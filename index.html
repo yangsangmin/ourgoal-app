@@ -1020,19 +1020,18 @@
     return requestClaudeFeedback(goal, text);
   }
   async function requestClaudeFeedback(goal, text){
-    var prompt = buildFeedbackPrompt(goal, text);
+    var msTitles = goal.milestones.map(function(m){ return m.title; }).join(', ') || '없음';
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 12000);
     try{
-      var res = await fetch('https://api.anthropic.com/v1/messages', {
+      var res = await fetch('/api/feedback', {
         method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
-        body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:300, messages:[{role:'user', content: prompt}] })
+        body: JSON.stringify({ goalTitle: goal.title, milestones: msTitles, text: text })
       });
       clearTimeout(timer);
       if(!res.ok) throw new Error('bad status');
-      var data = await res.json();
-      var raw = (data.content||[]).map(function(b){ return b.type==='text'?b.text:''; }).join('\n');
-      var parsed = parseFeedbackJSON(raw);
+      var parsed = await res.json();
+      if(!parsed || !parsed.verdict) throw new Error('bad shape');
       parsed.source = 'ai';
       return parsed;
     } catch(e){
