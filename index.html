@@ -3164,8 +3164,7 @@
         goalTitle: goalTitle,
         pct: pct,
         streak: 2 + (seed % 12),
-        logs: logs,
-        allowDm: (seed % 3) !== 0
+        logs: logs
       });
     });
     return out;
@@ -3280,7 +3279,7 @@
       partners.map(function(p){
         var sent = manitoSentToday(p.id);
         var mutual = manitoMutualCount(p.id);
-        var dmOpen = ms.allowDm && p.allowDm && mutual>=3;
+        var dmOpen = ms.allowDm && mutual>=3;
         var canReveal = mutual>=7;
         var color = p.pct>=67 ? '#1FC98E' : (p.pct>=34 ? '#FF9F1C' : '#FF4F64');
         return '<div class="manito-card">' +
@@ -3303,7 +3302,10 @@
             }).join('') +
           '</div>' +
           '<div style="display:flex;gap:8px;margin-top:10px;align-items:center;">' +
-            '<span class="faint" style="flex:1;">주고받은 응원 '+mutual+'회'+(dmOpen ? '' : ' · '+(Math.max(0,3-mutual))+'번 더 하면 DM')+'</span>' +
+            '<span class="faint" style="flex:1;">주고받은 응원 '+mutual+'회'+
+              (dmOpen ? ' · 💬 DM 열림' :
+                (!ms.allowDm ? ' · 내 DM 허용을 켜면 열려요' :
+                  ' · '+(Math.max(0,3-mutual))+'번 더 하면 DM'))+'</span>' +
             (dmOpen ? '<button class="btn btn-primary btn-sm" data-mndm="'+p.id+'" type="button" style="background:linear-gradient(135deg,#6C5CE7,#A29BFE);box-shadow:none;">💬 DM</button>'
                     : '<button class="btn btn-ghost btn-sm" type="button" disabled>🔒 DM</button>') +
             (canReveal ? '<button class="btn btn-ghost btn-sm" data-mnreveal="'+p.id+'" type="button">🎭 정체 공개 제안</button>' : '') +
@@ -3332,7 +3334,9 @@
         await saveProfile();
         var st = manitoStreak();
         var mutual = manitoMutualCount(pid);
-        toast(mutual===3 ? '🔓 DM이 열렸어요!' : (st>1 ? '응원 보냈어요 · '+st+'일 연속 🔥' : '응원을 보냈어요 💌'));
+        toast(mutual===3 && ms.allowDm ? '🔓 DM이 열렸어요!' :
+          (mutual===3 ? '응원 3회 달성 · 내 DM 허용을 켜면 열려요' :
+          (st>1 ? '응원 보냈어요 · '+st+'일 연속 🔥' : '응원을 보냈어요 💌')));
         renderCommManito(body);
       });
     });
