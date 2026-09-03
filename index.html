@@ -759,7 +759,7 @@
   function defaultProfile(id, username, displayName){
     return {
       id: id, username: username, displayName: displayName,
-      bio: '', avatarUrl: '', interests: [],
+      bio: '', avatarUrl: '', interests: [], region: '', regionPublic: false,
       schemaVersion: 1, createdAt: nowISO(),
       goals: [],
       records: [],
@@ -793,6 +793,7 @@
     return {
       id: userId, username: username, displayName: urow.display_name,
       bio: urow.bio || '', avatarUrl: urow.avatar_url || '', interests: urow.interests || [],
+      region: urow.region || '', regionPublic: !!urow.region_public,
       goals: goals, records: records, settings: loadLocalSettings(userId)
     };
   }
@@ -804,7 +805,8 @@
       await sb.from('users').upsert({
         id: uidVal, username: state.profile.username, display_name: state.profile.displayName,
         bio: state.profile.bio || null, avatar_url: state.profile.avatarUrl || null,
-        interests: state.profile.interests || []
+        interests: state.profile.interests || [],
+        region: state.profile.region || null, region_public: !!state.profile.regionPublic
       });
 
       var goals = state.profile.goals;
@@ -1122,7 +1124,7 @@
     openModal(
       '<h3>'+kindLabel+' 결과 기록</h3>' +
       '<p class="muted" style="margin:-8px 0 14px;"><b style="color:var(--ink);">'+escapeHtml(obj.title)+'</b></p>' +
-      '<p class="faint" style="margin:-8px 0 14px;">전부 못 했어도 괜찮아요. 실제로 한 만큼 적으면 그대로 기록에 남아요.</p>' +
+      '<p class="faint" style="margin:-8px 0 14px;">다 못 채웠어도 실제로 한 만큼 적어두면 기록으로 남아요! 삭제하지 말고 데이터베이스화하세요</p>' +
       '<div style="display:flex;gap:10px;">' +
         '<div class="field" style="flex:1;"><label>목표치</label><input id="rsTarget" type="number" inputmode="numeric" value="'+escapeHtml(String(r.target||''))+'" placeholder="30"></div>' +
         '<div class="field" style="flex:1;"><label>실제 달성</label><input id="rsResult" type="number" inputmode="numeric" value="'+escapeHtml(String(r.result||''))+'" placeholder="20"></div>' +
@@ -1194,6 +1196,10 @@
           '<div style="flex:1;min-width:0;">' +
             '<div class="profile-name">'+escapeHtml(p.displayName)+
               (streak>=7 ? '<span class="tmpl-badge" title="7일 이상 연속 기록">🔥</span>' : '')+'</div>' +
+            (p.region
+              ? '<div class="faint" style="font-size:.74rem;margin-top:2px;">📍 '+escapeHtml(p.region)+
+                ' · '+(p.regionPublic ? '공개' : '<span style="color:var(--ink-faint);">비공개</span>')+'</div>'
+              : '<div class="faint" style="font-size:.74rem;margin-top:2px;">📍 지역 미설정 · 근처 사람·오프라인 모임 추천에 쓰여요</div>') +
             '<div class="profile-bio">'+(p.bio ? escapeHtml(p.bio) : '<span class="faint">소개를 적으면 피드에서 나를 더 잘 보여줄 수 있어요</span>')+'</div>' +
           '</div>' +
         '</div>' +
@@ -1232,7 +1238,8 @@
 
   function openProfileEditor(){
     var p = state.profile;
-    var draft = { name: p.displayName, bio: p.bio||'', avatarUrl: p.avatarUrl||'', interests: (p.interests||[]).slice() };
+    var draft = { name: p.displayName, bio: p.bio||'', avatarUrl: p.avatarUrl||'', interests: (p.interests||[]).slice(),
+      region: p.region||'', regionPublic: !!p.regionPublic };
     openModal(
       '<h3>프로필 편집</h3>' +
       '<div class="avatar-edit">' +
@@ -1245,7 +1252,13 @@
       '</div>' +
       '<div class="field"><label>닉네임</label><input id="pvName" type="text" value="'+escapeHtml(draft.name)+'" maxlength="20"></div>' +
       '<div class="field"><label>내 소개 (최대 80자)</label><input id="pvBio" type="text" value="'+escapeHtml(draft.bio)+'" maxlength="80" placeholder="예: 3개월 뒤 하프마라톤 도전 중 · 매일 기록해요"></div>' +
-      '<div class="field"><label>관심 카테고리 (여러 개 선택)</label></div>' +
+      '<div class="field"><label>내 동네 (시/도 · 시군구)</label></div>' +
+      regionPickerHtml('pvRegion', draft.region) +
+      '<div class="toggle-row" style="margin-top:10px;">' +
+        '<div class="t">프로필에 지역 공개<div class="faint" style="font-size:.72rem;">공개하면 같은 동네 사람·오프라인 모임 추천에 노출돼요</div></div>' +
+        '<div class="switch'+(draft.regionPublic?' on':'')+'" id="pvRegionPublic"></div>' +
+      '</div>' +
+      '<div class="field" style="margin-top:14px;"><label>관심 카테고리 (여러 개 선택)</label></div>' +
       '<div id="pvInterests"></div>' +
       '<p class="faint" id="pvCount" style="margin:8px 0 0;"></p>' +
       '<div class="modal-actions"><button class="btn btn-ghost" id="pvCancel" type="button">취소</button><button class="btn btn-primary" id="pvSave" type="button">저장</button></div>',
@@ -1280,6 +1293,14 @@
         }
         paintInterests();
 
+        var regionRef = { value: draft.region };
+        wireRegionPicker(sheet, 'pvRegion', regionRef);
+        var regionSw = sheet.querySelector('#pvRegionPublic');
+        regionSw.addEventListener('click', function(){
+          draft.regionPublic = !draft.regionPublic;
+          regionSw.className = 'switch' + (draft.regionPublic ? ' on' : '');
+        });
+
         var fileInput = document.getElementById('avatarFile');
         sheet.querySelector('#pvPick').addEventListener('click', function(){ fileInput.click(); });
         fileInput.onchange = function(e){
@@ -1306,6 +1327,8 @@
           p.bio = sheet.querySelector('#pvBio').value.trim();
           p.avatarUrl = draft.avatarUrl;
           p.interests = draft.interests;
+          p.region = regionRef.value || '';
+          p.regionPublic = draft.regionPublic;
           await saveProfile();
           closeModal();
           renderAll();
@@ -1642,6 +1665,102 @@
     );
   }
 
+  /* ============ 목표 현황 데이터 내보내기 (AI 분석용) ============ */
+  function buildGoalSnapshot(goals){
+    var p = state.profile;
+    var recs = p.records.slice().sort(function(a,b){ return new Date(b.startAt)-new Date(a.startAt); });
+    return {
+      exportedAt: nowISO(),
+      purpose: 'AI 분석용 목표 현황 스냅샷',
+      user: {
+        displayName: p.displayName,
+        bio: p.bio || '',
+        interests: (p.interests||[]).map(function(t){ return topicLabel(t) || t; }),
+        region: p.region || null,
+        streakDays: computeStreakDays(),
+        totalRecords: p.records.length
+      },
+      goals: goals.map(function(g){
+        return {
+          title: g.title,
+          topic: topicLabel(g.topic) || null,
+          visibility: VISIBILITY_LABELS[g.visibility||'public'],
+          createdAt: g.createdAt,
+          dueDate: g.dueDate || null,
+          dDay: g.dueDate ? dDay(g.dueDate) : null,
+          archived: !!g.archivedAt,
+          archivedAt: g.archivedAt || null,
+          progressPercent: goalProgress(g),
+          achievementPercent: goalAchievement(g),
+          finalResult: g.result || null,
+          milestones: g.milestones.map(function(m){
+            return {
+              title: m.title,
+              status: m.status,
+              dueDate: m.dueDate || null,
+              dDay: m.dueDate ? dDay(m.dueDate) : null,
+              result: m.result || null,
+              tasks: (m.tasks||[]).map(function(t){
+                return { title: t.title, done: !!t.done, dueDate: t.dueDate||null, result: t.result||null };
+              })
+            };
+          })
+        };
+      }),
+      recentCheckins: recs.slice(0, 60).map(function(r){
+        return { date: dateKey(r.startAt), type: r.type, text: r.text,
+          minutes: r.endAt ? Math.round((new Date(r.endAt)-new Date(r.startAt))/60000) : null };
+      }),
+      analysisHints: [
+        '목표별 achievementPercent와 마일스톤 result를 비교해 어디서 진행이 막혔는지 찾아주세요',
+        'recentCheckins의 날짜 간격으로 실천 주기와 끊긴 구간을 분석해주세요',
+        'dDay가 임박하거나 지난 항목 중 결과가 비어 있는 것을 우선순위로 알려주세요'
+      ]
+    };
+  }
+  function goalSnapshotSummary(snap){
+    var lines = ['# 아워골 목표 현황 (' + dateKey(snap.exportedAt) + ')', ''];
+    lines.push('사용자: ' + snap.user.displayName + ' · 연속 기록 ' + snap.user.streakDays + '일 · 총 기록 ' + snap.user.totalRecords + '개');
+    if(snap.user.region) lines.push('지역: ' + snap.user.region);
+    if(snap.user.interests.length) lines.push('관심: ' + snap.user.interests.join(', '));
+    lines.push('');
+    snap.goals.forEach(function(g){
+      lines.push('## ' + g.title + (g.archived ? ' (보관됨)' : ''));
+      lines.push('- 카테고리: ' + (g.topic || '미설정') + ' / 공개: ' + g.visibility);
+      lines.push('- 마감: ' + (g.dueDate || '없음') + (g.dDay ? ' (' + g.dDay + ')' : '') + ' / 진행률 ' + g.progressPercent + '% · 달성률 ' + g.achievementPercent + '%');
+      if(g.finalResult) lines.push('- 최종 결과: ' + (g.finalResult.result||0) + '/' + (g.finalResult.target||'-') + ' ' + (g.finalResult.unit||'') + (g.finalResult.note ? ' · ' + g.finalResult.note : ''));
+      g.milestones.forEach(function(m){
+        var r = m.result;
+        lines.push('  - [' + m.status + '] ' + m.title + (m.dueDate ? ' (' + m.dueDate + ' ' + m.dDay + ')' : '') +
+          (r ? ' → ' + (r.result||0) + '/' + (r.target||'-') + ' ' + (r.unit||'') : ''));
+        (m.tasks||[]).forEach(function(t){
+          var tr = t.result;
+          lines.push('    · ' + t.title + (t.dueDate ? ' (' + t.dueDate + ')' : '') +
+            (tr ? ' → ' + (tr.result||0) + '/' + (tr.target||'-') + ' ' + (tr.unit||'') : (t.done ? ' → 완료' : '')));
+        });
+      });
+      lines.push('');
+    });
+    lines.push('## 최근 체크인');
+    snap.recentCheckins.slice(0, 30).forEach(function(r){
+      lines.push('- ' + r.date + ' · ' + r.text + (r.minutes ? ' (' + r.minutes + '분)' : ''));
+    });
+    return lines.join('\n');
+  }
+  function exportGoalSnapshot(scope, goal){
+    var goals = scope==='one' && goal ? [goal] : state.profile.goals;
+    if(!goals.length){ toast('내보낼 목표가 없어요'); return; }
+    var snap = buildGoalSnapshot(goals);
+    var stamp = dateKey(nowISO());
+    var fmt = state.profile.settings.exportFormat || 'csv';
+    if(fmt === 'json'){
+      download('아워골_목표현황_'+stamp+'.json', JSON.stringify(snap, null, 2), 'application/json');
+    } else {
+      download('아워골_목표현황_'+stamp+'.md', '﻿'+goalSnapshotSummary(snap), 'text/markdown;charset=utf-8');
+    }
+    toast('AI 분석용 파일을 받았어요');
+  }
+
   /* ============ 목표 보관(기록으로 옮기기) ============ */
   async function archiveGoal(goal){
     goal.archivedAt = nowISO();
@@ -1819,10 +1938,16 @@
         ? '<div class="muted" style="font-size:.85rem;">'+(goal.result.result||0)+' / '+(goal.result.target||'-')+' '+(goal.result.unit||'')+
           (resultPct(goal.result)!==null ? ' · 달성률 <b style="color:'+(resultPct(goal.result)>=100?'var(--sage)':'var(--gold)')+';">'+resultPct(goal.result)+'%</b>' : '')+'</div>' +
           (goal.result.note ? '<div class="faint" style="margin-top:4px;">'+escapeHtml(goal.result.note)+'</div>' : '')
-        : '<p class="faint" style="margin:0;">다 못 채웠어도 실제로 한 만큼 적어두면 기록으로 남아요</p>') +
+        : '<p class="faint" style="margin:0;">다 못 채웠어도 실제로 한 만큼 적어두면 기록으로 남아요! 삭제하지 말고 데이터베이스화하세요</p>') +
       ((goal.dueDate && dDay(goal.dueDate).indexOf('D+')===0)
         ? '<button class="btn btn-primary" id="goalArchiveBtn" type="button" style="width:100%;margin-top:12px;">마감일이 지났어요 · 기록으로 옮기기</button>'
         : '<button class="btn btn-ghost btn-sm" id="goalArchiveBtn" type="button" style="width:100%;margin-top:12px;">기록으로 옮기기</button>') +
+    '</div>' +
+    '<div class="export-card" style="margin-bottom:14px;">' +
+      '<div class="ico">🤖</div>' +
+      '<div class="txt"><b>현 상태로 데이터 받기</b><span>목표·마일스톤·할 일·결과·체크인을 AI 분석용으로 내보내요</span></div>' +
+      '<button class="btn btn-ghost btn-sm" id="goalExportBtn" type="button" style="margin-left:auto;">이 목표</button>' +
+      '<button class="btn btn-ghost btn-sm" id="goalExportAllBtn" type="button" style="margin-left:6px;">전체</button>' +
     '</div>';
 
     body.innerHTML = dueRow + visRow +
@@ -1859,6 +1984,11 @@
     if(goalResultBtn) goalResultBtn.addEventListener('click', function(){
       openResultModal('goal', goal, function(){ renderAll(); });
     });
+
+    var expBtn = document.getElementById('goalExportBtn');
+    if(expBtn) expBtn.addEventListener('click', function(){ exportGoalSnapshot('one', goal); });
+    var expAllBtn = document.getElementById('goalExportAllBtn');
+    if(expAllBtn) expAllBtn.addEventListener('click', function(){ exportGoalSnapshot('all'); });
 
     var archiveBtn = document.getElementById('goalArchiveBtn');
     if(archiveBtn) archiveBtn.addEventListener('click', async function(){
@@ -2135,32 +2265,32 @@
   }
 
   var MOCK_GROUPS = [
-    { id:'g1', icon:'💪', name:'벤치프레스 100kg 모임', topic:'health/헬스·근력', members:128, progress:68, cadence:'주 3회', endDate:daysFromNow(24),
+    { id:'g1', icon:'💪', name:'벤치프레스 100kg 모임', topic:'health/헬스·근력', region:'서울 강남구', members:128, progress:68, cadence:'주 3회', endDate:daysFromNow(24),
       desc:'같은 목표를 가진 사람들과 기록을 공유해요', rule:'운동한 날 무게·세트를 남기면 인증 완료',
       weeklyTarget:300, weeklyDone:214,
       roster:[{n:'민준',c:14},{n:'하늘',c:12},{n:'도윤',c:11},{n:'서아',c:9},{n:'지호',c:7}],
       activity:['민준님이 벤치 85kg 5회 인증했어요','하늘님이 7일 연속 인증을 달성했어요','도윤님이 이번 주 목표를 채웠어요'] },
-    { id:'g2', icon:'📚', name:'자격증 스터디', topic:'study/자격증·시험', members:342, progress:45, cadence:'매일', endDate:daysFromNow(51),
+    { id:'g2', icon:'📚', name:'자격증 스터디', topic:'study/자격증·시험', region:'온라인', members:342, progress:45, cadence:'매일', endDate:daysFromNow(51),
       desc:'시험 준비, 서로 진도를 확인하며 함께 가요', rule:'그날 공부한 분량을 기록하면 인증 완료',
       weeklyTarget:800, weeklyDone:361,
       roster:[{n:'서연',c:21},{n:'유진',c:18},{n:'현우',c:15},{n:'민서',c:13},{n:'태호',c:10}],
       activity:['서연님이 기출 3회독을 마쳤어요','유진님이 오답노트 20문항을 올렸어요','민서님이 오늘도 인증했어요'] },
-    { id:'g3', icon:'🏘️', name:'동네 아침 루틴', topic:'mind/기상·수면', members:76, progress:82, cadence:'매일', endDate:daysFromNow(9),
+    { id:'g3', icon:'🏘️', name:'동네 아침 루틴', topic:'mind/기상·수면', region:'서울 마포구', members:76, progress:82, cadence:'매일', endDate:daysFromNow(9),
       desc:'우리 동네 사람들과 아침 습관 만들기', rule:'오전 8시 전에 기록을 남기면 인증 완료',
       weeklyTarget:180, weeklyDone:148,
       roster:[{n:'다현',c:19},{n:'준서',c:17},{n:'예린',c:16},{n:'상우',c:12},{n:'가은',c:8}],
       activity:['다현님이 19일 연속 아침 인증 중이에요','준서님이 새벽 러닝을 인증했어요','예린님이 응원을 3개 보냈어요'] },
-    { id:'g4', icon:'🏃', name:'첫 10km 완주 클럽', topic:'health/러닝·마라톤', members:205, progress:57, cadence:'주 3회', endDate:daysFromNow(38),
+    { id:'g4', icon:'🏃', name:'첫 10km 완주 클럽', topic:'health/러닝·마라톤', region:'경기 성남시', members:205, progress:57, cadence:'주 3회', endDate:daysFromNow(38),
       desc:'러닝 입문자끼리 페이스 공유하며 10km까지', rule:'러닝 거리·페이스를 남기면 인증 완료',
       weeklyTarget:400, weeklyDone:236,
       roster:[{n:'수민',c:16},{n:'재영',c:14},{n:'하은',c:11},{n:'정우',c:9},{n:'소라',c:6}],
       activity:['수민님이 7km 완주를 인증했어요','재영님이 개인 최고 페이스를 갱신했어요','하은님이 첫 5km를 완주했어요'] },
-    { id:'g5', icon:'✍️', name:'매일 한 편 글쓰기', topic:'hobby/글쓰기', members:97, progress:73, cadence:'매일', endDate:daysFromNow(16),
+    { id:'g5', icon:'✍️', name:'매일 한 편 글쓰기', topic:'hobby/글쓰기', region:'온라인', members:97, progress:73, cadence:'매일', endDate:daysFromNow(16),
       desc:'짧아도 좋으니 매일 한 편씩 쓰는 사람들', rule:'글 링크나 분량을 남기면 인증 완료',
       weeklyTarget:250, weeklyDone:191,
       roster:[{n:'윤아',c:22},{n:'세훈',c:18},{n:'미래',c:15},{n:'동현',c:10},{n:'채원',c:7}],
       activity:['윤아님이 22일 연속 글쓰기를 이어가고 있어요','세훈님이 에세이 1편을 올렸어요','미래님이 응원을 보냈어요'] },
-    { id:'g6', icon:'💰', name:'6개월 1000만원 모으기', topic:'career/절약·가계부', members:412, progress:39, cadence:'주말', endDate:daysFromNow(74),
+    { id:'g6', icon:'💰', name:'6개월 1000만원 모으기', topic:'career/절약·가계부', region:'온라인', members:412, progress:39, cadence:'주말', endDate:daysFromNow(74),
       desc:'가계부 인증하며 목표 금액까지 함께', rule:'주간 지출 정리와 저축액을 남기면 인증 완료',
       weeklyTarget:600, weeklyDone:234,
       roster:[{n:'지훈',c:12},{n:'서영',c:11},{n:'민재',c:9},{n:'예나',c:8},{n:'우진',c:5}],
@@ -2233,6 +2363,85 @@
     var l = topicLabel(topic);
     return l ? '<span class="topic-pill">'+escapeHtml(l)+'</span>' : '';
   }
+  /* ============ 지역 (시/도 · 시군구) ============ */
+  var REGIONS = {
+    '서울': ['강남구','강동구','강북구','강서구','관악구','광진구','구로구','금천구','노원구','도봉구','동대문구','동작구','마포구','서대문구','서초구','성동구','성북구','송파구','양천구','영등포구','용산구','은평구','종로구','중구','중랑구'],
+    '경기': ['수원시','성남시','고양시','용인시','부천시','안산시','안양시','남양주시','화성시','평택시','의정부시','시흥시','파주시','김포시','광명시','광주시','군포시','하남시','오산시','이천시','안성시','의왕시','양평군','여주시','과천시','구리시','포천시','양주시','동두천시','가평군','연천군'],
+    '인천': ['중구','동구','미추홀구','연수구','남동구','부평구','계양구','서구','강화군','옹진군'],
+    '부산': ['중구','서구','동구','영도구','부산진구','동래구','남구','북구','해운대구','사하구','금정구','강서구','연제구','수영구','사상구','기장군'],
+    '대구': ['중구','동구','서구','남구','북구','수성구','달서구','달성군','군위군'],
+    '광주': ['동구','서구','남구','북구','광산구'],
+    '대전': ['동구','중구','서구','유성구','대덕구'],
+    '울산': ['중구','남구','동구','북구','울주군'],
+    '세종': ['세종시'],
+    '강원': ['춘천시','원주시','강릉시','동해시','태백시','속초시','삼척시','홍천군','횡성군','영월군','평창군','정선군','철원군','화천군','양구군','인제군','고성군','양양군'],
+    '충북': ['청주시','충주시','제천시','보은군','옥천군','영동군','증평군','진천군','괴산군','음성군','단양군'],
+    '충남': ['천안시','공주시','보령시','아산시','서산시','논산시','계룡시','당진시','금산군','부여군','서천군','청양군','홍성군','예산군','태안군'],
+    '전북': ['전주시','군산시','익산시','정읍시','남원시','김제시','완주군','진안군','무주군','장수군','임실군','순창군','고창군','부안군'],
+    '전남': ['목포시','여수시','순천시','나주시','광양시','담양군','곡성군','구례군','고흥군','보성군','화순군','장흥군','강진군','해남군','영암군','무안군','함평군','영광군','장성군','완도군','진도군','신안군'],
+    '경북': ['포항시','경주시','김천시','안동시','구미시','영주시','영천시','상주시','문경시','경산시','의성군','청송군','영양군','영덕군','청도군','고령군','성주군','칠곡군','예천군','봉화군','울진군','울릉군'],
+    '경남': ['창원시','진주시','통영시','사천시','김해시','밀양시','거제시','양산시','의령군','함안군','창녕군','고성군','남해군','하동군','산청군','함양군','거창군','합천군'],
+    '제주': ['제주시','서귀포시']
+  };
+  function regionPickerHtml(idPrefix, selected){
+    var parts = (selected||'').split(' ');
+    var curSido = REGIONS[parts[0]] ? parts[0] : '서울';
+    return '<div class="cat-major-row" id="'+idPrefix+'Sido">' +
+        Object.keys(REGIONS).map(function(k){
+          return '<button class="cat-major'+(k===curSido?' active':'')+'" data-sido="'+k+'" type="button">'+k+'</button>';
+        }).join('') +
+      '</div>' +
+      '<div class="cat-sub-grid" id="'+idPrefix+'Gu"></div>';
+  }
+  function wireRegionPicker(root, idPrefix, ref){
+    var sidoRow = root.querySelector('#'+idPrefix+'Sido');
+    var guGrid = root.querySelector('#'+idPrefix+'Gu');
+    function paintGu(sido){
+      guGrid.innerHTML = REGIONS[sido].map(function(g){
+        var on = ref.value === (sido+' '+g);
+        return '<button class="cat-sub'+(on?' active':'')+'" data-gu="'+escapeHtml(g)+'" type="button">'+escapeHtml(g)+'</button>';
+      }).join('');
+      guGrid.querySelectorAll('[data-gu]').forEach(function(b){
+        b.addEventListener('click', function(){
+          ref.value = sido+' '+b.dataset.gu;
+          paintGu(sido);
+        });
+      });
+    }
+    sidoRow.querySelectorAll('[data-sido]').forEach(function(b){
+      b.addEventListener('click', function(){
+        sidoRow.querySelectorAll('[data-sido]').forEach(function(x){ x.classList.remove('active'); });
+        b.classList.add('active');
+        paintGu(b.dataset.sido);
+      });
+    });
+    var init = (ref.value||'').split(' ')[0];
+    paintGu(REGIONS[init] ? init : '서울');
+  }
+
+  /* 사용자 추가 중범위 카테고리
+     설계 메모: 대범위(6개)는 고정이라 상위 분류는 절대 늘어나지 않고,
+     사용자 정의는 항상 '대범위/중범위' 한 컬럼(text)에만 저장된다.
+     별도 테이블·조인 없이 topic 인덱스만으로 조회되며,
+     선택지는 기존 데이터에서 distinct로 유도하므로 아무리 많이 추가돼도 스키마는 그대로다. */
+  function normalizeSubName(s){
+    return String(s||'').replace(/[\/\\|]/g,' ').replace(/\s+/g,' ').trim().slice(0,20);
+  }
+  function customSubsFor(major){
+    var found = {};
+    function add(topic){
+      if(!topic) return;
+      var parts = String(topic).split('/');
+      if(parts[0]!==major || !parts[1]) return;
+      if(TOPICS[major].subs.indexOf(parts[1])!==-1) return;
+      found[parts[1]] = true;
+    }
+    (state.profile ? state.profile.goals : []).forEach(function(g){ add(g.topic); });
+    (state.profile && state.profile.interests ? state.profile.interests : []).forEach(add);
+    MOCK_GROUPS.forEach(function(g){ add(g.topic); });
+    return Object.keys(found);
+  }
+
   /* 대/중 카테고리 선택 UI (모달·폼 공용) */
   function categoryPickerHtml(idPrefix, selected){
     var parts = (selected||'').split('/');
@@ -2250,19 +2459,41 @@
       '</div>';
   }
   /* 선택 상태를 ref 객체(.value)에 반영 */
-  function wireCategoryPicker(root, idPrefix, ref){
+  function wireCategoryPicker(root, idPrefix, ref, opts){
+    opts = opts || {};
     var majorRow = root.querySelector('#'+idPrefix+'Major');
     var subGrid = root.querySelector('#'+idPrefix+'Sub');
+    var extraSubs = {};
     function paintSubs(major){
-      subGrid.innerHTML = TOPICS[major].subs.map(function(s){
+      var subs = TOPICS[major].subs
+        .concat(customSubsFor(major))
+        .concat(extraSubs[major] || []);
+      var seen = {};
+      subs = subs.filter(function(s){ if(seen[s]) return false; seen[s]=true; return true; });
+      subGrid.innerHTML = subs.map(function(s){
         var on = ref.value === (major+'/'+s);
-        return '<button class="cat-sub'+(on?' active':'')+'" data-sub="'+escapeHtml(s)+'" type="button">'+escapeHtml(s)+'</button>';
-      }).join('');
+        var custom = TOPICS[major].subs.indexOf(s)===-1;
+        return '<button class="cat-sub'+(on?' active':'')+'" data-sub="'+escapeHtml(s)+'" type="button">'+(custom?'+ ':'')+escapeHtml(s)+'</button>';
+      }).join('') +
+      (opts.allowCustom===false ? '' :
+        '<button class="cat-sub" data-addsub="1" type="button" style="border-style:dashed;color:var(--red);border-color:var(--red-line);">＋ 직접 추가</button>');
       subGrid.querySelectorAll('[data-sub]').forEach(function(b){
         b.addEventListener('click', function(){
           ref.value = major+'/'+b.dataset.sub;
           paintSubs(major);
         });
+      });
+      var addBtn = subGrid.querySelector('[data-addsub]');
+      if(addBtn) addBtn.addEventListener('click', function(){
+        var input = window.prompt('추가할 세부 카테고리 이름을 적어주세요 (최대 20자)\n대분류: '+TOPICS[major].label);
+        if(input===null) return;
+        var name = normalizeSubName(input);
+        if(!name){ toast('이름을 확인해주세요'); return; }
+        if(subs.indexOf(name)!==-1){ ref.value = major+'/'+name; paintSubs(major); return; }
+        extraSubs[major] = (extraSubs[major]||[]).concat([name]);
+        ref.value = major+'/'+name;
+        paintSubs(major);
+        toast('"'+name+'" 카테고리를 추가했어요');
       });
     }
     majorRow.querySelectorAll('[data-major]').forEach(function(b){
@@ -2450,8 +2681,12 @@
     }
     var filter = state.groupFilter || 'all';
     var myInterests = state.profile.interests || [];
+    var myRegion = state.profile.region || '';
+    var mySido = myRegion.split(' ')[0];
     var visibleGroups = MOCK_GROUPS.filter(function(g){
       if(filter==='all') return true;
+      if(filter==='near') return myRegion && g.region && g.region !== '온라인' &&
+        (g.region === myRegion || g.region.split(' ')[0] === mySido);
       if(filter==='mine') return myInterests.some(function(i){ return i === g.topic; }) ||
         myInterests.some(function(i){ return (i.split('/')[0]) === (g.topic||'').split('/')[0]; });
       return (g.topic||'').split('/')[0] === filter;
@@ -2464,6 +2699,7 @@
       '</div>' +
       '<div class="cat-major-row" id="grpFilterRow">' +
         '<button class="cat-major'+(filter==='all'?' active':'')+'" data-gfilter="all" type="button">전체</button>' +
+        (myRegion ? '<button class="cat-major'+(filter==='near'?' active':'')+'" data-gfilter="near" type="button">📍 '+escapeHtml(mySido)+' 근처</button>' : '') +
         (myInterests.length ? '<button class="cat-major'+(filter==='mine'?' active':'')+'" data-gfilter="mine" type="button">⭐ 내 관심</button>' : '') +
         Object.keys(TOPICS).map(function(k){
           return '<button class="cat-major'+(filter===k?' active':'')+'" data-gfilter="'+k+'" type="button">'+TOPICS[k].icon+' '+TOPICS[k].label+'</button>';
@@ -2478,7 +2714,9 @@
         return '<div class="group-item" style="align-items:flex-start;cursor:pointer;" data-open-group="'+g.id+'">' +
           '<div class="group-ico">'+g.icon+'</div>' +
           '<div class="group-info"><b>'+escapeHtml(g.name)+(gs.joined&&checked?' ✅':'')+'</b>' +
-            (g.topic ? '<div style="margin:3px 0 2px;">'+topicPill(g.topic)+'</div>' : '') +
+            '<div style="margin:3px 0 2px;display:flex;gap:4px;flex-wrap:wrap;">' + topicPill(g.topic) +
+              (g.region ? '<span class="topic-pill" style="background:var(--gold-soft);color:var(--gold);border-color:var(--gold-line);">'+(g.region==='온라인'?'💻 온라인':'📍 '+escapeHtml(g.region))+'</span>' : '') +
+            '</div>' +
             '<span>'+(g.members+(gs.joined?1:0))+'명 참여 · '+g.cadence+' 인증 · '+dDay(g.endDate)+'</span>' +
             '<div class="group-bar"><span style="width:'+prog+'%;"></span></div>' +
             '<span class="faint" style="font-size:.7rem;">공동 달성률 '+prog+'%'+(gs.joined&&!checked?' · 오늘 인증 전이에요':'')+'</span>' +
@@ -2533,6 +2771,8 @@
       '<div class="collective-card">' +
         '<div class="collective-top"><b>'+g.icon+' '+escapeHtml(g.name)+'</b>' +
           '<span class="dday-pill" style="background:var(--red-soft);color:var(--red);">'+g.endDate+' · '+dDay(g.endDate)+'</span></div>' +
+        '<div style="margin:0 0 8px;display:flex;gap:4px;flex-wrap:wrap;">'+topicPill(g.topic)+
+          (g.region ? '<span class="topic-pill" style="background:var(--gold-soft);color:var(--gold);border-color:var(--gold-line);">'+(g.region==='온라인'?'💻 온라인 모임':'📍 '+escapeHtml(g.region)+' 오프라인 가능')+'</span>' : '')+'</div>' +
         '<p class="faint" style="margin:0 0 10px;">'+escapeHtml(g.desc)+' · '+g.cadence+' 인증</p>' +
         '<div class="collective-track"><div class="collective-fill" style="width:'+g.progress+'%;"></div></div>' +
         '<p class="faint" style="margin:8px 0 0;">참여자 '+(g.members+(gs.joined?1:0))+'명의 공동 달성률 '+g.progress+'%</p>' +
@@ -2652,10 +2892,25 @@
         '<option value="2">2주</option><option value="4" selected>4주</option><option value="8">8주</option><option value="12">12주</option>' +
       '</select></div>' +
       '<div class="field"><label>인증 규칙 (멤버에게 보여요)</label><input id="grpRule" type="text" placeholder="예: 운동한 날 무게·세트를 남기면 인증 완료"></div>' +
+      '<div class="field"><label>모임 방식</label><select id="grpMode">' +
+        '<option value="online">온라인 모임 (어디서든 참여)</option>' +
+        '<option value="local">우리 동네 모임 (오프라인 만남 가능)</option>' +
+      '</select></div>' +
+      '<div id="grpRegionBlock" style="display:none;">' +
+        '<div class="field"><label>모임 지역</label></div>' +
+        regionPickerHtml('grpRegion', state.profile.region||'') +
+        '<div style="height:14px;"></div>' +
+      '</div>' +
       '<div class="modal-actions"><button class="btn btn-ghost" id="grpCancel" type="button">취소</button><button class="btn btn-primary" id="grpSave" type="button">만들기</button></div>',
       function(sheet){
         var gTopicRef = { value: '' };
         wireCategoryPicker(sheet, 'gTopic', gTopicRef);
+        var gRegionRef = { value: state.profile.region || '' };
+        wireRegionPicker(sheet, 'grpRegion', gRegionRef);
+        var modeSel = sheet.querySelector('#grpMode');
+        modeSel.addEventListener('change', function(){
+          sheet.querySelector('#grpRegionBlock').style.display = modeSel.value==='local' ? '' : 'none';
+        });
         sheet.querySelector('#grpCancel').addEventListener('click', closeModal);
         sheet.querySelector('#grpSave').addEventListener('click', async function(){
           var name = sheet.querySelector('#grpName').value.trim();
@@ -2671,6 +2926,7 @@
             icon: sheet.querySelector('#grpIcon').value.trim() || '🔥',
             name: name,
             topic: gTopicRef.value,
+            region: modeSel.value==='local' ? (gRegionRef.value || '온라인') : '온라인',
             members: 1,
             progress: 0,
             cadence: cadence,
