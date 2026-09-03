@@ -713,7 +713,7 @@
     };
   }
 
-  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'share', dmActiveId: null, joinedGroups: {}, feedReacted: {} };
+  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'share', dmActiveId: null, activeGroupId: null, feedReacted: {} };
 
   async function ensureUserRow(userId, username, displayName){
     var found = await sb.from('users').select('*').eq('id', userId).maybeSingle();
@@ -887,7 +887,8 @@
             return '<div class="cat-chip" data-cat="'+k+'"><span class="ico">'+t.icon+'</span><span class="lbl">'+t.label+'</span></div>';
           }).join('') +
         '</div>' +
-        '<div class="modal-actions"><button class="btn btn-primary btn-block" id="obNext1" type="button" disabled>다음</button></div>',
+        '<div class="modal-actions"><button class="btn btn-primary btn-block" id="obNext1" type="button" disabled>다음</button></div>' +
+        '<button class="land-login-link" id="obSkip" type="button" style="width:100%;background:none;margin-top:12px;">다른 사람들의 목표 먼저 볼래요 · <b>나중에 설정하기</b></button>',
         function(sheet){
           sheet.querySelectorAll('.cat-chip').forEach(function(chip){
             chip.addEventListener('click', function(){
@@ -898,6 +899,13 @@
             });
           });
           sheet.querySelector('#obNext1').addEventListener('click', showObStep2);
+          sheet.querySelector('#obSkip').addEventListener('click', function(){
+            closeModal();
+            state.commSubTab = 'feed';
+            enterApp();
+            setTab('comm');
+            toast('마음에 드는 목표를 찾으면 바로 복사할 수 있어요');
+          });
         }
       );
     }
@@ -908,9 +916,14 @@
         '<p class="ob-step-label">2 / 3 · 목표 정하기</p>' +
         '<h3>'+t.icon+' '+t.label+' 목표를 적어주세요</h3>' +
         '<div class="field"><label>최종 목표</label><input id="obTitle" type="text" placeholder="예: 3개월 안에 벤치프레스 100kg" value="'+escapeHtml(ob.title)+'"></div>' +
-        '<div class="field"><label>목표 마감일 (선택)</label><input id="obDue" type="date" value="'+ob.dueDate+'"></div>' +
+        '<div class="field"><label>목표 마감일 (선택)</label><input id="obDue" type="date" value="'+ob.dueDate+'"><p class="faint" id="obDday" style="margin:6px 0 0;">'+(ob.dueDate ? '오늘 기준 <b style="color:var(--red);">'+dDay(ob.dueDate)+'</b>' : '')+'</p></div>' +
         '<div class="modal-actions"><button class="btn btn-ghost" id="obBack2" type="button">이전</button><button class="btn btn-primary" id="obNext2" type="button">다음</button></div>',
         function(sheet){
+          var obDue = sheet.querySelector('#obDue');
+          var obDdayEl = sheet.querySelector('#obDday');
+          obDue.addEventListener('change', function(){
+            obDdayEl.innerHTML = obDue.value ? '오늘 기준 <b style="color:var(--red);">'+dDay(obDue.value)+'</b>' : '';
+          });
           sheet.querySelector('#obBack2').addEventListener('click', showObStep1);
           sheet.querySelector('#obNext2').addEventListener('click', function(){
             var title = sheet.querySelector('#obTitle').value.trim();
@@ -938,7 +951,7 @@
         function(sheet){
           sheet.querySelector('#obBack3').addEventListener('click', showObStep2);
           sheet.querySelector('#obFinish').addEventListener('click', async function(){
-            var goal = { id: newId(), title: ob.title, dueDate: ob.dueDate||null, category: ob.category, createdAt: nowISO(), milestones: templateMilestones(ob.category) };
+            var goal = { id: newId(), title: ob.title, dueDate: ob.dueDate||null, category: ob.category, createdAt: nowISO(), visibility:'public', milestones: templateMilestones(ob.category) };
             state.profile.goals.push(goal);
             state.activeGoalId = goal.id;
             await saveProfile();
@@ -1065,7 +1078,9 @@
       var pct = goalProgress(g);
       var counts = msCounts(g);
       var color = pct>=67 ? '#516A44' : (pct>=34 ? '#B4832A' : '#B5402C');
-      var dd = g.dueDate ? '<span class="dday-pill">'+dDay(g.dueDate)+'</span>' : '';
+      var dd = g.dueDate
+        ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--red);">'+g.dueDate+' · '+dDay(g.dueDate)+'</span>'
+        : '';
       return '<div class="goal-card" data-goalid="'+g.id+'">' +
         '<div class="goal-card-top"><h4>'+escapeHtml(g.title)+'</h4>'+dd+'</div>' +
         '<div class="goal-body">' +
@@ -1271,7 +1286,7 @@
         }).join('') +
       '</div>' +
       '<div class="field"><label>최종 목표</label><input id="mGoalTitle" type="text" placeholder="예: 3개월 안에 벤치프레스 100kg"></div>' +
-      '<div class="field"><label>목표 마감일 (선택)</label><input id="mGoalDue" type="date"></div>' +
+      '<div class="field"><label>목표 마감일 (선택)</label><input id="mGoalDue" type="date"><p class="faint" id="mGoalDday" style="margin:6px 0 0;"></p></div>' +
       '<div class="field"><label>공개 범위</label><select id="mGoalVis">' +
         '<option value="public">전체 공개</option>' +
         '<option value="followers">팔로워만</option>' +
@@ -1285,6 +1300,13 @@
             chip.classList.add('active');
             chosenCat = chip.dataset.cat;
           });
+        });
+        var mDue = sheet.querySelector('#mGoalDue');
+        var mDdayEl = sheet.querySelector('#mGoalDday');
+        mDue.addEventListener('change', function(){
+          mDdayEl.innerHTML = mDue.value
+            ? '오늘 기준 <b style="color:var(--red);">'+dDay(mDue.value)+'</b> · 목표일과 함께 계속 표시돼요'
+            : '';
         });
         sheet.querySelector('#mCancel').addEventListener('click', closeModal);
         sheet.querySelector('#mSave').addEventListener('click', async function(){
@@ -1334,10 +1356,15 @@
       return;
     }
 
+    var ddayText = goal.dueDate ? dDay(goal.dueDate) : '';
+    var ddayPill = goal.dueDate ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--red);margin-left:8px;">'+ddayText+'</span>' : '';
     var dueRow = '<div class="duedate-row"><span class="lbl">목표 마감일</span>' +
-      (state.goalEditMode ?
-        '<input type="date" id="goalDueInput" value="'+(goal.dueDate||'')+'">' :
-        '<span class="faint">'+(goal.dueDate ? goal.dueDate+' · '+dDay(goal.dueDate) : '설정 안 함')+'</span>') +
+      '<span style="display:flex;align-items:center;">' +
+        (state.goalEditMode ?
+          '<input type="date" id="goalDueInput" value="'+(goal.dueDate||'')+'">' :
+          '<span class="faint">'+(goal.dueDate ? goal.dueDate : '설정 안 함')+'</span>') +
+        ddayPill +
+      '</span>' +
       '</div>';
 
     var vis = goal.visibility || 'public';
@@ -1381,7 +1408,8 @@
     body.innerHTML = dueRow + visRow +
       '<div class="ms-list">'+msHtml+'</div>' +
       (state.goalEditMode ? '<div class="add-ms-btn" id="addMsBtn">+ 마일스톤 추가</div><div class="drag-hint">탭해서 바로 수정 · 화살표로 순서 변경</div>' : '') +
-      (goal.milestones.length===0 ? '<div class="empty-state"><div class="e-icon">🧭</div><p>마일스톤을 추가해서 목표를 잘게 나눠보세요.</p></div>' : '');
+      (goal.milestones.length===0 ? '<div class="empty-state"><div class="e-icon">🧭</div><p>마일스톤을 추가해서 목표를 잘게 나눠보세요.</p></div>' : '') +
+      (state.goalEditMode ? '<button class="btn btn-danger" id="goalDeleteBtn" type="button" style="width:100%;margin-top:18px;">이 목표 삭제하기</button>' : '');
 
     // wire events
     var dueInput = document.getElementById('goalDueInput');
@@ -1393,6 +1421,16 @@
       await saveProfile();
       renderGoalsScreen();
       toast(VISIBILITY_LABELS[goal.visibility]+'(으)로 바꿨어요');
+    });
+
+    var delGoalBtn = document.getElementById('goalDeleteBtn');
+    if(delGoalBtn) delGoalBtn.addEventListener('click', async function(){
+      if(!confirm('"'+goal.title+'" 목표와 마일스톤·할 일을 모두 삭제할까요? 되돌릴 수 없어요.')) return;
+      state.profile.goals = state.profile.goals.filter(function(g){ return g.id!==goal.id; });
+      state.activeGoalId = state.profile.goals.length ? state.profile.goals[0].id : null;
+      await saveProfile();
+      renderAll();
+      toast('목표를 삭제했어요');
     });
 
     body.querySelectorAll('.ms-row').forEach(function(row){
@@ -1648,10 +1686,27 @@
     { id:'p2', name:'서연', avatar:'서', goal:'정보처리기사 합격', pct:40, action:'퇴근 후 기출문제 20문제를 풀고 오답노트까지 정리했어요.', time:'5시간 전', cheers:9, replies:['퇴근하고 기출문제 좀 풀었어요, 생각보다 할 만하네요','저도 자극받아요!','어떤 파트가 제일 어려웠어요?'] },
     { id:'p3', name:'다현', avatar:'다', goal:'매일 글쓰기 습관', pct:78, action:'약속했던 대로 오늘도 20분 동안 글을 썼어요, 5일째예요.', time:'어제', cheers:21, replies:['오늘도 20분 글쓰기 완료! 5일째예요','우와 꾸준하시네요 👏','비결이 뭐예요?'] }
   ];
+  function daysFromNow(n){
+    var d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+n);
+    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  }
+
   var MOCK_GROUPS = [
-    { id:'g1', icon:'💪', name:'벤치프레스 100kg 모임', members:128, progress:68, desc:'같은 목표를 가진 사람들과 기록을 공유해요' },
-    { id:'g2', icon:'📚', name:'자격증 스터디', members:342, progress:45, desc:'시험 준비, 서로 진도를 확인하며 함께 가요' },
-    { id:'g3', icon:'🏘️', name:'동네 아침 루틴', members:76, progress:82, desc:'우리 동네 사람들과 아침 습관 만들기' }
+    { id:'g1', icon:'💪', name:'벤치프레스 100kg 모임', members:128, progress:68, cadence:'주 3회', endDate:daysFromNow(24),
+      desc:'같은 목표를 가진 사람들과 기록을 공유해요', rule:'운동한 날 무게·세트를 남기면 인증 완료',
+      weeklyTarget:300, weeklyDone:214,
+      roster:[{n:'민준',c:14},{n:'하늘',c:12},{n:'도윤',c:11},{n:'서아',c:9},{n:'지호',c:7}],
+      activity:['민준님이 벤치 85kg 5회 인증했어요','하늘님이 7일 연속 인증을 달성했어요','도윤님이 이번 주 목표를 채웠어요'] },
+    { id:'g2', icon:'📚', name:'자격증 스터디', members:342, progress:45, cadence:'매일', endDate:daysFromNow(51),
+      desc:'시험 준비, 서로 진도를 확인하며 함께 가요', rule:'그날 공부한 분량을 기록하면 인증 완료',
+      weeklyTarget:800, weeklyDone:361,
+      roster:[{n:'서연',c:21},{n:'유진',c:18},{n:'현우',c:15},{n:'민서',c:13},{n:'태호',c:10}],
+      activity:['서연님이 기출 3회독을 마쳤어요','유진님이 오답노트 20문항을 올렸어요','민서님이 오늘도 인증했어요'] },
+    { id:'g3', icon:'🏘️', name:'동네 아침 루틴', members:76, progress:82, cadence:'매일', endDate:daysFromNow(9),
+      desc:'우리 동네 사람들과 아침 습관 만들기', rule:'오전 8시 전에 기록을 남기면 인증 완료',
+      weeklyTarget:180, weeklyDone:148,
+      roster:[{n:'다현',c:19},{n:'준서',c:17},{n:'예린',c:16},{n:'상우',c:12},{n:'가은',c:8}],
+      activity:['다현님이 19일 연속 아침 인증 중이에요','준서님이 새벽 러닝을 인증했어요','예린님이 응원을 3개 보냈어요'] }
   ];
 
   /* 외부 연동 샘플 데이터 (스트라바·건강앱 mock) */
@@ -1663,14 +1718,32 @@
     { id:'x5', src:'수면 트래커', icon:'😴', text:'수면 7시간 20분 · 깊은 수면 1시간 45분' }
   ];
 
-  /* Ⓜ️ 인증 크리에이터 템플릿 (mock) */
+  /* Ⓜ️ 인증 크리에이터 템플릿 (mock) — 마일스톤별 세부 할 일 포함 */
   var CREATOR_TEMPLATES = [
-    { id:'t1', creator:'마인드코치', title:'상담심리학 기반 멘탈케어 4주 코스', desc:'하루 10분, 나를 돌아보는 시간', category:'etc',
-      ms:['감정 일기 쓰기','스트레스 원인 파악하기','명상 10분 습관화','긍정 확언 만들기','4주 회고 정리'] },
-    { id:'t2', creator:'슈퍼삼촌', title:'조카와 함께하는 주말 활동 루틴', desc:'아이들의 창의력을 키우는 주말 보내기', category:'etc',
-      ms:['야외 활동 기획하기','간식 같이 만들기','동화책 읽어주기','보드게임 하기'] },
-    { id:'t3', creator:'삼백일운동', title:'초보자 3개월 근력 루틴', desc:'헬스장 처음이어도 따라오는 12주 계획', category:'exercise',
-      ms:['운동 기록 앱 세팅','주 3회 전신 루틴 익히기','6주차 중량 갱신','12주차 목표 중량 달성'] }
+    { id:'t1', creator:'마인드코치 지윤', badge:'상담심리학 석사 · 상담 경력 8년', title:'상담심리학 기반 멘탈케어 4주 코스',
+      desc:'하루 10분, 흔들리는 마음을 스스로 다잡는 4주 루틴', category:'etc', weeks:4, users:1240,
+      ms:[
+        { title:'1주차 · 내 감정 알아차리기', tasks:['자기 전 감정 단어 3개로 오늘 적기','기분이 요동친 순간 1개 기록하기','감정 일기 앱/노트 정하고 알림 맞추기'] },
+        { title:'2주차 · 스트레스 원인 찾기', tasks:['스트레스 상황 5개 적고 공통점 찾기','내가 통제 가능/불가능한 것 나누기','회피 대신 대처한 사례 1개 쓰기'] },
+        { title:'3주차 · 이완 습관 만들기', tasks:['4-7-8 호흡 하루 2회 하기','명상 앱으로 10분 세션 5회 채우기','자기 전 스마트폰 30분 끄기'] },
+        { title:'4주차 · 나를 지지하는 말 만들기', tasks:['나에게 하는 응원 문장 3개 만들기','힘든 순간에 꺼내 볼 문장 저장하기','4주 회고 · 달라진 점 3줄 정리'] }
+      ] },
+    { id:'t2', creator:'슈퍼삼촌 태호', badge:'유아교육 전공 · 주말 돌봄 5년차', title:'조카와 함께하는 주말 활동 루틴',
+      desc:'스마트폰 없이도 아이가 몰입하는 주말 4주 플랜', category:'etc', weeks:4, users:612,
+      ms:[
+        { title:'주말 1 · 밖에서 뛰놀기', tasks:['집 근처 공원/놀이터 3곳 후보 정하기','물통·간식·응급밴드 가방 미리 싸기','활동 사진 3장 남기기'] },
+        { title:'주말 2 · 같이 만들어 먹기', tasks:['아이가 고른 간식 레시피 1개 정하기','장보기 목록 같이 쓰기','설거지까지 같이 하기'] },
+        { title:'주말 3 · 책과 이야기', tasks:['도서관에서 그림책 2권 빌리기','목소리 바꿔가며 읽어주기','책 내용으로 질문 3개 주고받기'] },
+        { title:'주말 4 · 규칙 있는 놀이', tasks:['보드게임 1개 규칙 같이 익히기','졌을 때 감정 이야기 나누기','다음 달 하고 싶은 활동 정하기'] }
+      ] },
+    { id:'t3', creator:'삼백일운동 현우', badge:'생활스포츠지도사 2급 · 수강생 900명', title:'헬스 초보자 12주 근력 루틴',
+      desc:'헬스장이 처음이어도 3개월 뒤 3대 운동이 되는 계획', category:'exercise', weeks:12, users:3180,
+      ms:[
+        { title:'0~2주차 · 기록 세팅과 자세', tasks:['운동 기록 앱/노트 만들기','스쿼트·벤치·데드 빈 봉 자세 영상 찍기','주 3회 요일 고정하기'] },
+        { title:'3~6주차 · 루틴 몸에 익히기', tasks:['전신 루틴 주 3회 6주 채우기','매 세션 무게·횟수 기록하기','단백질 하루 체중×1.2g 챙기기'] },
+        { title:'7~9주차 · 중량 올리기', tasks:['3대 중량 각 5kg씩 올리기','부위별 보조운동 2개 추가','수면 7시간 주 5일 지키기'] },
+        { title:'10~12주차 · 목표 기록 도전', tasks:['1RM 측정일 정하기','측정 전 주 디로드 하기','시작 전후 사진·기록 비교 정리'] }
+      ] }
   ];
 
   /* 잇템(제휴 링크) 클릭 통계 (mock) */
@@ -1691,7 +1764,7 @@
       }).join('') + '</div>';
     body.innerHTML = subtabHtml + '<div id="commSubBody"></div>';
     body.querySelectorAll('[data-sub]').forEach(function(t){
-      t.addEventListener('click', function(){ state.commSubTab = t.dataset.sub; renderCommScreen(); });
+      t.addEventListener('click', function(){ state.commSubTab = t.dataset.sub; state.activeGroupId = null; renderCommScreen(); });
     });
     var subBody = document.getElementById('commSubBody');
     if(state.commSubTab==='share') renderCommShare(subBody);
@@ -1745,13 +1818,22 @@
 
   /* ============ 크리에이터 템플릿 ============ */
   function templatesHtml(){
-    return '<p class="faint" style="margin:0 0 10px;">Ⓜ️ 인증 크리에이터 추천 템플릿</p>' +
+    return '<p class="faint" style="margin:0 0 10px;">Ⓜ️ 인증 크리에이터 추천 템플릿 · 마일스톤과 할 일이 통째로 복사돼요</p>' +
       CREATOR_TEMPLATES.map(function(t){
+        var totalTasks = t.ms.reduce(function(a,m){ return a + m.tasks.length; }, 0);
         return '<div class="tmpl-card">' +
-          '<div class="tmpl-head"><span class="tmpl-badge">M</span><span class="faint" style="font-size:.76rem;">'+escapeHtml(t.creator)+'</span></div>' +
+          '<div class="tmpl-head"><span class="tmpl-badge">M</span><b style="font-size:.82rem;">'+escapeHtml(t.creator)+'</b>' +
+            '<span class="faint" style="font-size:.7rem;">'+escapeHtml(t.badge)+'</span></div>' +
           '<b>'+escapeHtml(t.title)+'</b>' +
           '<div class="tm-desc">'+escapeHtml(t.desc)+'</div>' +
-          '<div class="tmpl-ms">'+t.ms.map(function(m){ return '☐ '+escapeHtml(m); }).join('<br>')+'</div>' +
+          '<div class="faint" style="font-size:.72rem;margin-bottom:8px;">'+t.weeks+'주 과정 · 마일스톤 '+t.ms.length+'개 · 할 일 '+totalTasks+'개 · '+t.users.toLocaleString()+'명이 사용 중</div>' +
+          '<div class="tmpl-ms">' +
+            t.ms.map(function(m){
+              return '<div style="margin-bottom:6px;"><b style="color:var(--ink-soft);">☐ '+escapeHtml(m.title)+'</b>' +
+                m.tasks.map(function(tk){ return '<div style="padding-left:14px;">· '+escapeHtml(tk)+'</div>'; }).join('') +
+              '</div>';
+            }).join('') +
+          '</div>' +
           '<button class="tmpl-btn" data-tmpl="'+t.id+'" type="button">이 템플릿으로 목표 시작하기</button>' +
         '</div>';
       }).join('') +
@@ -1765,7 +1847,12 @@
     var goal = {
       id: newId(), title: t.title, dueDate: null, category: t.category,
       createdAt: nowISO(), visibility: 'public',
-      milestones: t.ms.map(function(title){ return { id: uid('ms'), title: title, status:'todo', dueDate:null, tasks:[] }; })
+      milestones: t.ms.map(function(m){
+        return {
+          id: uid('ms'), title: m.title, status:'todo', dueDate:null,
+          tasks: m.tasks.map(function(tk){ return { id: uid('task'), title: tk, done:false }; })
+        };
+      })
     };
     state.profile.goals.push(goal);
     state.activeGoalId = goal.id;
@@ -1814,43 +1901,180 @@
     });
   }
 
+  /* ============ 모임 참여 상태 (localStorage 유지) ============ */
+  function groupState(gid){
+    var s = state.profile.settings;
+    if(!s.groupState) s.groupState = {};
+    if(!s.groupState[gid]) s.groupState[gid] = { joined:false, checkins:[], cheers:0 };
+    return s.groupState[gid];
+  }
+  function groupCheckedToday(gid){
+    return groupState(gid).checkins.indexOf(dateKey(nowISO())) !== -1;
+  }
+  function groupStreak(gid){
+    var days = {};
+    groupState(gid).checkins.forEach(function(d){ days[d] = true; });
+    var streak = 0, cursor = new Date(); cursor.setHours(0,0,0,0);
+    while(days[cursor.getFullYear()+'-'+pad(cursor.getMonth()+1)+'-'+pad(cursor.getDate())]){
+      streak++; cursor.setDate(cursor.getDate()-1);
+    }
+    return streak;
+  }
+
   function renderCommGroups(body){
+    if(state.activeGroupId){
+      var ag = MOCK_GROUPS.find(function(x){ return x.id===state.activeGroupId; });
+      if(ag) return renderGroupDetail(body, ag);
+      state.activeGroupId = null;
+    }
     body.innerHTML =
       '<div class="card-title-row" style="margin-bottom:14px;">' +
-        '<p class="faint" style="margin:0;">목표·관심사로 모이는 공간 · 샘플 데이터</p>' +
+        '<p class="faint" style="margin:0;">목표·관심사로 모이는 공간</p>' +
         '<button class="btn btn-ghost btn-sm" id="commAddGroup" type="button">+ 모임 만들기</button>' +
       '</div>' +
       collectiveGaugeHtml() +
       MOCK_GROUPS.map(function(g){
-        var joined = !!state.joinedGroups[g.id];
+        var gs = groupState(g.id);
         var prog = typeof g.progress==='number' ? g.progress : 0;
-        return '<div class="group-item" style="align-items:flex-start;">' +
+        var checked = groupCheckedToday(g.id);
+        return '<div class="group-item" style="align-items:flex-start;cursor:pointer;" data-open-group="'+g.id+'">' +
           '<div class="group-ico">'+g.icon+'</div>' +
-          '<div class="group-info"><b>'+escapeHtml(g.name)+'</b><span>'+(g.members+(joined?1:0))+'명 참여 · '+escapeHtml(g.desc)+'</span>' +
+          '<div class="group-info"><b>'+escapeHtml(g.name)+(gs.joined&&checked?' ✅':'')+'</b>' +
+            '<span>'+(g.members+(gs.joined?1:0))+'명 참여 · '+g.cadence+' 인증 · '+dDay(g.endDate)+'</span>' +
             '<div class="group-bar"><span style="width:'+prog+'%;"></span></div>' +
-            '<span class="faint" style="font-size:.7rem;">공동 달성률 '+prog+'%</span>' +
+            '<span class="faint" style="font-size:.7rem;">공동 달성률 '+prog+'%'+(gs.joined&&!checked?' · 오늘 인증 전이에요':'')+'</span>' +
           '</div>' +
-          '<button class="join-btn'+(joined?' joined':'')+'" data-join="'+g.id+'" type="button">'+(joined?'참여중':'참여하기')+'</button>' +
+          '<button class="join-btn'+(gs.joined?' joined':'')+'" data-join="'+g.id+'" type="button">'+(gs.joined?'참여중':'참여하기')+'</button>' +
         '</div>';
       }).join('') +
-      '<p class="faint" style="margin-top:6px;">참여·생성은 이 기기(이 대화)에서만 기억돼요 · 실제 모임 기능은 서버가 필요해요</p>';
+      '<p class="faint" style="margin-top:6px;">모임을 눌러 인증·랭킹·미션을 확인해보세요 · 참여 기록은 이 기기에 저장돼요</p>';
+
+    body.querySelectorAll('[data-open-group]').forEach(function(card){
+      card.addEventListener('click', function(e){
+        if(e.target.closest('[data-join]')) return;
+        state.activeGroupId = card.dataset.openGroup;
+        renderCommGroups(body);
+      });
+    });
     body.querySelectorAll('[data-join]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var id = btn.dataset.join;
-        state.joinedGroups[id] = !state.joinedGroups[id];
-        toast(state.joinedGroups[id] ? '참여했어요' : '참여를 취소했어요');
+      btn.addEventListener('click', async function(e){
+        e.stopPropagation();
+        var gs = groupState(btn.dataset.join);
+        gs.joined = !gs.joined;
+        await saveProfile();
+        toast(gs.joined ? '참여했어요 · 오늘부터 인증해봐요' : '참여를 취소했어요');
         renderCommGroups(body);
       });
     });
     document.getElementById('commAddGroup').addEventListener('click', function(){ promptNewGroup(body); });
   }
 
+  function renderGroupDetail(body, g){
+    var gs = groupState(g.id);
+    var checked = groupCheckedToday(g.id);
+    var myStreak = groupStreak(g.id);
+    var myCount = gs.checkins.length;
+    var weeklyDone = g.weeklyDone + myCount;
+    var weeklyPct = Math.min(100, Math.round((weeklyDone / g.weeklyTarget) * 100));
+    var roster = g.roster.concat([{ n: state.profile.displayName, c: myCount, me:true }])
+      .sort(function(a,b){ return b.c - a.c; });
+    var myRank = roster.findIndex(function(r){ return r.me; }) + 1;
+    var acts = (gs.checkins.slice(-3).reverse().map(function(d){
+      return { me:true, text:'내가 '+fmtDateLabel(d+'T00:00:00')+' 인증했어요' };
+    })).concat(g.activity.map(function(a){ return { me:false, text:a }; }));
+
+    body.innerHTML =
+      '<span class="dm-back" id="grpBack">‹ 모임 목록</span>' +
+      '<div class="collective-card">' +
+        '<div class="collective-top"><b>'+g.icon+' '+escapeHtml(g.name)+'</b>' +
+          '<span class="dday-pill" style="background:var(--red-soft);color:var(--red);">'+g.endDate+' · '+dDay(g.endDate)+'</span></div>' +
+        '<p class="faint" style="margin:0 0 10px;">'+escapeHtml(g.desc)+' · '+g.cadence+' 인증</p>' +
+        '<div class="collective-track"><div class="collective-fill" style="width:'+g.progress+'%;"></div></div>' +
+        '<p class="faint" style="margin:8px 0 0;">참여자 '+(g.members+(gs.joined?1:0))+'명의 공동 달성률 '+g.progress+'%</p>' +
+      '</div>' +
+
+      (gs.joined ?
+        '<div class="card" style="border:1.6px solid '+(checked?'var(--sage)':'var(--red)')+';">' +
+          '<div class="card-title-row"><h3>'+(checked?'오늘 인증 완료 ✅':'오늘의 인증')+'</h3>' +
+            (myStreak>0 ? streakBadgeHtml(myStreak) : '') + '</div>' +
+          '<p class="muted" style="margin:0 0 12px;">'+escapeHtml(g.rule)+'</p>' +
+          (checked
+            ? '<p class="faint" style="margin:0;">내일 또 만나요 · 지금까지 이 모임에서 '+myCount+'번 인증했어요</p>'
+            : '<button class="mz-btn" id="grpCheckin" type="button">오늘 인증하기 🔥</button>') +
+        '</div>' : '') +
+
+      '<div class="card">' +
+        '<div class="card-title-row"><h3>이번 주 팀 미션</h3><span class="collective-pct" style="font-size:.9rem;">'+weeklyPct+'%</span></div>' +
+        '<p class="muted" style="margin:0 0 8px;">팀 전체 '+g.weeklyTarget+'회 인증하기 · 현재 '+weeklyDone+'회</p>' +
+        '<div class="collective-track"><div class="collective-fill" style="width:'+weeklyPct+'%;"></div></div>' +
+        (weeklyPct>=100 ? '<p style="margin:10px 0 0;color:var(--sage);font-weight:700;font-size:.85rem;">🏅 이번 주 미션 달성! 팀 배지를 받았어요</p>'
+                        : '<p class="faint" style="margin:8px 0 0;">'+(g.weeklyTarget-weeklyDone)+'회 남았어요 · 내 인증 1회가 팀 기록이 돼요</p>') +
+      '</div>' +
+
+      '<div class="card">' +
+        '<h3 style="margin-bottom:10px;">이번 주 인증 랭킹</h3>' +
+        roster.slice(0,6).map(function(r, i){
+          return '<div class="item-stat-row"'+(r.me?' style="border-color:var(--red);background:var(--red-soft);"':'')+'>' +
+            '<span class="ico">'+(i===0?'🥇':(i===1?'🥈':(i===2?'🥉':(i+1)+'위')))+'</span>' +
+            '<span class="nm">'+escapeHtml(r.n)+(r.me?' (나)':'')+'</span>' +
+            '<span class="ct"><b>'+r.c+'</b>회</span>' +
+          '</div>';
+        }).join('') +
+        (gs.joined ? '<p class="faint" style="margin:6px 0 0;">내 순위 '+myRank+'위 · 인증할수록 올라가요</p>' : '') +
+      '</div>' +
+
+      '<div class="card">' +
+        '<div class="card-title-row"><h3>모임 활동</h3>' +
+          '<button class="btn btn-ghost btn-sm" id="grpCheer" type="button">👏 응원 보내기</button></div>' +
+        acts.slice(0,6).map(function(a){
+          return '<div class="rec-card'+(a.me?' doing':'')+'" style="margin-bottom:8px;"><div class="rec-text">'+escapeHtml(a.text)+'</div></div>';
+        }).join('') +
+        (gs.cheers ? '<p class="faint" style="margin:6px 0 0;">이 모임에 응원을 '+gs.cheers+'번 보냈어요</p>' : '') +
+      '</div>' +
+
+      (gs.joined ? '' : '<button class="btn btn-primary btn-block" id="grpJoinNow" type="button" style="margin-top:6px;">이 모임 참여하기</button>');
+
+    document.getElementById('grpBack').addEventListener('click', function(){
+      state.activeGroupId = null;
+      renderCommGroups(body);
+    });
+
+    var checkBtn = document.getElementById('grpCheckin');
+    if(checkBtn) checkBtn.addEventListener('click', async function(){
+      gs.checkins.push(dateKey(nowISO()));
+      if(navigator.vibrate) navigator.vibrate([12, 40, 24]);
+      var r = checkBtn.getBoundingClientRect();
+      burstConfetti(r.left + r.width/2, r.top + r.height/2);
+      await saveProfile();
+      var st = groupStreak(g.id);
+      toast(st>1 ? st+'일 연속 인증! 🔥' : '인증 완료! 팀 기록에 +1');
+      renderCommGroups(body);
+    });
+
+    var cheerBtn = document.getElementById('grpCheer');
+    if(cheerBtn) cheerBtn.addEventListener('click', async function(){
+      gs.cheers = (gs.cheers||0) + 1;
+      if(navigator.vibrate) navigator.vibrate(10);
+      await saveProfile();
+      toast('응원을 보냈어요 👏');
+      renderCommGroups(body);
+    });
+
+    var joinNow = document.getElementById('grpJoinNow');
+    if(joinNow) joinNow.addEventListener('click', async function(){
+      gs.joined = true;
+      await saveProfile();
+      toast('참여했어요 · 오늘부터 인증해봐요');
+      renderCommGroups(body);
+    });
+  }
+
   function collectiveGaugeHtml(){
-    var joined = MOCK_GROUPS.filter(function(g){ return state.joinedGroups[g.id]; });
+    var joined = MOCK_GROUPS.filter(function(g){ return groupState(g.id).joined; });
     var pool = joined.length ? joined : MOCK_GROUPS;
     var sum = pool.reduce(function(acc,g){ return acc + (typeof g.progress==='number' ? g.progress : 0); }, 0);
     var avg = pool.length ? Math.round(sum / pool.length) : 0;
-    var members = pool.reduce(function(acc,g){ return acc + g.members + (state.joinedGroups[g.id]?1:0); }, 0);
+    var members = pool.reduce(function(acc,g){ return acc + g.members + (groupState(g.id).joined?1:0); }, 0);
     return '<div class="collective-card">' +
       '<div class="collective-top">' +
         '<b>'+(joined.length ? '참여 중인 모임 공동 챌린지' : '전체 모임 공동 챌린지')+'</b>' +
@@ -1862,28 +2086,57 @@
   }
 
   function promptNewGroup(body){
+    var myGoals = state.profile.goals;
     openModal(
       '<h3>새 모임 만들기</h3>' +
+      '<p class="muted" style="margin:-8px 0 14px;">인증 규칙과 기간을 정하면, 멤버들의 인증이 모여 공동 게이지가 올라가요.</p>' +
       '<div class="field"><label>아이콘 (이모지)</label><input id="grpIcon" type="text" value="🔥" maxlength="4"></div>' +
       '<div class="field"><label>모임 이름</label><input id="grpName" type="text" placeholder="예: 아침 6시 기상 스터디"></div>' +
-      '<div class="field"><label>소개글</label><input id="grpDesc" type="text" placeholder="모임의 목적을 적어주세요"></div>' +
+      '<div class="field"><label>소개글</label><input id="grpDesc" type="text" placeholder="어떤 사람들과 무엇을 함께할지 적어주세요"></div>' +
+      (myGoals.length ? '<div class="field"><label>연결할 내 목표 (선택)</label><select id="grpGoal">' +
+        '<option value="">연결 안 함</option>' +
+        myGoals.map(function(g){ return '<option value="'+g.id+'">'+escapeHtml(g.title)+'</option>'; }).join('') +
+      '</select></div>' : '') +
+      '<div class="field"><label>인증 주기</label><select id="grpCadence">' +
+        '<option value="매일">매일</option><option value="주 3회">주 3회</option><option value="주말">주말마다</option>' +
+      '</select></div>' +
+      '<div class="field"><label>챌린지 기간</label><select id="grpWeeks">' +
+        '<option value="2">2주</option><option value="4" selected>4주</option><option value="8">8주</option><option value="12">12주</option>' +
+      '</select></div>' +
+      '<div class="field"><label>인증 규칙 (멤버에게 보여요)</label><input id="grpRule" type="text" placeholder="예: 운동한 날 무게·세트를 남기면 인증 완료"></div>' +
       '<div class="modal-actions"><button class="btn btn-ghost" id="grpCancel" type="button">취소</button><button class="btn btn-primary" id="grpSave" type="button">만들기</button></div>',
       function(sheet){
         sheet.querySelector('#grpCancel').addEventListener('click', closeModal);
-        sheet.querySelector('#grpSave').addEventListener('click', function(){
+        sheet.querySelector('#grpSave').addEventListener('click', async function(){
           var name = sheet.querySelector('#grpName').value.trim();
           if(!name) return;
+          var weeks = parseInt(sheet.querySelector('#grpWeeks').value, 10);
+          var cadence = sheet.querySelector('#grpCadence').value;
+          var perWeek = cadence==='매일' ? 7 : (cadence==='주 3회' ? 3 : 2);
+          var goalSel = sheet.querySelector('#grpGoal');
+          var linked = goalSel && goalSel.value ? myGoals.find(function(g){ return g.id===goalSel.value; }) : null;
+          var gid = newId();
           MOCK_GROUPS.push({
-            id: newId(),
+            id: gid,
             icon: sheet.querySelector('#grpIcon').value.trim() || '🔥',
             name: name,
             members: 1,
             progress: 0,
-            desc: sheet.querySelector('#grpDesc').value.trim() || '설명이 없어요'
+            cadence: cadence,
+            endDate: daysFromNow(weeks*7),
+            desc: sheet.querySelector('#grpDesc').value.trim() || (linked ? '"'+linked.title+'" 목표를 함께 달성해요' : '설명이 없어요'),
+            rule: sheet.querySelector('#grpRule').value.trim() || '오늘 한 일을 기록하면 인증 완료',
+            weeklyTarget: perWeek * 5,
+            weeklyDone: 0,
+            roster: [],
+            activity: ['모임이 만들어졌어요 · 첫 인증을 남겨보세요']
           });
+          groupState(gid).joined = true;
+          await saveProfile();
           closeModal();
+          state.activeGroupId = gid;
           renderCommGroups(body);
-          toast('모임을 만들었어요');
+          toast('모임을 만들었어요 · 오늘 인증부터 시작해봐요');
         });
       }
     );
