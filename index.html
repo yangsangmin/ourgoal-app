@@ -535,12 +535,19 @@
 </div>
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
   "use strict";
 
+  /* ============ Supabase ============ */
+  var SUPABASE_URL = 'https://dvqosviqbciohcywkzbq.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2cW9zdmlxYmNpb2hjeXdremJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0MTM0NDYsImV4cCI6MjEwMzk4OTQ0Nn0.DCMMxxHB6kzJ0CjgLN0ERaSk7WY6LDN-pDVdeZ0-cWM';
+  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
   /* ============ Utilities ============ */
   function uid(p){ return (p||'id') + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function newId(){ return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : uid('id'); }
   function escapeHtml(s){
     return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; });
   }
@@ -591,48 +598,84 @@
     toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2200);
   }
 
-  /* ============ Storage (per-device local profile) ============ */
-  async function storageGet(key, shared){
-    try{
-      if(!window.storage) return null;
-      var r = await window.storage.get(key, !!shared);
-      return r ? r.value : null;
-    } catch(e){ return null; }
+  /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
+  function defaultSettings(){
+    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash" };
   }
-  async function storageSet(key, value, shared){
+  function loadLocalSettings(userId){
     try{
-      if(!window.storage) return false;
-      await window.storage.set(key, value, !!shared);
-      return true;
-    } catch(e){ return false; }
+      var raw = localStorage.getItem('ourgoal_settings_'+userId);
+      return raw ? Object.assign(defaultSettings(), JSON.parse(raw)) : defaultSettings();
+    } catch(e){ return defaultSettings(); }
+  }
+  function saveLocalSettings(userId, settings){
+    try{ localStorage.setItem('ourgoal_settings_'+userId, JSON.stringify(settings)); } catch(e){}
   }
 
-  function defaultProfile(username, displayName, password){
+  function defaultProfile(id, username, displayName){
     return {
-      username: username, displayName: displayName, password: password,
+      id: id, username: username, displayName: displayName,
       schemaVersion: 1, createdAt: nowISO(),
       goals: [],
       records: [],
-      settings: { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash" }
+      settings: defaultSettings()
     };
   }
 
   var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'share', dmActiveId: null, joinedGroups: {}, feedReacted: {} };
 
-  async function loadProfile(username){
-    var raw = await storageGet('profile:'+username, false);
-    if(!raw) return null;
-    try{ return JSON.parse(raw); } catch(e){ return null; }
+  async function ensureUserRow(userId, username, displayName){
+    var found = await sb.from('users').select('*').eq('id', userId).maybeSingle();
+    if(found.data) return found.data;
+    await sb.from('users').upsert({ id:userId, username:username, display_name:displayName });
+    return { id:userId, username:username, display_name:displayName };
   }
+
+  async function loadProfile(userId, username){
+    var urow = await ensureUserRow(userId, username, username.split('@')[0]);
+    var goalsRes = await sb.from('goals').select('*').eq('user_id', userId).order('created_at', {ascending:true});
+    var recsRes = await sb.from('checkins').select('*').eq('user_id', userId).order('start_at', {ascending:false});
+    var goals = (goalsRes.data||[]).map(function(g){
+      return { id:g.id, title:g.title, category:g.category, dueDate:g.due_date, createdAt:g.created_at, milestones: g.milestones||[] };
+    });
+    var records = (recsRes.data||[]).map(function(r){
+      return { id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at };
+    });
+    return {
+      id: userId, username: username, displayName: urow.display_name,
+      goals: goals, records: records, settings: loadLocalSettings(userId)
+    };
+  }
+
   async function saveProfile(){
     if(!state.profile) return;
-    await storageSet('profile:'+state.profile.username, JSON.stringify(state.profile), false);
-  }
-  async function setSession(username){
-    await storageSet('session', JSON.stringify({username:username}), false);
-  }
-  async function clearSession(){
-    await storageSet('session', '', false);
+    var uidVal = state.profile.id;
+    try{
+      await sb.from('users').upsert({ id: uidVal, username: state.profile.username, display_name: state.profile.displayName });
+
+      var goals = state.profile.goals;
+      if(goals.length){
+        await sb.from('goals').upsert(goals.map(function(g){
+          return { id:g.id, user_id:uidVal, title:g.title, category:g.category||null, due_date:g.dueDate||null, milestones:g.milestones||[] };
+        }));
+      }
+      var goalIds = goals.map(function(g){ return g.id; });
+      var delGoals = sb.from('goals').delete().eq('user_id', uidVal);
+      if(goalIds.length) delGoals = delGoals.not('id','in','('+goalIds.join(',')+')');
+      await delGoals;
+
+      var recs = state.profile.records;
+      if(recs.length){
+        await sb.from('checkins').upsert(recs.map(function(r){
+          return { id:r.id, user_id:uidVal, type:r.type, text:r.text, start_at:r.startAt, end_at:r.endAt };
+        }));
+      }
+      var recIds = recs.map(function(r){ return r.id; });
+      var delRecs = sb.from('checkins').delete().eq('user_id', uidVal);
+      if(recIds.length) delRecs = delRecs.not('id','in','('+recIds.join(',')+')');
+      await delRecs;
+    } catch(e){ console.warn('Supabase sync failed:', e); }
+    saveLocalSettings(uidVal, state.profile.settings);
   }
 
   /* ============ Landing ============ */
@@ -680,18 +723,18 @@
     var p2 = document.getElementById('suPass2').value;
     var errEl = document.getElementById('signupError');
     errEl.textContent = '';
-    if(!u || !/^[a-zA-Z0-9_]{3,20}$/.test(u)){ errEl.textContent = '아이디는 영문·숫자·_ 3~20자로 입력해주세요.'; return; }
+    if(!u || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(u)){ errEl.textContent = '아이디 자리에 이메일 주소를 입력해주세요.'; return; }
     if(!name){ errEl.textContent = '닉네임을 입력해주세요.'; return; }
     if(!p1 || p1.length<4){ errEl.textContent = '비밀번호는 4자 이상으로 입력해주세요.'; return; }
     if(p1!==p2){ errEl.textContent = '비밀번호가 서로 달라요.'; return; }
 
-    var existing = await storageGet('profile:'+u, false);
-    if(existing){ errEl.textContent = '이미 있는 아이디예요.'; return; }
+    var res = await sb.auth.signUp({ email: u, password: p1 });
+    if(res.error){ errEl.textContent = res.error.message; return; }
+    if(!res.data.session){ errEl.textContent = '가입 확인 메일을 보냈어요. 메일함에서 확인 후 로그인해주세요.'; return; }
 
-    var profile = defaultProfile(u, name, p1);
-    state.profile = profile;
+    await ensureUserRow(res.data.user.id, u, name);
+    state.profile = defaultProfile(res.data.user.id, u, name);
     await saveProfile();
-    await setSession(u);
     document.getElementById('authScreen').style.display = 'none';
     startOnboarding();
   });
@@ -702,15 +745,14 @@
     var errEl = document.getElementById('loginError');
     errEl.textContent = '';
     if(!u || !p){ errEl.textContent = '아이디와 비밀번호를 입력해주세요.'; return; }
-    var profile = await loadProfile(u);
-    if(!profile || profile.password !== p){ errEl.textContent = '아이디 또는 비밀번호가 올바르지 않아요.'; return; }
-    state.profile = profile;
-    await setSession(u);
+    var res = await sb.auth.signInWithPassword({ email: u, password: p });
+    if(res.error){ errEl.textContent = '아이디 또는 비밀번호가 올바르지 않아요.'; return; }
+    state.profile = await loadProfile(res.data.user.id, u);
     enterApp();
   });
 
   document.getElementById('logoutBtn').addEventListener('click', async function(){
-    await clearSession();
+    await sb.auth.signOut();
     state.profile = null;
     document.getElementById('appShell').classList.remove('active');
     document.getElementById('authScreen').style.display = 'flex';
@@ -719,7 +761,7 @@
 
   document.getElementById('resetBtn').addEventListener('click', async function(){
     if(!confirm('이 계정의 모든 목표·기록·설정을 초기화할까요? 되돌릴 수 없어요.')) return;
-    var fresh = defaultProfile(state.profile.username, state.profile.displayName, state.profile.password);
+    var fresh = defaultProfile(state.profile.id, state.profile.username, state.profile.displayName);
     state.profile = fresh;
     await saveProfile();
     renderAll();
@@ -805,7 +847,7 @@
         function(sheet){
           sheet.querySelector('#obBack3').addEventListener('click', showObStep2);
           sheet.querySelector('#obFinish').addEventListener('click', async function(){
-            var goal = { id: uid('goal'), title: ob.title, dueDate: ob.dueDate||null, category: ob.category, createdAt: nowISO(), milestones: templateMilestones(ob.category) };
+            var goal = { id: newId(), title: ob.title, dueDate: ob.dueDate||null, category: ob.category, createdAt: nowISO(), milestones: templateMilestones(ob.category) };
             state.profile.goals.push(goal);
             state.activeGoalId = goal.id;
             await saveProfile();
@@ -909,7 +951,7 @@
     var t = document.getElementById('captureInput');
     var text = t.value.trim();
     if(!text) return;
-    state.profile.records.unshift({ id: uid('rec'), type:'note', text: text, startAt: nowISO(), endAt: nowISO(), createdAt: nowISO() });
+    state.profile.records.unshift({ id: newId(), type:'note', text: text, startAt: nowISO(), endAt: nowISO(), createdAt: nowISO() });
     t.value = '';
     await saveProfile();
     toast('기록했어요');
@@ -1065,7 +1107,7 @@
           var title = sheet.querySelector('#mGoalTitle').value.trim();
           if(!title){ return; }
           var due = sheet.querySelector('#mGoalDue').value;
-          state.profile.goals.push({ id: uid('goal'), title: title, dueDate: due||null, category: chosenCat, createdAt: nowISO(), milestones: templateMilestones(chosenCat) });
+          state.profile.goals.push({ id: newId(), title: title, dueDate: due||null, category: chosenCat, createdAt: nowISO(), milestones: templateMilestones(chosenCat) });
           await saveProfile();
           closeModal();
           renderAll();
@@ -1332,7 +1374,7 @@
 
   function openRecordModal(rec){
     var isNew = !rec;
-    var r = rec || { id: uid('rec'), type:'timed', text:'', startAt: nowISO(), endAt: null, createdAt: nowISO() };
+    var r = rec || { id: newId(), type:'timed', text:'', startAt: nowISO(), endAt: null, createdAt: nowISO() };
     openModal(
       '<h3>'+(isNew?'새 기록':'기록 수정')+'</h3>' +
       '<div class="field"><label>내용</label><input id="rText" type="text" value="'+escapeHtml(r.text)+'" placeholder="무엇을 했나요?"></div>' +
@@ -1663,8 +1705,8 @@
       try{
         var data = JSON.parse(reader.result);
         if(!data.username) throw new Error('bad file');
-        data.username = state.profile.username; // keep current account id
-        data.password = state.profile.password;
+        data.id = state.profile.id; // keep current Supabase user id
+        data.username = state.profile.username;
         state.profile = data;
         await saveProfile();
         renderAll();
@@ -1722,18 +1764,13 @@
   /* ============ Boot ============ */
   (async function boot(){
     try{
-      var sessRaw = await storageGet('session', false);
-      if(sessRaw){
-        var sess = JSON.parse(sessRaw);
-        if(sess && sess.username){
-          var profile = await loadProfile(sess.username);
-          if(profile){
-            state.profile = profile;
-            document.getElementById('landingScreen').style.display = 'none';
-            enterApp();
-            return;
-          }
-        }
+      var res = await sb.auth.getSession();
+      var session = res.data && res.data.session;
+      if(session && session.user){
+        state.profile = await loadProfile(session.user.id, session.user.email);
+        document.getElementById('landingScreen').style.display = 'none';
+        enterApp();
+        return;
       }
     } catch(e){ /* fall through to landing screen */ }
     document.getElementById('landingScreen').style.display = 'flex';
