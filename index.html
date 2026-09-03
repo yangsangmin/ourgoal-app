@@ -401,7 +401,7 @@
       </div>
 
       <div class="card-title-row" style="margin:20px 0 10px;">
-        <h3>내 목표</h3>
+        <h3>내 목표 <span id="streakBadge"></span></h3>
         <button class="btn btn-ghost btn-sm" id="homeAddGoal" type="button">+ 새 목표</button>
       </div>
       <div id="homeGoalList"></div>
@@ -476,6 +476,18 @@
           <p class="faint">Google AI Studio에서 발급한 키를 붙여넣으세요. 이 키는 이 기기에만 저장되고, 브라우저에서 구글로 직접 요청을 보내요 — 사용량과 비용은 이 키 소유자 몫이에요.</p>
         </div>
         <p class="ai-note" style="margin-top:12px;">홈에서 기록을 저장하면 바로 피드백을 시도해요. 실패하면 간이 판단으로 대신해요.</p>
+      </div>
+
+      <div class="set-block">
+        <h4>외부 연동</h4>
+        <div class="toggle-row">
+          <div class="t">Notion 자동 동기화</div>
+          <div class="switch" id="notionSwitch"></div>
+        </div>
+        <div id="notionUrlBlock" style="display:none;margin-top:12px;">
+          <div class="field"><label>Notion Webhook URL</label><input id="notionWebhookInput" type="text" placeholder="https://..." autocomplete="off"></div>
+          <p class="faint">체크인 기록과 AI 피드백을 노션으로 자동 전송합니다. (준비 중 — 아직 실제 전송은 되지 않아요)</p>
+        </div>
       </div>
 
       <div class="set-block">
@@ -600,7 +612,7 @@
 
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
   function defaultSettings(){
-    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash" };
+    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"" };
   }
   function loadLocalSettings(userId){
     try{
@@ -912,9 +924,27 @@
     goal.milestones.forEach(function(m){ c[m.status]++; });
     return c;
   }
+  function computeStreakDays(){
+    var recs = state.profile.records;
+    if(!recs.length) return 0;
+    var days = {};
+    recs.forEach(function(r){ days[dateKey(r.startAt)] = true; });
+    var streak = 0;
+    var cursor = new Date(); cursor.setHours(0,0,0,0);
+    while(days[cursor.getFullYear()+'-'+pad(cursor.getMonth()+1)+'-'+pad(cursor.getDate())]){
+      streak++;
+      cursor.setDate(cursor.getDate()-1);
+    }
+    return streak;
+  }
 
   /* ============ RENDER: HOME ============ */
   function renderHome(){
+    var streak = computeStreakDays();
+    var badgeEl = document.getElementById('streakBadge');
+    if(badgeEl) badgeEl.innerHTML = streak>0
+      ? '<span class="dday-pill" style="background:var(--gold-soft);color:var(--gold);">🔥 '+streak+'일 연속</span>'
+      : '';
     var wrap = document.getElementById('homeGoalList');
     var goals = state.profile.goals;
     if(!goals.length){
@@ -1262,7 +1292,11 @@
         var tid = trow.dataset.taskid;
         var task = (ms.tasks||[]).find(function(t){ return t.id===tid; });
         var chk = trow.querySelector('[data-toggletask]');
-        chk.addEventListener('click', async function(){ task.done = !task.done; await saveProfile(); renderGoalsScreen(); });
+        chk.addEventListener('click', async function(){
+          task.done = !task.done;
+          if(task.done && navigator.vibrate) navigator.vibrate(15);
+          await saveProfile(); renderGoalsScreen();
+        });
         var tinput = trow.querySelector('[data-taskinput]');
         tinput.addEventListener('change', async function(){ task.title = tinput.value.trim() || task.title; await saveProfile(); });
         var tdel = trow.querySelector('[data-deltask]');
@@ -1535,7 +1569,11 @@
   }
 
   function renderCommGroups(body){
-    body.innerHTML = '<p class="faint" style="margin:0 0 14px;">목표·관심사로 모이는 공간 · 샘플 데이터</p>' +
+    body.innerHTML =
+      '<div class="card-title-row" style="margin-bottom:14px;">' +
+        '<p class="faint" style="margin:0;">목표·관심사로 모이는 공간 · 샘플 데이터</p>' +
+        '<button class="btn btn-ghost btn-sm" id="commAddGroup" type="button">+ 모임 만들기</button>' +
+      '</div>' +
       MOCK_GROUPS.map(function(g){
         var joined = !!state.joinedGroups[g.id];
         return '<div class="group-item">' +
@@ -1544,7 +1582,7 @@
           '<button class="join-btn'+(joined?' joined':'')+'" data-join="'+g.id+'" type="button">'+(joined?'참여중':'참여하기')+'</button>' +
         '</div>';
       }).join('') +
-      '<p class="faint" style="margin-top:6px;">참여는 이 기기에서만 기억돼요 · 실제 모임 기능은 서버가 필요해요</p>';
+      '<p class="faint" style="margin-top:6px;">참여·생성은 이 기기(이 대화)에서만 기억돼요 · 실제 모임 기능은 서버가 필요해요</p>';
     body.querySelectorAll('[data-join]').forEach(function(btn){
       btn.addEventListener('click', function(){
         var id = btn.dataset.join;
@@ -1553,6 +1591,34 @@
         renderCommGroups(body);
       });
     });
+    document.getElementById('commAddGroup').addEventListener('click', function(){ promptNewGroup(body); });
+  }
+
+  function promptNewGroup(body){
+    openModal(
+      '<h3>새 모임 만들기</h3>' +
+      '<div class="field"><label>아이콘 (이모지)</label><input id="grpIcon" type="text" value="🔥" maxlength="4"></div>' +
+      '<div class="field"><label>모임 이름</label><input id="grpName" type="text" placeholder="예: 아침 6시 기상 스터디"></div>' +
+      '<div class="field"><label>소개글</label><input id="grpDesc" type="text" placeholder="모임의 목적을 적어주세요"></div>' +
+      '<div class="modal-actions"><button class="btn btn-ghost" id="grpCancel" type="button">취소</button><button class="btn btn-primary" id="grpSave" type="button">만들기</button></div>',
+      function(sheet){
+        sheet.querySelector('#grpCancel').addEventListener('click', closeModal);
+        sheet.querySelector('#grpSave').addEventListener('click', function(){
+          var name = sheet.querySelector('#grpName').value.trim();
+          if(!name) return;
+          MOCK_GROUPS.push({
+            id: newId(),
+            icon: sheet.querySelector('#grpIcon').value.trim() || '🔥',
+            name: name,
+            members: 1,
+            desc: sheet.querySelector('#grpDesc').value.trim() || '설명이 없어요'
+          });
+          closeModal();
+          renderCommGroups(body);
+          toast('모임을 만들었어요');
+        });
+      }
+    );
   }
 
   function renderCommDM(body){
@@ -1652,6 +1718,22 @@
     };
 
     var settings = state.profile.settings;
+
+    var notionSw = document.getElementById('notionSwitch');
+    notionSw.className = 'switch' + (settings.notionSync ? ' on' : '');
+    document.getElementById('notionUrlBlock').style.display = settings.notionSync ? '' : 'none';
+    var notionUrlInput = document.getElementById('notionWebhookInput');
+    notionUrlInput.value = settings.notionWebhookUrl || '';
+    notionSw.onclick = async function(){
+      settings.notionSync = !settings.notionSync;
+      await saveProfile();
+      renderSettingsScreen();
+    };
+    notionUrlInput.onchange = async function(){
+      settings.notionWebhookUrl = notionUrlInput.value.trim();
+      await saveProfile();
+    };
+
     if(!settings.aiProvider) settings.aiProvider = 'claude';
     var aiWrap = document.getElementById('aiProviderToggle');
     aiWrap.querySelectorAll('.format-opt').forEach(function(o){
