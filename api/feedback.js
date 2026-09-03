@@ -46,7 +46,11 @@ module.exports = async function handler(req, res) {
 
     if (!anthropicRes.ok) {
       var errText = await anthropicRes.text().catch(function () { return ''; });
-      res.status(502).json({ error: 'Anthropic API error', detail: errText.slice(0, 300) });
+      res.status(502).json({
+        error: 'Anthropic API error',
+        detail: errText.slice(0, 300),
+        resolvedWorkspaceId: anthropicRes.headers.get('anthropic-workspace-id') || null
+      });
       return;
     }
 
