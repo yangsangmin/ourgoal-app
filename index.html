@@ -322,6 +322,48 @@
   .notify-banner .nb-txt{flex:1;font-size:.86rem;}
   .notify-banner .nb-txt b{display:block;font-family:'Noto Serif KR',serif;font-size:.95rem;margin-bottom:2px;}
   .notify-banner button{background:var(--red);color:#fff;padding:8px 14px;border-radius:999px;font-size:.78rem;font-weight:700;}
+
+  /* ---------- Confetti (task 완료 효과) ---------- */
+  #confettiLayer{position:fixed;inset:0;pointer-events:none;z-index:300;overflow:hidden;}
+  .confetti-piece{position:absolute;width:8px;height:14px;border-radius:2px;opacity:0;animation:confetti-fall .9s ease-out forwards;}
+  @keyframes confetti-fall{
+    0%{opacity:1;transform:translate3d(0,0,0) rotate(0deg);}
+    100%{opacity:0;transform:translate3d(var(--dx),var(--dy),0) rotate(var(--rot));}
+  }
+
+  /* ---------- Streak 강조 ---------- */
+  .streak-pill{font-family:'IBM Plex Mono',monospace;font-size:.7rem;border-radius:999px;padding:3px 10px;white-space:nowrap;font-weight:700;vertical-align:middle;}
+  .streak-t1{background:var(--card2);color:var(--ink-soft);}
+  .streak-t2{background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold-line);}
+  .streak-t3{background:linear-gradient(135deg,var(--mz1),var(--mz2));color:#fff;box-shadow:0 6px 16px -8px rgba(255,107,92,.7);}
+  .streak-t4{background:linear-gradient(135deg,var(--mz1),var(--mz2));color:#fff;box-shadow:0 8px 22px -6px rgba(255,107,92,.9);animation:streak-pulse 1.6s ease-in-out infinite;}
+  @keyframes streak-pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+
+  /* ---------- 공동 챌린지 게이지 ---------- */
+  .collective-card{background:var(--card);border:1.6px solid var(--red-line);border-radius:var(--radius);padding:16px;margin-bottom:16px;box-shadow:var(--shadow-sm);}
+  .collective-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;}
+  .collective-top b{font-family:'Noto Serif KR',serif;font-size:.98rem;}
+  .collective-pct{font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--red);font-size:1.1rem;}
+  .collective-track{height:14px;border-radius:999px;background:var(--card2);overflow:hidden;}
+  .collective-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--red),var(--gold));transition:width .4s ease;}
+  .group-bar{height:6px;border-radius:999px;background:var(--card2);overflow:hidden;margin-top:6px;}
+  .group-bar span{display:block;height:100%;background:var(--red);border-radius:999px;}
+
+  /* ---------- 크리에이터 템플릿 ---------- */
+  .tmpl-card{background:var(--card);border:1px solid var(--gold-line);border-radius:var(--radius);padding:14px;margin-bottom:10px;}
+  .tmpl-head{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+  .tmpl-badge{width:16px;height:16px;border-radius:50%;background:var(--red);color:#fff;font-size:.6rem;display:inline-flex;align-items:center;justify-content:center;font-weight:700;flex:0 0 auto;}
+  .tmpl-card b{font-size:.92rem;}
+  .tmpl-card .tm-desc{font-size:.8rem;color:var(--ink-soft);margin:4px 0 8px;}
+  .tmpl-ms{font-size:.76rem;color:var(--ink-faint);line-height:1.7;}
+  .tmpl-btn{margin-top:10px;width:100%;padding:9px;border-radius:999px;background:var(--gold-soft);border:1px solid var(--gold-line);color:var(--gold);font-weight:700;font-size:.82rem;}
+
+  /* ---------- 잇템 클릭 통계 ---------- */
+  .item-stat-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:10px 12px;margin-bottom:8px;}
+  .item-stat-row .ico{font-size:1.1rem;}
+  .item-stat-row .nm{flex:1;font-size:.85rem;font-weight:700;}
+  .item-stat-row .ct{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--ink-soft);text-align:right;line-height:1.5;}
+  .item-stat-row .ct b{color:var(--ink);}
 </style>
 </head>
 <body>
@@ -397,7 +439,10 @@
       <div class="capture-card card" id="captureCardBox">
         <div style="font-weight:700;color:var(--red);font-size:.86rem;">✎ 오늘 기록하기</div>
         <textarea id="captureInput" placeholder="지금 뭘 하고 있나요? 기분은 어때요? 자유롭게 적어보세요"></textarea>
-        <div class="capture-row" id="captureRowAnchor"><button class="btn btn-primary btn-sm" id="captureSave" type="button">저장</button></div>
+        <div class="capture-row" id="captureRowAnchor" style="gap:8px;">
+          <button class="btn btn-ghost btn-sm" id="importExternalBtn" type="button">🔗 외부 데이터 불러오기</button>
+          <button class="btn btn-primary btn-sm" id="captureSave" type="button">저장</button>
+        </div>
       </div>
 
       <div class="card-title-row" style="margin:20px 0 10px;">
@@ -486,8 +531,15 @@
         </div>
         <div id="notionUrlBlock" style="display:none;margin-top:12px;">
           <div class="field"><label>Notion Webhook URL</label><input id="notionWebhookInput" type="text" placeholder="https://..." autocomplete="off"></div>
-          <p class="faint">체크인 기록과 AI 피드백을 노션으로 자동 전송합니다. (준비 중 — 아직 실제 전송은 되지 않아요)</p>
+          <p class="faint">체크인을 저장하면 기록과 AI 피드백을 이 주소로 자동 전송해요. (Notion Automation의 웹훅 주소를 붙여넣으세요)</p>
+          <button class="btn btn-ghost btn-sm" id="notionTestBtn" type="button" style="margin-top:8px;">테스트 전송</button>
         </div>
+      </div>
+
+      <div class="set-block">
+        <h4>잇템 클릭 통계</h4>
+        <div id="itemStatsList"></div>
+        <p class="faint">내가 등록한 제휴 링크를 다른 사람이 클릭한 횟수예요 · 샘플 데이터</p>
       </div>
 
       <div class="set-block">
@@ -601,6 +653,33 @@
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
   }
+  /* ============ Confetti ============ */
+  function burstConfetti(x, y){
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var layer = document.getElementById('confettiLayer');
+    if(!layer){
+      layer = document.createElement('div');
+      layer.id = 'confettiLayer';
+      document.body.appendChild(layer);
+    }
+    var colors = ['#B5402C','#B4832A','#516A44','#FF6B5C','#FFB020'];
+    for(var i=0;i<18;i++){
+      var p = document.createElement('div');
+      p.className = 'confetti-piece';
+      var angle = (Math.PI * 2 * i) / 18 + Math.random()*0.4;
+      var dist = 60 + Math.random()*90;
+      p.style.left = x + 'px';
+      p.style.top = y + 'px';
+      p.style.background = colors[i % colors.length];
+      p.style.setProperty('--dx', Math.cos(angle)*dist + 'px');
+      p.style.setProperty('--dy', (Math.sin(angle)*dist + 60) + 'px');
+      p.style.setProperty('--rot', (Math.random()*720-360) + 'deg');
+      p.style.animationDelay = (Math.random()*0.08) + 's';
+      layer.appendChild(p);
+      (function(el){ setTimeout(function(){ el.remove(); }, 1100); })(p);
+    }
+  }
+
   var toastTimer=null;
   function toast(msg){
     var el = document.getElementById('toast');
@@ -648,7 +727,7 @@
     var goalsRes = await sb.from('goals').select('*').eq('user_id', userId).order('created_at', {ascending:true});
     var recsRes = await sb.from('checkins').select('*').eq('user_id', userId).order('start_at', {ascending:false});
     var goals = (goalsRes.data||[]).map(function(g){
-      return { id:g.id, title:g.title, category:g.category, dueDate:g.due_date, createdAt:g.created_at, milestones: g.milestones||[] };
+      return { id:g.id, title:g.title, category:g.category, dueDate:g.due_date, createdAt:g.created_at, visibility: g.visibility||'public', milestones: g.milestones||[] };
     });
     var records = (recsRes.data||[]).map(function(r){
       return { id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at };
@@ -668,7 +747,7 @@
       var goals = state.profile.goals;
       if(goals.length){
         await sb.from('goals').upsert(goals.map(function(g){
-          return { id:g.id, user_id:uidVal, title:g.title, category:g.category||null, due_date:g.dueDate||null, milestones:g.milestones||[] };
+          return { id:g.id, user_id:uidVal, title:g.title, category:g.category||null, due_date:g.dueDate||null, visibility:g.visibility||'public', milestones:g.milestones||[] };
         }));
       }
       var goalIds = goals.map(function(g){ return g.id; });
@@ -924,6 +1003,39 @@
     goal.milestones.forEach(function(m){ c[m.status]++; });
     return c;
   }
+  /* ============ Notion webhook 전송 ============ */
+  async function sendToNotion(record, feedback){
+    var s = state.profile && state.profile.settings;
+    if(!s || !s.notionSync || !s.notionWebhookUrl) return false;
+    try{
+      await fetch(s.notionWebhookUrl, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        mode:'no-cors',
+        body: JSON.stringify({
+          source:'아워골',
+          user: state.profile.displayName,
+          text: record.text,
+          createdAt: record.createdAt || nowISO(),
+          verdict: feedback ? feedback.verdict : null,
+          comment: feedback ? feedback.comment : null
+        })
+      });
+      return true;
+    } catch(e){
+      console.warn('Notion webhook failed:', e);
+      return false;
+    }
+  }
+
+  function streakBadgeHtml(streak){
+    var tier, flames;
+    if(streak>=30){ tier='streak-t4'; flames='🔥🔥🔥'; }
+    else if(streak>=7){ tier='streak-t3'; flames='🔥🔥'; }
+    else if(streak>=3){ tier='streak-t2'; flames='🔥'; }
+    else { tier='streak-t1'; flames='🔥'; }
+    return '<span class="streak-pill '+tier+'">'+flames+' '+streak+'일 연속</span>';
+  }
   function computeStreakDays(){
     var recs = state.profile.records;
     if(!recs.length) return 0;
@@ -942,9 +1054,7 @@
   function renderHome(){
     var streak = computeStreakDays();
     var badgeEl = document.getElementById('streakBadge');
-    if(badgeEl) badgeEl.innerHTML = streak>0
-      ? '<span class="dday-pill" style="background:var(--gold-soft);color:var(--gold);">🔥 '+streak+'일 연속</span>'
-      : '';
+    if(badgeEl) badgeEl.innerHTML = streak>0 ? streakBadgeHtml(streak) : '';
     var wrap = document.getElementById('homeGoalList');
     var goals = state.profile.goals;
     if(!goals.length){
@@ -987,12 +1097,15 @@
     toast('기록했어요');
     renderFeedbackSlot(null);
 
+    var newRec = state.profile.records[0];
     var goal = state.profile.goals.find(function(g){ return g.id===state.activeGoalId; }) || state.profile.goals[0];
+    var fb = null;
     if(goal){
       renderFeedbackSlot('loading');
-      var fb = await requestAIFeedback(goal, text);
+      fb = await requestAIFeedback(goal, text);
       renderFeedbackSlot(fb);
     }
+    sendToNotion(newRec, fb);
   });
 
   /* ============ AI feedback (best-effort; provider-aware; local fallback) ============ */
@@ -1101,6 +1214,43 @@
     }
   }
 
+  /* ============ 외부 데이터 불러오기 (mock) ============ */
+  document.getElementById('importExternalBtn').addEventListener('click', function(){
+    openModal(
+      '<h3>외부 데이터 불러오기</h3>' +
+      '<p class="muted" style="margin:-8px 0 14px;">연동된 앱에서 오늘의 활동을 가져와요. 선택하면 기록 내용에 채워집니다.</p>' +
+      '<div class="ms-list">' +
+        EXTERNAL_DATA.map(function(d){
+          return '<div class="ms-row" data-ext="'+d.id+'" style="cursor:pointer;">' +
+            '<div class="ms-main">' +
+              '<div style="font-size:1.2rem;">'+d.icon+'</div>' +
+              '<div style="flex:1;">' +
+                '<div style="font-size:.88rem;font-weight:600;">'+escapeHtml(d.text)+'</div>' +
+                '<div class="faint" style="font-size:.72rem;">'+escapeHtml(d.src)+'</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+      '<p class="faint" style="margin-top:12px;">지금은 샘플 데이터예요 · 실제 연동은 각 서비스의 API 인증이 필요해요</p>' +
+      '<div class="modal-actions"><button class="btn btn-ghost btn-block" id="extCancel" type="button">닫기</button></div>',
+      function(sheet){
+        sheet.querySelector('#extCancel').addEventListener('click', closeModal);
+        sheet.querySelectorAll('[data-ext]').forEach(function(row){
+          row.addEventListener('click', function(){
+            var d = EXTERNAL_DATA.find(function(x){ return x.id===row.dataset.ext; });
+            if(!d) return;
+            var input = document.getElementById('captureInput');
+            input.value = (input.value ? input.value.trim()+'\n' : '') + d.icon+' '+d.text;
+            closeModal();
+            input.focus();
+            toast(d.src+' 데이터를 불러왔어요');
+          });
+        });
+      }
+    );
+  });
+
   document.getElementById('homeAddGoal').addEventListener('click', function(){ promptNewGoal(); });
 
   document.getElementById('mzShareBtn').addEventListener('click', function(){
@@ -1122,6 +1272,11 @@
       '</div>' +
       '<div class="field"><label>최종 목표</label><input id="mGoalTitle" type="text" placeholder="예: 3개월 안에 벤치프레스 100kg"></div>' +
       '<div class="field"><label>목표 마감일 (선택)</label><input id="mGoalDue" type="date"></div>' +
+      '<div class="field"><label>공개 범위</label><select id="mGoalVis">' +
+        '<option value="public">전체 공개</option>' +
+        '<option value="followers">팔로워만</option>' +
+        '<option value="private">나만 보기</option>' +
+      '</select></div>' +
       '<div class="modal-actions"><button class="btn btn-ghost" id="mCancel" type="button">취소</button><button class="btn btn-primary" id="mSave" type="button">만들기</button></div>',
       function(sheet){
         sheet.querySelectorAll('.cat-chip').forEach(function(chip){
@@ -1136,7 +1291,7 @@
           var title = sheet.querySelector('#mGoalTitle').value.trim();
           if(!title){ return; }
           var due = sheet.querySelector('#mGoalDue').value;
-          state.profile.goals.push({ id: newId(), title: title, dueDate: due||null, category: chosenCat, createdAt: nowISO(), milestones: templateMilestones(chosenCat) });
+          state.profile.goals.push({ id: newId(), title: title, dueDate: due||null, category: chosenCat, createdAt: nowISO(), visibility: sheet.querySelector('#mGoalVis').value, milestones: templateMilestones(chosenCat) });
           await saveProfile();
           closeModal();
           renderAll();
@@ -1185,6 +1340,17 @@
         '<span class="faint">'+(goal.dueDate ? goal.dueDate+' · '+dDay(goal.dueDate) : '설정 안 함')+'</span>') +
       '</div>';
 
+    var vis = goal.visibility || 'public';
+    var visRow = '<div class="duedate-row"><span class="lbl">공개 범위</span>' +
+      (state.goalEditMode ?
+        '<select id="goalVisInput">' +
+          Object.keys(VISIBILITY_LABELS).map(function(k){
+            return '<option value="'+k+'"'+(k===vis?' selected':'')+'>'+VISIBILITY_LABELS[k]+'</option>';
+          }).join('') +
+        '</select>' :
+        '<span class="faint">'+(vis==='private'?'🔒 ':(vis==='followers'?'👥 ':'🌐 '))+VISIBILITY_LABELS[vis]+'</span>') +
+      '</div>';
+
     var msHtml = goal.milestones.map(function(m, idx){
       var statusIcon = m.status==='done' ? '✓' : '';
       var titleClass = m.status==='done' ? 'ms-title done-text' : 'ms-title';
@@ -1212,7 +1378,7 @@
       '</div>';
     }).join('');
 
-    body.innerHTML = dueRow +
+    body.innerHTML = dueRow + visRow +
       '<div class="ms-list">'+msHtml+'</div>' +
       (state.goalEditMode ? '<div class="add-ms-btn" id="addMsBtn">+ 마일스톤 추가</div><div class="drag-hint">탭해서 바로 수정 · 화살표로 순서 변경</div>' : '') +
       (goal.milestones.length===0 ? '<div class="empty-state"><div class="e-icon">🧭</div><p>마일스톤을 추가해서 목표를 잘게 나눠보세요.</p></div>' : '');
@@ -1220,6 +1386,14 @@
     // wire events
     var dueInput = document.getElementById('goalDueInput');
     if(dueInput) dueInput.addEventListener('change', async function(){ goal.dueDate = dueInput.value || null; await saveProfile(); renderGoalsScreen(); });
+
+    var visInput = document.getElementById('goalVisInput');
+    if(visInput) visInput.addEventListener('change', async function(){
+      goal.visibility = visInput.value;
+      await saveProfile();
+      renderGoalsScreen();
+      toast(VISIBILITY_LABELS[goal.visibility]+'(으)로 바꿨어요');
+    });
 
     body.querySelectorAll('.ms-row').forEach(function(row){
       var msid = row.dataset.msid;
@@ -1293,7 +1467,11 @@
         var chk = trow.querySelector('[data-toggletask]');
         chk.addEventListener('click', async function(){
           task.done = !task.done;
-          if(task.done && navigator.vibrate) navigator.vibrate(15);
+          if(task.done){
+            if(navigator.vibrate) navigator.vibrate([12, 40, 24]);
+            var r = chk.getBoundingClientRect();
+            burstConfetti(r.left + r.width/2, r.top + r.height/2);
+          }
           await saveProfile(); renderGoalsScreen();
         });
         var tinput = trow.querySelector('[data-taskinput]');
@@ -1471,10 +1649,38 @@
     { id:'p3', name:'다현', avatar:'다', goal:'매일 글쓰기 습관', pct:78, action:'약속했던 대로 오늘도 20분 동안 글을 썼어요, 5일째예요.', time:'어제', cheers:21, replies:['오늘도 20분 글쓰기 완료! 5일째예요','우와 꾸준하시네요 👏','비결이 뭐예요?'] }
   ];
   var MOCK_GROUPS = [
-    { id:'g1', icon:'💪', name:'벤치프레스 100kg 모임', members:128, desc:'같은 목표를 가진 사람들과 기록을 공유해요' },
-    { id:'g2', icon:'📚', name:'자격증 스터디', members:342, desc:'시험 준비, 서로 진도를 확인하며 함께 가요' },
-    { id:'g3', icon:'🏘️', name:'동네 아침 루틴', members:76, desc:'우리 동네 사람들과 아침 습관 만들기' }
+    { id:'g1', icon:'💪', name:'벤치프레스 100kg 모임', members:128, progress:68, desc:'같은 목표를 가진 사람들과 기록을 공유해요' },
+    { id:'g2', icon:'📚', name:'자격증 스터디', members:342, progress:45, desc:'시험 준비, 서로 진도를 확인하며 함께 가요' },
+    { id:'g3', icon:'🏘️', name:'동네 아침 루틴', members:76, progress:82, desc:'우리 동네 사람들과 아침 습관 만들기' }
   ];
+
+  /* 외부 연동 샘플 데이터 (스트라바·건강앱 mock) */
+  var EXTERNAL_DATA = [
+    { id:'x1', src:'Strava', icon:'🏃', text:'10km 러닝 43분 페이스 달성' },
+    { id:'x2', src:'Strava', icon:'🚴', text:'자전거 32km 라이딩 1시간 12분' },
+    { id:'x3', src:'헬스 앱', icon:'🏋️', text:'스쿼트 120kg 1RM 기록' },
+    { id:'x4', src:'헬스 앱', icon:'👟', text:'오늘 걸음 수 12,480보 달성' },
+    { id:'x5', src:'수면 트래커', icon:'😴', text:'수면 7시간 20분 · 깊은 수면 1시간 45분' }
+  ];
+
+  /* Ⓜ️ 인증 크리에이터 템플릿 (mock) */
+  var CREATOR_TEMPLATES = [
+    { id:'t1', creator:'마인드코치', title:'상담심리학 기반 멘탈케어 4주 코스', desc:'하루 10분, 나를 돌아보는 시간', category:'etc',
+      ms:['감정 일기 쓰기','스트레스 원인 파악하기','명상 10분 습관화','긍정 확언 만들기','4주 회고 정리'] },
+    { id:'t2', creator:'슈퍼삼촌', title:'조카와 함께하는 주말 활동 루틴', desc:'아이들의 창의력을 키우는 주말 보내기', category:'etc',
+      ms:['야외 활동 기획하기','간식 같이 만들기','동화책 읽어주기','보드게임 하기'] },
+    { id:'t3', creator:'삼백일운동', title:'초보자 3개월 근력 루틴', desc:'헬스장 처음이어도 따라오는 12주 계획', category:'exercise',
+      ms:['운동 기록 앱 세팅','주 3회 전신 루틴 익히기','6주차 중량 갱신','12주차 목표 중량 달성'] }
+  ];
+
+  /* 잇템(제휴 링크) 클릭 통계 (mock) */
+  var MOCK_ITEM_STATS = [
+    { id:'i1', icon:'🏋️', name:'리프팅 벨트 프로', total:1284, weekly:63 },
+    { id:'i2', icon:'🍫', name:'WPI 초코맛 프로틴', total:842, weekly:38 },
+    { id:'i3', icon:'⏱️', name:'집중력 향상 타이머', total:317, weekly:12 }
+  ];
+
+  var VISIBILITY_LABELS = { public:'전체 공개', followers:'팔로워만', private:'나만 보기' };
 
   function renderCommScreen(){
     var body = document.getElementById('commBody');
@@ -1537,20 +1743,56 @@
     document.getElementById('toFeedLink').addEventListener('click', function(){ state.commSubTab='feed'; renderCommScreen(); });
   }
 
+  /* ============ 크리에이터 템플릿 ============ */
+  function templatesHtml(){
+    return '<p class="faint" style="margin:0 0 10px;">Ⓜ️ 인증 크리에이터 추천 템플릿</p>' +
+      CREATOR_TEMPLATES.map(function(t){
+        return '<div class="tmpl-card">' +
+          '<div class="tmpl-head"><span class="tmpl-badge">M</span><span class="faint" style="font-size:.76rem;">'+escapeHtml(t.creator)+'</span></div>' +
+          '<b>'+escapeHtml(t.title)+'</b>' +
+          '<div class="tm-desc">'+escapeHtml(t.desc)+'</div>' +
+          '<div class="tmpl-ms">'+t.ms.map(function(m){ return '☐ '+escapeHtml(m); }).join('<br>')+'</div>' +
+          '<button class="tmpl-btn" data-tmpl="'+t.id+'" type="button">이 템플릿으로 목표 시작하기</button>' +
+        '</div>';
+      }).join('') +
+      '<div style="height:18px;"></div>';
+  }
+
+  async function cloneTemplate(tmplId, rerender){
+    var t = CREATOR_TEMPLATES.find(function(x){ return x.id===tmplId; });
+    if(!t) return;
+    if(state.profile.goals.length>=3){ toast('목표는 최대 3개까지 만들 수 있어요'); return; }
+    var goal = {
+      id: newId(), title: t.title, dueDate: null, category: t.category,
+      createdAt: nowISO(), visibility: 'public',
+      milestones: t.ms.map(function(title){ return { id: uid('ms'), title: title, status:'todo', dueDate:null, tasks:[] }; })
+    };
+    state.profile.goals.push(goal);
+    state.activeGoalId = goal.id;
+    await saveProfile();
+    toast('"'+t.creator+'" 템플릿을 내 목표로 복사했어요');
+    renderAll();
+    if(rerender) rerender();
+  }
+
   function renderCommFeed(body){
     var goals = state.profile.goals;
-    var myItems = goals.map(function(g){
+    var sharedGoals = goals.filter(function(g){ return (g.visibility||'public') !== 'private'; });
+    var hiddenCount = goals.length - sharedGoals.length;
+    var myItems = sharedGoals.map(function(g){
       var pct = goalProgress(g);
-      return { id:'me_'+g.id, name: state.profile.displayName, avatar: state.profile.displayName.slice(0,1), goal:g.title, pct:pct, action: '"'+g.title+'" 목표를 향해 가는 중', time:'방금', cheers:0, me:true };
+      return { id:'me_'+g.id, name: state.profile.displayName, avatar: state.profile.displayName.slice(0,1), goal:g.title, pct:pct, action: '"'+g.title+'" 목표를 향해 가는 중', time:'방금', cheers:0, me:true, vis:(g.visibility||'public') };
     });
     var items = myItems.concat(MOCK_PEOPLE).sort(function(){ return 0; });
-    body.innerHTML = '<p class="faint" style="margin:0 0 14px;">같은 목표를 향해 가는 사람들 · 샘플 데이터</p>' +
+    body.innerHTML = templatesHtml() +
+      '<p class="faint" style="margin:0 0 14px;">같은 목표를 향해 가는 사람들 · 샘플 데이터' +
+      (hiddenCount ? ' · 🔒 나만 보기 '+hiddenCount+'개는 피드에 노출되지 않아요' : '') + '</p>' +
       items.map(function(it){
         var reacted = !!state.feedReacted[it.id];
         return '<div class="feed-item">' +
           '<div class="feed-avatar'+(it.me?' me':'')+'">'+escapeHtml(it.avatar)+'</div>' +
           '<div class="feed-body">' +
-            '<div class="feed-head"><span class="feed-name">'+escapeHtml(it.name)+'</span><span class="feed-goal">'+escapeHtml(it.goal)+' · '+it.pct+'%</span></div>' +
+            '<div class="feed-head"><span class="feed-name">'+escapeHtml(it.name)+(it.vis==='followers'?' 👥':'')+'</span><span class="feed-goal">'+escapeHtml(it.goal)+' · '+it.pct+'%</span></div>' +
             '<div class="feed-action">'+escapeHtml(it.action)+'</div>' +
             '<div class="feed-foot"><span class="feed-time">'+it.time+'</span>' +
               '<button class="pill-react'+(reacted?' active':'')+'" data-react="'+it.id+'" type="button">응원 '+((it.cheers||0)+(reacted?1:0))+'</button>' +
@@ -1565,6 +1807,11 @@
         renderCommFeed(body);
       });
     });
+    body.querySelectorAll('[data-tmpl]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        cloneTemplate(btn.dataset.tmpl, function(){ renderCommFeed(body); });
+      });
+    });
   }
 
   function renderCommGroups(body){
@@ -1573,11 +1820,16 @@
         '<p class="faint" style="margin:0;">목표·관심사로 모이는 공간 · 샘플 데이터</p>' +
         '<button class="btn btn-ghost btn-sm" id="commAddGroup" type="button">+ 모임 만들기</button>' +
       '</div>' +
+      collectiveGaugeHtml() +
       MOCK_GROUPS.map(function(g){
         var joined = !!state.joinedGroups[g.id];
-        return '<div class="group-item">' +
+        var prog = typeof g.progress==='number' ? g.progress : 0;
+        return '<div class="group-item" style="align-items:flex-start;">' +
           '<div class="group-ico">'+g.icon+'</div>' +
-          '<div class="group-info"><b>'+escapeHtml(g.name)+'</b><span>'+g.members+(joined?1:0)+'명 참여 · '+escapeHtml(g.desc)+'</span></div>' +
+          '<div class="group-info"><b>'+escapeHtml(g.name)+'</b><span>'+(g.members+(joined?1:0))+'명 참여 · '+escapeHtml(g.desc)+'</span>' +
+            '<div class="group-bar"><span style="width:'+prog+'%;"></span></div>' +
+            '<span class="faint" style="font-size:.7rem;">공동 달성률 '+prog+'%</span>' +
+          '</div>' +
           '<button class="join-btn'+(joined?' joined':'')+'" data-join="'+g.id+'" type="button">'+(joined?'참여중':'참여하기')+'</button>' +
         '</div>';
       }).join('') +
@@ -1591,6 +1843,22 @@
       });
     });
     document.getElementById('commAddGroup').addEventListener('click', function(){ promptNewGroup(body); });
+  }
+
+  function collectiveGaugeHtml(){
+    var joined = MOCK_GROUPS.filter(function(g){ return state.joinedGroups[g.id]; });
+    var pool = joined.length ? joined : MOCK_GROUPS;
+    var sum = pool.reduce(function(acc,g){ return acc + (typeof g.progress==='number' ? g.progress : 0); }, 0);
+    var avg = pool.length ? Math.round(sum / pool.length) : 0;
+    var members = pool.reduce(function(acc,g){ return acc + g.members + (state.joinedGroups[g.id]?1:0); }, 0);
+    return '<div class="collective-card">' +
+      '<div class="collective-top">' +
+        '<b>'+(joined.length ? '참여 중인 모임 공동 챌린지' : '전체 모임 공동 챌린지')+'</b>' +
+        '<span class="collective-pct">'+avg+'%</span>' +
+      '</div>' +
+      '<div class="collective-track"><div class="collective-fill" style="width:'+avg+'%;"></div></div>' +
+      '<p class="faint" style="margin:8px 0 0;">'+pool.length+'개 모임 · 참여자 '+members.toLocaleString()+'명의 달성도를 합산했어요</p>' +
+    '</div>';
   }
 
   function promptNewGroup(body){
@@ -1610,6 +1878,7 @@
             icon: sheet.querySelector('#grpIcon').value.trim() || '🔥',
             name: name,
             members: 1,
+            progress: 0,
             desc: sheet.querySelector('#grpDesc').value.trim() || '설명이 없어요'
           });
           closeModal();
@@ -1732,6 +2001,29 @@
       settings.notionWebhookUrl = notionUrlInput.value.trim();
       await saveProfile();
     };
+    document.getElementById('notionTestBtn').onclick = async function(){
+      if(!settings.notionWebhookUrl){ toast('Webhook URL을 먼저 입력해주세요'); return; }
+      var ok = await sendToNotion({ text:'아워골 테스트 전송입니다', createdAt: nowISO() }, null);
+      toast(ok ? '노션으로 테스트 전송했어요' : '전송에 실패했어요 · URL을 확인해주세요');
+    };
+
+    var statsEl = document.getElementById('itemStatsList');
+    if(statsEl){
+      var totalAll = MOCK_ITEM_STATS.reduce(function(a,i){ return a+i.total; }, 0);
+      var weekAll = MOCK_ITEM_STATS.reduce(function(a,i){ return a+i.weekly; }, 0);
+      statsEl.innerHTML =
+        '<div class="collective-card" style="border-color:var(--gold-line);margin-bottom:12px;">' +
+          '<div class="collective-top"><b>전체 클릭</b><span class="collective-pct" style="color:var(--gold);">'+totalAll.toLocaleString()+'회</span></div>' +
+          '<p class="faint" style="margin:0;">이번 주 '+weekAll.toLocaleString()+'회 · 등록한 잇템 '+MOCK_ITEM_STATS.length+'개</p>' +
+        '</div>' +
+        MOCK_ITEM_STATS.map(function(i){
+          return '<div class="item-stat-row">' +
+            '<span class="ico">'+i.icon+'</span>' +
+            '<span class="nm">'+escapeHtml(i.name)+'</span>' +
+            '<span class="ct">총 <b>'+i.total.toLocaleString()+'</b>회<br>주간 '+i.weekly+'회</span>' +
+          '</div>';
+        }).join('');
+    }
 
     if(!settings.aiProvider) settings.aiProvider = 'claude';
     var aiWrap = document.getElementById('aiProviderToggle');
