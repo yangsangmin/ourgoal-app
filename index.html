@@ -146,7 +146,7 @@
   .ms-title.done-text{text-decoration:line-through;color:var(--ink-faint);}
   .ms-title:focus{outline:none;border-bottom:1px dashed var(--red);}
   .ms-date{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--ink-soft);border:1px solid var(--rule);border-radius:8px;padding:3px 7px;background:var(--card2);}
-  .ms-date input{border:none;background:transparent;font-family:inherit;font-size:.7rem;color:inherit;width:76px;}
+  .ms-date input{border:none;background:transparent;font-family:inherit;font-size:.7rem;color:inherit;width:118px;min-width:118px;}
   .ms-actions{display:flex;gap:2px;flex:0 0 auto;}
   .icon-btn{width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:var(--ink-faint);border-radius:6px;font-size:.85rem;}
   .icon-btn:hover{color:var(--red);background:var(--red-soft);}
@@ -364,6 +364,50 @@
   .item-stat-row .nm{flex:1;font-size:.85rem;font-weight:700;}
   .item-stat-row .ct{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--ink-soft);text-align:right;line-height:1.5;}
   .item-stat-row .ct b{color:var(--ink);}
+
+  /* ---------- 프로필 ---------- */
+  .profile-card{background:var(--card);border:1px solid var(--rule);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm);margin-bottom:16px;}
+  .profile-top{display:flex;gap:14px;align-items:center;}
+  .profile-avatar{width:64px;height:64px;border-radius:50%;background:#23241F;color:#F8F6EE;display:flex;align-items:center;justify-content:center;font-family:'Noto Serif KR',serif;font-weight:700;font-size:1.5rem;flex:0 0 auto;overflow:hidden;position:relative;}
+  .profile-avatar img{width:100%;height:100%;object-fit:cover;}
+  .profile-name{font-family:'Noto Serif KR',serif;font-weight:800;font-size:1.08rem;display:flex;align-items:center;gap:6px;}
+  .profile-bio{font-size:.83rem;color:var(--ink-soft);margin-top:3px;line-height:1.5;}
+  .profile-stats{display:flex;gap:0;margin-top:14px;border-top:1px solid var(--rule);padding-top:12px;}
+  .profile-stat{flex:1;text-align:center;}
+  .profile-stat b{display:block;font-family:'IBM Plex Mono',monospace;font-size:1.02rem;}
+  .profile-stat span{font-size:.7rem;color:var(--ink-faint);}
+  .profile-stat + .profile-stat{border-left:1px solid var(--rule);}
+  .tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .tag{font-size:.72rem;padding:4px 10px;border-radius:999px;background:var(--card2);color:var(--ink-soft);border:1px solid var(--rule);}
+  .tag.on{background:var(--red-soft);color:var(--red);border-color:var(--red-line);font-weight:700;}
+  .avatar-edit{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .avatar-edit .hint{font-size:.76rem;color:var(--ink-soft);line-height:1.5;}
+
+  /* ---------- 카테고리 선택 ---------- */
+  .cat-major-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;}
+  .cat-major{flex:0 0 auto;padding:7px 13px;border-radius:999px;font-size:.78rem;font-weight:700;background:var(--card2);border:1px solid var(--rule);color:var(--ink-soft);white-space:nowrap;}
+  .cat-major.active{background:#23241F;color:#F8F6EE;border-color:#23241F;}
+  .cat-sub-grid{display:flex;flex-wrap:wrap;gap:6px;}
+  .cat-sub{padding:6px 12px;border-radius:999px;font-size:.76rem;background:var(--card);border:1px solid var(--rule);color:var(--ink-soft);}
+  .cat-sub.active{background:var(--red-soft);color:var(--red);border-color:var(--red-line);font-weight:700;}
+  .topic-pill{font-size:.68rem;padding:2px 8px;border-radius:999px;background:var(--sage-soft);color:var(--sage);border:1px solid var(--sage-line);white-space:nowrap;}
+
+  /* ---------- 결과 기록(달성률) ---------- */
+  .result-btn{flex:0 0 auto;min-width:58px;padding:4px 8px;border-radius:10px;border:1px solid var(--rule);background:var(--card2);font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--ink-soft);text-align:center;line-height:1.3;}
+  .result-btn.has{background:var(--sage-soft);border-color:var(--sage-line);color:var(--sage);font-weight:700;}
+  .result-btn.miss{background:var(--gold-soft);border-color:var(--gold-line);color:var(--gold);font-weight:700;}
+  .mini-bar{height:4px;border-radius:999px;background:var(--card2);overflow:hidden;margin-top:5px;}
+  .mini-bar span{display:block;height:100%;background:var(--sage);border-radius:999px;}
+  .dday-mini{font-family:'IBM Plex Mono',monospace;font-size:.66rem;color:var(--red);margin-left:6px;white-space:nowrap;}
+  .dday-mini.over{color:var(--ink-faint);}
+
+  /* ---------- 보관(기록) 목표 ---------- */
+  .archive-card{background:var(--card2);border:1px solid var(--rule);border-radius:var(--radius);padding:14px;margin-bottom:10px;}
+  .archive-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+  .archive-top b{font-family:'Noto Serif KR',serif;font-size:.95rem;}
+  .archive-pct{font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--sage);}
+  .archive-meta{font-size:.74rem;color:var(--ink-faint);margin-top:4px;}
+  .archive-ms{font-size:.76rem;color:var(--ink-soft);margin-top:8px;line-height:1.7;}
 </style>
 </head>
 <body>
@@ -473,6 +517,9 @@
       </div>
       <div class="week-summary" id="weekSummary"></div>
       <div id="chartContainer"></div>
+      <h3 style="font-family:'Noto Serif KR',serif;font-size:1rem;margin:18px 0 8px;">완료·보관한 목표</h3>
+      <div id="archivedGoals"></div>
+      <h3 style="font-family:'Noto Serif KR',serif;font-size:1rem;margin:18px 0 8px;">체크인 기록</h3>
       <div id="recordsList"></div>
       <div class="export-card">
         <div class="ico">⬇</div>
@@ -492,6 +539,12 @@
     <section class="screen" id="screen-settings">
       <p class="s-eyebrow">설정</p>
       <h2 class="s-title">설정</h2>
+
+      <div class="set-block">
+        <h4>내 프로필</h4>
+        <div id="profileCard"></div>
+        <input type="file" id="avatarFile" accept="image/*" style="display:none;">
+      </div>
 
       <div class="set-block">
         <h4>체크인 알림 시간</h4>
@@ -706,6 +759,7 @@
   function defaultProfile(id, username, displayName){
     return {
       id: id, username: username, displayName: displayName,
+      bio: '', avatarUrl: '', interests: [],
       schemaVersion: 1, createdAt: nowISO(),
       goals: [],
       records: [],
@@ -713,7 +767,7 @@
     };
   }
 
-  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'share', dmActiveId: null, activeGroupId: null, feedReacted: {} };
+  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'share', dmActiveId: null, activeGroupId: null, groupFilter: 'all', feedReacted: {} };
 
   async function ensureUserRow(userId, username, displayName){
     var found = await sb.from('users').select('*').eq('id', userId).maybeSingle();
@@ -727,13 +781,18 @@
     var goalsRes = await sb.from('goals').select('*').eq('user_id', userId).order('created_at', {ascending:true});
     var recsRes = await sb.from('checkins').select('*').eq('user_id', userId).order('start_at', {ascending:false});
     var goals = (goalsRes.data||[]).map(function(g){
-      return { id:g.id, title:g.title, category:g.category, dueDate:g.due_date, createdAt:g.created_at, visibility: g.visibility||'public', milestones: g.milestones||[] };
+      return {
+        id:g.id, title:g.title, category:g.category, dueDate:g.due_date, createdAt:g.created_at,
+        visibility: g.visibility||'public', topic: g.topic||'', archivedAt: g.archived_at||null,
+        result: g.result||null, milestones: g.milestones||[]
+      };
     });
     var records = (recsRes.data||[]).map(function(r){
       return { id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at };
     });
     return {
       id: userId, username: username, displayName: urow.display_name,
+      bio: urow.bio || '', avatarUrl: urow.avatar_url || '', interests: urow.interests || [],
       goals: goals, records: records, settings: loadLocalSettings(userId)
     };
   }
@@ -742,12 +801,20 @@
     if(!state.profile) return;
     var uidVal = state.profile.id;
     try{
-      await sb.from('users').upsert({ id: uidVal, username: state.profile.username, display_name: state.profile.displayName });
+      await sb.from('users').upsert({
+        id: uidVal, username: state.profile.username, display_name: state.profile.displayName,
+        bio: state.profile.bio || null, avatar_url: state.profile.avatarUrl || null,
+        interests: state.profile.interests || []
+      });
 
       var goals = state.profile.goals;
       if(goals.length){
         await sb.from('goals').upsert(goals.map(function(g){
-          return { id:g.id, user_id:uidVal, title:g.title, category:g.category||null, due_date:g.dueDate||null, visibility:g.visibility||'public', milestones:g.milestones||[] };
+          return {
+            id:g.id, user_id:uidVal, title:g.title, category:g.category||null, due_date:g.dueDate||null,
+            visibility:g.visibility||'public', topic:g.topic||null, archived_at:g.archivedAt||null,
+            result:g.result||null, milestones:g.milestones||[]
+          };
         }));
       }
       var goalIds = goals.map(function(g){ return g.id; });
@@ -865,7 +932,6 @@
     var shell = document.getElementById('appShell');
     shell.classList.add('active');
     document.getElementById('topUserName').textContent = state.profile.displayName;
-    document.getElementById('topAvatar').textContent = state.profile.displayName.slice(0,1);
     document.getElementById('homeGreeting').textContent = state.profile.displayName + '님, 안녕하세요';
     renderAll();
     setupNotifyTimer();
@@ -946,12 +1012,19 @@
         '<h3>이렇게 시작할게요</h3>' +
         '<p class="muted" style="margin:-8px 0 12px;"><b style="color:var(--ink);">'+escapeHtml(ob.title)+'</b></p>' +
         '<div class="tmpl-preview">'+preview+'</div>' +
+        '<div class="field" style="margin-top:14px;"><label>관심 카테고리 (나중에 프로필에서 더 고를 수 있어요)</label></div>' +
+        categoryPickerHtml('obTopic', '') +
         '<p class="faint" style="margin:10px 0 0;">만든 뒤에 목표 화면에서 자유롭게 고칠 수 있어요.</p>' +
         '<div class="modal-actions"><button class="btn btn-ghost" id="obBack3" type="button">이전</button><button class="btn btn-primary" id="obFinish" type="button">목표 만들고 시작하기</button></div>',
         function(sheet){
+          var obTopicRef = { value: '' };
+          wireCategoryPicker(sheet, 'obTopic', obTopicRef);
           sheet.querySelector('#obBack3').addEventListener('click', showObStep2);
           sheet.querySelector('#obFinish').addEventListener('click', async function(){
-            var goal = { id: newId(), title: ob.title, dueDate: ob.dueDate||null, category: ob.category, createdAt: nowISO(), visibility:'public', milestones: templateMilestones(ob.category) };
+            if(obTopicRef.value && (state.profile.interests||[]).indexOf(obTopicRef.value)===-1){
+              state.profile.interests = (state.profile.interests||[]).concat([obTopicRef.value]);
+            }
+            var goal = { id: newId(), title: ob.title, dueDate: ob.dueDate||null, category: ob.category, topic: obTopicRef.value, createdAt: nowISO(), visibility:'public', archivedAt:null, result:null, milestones: templateMilestones(ob.category) };
             state.profile.goals.push(goal);
             state.activeGoalId = goal.id;
             await saveProfile();
@@ -1016,6 +1089,246 @@
     goal.milestones.forEach(function(m){ c[m.status]++; });
     return c;
   }
+  /* ============ 결과 기록 (체크박스 대신 수치 입력) ============ */
+  var RESULT_UNITS = ['회','일','페이지','분','시간','km','kg','개','%'];
+
+  function resultPct(r){
+    if(!r) return null;
+    var target = Number(r.target), done = Number(r.result);
+    if(!target || isNaN(target) || isNaN(done)) return null;
+    return Math.min(999, Math.round((done / target) * 100));
+  }
+  function resultBadgeHtml(r){
+    var pct = resultPct(r);
+    if(!r || (!r.target && !r.result)) return '<div class="result-btn">결과<br>입력</div>';
+    if(pct === null) return '<div class="result-btn has">기록<br>있음</div>';
+    var cls = pct>=100 ? 'has' : 'miss';
+    return '<div class="result-btn '+cls+'">'+r.result+'/'+r.target+'<br>'+pct+'%</div>';
+  }
+  function resultLineHtml(r){
+    var pct = resultPct(r);
+    if(!r || (!r.target && !r.result && !r.note)) return '';
+    var bar = pct!==null ? '<div class="mini-bar"><span style="width:'+Math.min(100,pct)+'%;background:'+(pct>=100?'var(--sage)':'var(--gold)')+';"></span></div>' : '';
+    var txt = [];
+    if(r.target || r.result) txt.push('실제 '+(r.result||0)+' / 목표 '+(r.target||'-')+' '+(r.unit||''));
+    if(r.note) txt.push(escapeHtml(r.note));
+    return '<div class="faint" style="font-size:.72rem;margin-top:4px;">'+txt.join(' · ')+'</div>'+bar;
+  }
+
+  /* 목표·마일스톤·할 일 공용 결과 입력 모달 */
+  function openResultModal(kind, obj, onSaved){
+    var r = obj.result || { target:'', result:'', unit:'회', note:'' };
+    var kindLabel = kind==='goal' ? '목표' : (kind==='ms' ? '마일스톤' : '할 일');
+    openModal(
+      '<h3>'+kindLabel+' 결과 기록</h3>' +
+      '<p class="muted" style="margin:-8px 0 14px;"><b style="color:var(--ink);">'+escapeHtml(obj.title)+'</b></p>' +
+      '<p class="faint" style="margin:-8px 0 14px;">전부 못 했어도 괜찮아요. 실제로 한 만큼 적으면 그대로 기록에 남아요.</p>' +
+      '<div style="display:flex;gap:10px;">' +
+        '<div class="field" style="flex:1;"><label>목표치</label><input id="rsTarget" type="number" inputmode="numeric" value="'+escapeHtml(String(r.target||''))+'" placeholder="30"></div>' +
+        '<div class="field" style="flex:1;"><label>실제 달성</label><input id="rsResult" type="number" inputmode="numeric" value="'+escapeHtml(String(r.result||''))+'" placeholder="20"></div>' +
+        '<div class="field" style="flex:1;"><label>단위</label><select id="rsUnit">' +
+          RESULT_UNITS.map(function(u){ return '<option value="'+u+'"'+(u===(r.unit||'회')?' selected':'')+'>'+u+'</option>'; }).join('') +
+        '</select></div>' +
+      '</div>' +
+      '<div class="field"><label>메모 (선택)</label><input id="rsNote" type="text" value="'+escapeHtml(r.note||'')+'" placeholder="예: 시험 기간엔 못 했지만 나머지는 지켰어요"></div>' +
+      '<p class="faint" id="rsPreview" style="margin:0 0 4px;"></p>' +
+      '<div class="modal-actions">' +
+        '<button class="btn btn-ghost" id="rsCancel" type="button">취소</button>' +
+        '<button class="btn btn-primary" id="rsSave" type="button">기록하기</button>' +
+      '</div>',
+      function(sheet){
+        var tEl = sheet.querySelector('#rsTarget'), dEl = sheet.querySelector('#rsResult'), uEl = sheet.querySelector('#rsUnit');
+        function preview(){
+          var pct = resultPct({ target:tEl.value, result:dEl.value });
+          sheet.querySelector('#rsPreview').innerHTML = pct===null ? ''
+            : '달성률 <b style="color:'+(pct>=100?'var(--sage)':'var(--gold)')+';">'+pct+'%</b> · '+(dEl.value||0)+uEl.value+' 완료';
+        }
+        tEl.addEventListener('input', preview); dEl.addEventListener('input', preview); uEl.addEventListener('change', preview);
+        preview();
+        sheet.querySelector('#rsCancel').addEventListener('click', closeModal);
+        sheet.querySelector('#rsSave').addEventListener('click', async function(){
+          obj.result = {
+            target: tEl.value ? Number(tEl.value) : '',
+            result: dEl.value ? Number(dEl.value) : '',
+            unit: uEl.value,
+            note: sheet.querySelector('#rsNote').value.trim(),
+            recordedAt: nowISO()
+          };
+          var pct = resultPct(obj.result);
+          if(pct !== null && pct >= 100){
+            if(navigator.vibrate) navigator.vibrate([12,40,24]);
+            burstConfetti(window.innerWidth/2, window.innerHeight/2);
+          }
+          if(kind==='task') obj.done = pct!==null ? pct>=100 : !!obj.result.result;
+          if(kind==='ms' && pct!==null) obj.status = pct>=100 ? 'done' : (pct>0 ? 'doing' : obj.status);
+          await saveProfile();
+          closeModal();
+          toast(pct!==null ? '달성률 '+pct+'%로 기록했어요' : '결과를 기록했어요');
+          if(onSaved) onSaved();
+        });
+      }
+    );
+  }
+
+  /* ============ 프로필 ============ */
+  function avatarHtml(size){
+    var p = state.profile;
+    var s = size || 64;
+    if(p.avatarUrl){
+      return '<div class="profile-avatar" style="width:'+s+'px;height:'+s+'px;"><img src="'+p.avatarUrl+'" alt=""></div>';
+    }
+    return '<div class="profile-avatar" style="width:'+s+'px;height:'+s+'px;font-size:'+(s*0.42)+'px;">'+escapeHtml(p.displayName.slice(0,1))+'</div>';
+  }
+
+  function renderProfileCard(){
+    var wrap = document.getElementById('profileCard');
+    if(!wrap) return;
+    var p = state.profile;
+    var activeGoals = p.goals.filter(function(g){ return !g.archivedAt; });
+    var archived = p.goals.filter(function(g){ return g.archivedAt; });
+    var streak = computeStreakDays();
+    wrap.innerHTML =
+      '<div class="profile-card">' +
+        '<div class="profile-top">' +
+          avatarHtml(64) +
+          '<div style="flex:1;min-width:0;">' +
+            '<div class="profile-name">'+escapeHtml(p.displayName)+
+              (streak>=7 ? '<span class="tmpl-badge" title="7일 이상 연속 기록">🔥</span>' : '')+'</div>' +
+            '<div class="profile-bio">'+(p.bio ? escapeHtml(p.bio) : '<span class="faint">소개를 적으면 피드에서 나를 더 잘 보여줄 수 있어요</span>')+'</div>' +
+          '</div>' +
+        '</div>' +
+        ((p.interests||[]).length ? '<div class="tag-row">' +
+          p.interests.map(function(t){ return '<span class="tag on">'+escapeHtml(topicLabel(t) || t)+'</span>'; }).join('') +
+        '</div>' : '<div class="tag-row"><span class="tag">관심 카테고리를 고르면 비슷한 사람·모임을 추천해줘요</span></div>') +
+        '<div class="profile-stats">' +
+          '<div class="profile-stat"><b>'+activeGoals.length+'</b><span>진행 중 목표</span></div>' +
+          '<div class="profile-stat"><b>'+archived.length+'</b><span>보관한 목표</span></div>' +
+          '<div class="profile-stat"><b>'+p.records.length+'</b><span>총 기록</span></div>' +
+          '<div class="profile-stat"><b>'+streak+'</b><span>연속일</span></div>' +
+        '</div>' +
+        '<button class="btn btn-ghost btn-sm" id="editProfileBtn" type="button" style="width:100%;margin-top:12px;">프로필 편집</button>' +
+      '</div>';
+    document.getElementById('editProfileBtn').addEventListener('click', openProfileEditor);
+  }
+
+  function resizeImageToDataUrl(file, max, cb){
+    var reader = new FileReader();
+    reader.onload = function(){
+      var img = new Image();
+      img.onload = function(){
+        var scale = Math.min(1, max / Math.max(img.width, img.height));
+        var w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        cb(canvas.toDataURL('image/jpeg', 0.82));
+      };
+      img.onerror = function(){ cb(null); };
+      img.src = reader.result;
+    };
+    reader.onerror = function(){ cb(null); };
+    reader.readAsDataURL(file);
+  }
+
+  function openProfileEditor(){
+    var p = state.profile;
+    var draft = { name: p.displayName, bio: p.bio||'', avatarUrl: p.avatarUrl||'', interests: (p.interests||[]).slice() };
+    openModal(
+      '<h3>프로필 편집</h3>' +
+      '<div class="avatar-edit">' +
+        '<div id="pvAvatar">'+avatarHtml(64)+'</div>' +
+        '<div style="flex:1;">' +
+          '<button class="btn btn-ghost btn-sm" id="pvPick" type="button">사진 변경</button>' +
+          (draft.avatarUrl ? ' <button class="btn btn-ghost btn-sm" id="pvClear" type="button">삭제</button>' : '') +
+          '<div class="hint">정사각형 사진이 가장 잘 보여요 · 128px로 줄여 저장돼요</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="field"><label>닉네임</label><input id="pvName" type="text" value="'+escapeHtml(draft.name)+'" maxlength="20"></div>' +
+      '<div class="field"><label>내 소개 (최대 80자)</label><input id="pvBio" type="text" value="'+escapeHtml(draft.bio)+'" maxlength="80" placeholder="예: 3개월 뒤 하프마라톤 도전 중 · 매일 기록해요"></div>' +
+      '<div class="field"><label>관심 카테고리 (여러 개 선택)</label></div>' +
+      '<div id="pvInterests"></div>' +
+      '<p class="faint" id="pvCount" style="margin:8px 0 0;"></p>' +
+      '<div class="modal-actions"><button class="btn btn-ghost" id="pvCancel" type="button">취소</button><button class="btn btn-primary" id="pvSave" type="button">저장</button></div>',
+      function(sheet){
+        function paintInterests(){
+          var el = sheet.querySelector('#pvInterests');
+          el.innerHTML = Object.keys(TOPICS).map(function(k){
+            var t = TOPICS[k];
+            return '<div style="margin-bottom:10px;">' +
+              '<div class="faint" style="font-size:.74rem;margin-bottom:4px;">'+t.icon+' '+t.label+'</div>' +
+              '<div class="cat-sub-grid">' +
+                t.subs.map(function(s){
+                  var key = k+'/'+s;
+                  var on = draft.interests.indexOf(key)!==-1;
+                  return '<button class="cat-sub'+(on?' active':'')+'" data-int="'+escapeHtml(key)+'" type="button">'+escapeHtml(s)+'</button>';
+                }).join('') +
+              '</div>' +
+            '</div>';
+          }).join('');
+          el.querySelectorAll('[data-int]').forEach(function(b){
+            b.addEventListener('click', function(){
+              var key = b.dataset.int;
+              var i = draft.interests.indexOf(key);
+              if(i===-1){
+                if(draft.interests.length>=8){ toast('관심 카테고리는 8개까지 고를 수 있어요'); return; }
+                draft.interests.push(key);
+              } else { draft.interests.splice(i,1); }
+              paintInterests();
+            });
+          });
+          sheet.querySelector('#pvCount').textContent = draft.interests.length+'개 선택됨 · 최대 8개';
+        }
+        paintInterests();
+
+        var fileInput = document.getElementById('avatarFile');
+        sheet.querySelector('#pvPick').addEventListener('click', function(){ fileInput.click(); });
+        fileInput.onchange = function(e){
+          var f = e.target.files[0];
+          if(!f) return;
+          resizeImageToDataUrl(f, 128, function(dataUrl){
+            if(!dataUrl){ toast('사진을 읽을 수 없어요'); return; }
+            draft.avatarUrl = dataUrl;
+            sheet.querySelector('#pvAvatar').innerHTML = '<div class="profile-avatar"><img src="'+dataUrl+'" alt=""></div>';
+          });
+          e.target.value = '';
+        };
+        var clearBtn = sheet.querySelector('#pvClear');
+        if(clearBtn) clearBtn.addEventListener('click', function(){
+          draft.avatarUrl = '';
+          sheet.querySelector('#pvAvatar').innerHTML = '<div class="profile-avatar">'+escapeHtml(draft.name.slice(0,1))+'</div>';
+        });
+
+        sheet.querySelector('#pvCancel').addEventListener('click', closeModal);
+        sheet.querySelector('#pvSave').addEventListener('click', async function(){
+          var name = sheet.querySelector('#pvName').value.trim();
+          if(!name){ toast('닉네임을 입력해주세요'); return; }
+          p.displayName = name;
+          p.bio = sheet.querySelector('#pvBio').value.trim();
+          p.avatarUrl = draft.avatarUrl;
+          p.interests = draft.interests;
+          await saveProfile();
+          closeModal();
+          renderAll();
+          updateTopBar();
+          toast('프로필을 저장했어요');
+        });
+      }
+    );
+  }
+
+  function updateTopBar(){
+    var p = state.profile;
+    document.getElementById('topUserName').textContent = p.displayName;
+    var av = document.getElementById('topAvatar');
+    if(p.avatarUrl){
+      av.innerHTML = '<img src="'+p.avatarUrl+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+      av.style.padding = '0';
+      av.style.overflow = 'hidden';
+    } else {
+      av.textContent = p.displayName.slice(0,1);
+    }
+  }
+
   /* ============ Notion webhook 전송 ============ */
   async function sendToNotion(record, feedback){
     var s = state.profile && state.profile.settings;
@@ -1069,7 +1382,7 @@
     var badgeEl = document.getElementById('streakBadge');
     if(badgeEl) badgeEl.innerHTML = streak>0 ? streakBadgeHtml(streak) : '';
     var wrap = document.getElementById('homeGoalList');
-    var goals = state.profile.goals;
+    var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     if(!goals.length){
       wrap.innerHTML = '<div class="empty-goal">아직 목표가 없어요.<br>첫 목표를 만들어보세요.</div>';
       return;
@@ -1083,6 +1396,7 @@
         : '';
       return '<div class="goal-card" data-goalid="'+g.id+'">' +
         '<div class="goal-card-top"><h4>'+escapeHtml(g.title)+'</h4>'+dd+'</div>' +
+        (g.topic ? '<div style="margin:-4px 0 8px;">'+topicPill(g.topic)+'</div>' : '') +
         '<div class="goal-body">' +
           '<div class="gauge">'+gaugeSvg(pct,56,color)+'</div>' +
           '<div class="goal-stats">' +
@@ -1274,7 +1588,7 @@
 
   /* ============ New goal modal ============ */
   function promptNewGoal(){
-    if(state.profile.goals.length>=3){ toast('목표는 최대 3개까지 만들 수 있어요'); return; }
+    if(state.profile.goals.filter(function(g){ return !g.archivedAt; }).length>=3){ toast('진행 중 목표는 최대 3개예요 · 기록으로 옮기면 새로 만들 수 있어요'); return; }
     var chosenCat = 'etc';
     openModal(
       '<h3>새 목표</h3>' +
@@ -1286,6 +1600,9 @@
         }).join('') +
       '</div>' +
       '<div class="field"><label>최종 목표</label><input id="mGoalTitle" type="text" placeholder="예: 3개월 안에 벤치프레스 100kg"></div>' +
+      '<div class="field"><label>카테고리 (대범위 · 중범위)</label></div>' +
+      categoryPickerHtml('mTopic', '') +
+      '<div style="height:14px;"></div>' +
       '<div class="field"><label>목표 마감일 (선택)</label><input id="mGoalDue" type="date"><p class="faint" id="mGoalDday" style="margin:6px 0 0;"></p></div>' +
       '<div class="field"><label>공개 범위</label><select id="mGoalVis">' +
         '<option value="public">전체 공개</option>' +
@@ -1294,6 +1611,8 @@
       '</select></div>' +
       '<div class="modal-actions"><button class="btn btn-ghost" id="mCancel" type="button">취소</button><button class="btn btn-primary" id="mSave" type="button">만들기</button></div>',
       function(sheet){
+        var topicRef = { value: '' };
+        wireCategoryPicker(sheet, 'mTopic', topicRef);
         sheet.querySelectorAll('.cat-chip').forEach(function(chip){
           chip.addEventListener('click', function(){
             sheet.querySelectorAll('.cat-chip').forEach(function(c){ c.classList.remove('active'); });
@@ -1313,7 +1632,7 @@
           var title = sheet.querySelector('#mGoalTitle').value.trim();
           if(!title){ return; }
           var due = sheet.querySelector('#mGoalDue').value;
-          state.profile.goals.push({ id: newId(), title: title, dueDate: due||null, category: chosenCat, createdAt: nowISO(), visibility: sheet.querySelector('#mGoalVis').value, milestones: templateMilestones(chosenCat) });
+          state.profile.goals.push({ id: newId(), title: title, dueDate: due||null, category: chosenCat, topic: topicRef.value, createdAt: nowISO(), visibility: sheet.querySelector('#mGoalVis').value, archivedAt: null, result: null, milestones: templateMilestones(chosenCat) });
           await saveProfile();
           closeModal();
           renderAll();
@@ -1323,9 +1642,76 @@
     );
   }
 
+  /* ============ 목표 보관(기록으로 옮기기) ============ */
+  async function archiveGoal(goal){
+    goal.archivedAt = nowISO();
+    state.activeGoalId = null;
+    await saveProfile();
+    renderAll();
+    setTab('records');
+    toast('"'+goal.title+'"을(를) 기록으로 옮겼어요');
+  }
+  async function restoreGoal(goal){
+    var active = state.profile.goals.filter(function(g){ return !g.archivedAt; });
+    if(active.length>=3){ toast('진행 중 목표가 3개예요 · 하나를 정리한 뒤 되돌릴 수 있어요'); return; }
+    goal.archivedAt = null;
+    await saveProfile();
+    renderAll();
+    setTab('goals');
+    toast('목표를 다시 진행 중으로 되돌렸어요');
+  }
+  function goalAchievement(goal){
+    var pct = resultPct(goal.result);
+    if(pct !== null) return pct;
+    var all = [], done = 0;
+    goal.milestones.forEach(function(m){
+      var mp = resultPct(m.result);
+      if(mp !== null){ all.push(mp); return; }
+      all.push(m.status==='done' ? 100 : (m.status==='doing' ? 50 : 0));
+    });
+    if(!all.length) return 0;
+    all.forEach(function(v){ done += v; });
+    return Math.round(done / all.length);
+  }
+  function renderArchivedGoals(){
+    var wrap = document.getElementById('archivedGoals');
+    if(!wrap) return;
+    var archived = state.profile.goals.filter(function(g){ return g.archivedAt; })
+      .sort(function(a,b){ return new Date(b.archivedAt) - new Date(a.archivedAt); });
+    if(!archived.length){
+      wrap.innerHTML = '<p class="faint" style="margin:0 0 18px;">마감일이 지난 목표는 삭제 대신 여기로 옮겨서 결과와 함께 남길 수 있어요.</p>';
+      return;
+    }
+    wrap.innerHTML = '<p class="faint" style="margin:0 0 10px;">보관한 목표 '+archived.length+'개 · 결과가 그대로 남아요</p>' +
+      archived.map(function(g){
+        var pct = goalAchievement(g);
+        var days = Math.max(1, Math.round((new Date(g.archivedAt) - new Date(g.createdAt))/86400000));
+        return '<div class="archive-card" data-arch="'+g.id+'">' +
+          '<div class="archive-top"><b>'+escapeHtml(g.title)+'</b><span class="archive-pct">'+pct+'%</span></div>' +
+          '<div class="archive-meta">'+(g.topic?topicLabel(g.topic)+' · ':'')+days+'일간 진행 · '+
+            (g.dueDate ? '마감 '+g.dueDate+' · ' : '')+dateKey(g.archivedAt)+' 보관</div>' +
+          (g.result ? '<div class="archive-meta">최종 '+(g.result.result||0)+'/'+(g.result.target||'-')+' '+(g.result.unit||'')+
+            (g.result.note ? ' · '+escapeHtml(g.result.note) : '')+'</div>' : '') +
+          '<div class="archive-ms">' +
+            g.milestones.map(function(m){
+              var mp = resultPct(m.result);
+              return '· '+escapeHtml(m.title)+' — '+(mp!==null ? m.result.result+'/'+m.result.target+' '+(m.result.unit||'')+' ('+mp+'%)' : (m.status==='done'?'완료':'미완료'));
+            }).join('<br>') +
+          '</div>' +
+          '<button class="btn btn-ghost btn-sm" data-restore="'+g.id+'" type="button" style="width:100%;margin-top:10px;">다시 진행하기</button>' +
+        '</div>';
+      }).join('');
+    wrap.querySelectorAll('[data-restore]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var g = state.profile.goals.find(function(x){ return x.id===btn.dataset.restore; });
+        if(g) restoreGoal(g);
+      });
+    });
+  }
+
   /* ============ RENDER: GOALS ============ */
   function renderGoalsScreen(){
-    var goals = state.profile.goals;
+    var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     if(!state.activeGoalId || !goals.find(function(g){ return g.id===state.activeGoalId; })){
       state.activeGoalId = goals.length ? goals[0].id : null;
     }
@@ -1378,22 +1764,43 @@
         '<span class="faint">'+(vis==='private'?'🔒 ':(vis==='followers'?'👥 ':'🌐 '))+VISIBILITY_LABELS[vis]+'</span>') +
       '</div>';
 
+    function ddayMini(dateStr){
+      if(!dateStr) return '';
+      var d = dDay(dateStr);
+      var over = d && d.indexOf('D+')===0;
+      return '<span class="dday-mini'+(over?' over':'')+'">'+d+'</span>';
+    }
+
     var msHtml = goal.milestones.map(function(m, idx){
       var statusIcon = m.status==='done' ? '✓' : '';
       var titleClass = m.status==='done' ? 'ms-title done-text' : 'ms-title';
       var taskRows = (m.tasks||[]).map(function(t){
-        return '<div class="task-row" data-taskid="'+t.id+'" data-msid="'+m.id+'">' +
-          '<div class="task-check'+(t.done?' done':'')+'" data-toggletask="1">'+(t.done?'✓':'')+'</div>' +
-          '<input class="task-title'+(t.done?' done-text':'')+'" data-taskinput="1" value="'+escapeHtml(t.title)+'" '+(state.goalEditMode?'':'readonly')+'>' +
-          (state.goalEditMode ? '<button class="icon-btn" data-deltask="1">×</button>' : '') +
+        return '<div class="task-row" data-taskid="'+t.id+'" data-msid="'+m.id+'" style="align-items:flex-start;">' +
+          '<div style="flex:1;min-width:0;">' +
+            '<div style="display:flex;align-items:center;gap:6px;">' +
+              '<input class="task-title'+(t.done?' done-text':'')+'" data-taskinput="1" value="'+escapeHtml(t.title)+'" '+(state.goalEditMode?'':'readonly')+'>' +
+              (t.dueDate ? ddayMini(t.dueDate) : '') +
+              (state.goalEditMode ? '<button class="icon-btn" data-deltask="1">×</button>' : '') +
+            '</div>' +
+            (state.goalEditMode ? '<div class="ms-date" style="display:inline-block;margin-top:4px;"><input type="date" data-taskdate="1" value="'+(t.dueDate||'')+'"></div>' : '') +
+            resultLineHtml(t.result) +
+          '</div>' +
+          '<button data-taskresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(t.result)+'</button>' +
         '</div>';
       }).join('');
       return '<div class="ms-row'+(m.status==='doing'?' doing':'')+'" data-msid="'+m.id+'" '+(state.goalEditMode?'draggable="true"':'')+'>' +
-        '<div class="ms-main">' +
+        '<div class="ms-main" style="align-items:flex-start;">' +
           (state.goalEditMode ? '<div class="drag-handle" title="드래그해서 순서 변경"><span></span><span></span><span></span></div>' : '') +
           '<div class="ms-status '+m.status+'" data-cyclestatus="1">'+statusIcon+'</div>' +
-          '<input class="'+titleClass+'" data-msinput="1" value="'+escapeHtml(m.title)+'" '+(state.goalEditMode?'':'readonly')+'>' +
-          '<div class="ms-date"><input type="date" data-msdate="1" value="'+(m.dueDate||'')+'" '+(state.goalEditMode?'':'disabled')+'></div>' +
+          '<div style="flex:1;min-width:0;">' +
+            '<div style="display:flex;align-items:center;gap:4px;">' +
+              '<input class="'+titleClass+'" data-msinput="1" value="'+escapeHtml(m.title)+'" '+(state.goalEditMode?'':'readonly')+'>' +
+              (m.dueDate ? ddayMini(m.dueDate) : '') +
+            '</div>' +
+            '<div class="ms-date" style="display:inline-block;margin-top:4px;"><input type="date" data-msdate="1" value="'+(m.dueDate||'')+'" '+(state.goalEditMode?'':'disabled')+'></div>' +
+            resultLineHtml(m.result) +
+          '</div>' +
+          '<button data-msresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(m.result)+'</button>' +
           (state.goalEditMode ? '<div class="ms-actions">' +
             (idx>0?'<button class="icon-btn" data-msup="1">↑</button>':'') +
             (idx<goal.milestones.length-1?'<button class="icon-btn" data-msdown="1">↓</button>':'') +
@@ -1405,7 +1812,22 @@
       '</div>';
     }).join('');
 
+    var goalResultRow = '<div class="card" style="margin-bottom:14px;">' +
+      '<div class="card-title-row"><h3>목표 최종 결과</h3>' +
+        '<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button">'+(goal.result?'결과 수정':'결과 입력')+'</button></div>' +
+      (goal.result
+        ? '<div class="muted" style="font-size:.85rem;">'+(goal.result.result||0)+' / '+(goal.result.target||'-')+' '+(goal.result.unit||'')+
+          (resultPct(goal.result)!==null ? ' · 달성률 <b style="color:'+(resultPct(goal.result)>=100?'var(--sage)':'var(--gold)')+';">'+resultPct(goal.result)+'%</b>' : '')+'</div>' +
+          (goal.result.note ? '<div class="faint" style="margin-top:4px;">'+escapeHtml(goal.result.note)+'</div>' : '')
+        : '<p class="faint" style="margin:0;">다 못 채웠어도 실제로 한 만큼 적어두면 기록으로 남아요</p>') +
+      ((goal.dueDate && dDay(goal.dueDate).indexOf('D+')===0)
+        ? '<button class="btn btn-primary" id="goalArchiveBtn" type="button" style="width:100%;margin-top:12px;">마감일이 지났어요 · 기록으로 옮기기</button>'
+        : '<button class="btn btn-ghost btn-sm" id="goalArchiveBtn" type="button" style="width:100%;margin-top:12px;">기록으로 옮기기</button>') +
+    '</div>';
+
     body.innerHTML = dueRow + visRow +
+      (goal.topic ? '<div class="duedate-row"><span class="lbl">카테고리</span>'+topicPill(goal.topic)+'</div>' : '') +
+      goalResultRow +
       '<div class="ms-list">'+msHtml+'</div>' +
       (state.goalEditMode ? '<div class="add-ms-btn" id="addMsBtn">+ 마일스톤 추가</div><div class="drag-hint">탭해서 바로 수정 · 화살표로 순서 변경</div>' : '') +
       (goal.milestones.length===0 ? '<div class="empty-state"><div class="e-icon">🧭</div><p>마일스톤을 추가해서 목표를 잘게 나눠보세요.</p></div>' : '') +
@@ -1427,10 +1849,26 @@
     if(delGoalBtn) delGoalBtn.addEventListener('click', async function(){
       if(!confirm('"'+goal.title+'" 목표와 마일스톤·할 일을 모두 삭제할까요? 되돌릴 수 없어요.')) return;
       state.profile.goals = state.profile.goals.filter(function(g){ return g.id!==goal.id; });
-      state.activeGoalId = state.profile.goals.length ? state.profile.goals[0].id : null;
+      state.activeGoalId = null;
       await saveProfile();
       renderAll();
       toast('목표를 삭제했어요');
+    });
+
+    var goalResultBtn = document.getElementById('goalResultBtn');
+    if(goalResultBtn) goalResultBtn.addEventListener('click', function(){
+      openResultModal('goal', goal, function(){ renderAll(); });
+    });
+
+    var archiveBtn = document.getElementById('goalArchiveBtn');
+    if(archiveBtn) archiveBtn.addEventListener('click', async function(){
+      if(!goal.result){
+        if(confirm('최종 결과를 먼저 입력할까요? (취소를 누르면 결과 없이 보관해요)')){
+          openResultModal('goal', goal, function(){ archiveGoal(goal); });
+          return;
+        }
+      }
+      archiveGoal(goal);
     });
 
     body.querySelectorAll('.ms-row').forEach(function(row){
@@ -1499,21 +1937,25 @@
         goal.milestones = goal.milestones.filter(function(x){ return x.id!==msid; });
         await saveProfile(); renderGoalsScreen();      });
 
+      var msResultBtn = row.querySelector('[data-msresult]');
+      if(msResultBtn) msResultBtn.addEventListener('click', function(){
+        openResultModal('ms', ms, function(){ renderGoalsScreen(); });
+      });
+
       row.querySelectorAll('.task-row').forEach(function(trow){
         var tid = trow.dataset.taskid;
         var task = (ms.tasks||[]).find(function(t){ return t.id===tid; });
-        var chk = trow.querySelector('[data-toggletask]');
-        chk.addEventListener('click', async function(){
-          task.done = !task.done;
-          if(task.done){
-            if(navigator.vibrate) navigator.vibrate([12, 40, 24]);
-            var r = chk.getBoundingClientRect();
-            burstConfetti(r.left + r.width/2, r.top + r.height/2);
-          }
-          await saveProfile(); renderGoalsScreen();
+        var tResultBtn = trow.querySelector('[data-taskresult]');
+        if(tResultBtn) tResultBtn.addEventListener('click', function(){
+          openResultModal('task', task, function(){ renderGoalsScreen(); });
         });
         var tinput = trow.querySelector('[data-taskinput]');
         tinput.addEventListener('change', async function(){ task.title = tinput.value.trim() || task.title; await saveProfile(); });
+        var tdate = trow.querySelector('[data-taskdate]');
+        if(tdate) tdate.addEventListener('change', async function(){
+          task.dueDate = tdate.value || null;
+          await saveProfile(); renderGoalsScreen();
+        });
         var tdel = trow.querySelector('[data-deltask]');
         if(tdel) tdel.addEventListener('click', async function(){
           ms.tasks = ms.tasks.filter(function(t){ return t.id!==tid; });
@@ -1576,6 +2018,7 @@
     });
     document.getElementById('weekSummary').textContent = '이번 주 총 ' + fmtDuration(totalMs) + ' 기록';
     renderWeekChart(recs);
+    renderArchivedGoals();
 
     var listEl = document.getElementById('recordsList');
     if(!recs.length){
@@ -1692,21 +2135,36 @@
   }
 
   var MOCK_GROUPS = [
-    { id:'g1', icon:'💪', name:'벤치프레스 100kg 모임', members:128, progress:68, cadence:'주 3회', endDate:daysFromNow(24),
+    { id:'g1', icon:'💪', name:'벤치프레스 100kg 모임', topic:'health/헬스·근력', members:128, progress:68, cadence:'주 3회', endDate:daysFromNow(24),
       desc:'같은 목표를 가진 사람들과 기록을 공유해요', rule:'운동한 날 무게·세트를 남기면 인증 완료',
       weeklyTarget:300, weeklyDone:214,
       roster:[{n:'민준',c:14},{n:'하늘',c:12},{n:'도윤',c:11},{n:'서아',c:9},{n:'지호',c:7}],
       activity:['민준님이 벤치 85kg 5회 인증했어요','하늘님이 7일 연속 인증을 달성했어요','도윤님이 이번 주 목표를 채웠어요'] },
-    { id:'g2', icon:'📚', name:'자격증 스터디', members:342, progress:45, cadence:'매일', endDate:daysFromNow(51),
+    { id:'g2', icon:'📚', name:'자격증 스터디', topic:'study/자격증·시험', members:342, progress:45, cadence:'매일', endDate:daysFromNow(51),
       desc:'시험 준비, 서로 진도를 확인하며 함께 가요', rule:'그날 공부한 분량을 기록하면 인증 완료',
       weeklyTarget:800, weeklyDone:361,
       roster:[{n:'서연',c:21},{n:'유진',c:18},{n:'현우',c:15},{n:'민서',c:13},{n:'태호',c:10}],
       activity:['서연님이 기출 3회독을 마쳤어요','유진님이 오답노트 20문항을 올렸어요','민서님이 오늘도 인증했어요'] },
-    { id:'g3', icon:'🏘️', name:'동네 아침 루틴', members:76, progress:82, cadence:'매일', endDate:daysFromNow(9),
+    { id:'g3', icon:'🏘️', name:'동네 아침 루틴', topic:'mind/기상·수면', members:76, progress:82, cadence:'매일', endDate:daysFromNow(9),
       desc:'우리 동네 사람들과 아침 습관 만들기', rule:'오전 8시 전에 기록을 남기면 인증 완료',
       weeklyTarget:180, weeklyDone:148,
       roster:[{n:'다현',c:19},{n:'준서',c:17},{n:'예린',c:16},{n:'상우',c:12},{n:'가은',c:8}],
-      activity:['다현님이 19일 연속 아침 인증 중이에요','준서님이 새벽 러닝을 인증했어요','예린님이 응원을 3개 보냈어요'] }
+      activity:['다현님이 19일 연속 아침 인증 중이에요','준서님이 새벽 러닝을 인증했어요','예린님이 응원을 3개 보냈어요'] },
+    { id:'g4', icon:'🏃', name:'첫 10km 완주 클럽', topic:'health/러닝·마라톤', members:205, progress:57, cadence:'주 3회', endDate:daysFromNow(38),
+      desc:'러닝 입문자끼리 페이스 공유하며 10km까지', rule:'러닝 거리·페이스를 남기면 인증 완료',
+      weeklyTarget:400, weeklyDone:236,
+      roster:[{n:'수민',c:16},{n:'재영',c:14},{n:'하은',c:11},{n:'정우',c:9},{n:'소라',c:6}],
+      activity:['수민님이 7km 완주를 인증했어요','재영님이 개인 최고 페이스를 갱신했어요','하은님이 첫 5km를 완주했어요'] },
+    { id:'g5', icon:'✍️', name:'매일 한 편 글쓰기', topic:'hobby/글쓰기', members:97, progress:73, cadence:'매일', endDate:daysFromNow(16),
+      desc:'짧아도 좋으니 매일 한 편씩 쓰는 사람들', rule:'글 링크나 분량을 남기면 인증 완료',
+      weeklyTarget:250, weeklyDone:191,
+      roster:[{n:'윤아',c:22},{n:'세훈',c:18},{n:'미래',c:15},{n:'동현',c:10},{n:'채원',c:7}],
+      activity:['윤아님이 22일 연속 글쓰기를 이어가고 있어요','세훈님이 에세이 1편을 올렸어요','미래님이 응원을 보냈어요'] },
+    { id:'g6', icon:'💰', name:'6개월 1000만원 모으기', topic:'career/절약·가계부', members:412, progress:39, cadence:'주말', endDate:daysFromNow(74),
+      desc:'가계부 인증하며 목표 금액까지 함께', rule:'주간 지출 정리와 저축액을 남기면 인증 완료',
+      weeklyTarget:600, weeklyDone:234,
+      roster:[{n:'지훈',c:12},{n:'서영',c:11},{n:'민재',c:9},{n:'예나',c:8},{n:'우진',c:5}],
+      activity:['지훈님이 이번 주 저축 목표를 채웠어요','서영님이 무지출 3일을 인증했어요','민재님이 가계부를 공유했어요'] }
   ];
 
   /* 외부 연동 샘플 데이터 (스트라바·건강앱 mock) */
@@ -1754,6 +2212,69 @@
   ];
 
   var VISIBILITY_LABELS = { public:'전체 공개', followers:'팔로워만', private:'나만 보기' };
+
+  /* ============ 카테고리 (대범위 · 중범위) ============ */
+  var TOPICS = {
+    health:   { icon:'💪', label:'운동·건강', subs:['헬스·근력','러닝·마라톤','다이어트','요가·필라테스','등산·아웃도어','식단·영양','구기·라켓'] },
+    study:    { icon:'📚', label:'학습·자격', subs:['어학','자격증·시험','대학·입시','코딩·개발','독서','대학원·연구'] },
+    career:   { icon:'💼', label:'커리어·머니', subs:['이직·취업','창업·사업','사이드 프로젝트','재테크·투자','절약·가계부'] },
+    hobby:    { icon:'🎨', label:'취미·창작', subs:['글쓰기','음악·악기','그림·디자인','사진·영상','요리·베이킹','공예·DIY'] },
+    mind:     { icon:'🧘', label:'마음·습관', subs:['명상·멘탈케어','기상·수면','금연·금주','미니멀·정리','일기·회고'] },
+    relation: { icon:'🏘️', label:'관계·생활', subs:['육아','반려동물','연애·결혼','가족','봉사·커뮤니티','여행'] }
+  };
+  function topicLabel(topic){
+    if(!topic) return '';
+    var parts = String(topic).split('/');
+    var t = TOPICS[parts[0]];
+    if(!t) return '';
+    return t.icon+' '+t.label + (parts[1] ? ' · '+parts[1] : '');
+  }
+  function topicPill(topic){
+    var l = topicLabel(topic);
+    return l ? '<span class="topic-pill">'+escapeHtml(l)+'</span>' : '';
+  }
+  /* 대/중 카테고리 선택 UI (모달·폼 공용) */
+  function categoryPickerHtml(idPrefix, selected){
+    var parts = (selected||'').split('/');
+    var curMajor = TOPICS[parts[0]] ? parts[0] : Object.keys(TOPICS)[0];
+    var curSub = parts[1] || '';
+    return '<div class="cat-major-row" id="'+idPrefix+'Major">' +
+        Object.keys(TOPICS).map(function(k){
+          return '<button class="cat-major'+(k===curMajor?' active':'')+'" data-major="'+k+'" type="button">'+TOPICS[k].icon+' '+TOPICS[k].label+'</button>';
+        }).join('') +
+      '</div>' +
+      '<div class="cat-sub-grid" id="'+idPrefix+'Sub">' +
+        TOPICS[curMajor].subs.map(function(s){
+          return '<button class="cat-sub'+(s===curSub?' active':'')+'" data-sub="'+escapeHtml(s)+'" type="button">'+escapeHtml(s)+'</button>';
+        }).join('') +
+      '</div>';
+  }
+  /* 선택 상태를 ref 객체(.value)에 반영 */
+  function wireCategoryPicker(root, idPrefix, ref){
+    var majorRow = root.querySelector('#'+idPrefix+'Major');
+    var subGrid = root.querySelector('#'+idPrefix+'Sub');
+    function paintSubs(major){
+      subGrid.innerHTML = TOPICS[major].subs.map(function(s){
+        var on = ref.value === (major+'/'+s);
+        return '<button class="cat-sub'+(on?' active':'')+'" data-sub="'+escapeHtml(s)+'" type="button">'+escapeHtml(s)+'</button>';
+      }).join('');
+      subGrid.querySelectorAll('[data-sub]').forEach(function(b){
+        b.addEventListener('click', function(){
+          ref.value = major+'/'+b.dataset.sub;
+          paintSubs(major);
+        });
+      });
+    }
+    majorRow.querySelectorAll('[data-major]').forEach(function(b){
+      b.addEventListener('click', function(){
+        majorRow.querySelectorAll('[data-major]').forEach(function(x){ x.classList.remove('active'); });
+        b.classList.add('active');
+        paintSubs(b.dataset.major);
+      });
+    });
+    var initMajor = (ref.value||'').split('/')[0];
+    paintSubs(TOPICS[initMajor] ? initMajor : Object.keys(TOPICS)[0]);
+  }
 
   function renderCommScreen(){
     var body = document.getElementById('commBody');
@@ -1843,7 +2364,7 @@
   async function cloneTemplate(tmplId, rerender){
     var t = CREATOR_TEMPLATES.find(function(x){ return x.id===tmplId; });
     if(!t) return;
-    if(state.profile.goals.length>=3){ toast('목표는 최대 3개까지 만들 수 있어요'); return; }
+    if(state.profile.goals.filter(function(g){ return !g.archivedAt; }).length>=3){ toast('진행 중 목표는 최대 3개예요 · 기록으로 옮기면 새로 만들 수 있어요'); return; }
     var goal = {
       id: newId(), title: t.title, dueDate: null, category: t.category,
       createdAt: nowISO(), visibility: 'public',
@@ -1863,7 +2384,7 @@
   }
 
   function renderCommFeed(body){
-    var goals = state.profile.goals;
+    var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     var sharedGoals = goals.filter(function(g){ return (g.visibility||'public') !== 'private'; });
     var hiddenCount = goals.length - sharedGoals.length;
     var myItems = sharedGoals.map(function(g){
@@ -1927,19 +2448,37 @@
       if(ag) return renderGroupDetail(body, ag);
       state.activeGroupId = null;
     }
+    var filter = state.groupFilter || 'all';
+    var myInterests = state.profile.interests || [];
+    var visibleGroups = MOCK_GROUPS.filter(function(g){
+      if(filter==='all') return true;
+      if(filter==='mine') return myInterests.some(function(i){ return i === g.topic; }) ||
+        myInterests.some(function(i){ return (i.split('/')[0]) === (g.topic||'').split('/')[0]; });
+      return (g.topic||'').split('/')[0] === filter;
+    });
+
     body.innerHTML =
-      '<div class="card-title-row" style="margin-bottom:14px;">' +
+      '<div class="card-title-row" style="margin-bottom:10px;">' +
         '<p class="faint" style="margin:0;">목표·관심사로 모이는 공간</p>' +
         '<button class="btn btn-ghost btn-sm" id="commAddGroup" type="button">+ 모임 만들기</button>' +
       '</div>' +
+      '<div class="cat-major-row" id="grpFilterRow">' +
+        '<button class="cat-major'+(filter==='all'?' active':'')+'" data-gfilter="all" type="button">전체</button>' +
+        (myInterests.length ? '<button class="cat-major'+(filter==='mine'?' active':'')+'" data-gfilter="mine" type="button">⭐ 내 관심</button>' : '') +
+        Object.keys(TOPICS).map(function(k){
+          return '<button class="cat-major'+(filter===k?' active':'')+'" data-gfilter="'+k+'" type="button">'+TOPICS[k].icon+' '+TOPICS[k].label+'</button>';
+        }).join('') +
+      '</div>' +
       collectiveGaugeHtml() +
-      MOCK_GROUPS.map(function(g){
+      (visibleGroups.length ? '' : '<div class="empty-state"><div class="e-icon">🔍</div><p>이 카테고리에는 아직 모임이 없어요.<br>첫 모임을 만들어보세요.</p></div>') +
+      visibleGroups.map(function(g){
         var gs = groupState(g.id);
         var prog = typeof g.progress==='number' ? g.progress : 0;
         var checked = groupCheckedToday(g.id);
         return '<div class="group-item" style="align-items:flex-start;cursor:pointer;" data-open-group="'+g.id+'">' +
           '<div class="group-ico">'+g.icon+'</div>' +
           '<div class="group-info"><b>'+escapeHtml(g.name)+(gs.joined&&checked?' ✅':'')+'</b>' +
+            (g.topic ? '<div style="margin:3px 0 2px;">'+topicPill(g.topic)+'</div>' : '') +
             '<span>'+(g.members+(gs.joined?1:0))+'명 참여 · '+g.cadence+' 인증 · '+dDay(g.endDate)+'</span>' +
             '<div class="group-bar"><span style="width:'+prog+'%;"></span></div>' +
             '<span class="faint" style="font-size:.7rem;">공동 달성률 '+prog+'%'+(gs.joined&&!checked?' · 오늘 인증 전이에요':'')+'</span>' +
@@ -1949,6 +2488,12 @@
       }).join('') +
       '<p class="faint" style="margin-top:6px;">모임을 눌러 인증·랭킹·미션을 확인해보세요 · 참여 기록은 이 기기에 저장돼요</p>';
 
+    body.querySelectorAll('[data-gfilter]').forEach(function(b){
+      b.addEventListener('click', function(){
+        state.groupFilter = b.dataset.gfilter;
+        renderCommGroups(body);
+      });
+    });
     body.querySelectorAll('[data-open-group]').forEach(function(card){
       card.addEventListener('click', function(e){
         if(e.target.closest('[data-join]')) return;
@@ -2093,6 +2638,9 @@
       '<div class="field"><label>아이콘 (이모지)</label><input id="grpIcon" type="text" value="🔥" maxlength="4"></div>' +
       '<div class="field"><label>모임 이름</label><input id="grpName" type="text" placeholder="예: 아침 6시 기상 스터디"></div>' +
       '<div class="field"><label>소개글</label><input id="grpDesc" type="text" placeholder="어떤 사람들과 무엇을 함께할지 적어주세요"></div>' +
+      '<div class="field"><label>카테고리 (대범위 · 중범위)</label></div>' +
+      categoryPickerHtml('gTopic', '') +
+      '<div style="height:14px;"></div>' +
       (myGoals.length ? '<div class="field"><label>연결할 내 목표 (선택)</label><select id="grpGoal">' +
         '<option value="">연결 안 함</option>' +
         myGoals.map(function(g){ return '<option value="'+g.id+'">'+escapeHtml(g.title)+'</option>'; }).join('') +
@@ -2106,6 +2654,8 @@
       '<div class="field"><label>인증 규칙 (멤버에게 보여요)</label><input id="grpRule" type="text" placeholder="예: 운동한 날 무게·세트를 남기면 인증 완료"></div>' +
       '<div class="modal-actions"><button class="btn btn-ghost" id="grpCancel" type="button">취소</button><button class="btn btn-primary" id="grpSave" type="button">만들기</button></div>',
       function(sheet){
+        var gTopicRef = { value: '' };
+        wireCategoryPicker(sheet, 'gTopic', gTopicRef);
         sheet.querySelector('#grpCancel').addEventListener('click', closeModal);
         sheet.querySelector('#grpSave').addEventListener('click', async function(){
           var name = sheet.querySelector('#grpName').value.trim();
@@ -2120,6 +2670,7 @@
             id: gid,
             icon: sheet.querySelector('#grpIcon').value.trim() || '🔥',
             name: name,
+            topic: gTopicRef.value,
             members: 1,
             progress: 0,
             cadence: cadence,
@@ -2203,6 +2754,7 @@
 
   /* ============ RENDER: SETTINGS ============ */
   function renderSettingsScreen(){
+    renderProfileCard();
     var row = document.getElementById('checkinTimesRow');
     var times = state.profile.settings.checkinTimes;
     row.innerHTML = times.map(function(t, i){
@@ -2377,8 +2929,7 @@
 
   /* ============ Render all ============ */
   function renderAll(){
-    document.getElementById('topUserName').textContent = state.profile.displayName;
-    document.getElementById('topAvatar').textContent = state.profile.displayName.slice(0,1);
+    updateTopBar();
     document.getElementById('homeGreeting').textContent = state.profile.displayName + '님, 안녕하세요';
     renderHome();
     renderGoalsScreen();
