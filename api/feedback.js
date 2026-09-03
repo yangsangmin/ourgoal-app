@@ -26,13 +26,17 @@ module.exports = async function handler(req, res) {
     '{"verdict":"도움됨 또는 애매함 또는 도움안됨 중 하나","comment":"1문장의 짧고 솔직한 피드백"}';
 
   try {
+    var headers = {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01'
+    };
+    if (process.env.ANTHROPIC_WORKSPACE_ID) {
+      headers['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
+    }
     var anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
-      },
+      headers: headers,
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 300,
