@@ -834,7 +834,7 @@
     };
   }
 
-  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'share', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, feedReacted: {} };
+  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, feedReacted: {}, shareComposer: null };
 
   async function ensureUserRow(userId, username, displayName){
     var found = await sb.from('users').select('*').eq('id', userId).maybeSingle();
@@ -2801,7 +2801,7 @@
   function renderCommScreen(){
     var body = document.getElementById('commBody');
     var subtabHtml = '<div class="comm-subtabs">' +
-      ['share:공유','feed:피드','group:모임','manito:🎁 마니또','dm:DM'].map(function(s){
+      ['feed:피드','group:모임','manito:🎁 마니또','share:공유','dm:DM'].map(function(s){
         var parts = s.split(':');
         return '<div class="comm-subtab'+(state.commSubTab===parts[0]?' active':'')+'" data-sub="'+parts[0]+'">'+parts[1]+'</div>';
       }).join('') + '</div>';
@@ -2817,16 +2817,76 @@
     else if(state.commSubTab==='dm') renderCommDM(subBody);
   }
 
+  /* ============ 플랫폼 맞춤 공유 카드 ============ */
+  var SHARE_PLATFORMS = {
+    kakao:   { label:'카카오톡',   badgeChar:'카', emoji:'💬', bg:'#FEE500', text:'#3A1D1D', ratios:[{key:'wide',     label:'1.91:1', ratio:'1.91/1'}] },
+    insta:   { label:'인스타그램', badgeChar:'인', emoji:'📷', bg:'linear-gradient(135deg,#C13584,#F77737)', text:'#fff', ratios:[{key:'square',label:'1:1', ratio:'1/1'},{key:'portrait',label:'3:4', ratio:'3/4'}] },
+    tiktok:  { label:'틱톡',       badgeChar:'틱', emoji:'🎵', bg:'#111', text:'#fff', ratios:[{key:'vertical', label:'9:16',   ratio:'9/16'}] },
+    threads: { label:'쓰레드',     badgeChar:'쓰', emoji:'🧵', bg:'#2b2b2b', text:'#fff', ratios:[{key:'square',  label:'1:1',    ratio:'1/1'}] }
+  };
+  function platformPreviewHtml(pkey, g, pct, sel, days){
+    var p = SHARE_PLATFORMS[pkey];
+    var comp = state.shareComposer;
+    var ratioKey = comp.ratio[pkey] || p.ratios[0].key;
+    var ratioObj = p.ratios.filter(function(r){ return r.key===ratioKey; })[0] || p.ratios[0];
+    var lastRec = state.profile.records[0];
+    var fbOk = sel.feedback && state.lastCapture && state.lastCapture.feedback && state.lastCapture.goal && state.lastCapture.goal.id===g.id;
+    var pickedMs = g.milestones.filter(function(m){ return sel.ms[m.id]; });
+    return '<div style="width:100%;max-width:220px;">' +
+      '<div style="border-radius:18px;overflow:hidden;box-shadow:var(--shadow-sm);aspect-ratio:'+ratioObj.ratio+';background:'+p.bg+';color:'+p.text+';padding:16px;display:flex;flex-direction:column;">' +
+        '<div style="font-size:.66rem;font-weight:900;opacity:.85;">아워골 · '+p.emoji+' '+p.label+'</div>' +
+        '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:7px;margin-top:6px;overflow:hidden;">' +
+          (sel.goal ? '<div><div style="font-size:1rem;font-weight:900;line-height:1.3;">'+escapeHtml(g.title)+'</div><div style="font-size:.82rem;font-weight:800;margin-top:2px;">'+pct+'% 달성 중</div></div>' : '') +
+          (sel.record && lastRec ? '<div style="font-size:.7rem;background:rgba(255,255,255,.2);border-radius:9px;padding:5px 7px;">📝 '+escapeHtml(lastRec.text.length>34?lastRec.text.slice(0,34)+'…':lastRec.text)+'</div>' : '') +
+          (fbOk ? '<div style="font-size:.7rem;background:rgba(255,255,255,.2);border-radius:9px;padding:5px 7px;">🤖 '+escapeHtml(state.lastCapture.feedback.comment.length>34?state.lastCapture.feedback.comment.slice(0,34)+'…':state.lastCapture.feedback.comment)+'</div>' : '') +
+          (pickedMs.length ? '<div style="display:flex;flex-wrap:wrap;gap:4px;">'+pickedMs.slice(0,4).map(function(m){ return '<span style="font-size:.62rem;background:rgba(255,255,255,.25);border-radius:999px;padding:2px 7px;font-weight:700;">'+escapeHtml(m.title)+'</span>'; }).join('')+'</div>' : '') +
+        '</div>' +
+        '<div style="font-size:.6rem;opacity:.75;margin-top:6px;">'+days+'일째 진행 중'+(g.dueDate?' · '+dDay(g.dueDate):'')+'</div>' +
+      '</div>' +
+      (p.ratios.length>1 ? '<div style="display:flex;gap:6px;justify-content:center;margin-top:6px;">'+p.ratios.map(function(r){
+        return '<button type="button" data-scratio="'+pkey+':'+r.key+'" class="btn btn-ghost btn-sm" style="padding:3px 10px;font-size:.68rem;'+(ratioKey===r.key?'background:var(--violet-soft);color:var(--violet);':'')+'">'+r.label+'</button>';
+      }).join('')+'</div>' : '') +
+      '<div style="text-align:center;font-size:.68rem;font-weight:700;color:var(--ink-soft);margin-top:4px;">'+p.emoji+' '+p.label+'</div>' +
+    '</div>';
+  }
   function renderCommShare(body){
     var goals = state.profile.goals;
     if(!goals.length){
       body.innerHTML = '<div class="empty-state"><div class="e-icon">📣</div><p>목표를 만들면 진행 카드를 공유할 수 있어요.</p></div>';
       return;
     }
+    if(!state.shareComposer) state.shareComposer = { platforms:{insta:true}, ratio:{insta:'square',kakao:'wide',tiktok:'vertical',threads:'square'}, sel:{record:false, feedback:false, goal:true, ms:{}} };
+    var comp = state.shareComposer;
     var g = goals.find(function(x){ return x.id===state.activeGoalId; }) || goals[0];
     var pct = goalProgress(g);
     var color = pct>=67 ? '#1FC98E' : (pct>=34 ? '#FF9F1C' : '#FF4F64');
     var days = Math.max(1, Math.round((Date.now()-new Date(g.createdAt))/86400000));
+    var lastRec = state.profile.records[0];
+    var fbAvailable = !!(state.lastCapture && state.lastCapture.feedback && state.lastCapture.goal && state.lastCapture.goal.id===g.id);
+    var sel = comp.sel;
+    g.milestones.forEach(function(m){ if(!(m.id in sel.ms)) sel.ms[m.id] = (m.status==='doing'); });
+
+    function pickRow(key, icon, title, sub, disabled){
+      return '<div class="ms-row" data-scpick="'+key+'" '+(disabled?'data-scdisabled="1"':'')+' style="cursor:'+(disabled?'default':'pointer')+';opacity:'+(disabled?'.5':'1')+';">' +
+        '<div class="ms-main">' +
+          '<div class="sel-check'+(sel[key]&&!disabled?' on':'')+'" data-scchk="'+key+'">'+(sel[key]&&!disabled?'✓':'')+'</div>' +
+          '<div style="flex:1;min-width:0;">' +
+            '<div style="font-size:.84rem;font-weight:700;">'+icon+' '+title+'</div>' +
+            (sub ? '<div class="faint" style="font-size:.72rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+sub+'</div>' : '') +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }
+    var msRows = g.milestones.map(function(m){
+      return '<div class="ms-row" data-scms="'+m.id+'" style="cursor:pointer;">' +
+        '<div class="ms-main">' +
+          '<div class="sel-check'+(sel.ms[m.id]?' on':'')+'" data-scmschk="'+m.id+'">'+(sel.ms[m.id]?'✓':'')+'</div>' +
+          '<div style="flex:1;min-width:0;font-size:.82rem;font-weight:600;">'+(m.status==='done'?'✅ ':(m.status==='doing'?'🔥 ':'· '))+escapeHtml(m.title)+'</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    var selectedPlatforms = Object.keys(SHARE_PLATFORMS).filter(function(k){ return comp.platforms[k]; });
 
     body.innerHTML =
       '<p class="faint" style="margin:0 0 14px;">내 진행 카드</p>' +
@@ -2836,14 +2896,37 @@
         '<div class="ms-break">'+days+'일째 진행 중'+(g.dueDate?' · '+dDay(g.dueDate)+' 남음':'')+'</div></div>' +
       '</div></div>' +
 
-      '<p class="faint" style="margin:18px 0 4px;">외부로 공유하기</p>' +
-      '<div class="share-badges">' +
-        '<div class="badge-wrap"><button class="badge" style="background:#FEE500;color:#3A1D1D;" data-share="카카오톡" type="button">카</button>카카오톡</div>' +
-        '<div class="badge-wrap"><button class="badge" style="background:linear-gradient(135deg,#C13584,#F77737);" data-share="인스타그램" type="button">인</button>인스타</div>' +
-        '<div class="badge-wrap"><button class="badge" style="background:#111;" data-share="틱톡" type="button">틱</button>틱톡</div>' +
-        '<div class="badge-wrap"><button class="badge" style="background:#2b2b2b;" data-share="쓰레드" type="button">쓰</button>쓰레드</div>' +
-        '<div class="badge-wrap"><button class="badge" style="background:linear-gradient(135deg,var(--mz1),var(--mz2));" data-share="공유" type="button">↗</button>더보기</div>' +
+      '<div class="card" style="background:var(--gold-soft);border:1.5px solid var(--gold-line);margin-top:16px;">' +
+        '<b style="font-size:.82rem;">📌 플랫폼 맞춤 카드가 뭐예요?</b>' +
+        '<p style="font-size:.78rem;line-height:1.6;margin:6px 0 0;color:var(--ink-soft);">공유할 곳을 고르면 그 자리에 어울리는 비율로 카드 모양이 자동으로 바뀌어요. 인스타그램은 정사각형(1:1)이나 세로형(3:4), 틱톡은 세로로 긴 화면(9:16)이 잘 어울리고, 카카오톡·쓰레드는 각자에 맞는 카드 모양으로 만들어져요. 카드에 무엇을 담을지도 기록·AI 피드백·달성률·마일스톤 중에서 직접 골라 아래에서 바로 미리 볼 수 있어요.</p>' +
       '</div>' +
+
+      '<p class="faint" style="margin:18px 0 4px;">공유할 플랫폼 고르기 · 여러 개 선택 가능</p>' +
+      '<div class="share-badges">' +
+        Object.keys(SHARE_PLATFORMS).map(function(k){
+          var p = SHARE_PLATFORMS[k];
+          var on = !!comp.platforms[k];
+          return '<div class="badge-wrap" data-scplat="'+k+'" style="cursor:pointer;">' +
+            '<button type="button" class="badge" style="background:'+p.bg+';color:'+p.text+';box-shadow:'+(on?'0 0 0 3px var(--violet)':'var(--shadow-sm)')+';opacity:'+(on?'1':'.5')+';">'+p.badgeChar+'</button>' +
+            p.label +
+          '</div>';
+        }).join('') +
+      '</div>' +
+
+      '<p class="faint" style="margin:18px 0 4px;">카드에 담을 내용 고르기</p>' +
+      '<div class="ms-list">' +
+        pickRow('goal','🎯','목표 & 달성률', escapeHtml(g.title)+' · '+pct+'%') +
+        pickRow('record','📝','최근 기록', lastRec ? escapeHtml(lastRec.text.length>30?lastRec.text.slice(0,30)+'…':lastRec.text) : '아직 기록이 없어요', !lastRec) +
+        pickRow('feedback','🤖','AI 피드백', fbAvailable ? escapeHtml(state.lastCapture.feedback.verdict) : '홈에서 기록을 남기면 담을 수 있어요', !fbAvailable) +
+      '</div>' +
+      (g.milestones.length ? '<p class="faint" style="margin:14px 0 6px;">마일스톤</p><div class="ms-list">'+msRows+'</div>' : '') +
+
+      '<p class="faint" style="margin:18px 0 8px;">미리보기</p>' +
+      (selectedPlatforms.length
+        ? '<div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;">' + selectedPlatforms.map(function(k){ return platformPreviewHtml(k, g, pct, sel, days); }).join('') + '</div>'
+        : '<div class="empty-state" style="padding:20px;"><p class="faint" style="margin:0;">플랫폼을 먼저 선택해주세요.</p></div>') +
+
+      '<button class="mz-btn" id="shareComposedBtn" type="button" style="margin-top:20px;'+(selectedPlatforms.length?'':'opacity:.45;pointer-events:none;')+'" '+(selectedPlatforms.length?'':'disabled')+'>선택한 형식으로 공유하기 🔗</button>' +
       '<p class="comm-hint" id="shareHint"></p>' +
 
       '<div class="feed-preview-box" id="toFeedLink" style="cursor:pointer;">내 카드가 피드 탭에도 보여요 · 눌러서 보기 ›</div>';
@@ -2851,12 +2934,39 @@
     var hintEl = document.getElementById('shareHint');
     var canShare = !!(navigator.share);
     hintEl.textContent = canShare
-      ? '탭하면 기기의 공유 시트가 열려요 — 원하는 앱을 직접 골라 보내주세요.'
-      : '이 브라우저는 공유 시트를 지원하지 않아요 — 탭하면 공유 문구를 복사해드려요.';
+      ? '공유하기를 누르면 기기의 공유 시트가 열려요 — 원하는 앱을 직접 골라 보내주세요.'
+      : '이 브라우저는 공유 시트를 지원하지 않아요 — 공유하기를 누르면 문구를 복사해드려요.';
 
-    body.querySelectorAll('[data-share]').forEach(function(btn){
-      btn.addEventListener('click', function(){ shareGoalCard(g, pct); });
+    body.querySelectorAll('[data-scplat]').forEach(function(el){
+      el.addEventListener('click', function(){
+        comp.platforms[el.dataset.scplat] = !comp.platforms[el.dataset.scplat];
+        renderCommShare(body);
+      });
     });
+    body.querySelectorAll('[data-scratio]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var parts = btn.dataset.scratio.split(':');
+        comp.ratio[parts[0]] = parts[1];
+        renderCommShare(body);
+      });
+    });
+    body.querySelectorAll('[data-scpick]').forEach(function(row){
+      row.addEventListener('click', function(){
+        if(row.dataset.scdisabled==='1') return;
+        sel[row.dataset.scpick] = !sel[row.dataset.scpick];
+        renderCommShare(body);
+      });
+    });
+    body.querySelectorAll('[data-scms]').forEach(function(row){
+      row.addEventListener('click', function(){
+        var id = row.dataset.scms;
+        sel.ms[id] = !sel.ms[id];
+        renderCommShare(body);
+      });
+    });
+    var shareBtn = document.getElementById('shareComposedBtn');
+    if(shareBtn) shareBtn.addEventListener('click', function(){ shareGoalCard(g, pct, sel, days); });
     document.getElementById('toFeedLink').addEventListener('click', function(){ state.commSubTab='feed'; renderCommScreen(); });
   }
 
@@ -3616,8 +3726,23 @@
     }
   }
 
-  async function shareGoalCard(g, pct){
-    var text = '아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪';
+  async function shareGoalCard(g, pct, sel, days){
+    var text;
+    if(sel){
+      var lines = [];
+      if(sel.goal) lines.push('아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪');
+      var lastRec = state.profile.records[0];
+      if(sel.record && lastRec) lines.push('오늘 기록: '+lastRec.text);
+      if(sel.feedback && state.lastCapture && state.lastCapture.feedback && state.lastCapture.goal && state.lastCapture.goal.id===g.id){
+        lines.push('AI 피드백: '+state.lastCapture.feedback.comment);
+      }
+      var pickedMs = g.milestones.filter(function(m){ return sel.ms[m.id]; });
+      if(pickedMs.length) lines.push('마일스톤: '+pickedMs.map(function(m){ return m.title; }).join(', '));
+      if(typeof days==='number') lines.push(days+'일째 진행 중');
+      text = lines.join('\n') || ('아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪');
+    } else {
+      text = '아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪';
+    }
     try{
       if(navigator.share){
         await navigator.share({ title:'아워골', text: text });
