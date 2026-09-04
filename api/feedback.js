@@ -14,7 +14,7 @@ module.exports = async function handler(req, res) {
   var goalTitle = body.goalTitle;
   var milestones = Array.isArray(body.milestones) ? body.milestones : [];
   var text = body.text;
-  var customPrompt = typeof body.customPrompt === 'string' ? body.customPrompt.trim().slice(0, 800) : '';
+  var customPrompt = typeof body.customPrompt === 'string' ? body.customPrompt.trim().slice(0, 2000) : '';
   if (!goalTitle || !text) {
     res.status(400).json({ error: 'goalTitle and text are required' });
     return;
