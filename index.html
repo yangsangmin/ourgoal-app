@@ -2485,7 +2485,9 @@
           var milestones = tmpl.milestones.filter(function(m){ return m.title; }).map(function(m){
             return { id: uid('ms'), title: m.title, status:'todo', dueDate:null, tasks:(m.tasks||[]).map(function(tk){ return { id: uid('task'), title: tk, done:false }; }) };
           });
-          state.profile.goals.push({ id: newId(), title: title, dueDate: null, category: 'etc', topic: major ? (major+'/'+(tmpl.topicMinor||'')) : '', createdAt: nowISO(), visibility:'public', archivedAt:null, result:null, milestones: milestones });
+          var newGoal = { id: newId(), title: title, dueDate: null, category: 'etc', topic: major ? (major+'/'+(tmpl.topicMinor||'')) : '', createdAt: nowISO(), visibility:'public', archivedAt:null, result:null, milestones: milestones };
+          state.profile.goals.push(newGoal);
+          state.activeGoalId = newGoal.id;
           await saveProfile();
           closeModal();
           renderAll();
@@ -2550,7 +2552,9 @@
           var title = sheet.querySelector('#mGoalTitle').value.trim();
           if(!title){ return; }
           var due = sheet.querySelector('#mGoalDue').value;
-          state.profile.goals.push({ id: newId(), title: title, dueDate: due||null, category: chosenCat, topic: topicRef.value, createdAt: nowISO(), visibility: sheet.querySelector('#mGoalVis').value, archivedAt: null, result: null, milestones: templateMilestones(chosenCat) });
+          var newGoal = { id: newId(), title: title, dueDate: due||null, category: chosenCat, topic: topicRef.value, createdAt: nowISO(), visibility: sheet.querySelector('#mGoalVis').value, archivedAt: null, result: null, milestones: templateMilestones(chosenCat) };
+          state.profile.goals.push(newGoal);
+          state.activeGoalId = newGoal.id;
           await saveProfile();
           closeModal();
           renderAll();
