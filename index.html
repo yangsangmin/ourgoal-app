@@ -2033,7 +2033,7 @@
     document.querySelector('.bottomnav').style.display = 'none';
     window.scrollTo({top:0, behavior:'auto'});
     var s = state.profile.settings;
-    state.fbSetup = { step: (s.customFeedbackActive && s.customFeedbackPrompt) ? 'status' : 'chat', desc:'', draft:'', generated:'' };
+    state.fbSetup = { step: s.customFeedbackPrompt ? 'status' : 'chat', desc:'', draft:'', generated:'' };
     renderFeedbackSetup();
   }
   function closeFeedbackSetup(){
@@ -2199,7 +2199,7 @@
       updateMCounter();
       manualInput.addEventListener('input', updateMCounter);
       document.getElementById('fbManualCancelBtn').addEventListener('click', function(){
-        st.step = (settings.customFeedbackActive && settings.customFeedbackPrompt) ? 'status' : 'chat';
+        st.step = settings.customFeedbackPrompt ? 'status' : 'chat';
         renderFeedbackSetup();
       });
       document.getElementById('fbManualSaveBtn').addEventListener('click', async function(){
