@@ -3235,6 +3235,7 @@
     var lastRec = state.profile.records[0];
     var fbOk = sel.feedback && state.lastCapture && state.lastCapture.feedback && state.lastCapture.goal && state.lastCapture.goal.id===g.id;
     var pickedMs = g.milestones.filter(function(m){ return sel.ms[m.id]; });
+    var maxContentY = dims.h - pad*1.55;
 
     if(sel.goal){
       ctx.fillStyle = textColor;
@@ -3252,12 +3253,14 @@
     }
 
     function drawChip(icon, text){
+      if(y >= maxContentY) return;
       var fontSize = Math.round(dims.w*0.029);
       ctx.font = '600 '+fontSize+'px "Noto Sans KR",sans-serif';
       var chipPadX = dims.w*0.028, chipPadY = dims.w*0.022;
       var lines = scWrapLines(ctx, icon+' '+text, innerW - chipPadX*2, 2);
       var lineH = dims.w*0.037;
       var chipH = chipPadY*2 + lines.length*lineH;
+      if(y + chipH > maxContentY) return;
       ctx.fillStyle = 'rgba(255,255,255,.16)';
       scRoundRect(ctx, pad, y, innerW, chipH, dims.w*0.018); ctx.fill();
       ctx.fillStyle = textColor;
@@ -3267,14 +3270,15 @@
     if(sel.record && lastRec) drawChip('📝', lastRec.text);
     if(fbOk) drawChip('🤖', state.lastCapture.feedback.comment);
 
-    if(pickedMs.length){
+    if(pickedMs.length && y < maxContentY){
       var chipFont = Math.round(dims.w*0.025);
       ctx.font = '700 '+chipFont+'px "Noto Sans KR",sans-serif';
       var cx = pad, cy = y, rowH = dims.w*0.048;
       pickedMs.slice(0,4).forEach(function(m){
+        if(cy >= maxContentY) return;
         var label = '· '+m.title;
         var w = ctx.measureText(label).width + dims.w*0.03;
-        if(cx + w > pad+innerW){ cx = pad; cy += rowH+dims.w*0.012; }
+        if(cx + w > pad+innerW){ cx = pad; cy += rowH+dims.w*0.012; if(cy>=maxContentY) return; }
         ctx.fillStyle = 'rgba(255,255,255,.2)';
         scRoundRect(ctx, cx, cy, w, rowH*0.82, rowH*0.4); ctx.fill();
         ctx.fillStyle = textColor;
@@ -3284,10 +3288,11 @@
       y = cy + rowH + dims.w*0.02;
     }
 
+    var footerY = Math.max(y + dims.w*0.03, dims.h - pad*0.6);
     ctx.globalAlpha = .7;
     ctx.font = '600 ' + Math.round(dims.w*0.024) + 'px "Noto Sans KR",sans-serif';
     ctx.fillStyle = textColor;
-    ctx.fillText(days+'일째 진행 중'+(g.dueDate?' · '+dDay(g.dueDate):''), pad, dims.h-pad*0.6);
+    ctx.fillText(days+'일째 진행 중'+(g.dueDate?' · '+dDay(g.dueDate):''), pad, footerY);
     ctx.globalAlpha = 1;
 
     return canvas;
