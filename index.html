@@ -3156,39 +3156,165 @@
     tiktok:  { label:'틱톡',       badgeChar:'틱', emoji:'🎵', bg:'#111', text:'#fff', ratios:[{key:'vertical', label:'9:16',   ratio:'9/16'}] },
     threads: { label:'쓰레드',     badgeChar:'쓰', emoji:'🧵', bg:'#2b2b2b', text:'#fff', ratios:[{key:'square',  label:'1:1',    ratio:'1/1'}] }
   };
-  function platformPreviewHtml(pkey, g, pct, sel, days){
+  var SHARE_CANVAS_DIMS = {
+    kakao:   { wide:     {w:800, h:419} },
+    insta:   { square:   {w:720, h:720}, portrait:{w:720, h:960} },
+    tiktok:  { vertical: {w:720, h:1280} },
+    threads: { square:   {w:720, h:720} }
+  };
+  function scRoundRect(ctx, x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.arcTo(x+w, y, x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x, y+h, r);
+    ctx.arcTo(x, y+h, x, y, r);
+    ctx.arcTo(x, y, x+w, y, r);
+    ctx.closePath();
+  }
+  function scWrapLines(ctx, text, maxWidth, maxLines){
+    var chars = String(text).split('');
+    var lines = [], line = '';
+    for(var i=0;i<chars.length;i++){
+      var test = line + chars[i];
+      if(ctx.measureText(test).width > maxWidth && line){
+        lines.push(line);
+        line = chars[i];
+        if(maxLines && lines.length>=maxLines) break;
+      } else {
+        line = test;
+      }
+    }
+    if(maxLines && lines.length>=maxLines){
+      lines = lines.slice(0, maxLines);
+      lines[maxLines-1] = lines[maxLines-1].replace(/.$/, '…');
+    } else if(line){
+      lines.push(line);
+    }
+    return lines;
+  }
+  function scDrawLines(ctx, lines, x, y, lineHeight){
+    lines.forEach(function(l, i){ ctx.fillText(l, x, y + i*lineHeight); });
+    return y + lines.length*lineHeight;
+  }
+  /* 선택된 목표·플랫폼 정보를 바탕으로 실제 공유될 이미지를 캔버스로 그려낸다 */
+  async function generateShareImage(pkey, g, pct, sel, days){
+    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; } catch(e){} }
     var p = SHARE_PLATFORMS[pkey];
     var comp = state.shareComposer;
     var ratioKey = comp.ratio[pkey] || p.ratios[0].key;
-    var ratioObj = p.ratios.filter(function(r){ return r.key===ratioKey; })[0] || p.ratios[0];
+    var dims = (SHARE_CANVAS_DIMS[pkey] && SHARE_CANVAS_DIMS[pkey][ratioKey]) || SHARE_CANVAS_DIMS[pkey][Object.keys(SHARE_CANVAS_DIMS[pkey])[0]];
+    var canvas = document.createElement('canvas');
+    canvas.width = dims.w; canvas.height = dims.h;
+    var ctx = canvas.getContext('2d');
+
+    if(pkey==='insta'){
+      var grad = ctx.createLinearGradient(0,0,dims.w,dims.h);
+      grad.addColorStop(0,'#C13584'); grad.addColorStop(1,'#F77737');
+      ctx.fillStyle = grad;
+    } else {
+      ctx.fillStyle = p.bg==='#111' ? '#111111' : (p.bg.indexOf('gradient')!==-1 ? '#2b2b2b' : p.bg);
+    }
+    ctx.fillRect(0,0,dims.w,dims.h);
+
+    var textColor = p.text;
+    var pad = Math.round(dims.w*0.075);
+    var innerW = dims.w - pad*2;
+    var y = pad + dims.w*0.03;
+
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = textColor;
+    ctx.globalAlpha = .92;
+    ctx.font = '700 ' + Math.round(dims.w*0.034) + 'px "Noto Sans KR",sans-serif';
+    ctx.fillText('아워골', pad, y);
+    ctx.globalAlpha = .6;
+    ctx.font = '500 ' + Math.round(dims.w*0.024) + 'px "Noto Sans KR",sans-serif';
+    ctx.fillText(p.emoji+' '+p.label+' 맞춤 카드', pad, y + dims.w*0.036);
+    ctx.globalAlpha = 1;
+    y += dims.w*0.11;
+
     var lastRec = state.profile.records[0];
     var fbOk = sel.feedback && state.lastCapture && state.lastCapture.feedback && state.lastCapture.goal && state.lastCapture.goal.id===g.id;
     var pickedMs = g.milestones.filter(function(m){ return sel.ms[m.id]; });
-    return '<div style="width:100%;max-width:220px;">' +
-      '<div style="border-radius:18px;overflow:hidden;box-shadow:var(--shadow-sm);aspect-ratio:'+ratioObj.ratio+';background:'+p.bg+';color:'+p.text+';padding:16px;display:flex;flex-direction:column;">' +
-        '<div style="font-size:.66rem;font-weight:900;opacity:.85;">아워골 · '+p.emoji+' '+p.label+'</div>' +
-        '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:7px;margin-top:6px;overflow:hidden;">' +
-          (sel.goal ? '<div><div style="font-size:1rem;font-weight:900;line-height:1.3;">'+escapeHtml(g.title)+'</div><div style="font-size:.82rem;font-weight:800;margin-top:2px;">'+pct+'% 달성 중</div></div>' : '') +
-          (sel.record && lastRec ? '<div style="font-size:.7rem;background:rgba(255,255,255,.2);border-radius:9px;padding:5px 7px;">📝 '+escapeHtml(lastRec.text.length>34?lastRec.text.slice(0,34)+'…':lastRec.text)+'</div>' : '') +
-          (fbOk ? '<div style="font-size:.7rem;background:rgba(255,255,255,.2);border-radius:9px;padding:5px 7px;">🤖 '+escapeHtml(state.lastCapture.feedback.comment.length>34?state.lastCapture.feedback.comment.slice(0,34)+'…':state.lastCapture.feedback.comment)+'</div>' : '') +
-          (pickedMs.length ? '<div style="display:flex;flex-wrap:wrap;gap:4px;">'+pickedMs.slice(0,4).map(function(m){ return '<span style="font-size:.62rem;background:rgba(255,255,255,.25);border-radius:999px;padding:2px 7px;font-weight:700;">'+escapeHtml(m.title)+'</span>'; }).join('')+'</div>' : '') +
-        '</div>' +
-        '<div style="font-size:.6rem;opacity:.75;margin-top:6px;">'+days+'일째 진행 중'+(g.dueDate?' · '+dDay(g.dueDate):'')+'</div>' +
-      '</div>' +
-      (p.ratios.length>1 ? '<div style="display:flex;gap:6px;justify-content:center;margin-top:6px;">'+p.ratios.map(function(r){
-        return '<button type="button" data-scratio="'+pkey+':'+r.key+'" class="btn btn-ghost btn-sm" style="padding:3px 10px;font-size:.68rem;'+(ratioKey===r.key?'background:var(--violet-soft);color:var(--violet);':'')+'">'+r.label+'</button>';
-      }).join('')+'</div>' : '') +
-      '<div style="text-align:center;font-size:.68rem;font-weight:700;color:var(--ink-soft);margin-top:4px;">'+p.emoji+' '+p.label+'</div>' +
-    '</div>';
+
+    if(sel.goal){
+      ctx.fillStyle = textColor;
+      ctx.font = '900 ' + Math.round(dims.w*0.07) + 'px "Noto Sans KR",sans-serif';
+      y = scDrawLines(ctx, scWrapLines(ctx, g.title, innerW, 2), pad, y, dims.w*0.08) + dims.w*0.015;
+      ctx.font = '800 ' + Math.round(dims.w*0.05) + 'px "Noto Sans KR",sans-serif';
+      ctx.fillText(pct+'% 달성 중', pad, y);
+      y += dims.w*0.055;
+      var barH = Math.round(dims.w*0.02);
+      ctx.fillStyle = 'rgba(255,255,255,.3)';
+      scRoundRect(ctx, pad, y, innerW, barH, barH/2); ctx.fill();
+      ctx.fillStyle = textColor;
+      scRoundRect(ctx, pad, y, Math.max(barH, innerW*Math.min(100,pct)/100), barH, barH/2); ctx.fill();
+      y += barH + dims.w*0.055;
+    }
+
+    function drawChip(icon, text){
+      var fontSize = Math.round(dims.w*0.029);
+      ctx.font = '600 '+fontSize+'px "Noto Sans KR",sans-serif';
+      var chipPadX = dims.w*0.028, chipPadY = dims.w*0.022;
+      var lines = scWrapLines(ctx, icon+' '+text, innerW - chipPadX*2, 2);
+      var lineH = dims.w*0.037;
+      var chipH = chipPadY*2 + lines.length*lineH;
+      ctx.fillStyle = 'rgba(255,255,255,.16)';
+      scRoundRect(ctx, pad, y, innerW, chipH, dims.w*0.018); ctx.fill();
+      ctx.fillStyle = textColor;
+      scDrawLines(ctx, lines, pad+chipPadX, y+chipPadY+lineH*0.72, lineH);
+      y += chipH + dims.w*0.022;
+    }
+    if(sel.record && lastRec) drawChip('📝', lastRec.text);
+    if(fbOk) drawChip('🤖', state.lastCapture.feedback.comment);
+
+    if(pickedMs.length){
+      var chipFont = Math.round(dims.w*0.025);
+      ctx.font = '700 '+chipFont+'px "Noto Sans KR",sans-serif';
+      var cx = pad, cy = y, rowH = dims.w*0.048;
+      pickedMs.slice(0,4).forEach(function(m){
+        var label = '· '+m.title;
+        var w = ctx.measureText(label).width + dims.w*0.03;
+        if(cx + w > pad+innerW){ cx = pad; cy += rowH+dims.w*0.012; }
+        ctx.fillStyle = 'rgba(255,255,255,.2)';
+        scRoundRect(ctx, cx, cy, w, rowH*0.82, rowH*0.4); ctx.fill();
+        ctx.fillStyle = textColor;
+        ctx.fillText(label, cx+dims.w*0.015, cy+rowH*0.56);
+        cx += w + dims.w*0.014;
+      });
+      y = cy + rowH + dims.w*0.02;
+    }
+
+    ctx.globalAlpha = .7;
+    ctx.font = '600 ' + Math.round(dims.w*0.024) + 'px "Noto Sans KR",sans-serif';
+    ctx.fillStyle = textColor;
+    ctx.fillText(days+'일째 진행 중'+(g.dueDate?' · '+dDay(g.dueDate):''), pad, dims.h-pad*0.6);
+    ctx.globalAlpha = 1;
+
+    return canvas;
+  }
+  function buildShareText(g, pct, sel, days){
+    var lines = [];
+    if(sel.goal) lines.push('아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪');
+    var lastRec = state.profile.records[0];
+    if(sel.record && lastRec) lines.push('오늘 기록: '+lastRec.text);
+    if(sel.feedback && state.lastCapture && state.lastCapture.feedback && state.lastCapture.goal && state.lastCapture.goal.id===g.id){
+      lines.push('AI 피드백: '+state.lastCapture.feedback.comment);
+    }
+    var pickedMs = g.milestones.filter(function(m){ return sel.ms[m.id]; });
+    if(pickedMs.length) lines.push('마일스톤: '+pickedMs.map(function(m){ return m.title; }).join(', '));
+    if(typeof days==='number') lines.push(days+'일째 진행 중');
+    return lines.join('\n') || ('아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪');
   }
   function renderCommShare(body){
-    var goals = state.profile.goals;
+    var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     if(!goals.length){
       body.innerHTML = '<div class="empty-state"><div class="e-icon">📣</div><p>목표를 만들면 진행 카드를 공유할 수 있어요.</p></div>';
       return;
     }
-    if(!state.shareComposer) state.shareComposer = { platforms:{insta:true}, ratio:{insta:'square',kakao:'wide',tiktok:'vertical',threads:'square'}, sel:{record:false, feedback:false, goal:true, ms:{}} };
+    if(!state.shareComposer) state.shareComposer = { platforms:{insta:true}, ratio:{insta:'square',kakao:'wide',tiktok:'vertical',threads:'square'}, sel:{record:false, feedback:false, goal:true, ms:{}}, previews:{} };
     var comp = state.shareComposer;
+    if(!comp.previews) comp.previews = {};
+    if(!goals.some(function(g){ return g.id===state.activeGoalId; })) state.activeGoalId = goals[0].id;
     var g = goals.find(function(x){ return x.id===state.activeGoalId; }) || goals[0];
     var pct = goalProgress(g);
     var color = pct>=67 ? '#1FC98E' : (pct>=34 ? '#FF9F1C' : '#FF4F64');
@@ -3197,6 +3323,8 @@
     var fbAvailable = !!(state.lastCapture && state.lastCapture.feedback && state.lastCapture.goal && state.lastCapture.goal.id===g.id);
     var sel = comp.sel;
     g.milestones.forEach(function(m){ if(!(m.id in sel.ms)) sel.ms[m.id] = (m.status==='doing'); });
+
+    function resetPreviews(){ comp.previews = {}; }
 
     function pickRow(key, icon, title, sub, disabled){
       return '<div class="ms-row" data-scpick="'+key+'" '+(disabled?'data-scdisabled="1"':'')+' style="cursor:'+(disabled?'default':'pointer')+';opacity:'+(disabled?'.5':'1')+';">' +
@@ -3219,21 +3347,32 @@
     }).join('');
 
     var selectedPlatforms = Object.keys(SHARE_PLATFORMS).filter(function(k){ return comp.platforms[k]; });
+    var previewKeys = Object.keys(comp.previews).filter(function(k){ return comp.platforms[k]; });
 
     body.innerHTML =
-      '<p class="faint" style="margin:0 0 14px;">내 진행 카드</p>' +
+      (goals.length>1 ? '<div class="cat-major-row" style="margin-bottom:14px;">' + goals.map(function(gg){
+        return '<button class="cat-major'+(gg.id===g.id?' active':'')+'" data-sharegoal="'+gg.id+'" type="button">'+escapeHtml(gg.title)+'</button>';
+      }).join('') + '</div>' : '') +
+
       '<div class="card"><div class="goal-body">' +
         '<div class="gauge">'+gaugeSvg(pct,64,color)+'</div>' +
         '<div class="goal-stats"><div class="ms-total" style="font-size:.95rem;">'+escapeHtml(g.title)+'</div>' +
         '<div class="ms-break">'+days+'일째 진행 중'+(g.dueDate?' · '+dDay(g.dueDate)+' 남음':'')+'</div></div>' +
       '</div></div>' +
 
-      '<div class="card" style="background:var(--gold-soft);border:1.5px solid var(--gold-line);margin-top:16px;">' +
-        '<b style="font-size:.82rem;">📌 플랫폼 맞춤 카드가 뭐예요?</b>' +
-        '<p style="font-size:.78rem;line-height:1.6;margin:6px 0 0;color:var(--ink-soft);">공유할 곳을 고르면 그 자리에 어울리는 비율로 카드 모양이 자동으로 바뀌어요. 인스타그램은 정사각형(1:1)이나 세로형(3:4), 틱톡은 세로로 긴 화면(9:16)이 잘 어울리고, 카카오톡·쓰레드는 각자에 맞는 카드 모양으로 만들어져요. 카드에 무엇을 담을지도 기록·AI 피드백·달성률·마일스톤 중에서 직접 골라 아래에서 바로 미리 볼 수 있어요.</p>' +
+      '<div class="card" style="background:var(--gold-soft);border:1.5px solid var(--gold-line);margin-top:14px;">' +
+        '<p style="font-size:.78rem;line-height:1.6;margin:0;color:var(--ink-soft);">📌 <b>①</b> 무엇을 담을지 고르고 <b>②</b> 올릴 곳을 고른 다음 <b>③ 미리보기</b>를 누르면, 실제로 공유될 이미지가 그 자리에 딱 맞는 비율(예: 인스타 1:1·틱톡 9:16)로 미리 만들어져요. 마음에 들면 바로 공유하거나 저장할 수 있어요.</p>' +
       '</div>' +
 
-      '<p class="faint" style="margin:18px 0 4px;">공유할 플랫폼 고르기 · 여러 개 선택 가능</p>' +
+      '<p class="faint" style="margin:18px 0 4px;">① 공유할 목표 선택하기 · 여러 개 골라도 돼요</p>' +
+      '<div class="ms-list">' +
+        pickRow('goal','🎯','목표 & 달성률', escapeHtml(g.title)+' · '+pct+'%') +
+        pickRow('record','📝','최근 기록', lastRec ? escapeHtml(lastRec.text.length>30?lastRec.text.slice(0,30)+'…':lastRec.text) : '아직 기록이 없어요', !lastRec) +
+        pickRow('feedback','🤖','AI 피드백', fbAvailable ? escapeHtml(state.lastCapture.feedback.verdict) : '홈에서 기록을 남기면 담을 수 있어요', !fbAvailable) +
+      '</div>' +
+      (g.milestones.length ? '<p class="faint" style="margin:14px 0 6px;">마일스톤도 같이 담기</p><div class="ms-list">'+msRows+'</div>' : '') +
+
+      '<p class="faint" style="margin:20px 0 4px;">② 어디에 올릴까요 · 여러 곳 선택 가능</p>' +
       '<div class="share-badges">' +
         Object.keys(SHARE_PLATFORMS).map(function(k){
           var p = SHARE_PLATFORMS[k];
@@ -3244,34 +3383,50 @@
           '</div>';
         }).join('') +
       '</div>' +
+      (selectedPlatforms.some(function(k){ return SHARE_PLATFORMS[k].ratios.length>1; })
+        ? '<div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">' +
+          selectedPlatforms.filter(function(k){ return SHARE_PLATFORMS[k].ratios.length>1; }).map(function(k){
+            var p = SHARE_PLATFORMS[k];
+            var ratioKey = comp.ratio[k] || p.ratios[0].key;
+            return '<div style="display:flex;align-items:center;gap:8px;">' +
+              '<span class="faint" style="font-size:.72rem;flex:0 0 auto;">'+p.emoji+' '+p.label+' 비율</span>' +
+              p.ratios.map(function(r){
+                return '<button type="button" data-scratio="'+k+':'+r.key+'" class="btn btn-ghost btn-sm" style="padding:3px 10px;font-size:.68rem;'+(ratioKey===r.key?'background:var(--violet-soft);color:var(--violet);':'')+'">'+r.label+'</button>';
+              }).join('') +
+            '</div>';
+          }).join('') +
+        '</div>' : '') +
 
-      '<p class="faint" style="margin:18px 0 4px;">카드에 담을 내용 고르기</p>' +
-      '<div class="ms-list">' +
-        pickRow('goal','🎯','목표 & 달성률', escapeHtml(g.title)+' · '+pct+'%') +
-        pickRow('record','📝','최근 기록', lastRec ? escapeHtml(lastRec.text.length>30?lastRec.text.slice(0,30)+'…':lastRec.text) : '아직 기록이 없어요', !lastRec) +
-        pickRow('feedback','🤖','AI 피드백', fbAvailable ? escapeHtml(state.lastCapture.feedback.verdict) : '홈에서 기록을 남기면 담을 수 있어요', !fbAvailable) +
+      '<button class="mz-btn" id="sharePreviewBtn" type="button" style="margin-top:20px;'+(selectedPlatforms.length?'':'opacity:.45;pointer-events:none;')+'" '+(selectedPlatforms.length?'':'disabled')+'>③ 미리보기 만들기 🖼️</button>' +
+      (selectedPlatforms.length ? '' : '<p class="faint" style="text-align:center;margin-top:6px;">먼저 올릴 곳을 골라주세요</p>') +
+
+      '<div id="sharePreviewArea" style="margin-top:18px;">' +
+        (previewKeys.length ? previewKeys.map(function(k){
+          var p = SHARE_PLATFORMS[k];
+          return '<div style="margin-bottom:18px;">' +
+            '<p class="faint" style="margin:0 0 6px;">'+p.emoji+' '+p.label+' 미리보기</p>' +
+            '<img src="'+comp.previews[k]+'" alt="'+p.label+' 공유 이미지" style="width:100%;border-radius:18px;box-shadow:var(--shadow-sm);display:block;">' +
+            '<div style="display:flex;gap:8px;margin-top:8px;">' +
+              '<button class="btn btn-primary btn-sm" style="flex:1;" data-imgshare="'+k+'" type="button">공유하기</button>' +
+              '<button class="btn btn-ghost btn-sm" style="flex:1;" data-imgsave="'+k+'" type="button">이미지 저장</button>' +
+            '</div>' +
+          '</div>';
+        }).join('') : '') +
       '</div>' +
-      (g.milestones.length ? '<p class="faint" style="margin:14px 0 6px;">마일스톤</p><div class="ms-list">'+msRows+'</div>' : '') +
-
-      '<p class="faint" style="margin:18px 0 8px;">미리보기</p>' +
-      (selectedPlatforms.length
-        ? '<div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;">' + selectedPlatforms.map(function(k){ return platformPreviewHtml(k, g, pct, sel, days); }).join('') + '</div>'
-        : '<div class="empty-state" style="padding:20px;"><p class="faint" style="margin:0;">플랫폼을 먼저 선택해주세요.</p></div>') +
-
-      '<button class="mz-btn" id="shareComposedBtn" type="button" style="margin-top:20px;'+(selectedPlatforms.length?'':'opacity:.45;pointer-events:none;')+'" '+(selectedPlatforms.length?'':'disabled')+'>선택한 형식으로 공유하기 🔗</button>' +
-      '<p class="comm-hint" id="shareHint"></p>' +
 
       '<div class="feed-preview-box" id="toFeedLink" style="cursor:pointer;">내 카드가 피드 탭에도 보여요 · 눌러서 보기 ›</div>';
 
-    var hintEl = document.getElementById('shareHint');
-    var canShare = !!(navigator.share);
-    hintEl.textContent = canShare
-      ? '공유하기를 누르면 기기의 공유 시트가 열려요 — 원하는 앱을 직접 골라 보내주세요.'
-      : '이 브라우저는 공유 시트를 지원하지 않아요 — 공유하기를 누르면 문구를 복사해드려요.';
-
+    body.querySelectorAll('[data-sharegoal]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        state.activeGoalId = btn.dataset.sharegoal;
+        resetPreviews();
+        renderCommShare(body);
+      });
+    });
     body.querySelectorAll('[data-scplat]').forEach(function(el){
       el.addEventListener('click', function(){
         comp.platforms[el.dataset.scplat] = !comp.platforms[el.dataset.scplat];
+        resetPreviews();
         renderCommShare(body);
       });
     });
@@ -3280,6 +3435,7 @@
         e.stopPropagation();
         var parts = btn.dataset.scratio.split(':');
         comp.ratio[parts[0]] = parts[1];
+        resetPreviews();
         renderCommShare(body);
       });
     });
@@ -3287,6 +3443,7 @@
       row.addEventListener('click', function(){
         if(row.dataset.scdisabled==='1') return;
         sel[row.dataset.scpick] = !sel[row.dataset.scpick];
+        resetPreviews();
         renderCommShare(body);
       });
     });
@@ -3294,11 +3451,63 @@
       row.addEventListener('click', function(){
         var id = row.dataset.scms;
         sel.ms[id] = !sel.ms[id];
+        resetPreviews();
         renderCommShare(body);
       });
     });
-    var shareBtn = document.getElementById('shareComposedBtn');
-    if(shareBtn) shareBtn.addEventListener('click', function(){ shareGoalCard(g, pct, sel, days); });
+    var previewBtn = document.getElementById('sharePreviewBtn');
+    if(previewBtn) previewBtn.addEventListener('click', async function(){
+      var targets = Object.keys(SHARE_PLATFORMS).filter(function(k){ return comp.platforms[k]; });
+      if(!targets.length){ toast('올릴 곳을 먼저 골라주세요'); return; }
+      previewBtn.textContent = '이미지 만드는 중…';
+      previewBtn.style.pointerEvents = 'none';
+      var built = {};
+      for(var i=0;i<targets.length;i++){
+        var canvas = await generateShareImage(targets[i], g, pct, sel, days);
+        built[targets[i]] = canvas.toDataURL('image/png');
+      }
+      comp.previews = built;
+      renderCommShare(body);
+      toast('미리보기를 만들었어요');
+      var area = document.getElementById('sharePreviewArea');
+      if(area) area.scrollIntoView({ behavior:'smooth', block:'start' });
+    });
+    body.querySelectorAll('[data-imgshare]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var k = btn.dataset.imgshare;
+        var dataUrl = comp.previews[k];
+        if(!dataUrl) return;
+        var text = buildShareText(g, pct, sel, days);
+        try{
+          var blob = await (await fetch(dataUrl)).blob();
+          var file = new File([blob], 'ourgoal-'+k+'.png', { type:'image/png' });
+          if(navigator.canShare && navigator.canShare({ files:[file] })){
+            await navigator.share({ files:[file], title:'아워골', text: text });
+            toast('공유했어요');
+          } else if(navigator.share){
+            await navigator.share({ title:'아워골', text: text });
+            toast('이 기기는 이미지 공유를 지원하지 않아 문구로 공유했어요 · 이미지는 저장 버튼을 써주세요');
+          } else if(navigator.clipboard){
+            await navigator.clipboard.writeText(text);
+            toast('공유 문구를 복사했어요 · 이미지는 저장 버튼으로 받아주세요');
+          } else {
+            toast('이미지 저장 버튼으로 받아서 직접 공유해주세요');
+          }
+        } catch(e){ /* 사용자가 공유 시트를 취소함 */ }
+      });
+    });
+    body.querySelectorAll('[data-imgsave]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var k = btn.dataset.imgsave;
+        var dataUrl = comp.previews[k];
+        if(!dataUrl) return;
+        var a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = '아워골_'+SHARE_PLATFORMS[k].label+'.png';
+        document.body.appendChild(a); a.click(); a.remove();
+        toast('이미지를 저장했어요');
+      });
+    });
     document.getElementById('toFeedLink').addEventListener('click', function(){ state.commSubTab='feed'; renderCommScreen(); });
   }
 
@@ -4056,36 +4265,6 @@
         el.addEventListener('click', function(){ state.dmActiveId = el.dataset.open; renderCommDM(body); });
       });
     }
-  }
-
-  async function shareGoalCard(g, pct, sel, days){
-    var text;
-    if(sel){
-      var lines = [];
-      if(sel.goal) lines.push('아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪');
-      var lastRec = state.profile.records[0];
-      if(sel.record && lastRec) lines.push('오늘 기록: '+lastRec.text);
-      if(sel.feedback && state.lastCapture && state.lastCapture.feedback && state.lastCapture.goal && state.lastCapture.goal.id===g.id){
-        lines.push('AI 피드백: '+state.lastCapture.feedback.comment);
-      }
-      var pickedMs = g.milestones.filter(function(m){ return sel.ms[m.id]; });
-      if(pickedMs.length) lines.push('마일스톤: '+pickedMs.map(function(m){ return m.title; }).join(', '));
-      if(typeof days==='number') lines.push(days+'일째 진행 중');
-      text = lines.join('\n') || ('아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪');
-    } else {
-      text = '아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪';
-    }
-    try{
-      if(navigator.share){
-        await navigator.share({ title:'아워골', text: text });
-        toast('공유했어요');
-      } else if(navigator.clipboard){
-        await navigator.clipboard.writeText(text);
-        toast('공유 문구를 복사했어요');
-      } else {
-        toast(text);
-      }
-    } catch(e){ /* user cancelled share sheet — no toast */ }
   }
 
   /* ============ RENDER: SETTINGS ============ */
