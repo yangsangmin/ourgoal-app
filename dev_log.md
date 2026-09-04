@@ -219,3 +219,14 @@
   (3) [설계 변경] 처음에는 생성→검증(2회 Claude 호출) 구조로 구현했으나, 실제로 긴 페르소나(유튜브 쇼츠+인스타 카드뉴스 등 복합 요구)에서 총 36초가 걸려 클라이언트 타임아웃(28초)에 걸려 실패하는 것을 라이브 테스트로 발견 → 매 요청마다 2번의 전체 생성을 도는 대신 "생성 1회(내부적으로 스스로 점검하며 작성) + 잘렸을 때만 짧은 이어쓰기 1회"로 재설계해 속도와 신뢰성을 확보. 클라이언트 타임아웃도 28초로 조정.
 - **검증 결과**: node·api/feedback.js·api/promptgen.js 문법 검증 통과, GitHub 업로드→Vercel 재배포(1차 2-패스 구조 배포 후 타임아웃 재현 확인 → 1-패스+보정 구조로 재수정·재배포) 후 실 계정 라이브 테스트 — 이전에 끊겼던 것과 유사한 복합 요구(투자 콘텐츠, 유튜브 쇼츠+인스타 카드뉴스, 후킹강도·정보정확도·플랫폼별 알고리즘 차이 등) 문장으로 재생성 → 약 23초 만에 1234자 분량이 "…코치 역할을 수행한다."로 문장이 완전히 끝난 상태로 생성됨을 확인(중간에 끊기지 않음), 승인 후 정상 활성화, 콘솔 에러 0건
 ---
+
+## [2026-09-04 20:40] PWA 설치 지원 (manifest.json + 최소 서비스워커)
+- **목표**: BACKLOG.md 항목("PWA 설치 지원")에 따라 홈 화면에 앱처럼 설치 가능하게 하고, 오프라인 시 빈 화면 대신 안내 문구를 노출
+- **수정/실행 내역**:
+  (1) `manifest.json` 신규 작성 — name/short_name "아워골", start_url·scope "/", display "standalone", theme_color(브랜드 코랄 #FF4F64), background_color(--paper #F4F5FB), 192/512 아이콘 등록.
+  (2) `icons/icon-192.png`, `icons/icon-512.png` 신규 생성 — 외부 이미지 라이브러리 없이 순수 Node(zlib)로 PNG를 직접 인코딩하는 1회성 스크립트로, 브랜드 그라디언트(--mz1 #FF4F64 → --mz2 #FF9F1C, 135deg) 배경에 흰색 다트보드(🎯) 링을 그린 아이콘.
+  (3) `sw.js` 신규 작성 — install 시 앱 셸("/") 캐싱, fetch 이벤트에서 네비게이션 요청만 network-first로 처리하고 실패 시 캐시 → 그마저 없으면 "인터넷 연결이 필요해요" 안내 화면(다시 시도 버튼 포함)을 반환.
+  (4) index.html `<head>`에 `<link rel="manifest">`, `<meta name="theme-color">`, favicon/apple-touch-icon 링크 4줄 추가. 메인 스크립트 IIFE 끝(boot() 직후)에 `navigator.serviceWorker.register('/sw.js')` 등록 코드 6줄 추가. 기존 디자인·레이아웃·CSS는 전혀 변경하지 않음(추가만 수행).
+- **발생한 문제 및 해결**: 자동화 환경에 이미지 변환 도구(ImageMagick, sharp 등)가 없어 아이콘 PNG를 만들 방법이 마땅치 않았음 → PNG 포맷(IHDR/IDAT/IEND 청크 + zlib deflate)을 직접 구현하는 소규모 스크립트로 우회, 생성된 PNG를 Read 도구로 실제 렌더링까지 눈으로 확인.
+- **검증 결과**: `node -e "new Function(...)"`로 index.html 인라인 스크립트 문법 검증 통과, `node -e "new Function(fs.readFileSync('sw.js'))"`로 sw.js 문법 검증 통과, `JSON.parse`로 manifest.json 유효성 확인, 생성된 PNG 2종을 `file` 명령과 이미지 뷰어로 실제 렌더링 확인(192x192/512x512 RGBA 정상). Vercel 프리뷰 URL 브라우저 실사용 테스트(설치 배너 노출, 오프라인 진입 등)는 이 자동화 환경에 브라우저 도구가 없어 수행하지 못했으며 PR 설명에 명시함.
+---

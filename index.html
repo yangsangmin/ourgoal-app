@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>아워골</title>
 <meta name="description" content="목표를 세우고, 기록하고, 성장을 나누는 아워골">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#FF4F64">
+<link rel="icon" href="/icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,450;0,9..144,600;0,9..144,700;1,9..144,500&family=Noto+Serif+KR:wght@500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -4748,6 +4752,13 @@
     } catch(e){ /* fall through to landing screen */ }
     document.getElementById('landingScreen').style.display = 'flex';
   })();
+
+  /* ============ PWA: Service Worker 등록 ============ */
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('/sw.js').catch(function(){});
+    });
+  }
 })();
 </script>
 </body>
