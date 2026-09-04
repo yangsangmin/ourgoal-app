@@ -20,10 +20,9 @@
 
 ## 메타(엔지니어링 기반, 우선순위 높음)
 
-- [ ] 최소 자동 스모크 테스트 스크립트 작성: Node 기반으로 `<script>` 문법 검증 + 핵심 함수(goalProgress, applySuggestion 등) 단위 테스트 몇 개를 `scripts/smoke-test.js` 같은 파일로 만들어서, 다음 자동화 사이클부터는 이걸 먼저 돌려보고 작업하도록. (사람이 매번 라이브 QA 하지 않아도 최소 안전망 확보)
-
 ## 완료됨
 
+- [x] 최소 자동 스모크 테스트 스크립트 작성: `scripts/smoke-test.js` — `<script>` 문법 검증 + goalProgress/msCounts/resultPct/dDay/computeStreakDays/findSuggestionTarget/sanitizeSuggestions/applySuggestion/describeSuggestion 단위 테스트 20개 (2026-09-04, PR 대기)
 - [x] 새 목표 AI 도우미(줄글 설명 → 마일스톤/할 일 템플릿 자동 생성 + 검증 + 리뷰 화면에서 수정 후 승인), 카테고리에 "직접 입력" 추가 (2026-09-05, 사용자 직접 요청·구현자 세션에서 즉시 반영)
 - [x] 목표 상세 "목표 최종 결과" → "현재 종합상황"으로 개편: 목표·마일스톤·할 일이 바뀔 때마다 AI가 150~200자로 현재 상태와 다음 행동을 요약, 검증 후 노출 (2026-09-05, 사용자 직접 요청·구현자 세션에서 즉시 반영)
 - [x] 프론트엔드 전면 리디자인, 목표 편집 UX 개선, 마니또 탭 (2026-09-04)
