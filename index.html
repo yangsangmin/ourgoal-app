@@ -2043,7 +2043,7 @@
   }
   async function generateCustomFeedbackPrompt(description){
     var controller = new AbortController();
-    var timer = setTimeout(function(){ controller.abort(); }, 15000);
+    var timer = setTimeout(function(){ controller.abort(); }, 30000);
     try{
       var res = await fetch('/api/promptgen', {
         method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
@@ -2146,7 +2146,7 @@
     }
 
     if(st.step==='loading'){
-      body.innerHTML = fbBotBubbleHtml('<p class="faint" style="margin:0;">맞춤 피드백 봇을 만드는 중… 🛠️</p>');
+      body.innerHTML = fbBotBubbleHtml('<p class="faint" style="margin:0;">맞춤 피드백 봇을 만들고 검증하는 중… 🛠️<br>완결된 지침인지 한 번 더 확인하고 있어요, 잠시만요.</p>');
       return;
     }
 
@@ -2186,7 +2186,7 @@
       body.innerHTML =
         '<div class="card">' +
           '<p class="faint" style="margin:0 0 10px;">피드백 봇에게 내릴 지침을 직접 적어주세요. 톤, 강조할 점, 판단 기준 등을 자유롭게 써주시면 돼요.</p>' +
-          '<textarea id="fbManualInput" maxlength="600" style="width:100%;min-height:170px;">'+escapeHtml(st.draft||'')+'</textarea>' +
+          '<textarea id="fbManualInput" maxlength="2000" style="width:100%;min-height:220px;">'+escapeHtml(st.draft||'')+'</textarea>' +
           '<p class="faint" id="fbManualCounter" style="text-align:right;margin:4px 2px 0;font-size:.68rem;"></p>' +
         '</div>' +
         '<div style="display:flex;gap:8px;margin-top:10px;">' +
@@ -2195,7 +2195,7 @@
         '</div>';
       var manualInput = document.getElementById('fbManualInput');
       var mCounter = document.getElementById('fbManualCounter');
-      function updateMCounter(){ mCounter.textContent = manualInput.value.length+'/600자'; }
+      function updateMCounter(){ mCounter.textContent = manualInput.value.length+'/2000자'; }
       updateMCounter();
       manualInput.addEventListener('input', updateMCounter);
       document.getElementById('fbManualCancelBtn').addEventListener('click', function(){
