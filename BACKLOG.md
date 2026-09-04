@@ -20,10 +20,9 @@
 
 ## 메타(엔지니어링 기반, 우선순위 높음)
 
-- [ ] 최소 자동 스모크 테스트 스크립트 작성: Node 기반으로 `<script>` 문법 검증 + 핵심 함수(goalProgress, applySuggestion 등) 단위 테스트 몇 개를 `scripts/smoke-test.js` 같은 파일로 만들어서, 다음 자동화 사이클부터는 이걸 먼저 돌려보고 작업하도록. (사람이 매번 라이브 QA 하지 않아도 최소 안전망 확보)
-
 ## 완료됨
 
+- [x] 최소 자동 스모크 테스트 스크립트 작성: `scripts/smoke-test.js` — `<script>` 문법 검증 + goalProgress/msCounts/resultPct/dDay/computeStreakDays/findSuggestionTarget/sanitizeSuggestions/applySuggestion/describeSuggestion 단위 테스트 20개 (2026-09-04, PR 대기)
 - [x] 프론트엔드 전면 리디자인, 목표 편집 UX 개선, 마니또 탭 (2026-09-04)
 - [x] 하이브리드 다중 목표 대시보드, 기록+AI피드백 선택 공유 (2026-09-04)
 - [x] 소통 탭 순서 변경, 공유 탭 플랫폼 맞춤 카드(실제 이미지 미리보기) (2026-09-04~05)
