@@ -1901,7 +1901,7 @@
     var name = s.type==='task' ? target.task.title : target.milestone.title;
     var icon = s.type==='task' ? '✅' : '🎯';
     var label;
-    if(s.field==='status') label = (s.type==='milestone'?'마일스톤':'')+' "'+name+'" → '+(s.value==='done'?'완료':(s.value==='doing'?'진행중':'시작 전'))+'으로 변경';
+    if(s.field==='status') label = (s.type==='milestone'?'마일스톤':'')+' "'+name+'" → '+(s.value==='done'?'완료로':(s.value==='doing'?'진행중으로':'시작 전으로'))+' 변경';
     else if(s.field==='done') label = '할 일 "'+name+'" → '+(s.value?'완료 체크':'완료 해제');
     else label = '"'+name+'" 결과 수치 → '+s.value+'로 업데이트';
     return { icon:icon, label:label, reason:s.reason||'' };
