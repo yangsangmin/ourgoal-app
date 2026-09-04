@@ -555,6 +555,7 @@
           <button class="btn btn-primary btn-sm" id="captureSave" type="button">저장</button>
         </div>
       </div>
+      <button class="btn btn-ghost btn-sm" id="customFeedbackBtn" type="button" style="width:100%;margin-top:8px;">🤖 내 맞춤 피드백 설정하기<span id="customFeedbackStatus"></span></button>
 
       <div class="card-title-row" style="margin:20px 0 10px;">
         <h3>내 목표 <span id="streakBadge"></span></h3>
@@ -646,6 +647,7 @@
           <div class="switch" id="autoUpdateSwitch"></div>
         </div>
         <p class="faint" style="margin-top:6px;">켜두면 기록이 마일스톤·할 일 완료를 암시할 때 AI가 알아채서 반영해도 될지 물어봐요. 승인만 하면 직접 고치지 않아도 돼요.</p>
+        <button class="btn btn-ghost btn-sm" id="settingsCustomFeedbackBtn" type="button" style="width:100%;margin-top:12px;">🤖 맞춤 피드백 봇 설정하기<span id="settingsCustomFeedbackStatus"></span></button>
       </div>
 
       <div class="set-block">
@@ -708,6 +710,13 @@
         <button class="btn btn-ghost" id="logoutBtn" type="button" style="width:100%;margin-bottom:10px;">로그아웃</button>
         <button class="btn btn-danger" id="resetBtn" type="button" style="width:100%;">이 계정 데이터 초기화</button>
       </div>
+    </section>
+
+    <!-- FEEDBACK BOT SETUP -->
+    <section class="screen" id="screen-feedbacksetup">
+      <span class="dm-back" id="fbSetupBack">‹ 뒤로</span>
+      <h2 class="s-title" style="margin-top:0;">맞춤 피드백 봇 설정</h2>
+      <div id="fbSetupBody" style="margin-top:14px;"></div>
     </section>
   </main>
 
@@ -835,7 +844,7 @@
 
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
   function defaultSettings(){
-    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} } };
+    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false };
   }
   function loadLocalSettings(userId){
     try{
@@ -858,7 +867,7 @@
     };
   }
 
-  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, feedReacted: {}, shareComposer: null, googleToken: null };
+  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, feedReacted: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home' };
 
   async function ensureUserRow(userId, username, displayName){
     var found = await sb.from('users').select('*').eq('id', userId).maybeSingle();
@@ -1697,6 +1706,7 @@
 
   /* ============ RENDER: HOME ============ */
   function renderHome(){
+    refreshCustomFeedbackButtons();
     var streak = computeStreakDays();
     var badgeEl = document.getElementById('streakBadge');
     if(badgeEl) badgeEl.innerHTML = streak>0 ? streakBadgeHtml(streak) : '';
@@ -1769,7 +1779,13 @@
   }
   function buildFeedbackPrompt(goal, text){
     var msJson = JSON.stringify(milestonesForAI(goal));
-    return '당신은 목표 달성 코치입니다. 사용자의 목표 구조(마일스톤과 하위 할 일)와 방금 남긴 기록을 보고, ' +
+    var settings = state.profile.settings;
+    var custom = (settings.customFeedbackActive && settings.customFeedbackPrompt) ? settings.customFeedbackPrompt : '';
+    var personaBlock = custom ? ('[페르소나 지침]\n'+custom+'\n\n') : '';
+    var roleLine = custom
+      ? '당신은 위 페르소나 지침에 따라 행동하는 목표 달성 피드백 봇입니다.'
+      : '당신은 목표 달성 코치입니다.';
+    return personaBlock + roleLine + ' 사용자의 목표 구조(마일스톤과 하위 할 일)와 방금 남긴 기록을 보고, ' +
       '그 기록이 목표 달성에 도움이 되는지 판단하고, 이 기록이 실제로 어떤 마일스톤이나 할 일의 진행 상태·결과를 바꿀 만한 확실한 근거가 되는지도 함께 판단하세요.\n\n' +
       '[사용자의 목표]\n최종 목표: ' + goal.title + '\n\n' +
       '[마일스톤/할 일 목록 - JSON, id는 그대로 참조용. result는 {target,result,unit,note} 형태의 결과 기록칸]\n' + msJson + '\n\n' +
@@ -1802,12 +1818,14 @@
     return requestClaudeFeedback(goal, text);
   }
   async function requestClaudeFeedback(goal, text){
+    var settings = state.profile.settings;
+    var custom = (settings.customFeedbackActive && settings.customFeedbackPrompt) ? settings.customFeedbackPrompt : '';
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 12000);
     try{
       var res = await fetch('/api/feedback', {
         method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
-        body: JSON.stringify({ goalTitle: goal.title, milestones: milestonesForAI(goal), text: text })
+        body: JSON.stringify({ goalTitle: goal.title, milestones: milestonesForAI(goal), text: text, customPrompt: custom })
       });
       clearTimeout(timer);
       if(!res.ok) throw new Error('bad status');
@@ -1815,6 +1833,7 @@
       if(!parsed || !parsed.verdict) throw new Error('bad shape');
       if(!Array.isArray(parsed.suggestions)) parsed.suggestions = [];
       parsed.source = 'ai';
+      parsed.persona = !!custom;
       return parsed;
     } catch(e){
       clearTimeout(timer);
@@ -1822,6 +1841,7 @@
     }
   }
   async function requestGeminiFeedback(goal, text){
+    var geminiPersona = !!(state.profile.settings.customFeedbackActive && state.profile.settings.customFeedbackPrompt);
     var prompt = buildFeedbackPrompt(goal, text);
     var model = state.profile.settings.geminiModel || 'gemini-2.5-flash';
     var controller = new AbortController();
@@ -1845,6 +1865,7 @@
       if(!raw) throw new Error('empty gemini response');
       var parsed = parseFeedbackJSON(raw);
       parsed.source = 'gemini';
+      parsed.persona = geminiPersona;
       return parsed;
     } catch(e){
       clearTimeout(timer);
@@ -1993,6 +2014,212 @@
       }
     );
   }
+
+  /* ============ 맞춤 피드백 봇 설정 ============ */
+  function customFeedbackStatusSuffix(){
+    var s = state.profile.settings;
+    return (s.customFeedbackActive && s.customFeedbackPrompt) ? ' · 사용 중' : '';
+  }
+  function refreshCustomFeedbackButtons(){
+    var suffix = customFeedbackStatusSuffix();
+    var a = document.getElementById('customFeedbackStatus');
+    var b = document.getElementById('settingsCustomFeedbackStatus');
+    if(a) a.textContent = suffix;
+    if(b) b.textContent = suffix;
+  }
+  function openFeedbackSetup(){
+    state.prevScreenTab = state.activeTab;
+    screens.forEach(function(s){ s.classList.toggle('active', s.id==='screen-feedbacksetup'); });
+    document.querySelector('.bottomnav').style.display = 'none';
+    window.scrollTo({top:0, behavior:'auto'});
+    var s = state.profile.settings;
+    state.fbSetup = { step: (s.customFeedbackActive && s.customFeedbackPrompt) ? 'status' : 'chat', desc:'', draft:'', generated:'' };
+    renderFeedbackSetup();
+  }
+  function closeFeedbackSetup(){
+    document.querySelector('.bottomnav').style.display = '';
+    state.fbSetup = null;
+    setTab(state.prevScreenTab || 'home');
+  }
+  async function generateCustomFeedbackPrompt(description){
+    var controller = new AbortController();
+    var timer = setTimeout(function(){ controller.abort(); }, 15000);
+    try{
+      var res = await fetch('/api/promptgen', {
+        method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
+        body: JSON.stringify({ description: description })
+      });
+      clearTimeout(timer);
+      if(!res.ok) throw new Error('bad status');
+      var data = await res.json();
+      if(!data || !data.prompt) throw new Error('bad shape');
+      return data.prompt;
+    } catch(e){
+      clearTimeout(timer);
+      return null;
+    }
+  }
+  function fbBotBubbleHtml(inner){
+    return '<div class="card" style="display:flex;gap:12px;align-items:flex-start;">' +
+      '<div style="font-size:1.6rem;flex:0 0 auto;line-height:1;">🤖</div>' +
+      '<div style="flex:1;min-width:0;">' + inner + '</div>' +
+    '</div>';
+  }
+  function renderFeedbackSetup(){
+    var body = document.getElementById('fbSetupBody');
+    var st = state.fbSetup;
+    if(!body || !st) return;
+    var settings = state.profile.settings;
+
+    if(st.step==='status'){
+      body.innerHTML =
+        fbBotBubbleHtml(
+          '<div class="toggle-row" style="margin:0;">' +
+            '<div class="t" style="font-weight:700;">맞춤 피드백 봇 사용</div>' +
+            '<div class="switch'+(settings.customFeedbackActive?' on':'')+'" id="fbActiveSwitch"></div>' +
+          '</div>' +
+          '<p class="faint" style="margin:10px 0 0;line-height:1.6;white-space:pre-wrap;">'+escapeHtml(settings.customFeedbackPrompt)+'</p>'
+        ) +
+        '<div style="display:flex;gap:8px;margin-top:14px;">' +
+          '<button class="btn btn-ghost" id="fbStatusEditBtn" type="button" style="flex:1;">✏️ 프롬프트 수정</button>' +
+          '<button class="btn btn-ghost" id="fbStatusRestartBtn" type="button" style="flex:1;">🔄 새로 만들기</button>' +
+        '</div>';
+      document.getElementById('fbActiveSwitch').addEventListener('click', async function(){
+        settings.customFeedbackActive = !settings.customFeedbackActive;
+        await saveProfile();
+        renderFeedbackSetup();
+        refreshCustomFeedbackButtons();
+        toast(settings.customFeedbackActive ? '맞춤 피드백 봇을 켰어요' : '기본 피드백으로 되돌렸어요 · 지침은 지워지지 않았어요');
+      });
+      document.getElementById('fbStatusEditBtn').addEventListener('click', function(){
+        st.draft = settings.customFeedbackPrompt;
+        st.step = 'manual';
+        renderFeedbackSetup();
+      });
+      document.getElementById('fbStatusRestartBtn').addEventListener('click', function(){
+        st.step = 'chat'; st.desc=''; st.generated='';
+        renderFeedbackSetup();
+      });
+      return;
+    }
+
+    if(st.step==='chat'){
+      body.innerHTML =
+        fbBotBubbleHtml(
+          '<p style="margin:0;font-size:.88rem;line-height:1.65;">안녕하세요 아워골 피드백 봇입니다. 어떤 목표를 향해가시는지와 어떤 피드백을 원하는지 알려주시면 원하시는 피드백 봇이 되어드릴게요.<br><br>원하는 바가 명확하시다면 <b>\'수동 설정하기\'</b>를 통해 직접 프롬프트를 입력하시면 됩니다.</p>'
+        ) +
+        '<textarea id="fbDescInput" maxlength="300" placeholder="예: 여행 유튜브 채널 10만 구독자가 목표예요. 행동에 대한 질책뿐 아니라 보완할 세부 대책도 전문적으로 짚어주는 피드백 봇이 필요해요." style="width:100%;min-height:120px;margin-top:14px;">'+escapeHtml(st.desc)+'</textarea>' +
+        '<p class="faint" id="fbDescCounter" style="text-align:right;margin:4px 2px 0;font-size:.68rem;"></p>' +
+        '<div style="display:flex;gap:8px;margin-top:10px;">' +
+          '<button class="btn btn-ghost" id="fbManualBtn" type="button" style="flex:1;">수동 설정하기</button>' +
+          '<button class="btn btn-primary" id="fbGenerateBtn" type="button" style="flex:1;">봇 만들기 ✨</button>' +
+        '</div>';
+      var descInput = document.getElementById('fbDescInput');
+      var counter = document.getElementById('fbDescCounter');
+      function updateCounter(){ counter.textContent = descInput.value.length+'/300자'; }
+      updateCounter();
+      descInput.addEventListener('input', updateCounter);
+      document.getElementById('fbManualBtn').addEventListener('click', function(){
+        st.desc = descInput.value;
+        st.draft = settings.customFeedbackPrompt || '';
+        st.step = 'manual';
+        renderFeedbackSetup();
+      });
+      document.getElementById('fbGenerateBtn').addEventListener('click', async function(){
+        var desc = descInput.value.trim();
+        if(!desc){ toast('먼저 원하시는 내용을 적어주세요'); return; }
+        st.desc = desc;
+        st.step = 'loading';
+        renderFeedbackSetup();
+        var generated = await generateCustomFeedbackPrompt(desc);
+        if(!generated){
+          toast('지금은 봇을 만들지 못했어요 · 다시 시도하거나 수동 설정을 이용해주세요');
+          st.step = 'chat';
+          renderFeedbackSetup();
+          return;
+        }
+        st.generated = generated;
+        st.step = 'review';
+        renderFeedbackSetup();
+      });
+      return;
+    }
+
+    if(st.step==='loading'){
+      body.innerHTML = fbBotBubbleHtml('<p class="faint" style="margin:0;">맞춤 피드백 봇을 만드는 중… 🛠️</p>');
+      return;
+    }
+
+    if(st.step==='review'){
+      body.innerHTML =
+        fbBotBubbleHtml('<p style="margin:0;font-size:.88rem;line-height:1.65;">사용자 맞춤 프롬프트가 추천되었습니다. 이대로 설정할까요?</p>') +
+        '<div class="card" style="margin-top:12px;background:var(--violet-soft);border:1.5px solid var(--violet-line);">' +
+          '<p style="margin:0;font-size:.84rem;line-height:1.7;white-space:pre-wrap;">'+escapeHtml(st.generated)+'</p>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;margin-top:14px;">' +
+          '<button class="btn btn-ghost" id="fbBackBtn" type="button" style="flex:1;">뒤로</button>' +
+          '<button class="btn btn-ghost" id="fbEditBtn" type="button" style="flex:1;">수정</button>' +
+          '<button class="btn btn-primary" id="fbApproveBtn" type="button" style="flex:1;">승인</button>' +
+        '</div>';
+      document.getElementById('fbBackBtn').addEventListener('click', function(){
+        st.step = 'chat';
+        renderFeedbackSetup();
+      });
+      document.getElementById('fbEditBtn').addEventListener('click', function(){
+        st.draft = st.generated;
+        st.step = 'manual';
+        renderFeedbackSetup();
+      });
+      document.getElementById('fbApproveBtn').addEventListener('click', async function(){
+        settings.customFeedbackPrompt = st.generated;
+        settings.customFeedbackActive = true;
+        await saveProfile();
+        toast('맞춤 피드백 봇이 활성화됐어요 🎉');
+        refreshCustomFeedbackButtons();
+        st.step = 'status';
+        renderFeedbackSetup();
+      });
+      return;
+    }
+
+    if(st.step==='manual'){
+      body.innerHTML =
+        '<div class="card">' +
+          '<p class="faint" style="margin:0 0 10px;">피드백 봇에게 내릴 지침을 직접 적어주세요. 톤, 강조할 점, 판단 기준 등을 자유롭게 써주시면 돼요.</p>' +
+          '<textarea id="fbManualInput" maxlength="600" style="width:100%;min-height:170px;">'+escapeHtml(st.draft||'')+'</textarea>' +
+          '<p class="faint" id="fbManualCounter" style="text-align:right;margin:4px 2px 0;font-size:.68rem;"></p>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;margin-top:10px;">' +
+          '<button class="btn btn-ghost" id="fbManualCancelBtn" type="button" style="flex:1;">취소</button>' +
+          '<button class="btn btn-primary" id="fbManualSaveBtn" type="button" style="flex:1;">저장하고 적용</button>' +
+        '</div>';
+      var manualInput = document.getElementById('fbManualInput');
+      var mCounter = document.getElementById('fbManualCounter');
+      function updateMCounter(){ mCounter.textContent = manualInput.value.length+'/600자'; }
+      updateMCounter();
+      manualInput.addEventListener('input', updateMCounter);
+      document.getElementById('fbManualCancelBtn').addEventListener('click', function(){
+        st.step = (settings.customFeedbackActive && settings.customFeedbackPrompt) ? 'status' : 'chat';
+        renderFeedbackSetup();
+      });
+      document.getElementById('fbManualSaveBtn').addEventListener('click', async function(){
+        var val = manualInput.value.trim();
+        if(!val){ toast('지침 내용을 입력해주세요'); return; }
+        settings.customFeedbackPrompt = val;
+        settings.customFeedbackActive = true;
+        await saveProfile();
+        toast('맞춤 피드백 봇이 저장됐어요');
+        refreshCustomFeedbackButtons();
+        st.step = 'status';
+        renderFeedbackSetup();
+      });
+      return;
+    }
+  }
+  document.getElementById('customFeedbackBtn').addEventListener('click', openFeedbackSetup);
+  document.getElementById('settingsCustomFeedbackBtn').addEventListener('click', openFeedbackSetup);
+  document.getElementById('fbSetupBack').addEventListener('click', closeFeedbackSetup);
+
   function verdictClass(v){ return v==='도움됨'?'good':(v==='도움안됨'?'bad':'mid'); }
   function renderFeedbackSlot(fb){
     var existing = document.getElementById('fbSlot');
@@ -2008,7 +2235,7 @@
       card.innerHTML = '<span class="fb-close" id="fbCloseBtn">×</span>' +
         '<div class="fb-verdict">'+escapeHtml(fb.verdict)+'</div>' +
         '<div class="fb-row">'+escapeHtml(fb.comment)+'</div>' +
-        '<div class="fb-source">'+(fb.source==='ai'?'Claude 판단':(fb.source==='gemini'?'Gemini 판단':'간이 판단'))+'</div>' +
+        '<div class="fb-source">'+(fb.persona?'🤖 내 맞춤 봇 판단':(fb.source==='ai'?'Claude 판단':(fb.source==='gemini'?'Gemini 판단':'간이 판단')))+'</div>' +
         '<button class="btn btn-ghost btn-sm" id="fbShareBtn" type="button" style="width:100%;margin-top:10px;">📤 이 기록, 피드에 공유하기</button>';
     }
     document.getElementById('captureCardBox').after(card);
@@ -4292,6 +4519,7 @@
 
   /* ============ RENDER: SETTINGS ============ */
   function renderSettingsScreen(){
+    refreshCustomFeedbackButtons();
     renderProfileCard();
     var row = document.getElementById('checkinTimesRow');
     var times = state.profile.settings.checkinTimes;
