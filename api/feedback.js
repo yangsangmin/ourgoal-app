@@ -14,12 +14,18 @@ module.exports = async function handler(req, res) {
   var goalTitle = body.goalTitle;
   var milestones = Array.isArray(body.milestones) ? body.milestones : [];
   var text = body.text;
+  var customPrompt = typeof body.customPrompt === 'string' ? body.customPrompt.trim().slice(0, 800) : '';
   if (!goalTitle || !text) {
     res.status(400).json({ error: 'goalTitle and text are required' });
     return;
   }
 
-  var prompt = '당신은 목표 달성 코치입니다. 사용자의 목표 구조(마일스톤과 하위 할 일)와 방금 남긴 기록을 보고, ' +
+  var personaBlock = customPrompt ? ('[페르소나 지침]\n' + customPrompt + '\n\n') : '';
+  var roleLine = customPrompt
+    ? '당신은 위 페르소나 지침에 따라 행동하는 목표 달성 피드백 봇입니다.'
+    : '당신은 목표 달성 코치입니다.';
+
+  var prompt = personaBlock + roleLine + ' 사용자의 목표 구조(마일스톤과 하위 할 일)와 방금 남긴 기록을 보고, ' +
     '그 기록이 목표 달성에 도움이 되는지 판단하고, 이 기록이 실제로 어떤 마일스톤이나 할 일의 진행 상태·결과를 바꿀 만한 확실한 근거가 되는지도 함께 판단하세요.\n\n' +
     '[사용자의 목표]\n최종 목표: ' + goalTitle + '\n\n' +
     '[마일스톤/할 일 목록 - JSON, id는 그대로 참조용. result는 {target,result,unit,note} 형태의 결과 기록칸]\n' + JSON.stringify(milestones) + '\n\n' +
