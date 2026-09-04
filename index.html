@@ -2043,7 +2043,7 @@
   }
   async function generateCustomFeedbackPrompt(description){
     var controller = new AbortController();
-    var timer = setTimeout(function(){ controller.abort(); }, 30000);
+    var timer = setTimeout(function(){ controller.abort(); }, 28000);
     try{
       var res = await fetch('/api/promptgen', {
         method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
