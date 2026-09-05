@@ -368,6 +368,16 @@
   .notify-banner .nb-txt{flex:1;font-size:.86rem;}
   .notify-banner .nb-txt b{display:block;font-size:.98rem;margin-bottom:2px;font-weight:900;}
   .notify-banner button{background:var(--grad);color:#fff;padding:9px 14px;border-radius:999px;font-size:.78rem;font-weight:800;}
+  .notify-banner.levelup{background:linear-gradient(135deg,var(--violet),#9C8CFF);}
+
+  /* ---------- Level badge ---------- */
+  #levelUpBannerSlot{position:fixed;top:14px;left:14px;right:14px;z-index:250;max-width:460px;margin:0 auto;}
+  #levelUpBannerSlot .notify-banner{margin-bottom:0;}
+  .level-badge-row{margin:2px 0 12px;}
+  .level-badge{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:999px;padding:8px 14px;box-shadow:var(--shadow-sm);}
+  .level-badge .level-num{flex:0 0 auto;font-weight:900;font-size:.82rem;color:#fff;background:linear-gradient(135deg,var(--violet),#9C8CFF);padding:4px 10px;border-radius:999px;}
+  .level-badge .level-bar-wrap{flex:1;min-width:0;}
+  .level-badge .level-xp-txt{font-size:.66rem;color:var(--ink-faint);font-family:var(--mono);margin-top:3px;display:block;}
 
   /* ---------- Confetti ---------- */
   #confettiLayer{position:fixed;inset:0;pointer-events:none;z-index:300;overflow:hidden;}
@@ -572,12 +582,14 @@
       <div class="avatar" id="topAvatar"></div>
     </div>
   </div>
+  <div id="levelUpBannerSlot"></div>
 
   <main class="screens">
     <!-- HOME -->
     <section class="screen active" id="screen-home">
       <p class="s-eyebrow">오늘</p>
       <h2 class="s-title" id="homeGreeting">안녕하세요</h2>
+      <div id="levelBadgeRow"></div>
       <div id="notifyBannerSlot"></div>
 
       <div class="capture-card card" id="captureCardBox">
@@ -926,6 +938,27 @@
     xp.log.unshift({ amount: amount, reason: reason, at: nowISO() });
     if(xp.log.length > XP_LOG_MAX) xp.log.length = XP_LOG_MAX;
     return { total: xp.total, leveledUp: levelForXP(xp.total) > beforeLevel };
+  }
+  function levelBadgeHtml(xp){
+    var p = levelProgress(xp);
+    return '<div class="level-badge"><span class="level-num">Lv.'+p.level+'</span>' +
+      '<div class="level-bar-wrap"><div class="mini-bar"><span style="width:'+Math.max(0,Math.min(100,p.pct))+'%;background:var(--violet);"></span></div>' +
+      '<span class="level-xp-txt">'+p.into+' / '+p.span+' XP</span></div></div>';
+  }
+  function renderLevelBadge(){
+    var el = document.getElementById('levelBadgeRow');
+    if(!el || !state.profile) return;
+    el.innerHTML = '<div class="level-badge-row">'+levelBadgeHtml(state.profile.settings.xp.total)+'</div>';
+  }
+  function showLevelUpBanner(level){
+    var slot = document.getElementById('levelUpBannerSlot');
+    if(!slot) return;
+    if(navigator.vibrate) navigator.vibrate([12,40,24]);
+    burstConfetti(window.innerWidth/2, 80, 14);
+    slot.innerHTML = '<div class="notify-banner levelup"><div class="nb-txt"><b>🎉 레벨 업!</b>Lv.'+level+'이 됐어요. 계속 이어가 볼까요?</div><button id="lvBannerClose" type="button">확인</button></div>';
+    var closeBtn = document.getElementById('lvBannerClose');
+    if(closeBtn) closeBtn.addEventListener('click', function(){ slot.innerHTML = ''; });
+    setTimeout(function(){ if(slot.innerHTML) slot.innerHTML = ''; }, 6000);
   }
 
   function defaultProfile(id, username, displayName){
@@ -1369,11 +1402,14 @@
           }
           if(kind==='task') obj.done = pct!==null ? pct>=100 : !!obj.result.result;
           if(kind==='ms' && pct!==null) obj.status = pct>=100 ? 'done' : (pct>0 ? 'doing' : obj.status);
-          if(kind==='ms' && !wasMsDone && obj.status==='done') awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
+          var msXpRes = null;
+          if(kind==='ms' && !wasMsDone && obj.status==='done') msXpRes = awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
           await saveProfile();
           closeModal();
           toast(pct!==null ? '달성률 '+pct+'%로 기록했어요' : '결과를 기록했어요');
           if(onSaved) onSaved();
+          renderLevelBadge();
+          if(msXpRes && msXpRes.leveledUp) showLevelUpBanner(levelForXP(msXpRes.total));
         });
       }
     );
@@ -1781,6 +1817,7 @@
   /* ============ RENDER: HOME ============ */
   function renderHome(){
     refreshCustomFeedbackButtons();
+    renderLevelBadge();
     var streak = computeStreakDays();
     var badgeEl = document.getElementById('streakBadge');
     if(badgeEl) badgeEl.innerHTML = streak>0 ? streakBadgeHtml(streak) : '';
@@ -1826,10 +1863,12 @@
     var goal = state.profile.goals.find(function(g){ return g.id===state.activeGoalId; }) || state.profile.goals[0];
     state.profile.records.unshift({ id: newId(), type:'note', text: text, startAt: nowISO(), endAt: nowISO(), createdAt: nowISO(), category: goal ? goal.category : null });
     t.value = '';
-    awardXP(XP_RULES.checkin, '체크인');
+    var xpRes = awardXP(XP_RULES.checkin, '체크인');
     await saveProfile();
     toast('기록했어요');
     renderFeedbackSlot(null);
+    renderLevelBadge();
+    if(xpRes.leveledUp) showLevelUpBanner(levelForXP(xpRes.total));
 
     var newRec = state.profile.records[0];
     var fb = null;
@@ -2081,7 +2120,8 @@
             }
           });
           if(!applied.length){ closeModal(); return; }
-          for(var i=0;i<newlyDoneMsCount;i++) awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
+          var lastXpRes = null;
+          for(var i=0;i<newlyDoneMsCount;i++) lastXpRes = awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
           await saveProfile();
           closeModal();
           var becameDone = applied.some(function(a){ return a.label.indexOf('완료')!==-1; });
@@ -2092,6 +2132,8 @@
           }
           toast(applied.length+'개 항목을 목표에 반영했어요 🎯');
           renderAll();
+          renderLevelBadge();
+          if(lastXpRes && lastXpRes.leveledUp) showLevelUpBanner(levelForXP(lastXpRes.total));
         });
       }
     );
@@ -3167,9 +3209,11 @@
         var order = ['todo','doing','done'];
         var wasDone = ms.status==='done';
         ms.status = order[(order.indexOf(ms.status)+1)%3];
-        if(!wasDone && ms.status==='done') awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
+        var cycleXpRes = (!wasDone && ms.status==='done') ? awardXP(XP_RULES.milestoneDone, '마일스톤 완료') : null;
         await saveProfile();
         renderGoalsScreen();
+        renderLevelBadge();
+        if(cycleXpRes && cycleXpRes.leveledUp) showLevelUpBanner(levelForXP(cycleXpRes.total));
       });
 
       var titleInput = row.querySelector('[data-msinput]');

@@ -313,3 +313,14 @@
 - **발생한 문제 및 해결**: 없음
 - **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 23개 전부 통과(기존 20 + 신규 3). `awardXP`의 레벨업 감지(레벨 경계를 넘을 때만 leveledUp:true) 로직을 별도 시뮬레이션(90XP+10XP=100XP → 레벨1→2 전환)으로 재확인. UI가 아직 없어 브라우저 검증은 해당 없음.
 ---
+
+## [2026-09-05 06:24] 레벨 배지 UI(홈 상단) + 레벨업 축하 배너
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 2단계 두 번째 항목 — 직전 PR(XP/레벨 데이터 모델)에서 만든 계산 로직을 실제 화면에 노출. 홈 상단에 현재 레벨·진행률 배지를 상시 표시하고, 레벨이 오를 때 화면 어디에 있든 보이는 축하 배너를 띄움. (이 항목은 XP 데이터 모델이 있어야 UI를 만들 수 있어, `auto/2026-09-05-xp-level-model` 브랜치 위에 쌓은 브랜치로 작업 — 그 PR이 먼저 병합돼야 이 PR도 merge 가능)
+- **수정/실행 내역**:
+  (1) 홈 화면 상단(`#homeGreeting` 바로 아래)에 `#levelBadgeRow` 신설. `levelBadgeHtml(xp)`가 `levelProgress()` 결과로 "Lv.N" 배지 + 현재 레벨 구간 진행률 미니바(기존 `.mini-bar` 재사용) + "into/span XP" 텍스트를 렌더링, `renderLevelBadge()`가 이를 DOM에 반영. `renderHome()`에서 항상 호출해 홈 진입 때마다 최신 상태 유지.
+  (2) 레벨업 배너: 앱 어느 탭에 있어도 보이도록 `#levelUpBannerSlot`을 topbar 바로 아래 `position:fixed` 오버레이로 신설(기존 체크인 리마인더용 `#notifyBannerSlot`과는 별도 슬롯이라 서로 덮어쓰지 않음). `showLevelUpBanner(level)`이 기존 `.notify-banner` 클래스에 보라 그라디언트 변형(`.levelup`)을 얹어 "🎉 레벨 업!" 메시지 + 확인 버튼을 띄우고 진동+컨페티를 함께 발동, 6초 후 자동 닫힘(수동 닫기도 가능).
+  (3) `awardXP` 호출 4곳(체크인, 결과 기록 모달 마일스톤 완료, AI 자동 업데이트 마일스톤 완료, 편집 모드 상태 순환) 모두에서 반환값의 `leveledUp`을 확인해 배너를 띄우고, 매번 `renderLevelBadge()`로 배지를 즉시 갱신하도록 연결.
+  (4) 신규 CSS는 `.notify-banner.levelup` 변형 1개 + `.level-badge*` 5개 클래스만 추가, 기존 `--violet`/`.mini-bar`/`.notify-banner`/`shadow-sm` 등 디자인 토큰만 재사용.
+- **발생한 문제 및 해결**: 없음. 레벨업 배너를 탭별 화면 대신 topbar 아래 고정 오버레이로 배치해 "체크인 중이 아닌 목표 편집 화면에서 마일스톤 완료로 레벨업해도 안 보이는" 사각지대를 피함.
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 기존 23개 전부 통과(이 PR은 순수 함수 추가가 없어 신규 테스트 없음, 회귀 없음). `levelProgress`/`levelBadgeHtml` 출력을 0/45/100/250 XP 케이스로 시뮬레이션해 "Lv.1 45/100 XP(45%)", "Lv.2 150/200 XP(75%)" 등 배지 텍스트가 올바르게 계산됨을 확인. 브라우저 도구가 없는 샌드박스라 실제 렌더링·애니메이션 확인은 진행하지 못함.
+---
