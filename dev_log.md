@@ -611,3 +611,16 @@
 - **발생한 문제 및 해결**: 없음 — 막힌 지점 없이 진행. (참고: 구현 중 실수로 main에서 바로 작업 브랜치 생성 전에 코드를 수정했으나, `git checkout -b`가 커밋되지 않은 변경을 새 브랜치로 그대로 이관해 데이터 손실·main 오염 없이 즉시 바로잡음.)
 - **검증 결과**: `node -e new Function()` 문법 검증 통과, `<style>` 중괄호 454/454, `node scripts/smoke-test.js` 41/41 통과(회귀 없음, 신규 순수 함수 없음). 브라우저 실제 렌더링 검증(검증 전용 `window.__dbg` 훅으로 클로저 상태 노출 → 확인 후 완전히 제거, `grep` 0건 재확인): 무료 상태에서 활성 목표 3개일 때 `promptNewGoal()` → 페이월 정상 표출(제목 "🌟 아워골 Pro"), "3일 무료 체험 시작하기" 클릭 → `isPro=true`/`plan='monthly'`/`expiresAt`이 정확히 +3일로 설정되고 PRO 뱃지 렌더링·모달 자동 종료 확인. Pro 전환 후 같은 3개 목표 상태에서 `promptNewGoal()` 재호출 시 페이월 없이 정상적으로 "새 목표" 모달이 뜸(무제한 확인). 다시 무료로 되돌려 리포트 30일 토글 클릭 → 페이월 표출·`reportPeriod`는 7 유지(전환 차단) 확인, 맞춤 피드백 봇 버튼 클릭 → 페이월 표출 확인. 콘솔 에러는 이 정적 서버에 없는 `/api/*` 엔드포인트 404(기존에도 있던 무관한 항목)와 인증되지 않은 테스트 계정의 Supabase 쓰기가 RLS에 막힌 400(안전, 실제 데이터 미변경)뿐, 신규 코드발 에러 0건.
 ---
+
+## [2026-09-06 07:18] TASK-06: 바이럴 딥링크 & 워터마크가 포함된 공유 카드 완성
+- **목표**: 노션 스프린트 TASK-06 — CAC 0원 유기적 신규 유입을 위해 공유되는 이미지에 워터마크(브랜드+URL)와 공유 텍스트에 초대 딥링크를 추가한다.
+- **사용자 확인 사항**: (1) 도메인은 아직 `ourgoal.app`이 연결되지 않아 실제 배포 주소 `https://ourgoal-app.vercel.app`을 사용 (2) `/share/{userId}`·`?ref=` 수신 처리(추천인 기록)는 이번 범위에서 제외하고 링크 생성까지만 구현 — 둘 다 사용자 확인 완료.
+- **[원칙 3~4] 타당성 검토**: 실제로 캔버스를 그리는 함수가 `generateShareImage`(플랫폼별 공유 카드) 외에 `generateGoalCertificateImage`(완주 인증서)·`generateWeeklyRecapImage`(위클리 리캡) 2개가 더 있음을 확인 — 태스크 문서의 "워터마크는 한 곳에서" 원칙대로 공용 `drawShareWatermark(ctx, dims, userId, textColor)` 헬퍼를 만들어 3곳 모두에 적용(중복 구현 방지). 마찬가지로 초대 링크도 `buildShareText` 하나만이 아니라 실제 공유 버튼 3곳(공유 카드/인증서/리캡) 전부에 `buildInviteLinkSuffix()`로 통일 적용 — 노션 스펙은 `buildShareText`만 명시했지만 "공유 버튼 클릭 핸들러"도 수정 대상으로 명시돼 있어 취지에 맞게 확장.
+- **수정/실행 내역**:
+  (1) `SHARE_DOMAIN` 상수(`https://ourgoal-app.vercel.app`), `drawShareWatermark()`(우측 하단 "아워골" 배지+URL, 하단 중앙 "나만의 목표 달성 메이트 · 아워골"(폰트 `dims.w*0.022`, 투명도 0.75)), `buildInviteLinkSuffix(goalId)`(`\n\n{도메인}?ref={userId}&goal={goalId}`, goalId 없으면 그 파라미터만 생략) 신규.
+  (2) 3개 캔버스 함수(`generateShareImage`/`generateGoalCertificateImage`/`generateWeeklyRecapImage`) 끝에서 `drawShareWatermark` 호출 — 기존 마지막 텍스트(진행일수·날짜 등)가 새 워터마크 영역과 겹치지 않도록 각 함수의 하단 여백(`footerY`/`maxContentY`)을 워터마크 높이만큼 줄여서 재배치(내용 자체는 그대로, 위치만 조정).
+  (3) `generateShareImage`에서 인스타 portrait(3:4)·틱톡 vertical(9:16) — 기존에 이미 있던 두 세로 비율 — 렌더링 시 상단 여백을 추가로 확보해 중앙 집중도를 높임(새 비율 옵션 추가 없이 기존 좌표 계산에 여백값만 조정).
+  (4) `buildShareText()` 및 위클리 리캡·인증서 공유 버튼의 인라인 텍스트 3곳 모두 끝에 `buildInviteLinkSuffix()` 첨부.
+- **발생한 문제 및 해결**: 없음 — 막힌 지점 없이 진행. 다만 여백 겹침을 미리 계산으로만 판단하지 않고 실제 브라우저에서 각 텍스트의 y좌표를 전부 뽑아 순서·간격을 직접 확인함(아래 검증 결과).
+- **검증 결과**: `node -e new Function()` 문법 검증 통과, `<style>` 중괄호 454/454(CSS 무변경), `node scripts/smoke-test.js` 41/41 통과(회귀 없음, 캔버스 드로잉 함수라 순수 함수 테스트 대상 아님). 브라우저 실제 렌더링 검증(검증 전용 `window.__dbg` 훅으로 `ctx.fillText` 호출을 가로채 좌표 기록 → 확인 후 완전 제거, `grep` 0건 재확인): 4가지 카드(인스타 정사각 720×720, 인스타 portrait 720×960, 틱톡 720×1280, 완주 인증서 720×720, 위클리 리캡 720×960) 전부에서 기존 콘텐츠의 마지막 텍스트 y좌표가 워터마크 3줄의 시작 y좌표보다 작고, 워터마크 마지막 줄도 캔버스 높이를 넘지 않아 겹침이 없음을 좌표로 직접 확인. `buildShareText()` 호출 결과 문자열 끝에 `https://ourgoal-app.vercel.app?ref=test-uid-123&goal=g1` 형태로 정확히 첨부됨을 확인. 콘솔 에러는 정적 서버의 무관한 `/api/*` 404·테스트 계정 RLS 400뿐, 신규 코드발 에러 0건.
+---

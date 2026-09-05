@@ -4572,10 +4572,11 @@
     ctx.globalAlpha = .55;
     ctx.fillStyle = '#fff';
     ctx.font = '500 ' + Math.round(dims.w*0.026) + 'px "Noto Sans KR",sans-serif';
-    ctx.fillText((state.profile.displayName||'')+' · '+dateKey(nowISO()), pad, dims.h - pad*0.6);
+    ctx.fillText((state.profile.displayName||'')+' · '+dateKey(nowISO()), pad, dims.h - pad*0.6 - dims.w*0.09);
     ctx.globalAlpha = 1;
     ctx.textAlign = 'left';
 
+    drawShareWatermark(ctx, dims, state.profile.id, '#fff');
     return canvas;
   }
   async function openWeeklyRecapModal(){
@@ -4601,7 +4602,7 @@
     if(shareBtn) shareBtn.disabled = false;
     if(saveBtn) saveBtn.disabled = false;
     if(shareBtn) shareBtn.addEventListener('click', async function(){
-      var text = '아워골 이번 주 위클리 리캡 · '+stats.count+'번 기록, 총 '+fmtDuration(stats.totalMs)+' 몰입! 🔥';
+      var text = '아워골 이번 주 위클리 리캡 · '+stats.count+'번 기록, 총 '+fmtDuration(stats.totalMs)+' 몰입! 🔥'+buildInviteLinkSuffix();
       try{
         var blob = await (await fetch(dataUrl)).blob();
         var file = new File([blob], 'ourgoal-weekly-recap.png', { type:'image/png' });
@@ -4998,6 +4999,28 @@
     tiktok:  { vertical: {w:720, h:1280} },
     threads: { square:   {w:720, h:720} }
   };
+  /* 실제 배포 도메인(커스텀 도메인 연결 전이라 vercel.app 주소 사용) */
+  var SHARE_DOMAIN = 'https://ourgoal-app.vercel.app';
+  /* 워터마크: 모든 공유 카드(플랫폼별 공유 카드·완주 인증서·위클리 리캡)가 공통으로 호출 */
+  function drawShareWatermark(ctx, dims, userId, textColor){
+    var pad = Math.round(dims.w*0.045);
+    ctx.save();
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = textColor || '#fff';
+    ctx.textAlign = 'right';
+    ctx.globalAlpha = 0.75;
+    ctx.font = '800 ' + Math.round(dims.w*0.026) + 'px "Noto Sans KR",sans-serif';
+    ctx.fillText('아워골', dims.w-pad, dims.h-pad*1.6);
+    ctx.font = '500 ' + Math.round(dims.w*0.02) + 'px "Noto Sans KR",sans-serif';
+    ctx.fillText(SHARE_DOMAIN.replace(/^https?:\/\//,'')+'/share/'+userId, dims.w-pad, dims.h-pad*0.9);
+    ctx.textAlign = 'center';
+    ctx.font = '500 ' + Math.round(dims.w*0.022) + 'px "Noto Sans KR",sans-serif';
+    ctx.fillText('나만의 목표 달성 메이트 · 아워골', dims.w/2, dims.h-pad*0.35);
+    ctx.restore();
+  }
+  function buildInviteLinkSuffix(goalId){
+    return '\n\n'+SHARE_DOMAIN+'?ref='+encodeURIComponent(state.profile.id)+(goalId ? '&goal='+encodeURIComponent(goalId) : '');
+  }
   function scRoundRect(ctx, x, y, w, h, r){
     ctx.beginPath();
     ctx.moveTo(x+r, y);
@@ -5055,7 +5078,10 @@
     var textColor = p.text;
     var pad = Math.round(dims.w*0.075);
     var innerW = dims.w - pad*2;
-    var y = pad + dims.w*0.03;
+    var watermarkH = dims.w*0.1; // 하단 워터마크(drawShareWatermark)가 차지할 여백
+    var isVertical = pkey==='tiktok' || (pkey==='insta' && ratioKey==='portrait');
+    var topExtra = isVertical ? dims.h*0.05 : 0; // 세로형 카드는 위아래 여백을 넉넉히 둬 스티커 공간 확보
+    var y = pad + dims.w*0.03 + topExtra;
 
     ctx.textBaseline = 'alphabetic';
     ctx.fillStyle = textColor;
@@ -5071,7 +5097,7 @@
     var lastRec = state.profile.records[0];
     var fbOk = sel.feedback && state.lastCapture && state.lastCapture.feedback && state.lastCapture.goal && state.lastCapture.goal.id===g.id;
     var pickedMs = g.milestones.filter(function(m){ return sel.ms[m.id]; });
-    var maxContentY = dims.h - pad*1.3;
+    var maxContentY = dims.h - pad*1.3 - watermarkH - (isVertical ? dims.h*0.04 : 0);
     var compact = dims.h < 500;
 
     if(sel.goal){
@@ -5125,13 +5151,14 @@
       y = cy + rowH + dims.w*0.02;
     }
 
-    var footerY = Math.max(y + dims.w*0.03, dims.h - pad*0.6);
+    var footerY = Math.max(y + dims.w*0.03, dims.h - pad*0.6 - watermarkH);
     ctx.globalAlpha = .7;
     ctx.font = '600 ' + Math.round(dims.w*0.024) + 'px "Noto Sans KR",sans-serif';
     ctx.fillStyle = textColor;
     ctx.fillText(days+'일째 진행 중'+(g.dueDate?' · '+dDay(g.dueDate):''), pad, footerY);
     ctx.globalAlpha = 1;
 
+    drawShareWatermark(ctx, dims, state.profile.id, textColor);
     return canvas;
   }
   function buildShareText(g, pct, sel, days){
@@ -5145,7 +5172,8 @@
     var pickedMs = g.milestones.filter(function(m){ return sel.ms[m.id]; });
     if(pickedMs.length) lines.push('마일스톤: '+pickedMs.map(function(m){ return m.title; }).join(', '));
     if(typeof days==='number') lines.push(days+'일째 진행 중');
-    return lines.join('\n') || ('아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪');
+    var base = lines.join('\n') || ('아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪');
+    return base + buildInviteLinkSuffix(g.id);
   }
 
   /* ============ 목표 완주 인증서 (기존 공유 캔버스 인프라 재사용) ============ */
@@ -5195,10 +5223,11 @@
 
     ctx.globalAlpha = .6;
     ctx.font = '500 ' + Math.round(dims.w*0.024) + 'px "Noto Sans KR",sans-serif';
-    ctx.fillText(dateKey(nowISO())+' · '+(state.profile.displayName||''), dims.w/2, dims.h - pad*0.7);
+    ctx.fillText(dateKey(nowISO())+' · '+(state.profile.displayName||''), dims.w/2, dims.h - pad*0.7 - dims.w*0.09);
     ctx.globalAlpha = 1;
     ctx.textAlign = 'left';
 
+    drawShareWatermark(ctx, dims, state.profile.id, '#fff');
     return canvas;
   }
   async function openGoalCertificateModal(goal){
@@ -5227,7 +5256,7 @@
     if(shareBtn) shareBtn.disabled = false;
     if(saveBtn) saveBtn.disabled = false;
     if(shareBtn) shareBtn.addEventListener('click', async function(){
-      var text = '아워골에서 "'+goal.title+'" '+pct+'% 달성으로 완주했어요! 🏆';
+      var text = '아워골에서 "'+goal.title+'" '+pct+'% 달성으로 완주했어요! 🏆'+buildInviteLinkSuffix(goal.id);
       try{
         var blob = await (await fetch(dataUrl)).blob();
         var file = new File([blob], 'ourgoal-certificate.png', { type:'image/png' });
