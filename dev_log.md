@@ -376,3 +376,10 @@
 - **발생한 문제 및 해결**: 없음. `gh auth login`은 자격 증명이 필요해 사용자가 직접 수행(이 커밋의 push는 인증 후 진행).
 - **검증 결과**: `git status`로 변경 파일이 CLAUDE.md·dev_log.md뿐임을 확인, `gh --version` 정상, clone HEAD가 최신 main(c75f192, PR #24 병합 커밋)과 일치.
 ---
+
+## [2026-09-06 00:38] 마니또 DM 전송 후 화면 전환 시 null 참조 크래시 수정
+- **목표**: 2026-09-05 14:24 세션이 `promptNewGroup` 검증 중 우연히 발견해 "별도 이슈로 분리해 보고"했던 마니또 렌더링 `TypeError: Cannot read properties of null (reading 'addEventListener')`의 정확한 발생 지점과 근본 원인을 규명하고, 합성 테스트 프로필만의 문제가 아니라 실제 사용자도 겪을 수 있는지 확인 후 수정.
+- **수정/실행 내역**: 로컬 정적 서버로 index.html을 띄우고 브라우저에서 재현 시도(임시 디버그 훅·Supabase fetch mock은 검증 후 전부 제거, 최종 커밋 미포함). 최초 가설이었던 "state.profile.settings.manito 필드 누락"은 `manitoState()`가 누락 시 기본값을 자동 생성해 기각(재현 안 됨) — 실제 원인은 프로필 데이터와 무관한 순수 비동기 타이밍(레이스 컨디션) 버그였음. 소통 > 마니또 > DM에서 메시지를 보내면 `renderManitoDm`의 `send()`가 `saveProfile()` 저장을 `await`하는 동안, 그 사이 사용자가 다른 소통 서브탭 등으로 전환하면 `renderCommScreen()`이 `commBody`를 통째로 새로 그려 기존 `commSubBody` DOM 노드를 교체(detach)함. 저장이 끝난 뒤 이어지는 `renderManitoDm(body, pid)` 호출이 이미 문서에서 분리된 옛 `body`를 참조한 채 `document.getElementById('mnDmBack').addEventListener(...)`를 실행해 null 참조로 크래시 — "메시지 전송 직후 다른 탭 터치"만으로 실 계정에서도 재현되는 도달 가능한 버그로 확인됨. `send()` 내 재렌더링 지점 2곳(전송 직후 / 모의 답장 `setTimeout` 콜백)에 `document.body.contains(body) && state.manitoDm===pid` 가드를 추가해 화면이 이미 전환된 경우 재렌더링을 건너뛰도록 최소 diff로 수정.
+- **발생한 문제 및 해결**: (1) 제보된 최초 가설과 실제 원인이 달라 실제 브라우저 재현으로 근본 원인을 재규명함. (2) 재현 중 실제 프로덕션 Supabase로 쓰기 요청이 나가지 않도록 로컬 사본에서만 fetch를 임시로 mock 처리 후 원상복구. (3) 8번 규칙에 따라 `C:\dev\ourgoal-app`(정식 git clone)로 작업 위치를 전환 — 처음 시도했던 OneDrive 폴더 사본은 PR #24 등 최신 커밋이 반영되지 않은 구버전이라 그대로 썼다면 최근 작업을 되돌릴 뻔함. (4) `gh auth status` 미인증으로 `gh pr create` 불가 — 8번 규칙상 브라우저 GitHub 웹 UI 우회는 금지이므로, 커밋까지만 로컬에서 완료하고 push·PR 생성은 사용자의 `gh auth login` 이후로 넘김(아래 검증 결과 참고).
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 전부 통과(회귀 없음). 로컬 브라우저 재현 환경에서 (1) 수정 전 100% 재현되던 크래시가 수정 후 0건, (2) 정상 흐름(DM 화면에 머무르며 메시지 전송 → 즉시 표시 → 800~1500ms 후 모의 답장까지 정상 표시)에 회귀 없음을 확인. push/PR 생성은 인증 문제로 이번 세션에서 미완료(아래 참고).
+---
