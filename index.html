@@ -926,7 +926,7 @@
 
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
   function defaultSettings(){
-    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, todayMissions:{}, streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] }, hasSeenGuide:false };
+    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, feedReactions:{}, todayMissions:{}, streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] }, hasSeenGuide:false };
   }
   function loadLocalSettings(userId){
     try{
@@ -977,7 +977,7 @@
     };
   }
 
-  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, feedReacted: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7 };
+  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7 };
 
   async function ensureUserRow(userId, username, displayName){
     var found = await sb.from('users').select('*').eq('id', userId).maybeSingle();
@@ -4893,7 +4893,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
   }
 
   function feedPostHtml(p){
-    var reacted = !!state.feedReacted[p.id];
+    var reacted = !!state.profile.settings.feedReactions[p.id];
     return '<div class="feed-item">' +
       '<div class="feed-avatar me">'+escapeHtml((state.profile.displayName||'').slice(0,1))+'</div>' +
       '<div class="feed-body">' +
@@ -4931,7 +4931,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
       (hiddenCount ? ' · 🔒 나만 보기 '+hiddenCount+'개는 피드에 노출되지 않아요' : '') + '</p>' +
       myPosts.map(feedPostHtml).join('') +
       items.map(function(it){
-        var reacted = !!state.feedReacted[it.id];
+        var reacted = !!state.profile.settings.feedReactions[it.id];
         return '<div class="feed-item">' +
           '<div class="feed-avatar'+(it.me?' me':'')+'">'+escapeHtml(it.avatar)+'</div>' +
           '<div class="feed-body">' +
@@ -4944,9 +4944,17 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
         '</div>';
       }).join('');
     body.querySelectorAll('[data-react]').forEach(function(btn){
-      btn.addEventListener('click', function(){
+      btn.addEventListener('click', async function(){
         var id = btn.dataset.react;
-        state.feedReacted[id] = !state.feedReacted[id];
+        var reactions = state.profile.settings.feedReactions;
+        var nowOn = !reactions[id];
+        if(nowOn) reactions[id] = true; else delete reactions[id];
+        if(nowOn){
+          if(navigator.vibrate) navigator.vibrate(10);
+          var r = btn.getBoundingClientRect();
+          burstConfetti(r.left+r.width/2, r.top, 6);
+        }
+        await saveProfile();
         renderCommFeed(body);
       });
     });
