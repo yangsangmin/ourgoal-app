@@ -69,8 +69,8 @@ const FN_NAMES = [
   'pad', 'dateKey', 'goalProgress', 'msCounts', 'resultPct', 'dDay',
   'computeStreakDays', 'findSuggestionTarget', 'sanitizeSuggestions',
   'applySuggestion', 'describeSuggestion', 'xpForLevel', 'levelForXP', 'levelProgress',
-  'heatmapLevel', 'localNextActionSuggestion', ];
-
+  'heatmapLevel', 'localNextActionSuggestion',
+];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
 
@@ -207,17 +207,17 @@ check('describeSuggestion: status 변경 라벨을 생성한다', () => {
   assert.ok(d.label.indexOf('완료로') !== -1);
 });
 
-check('xpForLevel: 레벨 1은 누적 XP 0부터 시작한다', () => {
+check('xpForLevel: 레벨 1은 0 XP', () => {
   assert.strictEqual(fns.xpForLevel(1), 0);
 });
 
-check('levelForXP: 총 XP로 레벨을 정확히 역산한다', () => {
+check('levelForXP: 경계값 미만이면 이전 레벨을 유지한다', () => {
   assert.strictEqual(fns.levelForXP(0), 1);
   assert.strictEqual(fns.levelForXP(fns.xpForLevel(3) - 1), 2);
   assert.strictEqual(fns.levelForXP(fns.xpForLevel(3)), 3);
 });
 
-check('levelProgress: 레벨 경계에서 진행률이 0이다', () => {
+check('levelProgress: 현재 레벨 구간 안에서의 진행률을 계산한다', () => {
   const p = fns.levelProgress(fns.xpForLevel(3));
   assert.strictEqual(p.level, 3);
   assert.strictEqual(p.into, 0);
