@@ -9,7 +9,6 @@
 
 ## 진행 중 / 대기
 
-- [ ] PWA 설치 지원: manifest.json + 최소 서비스워커 추가해서 홈 화면에 앱처럼 설치 가능하게. 오프라인 시 최소한 빈 화면 대신 안내 문구 노출.
 - [ ] 실제 브라우저 푸시 알림: 지금은 탭이 열려있을 때만 알림이 옴(Notification API). Service Worker 기반 Web Push로 앱이 꺼져 있어도 체크인 시간에 알림 오도록 개선.
 - [ ] 주간/월간 리포트 화면: 기록 탭에 최근 7일/30일 체크인 추이, 카테고리별 시간 분포를 간단한 SVG 차트로 보여주는 요약 화면 추가.
 - [ ] 다크모드: 현재 디자인 토큰(CSS 변수) 기준으로 prefers-color-scheme 다크 팔레트 정의하고 자동 전환 지원.
@@ -22,6 +21,7 @@
 
 ## 완료됨
 
+- [x] PWA 설치 지원: manifest.json + 최소 서비스워커(sw.js) 추가, 아이콘 192/512 생성, 오프라인 시 안내 문구 화면 노출 (2026-09-04, PR 대기)
 - [x] 최소 자동 스모크 테스트 스크립트 작성: `scripts/smoke-test.js` — `<script>` 문법 검증 + goalProgress/msCounts/resultPct/dDay/computeStreakDays/findSuggestionTarget/sanitizeSuggestions/applySuggestion/describeSuggestion 단위 테스트 20개 (2026-09-04, PR 대기)
 - [x] 새 목표 AI 도우미(줄글 설명 → 마일스톤/할 일 템플릿 자동 생성 + 검증 + 리뷰 화면에서 수정 후 승인), 카테고리에 "직접 입력" 추가 (2026-09-05, 사용자 직접 요청·구현자 세션에서 즉시 반영)
 - [x] 목표 상세 "목표 최종 결과" → "현재 종합상황"으로 개편: 목표·마일스톤·할 일이 바뀔 때마다 AI가 150~200자로 현재 상태와 다음 행동을 요약, 검증 후 노출 (2026-09-05, 사용자 직접 요청·구현자 세션에서 즉시 반영)

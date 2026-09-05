@@ -1,5 +1,6 @@
 # 아워골 개발 로그
 
+---
 ## [2026-09-03 15:56] GitHub 저장소 생성 및 index.html 업로드
 - **목표**: 로컬 HTML 앱(아워골_앱.html)을 GitHub 새 저장소에 index.html로 업로드
 - **수정/실행 내역**: GitHub에 yangsangmin/ourgoal-app 저장소 생성(Public), 파일명을 index.html로 변경해 웹 에디터로 커밋
@@ -220,11 +221,24 @@
 - **검증 결과**: node·api/feedback.js·api/promptgen.js 문법 검증 통과, GitHub 업로드→Vercel 재배포(1차 2-패스 구조 배포 후 타임아웃 재현 확인 → 1-패스+보정 구조로 재수정·재배포) 후 실 계정 라이브 테스트 — 이전에 끊겼던 것과 유사한 복합 요구(투자 콘텐츠, 유튜브 쇼츠+인스타 카드뉴스, 후킹강도·정보정확도·플랫폼별 알고리즘 차이 등) 문장으로 재생성 → 약 23초 만에 1234자 분량이 "…코치 역할을 수행한다."로 문장이 완전히 끝난 상태로 생성됨을 확인(중간에 끊기지 않음), 승인 후 정상 활성화, 콘솔 에러 0건
 ---
 
+## [2026-09-04 20:40] PWA 설치 지원 (manifest.json + 최소 서비스워커)
+- **목표**: BACKLOG.md 항목("PWA 설치 지원")에 따라 홈 화면에 앱처럼 설치 가능하게 하고, 오프라인 시 빈 화면 대신 안내 문구를 노출
+- **수정/실행 내역**:
+  (1) `manifest.json` 신규 작성 — name/short_name "아워골", start_url·scope "/", display "standalone", theme_color(브랜드 코랄 #FF4F64), background_color(--paper #F4F5FB), 192/512 아이콘 등록.
+  (2) `icons/icon-192.png`, `icons/icon-512.png` 신규 생성 — 외부 이미지 라이브러리 없이 순수 Node(zlib)로 PNG를 직접 인코딩하는 1회성 스크립트로, 브랜드 그라디언트(--mz1 #FF4F64 → --mz2 #FF9F1C, 135deg) 배경에 흰색 다트보드(🎯) 링을 그린 아이콘.
+  (3) `sw.js` 신규 작성 — install 시 앱 셸("/") 캐싱, fetch 이벤트에서 네비게이션 요청만 network-first로 처리하고 실패 시 캐시 → 그마저 없으면 "인터넷 연결이 필요해요" 안내 화면(다시 시도 버튼 포함)을 반환.
+  (4) index.html `<head>`에 `<link rel="manifest">`, `<meta name="theme-color">`, favicon/apple-touch-icon 링크 4줄 추가. 메인 스크립트 IIFE 끝(boot() 직후)에 `navigator.serviceWorker.register('/sw.js')` 등록 코드 6줄 추가. 기존 디자인·레이아웃·CSS는 전혀 변경하지 않음(추가만 수행).
+- **발생한 문제 및 해결**: 자동화 환경에 이미지 변환 도구(ImageMagick, sharp 등)가 없어 아이콘 PNG를 만들 방법이 마땅치 않았음 → PNG 포맷(IHDR/IDAT/IEND 청크 + zlib deflate)을 직접 구현하는 소규모 스크립트로 우회, 생성된 PNG를 Read 도구로 실제 렌더링까지 눈으로 확인.
+- **검증 결과**: `node -e "new Function(...)"`로 index.html 인라인 스크립트 문법 검증 통과, `node -e "new Function(fs.readFileSync('sw.js'))"`로 sw.js 문법 검증 통과, `JSON.parse`로 manifest.json 유효성 확인, 생성된 PNG 2종을 `file` 명령과 이미지 뷰어로 실제 렌더링 확인(192x192/512x512 RGBA 정상). Vercel 프리뷰 URL 브라우저 실사용 테스트(설치 배너 노출, 오프라인 진입 등)는 이 자동화 환경에 브라우저 도구가 없어 수행하지 못했으며 PR 설명에 명시함.
+---
+
 ## [2026-09-04 20:35] 최소 자동 스모크 테스트 스크립트 추가
 - **목표**: BACKLOG.md 메타 항목("최소 자동 스모크 테스트 스크립트 작성")에 따라, 사람이 매번 라이브 QA를 하지 않아도 다음 자동화 사이클부터 최소 안전망을 확보
 - **수정/실행 내역**: `scripts/smoke-test.js` 신규 작성. (1) index.html의 인라인 `<script>` 블록을 정규식으로 추출해 `new Function()`으로 컴파일만 하는 방식의 문법 검증(실행하지 않으므로 브라우저 전용 API 없이도 안전). (2) index.html이 전부 하나의 IIFE(`(function(){ "use strict"; ... })()`) 안에 캡슐화돼 있어 외부에서 함수를 직접 import할 수 없으므로, 함수 이름별로 소스 텍스트를 중괄호 균형 매칭으로 추출한 뒤 임시 파일에 `state` mock과 함께 조립해 Node로 require하는 방식의 격리 샌드박스를 구성. goalProgress/msCounts/resultPct/dDay/computeStreakDays/findSuggestionTarget/sanitizeSuggestions/applySuggestion/describeSuggestion 9개 함수에 대해 20개 단위 테스트(assert 기반) 작성. index.html 자체는 한 글자도 변경하지 않음.
 - **발생한 문제 및 해결**: (1) `<script>` 태그 추출 정규식에서 콘텐츠 안에 `src=`가 포함된 코드(이미지 `img.src = ...` 등)가 CDN `<script src=...>` 필터링 조건에 잘못 걸려 모든 스크립트가 제외됨 → 여는 태그 속성과 본문을 별도로 캡처해 속성 쪽에서만 `src=` 여부를 판별하도록 수정. (2) 추출한 함수 소스를 실행하기 위해 `Module.prototype._compile`을 직접 호출했더니 Node 내부 네이티브 어서션(`args[1]->IsString()`)으로 프로세스가 죽음 → 임시 파일에 써서 일반 `require()`로 불러오는 방식으로 교체, 이후 정상 동작.
 - **검증 결과**: `node scripts/smoke-test.js` 실행 → 20개 전부 통과(exit 0). 테스트가 실제로 회귀를 잡아내는지 확인하기 위해 `goalProgress`의 계산식을 일시적으로 `return 0;`으로 망가뜨린 뒤 재실행 → 관련 테스트 2개가 정확히 실패로 검출됨(exit 1)을 확인 후 index.html 원상 복구(`git diff` 결과 index.html 변경 없음, scripts/만 신규 추가된 상태 확인).
+---
+
 ## [2026-09-05 03:45] 새 목표 AI 도우미 · 목표 상세 "현재 종합상황" AI 요약
 - **목표**: (1) 새 목표(+) 만들기가 카테고리부터 고르게 하는 방식이라 진입장벽이 높다는 피드백 → 줄글로 설명하면 AI가 마일스톤·할 일까지 채운 템플릿을 만들어주는 방식으로 기본 흐름을 바꾸고, 검증 후 리뷰 화면에서 사용자가 직접 수정한 뒤 승인하도록 구현. 기존 카테고리 그리드(공부/운동/사업/시험/여행/기타)에는 "직접 입력" 추가. (2) 목표 상세에서 마일스톤 목록 바로 위에 있던 "목표 최종 결과"(수동 결과 입력 카드)가 첫인상으로 부적절하다는 지적 → "현재 종합상황"으로 개편해, 목표·마일스톤·할 일이 업데이트될 때마다 AI가 150~200자로 전문적인 현재 상태 판단과 다음 행동 제안을 요약해서 보여주고, 노출 전 검증 절차를 거치게 함.
 - **수정/실행 내역**:
