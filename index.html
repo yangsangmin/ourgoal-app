@@ -616,6 +616,13 @@
       <p class="s-eyebrow">목표</p>
       <div class="comm-subtabs" id="goalsSubtabs"></div>
       <div id="personalGoalsView">
+        <div class="card" id="goalAgentCard">
+          <div style="font-weight:700;color:var(--violet);font-size:.86rem;">🤖 대화로 목표 관리</div>
+          <div class="dm-input-row" style="padding:10px 0 0;border-top:none;">
+            <input id="goalAgentInput" type="text" placeholder="대화로 목표와 할일들을 추가, 변경, 삭제하세요">
+            <button class="btn btn-primary btn-sm" id="goalAgentSendBtn" type="button">전송</button>
+          </div>
+        </div>
         <div class="goal-head-row">
           <h2>목표</h2>
           <button class="edit-toggle off" id="goalEditToggle" type="button">편집</button>
@@ -2678,6 +2685,147 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
       }
     );
   }
+
+  /* ============ 대화로 목표 관리 (AI diff 제안 + 확인 후 반영) ============ */
+  function goalAgentSnapshot(){
+    return state.profile.goals.filter(function(g){ return !g.archivedAt; }).map(function(g){
+      return {
+        id: g.id, title: g.title, dueDate: g.dueDate || null,
+        milestones: (g.milestones||[]).map(function(m){
+          return {
+            id: m.id, title: m.title, status: m.status, dueDate: m.dueDate || null,
+            tasks: (m.tasks||[]).map(function(t){ return { id: t.id, title: t.title, done: !!t.done }; })
+          };
+        })
+      };
+    });
+  }
+  async function requestGoalAgentDiff(message){
+    var controller = new AbortController();
+    var timer = setTimeout(function(){ controller.abort(); }, 28000);
+    try{
+      var res = await fetch('/api/goalagent', {
+        method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
+        body: JSON.stringify({ message: message, goals: goalAgentSnapshot(), today: new Date().toISOString().slice(0,10) })
+      });
+      clearTimeout(timer);
+      if(!res.ok) return null;
+      var data = await res.json();
+      if(!data || !Array.isArray(data.ops)) return null;
+      return data;
+    } catch(e){ clearTimeout(timer); return null; }
+  }
+  function buildGoalFromAgentData(data){
+    var milestones = (data.milestones||[]).map(function(m){
+      return { id: uid('ms'), title: m.title, status:'todo', dueDate:null, tasks:(m.tasks||[]).map(function(tk){ return { id: uid('task'), title: tk, done:false }; }) };
+    });
+    return {
+      id: newId(), title: data.title, dueDate: data.dueDate || null,
+      category:'etc', topic: data.topicMajor ? (data.topicMajor+'/'+(data.topicMinor||'')) : '',
+      createdAt: nowISO(), visibility:'public', archivedAt:null, result:null, milestones: milestones
+    };
+  }
+  function applyGoalAgentOp(op){
+    var goals = state.profile.goals;
+    if(op.level==='goal'){
+      if(op.type==='CREATE'){
+        var newGoal = buildGoalFromAgentData(op.data);
+        goals.push(newGoal);
+        state.activeGoalId = newGoal.id;
+        return true;
+      }
+      var goal = goals.find(function(g){ return g.id===op.goalId; });
+      if(!goal) return false;
+      if(op.type==='DELETE'){
+        state.profile.goals = goals.filter(function(g){ return g.id!==op.goalId; });
+        if(state.activeGoalId===op.goalId) state.activeGoalId = null;
+        return true;
+      }
+      if('title' in op.data) goal.title = op.data.title;
+      if('dueDate' in op.data) goal.dueDate = op.data.dueDate;
+      return true;
+    }
+    var goal2 = goals.find(function(g){ return g.id===op.goalId; });
+    if(!goal2) return false;
+    if(op.level==='milestone'){
+      if(op.type==='CREATE'){
+        goal2.milestones.push({ id: uid('ms'), title: op.data.title, status:'todo', dueDate: op.data.dueDate||null,
+          tasks:(op.data.tasks||[]).map(function(tk){ return { id: uid('task'), title: tk, done:false }; }) });
+        return true;
+      }
+      var ms = goal2.milestones.find(function(m){ return m.id===op.milestoneId; });
+      if(!ms) return false;
+      if(op.type==='DELETE'){
+        goal2.milestones = goal2.milestones.filter(function(m){ return m.id!==op.milestoneId; });
+        return true;
+      }
+      if('title' in op.data) ms.title = op.data.title;
+      if('dueDate' in op.data) ms.dueDate = op.data.dueDate;
+      if('status' in op.data) ms.status = op.data.status;
+      return true;
+    }
+    var ms2 = goal2.milestones.find(function(m){ return m.id===op.milestoneId; });
+    if(!ms2) return false;
+    if(op.type==='CREATE'){
+      ms2.tasks.push({ id: uid('task'), title: op.data.title, done:false });
+      return true;
+    }
+    var task = ms2.tasks.find(function(t){ return t.id===op.taskId; });
+    if(!task) return false;
+    if(op.type==='DELETE'){
+      ms2.tasks = ms2.tasks.filter(function(t){ return t.id!==op.taskId; });
+      return true;
+    }
+    if('title' in op.data) task.title = op.data.title;
+    if('done' in op.data) task.done = op.data.done;
+    return true;
+  }
+  function showGoalAgentLoadingStep(){
+    openModal('<h3>🤖 이대로 반영할까요?</h3>' + fbBotBubbleHtml('<p class="faint" style="margin:0;">요청을 분석하는 중… 🛠️</p>'), null);
+  }
+  function showGoalAgentReviewStep(diff){
+    openModal(
+      '<h3>🤖 이대로 반영할까요?</h3>' +
+      (diff.reply ? '<p class="faint" style="margin:-8px 0 14px;">'+escapeHtml(diff.reply)+'</p>' : '') +
+      '<div class="ms-list">' +
+        diff.ops.map(function(op){
+          var icon = op.type==='CREATE' ? '➕' : (op.type==='DELETE' ? '🗑' : '✏️');
+          return '<div class="ms-row"><div class="ms-main">' +
+            '<div style="flex:1;min-width:0;"><div style="font-size:.84rem;font-weight:700;">'+icon+' '+escapeHtml(op.summary)+'</div></div>' +
+          '</div></div>';
+        }).join('') +
+      '</div>' +
+      '<div class="modal-actions"><button class="btn btn-ghost" id="gaCancelBtn" type="button">취소</button><button class="btn btn-primary" id="gaApplyBtn" type="button">반영</button></div>',
+      function(sheet){
+        sheet.querySelector('#gaCancelBtn').addEventListener('click', closeModal);
+        sheet.querySelector('#gaApplyBtn').addEventListener('click', async function(){
+          var applied = 0;
+          diff.ops.forEach(function(op){ if(applyGoalAgentOp(op)) applied++; });
+          if(!applied){ closeModal(); toast('반영할 변경사항이 없어요'); return; }
+          await saveProfile();
+          closeModal();
+          renderAll();
+          toast(applied+'개 변경사항을 반영했어요');
+        });
+      }
+    );
+  }
+  async function sendGoalAgentMessage(){
+    var input = document.getElementById('goalAgentInput');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    showGoalAgentLoadingStep();
+    var diff = await requestGoalAgentDiff(text);
+    if(!diff || !diff.ops.length){
+      closeModal();
+      toast((diff && diff.reply) || '요청을 처리하지 못했어요 · 다시 시도해주세요');
+      return;
+    }
+    showGoalAgentReviewStep(diff);
+  }
+  document.getElementById('goalAgentSendBtn').addEventListener('click', sendGoalAgentMessage);
+  document.getElementById('goalAgentInput').addEventListener('keydown', function(e){ if(e.key==='Enter') sendGoalAgentMessage(); });
 
   /* ============ 목표 현황 데이터 내보내기 (AI 분석용) ============ */
   function buildGoalSnapshot(goals){

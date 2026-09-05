@@ -378,3 +378,14 @@
 ---
 
 ---
+
+## [2026-09-06 01:30] 개인 목표 탭 대화형 AI 목표/할일 관리 기능 추가
+- **목표**: 사용자 직접 요청 — '개인 목표' 탭 최상단에 자연어로 목표·마일스톤·할 일을 추가/변경/삭제 요청하면, AI가 변경안(diff)을 만들고 사용자가 확인 모달에서 '반영'을 눌러야만 실제로 적용되는 대화형 관리 기능 추가.
+- **수정/실행 내역**:
+  (1) `api/goalagent.js` 신설 — 기존 `api/goaltemplate.js` 패턴(POST 검증→ANTHROPIC_API_KEY 확인→프롬프트 구성→claude-sonnet-4-6 호출→JSON 파싱)을 그대로 따름. 요청 `{message, goals, today}`에서 goals는 프런트가 보낸 현재 목표 스냅샷(id 포함)이고, 모델이 반환한 `ops`(type: CREATE/UPDATE/DELETE × level: goal/milestone/task) 각각을 서버가 재검증 — goalId/milestoneId/taskId가 요청에 실제로 존재하는지 대조하고, 레벨·타입별로 허용된 데이터 필드만 clamp해서 통과시키며 존재하지 않는 id를 참조하거나 형식이 어긋난 op는 조용히 제거. 응답은 `{ops, reply}`.
+  (2) `index.html` — `#personalGoalsView` 최상단에 `.card`(`#goalAgentCard`) + 기존 `.dm-input-row` 클래스를 그대로 재사용한 입력창(`#goalAgentInput`, placeholder "대화로 목표와 할일들을 추가, 변경, 삭제하세요") + 전송 버튼(`#goalAgentSendBtn`) 추가. 신규 CSS 없음 — 카드/입력행/버튼 전부 기존 클래스 재사용, 헤더 텍스트 색상만 기존 AI 기능에 쓰이던 `var(--violet)`를 인라인으로 지정.
+  (3) 전송 흐름: `showGoalAgentLoadingStep()`(기존 `showNewGoalLoadingStep`과 동일 패턴)으로 로딩 모달 표시 → `/api/goalagent` 호출 → `ops`가 비어 있으면 모달을 닫고 `reply`를 토스트로 안내 → 있으면 **기존 `openModal()`을 그대로 사용**해 "🤖 이대로 반영할까요?" 확인 모달(`showGoalAgentReviewStep`)을 띄우고 각 op의 `summary`를 기존 `.ms-list`/`.ms-row` 클래스로 나열. '반영' 클릭 시에만 `applyGoalAgentOp()`가 `state.profile.goals`에 순차 반영한 뒤 `saveProfile()` → `closeModal()` → `renderAll()`. '취소'는 `closeModal()`만 호출해 아무 것도 바꾸지 않음.
+  (4) 신규 목표 생성(CREATE goal)은 기존 AI 템플릿 생성 플로우(`showNewGoalReviewStep`)와 동일하게 `category:'etc'`, `topic:'major/minor'` 조합, milestone/task에 `uid('ms')`/`uid('task')` id를 부여하도록 구현(`buildGoalFromAgentData`).
+- **발생한 문제 및 해결**: 작업 착수 직전 표준 경로 `C:\dev\ourgoal-app`에서 다른 세션이 브랜치 `feat/2026-09-06-team-goal-comments`에 실시간으로 커밋 중인 것을 발견(동시 작업 충돌 위험 — reflog에 내가 관여하지 않은 checkout이 실시간으로 찍힘). 사용자에게 확인 후 `EnterWorktree`로 격리된 워크트리를 만들어 브랜치 `feature/2026-09-06-goal-agent-chat`에서 작업, 공유 작업 폴더의 다른 세션 상태는 전혀 건드리지 않음.
+- **검증 결과**: `node -e`로 `api/goalagent.js` require 및 메인 `<script>` 문법 검증 통과, `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음). 로컬 정적 서버(Python http.server)로 실제 브라우저 렌더링 확인 — `#goalAgentCard`가 '개인 목표' 탭 최상단(목표 헤더 위)에 요청한 그대로의 placeholder로 렌더링됨을 스크린샷으로 확인, 메시지 입력 후 전송 시 로딩 모달→(로컬엔 API 서버가 없어 실패)→에러 토스트까지 콘솔 에러 없이 정상 동작함을 클릭으로 확인. ANTHROPIC_API_KEY·Supabase 로그인이 없는 로컬 환경이라 실제 AI diff 생성·반영까지의 전체 흐름은 PR의 Vercel 프리뷰 배포에서 재검증이 필요함.
+---
