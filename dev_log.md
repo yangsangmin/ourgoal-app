@@ -301,3 +301,15 @@
 - **발생한 문제 및 해결**: (1) GitHub 웹 UI에서 conflict 3-way 병합용 CodeMirror "Accept both changes" 버튼이 뷰포트 폭에 의해 클릭 좌표가 어긋나 여러 번 실패 → git 블롭(ancestor/base/head oid)을 직접 API로 받아 로컬 `git merge-file`로 재현 후 업로드하는 방식으로 우회했으나, 정확히 이 작업을 진행하던 중 1호 직원 세션이 웹훅으로 깨어나 같은 브랜치를 실제 git으로 먼저 재해결·푸시하는 것을 발견 → 이후로는 1호 직원의 해결을 기다렸다가 "Merge pull request" 버튼 클릭만 담당하는 것으로 역할을 분담. (2) 로컬 3-way 병합 중 BACKLOG.md/dev_log.md(LF)와 main의 index.html(CRLF)이 섞여 있어 첫 시도에서 줄바꿈 불일치로 잘못된 병합 결과(변경사항 소실)가 발생 → 파일별로 실제 줄바꿈을 확인해 올바르게 정규화한 뒤 병합해 해결. (3) GitHub PR 병합 버튼이 "checking..." 상태에서 클릭이 씹히는 경우가 잦아, 클릭 후 커밋-메시지 입력폼이 실제로 나타났는지 read_page로 재확인하고 필요시 재클릭하는 방식으로 안정화.
 - **검증 결과**: 병합 후 main의 index.html에서 manifest.json(PWA)·prefers-color-scheme(다크모드)·renderReportSummary(리포트)·a11ySwitch(접근성)·그룹 배지 streak 계산·goaltemplate(새 목표 AI)가 모두 포함돼 있음을 문자열 검색으로 확인, `<style>` 중괄호 394/394 균형, 메인 `<script>`를 `new Function()`으로 문법 검증 통과. `gh api`로 열린 PR이 0개임을 최종 확인.
 ---
+
+## [2026-09-05 06:16] 기록 히트맵(GitHub 잔디 스타일) 추가
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 1단계 세 번째 항목 — 최근 몇 달간의 기록 꾸준함을 한눈에 보여주는 GitHub 잔디 스타일 히트맵을 기록 탭에 추가. (8원칙: 기존 리포트는 7일/30일 추이·분야별 분포만 있어 "장기간 꾸준히 해왔다"는 감각을 주는 시각화가 없었던 게 공백 → 별도 라이브러리 없이 순수 CSS 그리드+SVG 없는 div 기반으로 가볍게 구현하는 것이 효율적)
+- **수정/실행 내역**:
+  (1) 기록 탭(`#screen-records`)의 7일 막대 차트(`#chartContainer`)와 7/30일 리포트(`#reportSummary`) 사이에 `#recordHeatmap` 컨테이너 신설.
+  (2) `renderRecordHeatmap(recs)` — 오늘을 포함해 최근 18주(126일)를 일~토 7행 × 주 단위 열로 배치, 하루 기록 개수를 그날의 최댓값 대비 비율로 5단계(0~4)로 나눠 `--sage` 계열 색상 진하기로 표시(빈 날은 `--card2`). 오늘 이후 미래 날짜 칸은 투명 처리. 각 칸에 `title`로 날짜·건수 노출, 하단에 "적음→많음" 5단계 범례 추가. `heatmapLevel(count,maxCount)` 순수 함수로 단계 계산 분리.
+  (3) CSS는 기존 `.chart-card`/디자인 토큰(`--sage`, `--card2`, `--ink-faint`)만 재사용하고 히트맵 전용 그리드 클래스(`.heatmap-*`) 6개만 신규 추가, 좁은 화면 대응으로 `overflow-x:auto` 적용.
+  (4) `renderRecordsScreen()`에서 `renderWeekChart` 다음에 `renderRecordHeatmap` 호출 추가.
+  (5) `scripts/smoke-test.js`에 `heatmapLevel` 단위 테스트 3건 추가.
+- **발생한 문제 및 해결**: 없음
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 23개 전부 통과(기존 20 + 신규 3). `heatmapLevel` 경계값(0건/최댓값/중간 비율)을 별도 시뮬레이션으로 재확인. 브라우저 도구가 없는 샌드박스라 Vercel 프리뷰 실제 렌더링 확인은 진행하지 못함.
+---

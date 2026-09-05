@@ -324,6 +324,16 @@
   .report-legend-label{flex:1;color:var(--ink-soft);font-weight:700;}
   .report-legend-val{font-family:var(--mono);font-size:.72rem;color:var(--ink-faint);}
 
+  /* ---------- Heatmap (기록 히트맵) ---------- */
+  .heatmap-scroll{overflow-x:auto;padding-bottom:2px;}
+  .heatmap-body{display:flex;gap:3px;}
+  .heatmap-daylbls{display:grid;grid-template-rows:repeat(7,11px);gap:3px;margin-right:2px;flex:0 0 auto;}
+  .heatmap-daylbls span{font-size:.58rem;color:var(--ink-faint);font-family:var(--mono);line-height:11px;}
+  .heatmap-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,11px);gap:3px;}
+  .heatmap-cell{width:11px;height:11px;border-radius:3px;background:var(--card2);}
+  .heatmap-legend{display:flex;align-items:center;gap:4px;margin-top:8px;font-size:.66rem;color:var(--ink-faint);}
+  .heatmap-legend .heatmap-cell{width:9px;height:9px;border-radius:2px;}
+
   /* ---------- Comm sub-tabs ---------- */
   .comm-subtabs{display:flex;gap:4px;background:var(--card2);border-radius:999px;padding:4px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none;}
   .comm-subtabs::-webkit-scrollbar{display:none;}
@@ -618,6 +628,7 @@
       </div>
       <div class="week-summary" id="weekSummary"></div>
       <div id="chartContainer"></div>
+      <div id="recordHeatmap"></div>
       <div id="reportSummary"></div>
       <h3 style="font-weight:900;letter-spacing:-.02em;font-size:1rem;margin:18px 0 8px;">완료·보관한 목표</h3>
       <div id="archivedGoals"></div>
@@ -3222,6 +3233,50 @@
       '<div class="chart-card"><div class="ct-label">최근 7일 기록 시간</div><div class="chart-bars">'+bars+'</div></div>';
   }
 
+  /* ============ 기록 히트맵 (GitHub 잔디 스타일) ============ */
+  var HEATMAP_WEEKS = 18;
+  var HEATMAP_LEVELS = ['var(--card2)','rgba(31,201,142,.35)','rgba(31,201,142,.6)','rgba(31,201,142,.85)','#1FC98E'];
+  function heatmapLevel(count, maxCount){
+    if(!count) return 0;
+    if(maxCount<=1) return 4;
+    var ratio = count/maxCount;
+    if(ratio>0.75) return 4;
+    if(ratio>0.5) return 3;
+    if(ratio>0.25) return 2;
+    return 1;
+  }
+  function renderRecordHeatmap(recs){
+    var totalDays = HEATMAP_WEEKS*7;
+    var today = new Date(); today.setHours(0,0,0,0);
+    var start = new Date(today); start.setDate(start.getDate() - (totalDays - 1 - today.getDay()));
+    var counts = {};
+    recs.forEach(function(r){ var k = dateKey(r.startAt); counts[k] = (counts[k]||0) + 1; });
+    var maxCount = Math.max.apply(null, [1].concat(Object.keys(counts).map(function(k){ return counts[k]; })));
+    var cells = '';
+    for(var i=0;i<totalDays;i++){
+      var d = new Date(start); d.setDate(d.getDate()+i);
+      var k = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+      var future = d.getTime() > today.getTime();
+      var c = counts[k]||0;
+      var bg = future ? 'transparent' : HEATMAP_LEVELS[heatmapLevel(c, maxCount)];
+      var title = future ? '' : ' title="'+k+' · '+c+'건"';
+      cells += '<div class="heatmap-cell" style="background:'+bg+';"'+title+'></div>';
+    }
+    var dayLbls = ['일','월','화','수','목','금','토'].map(function(w,i){ return '<span>'+(i%2===1?w:'')+'</span>'; }).join('');
+    document.getElementById('recordHeatmap').innerHTML =
+      '<div class="chart-card">' +
+        '<div class="ct-label">🔥 기록 히트맵 · 최근 '+HEATMAP_WEEKS+'주</div>' +
+        '<div class="heatmap-scroll"><div class="heatmap-body">' +
+          '<div class="heatmap-daylbls">'+dayLbls+'</div>' +
+          '<div class="heatmap-grid">'+cells+'</div>' +
+        '</div></div>' +
+        '<div class="heatmap-legend"><span>적음</span>' +
+          HEATMAP_LEVELS.map(function(bg){ return '<div class="heatmap-cell" style="background:'+bg+';"></div>'; }).join('') +
+          '<span>많음</span>' +
+        '</div>' +
+      '</div>';
+  }
+
   /* ============ 주간/월간 리포트 (SVG 추이 + 카테고리 분포) ============ */
   var TOPIC_COLORS = { health:'#FF4F64', study:'#FF9F1C', career:'#1FC98E', hobby:'#6C5CE7', mind:'#FF7EB9', relation:'#3DBFCF' };
   function svgTrendChart(totals){
@@ -3338,6 +3393,7 @@
     });
     document.getElementById('weekSummary').textContent = '이번 주 총 ' + fmtDuration(totalMs) + ' 기록';
     renderWeekChart(recs);
+    renderRecordHeatmap(recs);
     renderReportSummary(recs);
     renderArchivedGoals();
 
