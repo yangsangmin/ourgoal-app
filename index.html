@@ -1148,6 +1148,7 @@
     await checkStreakFreeze();
     renderAll();
     setupNotifyTimer();
+    if(state.profile.settings.notify) syncPushSubscription();
     checkSocialNotifications();
   }
 
@@ -5627,12 +5628,14 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
       inp.addEventListener('change', async function(){
         times[+inp.dataset.timeidx] = inp.value;
         await saveProfile();
+        if(state.profile.settings.notify) syncPushSubscription();
       });
     });
     row.querySelectorAll('[data-timedel]').forEach(function(btn){
       btn.addEventListener('click', async function(){
         times.splice(+btn.dataset.timedel, 1);
         await saveProfile(); renderSettingsScreen();
+        if(state.profile.settings.notify) syncPushSubscription();
       });
     });
 
@@ -5646,8 +5649,10 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
           if(perm!=='granted'){ toast('브라우저 알림 권한이 필요해요'); return; }
         }
         state.profile.settings.notify = true;
+        syncPushSubscription();
       } else {
         state.profile.settings.notify = false;
+        removePushSubscription();
       }
       await saveProfile();
       renderSettingsScreen();
@@ -5755,6 +5760,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
   document.getElementById('addTimeBtn').addEventListener('click', async function(){
     state.profile.settings.checkinTimes.push('12:00');
     await saveProfile(); renderSettingsScreen();
+    if(state.profile.settings.notify) syncPushSubscription();
   });
   document.getElementById('testNotifyBtn').addEventListener('click', function(){
     setTab('home');
@@ -5821,6 +5827,61 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
       setTab('home');
       document.getElementById('captureInput').focus();
     });
+  }
+
+  /* ============ Web Push (앱이 꺼져 있어도 오는 알림) ============ */
+  function urlBase64ToUint8Array(base64String){
+    var padding = '='.repeat((4 - base64String.length % 4) % 4);
+    var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    var rawData = window.atob(base64);
+    var outputArray = new Uint8Array(rawData.length);
+    for(var i=0; i<rawData.length; i++) outputArray[i] = rawData.charCodeAt(i);
+    return outputArray;
+  }
+
+  async function syncPushSubscription(){
+    try{
+      if(!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+      if(!('Notification' in window) || Notification.permission!=='granted') return;
+      var reg = await navigator.serviceWorker.ready;
+      var sub = await reg.pushManager.getSubscription();
+      if(!sub){
+        var keyRes = await fetch('/api/vapid-public-key');
+        if(!keyRes.ok) return;
+        var keyData = await keyRes.json();
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(keyData.publicKey)
+        });
+      }
+      var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul';
+      await fetch('/api/push-subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: state.profile.id,
+          subscription: sub.toJSON(),
+          checkinTimes: state.profile.settings.checkinTimes,
+          timezone: timezone
+        })
+      });
+    } catch(e){ console.warn('Web Push 구독 실패:', e); }
+  }
+
+  async function removePushSubscription(){
+    try{
+      if(!('serviceWorker' in navigator)) return;
+      var reg = await navigator.serviceWorker.ready;
+      var sub = await reg.pushManager.getSubscription();
+      if(!sub) return;
+      var endpoint = sub.endpoint;
+      await sub.unsubscribe();
+      await fetch('/api/push-subscribe', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ endpoint: endpoint })
+      });
+    } catch(e){ console.warn('Web Push 구독 해제 실패:', e); }
   }
 
   /* ============ 받은 응원 알림 (mock: 시간 경과에 따라 내 게시물 응원이 쌓이는 것 + 마니또 받은 응원함) ============ */

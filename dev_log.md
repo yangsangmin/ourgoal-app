@@ -432,6 +432,29 @@
 - **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 24개 전부 통과(기존 20 + 신규 4, 회귀 없음). "기록 2일치 중 어제만 빠진" 케이스를 별도 시뮬레이션해 프리즈 적용 전 streak=1 → 적용 후 streak=3, 보유 개수 1→0으로 정확히 소비됨을 확인. 브라우저 도구가 없는 샌드박스라 실제 로그인 흐름에서의 토스트·뱃지 노출은 확인하지 못함.
 ---
 
+## [2026-09-05 16:50] Web Push(Service Worker 푸시) 알림 인프라 추가
+- **목표**: BACKLOG.md "실제 브라우저 푸시 알림" 처리 — 지금은 탭이 열려 있어야만(`Notification` API + `setInterval` 폴링) 체크인 알림이 오는데, 앱이 완전히 꺼져 있어도(브라우저·탭 종료) Service Worker 기반 Web Push로 체크인 시간에 알림이 오도록 개선.
+- **문제의 본질**: 브라우저 알림 자체는 탭이 열려 있을 때 클라이언트 setInterval로 폴링해 띄우는 구조라, 원천적으로 앱이 안 떠 있으면 발동할 수 없음. 이를 해결하려면 (1) 서버가 알림을 발송할 수 있는 채널(Web Push 구독)과 (2) 서버가 "지금이 그 시각인지"를 판단할 수 있는 정보(체크인 시각 + 타임존)가 사용자별로 서버에 저장돼야 하는데, 이 앱은 지금까지 `settings`(체크인 시각 포함)를 전부 `localStorage`에만 저장해왔다는 게 핵심 제약이었음.
+- **해결 방식 및 타당성 검토**: VAPID 키 기반 Web Push 표준 사용(핸드롤 암호화는 안전하지 않아 `web-push` npm 패키지로 위임). 서버가 사용자별 발송 시각을 알아야 하므로 새 Supabase 테이블(`push_subscriptions`)에 구독 정보와 함께 `checkin_times`·`timezone`을 같이 저장(구독/시각 변경 시마다 클라이언트가 재동기화). 발송은 Vercel Cron(`vercel.json`)이 5분마다 `/api/push-dispatch`를 호출해 각 구독의 로컬 시각이 체크인 시각과 ±2분 이내면 발송, 같은 슬롯 중복 발송은 `sent_slots`로 방지. 기존 탭-오픈 전용 알림(Notification API)은 그대로 유지해 두 방식이 공존(Web Push 실패 시에도 기존 방식이 폴백 역할). 신규 UI 요소·CSS 변경 없음(설정 화면의 기존 알림 스위치를 그대로 재사용해 켤 때 푸시 구독까지 함께 처리) — CLAUDE.md 디자인 불변경 원칙 준수. 다크패턴 요소 없음(옵트인 토글, 강제 재노출 없음).
+- **수정/실행 내역**:
+  (1) `package.json` 신설 — `web-push`, `@supabase/supabase-js` 의존성 추가(핸드롤 aes128gcm 암호화 위험 회피 목적).
+  (2) `api/vapid-public-key.js` 신설 — 클라이언트가 구독 시 필요한 VAPID 공개키를 서버 env에서 읽어 반환.
+  (3) `api/push-subscribe.js` 신설 — POST로 구독 정보(`endpoint`/`keys`)+`checkinTimes`+`timezone`을 `push_subscriptions`에 upsert, DELETE로 endpoint 기준 구독 삭제.
+  (4) `api/push-dispatch.js` 신설 — Vercel Cron 진입점. `CRON_SECRET` env가 설정돼 있으면 Authorization 헤더로 검증. 전체 구독을 순회하며 타임존별 로컬 시각을 계산해 일치하는 구독에만 `web-push`로 발송, 만료(404/410) 구독은 자동 삭제.
+  (5) `vercel.json` 신설 — `*/5 * * * *` 크론으로 `/api/push-dispatch` 호출.
+  (6) `sw.js`에 `push`/`notificationclick` 이벤트 핸들러 추가(알림 표시 + 클릭 시 기존 창 포커스 또는 새 창 열기).
+  (7) `index.html` — 설정 화면의 기존 알림 스위치 on/off 핸들러에 `syncPushSubscription()`/`removePushSubscription()` 연결, 체크인 시각 추가/수정/삭제 시(알림이 켜져 있으면) 서버에 재동기화, 앱 진입(`enterApp`) 시에도 알림이 켜져 있으면 구독을 재확인.
+- **발생한 문제 및 해결(원칙 8 재검증)**: 없음 — 막힌 지점 없이 설계한 대로 구현 완료.
+- **검증 결과**: `node -e`로 `index.html` 메인 `<script>` `new Function()` 문법 검증 통과, `node -c`로 `sw.js`·`api/push-subscribe.js`·`api/push-dispatch.js`·`api/vapid-public-key.js` 전부 문법 통과, `vercel.json`/`package.json` JSON 파싱 통과, `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음). **사용자가 직접 해야 하는 후속 설정**(PR 설명에 상세 기재): Supabase에 `push_subscriptions` 테이블 생성 SQL 실행, VAPID 키 쌍 생성 후 `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY`(+선택 `VAPID_CONTACT_EMAIL`) 및 `SUPABASE_SERVICE_ROLE_KEY`(+권장 `CRON_SECRET`) Vercel 환경변수 등록 — 이 설정 전까지는 각 API가 500으로 명확히 실패하며 기존 탭-오픈 알림에는 영향 없음. **Vercel 요금제 주의**: Hobby 플랜은 크론 실행 빈도가 하루 1회로 제한될 수 있어(플랜별 상이) 5분 간격 크론은 Pro 플랜이 필요할 수 있음 — 실제 플랜 확인 필요.
+---
+
+## [2026-09-05 16:58] PR #34 배포 실패 수정 — Vercel Cron → GitHub Actions
+- **목표**: PR #34(Web Push) 푸시 직후 Vercel이 `Hobby accounts are limited to daily cron jobs` 오류로 배포 실패 — 원인 파악 및 수정.
+- **수정/실행 내역**: `vercel.json`(5분 간격 cron) 제거, `.github/workflows/push-dispatch.yml`(GitHub Actions 5분 스케줄 + 수동 실행)로 발송 트리거 교체. Actions 스케줄 지연 가능성을 감안해 `api/push-dispatch.js`의 발송 시각 매칭 허용 오차를 2분→4분으로 확대.
+- **발생한 문제 및 해결**: PR 설명에 "캐비엇"으로만 적어뒀던 Vercel Hobby 플랜 크론 제한이 실제로 배포 실패를 일으킴 → 요금제 업그레이드 대신 무료·요금제 무관인 GitHub Actions로 발송 주체를 교체(사용자에게 새 비용을 강요하지 않는 방향으로 원칙 3~4 재검토).
+- **검증 결과**: `node -c api/push-dispatch.js` 통과, `node scripts/smoke-test.js` 28/28 통과. PR #34 본문·코멘트에 반영, GitHub Secrets/Variables(`CRON_SECRET`/`PUSH_DISPATCH_URL`) 등록 필요 안내 추가.
+---
+
 ## [2026-09-06 01:43] PR #26 병합 실수로 유실된 dev_log.md 항목(00:38) 복원
 - **목표**: 사용자가 별도 작업(최초 로그인 튜토리얼) 중 우연히 발견해 보고한 dev_log.md 유실 건 조사·복구. `git diff 304a0f0..29faccd -- dev_log.md`로 대조한 결과, PR #26(`fix/2026-09-06-smoke-test-timezone`) 병합 커밋 7e2adb2("Merge branch 'main' into fix/2026-09-06-smoke-test-timezone")에서 dev_log.md 충돌을 해결하며 main에만 있던 "[2026-09-06 00:38] 마니또 DM 전송 후 화면 전환 시 null 참조 크래시 수정" 항목 전체(목표/수정·실행 내역/문제 및 해결/검증 결과 5줄)가 병합 결과에 반영되지 못하고 순수 삭제됨을 확인 — 과거 3차례의 "병합 마커가 main에 유입"된 사고(CLAUDE.md 8번)와는 증상이 다르지만(마커 없이 콘텐츠만 조용히 사라짐), 수동 충돌 해결 시 한쪽 브랜치의 신규 내용을 놓친다는 같은 근본 원인을 공유. 이 항목이 기록하던 실제 코드 수정(index.html의 `document.body.contains(body) && state.manitoDm===pid` null-deref 가드)은 main에 그대로 살아있어 기능적 회귀는 아니고 순수 문서(이력) 유실임을 확인.
 - **수정/실행 내역**: 유실 전 커밋(304a0f0)의 git blob에서 해당 항목 원문을 그대로 추출해(파일 전체를 재작성하지 않고 정확한 삽입 지점에만 Node 스크립트로 splice), 시간순 규칙에 맞는 위치 — "[2026-09-05 15:23] 실행 효율 규칙" 항목과 "[2026-09-06 01:29] 회원가입 후 최초 로그인" 항목 사이(00:38은 그 사이 시각) — 에 텍스트 변경 없이 복원. 참고로 사용자가 언급한 인접 항목 "[2026-09-06 00:49] 일반 DM(renderCommDM)..."은 아직 main에 병합되지 않은 오픈 브랜치 `fix/2026-09-06-comm-dm-stale-dom-guard`(커밋 7ee89d2)에만 존재 — CLAUDE.md 6번 규칙("이전 주기 PR이 열려 있으면 건드리지 않는다")에 따라 그 브랜치는 건드리지 않고, 현재 main 기준으로 올바른 위치에만 삽입함(해당 PR이 나중에 병합될 때 00:38/00:49 순서를 다투는 통상적인 충돌이 생길 수 있으나 이는 그 PR 병합 시점에 처리할 몫).
