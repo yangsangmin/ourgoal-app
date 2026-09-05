@@ -71,6 +71,7 @@ const FN_NAMES = [
   'applySuggestion', 'describeSuggestion', 'xpForLevel', 'levelForXP', 'levelProgress',
   'heatmapLevel', 'localNextActionSuggestion',
   'goalAchievement', 'weeklyRecapStats',
+  'hashStr', 'mockPostCheerCount',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -84,6 +85,7 @@ const sandboxSrc =
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
   'goalAchievement, weeklyRecapStats, ' +
+  'hashStr, mockPostCheerCount, ' +
   'setRecords: function(r){ state.profile.records = r; } };\n';
 
 const os = require('os');
@@ -138,14 +140,22 @@ check('resultPct: 999%로 상한 고정', () => {
   assert.strictEqual(fns.resultPct({ target: '1', result: '100' }), 999);
 });
 
+// dDay()는 dateStr을 로컬 자정('T00:00:00')으로 파싱해 로컬 '오늘'과 비교한다.
+// 기대값을 toISOString()(UTC 날짜)로 만들면 UTC 날짜가 로컬 날짜보다 뒤처지는 시간대
+// (KST 기준 매일 00:00~09:00)에 하루 어긋나 실패하므로, 앱과 같은 dateKey()로 로컬 날짜를 만든다.
+function localDateStr(offsetDays) {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + offsetDays);
+  return fns.dateKey(d);
+}
+
 check('dDay: 오늘이면 D-day', () => {
-  const today = new Date().toISOString().slice(0, 10);
-  assert.strictEqual(fns.dDay(today), 'D-day');
+  assert.strictEqual(fns.dDay(localDateStr(0)), 'D-day');
 });
 
 check('dDay: 내일이면 D-1', () => {
-  const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
-  assert.strictEqual(fns.dDay(tomorrow), 'D-1');
+  assert.strictEqual(fns.dDay(localDateStr(1)), 'D-1');
 });
 
 check('computeStreakDays: 기록이 없으면 0', () => {
@@ -289,6 +299,20 @@ check('weeklyRecapStats: 이번 주 기록 시간과 최다 분야를 정확히 
   assert.strictEqual(stats.count, 2);
   assert.strictEqual(stats.totalMs, 3600000 + 1800000);
   assert.strictEqual(stats.topCategory, 'study');
+});
+
+check('mockPostCheerCount: 방금 작성한 글은 응원이 0이다', () => {
+  assert.strictEqual(fns.mockPostCheerCount({ id: 'p1', createdAt: new Date().toISOString() }), 0);
+});
+
+check('mockPostCheerCount: 글이나 id가 없으면 0이다', () => {
+  assert.strictEqual(fns.mockPostCheerCount(null), 0);
+  assert.strictEqual(fns.mockPostCheerCount({ createdAt: new Date().toISOString() }), 0);
+});
+
+check('mockPostCheerCount: 시간이 많이 지나면 상한(40)에 도달한다', () => {
+  const old = { id: 'p2', createdAt: new Date(Date.now() - 999 * 3600000).toISOString() };
+  assert.strictEqual(fns.mockPostCheerCount(old), 40);
 });
 
 /* ============ 결과 요약 ============ */
