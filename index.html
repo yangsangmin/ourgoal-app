@@ -3798,6 +3798,32 @@
     return role==='owner' || role==='manager';
   }
 
+  /* 팀 목표/마일스톤 댓글 — 역할(팀장·매니저·팀원) 무관 전원 작성·열람 가능, groupState에 로컬 저장 */
+  function teamComments(gid, targetId){
+    return groupState(gid).comments.filter(function(c){ return c.targetId===targetId; });
+  }
+  function teamCommentItemHtml(c){
+    return '<div class="feed-item" style="margin-bottom:8px;">' +
+        '<div class="feed-avatar me">'+escapeHtml((state.profile.displayName||'').slice(0,1))+'</div>' +
+        '<div class="feed-body">' +
+          '<div class="feed-head"><span class="feed-name">'+escapeHtml(state.profile.displayName)+'</span></div>' +
+          '<div class="feed-action">'+escapeHtml(c.text)+'</div>' +
+          '<div class="feed-foot"><span class="feed-time">'+timeAgoStr(c.createdAt)+'</span></div>' +
+        '</div>' +
+      '</div>';
+  }
+  function teamCommentsBlockHtml(gid, targetId){
+    var list = teamComments(gid, targetId);
+    return '<div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--rule);">' +
+        '<div class="faint" style="font-size:.72rem;margin-bottom:8px;">💬 댓글 '+list.length+'개</div>' +
+        list.map(teamCommentItemHtml).join('') +
+        '<div class="dm-input-row" style="padding:0;border-top:none;">' +
+          '<input type="text" data-cmtinput="'+targetId+'" placeholder="댓글을 남겨보세요" maxlength="300">' +
+          '<button class="btn btn-primary btn-sm" data-cmtsend="'+targetId+'" type="button">등록</button>' +
+        '</div>' +
+      '</div>';
+  }
+
   function renderTeamGoalsScreen(){
     var view = document.getElementById('teamGoalsView');
     var myTeams = MOCK_GROUPS.filter(function(g){ return groupState(g.id).joined; });
@@ -3823,6 +3849,7 @@
                   : '<span class="'+(m.status==='done'?'ms-title done-text':'ms-title')+'" style="display:inline-block;">'+escapeHtml(m.title)+'</span>') +
                 (canManage ? '<div class="ms-actions"><button class="icon-btn" data-tgmdel="1" aria-label="마일스톤 삭제">×</button></div>' : '') +
               '</div>' +
+              teamCommentsBlockHtml(g.id, m.id) +
             '</div>';
         }).join('');
         return '<div data-teamgoal="'+tg.id+'" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--rule);">' +
@@ -3837,6 +3864,7 @@
             '<div class="faint" style="font-size:.72rem;margin:4px 0 8px;">마일스톤 '+done+'/'+total+' 완료</div>' +
             '<div class="ms-list">'+msHtml+'</div>' +
             (canManage ? '<div class="add-ms-btn" data-tgaddms="1" style="margin-top:6px;">+ 마일스톤 추가</div>' : '') +
+            teamCommentsBlockHtml(g.id, tg.id) +
           '</div>';
       }).join('');
       return '<div class="card" data-teamcard="'+g.id+'">' +
@@ -3896,6 +3924,21 @@
 
       var addGoalBtn = card.querySelector('[data-addteamgoal]');
       if(addGoalBtn) addGoalBtn.addEventListener('click', function(){ promptNewTeamGoal(gid); });
+
+      card.querySelectorAll('[data-cmtsend]').forEach(function(btn){
+        var targetId = btn.dataset.cmtsend;
+        var input = card.querySelector('[data-cmtinput="'+targetId+'"]');
+        var submit = async function(){
+          var text = input.value.trim();
+          if(!text) return;
+          groupState(gid).comments.push({ id: uid('cmt'), targetId: targetId, text: text, createdAt: nowISO() });
+          await saveProfile();
+          toast('댓글을 남겼어요');
+          renderTeamGoalsScreen();
+        };
+        btn.addEventListener('click', submit);
+        input.addEventListener('keydown', function(e){ if(e.key==='Enter') submit(); });
+      });
     });
   }
 
@@ -5240,7 +5283,8 @@
   function groupState(gid){
     var s = state.profile.settings;
     if(!s.groupState) s.groupState = {};
-    if(!s.groupState[gid]) s.groupState[gid] = { joined:false, checkins:[], cheers:0, myRole:'member' };
+    if(!s.groupState[gid]) s.groupState[gid] = { joined:false, checkins:[], cheers:0, myRole:'member', comments:[] };
+    if(!s.groupState[gid].comments) s.groupState[gid].comments = [];
     return s.groupState[gid];
   }
   function groupCheckedToday(gid){
