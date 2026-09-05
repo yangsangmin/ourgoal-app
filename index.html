@@ -282,6 +282,13 @@
   .land-login-link{display:block;text-align:center;margin-top:14px;font-size:.84rem;color:var(--ink-soft);font-weight:600;}
   .land-login-link b{color:var(--red);}
 
+  /* ---------- 소셜 로그인 (카카오/구글) ---------- */
+  .oauth-row{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+  .btn-kakao{background:#FEE500;color:#3A1D1D;}
+  .btn-google{background:var(--card);color:var(--ink);box-shadow:0 0 0 1px var(--rule) inset;}
+  .auth-divider{display:flex;align-items:center;gap:10px;margin:4px 0 16px;font-size:.72rem;color:var(--ink-faint);}
+  .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--rule);}
+
   /* ---------- Onboarding ---------- */
   .ob-step-label{font-family:var(--mono);font-size:.7rem;color:var(--red);margin-bottom:4px;font-weight:600;letter-spacing:.1em;}
   .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0 18px;}
@@ -582,7 +589,11 @@
     </div>
   </div>
   <div class="land-cta">
-    <button class="btn btn-primary btn-block" id="landStartBtn" type="button">시작하기</button>
+    <div class="oauth-row">
+      <button class="btn btn-block btn-kakao" id="landKakaoBtn" type="button">💬 카카오로 3초 만에 시작하기</button>
+      <button class="btn btn-block btn-google" id="landGoogleBtn" type="button">Google로 계속하기</button>
+    </div>
+    <span class="land-login-link"><b id="landStartBtn">이메일로 가입하기</b></span>
     <span class="land-login-link">이미 계정이 있으신가요? <b id="landLoginLink">로그인</b></span>
   </div>
 </div>
@@ -594,6 +605,12 @@
     <div class="tag">OUR GOAL</div>
   </div>
   <div class="auth-card">
+    <div class="oauth-row">
+      <button class="btn btn-block btn-kakao" id="authKakaoBtn" type="button">💬 카카오로 3초 만에 시작하기</button>
+      <button class="btn btn-block btn-google" id="authGoogleBtn" type="button">Google로 계속하기</button>
+    </div>
+    <div class="auth-divider">이메일로 계속하기</div>
+
     <div class="auth-tabs">
       <button class="auth-tab active" data-authtab="login" type="button">로그인</button>
       <button class="auth-tab" data-authtab="signup" type="button">회원가입</button>
@@ -1114,15 +1131,17 @@
 
   var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7, calView: 'month', calDate: isoDate(new Date()), calSelectedDate: isoDate(new Date()) };
 
-  async function ensureUserRow(userId, username, displayName){
+  async function ensureUserRow(userId, username, displayName, extra){
     var found = await sb.from('users').select('*').eq('id', userId).maybeSingle();
-    if(found.data) return found.data;
-    await sb.from('users').upsert({ id:userId, username:username, display_name:displayName });
-    return { id:userId, username:username, display_name:displayName };
+    if(found.data) return { row: found.data, isNew: false };
+    var row = Object.assign({ id:userId, username:username, display_name:displayName }, extra||{});
+    await sb.from('users').upsert(row);
+    return { row: row, isNew: true };
   }
 
-  async function loadProfile(userId, username){
-    var urow = await ensureUserRow(userId, username, username.split('@')[0]);
+  async function loadProfile(userId, username, newUserExtra){
+    var ures = await ensureUserRow(userId, username, username.split('@')[0], newUserExtra);
+    var urow = ures.row;
     var goalsRes = await sb.from('goals').select('*').eq('user_id', userId).order('created_at', {ascending:true});
     var recsRes = await sb.from('checkins').select('*').eq('user_id', userId).order('start_at', {ascending:false});
     var goals = (goalsRes.data||[]).map(function(g){
@@ -1139,7 +1158,8 @@
       id: userId, username: username, displayName: urow.display_name,
       bio: urow.bio || '', avatarUrl: urow.avatar_url || '', interests: urow.interests || [],
       region: urow.region || '', regionPublic: !!urow.region_public,
-      goals: goals, records: records, settings: loadLocalSettings(userId)
+      goals: goals, records: records, settings: loadLocalSettings(userId),
+      _isNewSignup: ures.isNew
     };
   }
 
@@ -1193,6 +1213,17 @@
     document.getElementById('landingScreen').style.display = 'none';
     document.getElementById('authScreen').style.display = 'flex';
     document.querySelector('[data-authtab="login"]').click();
+  });
+
+  /* ============ 소셜 로그인 (카카오/구글) ============ */
+  async function startOAuthLogin(provider){
+    await sb.auth.signInWithOAuth({ provider: provider, options: { redirectTo: window.location.origin } });
+  }
+  ['landKakaoBtn','authKakaoBtn'].forEach(function(id){
+    document.getElementById(id).addEventListener('click', function(){ startOAuthLogin('kakao'); });
+  });
+  ['landGoogleBtn','authGoogleBtn'].forEach(function(id){
+    document.getElementById(id).addEventListener('click', function(){ startOAuthLogin('google'); });
   });
 
   /* ============ Goal category templates ============ */
@@ -6449,9 +6480,19 @@
       var res = await sb.auth.getSession();
       var session = res.data && res.data.session;
       if(session && session.user){
-        state.profile = await loadProfile(session.user.id, session.user.email);
+        var um = session.user.user_metadata || {};
+        var newExtra = {};
+        if(um.avatar_url || um.picture) newExtra.avatar_url = um.avatar_url || um.picture;
+        if(um.full_name || um.name || um.nickname) newExtra.display_name = um.full_name || um.name || um.nickname;
+        state.profile = await loadProfile(session.user.id, session.user.email, newExtra);
         document.getElementById('landingScreen').style.display = 'none';
-        enterApp();
+        document.getElementById('authScreen').style.display = 'none';
+        if(state.profile._isNewSignup){
+          await saveProfile();
+          startOnboarding();
+        } else {
+          enterApp();
+        }
         return;
       }
     } catch(e){ /* fall through to landing screen */ }

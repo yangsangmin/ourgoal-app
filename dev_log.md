@@ -585,3 +585,15 @@
 - **발생한 문제 및 해결**: (1) `.claude/settings.json` 훅 등록(및 update-config 스킬 호출)이 Claude Code 자동 모드 분류기에 차단됨 → 우회하지 않고 훅 스크립트만 커밋, 등록 JSON은 STATUS.md 체크리스트와 스크립트 머리말에 안내해 사용자가 직접 추가. (2) gh CLI가 PATH에 없음 → 전체 경로(`C:\Program Files\GitHub CLI\gh.exe`)로 호출, PATH 등록은 체크리스트에 추가. (3) 훅 스크립트 최초 작성본의 `\` 정규식이 셸 이스케이프로 깨져 문법 오류 → `String.fromCharCode(92)`로 대체. (4) 태스크 파일의 노션 내보내기 날짜가 UTC로 하루 어긋남 → 로컬 날짜로 수정 후 재생성. (5) 컨설팅 가이드가 제안한 별도 CLAUDE.md는 기존 6번 규칙(PR 후 사용자 병합)과 충돌(에이전트 스쿼시 머지)하므로 채택하지 않고 9번 절로 흡수.
 - **검증 결과**: `node scripts/smoke-test.js` 40/40 통과(origin/main 기준선). 훅 스크립트 3케이스 확인: 비대상 파일 무시(exit 0), index.html 정상(exit 0·요약 출력), 실패 스모크(exit 2·실패 내용 stderr). launch.json JSON 유효, 전 스크립트 `node --check` 통과. CLAUDE.md diff 13줄 추가만(기존 줄 무변경, CRLF 통일).
 ---
+
+## [2026-09-06 05:20] TASK-01: 카카오 & 구글 1초 소셜 로그인 연동
+- **목표**: 노션 스프린트 TASK-01 — 이메일/비밀번호 수동 입력만 있던 인증 시스템에 Supabase Auth 기반 카카오·구글 OAuth 로그인을 추가해 가입 마찰을 줄인다.
+- **수정/실행 내역**:
+  (1) `#landingScreen`/`#authScreen`에 카카오(노란색, 기존 공유 카드에서 쓰던 `#FEE500`/`#3A1D1D` 토큰 재사용)·구글 OAuth 버튼 추가, 기존 이메일 진입("시작하기"/"로그인")은 작은 텍스트 링크로 격하(`.land-login-link` 재사용, 신규 CSS는 `.oauth-row`/`.btn-kakao`/`.btn-google`/`.auth-divider` 4개만 추가).
+  (2) 버튼 클릭 시 `startOAuthLogin(provider)` 신규 함수가 `sb.auth.signInWithOAuth({provider, options:{redirectTo: window.location.origin}})` 호출(kakao/google 버튼 총 4개 모두 이 함수 재사용).
+  (3) `ensureUserRow(userId, username, displayName, extra)`에 `extra` 인자를 추가해 신규 유저 upsert 시 OAuth 프로필(닉네임·프로필사진)을 반영할 수 있게 하고, 반환값을 `{row, isNew}` 형태로 변경. `loadProfile(userId, username, newUserExtra)`가 이를 통해 받아 `_isNewSignup` 플래그를 프로필 객체에 얹어 반환.
+  (4) `boot()`에서 세션 복원 시 `session.user.user_metadata`(카카오/구글 공통 정규화 필드: `avatar_url`/`picture`, `full_name`/`name`/`nickname`)를 추출해 `loadProfile`에 전달하고, `_isNewSignup`이면 `startOnboarding()`(신규 유저 온보딩), 아니면 기존과 동일하게 `enterApp()`으로 분기.
+  (5) 기존 이메일 회원가입/로그인 핸들러(각자 직접 `startOnboarding`/`enterApp` 호출)는 전혀 수정하지 않음 — `ensureUserRow`의 두 번째 호출부(`signupSubmit`)는 반환값을 쓰지 않으므로 시그니처 변경의 영향이 없고, `loadProfile`의 기존 호출부(`loginSubmit`)는 기존 유저라 `_isNewSignup=false`로만 계산될 뿐 동작 변화 없음(회귀 없음).
+- **발생한 문제 및 해결**: 없음 — 막힌 지점 없이 진행.
+- **검증 결과**: `node -e new Function()`으로 메인 `<script>` 문법 검증 통과, `<style>` 중괄호 448/448 균형 확인, `node scripts/smoke-test.js` 41/41 전부 통과(회귀 없음, 신규 순수 함수 없어 테스트 추가 없음). 로컬 정적 서버+브라우저로 실제 렌더링 검증: 랜딩 화면에 카카오(정확한 배경색 `rgb(254,229,0)` 확인)·구글 버튼과 축소된 이메일 링크가 모두 정상 노출, "이메일로 가입하기" 클릭 시 인증 화면 회원가입 탭으로 정상 전환되고 그 화면에도 동일한 OAuth 버튼이 노출됨을 확인. 카카오/구글 버튼 클릭 시 콘솔 에러 0건(테스트 목적으로 별도 생성한 임시 Supabase 클라이언트의 "Multiple GoTrueClient" 경고 2건은 앱 코드와 무관). 실제 프로젝트 URL/키로 별도 임시 클라이언트를 만들어 `signInWithOAuth({provider:'kakao'|'google', skipBrowserRedirect:true})`를 직접 호출해, 두 provider 모두 올바른 `.../auth/v1/authorize?provider=...` URL을 정상 생성함을 확인(실제 브라우저 최상위 리다이렉트는 이 자동화 브라우저 샌드박스가 외부 origin 이동을 허용하지 않아 클릭만으로는 재현되지 않았으나, API 호출 자체가 정확한 URL을 만드는 것으로 로직을 검증). Kakao/Google Provider가 Supabase에서 아직 활성화되지 않았다면 리다이렉트 후 Supabase가 에러를 반환할 것이나, 이는 사용자가 처리할 외부 설정 사항이며 코드 로직과는 무관. 기존 이메일 로그인/회원가입 폼 요소(`loginForm`/`signupForm`/각 input/제출 버튼)가 모두 그대로 존재·동작함을 확인(회귀 없음).
+---
