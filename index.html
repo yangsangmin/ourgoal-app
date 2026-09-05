@@ -387,6 +387,16 @@
   .notify-banner .nb-txt{flex:1;font-size:.86rem;}
   .notify-banner .nb-txt b{display:block;font-size:.98rem;margin-bottom:2px;font-weight:900;}
   .notify-banner button{background:var(--grad);color:#fff;padding:9px 14px;border-radius:999px;font-size:.78rem;font-weight:800;}
+  .notify-banner.levelup{background:linear-gradient(135deg,var(--violet),#9C8CFF);}
+
+  /* ---------- Level badge ---------- */
+  #levelUpBannerSlot{position:fixed;top:14px;left:14px;right:14px;z-index:250;max-width:460px;margin:0 auto;}
+  #levelUpBannerSlot .notify-banner{margin-bottom:0;}
+  .level-badge-row{margin:2px 0 12px;}
+  .level-badge{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:999px;padding:8px 14px;box-shadow:var(--shadow-sm);}
+  .level-badge .level-num{flex:0 0 auto;font-weight:900;font-size:.82rem;color:#fff;background:linear-gradient(135deg,var(--violet),#9C8CFF);padding:4px 10px;border-radius:999px;}
+  .level-badge .level-bar-wrap{flex:1;min-width:0;}
+  .level-badge .level-xp-txt{font-size:.66rem;color:var(--ink-faint);font-family:var(--mono);margin-top:3px;display:block;}
 
   /* ---------- Confetti ---------- */
   #confettiLayer{position:fixed;inset:0;pointer-events:none;z-index:300;overflow:hidden;}
@@ -448,6 +458,14 @@
   .tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
   .tag{font-size:.72rem;font-weight:700;padding:5px 11px;border-radius:999px;background:var(--card2);color:var(--ink-soft);}
   .tag.on{background:var(--violet-soft);color:var(--violet);}
+
+  /* ---------- 뱃지 컬렉션 (명예의 전당) ---------- */
+  .badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px;}
+  .badge-tile{background:var(--card2);border-radius:14px;padding:12px 6px;text-align:center;opacity:.5;}
+  .badge-tile.on{opacity:1;background:var(--gold-soft);box-shadow:0 4px 14px -8px rgba(255,159,28,.6);}
+  .badge-icon{font-size:1.5rem;margin-bottom:4px;}
+  .badge-label{font-size:.74rem;font-weight:800;color:var(--ink);}
+  .badge-desc{font-size:.6rem;color:var(--ink-faint);margin-top:2px;line-height:1.3;}
   .avatar-edit{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
   .avatar-edit .hint{font-size:.74rem;color:var(--ink-soft);line-height:1.5;margin-top:4px;}
 
@@ -594,12 +612,14 @@
       <div class="avatar" id="topAvatar"></div>
     </div>
   </div>
+  <div id="levelUpBannerSlot"></div>
 
   <main class="screens">
     <!-- HOME -->
     <section class="screen active" id="screen-home">
       <p class="s-eyebrow">오늘</p>
       <h2 class="s-title" id="homeGreeting">안녕하세요</h2>
+      <div id="levelBadgeRow"></div>
       <div id="notifyBannerSlot"></div>
       <div id="socialNotifySlot"></div>
 
@@ -769,9 +789,11 @@
       <div class="set-block">
         <h4>데이터</h4>
         <div class="data-btn-row">
-          <button class="btn btn-ghost" id="settingsExportAll" type="button">전체 내보내기</button>
+          <button class="btn btn-ghost" id="settingsExportCheckins" type="button">체크인 전체 내보내기</button>
+          <button class="btn btn-ghost" id="settingsExportAll" type="button">전체 백업</button>
           <button class="btn btn-ghost" id="settingsImportAll" type="button">가져오기</button>
         </div>
+        <p class="faint" style="font-size:.72rem;margin:6px 0 0;">체크인 전체 내보내기: 위에서 고른 형식(CSV/JSON)으로 체크인 기록 전체를 내려받아요 · 전체 백업: 목표·설정까지 포함한 복원용 JSON</p>
         <input type="file" id="importFile" accept="application/json" style="display:none;">
         <p class="danger-note">데이터는 이 기기(이 대화)에만 저장됩니다</p>
       </div>
@@ -965,6 +987,75 @@
     if(xp.log.length > XP_LOG_MAX) xp.log.length = XP_LOG_MAX;
     return { total: xp.total, leveledUp: levelForXP(xp.total) > beforeLevel };
   }
+  function levelBadgeHtml(xp){
+    var p = levelProgress(xp);
+    return '<div class="level-badge"><span class="level-num">Lv.'+p.level+'</span>' +
+      '<div class="level-bar-wrap"><div class="mini-bar"><span style="width:'+Math.max(0,Math.min(100,p.pct))+'%;background:var(--violet);"></span></div>' +
+      '<span class="level-xp-txt">'+p.into+' / '+p.span+' XP</span></div></div>';
+  }
+  function renderLevelBadge(){
+    var el = document.getElementById('levelBadgeRow');
+    if(!el || !state.profile) return;
+    el.innerHTML = '<div class="level-badge-row">'+levelBadgeHtml(state.profile.settings.xp.total)+'</div>';
+  }
+  function showLevelUpBanner(level){
+    var slot = document.getElementById('levelUpBannerSlot');
+    if(!slot) return;
+    if(navigator.vibrate) navigator.vibrate([12,40,24]);
+    burstConfetti(window.innerWidth/2, 80, 14);
+    slot.innerHTML = '<div class="notify-banner levelup"><div class="nb-txt"><b>🎉 레벨 업!</b>Lv.'+level+'이 됐어요. 계속 이어가 볼까요?</div><button id="lvBannerClose" type="button">확인</button></div>';
+    var closeBtn = document.getElementById('lvBannerClose');
+    if(closeBtn) closeBtn.addEventListener('click', function(){ slot.innerHTML = ''; });
+    setTimeout(function(){ if(slot.innerHTML) slot.innerHTML = ''; }, 6000);
+  }
+
+  /* ============ 뱃지 컬렉션 (명예의 전당) ============ */
+  function totalCompletedMilestones(p){
+    var n = 0;
+    p.goals.forEach(function(g){ (g.milestones||[]).forEach(function(m){ if(m.status==='done') n++; }); });
+    return n;
+  }
+  function badgeContext(p){
+    return {
+      records: p.records.length,
+      streak: computeStreakDays(),
+      msDone: totalCompletedMilestones(p),
+      level: levelForXP((p.settings.xp && p.settings.xp.total) || 0),
+      archived: p.goals.filter(function(g){ return !!g.archivedAt; }).length
+    };
+  }
+  var BADGES = [
+    { id:'first_record', icon:'✍️', label:'첫 발걸음', desc:'기록을 1개 이상 남기면', check:function(ctx){ return ctx.records>=1; } },
+    { id:'streak_3', icon:'🔥', label:'3일 연속', desc:'3일 연속으로 기록하면', check:function(ctx){ return ctx.streak>=3; } },
+    { id:'streak_7', icon:'🔥🔥', label:'7일 연속', desc:'7일 연속으로 기록하면', check:function(ctx){ return ctx.streak>=7; } },
+    { id:'streak_30', icon:'🔥🔥🔥', label:'30일 연속', desc:'30일 연속으로 기록하면', check:function(ctx){ return ctx.streak>=30; } },
+    { id:'record_50', icon:'📚', label:'기록 마스터', desc:'기록을 50개 이상 남기면', check:function(ctx){ return ctx.records>=50; } },
+    { id:'ms_5', icon:'🎯', label:'마일스톤 헌터', desc:'마일스톤을 5개 이상 완료하면', check:function(ctx){ return ctx.msDone>=5; } },
+    { id:'ms_20', icon:'🏹', label:'마일스톤 정복자', desc:'마일스톤을 20개 이상 완료하면', check:function(ctx){ return ctx.msDone>=20; } },
+    { id:'level_5', icon:'⭐', label:'레벨 5', desc:'레벨 5를 달성하면', check:function(ctx){ return ctx.level>=5; } },
+    { id:'level_10', icon:'🌟', label:'레벨 10', desc:'레벨 10을 달성하면', check:function(ctx){ return ctx.level>=10; } },
+    { id:'first_finish', icon:'🏆', label:'첫 완주', desc:'목표를 1개 이상 완주(보관)하면', check:function(ctx){ return ctx.archived>=1; } }
+  ];
+  function openHallOfFame(){
+    var ctx = badgeContext(state.profile);
+    var unlocked = BADGES.filter(function(b){ return b.check(ctx); });
+    openModal(
+      '<h3>🏆 명예의 전당</h3>' +
+      '<p class="faint" style="margin:-8px 0 14px;">'+unlocked.length+' / '+BADGES.length+'개 획득</p>' +
+      '<div class="badge-grid">' +
+        BADGES.map(function(b){
+          var on = b.check(ctx);
+          return '<div class="badge-tile'+(on?' on':'')+'">' +
+            '<div class="badge-icon">'+(on?b.icon:'🔒')+'</div>' +
+            '<div class="badge-label">'+escapeHtml(b.label)+'</div>' +
+            '<div class="badge-desc">'+escapeHtml(b.desc)+'</div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+      '<div class="modal-actions"><button class="btn btn-primary" id="hofClose" type="button">닫기</button></div>',
+      function(sheet){ sheet.querySelector('#hofClose').addEventListener('click', closeModal); }
+    );
+  }
 
   function defaultProfile(id, username, displayName){
     return {
@@ -1148,6 +1239,7 @@
     await checkStreakFreeze();
     renderAll();
     setupNotifyTimer();
+    if(state.profile.settings.notify) syncPushSubscription();
     checkSocialNotifications();
   }
 
@@ -1256,11 +1348,33 @@
             closeModal();
             enterApp();
             toast('목표를 만들었어요 — 시작해봐요!');
+            var alreadySeenGuide = state.profile.settings.hasSeenGuide;
             await maybeShowFirstLoginGuide();
+            if(alreadySeenGuide) showCommTourModal();
           });
         }
       );
     }
+  }
+
+  /* ============ 온보딩 직후 소통 기능 짧은 투어 (첫 목표 생성 시 1회) ============ */
+  function showCommTourModal(){
+    openModal(
+      '<h3>🎉 첫 목표를 만들었어요!</h3>' +
+      '<p class="muted" style="margin:-6px 0 14px;">혼자보다 함께면 오래 갈 수 있어요. 소통 탭에서 이런 걸 할 수 있어요.</p>' +
+      '<div class="mission-card"><div class="mi">🎁</div><div><b>마니또</b><span>비슷한 목표를 가진 사람과 익명으로 매칭돼 서로 응원해요</span></div></div>' +
+      '<div class="mission-card"><div class="mi">👥</div><div><b>모임</b><span>같은 목표의 사람들과 함께 인증하고 랭킹을 확인해요</span></div></div>' +
+      '<div class="mission-card"><div class="mi">📣</div><div><b>공유</b><span>내 진행 상황을 카드 이미지로 만들어 SNS에 자랑해요</span></div></div>' +
+      '<div class="modal-actions"><button class="btn btn-ghost" id="tourSkip" type="button">나중에 볼게요</button><button class="btn btn-primary" id="tourGo" type="button">소통 탭 보러가기</button></div>',
+      function(sheet){
+        sheet.querySelector('#tourSkip').addEventListener('click', closeModal);
+        sheet.querySelector('#tourGo').addEventListener('click', function(){
+          closeModal();
+          state.commSubTab = 'feed';
+          setTab('comm');
+        });
+      }
+    );
   }
 
   /* ============ 최초 로그인 활용가이드 (온보딩 흐름 완료 직후 1회) ============ */
@@ -1283,7 +1397,7 @@
         '<button class="land-login-link" id="guideSkip1" type="button" style="width:100%;background:none;margin-top:12px;">나중에 볼게요</button>',
         function(sheet){
           sheet.querySelector('#guideNext1').addEventListener('click', showGuideStep2);
-          sheet.querySelector('#guideSkip1').addEventListener('click', closeModal);
+          sheet.querySelector('#guideSkip1').addEventListener('click', function(){ closeModal(); showCommTourModal(); });
         }
       );
     }
@@ -1326,7 +1440,7 @@
         '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack4" type="button">이전</button><button class="btn btn-primary" id="guideFinish4" type="button">시작하기</button></div>',
         function(sheet){
           sheet.querySelector('#guideBack4').addEventListener('click', showGuideStep3);
-          sheet.querySelector('#guideFinish4').addEventListener('click', closeModal);
+          sheet.querySelector('#guideFinish4').addEventListener('click', function(){ closeModal(); showCommTourModal(); });
         }
       );
     }
@@ -1492,11 +1606,14 @@
             if(navigator.vibrate) navigator.vibrate([12,40,24]);
             burstConfetti(window.innerWidth/2, window.innerHeight/2);
           }
-if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
-                        await saveProfile();
+          var msXpRes = null;
+          if(kind==='ms' && !wasDone && obj.status==='done') msXpRes = awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
+          await saveProfile();
           closeModal();
           toast(pct!==null ? '달성률 '+pct+'%로 기록했어요' : '결과를 기록했어요');
           if(onSaved) onSaved();
+          renderLevelBadge();
+          if(msXpRes && msXpRes.leveledUp) showLevelUpBanner(levelForXP(msXpRes.total));
           if(celebrateMs) celebrateMilestoneDone(goal, obj);
         });
       }
@@ -1543,9 +1660,13 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
           '<div class="profile-stat"><b>'+p.records.length+'</b><span>총 기록</span></div>' +
           '<div class="profile-stat"><b>'+streak+'</b><span>연속일</span></div>' +
         '</div>' +
-        '<button class="btn btn-ghost btn-sm" id="editProfileBtn" type="button" style="width:100%;margin-top:12px;">프로필 편집</button>' +
+        '<div style="display:flex;gap:8px;margin-top:12px;">' +
+          '<button class="btn btn-ghost btn-sm" id="editProfileBtn" type="button" style="flex:1;">프로필 편집</button>' +
+          '<button class="btn btn-ghost btn-sm" id="hallOfFameBtn" type="button" style="flex:1;">🏆 명예의 전당</button>' +
+        '</div>' +
       '</div>';
     document.getElementById('editProfileBtn').addEventListener('click', openProfileEditor);
+    document.getElementById('hallOfFameBtn').addEventListener('click', openHallOfFame);
   }
 
   function resizeImageToDataUrl(file, max, cb){
@@ -1933,6 +2054,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
   /* ============ RENDER: HOME ============ */
   function renderHome(){
     refreshCustomFeedbackButtons();
+    renderLevelBadge();
     renderTodayMissionCard();
     var streak = computeStreakDays();
     var badgeEl = document.getElementById('streakBadge');
@@ -1982,7 +2104,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
     var goal = state.profile.goals.find(function(g){ return g.id===state.activeGoalId; }) || state.profile.goals[0];
     state.profile.records.unshift({ id: newId(), type:'note', text: text, startAt: nowISO(), endAt: nowISO(), createdAt: nowISO(), category: goal ? goal.category : null });
     t.value = '';
-    awardXP(XP_RULES.checkin, '체크인');
+    var xpRes = awardXP(XP_RULES.checkin, '체크인');
     var freezeGranted = maybeGrantStreakFreeze();
     await saveProfile();
     toast(freezeGranted ? '🧊 스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요' : '기록했어요');
@@ -1994,6 +2116,8 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
     void saveBtn.offsetWidth;
     saveBtn.classList.add('btn-cs-pulse');
     renderFeedbackSlot(null);
+    renderLevelBadge();
+    if(xpRes.leveledUp) showLevelUpBanner(levelForXP(xpRes.total));
 
     var newRec = state.profile.records[0];
     var fb = null;
@@ -2249,7 +2373,8 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
             }
           });
           if(!applied.length){ closeModal(); return; }
-          for(var i=0;i<newlyDoneMsCount;i++) awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
+          var lastXpRes = null;
+          for(var i=0;i<newlyDoneMsCount;i++) lastXpRes = awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
           await saveProfile();
           closeModal();
           var becameDone = applied.some(function(a){ return a.label.indexOf('완료')!==-1; });
@@ -2260,6 +2385,8 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
           }
           toast(applied.length+'개 항목을 목표에 반영했어요 🎯');
           renderAll();
+          renderLevelBadge();
+          if(lastXpRes && lastXpRes.leveledUp) showLevelUpBanner(levelForXP(lastXpRes.total));
           if(newlyDoneMs.length) celebrateMilestoneDone(goal, newlyDoneMs[0]);
         });
       }
@@ -3590,9 +3717,11 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
         var order = ['todo','doing','done'];
         var wasDone = ms.status==='done';
         ms.status = order[(order.indexOf(ms.status)+1)%3];
-        if(!wasDone && ms.status==='done') awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
+        var cycleXpRes = (!wasDone && ms.status==='done') ? awardXP(XP_RULES.milestoneDone, '마일스톤 완료') : null;
         await saveProfile();
         renderGoalsScreen();
+        renderLevelBadge();
+        if(cycleXpRes && cycleXpRes.leveledUp) showLevelUpBanner(levelForXP(cycleXpRes.total));
         if(!wasDone && ms.status==='done') celebrateMilestoneDone(goal, ms);
       });
 
@@ -4065,10 +4194,11 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
   document.getElementById('recAddBtn').addEventListener('click', function(){ openRecordModal(null); });
 
   function buildCSV(){
-    var rows = [['날짜','시작','종료','소요시간(분)','내용']];
+    var rows = [['날짜','시작','종료','소요시간(분)','분야','내용']];
     state.profile.records.slice().sort(function(a,b){ return new Date(a.startAt)-new Date(b.startAt); }).forEach(function(r){
       var mins = r.endAt ? Math.round((new Date(r.endAt)-new Date(r.startAt))/60000) : '';
-      rows.push([dateKey(r.startAt), fmtTime(r.startAt), r.endAt?fmtTime(r.endAt):'진행중', mins, r.text]);
+      var catLabel = r.category && TOPICS[r.category] ? TOPICS[r.category].label : '';
+      rows.push([dateKey(r.startAt), fmtTime(r.startAt), r.endAt?fmtTime(r.endAt):'진행중', mins, catLabel, r.text]);
     });
     return rows.map(function(row){
       return row.map(function(cell){
@@ -4077,15 +4207,16 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
       }).join(',');
     }).join('\n');
   }
-  document.getElementById('exportRecordsBtn').addEventListener('click', function(){
+  function exportAllCheckins(){
     var fmt = state.profile.settings.exportFormat || 'csv';
     if(fmt==='json'){
       download('아워골_기록_'+dateKey(nowISO())+'.json', JSON.stringify(state.profile.records, null, 2), 'application/json');
     } else {
       download('아워골_기록_'+dateKey(nowISO())+'.csv', '\uFEFF'+buildCSV(), 'text/csv;charset=utf-8');
     }
-    toast('다운로드했어요');
-  });
+    toast('체크인 '+state.profile.records.length+'개를 전부 내려받았어요');
+  }
+  document.getElementById('exportRecordsBtn').addEventListener('click', exportAllCheckins);
 
   /* ============ RENDER: COMM ============ */
   /* ============ Mock community data (샘플, 서버 없이 데모) ============ */
@@ -4911,7 +5042,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
           p.milestones.map(function(m){ return '<span class="topic-pill">'+(m.status==='done'?'✅ ':(m.status==='doing'?'🔥 ':'· '))+escapeHtml(m.title)+'</span>'; }).join('') +
         '</div>' : '') +
         '<div class="feed-foot"><span class="feed-time">'+timeAgoStr(p.createdAt)+'</span>' +
-          '<button class="pill-react'+(reacted?' active':'')+'" data-react="'+p.id+'" type="button">응원 '+((p.cheers||0)+mockPostCheerCount(p)+(reacted?1:0))+'</button>' +
+          '<button class="pill-react'+(reacted?' active':'')+'" data-react="'+p.id+'" type="button">응원 '+((p.cheers||0)+(reacted?1:0))+'</button>' +
           '<button data-delpost="'+p.id+'" type="button" style="margin-left:8px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">삭제</button>' +
         '</div>' +
       '</div>' +
@@ -5595,7 +5726,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
         renderCommDM(body);
         setTimeout(function(){
           person._thread.push({ from:'them', text: person.replies[Math.floor(Math.random()*person.replies.length)], time: fmtTime(nowISO()) });
-          if(state.dmActiveId===person.id) renderCommDM(body);
+          if(document.body.contains(body) && state.dmActiveId===person.id) renderCommDM(body);
         }, 700+Math.random()*600);
       }
       document.getElementById('dmSend').addEventListener('click', send);
@@ -5628,12 +5759,14 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
       inp.addEventListener('change', async function(){
         times[+inp.dataset.timeidx] = inp.value;
         await saveProfile();
+        if(state.profile.settings.notify) syncPushSubscription();
       });
     });
     row.querySelectorAll('[data-timedel]').forEach(function(btn){
       btn.addEventListener('click', async function(){
         times.splice(+btn.dataset.timedel, 1);
         await saveProfile(); renderSettingsScreen();
+        if(state.profile.settings.notify) syncPushSubscription();
       });
     });
 
@@ -5647,8 +5780,10 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
           if(perm!=='granted'){ toast('브라우저 알림 권한이 필요해요'); return; }
         }
         state.profile.settings.notify = true;
+        syncPushSubscription();
       } else {
         state.profile.settings.notify = false;
+        removePushSubscription();
       }
       await saveProfile();
       renderSettingsScreen();
@@ -5756,6 +5891,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
   document.getElementById('addTimeBtn').addEventListener('click', async function(){
     state.profile.settings.checkinTimes.push('12:00');
     await saveProfile(); renderSettingsScreen();
+    if(state.profile.settings.notify) syncPushSubscription();
   });
   document.getElementById('testNotifyBtn').addEventListener('click', function(){
     setTab('home');
@@ -5765,6 +5901,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
     }
   });
 
+  document.getElementById('settingsExportCheckins').addEventListener('click', exportAllCheckins);
   document.getElementById('settingsExportAll').addEventListener('click', function(){
     download('아워골_백업_'+state.profile.username+'.json', JSON.stringify(state.profile, null, 2), 'application/json');
     toast('전체 데이터를 내보냈어요');
@@ -5824,24 +5961,72 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
     });
   }
 
-  /* ============ 받은 응원 알림 (mock: 시간 경과에 따라 내 게시물 응원이 쌓이는 것 + 마니또 받은 응원함) ============ */
-  function mockPostCheerCount(p){
-    if(!p || !p.id || !p.createdAt) return 0;
-    var hours = (Date.now() - new Date(p.createdAt).getTime()) / 3600000;
-    if(hours <= 0) return 0;
-    var speed = (hashStr(p.id) % 5) + 1;
-    return Math.min(Math.floor(hours / 3) * speed, 40);
+  /* ============ Web Push (앱이 꺼져 있어도 오는 알림) ============ */
+  function urlBase64ToUint8Array(base64String){
+    var padding = '='.repeat((4 - base64String.length % 4) % 4);
+    var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    var rawData = window.atob(base64);
+    var outputArray = new Uint8Array(rawData.length);
+    for(var i=0; i<rawData.length; i++) outputArray[i] = rawData.charCodeAt(i);
+    return outputArray;
   }
-  function totalMockFeedCheers(){
+
+  async function syncPushSubscription(){
+    try{
+      if(!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+      if(!('Notification' in window) || Notification.permission!=='granted') return;
+      var reg = await navigator.serviceWorker.ready;
+      var sub = await reg.pushManager.getSubscription();
+      if(!sub){
+        var keyRes = await fetch('/api/vapid-public-key');
+        if(!keyRes.ok) return;
+        var keyData = await keyRes.json();
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(keyData.publicKey)
+        });
+      }
+      var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul';
+      await fetch('/api/push-subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: state.profile.id,
+          subscription: sub.toJSON(),
+          checkinTimes: state.profile.settings.checkinTimes,
+          timezone: timezone
+        })
+      });
+    } catch(e){ console.warn('Web Push 구독 실패:', e); }
+  }
+
+  async function removePushSubscription(){
+    try{
+      if(!('serviceWorker' in navigator)) return;
+      var reg = await navigator.serviceWorker.ready;
+      var sub = await reg.pushManager.getSubscription();
+      if(!sub) return;
+      var endpoint = sub.endpoint;
+      await sub.unsubscribe();
+      await fetch('/api/push-subscribe', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ endpoint: endpoint })
+      });
+    } catch(e){ console.warn('Web Push 구독 해제 실패:', e); }
+  }
+
+  /* ============ 받은 응원 알림 (실제 내 게시물 응원 수 + 마니또 받은 응원함) ============ */
+  function totalFeedCheers(){
     var posts = (state.profile.settings.feedPosts || []);
     var sum = 0;
-    posts.forEach(function(p){ sum += (p.cheers || 0) + mockPostCheerCount(p); });
+    posts.forEach(function(p){ sum += (p.cheers || 0); });
     return sum;
   }
   function checkSocialNotifications(){
     var s = state.profile.settings;
     if(!s.social) s.social = { cheersSeen:0, manitoSeen:0 };
-    var cheerTotal = totalMockFeedCheers();
+    var cheerTotal = totalFeedCheers();
     var manitoTotal = manitoState().joined ? manitoInbox().length : 0;
     var newCheers = Math.max(0, cheerTotal - s.social.cheersSeen);
     var newManito = Math.max(0, manitoTotal - s.social.manitoSeen);
