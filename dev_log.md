@@ -377,4 +377,14 @@
 - **검증 결과**: `git status`로 변경 파일이 CLAUDE.md·dev_log.md뿐임을 확인, `gh --version` 정상, clone HEAD가 최신 main(c75f192, PR #24 병합 커밋)과 일치.
 ---
 
+## [2026-09-06 01:35] 팀 목표/마일스톤 댓글 기능 추가
+- **목표**: 사용자 직접 요청 — Phase 1(a574227, PR #24)에서 만든 팀 목표 화면에 팀 목표·마일스톤 단위 댓글 기능을 추가. 팀장/매니저/팀원 역할과 무관하게 전원이 자유롭게 댓글을 쓰고 볼 수 있어야 함.
+- **수정/실행 내역**:
+  (1) 댓글 UI는 소통 탭 피드의 `.feed-item`/`.feed-avatar`/`.feed-body`(+`.feed-head`/`.feed-name`/`.feed-action`/`.feed-foot`/`.feed-time`)와 DM 입력창의 `.dm-input-row` 클래스를 그대로 재사용해 신규 CSS 없이 구현(`<style>` 블록 변경 없음).
+  (2) 지시대로 `state.profile.settings.groupState[gid]`(모임별 로컬 상태 객체, localStorage 유지) 안에 `comments` 배열을 추가해 로컬 유지. 댓글 객체는 `{id, targetId, text, createdAt}`만 저장하고 작성자 이름은 기존 `feedPostHtml` 관례와 동일하게 렌더링 시점에 `state.profile.displayName`에서 읽음(단일 로컬 사용자 가정). `targetId`에 팀 목표 id 또는 마일스톤 id를 넣어 같은 배열에서 두 종류를 구분.
+  (3) `groupState(gid)` 기본값에 `comments:[]` 추가 + 이미 저장된 기존 사용자 데이터(필드 없음)를 위한 방어적 초기화 1줄 — `xp`/`gcalSync` 등 기존 설정 필드와 동일한 패턴.
+  (4) `teamCommentsBlockHtml(gid, targetId)` 신규(댓글 개수 + 목록 + 입력창/등록 버튼, Enter 전송) — `renderTeamGoalsScreen()`의 각 마일스톤 행과 각 팀 목표 블록 하단에 삽입. `canManageTeamGoals(gid)` 게이트를 적용하지 않아 팀장·매니저·팀원 모두 동일하게 작성·열람 가능(요구사항 2 충족).
+  (5) 등록 클릭 시 `groupState(gid).comments.push(...)` → `saveProfile()`(Supabase 실패해도 `saveLocalSettings`는 항상 실행돼 로컬 유지) → `renderTeamGoalsScreen()` 재렌더링, 기존 마일스톤 추가/삭제 핸들러와 동일한 async 패턴 재사용.
+- **발생한 문제 및 해결**: 작업 중 공용 메인 워크트리(`C:\dev\ourgoal-app`)를 동시에 쓰던 다른 세션이 캘린더 탭 작업으로 브랜치를 전환하며 이 기능의 미커밋 변경분을 발견해 `git stash`로 안전 보관해줌. 새로 만든 격리 워크트리(`.claude/worktrees/team-goal-comments`)에 스태시를 적용해 복구했으나, 같은 스태시에 무관한 다른 작업(`first-login-guide`의 `hasSeenGuide` 설정 필드 1줄)이 섞여 있어 `git diff` 검토로 발견 후 제거. 이후 공용 메인 워크트리 충돌을 피하려고 이 기능은 전용 격리 워크트리에서 커밋까지 완료.
+- **검증 결과**: `node -e "new Function(...)"`로 메인 `<script>` 문법 검증 통과, `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음 — main에 병합된 PR #26 시간대 수정 덕에 기존 dDay 실패 2건도 해소됨). 로컬 정적 서버+브라우저 실사용 테스트: `owner`/`manager`/`member` 세 역할 모두에서 팀 목표·마일스톤 댓글 입력→등록→목록 반영→개수 갱신이 정상 동작(멤버 역할에서도 수정/삭제 버튼은 기존대로 숨겨지고 댓글 작성만 노출됨을 확인). `<b>`/`&`/`"` 등 특수문자가 든 댓글이 `escapeHtml`로 이스케이프돼 실제 태그로 해석되지 않음을 확인(XSS 방지). `localStorage`의 `ourgoal_settings_<uid>` 값을 직접 읽어 `groupState.g1.comments`에 댓글 4건이 `targetId`별로 올바르게 분리 저장됨을 확인. 콘솔 에러 없음(테스트용 가짜 계정이라 뜨는 Supabase 400은 댓글 기능과 무관하며 `saveProfile`의 기존 try/catch로 이미 처리됨). Enter 키 제출은 코드상 기존 `dmInput`과 동일 패턴이나 이 자동화 브라우저 도구의 합성 키 입력으로는 재현되지 않아(등록 버튼 클릭 경로는 정상) 실제 키보드 환경에서 재확인을 권장.
 ---
