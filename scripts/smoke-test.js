@@ -69,7 +69,8 @@ const FN_NAMES = [
   'pad', 'dateKey', 'goalProgress', 'msCounts', 'resultPct', 'dDay',
   'computeStreakDays', 'findSuggestionTarget', 'sanitizeSuggestions',
   'applySuggestion', 'describeSuggestion', 'xpForLevel', 'levelForXP', 'levelProgress',
-];
+  'heatmapLevel', 'localNextActionSuggestion', ];
+
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
 
@@ -79,6 +80,8 @@ const sandboxSrc =
   '\nmodule.exports = { pad, dateKey, goalProgress, msCounts, resultPct, dDay, ' +
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
   'xpForLevel, levelForXP, levelProgress, ' +
+  'heatmapLevel, ' +
+  'localNextActionSuggestion, ' +
   'setRecords: function(r){ state.profile.records = r; } };\n';
 
 const os = require('os');
@@ -204,21 +207,47 @@ check('describeSuggestion: status 변경 라벨을 생성한다', () => {
   assert.ok(d.label.indexOf('완료로') !== -1);
 });
 
-check('xpForLevel: 레벨 1은 0 XP', () => {
+check('xpForLevel:  1 0 XP', () => {
   assert.strictEqual(fns.xpForLevel(1), 0);
 });
 
-check('levelForXP: 경계값 미만이면 이전 레벨을 유지한다', () => {
+check('levelForXP:     ', () => {
   assert.strictEqual(fns.levelForXP(0), 1);
   assert.strictEqual(fns.levelForXP(fns.xpForLevel(3) - 1), 2);
   assert.strictEqual(fns.levelForXP(fns.xpForLevel(3)), 3);
 });
 
-check('levelProgress: 현재 레벨 구간 안에서의 진행률을 계산한다', () => {
+check('levelProgress:      ', () => {
   const p = fns.levelProgress(fns.xpForLevel(3));
   assert.strictEqual(p.level, 3);
   assert.strictEqual(p.into, 0);
   assert.strictEqual(p.pct, 0);
+});
+
+check('heatmapLevel:   0', () => {
+  assert.strictEqual(fns.heatmapLevel(0, 5), 0);
+});
+
+check('heatmapLevel:   (4)', () => {
+  assert.strictEqual(fns.heatmapLevel(5, 5), 4);
+});
+
+check('heatmapLevel:     ', () => {
+  assert.strictEqual(fns.heatmapLevel(1, 5), 1);
+  assert.strictEqual(fns.heatmapLevel(3, 5), 3);
+});
+
+check('localNextActionSuggestion:      ', () => {
+  const goal = makeGoal(['done', 'todo', 'doing']);
+  const msg = fns.localNextActionSuggestion(goal, 'm0');
+  assert.ok(msg.indexOf(goal.milestones[1].title) !== -1);
+});
+
+check('localNextActionSuggestion:      ', () => {
+  const goal = makeGoal(['done']);
+  const msg = fns.localNextActionSuggestion(goal, 'm0');
+  assert.ok(msg.indexOf(' ') !== -1);
+  
 });
 
 /* ============ 결과 요약 ============ */
