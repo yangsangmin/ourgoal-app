@@ -353,3 +353,16 @@
 - **발생한 문제 및 해결**: 위 참조. 세 번째 반복된 사고라 사용자에게 "main 병합 후 `grep -rn "^<<<<<<<"` 확인" 습관을 다시 한 번 요청함 (PR #10 코멘트에서 이미 안내했었음).
 - **검증 결과**: 수정 전 `node -e`로 구문 오류 재현 확인 → 수정 후 통과, `node scripts/smoke-test.js` 28개 전부 통과, 저장소 전체 충돌 마커 재검색 클린, `celebrateMilestoneDone`/`awardXP`/`XP_RULES` 등 관련 함수 존재 확인. 병합 전까지는 실제 배포본이 깨진 상태일 수 있어 사용자에게 최우선 병합을 요청함.
 ---
+
+## [2026-09-05 14:24] 목표 탭 개인/팀 목표 분리 + 팀 목표 데이터 모델링
+- **목표**: 사용자 직접 요청 — 목표(`screen-goals`) 화면을 '개인 목표'/'팀 목표' 서브 탭으로 분리하고, 팀 목표는 팀장(Owner)·매니저(Manager)만 추가/수정/삭제할 수 있도록 권한 기반 데이터 모델을 설계.
+- **수정/실행 내역**:
+  (1) `screen-goals`에 기존 소통 탭과 동일한 `.comm-subtabs`/`.comm-subtab` 클래스를 그대로 재사용한 서브 탭 추가(신규 CSS 없음). 기존 목표 헤드 로우·칩 로우·상세 바디는 `#personalGoalsView`로 감싸 그대로 두고, `#teamGoalsView`를 새로 추가.
+  (2) `renderGoalsScreen()` 맨 앞에 서브탭 렌더링·토글 로직만 추가(기존 개인 목표 렌더링 본문은 한 글자도 수정하지 않음) — `state.goalsSubTab==='team'`이면 신규 `renderTeamGoalsScreen()`으로 위임하고 즉시 반환.
+  (3) `MOCK_GROUPS`(모임=팀) 6개 전부에 `teamGoals:[]` 필드 추가, 데모/검증용으로 g1(벤치프레스 모임)에 마일스톤 2개짜리 샘플 팀 목표 1건 포함.
+  (4) 권한 모델: `groupState(gid)`(모임별 내 상태 객체)에 `myRole:'member'` 기본값 추가. 새 모임을 만들면(`promptNewGroup`) 만든 사람이 자동으로 `myRole:'owner'`가 되어 그 팀의 목표를 관리할 수 있음. `canManageTeamGoals(gid)`가 `owner`/`manager`일 때만 true를 반환하도록 게이트.
+  (5) `renderTeamGoalsScreen()` 신규 — 내가 참여(`joined`)한 팀만 카드로 나열, 팀별 역할 뱃지(팀장/매니저/팀원) 표시. `canManageTeamGoals`가 true인 팀만 목표/마일스톤 추가·제목 수정·삭제·상태 순환(todo→doing→done) 컨트롤을 노출하고, 그 외에는 완전 읽기 전용으로 렌더링. 마일스톤 행은 기존 개인 목표의 `.ms-row`/`.ms-main`/`.ms-status`/`.ms-title`/`.ms-actions`/`.icon-btn`/`.add-ms-btn` 클래스를 그대로 재사용해 시각적으로 동일하게 유지.
+  (6) `promptNewTeamGoal(gid)` 신규 — 기존 `openModal`/`.field`/`.modal-actions` 패턴 그대로 재사용한 팀 목표 추가 모달(이름·마감일).
+- **발생한 문제 및 해결**: `role==='owner'||role==='manager'` 조건에서 'manager' 분기는 owner와 동일한 불리언 OR 조건이라 별도 승격 UI 없이도 로직은 owner와 동등하게 검증됨. 이 앱은 모임 멤버(roster)가 실제 계정이 아닌 mock 데이터라 "다른 사람을 매니저로 승격"할 실제 대상이 없어, 매니저 승격 UI는 이번 범위에서 제외(요청 범위인 "상태 객체에 권한 속성 부여"는 `myRole` 필드로 충족). 검증 중 `promptNewGroup` 저장 흐름에서 팀-생성 UI와 무관한 마니또(manito) 렌더링 쪽 `TypeError`를 우연히 발견했으나, 이 저장소의 원본 main 코드(내 변경 전)에서도 동일하게 재현돼 이번 작업과 무관한 기존 버그로 확인 — 별도 이슈로 분리해 보고함(이번 diff에는 포함하지 않음).
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `<style>` 중괄호 407/407 그대로(신규 CSS 없음 확인), `node scripts/smoke-test.js` 기존 28개 전부 통과(회귀 없음). 로컬 정적 서버로 실제 브라우저에서 렌더링 테스트 완료(Supabase 로그인 없이 `state.profile`을 직접 주입하는 방식) — 개인 목표 화면이 기존과 동일하게 정상 동작, 팀 목표 탭에서 미참여 시 안내 문구, `member` 역할로는 완전 읽기 전용(수정 버튼 없음), `owner`/`manager` 역할로는 마일스톤 상태 순환·추가·제목 수정·삭제, 팀 목표 추가(모달)·삭제가 모두 정상 동작함을 클릭으로 직접 확인. 콘솔 에러 없음(팀 목표 관련 코드 경로 한정).
+---
