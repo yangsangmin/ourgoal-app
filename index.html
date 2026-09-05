@@ -324,6 +324,22 @@
   .report-legend-label{flex:1;color:var(--ink-soft);font-weight:700;}
   .report-legend-val{font-family:var(--mono);font-size:.72rem;color:var(--ink-faint);}
 
+  /* ---------- Calendar tab (일정) ---------- */
+  .cal-nav-row{display:flex;align-items:center;gap:6px;margin:2px 0 14px;}
+  .cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:.66rem;font-weight:700;color:var(--ink-faint);margin-bottom:4px;}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+  .cal-cell{background:var(--card);border-radius:10px;padding:4px 3px;min-height:60px;box-shadow:var(--shadow-sm);cursor:pointer;overflow:hidden;transition:box-shadow .12s,transform .12s;}
+  .cal-cell:active{transform:scale(.96);}
+  .cal-cell.other-month{opacity:.4;}
+  .cal-cell.selected{box-shadow:0 0 0 2px var(--violet);}
+  .cal-grid-week .cal-cell{min-height:120px;}
+  .cal-daynum{font-size:.7rem;font-weight:800;width:20px;height:20px;display:flex;align-items:center;justify-content:center;border-radius:6px;margin-bottom:2px;}
+  .cal-cell.today .cal-daynum{background:var(--red);color:#fff;}
+  .cal-pill{font-size:.6rem;font-weight:700;background:var(--red-soft);color:var(--red);border-radius:5px;padding:1px 4px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .cal-pill.ms{background:var(--violet-soft);color:var(--violet);}
+  .cal-pill.done{opacity:.5;text-decoration:line-through;}
+  .cal-more{font-size:.6rem;color:var(--ink-faint);font-weight:700;padding-left:2px;}
+
   /* ---------- 오늘의 미션 ---------- */
   .mission-card{background:var(--card);border-radius:var(--radius-sm);padding:14px 16px;margin:14px 0;box-shadow:var(--shadow-sm);}
   .mission-card .ct-label{font-size:.8rem;font-weight:700;color:var(--ink-soft);margin-bottom:10px;}
@@ -666,6 +682,26 @@
       <div id="teamGoalsView" style="display:none;"></div>
     </section>
 
+    <!-- CALENDAR -->
+    <section class="screen" id="screen-calendar">
+      <div class="card-title-row" style="margin-bottom:6px;">
+        <div><p class="s-eyebrow">일정</p><h2 class="s-title" style="margin:0;">일정</h2></div>
+        <div class="format-toggle" id="calViewToggle" style="max-width:180px;">
+          <div class="format-opt" data-calview="month">월</div>
+          <div class="format-opt" data-calview="week">주</div>
+          <div class="format-opt" data-calview="day">일</div>
+        </div>
+      </div>
+      <div class="cal-nav-row">
+        <button class="btn btn-ghost btn-sm" id="calPrevBtn" type="button" aria-label="이전">‹</button>
+        <h3 id="calPeriodLabel" style="flex:1;text-align:center;margin:0;font-size:.92rem;"></h3>
+        <button class="btn btn-ghost btn-sm" id="calTodayBtn" type="button">오늘</button>
+        <button class="btn btn-ghost btn-sm" id="calNextBtn" type="button" aria-label="다음">›</button>
+      </div>
+      <div id="calGrid"></div>
+      <div id="calDayDetail"></div>
+    </section>
+
     <!-- RECORDS -->
     <section class="screen" id="screen-records">
       <div class="card-title-row" style="margin-bottom:6px;">
@@ -826,6 +862,10 @@
       <button class="navbtn" data-tab="goals" type="button">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
         목표
+      </button>
+      <button class="navbtn" data-tab="calendar" type="button">
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg>
+        일정
       </button>
       <button class="navbtn" data-tab="records" type="button">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>
@@ -1072,7 +1112,7 @@
     };
   }
 
-  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7 };
+  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7, calView: 'month', calDate: isoDate(new Date()), calSelectedDate: isoDate(new Date()) };
 
   async function ensureUserRow(userId, username, displayName){
     var found = await sb.from('users').select('*').eq('id', userId).maybeSingle();
@@ -1459,6 +1499,7 @@
     window.scrollTo({top:0, behavior:'auto'});
     if(tab==='home') renderHome();
     if(tab==='goals') renderGoalsScreen();
+    if(tab==='calendar') renderCalendarScreen();
     if(tab==='records') renderRecordsScreen();
     if(tab==='comm') renderCommScreen();
     if(tab==='settings') renderSettingsScreen();
@@ -1984,25 +2025,174 @@
           var okCount = 0;
           for(var i=0;i<picked.length;i++){
             var it = picked[i];
-            var eventUrl = 'https://www.googleapis.com/calendar/v3/calendars/primary/events' + (it.already ? '/'+it.already : '');
-            try{
-              var r = await fetch(eventUrl, {
-                method: it.already ? 'PATCH' : 'POST',
-                headers:{ 'Content-Type':'application/json', Authorization:'Bearer '+token },
-                body: JSON.stringify({ summary: it.label, start:{date:it.date}, end:{date: nextDayISO(it.date)} })
-              });
-              if(r.ok){
-                var ev = await r.json();
-                if(it.kind==='goal') sync.goals[it.goal.id] = ev.id; else sync.ms[it.ms.id] = ev.id;
-                okCount++;
-              }
-            } catch(e){ /* skip failed item */ }
+            var evId = await pushCalendarEvent(token, it.label, it.date, it.already);
+            if(evId){
+              if(it.kind==='goal') sync.goals[it.goal.id] = evId; else sync.ms[it.ms.id] = evId;
+              okCount++;
+            }
           }
           await saveProfile();
           toast(okCount+'개 일정을 캘린더에 반영했어요');
         });
       }
     );
+  }
+
+  /* ============ 일정(캘린더) 탭 ============ */
+  var WEEKDAYS_KR = ['일','월','화','수','목','금','토'];
+  function isoDate(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function calWeekStart(d){ var x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate()-x.getDay()); return x; }
+  async function pushCalendarEvent(token, label, date, existingEventId){
+    var eventUrl = 'https://www.googleapis.com/calendar/v3/calendars/primary/events' + (existingEventId ? '/'+existingEventId : '');
+    try{
+      var r = await fetch(eventUrl, {
+        method: existingEventId ? 'PATCH' : 'POST',
+        headers:{ 'Content-Type':'application/json', Authorization:'Bearer '+token },
+        body: JSON.stringify({ summary: label, start:{date:date}, end:{date: nextDayISO(date)} })
+      });
+      if(!r.ok) return null;
+      var ev = await r.json();
+      return ev.id;
+    } catch(e){ return null; }
+  }
+  async function quickSyncToCalendar(kind, goalId, msId){
+    var goal = state.profile.goals.find(function(g){ return g.id===goalId; });
+    if(!goal) return;
+    var ms = (kind==='ms') ? (goal.milestones||[]).find(function(m){ return m.id===msId; }) : null;
+    var date = kind==='goal' ? goal.dueDate : (ms && ms.dueDate);
+    if(!date){ toast('먼저 마감일을 설정해주세요'); return; }
+    var label = kind==='goal' ? ('🎯 '+goal.title) : ('· '+ms.title+' ('+goal.title+')');
+    if(!state.profile.settings.gcalSync) state.profile.settings.gcalSync = { goals:{}, ms:{}, imported:{} };
+    var sync = state.profile.settings.gcalSync;
+    var existing = kind==='goal' ? sync.goals[goal.id] : sync.ms[ms.id];
+    var token;
+    try{ token = await getGoogleAccessToken(); } catch(e){ toast('구글 인증에 실패했어요'); return; }
+    toast('캘린더에 반영하는 중…');
+    var evId = await pushCalendarEvent(token, label, date, existing);
+    if(!evId){ toast('캘린더 반영에 실패했어요'); return; }
+    if(kind==='goal') sync.goals[goal.id] = evId; else sync.ms[ms.id] = evId;
+    await saveProfile();
+    toast('"'+(kind==='goal'?goal.title:ms.title)+'" 일정을 캘린더에 반영했어요');
+    if(state.activeTab==='calendar') renderCalendarScreen();
+  }
+  function calendarItemsByDate(){
+    var map = {};
+    function push(item){ (map[item.date] = map[item.date] || []).push(item); }
+    state.profile.goals.filter(function(g){ return !g.archivedAt; }).forEach(function(g){
+      if(g.dueDate) push({ date:g.dueDate, title:g.title, kind:'goal', goalId:g.id, msId:null, done:false, goalTitle:g.title });
+      (g.milestones||[]).forEach(function(m){
+        if(m.dueDate) push({ date:m.dueDate, title:m.title, kind:'ms', goalId:g.id, msId:m.id, done:m.status==='done', goalTitle:g.title });
+      });
+    });
+    return map;
+  }
+  function calCellHtml(d, itemsByDate, dim){
+    var iso = isoDate(d);
+    var evs = itemsByDate[iso] || [];
+    var cls = 'cal-cell'+(dim?' other-month':'')+(iso===isoDate(new Date())?' today':'')+(iso===state.calSelectedDate?' selected':'');
+    var shown = evs.slice(0,2);
+    var more = evs.length - shown.length;
+    return '<div class="'+cls+'" data-caldate="'+iso+'">' +
+      '<div class="cal-daynum">'+d.getDate()+'</div>' +
+      shown.map(function(e){ return '<div class="cal-pill'+(e.kind==='ms'?' ms':'')+(e.done?' done':'')+'">'+escapeHtml(e.title)+'</div>'; }).join('') +
+      (more>0 ? '<div class="cal-more">+'+more+'</div>' : '') +
+    '</div>';
+  }
+  function calShift(dir){
+    var view = state.calView || 'month';
+    var d = new Date(state.calDate+'T00:00:00');
+    if(view==='month') d.setMonth(d.getMonth()+dir, 1);
+    else if(view==='week') d.setDate(d.getDate()+dir*7);
+    else d.setDate(d.getDate()+dir);
+    state.calDate = isoDate(d);
+    renderCalendarScreen();
+  }
+  function renderCalendarScreen(){
+    var view = state.calView || 'month';
+    var refDate = new Date(state.calDate+'T00:00:00');
+    var itemsByDate = calendarItemsByDate();
+    var periodLabel, gridHtml;
+
+    if(view==='month'){
+      var y = refDate.getFullYear(), mo = refDate.getMonth();
+      periodLabel = y+'년 '+(mo+1)+'월';
+      var startCell = calWeekStart(new Date(y, mo, 1));
+      var cells = [];
+      for(var i=0;i<42;i++) cells.push(new Date(startCell.getFullYear(), startCell.getMonth(), startCell.getDate()+i));
+      gridHtml = '<div class="cal-weekdays">'+WEEKDAYS_KR.map(function(w){ return '<div>'+w+'</div>'; }).join('')+'</div>' +
+        '<div class="cal-grid">'+cells.map(function(cd){ return calCellHtml(cd, itemsByDate, cd.getMonth()!==mo); }).join('')+'</div>';
+    } else if(view==='week'){
+      var wkStart = calWeekStart(refDate);
+      var wcells = [];
+      for(var j=0;j<7;j++) wcells.push(new Date(wkStart.getFullYear(), wkStart.getMonth(), wkStart.getDate()+j));
+      periodLabel = isoDate(wcells[0])+' ~ '+isoDate(wcells[6]);
+      gridHtml = '<div class="cal-weekdays">'+WEEKDAYS_KR.map(function(w){ return '<div>'+w+'</div>'; }).join('')+'</div>' +
+        '<div class="cal-grid cal-grid-week">'+wcells.map(function(cd){ return calCellHtml(cd, itemsByDate, false); }).join('')+'</div>';
+    } else {
+      periodLabel = isoDate(refDate)+' ('+WEEKDAYS_KR[refDate.getDay()]+')';
+      gridHtml = '';
+      state.calSelectedDate = isoDate(refDate);
+    }
+
+    document.getElementById('calPeriodLabel').textContent = periodLabel;
+    document.getElementById('calGrid').innerHTML = gridHtml;
+    document.querySelectorAll('#calViewToggle [data-calview]').forEach(function(opt){
+      opt.classList.toggle('active', opt.dataset.calview===view);
+      opt.onclick = function(){
+        state.calView = opt.dataset.calview;
+        if(state.calView!=='month' && state.calSelectedDate) state.calDate = state.calSelectedDate;
+        renderCalendarScreen();
+      };
+    });
+    document.getElementById('calPrevBtn').onclick = function(){ calShift(-1); };
+    document.getElementById('calNextBtn').onclick = function(){ calShift(1); };
+    document.getElementById('calTodayBtn').onclick = function(){
+      var t = isoDate(new Date());
+      state.calDate = t; state.calSelectedDate = t;
+      renderCalendarScreen();
+    };
+    document.querySelectorAll('#calGrid [data-caldate]').forEach(function(cell){
+      cell.addEventListener('click', function(){
+        state.calSelectedDate = cell.dataset.caldate;
+        document.querySelectorAll('#calGrid .cal-cell').forEach(function(c){ c.classList.toggle('selected', c.dataset.caldate===state.calSelectedDate); });
+        renderCalDayDetail(itemsByDate);
+      });
+    });
+    renderCalDayDetail(itemsByDate);
+  }
+  function renderCalDayDetail(itemsByDate){
+    var sel = state.calSelectedDate || isoDate(new Date());
+    var evs = (itemsByDate || calendarItemsByDate())[sel] || [];
+    var wrap = document.getElementById('calDayDetail');
+    wrap.innerHTML =
+      '<div class="card-title-row" style="margin:16px 0 8px;"><h3 style="margin:0;font-size:.92rem;">'+sel+'</h3><span class="faint" style="font-weight:700;">'+(dDay(sel)||'')+'</span></div>' +
+      (evs.length ? '<div class="ms-list">'+evs.map(function(e){
+        return '<div class="ms-row" data-calgoto="'+e.goalId+'">' +
+          '<div class="ms-main">' +
+            '<div class="ms-status'+(e.done?' done':'')+'">'+(e.done?'✓':'')+'</div>' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div class="ms-title'+(e.done?' done-text':'')+'">'+escapeHtml(e.title)+'</div>' +
+              (e.kind==='ms' ? '<div class="faint" style="font-size:.72rem;">'+escapeHtml(e.goalTitle)+'</div>' : '') +
+            '</div>' +
+            '<button class="icon-btn" data-calsync="'+e.kind+'" data-calsyncgid="'+e.goalId+'" data-calsyncmid="'+(e.msId||'')+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' +
+          '</div>' +
+        '</div>';
+      }).join('')+'</div>'
+      : '<div class="empty-state"><div class="e-icon">🗓️</div><p>이 날은 예정된 일정이 없어요.</p></div>');
+
+    wrap.querySelectorAll('[data-calgoto]').forEach(function(row){
+      row.addEventListener('click', function(e){
+        if(e.target.closest('[data-calsync]')) return;
+        state.activeGoalId = row.dataset.calgoto;
+        setTab('goals');
+      });
+    });
+    wrap.querySelectorAll('[data-calsync]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        quickSyncToCalendar(btn.dataset.calsync, btn.dataset.calsyncgid, btn.dataset.calsyncmid||null);
+      });
+    });
   }
 
   function streakBadgeHtml(streak){
@@ -2080,7 +2270,11 @@
         ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--red);">'+g.dueDate+' · '+dDay(g.dueDate)+'</span>'
         : '';
       return '<div class="goal-card" data-goalid="'+g.id+'">' +
-        '<div class="goal-card-top"><h4>'+escapeHtml(g.title)+'</h4>'+dd+'</div>' +
+        '<div class="goal-card-top"><h4>'+escapeHtml(g.title)+'</h4>' +
+          '<div style="display:flex;align-items:center;gap:6px;">'+dd+
+            '<button class="icon-btn" data-calsyncgoal="'+g.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' +
+          '</div>' +
+        '</div>' +
         (g.topic ? '<div style="margin:-4px 0 8px;">'+topicPill(g.topic)+'</div>' : '') +
         '<div class="goal-body">' +
           '<div class="gauge">'+gaugeSvg(pct,56,color)+'</div>' +
@@ -2097,6 +2291,12 @@
       el.addEventListener('click', function(){
         state.activeGoalId = el.dataset.detail;
         setTab('goals');
+      });
+    });
+    wrap.querySelectorAll('[data-calsyncgoal]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        quickSyncToCalendar('goal', btn.dataset.calsyncgoal, null);
       });
     });
   }
@@ -3543,6 +3743,7 @@
             resultLineHtml(m.result) +
           '</div>' +
           '<button data-msresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(m.result)+'</button>' +
+          '<button class="icon-btn" data-calsyncms="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' +
           (state.goalEditMode ? '<div class="ms-actions">' +
             (idx>0?'<button class="icon-btn" data-msup="1" aria-label="위로 이동">↑</button>':'') +
             (idx<goal.milestones.length-1?'<button class="icon-btn" data-msdown="1" aria-label="아래로 이동">↓</button>':'') +
@@ -3754,6 +3955,12 @@
       var msResultBtn = row.querySelector('[data-msresult]');
       if(msResultBtn) msResultBtn.addEventListener('click', function(){
         openResultModal('ms', ms, function(){ renderGoalsScreen(); }, goal);
+      });
+
+      var msCalBtn = row.querySelector('[data-calsyncms]');
+      if(msCalBtn) msCalBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        quickSyncToCalendar('ms', goal.id, msid);
       });
 
       row.querySelectorAll('.task-row').forEach(function(trow){
@@ -6230,6 +6437,7 @@
     document.getElementById('homeGreeting').textContent = state.profile.displayName + '님, 안녕하세요';
     renderHome();
     renderGoalsScreen();
+    renderCalendarScreen();
     renderRecordsScreen();
     renderCommScreen();
     renderSettingsScreen();
