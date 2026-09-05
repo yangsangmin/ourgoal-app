@@ -72,6 +72,7 @@ const FN_NAMES = [
   'maybeGrantStreakFreeze', 'maybeApplyStreakFreeze',
   'xpForLevel', 'levelForXP', 'levelProgress',
   'heatmapLevel', 'localNextActionSuggestion',
+  'goalAchievement',
   'hashStr', 'mockPostCheerCount',
 ];
 
@@ -88,6 +89,7 @@ const sandboxSrc =
   'xpForLevel, levelForXP, levelProgress, ' +
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
+  'goalAchievement, ' +
   'hashStr, mockPostCheerCount, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
@@ -307,6 +309,20 @@ check('localNextActionSuggestion: 남은 마일스톤이 없으면 결과 기록
   const goal = makeGoal(['done']);
   const msg = fns.localNextActionSuggestion(goal, 'm0');
   assert.ok(msg.indexOf('결과를 기록') !== -1);
+});
+
+check('goalAchievement: 마일스톤이 전부 done이면 100', () => {
+  assert.strictEqual(fns.goalAchievement(makeGoal(['done', 'done'])), 100);
+});
+
+check('goalAchievement: 일부만 done이면 100 미만', () => {
+  assert.ok(fns.goalAchievement(makeGoal(['done', 'todo'])) < 100);
+});
+
+check('goalAchievement: 목표 자체에 수치 결과가 있으면 그 비율을 우선한다', () => {
+  const goal = makeGoal(['todo']);
+  goal.result = { target: '10', result: '10', unit: '회', note: '' };
+  assert.strictEqual(fns.goalAchievement(goal), 100);
 });
 
 check('mockPostCheerCount: 방금 작성한 글은 응원이 0이다', () => {
