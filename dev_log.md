@@ -376,3 +376,12 @@
 - **발생한 문제 및 해결**: 없음. `gh auth login`은 자격 증명이 필요해 사용자가 직접 수행(이 커밋의 push는 인증 후 진행).
 - **검증 결과**: `git status`로 변경 파일이 CLAUDE.md·dev_log.md뿐임을 확인, `gh --version` 정상, clone HEAD가 최신 main(c75f192, PR #24 병합 커밋)과 일치.
 ---
+
+## [2026-09-06 00:33] 스모크 테스트 dDay 케이스 타임존 플래키 수정 (테스트 파일만 변경)
+- **목표**: `node scripts/smoke-test.js`의 "dDay: 오늘이면 D-day"·"dDay: 내일이면 D-1" 두 케이스가 KST 00:00~09:00 사이에 매일 실패하는 문제를 테스트 파일만 고쳐 해결. 2026-09-05T15:26Z(= 09-06 00:26 KST)에 `'D+1' !== 'D-day'`, `'D-day' !== 'D-1'`로 재현됐고 `TZ=UTC`로 돌리면 28/28 통과. 앱 코드는 바뀐 적 없음(최근 커밋은 CLAUDE.md/dev_log.md만 수정).
+- **수정/실행 내역**:
+  (1) 원인(8원칙 1~2): 테스트는 `new Date().toISOString().slice(0,10)`(UTC 달력 날짜)로 기대 날짜를 만들지만, `index.html`의 `dDay(dateStr)`는 `dateStr+'T00:00:00'`을 로컬 자정으로 파싱해 로컬 '오늘'(`setHours(0,0,0,0)`)과 비교한다. UTC 날짜가 로컬 날짜보다 하루 뒤처지는 시간대(KST 기준 매일 00~09시)마다 기대값이 하루 어긋남 → 앱 코드 버그가 아니라 테스트 기대값의 시간대 의미론 불일치.
+  (2) 해결(8원칙 3~4): `index.html`은 건드리지 않고 `scripts/smoke-test.js`에 로컬 자정 기준 `localDateStr(offsetDays)` 헬퍼를 추가 — `setHours(0,0,0,0)`·`setDate(getDate()+offset)`로 날짜를 만들고, 샌드박스(FN_NAMES)에 이미 추출돼 있는 앱의 `dateKey()`로 포맷해 dDay()와 동일한 로컬 시간 의미론을 따르게 함. 86400000ms 덧셈 대신 `setDate`를 써 DST 전환일(25시간 하루)에도 안전. 두 케이스의 본문만 헬퍼 호출로 교체(변경 12줄 추가/4줄 삭제, 테스트 파일 한정).
+- **발생한 문제 및 해결**: 첫 패치 시도에서 문자열 치환이 실패(파일이 CRLF라 LF 기준 문자열이 안 맞음) → 줄 번호 범위(139~147행)로 교체하고 원본 CRLF를 보존해 재적용. `gh auth status`가 미로그인 상태라 PR 생성은 사용자의 `gh auth login` 이후 진행(CLAUDE.md 8-C에 따라 웹 UI로 우회하지 않음).
+- **검증 결과**: 수정 전 기본 TZ(KST 00:27)에서 26/28로 실패 재현 → 수정 후 `node --check scripts/smoke-test.js` 통과, 기본 TZ·`TZ=UTC`·`TZ=Pacific/Kiritimati`(UTC+14)·`TZ=America/Los_Angeles`·`TZ=Etc/GMT+12`·`TZ=Asia/Seoul` 전부 28/28 통과. Kiritimati에서 node의 로컬 날짜(09-06)와 UTC 날짜(09-05)가 실제로 다름을 별도로 확인해, 어긋나는 시나리오가 실제로 검증됐음을 보장.
+---
