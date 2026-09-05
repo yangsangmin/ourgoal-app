@@ -123,6 +123,12 @@
   .capture-card textarea{width:100%;border:none;background:transparent;resize:none;font-size:1rem;min-height:64px;padding:0;margin:10px 0 8px;line-height:1.5;}
   .capture-card textarea:focus{outline:none;box-shadow:none;background:transparent;}
   .capture-row{display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;}
+  .capture-ta-wrap{position:relative;}
+  .capture-ta-wrap textarea{padding-right:40px;}
+  .mic-btn{position:absolute;right:0;bottom:6px;width:32px;height:32px;border-radius:50%;border:none;background:var(--card2);color:var(--ink-soft);font-size:.92rem;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .mic-btn.listening{background:var(--red);color:#fff;animation:mic-pulse 1.1s ease-in-out infinite;}
+  @keyframes mic-pulse{0%{box-shadow:0 0 0 0 rgba(255,79,100,.5);}70%{box-shadow:0 0 0 12px rgba(255,79,100,0);}100%{box-shadow:0 0 0 0 rgba(255,79,100,0);}}
+  .mic-status{display:block;text-align:right;font-size:.7rem;color:var(--red);font-weight:700;margin:-4px 0 4px;}
 
   /* goal card (home) */
   .goal-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow-sm);margin-bottom:12px;border:1px solid rgba(255,255,255,.6);transition:transform .15s,box-shadow .15s;}
@@ -666,7 +672,18 @@
 
       <div class="capture-card card" id="captureCardBox">
         <div style="font-weight:700;color:var(--red);font-size:.86rem;">✎ 오늘 기록하기</div>
-        <textarea id="captureInput" placeholder="지금 뭘 하고 있나요? 기분은 어때요? 자유롭게 적어보세요. 세부적으로 남길수록 ai가 더 상세한 피드백을 줄 수 있으며 내 목표와 연관된 행동을 작성할 경우 자동으로 목표달성 정도를 파악하고 수정할지 여쭤볼겁니다"></textarea>
+        <div class="goal-chip-row" id="quickRoutineRow">
+          <button class="goal-chip" type="button" data-quickroutine="💪 운동 완료">💪 운동 완료</button>
+          <button class="goal-chip" type="button" data-quickroutine="📚 1시간 집중">📚 1시간 집중</button>
+          <button class="goal-chip" type="button" data-quickroutine="💧 물 2L">💧 물 2L</button>
+          <button class="goal-chip" type="button" data-quickroutine="🏃 5km 러닝">🏃 5km 러닝</button>
+          <button class="goal-chip" type="button" data-quickroutine="🧘 명상 10분">🧘 명상 10분</button>
+        </div>
+        <span class="mic-status" id="micStatus" hidden>🔴 듣고 있어요...</span>
+        <div class="capture-ta-wrap">
+          <textarea id="captureInput" placeholder="지금 뭘 하고 있나요? 기분은 어때요? 자유롭게 적어보세요. 세부적으로 남길수록 ai가 더 상세한 피드백을 줄 수 있으며 내 목표와 연관된 행동을 작성할 경우 자동으로 목표달성 정도를 파악하고 수정할지 여쭤볼겁니다"></textarea>
+          <button class="mic-btn" id="micBtn" type="button" aria-label="음성으로 입력하기" title="음성으로 입력하기">🎙️</button>
+        </div>
         <div class="capture-row" id="captureRowAnchor" style="gap:8px;">
           <button class="btn btn-ghost btn-sm" id="importExternalBtn" type="button">🔗 외부 데이터 불러오기</button>
           <button class="btn btn-primary btn-sm" id="captureSave" type="button">저장</button>
@@ -2396,6 +2413,56 @@
       });
     });
   }
+
+  /* ============ 원터치 퀵 루틴 칩 ============ */
+  document.getElementById('quickRoutineRow').querySelectorAll('[data-quickroutine]').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      document.getElementById('captureInput').value = chip.dataset.quickroutine;
+      document.getElementById('captureSave').click();
+    });
+  });
+
+  /* ============ 음성 체크인 (Web Speech API) ============ */
+  (function setupVoiceCheckin(){
+    var micBtn = document.getElementById('micBtn');
+    var micStatus = document.getElementById('micStatus');
+    var SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SpeechRecognitionCtor){ micBtn.style.display = 'none'; return; }
+    var recognition = new SpeechRecognitionCtor();
+    recognition.lang = 'ko-KR';
+    recognition.interimResults = true;
+    recognition.continuous = false;
+    var listening = false;
+    var baseText = '';
+    micBtn.addEventListener('click', function(){
+      if(listening){ recognition.stop(); return; }
+      var ta = document.getElementById('captureInput');
+      baseText = ta.value;
+      if(baseText && !/\s$/.test(baseText)) baseText += ' ';
+      try{ recognition.start(); } catch(e){}
+    });
+    recognition.addEventListener('start', function(){
+      listening = true;
+      micBtn.classList.add('listening');
+      micStatus.hidden = false;
+    });
+    recognition.addEventListener('end', function(){
+      listening = false;
+      micBtn.classList.remove('listening');
+      micStatus.hidden = true;
+    });
+    recognition.addEventListener('error', function(e){
+      listening = false;
+      micBtn.classList.remove('listening');
+      micStatus.hidden = true;
+      if(e.error==='not-allowed' || e.error==='service-not-allowed') toast('마이크 사용 권한이 필요해요');
+    });
+    recognition.addEventListener('result', function(e){
+      var transcript = '';
+      for(var i=0;i<e.results.length;i++) transcript += e.results[i][0].transcript;
+      document.getElementById('captureInput').value = baseText + transcript;
+    });
+  })();
 
   document.getElementById('captureSave').addEventListener('click', async function(){
     var t = document.getElementById('captureInput');
