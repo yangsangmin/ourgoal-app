@@ -324,6 +324,15 @@
   .report-legend-label{flex:1;color:var(--ink-soft);font-weight:700;}
   .report-legend-val{font-family:var(--mono);font-size:.72rem;color:var(--ink-faint);}
 
+  /* ---------- 오늘의 미션 ---------- */
+  .mission-card{background:var(--card);border-radius:var(--radius-sm);padding:14px 16px;margin:14px 0;box-shadow:var(--shadow-sm);}
+  .mission-card .ct-label{font-size:.8rem;font-weight:700;color:var(--ink-soft);margin-bottom:10px;}
+  .mission-row{display:flex;align-items:flex-start;gap:8px;padding:7px 0;font-size:.82rem;}
+  .mission-row + .mission-row{border-top:1px solid var(--rule);}
+  .mission-row .m-icon{flex:0 0 auto;}
+  .mission-row .m-goal{font-weight:800;color:var(--ink);}
+  .mission-row .m-text{color:var(--ink-soft);}
+
   /* ---------- Heatmap (기록 히트맵) ---------- */
   .heatmap-scroll{overflow-x:auto;padding-bottom:2px;}
   .heatmap-body{display:flex;gap:3px;}
@@ -393,6 +402,7 @@
   .streak-t3{background:var(--grad);color:#fff;box-shadow:0 6px 16px -8px rgba(255,79,100,.7);}
   .streak-t4{background:var(--grad);color:#fff;box-shadow:0 8px 22px -6px rgba(255,79,100,.9);animation:streak-pulse 1.6s ease-in-out infinite;}
   @keyframes streak-pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+  .freeze-pill{font-family:var(--mono);font-size:.7rem;border-radius:999px;padding:4px 10px;white-space:nowrap;font-weight:700;vertical-align:middle;margin-left:6px;background:var(--violet-soft);color:var(--violet);}
 
   /* ---------- 공동 챌린지 ---------- */
   .collective-card{background:var(--chip);color:#fff;border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
@@ -603,8 +613,10 @@
       </div>
       <button class="btn btn-ghost btn-sm" id="customFeedbackBtn" type="button" style="width:100%;margin-top:8px;">🤖 내 맞춤 피드백 설정하기<span id="customFeedbackStatus"></span></button>
 
+      <div id="todayMissionCard"></div>
+
       <div class="card-title-row" style="margin:20px 0 10px;">
-        <h3>내 목표 <span id="streakBadge"></span></h3>
+        <h3>내 목표 <span id="streakBadge"></span><span id="streakFreezeBadge"></span></h3>
         <button class="btn btn-ghost btn-sm" id="homeAddGoal" type="button">+ 새 목표</button>
       </div>
       <div id="homeGoalList"></div>
@@ -918,7 +930,7 @@
 
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
   function defaultSettings(){
-    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] }, hasSeenGuide:false };
+    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, todayMissions:{}, streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] }, hasSeenGuide:false };
   }
   function loadLocalSettings(userId){
     try{
@@ -1131,15 +1143,26 @@
   });
 
   /* ============ Enter app ============ */
-  function enterApp(){
+  async function enterApp(){
     document.getElementById('authScreen').style.display = 'none';
     var shell = document.getElementById('appShell');
     shell.classList.add('active');
     document.getElementById('topUserName').textContent = state.profile.displayName;
     document.getElementById('homeGreeting').textContent = state.profile.displayName + '님, 안녕하세요';
+    await checkStreakFreeze();
     renderAll();
     setupNotifyTimer();
     checkSocialNotifications();
+  }
+
+  /* ============ 스트릭 프리즈 (연속기록 보호권) ============ */
+  async function checkStreakFreeze(){
+    if(!state.profile.settings.streakFreeze) state.profile.settings.streakFreeze = { available:1, usedDates:[], grantedTier:0 };
+    var applied = maybeApplyStreakFreeze();
+    var granted = maybeGrantStreakFreeze();
+    if(applied || granted) await saveProfile();
+    if(applied) toast('🧊 어제 기록을 못 남겼지만 스트릭 프리즈로 연속 기록이 지켜졌어요');
+    else if(granted) toast('🧊 스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요');
   }
 
   /* ============ Onboarding (first-time, after signup) ============ */
@@ -1871,9 +1894,11 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
   }
   function computeStreakDays(){
     var recs = state.profile.records;
-    if(!recs.length) return 0;
+    var frozen = (state.profile.settings.streakFreeze && state.profile.settings.streakFreeze.usedDates) || [];
+    if(!recs.length && !frozen.length) return 0;
     var days = {};
     recs.forEach(function(r){ days[dateKey(r.startAt)] = true; });
+    frozen.forEach(function(k){ days[k] = true; });
     var streak = 0;
     var cursor = new Date(); cursor.setHours(0,0,0,0);
     while(days[cursor.getFullYear()+'-'+pad(cursor.getMonth()+1)+'-'+pad(cursor.getDate())]){
@@ -1882,13 +1907,43 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
     }
     return streak;
   }
+  var STREAK_FREEZE_MAX = 3;
+  function maybeGrantStreakFreeze(){
+    var sf = state.profile.settings.streakFreeze;
+    if(!sf) return false;
+    var tier = Math.floor(computeStreakDays() / 7);
+    if(tier <= (sf.grantedTier||0)) return false;
+    sf.grantedTier = tier;
+    if(sf.available >= STREAK_FREEZE_MAX) return false;
+    sf.available = Math.min(STREAK_FREEZE_MAX, sf.available + 1);
+    return true;
+  }
+  function maybeApplyStreakFreeze(){
+    var sf = state.profile.settings.streakFreeze;
+    if(!sf || sf.available <= 0) return false;
+    var recs = state.profile.records;
+    var hasRecordOn = function(k){ return recs.some(function(r){ return dateKey(r.startAt)===k; }); };
+    var y = new Date(); y.setHours(0,0,0,0); y.setDate(y.getDate()-1);
+    var yKey = y.getFullYear()+'-'+pad(y.getMonth()+1)+'-'+pad(y.getDate());
+    if(hasRecordOn(yKey) || sf.usedDates.indexOf(yKey)!==-1) return false;
+    var bb = new Date(y); bb.setDate(bb.getDate()-1);
+    var bbKey = bb.getFullYear()+'-'+pad(bb.getMonth()+1)+'-'+pad(bb.getDate());
+    if(!hasRecordOn(bbKey) && sf.usedDates.indexOf(bbKey)===-1) return false;
+    sf.available--;
+    sf.usedDates.push(yKey);
+    return true;
+  }
 
   /* ============ RENDER: HOME ============ */
   function renderHome(){
     refreshCustomFeedbackButtons();
+    renderTodayMissionCard();
     var streak = computeStreakDays();
     var badgeEl = document.getElementById('streakBadge');
     if(badgeEl) badgeEl.innerHTML = streak>0 ? streakBadgeHtml(streak) : '';
+    var freezeEl = document.getElementById('streakFreezeBadge');
+    var sf = state.profile.settings.streakFreeze;
+    if(freezeEl) freezeEl.innerHTML = (sf && sf.available>0) ? '<span class="freeze-pill" title="하루를 놓쳐도 스트릭이 끊기지 않게 지켜줘요">🧊'+sf.available+'</span>' : '';
     var wrap = document.getElementById('homeGoalList');
     var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     if(!goals.length){
@@ -3111,6 +3166,62 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
         if(el) el.textContent = text;
         if(tag) tag.textContent = '🤖 AI 요약';
       }
+    });
+  }
+
+  /* ============ 오늘의 미션 ============ */
+  function milestonesForMission(goal){
+    return goal.milestones.filter(function(m){ return m.status!=='done'; }).map(function(m){
+      return { title: m.title, status: m.status, tasks: (m.tasks||[]).filter(function(t){ return !t.done; }).map(function(t){ return { title: t.title }; }) };
+    });
+  }
+  function localTodayMission(goal){
+    var open = goal.milestones.find(function(m){ return m.status!=='done'; });
+    return open ? '오늘은 "'+open.title+'" 마일스톤을 위해 작게 한 걸음 내딛어보세요.' : '오늘은 그동안의 기록을 돌아보며 다음 목표를 그려보세요.';
+  }
+  async function requestTodayMission(goal){
+    var controller = new AbortController();
+    var timer = setTimeout(function(){ controller.abort(); }, 28000);
+    try{
+      var res = await fetch('/api/todaymission', {
+        method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
+        body: JSON.stringify({ goalTitle: goal.title, milestones: milestonesForMission(goal) })
+      });
+      clearTimeout(timer);
+      if(!res.ok) return localTodayMission(goal);
+      var data = await res.json();
+      var text = data && data.mission ? String(data.mission).trim() : '';
+      if(!text || text.length<6 || text.length>80) return localTodayMission(goal);
+      return text;
+    } catch(e){ clearTimeout(timer); return localTodayMission(goal); }
+  }
+  function renderTodayMissionCard(){
+    var el = document.getElementById('todayMissionCard');
+    if(!el || !state.profile) return;
+    var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
+    if(!goals.length){ el.innerHTML = ''; return; }
+    var today = dateKey(nowISO());
+    var missions = state.profile.settings.todayMissions || {};
+    el.innerHTML = '<div class="mission-card"><div class="ct-label">🎯 오늘의 미션</div>' +
+      goals.map(function(g){
+        var m = missions[g.id];
+        var text = (m && m.date===today) ? m.text : '생각하는 중...';
+        return '<div class="mission-row"><span class="m-icon">✅</span><span><span class="m-goal">'+escapeHtml(g.title)+'</span> · <span class="m-text">'+escapeHtml(text)+'</span></span></div>';
+      }).join('') +
+    '</div>';
+    goals.forEach(function(g){
+      var m = missions[g.id];
+      if(m && m.date===today) return;
+      if(!state.todayMissionPending) state.todayMissionPending = {};
+      if(state.todayMissionPending[g.id]) return;
+      state.todayMissionPending[g.id] = true;
+      requestTodayMission(g).then(async function(text){
+        delete state.todayMissionPending[g.id];
+        if(!state.profile.settings.todayMissions) state.profile.settings.todayMissions = {};
+        state.profile.settings.todayMissions[g.id] = { date: today, text: text };
+        await saveProfile();
+        if(state.activeTab==='home') renderTodayMissionCard();
+      });
     });
   }
 
