@@ -438,3 +438,14 @@
 - **발생한 문제 및 해결**: (1) dev_log.md는 작업 트리에서 CRLF, git blob 저장은 LF(core.autocrlf=true)로 줄바꿈 방식이 달라 단순 문자열 치환 시 줄바꿈이 섞일 위험이 있어, 추출한 원문을 CRLF로 변환 후 삽입하고 삽입 전후로 앵커 주변 텍스트를 스크립트로 출력해 삽입 위치를 프로그램적으로 재확인. (2) PR 생성 직후 `gh pr view`가 `mergeable:CONFLICTING`을 보고 — 확인해보니 작업 도중 별도 PR #17(응원 알림 기능)이 main에 먼저 병합되어 dev_log.md 파일 끝부분(같은 삽입 지점)에서 충돌 발생. `git merge origin/main` 후 충돌 마커를 직접 편집하는 대신 이번 작업과 동일한 스크립트 기반 방식(마커로 양쪽 콘텐츠를 정확히 추출 → origin 쪽 항목을 먼저, 내 항목을 그 뒤에 배치해 재조립)으로 해결해 양쪽 내용을 모두 보존 — 이 PR 자체가 고치려는 "수동 충돌 해결 중 콘텐츠 유실" 사고를 반복하지 않도록 8원칙 1~7단계를 그 자리에서 재적용.
 - **검증 결과**: 복원된 항목 텍스트가 304a0f0 원문과 문자 단위로 완전히 동일함을 스크립트로 대조(1,814자 일치), 병합 후 `git diff main...HEAD`로 순수 추가(복원 7줄 + 신규 기록 7줄) 외 다른 라인 변경이 없음을 확인, 저장소 전체 병합 마커 재검색(`grep -rn "^<<<<<<<"`) 클린, `node scripts/smoke-test.js` 31개 전부 통과(기존 28 + origin/main 병합으로 들어온 PR #17의 신규 3개, 회귀 없음). `gh pr view`로 `mergeable:MERGEABLE`/`mergeStateStatus:CLEAN` 확인. 순수 문서 변경이라 브라우저 검증은 해당 없음.
 ---
+
+## [2026-09-05 06:31] 홈 화면 "오늘의 미션" 추가
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 3단계 항목 — 목표 전체가 아니라 "오늘 하루" 단위로 할 일을 잘게 쪼개주는 AI 제안을 홈 화면에 추가. (8원칙: 거창한 목표를 매번 마주하면 시작하기 부담스러워지는 게 이탈 원인 중 하나라 판단 → 목표별로 "오늘 할 만한 아주 작은 한 걸음"만 AI가 짚어주는 것이 핵심 해결책. goalstatus.js/nextaction.js와 동일한 단일 호출+자체검증 패턴을 재사용)
+- **수정/실행 내역**:
+  (1) `api/todaymission.js` 신설(goalstatus.js·nextaction.js와 동일 구조) — goalTitle과 미완료 마일스톤/할 일 목록만 받아 "① 아직 끝나지 않은 항목에 근거 ② 오늘 하루 안에 부담 없이 끝낼 만큼 작고 구체적 ③ 다정한 제안 톤 ④ 15~40자 한 문장" 자체점검 기준을 내장한 프롬프트로 Claude 1회 호출.
+  (2) 클라이언트에 `localTodayMission`(AI 실패 시 로컬 폴백: 첫 미완료 마일스톤 제목을 언급하거나, 전부 완료면 회고 제안), `requestTodayMission`(28초 타임아웃+6~80자 검증, 실패 시 로컬 폴백), `renderTodayMissionCard`(활성 목표별로 카드 한 줄씩 렌더링, 오늘 날짜로 캐시돼 있으면 재사용하고 없으면 비동기로 채워 넣음) 추가. 캐시는 `settings.todayMissions[goalId] = {date, text}`로 저장해 목표당 하루 1회만 호출.
+  (3) 홈 화면 캡처 카드와 목표 목록 사이에 `#todayMissionCard` 신설, `renderHome()`에서 항상 갱신. CSS는 `.mission-*` 5개 클래스만 신규 추가(기존 `--rule`/`--ink-soft`/`shadow-sm` 토큰 재사용).
+  (4) `scripts/smoke-test.js`에 `localTodayMission` 단위 테스트 2건 추가.
+- **발생한 문제 및 해결**: 없음
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node -c api/todaymission.js` 문법 검증 통과, `node scripts/smoke-test.js` 22개 전부 통과(기존 20 + 신규 2, 회귀 없음). 브라우저 도구가 없는 샌드박스라 Vercel 프리뷰 실제 렌더링 확인은 진행하지 못함.
+---
