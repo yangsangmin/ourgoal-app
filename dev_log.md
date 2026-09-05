@@ -302,6 +302,94 @@
 - **검증 결과**: 병합 후 main의 index.html에서 manifest.json(PWA)·prefers-color-scheme(다크모드)·renderReportSummary(리포트)·a11ySwitch(접근성)·그룹 배지 streak 계산·goaltemplate(새 목표 AI)가 모두 포함돼 있음을 문자열 검색으로 확인, `<style>` 중괄호 394/394 균형, 메인 `<script>`를 `new Function()`으로 문법 검증 통과. `gh api`로 열린 PR이 0개임을 최종 확인.
 ---
 
+## [2026-09-05 06:20] XP/레벨 시스템 데이터 모델과 계산 로직
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 2단계 첫 항목 — 체크인·마일스톤 완료 시 XP가 쌓이는 데이터 모델과 레벨 계산 로직을 settings에 구현(UI는 다음 항목인 "레벨 배지 UI+레벨업 배너"에서 이어감, 이번엔 백엔드 로직만). (8원칙: 순간적인 축하(컨페티 등)는 앞선 PR들로 이미 커버했지만, "누적되는 성장" 감각을 주려면 그 이전에 데이터 모델부터 먼저 있어야 UI를 올릴 수 있어 이 순서로 쪼갬)
+- **수정/실행 내역**:
+  (1) `defaultSettings()`에 `xp:{ total:0, log:[] }` 기본값 추가. 기존 사용자도 `loadLocalSettings`의 `Object.assign(defaultSettings(), ...)` 병합 로직으로 자동 채워짐(마이그레이션 불필요).
+  (2) 순수 계산 함수 3개 신설: `xpForLevel(level)`(레벨업에 필요한 누적 XP, 50*(N-1)*N 곡선 — 레벨2 100XP·레벨3 300XP·레벨4 600XP·레벨5 1000XP), `levelForXP(xp)`(현재 총 XP로 레벨 역산), `levelProgress(xp)`(현재 레벨 구간 안에서의 진행률 %까지 반환해 다음 항목의 UI가 바로 쓸 수 있게 준비).
+  (3) `awardXP(amount, reason)` — settings.xp.total 증가 + 최근 200건 로그 기록, 레벨업 여부(leveledUp)를 반환해 다음 항목(레벨업 배너)에서 바로 활용 가능하도록 설계.
+  (4) XP 적립 지점 4곳 연결(모두 saveProfile 호출 전에 실행해 별도 API 왕복 없이 한 번에 저장): ① 체크인 저장(`captureSave`) +10, ② 결과 기록 모달에서 마일스톤이 새로 완료(wasDone→done)될 때 +50, ③ 기록 기반 AI 자동 업데이트 적용으로 마일스톤이 새로 완료될 때 건당 +50, ④ 편집 모드 상태 순환 배지로 마일스톤을 done으로 바꿀 때 +50. 목표/할 일(task) 완료는 XP 지급 대상에서 제외(요청 범위대로 체크인·마일스톤만).
+  (5) `scripts/smoke-test.js`에 `xpForLevel`/`levelForXP`/`levelProgress` 단위 테스트 3건 추가.
+- **발생한 문제 및 해결**: 없음
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 23개 전부 통과(기존 20 + 신규 3). `awardXP`의 레벨업 감지(레벨 경계를 넘을 때만 leveledUp:true) 로직을 별도 시뮬레이션(90XP+10XP=100XP → 레벨1→2 전환)으로 재확인. UI가 아직 없어 브라우저 검증은 해당 없음.
+## [2026-09-05 06:16] 기록 히트맵(GitHub 잔디 스타일) 추가
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 1단계 세 번째 항목 — 최근 몇 달간의 기록 꾸준함을 한눈에 보여주는 GitHub 잔디 스타일 히트맵을 기록 탭에 추가. (8원칙: 기존 리포트는 7일/30일 추이·분야별 분포만 있어 "장기간 꾸준히 해왔다"는 감각을 주는 시각화가 없었던 게 공백 → 별도 라이브러리 없이 순수 CSS 그리드+SVG 없는 div 기반으로 가볍게 구현하는 것이 효율적)
+- **수정/실행 내역**:
+  (1) 기록 탭(`#screen-records`)의 7일 막대 차트(`#chartContainer`)와 7/30일 리포트(`#reportSummary`) 사이에 `#recordHeatmap` 컨테이너 신설.
+  (2) `renderRecordHeatmap(recs)` — 오늘을 포함해 최근 18주(126일)를 일~토 7행 × 주 단위 열로 배치, 하루 기록 개수를 그날의 최댓값 대비 비율로 5단계(0~4)로 나눠 `--sage` 계열 색상 진하기로 표시(빈 날은 `--card2`). 오늘 이후 미래 날짜 칸은 투명 처리. 각 칸에 `title`로 날짜·건수 노출, 하단에 "적음→많음" 5단계 범례 추가. `heatmapLevel(count,maxCount)` 순수 함수로 단계 계산 분리.
+  (3) CSS는 기존 `.chart-card`/디자인 토큰(`--sage`, `--card2`, `--ink-faint`)만 재사용하고 히트맵 전용 그리드 클래스(`.heatmap-*`) 6개만 신규 추가, 좁은 화면 대응으로 `overflow-x:auto` 적용.
+  (4) `renderRecordsScreen()`에서 `renderWeekChart` 다음에 `renderRecordHeatmap` 호출 추가.
+  (5) `scripts/smoke-test.js`에 `heatmapLevel` 단위 테스트 3건 추가.
+- **발생한 문제 및 해결**: 없음
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 23개 전부 통과(기존 20 + 신규 3). `heatmapLevel` 경계값(0건/최댓값/중간 비율)을 별도 시뮬레이션으로 재확인. 브라우저 도구가 없는 샌드박스라 Vercel 프리뷰 실제 렌더링 확인은 진행하지 못함.
+## [2026-09-05 06:12] 마일스톤 완료 축하 모달 + AI 다음 행동 제안
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 1단계 두 번째 항목 — 마일스톤이 완료 상태로 전환될 때 축하 모달을 띄우고, goalstatus.js와 같은 "단일 Claude 호출 + 프롬프트 내 자체검증" 패턴으로 AI가 다음 행동을 한 줄 제안하도록 구현. (8원칙: 마일스톤 완료는 목표 달성 과정에서 가장 의미 있는 성취 단위인데, 완료 시점에 사용자가 다음에 뭘 해야 할지 스스로 찾아야 했던 게 도파민 단절 지점이라 판단 → 완료 감지와 동시에 축하+다음 행동 제시를 한 번에 묶는 것이 핵심 해결책)
+- **수정/실행 내역**:
+  (1) `api/nextaction.js` 신설(goalstatus.js와 동일한 구조: POST 전용, ANTHROPIC_API_KEY 서버 프록시, 단일 Claude 호출 프롬프트에 "제공된 데이터에만 근거·축하 톤+구체적 다음 행동·남은 항목 없으면 결과 기록 제안·25~50자" 자체점검 기준을 내장해 모델이 스스로 다듬은 한 줄만 반환하도록 설계). 입력은 목표 제목·방금 완료한 마일스톤 제목·남은 마일스톤 목록(제목/상태)만 전달.
+  (2) index.html에 `localNextActionSuggestion`(AI 실패 시 로컬 대체: 다음 미완료 마일스톤 제목을 안내하거나, 없으면 결과 기록 제안), `requestNextActionSuggestion`(28초 타임아웃 + 8~80자 검증, 실패 시 로컬 대체로 폴백), `celebrateMilestoneDone`(진동+컨페티+"🎉 마일스톤 완료!" 모달을 열고 AI 제안을 비동기로 채워 넣음) 3개 함수 추가.
+  (3) 마일스톤이 "완료 아님→완료"로 전환되는 3개 지점 모두에 연결: ① 결과 기록 모달(`openResultModal`)에 `goal` 인자를 추가하고 kind==='ms'일 때 wasDone→nowDone 전환 시 기존 중앙 컨페티 대신 축하 모달 호출, ② 기록 기반 AI 자동 업데이트 제안(`sugApplyBtn`)에서 마일스톤이 새로 done이 된 경우 감지해 축하 모달 호출(같은 요청에 여러 건이면 첫 건만), ③ 편집 모드의 상태 순환 배지(`data-cyclestatus`) 클릭으로 done이 될 때도 동일 처리. 목표/할 일(task) 완료 시의 기존 동작은 그대로 유지.
+  (4) `scripts/smoke-test.js`에 `localNextActionSuggestion` 단위 테스트 2건 추가(남은 마일스톤 있음/없음 케이스).
+- **발생한 문제 및 해결**: 없음. 기존 openModal/burstConfetti 인프라를 그대로 재사용해 신규 CSS 없이 구현
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node -c api/nextaction.js` 문법 검증 통과, `node scripts/smoke-test.js` 22개 전부 통과(기존 20 + 신규 2, 회귀 없음). ANTHROPIC_API_KEY 없이도 폴백 텍스트가 정확히 나오는지 로직 시뮬레이션으로 확인(남은 마일스톤 제목 인용 / "결과를 기록" 문구). 브라우저 도구가 없는 샌드박스라 Vercel 프리뷰 실제 클릭 테스트는 진행하지 못함.
+---
+
+## [2026-09-05 06:06] 체크인/할 일 완료 축하 마이크로 애니메이션
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 1단계 첫 항목 — 체크인 저장 및 할 일/마일스톤 완료 시 즉각적인 축하 마이크로 애니메이션을 외부 라이브러리 없이 추가. (문제해결 8원칙: 기존 burstConfetti는 수치형 목표 100% 달성·마니또 응원에만 연결돼 있고, 정작 가장 빈번한 행동인 일반 체크인 저장과 수치 목표 없는 "할 일" 완료에는 축하 반응이 전혀 없다는 게 핵심 공백이었음 → 새 애니메이션을 따로 만들지 않고 기존 burstConfetti/vibrate 패턴을 재사용해 두 지점에 연결하는 것이 가장 효율적이라 판단)
+- **수정/실행 내역**:
+  (1) burstConfetti(x,y)에 count 인자 추가(기본 18, 하위 호환)해 체크인처럼 자주 발생하는 이벤트에는 더 작은 "마이크로" 버스트(8개)를 쓸 수 있게 함.
+  (2) 홈 체크인 저장(captureSave 클릭) 시 저장 버튼 위치에서 8개짜리 마이크로 컨페티 + 짧은 진동(10ms) + 버튼 펄스 애니메이션(.btn-cs-pulse, 신규 CSS 키프레임 cs-pulse) 실행. prefers-reduced-motion 사용자는 burstConfetti 내부 기존 가드로 자동 제외.
+  (3) 결과 기록 모달(openResultModal, kind==='task'|'ms' 공용)의 축하 조건을 "수치 달성률 100%"에서 "완료 상태로 새로 전환됐는가(wasDone→nowDone)"로 변경 — 수치 목표(target/result)가 없는 할 일을 자유 텍스트 결과로 완료 처리해도 기존에는 축하가 전혀 없었는데 이제 동일하게 진동+컨페티가 나가도록 수정. 이미 완료 상태였던 항목을 재저장할 때는 재발화하지 않음.
+- **발생한 문제 및 해결**: 없음 (기존 confetti/vibrate 인프라 재사용, 신규 CSS는 1개 클래스+키프레임만 추가)
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 20개 전부 통과(회귀 없음). resultPct 로직을 별도 시뮬레이션해 "target 없이 결과값만 입력한 할 일"이 wasDone:false→nowDone:true로 판정되어 축하 조건이 정확히 발화함을 확인.
+---
+
+## [2026-09-05 12:20] 긴급 장애 대응 — main 배포본 구문 오류(3번째 병합 사고) 수정
+- **목표**: PR #10 병합 커밋에 남은 병합 충돌 마커가 그대로 `main`에 들어가 배포된 앱의 인라인 `<script>`가 구문 오류로 깨진 상태를 즉시 복구. (8원칙: PR #9→#10 두 차례에 걸쳐 "main 병합 시 충돌 마커/텍스트 손상이 그대로 커밋되는" 같은 유형의 사고가 반복됐고, 이번엔 앞서 연 수정 PR(#16)이 병합되지 않은 채로 남아 실제로 `main`·프로덕션까지 영향이 번짐 → 근본 해결은 병합 프로세스 자체의 개선이 필요하지만, 지금 당장은 장애 복구가 최우선이라 판단해 즉시 hotfix 브랜치로 처리)
+- **수정/실행 내역**:
+  (1) `node -e`로 실제 `SyntaxError: Unexpected token '<<'`가 재현됨을 먼저 확인해 장애를 확정.
+  (2) `index.html`의 `sugApplyBtn` 핸들러에 남아있던 충돌 마커 제거 — `newlyDoneMsCount`(XP 적립)와 `newlyDoneMs`(마일스톤 축하 모달)를 함께 채우도록 재병합.
+  (3) `scripts/smoke-test.js`의 동일 계열 한글 손상 텍스트를 원본 커밋 기준으로 복구.
+  (4) PR #19를 최우선 병합 요청으로 오픈, PushNotification으로 사용자에게 즉시 알림.
+- **발생한 문제 및 해결**: 위 참조. 세 번째 반복된 사고라 사용자에게 "main 병합 후 `grep -rn "^<<<<<<<"` 확인" 습관을 다시 한 번 요청함 (PR #10 코멘트에서 이미 안내했었음).
+- **검증 결과**: 수정 전 `node -e`로 구문 오류 재현 확인 → 수정 후 통과, `node scripts/smoke-test.js` 28개 전부 통과, 저장소 전체 충돌 마커 재검색 클린, `celebrateMilestoneDone`/`awardXP`/`XP_RULES` 등 관련 함수 존재 확인. 병합 전까지는 실제 배포본이 깨진 상태일 수 있어 사용자에게 최우선 병합을 요청함.
+---
+
+## [2026-09-05 14:24] 목표 탭 개인/팀 목표 분리 + 팀 목표 데이터 모델링
+- **목표**: 사용자 직접 요청 — 목표(`screen-goals`) 화면을 '개인 목표'/'팀 목표' 서브 탭으로 분리하고, 팀 목표는 팀장(Owner)·매니저(Manager)만 추가/수정/삭제할 수 있도록 권한 기반 데이터 모델을 설계.
+- **수정/실행 내역**:
+  (1) `screen-goals`에 기존 소통 탭과 동일한 `.comm-subtabs`/`.comm-subtab` 클래스를 그대로 재사용한 서브 탭 추가(신규 CSS 없음). 기존 목표 헤드 로우·칩 로우·상세 바디는 `#personalGoalsView`로 감싸 그대로 두고, `#teamGoalsView`를 새로 추가.
+  (2) `renderGoalsScreen()` 맨 앞에 서브탭 렌더링·토글 로직만 추가(기존 개인 목표 렌더링 본문은 한 글자도 수정하지 않음) — `state.goalsSubTab==='team'`이면 신규 `renderTeamGoalsScreen()`으로 위임하고 즉시 반환.
+  (3) `MOCK_GROUPS`(모임=팀) 6개 전부에 `teamGoals:[]` 필드 추가, 데모/검증용으로 g1(벤치프레스 모임)에 마일스톤 2개짜리 샘플 팀 목표 1건 포함.
+  (4) 권한 모델: `groupState(gid)`(모임별 내 상태 객체)에 `myRole:'member'` 기본값 추가. 새 모임을 만들면(`promptNewGroup`) 만든 사람이 자동으로 `myRole:'owner'`가 되어 그 팀의 목표를 관리할 수 있음. `canManageTeamGoals(gid)`가 `owner`/`manager`일 때만 true를 반환하도록 게이트.
+  (5) `renderTeamGoalsScreen()` 신규 — 내가 참여(`joined`)한 팀만 카드로 나열, 팀별 역할 뱃지(팀장/매니저/팀원) 표시. `canManageTeamGoals`가 true인 팀만 목표/마일스톤 추가·제목 수정·삭제·상태 순환(todo→doing→done) 컨트롤을 노출하고, 그 외에는 완전 읽기 전용으로 렌더링. 마일스톤 행은 기존 개인 목표의 `.ms-row`/`.ms-main`/`.ms-status`/`.ms-title`/`.ms-actions`/`.icon-btn`/`.add-ms-btn` 클래스를 그대로 재사용해 시각적으로 동일하게 유지.
+  (6) `promptNewTeamGoal(gid)` 신규 — 기존 `openModal`/`.field`/`.modal-actions` 패턴 그대로 재사용한 팀 목표 추가 모달(이름·마감일).
+- **발생한 문제 및 해결**: `role==='owner'||role==='manager'` 조건에서 'manager' 분기는 owner와 동일한 불리언 OR 조건이라 별도 승격 UI 없이도 로직은 owner와 동등하게 검증됨. 이 앱은 모임 멤버(roster)가 실제 계정이 아닌 mock 데이터라 "다른 사람을 매니저로 승격"할 실제 대상이 없어, 매니저 승격 UI는 이번 범위에서 제외(요청 범위인 "상태 객체에 권한 속성 부여"는 `myRole` 필드로 충족). 검증 중 `promptNewGroup` 저장 흐름에서 팀-생성 UI와 무관한 마니또(manito) 렌더링 쪽 `TypeError`를 우연히 발견했으나, 이 저장소의 원본 main 코드(내 변경 전)에서도 동일하게 재현돼 이번 작업과 무관한 기존 버그로 확인 — 별도 이슈로 분리해 보고함(이번 diff에는 포함하지 않음).
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `<style>` 중괄호 407/407 그대로(신규 CSS 없음 확인), `node scripts/smoke-test.js` 기존 28개 전부 통과(회귀 없음). 로컬 정적 서버로 실제 브라우저에서 렌더링 테스트 완료(Supabase 로그인 없이 `state.profile`을 직접 주입하는 방식) — 개인 목표 화면이 기존과 동일하게 정상 동작, 팀 목표 탭에서 미참여 시 안내 문구, `member` 역할로는 완전 읽기 전용(수정 버튼 없음), `owner`/`manager` 역할로는 마일스톤 상태 순환·추가·제목 수정·삭제, 팀 목표 추가(모달)·삭제가 모두 정상 동작함을 클릭으로 직접 확인. 콘솔 에러 없음(팀 목표 관련 코드 경로 한정).
+---
+
+## [2026-09-05 15:23] 실행 효율 규칙(CLAUDE.md 8번) 신설 + 로컬 git/gh 환경 구축
+- **목표**: 2026-09-05 세션에서 작업 품질은 좋았으나 실행이 12분 이상 걸리고 프로덕션 장애(PR #10 병합 시 충돌 마커 유입)까지 난 원인을 진단해, 4블록 사고 원칙은 그대로 두고 기계적 낭비만 제거하는 실행 규칙을 정립.
+- **수정/실행 내역**:
+  (1) 진단(8원칙 1~2): 느려진 원인은 사고가 아니라 GitHub 웹 UI 브라우저 자동화였고, 그 근본 원인은 로컬 폴더가 git 저장소가 아니고 gh CLI가 없어 우회할 수밖에 없었던 환경. 외부 분석의 "index.html을 7번 쪼개 고친 게 과부하"라는 진단은 오진으로 판단(diff 편집 7회는 1분 미만이었고 규칙 3을 준수한 방식)하고 채택하지 않음.
+  (2) CLAUDE.md에 `## 8. 실행 효율 규칙` 신설(사용자 승인): 전제(`C:\dev\ourgoal-app` clone + gh CLI), A. GitHub 조작은 터미널로만, B. 충돌 해결은 로컬 git으로만 + 병합 직후 마커·스모크 검증, C. 착수 전 환경 점검, D. diff 편집·병렬 호출·sha 기준 검증, E. 4블록 유지·기록 저비용화.
+  (3) 환경 구축: winget으로 gh CLI 2.100.0 설치, 저장소를 `C:\dev\ourgoal-app`에 clone(OneDrive 폴더 대신), 세션 작업 디렉토리를 clone으로 이동.
+- **발생한 문제 및 해결**: 없음. `gh auth login`은 자격 증명이 필요해 사용자가 직접 수행(이 커밋의 push는 인증 후 진행).
+- **검증 결과**: `git status`로 변경 파일이 CLAUDE.md·dev_log.md뿐임을 확인, `gh --version` 정상, clone HEAD가 최신 main(c75f192, PR #24 병합 커밋)과 일치.
+---
+
+---
+
+## [2026-09-06 01:30] 개인 목표 탭 대화형 AI 목표/할일 관리 기능 추가
+- **목표**: 사용자 직접 요청 — '개인 목표' 탭 최상단에 자연어로 목표·마일스톤·할 일을 추가/변경/삭제 요청하면, AI가 변경안(diff)을 만들고 사용자가 확인 모달에서 '반영'을 눌러야만 실제로 적용되는 대화형 관리 기능 추가.
+- **수정/실행 내역**:
+  (1) `api/goalagent.js` 신설 — 기존 `api/goaltemplate.js` 패턴(POST 검증→ANTHROPIC_API_KEY 확인→프롬프트 구성→claude-sonnet-4-6 호출→JSON 파싱)을 그대로 따름. 요청 `{message, goals, today}`에서 goals는 프런트가 보낸 현재 목표 스냅샷(id 포함)이고, 모델이 반환한 `ops`(type: CREATE/UPDATE/DELETE × level: goal/milestone/task) 각각을 서버가 재검증 — goalId/milestoneId/taskId가 요청에 실제로 존재하는지 대조하고, 레벨·타입별로 허용된 데이터 필드만 clamp해서 통과시키며 존재하지 않는 id를 참조하거나 형식이 어긋난 op는 조용히 제거. 응답은 `{ops, reply}`.
+  (2) `index.html` — `#personalGoalsView` 최상단에 `.card`(`#goalAgentCard`) + 기존 `.dm-input-row` 클래스를 그대로 재사용한 입력창(`#goalAgentInput`, placeholder "대화로 목표와 할일들을 추가, 변경, 삭제하세요") + 전송 버튼(`#goalAgentSendBtn`) 추가. 신규 CSS 없음 — 카드/입력행/버튼 전부 기존 클래스 재사용, 헤더 텍스트 색상만 기존 AI 기능에 쓰이던 `var(--violet)`를 인라인으로 지정.
+  (3) 전송 흐름: `showGoalAgentLoadingStep()`(기존 `showNewGoalLoadingStep`과 동일 패턴)으로 로딩 모달 표시 → `/api/goalagent` 호출 → `ops`가 비어 있으면 모달을 닫고 `reply`를 토스트로 안내 → 있으면 **기존 `openModal()`을 그대로 사용**해 "🤖 이대로 반영할까요?" 확인 모달(`showGoalAgentReviewStep`)을 띄우고 각 op의 `summary`를 기존 `.ms-list`/`.ms-row` 클래스로 나열. '반영' 클릭 시에만 `applyGoalAgentOp()`가 `state.profile.goals`에 순차 반영한 뒤 `saveProfile()` → `closeModal()` → `renderAll()`. '취소'는 `closeModal()`만 호출해 아무 것도 바꾸지 않음.
+  (4) 신규 목표 생성(CREATE goal)은 기존 AI 템플릿 생성 플로우(`showNewGoalReviewStep`)와 동일하게 `category:'etc'`, `topic:'major/minor'` 조합, milestone/task에 `uid('ms')`/`uid('task')` id를 부여하도록 구현(`buildGoalFromAgentData`).
+- **발생한 문제 및 해결**: 작업 착수 직전 표준 경로 `C:\dev\ourgoal-app`에서 다른 세션이 브랜치 `feat/2026-09-06-team-goal-comments`에 실시간으로 커밋 중인 것을 발견(동시 작업 충돌 위험 — reflog에 내가 관여하지 않은 checkout이 실시간으로 찍힘). 사용자에게 확인 후 `EnterWorktree`로 격리된 워크트리를 만들어 브랜치 `feature/2026-09-06-goal-agent-chat`에서 작업, 공유 작업 폴더의 다른 세션 상태는 전혀 건드리지 않음.
+- **검증 결과**: `node -e`로 `api/goalagent.js` require 및 메인 `<script>` 문법 검증 통과, `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음). 로컬 정적 서버(Python http.server)로 실제 브라우저 렌더링 확인 — `#goalAgentCard`가 '개인 목표' 탭 최상단(목표 헤더 위)에 요청한 그대로의 placeholder로 렌더링됨을 스크린샷으로 확인, 메시지 입력 후 전송 시 로딩 모달→(로컬엔 API 서버가 없어 실패)→에러 토스트까지 콘솔 에러 없이 정상 동작함을 클릭으로 확인. ANTHROPIC_API_KEY·Supabase 로그인이 없는 로컬 환경이라 실제 AI diff 생성·반영까지의 전체 흐름은 PR의 Vercel 프리뷰 배포에서 재검증이 필요함.
+---
+
 ## [2026-09-05 06:40] 피드 원터치 응원 리액션 보강 (영속화 + 햅틱)
 - **목표**: BACKLOG.md "사용자 경험·도파민 강화" 5단계 항목 — 피드/마니또에 "문구 작성 없이 한 번의 탭으로 응원"하는 기능. (8원칙: 먼저 현황 조사 → 마니또 응원 스탬프는 이미 햅틱+컨페티+영속 저장까지 완비돼 있었고, 피드의 "응원" 버튼도 이미 한 번의 탭으로 동작하지만 ①`state.feedReacted`가 세션 메모리에만 있어 새로고침하면 응원 표시가 사라지고 ②탭해도 아무 촉각/시각 피드백이 없다는 두 가지 실질적 공백을 발견 → 새 기능을 만들 필요 없이 이 공백만 메우는 것이 정확한 해결책)
 - **수정/실행 내역**:
