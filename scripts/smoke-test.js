@@ -71,6 +71,7 @@ const FN_NAMES = [
   'applySuggestion', 'describeSuggestion', 'localTodayMission',
   'maybeGrantStreakFreeze', 'maybeApplyStreakFreeze',
   'xpForLevel', 'levelForXP', 'levelProgress',
+  'totalCompletedMilestones',
   'heatmapLevel', 'localNextActionSuggestion',
   'goalAchievement',
   'hashStr', 'mockPostCheerCount',
@@ -86,7 +87,7 @@ const sandboxSrc =
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
   'localTodayMission, ' +
   'maybeGrantStreakFreeze, maybeApplyStreakFreeze, ' +
-  'xpForLevel, levelForXP, levelProgress, ' +
+  'xpForLevel, levelForXP, levelProgress, totalCompletedMilestones, ' +
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
   'goalAchievement, ' +
@@ -284,6 +285,16 @@ check('levelProgress: 현재 레벨 구간 안에서의 진행률을 계산한�
   assert.strictEqual(p.level, 3);
   assert.strictEqual(p.into, 0);
   assert.strictEqual(p.pct, 0);
+});
+
+check('totalCompletedMilestones: 여러 목표에 걸친 완료 마일스톤 수를 정확히 센다', () => {
+  const p = {
+    goals: [
+      { milestones: [{ status: 'done' }, { status: 'todo' }] },
+      { milestones: [{ status: 'done' }, { status: 'done' }] },
+    ],
+  };
+  assert.strictEqual(fns.totalCompletedMilestones(p), 3);
 });
 
 check('heatmapLevel: 기록이 없으면 0단계', () => {
