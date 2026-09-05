@@ -68,23 +68,31 @@ function extractFunction(source, name) {
 const FN_NAMES = [
   'pad', 'dateKey', 'goalProgress', 'msCounts', 'resultPct', 'dDay',
   'computeStreakDays', 'findSuggestionTarget', 'sanitizeSuggestions',
-  'applySuggestion', 'describeSuggestion', 'xpForLevel', 'levelForXP', 'levelProgress',
+  'applySuggestion', 'describeSuggestion', 'localTodayMission',
+  'maybeGrantStreakFreeze', 'maybeApplyStreakFreeze',
+  'xpForLevel', 'levelForXP', 'levelProgress',
   'heatmapLevel', 'localNextActionSuggestion',
   'goalAchievement',
+  'hashStr', 'mockPostCheerCount',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
 
 const sandboxSrc =
-  'var state = { profile: { records: [] } };\n' +
+  'var STREAK_FREEZE_MAX = 3;\n' +
+  'var state = { profile: { records: [], settings: { streakFreeze: { available: 0, usedDates: [], grantedTier: 0 } } } };\n' +
   extracted +
   '\nmodule.exports = { pad, dateKey, goalProgress, msCounts, resultPct, dDay, ' +
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
+  'localTodayMission, ' +
+  'maybeGrantStreakFreeze, maybeApplyStreakFreeze, ' +
   'xpForLevel, levelForXP, levelProgress, ' +
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
   'goalAchievement, ' +
-  'setRecords: function(r){ state.profile.records = r; } };\n';
+  'hashStr, mockPostCheerCount, ' +
+  'setRecords: function(r){ state.profile.records = r; }, ' +
+  'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
 const os = require('os');
 const sandboxPath = path.join(os.tmpdir(), 'ourgoal-smoke-sandbox-' + process.pid + '.js');
@@ -217,6 +225,50 @@ check('describeSuggestion: status 변경 라벨을 생성한다', () => {
   assert.ok(d.label.indexOf('완료로') !== -1);
 });
 
+check('localTodayMission: 미완료 마일스톤이 있으면 그 제목을 언급한다', () => {
+  const goal = makeGoal(['done', 'todo']);
+  const msg = fns.localTodayMission(goal);
+  assert.ok(msg.indexOf(goal.milestones[1].title) !== -1);
+});
+
+check('localTodayMission: 전부 완료면 회고를 제안한다', () => {
+  const goal = makeGoal(['done', 'done']);
+  const msg = fns.localTodayMission(goal);
+  assert.ok(msg.indexOf('돌아보며') !== -1);
+});
+
+check('maybeGrantStreakFreeze: 7일 연속을 달성하면 프리즈를 1개 지급한다', () => {
+  const startAt = d => new Date(Date.now() - d * 86400000).toISOString();
+  fns.setRecords([0, 1, 2, 3, 4, 5, 6].map(d => ({ startAt: startAt(d) })));
+  fns.setStreakFreeze({ available: 0, usedDates: [], grantedTier: 0 });
+  const granted = fns.maybeGrantStreakFreeze();
+  assert.strictEqual(granted, true);
+});
+
+check('maybeGrantStreakFreeze: 같은 티어에서는 중복 지급하지 않는다', () => {
+  const startAt = d => new Date(Date.now() - d * 86400000).toISOString();
+  fns.setRecords([0, 1, 2, 3, 4, 5, 6].map(d => ({ startAt: startAt(d) })));
+  fns.setStreakFreeze({ available: 1, usedDates: [], grantedTier: 1 });
+  const granted = fns.maybeGrantStreakFreeze();
+  assert.strictEqual(granted, false);
+});
+
+check('maybeApplyStreakFreeze: 어제를 놓쳤어도 그제 기록이 있고 프리즈가 있으면 자동 적용된다', () => {
+  const startAt = d => new Date(Date.now() - d * 86400000).toISOString();
+  fns.setRecords([{ startAt: startAt(0) }, { startAt: startAt(2) }]); // 어제(1)만 비어있음
+  fns.setStreakFreeze({ available: 1, usedDates: [], grantedTier: 0 });
+  const applied = fns.maybeApplyStreakFreeze();
+  assert.strictEqual(applied, true);
+});
+
+check('maybeApplyStreakFreeze: 프리즈가 없으면 적용되지 않는다', () => {
+  const startAt = d => new Date(Date.now() - d * 86400000).toISOString();
+  fns.setRecords([{ startAt: startAt(0) }, { startAt: startAt(2) }]);
+  fns.setStreakFreeze({ available: 0, usedDates: [], grantedTier: 0 });
+  const applied = fns.maybeApplyStreakFreeze();
+  assert.strictEqual(applied, false);
+});
+
 check('xpForLevel: 레벨 1은 0 XP', () => {
   assert.strictEqual(fns.xpForLevel(1), 0);
 });
@@ -271,6 +323,20 @@ check('goalAchievement: 목표 자체에 수치 결과가 있으면 그 비율�
   const goal = makeGoal(['todo']);
   goal.result = { target: '10', result: '10', unit: '회', note: '' };
   assert.strictEqual(fns.goalAchievement(goal), 100);
+});
+
+check('mockPostCheerCount: 방금 작성한 글은 응원이 0이다', () => {
+  assert.strictEqual(fns.mockPostCheerCount({ id: 'p1', createdAt: new Date().toISOString() }), 0);
+});
+
+check('mockPostCheerCount: 글이나 id가 없으면 0이다', () => {
+  assert.strictEqual(fns.mockPostCheerCount(null), 0);
+  assert.strictEqual(fns.mockPostCheerCount({ createdAt: new Date().toISOString() }), 0);
+});
+
+check('mockPostCheerCount: 시간이 많이 지나면 상한(40)에 도달한다', () => {
+  const old = { id: 'p2', createdAt: new Date(Date.now() - 999 * 3600000).toISOString() };
+  assert.strictEqual(fns.mockPostCheerCount(old), 40);
 });
 
 /* ============ 결과 요약 ============ */
