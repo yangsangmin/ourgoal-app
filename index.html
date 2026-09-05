@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>아워골</title>
 <meta name="description" content="목표를 세우고, 기록하고, 성장을 나누는 아워골">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#FF4F64">
+<link rel="icon" href="/icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,450;0,9..144,600;0,9..144,700;1,9..144,500&family=Noto+Serif+KR:wght@500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -854,7 +858,7 @@
 
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
   function defaultSettings(){
-    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false };
+    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{} };
   }
   function loadLocalSettings(userId){
     try{
@@ -2396,15 +2400,129 @@
   /* ============ New goal modal ============ */
   function promptNewGoal(){
     if(state.profile.goals.filter(function(g){ return !g.archivedAt; }).length>=3){ toast('진행 중 목표는 최대 3개예요 · 기록으로 옮기면 새로 만들 수 있어요'); return; }
-    var chosenCat = 'etc';
+    showNewGoalChatStep('');
+  }
+  async function generateGoalTemplate(description){
+    var controller = new AbortController();
+    var timer = setTimeout(function(){ controller.abort(); }, 28000);
+    try{
+      var res = await fetch('/api/goaltemplate', {
+        method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
+        body: JSON.stringify({ description: description })
+      });
+      clearTimeout(timer);
+      if(!res.ok) return null;
+      var data = await res.json();
+      if(!data || !data.title || !Array.isArray(data.milestones) || !data.milestones.length) return null;
+      return data;
+    } catch(e){ clearTimeout(timer); return null; }
+  }
+  function showNewGoalChatStep(prevDesc){
     openModal(
       '<h3>새 목표</h3>' +
+      fbBotBubbleHtml(
+        '<p style="margin:0;font-size:.88rem;line-height:1.65;">원하시는 바를 줄글 형태로 작성하시면 목표설정 도우미 봇이 마일스톤과 세부 할 일까지 채운 템플릿을 만들어드려요!</p>' +
+        '<p class="faint" style="margin:8px 0 0;font-size:.74rem;">예: "유튜브 5만 구독자, 인스타 5만 팔로워 달성이 목표예요. 지금은 계정만 만들어 놓은 상태고, 카테고리는 여행이에요."</p>'
+      ) +
+      '<textarea id="ngDescInput" maxlength="500" placeholder="목표와 지금 상태를 자유롭게 적어주세요" style="width:100%;min-height:110px;margin-top:14px;">'+escapeHtml(prevDesc||'')+'</textarea>' +
+      '<p class="faint" id="ngDescCounter" style="text-align:right;margin:4px 2px 0;font-size:.68rem;"></p>' +
+      '<div style="display:flex;gap:8px;margin-top:10px;">' +
+        '<button class="btn btn-ghost" id="ngManualBtn" type="button" style="flex:1;">직접 설정할게요</button>' +
+        '<button class="btn btn-primary" id="ngGenBtn" type="button" style="flex:1;">템플릿 만들기 ✨</button>' +
+      '</div>' +
+      '<div class="modal-actions"><button class="btn btn-ghost" id="ngCancelBtn" type="button" style="width:100%;">취소</button></div>',
+      function(sheet){
+        var input = sheet.querySelector('#ngDescInput');
+        var counter = sheet.querySelector('#ngDescCounter');
+        function upd(){ counter.textContent = input.value.length+'/500자'; }
+        upd();
+        input.addEventListener('input', upd);
+        sheet.querySelector('#ngCancelBtn').addEventListener('click', closeModal);
+        sheet.querySelector('#ngManualBtn').addEventListener('click', function(){ showNewGoalManualForm(); });
+        sheet.querySelector('#ngGenBtn').addEventListener('click', async function(){
+          var desc = input.value.trim();
+          if(!desc){ toast('목표를 먼저 적어주세요'); return; }
+          showNewGoalLoadingStep();
+          var tmpl = await generateGoalTemplate(desc);
+          if(!tmpl){ toast('템플릿을 만들지 못했어요 · 다시 시도하거나 직접 설정해주세요'); showNewGoalChatStep(desc); return; }
+          showNewGoalReviewStep(tmpl);
+        });
+      }
+    );
+  }
+  function showNewGoalLoadingStep(){
+    openModal('<h3>새 목표</h3>' + fbBotBubbleHtml('<p class="faint" style="margin:0;">목표 템플릿을 만들고 검증하는 중… 🛠️</p>'), null);
+  }
+  function showNewGoalReviewStep(tmpl){
+    var major = TOPICS[tmpl.topicMajor] ? tmpl.topicMajor : '';
+    var majorInfo = TOPICS[major];
+    openModal(
+      '<h3>새 목표</h3>' +
+      fbBotBubbleHtml('<p style="margin:0;font-size:.88rem;line-height:1.65;">이렇게 목표를 만들어봤어요. 이대로 적용할까요? 적용한 뒤에도 자유롭게 수정할 수 있어요.</p>') +
+      '<div class="field" style="margin-top:14px;"><label>목표 제목</label><input id="ngTitle" type="text" value="'+escapeHtml(tmpl.title)+'"></div>' +
+      (majorInfo ? '<p class="faint" style="margin:4px 2px 0;">'+majorInfo.icon+' '+majorInfo.label+(tmpl.topicMinor?' · '+escapeHtml(tmpl.topicMinor):'')+'</p>' : '') +
+      '<p class="faint" style="margin:14px 0 6px;">마일스톤 · 제목을 눌러 고치거나 ×로 지울 수 있어요</p>' +
+      '<div class="ms-list" id="ngMsList">' +
+        tmpl.milestones.map(function(m, i){
+          return '<div class="ms-row" data-ngms="'+i+'">' +
+            '<div class="ms-main">' +
+              '<div style="flex:1;min-width:0;">' +
+                '<div style="display:flex;align-items:center;gap:6px;">' +
+                  '<input class="ms-title" data-ngmstitle="'+i+'" value="'+escapeHtml(m.title)+'">' +
+                  '<button class="icon-btn" data-ngmsdel="'+i+'" type="button" aria-label="마일스톤 삭제">×</button>' +
+                '</div>' +
+                (m.tasks && m.tasks.length ? '<div style="margin-top:6px;display:flex;flex-direction:column;gap:4px;">' +
+                  m.tasks.map(function(tk){ return '<div class="faint" style="font-size:.76rem;">· '+escapeHtml(tk)+'</div>'; }).join('') +
+                '</div>' : '') +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+      '<div class="modal-actions"><button class="btn btn-ghost" id="ngBackBtn" type="button">뒤로</button><button class="btn btn-primary" id="ngApplyBtn" type="button">이대로 적용</button></div>',
+      function(sheet){
+        sheet.querySelector('#ngBackBtn').addEventListener('click', function(){ showNewGoalChatStep(''); });
+        sheet.querySelectorAll('[data-ngmsdel]').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            var i = +btn.dataset.ngmsdel;
+            tmpl.milestones.splice(i,1);
+            showNewGoalReviewStep(tmpl);
+          });
+        });
+        sheet.querySelector('#ngApplyBtn').addEventListener('click', async function(){
+          var title = sheet.querySelector('#ngTitle').value.trim();
+          if(!title){ toast('목표 제목을 입력해주세요'); return; }
+          sheet.querySelectorAll('[data-ngmstitle]').forEach(function(inp){
+            var i = +inp.dataset.ngmstitle;
+            if(tmpl.milestones[i]) tmpl.milestones[i].title = inp.value.trim() || tmpl.milestones[i].title;
+          });
+          var milestones = tmpl.milestones.filter(function(m){ return m.title; }).map(function(m){
+            return { id: uid('ms'), title: m.title, status:'todo', dueDate:null, tasks:(m.tasks||[]).map(function(tk){ return { id: uid('task'), title: tk, done:false }; }) };
+          });
+          var newGoal = { id: newId(), title: title, dueDate: null, category: 'etc', topic: major ? (major+'/'+(tmpl.topicMinor||'')) : '', createdAt: nowISO(), visibility:'public', archivedAt:null, result:null, milestones: milestones };
+          state.profile.goals.push(newGoal);
+          state.activeGoalId = newGoal.id;
+          await saveProfile();
+          closeModal();
+          renderAll();
+          toast('목표를 만들었어요 · 목표 화면 편집 모드에서 더 다듬을 수 있어요');
+        });
+      }
+    );
+  }
+  function showNewGoalManualForm(){
+    var chosenCat = 'etc';
+    var customLabel = '';
+    openModal(
+      '<h3>새 목표</h3>' +
+      '<p class="comm-hint" id="ngBackToAi" style="cursor:pointer;color:var(--violet);font-weight:700;margin:-8px 0 14px;">🤖 AI 도우미로 만들래요 ›</p>' +
       '<div class="field"><label>어떤 종류인가요? (선택하면 마일스톤을 채워드려요)</label></div>' +
       '<div class="cat-grid" id="mCatGrid">' +
         Object.keys(GOAL_TEMPLATES).map(function(k){
           var t = GOAL_TEMPLATES[k];
           return '<div class="cat-chip'+(k==='etc'?' active':'')+'" data-cat="'+k+'"><span class="ico">'+t.icon+'</span><span class="lbl">'+t.label+'</span></div>';
         }).join('') +
+        '<div class="cat-chip" data-cat="custom" id="mCatCustomChip"><span class="ico">✏️</span><span class="lbl">직접 입력</span></div>' +
       '</div>' +
       '<div class="field"><label>최종 목표</label><input id="mGoalTitle" type="text" placeholder="예: 3개월 안에 벤치프레스 100kg"></div>' +
       '<div class="field"><label>카테고리 (대범위 · 중범위)</label></div>' +
@@ -2418,10 +2536,19 @@
       '</select></div>' +
       '<div class="modal-actions"><button class="btn btn-ghost" id="mCancel" type="button">취소</button><button class="btn btn-primary" id="mSave" type="button">만들기</button></div>',
       function(sheet){
+        sheet.querySelector('#ngBackToAi').addEventListener('click', function(){ showNewGoalChatStep(''); });
         var topicRef = { value: '' };
         wireCategoryPicker(sheet, 'mTopic', topicRef);
         sheet.querySelectorAll('.cat-chip').forEach(function(chip){
           chip.addEventListener('click', function(){
+            if(chip.dataset.cat==='custom'){
+              var input = window.prompt('원하는 목표 종류를 적어주세요 (예: 자기계발)');
+              if(input===null) return;
+              var name = input.trim().slice(0,20);
+              if(!name){ toast('이름을 확인해주세요'); return; }
+              customLabel = name;
+              chip.querySelector('.lbl').textContent = name;
+            }
             sheet.querySelectorAll('.cat-chip').forEach(function(c){ c.classList.remove('active'); });
             chip.classList.add('active');
             chosenCat = chip.dataset.cat;
@@ -2439,7 +2566,9 @@
           var title = sheet.querySelector('#mGoalTitle').value.trim();
           if(!title){ return; }
           var due = sheet.querySelector('#mGoalDue').value;
-          state.profile.goals.push({ id: newId(), title: title, dueDate: due||null, category: chosenCat, topic: topicRef.value, createdAt: nowISO(), visibility: sheet.querySelector('#mGoalVis').value, archivedAt: null, result: null, milestones: templateMilestones(chosenCat) });
+          var newGoal = { id: newId(), title: title, dueDate: due||null, category: chosenCat, topic: topicRef.value, createdAt: nowISO(), visibility: sheet.querySelector('#mGoalVis').value, archivedAt: null, result: null, milestones: templateMilestones(chosenCat) };
+          state.profile.goals.push(newGoal);
+          state.activeGoalId = newGoal.id;
           await saveProfile();
           closeModal();
           renderAll();
@@ -2612,6 +2741,53 @@
     });
   }
 
+  /* ============ 현재 종합상황 (AI 요약) ============ */
+  function computeGoalStatusHash(goal){
+    var parts = [goal.title, goal.dueDate||'', JSON.stringify(goal.result||null)];
+    goal.milestones.forEach(function(m){
+      parts.push(m.id, m.status, JSON.stringify(m.result||null));
+      (m.tasks||[]).forEach(function(t){ parts.push(t.id, t.done?'1':'0', JSON.stringify(t.result||null)); });
+    });
+    var str = parts.join('|');
+    var h = 0;
+    for(var i=0;i<str.length;i++){ h = ((h<<5)-h + str.charCodeAt(i))|0; }
+    return String(h);
+  }
+  async function generateGoalStatusSummary(goal){
+    var controller = new AbortController();
+    var timer = setTimeout(function(){ controller.abort(); }, 28000);
+    try{
+      var res = await fetch('/api/goalstatus', {
+        method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
+        body: JSON.stringify({ goalTitle: goal.title, milestones: milestonesForAI(goal), dueDate: goal.dueDate||null, goalResult: goal.result||null })
+      });
+      clearTimeout(timer);
+      if(!res.ok) return null;
+      var data = await res.json();
+      var text = data && data.summary ? String(data.summary).trim() : '';
+      if(!text || text.length<80 || text.length>240) return null;
+      return text;
+    } catch(e){ clearTimeout(timer); return null; }
+  }
+  function refreshGoalStatusSummary(goal, hash){
+    if(!state.goalStatusPending) state.goalStatusPending = {};
+    if(state.goalStatusPending[goal.id]) return;
+    state.goalStatusPending[goal.id] = true;
+    generateGoalStatusSummary(goal).then(async function(text){
+      delete state.goalStatusPending[goal.id];
+      if(!text) return;
+      if(!state.profile.settings.goalStatusSummaries) state.profile.settings.goalStatusSummaries = {};
+      state.profile.settings.goalStatusSummaries[goal.id] = { text: text, hash: hash, updatedAt: nowISO() };
+      await saveProfile();
+      if(state.activeGoalId===goal.id && state.activeTab==='goals' && !state.goalEditMode){
+        var el = document.getElementById('goalStatusText');
+        var tag = document.getElementById('goalStatusTag');
+        if(el) el.textContent = text;
+        if(tag) tag.textContent = '🤖 AI 요약';
+      }
+    });
+  }
+
   /* ============ RENDER: GOALS ============ */
   function renderGoalsScreen(){
     var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
@@ -2756,17 +2932,20 @@
       '</div>';
     }).join('');
 
+    var goalStatusHash = computeGoalStatusHash(goal);
+    if(!state.profile.settings.goalStatusSummaries) state.profile.settings.goalStatusSummaries = {};
+    var goalStatusCache = state.profile.settings.goalStatusSummaries[goal.id];
+    var goalStatusStale = !goalStatusCache || goalStatusCache.hash !== goalStatusHash;
     var goalResultRow = '<div class="card" style="margin-bottom:14px;">' +
-      '<div class="card-title-row"><h3>목표 최종 결과</h3>' +
-        '<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button">'+(goal.result?'결과 수정':'결과 입력')+'</button></div>' +
-      (goal.result
-        ? '<div class="muted" style="font-size:.85rem;">'+(goal.result.result||0)+' / '+(goal.result.target||'-')+' '+(goal.result.unit||'')+
-          (resultPct(goal.result)!==null ? ' · 달성률 <b style="color:'+(resultPct(goal.result)>=100?'var(--sage)':'var(--gold)')+';">'+resultPct(goal.result)+'%</b>' : '')+'</div>' +
-          (goal.result.note ? '<div class="faint" style="margin-top:4px;">'+escapeHtml(goal.result.note)+'</div>' : '')
-        : '<p class="faint" style="margin:0;">다 못 채웠어도 실제로 한 만큼 적어두면 기록으로 남아요! 삭제하지 말고 데이터베이스화하세요</p>') +
+      '<div class="card-title-row"><h3>현재 종합상황</h3>' +
+        '<span class="faint" id="goalStatusTag" style="font-size:.66rem;">'+(goalStatusStale?'🤖 분석 중…':'🤖 AI 요약')+'</span></div>' +
+      '<p class="faint" id="goalStatusText" style="margin:0;line-height:1.65;min-height:1.2em;">'+(goalStatusCache?escapeHtml(goalStatusCache.text):(goal.milestones.length?'기록을 쌓으면 AI가 목표·마일스톤·할 일을 종합해 지금 상태를 요약해드려요.':'마일스톤을 추가하면 AI가 진행 상황을 요약해드려요.'))+'</p>' +
+      '<div style="display:flex;justify-content:flex-end;margin-top:10px;">' +
+        '<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button">'+(goal.result?'최종 결과 수정':'최종 결과 입력')+'</button>' +
+      '</div>' +
       ((goal.dueDate && dDay(goal.dueDate).indexOf('D+')===0)
-        ? '<button class="btn btn-primary" id="goalArchiveBtn" type="button" style="width:100%;margin-top:12px;">마감일이 지났어요 · 기록으로 옮기기</button>'
-        : '<button class="btn btn-ghost btn-sm" id="goalArchiveBtn" type="button" style="width:100%;margin-top:12px;">기록으로 옮기기</button>') +
+        ? '<button class="btn btn-primary" id="goalArchiveBtn" type="button" style="width:100%;margin-top:2px;">마감일이 지났어요 · 기록으로 옮기기</button>'
+        : '<button class="btn btn-ghost btn-sm" id="goalArchiveBtn" type="button" style="width:100%;margin-top:2px;">기록으로 옮기기</button>') +
     '</div>' +
     '<div class="export-card" style="margin-bottom:14px;">' +
       '<div class="ico">🤖</div>' +
@@ -2861,6 +3040,7 @@
     if(goalResultBtn) goalResultBtn.addEventListener('click', function(){
       openResultModal('goal', goal, function(){ renderAll(); });
     });
+    if(!state.goalEditMode && goalStatusStale && goal.milestones.length) refreshGoalStatusSummary(goal, goalStatusHash);
 
     var expBtn = document.getElementById('goalExportBtn');
     if(expBtn) expBtn.addEventListener('click', function(){ exportGoalSnapshot('one', goal); });
@@ -4761,6 +4941,13 @@
     } catch(e){ /* fall through to landing screen */ }
     document.getElementById('landingScreen').style.display = 'flex';
   })();
+
+  /* ============ PWA: Service Worker 등록 ============ */
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('/sw.js').catch(function(){});
+    });
+  }
 })();
 </script>
 </body>
