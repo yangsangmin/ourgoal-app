@@ -301,3 +301,13 @@
 - **발생한 문제 및 해결**: (1) GitHub 웹 UI에서 conflict 3-way 병합용 CodeMirror "Accept both changes" 버튼이 뷰포트 폭에 의해 클릭 좌표가 어긋나 여러 번 실패 → git 블롭(ancestor/base/head oid)을 직접 API로 받아 로컬 `git merge-file`로 재현 후 업로드하는 방식으로 우회했으나, 정확히 이 작업을 진행하던 중 1호 직원 세션이 웹훅으로 깨어나 같은 브랜치를 실제 git으로 먼저 재해결·푸시하는 것을 발견 → 이후로는 1호 직원의 해결을 기다렸다가 "Merge pull request" 버튼 클릭만 담당하는 것으로 역할을 분담. (2) 로컬 3-way 병합 중 BACKLOG.md/dev_log.md(LF)와 main의 index.html(CRLF)이 섞여 있어 첫 시도에서 줄바꿈 불일치로 잘못된 병합 결과(변경사항 소실)가 발생 → 파일별로 실제 줄바꿈을 확인해 올바르게 정규화한 뒤 병합해 해결. (3) GitHub PR 병합 버튼이 "checking..." 상태에서 클릭이 씹히는 경우가 잦아, 클릭 후 커밋-메시지 입력폼이 실제로 나타났는지 read_page로 재확인하고 필요시 재클릭하는 방식으로 안정화.
 - **검증 결과**: 병합 후 main의 index.html에서 manifest.json(PWA)·prefers-color-scheme(다크모드)·renderReportSummary(리포트)·a11ySwitch(접근성)·그룹 배지 streak 계산·goaltemplate(새 목표 AI)가 모두 포함돼 있음을 문자열 검색으로 확인, `<style>` 중괄호 394/394 균형, 메인 `<script>`를 `new Function()`으로 문법 검증 통과. `gh api`로 열린 PR이 0개임을 최종 확인.
 ---
+
+## [2026-09-05 06:40] 피드 원터치 응원 리액션 보강 (영속화 + 햅틱)
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 5단계 항목 — 피드/마니또에 "문구 작성 없이 한 번의 탭으로 응원"하는 기능. (8원칙: 먼저 현황 조사 → 마니또 응원 스탬프는 이미 햅틱+컨페티+영속 저장까지 완비돼 있었고, 피드의 "응원" 버튼도 이미 한 번의 탭으로 동작하지만 ①`state.feedReacted`가 세션 메모리에만 있어 새로고침하면 응원 표시가 사라지고 ②탭해도 아무 촉각/시각 피드백이 없다는 두 가지 실질적 공백을 발견 → 새 기능을 만들 필요 없이 이 공백만 메우는 것이 정확한 해결책)
+- **수정/실행 내역**:
+  (1) `settings.feedReactions:{}` 기본값 추가, 세션 전용이던 `state.feedReacted`를 완전히 제거하고 `state.profile.settings.feedReactions`(영속)로 교체 — `feedPostHtml`(내 게시물)·`renderCommFeed`(피드 아이템) 두 곳 모두 반영.
+  (2) 피드 응원 버튼 클릭 핸들러를 async로 전환: 응원을 새로 켤 때만 진동(10ms)+마이크로 컨페티(6개, 버튼 위치)를 발동하고 `await saveProfile()`로 즉시 영속화. 이미 응원한 걸 취소할 때는 조용히 꺼짐(다크패턴 방지 — 응원 취소를 벌주지 않음).
+  (3) `burstConfetti(x,y)`에 count 인자(기본 18) 추가해 이런 잦은 가벼운 반응에는 더 작은 버스트를 쓸 수 있게 함(체크인 축하 PR과 동일한 아이디어를 이 브랜치에도 독립적으로 반영).
+- **발생한 문제 및 해결**: 마니또는 이미 요구사항을 충족하고 있어 별도 수정 없음(중복 구현 방지, 조사 후 실제 공백만 정확히 수정)
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 기존 20개 전부 통과(회귀 없음). `grep`으로 `feedReacted` 잔여 참조 0건 확인. 브라우저 도구가 없는 샌드박스라 실제 새로고침 후 영속 확인은 진행하지 못함(로직상 settings가 saveProfile→localStorage에 저장되는 기존 검증된 경로를 그대로 타므로 안전).
+---
