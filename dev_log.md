@@ -377,6 +377,13 @@
 - **검증 결과**: `git status`로 변경 파일이 CLAUDE.md·dev_log.md뿐임을 확인, `gh --version` 정상, clone HEAD가 최신 main(c75f192, PR #24 병합 커밋)과 일치.
 ---
 
+## [2026-09-06 00:38] 마니또 DM 전송 후 화면 전환 시 null 참조 크래시 수정
+- **목표**: 2026-09-05 14:24 세션이 `promptNewGroup` 검증 중 우연히 발견해 "별도 이슈로 분리해 보고"했던 마니또 렌더링 `TypeError: Cannot read properties of null (reading 'addEventListener')`의 정확한 발생 지점과 근본 원인을 규명하고, 합성 테스트 프로필만의 문제가 아니라 실제 사용자도 겪을 수 있는지 확인 후 수정.
+- **수정/실행 내역**: 로컬 정적 서버로 index.html을 띄우고 브라우저에서 재현 시도(임시 디버그 훅·Supabase fetch mock은 검증 후 전부 제거, 최종 커밋 미포함). 최초 가설이었던 "state.profile.settings.manito 필드 누락"은 `manitoState()`가 누락 시 기본값을 자동 생성해 기각(재현 안 됨) — 실제 원인은 프로필 데이터와 무관한 순수 비동기 타이밍(레이스 컨디션) 버그였음. 소통 > 마니또 > DM에서 메시지를 보내면 `renderManitoDm`의 `send()`가 `saveProfile()` 저장을 `await`하는 동안, 그 사이 사용자가 다른 소통 서브탭 등으로 전환하면 `renderCommScreen()`이 `commBody`를 통째로 새로 그려 기존 `commSubBody` DOM 노드를 교체(detach)함. 저장이 끝난 뒤 이어지는 `renderManitoDm(body, pid)` 호출이 이미 문서에서 분리된 옛 `body`를 참조한 채 `document.getElementById('mnDmBack').addEventListener(...)`를 실행해 null 참조로 크래시 — "메시지 전송 직후 다른 탭 터치"만으로 실 계정에서도 재현되는 도달 가능한 버그로 확인됨. `send()` 내 재렌더링 지점 2곳(전송 직후 / 모의 답장 `setTimeout` 콜백)에 `document.body.contains(body) && state.manitoDm===pid` 가드를 추가해 화면이 이미 전환된 경우 재렌더링을 건너뛰도록 최소 diff로 수정.
+- **발생한 문제 및 해결**: (1) 제보된 최초 가설과 실제 원인이 달라 실제 브라우저 재현으로 근본 원인을 재규명함. (2) 재현 중 실제 프로덕션 Supabase로 쓰기 요청이 나가지 않도록 로컬 사본에서만 fetch를 임시로 mock 처리 후 원상복구. (3) 8번 규칙에 따라 `C:\dev\ourgoal-app`(정식 git clone)로 작업 위치를 전환 — 처음 시도했던 OneDrive 폴더 사본은 PR #24 등 최신 커밋이 반영되지 않은 구버전이라 그대로 썼다면 최근 작업을 되돌릴 뻔함. (4) `gh auth status` 미인증으로 `gh pr create` 불가 — 8번 규칙상 브라우저 GitHub 웹 UI 우회는 금지이므로, 커밋까지만 로컬에서 완료하고 push·PR 생성은 사용자의 `gh auth login` 이후로 넘김(아래 검증 결과 참고).
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 전부 통과(회귀 없음). 로컬 브라우저 재현 환경에서 (1) 수정 전 100% 재현되던 크래시가 수정 후 0건, (2) 정상 흐름(DM 화면에 머무르며 메시지 전송 → 즉시 표시 → 800~1500ms 후 모의 답장까지 정상 표시)에 회귀 없음을 확인. push/PR 생성은 인증 문제로 이번 세션에서 미완료(아래 참고).
+---
+
 ## [2026-09-06 01:29] 회원가입 후 최초 로그인 활용가이드 튜토리얼 추가
 - **목표**: 사용자 직접 요청 — 회원가입 후 최초 로그인 시 앱의 강점(AI 코칭, 캘린더 연동, API 커스텀·비공개 설정)을 소개하는 튜토리얼 모달 추가. (8원칙: 신규 가입자는 온보딩 3단계(카테고리→목표→마일스톤 미리보기)를 마치면 곧바로 앱 화면으로 들어가는데, 이 앱을 다른 목표관리 앱과 구분 짓는 핵심 기능(AI 자동 코칭, 캘린더 자동 동기화, BYOK 커스텀 연결·비공개 설정)은 설정 화면 깊숙이 있어 스스로 찾기 전엔 존재조차 모르고 지나칠 수 있음 → 첫 진입 직후가 이 차별점을 각인시킬 유일한 순간이라 판단)
 - **수정/실행 내역**:
@@ -397,4 +404,11 @@
   (4) 신규 목표 생성(CREATE goal)은 기존 AI 템플릿 생성 플로우(`showNewGoalReviewStep`)와 동일하게 `category:'etc'`, `topic:'major/minor'` 조합, milestone/task에 `uid('ms')`/`uid('task')` id를 부여하도록 구현(`buildGoalFromAgentData`).
 - **발생한 문제 및 해결**: 작업 착수 직전 표준 경로 `C:\dev\ourgoal-app`에서 다른 세션이 브랜치 `feat/2026-09-06-team-goal-comments`에 실시간으로 커밋 중인 것을 발견(동시 작업 충돌 위험 — reflog에 내가 관여하지 않은 checkout이 실시간으로 찍힘). 사용자에게 확인 후 `EnterWorktree`로 격리된 워크트리를 만들어 브랜치 `feature/2026-09-06-goal-agent-chat`에서 작업, 공유 작업 폴더의 다른 세션 상태는 전혀 건드리지 않음.
 - **검증 결과**: `node -e`로 `api/goalagent.js` require 및 메인 `<script>` 문법 검증 통과, `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음). 로컬 정적 서버(Python http.server)로 실제 브라우저 렌더링 확인 — `#goalAgentCard`가 '개인 목표' 탭 최상단(목표 헤더 위)에 요청한 그대로의 placeholder로 렌더링됨을 스크린샷으로 확인, 메시지 입력 후 전송 시 로딩 모달→(로컬엔 API 서버가 없어 실패)→에러 토스트까지 콘솔 에러 없이 정상 동작함을 클릭으로 확인. ANTHROPIC_API_KEY·Supabase 로그인이 없는 로컬 환경이라 실제 AI diff 생성·반영까지의 전체 흐름은 PR의 Vercel 프리뷰 배포에서 재검증이 필요함.
+---
+
+## [2026-09-06 01:43] PR #26 병합 실수로 유실된 dev_log.md 항목(00:38) 복원
+- **목표**: 사용자가 별도 작업(최초 로그인 튜토리얼) 중 우연히 발견해 보고한 dev_log.md 유실 건 조사·복구. `git diff 304a0f0..29faccd -- dev_log.md`로 대조한 결과, PR #26(`fix/2026-09-06-smoke-test-timezone`) 병합 커밋 7e2adb2("Merge branch 'main' into fix/2026-09-06-smoke-test-timezone")에서 dev_log.md 충돌을 해결하며 main에만 있던 "[2026-09-06 00:38] 마니또 DM 전송 후 화면 전환 시 null 참조 크래시 수정" 항목 전체(목표/수정·실행 내역/문제 및 해결/검증 결과 5줄)가 병합 결과에 반영되지 못하고 순수 삭제됨을 확인 — 과거 3차례의 "병합 마커가 main에 유입"된 사고(CLAUDE.md 8번)와는 증상이 다르지만(마커 없이 콘텐츠만 조용히 사라짐), 수동 충돌 해결 시 한쪽 브랜치의 신규 내용을 놓친다는 같은 근본 원인을 공유. 이 항목이 기록하던 실제 코드 수정(index.html의 `document.body.contains(body) && state.manitoDm===pid` null-deref 가드)은 main에 그대로 살아있어 기능적 회귀는 아니고 순수 문서(이력) 유실임을 확인.
+- **수정/실행 내역**: 유실 전 커밋(304a0f0)의 git blob에서 해당 항목 원문을 그대로 추출해(파일 전체를 재작성하지 않고 정확한 삽입 지점에만 Node 스크립트로 splice), 시간순 규칙에 맞는 위치 — "[2026-09-05 15:23] 실행 효율 규칙" 항목과 "[2026-09-06 01:29] 회원가입 후 최초 로그인" 항목 사이(00:38은 그 사이 시각) — 에 텍스트 변경 없이 복원. 참고로 사용자가 언급한 인접 항목 "[2026-09-06 00:49] 일반 DM(renderCommDM)..."은 아직 main에 병합되지 않은 오픈 브랜치 `fix/2026-09-06-comm-dm-stale-dom-guard`(커밋 7ee89d2)에만 존재 — CLAUDE.md 6번 규칙("이전 주기 PR이 열려 있으면 건드리지 않는다")에 따라 그 브랜치는 건드리지 않고, 현재 main 기준으로 올바른 위치에만 삽입함(해당 PR이 나중에 병합될 때 00:38/00:49 순서를 다투는 통상적인 충돌이 생길 수 있으나 이는 그 PR 병합 시점에 처리할 몫).
+- **발생한 문제 및 해결**: dev_log.md는 작업 트리에서 CRLF, git blob 저장은 LF(core.autocrlf=true)로 줄바꿈 방식이 달라 단순 문자열 치환 시 줄바꿈이 섞일 위험이 있어, 추출한 원문을 CRLF로 변환 후 삽입하고 삽입 전후로 앵커 주변 텍스트를 스크립트로 출력해 삽입 위치를 프로그램적으로 재확인.
+- **검증 결과**: 복원된 항목 텍스트가 304a0f0 원문과 문자 단위로 완전히 동일함을 스크립트로 대조(1,814자 일치), `git diff`로 이번 변경이 7줄 순수 추가 외 다른 라인 변경이 전혀 없음을 확인, 저장소 전체 병합 마커 재검색(`grep -rn "^<<<<<<<"`) 클린, `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음). 순수 문서 변경이라 브라우저 검증은 해당 없음.
 ---
