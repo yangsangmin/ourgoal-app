@@ -2094,26 +2094,18 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
         sheet.querySelector('#sugSkipBtn').addEventListener('click', closeModal);
         sheet.querySelector('#sugApplyBtn').addEventListener('click', async function(){
           var applied = [];
-<<<<<<< auto/2026-09-05-xp-level-model
-          var newlyDoneMsCount = 0;
-=======
           var newlyDoneMs = [];
->>>>>>> main
           valid.forEach(function(s, i){
             if(!checked[i]) return;
             var target = findSuggestionTarget(goal, s);
             var wasMsDone = s.type==='milestone' && target && target.milestone.status==='done';
             if(applySuggestion(goal, s)){
               applied.push(describeSuggestion(goal, s));
-<<<<<<< auto/2026-09-05-xp-level-model
-              if(s.type==='milestone' && target && !wasMsDone && target.milestone.status==='done') newlyDoneMsCount++;
-=======
               if(s.type==='milestone' && target && !wasMsDone && target.milestone.status==='done') newlyDoneMs.push(target.milestone);
->>>>>>> main
             }
           });
           if(!applied.length){ closeModal(); return; }
-          for(var i=0;i<newlyDoneMsCount;i++) awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
+          for(var i=0;i<newlyDoneMs.length;i++) awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
           await saveProfile();
           closeModal();
           var becameDone = applied.some(function(a){ return a.label.indexOf('완료')!==-1; });
