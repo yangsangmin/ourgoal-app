@@ -34,6 +34,33 @@ var OFFLINE_HTML = '<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8">'
   '<p>아워골은 온라인 상태에서만 이용할 수 있어요.<br>연결을 확인한 뒤 다시 시도해주세요.</p>' +
   '<button onclick="location.reload()">다시 시도</button></div></body></html>';
 
+self.addEventListener('push', function(event){
+  var data = {};
+  try{ data = event.data ? event.data.json() : {}; } catch(e){ /* non-JSON payload, use defaults */ }
+  var title = data.title || '아워골';
+  var body = data.body || '지금 뭐 하고 있었어요?';
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body: body,
+      icon: '/icons/icon-192.png',
+      badge: '/icons/icon-192.png',
+      data: { url: '/' }
+    })
+  );
+});
+
+self.addEventListener('notificationclick', function(event){
+  event.notification.close();
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(list){
+      for(var i=0; i<list.length; i++){
+        if('focus' in list[i]) return list[i].focus();
+      }
+      if(self.clients.openWindow) return self.clients.openWindow('/');
+    })
+  );
+});
+
 self.addEventListener('fetch', function(event){
   var req = event.request;
   if(req.mode !== 'navigate') return;
