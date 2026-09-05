@@ -1181,6 +1181,7 @@
     await checkStreakFreeze();
     renderAll();
     setupNotifyTimer();
+    if(state.profile.settings.notify) syncPushSubscription();
     checkSocialNotifications();
   }
 
@@ -3097,10 +3098,15 @@
   async function archiveGoal(goal){
     goal.archivedAt = nowISO();
     state.activeGoalId = null;
+    var fullyAchieved = goalAchievement(goal) >= 100;
     await saveProfile();
     renderAll();
     setTab('records');
-    toast('"'+goal.title+'"을(를) 기록으로 옮겼어요');
+    if(fullyAchieved){
+      openGoalCertificateModal(goal);
+    } else {
+      toast('"'+goal.title+'"을(를) 기록으로 옮겼어요');
+    }
   }
   async function restoreGoal(goal){
     var active = state.profile.goals.filter(function(g){ return !g.archivedAt; });
@@ -4572,6 +4578,113 @@
     if(typeof days==='number') lines.push(days+'일째 진행 중');
     return lines.join('\n') || ('아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪');
   }
+
+  /* ============ 목표 완주 인증서 (기존 공유 캔버스 인프라 재사용) ============ */
+  async function generateGoalCertificateImage(goal, pct, days){
+    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; } catch(e){} }
+    var dims = { w:720, h:720 };
+    var canvas = document.createElement('canvas');
+    canvas.width = dims.w; canvas.height = dims.h;
+    var ctx = canvas.getContext('2d');
+
+    var grad = ctx.createLinearGradient(0,0,dims.w,dims.h);
+    grad.addColorStop(0,'#6C5CE7'); grad.addColorStop(1,'#FF9F1C');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0,0,dims.w,dims.h);
+
+    var pad = Math.round(dims.w*0.09);
+    var innerW = dims.w - pad*2;
+    var borderPad = Math.round(dims.w*0.035);
+    ctx.strokeStyle = 'rgba(255,255,255,.75)';
+    ctx.lineWidth = Math.round(dims.w*0.008);
+    scRoundRect(ctx, borderPad, borderPad, dims.w-borderPad*2, dims.h-borderPad*2, dims.w*0.05);
+    ctx.stroke();
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = '#fff';
+
+    ctx.globalAlpha = .85;
+    ctx.font = '700 ' + Math.round(dims.w*0.032) + 'px "Noto Sans KR",sans-serif';
+    ctx.fillText('아워골 · 목표 완주 인증서', dims.w/2, pad + dims.w*0.05);
+    ctx.globalAlpha = 1;
+
+    ctx.font = Math.round(dims.w*0.16) + 'px sans-serif';
+    ctx.fillText('🏆', dims.w/2, pad + dims.w*0.26);
+
+    ctx.font = '900 ' + Math.round(dims.w*0.062) + 'px "Noto Sans KR",sans-serif';
+    var titleLines = scWrapLines(ctx, goal.title, innerW, 2);
+    var afterTitleY = scDrawLines(ctx, titleLines, dims.w/2, pad+dims.w*0.42, dims.w*0.075);
+
+    ctx.globalAlpha = .92;
+    ctx.font = '800 ' + Math.round(dims.w*0.042) + 'px "Noto Sans KR",sans-serif';
+    ctx.fillText(pct+'% 달성으로 완주했어요', dims.w/2, afterTitleY + dims.w*0.045);
+    ctx.globalAlpha = .75;
+    ctx.font = '600 ' + Math.round(dims.w*0.03) + 'px "Noto Sans KR",sans-serif';
+    ctx.fillText(days+'일 동안의 여정', dims.w/2, afterTitleY + dims.w*0.09);
+    ctx.globalAlpha = 1;
+
+    ctx.globalAlpha = .6;
+    ctx.font = '500 ' + Math.round(dims.w*0.024) + 'px "Noto Sans KR",sans-serif';
+    ctx.fillText(dateKey(nowISO())+' · '+(state.profile.displayName||''), dims.w/2, dims.h - pad*0.7);
+    ctx.globalAlpha = 1;
+    ctx.textAlign = 'left';
+
+    return canvas;
+  }
+  async function openGoalCertificateModal(goal){
+    var pct = goalAchievement(goal);
+    var days = Math.max(1, Math.round((new Date(goal.archivedAt||nowISO()) - new Date(goal.createdAt))/86400000));
+    openModal(
+      '<h3 style="text-align:center;">🏆 완주를 축하해요!</h3>' +
+      '<p class="muted" style="text-align:center;margin:-6px 0 16px;">"'+escapeHtml(goal.title)+'"을(를) '+pct+'% 달성으로 마쳤어요</p>' +
+      '<div id="certImgWrap" style="text-align:center;color:var(--ink-faint);padding:60px 0;">인증서 만드는 중…</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn btn-primary" id="certShareBtn" type="button" disabled>공유하기</button>' +
+        '<button class="btn btn-ghost" id="certSaveBtn" type="button" disabled>이미지 저장</button>' +
+      '</div>',
+      function(){
+        if(navigator.vibrate) navigator.vibrate([12,40,24]);
+        burstConfetti(window.innerWidth/2, window.innerHeight/3);
+      }
+    );
+    var canvas = await generateGoalCertificateImage(goal, pct, days);
+    var dataUrl = canvas.toDataURL('image/png');
+    var wrap = document.getElementById('certImgWrap');
+    if(!wrap) return; // 사용자가 모달을 이미 닫음
+    wrap.outerHTML = '<img id="certImgWrap" src="'+dataUrl+'" alt="목표 완주 인증서" style="width:100%;border-radius:18px;box-shadow:var(--shadow-sm);display:block;">';
+    var shareBtn = document.getElementById('certShareBtn');
+    var saveBtn = document.getElementById('certSaveBtn');
+    if(shareBtn) shareBtn.disabled = false;
+    if(saveBtn) saveBtn.disabled = false;
+    if(shareBtn) shareBtn.addEventListener('click', async function(){
+      var text = '아워골에서 "'+goal.title+'" '+pct+'% 달성으로 완주했어요! 🏆';
+      try{
+        var blob = await (await fetch(dataUrl)).blob();
+        var file = new File([blob], 'ourgoal-certificate.png', { type:'image/png' });
+        if(navigator.canShare && navigator.canShare({ files:[file] })){
+          await navigator.share({ files:[file], title:'아워골', text: text });
+          toast('공유했어요');
+        } else if(navigator.share){
+          await navigator.share({ title:'아워골', text: text });
+          toast('이 기기는 이미지 공유를 지원하지 않아 문구로 공유했어요 · 이미지는 저장 버튼을 써주세요');
+        } else if(navigator.clipboard){
+          await navigator.clipboard.writeText(text);
+          toast('공유 문구를 복사했어요 · 이미지는 저장 버튼으로 받아주세요');
+        } else {
+          toast('이미지 저장 버튼으로 받아서 직접 공유해주세요');
+        }
+      } catch(e){ /* 사용자가 공유 시트를 취소함 */ }
+    });
+    if(saveBtn) saveBtn.addEventListener('click', function(){
+      var a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = '아워골_완주인증서.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      toast('이미지를 저장했어요');
+    });
+  }
+
   function renderCommShare(body){
     var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     if(!goals.length){
@@ -5526,7 +5639,7 @@
         renderCommDM(body);
         setTimeout(function(){
           person._thread.push({ from:'them', text: person.replies[Math.floor(Math.random()*person.replies.length)], time: fmtTime(nowISO()) });
-          if(state.dmActiveId===person.id) renderCommDM(body);
+          if(document.body.contains(body) && state.dmActiveId===person.id) renderCommDM(body);
         }, 700+Math.random()*600);
       }
       document.getElementById('dmSend').addEventListener('click', send);
@@ -5559,12 +5672,14 @@
       inp.addEventListener('change', async function(){
         times[+inp.dataset.timeidx] = inp.value;
         await saveProfile();
+        if(state.profile.settings.notify) syncPushSubscription();
       });
     });
     row.querySelectorAll('[data-timedel]').forEach(function(btn){
       btn.addEventListener('click', async function(){
         times.splice(+btn.dataset.timedel, 1);
         await saveProfile(); renderSettingsScreen();
+        if(state.profile.settings.notify) syncPushSubscription();
       });
     });
 
@@ -5578,8 +5693,10 @@
           if(perm!=='granted'){ toast('브라우저 알림 권한이 필요해요'); return; }
         }
         state.profile.settings.notify = true;
+        syncPushSubscription();
       } else {
         state.profile.settings.notify = false;
+        removePushSubscription();
       }
       await saveProfile();
       renderSettingsScreen();
@@ -5687,6 +5804,7 @@
   document.getElementById('addTimeBtn').addEventListener('click', async function(){
     state.profile.settings.checkinTimes.push('12:00');
     await saveProfile(); renderSettingsScreen();
+    if(state.profile.settings.notify) syncPushSubscription();
   });
   document.getElementById('testNotifyBtn').addEventListener('click', function(){
     setTab('home');
@@ -5753,6 +5871,61 @@
       setTab('home');
       document.getElementById('captureInput').focus();
     });
+  }
+
+  /* ============ Web Push (앱이 꺼져 있어도 오는 알림) ============ */
+  function urlBase64ToUint8Array(base64String){
+    var padding = '='.repeat((4 - base64String.length % 4) % 4);
+    var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    var rawData = window.atob(base64);
+    var outputArray = new Uint8Array(rawData.length);
+    for(var i=0; i<rawData.length; i++) outputArray[i] = rawData.charCodeAt(i);
+    return outputArray;
+  }
+
+  async function syncPushSubscription(){
+    try{
+      if(!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+      if(!('Notification' in window) || Notification.permission!=='granted') return;
+      var reg = await navigator.serviceWorker.ready;
+      var sub = await reg.pushManager.getSubscription();
+      if(!sub){
+        var keyRes = await fetch('/api/vapid-public-key');
+        if(!keyRes.ok) return;
+        var keyData = await keyRes.json();
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(keyData.publicKey)
+        });
+      }
+      var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul';
+      await fetch('/api/push-subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: state.profile.id,
+          subscription: sub.toJSON(),
+          checkinTimes: state.profile.settings.checkinTimes,
+          timezone: timezone
+        })
+      });
+    } catch(e){ console.warn('Web Push 구독 실패:', e); }
+  }
+
+  async function removePushSubscription(){
+    try{
+      if(!('serviceWorker' in navigator)) return;
+      var reg = await navigator.serviceWorker.ready;
+      var sub = await reg.pushManager.getSubscription();
+      if(!sub) return;
+      var endpoint = sub.endpoint;
+      await sub.unsubscribe();
+      await fetch('/api/push-subscribe', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ endpoint: endpoint })
+      });
+    } catch(e){ console.warn('Web Push 구독 해제 실패:', e); }
   }
 
   /* ============ 받은 응원 알림 (mock: 시간 경과에 따라 내 게시물 응원이 쌓이는 것 + 마니또 받은 응원함) ============ */
