@@ -301,3 +301,13 @@
 - **발생한 문제 및 해결**: (1) GitHub 웹 UI에서 conflict 3-way 병합용 CodeMirror "Accept both changes" 버튼이 뷰포트 폭에 의해 클릭 좌표가 어긋나 여러 번 실패 → git 블롭(ancestor/base/head oid)을 직접 API로 받아 로컬 `git merge-file`로 재현 후 업로드하는 방식으로 우회했으나, 정확히 이 작업을 진행하던 중 1호 직원 세션이 웹훅으로 깨어나 같은 브랜치를 실제 git으로 먼저 재해결·푸시하는 것을 발견 → 이후로는 1호 직원의 해결을 기다렸다가 "Merge pull request" 버튼 클릭만 담당하는 것으로 역할을 분담. (2) 로컬 3-way 병합 중 BACKLOG.md/dev_log.md(LF)와 main의 index.html(CRLF)이 섞여 있어 첫 시도에서 줄바꿈 불일치로 잘못된 병합 결과(변경사항 소실)가 발생 → 파일별로 실제 줄바꿈을 확인해 올바르게 정규화한 뒤 병합해 해결. (3) GitHub PR 병합 버튼이 "checking..." 상태에서 클릭이 씹히는 경우가 잦아, 클릭 후 커밋-메시지 입력폼이 실제로 나타났는지 read_page로 재확인하고 필요시 재클릭하는 방식으로 안정화.
 - **검증 결과**: 병합 후 main의 index.html에서 manifest.json(PWA)·prefers-color-scheme(다크모드)·renderReportSummary(리포트)·a11ySwitch(접근성)·그룹 배지 streak 계산·goaltemplate(새 목표 AI)가 모두 포함돼 있음을 문자열 검색으로 확인, `<style>` 중괄호 394/394 균형, 메인 `<script>`를 `new Function()`으로 문법 검증 통과. `gh api`로 열린 PR이 0개임을 최종 확인.
 ---
+
+## [2026-09-05 06:06] 체크인/할 일 완료 축하 마이크로 애니메이션
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 1단계 첫 항목 — 체크인 저장 및 할 일/마일스톤 완료 시 즉각적인 축하 마이크로 애니메이션을 외부 라이브러리 없이 추가. (문제해결 8원칙: 기존 burstConfetti는 수치형 목표 100% 달성·마니또 응원에만 연결돼 있고, 정작 가장 빈번한 행동인 일반 체크인 저장과 수치 목표 없는 "할 일" 완료에는 축하 반응이 전혀 없다는 게 핵심 공백이었음 → 새 애니메이션을 따로 만들지 않고 기존 burstConfetti/vibrate 패턴을 재사용해 두 지점에 연결하는 것이 가장 효율적이라 판단)
+- **수정/실행 내역**:
+  (1) burstConfetti(x,y)에 count 인자 추가(기본 18, 하위 호환)해 체크인처럼 자주 발생하는 이벤트에는 더 작은 "마이크로" 버스트(8개)를 쓸 수 있게 함.
+  (2) 홈 체크인 저장(captureSave 클릭) 시 저장 버튼 위치에서 8개짜리 마이크로 컨페티 + 짧은 진동(10ms) + 버튼 펄스 애니메이션(.btn-cs-pulse, 신규 CSS 키프레임 cs-pulse) 실행. prefers-reduced-motion 사용자는 burstConfetti 내부 기존 가드로 자동 제외.
+  (3) 결과 기록 모달(openResultModal, kind==='task'|'ms' 공용)의 축하 조건을 "수치 달성률 100%"에서 "완료 상태로 새로 전환됐는가(wasDone→nowDone)"로 변경 — 수치 목표(target/result)가 없는 할 일을 자유 텍스트 결과로 완료 처리해도 기존에는 축하가 전혀 없었는데 이제 동일하게 진동+컨페티가 나가도록 수정. 이미 완료 상태였던 항목을 재저장할 때는 재발화하지 않음.
+- **발생한 문제 및 해결**: 없음 (기존 confetti/vibrate 인프라 재사용, 신규 CSS는 1개 클래스+키프레임만 추가)
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 20개 전부 통과(회귀 없음). resultPct 로직을 별도 시뮬레이션해 "target 없이 결과값만 입력한 할 일"이 wasDone:false→nowDone:true로 판정되어 축하 조건이 정확히 발화함을 확인.
+---
