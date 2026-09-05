@@ -1348,11 +1348,33 @@
             closeModal();
             enterApp();
             toast('목표를 만들었어요 — 시작해봐요!');
+            var alreadySeenGuide = state.profile.settings.hasSeenGuide;
             await maybeShowFirstLoginGuide();
+            if(alreadySeenGuide) showCommTourModal();
           });
         }
       );
     }
+  }
+
+  /* ============ 온보딩 직후 소통 기능 짧은 투어 (첫 목표 생성 시 1회) ============ */
+  function showCommTourModal(){
+    openModal(
+      '<h3>🎉 첫 목표를 만들었어요!</h3>' +
+      '<p class="muted" style="margin:-6px 0 14px;">혼자보다 함께면 오래 갈 수 있어요. 소통 탭에서 이런 걸 할 수 있어요.</p>' +
+      '<div class="mission-card"><div class="mi">🎁</div><div><b>마니또</b><span>비슷한 목표를 가진 사람과 익명으로 매칭돼 서로 응원해요</span></div></div>' +
+      '<div class="mission-card"><div class="mi">👥</div><div><b>모임</b><span>같은 목표의 사람들과 함께 인증하고 랭킹을 확인해요</span></div></div>' +
+      '<div class="mission-card"><div class="mi">📣</div><div><b>공유</b><span>내 진행 상황을 카드 이미지로 만들어 SNS에 자랑해요</span></div></div>' +
+      '<div class="modal-actions"><button class="btn btn-ghost" id="tourSkip" type="button">나중에 볼게요</button><button class="btn btn-primary" id="tourGo" type="button">소통 탭 보러가기</button></div>',
+      function(sheet){
+        sheet.querySelector('#tourSkip').addEventListener('click', closeModal);
+        sheet.querySelector('#tourGo').addEventListener('click', function(){
+          closeModal();
+          state.commSubTab = 'feed';
+          setTab('comm');
+        });
+      }
+    );
   }
 
   /* ============ 최초 로그인 활용가이드 (온보딩 흐름 완료 직후 1회) ============ */
@@ -1375,7 +1397,7 @@
         '<button class="land-login-link" id="guideSkip1" type="button" style="width:100%;background:none;margin-top:12px;">나중에 볼게요</button>',
         function(sheet){
           sheet.querySelector('#guideNext1').addEventListener('click', showGuideStep2);
-          sheet.querySelector('#guideSkip1').addEventListener('click', closeModal);
+          sheet.querySelector('#guideSkip1').addEventListener('click', function(){ closeModal(); showCommTourModal(); });
         }
       );
     }
@@ -1418,7 +1440,7 @@
         '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack4" type="button">이전</button><button class="btn btn-primary" id="guideFinish4" type="button">시작하기</button></div>',
         function(sheet){
           sheet.querySelector('#guideBack4').addEventListener('click', showGuideStep3);
-          sheet.querySelector('#guideFinish4').addEventListener('click', closeModal);
+          sheet.querySelector('#guideFinish4').addEventListener('click', function(){ closeModal(); showCommTourModal(); });
         }
       );
     }
