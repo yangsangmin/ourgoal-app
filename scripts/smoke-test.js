@@ -68,9 +68,12 @@ function extractFunction(source, name) {
 const FN_NAMES = [
   'pad', 'dateKey', 'goalProgress', 'msCounts', 'resultPct', 'dDay',
   'computeStreakDays', 'findSuggestionTarget', 'sanitizeSuggestions',
-  'applySuggestion', 'describeSuggestion', 'maybeGrantStreakFreeze', 'maybeApplyStreakFreeze',
+  'applySuggestion', 'describeSuggestion', 'localTodayMission',
+  'maybeGrantStreakFreeze', 'maybeApplyStreakFreeze',
   'xpForLevel', 'levelForXP', 'levelProgress',
+  'totalCompletedMilestones',
   'heatmapLevel', 'localNextActionSuggestion',
+  'goalAchievement',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -81,10 +84,12 @@ const sandboxSrc =
   extracted +
   '\nmodule.exports = { pad, dateKey, goalProgress, msCounts, resultPct, dDay, ' +
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
+  'localTodayMission, ' +
   'maybeGrantStreakFreeze, maybeApplyStreakFreeze, ' +
-  'xpForLevel, levelForXP, levelProgress, ' +
+  'xpForLevel, levelForXP, levelProgress, totalCompletedMilestones, ' +
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
+  'goalAchievement, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -219,6 +224,18 @@ check('describeSuggestion: status 변경 라벨을 생성한다', () => {
   assert.ok(d.label.indexOf('완료로') !== -1);
 });
 
+check('localTodayMission: 미완료 마일스톤이 있으면 그 제목을 언급한다', () => {
+  const goal = makeGoal(['done', 'todo']);
+  const msg = fns.localTodayMission(goal);
+  assert.ok(msg.indexOf(goal.milestones[1].title) !== -1);
+});
+
+check('localTodayMission: 전부 완료면 회고를 제안한다', () => {
+  const goal = makeGoal(['done', 'done']);
+  const msg = fns.localTodayMission(goal);
+  assert.ok(msg.indexOf('돌아보며') !== -1);
+});
+
 check('maybeGrantStreakFreeze: 7일 연속을 달성하면 프리즈를 1개 지급한다', () => {
   const startAt = d => new Date(Date.now() - d * 86400000).toISOString();
   fns.setRecords([0, 1, 2, 3, 4, 5, 6].map(d => ({ startAt: startAt(d) })));
@@ -268,6 +285,16 @@ check('levelProgress: 현재 레벨 구간 안에서의 진행률을 계산한�
   assert.strictEqual(p.pct, 0);
 });
 
+check('totalCompletedMilestones: 여러 목표에 걸친 완료 마일스톤 수를 정확히 센다', () => {
+  const p = {
+    goals: [
+      { milestones: [{ status: 'done' }, { status: 'todo' }] },
+      { milestones: [{ status: 'done' }, { status: 'done' }] },
+    ],
+  };
+  assert.strictEqual(fns.totalCompletedMilestones(p), 3);
+});
+
 check('heatmapLevel: 기록이 없으면 0단계', () => {
   assert.strictEqual(fns.heatmapLevel(0, 5), 0);
 });
@@ -293,6 +320,19 @@ check('localNextActionSuggestion: 남은 마일스톤이 없으면 결과 기록
   assert.ok(msg.indexOf('결과를 기록') !== -1);
 });
 
+check('goalAchievement: 마일스톤이 전부 done이면 100', () => {
+  assert.strictEqual(fns.goalAchievement(makeGoal(['done', 'done'])), 100);
+});
+
+check('goalAchievement: 일부만 done이면 100 미만', () => {
+  assert.ok(fns.goalAchievement(makeGoal(['done', 'todo'])) < 100);
+});
+
+check('goalAchievement: 목표 자체에 수치 결과가 있으면 그 비율을 우선한다', () => {
+  const goal = makeGoal(['todo']);
+  goal.result = { target: '10', result: '10', unit: '회', note: '' };
+  assert.strictEqual(fns.goalAchievement(goal), 100);
+});
 /* ============ 결과 요약 ============ */
 console.log('');
 console.log(passed + '개 통과, ' + failures + '개 실패');
