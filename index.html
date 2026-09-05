@@ -324,6 +324,15 @@
   .report-legend-label{flex:1;color:var(--ink-soft);font-weight:700;}
   .report-legend-val{font-family:var(--mono);font-size:.72rem;color:var(--ink-faint);}
 
+  /* ---------- 오늘의 미션 ---------- */
+  .mission-card{background:var(--card);border-radius:var(--radius-sm);padding:14px 16px;margin:14px 0;box-shadow:var(--shadow-sm);}
+  .mission-card .ct-label{font-size:.8rem;font-weight:700;color:var(--ink-soft);margin-bottom:10px;}
+  .mission-row{display:flex;align-items:flex-start;gap:8px;padding:7px 0;font-size:.82rem;}
+  .mission-row + .mission-row{border-top:1px solid var(--rule);}
+  .mission-row .m-icon{flex:0 0 auto;}
+  .mission-row .m-goal{font-weight:800;color:var(--ink);}
+  .mission-row .m-text{color:var(--ink-soft);}
+
   /* ---------- Heatmap (기록 히트맵) ---------- */
   .heatmap-scroll{overflow-x:auto;padding-bottom:2px;}
   .heatmap-body{display:flex;gap:3px;}
@@ -378,6 +387,16 @@
   .notify-banner .nb-txt{flex:1;font-size:.86rem;}
   .notify-banner .nb-txt b{display:block;font-size:.98rem;margin-bottom:2px;font-weight:900;}
   .notify-banner button{background:var(--grad);color:#fff;padding:9px 14px;border-radius:999px;font-size:.78rem;font-weight:800;}
+  .notify-banner.levelup{background:linear-gradient(135deg,var(--violet),#9C8CFF);}
+
+  /* ---------- Level badge ---------- */
+  #levelUpBannerSlot{position:fixed;top:14px;left:14px;right:14px;z-index:250;max-width:460px;margin:0 auto;}
+  #levelUpBannerSlot .notify-banner{margin-bottom:0;}
+  .level-badge-row{margin:2px 0 12px;}
+  .level-badge{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:999px;padding:8px 14px;box-shadow:var(--shadow-sm);}
+  .level-badge .level-num{flex:0 0 auto;font-weight:900;font-size:.82rem;color:#fff;background:linear-gradient(135deg,var(--violet),#9C8CFF);padding:4px 10px;border-radius:999px;}
+  .level-badge .level-bar-wrap{flex:1;min-width:0;}
+  .level-badge .level-xp-txt{font-size:.66rem;color:var(--ink-faint);font-family:var(--mono);margin-top:3px;display:block;}
 
   /* ---------- Confetti ---------- */
   #confettiLayer{position:fixed;inset:0;pointer-events:none;z-index:300;overflow:hidden;}
@@ -393,6 +412,7 @@
   .streak-t3{background:var(--grad);color:#fff;box-shadow:0 6px 16px -8px rgba(255,79,100,.7);}
   .streak-t4{background:var(--grad);color:#fff;box-shadow:0 8px 22px -6px rgba(255,79,100,.9);animation:streak-pulse 1.6s ease-in-out infinite;}
   @keyframes streak-pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+  .freeze-pill{font-family:var(--mono);font-size:.7rem;border-radius:999px;padding:4px 10px;white-space:nowrap;font-weight:700;vertical-align:middle;margin-left:6px;background:var(--violet-soft);color:var(--violet);}
 
   /* ---------- 공동 챌린지 ---------- */
   .collective-card{background:var(--chip);color:#fff;border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
@@ -438,6 +458,14 @@
   .tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
   .tag{font-size:.72rem;font-weight:700;padding:5px 11px;border-radius:999px;background:var(--card2);color:var(--ink-soft);}
   .tag.on{background:var(--violet-soft);color:var(--violet);}
+
+  /* ---------- 뱃지 컬렉션 (명예의 전당) ---------- */
+  .badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px;}
+  .badge-tile{background:var(--card2);border-radius:14px;padding:12px 6px;text-align:center;opacity:.5;}
+  .badge-tile.on{opacity:1;background:var(--gold-soft);box-shadow:0 4px 14px -8px rgba(255,159,28,.6);}
+  .badge-icon{font-size:1.5rem;margin-bottom:4px;}
+  .badge-label{font-size:.74rem;font-weight:800;color:var(--ink);}
+  .badge-desc{font-size:.6rem;color:var(--ink-faint);margin-top:2px;line-height:1.3;}
   .avatar-edit{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
   .avatar-edit .hint{font-size:.74rem;color:var(--ink-soft);line-height:1.5;margin-top:4px;}
 
@@ -584,13 +612,16 @@
       <div class="avatar" id="topAvatar"></div>
     </div>
   </div>
+  <div id="levelUpBannerSlot"></div>
 
   <main class="screens">
     <!-- HOME -->
     <section class="screen active" id="screen-home">
       <p class="s-eyebrow">오늘</p>
       <h2 class="s-title" id="homeGreeting">안녕하세요</h2>
+      <div id="levelBadgeRow"></div>
       <div id="notifyBannerSlot"></div>
+      <div id="socialNotifySlot"></div>
 
       <div class="capture-card card" id="captureCardBox">
         <div style="font-weight:700;color:var(--red);font-size:.86rem;">✎ 오늘 기록하기</div>
@@ -602,8 +633,10 @@
       </div>
       <button class="btn btn-ghost btn-sm" id="customFeedbackBtn" type="button" style="width:100%;margin-top:8px;">🤖 내 맞춤 피드백 설정하기<span id="customFeedbackStatus"></span></button>
 
+      <div id="todayMissionCard"></div>
+
       <div class="card-title-row" style="margin:20px 0 10px;">
-        <h3>내 목표 <span id="streakBadge"></span></h3>
+        <h3>내 목표 <span id="streakBadge"></span><span id="streakFreezeBadge"></span></h3>
         <button class="btn btn-ghost btn-sm" id="homeAddGoal" type="button">+ 새 목표</button>
       </div>
       <div id="homeGoalList"></div>
@@ -616,6 +649,13 @@
       <p class="s-eyebrow">목표</p>
       <div class="comm-subtabs" id="goalsSubtabs"></div>
       <div id="personalGoalsView">
+        <div class="card" id="goalAgentCard">
+          <div style="font-weight:700;color:var(--violet);font-size:.86rem;">🤖 대화로 목표 관리</div>
+          <div class="dm-input-row" style="padding:10px 0 0;border-top:none;">
+            <input id="goalAgentInput" type="text" placeholder="대화로 목표와 할일들을 추가, 변경, 삭제하세요">
+            <button class="btn btn-primary btn-sm" id="goalAgentSendBtn" type="button">전송</button>
+          </div>
+        </div>
         <div class="goal-head-row">
           <h2>목표</h2>
           <button class="edit-toggle off" id="goalEditToggle" type="button">편집</button>
@@ -749,9 +789,11 @@
       <div class="set-block">
         <h4>데이터</h4>
         <div class="data-btn-row">
-          <button class="btn btn-ghost" id="settingsExportAll" type="button">전체 내보내기</button>
+          <button class="btn btn-ghost" id="settingsExportCheckins" type="button">체크인 전체 내보내기</button>
+          <button class="btn btn-ghost" id="settingsExportAll" type="button">전체 백업</button>
           <button class="btn btn-ghost" id="settingsImportAll" type="button">가져오기</button>
         </div>
+        <p class="faint" style="font-size:.72rem;margin:6px 0 0;">체크인 전체 내보내기: 위에서 고른 형식(CSV/JSON)으로 체크인 기록 전체를 내려받아요 · 전체 백업: 목표·설정까지 포함한 복원용 JSON</p>
         <input type="file" id="importFile" accept="application/json" style="display:none;">
         <p class="danger-note">데이터는 이 기기(이 대화)에만 저장됩니다</p>
       </div>
@@ -906,7 +948,7 @@
 
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
   function defaultSettings(){
-    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, xp:{ total:0, log:[] } };
+    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, feedReactions:{}, todayMissions:{}, streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] }, hasSeenGuide:false };
   }
   function loadLocalSettings(userId){
     try{
@@ -945,6 +987,75 @@
     if(xp.log.length > XP_LOG_MAX) xp.log.length = XP_LOG_MAX;
     return { total: xp.total, leveledUp: levelForXP(xp.total) > beforeLevel };
   }
+  function levelBadgeHtml(xp){
+    var p = levelProgress(xp);
+    return '<div class="level-badge"><span class="level-num">Lv.'+p.level+'</span>' +
+      '<div class="level-bar-wrap"><div class="mini-bar"><span style="width:'+Math.max(0,Math.min(100,p.pct))+'%;background:var(--violet);"></span></div>' +
+      '<span class="level-xp-txt">'+p.into+' / '+p.span+' XP</span></div></div>';
+  }
+  function renderLevelBadge(){
+    var el = document.getElementById('levelBadgeRow');
+    if(!el || !state.profile) return;
+    el.innerHTML = '<div class="level-badge-row">'+levelBadgeHtml(state.profile.settings.xp.total)+'</div>';
+  }
+  function showLevelUpBanner(level){
+    var slot = document.getElementById('levelUpBannerSlot');
+    if(!slot) return;
+    if(navigator.vibrate) navigator.vibrate([12,40,24]);
+    burstConfetti(window.innerWidth/2, 80, 14);
+    slot.innerHTML = '<div class="notify-banner levelup"><div class="nb-txt"><b>🎉 레벨 업!</b>Lv.'+level+'이 됐어요. 계속 이어가 볼까요?</div><button id="lvBannerClose" type="button">확인</button></div>';
+    var closeBtn = document.getElementById('lvBannerClose');
+    if(closeBtn) closeBtn.addEventListener('click', function(){ slot.innerHTML = ''; });
+    setTimeout(function(){ if(slot.innerHTML) slot.innerHTML = ''; }, 6000);
+  }
+
+  /* ============ 뱃지 컬렉션 (명예의 전당) ============ */
+  function totalCompletedMilestones(p){
+    var n = 0;
+    p.goals.forEach(function(g){ (g.milestones||[]).forEach(function(m){ if(m.status==='done') n++; }); });
+    return n;
+  }
+  function badgeContext(p){
+    return {
+      records: p.records.length,
+      streak: computeStreakDays(),
+      msDone: totalCompletedMilestones(p),
+      level: levelForXP((p.settings.xp && p.settings.xp.total) || 0),
+      archived: p.goals.filter(function(g){ return !!g.archivedAt; }).length
+    };
+  }
+  var BADGES = [
+    { id:'first_record', icon:'✍️', label:'첫 발걸음', desc:'기록을 1개 이상 남기면', check:function(ctx){ return ctx.records>=1; } },
+    { id:'streak_3', icon:'🔥', label:'3일 연속', desc:'3일 연속으로 기록하면', check:function(ctx){ return ctx.streak>=3; } },
+    { id:'streak_7', icon:'🔥🔥', label:'7일 연속', desc:'7일 연속으로 기록하면', check:function(ctx){ return ctx.streak>=7; } },
+    { id:'streak_30', icon:'🔥🔥🔥', label:'30일 연속', desc:'30일 연속으로 기록하면', check:function(ctx){ return ctx.streak>=30; } },
+    { id:'record_50', icon:'📚', label:'기록 마스터', desc:'기록을 50개 이상 남기면', check:function(ctx){ return ctx.records>=50; } },
+    { id:'ms_5', icon:'🎯', label:'마일스톤 헌터', desc:'마일스톤을 5개 이상 완료하면', check:function(ctx){ return ctx.msDone>=5; } },
+    { id:'ms_20', icon:'🏹', label:'마일스톤 정복자', desc:'마일스톤을 20개 이상 완료하면', check:function(ctx){ return ctx.msDone>=20; } },
+    { id:'level_5', icon:'⭐', label:'레벨 5', desc:'레벨 5를 달성하면', check:function(ctx){ return ctx.level>=5; } },
+    { id:'level_10', icon:'🌟', label:'레벨 10', desc:'레벨 10을 달성하면', check:function(ctx){ return ctx.level>=10; } },
+    { id:'first_finish', icon:'🏆', label:'첫 완주', desc:'목표를 1개 이상 완주(보관)하면', check:function(ctx){ return ctx.archived>=1; } }
+  ];
+  function openHallOfFame(){
+    var ctx = badgeContext(state.profile);
+    var unlocked = BADGES.filter(function(b){ return b.check(ctx); });
+    openModal(
+      '<h3>🏆 명예의 전당</h3>' +
+      '<p class="faint" style="margin:-8px 0 14px;">'+unlocked.length+' / '+BADGES.length+'개 획득</p>' +
+      '<div class="badge-grid">' +
+        BADGES.map(function(b){
+          var on = b.check(ctx);
+          return '<div class="badge-tile'+(on?' on':'')+'">' +
+            '<div class="badge-icon">'+(on?b.icon:'🔒')+'</div>' +
+            '<div class="badge-label">'+escapeHtml(b.label)+'</div>' +
+            '<div class="badge-desc">'+escapeHtml(b.desc)+'</div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+      '<div class="modal-actions"><button class="btn btn-primary" id="hofClose" type="button">닫기</button></div>',
+      function(sheet){ sheet.querySelector('#hofClose').addEventListener('click', closeModal); }
+    );
+  }
 
   function defaultProfile(id, username, displayName){
     return {
@@ -957,7 +1068,7 @@
     };
   }
 
-  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, feedReacted: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7 };
+  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7 };
 
   async function ensureUserRow(userId, username, displayName){
     var found = await sb.from('users').select('*').eq('id', userId).maybeSingle();
@@ -1119,14 +1230,27 @@
   });
 
   /* ============ Enter app ============ */
-  function enterApp(){
+  async function enterApp(){
     document.getElementById('authScreen').style.display = 'none';
     var shell = document.getElementById('appShell');
     shell.classList.add('active');
     document.getElementById('topUserName').textContent = state.profile.displayName;
     document.getElementById('homeGreeting').textContent = state.profile.displayName + '님, 안녕하세요';
+    await checkStreakFreeze();
     renderAll();
     setupNotifyTimer();
+    if(state.profile.settings.notify) syncPushSubscription();
+    checkSocialNotifications();
+  }
+
+  /* ============ 스트릭 프리즈 (연속기록 보호권) ============ */
+  async function checkStreakFreeze(){
+    if(!state.profile.settings.streakFreeze) state.profile.settings.streakFreeze = { available:1, usedDates:[], grantedTier:0 };
+    var applied = maybeApplyStreakFreeze();
+    var granted = maybeGrantStreakFreeze();
+    if(applied || granted) await saveProfile();
+    if(applied) toast('🧊 어제 기록을 못 남겼지만 스트릭 프리즈로 연속 기록이 지켜졌어요');
+    else if(granted) toast('🧊 스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요');
   }
 
   /* ============ Onboarding (first-time, after signup) ============ */
@@ -1157,12 +1281,13 @@
             });
           });
           sheet.querySelector('#obNext1').addEventListener('click', showObStep2);
-          sheet.querySelector('#obSkip').addEventListener('click', function(){
+          sheet.querySelector('#obSkip').addEventListener('click', async function(){
             closeModal();
             state.commSubTab = 'feed';
             enterApp();
             setTab('comm');
             toast('마음에 드는 목표를 찾으면 바로 복사할 수 있어요');
+            await maybeShowFirstLoginGuide();
           });
         }
       );
@@ -1223,7 +1348,9 @@
             closeModal();
             enterApp();
             toast('목표를 만들었어요 — 시작해봐요!');
-            showCommTourModal();
+            var alreadySeenGuide = state.profile.settings.hasSeenGuide;
+            await maybeShowFirstLoginGuide();
+            if(alreadySeenGuide) showCommTourModal();
           });
         }
       );
@@ -1248,6 +1375,75 @@
         });
       }
     );
+  }
+
+  /* ============ 최초 로그인 활용가이드 (온보딩 흐름 완료 직후 1회) ============ */
+  async function maybeShowFirstLoginGuide(){
+    if(state.profile.settings.hasSeenGuide) return;
+    state.profile.settings.hasSeenGuide = true;
+    await saveProfile();
+    startFirstLoginGuide();
+  }
+
+  function startFirstLoginGuide(){
+    showGuideStep1();
+
+    function showGuideStep1(){
+      openModal(
+        '<p class="ob-step-label">1 / 4 · 환영해요</p>' +
+        '<h3>🤖 안녕하세요 '+escapeHtml(state.profile.displayName)+'님, 아워골 최초 로그인을 축하드립니다!</h3>' +
+        '<p class="muted" style="margin:-8px 0 18px;">앱 활용가이드를 확인해주세요 — 30초면 아워골이 다른 목표 관리 앱과 다른 점 3가지를 모두 알 수 있어요.</p>' +
+        '<div class="modal-actions"><button class="btn btn-primary btn-block" id="guideNext1" type="button">다음</button></div>' +
+        '<button class="land-login-link" id="guideSkip1" type="button" style="width:100%;background:none;margin-top:12px;">나중에 볼게요</button>',
+        function(sheet){
+          sheet.querySelector('#guideNext1').addEventListener('click', showGuideStep2);
+          sheet.querySelector('#guideSkip1').addEventListener('click', function(){ closeModal(); showCommTourModal(); });
+        }
+      );
+    }
+
+    function showGuideStep2(){
+      openModal(
+        '<p class="ob-step-label">2 / 4 · AI 연동</p>' +
+        '<h3>🧠 목표를 읽는 AI 코치</h3>' +
+        '<div class="mission-card"><div class="mi">🤖</div><div><b>AI 자동 코칭</b><span>체크인 기록을 스스로 분석해서 목표 상태를 업데이트하고, 다음에 뭘 하면 좋을지 한 줄로 제안해드려요</span></div></div>' +
+        '<div class="mission-card"><div class="mi">🎭</div><div><b>나만의 피드백 봇</b><span>말투와 성격까지 직접 설정해서, 나에게 맞는 방식으로 피드백을 받아보세요</span></div></div>' +
+        '<p class="faint" style="margin:10px 0 0;">Claude·Gemini 중 원하는 AI를 골라 쓸 수 있어요.</p>' +
+        '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack2" type="button">이전</button><button class="btn btn-primary" id="guideNext2" type="button">다음</button></div>',
+        function(sheet){
+          sheet.querySelector('#guideBack2').addEventListener('click', showGuideStep1);
+          sheet.querySelector('#guideNext2').addEventListener('click', showGuideStep3);
+        }
+      );
+    }
+
+    function showGuideStep3(){
+      openModal(
+        '<p class="ob-step-label">3 / 4 · 캘린더 연동</p>' +
+        '<h3>📅 마일스톤이 캘린더에 저절로</h3>' +
+        '<div class="mission-card"><div class="mi">📆</div><div><b>구글 캘린더 자동 연동</b><span>마감일과 마일스톤이 구글 캘린더에 자동으로 올라가요. 구글 계정과 연결된 삼성 캘린더 등에도 그대로 반영돼요</span></div></div>' +
+        '<p class="faint" style="margin:10px 0 0;">설정 탭에서 한 번만 연결하면 계속 자동으로 동기화돼요.</p>' +
+        '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack3" type="button">이전</button><button class="btn btn-primary" id="guideNext3" type="button">다음</button></div>',
+        function(sheet){
+          sheet.querySelector('#guideBack3').addEventListener('click', showGuideStep2);
+          sheet.querySelector('#guideNext3').addEventListener('click', showGuideStep4);
+        }
+      );
+    }
+
+    function showGuideStep4(){
+      openModal(
+        '<p class="ob-step-label">4 / 4 · 나만의 방식으로</p>' +
+        '<h3>🔐 내 데이터는 내 방식대로</h3>' +
+        '<div class="mission-card"><div class="mi">🔑</div><div><b>API 커스텀 연결</b><span>구글 캘린더·AI 키를 내가 직접 연결해서 쓰는 구조라, 어떤 서비스가 연결되는지 항상 내가 통제할 수 있어요</span></div></div>' +
+        '<div class="mission-card"><div class="mi">🕶️</div><div><b>비공개 설정</b><span>목표와 지역 정보를 공개할지 나만 볼지 자유롭게 선택할 수 있어요</span></div></div>' +
+        '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack4" type="button">이전</button><button class="btn btn-primary" id="guideFinish4" type="button">시작하기</button></div>',
+        function(sheet){
+          sheet.querySelector('#guideBack4').addEventListener('click', showGuideStep3);
+          sheet.querySelector('#guideFinish4').addEventListener('click', function(){ closeModal(); showCommTourModal(); });
+        }
+      );
+    }
   }
 
   var navButtons = document.querySelectorAll('.navbtn');
@@ -1410,11 +1606,14 @@
             if(navigator.vibrate) navigator.vibrate([12,40,24]);
             burstConfetti(window.innerWidth/2, window.innerHeight/2);
           }
-if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
-                        await saveProfile();
+          var msXpRes = null;
+          if(kind==='ms' && !wasDone && obj.status==='done') msXpRes = awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
+          await saveProfile();
           closeModal();
           toast(pct!==null ? '달성률 '+pct+'%로 기록했어요' : '결과를 기록했어요');
           if(onSaved) onSaved();
+          renderLevelBadge();
+          if(msXpRes && msXpRes.leveledUp) showLevelUpBanner(levelForXP(msXpRes.total));
           if(celebrateMs) celebrateMilestoneDone(goal, obj);
         });
       }
@@ -1461,9 +1660,13 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
           '<div class="profile-stat"><b>'+p.records.length+'</b><span>총 기록</span></div>' +
           '<div class="profile-stat"><b>'+streak+'</b><span>연속일</span></div>' +
         '</div>' +
-        '<button class="btn btn-ghost btn-sm" id="editProfileBtn" type="button" style="width:100%;margin-top:12px;">프로필 편집</button>' +
+        '<div style="display:flex;gap:8px;margin-top:12px;">' +
+          '<button class="btn btn-ghost btn-sm" id="editProfileBtn" type="button" style="flex:1;">프로필 편집</button>' +
+          '<button class="btn btn-ghost btn-sm" id="hallOfFameBtn" type="button" style="flex:1;">🏆 명예의 전당</button>' +
+        '</div>' +
       '</div>';
     document.getElementById('editProfileBtn').addEventListener('click', openProfileEditor);
+    document.getElementById('hallOfFameBtn').addEventListener('click', openHallOfFame);
   }
 
   function resizeImageToDataUrl(file, max, cb){
@@ -1808,9 +2011,11 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
   }
   function computeStreakDays(){
     var recs = state.profile.records;
-    if(!recs.length) return 0;
+    var frozen = (state.profile.settings.streakFreeze && state.profile.settings.streakFreeze.usedDates) || [];
+    if(!recs.length && !frozen.length) return 0;
     var days = {};
     recs.forEach(function(r){ days[dateKey(r.startAt)] = true; });
+    frozen.forEach(function(k){ days[k] = true; });
     var streak = 0;
     var cursor = new Date(); cursor.setHours(0,0,0,0);
     while(days[cursor.getFullYear()+'-'+pad(cursor.getMonth()+1)+'-'+pad(cursor.getDate())]){
@@ -1819,13 +2024,44 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
     }
     return streak;
   }
+  var STREAK_FREEZE_MAX = 3;
+  function maybeGrantStreakFreeze(){
+    var sf = state.profile.settings.streakFreeze;
+    if(!sf) return false;
+    var tier = Math.floor(computeStreakDays() / 7);
+    if(tier <= (sf.grantedTier||0)) return false;
+    sf.grantedTier = tier;
+    if(sf.available >= STREAK_FREEZE_MAX) return false;
+    sf.available = Math.min(STREAK_FREEZE_MAX, sf.available + 1);
+    return true;
+  }
+  function maybeApplyStreakFreeze(){
+    var sf = state.profile.settings.streakFreeze;
+    if(!sf || sf.available <= 0) return false;
+    var recs = state.profile.records;
+    var hasRecordOn = function(k){ return recs.some(function(r){ return dateKey(r.startAt)===k; }); };
+    var y = new Date(); y.setHours(0,0,0,0); y.setDate(y.getDate()-1);
+    var yKey = y.getFullYear()+'-'+pad(y.getMonth()+1)+'-'+pad(y.getDate());
+    if(hasRecordOn(yKey) || sf.usedDates.indexOf(yKey)!==-1) return false;
+    var bb = new Date(y); bb.setDate(bb.getDate()-1);
+    var bbKey = bb.getFullYear()+'-'+pad(bb.getMonth()+1)+'-'+pad(bb.getDate());
+    if(!hasRecordOn(bbKey) && sf.usedDates.indexOf(bbKey)===-1) return false;
+    sf.available--;
+    sf.usedDates.push(yKey);
+    return true;
+  }
 
   /* ============ RENDER: HOME ============ */
   function renderHome(){
     refreshCustomFeedbackButtons();
+    renderLevelBadge();
+    renderTodayMissionCard();
     var streak = computeStreakDays();
     var badgeEl = document.getElementById('streakBadge');
     if(badgeEl) badgeEl.innerHTML = streak>0 ? streakBadgeHtml(streak) : '';
+    var freezeEl = document.getElementById('streakFreezeBadge');
+    var sf = state.profile.settings.streakFreeze;
+    if(freezeEl) freezeEl.innerHTML = (sf && sf.available>0) ? '<span class="freeze-pill" title="하루를 놓쳐도 스트릭이 끊기지 않게 지켜줘요">🧊'+sf.available+'</span>' : '';
     var wrap = document.getElementById('homeGoalList');
     var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     if(!goals.length){
@@ -1868,7 +2104,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
     var goal = state.profile.goals.find(function(g){ return g.id===state.activeGoalId; }) || state.profile.goals[0];
     state.profile.records.unshift({ id: newId(), type:'note', text: text, startAt: nowISO(), endAt: nowISO(), createdAt: nowISO(), category: goal ? goal.category : null });
     t.value = '';
-    awardXP(XP_RULES.checkin, '체크인');
+    var xpRes = awardXP(XP_RULES.checkin, '체크인');
     await saveProfile();
     toast('기록했어요');
     if(navigator.vibrate) navigator.vibrate(10);
@@ -1879,6 +2115,8 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
     void saveBtn.offsetWidth;
     saveBtn.classList.add('btn-cs-pulse');
     renderFeedbackSlot(null);
+    renderLevelBadge();
+    if(xpRes.leveledUp) showLevelUpBanner(levelForXP(xpRes.total));
 
     var newRec = state.profile.records[0];
     var fb = null;
@@ -2119,6 +2357,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
         sheet.querySelector('#sugSkipBtn').addEventListener('click', closeModal);
         sheet.querySelector('#sugApplyBtn').addEventListener('click', async function(){
           var applied = [];
+          var newlyDoneMsCount = 0;
           var newlyDoneMs = [];
           valid.forEach(function(s, i){
             if(!checked[i]) return;
@@ -2126,11 +2365,15 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
             var wasMsDone = s.type==='milestone' && target && target.milestone.status==='done';
             if(applySuggestion(goal, s)){
               applied.push(describeSuggestion(goal, s));
-              if(s.type==='milestone' && target && !wasMsDone && target.milestone.status==='done') newlyDoneMs.push(target.milestone);
+              if(s.type==='milestone' && target && !wasMsDone && target.milestone.status==='done'){
+                newlyDoneMsCount++;
+                newlyDoneMs.push(target.milestone);
+              }
             }
           });
           if(!applied.length){ closeModal(); return; }
-          for(var i=0;i<newlyDoneMs.length;i++) awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
+          var lastXpRes = null;
+          for(var i=0;i<newlyDoneMsCount;i++) lastXpRes = awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
           await saveProfile();
           closeModal();
           var becameDone = applied.some(function(a){ return a.label.indexOf('완료')!==-1; });
@@ -2141,6 +2384,8 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
           }
           toast(applied.length+'개 항목을 목표에 반영했어요 🎯');
           renderAll();
+          renderLevelBadge();
+          if(lastXpRes && lastXpRes.leveledUp) showLevelUpBanner(levelForXP(lastXpRes.total));
           if(newlyDoneMs.length) celebrateMilestoneDone(goal, newlyDoneMs[0]);
         });
       }
@@ -2696,6 +2941,147 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
     );
   }
 
+  /* ============ 대화로 목표 관리 (AI diff 제안 + 확인 후 반영) ============ */
+  function goalAgentSnapshot(){
+    return state.profile.goals.filter(function(g){ return !g.archivedAt; }).map(function(g){
+      return {
+        id: g.id, title: g.title, dueDate: g.dueDate || null,
+        milestones: (g.milestones||[]).map(function(m){
+          return {
+            id: m.id, title: m.title, status: m.status, dueDate: m.dueDate || null,
+            tasks: (m.tasks||[]).map(function(t){ return { id: t.id, title: t.title, done: !!t.done }; })
+          };
+        })
+      };
+    });
+  }
+  async function requestGoalAgentDiff(message){
+    var controller = new AbortController();
+    var timer = setTimeout(function(){ controller.abort(); }, 28000);
+    try{
+      var res = await fetch('/api/goalagent', {
+        method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
+        body: JSON.stringify({ message: message, goals: goalAgentSnapshot(), today: new Date().toISOString().slice(0,10) })
+      });
+      clearTimeout(timer);
+      if(!res.ok) return null;
+      var data = await res.json();
+      if(!data || !Array.isArray(data.ops)) return null;
+      return data;
+    } catch(e){ clearTimeout(timer); return null; }
+  }
+  function buildGoalFromAgentData(data){
+    var milestones = (data.milestones||[]).map(function(m){
+      return { id: uid('ms'), title: m.title, status:'todo', dueDate:null, tasks:(m.tasks||[]).map(function(tk){ return { id: uid('task'), title: tk, done:false }; }) };
+    });
+    return {
+      id: newId(), title: data.title, dueDate: data.dueDate || null,
+      category:'etc', topic: data.topicMajor ? (data.topicMajor+'/'+(data.topicMinor||'')) : '',
+      createdAt: nowISO(), visibility:'public', archivedAt:null, result:null, milestones: milestones
+    };
+  }
+  function applyGoalAgentOp(op){
+    var goals = state.profile.goals;
+    if(op.level==='goal'){
+      if(op.type==='CREATE'){
+        var newGoal = buildGoalFromAgentData(op.data);
+        goals.push(newGoal);
+        state.activeGoalId = newGoal.id;
+        return true;
+      }
+      var goal = goals.find(function(g){ return g.id===op.goalId; });
+      if(!goal) return false;
+      if(op.type==='DELETE'){
+        state.profile.goals = goals.filter(function(g){ return g.id!==op.goalId; });
+        if(state.activeGoalId===op.goalId) state.activeGoalId = null;
+        return true;
+      }
+      if('title' in op.data) goal.title = op.data.title;
+      if('dueDate' in op.data) goal.dueDate = op.data.dueDate;
+      return true;
+    }
+    var goal2 = goals.find(function(g){ return g.id===op.goalId; });
+    if(!goal2) return false;
+    if(op.level==='milestone'){
+      if(op.type==='CREATE'){
+        goal2.milestones.push({ id: uid('ms'), title: op.data.title, status:'todo', dueDate: op.data.dueDate||null,
+          tasks:(op.data.tasks||[]).map(function(tk){ return { id: uid('task'), title: tk, done:false }; }) });
+        return true;
+      }
+      var ms = goal2.milestones.find(function(m){ return m.id===op.milestoneId; });
+      if(!ms) return false;
+      if(op.type==='DELETE'){
+        goal2.milestones = goal2.milestones.filter(function(m){ return m.id!==op.milestoneId; });
+        return true;
+      }
+      if('title' in op.data) ms.title = op.data.title;
+      if('dueDate' in op.data) ms.dueDate = op.data.dueDate;
+      if('status' in op.data) ms.status = op.data.status;
+      return true;
+    }
+    var ms2 = goal2.milestones.find(function(m){ return m.id===op.milestoneId; });
+    if(!ms2) return false;
+    if(op.type==='CREATE'){
+      ms2.tasks.push({ id: uid('task'), title: op.data.title, done:false });
+      return true;
+    }
+    var task = ms2.tasks.find(function(t){ return t.id===op.taskId; });
+    if(!task) return false;
+    if(op.type==='DELETE'){
+      ms2.tasks = ms2.tasks.filter(function(t){ return t.id!==op.taskId; });
+      return true;
+    }
+    if('title' in op.data) task.title = op.data.title;
+    if('done' in op.data) task.done = op.data.done;
+    return true;
+  }
+  function showGoalAgentLoadingStep(){
+    openModal('<h3>🤖 이대로 반영할까요?</h3>' + fbBotBubbleHtml('<p class="faint" style="margin:0;">요청을 분석하는 중… 🛠️</p>'), null);
+  }
+  function showGoalAgentReviewStep(diff){
+    openModal(
+      '<h3>🤖 이대로 반영할까요?</h3>' +
+      (diff.reply ? '<p class="faint" style="margin:-8px 0 14px;">'+escapeHtml(diff.reply)+'</p>' : '') +
+      '<div class="ms-list">' +
+        diff.ops.map(function(op){
+          var icon = op.type==='CREATE' ? '➕' : (op.type==='DELETE' ? '🗑' : '✏️');
+          return '<div class="ms-row"><div class="ms-main">' +
+            '<div style="flex:1;min-width:0;"><div style="font-size:.84rem;font-weight:700;">'+icon+' '+escapeHtml(op.summary)+'</div></div>' +
+          '</div></div>';
+        }).join('') +
+      '</div>' +
+      '<div class="modal-actions"><button class="btn btn-ghost" id="gaCancelBtn" type="button">취소</button><button class="btn btn-primary" id="gaApplyBtn" type="button">반영</button></div>',
+      function(sheet){
+        sheet.querySelector('#gaCancelBtn').addEventListener('click', closeModal);
+        sheet.querySelector('#gaApplyBtn').addEventListener('click', async function(){
+          var applied = 0;
+          diff.ops.forEach(function(op){ if(applyGoalAgentOp(op)) applied++; });
+          if(!applied){ closeModal(); toast('반영할 변경사항이 없어요'); return; }
+          await saveProfile();
+          closeModal();
+          renderAll();
+          toast(applied+'개 변경사항을 반영했어요');
+        });
+      }
+    );
+  }
+  async function sendGoalAgentMessage(){
+    var input = document.getElementById('goalAgentInput');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    showGoalAgentLoadingStep();
+    var diff = await requestGoalAgentDiff(text);
+    if(!diff || !diff.ops.length){
+      closeModal();
+      toast((diff && diff.reply) || '요청을 처리하지 못했어요 · 다시 시도해주세요');
+      return;
+    }
+    showGoalAgentReviewStep(diff);
+  }
+  document.getElementById('goalAgentSendBtn').addEventListener('click', sendGoalAgentMessage);
+  document.getElementById('goalAgentInput').addEventListener('keydown', function(e){ if(e.key==='Enter') sendGoalAgentMessage(); });
+
   /* ============ 목표 현황 데이터 내보내기 (AI 분석용) ============ */
   function buildGoalSnapshot(goals){
     var p = state.profile;
@@ -2796,10 +3182,15 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
   async function archiveGoal(goal){
     goal.archivedAt = nowISO();
     state.activeGoalId = null;
+    var fullyAchieved = goalAchievement(goal) >= 100;
     await saveProfile();
     renderAll();
     setTab('records');
-    toast('"'+goal.title+'"을(를) 기록으로 옮겼어요');
+    if(fullyAchieved){
+      openGoalCertificateModal(goal);
+    } else {
+      toast('"'+goal.title+'"을(를) 기록으로 옮겼어요');
+    }
   }
   async function restoreGoal(goal){
     var active = state.profile.goals.filter(function(g){ return !g.archivedAt; });
@@ -2903,6 +3294,62 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
         if(el) el.textContent = text;
         if(tag) tag.textContent = '🤖 AI 요약';
       }
+    });
+  }
+
+  /* ============ 오늘의 미션 ============ */
+  function milestonesForMission(goal){
+    return goal.milestones.filter(function(m){ return m.status!=='done'; }).map(function(m){
+      return { title: m.title, status: m.status, tasks: (m.tasks||[]).filter(function(t){ return !t.done; }).map(function(t){ return { title: t.title }; }) };
+    });
+  }
+  function localTodayMission(goal){
+    var open = goal.milestones.find(function(m){ return m.status!=='done'; });
+    return open ? '오늘은 "'+open.title+'" 마일스톤을 위해 작게 한 걸음 내딛어보세요.' : '오늘은 그동안의 기록을 돌아보며 다음 목표를 그려보세요.';
+  }
+  async function requestTodayMission(goal){
+    var controller = new AbortController();
+    var timer = setTimeout(function(){ controller.abort(); }, 28000);
+    try{
+      var res = await fetch('/api/todaymission', {
+        method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
+        body: JSON.stringify({ goalTitle: goal.title, milestones: milestonesForMission(goal) })
+      });
+      clearTimeout(timer);
+      if(!res.ok) return localTodayMission(goal);
+      var data = await res.json();
+      var text = data && data.mission ? String(data.mission).trim() : '';
+      if(!text || text.length<6 || text.length>80) return localTodayMission(goal);
+      return text;
+    } catch(e){ clearTimeout(timer); return localTodayMission(goal); }
+  }
+  function renderTodayMissionCard(){
+    var el = document.getElementById('todayMissionCard');
+    if(!el || !state.profile) return;
+    var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
+    if(!goals.length){ el.innerHTML = ''; return; }
+    var today = dateKey(nowISO());
+    var missions = state.profile.settings.todayMissions || {};
+    el.innerHTML = '<div class="mission-card"><div class="ct-label">🎯 오늘의 미션</div>' +
+      goals.map(function(g){
+        var m = missions[g.id];
+        var text = (m && m.date===today) ? m.text : '생각하는 중...';
+        return '<div class="mission-row"><span class="m-icon">✅</span><span><span class="m-goal">'+escapeHtml(g.title)+'</span> · <span class="m-text">'+escapeHtml(text)+'</span></span></div>';
+      }).join('') +
+    '</div>';
+    goals.forEach(function(g){
+      var m = missions[g.id];
+      if(m && m.date===today) return;
+      if(!state.todayMissionPending) state.todayMissionPending = {};
+      if(state.todayMissionPending[g.id]) return;
+      state.todayMissionPending[g.id] = true;
+      requestTodayMission(g).then(async function(text){
+        delete state.todayMissionPending[g.id];
+        if(!state.profile.settings.todayMissions) state.profile.settings.todayMissions = {};
+        state.profile.settings.todayMissions[g.id] = { date: today, text: text };
+        await saveProfile();
+        if(state.activeTab==='home') renderTodayMissionCard();
+      });
     });
   }
 
@@ -3269,9 +3716,11 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
         var order = ['todo','doing','done'];
         var wasDone = ms.status==='done';
         ms.status = order[(order.indexOf(ms.status)+1)%3];
-        if(!wasDone && ms.status==='done') awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
+        var cycleXpRes = (!wasDone && ms.status==='done') ? awardXP(XP_RULES.milestoneDone, '마일스톤 완료') : null;
         await saveProfile();
         renderGoalsScreen();
+        renderLevelBadge();
+        if(cycleXpRes && cycleXpRes.leveledUp) showLevelUpBanner(levelForXP(cycleXpRes.total));
         if(!wasDone && ms.status==='done') celebrateMilestoneDone(goal, ms);
       });
 
@@ -3744,10 +4193,11 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
   document.getElementById('recAddBtn').addEventListener('click', function(){ openRecordModal(null); });
 
   function buildCSV(){
-    var rows = [['날짜','시작','종료','소요시간(분)','내용']];
+    var rows = [['날짜','시작','종료','소요시간(분)','분야','내용']];
     state.profile.records.slice().sort(function(a,b){ return new Date(a.startAt)-new Date(b.startAt); }).forEach(function(r){
       var mins = r.endAt ? Math.round((new Date(r.endAt)-new Date(r.startAt))/60000) : '';
-      rows.push([dateKey(r.startAt), fmtTime(r.startAt), r.endAt?fmtTime(r.endAt):'진행중', mins, r.text]);
+      var catLabel = r.category && TOPICS[r.category] ? TOPICS[r.category].label : '';
+      rows.push([dateKey(r.startAt), fmtTime(r.startAt), r.endAt?fmtTime(r.endAt):'진행중', mins, catLabel, r.text]);
     });
     return rows.map(function(row){
       return row.map(function(cell){
@@ -3756,15 +4206,16 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
       }).join(',');
     }).join('\n');
   }
-  document.getElementById('exportRecordsBtn').addEventListener('click', function(){
+  function exportAllCheckins(){
     var fmt = state.profile.settings.exportFormat || 'csv';
     if(fmt==='json'){
       download('아워골_기록_'+dateKey(nowISO())+'.json', JSON.stringify(state.profile.records, null, 2), 'application/json');
     } else {
       download('아워골_기록_'+dateKey(nowISO())+'.csv', '\uFEFF'+buildCSV(), 'text/csv;charset=utf-8');
     }
-    toast('다운로드했어요');
-  });
+    toast('체크인 '+state.profile.records.length+'개를 전부 내려받았어요');
+  }
+  document.getElementById('exportRecordsBtn').addEventListener('click', exportAllCheckins);
 
   /* ============ RENDER: COMM ============ */
   /* ============ Mock community data (샘플, 서버 없이 데모) ============ */
@@ -4213,6 +4664,113 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
     if(typeof days==='number') lines.push(days+'일째 진행 중');
     return lines.join('\n') || ('아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪');
   }
+
+  /* ============ 목표 완주 인증서 (기존 공유 캔버스 인프라 재사용) ============ */
+  async function generateGoalCertificateImage(goal, pct, days){
+    if(document.fonts && document.fonts.ready){ try{ await document.fonts.ready; } catch(e){} }
+    var dims = { w:720, h:720 };
+    var canvas = document.createElement('canvas');
+    canvas.width = dims.w; canvas.height = dims.h;
+    var ctx = canvas.getContext('2d');
+
+    var grad = ctx.createLinearGradient(0,0,dims.w,dims.h);
+    grad.addColorStop(0,'#6C5CE7'); grad.addColorStop(1,'#FF9F1C');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0,0,dims.w,dims.h);
+
+    var pad = Math.round(dims.w*0.09);
+    var innerW = dims.w - pad*2;
+    var borderPad = Math.round(dims.w*0.035);
+    ctx.strokeStyle = 'rgba(255,255,255,.75)';
+    ctx.lineWidth = Math.round(dims.w*0.008);
+    scRoundRect(ctx, borderPad, borderPad, dims.w-borderPad*2, dims.h-borderPad*2, dims.w*0.05);
+    ctx.stroke();
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = '#fff';
+
+    ctx.globalAlpha = .85;
+    ctx.font = '700 ' + Math.round(dims.w*0.032) + 'px "Noto Sans KR",sans-serif';
+    ctx.fillText('아워골 · 목표 완주 인증서', dims.w/2, pad + dims.w*0.05);
+    ctx.globalAlpha = 1;
+
+    ctx.font = Math.round(dims.w*0.16) + 'px sans-serif';
+    ctx.fillText('🏆', dims.w/2, pad + dims.w*0.26);
+
+    ctx.font = '900 ' + Math.round(dims.w*0.062) + 'px "Noto Sans KR",sans-serif';
+    var titleLines = scWrapLines(ctx, goal.title, innerW, 2);
+    var afterTitleY = scDrawLines(ctx, titleLines, dims.w/2, pad+dims.w*0.42, dims.w*0.075);
+
+    ctx.globalAlpha = .92;
+    ctx.font = '800 ' + Math.round(dims.w*0.042) + 'px "Noto Sans KR",sans-serif';
+    ctx.fillText(pct+'% 달성으로 완주했어요', dims.w/2, afterTitleY + dims.w*0.045);
+    ctx.globalAlpha = .75;
+    ctx.font = '600 ' + Math.round(dims.w*0.03) + 'px "Noto Sans KR",sans-serif';
+    ctx.fillText(days+'일 동안의 여정', dims.w/2, afterTitleY + dims.w*0.09);
+    ctx.globalAlpha = 1;
+
+    ctx.globalAlpha = .6;
+    ctx.font = '500 ' + Math.round(dims.w*0.024) + 'px "Noto Sans KR",sans-serif';
+    ctx.fillText(dateKey(nowISO())+' · '+(state.profile.displayName||''), dims.w/2, dims.h - pad*0.7);
+    ctx.globalAlpha = 1;
+    ctx.textAlign = 'left';
+
+    return canvas;
+  }
+  async function openGoalCertificateModal(goal){
+    var pct = goalAchievement(goal);
+    var days = Math.max(1, Math.round((new Date(goal.archivedAt||nowISO()) - new Date(goal.createdAt))/86400000));
+    openModal(
+      '<h3 style="text-align:center;">🏆 완주를 축하해요!</h3>' +
+      '<p class="muted" style="text-align:center;margin:-6px 0 16px;">"'+escapeHtml(goal.title)+'"을(를) '+pct+'% 달성으로 마쳤어요</p>' +
+      '<div id="certImgWrap" style="text-align:center;color:var(--ink-faint);padding:60px 0;">인증서 만드는 중…</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn btn-primary" id="certShareBtn" type="button" disabled>공유하기</button>' +
+        '<button class="btn btn-ghost" id="certSaveBtn" type="button" disabled>이미지 저장</button>' +
+      '</div>',
+      function(){
+        if(navigator.vibrate) navigator.vibrate([12,40,24]);
+        burstConfetti(window.innerWidth/2, window.innerHeight/3);
+      }
+    );
+    var canvas = await generateGoalCertificateImage(goal, pct, days);
+    var dataUrl = canvas.toDataURL('image/png');
+    var wrap = document.getElementById('certImgWrap');
+    if(!wrap) return; // 사용자가 모달을 이미 닫음
+    wrap.outerHTML = '<img id="certImgWrap" src="'+dataUrl+'" alt="목표 완주 인증서" style="width:100%;border-radius:18px;box-shadow:var(--shadow-sm);display:block;">';
+    var shareBtn = document.getElementById('certShareBtn');
+    var saveBtn = document.getElementById('certSaveBtn');
+    if(shareBtn) shareBtn.disabled = false;
+    if(saveBtn) saveBtn.disabled = false;
+    if(shareBtn) shareBtn.addEventListener('click', async function(){
+      var text = '아워골에서 "'+goal.title+'" '+pct+'% 달성으로 완주했어요! 🏆';
+      try{
+        var blob = await (await fetch(dataUrl)).blob();
+        var file = new File([blob], 'ourgoal-certificate.png', { type:'image/png' });
+        if(navigator.canShare && navigator.canShare({ files:[file] })){
+          await navigator.share({ files:[file], title:'아워골', text: text });
+          toast('공유했어요');
+        } else if(navigator.share){
+          await navigator.share({ title:'아워골', text: text });
+          toast('이 기기는 이미지 공유를 지원하지 않아 문구로 공유했어요 · 이미지는 저장 버튼을 써주세요');
+        } else if(navigator.clipboard){
+          await navigator.clipboard.writeText(text);
+          toast('공유 문구를 복사했어요 · 이미지는 저장 버튼으로 받아주세요');
+        } else {
+          toast('이미지 저장 버튼으로 받아서 직접 공유해주세요');
+        }
+      } catch(e){ /* 사용자가 공유 시트를 취소함 */ }
+    });
+    if(saveBtn) saveBtn.addEventListener('click', function(){
+      var a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = '아워골_완주인증서.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      toast('이미지를 저장했어요');
+    });
+  }
+
   function renderCommShare(body){
     var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     if(!goals.length){
@@ -4466,7 +5024,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
   }
 
   function feedPostHtml(p){
-    var reacted = !!state.feedReacted[p.id];
+    var reacted = !!state.profile.settings.feedReactions[p.id];
     return '<div class="feed-item">' +
       '<div class="feed-avatar me">'+escapeHtml((state.profile.displayName||'').slice(0,1))+'</div>' +
       '<div class="feed-body">' +
@@ -4483,7 +5041,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
           p.milestones.map(function(m){ return '<span class="topic-pill">'+(m.status==='done'?'✅ ':(m.status==='doing'?'🔥 ':'· '))+escapeHtml(m.title)+'</span>'; }).join('') +
         '</div>' : '') +
         '<div class="feed-foot"><span class="feed-time">'+timeAgoStr(p.createdAt)+'</span>' +
-          '<button class="pill-react'+(reacted?' active':'')+'" data-react="'+p.id+'" type="button">응원 '+((p.cheers||0)+(reacted?1:0))+'</button>' +
+          '<button class="pill-react'+(reacted?' active':'')+'" data-react="'+p.id+'" type="button">응원 '+((p.cheers||0)+mockPostCheerCount(p)+(reacted?1:0))+'</button>' +
           '<button data-delpost="'+p.id+'" type="button" style="margin-left:8px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">삭제</button>' +
         '</div>' +
       '</div>' +
@@ -4504,7 +5062,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
       (hiddenCount ? ' · 🔒 나만 보기 '+hiddenCount+'개는 피드에 노출되지 않아요' : '') + '</p>' +
       myPosts.map(feedPostHtml).join('') +
       items.map(function(it){
-        var reacted = !!state.feedReacted[it.id];
+        var reacted = !!state.profile.settings.feedReactions[it.id];
         return '<div class="feed-item">' +
           '<div class="feed-avatar'+(it.me?' me':'')+'">'+escapeHtml(it.avatar)+'</div>' +
           '<div class="feed-body">' +
@@ -4517,9 +5075,17 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
         '</div>';
       }).join('');
     body.querySelectorAll('[data-react]').forEach(function(btn){
-      btn.addEventListener('click', function(){
+      btn.addEventListener('click', async function(){
         var id = btn.dataset.react;
-        state.feedReacted[id] = !state.feedReacted[id];
+        var reactions = state.profile.settings.feedReactions;
+        var nowOn = !reactions[id];
+        if(nowOn) reactions[id] = true; else delete reactions[id];
+        if(nowOn){
+          if(navigator.vibrate) navigator.vibrate(10);
+          var r = btn.getBoundingClientRect();
+          burstConfetti(r.left+r.width/2, r.top, 6);
+        }
+        await saveProfile();
         renderCommFeed(body);
       });
     });
@@ -5159,7 +5725,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
         renderCommDM(body);
         setTimeout(function(){
           person._thread.push({ from:'them', text: person.replies[Math.floor(Math.random()*person.replies.length)], time: fmtTime(nowISO()) });
-          if(state.dmActiveId===person.id) renderCommDM(body);
+          if(document.body.contains(body) && state.dmActiveId===person.id) renderCommDM(body);
         }, 700+Math.random()*600);
       }
       document.getElementById('dmSend').addEventListener('click', send);
@@ -5192,12 +5758,14 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
       inp.addEventListener('change', async function(){
         times[+inp.dataset.timeidx] = inp.value;
         await saveProfile();
+        if(state.profile.settings.notify) syncPushSubscription();
       });
     });
     row.querySelectorAll('[data-timedel]').forEach(function(btn){
       btn.addEventListener('click', async function(){
         times.splice(+btn.dataset.timedel, 1);
         await saveProfile(); renderSettingsScreen();
+        if(state.profile.settings.notify) syncPushSubscription();
       });
     });
 
@@ -5211,8 +5779,10 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
           if(perm!=='granted'){ toast('브라우저 알림 권한이 필요해요'); return; }
         }
         state.profile.settings.notify = true;
+        syncPushSubscription();
       } else {
         state.profile.settings.notify = false;
+        removePushSubscription();
       }
       await saveProfile();
       renderSettingsScreen();
@@ -5320,6 +5890,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
   document.getElementById('addTimeBtn').addEventListener('click', async function(){
     state.profile.settings.checkinTimes.push('12:00');
     await saveProfile(); renderSettingsScreen();
+    if(state.profile.settings.notify) syncPushSubscription();
   });
   document.getElementById('testNotifyBtn').addEventListener('click', function(){
     setTab('home');
@@ -5329,6 +5900,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
     }
   });
 
+  document.getElementById('settingsExportCheckins').addEventListener('click', exportAllCheckins);
   document.getElementById('settingsExportAll').addEventListener('click', function(){
     download('아워골_백업_'+state.profile.username+'.json', JSON.stringify(state.profile, null, 2), 'application/json');
     toast('전체 데이터를 내보냈어요');
@@ -5385,6 +5957,102 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
       container.innerHTML = '';
       setTab('home');
       document.getElementById('captureInput').focus();
+    });
+  }
+
+  /* ============ Web Push (앱이 꺼져 있어도 오는 알림) ============ */
+  function urlBase64ToUint8Array(base64String){
+    var padding = '='.repeat((4 - base64String.length % 4) % 4);
+    var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    var rawData = window.atob(base64);
+    var outputArray = new Uint8Array(rawData.length);
+    for(var i=0; i<rawData.length; i++) outputArray[i] = rawData.charCodeAt(i);
+    return outputArray;
+  }
+
+  async function syncPushSubscription(){
+    try{
+      if(!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+      if(!('Notification' in window) || Notification.permission!=='granted') return;
+      var reg = await navigator.serviceWorker.ready;
+      var sub = await reg.pushManager.getSubscription();
+      if(!sub){
+        var keyRes = await fetch('/api/vapid-public-key');
+        if(!keyRes.ok) return;
+        var keyData = await keyRes.json();
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(keyData.publicKey)
+        });
+      }
+      var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul';
+      await fetch('/api/push-subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: state.profile.id,
+          subscription: sub.toJSON(),
+          checkinTimes: state.profile.settings.checkinTimes,
+          timezone: timezone
+        })
+      });
+    } catch(e){ console.warn('Web Push 구독 실패:', e); }
+  }
+
+  async function removePushSubscription(){
+    try{
+      if(!('serviceWorker' in navigator)) return;
+      var reg = await navigator.serviceWorker.ready;
+      var sub = await reg.pushManager.getSubscription();
+      if(!sub) return;
+      var endpoint = sub.endpoint;
+      await sub.unsubscribe();
+      await fetch('/api/push-subscribe', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ endpoint: endpoint })
+      });
+    } catch(e){ console.warn('Web Push 구독 해제 실패:', e); }
+  }
+
+  /* ============ 받은 응원 알림 (mock: 시간 경과에 따라 내 게시물 응원이 쌓이는 것 + 마니또 받은 응원함) ============ */
+  function mockPostCheerCount(p){
+    if(!p || !p.id || !p.createdAt) return 0;
+    var hours = (Date.now() - new Date(p.createdAt).getTime()) / 3600000;
+    if(hours <= 0) return 0;
+    var speed = (hashStr(p.id) % 5) + 1;
+    return Math.min(Math.floor(hours / 3) * speed, 40);
+  }
+  function totalMockFeedCheers(){
+    var posts = (state.profile.settings.feedPosts || []);
+    var sum = 0;
+    posts.forEach(function(p){ sum += (p.cheers || 0) + mockPostCheerCount(p); });
+    return sum;
+  }
+  function checkSocialNotifications(){
+    var s = state.profile.settings;
+    if(!s.social) s.social = { cheersSeen:0, manitoSeen:0 };
+    var cheerTotal = totalMockFeedCheers();
+    var manitoTotal = manitoState().joined ? manitoInbox().length : 0;
+    var newCheers = Math.max(0, cheerTotal - s.social.cheersSeen);
+    var newManito = Math.max(0, manitoTotal - s.social.manitoSeen);
+    s.social.cheersSeen = cheerTotal;
+    s.social.manitoSeen = manitoTotal;
+    if(newCheers > 0 || newManito > 0){
+      showSocialNotifyBanner(newCheers, newManito);
+      saveProfile();
+    }
+  }
+  function showSocialNotifyBanner(newCheers, newManito){
+    var container = document.getElementById('socialNotifySlot');
+    if(!container) return;
+    var parts = [];
+    if(newCheers > 0) parts.push('내 기록에 응원 '+newCheers+'개');
+    if(newManito > 0) parts.push('마니또 응원 '+newManito+'개');
+    container.innerHTML = '<div class="notify-banner"><div class="nb-txt"><b>🎉 응원이 도착했어요</b>'+parts.join(' · ')+'</div><button id="sbOpen" type="button">확인하기</button></div>';
+    document.getElementById('sbOpen').addEventListener('click', function(){
+      container.innerHTML = '';
+      setTab('comm');
     });
   }
 

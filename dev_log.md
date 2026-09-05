@@ -354,3 +354,179 @@
 - **검증 결과**: 수정 전 `node -e`로 구문 오류 재현 확인 → 수정 후 통과, `node scripts/smoke-test.js` 28개 전부 통과, 저장소 전체 충돌 마커 재검색 클린, `celebrateMilestoneDone`/`awardXP`/`XP_RULES` 등 관련 함수 존재 확인. 병합 전까지는 실제 배포본이 깨진 상태일 수 있어 사용자에게 최우선 병합을 요청함.
 ---
 
+## [2026-09-05 14:24] 목표 탭 개인/팀 목표 분리 + 팀 목표 데이터 모델링
+- **목표**: 사용자 직접 요청 — 목표(`screen-goals`) 화면을 '개인 목표'/'팀 목표' 서브 탭으로 분리하고, 팀 목표는 팀장(Owner)·매니저(Manager)만 추가/수정/삭제할 수 있도록 권한 기반 데이터 모델을 설계.
+- **수정/실행 내역**:
+  (1) `screen-goals`에 기존 소통 탭과 동일한 `.comm-subtabs`/`.comm-subtab` 클래스를 그대로 재사용한 서브 탭 추가(신규 CSS 없음). 기존 목표 헤드 로우·칩 로우·상세 바디는 `#personalGoalsView`로 감싸 그대로 두고, `#teamGoalsView`를 새로 추가.
+  (2) `renderGoalsScreen()` 맨 앞에 서브탭 렌더링·토글 로직만 추가(기존 개인 목표 렌더링 본문은 한 글자도 수정하지 않음) — `state.goalsSubTab==='team'`이면 신규 `renderTeamGoalsScreen()`으로 위임하고 즉시 반환.
+  (3) `MOCK_GROUPS`(모임=팀) 6개 전부에 `teamGoals:[]` 필드 추가, 데모/검증용으로 g1(벤치프레스 모임)에 마일스톤 2개짜리 샘플 팀 목표 1건 포함.
+  (4) 권한 모델: `groupState(gid)`(모임별 내 상태 객체)에 `myRole:'member'` 기본값 추가. 새 모임을 만들면(`promptNewGroup`) 만든 사람이 자동으로 `myRole:'owner'`가 되어 그 팀의 목표를 관리할 수 있음. `canManageTeamGoals(gid)`가 `owner`/`manager`일 때만 true를 반환하도록 게이트.
+  (5) `renderTeamGoalsScreen()` 신규 — 내가 참여(`joined`)한 팀만 카드로 나열, 팀별 역할 뱃지(팀장/매니저/팀원) 표시. `canManageTeamGoals`가 true인 팀만 목표/마일스톤 추가·제목 수정·삭제·상태 순환(todo→doing→done) 컨트롤을 노출하고, 그 외에는 완전 읽기 전용으로 렌더링. 마일스톤 행은 기존 개인 목표의 `.ms-row`/`.ms-main`/`.ms-status`/`.ms-title`/`.ms-actions`/`.icon-btn`/`.add-ms-btn` 클래스를 그대로 재사용해 시각적으로 동일하게 유지.
+  (6) `promptNewTeamGoal(gid)` 신규 — 기존 `openModal`/`.field`/`.modal-actions` 패턴 그대로 재사용한 팀 목표 추가 모달(이름·마감일).
+- **발생한 문제 및 해결**: `role==='owner'||role==='manager'` 조건에서 'manager' 분기는 owner와 동일한 불리언 OR 조건이라 별도 승격 UI 없이도 로직은 owner와 동등하게 검증됨. 이 앱은 모임 멤버(roster)가 실제 계정이 아닌 mock 데이터라 "다른 사람을 매니저로 승격"할 실제 대상이 없어, 매니저 승격 UI는 이번 범위에서 제외(요청 범위인 "상태 객체에 권한 속성 부여"는 `myRole` 필드로 충족). 검증 중 `promptNewGroup` 저장 흐름에서 팀-생성 UI와 무관한 마니또(manito) 렌더링 쪽 `TypeError`를 우연히 발견했으나, 이 저장소의 원본 main 코드(내 변경 전)에서도 동일하게 재현돼 이번 작업과 무관한 기존 버그로 확인 — 별도 이슈로 분리해 보고함(이번 diff에는 포함하지 않음).
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `<style>` 중괄호 407/407 그대로(신규 CSS 없음 확인), `node scripts/smoke-test.js` 기존 28개 전부 통과(회귀 없음). 로컬 정적 서버로 실제 브라우저에서 렌더링 테스트 완료(Supabase 로그인 없이 `state.profile`을 직접 주입하는 방식) — 개인 목표 화면이 기존과 동일하게 정상 동작, 팀 목표 탭에서 미참여 시 안내 문구, `member` 역할로는 완전 읽기 전용(수정 버튼 없음), `owner`/`manager` 역할로는 마일스톤 상태 순환·추가·제목 수정·삭제, 팀 목표 추가(모달)·삭제가 모두 정상 동작함을 클릭으로 직접 확인. 콘솔 에러 없음(팀 목표 관련 코드 경로 한정).
+---
+
+## [2026-09-05 15:23] 실행 효율 규칙(CLAUDE.md 8번) 신설 + 로컬 git/gh 환경 구축
+- **목표**: 2026-09-05 세션에서 작업 품질은 좋았으나 실행이 12분 이상 걸리고 프로덕션 장애(PR #10 병합 시 충돌 마커 유입)까지 난 원인을 진단해, 4블록 사고 원칙은 그대로 두고 기계적 낭비만 제거하는 실행 규칙을 정립.
+- **수정/실행 내역**:
+  (1) 진단(8원칙 1~2): 느려진 원인은 사고가 아니라 GitHub 웹 UI 브라우저 자동화였고, 그 근본 원인은 로컬 폴더가 git 저장소가 아니고 gh CLI가 없어 우회할 수밖에 없었던 환경. 외부 분석의 "index.html을 7번 쪼개 고친 게 과부하"라는 진단은 오진으로 판단(diff 편집 7회는 1분 미만이었고 규칙 3을 준수한 방식)하고 채택하지 않음.
+  (2) CLAUDE.md에 `## 8. 실행 효율 규칙` 신설(사용자 승인): 전제(`C:\dev\ourgoal-app` clone + gh CLI), A. GitHub 조작은 터미널로만, B. 충돌 해결은 로컬 git으로만 + 병합 직후 마커·스모크 검증, C. 착수 전 환경 점검, D. diff 편집·병렬 호출·sha 기준 검증, E. 4블록 유지·기록 저비용화.
+  (3) 환경 구축: winget으로 gh CLI 2.100.0 설치, 저장소를 `C:\dev\ourgoal-app`에 clone(OneDrive 폴더 대신), 세션 작업 디렉토리를 clone으로 이동.
+- **발생한 문제 및 해결**: 없음. `gh auth login`은 자격 증명이 필요해 사용자가 직접 수행(이 커밋의 push는 인증 후 진행).
+- **검증 결과**: `git status`로 변경 파일이 CLAUDE.md·dev_log.md뿐임을 확인, `gh --version` 정상, clone HEAD가 최신 main(c75f192, PR #24 병합 커밋)과 일치.
+---
+
+## [2026-09-06 00:38] 마니또 DM 전송 후 화면 전환 시 null 참조 크래시 수정
+- **목표**: 2026-09-05 14:24 세션이 `promptNewGroup` 검증 중 우연히 발견해 "별도 이슈로 분리해 보고"했던 마니또 렌더링 `TypeError: Cannot read properties of null (reading 'addEventListener')`의 정확한 발생 지점과 근본 원인을 규명하고, 합성 테스트 프로필만의 문제가 아니라 실제 사용자도 겪을 수 있는지 확인 후 수정.
+- **수정/실행 내역**: 로컬 정적 서버로 index.html을 띄우고 브라우저에서 재현 시도(임시 디버그 훅·Supabase fetch mock은 검증 후 전부 제거, 최종 커밋 미포함). 최초 가설이었던 "state.profile.settings.manito 필드 누락"은 `manitoState()`가 누락 시 기본값을 자동 생성해 기각(재현 안 됨) — 실제 원인은 프로필 데이터와 무관한 순수 비동기 타이밍(레이스 컨디션) 버그였음. 소통 > 마니또 > DM에서 메시지를 보내면 `renderManitoDm`의 `send()`가 `saveProfile()` 저장을 `await`하는 동안, 그 사이 사용자가 다른 소통 서브탭 등으로 전환하면 `renderCommScreen()`이 `commBody`를 통째로 새로 그려 기존 `commSubBody` DOM 노드를 교체(detach)함. 저장이 끝난 뒤 이어지는 `renderManitoDm(body, pid)` 호출이 이미 문서에서 분리된 옛 `body`를 참조한 채 `document.getElementById('mnDmBack').addEventListener(...)`를 실행해 null 참조로 크래시 — "메시지 전송 직후 다른 탭 터치"만으로 실 계정에서도 재현되는 도달 가능한 버그로 확인됨. `send()` 내 재렌더링 지점 2곳(전송 직후 / 모의 답장 `setTimeout` 콜백)에 `document.body.contains(body) && state.manitoDm===pid` 가드를 추가해 화면이 이미 전환된 경우 재렌더링을 건너뛰도록 최소 diff로 수정.
+- **발생한 문제 및 해결**: (1) 제보된 최초 가설과 실제 원인이 달라 실제 브라우저 재현으로 근본 원인을 재규명함. (2) 재현 중 실제 프로덕션 Supabase로 쓰기 요청이 나가지 않도록 로컬 사본에서만 fetch를 임시로 mock 처리 후 원상복구. (3) 8번 규칙에 따라 `C:\dev\ourgoal-app`(정식 git clone)로 작업 위치를 전환 — 처음 시도했던 OneDrive 폴더 사본은 PR #24 등 최신 커밋이 반영되지 않은 구버전이라 그대로 썼다면 최근 작업을 되돌릴 뻔함. (4) `gh auth status` 미인증으로 `gh pr create` 불가 — 8번 규칙상 브라우저 GitHub 웹 UI 우회는 금지이므로, 커밋까지만 로컬에서 완료하고 push·PR 생성은 사용자의 `gh auth login` 이후로 넘김(아래 검증 결과 참고).
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 전부 통과(회귀 없음). 로컬 브라우저 재현 환경에서 (1) 수정 전 100% 재현되던 크래시가 수정 후 0건, (2) 정상 흐름(DM 화면에 머무르며 메시지 전송 → 즉시 표시 → 800~1500ms 후 모의 답장까지 정상 표시)에 회귀 없음을 확인. push/PR 생성은 인증 문제로 이번 세션에서 미완료(아래 참고).
+---
+
+## [2026-09-06 00:49] 일반 DM(renderCommDM) 재렌더링 가드에 stale DOM 체크 추가
+- **목표**: 마니또 DM `renderManitoDm`의 확정된 실사용자 도달 가능 null-deref 크래시(f57eefd, PR 대기)와 동일 클래스의 잠재 결함이 일반 소통 DM `renderCommDM`의 모의 답장 `setTimeout` 콜백에도 있는지 점검하고, 있다면 동일 가드를 선제 적용(사용자 직접 요청).
+- **수정/실행 내역**: `renderCommDM`의 `send()` 내부 `setTimeout` 콜백 가드를 `if(state.dmActiveId===person.id)` → `if(document.body.contains(body) && state.dmActiveId===person.id)`로 1줄 수정(마니또 수정과 동일 패턴 재사용, diff 1줄). `saveProfile()` await 갭이 없어 마니또보다 노출 창은 좁지만(답장 대기 700~1300ms 사이 정확히 같은 사람 DM을 보며 다른 소통 서브탭으로 전환·복귀해야 함), `dmActiveId` 조건만으로는 DOM이 여전히 document에 붙어있는지 보장 못 하는 동일 클래스의 이론적 결함이라 방어적으로 수정.
+- **발생한 문제 및 해결**: 없음. (참고: 이 브랜치의 이전 병합 커밋 ce393b9에서 이 항목이 실수로 유실되었다가, PR #25를 origin/main 대상으로 재병합하며 복원함.)
+- **검증 결과**: `node -e`로 메인 `<script>` `new Function()` 문법 검증 통과. `node scripts/smoke-test.js` 26/28 통과 — 실패 2건(`dDay: 오늘이면 D-day`, `dDay: 내일이면 D-1`)은 `git stash`로 격리해 수정 전 main에서도 동일하게 실패함을 확인한 기존의 무관한 버그로, 이번 변경과 무관(이번 PR 범위 밖).
+---
+## [2026-09-06 01:29] 회원가입 후 최초 로그인 활용가이드 튜토리얼 추가
+- **목표**: 사용자 직접 요청 — 회원가입 후 최초 로그인 시 앱의 강점(AI 코칭, 캘린더 연동, API 커스텀·비공개 설정)을 소개하는 튜토리얼 모달 추가. (8원칙: 신규 가입자는 온보딩 3단계(카테고리→목표→마일스톤 미리보기)를 마치면 곧바로 앱 화면으로 들어가는데, 이 앱을 다른 목표관리 앱과 구분 짓는 핵심 기능(AI 자동 코칭, 캘린더 자동 동기화, BYOK 커스텀 연결·비공개 설정)은 설정 화면 깊숙이 있어 스스로 찾기 전엔 존재조차 모르고 지나칠 수 있음 → 첫 진입 직후가 이 차별점을 각인시킬 유일한 순간이라 판단)
+- **수정/실행 내역**:
+  (1) `defaultSettings()`에 `hasSeenGuide:false` 필드 추가(로컬스토리지 저장, 기존 xp/checkinTimes 등과 동일 패턴). 기존 사용자도 병합 시 `false`로 채워지지만 `startOnboarding()`은 가입 시에만 호출되므로 재로그인 시 실수로 노출될 위험은 없음.
+  (2) `startFirstLoginGuide()`(4단계: 환영 → AI 연동 → 캘린더 연동 → API 커스텀/비공개) + 가드 `maybeShowFirstLoginGuide()` 신규. `startOnboarding()`의 두 종료 지점(3단계 완료 `obFinish`, 1단계 스킵 `obSkip`) 모두에서 기존 로직(enterApp/toast) 직후 호출 — 목표를 만들고 시작하든 소통 탭으로 건너뛰든 최초 진입 시 1회만 노출되고 이후 재로그인에는 뜨지 않음.
+  (3) 신규 CSS 없이 기존 `.ob-step-label`(단계 표시)·`.mission-card`/`.mi`(기능 카드)·`.modal-actions`·`.land-login-link` 클래스만 재사용(디자인 불변경 원칙 준수).
+  (4) 카피 사실 검증: 요청 문구엔 "구글/삼성 달력 자동 연동"이 있었으나 실제로는 구글 캘린더 연동만 존재(BACKLOG.md·코드 확인, 삼성 직접 연동 없음) — 없는 기능을 안내하지 않도록 "구글 캘린더 자동 연동 + 구글 계정과 연결된 삼성 캘린더 등에도 반영"으로 정확하게 조정.
+- **발생한 문제 및 해결**: 작업 중 `C:\dev\ourgoal-app` 공유 클론에서 다른 세션 2개(팀 목표 댓글 기능, 캘린더 탭 기능)가 거의 동시에 브랜치를 전환하면서, 제가 만든 1줄 수정이 그쪽 세션의 스테이징 영역에 섞여 들어가는 충돌을 발견. 즉시 두 세션에 메시지로 알려 커밋 전 확인을 요청하고, 저는 `git worktree add`로 별도 작업 공간을 분리해 이후 충돌 없이 작업(아래 검증은 전부 이 격리된 worktree 기준). 그 과정에서 PR #26 병합 시 dev_log.md 항목 하나(2026-09-06 00:38 마니또 DM 크래시 수정 기록)가 유실된 것도 우연히 발견 — 코드 자체 회귀는 아니었으나(해당 null-deref 가드는 index.html에 정상 존재) 이번 작업과 무관해 별도 이슈로 분리 보고함.
+- **검증 결과**: `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음), 저장소 전체 병합 마커 재검색 클린. 로컬 정적 서버(Python http.server)로 실제 브라우저 렌더링 테스트 완료 — 회원가입 → 온보딩 3단계 완료(obFinish) 경로와 온보딩 스킵(obSkip) 경로 둘 다 실제 클릭으로 튜토리얼 4단계(환영/AI/캘린더/API·비공개)가 정확한 문구·스타일로 순서대로 뜨는 것을 확인, "시작하기"로 정상 종료, `localStorage`의 `hasSeenGuide:true` 저장까지 확인. 콘솔 에러 없음(로컬 정적 서버가 POST를 지원하지 않아 뜨는 501 하나는 Supabase 호출에 의한 것으로 이번 기능과 무관한 테스트 환경 노이즈).
+---
+
+## [2026-09-06 01:30] 개인 목표 탭 대화형 AI 목표/할일 관리 기능 추가
+- **목표**: 사용자 직접 요청 — '개인 목표' 탭 최상단에 자연어로 목표·마일스톤·할 일을 추가/변경/삭제 요청하면, AI가 변경안(diff)을 만들고 사용자가 확인 모달에서 '반영'을 눌러야만 실제로 적용되는 대화형 관리 기능 추가.
+- **수정/실행 내역**:
+  (1) `api/goalagent.js` 신설 — 기존 `api/goaltemplate.js` 패턴(POST 검증→ANTHROPIC_API_KEY 확인→프롬프트 구성→claude-sonnet-4-6 호출→JSON 파싱)을 그대로 따름. 요청 `{message, goals, today}`에서 goals는 프런트가 보낸 현재 목표 스냅샷(id 포함)이고, 모델이 반환한 `ops`(type: CREATE/UPDATE/DELETE × level: goal/milestone/task) 각각을 서버가 재검증 — goalId/milestoneId/taskId가 요청에 실제로 존재하는지 대조하고, 레벨·타입별로 허용된 데이터 필드만 clamp해서 통과시키며 존재하지 않는 id를 참조하거나 형식이 어긋난 op는 조용히 제거. 응답은 `{ops, reply}`.
+  (2) `index.html` — `#personalGoalsView` 최상단에 `.card`(`#goalAgentCard`) + 기존 `.dm-input-row` 클래스를 그대로 재사용한 입력창(`#goalAgentInput`, placeholder "대화로 목표와 할일들을 추가, 변경, 삭제하세요") + 전송 버튼(`#goalAgentSendBtn`) 추가. 신규 CSS 없음 — 카드/입력행/버튼 전부 기존 클래스 재사용, 헤더 텍스트 색상만 기존 AI 기능에 쓰이던 `var(--violet)`를 인라인으로 지정.
+  (3) 전송 흐름: `showGoalAgentLoadingStep()`(기존 `showNewGoalLoadingStep`과 동일 패턴)으로 로딩 모달 표시 → `/api/goalagent` 호출 → `ops`가 비어 있으면 모달을 닫고 `reply`를 토스트로 안내 → 있으면 **기존 `openModal()`을 그대로 사용**해 "🤖 이대로 반영할까요?" 확인 모달(`showGoalAgentReviewStep`)을 띄우고 각 op의 `summary`를 기존 `.ms-list`/`.ms-row` 클래스로 나열. '반영' 클릭 시에만 `applyGoalAgentOp()`가 `state.profile.goals`에 순차 반영한 뒤 `saveProfile()` → `closeModal()` → `renderAll()`. '취소'는 `closeModal()`만 호출해 아무 것도 바꾸지 않음.
+  (4) 신규 목표 생성(CREATE goal)은 기존 AI 템플릿 생성 플로우(`showNewGoalReviewStep`)와 동일하게 `category:'etc'`, `topic:'major/minor'` 조합, milestone/task에 `uid('ms')`/`uid('task')` id를 부여하도록 구현(`buildGoalFromAgentData`).
+- **발생한 문제 및 해결**: 작업 착수 직전 표준 경로 `C:\dev\ourgoal-app`에서 다른 세션이 브랜치 `feat/2026-09-06-team-goal-comments`에 실시간으로 커밋 중인 것을 발견(동시 작업 충돌 위험 — reflog에 내가 관여하지 않은 checkout이 실시간으로 찍힘). 사용자에게 확인 후 `EnterWorktree`로 격리된 워크트리를 만들어 브랜치 `feature/2026-09-06-goal-agent-chat`에서 작업, 공유 작업 폴더의 다른 세션 상태는 전혀 건드리지 않음.
+- **검증 결과**: `node -e`로 `api/goalagent.js` require 및 메인 `<script>` 문법 검증 통과, `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음). 로컬 정적 서버(Python http.server)로 실제 브라우저 렌더링 확인 — `#goalAgentCard`가 '개인 목표' 탭 최상단(목표 헤더 위)에 요청한 그대로의 placeholder로 렌더링됨을 스크린샷으로 확인, 메시지 입력 후 전송 시 로딩 모달→(로컬엔 API 서버가 없어 실패)→에러 토스트까지 콘솔 에러 없이 정상 동작함을 클릭으로 확인. ANTHROPIC_API_KEY·Supabase 로그인이 없는 로컬 환경이라 실제 AI diff 생성·반영까지의 전체 흐름은 PR의 Vercel 프리뷰 배포에서 재검증이 필요함.
+---
+
+참고: 위 장애는 사용자가 별도로 연 PR #19로 먼저 병합되어 해결되었다. 아래 응원 알림 브랜치는 그보다 앞서(PR #10 XP/레벨 모델 병합 이전 시점의 main) 분기했던 브랜치라, 그 사이 병합된 PR #10·#19 두 커밋과 병합 충돌이 발생해 이 로그를 포함한 파일들을 수동으로 재병합했다.
+
+## [2026-09-05 12:20] 내 기록에 반응·응원이 왔을 때 알림
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 5단계 두 번째 항목 — 내 기록/게시물에 응원이 왔을 때 눈에 띄는 알림을 띄운다. (문제해결 8원칙: 조사해보니 내가 공유한 피드 게시물(`settings.feedPosts`)의 `cheers`는 작성 이후 절대 증가하지 않아 "반응이 온다"는 이벤트 자체가 존재하지 않았고, 마니또 "받은 응원함"(mock, 매일 1개 기본)은 이미 쌓이지만 새로 왔는지 알려주는 장치가 없었던 게 핵심 공백 → 새 알림 UI를 만들기 전에 먼저 두 mock 데이터 소스에 "시간이 지나면 응원이 늘어난다"는 최소한의 성장 로직을 부여하고, 그 위에 마지막 확인 시점 대비 증가분을 알려주는 배너를 얹는 순서로 설계. CLAUDE.md 다크패턴 금지 원칙에 따라 불안·상실회피 요소 없이 순수 긍정 알림만 노출)
+- **수정/실행 내역**:
+  (1) `mockPostCheerCount(p)`(순수 함수) 신규 — 게시물 작성 후 경과 시간과 게시물 id 해시(`hashStr`, 기존 마니또 코드가 쓰던 함수 재사용)로 결정론적인 응원 증가량을 계산(3시간마다 1~5개, 상한 40). `feedPostHtml`의 응원 버튼 표시값에 이 값을 더해 내 게시물 응원이 실제로 시간에 따라 늘어나도록 수정.
+  (2) `totalMockFeedCheers()`(내 모든 게시물 응원 총합) / `checkSocialNotifications()`(마지막 확인 시점 대비 새 응원·새 마니또 응원 개수를 계산해 배너 노출 후 `settings.social`에 기준값 저장) / `showSocialNotifyBanner(newCheers,newManito)` 3개 함수 신규.
+  (3) 홈 화면에 기존 `#notifyBannerSlot`(체크인 리마인더용)과 겹치지 않는 별도 `#socialNotifySlot`을 신설(레벨업 배너 등 기존에도 쓰던 "슬롯 분리" 패턴 재사용), `enterApp()`에서 로그인/앱 진입마다 1회 `checkSocialNotifications()` 호출. 알림 배너는 기존 `.notify-banner` 클래스를 그대로 재사용해 신규 CSS 없음. "확인하기"를 누르면 소통 탭으로 이동.
+  (4) `defaultSettings()`에 `social:{cheersSeen:0,manitoSeen:0}` 기본값 추가(기존 유저도 병합 로직으로 자동 채워짐).
+  (5) `scripts/smoke-test.js`에 `mockPostCheerCount` 단위 테스트 3건 추가(작성 직후 0, id/게시물 없으면 0, 오래되면 상한 40 도달).
+- **발생한 문제 및 해결**: 착수 전 로컬 검증을 위해 `node scripts/smoke-test.js`를 실행했더니, main에 이미 **병합 충돌 마커(`<<<<<<< / ======= / >>>>>>>`)가 해결되지 않은 채로 남아있는 상태**(PR #9를 병합하는 시점과 그 수정 커밋 푸시가 겹쳐 발생한 문제로, 이미 열려있는 PR #16이 정확히 이 문제를 고치는 중)를 발견 → PR #16을 직접 건드리지 않되(운영 규칙상 이전 주기 PR 불가침), 내 브랜치가 깨진 main에서 분기했으므로 동일한 내용(heatmapLevel 3건 + localNextActionSuggestion 2건 모두 보존)으로 충돌 마커만 로컬에서 해소해 테스트가 통과하도록 정리. 이 파일은 개발용 테스트 스크립트로 Vercel 배포와 무관.
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `<style>` 중괄호 407/407 균형(변경 없음 확인), `node scripts/smoke-test.js` 28개 전부 통과(기존 25 + 신규 3). `mockPostCheerCount`의 시간 경과별 단조 증가·상한 동작을 별도 시뮬레이션으로 재확인. 브라우저 도구가 없는 샌드박스 환경이라 실제 배너 노출·클릭 후 소통 탭 이동은 로직 검증으로 대체했으며 PR에 명시.
+---
+
+## [2026-09-05 06:36] 스트릭 프리즈(연속기록 보호권) 추가
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 4단계 항목 — 하루를 놓쳐도 연속 기록(스트릭)이 끊기지 않도록 보호해주는 안전장치 추가. (8원칙: 스트릭이 도파민 요소이자 동시에 "하루라도 놓치면 다 무너진다"는 불안(다크패턴 소지)이 될 수 있는데, CLAUDE.md가 명시적으로 다크패턴 금지를 요구하므로 처벌이 아니라 "심리적 안전장치"로 설계 — 하루 못 채워도 미리 모아둔 프리즈로 자동 보호되게 함)
+- **수정/실행 내역**:
+  (1) `settings.streakFreeze = { available:1, usedDates:[], grantedTier:0 }` 기본값 추가(신규 유저는 프리즈 1개로 시작, 기존 유저도 병합 로직으로 자동 채워짐).
+  (2) `computeStreakDays()`를 최소 수정 — 기존 record 날짜 집합에 `usedDates`(이미 소비된 프리즈 날짜)를 합쳐서 연속일을 세도록 변경(그 외 로직·시그니처 동일).
+  (3) `maybeGrantStreakFreeze()` — 연속 기록이 7일 배수를 새로 넘을 때마다 프리즈 1개 지급(최대 3개 보유, `grantedTier`로 같은 구간 중복 지급 방지). `maybeApplyStreakFreeze()` — 어제 기록이 없고 프리즈가 있으며 그제(또는 이미 프리즈된 그제)에는 기록이 있어 "연속이 이어지고 있던 상태"일 때만 자동으로 프리즈 1개를 소비해 어제를 보호. 둘 다 로그인 시 1회(`checkStreakFreeze`, `enterApp()`에서 `renderAll()` 전에 호출)만 실행해 매 렌더링마다 재적용되지 않음.
+  (4) 프리즈 적용/지급 시 각각 토스트 안내("어제 기록을 못 남겼지만 스트릭 프리즈로 지켜졌어요" / "프리즈를 1개 획득했어요"), 홈 상단 스트릭 배지 옆에 보유 개수 뱃지(🧊N, `.freeze-pill` 1개 클래스 신규 추가, `--violet-soft` 토큰 재사용) 노출.
+  (5) `scripts/smoke-test.js` 사샌드박스에 `settings.streakFreeze` 기본 상태와 `setStreakFreeze` 헬퍼 추가, `maybeGrantStreakFreeze`/`maybeApplyStreakFreeze` 단위 테스트 4건 신설.
+- **발생한 문제 및 해결**: 없음. 자동 소비 조건을 "그제에 실제 기록(혹은 이미 프리즈된 그제)이 있을 때"로 제한해, 애초에 스트릭이 없던 상태에서 프리즈가 낭비되거나 스트릭을 인위적으로 만들어내는 경우를 방지.
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 24개 전부 통과(기존 20 + 신규 4, 회귀 없음). "기록 2일치 중 어제만 빠진" 케이스를 별도 시뮬레이션해 프리즈 적용 전 streak=1 → 적용 후 streak=3, 보유 개수 1→0으로 정확히 소비됨을 확인. 브라우저 도구가 없는 샌드박스라 실제 로그인 흐름에서의 토스트·뱃지 노출은 확인하지 못함.
+---
+
+## [2026-09-05 16:50] Web Push(Service Worker 푸시) 알림 인프라 추가
+- **목표**: BACKLOG.md "실제 브라우저 푸시 알림" 처리 — 지금은 탭이 열려 있어야만(`Notification` API + `setInterval` 폴링) 체크인 알림이 오는데, 앱이 완전히 꺼져 있어도(브라우저·탭 종료) Service Worker 기반 Web Push로 체크인 시간에 알림이 오도록 개선.
+- **문제의 본질**: 브라우저 알림 자체는 탭이 열려 있을 때 클라이언트 setInterval로 폴링해 띄우는 구조라, 원천적으로 앱이 안 떠 있으면 발동할 수 없음. 이를 해결하려면 (1) 서버가 알림을 발송할 수 있는 채널(Web Push 구독)과 (2) 서버가 "지금이 그 시각인지"를 판단할 수 있는 정보(체크인 시각 + 타임존)가 사용자별로 서버에 저장돼야 하는데, 이 앱은 지금까지 `settings`(체크인 시각 포함)를 전부 `localStorage`에만 저장해왔다는 게 핵심 제약이었음.
+- **해결 방식 및 타당성 검토**: VAPID 키 기반 Web Push 표준 사용(핸드롤 암호화는 안전하지 않아 `web-push` npm 패키지로 위임). 서버가 사용자별 발송 시각을 알아야 하므로 새 Supabase 테이블(`push_subscriptions`)에 구독 정보와 함께 `checkin_times`·`timezone`을 같이 저장(구독/시각 변경 시마다 클라이언트가 재동기화). 발송은 Vercel Cron(`vercel.json`)이 5분마다 `/api/push-dispatch`를 호출해 각 구독의 로컬 시각이 체크인 시각과 ±2분 이내면 발송, 같은 슬롯 중복 발송은 `sent_slots`로 방지. 기존 탭-오픈 전용 알림(Notification API)은 그대로 유지해 두 방식이 공존(Web Push 실패 시에도 기존 방식이 폴백 역할). 신규 UI 요소·CSS 변경 없음(설정 화면의 기존 알림 스위치를 그대로 재사용해 켤 때 푸시 구독까지 함께 처리) — CLAUDE.md 디자인 불변경 원칙 준수. 다크패턴 요소 없음(옵트인 토글, 강제 재노출 없음).
+- **수정/실행 내역**:
+  (1) `package.json` 신설 — `web-push`, `@supabase/supabase-js` 의존성 추가(핸드롤 aes128gcm 암호화 위험 회피 목적).
+  (2) `api/vapid-public-key.js` 신설 — 클라이언트가 구독 시 필요한 VAPID 공개키를 서버 env에서 읽어 반환.
+  (3) `api/push-subscribe.js` 신설 — POST로 구독 정보(`endpoint`/`keys`)+`checkinTimes`+`timezone`을 `push_subscriptions`에 upsert, DELETE로 endpoint 기준 구독 삭제.
+  (4) `api/push-dispatch.js` 신설 — Vercel Cron 진입점. `CRON_SECRET` env가 설정돼 있으면 Authorization 헤더로 검증. 전체 구독을 순회하며 타임존별 로컬 시각을 계산해 일치하는 구독에만 `web-push`로 발송, 만료(404/410) 구독은 자동 삭제.
+  (5) `vercel.json` 신설 — `*/5 * * * *` 크론으로 `/api/push-dispatch` 호출.
+  (6) `sw.js`에 `push`/`notificationclick` 이벤트 핸들러 추가(알림 표시 + 클릭 시 기존 창 포커스 또는 새 창 열기).
+  (7) `index.html` — 설정 화면의 기존 알림 스위치 on/off 핸들러에 `syncPushSubscription()`/`removePushSubscription()` 연결, 체크인 시각 추가/수정/삭제 시(알림이 켜져 있으면) 서버에 재동기화, 앱 진입(`enterApp`) 시에도 알림이 켜져 있으면 구독을 재확인.
+- **발생한 문제 및 해결(원칙 8 재검증)**: 없음 — 막힌 지점 없이 설계한 대로 구현 완료.
+- **검증 결과**: `node -e`로 `index.html` 메인 `<script>` `new Function()` 문법 검증 통과, `node -c`로 `sw.js`·`api/push-subscribe.js`·`api/push-dispatch.js`·`api/vapid-public-key.js` 전부 문법 통과, `vercel.json`/`package.json` JSON 파싱 통과, `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음). **사용자가 직접 해야 하는 후속 설정**(PR 설명에 상세 기재): Supabase에 `push_subscriptions` 테이블 생성 SQL 실행, VAPID 키 쌍 생성 후 `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY`(+선택 `VAPID_CONTACT_EMAIL`) 및 `SUPABASE_SERVICE_ROLE_KEY`(+권장 `CRON_SECRET`) Vercel 환경변수 등록 — 이 설정 전까지는 각 API가 500으로 명확히 실패하며 기존 탭-오픈 알림에는 영향 없음. **Vercel 요금제 주의**: Hobby 플랜은 크론 실행 빈도가 하루 1회로 제한될 수 있어(플랜별 상이) 5분 간격 크론은 Pro 플랜이 필요할 수 있음 — 실제 플랜 확인 필요.
+---
+
+## [2026-09-05 16:58] PR #34 배포 실패 수정 — Vercel Cron → GitHub Actions
+- **목표**: PR #34(Web Push) 푸시 직후 Vercel이 `Hobby accounts are limited to daily cron jobs` 오류로 배포 실패 — 원인 파악 및 수정.
+- **수정/실행 내역**: `vercel.json`(5분 간격 cron) 제거, `.github/workflows/push-dispatch.yml`(GitHub Actions 5분 스케줄 + 수동 실행)로 발송 트리거 교체. Actions 스케줄 지연 가능성을 감안해 `api/push-dispatch.js`의 발송 시각 매칭 허용 오차를 2분→4분으로 확대.
+- **발생한 문제 및 해결**: PR 설명에 "캐비엇"으로만 적어뒀던 Vercel Hobby 플랜 크론 제한이 실제로 배포 실패를 일으킴 → 요금제 업그레이드 대신 무료·요금제 무관인 GitHub Actions로 발송 주체를 교체(사용자에게 새 비용을 강요하지 않는 방향으로 원칙 3~4 재검토).
+- **검증 결과**: `node -c api/push-dispatch.js` 통과, `node scripts/smoke-test.js` 28/28 통과. PR #34 본문·코멘트에 반영, GitHub Secrets/Variables(`CRON_SECRET`/`PUSH_DISPATCH_URL`) 등록 필요 안내 추가.
+---
+
+## [2026-09-06 01:43] PR #26 병합 실수로 유실된 dev_log.md 항목(00:38) 복원
+- **목표**: 사용자가 별도 작업(최초 로그인 튜토리얼) 중 우연히 발견해 보고한 dev_log.md 유실 건 조사·복구. `git diff 304a0f0..29faccd -- dev_log.md`로 대조한 결과, PR #26(`fix/2026-09-06-smoke-test-timezone`) 병합 커밋 7e2adb2("Merge branch 'main' into fix/2026-09-06-smoke-test-timezone")에서 dev_log.md 충돌을 해결하며 main에만 있던 "[2026-09-06 00:38] 마니또 DM 전송 후 화면 전환 시 null 참조 크래시 수정" 항목 전체(목표/수정·실행 내역/문제 및 해결/검증 결과 5줄)가 병합 결과에 반영되지 못하고 순수 삭제됨을 확인 — 과거 3차례의 "병합 마커가 main에 유입"된 사고(CLAUDE.md 8번)와는 증상이 다르지만(마커 없이 콘텐츠만 조용히 사라짐), 수동 충돌 해결 시 한쪽 브랜치의 신규 내용을 놓친다는 같은 근본 원인을 공유. 이 항목이 기록하던 실제 코드 수정(index.html의 `document.body.contains(body) && state.manitoDm===pid` null-deref 가드)은 main에 그대로 살아있어 기능적 회귀는 아니고 순수 문서(이력) 유실임을 확인.
+- **수정/실행 내역**: 유실 전 커밋(304a0f0)의 git blob에서 해당 항목 원문을 그대로 추출해(파일 전체를 재작성하지 않고 정확한 삽입 지점에만 Node 스크립트로 splice), 시간순 규칙에 맞는 위치 — "[2026-09-05 15:23] 실행 효율 규칙" 항목과 "[2026-09-06 01:29] 회원가입 후 최초 로그인" 항목 사이(00:38은 그 사이 시각) — 에 텍스트 변경 없이 복원. 참고로 사용자가 언급한 인접 항목 "[2026-09-06 00:49] 일반 DM(renderCommDM)..."은 아직 main에 병합되지 않은 오픈 브랜치 `fix/2026-09-06-comm-dm-stale-dom-guard`(커밋 7ee89d2)에만 존재 — CLAUDE.md 6번 규칙("이전 주기 PR이 열려 있으면 건드리지 않는다")에 따라 그 브랜치는 건드리지 않고, 현재 main 기준으로 올바른 위치에만 삽입함(해당 PR이 나중에 병합될 때 00:38/00:49 순서를 다투는 통상적인 충돌이 생길 수 있으나 이는 그 PR 병합 시점에 처리할 몫).
+- **발생한 문제 및 해결**: (1) dev_log.md는 작업 트리에서 CRLF, git blob 저장은 LF(core.autocrlf=true)로 줄바꿈 방식이 달라 단순 문자열 치환 시 줄바꿈이 섞일 위험이 있어, 추출한 원문을 CRLF로 변환 후 삽입하고 삽입 전후로 앵커 주변 텍스트를 스크립트로 출력해 삽입 위치를 프로그램적으로 재확인. (2) PR 생성 직후 `gh pr view`가 `mergeable:CONFLICTING`을 보고 — 확인해보니 작업 도중 별도 PR #17(응원 알림 기능)이 main에 먼저 병합되어 dev_log.md 파일 끝부분(같은 삽입 지점)에서 충돌 발생. `git merge origin/main` 후 충돌 마커를 직접 편집하는 대신 이번 작업과 동일한 스크립트 기반 방식(마커로 양쪽 콘텐츠를 정확히 추출 → origin 쪽 항목을 먼저, 내 항목을 그 뒤에 배치해 재조립)으로 해결해 양쪽 내용을 모두 보존 — 이 PR 자체가 고치려는 "수동 충돌 해결 중 콘텐츠 유실" 사고를 반복하지 않도록 8원칙 1~7단계를 그 자리에서 재적용.
+- **검증 결과**: 복원된 항목 텍스트가 304a0f0 원문과 문자 단위로 완전히 동일함을 스크립트로 대조(1,814자 일치), 병합 후 `git diff main...HEAD`로 순수 추가(복원 7줄 + 신규 기록 7줄) 외 다른 라인 변경이 없음을 확인, 저장소 전체 병합 마커 재검색(`grep -rn "^<<<<<<<"`) 클린, `node scripts/smoke-test.js` 31개 전부 통과(기존 28 + origin/main 병합으로 들어온 PR #17의 신규 3개, 회귀 없음). `gh pr view`로 `mergeable:MERGEABLE`/`mergeStateStatus:CLEAN` 확인. 순수 문서 변경이라 브라우저 검증은 해당 없음.
+---
+
+## [2026-09-05 06:31] 홈 화면 "오늘의 미션" 추가
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 3단계 항목 — 목표 전체가 아니라 "오늘 하루" 단위로 할 일을 잘게 쪼개주는 AI 제안을 홈 화면에 추가. (8원칙: 거창한 목표를 매번 마주하면 시작하기 부담스러워지는 게 이탈 원인 중 하나라 판단 → 목표별로 "오늘 할 만한 아주 작은 한 걸음"만 AI가 짚어주는 것이 핵심 해결책. goalstatus.js/nextaction.js와 동일한 단일 호출+자체검증 패턴을 재사용)
+- **수정/실행 내역**:
+  (1) `api/todaymission.js` 신설(goalstatus.js·nextaction.js와 동일 구조) — goalTitle과 미완료 마일스톤/할 일 목록만 받아 "① 아직 끝나지 않은 항목에 근거 ② 오늘 하루 안에 부담 없이 끝낼 만큼 작고 구체적 ③ 다정한 제안 톤 ④ 15~40자 한 문장" 자체점검 기준을 내장한 프롬프트로 Claude 1회 호출.
+  (2) 클라이언트에 `localTodayMission`(AI 실패 시 로컬 폴백: 첫 미완료 마일스톤 제목을 언급하거나, 전부 완료면 회고 제안), `requestTodayMission`(28초 타임아웃+6~80자 검증, 실패 시 로컬 폴백), `renderTodayMissionCard`(활성 목표별로 카드 한 줄씩 렌더링, 오늘 날짜로 캐시돼 있으면 재사용하고 없으면 비동기로 채워 넣음) 추가. 캐시는 `settings.todayMissions[goalId] = {date, text}`로 저장해 목표당 하루 1회만 호출.
+  (3) 홈 화면 캡처 카드와 목표 목록 사이에 `#todayMissionCard` 신설, `renderHome()`에서 항상 갱신. CSS는 `.mission-*` 5개 클래스만 신규 추가(기존 `--rule`/`--ink-soft`/`shadow-sm` 토큰 재사용).
+  (4) `scripts/smoke-test.js`에 `localTodayMission` 단위 테스트 2건 추가.
+- **발생한 문제 및 해결**: 없음
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node -c api/todaymission.js` 문법 검증 통과, `node scripts/smoke-test.js` 22개 전부 통과(기존 20 + 신규 2, 회귀 없음). 브라우저 도구가 없는 샌드박스라 Vercel 프리뷰 실제 렌더링 확인은 진행하지 못함.
+---
+
+## [2026-09-05 06:40] 피드 원터치 응원 리액션 보강 (영속화 + 햅틱)
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 5단계 항목 — 피드/마니또에 "문구 작성 없이 한 번의 탭으로 응원"하는 기능. (8원칙: 먼저 현황 조사 → 마니또 응원 스탬프는 이미 햅틱+컨페티+영속 저장까지 완비돼 있었고, 피드의 "응원" 버튼도 이미 한 번의 탭으로 동작하지만 ①`state.feedReacted`가 세션 메모리에만 있어 새로고침하면 응원 표시가 사라지고 ②탭해도 아무 촉각/시각 피드백이 없다는 두 가지 실질적 공백을 발견 → 새 기능을 만들 필요 없이 이 공백만 메우는 것이 정확한 해결책)
+- **수정/실행 내역**:
+  (1) `settings.feedReactions:{}` 기본값 추가, 세션 전용이던 `state.feedReacted`를 완전히 제거하고 `state.profile.settings.feedReactions`(영속)로 교체 — `feedPostHtml`(내 게시물)·`renderCommFeed`(피드 아이템) 두 곳 모두 반영.
+  (2) 피드 응원 버튼 클릭 핸들러를 async로 전환: 응원을 새로 켤 때만 진동(10ms)+마이크로 컨페티(6개, 버튼 위치)를 발동하고 `await saveProfile()`로 즉시 영속화. 이미 응원한 걸 취소할 때는 조용히 꺼짐(다크패턴 방지 — 응원 취소를 벌주지 않음).
+  (3) `burstConfetti(x,y)`에 count 인자(기본 18) 추가해 이런 잦은 가벼운 반응에는 더 작은 버스트를 쓸 수 있게 함(체크인 축하 PR과 동일한 아이디어를 이 브랜치에도 독립적으로 반영).
+- **발생한 문제 및 해결**: 마니또는 이미 요구사항을 충족하고 있어 별도 수정 없음(중복 구현 방지, 조사 후 실제 공백만 정확히 수정)
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 기존 20개 전부 통과(회귀 없음). `grep`으로 `feedReacted` 잔여 참조 0건 확인. 브라우저 도구가 없는 샌드박스라 실제 새로고침 후 영속 확인은 진행하지 못함(로직상 settings가 saveProfile→localStorage에 저장되는 기존 검증된 경로를 그대로 타므로 안전).
+---
+
+## [2026-09-05 06:27] 뱃지 컬렉션 "명예의 전당" 화면
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 2단계 세 번째 항목 — 이미 갖고 있는 지표(연속일·기록 수·완료 마일스톤 수·레벨·완주한 목표 수)를 뱃지로 묶어 모아보는 "명예의 전당" 화면을 마이페이지(설정 화면 프로필 카드)에서 진입하도록 추가. (8원칙: 새 서버 저장 없이도 이미 있는 데이터로 계산 가능한 지표들이라, 별도 스키마 변경 없이 계산식만으로 뱃지 잠금/해제를 판정하는 게 가장 효율적 — 이 항목도 레벨 지표를 쓰므로 `auto/2026-09-05-xp-level-model` 브랜치 위에 쌓음)
+- **수정/실행 내역**:
+  (1) `totalCompletedMilestones(profile)` — 모든 목표에 걸친 완료 마일스톤 총합을 계산하는 순수 함수 신설.
+  (2) `badgeContext(profile)` — records 수·streak·완료 마일스톤 수·레벨(levelForXP)·보관(완주) 목표 수를 한 번에 모아주는 헬퍼.
+  (3) `BADGES` 카탈로그(10종): 첫 발걸음(기록 1+)·3/7/30일 연속·기록 마스터(50+)·마일스톤 헌터(5+)/정복자(20+)·레벨 5/10·첫 완주(보관 1+). 각 뱃지는 `check(ctx)` 조건 함수로 판정(서버 저장 없이 매번 실시간 계산이라 데이터 불일치 위험 없음).
+  (4) `openHallOfFame()` — 획득 개수(N/10)와 함께 3열 그리드 모달로 뱃지 전체를 보여주고, 미획득은 🔒 처리 + 획득 조건 설명 노출.
+  (5) 설정 화면 프로필 카드의 "프로필 편집" 버튼 옆에 "🏆 명예의 전당" 버튼 추가(기존 버튼과 나란히 flex 배치로 레이아웃 변경 최소화).
+  (6) CSS는 `.badge-grid`/`.badge-tile`/`.badge-icon`/`.badge-label`/`.badge-desc` 5개 신규 클래스만 추가, `--gold-soft`/`--card2`/`--ink-faint` 등 기존 토큰 재사용.
+  (7) `scripts/smoke-test.js`에 `totalCompletedMilestones` 단위 테스트 1건 추가.
+- **발생한 문제 및 해결**: 없음
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 24개 전부 통과(기존 23 + 신규 1, 회귀 없음). 브라우저 도구가 없는 샌드박스라 모달 실제 렌더링 확인은 진행하지 못함.
+## [2026-09-05 06:24] 레벨 배지 UI(홈 상단) + 레벨업 축하 배너
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 2단계 두 번째 항목 — 직전 PR(XP/레벨 데이터 모델)에서 만든 계산 로직을 실제 화면에 노출. 홈 상단에 현재 레벨·진행률 배지를 상시 표시하고, 레벨이 오를 때 화면 어디에 있든 보이는 축하 배너를 띄움. (이 항목은 XP 데이터 모델이 있어야 UI를 만들 수 있어, `auto/2026-09-05-xp-level-model` 브랜치 위에 쌓은 브랜치로 작업 — 그 PR이 먼저 병합돼야 이 PR도 merge 가능)
+- **수정/실행 내역**:
+  (1) 홈 화면 상단(`#homeGreeting` 바로 아래)에 `#levelBadgeRow` 신설. `levelBadgeHtml(xp)`가 `levelProgress()` 결과로 "Lv.N" 배지 + 현재 레벨 구간 진행률 미니바(기존 `.mini-bar` 재사용) + "into/span XP" 텍스트를 렌더링, `renderLevelBadge()`가 이를 DOM에 반영. `renderHome()`에서 항상 호출해 홈 진입 때마다 최신 상태 유지.
+  (2) 레벨업 배너: 앱 어느 탭에 있어도 보이도록 `#levelUpBannerSlot`을 topbar 바로 아래 `position:fixed` 오버레이로 신설(기존 체크인 리마인더용 `#notifyBannerSlot`과는 별도 슬롯이라 서로 덮어쓰지 않음). `showLevelUpBanner(level)`이 기존 `.notify-banner` 클래스에 보라 그라디언트 변형(`.levelup`)을 얹어 "🎉 레벨 업!" 메시지 + 확인 버튼을 띄우고 진동+컨페티를 함께 발동, 6초 후 자동 닫힘(수동 닫기도 가능).
+  (3) `awardXP` 호출 4곳(체크인, 결과 기록 모달 마일스톤 완료, AI 자동 업데이트 마일스톤 완료, 편집 모드 상태 순환) 모두에서 반환값의 `leveledUp`을 확인해 배너를 띄우고, 매번 `renderLevelBadge()`로 배지를 즉시 갱신하도록 연결.
+  (4) 신규 CSS는 `.notify-banner.levelup` 변형 1개 + `.level-badge*` 5개 클래스만 추가, 기존 `--violet`/`.mini-bar`/`.notify-banner`/`shadow-sm` 등 디자인 토큰만 재사용.
+- **발생한 문제 및 해결**: 없음. 레벨업 배너를 탭별 화면 대신 topbar 아래 고정 오버레이로 배치해 "체크인 중이 아닌 목표 편집 화면에서 마일스톤 완료로 레벨업해도 안 보이는" 사각지대를 피함.
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 기존 23개 전부 통과(이 PR은 순수 함수 추가가 없어 신규 테스트 없음, 회귀 없음). `levelProgress`/`levelBadgeHtml` 출력을 0/45/100/250 XP 케이스로 시뮬레이션해 "Lv.1 45/100 XP(45%)", "Lv.2 150/200 XP(75%)" 등 배지 텍스트가 올바르게 계산됨을 확인. 브라우저 도구가 없는 샌드박스라 실제 렌더링·애니메이션 확인은 진행하지 못함.
+참고: 위 장애는 사용자가 별도로 연 PR #19로 먼저 병합되어 해결되었다. 아래 완주 인증서 브랜치는 그보다 앞서(PR #10 XP/레벨 모델 병합 이전 시점의 main) 분기했던 브랜치라, 그 사이 병합된 PR #10·#19 두 커밋과 병합 충돌이 발생해 이 로그를 포함한 파일들을 수동으로 재병합했다.
+
+## [2026-09-05 12:30] 목표 완주 인증서(트로피) 이미지 생성 + 공유
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 6단계 첫 항목 — 목표를 최종 달성했을 때 트로피/인증서 이미지를 생성해 공유할 수 있게 한다. (문제해결 8원칙: "완주"라는 가장 큰 성취 순간에 남는 게 텍스트 토스트 한 줄뿐이라, 그동안 쌓아온 노력을 형태 있는 결과물로 남기고 확산할 장치가 없었던 게 공백이었음 → 이미 공유 탭에 마련돼 있는 canvas 기반 카드 생성 인프라(`scRoundRect`/`scWrapLines`/`scDrawLines`, 공유/저장 흐름)를 그대로 재사용해 새 인프라를 만들지 않는 것이 효율적이라 판단)
+- **해결 방식 타당성 검토**: 다크패턴 여부 점검 — 인증서는 목표를 100% 달성(`goalAchievement(goal)>=100`)했을 때만 뜨는 순수 긍정 보상이고, 강제 공유 없이 "공유하기/이미지 저장"을 사용자가 선택. 기존 공유 카드와 달리 별도의 캔버스 크기(720×720 고정, 보라→골드 그라디언트 + 흰 테두리 + 🏆)를 써서 "진행 중 공유 카드"와 시각적으로 구분되는 별도 성격(인증서)임을 분명히 했고, 기존 `.modal-actions`/`.btn-primary`/`.btn-ghost`/`gaugeSvg`류 디자인 토큰만 재사용해 CLAUDE.md 디자인 불변경 원칙을 지켰다.
+- **수정/실행 내역**:
+  (1) `generateGoalCertificateImage(goal,pct,days)` 신규 — 공유 탭의 `generateShareImage`가 쓰던 `scRoundRect`/`scWrapLines`/`scDrawLines` 헬퍼를 그대로 재사용해 720×720 인증서 이미지를 canvas로 그림(제목·달성률·소요일수·완료일자·이름 포함).
+  (2) `openGoalCertificateModal(goal)` 신규 — 기존 `openModal`로 모달을 띄우고 진동+컨페티(`burstConfetti`, 기존 인프라)를 함께 발동, 인증서 이미지를 비동기로 채운 뒤 "공유하기"(`navigator.share`/클립보드 폴백, 공유 탭과 동일 패턴)·"이미지 저장"(다운로드) 버튼을 연결.
+  (3) `archiveGoal(goal)`(목표를 "기록"으로 보관하는 기존 함수, = 완주/종료 시점)에서 `goalAchievement(goal)>=100`이면 기존 토스트 대신 인증서 모달을 띄우도록 1줄 분기 추가. 100% 미만으로 보관(중도 종료)하는 기존 동작은 그대로 유지.
+  (4) `scripts/smoke-test.js`에 `goalAchievement` 단위 테스트 3건 추가(전부 done→100, 일부만→100 미만, 목표 자체 수치 결과 우선).
+- **발생한 문제 및 해결(원칙 8 재검증)**: 착수 전 로컬 검증을 위해 `node scripts/smoke-test.js`를 실행하니 이번에도 main에 병합 충돌 마커가 남은 상태(직전 사이클의 다른 PR이 처리 중인 것과 동일 사안)라 이 브랜치에서도 동일하게 마커만 해소(내용은 그대로 보존, 별도 신규 로직 아님).
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과(길이 233,871자), `<style>` 중괄호 407/407(CSS 변경 없음), `node scripts/smoke-test.js` **28개 전부 통과**(기존 25 + 신규 3, 회귀 없음). `archiveGoal` 분기 로직을 코드 리뷰로 재확인(밀리스톤 없는 빈 목표는 achievement 0이라 오발화하지 않음, 이미 result가 있는 경우도 정상 처리). 브라우저 도구가 없는 샌드박스라 실제 canvas 렌더링·공유 시트 동작은 로직 검증으로 대체했으며 PR에 명시.
+---
+
+## [2026-09-06 02:54] 스프린트 오케스트레이션(수석비서 모드) 세팅
+- **목표**: 노션 6대 스프린트 태스크(TASK-01~06)를 하위 에이전트 충돌 없이 순차 처리하기 위한 수석비서 운영 체계를 저장소에 고정 (CLAUDE.md 9번 절, `/sprint-task` 스킬, 태스크 파일, 상태 파일, 검증 훅 스크립트)
+- **수정/실행 내역**: CLAUDE.md 6번에 스프린트 기간 1호 직원 제외 규칙 1줄 추가, 9번 절(상위 원칙 7개) 신설. `docs/sprint/TASK-01~06.md`(노션 CSV → `scripts/gen-sprint-tasks.js`로 생성, 태스크별 의존성·기존 PR 겹침·사용자 필요 작업 메타 포함), `docs/sprint/STATUS.md`(진행표 + 사전 정리 체크리스트), `.claude/skills/sprint-task/SKILL.md`(9단계 프로토콜, 승인 게이트 2회), `scripts/hook-smoke-on-index.js`(index.html 수정 시 스모크 테스트 자동 실행 PostToolUse 훅), `scripts/static-server.js` + `.claude/launch.json`(임시 폴더 경로 → 저장소 내부 경로로 교정), `.gitignore`(.claude/worktrees, settings.local.json, .pr-body-*.md) 추가. 로컬 체크아웃의 미커밋 index.html 변경을 건드리지 않도록 origin/main 기준 워크트리(`.claude/worktrees/sprint-setup`)에서 새 브랜치로 작업. index.html·sw.js·api/ 무변경(배포 영향 없음).
+- **발생한 문제 및 해결**: (1) `.claude/settings.json` 훅 등록(및 update-config 스킬 호출)이 Claude Code 자동 모드 분류기에 차단됨 → 우회하지 않고 훅 스크립트만 커밋, 등록 JSON은 STATUS.md 체크리스트와 스크립트 머리말에 안내해 사용자가 직접 추가. (2) gh CLI가 PATH에 없음 → 전체 경로(`C:\Program Files\GitHub CLI\gh.exe`)로 호출, PATH 등록은 체크리스트에 추가. (3) 훅 스크립트 최초 작성본의 `\` 정규식이 셸 이스케이프로 깨져 문법 오류 → `String.fromCharCode(92)`로 대체. (4) 태스크 파일의 노션 내보내기 날짜가 UTC로 하루 어긋남 → 로컬 날짜로 수정 후 재생성. (5) 컨설팅 가이드가 제안한 별도 CLAUDE.md는 기존 6번 규칙(PR 후 사용자 병합)과 충돌(에이전트 스쿼시 머지)하므로 채택하지 않고 9번 절로 흡수.
+- **검증 결과**: `node scripts/smoke-test.js` 40/40 통과(origin/main 기준선). 훅 스크립트 3케이스 확인: 비대상 파일 무시(exit 0), index.html 정상(exit 0·요약 출력), 실패 스모크(exit 2·실패 내용 stderr). launch.json JSON 유효, 전 스크립트 `node --check` 통과. CLAUDE.md diff 13줄 추가만(기존 줄 무변경, CRLF 통일).
+---
