@@ -71,6 +71,7 @@ const FN_NAMES = [
   'applySuggestion', 'describeSuggestion', 'xpForLevel', 'levelForXP', 'levelProgress',
   'totalCompletedMilestones',
   'heatmapLevel', 'localNextActionSuggestion',
+  'hashStr', 'mockPostCheerCount',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -83,6 +84,7 @@ const sandboxSrc =
   'xpForLevel, levelForXP, levelProgress, totalCompletedMilestones, ' +
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
+  'hashStr, mockPostCheerCount, ' +
   'setRecords: function(r){ state.profile.records = r; } };\n';
 
 const os = require('os');
@@ -266,6 +268,20 @@ check('localNextActionSuggestion: 남은 마일스톤이 없으면 결과 기록
   const goal = makeGoal(['done']);
   const msg = fns.localNextActionSuggestion(goal, 'm0');
   assert.ok(msg.indexOf('결과를 기록') !== -1);
+});
+
+check('mockPostCheerCount: 방금 작성한 글은 응원이 0이다', () => {
+  assert.strictEqual(fns.mockPostCheerCount({ id: 'p1', createdAt: new Date().toISOString() }), 0);
+});
+
+check('mockPostCheerCount: 글이나 id가 없으면 0이다', () => {
+  assert.strictEqual(fns.mockPostCheerCount(null), 0);
+  assert.strictEqual(fns.mockPostCheerCount({ createdAt: new Date().toISOString() }), 0);
+});
+
+check('mockPostCheerCount: 시간이 많이 지나면 상한(40)에 도달한다', () => {
+  const old = { id: 'p2', createdAt: new Date(Date.now() - 999 * 3600000).toISOString() };
+  assert.strictEqual(fns.mockPostCheerCount(old), 40);
 });
 
 /* ============ 결과 요약 ============ */
