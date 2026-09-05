@@ -534,6 +534,15 @@
 - **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과(길이 233,871자), `<style>` 중괄호 407/407(CSS 변경 없음), `node scripts/smoke-test.js` **28개 전부 통과**(기존 25 + 신규 3, 회귀 없음). `archiveGoal` 분기 로직을 코드 리뷰로 재확인(밀리스톤 없는 빈 목표는 achievement 0이라 오발화하지 않음, 이미 result가 있는 경우도 정상 처리). 브라우저 도구가 없는 샌드박스라 실제 canvas 렌더링·공유 시트 동작은 로직 검증으로 대체했으며 PR에 명시.
 ---
 
+## [2026-09-05 17:42] 스트릭 프리즈 지급이 사실상 발동하지 않던 타이밍 버그 수정
+- **목표**: 오늘 대량 병합 이후 감사(audit) 워크플로에서 발견된 이슈 수정 — "7일 연속 기록 시 스트릭 프리즈 1개 지급" 기능이 정상적인 하루 1회 접속 흐름에서 사실상 지급되지 않는 버그.
+- **문제의 본질**: `checkStreakFreeze()`(그 안에서 `maybeGrantStreakFreeze()` 호출)는 `enterApp()` 안에서 **그날의 체크인을 하기 전에 딱 한 번**만 실행된다. 그런데 `computeStreakDays()`는 '오늘' 기록이 없으면 즉시 0을 반환하도록 설계돼 있다(오늘 체크인 전에는 어제까지 연속 기록이 아무리 길어도 streak=0). 그 결과 정확히 7/14/21일째 되는 날 앱을 켜서 확인만 하고 나중에 체크인하는 전형적인 사용 패턴에서는, 그 경계를 넘는 순간(=체크인 완료 시점)에 지급 로직이 다시 실행되지 않아 `grantedTier`가 영원히 갱신되지 않는다. `maybeGrantStreakFreeze()`/`computeStreakDays()` 함수 자체의 계산 로직은 정확했고(기존 단위 테스트도 모두 "오늘 기록 포함" 상태로만 검증해 이 문제를 잡지 못함), 문제는 순수하게 "언제 호출하는가"였다.
+- **해결 방식 및 타당성 검토**: 로직을 바꾸는 대신, 실제로 그날 스트릭이 갱신되는 시점 — 체크인 저장(`#captureSave` 클릭 핸들러) 직후 — 에도 `maybeGrantStreakFreeze()`를 한 번 더 호출하도록 배선을 추가했다. `maybeGrantStreakFreeze()`는 `tier <= grantedTier`면 즉시 false를 반환하는 멱등 가드가 이미 있어, 로그인 시점 호출과 체크인 시점 호출이 같은 날 중복 지급을 일으키지 않는다. 로그인 시점 호출은 그대로 유지(다른 기기에서 이미 오늘 체크인한 경우를 커버하는 데 여전히 유효).
+- **구현 절차 및 검증 결과**:
+  (1) `#captureSave` 클릭 핸들러에서 `state.profile.records.unshift(...)`(오늘자 기록 추가)와 `awardXP()` 직후, `saveProfile()` 이전에 `var freezeGranted = maybeGrantStreakFreeze();` 추가.
+  (2) 체크인 완료 토스트를 `freezeGranted`면 "🧊 스트릭 프리즈를 1개 획득했어요..." 문구로, 아니면 기존 "기록했어요"로 분기(토스트 UI가 한 번에 하나만 표시되는 구조라 둘 다 보여주는 대신 더 드물고 중요한 쪽을 우선 노출).
+- **재검증 내역(원칙 8)**: 해당 없음.
+- **검증 결과**: `node -e`로 메인 `<script>` `new Function()` 문법 검증 통과, `node scripts/smoke-test.js` **40개 전부 통과**(회귀 없음). 버그 재현·수정 확인을 위해 별도 Node 시뮬레이션 실행 — 7일 연속(어제까지)인 상태에서 "오늘 체크인 전" `maybeGrantStreakFreeze()`는 `false`(streak=0, 버그 재현), 캡처 핸들러와 동일한 순서로 "오늘 기록 추가 → 호출"하면 `true`(streak=8, 정상 지급)로 정확히 갈린다는 것을 확인. 브라우저 도구가 없는 샌드박스라 실제 클릭 시 토스트 문구까지는 코드 리뷰로 대체.
 ## [2026-09-06 02:54] 스프린트 오케스트레이션(수석비서 모드) 세팅
 - **목표**: 노션 6대 스프린트 태스크(TASK-01~06)를 하위 에이전트 충돌 없이 순차 처리하기 위한 수석비서 운영 체계를 저장소에 고정 (CLAUDE.md 9번 절, `/sprint-task` 스킬, 태스크 파일, 상태 파일, 검증 훅 스크립트)
 - **수정/실행 내역**: CLAUDE.md 6번에 스프린트 기간 1호 직원 제외 규칙 1줄 추가, 9번 절(상위 원칙 7개) 신설. `docs/sprint/TASK-01~06.md`(노션 CSV → `scripts/gen-sprint-tasks.js`로 생성, 태스크별 의존성·기존 PR 겹침·사용자 필요 작업 메타 포함), `docs/sprint/STATUS.md`(진행표 + 사전 정리 체크리스트), `.claude/skills/sprint-task/SKILL.md`(9단계 프로토콜, 승인 게이트 2회), `scripts/hook-smoke-on-index.js`(index.html 수정 시 스모크 테스트 자동 실행 PostToolUse 훅), `scripts/static-server.js` + `.claude/launch.json`(임시 폴더 경로 → 저장소 내부 경로로 교정), `.gitignore`(.claude/worktrees, settings.local.json, .pr-body-*.md) 추가. 로컬 체크아웃의 미커밋 index.html 변경을 건드리지 않도록 origin/main 기준 워크트리(`.claude/worktrees/sprint-setup`)에서 새 브랜치로 작업. index.html·sw.js·api/ 무변경(배포 영향 없음).

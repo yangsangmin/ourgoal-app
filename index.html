@@ -2105,8 +2105,9 @@
     state.profile.records.unshift({ id: newId(), type:'note', text: text, startAt: nowISO(), endAt: nowISO(), createdAt: nowISO(), category: goal ? goal.category : null });
     t.value = '';
     var xpRes = awardXP(XP_RULES.checkin, '체크인');
+    var freezeGranted = maybeGrantStreakFreeze();
     await saveProfile();
-    toast('기록했어요');
+    toast(freezeGranted ? '🧊 스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요' : '기록했어요');
     if(navigator.vibrate) navigator.vibrate(10);
     var saveBtn = document.getElementById('captureSave');
     var btnRect = saveBtn.getBoundingClientRect();
