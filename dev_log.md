@@ -332,3 +332,10 @@
 - **발생한 문제 및 해결**: 없음 (기존 confetti/vibrate 인프라 재사용, 신규 CSS는 1개 클래스+키프레임만 추가)
 - **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 20개 전부 통과(회귀 없음). resultPct 로직을 별도 시뮬레이션해 "target 없이 결과값만 입력한 할 일"이 wasDone:false→nowDone:true로 판정되어 축하 조건이 정확히 발화함을 확인.
 ---
+
+## [2026-09-05 11:56] 병합 사고 수정 — main의 smoke-test.js 병합 충돌 마커 제거
+- **목표**: PR #9(기록 히트맵) 병합 과정에서 main에 들어간 `scripts/smoke-test.js`의 미해결 병합 충돌 마커를 제거. (8원칙: 문제 자체는 사소한 실수처럼 보이지만 원인을 추적해보니 — PR #9 브랜치에 main을 병합하는 과정에서 `heatmapLevel`(해당 브랜치) vs `localNextActionSuggestion`(main, PR #8) 테스트가 같은 위치에 추가되어 충돌났고, 그 충돌이 `<<<<<<</=======/>>>>>>>` 마커가 그대로 남은 채 커밋됨 → PR #9에 수정 커밋(2fbcd29)을 푸시하고 코멘트로 안내했지만, 병합 시점이 겹쳐 실제 "Merge pull request #9"는 그 수정 이전 커밋을 기준으로 이뤄져 깨진 상태 그대로 main에 반영됨. Vercel 배포는 이 파일을 쓰지 않아 계속 성공으로 표시돼 즉시 드러나지 않았음)
+- **수정/실행 내역**: `fix/2026-09-05-smoke-test-merge-markers` 브랜치(PR #16)에서 두 테스트 스위트(heatmapLevel 3건 + localNextActionSuggestion 2건)를 모두 살려 충돌 마커만 제거, `FN_NAMES` 배열의 부수적인 들여쓰기 문제도 함께 정리.
+- **발생한 문제 및 해결**: 위 참조. 재발 방지를 위해 앞으로 스스로 병합 커밋을 만들 때는 마커 잔존 여부를 `grep`으로 재확인하는 절차를 습관화.
+- **검증 결과**: 저장소 전체에서 `<<<<<<<`/`=======`/`>>>>>>>` 마커 재검색해 다른 곳에는 없음을 확인, `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 25개 전부 통과, `node -c api/goalstatus.js`·`node -c api/nextaction.js` 문법 검증 통과.
+---
