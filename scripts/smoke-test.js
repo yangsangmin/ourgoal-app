@@ -68,7 +68,7 @@ function extractFunction(source, name) {
 const FN_NAMES = [
   'pad', 'dateKey', 'goalProgress', 'msCounts', 'resultPct', 'dDay',
   'computeStreakDays', 'findSuggestionTarget', 'sanitizeSuggestions',
-  'applySuggestion', 'describeSuggestion',
+  'applySuggestion', 'describeSuggestion', 'xpForLevel', 'levelForXP', 'levelProgress',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -78,6 +78,7 @@ const sandboxSrc =
   extracted +
   '\nmodule.exports = { pad, dateKey, goalProgress, msCounts, resultPct, dDay, ' +
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
+  'xpForLevel, levelForXP, levelProgress, ' +
   'setRecords: function(r){ state.profile.records = r; } };\n';
 
 const os = require('os');
@@ -201,6 +202,23 @@ check('describeSuggestion: status 변경 라벨을 생성한다', () => {
   const goal = makeGoal(['todo']);
   const d = fns.describeSuggestion(goal, { type: 'milestone', id: 'm0', field: 'status', value: 'done' });
   assert.ok(d.label.indexOf('완료로') !== -1);
+});
+
+check('xpForLevel: 레벨 1은 0 XP', () => {
+  assert.strictEqual(fns.xpForLevel(1), 0);
+});
+
+check('levelForXP: 경계값 미만이면 이전 레벨을 유지한다', () => {
+  assert.strictEqual(fns.levelForXP(0), 1);
+  assert.strictEqual(fns.levelForXP(fns.xpForLevel(3) - 1), 2);
+  assert.strictEqual(fns.levelForXP(fns.xpForLevel(3)), 3);
+});
+
+check('levelProgress: 현재 레벨 구간 안에서의 진행률을 계산한다', () => {
+  const p = fns.levelProgress(fns.xpForLevel(3));
+  assert.strictEqual(p.level, 3);
+  assert.strictEqual(p.into, 0);
+  assert.strictEqual(p.pct, 0);
 });
 
 /* ============ 결과 요약 ============ */

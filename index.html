@@ -888,7 +888,7 @@
 
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
   function defaultSettings(){
-    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{} };
+    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, xp:{ total:0, log:[] } };
   }
   function loadLocalSettings(userId){
     try{
@@ -898,6 +898,34 @@
   }
   function saveLocalSettings(userId, settings){
     try{ localStorage.setItem('ourgoal_settings_'+userId, JSON.stringify(settings)); } catch(e){}
+  }
+
+  /* ============ XP/레벨 시스템 ============ */
+  var XP_RULES = { checkin: 10, milestoneDone: 50 };
+  var XP_LOG_MAX = 200;
+  function xpForLevel(level){
+    // 레벨 1은 0 XP, 이후 레벨마다 필요 누적치가 50*(level-1)*level 만큼 늘어나는 성장 곡선.
+    return 50 * (level - 1) * level;
+  }
+  function levelForXP(xp){
+    var level = 1;
+    while(xpForLevel(level + 1) <= xp) level++;
+    return level;
+  }
+  function levelProgress(xp){
+    var level = levelForXP(xp);
+    var floor = xpForLevel(level);
+    var ceil = xpForLevel(level + 1);
+    return { level: level, xp: xp, into: xp - floor, span: ceil - floor, pct: Math.round(((xp - floor) / (ceil - floor)) * 100) };
+  }
+  function awardXP(amount, reason){
+    if(!state.profile.settings.xp) state.profile.settings.xp = { total:0, log:[] };
+    var xp = state.profile.settings.xp;
+    var beforeLevel = levelForXP(xp.total);
+    xp.total += amount;
+    xp.log.unshift({ amount: amount, reason: reason, at: nowISO() });
+    if(xp.log.length > XP_LOG_MAX) xp.log.length = XP_LOG_MAX;
+    return { total: xp.total, leveledUp: levelForXP(xp.total) > beforeLevel };
   }
 
   function defaultProfile(id, username, displayName){
@@ -1326,6 +1354,7 @@
         preview();
         sheet.querySelector('#rsCancel').addEventListener('click', closeModal);
         sheet.querySelector('#rsSave').addEventListener('click', async function(){
+          var wasMsDone = kind==='ms' && obj.status==='done';
           obj.result = {
             target: tEl.value ? Number(tEl.value) : '',
             result: dEl.value ? Number(dEl.value) : '',
@@ -1340,6 +1369,7 @@
           }
           if(kind==='task') obj.done = pct!==null ? pct>=100 : !!obj.result.result;
           if(kind==='ms' && pct!==null) obj.status = pct>=100 ? 'done' : (pct>0 ? 'doing' : obj.status);
+          if(kind==='ms' && !wasMsDone && obj.status==='done') awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
           await saveProfile();
           closeModal();
           toast(pct!==null ? '달성률 '+pct+'%로 기록했어요' : '결과를 기록했어요');
@@ -1796,6 +1826,7 @@
     var goal = state.profile.goals.find(function(g){ return g.id===state.activeGoalId; }) || state.profile.goals[0];
     state.profile.records.unshift({ id: newId(), type:'note', text: text, startAt: nowISO(), endAt: nowISO(), createdAt: nowISO(), category: goal ? goal.category : null });
     t.value = '';
+    awardXP(XP_RULES.checkin, '체크인');
     await saveProfile();
     toast('기록했어요');
     renderFeedbackSlot(null);
@@ -2039,11 +2070,18 @@
         sheet.querySelector('#sugSkipBtn').addEventListener('click', closeModal);
         sheet.querySelector('#sugApplyBtn').addEventListener('click', async function(){
           var applied = [];
+          var newlyDoneMsCount = 0;
           valid.forEach(function(s, i){
             if(!checked[i]) return;
-            if(applySuggestion(goal, s)) applied.push(describeSuggestion(goal, s));
+            var target = findSuggestionTarget(goal, s);
+            var wasMsDone = s.type==='milestone' && target && target.milestone.status==='done';
+            if(applySuggestion(goal, s)){
+              applied.push(describeSuggestion(goal, s));
+              if(s.type==='milestone' && target && !wasMsDone && target.milestone.status==='done') newlyDoneMsCount++;
+            }
           });
           if(!applied.length){ closeModal(); return; }
+          for(var i=0;i<newlyDoneMsCount;i++) awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
           await saveProfile();
           closeModal();
           var becameDone = applied.some(function(a){ return a.label.indexOf('완료')!==-1; });
@@ -3127,7 +3165,9 @@
       var statusEl = row.querySelector('[data-cyclestatus]');
       statusEl.addEventListener('click', async function(){
         var order = ['todo','doing','done'];
+        var wasDone = ms.status==='done';
         ms.status = order[(order.indexOf(ms.status)+1)%3];
+        if(!wasDone && ms.status==='done') awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
         await saveProfile();
         renderGoalsScreen();
       });

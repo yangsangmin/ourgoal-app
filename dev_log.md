@@ -301,3 +301,15 @@
 - **발생한 문제 및 해결**: (1) GitHub 웹 UI에서 conflict 3-way 병합용 CodeMirror "Accept both changes" 버튼이 뷰포트 폭에 의해 클릭 좌표가 어긋나 여러 번 실패 → git 블롭(ancestor/base/head oid)을 직접 API로 받아 로컬 `git merge-file`로 재현 후 업로드하는 방식으로 우회했으나, 정확히 이 작업을 진행하던 중 1호 직원 세션이 웹훅으로 깨어나 같은 브랜치를 실제 git으로 먼저 재해결·푸시하는 것을 발견 → 이후로는 1호 직원의 해결을 기다렸다가 "Merge pull request" 버튼 클릭만 담당하는 것으로 역할을 분담. (2) 로컬 3-way 병합 중 BACKLOG.md/dev_log.md(LF)와 main의 index.html(CRLF)이 섞여 있어 첫 시도에서 줄바꿈 불일치로 잘못된 병합 결과(변경사항 소실)가 발생 → 파일별로 실제 줄바꿈을 확인해 올바르게 정규화한 뒤 병합해 해결. (3) GitHub PR 병합 버튼이 "checking..." 상태에서 클릭이 씹히는 경우가 잦아, 클릭 후 커밋-메시지 입력폼이 실제로 나타났는지 read_page로 재확인하고 필요시 재클릭하는 방식으로 안정화.
 - **검증 결과**: 병합 후 main의 index.html에서 manifest.json(PWA)·prefers-color-scheme(다크모드)·renderReportSummary(리포트)·a11ySwitch(접근성)·그룹 배지 streak 계산·goaltemplate(새 목표 AI)가 모두 포함돼 있음을 문자열 검색으로 확인, `<style>` 중괄호 394/394 균형, 메인 `<script>`를 `new Function()`으로 문법 검증 통과. `gh api`로 열린 PR이 0개임을 최종 확인.
 ---
+
+## [2026-09-05 06:20] XP/레벨 시스템 데이터 모델과 계산 로직
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 2단계 첫 항목 — 체크인·마일스톤 완료 시 XP가 쌓이는 데이터 모델과 레벨 계산 로직을 settings에 구현(UI는 다음 항목인 "레벨 배지 UI+레벨업 배너"에서 이어감, 이번엔 백엔드 로직만). (8원칙: 순간적인 축하(컨페티 등)는 앞선 PR들로 이미 커버했지만, "누적되는 성장" 감각을 주려면 그 이전에 데이터 모델부터 먼저 있어야 UI를 올릴 수 있어 이 순서로 쪼갬)
+- **수정/실행 내역**:
+  (1) `defaultSettings()`에 `xp:{ total:0, log:[] }` 기본값 추가. 기존 사용자도 `loadLocalSettings`의 `Object.assign(defaultSettings(), ...)` 병합 로직으로 자동 채워짐(마이그레이션 불필요).
+  (2) 순수 계산 함수 3개 신설: `xpForLevel(level)`(레벨업에 필요한 누적 XP, 50*(N-1)*N 곡선 — 레벨2 100XP·레벨3 300XP·레벨4 600XP·레벨5 1000XP), `levelForXP(xp)`(현재 총 XP로 레벨 역산), `levelProgress(xp)`(현재 레벨 구간 안에서의 진행률 %까지 반환해 다음 항목의 UI가 바로 쓸 수 있게 준비).
+  (3) `awardXP(amount, reason)` — settings.xp.total 증가 + 최근 200건 로그 기록, 레벨업 여부(leveledUp)를 반환해 다음 항목(레벨업 배너)에서 바로 활용 가능하도록 설계.
+  (4) XP 적립 지점 4곳 연결(모두 saveProfile 호출 전에 실행해 별도 API 왕복 없이 한 번에 저장): ① 체크인 저장(`captureSave`) +10, ② 결과 기록 모달에서 마일스톤이 새로 완료(wasDone→done)될 때 +50, ③ 기록 기반 AI 자동 업데이트 적용으로 마일스톤이 새로 완료될 때 건당 +50, ④ 편집 모드 상태 순환 배지로 마일스톤을 done으로 바꿀 때 +50. 목표/할 일(task) 완료는 XP 지급 대상에서 제외(요청 범위대로 체크인·마일스톤만).
+  (5) `scripts/smoke-test.js`에 `xpForLevel`/`levelForXP`/`levelProgress` 단위 테스트 3건 추가.
+- **발생한 문제 및 해결**: 없음
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 23개 전부 통과(기존 20 + 신규 3). `awardXP`의 레벨업 감지(레벨 경계를 넘을 때만 leveledUp:true) 로직을 별도 시뮬레이션(90XP+10XP=100XP → 레벨1→2 전환)으로 재확인. UI가 아직 없어 브라우저 검증은 해당 없음.
+---
