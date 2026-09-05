@@ -301,3 +301,14 @@
 - **발생한 문제 및 해결**: (1) GitHub 웹 UI에서 conflict 3-way 병합용 CodeMirror "Accept both changes" 버튼이 뷰포트 폭에 의해 클릭 좌표가 어긋나 여러 번 실패 → git 블롭(ancestor/base/head oid)을 직접 API로 받아 로컬 `git merge-file`로 재현 후 업로드하는 방식으로 우회했으나, 정확히 이 작업을 진행하던 중 1호 직원 세션이 웹훅으로 깨어나 같은 브랜치를 실제 git으로 먼저 재해결·푸시하는 것을 발견 → 이후로는 1호 직원의 해결을 기다렸다가 "Merge pull request" 버튼 클릭만 담당하는 것으로 역할을 분담. (2) 로컬 3-way 병합 중 BACKLOG.md/dev_log.md(LF)와 main의 index.html(CRLF)이 섞여 있어 첫 시도에서 줄바꿈 불일치로 잘못된 병합 결과(변경사항 소실)가 발생 → 파일별로 실제 줄바꿈을 확인해 올바르게 정규화한 뒤 병합해 해결. (3) GitHub PR 병합 버튼이 "checking..." 상태에서 클릭이 씹히는 경우가 잦아, 클릭 후 커밋-메시지 입력폼이 실제로 나타났는지 read_page로 재확인하고 필요시 재클릭하는 방식으로 안정화.
 - **검증 결과**: 병합 후 main의 index.html에서 manifest.json(PWA)·prefers-color-scheme(다크모드)·renderReportSummary(리포트)·a11ySwitch(접근성)·그룹 배지 streak 계산·goaltemplate(새 목표 AI)가 모두 포함돼 있음을 문자열 검색으로 확인, `<style>` 중괄호 394/394 균형, 메인 `<script>`를 `new Function()`으로 문법 검증 통과. `gh api`로 열린 PR이 0개임을 최종 확인.
 ---
+
+## [2026-09-05 06:12] 마일스톤 완료 축하 모달 + AI 다음 행동 제안
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 1단계 두 번째 항목 — 마일스톤이 완료 상태로 전환될 때 축하 모달을 띄우고, goalstatus.js와 같은 "단일 Claude 호출 + 프롬프트 내 자체검증" 패턴으로 AI가 다음 행동을 한 줄 제안하도록 구현. (8원칙: 마일스톤 완료는 목표 달성 과정에서 가장 의미 있는 성취 단위인데, 완료 시점에 사용자가 다음에 뭘 해야 할지 스스로 찾아야 했던 게 도파민 단절 지점이라 판단 → 완료 감지와 동시에 축하+다음 행동 제시를 한 번에 묶는 것이 핵심 해결책)
+- **수정/실행 내역**:
+  (1) `api/nextaction.js` 신설(goalstatus.js와 동일한 구조: POST 전용, ANTHROPIC_API_KEY 서버 프록시, 단일 Claude 호출 프롬프트에 "제공된 데이터에만 근거·축하 톤+구체적 다음 행동·남은 항목 없으면 결과 기록 제안·25~50자" 자체점검 기준을 내장해 모델이 스스로 다듬은 한 줄만 반환하도록 설계). 입력은 목표 제목·방금 완료한 마일스톤 제목·남은 마일스톤 목록(제목/상태)만 전달.
+  (2) index.html에 `localNextActionSuggestion`(AI 실패 시 로컬 대체: 다음 미완료 마일스톤 제목을 안내하거나, 없으면 결과 기록 제안), `requestNextActionSuggestion`(28초 타임아웃 + 8~80자 검증, 실패 시 로컬 대체로 폴백), `celebrateMilestoneDone`(진동+컨페티+"🎉 마일스톤 완료!" 모달을 열고 AI 제안을 비동기로 채워 넣음) 3개 함수 추가.
+  (3) 마일스톤이 "완료 아님→완료"로 전환되는 3개 지점 모두에 연결: ① 결과 기록 모달(`openResultModal`)에 `goal` 인자를 추가하고 kind==='ms'일 때 wasDone→nowDone 전환 시 기존 중앙 컨페티 대신 축하 모달 호출, ② 기록 기반 AI 자동 업데이트 제안(`sugApplyBtn`)에서 마일스톤이 새로 done이 된 경우 감지해 축하 모달 호출(같은 요청에 여러 건이면 첫 건만), ③ 편집 모드의 상태 순환 배지(`data-cyclestatus`) 클릭으로 done이 될 때도 동일 처리. 목표/할 일(task) 완료 시의 기존 동작은 그대로 유지.
+  (4) `scripts/smoke-test.js`에 `localNextActionSuggestion` 단위 테스트 2건 추가(남은 마일스톤 있음/없음 케이스).
+- **발생한 문제 및 해결**: 없음. 기존 openModal/burstConfetti 인프라를 그대로 재사용해 신규 CSS 없이 구현
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node -c api/nextaction.js` 문법 검증 통과, `node scripts/smoke-test.js` 22개 전부 통과(기존 20 + 신규 2, 회귀 없음). ANTHROPIC_API_KEY 없이도 폴백 텍스트가 정확히 나오는지 로직 시뮬레이션으로 확인(남은 마일스톤 제목 인용 / "결과를 기록" 문구). 브라우저 도구가 없는 샌드박스라 Vercel 프리뷰 실제 클릭 테스트는 진행하지 못함.
+---
