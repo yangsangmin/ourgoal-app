@@ -384,6 +384,12 @@
 - **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 전부 통과(회귀 없음). 로컬 브라우저 재현 환경에서 (1) 수정 전 100% 재현되던 크래시가 수정 후 0건, (2) 정상 흐름(DM 화면에 머무르며 메시지 전송 → 즉시 표시 → 800~1500ms 후 모의 답장까지 정상 표시)에 회귀 없음을 확인. push/PR 생성은 인증 문제로 이번 세션에서 미완료(아래 참고).
 ---
 
+## [2026-09-06 00:49] 일반 DM(renderCommDM) 재렌더링 가드에 stale DOM 체크 추가
+- **목표**: 마니또 DM `renderManitoDm`의 확정된 실사용자 도달 가능 null-deref 크래시(f57eefd, PR 대기)와 동일 클래스의 잠재 결함이 일반 소통 DM `renderCommDM`의 모의 답장 `setTimeout` 콜백에도 있는지 점검하고, 있다면 동일 가드를 선제 적용(사용자 직접 요청).
+- **수정/실행 내역**: `renderCommDM`의 `send()` 내부 `setTimeout` 콜백 가드를 `if(state.dmActiveId===person.id)` → `if(document.body.contains(body) && state.dmActiveId===person.id)`로 1줄 수정(마니또 수정과 동일 패턴 재사용, diff 1줄). `saveProfile()` await 갭이 없어 마니또보다 노출 창은 좁지만(답장 대기 700~1300ms 사이 정확히 같은 사람 DM을 보며 다른 소통 서브탭으로 전환·복귀해야 함), `dmActiveId` 조건만으로는 DOM이 여전히 document에 붙어있는지 보장 못 하는 동일 클래스의 이론적 결함이라 방어적으로 수정.
+- **발생한 문제 및 해결**: 없음. (참고: 이 브랜치의 이전 병합 커밋 ce393b9에서 이 항목이 실수로 유실되었다가, PR #25를 origin/main 대상으로 재병합하며 복원함.)
+- **검증 결과**: `node -e`로 메인 `<script>` `new Function()` 문법 검증 통과. `node scripts/smoke-test.js` 26/28 통과 — 실패 2건(`dDay: 오늘이면 D-day`, `dDay: 내일이면 D-1`)은 `git stash`로 격리해 수정 전 main에서도 동일하게 실패함을 확인한 기존의 무관한 버그로, 이번 변경과 무관(이번 PR 범위 밖).
+---
 ## [2026-09-06 01:29] 회원가입 후 최초 로그인 활용가이드 튜토리얼 추가
 - **목표**: 사용자 직접 요청 — 회원가입 후 최초 로그인 시 앱의 강점(AI 코칭, 캘린더 연동, API 커스텀·비공개 설정)을 소개하는 튜토리얼 모달 추가. (8원칙: 신규 가입자는 온보딩 3단계(카테고리→목표→마일스톤 미리보기)를 마치면 곧바로 앱 화면으로 들어가는데, 이 앱을 다른 목표관리 앱과 구분 짓는 핵심 기능(AI 자동 코칭, 캘린더 자동 동기화, BYOK 커스텀 연결·비공개 설정)은 설정 화면 깊숙이 있어 스스로 찾기 전엔 존재조차 모르고 지나칠 수 있음 → 첫 진입 직후가 이 차별점을 각인시킬 유일한 순간이라 판단)
 - **수정/실행 내역**:
@@ -432,6 +438,29 @@
 - **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 24개 전부 통과(기존 20 + 신규 4, 회귀 없음). "기록 2일치 중 어제만 빠진" 케이스를 별도 시뮬레이션해 프리즈 적용 전 streak=1 → 적용 후 streak=3, 보유 개수 1→0으로 정확히 소비됨을 확인. 브라우저 도구가 없는 샌드박스라 실제 로그인 흐름에서의 토스트·뱃지 노출은 확인하지 못함.
 ---
 
+## [2026-09-05 16:50] Web Push(Service Worker 푸시) 알림 인프라 추가
+- **목표**: BACKLOG.md "실제 브라우저 푸시 알림" 처리 — 지금은 탭이 열려 있어야만(`Notification` API + `setInterval` 폴링) 체크인 알림이 오는데, 앱이 완전히 꺼져 있어도(브라우저·탭 종료) Service Worker 기반 Web Push로 체크인 시간에 알림이 오도록 개선.
+- **문제의 본질**: 브라우저 알림 자체는 탭이 열려 있을 때 클라이언트 setInterval로 폴링해 띄우는 구조라, 원천적으로 앱이 안 떠 있으면 발동할 수 없음. 이를 해결하려면 (1) 서버가 알림을 발송할 수 있는 채널(Web Push 구독)과 (2) 서버가 "지금이 그 시각인지"를 판단할 수 있는 정보(체크인 시각 + 타임존)가 사용자별로 서버에 저장돼야 하는데, 이 앱은 지금까지 `settings`(체크인 시각 포함)를 전부 `localStorage`에만 저장해왔다는 게 핵심 제약이었음.
+- **해결 방식 및 타당성 검토**: VAPID 키 기반 Web Push 표준 사용(핸드롤 암호화는 안전하지 않아 `web-push` npm 패키지로 위임). 서버가 사용자별 발송 시각을 알아야 하므로 새 Supabase 테이블(`push_subscriptions`)에 구독 정보와 함께 `checkin_times`·`timezone`을 같이 저장(구독/시각 변경 시마다 클라이언트가 재동기화). 발송은 Vercel Cron(`vercel.json`)이 5분마다 `/api/push-dispatch`를 호출해 각 구독의 로컬 시각이 체크인 시각과 ±2분 이내면 발송, 같은 슬롯 중복 발송은 `sent_slots`로 방지. 기존 탭-오픈 전용 알림(Notification API)은 그대로 유지해 두 방식이 공존(Web Push 실패 시에도 기존 방식이 폴백 역할). 신규 UI 요소·CSS 변경 없음(설정 화면의 기존 알림 스위치를 그대로 재사용해 켤 때 푸시 구독까지 함께 처리) — CLAUDE.md 디자인 불변경 원칙 준수. 다크패턴 요소 없음(옵트인 토글, 강제 재노출 없음).
+- **수정/실행 내역**:
+  (1) `package.json` 신설 — `web-push`, `@supabase/supabase-js` 의존성 추가(핸드롤 aes128gcm 암호화 위험 회피 목적).
+  (2) `api/vapid-public-key.js` 신설 — 클라이언트가 구독 시 필요한 VAPID 공개키를 서버 env에서 읽어 반환.
+  (3) `api/push-subscribe.js` 신설 — POST로 구독 정보(`endpoint`/`keys`)+`checkinTimes`+`timezone`을 `push_subscriptions`에 upsert, DELETE로 endpoint 기준 구독 삭제.
+  (4) `api/push-dispatch.js` 신설 — Vercel Cron 진입점. `CRON_SECRET` env가 설정돼 있으면 Authorization 헤더로 검증. 전체 구독을 순회하며 타임존별 로컬 시각을 계산해 일치하는 구독에만 `web-push`로 발송, 만료(404/410) 구독은 자동 삭제.
+  (5) `vercel.json` 신설 — `*/5 * * * *` 크론으로 `/api/push-dispatch` 호출.
+  (6) `sw.js`에 `push`/`notificationclick` 이벤트 핸들러 추가(알림 표시 + 클릭 시 기존 창 포커스 또는 새 창 열기).
+  (7) `index.html` — 설정 화면의 기존 알림 스위치 on/off 핸들러에 `syncPushSubscription()`/`removePushSubscription()` 연결, 체크인 시각 추가/수정/삭제 시(알림이 켜져 있으면) 서버에 재동기화, 앱 진입(`enterApp`) 시에도 알림이 켜져 있으면 구독을 재확인.
+- **발생한 문제 및 해결(원칙 8 재검증)**: 없음 — 막힌 지점 없이 설계한 대로 구현 완료.
+- **검증 결과**: `node -e`로 `index.html` 메인 `<script>` `new Function()` 문법 검증 통과, `node -c`로 `sw.js`·`api/push-subscribe.js`·`api/push-dispatch.js`·`api/vapid-public-key.js` 전부 문법 통과, `vercel.json`/`package.json` JSON 파싱 통과, `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음). **사용자가 직접 해야 하는 후속 설정**(PR 설명에 상세 기재): Supabase에 `push_subscriptions` 테이블 생성 SQL 실행, VAPID 키 쌍 생성 후 `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY`(+선택 `VAPID_CONTACT_EMAIL`) 및 `SUPABASE_SERVICE_ROLE_KEY`(+권장 `CRON_SECRET`) Vercel 환경변수 등록 — 이 설정 전까지는 각 API가 500으로 명확히 실패하며 기존 탭-오픈 알림에는 영향 없음. **Vercel 요금제 주의**: Hobby 플랜은 크론 실행 빈도가 하루 1회로 제한될 수 있어(플랜별 상이) 5분 간격 크론은 Pro 플랜이 필요할 수 있음 — 실제 플랜 확인 필요.
+---
+
+## [2026-09-05 16:58] PR #34 배포 실패 수정 — Vercel Cron → GitHub Actions
+- **목표**: PR #34(Web Push) 푸시 직후 Vercel이 `Hobby accounts are limited to daily cron jobs` 오류로 배포 실패 — 원인 파악 및 수정.
+- **수정/실행 내역**: `vercel.json`(5분 간격 cron) 제거, `.github/workflows/push-dispatch.yml`(GitHub Actions 5분 스케줄 + 수동 실행)로 발송 트리거 교체. Actions 스케줄 지연 가능성을 감안해 `api/push-dispatch.js`의 발송 시각 매칭 허용 오차를 2분→4분으로 확대.
+- **발생한 문제 및 해결**: PR 설명에 "캐비엇"으로만 적어뒀던 Vercel Hobby 플랜 크론 제한이 실제로 배포 실패를 일으킴 → 요금제 업그레이드 대신 무료·요금제 무관인 GitHub Actions로 발송 주체를 교체(사용자에게 새 비용을 강요하지 않는 방향으로 원칙 3~4 재검토).
+- **검증 결과**: `node -c api/push-dispatch.js` 통과, `node scripts/smoke-test.js` 28/28 통과. PR #34 본문·코멘트에 반영, GitHub Secrets/Variables(`CRON_SECRET`/`PUSH_DISPATCH_URL`) 등록 필요 안내 추가.
+---
+
 ## [2026-09-06 01:43] PR #26 병합 실수로 유실된 dev_log.md 항목(00:38) 복원
 - **목표**: 사용자가 별도 작업(최초 로그인 튜토리얼) 중 우연히 발견해 보고한 dev_log.md 유실 건 조사·복구. `git diff 304a0f0..29faccd -- dev_log.md`로 대조한 결과, PR #26(`fix/2026-09-06-smoke-test-timezone`) 병합 커밋 7e2adb2("Merge branch 'main' into fix/2026-09-06-smoke-test-timezone")에서 dev_log.md 충돌을 해결하며 main에만 있던 "[2026-09-06 00:38] 마니또 DM 전송 후 화면 전환 시 null 참조 크래시 수정" 항목 전체(목표/수정·실행 내역/문제 및 해결/검증 결과 5줄)가 병합 결과에 반영되지 못하고 순수 삭제됨을 확인 — 과거 3차례의 "병합 마커가 main에 유입"된 사고(CLAUDE.md 8번)와는 증상이 다르지만(마커 없이 콘텐츠만 조용히 사라짐), 수동 충돌 해결 시 한쪽 브랜치의 신규 내용을 놓친다는 같은 근본 원인을 공유. 이 항목이 기록하던 실제 코드 수정(index.html의 `document.body.contains(body) && state.manitoDm===pid` null-deref 가드)은 main에 그대로 살아있어 기능적 회귀는 아니고 순수 문서(이력) 유실임을 확인.
 - **수정/실행 내역**: 유실 전 커밋(304a0f0)의 git blob에서 해당 항목 원문을 그대로 추출해(파일 전체를 재작성하지 않고 정확한 삽입 지점에만 Node 스크립트로 splice), 시간순 규칙에 맞는 위치 — "[2026-09-05 15:23] 실행 효율 규칙" 항목과 "[2026-09-06 01:29] 회원가입 후 최초 로그인" 항목 사이(00:38은 그 사이 시각) — 에 텍스트 변경 없이 복원. 참고로 사용자가 언급한 인접 항목 "[2026-09-06 00:49] 일반 DM(renderCommDM)..."은 아직 main에 병합되지 않은 오픈 브랜치 `fix/2026-09-06-comm-dm-stale-dom-guard`(커밋 7ee89d2)에만 존재 — CLAUDE.md 6번 규칙("이전 주기 PR이 열려 있으면 건드리지 않는다")에 따라 그 브랜치는 건드리지 않고, 현재 main 기준으로 올바른 위치에만 삽입함(해당 PR이 나중에 병합될 때 00:38/00:49 순서를 다투는 통상적인 충돌이 생길 수 있으나 이는 그 PR 병합 시점에 처리할 몫).
@@ -472,4 +501,32 @@
   (7) `scripts/smoke-test.js`에 `totalCompletedMilestones` 단위 테스트 1건 추가.
 - **발생한 문제 및 해결**: 없음
 - **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 24개 전부 통과(기존 23 + 신규 1, 회귀 없음). 브라우저 도구가 없는 샌드박스라 모달 실제 렌더링 확인은 진행하지 못함.
+## [2026-09-05 06:24] 레벨 배지 UI(홈 상단) + 레벨업 축하 배너
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 2단계 두 번째 항목 — 직전 PR(XP/레벨 데이터 모델)에서 만든 계산 로직을 실제 화면에 노출. 홈 상단에 현재 레벨·진행률 배지를 상시 표시하고, 레벨이 오를 때 화면 어디에 있든 보이는 축하 배너를 띄움. (이 항목은 XP 데이터 모델이 있어야 UI를 만들 수 있어, `auto/2026-09-05-xp-level-model` 브랜치 위에 쌓은 브랜치로 작업 — 그 PR이 먼저 병합돼야 이 PR도 merge 가능)
+- **수정/실행 내역**:
+  (1) 홈 화면 상단(`#homeGreeting` 바로 아래)에 `#levelBadgeRow` 신설. `levelBadgeHtml(xp)`가 `levelProgress()` 결과로 "Lv.N" 배지 + 현재 레벨 구간 진행률 미니바(기존 `.mini-bar` 재사용) + "into/span XP" 텍스트를 렌더링, `renderLevelBadge()`가 이를 DOM에 반영. `renderHome()`에서 항상 호출해 홈 진입 때마다 최신 상태 유지.
+  (2) 레벨업 배너: 앱 어느 탭에 있어도 보이도록 `#levelUpBannerSlot`을 topbar 바로 아래 `position:fixed` 오버레이로 신설(기존 체크인 리마인더용 `#notifyBannerSlot`과는 별도 슬롯이라 서로 덮어쓰지 않음). `showLevelUpBanner(level)`이 기존 `.notify-banner` 클래스에 보라 그라디언트 변형(`.levelup`)을 얹어 "🎉 레벨 업!" 메시지 + 확인 버튼을 띄우고 진동+컨페티를 함께 발동, 6초 후 자동 닫힘(수동 닫기도 가능).
+  (3) `awardXP` 호출 4곳(체크인, 결과 기록 모달 마일스톤 완료, AI 자동 업데이트 마일스톤 완료, 편집 모드 상태 순환) 모두에서 반환값의 `leveledUp`을 확인해 배너를 띄우고, 매번 `renderLevelBadge()`로 배지를 즉시 갱신하도록 연결.
+  (4) 신규 CSS는 `.notify-banner.levelup` 변형 1개 + `.level-badge*` 5개 클래스만 추가, 기존 `--violet`/`.mini-bar`/`.notify-banner`/`shadow-sm` 등 디자인 토큰만 재사용.
+- **발생한 문제 및 해결**: 없음. 레벨업 배너를 탭별 화면 대신 topbar 아래 고정 오버레이로 배치해 "체크인 중이 아닌 목표 편집 화면에서 마일스톤 완료로 레벨업해도 안 보이는" 사각지대를 피함.
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 기존 23개 전부 통과(이 PR은 순수 함수 추가가 없어 신규 테스트 없음, 회귀 없음). `levelProgress`/`levelBadgeHtml` 출력을 0/45/100/250 XP 케이스로 시뮬레이션해 "Lv.1 45/100 XP(45%)", "Lv.2 150/200 XP(75%)" 등 배지 텍스트가 올바르게 계산됨을 확인. 브라우저 도구가 없는 샌드박스라 실제 렌더링·애니메이션 확인은 진행하지 못함.
+참고: 위 장애는 사용자가 별도로 연 PR #19로 먼저 병합되어 해결되었다. 아래 완주 인증서 브랜치는 그보다 앞서(PR #10 XP/레벨 모델 병합 이전 시점의 main) 분기했던 브랜치라, 그 사이 병합된 PR #10·#19 두 커밋과 병합 충돌이 발생해 이 로그를 포함한 파일들을 수동으로 재병합했다.
+
+## [2026-09-05 12:30] 목표 완주 인증서(트로피) 이미지 생성 + 공유
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 6단계 첫 항목 — 목표를 최종 달성했을 때 트로피/인증서 이미지를 생성해 공유할 수 있게 한다. (문제해결 8원칙: "완주"라는 가장 큰 성취 순간에 남는 게 텍스트 토스트 한 줄뿐이라, 그동안 쌓아온 노력을 형태 있는 결과물로 남기고 확산할 장치가 없었던 게 공백이었음 → 이미 공유 탭에 마련돼 있는 canvas 기반 카드 생성 인프라(`scRoundRect`/`scWrapLines`/`scDrawLines`, 공유/저장 흐름)를 그대로 재사용해 새 인프라를 만들지 않는 것이 효율적이라 판단)
+- **해결 방식 타당성 검토**: 다크패턴 여부 점검 — 인증서는 목표를 100% 달성(`goalAchievement(goal)>=100`)했을 때만 뜨는 순수 긍정 보상이고, 강제 공유 없이 "공유하기/이미지 저장"을 사용자가 선택. 기존 공유 카드와 달리 별도의 캔버스 크기(720×720 고정, 보라→골드 그라디언트 + 흰 테두리 + 🏆)를 써서 "진행 중 공유 카드"와 시각적으로 구분되는 별도 성격(인증서)임을 분명히 했고, 기존 `.modal-actions`/`.btn-primary`/`.btn-ghost`/`gaugeSvg`류 디자인 토큰만 재사용해 CLAUDE.md 디자인 불변경 원칙을 지켰다.
+- **수정/실행 내역**:
+  (1) `generateGoalCertificateImage(goal,pct,days)` 신규 — 공유 탭의 `generateShareImage`가 쓰던 `scRoundRect`/`scWrapLines`/`scDrawLines` 헬퍼를 그대로 재사용해 720×720 인증서 이미지를 canvas로 그림(제목·달성률·소요일수·완료일자·이름 포함).
+  (2) `openGoalCertificateModal(goal)` 신규 — 기존 `openModal`로 모달을 띄우고 진동+컨페티(`burstConfetti`, 기존 인프라)를 함께 발동, 인증서 이미지를 비동기로 채운 뒤 "공유하기"(`navigator.share`/클립보드 폴백, 공유 탭과 동일 패턴)·"이미지 저장"(다운로드) 버튼을 연결.
+  (3) `archiveGoal(goal)`(목표를 "기록"으로 보관하는 기존 함수, = 완주/종료 시점)에서 `goalAchievement(goal)>=100`이면 기존 토스트 대신 인증서 모달을 띄우도록 1줄 분기 추가. 100% 미만으로 보관(중도 종료)하는 기존 동작은 그대로 유지.
+  (4) `scripts/smoke-test.js`에 `goalAchievement` 단위 테스트 3건 추가(전부 done→100, 일부만→100 미만, 목표 자체 수치 결과 우선).
+- **발생한 문제 및 해결(원칙 8 재검증)**: 착수 전 로컬 검증을 위해 `node scripts/smoke-test.js`를 실행하니 이번에도 main에 병합 충돌 마커가 남은 상태(직전 사이클의 다른 PR이 처리 중인 것과 동일 사안)라 이 브랜치에서도 동일하게 마커만 해소(내용은 그대로 보존, 별도 신규 로직 아님).
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과(길이 233,871자), `<style>` 중괄호 407/407(CSS 변경 없음), `node scripts/smoke-test.js` **28개 전부 통과**(기존 25 + 신규 3, 회귀 없음). `archiveGoal` 분기 로직을 코드 리뷰로 재확인(밀리스톤 없는 빈 목표는 achievement 0이라 오발화하지 않음, 이미 result가 있는 경우도 정상 처리). 브라우저 도구가 없는 샌드박스라 실제 canvas 렌더링·공유 시트 동작은 로직 검증으로 대체했으며 PR에 명시.
+---
+
+## [2026-09-06 02:54] 스프린트 오케스트레이션(수석비서 모드) 세팅
+- **목표**: 노션 6대 스프린트 태스크(TASK-01~06)를 하위 에이전트 충돌 없이 순차 처리하기 위한 수석비서 운영 체계를 저장소에 고정 (CLAUDE.md 9번 절, `/sprint-task` 스킬, 태스크 파일, 상태 파일, 검증 훅 스크립트)
+- **수정/실행 내역**: CLAUDE.md 6번에 스프린트 기간 1호 직원 제외 규칙 1줄 추가, 9번 절(상위 원칙 7개) 신설. `docs/sprint/TASK-01~06.md`(노션 CSV → `scripts/gen-sprint-tasks.js`로 생성, 태스크별 의존성·기존 PR 겹침·사용자 필요 작업 메타 포함), `docs/sprint/STATUS.md`(진행표 + 사전 정리 체크리스트), `.claude/skills/sprint-task/SKILL.md`(9단계 프로토콜, 승인 게이트 2회), `scripts/hook-smoke-on-index.js`(index.html 수정 시 스모크 테스트 자동 실행 PostToolUse 훅), `scripts/static-server.js` + `.claude/launch.json`(임시 폴더 경로 → 저장소 내부 경로로 교정), `.gitignore`(.claude/worktrees, settings.local.json, .pr-body-*.md) 추가. 로컬 체크아웃의 미커밋 index.html 변경을 건드리지 않도록 origin/main 기준 워크트리(`.claude/worktrees/sprint-setup`)에서 새 브랜치로 작업. index.html·sw.js·api/ 무변경(배포 영향 없음).
+- **발생한 문제 및 해결**: (1) `.claude/settings.json` 훅 등록(및 update-config 스킬 호출)이 Claude Code 자동 모드 분류기에 차단됨 → 우회하지 않고 훅 스크립트만 커밋, 등록 JSON은 STATUS.md 체크리스트와 스크립트 머리말에 안내해 사용자가 직접 추가. (2) gh CLI가 PATH에 없음 → 전체 경로(`C:\Program Files\GitHub CLI\gh.exe`)로 호출, PATH 등록은 체크리스트에 추가. (3) 훅 스크립트 최초 작성본의 `\` 정규식이 셸 이스케이프로 깨져 문법 오류 → `String.fromCharCode(92)`로 대체. (4) 태스크 파일의 노션 내보내기 날짜가 UTC로 하루 어긋남 → 로컬 날짜로 수정 후 재생성. (5) 컨설팅 가이드가 제안한 별도 CLAUDE.md는 기존 6번 규칙(PR 후 사용자 병합)과 충돌(에이전트 스쿼시 머지)하므로 채택하지 않고 9번 절로 흡수.
+- **검증 결과**: `node scripts/smoke-test.js` 40/40 통과(origin/main 기준선). 훅 스크립트 3케이스 확인: 비대상 파일 무시(exit 0), index.html 정상(exit 0·요약 출력), 실패 스모크(exit 2·실패 내용 stderr). launch.json JSON 유효, 전 스크립트 `node --check` 통과. CLAUDE.md diff 13줄 추가만(기존 줄 무변경, CRLF 통일).
 ---
