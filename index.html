@@ -757,23 +757,23 @@
   <div class="bottomnav">
     <nav class="bottomnav-inner">
       <button class="navbtn active" data-tab="home" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>
         홈
       </button>
       <button class="navbtn" data-tab="goals" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
         목표
       </button>
       <button class="navbtn" data-tab="records" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>
         기록
       </button>
       <button class="navbtn" data-tab="comm" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v10H8l-4 4V5z"/></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v10H8l-4 4V5z"/></svg>
         소통
       </button>
       <button class="navbtn" data-tab="settings" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.15-1.4l2-1.55-2-3.4-2.35.95a7 7 0 00-2.4-1.4L13.7 3h-3.4l-.4 2.2a7 7 0 00-2.4 1.4l-2.35-.95-2 3.4 2 1.55A7 7 0 005 12a7 7 0 00.15 1.4l-2 1.55 2 3.4 2.35-.95a7 7 0 002.4 1.4l.4 2.2h3.4l.4-2.2a7 7 0 002.4-1.4l2.35.95 2-3.4-2-1.55A7 7 0 0019 12z"/></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.15-1.4l2-1.55-2-3.4-2.35.95a7 7 0 00-2.4-1.4L13.7 3h-3.4l-.4 2.2a7 7 0 00-2.4 1.4l-2.35-.95-2 3.4 2 1.55A7 7 0 005 12a7 7 0 00.15 1.4l-2 1.55 2 3.4 2.35-.95a7 7 0 002.4 1.4l.4 2.2h3.4l.4-2.2a7 7 0 002.4-1.4l2.35.95 2-3.4-2-1.55A7 7 0 0019 12z"/></svg>
         설정
       </button>
     </nav>
@@ -801,6 +801,16 @@
   function newId(){ return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : uid('id'); }
   function escapeHtml(s){
     return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; });
+  }
+  /* 접근성: div 기반 토글 스위치에 role/aria/키보드 조작 지원 부여 (클릭 동작은 그대로 유지) */
+  function a11ySwitch(el, checked, label){
+    el.setAttribute('role','switch');
+    el.setAttribute('aria-checked', checked ? 'true' : 'false');
+    el.setAttribute('tabindex','0');
+    if(label) el.setAttribute('aria-label', label);
+    el.onkeydown = function(e){
+      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); el.click(); }
+    };
   }
   function pad(n){ return n<10?'0'+n:''+n; }
   function nowISO(){ return new Date().toISOString(); }
@@ -2918,7 +2928,7 @@
             '<div style="display:flex;align-items:center;gap:6px;">' +
               '<input class="task-title'+(t.done?' done-text':'')+'" data-taskinput="1" value="'+escapeHtml(t.title)+'" '+(state.goalEditMode?'':'readonly')+'>' +
               (t.dueDate ? ddayMini(t.dueDate) : '') +
-              (state.goalEditMode ? '<button class="icon-btn" data-deltask="1">×</button>' : '') +
+              (state.goalEditMode ? '<button class="icon-btn" data-deltask="1" aria-label="할 일 삭제">×</button>' : '') +
             '</div>' +
             (state.goalEditMode ? '<div class="ms-date" style="display:inline-block;margin-top:4px;"><input type="date" data-taskdate="1" value="'+(t.dueDate||'')+'"></div>' : '') +
             resultLineHtml(t.result) +
@@ -2942,9 +2952,9 @@
           '</div>' +
           '<button data-msresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(m.result)+'</button>' +
           (state.goalEditMode ? '<div class="ms-actions">' +
-            (idx>0?'<button class="icon-btn" data-msup="1">↑</button>':'') +
-            (idx<goal.milestones.length-1?'<button class="icon-btn" data-msdown="1">↓</button>':'') +
-            '<button class="icon-btn" data-msdel="1">×</button>' +
+            (idx>0?'<button class="icon-btn" data-msup="1" aria-label="위로 이동">↑</button>':'') +
+            (idx<goal.milestones.length-1?'<button class="icon-btn" data-msdown="1" aria-label="아래로 이동">↓</button>':'') +
+            '<button class="icon-btn" data-msdel="1" aria-label="마일스톤 삭제">×</button>' +
           '</div>' : '') +
         '</div>' +
         '<div class="task-list">'+taskRows+'</div>' +
@@ -3350,7 +3360,7 @@
       var timeStr = isNote ? fmtTime(r.startAt) : (fmtTime(r.startAt) + ' – ' + (r.endAt?fmtTime(r.endAt):'진행중'));
       html += '<div class="rec-card'+(isDoing?' doing':'')+'" data-recid="'+r.id+'">' +
         '<div class="rec-top"><div class="rec-text">'+escapeHtml(r.text)+'</div>' +
-          '<div class="rec-icons"><button class="icon-btn" data-recedit="1">✎</button><button class="icon-btn" data-recdel="1">×</button></div>' +
+          '<div class="rec-icons"><button class="icon-btn" data-recedit="1" aria-label="기록 수정">✎</button><button class="icon-btn" data-recdel="1" aria-label="기록 삭제">×</button></div>' +
         '</div>' +
         '<div class="rec-bottom"><span class="rec-time">'+timeStr+'</span>'+durEl+'</div>' +
       '</div>';
@@ -4843,7 +4853,7 @@
     var row = document.getElementById('checkinTimesRow');
     var times = state.profile.settings.checkinTimes;
     row.innerHTML = times.map(function(t, i){
-      return '<div class="time-chip"><input type="time" value="'+t+'" data-timeidx="'+i+'"><button class="icon-btn" data-timedel="'+i+'" style="margin-left:4px;">×</button></div>';
+      return '<div class="time-chip"><input type="time" value="'+t+'" data-timeidx="'+i+'" aria-label="체크인 시간 '+(i+1)+'"><button class="icon-btn" data-timedel="'+i+'" style="margin-left:4px;" aria-label="체크인 시간 삭제">×</button></div>';
     }).join('');
     row.querySelectorAll('[data-timeidx]').forEach(function(inp){
       inp.addEventListener('change', async function(){
@@ -4860,6 +4870,7 @@
 
     var sw = document.getElementById('notifySwitch');
     sw.className = 'switch' + (state.profile.settings.notify ? ' on' : '');
+    a11ySwitch(sw, state.profile.settings.notify, '이 탭이 열려있는 동안 알림 받기');
     sw.onclick = async function(){
       if(!state.profile.settings.notify){
         if('Notification' in window){
@@ -4879,6 +4890,7 @@
 
     var notionSw = document.getElementById('notionSwitch');
     notionSw.className = 'switch' + (settings.notionSync ? ' on' : '');
+    a11ySwitch(notionSw, settings.notionSync, 'Notion 자동 동기화');
     document.getElementById('notionUrlBlock').style.display = settings.notionSync ? '' : 'none';
     var notionUrlInput = document.getElementById('notionWebhookInput');
     notionUrlInput.value = settings.notionWebhookUrl || '';
@@ -4958,6 +4970,7 @@
 
     var autoSw = document.getElementById('autoUpdateSwitch');
     autoSw.className = 'switch' + (settings.autoUpdateSuggest!==false ? ' on' : '');
+    a11ySwitch(autoSw, settings.autoUpdateSuggest!==false, '기록 보고 목표 진행 상황 자동 업데이트 제안');
     autoSw.onclick = async function(){
       settings.autoUpdateSuggest = settings.autoUpdateSuggest===false;
       await saveProfile();
