@@ -301,3 +301,14 @@
 - **발생한 문제 및 해결**: (1) GitHub 웹 UI에서 conflict 3-way 병합용 CodeMirror "Accept both changes" 버튼이 뷰포트 폭에 의해 클릭 좌표가 어긋나 여러 번 실패 → git 블롭(ancestor/base/head oid)을 직접 API로 받아 로컬 `git merge-file`로 재현 후 업로드하는 방식으로 우회했으나, 정확히 이 작업을 진행하던 중 1호 직원 세션이 웹훅으로 깨어나 같은 브랜치를 실제 git으로 먼저 재해결·푸시하는 것을 발견 → 이후로는 1호 직원의 해결을 기다렸다가 "Merge pull request" 버튼 클릭만 담당하는 것으로 역할을 분담. (2) 로컬 3-way 병합 중 BACKLOG.md/dev_log.md(LF)와 main의 index.html(CRLF)이 섞여 있어 첫 시도에서 줄바꿈 불일치로 잘못된 병합 결과(변경사항 소실)가 발생 → 파일별로 실제 줄바꿈을 확인해 올바르게 정규화한 뒤 병합해 해결. (3) GitHub PR 병합 버튼이 "checking..." 상태에서 클릭이 씹히는 경우가 잦아, 클릭 후 커밋-메시지 입력폼이 실제로 나타났는지 read_page로 재확인하고 필요시 재클릭하는 방식으로 안정화.
 - **검증 결과**: 병합 후 main의 index.html에서 manifest.json(PWA)·prefers-color-scheme(다크모드)·renderReportSummary(리포트)·a11ySwitch(접근성)·그룹 배지 streak 계산·goaltemplate(새 목표 AI)가 모두 포함돼 있음을 문자열 검색으로 확인, `<style>` 중괄호 394/394 균형, 메인 `<script>`를 `new Function()`으로 문법 검증 통과. `gh api`로 열린 PR이 0개임을 최종 확인.
 ---
+
+## [2026-09-05 06:31] 홈 화면 "오늘의 미션" 추가
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 3단계 항목 — 목표 전체가 아니라 "오늘 하루" 단위로 할 일을 잘게 쪼개주는 AI 제안을 홈 화면에 추가. (8원칙: 거창한 목표를 매번 마주하면 시작하기 부담스러워지는 게 이탈 원인 중 하나라 판단 → 목표별로 "오늘 할 만한 아주 작은 한 걸음"만 AI가 짚어주는 것이 핵심 해결책. goalstatus.js/nextaction.js와 동일한 단일 호출+자체검증 패턴을 재사용)
+- **수정/실행 내역**:
+  (1) `api/todaymission.js` 신설(goalstatus.js·nextaction.js와 동일 구조) — goalTitle과 미완료 마일스톤/할 일 목록만 받아 "① 아직 끝나지 않은 항목에 근거 ② 오늘 하루 안에 부담 없이 끝낼 만큼 작고 구체적 ③ 다정한 제안 톤 ④ 15~40자 한 문장" 자체점검 기준을 내장한 프롬프트로 Claude 1회 호출.
+  (2) 클라이언트에 `localTodayMission`(AI 실패 시 로컬 폴백: 첫 미완료 마일스톤 제목을 언급하거나, 전부 완료면 회고 제안), `requestTodayMission`(28초 타임아웃+6~80자 검증, 실패 시 로컬 폴백), `renderTodayMissionCard`(활성 목표별로 카드 한 줄씩 렌더링, 오늘 날짜로 캐시돼 있으면 재사용하고 없으면 비동기로 채워 넣음) 추가. 캐시는 `settings.todayMissions[goalId] = {date, text}`로 저장해 목표당 하루 1회만 호출.
+  (3) 홈 화면 캡처 카드와 목표 목록 사이에 `#todayMissionCard` 신설, `renderHome()`에서 항상 갱신. CSS는 `.mission-*` 5개 클래스만 신규 추가(기존 `--rule`/`--ink-soft`/`shadow-sm` 토큰 재사용).
+  (4) `scripts/smoke-test.js`에 `localTodayMission` 단위 테스트 2건 추가.
+- **발생한 문제 및 해결**: 없음
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node -c api/todaymission.js` 문법 검증 통과, `node scripts/smoke-test.js` 22개 전부 통과(기존 20 + 신규 2, 회귀 없음). 브라우저 도구가 없는 샌드박스라 Vercel 프리뷰 실제 렌더링 확인은 진행하지 못함.
+---

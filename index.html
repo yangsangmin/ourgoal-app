@@ -324,6 +324,15 @@
   .report-legend-label{flex:1;color:var(--ink-soft);font-weight:700;}
   .report-legend-val{font-family:var(--mono);font-size:.72rem;color:var(--ink-faint);}
 
+  /* ---------- 오늘의 미션 ---------- */
+  .mission-card{background:var(--card);border-radius:var(--radius-sm);padding:14px 16px;margin:14px 0;box-shadow:var(--shadow-sm);}
+  .mission-card .ct-label{font-size:.8rem;font-weight:700;color:var(--ink-soft);margin-bottom:10px;}
+  .mission-row{display:flex;align-items:flex-start;gap:8px;padding:7px 0;font-size:.82rem;}
+  .mission-row + .mission-row{border-top:1px solid var(--rule);}
+  .mission-row .m-icon{flex:0 0 auto;}
+  .mission-row .m-goal{font-weight:800;color:var(--ink);}
+  .mission-row .m-text{color:var(--ink-soft);}
+
   /* ---------- Comm sub-tabs ---------- */
   .comm-subtabs{display:flex;gap:4px;background:var(--card2);border-radius:999px;padding:4px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none;}
   .comm-subtabs::-webkit-scrollbar{display:none;}
@@ -589,6 +598,8 @@
         </div>
       </div>
       <button class="btn btn-ghost btn-sm" id="customFeedbackBtn" type="button" style="width:100%;margin-top:8px;">🤖 내 맞춤 피드백 설정하기<span id="customFeedbackStatus"></span></button>
+
+      <div id="todayMissionCard"></div>
 
       <div class="card-title-row" style="margin:20px 0 10px;">
         <h3>내 목표 <span id="streakBadge"></span></h3>
@@ -888,7 +899,7 @@
 
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
   function defaultSettings(){
-    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{} };
+    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, todayMissions:{} };
   }
   function loadLocalSettings(userId){
     try{
@@ -1751,6 +1762,7 @@
   /* ============ RENDER: HOME ============ */
   function renderHome(){
     refreshCustomFeedbackButtons();
+    renderTodayMissionCard();
     var streak = computeStreakDays();
     var badgeEl = document.getElementById('streakBadge');
     if(badgeEl) badgeEl.innerHTML = streak>0 ? streakBadgeHtml(streak) : '';
@@ -2815,6 +2827,62 @@
         if(el) el.textContent = text;
         if(tag) tag.textContent = '🤖 AI 요약';
       }
+    });
+  }
+
+  /* ============ 오늘의 미션 ============ */
+  function milestonesForMission(goal){
+    return goal.milestones.filter(function(m){ return m.status!=='done'; }).map(function(m){
+      return { title: m.title, status: m.status, tasks: (m.tasks||[]).filter(function(t){ return !t.done; }).map(function(t){ return { title: t.title }; }) };
+    });
+  }
+  function localTodayMission(goal){
+    var open = goal.milestones.find(function(m){ return m.status!=='done'; });
+    return open ? '오늘은 "'+open.title+'" 마일스톤을 위해 작게 한 걸음 내딛어보세요.' : '오늘은 그동안의 기록을 돌아보며 다음 목표를 그려보세요.';
+  }
+  async function requestTodayMission(goal){
+    var controller = new AbortController();
+    var timer = setTimeout(function(){ controller.abort(); }, 28000);
+    try{
+      var res = await fetch('/api/todaymission', {
+        method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
+        body: JSON.stringify({ goalTitle: goal.title, milestones: milestonesForMission(goal) })
+      });
+      clearTimeout(timer);
+      if(!res.ok) return localTodayMission(goal);
+      var data = await res.json();
+      var text = data && data.mission ? String(data.mission).trim() : '';
+      if(!text || text.length<6 || text.length>80) return localTodayMission(goal);
+      return text;
+    } catch(e){ clearTimeout(timer); return localTodayMission(goal); }
+  }
+  function renderTodayMissionCard(){
+    var el = document.getElementById('todayMissionCard');
+    if(!el || !state.profile) return;
+    var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
+    if(!goals.length){ el.innerHTML = ''; return; }
+    var today = dateKey(nowISO());
+    var missions = state.profile.settings.todayMissions || {};
+    el.innerHTML = '<div class="mission-card"><div class="ct-label">🎯 오늘의 미션</div>' +
+      goals.map(function(g){
+        var m = missions[g.id];
+        var text = (m && m.date===today) ? m.text : '생각하는 중...';
+        return '<div class="mission-row"><span class="m-icon">✅</span><span><span class="m-goal">'+escapeHtml(g.title)+'</span> · <span class="m-text">'+escapeHtml(text)+'</span></span></div>';
+      }).join('') +
+    '</div>';
+    goals.forEach(function(g){
+      var m = missions[g.id];
+      if(m && m.date===today) return;
+      if(!state.todayMissionPending) state.todayMissionPending = {};
+      if(state.todayMissionPending[g.id]) return;
+      state.todayMissionPending[g.id] = true;
+      requestTodayMission(g).then(async function(text){
+        delete state.todayMissionPending[g.id];
+        if(!state.profile.settings.todayMissions) state.profile.settings.todayMissions = {};
+        state.profile.settings.todayMissions[g.id] = { date: today, text: text };
+        await saveProfile();
+        if(state.activeTab==='home') renderTodayMissionCard();
+      });
     });
   }
 

@@ -68,7 +68,7 @@ function extractFunction(source, name) {
 const FN_NAMES = [
   'pad', 'dateKey', 'goalProgress', 'msCounts', 'resultPct', 'dDay',
   'computeStreakDays', 'findSuggestionTarget', 'sanitizeSuggestions',
-  'applySuggestion', 'describeSuggestion',
+  'applySuggestion', 'describeSuggestion', 'localTodayMission',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -78,6 +78,7 @@ const sandboxSrc =
   extracted +
   '\nmodule.exports = { pad, dateKey, goalProgress, msCounts, resultPct, dDay, ' +
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
+  'localTodayMission, ' +
   'setRecords: function(r){ state.profile.records = r; } };\n';
 
 const os = require('os');
@@ -201,6 +202,18 @@ check('describeSuggestion: status 변경 라벨을 생성한다', () => {
   const goal = makeGoal(['todo']);
   const d = fns.describeSuggestion(goal, { type: 'milestone', id: 'm0', field: 'status', value: 'done' });
   assert.ok(d.label.indexOf('완료로') !== -1);
+});
+
+check('localTodayMission: 미완료 마일스톤이 있으면 그 제목을 언급한다', () => {
+  const goal = makeGoal(['done', 'todo']);
+  const msg = fns.localTodayMission(goal);
+  assert.ok(msg.indexOf(goal.milestones[1].title) !== -1);
+});
+
+check('localTodayMission: 전부 완료면 회고를 제안한다', () => {
+  const goal = makeGoal(['done', 'done']);
+  const msg = fns.localTodayMission(goal);
+  assert.ok(msg.indexOf('돌아보며') !== -1);
 });
 
 /* ============ 결과 요약 ============ */
