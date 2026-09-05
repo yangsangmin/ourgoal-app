@@ -302,6 +302,16 @@
 - **검증 결과**: 병합 후 main의 index.html에서 manifest.json(PWA)·prefers-color-scheme(다크모드)·renderReportSummary(리포트)·a11ySwitch(접근성)·그룹 배지 streak 계산·goaltemplate(새 목표 AI)가 모두 포함돼 있음을 문자열 검색으로 확인, `<style>` 중괄호 394/394 균형, 메인 `<script>`를 `new Function()`으로 문법 검증 통과. `gh api`로 열린 PR이 0개임을 최종 확인.
 ---
 
+## [2026-09-05 06:16] 기록 히트맵(GitHub 잔디 스타일) 추가
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 1단계 세 번째 항목 — 최근 몇 달간의 기록 꾸준함을 한눈에 보여주는 GitHub 잔디 스타일 히트맵을 기록 탭에 추가. (8원칙: 기존 리포트는 7일/30일 추이·분야별 분포만 있어 "장기간 꾸준히 해왔다"는 감각을 주는 시각화가 없었던 게 공백 → 별도 라이브러리 없이 순수 CSS 그리드+SVG 없는 div 기반으로 가볍게 구현하는 것이 효율적)
+- **수정/실행 내역**:
+  (1) 기록 탭(`#screen-records`)의 7일 막대 차트(`#chartContainer`)와 7/30일 리포트(`#reportSummary`) 사이에 `#recordHeatmap` 컨테이너 신설.
+  (2) `renderRecordHeatmap(recs)` — 오늘을 포함해 최근 18주(126일)를 일~토 7행 × 주 단위 열로 배치, 하루 기록 개수를 그날의 최댓값 대비 비율로 5단계(0~4)로 나눠 `--sage` 계열 색상 진하기로 표시(빈 날은 `--card2`). 오늘 이후 미래 날짜 칸은 투명 처리. 각 칸에 `title`로 날짜·건수 노출, 하단에 "적음→많음" 5단계 범례 추가. `heatmapLevel(count,maxCount)` 순수 함수로 단계 계산 분리.
+  (3) CSS는 기존 `.chart-card`/디자인 토큰(`--sage`, `--card2`, `--ink-faint`)만 재사용하고 히트맵 전용 그리드 클래스(`.heatmap-*`) 6개만 신규 추가, 좁은 화면 대응으로 `overflow-x:auto` 적용.
+  (4) `renderRecordsScreen()`에서 `renderWeekChart` 다음에 `renderRecordHeatmap` 호출 추가.
+  (5) `scripts/smoke-test.js`에 `heatmapLevel` 단위 테스트 3건 추가.
+- **발생한 문제 및 해결**: 없음
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 23개 전부 통과(기존 20 + 신규 3). `heatmapLevel` 경계값(0건/최댓값/중간 비율)을 별도 시뮬레이션으로 재확인. 브라우저 도구가 없는 샌드박스라 Vercel 프리뷰 실제 렌더링 확인은 진행하지 못함.
 ## [2026-09-05 06:12] 마일스톤 완료 축하 모달 + AI 다음 행동 제안
 - **목표**: BACKLOG.md "사용자 경험·도파민 강화" 1단계 두 번째 항목 — 마일스톤이 완료 상태로 전환될 때 축하 모달을 띄우고, goalstatus.js와 같은 "단일 Claude 호출 + 프롬프트 내 자체검증" 패턴으로 AI가 다음 행동을 한 줄 제안하도록 구현. (8원칙: 마일스톤 완료는 목표 달성 과정에서 가장 의미 있는 성취 단위인데, 완료 시점에 사용자가 다음에 뭘 해야 할지 스스로 찾아야 했던 게 도파민 단절 지점이라 판단 → 완료 감지와 동시에 축하+다음 행동 제시를 한 번에 묶는 것이 핵심 해결책)
 - **수정/실행 내역**:
