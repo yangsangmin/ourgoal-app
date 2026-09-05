@@ -745,9 +745,11 @@
       <div class="set-block">
         <h4>데이터</h4>
         <div class="data-btn-row">
-          <button class="btn btn-ghost" id="settingsExportAll" type="button">전체 내보내기</button>
+          <button class="btn btn-ghost" id="settingsExportCheckins" type="button">체크인 전체 내보내기</button>
+          <button class="btn btn-ghost" id="settingsExportAll" type="button">전체 백업</button>
           <button class="btn btn-ghost" id="settingsImportAll" type="button">가져오기</button>
         </div>
+        <p class="faint" style="font-size:.72rem;margin:6px 0 0;">체크인 전체 내보내기: 위에서 고른 형식(CSV/JSON)으로 체크인 기록 전체를 내려받아요 · 전체 백업: 목표·설정까지 포함한 복원용 JSON</p>
         <input type="file" id="importFile" accept="application/json" style="display:none;">
         <p class="danger-note">데이터는 이 기기(이 대화)에만 저장됩니다</p>
       </div>
@@ -3578,10 +3580,11 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
   document.getElementById('recAddBtn').addEventListener('click', function(){ openRecordModal(null); });
 
   function buildCSV(){
-    var rows = [['날짜','시작','종료','소요시간(분)','내용']];
+    var rows = [['날짜','시작','종료','소요시간(분)','분야','내용']];
     state.profile.records.slice().sort(function(a,b){ return new Date(a.startAt)-new Date(b.startAt); }).forEach(function(r){
       var mins = r.endAt ? Math.round((new Date(r.endAt)-new Date(r.startAt))/60000) : '';
-      rows.push([dateKey(r.startAt), fmtTime(r.startAt), r.endAt?fmtTime(r.endAt):'진행중', mins, r.text]);
+      var catLabel = r.category && TOPICS[r.category] ? TOPICS[r.category].label : '';
+      rows.push([dateKey(r.startAt), fmtTime(r.startAt), r.endAt?fmtTime(r.endAt):'진행중', mins, catLabel, r.text]);
     });
     return rows.map(function(row){
       return row.map(function(cell){
@@ -3590,15 +3593,16 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
       }).join(',');
     }).join('\n');
   }
-  document.getElementById('exportRecordsBtn').addEventListener('click', function(){
+  function exportAllCheckins(){
     var fmt = state.profile.settings.exportFormat || 'csv';
     if(fmt==='json'){
       download('아워골_기록_'+dateKey(nowISO())+'.json', JSON.stringify(state.profile.records, null, 2), 'application/json');
     } else {
       download('아워골_기록_'+dateKey(nowISO())+'.csv', '\uFEFF'+buildCSV(), 'text/csv;charset=utf-8');
     }
-    toast('다운로드했어요');
-  });
+    toast('체크인 '+state.profile.records.length+'개를 전부 내려받았어요');
+  }
+  document.getElementById('exportRecordsBtn').addEventListener('click', exportAllCheckins);
 
   /* ============ RENDER: COMM ============ */
   /* ============ Mock community data (샘플, 서버 없이 데모) ============ */
@@ -5150,6 +5154,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
     }
   });
 
+  document.getElementById('settingsExportCheckins').addEventListener('click', exportAllCheckins);
   document.getElementById('settingsExportAll').addEventListener('click', function(){
     download('아워골_백업_'+state.profile.username+'.json', JSON.stringify(state.profile, null, 2), 'application/json');
     toast('전체 데이터를 내보냈어요');
