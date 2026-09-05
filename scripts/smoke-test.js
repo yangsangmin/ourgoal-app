@@ -136,14 +136,22 @@ check('resultPct: 999%로 상한 고정', () => {
   assert.strictEqual(fns.resultPct({ target: '1', result: '100' }), 999);
 });
 
+// dDay()는 dateStr을 로컬 자정('T00:00:00')으로 파싱해 로컬 '오늘'과 비교한다.
+// 기대값을 toISOString()(UTC 날짜)로 만들면 UTC 날짜가 로컬 날짜보다 뒤처지는 시간대
+// (KST 기준 매일 00:00~09:00)에 하루 어긋나 실패하므로, 앱과 같은 dateKey()로 로컬 날짜를 만든다.
+function localDateStr(offsetDays) {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + offsetDays);
+  return fns.dateKey(d);
+}
+
 check('dDay: 오늘이면 D-day', () => {
-  const today = new Date().toISOString().slice(0, 10);
-  assert.strictEqual(fns.dDay(today), 'D-day');
+  assert.strictEqual(fns.dDay(localDateStr(0)), 'D-day');
 });
 
 check('dDay: 내일이면 D-1', () => {
-  const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
-  assert.strictEqual(fns.dDay(tomorrow), 'D-1');
+  assert.strictEqual(fns.dDay(localDateStr(1)), 'D-1');
 });
 
 check('computeStreakDays: 기록이 없으면 0', () => {
