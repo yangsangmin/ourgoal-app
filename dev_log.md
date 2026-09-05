@@ -496,3 +496,10 @@
 - **발생한 문제 및 해결(원칙 8 재검증)**: 착수 전 로컬 검증을 위해 `node scripts/smoke-test.js`를 실행하니 이번에도 main에 병합 충돌 마커가 남은 상태(직전 사이클의 다른 PR이 처리 중인 것과 동일 사안)라 이 브랜치에서도 동일하게 마커만 해소(내용은 그대로 보존, 별도 신규 로직 아님).
 - **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과(길이 233,871자), `<style>` 중괄호 407/407(CSS 변경 없음), `node scripts/smoke-test.js` **28개 전부 통과**(기존 25 + 신규 3, 회귀 없음). `archiveGoal` 분기 로직을 코드 리뷰로 재확인(밀리스톤 없는 빈 목표는 achievement 0이라 오발화하지 않음, 이미 result가 있는 경우도 정상 처리). 브라우저 도구가 없는 샌드박스라 실제 canvas 렌더링·공유 시트 동작은 로직 검증으로 대체했으며 PR에 명시.
 ---
+
+## [2026-09-06 02:54] 스프린트 오케스트레이션(수석비서 모드) 세팅
+- **목표**: 노션 6대 스프린트 태스크(TASK-01~06)를 하위 에이전트 충돌 없이 순차 처리하기 위한 수석비서 운영 체계를 저장소에 고정 (CLAUDE.md 9번 절, `/sprint-task` 스킬, 태스크 파일, 상태 파일, 검증 훅 스크립트)
+- **수정/실행 내역**: CLAUDE.md 6번에 스프린트 기간 1호 직원 제외 규칙 1줄 추가, 9번 절(상위 원칙 7개) 신설. `docs/sprint/TASK-01~06.md`(노션 CSV → `scripts/gen-sprint-tasks.js`로 생성, 태스크별 의존성·기존 PR 겹침·사용자 필요 작업 메타 포함), `docs/sprint/STATUS.md`(진행표 + 사전 정리 체크리스트), `.claude/skills/sprint-task/SKILL.md`(9단계 프로토콜, 승인 게이트 2회), `scripts/hook-smoke-on-index.js`(index.html 수정 시 스모크 테스트 자동 실행 PostToolUse 훅), `scripts/static-server.js` + `.claude/launch.json`(임시 폴더 경로 → 저장소 내부 경로로 교정), `.gitignore`(.claude/worktrees, settings.local.json, .pr-body-*.md) 추가. 로컬 체크아웃의 미커밋 index.html 변경을 건드리지 않도록 origin/main 기준 워크트리(`.claude/worktrees/sprint-setup`)에서 새 브랜치로 작업. index.html·sw.js·api/ 무변경(배포 영향 없음).
+- **발생한 문제 및 해결**: (1) `.claude/settings.json` 훅 등록(및 update-config 스킬 호출)이 Claude Code 자동 모드 분류기에 차단됨 → 우회하지 않고 훅 스크립트만 커밋, 등록 JSON은 STATUS.md 체크리스트와 스크립트 머리말에 안내해 사용자가 직접 추가. (2) gh CLI가 PATH에 없음 → 전체 경로(`C:\Program Files\GitHub CLI\gh.exe`)로 호출, PATH 등록은 체크리스트에 추가. (3) 훅 스크립트 최초 작성본의 `\` 정규식이 셸 이스케이프로 깨져 문법 오류 → `String.fromCharCode(92)`로 대체. (4) 태스크 파일의 노션 내보내기 날짜가 UTC로 하루 어긋남 → 로컬 날짜로 수정 후 재생성. (5) 컨설팅 가이드가 제안한 별도 CLAUDE.md는 기존 6번 규칙(PR 후 사용자 병합)과 충돌(에이전트 스쿼시 머지)하므로 채택하지 않고 9번 절로 흡수.
+- **검증 결과**: `node scripts/smoke-test.js` 40/40 통과(origin/main 기준선). 훅 스크립트 3케이스 확인: 비대상 파일 무시(exit 0), index.html 정상(exit 0·요약 출력), 실패 스모크(exit 2·실패 내용 stderr). launch.json JSON 유효, 전 스크립트 `node --check` 통과. CLAUDE.md diff 13줄 추가만(기존 줄 무변경, CRLF 통일).
+---
