@@ -71,9 +71,9 @@ const FN_NAMES = [
   'applySuggestion', 'describeSuggestion', 'localTodayMission',
   'maybeGrantStreakFreeze', 'maybeApplyStreakFreeze',
   'xpForLevel', 'levelForXP', 'levelProgress',
+  'totalCompletedMilestones',
   'heatmapLevel', 'localNextActionSuggestion',
   'goalAchievement', 'weeklyRecapStats',
-  'hashStr', 'mockPostCheerCount',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -86,11 +86,10 @@ const sandboxSrc =
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
   'localTodayMission, ' +
   'maybeGrantStreakFreeze, maybeApplyStreakFreeze, ' +
-  'xpForLevel, levelForXP, levelProgress, ' +
+  'xpForLevel, levelForXP, levelProgress, totalCompletedMilestones, ' +
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
   'goalAchievement, weeklyRecapStats, ' +
-  'hashStr, mockPostCheerCount, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -286,6 +285,16 @@ check('levelProgress: 현재 레벨 구간 안에서의 진행률을 계산한�
   assert.strictEqual(p.pct, 0);
 });
 
+check('totalCompletedMilestones: 여러 목표에 걸친 완료 마일스톤 수를 정확히 센다', () => {
+  const p = {
+    goals: [
+      { milestones: [{ status: 'done' }, { status: 'todo' }] },
+      { milestones: [{ status: 'done' }, { status: 'done' }] },
+    ],
+  };
+  assert.strictEqual(fns.totalCompletedMilestones(p), 3);
+});
+
 check('heatmapLevel: 기록이 없으면 0단계', () => {
   assert.strictEqual(fns.heatmapLevel(0, 5), 0);
 });
@@ -349,20 +358,6 @@ check('weeklyRecapStats: 이번 주 기록 시간과 최다 분야를 정확히 
   assert.strictEqual(stats.count, 2);
   assert.strictEqual(stats.totalMs, 3600000 + 1800000);
   assert.strictEqual(stats.topCategory, 'study');
-});
-
-check('mockPostCheerCount: 방금 작성한 글은 응원이 0이다', () => {
-  assert.strictEqual(fns.mockPostCheerCount({ id: 'p1', createdAt: new Date().toISOString() }), 0);
-});
-
-check('mockPostCheerCount: 글이나 id가 없으면 0이다', () => {
-  assert.strictEqual(fns.mockPostCheerCount(null), 0);
-  assert.strictEqual(fns.mockPostCheerCount({ createdAt: new Date().toISOString() }), 0);
-});
-
-check('mockPostCheerCount: 시간이 많이 지나면 상한(40)에 도달한다', () => {
-  const old = { id: 'p2', createdAt: new Date(Date.now() - 999 * 3600000).toISOString() };
-  assert.strictEqual(fns.mockPostCheerCount(old), 40);
 });
 
 /* ============ 결과 요약 ============ */
