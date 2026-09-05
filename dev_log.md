@@ -354,6 +354,51 @@
 - **검증 결과**: 수정 전 `node -e`로 구문 오류 재현 확인 → 수정 후 통과, `node scripts/smoke-test.js` 28개 전부 통과, 저장소 전체 충돌 마커 재검색 클린, `celebrateMilestoneDone`/`awardXP`/`XP_RULES` 등 관련 함수 존재 확인. 병합 전까지는 실제 배포본이 깨진 상태일 수 있어 사용자에게 최우선 병합을 요청함.
 ---
 
+## [2026-09-05 14:24] 목표 탭 개인/팀 목표 분리 + 팀 목표 데이터 모델링
+- **목표**: 사용자 직접 요청 — 목표(`screen-goals`) 화면을 '개인 목표'/'팀 목표' 서브 탭으로 분리하고, 팀 목표는 팀장(Owner)·매니저(Manager)만 추가/수정/삭제할 수 있도록 권한 기반 데이터 모델을 설계.
+- **수정/실행 내역**:
+  (1) `screen-goals`에 기존 소통 탭과 동일한 `.comm-subtabs`/`.comm-subtab` 클래스를 그대로 재사용한 서브 탭 추가(신규 CSS 없음). 기존 목표 헤드 로우·칩 로우·상세 바디는 `#personalGoalsView`로 감싸 그대로 두고, `#teamGoalsView`를 새로 추가.
+  (2) `renderGoalsScreen()` 맨 앞에 서브탭 렌더링·토글 로직만 추가(기존 개인 목표 렌더링 본문은 한 글자도 수정하지 않음) — `state.goalsSubTab==='team'`이면 신규 `renderTeamGoalsScreen()`으로 위임하고 즉시 반환.
+  (3) `MOCK_GROUPS`(모임=팀) 6개 전부에 `teamGoals:[]` 필드 추가, 데모/검증용으로 g1(벤치프레스 모임)에 마일스톤 2개짜리 샘플 팀 목표 1건 포함.
+  (4) 권한 모델: `groupState(gid)`(모임별 내 상태 객체)에 `myRole:'member'` 기본값 추가. 새 모임을 만들면(`promptNewGroup`) 만든 사람이 자동으로 `myRole:'owner'`가 되어 그 팀의 목표를 관리할 수 있음. `canManageTeamGoals(gid)`가 `owner`/`manager`일 때만 true를 반환하도록 게이트.
+  (5) `renderTeamGoalsScreen()` 신규 — 내가 참여(`joined`)한 팀만 카드로 나열, 팀별 역할 뱃지(팀장/매니저/팀원) 표시. `canManageTeamGoals`가 true인 팀만 목표/마일스톤 추가·제목 수정·삭제·상태 순환(todo→doing→done) 컨트롤을 노출하고, 그 외에는 완전 읽기 전용으로 렌더링. 마일스톤 행은 기존 개인 목표의 `.ms-row`/`.ms-main`/`.ms-status`/`.ms-title`/`.ms-actions`/`.icon-btn`/`.add-ms-btn` 클래스를 그대로 재사용해 시각적으로 동일하게 유지.
+  (6) `promptNewTeamGoal(gid)` 신규 — 기존 `openModal`/`.field`/`.modal-actions` 패턴 그대로 재사용한 팀 목표 추가 모달(이름·마감일).
+- **발생한 문제 및 해결**: `role==='owner'||role==='manager'` 조건에서 'manager' 분기는 owner와 동일한 불리언 OR 조건이라 별도 승격 UI 없이도 로직은 owner와 동등하게 검증됨. 이 앱은 모임 멤버(roster)가 실제 계정이 아닌 mock 데이터라 "다른 사람을 매니저로 승격"할 실제 대상이 없어, 매니저 승격 UI는 이번 범위에서 제외(요청 범위인 "상태 객체에 권한 속성 부여"는 `myRole` 필드로 충족). 검증 중 `promptNewGroup` 저장 흐름에서 팀-생성 UI와 무관한 마니또(manito) 렌더링 쪽 `TypeError`를 우연히 발견했으나, 이 저장소의 원본 main 코드(내 변경 전)에서도 동일하게 재현돼 이번 작업과 무관한 기존 버그로 확인 — 별도 이슈로 분리해 보고함(이번 diff에는 포함하지 않음).
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `<style>` 중괄호 407/407 그대로(신규 CSS 없음 확인), `node scripts/smoke-test.js` 기존 28개 전부 통과(회귀 없음). 로컬 정적 서버로 실제 브라우저에서 렌더링 테스트 완료(Supabase 로그인 없이 `state.profile`을 직접 주입하는 방식) — 개인 목표 화면이 기존과 동일하게 정상 동작, 팀 목표 탭에서 미참여 시 안내 문구, `member` 역할로는 완전 읽기 전용(수정 버튼 없음), `owner`/`manager` 역할로는 마일스톤 상태 순환·추가·제목 수정·삭제, 팀 목표 추가(모달)·삭제가 모두 정상 동작함을 클릭으로 직접 확인. 콘솔 에러 없음(팀 목표 관련 코드 경로 한정).
+---
+
+## [2026-09-05 15:23] 실행 효율 규칙(CLAUDE.md 8번) 신설 + 로컬 git/gh 환경 구축
+- **목표**: 2026-09-05 세션에서 작업 품질은 좋았으나 실행이 12분 이상 걸리고 프로덕션 장애(PR #10 병합 시 충돌 마커 유입)까지 난 원인을 진단해, 4블록 사고 원칙은 그대로 두고 기계적 낭비만 제거하는 실행 규칙을 정립.
+- **수정/실행 내역**:
+  (1) 진단(8원칙 1~2): 느려진 원인은 사고가 아니라 GitHub 웹 UI 브라우저 자동화였고, 그 근본 원인은 로컬 폴더가 git 저장소가 아니고 gh CLI가 없어 우회할 수밖에 없었던 환경. 외부 분석의 "index.html을 7번 쪼개 고친 게 과부하"라는 진단은 오진으로 판단(diff 편집 7회는 1분 미만이었고 규칙 3을 준수한 방식)하고 채택하지 않음.
+  (2) CLAUDE.md에 `## 8. 실행 효율 규칙` 신설(사용자 승인): 전제(`C:\dev\ourgoal-app` clone + gh CLI), A. GitHub 조작은 터미널로만, B. 충돌 해결은 로컬 git으로만 + 병합 직후 마커·스모크 검증, C. 착수 전 환경 점검, D. diff 편집·병렬 호출·sha 기준 검증, E. 4블록 유지·기록 저비용화.
+  (3) 환경 구축: winget으로 gh CLI 2.100.0 설치, 저장소를 `C:\dev\ourgoal-app`에 clone(OneDrive 폴더 대신), 세션 작업 디렉토리를 clone으로 이동.
+- **발생한 문제 및 해결**: 없음. `gh auth login`은 자격 증명이 필요해 사용자가 직접 수행(이 커밋의 push는 인증 후 진행).
+- **검증 결과**: `git status`로 변경 파일이 CLAUDE.md·dev_log.md뿐임을 확인, `gh --version` 정상, clone HEAD가 최신 main(c75f192, PR #24 병합 커밋)과 일치.
+---
+
+## [2026-09-06 01:29] 회원가입 후 최초 로그인 활용가이드 튜토리얼 추가
+- **목표**: 사용자 직접 요청 — 회원가입 후 최초 로그인 시 앱의 강점(AI 코칭, 캘린더 연동, API 커스텀·비공개 설정)을 소개하는 튜토리얼 모달 추가. (8원칙: 신규 가입자는 온보딩 3단계(카테고리→목표→마일스톤 미리보기)를 마치면 곧바로 앱 화면으로 들어가는데, 이 앱을 다른 목표관리 앱과 구분 짓는 핵심 기능(AI 자동 코칭, 캘린더 자동 동기화, BYOK 커스텀 연결·비공개 설정)은 설정 화면 깊숙이 있어 스스로 찾기 전엔 존재조차 모르고 지나칠 수 있음 → 첫 진입 직후가 이 차별점을 각인시킬 유일한 순간이라 판단)
+- **수정/실행 내역**:
+  (1) `defaultSettings()`에 `hasSeenGuide:false` 필드 추가(로컬스토리지 저장, 기존 xp/checkinTimes 등과 동일 패턴). 기존 사용자도 병합 시 `false`로 채워지지만 `startOnboarding()`은 가입 시에만 호출되므로 재로그인 시 실수로 노출될 위험은 없음.
+  (2) `startFirstLoginGuide()`(4단계: 환영 → AI 연동 → 캘린더 연동 → API 커스텀/비공개) + 가드 `maybeShowFirstLoginGuide()` 신규. `startOnboarding()`의 두 종료 지점(3단계 완료 `obFinish`, 1단계 스킵 `obSkip`) 모두에서 기존 로직(enterApp/toast) 직후 호출 — 목표를 만들고 시작하든 소통 탭으로 건너뛰든 최초 진입 시 1회만 노출되고 이후 재로그인에는 뜨지 않음.
+  (3) 신규 CSS 없이 기존 `.ob-step-label`(단계 표시)·`.mission-card`/`.mi`(기능 카드)·`.modal-actions`·`.land-login-link` 클래스만 재사용(디자인 불변경 원칙 준수).
+  (4) 카피 사실 검증: 요청 문구엔 "구글/삼성 달력 자동 연동"이 있었으나 실제로는 구글 캘린더 연동만 존재(BACKLOG.md·코드 확인, 삼성 직접 연동 없음) — 없는 기능을 안내하지 않도록 "구글 캘린더 자동 연동 + 구글 계정과 연결된 삼성 캘린더 등에도 반영"으로 정확하게 조정.
+- **발생한 문제 및 해결**: 작업 중 `C:\dev\ourgoal-app` 공유 클론에서 다른 세션 2개(팀 목표 댓글 기능, 캘린더 탭 기능)가 거의 동시에 브랜치를 전환하면서, 제가 만든 1줄 수정이 그쪽 세션의 스테이징 영역에 섞여 들어가는 충돌을 발견. 즉시 두 세션에 메시지로 알려 커밋 전 확인을 요청하고, 저는 `git worktree add`로 별도 작업 공간을 분리해 이후 충돌 없이 작업(아래 검증은 전부 이 격리된 worktree 기준). 그 과정에서 PR #26 병합 시 dev_log.md 항목 하나(2026-09-06 00:38 마니또 DM 크래시 수정 기록)가 유실된 것도 우연히 발견 — 코드 자체 회귀는 아니었으나(해당 null-deref 가드는 index.html에 정상 존재) 이번 작업과 무관해 별도 이슈로 분리 보고함.
+- **검증 결과**: `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음), 저장소 전체 병합 마커 재검색 클린. 로컬 정적 서버(Python http.server)로 실제 브라우저 렌더링 테스트 완료 — 회원가입 → 온보딩 3단계 완료(obFinish) 경로와 온보딩 스킵(obSkip) 경로 둘 다 실제 클릭으로 튜토리얼 4단계(환영/AI/캘린더/API·비공개)가 정확한 문구·스타일로 순서대로 뜨는 것을 확인, "시작하기"로 정상 종료, `localStorage`의 `hasSeenGuide:true` 저장까지 확인. 콘솔 에러 없음(로컬 정적 서버가 POST를 지원하지 않아 뜨는 501 하나는 Supabase 호출에 의한 것으로 이번 기능과 무관한 테스트 환경 노이즈).
+---
+
+## [2026-09-06 01:30] 개인 목표 탭 대화형 AI 목표/할일 관리 기능 추가
+- **목표**: 사용자 직접 요청 — '개인 목표' 탭 최상단에 자연어로 목표·마일스톤·할 일을 추가/변경/삭제 요청하면, AI가 변경안(diff)을 만들고 사용자가 확인 모달에서 '반영'을 눌러야만 실제로 적용되는 대화형 관리 기능 추가.
+- **수정/실행 내역**:
+  (1) `api/goalagent.js` 신설 — 기존 `api/goaltemplate.js` 패턴(POST 검증→ANTHROPIC_API_KEY 확인→프롬프트 구성→claude-sonnet-4-6 호출→JSON 파싱)을 그대로 따름. 요청 `{message, goals, today}`에서 goals는 프런트가 보낸 현재 목표 스냅샷(id 포함)이고, 모델이 반환한 `ops`(type: CREATE/UPDATE/DELETE × level: goal/milestone/task) 각각을 서버가 재검증 — goalId/milestoneId/taskId가 요청에 실제로 존재하는지 대조하고, 레벨·타입별로 허용된 데이터 필드만 clamp해서 통과시키며 존재하지 않는 id를 참조하거나 형식이 어긋난 op는 조용히 제거. 응답은 `{ops, reply}`.
+  (2) `index.html` — `#personalGoalsView` 최상단에 `.card`(`#goalAgentCard`) + 기존 `.dm-input-row` 클래스를 그대로 재사용한 입력창(`#goalAgentInput`, placeholder "대화로 목표와 할일들을 추가, 변경, 삭제하세요") + 전송 버튼(`#goalAgentSendBtn`) 추가. 신규 CSS 없음 — 카드/입력행/버튼 전부 기존 클래스 재사용, 헤더 텍스트 색상만 기존 AI 기능에 쓰이던 `var(--violet)`를 인라인으로 지정.
+  (3) 전송 흐름: `showGoalAgentLoadingStep()`(기존 `showNewGoalLoadingStep`과 동일 패턴)으로 로딩 모달 표시 → `/api/goalagent` 호출 → `ops`가 비어 있으면 모달을 닫고 `reply`를 토스트로 안내 → 있으면 **기존 `openModal()`을 그대로 사용**해 "🤖 이대로 반영할까요?" 확인 모달(`showGoalAgentReviewStep`)을 띄우고 각 op의 `summary`를 기존 `.ms-list`/`.ms-row` 클래스로 나열. '반영' 클릭 시에만 `applyGoalAgentOp()`가 `state.profile.goals`에 순차 반영한 뒤 `saveProfile()` → `closeModal()` → `renderAll()`. '취소'는 `closeModal()`만 호출해 아무 것도 바꾸지 않음.
+  (4) 신규 목표 생성(CREATE goal)은 기존 AI 템플릿 생성 플로우(`showNewGoalReviewStep`)와 동일하게 `category:'etc'`, `topic:'major/minor'` 조합, milestone/task에 `uid('ms')`/`uid('task')` id를 부여하도록 구현(`buildGoalFromAgentData`).
+- **발생한 문제 및 해결**: 작업 착수 직전 표준 경로 `C:\dev\ourgoal-app`에서 다른 세션이 브랜치 `feat/2026-09-06-team-goal-comments`에 실시간으로 커밋 중인 것을 발견(동시 작업 충돌 위험 — reflog에 내가 관여하지 않은 checkout이 실시간으로 찍힘). 사용자에게 확인 후 `EnterWorktree`로 격리된 워크트리를 만들어 브랜치 `feature/2026-09-06-goal-agent-chat`에서 작업, 공유 작업 폴더의 다른 세션 상태는 전혀 건드리지 않음.
+- **검증 결과**: `node -e`로 `api/goalagent.js` require 및 메인 `<script>` 문법 검증 통과, `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음). 로컬 정적 서버(Python http.server)로 실제 브라우저 렌더링 확인 — `#goalAgentCard`가 '개인 목표' 탭 최상단(목표 헤더 위)에 요청한 그대로의 placeholder로 렌더링됨을 스크린샷으로 확인, 메시지 입력 후 전송 시 로딩 모달→(로컬엔 API 서버가 없어 실패)→에러 토스트까지 콘솔 에러 없이 정상 동작함을 클릭으로 확인. ANTHROPIC_API_KEY·Supabase 로그인이 없는 로컬 환경이라 실제 AI diff 생성·반영까지의 전체 흐름은 PR의 Vercel 프리뷰 배포에서 재검증이 필요함.
+---
+
 참고: 위 장애는 사용자가 별도로 연 PR #19로 먼저 병합되어 해결되었다. 아래 응원 알림 브랜치는 그보다 앞서(PR #10 XP/레벨 모델 병합 이전 시점의 main) 분기했던 브랜치라, 그 사이 병합된 PR #10·#19 두 커밋과 병합 충돌이 발생해 이 로그를 포함한 파일들을 수동으로 재병합했다.
 
 ## [2026-09-05 12:20] 내 기록에 반응·응원이 왔을 때 알림
@@ -366,3 +411,4 @@
   (5) `scripts/smoke-test.js`에 `mockPostCheerCount` 단위 테스트 3건 추가(작성 직후 0, id/게시물 없으면 0, 오래되면 상한 40 도달).
 - **발생한 문제 및 해결**: 착수 전 로컬 검증을 위해 `node scripts/smoke-test.js`를 실행했더니, main에 이미 **병합 충돌 마커(`<<<<<<< / ======= / >>>>>>>`)가 해결되지 않은 채로 남아있는 상태**(PR #9를 병합하는 시점과 그 수정 커밋 푸시가 겹쳐 발생한 문제로, 이미 열려있는 PR #16이 정확히 이 문제를 고치는 중)를 발견 → PR #16을 직접 건드리지 않되(운영 규칙상 이전 주기 PR 불가침), 내 브랜치가 깨진 main에서 분기했으므로 동일한 내용(heatmapLevel 3건 + localNextActionSuggestion 2건 모두 보존)으로 충돌 마커만 로컬에서 해소해 테스트가 통과하도록 정리. 이 파일은 개발용 테스트 스크립트로 Vercel 배포와 무관.
 - **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `<style>` 중괄호 407/407 균형(변경 없음 확인), `node scripts/smoke-test.js` 28개 전부 통과(기존 25 + 신규 3). `mockPostCheerCount`의 시간 경과별 단조 증가·상한 동작을 별도 시뮬레이션으로 재확인. 브라우저 도구가 없는 샌드박스 환경이라 실제 배너 노출·클릭 후 소통 탭 이동은 로직 검증으로 대체했으며 PR에 명시.
+---
