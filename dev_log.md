@@ -439,6 +439,17 @@
 - **검증 결과**: 복원된 항목 텍스트가 304a0f0 원문과 문자 단위로 완전히 동일함을 스크립트로 대조(1,814자 일치), 병합 후 `git diff main...HEAD`로 순수 추가(복원 7줄 + 신규 기록 7줄) 외 다른 라인 변경이 없음을 확인, 저장소 전체 병합 마커 재검색(`grep -rn "^<<<<<<<"`) 클린, `node scripts/smoke-test.js` 31개 전부 통과(기존 28 + origin/main 병합으로 들어온 PR #17의 신규 3개, 회귀 없음). `gh pr view`로 `mergeable:MERGEABLE`/`mergeStateStatus:CLEAN` 확인. 순수 문서 변경이라 브라우저 검증은 해당 없음.
 ---
 
+## [2026-09-05 06:31] 홈 화면 "오늘의 미션" 추가
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 3단계 항목 — 목표 전체가 아니라 "오늘 하루" 단위로 할 일을 잘게 쪼개주는 AI 제안을 홈 화면에 추가. (8원칙: 거창한 목표를 매번 마주하면 시작하기 부담스러워지는 게 이탈 원인 중 하나라 판단 → 목표별로 "오늘 할 만한 아주 작은 한 걸음"만 AI가 짚어주는 것이 핵심 해결책. goalstatus.js/nextaction.js와 동일한 단일 호출+자체검증 패턴을 재사용)
+- **수정/실행 내역**:
+  (1) `api/todaymission.js` 신설(goalstatus.js·nextaction.js와 동일 구조) — goalTitle과 미완료 마일스톤/할 일 목록만 받아 "① 아직 끝나지 않은 항목에 근거 ② 오늘 하루 안에 부담 없이 끝낼 만큼 작고 구체적 ③ 다정한 제안 톤 ④ 15~40자 한 문장" 자체점검 기준을 내장한 프롬프트로 Claude 1회 호출.
+  (2) 클라이언트에 `localTodayMission`(AI 실패 시 로컬 폴백: 첫 미완료 마일스톤 제목을 언급하거나, 전부 완료면 회고 제안), `requestTodayMission`(28초 타임아웃+6~80자 검증, 실패 시 로컬 폴백), `renderTodayMissionCard`(활성 목표별로 카드 한 줄씩 렌더링, 오늘 날짜로 캐시돼 있으면 재사용하고 없으면 비동기로 채워 넣음) 추가. 캐시는 `settings.todayMissions[goalId] = {date, text}`로 저장해 목표당 하루 1회만 호출.
+  (3) 홈 화면 캡처 카드와 목표 목록 사이에 `#todayMissionCard` 신설, `renderHome()`에서 항상 갱신. CSS는 `.mission-*` 5개 클래스만 신규 추가(기존 `--rule`/`--ink-soft`/`shadow-sm` 토큰 재사용).
+  (4) `scripts/smoke-test.js`에 `localTodayMission` 단위 테스트 2건 추가.
+- **발생한 문제 및 해결**: 없음
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node -c api/todaymission.js` 문법 검증 통과, `node scripts/smoke-test.js` 22개 전부 통과(기존 20 + 신규 2, 회귀 없음). 브라우저 도구가 없는 샌드박스라 Vercel 프리뷰 실제 렌더링 확인은 진행하지 못함.
+---
+
 ## [2026-09-05 06:24] 레벨 배지 UI(홈 상단) + 레벨업 축하 배너
 - **목표**: BACKLOG.md "사용자 경험·도파민 강화" 2단계 두 번째 항목 — 직전 PR(XP/레벨 데이터 모델)에서 만든 계산 로직을 실제 화면에 노출. 홈 상단에 현재 레벨·진행률 배지를 상시 표시하고, 레벨이 오를 때 화면 어디에 있든 보이는 축하 배너를 띄움. (이 항목은 XP 데이터 모델이 있어야 UI를 만들 수 있어, `auto/2026-09-05-xp-level-model` 브랜치 위에 쌓은 브랜치로 작업 — 그 PR이 먼저 병합돼야 이 PR도 merge 가능)
 - **수정/실행 내역**:
