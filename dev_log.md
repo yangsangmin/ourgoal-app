@@ -414,3 +414,10 @@
 - **발생한 문제 및 해결(원칙 8 재검증)**: 없음 — 막힌 지점 없이 설계한 대로 구현 완료.
 - **검증 결과**: `node -e`로 `index.html` 메인 `<script>` `new Function()` 문법 검증 통과, `node -c`로 `sw.js`·`api/push-subscribe.js`·`api/push-dispatch.js`·`api/vapid-public-key.js` 전부 문법 통과, `vercel.json`/`package.json` JSON 파싱 통과, `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음). **사용자가 직접 해야 하는 후속 설정**(PR 설명에 상세 기재): Supabase에 `push_subscriptions` 테이블 생성 SQL 실행, VAPID 키 쌍 생성 후 `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY`(+선택 `VAPID_CONTACT_EMAIL`) 및 `SUPABASE_SERVICE_ROLE_KEY`(+권장 `CRON_SECRET`) Vercel 환경변수 등록 — 이 설정 전까지는 각 API가 500으로 명확히 실패하며 기존 탭-오픈 알림에는 영향 없음. **Vercel 요금제 주의**: Hobby 플랜은 크론 실행 빈도가 하루 1회로 제한될 수 있어(플랜별 상이) 5분 간격 크론은 Pro 플랜이 필요할 수 있음 — 실제 플랜 확인 필요.
 ---
+
+## [2026-09-05 16:58] PR #34 배포 실패 수정 — Vercel Cron → GitHub Actions
+- **목표**: PR #34(Web Push) 푸시 직후 Vercel이 `Hobby accounts are limited to daily cron jobs` 오류로 배포 실패 — 원인 파악 및 수정.
+- **수정/실행 내역**: `vercel.json`(5분 간격 cron) 제거, `.github/workflows/push-dispatch.yml`(GitHub Actions 5분 스케줄 + 수동 실행)로 발송 트리거 교체. Actions 스케줄 지연 가능성을 감안해 `api/push-dispatch.js`의 발송 시각 매칭 허용 오차를 2분→4분으로 확대.
+- **발생한 문제 및 해결**: PR 설명에 "캐비엇"으로만 적어뒀던 Vercel Hobby 플랜 크론 제한이 실제로 배포 실패를 일으킴 → 요금제 업그레이드 대신 무료·요금제 무관인 GitHub Actions로 발송 주체를 교체(사용자에게 새 비용을 강요하지 않는 방향으로 원칙 3~4 재검토).
+- **검증 결과**: `node -c api/push-dispatch.js` 통과, `node scripts/smoke-test.js` 28/28 통과. PR #34 본문·코멘트에 반영, GitHub Secrets/Variables(`CRON_SECRET`/`PUSH_DISPATCH_URL`) 등록 필요 안내 추가.
+---
