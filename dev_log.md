@@ -342,3 +342,13 @@
 - **발생한 문제 및 해결**: 없음 (기존 confetti/vibrate 인프라 재사용, 신규 CSS는 1개 클래스+키프레임만 추가)
 - **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 20개 전부 통과(회귀 없음). resultPct 로직을 별도 시뮬레이션해 "target 없이 결과값만 입력한 할 일"이 wasDone:false→nowDone:true로 판정되어 축하 조건이 정확히 발화함을 확인.
 ---
+
+## [2026-09-05 12:16] 병합 사고 수정 — main 병합 커밋에 남은 충돌 마커·손상 텍스트 복구 (2건째)
+- **목표**: PR #10(XP/레벨 데이터 모델) 브랜치에 `main`을 병합하는 과정에서 생긴 미해결 병합 충돌과 텍스트 손상을 복구. (8원칙: PR #9에서 한 번 겪었던 것과 같은 유형의 사고가 다시 발생 — `main`에 병합 시 텍스트 편집기 방식으로 충돌을 처리하다 보니 ①충돌 마커가 그대로 커밋되거나 ②한글 설명 문자열이 통째로 유실되는 두 패턴이 반복됨. 근본 원인은 반복되는 수작업 충돌 해결 과정 자체이므로, 매번 원본 커밋에서 정확한 문자열을 대조해 복구하는 방식으로 대응)
+- **수정/실행 내역**:
+  (1) `index.html`의 `sugApplyBtn` 핸들러에 남아있던 두 군데 충돌 마커 제거 — 이 브랜치의 `newlyDoneMsCount`(XP 적립 카운터)와 `main`/#8의 `newlyDoneMs`(마일스톤 축하 모달용 배열)를 하나의 forEach 안에서 함께 채우도록 병합해 XP 적립과 축하 모달이 모두 정상 동작하도록 복구. 이 상태로 방치됐다면 `main`에 들어가는 순간 인라인 `<script>`가 구문 오류로 깨져 배포된 앱 전체가 멈췄을 심각한 사안이었음.
+  (2) `scripts/smoke-test.js`의 `xpForLevel`/`levelForXP`/`levelProgress`/`heatmapLevel`/`localNextActionSuggestion` 테스트 설명 문자열에서 한글이 사라져 있던 것을, 각 기능이 원래 추가된 커밋(XP는 이 브랜치의 4d1421c, heatmapLevel은 #9의 f191204, localNextActionSuggestion은 #8의 ac5575d)에서 정확한 문자열을 대조해 복구.
+  (3) PR #10에 코멘트로 상황과 재발 방지책(`grep -rn "^<<<<<<<"`로 병합 후 확인) 안내.
+- **발생한 문제 및 해결**: 위 참조. PR #9와 #10 두 차례 연속으로 같은 유형의 사고가 발생해, 앞으로 이 세션이 "main 병합 완료" 알림을 받을 때마다 병합 커밋 diff에서 충돌 마커·비정상적으로 짧아진 문자열을 우선 점검하는 것을 표준 절차로 삼기로 함.
+- **검증 결과**: 저장소 전체 `<<<<<<<`/`=======`/`>>>>>>>` 마커 재검색 클린 확인, `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 28개 전부 통과, `celebrateMilestoneDone`/`awardXP`/`XP_RULES` 등 병합 후에도 필요한 함수·변수가 모두 존재함을 grep으로 확인.
+---
