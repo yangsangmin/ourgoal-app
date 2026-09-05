@@ -376,3 +376,10 @@
 - **발생한 문제 및 해결**: 없음. `gh auth login`은 자격 증명이 필요해 사용자가 직접 수행(이 커밋의 push는 인증 후 진행).
 - **검증 결과**: `git status`로 변경 파일이 CLAUDE.md·dev_log.md뿐임을 확인, `gh --version` 정상, clone HEAD가 최신 main(c75f192, PR #24 병합 커밋)과 일치.
 ---
+
+## [2026-09-06 00:49] 일반 DM(renderCommDM) 재렌더링 가드에 stale DOM 체크 추가
+- **목표**: 마니또 DM `renderManitoDm`의 확정된 실사용자 도달 가능 null-deref 크래시(f57eefd, PR 대기)와 동일 클래스의 잠재 결함이 일반 소통 DM `renderCommDM`의 모의 답장 `setTimeout` 콜백에도 있는지 점검하고, 있다면 동일 가드를 선제 적용(사용자 직접 요청).
+- **수정/실행 내역**: `renderCommDM`의 `send()` 내부 `setTimeout` 콜백 가드를 `if(state.dmActiveId===person.id)` → `if(document.body.contains(body) && state.dmActiveId===person.id)`로 1줄 수정(마니또 수정과 동일 패턴 재사용, diff 1줄). `saveProfile()` await 갭이 없어 마니또보다 노출 창은 좁지만(답장 대기 700~1300ms 사이 정확히 같은 사람 DM을 보며 다른 소통 서브탭으로 전환·복귀해야 함), `dmActiveId` 조건만으로는 DOM이 여전히 document에 붙어있는지 보장 못 하는 동일 클래스의 이론적 결함이라 방어적으로 수정.
+- **발생한 문제 및 해결**: 없음.
+- **검증 결과**: `node -e`로 메인 `<script>` `new Function()` 문법 검증 통과. `node scripts/smoke-test.js` 26/28 통과 — 실패 2건(`dDay: 오늘이면 D-day`, `dDay: 내일이면 D-1`)은 `git stash`로 격리해 수정 전 main에서도 동일하게 실패함을 확인한 기존의 무관한 버그로, 이번 변경과 무관(이번 PR 범위 밖).
+---
