@@ -4,7 +4,7 @@ var webpush = require('web-push');
 module.exports.config = { maxDuration: 30 };
 
 var DEFAULT_SUPABASE_URL = 'https://dvqosviqbciohcywkzbq.supabase.co';
-var MATCH_TOLERANCE_MIN = 2;
+var MATCH_TOLERANCE_MIN = 4; // GitHub Actions 스케줄 실행은 부하 상황에 따라 지연될 수 있어 여유를 둔다
 var SENT_SLOTS_KEEP = 30;
 
 function minutesSinceMidnight(hhmm) {
