@@ -381,6 +381,7 @@
   .streak-t3{background:var(--grad);color:#fff;box-shadow:0 6px 16px -8px rgba(255,79,100,.7);}
   .streak-t4{background:var(--grad);color:#fff;box-shadow:0 8px 22px -6px rgba(255,79,100,.9);animation:streak-pulse 1.6s ease-in-out infinite;}
   @keyframes streak-pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+  .freeze-pill{font-family:var(--mono);font-size:.7rem;border-radius:999px;padding:4px 10px;white-space:nowrap;font-weight:700;vertical-align:middle;margin-left:6px;background:var(--violet-soft);color:var(--violet);}
 
   /* ---------- 공동 챌린지 ---------- */
   .collective-card{background:var(--chip);color:#fff;border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
@@ -591,7 +592,7 @@
       <button class="btn btn-ghost btn-sm" id="customFeedbackBtn" type="button" style="width:100%;margin-top:8px;">🤖 내 맞춤 피드백 설정하기<span id="customFeedbackStatus"></span></button>
 
       <div class="card-title-row" style="margin:20px 0 10px;">
-        <h3>내 목표 <span id="streakBadge"></span></h3>
+        <h3>내 목표 <span id="streakBadge"></span><span id="streakFreezeBadge"></span></h3>
         <button class="btn btn-ghost btn-sm" id="homeAddGoal" type="button">+ 새 목표</button>
       </div>
       <div id="homeGoalList"></div>
@@ -888,7 +889,7 @@
 
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
   function defaultSettings(){
-    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{} };
+    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, streakFreeze:{ available:1, usedDates:[], grantedTier:0 } };
   }
   function loadLocalSettings(userId){
     try{
@@ -1073,14 +1074,25 @@
   });
 
   /* ============ Enter app ============ */
-  function enterApp(){
+  async function enterApp(){
     document.getElementById('authScreen').style.display = 'none';
     var shell = document.getElementById('appShell');
     shell.classList.add('active');
     document.getElementById('topUserName').textContent = state.profile.displayName;
     document.getElementById('homeGreeting').textContent = state.profile.displayName + '님, 안녕하세요';
+    await checkStreakFreeze();
     renderAll();
     setupNotifyTimer();
+  }
+
+  /* ============ 스트릭 프리즈 (연속기록 보호권) ============ */
+  async function checkStreakFreeze(){
+    if(!state.profile.settings.streakFreeze) state.profile.settings.streakFreeze = { available:1, usedDates:[], grantedTier:0 };
+    var applied = maybeApplyStreakFreeze();
+    var granted = maybeGrantStreakFreeze();
+    if(applied || granted) await saveProfile();
+    if(applied) toast('🧊 어제 기록을 못 남겼지만 스트릭 프리즈로 연속 기록이 지켜졌어요');
+    else if(granted) toast('🧊 스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요');
   }
 
   /* ============ Onboarding (first-time, after signup) ============ */
@@ -1736,9 +1748,11 @@
   }
   function computeStreakDays(){
     var recs = state.profile.records;
-    if(!recs.length) return 0;
+    var frozen = (state.profile.settings.streakFreeze && state.profile.settings.streakFreeze.usedDates) || [];
+    if(!recs.length && !frozen.length) return 0;
     var days = {};
     recs.forEach(function(r){ days[dateKey(r.startAt)] = true; });
+    frozen.forEach(function(k){ days[k] = true; });
     var streak = 0;
     var cursor = new Date(); cursor.setHours(0,0,0,0);
     while(days[cursor.getFullYear()+'-'+pad(cursor.getMonth()+1)+'-'+pad(cursor.getDate())]){
@@ -1747,6 +1761,32 @@
     }
     return streak;
   }
+  var STREAK_FREEZE_MAX = 3;
+  function maybeGrantStreakFreeze(){
+    var sf = state.profile.settings.streakFreeze;
+    if(!sf) return false;
+    var tier = Math.floor(computeStreakDays() / 7);
+    if(tier <= (sf.grantedTier||0)) return false;
+    sf.grantedTier = tier;
+    if(sf.available >= STREAK_FREEZE_MAX) return false;
+    sf.available = Math.min(STREAK_FREEZE_MAX, sf.available + 1);
+    return true;
+  }
+  function maybeApplyStreakFreeze(){
+    var sf = state.profile.settings.streakFreeze;
+    if(!sf || sf.available <= 0) return false;
+    var recs = state.profile.records;
+    var hasRecordOn = function(k){ return recs.some(function(r){ return dateKey(r.startAt)===k; }); };
+    var y = new Date(); y.setHours(0,0,0,0); y.setDate(y.getDate()-1);
+    var yKey = y.getFullYear()+'-'+pad(y.getMonth()+1)+'-'+pad(y.getDate());
+    if(hasRecordOn(yKey) || sf.usedDates.indexOf(yKey)!==-1) return false;
+    var bb = new Date(y); bb.setDate(bb.getDate()-1);
+    var bbKey = bb.getFullYear()+'-'+pad(bb.getMonth()+1)+'-'+pad(bb.getDate());
+    if(!hasRecordOn(bbKey) && sf.usedDates.indexOf(bbKey)===-1) return false;
+    sf.available--;
+    sf.usedDates.push(yKey);
+    return true;
+  }
 
   /* ============ RENDER: HOME ============ */
   function renderHome(){
@@ -1754,6 +1794,9 @@
     var streak = computeStreakDays();
     var badgeEl = document.getElementById('streakBadge');
     if(badgeEl) badgeEl.innerHTML = streak>0 ? streakBadgeHtml(streak) : '';
+    var freezeEl = document.getElementById('streakFreezeBadge');
+    var sf = state.profile.settings.streakFreeze;
+    if(freezeEl) freezeEl.innerHTML = (sf && sf.available>0) ? '<span class="freeze-pill" title="하루를 놓쳐도 스트릭이 끊기지 않게 지켜줘요">🧊'+sf.available+'</span>' : '';
     var wrap = document.getElementById('homeGoalList');
     var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     if(!goals.length){

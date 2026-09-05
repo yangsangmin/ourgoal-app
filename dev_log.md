@@ -301,3 +301,15 @@
 - **발생한 문제 및 해결**: (1) GitHub 웹 UI에서 conflict 3-way 병합용 CodeMirror "Accept both changes" 버튼이 뷰포트 폭에 의해 클릭 좌표가 어긋나 여러 번 실패 → git 블롭(ancestor/base/head oid)을 직접 API로 받아 로컬 `git merge-file`로 재현 후 업로드하는 방식으로 우회했으나, 정확히 이 작업을 진행하던 중 1호 직원 세션이 웹훅으로 깨어나 같은 브랜치를 실제 git으로 먼저 재해결·푸시하는 것을 발견 → 이후로는 1호 직원의 해결을 기다렸다가 "Merge pull request" 버튼 클릭만 담당하는 것으로 역할을 분담. (2) 로컬 3-way 병합 중 BACKLOG.md/dev_log.md(LF)와 main의 index.html(CRLF)이 섞여 있어 첫 시도에서 줄바꿈 불일치로 잘못된 병합 결과(변경사항 소실)가 발생 → 파일별로 실제 줄바꿈을 확인해 올바르게 정규화한 뒤 병합해 해결. (3) GitHub PR 병합 버튼이 "checking..." 상태에서 클릭이 씹히는 경우가 잦아, 클릭 후 커밋-메시지 입력폼이 실제로 나타났는지 read_page로 재확인하고 필요시 재클릭하는 방식으로 안정화.
 - **검증 결과**: 병합 후 main의 index.html에서 manifest.json(PWA)·prefers-color-scheme(다크모드)·renderReportSummary(리포트)·a11ySwitch(접근성)·그룹 배지 streak 계산·goaltemplate(새 목표 AI)가 모두 포함돼 있음을 문자열 검색으로 확인, `<style>` 중괄호 394/394 균형, 메인 `<script>`를 `new Function()`으로 문법 검증 통과. `gh api`로 열린 PR이 0개임을 최종 확인.
 ---
+
+## [2026-09-05 06:36] 스트릭 프리즈(연속기록 보호권) 추가
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 4단계 항목 — 하루를 놓쳐도 연속 기록(스트릭)이 끊기지 않도록 보호해주는 안전장치 추가. (8원칙: 스트릭이 도파민 요소이자 동시에 "하루라도 놓치면 다 무너진다"는 불안(다크패턴 소지)이 될 수 있는데, CLAUDE.md가 명시적으로 다크패턴 금지를 요구하므로 처벌이 아니라 "심리적 안전장치"로 설계 — 하루 못 채워도 미리 모아둔 프리즈로 자동 보호되게 함)
+- **수정/실행 내역**:
+  (1) `settings.streakFreeze = { available:1, usedDates:[], grantedTier:0 }` 기본값 추가(신규 유저는 프리즈 1개로 시작, 기존 유저도 병합 로직으로 자동 채워짐).
+  (2) `computeStreakDays()`를 최소 수정 — 기존 record 날짜 집합에 `usedDates`(이미 소비된 프리즈 날짜)를 합쳐서 연속일을 세도록 변경(그 외 로직·시그니처 동일).
+  (3) `maybeGrantStreakFreeze()` — 연속 기록이 7일 배수를 새로 넘을 때마다 프리즈 1개 지급(최대 3개 보유, `grantedTier`로 같은 구간 중복 지급 방지). `maybeApplyStreakFreeze()` — 어제 기록이 없고 프리즈가 있으며 그제(또는 이미 프리즈된 그제)에는 기록이 있어 "연속이 이어지고 있던 상태"일 때만 자동으로 프리즈 1개를 소비해 어제를 보호. 둘 다 로그인 시 1회(`checkStreakFreeze`, `enterApp()`에서 `renderAll()` 전에 호출)만 실행해 매 렌더링마다 재적용되지 않음.
+  (4) 프리즈 적용/지급 시 각각 토스트 안내("어제 기록을 못 남겼지만 스트릭 프리즈로 지켜졌어요" / "프리즈를 1개 획득했어요"), 홈 상단 스트릭 배지 옆에 보유 개수 뱃지(🧊N, `.freeze-pill` 1개 클래스 신규 추가, `--violet-soft` 토큰 재사용) 노출.
+  (5) `scripts/smoke-test.js` 사샌드박스에 `settings.streakFreeze` 기본 상태와 `setStreakFreeze` 헬퍼 추가, `maybeGrantStreakFreeze`/`maybeApplyStreakFreeze` 단위 테스트 4건 신설.
+- **발생한 문제 및 해결**: 없음. 자동 소비 조건을 "그제에 실제 기록(혹은 이미 프리즈된 그제)이 있을 때"로 제한해, 애초에 스트릭이 없던 상태에서 프리즈가 낭비되거나 스트릭을 인위적으로 만들어내는 경우를 방지.
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 24개 전부 통과(기존 20 + 신규 4, 회귀 없음). "기록 2일치 중 어제만 빠진" 케이스를 별도 시뮬레이션해 프리즈 적용 전 streak=1 → 적용 후 streak=3, 보유 개수 1→0으로 정확히 소비됨을 확인. 브라우저 도구가 없는 샌드박스라 실제 로그인 흐름에서의 토스트·뱃지 노출은 확인하지 못함.
+---
