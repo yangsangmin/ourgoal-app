@@ -8,7 +8,7 @@
 - 현재 태스크: TASK-05
 - 단계: PR 대기
 - 브랜치: feat/2026-09-06-task-05-dynamic-push
-- PR: -
+- PR: #42
 
 ## 태스크 진행표
 
@@ -18,7 +18,7 @@
 | TASK-02 토스페이먼츠 정기구독 & Pro 페이월 | PR 대기 | feat/2026-09-06-task-02-toss-paywall | #39 |
 | TASK-03 Web Speech API 음성 체크인 & 퀵 루틴 | 시작 전 | | |
 | TASK-04 Supabase Realtime 팀 댓글 & 피드 | PR 대기(#41 열림, SQL 실행 후 병합 예정) | feat/2026-09-06-task-04-realtime-comments-feed | #41 |
-| TASK-05 맥락 기반 다이내믹 푸시 알림 | PR 대기 | feat/2026-09-06-task-05-dynamic-push | |
+| TASK-05 맥락 기반 다이내믹 푸시 알림 | PR 대기 | feat/2026-09-06-task-05-dynamic-push | #42 |
 | TASK-06 딥링크 & 워터마크 공유 카드 | 시작 전 | | |
 
 상태 값: `시작 전` → `진행 중` → `PR 대기` → `PR 병합 완료` (막히면 `보류(사유)`)
