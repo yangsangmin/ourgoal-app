@@ -4356,9 +4356,11 @@
       '<div class="card">' +
         '<h3 style="margin-bottom:10px;">이번 주 인증 랭킹</h3>' +
         roster.slice(0,6).map(function(r, i){
+          var streak = r.me ? myStreak : Math.max(1, Math.round(r.c * 0.6));
           return '<div class="item-stat-row"'+(r.me?' style="border-color:var(--red);background:var(--red-soft);"':'')+'>' +
             '<span class="ico">'+(i===0?'🥇':(i===1?'🥈':(i===2?'🥉':(i+1)+'위')))+'</span>' +
-            '<span class="nm">'+escapeHtml(r.n)+(r.me?' (나)':'')+'</span>' +
+            '<span class="nm" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+escapeHtml(r.n)+(r.me?' (나)':'')+'</span>' +
+            (streak>=3 ? '<span style="flex:0 0 auto;">'+streakBadgeHtml(streak)+'</span>' : '') +
             '<span class="ct"><b>'+r.c+'</b>회</span>' +
           '</div>';
         }).join('') +
