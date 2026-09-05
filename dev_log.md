@@ -597,3 +597,17 @@
 - **발생한 문제 및 해결**: 없음 — 막힌 지점 없이 진행.
 - **검증 결과**: `node -e new Function()`으로 메인 `<script>` 문법 검증 통과, `<style>` 중괄호 448/448 균형 확인, `node scripts/smoke-test.js` 41/41 전부 통과(회귀 없음, 신규 순수 함수 없어 테스트 추가 없음). 로컬 정적 서버+브라우저로 실제 렌더링 검증: 랜딩 화면에 카카오(정확한 배경색 `rgb(254,229,0)` 확인)·구글 버튼과 축소된 이메일 링크가 모두 정상 노출, "이메일로 가입하기" 클릭 시 인증 화면 회원가입 탭으로 정상 전환되고 그 화면에도 동일한 OAuth 버튼이 노출됨을 확인. 카카오/구글 버튼 클릭 시 콘솔 에러 0건(테스트 목적으로 별도 생성한 임시 Supabase 클라이언트의 "Multiple GoTrueClient" 경고 2건은 앱 코드와 무관). 실제 프로젝트 URL/키로 별도 임시 클라이언트를 만들어 `signInWithOAuth({provider:'kakao'|'google', skipBrowserRedirect:true})`를 직접 호출해, 두 provider 모두 올바른 `.../auth/v1/authorize?provider=...` URL을 정상 생성함을 확인(실제 브라우저 최상위 리다이렉트는 이 자동화 브라우저 샌드박스가 외부 origin 이동을 허용하지 않아 클릭만으로는 재현되지 않았으나, API 호출 자체가 정확한 URL을 만드는 것으로 로직을 검증). Kakao/Google Provider가 Supabase에서 아직 활성화되지 않았다면 리다이렉트 후 Supabase가 에러를 반환할 것이나, 이는 사용자가 처리할 외부 설정 사항이며 코드 로직과는 무관. 기존 이메일 로그인/회원가입 폼 요소(`loginForm`/`signupForm`/각 input/제출 버튼)가 모두 그대로 존재·동작함을 확인(회귀 없음).
 ---
+
+## [2026-09-06 05:37] TASK-02: 토스페이먼츠 정기구독 & Pro 페이월 시스템
+- **목표**: 노션 스프린트 TASK-02 — Pro 구독 페이월과 3곳의 유료 기능 게이팅(목표 개수·맞춤 피드백 봇·30일 리포트)을 추가해 수익화 창구를 연다. 이번 단계는 노션 지시대로 실제 토스 결제 승인 없이 "가상 성공 처리"까지만 구현(서버 시크릿 키가 필요한 실결제 승인은 범위 밖).
+- **착수 전 발견한 충돌과 사용자 결정**: 기존 `promptNewGoal()`에 이미 "진행 중 목표 최대 3개" 하드 제한과 랜딩 화면 "목표 · 최대 3개" 광고 문구가 있었는데, 노션 스펙("활성 목표 2개 초과 시 페이월")대로 하면 무료 한도가 3→2로 줄어 기존 광고 문구와 어긋남. 사용자에게 (a) 노션 스펙대로 2개+문구 수정 vs (b) 기존 "최대 3개" 문구·한도 유지하고 페이월 트리거만 4번째 시도(기존 `>=3` 체크 지점)로 맞추는 대안 중 선택 요청 → **(b) 대안 채택**(기존 UI/문구 무변경, CLAUDE.md 2번 원칙과도 더 부합).
+- **수정/실행 내역**:
+  (1) `<head>`에 토스페이먼츠 SDK 스크립트 태그 추가(`js.tosspayments.com/v1/payment-widget`, 이번 단계는 로드만 하고 실제 호출 없음).
+  (2) `defaultSettings()`에 `subscription:{isPro:false, plan:null, expiresAt:null, billingKey:null}` 기본값 추가, `subscriptionState()` 신규 헬퍼(기존 `groupState`/`manitoState` 패턴 재사용)로 구버전 로컬 백업을 가져오기(import)해도 안전하게 방어적 초기화.
+  (3) `openPaywallModal(triggerReason)` 신규 — 기존 `openModal`/`.mission-card`/`.modal-actions` 재사용, 혜택 4개 + 월 8,900원/연 69,000원(35% 할인) 요금제 + "3일 무료 체험 시작하기" 버튼. 신규 CSS는 `.pro-badge`/`.pw-plan-row`/`.pw-plan`/`.pw-discount` 4개뿐(기존 `--gold`/`--card2` 토큰 재사용).
+  (4) 체험 시작 클릭 시 가상 성공 처리: `subscriptionState().isPro=true`, `plan='monthly'`, `expiresAt=오늘+3일`로 설정 후 `saveProfile()` → `renderProBadge()` → 토스트.
+  (5) 유료 게이팅 3곳: `promptNewGoal()` 2개 호출부(홈/목표 탭 진입점)의 기존 `>=3` 체크를 `!isPro && ...>=3`으로 변경해 무료는 기존과 동일하게(최대 3개, 문구 무변경) 페이월로, Pro는 무제한으로; `customFeedbackBtn`/`settingsCustomFeedbackBtn` 클릭을 `openFeedbackSetupGated()`로 감싸 진입 시 체크; `reportPeriodToggle`의 30일 클릭 시 체크(7일은 그대로 무료).
+  (6) 상단 프로필 칩에 `renderProBadge()`로 PRO 뱃지(골드 그라디언트 필) 삽입 — `enterApp()`과 `updateTopBar()` 양쪽에서 호출(기존 코드가 이 두 곳에서 각자 `topUserName`을 따로 세팅하는 기존 중복 패턴을 그대로 따름, 리팩터링하지 않음).
+- **발생한 문제 및 해결**: 없음 — 막힌 지점 없이 진행. (참고: 구현 중 실수로 main에서 바로 작업 브랜치 생성 전에 코드를 수정했으나, `git checkout -b`가 커밋되지 않은 변경을 새 브랜치로 그대로 이관해 데이터 손실·main 오염 없이 즉시 바로잡음.)
+- **검증 결과**: `node -e new Function()` 문법 검증 통과, `<style>` 중괄호 454/454, `node scripts/smoke-test.js` 41/41 통과(회귀 없음, 신규 순수 함수 없음). 브라우저 실제 렌더링 검증(검증 전용 `window.__dbg` 훅으로 클로저 상태 노출 → 확인 후 완전히 제거, `grep` 0건 재확인): 무료 상태에서 활성 목표 3개일 때 `promptNewGoal()` → 페이월 정상 표출(제목 "🌟 아워골 Pro"), "3일 무료 체험 시작하기" 클릭 → `isPro=true`/`plan='monthly'`/`expiresAt`이 정확히 +3일로 설정되고 PRO 뱃지 렌더링·모달 자동 종료 확인. Pro 전환 후 같은 3개 목표 상태에서 `promptNewGoal()` 재호출 시 페이월 없이 정상적으로 "새 목표" 모달이 뜸(무제한 확인). 다시 무료로 되돌려 리포트 30일 토글 클릭 → 페이월 표출·`reportPeriod`는 7 유지(전환 차단) 확인, 맞춤 피드백 봇 버튼 클릭 → 페이월 표출 확인. 콘솔 에러는 이 정적 서버에 없는 `/api/*` 엔드포인트 404(기존에도 있던 무관한 항목)와 인증되지 않은 테스트 계정의 Supabase 쓰기가 RLS에 막힌 400(안전, 실제 데이터 미변경)뿐, 신규 코드발 에러 0건.
+---

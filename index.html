@@ -356,6 +356,14 @@
   .mission-row .m-goal{font-weight:800;color:var(--ink);}
   .mission-row .m-text{color:var(--ink-soft);}
 
+  /* ---------- Pro 페이월 ---------- */
+  .pro-badge{flex:0 0 auto;font-size:.62rem;font-weight:900;color:#fff;background:linear-gradient(135deg,var(--gold),#FFC24D);padding:2px 8px;border-radius:999px;letter-spacing:.03em;}
+  .pw-plan-row{display:flex;gap:10px;margin:14px 0;}
+  .pw-plan{flex:1;background:var(--card2);border-radius:14px;padding:12px;text-align:center;}
+  .pw-plan .pw-price{font-size:1.05rem;font-weight:900;color:var(--ink);margin-top:2px;}
+  .pw-plan .pw-unit{font-size:.68rem;color:var(--ink-faint);}
+  .pw-discount{display:inline-block;font-size:.62rem;font-weight:800;color:var(--gold);background:var(--gold-soft);border-radius:999px;padding:2px 8px;margin-bottom:4px;}
+
   /* ---------- Heatmap (기록 히트맵) ---------- */
   .heatmap-scroll{overflow-x:auto;padding-bottom:2px;}
   .heatmap-body{display:flex;gap:3px;}
@@ -907,6 +915,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://js.tosspayments.com/v1/payment-widget"></script>
 <script>
 (function(){
   "use strict";
@@ -1009,7 +1018,7 @@
 
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
   function defaultSettings(){
-    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, feedReactions:{}, todayMissions:{}, streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] }, hasSeenGuide:false };
+    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, feedReactions:{}, todayMissions:{}, streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] }, hasSeenGuide:false, subscription:{ isPro:false, plan:null, expiresAt:null, billingKey:null } };
   }
   function loadLocalSettings(userId){
     try{
@@ -1019,6 +1028,13 @@
   }
   function saveLocalSettings(userId, settings){
     try{ localStorage.setItem('ourgoal_settings_'+userId, JSON.stringify(settings)); } catch(e){}
+  }
+
+  /* ============ Pro 구독 (토스페이먼츠, 이번 단계는 가상 성공 처리) ============ */
+  function subscriptionState(){
+    var s = state.profile.settings;
+    if(!s.subscription) s.subscription = { isPro:false, plan:null, expiresAt:null, billingKey:null };
+    return s.subscription;
   }
 
   /* ============ XP/레벨 시스템 ============ */
@@ -1311,6 +1327,7 @@
     shell.classList.add('active');
     document.getElementById('topUserName').textContent = state.profile.displayName;
     document.getElementById('homeGreeting').textContent = state.profile.displayName + '님, 안녕하세요';
+    renderProBadge();
     await checkStreakFreeze();
     renderAll();
     setupNotifyTimer();
@@ -1547,6 +1564,53 @@
     overlay.onclick = function(e){ if(e.target===overlay) closeModal(); };
   }
   function closeModal(){ document.getElementById('modalOverlay').classList.remove('active'); }
+
+  /* ============ Pro 페이월 (가상 결제 성공 처리) ============ */
+  function openPaywallModal(triggerReason){
+    openModal(
+      '<h3>🌟 아워골 Pro</h3>' +
+      '<p class="muted" style="margin:-6px 0 14px;">더 깊이, 더 자유롭게 목표를 관리해보세요.</p>' +
+      '<div class="mission-card">' +
+        '<div class="mission-row"><span class="m-icon">🎯</span><div><b class="m-goal">무제한 목표 관리</b><span class="m-text"> · 활성 목표 개수 제한 없이</span></div></div>' +
+        '<div class="mission-row"><span class="m-icon">🤖</span><div><b class="m-goal">맞춤 AI 코치 무제한</b><span class="m-text"> · 나만의 피드백 봇 자유롭게</span></div></div>' +
+        '<div class="mission-row"><span class="m-icon">📊</span><div><b class="m-goal">30일/연간 심층 분석 리포트</b><span class="m-text"> · 더 긴 흐름을 한눈에</span></div></div>' +
+        '<div class="mission-row"><span class="m-icon">📅</span><div><b class="m-goal">캘린더 양방향 실시간 동기화</b><span class="m-text"> · 항상 최신 상태로</span></div></div>' +
+      '</div>' +
+      '<div class="pw-plan-row">' +
+        '<div class="pw-plan"><div class="pw-unit">월간</div><div class="pw-price">8,900원</div><div class="pw-unit">/ 월</div></div>' +
+        '<div class="pw-plan"><span class="pw-discount">35% 할인</span><div class="pw-price">69,000원</div><div class="pw-unit">/ 년</div></div>' +
+      '</div>' +
+      '<div class="modal-actions"><button class="btn btn-primary btn-block" id="pwStartTrial" type="button">3일 무료 체험 시작하기</button></div>' +
+      '<button class="land-login-link" id="pwSkip" type="button" style="width:100%;background:none;margin-top:12px;">나중에 할게요</button>',
+      function(sheet){
+        sheet.querySelector('#pwSkip').addEventListener('click', closeModal);
+        sheet.querySelector('#pwStartTrial').addEventListener('click', async function(){
+          // 이번 단계는 토스페이먼츠 실결제 승인(서버 시크릿 키 필요) 없이 가상 성공 처리만 한다.
+          var sub = subscriptionState();
+          sub.isPro = true;
+          sub.plan = 'monthly';
+          sub.expiresAt = new Date(Date.now() + 3*86400000).toISOString();
+          await saveProfile();
+          closeModal();
+          renderProBadge();
+          toast('🌟 Pro 체험이 시작됐어요! 3일간 무제한으로 이용해보세요');
+        });
+      }
+    );
+  }
+
+  function renderProBadge(){
+    var isPro = subscriptionState().isPro;
+    document.querySelectorAll('.pro-badge').forEach(function(el){ el.remove(); });
+    if(!isPro) return;
+    var chip = document.getElementById('topUserName');
+    if(chip){
+      var badge = document.createElement('span');
+      badge.className = 'pro-badge';
+      badge.textContent = 'PRO';
+      chip.insertAdjacentElement('afterend', badge);
+    }
+  }
 
   /* ============ Gauge SVG ============ */
   function gaugeSvg(pct, size, color){
@@ -1870,6 +1934,7 @@
   function updateTopBar(){
     var p = state.profile;
     document.getElementById('topUserName').textContent = p.displayName;
+    renderProBadge();
     var av = document.getElementById('topAvatar');
     if(p.avatarUrl){
       av.innerHTML = '<img src="'+p.avatarUrl+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
@@ -2829,8 +2894,12 @@
       return;
     }
   }
-  document.getElementById('customFeedbackBtn').addEventListener('click', openFeedbackSetup);
-  document.getElementById('settingsCustomFeedbackBtn').addEventListener('click', openFeedbackSetup);
+  function openFeedbackSetupGated(){
+    if(!subscriptionState().isPro){ openPaywallModal('customFeedback'); return; }
+    openFeedbackSetup();
+  }
+  document.getElementById('customFeedbackBtn').addEventListener('click', openFeedbackSetupGated);
+  document.getElementById('settingsCustomFeedbackBtn').addEventListener('click', openFeedbackSetupGated);
   document.getElementById('fbSetupBack').addEventListener('click', closeFeedbackSetup);
 
   function verdictClass(v){ return v==='도움됨'?'good':(v==='도움안됨'?'bad':'mid'); }
@@ -2998,7 +3067,7 @@
 
   /* ============ New goal modal ============ */
   function promptNewGoal(){
-    if(state.profile.goals.filter(function(g){ return !g.archivedAt; }).length>=3){ toast('진행 중 목표는 최대 3개예요 · 기록으로 옮기면 새로 만들 수 있어요'); return; }
+    if(!subscriptionState().isPro && state.profile.goals.filter(function(g){ return !g.archivedAt; }).length>=3){ openPaywallModal('goalLimit'); return; }
     showNewGoalChatStep('');
   }
   async function generateGoalTemplate(description){
@@ -4371,7 +4440,9 @@
 
     document.getElementById('reportPeriodToggle').querySelectorAll('[data-period]').forEach(function(btn){
       btn.addEventListener('click', function(){
-        state.reportPeriod = Number(btn.dataset.period);
+        var period = Number(btn.dataset.period);
+        if(period===30 && !subscriptionState().isPro){ openPaywallModal('report30d'); return; }
+        state.reportPeriod = period;
         renderRecordsScreen();
       });
     });
@@ -5416,7 +5487,7 @@
   async function cloneTemplate(tmplId, rerender){
     var t = CREATOR_TEMPLATES.find(function(x){ return x.id===tmplId; });
     if(!t) return;
-    if(state.profile.goals.filter(function(g){ return !g.archivedAt; }).length>=3){ toast('진행 중 목표는 최대 3개예요 · 기록으로 옮기면 새로 만들 수 있어요'); return; }
+    if(!subscriptionState().isPro && state.profile.goals.filter(function(g){ return !g.archivedAt; }).length>=3){ openPaywallModal('goalLimit'); return; }
     var goal = {
       id: newId(), title: t.title, dueDate: null, category: t.category,
       createdAt: nowISO(), visibility: 'public',

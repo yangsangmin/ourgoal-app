@@ -5,17 +5,17 @@
 갱신은 항상 태스크 브랜치 안에서만 한다(main 직접 커밋 금지).
 
 - 스프린트 상태: 진행 중
-- 현재 태스크: TASK-01
+- 현재 태스크: TASK-02
 - 단계: PR 대기
-- 브랜치: feat/2026-09-06-task-01-social-login
-- PR: #38
+- 브랜치: feat/2026-09-06-task-02-toss-paywall
+- PR: -
 
 ## 태스크 진행표
 
 | 태스크 | 상태 | 브랜치 | PR |
 |---|---|---|---|
-| TASK-01 카카오 & 구글 1초 소셜 로그인 | PR 대기 | feat/2026-09-06-task-01-social-login | #38 |
-| TASK-02 토스페이먼츠 정기구독 & Pro 페이월 | 시작 전 | | |
+| TASK-01 카카오 & 구글 1초 소셜 로그인 | PR 병합 완료 | feat/2026-09-06-task-01-social-login | #38 |
+| TASK-02 토스페이먼츠 정기구독 & Pro 페이월 | PR 대기 | feat/2026-09-06-task-02-toss-paywall | |
 | TASK-03 Web Speech API 음성 체크인 & 퀵 루틴 | 시작 전 | | |
 | TASK-04 Supabase Realtime 팀 댓글 & 피드 | 시작 전 | | |
 | TASK-05 맥락 기반 다이내믹 푸시 알림 | 시작 전 | | |
@@ -25,7 +25,8 @@
 
 ## 대기 중 사용자 작업
 
-- TASK-01 (PR 대기): Supabase에서 Kakao·Google Provider 활성화, 각 콘솔에서 앱 등록·Redirect URI 설정, Supabase Site/Redirect URL에 배포 도메인 추가. 상세는 `docs/sprint/TASK-01.md` "사용자 필요 작업" 참고. 설정 전에도 코드 로직·문법 검증은 끝났고 PR 병합은 가능하나, 실제 소셜 로그인 팝업/리다이렉트는 이 설정이 끝나야 동작함.
+- TASK-01 (병합 완료): Supabase에서 Kakao·Google Provider 활성화, 각 콘솔에서 앱 등록·Redirect URI 설정, Supabase Site/Redirect URL에 배포 도메인 추가. 상세는 `docs/sprint/TASK-01.md` "사용자 필요 작업" 참고. 설정 전까지는 버튼을 눌러도 provider 비활성화 에러가 남(코드 문제 아님).
+- TASK-02 (PR 대기): 토스페이먼츠 개발자센터 가맹점(테스트) 등록·테스트 클라이언트 키 발급 — 이번 PR은 실제 SDK 호출 없이 "가상 성공 처리"만 구현했으므로 이 설정 없이도 병합·동작 가능. 다음 단계(실제 결제 승인)부터 필요.
 
 ## 사전 정리 체크리스트 (스프린트 시작 전 1회, 사용자 확인 필요)
 
