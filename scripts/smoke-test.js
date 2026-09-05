@@ -68,7 +68,9 @@ function extractFunction(source, name) {
 const FN_NAMES = [
   'pad', 'dateKey', 'goalProgress', 'msCounts', 'resultPct', 'dDay',
   'computeStreakDays', 'findSuggestionTarget', 'sanitizeSuggestions',
-    'applySuggestion', 'describeSuggestion', 'heatmapLevel', 'localNextActionSuggestion',];
+  'applySuggestion', 'describeSuggestion', 'heatmapLevel', 'localNextActionSuggestion',
+  'goalAchievement',
+];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
 
@@ -79,6 +81,7 @@ const sandboxSrc =
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
+  'goalAchievement, ' +
   'setRecords: function(r){ state.profile.records = r; } };\n';
 
 const os = require('os');
@@ -204,7 +207,6 @@ check('describeSuggestion: status 변경 라벨을 생성한다', () => {
   assert.ok(d.label.indexOf('완료로') !== -1);
 });
 
-<<<<<<< auto/2026-09-05-record-heatmap
 check('heatmapLevel: 기록이 없으면 0단계', () => {
   assert.strictEqual(fns.heatmapLevel(0, 5), 0);
 });
@@ -216,7 +218,8 @@ check('heatmapLevel: 최댓값이면 최고 단계(4)', () => {
 check('heatmapLevel: 비율에 따라 중간 단계로 나뉜다', () => {
   assert.strictEqual(fns.heatmapLevel(1, 5), 1);
   assert.strictEqual(fns.heatmapLevel(3, 5), 3);
-=======
+});
+
 check('localNextActionSuggestion: 남은 마일스톤이 있으면 그 제목을 제안한다', () => {
   const goal = makeGoal(['done', 'todo', 'doing']);
   const msg = fns.localNextActionSuggestion(goal, 'm0');
@@ -227,7 +230,20 @@ check('localNextActionSuggestion: 남은 마일스톤이 없으면 결과 기록
   const goal = makeGoal(['done']);
   const msg = fns.localNextActionSuggestion(goal, 'm0');
   assert.ok(msg.indexOf('결과를 기록') !== -1);
->>>>>>> main
+});
+
+check('goalAchievement: 마일스톤이 전부 done이면 100', () => {
+  assert.strictEqual(fns.goalAchievement(makeGoal(['done', 'done'])), 100);
+});
+
+check('goalAchievement: 일부만 done이면 100 미만', () => {
+  assert.ok(fns.goalAchievement(makeGoal(['done', 'todo'])) < 100);
+});
+
+check('goalAchievement: 목표 자체에 수치 결과가 있으면 그 비율을 우선한다', () => {
+  const goal = makeGoal(['todo']);
+  goal.result = { target: '10', result: '10', unit: '회', note: '' };
+  assert.strictEqual(fns.goalAchievement(goal), 100);
 });
 
 /* ============ 결과 요약 ============ */
