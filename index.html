@@ -925,6 +925,18 @@
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2cW9zdmlxYmNpb2hjeXdremJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0MTM0NDYsImV4cCI6MjEwMzk4OTQ0Nn0.DCMMxxHB6kzJ0CjgLN0ERaSk7WY6LDN-pDVdeZ0-cWM';
   var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  /*
+   * TASK-04: 아래 두 테이블 + RPC가 Supabase에 있어야 팀 댓글/피드 응원이 실제로 동작한다.
+   * (전체 CREATE TABLE / RLS / RPC SQL은 이 태스크의 PR 본문에 그대로 첨부돼 있다.)
+   * - team_comments(id text pk, group_id text, user_id uuid, display_name text, target_id text, text text, created_at timestamptz)
+   *   RLS: 로그인 유저 전원 select, 본인 것만 insert.
+   * - feed_posts(id text pk, user_id uuid, display_name text, avatar_url text, goal_title text, caption text,
+   *              cheers_count int default 0, extra jsonb, created_at timestamptz)
+   *   RLS: 전원 select, 본인 것만 insert/delete. cheers_count는 RLS로 열어두지 않고
+   *   increment_post_cheers(p_post_id, p_delta) RPC(SECURITY DEFINER)로만 증감(다른 사람 글의 컬럼을
+   *   안전하게 원자적으로 바꾸기 위함 — 클라이언트가 직접 UPDATE하면 동시성 문제와 임의 컬럼 변조 위험이 있다).
+   */
+
   /* ============ Utilities ============ */
   function uid(p){ return (p||'id') + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
   function newId(){ return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : uid('id'); }
@@ -1018,7 +1030,7 @@
 
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
   function defaultSettings(){
-    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, feedReactions:{}, todayMissions:{}, streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] }, hasSeenGuide:false, subscription:{ isPro:false, plan:null, expiresAt:null, billingKey:null } };
+    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, feedReactions:{}, todayMissions:{}, streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] }, hasSeenGuide:false, subscription:{ isPro:false, plan:null, expiresAt:null, billingKey:null } };
   }
   function loadLocalSettings(userId){
     try{
@@ -1332,6 +1344,8 @@
     renderAll();
     setupNotifyTimer();
     if(state.profile.settings.notify) syncPushSubscription();
+    setupRealtimeChannelsOnce();
+    await ensureFeedPostsLoaded();
     checkSocialNotifications();
   }
 
@@ -3004,15 +3018,19 @@
           if(!caption){ toast('한마디를 적어주세요'); return; }
           var picked = goal.milestones.filter(function(m){ return sel.ms[m.id]; }).map(function(m){ return { title:m.title, status:m.status }; });
           var post = {
-            id: 'post_'+newId(), createdAt: nowISO(), caption: caption, cheers:0,
-            includeRecord: sel.record, recordText: sel.record ? record.text : null,
-            includeFeedback: sel.feedback, feedback: sel.feedback ? { verdict:fb.verdict, comment:fb.comment, source:fb.source } : null,
-            includeGoal: sel.goal, goalTitle: sel.goal ? goal.title : null, goalPct: sel.goal ? pct : null,
-            milestones: picked
+            id: 'post_'+newId(), user_id: state.profile.id, display_name: state.profile.displayName, avatar_url: state.profile.avatarUrl||null,
+            goal_title: sel.goal ? goal.title : null, caption: caption, cheers_count: 0, created_at: nowISO(),
+            extra: {
+              includeRecord: sel.record, recordText: sel.record ? record.text : null,
+              includeFeedback: sel.feedback, feedback: sel.feedback ? { verdict:fb.verdict, comment:fb.comment, source:fb.source } : null,
+              includeGoal: sel.goal, goalPct: sel.goal ? pct : null,
+              milestones: picked
+            }
           };
-          if(!state.profile.settings.feedPosts) state.profile.settings.feedPosts = [];
-          state.profile.settings.feedPosts.unshift(post);
-          await saveProfile();
+          var res = await sb.from('feed_posts').insert(post);
+          if(res.error){ toast('공유에 실패했어요'); return; }
+          if(!FEED_POSTS_CACHE) FEED_POSTS_CACHE = [];
+          FEED_POSTS_CACHE.unshift(post);
           closeModal();
           toast('피드에 공유했어요');
           state.commSubTab = 'feed';
@@ -4106,16 +4124,44 @@
   }
 
   /* 팀 목표/마일스톤 댓글 — 역할(팀장·매니저·팀원) 무관 전원 작성·열람 가능, groupState에 로컬 저장 */
+  /* ============ 팀 댓글 (Supabase team_comments, 실시간 동기화) ============ */
+  var TEAM_COMMENTS_CACHE = {}; // gid -> team_comments rows
+  var REALTIME_CHANNELS_SETUP = false;
+  function setupRealtimeChannelsOnce(){
+    if(REALTIME_CHANNELS_SETUP) return;
+    REALTIME_CHANNELS_SETUP = true;
+    setupTeamCommentsRealtime();
+    setupFeedPostsRealtime();
+  }
+  async function ensureTeamCommentsLoaded(gid){
+    if(TEAM_COMMENTS_CACHE[gid]) return;
+    TEAM_COMMENTS_CACHE[gid] = []; // 중복 요청 방지용 로딩 가드
+    var res = await sb.from('team_comments').select('*').eq('group_id', gid).order('created_at', { ascending:true });
+    TEAM_COMMENTS_CACHE[gid] = res.data || [];
+  }
+  function setupTeamCommentsRealtime(){
+    sb.channel('team_comments_channel')
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'team_comments' }, function(payload){
+        var row = payload.new;
+        var list = TEAM_COMMENTS_CACHE[row.group_id];
+        if(!list) return; // 아직 이 그룹 댓글을 열어본 적 없으면 다음에 열 때 전체를 새로 불러온다
+        if(list.some(function(c){ return c.id===row.id; })) return; // 본인이 낙관적으로 이미 넣은 것과 중복 방지
+        list.push(row);
+        if(state.activeTab==='goals' && state.goalsSubTab==='team') renderTeamGoalsScreen();
+      })
+      .subscribe();
+  }
   function teamComments(gid, targetId){
-    return groupState(gid).comments.filter(function(c){ return c.targetId===targetId; });
+    return (TEAM_COMMENTS_CACHE[gid] || []).filter(function(c){ return c.target_id===targetId; });
   }
   function teamCommentItemHtml(c){
+    var isMe = c.user_id === state.profile.id;
     return '<div class="feed-item" style="margin-bottom:8px;">' +
-        '<div class="feed-avatar me">'+escapeHtml((state.profile.displayName||'').slice(0,1))+'</div>' +
+        '<div class="feed-avatar'+(isMe?' me':'')+'">'+escapeHtml((c.display_name||'').slice(0,1))+'</div>' +
         '<div class="feed-body">' +
-          '<div class="feed-head"><span class="feed-name">'+escapeHtml(state.profile.displayName)+'</span></div>' +
+          '<div class="feed-head"><span class="feed-name">'+escapeHtml(c.display_name)+'</span></div>' +
           '<div class="feed-action">'+escapeHtml(c.text)+'</div>' +
-          '<div class="feed-foot"><span class="feed-time">'+timeAgoStr(c.createdAt)+'</span></div>' +
+          '<div class="feed-foot"><span class="feed-time">'+timeAgoStr(c.created_at)+'</span></div>' +
         '</div>' +
       '</div>';
   }
@@ -4138,6 +4184,13 @@
       view.innerHTML = '<div class="empty-state"><div class="e-icon">🤝</div><p>아직 참여한 팀(모임)이 없어요.<br>소통 탭에서 모임에 먼저 참여해보세요.</p></div>';
       return;
     }
+    myTeams.forEach(function(g){
+      if(!TEAM_COMMENTS_CACHE[g.id]){
+        ensureTeamCommentsLoaded(g.id).then(function(){
+          if(state.activeTab==='goals' && state.goalsSubTab==='team') renderTeamGoalsScreen();
+        });
+      }
+    });
     var roleLabels = { owner:'팀장', manager:'매니저', member:'팀원' };
     view.innerHTML = myTeams.map(function(g){
       var canManage = canManageTeamGoals(g.id);
@@ -4238,8 +4291,10 @@
         var submit = async function(){
           var text = input.value.trim();
           if(!text) return;
-          groupState(gid).comments.push({ id: uid('cmt'), targetId: targetId, text: text, createdAt: nowISO() });
-          await saveProfile();
+          var row = { id: uid('cmt'), group_id: gid, user_id: state.profile.id, display_name: state.profile.displayName, target_id: targetId, text: text, created_at: nowISO() };
+          var res = await sb.from('team_comments').insert(row);
+          if(res.error){ toast('댓글 등록에 실패했어요'); return; }
+          (TEAM_COMMENTS_CACHE[gid] = TEAM_COMMENTS_CACHE[gid] || []).push(row);
           toast('댓글을 남겼어요');
           renderTeamGoalsScreen();
         };
@@ -5506,31 +5561,67 @@
     if(rerender) rerender();
   }
 
+  /* ============ 소통 피드 (Supabase feed_posts, 실시간 동기화) ============ */
+  var FEED_POSTS_CACHE = null; // null=아직 안 불러옴, 로드 후 배열
+  async function ensureFeedPostsLoaded(){
+    if(FEED_POSTS_CACHE) return;
+    FEED_POSTS_CACHE = [];
+    var res = await sb.from('feed_posts').select('*').order('created_at', { ascending:false }).limit(50);
+    FEED_POSTS_CACHE = res.data || [];
+  }
+  function setupFeedPostsRealtime(){
+    function rerenderIfFeedVisible(){
+      if(state.activeTab!=='comm' || state.commSubTab!=='feed') return;
+      var subBody = document.getElementById('commSubBody');
+      if(subBody) renderCommFeed(subBody);
+    }
+    sb.channel('feed_posts_channel')
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'feed_posts' }, function(payload){
+        if(!FEED_POSTS_CACHE) return;
+        if(FEED_POSTS_CACHE.some(function(p){ return p.id===payload.new.id; })) return;
+        FEED_POSTS_CACHE.unshift(payload.new);
+        rerenderIfFeedVisible();
+      })
+      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'feed_posts' }, function(payload){
+        if(!FEED_POSTS_CACHE) return;
+        var idx = FEED_POSTS_CACHE.findIndex(function(p){ return p.id===payload.new.id; });
+        if(idx>-1) FEED_POSTS_CACHE[idx] = payload.new;
+        rerenderIfFeedVisible();
+      })
+      .subscribe();
+  }
   function feedPostHtml(p){
+    var ex = p.extra || {};
     var reacted = !!state.profile.settings.feedReactions[p.id];
+    var isMe = p.user_id === state.profile.id;
     return '<div class="feed-item">' +
-      '<div class="feed-avatar me">'+escapeHtml((state.profile.displayName||'').slice(0,1))+'</div>' +
+      '<div class="feed-avatar'+(isMe?' me':'')+'">'+escapeHtml((p.display_name||'').slice(0,1))+'</div>' +
       '<div class="feed-body">' +
-        '<div class="feed-head"><span class="feed-name">'+escapeHtml(state.profile.displayName)+'</span>' +
-          (p.includeGoal ? '<span class="feed-goal">'+escapeHtml(p.goalTitle)+' · '+p.goalPct+'%</span>' : '') +
+        '<div class="feed-head"><span class="feed-name">'+escapeHtml(p.display_name)+'</span>' +
+          (ex.includeGoal ? '<span class="feed-goal">'+escapeHtml(p.goal_title)+' · '+ex.goalPct+'%</span>' : '') +
         '</div>' +
         '<div class="feed-action">'+escapeHtml(p.caption)+'</div>' +
-        (p.includeRecord && p.recordText ? '<div class="faint" style="font-size:.78rem;background:var(--card2);border-radius:12px;padding:8px 10px;margin-top:8px;">📝 '+escapeHtml(p.recordText)+'</div>' : '') +
-        (p.includeFeedback && p.feedback ? '<div class="fb-card '+verdictClass(p.feedback.verdict)+'" style="margin:8px 0 0;padding:10px 12px;box-shadow:none;">' +
-          '<div class="fb-verdict" style="font-size:.76rem;">🤖 '+escapeHtml(p.feedback.verdict)+'</div>' +
-          '<div class="fb-row" style="font-size:.78rem;margin-top:2px;">'+escapeHtml(p.feedback.comment)+'</div>' +
+        (ex.includeRecord && ex.recordText ? '<div class="faint" style="font-size:.78rem;background:var(--card2);border-radius:12px;padding:8px 10px;margin-top:8px;">📝 '+escapeHtml(ex.recordText)+'</div>' : '') +
+        (ex.includeFeedback && ex.feedback ? '<div class="fb-card '+verdictClass(ex.feedback.verdict)+'" style="margin:8px 0 0;padding:10px 12px;box-shadow:none;">' +
+          '<div class="fb-verdict" style="font-size:.76rem;">🤖 '+escapeHtml(ex.feedback.verdict)+'</div>' +
+          '<div class="fb-row" style="font-size:.78rem;margin-top:2px;">'+escapeHtml(ex.feedback.comment)+'</div>' +
         '</div>' : '') +
-        (p.milestones && p.milestones.length ? '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">' +
-          p.milestones.map(function(m){ return '<span class="topic-pill">'+(m.status==='done'?'✅ ':(m.status==='doing'?'🔥 ':'· '))+escapeHtml(m.title)+'</span>'; }).join('') +
+        (ex.milestones && ex.milestones.length ? '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">' +
+          ex.milestones.map(function(m){ return '<span class="topic-pill">'+(m.status==='done'?'✅ ':(m.status==='doing'?'🔥 ':'· '))+escapeHtml(m.title)+'</span>'; }).join('') +
         '</div>' : '') +
-        '<div class="feed-foot"><span class="feed-time">'+timeAgoStr(p.createdAt)+'</span>' +
-          '<button class="pill-react'+(reacted?' active':'')+'" data-react="'+p.id+'" type="button">응원 '+((p.cheers||0)+(reacted?1:0))+'</button>' +
-          '<button data-delpost="'+p.id+'" type="button" style="margin-left:8px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">삭제</button>' +
+        '<div class="feed-foot"><span class="feed-time">'+timeAgoStr(p.created_at)+'</span>' +
+          '<button class="pill-react'+(reacted?' active':'')+'" data-react="'+p.id+'" type="button">응원 '+(p.cheers_count||0)+'</button>' +
+          (isMe ? '<button data-delpost="'+p.id+'" type="button" style="margin-left:8px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">삭제</button>' : '') +
         '</div>' +
       '</div>' +
     '</div>';
   }
   function renderCommFeed(body){
+    if(!FEED_POSTS_CACHE){
+      ensureFeedPostsLoaded().then(function(){
+        if(state.activeTab==='comm' && state.commSubTab==='feed') renderCommFeed(body);
+      });
+    }
     var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     var sharedGoals = goals.filter(function(g){ return (g.visibility||'public') !== 'private'; });
     var hiddenCount = goals.length - sharedGoals.length;
@@ -5538,12 +5629,12 @@
       var pct = goalProgress(g);
       return { id:'me_'+g.id, name: state.profile.displayName, avatar: state.profile.displayName.slice(0,1), goal:g.title, pct:pct, action: '"'+g.title+'" 목표를 향해 가는 중', time:'방금', cheers:0, me:true, vis:(g.visibility||'public') };
     });
-    var myPosts = state.profile.settings.feedPosts || [];
+    var posts = FEED_POSTS_CACHE || [];
     var items = myItems.concat(MOCK_PEOPLE).sort(function(){ return 0; });
     body.innerHTML = templatesHtml() +
       '<p class="faint" style="margin:0 0 14px;">같은 목표를 향해 가는 사람들 · 샘플 데이터' +
       (hiddenCount ? ' · 🔒 나만 보기 '+hiddenCount+'개는 피드에 노출되지 않아요' : '') + '</p>' +
-      myPosts.map(feedPostHtml).join('') +
+      posts.map(feedPostHtml).join('') +
       items.map(function(it){
         var reacted = !!state.profile.settings.feedReactions[it.id];
         return '<div class="feed-item">' +
@@ -5569,6 +5660,11 @@
           burstConfetti(r.left+r.width/2, r.top, 6);
         }
         await saveProfile();
+        var post = (FEED_POSTS_CACHE||[]).find(function(p){ return p.id===id; });
+        if(post){
+          var res = await sb.rpc('increment_post_cheers', { p_post_id:id, p_delta: nowOn?1:-1 });
+          if(!res.error && typeof res.data==='number') post.cheers_count = res.data;
+        }
         renderCommFeed(body);
       });
     });
@@ -5580,8 +5676,9 @@
     body.querySelectorAll('[data-delpost]').forEach(function(btn){
       btn.addEventListener('click', async function(){
         var id = btn.dataset.delpost;
-        state.profile.settings.feedPosts = (state.profile.settings.feedPosts||[]).filter(function(p){ return p.id!==id; });
-        await saveProfile();
+        var res = await sb.from('feed_posts').delete().eq('id', id);
+        if(res.error){ toast('삭제에 실패했어요'); return; }
+        FEED_POSTS_CACHE = (FEED_POSTS_CACHE||[]).filter(function(p){ return p.id!==id; });
         toast('삭제했어요');
         renderCommFeed(body);
       });
@@ -5592,8 +5689,7 @@
   function groupState(gid){
     var s = state.profile.settings;
     if(!s.groupState) s.groupState = {};
-    if(!s.groupState[gid]) s.groupState[gid] = { joined:false, checkins:[], cheers:0, myRole:'member', comments:[] };
-    if(!s.groupState[gid].comments) s.groupState[gid].comments = [];
+    if(!s.groupState[gid]) s.groupState[gid] = { joined:false, checkins:[], cheers:0, myRole:'member' };
     return s.groupState[gid];
   }
   function groupCheckedToday(gid){
@@ -6501,9 +6597,9 @@
 
   /* ============ 받은 응원 알림 (실제 내 게시물 응원 수 + 마니또 받은 응원함) ============ */
   function totalFeedCheers(){
-    var posts = (state.profile.settings.feedPosts || []);
+    var myPosts = (FEED_POSTS_CACHE || []).filter(function(p){ return p.user_id === state.profile.id; });
     var sum = 0;
-    posts.forEach(function(p){ sum += (p.cheers || 0); });
+    myPosts.forEach(function(p){ sum += (p.cheers_count || 0); });
     return sum;
   }
   function checkSocialNotifications(){
