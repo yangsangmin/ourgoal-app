@@ -6377,10 +6377,11 @@
     if(state.profile.settings.notify) syncPushSubscription();
   });
   document.getElementById('testNotifyBtn').addEventListener('click', function(){
+    var msg = generateDynamicNotification(state.profile);
     setTab('home');
-    showNotifyBanner();
+    showNotifyBanner(msg);
     if('Notification' in window && Notification.permission==='granted'){
-      new Notification('아워골', { body:'지금 뭐 하고 있었어요?' });
+      new Notification('아워골', { body: msg });
     }
   });
 
@@ -6414,6 +6415,54 @@
     e.target.value = '';
   });
 
+  /* ============ 맥락 기반 다이내믹 알림 문구 생성 ============ */
+  function generateDynamicNotification(profile, now){
+    now = now || new Date();
+    var today = new Date(now); today.setHours(0,0,0,0);
+    var goals = (profile.goals || []).filter(function(g){ return !g.archivedAt && g.dueDate; });
+    var soonest = null;
+    goals.forEach(function(g){
+      var target = new Date(g.dueDate+'T00:00:00');
+      var daysLeft = Math.round((target-today)/86400000);
+      if(daysLeft>=0 && daysLeft<=3 && (!soonest || daysLeft<soonest.daysLeft)){
+        soonest = { goal:g, daysLeft:daysLeft };
+      }
+    });
+    if(soonest){
+      return '[D-day 임박] '+soonest.goal.title+' 마감까지 '+soonest.daysLeft+'일 남았어요! 오늘 마일스톤을 체크해보세요 🔥';
+    }
+
+    var checkedToday = (profile.records || []).some(function(r){ return dateKey(r.startAt)===dateKey(now.toISOString()); });
+    var hourNow = now.getHours();
+    if(!checkedToday && hourNow>=20){
+      // 오늘 체크인 전이라 computeStreakDays()(오늘 포함 기준)는 항상 0이 되므로,
+      // "지금 끊기려는 중인 스트릭"은 어제까지의 연속 기록으로 따로 센다.
+      var recs = profile.records || [];
+      var frozen = (profile.settings.streakFreeze && profile.settings.streakFreeze.usedDates) || [];
+      var days = {};
+      recs.forEach(function(r){ days[dateKey(r.startAt)] = true; });
+      frozen.forEach(function(k){ days[k] = true; });
+      var cursor = new Date(today); cursor.setDate(cursor.getDate()-1);
+      var priorStreak = 0;
+      while(days[cursor.getFullYear()+'-'+pad(cursor.getMonth()+1)+'-'+pad(cursor.getDate())]){
+        priorStreak++;
+        cursor.setDate(cursor.getDate()-1);
+      }
+      if(priorStreak>0){
+        return '[스트릭 경보] '+priorStreak+'일 연속 불꽃이 꺼지기 직전이에요! 오늘 한 일을 10초 만에 남겨보세요 ⏰';
+      }
+    }
+
+    var s = profile.settings || {};
+    var joinedGroup = MOCK_GROUPS.find(function(g){ return s.groupState && s.groupState[g.id] && s.groupState[g.id].joined; });
+    if(joinedGroup){
+      var n = (joinedGroup.activity || []).length;
+      return '[모임 인증] '+joinedGroup.name+' 팀원들이 오늘 '+n+'회 인증했어요! 함께 달려볼까요? 🏃';
+    }
+
+    return (profile.displayName||'회원')+'님, 오늘의 성장을 기록할 시간이에요 ✨';
+  }
+
   /* ============ Notifications (best-effort, tab must be open) ============ */
   function setupNotifyTimer(){
     if(state.notifyTimer){ clearInterval(state.notifyTimer); state.notifyTimer = null; }
@@ -6425,18 +6474,20 @@
       var slotKey = todayKey+'_'+hhmm;
       if(state.profile.settings.checkinTimes.indexOf(hhmm)!==-1 && !state.notifiedSlots[slotKey]){
         state.notifiedSlots[slotKey] = true;
+        var msg = generateDynamicNotification(state.profile);
         if('Notification' in window && Notification.permission==='granted'){
-          new Notification('아워골', { body:'지금 뭐 하고 있었어요?' });
+          new Notification('아워골', { body: msg });
         }
-        showNotifyBanner();
+        showNotifyBanner(msg);
       }
     }, 20000);
   }
 
-  function showNotifyBanner(){
+  function showNotifyBanner(bodyText){
     var container = document.getElementById('notifyBannerSlot');
     if(!container) return;
-    container.innerHTML = '<div class="notify-banner"><div class="nb-txt"><b>질문이 도착했어요</b>지금 뭐 하고 있었어요?</div><button id="nbOpen" type="button">기록하기</button></div>';
+    bodyText = bodyText || '지금 뭐 하고 있었어요?';
+    container.innerHTML = '<div class="notify-banner"><div class="nb-txt"><b>질문이 도착했어요</b>'+escapeHtml(bodyText)+'</div><button id="nbOpen" type="button">기록하기</button></div>';
     document.getElementById('nbOpen').addEventListener('click', function(){
       container.innerHTML = '';
       setTab('home');
