@@ -591,6 +591,7 @@
       <p class="s-eyebrow">오늘</p>
       <h2 class="s-title" id="homeGreeting">안녕하세요</h2>
       <div id="notifyBannerSlot"></div>
+      <div id="socialNotifySlot"></div>
 
       <div class="capture-card card" id="captureCardBox">
         <div style="font-weight:700;color:var(--red);font-size:.86rem;">✎ 오늘 기록하기</div>
@@ -902,7 +903,7 @@
 
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
   function defaultSettings(){
-    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{} };
+    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", feedPosts:[], autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, social:{ cheersSeen:0, manitoSeen:0 } };
   }
   function loadLocalSettings(userId){
     try{
@@ -1095,6 +1096,7 @@
     document.getElementById('homeGreeting').textContent = state.profile.displayName + '님, 안녕하세요';
     renderAll();
     setupNotifyTimer();
+    checkSocialNotifications();
   }
 
   /* ============ Onboarding (first-time, after signup) ============ */
@@ -4274,7 +4276,7 @@
           p.milestones.map(function(m){ return '<span class="topic-pill">'+(m.status==='done'?'✅ ':(m.status==='doing'?'🔥 ':'· '))+escapeHtml(m.title)+'</span>'; }).join('') +
         '</div>' : '') +
         '<div class="feed-foot"><span class="feed-time">'+timeAgoStr(p.createdAt)+'</span>' +
-          '<button class="pill-react'+(reacted?' active':'')+'" data-react="'+p.id+'" type="button">응원 '+((p.cheers||0)+(reacted?1:0))+'</button>' +
+          '<button class="pill-react'+(reacted?' active':'')+'" data-react="'+p.id+'" type="button">응원 '+((p.cheers||0)+mockPostCheerCount(p)+(reacted?1:0))+'</button>' +
           '<button data-delpost="'+p.id+'" type="button" style="margin-left:8px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">삭제</button>' +
         '</div>' +
       '</div>' +
@@ -5174,6 +5176,47 @@
       container.innerHTML = '';
       setTab('home');
       document.getElementById('captureInput').focus();
+    });
+  }
+
+  /* ============ 받은 응원 알림 (mock: 시간 경과에 따라 내 게시물 응원이 쌓이는 것 + 마니또 받은 응원함) ============ */
+  function mockPostCheerCount(p){
+    if(!p || !p.id || !p.createdAt) return 0;
+    var hours = (Date.now() - new Date(p.createdAt).getTime()) / 3600000;
+    if(hours <= 0) return 0;
+    var speed = (hashStr(p.id) % 5) + 1;
+    return Math.min(Math.floor(hours / 3) * speed, 40);
+  }
+  function totalMockFeedCheers(){
+    var posts = (state.profile.settings.feedPosts || []);
+    var sum = 0;
+    posts.forEach(function(p){ sum += (p.cheers || 0) + mockPostCheerCount(p); });
+    return sum;
+  }
+  function checkSocialNotifications(){
+    var s = state.profile.settings;
+    if(!s.social) s.social = { cheersSeen:0, manitoSeen:0 };
+    var cheerTotal = totalMockFeedCheers();
+    var manitoTotal = manitoState().joined ? manitoInbox().length : 0;
+    var newCheers = Math.max(0, cheerTotal - s.social.cheersSeen);
+    var newManito = Math.max(0, manitoTotal - s.social.manitoSeen);
+    s.social.cheersSeen = cheerTotal;
+    s.social.manitoSeen = manitoTotal;
+    if(newCheers > 0 || newManito > 0){
+      showSocialNotifyBanner(newCheers, newManito);
+      saveProfile();
+    }
+  }
+  function showSocialNotifyBanner(newCheers, newManito){
+    var container = document.getElementById('socialNotifySlot');
+    if(!container) return;
+    var parts = [];
+    if(newCheers > 0) parts.push('내 기록에 응원 '+newCheers+'개');
+    if(newManito > 0) parts.push('마니또 응원 '+newManito+'개');
+    container.innerHTML = '<div class="notify-banner"><div class="nb-txt"><b>🎉 응원이 도착했어요</b>'+parts.join(' · ')+'</div><button id="sbOpen" type="button">확인하기</button></div>';
+    document.getElementById('sbOpen').addEventListener('click', function(){
+      container.innerHTML = '';
+      setTab('comm');
     });
   }
 

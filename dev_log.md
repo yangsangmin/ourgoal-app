@@ -332,3 +332,14 @@
 - **발생한 문제 및 해결**: 없음 (기존 confetti/vibrate 인프라 재사용, 신규 CSS는 1개 클래스+키프레임만 추가)
 - **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `node scripts/smoke-test.js` 20개 전부 통과(회귀 없음). resultPct 로직을 별도 시뮬레이션해 "target 없이 결과값만 입력한 할 일"이 wasDone:false→nowDone:true로 판정되어 축하 조건이 정확히 발화함을 확인.
 ---
+
+## [2026-09-05 12:20] 내 기록에 반응·응원이 왔을 때 알림
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 5단계 두 번째 항목 — 내 기록/게시물에 응원이 왔을 때 눈에 띄는 알림을 띄운다. (문제해결 8원칙: 조사해보니 내가 공유한 피드 게시물(`settings.feedPosts`)의 `cheers`는 작성 이후 절대 증가하지 않아 "반응이 온다"는 이벤트 자체가 존재하지 않았고, 마니또 "받은 응원함"(mock, 매일 1개 기본)은 이미 쌓이지만 새로 왔는지 알려주는 장치가 없었던 게 핵심 공백 → 새 알림 UI를 만들기 전에 먼저 두 mock 데이터 소스에 "시간이 지나면 응원이 늘어난다"는 최소한의 성장 로직을 부여하고, 그 위에 마지막 확인 시점 대비 증가분을 알려주는 배너를 얹는 순서로 설계. CLAUDE.md 다크패턴 금지 원칙에 따라 불안·상실회피 요소 없이 순수 긍정 알림만 노출)
+- **수정/실행 내역**:
+  (1) `mockPostCheerCount(p)`(순수 함수) 신규 — 게시물 작성 후 경과 시간과 게시물 id 해시(`hashStr`, 기존 마니또 코드가 쓰던 함수 재사용)로 결정론적인 응원 증가량을 계산(3시간마다 1~5개, 상한 40). `feedPostHtml`의 응원 버튼 표시값에 이 값을 더해 내 게시물 응원이 실제로 시간에 따라 늘어나도록 수정.
+  (2) `totalMockFeedCheers()`(내 모든 게시물 응원 총합) / `checkSocialNotifications()`(마지막 확인 시점 대비 새 응원·새 마니또 응원 개수를 계산해 배너 노출 후 `settings.social`에 기준값 저장) / `showSocialNotifyBanner(newCheers,newManito)` 3개 함수 신규.
+  (3) 홈 화면에 기존 `#notifyBannerSlot`(체크인 리마인더용)과 겹치지 않는 별도 `#socialNotifySlot`을 신설(레벨업 배너 등 기존에도 쓰던 "슬롯 분리" 패턴 재사용), `enterApp()`에서 로그인/앱 진입마다 1회 `checkSocialNotifications()` 호출. 알림 배너는 기존 `.notify-banner` 클래스를 그대로 재사용해 신규 CSS 없음. "확인하기"를 누르면 소통 탭으로 이동.
+  (4) `defaultSettings()`에 `social:{cheersSeen:0,manitoSeen:0}` 기본값 추가(기존 유저도 병합 로직으로 자동 채워짐).
+  (5) `scripts/smoke-test.js`에 `mockPostCheerCount` 단위 테스트 3건 추가(작성 직후 0, id/게시물 없으면 0, 오래되면 상한 40 도달).
+- **발생한 문제 및 해결**: 착수 전 로컬 검증을 위해 `node scripts/smoke-test.js`를 실행했더니, main에 이미 **병합 충돌 마커(`<<<<<<< / ======= / >>>>>>>`)가 해결되지 않은 채로 남아있는 상태**(PR #9를 병합하는 시점과 그 수정 커밋 푸시가 겹쳐 발생한 문제로, 이미 열려있는 PR #16이 정확히 이 문제를 고치는 중)를 발견 → PR #16을 직접 건드리지 않되(운영 규칙상 이전 주기 PR 불가침), 내 브랜치가 깨진 main에서 분기했으므로 동일한 내용(heatmapLevel 3건 + localNextActionSuggestion 2건 모두 보존)으로 충돌 마커만 로컬에서 해소해 테스트가 통과하도록 정리. 이 파일은 개발용 테스트 스크립트로 Vercel 배포와 무관.
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `<style>` 중괄호 407/407 균형(변경 없음 확인), `node scripts/smoke-test.js` 28개 전부 통과(기존 25 + 신규 3). `mockPostCheerCount`의 시간 경과별 단조 증가·상한 동작을 별도 시뮬레이션으로 재확인. 브라우저 도구가 없는 샌드박스 환경이라 실제 배너 노출·클릭 후 소통 탭 이동은 로직 검증으로 대체했으며 PR에 명시.
