@@ -8,7 +8,7 @@
 - 현재 태스크: TASK-04
 - 단계: PR 대기
 - 브랜치: feat/2026-09-06-task-04-realtime-comments-feed
-- PR: -
+- PR: #41
 
 ## 태스크 진행표
 
@@ -17,7 +17,7 @@
 | TASK-01 카카오 & 구글 1초 소셜 로그인 | PR 병합 완료 | feat/2026-09-06-task-01-social-login | #38 |
 | TASK-02 토스페이먼츠 정기구독 & Pro 페이월 | PR 병합 완료 | feat/2026-09-06-task-02-toss-paywall | #39 |
 | TASK-03 Web Speech API 음성 체크인 & 퀵 루틴 | PR 대기(#40 열림, 병합 보류) | feat/2026-09-06-task-03-voice-checkin | #40 |
-| TASK-04 Supabase Realtime 팀 댓글 & 피드 | PR 대기 | feat/2026-09-06-task-04-realtime-comments-feed | |
+| TASK-04 Supabase Realtime 팀 댓글 & 피드 | PR 대기 | feat/2026-09-06-task-04-realtime-comments-feed | #41 |
 | TASK-05 맥락 기반 다이내믹 푸시 알림 | 시작 전 | | |
 | TASK-06 딥링크 & 워터마크 공유 카드 | 시작 전 | | |
 
