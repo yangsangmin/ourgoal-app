@@ -319,6 +319,10 @@
   .chart-bar{width:100%;max-width:26px;background:linear-gradient(to top,var(--violet),#9C8CFF);border-radius:8px 8px 3px 3px;min-height:4px;transition:height .3s ease;}
   .chart-bar.today{background:var(--grad);}
   .chart-day-lbl{font-size:.64rem;color:var(--ink-faint);margin-top:5px;font-family:var(--mono);}
+  .report-legend-row{display:flex;align-items:center;gap:8px;font-size:.78rem;padding:4px 0;}
+  .report-dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto;}
+  .report-legend-label{flex:1;color:var(--ink-soft);font-weight:700;}
+  .report-legend-val{font-family:var(--mono);font-size:.72rem;color:var(--ink-faint);}
 
   /* ---------- Comm sub-tabs ---------- */
   .comm-subtabs{display:flex;gap:4px;background:var(--card2);border-radius:999px;padding:4px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none;}
@@ -614,6 +618,7 @@
       </div>
       <div class="week-summary" id="weekSummary"></div>
       <div id="chartContainer"></div>
+      <div id="reportSummary"></div>
       <h3 style="font-weight:900;letter-spacing:-.02em;font-size:1rem;margin:18px 0 8px;">완료·보관한 목표</h3>
       <div id="archivedGoals"></div>
       <h3 style="font-weight:900;letter-spacing:-.02em;font-size:1rem;margin:18px 0 8px;">체크인 기록</h3>
@@ -896,7 +901,7 @@
     };
   }
 
-  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, feedReacted: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home' };
+  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, feedReacted: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7 };
 
   async function ensureUserRow(userId, username, displayName){
     var found = await sb.from('users').select('*').eq('id', userId).maybeSingle();
@@ -1778,14 +1783,14 @@
     var t = document.getElementById('captureInput');
     var text = t.value.trim();
     if(!text) return;
-    state.profile.records.unshift({ id: newId(), type:'note', text: text, startAt: nowISO(), endAt: nowISO(), createdAt: nowISO() });
+    var goal = state.profile.goals.find(function(g){ return g.id===state.activeGoalId; }) || state.profile.goals[0];
+    state.profile.records.unshift({ id: newId(), type:'note', text: text, startAt: nowISO(), endAt: nowISO(), createdAt: nowISO(), category: goal ? goal.category : null });
     t.value = '';
     await saveProfile();
     toast('기록했어요');
     renderFeedbackSlot(null);
 
     var newRec = state.profile.records[0];
-    var goal = state.profile.goals.find(function(g){ return g.id===state.activeGoalId; }) || state.profile.goals[0];
     var fb = null;
     if(goal){
       renderFeedbackSlot('loading');
@@ -3207,6 +3212,109 @@
       '<div class="chart-card"><div class="ct-label">최근 7일 기록 시간</div><div class="chart-bars">'+bars+'</div></div>';
   }
 
+  /* ============ 주간/월간 리포트 (SVG 추이 + 카테고리 분포) ============ */
+  var TOPIC_COLORS = { health:'#FF4F64', study:'#FF9F1C', career:'#1FC98E', hobby:'#6C5CE7', mind:'#FF7EB9', relation:'#3DBFCF' };
+  function svgTrendChart(totals){
+    var w = 320, h = 84, padX = 6, padY = 8;
+    var maxMs = Math.max.apply(null, totals.concat([1]));
+    var n = totals.length;
+    var stepX = n>1 ? (w - padX*2)/(n-1) : 0;
+    var pts = totals.map(function(ms, i){
+      var x = padX + i*stepX;
+      var y = h - padY - (ms/maxMs)*(h - padY*2);
+      return x.toFixed(1)+','+y.toFixed(1);
+    });
+    var lastX = (padX + (n-1)*stepX).toFixed(1);
+    var areaPts = padX.toFixed(1)+','+(h-padY).toFixed(1)+' '+pts.join(' ')+' '+lastX+','+(h-padY).toFixed(1);
+    return '<svg viewBox="0 0 '+w+' '+h+'" width="100%" height="84" preserveAspectRatio="none" style="display:block;">' +
+      '<polygon points="'+areaPts+'" style="fill:var(--violet-soft);"></polygon>' +
+      '<polyline points="'+pts.join(' ')+'" style="fill:none;stroke:var(--violet);stroke-width:2;"></polyline>' +
+    '</svg>';
+  }
+  function svgCategoryDonut(catTotals){
+    var keys = Object.keys(catTotals).filter(function(k){ return catTotals[k] > 0; });
+    if(!keys.length) return '';
+    var total = keys.reduce(function(s,k){ return s+catTotals[k]; }, 0);
+    var r = 40, cx = 50, cy = 50, circ = 2*Math.PI*r;
+    var offset = 0;
+    var segs = keys.map(function(k){
+      var frac = catTotals[k]/total;
+      var len = frac*circ;
+      var seg = '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+(TOPIC_COLORS[k]||'#9A9EB8')+'" stroke-width="16" ' +
+        'stroke-dasharray="'+len.toFixed(1)+' '+(circ-len).toFixed(1)+'" stroke-dashoffset="'+(-offset).toFixed(1)+'" transform="rotate(-90 '+cx+' '+cy+')"></circle>';
+      offset += len;
+      return seg;
+    }).join('');
+    return '<svg viewBox="0 0 100 100" width="104" height="104">'+segs+'</svg>';
+  }
+  function renderReportSummary(recs){
+    var days = state.reportPeriod === 30 ? 30 : 7;
+    var dayList = [];
+    for(var i=days-1;i>=0;i--){
+      var d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-i);
+      dayList.push(d);
+    }
+    var totals = dayList.map(function(d){
+      var dayKey = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+      var sum = 0;
+      recs.forEach(function(r){ if(dateKey(r.startAt)===dayKey && r.endAt){ sum += (new Date(r.endAt)-new Date(r.startAt)); } });
+      return sum;
+    });
+    var periodStart = dayList[0].getTime();
+    var catTotals = {};
+    var uncategorized = 0;
+    recs.forEach(function(r){
+      if(!r.endAt) return;
+      if(new Date(r.startAt).getTime() < periodStart) return;
+      var ms = new Date(r.endAt)-new Date(r.startAt);
+      var key = r.category && TOPICS[r.category] ? r.category : null;
+      if(key){ catTotals[key] = (catTotals[key]||0) + ms; }
+      else { uncategorized += ms; }
+    });
+    var totalPeriodMs = totals.reduce(function(a,b){ return a+b; }, 0);
+
+    var keys = Object.keys(catTotals).sort(function(a,b){ return catTotals[b]-catTotals[a]; });
+    var legendRows = keys.map(function(k){
+      return '<div class="report-legend-row"><span class="report-dot" style="background:'+(TOPIC_COLORS[k]||'#9A9EB8')+';"></span>'+
+        '<span class="report-legend-label">'+TOPICS[k].icon+' '+TOPICS[k].label+'</span>'+
+        '<span class="report-legend-val">'+fmtDuration(catTotals[k])+'</span></div>';
+    }).join('');
+    if(uncategorized>0){
+      legendRows += '<div class="report-legend-row"><span class="report-dot" style="background:#9A9EB8;"></span>'+
+        '<span class="report-legend-label">🗂️ 미분류</span>'+
+        '<span class="report-legend-val">'+fmtDuration(uncategorized)+'</span></div>';
+    }
+    var donutMap = {};
+    keys.forEach(function(k){ donutMap[k] = catTotals[k]; });
+    if(uncategorized>0) donutMap._etc = uncategorized;
+
+    document.getElementById('reportSummary').innerHTML =
+      '<div class="chart-card">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;">' +
+          '<div class="ct-label" style="margin:0;">📊 기간별 리포트</div>' +
+          '<div class="format-toggle" style="max-width:140px;" id="reportPeriodToggle">' +
+            '<div class="format-opt'+(days===7?' active':'')+'" data-period="7">7일</div>' +
+            '<div class="format-opt'+(days===30?' active':'')+'" data-period="30">30일</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="faint" style="font-size:.74rem;margin-bottom:6px;">최근 '+days+'일 총 '+fmtDuration(totalPeriodMs)+' 기록</div>' +
+        svgTrendChart(totals) +
+        (keys.length || uncategorized>0 ?
+          '<div style="display:flex;gap:16px;align-items:center;margin-top:14px;flex-wrap:wrap;">' +
+            '<div style="flex:0 0 auto;">'+svgCategoryDonut(donutMap)+'</div>' +
+            '<div style="flex:1;min-width:140px;">'+legendRows+'</div>' +
+          '</div>'
+        : '<div class="faint" style="font-size:.76rem;margin-top:10px;">분야를 지정한 기록이 쌓이면 분포가 여기 표시돼요.</div>')
+      + '</div>';
+
+    document.getElementById('reportPeriodToggle').querySelectorAll('[data-period]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        state.reportPeriod = Number(btn.dataset.period);
+        renderRecordsScreen();
+      });
+    });
+  }
+
   function renderRecordsScreen(){
     var recs = state.profile.records.slice().sort(function(a,b){ return new Date(b.startAt)-new Date(a.startAt); });
 
@@ -3220,6 +3328,7 @@
     });
     document.getElementById('weekSummary').textContent = '이번 주 총 ' + fmtDuration(totalMs) + ' 기록';
     renderWeekChart(recs);
+    renderReportSummary(recs);
     renderArchivedGoals();
 
     var listEl = document.getElementById('recordsList');
@@ -3268,10 +3377,14 @@
 
   function openRecordModal(rec){
     var isNew = !rec;
-    var r = rec || { id: newId(), type:'timed', text:'', startAt: nowISO(), endAt: null, createdAt: nowISO() };
+    var r = rec || { id: newId(), type:'timed', text:'', startAt: nowISO(), endAt: null, createdAt: nowISO(), category: null };
+    var catOptions = '<option value="">미분류</option>' + Object.keys(TOPICS).map(function(k){
+      return '<option value="'+k+'"'+(r.category===k?' selected':'')+'>'+TOPICS[k].icon+' '+TOPICS[k].label+'</option>';
+    }).join('');
     openModal(
       '<h3>'+(isNew?'새 기록':'기록 수정')+'</h3>' +
       '<div class="field"><label>내용</label><input id="rText" type="text" value="'+escapeHtml(r.text)+'" placeholder="무엇을 했나요?"></div>' +
+      '<div class="field"><label>분야</label><select id="rCategory">'+catOptions+'</select></div>' +
       '<div class="field"><label>시작 시간</label><input id="rStart" type="datetime-local" value="'+toLocalInputValue(r.startAt)+'"></div>' +
       '<div class="field"><label style="display:flex;align-items:center;justify-content:space-between;">종료 시간 <span style="font-weight:400;"><input type="checkbox" id="rOngoing" '+(!r.endAt?'checked':'')+'> 진행중</span></label>' +
         '<input id="rEnd" type="datetime-local" value="'+toLocalInputValue(r.endAt)+'" '+(!r.endAt?'disabled':'')+'></div>' +
@@ -3288,6 +3401,7 @@
           var endVal = endInput.value;
           r.text = text;
           r.type = 'timed';
+          r.category = sheet.querySelector('#rCategory').value || null;
           r.startAt = startVal ? new Date(startVal).toISOString() : nowISO();
           r.endAt = ongoingChk.checked ? null : (endVal ? new Date(endVal).toISOString() : null);
           if(isNew) state.profile.records.unshift(r);

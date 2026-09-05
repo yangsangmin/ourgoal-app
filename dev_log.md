@@ -269,3 +269,13 @@
 - **발생한 문제 및 해결**: (1) MOCK_GROUPS의 roster 데이터에는 애초에 개별 streak 필드가 없어(체크인 횟수 `c`만 존재) 30개 mock 항목을 전부 손으로 편집하는 대신, 기존 `c` 값에서 그럴듯한 streak를 근사 계산하는 방식으로 최소 침습적으로 해결. (2) main이 PWA·새 목표 AI 도우미·다크모드까지 순차 병합되며 앞서 나가 이 브랜치와 두 차례 충돌 → 해당 영역(모임 roster 렌더링)은 main에서 변경되지 않아 동일한 편집을 최신 main 위에 그대로 재적용해 해결.
 - **검증 결과**: 메인 `<script>`를 `new Function()`으로 문법 검증 통과. `node scripts/smoke-test.js` 20개 전부 통과. `git diff`로 이번 변경이 roster map 콜백 내부 5줄 추가/수정뿐임을 확인. 실제 좁은 화면에서 배지+긴 이름이 겹치지 않는지는 이 자동화 환경에 브라우저가 없어 육안 확인하지 못했으며, ellipsis 처리로 최소한 레이아웃이 깨지지 않도록 방어만 해두었다는 점을 PR에 명시.
 ---
+
+## [2026-09-04 20:43] 주간/월간 리포트 화면 (SVG 추이 + 카테고리 분포)
+- **목표**: BACKLOG.md 항목("주간/월간 리포트 화면")에 따라 기록 탭에 최근 7일/30일 체크인 추이와 카테고리별 시간 분포를 SVG 차트로 보여주는 요약 화면 추가.
+- **수정/실행 내역**:
+  (1) 기록에 `category`(TOPICS 6분야 major key) 필드 신설. 홈 캡처 입력(`captureSave`)은 체크인 대상 목표의 `category`를 자동으로 물려받도록 하고, 기록 수동 추가/수정 모달(`openRecordModal`)에는 "분야" select(미분류 + 6개 분야)를 새로 추가.
+  (2) `svgTrendChart(totals)` — 일자별 총 기록시간 배열을 받아 area+line SVG(폴리곤+폴리라인)로 렌더링. `svgCategoryDonut(catTotals)` — 카테고리별 합계를 도넛(stroke-dasharray 누적 오프셋 방식)으로 렌더링. `TOPIC_COLORS` 상수로 6개 분야에 각각 다른 색 배정(브랜드 색 4종 + 조화되는 핑크/틸 2종 추가).
+  (3) `renderReportSummary(recs)` 신규 — `state.reportPeriod`(7|30, 화면 전환 시 초기화되는 휘발성 UI 상태, 기존 `state.commSubTab` 패턴과 동일)에 따라 기간을 바꿔가며 추이 차트 + 카테고리 도넛+범례를 그리고, 기존 `.chart-card`/`.format-toggle`/`.format-opt` 클래스를 재사용해 새 디자인 요소 추가를 최소화(범례용 `.report-legend-row` 등 4개 CSS만 신규 추가). 분야 지정 기록이 없으면 "분야를 지정한 기록이 쌓이면 표시된다"는 안내문 노출. 기존 7일 막대그래프(`renderWeekChart`)는 그대로 두고 그 아래에 새 카드를 추가.
+- **발생한 문제 및 해결**: (1) 기록(record) 데이터에 애초에 카테고리 개념이 없어 분포를 낼 축이 없었음 → 목표(goal)가 이미 갖고 있는 `category`를 체크인 시 자동 승계시키고, 수동 기록에도 선택 필드를 추가해 최소 침습적으로 해결. 기존 레코드는 `category`가 없어 "미분류"로 자동 집계되어 하위 호환됨. (2) main이 PWA·새 목표 AI 도우미·다크모드 기능까지 차례로 병합되며 앞서 나가 이 브랜치와 두 차례 충돌 → 해당 영역(Records 섹션)은 main에서 변경되지 않아 동일한 편집을 최신 main 위에 그대로 재적용해 해결.
+- **검증 결과**: `<style>` 중괄호 균형 확인, 메인 `<script>`를 `new Function()`으로 문법 검증 통과. `svgTrendChart`/`svgCategoryDonut`/`TOPICS`/`TOPIC_COLORS`를 Node로 격리 추출해 실제 데이터(정상 분포, 전부 0, 빈 카테고리)로 호출 → 유효한 `<svg>...</svg>` 문자열이 예외 없이 생성됨을 확인. `node scripts/smoke-test.js` 20개 전부 통과. 실제 브라우저에서의 렌더링(차트 비율, 토글 클릭 동작)은 이 자동화 환경에 브라우저 도구가 없어 확인하지 못했으며 PR에 명시함.
+---
