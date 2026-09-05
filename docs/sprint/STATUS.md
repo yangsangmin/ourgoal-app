@@ -5,10 +5,10 @@
 갱신은 항상 태스크 브랜치 안에서만 한다(main 직접 커밋 금지).
 
 - 스프린트 상태: 진행 중
-- 현재 태스크: TASK-02
+- 현재 태스크: TASK-05
 - 단계: PR 대기
-- 브랜치: feat/2026-09-06-task-02-toss-paywall
-- PR: #39
+- 브랜치: feat/2026-09-06-task-05-dynamic-push
+- PR: #42
 
 ## 태스크 진행표
 
@@ -17,8 +17,8 @@
 | TASK-01 카카오 & 구글 1초 소셜 로그인 | PR 병합 완료 | feat/2026-09-06-task-01-social-login | #38 |
 | TASK-02 토스페이먼츠 정기구독 & Pro 페이월 | PR 대기 | feat/2026-09-06-task-02-toss-paywall | #39 |
 | TASK-03 Web Speech API 음성 체크인 & 퀵 루틴 | 시작 전 | | |
-| TASK-04 Supabase Realtime 팀 댓글 & 피드 | 시작 전 | | |
-| TASK-05 맥락 기반 다이내믹 푸시 알림 | 시작 전 | | |
+| TASK-04 Supabase Realtime 팀 댓글 & 피드 | PR 대기(#41 열림, SQL 실행 후 병합 예정) | feat/2026-09-06-task-04-realtime-comments-feed | #41 |
+| TASK-05 맥락 기반 다이내믹 푸시 알림 | PR 대기 | feat/2026-09-06-task-05-dynamic-push | #42 |
 | TASK-06 딥링크 & 워터마크 공유 카드 | 시작 전 | | |
 
 상태 값: `시작 전` → `진행 중` → `PR 대기` → `PR 병합 완료` (막히면 `보류(사유)`)
@@ -26,7 +26,10 @@
 ## 대기 중 사용자 작업
 
 - TASK-01 (병합 완료): Supabase에서 Kakao·Google Provider 활성화, 각 콘솔에서 앱 등록·Redirect URI 설정, Supabase Site/Redirect URL에 배포 도메인 추가. 상세는 `docs/sprint/TASK-01.md` "사용자 필요 작업" 참고. 설정 전까지는 버튼을 눌러도 provider 비활성화 에러가 남(코드 문제 아님).
-- TASK-02 (PR 대기): 토스페이먼츠 개발자센터 가맹점(테스트) 등록·테스트 클라이언트 키 발급 — 이번 PR은 실제 SDK 호출 없이 "가상 성공 처리"만 구현했으므로 이 설정 없이도 병합·동작 가능. 다음 단계(실제 결제 승인)부터 필요.
+- TASK-02 (병합 완료): 가상 성공 처리만 구현했으므로 이미 동작 중. 다음 단계(실제 결제 승인)부터 필요.
+- TASK-03 (PR #40 대기, Vercel 배포 한도로 미병합 보류): 없음.
+- TASK-04 (PR #41 대기, 병합 전 필수): Supabase SQL Editor에서 `team_comments`/`feed_posts` 테이블 + RLS + `increment_post_cheers` RPC 실행, Realtime 활성화. 정확한 SQL은 PR #41 본문.
+- TASK-05 (PR 대기): 없음(클라이언트 로직만 변경, 서버·sw.js 무수정).
 
 ## 사전 정리 체크리스트 (스프린트 시작 전 1회, 사용자 확인 필요)
 

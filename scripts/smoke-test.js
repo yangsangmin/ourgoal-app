@@ -74,6 +74,7 @@ const FN_NAMES = [
   'totalCompletedMilestones',
   'heatmapLevel', 'localNextActionSuggestion',
   'goalAchievement', 'weeklyRecapStats',
+  'nowISO', 'generateDynamicNotification',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -81,6 +82,8 @@ const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('
 const sandboxSrc =
   'var STREAK_FREEZE_MAX = 3;\n' +
   'var state = { profile: { records: [], settings: { streakFreeze: { available: 0, usedDates: [], grantedTier: 0 } } } };\n' +
+  // generateDynamicNotification의 모임 인증 분기 테스트용 최소 스텁(실제 MOCK_GROUPS는 추출하지 않음).
+  'var MOCK_GROUPS = [{ id: "g1", name: "테스트 모임", activity: ["a", "b", "c"] }];\n' +
   extracted +
   '\nmodule.exports = { pad, dateKey, goalProgress, msCounts, resultPct, dDay, ' +
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
@@ -90,6 +93,7 @@ const sandboxSrc =
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
   'goalAchievement, weeklyRecapStats, ' +
+  'nowISO, generateDynamicNotification, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -358,6 +362,68 @@ check('weeklyRecapStats: 이번 주 기록 시간과 최다 분야를 정확히 
   assert.strictEqual(stats.count, 2);
   assert.strictEqual(stats.totalMs, 3600000 + 1800000);
   assert.strictEqual(stats.topCategory, 'study');
+});
+
+check('generateDynamicNotification: D-3 이내 마감 목표가 있으면 D-day 알림을 최우선한다', () => {
+  const profile = {
+    displayName: '테스트유저', settings: {}, records: [],
+    goals: [{ title: '시험 준비', dueDate: localDateStr(2), archivedAt: null }],
+  };
+  const msg = fns.generateDynamicNotification(profile);
+  assert.ok(msg.indexOf('[D-day 임박]') !== -1);
+  assert.ok(msg.indexOf('시험 준비') !== -1);
+  assert.ok(msg.indexOf('2일') !== -1);
+});
+
+check('generateDynamicNotification: 보관된 목표의 마감일은 D-day 알림에서 무시한다', () => {
+  const profile = {
+    displayName: '테스트유저', settings: {}, records: [],
+    goals: [{ title: '지난 목표', dueDate: localDateStr(1), archivedAt: '2020-01-01T00:00:00.000Z' }],
+  };
+  const msg = fns.generateDynamicNotification(profile);
+  assert.ok(msg.indexOf('[D-day 임박]') === -1);
+});
+
+check('generateDynamicNotification: 저녁 8시 이후 미체크인이고 어제까지 스트릭이 있으면 경보 문구', () => {
+  const now = new Date(); now.setHours(21, 0, 0, 0);
+  const yesterday = new Date(now); yesterday.setDate(yesterday.getDate() - 1);
+  const dayBefore = new Date(now); dayBefore.setDate(dayBefore.getDate() - 2);
+  const profile = {
+    displayName: '테스트유저', settings: {}, goals: [],
+    records: [{ startAt: yesterday.toISOString() }, { startAt: dayBefore.toISOString() }],
+  };
+  const msg = fns.generateDynamicNotification(profile, now);
+  assert.ok(msg.indexOf('[스트릭 경보]') !== -1);
+  assert.ok(msg.indexOf('2일 연속') !== -1);
+});
+
+check('generateDynamicNotification: 오늘 이미 체크인했으면 스트릭 경보를 띄우지 않는다', () => {
+  const now = new Date(); now.setHours(21, 0, 0, 0);
+  const profile = {
+    displayName: '테스트유저', settings: {}, goals: [],
+    records: [{ startAt: now.toISOString() }],
+  };
+  const msg = fns.generateDynamicNotification(profile, now);
+  assert.ok(msg.indexOf('[스트릭 경보]') === -1);
+});
+
+check('generateDynamicNotification: 참여 중인 모임이 있으면 모임 인증 알림을 보여준다', () => {
+  const now = new Date(); now.setHours(10, 0, 0, 0);
+  const profile = {
+    displayName: '테스트유저', goals: [], records: [],
+    settings: { groupState: { g1: { joined: true } } },
+  };
+  const msg = fns.generateDynamicNotification(profile, now);
+  assert.ok(msg.indexOf('[모임 인증]') !== -1);
+  assert.ok(msg.indexOf('테스트 모임') !== -1);
+  assert.ok(msg.indexOf('3회') !== -1);
+});
+
+check('generateDynamicNotification: 해당하는 조건이 없으면 기본 메시지를 보여준다', () => {
+  const now = new Date(); now.setHours(10, 0, 0, 0);
+  const profile = { displayName: '테스트유저', goals: [], records: [], settings: {} };
+  const msg = fns.generateDynamicNotification(profile, now);
+  assert.strictEqual(msg, '테스트유저님, 오늘의 성장을 기록할 시간이에요 ✨');
 });
 
 /* ============ 결과 요약 ============ */
