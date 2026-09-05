@@ -4730,7 +4730,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
           p.milestones.map(function(m){ return '<span class="topic-pill">'+(m.status==='done'?'✅ ':(m.status==='doing'?'🔥 ':'· '))+escapeHtml(m.title)+'</span>'; }).join('') +
         '</div>' : '') +
         '<div class="feed-foot"><span class="feed-time">'+timeAgoStr(p.createdAt)+'</span>' +
-          '<button class="pill-react'+(reacted?' active':'')+'" data-react="'+p.id+'" type="button">응원 '+((p.cheers||0)+mockPostCheerCount(p)+(reacted?1:0))+'</button>' +
+          '<button class="pill-react'+(reacted?' active':'')+'" data-react="'+p.id+'" type="button">응원 '+((p.cheers||0)+(reacted?1:0))+'</button>' +
           '<button data-delpost="'+p.id+'" type="button" style="margin-left:8px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">삭제</button>' +
         '</div>' +
       '</div>' +
@@ -5635,24 +5635,17 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
     });
   }
 
-  /* ============ 받은 응원 알림 (mock: 시간 경과에 따라 내 게시물 응원이 쌓이는 것 + 마니또 받은 응원함) ============ */
-  function mockPostCheerCount(p){
-    if(!p || !p.id || !p.createdAt) return 0;
-    var hours = (Date.now() - new Date(p.createdAt).getTime()) / 3600000;
-    if(hours <= 0) return 0;
-    var speed = (hashStr(p.id) % 5) + 1;
-    return Math.min(Math.floor(hours / 3) * speed, 40);
-  }
-  function totalMockFeedCheers(){
+  /* ============ 받은 응원 알림 (실제 내 게시물 응원 수 + 마니또 받은 응원함) ============ */
+  function totalFeedCheers(){
     var posts = (state.profile.settings.feedPosts || []);
     var sum = 0;
-    posts.forEach(function(p){ sum += (p.cheers || 0) + mockPostCheerCount(p); });
+    posts.forEach(function(p){ sum += (p.cheers || 0); });
     return sum;
   }
   function checkSocialNotifications(){
     var s = state.profile.settings;
     if(!s.social) s.social = { cheersSeen:0, manitoSeen:0 };
-    var cheerTotal = totalMockFeedCheers();
+    var cheerTotal = totalFeedCheers();
     var manitoTotal = manitoState().joined ? manitoInbox().length : 0;
     var newCheers = Math.max(0, cheerTotal - s.social.cheersSeen);
     var newManito = Math.max(0, manitoTotal - s.social.manitoSeen);
