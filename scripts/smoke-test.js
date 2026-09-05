@@ -73,7 +73,7 @@ const FN_NAMES = [
   'xpForLevel', 'levelForXP', 'levelProgress',
   'totalCompletedMilestones',
   'heatmapLevel', 'localNextActionSuggestion',
-  'goalAchievement',
+  'goalAchievement', 'weeklyRecapStats',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -89,7 +89,7 @@ const sandboxSrc =
   'xpForLevel, levelForXP, levelProgress, totalCompletedMilestones, ' +
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
-  'goalAchievement, ' +
+  'goalAchievement, weeklyRecapStats, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -333,6 +333,33 @@ check('goalAchievement: 목표 자체에 수치 결과가 있으면 그 비율�
   goal.result = { target: '10', result: '10', unit: '회', note: '' };
   assert.strictEqual(fns.goalAchievement(goal), 100);
 });
+
+check('weeklyRecapStats: 기록이 없으면 count 0, 시간 0', () => {
+  const stats = fns.weeklyRecapStats([], new Date());
+  assert.strictEqual(stats.count, 0);
+  assert.strictEqual(stats.totalMs, 0);
+  assert.strictEqual(stats.topCategory, null);
+});
+
+check('weeklyRecapStats: 7일 이전 기록은 제외한다', () => {
+  const now = new Date('2026-09-05T12:00:00.000Z');
+  const old = new Date(now.getTime() - 10 * 86400000);
+  const stats = fns.weeklyRecapStats([{ startAt: old.toISOString(), endAt: old.toISOString(), category: 'study' }], now);
+  assert.strictEqual(stats.count, 0);
+});
+
+check('weeklyRecapStats: 이번 주 기록 시간과 최다 분야를 정확히 계산한다', () => {
+  const now = new Date('2026-09-05T12:00:00.000Z');
+  const recs = [
+    { startAt: new Date(now.getTime() - 86400000).toISOString(), endAt: new Date(now.getTime() - 86400000 + 3600000).toISOString(), category: 'study' },
+    { startAt: new Date(now.getTime() - 2 * 86400000).toISOString(), endAt: new Date(now.getTime() - 2 * 86400000 + 1800000).toISOString(), category: 'health' },
+  ];
+  const stats = fns.weeklyRecapStats(recs, now);
+  assert.strictEqual(stats.count, 2);
+  assert.strictEqual(stats.totalMs, 3600000 + 1800000);
+  assert.strictEqual(stats.topCategory, 'study');
+});
+
 /* ============ 결과 요약 ============ */
 console.log('');
 console.log(passed + '개 통과, ' + failures + '개 실패');
