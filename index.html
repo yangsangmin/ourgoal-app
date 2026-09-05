@@ -5595,7 +5595,7 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
         renderCommDM(body);
         setTimeout(function(){
           person._thread.push({ from:'them', text: person.replies[Math.floor(Math.random()*person.replies.length)], time: fmtTime(nowISO()) });
-          if(state.dmActiveId===person.id) renderCommDM(body);
+          if(document.body.contains(body) && state.dmActiveId===person.id) renderCommDM(body);
         }, 700+Math.random()*600);
       }
       document.getElementById('dmSend').addEventListener('click', send);
