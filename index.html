@@ -5107,11 +5107,11 @@ if(kind==='ms' && !wasDone && nowDone) awardXP(XP_RULES.milestoneDone, '마일�
       thread.push({ from:'me', text:text, time: fmtTime(nowISO()) });
       input.value = '';
       await saveProfile();
-      renderManitoDm(body, pid);
+      if(document.body.contains(body) && state.manitoDm===pid) renderManitoDm(body, pid);
       setTimeout(async function(){
         thread.push({ from:'them', text: replies[Math.floor(Math.random()*replies.length)], time: fmtTime(nowISO()) });
         await saveProfile();
-        if(state.manitoDm===pid) renderManitoDm(body, pid);
+        if(document.body.contains(body) && state.manitoDm===pid) renderManitoDm(body, pid);
       }, 800+Math.random()*700);
     }
     document.getElementById('mnDmSend').addEventListener('click', send);
