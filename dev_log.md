@@ -377,6 +377,40 @@
 - **검증 결과**: `git status`로 변경 파일이 CLAUDE.md·dev_log.md뿐임을 확인, `gh --version` 정상, clone HEAD가 최신 main(c75f192, PR #24 병합 커밋)과 일치.
 ---
 
+## [2026-09-06 01:29] 회원가입 후 최초 로그인 활용가이드 튜토리얼 추가
+- **목표**: 사용자 직접 요청 — 회원가입 후 최초 로그인 시 앱의 강점(AI 코칭, 캘린더 연동, API 커스텀·비공개 설정)을 소개하는 튜토리얼 모달 추가. (8원칙: 신규 가입자는 온보딩 3단계(카테고리→목표→마일스톤 미리보기)를 마치면 곧바로 앱 화면으로 들어가는데, 이 앱을 다른 목표관리 앱과 구분 짓는 핵심 기능(AI 자동 코칭, 캘린더 자동 동기화, BYOK 커스텀 연결·비공개 설정)은 설정 화면 깊숙이 있어 스스로 찾기 전엔 존재조차 모르고 지나칠 수 있음 → 첫 진입 직후가 이 차별점을 각인시킬 유일한 순간이라 판단)
+- **수정/실행 내역**:
+  (1) `defaultSettings()`에 `hasSeenGuide:false` 필드 추가(로컬스토리지 저장, 기존 xp/checkinTimes 등과 동일 패턴). 기존 사용자도 병합 시 `false`로 채워지지만 `startOnboarding()`은 가입 시에만 호출되므로 재로그인 시 실수로 노출될 위험은 없음.
+  (2) `startFirstLoginGuide()`(4단계: 환영 → AI 연동 → 캘린더 연동 → API 커스텀/비공개) + 가드 `maybeShowFirstLoginGuide()` 신규. `startOnboarding()`의 두 종료 지점(3단계 완료 `obFinish`, 1단계 스킵 `obSkip`) 모두에서 기존 로직(enterApp/toast) 직후 호출 — 목표를 만들고 시작하든 소통 탭으로 건너뛰든 최초 진입 시 1회만 노출되고 이후 재로그인에는 뜨지 않음.
+  (3) 신규 CSS 없이 기존 `.ob-step-label`(단계 표시)·`.mission-card`/`.mi`(기능 카드)·`.modal-actions`·`.land-login-link` 클래스만 재사용(디자인 불변경 원칙 준수).
+  (4) 카피 사실 검증: 요청 문구엔 "구글/삼성 달력 자동 연동"이 있었으나 실제로는 구글 캘린더 연동만 존재(BACKLOG.md·코드 확인, 삼성 직접 연동 없음) — 없는 기능을 안내하지 않도록 "구글 캘린더 자동 연동 + 구글 계정과 연결된 삼성 캘린더 등에도 반영"으로 정확하게 조정.
+- **발생한 문제 및 해결**: 작업 중 `C:\dev\ourgoal-app` 공유 클론에서 다른 세션 2개(팀 목표 댓글 기능, 캘린더 탭 기능)가 거의 동시에 브랜치를 전환하면서, 제가 만든 1줄 수정이 그쪽 세션의 스테이징 영역에 섞여 들어가는 충돌을 발견. 즉시 두 세션에 메시지로 알려 커밋 전 확인을 요청하고, 저는 `git worktree add`로 별도 작업 공간을 분리해 이후 충돌 없이 작업(아래 검증은 전부 이 격리된 worktree 기준). 그 과정에서 PR #26 병합 시 dev_log.md 항목 하나(2026-09-06 00:38 마니또 DM 크래시 수정 기록)가 유실된 것도 우연히 발견 — 코드 자체 회귀는 아니었으나(해당 null-deref 가드는 index.html에 정상 존재) 이번 작업과 무관해 별도 이슈로 분리 보고함.
+- **검증 결과**: `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음), 저장소 전체 병합 마커 재검색 클린. 로컬 정적 서버(Python http.server)로 실제 브라우저 렌더링 테스트 완료 — 회원가입 → 온보딩 3단계 완료(obFinish) 경로와 온보딩 스킵(obSkip) 경로 둘 다 실제 클릭으로 튜토리얼 4단계(환영/AI/캘린더/API·비공개)가 정확한 문구·스타일로 순서대로 뜨는 것을 확인, "시작하기"로 정상 종료, `localStorage`의 `hasSeenGuide:true` 저장까지 확인. 콘솔 에러 없음(로컬 정적 서버가 POST를 지원하지 않아 뜨는 501 하나는 Supabase 호출에 의한 것으로 이번 기능과 무관한 테스트 환경 노이즈).
+---
+
+## [2026-09-06 01:30] 개인 목표 탭 대화형 AI 목표/할일 관리 기능 추가
+- **목표**: 사용자 직접 요청 — '개인 목표' 탭 최상단에 자연어로 목표·마일스톤·할 일을 추가/변경/삭제 요청하면, AI가 변경안(diff)을 만들고 사용자가 확인 모달에서 '반영'을 눌러야만 실제로 적용되는 대화형 관리 기능 추가.
+- **수정/실행 내역**:
+  (1) `api/goalagent.js` 신설 — 기존 `api/goaltemplate.js` 패턴(POST 검증→ANTHROPIC_API_KEY 확인→프롬프트 구성→claude-sonnet-4-6 호출→JSON 파싱)을 그대로 따름. 요청 `{message, goals, today}`에서 goals는 프런트가 보낸 현재 목표 스냅샷(id 포함)이고, 모델이 반환한 `ops`(type: CREATE/UPDATE/DELETE × level: goal/milestone/task) 각각을 서버가 재검증 — goalId/milestoneId/taskId가 요청에 실제로 존재하는지 대조하고, 레벨·타입별로 허용된 데이터 필드만 clamp해서 통과시키며 존재하지 않는 id를 참조하거나 형식이 어긋난 op는 조용히 제거. 응답은 `{ops, reply}`.
+  (2) `index.html` — `#personalGoalsView` 최상단에 `.card`(`#goalAgentCard`) + 기존 `.dm-input-row` 클래스를 그대로 재사용한 입력창(`#goalAgentInput`, placeholder "대화로 목표와 할일들을 추가, 변경, 삭제하세요") + 전송 버튼(`#goalAgentSendBtn`) 추가. 신규 CSS 없음 — 카드/입력행/버튼 전부 기존 클래스 재사용, 헤더 텍스트 색상만 기존 AI 기능에 쓰이던 `var(--violet)`를 인라인으로 지정.
+  (3) 전송 흐름: `showGoalAgentLoadingStep()`(기존 `showNewGoalLoadingStep`과 동일 패턴)으로 로딩 모달 표시 → `/api/goalagent` 호출 → `ops`가 비어 있으면 모달을 닫고 `reply`를 토스트로 안내 → 있으면 **기존 `openModal()`을 그대로 사용**해 "🤖 이대로 반영할까요?" 확인 모달(`showGoalAgentReviewStep`)을 띄우고 각 op의 `summary`를 기존 `.ms-list`/`.ms-row` 클래스로 나열. '반영' 클릭 시에만 `applyGoalAgentOp()`가 `state.profile.goals`에 순차 반영한 뒤 `saveProfile()` → `closeModal()` → `renderAll()`. '취소'는 `closeModal()`만 호출해 아무 것도 바꾸지 않음.
+  (4) 신규 목표 생성(CREATE goal)은 기존 AI 템플릿 생성 플로우(`showNewGoalReviewStep`)와 동일하게 `category:'etc'`, `topic:'major/minor'` 조합, milestone/task에 `uid('ms')`/`uid('task')` id를 부여하도록 구현(`buildGoalFromAgentData`).
+- **발생한 문제 및 해결**: 작업 착수 직전 표준 경로 `C:\dev\ourgoal-app`에서 다른 세션이 브랜치 `feat/2026-09-06-team-goal-comments`에 실시간으로 커밋 중인 것을 발견(동시 작업 충돌 위험 — reflog에 내가 관여하지 않은 checkout이 실시간으로 찍힘). 사용자에게 확인 후 `EnterWorktree`로 격리된 워크트리를 만들어 브랜치 `feature/2026-09-06-goal-agent-chat`에서 작업, 공유 작업 폴더의 다른 세션 상태는 전혀 건드리지 않음.
+- **검증 결과**: `node -e`로 `api/goalagent.js` require 및 메인 `<script>` 문법 검증 통과, `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음). 로컬 정적 서버(Python http.server)로 실제 브라우저 렌더링 확인 — `#goalAgentCard`가 '개인 목표' 탭 최상단(목표 헤더 위)에 요청한 그대로의 placeholder로 렌더링됨을 스크린샷으로 확인, 메시지 입력 후 전송 시 로딩 모달→(로컬엔 API 서버가 없어 실패)→에러 토스트까지 콘솔 에러 없이 정상 동작함을 클릭으로 확인. ANTHROPIC_API_KEY·Supabase 로그인이 없는 로컬 환경이라 실제 AI diff 생성·반영까지의 전체 흐름은 PR의 Vercel 프리뷰 배포에서 재검증이 필요함.
+---
+
+참고: 위 장애는 사용자가 별도로 연 PR #19로 먼저 병합되어 해결되었다. 아래 응원 알림 브랜치는 그보다 앞서(PR #10 XP/레벨 모델 병합 이전 시점의 main) 분기했던 브랜치라, 그 사이 병합된 PR #10·#19 두 커밋과 병합 충돌이 발생해 이 로그를 포함한 파일들을 수동으로 재병합했다.
+
+## [2026-09-05 12:20] 내 기록에 반응·응원이 왔을 때 알림
+- **목표**: BACKLOG.md "사용자 경험·도파민 강화" 5단계 두 번째 항목 — 내 기록/게시물에 응원이 왔을 때 눈에 띄는 알림을 띄운다. (문제해결 8원칙: 조사해보니 내가 공유한 피드 게시물(`settings.feedPosts`)의 `cheers`는 작성 이후 절대 증가하지 않아 "반응이 온다"는 이벤트 자체가 존재하지 않았고, 마니또 "받은 응원함"(mock, 매일 1개 기본)은 이미 쌓이지만 새로 왔는지 알려주는 장치가 없었던 게 핵심 공백 → 새 알림 UI를 만들기 전에 먼저 두 mock 데이터 소스에 "시간이 지나면 응원이 늘어난다"는 최소한의 성장 로직을 부여하고, 그 위에 마지막 확인 시점 대비 증가분을 알려주는 배너를 얹는 순서로 설계. CLAUDE.md 다크패턴 금지 원칙에 따라 불안·상실회피 요소 없이 순수 긍정 알림만 노출)
+- **수정/실행 내역**:
+  (1) `mockPostCheerCount(p)`(순수 함수) 신규 — 게시물 작성 후 경과 시간과 게시물 id 해시(`hashStr`, 기존 마니또 코드가 쓰던 함수 재사용)로 결정론적인 응원 증가량을 계산(3시간마다 1~5개, 상한 40). `feedPostHtml`의 응원 버튼 표시값에 이 값을 더해 내 게시물 응원이 실제로 시간에 따라 늘어나도록 수정.
+  (2) `totalMockFeedCheers()`(내 모든 게시물 응원 총합) / `checkSocialNotifications()`(마지막 확인 시점 대비 새 응원·새 마니또 응원 개수를 계산해 배너 노출 후 `settings.social`에 기준값 저장) / `showSocialNotifyBanner(newCheers,newManito)` 3개 함수 신규.
+  (3) 홈 화면에 기존 `#notifyBannerSlot`(체크인 리마인더용)과 겹치지 않는 별도 `#socialNotifySlot`을 신설(레벨업 배너 등 기존에도 쓰던 "슬롯 분리" 패턴 재사용), `enterApp()`에서 로그인/앱 진입마다 1회 `checkSocialNotifications()` 호출. 알림 배너는 기존 `.notify-banner` 클래스를 그대로 재사용해 신규 CSS 없음. "확인하기"를 누르면 소통 탭으로 이동.
+  (4) `defaultSettings()`에 `social:{cheersSeen:0,manitoSeen:0}` 기본값 추가(기존 유저도 병합 로직으로 자동 채워짐).
+  (5) `scripts/smoke-test.js`에 `mockPostCheerCount` 단위 테스트 3건 추가(작성 직후 0, id/게시물 없으면 0, 오래되면 상한 40 도달).
+- **발생한 문제 및 해결**: 착수 전 로컬 검증을 위해 `node scripts/smoke-test.js`를 실행했더니, main에 이미 **병합 충돌 마커(`<<<<<<< / ======= / >>>>>>>`)가 해결되지 않은 채로 남아있는 상태**(PR #9를 병합하는 시점과 그 수정 커밋 푸시가 겹쳐 발생한 문제로, 이미 열려있는 PR #16이 정확히 이 문제를 고치는 중)를 발견 → PR #16을 직접 건드리지 않되(운영 규칙상 이전 주기 PR 불가침), 내 브랜치가 깨진 main에서 분기했으므로 동일한 내용(heatmapLevel 3건 + localNextActionSuggestion 2건 모두 보존)으로 충돌 마커만 로컬에서 해소해 테스트가 통과하도록 정리. 이 파일은 개발용 테스트 스크립트로 Vercel 배포와 무관.
+- **검증 결과**: `node -e`로 메인 `<script>` new Function() 문법 검증 통과, `<style>` 중괄호 407/407 균형(변경 없음 확인), `node scripts/smoke-test.js` 28개 전부 통과(기존 25 + 신규 3). `mockPostCheerCount`의 시간 경과별 단조 증가·상한 동작을 별도 시뮬레이션으로 재확인. 브라우저 도구가 없는 샌드박스 환경이라 실제 배너 노출·클릭 후 소통 탭 이동은 로직 검증으로 대체했으며 PR에 명시.
 ---
 
 ## [2026-09-05 06:24] 레벨 배지 UI(홈 상단) + 레벨업 축하 배너
