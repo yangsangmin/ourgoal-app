@@ -398,3 +398,19 @@
 - **발생한 문제 및 해결**: 작업 착수 직전 표준 경로 `C:\dev\ourgoal-app`에서 다른 세션이 브랜치 `feat/2026-09-06-team-goal-comments`에 실시간으로 커밋 중인 것을 발견(동시 작업 충돌 위험 — reflog에 내가 관여하지 않은 checkout이 실시간으로 찍힘). 사용자에게 확인 후 `EnterWorktree`로 격리된 워크트리를 만들어 브랜치 `feature/2026-09-06-goal-agent-chat`에서 작업, 공유 작업 폴더의 다른 세션 상태는 전혀 건드리지 않음.
 - **검증 결과**: `node -e`로 `api/goalagent.js` require 및 메인 `<script>` 문법 검증 통과, `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음). 로컬 정적 서버(Python http.server)로 실제 브라우저 렌더링 확인 — `#goalAgentCard`가 '개인 목표' 탭 최상단(목표 헤더 위)에 요청한 그대로의 placeholder로 렌더링됨을 스크린샷으로 확인, 메시지 입력 후 전송 시 로딩 모달→(로컬엔 API 서버가 없어 실패)→에러 토스트까지 콘솔 에러 없이 정상 동작함을 클릭으로 확인. ANTHROPIC_API_KEY·Supabase 로그인이 없는 로컬 환경이라 실제 AI diff 생성·반영까지의 전체 흐름은 PR의 Vercel 프리뷰 배포에서 재검증이 필요함.
 ---
+
+## [2026-09-05 16:50] Web Push(Service Worker 푸시) 알림 인프라 추가
+- **목표**: BACKLOG.md "실제 브라우저 푸시 알림" 처리 — 지금은 탭이 열려 있어야만(`Notification` API + `setInterval` 폴링) 체크인 알림이 오는데, 앱이 완전히 꺼져 있어도(브라우저·탭 종료) Service Worker 기반 Web Push로 체크인 시간에 알림이 오도록 개선.
+- **문제의 본질**: 브라우저 알림 자체는 탭이 열려 있을 때 클라이언트 setInterval로 폴링해 띄우는 구조라, 원천적으로 앱이 안 떠 있으면 발동할 수 없음. 이를 해결하려면 (1) 서버가 알림을 발송할 수 있는 채널(Web Push 구독)과 (2) 서버가 "지금이 그 시각인지"를 판단할 수 있는 정보(체크인 시각 + 타임존)가 사용자별로 서버에 저장돼야 하는데, 이 앱은 지금까지 `settings`(체크인 시각 포함)를 전부 `localStorage`에만 저장해왔다는 게 핵심 제약이었음.
+- **해결 방식 및 타당성 검토**: VAPID 키 기반 Web Push 표준 사용(핸드롤 암호화는 안전하지 않아 `web-push` npm 패키지로 위임). 서버가 사용자별 발송 시각을 알아야 하므로 새 Supabase 테이블(`push_subscriptions`)에 구독 정보와 함께 `checkin_times`·`timezone`을 같이 저장(구독/시각 변경 시마다 클라이언트가 재동기화). 발송은 Vercel Cron(`vercel.json`)이 5분마다 `/api/push-dispatch`를 호출해 각 구독의 로컬 시각이 체크인 시각과 ±2분 이내면 발송, 같은 슬롯 중복 발송은 `sent_slots`로 방지. 기존 탭-오픈 전용 알림(Notification API)은 그대로 유지해 두 방식이 공존(Web Push 실패 시에도 기존 방식이 폴백 역할). 신규 UI 요소·CSS 변경 없음(설정 화면의 기존 알림 스위치를 그대로 재사용해 켤 때 푸시 구독까지 함께 처리) — CLAUDE.md 디자인 불변경 원칙 준수. 다크패턴 요소 없음(옵트인 토글, 강제 재노출 없음).
+- **수정/실행 내역**:
+  (1) `package.json` 신설 — `web-push`, `@supabase/supabase-js` 의존성 추가(핸드롤 aes128gcm 암호화 위험 회피 목적).
+  (2) `api/vapid-public-key.js` 신설 — 클라이언트가 구독 시 필요한 VAPID 공개키를 서버 env에서 읽어 반환.
+  (3) `api/push-subscribe.js` 신설 — POST로 구독 정보(`endpoint`/`keys`)+`checkinTimes`+`timezone`을 `push_subscriptions`에 upsert, DELETE로 endpoint 기준 구독 삭제.
+  (4) `api/push-dispatch.js` 신설 — Vercel Cron 진입점. `CRON_SECRET` env가 설정돼 있으면 Authorization 헤더로 검증. 전체 구독을 순회하며 타임존별 로컬 시각을 계산해 일치하는 구독에만 `web-push`로 발송, 만료(404/410) 구독은 자동 삭제.
+  (5) `vercel.json` 신설 — `*/5 * * * *` 크론으로 `/api/push-dispatch` 호출.
+  (6) `sw.js`에 `push`/`notificationclick` 이벤트 핸들러 추가(알림 표시 + 클릭 시 기존 창 포커스 또는 새 창 열기).
+  (7) `index.html` — 설정 화면의 기존 알림 스위치 on/off 핸들러에 `syncPushSubscription()`/`removePushSubscription()` 연결, 체크인 시각 추가/수정/삭제 시(알림이 켜져 있으면) 서버에 재동기화, 앱 진입(`enterApp`) 시에도 알림이 켜져 있으면 구독을 재확인.
+- **발생한 문제 및 해결(원칙 8 재검증)**: 없음 — 막힌 지점 없이 설계한 대로 구현 완료.
+- **검증 결과**: `node -e`로 `index.html` 메인 `<script>` `new Function()` 문법 검증 통과, `node -c`로 `sw.js`·`api/push-subscribe.js`·`api/push-dispatch.js`·`api/vapid-public-key.js` 전부 문법 통과, `vercel.json`/`package.json` JSON 파싱 통과, `node scripts/smoke-test.js` 28개 전부 통과(회귀 없음). **사용자가 직접 해야 하는 후속 설정**(PR 설명에 상세 기재): Supabase에 `push_subscriptions` 테이블 생성 SQL 실행, VAPID 키 쌍 생성 후 `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY`(+선택 `VAPID_CONTACT_EMAIL`) 및 `SUPABASE_SERVICE_ROLE_KEY`(+권장 `CRON_SECRET`) Vercel 환경변수 등록 — 이 설정 전까지는 각 API가 500으로 명확히 실패하며 기존 탭-오픈 알림에는 영향 없음. **Vercel 요금제 주의**: Hobby 플랜은 크론 실행 빈도가 하루 1회로 제한될 수 있어(플랜별 상이) 5분 간격 크론은 Pro 플랜이 필요할 수 있음 — 실제 플랜 확인 필요.
+---
