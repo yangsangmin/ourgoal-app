@@ -685,3 +685,12 @@
 - **해결 방식·타당성**: upsert 행과 매핑에 `category: r.category || null` 1필드씩 추가 + `docs/sql/2026-09-06-checkins-category.sql`(`add column if not exists`). 컬럼이 아직 없는 DB에서 upsert가 "category" 오류로 실패하면 기존 형식으로 1회 재시도해 **SQL 실행 전에도 기록 저장이 끊기지 않게** 한다(배포 순서 무관). 기존 행은 null 유지. UI·CSS 변경 0, 개인정보 항목 확대 아님(이미 클라이언트에 있던 값의 동기화).
 - **검증 결과**: 문법 통과, `node scripts/smoke-test.js` 44/44, index.html 삭제 줄 3(전부 치환), 마커 0. 실제 저장·복원은 SQL 실행 후 프로덕션에서 기록 1건 생성 → 새로고침으로 확인 권장. 열린 PR #49가 `saveProfile` 첫머리(1246)를 만지지만 이 변경(1272~)과 줄이 떨어져 있어 자동 병합 예상.
 ---
+
+## [2026-09-06 21:25] PWA 앱 배지로 스트릭 일수 표시 (성장 백로그 P0 실행순서 6)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~) 3번째 항목. ① DEV-1(#47) → ② OG 메타(#48) → ③ 이 항목 → ④ 온보딩 첫 체크인 → ⑤ CSV 내보내기.
+- **목표**: 홈 화면에 설치된 PWA 아이콘에 현재 스트릭 일수를 배지로 표시해 앱을 열지 않아도 연속 기록이 보이게 한다. 미지원 브라우저(iOS Safari 비PWA 등)·비설치 환경에서는 아무 일도 하지 않아야 한다.
+- **착수 전 불변식(ORG.md §4 신규 규칙 첫 적용)**: (1) Badging API가 없거나 `navigator`가 없어도 절대 throw하지 않는다 (2) 스트릭>0이면 `setAppBadge(n)` (3) 0·음수·비숫자면 `clearAppBadge()` (4) 로그아웃 시 배지 제거. 불변식 1~3은 스모크 테스트로 먼저 고정.
+- **수정/실행 내역**: `index.html` — `computeStreakDays` 바로 뒤에 `updateAppBadge(streak)` 추가(try/catch, 기능 감지, `.catch` 부착), `renderHome`의 스트릭 계산 직후 호출(홈 렌더 = 체크인·앱 진입마다 갱신), 로그아웃 핸들러에 `updateAppBadge(0)`. `scripts/smoke-test.js` — 샌드박스에 `navigator` 스텁(`setAppBadge`/`clearAppBadge`)과 `getNavigator/setNavigator` 훅, `updateAppBadge` 추출, 테스트 3건. 새 UI 요소·CSS 없음.
+- **발생한 문제 및 해결**: 감사(AUD) 지적 — `renderHome`은 탭 전환·앱 진입에서만 호출돼 홈 체크인·기록 모달 저장 직후에는 배지가 갱신되지 않는 전제 오류(리뷰어를 생략한 S 작업의 첫 실증 비용). 보완: 기록이 바뀌는 모든 경로가 지나는 `saveProfile()` 첫머리에서 `updateAppBadge(computeStreakDays())` 호출, 로그아웃은 `signOut()` 전에 배지 제거, PR 본문의 iOS 권한 문구 정정.
+- **검증 결과**: `new Function()` 문법 통과, `node scripts/smoke-test.js` 47/47(기존 44 + 신규 3), 충돌 마커 0건, index.html 삭제 줄 0. 브라우저 실동작은 로그인 후 홈 렌더에서만 일어나고 로컬 프리뷰에 로그인 세션이 없어 스모크(불변식 3건)로 대체 — 병합 후 PWA 설치 기기에서 체크인 뒤 아이콘 배지 확인 권장.
+---

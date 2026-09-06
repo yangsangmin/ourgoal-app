@@ -74,7 +74,7 @@ const FN_NAMES = [
   'totalCompletedMilestones',
   'heatmapLevel', 'localNextActionSuggestion',
   'goalAchievement', 'weeklyRecapStats',
-  'parseAttribution',
+  'parseAttribution', 'updateAppBadge',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -82,6 +82,8 @@ const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('
 const sandboxSrc =
   'var STREAK_FREEZE_MAX = 3;\n' +
   'var state = { profile: { records: [], settings: { streakFreeze: { available: 0, usedDates: [], grantedTier: 0 } } } };\n' +
+  /* Badging API 스텁 — updateAppBadge 불변식 검증용 (setNavigator(null)로 미지원 환경 재현) */
+  'var navigator = { badge: null, setAppBadge: function(n){ this.badge = n; return Promise.resolve(); }, clearAppBadge: function(){ this.badge = 0; return Promise.resolve(); } };\n' +
   extracted +
   '\nmodule.exports = { pad, dateKey, goalProgress, msCounts, resultPct, dDay, ' +
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
@@ -91,7 +93,8 @@ const sandboxSrc =
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
   'goalAchievement, weeklyRecapStats, ' +
-  'parseAttribution, ' +
+  'parseAttribution, updateAppBadge, ' +
+  'getNavigator: function(){ return navigator; }, setNavigator: function(n){ navigator = n; }, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -380,6 +383,33 @@ check('parseAttribution: 값은 80자로 자르고 +는 공백으로 복원한�
   const a = fns.parseAttribution('?utm_campaign=' + long + '&utm_source=kakao+talk');
   assert.strictEqual(a.utm_campaign.length, 80);
   assert.strictEqual(a.utm_source, 'kakao talk');
+});
+
+/* ============ PWA 앱 배지 (불변식: 미지원 환경 no-op·throw 없음 / 스트릭>0 → 숫자 / 0 → clear) ============ */
+check('updateAppBadge: 스트릭이 있으면 아이콘 배지에 그 숫자를 설정한다', () => {
+  assert.strictEqual(fns.updateAppBadge(7), true);
+  assert.strictEqual(fns.getNavigator().badge, 7);
+});
+
+check('updateAppBadge: 스트릭 0·음수·비숫자면 배지를 지운다', () => {
+  fns.updateAppBadge(3);
+  assert.strictEqual(fns.updateAppBadge(0), true);
+  assert.strictEqual(fns.getNavigator().badge, 0);
+  fns.updateAppBadge(3);
+  fns.updateAppBadge(undefined);
+  assert.strictEqual(fns.getNavigator().badge, 0);
+});
+
+check('updateAppBadge: Badging API가 없는 환경에서는 예외 없이 false를 돌려준다', () => {
+  const saved = fns.getNavigator();
+  try {
+    fns.setNavigator({});
+    assert.strictEqual(fns.updateAppBadge(5), false);
+    fns.setNavigator(null);
+    assert.strictEqual(fns.updateAppBadge(5), false);
+  } finally {
+    fns.setNavigator(saved);
+  }
 });
 
 /* ============ 결과 요약 ============ */
