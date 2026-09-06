@@ -5,6 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>아워골</title>
 <meta name="description" content="목표를 세우고, 기록하고, 성장을 나누는 아워골">
+<!-- 공유 링크 미리보기(카카오톡·트위터·슬랙 등 OG 크롤러용, 성장 백로그 P0 ④) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="아워골">
+<meta property="og:title" content="아워골 — 나만의 목표 달성 메이트">
+<meta property="og:description" content="목표를 세우고, 매일 한 줄 기록하고, 성장을 나누는 아워골">
+<meta property="og:url" content="https://ourgoal-app.vercel.app/">
+<meta property="og:image" content="https://ourgoal-app.vercel.app/icons/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="아워골 — 나만의 목표 달성 메이트">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="아워골 — 나만의 목표 달성 메이트">
+<meta name="twitter:description" content="목표를 세우고, 매일 한 줄 기록하고, 성장을 나누는 아워골">
+<meta name="twitter:image" content="https://ourgoal-app.vercel.app/icons/og-image.jpg">
+<meta name="twitter:image:alt" content="아워골 — 나만의 목표 달성 메이트">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#FF4F64">
 <link rel="icon" href="/icons/icon-192.png" type="image/png">
@@ -925,6 +941,10 @@
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2cW9zdmlxYmNpb2hjeXdremJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0MTM0NDYsImV4cCI6MjEwMzk4OTQ0Nn0.DCMMxxHB6kzJ0CjgLN0ERaSk7WY6LDN-pDVdeZ0-cWM';
   var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  /* 앱 레벨 Google OAuth 클라이언트 ID(공개 식별자, 시크릿 아님). GCP 콘솔에서 이 앱을 등록한 뒤 값을 채우면
+     사용자가 자기 ID를 넣을 필요가 없어진다. 비어 있으면 설정의 사용자 ID로 폴백한다 — 거시 재조정안 A2 */
+  var GOOGLE_OAUTH_CLIENT_ID = '';
+
   /*
    * TASK-04: 아래 두 테이블 + RPC가 Supabase에 있어야 팀 댓글/피드 응원이 실제로 동작한다.
    * (전체 CREATE TABLE / RLS / RPC SQL은 이 태스크의 PR 본문에 그대로 첨부돼 있다.)
@@ -1231,7 +1251,7 @@
       };
     });
     var records = (recsRes.data||[]).map(function(r){
-      return { id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at };
+      return { id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at, category: r.category || null };
     });
     if(ures.isNew){
       track('signup', Object.assign({ method: provider || 'email' }, getAttribution()));
@@ -1247,6 +1267,7 @@
 
   async function saveProfile(){
     if(!state.profile) return;
+    updateAppBadge(computeStreakDays()); /* 기록이 바뀌는 모든 경로(홈 체크인·기록 모달·온보딩)가 여기를 지나므로 배지는 여기서 갱신 */
     var uidVal = state.profile.id;
     try{
       await sb.from('users').upsert({
@@ -1273,9 +1294,14 @@
 
       var recs = state.profile.records;
       if(recs.length){
-        await sb.from('checkins').upsert(recs.map(function(r){
-          return { id:r.id, user_id:uidVal, type:r.type, text:r.text, start_at:r.startAt, end_at:r.endAt };
-        }));
+        var recRows = recs.map(function(r){
+          return { id:r.id, user_id:uidVal, type:r.type, text:r.text, start_at:r.startAt, end_at:r.endAt, category: r.category || null };
+        });
+        var upRes = await sb.from('checkins').upsert(recRows);
+        if(upRes && upRes.error && /category/i.test(upRes.error.message || '')){
+          /* checkins.category 컬럼이 아직 없는 DB(docs/sql/2026-09-06-checkins-category.sql 미실행)에서는 기존 형식으로 재시도해 기록 저장이 끊기지 않게 한다 */
+          await sb.from('checkins').upsert(recRows.map(function(x){ var y = Object.assign({}, x); delete y.category; return y; }));
+        }
       }
       var recIds = recs.map(function(r){ return r.id; });
       var delRecs = sb.from('checkins').delete().eq('user_id', uidVal);
@@ -1371,6 +1397,7 @@
   });
 
   document.getElementById('logoutBtn').addEventListener('click', async function(){
+    updateAppBadge(0); /* signOut 실패 여부와 무관하게 아이콘에 이전 사용자의 스트릭이 남지 않도록 먼저 지운다 */
     await sb.auth.signOut();
     state.profile = null;
     document.getElementById('appShell').classList.remove('active');
@@ -1421,7 +1448,7 @@
 
     function showObStep1(){
       openModal(
-        '<p class="ob-step-label">1 / 3 · 환영해요</p>' +
+        '<p class="ob-step-label">1 / 4 · 환영해요</p>' +
         '<h3>'+escapeHtml(state.profile.displayName)+'님, 반가워요 👋</h3>' +
         '<p class="muted" style="margin:-8px 0 18px;">먼저 어떤 종류의 목표를 시작할지 골라주세요. 목표에 맞는 마일스톤을 미리 채워드려요.</p>' +
         '<div class="cat-grid" id="obCatGrid">' +
@@ -1457,7 +1484,7 @@
     function showObStep2(){
       var t = GOAL_TEMPLATES[ob.category];
       openModal(
-        '<p class="ob-step-label">2 / 3 · 목표 정하기</p>' +
+        '<p class="ob-step-label">2 / 4 · 목표 정하기</p>' +
         '<h3>'+t.icon+' '+t.label+' 목표를 적어주세요</h3>' +
         '<div class="field"><label>최종 목표</label><input id="obTitle" type="text" placeholder="예: 3개월 안에 벤치프레스 100kg" value="'+escapeHtml(ob.title)+'"></div>' +
         '<div class="field"><label>목표 마감일 (선택)</label><input id="obDue" type="date" value="'+ob.dueDate+'"><p class="faint" id="obDday" style="margin:6px 0 0;">'+(ob.dueDate ? '오늘 기준 <b style="color:var(--red);">'+dDay(ob.dueDate)+'</b>' : '')+'</p></div>' +
@@ -1486,7 +1513,7 @@
         ? t.ms.map(function(m){ return '<div class="tp-item">☐ '+escapeHtml(m)+'</div>'; }).join('')
         : '<div class="tp-item">마일스톤은 목표 화면에서 직접 추가해요</div>';
       openModal(
-        '<p class="ob-step-label">3 / 3 · 마일스톤 미리보기</p>' +
+        '<p class="ob-step-label">3 / 4 · 마일스톤 미리보기</p>' +
         '<h3>이렇게 시작할게요</h3>' +
         '<p class="muted" style="margin:-8px 0 12px;"><b style="color:var(--ink);">'+escapeHtml(ob.title)+'</b></p>' +
         '<div class="tmpl-preview">'+preview+'</div>' +
@@ -1507,15 +1534,50 @@
             state.activeGoalId = goal.id;
             trackGoalCreated(goal, 'onboarding');
             await saveProfile();
-            closeModal();
-            enterApp();
-            toast('목표를 만들었어요 — 시작해봐요!');
-            var alreadySeenGuide = state.profile.settings.hasSeenGuide;
-            await maybeShowFirstLoginGuide();
-            if(alreadySeenGuide) showCommTourModal();
+            showObStep4(goal);
           });
         }
       );
+    }
+
+    async function finishOnboarding(msg){
+      closeModal();
+      enterApp();
+      toast(msg);
+      var alreadySeenGuide = state.profile.settings.hasSeenGuide;
+      await maybeShowFirstLoginGuide();
+      if(alreadySeenGuide) showCommTourModal();
+    }
+    function showObStep4(goal){
+      var html =
+        '<p class="ob-step-label">4 / 4 · 첫 기록</p>' +
+        '<h3>지금 뭘 하고 있었나요?</h3>' +
+        '<p class="muted" style="margin:-8px 0 18px;">한 줄이면 충분해요. 「'+escapeHtml(goal.title)+'」의 첫 기록이 돼요.</p>' +
+        '<textarea id="obFirstNote" maxlength="300" placeholder="예: 헬스장 등록하고 왔다" style="width:100%;min-height:96px;"></textarea>' +
+        '<div class="modal-actions"><button class="btn btn-primary btn-block" id="obFirstSave" type="button" disabled>기록하고 시작하기</button></div>' +
+        '<button class="land-login-link" id="obFirstSkip" type="button" style="width:100%;background:none;margin-top:12px;">나중에 적을게요</button>';
+      var busy = false;
+      var skip = function(){ if(busy) return; busy = true; finishOnboarding('목표를 만들었어요 — 시작해봐요!'); };
+      openModal(html, function(sheet){
+        var ta = sheet.querySelector('#obFirstNote');
+        var saveBtn = sheet.querySelector('#obFirstSave');
+        ta.addEventListener('input', function(){ saveBtn.disabled = !ta.value.trim(); });
+        saveBtn.addEventListener('click', async function(){
+          var text = ta.value.trim();
+          if(!text || busy) return;
+          busy = true; saveBtn.disabled = true;
+          var xpRes = null;
+          try{ xpRes = await saveQuickCheckin(text, goal, 'onboarding'); }
+          catch(e){ console.warn('first checkin failed:', e); } /* 저장이 실패해도 반드시 홈으로 진입(불변식 1) */
+          await finishOnboarding(xpRes ? '첫 기록까지 남겼어요 — 시작해봐요!' : '목표를 만들었어요 — 시작해봐요!');
+          if(xpRes && xpRes.leveledUp) showLevelUpBanner(levelForXP(xpRes.total));
+        });
+        sheet.querySelector('#obFirstSkip').addEventListener('click', skip);
+        setTimeout(function(){ try{ ta.focus(); }catch(e){} }, 50);
+      });
+      /* openModal이 onMount 뒤에 overlay.onclick을 덮어쓰므로 여기서 재지정: 배경 탭도 반드시 enterApp 경로로 */
+      var overlay = document.getElementById('modalOverlay');
+      overlay.onclick = function(e){ if(e.target === overlay) skip(); };
     }
   }
 
@@ -1583,8 +1645,8 @@
       openModal(
         '<p class="ob-step-label">3 / 4 · 캘린더 연동</p>' +
         '<h3>📅 마일스톤이 캘린더에 저절로</h3>' +
-        '<div class="mission-card"><div class="mi">📆</div><div><b>구글 캘린더 자동 연동</b><span>마감일과 마일스톤이 구글 캘린더에 자동으로 올라가요. 구글 계정과 연결된 삼성 캘린더 등에도 그대로 반영돼요</span></div></div>' +
-        '<p class="faint" style="margin:10px 0 0;">설정 탭에서 한 번만 연결하면 계속 자동으로 동기화돼요.</p>' +
+        '<div class="mission-card"><div class="mi">📆</div><div><b>구글 캘린더 연동</b><span>목표와 마일스톤 일정을 구글 캘린더에 보낼 수 있어요(항목별 📅 버튼)</span></div></div>' +
+        '<p class="faint" style="margin:10px 0 0;">설정 → 구글 캘린더 연동에서 한 번 연결하면 쓸 수 있어요.</p>' +
         '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack3" type="button">이전</button><button class="btn btn-primary" id="guideNext3" type="button">다음</button></div>',
         function(sheet){
           sheet.querySelector('#guideBack3').addEventListener('click', showGuideStep2);
@@ -1597,7 +1659,7 @@
       openModal(
         '<p class="ob-step-label">4 / 4 · 나만의 방식으로</p>' +
         '<h3>🔐 내 데이터는 내 방식대로</h3>' +
-        '<div class="mission-card"><div class="mi">🔑</div><div><b>API 커스텀 연결</b><span>구글 캘린더·AI 키를 내가 직접 연결해서 쓰는 구조라, 어떤 서비스가 연결되는지 항상 내가 통제할 수 있어요</span></div></div>' +
+        '<div class="mission-card"><div class="mi">🔑</div><div><b>직접 연결</b><span>내 구글 캘린더·AI 키를 설정에서 직접 연결해서 쓸 수 있어요</span></div></div>' +
         '<div class="mission-card"><div class="mi">🕶️</div><div><b>비공개 설정</b><span>목표와 지역 정보를 공개할지 나만 볼지 자유롭게 선택할 수 있어요</span></div></div>' +
         '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack4" type="button">이전</button><button class="btn btn-primary" id="guideFinish4" type="button">시작하기</button></div>',
         function(sheet){
@@ -1644,7 +1706,7 @@
         '<div class="mission-row"><span class="m-icon">🎯</span><div><b class="m-goal">무제한 목표 관리</b><span class="m-text"> · 활성 목표 개수 제한 없이</span></div></div>' +
         '<div class="mission-row"><span class="m-icon">🤖</span><div><b class="m-goal">맞춤 AI 코치 무제한</b><span class="m-text"> · 나만의 피드백 봇 자유롭게</span></div></div>' +
         '<div class="mission-row"><span class="m-icon">📊</span><div><b class="m-goal">30일/연간 심층 분석 리포트</b><span class="m-text"> · 더 긴 흐름을 한눈에</span></div></div>' +
-        '<div class="mission-row"><span class="m-icon">📅</span><div><b class="m-goal">캘린더 양방향 실시간 동기화</b><span class="m-text"> · 항상 최신 상태로</span></div></div>' +
+        (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<div class="mission-row"><span class="m-icon">📅</span><div><b class="m-goal">캘린더 양방향 실시간 동기화</b><span class="m-text"> · 항상 최신 상태로</span></div></div>' : '') +
       '</div>' +
       '<div class="pw-plan-row">' +
         '<div class="pw-plan"><div class="pw-unit">월간</div><div class="pw-price">8,900원</div><div class="pw-unit">/ 월</div></div>' +
@@ -2042,13 +2104,24 @@
 
   /* ============ 구글 캘린더 연동 ============ */
   var googleTokenClient = null;
+  /* 캘린더 사용 가능 판단을 한 곳에: 앱 상수 우선, 비면 사용자가 설정에 넣은 ID로 폴백 (A2/R5/F4) */
+  function calendarAvailable(appClientId, settings){
+    var app = ((appClientId || '') + '').trim();
+    var own = ((settings && settings.gcalClientId) || '').trim();
+    return !!(app || own);
+  }
+  function effectiveGcalClientId(){
+    var app = (GOOGLE_OAUTH_CLIENT_ID || '').trim();
+    if(app) return app;
+    return ((state.profile && state.profile.settings && state.profile.settings.gcalClientId) || '').trim();
+  }
   function nextDayISO(dateStr){
     var d = new Date(dateStr+'T00:00:00');
     d.setDate(d.getDate()+1);
     return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
   }
   function ensureGoogleTokenClient(){
-    var clientId = (state.profile.settings.gcalClientId||'').trim();
+    var clientId = effectiveGcalClientId();
     if(!clientId){ toast('먼저 Google OAuth 클라이언트 ID를 입력해주세요'); return null; }
     if(!window.google || !google.accounts || !google.accounts.oauth2){ toast('구글 로그인 스크립트를 불러오는 중이에요, 잠시 후 다시 시도해주세요'); return null; }
     if(!googleTokenClient || googleTokenClient.__clientId !== clientId){
@@ -2340,7 +2413,7 @@
               '<div class="ms-title'+(e.done?' done-text':'')+'">'+escapeHtml(e.title)+'</div>' +
               (e.kind==='ms' ? '<div class="faint" style="font-size:.72rem;">'+escapeHtml(e.goalTitle)+'</div>' : '') +
             '</div>' +
-            '<button class="icon-btn" data-calsync="'+e.kind+'" data-calsyncgid="'+e.goalId+'" data-calsyncmid="'+(e.msId||'')+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' +
+            (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsync="'+e.kind+'" data-calsyncgid="'+e.goalId+'" data-calsyncmid="'+(e.msId||'')+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' : '') +
           '</div>' +
         '</div>';
       }).join('')+'</div>'
@@ -2384,6 +2457,16 @@
     }
     return streak;
   }
+  /* PWA 앱 배지: 홈 화면 아이콘에 스트릭 일수 표시. 미지원 브라우저·비PWA에서는 no-op, 절대 throw하지 않는다 — 성장 백로그 P0 ⑥ */
+  function updateAppBadge(streak){
+    try{
+      if(typeof navigator === 'undefined' || !navigator || typeof navigator.setAppBadge !== 'function') return false;
+      var n = Number(streak) || 0;
+      if(n > 0){ navigator.setAppBadge(n).catch(function(){}); }
+      else if(typeof navigator.clearAppBadge === 'function'){ navigator.clearAppBadge().catch(function(){}); }
+      return true;
+    } catch(e){ return false; }
+  }
   var STREAK_FREEZE_MAX = 3;
   function maybeGrantStreakFreeze(){
     var sf = state.profile.settings.streakFreeze;
@@ -2411,12 +2494,26 @@
     return true;
   }
 
+  /* 온보딩 첫 기록용 체크인 저장 — 데이터 부수효과만 수행하고 홈 DOM(captureSave 핸들러)은 건드리지 않는다. 성장 백로그 P0 3.5 / 거시 A4 */
+  function buildCheckinRecord(text, goal){
+    return { id: newId(), type: 'note', text: text, startAt: nowISO(), endAt: nowISO(), createdAt: nowISO(), category: goal ? goal.category : null };
+  }
+  async function saveQuickCheckin(text, goal, source){
+    state.profile.records.unshift(buildCheckinRecord(text, goal));
+    var xpRes = awardXP(XP_RULES.checkin, '체크인');
+    maybeGrantStreakFreeze();
+    await saveProfile();
+    track('checkin', { first: state.profile.records.length===1, has_goal: !!goal, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l'), source: source || 'quick' });
+    return xpRes;
+  }
+
   /* ============ RENDER: HOME ============ */
   function renderHome(){
     refreshCustomFeedbackButtons();
     renderLevelBadge();
     renderTodayMissionCard();
     var streak = computeStreakDays();
+    updateAppBadge(streak);
     var badgeEl = document.getElementById('streakBadge');
     if(badgeEl) badgeEl.innerHTML = streak>0 ? streakBadgeHtml(streak) : '';
     var freezeEl = document.getElementById('streakFreezeBadge');
@@ -2438,7 +2535,7 @@
       return '<div class="goal-card" data-goalid="'+g.id+'">' +
         '<div class="goal-card-top"><h4>'+escapeHtml(g.title)+'</h4>' +
           '<div style="display:flex;align-items:center;gap:6px;">'+dd+
-            '<button class="icon-btn" data-calsyncgoal="'+g.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' +
+            (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsyncgoal="'+g.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' : '') +
           '</div>' +
         '</div>' +
         (g.topic ? '<div style="margin:-4px 0 8px;">'+topicPill(g.topic)+'</div>' : '') +
@@ -3921,7 +4018,7 @@
             resultLineHtml(m.result) +
           '</div>' +
           '<button data-msresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(m.result)+'</button>' +
-          '<button class="icon-btn" data-calsyncms="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' +
+          (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsyncms="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' : '') +
           (state.goalEditMode ? '<div class="ms-actions">' +
             (idx>0?'<button class="icon-btn" data-msup="1" aria-label="위로 이동">↑</button>':'') +
             (idx<goal.milestones.length-1?'<button class="icon-btn" data-msdown="1" aria-label="아래로 이동">↓</button>':'') +
@@ -6514,11 +6611,16 @@
     if(!settings.gcalSync) settings.gcalSync = { goals:{}, ms:{}, imported:{} };
     var gcalIdInput = document.getElementById('gcalClientIdInput');
     gcalIdInput.value = settings.gcalClientId || '';
+    var gcalAppIdSet = !!(GOOGLE_OAUTH_CLIENT_ID||'').trim();
+    var gcalIdField = gcalIdInput.closest('.field');
+    if(gcalIdField) gcalIdField.style.display = gcalAppIdSet ? 'none' : '';
+    var gcalIdHint = gcalIdField && gcalIdField.nextElementSibling;
+    if(gcalIdHint && gcalIdHint.tagName==='P') gcalIdHint.style.display = gcalAppIdSet ? 'none' : '';
     var gcalConnected = !!(state.googleToken && state.googleToken.expiresAt > Date.now());
     document.getElementById('gcalStatusBox').innerHTML = gcalConnected
       ? '<p class="faint" style="margin:0;color:var(--sage);font-weight:700;">✅ 연결됨</p>'
       : '<p class="faint" style="margin:0;">아직 연결되지 않았어요.</p>';
-    document.getElementById('gcalActionRow').style.display = settings.gcalClientId ? '' : 'none';
+    document.getElementById('gcalActionRow').style.display = effectiveGcalClientId() ? '' : 'none';
     document.getElementById('gcalSyncRow').style.display = gcalConnected ? 'flex' : 'none';
     gcalIdInput.onchange = async function(){
       settings.gcalClientId = gcalIdInput.value.trim();

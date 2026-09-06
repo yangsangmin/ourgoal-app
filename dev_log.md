@@ -655,6 +655,72 @@
 - **검증 결과**: `/api/track` GET 405 · `events` 테이블 존재(anon select 200 []) · `/api/vapid-public-key` 200(생성한 공개키와 일치) · `/api/push-dispatch` 비밀값 없이 401, 있으면 200 `{checked:0,sent:0,removed:0,errors:0}` · `/api/push-subscribe` DELETE 왕복 200 · GitHub Actions `push-dispatch.yml` 수동 실행 success(그 전까지 5분마다 failure). 구독은 아직 0건 — 사용자가 앱 설정에서 알림을 켜면 구독이 생성되고 이후 `notification_sent`/`notification_clicked` 이벤트가 쌓인다.
 ---
 
+## [2026-09-06 21:45] 공유 링크 OG 메타태그 (성장 백로그 P0 실행순서 4)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~)의 2번째 항목. ① 조직개발 DEV-1(PR #47) → ② 이 항목 → ③ PWA 앱 배지 → ④ 온보딩 첫 체크인 → ⑤ CSV 내보내기.
+- **목표**: 공유·초대 링크가 카카오톡·트위터·슬랙에 붙을 때 제목·설명·이미지 미리보기가 나오게 한다(지금은 `<title>`과 description 메타만 있어 이미지 없는 밋밋한 카드).
+- **수정/실행 내역**: `index.html` `<head>`의 description 메타 바로 뒤에 OG 태그 9개(`og:type/site_name/title/description/url/image/image:width/height/locale`)와 트위터 카드 4개(`summary` 타입 — 이미지가 정사각 아이콘이라 `summary_large_image` 대신 선택) 추가. 이미지는 기존 `icons/icon-512.png` 절대 URL(새 에셋 없음). 문구는 기존 description 톤 유지("목표를 세우고, 매일 한 줄 기록하고, 성장을 나누는 아워골"). SPA라 정적 메타 1세트(사용자별 동적 OG는 서버 렌더가 필요해 범위 밖).
+- **발생한 문제 및 해결**: TASK-06(#43)의 `SHARE_DOMAIN` 상수가 아직 main에 없어 URL을 직접 기재 — 커스텀 도메인 연결 시 이 태그 2곳(`og:url`·`og:image`)과 상수를 함께 바꾸면 됨. **감사 AUD-3 지적 반영(보완 커밋)**: 512×512 정사각 아이콘은 카카오톡(2:1 권장)·트위터에서 소형/크롭 썸네일이라 클릭률 목표에 부족 → 앱 팔레트(코랄 #FF4F64·앰버 #FF9F1C)와 Noto Sans KR로 1200×630 `icons/og-image.jpg`(41KB)를 브라우저 캔버스로 생성해 추가하고 `twitter:card`를 `summary_large_image`로, `og:image:alt`/`twitter:image:alt` 추가. 새 에셋 1개(아이콘 폴더), 디자인 규칙 변경 없음.
+- **검증 결과**: `new Function()` 문법 통과, `<style>` 중괄호 균형, `node scripts/smoke-test.js` 44/44, 충돌 마커 0건. 로컬 static 서버에서 13개 메타가 그대로 렌더됨을 JS로 확인, 콘솔은 변경 전 기준선과 동일한 404 3건(로컬 서버에 /api·Supabase 리소스 없음) 외 신규 에러 0. 실제 카카오톡 미리보기는 병합·배포 후 https://developers.kakao.com/tool/debugger/sharing 에서 URL을 넣어 캐시 갱신하며 확인 — 사용자 필요 작업으로 PR에 기재.
+---
+
+## [2026-09-06 22:27] `.gitattributes` — dev_log.md에 merge=union (형제 PR append 충돌 자동 해결, 감사 7회 반복 지적)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~23:16) 마지막 작업. 감사 AUD-5~11이 7회 반복 지적한 "모든 PR이 dev_log.md 끝에 덧붙여 서로 충돌"을 도구 수준에서 해소.
+- **목표**: 이번 사이클 PR 9개를 순서대로 병합할 때 dev_log.md 충돌을 수동으로 풀지 않게 한다.
+- **해결 방식·타당성**: `dev_log.md merge=union` 1줄. union 드라이버는 양쪽 추가분을 모두 남기므로 순수 append 파일에 안전하고, 같은 줄을 다르게 고친 경우만 수동 확인이 남는다. `scripts/smoke-test.js`는 코드 파일이라 union을 쓰지 않는다(잘못 합쳐지면 문법 오류) — 그쪽 충돌은 병합 시 컨트롤타워가 수동 해결. GitHub 웹 병합이 이 속성을 존중하는지는 미확인이므로 로컬 `git merge origin/main` 경로에서 효과를 본다.
+- **검증 결과**: `git check-attr merge dev_log.md` → `merge: union`. 코드 무변경, 스모크 44/44. 실제 효과는 첫 병합 뒤 두 번째 PR을 로컬 merge할 때 확인.
+---
+
+## [2026-09-06 21:18] 조직개발 DEV-1 — 대체 모드 규칙·리뷰어 선행(draft PR)·불변식 테스트·§5 개인정보 경계 (근거 AUD-1)
+- **사이클 계획(8원칙)**: 사용자 지시 "앞으로 2시간 자체 판단으로 계속 진행"(21:16 시작). 순서: ① 이 조직개발(감사 AUD-1이 "지금 반영" 권고한 구조 결함 2건) → ② P0 ④ OG 메타태그 → ③ P0 ⑥ PWA 앱 배지 → ④ P0 3.5 온보딩 마지막 단계 첫 체크인 → ⑤ 여유 시 P0 ⑪ CSV 내보내기. 열린 PR #40·#42·#43과 겹치는 알림 문구·방해금지·리캡 알림은 제외. 항목마다 별도 브랜치·PR, 병합은 사용자.
+- **목표**: 감사 AUD-1의 개선점 5개 중 구조적으로 확정된 2개(커스텀 에이전트 미로드 시 대체 모드 규칙 부재, /work가 리뷰어 통과 전 PR 오픈을 허용)를 지금 반영하고, 나머지 3개(불변식 테스트 선행, researcher 위임·scratchpad 복구, §5 판단 명시)는 비용이 낮은 규칙 문장이라 함께 넣는다. 커스텀 `org-developer`가 이 세션에 로드되지 않아 컨트롤타워가 대체 모드로 직접 수행(§3-1 규칙 그대로 적용한 첫 사례).
+- **수정/실행 내역**: `docs/org/ORG.md` — §3-1 대체 모드 절 신설(5개 규칙), §4에 기본값 3행 추가(같은 인프라 항목 한 PR 묶음·불변식 테스트 선행·M 이상 draft PR), §5-2 개인정보 경계 명시. `.claude/skills/work/SKILL.md` — §0 시작 시각 실기록·대체 모드 판단, §2 불변식·scratchpad 선기록·researcher 위임, §5-5 리뷰어 결과 전 진행 금지, §6 `--draft` → `gh pr ready` 흐름, §8 보고 양식에 모드·§5 판단 항목. `.claude/agents/reviewer.md` — 검토 항목 9(DB 제약·남용 완화)·10(가입·생성 경로 누락) 추가. CLAUDE.md §10은 변경 불필요(ORG.md가 단일 출처). 노션 조직 개발 로그 DEV-1 기록, 감사 AUD-1 `조직개발 반영 = 부분반영`(PR 병합 시 반영).
+- **발생한 문제 및 해결**: `/develop-org` 스킬은 감사 표본 1~2건이면 사용자에게 진행 여부를 묻도록 돼 있으나, 사용자가 이미 "감사 권고 2건 처리"를 지시하고 2시간 자율 진행을 승인했으므로 그 지시를 답으로 간주하고 진행. 코드(index.html·api·sw.js) 변경 없음.
+- **검증 결과**: 앱 코드 무변경(`git diff --stat`에 조직 파일 3개 + dev_log만), `node scripts/smoke-test.js` 44/44, 충돌 마커 0건, 에이전트 frontmatter 유지. 규칙 자체의 효과는 다음 감사(AUD-2~)의 1회 통과율·리드타임으로 재검증. **보완 커밋(21:36, AUD-2·AUD-3 반영)**: (1) ORG.md §3 S 기능구현 행이 "→ reviewer"인데 /work §6은 "S는 리뷰어 없음"이라 모순 → S는 스모크(불변식)+auditor 교차검증, 같은 결함 3건 반복 시 reviewer 필수로 승격하도록 통일. (2) 타임라인 추정치 3회 반복 지적 → /work §7에 `date`·`git log`·`gh createdAt` 실제 값 복사 의무, auditor.md에 서버 시각 기준 리드타임 계산·5분 이상 불일치 표기 규칙 추가. dev_log 제목 시각도 실제 커밋 시각으로 정정. **보완 커밋 2(21:48, AUD-4·AUD-5 반영)**: (3) 설정에 이미 있던 "체크인 전체 내보내기"(PR #22)를 모른 채 PR #50을 중복 구현 → /work §1에 "착수 전 기존 코드 존재 확인(grep + 병합 PR 대조)" 필수 단계, ORG.md §4 기본값 1행, reviewer 검토 항목 11(기존 구현 중복)·12(호출 지점 전제 확인 — AUD-4의 renderHome 전제 오류) 추가.
+---
+
+## [2026-09-06 22:13] 버그수정 — 체크인 분야(category)가 Supabase에 저장·복원되지 않던 결함 (감사 AUD-5 발견)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~23:16) 10번째 작업. 남은 시간에 검색(P0 9, 새 UI 필요)을 급하게 넣는 대신, 감사가 발견한 실제 데이터 결함(S 버그수정, UI 변경 0)을 처리한다.
+- **목표**: 기록 카드에서 고른 분야가 새로고침·다른 기기에서도 유지되고, 분야별 리포트·CSV·히트맵이 정확해진다.
+- **문제·본질**: `records[].category`는 체크인 생성(2471)·편집(4774)에서 채워지지만 `saveProfile`의 `checkins` upsert 행(1273)과 `loadProfile` 매핑(1230)에 `category`가 없어 서버에 한 번도 저장된 적이 없다. 본질: 분야 필드가 2026-09-04 리포트 기능 때 클라이언트에만 추가되고 스키마·동기화 계층은 따라가지 않았다.
+- **해결 방식·타당성**: upsert 행과 매핑에 `category: r.category || null` 1필드씩 추가 + `docs/sql/2026-09-06-checkins-category.sql`(`add column if not exists`). 컬럼이 아직 없는 DB에서 upsert가 "category" 오류로 실패하면 기존 형식으로 1회 재시도해 **SQL 실행 전에도 기록 저장이 끊기지 않게** 한다(배포 순서 무관). 기존 행은 null 유지. UI·CSS 변경 0, 개인정보 항목 확대 아님(이미 클라이언트에 있던 값의 동기화).
+- **검증 결과**: 문법 통과, `node scripts/smoke-test.js` 44/44, index.html 삭제 줄 3(전부 치환), 마커 0. 실제 저장·복원은 SQL 실행 후 프로덕션에서 기록 1건 생성 → 새로고침으로 확인 권장. 열린 PR #49가 `saveProfile` 첫머리(1246)를 만지지만 이 변경(1272~)과 줄이 떨어져 있어 자동 병합 예상.
+---
+
+## [2026-09-06 21:25] PWA 앱 배지로 스트릭 일수 표시 (성장 백로그 P0 실행순서 6)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~) 3번째 항목. ① DEV-1(#47) → ② OG 메타(#48) → ③ 이 항목 → ④ 온보딩 첫 체크인 → ⑤ CSV 내보내기.
+- **목표**: 홈 화면에 설치된 PWA 아이콘에 현재 스트릭 일수를 배지로 표시해 앱을 열지 않아도 연속 기록이 보이게 한다. 미지원 브라우저(iOS Safari 비PWA 등)·비설치 환경에서는 아무 일도 하지 않아야 한다.
+- **착수 전 불변식(ORG.md §4 신규 규칙 첫 적용)**: (1) Badging API가 없거나 `navigator`가 없어도 절대 throw하지 않는다 (2) 스트릭>0이면 `setAppBadge(n)` (3) 0·음수·비숫자면 `clearAppBadge()` (4) 로그아웃 시 배지 제거. 불변식 1~3은 스모크 테스트로 먼저 고정.
+- **수정/실행 내역**: `index.html` — `computeStreakDays` 바로 뒤에 `updateAppBadge(streak)` 추가(try/catch, 기능 감지, `.catch` 부착), `renderHome`의 스트릭 계산 직후 호출(홈 렌더 = 체크인·앱 진입마다 갱신), 로그아웃 핸들러에 `updateAppBadge(0)`. `scripts/smoke-test.js` — 샌드박스에 `navigator` 스텁(`setAppBadge`/`clearAppBadge`)과 `getNavigator/setNavigator` 훅, `updateAppBadge` 추출, 테스트 3건. 새 UI 요소·CSS 없음.
+- **발생한 문제 및 해결**: 감사(AUD) 지적 — `renderHome`은 탭 전환·앱 진입에서만 호출돼 홈 체크인·기록 모달 저장 직후에는 배지가 갱신되지 않는 전제 오류(리뷰어를 생략한 S 작업의 첫 실증 비용). 보완: 기록이 바뀌는 모든 경로가 지나는 `saveProfile()` 첫머리에서 `updateAppBadge(computeStreakDays())` 호출, 로그아웃은 `signOut()` 전에 배지 제거, PR 본문의 iOS 권한 문구 정정.
+- **검증 결과**: `new Function()` 문법 통과, `node scripts/smoke-test.js` 47/47(기존 44 + 신규 3), 충돌 마커 0건, index.html 삭제 줄 0. 브라우저 실동작은 로그인 후 홈 렌더에서만 일어나고 로컬 프리뷰에 로그인 세션이 없어 스모크(불변식 3건)로 대체 — 병합 후 PWA 설치 기기에서 체크인 뒤 아이콘 배지 확인 권장.
+---
+
+## [2026-09-06 21:37] 온보딩 4단계 "첫 기록" — 가입 60초 내 첫 체크인 유도 (성장 백로그 P0 3.5 / 거시 A4)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~) 5번째 항목. ① DEV-1(#47) → ② OG(#48) → ③ 앱 배지(#49) → ④ CSV(#50, 감사에서 기존 기능 중복 확인돼 닫음) → ⑤ 이 항목. 배정표대로 researcher(삽입 지점 표) → implementer(격리 worktree) → reviewer 순으로 실행(대체 모드: general-purpose + 역할 프롬프트). 컨트롤타워는 탐색 읽기를 하지 않고 삽입 지점 표만 받아 설계했다(DEV-1 규칙 첫 적용, 컨텍스트 압축 0회).
+- **목표**: 신규 가입자가 목표를 만든 직후 가이드 5개 모달을 지나기 전에 "한 줄 기록"을 남기게 해 가입→첫 체크인 전환율(목표 ≥60%)을 올린다.
+- **착수 전 불변식**: (1) 건너뛰기·배경 탭·저장 어느 경로로도 `enterApp()` 도달 (2) 저장은 기록 1건·XP 1회 (3) 빈 텍스트 저장 불가 (4) `captureSave` 핸들러·CSS·1~3단계 불변(라벨 분모만 4) (5) `buildCheckinRecord` 스모크 고정.
+- **수정/실행 내역**: `index.html` — 라벨 3곳 `/ 4`, `buildCheckinRecord`/`saveQuickCheckin` 헬퍼(`maybeApplyStreakFreeze` 뒤), `startOnboarding` 안 `finishOnboarding`(기존 후속 6줄 이동)/`showObStep4`(textarea + [기록하고 시작하기] + "나중에 적을게요", 배경 탭은 `overlay.onclick` 재지정으로 건너뛰기와 동일), `#obFinish` 핸들러 6줄 → `showObStep4(goal)`. `scripts/smoke-test.js` — `uid·newId·nowISO·buildCheckinRecord` 추출, 샌드박스 `window` shim, 테스트 2건.
+- **발생한 문제 및 해결**: 리뷰어 조건부 통과 — (1) 저장 중 예외 시 `busy` 가드 때문에 탈출 경로 0개 → try/catch로 감싸 실패해도 `finishOnboarding` 도달(불변식 1 코드로 보장) (2) dev_log·4블록 4번 미기입 → 이 기록과 PR 본문 보완 (3) `scripts/smoke-test.js`가 열린 #49와 인접 줄 충돌 → 병합 순서 주의로 PR에 명시. 구현자는 static 서버 포트 하드코딩으로 브라우저 검증을 생략했고 컨트롤타워가 대신 수행.
+- **검증 결과**: 문법 통과, `node scripts/smoke-test.js` 46/46(기존 44 + 2), 삭제 줄 9(라벨 3 + 이동 6, 전부 의도), `captureSave` 무변경, 마커·`__dbg` 0. 브라우저(로컬 static 서버, 임시 `__dbg` 훅으로 온보딩 강제 실행 후 제거): 1→2→3→4단계 라벨 정상, 빈 텍스트 저장 버튼 disabled, 입력 후 저장 → 기록 1건·XP +10(1회)·`appShell.active`·가이드 모달로 이어짐, 건너뛰기 → 기록 0·홈 진입·가이드, 배경 탭 → 기록 0·홈 진입·가이드. 리뷰어 조건부 통과 → 권고 반영 후 재검증(스모크 46/46).
+---
+
+## [2026-09-06 21:54] 검증 도구 개선 — static 서버 포트 인자·jpg MIME, 스모크 샌드박스 브라우저 스텁 + 계측 게이트 불변식 테스트 (감사 AUD-1·AUD-6 반영)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~) 7번째 항목. 감사 로그가 3회 반복 지적한 "DOM 스텁 미비로 불변식을 테스트로 못 잡음"(AUD-2·4·6, §8 승격 기준 도달)과 "구현자가 static 서버 포트 하드코딩 때문에 브라우저 검증을 컨트롤타워에 넘김"(AUD-6)을 도구 수준에서 해소. 앱 코드(index.html) 무변경.
+- **목표**: (1) 구현 서브에이전트가 별도 포트로 static 서버를 띄워 스스로 브라우저 검증할 수 있게 한다 (2) localStorage·location에 의존하는 게이트 로직을 스모크 테스트로 고정할 수 있게 한다 — 함수 계약(first-touch·오가닉 미저장·storage 예외 무해)을 고정하기 위함. 단 AUD-1의 실제 결함(호출 지점이 하루 1회 게이트 안에 있던 순서 문제)은 부트 블록이 이름 있는 함수로 분리돼야 테스트 가능하므로 이번 범위 밖(AUD-8 지적) — index.html PR들 병합 후 후속.
+- **수정/실행 내역**: `scripts/static-server.js` — 포트를 `PORT` 환경변수 또는 첫 인자로 받음(기본 8787), `.jpg/.jpeg/.webp` MIME 추가(OG 이미지 로컬 확인용). `scripts/smoke-test.js` — 샌드박스에 `window`·`location`·`localStorage`(Map 기반) 스텁, `uid·newId·nowISO·getSid·getAttribution` 추출, `setSearch/getStorage` 훅, 불변식 테스트 3건(sid 안정성·보존, first-touch 유지·`goal` 제외·`landed_at`, 오가닉 미저장·storage 예외 시 빈 객체).
+- **발생한 문제 및 해결**: 없음. `scripts/smoke-test.js`의 `FN_NAMES`·exports 줄은 열린 #49·#51·#52와 인접 충돌 — 병합 순서에서 마지막에 두거나 컨트롤타워가 정리.
+- **검증 결과**: `node scripts/smoke-test.js` 47/47(기존 44 + 3), `PORT=8790`·인자 `8791` 양쪽으로 서버 기동·200 응답 확인, index.html 무변경.
+---
+
+## [2026-09-06 22:01] 캘린더 가용성 게이팅 — 앱 레벨 OAuth 클라이언트 ID 상수·📅 버튼/Pro 혜택 조건부·가이드 문구 정직화 (거시 A2/R5/F4, 성장 백로그 P0 8.5)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~) 8번째(마지막) 항목. ① DEV-1(#47) → ② OG(#48) → ③ 앱 배지(#49) → ④ CSV(#50, 중복으로 닫음) → ⑤ 온보딩 첫 기록(#51) → ⑥ 신고/자동 숨김(#52) → ⑦ 검증 도구(#53) → ⑧ 이 항목. 배정: researcher(gcal 코드·📅 진입점 3곳·페이월·가이드 문구·hunk 대조) → implementer(격리 worktree) → reviewer.
+- **목표**: "동작하지 않는 혜택을 판매"하는 구조적 모순 해소. 캘린더 사용 가능 여부를 한 함수로 판단하고, 불가능하면 📅 버튼·Pro 혜택 행을 보이지 않게 하며, 앱 레벨 클라이언트 ID(개발자 1회 등록)로 사용자가 자기 ID를 만들 필요가 없게 한다.
+- **착수 전 불변식**: (1) 빈 값·공백 false, 상수 또는 사용자 값 하나라도 있으면 true (2) 유효 ID = 상수 우선·사용자 폴백 (3) 불가면 📅 0개·페이월 행 3개, 가능하면 기존과 동일 (4) 기존 사용자 동작 불변 (5) CSS·HTML 구조 무변경·삭제는 치환뿐 (6) `calendarAvailable` 스모크 고정.
+- **수정/실행 내역**: `index.html` — `GOOGLE_OAUTH_CLIENT_ID = ''` 상수(sb 생성 직후), `calendarAvailable(appClientId, settings)`·`effectiveGcalClientId()`(`googleTokenClient` 선언 뒤), `ensureGoogleTokenClient`가 유효 ID 사용, 📅 버튼 3곳(홈 카드·일정 탭 일자 상세·마일스톤 행)과 페이월 캘린더 행을 3항식으로 조건부, 설정의 연결 버튼 표시를 유효 ID 기준으로 + 상수가 채워지면 사용자 ID 입력 `.field`·안내문 `display:none`, 온보딩 가이드 3/4·4/4 과장 문구 3곳을 사실대로("목표와 마일스톤 일정을 구글 캘린더에 보낼 수 있어요(항목별 📅)", "직접 연결 옵션"). `scripts/smoke-test.js` 테스트 2건. `docs/sprint/STATUS.md` 대기 중 사용자 작업 1줄(GCP 등록 후 상수 입력).
+- **발생한 문제 및 해결**: 없음. `defaultSettings` 1080은 #52와 충돌하므로 손대지 않았고(`gcalClientId` 기본값 유지), `renderHome`은 2437 한 줄만 바꿔 #40·#49·#51과의 충돌을 피함.
+- **검증 결과**: 문법 통과, `node scripts/smoke-test.js` 46/46(기존 44 + 2), 삭제 줄 9(전부 치환), 📅 버튼 문자열 카운트 동일, 마커·`__dbg` 0. 브라우저(로컬 static 서버, 임시 훅으로 가짜 프로필 주입 후 제거): ID 없음 → 홈 📅 0개·페이월 행 3개·설정 연결 버튼 숨김·입력 노출 / 사용자 ID → 📅 1개·행 4개·입력 노출 / 앱 상수 → 📅 1개·행 4개·입력·안내문 숨김·연결 버튼 노출 / 상수 비우면 다시 0개. 콘솔은 가짜 프로필로 인한 AI·Supabase API 400/404 외 신규 예외 없음. 리뷰어 조건부 통과(차단 0, 버튼·페이월 문자열과 정적 HTML이 main과 바이트 동일 확인) → 권고 반영: 가이드 4/4 문구를 상수 유무 양쪽에서 참인 표현으로, STATUS.md에 PR 번호 명시, 4블록 채움. 후속 백로그: 페이월 기존 문구 "양방향 실시간 동기화"는 실제(항목별 수동 반영)와 달라 정직화 필요.
+---
+
 ## [2026-09-06 21:44] 커뮤니티 신고/자동 숨김 — content_reports + report_content RPC + 피드·댓글 신고 버튼 (성장 백로그 P0 실행순서 5)
 - **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~) 6번째 항목. ① DEV-1(#47) → ② OG(#48) → ③ 앱 배지(#49) → ④ CSV(#50, 중복으로 닫음) → ⑤ 온보딩 첫 기록(#51) → ⑥ 이 항목. 배정: researcher(렌더·데이터 계층·PR #41 SQL 원문·hunk 대조) → implementer(격리 worktree) → reviewer. 컨트롤타워는 삽입 지점 표만 받아 설계.
 - **목표**: 실제 피드·댓글에 대한 최소 안전망 — 타인 글 신고, 3건 누적 시 자동 숨김(사람 검토는 별도), 신고자 중복 방지.
