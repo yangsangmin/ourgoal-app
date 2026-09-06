@@ -5,6 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>아워골</title>
 <meta name="description" content="목표를 세우고, 기록하고, 성장을 나누는 아워골">
+<!-- 공유 링크 미리보기(카카오톡·트위터·슬랙 등 OG 크롤러용, 성장 백로그 P0 ④) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="아워골">
+<meta property="og:title" content="아워골 — 나만의 목표 달성 메이트">
+<meta property="og:description" content="목표를 세우고, 매일 한 줄 기록하고, 성장을 나누는 아워골">
+<meta property="og:url" content="https://ourgoal-app.vercel.app/">
+<meta property="og:image" content="https://ourgoal-app.vercel.app/icons/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="아워골 — 나만의 목표 달성 메이트">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="아워골 — 나만의 목표 달성 메이트">
+<meta name="twitter:description" content="목표를 세우고, 매일 한 줄 기록하고, 성장을 나누는 아워골">
+<meta name="twitter:image" content="https://ourgoal-app.vercel.app/icons/og-image.jpg">
+<meta name="twitter:image:alt" content="아워골 — 나만의 목표 달성 메이트">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#FF4F64">
 <link rel="icon" href="/icons/icon-192.png" type="image/png">
@@ -1227,7 +1243,7 @@
       };
     });
     var records = (recsRes.data||[]).map(function(r){
-      return { id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at };
+      return { id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at, category: r.category || null };
     });
     if(ures.isNew){
       track('signup', Object.assign({ method: provider || 'email' }, getAttribution()));
@@ -1243,6 +1259,7 @@
 
   async function saveProfile(){
     if(!state.profile) return;
+    updateAppBadge(computeStreakDays()); /* 기록이 바뀌는 모든 경로(홈 체크인·기록 모달·온보딩)가 여기를 지나므로 배지는 여기서 갱신 */
     var uidVal = state.profile.id;
     try{
       await sb.from('users').upsert({
@@ -1269,9 +1286,14 @@
 
       var recs = state.profile.records;
       if(recs.length){
-        await sb.from('checkins').upsert(recs.map(function(r){
-          return { id:r.id, user_id:uidVal, type:r.type, text:r.text, start_at:r.startAt, end_at:r.endAt };
-        }));
+        var recRows = recs.map(function(r){
+          return { id:r.id, user_id:uidVal, type:r.type, text:r.text, start_at:r.startAt, end_at:r.endAt, category: r.category || null };
+        });
+        var upRes = await sb.from('checkins').upsert(recRows);
+        if(upRes && upRes.error && /category/i.test(upRes.error.message || '')){
+          /* checkins.category 컬럼이 아직 없는 DB(docs/sql/2026-09-06-checkins-category.sql 미실행)에서는 기존 형식으로 재시도해 기록 저장이 끊기지 않게 한다 */
+          await sb.from('checkins').upsert(recRows.map(function(x){ var y = Object.assign({}, x); delete y.category; return y; }));
+        }
       }
       var recIds = recs.map(function(r){ return r.id; });
       var delRecs = sb.from('checkins').delete().eq('user_id', uidVal);
@@ -1367,6 +1389,7 @@
   });
 
   document.getElementById('logoutBtn').addEventListener('click', async function(){
+    updateAppBadge(0); /* signOut 실패 여부와 무관하게 아이콘에 이전 사용자의 스트릭이 남지 않도록 먼저 지운다 */
     await sb.auth.signOut();
     state.profile = null;
     document.getElementById('appShell').classList.remove('active');
@@ -2415,6 +2438,16 @@
     }
     return streak;
   }
+  /* PWA 앱 배지: 홈 화면 아이콘에 스트릭 일수 표시. 미지원 브라우저·비PWA에서는 no-op, 절대 throw하지 않는다 — 성장 백로그 P0 ⑥ */
+  function updateAppBadge(streak){
+    try{
+      if(typeof navigator === 'undefined' || !navigator || typeof navigator.setAppBadge !== 'function') return false;
+      var n = Number(streak) || 0;
+      if(n > 0){ navigator.setAppBadge(n).catch(function(){}); }
+      else if(typeof navigator.clearAppBadge === 'function'){ navigator.clearAppBadge().catch(function(){}); }
+      return true;
+    } catch(e){ return false; }
+  }
   var STREAK_FREEZE_MAX = 3;
   function maybeGrantStreakFreeze(){
     var sf = state.profile.settings.streakFreeze;
@@ -2461,6 +2494,7 @@
     renderLevelBadge();
     renderTodayMissionCard();
     var streak = computeStreakDays();
+    updateAppBadge(streak);
     var badgeEl = document.getElementById('streakBadge');
     if(badgeEl) badgeEl.innerHTML = streak>0 ? streakBadgeHtml(streak) : '';
     var freezeEl = document.getElementById('streakFreezeBadge');
