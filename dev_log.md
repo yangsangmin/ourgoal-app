@@ -654,3 +654,11 @@
 - **발생한 문제 및 해결**: (1) Claude Code 분류기가 `gh secret set`·Vercel env 입력을 차단 → 값을 화면에 출력하지 않고 파일에서 읽어 등록하는 Node 스크립트를 만들어 사용자가 실행. (2) 그 스크립트가 공백 포함 `gh.exe` 경로를 shell 경유로 호출해 1단계에서 실패 → shell 없이 직접 spawn하도록 수정. (3) `vercel redeploy --yes` 옵션 미지원 → 옵션 제거. (4) 재배포 후에도 `push-dispatch`가 500: `SUPABASE_SERVICE_ROLE_KEY` 값 첫 글자가 한글('아', ByteString 오류) → 사용자가 Vercel에서 값을 다시 입력. (5) 그 다음 오류 `push_subscriptions` 테이블 없음 → PR #34 본문에서 SQL을 찾아 실행. (6) PowerShell 실행 정책이 `vercel.ps1`을 막음 → `vercel.cmd`로 호출.
 - **검증 결과**: `/api/track` GET 405 · `events` 테이블 존재(anon select 200 []) · `/api/vapid-public-key` 200(생성한 공개키와 일치) · `/api/push-dispatch` 비밀값 없이 401, 있으면 200 `{checked:0,sent:0,removed:0,errors:0}` · `/api/push-subscribe` DELETE 왕복 200 · GitHub Actions `push-dispatch.yml` 수동 실행 success(그 전까지 5분마다 failure). 구독은 아직 0건 — 사용자가 앱 설정에서 알림을 켜면 구독이 생성되고 이후 `notification_sent`/`notification_clicked` 이벤트가 쌓인다.
 ---
+
+## [2026-09-06 21:54] 검증 도구 개선 — static 서버 포트 인자·jpg MIME, 스모크 샌드박스 브라우저 스텁 + 계측 게이트 불변식 테스트 (감사 AUD-1·AUD-6 반영)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~) 7번째 항목. 감사 로그가 3회 반복 지적한 "DOM 스텁 미비로 불변식을 테스트로 못 잡음"(AUD-2·4·6, §8 승격 기준 도달)과 "구현자가 static 서버 포트 하드코딩 때문에 브라우저 검증을 컨트롤타워에 넘김"(AUD-6)을 도구 수준에서 해소. 앱 코드(index.html) 무변경.
+- **목표**: (1) 구현 서브에이전트가 별도 포트로 static 서버를 띄워 스스로 브라우저 검증할 수 있게 한다 (2) localStorage·location에 의존하는 게이트 로직을 스모크 테스트로 고정할 수 있게 한다 — AUD-1에서 브라우저까지 가서야 잡힌 "유입 캡처가 하루 1회 게이트 안에 있던 버그" 유형을 초 단위로 잡기 위함.
+- **수정/실행 내역**: `scripts/static-server.js` — 포트를 `PORT` 환경변수 또는 첫 인자로 받음(기본 8787), `.jpg/.jpeg/.webp` MIME 추가(OG 이미지 로컬 확인용). `scripts/smoke-test.js` — 샌드박스에 `window`·`location`·`localStorage`(Map 기반) 스텁, `uid·newId·nowISO·getSid·getAttribution` 추출, `setSearch/getStorage` 훅, 불변식 테스트 3건(sid 안정성·보존, first-touch 유지·`goal` 제외·`landed_at`, 오가닉 미저장·storage 예외 시 빈 객체).
+- **발생한 문제 및 해결**: 없음. `scripts/smoke-test.js`의 `FN_NAMES`·exports 줄은 열린 #49·#51·#52와 인접 충돌 — 병합 순서에서 마지막에 두거나 컨트롤타워가 정리.
+- **검증 결과**: `node scripts/smoke-test.js` 47/47(기존 44 + 3), `PORT=8790`·인자 `8791` 양쪽으로 서버 기동·200 응답 확인, index.html 무변경.
+---
