@@ -654,3 +654,10 @@
 - **발생한 문제 및 해결**: (1) Claude Code 분류기가 `gh secret set`·Vercel env 입력을 차단 → 값을 화면에 출력하지 않고 파일에서 읽어 등록하는 Node 스크립트를 만들어 사용자가 실행. (2) 그 스크립트가 공백 포함 `gh.exe` 경로를 shell 경유로 호출해 1단계에서 실패 → shell 없이 직접 spawn하도록 수정. (3) `vercel redeploy --yes` 옵션 미지원 → 옵션 제거. (4) 재배포 후에도 `push-dispatch`가 500: `SUPABASE_SERVICE_ROLE_KEY` 값 첫 글자가 한글('아', ByteString 오류) → 사용자가 Vercel에서 값을 다시 입력. (5) 그 다음 오류 `push_subscriptions` 테이블 없음 → PR #34 본문에서 SQL을 찾아 실행. (6) PowerShell 실행 정책이 `vercel.ps1`을 막음 → `vercel.cmd`로 호출.
 - **검증 결과**: `/api/track` GET 405 · `events` 테이블 존재(anon select 200 []) · `/api/vapid-public-key` 200(생성한 공개키와 일치) · `/api/push-dispatch` 비밀값 없이 401, 있으면 200 `{checked:0,sent:0,removed:0,errors:0}` · `/api/push-subscribe` DELETE 왕복 200 · GitHub Actions `push-dispatch.yml` 수동 실행 success(그 전까지 5분마다 failure). 구독은 아직 0건 — 사용자가 앱 설정에서 알림을 켜면 구독이 생성되고 이후 `notification_sent`/`notification_clicked` 이벤트가 쌓인다.
 ---
+
+## [2026-09-06 22:27] `.gitattributes` — dev_log.md에 merge=union (형제 PR append 충돌 자동 해결, 감사 7회 반복 지적)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~23:16) 마지막 작업. 감사 AUD-5~11이 7회 반복 지적한 "모든 PR이 dev_log.md 끝에 덧붙여 서로 충돌"을 도구 수준에서 해소.
+- **목표**: 이번 사이클 PR 9개를 순서대로 병합할 때 dev_log.md 충돌을 수동으로 풀지 않게 한다.
+- **해결 방식·타당성**: `dev_log.md merge=union` 1줄. union 드라이버는 양쪽 추가분을 모두 남기므로 순수 append 파일에 안전하고, 같은 줄을 다르게 고친 경우만 수동 확인이 남는다. `scripts/smoke-test.js`는 코드 파일이라 union을 쓰지 않는다(잘못 합쳐지면 문법 오류) — 그쪽 충돌은 병합 시 컨트롤타워가 수동 해결. GitHub 웹 병합이 이 속성을 존중하는지는 미확인이므로 로컬 `git merge origin/main` 경로에서 효과를 본다.
+- **검증 결과**: `git check-attr merge dev_log.md` → `merge: union`. 코드 무변경, 스모크 44/44. 실제 효과는 첫 병합 뒤 두 번째 PR을 로컬 merge할 때 확인.
+---
