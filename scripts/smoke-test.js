@@ -75,6 +75,7 @@ const FN_NAMES = [
   'heatmapLevel', 'localNextActionSuggestion',
   'goalAchievement', 'weeklyRecapStats',
   'parseAttribution',
+  'calendarAvailable',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -92,6 +93,7 @@ const sandboxSrc =
   'localNextActionSuggestion, ' +
   'goalAchievement, weeklyRecapStats, ' +
   'parseAttribution, ' +
+  'calendarAvailable, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -380,6 +382,17 @@ check('parseAttribution: 값은 80자로 자르고 +는 공백으로 복원한�
   const a = fns.parseAttribution('?utm_campaign=' + long + '&utm_source=kakao+talk');
   assert.strictEqual(a.utm_campaign.length, 80);
   assert.strictEqual(a.utm_source, 'kakao talk');
+});
+
+check('calendarAvailable: 앱/사용자 ID가 모두 비어 있거나 공백만이면 false', () => {
+  assert.strictEqual(fns.calendarAvailable('', {}), false);
+  assert.strictEqual(fns.calendarAvailable('  ', { gcalClientId: '  ' }), false);
+});
+
+check('calendarAvailable: 앱 ID 또는 사용자 ID 중 하나라도 있으면 true (settings null 포함)', () => {
+  assert.strictEqual(fns.calendarAvailable('', { gcalClientId: 'x' }), true);
+  assert.strictEqual(fns.calendarAvailable('app', {}), true);
+  assert.strictEqual(fns.calendarAvailable('app', null), true);
 });
 
 /* ============ 결과 요약 ============ */
