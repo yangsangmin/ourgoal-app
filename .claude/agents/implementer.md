@@ -23,7 +23,7 @@ model: sonnet
    - `node -e "new Function(require('fs').readFileSync('index.html','utf8').match(/<script(?![^>]*src)[^>]*>([\s\S]*?)<\/script>/g).map(function(s){return s.replace(/^<script[^>]*>|<\/script>$/g,'')}).join('\n'))"` 로 인라인 스크립트 문법 확인 (api/·sw.js를 고쳤으면 `node --check <파일>`)
    - `node scripts/smoke-test.js` 전부 통과
    - `git diff -- index.html | grep '^-' | grep -v '^---'` 로 삭제된 줄을 읽고, 의도하지 않은 기존 기능 제거가 없는지 확인
-4. 브라우저 검증이 필요하면 `window.__dbg = {...}` 훅을 스크립트 끝에 임시로 넣어 확인하고, **반드시 제거한 뒤** `grep -n "__dbg" index.html`이 0건임을 확인한다.
+4. 브라우저 검증이 필요하면 컨트롤타워와 겹치지 않는 별도 포트로 서버를 띄운다(`PORT=8790 node scripts/static-server.js`, PR #53 이후 지원) 후 `window.__dbg = {...}` 훅을 스크립트 끝에 임시로 넣어 확인하고, **반드시 제거한 뒤** `grep -n "__dbg" index.html`이 0건임을 확인한다.
 
 ## 보고 형식 (마지막 메시지)
 ```
