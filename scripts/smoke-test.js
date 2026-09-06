@@ -74,7 +74,7 @@ const FN_NAMES = [
   'totalCompletedMilestones',
   'heatmapLevel', 'localNextActionSuggestion',
   'goalAchievement', 'weeklyRecapStats',
-  'parseAttribution',
+  'parseAttribution', 'filterHidden',
   'uid', 'newId', 'nowISO', 'getSid', 'getAttribution', 'buildCheckinRecord', 'updateAppBadge',
   'calendarAvailable',
 ];
@@ -99,7 +99,8 @@ const sandboxSrc =
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
   'goalAchievement, weeklyRecapStats, ' +
-  'parseAttribution, uid, newId, nowISO, getSid, getAttribution, ' +
+  'parseAttribution, filterHidden, ' +
+  'uid, newId, nowISO, getSid, getAttribution, ' +
   'setSearch: function(s){ location.search = s; }, getStorage: function(){ return localStorage; }, ' +
   'buildCheckinRecord, updateAppBadge, ' +
   'getNavigator: function(){ return navigator; }, setNavigator: function(n){ navigator = n; }, ' +
@@ -392,6 +393,20 @@ check('parseAttribution: 값은 80자로 자르고 +는 공백으로 복원한�
   const a = fns.parseAttribution('?utm_campaign=' + long + '&utm_source=kakao+talk');
   assert.strictEqual(a.utm_campaign.length, 80);
   assert.strictEqual(a.utm_source, 'kakao talk');
+});
+
+/* ============ 신고 자동 숨김: 숨김 필터 ============ */
+check('filterHidden: hidden:true·null 항목은 제외하고 나머지는 순서를 유지한다', () => {
+  const a = { id: 'a' };
+  const b = { id: 'b', hidden: true };
+  const c = { id: 'c', hidden: false };
+  const result = fns.filterHidden([a, b, null, c]);
+  assert.deepStrictEqual(result, [a, c]);
+});
+
+check('filterHidden: undefined나 빈 배열을 넣으면 빈 배열을 돌려준다', () => {
+  assert.deepStrictEqual(fns.filterHidden(undefined), []);
+  assert.deepStrictEqual(fns.filterHidden([]), []);
 });
 
 /* ============ 계측 게이트 불변식 (localStorage/location 스텁) ============ */

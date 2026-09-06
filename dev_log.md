@@ -720,3 +720,13 @@
 - **발생한 문제 및 해결**: 없음. `defaultSettings` 1080은 #52와 충돌하므로 손대지 않았고(`gcalClientId` 기본값 유지), `renderHome`은 2437 한 줄만 바꿔 #40·#49·#51과의 충돌을 피함.
 - **검증 결과**: 문법 통과, `node scripts/smoke-test.js` 46/46(기존 44 + 2), 삭제 줄 9(전부 치환), 📅 버튼 문자열 카운트 동일, 마커·`__dbg` 0. 브라우저(로컬 static 서버, 임시 훅으로 가짜 프로필 주입 후 제거): ID 없음 → 홈 📅 0개·페이월 행 3개·설정 연결 버튼 숨김·입력 노출 / 사용자 ID → 📅 1개·행 4개·입력 노출 / 앱 상수 → 📅 1개·행 4개·입력·안내문 숨김·연결 버튼 노출 / 상수 비우면 다시 0개. 콘솔은 가짜 프로필로 인한 AI·Supabase API 400/404 외 신규 예외 없음. 리뷰어 조건부 통과(차단 0, 버튼·페이월 문자열과 정적 HTML이 main과 바이트 동일 확인) → 권고 반영: 가이드 4/4 문구를 상수 유무 양쪽에서 참인 표현으로, STATUS.md에 PR 번호 명시, 4블록 채움. 후속 백로그: 페이월 기존 문구 "양방향 실시간 동기화"는 실제(항목별 수동 반영)와 달라 정직화 필요.
 ---
+
+## [2026-09-06 21:44] 커뮤니티 신고/자동 숨김 — content_reports + report_content RPC + 피드·댓글 신고 버튼 (성장 백로그 P0 실행순서 5)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~) 6번째 항목. ① DEV-1(#47) → ② OG(#48) → ③ 앱 배지(#49) → ④ CSV(#50, 중복으로 닫음) → ⑤ 온보딩 첫 기록(#51) → ⑥ 이 항목. 배정: researcher(렌더·데이터 계층·PR #41 SQL 원문·hunk 대조) → implementer(격리 worktree) → reviewer. 컨트롤타워는 삽입 지점 표만 받아 설계.
+- **목표**: 실제 피드·댓글에 대한 최소 안전망 — 타인 글 신고, 3건 누적 시 자동 숨김(사람 검토는 별도), 신고자 중복 방지.
+- **착수 전 불변식**: (1) 내 글 버튼 없음 + RPC 본인 글 거부 (2) 중복 신고 1건 (3) hidden 행 미렌더(낙관적 unshift·Realtime 경로 포함) (4) RPC 실패 시 토스트만 (5) `filterHidden` 스모크 (6) 기존 삭제·응원·댓글 입력 불변.
+- **§5-2 판단**: 신고자 user_id를 서버 전용 테이블에 저장(중복 방지·남용 추적 필수, 클라이언트 조회 불가). 수집 항목 확대에 해당할 수 있어 PR 본문에 명시 — 병합이 곧 사용자 결정.
+- **수정/실행 내역**: `docs/sql/2026-09-06-content-reports.sql`(hidden 컬럼 2개, content_reports + unique + RLS 정책 없음, `report_content` SECURITY DEFINER RPC), `index.html`(filterHidden·필터 2곳·defaultSettings.contentReports·피드/댓글 신고 버튼 + 핸들러·팀 댓글 Realtime UPDATE 구독·스키마 주석), `docs/sql/2026-09-06-events.sql` 주석, `scripts/smoke-test.js`(테스트 2건).
+- **발생한 문제 및 해결**: 리뷰어 조건부 통과(차단 0) → (1) 동시 신고 임계치 어긋남 → `for update` 잠금 (2) PUBLIC EXECUTE 기본 부여 → `revoke from public, anon` (3) 관리자 되돌림 후 재신고로 재숨김 → `row_count`로 새 신고일 때만 임계치 평가 + 되돌리기 SQL 주석 (4) 팀 댓글 INSERT만 구독 → UPDATE 구독 추가 (5) 남용 완화 1시간 20건 상한. RLS select 정책은 바꾸지 않음(Realtime이 RLS로 UPDATE 이벤트를 걸러 캐시가 낡는 부작용 회피) — API 레벨 차단은 후속.
+- **검증 결과**: 문법 통과, `node scripts/smoke-test.js` 46/46(기존 44 + 2), 삭제 줄 4(전부 치환), 기존 액션 핸들러 수 동일, 마커·`__dbg` 0. 리뷰어 독립 재실행 46/46, merge-tree 충돌 0. 브라우저 실동작은 SQL 실행·로그인·3계정이 필요해 병합 후 확인.
+---
