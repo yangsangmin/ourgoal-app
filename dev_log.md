@@ -654,3 +654,11 @@
 - **발생한 문제 및 해결**: (1) Claude Code 분류기가 `gh secret set`·Vercel env 입력을 차단 → 값을 화면에 출력하지 않고 파일에서 읽어 등록하는 Node 스크립트를 만들어 사용자가 실행. (2) 그 스크립트가 공백 포함 `gh.exe` 경로를 shell 경유로 호출해 1단계에서 실패 → shell 없이 직접 spawn하도록 수정. (3) `vercel redeploy --yes` 옵션 미지원 → 옵션 제거. (4) 재배포 후에도 `push-dispatch`가 500: `SUPABASE_SERVICE_ROLE_KEY` 값 첫 글자가 한글('아', ByteString 오류) → 사용자가 Vercel에서 값을 다시 입력. (5) 그 다음 오류 `push_subscriptions` 테이블 없음 → PR #34 본문에서 SQL을 찾아 실행. (6) PowerShell 실행 정책이 `vercel.ps1`을 막음 → `vercel.cmd`로 호출.
 - **검증 결과**: `/api/track` GET 405 · `events` 테이블 존재(anon select 200 []) · `/api/vapid-public-key` 200(생성한 공개키와 일치) · `/api/push-dispatch` 비밀값 없이 401, 있으면 200 `{checked:0,sent:0,removed:0,errors:0}` · `/api/push-subscribe` DELETE 왕복 200 · GitHub Actions `push-dispatch.yml` 수동 실행 success(그 전까지 5분마다 failure). 구독은 아직 0건 — 사용자가 앱 설정에서 알림을 켜면 구독이 생성되고 이후 `notification_sent`/`notification_clicked` 이벤트가 쌓인다.
 ---
+
+## [2026-09-06 22:13] 버그수정 — 체크인 분야(category)가 Supabase에 저장·복원되지 않던 결함 (감사 AUD-5 발견)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~23:16) 10번째 작업. 남은 시간에 검색(P0 9, 새 UI 필요)을 급하게 넣는 대신, 감사가 발견한 실제 데이터 결함(S 버그수정, UI 변경 0)을 처리한다.
+- **목표**: 기록 카드에서 고른 분야가 새로고침·다른 기기에서도 유지되고, 분야별 리포트·CSV·히트맵이 정확해진다.
+- **문제·본질**: `records[].category`는 체크인 생성(2471)·편집(4774)에서 채워지지만 `saveProfile`의 `checkins` upsert 행(1273)과 `loadProfile` 매핑(1230)에 `category`가 없어 서버에 한 번도 저장된 적이 없다. 본질: 분야 필드가 2026-09-04 리포트 기능 때 클라이언트에만 추가되고 스키마·동기화 계층은 따라가지 않았다.
+- **해결 방식·타당성**: upsert 행과 매핑에 `category: r.category || null` 1필드씩 추가 + `docs/sql/2026-09-06-checkins-category.sql`(`add column if not exists`). 컬럼이 아직 없는 DB에서 upsert가 "category" 오류로 실패하면 기존 형식으로 1회 재시도해 **SQL 실행 전에도 기록 저장이 끊기지 않게** 한다(배포 순서 무관). 기존 행은 null 유지. UI·CSS 변경 0, 개인정보 항목 확대 아님(이미 클라이언트에 있던 값의 동기화).
+- **검증 결과**: 문법 통과, `node scripts/smoke-test.js` 44/44, index.html 삭제 줄 3(전부 치환), 마커 0. 실제 저장·복원은 SQL 실행 후 프로덕션에서 기록 1건 생성 → 새로고침으로 확인 권장. 열린 PR #49가 `saveProfile` 첫머리(1246)를 만지지만 이 변경(1272~)과 줄이 떨어져 있어 자동 병합 예상.
+---

@@ -29,6 +29,7 @@
 - TASK-02 (병합 완료): 토스페이먼츠 개발자센터 가맹점(테스트) 등록·테스트 클라이언트 키 발급 — 가상 성공 처리만 구현했으므로 이미 동작 중. 다음 단계(실제 결제 승인)부터 필요.
 - TASK-03 (PR #40 대기, Vercel 배포 한도로 미병합 보류): 없음(브라우저 내장 API). 병합은 사용자 판단에 맡김.
 - ~~PR #45 계측 인프라: `docs/sql/2026-09-06-events.sql` 실행~~ → 2026-09-06 20:30 완료. 같은 날 프로덕션 웹푸시 인프라도 완성(Vercel `SUPABASE_SERVICE_ROLE_KEY`·`VAPID_PUBLIC_KEY`·`VAPID_PRIVATE_KEY`·`CRON_SECRET`, GitHub Actions Secret/Variable, `docs/sql/2026-09-05-push-subscriptions.sql` 실행) — push-dispatch 200·워크플로 success 확인. 남은 사용자 작업 없음.
+- 체크인 분야 영속화 수정 PR(병합 전후 무관, 1회): Supabase SQL Editor에서 `docs/sql/2026-09-06-checkins-category.sql` 실행(`checkins.category` 컬럼 추가). 실행 전에는 클라이언트가 자동으로 기존 형식으로 재시도해 저장이 끊기지 않지만 분야는 계속 저장되지 않음.
 - TASK-04 (PR 대기, 병합 전 필수): Supabase SQL Editor에서 `team_comments`/`feed_posts` 테이블 + RLS + `increment_post_cheers` RPC 실행, Database→Replication에서 두 테이블 Realtime 활성화. 이 SQL을 실행하기 전에는 팀 댓글·피드 응원이 전부 안전하게 실패(400/404, 크래시 없음)하지만 실제로 동작하지 않음. 정확한 SQL은 PR 본문에 있음.
 
 ## 사전 정리 체크리스트 (스프린트 시작 전 1회, 사용자 확인 필요)

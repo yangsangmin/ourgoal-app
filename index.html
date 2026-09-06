@@ -1227,7 +1227,7 @@
       };
     });
     var records = (recsRes.data||[]).map(function(r){
-      return { id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at };
+      return { id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at, category: r.category || null };
     });
     if(ures.isNew){
       track('signup', Object.assign({ method: provider || 'email' }, getAttribution()));
@@ -1269,9 +1269,14 @@
 
       var recs = state.profile.records;
       if(recs.length){
-        await sb.from('checkins').upsert(recs.map(function(r){
-          return { id:r.id, user_id:uidVal, type:r.type, text:r.text, start_at:r.startAt, end_at:r.endAt };
-        }));
+        var recRows = recs.map(function(r){
+          return { id:r.id, user_id:uidVal, type:r.type, text:r.text, start_at:r.startAt, end_at:r.endAt, category: r.category || null };
+        });
+        var upRes = await sb.from('checkins').upsert(recRows);
+        if(upRes && upRes.error && /category/i.test(upRes.error.message || '')){
+          /* checkins.category 컬럼이 아직 없는 DB(docs/sql/2026-09-06-checkins-category.sql 미실행)에서는 기존 형식으로 재시도해 기록 저장이 끊기지 않게 한다 */
+          await sb.from('checkins').upsert(recRows.map(function(x){ var y = Object.assign({}, x); delete y.category; return y; }));
+        }
       }
       var recIds = recs.map(function(r){ return r.id; });
       var delRecs = sb.from('checkins').delete().eq('user_id', uidVal);
