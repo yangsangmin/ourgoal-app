@@ -1535,8 +1535,10 @@
           var text = ta.value.trim();
           if(!text || busy) return;
           busy = true; saveBtn.disabled = true;
-          var xpRes = await saveQuickCheckin(text, goal, 'onboarding');
-          await finishOnboarding('첫 기록까지 남겼어요 — 시작해봐요!');
+          var xpRes = null;
+          try{ xpRes = await saveQuickCheckin(text, goal, 'onboarding'); }
+          catch(e){ console.warn('first checkin failed:', e); } /* 저장이 실패해도 반드시 홈으로 진입(불변식 1) */
+          await finishOnboarding(xpRes ? '첫 기록까지 남겼어요 — 시작해봐요!' : '목표를 만들었어요 — 시작해봐요!');
           if(xpRes && xpRes.leveledUp) showLevelUpBanner(levelForXP(xpRes.total));
         });
         sheet.querySelector('#obFirstSkip').addEventListener('click', skip);
