@@ -654,3 +654,12 @@
 - **발생한 문제 및 해결**: (1) Claude Code 분류기가 `gh secret set`·Vercel env 입력을 차단 → 값을 화면에 출력하지 않고 파일에서 읽어 등록하는 Node 스크립트를 만들어 사용자가 실행. (2) 그 스크립트가 공백 포함 `gh.exe` 경로를 shell 경유로 호출해 1단계에서 실패 → shell 없이 직접 spawn하도록 수정. (3) `vercel redeploy --yes` 옵션 미지원 → 옵션 제거. (4) 재배포 후에도 `push-dispatch`가 500: `SUPABASE_SERVICE_ROLE_KEY` 값 첫 글자가 한글('아', ByteString 오류) → 사용자가 Vercel에서 값을 다시 입력. (5) 그 다음 오류 `push_subscriptions` 테이블 없음 → PR #34 본문에서 SQL을 찾아 실행. (6) PowerShell 실행 정책이 `vercel.ps1`을 막음 → `vercel.cmd`로 호출.
 - **검증 결과**: `/api/track` GET 405 · `events` 테이블 존재(anon select 200 []) · `/api/vapid-public-key` 200(생성한 공개키와 일치) · `/api/push-dispatch` 비밀값 없이 401, 있으면 200 `{checked:0,sent:0,removed:0,errors:0}` · `/api/push-subscribe` DELETE 왕복 200 · GitHub Actions `push-dispatch.yml` 수동 실행 success(그 전까지 5분마다 failure). 구독은 아직 0건 — 사용자가 앱 설정에서 알림을 켜면 구독이 생성되고 이후 `notification_sent`/`notification_clicked` 이벤트가 쌓인다.
 ---
+
+## [2026-09-06 21:25] PWA 앱 배지로 스트릭 일수 표시 (성장 백로그 P0 실행순서 6)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~) 3번째 항목. ① DEV-1(#47) → ② OG 메타(#48) → ③ 이 항목 → ④ 온보딩 첫 체크인 → ⑤ CSV 내보내기.
+- **목표**: 홈 화면에 설치된 PWA 아이콘에 현재 스트릭 일수를 배지로 표시해 앱을 열지 않아도 연속 기록이 보이게 한다. 미지원 브라우저(iOS Safari 비PWA 등)·비설치 환경에서는 아무 일도 하지 않아야 한다.
+- **착수 전 불변식(ORG.md §4 신규 규칙 첫 적용)**: (1) Badging API가 없거나 `navigator`가 없어도 절대 throw하지 않는다 (2) 스트릭>0이면 `setAppBadge(n)` (3) 0·음수·비숫자면 `clearAppBadge()` (4) 로그아웃 시 배지 제거. 불변식 1~3은 스모크 테스트로 먼저 고정.
+- **수정/실행 내역**: `index.html` — `computeStreakDays` 바로 뒤에 `updateAppBadge(streak)` 추가(try/catch, 기능 감지, `.catch` 부착), `renderHome`의 스트릭 계산 직후 호출(홈 렌더 = 체크인·앱 진입마다 갱신), 로그아웃 핸들러에 `updateAppBadge(0)`. `scripts/smoke-test.js` — 샌드박스에 `navigator` 스텁(`setAppBadge`/`clearAppBadge`)과 `getNavigator/setNavigator` 훅, `updateAppBadge` 추출, 테스트 3건. 새 UI 요소·CSS 없음.
+- **발생한 문제 및 해결**: 없음.
+- **검증 결과**: `new Function()` 문법 통과, `node scripts/smoke-test.js` 47/47(기존 44 + 신규 3), 충돌 마커 0건, index.html 삭제 줄 0. 브라우저 실동작은 로그인 후 홈 렌더에서만 일어나고 로컬 프리뷰에 로그인 세션이 없어 스모크(불변식 3건)로 대체 — 병합 후 PWA 설치 기기에서 체크인 뒤 아이콘 배지 확인 권장.
+---

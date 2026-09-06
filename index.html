@@ -1369,6 +1369,7 @@
   document.getElementById('logoutBtn').addEventListener('click', async function(){
     await sb.auth.signOut();
     state.profile = null;
+    updateAppBadge(0); /* 로그아웃 후 아이콘에 이전 사용자의 스트릭이 남지 않도록 */
     document.getElementById('appShell').classList.remove('active');
     document.getElementById('authScreen').style.display = 'flex';
     if(state.notifyTimer){ clearInterval(state.notifyTimer); state.notifyTimer=null; }
@@ -2380,6 +2381,16 @@
     }
     return streak;
   }
+  /* PWA 앱 배지: 홈 화면 아이콘에 스트릭 일수 표시. 미지원 브라우저·비PWA에서는 no-op, 절대 throw하지 않는다 — 성장 백로그 P0 ⑥ */
+  function updateAppBadge(streak){
+    try{
+      if(typeof navigator === 'undefined' || !navigator || typeof navigator.setAppBadge !== 'function') return false;
+      var n = Number(streak) || 0;
+      if(n > 0){ navigator.setAppBadge(n).catch(function(){}); }
+      else if(typeof navigator.clearAppBadge === 'function'){ navigator.clearAppBadge().catch(function(){}); }
+      return true;
+    } catch(e){ return false; }
+  }
   var STREAK_FREEZE_MAX = 3;
   function maybeGrantStreakFreeze(){
     var sf = state.profile.settings.streakFreeze;
@@ -2413,6 +2424,7 @@
     renderLevelBadge();
     renderTodayMissionCard();
     var streak = computeStreakDays();
+    updateAppBadge(streak);
     var badgeEl = document.getElementById('streakBadge');
     if(badgeEl) badgeEl.innerHTML = streak>0 ? streakBadgeHtml(streak) : '';
     var freezeEl = document.getElementById('streakFreezeBadge');
