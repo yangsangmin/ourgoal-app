@@ -44,7 +44,7 @@
 
 | 유형 | S | M | L |
 |---|---|---|---|
-| 기능구현 | 컨트롤타워 직접 구현 → reviewer | researcher(탐색) → implementer → reviewer | strategist(설계 판단) → researcher → implementer → reviewer → 사용자 승인 게이트 |
+| 기능구현 | 컨트롤타워 직접 구현 → 스모크(불변식 테스트) → auditor 교차검증 (reviewer 생략 가능, 감사가 같은 결함을 3건 지적하면 S도 reviewer 필수로 승격) | researcher(탐색) → implementer → reviewer | strategist(설계 판단) → researcher → implementer → reviewer → 사용자 승인 게이트 |
 | 버그수정 | 컨트롤타워 직접 → 스모크 | researcher(원인) → implementer → reviewer | 위와 같음 + 재현 스크립트 |
 | 리서치 | researcher 1 | researcher 2~3 병렬 → 컨트롤타워 종합 | strategist + researcher 병렬 |
 | 전략/기획 | strategist | strategist → 노션 기록 | strategist → 사용자 결정 질문(§5) |
