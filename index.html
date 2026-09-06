@@ -1243,6 +1243,7 @@
 
   async function saveProfile(){
     if(!state.profile) return;
+    updateAppBadge(computeStreakDays()); /* 기록이 바뀌는 모든 경로(홈 체크인·기록 모달·온보딩)가 여기를 지나므로 배지는 여기서 갱신 */
     var uidVal = state.profile.id;
     try{
       await sb.from('users').upsert({
@@ -1367,9 +1368,9 @@
   });
 
   document.getElementById('logoutBtn').addEventListener('click', async function(){
+    updateAppBadge(0); /* signOut 실패 여부와 무관하게 아이콘에 이전 사용자의 스트릭이 남지 않도록 먼저 지운다 */
     await sb.auth.signOut();
     state.profile = null;
-    updateAppBadge(0); /* 로그아웃 후 아이콘에 이전 사용자의 스트릭이 남지 않도록 */
     document.getElementById('appShell').classList.remove('active');
     document.getElementById('authScreen').style.display = 'flex';
     if(state.notifyTimer){ clearInterval(state.notifyTimer); state.notifyTimer=null; }
