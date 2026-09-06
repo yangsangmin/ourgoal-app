@@ -654,3 +654,13 @@
 - **발생한 문제 및 해결**: (1) Claude Code 분류기가 `gh secret set`·Vercel env 입력을 차단 → 값을 화면에 출력하지 않고 파일에서 읽어 등록하는 Node 스크립트를 만들어 사용자가 실행. (2) 그 스크립트가 공백 포함 `gh.exe` 경로를 shell 경유로 호출해 1단계에서 실패 → shell 없이 직접 spawn하도록 수정. (3) `vercel redeploy --yes` 옵션 미지원 → 옵션 제거. (4) 재배포 후에도 `push-dispatch`가 500: `SUPABASE_SERVICE_ROLE_KEY` 값 첫 글자가 한글('아', ByteString 오류) → 사용자가 Vercel에서 값을 다시 입력. (5) 그 다음 오류 `push_subscriptions` 테이블 없음 → PR #34 본문에서 SQL을 찾아 실행. (6) PowerShell 실행 정책이 `vercel.ps1`을 막음 → `vercel.cmd`로 호출.
 - **검증 결과**: `/api/track` GET 405 · `events` 테이블 존재(anon select 200 []) · `/api/vapid-public-key` 200(생성한 공개키와 일치) · `/api/push-dispatch` 비밀값 없이 401, 있으면 200 `{checked:0,sent:0,removed:0,errors:0}` · `/api/push-subscribe` DELETE 왕복 200 · GitHub Actions `push-dispatch.yml` 수동 실행 success(그 전까지 5분마다 failure). 구독은 아직 0건 — 사용자가 앱 설정에서 알림을 켜면 구독이 생성되고 이후 `notification_sent`/`notification_clicked` 이벤트가 쌓인다.
 ---
+
+## [2026-09-06 21:44] 커뮤니티 신고/자동 숨김 — content_reports + report_content RPC + 피드·댓글 신고 버튼 (성장 백로그 P0 실행순서 5)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~) 6번째 항목. ① DEV-1(#47) → ② OG(#48) → ③ 앱 배지(#49) → ④ CSV(#50, 중복으로 닫음) → ⑤ 온보딩 첫 기록(#51) → ⑥ 이 항목. 배정: researcher(렌더·데이터 계층·PR #41 SQL 원문·hunk 대조) → implementer(격리 worktree) → reviewer. 컨트롤타워는 삽입 지점 표만 받아 설계.
+- **목표**: 실제 피드·댓글에 대한 최소 안전망 — 타인 글 신고, 3건 누적 시 자동 숨김(사람 검토는 별도), 신고자 중복 방지.
+- **착수 전 불변식**: (1) 내 글 버튼 없음 + RPC 본인 글 거부 (2) 중복 신고 1건 (3) hidden 행 미렌더(낙관적 unshift·Realtime 경로 포함) (4) RPC 실패 시 토스트만 (5) `filterHidden` 스모크 (6) 기존 삭제·응원·댓글 입력 불변.
+- **§5-2 판단**: 신고자 user_id를 서버 전용 테이블에 저장(중복 방지·남용 추적 필수, 클라이언트 조회 불가). 수집 항목 확대에 해당할 수 있어 PR 본문에 명시 — 병합이 곧 사용자 결정.
+- **수정/실행 내역**: `docs/sql/2026-09-06-content-reports.sql`(hidden 컬럼 2개, content_reports + unique + RLS 정책 없음, `report_content` SECURITY DEFINER RPC), `index.html`(filterHidden·필터 2곳·defaultSettings.contentReports·피드/댓글 신고 버튼 + 핸들러·팀 댓글 Realtime UPDATE 구독·스키마 주석), `docs/sql/2026-09-06-events.sql` 주석, `scripts/smoke-test.js`(테스트 2건).
+- **발생한 문제 및 해결**: 리뷰어 조건부 통과(차단 0) → (1) 동시 신고 임계치 어긋남 → `for update` 잠금 (2) PUBLIC EXECUTE 기본 부여 → `revoke from public, anon` (3) 관리자 되돌림 후 재신고로 재숨김 → `row_count`로 새 신고일 때만 임계치 평가 + 되돌리기 SQL 주석 (4) 팀 댓글 INSERT만 구독 → UPDATE 구독 추가 (5) 남용 완화 1시간 20건 상한. RLS select 정책은 바꾸지 않음(Realtime이 RLS로 UPDATE 이벤트를 걸러 캐시가 낡는 부작용 회피) — API 레벨 차단은 후속.
+- **검증 결과**: 문법 통과, `node scripts/smoke-test.js` 46/46(기존 44 + 2), 삭제 줄 4(전부 치환), 기존 액션 핸들러 수 동일, 마커·`__dbg` 0. 리뷰어 독립 재실행 46/46, merge-tree 충돌 0. 브라우저 실동작은 SQL 실행·로그인·3계정이 필요해 병합 후 확인.
+---

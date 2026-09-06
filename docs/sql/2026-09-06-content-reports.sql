@@ -20,26 +20,40 @@ declare
   v_uid uuid := auth.uid();
   v_owner uuid;
   v_count int;
+  v_ins int;              -- 이번 호출로 실제 추가된 신고 행 수(0이면 중복 신고)
+  v_recent int;           -- 신고자의 최근 1시간 신고 수(남용 완화)
   v_hidden boolean := false;
   v_threshold int := 3;   -- 자동 숨김 임계치(사람 검토 전 최소 안전망)
 begin
   if v_uid is null then raise exception 'unauthorized'; end if;
+  -- for update: 같은 대상의 동시 신고를 직렬화해 임계치 판정이 어긋나지 않게 한다
   if p_target_type = 'feed_post' then
-    select user_id into v_owner from feed_posts where id = p_target_id;
+    select user_id into v_owner from feed_posts where id = p_target_id for update;
   elsif p_target_type = 'team_comment' then
-    select user_id into v_owner from team_comments where id = p_target_id;
+    select user_id into v_owner from team_comments where id = p_target_id for update;
   else
     raise exception 'bad target type';
   end if;
   if v_owner is null then raise exception 'target not found'; end if;
   if v_owner = v_uid then raise exception 'cannot report own content'; end if;
 
+  -- 남용 완화: 한 계정이 1시간에 20건 넘게 신고하면 거부
+  select count(*) into v_recent from content_reports
+    where reporter_id = v_uid and created_at > now() - interval '1 hour';
+  if v_recent >= 20 then raise exception 'too many reports'; end if;
+
   insert into content_reports(target_type, target_id, reporter_id, reason)
     values (p_target_type, p_target_id, v_uid, left(coalesce(p_reason, ''), 200))
     on conflict (target_type, target_id, reporter_id) do nothing;
+  get diagnostics v_ins = row_count;
 
   select count(*) into v_count from content_reports
     where target_type = p_target_type and target_id = p_target_id;
+
+  -- 새 신고가 아니면(같은 사람의 재신고) 임계치를 다시 평가하지 않는다 → 관리자가 hidden=false로 되돌린 뒤 재숨김되지 않음
+  if v_ins = 0 then
+    return jsonb_build_object('count', v_count, 'hidden', false);
+  end if;
 
   if v_count >= v_threshold then
     if p_target_type = 'feed_post' then
@@ -52,4 +66,10 @@ begin
   return jsonb_build_object('count', v_count, 'hidden', v_hidden);
 end;
 $$;
+-- Postgres는 새 함수에 PUBLIC EXECUTE를 기본 부여하므로 먼저 회수한 뒤 authenticated에만 허용
+revoke execute on function public.report_content(text, text, text) from public, anon;
 grant execute on function public.report_content(text, text, text) to authenticated;
+
+-- 검토 후 되돌리기(관리자, SQL Editor): hidden을 풀 때는 해당 신고 행도 함께 지워야 재신고 시 즉시 다시 숨겨지지 않는다
+-- update public.feed_posts set hidden = false where id = '<post id>';
+-- delete from public.content_reports where target_type = 'feed_post' and target_id = '<post id>';

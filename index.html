@@ -4209,6 +4209,16 @@
         list.push(row);
         if(state.activeTab==='goals' && state.goalsSubTab==='team') renderTeamGoalsScreen();
       })
+      .on('postgres_changes', { event:'UPDATE', schema:'public', table:'team_comments' }, function(payload){
+        /* 신고 누적으로 hidden이 바뀐 댓글을 다른 사용자 화면에서도 즉시 반영 (P0 5) */
+        var row = payload.new;
+        var list = TEAM_COMMENTS_CACHE[row.group_id];
+        if(!list) return;
+        var idx = list.findIndex(function(c){ return c.id===row.id; });
+        if(idx === -1) return;
+        list[idx] = row;
+        if(state.activeTab==='goals' && state.goalsSubTab==='team') renderTeamGoalsScreen();
+      })
       .subscribe();
   }
   /* 숨김 처리된 게시물·댓글 제외(신고 자동 숨김) — 성장 백로그 P0 5 */
