@@ -41,6 +41,7 @@ disable-model-invocation: true
 ## 4. 브랜치·실행
 - `git checkout -b <feat|fix|chore>/<YYYY-MM-DD>-<slug> origin/main` (ORG.md §4). 브랜치 없이 코드를 고치지 않는다.
 - 실행 중 막히면 3회까지 자체 수정, 그 뒤 원칙 8로 돌아가 1~2블록을 다시 쓰고 진행한다(재검증 내역에 기록).
+- **한 번에 하나의 브랜치에서만 커밋한다** (DEV-2, ORG.md §3-1-6 연장): 다른 브랜치로 옮기기 전 `git status --short`가 비어 있는지 확인하고, 비어 있지 않으면 먼저 커밋·푸시한 뒤 전환한다. 같은 작업 트리에서 브랜치를 짧은 간격으로 오가면 checkout 실패나 잘못된 브랜치 커밋이 생긴다.
 
 ## 5. 검증 게이트 (전부 통과해야 6으로)
 1. 인라인 스크립트 문법(`node -e new Function(...)`) · 수정한 api/·sw.js는 `node --check`
@@ -49,12 +50,14 @@ disable-model-invocation: true
 4. `git diff origin/main -- index.html`의 삭제 줄 검토 — 기존 기능 삭제 없음
 5. M 이상은 `reviewer`를 띄워 "통과/조건부 통과" 받기. "반려"면 되돌린다. **reviewer 결과가 오기 전에는 §6의 `gh pr ready`·§8 보고로 넘어가지 않는다** — PR은 §6대로 draft로 먼저 열어 두고 기다린다.
 6. `grep -rn "^<<<<<<<" .` 0건, `grep -n "__dbg" index.html` 0건
+7. **PR을 연 뒤 `gh pr checks <번호>`를 반드시 실행**하고 결과(pass/fail)를 보고의 "배포" 항목에 적는다 (DEV-2, AUD-4·6·7·9 반복 지적). "배포 미확인"으로 보고하지 않는다 — 프리뷰가 SSO로 막혀 있어도 체크 자체는 항상 확인 가능하다.
 
 ## 6. 기록·PR
 - dev_log.md 맨 끝에 CLAUDE.md §5 형식으로 기록(4블록 요약 포함).
 - 스프린트 태스크면 `docs/sprint/STATUS.md`, 백로그 항목이면 BACKLOG.md 체크·노션 백로그 행 `비고`에 PR 번호 추가.
 - PR 본문을 `.pr-body-<slug>.md`에 CLAUDE.md §6 4블록 형식으로 쓰고 `gh pr create --base main --title "…" --body-file …`. 본문 끝에 `🤖 Generated with [Claude Code](https://claude.com/claude-code)`.
 - **M 이상은 `--draft`로 연다.** reviewer "통과/조건부 통과" 후 지적 사항을 반영·재검증하고 `gh pr edit --body-file`로 4블록(재검증 내역)을 갱신한 뒤 `gh pr ready <번호>`로 전환한다. S(리뷰어 없음)는 바로 ready로 연다.
+- **draft로 열 때도 그 커밋에 dev_log.md 항목을 반드시 포함한다** (DEV-2): 4블록 4번은 "재검증 전"으로 자리만 잡아 둔다. reviewer 반영 후 같은 항목을 갱신하는 커밋을 추가한다 — dev_log를 리뷰 완료 후에야 별도로 추가하지 않는다.
 - main에 직접 커밋·푸시·병합하지 않는다. 채팅 명시 지시가 있을 때만 `gh pr merge`, 직후 충돌 마커 grep + 스모크.
 
 ## 7. 감사 호출 (생략 금지)
