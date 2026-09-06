@@ -626,3 +626,17 @@
 - **발생한 문제 및 해결**: 없음 — 위 스키마 설계 재검토(원칙 8) 외에 별도로 막힌 지점은 없었음.
 - **검증 결과**: `node -e new Function()` 문법 검증 통과, `<style>` 중괄호 454/454(CSS 변경 없음), `node scripts/smoke-test.js` 41/41 통과(회귀 없음, 신규 순수 함수 없음). 브라우저 실제 렌더링 검증(검증 전용 `window.__dbg` 훅으로 캐시를 직접 주입해 확인 후 완전 제거, `grep` 0건 재확인): 캐시에 "다른 유저"가 쓴 팀 댓글을 주입하자 실제로 이름·내용이 정확히 렌더링됨(기존 mock 구조에서는 원천적으로 불가능했던 부분). 피드에도 "다른 유저"의 게시물을 주입해 이름·기록 스니펫·마일스톤 태그가 전부 정상 복원되고, 삭제 버튼은 내 게시물에만 노출됨을 확인. `sb.rpc`를 임시로 몽키패치해 성공 응답(5→6)을 시뮬레이션 → 실제로 캐시와 화면의 응원 수가 6으로 정확히 갱신됨을 확인(RPC 로직 자체 검증). 실 프로덕션에는 아직 테이블·RPC가 없어 관련 요청은 전부 404/400으로 안전하게 실패(크래시 없음, 토스트로 안내)함을 확인 — 이는 병합 전 사용자가 SQL을 실행해야 실제로 동작하는 정상적인 상태. 검증 기준인 "두 브라우저 창 간 실시간 반영"은 이 브라우저 자동화 도구가 탭 하나만 다룰 수 있어 직접 재현하지 못했고, 로직 검증(구독 콜백이 정확한 조건으로 캐시에 반영되는 코드 리뷰)으로 대체 — 병합 후 실제 두 창 테스트를 권장.
 ---
+
+## [2026-09-06 19:55] 계측 인프라: 온보딩 퍼널·유입 채널(UTM/ref)·알림 클릭률 이벤트 (성장 백로그 P0 실행순서 1~3)
+- **사이클 계획(8원칙)**: AI 조직 구조(PR #44) 도입 후 첫 `/work` 작업. 거시 재조정안이 "무엇을 고쳐야 하는지 판단할 데이터가 없다"를 최상위 문제로 짚었으므로, P0 실행순서 1~3(온보딩 퍼널·UTM·알림 클릭률)을 **한 PR·한 events 테이블**로 묶어 계측의 뼈대를 먼저 세운다. 커스텀 에이전트 정의는 PR #44가 병합·재시작되기 전이라 이 세션에 로드되지 않아 컨트롤타워가 직접 구현하고, 리뷰·감사는 general-purpose 에이전트에 역할 프롬프트를 주어 대체.
+- **목표**: 개인정보 최소화(user_id 미저장, 기기별 익명 sid)를 지키면서 landing_view → signup → goal_created → checkin 퍼널과 유입 채널(utm_source/medium/campaign/ref 첫 유입), 푸시 알림 발송/클릭 수를 Supabase `events` 테이블에 쌓는다. 계측 실패가 UX에 영향을 주지 않을 것.
+- **수정/실행 내역**:
+  - `index.html`: `dateKey` 뒤에 계측 헬퍼 5개 추가 — `parseAttribution(search)`(순수 함수, utm_*·ref만 80자로 추출), `getSid()`(localStorage `ourgoal_sid`), `getAttribution()`(첫 유입만 `ourgoal_attrib`에 보존), `track(name, props)`(anon 클라이언트로 `events` insert, fire-and-forget, try/catch), `trackGoalCreated(goal, source)`. 호출 지점: `loadProfile`에서 `ures.isNew`일 때 `signup`(method oauth/email + 유입 속성), 목표 생성 5곳(온보딩·템플릿봇·수동·목표 에이전트·커뮤니티 템플릿)에 `goal_created`(source·category·first), `captureSave`에 `checkin`(first·has_goal·len), 랜딩 표시 시 `landing_view`(하루 1회 + 유입 속성).
+  - `sw.js`: `notificationclick`에서 `/api/track`에 `notification_clicked` POST(실패 무시) 후 기존 포커스/열기 로직을 `Promise.all`로 함께 대기.
+  - `api/push-dispatch.js`: 발송 성공(`result.sent++`) 직후 `notification_sent` 이벤트 insert(try/catch, 발송 흐름 무영향).
+  - `api/track.js` 신규: POST만, 허용 이벤트 allowlist(`notification_clicked`), props 500자 제한, service_role로 insert.
+  - `docs/sql/2026-09-06-events.sql` 신규: `events` 테이블(sid·name·props·created_at) + 인덱스 + RLS(anon/authenticated insert-only) + 퍼널·CTR 예시 쿼리.
+  - `scripts/smoke-test.js`: `parseAttribution`을 샌드박스에 추가하고 순수 함수 테스트 3건 추가.
+- **발생한 문제 및 해결**: 브라우저 검증에서 `?utm_source=…`로 접속했는데 `ourgoal_attrib`가 비어 있었음 → 원인은 프리뷰 서버가 먼저 루트를 한 번 열어 `landing_view`의 "하루 1회" 게이트가 이미 닫혔고, 유입 속성 캡처가 그 게이트 안에 있었던 것. 유입 속성 캡처(`getAttribution()`)를 게이트 밖으로 빼서 매 로드마다 확보(저장은 첫 유입만)하도록 수정 후 재검증 통과.
+- **검증 결과**: `new Function()` 문법 통과, `<style>` 중괄호 균형(CSS 변경 없음), `node --check` api/track.js·push-dispatch.js·sw.js 통과, `node scripts/smoke-test.js` 44/44(기존 41 + 신규 3). 브라우저(로컬 static 서버): `?utm_source=instagram&…&ref=user-abc&goal=g1` 접속 시 `ourgoal_sid` 생성, `ourgoal_attrib`에 4개 키+landed_at 저장, `goal` 파라미터는 제외됨; 이후 `?utm_source=tiktok`으로 재접속해도 첫 유입(instagram) 유지·sid 동일; `POST /rest/v1/events`가 실제 시도되어 404(테이블 미생성)로 조용히 실패하고 랜딩 화면은 정상 렌더링, 콘솔 에러는 그 404 외 없음. 충돌 마커 0건, `git diff`에 기존 기능 삭제 없음(sw.js 4줄은 `waitUntil` 감싸기 재구성). 실제 이벤트 적재는 사용자가 SQL을 실행한 뒤 확인 가능.
+---
