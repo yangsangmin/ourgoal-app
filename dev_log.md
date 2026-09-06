@@ -654,3 +654,11 @@
 - **발생한 문제 및 해결**: (1) Claude Code 분류기가 `gh secret set`·Vercel env 입력을 차단 → 값을 화면에 출력하지 않고 파일에서 읽어 등록하는 Node 스크립트를 만들어 사용자가 실행. (2) 그 스크립트가 공백 포함 `gh.exe` 경로를 shell 경유로 호출해 1단계에서 실패 → shell 없이 직접 spawn하도록 수정. (3) `vercel redeploy --yes` 옵션 미지원 → 옵션 제거. (4) 재배포 후에도 `push-dispatch`가 500: `SUPABASE_SERVICE_ROLE_KEY` 값 첫 글자가 한글('아', ByteString 오류) → 사용자가 Vercel에서 값을 다시 입력. (5) 그 다음 오류 `push_subscriptions` 테이블 없음 → PR #34 본문에서 SQL을 찾아 실행. (6) PowerShell 실행 정책이 `vercel.ps1`을 막음 → `vercel.cmd`로 호출.
 - **검증 결과**: `/api/track` GET 405 · `events` 테이블 존재(anon select 200 []) · `/api/vapid-public-key` 200(생성한 공개키와 일치) · `/api/push-dispatch` 비밀값 없이 401, 있으면 200 `{checked:0,sent:0,removed:0,errors:0}` · `/api/push-subscribe` DELETE 왕복 200 · GitHub Actions `push-dispatch.yml` 수동 실행 success(그 전까지 5분마다 failure). 구독은 아직 0건 — 사용자가 앱 설정에서 알림을 켜면 구독이 생성되고 이후 `notification_sent`/`notification_clicked` 이벤트가 쌓인다.
 ---
+
+## [2026-09-06 21:45] 공유 링크 OG 메타태그 (성장 백로그 P0 실행순서 4)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~)의 2번째 항목. ① 조직개발 DEV-1(PR #47) → ② 이 항목 → ③ PWA 앱 배지 → ④ 온보딩 첫 체크인 → ⑤ CSV 내보내기.
+- **목표**: 공유·초대 링크가 카카오톡·트위터·슬랙에 붙을 때 제목·설명·이미지 미리보기가 나오게 한다(지금은 `<title>`과 description 메타만 있어 이미지 없는 밋밋한 카드).
+- **수정/실행 내역**: `index.html` `<head>`의 description 메타 바로 뒤에 OG 태그 9개(`og:type/site_name/title/description/url/image/image:width/height/locale`)와 트위터 카드 4개(`summary` 타입 — 이미지가 정사각 아이콘이라 `summary_large_image` 대신 선택) 추가. 이미지는 기존 `icons/icon-512.png` 절대 URL(새 에셋 없음). 문구는 기존 description 톤 유지("목표를 세우고, 매일 한 줄 기록하고, 성장을 나누는 아워골"). SPA라 정적 메타 1세트(사용자별 동적 OG는 서버 렌더가 필요해 범위 밖).
+- **발생한 문제 및 해결**: 없음. TASK-06(#43)의 `SHARE_DOMAIN` 상수가 아직 main에 없어 URL을 직접 기재 — 커스텀 도메인 연결 시 이 태그 2곳(`og:url`·`og:image`)과 상수를 함께 바꾸면 됨.
+- **검증 결과**: `new Function()` 문법 통과, `<style>` 중괄호 균형, `node scripts/smoke-test.js` 44/44, 충돌 마커 0건. 로컬 static 서버에서 13개 메타가 그대로 렌더됨을 JS로 확인, 콘솔은 변경 전 기준선과 동일한 404 3건(로컬 서버에 /api·Supabase 리소스 없음) 외 신규 에러 0. 실제 카카오톡 미리보기는 병합·배포 후 https://developers.kakao.com/tool/debugger/sharing 에서 URL을 넣어 캐시 갱신하며 확인 — 사용자 필요 작업으로 PR에 기재.
+---
