@@ -76,7 +76,7 @@ const FN_NAMES = [
   'goalAchievement', 'weeklyRecapStats',
   'parseAttribution', 'filterHidden',
   'uid', 'newId', 'nowISO', 'getSid', 'getAttribution', 'buildCheckinRecord', 'updateAppBadge',
-  'calendarAvailable',
+  'calendarAvailable', 'fmtDateLabel', 'filterRecordsByQuery',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -90,6 +90,8 @@ const sandboxSrc =
   'var localStorage = { _m: {}, getItem: function(k){ return Object.prototype.hasOwnProperty.call(this._m, k) ? this._m[k] : null; }, setItem: function(k, v){ this._m[k] = String(v); }, removeItem: function(k){ delete this._m[k]; }, clear: function(){ this._m = {}; } };\n' +
   /* Badging API 스텁 — updateAppBadge 불변식 검증용 (setNavigator(null)로 미지원 환경 재현) */
   'var navigator = { badge: null, setAppBadge: function(n){ this.badge = n; return Promise.resolve(); }, clearAppBadge: function(){ this.badge = 0; return Promise.resolve(); } };\n' +
+  /* 검색(filterRecordsByQuery)의 분야 매칭 대상 — 실제 TOPICS 전체를 옮기지 않고 테스트에 필요한 만큼만 스텁 */
+  'var TOPICS = { workout: { label: "운동" } };\n' +
   extracted +
   '\nmodule.exports = { pad, dateKey, goalProgress, msCounts, resultPct, dDay, ' +
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
@@ -104,7 +106,7 @@ const sandboxSrc =
   'setSearch: function(s){ location.search = s; }, getStorage: function(){ return localStorage; }, ' +
   'buildCheckinRecord, updateAppBadge, ' +
   'getNavigator: function(){ return navigator; }, setNavigator: function(n){ navigator = n; }, ' +
-  'calendarAvailable, ' +
+  'calendarAvailable, fmtDateLabel, filterRecordsByQuery, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -502,6 +504,34 @@ check('calendarAvailable: 앱 ID 또는 사용자 ID 중 하나라도 있으면 
   assert.strictEqual(fns.calendarAvailable('', { gcalClientId: 'x' }), true);
   assert.strictEqual(fns.calendarAvailable('app', {}), true);
   assert.strictEqual(fns.calendarAvailable('app', null), true);
+});
+
+/* ============ 기록 검색 (성장 백로그 P0 9) ============ */
+check('filterRecordsByQuery: 검색어가 비어있으면 전체 목록을 그대로 돌려준다', () => {
+  const recs = [{ id: 'a', text: '헬스장 다녀옴', startAt: '2020-03-15T10:00:00' }];
+  assert.strictEqual(fns.filterRecordsByQuery(recs, ''), recs);
+  assert.strictEqual(fns.filterRecordsByQuery(recs, '   '), recs);
+});
+
+check('filterRecordsByQuery: 본문 텍스트를 대소문자 구분 없이 부분일치로 찾는다', () => {
+  const a = { id: 'a', text: '토익 RC 30문제 풀이', startAt: '2020-03-15T10:00:00' };
+  const b = { id: 'b', text: '헬스장 다녀옴', startAt: '2020-03-16T10:00:00' };
+  assert.deepStrictEqual(fns.filterRecordsByQuery([a, b], 'rc'), [a]);
+  assert.deepStrictEqual(fns.filterRecordsByQuery([a, b], '헬스'), [b]);
+});
+
+check('filterRecordsByQuery: 날짜(월/일 라벨·dateKey)로도 찾는다', () => {
+  const a = { id: 'a', text: '아무 내용', startAt: '2020-03-15T10:00:00' };
+  const b = { id: 'b', text: '아무 내용', startAt: '2020-04-20T10:00:00' };
+  assert.deepStrictEqual(fns.filterRecordsByQuery([a, b], '3월'), [a]);
+  assert.deepStrictEqual(fns.filterRecordsByQuery([a, b], '2020-04'), [b]);
+});
+
+check('filterRecordsByQuery: 분야(TOPICS 라벨)로도 찾고, 일치하는 게 없으면 빈 배열', () => {
+  const a = { id: 'a', text: '아무 내용', category: 'workout', startAt: '2020-03-15T10:00:00' };
+  const b = { id: 'b', text: '아무 내용', startAt: '2020-03-16T10:00:00' };
+  assert.deepStrictEqual(fns.filterRecordsByQuery([a, b], '운동'), [a]);
+  assert.deepStrictEqual(fns.filterRecordsByQuery([a, b], '존재하지않는검색어'), []);
 });
 
 /* ============ 결과 요약 ============ */
