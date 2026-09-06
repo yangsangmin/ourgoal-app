@@ -694,3 +694,12 @@
 - **발생한 문제 및 해결**: 감사(AUD) 지적 — `renderHome`은 탭 전환·앱 진입에서만 호출돼 홈 체크인·기록 모달 저장 직후에는 배지가 갱신되지 않는 전제 오류(리뷰어를 생략한 S 작업의 첫 실증 비용). 보완: 기록이 바뀌는 모든 경로가 지나는 `saveProfile()` 첫머리에서 `updateAppBadge(computeStreakDays())` 호출, 로그아웃은 `signOut()` 전에 배지 제거, PR 본문의 iOS 권한 문구 정정.
 - **검증 결과**: `new Function()` 문법 통과, `node scripts/smoke-test.js` 47/47(기존 44 + 신규 3), 충돌 마커 0건, index.html 삭제 줄 0. 브라우저 실동작은 로그인 후 홈 렌더에서만 일어나고 로컬 프리뷰에 로그인 세션이 없어 스모크(불변식 3건)로 대체 — 병합 후 PWA 설치 기기에서 체크인 뒤 아이콘 배지 확인 권장.
 ---
+
+## [2026-09-06 21:37] 온보딩 4단계 "첫 기록" — 가입 60초 내 첫 체크인 유도 (성장 백로그 P0 3.5 / 거시 A4)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~) 5번째 항목. ① DEV-1(#47) → ② OG(#48) → ③ 앱 배지(#49) → ④ CSV(#50, 감사에서 기존 기능 중복 확인돼 닫음) → ⑤ 이 항목. 배정표대로 researcher(삽입 지점 표) → implementer(격리 worktree) → reviewer 순으로 실행(대체 모드: general-purpose + 역할 프롬프트). 컨트롤타워는 탐색 읽기를 하지 않고 삽입 지점 표만 받아 설계했다(DEV-1 규칙 첫 적용, 컨텍스트 압축 0회).
+- **목표**: 신규 가입자가 목표를 만든 직후 가이드 5개 모달을 지나기 전에 "한 줄 기록"을 남기게 해 가입→첫 체크인 전환율(목표 ≥60%)을 올린다.
+- **착수 전 불변식**: (1) 건너뛰기·배경 탭·저장 어느 경로로도 `enterApp()` 도달 (2) 저장은 기록 1건·XP 1회 (3) 빈 텍스트 저장 불가 (4) `captureSave` 핸들러·CSS·1~3단계 불변(라벨 분모만 4) (5) `buildCheckinRecord` 스모크 고정.
+- **수정/실행 내역**: `index.html` — 라벨 3곳 `/ 4`, `buildCheckinRecord`/`saveQuickCheckin` 헬퍼(`maybeApplyStreakFreeze` 뒤), `startOnboarding` 안 `finishOnboarding`(기존 후속 6줄 이동)/`showObStep4`(textarea + [기록하고 시작하기] + "나중에 적을게요", 배경 탭은 `overlay.onclick` 재지정으로 건너뛰기와 동일), `#obFinish` 핸들러 6줄 → `showObStep4(goal)`. `scripts/smoke-test.js` — `uid·newId·nowISO·buildCheckinRecord` 추출, 샌드박스 `window` shim, 테스트 2건.
+- **발생한 문제 및 해결**: 리뷰어 조건부 통과 — (1) 저장 중 예외 시 `busy` 가드 때문에 탈출 경로 0개 → try/catch로 감싸 실패해도 `finishOnboarding` 도달(불변식 1 코드로 보장) (2) dev_log·4블록 4번 미기입 → 이 기록과 PR 본문 보완 (3) `scripts/smoke-test.js`가 열린 #49와 인접 줄 충돌 → 병합 순서 주의로 PR에 명시. 구현자는 static 서버 포트 하드코딩으로 브라우저 검증을 생략했고 컨트롤타워가 대신 수행.
+- **검증 결과**: 문법 통과, `node scripts/smoke-test.js` 46/46(기존 44 + 2), 삭제 줄 9(라벨 3 + 이동 6, 전부 의도), `captureSave` 무변경, 마커·`__dbg` 0. 브라우저(로컬 static 서버, 임시 `__dbg` 훅으로 온보딩 강제 실행 후 제거): 1→2→3→4단계 라벨 정상, 빈 텍스트 저장 버튼 disabled, 입력 후 저장 → 기록 1건·XP +10(1회)·`appShell.active`·가이드 모달로 이어짐, 건너뛰기 → 기록 0·홈 진입·가이드, 배경 탭 → 기록 0·홈 진입·가이드. 리뷰어 조건부 통과 → 권고 반영 후 재검증(스모크 46/46).
+---

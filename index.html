@@ -1440,7 +1440,7 @@
 
     function showObStep1(){
       openModal(
-        '<p class="ob-step-label">1 / 3 · 환영해요</p>' +
+        '<p class="ob-step-label">1 / 4 · 환영해요</p>' +
         '<h3>'+escapeHtml(state.profile.displayName)+'님, 반가워요 👋</h3>' +
         '<p class="muted" style="margin:-8px 0 18px;">먼저 어떤 종류의 목표를 시작할지 골라주세요. 목표에 맞는 마일스톤을 미리 채워드려요.</p>' +
         '<div class="cat-grid" id="obCatGrid">' +
@@ -1476,7 +1476,7 @@
     function showObStep2(){
       var t = GOAL_TEMPLATES[ob.category];
       openModal(
-        '<p class="ob-step-label">2 / 3 · 목표 정하기</p>' +
+        '<p class="ob-step-label">2 / 4 · 목표 정하기</p>' +
         '<h3>'+t.icon+' '+t.label+' 목표를 적어주세요</h3>' +
         '<div class="field"><label>최종 목표</label><input id="obTitle" type="text" placeholder="예: 3개월 안에 벤치프레스 100kg" value="'+escapeHtml(ob.title)+'"></div>' +
         '<div class="field"><label>목표 마감일 (선택)</label><input id="obDue" type="date" value="'+ob.dueDate+'"><p class="faint" id="obDday" style="margin:6px 0 0;">'+(ob.dueDate ? '오늘 기준 <b style="color:var(--red);">'+dDay(ob.dueDate)+'</b>' : '')+'</p></div>' +
@@ -1505,7 +1505,7 @@
         ? t.ms.map(function(m){ return '<div class="tp-item">☐ '+escapeHtml(m)+'</div>'; }).join('')
         : '<div class="tp-item">마일스톤은 목표 화면에서 직접 추가해요</div>';
       openModal(
-        '<p class="ob-step-label">3 / 3 · 마일스톤 미리보기</p>' +
+        '<p class="ob-step-label">3 / 4 · 마일스톤 미리보기</p>' +
         '<h3>이렇게 시작할게요</h3>' +
         '<p class="muted" style="margin:-8px 0 12px;"><b style="color:var(--ink);">'+escapeHtml(ob.title)+'</b></p>' +
         '<div class="tmpl-preview">'+preview+'</div>' +
@@ -1526,15 +1526,50 @@
             state.activeGoalId = goal.id;
             trackGoalCreated(goal, 'onboarding');
             await saveProfile();
-            closeModal();
-            enterApp();
-            toast('목표를 만들었어요 — 시작해봐요!');
-            var alreadySeenGuide = state.profile.settings.hasSeenGuide;
-            await maybeShowFirstLoginGuide();
-            if(alreadySeenGuide) showCommTourModal();
+            showObStep4(goal);
           });
         }
       );
+    }
+
+    async function finishOnboarding(msg){
+      closeModal();
+      enterApp();
+      toast(msg);
+      var alreadySeenGuide = state.profile.settings.hasSeenGuide;
+      await maybeShowFirstLoginGuide();
+      if(alreadySeenGuide) showCommTourModal();
+    }
+    function showObStep4(goal){
+      var html =
+        '<p class="ob-step-label">4 / 4 · 첫 기록</p>' +
+        '<h3>지금 뭘 하고 있었나요?</h3>' +
+        '<p class="muted" style="margin:-8px 0 18px;">한 줄이면 충분해요. 「'+escapeHtml(goal.title)+'」의 첫 기록이 돼요.</p>' +
+        '<textarea id="obFirstNote" maxlength="300" placeholder="예: 헬스장 등록하고 왔다" style="width:100%;min-height:96px;"></textarea>' +
+        '<div class="modal-actions"><button class="btn btn-primary btn-block" id="obFirstSave" type="button" disabled>기록하고 시작하기</button></div>' +
+        '<button class="land-login-link" id="obFirstSkip" type="button" style="width:100%;background:none;margin-top:12px;">나중에 적을게요</button>';
+      var busy = false;
+      var skip = function(){ if(busy) return; busy = true; finishOnboarding('목표를 만들었어요 — 시작해봐요!'); };
+      openModal(html, function(sheet){
+        var ta = sheet.querySelector('#obFirstNote');
+        var saveBtn = sheet.querySelector('#obFirstSave');
+        ta.addEventListener('input', function(){ saveBtn.disabled = !ta.value.trim(); });
+        saveBtn.addEventListener('click', async function(){
+          var text = ta.value.trim();
+          if(!text || busy) return;
+          busy = true; saveBtn.disabled = true;
+          var xpRes = null;
+          try{ xpRes = await saveQuickCheckin(text, goal, 'onboarding'); }
+          catch(e){ console.warn('first checkin failed:', e); } /* 저장이 실패해도 반드시 홈으로 진입(불변식 1) */
+          await finishOnboarding(xpRes ? '첫 기록까지 남겼어요 — 시작해봐요!' : '목표를 만들었어요 — 시작해봐요!');
+          if(xpRes && xpRes.leveledUp) showLevelUpBanner(levelForXP(xpRes.total));
+        });
+        sheet.querySelector('#obFirstSkip').addEventListener('click', skip);
+        setTimeout(function(){ try{ ta.focus(); }catch(e){} }, 50);
+      });
+      /* openModal이 onMount 뒤에 overlay.onclick을 덮어쓰므로 여기서 재지정: 배경 탭도 반드시 enterApp 경로로 */
+      var overlay = document.getElementById('modalOverlay');
+      overlay.onclick = function(e){ if(e.target === overlay) skip(); };
     }
   }
 
@@ -2438,6 +2473,19 @@
     sf.available--;
     sf.usedDates.push(yKey);
     return true;
+  }
+
+  /* 온보딩 첫 기록용 체크인 저장 — 데이터 부수효과만 수행하고 홈 DOM(captureSave 핸들러)은 건드리지 않는다. 성장 백로그 P0 3.5 / 거시 A4 */
+  function buildCheckinRecord(text, goal){
+    return { id: newId(), type: 'note', text: text, startAt: nowISO(), endAt: nowISO(), createdAt: nowISO(), category: goal ? goal.category : null };
+  }
+  async function saveQuickCheckin(text, goal, source){
+    state.profile.records.unshift(buildCheckinRecord(text, goal));
+    var xpRes = awardXP(XP_RULES.checkin, '체크인');
+    maybeGrantStreakFreeze();
+    await saveProfile();
+    track('checkin', { first: state.profile.records.length===1, has_goal: !!goal, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l'), source: source || 'quick' });
+    return xpRes;
   }
 
   /* ============ RENDER: HOME ============ */

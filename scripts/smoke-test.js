@@ -74,12 +74,14 @@ const FN_NAMES = [
   'totalCompletedMilestones',
   'heatmapLevel', 'localNextActionSuggestion',
   'goalAchievement', 'weeklyRecapStats',
-  'parseAttribution', 'updateAppBadge',
+  'parseAttribution',
+  'uid', 'newId', 'nowISO', 'buildCheckinRecord', 'updateAppBadge',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
 
 const sandboxSrc =
+  'var window = {};\n' +
   'var STREAK_FREEZE_MAX = 3;\n' +
   'var state = { profile: { records: [], settings: { streakFreeze: { available: 0, usedDates: [], grantedTier: 0 } } } };\n' +
   /* Badging API 스텁 — updateAppBadge 불변식 검증용 (setNavigator(null)로 미지원 환경 재현) */
@@ -93,7 +95,8 @@ const sandboxSrc =
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
   'goalAchievement, weeklyRecapStats, ' +
-  'parseAttribution, updateAppBadge, ' +
+  'parseAttribution, ' +
+  'buildCheckinRecord, updateAppBadge, ' +
   'getNavigator: function(){ return navigator; }, setNavigator: function(n){ navigator = n; }, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
@@ -383,6 +386,22 @@ check('parseAttribution: 값은 80자로 자르고 +는 공백으로 복원한�
   const a = fns.parseAttribution('?utm_campaign=' + long + '&utm_source=kakao+talk');
   assert.strictEqual(a.utm_campaign.length, 80);
   assert.strictEqual(a.utm_source, 'kakao talk');
+});
+
+/* ============ 온보딩 첫 기록 ============ */
+check('buildCheckinRecord: 목표가 있으면 category를 물려받고 type=note·startAt=endAt(ISO)·id 비어있지 않음', () => {
+  const goal = { category: 'health' };
+  const rec = fns.buildCheckinRecord('헬스장 등록하고 왔다', goal);
+  assert.strictEqual(rec.type, 'note');
+  assert.strictEqual(rec.category, 'health');
+  assert.ok(rec.id && String(rec.id).length > 0);
+  assert.strictEqual(rec.startAt, rec.endAt);
+  assert.ok(!isNaN(Date.parse(rec.startAt)));
+});
+
+check('buildCheckinRecord: 목표가 없으면 category는 null', () => {
+  const rec = fns.buildCheckinRecord('오늘의 기록', null);
+  assert.strictEqual(rec.category, null);
 });
 
 /* ============ PWA 앱 배지 (불변식: 미지원 환경 no-op·throw 없음 / 스트릭>0 → 숫자 / 0 → clear) ============ */
