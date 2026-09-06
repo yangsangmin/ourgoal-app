@@ -3,8 +3,9 @@ const fs = require('fs');
 const path = require('path');
 
 const root = process.cwd();
-const port = 8787;
-const types = { '.html':'text/html', '.js':'text/javascript', '.json':'application/json', '.css':'text/css', '.png':'image/png', '.svg':'image/svg+xml', '.ico':'image/x-icon' };
+/* 포트: `PORT=8790 node scripts/static-server.js` 또는 `node scripts/static-server.js 8790` (구현 서브에이전트가 컨트롤타워의 8787과 별도로 띄울 수 있게) */
+const port = Number(process.env.PORT || process.argv[2] || 8787);
+const types = { '.html':'text/html', '.js':'text/javascript', '.json':'application/json', '.css':'text/css', '.png':'image/png', '.jpg':'image/jpeg', '.jpeg':'image/jpeg', '.webp':'image/webp', '.svg':'image/svg+xml', '.ico':'image/x-icon' };
 
 http.createServer(function(req, res){
   var urlPath = req.url.split('?')[0];

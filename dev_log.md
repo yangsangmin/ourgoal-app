@@ -703,3 +703,11 @@
 - **발생한 문제 및 해결**: 리뷰어 조건부 통과 — (1) 저장 중 예외 시 `busy` 가드 때문에 탈출 경로 0개 → try/catch로 감싸 실패해도 `finishOnboarding` 도달(불변식 1 코드로 보장) (2) dev_log·4블록 4번 미기입 → 이 기록과 PR 본문 보완 (3) `scripts/smoke-test.js`가 열린 #49와 인접 줄 충돌 → 병합 순서 주의로 PR에 명시. 구현자는 static 서버 포트 하드코딩으로 브라우저 검증을 생략했고 컨트롤타워가 대신 수행.
 - **검증 결과**: 문법 통과, `node scripts/smoke-test.js` 46/46(기존 44 + 2), 삭제 줄 9(라벨 3 + 이동 6, 전부 의도), `captureSave` 무변경, 마커·`__dbg` 0. 브라우저(로컬 static 서버, 임시 `__dbg` 훅으로 온보딩 강제 실행 후 제거): 1→2→3→4단계 라벨 정상, 빈 텍스트 저장 버튼 disabled, 입력 후 저장 → 기록 1건·XP +10(1회)·`appShell.active`·가이드 모달로 이어짐, 건너뛰기 → 기록 0·홈 진입·가이드, 배경 탭 → 기록 0·홈 진입·가이드. 리뷰어 조건부 통과 → 권고 반영 후 재검증(스모크 46/46).
 ---
+
+## [2026-09-06 21:54] 검증 도구 개선 — static 서버 포트 인자·jpg MIME, 스모크 샌드박스 브라우저 스텁 + 계측 게이트 불변식 테스트 (감사 AUD-1·AUD-6 반영)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~) 7번째 항목. 감사 로그가 3회 반복 지적한 "DOM 스텁 미비로 불변식을 테스트로 못 잡음"(AUD-2·4·6, §8 승격 기준 도달)과 "구현자가 static 서버 포트 하드코딩 때문에 브라우저 검증을 컨트롤타워에 넘김"(AUD-6)을 도구 수준에서 해소. 앱 코드(index.html) 무변경.
+- **목표**: (1) 구현 서브에이전트가 별도 포트로 static 서버를 띄워 스스로 브라우저 검증할 수 있게 한다 (2) localStorage·location에 의존하는 게이트 로직을 스모크 테스트로 고정할 수 있게 한다 — 함수 계약(first-touch·오가닉 미저장·storage 예외 무해)을 고정하기 위함. 단 AUD-1의 실제 결함(호출 지점이 하루 1회 게이트 안에 있던 순서 문제)은 부트 블록이 이름 있는 함수로 분리돼야 테스트 가능하므로 이번 범위 밖(AUD-8 지적) — index.html PR들 병합 후 후속.
+- **수정/실행 내역**: `scripts/static-server.js` — 포트를 `PORT` 환경변수 또는 첫 인자로 받음(기본 8787), `.jpg/.jpeg/.webp` MIME 추가(OG 이미지 로컬 확인용). `scripts/smoke-test.js` — 샌드박스에 `window`·`location`·`localStorage`(Map 기반) 스텁, `uid·newId·nowISO·getSid·getAttribution` 추출, `setSearch/getStorage` 훅, 불변식 테스트 3건(sid 안정성·보존, first-touch 유지·`goal` 제외·`landed_at`, 오가닉 미저장·storage 예외 시 빈 객체).
+- **발생한 문제 및 해결**: 없음. `scripts/smoke-test.js`의 `FN_NAMES`·exports 줄은 열린 #49·#51·#52와 인접 충돌 — 병합 순서에서 마지막에 두거나 컨트롤타워가 정리.
+- **검증 결과**: `node scripts/smoke-test.js` 47/47(기존 44 + 3), `PORT=8790`·인자 `8791` 양쪽으로 서버 기동·200 응답 확인, index.html 무변경.
+---
