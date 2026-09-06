@@ -15,7 +15,8 @@ disable-model-invocation: true
 - `git status --short` — 커밋되지 않은 변경이 있으면 시작하지 않고 알린다.
 - `"C:\Program Files\GitHub CLI\gh.exe" auth status` 통과 확인.
 - `git fetch origin main` 후 현재 main 기준선 `node scripts/smoke-test.js` 통과 확인.
-- 시작 시각을 기록한다(감사용).
+- 시작 시각을 **`date "+%H:%M"`로 실제 기록**한다(추정치 금지 — 리드타임 지표의 근거).
+- Agent 도구의 가용 에이전트 목록에 `implementer`·`reviewer`·`auditor`가 없으면 **대체 모드**(ORG.md §3-1)를 선언한다. 배정표는 그대로, 각 역할은 `general-purpose` + 해당 `.claude/agents/<역할>.md` 본문으로 띄운다.
 
 ## 1. 지시 접수·분류
 - 유형: 기능구현 / 버그수정 / 리서치 / 전략·기획 / 문서 / 조직운영 / 백로그 소진
@@ -26,6 +27,8 @@ disable-model-invocation: true
 
 ## 2. 착수 전 사고 (CLAUDE.md §6 4블록 1~2 · §7 원칙 1~4)
 - 1블록 문제·본질 / 2블록 해결 방식·타당성(CLAUDE.md 규칙·기존 기능 충돌 점검)을 **코드를 건드리기 전에** 정리한다. L 규모면 `strategist`에게 이 판단을 맡긴다.
+- 계측·게이팅·localStorage 상태 로직이 포함되면 2블록에 **불변식 목록**을 적고, §5-2 스모크 테스트를 불변식 1개당 1개 먼저 쓴다(ORG.md §4).
+- M 이상은 4블록 1~2·삽입 지점 표(파일:줄·앞뒤 3줄)·불변식을 scratchpad 파일에 먼저 써 둔다 — 컨텍스트 압축이 일어나도 디스크에서 복구한다. 탐색 읽기는 `researcher`에게 맡기고 컨트롤타워는 삽입 지점 표만 받는다.
 - 사용자 승인 게이트는 두 곳뿐: (a) ORG.md §5 해당 시, (b) 마지막 PR. L 규모 기능구현은 착수 브리핑을 보고하되 답을 기다리지 않고 진행한다(사용자가 중간에 멈출 수 있다) — 단 §5 항목이 포함되면 기다린다.
 
 ## 3. 배정 (ORG.md §3)
@@ -43,13 +46,14 @@ disable-model-invocation: true
 2. `node scripts/smoke-test.js` 통과
 3. UI 변경이 있으면 `.claude/launch.json` static 서버로 렌더링, 콘솔 에러 0건
 4. `git diff origin/main -- index.html`의 삭제 줄 검토 — 기존 기능 삭제 없음
-5. M 이상은 `reviewer`를 띄워 "통과/조건부 통과" 받기. "반려"면 되돌린다.
+5. M 이상은 `reviewer`를 띄워 "통과/조건부 통과" 받기. "반려"면 되돌린다. **reviewer 결과가 오기 전에는 §6의 `gh pr ready`·§8 보고로 넘어가지 않는다** — PR은 §6대로 draft로 먼저 열어 두고 기다린다.
 6. `grep -rn "^<<<<<<<" .` 0건, `grep -n "__dbg" index.html` 0건
 
 ## 6. 기록·PR
 - dev_log.md 맨 끝에 CLAUDE.md §5 형식으로 기록(4블록 요약 포함).
 - 스프린트 태스크면 `docs/sprint/STATUS.md`, 백로그 항목이면 BACKLOG.md 체크·노션 백로그 행 `비고`에 PR 번호 추가.
 - PR 본문을 `.pr-body-<slug>.md`에 CLAUDE.md §6 4블록 형식으로 쓰고 `gh pr create --base main --title "…" --body-file …`. 본문 끝에 `🤖 Generated with [Claude Code](https://claude.com/claude-code)`.
+- **M 이상은 `--draft`로 연다.** reviewer "통과/조건부 통과" 후 지적 사항을 반영·재검증하고 `gh pr edit --body-file`로 4블록(재검증 내역)을 갱신한 뒤 `gh pr ready <번호>`로 전환한다. S(리뷰어 없음)는 바로 ready로 연다.
 - main에 직접 커밋·푸시·병합하지 않는다. 채팅 명시 지시가 있을 때만 `gh pr merge`, 직후 충돌 마커 grep + 스모크.
 
 ## 7. 감사 호출 (생략 금지)
@@ -58,7 +62,7 @@ auditor가 노션 쓰기에 실패해 내용을 메시지로 남기면 컨트롤
 
 ## 8. 보고 (CLAUDE.md §6 양식)
 ```
-🔧 컨트롤타워 작업 보고 [HH:MM~HH:MM, 규모 S/M/L]
+🔧 컨트롤타워 작업 보고 [HH:MM~HH:MM, 규모 S/M/L, 모드: 정규 | 대체(에이전트 미로드)]
 
 1. [작업명] — PR #번호
    - 근거: (4블록 1~2 요약 1줄)
@@ -66,6 +70,7 @@ auditor가 노션 쓰기에 실패해 내용을 메시지로 남기면 컨트롤
    - 배정: (에이전트 조합)
    - 검증: 문법✅ 테스트n/n✅ 배포✅ 리뷰✅
    - 스스로 정한 것: (ORG.md §4로 결정한 항목, 없으면 "없음")
+   - §5 판단: (돈·개인정보·삭제·병합·조직변경 중 해당 항목과 질문 여부. 없으면 "해당 없음 — 이유 1줄")
    - ⚠️ 주의사항 (있을 때만)
 
 감사: AUD-n 기록됨 (미검토 누적 k건 — k≥5면 "/develop-org 실행을 권합니다")

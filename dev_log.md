@@ -654,3 +654,11 @@
 - **발생한 문제 및 해결**: (1) Claude Code 분류기가 `gh secret set`·Vercel env 입력을 차단 → 값을 화면에 출력하지 않고 파일에서 읽어 등록하는 Node 스크립트를 만들어 사용자가 실행. (2) 그 스크립트가 공백 포함 `gh.exe` 경로를 shell 경유로 호출해 1단계에서 실패 → shell 없이 직접 spawn하도록 수정. (3) `vercel redeploy --yes` 옵션 미지원 → 옵션 제거. (4) 재배포 후에도 `push-dispatch`가 500: `SUPABASE_SERVICE_ROLE_KEY` 값 첫 글자가 한글('아', ByteString 오류) → 사용자가 Vercel에서 값을 다시 입력. (5) 그 다음 오류 `push_subscriptions` 테이블 없음 → PR #34 본문에서 SQL을 찾아 실행. (6) PowerShell 실행 정책이 `vercel.ps1`을 막음 → `vercel.cmd`로 호출.
 - **검증 결과**: `/api/track` GET 405 · `events` 테이블 존재(anon select 200 []) · `/api/vapid-public-key` 200(생성한 공개키와 일치) · `/api/push-dispatch` 비밀값 없이 401, 있으면 200 `{checked:0,sent:0,removed:0,errors:0}` · `/api/push-subscribe` DELETE 왕복 200 · GitHub Actions `push-dispatch.yml` 수동 실행 success(그 전까지 5분마다 failure). 구독은 아직 0건 — 사용자가 앱 설정에서 알림을 켜면 구독이 생성되고 이후 `notification_sent`/`notification_clicked` 이벤트가 쌓인다.
 ---
+
+## [2026-09-06 21:30] 조직개발 DEV-1 — 대체 모드 규칙·리뷰어 선행(draft PR)·불변식 테스트·§5 개인정보 경계 (근거 AUD-1)
+- **사이클 계획(8원칙)**: 사용자 지시 "앞으로 2시간 자체 판단으로 계속 진행"(21:16 시작). 순서: ① 이 조직개발(감사 AUD-1이 "지금 반영" 권고한 구조 결함 2건) → ② P0 ④ OG 메타태그 → ③ P0 ⑥ PWA 앱 배지 → ④ P0 3.5 온보딩 마지막 단계 첫 체크인 → ⑤ 여유 시 P0 ⑪ CSV 내보내기. 열린 PR #40·#42·#43과 겹치는 알림 문구·방해금지·리캡 알림은 제외. 항목마다 별도 브랜치·PR, 병합은 사용자.
+- **목표**: 감사 AUD-1의 개선점 5개 중 구조적으로 확정된 2개(커스텀 에이전트 미로드 시 대체 모드 규칙 부재, /work가 리뷰어 통과 전 PR 오픈을 허용)를 지금 반영하고, 나머지 3개(불변식 테스트 선행, researcher 위임·scratchpad 복구, §5 판단 명시)는 비용이 낮은 규칙 문장이라 함께 넣는다. 커스텀 `org-developer`가 이 세션에 로드되지 않아 컨트롤타워가 대체 모드로 직접 수행(§3-1 규칙 그대로 적용한 첫 사례).
+- **수정/실행 내역**: `docs/org/ORG.md` — §3-1 대체 모드 절 신설(5개 규칙), §4에 기본값 3행 추가(같은 인프라 항목 한 PR 묶음·불변식 테스트 선행·M 이상 draft PR), §5-2 개인정보 경계 명시. `.claude/skills/work/SKILL.md` — §0 시작 시각 실기록·대체 모드 판단, §2 불변식·scratchpad 선기록·researcher 위임, §5-5 리뷰어 결과 전 진행 금지, §6 `--draft` → `gh pr ready` 흐름, §8 보고 양식에 모드·§5 판단 항목. `.claude/agents/reviewer.md` — 검토 항목 9(DB 제약·남용 완화)·10(가입·생성 경로 누락) 추가. CLAUDE.md §10은 변경 불필요(ORG.md가 단일 출처). 노션 조직 개발 로그 DEV-1 기록, 감사 AUD-1 `조직개발 반영 = 부분반영`(PR 병합 시 반영).
+- **발생한 문제 및 해결**: `/develop-org` 스킬은 감사 표본 1~2건이면 사용자에게 진행 여부를 묻도록 돼 있으나, 사용자가 이미 "감사 권고 2건 처리"를 지시하고 2시간 자율 진행을 승인했으므로 그 지시를 답으로 간주하고 진행. 코드(index.html·api·sw.js) 변경 없음.
+- **검증 결과**: 앱 코드 무변경(`git diff --stat`에 조직 파일 3개 + dev_log만), `node scripts/smoke-test.js` 44/44, 충돌 마커 0건, 에이전트 frontmatter 유지. 규칙 자체의 효과는 다음 감사(AUD-2~)의 1회 통과율·리드타임으로 재검증.
+---
