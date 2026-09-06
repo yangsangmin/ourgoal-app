@@ -654,3 +654,12 @@
 - **발생한 문제 및 해결**: (1) Claude Code 분류기가 `gh secret set`·Vercel env 입력을 차단 → 값을 화면에 출력하지 않고 파일에서 읽어 등록하는 Node 스크립트를 만들어 사용자가 실행. (2) 그 스크립트가 공백 포함 `gh.exe` 경로를 shell 경유로 호출해 1단계에서 실패 → shell 없이 직접 spawn하도록 수정. (3) `vercel redeploy --yes` 옵션 미지원 → 옵션 제거. (4) 재배포 후에도 `push-dispatch`가 500: `SUPABASE_SERVICE_ROLE_KEY` 값 첫 글자가 한글('아', ByteString 오류) → 사용자가 Vercel에서 값을 다시 입력. (5) 그 다음 오류 `push_subscriptions` 테이블 없음 → PR #34 본문에서 SQL을 찾아 실행. (6) PowerShell 실행 정책이 `vercel.ps1`을 막음 → `vercel.cmd`로 호출.
 - **검증 결과**: `/api/track` GET 405 · `events` 테이블 존재(anon select 200 []) · `/api/vapid-public-key` 200(생성한 공개키와 일치) · `/api/push-dispatch` 비밀값 없이 401, 있으면 200 `{checked:0,sent:0,removed:0,errors:0}` · `/api/push-subscribe` DELETE 왕복 200 · GitHub Actions `push-dispatch.yml` 수동 실행 success(그 전까지 5분마다 failure). 구독은 아직 0건 — 사용자가 앱 설정에서 알림을 켜면 구독이 생성되고 이후 `notification_sent`/`notification_clicked` 이벤트가 쌓인다.
 ---
+
+## [2026-09-06 21:28] 데이터 내보내기 — 체크인 기록 CSV (성장 백로그 P0 실행순서 11)
+- **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~) 4번째 항목(온보딩 첫 체크인은 리서치 결과를 기다리는 동안 순서를 바꿔 이 S 항목을 먼저 처리). ① DEV-1(#47) → ② OG 메타(#48) → ③ 앱 배지(#49) → ④ 이 항목 → ⑤ 온보딩 첫 체크인.
+- **목표**: 기록은 사용자 소유 — 언제든 파일로 가져갈 수 있어야 한다(데이터 주권 신뢰 = 이탈 방지). 설정 화면에서 버튼 하나로 체크인 기록을 CSV로 내려받는다.
+- **착수 전 불변식**: (1) 출력은 항상 BOM + 헤더 줄로 시작(엑셀 한글 깨짐 방지) (2) 쉼표·따옴표·줄바꿈이 있는 값은 인용하고 따옴표는 두 번 (3) startAt 오름차순 (4) 결측(종료 시각 없음)은 빈 칸, 예외 없음. 4개 모두 스모크 테스트로 먼저 고정.
+- **수정/실행 내역**: `index.html` — 설정 화면 마지막 set-block의 로그아웃 버튼 위에 같은 클래스(`btn btn-ghost`, 인라인 width 100%)로 `#exportCsvBtn` 1줄 추가(새 CSS 없음). `resetBtn` 핸들러 뒤에 순수 함수 `csvEscape`·`recordsToCsv(records)`(열: 날짜·시작·종료·소요(분)·유형·내용)와 클릭 핸들러(Blob → `a[download]` `ourgoal-records-YYYY-MM-DD.csv`, `track('export', {format, count})`, 기록 0건이면 안내 토스트) 추가. `scripts/smoke-test.js` — 두 함수 추출·테스트 3건.
+- **발생한 문제 및 해결**: 없음. ics(캘린더) 형식은 백로그 비고("JSON→CSV 변환 정도")를 스코프 상한으로 보고 제외.
+- **검증 결과**: `new Function()` 문법 통과, `<style>` 중괄호 균형, `node scripts/smoke-test.js` 47/47(기존 44 + 신규 3), index.html 삭제 줄 0, 마커 0. 로컬 static 서버(21:28): `#exportCsvBtn`이 로그아웃 버튼과 같은 클래스로 바로 위에 렌더됨을 JS로 확인, 콘솔은 기준선과 같은 404 3건 외 신규 에러 0. 실제 다운로드는 로그인 세션이 필요해 병합 후 설정 화면에서 확인 권장.
+---

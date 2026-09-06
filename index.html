@@ -865,6 +865,7 @@
 
       <div class="set-block">
         <h4>계정</h4>
+        <button class="btn btn-ghost" id="exportCsvBtn" type="button" style="width:100%;margin-bottom:10px;">기록 내보내기 (CSV)</button>
         <button class="btn btn-ghost" id="logoutBtn" type="button" style="width:100%;margin-bottom:10px;">로그아웃</button>
         <button class="btn btn-danger" id="resetBtn" type="button" style="width:100%;">이 계정 데이터 초기화</button>
       </div>
@@ -1381,6 +1382,36 @@
     await saveProfile();
     renderAll();
     toast('초기화했어요');
+  });
+
+  /* 데이터 내보내기(CSV) — 성장 백로그 P0 ⑪. 기록은 사용자 소유: 언제든 파일로 가져갈 수 있어야 한다 */
+  function csvEscape(v){
+    var s = (v === null || v === undefined) ? '' : String(v);
+    return /[",\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }
+  function recordsToCsv(records){
+    var header = ['날짜','시작','종료','소요(분)','유형','내용'];
+    var fmtTime = function(d){ return (d && !isNaN(d)) ? pad(d.getHours())+':'+pad(d.getMinutes()) : ''; };
+    var rows = (records || []).slice().sort(function(a,b){ return String(a.startAt||'').localeCompare(String(b.startAt||'')); }).map(function(r){
+      var s = r.startAt ? new Date(r.startAt) : null, e = r.endAt ? new Date(r.endAt) : null;
+      var mins = (s && e && !isNaN(s) && !isNaN(e)) ? Math.max(0, Math.round((e - s)/60000)) : '';
+      return [ r.startAt ? dateKey(r.startAt) : '', fmtTime(s), fmtTime(e), mins, r.type || '', r.text || '' ].map(csvEscape).join(',');
+    });
+    return '﻿' + [header.join(',')].concat(rows).join('\r\n') + '\r\n'; /* BOM: 엑셀에서 한글 깨짐 방지 */
+  }
+  document.getElementById('exportCsvBtn').addEventListener('click', function(){
+    var recs = (state.profile && state.profile.records) || [];
+    if(!recs.length){ toast('아직 내보낼 기록이 없어요'); return; }
+    try{
+      var blob = new Blob([recordsToCsv(recs)], { type: 'text/csv;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = 'ourgoal-records-' + dateKey(nowISO()) + '.csv';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+      track('export', { format: 'csv', count: recs.length });
+      toast(recs.length + '개 기록을 CSV로 내보냈어요');
+    } catch(e){ toast('내보내기에 실패했어요. 잠시 후 다시 시도해주세요'); }
   });
 
   /* ============ Enter app ============ */

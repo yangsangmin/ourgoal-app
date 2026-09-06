@@ -74,7 +74,7 @@ const FN_NAMES = [
   'totalCompletedMilestones',
   'heatmapLevel', 'localNextActionSuggestion',
   'goalAchievement', 'weeklyRecapStats',
-  'parseAttribution',
+  'parseAttribution', 'csvEscape', 'recordsToCsv',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -91,7 +91,7 @@ const sandboxSrc =
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
   'goalAchievement, weeklyRecapStats, ' +
-  'parseAttribution, ' +
+  'parseAttribution, csvEscape, recordsToCsv, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -380,6 +380,27 @@ check('parseAttribution: 값은 80자로 자르고 +는 공백으로 복원한�
   const a = fns.parseAttribution('?utm_campaign=' + long + '&utm_source=kakao+talk');
   assert.strictEqual(a.utm_campaign.length, 80);
   assert.strictEqual(a.utm_source, 'kakao talk');
+});
+
+/* ============ CSV 내보내기 (불변식: BOM+헤더 항상 / 특수문자 인용·따옴표 이중화 / startAt 오름차순 / 결측은 빈 칸) ============ */
+check('recordsToCsv: 빈 배열이면 BOM + 헤더 줄만 낸다', () => {
+  assert.strictEqual(fns.recordsToCsv([]), '﻿날짜,시작,종료,소요(분),유형,내용\r\n');
+});
+
+check('recordsToCsv: 쉼표·따옴표·줄바꿈이 있는 내용은 인용하고 따옴표는 두 번 쓴다, 소요 분을 계산한다', () => {
+  const csv = fns.recordsToCsv([{ startAt: '2026-09-06T01:00:00.000Z', endAt: '2026-09-06T01:30:00.000Z', type: 'note', text: '오늘은 "집중", 잘됨\n내일도' }]);
+  const line = csv.split('\r\n')[1];
+  assert.ok(line.endsWith(',30,note,"오늘은 ""집중"", 잘됨\n내일도"'), line);
+  assert.strictEqual(fns.csvEscape('plain'), 'plain');
+  assert.strictEqual(fns.csvEscape(null), '');
+});
+
+check('recordsToCsv: startAt 오름차순으로 정렬하고 종료 시각이 없으면 빈 칸', () => {
+  const csv = fns.recordsToCsv([{ startAt: '2026-09-06T05:00:00.000Z', text: 'b' }, { startAt: '2026-09-05T05:00:00.000Z', text: 'a' }]);
+  const lines = csv.split('\r\n');
+  assert.ok(lines[1].endsWith(',a') && lines[2].endsWith(',b'));
+  assert.strictEqual(lines[1].split(',')[2], '');
+  assert.strictEqual(lines[1].split(',')[3], '');
 });
 
 /* ============ 결과 요약 ============ */
