@@ -966,6 +966,53 @@
     return (d.getMonth()+1)+'월 '+d.getDate()+'일';
   }
   function dateKey(iso){ var d=new Date(iso); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  /* ============ 계측(익명 이벤트) — 성장 백로그 P0 ①온보딩 퍼널 ②유입 채널 ③알림 클릭률 ============
+     원칙: user_id는 저장하지 않고 기기별 익명 sid만 사용(개인정보 최소화). 계측 실패는 UX에 절대 영향을 주지 않는다. */
+  function parseAttribution(search){
+    var keys = ['utm_source','utm_medium','utm_campaign','ref'];
+    var out = {};
+    var q = String(search||'').replace(/^\?/, '');
+    if(!q) return out;
+    q.split('&').forEach(function(pair){
+      var i = pair.indexOf('=');
+      var rawK = i===-1 ? pair : pair.slice(0,i);
+      var rawV = i===-1 ? '' : pair.slice(i+1);
+      var k, v;
+      try{ k = decodeURIComponent(rawK).trim(); v = decodeURIComponent(rawV.replace(/\+/g,' ')).trim(); } catch(e){ return; }
+      if(keys.indexOf(k)===-1 || !v) return;
+      out[k] = v.slice(0,80);
+    });
+    return out;
+  }
+  function getSid(){
+    try{
+      var sid = localStorage.getItem('ourgoal_sid');
+      if(!sid){ sid = newId(); localStorage.setItem('ourgoal_sid', sid); }
+      return sid;
+    } catch(e){ return null; }
+  }
+  function getAttribution(){
+    try{
+      var saved = localStorage.getItem('ourgoal_attrib');
+      if(saved) return JSON.parse(saved);
+      var fresh = parseAttribution(location.search);
+      if(Object.keys(fresh).length){
+        fresh.landed_at = nowISO();
+        localStorage.setItem('ourgoal_attrib', JSON.stringify(fresh)); /* 첫 유입(first-touch)만 보존 */
+      }
+      return fresh;
+    } catch(e){ return {}; }
+  }
+  function track(name, props){
+    try{
+      if(!sb || !name) return;
+      sb.from('events').insert({ sid: getSid(), name: name, props: props || {} }).then(function(){}, function(){});
+    } catch(e){ /* 계측 실패는 조용히 무시 */ }
+  }
+  function trackGoalCreated(goal, source){
+    var goals = (state.profile && state.profile.goals) || [];
+    track('goal_created', { source: source, category: goal && goal.category, first: goals.length<=1 });
+  }
   function fmtDuration(ms){
     if(ms<0) ms=0;
     var mins = Math.round(ms/60000);
@@ -1167,7 +1214,7 @@
     return { row: row, isNew: true };
   }
 
-  async function loadProfile(userId, username, newUserExtra){
+  async function loadProfile(userId, username, newUserExtra, provider){
     var ures = await ensureUserRow(userId, username, username.split('@')[0], newUserExtra);
     var urow = ures.row;
     var goalsRes = await sb.from('goals').select('*').eq('user_id', userId).order('created_at', {ascending:true});
@@ -1182,6 +1229,9 @@
     var records = (recsRes.data||[]).map(function(r){
       return { id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at };
     });
+    if(ures.isNew){
+      track('signup', Object.assign({ method: provider || 'email' }, getAttribution()));
+    }
     return {
       id: userId, username: username, displayName: urow.display_name,
       bio: urow.bio || '', avatarUrl: urow.avatar_url || '', interests: urow.interests || [],
@@ -1297,6 +1347,7 @@
     if(!res.data.session){ errEl.textContent = '가입 확인 메일을 보냈어요. 메일함에서 확인 후 로그인해주세요.'; return; }
 
     await ensureUserRow(res.data.user.id, u, name);
+    track('signup', Object.assign({ method: 'email' }, getAttribution())); /* 즉시 세션 경로는 loadProfile을 거치지 않으므로 여기서 기록 */
     state.profile = defaultProfile(res.data.user.id, u, name);
     await saveProfile();
     document.getElementById('authScreen').style.display = 'none';
@@ -1450,6 +1501,7 @@
             var goal = { id: newId(), title: ob.title, dueDate: ob.dueDate||null, category: ob.category, topic: obTopicRef.value, createdAt: nowISO(), visibility:'public', archivedAt:null, result:null, milestones: templateMilestones(ob.category) };
             state.profile.goals.push(goal);
             state.activeGoalId = goal.id;
+            trackGoalCreated(goal, 'onboarding');
             await saveProfile();
             closeModal();
             enterApp();
@@ -2421,6 +2473,7 @@
     var xpRes = awardXP(XP_RULES.checkin, '체크인');
     var freezeGranted = maybeGrantStreakFreeze();
     await saveProfile();
+    track('checkin', { first: state.profile.records.length===1, has_goal: !!goal, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l') });
     toast(freezeGranted ? '🧊 스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요' : '기록했어요');
     if(navigator.vibrate) navigator.vibrate(10);
     var saveBtn = document.getElementById('captureSave');
@@ -3188,6 +3241,7 @@
           var newGoal = { id: newId(), title: title, dueDate: null, category: 'etc', topic: major ? (major+'/'+(tmpl.topicMinor||'')) : '', createdAt: nowISO(), visibility:'public', archivedAt:null, result:null, milestones: milestones };
           state.profile.goals.push(newGoal);
           state.activeGoalId = newGoal.id;
+          trackGoalCreated(newGoal, 'template_bot');
           await saveProfile();
           closeModal();
           renderAll();
@@ -3255,6 +3309,7 @@
           var newGoal = { id: newId(), title: title, dueDate: due||null, category: chosenCat, topic: topicRef.value, createdAt: nowISO(), visibility: sheet.querySelector('#mGoalVis').value, archivedAt: null, result: null, milestones: templateMilestones(chosenCat) };
           state.profile.goals.push(newGoal);
           state.activeGoalId = newGoal.id;
+          trackGoalCreated(newGoal, 'manual');
           await saveProfile();
           closeModal();
           renderAll();
@@ -3310,6 +3365,7 @@
         var newGoal = buildGoalFromAgentData(op.data);
         goals.push(newGoal);
         state.activeGoalId = newGoal.id;
+        trackGoalCreated(newGoal, 'goal_agent');
         return true;
       }
       var goal = goals.find(function(g){ return g.id===op.goalId; });
@@ -5555,6 +5611,7 @@
     };
     state.profile.goals.push(goal);
     state.activeGoalId = goal.id;
+    trackGoalCreated(goal, 'community_template');
     await saveProfile();
     toast('"'+t.creator+'" 템플릿을 내 목표로 복사했어요');
     renderAll();
@@ -6651,7 +6708,7 @@
         var newExtra = {};
         if(um.avatar_url || um.picture) newExtra.avatar_url = um.avatar_url || um.picture;
         if(um.full_name || um.name || um.nickname) newExtra.display_name = um.full_name || um.name || um.nickname;
-        state.profile = await loadProfile(session.user.id, session.user.email, newExtra);
+        state.profile = await loadProfile(session.user.id, session.user.email, newExtra, (session.user.app_metadata && session.user.app_metadata.provider) || null);
         document.getElementById('landingScreen').style.display = 'none';
         document.getElementById('authScreen').style.display = 'none';
         if(state.profile._isNewSignup){
@@ -6664,6 +6721,11 @@
       }
     } catch(e){ /* fall through to landing screen */ }
     document.getElementById('landingScreen').style.display = 'flex';
+    try{
+      var attrib = getAttribution(); /* 유입 속성은 매 로드마다 확보(첫 유입만 저장), landing_view는 하루 1회만 기록 */
+      var lvDay = dateKey(nowISO());
+      if(localStorage.getItem('ourgoal_lv_day') !== lvDay){ localStorage.setItem('ourgoal_lv_day', lvDay); track('landing_view', attrib); }
+    } catch(e){ /* 계측 실패 무시 */ }
   })();
 
   /* ============ PWA: Service Worker 등록 ============ */

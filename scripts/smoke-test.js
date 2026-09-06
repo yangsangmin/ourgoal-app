@@ -74,6 +74,7 @@ const FN_NAMES = [
   'totalCompletedMilestones',
   'heatmapLevel', 'localNextActionSuggestion',
   'goalAchievement', 'weeklyRecapStats',
+  'parseAttribution',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -90,6 +91,7 @@ const sandboxSrc =
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
   'goalAchievement, weeklyRecapStats, ' +
+  'parseAttribution, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -358,6 +360,26 @@ check('weeklyRecapStats: 이번 주 기록 시간과 최다 분야를 정확히 
   assert.strictEqual(stats.count, 2);
   assert.strictEqual(stats.totalMs, 3600000 + 1800000);
   assert.strictEqual(stats.topCategory, 'study');
+});
+
+/* ============ 계측: 유입 속성 파싱 ============ */
+check('parseAttribution: utm/ref만 추출하고 나머지 파라미터는 버린다', () => {
+  const a = fns.parseAttribution('?utm_source=instagram&utm_medium=social&utm_campaign=launch&ref=user-1&goal=g1&foo=bar');
+  assert.deepStrictEqual(a, { utm_source: 'instagram', utm_medium: 'social', utm_campaign: 'launch', ref: 'user-1' });
+});
+
+check('parseAttribution: 빈 값·빈 문자열·잘못된 인코딩에도 예외 없이 빈 객체를 돌려준다', () => {
+  assert.deepStrictEqual(fns.parseAttribution(''), {});
+  assert.deepStrictEqual(fns.parseAttribution(undefined), {});
+  assert.deepStrictEqual(fns.parseAttribution('?utm_source=&ref='), {});
+  assert.deepStrictEqual(fns.parseAttribution('?utm_source=%E0%A4%A&ref=ok'), { ref: 'ok' });
+});
+
+check('parseAttribution: 값은 80자로 자르고 +는 공백으로 복원한다', () => {
+  const long = 'x'.repeat(200);
+  const a = fns.parseAttribution('?utm_campaign=' + long + '&utm_source=kakao+talk');
+  assert.strictEqual(a.utm_campaign.length, 80);
+  assert.strictEqual(a.utm_source, 'kakao talk');
 });
 
 /* ============ 결과 요약 ============ */
