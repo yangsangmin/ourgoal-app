@@ -84,10 +84,10 @@ module.exports = async function handler(req, res) {
           JSON.stringify({ title: '아워골', body: '지금 뭐 하고 있었어요?' })
         );
         result.sent++;
-        /* 알림 발송 계측(클릭률 분모) — 실패해도 발송 흐름에 영향 없음 */
-        try { await sb.from('events').insert({ sid: null, name: 'notification_sent', props: { channel: 'push', body_type: 'fixed' } }); } catch (evErr) { /* ignore */ }
         var nextSlots = sentSlots.concat([slotKey]).slice(-SENT_SLOTS_KEEP);
         await sb.from('push_subscriptions').update({ sent_slots: nextSlots }).eq('endpoint', row.endpoint);
+        /* 알림 발송 계측(클릭률 분모) — sent_slots 기록 뒤에 두어 타임아웃 시 중복 발송 창을 넓히지 않음. 실패해도 발송 흐름에 영향 없음 */
+        try { await sb.from('events').insert({ sid: null, name: 'notification_sent', props: { channel: 'push', body_type: 'fixed' } }); } catch (evErr) { /* ignore */ }
       } catch (sendErr) {
         var statusCode = sendErr && sendErr.statusCode;
         if (statusCode === 404 || statusCode === 410) {

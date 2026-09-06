@@ -1214,7 +1214,7 @@
     return { row: row, isNew: true };
   }
 
-  async function loadProfile(userId, username, newUserExtra){
+  async function loadProfile(userId, username, newUserExtra, provider){
     var ures = await ensureUserRow(userId, username, username.split('@')[0], newUserExtra);
     var urow = ures.row;
     var goalsRes = await sb.from('goals').select('*').eq('user_id', userId).order('created_at', {ascending:true});
@@ -1230,7 +1230,7 @@
       return { id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at };
     });
     if(ures.isNew){
-      track('signup', Object.assign({ method: (newUserExtra && Object.keys(newUserExtra).length) ? 'oauth' : 'email' }, getAttribution()));
+      track('signup', Object.assign({ method: provider || 'email' }, getAttribution()));
     }
     return {
       id: userId, username: username, displayName: urow.display_name,
@@ -1347,6 +1347,7 @@
     if(!res.data.session){ errEl.textContent = '가입 확인 메일을 보냈어요. 메일함에서 확인 후 로그인해주세요.'; return; }
 
     await ensureUserRow(res.data.user.id, u, name);
+    track('signup', Object.assign({ method: 'email' }, getAttribution())); /* 즉시 세션 경로는 loadProfile을 거치지 않으므로 여기서 기록 */
     state.profile = defaultProfile(res.data.user.id, u, name);
     await saveProfile();
     document.getElementById('authScreen').style.display = 'none';
@@ -6707,7 +6708,7 @@
         var newExtra = {};
         if(um.avatar_url || um.picture) newExtra.avatar_url = um.avatar_url || um.picture;
         if(um.full_name || um.name || um.nickname) newExtra.display_name = um.full_name || um.name || um.nickname;
-        state.profile = await loadProfile(session.user.id, session.user.email, newExtra);
+        state.profile = await loadProfile(session.user.id, session.user.email, newExtra, (session.user.app_metadata && session.user.app_metadata.provider) || null);
         document.getElementById('landingScreen').style.display = 'none';
         document.getElementById('authScreen').style.display = 'none';
         if(state.profile._isNewSignup){

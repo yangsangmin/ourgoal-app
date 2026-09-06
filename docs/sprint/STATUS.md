@@ -28,6 +28,7 @@
 - TASK-01 (병합 완료): Supabase에서 Kakao·Google Provider 활성화, 각 콘솔에서 앱 등록·Redirect URI 설정, Supabase Site/Redirect URL에 배포 도메인 추가. 상세는 `docs/sprint/TASK-01.md` "사용자 필요 작업" 참고. 설정 전까지는 버튼을 눌러도 provider 비활성화 에러가 남(코드 문제 아님).
 - TASK-02 (병합 완료): 토스페이먼츠 개발자센터 가맹점(테스트) 등록·테스트 클라이언트 키 발급 — 가상 성공 처리만 구현했으므로 이미 동작 중. 다음 단계(실제 결제 승인)부터 필요.
 - TASK-03 (PR #40 대기, Vercel 배포 한도로 미병합 보류): 없음(브라우저 내장 API). 병합은 사용자 판단에 맡김.
+- PR #45 계측 인프라(스프린트 외 /work 작업, 병합 후 필수): Supabase SQL Editor에서 `docs/sql/2026-09-06-events.sql` 실행(1회). 실행 전에는 계측만 조용히 실패(404)하고 앱 동작에는 영향 없음.
 - TASK-04 (PR 대기, 병합 전 필수): Supabase SQL Editor에서 `team_comments`/`feed_posts` 테이블 + RLS + `increment_post_cheers` RPC 실행, Database→Replication에서 두 테이블 Realtime 활성화. 이 SQL을 실행하기 전에는 팀 댓글·피드 응원이 전부 안전하게 실패(400/404, 크래시 없음)하지만 실제로 동작하지 않음. 정확한 SQL은 PR 본문에 있음.
 
 ## 사전 정리 체크리스트 (스프린트 시작 전 1회, 사용자 확인 필요)

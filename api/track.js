@@ -46,6 +46,6 @@ module.exports = async function handler(req, res) {
     if (ins.error) throw ins.error;
     res.status(200).json({ ok: true });
   } catch (e) {
-    res.status(500).json({ error: (e && e.message) || 'unknown error' });
+    res.status(500).json({ error: 'insert failed' }); /* DB 에러 원문은 노출하지 않음 */
   }
 };
