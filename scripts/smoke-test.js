@@ -75,6 +75,7 @@ const FN_NAMES = [
   'heatmapLevel', 'localNextActionSuggestion',
   'goalAchievement', 'weeklyRecapStats',
   'parseAttribution',
+  'uid', 'newId', 'nowISO', 'getSid', 'getAttribution', 'buildCheckinRecord', 'updateAppBadge',
   'calendarAvailable',
 ];
 
@@ -83,6 +84,12 @@ const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('
 const sandboxSrc =
   'var STREAK_FREEZE_MAX = 3;\n' +
   'var state = { profile: { records: [], settings: { streakFreeze: { available: 0, usedDates: [], grantedTier: 0 } } } };\n' +
+  /* 브라우저 전역 스텁 — localStorage/location에 의존하는 게이트 로직(getSid·getAttribution)을 불변식 테스트로 고정하기 위함 (AUD-1·AUD-6) */
+  'var window = {};\n' +
+  'var location = { search: "" };\n' +
+  'var localStorage = { _m: {}, getItem: function(k){ return Object.prototype.hasOwnProperty.call(this._m, k) ? this._m[k] : null; }, setItem: function(k, v){ this._m[k] = String(v); }, removeItem: function(k){ delete this._m[k]; }, clear: function(){ this._m = {}; } };\n' +
+  /* Badging API 스텁 — updateAppBadge 불변식 검증용 (setNavigator(null)로 미지원 환경 재현) */
+  'var navigator = { badge: null, setAppBadge: function(n){ this.badge = n; return Promise.resolve(); }, clearAppBadge: function(){ this.badge = 0; return Promise.resolve(); } };\n' +
   extracted +
   '\nmodule.exports = { pad, dateKey, goalProgress, msCounts, resultPct, dDay, ' +
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
@@ -92,7 +99,10 @@ const sandboxSrc =
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
   'goalAchievement, weeklyRecapStats, ' +
-  'parseAttribution, ' +
+  'parseAttribution, uid, newId, nowISO, getSid, getAttribution, ' +
+  'setSearch: function(s){ location.search = s; }, getStorage: function(){ return localStorage; }, ' +
+  'buildCheckinRecord, updateAppBadge, ' +
+  'getNavigator: function(){ return navigator; }, setNavigator: function(n){ navigator = n; }, ' +
   'calendarAvailable, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
@@ -384,6 +394,90 @@ check('parseAttribution: 값은 80자로 자르고 +는 공백으로 복원한�
   assert.strictEqual(a.utm_source, 'kakao talk');
 });
 
+/* ============ 계측 게이트 불변식 (localStorage/location 스텁) ============ */
+check('getSid: 같은 기기에서는 항상 같은 익명 id를 돌려주고 localStorage에 보존한다', () => {
+  fns.getStorage().clear();
+  const a = fns.getSid();
+  const b = fns.getSid();
+  assert.ok(typeof a === 'string' && a.length > 8);
+  assert.strictEqual(a, b);
+  assert.strictEqual(fns.getStorage().getItem('ourgoal_sid'), a);
+  fns.getStorage().clear();
+  assert.notStrictEqual(fns.getSid(), a);
+});
+
+check('getAttribution: 첫 유입만 저장하고 이후 다른 UTM으로 와도 첫 값을 유지한다(first-touch)', () => {
+  fns.getStorage().clear();
+  fns.setSearch('?utm_source=instagram&ref=user-1&goal=g1');
+  const first = fns.getAttribution();
+  assert.strictEqual(first.utm_source, 'instagram');
+  assert.strictEqual(first.ref, 'user-1');
+  assert.ok(first.landed_at && !isNaN(Date.parse(first.landed_at)));
+  assert.strictEqual(first.goal, undefined);
+  fns.setSearch('?utm_source=tiktok');
+  assert.strictEqual(fns.getAttribution().utm_source, 'instagram');
+});
+
+check('getAttribution: UTM 없는 오가닉 방문은 아무것도 저장하지 않고, localStorage가 깨져도 예외 없이 빈 객체', () => {
+  fns.getStorage().clear();
+  fns.setSearch('');
+  assert.deepStrictEqual(fns.getAttribution(), {});
+  assert.strictEqual(fns.getStorage().getItem('ourgoal_attrib'), null);
+  const st = fns.getStorage();
+  const saved = st.getItem;
+  st.getItem = function(){ throw new Error('storage disabled'); };
+  try {
+    fns.setSearch('?utm_source=x');
+    assert.deepStrictEqual(fns.getAttribution(), {});
+  } finally {
+    st.getItem = saved;
+  }
+});
+
+/* ============ 온보딩 첫 기록 ============ */
+check('buildCheckinRecord: 목표가 있으면 category를 물려받고 type=note·startAt=endAt(ISO)·id 비어있지 않음', () => {
+  const goal = { category: 'health' };
+  const rec = fns.buildCheckinRecord('헬스장 등록하고 왔다', goal);
+  assert.strictEqual(rec.type, 'note');
+  assert.strictEqual(rec.category, 'health');
+  assert.ok(rec.id && String(rec.id).length > 0);
+  assert.strictEqual(rec.startAt, rec.endAt);
+  assert.ok(!isNaN(Date.parse(rec.startAt)));
+});
+
+check('buildCheckinRecord: 목표가 없으면 category는 null', () => {
+  const rec = fns.buildCheckinRecord('오늘의 기록', null);
+  assert.strictEqual(rec.category, null);
+});
+
+/* ============ PWA 앱 배지 (불변식: 미지원 환경 no-op·throw 없음 / 스트릭>0 → 숫자 / 0 → clear) ============ */
+check('updateAppBadge: 스트릭이 있으면 아이콘 배지에 그 숫자를 설정한다', () => {
+  assert.strictEqual(fns.updateAppBadge(7), true);
+  assert.strictEqual(fns.getNavigator().badge, 7);
+});
+
+check('updateAppBadge: 스트릭 0·음수·비숫자면 배지를 지운다', () => {
+  fns.updateAppBadge(3);
+  assert.strictEqual(fns.updateAppBadge(0), true);
+  assert.strictEqual(fns.getNavigator().badge, 0);
+  fns.updateAppBadge(3);
+  fns.updateAppBadge(undefined);
+  assert.strictEqual(fns.getNavigator().badge, 0);
+});
+
+check('updateAppBadge: Badging API가 없는 환경에서는 예외 없이 false를 돌려준다', () => {
+  const saved = fns.getNavigator();
+  try {
+    fns.setNavigator({});
+    assert.strictEqual(fns.updateAppBadge(5), false);
+    fns.setNavigator(null);
+    assert.strictEqual(fns.updateAppBadge(5), false);
+  } finally {
+    fns.setNavigator(saved);
+  }
+});
+
+/* ============ 캘린더 가용성 게이팅 ============ */
 check('calendarAvailable: 앱/사용자 ID가 모두 비어 있거나 공백만이면 false', () => {
   assert.strictEqual(fns.calendarAvailable('', {}), false);
   assert.strictEqual(fns.calendarAvailable('  ', { gcalClientId: '  ' }), false);

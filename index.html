@@ -5,6 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>아워골</title>
 <meta name="description" content="목표를 세우고, 기록하고, 성장을 나누는 아워골">
+<!-- 공유 링크 미리보기(카카오톡·트위터·슬랙 등 OG 크롤러용, 성장 백로그 P0 ④) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="아워골">
+<meta property="og:title" content="아워골 — 나만의 목표 달성 메이트">
+<meta property="og:description" content="목표를 세우고, 매일 한 줄 기록하고, 성장을 나누는 아워골">
+<meta property="og:url" content="https://ourgoal-app.vercel.app/">
+<meta property="og:image" content="https://ourgoal-app.vercel.app/icons/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="아워골 — 나만의 목표 달성 메이트">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="아워골 — 나만의 목표 달성 메이트">
+<meta name="twitter:description" content="목표를 세우고, 매일 한 줄 기록하고, 성장을 나누는 아워골">
+<meta name="twitter:image" content="https://ourgoal-app.vercel.app/icons/og-image.jpg">
+<meta name="twitter:image:alt" content="아워골 — 나만의 목표 달성 메이트">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#FF4F64">
 <link rel="icon" href="/icons/icon-192.png" type="image/png">
@@ -1231,7 +1247,7 @@
       };
     });
     var records = (recsRes.data||[]).map(function(r){
-      return { id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at };
+      return { id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at, category: r.category || null };
     });
     if(ures.isNew){
       track('signup', Object.assign({ method: provider || 'email' }, getAttribution()));
@@ -1247,6 +1263,7 @@
 
   async function saveProfile(){
     if(!state.profile) return;
+    updateAppBadge(computeStreakDays()); /* 기록이 바뀌는 모든 경로(홈 체크인·기록 모달·온보딩)가 여기를 지나므로 배지는 여기서 갱신 */
     var uidVal = state.profile.id;
     try{
       await sb.from('users').upsert({
@@ -1273,9 +1290,14 @@
 
       var recs = state.profile.records;
       if(recs.length){
-        await sb.from('checkins').upsert(recs.map(function(r){
-          return { id:r.id, user_id:uidVal, type:r.type, text:r.text, start_at:r.startAt, end_at:r.endAt };
-        }));
+        var recRows = recs.map(function(r){
+          return { id:r.id, user_id:uidVal, type:r.type, text:r.text, start_at:r.startAt, end_at:r.endAt, category: r.category || null };
+        });
+        var upRes = await sb.from('checkins').upsert(recRows);
+        if(upRes && upRes.error && /category/i.test(upRes.error.message || '')){
+          /* checkins.category 컬럼이 아직 없는 DB(docs/sql/2026-09-06-checkins-category.sql 미실행)에서는 기존 형식으로 재시도해 기록 저장이 끊기지 않게 한다 */
+          await sb.from('checkins').upsert(recRows.map(function(x){ var y = Object.assign({}, x); delete y.category; return y; }));
+        }
       }
       var recIds = recs.map(function(r){ return r.id; });
       var delRecs = sb.from('checkins').delete().eq('user_id', uidVal);
@@ -1371,6 +1393,7 @@
   });
 
   document.getElementById('logoutBtn').addEventListener('click', async function(){
+    updateAppBadge(0); /* signOut 실패 여부와 무관하게 아이콘에 이전 사용자의 스트릭이 남지 않도록 먼저 지운다 */
     await sb.auth.signOut();
     state.profile = null;
     document.getElementById('appShell').classList.remove('active');
@@ -1421,7 +1444,7 @@
 
     function showObStep1(){
       openModal(
-        '<p class="ob-step-label">1 / 3 · 환영해요</p>' +
+        '<p class="ob-step-label">1 / 4 · 환영해요</p>' +
         '<h3>'+escapeHtml(state.profile.displayName)+'님, 반가워요 👋</h3>' +
         '<p class="muted" style="margin:-8px 0 18px;">먼저 어떤 종류의 목표를 시작할지 골라주세요. 목표에 맞는 마일스톤을 미리 채워드려요.</p>' +
         '<div class="cat-grid" id="obCatGrid">' +
@@ -1457,7 +1480,7 @@
     function showObStep2(){
       var t = GOAL_TEMPLATES[ob.category];
       openModal(
-        '<p class="ob-step-label">2 / 3 · 목표 정하기</p>' +
+        '<p class="ob-step-label">2 / 4 · 목표 정하기</p>' +
         '<h3>'+t.icon+' '+t.label+' 목표를 적어주세요</h3>' +
         '<div class="field"><label>최종 목표</label><input id="obTitle" type="text" placeholder="예: 3개월 안에 벤치프레스 100kg" value="'+escapeHtml(ob.title)+'"></div>' +
         '<div class="field"><label>목표 마감일 (선택)</label><input id="obDue" type="date" value="'+ob.dueDate+'"><p class="faint" id="obDday" style="margin:6px 0 0;">'+(ob.dueDate ? '오늘 기준 <b style="color:var(--red);">'+dDay(ob.dueDate)+'</b>' : '')+'</p></div>' +
@@ -1486,7 +1509,7 @@
         ? t.ms.map(function(m){ return '<div class="tp-item">☐ '+escapeHtml(m)+'</div>'; }).join('')
         : '<div class="tp-item">마일스톤은 목표 화면에서 직접 추가해요</div>';
       openModal(
-        '<p class="ob-step-label">3 / 3 · 마일스톤 미리보기</p>' +
+        '<p class="ob-step-label">3 / 4 · 마일스톤 미리보기</p>' +
         '<h3>이렇게 시작할게요</h3>' +
         '<p class="muted" style="margin:-8px 0 12px;"><b style="color:var(--ink);">'+escapeHtml(ob.title)+'</b></p>' +
         '<div class="tmpl-preview">'+preview+'</div>' +
@@ -1507,15 +1530,50 @@
             state.activeGoalId = goal.id;
             trackGoalCreated(goal, 'onboarding');
             await saveProfile();
-            closeModal();
-            enterApp();
-            toast('목표를 만들었어요 — 시작해봐요!');
-            var alreadySeenGuide = state.profile.settings.hasSeenGuide;
-            await maybeShowFirstLoginGuide();
-            if(alreadySeenGuide) showCommTourModal();
+            showObStep4(goal);
           });
         }
       );
+    }
+
+    async function finishOnboarding(msg){
+      closeModal();
+      enterApp();
+      toast(msg);
+      var alreadySeenGuide = state.profile.settings.hasSeenGuide;
+      await maybeShowFirstLoginGuide();
+      if(alreadySeenGuide) showCommTourModal();
+    }
+    function showObStep4(goal){
+      var html =
+        '<p class="ob-step-label">4 / 4 · 첫 기록</p>' +
+        '<h3>지금 뭘 하고 있었나요?</h3>' +
+        '<p class="muted" style="margin:-8px 0 18px;">한 줄이면 충분해요. 「'+escapeHtml(goal.title)+'」의 첫 기록이 돼요.</p>' +
+        '<textarea id="obFirstNote" maxlength="300" placeholder="예: 헬스장 등록하고 왔다" style="width:100%;min-height:96px;"></textarea>' +
+        '<div class="modal-actions"><button class="btn btn-primary btn-block" id="obFirstSave" type="button" disabled>기록하고 시작하기</button></div>' +
+        '<button class="land-login-link" id="obFirstSkip" type="button" style="width:100%;background:none;margin-top:12px;">나중에 적을게요</button>';
+      var busy = false;
+      var skip = function(){ if(busy) return; busy = true; finishOnboarding('목표를 만들었어요 — 시작해봐요!'); };
+      openModal(html, function(sheet){
+        var ta = sheet.querySelector('#obFirstNote');
+        var saveBtn = sheet.querySelector('#obFirstSave');
+        ta.addEventListener('input', function(){ saveBtn.disabled = !ta.value.trim(); });
+        saveBtn.addEventListener('click', async function(){
+          var text = ta.value.trim();
+          if(!text || busy) return;
+          busy = true; saveBtn.disabled = true;
+          var xpRes = null;
+          try{ xpRes = await saveQuickCheckin(text, goal, 'onboarding'); }
+          catch(e){ console.warn('first checkin failed:', e); } /* 저장이 실패해도 반드시 홈으로 진입(불변식 1) */
+          await finishOnboarding(xpRes ? '첫 기록까지 남겼어요 — 시작해봐요!' : '목표를 만들었어요 — 시작해봐요!');
+          if(xpRes && xpRes.leveledUp) showLevelUpBanner(levelForXP(xpRes.total));
+        });
+        sheet.querySelector('#obFirstSkip').addEventListener('click', skip);
+        setTimeout(function(){ try{ ta.focus(); }catch(e){} }, 50);
+      });
+      /* openModal이 onMount 뒤에 overlay.onclick을 덮어쓰므로 여기서 재지정: 배경 탭도 반드시 enterApp 경로로 */
+      var overlay = document.getElementById('modalOverlay');
+      overlay.onclick = function(e){ if(e.target === overlay) skip(); };
     }
   }
 
@@ -2395,6 +2453,16 @@
     }
     return streak;
   }
+  /* PWA 앱 배지: 홈 화면 아이콘에 스트릭 일수 표시. 미지원 브라우저·비PWA에서는 no-op, 절대 throw하지 않는다 — 성장 백로그 P0 ⑥ */
+  function updateAppBadge(streak){
+    try{
+      if(typeof navigator === 'undefined' || !navigator || typeof navigator.setAppBadge !== 'function') return false;
+      var n = Number(streak) || 0;
+      if(n > 0){ navigator.setAppBadge(n).catch(function(){}); }
+      else if(typeof navigator.clearAppBadge === 'function'){ navigator.clearAppBadge().catch(function(){}); }
+      return true;
+    } catch(e){ return false; }
+  }
   var STREAK_FREEZE_MAX = 3;
   function maybeGrantStreakFreeze(){
     var sf = state.profile.settings.streakFreeze;
@@ -2422,12 +2490,26 @@
     return true;
   }
 
+  /* 온보딩 첫 기록용 체크인 저장 — 데이터 부수효과만 수행하고 홈 DOM(captureSave 핸들러)은 건드리지 않는다. 성장 백로그 P0 3.5 / 거시 A4 */
+  function buildCheckinRecord(text, goal){
+    return { id: newId(), type: 'note', text: text, startAt: nowISO(), endAt: nowISO(), createdAt: nowISO(), category: goal ? goal.category : null };
+  }
+  async function saveQuickCheckin(text, goal, source){
+    state.profile.records.unshift(buildCheckinRecord(text, goal));
+    var xpRes = awardXP(XP_RULES.checkin, '체크인');
+    maybeGrantStreakFreeze();
+    await saveProfile();
+    track('checkin', { first: state.profile.records.length===1, has_goal: !!goal, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l'), source: source || 'quick' });
+    return xpRes;
+  }
+
   /* ============ RENDER: HOME ============ */
   function renderHome(){
     refreshCustomFeedbackButtons();
     renderLevelBadge();
     renderTodayMissionCard();
     var streak = computeStreakDays();
+    updateAppBadge(streak);
     var badgeEl = document.getElementById('streakBadge');
     if(badgeEl) badgeEl.innerHTML = streak>0 ? streakBadgeHtml(streak) : '';
     var freezeEl = document.getElementById('streakFreezeBadge');
