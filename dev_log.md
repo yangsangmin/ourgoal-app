@@ -659,6 +659,6 @@
 - **사이클 계획(8원칙)**: 2시간 자율 사이클(21:16~)의 2번째 항목. ① 조직개발 DEV-1(PR #47) → ② 이 항목 → ③ PWA 앱 배지 → ④ 온보딩 첫 체크인 → ⑤ CSV 내보내기.
 - **목표**: 공유·초대 링크가 카카오톡·트위터·슬랙에 붙을 때 제목·설명·이미지 미리보기가 나오게 한다(지금은 `<title>`과 description 메타만 있어 이미지 없는 밋밋한 카드).
 - **수정/실행 내역**: `index.html` `<head>`의 description 메타 바로 뒤에 OG 태그 9개(`og:type/site_name/title/description/url/image/image:width/height/locale`)와 트위터 카드 4개(`summary` 타입 — 이미지가 정사각 아이콘이라 `summary_large_image` 대신 선택) 추가. 이미지는 기존 `icons/icon-512.png` 절대 URL(새 에셋 없음). 문구는 기존 description 톤 유지("목표를 세우고, 매일 한 줄 기록하고, 성장을 나누는 아워골"). SPA라 정적 메타 1세트(사용자별 동적 OG는 서버 렌더가 필요해 범위 밖).
-- **발생한 문제 및 해결**: 없음. TASK-06(#43)의 `SHARE_DOMAIN` 상수가 아직 main에 없어 URL을 직접 기재 — 커스텀 도메인 연결 시 이 태그 2곳(`og:url`·`og:image`)과 상수를 함께 바꾸면 됨.
+- **발생한 문제 및 해결**: TASK-06(#43)의 `SHARE_DOMAIN` 상수가 아직 main에 없어 URL을 직접 기재 — 커스텀 도메인 연결 시 이 태그 2곳(`og:url`·`og:image`)과 상수를 함께 바꾸면 됨. **감사 AUD-3 지적 반영(보완 커밋)**: 512×512 정사각 아이콘은 카카오톡(2:1 권장)·트위터에서 소형/크롭 썸네일이라 클릭률 목표에 부족 → 앱 팔레트(코랄 #FF4F64·앰버 #FF9F1C)와 Noto Sans KR로 1200×630 `icons/og-image.jpg`(41KB)를 브라우저 캔버스로 생성해 추가하고 `twitter:card`를 `summary_large_image`로, `og:image:alt`/`twitter:image:alt` 추가. 새 에셋 1개(아이콘 폴더), 디자인 규칙 변경 없음.
 - **검증 결과**: `new Function()` 문법 통과, `<style>` 중괄호 균형, `node scripts/smoke-test.js` 44/44, 충돌 마커 0건. 로컬 static 서버에서 13개 메타가 그대로 렌더됨을 JS로 확인, 콘솔은 변경 전 기준선과 동일한 404 3건(로컬 서버에 /api·Supabase 리소스 없음) 외 신규 에러 0. 실제 카카오톡 미리보기는 병합·배포 후 https://developers.kakao.com/tool/debugger/sharing 에서 URL을 넣어 캐시 갱신하며 확인 — 사용자 필요 작업으로 PR에 기재.
 ---
