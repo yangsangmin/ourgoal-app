@@ -4,7 +4,7 @@
 create table if not exists public.events (
   id         bigint generated always as identity primary key,
   sid        text,                                   -- 기기별 익명 세션 id (서버 발생 이벤트는 null). user_id는 저장하지 않는다
-  name       text not null,                          -- landing_view · signup · goal_created · checkin · notification_sent · notification_clicked
+  name       text not null,                          -- landing_view · signup · goal_created · checkin · notification_sent · notification_clicked · content_reported
   props      jsonb not null default '{}'::jsonb,     -- 작은 속성만 (utm_source/utm_medium/utm_campaign/ref, source, first, channel ...)
   created_at timestamptz not null default now()
 );
