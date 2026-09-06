@@ -941,6 +941,10 @@
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2cW9zdmlxYmNpb2hjeXdremJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0MTM0NDYsImV4cCI6MjEwMzk4OTQ0Nn0.DCMMxxHB6kzJ0CjgLN0ERaSk7WY6LDN-pDVdeZ0-cWM';
   var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  /* 앱 레벨 Google OAuth 클라이언트 ID(공개 식별자, 시크릿 아님). GCP 콘솔에서 이 앱을 등록한 뒤 값을 채우면
+     사용자가 자기 ID를 넣을 필요가 없어진다. 비어 있으면 설정의 사용자 ID로 폴백한다 — 거시 재조정안 A2 */
+  var GOOGLE_OAUTH_CLIENT_ID = '';
+
   /*
    * TASK-04: 아래 두 테이블 + RPC가 Supabase에 있어야 팀 댓글/피드 응원이 실제로 동작한다.
    * (전체 CREATE TABLE / RLS / RPC SQL은 이 태스크의 PR 본문에 그대로 첨부돼 있다.)
@@ -1637,8 +1641,8 @@
       openModal(
         '<p class="ob-step-label">3 / 4 · 캘린더 연동</p>' +
         '<h3>📅 마일스톤이 캘린더에 저절로</h3>' +
-        '<div class="mission-card"><div class="mi">📆</div><div><b>구글 캘린더 자동 연동</b><span>마감일과 마일스톤이 구글 캘린더에 자동으로 올라가요. 구글 계정과 연결된 삼성 캘린더 등에도 그대로 반영돼요</span></div></div>' +
-        '<p class="faint" style="margin:10px 0 0;">설정 탭에서 한 번만 연결하면 계속 자동으로 동기화돼요.</p>' +
+        '<div class="mission-card"><div class="mi">📆</div><div><b>구글 캘린더 연동</b><span>목표와 마일스톤 일정을 구글 캘린더에 보낼 수 있어요(항목별 📅 버튼)</span></div></div>' +
+        '<p class="faint" style="margin:10px 0 0;">설정 → 구글 캘린더 연동에서 한 번 연결하면 쓸 수 있어요.</p>' +
         '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack3" type="button">이전</button><button class="btn btn-primary" id="guideNext3" type="button">다음</button></div>',
         function(sheet){
           sheet.querySelector('#guideBack3').addEventListener('click', showGuideStep2);
@@ -1651,7 +1655,7 @@
       openModal(
         '<p class="ob-step-label">4 / 4 · 나만의 방식으로</p>' +
         '<h3>🔐 내 데이터는 내 방식대로</h3>' +
-        '<div class="mission-card"><div class="mi">🔑</div><div><b>API 커스텀 연결</b><span>구글 캘린더·AI 키를 내가 직접 연결해서 쓰는 구조라, 어떤 서비스가 연결되는지 항상 내가 통제할 수 있어요</span></div></div>' +
+        '<div class="mission-card"><div class="mi">🔑</div><div><b>직접 연결</b><span>내 구글 캘린더·AI 키를 설정에서 직접 연결해서 쓸 수 있어요</span></div></div>' +
         '<div class="mission-card"><div class="mi">🕶️</div><div><b>비공개 설정</b><span>목표와 지역 정보를 공개할지 나만 볼지 자유롭게 선택할 수 있어요</span></div></div>' +
         '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack4" type="button">이전</button><button class="btn btn-primary" id="guideFinish4" type="button">시작하기</button></div>',
         function(sheet){
@@ -1698,7 +1702,7 @@
         '<div class="mission-row"><span class="m-icon">🎯</span><div><b class="m-goal">무제한 목표 관리</b><span class="m-text"> · 활성 목표 개수 제한 없이</span></div></div>' +
         '<div class="mission-row"><span class="m-icon">🤖</span><div><b class="m-goal">맞춤 AI 코치 무제한</b><span class="m-text"> · 나만의 피드백 봇 자유롭게</span></div></div>' +
         '<div class="mission-row"><span class="m-icon">📊</span><div><b class="m-goal">30일/연간 심층 분석 리포트</b><span class="m-text"> · 더 긴 흐름을 한눈에</span></div></div>' +
-        '<div class="mission-row"><span class="m-icon">📅</span><div><b class="m-goal">캘린더 양방향 실시간 동기화</b><span class="m-text"> · 항상 최신 상태로</span></div></div>' +
+        (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<div class="mission-row"><span class="m-icon">📅</span><div><b class="m-goal">캘린더 양방향 실시간 동기화</b><span class="m-text"> · 항상 최신 상태로</span></div></div>' : '') +
       '</div>' +
       '<div class="pw-plan-row">' +
         '<div class="pw-plan"><div class="pw-unit">월간</div><div class="pw-price">8,900원</div><div class="pw-unit">/ 월</div></div>' +
@@ -2096,13 +2100,24 @@
 
   /* ============ 구글 캘린더 연동 ============ */
   var googleTokenClient = null;
+  /* 캘린더 사용 가능 판단을 한 곳에: 앱 상수 우선, 비면 사용자가 설정에 넣은 ID로 폴백 (A2/R5/F4) */
+  function calendarAvailable(appClientId, settings){
+    var app = ((appClientId || '') + '').trim();
+    var own = ((settings && settings.gcalClientId) || '').trim();
+    return !!(app || own);
+  }
+  function effectiveGcalClientId(){
+    var app = (GOOGLE_OAUTH_CLIENT_ID || '').trim();
+    if(app) return app;
+    return ((state.profile && state.profile.settings && state.profile.settings.gcalClientId) || '').trim();
+  }
   function nextDayISO(dateStr){
     var d = new Date(dateStr+'T00:00:00');
     d.setDate(d.getDate()+1);
     return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
   }
   function ensureGoogleTokenClient(){
-    var clientId = (state.profile.settings.gcalClientId||'').trim();
+    var clientId = effectiveGcalClientId();
     if(!clientId){ toast('먼저 Google OAuth 클라이언트 ID를 입력해주세요'); return null; }
     if(!window.google || !google.accounts || !google.accounts.oauth2){ toast('구글 로그인 스크립트를 불러오는 중이에요, 잠시 후 다시 시도해주세요'); return null; }
     if(!googleTokenClient || googleTokenClient.__clientId !== clientId){
@@ -2394,7 +2409,7 @@
               '<div class="ms-title'+(e.done?' done-text':'')+'">'+escapeHtml(e.title)+'</div>' +
               (e.kind==='ms' ? '<div class="faint" style="font-size:.72rem;">'+escapeHtml(e.goalTitle)+'</div>' : '') +
             '</div>' +
-            '<button class="icon-btn" data-calsync="'+e.kind+'" data-calsyncgid="'+e.goalId+'" data-calsyncmid="'+(e.msId||'')+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' +
+            (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsync="'+e.kind+'" data-calsyncgid="'+e.goalId+'" data-calsyncmid="'+(e.msId||'')+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' : '') +
           '</div>' +
         '</div>';
       }).join('')+'</div>'
@@ -2516,7 +2531,7 @@
       return '<div class="goal-card" data-goalid="'+g.id+'">' +
         '<div class="goal-card-top"><h4>'+escapeHtml(g.title)+'</h4>' +
           '<div style="display:flex;align-items:center;gap:6px;">'+dd+
-            '<button class="icon-btn" data-calsyncgoal="'+g.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' +
+            (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsyncgoal="'+g.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' : '') +
           '</div>' +
         '</div>' +
         (g.topic ? '<div style="margin:-4px 0 8px;">'+topicPill(g.topic)+'</div>' : '') +
@@ -3999,7 +4014,7 @@
             resultLineHtml(m.result) +
           '</div>' +
           '<button data-msresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(m.result)+'</button>' +
-          '<button class="icon-btn" data-calsyncms="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' +
+          (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsyncms="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' : '') +
           (state.goalEditMode ? '<div class="ms-actions">' +
             (idx>0?'<button class="icon-btn" data-msup="1" aria-label="위로 이동">↑</button>':'') +
             (idx<goal.milestones.length-1?'<button class="icon-btn" data-msdown="1" aria-label="아래로 이동">↓</button>':'') +
@@ -6534,11 +6549,16 @@
     if(!settings.gcalSync) settings.gcalSync = { goals:{}, ms:{}, imported:{} };
     var gcalIdInput = document.getElementById('gcalClientIdInput');
     gcalIdInput.value = settings.gcalClientId || '';
+    var gcalAppIdSet = !!(GOOGLE_OAUTH_CLIENT_ID||'').trim();
+    var gcalIdField = gcalIdInput.closest('.field');
+    if(gcalIdField) gcalIdField.style.display = gcalAppIdSet ? 'none' : '';
+    var gcalIdHint = gcalIdField && gcalIdField.nextElementSibling;
+    if(gcalIdHint && gcalIdHint.tagName==='P') gcalIdHint.style.display = gcalAppIdSet ? 'none' : '';
     var gcalConnected = !!(state.googleToken && state.googleToken.expiresAt > Date.now());
     document.getElementById('gcalStatusBox').innerHTML = gcalConnected
       ? '<p class="faint" style="margin:0;color:var(--sage);font-weight:700;">✅ 연결됨</p>'
       : '<p class="faint" style="margin:0;">아직 연결되지 않았어요.</p>';
-    document.getElementById('gcalActionRow').style.display = settings.gcalClientId ? '' : 'none';
+    document.getElementById('gcalActionRow').style.display = effectiveGcalClientId() ? '' : 'none';
     document.getElementById('gcalSyncRow').style.display = gcalConnected ? 'flex' : 'none';
     gcalIdInput.onchange = async function(){
       settings.gcalClientId = gcalIdInput.value.trim();

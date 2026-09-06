@@ -76,6 +76,7 @@ const FN_NAMES = [
   'goalAchievement', 'weeklyRecapStats',
   'parseAttribution',
   'uid', 'newId', 'nowISO', 'getSid', 'getAttribution', 'buildCheckinRecord', 'updateAppBadge',
+  'calendarAvailable',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -102,6 +103,7 @@ const sandboxSrc =
   'setSearch: function(s){ location.search = s; }, getStorage: function(){ return localStorage; }, ' +
   'buildCheckinRecord, updateAppBadge, ' +
   'getNavigator: function(){ return navigator; }, setNavigator: function(n){ navigator = n; }, ' +
+  'calendarAvailable, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -473,6 +475,18 @@ check('updateAppBadge: Badging API가 없는 환경에서는 예외 없이 false
   } finally {
     fns.setNavigator(saved);
   }
+});
+
+/* ============ 캘린더 가용성 게이팅 ============ */
+check('calendarAvailable: 앱/사용자 ID가 모두 비어 있거나 공백만이면 false', () => {
+  assert.strictEqual(fns.calendarAvailable('', {}), false);
+  assert.strictEqual(fns.calendarAvailable('  ', { gcalClientId: '  ' }), false);
+});
+
+check('calendarAvailable: 앱 ID 또는 사용자 ID 중 하나라도 있으면 true (settings null 포함)', () => {
+  assert.strictEqual(fns.calendarAvailable('', { gcalClientId: 'x' }), true);
+  assert.strictEqual(fns.calendarAvailable('app', {}), true);
+  assert.strictEqual(fns.calendarAvailable('app', null), true);
 });
 
 /* ============ 결과 요약 ============ */
