@@ -835,6 +835,7 @@
   2. 로컬 전용 스크래치 25개(`resolve*/`·`verify1x`·`worktree-*`·`claude/*`)는 PR #11(레벨 배지)·#12(명예의 전당)용 충돌해결 잔재로, 두 기능이 main의 index.html에 실재함을 grep으로 확인(`levelBadge` 4건, `명예의 전당` 4건) 후 삭제 대상에 포함.
   3. `git branch -D`로 로컬 62개, `git push origin --delete`로 원격 49개 삭제(25+24 두 배치). `git worktree prune -v` 실행 — `.git/worktrees`가 이미 없어 출력 없음(정상).
   4. `.claude/settings.json`(git 미추적 개인 설정)에 PostToolUse 훅 블록 추가 후 실제 stdin JSON을 흘려 동작 확인.
+  5. (사용자 승인 후 추가) `.gitignore`에 `node_modules/` 1줄 추가 — 추적되지 않은 채 방치돼 `git add .` 한 번에 수천 파일이 커밋될 위험 제거. `package-lock.json`은 `package.json`에 실제 의존성(`web-push`, `@supabase/supabase-js`)이 있어 Vercel 빌드 재현성을 위해 **추적 대상으로 유지**(무시 목록에 넣지 않음). `git check-ignore -v`로 적용 확인.
 - **발생한 문제 및 해결**: (1) `git for-each-ref refs/remotes/origin` 결과에 `origin/HEAD`의 짧은 이름인 `origin`이 섞여 들어가 첫 push가 `unable to delete 'origin'`으로 통째 실패 → 목록에서 해당 줄만 제외해 재실행, 실제 원격 브랜치 수는 50이 아니라 49로 정정. (2) 훅 동작 테스트 중 셸에서 백슬래시가 소실돼 JSON이 깨지면서 훅이 조용히 exit 0 → 훅 결함으로 오인할 뻔했으나 `node`로 유효한 JSON을 생성해 재검증, Windows 백슬래시 경로·슬래시 경로 모두 정상 동작 확인.
 - **재검증 내역(원칙8)**: 위 (2)에서 "훅이 안 도는 것 아닌가"로 막혀 원칙 1~2로 돌아가 원인을 재확인한 결과, 문제는 훅이 아니라 테스트 입력 생성 방식이었음을 특정하고 검증 절차만 교체했다.
 - **검증 결과**: `git branch -a` → `main`/`origin/HEAD`/`origin/main` 3줄만 남음✅. `git worktree list` 1개✅. `git status` 추적 파일 변경 0건(코드 무변경)✅. `node scripts/smoke-test.js` 66/66 통과✅. `grep -rn "^<<<<<<<"` 0건✅. 훅: index.html 수정 시 `[smoke-test OK] 66개 통과, 0개 실패` 출력, 비대상 파일은 무출력 exit 0✅.
