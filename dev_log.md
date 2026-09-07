@@ -840,3 +840,12 @@
 - **재검증 내역(원칙8)**: 위 (2)에서 "훅이 안 도는 것 아닌가"로 막혀 원칙 1~2로 돌아가 원인을 재확인한 결과, 문제는 훅이 아니라 테스트 입력 생성 방식이었음을 특정하고 검증 절차만 교체했다.
 - **검증 결과**: `git branch -a` → `main`/`origin/HEAD`/`origin/main` 3줄만 남음✅. `git worktree list` 1개✅. `git status` 추적 파일 변경 0건(코드 무변경)✅. `node scripts/smoke-test.js` 66/66 통과✅. `grep -rn "^<<<<<<<"` 0건✅. 훅: index.html 수정 시 `[smoke-test OK] 66개 통과, 0개 실패` 출력, 비대상 파일은 무출력 exit 0✅.
 ---
+
+## [2026-09-08 06:12] package-lock.json 추적 시작 (빌드 재현성)
+- **목표**: 무시도 추적도 되지 않은 채 방치돼 있던 `package-lock.json`을 저장소에 편입해 Vercel 빌드의 의존성 버전을 고정한다.
+- **문제 및 본질(원칙1~2)**: `package.json`에 런타임 의존성 2개(`web-push`, `@supabase/supabase-js: ^2`)가 선언돼 있고 `api/` 서버리스 함수가 이를 사용하는데, 락파일이 추적되지 않아 Vercel은 배포 때마다 캐럿 범위 안에서 최신 버전을 새로 설치한다. 근본 원인은 npm 설치가 개발 편의로 이뤄지고 그 산출물의 처리 방침(무시할지 추적할지)이 한 번도 정해지지 않은 것. 방치의 결과로 (a) 코드를 한 줄도 안 고쳤는데 어느 날 의존성 마이너 업데이트로 배포가 깨질 수 있고, (b) 로컬과 프로덕션의 설치 버전이 달라 재현이 안 된다.
+- **해결 방식 및 타당성(원칙3~4)**: npm 표준대로 `package-lock.json`을 추적한다. 직전 커밋에서 `.gitignore`에 넣은 `node_modules/`와는 정반대 처리이며, 이 구분이 핵심이다 — 설치 결과물(node_modules)은 무시, 버전 고정 기록(락파일)은 추적. 앱 코드·디자인 무변경이라 CLAUDE.md 2번과 무관하고, 락파일 내용이 현재 `package.json` 선언과 일치함을 확인해 새 버전을 끌어오는 변화가 아님을 보장한다(고정만 함).
+- **구현 절차 및 검증(원칙5~7)**: 락파일 무결성 선확인 — `lockfileVersion: 3`, `name: ourgoal-app`, 루트 dependencies가 `package.json`과 정확히 일치, 총 27개 패키지, `web-push 3.6.7`·`@supabase/supabase-js 2.115.0`, 파일 크기 12K(저장소 부담 없음). 이후 `git add package-lock.json`으로 추적 편입.
+- **재검증 내역(원칙8)**: 최초 제안은 `.gitignore`에 "node_modules와 package-lock.json 두 줄 추가"였으나, 실행 전 `package.json`을 열어 실제 의존성이 있음을 확인하고 원칙 1~3으로 되돌아가 판단을 뒤집었다 — 락파일은 무시 대상이 아니라 추적 대상이다. 사용자에게 정정 보고 후 승인(A안)을 받아 진행.
+- **검증 결과**: `node scripts/smoke-test.js` 66/66 통과✅, `grep -rn "^<<<<<<<"` 0건✅, 앱 코드 diff 0줄✅, `git status`에 미추적 파일은 `.claude/settings.json`(개인 설정, 의도적 제외)만 남음✅.
+---
