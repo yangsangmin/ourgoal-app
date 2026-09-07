@@ -760,6 +760,7 @@
       <h3 style="font-weight:900;letter-spacing:-.02em;font-size:1rem;margin:18px 0 8px;">완료·보관한 목표</h3>
       <div id="archivedGoals"></div>
       <h3 style="font-weight:900;letter-spacing:-.02em;font-size:1rem;margin:18px 0 8px;">체크인 기록</h3>
+      <div class="field" style="margin-bottom:10px;"><input id="recSearchInput" type="text" placeholder="🔍 날짜·분야·키워드로 검색"></div>
       <div id="recordsList"></div>
       <div class="export-card">
         <div class="ico">⬇</div>
@@ -4699,6 +4700,17 @@
     });
   }
 
+  function filterRecordsByQuery(recs, query){
+    var q = String(query||'').trim().toLowerCase();
+    if(!q) return recs || [];
+    return (recs||[]).filter(function(r){
+      var text = String(r.text||'').toLowerCase();
+      var label = fmtDateLabel(r.startAt).toLowerCase();
+      var key = dateKey(r.startAt).toLowerCase();
+      var cat = (r.category && TOPICS[r.category]) ? String(TOPICS[r.category].label||'').toLowerCase() : '';
+      return text.indexOf(q)>=0 || label.indexOf(q)>=0 || key.indexOf(q)>=0 || cat.indexOf(q)>=0;
+    });
+  }
   function renderRecordsScreen(){
     var recs = state.profile.records.slice().sort(function(a,b){ return new Date(b.startAt)-new Date(a.startAt); });
 
@@ -4719,6 +4731,14 @@
     var listEl = document.getElementById('recordsList');
     if(!recs.length){
       listEl.innerHTML = '<div class="empty-state"><div class="e-icon">📝</div><p>아직 기록이 없어요. 홈에서 자유롭게 적어보세요.</p></div>';
+      return;
+    }
+
+    var searchInput = document.getElementById('recSearchInput');
+    var query = searchInput ? searchInput.value : '';
+    recs = filterRecordsByQuery(recs, query);
+    if(!recs.length){
+      listEl.innerHTML = '<div class="empty-state"><div class="e-icon">🔍</div><p>검색 결과가 없어요.</p></div>';
       return;
     }
 
@@ -4925,6 +4945,7 @@
   }
   document.getElementById('recAddBtn').addEventListener('click', function(){ openRecordModal(null); });
   document.getElementById('weeklyRecapBtn').addEventListener('click', function(){ openWeeklyRecapModal(); });
+  document.getElementById('recSearchInput').addEventListener('input', function(){ renderRecordsScreen(); });
 
   function buildCSV(){
     var rows = [['날짜','시작','종료','소요시간(분)','분야','내용']];

@@ -12,6 +12,7 @@ disable-model-invocation: true
 당신은 아워골(OUR GOAL)의 **컨트롤타워(총괄 PM)** 다. CLAUDE.md 1~10을 모두 따르고, `docs/org/ORG.md`의 조직도·배정표·기본값을 **먼저 읽은 뒤** 아래 단계를 순서대로 밟는다. 사용자에게 묻는 것은 ORG.md §5의 다섯 가지뿐이다 — 그 외는 §4 기본값으로 스스로 정하고 보고에 한 줄 남긴다.
 
 ## 0. 환경 점검 (CLAUDE.md 8-C)
+- **[DEV-5] 직전 작업의 감사 로그가 남아 있는지 확인**한다(작업 감사 로그 최신 행). 없으면 새 작업을 시작하기 전에 먼저 그 감사부터 기록한다(완료의 정의는 §6 참조) — 감사 없이 연속 작업이 쌓이면 학습 루프가 끊긴다(AUD-12~15).
 - `git status --short` — 커밋되지 않은 변경이 있으면 시작하지 않고 알린다.
 - `"C:\Program Files\GitHub CLI\gh.exe" auth status` 통과 확인.
 - `git fetch origin main` 후 현재 main 기준선 `node scripts/smoke-test.js` 통과 확인.
@@ -20,6 +21,7 @@ disable-model-invocation: true
 
 ## 1. 지시 접수·분류
 - 유형: 기능구현 / 버그수정 / 리서치 / 전략·기획 / 문서 / 조직운영 / 백로그 소진
+- **[read-before-act, DEV-5] 작업흐름 플레이북 DB(`collection://fe02a46a-86ab-468a-be6a-8aea83b56b43`)에서 해당 유형 행의 최신 체크리스트를 먼저 읽는다.** 여기 §1~§8의 절차는 v1.0 스냅샷이고, 플레이북 쪽이 최신 원장이다 — 둘이 다르면 플레이북을 따른다.
 - 규모: S / M / L (ORG.md §3 정의). 애매하면 S.
 - 위험 표시: 디자인 변경 필요? 기존 기능 영향? 시크릿·외부 콘솔? 결제·개인정보? (ORG.md §5 해당 시 여기서 한 번만 질문하고 멈춘다)
 - 노션 성장 백로그에 같은 항목이 있으면 그 행의 `비고`(조건)를 스코프 상한으로 삼고 행 URL을 기록한다.
@@ -41,6 +43,7 @@ disable-model-invocation: true
 ## 4. 브랜치·실행
 - `git checkout -b <feat|fix|chore>/<YYYY-MM-DD>-<slug> origin/main` (ORG.md §4). 브랜치 없이 코드를 고치지 않는다.
 - 실행 중 막히면 3회까지 자체 수정, 그 뒤 원칙 8로 돌아가 1~2블록을 다시 쓰고 진행한다(재검증 내역에 기록).
+- **한 번에 하나의 브랜치에서만 커밋한다** (DEV-2, ORG.md §3-1-6 연장): 다른 브랜치로 옮기기 전 `git status --short`가 비어 있는지 확인하고, 비어 있지 않으면 먼저 커밋·푸시한 뒤 전환한다. 같은 작업 트리에서 브랜치를 짧은 간격으로 오가면 checkout 실패나 잘못된 브랜치 커밋이 생긴다.
 
 ## 5. 검증 게이트 (전부 통과해야 6으로)
 1. 인라인 스크립트 문법(`node -e new Function(...)`) · 수정한 api/·sw.js는 `node --check`
@@ -49,21 +52,24 @@ disable-model-invocation: true
 4. `git diff origin/main -- index.html`의 삭제 줄 검토 — 기존 기능 삭제 없음
 5. M 이상은 `reviewer`를 띄워 "통과/조건부 통과" 받기. "반려"면 되돌린다. **reviewer 결과가 오기 전에는 §6의 `gh pr ready`·§8 보고로 넘어가지 않는다** — PR은 §6대로 draft로 먼저 열어 두고 기다린다.
 6. `grep -rn "^<<<<<<<" .` 0건, `grep -n "__dbg" index.html` 0건
+7. **PR을 연 뒤 `gh pr checks <번호>`를 반드시 실행**하고 결과(pass/fail)를 보고의 "배포" 항목에 적는다 (DEV-2, AUD-4·6·7·9 반복 지적). "배포 미확인"으로 보고하지 않는다 — 프리뷰가 SSO로 막혀 있어도 체크 자체는 항상 확인 가능하다.
 
 ## 6. 기록·PR
 - dev_log.md 맨 끝에 CLAUDE.md §5 형식으로 기록(4블록 요약 포함).
 - 스프린트 태스크면 `docs/sprint/STATUS.md`, 백로그 항목이면 BACKLOG.md 체크·노션 백로그 행 `비고`에 PR 번호 추가.
 - PR 본문을 `.pr-body-<slug>.md`에 CLAUDE.md §6 4블록 형식으로 쓰고 `gh pr create --base main --title "…" --body-file …`. 본문 끝에 `🤖 Generated with [Claude Code](https://claude.com/claude-code)`.
 - **M 이상은 `--draft`로 연다.** reviewer "통과/조건부 통과" 후 지적 사항을 반영·재검증하고 `gh pr edit --body-file`로 4블록(재검증 내역)을 갱신한 뒤 `gh pr ready <번호>`로 전환한다. S(리뷰어 없음)는 바로 ready로 연다.
+- **draft로 열 때도 그 커밋에 dev_log.md 항목을 반드시 포함한다** (DEV-2): 4블록 4번은 "재검증 전"으로 자리만 잡아 둔다. reviewer 반영 후 같은 항목을 갱신하는 커밋을 추가한다 — dev_log를 리뷰 완료 후에야 별도로 추가하지 않는다.
 - main에 직접 커밋·푸시·병합하지 않는다. 채팅 명시 지시가 있을 때만 `gh pr merge`, 직후 충돌 마커 grep + 스모크.
 
 ## 7. 감사 호출 (생략 금지)
 `auditor` 서브에이전트를 **백그라운드**로 띄운다. 프롬프트에 반드시 포함: 지시 원문, 지시자, 담당 에이전트 목록, 유형·규모, 타임라인(시작·끝·주요 단계 — `date "+%H:%M"`·`git log --format=%ci`·`gh pr view --json createdAt`의 **실제 값을 복사**한다. 머릿속 추정치는 금지, AUD-2·AUD-3에서 3회 반복 지적), 사용자 개입 횟수(질문·승인·수정 요청 각 1회로 센다), 산출물 링크, 검증 결과 6항목, 막힌 지점과 해결, 이번에 §4 기본값으로 스스로 결정한 것들.
-auditor가 노션 쓰기에 실패해 내용을 메시지로 남기면 컨트롤타워가 대신 `notion-create-pages`로 기록한다.
+**[DEV-5] 다음 3개 필드는 생략 불가**: `조직 버전`(작업 시작 시점 ORG.md 조직 버전, 예: v1.3), `플레이북 버전`(§1에서 읽은 해당 유형 플레이북 버전), `교훈 1줄`(다음에 같은 유형 작업을 할 때 실제로 도움 될 한 문장 — "잘했다/못했다" 감상이 아니라 구체적 행동 지침).
+auditor가 노션 쓰기에 실패해 내용을 메시지로 남기면 컨트롤타워가 대신 `notion-create-pages`로 기록한다. **감사 호출은 다음 작업을 시작하기 전에 완료돼야 한다(§0 DoD)** — "나중에 몰아서 기록"은 금지.
 
 ## 8. 보고 (CLAUDE.md §6 양식)
 ```
-🔧 컨트롤타워 작업 보고 [HH:MM~HH:MM, 규모 S/M/L, 모드: 정규 | 대체(에이전트 미로드)]
+🔧 컨트롤타워 작업 보고 [HH:MM~HH:MM, 규모 S/M/L, 모드: 정규 | 대체(에이전트 미로드), 조직 vX.X, 플레이북 vX.X]
 
 1. [작업명] — PR #번호
    - 근거: (4블록 1~2 요약 1줄)
