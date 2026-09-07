@@ -42,10 +42,10 @@ TASK-03(음성 체크인)·TASK-05(다이내믹 푸시)·TASK-06(공유 카드)�
 
 - [x] 로컬 체크아웃(`C:\dev\ourgoal-app`)의 커밋되지 않은 index.html 변경 정리
 - [x] 스프린트 이전에 열려 있던 PR(#11 #12 #20 #22 #23 #25 #31 #32 #35 #36) 병합 또는 닫기 결정 — 전부 처리 완료
-- [x] 병합된 브랜치·워크트리 정리 (`git worktree list` 1개만 남음)
+- [x] 병합된 브랜치·워크트리 정리 (2026-09-08 전량 정리 — 로컬 62개·원격 49개 삭제, `main`/`origin/main`만 남음, `git worktree list` 1개)
 - [x] 1호 직원 루틴이 스프린트 제외 규칙(CLAUDE.md 6번)을 읽도록 세팅 PR 병합
-- [ ] gh CLI PATH 등록 (`C:\Program Files\GitHub CLI`) 후 새 터미널에서 `gh auth status` 확인 — 현재는 세션마다 PATH를 수동으로 추가해야 함
-- [ ] (선택, 권장) index.html 자동 검증 훅 등록: `.claude/settings.json`에 아래 `hooks` 블록 추가. Claude Code 자동 모드가 설정 파일 수정을 차단하므로 사용자가 직접 넣는다. 훅 스크립트 자체(`scripts/hook-smoke-on-index.js`)는 이미 저장소에 있다.
+- [x] gh CLI PATH 등록 (`C:\Program Files\GitHub CLI`) — 2026-09-08 확인: `gh`가 PATH에서 바로 잡히고 `gh auth status` 정상(yangsangmin, scopes: gist/read:org/repo/workflow)
+- [x] index.html 자동 검증 훅 등록 — 2026-09-08 완료. 로컬 `.claude/settings.json`(git 미추적 개인 설정)에 아래 `hooks` 블록을 넣고 동작 확인: index.html 수정 시 스모크 66/66 통과 요약 출력, 다른 파일 수정 시 아무 동작 없음(exit 0). 훅 스크립트는 `scripts/hook-smoke-on-index.js`.
 
 ```json
 "hooks": {
