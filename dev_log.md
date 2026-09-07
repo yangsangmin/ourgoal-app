@@ -825,3 +825,18 @@
 - **발생한 문제 및 해결**: 해당 없음(시스템 블로커 아님 — 백로그 자체가 실행 가능한 항목이 없는 상태).
 - **검증 결과**: 코드 변경 없으므로 스모크 테스트 생략 대상(변경 없음). 열린 PR 5건(#40,#42,#43,#55,#60)은 규칙대로 손대지 않음.
 ---
+
+## [2026-09-08 05:53] 병합 완료 브랜치 전량 정리 + index.html 자동 검증 훅 등록
+- **목표**: 직전 세션에서 열린 PR 7건(#67 #55 #60 #68 #40 #42 #43)을 전부 병합해 열린 PR이 0건이 된 시점에, 누적된 작업용 브랜치 111개를 정리하고 STATUS.md 사전 정리 체크리스트의 남은 2건(gh PATH·검증 훅)을 마감한다.
+- **문제 및 본질(원칙1~2)**: 로컬 62개·원격 49개의 브랜치가 남아 `git branch` 출력이 100줄을 넘고, PR을 열 때 base/head를 잘못 고를 위험과 "이 브랜치가 병합된 건가?"를 매번 재조사해야 하는 비용이 반복됐다. 근본 원인은 스쿼시 병합이라 `git branch --merged`로는 병합 여부가 드러나지 않아, 삭제 판단을 누구도 확신 있게 내리지 못한 채 미뤄온 것.
+- **해결 방식 및 타당성(원칙3~4)**: `git branch --merged`만 믿지 않고 `gh pr list --state merged/closed`로 브랜치↔PR을 전수 대조하는 방식을 택했다. PR이 MERGED면 안전, CLOSED면 해당 기능이 실제로 main에 있는지 `git grep`으로 개별 확인 후 판단. 코드 변경이 0이고 main 히스토리를 건드리지 않으므로 CLAUDE.md 2번(디자인 불변경)·배포 리스크와 무관하며, Vercel 배포도 트리거되지 않는다.
+- **구현 절차 및 검증(원칙5~7)**:
+  1. 전수 대조 — 원격 49개 중 46개가 MERGED(#1~#62), 3개가 CLOSED. CLOSED 3건은 개별 확인: `feat/2026-09-06-csv-export`(#50)는 CSV 내보내기가 #22로 이미 main에 존재, `fix/2026-09-05-index-merge-conflict-markers`(#21)·`fix/2026-09-05-smoke-test-merge-markers`(#16)는 #19 핫픽스로 해결돼 main에 충돌 마커 0건 확인.
+  2. 로컬 전용 스크래치 25개(`resolve*/`·`verify1x`·`worktree-*`·`claude/*`)는 PR #11(레벨 배지)·#12(명예의 전당)용 충돌해결 잔재로, 두 기능이 main의 index.html에 실재함을 grep으로 확인(`levelBadge` 4건, `명예의 전당` 4건) 후 삭제 대상에 포함.
+  3. `git branch -D`로 로컬 62개, `git push origin --delete`로 원격 49개 삭제(25+24 두 배치). `git worktree prune -v` 실행 — `.git/worktrees`가 이미 없어 출력 없음(정상).
+  4. `.claude/settings.json`(git 미추적 개인 설정)에 PostToolUse 훅 블록 추가 후 실제 stdin JSON을 흘려 동작 확인.
+  5. (사용자 승인 후 추가) `.gitignore`에 `node_modules/` 1줄 추가 — 추적되지 않은 채 방치돼 `git add .` 한 번에 수천 파일이 커밋될 위험 제거. `package-lock.json`은 `package.json`에 실제 의존성(`web-push`, `@supabase/supabase-js`)이 있어 Vercel 빌드 재현성을 위해 **추적 대상으로 유지**(무시 목록에 넣지 않음). `git check-ignore -v`로 적용 확인.
+- **발생한 문제 및 해결**: (1) `git for-each-ref refs/remotes/origin` 결과에 `origin/HEAD`의 짧은 이름인 `origin`이 섞여 들어가 첫 push가 `unable to delete 'origin'`으로 통째 실패 → 목록에서 해당 줄만 제외해 재실행, 실제 원격 브랜치 수는 50이 아니라 49로 정정. (2) 훅 동작 테스트 중 셸에서 백슬래시가 소실돼 JSON이 깨지면서 훅이 조용히 exit 0 → 훅 결함으로 오인할 뻔했으나 `node`로 유효한 JSON을 생성해 재검증, Windows 백슬래시 경로·슬래시 경로 모두 정상 동작 확인.
+- **재검증 내역(원칙8)**: 위 (2)에서 "훅이 안 도는 것 아닌가"로 막혀 원칙 1~2로 돌아가 원인을 재확인한 결과, 문제는 훅이 아니라 테스트 입력 생성 방식이었음을 특정하고 검증 절차만 교체했다.
+- **검증 결과**: `git branch -a` → `main`/`origin/HEAD`/`origin/main` 3줄만 남음✅. `git worktree list` 1개✅. `git status` 추적 파일 변경 0건(코드 무변경)✅. `node scripts/smoke-test.js` 66/66 통과✅. `grep -rn "^<<<<<<<"` 0건✅. 훅: index.html 수정 시 `[smoke-test OK] 66개 통과, 0개 실패` 출력, 비대상 파일은 무출력 exit 0✅.
+---
