@@ -51,14 +51,19 @@ self.addEventListener('push', function(event){
 
 self.addEventListener('notificationclick', function(event){
   event.notification.close();
-  event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(list){
+  /* 알림 클릭률 계측(익명·실패 무시) — 성장 백로그 P0 ③ */
+  var tracked = fetch('/api/track', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: 'notification_clicked', props: { channel: 'push' } })
+  }).catch(function(){});
+  var focused = self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(list){
       for(var i=0; i<list.length; i++){
         if('focus' in list[i]) return list[i].focus();
       }
       if(self.clients.openWindow) return self.clients.openWindow('/');
-    })
-  );
+    });
+  event.waitUntil(Promise.all([tracked, focused]));
 });
 
 self.addEventListener('fetch', function(event){
