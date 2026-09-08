@@ -28,7 +28,7 @@ function check(label, fn) {
 }
 
 /* ============ 1. <script> 문법 검증 ============ */
-console.log('[1/2] index.html 인라인 <script> 문법 검증');
+console.log('[1/3] index.html 인라인 <script> 문법 검증');
 
 const scriptMatches = [...html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)]
   .filter(m => !/\bsrc=/.test(m[1]))
@@ -46,7 +46,7 @@ check('메인 <script> 블록이 유효한 JS 문법이다 (new Function 파싱)
 });
 
 /* ============ 2. 핵심 순수 함수 단위 테스트 ============ */
-console.log('[2/2] 핵심 함수 단위 테스트');
+console.log('[2/3] 핵심 함수 단위 테스트');
 
 // index.html의 IIFE 안에 캡슐화된 순수 함수들을 이름으로 추출해
 // 격리된 샌드박스에서 실행한다. (index.html 자체는 수정하지 않음)
@@ -598,6 +598,84 @@ check('filterRecordsByQuery: 분야(TOPICS 라벨)로도 찾고, 일치하는 �
   const b = { id: 'b', text: '아무 내용', startAt: '2020-03-16T10:00:00' };
   assert.deepStrictEqual(fns.filterRecordsByQuery([a, b], '운동'), [a]);
   assert.deepStrictEqual(fns.filterRecordsByQuery([a, b], '존재하지않는검색어'), []);
+});
+
+/* ============ 3. docs/sql/*.sql 최소 문법 검사 (AUD-7) ============ */
+// 외부 SQL 파서 없이 정규식 기반 최소 검사만 한다: 병합 전 "괄호가 안 닫힘·$$가 안 짝맞음·
+// create policy에 on 절이 없음" 같은 명백한 오탈자를 잡는 것이 목표이고, 완전한 SQL 문법
+// 검증(진짜 실행 검증)은 사용자가 Supabase 스테이징 프로젝트를 만들어야 가능하므로 범위 밖이다.
+console.log('[3/3] docs/sql/*.sql 최소 문법 검사');
+
+const SQL_DIR = path.join(__dirname, '..', 'docs', 'sql');
+
+function lintSql(sql) {
+  const issues = [];
+
+  const dollarCount = (sql.match(/\$\$/g) || []).length;
+  if (dollarCount % 2 !== 0) issues.push('$$ 개수가 홀수라 짝이 맞지 않음 (' + dollarCount + '개)');
+
+  // 라인 주석과 $$...$$ 함수 본문(내부는 PL/pgSQL이라 바깥과 괄호/세미콜론 규칙이 다름)을 제거하고
+  // 최상위 SQL 문장만 남긴다.
+  const stripped = sql
+    .replace(/--[^\n]*/g, '')
+    .replace(/\$\$[\s\S]*?\$\$/g, '$$body$$');
+
+  let depth = 0;
+  for (const ch of stripped) {
+    if (ch === '(') depth++;
+    else if (ch === ')') {
+      depth--;
+      if (depth < 0) { issues.push('괄호가 열리기 전에 먼저 닫힘'); break; }
+    }
+  }
+  if (depth > 0) issues.push('괄호가 짝 없이 열려 있음 (' + depth + '개 안 닫힘)');
+
+  const policyCount = (stripped.match(/create\s+policy\b/gi) || []).length;
+  const policyWithOn = (stripped.match(/create\s+policy\s+(?:"[^"]+"|\S+)\s+on\s+\S+/gi) || []).length;
+  if (policyWithOn < policyCount) {
+    issues.push('create policy 뒤에 on <table> 절이 없는 문장이 있음 (' + policyCount + '개 중 ' + policyWithOn + '개만 on 포함)');
+  }
+
+  const trimmed = stripped.trim();
+  if (trimmed && !trimmed.endsWith(';')) {
+    issues.push('마지막 문장이 세미콜론(;)으로 끝나지 않음');
+  }
+
+  return issues;
+}
+
+const sqlFiles = fs.existsSync(SQL_DIR)
+  ? fs.readdirSync(SQL_DIR).filter(f => f.endsWith('.sql'))
+  : [];
+
+check('docs/sql 디렉터리에 최소 1개 이상의 SQL 파일이 있다', () => {
+  assert.ok(sqlFiles.length > 0, 'docs/sql/*.sql 파일을 찾지 못했습니다.');
+});
+
+sqlFiles.forEach(file => {
+  check('docs/sql/' + file + ': 괄호·$$·create policy on 절·마지막 세미콜론 최소 검사 통과', () => {
+    const sql = fs.readFileSync(path.join(SQL_DIR, file), 'utf8');
+    const issues = lintSql(sql);
+    assert.deepStrictEqual(issues, [], issues.join(' / '));
+  });
+});
+
+check('lintSql: 괄호가 짝 없이 열려 있으면 잡아낸다', () => {
+  const issues = lintSql("create table t (id bigint);\ncreate table u (id bigint;");
+  assert.ok(issues.some(m => m.includes('괄호')), issues.join(' / '));
+});
+
+check('lintSql: create policy에 on 절이 없으면 잡아낸다', () => {
+  const issues = lintSql('create policy "p" using (true);');
+  assert.ok(issues.some(m => m.includes('create policy')), issues.join(' / '));
+});
+
+check('lintSql: $$ 함수 본문 내부의 괄호·세미콜론은 바깥 규칙과 무관하게 통과한다', () => {
+  const sql =
+    'create or replace function f() returns int language plpgsql as $$\n' +
+    'declare v int; begin if (true) then v := 1; end if; return v; end;\n' +
+    '$$;\n';
+  assert.deepStrictEqual(lintSql(sql), []);
 });
 
 /* ============ 결과 요약 ============ */

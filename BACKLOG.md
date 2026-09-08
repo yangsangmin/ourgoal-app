@@ -38,7 +38,7 @@
 - [x] **체크인 `category`가 Supabase에 저장·복원되지 않는 결함** (AUD-5 발견). `checkins` upsert·매핑에 category 추가 + 컬럼 없는 DB 폴백. (2026-09-07, PR #56 병합 완료 — 사용자가 `docs/sql/2026-09-06-checkins-category.sql`을 1회 실행해야 실제로 저장됨)
 - [ ] **랜딩 부트 블록 함수 분리 + 게이트 순서 테스트** (AUD-8). 1~2블록: `landing_view` 하루 1회 게이트와 유입 캡처 순서는 현재 부트 IIFE 안에 있어 테스트로 고정할 수 없다(AUD-1 결함 유형) / `recordLanding(search, todayKey)` 같은 이름 있는 함수로 빼고 스모크에 "lv_day가 이미 오늘인 상태에서 ?utm_source 로드 → attrib 저장" 1건 + `document` 스텁. index.html PR(#48·#49·#51·#52·#54) 병합 후 착수(충돌 회피).
 - [ ] **숨김 처리된 게시물·댓글의 REST 노출 차단** (PR #52 후속, AUD-7). 1~2블록: `hidden=true` 행도 `select` 정책(`auth.role()='authenticated'`)으로 API에서 읽힌다 / 정책에 `and hidden is not true` 추가 시 Realtime UPDATE 이벤트가 구독자에게 안 가 캐시가 낡는 부작용이 있으므로, (a) 정책 변경 + 클라이언트가 세션 중 1회 재조회, 또는 (b) 작성자 본인만 예외(`or auth.uid()=user_id`) 중 택일해 SQL 파일로. #52 병합·SQL 실행 후.
-- [ ] **`docs/sql/*.sql` 문법 검사를 스모크에 추가** (AUD-7). 1~2블록: 새 테이블·RPC SQL이 어떤 DB에서도 실행되지 않은 채 PR이 열린다 / 외부 파서 없이 최소 검사(문장 끝 `;`·`$$` 짝·`create policy` 뒤 `on` 존재 등 정규식)라도 넣고, 가능하면 사용자 1회 작업으로 Supabase 스테이징 프로젝트를 만들어 병합 전 실행 검증 경로를 연다.
+- [x] **`docs/sql/*.sql` 문법 검사를 스모크에 추가** (AUD-7). `scripts/smoke-test.js`에 `lintSql()` 추가 — `docs/sql/*.sql` 각 파일에 괄호 짝·`$$` 짝·`create policy` 뒤 `on <table>` 절 존재·마지막 문장 세미콜론 4가지를 정규식으로 검사(사람이 만든 오탈자 방지, 실제 DB 실행 검증은 아님). (2026-09-08, PR로 제출). Supabase 스테이징 프로젝트를 통한 실제 실행 검증은 여전히 사람 판단·설정이 필요해 범위 밖으로 남김.
 
 ## 메타(엔지니어링 기반, 우선순위 높음)
 
