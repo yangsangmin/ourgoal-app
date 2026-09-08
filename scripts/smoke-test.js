@@ -75,7 +75,7 @@ const FN_NAMES = [
   'heatmapLevel', 'localNextActionSuggestion',
   'goalAchievement', 'weeklyRecapStats',
   'parseAttribution', 'filterHidden',
-  'uid', 'newId', 'nowISO', 'getSid', 'getAttribution', 'buildCheckinRecord', 'updateAppBadge',
+  'uid', 'newId', 'nowISO', 'getSid', 'getAttribution', 'recordLanding', 'buildCheckinRecord', 'updateAppBadge',
   'calendarAvailable', 'fmtDateLabel', 'filterRecordsByQuery',
   'generateDynamicNotification',
 ];
@@ -105,7 +105,7 @@ const sandboxSrc =
   'localNextActionSuggestion, ' +
   'goalAchievement, weeklyRecapStats, ' +
   'parseAttribution, filterHidden, ' +
-  'uid, newId, nowISO, getSid, getAttribution, ' +
+  'uid, newId, nowISO, getSid, getAttribution, recordLanding, ' +
   'setSearch: function(s){ location.search = s; }, getStorage: function(){ return localStorage; }, ' +
   'buildCheckinRecord, updateAppBadge, ' +
   'getNavigator: function(){ return navigator; }, setNavigator: function(n){ navigator = n; }, ' +
@@ -602,6 +602,57 @@ check('filterRecordsByQuery: 분야(TOPICS 라벨)로도 찾고, 일치하는 �
 
 /* ============ 결과 요약 ============ */
 console.log('');
+/* ── 랜딩 진입 게이트 (AUD-8) ────────────────────────────────────────
+   부트 IIFE 안에 있던 로직을 recordLanding 으로 뺀 뒤 불변식을 고정한다.
+   핵심은 "유입 저장"과 "하루 1회 조회 기록"의 주기가 다르다는 것이다. */
+
+check('recordLanding: 첫 방문이면 유입을 저장하고 landing_view도 기록한다', () => {
+  fns.getStorage().clear();
+  fns.setSearch('');
+  const r = fns.recordLanding('?utm_source=instagram&utm_campaign=launch', '2026-09-08');
+  assert.strictEqual(r.attrib.utm_source, 'instagram');
+  assert.strictEqual(r.attrib.utm_campaign, 'launch');
+  assert.strictEqual(r.viewed, true);
+  assert.strictEqual(fns.getStorage().getItem('ourgoal_lv_day'), '2026-09-08');
+});
+
+check('recordLanding: lv_day가 오늘이어도 ?utm_source 유입은 저장된다 (AUD-8 회귀)', () => {
+  const st = fns.getStorage();
+  st.clear();
+  fns.setSearch('');
+  /* 오늘 이미 랜딩을 본 상태 — 유입 기록은 아직 없다 */
+  st.setItem('ourgoal_lv_day', '2026-09-08');
+  const r = fns.recordLanding('?utm_source=youtube&ref=friend-1', '2026-09-08');
+  /* landing_view 는 하루 1회라 안 남지만, 유입은 반드시 잡혀야 한다 */
+  assert.strictEqual(r.viewed, false, 'landing_view는 하루 1회여야 한다');
+  assert.strictEqual(r.attrib.utm_source, 'youtube', '오늘 이미 방문했어도 유입은 저장되어야 한다');
+  const saved = JSON.parse(st.getItem('ourgoal_attrib'));
+  assert.strictEqual(saved.utm_source, 'youtube');
+  assert.strictEqual(saved.ref, 'friend-1');
+});
+
+check('recordLanding: 첫 유입(first-touch)만 보존하고 나중 유입으로 덮어쓰지 않는다', () => {
+  const st = fns.getStorage();
+  st.clear();
+  fns.setSearch('');
+  fns.recordLanding('?utm_source=instagram', '2026-09-08');
+  const r = fns.recordLanding('?utm_source=naver', '2026-09-09');
+  assert.strictEqual(r.attrib.utm_source, 'instagram', '첫 유입이 유지되어야 한다');
+  assert.strictEqual(JSON.parse(st.getItem('ourgoal_attrib')).utm_source, 'instagram');
+});
+
+check('recordLanding: 유입 파라미터가 없어도 예외 없이 하루 1회 게이트만 동작한다', () => {
+  const st = fns.getStorage();
+  st.clear();
+  fns.setSearch('');
+  const a = fns.recordLanding('', '2026-09-08');
+  assert.deepStrictEqual(a.attrib, {});
+  assert.strictEqual(a.viewed, true);
+  const b = fns.recordLanding('', '2026-09-08');
+  assert.strictEqual(b.viewed, false, '같은 날 두 번째 진입은 기록하지 않는다');
+});
+
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
