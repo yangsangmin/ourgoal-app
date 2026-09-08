@@ -1,11 +1,10 @@
 name: Web Push dispatch
 
-# Vercel Hobby 플랜은 크론을 하루 1회로 제한해 vercel.json cron으로는
-# 5분 간격 발송이 불가능하다(배포 실패 확인됨). 대신 무료인 GitHub Actions
-# 스케줄로 /api/push-dispatch를 주기 호출한다.
+# 발송 트리거는 Supabase pg_cron(docs/sql/2026-09-08-push-cron.sql, 매분)이다.
+# 이전의 GitHub Actions */5 스케줄은 59시간 동안 22회만 돌고(간격 중앙값 128분,
+# 5분 이하 0회) "설정한 시각에 도착"을 보장하지 못해 2026-09-08 제거했다.
+# 이 워크플로는 수동 점검용(workflow_dispatch)으로만 남긴다.
 on:
-  schedule:
-    - cron: '*/5 * * * *'
   workflow_dispatch: {}
 
 jobs:

@@ -4,7 +4,7 @@ var webpush = require('web-push');
 module.exports.config = { maxDuration: 30 };
 
 var DEFAULT_SUPABASE_URL = 'https://dvqosviqbciohcywkzbq.supabase.co';
-var MATCH_TOLERANCE_MIN = 4; // GitHub Actions 스케줄 실행은 부하 상황에 따라 지연될 수 있어 여유를 둔다
+var MATCH_TOLERANCE_MIN = 4; // 트리거(Supabase pg_cron, 매분)가 지연·건너뛰어도 체크인 시각 후 4분까지는 발송한다. 정각 이전에는 보내지 않는다(sent_slots 가 같은 슬롯 중복을 막는다)
 var SENT_SLOTS_KEEP = 30;
 
 function minutesSinceMidnight(hhmm) {
@@ -67,7 +67,8 @@ module.exports = async function handler(req, res) {
 
       var matchedTime = null;
       for (var t = 0; t < checkinTimes.length; t++) {
-        if (Math.abs(minutesSinceMidnight(checkinTimes[t]) - nowMin) <= MATCH_TOLERANCE_MIN) {
+        var lateMin = nowMin - minutesSinceMidnight(checkinTimes[t]);
+        if (lateMin >= 0 && lateMin <= MATCH_TOLERANCE_MIN) {
           matchedTime = checkinTimes[t];
           break;
         }
