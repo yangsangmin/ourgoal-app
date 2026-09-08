@@ -888,6 +888,21 @@
 - **검증 결과**: `git diff --numstat` 28줄 추가·**0줄 삭제**, 추가된 줄 중 `---`·빈 줄이 아닌 것 **0건**(본문 무변경 기계 검증). 구조 재검사 87개 항목·구분선 누락 **0건**(복구 전 14건), 제목 중복 0·본문 없는 항목 0. `git check-attr merge dev_log.md` → `unspecified`(union 해제 확인). `node scripts/smoke-test.js` 66/66 통과(회귀 없음), 충돌 마커 0건. 앱 코드(index.html) 무변경.
 ---
 
+## [2026-09-08 시점] 미실행 Supabase SQL 2건 실행 및 실서버 검증
+- **목표**: 코드는 배포됐지만 DB 스키마가 없어 동작하지 않던 3개 기능(팀 댓글, 소통 피드 응원 카운트, 체크인 분야 저장)을 살린다.
+- **수정/실행 내역**:
+  - `docs/sql/RUN-ME-2026-09-08.sql` 내용을 3단계로 분할해 사용자가 Supabase SQL Editor에서 실행
+  - 생성: `team_comments`(+RLS 2정책), `feed_posts`(+RLS 3정책), `increment_post_cheers(text,integer)` RPC, Realtime publication 2건, `checkins.category` 컬럼
+- **발생한 문제 및 해결**:
+  - 1차: 사용자가 파일 열기용 셸 명령(`! notepad ...`)을 SQL 편집기에 붙여넣음 → SQL 본문을 채팅에 직접 출력해 해결
+  - 2차: `returns int` 줄에서 42601 구문 오류 → 함수 시그니처를 한 줄로 합치고 `int`→`integer`, `$$`→`$fn$`/`$blk$` 태그 달기, 주석·한글 제거한 ASCII 전용 버전으로 재작성
+  - 3차: 3단계 분할 실행으로 실패 지점 특정 가능하게 함
+- **검증 결과**:
+  - anon 키로 PostgREST 직접 조회 — `team_comments` 200, `feed_posts?select=id,cheers_count` 200, `checkins?select=category` 200 (미존재 시 404/400이어야 하므로 생성 확인)
+  - `POST /rest/v1/rpc/increment_post_cheers` 200 → 함수 존재 확인
+  - **보안 결함 발견 및 해결**: 위 RPC가 비로그인(anon)으로도 실행됨(200). PostgreSQL 기본 `PUBLIC` 실행 권한 때문. `revoke execute from public/anon` + `grant to authenticated` 실행 후 재검증 → anon 호출이 `401 42501 permission denied for function`으로 차단됨(함수는 존재, 권한만 차단). 피드 읽기는 200 유지로 기존 동작 영향 없음.
+  - 노션 실행계획 5개 행 갱신(왕복 대조 전건 OK): 순서 31·32 → 완료, 순서 26·18 → 미검증 유지(SQL 블로커는 해소됐으나 '재로그인 후 분야 유지'·'두 브라우저 실시간 반영'을 아직 아무도 재보지 않았으므로 완료로 올리지 않음), 순서 37 → 오늘의 42601 실패를 근거로 비고 보강.
+  - **진행률: 26/37(70.3%) → 28/37(75.7%)**. 사전 예상치 78%는 미검증 2건이 완료로 갈 것을 전제했으나 실제 측정 기준을 통과하지 못해 76%로 정정.
 ## [2026-09-08 17:50] 페이월 캘린더 혜택 문구 정직화 (실행계획 순서 34)
 - **목표**: Pro 혜택 목록의 "캘린더 양방향 실시간 동기화 · 항상 최신 상태로"가 실제 동작과 달라 다크패턴에 해당. 실제 동작을 정확히 설명하도록 고친다.
 - **수정/실행 내역**:

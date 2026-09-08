@@ -1,0 +1,38 @@
+{
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_LOGS_EXPORTER": "otlp",
+    "OTEL_METRICS_EXPORTER": "otlp",
+    "OTEL_EXPORTER_OTLP_PROTOCOL": "http/json",
+    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:7777",
+    "OTEL_RESOURCE_ATTRIBUTES": "project=ourgoal-app",
+    "OTEL_METRICS_INCLUDE_RESOURCE_ATTRIBUTES": "false"
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "node scripts/hook-smoke-on-index.js", "timeout": 60 }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(gh pr merge)",
+      "Bash(gh pr merge *)",
+      "Bash(claude --bg:*)",
+      "Bash(claude agents:*)",
+      "Bash(claude logs:*)",
+      "Bash(claude stop:*)"
+    ]
+  },
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Running `gh pr merge` on an open pull request is allowed without further confirmation when this repository's CLAUDE.md documents a standing user pre-authorization for automatic merges (a chat instruction to merge that specific PR, or a cycle-start instruction to auto-merge). The required post-merge verification (conflict-marker grep + smoke test) must still run and be reported regardless.",
+      "Writing and running code that spawns background Claude Code sessions via `claude --bg` is allowed for the 양비스 command center at C:\\dev\\command-center. On 2026-09-08 the user granted summoning as a capability but required that every summon be triggered by their own explicit voice or text command through the status window: the orchestrator only queues numbered proposals and never spawns on its own, and a session that modifies anything must additionally show what it will change before the user approves. `claude agents`, `claude logs`, and `claude stop` are allowed so spawned sessions can always be listed and terminated."
+    ]
+  }
+}
