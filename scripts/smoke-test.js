@@ -653,6 +653,54 @@ check('recordLanding: 유입 파라미터가 없어도 예외 없이 하루 1회
 });
 
 
+
+/* ── docs/sql 문법 검사 (실행계획 순서 37, AUD-7) ──────────────────────
+   SQL 은 사람이 Supabase 콘솔에 붙여넣어야 실행돼서 CI 가 돌려보지 못한다.
+   2026-09-08 에 실제로 42601 로 붙여넣기가 통째로 실패했다.
+   실행은 못 해도 **읽어서 잡을 수 있는 실수**는 병합 전에 잡는다. */
+const { lintSql } = require('./sql-lint');
+
+check('sql-lint: 마지막 문장의 세미콜론 누락을 잡는다', () => {
+  const p = lintSql('create table t (id int);\nalter table t add column x int');
+  assert.ok(p.some(m => m.includes('세미콜론')), '세미콜론 누락을 못 잡았다: ' + JSON.stringify(p));
+});
+
+check('sql-lint: 달러 인용($$) 짝 불일치를 잡는다', () => {
+  const p = lintSql('create function f() returns int language plpgsql as $$ begin return 1; end;');
+  assert.ok(p.some(m => m.includes('달러 인용')), '달러 인용 불일치를 못 잡았다: ' + JSON.stringify(p));
+});
+
+check('sql-lint: create policy 뒤 on <테이블> 누락을 잡는다', () => {
+  const p = lintSql('create policy "p" for select using (true);');
+  assert.ok(p.some(m => m.includes('on <테이블>')), 'on 누락을 못 잡았다: ' + JSON.stringify(p));
+});
+
+check('sql-lint: 괄호 짝 불일치를 잡는다', () => {
+  const p = lintSql('create table t (id int;');
+  assert.ok(p.some(m => m.includes('괄호')), '괄호 불일치를 못 잡았다: ' + JSON.stringify(p));
+});
+
+check('sql-lint: 정상 SQL 은 통과시킨다 (거짓 경보 없음)', () => {
+  const ok = 'create table if not exists t (id int);\n'
+    + 'create policy "p" on t for select using (true);\n'
+    + 'create function f() returns int language plpgsql as $fn$ begin return 1; end; $fn$;\n'
+    + '-- 주석의 세미콜론(;) 과 따옴표는 무시된다\n'
+    + 'insert into t values (1); -- 끝';
+  assert.deepStrictEqual(lintSql(ok), []);
+});
+
+check('docs/sql 의 모든 .sql 파일이 문법 검사를 통과한다', () => {
+  const dir = path.join(__dirname, '..', 'docs', 'sql');
+  const files = fs.readdirSync(dir).filter(f => f.endsWith('.sql'));
+  assert.ok(files.length > 0, 'docs/sql 에 .sql 파일이 없다');
+  const bad = [];
+  for (const f of files) {
+    const problems = lintSql(fs.readFileSync(path.join(dir, f), 'utf8'));
+    if (problems.length) bad.push(f + ': ' + problems.join(' / '));
+  }
+  assert.deepStrictEqual(bad, [], '문법 문제가 있는 SQL 파일: ' + bad.join(' | '));
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
