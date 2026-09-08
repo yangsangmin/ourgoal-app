@@ -75,7 +75,7 @@ const FN_NAMES = [
   'heatmapLevel', 'localNextActionSuggestion',
   'goalAchievement', 'weeklyRecapStats',
   'parseAttribution', 'filterHidden',
-  'uid', 'newId', 'nowISO', 'getSid', 'getAttribution', 'buildCheckinRecord', 'updateAppBadge',
+  'uid', 'newId', 'nowISO', 'getSid', 'getAttribution', 'recordLanding', 'buildCheckinRecord', 'updateAppBadge',
   'calendarAvailable', 'fmtDateLabel', 'filterRecordsByQuery',
   'generateDynamicNotification',
 ];
@@ -91,6 +91,9 @@ const sandboxSrc =
   'var localStorage = { _m: {}, getItem: function(k){ return Object.prototype.hasOwnProperty.call(this._m, k) ? this._m[k] : null; }, setItem: function(k, v){ this._m[k] = String(v); }, removeItem: function(k){ delete this._m[k]; }, clear: function(){ this._m = {}; } };\n' +
   /* Badging API 스텁 — updateAppBadge 불변식 검증용 (setNavigator(null)로 미지원 환경 재현) */
   'var navigator = { badge: null, setAppBadge: function(n){ this.badge = n; return Promise.resolve(); }, clearAppBadge: function(){ this.badge = 0; return Promise.resolve(); } };\n' +
+  /* track() 스텁 — recordLanding()은 실제 Supabase 클라이언트(sb) 없이 호출 여부만 검증(AUD-8) */
+  'var __trackCalls = [];\n' +
+  'var track = function(name, props){ __trackCalls.push({ name: name, props: props }); };\n' +
   /* 검색(filterRecordsByQuery)의 분야 매칭 대상 — 실제 TOPICS 전체를 옮기지 않고 테스트에 필요한 만큼만 스텁 */
   'var TOPICS = { workout: { label: "운동" } };\n' +
   // generateDynamicNotification의 모임 인증 분기 테스트용 최소 스텁(실제 MOCK_GROUPS는 추출하지 않음).
@@ -105,8 +108,9 @@ const sandboxSrc =
   'localNextActionSuggestion, ' +
   'goalAchievement, weeklyRecapStats, ' +
   'parseAttribution, filterHidden, ' +
-  'uid, newId, nowISO, getSid, getAttribution, ' +
+  'uid, newId, nowISO, getSid, getAttribution, recordLanding, ' +
   'setSearch: function(s){ location.search = s; }, getStorage: function(){ return localStorage; }, ' +
+  'getTrackCalls: function(){ return __trackCalls; }, clearTrackCalls: function(){ __trackCalls = []; }, ' +
   'buildCheckinRecord, updateAppBadge, ' +
   'getNavigator: function(){ return navigator; }, setNavigator: function(n){ navigator = n; }, ' +
   'calendarAvailable, fmtDateLabel, filterRecordsByQuery, ' +
@@ -515,6 +519,34 @@ check('getAttribution: UTM 없는 오가닉 방문은 아무것도 저장하지 
   } finally {
     st.getItem = saved;
   }
+});
+
+/* ============ recordLanding: landing_view 하루 1회 게이트 (AUD-8) ============ */
+check('recordLanding: lv_day가 이미 오늘이면 다시 기록하지 않는다', () => {
+  fns.getStorage().clear();
+  fns.clearTrackCalls();
+  fns.getStorage().setItem('ourgoal_lv_day', '2026-09-08');
+  fns.setSearch('?utm_source=instagram');
+  const tracked = fns.recordLanding('2026-09-08');
+  assert.strictEqual(tracked, false);
+  assert.deepStrictEqual(fns.getTrackCalls(), []);
+});
+
+check('recordLanding: lv_day가 오늘이 아니면 landing_view를 1회 기록하고 attrib을 함께 보낸다', () => {
+  fns.getStorage().clear();
+  fns.clearTrackCalls();
+  fns.setSearch('?utm_source=instagram&utm_medium=social');
+  const tracked = fns.recordLanding('2026-09-08');
+  assert.strictEqual(tracked, true);
+  assert.strictEqual(fns.getStorage().getItem('ourgoal_lv_day'), '2026-09-08');
+  const calls = fns.getTrackCalls();
+  assert.strictEqual(calls.length, 1);
+  assert.strictEqual(calls[0].name, 'landing_view');
+  assert.strictEqual(calls[0].props.utm_source, 'instagram');
+  // 같은 날 다시 호출하면 게이트에 막혀 추가로 기록되지 않는다.
+  const trackedAgain = fns.recordLanding('2026-09-08');
+  assert.strictEqual(trackedAgain, false);
+  assert.strictEqual(fns.getTrackCalls().length, 1);
 });
 
 /* ============ 온보딩 첫 기록 ============ */

@@ -1067,6 +1067,16 @@
       sb.from('events').insert({ sid: getSid(), name: name, props: props || {} }).then(function(){}, function(){});
     } catch(e){ /* 계측 실패는 조용히 무시 */ }
   }
+  /* landing_view는 하루 1회만 기록(ourgoal_lv_day 게이트), 유입 속성(attrib)은 매 로드마다 확보하되 첫 유입만 저장(getAttribution의 first-touch 규칙) */
+  function recordLanding(todayKey){
+    try{
+      var attrib = getAttribution();
+      if(localStorage.getItem('ourgoal_lv_day') === todayKey) return false;
+      localStorage.setItem('ourgoal_lv_day', todayKey);
+      track('landing_view', attrib);
+      return true;
+    } catch(e){ /* 계측 실패 무시 */ return false; }
+  }
   function trackGoalCreated(goal, source){
     var goals = (state.profile && state.profile.goals) || [];
     track('goal_created', { source: source, category: goal && goal.category, first: goals.length<=1 });
@@ -7069,11 +7079,7 @@
       }
     } catch(e){ /* fall through to landing screen */ }
     document.getElementById('landingScreen').style.display = 'flex';
-    try{
-      var attrib = getAttribution(); /* 유입 속성은 매 로드마다 확보(첫 유입만 저장), landing_view는 하루 1회만 기록 */
-      var lvDay = dateKey(nowISO());
-      if(localStorage.getItem('ourgoal_lv_day') !== lvDay){ localStorage.setItem('ourgoal_lv_day', lvDay); track('landing_view', attrib); }
-    } catch(e){ /* 계측 실패 무시 */ }
+    recordLanding(dateKey(nowISO()));
   })();
 
   /* ============ PWA: Service Worker 등록 ============ */
