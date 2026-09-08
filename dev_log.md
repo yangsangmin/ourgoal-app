@@ -887,3 +887,12 @@
 - **원인 기록**: union은 (1) 양쪽 블록을 이어붙일 때 경계의 `---`를 먹고, (2) GitHub 병합 엔진이 아예 적용하지 않아 로컬 merge-tree 충돌 0건인 PR이 CONFLICTING으로 표시된다(#60·#55가 실제로 이 이유로 막혔다). 즉 애초 목표였던 "GitHub에서의 자동 충돌 해결"은 처음부터 동작하지 않았고, 로컬에서만 구분선을 잃고 있었다.
 - **검증 결과**: `git diff --numstat` 28줄 추가·**0줄 삭제**, 추가된 줄 중 `---`·빈 줄이 아닌 것 **0건**(본문 무변경 기계 검증). 구조 재검사 87개 항목·구분선 누락 **0건**(복구 전 14건), 제목 중복 0·본문 없는 항목 0. `git check-attr merge dev_log.md` → `unspecified`(union 해제 확인). `node scripts/smoke-test.js` 66/66 통과(회귀 없음), 충돌 마커 0건. 앱 코드(index.html) 무변경.
 ---
+
+## [2026-09-08 00:45] 숨김 처리된 게시물·댓글의 REST 노출 차단 (AUD-7)
+- **목표**: BACKLOG.md "숨김 처리된 게시물·댓글의 REST 노출 차단"(PR #52 후속, AUD-7) 처리. `hidden=true`로 자동 숨김된 신고 대상 글이 여전히 REST API로 조회 가능한 구멍을 막는다.
+- **문제 및 본질(원칙1~2)**: PR #52가 `hidden` 컬럼과 클라이언트 필터 `filterHidden()`을 추가했지만, `team_comments`/`feed_posts`의 select 정책(`team_comments_select_all`/`feed_posts_select_all`, PR #41에서 생성)은 `auth.role()='authenticated'`만 검사한다. 즉 화면 렌더링만 클라이언트 쪽에서 걸러질 뿐, 인증된 사용자가 Supabase REST 엔드포인트를 직접 호출하면 hidden 행이 그대로 응답에 포함된다 — DB 레벨 차단이 없는 것이 근본 원인.
+- **해결 방식 및 타당성(원칙3~4)**: BACKLOG가 제시한 두 방식((a) `and hidden is not true` + 클라이언트 세션당 1회 재조회, (b) `or auth.uid()=user_id` 작성자 예외) 중 (b)를 선택. 이유: Supabase Realtime의 `postgres_changes`는 변경된 행이 각 구독자의 select 정책을 통과해야만 그 구독자에게 이벤트를 전달하므로, hidden=true로 바뀌는 순간 "그 글을 볼 수 있는 사람이 아무도 없는" 상태가 되어 이미 그 글을 보고 있던 다른 목격자에게는 (a)든 (b)든 동일하게 실시간 갱신이 전달되지 않는다(작성자 예외 유무는 목격자의 실시간성에 영향을 주지 않음 — 작성자 자신이 자기 글의 hidden 갱신을 실시간으로 받는 것은 이 기능의 목적이 아니다). 즉 두 방식의 실질적 차이가 없는 상황에서 (b)는 클라이언트 코드 변경이 전혀 필요 없는 순수 SQL 정책 교체라 변경 범위가 더 작고 회귀 위험이 낮다 — CLAUDE.md 3번(diff 최소화)에 더 부합. 기존 기능(신고 시 즉시 숨김 UPDATE 구독, filterHidden 렌더 필터)은 그대로 유지되므로 삭제 없음.
+- **구현 절차 및 검증(원칙5~7)**: `docs/sql/2026-09-08-hidden-content-rest-policy.sql` 신규 — 기존 정책 2개를 `drop policy if exists` 후 `hidden is not true or auth.uid()=user_id` 조건의 새 정책으로 교체. index.html 변경 없음(순수 SQL만). 검증: `node -e`로 SQL 파일 내 `create policy ... on ... for select using (...)` 문법 구조(괄호 짝·문장 끝 세미콜론)를 육안 재검토, `node scripts/smoke-test.js` **66/66**(이 브랜치 기준, main 브랜치 시점) 통과(회귀 없음 — 이번 변경이 index.html을 건드리지 않음을 재확인). 실제 DB 적용·REST 응답 검증은 사용자가 SQL 실행 후 가능(Supabase 프로젝트 접근 필요).
+- **재검증 내역(원칙8)**: 최초에는 (a) 정책+클라이언트 재조회를 기본값으로 검토했으나, Realtime 필터링 메커니즘을 원칙 1~4로 되짚어보니 (a)의 "클라이언트 재조회" 부분이 (b) 대비 추가로 얻는 이득이 없다는 결론에 도달해 (b)로 전환 — 판단을 코드 작성 전에 뒤집었다(구현 후 끼워맞춤 아님).
+- **검증 결과**: 문법(SQL 구조 재검토)✅ 스모크 66/66✅(index.html 무변경 확인) / DB 적용 검증은 사용자 SQL 실행 필요(아래 참고).
+---
