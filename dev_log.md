@@ -1041,4 +1041,34 @@
   - Supabase 프로덕션 DB 오염 0건, 완전 격리 샌드박스 보장.
 ---
 
+## [2026-09-10 06:35] 사용자 기록 테마 자동 인식·분류 및 테마별 기록 DB 저장 체계 구축 (TASK-OG-001)
+- **목표**:
+  1. 사용자 기록 저장 시 5대 주요 테마(심리상태, 공부기록, 사업기록, 약속기록, 운동기록) + 일상/기타 자동 인식·분류 및 DB 저장
+  2. SQL 마이그레이션 DDL(`docs/sql/2026-09-10-checkins-theme.sql`) 작성 및 원격 DB 미적용 시에도 무중단 fallback 동기화 지원
+  3. 기존 미분류 기록에 대한 비파괴 자동 백필(Backfill Migration) 구현
+  4. 라이프 밸런스 휠 (5대 테마 분포도 게이지 바 및 범례) 기록 탭 상단 렌더링
+  5. 1-Click HITL 테마 수정 팝업 UI 및 기록 카드별 테마 배지 칩 탑재
+  6. 테마 맞춤 AI 코칭 지침 주입 (`api/feedback.js`, `buildFeedbackPrompt`, `localFeedback`)
+  7. 테마별 DB 내보내기 (CSV, JSON, Markdown) 및 외부 AI(ChatGPT, Claude) 전용 분석 프롬프트 번들링 엔진 구현
+- **수정/실행 내역**:
+  - `docs/sql/2026-09-10-checkins-theme.sql`: `theme`, `sub_theme`, `theme_confidence`, `theme_metadata` 컬럼 추가 및 `idx_checkins_user_theme` 복합 인덱스 생성 DDL 작성 (sql-lint 검증 통과)
+  - `api/feedback.js`: 요청 body 내 `theme` 필드를 수신하여 5대 테마별 맞춤 코칭 지침(심리: 감정 공감/멘탈케어, 공부: 복습주기/인지과학, 사업: ROI/우선순위, 약속: 관계가치/시간관리, 운동: 점진과부하/루틴)을 프롬프트에 주입
+  - `ourgoal-app/index.html`:
+    - CSS: `.rec-theme-chip`, `.theme-filter-row`, `.theme-filter-chip`, `.balance-card`, `.balance-seg`, `.balance-legend`, `.export-theme-opt` 스타일 신설
+    - DOM: `#lifeBalanceBox`, `#recThemeFilters` 슬롯 추가
+    - 5대 테마 온톨로지 및 경량 AI 분류 엔진 탑재 (`RECORD_THEMES`, `THEME_KEYWORDS`, `THEME_REGEX_RULES`, `CATEGORY_THEME_MAP`, `classifyRecordTheme`)
+    - Supabase 클라이언트 동기화: `loadProfile` 및 `saveProfile`에 `theme`, `sub_theme`, `theme_confidence` 매핑 및 DB 스키마 에러 시 자동 fallback 처리
+    - `buildCheckinRecord` & `captureSave`: 신규 체크인 작성 시 1ms 이내 즉각 테마 자동 판별
+    - `buildFeedbackPrompt`, `requestAIFeedback`, `localFeedback`: 테마 맞춤 프롬프트 및 로컬 피드백 생성
+    - `renderRecordsScreen`: 레거시 기록 자동 백필, `renderLifeBalanceWheel`, `renderRecordThemeFilters`, 테마 필터링 및 카드 좌측 테마 컬러 보더/하단 칩 연동
+    - `openThemePickerModal`: 클릭 한 번으로 6대 테마 즉시 교정(HITL) 및 신뢰도 1.0 갱신
+    - `openRecordModal`: 기록 생성/수정 모달에 테마 셀렉트 박스 추가
+    - `openExportThemeModal`, `buildCSV`, `buildMarkdownExport`, `getAIAnalysisPrompt`: 테마별 필터링 내보내기 및 ChatGPT/Claude 원클릭 복사/다운로드 번들 엔진 구현
+  - `ourgoal-app/dev_log.md`: 개발 로그 추가
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **82개 전수 통과 (0개 실패)**
+  - `test-theme-classifier.js`: 5대 테마 8종 실사용 케이스 전수 정밀 분류 검증 통과 (심리, 공부, 사업, 약속, 운동, 일상)
+  - `sql-lint` 통과 및 Supabase 기존 스키마와의 무중단 역호환성 보장
+---
+
 

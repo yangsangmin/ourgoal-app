@@ -417,6 +417,25 @@
   .ai-badge-notice{display:flex;align-items:flex-start;gap:6px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:10px;padding:8px 10px;margin-top:8px;font-size:.73rem;color:var(--chip);line-height:1.45;word-break:keep-all;}
   .ai-badge-notice .ai-icon{flex:0 0 auto;font-size:.85rem;}
   .feed-ai-tag{display:inline-block;background:rgba(59,130,246,.12);color:var(--chip);font-size:.64rem;font-weight:800;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;}
+  /* ---------- 5대 테마 배지 & 라이프 밸런스 휠 (TASK-OG-001) ---------- */
+  .rec-theme-chip{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:6px;cursor:pointer;transition:all .15s;background:var(--card2);color:var(--ink-soft);border:1px solid transparent;}
+  .rec-theme-chip:hover{background:rgba(20,22,43,.08);border-color:var(--rule);}
+  .theme-filter-row{display:flex;gap:5px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+  .theme-filter-row::-webkit-scrollbar{display:none;}
+  .theme-filter-chip{flex:0 0 auto;padding:6px 12px;border-radius:999px;font-size:.76rem;font-weight:700;background:var(--card2);color:var(--ink-soft);cursor:pointer;transition:all .15s;border:1px solid transparent;}
+  .theme-filter-chip:hover{background:rgba(20,22,43,.08);}
+  .theme-filter-chip.active{background:var(--chip);color:#fff;box-shadow:0 4px 10px -4px rgba(20,22,43,.4);}
+  .balance-card{background:var(--card);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow-sm);}
+  .balance-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .balance-head b{font-size:.88rem;color:var(--ink);}
+  .balance-head span{font-size:.72rem;color:var(--ink-faint);font-family:var(--mono);}
+  .balance-bar-wrap{width:100%;height:10px;background:var(--card2);border-radius:999px;overflow:hidden;display:flex;margin-bottom:10px;}
+  .balance-seg{height:100%;transition:width .3s ease;}
+  .balance-legend{display:flex;flex-wrap:wrap;gap:8px 12px;font-size:.72rem;color:var(--ink-soft);}
+  .balance-leg-item{display:flex;align-items:center;gap:4px;cursor:pointer;}
+  .balance-dot{width:8px;height:8px;border-radius:50%;}
+  .export-theme-opt{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--card2);border-radius:12px;cursor:pointer;margin-bottom:6px;transition:all .15s;border:1.5px solid transparent;}
+  .export-theme-opt.active{background:rgba(108,92,231,.08);border-color:var(--violet);color:var(--violet);font-weight:700;}
   .group-item{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-sm);transition:transform .15s;}
   .group-item:active{transform:scale(.99);}
   .group-ico{width:48px;height:48px;border-radius:16px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex:0 0 auto;}
@@ -789,6 +808,7 @@
         <button class="btn btn-primary btn-sm fab-add" id="recAddBtn" type="button">+ 새 기록</button>
       </div>
       <div class="week-summary" id="weekSummary"></div>
+      <div id="lifeBalanceBox"></div>
       <div id="chartContainer"></div>
       <div id="recordHeatmap"></div>
       <div id="reportSummary"></div>
@@ -799,7 +819,8 @@
       <h3 style="font-weight:900;letter-spacing:-.02em;font-size:1rem;margin:18px 0 8px;">완료·보관한 목표</h3>
       <div id="archivedGoals"></div>
       <h3 style="font-weight:900;letter-spacing:-.02em;font-size:1rem;margin:18px 0 8px;">체크인 기록</h3>
-      <div class="field" style="margin-bottom:10px;"><input id="recSearchInput" type="text" placeholder="🔍 날짜·분야·키워드로 검색"></div>
+      <div class="theme-filter-row" id="recThemeFilters"></div>
+      <div class="field" style="margin-bottom:10px;"><input id="recSearchInput" type="text" placeholder="🔍 날짜·테마·키워드로 검색"></div>
       <div id="recordsList"></div>
       <div class="export-card">
         <div class="ico">⬇</div>
@@ -1316,7 +1337,7 @@
     };
   }
 
-  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7, calView: 'month', calDate: isoDate(new Date()), calSelectedDate: isoDate(new Date()) };
+  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7, calView: 'month', calDate: isoDate(new Date()), calSelectedDate: isoDate(new Date()), selectedRecordTheme: 'all' };
 
   async function ensureUserRow(userId, username, displayName, extra){
     var found = await sb.from('users').select('*').eq('id', userId).maybeSingle();
@@ -1339,7 +1360,13 @@
       };
     });
     var records = (recsRes.data||[]).map(function(r){
-      return { id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at, category: r.category || null };
+      return {
+        id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at,
+        category: r.category || null,
+        theme: r.theme || (typeof classifyRecordTheme === 'function' ? classifyRecordTheme(r.text, r.category).theme : 'daily'),
+        subTheme: r.sub_theme || null,
+        themeConfidence: r.theme_confidence || null
+      };
     });
     if(ures.isNew){
       track('signup', Object.assign({ method: provider || 'email' }, getAttribution()));
@@ -1383,12 +1410,25 @@
       var recs = state.profile.records;
       if(recs.length){
         var recRows = recs.map(function(r){
-          return { id:r.id, user_id:uidVal, type:r.type, text:r.text, start_at:r.startAt, end_at:r.endAt, category: r.category || null };
+          return {
+            id:r.id, user_id:uidVal, type:r.type, text:r.text, start_at:r.startAt, end_at:r.endAt,
+            category: r.category || null,
+            theme: r.theme || null,
+            sub_theme: r.subTheme || null,
+            theme_confidence: r.themeConfidence || null
+          };
         });
         var upRes = await sb.from('checkins').upsert(recRows);
-        if(upRes && upRes.error && /category/i.test(upRes.error.message || '')){
-          /* checkins.category 컬럼이 아직 없는 DB(docs/sql/2026-09-06-checkins-category.sql 미실행)에서는 기존 형식으로 재시도해 기록 저장이 끊기지 않게 한다 */
-          await sb.from('checkins').upsert(recRows.map(function(x){ var y = Object.assign({}, x); delete y.category; return y; }));
+        if(upRes && upRes.error && (/category/i.test(upRes.error.message || '') || /theme/i.test(upRes.error.message || ''))){
+          /* checkins.theme/category 컬럼이 아직 없는 DB에서는 레거시 형식으로 재시도해 기록 저장이 끊기지 않게 한다 */
+          await sb.from('checkins').upsert(recRows.map(function(x){
+            var y = Object.assign({}, x);
+            delete y.theme;
+            delete y.sub_theme;
+            delete y.theme_confidence;
+            if(/category/i.test(upRes.error.message || '')) delete y.category;
+            return y;
+          }));
         }
       }
       var recIds = recs.map(function(r){ return r.id; });
@@ -2710,9 +2750,182 @@
     return true;
   }
 
+  /* ============ 5대 테마 온톨로지 & 경량 AI 분류기 (TASK-OG-001) ============ */
+  var RECORD_THEMES = {
+    mind: {
+      key: 'mind',
+      label: '심리상태',
+      icon: '🧠',
+      color: '#8b5cf6',
+      bgColor: 'rgba(139,92,246,0.12)',
+      borderColor: 'rgba(139,92,246,0.35)',
+      desc: '기분·감정·멘탈케어·휴식'
+    },
+    study: {
+      key: 'study',
+      label: '공부기록',
+      icon: '📚',
+      color: '#3b82f6',
+      bgColor: 'rgba(59,130,246,0.12)',
+      borderColor: 'rgba(59,130,246,0.35)',
+      desc: '학습·시험·독서·강의·코딩'
+    },
+    business: {
+      key: 'business',
+      label: '사업기록',
+      icon: '💼',
+      color: '#10b981',
+      bgColor: 'rgba(16,185,129,0.12)',
+      borderColor: 'rgba(16,185,129,0.35)',
+      desc: '업무·매출·고객·기획·프로젝트'
+    },
+    schedule: {
+      key: 'schedule',
+      label: '약속기록',
+      icon: '🤝',
+      color: '#f59e0b',
+      bgColor: 'rgba(245,158,11,0.12)',
+      borderColor: 'rgba(245,158,11,0.35)',
+      desc: '약속·모임·일정·회의·만남'
+    },
+    workout: {
+      key: 'workout',
+      label: '운동기록',
+      icon: '💪',
+      color: '#ef4444',
+      bgColor: 'rgba(239,68,68,0.12)',
+      borderColor: 'rgba(239,68,68,0.35)',
+      desc: '헬스·러닝·필라테스·식단·루틴'
+    },
+    daily: {
+      key: 'daily',
+      label: '일상/기타',
+      icon: '🌱',
+      color: '#64748b',
+      bgColor: 'rgba(100,116,139,0.12)',
+      borderColor: 'rgba(100,116,139,0.35)',
+      desc: '기타 일상 및 생각'
+    }
+  };
+
+  var THEME_KEYWORDS = {
+    mind: [
+      '심리','멘탈','기분','우울','불안','행복','감사','스트레스','힐링','휴식','지치','번아웃',
+      '마음','위로','명상','산책','평온','다짐','자책','답답','눈물','홀가분','뿌듯','짜증'
+    ],
+    study: [
+      '공부','독서','도서관','강의','수업','시험','인강','토익','과제','학습','자격증','영단어',
+      '기출','복습','코딩','알고리즘','백준','스터디','논문','암기','단어장','필기','오답'
+    ],
+    business: [
+      '사업','매출','고객','계약','미팅','기획','보고서','업무보고','업무','출근','퇴근','야근','프로젝트',
+      '출시','런칭','개발','투자','마케팅','광고','외근','영업','바이어','회의','피칭','세일즈'
+    ],
+    schedule: [
+      '약속','만남','친구','데이트','약속시간','모임','회식','식사','가족','방문','접견','동창',
+      '카페에서','일정','참석','동호회','파티','생일','초대'
+    ],
+    workout: [
+      '운동','헬스','러닝','달리기','웨이트','스쿼트','벤치','유산소','스트레칭','필라테스',
+      '수영','자전거','식단','단백질','벌크업','감량','체중','인바디','근력','오운완','피티'
+    ]
+  };
+
+  var THEME_REGEX_RULES = [
+    { theme: 'study', re: /(?:^|\s)책(?:[을를이가은는과와에로도만]|\s|$)/i, label: '독서' },
+    { theme: 'business', re: /(?:^|\s)보고(?:서|회|[를에]|\s*완료|\s*드림|\s*작성)/i, label: '보고' },
+    { theme: 'schedule', re: /(?:^|\s)만나(?:서|기로|고|다|러)/i, label: '만남' }
+  ];
+
+  var CATEGORY_THEME_MAP = {
+    'health': 'workout',
+    'workout': 'workout',
+    'fitness': 'workout',
+    'study': 'study',
+    'learning': 'study',
+    'exam': 'study',
+    'coding': 'study',
+    'business': 'business',
+    'career': 'business',
+    'work': 'business',
+    'money': 'business',
+    'mind': 'mind',
+    'habit': 'mind',
+    'relationship': 'schedule',
+    'schedule': 'schedule'
+  };
+
+  function classifyRecordTheme(text, category){
+    var hay = (text || '').toLowerCase();
+    var scores = { mind:0, study:0, business:0, schedule:0, workout:0, daily:0 };
+
+    if(category){
+      var majorCat = String(category).split('/')[0].toLowerCase();
+      var mapped = CATEGORY_THEME_MAP[majorCat];
+      if(mapped && scores[mapped] !== undefined){
+        scores[mapped] += 1.5;
+      }
+    }
+
+    var matchedWords = {};
+    Object.keys(THEME_KEYWORDS).forEach(function(themeKey){
+      matchedWords[themeKey] = [];
+      THEME_KEYWORDS[themeKey].forEach(function(kw){
+        if(hay.indexOf(kw) !== -1){
+          scores[themeKey] += 1.0;
+          matchedWords[themeKey].push(kw);
+        }
+      });
+    });
+
+    THEME_REGEX_RULES.forEach(function(rule){
+      if(rule.re.test(hay)){
+        scores[rule.theme] += 1.0;
+        if(!matchedWords[rule.theme]) matchedWords[rule.theme] = [];
+        matchedWords[rule.theme].push(rule.label);
+      }
+    });
+
+    var bestTheme = 'daily';
+    var maxScore = 0;
+    ['mind','study','business','workout','schedule'].forEach(function(t){
+      if(scores[t] > maxScore){
+        maxScore = scores[t];
+        bestTheme = t;
+      }
+    });
+
+    var subTheme = (matchedWords[bestTheme] && matchedWords[bestTheme].length > 0)
+      ? matchedWords[bestTheme].slice(0, 2).join('·')
+      : (RECORD_THEMES[bestTheme] ? RECORD_THEMES[bestTheme].desc.split('·')[0] : '');
+
+    var confidence = maxScore >= 2 ? 0.95 : (maxScore >= 1 ? 0.8 : 0.6);
+
+    return {
+      theme: bestTheme,
+      subTheme: subTheme,
+      confidence: confidence
+    };
+  }
+
   /* 온보딩 첫 기록용 체크인 저장 — 데이터 부수효과만 수행하고 홈 DOM(captureSave 핸들러)은 건드리지 않는다. 성장 백로그 P0 3.5 / 거시 A4 */
   function buildCheckinRecord(text, goal){
-    return { id: newId(), type: 'note', text: text, startAt: nowISO(), endAt: nowISO(), createdAt: nowISO(), category: goal ? goal.category : null };
+    var cat = goal ? goal.category : null;
+    var classified = (typeof classifyRecordTheme === 'function')
+      ? classifyRecordTheme(text, cat)
+      : { theme: 'daily', subTheme: '', confidence: 0.5 };
+    return {
+      id: newId(),
+      type: 'note',
+      text: text,
+      startAt: nowISO(),
+      endAt: nowISO(),
+      createdAt: nowISO(),
+      category: cat,
+      theme: classified.theme,
+      subTheme: classified.subTheme,
+      themeConfidence: classified.confidence
+    };
   }
   async function saveQuickCheckin(text, goal, source){
     var isFirst = state.profile.records.length === 0;
@@ -2839,8 +3052,23 @@
     var text = t.value.trim();
     if(!text) return;
     var goal = state.profile.goals.find(function(g){ return g.id===state.activeGoalId; }) || state.profile.goals[0];
+    var cat = goal ? goal.category : null;
     var isFirst = (state.profile.records.length === 0);
-    state.profile.records.unshift({ id: newId(), type:'note', text: text, startAt: nowISO(), endAt: nowISO(), createdAt: nowISO(), category: goal ? goal.category : null });
+    var classified = (typeof classifyRecordTheme === 'function')
+      ? classifyRecordTheme(text, cat)
+      : { theme: 'daily', subTheme: '', confidence: 0.5 };
+    state.profile.records.unshift({
+      id: newId(),
+      type: 'note',
+      text: text,
+      startAt: nowISO(),
+      endAt: nowISO(),
+      createdAt: nowISO(),
+      category: cat,
+      theme: classified.theme,
+      subTheme: classified.subTheme,
+      themeConfidence: classified.confidence
+    });
     t.value = '';
     var xpRes = awardXP(XP_RULES.checkin, '체크인');
     var freezeGranted = maybeGrantStreakFreeze();
@@ -2865,7 +3093,7 @@
     var fb = null;
     if(goal){
       renderFeedbackSlot('loading');
-      fb = await requestAIFeedback(goal, text);
+      fb = await requestAIFeedback(goal, text, newRec ? newRec.theme : null);
       state.lastCapture = { record: newRec, goal: goal, feedback: fb };
       renderFeedbackSlot(fb);
       maybeShowGoalUpdateModal(goal, fb);
@@ -2928,7 +3156,18 @@
       };
     });
   }
-  function buildFeedbackPrompt(goal, text){
+  var THEME_FEEDBACK_PROMPTS = {
+    mind: '이 기록은 [심리상태] 테마로 분류되었습니다. 사용자의 감정 상태, 멘탈 회복, 스트레스 관리 관점에서 깊이 공감하고 따뜻한 위로와 마인드셋 회복 조언을 포함하세요.',
+    study: '이 기록은 [공부기록] 테마로 분류되었습니다. 학습 효율성, 복습 주기, 지식 습득의 깊이 관점에서 구체적이고 실천적인 학습 피드백을 제공하세요.',
+    business: '이 기록은 [사업기록] 테마로 분류되었습니다. 업무 생산성, 비즈니스 성과, 마일스톤 진척도, 우선순위 관리 관점에서 전략적 피드백을 제공하세요.',
+    schedule: '이 기록은 [약속기록] 테마로 분류되었습니다. 대인 관계, 네트워킹 가치, 약속 이행 및 시간 관리 관점의 조언을 제공하세요.',
+    workout: '이 기록은 [운동기록] 테마로 분류되었습니다. 신체 건강, 운동 루틴의 지속성, 점진적 과부하와 부상 방지 관점에서 활력 넘치는 피드백을 제공하세요.',
+    daily: '이 기록은 [일상/기타] 테마입니다. 작은 일상의 실천이 주는 의미와 가치를 격려하세요.'
+  };
+
+  function buildFeedbackPrompt(goal, text, theme){
+    var detectedTheme = theme || ((typeof classifyRecordTheme === 'function') ? classifyRecordTheme(text, goal ? goal.category : null).theme : 'daily');
+    var themeLens = THEME_FEEDBACK_PROMPTS[detectedTheme] || THEME_FEEDBACK_PROMPTS.daily;
     var msJson = JSON.stringify(milestonesForAI(goal));
     var settings = state.profile.settings;
     var custom = (settings.customFeedbackActive && settings.customFeedbackPrompt) ? settings.customFeedbackPrompt : '';
@@ -2936,8 +3175,11 @@
     var roleLine = custom
       ? '당신은 위 페르소나 지침에 따라 행동하는 목표 달성 피드백 봇입니다.'
       : '당신은 목표 달성 코치입니다.';
-    return personaBlock + roleLine + ' 사용자의 목표 구조(마일스톤과 하위 할 일)와 방금 남긴 기록을 보고, ' +
+    var thLabel = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[detectedTheme]) ? RECORD_THEMES[detectedTheme].label : detectedTheme;
+    return personaBlock + roleLine + ' [기록 테마 코칭 지침: ' + thLabel + ']\n' + themeLens + '\n\n' +
+      '사용자의 목표 구조(마일스톤과 하위 할 일)와 방금 남긴 기록을 보고, ' +
       '그 기록이 목표 달성에 도움이 되는지 판단하고, 이 기록이 실제로 어떤 마일스톤이나 할 일의 진행 상태·결과를 바꿀 만한 확실한 근거가 되는지도 함께 판단하세요.\n\n' +
+      '[기록 테마]\n' + thLabel + '\n\n' +
       '[사용자의 목표]\n최종 목표: ' + goal.title + '\n\n' +
       '[마일스톤/할 일 목록 - JSON, id는 그대로 참조용. result는 {target,result,unit,note} 형태의 결과 기록칸]\n' + msJson + '\n\n' +
       '[방금 남긴 기록]\n"' + text + '"\n\n' +
@@ -2959,16 +3201,16 @@
     if(!Array.isArray(parsed.suggestions)) parsed.suggestions = [];
     return parsed;
   }
-  async function requestAIFeedback(goal, text){
+  async function requestAIFeedback(goal, text, theme){
     var provider = (state.profile.settings.aiProvider) || 'claude';
     if(provider==='gemini' && state.profile.settings.geminiKey){
-      var g = await requestGeminiFeedback(goal, text);
+      var g = await requestGeminiFeedback(goal, text, theme);
       if(g) return g;
-      return localFeedback(goal, text); // key set but call failed
+      return localFeedback(goal, text, theme); // key set but call failed
     }
-    return requestClaudeFeedback(goal, text);
+    return requestClaudeFeedback(goal, text, theme);
   }
-  async function requestClaudeFeedback(goal, text){
+  async function requestClaudeFeedback(goal, text, theme){
     var settings = state.profile.settings;
     var custom = (settings.customFeedbackActive && settings.customFeedbackPrompt) ? settings.customFeedbackPrompt : '';
     var controller = new AbortController();
@@ -2976,7 +3218,7 @@
     try{
       var res = await fetch('/api/feedback', {
         method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
-        body: JSON.stringify({ goalTitle: goal.title, milestones: milestonesForAI(goal), text: text, customPrompt: custom })
+        body: JSON.stringify({ goalTitle: goal.title, milestones: milestonesForAI(goal), text: text, customPrompt: custom, theme: theme })
       });
       clearTimeout(timer);
       if(!res.ok) throw new Error('bad status');
@@ -2988,12 +3230,12 @@
       return parsed;
     } catch(e){
       clearTimeout(timer);
-      return localFeedback(goal, text);
+      return localFeedback(goal, text, theme);
     }
   }
-  async function requestGeminiFeedback(goal, text){
+  async function requestGeminiFeedback(goal, text, theme){
     var geminiPersona = !!(state.profile.settings.customFeedbackActive && state.profile.settings.customFeedbackPrompt);
-    var prompt = buildFeedbackPrompt(goal, text);
+    var prompt = buildFeedbackPrompt(goal, text, theme);
     var model = state.profile.settings.geminiModel || 'gemini-2.5-flash';
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 12000);
@@ -3025,8 +3267,9 @@
     }
   }
   var DONE_KEYWORDS = ['완료','다 했','다했','끝냈','끝났','달성','마쳤','마무리','성공','clear','done'];
-  function localFeedback(goal, text){
+  function localFeedback(goal, text, theme){
     var hay = text.toLowerCase();
+    var detectedTheme = theme || ((typeof classifyRecordTheme === 'function') ? classifyRecordTheme(text, goal ? goal.category : null).theme : 'daily');
     var goalWords = Array.from(new Set((goal.title+' '+goal.milestones.map(function(m){return m.title;}).join(' ')).toLowerCase().split(/[^a-z0-9가-힣]+/i).filter(function(w){ return w.length>1; })));
     var hit = goalWords.some(function(w){ return w && hay.indexOf(w)!==-1; });
     var hasDoneKeyword = DONE_KEYWORDS.some(function(k){ return hay.indexOf(k.toLowerCase())!==-1; });
@@ -3041,9 +3284,26 @@
         suggestions.push({ type:'milestone', id:m.id, field:'status', value:'doing', reason:'기록에 "'+m.title+'" 관련 내용이 있어요' });
       }
     });
-    return hit
-      ? { verdict:'도움됨', comment:'"'+goal.title+'"에 도움이 되는 행동으로 보여요. 좋은 흐름이에요.', source:'local', suggestions:suggestions }
-      : { verdict:'애매함', comment:'목표와 바로 연결되는지는 조금 더 지켜봐야 할 것 같아요.', source:'local', suggestions:suggestions };
+
+    var comment;
+    if(hit){
+      if(detectedTheme === 'mind') comment = '"' + goal.title + '"를 향한 여정에서 마음과 멘탈을 잘 돌보고 계시네요. 훌륭한 호흡이에요.';
+      else if(detectedTheme === 'study') comment = '"' + goal.title + '"를 위한 집중 학습이 돋보여요. 배운 지식이 큰 밑거름이 될 거예요.';
+      else if(detectedTheme === 'business') comment = '"' + goal.title + '" 성과를 이끄는 전략적 실천이에요. 실행력이 매우 뛰어납니다.';
+      else if(detectedTheme === 'schedule') comment = '"' + goal.title + '"를 위한 소중한 약속과 일정을 알차게 챙기셨네요.';
+      else if(detectedTheme === 'workout') comment = '"' + goal.title + '"를 뒷받침하는 든든한 체력을 다지셨네요! 활력이 넘쳐요.';
+      else comment = '"'+goal.title+'"에 도움이 되는 행동으로 보여요. 좋은 흐름이에요.';
+    } else {
+      comment = '목표와 바로 연결되는지는 조금 더 지켜봐야 할 것 같아요.';
+    }
+
+    return {
+      verdict: hit ? '도움됨' : '애매함',
+      comment: comment,
+      source: 'local',
+      theme: detectedTheme,
+      suggestions: suggestions
+    };
   }
   /* ============ 기록 기반 목표·마일스톤·할 일 자동 업데이트 제안 ============ */
   function findSuggestionTarget(goal, s){
@@ -5026,43 +5286,204 @@
       var text = String(r.text||'').toLowerCase();
       var label = fmtDateLabel(r.startAt).toLowerCase();
       var key = dateKey(r.startAt).toLowerCase();
-      var cat = (r.category && TOPICS[r.category]) ? String(TOPICS[r.category].label||'').toLowerCase() : '';
-      return text.indexOf(q)>=0 || label.indexOf(q)>=0 || key.indexOf(q)>=0 || cat.indexOf(q)>=0;
+      var cat = (r.category && typeof TOPICS !== 'undefined' && TOPICS[r.category]) ? String(TOPICS[r.category].label||'').toLowerCase() : '';
+      var thObj = (typeof RECORD_THEMES !== 'undefined' && r.theme && RECORD_THEMES[r.theme]) ? RECORD_THEMES[r.theme] : null;
+      var thLabel = thObj ? String(thObj.label||'').toLowerCase() : '';
+      var subTh = String(r.subTheme||'').toLowerCase();
+      return text.indexOf(q)>=0 || label.indexOf(q)>=0 || key.indexOf(q)>=0 || cat.indexOf(q)>=0 || thLabel.indexOf(q)>=0 || subTh.indexOf(q)>=0;
     });
   }
+
+  /* ============ 5대 테마 라이프 밸런스 휠 & 테마 필터 (TASK-OG-001) ============ */
+  function renderLifeBalanceWheel(allRecs){
+    var box = document.getElementById('lifeBalanceBox');
+    if(!box) return;
+    if(!allRecs || allRecs.length === 0){
+      box.innerHTML = '';
+      return;
+    }
+    var counts = { mind:0, study:0, business:0, schedule:0, workout:0, daily:0 };
+    var total = 0;
+    allRecs.forEach(function(r){
+      var t = r.theme || 'daily';
+      if(counts[t] !== undefined) counts[t]++;
+      else counts.daily++;
+      total++;
+    });
+
+    var keys = ['mind','study','business','schedule','workout','daily'];
+    var segsHtml = '';
+    var legendHtml = '';
+
+    keys.forEach(function(k){
+      var count = counts[k];
+      var pct = total > 0 ? Math.round((count / total) * 100) : 0;
+      var th = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[k]) ? RECORD_THEMES[k] : { label:k, icon:'🌱', color:'#64748b' };
+      if(count > 0){
+        segsHtml += '<div class="balance-seg" style="width:'+pct+'%;background-color:'+th.color+';" title="'+th.label+' '+pct+'% ('+count+'건)"></div>';
+      }
+      var isSelected = (state.selectedRecordTheme === k);
+      legendHtml += '<div class="balance-leg-item'+(isSelected?' active':'')+'" data-themefilter="'+k+'" style="cursor:pointer;'+(isSelected?'font-weight:700;color:var(--ink);':'')+'">' +
+        '<span class="balance-dot" style="background-color:'+th.color+';"></span>' +
+        '<span>'+th.icon+' '+th.label+' <b style="font-family:var(--mono);">'+pct+'%</b> ('+count+')</span>' +
+      '</div>';
+    });
+
+    box.innerHTML =
+      '<div class="balance-card">' +
+        '<div class="balance-head">' +
+          '<b>⚖️ 라이프 밸런스 휠</b>' +
+          '<span>총 ' + total + '개 기록 분류</span>' +
+        '</div>' +
+        '<div class="balance-bar-wrap">' + (segsHtml || '<div class="balance-seg" style="width:100%;background:var(--rule);"></div>') + '</div>' +
+        '<div class="balance-legend">' + legendHtml + '</div>' +
+      '</div>';
+
+    box.querySelectorAll('[data-themefilter]').forEach(function(el){
+      el.addEventListener('click', function(){
+        var target = el.dataset.themefilter;
+        state.selectedRecordTheme = (state.selectedRecordTheme === target) ? 'all' : target;
+        renderRecordsScreen();
+      });
+    });
+  }
+
+  function renderRecordThemeFilters(){
+    var wrap = document.getElementById('recThemeFilters');
+    if(!wrap || typeof RECORD_THEMES === 'undefined') return;
+    var themes = [
+      { key:'all', label:'전체', icon:'✨' },
+      RECORD_THEMES.mind,
+      RECORD_THEMES.study,
+      RECORD_THEMES.business,
+      RECORD_THEMES.schedule,
+      RECORD_THEMES.workout,
+      RECORD_THEMES.daily
+    ];
+
+    var curTheme = state.selectedRecordTheme || 'all';
+    var html = themes.map(function(t){
+      var active = (curTheme === t.key);
+      return '<button class="theme-filter-chip'+(active?' active':'')+'" type="button" data-filter="'+t.key+'">' +
+        t.icon + ' ' + t.label +
+      '</button>';
+    }).join('');
+    wrap.innerHTML = html;
+
+    wrap.querySelectorAll('[data-filter]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        state.selectedRecordTheme = btn.dataset.filter;
+        renderRecordsScreen();
+      });
+    });
+  }
+
+  /* 1-Click HITL 테마 수정 팝업 (TASK-OG-001) */
+  function openThemePickerModal(recId){
+    var rec = state.profile.records.find(function(r){ return r.id===recId; });
+    if(!rec || typeof RECORD_THEMES === 'undefined') return;
+    var keys = ['mind','study','business','schedule','workout','daily'];
+    var optionsHtml = keys.map(function(k){
+      var th = RECORD_THEMES[k];
+      var isCurrent = ((rec.theme || 'daily') === k);
+      return '<div class="export-theme-opt'+(isCurrent?' active':'')+'" data-picktheme="'+k+'" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:12px;cursor:pointer;margin-bottom:8px;background:var(--card2);border:1.5px solid '+(isCurrent?th.color:'transparent')+';">' +
+        '<div style="display:flex;align-items:center;gap:10px;">' +
+          '<span style="font-size:1.3rem;">'+th.icon+'</span>' +
+          '<div>' +
+            '<div style="font-weight:700;font-size:.9rem;color:var(--ink);">'+th.label+(isCurrent?' <span style="font-size:.75rem;color:'+th.color+';font-weight:600;">(현재)</span>':'')+'</div>' +
+            '<div style="font-size:.75rem;color:var(--ink-soft);">'+th.desc+'</div>' +
+          '</div>' +
+        '</div>' +
+        '<span style="font-size:1.1rem;color:'+(isCurrent?th.color:'var(--ink-faint)')+';">'+(isCurrent?'✓':'›')+'</span>' +
+      '</div>';
+    }).join('');
+
+    openModal(
+      '<h3>🏷️ 기록 테마 변경</h3>' +
+      '<p class="faint" style="font-size:.82rem;margin-bottom:14px;word-break:break-word;">"'+escapeHtml(rec.text)+'"</p>' +
+      '<div id="themePickList">' + optionsHtml + '</div>' +
+      '<div class="modal-actions" style="margin-top:12px;"><button class="btn btn-ghost" id="mCloseTheme" type="button">닫기</button></div>',
+      function(sheet){
+        sheet.querySelector('#mCloseTheme').addEventListener('click', closeModal);
+        sheet.querySelectorAll('[data-picktheme]').forEach(function(item){
+          item.addEventListener('click', async function(){
+            var newTheme = item.dataset.picktheme;
+            rec.theme = newTheme;
+            rec.themeConfidence = 1.0;
+            var th = RECORD_THEMES[newTheme];
+            await saveProfile();
+            closeModal();
+            renderRecordsScreen();
+            toast('테마를 [' + th.label + '](으)로 변경했어요');
+          });
+        });
+      }
+    );
+  }
+
   function renderRecordsScreen(){
-    var recs = state.profile.records.slice().sort(function(a,b){ return new Date(b.startAt)-new Date(a.startAt); });
+    // 1. 레거시 기록 자동 테마 백필 (Backfill Migration)
+    var needsSave = false;
+    (state.profile.records || []).forEach(function(r){
+      if(!r.theme){
+        var c = (typeof classifyRecordTheme === 'function') ? classifyRecordTheme(r.text, r.category) : { theme: 'daily', subTheme: '', confidence: 0.5 };
+        r.theme = c.theme;
+        r.subTheme = c.subTheme;
+        r.themeConfidence = c.confidence;
+        needsSave = true;
+      }
+    });
+    if(needsSave){
+      saveProfile();
+    }
+
+    var allRecs = (state.profile.records || []).slice().sort(function(a,b){ return new Date(b.startAt)-new Date(a.startAt); });
+
+    // 라이프 밸런스 휠 (전체 기록 테마 분포)
+    renderLifeBalanceWheel(allRecs);
+
+    // 테마 필터 칩 렌더링
+    renderRecordThemeFilters();
 
     // week summary
     var weekAgo = Date.now() - 7*86400000;
     var totalMs = 0;
-    recs.forEach(function(r){
+    allRecs.forEach(function(r){
       if(new Date(r.startAt).getTime() >= weekAgo && r.endAt){
         totalMs += (new Date(r.endAt) - new Date(r.startAt));
       }
     });
     document.getElementById('weekSummary').textContent = '이번 주 총 ' + fmtDuration(totalMs) + ' 기록';
-    renderWeekChart(recs);
-    renderRecordHeatmap(recs);
-    renderReportSummary(recs);
+    renderWeekChart(allRecs);
+    renderRecordHeatmap(allRecs);
+    renderReportSummary(allRecs);
     renderArchivedGoals();
 
     var listEl = document.getElementById('recordsList');
-    if(!recs.length){
+    if(!allRecs.length){
       listEl.innerHTML = '<div class="empty-state"><div class="e-icon">📝</div><p>아직 기록이 없어요. 홈에서 자유롭게 적어보세요.</p></div>';
       return;
     }
 
+    // 테마 필터링
+    var filteredRecs = allRecs;
+    if(state.selectedRecordTheme && state.selectedRecordTheme !== 'all'){
+      filteredRecs = filteredRecs.filter(function(r){
+        return (r.theme || 'daily') === state.selectedRecordTheme;
+      });
+    }
+
+    // 검색어 필터링
     var searchInput = document.getElementById('recSearchInput');
     var query = searchInput ? searchInput.value : '';
-    recs = filterRecordsByQuery(recs, query);
-    if(!recs.length){
-      listEl.innerHTML = '<div class="empty-state"><div class="e-icon">🔍</div><p>검색 결과가 없어요.</p></div>';
+    filteredRecs = filterRecordsByQuery(filteredRecs, query);
+    if(!filteredRecs.length){
+      listEl.innerHTML = '<div class="empty-state"><div class="e-icon">🔍</div><p>해당 테마 또는 검색 조건에 맞는 기록이 없어요.</p></div>';
       return;
     }
 
     var html = ''; var lastKey = null;
-    recs.forEach(function(r){
+    filteredRecs.forEach(function(r){
       var k = dateKey(r.startAt);
       if(k!==lastKey){ html += '<div class="rec-date-label">'+fmtDateLabel(r.startAt)+'</div>'; lastKey = k; }
       var isNote = r.type==='note';
@@ -5072,11 +5493,20 @@
       else if(isDoing){ durEl = '<span class="rec-dur doing">진행 중</span>'; }
       else{ durEl = '<span class="rec-dur">'+fmtDuration(new Date(r.endAt)-new Date(r.startAt))+'</span>'; }
       var timeStr = isNote ? fmtTime(r.startAt) : (fmtTime(r.startAt) + ' – ' + (r.endAt?fmtTime(r.endAt):'진행중'));
-      html += '<div class="rec-card'+(isDoing?' doing':'')+'" data-recid="'+r.id+'">' +
+      var th = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[r.theme]) ? RECORD_THEMES[r.theme] : ((typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES.daily) ? RECORD_THEMES.daily : { label:'일상', icon:'🌱', color:'#64748b', bgColor:'rgba(100,116,139,0.12)', borderColor:'rgba(100,116,139,0.35)' });
+      var subThText = r.subTheme ? (' · ' + escapeHtml(r.subTheme)) : '';
+      var chipStyle = 'background:'+th.bgColor+';color:'+th.color+';border:1px solid '+th.borderColor+';';
+
+      html += '<div class="rec-card'+(isDoing?' doing':'')+'" data-recid="'+r.id+'" style="border-left: 4px solid '+th.color+';">' +
         '<div class="rec-top"><div class="rec-text">'+escapeHtml(r.text)+'</div>' +
           '<div class="rec-icons"><button class="icon-btn" data-recedit="1" aria-label="기록 수정">✎</button><button class="icon-btn" data-recdel="1" aria-label="기록 삭제">×</button></div>' +
         '</div>' +
-        '<div class="rec-bottom"><span class="rec-time">'+timeStr+'</span>'+durEl+'</div>' +
+        '<div class="rec-bottom">' +
+          '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+            '<span class="rec-time">'+timeStr+'</span>' + durEl +
+          '</div>' +
+          '<span class="rec-theme-chip" data-rectheme="'+r.id+'" style="'+chipStyle+'" title="테마 변경 (클릭)">'+th.icon+' '+th.label+subThText+' ▾</span>' +
+        '</div>' +
       '</div>';
     });
     listEl.innerHTML = html;
@@ -5085,6 +5515,13 @@
       var id = card.dataset.recid;
       var rec = state.profile.records.find(function(r){ return r.id===id; });
       card.querySelector('[data-recedit]').addEventListener('click', function(){ openRecordModal(rec); });
+      var chipBtn = card.querySelector('[data-rectheme]');
+      if(chipBtn){
+        chipBtn.addEventListener('click', function(e){
+          e.stopPropagation();
+          openThemePickerModal(id);
+        });
+      }
       card.querySelector('[data-recdel]').addEventListener('click', async function(){
         if(!confirm('이 기록을 삭제할까요?')) return;
         state.profile.records = state.profile.records.filter(function(r){ return r.id!==id; });
@@ -5227,13 +5664,19 @@
 
   function openRecordModal(rec){
     var isNew = !rec;
-    var r = rec || { id: newId(), type:'timed', text:'', startAt: nowISO(), endAt: null, createdAt: nowISO(), category: null };
+    var r = rec || { id: newId(), type:'timed', text:'', startAt: nowISO(), endAt: null, createdAt: nowISO(), category: null, theme:'daily', subTheme:'', themeConfidence:1.0 };
     var catOptions = '<option value="">미분류</option>' + Object.keys(TOPICS).map(function(k){
       return '<option value="'+k+'"'+(r.category===k?' selected':'')+'>'+TOPICS[k].icon+' '+TOPICS[k].label+'</option>';
     }).join('');
+    var themeOptions = (typeof RECORD_THEMES !== 'undefined') ? Object.keys(RECORD_THEMES).map(function(k){
+      var th = RECORD_THEMES[k];
+      return '<option value="'+k+'"'+((r.theme||'daily')===k?' selected':'')+'>'+th.icon+' '+th.label+' ('+th.desc+')</option>';
+    }).join('') : '<option value="daily">🌱 일상</option>';
+
     openModal(
       '<h3>'+(isNew?'새 기록':'기록 수정')+'</h3>' +
       '<div class="field"><label>내용</label><input id="rText" type="text" value="'+escapeHtml(r.text)+'" placeholder="무엇을 했나요?"></div>' +
+      '<div class="field"><label>테마 분류</label><select id="rTheme">'+themeOptions+'</select></div>' +
       '<div class="field"><label>분야</label><select id="rCategory">'+catOptions+'</select></div>' +
       '<div class="field"><label>시작 시간</label><input id="rStart" type="datetime-local" value="'+toLocalInputValue(r.startAt)+'"></div>' +
       '<div class="field"><label style="display:flex;align-items:center;justify-content:space-between;">종료 시간 <span style="font-weight:400;"><input type="checkbox" id="rOngoing" '+(!r.endAt?'checked':'')+'> 진행중</span></label>' +
@@ -5249,8 +5692,11 @@
           if(!text) return;
           var startVal = sheet.querySelector('#rStart').value;
           var endVal = endInput.value;
+          var selectedTheme = sheet.querySelector('#rTheme').value || 'daily';
           r.text = text;
           r.type = 'timed';
+          r.theme = selectedTheme;
+          r.themeConfidence = 1.0;
           r.category = sheet.querySelector('#rCategory').value || null;
           r.startAt = startVal ? new Date(startVal).toISOString() : nowISO();
           r.endAt = ongoingChk.checked ? null : (endVal ? new Date(endVal).toISOString() : null);
@@ -5267,12 +5713,30 @@
   document.getElementById('weeklyRecapBtn').addEventListener('click', function(){ openWeeklyRecapModal(); });
   document.getElementById('recSearchInput').addEventListener('input', function(){ renderRecordsScreen(); });
 
-  function buildCSV(){
-    var rows = [['날짜','시작','종료','소요시간(분)','분야','내용']];
-    state.profile.records.slice().sort(function(a,b){ return new Date(a.startAt)-new Date(b.startAt); }).forEach(function(r){
+  /* ============ 테마별 기록 DB 다운로드 & 외부 AI 분석 프롬프트 번들 (TASK-OG-001) ============ */
+  function getAIAnalysisPrompt(themeKey){
+    var prompts = {
+      mind: '당신은 최고 수준의 심리상담 전문가이자 마인드셋 코치입니다. 아래 제공된 사용자의 [심리상태] 기록 데이터를 바탕으로 다음 3가지를 분석하고 피드백을 작성해주세요:\n1. 주요 감정 상태의 긍정/부정 추이 및 감정 기복 패턴 분석\n2. 스트레스 및 번아웃 유발 요인과 힐링/휴식 빈도 진단\n3. 회복탄력성과 심리적 안정감을 증진하기 위한 맞춤형 주간 멘탈케어 실천 방안 3가지',
+      study: '당신은 인지과학 기반의 학습 전략 및 자기주도학습 최고 전문가입니다. 아래 제공된 사용자의 [공부기록] 데이터를 바탕으로 다음 3가지를 분석하고 피드백을 작성해주세요:\n1. 총 학습 시간, 집중도 추이 및 주요 학습 주제별 시간 배분 분석\n2. 에빙하우스 망각 곡선에 기반한 최적의 복습 주기 및 지식 유지 전략 제안\n3. 목표 시험/성취를 달성하기 위한 구체적인 학습 루틴 최적화 가이드',
+      business: '당신은 성공적인 린 스타트업 및 비즈니스 전략 수석 컨설턴트입니다. 아래 제공된 사용자의 [사업기록] 데이터를 바탕으로 다음 3가지를 분석하고 피드백을 작성해주세요:\n1. 시간 및 노력 투입 대비 실질 비즈니스 임팩트(매출, 고객, 제품) 평가\n2. 업무 프로세스 상의 병목 지점 및 우선순위 집중도 분석\n3. 다음 마일스톤 달성을 위해 즉시 실행해야 할 전략적 핵심 액션 아이템 3가지',
+      schedule: '당신은 라이프스타일 및 인적 네트워크, 시간관리 수석 컨설턴트입니다. 아래 제공된 사용자의 [약속기록] 데이터를 바탕으로 다음 3가지를 분석하고 피드백을 작성해주세요:\n1. 대인관계 및 모임 일정의 성격 분포(비즈니스, 친목, 가족 등)와 에너지 소비 분석\n2. 일정 관리의 효율성과 개인 집중 시간 확보 밸런스 평가\n3. 건강한 인간관계와 생산적인 시간 관리를 양립하기 위한 개선 가이드',
+      workout: '당신은 국가대표 스포츠 과학 전문 트레이너이자 임상 영양 코치입니다. 아래 제공된 사용자의 [운동기록] 데이터를 바탕으로 다음 3가지를 분석하고 피드백을 작성해주세요:\n1. 운동 종목(유산소, 웨이트, 스트레칭 등)의 밸런스 및 주간 운동 빈도 평가\n2. 점진적 과부하와 충분한 신체 회복 주기가 잘 지켜지고 있는지 진단\n3. 지속 가능한 건강과 신체적 목표 달성을 위한 차주 맞춤형 트레이닝 & 컨디셔닝 조언',
+      daily: '당신은 전인적 라이프 코칭 전문가입니다. 사용자의 일상 기록을 분석하여 삶의 활력과 작은 성취들의 의미를 짚어주고, 더 나은 하루를 만들기 위한 따뜻한 조언을 작성해주세요.'
+    };
+    var base = prompts[themeKey] || '당신은 전인적 라이프 코칭 및 데이터 분석 전문가입니다. 아래 사용자의 5대 라이프 테마(심리, 공부, 사업, 약속, 운동) 기록 데이터를 바탕으로 삶의 균형 상태를 진단하고, 테마별 집중도 분석 및 더 조화롭고 몰입도 높은 삶을 위한 실행 가능한 가이드를 작성해주세요.';
+    return '[외부 AI 분석 프롬프트 (ChatGPT / Claude 붙여넣기용)]\n' + base;
+  }
+
+  function buildCSV(recordsToExport){
+    var list = (recordsToExport || state.profile.records).slice().sort(function(a,b){ return new Date(a.startAt)-new Date(b.startAt); });
+    var rows = [['날짜','시작','종료','소요시간(분)','테마','소주제','분야','내용']];
+    list.forEach(function(r){
       var mins = r.endAt ? Math.round((new Date(r.endAt)-new Date(r.startAt))/60000) : '';
-      var catLabel = r.category && TOPICS[r.category] ? TOPICS[r.category].label : '';
-      rows.push([dateKey(r.startAt), fmtTime(r.startAt), r.endAt?fmtTime(r.endAt):'진행중', mins, catLabel, r.text]);
+      var catLabel = (r.category && typeof TOPICS !== 'undefined' && TOPICS[r.category]) ? TOPICS[r.category].label : '';
+      var thObj = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[r.theme]) ? RECORD_THEMES[r.theme] : null;
+      var thLabel = thObj ? thObj.label : (r.theme || '일상');
+      var subTh = r.subTheme || '';
+      rows.push([dateKey(r.startAt), fmtTime(r.startAt), r.endAt?fmtTime(r.endAt):'진행중', mins, thLabel, subTh, catLabel, r.text]);
     });
     return rows.map(function(row){
       return row.map(function(cell){
@@ -5281,16 +5745,147 @@
       }).join(',');
     }).join('\n');
   }
-  function exportAllCheckins(){
-    var fmt = state.profile.settings.exportFormat || 'csv';
-    if(fmt==='json'){
-      download('아워골_기록_'+dateKey(nowISO())+'.json', JSON.stringify(state.profile.records, null, 2), 'application/json');
-    } else {
-      download('아워골_기록_'+dateKey(nowISO())+'.csv', '\uFEFF'+buildCSV(), 'text/csv;charset=utf-8');
-    }
-    toast('체크인 '+state.profile.records.length+'개를 전부 내려받았어요');
+
+  function buildMarkdownExport(recordsToExport, themeKey, includePrompt){
+    var thObj = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[themeKey]) ? RECORD_THEMES[themeKey] : null;
+    var themeTitle = thObj ? thObj.label : (themeKey === 'all' ? '전체 테마' : '기록');
+    var promptHeader = includePrompt ? (getAIAnalysisPrompt(themeKey) + '\n\n---\n\n### [데이터셋: ' + themeTitle + ' 기록 목록]\n\n') : '';
+
+    var lines = [promptHeader + '# 📊 아워골 ' + themeTitle + ' 기록 내보내기\n'];
+    lines.push('- 추출 일시: ' + nowISO());
+    lines.push('- 총 기록 수: ' + recordsToExport.length + '건\n');
+    lines.push('| 날짜 | 시간 | 소요 | 테마 | 소주제 | 내용 |');
+    lines.push('|---|---|---|---|---|---|');
+
+    recordsToExport.slice().sort(function(a,b){ return new Date(a.startAt)-new Date(b.startAt); }).forEach(function(r){
+      var mins = r.endAt ? (Math.round((new Date(r.endAt)-new Date(r.startAt))/60000) + '분') : (r.type==='note'?'메모':'진행중');
+      var th = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[r.theme]) ? RECORD_THEMES[r.theme].label : (r.theme || '일상');
+      var subTh = r.subTheme || '-';
+      var safeText = (r.text || '').replace(/\|/g, '\\|').replace(/\n/g, ' ');
+      lines.push('| ' + dateKey(r.startAt) + ' | ' + fmtTime(r.startAt) + ' | ' + mins + ' | ' + th + ' | ' + subTh + ' | ' + safeText + ' |');
+    });
+
+    return lines.join('\n');
   }
-  document.getElementById('exportRecordsBtn').addEventListener('click', exportAllCheckins);
+
+  function openExportThemeModal(){
+    var currentFilter = (state.selectedRecordTheme && state.selectedRecordTheme !== 'all') ? state.selectedRecordTheme : 'all';
+    var allRecs = state.profile.records || [];
+
+    var themeOptions = [
+      { key: 'all', label: '전체 테마 (모든 기록)', icon: '✨', count: allRecs.length },
+      { key: 'mind', label: '심리상태', icon: '🧠', count: allRecs.filter(function(r){ return r.theme==='mind'; }).length },
+      { key: 'study', label: '공부기록', icon: '📚', count: allRecs.filter(function(r){ return r.theme==='study'; }).length },
+      { key: 'business', label: '사업기록', icon: '💼', count: allRecs.filter(function(r){ return r.theme==='business'; }).length },
+      { key: 'schedule', label: '약속기록', icon: '🤝', count: allRecs.filter(function(r){ return r.theme==='schedule'; }).length },
+      { key: 'workout', label: '운동기록', icon: '💪', count: allRecs.filter(function(r){ return r.theme==='workout'; }).length },
+      { key: 'daily', label: '일상/기타', icon: '🌱', count: allRecs.filter(function(r){ return (r.theme||'daily')==='daily'; }).length }
+    ];
+
+    var themeSelectHtml = themeOptions.map(function(opt){
+      var sel = (currentFilter === opt.key);
+      return '<option value="'+opt.key+'"'+(sel?' selected':'')+'>'+opt.icon+' '+opt.label+' ('+opt.count+'개)</option>';
+    }).join('');
+
+    openModal(
+      '<h3>📥 테마별 기록 DB 다운로드 & AI 분석 프롬프트</h3>' +
+      '<p class="faint" style="font-size:.82rem;margin-bottom:14px;">기록 데이터를 테마별로 추출하고, ChatGPT나 Claude에서 즉시 심층 피드백을 받을 수 있는 분석 프롬프트 번들을 생성합니다.</p>' +
+      '<div class="field"><label>내보낼 테마 선택</label><select id="expThemeSel">'+themeSelectHtml+'</select></div>' +
+      '<div class="field"><label>내보내기 형식</label>' +
+        '<select id="expFmtSel">' +
+          '<option value="csv">CSV (엑셀 / 구글 스프레드시트 호환)</option>' +
+          '<option value="json">JSON (개발자 / DB 백업 원본)</option>' +
+          '<option value="md">Markdown (노션 / 옵시디언 / 보고서용)</option>' +
+        '</select>' +
+      '</div>' +
+      '<div class="field" style="margin-top:12px;">' +
+        '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;">' +
+          '<input type="checkbox" id="expWithAIPrompt" checked> 외부 AI(ChatGPT / Claude) 분석 프롬프트 번들 포함' +
+        '</label>' +
+        '<div class="faint" style="font-size:.74rem;margin-top:4px;">선택한 테마의 특성에 맞춘 전문 AI 분석가 페르소나 지침이 데이터와 함께 번들링됩니다.</div>' +
+      '</div>' +
+      '<div class="modal-actions" style="margin-top:16px;flex-wrap:wrap;gap:8px;">' +
+        '<button class="btn btn-ghost" id="mExpCancel" type="button">취소</button>' +
+        '<button class="btn btn-secondary" id="mExpCopyPrompt" type="button">📋 AI 프롬프트+데이터 복사</button>' +
+        '<button class="btn btn-primary" id="mExpDownload" type="button">💾 파일 다운로드</button>' +
+      '</div>',
+      function(sheet){
+        sheet.querySelector('#mExpCancel').addEventListener('click', closeModal);
+
+        function getTargetRecords(){
+          var themeKey = sheet.querySelector('#expThemeSel').value;
+          var targetRecs = allRecs;
+          if(themeKey !== 'all'){
+            targetRecs = allRecs.filter(function(r){ return (r.theme || 'daily') === themeKey; });
+          }
+          return { themeKey: themeKey, recs: targetRecs };
+        }
+
+        // 복사 버튼 (클립보드에 AI 프롬프트 + 마크다운 테이블 복사)
+        sheet.querySelector('#mExpCopyPrompt').addEventListener('click', function(){
+          var target = getTargetRecords();
+          if(!target.recs.length){
+            toast('해당 테마에 기록이 없습니다.');
+            return;
+          }
+          var mdContent = buildMarkdownExport(target.recs, target.themeKey, true);
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(mdContent).then(function(){
+              toast('📋 AI 분석 프롬프트와 '+target.recs.length+'개 기록을 복사했어요! ChatGPT/Claude에 붙여넣으세요.');
+              closeModal();
+            }).catch(function(){
+              toast('복사에 실패했습니다.');
+            });
+          } else {
+            download('아워골_AI프롬프트_'+target.themeKey+'_'+dateKey(nowISO())+'.md', mdContent, 'text/markdown;charset=utf-8');
+            toast('파일로 저장했습니다.');
+            closeModal();
+          }
+        });
+
+        // 다운로드 버튼
+        sheet.querySelector('#mExpDownload').addEventListener('click', function(){
+          var target = getTargetRecords();
+          if(!target.recs.length){
+            toast('해당 테마에 기록이 없습니다.');
+            return;
+          }
+          var fmt = sheet.querySelector('#expFmtSel').value;
+          var withPrompt = sheet.querySelector('#expWithAIPrompt').checked;
+          var fnameBase = '아워골_기록_' + target.themeKey + '_' + dateKey(nowISO());
+
+          if(fmt === 'json'){
+            var jsonPayload = {
+              exportedAt: nowISO(),
+              theme: target.themeKey,
+              aiAnalysisPrompt: withPrompt ? getAIAnalysisPrompt(target.themeKey) : null,
+              totalRecords: target.recs.length,
+              records: target.recs
+            };
+            download(fnameBase + '.json', JSON.stringify(jsonPayload, null, 2), 'application/json');
+          } else if(fmt === 'md'){
+            download(fnameBase + '.md', buildMarkdownExport(target.recs, target.themeKey, withPrompt), 'text/markdown;charset=utf-8');
+          } else {
+            // CSV
+            var csvStr = '\uFEFF' + buildCSV(target.recs);
+            if(withPrompt){
+              var promptComment = '# ' + getAIAnalysisPrompt(target.themeKey).replace(/\n/g, '\n# ') + '\n\n';
+              csvStr = '\uFEFF' + promptComment + buildCSV(target.recs);
+            }
+            download(fnameBase + '.csv', csvStr, 'text/csv;charset=utf-8');
+          }
+
+          toast('테마 [' + target.themeKey + '] 기록 ' + target.recs.length + '개를 다운로드했어요');
+          closeModal();
+        });
+      }
+    );
+  }
+
+  function exportAllCheckins(){
+    openExportThemeModal();
+  }
+  document.getElementById('exportRecordsBtn').addEventListener('click', openExportThemeModal);
 
   /* ============ RENDER: COMM ============ */
   /* ============ 40인 가상 페르소나 자율 활동 데이터 (TASK-OG-002: 20대 남녀 20인씩 총 40인) ============ */
