@@ -434,8 +434,24 @@
   .balance-legend{display:flex;flex-wrap:wrap;gap:8px 12px;font-size:.72rem;color:var(--ink-soft);}
   .balance-leg-item{display:flex;align-items:center;gap:4px;cursor:pointer;}
   .balance-dot{width:8px;height:8px;border-radius:50%;}
-  .export-theme-opt{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--card2);border-radius:12px;cursor:pointer;margin-bottom:6px;transition:all .15s;border:1.5px solid transparent;}
   .export-theme-opt.active{background:rgba(108,92,231,.08);border-color:var(--violet);color:var(--violet);font-weight:700;}
+  /* ---------- 60초 온보딩 프리셋 & 웰컴 리워드 (TASK-BG-3.5, TASK-RD-T010) ---------- */
+  .btn-preset-goal{display:flex;align-items:center;justify-content:space-between;width:100%;padding:11px 14px;border-radius:12px;border:1.5px solid var(--rule);background:var(--card2);color:var(--ink);font-size:.85rem;font-weight:700;cursor:pointer;transition:all .15s;text-align:left;}
+  .btn-preset-goal:hover{background:rgba(20,22,43,.06);border-color:var(--chip);transform:translateX(2px);}
+  .ob-quick-action-chip{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border-radius:999px;background:var(--card2);border:1px solid var(--rule);font-size:.76rem;color:var(--ink-soft);cursor:pointer;transition:all .15s;}
+  .ob-quick-action-chip:hover{background:rgba(20,22,43,.08);color:var(--ink);border-color:var(--chip);}
+  .welcome-reward-card{background:linear-gradient(135deg,rgba(108,92,231,.12) 0%,rgba(59,130,246,.12) 100%);border:1.5px solid rgba(108,92,231,.3);border-radius:16px;padding:16px;margin:12px 0 16px;text-align:center;}
+  .welcome-reward-card b{font-size:1.05rem;color:var(--ink);display:block;margin-bottom:6px;}
+
+  /* ---------- 커뮤니티 UGC 신고/차단 & 안전망 (TASK-CB-003, TASK-CB-004) ---------- */
+  .blocked-user-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card2);border-radius:12px;margin-bottom:8px;font-size:.84rem;}
+  .blocked-user-row b{color:var(--ink);}
+  .btn-unblock{padding:4px 10px;border-radius:6px;font-size:.74rem;font-weight:700;background:var(--card);border:1px solid var(--rule);color:var(--ink-soft);cursor:pointer;transition:all .15s;}
+  .btn-unblock:hover{border-color:var(--red);color:var(--red);}
+
+  /* ---------- 소프트 애스크 모달 (TASK-RD-T020) ---------- */
+  .soft-ask-card{background:var(--card2);border-radius:16px;padding:16px;margin-bottom:14px;text-align:center;}
+  .soft-ask-icon{font-size:2.4rem;margin-bottom:8px;display:inline-block;}
   .group-item{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-sm);transition:transform .15s;}
   .group-item:active{transform:scale(.99);}
   .group-ico{width:48px;height:48px;border-radius:16px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex:0 0 auto;}
@@ -890,6 +906,13 @@
           <div class="switch" id="virtualCheerSwitch"></div>
         </div>
         <p class="faint" style="margin-top:6px;">초기 활동이 외롭지 않도록 20대 가상 유저 페르소나가 첫 체크인을 응원하고 피드에 함께 참여해요. 언제든지 끌 수 있어요.</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px dashed var(--rule);">
+          <div>
+            <div style="font-size:.86rem;font-weight:700;">🚫 차단한 사용자 관리</div>
+            <p class="faint" id="blockedCountDesc" style="margin:2px 0 0;">차단된 사용자의 글/댓글은 피드에서 숨겨집니다.</p>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="manageBlockedBtn" type="button" style="padding:6px 12px;font-size:.78rem;">목록 보기</button>
+        </div>
       </div>
 
       <div class="set-block">
@@ -1483,6 +1506,22 @@
     return t.ms.map(function(title){ return { id: uid('ms'), title: title, status:'todo', dueDate:null, tasks:[] }; });
   }
 
+  /* 60초 온보딩 추천 목표 프리셋 & 퀵 액션 칩 (TASK-BG-3.5, TASK-RD-T010) */
+  var ONBOARDING_PRESETS = [
+    { label: '💪 매일 30분 운동하기', title: '매일 30분 운동하기', category: 'exercise', topic: 'workout' },
+    { label: '📚 자격증 / 어학 매일 1강', title: '자격증 / 어학 매일 1강 완강', category: 'study', topic: 'study' },
+    { label: '💼 사이드 프로젝트 / 코딩', title: '사이드 프로젝트 완성하기', category: 'business', topic: 'career' },
+    { label: '📝 매일 시험 기출문제 풀기', title: '매일 시험 기출문제 풀기', category: 'exam', topic: 'study' }
+  ];
+  var QUICK_ACTIONS_BY_CAT = {
+    exercise: ['오늘 30분 런닝 완료 🏃', '헬스장 출석 및 하체 운동 완료 💪', '가벼운 스트레칭과 홈트 🧘'],
+    study: ['강의 1강 수강 완료 📖', '핵심 요약노트 정리 ✍️', '취침 전 10분 독서 📚'],
+    business: ['기능 1개 구현 및 커밋 💻', '아이디어 기획안 작성 📄', '시장 조사 아티클 정독 📑'],
+    exam: ['기출문제 1회분 풀이 ✏️', '영단어 50개 암기 완료 🔤', '오답노트 복습 🔍'],
+    travel: ['여행 일정표 정리 ✈️', '숙소 및 교통편 예약 🏨'],
+    etc: ['오늘 할 일 1개 완료 🎯', '하루 감사일기 작성 📝']
+  };
+
   var authTabButtons = document.querySelectorAll('.auth-tab');
   authTabButtons.forEach(function(b){
     b.addEventListener('click', function(){
@@ -1634,12 +1673,25 @@
     renderProBadge();
     await checkStreakFreeze();
     renderAll();
+    try{ updateAppBadge(computeStreakDays()); }catch(e){}
     setupNotifyTimer();
     if(state.profile.settings.notify) syncPushSubscription();
     setupRealtimeChannelsOnce();
     await ensureFeedPostsLoaded();
     checkSocialNotifications();
   }
+
+  /* PWA 실시간 배지 동기화 — 앱 포커스 복귀 및 탭 가시성 전환 시 (TASK-BG-6) */
+  window.addEventListener('focus', function(){
+    if(state.profile && state.profile.records){
+      try{ updateAppBadge(computeStreakDays()); }catch(e){}
+    }
+  });
+  document.addEventListener('visibilitychange', function(){
+    if(!document.hidden && state.profile && state.profile.records){
+      try{ updateAppBadge(computeStreakDays()); }catch(e){}
+    }
+  });
 
   /* ============ 스트릭 프리즈 (연속기록 보호권) ============ */
   async function checkStreakFreeze(){
@@ -1653,14 +1705,28 @@
 
   /* ============ Onboarding (first-time, after signup) ============ */
   function startOnboarding(){
-    var ob = { category: null, title: '', dueDate: '' };
+    var ob = { category: null, title: '', dueDate: '', presetTopic: '' };
     showObStep1();
 
     function showObStep1(){
+      var presetsHtml = '<div style="margin-bottom:16px;">' +
+        '<p class="faint" style="margin:0 0 8px;font-weight:700;">🔥 1초 만에 시작하는 추천 목표</p>' +
+        '<div style="display:flex;flex-direction:column;gap:6px;">' +
+          ONBOARDING_PRESETS.map(function(p, idx){
+            return '<button class="btn-preset-goal" data-presetidx="'+idx+'" type="button">' +
+              '<span>'+escapeHtml(p.label)+'</span>' +
+              '<span style="color:var(--violet);font-size:.78rem;">선택 &gt;</span>' +
+            '</button>';
+          }).join('') +
+        '</div>' +
+      '</div>' +
+      '<p class="faint" style="margin:0 0 8px;font-weight:700;">또는 직접 분야 선택</p>';
+
       openModal(
         '<p class="ob-step-label">1 / 4 · 환영해요</p>' +
         '<h3>'+escapeHtml(state.profile.displayName)+'님, 반가워요 👋</h3>' +
-        '<p class="muted" style="margin:-8px 0 18px;">먼저 어떤 종류의 목표를 시작할지 골라주세요. 목표에 맞는 마일스톤을 미리 채워드려요.</p>' +
+        '<p class="muted" style="margin:-8px 0 16px;">인기 목표를 1초 만에 선택하거나, 원하는 분야를 골라주세요.</p>' +
+        presetsHtml +
         '<div class="cat-grid" id="obCatGrid">' +
           Object.keys(GOAL_TEMPLATES).map(function(k){
             var t = GOAL_TEMPLATES[k];
@@ -1670,11 +1736,22 @@
         '<div class="modal-actions"><button class="btn btn-primary btn-block" id="obNext1" type="button" disabled>다음</button></div>' +
         '<button class="land-login-link" id="obSkip" type="button" style="width:100%;background:none;margin-top:12px;">다른 사람들의 목표 먼저 볼래요 · <b>나중에 설정하기</b></button>',
         function(sheet){
+          sheet.querySelectorAll('.btn-preset-goal').forEach(function(btn){
+            btn.addEventListener('click', function(){
+              var p = ONBOARDING_PRESETS[+btn.dataset.presetidx];
+              if(!p) return;
+              ob.category = p.category;
+              ob.title = p.title;
+              ob.presetTopic = p.topic || '';
+              showObStep3();
+            });
+          });
           sheet.querySelectorAll('.cat-chip').forEach(function(chip){
             chip.addEventListener('click', function(){
               sheet.querySelectorAll('.cat-chip').forEach(function(c){ c.classList.remove('active'); });
               chip.classList.add('active');
               ob.category = chip.dataset.cat;
+              ob.presetTopic = '';
               sheet.querySelector('#obNext1').disabled = false;
             });
           });
@@ -1692,7 +1769,7 @@
     }
 
     function showObStep2(){
-      var t = GOAL_TEMPLATES[ob.category];
+      var t = GOAL_TEMPLATES[ob.category] || GOAL_TEMPLATES.etc;
       openModal(
         '<p class="ob-step-label">2 / 4 · 목표 정하기</p>' +
         '<h3>'+t.icon+' '+t.label+' 목표를 적어주세요</h3>' +
@@ -1718,8 +1795,8 @@
     }
 
     function showObStep3(){
-      var t = GOAL_TEMPLATES[ob.category];
-      var preview = t.ms.length
+      var t = GOAL_TEMPLATES[ob.category] || GOAL_TEMPLATES.etc;
+      var preview = (t.ms && t.ms.length)
         ? t.ms.map(function(m){ return '<div class="tp-item">☐ '+escapeHtml(m)+'</div>'; }).join('')
         : '<div class="tp-item">마일스톤은 목표 화면에서 직접 추가해요</div>';
       openModal(
@@ -1728,13 +1805,16 @@
         '<p class="muted" style="margin:-8px 0 12px;"><b style="color:var(--ink);">'+escapeHtml(ob.title)+'</b></p>' +
         '<div class="tmpl-preview">'+preview+'</div>' +
         '<div class="field" style="margin-top:14px;"><label>관심 카테고리 (나중에 프로필에서 더 고를 수 있어요)</label></div>' +
-        categoryPickerHtml('obTopic', '') +
+        categoryPickerHtml('obTopic', ob.presetTopic || '') +
         '<p class="faint" style="margin:10px 0 0;">만든 뒤에 목표 화면에서 자유롭게 고칠 수 있어요.</p>' +
         '<div class="modal-actions"><button class="btn btn-ghost" id="obBack3" type="button">이전</button><button class="btn btn-primary" id="obFinish" type="button">목표 만들고 시작하기</button></div>',
         function(sheet){
-          var obTopicRef = { value: '' };
+          var obTopicRef = { value: ob.presetTopic || '' };
           wireCategoryPicker(sheet, 'obTopic', obTopicRef);
-          sheet.querySelector('#obBack3').addEventListener('click', showObStep2);
+          sheet.querySelector('#obBack3').addEventListener('click', function(){
+            if(ob.presetTopic) showObStep1();
+            else showObStep2();
+          });
           sheet.querySelector('#obFinish').addEventListener('click', async function(){
             if(obTopicRef.value && (state.profile.interests||[]).indexOf(obTopicRef.value)===-1){
               state.profile.interests = (state.profile.interests||[]).concat([obTopicRef.value]);
@@ -1750,20 +1830,33 @@
       );
     }
 
-    async function finishOnboarding(msg){
+    async function finishOnboarding(msg, firstTheme){
       closeModal();
       enterApp();
-      toast(msg);
+      if(firstTheme && THEME_CONFIG && THEME_CONFIG[firstTheme]){
+        var tc = THEME_CONFIG[firstTheme];
+        toast('🎉 첫 기록 완료! ['+tc.emoji+' '+tc.label+'] 테마 분류 & 웰컴 프리즈 1개가 지급되었어요 🧊');
+      } else {
+        toast(msg);
+      }
       var alreadySeenGuide = state.profile.settings.hasSeenGuide;
       await maybeShowFirstLoginGuide();
       if(alreadySeenGuide) showCommTourModal();
     }
     function showObStep4(goal){
+      var quickChips = QUICK_ACTIONS_BY_CAT[goal.category] || QUICK_ACTIONS_BY_CAT.etc;
+      var quickChipsHtml = '<div style="margin:8px 0 14px;display:flex;flex-wrap:wrap;gap:6px;">' +
+        quickChips.map(function(c){
+          return '<button class="ob-quick-action-chip" type="button" data-chip="'+escapeHtml(c)+'">'+escapeHtml(c)+'</button>';
+        }).join('') +
+      '</div>';
+
       var html =
         '<p class="ob-step-label">4 / 4 · 첫 기록</p>' +
         '<h3>지금 뭘 하고 있었나요?</h3>' +
-        '<p class="muted" style="margin:-8px 0 18px;">한 줄이면 충분해요. 「'+escapeHtml(goal.title)+'」의 첫 기록이 돼요.</p>' +
-        '<textarea id="obFirstNote" maxlength="300" placeholder="예: 헬스장 등록하고 왔다" style="width:100%;min-height:96px;"></textarea>' +
+        '<p class="muted" style="margin:-8px 0 14px;">한 줄이면 충분해요. 「'+escapeHtml(goal.title)+'」의 첫 기록이 돼요.</p>' +
+        '<textarea id="obFirstNote" maxlength="300" placeholder="예: 헬스장 등록하고 왔다" style="width:100%;min-height:88px;"></textarea>' +
+        quickChipsHtml +
         '<div class="modal-actions"><button class="btn btn-primary btn-block" id="obFirstSave" type="button" disabled>기록하고 시작하기</button></div>' +
         '<button class="land-login-link" id="obFirstSkip" type="button" style="width:100%;background:none;margin-top:12px;">나중에 적을게요</button>';
       var busy = false;
@@ -1772,6 +1865,13 @@
         var ta = sheet.querySelector('#obFirstNote');
         var saveBtn = sheet.querySelector('#obFirstSave');
         ta.addEventListener('input', function(){ saveBtn.disabled = !ta.value.trim(); });
+        sheet.querySelectorAll('.ob-quick-action-chip').forEach(function(chip){
+          chip.addEventListener('click', function(){
+            ta.value = chip.dataset.chip;
+            saveBtn.disabled = false;
+            ta.focus();
+          });
+        });
         saveBtn.addEventListener('click', async function(){
           var text = ta.value.trim();
           if(!text || busy) return;
@@ -1779,7 +1879,9 @@
           var xpRes = null;
           try{ xpRes = await saveQuickCheckin(text, goal, 'onboarding'); }
           catch(e){ console.warn('first checkin failed:', e); } /* 저장이 실패해도 반드시 홈으로 진입(불변식 1) */
-          await finishOnboarding(xpRes ? '첫 기록까지 남겼어요 — 시작해봐요!' : '목표를 만들었어요 — 시작해봐요!');
+          var firstRec = state.profile.records && state.profile.records[0];
+          var firstTheme = firstRec ? firstRec.theme : null;
+          await finishOnboarding(xpRes ? '첫 기록까지 남겼어요 — 시작해봐요!' : '목표를 만들었어요 — 시작해봐요!', firstTheme);
           if(xpRes && xpRes.leveledUp) showLevelUpBanner(levelForXP(xpRes.total));
         });
         sheet.querySelector('#obFirstSkip').addEventListener('click', skip);
@@ -2932,7 +3034,14 @@
     state.profile.records.unshift(buildCheckinRecord(text, goal));
     var xpRes = awardXP(XP_RULES.checkin, '체크인');
     maybeGrantStreakFreeze();
+    if(isFirst && state.profile.settings){
+      if(!state.profile.settings.streakFreeze) state.profile.settings.streakFreeze = { available:0, usedDates:[], grantedTier:0 };
+      if(state.profile.settings.streakFreeze.available === 0){
+        state.profile.settings.streakFreeze.available = 1;
+      }
+    }
     await saveProfile();
+    try{ updateAppBadge(computeStreakDays()); }catch(e){}
     track('checkin', { first: isFirst, has_goal: !!goal, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l'), source: source || 'quick' });
     if(isFirst){
       triggerFirstCheerResponse(goal, text);
@@ -4902,8 +5011,107 @@
   function filterHidden(list){
     return (list || []).filter(function(x){ return !!x && !x.hidden; });
   }
+
+  /* 차단된 사용자의 게시물·댓글 제외 (TASK-CB-004) */
+  function filterBlockedPosts(posts, blockedList){
+    if(!posts || !Array.isArray(posts)) return [];
+    var map = {};
+    (blockedList || []).forEach(function(b){
+      if(typeof b === 'string') map[b] = true;
+      else if(b && b.id) map[b.id] = true;
+    });
+    return posts.filter(function(p){
+      if(!p) return false;
+      var uid = p.userId || p.user_id;
+      return !uid || !map[uid];
+    });
+  }
+
+  function isUserBlocked(userId){
+    if(!userId) return false;
+    var list = (state.profile && state.profile.settings && state.profile.settings.blockedUsers) || [];
+    return list.some(function(b){ return (typeof b === 'string' ? b : (b && b.id)) === userId; });
+  }
+
+  async function blockUser(userId, userName){
+    if(!userId) return;
+    if(userId === state.profile.id){
+      toast('자기 자신은 차단할 수 없어요');
+      return;
+    }
+    var displayName = userName || '이 사용자';
+    if(!confirm(displayName + '님을 차단할까요?\n차단하면 해당 사용자의 게시물과 댓글이 숨겨지며, 상대방에게도 내 글이 보이지 않게 됩니다.')) return;
+    var settings = state.profile.settings;
+    if(!settings.blockedUsers) settings.blockedUsers = [];
+    if(!settings.blockedUsers.some(function(b){ return (typeof b === 'string' ? b : b.id) === userId; })){
+      settings.blockedUsers.push({ id: userId, name: displayName, at: nowISO() });
+    }
+    try{
+      await sb.from('user_blocks').insert({ blocker_id: state.profile.id, blocked_id: userId });
+    }catch(e){}
+    await saveProfile();
+    toast(displayName + '님을 차단했어요');
+    if(state.activeTab === 'comm'){
+      var subBody = document.getElementById('commSubBody');
+      if(subBody && state.commSubTab === 'feed') renderCommFeed(subBody);
+    } else if(state.activeTab === 'goals' && state.goalsSubTab === 'team'){
+      renderTeamGoalsScreen();
+    }
+  }
+
+  async function unblockUser(userId){
+    var settings = state.profile.settings;
+    if(!settings.blockedUsers) return;
+    settings.blockedUsers = settings.blockedUsers.filter(function(b){ return (typeof b === 'string' ? b : b.id) !== userId; });
+    try{
+      await sb.from('user_blocks').delete().eq('blocker_id', state.profile.id).eq('blocked_id', userId);
+    }catch(e){}
+    await saveProfile();
+    toast('차단을 해제했어요');
+    if(state.activeTab === 'comm'){
+      var subBody = document.getElementById('commSubBody');
+      if(subBody && state.commSubTab === 'feed') renderCommFeed(subBody);
+    } else if(state.activeTab === 'goals' && state.goalsSubTab === 'team'){
+      renderTeamGoalsScreen();
+    }
+  }
+
+  function openBlockedUsersModal(){
+    var list = (state.profile.settings && state.profile.settings.blockedUsers) || [];
+    var listHtml = list.length === 0
+      ? '<p class="muted" style="text-align:center;padding:24px 0;">차단한 사용자가 없습니다.</p>'
+      : list.map(function(b){
+          var bid = typeof b === 'string' ? b : b.id;
+          var bname = typeof b === 'string' ? '사용자' : (b.name || '사용자');
+          var bat = (typeof b === 'object' && b.at) ? b.at.slice(0, 10) : '-';
+          return '<div class="blocked-user-row">' +
+            '<div><b>' + escapeHtml(bname) + '</b><div class="faint" style="font-size:.72rem;">차단일: ' + bat + '</div></div>' +
+            '<button class="btn-unblock" data-unblockid="' + bid + '" type="button">차단 해제</button>' +
+          '</div>';
+        }).join('');
+
+    openModal(
+      '<h3>차단한 사용자 관리</h3>' +
+      '<p class="muted" style="margin:-6px 0 14px;font-size:.8rem;">차단된 사용자의 글과 댓글은 피드에서 숨겨집니다.</p>' +
+      '<div style="max-height:280px;overflow-y:auto;margin-bottom:16px;">' + listHtml + '</div>' +
+      '<div class="modal-actions"><button class="btn btn-primary btn-block" id="closeBlockedModal" type="button">닫기</button></div>',
+      function(sheet){
+        sheet.querySelector('#closeBlockedModal').addEventListener('click', closeModal);
+        sheet.querySelectorAll('[data-unblockid]').forEach(function(btn){
+          btn.addEventListener('click', async function(){
+            await unblockUser(btn.dataset.unblockid);
+            closeModal();
+            openBlockedUsersModal();
+          });
+        });
+      }
+    );
+  }
+
   function teamComments(gid, targetId){
-    return filterHidden(TEAM_COMMENTS_CACHE[gid]).filter(function(c){ return c.target_id===targetId; });
+    var blockedList = (state.profile && state.profile.settings && state.profile.settings.blockedUsers) || [];
+    var filtered = filterHidden(TEAM_COMMENTS_CACHE[gid]);
+    return filterBlockedPosts(filtered, blockedList).filter(function(c){ return c.target_id===targetId; });
   }
   function teamCommentItemHtml(c){
     var isMe = c.user_id === state.profile.id;
@@ -4914,7 +5122,8 @@
           '<div class="feed-head"><span class="feed-name">'+escapeHtml(c.display_name)+'</span></div>' +
           '<div class="feed-action">'+escapeHtml(c.text)+'</div>' +
           '<div class="feed-foot"><span class="feed-time">'+timeAgoStr(c.created_at)+'</span>'+
-            (!isMe ? '<button data-reportcmt="'+c.id+'" type="button"'+(reported?' disabled':'')+' style="background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">'+(reported?'신고됨':'신고')+'</button>' : '') +
+            (!isMe ? '<button data-reportcmt="'+c.id+'" type="button"'+(reported?' disabled':'')+' style="background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">'+(reported?'신고됨':'신고')+'</button>' +
+              (c.user_id ? '<button data-blockuser="'+c.user_id+'" data-blockname="'+escapeHtml(c.display_name||'사용자')+'" type="button" style="margin-left:8px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">차단</button>' : '') : '') +
           '</div>' +
         '</div>' +
       '</div>';
@@ -5062,7 +5271,21 @@
           if(!confirm('이 댓글을 신고할까요? 신고가 여러 건 쌓이면 자동으로 숨겨져요.')) return;
           btn.disabled = true;
           var res = await sb.rpc('report_content', { p_target_type: 'team_comment', p_target_id: id, p_reason: '' });
-          if(res.error){ btn.disabled = false; toast('신고를 보내지 못했어요. 잠시 후 다시 시도해주세요'); return; }
+          if(res.error){
+            if(!state.profile.settings.contentReports) state.profile.settings.contentReports = {};
+            var localCount = (state.profile.settings.contentReports['local_rep_count:'+id] || 0) + 1;
+            state.profile.settings.contentReports['local_rep_count:'+id] = localCount;
+            state.profile.settings.contentReports['team_comment:'+id] = nowISO();
+            if(localCount >= 3){
+              Object.keys(TEAM_COMMENTS_CACHE).forEach(function(gkey){
+                (TEAM_COMMENTS_CACHE[gkey]||[]).forEach(function(c){ if(c.id===id) c.hidden = true; });
+              });
+            }
+            toast(localCount >= 3 ? '신고가 누적되어 댓글이 숨겨졌어요' : '신고가 접수되었어요');
+            await saveProfile();
+            renderTeamGoalsScreen();
+            return;
+          }
           if(!state.profile.settings.contentReports) state.profile.settings.contentReports = {};
           state.profile.settings.contentReports['team_comment:'+id] = nowISO();
           var hidden = !!(res.data && res.data.hidden);
@@ -5075,6 +5298,12 @@
           toast(hidden ? '신고가 접수됐고 댓글이 숨겨졌어요' : '신고가 접수됐어요. 확인 후 조치할게요');
           await saveProfile();
           renderTeamGoalsScreen();
+        });
+      });
+
+      card.querySelectorAll('[data-blockuser]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          blockUser(btn.dataset.blockuser, btn.dataset.blockname);
         });
       });
     });
@@ -6814,7 +7043,8 @@
         '<div class="feed-foot"><span class="feed-time">'+timeAgoStr(p.created_at)+'</span>' +
           '<button class="pill-react'+(reacted?' active':'')+'" data-react="'+p.id+'" type="button">응원 '+(p.cheers_count||0)+'</button>' +
           (isMe ? '<button data-delpost="'+p.id+'" type="button" style="margin-left:8px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">삭제</button>' : '') +
-          (!isMe ? '<button data-reportpost="'+p.id+'" type="button"'+(reported?' disabled':'')+' style="margin-left:8px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">'+(reported?'신고됨':'신고')+'</button>' : '') +
+          (!isMe ? '<button data-reportpost="'+p.id+'" type="button"'+(reported?' disabled':'')+' style="margin-left:8px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">'+(reported?'신고됨':'신고')+'</button>' +
+            (p.user_id ? '<button data-blockuser="'+p.user_id+'" data-blockname="'+escapeHtml(p.display_name||'사용자')+'" type="button" style="margin-left:8px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">차단</button>' : '') : '') +
         '</div>' +
       '</div>' +
     '</div>';
@@ -6830,7 +7060,7 @@
     var hiddenCount = goals.length - sharedGoals.length;
     var myItems = sharedGoals.map(function(g){
       var pct = goalProgress(g);
-      return { id:'me_'+g.id, name: state.profile.displayName, avatar: state.profile.displayName.slice(0,1), goal:g.title, pct:pct, action: '"'+g.title+'" 목표를 향해 가는 중', time:'방금', cheers:0, me:true, vis:(g.visibility||'public'), is_ai:false };
+      return { id:'me_'+g.id, userId: state.profile.id, name: state.profile.displayName, avatar: state.profile.displayName.slice(0,1), goal:g.title, pct:pct, action: '"'+g.title+'" 목표를 향해 가는 중', time:'방금', cheers:0, me:true, vis:(g.visibility||'public'), is_ai:false };
     });
     var posts = filterHidden(FEED_POSTS_CACHE);
 
@@ -6839,6 +7069,7 @@
       var ex = p.extra || {};
       return {
         id: p.id,
+        userId: p.user_id,
         name: p.display_name,
         avatar: (p.display_name||'').slice(0,1),
         goal: p.goal_title,
@@ -6853,6 +7084,9 @@
         is_ai: false
       };
     }));
+
+    var blockedList = (state.profile && state.profile.settings && state.profile.settings.blockedUsers) || [];
+    realCombined = filterBlockedPosts(realCombined, blockedList);
 
     // 동적 블렌디드 피드 (동적 감쇄 알고리즘: 실유저 수에 따라 70% → 30% → 5% 자동 전환)
     var realCount = realCombined.length;
@@ -6931,7 +7165,8 @@
             '<div class="feed-foot"><span class="feed-time">'+it.time+'</span>' +
               '<button class="pill-react'+(reacted?' active':'')+'" data-react="'+it.id+'" type="button">응원 '+((it.cheers||0)+(reacted?1:0))+'</button>' +
               (isMe && !it.is_ai ? '<button data-delpost="'+it.id+'" type="button" style="margin-left:8px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">삭제</button>' : '') +
-              (!isMe && !it.is_ai ? '<button data-reportpost="'+it.id+'" type="button" style="margin-left:8px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">신고</button>' : '') +
+              (!isMe && !it.is_ai ? '<button data-reportpost="'+it.id+'" type="button" style="margin-left:8px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">신고</button>' +
+                (it.userId ? '<button data-blockuser="'+it.userId+'" data-blockname="'+escapeHtml(it.name||'사용자')+'" type="button" style="margin-left:8px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">차단</button>' : '') : '') +
             '</div>' +
             aiNoticeHtml +
           '</div>' +
@@ -6978,7 +7213,19 @@
         if(!confirm('이 게시물을 신고할까요? 신고가 여러 건 쌓이면 자동으로 숨겨져요.')) return;
         btn.disabled = true;
         var res = await sb.rpc('report_content', { p_target_type: 'feed_post', p_target_id: id, p_reason: '' });
-        if(res.error){ btn.disabled = false; toast('신고를 보내지 못했어요. 잠시 후 다시 시도해주세요'); return; }
+        if(res.error){
+          if(!state.profile.settings.contentReports) state.profile.settings.contentReports = {};
+          var localCount = (state.profile.settings.contentReports['local_rep_count:'+id] || 0) + 1;
+          state.profile.settings.contentReports['local_rep_count:'+id] = localCount;
+          state.profile.settings.contentReports['feed_post:'+id] = nowISO();
+          if(localCount >= 3 && FEED_POSTS_CACHE){
+            FEED_POSTS_CACHE.forEach(function(p){ if(p.id===id) p.hidden = true; });
+          }
+          toast(localCount >= 3 ? '신고가 누적되어 게시물이 숨겨졌어요' : '신고가 접수되었어요');
+          await saveProfile();
+          renderCommFeed(body);
+          return;
+        }
         if(!state.profile.settings.contentReports) state.profile.settings.contentReports = {};
         state.profile.settings.contentReports['feed_post:'+id] = nowISO();
         var hidden = !!(res.data && res.data.hidden);
@@ -6987,6 +7234,11 @@
         toast(hidden ? '신고가 접수됐고 게시물이 숨겨졌어요' : '신고가 접수됐어요. 확인 후 조치할게요');
         await saveProfile();
         renderCommFeed(body);
+      });
+    });
+    body.querySelectorAll('[data-blockuser]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        blockUser(btn.dataset.blockuser, btn.dataset.blockname);
       });
     });
   }
@@ -7631,6 +7883,54 @@
     }
   }
 
+  /* ============ 웹알림 소프트 애스크 (TASK-RD-T020) ============ */
+  function openNotificationSoftAskModal(){
+    return new Promise(function(resolve){
+      if(!('Notification' in window)){
+        resolve(false);
+        return;
+      }
+      if(Notification.permission === 'granted'){
+        resolve(true);
+        return;
+      }
+      if(Notification.permission === 'denied'){
+        toast('브라우저 설정에서 알림 권한을 허용해주세요');
+        resolve(false);
+        return;
+      }
+      openModal(
+        '<div class="soft-ask-card">' +
+          '<div class="soft-ask-icon">🔔</div>' +
+          '<h3>스트릭을 안전하게 지켜드릴까요?</h3>' +
+          '<p class="muted" style="margin:6px 0 0;font-size:.84rem;line-height:1.45;">' +
+            '저녁 8시까지 체크인이 없을 때 긴급 알림으로 연속 불꽃이 꺼지지 않게 지켜드려요.<br>' +
+            '일요일 저녁에는 주간 성취 리캡도 전해드려요.' +
+          '</p>' +
+        '</div>' +
+        '<div class="modal-actions">' +
+          '<button class="btn btn-ghost" id="softAskDismiss" type="button">나중에</button>' +
+          '<button class="btn btn-primary" id="softAskAllow" type="button">알림 켜고 보호받기</button>' +
+        '</div>',
+        function(sheet){
+          sheet.querySelector('#softAskDismiss').addEventListener('click', function(){
+            closeModal();
+            resolve(false);
+          });
+          sheet.querySelector('#softAskAllow').addEventListener('click', async function(){
+            closeModal();
+            try {
+              var perm = await Notification.requestPermission();
+              resolve(perm === 'granted');
+            } catch(e){
+              resolve(false);
+            }
+          });
+        }
+      );
+    });
+  }
+
   /* ============ RENDER: SETTINGS ============ */
   function renderSettingsScreen(){
     refreshCustomFeedbackButtons();
@@ -7661,8 +7961,11 @@
     sw.onclick = async function(){
       if(!state.profile.settings.notify){
         if('Notification' in window){
-          var perm = await Notification.requestPermission();
-          if(perm!=='granted'){ toast('브라우저 알림 권한이 필요해요'); return; }
+          var granted = await openNotificationSoftAskModal();
+          if(!granted){
+            toast('알림 권한이 허용되지 않았어요');
+            return;
+          }
         }
         state.profile.settings.notify = true;
         syncPushSubscription();
@@ -7688,6 +7991,12 @@
         renderSettingsScreen();
       };
     }
+
+    var blockedList = settings.blockedUsers || [];
+    var countDesc = document.getElementById('blockedCountDesc');
+    if(countDesc) countDesc.textContent = blockedList.length ? ('현재 ' + blockedList.length + '명의 사용자를 차단 중이에요.') : '차단된 사용자의 글/댓글은 피드에서 숨겨집니다.';
+    var manageBlockedBtn = document.getElementById('manageBlockedBtn');
+    if(manageBlockedBtn) manageBlockedBtn.onclick = function(){ openBlockedUsersModal(); };
 
     var notionSw = document.getElementById('notionSwitch');
     notionSw.className = 'switch' + (settings.notionSync ? ' on' : '');
@@ -7857,7 +8166,7 @@
       // 오늘 체크인 전이라 computeStreakDays()(오늘 포함 기준)는 항상 0이 되므로,
       // "지금 끊기려는 중인 스트릭"은 어제까지의 연속 기록으로 따로 센다.
       var recs = profile.records || [];
-      var frozen = (profile.settings.streakFreeze && profile.settings.streakFreeze.usedDates) || [];
+      var frozen = (profile.settings && profile.settings.streakFreeze && profile.settings.streakFreeze.usedDates) || [];
       var days = {};
       recs.forEach(function(r){ days[dateKey(r.startAt)] = true; });
       frozen.forEach(function(k){ days[k] = true; });
@@ -7870,6 +8179,11 @@
       if(priorStreak>0){
         return '[스트릭 경보] '+priorStreak+'일 연속 불꽃이 꺼지기 직전이에요! 오늘 한 일을 10초 만에 남겨보세요 ⏰';
       }
+    }
+
+    // 일요일 저녁(18~22시) 주간 성취 리캡 (TASK-BG-8)
+    if(now.getDay() === 0 && hourNow >= 18 && hourNow <= 22 && (profile.records || []).length > 0){
+      return '[위클리 리캡] 이번 주 나의 성취가 정리되었어요! 지난 7일간의 기록과 테마 분석을 확인해보세요 🏆';
     }
 
     var s = profile.settings || {};

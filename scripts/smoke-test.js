@@ -74,7 +74,7 @@ const FN_NAMES = [
   'totalCompletedMilestones',
   'heatmapLevel', 'localNextActionSuggestion',
   'goalAchievement', 'weeklyRecapStats',
-  'parseAttribution', 'filterHidden',
+  'parseAttribution', 'filterHidden', 'filterBlockedPosts',
   'uid', 'newId', 'nowISO', 'getSid', 'getAttribution', 'recordLanding', 'buildCheckinRecord', 'updateAppBadge',
   'calendarAvailable', 'fmtDateLabel', 'filterRecordsByQuery',
   'generateDynamicNotification',
@@ -104,7 +104,7 @@ const sandboxSrc =
   'heatmapLevel, ' +
   'localNextActionSuggestion, ' +
   'goalAchievement, weeklyRecapStats, ' +
-  'parseAttribution, filterHidden, ' +
+  'parseAttribution, filterHidden, filterBlockedPosts, ' +
   'uid, newId, nowISO, getSid, getAttribution, recordLanding, ' +
   'setSearch: function(s){ location.search = s; }, getStorage: function(){ return localStorage; }, ' +
   'buildCheckinRecord, updateAppBadge, ' +
@@ -443,6 +443,19 @@ check('generateDynamicNotification: 해당하는 조건이 없으면 기본 메�
   assert.strictEqual(msg, '테스트유저님, 오늘의 성장을 기록할 시간이에요 ✨');
 });
 
+check('generateDynamicNotification: 일요일 저녁 18~22시에 기록이 있으면 위클리 리캡 문구', () => {
+  const sundayEvening = new Date('2026-09-13T19:00:00'); // 2026-09-13 is Sunday
+  const profile = {
+    displayName: '테스트유저',
+    goals: [],
+    records: [{ startAt: '2026-09-10T12:00:00.000Z' }],
+    settings: {}
+  };
+  const msg = fns.generateDynamicNotification(profile, sundayEvening);
+  assert.ok(msg.indexOf('[위클리 리캡]') !== -1);
+  assert.ok(msg.indexOf('이번 주 나의 성취') !== -1);
+});
+
 /* ============ 계측: 유입 속성 파싱 ============ */
 check('parseAttribution: utm/ref만 추출하고 나머지 파라미터는 버린다', () => {
   const a = fns.parseAttribution('?utm_source=instagram&utm_medium=social&utm_campaign=launch&ref=user-1&goal=g1&foo=bar');
@@ -475,6 +488,24 @@ check('filterHidden: hidden:true·null 항목은 제외하고 나머지는 순�
 check('filterHidden: undefined나 빈 배열을 넣으면 빈 배열을 돌려준다', () => {
   assert.deepStrictEqual(fns.filterHidden(undefined), []);
   assert.deepStrictEqual(fns.filterHidden([]), []);
+});
+
+/* ============ 차단 유저 격리: filterBlockedPosts ============ */
+check('filterBlockedPosts: 차단된 사용자의 글/댓글은 필터링되고 나머지는 유지된다', () => {
+  const p1 = { id: 'p1', userId: 'user_good' };
+  const p2 = { id: 'p2', userId: 'user_bad' };
+  const p3 = { id: 'p3', userId: 'user_another' };
+  const blocked = [{ id: 'user_bad', name: '나쁜유저' }];
+  const res = fns.filterBlockedPosts([p1, p2, p3], blocked);
+  assert.deepStrictEqual(res, [p1, p3]);
+});
+
+check('filterBlockedPosts: 문자열 ID 배열 및 null/undefined 에도 안전하다', () => {
+  assert.deepStrictEqual(fns.filterBlockedPosts(undefined, ['u1']), []);
+  assert.deepStrictEqual(fns.filterBlockedPosts([], []), []);
+  const p1 = { id: 'p1', user_id: 'u1' };
+  const p2 = { id: 'p2', user_id: 'u2' };
+  assert.deepStrictEqual(fns.filterBlockedPosts([p1, p2], ['u1']), [p2]);
 });
 
 /* ============ 계측 게이트 불변식 (localStorage/location 스텁) ============ */

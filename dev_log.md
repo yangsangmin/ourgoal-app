@@ -1069,6 +1069,18 @@
   - `node scripts/smoke-test.js` **82개 전수 통과 (0개 실패)**
   - `test-theme-classifier.js`: 5대 테마 8종 실사용 케이스 전수 정밀 분류 검증 통과 (심리, 공부, 사업, 약속, 운동, 일상)
   - `sql-lint` 통과 및 Supabase 기존 스키마와의 무중단 역호환성 보장
+## [2026-09-10 07:00] 3대 AI 자율실행 P0 작업 완결 (60초 온보딩 퍼널, 커뮤니티 UGC 안전망·차단 체계, PWA 배지·골든타임 방어 알림)
+- **목표**: 사용자(상민님) 개입이 0%인 3대 최우선 작업 완결
+  1. 가입 60초 내 첫 체크인 완성 퍼널 & 1-클릭 목표 프리셋 및 웰컴 프리즈 패키지 (`TASK-BG-3.5` + `TASK-RD-T010`)
+  2. 커뮤니티 UGC 신고 3회 자동 블라인드 & 악성 유저 양방향 차단 격리 및 차단 관리 UI (`TASK-CB-003` + `TASK-CB-004` + `TASK-BG-5`)
+  3. PWA 홈화면 실시간 스트릭 배지 동기화 & 일요일 위클리 리캡 / 저녁 8시 스트릭 방어 긴급 알림 & 소프트 애스크 모달 (`TASK-BG-6` + `TASK-BG-8` + `TASK-RD-T020`)
+- **수정/실행 내역**:
+  - `docs/sql/2026-09-10-ugc-safety-reports.sql`: `user_blocks` 테이블 DDL 및 RLS 정책 생성 (sql-lint 통과)
+  - `ourgoal-app/index.html`:
+    - [TASK 1] `ONBOARDING_PRESETS`(4대 인기 목표 1초 시작), `QUICK_ACTIONS_BY_CAT`(카테고리별 1-탭 체크인 칩), `saveQuickCheckin` 신규 가입자 웰컴 스트릭 프리즈 1개 즉시 증정, `finishOnboarding` 테마 분류 배지 축하 토스트 연동
+    - [TASK 2] `filterBlockedPosts` 순수 함수, `isUserBlocked`, `blockUser`, `unblockUser`, `openBlockedUsersModal`, 피드/댓글에 차단 버튼 및 양방향 콘텐츠 숨김, 3-strike 로컬 장애 복원 soft-blind, 설정 화면 내 '🚫 차단한 사용자 관리' 모달 연동
+    - [TASK 3] `enterApp` 및 포커스/가시성 전환 시 `updateAppBadge(computeStreakDays())` 실시간 동기화, `generateDynamicNotification` 일요일 저녁 18~22시 위클리 리캡 분기 추가, `openNotificationSoftAskModal` 친절한 사전 권한 획득 모달 탑재
+  - `ourgoal-app/scripts/smoke-test.js`: `filterBlockedPosts`, 일요일 저녁 위클리 리캡 검증 단위 테스트 3건 추가 (총 85개 테스트)
+- **발생한 문제 및 해결**: 일요일 저녁 18~22시 알림 분기가 기존 21:00 스트릭 경보 불변식과 충돌할 가능성 사전 감지 → 스트릭 경보 조건을 우선 평가하고 위클리 리캡은 스트릭 안전 상태 또는 미체크인 시에만 발생하도록 조건 격리 완료
+- **검증 결과**: `node scripts/smoke-test.js` **85개 전수 통과 (0개 실패)**, `sql-lint` 통과, 단일 HTML 아키텍처 및 Supabase RLS 무결성 보장
 ---
-
-
