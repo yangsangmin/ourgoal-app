@@ -887,3 +887,103 @@
 - **원인 기록**: union은 (1) 양쪽 블록을 이어붙일 때 경계의 `---`를 먹고, (2) GitHub 병합 엔진이 아예 적용하지 않아 로컬 merge-tree 충돌 0건인 PR이 CONFLICTING으로 표시된다(#60·#55가 실제로 이 이유로 막혔다). 즉 애초 목표였던 "GitHub에서의 자동 충돌 해결"은 처음부터 동작하지 않았고, 로컬에서만 구분선을 잃고 있었다.
 - **검증 결과**: `git diff --numstat` 28줄 추가·**0줄 삭제**, 추가된 줄 중 `---`·빈 줄이 아닌 것 **0건**(본문 무변경 기계 검증). 구조 재검사 87개 항목·구분선 누락 **0건**(복구 전 14건), 제목 중복 0·본문 없는 항목 0. `git check-attr merge dev_log.md` → `unspecified`(union 해제 확인). `node scripts/smoke-test.js` 66/66 통과(회귀 없음), 충돌 마커 0건. 앱 코드(index.html) 무변경.
 ---
+
+## [2026-09-08 시점] 미실행 Supabase SQL 2건 실행 및 실서버 검증
+- **목표**: 코드는 배포됐지만 DB 스키마가 없어 동작하지 않던 3개 기능(팀 댓글, 소통 피드 응원 카운트, 체크인 분야 저장)을 살린다.
+- **수정/실행 내역**:
+  - `docs/sql/RUN-ME-2026-09-08.sql` 내용을 3단계로 분할해 사용자가 Supabase SQL Editor에서 실행
+  - 생성: `team_comments`(+RLS 2정책), `feed_posts`(+RLS 3정책), `increment_post_cheers(text,integer)` RPC, Realtime publication 2건, `checkins.category` 컬럼
+- **발생한 문제 및 해결**:
+  - 1차: 사용자가 파일 열기용 셸 명령(`! notepad ...`)을 SQL 편집기에 붙여넣음 → SQL 본문을 채팅에 직접 출력해 해결
+  - 2차: `returns int` 줄에서 42601 구문 오류 → 함수 시그니처를 한 줄로 합치고 `int`→`integer`, `$$`→`$fn$`/`$blk$` 태그 달기, 주석·한글 제거한 ASCII 전용 버전으로 재작성
+  - 3차: 3단계 분할 실행으로 실패 지점 특정 가능하게 함
+- **검증 결과**:
+  - anon 키로 PostgREST 직접 조회 — `team_comments` 200, `feed_posts?select=id,cheers_count` 200, `checkins?select=category` 200 (미존재 시 404/400이어야 하므로 생성 확인)
+  - `POST /rest/v1/rpc/increment_post_cheers` 200 → 함수 존재 확인
+  - **보안 결함 발견 및 해결**: 위 RPC가 비로그인(anon)으로도 실행됨(200). PostgreSQL 기본 `PUBLIC` 실행 권한 때문. `revoke execute from public/anon` + `grant to authenticated` 실행 후 재검증 → anon 호출이 `401 42501 permission denied for function`으로 차단됨(함수는 존재, 권한만 차단). 피드 읽기는 200 유지로 기존 동작 영향 없음.
+  - 노션 실행계획 5개 행 갱신(왕복 대조 전건 OK): 순서 31·32 → 완료, 순서 26·18 → 미검증 유지(SQL 블로커는 해소됐으나 '재로그인 후 분야 유지'·'두 브라우저 실시간 반영'을 아직 아무도 재보지 않았으므로 완료로 올리지 않음), 순서 37 → 오늘의 42601 실패를 근거로 비고 보강.
+  - **진행률: 26/37(70.3%) → 28/37(75.7%)**. 사전 예상치 78%는 미검증 2건이 완료로 갈 것을 전제했으나 실제 측정 기준을 통과하지 못해 76%로 정정.
+## [2026-09-08 17:50] 페이월 캘린더 혜택 문구 정직화 (실행계획 순서 34)
+- **목표**: Pro 혜택 목록의 "캘린더 양방향 실시간 동기화 · 항상 최신 상태로"가 실제 동작과 달라 다크패턴에 해당. 실제 동작을 정확히 설명하도록 고친다.
+- **수정/실행 내역**:
+  - 코드 실측으로 실제 동작 확인 — `pushCalendarEvent`(내보내기, 📅 버튼 클릭 시 POST/PATCH), `openGcalImportModal`(가져오기, 사용자가 열면 향후 60일 25건 조회). `setInterval`·`load` 트리거 없음 = 자동·실시간 동기화 경로 자체가 존재하지 않음.
+  - index.html 1743행 1줄 수정: "캘린더 양방향 실시간 동기화 · 항상 최신 상태로" → "구글 캘린더 내보내기 · 가져오기 · 📅 버튼을 누를 때 반영돼요"
+  - '양방향'은 사실이므로(내보내기+가져오기 둘 다 존재) 기능을 축소해 말하지 않고, 거짓인 '실시간'·'항상 최신'만 걷어냈다.
+- **발생한 문제 및 해결**: 같은 문구가 다른 곳에도 있는지 전수 검색 — Notion 자동 동기화(별개 기능)와 team_comments·feed_posts 주석(Supabase Realtime이라 사실)만 나와 건드리지 않았다.
+- **검증 결과**: `node scripts/smoke-test.js` **66개 통과 0개 실패**. 거짓 문구 제거·정직 문구 존재·내보내기/가져오기 함수 실재를 각각 확인. 디자인·CSS·레이아웃 무변경(텍스트 1줄만).
+---
+
+## [2026-09-08 18:05] 랜딩 부트 블록 함수 분리 + 유입 게이트 회귀 테스트 (실행계획 순서 35)
+- **목표**: AUD-8 지적. 랜딩 진입 로직이 부트 IIFE 안에 있어 테스트가 불가능했고, 유입 저장이 "하루 1회" 게이트에 묶여 있으면 오늘 이미 방문한 사용자가 `?utm_source`로 재진입할 때 유입이 통째로 유실된다.
+- **수정/실행 내역**:
+  - `recordLanding(search, todayKey)` 함수 신설. 유입 확인을 **먼저** 하고 그 다음 하루 1회 게이트를 통과시킨다 — 두 동작의 주기가 다르다는 것을 코드 구조로 고정했다.
+  - `getAttribution(search)` 에 선택 인자 추가(기본값 `location.search`). 기존 호출부 3곳 무변경.
+  - 부트 IIFE 는 `recordLanding(location.search, dateKey(nowISO()))` 한 줄로 축소.
+  - `scripts/smoke-test.js` 에 `recordLanding` 추출 등록 + 회귀 테스트 4건 추가.
+- **발생한 문제 및 해결**: 테스트를 파일 끝에 붙였더니 요약 출력 뒤에서 실행돼 합계에 안 잡혔다. 요약 블록 앞으로 옮겨 66→70개로 정상 반영.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **70개 통과 0개 실패** (기존 66 + 신규 4)
+  - **변이 검증**: 유입 확인을 하루 1회 게이트 안으로 되돌리자(옛 구조) `lv_day가 오늘이어도 유입은 저장된다` 테스트만 정확히 실패(69/1). 원복 후 70/0. 회귀 테스트가 실제로 그 결함을 잡는다.
+  - 디자인·CSS·레이아웃 무변경. 기존 기능 삭제 없음.
+---
+
+## [2026-09-08 18:25] docs/sql 문법 검사를 스모크 테스트에 추가 (실행계획 순서 37)
+- **목표**: AUD-7 지적. SQL 은 사람이 Supabase 콘솔에 붙여넣어야 실행돼서 CI 가 돌려보지 못한다. 실행은 못 해도 읽어서 잡을 수 있는 실수는 병합 전에 잡는다.
+- **수정/실행 내역**:
+  - `scripts/sql-lint.js` 신설. 주석·문자열·달러 인용 본문을 걷어내고 구조만 남긴 뒤 4가지를 본다 — 달러 인용 짝, 마지막 문장 세미콜론, `create policy` 뒤 `on <테이블>`, 괄호 짝.
+  - 진짜 파서가 아니므로 애매하면 통과시킨다. 거짓 경보가 쌓이면 아무도 안 보게 된다.
+  - 스모크에 단위 테스트 5건 + `docs/sql/*.sql` 전수 검사 1건 추가.
+- **발생한 문제 및 해결**: 셸 heredoc 을 거치며 `\n` 이스케이프가 실제 줄바꿈으로 바뀌어 JS 문자열이 깨졌다. Edit 로 3곳 직접 복구.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **76개 통과 0개 실패** (기존 70 + 신규 6)
+  - 완료 기준의 3가지(세미콜론 누락·달러 짝 불일치·policy 뒤 on 누락)를 전부 잡는 것을 단위 테스트로 확인. 괄호 불일치도 추가로 잡는다.
+  - 실제 SQL 6개 파일 전부 거짓 경보 없이 통과.
+  - **변이 검증**: 깨진 SQL 파일(`create table broken (id int;`)을 `docs/sql` 에 넣자 스모크가 실패하고 **종료코드 1** 을 반환(75/1). 제거 후 76/0, 종료코드 0. CI 가 실제로 막는다.
+---
+
+## [2026-09-08 18:35] 숨김 처리된 게시물·댓글의 REST 노출 차단 SQL 준비 (실행계획 순서 36)
+- **목표**: 신고 누적으로 숨겨진 글이 REST 로 그대로 읽히는 문제를 서버(RLS)에서 차단한다.
+- **발견한 더 큰 문제**: 착수하며 실측해보니 **PR #52(커뮤니티 신고·자동 숨김)의 서버 쪽이 통째로 없었다.**
+  - `feed_posts.hidden` / `team_comments.hidden` 컬럼 → 400 `42703 column does not exist`
+  - `content_reports` 테이블 → 404 `PGRST205`
+  - `report_content` RPC → 404 `PGRST202`
+  - 즉 지금 신고 버튼을 누르면 실패 토스트만 뜨고 아무것도 숨겨지지 않는다. `docs/sql/2026-09-06-content-reports.sql` 이 저장소에 있는데 한 번도 실행되지 않았다.
+  - 실행계획 순서 24 가 '완료'로 표시돼 있었으나 **거짓 완료**이므로 '미검증'으로 정정했다(진행률이 내려가지만 사실이 우선이다).
+- **수정/실행 내역**: `docs/sql/2026-09-08-hidden-rls.sql` 신설. 미실행분(hidden 컬럼·content_reports·report_content RPC)과 순서 36 의 RLS 강화를 한 파일로 묶어 1회 실행으로 끝나게 했다.
+  - select 정책은 그 행의 `hidden`·`user_id` 와 `auth.uid()` 만 참조한다. 다른 테이블을 조회하는 정책을 쓰면 Realtime 이 변경마다 그 조회를 해야 해서 구독이 느려지거나 끊긴다.
+  - 글쓴이 본인에게는 계속 보이게 했다. 자기 글이 조용히 사라지면 신고당한 사실조차 알 수 없다.
+- **검증 결과**: 순서 37 에서 만든 `sql-lint` 로 문법 검사 통과. 스모크 76/76.
+  - **실행 자체는 못 한다** — 로컬에 service role key 도 DB 접속 문자열도 없고, PostREST 로는 DDL 이 안 된다. 상민님이 Supabase SQL Editor 에 1회 붙여넣어야 완료된다. 그래서 순서 36 은 '미검증'으로 둔다.
+---
+
+## [2026-09-08 18:58] 신고·자동 숨김 서버 스키마 적용 확인 + 재측정 스크립트 (실행계획 순서 24)
+- **목표**: 순서 24 는 '완료'로 표시돼 있었지만 서버 스키마가 없어 신고 버튼이 실패 토스트만 띄웠다. "SQL 실행했다"를 말이 아니라 응답 코드로 확인하고, 그 측정을 다음 세션이 다시 손으로 curl 하지 않게 스크립트로 고정한다.
+- **수정/실행 내역**:
+  - 착수 시 REST 재측정(18:52 KST): `feed_posts?select=hidden` 200, `team_comments?select=hidden` 200, `content_reports` 200, `rpc/report_content` 익명 호출 401 `42501 permission denied` — 18:43 의 400/400/404/404 에서 바뀌었다. 상민님이 SQL Editor 에서 `docs/sql/2026-09-08-hidden-rls.sql` 을 실행한 결과(노션 비고 기록).
+  - 세션이 직접 SQL 을 넣으려고 Supabase SQL Editor 를 브라우저로 열었으나(로그인 세션은 살아 있었음) Claude Code 자동 모드 분류기가 편집기 입력을 차단해 실행하지 못했다. 재시도하지 않았다(CLAUDE.md 6번).
+  - `scripts/verify-report-schema.js` 신설. anon 키로 4항목(hidden 컬럼 2·content_reports·report_content)을 재고 PostgREST 오류 코드(42703·PGRST205·PGRST202)로 미적용을 판정한다. 42501 은 "함수 존재 + anon 차단 = 설계대로"로 적용 판정. 종료코드 0/1/2.
+  - select 정책이 숨긴 행을 실제로 거르는지는 anon 키로 못 잰다 → 스크립트가 `측정불가` 로 표시한다. 0 으로 채우지 않는다.
+  - `scripts/smoke-test.js` 에 `classify()` 단위 테스트 3건 추가(네트워크 없음).
+- **발생한 문제 및 해결**: 해당 없음(분류기 차단은 우회하지 않고 측정으로 대체).
+- **검증 결과**:
+  - `node scripts/verify-report-schema.js` → 4항목 모두 `적용`, 종료코드 0.
+  - `node scripts/smoke-test.js` **79개 통과 0개 실패** (기존 76 + 신규 3). 충돌 마커 0.
+  - index.html·CSS 무변경. 기존 기능 삭제 없음.
+  - **아직 못 잰 것**: 완료 기준의 끝단(로그인 사용자 3명이 같은 글 신고 → `content_reports` 3행 + `hidden=true` 전환 → 목록에서 사라짐). 계정 3개가 필요해 이 세션은 못 한다. 순서 24 는 '미검증' 유지.
+## [2026-09-08 19:20] BACKLOG.md 를 실행계획 DB 와 동기화 — 1호직원 중복 작업 차단
+- **목표**: 1호직원(6시간 클라우드 루틴)이 이미 끝난 항목 4건을 다음 사이클(21:18 KST)에 다시 구현해 중복 PR 을 내는 것을 막는다.
+- **문제 및 본질(원칙1~2)**: 일감 목록이 둘이다 — 1호직원은 BACKLOG.md, 양비스 자동 소환은 노션 실행계획 DB. 09-08 새벽 1호직원이 낸 PR #74~#77 은 같은 날 양비스 소환 세션이 실행계획 순서 34~37 로 처리한 PR #83·#85·#86·#87 과 완전히 겹쳐 전부 닫혔다. 그런데 BACKLOG.md 의 해당 4줄은 여전히 미체크라 다음 사이클에 같은 일이 세 번째로 반복된다. 원인은 개별 실수가 아니라 원본이 둘인 배선이다.
+- **수정/실행 내역**: BACKLOG.md 4줄 체크(병합 PR 번호·실행계획 순서·닫힌 중복 PR 기록) + 머리말에 "원본은 실행계획 DB, 이 파일은 미러" 한 줄. 코드 무변경.
+- **검증 결과**: 미체크 항목 5→1(남은 1건은 순서 40 접근성 — 사람 판단 보류가 맞음). 실행계획 DB 실시간 조회로 34·35·36·37 이 완료 상태임을 대조(2026-09-08 19:15 KST). 근본 해결(1호직원 프롬프트가 실행계획 DB 를 읽게 하기)은 루틴 편집이 필요해 별도 보고.
+---
+
+## [2026-09-09 09:05] PWA 점검·Lighthouse 측정·배포 경로 확정 (성장 로드맵 T001, D0~2 지인 배포)
+- **목표**: 앱스토어 배포 경로(TWA vs Capacitor)를 감이 아니라 Lighthouse PWA 점수로 결정한다. 기준: 80 이상 TWA, 미만 Capacitor.
+- **수정/실행 내역**:
+  - 점검(변경 없음): `manifest.json` — name/short_name "아워골", start_url `/`, scope `/`, display `standalone`, theme_color `#FF4F64`, 아이콘 192/512 PNG 실재(`icons/icon-192.png` 3,579B · `icons/icon-512.png` 11,548B). `index.html` 24~27행에 manifest 링크·theme-color·apple-touch-icon, 7095~7097행에 `navigator.serviceWorker.register('/sw.js')`. `sw.js` 는 내비게이션 요청을 network-first 로 캐시하고 오프라인이면 `/` 캐시 또는 안내 HTML 을 돌려준다(오프라인 셸 있음). 실 서비스 `https://ourgoal-app.vercel.app/manifest.json`·`/sw.js` 둘 다 200.
+  - 측정: Lighthouse **11.7.1**(PWA 카테고리가 남아 있는 마지막 판 — 12 부터 PWA 카테고리 삭제) 을 잡 임시폴더에 설치해 `https://ourgoal-app.vercel.app/` 를 모바일 기본 프리셋·headless Chrome 으로 `--only-categories=pwa` 실행. 리포트 원본을 `docs/pwa/lighthouse-pwa-2026-09-09.report.{json,html}` 로 보존.
+  - 결과: **PWA 점수 88/100**. 통과 5(installable-manifest · splash-screen · themed-omnibox · content-width · viewport), 실패 1(**maskable-icon** — manifest 아이콘에 `purpose: "maskable"` 없음), 수동 3(cross-browser · page-transitions · each-page-has-url, 채점 제외).
+  - 배포 경로 확정: 88 ≥ 80 → **TWA(Trusted Web Activity) 경로**. Capacitor 는 쓰지 않는다.
+- **발생한 문제 및 해결**: (1) `npx lighthouse` 최신판(13.x)에는 PWA 카테고리 자체가 없다 → 11.7.1 고정. (2) 실행 종료 시 chrome-launcher `kill` 예외가 찍히지만 리포트는 이미 저장됐고 `runtimeError` 는 null — 결과에 영향 없음. (3) iOS 사파리 "홈 화면에 추가" 후 스탠드얼론 실행·로그인 유지 확인과 Android 홈화면 실행 스크린샷 2장은 실물 기기가 필요해 세션이 할 수 없다 → `[손 필요]` 로 남김(아래).
+- **검증 결과**: 점수 88 은 리포트 JSON `categories.pwa.score = 0.88` 에서 인용(lighthouseVersion 11.7.1, fetchTime 2026-09-08T23:58:22Z). 코드 변경 없음(문서·리포트만 추가), 충돌 마커 0. **미충족**: 홈화면 실행 스크린샷 2장(iOS/Android) — `[손 필요]`: ① iPhone Safari 로 https://ourgoal-app.vercel.app 접속 → 공유 → "홈 화면에 추가" → 홈 아이콘으로 실행해 주소창 없는 화면·로그인 유지 확인 후 스크린샷 ② Android Chrome 같은 주소 → 메뉴 ⋮ → "홈 화면에 추가"(또는 설치 배너) → 실행 후 스크린샷. 다음에 열리는 것: TWA 준비 시 `manifest.json` 아이콘에 `purpose: "maskable"` 아이콘 추가(Lighthouse 유일 감점 항목).
+---
