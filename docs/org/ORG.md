@@ -1,4 +1,4 @@
-# 아워골 AI 조직도 (ORG.md)
+# 아워골 AI 조직도 (ORG.md) — v2.0 (2026-09-09)
 
 컨트롤타워(메인 세션)가 `/work` 시작 시 **반드시** 읽는 파일. 여기 적힌 역할·배정표·기본값이 곧 "회사 구조"다.
 이 파일과 `.claude/agents/*.md`, `.claude/skills/*/SKILL.md`, CLAUDE.md §10은 **조직개발자(org-developer)가 PR로만** 바꾼다. 세션 중 임의 수정 금지.
@@ -20,6 +20,7 @@
    │
    ├─ 실행층 (.claude/agents/) ─ 컨트롤타워가 배정, 서브에이전트는 서브에이전트를 띄우지 못한다
    │     implementer 구현자 · reviewer 리뷰어 · researcher 리서처 · strategist 전략가
+   │     growth-analyst 성장/데이터 분석가 (계측 데이터 해석 및 유저 행동·퍼널 분석)
    │     1호직원 (클라우드 6시간 루틴, CLAUDE.md §6) ─ BACKLOG.md를 먹고 PR을 낸다
    │
    ├─ 병렬 세션 층 (DEV-8) ─ 다른 터미널·기기·클라우드에서 도는 독립 세션들
@@ -27,9 +28,9 @@
    │     **컨트롤타워의 부하가 아니다. 서로를 보지 못하고, 서로에게 배정하지 못한다.**
    │     조율은 오직 두 경로 ─ (a) 작업로그의 진행중 선언 (b) 사용자
    │
-   └─ 메타층 ─ 실행층을 평가·개조한다. 실행층 산출물을 직접 고치지 않는다
+   └─ 메타층 ─ 실행층을 평가·수호·개조한다
          auditor 감시자 ─ 작업마다 감사 로그 1행
-         security-auditor 보안 감시자 ─ 5대 보안 검증 (시크릿·RLS·XSS·API·스토리지, PASS/WARNING/BLOCK)
+         security-auditor 보안 감시자(수호자, DEV-10) ─ 5대 보안 검증 + 보안 테스트(scripts/sec-*) 및 긴급 패치 직접 작성 권한
          org-developer 조직개발자 ─ 감사 로그를 읽고 조직을 발전시킨다 (개발 로그 + PR)
 ```
 
@@ -42,9 +43,10 @@
 | 리뷰어 | `reviewer` | 서브에이전트 | 없음(읽기 전용) | sonnet | 병렬 가능 | 위반·결함 목록 |
 | 리서처 | `researcher` | 서브에이전트 | 없음(읽기 전용) | haiku→sonnet | 병렬 가능 | 조사 요약·근거 |
 | 전략가 | `strategist` | 서브에이전트 | 노션(백로그·전략 페이지)만 | opus | 1 | 우선순위·설계 판단(8원칙) |
+| 성장/데이터 분석가 | `growth-analyst` | 서브에이전트 | 노션(지표·분석 리포트)·docs/analytics/ | sonnet | 병렬 가능 | 지표 해석·퍼널 이탈 분석·실험 제안 |
 | 1호직원 | (클라우드 루틴) | GitHub 클라우드 | 브랜치·PR | 루틴 설정값 | 1 | BACKLOG 항목 PR |
 | 감시자 | `auditor` | 서브에이전트(백그라운드) | 노션 감사 로그만 | sonnet | 병렬 가능 | 감사 로그 1행/작업 (주요 기능 시 가입설명 갱신 및 노출 보고 감시) |
-| 보안 감시자 | `security-auditor` | 서브에이전트 또는 `/security-audit` | 없음(읽기 전용) | sonnet | 병렬 가능 | 보안 감사 리포트 (PASS/WARNING/BLOCK) |
+| 보안 감시자 | `security-auditor` | 서브에이전트 또는 `/security-audit` | 보안 테스트(`scripts/sec-*`)·보안 패치 diff·`docs/security/` (DEV-10) | sonnet | 병렬 가능 | 보안 감사 리포트 (PASS/WARNING/BLOCK) 및 보안 테스트/긴급 패치 |
 | 조직개발자 | `org-developer` | 서브에이전트 또는 `/develop-org` | ORG.md·agents·skills·CLAUDE.md §10 (브랜치+PR) + 노션 개발 로그 | opus | 1 | 개발 로그 + 조직 변경 PR |
 
 ## 3. 배정표 (지시 유형 × 규모 → 에이전트 조합)
@@ -57,12 +59,13 @@
 | 버그수정 | 컨트롤타워 직접 → 스모크 | researcher(원인) → implementer → reviewer | 위와 같음 + 재현 스크립트 |
 | 리서치 | researcher 1 | researcher 2~3 병렬 → 컨트롤타워 종합 | strategist + researcher 병렬 |
 | 전략/기획 | strategist | strategist → 노션 기록 | strategist → 사용자 결정 질문(§5) |
+| 데이터분석/성장 | growth-analyst | growth-analyst → 리포트 | growth-analyst + strategist 병렬 |
 | 문서 | 컨트롤타워 직접 | 컨트롤타워 직접 | researcher → 컨트롤타워 |
 | 조직운영 | org-developer | org-developer | org-developer → 사용자 승인(PR) |
 | 백로그 소진(야간) | BACKLOG.md에 항목 적기 → 1호직원 | 동일 | 1호직원 대상 아님(스프린트 제외 규칙) |
 
 - 모든 작업은 마지막에 **auditor 호출**(백그라운드)로 끝난다. 예외 없음.
-- 인증, 결제, DB 스키마(RLS), Vercel Serverless API 변경 등 **보안 민감 작업**은 병합 전 **security-auditor 호출** 필수 (BLOCK 판정 시 해결 전 병합 금지).
+- [DEV-10 Shift-Left 조기 보안 게이트] 인증, 결제, DB 스키마(RLS), Vercel Serverless API 변경 등 **보안 민감 작업**은 병합 직전뿐만 아니라 구현 단계에서 **security-auditor 조기 호출** 필수 (BLOCK 판정 시 해결 전 병합 금지, 보안 테스트 scripts/sec-* 선제 작성 가능).
 - 구현 서브에이전트는 어떤 경우에도 2개 이상 동시 실행하지 않는다(index.html 단일 파일 충돌).
 
 ### 3-1. 대체 모드 — 커스텀 에이전트가 세션에 로드되지 않았을 때 (DEV-1)
@@ -93,6 +96,23 @@
 2. **작업을 시작할 때 무엇을 맡았는지 먼저 선언한다.** 작업로그에 `진행중`으로 1행을 **착수 시점에** 남긴다(끝나고 쓰는 게 아니다). 최소 항목: 세션 이름 · 대상 저장소/파일 · 착수 시각 · 예상 산출물. 끝나면 같은 행을 갱신한다. 감사 로그(사후·평가)와 역할이 다르다 — 이건 **점유 선언**이다.
 3. **같은 저장소를 만지기 전에 진행중 행을 확인한다.** 다른 세션이 같은 저장소·같은 파일을 점유 중이면 착수하지 않고, 사용자에게 알리거나 다른 항목으로 넘어간다. 확인 없이 착수해서 생긴 충돌은 나중에 발견될수록 비싸다.
 4. **다른 세션이 만든 PR·브랜치를 자기 것으로 가정하지 않는다.** 출처가 불분명한 산출물을 발견하면 임의로 병합·수정하지 말고 진행중 행과 `gh pr view --json author`로 확인한다.
+
+### 3-3. Shift-Left 조기 보안 게이트 및 능동적 보안 수호자 (DEV-10)
+
+보안은 병합 직전의 단순 체크리스트 검사가 아니라, 설계와 구현 시점에 조기 개입(Shift-Left)하는 보안 게이트여야 한다. `security-auditor`에게 쓰기 권한을 부여하고 능동적 수호자로 격상한다.
+
+1. **보안 감시자 쓰기 권한의 범위**:
+   - 보안 검증/회귀 방어 테스트 스크립트(`scripts/sec-*.js`, `docs/sql/security-*.sql`) 작성 및 실행.
+   - 치명적 보안 취약점(P0: 하드코딩된 비밀키, RLS 누락/우회, DOM XSS 직접 노출 등) 발견 시 직접 대체 패치(diff) 및 긴급 핫픽스 브랜치 작성.
+   - 보안 문서(`docs/security/`) 및 노션 보안 로그 기록.
+2. **Shift-Left 조기 보안 게이트 트리거**:
+   - 인증(Auth), 결제(Toss/Stripe), DB 스키마/RLS 정책, Vercel Serverless API 변경 등 **보안 민감 작업** 시:
+     - (1) 착수 전/설계 시점: 보안 위협 모델링 및 불변식 정의.
+     - (2) 구현 중/커밋 시점: `security-auditor`가 조기 개입하여 취약점을 점검하고 방어 테스트 스크립트 작성.
+     - (3) 병합 전 게이트: `security-auditor`의 독립 보안 판정 필수.
+3. **BLOCK 판정 시 절대 병합 불가**:
+   - 🔴 **BLOCK** 판정 시 취약점이 완전히 해소되고 회귀 테스트를 통과하기 전까지 PR 병합이 엄격히 차단된다.
+   - 보안 감시자가 직접 작성한 핫픽스 패치를 적용하거나, 구현자가 재작업하여 검증을 다시 통과해야 한다.
 
 ## 4. 자율 결정 기본값 — 묻지 않고 이렇게 정한다
 
@@ -203,8 +223,8 @@
 역할 추가 후보 (감사 로그가 근거를 만들면):
 - `qa-browser` — 브라우저 시나리오 검증 전담 (검증 게이트 마찰 반복 시)
 - `notion-scribe` — 노션 기록 전담 (기록 누락·형식 불일치 반복 시)
-- `growth-analyst` — 계측 데이터 해석 (P0 계측 인프라 가동 후)
 - `release-manager` — PR 병합 후 배포 확인·롤백 (프로덕션 장애 반복 시)
+*(참고: `growth-analyst`는 v2.0 조직 개편에서 정식 역할로 승격·배치됨)*
 
 ## 9. 지표 (감사 로그에서 계산)
 
