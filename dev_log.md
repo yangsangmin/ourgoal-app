@@ -999,3 +999,88 @@
 - **발생한 문제 및 해결**: (1) `npx lighthouse` 최신판(13.x)에는 PWA 카테고리 자체가 없다 → 11.7.1 고정. (2) 실행 종료 시 chrome-launcher `kill` 예외가 찍히지만 리포트는 이미 저장됐고 `runtimeError` 는 null — 결과에 영향 없음. (3) iOS 사파리 "홈 화면에 추가" 후 스탠드얼론 실행·로그인 유지 확인과 Android 홈화면 실행 스크린샷 2장은 실물 기기가 필요해 세션이 할 수 없다 → `[손 필요]` 로 남김(아래).
 - **검증 결과**: 점수 88 은 리포트 JSON `categories.pwa.score = 0.88` 에서 인용(lighthouseVersion 11.7.1, fetchTime 2026-09-08T23:58:22Z). 코드 변경 없음(문서·리포트만 추가), 충돌 마커 0. **미충족**: 홈화면 실행 스크린샷 2장(iOS/Android) — `[손 필요]`: ① iPhone Safari 로 https://ourgoal-app.vercel.app 접속 → 공유 → "홈 화면에 추가" → 홈 아이콘으로 실행해 주소창 없는 화면·로그인 유지 확인 후 스크린샷 ② Android Chrome 같은 주소 → 메뉴 ⋮ → "홈 화면에 추가"(또는 설치 배너) → 실행 후 스크린샷. 다음에 열리는 것: TWA 준비 시 `manifest.json` 아이콘에 `purpose: "maskable"` 아이콘 추가(Lighthouse 유일 감점 항목).
 ---
+
+## [2026-09-10 02:35] 40인 가상 페르소나 자율 활동 시뮬레이터 & 콜드스타트 블렌디드 피드 구축 (TASK-OG-002)
+- **목표**:
+  1. 20대 남녀 40인(남20, 여20)의 다채로운 페르소나(직업, 취미, MBTI, 생활루틴) 데이터셋 구축
+  2. 실제 Supabase 프로덕션과 100% 분리된 격리 샌드박스 DB (sandbox_db.json) 및 자율 시뮬레이터 엔진 구현
+  3. 콜드스타트 피드 및 실사용자-AI 생성물 동적 블렌디드 피드 구현 + 법적·윤리적 투명성 고지 배지 필수 표기:
+     "이는 ai봇 생성물입니다 앱 런칭 초기에 앱 활용을 보여드리기 위함이고 곧 실제 사용자의 제작물로 가득 찰 것입니다"
+  4. 커맨드센터 관제 HUD (`localhost:7777`)에 40인 가상 페르소나 전용 관제 서브뷰 신설 (실시간 피드 스트림, 상위 불편점/개선제안 집계, 1회 수동 틱 및 데몬 제어)
+- **수정/실행 내역**:
+  - `sim/personas.json` 40인 페르소나 데이터셋 구축 (20대 남 20명, 여 20명).
+  - `index.html`: `.ai-badge-notice`, `.feed-ai-tag` CSS 신설, `SIM_PERSONAS` 40인 데이터 탑재, `renderCommFeed`를 콜드스타트 지원 및 동적 블렌디드 피드로 고도화 (AI 생성물 고지 배지 필수 표기).
+  - 커맨드센터: `sim/sandboxDb.js`, `sim/simulator.js`, `hud/server.js` (`/api/sim/state`, `/api/sim/feedback`, `/api/sim/tick`, `/api/sim/toggle`, `/api/sim/feed` 신설), `hud/index.html` 및 `hud/app.js`에 가상유저 관제국 서브뷰 구현.
+- **검증 결과**:
+## [2026-09-10 06:15] 40인 가상 페르소나 피드백 고도화 — 상호작용, 자동 발의 백로그, 동적 감쇄 알고리즘 & 온보딩 응원 연동 (TASK-OG-002)
+- **목표**:
+  1. 가상 유저 간 파편화 방지 및 4회 루틴 중 응원/댓글 상호작용(Interactions) 시스템 구축
+  2. 동일 불편점 5회 이상 누적 감지 시 자동으로 개선 백로그 승격 발의(Auto-proposed Backlog)
+  3. 실유저 게시글 증가에 따른 동적 감쇄 알고리즘(Dynamic Decay: 70% → 30% → 5%) 정밀 구현
+  4. 신규 유저 온보딩 "3분 내 맞춤 페르소나 응원(First Cheer)" 시스템 구축 및 로컬 폴백 연동
+  5. 설정 화면 내 `🤖 가상 페르소나 응원 수신 (초기 활성화)` 옵트아웃 토글 신설
+- **수정/실행 내역**:
+  - `command-center/sim/sandboxDb.js`: `interactions` 및 `proposedBacklogs` 컬렉션/CRUD 메서드 추가
+  - `command-center/sim/simulator.js`: `createPersonaInteraction()`, `triggerFirstCheer()`, `checkAndAutoProposeBacklog()` 구현 및 틱 루틴 연동
+  - `command-center/hud/server.js`: `/api/sim/interactions`, `/api/sim/first-cheer`, `/api/sim/proposed-backlogs` 라우트 신설 및 서버 재가동
+  - `command-center/hud/index.html` & `app.js`: 4대 내부 탭(활동/피드백/상호작용/자동발의백로그) 완비 및 실시간 렌더링 카드 연동
+  - `ourgoal-app/index.html`:
+    - `defaultSettings()`에 `virtualCheerEnabled: true` 기본값 설정
+    - `screen-settings` 및 `renderSettingsScreen`에 가상 페르소나 응원 수신 토글 연동
+    - `renderCommFeed`에 실유저 글 수에 따른 70% → 30% → 5% 동적 감쇄 인터리빙 알고리즘 구현
+    - 첫 체크인 시 `triggerFirstCheerResponse()`를 호출하여 맞춤 페르소나 응원 수신 처리
+  - `ourgoal-app/dev_log.md`: 개발 내역 추가
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **82개 전수 통과 (0개 실패)**.
+  - `node -c hud/app.js` 및 `node -c sim/simulator.js` 문법 검증 통과.
+  - Command Center (`http://localhost:7777`) API 호출 검증:
+    - `/api/sim/state` (OK, 40 페르소나, 상호작용/발의 백로그 포함)
+    - `/api/sim/interactions` (OK, 응원/댓글 스트림)
+    - `/api/sim/proposed-backlogs` (OK, 5회 이상 고통점 5건 자동 발의)
+    - `/api/sim/first-cheer` (OK, 사용자 목표 맞춤 페르소나 응원 메시지 반환)
+  - Supabase 프로덕션 DB 오염 0건, 완전 격리 샌드박스 보장.
+---
+
+## [2026-09-10 06:35] 사용자 기록 테마 자동 인식·분류 및 테마별 기록 DB 저장 체계 구축 (TASK-OG-001)
+- **목표**:
+  1. 사용자 기록 저장 시 5대 주요 테마(심리상태, 공부기록, 사업기록, 약속기록, 운동기록) + 일상/기타 자동 인식·분류 및 DB 저장
+  2. SQL 마이그레이션 DDL(`docs/sql/2026-09-10-checkins-theme.sql`) 작성 및 원격 DB 미적용 시에도 무중단 fallback 동기화 지원
+  3. 기존 미분류 기록에 대한 비파괴 자동 백필(Backfill Migration) 구현
+  4. 라이프 밸런스 휠 (5대 테마 분포도 게이지 바 및 범례) 기록 탭 상단 렌더링
+  5. 1-Click HITL 테마 수정 팝업 UI 및 기록 카드별 테마 배지 칩 탑재
+  6. 테마 맞춤 AI 코칭 지침 주입 (`api/feedback.js`, `buildFeedbackPrompt`, `localFeedback`)
+  7. 테마별 DB 내보내기 (CSV, JSON, Markdown) 및 외부 AI(ChatGPT, Claude) 전용 분석 프롬프트 번들링 엔진 구현
+- **수정/실행 내역**:
+  - `docs/sql/2026-09-10-checkins-theme.sql`: `theme`, `sub_theme`, `theme_confidence`, `theme_metadata` 컬럼 추가 및 `idx_checkins_user_theme` 복합 인덱스 생성 DDL 작성 (sql-lint 검증 통과)
+  - `api/feedback.js`: 요청 body 내 `theme` 필드를 수신하여 5대 테마별 맞춤 코칭 지침(심리: 감정 공감/멘탈케어, 공부: 복습주기/인지과학, 사업: ROI/우선순위, 약속: 관계가치/시간관리, 운동: 점진과부하/루틴)을 프롬프트에 주입
+  - `ourgoal-app/index.html`:
+    - CSS: `.rec-theme-chip`, `.theme-filter-row`, `.theme-filter-chip`, `.balance-card`, `.balance-seg`, `.balance-legend`, `.export-theme-opt` 스타일 신설
+    - DOM: `#lifeBalanceBox`, `#recThemeFilters` 슬롯 추가
+    - 5대 테마 온톨로지 및 경량 AI 분류 엔진 탑재 (`RECORD_THEMES`, `THEME_KEYWORDS`, `THEME_REGEX_RULES`, `CATEGORY_THEME_MAP`, `classifyRecordTheme`)
+    - Supabase 클라이언트 동기화: `loadProfile` 및 `saveProfile`에 `theme`, `sub_theme`, `theme_confidence` 매핑 및 DB 스키마 에러 시 자동 fallback 처리
+    - `buildCheckinRecord` & `captureSave`: 신규 체크인 작성 시 1ms 이내 즉각 테마 자동 판별
+    - `buildFeedbackPrompt`, `requestAIFeedback`, `localFeedback`: 테마 맞춤 프롬프트 및 로컬 피드백 생성
+    - `renderRecordsScreen`: 레거시 기록 자동 백필, `renderLifeBalanceWheel`, `renderRecordThemeFilters`, 테마 필터링 및 카드 좌측 테마 컬러 보더/하단 칩 연동
+    - `openThemePickerModal`: 클릭 한 번으로 6대 테마 즉시 교정(HITL) 및 신뢰도 1.0 갱신
+    - `openRecordModal`: 기록 생성/수정 모달에 테마 셀렉트 박스 추가
+    - `openExportThemeModal`, `buildCSV`, `buildMarkdownExport`, `getAIAnalysisPrompt`: 테마별 필터링 내보내기 및 ChatGPT/Claude 원클릭 복사/다운로드 번들 엔진 구현
+  - `ourgoal-app/dev_log.md`: 개발 로그 추가
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **82개 전수 통과 (0개 실패)**
+  - `test-theme-classifier.js`: 5대 테마 8종 실사용 케이스 전수 정밀 분류 검증 통과 (심리, 공부, 사업, 약속, 운동, 일상)
+  - `sql-lint` 통과 및 Supabase 기존 스키마와의 무중단 역호환성 보장
+## [2026-09-10 07:00] 3대 AI 자율실행 P0 작업 완결 (60초 온보딩 퍼널, 커뮤니티 UGC 안전망·차단 체계, PWA 배지·골든타임 방어 알림)
+- **목표**: 사용자(상민님) 개입이 0%인 3대 최우선 작업 완결
+  1. 가입 60초 내 첫 체크인 완성 퍼널 & 1-클릭 목표 프리셋 및 웰컴 프리즈 패키지 (`TASK-BG-3.5` + `TASK-RD-T010`)
+  2. 커뮤니티 UGC 신고 3회 자동 블라인드 & 악성 유저 양방향 차단 격리 및 차단 관리 UI (`TASK-CB-003` + `TASK-CB-004` + `TASK-BG-5`)
+  3. PWA 홈화면 실시간 스트릭 배지 동기화 & 일요일 위클리 리캡 / 저녁 8시 스트릭 방어 긴급 알림 & 소프트 애스크 모달 (`TASK-BG-6` + `TASK-BG-8` + `TASK-RD-T020`)
+- **수정/실행 내역**:
+  - `docs/sql/2026-09-10-ugc-safety-reports.sql`: `user_blocks` 테이블 DDL 및 RLS 정책 생성 (sql-lint 통과)
+  - `ourgoal-app/index.html`:
+    - [TASK 1] `ONBOARDING_PRESETS`(4대 인기 목표 1초 시작), `QUICK_ACTIONS_BY_CAT`(카테고리별 1-탭 체크인 칩), `saveQuickCheckin` 신규 가입자 웰컴 스트릭 프리즈 1개 즉시 증정, `finishOnboarding` 테마 분류 배지 축하 토스트 연동
+    - [TASK 2] `filterBlockedPosts` 순수 함수, `isUserBlocked`, `blockUser`, `unblockUser`, `openBlockedUsersModal`, 피드/댓글에 차단 버튼 및 양방향 콘텐츠 숨김, 3-strike 로컬 장애 복원 soft-blind, 설정 화면 내 '🚫 차단한 사용자 관리' 모달 연동
+    - [TASK 3] `enterApp` 및 포커스/가시성 전환 시 `updateAppBadge(computeStreakDays())` 실시간 동기화, `generateDynamicNotification` 일요일 저녁 18~22시 위클리 리캡 분기 추가, `openNotificationSoftAskModal` 친절한 사전 권한 획득 모달 탑재
+  - `ourgoal-app/scripts/smoke-test.js`: `filterBlockedPosts`, 일요일 저녁 위클리 리캡 검증 단위 테스트 3건 추가 (총 85개 테스트)
+- **발생한 문제 및 해결**: 일요일 저녁 18~22시 알림 분기가 기존 21:00 스트릭 경보 불변식과 충돌할 가능성 사전 감지 → 스트릭 경보 조건을 우선 평가하고 위클리 리캡은 스트릭 안전 상태 또는 미체크인 시에만 발생하도록 조건 격리 완료
+- **검증 결과**: `node scripts/smoke-test.js` **85개 전수 통과 (0개 실패)**, `sql-lint` 통과, 단일 HTML 아키텍처 및 Supabase RLS 무결성 보장
+---
