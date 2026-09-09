@@ -678,7 +678,9 @@
       <button class="btn btn-primary btn-block" id="signupSubmit" type="button">회원가입</button>
     </div>
 
-    <p class="auth-note">이 계정은 지금 이 기기(이 대화)에만 저장돼요.<br>다른 기기와 동기화되지 않아요.</p>
+    <p class="auth-note" style="margin-top:16px;font-size:0.72rem;line-height:1.5;">
+      계속 진행하면 아워골의 <a href="#" id="authTermsLink" style="color:var(--violet);text-decoration:underline;">서비스 이용약관</a> 및 <a href="#" id="authPrivacyLink" style="color:var(--violet);text-decoration:underline;">개인정보처리방침</a>에 동의하는 것으로 간주됩니다.
+    </p>
   </div>
 </div>
 
@@ -914,9 +916,29 @@
       </div>
 
       <div class="set-block">
+        <h4>고객지원 및 안내</h4>
+        <button class="btn btn-ghost" id="feedbackInquiryBtn" type="button" style="width:100%;margin-bottom:8px;">💬 1:1 문의 및 오류 제보</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost btn-sm" id="viewTermsBtn" type="button" style="flex:1;">서비스 이용약관</button>
+          <button class="btn btn-ghost btn-sm" id="viewPrivacyBtn" type="button" style="flex:1;">개인정보처리방침</button>
+        </div>
+      </div>
+
+      <div class="set-block">
         <h4>계정</h4>
         <button class="btn btn-ghost" id="logoutBtn" type="button" style="width:100%;margin-bottom:10px;">로그아웃</button>
-        <button class="btn btn-danger" id="resetBtn" type="button" style="width:100%;">이 계정 데이터 초기화</button>
+        <button class="btn btn-danger" id="resetBtn" type="button" style="width:100%;margin-bottom:10px;">이 계정 데이터 초기화</button>
+        <button class="btn btn-ghost" id="withdrawBtn" type="button" style="width:100%;color:var(--red);font-size:.82rem;">회원 탈퇴</button>
+      </div>
+
+      <div style="text-align:center;padding:24px 12px 16px;font-size:0.75rem;color:var(--ink-faint);line-height:1.6;">
+        <div><strong>아워골 (OurGoal)</strong> · v1.0.0</div>
+        <div>운영: 아워골 팀 · 문의: <a href="mailto:support@ourgoal.app" style="color:var(--violet);text-decoration:underline;">support@ourgoal.app</a></div>
+        <div style="margin-top:6px;">
+          <a href="#" id="setTermsLink" style="color:var(--ink-faint);text-decoration:underline;">이용약관</a> · 
+          <a href="#" id="setPrivacyLink" style="color:var(--ink-faint);text-decoration:underline;">개인정보처리방침</a>
+        </div>
+        <div style="margin-top:6px;font-size:0.68rem;opacity:0.8;">© 2026 OurGoal. All rights reserved.</div>
       </div>
     </section>
 
@@ -1473,6 +1495,82 @@
     toast('초기화했어요');
   });
 
+  /* ============ 회원 탈퇴 ============ */
+  async function withdrawAccount(){
+    if(!state.profile || !state.profile.id) return;
+    if(!confirm('정말로 아워골에서 회원 탈퇴하시겠습니까?\n\n탈퇴하시면 작성하신 모든 목표, 마일스톤, 체크인 기록, 피드백 및 프로필이 즉시 영구 삭제되며 복구할 수 없습니다.')) return;
+    if(!confirm('정말 탈퇴를 진행할까요?\n\n이 작업은 되돌릴 수 없으며, 탈퇴 즉시 모든 데이터가 완전히 파기됩니다.')) return;
+
+    var uid = state.profile.id;
+    try {
+      toast('회원 탈퇴 처리 중입니다…');
+      var sessRes = await sb.auth.getSession();
+      var token = (sessRes && sessRes.data && sessRes.data.session) ? sessRes.data.session.access_token : null;
+
+      if (token) {
+        try {
+          await fetch('/api/withdraw', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
+          });
+        } catch(apiErr) {
+          console.warn('Withdraw API fetch warning:', apiErr);
+        }
+      }
+
+      // 클라이언트 권한 데이터 정리
+      try {
+        await sb.from('checkins').delete().eq('user_id', uid);
+        await sb.from('goals').delete().eq('user_id', uid);
+        await sb.from('push_subscriptions').delete().eq('user_id', uid);
+        await sb.from('feed_posts').delete().eq('user_id', uid);
+        await sb.from('comments').delete().eq('user_id', uid);
+        await sb.from('users').delete().eq('id', uid);
+      } catch(e){ console.warn('Client tables cleanup warning:', e); }
+
+      // 로컬 스토리지 정리
+      try {
+        localStorage.removeItem('ourgoal_settings_' + uid);
+        localStorage.removeItem('ourgoal_sid');
+        localStorage.removeItem('ourgoal_attrib');
+        localStorage.removeItem('ourgoal_lv_day');
+      } catch(e){}
+
+      updateAppBadge(0);
+      if(state.notifyTimer){ clearInterval(state.notifyTimer); state.notifyTimer=null; }
+
+      await sb.auth.signOut();
+      state.profile = null;
+
+      document.getElementById('appShell').classList.remove('active');
+      document.getElementById('authScreen').style.display = 'flex';
+      toast('회원 탈퇴가 완료되었습니다. 그동안 이용해 주셔서 감사합니다.');
+    } catch(err){
+      console.error('Withdrawal error:', err);
+      toast('탈퇴 처리 중 오류가 발생했습니다: ' + (err.message || '잠시 후 다시 시도해주세요'));
+    }
+  }
+  document.getElementById('withdrawBtn').addEventListener('click', withdrawAccount);
+
+  /* ============ 1:1 고객 문의 / 버그 제보 ============ */
+  document.getElementById('feedbackInquiryBtn').addEventListener('click', function(){
+    var ua = encodeURIComponent((navigator.userAgent || '').slice(0, 80));
+    var mailto = 'mailto:support@ourgoal.app?subject=' + encodeURIComponent('[아워골 문의/버그 제보]') +
+      '&body=' + encodeURIComponent('안녕하세요, 아워골 이용 중 문의/제보 드립니다.\n\n- 내용:\n\n[앱 v1.0.0 / ' + decodeURIComponent(ua) + ']');
+    window.location.href = mailto;
+    toast('이메일 앱을 엽니다 (support@ourgoal.app)');
+  });
+
+  /* ============ 이용약관 / 개인정보처리방침 열람 리스너 ============ */
+  ['viewTermsBtn', 'authTermsLink', 'setTermsLink'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.addEventListener('click', function(e){ e.preventDefault(); showLegalModal('terms'); });
+  });
+  ['viewPrivacyBtn', 'authPrivacyLink', 'setPrivacyLink'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.addEventListener('click', function(e){ e.preventDefault(); showLegalModal('privacy'); });
+  });
+
   /* ============ Enter app ============ */
   async function enterApp(){
     document.getElementById('authScreen').style.display = 'none';
@@ -1755,6 +1853,52 @@
     overlay.onclick = function(e){ if(e.target===overlay) closeModal(); };
   }
   function closeModal(){ document.getElementById('modalOverlay').classList.remove('active'); }
+
+  /* ============ 이용약관 & 개인정보처리방침 모달 ============ */
+  function showLegalModal(initialTab){
+    var curTab = initialTab === 'privacy' ? 'privacy' : 'terms';
+    function getBody(tab){
+      if(tab === 'privacy'){
+        return '<h4 style="margin:4px 0 6px;">아워골 개인정보처리방침</h4>' +
+          '<p class="faint" style="font-size:0.75rem;margin-bottom:12px;">시행일자: 2026년 9월 9일</p>' +
+          '<div style="max-height:55vh;overflow-y:auto;font-size:0.8rem;line-height:1.65;padding-right:4px;color:var(--ink-soft);">' +
+          '<p><b>제1조 (수집하는 개인정보 항목)</b><br>• 회원가입 및 소셜 로그인(카카오/구글/애플): 이메일 주소, 닉네임, 프로필 사진 URL, 소셜 고유 식별자<br>• 서비스 이용: 목표, 마일스톤, 체크인 기록, 피드백 설정, 피드 게시물 및 댓글<br>• 기기 정보: 기기 식별값(익명 sid), 접속 일시</p>' +
+          '<p><b>제2조 (개인정보의 처리 목적)</b><br>• 회원 식별 및 계정 관리<br>• 목표 관리, 체크인 기록 저장 및 맞춤 피드백 제공<br>• 1:1 고객 문의 응대 및 중요 고지사항 전달</p>' +
+          '<p><b>제3조 (보유 및 파기)</b><br>• 원칙적으로 회원 탈퇴 시 모든 개인정보는 지체 없이 즉시 영구 파기됩니다.<br>• 단, 전자상거래법 등 관계 법령에 따른 보존 의무가 있는 경우 법정 기간 동안 안전하게 보관 후 파기합니다.</p>' +
+          '<p><b>제4조 (제3자 제공 및 위탁)</b><br>• 서비스는 이용자의 동의 없이 개인정보를 제3자에게 제공하지 않습니다.<br>• 인프라 위탁: Supabase Inc. (클라우드 DB), Vercel Inc. (호스팅 및 API)</p>' +
+          '<p><b>제5조 (이용자의 권리와 행사)</b><br>• 이용자는 언제든지 [설정] 메뉴의 [회원 탈퇴]를 통해 계정 삭제 및 개인정보 파기를 직접 실행할 수 있습니다.</p>' +
+          '<p><b>제6조 (개인정보 보호책임자)</b><br>• 성명: 아워골 운영팀 · 문의: support@ourgoal.app</p>' +
+          '</div>';
+      } else {
+        return '<h4 style="margin:4px 0 6px;">아워골 서비스 이용약관</h4>' +
+          '<p class="faint" style="font-size:0.75rem;margin-bottom:12px;">시행일자: 2026년 9월 9일</p>' +
+          '<div style="max-height:55vh;overflow-y:auto;font-size:0.8rem;line-height:1.65;padding-right:4px;color:var(--ink-soft);">' +
+          '<p><b>제1조 (목적)</b><br>본 약관은 아워골 서비스의 이용과 관련하여 서비스와 회원 간의 권리, 의무 및 책임사항을 규정합니다.</p>' +
+          '<p><b>제2조 (이용계약)</b><br>회원가입 또는 소셜 로그인을 통해 서비스를 시작함으로써 본 약관 및 개인정보처리방침에 동의한 것으로 간주됩니다.</p>' +
+          '<p><b>제3조 (사용자 콘텐츠 및 커뮤니티 정책)</b><br>• 음란물, 폭력/혐오 표현, 타인 비방, 무단 광고 등 불법·유해 콘텐츠 게시를 엄격히 금지합니다.<br>• 신고가 누적되거나 운영 정책을 위반한 콘텐츠는 사전 통보 없이 즉시 숨김 또는 삭제될 수 있습니다.</p>' +
+          '<p><b>제4조 (계약 해지 및 회원 탈퇴)</b><br>회원은 언제든지 서비스 내 [설정] 메뉴를 통해 회원 탈퇴를 신청할 수 있으며, 탈퇴 시 모든 데이터는 즉시 영구 파기됩니다.</p>' +
+          '<p><b>제5조 (면책 조항)</b><br>서비스는 천재지변, 외부 클라우드 장애 등 불가항력적 사유로 인한 장애에 대하여 책임을 면합니다.</p>' +
+          '</div>';
+      }
+    }
+
+    function render(){
+      openModal(
+        '<div class="auth-tabs" style="margin-bottom:14px;">' +
+          '<button class="auth-tab' + (curTab==='terms'?' active':'') + '" id="legalTabTerms" type="button">이용약관</button>' +
+          '<button class="auth-tab' + (curTab==='privacy'?' active':'') + '" id="legalTabPrivacy" type="button">개인정보처리방침</button>' +
+        '</div>' +
+        '<div id="legalBody">' + getBody(curTab) + '</div>' +
+        '<div class="modal-actions" style="margin-top:14px;"><button class="btn btn-primary btn-block" id="legalCloseBtn" type="button">확인</button></div>',
+        function(sheet){
+          sheet.querySelector('#legalCloseBtn').addEventListener('click', closeModal);
+          sheet.querySelector('#legalTabTerms').addEventListener('click', function(){ curTab='terms'; render(); });
+          sheet.querySelector('#legalTabPrivacy').addEventListener('click', function(){ curTab='privacy'; render(); });
+        }
+      );
+    }
+    render();
+  }
 
   /* ============ Pro 페이월 (가상 결제 성공 처리) ============ */
   function openPaywallModal(triggerReason){
