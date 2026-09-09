@@ -999,3 +999,21 @@
 - **발생한 문제 및 해결**: (1) `npx lighthouse` 최신판(13.x)에는 PWA 카테고리 자체가 없다 → 11.7.1 고정. (2) 실행 종료 시 chrome-launcher `kill` 예외가 찍히지만 리포트는 이미 저장됐고 `runtimeError` 는 null — 결과에 영향 없음. (3) iOS 사파리 "홈 화면에 추가" 후 스탠드얼론 실행·로그인 유지 확인과 Android 홈화면 실행 스크린샷 2장은 실물 기기가 필요해 세션이 할 수 없다 → `[손 필요]` 로 남김(아래).
 - **검증 결과**: 점수 88 은 리포트 JSON `categories.pwa.score = 0.88` 에서 인용(lighthouseVersion 11.7.1, fetchTime 2026-09-08T23:58:22Z). 코드 변경 없음(문서·리포트만 추가), 충돌 마커 0. **미충족**: 홈화면 실행 스크린샷 2장(iOS/Android) — `[손 필요]`: ① iPhone Safari 로 https://ourgoal-app.vercel.app 접속 → 공유 → "홈 화면에 추가" → 홈 아이콘으로 실행해 주소창 없는 화면·로그인 유지 확인 후 스크린샷 ② Android Chrome 같은 주소 → 메뉴 ⋮ → "홈 화면에 추가"(또는 설치 배너) → 실행 후 스크린샷. 다음에 열리는 것: TWA 준비 시 `manifest.json` 아이콘에 `purpose: "maskable"` 아이콘 추가(Lighthouse 유일 감점 항목).
 ---
+
+## [2026-09-10 02:35] 40인 가상 페르소나 자율 활동 시뮬레이터 & 콜드스타트 블렌디드 피드 구축 (TASK-OG-002)
+- **목표**:
+  1. 20대 남녀 40인(남20, 여20)의 다채로운 페르소나(직업, 취미, MBTI, 생활루틴) 데이터셋 구축
+  2. 실제 Supabase 프로덕션과 100% 분리된 격리 샌드박스 DB (sandbox_db.json) 및 자율 시뮬레이터 엔진 구현
+  3. 콜드스타트 피드 및 실사용자-AI 생성물 동적 블렌디드 피드 구현 + 법적·윤리적 투명성 고지 배지 필수 표기:
+     "이는 ai봇 생성물입니다 앱 런칭 초기에 앱 활용을 보여드리기 위함이고 곧 실제 사용자의 제작물로 가득 찰 것입니다"
+  4. 커맨드센터 관제 HUD (`localhost:7777`)에 40인 가상 페르소나 전용 관제 서브뷰 신설 (실시간 피드 스트림, 상위 불편점/개선제안 집계, 1회 수동 틱 및 데몬 제어)
+- **수정/실행 내역**:
+  - `sim/personas.json` 40인 페르소나 데이터셋 구축 (20대 남 20명, 여 20명).
+  - `index.html`: `.ai-badge-notice`, `.feed-ai-tag` CSS 신설, `SIM_PERSONAS` 40인 데이터 탑재, `renderCommFeed`를 콜드스타트 지원 및 동적 블렌디드 피드로 고도화 (AI 생성물 고지 배지 필수 표기).
+  - 커맨드센터: `sim/sandboxDb.js`, `sim/simulator.js`, `hud/server.js` (`/api/sim/state`, `/api/sim/feedback`, `/api/sim/tick`, `/api/sim/toggle`, `/api/sim/feed` 신설), `hud/index.html` 및 `hud/app.js`에 가상유저 관제국 서브뷰 구현.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **82개 전수 통과 0개 실패**.
+  - 커맨드센터 시뮬레이터 틱 실행 및 실시간 피드백 집계 검증 완료 (`localhost:7777/api/sim/state`, `tick`, `feed`).
+  - 실제 Supabase 격리 100% (프로덕션 오염 0건, 로컬 `sandbox_db.json` 격리 운영).
+---
+
