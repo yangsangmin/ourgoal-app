@@ -1378,7 +1378,13 @@
 
   /* ============ 소셜 로그인 (카카오/구글) ============ */
   async function startOAuthLogin(provider){
-    await sb.auth.signInWithOAuth({ provider: provider, options: { redirectTo: window.location.origin } });
+    try {
+      var res = await sb.auth.signInWithOAuth({ provider: provider, options: { redirectTo: window.location.origin } });
+      if(res && res.error) throw res.error;
+    } catch(err){
+      console.warn('OAuth 시작 실패:', err);
+      toast((provider === 'kakao' ? '카카오' : '구글') + ' 로그인 시작에 실패했어요: ' + (err.message || '잠시 후 다시 시도해주세요'));
+    }
   }
   ['landKakaoBtn','authKakaoBtn'].forEach(function(id){
     document.getElementById(id).addEventListener('click', function(){ startOAuthLogin('kakao'); });
@@ -7067,6 +7073,19 @@
 
   /* ============ Boot ============ */
   (async function boot(){
+    try{
+      var hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+      var searchParams = new URLSearchParams(window.location.search);
+      var authErr = hashParams.get('error_description') || searchParams.get('error_description')
+        || hashParams.get('error') || searchParams.get('error');
+      if(authErr){
+        toast('로그인 중 문제가 발생했어요: ' + decodeURIComponent(authErr.replace(/\+/g, ' ')));
+        if(window.history && window.history.replaceState){
+          window.history.replaceState(null, '', window.location.pathname);
+        }
+      }
+    } catch(e){}
+
     try{
       var res = await sb.auth.getSession();
       var session = res.data && res.data.session;
