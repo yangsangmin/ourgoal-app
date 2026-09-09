@@ -75,7 +75,7 @@ const FN_NAMES = [
   'heatmapLevel', 'localNextActionSuggestion',
   'goalAchievement', 'weeklyRecapStats',
   'parseAttribution', 'filterHidden',
-  'uid', 'newId', 'nowISO', 'getSid', 'getAttribution', 'buildCheckinRecord', 'updateAppBadge',
+  'uid', 'newId', 'nowISO', 'getSid', 'getAttribution', 'recordLanding', 'buildCheckinRecord', 'updateAppBadge',
   'calendarAvailable', 'fmtDateLabel', 'filterRecordsByQuery',
   'generateDynamicNotification',
 ];
@@ -105,7 +105,7 @@ const sandboxSrc =
   'localNextActionSuggestion, ' +
   'goalAchievement, weeklyRecapStats, ' +
   'parseAttribution, filterHidden, ' +
-  'uid, newId, nowISO, getSid, getAttribution, ' +
+  'uid, newId, nowISO, getSid, getAttribution, recordLanding, ' +
   'setSearch: function(s){ location.search = s; }, getStorage: function(){ return localStorage; }, ' +
   'buildCheckinRecord, updateAppBadge, ' +
   'getNavigator: function(){ return navigator; }, setNavigator: function(n){ navigator = n; }, ' +
@@ -602,6 +602,125 @@ check('filterRecordsByQuery: 분야(TOPICS 라벨)로도 찾고, 일치하는 �
 
 /* ============ 결과 요약 ============ */
 console.log('');
+/* ── 랜딩 진입 게이트 (AUD-8) ────────────────────────────────────────
+   부트 IIFE 안에 있던 로직을 recordLanding 으로 뺀 뒤 불변식을 고정한다.
+   핵심은 "유입 저장"과 "하루 1회 조회 기록"의 주기가 다르다는 것이다. */
+
+check('recordLanding: 첫 방문이면 유입을 저장하고 landing_view도 기록한다', () => {
+  fns.getStorage().clear();
+  fns.setSearch('');
+  const r = fns.recordLanding('?utm_source=instagram&utm_campaign=launch', '2026-09-08');
+  assert.strictEqual(r.attrib.utm_source, 'instagram');
+  assert.strictEqual(r.attrib.utm_campaign, 'launch');
+  assert.strictEqual(r.viewed, true);
+  assert.strictEqual(fns.getStorage().getItem('ourgoal_lv_day'), '2026-09-08');
+});
+
+check('recordLanding: lv_day가 오늘이어도 ?utm_source 유입은 저장된다 (AUD-8 회귀)', () => {
+  const st = fns.getStorage();
+  st.clear();
+  fns.setSearch('');
+  /* 오늘 이미 랜딩을 본 상태 — 유입 기록은 아직 없다 */
+  st.setItem('ourgoal_lv_day', '2026-09-08');
+  const r = fns.recordLanding('?utm_source=youtube&ref=friend-1', '2026-09-08');
+  /* landing_view 는 하루 1회라 안 남지만, 유입은 반드시 잡혀야 한다 */
+  assert.strictEqual(r.viewed, false, 'landing_view는 하루 1회여야 한다');
+  assert.strictEqual(r.attrib.utm_source, 'youtube', '오늘 이미 방문했어도 유입은 저장되어야 한다');
+  const saved = JSON.parse(st.getItem('ourgoal_attrib'));
+  assert.strictEqual(saved.utm_source, 'youtube');
+  assert.strictEqual(saved.ref, 'friend-1');
+});
+
+check('recordLanding: 첫 유입(first-touch)만 보존하고 나중 유입으로 덮어쓰지 않는다', () => {
+  const st = fns.getStorage();
+  st.clear();
+  fns.setSearch('');
+  fns.recordLanding('?utm_source=instagram', '2026-09-08');
+  const r = fns.recordLanding('?utm_source=naver', '2026-09-09');
+  assert.strictEqual(r.attrib.utm_source, 'instagram', '첫 유입이 유지되어야 한다');
+  assert.strictEqual(JSON.parse(st.getItem('ourgoal_attrib')).utm_source, 'instagram');
+});
+
+check('recordLanding: 유입 파라미터가 없어도 예외 없이 하루 1회 게이트만 동작한다', () => {
+  const st = fns.getStorage();
+  st.clear();
+  fns.setSearch('');
+  const a = fns.recordLanding('', '2026-09-08');
+  assert.deepStrictEqual(a.attrib, {});
+  assert.strictEqual(a.viewed, true);
+  const b = fns.recordLanding('', '2026-09-08');
+  assert.strictEqual(b.viewed, false, '같은 날 두 번째 진입은 기록하지 않는다');
+});
+
+
+
+/* ── docs/sql 문법 검사 (실행계획 순서 37, AUD-7) ──────────────────────
+   SQL 은 사람이 Supabase 콘솔에 붙여넣어야 실행돼서 CI 가 돌려보지 못한다.
+   2026-09-08 에 실제로 42601 로 붙여넣기가 통째로 실패했다.
+   실행은 못 해도 **읽어서 잡을 수 있는 실수**는 병합 전에 잡는다. */
+const { lintSql } = require('./sql-lint');
+
+check('sql-lint: 마지막 문장의 세미콜론 누락을 잡는다', () => {
+  const p = lintSql('create table t (id int);\nalter table t add column x int');
+  assert.ok(p.some(m => m.includes('세미콜론')), '세미콜론 누락을 못 잡았다: ' + JSON.stringify(p));
+});
+
+check('sql-lint: 달러 인용($$) 짝 불일치를 잡는다', () => {
+  const p = lintSql('create function f() returns int language plpgsql as $$ begin return 1; end;');
+  assert.ok(p.some(m => m.includes('달러 인용')), '달러 인용 불일치를 못 잡았다: ' + JSON.stringify(p));
+});
+
+check('sql-lint: create policy 뒤 on <테이블> 누락을 잡는다', () => {
+  const p = lintSql('create policy "p" for select using (true);');
+  assert.ok(p.some(m => m.includes('on <테이블>')), 'on 누락을 못 잡았다: ' + JSON.stringify(p));
+});
+
+check('sql-lint: 괄호 짝 불일치를 잡는다', () => {
+  const p = lintSql('create table t (id int;');
+  assert.ok(p.some(m => m.includes('괄호')), '괄호 불일치를 못 잡았다: ' + JSON.stringify(p));
+});
+
+check('sql-lint: 정상 SQL 은 통과시킨다 (거짓 경보 없음)', () => {
+  const ok = 'create table if not exists t (id int);\n'
+    + 'create policy "p" on t for select using (true);\n'
+    + 'create function f() returns int language plpgsql as $fn$ begin return 1; end; $fn$;\n'
+    + '-- 주석의 세미콜론(;) 과 따옴표는 무시된다\n'
+    + 'insert into t values (1); -- 끝';
+  assert.deepStrictEqual(lintSql(ok), []);
+});
+
+check('docs/sql 의 모든 .sql 파일이 문법 검사를 통과한다', () => {
+  const dir = path.join(__dirname, '..', 'docs', 'sql');
+  const files = fs.readdirSync(dir).filter(f => f.endsWith('.sql'));
+  assert.ok(files.length > 0, 'docs/sql 에 .sql 파일이 없다');
+  const bad = [];
+  for (const f of files) {
+    const problems = lintSql(fs.readFileSync(path.join(dir, f), 'utf8'));
+    if (problems.length) bad.push(f + ': ' + problems.join(' / '));
+  }
+  assert.deepStrictEqual(bad, [], '문법 문제가 있는 SQL 파일: ' + bad.join(' | '));
+});
+
+/* ── 신고 스키마 검증기 판정 (실행계획 순서 24) ─────────────────────────
+ * 네트워크는 타지 않는다. classify() 가 PostgREST 오류 코드를 올바르게 '미적용'으로 읽는지만 본다.
+ * 2026-09-08 에 '완료' 표시된 항목이 실제로는 서버가 없었던 일이 있어, 판정 규칙 자체를 고정한다. */
+const { classify: classifyReportSchema } = require('./verify-report-schema');
+
+check('verify-report-schema: 42703(컬럼 없음)·PGRST205·PGRST202 는 미적용', () => {
+  assert.strictEqual(classifyReportSchema(400, { code: '42703' }).applied, false);
+  assert.strictEqual(classifyReportSchema(404, { code: 'PGRST205' }).applied, false);
+  assert.strictEqual(classifyReportSchema(404, { code: 'PGRST202' }).applied, false);
+});
+
+check('verify-report-schema: 200 과 42501(anon 실행 거부) 은 적용', () => {
+  assert.strictEqual(classifyReportSchema(200, []).applied, true);
+  assert.strictEqual(classifyReportSchema(401, { code: '42501' }).applied, true);
+});
+
+check('verify-report-schema: 예상 밖 응답은 적용/미적용이 아니라 판정불가(null)', () => {
+  assert.strictEqual(classifyReportSchema(500, null).applied, null);
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
