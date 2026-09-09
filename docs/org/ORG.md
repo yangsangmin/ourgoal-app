@@ -29,6 +29,7 @@
    │
    └─ 메타층 ─ 실행층을 평가·개조한다. 실행층 산출물을 직접 고치지 않는다
          auditor 감시자 ─ 작업마다 감사 로그 1행
+         security-auditor 보안 감시자 ─ 5대 보안 검증 (시크릿·RLS·XSS·API·스토리지, PASS/WARNING/BLOCK)
          org-developer 조직개발자 ─ 감사 로그를 읽고 조직을 발전시킨다 (개발 로그 + PR)
 ```
 
@@ -42,7 +43,8 @@
 | 리서처 | `researcher` | 서브에이전트 | 없음(읽기 전용) | haiku→sonnet | 병렬 가능 | 조사 요약·근거 |
 | 전략가 | `strategist` | 서브에이전트 | 노션(백로그·전략 페이지)만 | opus | 1 | 우선순위·설계 판단(8원칙) |
 | 1호직원 | (클라우드 루틴) | GitHub 클라우드 | 브랜치·PR | 루틴 설정값 | 1 | BACKLOG 항목 PR |
-| 감시자 | `auditor` | 서브에이전트(백그라운드) | 노션 감사 로그만 | sonnet | 병렬 가능 | 감사 로그 1행/작업 |
+| 감시자 | `auditor` | 서브에이전트(백그라운드) | 노션 감사 로그만 | sonnet | 병렬 가능 | 감사 로그 1행/작업 (주요 기능 시 가입설명 갱신 및 노출 보고 감시) |
+| 보안 감시자 | `security-auditor` | 서브에이전트 또는 `/security-audit` | 없음(읽기 전용) | sonnet | 병렬 가능 | 보안 감사 리포트 (PASS/WARNING/BLOCK) |
 | 조직개발자 | `org-developer` | 서브에이전트 또는 `/develop-org` | ORG.md·agents·skills·CLAUDE.md §10 (브랜치+PR) + 노션 개발 로그 | opus | 1 | 개발 로그 + 조직 변경 PR |
 
 ## 3. 배정표 (지시 유형 × 규모 → 에이전트 조합)
@@ -60,6 +62,7 @@
 | 백로그 소진(야간) | BACKLOG.md에 항목 적기 → 1호직원 | 동일 | 1호직원 대상 아님(스프린트 제외 규칙) |
 
 - 모든 작업은 마지막에 **auditor 호출**(백그라운드)로 끝난다. 예외 없음.
+- 인증, 결제, DB 스키마(RLS), Vercel Serverless API 변경 등 **보안 민감 작업**은 병합 전 **security-auditor 호출** 필수 (BLOCK 판정 시 해결 전 병합 금지).
 - 구현 서브에이전트는 어떤 경우에도 2개 이상 동시 실행하지 않는다(index.html 단일 파일 충돌).
 
 ### 3-1. 대체 모드 — 커스텀 에이전트가 세션에 로드되지 않았을 때 (DEV-1)
