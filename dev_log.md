@@ -970,4 +970,20 @@
   - `node scripts/smoke-test.js` **79개 통과 0개 실패** (기존 76 + 신규 3). 충돌 마커 0.
   - index.html·CSS 무변경. 기존 기능 삭제 없음.
   - **아직 못 잰 것**: 완료 기준의 끝단(로그인 사용자 3명이 같은 글 신고 → `content_reports` 3행 + `hidden=true` 전환 → 목록에서 사라짐). 계정 3개가 필요해 이 세션은 못 한다. 순서 24 는 '미검증' 유지.
+## [2026-09-08 19:20] BACKLOG.md 를 실행계획 DB 와 동기화 — 1호직원 중복 작업 차단
+- **목표**: 1호직원(6시간 클라우드 루틴)이 이미 끝난 항목 4건을 다음 사이클(21:18 KST)에 다시 구현해 중복 PR 을 내는 것을 막는다.
+- **문제 및 본질(원칙1~2)**: 일감 목록이 둘이다 — 1호직원은 BACKLOG.md, 양비스 자동 소환은 노션 실행계획 DB. 09-08 새벽 1호직원이 낸 PR #74~#77 은 같은 날 양비스 소환 세션이 실행계획 순서 34~37 로 처리한 PR #83·#85·#86·#87 과 완전히 겹쳐 전부 닫혔다. 그런데 BACKLOG.md 의 해당 4줄은 여전히 미체크라 다음 사이클에 같은 일이 세 번째로 반복된다. 원인은 개별 실수가 아니라 원본이 둘인 배선이다.
+- **수정/실행 내역**: BACKLOG.md 4줄 체크(병합 PR 번호·실행계획 순서·닫힌 중복 PR 기록) + 머리말에 "원본은 실행계획 DB, 이 파일은 미러" 한 줄. 코드 무변경.
+- **검증 결과**: 미체크 항목 5→1(남은 1건은 순서 40 접근성 — 사람 판단 보류가 맞음). 실행계획 DB 실시간 조회로 34·35·36·37 이 완료 상태임을 대조(2026-09-08 19:15 KST). 근본 해결(1호직원 프롬프트가 실행계획 DB 를 읽게 하기)은 루틴 편집이 필요해 별도 보고.
+---
+
+## [2026-09-09 09:05] PWA 점검·Lighthouse 측정·배포 경로 확정 (성장 로드맵 T001, D0~2 지인 배포)
+- **목표**: 앱스토어 배포 경로(TWA vs Capacitor)를 감이 아니라 Lighthouse PWA 점수로 결정한다. 기준: 80 이상 TWA, 미만 Capacitor.
+- **수정/실행 내역**:
+  - 점검(변경 없음): `manifest.json` — name/short_name "아워골", start_url `/`, scope `/`, display `standalone`, theme_color `#FF4F64`, 아이콘 192/512 PNG 실재(`icons/icon-192.png` 3,579B · `icons/icon-512.png` 11,548B). `index.html` 24~27행에 manifest 링크·theme-color·apple-touch-icon, 7095~7097행에 `navigator.serviceWorker.register('/sw.js')`. `sw.js` 는 내비게이션 요청을 network-first 로 캐시하고 오프라인이면 `/` 캐시 또는 안내 HTML 을 돌려준다(오프라인 셸 있음). 실 서비스 `https://ourgoal-app.vercel.app/manifest.json`·`/sw.js` 둘 다 200.
+  - 측정: Lighthouse **11.7.1**(PWA 카테고리가 남아 있는 마지막 판 — 12 부터 PWA 카테고리 삭제) 을 잡 임시폴더에 설치해 `https://ourgoal-app.vercel.app/` 를 모바일 기본 프리셋·headless Chrome 으로 `--only-categories=pwa` 실행. 리포트 원본을 `docs/pwa/lighthouse-pwa-2026-09-09.report.{json,html}` 로 보존.
+  - 결과: **PWA 점수 88/100**. 통과 5(installable-manifest · splash-screen · themed-omnibox · content-width · viewport), 실패 1(**maskable-icon** — manifest 아이콘에 `purpose: "maskable"` 없음), 수동 3(cross-browser · page-transitions · each-page-has-url, 채점 제외).
+  - 배포 경로 확정: 88 ≥ 80 → **TWA(Trusted Web Activity) 경로**. Capacitor 는 쓰지 않는다.
+- **발생한 문제 및 해결**: (1) `npx lighthouse` 최신판(13.x)에는 PWA 카테고리 자체가 없다 → 11.7.1 고정. (2) 실행 종료 시 chrome-launcher `kill` 예외가 찍히지만 리포트는 이미 저장됐고 `runtimeError` 는 null — 결과에 영향 없음. (3) iOS 사파리 "홈 화면에 추가" 후 스탠드얼론 실행·로그인 유지 확인과 Android 홈화면 실행 스크린샷 2장은 실물 기기가 필요해 세션이 할 수 없다 → `[손 필요]` 로 남김(아래).
+- **검증 결과**: 점수 88 은 리포트 JSON `categories.pwa.score = 0.88` 에서 인용(lighthouseVersion 11.7.1, fetchTime 2026-09-08T23:58:22Z). 코드 변경 없음(문서·리포트만 추가), 충돌 마커 0. **미충족**: 홈화면 실행 스크린샷 2장(iOS/Android) — `[손 필요]`: ① iPhone Safari 로 https://ourgoal-app.vercel.app 접속 → 공유 → "홈 화면에 추가" → 홈 아이콘으로 실행해 주소창 없는 화면·로그인 유지 확인 후 스크린샷 ② Android Chrome 같은 주소 → 메뉴 ⋮ → "홈 화면에 추가"(또는 설치 배너) → 실행 후 스크린샷. 다음에 열리는 것: TWA 준비 시 `manifest.json` 아이콘에 `purpose: "maskable"` 아이콘 추가(Lighthouse 유일 감점 항목).
 ---
