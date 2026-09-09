@@ -701,6 +701,26 @@ check('docs/sql 의 모든 .sql 파일이 문법 검사를 통과한다', () => 
   assert.deepStrictEqual(bad, [], '문법 문제가 있는 SQL 파일: ' + bad.join(' | '));
 });
 
+/* ── 신고 스키마 검증기 판정 (실행계획 순서 24) ─────────────────────────
+ * 네트워크는 타지 않는다. classify() 가 PostgREST 오류 코드를 올바르게 '미적용'으로 읽는지만 본다.
+ * 2026-09-08 에 '완료' 표시된 항목이 실제로는 서버가 없었던 일이 있어, 판정 규칙 자체를 고정한다. */
+const { classify: classifyReportSchema } = require('./verify-report-schema');
+
+check('verify-report-schema: 42703(컬럼 없음)·PGRST205·PGRST202 는 미적용', () => {
+  assert.strictEqual(classifyReportSchema(400, { code: '42703' }).applied, false);
+  assert.strictEqual(classifyReportSchema(404, { code: 'PGRST205' }).applied, false);
+  assert.strictEqual(classifyReportSchema(404, { code: 'PGRST202' }).applied, false);
+});
+
+check('verify-report-schema: 200 과 42501(anon 실행 거부) 은 적용', () => {
+  assert.strictEqual(classifyReportSchema(200, []).applied, true);
+  assert.strictEqual(classifyReportSchema(401, { code: '42501' }).applied, true);
+});
+
+check('verify-report-schema: 예상 밖 응답은 적용/미적용이 아니라 판정불가(null)', () => {
+  assert.strictEqual(classifyReportSchema(500, null).applied, null);
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
