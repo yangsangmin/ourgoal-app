@@ -731,7 +731,7 @@ check('compliance: docs/legal/privacy.md 및 terms.md 가 존재하고 필수 �
   const priv = fs.readFileSync(privPath, 'utf8');
   assert.ok(priv.includes('개인정보처리방침'), '개인정보처리방침 제목 포함');
   assert.ok(priv.includes('파기'), '파기 절차 포함');
-  assert.ok(priv.includes('support@ourgoal.app'), '보호책임자 연락처 포함');
+  assert.ok(priv.includes('ysm0422@naver.com'), '보호책임자 연락처 포함');
 
   const terms = fs.readFileSync(termsPath, 'utf8');
   assert.ok(terms.includes('이용약관'), '이용약관 제목 포함');
@@ -745,7 +745,7 @@ check('compliance: index.html 에 회원탈퇴·약관·문의·버전 마커가
   assert.ok(html.includes('id="viewTermsBtn"'), '약관 보기 버튼 마커');
   assert.ok(html.includes('id="viewPrivacyBtn"'), '방침 보기 버튼 마커');
   assert.ok(html.includes('v1.0.0'), '앱 버전 v1.0.0 표기');
-  assert.ok(html.includes('support@ourgoal.app'), '고객지원 이메일 표기');
+  assert.ok(html.includes('ysm0422@naver.com'), '고객지원 이메일 표기');
   assert.ok(html.includes('withdrawAccount'), '회원 탈퇴 함수 구현');
   assert.ok(html.includes('showLegalModal'), '약관 모달 뷰어 함수 구현');
 });
