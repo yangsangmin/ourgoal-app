@@ -1012,8 +1012,33 @@
   - `index.html`: `.ai-badge-notice`, `.feed-ai-tag` CSS 신설, `SIM_PERSONAS` 40인 데이터 탑재, `renderCommFeed`를 콜드스타트 지원 및 동적 블렌디드 피드로 고도화 (AI 생성물 고지 배지 필수 표기).
   - 커맨드센터: `sim/sandboxDb.js`, `sim/simulator.js`, `hud/server.js` (`/api/sim/state`, `/api/sim/feedback`, `/api/sim/tick`, `/api/sim/toggle`, `/api/sim/feed` 신설), `hud/index.html` 및 `hud/app.js`에 가상유저 관제국 서브뷰 구현.
 - **검증 결과**:
-  - `node scripts/smoke-test.js` **82개 전수 통과 0개 실패**.
-  - 커맨드센터 시뮬레이터 틱 실행 및 실시간 피드백 집계 검증 완료 (`localhost:7777/api/sim/state`, `tick`, `feed`).
-  - 실제 Supabase 격리 100% (프로덕션 오염 0건, 로컬 `sandbox_db.json` 격리 운영).
+## [2026-09-10 06:15] 40인 가상 페르소나 피드백 고도화 — 상호작용, 자동 발의 백로그, 동적 감쇄 알고리즘 & 온보딩 응원 연동 (TASK-OG-002)
+- **목표**:
+  1. 가상 유저 간 파편화 방지 및 4회 루틴 중 응원/댓글 상호작용(Interactions) 시스템 구축
+  2. 동일 불편점 5회 이상 누적 감지 시 자동으로 개선 백로그 승격 발의(Auto-proposed Backlog)
+  3. 실유저 게시글 증가에 따른 동적 감쇄 알고리즘(Dynamic Decay: 70% → 30% → 5%) 정밀 구현
+  4. 신규 유저 온보딩 "3분 내 맞춤 페르소나 응원(First Cheer)" 시스템 구축 및 로컬 폴백 연동
+  5. 설정 화면 내 `🤖 가상 페르소나 응원 수신 (초기 활성화)` 옵트아웃 토글 신설
+- **수정/실행 내역**:
+  - `command-center/sim/sandboxDb.js`: `interactions` 및 `proposedBacklogs` 컬렉션/CRUD 메서드 추가
+  - `command-center/sim/simulator.js`: `createPersonaInteraction()`, `triggerFirstCheer()`, `checkAndAutoProposeBacklog()` 구현 및 틱 루틴 연동
+  - `command-center/hud/server.js`: `/api/sim/interactions`, `/api/sim/first-cheer`, `/api/sim/proposed-backlogs` 라우트 신설 및 서버 재가동
+  - `command-center/hud/index.html` & `app.js`: 4대 내부 탭(활동/피드백/상호작용/자동발의백로그) 완비 및 실시간 렌더링 카드 연동
+  - `ourgoal-app/index.html`:
+    - `defaultSettings()`에 `virtualCheerEnabled: true` 기본값 설정
+    - `screen-settings` 및 `renderSettingsScreen`에 가상 페르소나 응원 수신 토글 연동
+    - `renderCommFeed`에 실유저 글 수에 따른 70% → 30% → 5% 동적 감쇄 인터리빙 알고리즘 구현
+    - 첫 체크인 시 `triggerFirstCheerResponse()`를 호출하여 맞춤 페르소나 응원 수신 처리
+  - `ourgoal-app/dev_log.md`: 개발 내역 추가
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **82개 전수 통과 (0개 실패)**.
+  - `node -c hud/app.js` 및 `node -c sim/simulator.js` 문법 검증 통과.
+  - Command Center (`http://localhost:7777`) API 호출 검증:
+    - `/api/sim/state` (OK, 40 페르소나, 상호작용/발의 백로그 포함)
+    - `/api/sim/interactions` (OK, 응원/댓글 스트림)
+    - `/api/sim/proposed-backlogs` (OK, 5회 이상 고통점 5건 자동 발의)
+    - `/api/sim/first-cheer` (OK, 사용자 목표 맞춤 페르소나 응원 메시지 반환)
+  - Supabase 프로덕션 DB 오염 0건, 완전 격리 샌드박스 보장.
 ---
+
 

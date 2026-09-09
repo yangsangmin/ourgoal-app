@@ -863,6 +863,15 @@
       </div>
 
       <div class="set-block">
+        <h4>가상 페르소나 & 커뮤니티</h4>
+        <div class="toggle-row">
+          <div class="t">🤖 가상 페르소나 응원 수신 (초기 활성화)</div>
+          <div class="switch" id="virtualCheerSwitch"></div>
+        </div>
+        <p class="faint" style="margin-top:6px;">초기 활동이 외롭지 않도록 20대 가상 유저 페르소나가 첫 체크인을 응원하고 피드에 함께 참여해요. 언제든지 끌 수 있어요.</p>
+      </div>
+
+      <div class="set-block">
         <h4>외부 연동</h4>
         <div class="toggle-row">
           <div class="t">Notion 자동 동기화</div>
@@ -1180,7 +1189,7 @@
 
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
   function defaultSettings(){
-    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", autoUpdateSuggest:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, feedReactions:{}, contentReports:{}, todayMissions:{}, streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] }, hasSeenGuide:false, subscription:{ isPro:false, plan:null, expiresAt:null, billingKey:null } };
+    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", autoUpdateSuggest:true, virtualCheerEnabled:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, feedReactions:{}, contentReports:{}, todayMissions:{}, streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] }, hasSeenGuide:false, subscription:{ isPro:false, plan:null, expiresAt:null, billingKey:null } };
   }
   function loadLocalSettings(userId){
     try{
@@ -2706,11 +2715,15 @@
     return { id: newId(), type: 'note', text: text, startAt: nowISO(), endAt: nowISO(), createdAt: nowISO(), category: goal ? goal.category : null };
   }
   async function saveQuickCheckin(text, goal, source){
+    var isFirst = state.profile.records.length === 0;
     state.profile.records.unshift(buildCheckinRecord(text, goal));
     var xpRes = awardXP(XP_RULES.checkin, '체크인');
     maybeGrantStreakFreeze();
     await saveProfile();
-    track('checkin', { first: state.profile.records.length===1, has_goal: !!goal, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l'), source: source || 'quick' });
+    track('checkin', { first: isFirst, has_goal: !!goal, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l'), source: source || 'quick' });
+    if(isFirst){
+      triggerFirstCheerResponse(goal, text);
+    }
     return xpRes;
   }
 
@@ -2826,12 +2839,16 @@
     var text = t.value.trim();
     if(!text) return;
     var goal = state.profile.goals.find(function(g){ return g.id===state.activeGoalId; }) || state.profile.goals[0];
+    var isFirst = (state.profile.records.length === 0);
     state.profile.records.unshift({ id: newId(), type:'note', text: text, startAt: nowISO(), endAt: nowISO(), createdAt: nowISO(), category: goal ? goal.category : null });
     t.value = '';
     var xpRes = awardXP(XP_RULES.checkin, '체크인');
     var freezeGranted = maybeGrantStreakFreeze();
     await saveProfile();
-    track('checkin', { first: state.profile.records.length===1, has_goal: !!goal, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l') });
+    track('checkin', { first: isFirst, has_goal: !!goal, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l') });
+    if(isFirst){
+      triggerFirstCheerResponse(goal, text);
+    }
     toast(freezeGranted ? '🧊 스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요' : '기록했어요');
     if(navigator.vibrate) navigator.vibrate(10);
     var saveBtn = document.getElementById('captureSave');
@@ -2855,6 +2872,52 @@
     }
     sendToNotion(newRec, fb);
   });
+
+  /* ============ 신규 유저 온보딩: 가상 페르소나 3분 내 맞춤 응원 (TASK-OG-002) ============ */
+  function triggerFirstCheerResponse(goal, checkinText){
+    if(state.profile.settings.virtualCheerEnabled === false) return;
+    var payload = {
+      userGoal: goal ? goal.title : '',
+      userCheckin: checkinText || ''
+    };
+    fetch('http://localhost:7777/api/sim/first-cheer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function(res){
+      if(!res.ok) throw new Error('sim server offline');
+      return res.json();
+    }).then(function(data){
+      if(data && data.cheers && data.cheers.length > 0){
+        scheduleCheerDelivery(data.cheers[0]);
+      }
+    }).catch(function(){
+      // 커맨드센터 서버 미실행 시 로컬 페르소나 매칭 폴백
+      var matched = (typeof SIM_PERSONAS !== 'undefined' && SIM_PERSONAS[0]) || { name:'김도윤', avatar:'도', goal:'목표' };
+      var gTitle = (goal ? goal.title : '').toLowerCase();
+      if(typeof SIM_PERSONAS !== 'undefined'){
+        if(gTitle.indexOf('코딩')!==-1 || gTitle.indexOf('개발')!==-1) matched = SIM_PERSONAS[1];
+        else if(gTitle.indexOf('창업')!==-1 || gTitle.indexOf('사업')!==-1) matched = SIM_PERSONAS[2];
+        else if(gTitle.indexOf('운동')!==-1 || gTitle.indexOf('헬스')!==-1) matched = SIM_PERSONAS[3];
+      }
+      var cheerObj = {
+        personaName: matched.name,
+        avatar: matched.avatar,
+        message: matched.name + '님이 첫 체크인을 격려합니다: "저도 [' + (matched.goal || '목표') + '] 도전 중인데, 함께 꾸준히 완주해봐요! 진심으로 응원합니다 🔥"'
+      };
+      scheduleCheerDelivery(cheerObj);
+    });
+  }
+
+  function scheduleCheerDelivery(cheer){
+    // 신규 온보딩 체감: 4초 뒤 도착하여 유저에게 환영 메시지 전달
+    setTimeout(function(){
+      toast('🎉 ' + (cheer.message || (cheer.personaName + '님이 첫 체크인을 응원합니다!')), 5000);
+      if('Notification' in window && Notification.permission==='granted'){
+        new Notification('아워골 · ' + cheer.personaName + '님의 응원', { body: cheer.message });
+      }
+    }, 4000);
+  }
 
   /* ============ AI feedback (best-effort; provider-aware; local fallback) ============ */
   function milestonesForAI(goal){
@@ -6176,44 +6239,75 @@
     });
     var posts = filterHidden(FEED_POSTS_CACHE);
 
-    // 동적 블렌디드 피드 (콜드스타트 자동 적용 & 실제 유저 + 가상 페르소나 생성물 자연 혼합)
-    var isColdStart = (posts.length === 0 && myItems.length === 0);
+    var virtualCheerEnabled = state.profile.settings.virtualCheerEnabled !== false;
+    var realCombined = myItems.concat(posts.map(function(p){
+      var ex = p.extra || {};
+      return {
+        id: p.id,
+        name: p.display_name,
+        avatar: (p.display_name||'').slice(0,1),
+        goal: p.goal_title,
+        pct: ex.goalPct || 0,
+        action: p.caption,
+        recordText: ex.includeRecord ? ex.recordText : null,
+        feedback: ex.includeFeedback ? ex.feedback : null,
+        milestones: ex.milestones || [],
+        time: timeAgoStr(p.created_at),
+        cheers: p.cheers_count || 0,
+        isMe: p.user_id === state.profile.id,
+        is_ai: false
+      };
+    }));
+
+    // 동적 블렌디드 피드 (동적 감쇄 알고리즘: 실유저 수에 따라 70% → 30% → 5% 자동 전환)
+    var realCount = realCombined.length;
+    var isColdStart = (realCount === 0);
     var blendedItems = [];
-    if(isColdStart){
-      // 콜드스타트: 40인 가상 페르소나 자율 생성물 피드 우선 노출
+
+    if(!virtualCheerEnabled){
+      // 가상 페르소나 수신 옵트아웃 시 실제 유저 게시물만 노출
+      blendedItems = realCombined;
+    } else if(isColdStart){
+      // 콜드스타트: 40인 가상 페르소나 자율 생성물 피드 우선 노출 (100%)
       blendedItems = SIM_PERSONAS.slice(0, 15);
     } else {
-      // 실제 유저 게시물 생성 시: 실제 유저와 가상 페르소나 피드 교차 혼합
-      var realCombined = myItems.concat(posts.map(function(p){
-        var ex = p.extra || {};
-        return {
-          id: p.id,
-          name: p.display_name,
-          avatar: (p.display_name||'').slice(0,1),
-          goal: p.goal_title,
-          pct: ex.goalPct || 0,
-          action: p.caption,
-          recordText: ex.includeRecord ? ex.recordText : null,
-          feedback: ex.includeFeedback ? ex.feedback : null,
-          milestones: ex.milestones || [],
-          time: timeAgoStr(p.created_at),
-          cheers: p.cheers_count || 0,
-          isMe: p.user_id === state.profile.id,
-          is_ai: false
-        };
-      }));
-      var aiPool = SIM_PERSONAS.slice(0, 10);
-      var rI = 0, aI = 0;
-      while(rI < realCombined.length || aI < aiPool.length){
-        if(rI < realCombined.length) blendedItems.push(realCombined[rI++]);
-        if(aI < aiPool.length) blendedItems.push(aiPool[aI++]);
+      // 동적 감쇄 비율 결정 (0~10건: 70% | 10~50건: 30% | 50건 초과: 5%)
+      var aiRatio;
+      if(realCount <= 10){
+        aiRatio = 0.70;
+      } else if(realCount <= 50){
+        aiRatio = 0.30;
+      } else {
+        aiRatio = 0.05;
+      }
+
+      var targetAiCount = Math.max(1, Math.round(realCount * (aiRatio / (1 - aiRatio))));
+      targetAiCount = Math.min(targetAiCount, SIM_PERSONAS.length);
+      var aiPool = SIM_PERSONAS.slice(0, targetAiCount);
+
+      var totalLen = realCount + aiPool.length;
+      var rIdx = 0, aIdx = 0;
+      for(var i = 0; i < totalLen; i++){
+        var currentAiRatio = (i === 0) ? 0 : (aIdx / i);
+        if(aIdx < aiPool.length && (rIdx >= realCount || currentAiRatio < aiRatio)){
+          blendedItems.push(aiPool[aIdx++]);
+        } else if(rIdx < realCount){
+          blendedItems.push(realCombined[rIdx++]);
+        } else if(aIdx < aiPool.length){
+          blendedItems.push(aiPool[aIdx++]);
+        }
       }
     }
 
+    var stageLabel = !virtualCheerEnabled ? ' · 실시간 활동 피드' :
+      (isColdStart ? ' · 🤖 초기 콜드스타트 가이드 (AI 100%)' :
+      (realCount <= 10 ? ' · 🤖 초기 활력 지원 (AI 70% 블렌디드)' :
+      (realCount <= 50 ? ' · 👥 성장 전환기 (AI 30% 블렌디드)' : ' · 🌟 실유저 중심 (AI 5% 완충)')));
+
     body.innerHTML = templatesHtml() +
-      '<p class="faint" style="margin:0 0 14px;">같은 목표를 향해 가는 사람들' +
-      (isColdStart ? ' · 🤖 초기 활용 가이드용 AI 페르소나 피드' : ' · 실시간 활동 피드') +
+      '<p class="faint" style="margin:0 0 14px;">같은 목표를 향해 가는 사람들' + stageLabel +
       (hiddenCount ? ' · 🔒 나만 보기 '+hiddenCount+'개는 피드에 노출되지 않아요' : '') + '</p>' +
+      (blendedItems.length === 0 ? '<div class="faint" style="text-align:center;padding:40px 0;">아직 공유된 피드가 없어요. 첫 목표나 체크인을 공유해보세요!</div>' : '') +
       blendedItems.map(function(it){
         var reacted = !!state.profile.settings.feedReactions[it.id];
         var isMe = it.me || it.isMe;
@@ -6987,6 +7081,18 @@
     };
 
     var settings = state.profile.settings;
+
+    var cheerSw = document.getElementById('virtualCheerSwitch');
+    if(cheerSw){
+      var isCheerOn = settings.virtualCheerEnabled !== false;
+      cheerSw.className = 'switch' + (isCheerOn ? ' on' : '');
+      a11ySwitch(cheerSw, isCheerOn, '가상 페르소나 응원 수신');
+      cheerSw.onclick = async function(){
+        settings.virtualCheerEnabled = !isCheerOn;
+        await saveProfile();
+        renderSettingsScreen();
+      };
+    }
 
     var notionSw = document.getElementById('notionSwitch');
     notionSw.className = 'switch' + (settings.notionSync ? ' on' : '');
