@@ -888,6 +888,13 @@
 - **검증 결과**: `git diff --numstat` 28줄 추가·**0줄 삭제**, 추가된 줄 중 `---`·빈 줄이 아닌 것 **0건**(본문 무변경 기계 검증). 구조 재검사 87개 항목·구분선 누락 **0건**(복구 전 14건), 제목 중복 0·본문 없는 항목 0. `git check-attr merge dev_log.md` → `unspecified`(union 해제 확인). `node scripts/smoke-test.js` 66/66 통과(회귀 없음), 충돌 마커 0건. 앱 코드(index.html) 무변경.
 ---
 
+## [2026-09-08 06:17] 1호직원 사이클 — 새로 착수할 항목 없음(전량 이전 주기 PR 대기 중)
+- **사이클 계획(8원칙)**: 시작 시각 기록 후 `git fetch/pull origin main`으로 최신화(146개 커밋 반영, `main`이 이전 세션 detached HEAD보다 앞서 있었음). `grep '^- \[ \]' BACKLOG.md`로 미완료 항목 전수 확인 — 5건.
+- **문제 및 본질(원칙1~2)**: 5건 중 1건("접근성 점검")은 2026-09-04/07에 이미 "전역 팔레트 변경은 사람 판단 필요"로 결론 나 고대비 모드로 부분 해결된 상태라 이번에도 사람 판단 대기. 나머지 4건("페이월 캘린더 문구 정직화", "랜딩 부트 블록 함수 분리", "숨김 게시물·댓글 REST 차단", "docs/sql 문법 검사 스모크 추가")은 `gh`/GitHub MCP로 열린 PR을 조회한 결과 이미 각각 PR #74·#75·#76·#77로 제출돼 병합 대기 중임을 확인(브랜치명 `auto/2026-09-08-*`, base main, 아직 미병합). CLAUDE.md 6번 "이전 주기 PR이 아직 열려 있으면 건드리지 않고 다음 항목으로 넘어간다" 규칙에 따라 4건 모두 스킵 대상.
+- **해결 방식 및 타당성(원칙3~4)**: BACKLOG.md의 실행 가능한 미완료 항목이 사실상 소진된 상태(1건은 사람 판단 대기, 4건은 이미 PR 제출·병합 대기)이므로 새 항목에 착수하지 않고 사이클을 종료한다. 스프린트 상태(`docs/sprint/STATUS.md`)는 "완료"라 6번의 스프린트 제외 규칙은 이번 판단과 무관함을 확인.
+- **구현 절차 및 검증(원칙5~7)**: 코드 변경 없음(조사만 수행). 열린 PR 목록(`mcp__github__list_pull_requests`, state=open, base=main): #74~#77(BACKLOG 관련, 위 4건), #78~#81(조직개발자 세션의 ORG.md 변경 PR, 6번 루틴과 무관해 손대지 않음).
+- **재검증 내역(원칙8)**: 막힌 지점 없음.
+- **검증 결과**: 앱 코드 무변경이므로 스모크 테스트 해당 없음. `git status` 클린 확인.
 ## [2026-09-08 시점] 미실행 Supabase SQL 2건 실행 및 실서버 검증
 - **목표**: 코드는 배포됐지만 DB 스키마가 없어 동작하지 않던 3개 기능(팀 댓글, 소통 피드 응원 카운트, 체크인 분야 저장)을 살린다.
 - **수정/실행 내역**:
@@ -956,6 +963,20 @@
   - **실행 자체는 못 한다** — 로컬에 service role key 도 DB 접속 문자열도 없고, PostREST 로는 DDL 이 안 된다. 상민님이 Supabase SQL Editor 에 1회 붙여넣어야 완료된다. 그래서 순서 36 은 '미검증'으로 둔다.
 ---
 
+## [2026-09-08 18:58] 신고·자동 숨김 서버 스키마 적용 확인 + 재측정 스크립트 (실행계획 순서 24)
+- **목표**: 순서 24 는 '완료'로 표시돼 있었지만 서버 스키마가 없어 신고 버튼이 실패 토스트만 띄웠다. "SQL 실행했다"를 말이 아니라 응답 코드로 확인하고, 그 측정을 다음 세션이 다시 손으로 curl 하지 않게 스크립트로 고정한다.
+- **수정/실행 내역**:
+  - 착수 시 REST 재측정(18:52 KST): `feed_posts?select=hidden` 200, `team_comments?select=hidden` 200, `content_reports` 200, `rpc/report_content` 익명 호출 401 `42501 permission denied` — 18:43 의 400/400/404/404 에서 바뀌었다. 상민님이 SQL Editor 에서 `docs/sql/2026-09-08-hidden-rls.sql` 을 실행한 결과(노션 비고 기록).
+  - 세션이 직접 SQL 을 넣으려고 Supabase SQL Editor 를 브라우저로 열었으나(로그인 세션은 살아 있었음) Claude Code 자동 모드 분류기가 편집기 입력을 차단해 실행하지 못했다. 재시도하지 않았다(CLAUDE.md 6번).
+  - `scripts/verify-report-schema.js` 신설. anon 키로 4항목(hidden 컬럼 2·content_reports·report_content)을 재고 PostgREST 오류 코드(42703·PGRST205·PGRST202)로 미적용을 판정한다. 42501 은 "함수 존재 + anon 차단 = 설계대로"로 적용 판정. 종료코드 0/1/2.
+  - select 정책이 숨긴 행을 실제로 거르는지는 anon 키로 못 잰다 → 스크립트가 `측정불가` 로 표시한다. 0 으로 채우지 않는다.
+  - `scripts/smoke-test.js` 에 `classify()` 단위 테스트 3건 추가(네트워크 없음).
+- **발생한 문제 및 해결**: 해당 없음(분류기 차단은 우회하지 않고 측정으로 대체).
+- **검증 결과**:
+  - `node scripts/verify-report-schema.js` → 4항목 모두 `적용`, 종료코드 0.
+  - `node scripts/smoke-test.js` **79개 통과 0개 실패** (기존 76 + 신규 3). 충돌 마커 0.
+  - index.html·CSS 무변경. 기존 기능 삭제 없음.
+  - **아직 못 잰 것**: 완료 기준의 끝단(로그인 사용자 3명이 같은 글 신고 → `content_reports` 3행 + `hidden=true` 전환 → 목록에서 사라짐). 계정 3개가 필요해 이 세션은 못 한다. 순서 24 는 '미검증' 유지.
 ## [2026-09-08 19:20] BACKLOG.md 를 실행계획 DB 와 동기화 — 1호직원 중복 작업 차단
 - **목표**: 1호직원(6시간 클라우드 루틴)이 이미 끝난 항목 4건을 다음 사이클(21:18 KST)에 다시 구현해 중복 PR 을 내는 것을 막는다.
 - **문제 및 본질(원칙1~2)**: 일감 목록이 둘이다 — 1호직원은 BACKLOG.md, 양비스 자동 소환은 노션 실행계획 DB. 09-08 새벽 1호직원이 낸 PR #74~#77 은 같은 날 양비스 소환 세션이 실행계획 순서 34~37 로 처리한 PR #83·#85·#86·#87 과 완전히 겹쳐 전부 닫혔다. 그런데 BACKLOG.md 의 해당 4줄은 여전히 미체크라 다음 사이클에 같은 일이 세 번째로 반복된다. 원인은 개별 실수가 아니라 원본이 둘인 배선이다.
@@ -968,4 +989,13 @@
 - **수정/실행 내역**: BACKLOG.md 전수 확인 — `- [ ]` 항목은 "접근성 점검" 1건뿐이고, 이 항목은 2026-09-04/07에 이미 "전역 팔레트를 어둡게 하면 3단계 텍스트 위계·브랜드 톤이 달라져 사람 판단이 필요하다"고 결론 내고 `prefers-contrast: more` 보정(PR #68)으로 부분 해결까지 마친 뒤 사람 판단 대기로 남겨둔 항목이다. 새로 코드로 착수할 미완료 항목이 없어 코드 변경 없음.
 - **발생한 문제 및 해결**: `docs/sprint/STATUS.md`의 스프린트 상태가 `완료`라 6번의 스프린트 제외 규칙과도 무관함을 확인. `mcp__github__list_pull_requests`(state=open)로 열린 PR 9건(#78~#81 조직개발자, #82 이전 사이클의 동일 보고, #88·#89·#93 다른 세션 작업)을 확인했으나 전부 이번 루틴이 건드릴 대상이 아니라 CLAUDE.md 6번 "이전 주기 PR은 건드리지 않는다" 규칙대로 그대로 두었다.
 - **검증 결과**: 앱 코드 변경이 없어 스모크 테스트 대상 아님. `git status` 클린 확인. BACKLOG.md 미체크 항목 수 1건(변동 없음, 그대로가 맞음).
+## [2026-09-09 09:05] PWA 점검·Lighthouse 측정·배포 경로 확정 (성장 로드맵 T001, D0~2 지인 배포)
+- **목표**: 앱스토어 배포 경로(TWA vs Capacitor)를 감이 아니라 Lighthouse PWA 점수로 결정한다. 기준: 80 이상 TWA, 미만 Capacitor.
+- **수정/실행 내역**:
+  - 점검(변경 없음): `manifest.json` — name/short_name "아워골", start_url `/`, scope `/`, display `standalone`, theme_color `#FF4F64`, 아이콘 192/512 PNG 실재(`icons/icon-192.png` 3,579B · `icons/icon-512.png` 11,548B). `index.html` 24~27행에 manifest 링크·theme-color·apple-touch-icon, 7095~7097행에 `navigator.serviceWorker.register('/sw.js')`. `sw.js` 는 내비게이션 요청을 network-first 로 캐시하고 오프라인이면 `/` 캐시 또는 안내 HTML 을 돌려준다(오프라인 셸 있음). 실 서비스 `https://ourgoal-app.vercel.app/manifest.json`·`/sw.js` 둘 다 200.
+  - 측정: Lighthouse **11.7.1**(PWA 카테고리가 남아 있는 마지막 판 — 12 부터 PWA 카테고리 삭제) 을 잡 임시폴더에 설치해 `https://ourgoal-app.vercel.app/` 를 모바일 기본 프리셋·headless Chrome 으로 `--only-categories=pwa` 실행. 리포트 원본을 `docs/pwa/lighthouse-pwa-2026-09-09.report.{json,html}` 로 보존.
+  - 결과: **PWA 점수 88/100**. 통과 5(installable-manifest · splash-screen · themed-omnibox · content-width · viewport), 실패 1(**maskable-icon** — manifest 아이콘에 `purpose: "maskable"` 없음), 수동 3(cross-browser · page-transitions · each-page-has-url, 채점 제외).
+  - 배포 경로 확정: 88 ≥ 80 → **TWA(Trusted Web Activity) 경로**. Capacitor 는 쓰지 않는다.
+- **발생한 문제 및 해결**: (1) `npx lighthouse` 최신판(13.x)에는 PWA 카테고리 자체가 없다 → 11.7.1 고정. (2) 실행 종료 시 chrome-launcher `kill` 예외가 찍히지만 리포트는 이미 저장됐고 `runtimeError` 는 null — 결과에 영향 없음. (3) iOS 사파리 "홈 화면에 추가" 후 스탠드얼론 실행·로그인 유지 확인과 Android 홈화면 실행 스크린샷 2장은 실물 기기가 필요해 세션이 할 수 없다 → `[손 필요]` 로 남김(아래).
+- **검증 결과**: 점수 88 은 리포트 JSON `categories.pwa.score = 0.88` 에서 인용(lighthouseVersion 11.7.1, fetchTime 2026-09-08T23:58:22Z). 코드 변경 없음(문서·리포트만 추가), 충돌 마커 0. **미충족**: 홈화면 실행 스크린샷 2장(iOS/Android) — `[손 필요]`: ① iPhone Safari 로 https://ourgoal-app.vercel.app 접속 → 공유 → "홈 화면에 추가" → 홈 아이콘으로 실행해 주소창 없는 화면·로그인 유지 확인 후 스크린샷 ② Android Chrome 같은 주소 → 메뉴 ⋮ → "홈 화면에 추가"(또는 설치 배너) → 실행 후 스크린샷. 다음에 열리는 것: TWA 준비 시 `manifest.json` 아이콘에 `purpose: "maskable"` 아이콘 추가(Lighthouse 유일 감점 항목).
 ---
