@@ -6308,9 +6308,9 @@
         '<div style="font-weight:800;color:var(--violet);margin-bottom:2px;display:flex;align-items:center;gap:4px;">' +
           '<span>📱 아이폰 앱으로 홈 화면에 추가</span>' +
         '</div>' +
-        '사파리 하단 <b>공유 버튼(⎋)</b> 누른 뒤 <b>[홈 화면에 추가]</b>를 누르면 주소창 없는 전체화면과 푸시 알림을 지원해요!' +
+        '<span>사파리 하단 <b>공유 버튼(⎋)</b> 클릭 후 <b>[홈 화면에 추가]</b>를 누르면 전체화면 앱으로 바로 즐길 수 있습니다.</span>' +
       '</div>' +
-      '<button type="button" id="iosPwaDismissBtn" aria-label="닫기" style="background:none;border:none;color:var(--ink-faint);font-size:1.1rem;cursor:pointer;padding:4px 6px;line-height:1;">✕</button>' +
+      '<button id="iosPwaDismissBtn" type="button" style="background:none;border:none;color:var(--ink-muted);font-size:1.1rem;cursor:pointer;padding:4px;" aria-label="닫기">✕</button>' +
     '</div>';
     var closeBtn = document.getElementById('iosPwaDismissBtn');
     if(closeBtn){
@@ -6319,6 +6319,69 @@
         slot.innerHTML = '';
       };
     }
+  }
+
+  /* ============ 신규 유저 10초 활성화: 갓생 스타터 목표 템플릿 ============ */
+  var STARTER_GOAL_TEMPLATES = {
+    workout: {
+      title: '주 3회 헬스 & 기초체력 기르기',
+      category: 'workout',
+      milestones: [
+        { title: '운동 전후 스트레칭 5분', status: 'todo' },
+        { title: '웨이트 또는 유산소 30분 집중', status: 'todo' },
+        { title: '운동 후 단백질 및 수분 챙기기', status: 'todo' }
+      ]
+    },
+    running: {
+      title: '매일 3km 러닝 & 심폐지구력',
+      category: 'workout',
+      milestones: [
+        { title: '러닝화 신고 밖으로 나가기', status: 'todo' },
+        { title: '3km 페이스 유지하며 완주', status: 'todo' },
+        { title: '러닝 후 쿨다운 걷기 및 수분 보충', status: 'todo' }
+      ]
+    },
+    study: {
+      title: '매일 1시간 몰입 & 자격증 합격',
+      category: 'study',
+      milestones: [
+        { title: '스마트폰 치우고 1시간 집중 몰입', status: 'todo' },
+        { title: '기출문제 1회분 풀고 채점', status: 'todo' },
+        { title: '핵심 오답 정리 및 내일 복습 체크', status: 'todo' }
+      ]
+    },
+    reading: {
+      title: '하루 15분 독서 & 지적 성장',
+      category: 'reading',
+      milestones: [
+        { title: '잠들기 전 책 15분 읽기', status: 'todo' },
+        { title: '마음에 와닿는 문장 1줄 기록', status: 'todo' },
+        { title: '이번 주 1권 완독하기', status: 'todo' }
+      ]
+    }
+  };
+
+  function quickCreateStarterGoal(starterKey){
+    var tmpl = STARTER_GOAL_TEMPLATES[starterKey] || STARTER_GOAL_TEMPLATES.workout;
+    var gId = newId();
+    var ms = tmpl.milestones.map(function(m){
+      return {
+        id: newId(),
+        title: m.title,
+        status: m.status,
+        dueDate: null,
+        tasks: []
+      };
+    });
+    return {
+      id: gId,
+      title: tmpl.title,
+      category: tmpl.category,
+      dueDate: null,
+      milestones: ms,
+      createdAt: nowISO(),
+      visibility: 'private'
+    };
   }
 
   /* ============ RENDER: HOME ============ */
@@ -6342,7 +6405,52 @@
     var goalOrder = (state.profile.settings && state.profile.settings.goalOrder) || [];
     var goals = sortGoalsByOrder(rawGoals, goalOrder);
     if(!goals.length){
-      wrap.innerHTML = '<div class="empty-goal">아직 목표가 없어요.<br>첫 목표를 만들어보세요.</div>';
+      wrap.innerHTML = '<div class="empty-goal-starter card" style="text-align:center;padding:22px 18px;background:linear-gradient(160deg,#fff 0%,#FFF9F5 100%);border:1.5px dashed var(--red-line);border-radius:18px;">' +
+        '<div style="font-size:2rem;margin-bottom:6px;">🚀</div>' +
+        '<h4 style="font-size:1.05rem;font-weight:800;color:var(--ink);margin:0 0 4px;">아직 목표가 없으신가요?</h4>' +
+        '<p class="muted" style="font-size:0.82rem;margin:0 0 14px;">고민할 필요 없이 가장 인기 있는 갓생 목표를 1초 만에 시작해보세요!</p>' +
+        '<div class="starter-goals-grid" style="display:flex;flex-direction:column;gap:8px;">' +
+          '<button type="button" class="btn btn-ghost btn-sm starter-goal-btn" data-starter="workout" style="justify-content:flex-start;padding:10px 14px;border-radius:12px;font-size:0.84rem;text-align:left;">' +
+            '<span style="font-size:1.2rem;margin-right:6px;">💪</span>' +
+            '<div><b>주 3회 헬스 & 기초체력 기르기</b><br><span style="font-size:0.72rem;color:var(--ink-faint);">스트레칭 · 30분 운동 · 단백질 섭취</span></div>' +
+          '</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm starter-goal-btn" data-starter="running" style="justify-content:flex-start;padding:10px 14px;border-radius:12px;font-size:0.84rem;text-align:left;">' +
+            '<span style="font-size:1.2rem;margin-right:6px;">🏃</span>' +
+            '<div><b>매일 3km 러닝 & 심폐지구력</b><br><span style="font-size:0.72rem;color:var(--ink-faint);">가벼운 조깅 · 3km 완주 · 수분 보충</span></div>' +
+          '</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm starter-goal-btn" data-starter="study" style="justify-content:flex-start;padding:10px 14px;border-radius:12px;font-size:0.84rem;text-align:left;">' +
+            '<span style="font-size:1.2rem;margin-right:6px;">📚</span>' +
+            '<div><b>매일 1시간 몰입 & 자격증 합격</b><br><span style="font-size:0.72rem;color:var(--ink-faint);">개념 1단원 · 기출문제 풀이 · 오답 복습</span></div>' +
+          '</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm starter-goal-btn" data-starter="reading" style="justify-content:flex-start;padding:10px 14px;border-radius:12px;font-size:0.84rem;text-align:left;">' +
+            '<span style="font-size:1.2rem;margin-right:6px;">📖</span>' +
+            '<div><b>하루 15분 독서 & 지적 성장</b><br><span style="font-size:0.72rem;color:var(--ink-faint);">책 15분 읽기 · 인상 깊은 한 줄 메모</span></div>' +
+          '</button>' +
+        '</div>' +
+        '<button class="btn btn-primary btn-sm" id="emptyAddCustomGoalBtn" type="button" style="width:100%;margin-top:14px;padding:11px 16px;border-radius:12px;font-weight:800;">+ 내가 직접 새 목표 만들기</button>' +
+      '</div>';
+
+      wrap.querySelectorAll('.starter-goal-btn').forEach(function(btn){
+        btn.onclick = async function(){
+          var key = btn.dataset.starter;
+          var newG = quickCreateStarterGoal(key);
+          state.profile.goals.push(newG);
+          state.activeGoalId = newG.id;
+          await saveProfile();
+          renderAll();
+          triggerHaptic(25);
+          burstConfetti(window.innerWidth/2, window.innerHeight/3, 20);
+          toast('🎉 첫 갓생 목표가 시작되었어요! 오늘 1줄 기록을 남겨보세요.');
+        };
+      });
+
+      var customAddBtn = wrap.querySelector('#emptyAddCustomGoalBtn');
+      if(customAddBtn){
+        customAddBtn.onclick = function(){
+          var addBtn = document.getElementById('homeAddGoal');
+          if(addBtn) addBtn.click();
+        };
+      }
       return;
     }
     wrap.innerHTML = hybridDashboardHtml(goals) + goals.map(function(g, gIdx){
@@ -6533,35 +6641,271 @@
       + '</div>';
   }
 
+  /* ============ MZ 9:16 인스타 스토리 고해상도 그래픽 캔버스 생성기 (Growth & Viral Loop) ============ */
+  function generateMzStoryCanvas(options){
+    options = options || {};
+    var streak = Number(options.streak) || 0;
+    var userName = String(options.userName || '아워골 메이커');
+    var quote = String(options.quote || '목표를 향해 한 걸음씩, 꾸준함이 비범함을 만든다 ✨');
+    var dateStr = options.dateStr || (function(){
+      var d = new Date();
+      var m = String(d.getMonth() + 1).padStart(2, '0');
+      var day = String(d.getDate()).padStart(2, '0');
+      return d.getFullYear() + '.' + m + '.' + day;
+    })();
+
+    var canvas = options.canvas || (typeof document !== 'undefined' && document.createElement ? document.createElement('canvas') : null);
+    if(!canvas) return null;
+    canvas.width = 720;
+    canvas.height = 1280;
+    var ctx = canvas.getContext ? canvas.getContext('2d') : null;
+    if(!ctx) return canvas;
+
+    // 1. 다크 프리미엄 배경 그라디언트
+    var bgGrad = ctx.createLinearGradient(0, 0, 720, 1280);
+    bgGrad.addColorStop(0, '#0E0C18');
+    bgGrad.addColorStop(0.5, '#1B142E');
+    bgGrad.addColorStop(1, '#0C0A14');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, 720, 1280);
+
+    // 2. 앰비언트 글로우 (보라 + 코랄)
+    try {
+      var glow1 = ctx.createRadialGradient(580, 220, 20, 580, 220, 420);
+      glow1.addColorStop(0, 'rgba(108, 92, 231, 0.38)');
+      glow1.addColorStop(1, 'rgba(108, 92, 231, 0)');
+      ctx.fillStyle = glow1;
+      ctx.fillRect(0, 0, 720, 1280);
+
+      var glow2 = ctx.createRadialGradient(140, 960, 20, 140, 960, 460);
+      glow2.addColorStop(0, 'rgba(255, 107, 74, 0.32)');
+      glow2.addColorStop(1, 'rgba(255, 107, 74, 0)');
+      ctx.fillStyle = glow2;
+      ctx.fillRect(0, 0, 720, 1280);
+    } catch(e){}
+
+    // 3. 카드 외곽 테두리 (네온 라운드 프레임)
+    var fx = 36, fy = 48, fw = 648, fh = 1184, r = 32;
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(fx + r, fy);
+    ctx.lineTo(fx + fw - r, fy);
+    ctx.quadraticCurveTo(fx + fw, fy, fx + fw, fy + r);
+    ctx.lineTo(fx + fw, fy + fh - r);
+    ctx.quadraticCurveTo(fx + fw, fy + fh, fx + fw - r, fy + fh);
+    ctx.lineTo(fx + r, fy + fh);
+    ctx.quadraticCurveTo(fx, fy + fh, fx, fy + fh - r);
+    ctx.lineTo(fx, fy + r);
+    ctx.quadraticCurveTo(fx, fy, fx + r, fy);
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // 4. 헤더 엠블럼 & 날짜
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#FF6B4A';
+    ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillText('OUR GOAL · 갓생 아카이브', 360, 130);
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+    ctx.font = '17px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillText(dateStr + ' MISSION RECORD', 360, 168);
+
+    // 5. 스트릭 메인 불꽃 & 일수
+    ctx.font = '96px -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", sans-serif';
+    ctx.fillText('🔥', 360, 330);
+
+    ctx.font = '900 104px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText(String(streak), 360, 460);
+
+    ctx.font = 'bold 30px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    try {
+      var textGrad = ctx.createLinearGradient(220, 500, 500, 500);
+      textGrad.addColorStop(0, '#FF8A65');
+      textGrad.addColorStop(1, '#FFD54F');
+      ctx.fillStyle = textGrad;
+    } catch(e){
+      ctx.fillStyle = '#FFD54F';
+    }
+    ctx.fillText('DAYS STREAK', 360, 510);
+
+    ctx.font = '21px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
+    ctx.fillText('매일매일 쌓아올린 흔들리지 않는 몰입', 360, 555);
+
+    // 6. 오늘의 한 줄 기록 박스 (Frosted Glass 컨테이너)
+    var qx = 72, qy = 635, qw = 576, qh = 320, qr = 22;
+    ctx.beginPath();
+    ctx.moveTo(qx + qr, qy);
+    ctx.lineTo(qx + qw - qr, qy);
+    ctx.quadraticCurveTo(qx + qw, qy, qx + qw, qy + qr);
+    ctx.lineTo(qx + qw, qy + qh - qr);
+    ctx.quadraticCurveTo(qx + qw, qy + qh, qx + qw - qr, qy + qh);
+    ctx.lineTo(qx + qr, qy + qh);
+    ctx.quadraticCurveTo(qx, qy + qh, qx, qy + qh - qr);
+    ctx.lineTo(qx, qy + qr);
+    ctx.quadraticCurveTo(qx, qy, qx + qr, qy);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.textAlign = 'left';
+    ctx.font = 'bold 23px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = '#FF6B4A';
+    ctx.fillText('⚡ ' + userName + ' 님의 오늘 기록', 106, 695);
+
+    ctx.font = '25px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = '#F5F5FA';
+    var cleanQuote = quote.replace(/^["']|["']$/g, '').trim();
+    var words = cleanQuote.split('');
+    var line = '';
+    var startY = 750;
+    var maxCharsPerLine = 19;
+    var lines = [];
+    for(var w = 0; w < words.length; w++){
+      line += words[w];
+      if(line.length >= maxCharsPerLine || w === words.length - 1){
+        lines.push(line);
+        line = '';
+        if(lines.length >= 3) break;
+      }
+    }
+    if(!lines.length) lines.push('오늘의 몰입 완료');
+    for(var li = 0; li < lines.length; li++){
+      var prefix = (li === 0) ? '"' : ' ';
+      var suffix = (li === lines.length - 1 || li === 2) ? '"' : '';
+      ctx.fillText(prefix + lines[li] + suffix, 106, startY + (li * 40));
+    }
+
+    // 태그
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = 'rgba(108, 92, 231, 0.95)';
+    ctx.fillText('#오운완  #아워골  #갓생  #목표완주  #100일루틴', 360, 905);
+
+    // 7. 하단 워터마크 및 앱 유입
+    ctx.font = 'bold 26px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillText('OURGOAL', 360, 1080);
+
+    ctx.font = '17px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+    ctx.fillText('함께 달리는 나만의 목표 루틴 아카이브', 360, 1115);
+
+    ctx.font = 'bold 18px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = '#FF6B4A';
+    ctx.fillText('ourgoal-app.vercel.app', 360, 1148);
+
+    ctx.restore();
+    return canvas;
+  }
+
   function openMzShareCardModal(){
     triggerHaptic(20);
     var streak = computeStreakDays();
     var userName = state.profile.name || '아워골 메이커';
     var nowK = dateKey(new Date());
     var todayRec = (state.profile.records || []).find(function(r){ return r && r.startAt && dateKey(r.startAt) === nowK; });
-    var quote = todayRec ? ('"' + escapeHtml(todayRec.text ? todayRec.text.slice(0, 60) : '오늘의 몰입 완료') + '"') : '"목표를 향해 한 걸음씩, 꾸준함이 비범함을 만든다 ✨"';
+    var quote = todayRec ? (todayRec.text ? todayRec.text.slice(0, 60) : '오늘의 몰입 완료') : '목표를 향해 한 걸음씩, 꾸준함이 비범함을 만든다 ✨';
 
     openModal(
-      '<h3>✨ 오늘의 MZ 성취 인증 카드</h3>'
-      + '<p class="faint" style="margin:-8px 0 14px;">인스타그램 스토리, 스레드, 카카오톡에 오늘의 성취를 세련되게 공유해보세요.</p>'
-      + '<div class="mz-card-preview" id="mzShareCardCanvas">'
-      + '  <div style="font-size:0.72rem;letter-spacing:0.12em;font-weight:800;color:var(--red);text-transform:uppercase;margin-bottom:6px;">OURGOAL DAILY ACHIEVER</div>'
-      + '  <div style="font-size:2rem;margin-bottom:4px;"><span class="streak-flame-pulse">🔥</span> ' + streak + ' DAY STREAK</div>'
-      + '  <div style="font-size:1.05rem;font-weight:800;color:var(--ink);margin:8px 0;">' + escapeHtml(userName) + ' 님의 몰입 인증</div>'
-      + '  <div style="font-size:0.86rem;color:var(--ink-soft);font-style:italic;margin:12px 0 16px;line-height:1.5;">' + quote + '</div>'
-      + '  <div style="display:inline-block;padding:4px 12px;border-radius:999px;background:rgba(255,107,74,0.12);color:var(--red);font-size:0.75rem;font-weight:700;">#오운완 #자기계발 #아워골 #성장기록</div>'
+      '<h3>✨ 오늘의 MZ 갓생 스토리 카드</h3>'
+      + '<p class="faint" style="margin:-8px 0 14px;">인스타그램 스토리(9:16) 및 카카오톡에 오늘의 성취를 고화질 그래픽 카드로 인증하세요.</p>'
+      + '<div class="mz-card-preview" id="mzShareCardCanvas" style="padding:14px;background:linear-gradient(145deg,#12101F 0%,#1B152B 100%);border:1.5px solid rgba(255,107,74,0.35);border-radius:20px;">'
+      + '  <canvas id="mzStoryCanvasEl" style="width:100%;max-width:260px;height:auto;aspect-ratio:9/16;border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,0.45);display:block;margin:0 auto;background:#0E0C18;"></canvas>'
+      + '  <div style="font-size:0.75rem;color:var(--gold);font-weight:700;margin-top:10px;text-align:center;">✨ 9:16 인스타 스토리 맞춤 고해상도 카드</div>'
       + '</div>'
       + '<div class="modal-actions" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;">'
-      + '  <button class="btn btn-primary" id="copyMzCardTextBtn" style="flex:1;">📋 텍스트 복사</button>'
-      + '  <button class="btn btn-secondary" id="copyMzCardLinkBtn" style="flex:1;">🔗 링크 공유</button>'
-      + '  <button class="btn btn-ghost" id="mzCardCloseBtn" type="button" style="width:100%;">닫기</button>'
+      + '  <button class="btn btn-primary" id="saveMzStoryPngBtn" type="button" style="flex:1;background:linear-gradient(135deg,#FF6B4A,#FF4757);font-weight:800;border:none;padding:12px 14px;border-radius:12px;">📸 인스타 스토리용 저장 (PNG)</button>'
+      + '  <button class="btn btn-secondary" id="shareMzStoryWebBtn" type="button" style="flex:1;font-weight:800;padding:12px 14px;border-radius:12px;">🚀 친구에게 바로 공유</button>'
+      + '  <div style="width:100%;display:flex;gap:8px;">'
+      + '    <button class="btn btn-ghost btn-sm" id="copyMzCardTextBtn" type="button" style="flex:1;">📋 텍스트 복사</button>'
+      + '    <button class="btn btn-ghost btn-sm" id="copyMzCardLinkBtn" type="button" style="flex:1;">🔗 링크 복사</button>'
+      + '  </div>'
+      + '  <button class="btn btn-ghost btn-sm" id="mzCardCloseBtn" type="button" style="width:100%;">닫기</button>'
       + '</div>',
       function(sheet){
         sheet.querySelector('#mzCardCloseBtn').onclick = closeModal;
+        var canvasEl = sheet.querySelector('#mzStoryCanvasEl');
+        if(canvasEl){
+          try {
+            generateMzStoryCanvas({
+              canvas: canvasEl,
+              streak: streak,
+              userName: userName,
+              quote: quote
+            });
+          } catch(e){
+            console.error('Canvas render error', e);
+          }
+        }
+
+        var savePngBtn = sheet.querySelector('#saveMzStoryPngBtn');
+        if(savePngBtn && canvasEl){
+          savePngBtn.onclick = function(){
+            try {
+              var dataUrl = canvasEl.toDataURL('image/png');
+              var a = document.createElement('a');
+              a.href = dataUrl;
+              a.download = 'ourgoal-streak-' + streak + 'days.png';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              triggerHaptic(30);
+              burstConfetti(window.innerWidth/2, window.innerHeight/3, 25);
+              toast('📸 9:16 인스타 스토리 이미지가 저장되었어요! 인스타에 공유해보세요.');
+            } catch(e){
+              toast('이미지 저장에 실패했습니다. 화면을 캡처해주세요.');
+            }
+          };
+        }
+
+        var shareWebBtn = sheet.querySelector('#shareMzStoryWebBtn');
+        if(shareWebBtn && canvasEl){
+          shareWebBtn.onclick = function(){
+            triggerHaptic(20);
+            if(navigator.share && canvasEl.toBlob){
+              canvasEl.toBlob(async function(blob){
+                if(!blob) return;
+                try {
+                  var file = new File([blob], 'ourgoal-streak-' + streak + 'd.png', { type: 'image/png' });
+                  if(navigator.canShare && navigator.canShare({ files: [file] })){
+                    await navigator.share({
+                      title: '아워골 ' + streak + '일 연속 몰입 인증',
+                      text: '🔥 오늘 목표 달성! ' + streak + '일 연속 몰입 중\nhttps://ourgoal-app.vercel.app',
+                      files: [file]
+                    });
+                    toast('🚀 성공적으로 공유되었습니다!');
+                    return;
+                  }
+                } catch(err){
+                  if(err && err.name === 'AbortError') return;
+                }
+                try {
+                  await navigator.share({
+                    title: '아워골 ' + streak + '일 연속 몰입 인증',
+                    text: '🔥 오늘 목표 달성! ' + streak + '일 연속 몰입 중\n' + quote + '\n\n나만의 목표 완주하기 👉 https://ourgoal-app.vercel.app',
+                    url: 'https://ourgoal-app.vercel.app'
+                  });
+                } catch(e){
+                  if(savePngBtn) savePngBtn.click();
+                }
+              }, 'image/png');
+            } else {
+              if(savePngBtn) savePngBtn.click();
+            }
+          };
+        }
+
         var copyTxtBtn = sheet.querySelector('#copyMzCardTextBtn');
         if(copyTxtBtn){
           copyTxtBtn.onclick = function(){
-            var text = '🔥 아워골 ' + streak + '일 연속 몰입 달성!\n' + userName + '님의 오늘의 한 줄:\n' + quote + '\n\n나만의 목표 완주하기 👉 https://ourgoal-app.vercel.app';
+            var text = '🔥 아워골 ' + streak + '일 연속 몰입 달성!\n' + userName + '님의 오늘의 한 줄:\n"' + quote + '"\n\n나만의 목표 완주하기 👉 https://ourgoal-app.vercel.app';
             if(navigator.clipboard && navigator.clipboard.writeText){
               navigator.clipboard.writeText(text).then(function(){
                 toast('📸 성취 텍스트가 클립보드에 복사되었어요! 인스타 스토리에 붙여넣으세요.');
@@ -9392,17 +9736,6 @@
       '<span class="faint" style="font-size:.74rem;color:var(--ink-soft);">(목표완료시)</span>' +
     '</div>';
 
-    var rescaleCardHtml = '<div class="rescale-card" style="margin:8px 0 12px;padding:10px 12px;background:var(--card);border:1.5px solid var(--violet-soft);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
-      '<div style="flex:1;min-width:0;">' +
-        '<div style="font-size:.78rem;font-weight:800;color:var(--violet);display:flex;align-items:center;gap:4px;">' +
-          '<span>🌱 작심삼일 극복 & 번아웃 케어</span>' +
-          (goal.rescaledCount ? '<span style="font-size:.66rem;padding:1px 5px;background:var(--chip);border-radius:4px;color:var(--ink-soft);">'+goal.rescaledCount+'회 조정됨</span>' : '') +
-        '</div>' +
-        '<div style="font-size:.72rem;color:var(--ink-soft);margin-top:2px;">바쁘셨나요? 자책하지 마세요! 일정과 목표 강도를 가볍게 50% 덜어드릴게요.</div>' +
-      '</div>' +
-      '<button class="btn btn-ghost btn-sm" id="goalRescaleBtn" type="button" style="font-size:.74rem;padding:5px 8px;white-space:nowrap;color:var(--violet);border-color:var(--violet);font-weight:700;">🌱 50% 가볍게 조정</button>' +
-    '</div>';
-
     var selCount = Object.keys(state.msSel).length + Object.keys(state.taskSel).length;
     var selBar = state.goalEditMode ?
       '<div class="sel-bar">' +
@@ -9413,7 +9746,7 @@
       '</div>' : '';
 
     body.innerHTML =
-      (state.goalEditMode ? dueRow + visRow : metaStrip + compactResultRow + rescaleCardHtml) +
+      (state.goalEditMode ? dueRow + visRow : metaStrip + compactResultRow) +
       (state.goalEditMode ? '' : goalResultRow) +
       msFilterBar +
       '<div class="ms-list">'+msHtml+'</div>' +
@@ -9511,19 +9844,6 @@
     if(goalResultBtn) goalResultBtn.addEventListener('click', function(){
       openResultModal('goal', goal, function(){ renderAll(); });
     });
-
-    var rescaleBtn = document.getElementById('goalRescaleBtn');
-    if(rescaleBtn){
-      rescaleBtn.addEventListener('click', async function(){
-        if(!confirm('이 목표의 마감일과 지연된 할 일 일정을 여유롭게 연장하고 부담을 50% 덜어드릴까요?\n\n(자책할 필요 없이 오늘 할 수 있는 것부터 다시 가볍게 시작해요!)')) return;
-        rescaleGoal(goal, 0.5);
-        await saveProfile();
-        renderAll();
-        if(typeof triggerHaptic === 'function') triggerHaptic(50);
-        if(typeof burstConfetti === 'function') burstConfetti(window.innerWidth/2, window.innerHeight/3, 18);
-        toast('목표 일정을 여유롭게 재조정했어요! 오늘 작은 1보부터 시작해봐요 🌱');
-      });
-    }
 
     if(!state.goalEditMode && goalStatusStale && goal.milestones.length) refreshGoalStatusSummary(goal, goalStatusHash);
 

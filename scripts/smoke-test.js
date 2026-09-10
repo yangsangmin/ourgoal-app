@@ -88,6 +88,7 @@ const FN_NAMES = [
   'computeTrendChartData', 'formatStopwatchTime',
   'rescaleGoal',
   'sortGoalsByOrder', 'isWithinDND', 'buildICS',
+  'quickCreateStarterGoal', 'generateMzStoryCanvas',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -106,6 +107,12 @@ const sandboxSrc =
   'var RECORD_THEMES = { daily: { label: "일상" }, study: { label: "공부" }, workout: { label: "운동" } };\n' +
   // generateDynamicNotification의 모임 인증 분기 테스트용 최소 스텁(실제 MOCK_GROUPS는 추출하지 않음).
   'var MOCK_GROUPS = [{ id: "g1", name: "테스트 모임", activity: ["a", "b", "c"] }];\n' +
+  'var STARTER_GOAL_TEMPLATES = {\n' +
+  '  workout: { title: "주 3회 헬스 & 기초체력 기르기", category: "workout", milestones: [{ title: "운동 전후 스트레칭 5분", status: "todo" }, { title: "웨이트 또는 유산소 30분 집중", status: "todo" }, { title: "운동 후 단백질 및 수분 챙기기", status: "todo" }] },\n' +
+  '  running: { title: "매일 3km 러닝 & 심폐지구력", category: "workout", milestones: [{ title: "러닝화 신고 밖으로 나가기", status: "todo" }, { title: "3km 페이스 유지하며 완주", status: "todo" }, { title: "러닝 후 쿨다운 걷기 및 수분 보충", status: "todo" }] },\n' +
+  '  study: { title: "매일 1시간 몰입 & 자격증 합격", category: "study", milestones: [{ title: "스마트폰 치우고 1시간 집중 몰입", status: "todo" }, { title: "기출문제 1회분 풀고 채점", status: "todo" }, { title: "핵심 오답 정리 및 내일 복습 체크", status: "todo" }] },\n' +
+  '  reading: { title: "하루 15분 독서 & 지적 성장", category: "reading", milestones: [{ title: "잠들기 전 책 15분 읽기", status: "todo" }, { title: "마음에 와닿는 문장 1줄 기록", status: "todo" }, { title: "이번 주 1권 완독하기", status: "todo" }] }\n' +
+  '};\n' +
   extracted +
   '\nmodule.exports = { pad, dateKey, goalProgress, msCounts, resultPct, dDay, ' +
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
@@ -126,6 +133,7 @@ const sandboxSrc =
   'triggerHaptic, reorderMilestones, filterFeedByCategory, calculateWeeklyFocusStats, exportRecordsToCsv, exportRecordsToMarkdown, ' +
   'defaultSettings, getPrivacyLabel, subscriptionState, computeTrendChartData, formatStopwatchTime, ' +
   'rescaleGoal, sortGoalsByOrder, isWithinDND, buildICS, ' +
+  'quickCreateStarterGoal, generateMzStoryCanvas, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -1998,15 +2006,12 @@ check('rescaleGoal: 지연된 마일스톤과 할 일 일정을 여유롭게 연
   assert.ok(res.milestones[1].tasks[0].dueDate > '2026-09-11', '미완료 세부 할 일 일정 연장');
 });
 
-check('compliance: 작심삼일 극복 & 번아웃 케어(Anti-Guilt 리스케일링) 및 앰비언트 1줄 체크인 UI', () => {
-  // 1. 목표 상세 내 리스케일링 UI 및 버튼
-  assert.ok(html.includes('작심삼일 극복 & 번아웃 케어'), '작심삼일 극복 및 번아웃 케어 라벨 존재');
-  assert.ok(html.includes('id="goalRescaleBtn"'), 'goalRescaleBtn 리스케일링 버튼 존재');
-  assert.ok(html.includes('50% 가볍게 조정'), '50% 가볍게 조정 텍스트 존재');
-
-  // 2. 홈 화면 앰비언트 1줄 체크인 안내 및 플레이스홀더
+check('compliance: 앰비언트 1줄 체크인 및 모바일 엄지 인체공학 UI', () => {
+  // 1. 홈 화면 앰비언트 1줄 체크인 안내 및 플레이스홀더
   assert.ok(html.includes('AI 노션 DB 1줄 체크인'), '홈 체크인 헤더 노션 DB 1줄 체크인 명시');
   assert.ok(html.includes('AI가 노션 DB 규격으로 자동 변환해드려요'), '앰비언트 체크인 플레이스홀더 안내');
+  assert.ok(html.includes('id="captureLiveMeta"'), '1초 앰비언트 실시간 프리뷰 힌트 바 존재');
+  assert.ok(html.includes('id="iosPwaSlot"'), 'iOS PWA 스마트 설치 배너 슬롯 존재');
 });
 
 check('compliance: 2026 차세대 UX 표준 (View Transitions, prefers-reduced-motion, 다이나믹 햅틱 프리셋) 탑재', () => {
@@ -2014,6 +2019,97 @@ check('compliance: 2026 차세대 UX 표준 (View Transitions, prefers-reduced-m
   assert.ok(html.includes('::view-transition-old(root)'), 'View Transitions CSS 루트 애니메이션 존재');
   assert.ok(html.includes('document.startViewTransition'), 'setTab 내 View Transitions API 연동 존재');
   assert.ok(html.includes('HAPTIC_PATTERNS'), '다이나믹 햅틱 프리셋 딕셔너리 존재');
+});
+
+check('quickCreateStarterGoal: 4대 갓생 템플릿(헬스·러닝·공부·독서) 맞춤 목표와 마일스톤을 1초 만에 생성한다', () => {
+  const g1 = fns.quickCreateStarterGoal('workout');
+  assert.ok(g1 && g1.id, '목표 ID 생성');
+  assert.strictEqual(g1.title, '주 3회 헬스 & 기초체력 기르기', '헬스 목표명');
+  assert.strictEqual(g1.category, 'workout', '헬스 카테고리');
+  assert.strictEqual(g1.visibility, 'private', '기본 공개범위 비공개');
+  assert.ok(Array.isArray(g1.milestones) && g1.milestones.length >= 1, '마일스톤 배열 존재');
+  assert.strictEqual(g1.milestones[0].status, 'todo', '마일스톤 초기 상태 todo');
+
+  const g2 = fns.quickCreateStarterGoal('running');
+  assert.strictEqual(g2.category, 'workout', '러닝 카테고리');
+  assert.ok(g2.title.includes('러닝'), '러닝 목표명');
+
+  const g3 = fns.quickCreateStarterGoal('study');
+  assert.strictEqual(g3.category, 'study', '공부 카테고리');
+  assert.ok(g3.title.includes('몰입'), '공부 목표명');
+
+  const g4 = fns.quickCreateStarterGoal('reading');
+  assert.strictEqual(g4.category, 'reading', '독서 카테고리');
+  assert.ok(g4.title.includes('독서'), '독서 목표명');
+
+  // 없는 키 입력 시 기본 헬스로 안전 폴백
+  const gFallback = fns.quickCreateStarterGoal('unknown_routine');
+  assert.strictEqual(gFallback.category, 'workout', '폴백 시 헬스 카테고리');
+});
+
+check('generateMzStoryCanvas: 9:16 인스타 스토리 최적 720x1280 해상도와 스트릭·기록을 캔버스에 렌더링한다', () => {
+  const texts = [];
+  const mockCtx = {
+    createLinearGradient: () => ({ addColorStop: () => {} }),
+    createRadialGradient: () => ({ addColorStop: () => {} }),
+    fillRect: () => {},
+    save: () => {},
+    restore: () => {},
+    beginPath: () => {},
+    moveTo: () => {},
+    lineTo: () => {},
+    quadraticCurveTo: () => {},
+    closePath: () => {},
+    stroke: () => {},
+    fill: () => {},
+    fillText: (text) => { texts.push(String(text)); },
+    fillStyle: '',
+    strokeStyle: '',
+    lineWidth: 1,
+    font: '',
+    textAlign: '',
+    letterSpacing: ''
+  };
+  const mockCanvas = {
+    width: 0,
+    height: 0,
+    getContext: (type) => (type === '2d' ? mockCtx : null)
+  };
+
+  const res = fns.generateMzStoryCanvas({
+    canvas: mockCanvas,
+    streak: 21,
+    userName: '갓생러양비스',
+    quote: '오늘 러닝 5km 페이스 5분대로 완주 성공!'
+  });
+
+  assert.strictEqual(res, mockCanvas, '캔버스 인스턴스 반환');
+  assert.strictEqual(mockCanvas.width, 720, '인스타 스토리 9:16 가로 720px');
+  assert.strictEqual(mockCanvas.height, 1280, '인스타 스토리 9:16 세로 1280px');
+
+  assert.ok(texts.includes('🔥'), '스트릭 불꽃 이모지 렌더링');
+  assert.ok(texts.includes('21'), '스트릭 일수 21 렌더링');
+  assert.ok(texts.includes('DAYS STREAK'), 'DAYS STREAK 영문 라벨');
+  assert.ok(texts.some(t => t.includes('갓생러양비스')), '유저 닉네임 렌더링');
+  assert.ok(texts.some(t => t.includes('오늘 러닝 5km')), '오늘의 한 줄 기록 렌더링');
+  assert.ok(texts.includes('ourgoal-app.vercel.app'), '바이럴 워터마크 URL');
+});
+
+check('compliance: 9:16 인스타 스토리 바이럴 카드 & Web Share API & iOS PWA 설치 배너', () => {
+  // 1. 인스타 스토리 캔버스 엔진
+  assert.ok(html.includes('generateMzStoryCanvas'), 'MZ 스토리 캔버스 생성 함수');
+  assert.ok(html.includes('saveMzStoryPngBtn'), '인스타 스토리 PNG 다운로드 버튼');
+  assert.ok(html.includes('shareMzStoryWebBtn'), 'Web Share API 연동 공유 버튼');
+
+  // 2. iOS PWA 배너 & 갓생 스타터
+  assert.ok(html.includes('renderIosPwaBanner'), 'iOS PWA 스마트 배너 렌더 함수');
+  assert.ok(html.includes('ios-pwa-banner'), 'iOS PWA 배너 클래스');
+  assert.ok(html.includes('quickCreateStarterGoal'), '10초 갓생 스타터 생성 함수');
+  assert.ok(html.includes('empty-goal-starter'), '빈 화면 갓생 스타터 컨테이너');
+
+  // 3. 번아웃 케어 / 재조정하기 UI 전면 박멸 검증
+  assert.strictEqual(html.includes('goalRescaleBtn'), false, '번아웃 케어 재조정하기 버튼 영구 삭제');
+  assert.strictEqual(html.includes('rescaleCardHtml'), false, '번아웃 케어 카드 UI 영구 삭제');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

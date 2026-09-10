@@ -1902,5 +1902,33 @@
   - `node scripts/chaos-monkey-test.js` **45개 극한 공격 전수 완벽 방어 (방어율 100%)**.
 ---
 
+## [2026-09-11 07:15] feat: 양비스 총괄 지휘 & 3대 감찰관 검증 — 유저 증대(Growth) 및 바이럴 완결 (번아웃 UI 박멸, 10초 갓생 스타터, 9:16 인스타 스토리 Canvas & Web Share API)
+- **목표**:
+  1. 양비스(총괄 관찰자)의 지시에 따라 패배주의를 조장하던 번아웃 케어/재조정하기 UI를 코드베이스에서 전면 박멸.
+  2. 3대 외부 감찰관(빅터 CPO, 카이로스 통제관, 레오 아키텍트)의 합의에 따라, 앱의 본질(목표-기록-성장)과 실제 신규 유저 유입 및 활성화(Growth/Acquisition/Retention)에 직결되는 킬러 피처를 자율 구축.
+  3. 3시간 무중단 자율 완결 원칙에 따라 사람 개입 0회로 전수 구현 및 159개 테스트 통과.
+- **수정/실행 내역**:
+  1. **번아웃 케어 / 재조정하기 UI 전면 제거 (Phase 0)**:
+     - `renderGoalsScreen` 내 `rescaleCardHtml`("🌱 작심삼일 극복 & 번아웃 케어") 카드 및 `goalRescaleBtn` 이벤트 리스너 영구 제거.
+     - 테스트 스위트 내 compliance 항목에서 번아웃 케어 버튼/카드의 완전 부재(0개) 엄격 검증.
+  2. **10초 갓생 스타터 퀵 온보딩 (Phase 1 / Activation)**:
+     - 목표가 0개인 신규 유저가 첫 화면에서 이탈하지 않도록 4대 인기 갓생 루틴(`STARTER_GOAL_TEMPLATES`: 헬스, 러닝, 공부, 독서) 원탭 생성 칩바 배치.
+     - `quickCreateStarterGoal`: 1초 만에 최적화된 마일스톤과 목표 구조를 생성하여 첫 날 첫 기록의 성취 도파민을 즉각 전달.
+  3. **인스타 스토리 9:16 'MZ 갓생 인증' Canvas 그래픽 엔진 & Web Share API (Phase 2 / Viral Acquisition)**:
+     - `generateMzStoryCanvas`: 720x1280 (9:16 인스타그램 스토리 표준 해상도)의 고해상도 그래픽 카드를 클라이언트 캔버스로 즉석 렌더링.
+     - 다크 프리미엄 그라디언트, 네온 라운드 프레임, 불꽃 스트릭(🔥 N일차), 오늘의 1줄 기록, 해시태그 및 워터마크(`ourgoal-app.vercel.app`) 자동 합성.
+     - `openMzShareCardModal`: 기존의 정적 텍스트 복사를 탈피하고 [📸 인스타 스토리용 저장 (PNG)] 및 [🚀 친구에게 바로 공유](Web Share API `navigator.share({ files: [file] })`) 연동.
+  4. **iOS 사파리 홈 추가 PWA 스마트 배너 & 스프링 Kudos (Phase 3 / Retention)**:
+     - `renderIosPwaBanner`: 아이폰 사파리 유저에게 홈 화면 추가 가이드 제공하여 앱 아이콘 설치 및 이탈률 최소화.
+     - Strava식 `@keyframes spring-pop` 탄성 애니메이션으로 피드 리액션 및 응원 시 찰진 손맛 제공.
+  5. **테스트 하네스 확장 (Phase 4 / Verification)**:
+     - `scripts/smoke-test.js`: `quickCreateStarterGoal`, `generateMzStoryCanvas`, 신규 바이럴 컴플라이언스 3종 추가 (총 159개 전수 통과).
+     - `scripts/chaos-monkey-test.js`: 45개 파괴적 카오스 공격 전수 방어 확인.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **159개 전수 통과 (0개 실패)**.
+  - `node scripts/chaos-monkey-test.js` **45개 극한 공격 전수 완벽 방어 (방어율 100%)**.
+---
+
+
 
 
