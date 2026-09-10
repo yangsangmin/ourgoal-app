@@ -169,30 +169,89 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
     cleanTitle = '나만의 새로운 실천 목표';
   }
 
-  var topic = 'study';
-  if (/(운동|헬스|달리기|러닝|다이어트|건강|수영|자전거|식단|체중|근육)/.test(msg)) topic = 'health';
-  else if (/(공부|토익|영어|독서|책|자격증|시험|수학|학습|코딩|강의)/.test(msg)) topic = 'study';
-  else if (/(일|업무|사업|매출|취업|이직|프로젝트|머니|돈|투자|수익)/.test(msg)) topic = 'career';
-  else if (/(취미|음악|그림|사진|게임|여행|영상|유튜브|블로그|글쓰기)/.test(msg)) topic = 'hobby';
-  else if (/(마음|명상|수면|일기|감사|습관|기상|미라클|루틴)/.test(msg)) topic = 'mind';
-  else if (/(친구|가족|연인|약속|모임|대화|결혼)/.test(msg)) topic = 'relation';
+  // 날짜/기간 자연어 추출 (예: "한달 뒤", "30일 뒤", "다음 주" 등)
+  var dueDate = null;
+  if (/(한\s*달\s*뒤|1\s*달\s*뒤|30\s*일\s*뒤|1\s*개월\s*뒤)/i.test(msg)) {
+    var d = new Date(today);
+    d.setDate(d.getDate() + 30);
+    dueDate = d.toISOString().slice(0, 10);
+  } else if (/(두\s*달\s*뒤|2\s*달\s*뒤|60\s*일\s*뒤|2\s*개월\s*뒤)/i.test(msg)) {
+    var d = new Date(today);
+    d.setDate(d.getDate() + 60);
+    dueDate = d.toISOString().slice(0, 10);
+  } else if (/(세\s*달\s*뒤|3\s*달\s*뒤|90\s*일\s*뒤|3\s*개월\s*뒤|100\s*일\s*뒤)/i.test(msg)) {
+    var d = new Date(today);
+    d.setDate(d.getDate() + 90);
+    dueDate = d.toISOString().slice(0, 10);
+  } else if (/(다음\s*주|1\s*주\s*뒤|7\s*일\s*뒤)/i.test(msg)) {
+    var d = new Date(today);
+    d.setDate(d.getDate() + 7);
+    dueDate = d.toISOString().slice(0, 10);
+  } else if (/(올해\s*말|연말)/i.test(msg)) {
+    var y = today.slice(0, 4);
+    dueDate = y + '-12-31';
+  }
+
+  // 세부 도메인 판정
+  var isMarathon = /(마라톤|10km|5km|달리기|러닝|조깅|하프|풀코스|트랙|페이스)/i.test(msg);
+  var isDiet = /(다이어트|살빼기|체중|식단|감량|체지방|뱃살)/i.test(msg);
+  var isHealth = isMarathon || isDiet || /(운동|헬스|피트니스|웨이트|근육|스쿼트|수영|자전거|사이클|필라테스|요가|크로스핏|등산|체력|건강)/i.test(msg);
+  var isStudy = /(공부|토익|영어|독서|책|자격증|시험|수학|학습|코딩|강의|프로그래밍|알고리즘|취득|합격)/i.test(msg);
+  var isCareer = /(일|업무|사업|매출|취업|이직|프로젝트|머니|돈|투자|수익|재테크|마케팅|창업)/i.test(msg);
+  var isHobby = /(취미|음악|악기|피아노|기타|그림|사진|게임|여행|영상|유튜브|블로그|글쓰기)/i.test(msg);
+  var isMind = /(마음|명상|수면|일기|감사|습관|기상|미라클|루틴|멘탈)/i.test(msg);
+  var isRelation = /(친구|가족|연인|약속|모임|대화|결혼|부모|자녀)/i.test(msg);
+
+  var topic = 'health';
+  if (isHealth) topic = 'health';
+  else if (isStudy) topic = 'study';
+  else if (isCareer) topic = 'career';
+  else if (isHobby) topic = 'hobby';
+  else if (isMind) topic = 'mind';
+  else if (isRelation) topic = 'relation';
 
   var m1 = '1단계: 시작 준비 및 실행 계획 수립';
+  var t1 = ['세부 실천 계획 정리하기', '필요한 준비물 및 환경 구성하기'];
   var m2 = '2단계: 주 3회 이상 꾸준한 실행 루틴 확립';
+  var t2 = ['기본 실천 꾸준히 이어가기', '진행 과정과 느낀 점 기록하기'];
   var m3 = '3단계: 최종 목표 달성 점검 및 습관화';
+  var t3 = ['최종 결과 점검 및 피드백', '다음 성장 단계 수립하기'];
 
-  if (topic === 'health') {
+  if (isMarathon) {
+    m1 = '1단계: 기초 러닝 적응 및 장비 점검 (주 2~3회, 3~5km)';
+    t1 = ['발에 맞는 러닝화 및 복장 점검하기', '주 2~3회 가벼운 조깅(3km)으로 기초 호흡 적응하기'];
+    m2 = '2단계: 주간 주행거리 증량 및 페이스 훈련 (5~8km)';
+    t2 = ['1회 5km 지속주 완주 및 주간 15km 마일리지 달성하기', '대회 2주 전 8km 지속주로 목표 페이스 점검하기'];
+    m3 = '3단계: 테이퍼링(컨디션 조절) 및 10km 완주 도전';
+    t3 = ['대회 1주 전 훈련량 조절 및 충분한 수분/휴식 취하기', '10km 마라톤 완주 및 기록 회고하기'];
+  } else if (isDiet) {
+    m1 = '1단계: 기초 식단 구성 및 현재 식습관 점검';
+    t1 = ['하루 섭취 칼로리 및 식단 기록하기', '물 2L 마시기 및 야식 줄이기'];
+    m2 = '2단계: 규칙적인 유산소 운동 및 칼로리 조절 병행';
+    t2 = ['주 4회 40분 이상 유산소 운동 실천하기', '단백질 위주 건강한 식사 유지하기'];
+    m3 = '3단계: 목표 체중 달성 및 요요 없는 유지 습관 형성';
+    t3 = ['최종 체중 및 체지방 측정 점검하기', '지속 가능한 건강 루틴 완성하기'];
+  } else if (isHealth) {
     m1 = '1단계: 운동 계획 수립 및 장비/루틴 준비';
+    t1 = ['운동 루틴 및 시간대 계획하기', '필요한 장비 및 복장 챙기기'];
     m2 = '2단계: 주 3~4회 규칙적인 실천 이어가기';
+    t2 = ['계획한 운동 성실히 완료하기', '운동 후 간단한 체크인 기록하기'];
     m3 = '3단계: 목표 체력/체중 달성 및 건강한 습관 정착';
-  } else if (topic === 'study') {
+    t3 = ['체력 변화 및 성취 점검하기', '다음 운동 루틴으로 업그레이드하기'];
+  } else if (isStudy) {
     m1 = '1단계: 학습 계획 수립 및 교재/강의 준비';
+    t1 = ['학습 목표 분량 및 교재 선정하기', '주간 학습 스케줄 확정하기'];
     m2 = '2단계: 매일 핵심 분량 학습 및 복습 진행';
+    t2 = ['일일 목표 챕터 집중 공부하기', '핵심 요약 및 오답 정리하기'];
     m3 = '3단계: 모의 점검 및 최종 목표 성적/합격 달성';
-  } else if (topic === 'career') {
+    t3 = ['모의 테스트 풀이 및 최종 점검하기', '시험 응시 또는 최종 과제 완료하기'];
+  } else if (isCareer) {
     m1 = '1단계: 핵심 과제 정의 및 필요 자료 준비';
+    t1 = ['핵심 마일스톤 및 일정 정의하기', '필요한 레퍼런스 및 데이터 수집하기'];
     m2 = '2단계: 주요 산출물 완성 및 실행 가속화';
+    t2 = ['핵심 작업물 1차 버전 완료하기', '피드백 수렴 및 개선 반영하기'];
     m3 = '3단계: 최종 성과 검증 및 지속 성장 체계 구축';
+    t3 = ['프로젝트 완료 및 성과 지표 측정하기', '회고 및 다음 액션 플랜 수립하기'];
   }
 
   ops.push({
@@ -200,18 +259,18 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
     level: 'goal',
     data: {
       title: cleanTitle,
-      dueDate: null,
+      dueDate: dueDate,
       topicMajor: topic,
       topicMinor: '',
       milestones: [
-        { title: m1, tasks: ['세부 실천 계획 정리하기', '필요한 준비물 및 환경 구성하기'] },
-        { title: m2, tasks: ['기본 실천 꾸준히 이어가기', '진행 과정과 느낀 점 기록하기'] },
-        { title: m3, tasks: ['최종 결과 점검 및 피드백', '다음 성장 단계 수립하기'] }
+        { title: m1, tasks: t1 },
+        { title: m2, tasks: t2 },
+        { title: m3, tasks: t3 }
       ]
     },
-    summary: '신규 목표 "' + cleanTitle + '" 및 3단계 마일스톤 생성'
+    summary: '신규 목표 "' + cleanTitle + '" 및 3단계 마일스톤 생성' + (dueDate ? ' (마감: ' + dueDate + ')' : '')
   });
-  reply = '"' + cleanTitle + '" 목표와 실행 마일스톤을 준비했어요. 이대로 적용할까요?';
+  reply = '"' + cleanTitle + '" 목표와 맞춤 실행 마일스톤을 준비했어요.' + (dueDate ? ' 마감일은 ' + dueDate + '로 잡았어요.' : '') + ' 이대로 적용할까요?';
 
   return { ops: ops, reply: reply };
 }
@@ -317,7 +376,7 @@ module.exports = async function handler(req, res) {
 
     // 2. Anthropic Claude 3.5 Sonnet / Haiku 듀얼 폴백 (유효한 공식 모델명 사용)
     if (!parsed && anthropicApiKey) {
-      var anthropicModels = ['claude-3-5-sonnet-20241022', 'claude-3-haiku-20240307'];
+      var anthropicModels = ['claude-3-5-sonnet-20241022', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307'];
       for (var mi = 0; mi < anthropicModels.length; mi++) {
         var aModel = anthropicModels[mi];
         try {
