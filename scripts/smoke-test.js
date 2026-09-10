@@ -80,6 +80,7 @@ const FN_NAMES = [
   'generateDynamicNotification',
   'fmtYYMMDD', 'recommendTemplateFromAI',
   'computeTableAnalytics',
+  'parseNaturalLanguageTemplateSpec', 'parseCsvText',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -113,6 +114,7 @@ const sandboxSrc =
   'getNavigator: function(){ return navigator; }, setNavigator: function(n){ navigator = n; }, ' +
   'calendarAvailable, fmtDateLabel, filterRecordsByQuery, ' +
   'generateDynamicNotification, fmtYYMMDD, recommendTemplateFromAI, computeTableAnalytics, ' +
+  'parseNaturalLanguageTemplateSpec, parseCsvText, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -909,7 +911,101 @@ check('compliance: 4대 혁신 기능(자동 통계, 1초 루틴 로드, AI 프�
   assert.ok(html.includes('.cal-pill.tpl'), '템플릿 기록 전용 캘린더 필 클래스 적용');
 });
 
+check('recommendTemplateFromAI: 크로스핏과 하이록스를 엄격히 분리하고 하이록스는 8대 공식 스테이션을 모두 제공한다', () => {
+  // 크로스핏 분리 검증
+  const cf = fns.recommendTemplateFromAI('크로스핏');
+  assert.strictEqual(cf.title, '크로스핏');
+  assert.strictEqual(cf.icon, '🔥');
+  assert.ok(cf.columns.includes('WOD 운동종목'));
+  assert.ok(cf.columns.includes('Rx/Scaled'));
+  assert.ok(cf.defaultRows.length >= 6, 'Fran WOD 6개 행 제공');
+
+  // 하이록스 8대 공식 종목 검증
+  const hyrox = fns.recommendTemplateFromAI('하이록스');
+  assert.strictEqual(hyrox.title, '하이록스');
+  assert.strictEqual(hyrox.icon, '🏃');
+  assert.strictEqual(hyrox.defaultRows.length, 9, '8대 공식 기능성 스테이션 + 1km 러닝 = 총 9행');
+  const stations = hyrox.defaultRows.map(r => r[1]);
+  assert.ok(stations.some(s => s.includes('러닝')), '1km 러닝 포함');
+  assert.ok(stations.some(s => s.includes('SkiErg')), 'SkiErg 포함');
+  assert.ok(stations.some(s => s.includes('Sled Push')), 'Sled Push 포함');
+  assert.ok(stations.some(s => s.includes('Sled Pull')), 'Sled Pull 포함');
+  assert.ok(stations.some(s => s.includes('Burpee Broad Jumps')), 'Burpee Broad Jumps 포함');
+  assert.ok(stations.some(s => s.includes('Rowing')), 'Rowing 포함');
+  assert.ok(stations.some(s => s.includes('Farmers Carry')), 'Farmers Carry 포함');
+  assert.ok(stations.some(s => s.includes('Sandbag Lunges')), 'Sandbag Lunges 포함');
+  assert.ok(stations.some(s => s.includes('Wall Balls')), 'Wall Balls 포함');
+});
+
+check('recommendTemplateFromAI: 세부 입력(자격증, 주식 등)을 통합 테마로 뭉개지 않고 맞춤 유지한다', () => {
+  const exam = fns.recommendTemplateFromAI('공인중개사 민법');
+  assert.strictEqual(exam.title, '공인중개사 민법');
+  assert.strictEqual(exam.icon, '📝');
+  assert.ok(exam.columns.includes('문제번호/범위'));
+  assert.ok(exam.columns.includes('오답원인/핵심개념'));
+
+  const stock = fns.recommendTemplateFromAI('주식 매매일지');
+  assert.strictEqual(stock.title, '주식 매매일지');
+  assert.strictEqual(stock.icon, '📈');
+  assert.ok(stock.columns.includes('종목명/티커'));
+  assert.ok(stock.columns.includes('매수가'));
+  assert.ok(stock.columns.includes('수익률(%)'));
+});
+
+check('parseNaturalLanguageTemplateSpec: 줄글 설명으로부터 열 속성과 행 데이터를 자연어로 맞춤 파싱한다', () => {
+  const prose = "열은 '운동종목, 무게(lb), 횟수, 타임캡, Rx 여부'로 해주고 행은 Fran 기준으로 쓰러스터 21-15-9와 풀업 넣어줘";
+  const parsed = fns.parseNaturalLanguageTemplateSpec('크로스핏', prose, [], []);
+  assert.ok(parsed.columns.includes('운동종목'));
+  assert.ok(parsed.columns.includes('무게(lb)'));
+  assert.ok(parsed.columns.includes('Rx 여부'));
+  assert.strictEqual(parsed.defaultRows.length, 6, 'Fran 와드 6행 자동 생성');
+  assert.ok(parsed.explanation.length > 0, 'AI 분석 설명문 제공');
+});
+
+check('parseCsvText: 콤마 및 탭 구분 텍스트를 2차원 배열로 안전하게 파싱한다', () => {
+  const csv = '운동종목,세트,횟수,무게\n벤치프레스,4,10,60kg\n"스쿼트, 파워",5,5,100kg';
+  const parsed = fns.parseCsvText(csv);
+  assert.strictEqual(parsed.length, 3);
+  assert.strictEqual(parsed[0][0], '운동종목');
+  assert.strictEqual(parsed[2][0], '스쿼트, 파워');
+});
+
+check('compliance: 엑셀/CSV 가져오기·내보내기, 스마트워치 연동, 목표 3각 추적 엔진이 구현되어 있다', () => {
+  assert.ok(html.includes('downloadTableAsCsv'), 'CSV 다운로드 함수 존재');
+  assert.ok(html.includes('openCsvImportModal'), 'CSV 가져오기 모달 함수 존재');
+  assert.ok(html.includes('openWearableSyncModal'), '스마트워치 연동 모달 함수 존재');
+  assert.ok(html.includes('syncRecordToMatchingGoals'), '목표 3각 자동 추적 엔진 함수 존재');
+  assert.ok(html.includes('id="proCsvImportBtn"'), 'CSV 가져오기 버튼 마크업 존재');
+  assert.ok(html.includes('id="proCsvExportBtn"'), 'CSV 내보내기 버튼 마크업 존재');
+check('compliance: 다른 기기 원격 로그아웃, 마일스톤·할일 마감일/D-day 및 결과입력 AI 비서가 구현되어 있다', () => {
+  // 1. 원격 로그아웃 실시간 엔진
+  assert.ok(html.includes('checkRemoteSessionRevoked'), '원격 세션 무효화 검증 함수 존재');
+  assert.ok(html.includes('getDeviceId'), '기기 식별자 함수 존재');
+  assert.ok(html.includes('getDeviceLoginTime'), '기기 로그인 시각 조회 함수 존재');
+  assert.ok(html.includes('setupUserSessionRealtime'), '유저 세션 Realtime 브로드캐스트 리스너 존재');
+  assert.ok(html.includes('id="logoutOtherDevicesBtn"'), '다른 기기 원격 로그아웃 버튼 마크업 존재');
+  assert.ok(html.includes('signOut({ scope: \'others\' })'), 'Supabase GoTrue others 세션 무효화 호출 존재');
+  assert.ok(html.includes('ourgoal_remote_logout_trigger'), '동일 브라우저 타 탭 연동 트리거 존재');
+
+  // 2. 마일스톤 및 할일 마감일과 D-day 표시
+  assert.ok(html.includes('taskDueHtml'), '할 일 마감일/D-day 렌더링 로직 존재');
+  assert.ok(html.includes('msDueHtml'), '마일스톤 마감일/D-day 렌더링 로직 존재');
+  assert.ok(html.includes('📅 마감일'), '마감일 레이블 렌더링 존재');
+
+  // 3. 참고자료 옆 단독 AI 결과 버튼 제거 확인
+  assert.strictEqual(html.includes('data-taskaires'), false, '할 일의 참고자료 옆 AI 결과 버튼이 제거됨');
+  assert.strictEqual(html.includes('data-msaires'), false, '마일스톤의 참고자료 옆 AI 결과 버튼이 제거됨');
+
+  // 4. 결과입력 모달 내 AI 비서 탑재 확인
+  assert.ok(html.includes('rsAiQuickBtn'), '결과입력 모달 내 상세 AI 대화 열기 버튼 존재');
+  assert.ok(html.includes('rsAiQuickInput'), '결과입력 모달 내 AI 자연어 한줄 입력창 존재');
+  assert.ok(html.includes('rsAiQuickApplyBtn'), '결과입력 모달 내 AI 자동채우기 버튼 존재');
+  assert.ok(html.includes('openAiResultAssistantModal'), 'AI 결과 입력 전용 상세 모달 함수 존재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
 }
+
+
