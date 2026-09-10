@@ -1513,6 +1513,98 @@ check('compliance: 기록/달력 6대 UX 개선사항(기록 탭 AI 피드백, �
   assert.ok(html.includes('calEditBackToHubBtn'), '일정 편집창 뒤로가기 허브 복귀 버튼');
 });
 
+check('distributeSequentialDates: 30일 마라톤 일일계획의 dueDate가 마지막 날 하나로 몰리지 않고 1일차~30일차로 순차 분배된다', () => {
+  const { distributeSequentialDates } = require('../api/goalagent.js');
+  const mockOps = [{
+    type: 'CREATE',
+    level: 'goal',
+    data: {
+      title: '한달뒤 마라톤 완주',
+      dueDate: '2026-10-10',
+      topicMajor: 'health',
+      milestones: Array.from({ length: 30 }, (_, i) => ({
+        title: 'Day ' + (i + 1) + ': 러닝 훈련',
+        dueDate: '2026-10-10', // 모델이 잘못 준 동일 날짜
+        tasks: ['기초 조깅 3km']
+      }))
+    }
+  }];
+
+  const res = distributeSequentialDates(mockOps, '2026-09-10', '전문 코치의 일일단위 한달 계획 요청');
+  const ms = res[0].data.milestones;
+  assert.strictEqual(ms.length, 30, '30개 마일스톤 온전히 유지');
+  assert.strictEqual(ms[0].dueDate, '2026-09-11', '1일차 마감일은 2026-09-11');
+  assert.strictEqual(ms[1].dueDate, '2026-09-12', '2일차 마감일은 2026-09-12');
+  assert.strictEqual(ms[14].dueDate, '2026-09-25', '15일차 마감일은 2026-09-25');
+  assert.strictEqual(ms[29].dueDate, '2026-10-10', '30일차 마감일은 2026-10-10');
+
+  // 중복 날짜 검사: 30일이 모두 서로 다른 날짜인지 확인
+  const uniqueDates = new Set(ms.map(m => m.dueDate));
+  assert.strictEqual(uniqueDates.size, 30, '모든 30일차 날짜가 서로 고유하게 분배됨');
+});
+
+check('distributeSequentialDates: 공부/다이어트/주차별 등 다른 테마에서도 순차 날짜가 올바르게 분배된다', () => {
+  const { distributeSequentialDates } = require('../api/goalagent.js');
+
+  // 1. 공부 테마 (토익 30일 일일단위)
+  const studyOps = [{
+    type: 'CREATE',
+    level: 'goal',
+    data: {
+      title: '토익 900점 달성',
+      dueDate: '2026-10-10',
+      topicMajor: 'study',
+      milestones: Array.from({ length: 30 }, (_, i) => ({
+        title: (i + 1) + '일차: 단어 50개',
+        dueDate: '2026-10-10',
+        tasks: ['단어 암기']
+      }))
+    }
+  }];
+  distributeSequentialDates(studyOps, '2026-09-10', '토익 일일단위 계획');
+  const studyMs = studyOps[0].data.milestones;
+  assert.strictEqual(studyMs[0].dueDate, '2026-09-11');
+  assert.strictEqual(studyMs[29].dueDate, '2026-10-10');
+
+  // 2. 주차별 테마 (4주차)
+  const weeklyOps = [{
+    type: 'CREATE',
+    level: 'goal',
+    data: {
+      title: '체지방 감량',
+      dueDate: '2026-10-10',
+      topicMajor: 'health',
+      milestones: [
+        { title: '1주차: 식습관 개선', dueDate: '2026-10-10' },
+        { title: '2주차: 칼로리 제한', dueDate: '2026-10-10' },
+        { title: '3주차: 공복 유산소', dueDate: '2026-10-10' },
+        { title: '4주차: 최종 점검', dueDate: '2026-10-10' }
+      ]
+    }
+  }];
+  distributeSequentialDates(weeklyOps, '2026-09-10', '주차별 한달 다이어트 계획');
+  const weeklyMs = weeklyOps[0].data.milestones;
+  assert.strictEqual(weeklyMs[0].dueDate, '2026-09-17', '1주차: 7일 뒤');
+  assert.strictEqual(weeklyMs[1].dueDate, '2026-09-24', '2주차: 14일 뒤');
+  assert.strictEqual(weeklyMs[2].dueDate, '2026-10-01', '3주차: 21일 뒤');
+  assert.strictEqual(weeklyMs[3].dueDate, '2026-10-08', '4주차: 28일 뒤');
+});
+
+check('localGoalAgentFallback: 한달 일일 계획 요청 시 30개 항목과 순차 날짜가 생성된다', () => {
+  const { localGoalAgentFallback } = require('../api/goalagent.js');
+  const res = localGoalAgentFallback('한달뒤 마라톤 완주 [추가수정보완 1회차]: 전문 코치의 일일단위 한달 계획 요청', [], '2026-09-10', {});
+  assert.ok(res.ops && res.ops.length > 0, 'ops 생성됨');
+  const ms = res.ops[0].data.milestones;
+  assert.strictEqual(ms.length, 30, '30일치 일일 마일스톤 생성');
+  assert.strictEqual(ms[0].dueDate, '2026-09-11', '1일차는 내일');
+  assert.strictEqual(ms[29].dueDate, '2026-10-10', '30일차는 한달뒤');
+});
+
+check('compliance: index.html에 normalizeSequentialMilestoneDates 및 35개 마일스톤 지원 로직이 존재한다', () => {
+  assert.ok(html.includes('normalizeSequentialMilestoneDates'), '클라이언트 날짜 정규화 함수 존재');
+  assert.ok(html.includes('normalizeSequentialMilestoneDates(rawMilestones, data.dueDate)'), '목표 빌드 시 정규화 연동');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);

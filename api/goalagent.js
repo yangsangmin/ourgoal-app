@@ -26,13 +26,21 @@ function sanitizeCreateGoalData(data) {
   data = data || {};
   var title = clampStr(data.title, 60);
   if (!title) return null;
-  var milestones = Array.isArray(data.milestones) ? data.milestones.slice(0, 8).map(function (m) {
+  var milestones = Array.isArray(data.milestones) ? data.milestones.slice(0, 35).map(function (m) {
     return {
       title: clampStr(m && m.title, 60),
       dueDate: isDateStr(m && m.dueDate) ? m.dueDate : null,
-      tasks: Array.isArray(m && m.tasks) ? m.tasks.slice(0, 6).map(function (t) {
+      tasks: Array.isArray(m && m.tasks) ? m.tasks.slice(0, 35).map(function (t) {
         if (typeof t === 'string') return clampStr(t, 80);
-        return clampStr(t && t.title, 80);
+        if (t && typeof t === 'object') {
+          var tTitle = clampStr(t.title, 80);
+          if (!tTitle) return null;
+          var resT = { title: tTitle };
+          if (isDateStr(t.dueDate)) resT.dueDate = t.dueDate;
+          if (Array.isArray(t.attachments)) resT.attachments = sanitizeAttachments(t.attachments);
+          return resT;
+        }
+        return null;
       }).filter(Boolean) : [],
       attachments: sanitizeAttachments(m && m.attachments)
     };
@@ -59,9 +67,17 @@ function sanitizeCreateMilestoneData(data) {
   return {
     title: title,
     dueDate: isDateStr(data.dueDate) ? data.dueDate : null,
-    tasks: Array.isArray(data.tasks) ? data.tasks.slice(0, 6).map(function (t) {
+    tasks: Array.isArray(data.tasks) ? data.tasks.slice(0, 35).map(function (t) {
       if (typeof t === 'string') return clampStr(t, 80);
-      return clampStr(t && t.title, 80);
+      if (t && typeof t === 'object') {
+        var tTitle = clampStr(t.title, 80);
+        if (!tTitle) return null;
+        var resT = { title: tTitle };
+        if (isDateStr(t.dueDate)) resT.dueDate = t.dueDate;
+        if (Array.isArray(t.attachments)) resT.attachments = sanitizeAttachments(t.attachments);
+        return resT;
+      }
+      return null;
     }).filter(Boolean) : [],
     attachments: sanitizeAttachments(data.attachments)
   };
@@ -129,6 +145,147 @@ function processOp(op, goalMap) {
   if (!data) return null;
   result.data = data;
   return result;
+}
+
+function addDays(baseDateStr, days) {
+  var d = new Date(baseDateStr + 'T12:00:00');
+  if (isNaN(d.getTime())) d = new Date();
+  d.setDate(d.getDate() + days);
+  var y = d.getFullYear();
+  var m = String(d.getMonth() + 1).padStart(2, '0');
+  var day = String(d.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + day;
+}
+
+function diffDays(startDateStr, endDateStr) {
+  var s = new Date(startDateStr + 'T12:00:00');
+  var e = new Date(endDateStr + 'T12:00:00');
+  if (isNaN(s.getTime()) || isNaN(e.getTime())) return 30;
+  return Math.max(1, Math.round((e - s) / (24 * 60 * 60 * 1000)));
+}
+
+// 일일/주차별/순차 계획의 dueDate가 최종 마감일 하나로 몰리지 않도록 안전하게 분배하는 엔진
+function distributeSequentialDates(ops, today, userMessage) {
+  if (!Array.isArray(ops) || !ops.length) return ops;
+  var msg = (userMessage || '').toLowerCase();
+  var isDailyIntent = /(일일|일자별|매일|데일리|30일|한달\s*계획|한달\s*일일|루틴|챌린지|daily|day)/i.test(msg);
+  var isWeeklyIntent = /(주차별|주간|주별|주차|weekly|week)/i.test(msg);
+
+  ops.forEach(function (op) {
+    if (!op || !op.data) return;
+
+    if (op.type === 'CREATE' && op.level === 'goal') {
+      var goalDue = op.data.dueDate;
+      var totalSpan = goalDue ? diffDays(today, goalDue) : 30;
+      var msList = op.data.milestones;
+
+      if (Array.isArray(msList) && msList.length > 1) {
+        var nonNullDues = msList.map(function (m) { return m && m.dueDate; }).filter(Boolean);
+        var allSameDue = nonNullDues.length > 0 && nonNullDues.every(function (d) { return d === nonNullDues[0]; });
+        var mostlyMissing = nonNullDues.length <= Math.ceil(msList.length * 0.3);
+        var hasSequentialTitle = msList.some(function (m) {
+          return m && m.title && /(?:day\s*\d+|\d+일차|\d+주차|\d+단계)/i.test(m.title);
+        });
+
+        if (allSameDue || mostlyMissing || hasSequentialTitle || isDailyIntent || isWeeklyIntent) {
+          var isDaily = isDailyIntent || msList.length >= 14 || msList.some(function (m) { return m && m.title && /(?:day\s*\d+|\d+일차)/i.test(m.title); });
+          var isWeekly = !isDaily && (isWeeklyIntent || msList.length <= 6 || msList.some(function (m) { return m && m.title && /(?:\d+주차|주간)/i.test(m.title); }));
+
+          msList.forEach(function (m, idx) {
+            if (!m) return;
+            var numMatch = (m.title || '').match(/(?:day\s*(\d+)|\b(\d+)일차)/i);
+            var itemIdx = numMatch ? (parseInt(numMatch[1] || numMatch[2], 10) - 1) : idx;
+            if (itemIdx < 0) itemIdx = idx;
+
+            if (isDaily) {
+              var offset = itemIdx + 1;
+              if (offset > totalSpan && goalDue) offset = totalSpan;
+              m.dueDate = addDays(today, offset);
+            } else if (isWeekly) {
+              var wOffset = Math.min((itemIdx + 1) * 7, totalSpan);
+              m.dueDate = addDays(today, wOffset);
+            } else {
+              var step = Math.max(1, Math.round(((itemIdx + 1) / msList.length) * totalSpan));
+              m.dueDate = addDays(today, step);
+            }
+          });
+        }
+      }
+
+      // 각 마일스톤 내부의 tasks도 날짜 순차 분배 확인
+      if (Array.isArray(msList)) {
+        msList.forEach(function (m) {
+          if (!m || !Array.isArray(m.tasks) || m.tasks.length < 2) return;
+          var tList = m.tasks;
+          var tNonNullDues = tList.map(function (t) { return t && typeof t === 'object' && t.dueDate; }).filter(Boolean);
+          var tAllSame = tNonNullDues.length > 0 && tNonNullDues.every(function (d) { return d === tNonNullDues[0]; });
+          var tMissing = tNonNullDues.length <= Math.ceil(tList.length * 0.3);
+          var tSeq = tList.some(function (t) {
+            var tTitle = typeof t === 'string' ? t : (t && t.title);
+            return tTitle && /(?:day\s*\d+|\d+일차)/i.test(tTitle);
+          });
+
+          if (tAllSame || tMissing || tSeq || isDailyIntent) {
+            var mDue = m.dueDate || goalDue;
+            var mSpan = mDue ? diffDays(today, mDue) : Math.max(tList.length, 7);
+            tList.forEach(function (t, tIdx) {
+              if (typeof t === 'string') {
+                t = { title: t };
+                m.tasks[tIdx] = t;
+              }
+              var tNum = (t.title || '').match(/(?:day\s*(\d+)|\b(\d+)일차)/i);
+              var tDayIdx = tNum ? (parseInt(tNum[1] || tNum[2], 10) - 1) : tIdx;
+              if (tDayIdx < 0) tDayIdx = tIdx;
+
+              if (tList.length <= mSpan) {
+                t.dueDate = addDays(today, Math.min(tDayIdx + 1, mSpan));
+              } else {
+                var tStep = Math.max(1, Math.round(((tDayIdx + 1) / tList.length) * mSpan));
+                t.dueDate = addDays(today, tStep);
+              }
+            });
+          }
+        });
+      }
+    }
+  });
+
+  // 연속된 CREATE milestone ops 처리
+  var createMsOps = ops.filter(function (o) { return o && o.type === 'CREATE' && o.level === 'milestone'; });
+  if (createMsOps.length > 1) {
+    var msDues = createMsOps.map(function (o) { return o.data && o.data.dueDate; }).filter(Boolean);
+    var msAllSame = msDues.length > 0 && msDues.every(function (d) { return d === msDues[0]; });
+    var msHasSeq = createMsOps.some(function (o) { return o.data && /(?:day\s*\d+|\d+일차|\d+단계|\d+주차)/i.test(o.data.title || ''); });
+    if (msAllSame || msHasSeq || isDailyIntent) {
+      var baseSpan = msDues[0] ? diffDays(today, msDues[0]) : Math.max(createMsOps.length, 30);
+      createMsOps.forEach(function (o, idx) {
+        if (!o.data) return;
+        var offset = isDailyIntent || createMsOps.length >= 14 ? (idx + 1) : Math.max(1, Math.round(((idx + 1) / createMsOps.length) * baseSpan));
+        if (msDues[0] && offset > baseSpan) offset = baseSpan;
+        o.data.dueDate = addDays(today, offset);
+      });
+    }
+  }
+
+  // 연속된 CREATE task ops 처리
+  var createTaskOps = ops.filter(function (o) { return o && o.type === 'CREATE' && o.level === 'task'; });
+  if (createTaskOps.length > 1) {
+    var tDues = createTaskOps.map(function (o) { return o.data && o.data.dueDate; }).filter(Boolean);
+    var tAllSame = tDues.length > 0 && tDues.every(function (d) { return d === tDues[0]; });
+    var tHasSeq = createTaskOps.some(function (o) { return o.data && /(?:day\s*\d+|\d+일차)/i.test((o.data.title || '') + (typeof o.data === 'string' ? o.data : '')); });
+    if (tAllSame || tHasSeq || isDailyIntent) {
+      var tSpan = tDues[0] ? diffDays(today, tDues[0]) : Math.max(createTaskOps.length, 30);
+      createTaskOps.forEach(function (o, idx) {
+        if (!o.data) return;
+        if (typeof o.data === 'string') o.data = { title: o.data };
+        var offset = isDailyIntent || createTaskOps.length >= 14 ? (idx + 1) : Math.max(1, Math.round(((idx + 1) / createTaskOps.length) * tSpan));
+        if (tDues[0] && offset > tSpan) offset = tSpan;
+        o.data.dueDate = addDays(today, offset);
+      });
+    }
+  }
+
+  return ops;
 }
 
 // API 키 부재 또는 호출 실패 시 로컬 규칙 기반 스마트 폴백 엔진 (어떤 입력이든 목표 생성으로 안전하게 포용)
@@ -369,18 +526,80 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
     t3 = ['프로젝트 완료 및 성과 지표 측정하기', '회고 및 다음 액션 플랜 수립하기'];
   }
 
+  var isDailyPlan = /(일일|일자별|매일|데일리|30일\s*계획|30일\s*챌린지|한달\s*계획|한달\s*일일|한달\s*플랜|30개)/i.test(msg);
+  if (isDailyPlan) {
+    var dailyMilestones = [];
+    var planSpan = dueDate ? diffDays(today, dueDate) : 30;
+    var itemCount = Math.min(Math.max(planSpan, 30), 31);
+
+    for (var di = 1; di <= itemCount; di++) {
+      var dDate = addDays(today, di);
+      var dayTitle = '';
+      var dayTasks = [];
+      if (isMarathon) {
+        if (di === 1) { dayTitle = 'Day 1: 가벼운 3km 조깅 & 호흡 적응'; dayTasks = ['3km 조깅 완주', '러닝 후 종아리 스트레칭']; }
+        else if (di === itemCount) { dayTitle = 'Day ' + di + ': 10km 마라톤 완주 및 기록 회고'; dayTasks = ['목표 페이스로 10km 완주', '완주 기록 및 소감 작성']; }
+        else if (di % 7 === 0) { dayTitle = 'Day ' + di + ': 주간 지속주 테스트 및 장거리 회복'; dayTasks = ['목표 페이스 점검', '충분한 수분 및 영양 섭취']; }
+        else if (di % 2 === 0) { dayTitle = 'Day ' + di + ': 하체 코어 운동 & 인터벌 러닝'; dayTasks = ['스쿼트/런지 3세트', '질주 인터벌 5회']; }
+        else { dayTitle = 'Day ' + di + ': 페이스 유지 5km 러닝'; dayTasks = ['5km 일정한 페이스 유지', '러닝 자세 점검']; }
+      } else if (isDiet) {
+        if (di === 1) { dayTitle = 'Day 1: 식단 일기 시작 & 현재 체중 기록'; dayTasks = ['공복 체중 측정', '물 2L 마시기']; }
+        else if (di === itemCount) { dayTitle = 'Day ' + di + ': 최종 인바디 측정 및 목표 체중 달성'; dayTasks = ['최종 체중 점검', '1개월 성과 회고']; }
+        else if (di % 2 === 0) { dayTitle = 'Day ' + di + ': 40분 유산소 운동 & 저녁 소식'; dayTasks = ['빠르게 걷기 40분', '야식 금지']; }
+        else { dayTitle = 'Day ' + di + ': 단백질 위주 식단 & 홈트레이닝'; dayTasks = ['단백질 60g 섭취', '복근 운동 15분']; }
+      } else if (isStudy) {
+        if (di === 1) { dayTitle = 'Day 1: 학습 분량 분배 및 1챕터 정독'; dayTasks = ['교재 1챕터 완독', '핵심 개념 요약노트']; }
+        else if (di === itemCount) { dayTitle = 'Day ' + di + ': 실전 모의고사 풀이 및 합격 달성'; dayTasks = ['실전 시간 맞춰 풀기', '오답노트 최종 복습']; }
+        else if (di % 7 === 0) { dayTitle = 'Day ' + di + ': 주간 누적 오답 복습 및 총정리'; dayTasks = ['틀린 문제 다시 풀기', '취약 개념 보강']; }
+        else { dayTitle = 'Day ' + di + ': 일일 목표 단어 50개 암기 및 기출 풀이'; dayTasks = ['단어 50개 암기', '기출문제 20문항']; }
+      } else {
+        if (di === 1) { dayTitle = 'Day 1: 실천 환경 구축 및 첫 실행'; dayTasks = ['필요 도구 준비', '첫 실천 20분 완료']; }
+        else if (di === itemCount) { dayTitle = 'Day ' + di + ': 최종 목표 달성 및 성장 회고'; dayTasks = ['성과 지표 점검', '다음 목표 계획']; }
+        else { dayTitle = 'Day ' + di + ': 일일 루틴 실천 및 기록'; dayTasks = ['핵심 과제 1개 달성', '오늘의 체크인 기록']; }
+      }
+
+      dailyMilestones.push({
+        title: dayTitle,
+        dueDate: dDate,
+        tasks: dayTasks
+      });
+    }
+
+    var finalDue = addDays(today, itemCount);
+    ops.push({
+      type: 'CREATE',
+      level: 'goal',
+      data: {
+        title: cleanTitle,
+        dueDate: finalDue,
+        topicMajor: topic,
+        topicMinor: '',
+        milestones: dailyMilestones
+      },
+      summary: '신규 목표 "' + cleanTitle + '" 및 ' + itemCount + '일 일일 플랜 생성 (' + addDays(today, 1) + ' ~ ' + finalDue + ')'
+    });
+
+    reply = '"' + cleanTitle + '" ' + itemCount + '일 일일단위 실천 계획을 준비했어요. 1일차(' + addDays(today, 1) + ')부터 ' + itemCount + '일차(' + finalDue + ')까지 날짜별로 마감일이 순차적으로 배치되었습니다. 이대로 적용할까요?';
+    return { ops: ops, reply: reply };
+  }
+
+  var totalDays = dueDate ? diffDays(today, dueDate) : 30;
+  var d1 = addDays(today, Math.max(1, Math.round(totalDays * 1 / 3)));
+  var d2 = addDays(today, Math.max(2, Math.round(totalDays * 2 / 3)));
+  var d3 = dueDate || addDays(today, totalDays);
+
   ops.push({
     type: 'CREATE',
     level: 'goal',
     data: {
       title: cleanTitle,
-      dueDate: dueDate,
+      dueDate: dueDate || d3,
       topicMajor: topic,
       topicMinor: '',
       milestones: [
-        { title: m1, tasks: t1, attachments: m1Atts, dueDate: dueDate },
-        { title: m2, tasks: t2 },
-        { title: m3, tasks: t3 }
+        { title: m1, tasks: t1, attachments: m1Atts, dueDate: d1 },
+        { title: m2, tasks: t2, dueDate: d2 },
+        { title: m3, tasks: t3, dueDate: d3 }
       ]
     },
     summary: '신규 목표 "' + cleanTitle + '" 및 3단계 마일스톤 생성' + (dueDate ? ' (일정: ' + dueDate + ')' : '') + (attachKeyword ? ' + ' + attachKeyword + ' 첨부' : '')
@@ -441,9 +660,10 @@ module.exports = async function handler(req, res) {
     '(1) UPDATE·DELETE 대상의 goalId·milestoneId·taskId가 위 JSON에 실제로 존재하는 값인가\n' +
     '(2) 새로 만드는 항목(CREATE)에는 id를 절대 넣지 않았는가\n' +
     '(3) "10월", "다음 주" 같은 날짜 표현을 [오늘 날짜] 기준 정확한 YYYY-MM-DD로 변환했는가 (구체적인 날짜가 없으면 해당 월의 마지막 날을 사용)\n' +
-    '(4) 사용자가 언급하지 않은 목표·마일스톤·할 일은 절대 건드리지 않았는가\n' +
-    '(5) summary가 각 변경사항을 한국어 한 문장으로 명확히 설명하는가\n' +
-    '(6) JSON 형식이 정확한가\n\n' +
+    '(4) 사용자가 "일일 단위", "일자별(Day 1..Day 30)", "30일 챌린지", "주차별(1~4주차)", "단계별" 등 기간에 걸친 연속적인 계획을 요청한 경우: 절대 모든 항목의 dueDate를 최종 마감일(예: 한달 뒤) 하나로 똑같이 설정하지 마세요! [오늘 날짜]부터 시작해 Day 1은 +1일, Day 2는 +2일... 또는 주차별(+7일, +14일...)로 실제 실행 일자(YYYY-MM-DD)를 순차적으로 각각 다르게 배분하세요 (운동, 공부, 커리어, 습관 등 전 분야 필수 적용)\n' +
+    '(5) 사용자가 언급하지 않은 목표·마일스톤·할 일은 절대 건드리지 않았는가\n' +
+    '(6) summary가 각 변경사항을 한국어 한 문장으로 명확히 설명하는가\n' +
+    '(7) JSON 형식이 정확한가\n\n' +
     '요청이 모호하거나 대상을 찾을 수 없으면 ops를 빈 배열로 두고 reply에 이유를 설명하세요. 절대 추측으로 엉뚱한 항목을 바꾸지 마세요.\n\n' +
     '아래 JSON 형식으로만 답하세요. 다른 텍스트, 코드블록, 마크다운 없이 순수 JSON만 출력하세요.\n' +
     '{"ops":[{"type":"CREATE 또는 UPDATE 또는 DELETE","level":"goal 또는 milestone 또는 task",' +
@@ -455,11 +675,11 @@ module.exports = async function handler(req, res) {
     '"reply":"사용자에게 보여줄 1~2문장 응답 (요청 이해 내용 요약 또는 실패 이유)"}\n\n' +
     'data 필드 규칙:\n' +
     '- goal CREATE: title(필수), dueDate(YYYY-MM-DD 또는 YYYY-MM-DDTHH:mm, null), topicMajor(health/study/career/hobby/mind/relation 중 하나, 선택), ' +
-    'topicMinor(짧은 텍스트, 선택), milestones(선택, [{"title":"","tasks":["",...],"attachments":[{"type":"video|image|text|link","title":"","url":""}]}] 형태)\n' +
+    'topicMinor(짧은 텍스트, 선택), milestones(선택, [{"title":"","dueDate":"YYYY-MM-DD(순차 분배)","tasks":["세부할일" 또는 {"title":"","dueDate":"YYYY-MM-DD"}],"attachments":[{"type":"video|image|text|link","title":"","url":""}]}] 형태)\n' +
     '- goal UPDATE: title, dueDate 중 바꿀 것만\n' +
-    '- milestone CREATE: title(필수), tasks(선택, 문자열 배열), dueDate(선택), attachments(선택)\n' +
+    '- milestone CREATE: title(필수), tasks(선택, 문자열 또는 {title, dueDate} 배열), dueDate(선택, 순차 일자), attachments(선택)\n' +
     '- milestone UPDATE: title, dueDate, status(todo/doing/done), attachments 중 바꿀 것만\n' +
-    '- task CREATE: title(필수), dueDate(선택), attachments(선택)\n' +
+    '- task CREATE: title(필수), dueDate(선택, 순차 일자), attachments(선택)\n' +
     '- task UPDATE: title, done(true/false), dueDate, attachments 중 바꿀 것만\n' +
     '- DELETE는 data가 필요 없습니다.\n\n' +
     '첨부파일/유튜브 요청 대응 규칙:\n' +
@@ -517,7 +737,7 @@ module.exports = async function handler(req, res) {
             headers: headers,
             body: JSON.stringify({
               model: aModel,
-              max_tokens: 2000,
+              max_tokens: 2500,
               messages: [{ role: 'user', content: prompt }]
             })
           });
@@ -542,17 +762,23 @@ module.exports = async function handler(req, res) {
     if (!parsed || !Array.isArray(parsed.ops) || parsed.ops.length === 0) {
       console.log('[goalagent] Falling back to localGoalAgentFallback for:', message);
       var fallbackResult = localGoalAgentFallback(message, goals, today, goalMap);
+      fallbackResult.ops = distributeSequentialDates(fallbackResult.ops, today, message);
       res.status(200).json(fallbackResult);
       return;
     }
 
-    var ops = parsed.ops.slice(0, 20).map(function (op) { return processOp(op, goalMap); }).filter(Boolean);
+    var ops = parsed.ops.slice(0, 40).map(function (op) { return processOp(op, goalMap); }).filter(Boolean);
+    ops = distributeSequentialDates(ops, today, message);
     var reply = clampStr(parsed.reply, 200) || (ops.length ? '요청하신 변경사항을 준비했어요.' : '요청을 이해하지 못했어요.');
 
     res.status(200).json({ ops: ops, reply: reply });
   } catch (e) {
     console.error('[goalagent] Exception in handler:', e.message);
     var fb = localGoalAgentFallback(message, goals, today, goalMap);
+    fb.ops = distributeSequentialDates(fb.ops, today, message);
     res.status(200).json(fb);
   }
 };
+
+module.exports.distributeSequentialDates = distributeSequentialDates;
+module.exports.localGoalAgentFallback = localGoalAgentFallback;

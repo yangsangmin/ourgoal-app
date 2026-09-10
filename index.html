@@ -7133,8 +7133,45 @@
     });
   }
 
+  function normalizeSequentialMilestoneDates(milestones, goalDueDate){
+    if(!Array.isArray(milestones) || milestones.length <= 1) return milestones;
+    var today = dateKey(new Date());
+    var dues = milestones.map(function(m){ return m && m.dueDate; }).filter(Boolean);
+    var allSame = dues.length > 0 && dues.every(function(d){ return d === dues[0]; });
+    var mostlyMissing = dues.length <= Math.ceil(milestones.length * 0.3);
+    var hasSeq = milestones.some(function(m){ return m && m.title && /(?:day\s*\d+|\d+일차|\d+주차|\d+단계)/i.test(m.title); });
+
+    if(allSame || mostlyMissing || hasSeq){
+      var totalSpan = goalDueDate ? Math.max(1, Math.round((new Date(goalDueDate+'T12:00:00') - new Date(today+'T12:00:00')) / 86400000)) : 30;
+      var isDaily = milestones.length >= 14 || milestones.some(function(m){ return m && m.title && /(?:day\s*\d+|\d+일차)/i.test(m.title); });
+      var isWeekly = !isDaily && (milestones.length <= 6 || milestones.some(function(m){ return m && m.title && /(?:\d+주차|주간)/i.test(m.title); }));
+
+      milestones.forEach(function(m, idx){
+        if(!m) return;
+        var numMatch = (m.title||'').match(/(?:day\s*(\d+)|\b(\d+)일차)/i);
+        var itemIdx = numMatch ? (parseInt(numMatch[1]||numMatch[2], 10) - 1) : idx;
+        if(itemIdx < 0) itemIdx = idx;
+
+        var d = new Date(today + 'T12:00:00');
+        if(isDaily){
+          var offset = itemIdx + 1;
+          if(offset > totalSpan && goalDueDate) offset = totalSpan;
+          d.setDate(d.getDate() + offset);
+        } else if(isWeekly){
+          var wOffset = Math.min((itemIdx + 1) * 7, totalSpan);
+          d.setDate(d.getDate() + wOffset);
+        } else {
+          var step = Math.max(1, Math.round(((itemIdx + 1) / milestones.length) * totalSpan));
+          d.setDate(d.getDate() + step);
+        }
+        m.dueDate = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+      });
+    }
+    return milestones;
+  }
+
   function buildGoalFromAgentData(data){
-    var milestones = (data.milestones||[]).map(function(m){
+    var rawMilestones = (data.milestones||[]).map(function(m){
       return {
         id: uid('ms'),
         title: m.title,
@@ -7149,6 +7186,7 @@
         })
       };
     });
+    var milestones = normalizeSequentialMilestoneDates(rawMilestones, data.dueDate);
     return {
       id: newId(),
       title: data.title,
@@ -7198,7 +7236,8 @@
           tasks: (op.data.tasks||[]).map(function(tk){
             var tkTitle = typeof tk === 'string' ? tk : (tk && tk.title) || '';
             var tkAtts = (tk && tk.attachments) || [];
-            return { id: uid('task'), title: tkTitle, done: false, attachments: sanitizeAttachments(tkAtts) };
+            var tkDue = (tk && tk.dueDate) || null;
+            return { id: uid('task'), title: tkTitle, done: false, dueDate: tkDue, attachments: sanitizeAttachments(tkAtts) };
           })
         });
         return true;
@@ -7239,6 +7278,11 @@
   /* ============ 목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5) ============ */
   function renderGoalOpsFullPreviewHtml(ops){
     if(!ops || !ops.length) return '<p class="faint">반영할 변경사항이 없습니다.</p>';
+    ops.forEach(function(op){
+      if(op && op.level==='goal' && op.type==='CREATE' && op.data && Array.isArray(op.data.milestones)){
+        normalizeSequentialMilestoneDates(op.data.milestones, op.data.dueDate);
+      }
+    });
     var html = '<div class="scroll-preview-box">';
     ops.forEach(function(op, opIdx){
       var icon = op.type==='CREATE' ? '➕' : (op.type==='DELETE' ? '🗑' : '✏️');

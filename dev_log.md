@@ -1602,3 +1602,27 @@
   - `node scripts/smoke-test.js` **127개 전수 통과 (0개 실패)**.
   - 양방향 동기화 및 달력 통합 렌더링 무결성 검증 완료.
 ---
+
+## [2026-09-10 20:20] fix: 일일/순차 목표 계획 생성 시 마감일 몰림 방지 및 전 테마 순차 분배 배포
+- **목표**:
+  1. 목표설정 2차 프롬프트에서 "전문 코치의 일일단위 한달 계획" 요청 시 30개 마일스톤의 마감일(dueDate)이 모두 목표 최종 마감일(1개월 뒤) 하나로 몰려 설정되던 문제의 근본 원인 해결.
+  2. 마라톤뿐만 아니라 공부, 다이어트, 커리어, 습관 등 전 테마에서 일일(Day 1~Day 30), 주차별(1~4주차), 단계별 계획이 목표 기간에 걸쳐 순차적·점진적으로 배분되도록 서버 및 클라이언트 이중 안전 분배 파이프라인 구축.
+  3. 일일 단위 대규모 계획(최대 35개 마일스톤/태스크) 지원 및 자동 배포.
+- **수정/실행 내역**:
+  1. `api/goalagent.js`:
+     - 원인 파악: LLM 프롬프트가 순차 일자 배분을 명시하지 않아 최종 기한 1개만 모든 항목에 복제했고, 서버 sanitize 스키마의 8개 마일스톤/20개 ops 제한 및 task dueDate 누락이 존재했음.
+     - `distributeSequentialDates(ops, today, message)` 신설: 서버 응답 후처리 단계에서 항목 제목의 순차 키워드(Day N, N일차, N주차, N단계) 및 일일 의도(isDailyIntent)를 감지하여, 마감일이 동일하거나 누락된 경우 오늘+1일부터 목표 마감일까지 균등/일일 단위로 자동 분배.
+     - `sanitizeCreateGoalData` 및 `sanitizeCreateMilestoneData` 확장: 최대 35개 마일스톤 및 마일스톤별 35개 태스크 객체({ title, dueDate, attachments }) 지원.
+     - `localGoalAgentFallback` 고도화: 마라톤, 다이어트, 수험/공부, 일반 습관 등 1달 일일 계획 요청 시 1일차~30일차 전체 마일스톤 및 순차적 마감일 즉시 자동 생성.
+     - LLM 시스템 프롬프트 강화: 일일/주차별/단계별 계획 시 모든 항목에 동일한 dueDate 부여를 금지하고 [오늘 날짜] 기준 순차 일자 부여 규칙 명시, 토큰 한도 상향(2500).
+  2. `index.html`:
+     - `normalizeSequentialMilestoneDates(milestones, goalDueDate)` 신설: 클라이언트 측 목표 수신(`buildGoalFromAgentData`) 및 프리뷰(`renderGoalOpsFullPreviewHtml`) 시 날짜 몰림 감지 및 순차 분배 이중 방어.
+     - 마일스톤 태스크 생성(`applyGoalAgentOp`) 시 `dueDate` 보존 지원.
+  3. `scripts/smoke-test.js`:
+     - 30일 마라톤 순차 마감일 분배, 공부/다이어트/주차별 분배, Fallback 30일 생성, index.html 35개 마일스톤 지원 검증 테스트 4종 추가 (총 131개 전수 통과).
+- **발생한 문제 및 해결**:
+  - LLM 모델이 일일단위 요청에도 단일 목표 dueDate만 복사하는 현상이 발생할 수 있어, 프롬프트 가이드뿐만 아니라 서버단 `distributeSequentialDates`와 클라이언트단 `normalizeSequentialMilestoneDates`의 2중 자동 분배 정규화기를 배치하여 모델 응답 품질 편차에 상관없이 100% 순차 날짜가 보장되도록 해결.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` 131개 전수 통과 (0개 실패).
+  - 30일 일일 계획 요청 시 Day 1(2026-09-11)부터 Day 30(2026-10-10)까지 30개 고유 날짜 순차 배분 검증 완료.
+---
