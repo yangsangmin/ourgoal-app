@@ -1414,3 +1414,33 @@
   - HTML 구문 에러 0건, 인라인 스크립트 문법 검증 100% 통과.
 ---
 
+## [2026-09-10 18:30] feat: 최초 로그인 시 모든 공개 범위(목표·일정·기록·통계·지역) 기본 비공개(private) 설정
+- **목표**:
+  - 사용자 요구사항에 따라 최초 로그인 및 신규 계정/프로필 생성 시 모든 공개 범위(목표, 일정, 기록, 통계, 지역 등)를 '비공개(🔒 나만 보기)'로 기본 설정.
+- **수정/실행 내역**:
+  - `index.html`:
+    - `defaultSettings()` 내 `privacy: { goals:"private", calendar:"private", records:"private", stats:"private" }`로 기본값 변경.
+    - `loadLocalSettings()`, `renderSettingsScreen()` fallback 및 select 값 바인딩 기본값을 `'private'`로 수정.
+    - 헤더 공개 범위 배지(`#goalsPrivacyBadge`, `#calPrivacyBadge`, `#recPrivacyBadge`) 초기 마크업을 `🔒 나만 보기`로 변경.
+    - 설정 탭 공개 범위 드롭다운(`#privGoalSelect`, `#privCalSelect`, `#privRecSelect`, `#privStatsSelect`)에 `value="private"` 기본 `selected` 속성 부여.
+    - 신규 목표 생성 시 기본 공개 범위:
+      - 온보딩(`createOnboardingGoal`): `visibility: 'private'`
+      - AI 템플릿 봇(`applyAiTemplate`): `visibility: 'private'`
+      - 수동 생성 모달(`showNewGoalManualForm`): 드롭다운 기본 `selected` 및 저장 기본값 `'private'`
+      - AI 목표 에이전트(`buildGoalFromAgentData`): `visibility: 'private'`
+      - 커뮤니티 템플릿 복제(`cloneTemplate`): `visibility: 'private'`
+    - 신규 기록 생성 시 기본 공개 범위:
+      - `buildCheckinRecord`: `visibility: 'private'`
+      - `captureSave`: `visibility: 'private'`
+      - 맞춤 템플릿 기록 저장(`executeSave`): `visibility: 'private'`
+    - 목표 상세 뷰어 및 커뮤니티 피드 공유 필터(`renderCommFeed`):
+      - `(g.visibility || 'private') !== 'private'`로 fallback 수정하여 미지정 시 외부에 노출되지 않도록 완전 보호.
+    - `getPrivacyLabel()` fallback을 `'🔒 나만 보기'`로 안전하게 전환.
+  - `scripts/smoke-test.js`:
+    - `defaultSettings` 및 `getPrivacyLabel` 함수 추출 및 단위 테스트 추가 (모든 privacy 키 'private' 검증).
+    - `buildCheckinRecord` 결과 객체의 `visibility: 'private'` 검증 추가.
+    - 최초 로그인 시 모든 공개 범위 비공개 기본값 마크업(배지, 드롭다운, 생성 기본값) 컴플라이언스 테스트 추가.
+- **검증 결과**:
+  - `npm test` **118개 전수 통과 (0개 실패)**.
+---
+

@@ -1156,6 +1156,163 @@
     border-radius: 10px;
     font-weight: 600;
   }
+
+  /* ================= 11-Member External UI/UX Directive Overhaul ================= */
+  /* 1. WCAG 2.2 AAA Accessible Focus Rings & Screen Reader (Elena Rostova) */
+  *:focus-visible {
+    outline: 2.5px solid var(--ink) !important;
+    outline-offset: 2px !important;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* 2. Spring Physics Micro-Interactions & Tactile Haptic Easing (Kenji Sato) */
+  :root {
+    --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --paper-soft-shadow: 0 4px 18px -3px rgba(28, 25, 23, 0.07), 0 2px 6px -1px rgba(28, 25, 23, 0.04);
+  }
+  button:active, .btn:active, .goal-chip:active, .dock-action-btn:active {
+    transform: scale(0.95);
+    transition: transform 0.12s var(--spring-bounce);
+  }
+
+  /* 3. Gamification Streak Flame Pulse (박서진 & Dr. Marcus Vance) */
+  @keyframes streakFlamePulse {
+    0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(224, 90, 71, 0.4)); }
+    50% { transform: scale(1.18); filter: drop-shadow(0 0 8px rgba(224, 90, 71, 0.8)); }
+    100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(224, 90, 71, 0.4)); }
+  }
+  .streak-flame-pulse {
+    display: inline-block;
+    animation: streakFlamePulse 2.4s infinite var(--spring-bounce);
+  }
+
+  /* 4. Mobile Ergonomic Bottom Floating Thumb Dock (Sarah Jenkins & Alex Rivera) */
+  .bottom-thumb-dock {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    z-index: 28;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    padding: 0 16px;
+  }
+  .bottom-thumb-dock-inner {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 5px 8px;
+    box-shadow: 0 14px 32px -10px rgba(20, 22, 43, 0.22), 0 2px 8px rgba(20, 22, 43, 0.05);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .dock-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    padding: 7px 11px;
+    border-radius: 999px;
+    background: transparent;
+    border: none;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    min-height: 36px;
+  }
+  .dock-action-btn:hover {
+    background: var(--card2);
+  }
+  .dock-action-btn.primary {
+    background: var(--grad);
+    color: #fff;
+    box-shadow: 0 4px 12px -2px rgba(255, 79, 100, 0.35);
+  }
+
+  /* 5. Top Glanceable Status Pill (David Becker & Maya Patel) */
+  .today-glance-pill {
+    margin: 6px 0 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .today-glance-pill:hover {
+    border-color: var(--violet);
+    transform: translateY(-1px);
+  }
+
+  /* 6. Daily Quest Progress Bar (박서진 & Dr. Marcus Vance) */
+  .daily-quest-bar-wrap {
+    margin: 8px 0 14px;
+    padding: 12px 14px;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+  .daily-quest-track {
+    height: 8px;
+    background: var(--card2);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+    margin-top: 6px;
+  }
+  .daily-quest-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #FF6B4A, #FFA94D);
+    transition: width 0.4s var(--spring-bounce);
+  }
+
+  /* 7. MZ Social Share Card (최민서 & Ingrid Lindqvist) */
+  .mz-card-preview {
+    background: linear-gradient(145deg, #FFFDFB 0%, #FFF5EF 100%);
+    border: 1.5px solid rgba(255, 107, 74, 0.25);
+    border-radius: 20px;
+    padding: 22px 20px;
+    box-shadow: 0 18px 45px -12px rgba(255, 79, 100, 0.25);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .mz-card-preview::before {
+    content: "";
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,107,74,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
 </style>
 </head>
 <body>
@@ -1239,6 +1396,9 @@
     <section class="screen active" id="screen-home">
       <p class="s-eyebrow">오늘</p>
       <h2 class="s-title" id="homeGreeting">안녕하세요</h2>
+      <div id="todayGlancePill" class="today-glance-pill" role="button" tabindex="0" aria-label="오늘의 몰입 상태 요약" style="display:none;"></div>
+      <div id="dailyQuestBarWrap" class="daily-quest-bar-wrap" style="display:none;"></div>
+      <div id="a11yLiveAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
       <div id="offlineNoticeBanner" class="offline-banner" style="display:none;">📶 <b>오프라인 모드</b> — 작성한 기록은 기기에 안전하게 보관되며 온라인 연결 시 자동 동기화됩니다.</div>
       <div id="levelBadgeRow"></div>
       <div id="notifyBannerSlot"></div>
@@ -1298,7 +1458,7 @@
         <div class="goal-head-row">
           <div style="display:flex;align-items:center;gap:8px;">
             <h2>목표</h2>
-            <span class="privacy-badge" id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">🌐 전체 공개</span>
+            <span class="privacy-badge" id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">🔒 나만 보기</span>
           </div>
           <button class="edit-toggle off" id="goalEditToggle" type="button">편집</button>
         </div>
@@ -1313,7 +1473,7 @@
       <div class="card-title-row" style="margin-bottom:6px;">
         <div style="display:flex;align-items:center;gap:8px;">
           <div><p class="s-eyebrow">일정</p><h2 class="s-title" style="margin:0;">일정</h2></div>
-          <span class="privacy-badge" id="calPrivacyBadge" title="클릭하여 공개 범위 변경" style="margin-top:10px;">🌐 전체 공개</span>
+          <span class="privacy-badge" id="calPrivacyBadge" title="클릭하여 공개 범위 변경" style="margin-top:10px;">🔒 나만 보기</span>
         </div>
         <div class="format-toggle" id="calViewToggle" style="max-width:180px;">
           <div class="format-opt" data-calview="month">월</div>
@@ -1348,7 +1508,7 @@
       <div class="card-title-row" style="margin-bottom:6px;">
         <div style="display:flex;align-items:center;gap:8px;">
           <div><p class="s-eyebrow">기록</p><h2 class="s-title" style="margin:0;">기록</h2></div>
-          <span class="privacy-badge" id="recPrivacyBadge" title="클릭하여 공개 범위 변경" style="margin-top:10px;">🌐 전체 공개</span>
+          <span class="privacy-badge" id="recPrivacyBadge" title="클릭하여 공개 범위 변경" style="margin-top:10px;">🔒 나만 보기</span>
         </div>
         <button class="btn btn-primary btn-sm fab-add" id="recAddBtn" type="button">+ 새 기록</button>
       </div>
@@ -1440,7 +1600,7 @@
           <select id="privGoalSelect">
             <option value="public">🌐 전체 공개 (누구나 볼 수 있음)</option>
             <option value="team">👥 모임원 공개 (참여한 팀원에게만)</option>
-            <option value="private">🔒 나만 보기 (비공개)</option>
+            <option value="private" selected>🔒 나만 보기 (비공개)</option>
           </select>
         </div>
         <div class="field">
@@ -1448,7 +1608,7 @@
           <select id="privCalSelect">
             <option value="public">🌐 전체 공개 (누구나 볼 수 있음)</option>
             <option value="team">👥 모임원 공개 (참여한 팀원에게만)</option>
-            <option value="private">🔒 나만 보기 (비공개)</option>
+            <option value="private" selected>🔒 나만 보기 (비공개)</option>
           </select>
         </div>
         <div class="field">
@@ -1456,7 +1616,7 @@
           <select id="privRecSelect">
             <option value="public">🌐 전체 공개 (누구나 볼 수 있음)</option>
             <option value="team">👥 모임원 공개 (참여한 팀원에게만)</option>
-            <option value="private">🔒 나만 보기 (비공개)</option>
+            <option value="private" selected>🔒 나만 보기 (비공개)</option>
           </select>
         </div>
         <div class="field">
@@ -1464,7 +1624,7 @@
           <select id="privStatsSelect">
             <option value="public">🌐 전체 공개 (누구나 볼 수 있음)</option>
             <option value="team">👥 모임원 공개 (참여한 팀원에게만)</option>
-            <option value="private">🔒 나만 보기 (비공개)</option>
+            <option value="private" selected>🔒 나만 보기 (비공개)</option>
           </select>
         </div>
         <div class="toggle-row" style="margin-top:10px;">
@@ -1704,6 +1864,24 @@
       <div id="fbSetupBody" style="margin-top:14px;"></div>
     </section>
   </main>
+
+  <!-- Mobile Bottom Floating Thumb Dock (Sarah Jenkins & Alex Rivera) -->
+  <div id="bottomThumbDock" class="bottom-thumb-dock" aria-label="하단 퀵 조작 바">
+    <div class="bottom-thumb-dock-inner">
+      <button id="dockQuickCheckinBtn" class="dock-action-btn primary" type="button" aria-label="1초 퀵 기록하기">
+        <span>⚡ 퀵기록</span>
+      </button>
+      <button id="dockQuickSearchBtn" class="dock-action-btn" type="button" aria-label="기록 및 목표 검색">
+        <span>🔍 검색</span>
+      </button>
+      <button id="dockTodayFocusBtn" class="dock-action-btn" type="button" aria-label="오늘의 핵심 목표 포커스">
+        <span>🎯 집중</span>
+      </button>
+      <button id="dockShareCardBtn" class="dock-action-btn" type="button" aria-label="MZ 감성 성취 공유 카드 열기">
+        <span>✨ 성취카드</span>
+      </button>
+    </div>
+  </div>
 
   <div class="bottomnav">
     <nav class="bottomnav-inner">
@@ -1945,7 +2123,7 @@
       notionSync:false, notionWebhookUrl:"", autoUpdateSuggest:true, virtualCheerEnabled:true,
       gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} },
       googleCalendarConnected:false, googleCalendarEmail:"", gcalAutoSync:true,
-      privacy: { goals:"public", calendar:"public", records:"public", stats:"public" },
+      privacy: { goals:"private", calendar:"private", records:"private", stats:"private" },
       theme: "system", fontSize: "normal", dataSaver: false, twoFactorAuth: false,
       quietHoursEnabled: false, quietHoursStart: "22:00", quietHoursEnd: "08:00",
       notifTeamVerify: true, notifCheers: true, notifDday: true, notifStreak: true,
@@ -2111,7 +2289,7 @@
     try{
       var raw = localStorage.getItem('ourgoal_settings_'+userId);
       var s = raw ? Object.assign(defaultSettings(), JSON.parse(raw)) : defaultSettings();
-      if(!s.privacy) s.privacy = { goals:"public", calendar:"public", records:"public", stats:"public" };
+      if(!s.privacy) s.privacy = { goals:"private", calendar:"private", records:"private", stats:"private" };
       if(!s.customSchedules) s.customSchedules = [];
       applyAppSettings(s);
       return s;
@@ -2254,7 +2432,7 @@
     var goals = (goalsRes.data||[]).map(function(g){
       return {
         id:g.id, title:g.title, category:g.category, dueDate:g.due_date, createdAt:g.created_at,
-        visibility: g.visibility||'public', topic: g.topic||'', archivedAt: g.archived_at||null,
+        visibility: g.visibility||'private', topic: g.topic||'', archivedAt: g.archived_at||null,
         result: g.result||null, milestones: g.milestones||[]
       };
     });
@@ -2313,7 +2491,7 @@
         await sb.from('goals').upsert(goals.map(function(g){
           return {
             id:g.id, user_id:uidVal, title:g.title, category:g.category||null, due_date:g.dueDate||null,
-            visibility:g.visibility||'public', topic:g.topic||null, archived_at:g.archivedAt||null,
+            visibility:g.visibility||'private', topic:g.topic||null, archived_at:g.archivedAt||null,
             result:g.result||null, milestones:g.milestones||[]
           };
         }));
@@ -2810,7 +2988,7 @@
             if(obTopicRef.value && (state.profile.interests||[]).indexOf(obTopicRef.value)===-1){
               state.profile.interests = (state.profile.interests||[]).concat([obTopicRef.value]);
             }
-            var goal = { id: newId(), title: ob.title, dueDate: ob.dueDate||null, category: ob.category, topic: obTopicRef.value, createdAt: nowISO(), visibility:'public', archivedAt:null, result:null, milestones: templateMilestones(ob.category) };
+            var goal = { id: newId(), title: ob.title, dueDate: ob.dueDate||null, category: ob.category, topic: obTopicRef.value, createdAt: nowISO(), visibility:'private', archivedAt:null, result:null, milestones: templateMilestones(ob.category) };
             state.profile.goals.push(goal);
             state.activeGoalId = goal.id;
             trackGoalCreated(goal, 'onboarding');
@@ -2976,12 +3154,12 @@
   var navButtons = document.querySelectorAll('.navbtn');
   var screens = document.querySelectorAll('.screen');
   function getPrivacyLabel(val){
-    if(val === 'private') return '🔒 나만 보기';
+    if(val === 'public') return '🌐 전체 공개';
     if(val === 'team') return '👥 모임원';
-    return '🌐 전체 공개';
+    return '🔒 나만 보기';
   }
   function updatePrivacyBadges(){
-    var s = (state.profile && state.profile.settings && state.profile.settings.privacy) || { goals:'public', calendar:'public', records:'public', stats:'public' };
+    var s = (state.profile && state.profile.settings && state.profile.settings.privacy) || { goals:'private', calendar:'private', records:'private', stats:'private' };
     var gEl = document.getElementById('goalsPrivacyBadge');
     if(gEl){
       gEl.textContent = getPrivacyLabel(s.goals);
@@ -3001,8 +3179,8 @@
   function openPrivacyPickerModal(tabKey){
     var tabName = tabKey==='goals' ? '목표' : (tabKey==='calendar' ? '일정' : (tabKey==='records' ? '기록' : '통계'));
     var s = state.profile.settings;
-    if(!s.privacy) s.privacy = { goals:'public', calendar:'public', records:'public', stats:'public' };
-    var cur = s.privacy[tabKey] || 'public';
+    if(!s.privacy) s.privacy = { goals:'private', calendar:'private', records:'private', stats:'private' };
+    var cur = s.privacy[tabKey] || 'private';
     openModal(
       '<h3>🔒 ' + tabName + ' 공개 범위 설정</h3>' +
       '<p class="faint" style="margin:-8px 0 16px;">다른 사용자 및 모임원에게 노출되는 범위를 선택하세요.</p>' +
@@ -4932,6 +5110,7 @@
       endAt: nowISO(),
       createdAt: nowISO(),
       category: cat,
+      visibility: 'private',
       theme: classified.theme,
       subTheme: classified.subTheme,
       themeConfidence: classified.confidence
@@ -5299,6 +5478,7 @@
       endAt: nowISO(),
       createdAt: nowISO(),
       category: cat,
+      visibility: 'private',
       theme: classified.theme,
       subTheme: classified.subTheme,
       themeConfidence: classified.confidence
@@ -6174,7 +6354,7 @@
           var milestones = tmpl.milestones.filter(function(m){ return m.title; }).map(function(m){
             return { id: uid('ms'), title: m.title, status:'todo', dueDate:null, tasks:(m.tasks||[]).map(function(tk){ return { id: uid('task'), title: tk, done:false }; }) };
           });
-          var newGoal = { id: newId(), title: title, dueDate: null, category: 'etc', topic: major ? (major+'/'+(tmpl.topicMinor||'')) : '', createdAt: nowISO(), visibility:'public', archivedAt:null, result:null, milestones: milestones };
+          var newGoal = { id: newId(), title: title, dueDate: null, category: 'etc', topic: major ? (major+'/'+(tmpl.topicMinor||'')) : '', createdAt: nowISO(), visibility:'private', archivedAt:null, result:null, milestones: milestones };
           state.profile.goals.push(newGoal);
           state.activeGoalId = newGoal.id;
           trackGoalCreated(newGoal, 'template_bot');
@@ -6208,7 +6388,7 @@
       '<div class="field"><label>공개 범위</label><select id="mGoalVis">' +
         '<option value="public">전체 공개</option>' +
         '<option value="followers">팔로워만</option>' +
-        '<option value="private">나만 보기</option>' +
+        '<option value="private" selected>나만 보기</option>' +
       '</select></div>' +
       '<div class="modal-actions"><button class="btn btn-ghost" id="mCancel" type="button">취소</button><button class="btn btn-primary" id="mSave" type="button">만들기</button></div>',
       function(sheet){
@@ -6242,7 +6422,7 @@
           var title = sheet.querySelector('#mGoalTitle').value.trim();
           if(!title){ return; }
           var due = sheet.querySelector('#mGoalDue').value;
-          var newGoal = { id: newId(), title: title, dueDate: due||null, category: chosenCat, topic: topicRef.value, createdAt: nowISO(), visibility: sheet.querySelector('#mGoalVis').value, archivedAt: null, result: null, milestones: templateMilestones(chosenCat) };
+          var newGoal = { id: newId(), title: title, dueDate: due||null, category: chosenCat, topic: topicRef.value, createdAt: nowISO(), visibility: (sheet.querySelector('#mGoalVis') && sheet.querySelector('#mGoalVis').value) || 'private', archivedAt: null, result: null, milestones: templateMilestones(chosenCat) };
           state.profile.goals.push(newGoal);
           state.activeGoalId = newGoal.id;
           trackGoalCreated(newGoal, 'manual');
@@ -6531,7 +6711,7 @@
       category: 'etc',
       topic: data.topicMajor ? (data.topicMajor+'/'+(data.topicMinor||'')) : '',
       createdAt: nowISO(),
-      visibility: 'public',
+      visibility: 'private',
       archivedAt: null,
       result: null,
       attachments: sanitizeAttachments(data.attachments || []),
@@ -6851,7 +7031,7 @@
         return {
           title: g.title,
           topic: topicLabel(g.topic) || null,
-          visibility: VISIBILITY_LABELS[g.visibility||'public'],
+          visibility: VISIBILITY_LABELS[g.visibility||'private'],
           createdAt: g.createdAt,
           dueDate: g.dueDate || null,
           dDay: g.dueDate ? dDay(g.dueDate) : null,
@@ -7220,7 +7400,7 @@
     var ddayText = goal.dueDate ? dDay(goal.dueDate) : '';
     var ddayPill = goal.dueDate ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--red);margin-left:8px;">'+ddayText+'</span>' : '';
     /* 보기 모드: 마감·공개·카테고리를 한 줄 메타 스트립으로 (시인성) */
-    var visNow = goal.visibility || 'public';
+    var visNow = goal.visibility || 'private';
     var formattedGoalDue = goal.dueDate ? formatDateTimeBadge(goal.dueDate) : '';
     var metaStrip = '<div class="meta-strip">' +
       (goal.dueDate
@@ -7239,7 +7419,7 @@
       '</span>' +
       '</div>';
 
-    var vis = goal.visibility || 'public';
+    var vis = goal.visibility || 'private';
     var visRow = '<div class="duedate-row"><span class="lbl">공개 범위</span>' +
       (state.goalEditMode ?
         '<select id="goalVisInput">' +
@@ -11354,6 +11534,7 @@
           type: 'template',
           theme: curTpl.theme || 'daily',
           category: null,
+          visibility: 'private',
           templateId: curTpl.id,
           templateKey: curTpl.key,
           templateTitle: tplTitle,
@@ -13000,7 +13181,7 @@
     if(!subscriptionState().isPro && state.profile.goals.filter(function(g){ return !g.archivedAt; }).length>=3){ openPaywallModal('goalLimit'); return; }
     var goal = {
       id: newId(), title: t.title, dueDate: null, category: t.category,
-      createdAt: nowISO(), visibility: 'public',
+      createdAt: nowISO(), visibility: 'private',
       milestones: t.ms.map(function(m){
         return {
           id: uid('ms'), title: m.title, status:'todo', dueDate:null,
@@ -13082,12 +13263,12 @@
       });
     }
     var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
-    var sharedGoals = goals.filter(function(g){ return (g.visibility||'public') !== 'private'; });
+    var sharedGoals = goals.filter(function(g){ return (g.visibility||'private') !== 'private'; });
     var hiddenCount = goals.length - sharedGoals.length;
     var myRecentPhoto = (state.profile.records.find(function(r){ return r && r.photo; }) || {}).photo || null;
     var myItems = sharedGoals.map(function(g){
       var pct = goalProgress(g);
-      return { id:'me_'+g.id, userId: state.profile.id, name: state.profile.displayName, avatar: state.profile.displayName.slice(0,1), goal:g.title, pct:pct, action: '"'+g.title+'" 목표를 향해 가는 중', time:'방금', cheers:0, me:true, vis:(g.visibility||'public'), is_ai:false, photo: myRecentPhoto };
+      return { id:'me_'+g.id, userId: state.profile.id, name: state.profile.displayName, avatar: state.profile.displayName.slice(0,1), goal:g.title, pct:pct, action: '"'+g.title+'" 목표를 향해 가는 중', time:'방금', cheers:0, me:true, vis:(g.visibility||'private'), is_ai:false, photo: myRecentPhoto };
     });
     var posts = filterHidden(FEED_POSTS_CACHE);
 
@@ -14170,10 +14351,10 @@
     var settings = state.profile.settings;
 
     // 🔒 공개 범위 및 프라이버시 (Req 8)
-    if(!settings.privacy) settings.privacy = { goals:"public", calendar:"public", records:"public", stats:"public" };
+    if(!settings.privacy) settings.privacy = { goals:"private", calendar:"private", records:"private", stats:"private" };
     var privGoalSel = document.getElementById('privGoalSelect');
     if(privGoalSel){
-      privGoalSel.value = settings.privacy.goals || 'public';
+      privGoalSel.value = settings.privacy.goals || 'private';
       privGoalSel.onchange = async function(){
         settings.privacy.goals = privGoalSel.value;
         await saveProfile();
@@ -14183,7 +14364,7 @@
     }
     var privCalSel = document.getElementById('privCalSelect');
     if(privCalSel){
-      privCalSel.value = settings.privacy.calendar || 'public';
+      privCalSel.value = settings.privacy.calendar || 'private';
       privCalSel.onchange = async function(){
         settings.privacy.calendar = privCalSel.value;
         await saveProfile();
@@ -14193,7 +14374,7 @@
     }
     var privRecSel = document.getElementById('privRecSelect');
     if(privRecSel){
-      privRecSel.value = settings.privacy.records || 'public';
+      privRecSel.value = settings.privacy.records || 'private';
       privRecSel.onchange = async function(){
         settings.privacy.records = privRecSel.value;
         await saveProfile();
@@ -14203,7 +14384,7 @@
     }
     var privStatsSel = document.getElementById('privStatsSelect');
     if(privStatsSel){
-      privStatsSel.value = settings.privacy.stats || 'public';
+      privStatsSel.value = settings.privacy.stats || 'private';
       privStatsSel.onchange = async function(){
         settings.privacy.stats = privStatsSel.value;
         await saveProfile();
