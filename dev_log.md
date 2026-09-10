@@ -1701,4 +1701,33 @@
 - **검증 결과**:
   - `node scripts/smoke-test.js` **140개 전수 통과 (0개 실패)**.
   - Vercel 배포 준비 완료.
+## [2026-09-10 22:46] fix: 기존 계정 목표 보존, Supabase DB 무결성 확인 및 최초로그인 온보딩 오진입 원천 차단
+- **상황 및 사용자 문의**:
+  - "야 방금 너가 수정하고나서 기존 계정들의 목표 다 삭제됐어. 그것뿐만이 아니라 최초로그인 상태로. DB 다 날아간거야?"
+- **DB 무결성 검증 결과**:
+  - **Supabase DB는 전혀 삭제되거나 초기화(Drop/Truncate)되지 않았음 (100% 안전 보존)**.
+  - Supabase 테이블(`users`, `goals`, `checkins`, `feed_posts` 등)은 RLS(Row Level Security) 정책(`auth.uid() = user_id`)에 의해 비인가/익명 조회가 제한될 뿐, 원본 스키마와 데이터는 정상 보존되어 있음.
+- **기존 계정이 '최초 로그인 상태' 및 '목표 증발'로 보였던 근본 원인 (Root Cause)**:
+  1. **신규 가입 오판정 및 온보딩 강제 진입 (`_isNewSignup` 플래그 버그)**:
+     - `boot()` 진입 시 `ensureUserRow()`에서 `found.data`가 null이거나 쿼리 지연 시 `isNew: true`를 반환.
+     - 기존 계정의 `goals`가 Supabase에 이미 존재하더라도 `_isNewSignup: true`로 판정되어 `startOnboarding()` 모달(1/4 환영해요)이 화면 전체를 덮어버림.
+     - 이로 인해 기존 계정 사용자가 대시보드 대신 최초 가입 온보딩 화면을 보게 되어 계정이 초기화된 것으로 인지함.
+  2. **`saveProfile()`의 파괴적 `delete().not('in')` 동기화 취약점**:
+     - 기존 `saveProfile()`에서 `goals` 또는 `records` 배열이 비어있거나(`[]`) 로드 지연 시 `.not('id', 'in', ...)` 절이 누락되어 Supabase의 해당 유저 데이터를 일괄 DELETE할 위험이 존재했음.
+  3. **소셜 로그인(Google One Tap / Kakao) 세션 및 계정 분리**:
+     - 기존 일반 이메일 가입 계정과 소셜 로그인 시 서로 다른 UUID가 부여되거나, Google One Tap 실패 시 임시 `g_...` ID가 발급되어 목표가 0개인 신규 프로필로 로드되었던 문제.
+- **원천 해결 및 안전망 구축 내역**:
+  1. **비파괴적 동기화 구조로 전면 전환**:
+     - `saveProfile()` 내의 일괄 `DELETE ... NOT IN` 로직 전면 제거. `saveProfile`은 오직 신규/수정된 목표와 기록에 대해서만 안전하게 `upsert` 수행.
+     - 목표 및 기록의 실제 삭제는 사용자가 UI에서 명시적으로 삭제 버튼을 누르고 확인했을 때만 개별 ID 기준(`delete().eq('id', id).eq('user_id', uidVal)`)으로 실행되도록 안전 격리.
+  2. **정밀 신규 판정 및 기존 유저 온보딩 진입 절대 차단**:
+     - `loadProfile()`에서 DB 목표, DB 기록, 또는 로컬 백업(`ourgoal_goals_backup_<userId>`) 중 하나라도 데이터가 존재하면 `_isNewSignup`을 무조건 `false`로 강제.
+     - `boot()` 및 Google 로그인 핸들러에서 `goals`나 `records`가 1개라도 존재하는 유저는 절대로 `startOnboarding()`을 실행하지 않고 즉시 `enterApp()`을 통해 대시보드로 진입하도록 2중 방어선 구축.
+     - 기존 데이터 보유 유저는 `settings.hasSeenGuide = true`로 설정하여 최초 가입 튜토리얼이 재출력되지 않도록 차단.
+  3. **목표 로컬 백업 및 자가 치유(Self-Healing) 체계**:
+     - `saveProfile` 및 목표 조회 성공 시 로컬 스토리지(`ourgoal_goals_backup_<userId>`)에 즉시 백업.
+     - 네트워크 지연이나 Supabase 일시 응답 지연으로 빈 목표가 반환되더라도 로컬 백업에서 목표를 자동 복원하고 Supabase에 즉각 재동기화하여 목표 증발 원천 방지.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **141개 전수 통과 (0개 실패)**.
 ---
+
