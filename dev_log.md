@@ -1547,3 +1547,58 @@
   - `node scripts/smoke-test.js` **126개 전수 통과 (0개 실패)**.
   - calendarAvailable 및 기존 캘린더 동기화 로직 정상 동작 확인.
 ---
+
+## [2026-09-10 19:40] feat: 기록·캘린더 6대 핵심 UX 혁신 및 AI 피드백 고도화 배포
+- **목표**:
+  1. 홈 탭이 아닌 기록 탭에서 기록을 작성해도 실시간 AI 피드백을 수신하고 피드에 공유할 수 있도록 연동.
+  2. 기록 히트맵의 기간과 횟수가 직관적으로 보이도록 상단 기간 및 통계 바, 월별 눈금 헤더, 구체적 건수 범례, 인터랙티브 셀 터치 상세 패널, 우측 자동 스크롤 도입.
+  3. 위클리 리캡 카드 생성 시 포함할 정보(기록 횟수, 몰입 시간, 스트릭, 최다 분야, 주요 목표, 닉네임/날짜)를 사용자가 선택/토글할 수 있는 기능 추가.
+  4. 체크인 기록 바로 위에 기간(7일/14일/30일/이번 달/커스텀)을 설정하고 해당 기간을 종합 분석하는 AI 코칭 피드백 카드 추가.
+  5. 번잡하고 실용성 없던 하단 플로팅 퀵이동 독(`bottomThumbDock`) 및 관련 CSS/JS 완전 영구 제거.
+  6. 일정 탭 달력 날짜 클릭 시 일정 관리 허브 모달에서 `+ 새 일정 추가`, `📋 맞춤기록 작성` 클릭 시 모달이 즉시 닫히던 버그 수정 및 뒤로가기 복귀 네비게이션 보장.
+- **수정/실행 내역**:
+  1. `index.html`:
+     - **Req 1 (기록 탭 AI 피드백)**:
+       - `screen-records` 상단에 `#recFeedbackSlot` 배치 및 `renderRecordFeedbackSlot(fb)` 구현.
+       - 일반 기록 추가(`openRecordModal`), AI 대화형 기록(`openConversationalRecordConfirmModal`), 전문 맞춤 템플릿 기록(`openProTemplateRecordModal`), 홈 탭 체크인(`captureSave`)에서 기록 저장 시 AI 피드백 비동기 요청 및 홈/기록 탭 실시간 동기화.
+       - 목표가 연결되지 않은 일반 기록 저장 시에도 `goal` null 안전성 보장(`{ title: '나의 일상 성장', milestones: [] }` 기본값) 및 테마별 긍정 코칭 코멘트 생성.
+     - **Req 2 (히트맵 UX 혁신)**:
+       - 상단에 기간(`YYYY.MM.DD ~ YYYY.MM.DD (최근 18주)`) 및 총 기록수/활동일수/1일최다기록/실천율 요약 통계 바(`heatmap-stat-bar`) 추가.
+       - 18개 주차 그리드 상단에 월 변경 시점을 감지하여 월별 라벨(`heatmap-month-row`, `heatmap-month-lbl`) 배치.
+       - 범례를 `0건`, `1건`, `2건`, `3~4건`, `5건+`로 구체화.
+       - 셀 터치/클릭 인터랙션: 활성 아웃라인 및 하단 `#heatmapSelectedInfo` 패널에 해당 일자 날짜, 요일, 기록 건수, 개별 기록 리스트(시간, 테마 아이콘, 본문 요약) 상세 렌더링.
+       - 모바일/데스크톱 렌더링 즉시 오늘 날짜가 바로 보이도록 우측 끝(`scrollLeft = scrollWidth`)으로 자동 스크롤.
+     - **Req 3 (위클리 리캡 정보 선택 포함)**:
+       - `generateWeeklyRecapImage(stats, streakDays, options)`: options 매개변수 도입 및 선택된 통계 항목 개수에 따라 세로 높이와 폰트 크기를 동적으로 배분해 카드 밸런스 유지.
+       - `openWeeklyRecapModal`: 체크박스 UI(기록 횟수, 몰입 시간, 연속 스트릭, 최다 분야, 주요 목표, 닉네임·날짜) 제공, 체크 변경 시 실시간 캔버스 재렌더링 및 프리뷰 갱신, 선택된 정보만 반영한 공유 문구 자동 생성.
+     - **Req 4 (기간별 AI 종합 피드백)**:
+       - `screen-records`의 `체크인 기록` 바로 위에 `#periodAiCard` 배치.
+       - `initPeriodAiCard`: 최근 7일/14일/30일/이번 달 프리셋 칩, 시작일~종료일 input 연동, 기간 내 기록 건수 배지 실시간 계산.
+       - `generatePeriodAIFeedback` / `generateLocalPeriodFeedback` / `renderPeriodFeedbackResult`: 기간 내 기록들을 종합 분석하여 성취 판정, 2문장 총평, 테마별 건수 배지, 핵심 강점 리스트, 차기 실천 가이드, 피드 공유 버튼 제공.
+     - **Req 5 (하단 퀵도크 삭제)**:
+       - `#bottomThumbDock` 마크업, `.bottom-thumb-dock` CSS, `setupBottomThumbDock` 함수 완전 제거.
+     - **Req 6 (달력 관리 허브 모달 버그 수정)**:
+       - `openCalendarDayEditHubModal`: `hubAddNewBtn`, `hubAddProRecBtn` 클릭 시 `closeModal()` 호출 제거로 브라우저 `popstate` 충돌 버그 근본 해결.
+       - `openCalendarManualEditModal`: `‹ [일자] 일정 목록으로` 뒤로가기 버튼 추가 및 저장/삭제/취소 시 허브 모달 복귀 처리.
+  2. `scripts/smoke-test.js`:
+     - 6대 핵심 UX 개선사항(기록 탭 AI 피드백, 히트맵 기간/횟수/월눈금/상세패널, 위클리 리캡 선택옵션, 기간별 AI 카드, 퀵도크 삭제, 일정 허브 모달 정상동작) 전용 컴플라이언스 테스트 추가.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **127개 전수 통과 (0개 실패)**.
+  - 전 기능 모바일 및 데스크톱 반응형 렌더링 정상 검증 완료.
+---
+
+## [2026-09-10 19:45] 구글 캘린더 상호 일정 공유 (양방향 자동 동기화 및 캘린더 통합 표시)
+- **목표**:
+  - 구글 캘린더 연동 시, 아워골 일정(목표/마일스톤/할일/맞춤일정)을 구글로 전송하는 것뿐만 아니라, 구글 캘린더의 기존 일정들도 아워골 달력에 자동으로 가져와 함께 표시(별도 배지 없이 일반 일정과 동일하게 통합 표시)되도록 상호 공유 구현.
+- **수정/실행 내역**:
+  1. `index.html`:
+     - `fetchGoogleCalendarEvents(token)` 신설: 구글 캘린더 API로부터 최근 2개월~향후 6개월 일정을 조회하고, 아워골에서 전송한 일정의 중복을 방지하여 순수 구글 일정을 정제 및 캐싱(`state.gcalEventsCache`, `localStorage`).
+     - `syncAllToGoogleCalendar()`: 기존 일방향 Push에서 양방향 상호 동기화(아워골 일정 Push + 구글 캘린더 일정 Pull)로 확장.
+     - `tryConnectGoogleCalendar()`: 구글 계정 최초 연동 성공 즉시 `syncAllToGoogleCalendar()` 자동 트리거하여 즉각적인 일정 상호 공유 보장.
+     - `calendarItemsByDate()`: 캐싱된 구글 캘린더 일정을 일자별 매핑에 자동 병합하여 달력 날짜 셀에 자연스럽게 통합 렌더링 (따로 배지 없이 `.cal-pill`로 일관된 룩앤필 유지).
+     - `openCalendarDayEditHubModal`: 해당 일자의 구글 캘린더 일정 클릭 시 구글 캘린더 웹/앱으로 바로 이동할 수 있는 링크 제공.
+     - `renderCalendarScreen`: 구글 캘린더 연동 상태 시 60초 주기로 백그라운드 최신 일정 자동 갱신.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **127개 전수 통과 (0개 실패)**.
+  - 양방향 동기화 및 달력 통합 렌더링 무결성 검증 완료.
+---

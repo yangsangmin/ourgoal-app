@@ -1479,6 +1479,40 @@ check('compliance: 유료 기능 잠금이 전면 해제되고 모든 기능(무
   assert.strictEqual(sub.isPro, true, '모든 유저 isPro: true 무제한 무료 제공');
 });
 
+check('compliance: 기록/달력 6대 UX 개선사항(기록 탭 AI 피드백, 히트맵 기간·횟수 시각화, 위클리 리캡 항목선택, 기간별 AI 피드백, 퀵도크 삭제, 일정 허브 모달 정상동작)이 모두 구현되어 있다', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 기록 탭 실시간 AI 피드백 슬롯 및 렌더러
+  assert.ok(html.includes('id="recFeedbackSlot"'), '기록 탭 피드백 슬롯 마커 존재');
+  assert.ok(html.includes('function renderRecordFeedbackSlot'), '기록 탭 피드백 렌더러 함수 존재');
+
+  // 2. 기록 히트맵 기간/횟수 디자인 & UX 개선
+  assert.ok(html.includes('heatmap-stat-bar'), '히트맵 상단 기간 및 핵심 통계 바');
+  assert.ok(html.includes('heatmap-month-row'), '히트맵 월별 헤더 눈금');
+  assert.ok(html.includes('id="heatmapSelectedInfo"'), '히트맵 셀 터치/클릭 인터랙티브 상세 패널');
+  assert.ok(html.includes('0건') && html.includes('5건+'), '히트맵 구체적 건수 범례');
+
+  // 3. 위클리 리캡 정보 선택 포함 기능
+  assert.ok(html.includes('recapOptionsGrid'), '위클리 리캡 포함할 정보 선택 체크박스 그리드');
+  assert.ok(html.includes('recapOptCount') && html.includes('recapOptDuration') && html.includes('recapOptStreak'), '위클리 리캡 세부 선택 옵션들');
+
+  // 4. 기간별 기록 AI 피드백 카드
+  assert.ok(html.includes('id="periodAiCard"'), '체크인 기록 상단 기간별 AI 피드백 카드 마커');
+  assert.ok(html.includes('id="periodStartDate"') && html.includes('id="periodEndDate"'), '기간 설정 시작일/종료일 인풋');
+  assert.ok(html.includes('id="periodAiRequestBtn"'), '기간 AI 피드백 받기 버튼');
+  assert.ok(html.includes('function initPeriodAiCard'), '기간별 기록 AI 피드백 초기화 함수');
+
+  // 5. 번잡한 하단 퀵이동 도크 및 버튼 완전 삭제
+  assert.strictEqual(html.includes('bottomThumbDock'), false, '하단 퀵이동 도크 DOM 완전 제거');
+  assert.strictEqual(html.includes('setupBottomThumbDock'), false, '하단 퀵이동 함수 완전 제거');
+
+  // 6. 일정 탭 달력 날짜 관리창 새일정추가 및 맞춤기록 정상 작동
+  assert.ok(html.includes('openCalendarDayEditHubModal'), '캘린더 일자 허브 모달 함수');
+  assert.ok(html.includes('openCalendarManualEditModal'), '새 일정 추가 모달 연결');
+  assert.ok(html.includes('openProTemplateRecordModal'), '맞춤 기록 작성 모달 연결');
+  assert.ok(html.includes('calEditBackToHubBtn'), '일정 편집창 뒤로가기 허브 복귀 버튼');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
