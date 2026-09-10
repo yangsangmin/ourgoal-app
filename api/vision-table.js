@@ -1,5 +1,67 @@
 module.exports.config = { maxDuration: 30 };
 
+function buildNotionPagePayload(params) {
+  var databaseId = (params.databaseId || '').trim().replace(/-/g, '');
+  var title = params.title || '아워골 기록';
+  var dateStr = params.date || new Date().toISOString();
+  var columns = Array.isArray(params.columns) ? params.columns : [];
+  var rows = Array.isArray(params.rows) ? params.rows : [];
+  var memo = params.memo || '';
+
+  var tableWidth = Math.max(1, columns.length);
+  var tableChildren = [];
+  if (columns.length > 0) {
+    tableChildren.push({
+      type: 'table_row',
+      table_row: {
+        cells: columns.map(function (c) {
+          return [{ type: 'text', text: { content: String(c || '') } }];
+        })
+      }
+    });
+  }
+  rows.forEach(function (r) {
+    var cells = [];
+    for (var ci = 0; ci < tableWidth; ci++) {
+      cells.push([{ type: 'text', text: { content: String((r && r[ci]) || '') } }]);
+    }
+    tableChildren.push({
+      type: 'table_row',
+      table_row: { cells: cells }
+    });
+  });
+
+  return {
+    parent: { database_id: databaseId },
+    properties: {
+      title: {
+        title: [{ type: 'text', text: { content: title } }]
+      }
+    },
+    children: [
+      {
+        object: 'block',
+        type: 'paragraph',
+        paragraph: {
+          rich_text: [
+            { type: 'text', text: { content: '📅 기록일시: ' + dateStr + (memo ? ' · 메모: ' + memo : '') } }
+          ]
+        }
+      },
+      {
+        object: 'block',
+        type: 'table',
+        table: {
+          table_width: tableWidth,
+          has_column_header: columns.length > 0,
+          has_row_header: false,
+          children: tableChildren
+        }
+      }
+    ]
+  };
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
@@ -7,6 +69,44 @@ module.exports = async function handler(req, res) {
   }
 
   var body = req.body || {};
+
+  // 🔄 Notion Database Direct Push Action
+  if (body.action === 'notion_push' || (req.query && req.query.action === 'notion_push')) {
+    var apiKey = (body.apiKey || process.env.NOTION_API_KEY || '').trim();
+    var databaseId = (body.databaseId || process.env.NOTION_DATABASE_ID || '').trim().replace(/-/g, '');
+    if (!apiKey) {
+      res.status(400).json({ error: 'Notion API Key(Integration Secret)가 필요합니다.' });
+      return;
+    }
+    if (!databaseId) {
+      res.status(400).json({ error: 'Notion Database ID가 필요합니다.' });
+      return;
+    }
+
+    var payload = buildNotionPagePayload(body);
+    try {
+      var notionRes = await fetch('https://api.notion.com/v1/pages', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + apiKey,
+          'Notion-Version': '2022-06-28',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      var data = await notionRes.json();
+      if (!notionRes.ok) {
+        res.status(notionRes.status).json({ error: data.message || 'Notion API 호출 실패', details: data });
+        return;
+      }
+      res.status(200).json({ ok: true, id: data.id, url: data.url });
+      return;
+    } catch (err) {
+      res.status(500).json({ error: 'Notion 통신 중 오류: ' + err.message });
+      return;
+    }
+  }
+
   var image = body.image; // base64 data URL
   var columns = Array.isArray(body.columns) ? body.columns : [];
   var templateTitle = typeof body.templateTitle === 'string' ? body.templateTitle.trim() : '기록';
@@ -162,3 +262,5 @@ module.exports = async function handler(req, res) {
   var finalFallback = localVisionFallback();
   res.status(200).json(finalFallback);
 };
+
+module.exports.buildNotionPagePayload = buildNotionPagePayload;

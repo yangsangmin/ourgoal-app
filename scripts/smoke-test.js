@@ -85,6 +85,7 @@ const FN_NAMES = [
   'triggerHaptic', 'reorderMilestones', 'filterFeedByCategory',
   'calculateWeeklyFocusStats', 'exportRecordsToCsv', 'exportRecordsToMarkdown',
   'defaultSettings', 'getPrivacyLabel',
+  'computeTrendChartData', 'formatStopwatchTime',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -121,7 +122,7 @@ const sandboxSrc =
   'generateDynamicNotification, fmtYYMMDD, recommendTemplateFromAI, computeTableAnalytics, ' +
   'parseNaturalLanguageTemplateSpec, parseCsvText, parseVoiceToTableRow, ' +
   'triggerHaptic, reorderMilestones, filterFeedByCategory, calculateWeeklyFocusStats, exportRecordsToCsv, exportRecordsToMarkdown, ' +
-  'defaultSettings, getPrivacyLabel, ' +
+  'defaultSettings, getPrivacyLabel, computeTrendChartData, formatStopwatchTime, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -1224,6 +1225,118 @@ check('exportRecordsToCsv: 따옴표(")가 포함된 본문을 CSV 표준에 맞
   const records = [{ startAt: '2026-09-10T10:00:00Z', theme: 'daily', text: '그는 "할 수 있다"고 말했다' }];
   const csv = fns.exportRecordsToCsv(records, 'all');
   assert.ok(csv.includes('""할 수 있다""'), 'CSV 이중따옴표 이스케이프');
+});
+
+/* ============ 혁신 3종 신기능 (트렌드 차트 / 스톱워치 / 노션 푸시) 단위 & 규격 테스트 ============ */
+const { buildNotionPagePayload } = require('../api/vision-table.js');
+
+check('computeTrendChartData: 실 기록 2개 이상일 때 정확한 통계치와 성장률을 계산한다', () => {
+  const records = [
+    {
+      type: 'template',
+      templateKey: 'health',
+      startAt: '2026-09-01T09:00:00Z',
+      columns: ['세트', '종목', '무게', '횟수'],
+      rows: [['1', '스쿼트', '100', '10'], ['2', '스쿼트', '100', '10']] // volume = 1*100*10 + 2*100*10 = 3000
+    },
+    {
+      type: 'template',
+      templateKey: 'health',
+      startAt: '2026-09-08T09:00:00Z',
+      columns: ['세트', '종목', '무게', '횟수'],
+      rows: [['1', '스쿼트', '120', '10'], ['2', '스쿼트', '120', '10']] // volume = 1*120*10 + 2*120*10 = 3600
+    }
+  ];
+  const chart = fns.computeTrendChartData('health', records, '7');
+  assert.strictEqual(chart.isSample, false, '실제 기록 기반 계산');
+  assert.strictEqual(chart.points.length, 2, '2개 포인트 생성');
+  assert.strictEqual(chart.points[0].value, 3000, '첫 포인트 3000kg 볼륨');
+  assert.strictEqual(chart.points[1].value, 3600, '두번째 포인트 3600kg 볼륨');
+  assert.strictEqual(chart.max, 3600, '최고값 3600');
+  assert.strictEqual(chart.min, 3000, '최소값 3000');
+  assert.strictEqual(chart.growthRate, 20, '20% 성장률 (+600/3000)');
+  assert.strictEqual(chart.unit, 'kg', '헬스 템플릿 단위 kg');
+});
+
+check('computeTrendChartData: 기록 부족 시(0~1개) 시뮬레이션 데이터를 제공하며 도메인별 메트릭을 매핑한다', () => {
+  const studyChart = fns.computeTrendChartData('study_tracker', [], '7');
+  assert.strictEqual(studyChart.isSample, true, '샘플 시뮬레이션 플래그');
+  assert.strictEqual(studyChart.metricName, '순공 시간');
+  assert.strictEqual(studyChart.unit, '분');
+  assert.ok(studyChart.points.length >= 5, '최소 5개 시뮬레이션 포인트');
+  assert.ok(studyChart.growthRate > 0, '양의 성장률 시뮬레이션');
+
+  const hyroxChart = fns.computeTrendChartData('hyrox_workout', [], '7');
+  assert.strictEqual(hyroxChart.metricName, '소요 시간');
+  assert.strictEqual(hyroxChart.unit, '분');
+});
+
+check('formatStopwatchTime: 밀리초를 분:초.소수점 형식으로 정확히 변환하며 무효값을 방어한다', () => {
+  assert.strictEqual(fns.formatStopwatchTime(0, true), '00:00.0', '0초 포맷');
+  assert.strictEqual(fns.formatStopwatchTime(65432, true), '01:05.4', '1분 5.4초 포맷');
+  assert.strictEqual(fns.formatStopwatchTime(65432, false), '01:05', '소수점 제외 포맷');
+  assert.strictEqual(fns.formatStopwatchTime(3665432, true), '01:01:05.4', '1시간 1분 5.4초 포맷');
+  assert.strictEqual(fns.formatStopwatchTime(-500, true), '00:00.0', '음수 방어');
+  assert.strictEqual(fns.formatStopwatchTime(NaN, true), '00:00.0', 'NaN 방어');
+});
+
+check('buildNotionPagePayload: 노션 API 공식 스펙에 부합하는 중첩 표 블록과 메타데이터 페이로드를 생성한다', () => {
+  const payload = buildNotionPagePayload({
+    databaseId: 'test_db_id_123',
+    title: '크로스핏 와드 기록',
+    date: '2026-09-10T15:30:00.000Z',
+    columns: ['라운드', '종목', '무게', '시간'],
+    rows: [['1', '버피', '체중', '01:20'], ['2', '쓰러스터', '43kg', '02:15']],
+    memo: '오늘 타임캡 18분 완주'
+  });
+
+  assert.strictEqual(payload.parent.database_id, 'test_db_id_123', '데이터베이스 부모 ID 매핑');
+  assert.strictEqual(payload.properties.title.title[0].text.content, '크로스핏 와드 기록', '페이지 제목 매핑');
+  assert.ok(payload.children && payload.children.length >= 2, '콜아웃 및 테이블 블록 포함');
+
+  const tableBlock = payload.children.find(b => b.type === 'table');
+  assert.ok(tableBlock, '테이블 타입 블록 존재');
+  assert.strictEqual(tableBlock.table.table_width, 4, '컬럼 개수 4개');
+  assert.strictEqual(tableBlock.table.has_column_header, true, '컬럼 헤더 플래그 true');
+  assert.strictEqual(tableBlock.table.children.length, 3, '헤더 1행 + 데이터 2행');
+  assert.strictEqual(tableBlock.table.children[0].table_row.cells[1][0].text.content, '종목', '헤더 컬럼 텍스트 매핑');
+  assert.strictEqual(tableBlock.table.children[1].table_row.cells[1][0].text.content, '버피', '행1 종목 매핑');
+  assert.strictEqual(tableBlock.table.children[2].table_row.cells[3][0].text.content, '02:15', '행2 시간 매핑');
+});
+
+check('compliance: 3종 혁신 기능(비주얼 성장 차트, 인앱 스톱워치, 노션 다이렉트 푸시) UI 및 연동 스펙이 완벽히 구비되어 있다', () => {
+  // 1. 성장 추이 차트 UI
+  assert.ok(html.includes('pro-trend-chart-card'), '추이 차트 카드 CSS 클래스');
+  assert.ok(html.includes('pro-trend-svg-wrap'), '추이 차트 SVG 래퍼');
+  assert.ok(html.includes('trend-tooltip'), '인터랙티브 툴팁 CSS');
+  assert.ok(html.includes('computeTrendChartData'), '추이 데이터 계산 함수');
+  assert.ok(html.includes('renderTrendSvgChart'), 'SVG 차트 렌더 함수');
+  assert.ok(html.includes('proTrendChartWrap'), '기록 모달 내 차트 컨테이너');
+  assert.ok(html.includes('detailTrendChartWrap'), '상세 모달 내 차트 컨테이너');
+
+  // 2. 인앱 스톱워치 & 인터벌 타이머
+  assert.ok(html.includes('pro-stopwatch-widget'), '스톱워치 위젯 컨테이너');
+  assert.ok(html.includes('pro-sw-clock'), '디지털 시계 디스플레이');
+  assert.ok(html.includes('cell-highlight-flash'), '표 셀 기입 하이라이트 애니메이션');
+  assert.ok(html.includes('formatStopwatchTime'), '스톱워치 시간 포맷 함수');
+  assert.ok(html.includes('renderStopwatchWidgetHtml'), '스톱워치 HTML 렌더 함수');
+  assert.ok(html.includes('swStartPauseBtn'), '시작/일시정지 제어 버튼');
+  assert.ok(html.includes('swInjectBtn'), '표에 시간 기입 버튼');
+
+  // 3. 노션 다이렉트 자동 푸시
+  assert.ok(html.includes('notionApiKeyInput'), '설정 탭 노션 API 토큰 입력');
+  assert.ok(html.includes('notionDbIdInput'), '설정 탭 노션 DB ID 입력');
+  assert.ok(html.includes('notionAutoPushSwitch'), '설정 탭 노션 자동 푸시 토글');
+  assert.ok(html.includes('notionDirectPushBtn'), '노션 모달 즉시 전송 버튼');
+  assert.ok(html.includes('pushRecordToNotion'), '노션 백그라운드 자동 전송 함수');
+  assert.ok(html.includes('/api/notion-push'), 'Vercel Hobby 리라이트 엔드포인트 호출');
+
+  // 4. Vercel 설정 검증 (12개 함수 한도 준수)
+  const vercelJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+  assert.ok(vercelJson.rewrites && vercelJson.rewrites.some(r => r.source === '/api/notion-push' && r.destination === '/api/vision-table'), 'vercel.json /api/notion-push rewrite 등록');
+
+  const apiFiles = fs.readdirSync(path.join(__dirname, '..', 'api')).filter(f => f.endsWith('.js'));
+  assert.strictEqual(apiFiles.length, 12, 'Vercel Hobby 12개 서버리스 함수 한도 엄수 (정확히 12개)');
 });
 
 check('compliance: 가상 페르소나 40인 및 유저 피드백 TOP 10 핵심 개선사항이 index.html에 모두 구현되어 있다', () => {

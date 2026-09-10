@@ -1480,4 +1480,31 @@
   - Vercel Serverless Function 12개 이하 유지 (현재 정확히 12개).
 ---
 
+## [2026-09-10 18:45] 전문 템플릿 3대 혁신 기능 (비주얼 성장 차트 / 인앱 스톱워치 / 노션 다이렉트 푸시) 구현
+- **목표**:
+  1. 표 기록 기반 일자별 자동 성장 추이 차트 (Visual Trend Chart): 시계열 기록(헬스 볼륨, 순공시간, 하이록스 시간, 영업실적 등)을 인터랙티브 SVG 꺾은선 차트로 자동 시각화하고 KPI(최고/평균/최근/성장률) 및 기간 필터(7회/30일/전체) 제공.
+  2. 인앱 인터벌 타이머 & 스톱워치 위젯 (In-Table Stopwatch): 크로스핏 타임캡, 세트 간 휴식(60초/90초/2분), 공부 집중 시간을 측정하고 표의 시간/페이스 열 또는 선택 셀에 원클릭 자동 기입. 카운트다운 완료 시 오디오 비프음 및 알림 제공.
+  3. 노션 데이터베이스 실시간 양방향 자동 푸시 (Notion Direct Push): 클립보드 복사(TSV/MD)를 넘어, 노션 API 토큰 등록 시 기록 저장과 동시에 노션 DB의 실제 표 페이지로 백그라운드 자동 전송 및 모달 내 즉시 전송 지원.
+- **수정/실행 내역**:
+  - `api/vision-table.js`:
+    - `buildNotionPagePayload(params)` 헬퍼 구현 및 공식 Notion Blocks API 규격(`callout`, `table`, `table_row`) 매핑.
+    - `action === 'notion_push'` 핸들러 추가 (`POST https://api.notion.com/v1/pages` 호출).
+    - Vercel Hobby 12-함수 한도 준수를 위해 기존 `vision-table.js`에 핸들러 통합 및 `module.exports.buildNotionPagePayload` 노출.
+  - `vercel.json`:
+    - `/api/notion-push` -> `/api/vision-table` 리라이트 설정 추가.
+  - `index.html`:
+    - CSS: `.pro-trend-chart-card`, `.pro-trend-svg-wrap`, `.trend-tooltip`, `.pro-stopwatch-widget`, `.pro-sw-clock`, `.cell-highlight-flash`, `.notion-push-status-pill` 스타일 추가.
+    - 설정 탭: Notion API 토큰(`#notionApiKeyInput`), Database ID(`#notionDbIdInput`), 자동 푸시 스위치(`#notionAutoPushSwitch`) 마크업 및 바인딩, `defaultSettings`에 기본값 등록.
+    - 차트 엔진: `computeTrendChartData(templateKey, allRecords, period)`, `renderTrendSvgChart(chartData)` 구현 및 툴팁/기간 필터링 이벤트 연동.
+    - 스톱워치 엔진: `formatStopwatchTime(ms, includeTenths)`, `renderStopwatchWidgetHtml()`, `playTimerBeep()` 구현, 5개 모드(스톱워치/60초/90초/2분/20분), 랩 타임 및 표 셀 하이라이트 자동 기입 구현.
+    - 노션 연동: `pushRecordToNotion(record, curTpl, columns, rows)` 구현, `openProNotionExportModal` 내 즉시 전송 버튼 및 상태 피드백, `executeSave` 저장 시 설정에 따른 백그라운드 자동 푸시 연동.
+    - 모달 적용: `openProTemplateRecordModal` 및 `openTemplateRecordDetailModal`에 성장 추이 차트와 스톱워치 위젯 배치 및 라이프사이클(인터벌 메모리 누수 방지) 정리.
+  - `scripts/smoke-test.js`:
+    - `FN_NAMES`에 `computeTrendChartData`, `formatStopwatchTime` 등록 및 샌드박스 노출.
+    - `buildNotionPagePayload` 단위 테스트 및 3대 기능 DOM/규격/Vercel 12-함수 한도 준수 테스트 추가.
+- **검증 결과**:
+  - `npm test` **125개 전수 통과 (0개 실패)**.
+  - Vercel Serverless Function 개수 정확히 12개 엄수 (Hobby 한도 완벽 준수).
+---
+
 

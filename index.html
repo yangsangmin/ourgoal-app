@@ -1313,6 +1313,219 @@
     background: radial-gradient(circle, rgba(255,107,74,0.15) 0%, transparent 70%);
     pointer-events: none;
   }
+
+  /* 📈 표 기록 기반 일자별 자동 성장 추이 차트 (Visual Trend Chart) */
+  .pro-trend-chart-card {
+    background: var(--card);
+    border: 1.5px solid var(--violet-soft);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+  }
+  .pro-trend-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .pro-trend-title {
+    font-size: .84rem;
+    font-weight: 800;
+    color: var(--violet);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .pro-trend-filters {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .pro-trend-filter-chip {
+    border: 1px solid var(--rule);
+    background: var(--card2);
+    color: var(--ink-soft);
+    font-size: .68rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .pro-trend-filter-chip.active, .pro-trend-filter-chip:hover {
+    background: var(--violet);
+    color: #fff;
+    border-color: var(--violet);
+  }
+  .pro-trend-svg-wrap {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(99,102,241,0.03) 0%, transparent 100%);
+  }
+  .trend-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: var(--ink);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: .72rem;
+    font-weight: 700;
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translate(-50%, -120%);
+    transition: opacity .15s, transform .15s;
+    z-index: 10;
+  }
+  .trend-tooltip.show {
+    opacity: 1;
+  }
+  .pro-trend-kpi-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--rule);
+    overflow-x: auto;
+  }
+  .pro-trend-kpi-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: .72rem;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  .pro-trend-kpi-pill b {
+    color: var(--ink);
+  }
+  .pro-trend-growth-badge {
+    font-size: .7rem;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 999px;
+  }
+  .pro-trend-growth-badge.up {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+  }
+  .pro-trend-growth-badge.down {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--red);
+  }
+
+  /* ⏱️ 인앱 인터벌 타이머 & 스톱워치 위젯 (In-Table Stopwatch) */
+  .pro-stopwatch-widget {
+    background: var(--card2);
+    border: 1.5px solid var(--violet-soft);
+    border-radius: 14px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+  }
+  .pro-stopwatch-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pro-sw-modes {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .pro-sw-mode-chip {
+    font-size: .7rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 8px;
+    border: 1px solid var(--rule);
+    background: var(--card);
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .pro-sw-mode-chip.active {
+    background: var(--violet-soft);
+    color: var(--violet);
+    border-color: var(--violet);
+  }
+  .pro-sw-display-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .pro-sw-clock {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 1.65rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--ink);
+    background: var(--card);
+    padding: 4px 14px;
+    border-radius: 10px;
+    border: 1.5px solid var(--rule);
+    min-width: 140px;
+    text-align: center;
+    user-select: none;
+  }
+  .pro-sw-clock.running {
+    color: var(--violet);
+    border-color: var(--violet);
+    box-shadow: 0 0 10px rgba(99,102,241,0.2);
+  }
+  .pro-sw-clock.alert {
+    color: var(--red);
+    border-color: var(--red);
+    animation: swFlash .4s infinite alternate;
+  }
+  @keyframes swFlash {
+    from { opacity: 1; }
+    to { opacity: 0.4; }
+  }
+  .pro-sw-controls {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .cell-highlight-flash {
+    animation: cellFlash .8s ease-out;
+  }
+  @keyframes cellFlash {
+    0% { background: rgba(99,102,241,0.35); border-color: var(--violet); }
+    100% { background: transparent; }
+  }
+
+  /* 🔄 노션 데이터베이스 실시간 푸시 카드 (Notion Direct Push) */
+  .notion-push-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: .72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--card2);
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+  }
+  .notion-push-status-pill.connected {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.3);
+  }
 </style>
 </head>
 <body>
@@ -1785,8 +1998,14 @@
           <div class="switch" id="notionSwitch"></div>
         </div>
         <div id="notionUrlBlock" style="display:none;margin-top:12px;">
-          <div class="field"><label>Notion Webhook URL</label><input id="notionWebhookInput" type="text" placeholder="https://..." autocomplete="off"></div>
-          <p class="faint">체크인을 저장하면 기록과 AI 피드백을 이 주소로 자동 전송해요. (Notion Automation의 웹훅 주소를 붙여넣으세요)</p>
+          <div class="field"><label>Notion Webhook URL (선택)</label><input id="notionWebhookInput" type="text" placeholder="https://..." autocomplete="off"></div>
+          <div class="field" style="margin-top:8px;"><label>Notion API Key (Integration Secret)</label><input id="notionApiKeyInput" type="password" placeholder="secret_..." autocomplete="off"></div>
+          <div class="field" style="margin-top:8px;"><label>Notion Database ID</label><input id="notionDbIdInput" type="text" placeholder="32자리 데이터베이스 ID 또는 URL" autocomplete="off"></div>
+          <div class="toggle-row" style="margin-top:10px;">
+            <div class="t">맞춤 템플릿 저장 시 노션 DB로 자동 전송</div>
+            <div class="switch" id="notionAutoPushSwitch"></div>
+          </div>
+          <p class="faint" style="margin-top:6px;">API Key와 Database ID를 등록하면 전문 템플릿 표 기록이 노션 데이터베이스의 실제 표 페이지로 자동 전송됩니다.</p>
           <button class="btn btn-ghost btn-sm" id="notionTestBtn" type="button" style="margin-top:8px;">테스트 전송</button>
         </div>
         <div style="display:flex;gap:8px;margin-top:10px;">
@@ -2120,7 +2339,7 @@
   function defaultSettings(){
     return {
       checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash",
-      notionSync:false, notionWebhookUrl:"", autoUpdateSuggest:true, virtualCheerEnabled:true,
+      notionSync:false, notionWebhookUrl:"", notionApiKey:"", notionDatabaseId:"", notionAutoPush:false, autoUpdateSuggest:true, virtualCheerEnabled:true,
       gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} },
       googleCalendarConnected:false, googleCalendarEmail:"", gcalAutoSync:true,
       privacy: { goals:"private", calendar:"private", records:"private", stats:"private" },
@@ -9927,6 +10146,341 @@
     '</div>';
   }
 
+  /* ============ 📈 표 기록 기반 일자별 자동 성장 추이 차트 (Visual Trend Chart) ============ */
+  function computeTrendChartData(templateKey, allRecords, period){
+    period = period || '7';
+    var list = (allRecords || []).filter(function(r){
+      if(!r) return false;
+      var tKey = r.templateKey || r.templateId || '';
+      if(templateKey && tKey && tKey !== templateKey) return false;
+      if(templateKey && !tKey){
+        if(r.templateTitle && r.templateTitle.indexOf(templateKey) === -1 && (!r.theme || r.theme.indexOf(templateKey) === -1)) return false;
+      }
+      return (r.type === 'template' || (r.columns && r.rows));
+    });
+
+    list.sort(function(a, b){
+      var da = Date.parse(a.startAt || a.createdAt || 0);
+      var db = Date.parse(b.startAt || b.createdAt || 0);
+      return da - db;
+    });
+
+    if(period === '7' && list.length > 7){
+      list = list.slice(-7);
+    } else if(period === '30' && list.length > 30){
+      list = list.slice(-30);
+    }
+
+    var tKey = templateKey || (list[0] && list[0].templateKey) || 'health';
+    var metricName = '기록 항목수';
+    var unit = '개';
+    if(/hyrox|하이록스|crossfit|크로스핏/.test(tKey)){
+      metricName = '소요 시간';
+      unit = '분';
+    } else if(/study|공부/.test(tKey)){
+      metricName = '순공 시간';
+      unit = '분';
+    } else if(/sales|영업|주식|stock/.test(tKey)){
+      metricName = '실적 금액';
+      unit = '만원';
+    } else if(/health|workout|헬스|운동/.test(tKey)){
+      metricName = '총 볼륨';
+      unit = 'kg';
+    }
+
+    var points = [];
+    var isSample = false;
+
+    if(list.length >= 2){
+      list.forEach(function(rec){
+        var d = new Date(rec.startAt || rec.createdAt || Date.now());
+        var dateLabel = pad(d.getMonth() + 1) + '/' + pad(d.getDate());
+        var fullDate = dateKey(d.toISOString());
+        var tplTheme = (rec && rec.theme) || (/health|workout|hyrox|crossfit|헬스|운동/.test(tKey) ? 'workout' : (/study|공부/.test(tKey) ? 'study' : (/sales|영업|주식/.test(tKey) ? 'sales' : 'daily')));
+        var tplTitle = (rec && rec.templateTitle) || (tplTheme === 'workout' ? '헬스 운동일지' : tKey);
+        var analytics = computeTableAnalytics({ key: tKey, title: tplTitle, theme: tplTheme }, rec.columns || [], rec.rows || []);
+        if(analytics && analytics.stats && analytics.stats.length){
+          var stat = analytics.stats[0];
+          if(stat && stat.value){
+            val = parseFloat(String(stat.value).replace(/[^0-9.]/g, '')) || 0;
+          }
+        }
+        if(val === 0){
+          val = (rec.rows && rec.rows.length) || 1;
+        }
+        points.push({
+          date: dateLabel,
+          fullDate: fullDate,
+          value: Math.round(val),
+          label: Math.round(val).toLocaleString() + unit
+        });
+      });
+    } else {
+      isSample = true;
+      var baseVal = /study|공부/.test(tKey) ? 75 : (/sales|영업/.test(tKey) ? 450 : (/hyrox|하이록스/.test(tKey) ? 68 : 1200));
+      var now = new Date();
+      var sampleCount = period === '7' ? 5 : (period === '30' ? 8 : 10);
+      for(var i = sampleCount - 1; i >= 0; i--){
+        var dt = new Date(now.getTime() - i * 86400000 * 2);
+        var factor = 1 + (sampleCount - 1 - i) * 0.07 + (i % 2 === 0 ? 0.03 : -0.02);
+        var simVal = Math.round(baseVal * factor);
+        points.push({
+          date: pad(dt.getMonth() + 1) + '/' + pad(dt.getDate()),
+          fullDate: dateKey(dt.toISOString()),
+          value: simVal,
+          label: simVal.toLocaleString() + unit
+        });
+      }
+    }
+
+    var vals = points.map(function(p){ return p.value; });
+    var maxVal = Math.max.apply(null, vals);
+    var minVal = Math.min.apply(null, vals);
+    var sum = vals.reduce(function(a, b){ return a + b; }, 0);
+    var avgVal = Math.round(sum / vals.length);
+    var latest = vals[vals.length - 1];
+    var first = vals[0];
+    var growthRate = first > 0 ? parseFloat((((latest - first) / first) * 100).toFixed(1)) : 0;
+
+    return {
+      templateKey: tKey,
+      metricName: metricName,
+      unit: unit,
+      points: points,
+      max: maxVal,
+      min: minVal,
+      avg: avgVal,
+      latest: latest,
+      growthRate: growthRate,
+      isSample: isSample
+    };
+  }
+
+  function renderTrendSvgChart(chartData){
+    if(!chartData || !chartData.points || !chartData.points.length){
+      return '<div class="faint" style="text-align:center;padding:20px;">표시할 추이 데이터가 없습니다.</div>';
+    }
+
+    var pts = chartData.points;
+    var w = 500;
+    var h = 155;
+    var padLeft = 45;
+    var padRight = 20;
+    var padTop = 16;
+    var padBottom = 26;
+
+    var min = chartData.min;
+    var max = chartData.max;
+    var range = (max - min) || 1;
+
+    var coords = pts.map(function(p, i){
+      var x = padLeft + (i / Math.max(1, pts.length - 1)) * (w - padLeft - padRight);
+      var y = h - padBottom - ((p.value - min) / range) * (h - padTop - padBottom);
+      return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10, p: p };
+    });
+
+    var linePath = 'M ' + coords.map(function(c){ return c.x + ' ' + c.y; }).join(' L ');
+    var areaPath = linePath + ' L ' + coords[coords.length - 1].x + ' ' + (h - padBottom) + ' L ' + coords[0].x + ' ' + (h - padBottom) + ' Z';
+    var midVal = Math.round((max + min) / 2);
+    var gradId = 'trendGrad_' + String(chartData.templateKey || 'tpl').replace(/[^a-zA-Z0-9]/g, '_');
+
+    var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" class="pro-trend-svg" style="width:100%;height:auto;display:block;">' +
+      '<defs>' +
+        '<linearGradient id="' + gradId + '" x1="0" y1="0" x2="0" y2="1">' +
+          '<stop offset="0%" stop-color="var(--violet)" stop-opacity="0.25"/>' +
+          '<stop offset="100%" stop-color="var(--violet)" stop-opacity="0.0"/>' +
+        '</linearGradient>' +
+      '</defs>' +
+      '<line x1="' + padLeft + '" y1="' + padTop + '" x2="' + (w - padRight) + '" y2="' + padTop + '" stroke="var(--rule)" stroke-dasharray="3,3" stroke-width="1"/>' +
+      '<text x="' + (padLeft - 6) + '" y="' + (padTop + 4) + '" text-anchor="end" font-size="10" fill="var(--ink-faint)">' + max + '</text>' +
+      '<line x1="' + padLeft + '" y1="' + Math.round((padTop + h - padBottom)/2) + '" x2="' + (w - padRight) + '" y2="' + Math.round((padTop + h - padBottom)/2) + '" stroke="var(--rule)" stroke-dasharray="3,3" stroke-width="1"/>' +
+      '<text x="' + (padLeft - 6) + '" y="' + (Math.round((padTop + h - padBottom)/2) + 4) + '" text-anchor="end" font-size="10" fill="var(--ink-faint)">' + midVal + '</text>' +
+      '<line x1="' + padLeft + '" y1="' + (h - padBottom) + '" x2="' + (w - padRight) + '" y2="' + (h - padBottom) + '" stroke="var(--rule)" stroke-width="1.2"/>' +
+      '<text x="' + (padLeft - 6) + '" y="' + (h - padBottom + 4) + '" text-anchor="end" font-size="10" fill="var(--ink-faint)">' + min + '</text>' +
+      '<path d="' + areaPath + '" fill="url(#' + gradId + ')"/>' +
+      '<path d="' + linePath + '" fill="none" stroke="var(--violet)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+      coords.map(function(c){
+        var pt = c.p;
+        return '<g class="trend-pt-group" data-val="' + escapeHtml(pt.label) + '" data-date="' + escapeHtml(pt.fullDate) + '">' +
+          '<circle cx="' + c.x + '" cy="' + c.y + '" r="4" fill="var(--card)" stroke="var(--violet)" stroke-width="2.2" style="cursor:pointer;"/>' +
+          '<text x="' + c.x + '" y="' + (h - padBottom + 16) + '" text-anchor="middle" font-size="10" fill="var(--ink-soft)" font-weight="600">' + pt.date + '</text>' +
+        '</g>';
+      }).join('') +
+    '</svg>';
+
+    var growthBadgeClass = chartData.growthRate >= 0 ? 'up' : 'down';
+    var growthIcon = chartData.growthRate >= 0 ? '▲' : '▼';
+    var growthSign = chartData.growthRate >= 0 ? '+' : '';
+
+    return '<div class="pro-trend-chart-card" id="trendChartCard">' +
+      '<div class="pro-trend-header">' +
+        '<div class="pro-trend-title">' +
+          '<span>📈 ' + escapeHtml(chartData.metricName) + ' 성장 추이</span>' +
+          (chartData.isSample ? '<span style="font-size:.68rem;font-weight:400;color:var(--ink-faint);">(초기 시뮬레이션)</span>' : '') +
+        '</div>' +
+        '<div class="pro-trend-filters" id="trendPeriodFilters">' +
+          '<button class="pro-trend-filter-chip active" data-period="7" type="button">7회</button>' +
+          '<button class="pro-trend-filter-chip" data-period="30" type="button">30일</button>' +
+          '<button class="pro-trend-filter-chip" data-period="all" type="button">전체</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="pro-trend-svg-wrap" style="position:relative;">' +
+        svg +
+        '<div class="trend-tooltip" id="trendTooltip"></div>' +
+      '</div>' +
+      '<div class="pro-trend-kpi-row">' +
+        '<div class="pro-trend-kpi-pill">최고: <b>' + chartData.max.toLocaleString() + chartData.unit + '</b></div>' +
+        '<div class="pro-trend-kpi-pill">평균: <b>' + chartData.avg.toLocaleString() + chartData.unit + '</b></div>' +
+        '<div class="pro-trend-kpi-pill">최근: <b>' + chartData.latest.toLocaleString() + chartData.unit + '</b></div>' +
+        '<div class="pro-trend-kpi-pill">성장률: <span class="pro-trend-growth-badge ' + growthBadgeClass + '">' + growthIcon + ' ' + growthSign + chartData.growthRate + '%</span></div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ============ ⏱️ 인앱 인터벌 타이머 & 스톱워치 위젯 (In-Table Stopwatch) ============ */
+  function formatStopwatchTime(ms, includeTenths){
+    if(isNaN(ms) || ms < 0) ms = 0;
+    var totalSec = Math.floor(ms / 1000);
+    var hours = Math.floor(totalSec / 3600);
+    var minutes = Math.floor((totalSec % 3600) / 60);
+    var seconds = totalSec % 60;
+    var tenths = Math.floor((ms % 1000) / 100);
+
+    var minStr = (hours > 0 ? (pad(hours) + ':') : '') + pad(minutes) + ':' + pad(seconds);
+    if(includeTenths !== false){
+      return minStr + '.' + tenths;
+    }
+    return minStr;
+  }
+
+  function playTimerBeep(){
+    try {
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.35);
+    } catch(e){}
+  }
+
+  var STOPWATCH_STATE = {
+    mode: 'stopwatch',
+    targetMs: 0,
+    elapsedMs: 0,
+    startTime: 0,
+    timerId: null,
+    isRunning: false,
+    laps: []
+  };
+
+  function renderStopwatchWidgetHtml(){
+    return '<div class="pro-stopwatch-widget" id="proStopwatchWidget">' +
+      '<div class="pro-stopwatch-header">' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<span style="font-size:1rem;">⏱️</span>' +
+          '<b style="font-size:.82rem;color:var(--violet);">인앱 인터벌 타이머 & 스톱워치</b>' +
+        '</div>' +
+        '<div class="pro-sw-modes" id="swModeRow">' +
+          '<button class="pro-sw-mode-chip active" data-swmode="stopwatch" type="button">⏱️ 스톱워치</button>' +
+          '<button class="pro-sw-mode-chip" data-swmode="rest60" type="button">⏳ 60초 휴식</button>' +
+          '<button class="pro-sw-mode-chip" data-swmode="rest90" type="button">⏳ 90초 휴식</button>' +
+          '<button class="pro-sw-mode-chip" data-swmode="rest120" type="button">⏳ 2분 휴식</button>' +
+          '<button class="pro-sw-mode-chip" data-swmode="timecap20" type="button">🎯 20분 타임캡</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="pro-sw-display-row">' +
+        '<div class="pro-sw-clock" id="swDisplay">00:00.0</div>' +
+        '<div class="pro-sw-controls">' +
+          '<button class="btn btn-primary btn-sm" id="swStartPauseBtn" type="button" style="min-width:70px;">▶ 시작</button>' +
+          '<button class="btn btn-ghost btn-sm" id="swResetBtn" type="button">🔄 리셋</button>' +
+          '<button class="btn btn-ghost btn-sm" id="swLapBtn" type="button">📍 랩</button>' +
+          '<button class="btn btn-ghost btn-sm" id="swInjectBtn" type="button" style="color:var(--violet);border-color:var(--violet-soft);font-weight:700;" title="현재 측정 시간을 표의 시간 열에 기입">📥 표에 시간 기입</button>' +
+        '</div>' +
+      '</div>' +
+      '<div id="swLapsList" style="display:none;margin-top:6px;font-size:.72rem;color:var(--ink-soft);max-height:54px;overflow-y:auto;padding-top:4px;border-top:1px dashed var(--rule);"></div>' +
+    '</div>';
+  }
+
+  /* ============ 🔄 Notion 데이터베이스 실시간 자동 푸시 (Notion Direct Push) ============ */
+  async function pushRecordToNotion(record, curTpl, columns, rows){
+    var s = state.profile && state.profile.settings;
+    var apiKey = (s && s.notionApiKey) || '';
+    var dbId = (s && s.notionDatabaseId) || '';
+    var webhookUrl = (s && s.notionWebhookUrl) || '';
+
+    if(!apiKey && !webhookUrl){
+      return { ok: false, error: 'Notion API 토큰 또는 Webhook URL을 설정에서 먼저 등록해주세요.' };
+    }
+
+    var validRows = (rows || []).filter(function(r){
+      return r && r.some(function(c, idx){ return idx > 0 && c && String(c).trim().length > 0; });
+    });
+    if(!validRows.length) validRows = (rows || []).slice(0, 1);
+
+    var title = (curTpl && curTpl.title ? curTpl.title : '기록') + ' - ' + (record.startAt ? record.startAt.slice(0,10) : nowISO().slice(0,10));
+    var results = [];
+
+    // 1. Direct Notion Database API Push
+    if(apiKey && dbId){
+      try {
+        var res = await fetch('/api/notion-push', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'notion_push',
+            apiKey: apiKey,
+            databaseId: dbId,
+            title: title,
+            date: record.startAt || nowISO(),
+            columns: columns || [],
+            rows: validRows,
+            memo: record.memo || ''
+          })
+        });
+        var data = await res.json();
+        if(res.ok && data.ok){
+          results.push('Notion DB 페이지 생성 완료');
+        } else {
+          results.push('Notion DB 실패: ' + (data.error || res.statusText));
+        }
+      } catch(e){
+        results.push('Notion DB 오류: ' + e.message);
+      }
+    }
+
+    // 2. Notion Webhook automation
+    if(webhookUrl && s && s.notionSync){
+      try {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          mode: 'no-cors',
+          body: JSON.stringify({
+            source: '아워골',
+            title: title,
+            date: record.startAt || nowISO(),
+            columns: columns,
+            rows: validRows,
+            memo: record.memo || ''
+          })
+        });
+        results.push('웹훅 전송 완료');
+      } catch(e){}
+    }
+
+    var isOk = results.some(function(r){ return r.indexOf('완료') !== -1; });
+    return {
+      ok: isOk,
+      summary: results.join(' · ')
+    };
+  }
+
   /* ============ AI 프로 코칭 리포트 & 처방 모달 (혁신 3) ============ */
   function openProCoachReportModal(curTpl, columns, rows, memoVal){
     var a = computeTableAnalytics(curTpl, columns, rows);
@@ -10121,7 +10675,11 @@
         escapeHtml(mdTable) +
       '</div>' +
       '<div style="display:flex;flex-direction:column;gap:8px;">' +
-        '<button class="btn btn-primary btn-sm" id="notionCopyTsvBtn" type="button" style="width:100%;padding:9px 0;font-size:.82rem;">' +
+        '<button class="btn btn-primary btn-sm" id="notionDirectPushBtn" type="button" style="width:100%;padding:9px 0;font-size:.82rem;background:var(--violet);border-color:var(--violet);">' +
+          '🚀 Notion DB로 즉시 전송' +
+        '</button>' +
+        '<div id="notionPushStatusWrap" style="display:none;font-size:.76rem;text-align:center;padding:4px 8px;border-radius:6px;"></div>' +
+        '<button class="btn btn-ghost btn-sm" id="notionCopyTsvBtn" type="button" style="width:100%;padding:9px 0;font-size:.82rem;">' +
           '📋 노션 표 형식 클립보드 복사 (Ctrl+V용)' +
         '</button>' +
         '<button class="btn btn-ghost btn-sm" id="notionCopyMdBtn" type="button" style="width:100%;font-size:.8rem;">' +
@@ -10134,6 +10692,53 @@
       '</div>',
       function(sheet){
         sheet.querySelector('#notionCloseBtn').onclick = closeModal;
+        var pushBtn = sheet.querySelector('#notionDirectPushBtn');
+        var statusWrap = sheet.querySelector('#notionPushStatusWrap');
+        if(pushBtn){
+          pushBtn.onclick = async function(){
+            var s = state.profile && state.profile.settings;
+            if((!s || !s.notionApiKey) && (!s || !s.notionWebhookUrl)){
+              toast('설정(⚙️) 탭에서 Notion API Key 또는 Webhook URL을 먼저 등록해주세요.');
+              return;
+            }
+            pushBtn.disabled = true;
+            pushBtn.textContent = '⏳ Notion으로 전송 중...';
+            if(statusWrap){
+              statusWrap.style.display = 'block';
+              statusWrap.className = 'notion-push-status-pill pending';
+              statusWrap.textContent = 'Notion API와 통신 중입니다...';
+            }
+            try {
+              var rec = {
+                startAt: nowISO(),
+                memo: ''
+              };
+              var result = await pushRecordToNotion(rec, curTpl, columns, validRows);
+              if(result.ok){
+                toast('🚀 Notion에 성공적으로 전송되었습니다!');
+                if(statusWrap){
+                  statusWrap.className = 'notion-push-status-pill success';
+                  statusWrap.textContent = '✅ ' + (result.summary || '전송 완료');
+                }
+              } else {
+                toast('Notion 전송 실패: ' + (result.error || result.summary || '설정을 확인하세요'));
+                if(statusWrap){
+                  statusWrap.className = 'notion-push-status-pill error';
+                  statusWrap.textContent = '❌ ' + (result.error || result.summary || '전송 실패');
+                }
+              }
+            } catch(err){
+              toast('Notion 전송 오류: ' + err.message);
+              if(statusWrap){
+                statusWrap.className = 'notion-push-status-pill error';
+                statusWrap.textContent = '❌ ' + err.message;
+              }
+            } finally {
+              pushBtn.disabled = false;
+              pushBtn.textContent = '🚀 Notion DB로 즉시 전송';
+            }
+          };
+        }
         sheet.querySelector('#notionCopyTsvBtn').onclick = function(){
           if(navigator.clipboard && navigator.clipboard.writeText){
             navigator.clipboard.writeText(tsvTable).then(function(){
@@ -11290,6 +11895,12 @@
           '<input id="proRecDate" type="datetime-local" value="' + recordDateVal + '">' +
         '</div>' +
       '</div>' +
+      '<div id="proTrendChartWrap" style="margin-bottom:10px;">' +
+        renderTrendSvgChart(computeTrendChartData(curTpl.key, (state.profile && state.profile.records) || [], '7')) +
+      '</div>' +
+      '<div id="proStopwatchWrap" style="margin-bottom:10px;">' +
+        renderStopwatchWidgetHtml() +
+      '</div>' +
       '<div id="proAnalyticsWrap">' +
         renderAnalyticsHtml(curTpl, columns, rows) +
       '</div>' +
@@ -11628,6 +12239,7 @@
           var badge = sheet.querySelector('.pro-tpl-badge');
           if(badge) badge.innerHTML = curTpl.icon + ' ' + escapeHtml(curTpl.title);
           refreshTableBody();
+          updateTrendChart();
         };
       }
 
@@ -11652,6 +12264,7 @@
             var badge = sheet.querySelector('.pro-tpl-badge');
             if(badge) badge.innerHTML = curTpl.icon + ' ' + escapeHtml(curTpl.title);
             refreshTableBody();
+            updateTrendChart();
           });
         };
       }
@@ -11676,10 +12289,229 @@
 
       bindRowEvents();
 
-      sheet.querySelector('#proCancelBtn').onclick = closeModal;
+      // 📈 표 기록 기반 일자별 자동 성장 추이 차트 제어
+      var curChartPeriod = '7';
+      function bindChartEvents(){
+        var chartWrap = sheet.querySelector('#proTrendChartWrap');
+        if(!chartWrap) return;
+
+        var tip = chartWrap.querySelector('#trendTooltip');
+        chartWrap.querySelectorAll('.trend-pt-group').forEach(function(g){
+          g.onmouseenter = function(){
+            if(!tip) return;
+            tip.textContent = (g.dataset.val || '') + ' (' + (g.dataset.date || '') + ')';
+            tip.style.display = 'block';
+            var rect = g.getBoundingClientRect();
+            var wrapRect = chartWrap.getBoundingClientRect();
+            tip.style.left = (rect.left - wrapRect.left) + 'px';
+            tip.style.top = (rect.top - wrapRect.top - 24) + 'px';
+          };
+          g.onmouseleave = function(){
+            if(tip) tip.style.display = 'none';
+          };
+        });
+
+        chartWrap.querySelectorAll('.pro-trend-filter-chip').forEach(function(btn){
+          btn.onclick = function(){
+            curChartPeriod = btn.dataset.period || '7';
+            updateTrendChart();
+          };
+        });
+      }
+
+      function updateTrendChart(){
+        var chartWrap = sheet.querySelector('#proTrendChartWrap');
+        if(!chartWrap) return;
+        var cData = computeTrendChartData(curTpl.key, (state.profile && state.profile.records) || [], curChartPeriod);
+        chartWrap.innerHTML = renderTrendSvgChart(cData);
+        var activeBtn = chartWrap.querySelector('.pro-trend-filter-chip[data-period="'+curChartPeriod+'"]');
+        if(activeBtn){
+          chartWrap.querySelectorAll('.pro-trend-filter-chip').forEach(function(b){ b.classList.remove('active'); });
+          activeBtn.classList.add('active');
+        }
+        bindChartEvents();
+      }
+
+      bindChartEvents();
+
+      // ⏱️ 인앱 스톱워치 & 인터벌 타이머 위젯 제어
+      var swTimerId = null;
+      var swRunning = false;
+      var swMode = 'stopwatch';
+      var swTargetMs = 0;
+      var swElapsedMs = 0;
+      var swLastTick = 0;
+      var swLaps = [];
+      var lastFocusedCell = null;
+
+      var swDisplay = sheet.querySelector('#swDisplay');
+      var swStartPauseBtn = sheet.querySelector('#swStartPauseBtn');
+      var swResetBtn = sheet.querySelector('#swResetBtn');
+      var swLapBtn = sheet.querySelector('#swLapBtn');
+      var swInjectBtn = sheet.querySelector('#swInjectBtn');
+      var swLapsList = sheet.querySelector('#swLapsList');
+      var swModeChips = sheet.querySelectorAll('.pro-sw-mode-chip');
+
+      function updateSwDisplay(){
+        if(!swDisplay) return;
+        var displayMs = swMode === 'stopwatch' ? swElapsedMs : Math.max(0, swTargetMs - swElapsedMs);
+        swDisplay.textContent = formatStopwatchTime(displayMs, true);
+        if(swMode !== 'stopwatch' && displayMs === 0 && swRunning){
+          swDisplay.style.color = 'var(--red)';
+        } else {
+          swDisplay.style.color = '';
+        }
+      }
+
+      function stopSwTimer(){
+        if(swTimerId){
+          clearInterval(swTimerId);
+          swTimerId = null;
+        }
+        swRunning = false;
+        if(swStartPauseBtn) swStartPauseBtn.textContent = '▶ 시작';
+      }
+
+      function resetSw(newMode){
+        stopSwTimer();
+        if(newMode) swMode = newMode;
+        swElapsedMs = 0;
+        swLaps = [];
+        if(swLapsList){
+          swLapsList.style.display = 'none';
+          swLapsList.innerHTML = '';
+        }
+        if(swMode === 'stopwatch'){
+          swTargetMs = 0;
+        } else if(swMode === 'rest60'){
+          swTargetMs = 60000;
+        } else if(swMode === 'rest90'){
+          swTargetMs = 90000;
+        } else if(swMode === 'rest120'){
+          swTargetMs = 120000;
+        } else if(swMode === 'timecap20'){
+          swTargetMs = 1200000;
+        }
+        updateSwDisplay();
+      }
+
+      swModeChips.forEach(function(chip){
+        chip.onclick = function(){
+          swModeChips.forEach(function(c){ c.classList.remove('active'); });
+          chip.classList.add('active');
+          resetSw(chip.dataset.swmode);
+        };
+      });
+
+      if(swStartPauseBtn){
+        swStartPauseBtn.onclick = function(){
+          if(swRunning){
+            stopSwTimer();
+          } else {
+            swRunning = true;
+            swStartPauseBtn.textContent = '⏸ 일시정지';
+            swLastTick = Date.now();
+            swTimerId = setInterval(function(){
+              var now = Date.now();
+              var delta = now - swLastTick;
+              swLastTick = now;
+              swElapsedMs += delta;
+
+              if(swMode !== 'stopwatch' && swElapsedMs >= swTargetMs){
+                swElapsedMs = swTargetMs;
+                stopSwTimer();
+                updateSwDisplay();
+                playTimerBeep();
+                var modeNames = { rest60: '60초 휴식', rest90: '90초 휴식', rest120: '2분 휴식', timecap20: '20분 타임캡' };
+                toast('⏳ [' + (modeNames[swMode] || '타이머') + '] 종료되었습니다! 다음 세트를 시작하세요!');
+                return;
+              }
+              updateSwDisplay();
+            }, 60);
+          }
+        };
+      }
+
+      if(swResetBtn){
+        swResetBtn.onclick = function(){
+          resetSw();
+        };
+      }
+
+      if(swLapBtn){
+        swLapBtn.onclick = function(){
+          var curMs = swMode === 'stopwatch' ? swElapsedMs : Math.max(0, swTargetMs - swElapsedMs);
+          var lapStr = formatStopwatchTime(curMs, true);
+          swLaps.unshift(lapStr);
+          if(swLapsList){
+            swLapsList.style.display = 'block';
+            swLapsList.innerHTML = swLaps.slice(0, 5).map(function(lp, idx){
+              return '<span style="display:inline-block;margin-right:8px;">랩 ' + (swLaps.length - idx) + ': <b>' + lp + '</b></span>';
+            }).join('');
+          }
+          toast('📍 랩 타임 ' + lapStr + ' 기록!');
+        };
+      }
+
+      // Track cell focus for stopwatch injection
+      sheet.addEventListener('focusin', function(e){
+        if(e.target && e.target.classList && e.target.classList.contains('pro-tpl-cell-input')){
+          lastFocusedCell = e.target;
+        }
+      });
+
+      if(swInjectBtn){
+        swInjectBtn.onclick = function(){
+          var targetInp = null;
+          if(lastFocusedCell && document.body.contains(lastFocusedCell)){
+            targetInp = lastFocusedCell;
+          } else {
+            // Find column matching 시간|페이스|time|소요시간|타임
+            var timeColIdx = -1;
+            columns.forEach(function(c, i){
+              if(timeColIdx === -1 && /(?:시간|페이스|time|타임|소요)/i.test(c)){
+                timeColIdx = i;
+              }
+            });
+            if(timeColIdx === -1 && columns.length > 1) timeColIdx = columns.length - 1;
+
+            if(timeColIdx !== -1){
+              var inps = sheet.querySelectorAll('.pro-tpl-cell-input[data-col="'+timeColIdx+'"]');
+              for(var j=0; j<inps.length; j++){
+                if(!inps[j].value.trim()){
+                  targetInp = inps[j];
+                  break;
+                }
+              }
+              if(!targetInp && inps.length) targetInp = inps[inps.length - 1];
+            }
+          }
+
+          if(!targetInp){
+            toast('시간을 기입할 셀을 선택해주세요');
+            return;
+          }
+
+          var curMs = swMode === 'stopwatch' ? swElapsedMs : Math.max(0, swTargetMs - swElapsedMs);
+          var timeVal = formatStopwatchTime(curMs, false);
+          targetInp.value = timeVal;
+          targetInp.classList.add('cell-highlight-flash');
+          setTimeout(function(){ targetInp.classList.remove('cell-highlight-flash'); }, 1400);
+
+          syncCurrentRowsFromDOM();
+          updateAnalyticsBanner();
+          toast('⏱️ 표에 측정 시간(' + timeVal + ')을 자동 기입했습니다!');
+        };
+      }
+
+      sheet.querySelector('#proCancelBtn').onclick = function(){
+        stopSwTimer();
+        closeModal();
+      };
 
       // 저장 공통 함수
       async function executeSave(syncCalendar){
+        stopSwTimer();
         syncCurrentRowsFromDOM();
         var dateInpVal = (sheet.querySelector('#proRecDate').value || '').trim();
         var schedDateVal = dateInpVal ? (dateInpVal.indexOf('T') !== -1 ? dateInpVal : dateInpVal + 'T09:00') : toLocalInputValue(new Date());
@@ -11795,6 +12627,17 @@
         // 3. Sync to Supabase in background
         await saveProfile();
 
+        // 4. Background Notion Auto-Push if enabled
+        if(state.profile.settings && state.profile.settings.notionAutoPush && (state.profile.settings.notionApiKey || state.profile.settings.notionWebhookUrl)){
+          pushRecordToNotion(recObj, curTpl, columns, validRows).then(function(res){
+            if(res && res.ok){
+              console.log('[Notion AutoPush Success]', res.summary);
+            }
+          }).catch(function(e){
+            console.warn('[Notion AutoPush Error]', e);
+          });
+        }
+
         if(syncCalendar){
           toast('기록 저장 및 [' + schedTitle + '] 일정에 연동 완료!');
         } else {
@@ -11832,6 +12675,9 @@
       '<div id="detailAnalyticsWrap" style="margin-bottom:10px;">' +
         renderAnalyticsHtml(curTpl, cols, rList) +
       '</div>' +
+      '<div id="detailTrendChartWrap" style="margin-bottom:10px;">' +
+        renderTrendSvgChart(computeTrendChartData(record.templateKey || record.templateId, (state.profile && state.profile.records) || [], '7')) +
+      '</div>' +
       (record.memo ? '<div style="padding:8px 12px;background:var(--card2);border-radius:10px;margin-bottom:10px;font-size:.82rem;line-height:1.45;">💭 <b>메모:</b> ' + escapeHtml(record.memo) + '</div>' : '') +
       '<div class="pro-tpl-table-wrap">' +
         '<table class="pro-notion-table">' +
@@ -11862,6 +12708,42 @@
       '</div>',
       function(sheet){
         sheet.querySelector('#detailCloseBtn').onclick = closeModal;
+
+        var detailChartPeriod = '7';
+        function bindDetailChartEvents(){
+          var chartWrap = sheet.querySelector('#detailTrendChartWrap');
+          if(!chartWrap) return;
+          var tip = chartWrap.querySelector('#trendTooltip');
+          chartWrap.querySelectorAll('.trend-pt-group').forEach(function(g){
+            g.onmouseenter = function(){
+              if(!tip) return;
+              tip.textContent = (g.dataset.val || '') + ' (' + (g.dataset.date || '') + ')';
+              tip.style.display = 'block';
+              var rect = g.getBoundingClientRect();
+              var wrapRect = chartWrap.getBoundingClientRect();
+              tip.style.left = (rect.left - wrapRect.left) + 'px';
+              tip.style.top = (rect.top - wrapRect.top - 24) + 'px';
+            };
+            g.onmouseleave = function(){
+              if(tip) tip.style.display = 'none';
+            };
+          });
+          chartWrap.querySelectorAll('.pro-trend-filter-chip').forEach(function(btn){
+            btn.onclick = function(){
+              detailChartPeriod = btn.dataset.period || '7';
+              var cData = computeTrendChartData(record.templateKey || record.templateId, (state.profile && state.profile.records) || [], detailChartPeriod);
+              chartWrap.innerHTML = renderTrendSvgChart(cData);
+              var activeBtn = chartWrap.querySelector('.pro-trend-filter-chip[data-period="'+detailChartPeriod+'"]');
+              if(activeBtn){
+                chartWrap.querySelectorAll('.pro-trend-filter-chip').forEach(function(b){ b.classList.remove('active'); });
+                activeBtn.classList.add('active');
+              }
+              bindDetailChartEvents();
+            };
+          });
+        }
+        bindDetailChartEvents();
+
         var editBtn = sheet.querySelector('#detailEditBtn');
         if(editBtn){
           editBtn.onclick = function(){
@@ -14918,20 +15800,56 @@
     a11ySwitch(notionSw, settings.notionSync, 'Notion 자동 동기화');
     document.getElementById('notionUrlBlock').style.display = settings.notionSync ? '' : 'none';
     var notionUrlInput = document.getElementById('notionWebhookInput');
-    notionUrlInput.value = settings.notionWebhookUrl || '';
+    if(notionUrlInput){
+      notionUrlInput.value = settings.notionWebhookUrl || '';
+      notionUrlInput.onchange = async function(){
+        settings.notionWebhookUrl = notionUrlInput.value.trim();
+        await saveProfile();
+      };
+    }
+    var notionKeyInput = document.getElementById('notionApiKeyInput');
+    if(notionKeyInput){
+      notionKeyInput.value = settings.notionApiKey || '';
+      notionKeyInput.onchange = async function(){
+        settings.notionApiKey = notionKeyInput.value.trim();
+        await saveProfile();
+      };
+    }
+    var notionDbInput = document.getElementById('notionDbIdInput');
+    if(notionDbInput){
+      notionDbInput.value = settings.notionDatabaseId || '';
+      notionDbInput.onchange = async function(){
+        settings.notionDatabaseId = notionDbInput.value.trim();
+        await saveProfile();
+      };
+    }
+    var notionAutoPushSw = document.getElementById('notionAutoPushSwitch');
+    if(notionAutoPushSw){
+      var isAuto = !!settings.notionAutoPush;
+      notionAutoPushSw.className = 'switch' + (isAuto ? ' on' : '');
+      a11ySwitch(notionAutoPushSw, isAuto, '맞춤 템플릿 저장 시 노션 DB로 자동 전송');
+      notionAutoPushSw.onclick = async function(){
+        settings.notionAutoPush = !isAuto;
+        await saveProfile();
+        renderSettingsScreen();
+      };
+    }
     notionSw.onclick = async function(){
       settings.notionSync = !settings.notionSync;
       await saveProfile();
       renderSettingsScreen();
     };
-    notionUrlInput.onchange = async function(){
-      settings.notionWebhookUrl = notionUrlInput.value.trim();
-      await saveProfile();
-    };
     document.getElementById('notionTestBtn').onclick = async function(){
-      if(!settings.notionWebhookUrl){ toast('Webhook URL을 먼저 입력해주세요'); return; }
-      var ok = await sendToNotion({ text:'아워골 테스트 전송입니다', createdAt: nowISO() }, null);
-      toast(ok ? '노션으로 테스트 전송했어요' : '전송에 실패했어요 · URL을 확인해주세요');
+      if(settings.notionApiKey && settings.notionDatabaseId){
+        toast('Notion DB로 테스트 전송 중...');
+        var res = await pushRecordToNotion({ startAt: nowISO(), memo: '아워골 연동 테스트' }, { title: '테스트' }, ['항목', '상태'], [['연동 확인', '성공']]);
+        toast(res.ok ? '🚀 ' + res.summary : '전송 실패: ' + (res.error || res.summary));
+      } else if(settings.notionWebhookUrl){
+        var ok = await sendToNotion({ text:'아워골 테스트 전송입니다', createdAt: nowISO() }, null);
+        toast(ok ? '노션 웹훅으로 테스트 전송했어요' : '전송에 실패했어요 · URL을 확인해주세요');
+      } else {
+        toast('API Key와 Database ID 또는 Webhook URL을 먼저 입력해주세요');
+      }
     };
 
     // 잇템 통계
