@@ -1121,3 +1121,23 @@
   - `node scripts/smoke-test.js` **85개 전수 통과 (0개 실패)**
   - 인라인 스크립트 문법 및 모든 핵심 함수 회귀 0건 확인
 ---
+
+## [2026-09-10 11:05] 72시간 릴리즈 Phase 3: Capacitor 앱 식별자 확정 및 GitHub Actions 클라우드 APK 빌드 파이프라인 구축
+- **목표**: 
+  1. 로컬 환경의 Android SDK/JDK 부재 제약을 극복하고 클라우드(GitHub Actions)에서 설치형 APK를 자동 빌드·추출하는 파이프라인 수립
+  2. 향후 정식 구글 플레이스토어 배포 시 영구 승계되는 패키지 식별자(`com.yangbis.ourgoal`) 확정
+  3. 라이브 프로덕션(`https://ourgoal-app.vercel.app`) 실시간 연동을 통한 무중단 OTA 업데이트 체계 구축
+- **수정/실행 내역**:
+  - `capacitor.config.json`:
+    - `appId`: `com.yangbis.ourgoal`, `appName`: `아워골` 영구 확정
+    - `server.url`: `https://ourgoal-app.vercel.app`로 지정하여 Vercel 배포 시 APK 앱도 실시간 동기화
+  - `.github/workflows/build-apk.yml`:
+    - Ubuntu 러너, Java JDK 17, Android SDK 자동 셋업
+    - Capacitor Android 프로젝트 초기화 및 Gradle 디버그 APK(`app-debug.apk`) 자동 빌드
+    - 인터넷 권한(`android.permission.INTERNET`) 자동 주입 및 GitHub Artifacts 업로드
+  - `package.json`: `npm test` 스크립트 등록
+  - `dev_log.md`: 개발 로그 추가
+- **검증 결과**:
+  - `npm test` (스모크 테스트) **85개 전수 통과 (0개 실패)**
+  - 워크플로우 YAML 및 Capacitor JSON 구문 검증 완료
+---
