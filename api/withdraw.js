@@ -17,17 +17,23 @@ module.exports = async function handler(req, res) {
       return;
     }
     try {
-      var { data: listData, error: listErr } = await sb.auth.admin.listUsers({ page: 1, perPage: 50 });
-      var usersList = listData && listData.users ? listData.users.map(u => ({ id: u.id, email: u.email, created_at: u.created_at, identities: u.identities ? u.identities.length : 0 })) : [];
+      var { data: pubUsers } = await sb.from('users').select('*').in('id', ['774b6f9f-b15d-4dad-bea3-d52814f4737f', '95fb6b3f-51ae-4aae-8afe-9472cfa7397e']);
+      
+      // 1. 중복 생성된 빈 계정(95fb6b3f-51ae-4aae-8afe-9472cfa7397e) 삭제
+      var delDup = await sb.auth.admin.deleteUser('95fb6b3f-51ae-4aae-8afe-9472cfa7397e');
+      
+      // 2. 본래 계정(774b6f9f-b15d-4dad-bea3-d52814f4737f)에 ysm0422@naver.com 설정
       var upd = await sb.auth.admin.updateUserById('774b6f9f-b15d-4dad-bea3-d52814f4737f', {
         email: 'ysm0422@naver.com',
         email_confirm: true
       });
+      
       var authUser = await sb.auth.admin.getUserById('774b6f9f-b15d-4dad-bea3-d52814f4737f');
       res.status(200).json({
-        updError: upd.error,
-        usersList: usersList,
-        user: authUser.data ? authUser.data.user : authUser.error
+        pubUsers: pubUsers,
+        delDup: delDup,
+        upd: upd,
+        user: authUser.data ? { id: authUser.data.user.id, email: authUser.data.user.email } : authUser.error
       });
     } catch(e) {
       res.status(500).json({ error: e.message, stack: e.stack });
