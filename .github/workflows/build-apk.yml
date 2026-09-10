@@ -8,6 +8,7 @@ on:
     paths:
       - 'capacitor.config.json'
       - '.github/workflows/build-apk.yml'
+      - 'icons/**'
 
 jobs:
   build-apk:
@@ -48,6 +49,12 @@ jobs:
         run: |
           npx cap add android || true
           npx cap sync android
+
+      - name: Apply Custom Android App Icons
+        run: |
+          if [ -d "icons/android" ] && [ -d "android/app/src/main/res" ]; then
+            cp -r icons/android/* android/app/src/main/res/
+          fi
 
       - name: Ensure Internet Permission in AndroidManifest
         run: |

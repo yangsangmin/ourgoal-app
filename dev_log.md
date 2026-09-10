@@ -1190,6 +1190,19 @@
 - **검증 결과**:
   - `npm test` **85개 전수 통과 (0개 실패)**
   - '목표설정', '목표설정 요청', '다이어트 목표설정' 등 다양한 자연어 입력에 대해 ops 100% 생성 단위 검증 완료
+## [2026-09-10 13:00] feat: 신규 앱 로고 교체 (웹/PWA 파비콘 및 안드로이드 APK 런처 아이콘 전면 반영)
+- **목표**: 사용자가 업로드한 신규 목표/타깃 심볼 로고로 앱 전체 파비콘, 웹/PWA 아이콘, 안드로이드 APK 런처 아이콘 전면 교체
+- **수정/실행 내역**:
+  - `icons/icon-192.png`, `icons/icon-512.png`: 192x192, 512x512 고해상도 PWA 아이콘 신규 로고로 교체
+  - `icons/apple-touch-icon.png`: 180x180 iOS 홈 화면 아이콘 생성
+  - `icons/favicon.png`, `icons/favicon-16.png`, `icons/favicon.ico`: 멀티사이즈 브라우저 탭 파비콘 생성
+  - `icons/android/mipmap-*`: 안드로이드 5대 규격(`mdpi`, `hdpi`, `xhdpi`, `xxhdpi`, `xxxhdpi`)별 `ic_launcher.png`, `ic_launcher_round.png`, `ic_launcher_foreground.png` 및 `ic_launcher_background.xml` 생성
+  - `.github/workflows/build-apk.yml`: `icons/**` 변경 시 APK 자동 빌드 트리거 추가 및 `npx cap sync android` 이후 신규 런처 아이콘을 `android/app/src/main/res/`로 자동 복사하여 적용하는 스텝 추가
+  - `manifest.json`: `maskable` 아이콘 항목 추가
+  - `index.html`: 신규 파비콘 및 `apple-touch-icon` 메타 링크 연결
+- **검증 결과**:
+  - `npm test` **85개 전수 통과 (0개 실패)**
+  - 파비콘, PWA 아이콘, 안드로이드 런처 아이콘(라운드/어댑티브) 해상도 및 비주얼 렌더링 정상 확인
 ---
 
 
