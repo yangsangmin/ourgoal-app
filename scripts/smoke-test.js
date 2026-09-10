@@ -84,6 +84,7 @@ const FN_NAMES = [
   'fmtTime', 'getAIAnalysisPrompt', 'buildCSV', 'buildMarkdownExport',
   'triggerHaptic', 'reorderMilestones', 'filterFeedByCategory',
   'calculateWeeklyFocusStats', 'exportRecordsToCsv', 'exportRecordsToMarkdown',
+  'defaultSettings', 'getPrivacyLabel',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -120,6 +121,7 @@ const sandboxSrc =
   'generateDynamicNotification, fmtYYMMDD, recommendTemplateFromAI, computeTableAnalytics, ' +
   'parseNaturalLanguageTemplateSpec, parseCsvText, parseVoiceToTableRow, ' +
   'triggerHaptic, reorderMilestones, filterFeedByCategory, calculateWeeklyFocusStats, exportRecordsToCsv, exportRecordsToMarkdown, ' +
+  'defaultSettings, getPrivacyLabel, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -563,14 +565,34 @@ check('buildCheckinRecord: 목표가 있으면 category를 물려받고 type=not
   const rec = fns.buildCheckinRecord('헬스장 등록하고 왔다', goal);
   assert.strictEqual(rec.type, 'note');
   assert.strictEqual(rec.category, 'health');
+  assert.strictEqual(rec.visibility, 'private');
   assert.ok(rec.id && String(rec.id).length > 0);
   assert.strictEqual(rec.startAt, rec.endAt);
   assert.ok(!isNaN(Date.parse(rec.startAt)));
 });
 
-check('buildCheckinRecord: 목표가 없으면 category는 null', () => {
+check('buildCheckinRecord: 목표가 없으면 category는 null, visibility는 private', () => {
   const rec = fns.buildCheckinRecord('오늘의 기록', null);
   assert.strictEqual(rec.category, null);
+  assert.strictEqual(rec.visibility, 'private');
+});
+
+/* ============ 최초 로그인 시 모든 공개 범위 비공개 ('private') ============ */
+check('defaultSettings: 최초 로그인 기본 설정에서 모든 공개 범위(goals, calendar, records, stats)가 private이다', () => {
+  const s = fns.defaultSettings();
+  assert.ok(s.privacy, 'privacy 설정 객체 존재');
+  assert.strictEqual(s.privacy.goals, 'private');
+  assert.strictEqual(s.privacy.calendar, 'private');
+  assert.strictEqual(s.privacy.records, 'private');
+  assert.strictEqual(s.privacy.stats, 'private');
+});
+
+check('getPrivacyLabel: 기본값 및 private는 🔒 나만 보기를 반환하고, team 및 public을 올바르게 매핑한다', () => {
+  assert.strictEqual(fns.getPrivacyLabel('private'), '🔒 나만 보기');
+  assert.strictEqual(fns.getPrivacyLabel('team'), '👥 모임원');
+  assert.strictEqual(fns.getPrivacyLabel('public'), '🌐 전체 공개');
+  assert.strictEqual(fns.getPrivacyLabel(undefined), '🔒 나만 보기');
+  assert.strictEqual(fns.getPrivacyLabel(null), '🔒 나만 보기');
 });
 
 /* ============ PWA 앱 배지 (불변식: 미지원 환경 no-op·throw 없음 / 스트릭>0 → 숫자 / 0 → clear) ============ */
@@ -1245,6 +1267,25 @@ check('compliance: 가상 페르소나 40인 및 유저 피드백 TOP 10 핵심 
   assert.ok(html.includes('data-high-contrast'), '고대비 CSS 데이터 속성 존재');
   assert.ok(html.includes('data-fs="small"') && html.includes('data-fs="xlarge"'), '4단계 글자크기 옵션 존재');
   assert.ok(html.includes('triggerHaptic'), '촉각 피드백(진동) 함수 존재');
+});
+
+check('compliance: 최초 로그인 시 모든 공개 범위(헤더 배지, 설정 셀렉트, 목표/기록 기본값)가 비공개로 설정되어 있다', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 헤더 배지 초기 마크업 비공개 확인
+  assert.ok(html.includes('id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">🔒 나만 보기</span>'), '목표 탭 배지 비공개 기본값');
+  assert.ok(html.includes('id="calPrivacyBadge" title="클릭하여 공개 범위 변경" style="margin-top:10px;">🔒 나만 보기</span>'), '일정 탭 배지 비공개 기본값');
+  assert.ok(html.includes('id="recPrivacyBadge" title="클릭하여 공개 범위 변경" style="margin-top:10px;">🔒 나만 보기</span>'), '기록 탭 배지 비공개 기본값');
+
+  // 2. 설정 셀렉트 옵션 비공개 pre-selected 확인
+  assert.ok(html.includes('<option value="private" selected>🔒 나만 보기 (비공개)</option>'), '설정 탭 비공개 pre-selected 존재');
+
+  // 3. 목표 생성 모달 공개 범위 셀렉트 private pre-selected 확인
+  assert.ok(html.includes('<option value="private" selected>나만 보기</option>'), '목표 모달 비공개 pre-selected 존재');
+
+  // 4. 온보딩 및 AI 목표 생성 시 visibility: 'private' 확인
+  assert.ok(html.includes("visibility:'private'"), '온보딩 목표 비공개 설정');
+  assert.ok(html.includes("visibility: 'private'"), '기본 목표 비공개 설정');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
