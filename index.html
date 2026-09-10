@@ -3311,15 +3311,14 @@
     return parsed;
   }
   async function requestAIFeedback(goal, text, theme){
-    var provider = (state.profile.settings.aiProvider) || 'claude';
+    var provider = (state.profile.settings.aiProvider) || 'gemini';
     if(provider==='gemini' && state.profile.settings.geminiKey){
       var g = await requestGeminiFeedback(goal, text, theme);
       if(g) return g;
-      return localFeedback(goal, text, theme); // key set but call failed
     }
-    return requestClaudeFeedback(goal, text, theme);
+    return requestServerAIFeedback(goal, text, theme);
   }
-  async function requestClaudeFeedback(goal, text, theme){
+  async function requestServerAIFeedback(goal, text, theme){
     var settings = state.profile.settings;
     var custom = (settings.customFeedbackActive && settings.customFeedbackPrompt) ? settings.customFeedbackPrompt : '';
     var controller = new AbortController();
@@ -3327,7 +3326,14 @@
     try{
       var res = await fetch('/api/feedback', {
         method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
-        body: JSON.stringify({ goalTitle: goal.title, milestones: milestonesForAI(goal), text: text, customPrompt: custom, theme: theme })
+        body: JSON.stringify({
+          goalTitle: goal.title,
+          milestones: milestonesForAI(goal),
+          text: text,
+          customPrompt: custom,
+          theme: theme,
+          geminiKey: settings.geminiKey || ''
+        })
       });
       clearTimeout(timer);
       if(!res.ok) throw new Error('bad status');
@@ -3342,6 +3348,7 @@
       return localFeedback(goal, text, theme);
     }
   }
+  var requestClaudeFeedback = requestServerAIFeedback;
   async function requestGeminiFeedback(goal, text, theme){
     var geminiPersona = !!(state.profile.settings.customFeedbackActive && state.profile.settings.customFeedbackPrompt);
     var prompt = buildFeedbackPrompt(goal, text, theme);

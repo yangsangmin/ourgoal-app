@@ -1084,3 +1084,23 @@
 - **발생한 문제 및 해결**: 일요일 저녁 18~22시 알림 분기가 기존 21:00 스트릭 경보 불변식과 충돌할 가능성 사전 감지 → 스트릭 경보 조건을 우선 평가하고 위클리 리캡은 스트릭 안전 상태 또는 미체크인 시에만 발생하도록 조건 격리 완료
 - **검증 결과**: `node scripts/smoke-test.js` **85개 전수 통과 (0개 실패)**, `sql-lint` 통과, 단일 HTML 아키텍처 및 Supabase RLS 무결성 보장
 ---
+
+## [2026-09-10 10:55] 72시간 릴리즈 Phase 1: AI API 서버리스 프록시화 및 Gemini/Claude 듀얼 지원
+- **목표**: 
+  1. 베타 테스터에게 개인 API 키 입력 부담 없이 AI 목표 피드백을 제공하기 위한 Vercel Serverless Function 프록시(`api/feedback.js`) 강화
+  2. 서버 환경변수 `GEMINI_API_KEY` (Gemini 2.5 Flash) 및 `ANTHROPIC_API_KEY` (Claude) 듀얼 지원 및 클라이언트 키 노출 차단
+  3. `index.html` 내 AI 피드백 호출 라우팅 단일화 및 장애 시 고도화된 규칙 기반 `localFeedback` 무결성 보존
+- **수정/실행 내역**:
+  - `api/feedback.js`:
+    - 클라이언트 키, 서버 `GEMINI_API_KEY`, 서버 `ANTHROPIC_API_KEY` 계층형 우선순위 라우팅 탑재
+    - Gemini 2.5 Flash API(`responseMimeType: "application/json"`) 직접 호출 및 JSON 파싱 엔진 구현
+    - Gemini 미설정 또는 오류 시 Anthropic Claude로의 자동 장애 복구(Fallback) 및 503 안전 응답 핸들링
+  - `index.html`:
+    - `requestAIFeedback`: 기본 프로바이더를 `gemini`로 전환하고, 설정된 개인 키 유무와 무관하게 서버리스 프록시(`/api/feedback`)로 라우팅
+    - `requestServerAIFeedback`: 요청 페이로드에 `geminiKey`를 포함하여 BYOK 호환성 유지 및 네트워크 장애 시 `localFeedback` 100% 안전 폴백 보장
+    - 기존 85개 스모크 테스트 및 단일 HTML 아키텍처 불변식 100% 보존
+  - `dev_log.md`: 개발 로그 추가
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **85개 전수 통과 (0개 실패)**
+  - `node -e "require('./api/feedback.js')"` 핸들러 모듈 로드 정상 검증
+---
