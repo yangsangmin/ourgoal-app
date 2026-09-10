@@ -7,7 +7,19 @@ function clampStr(v, max) {
   return typeof v === 'string' ? v.trim().slice(0, max) : '';
 }
 function isDateStr(v) {
-  return typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v);
+  return typeof v === 'string' && (/^\d{4}-\d{2}-\d{2}$/.test(v) || /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(v));
+}
+
+function sanitizeAttachments(list) {
+  if (!Array.isArray(list)) return [];
+  return list.slice(0, 10).map(function (a) {
+    if (!a || typeof a !== 'object') return null;
+    var type = ['video', 'image', 'text', 'link'].indexOf(a.type) !== -1 ? a.type : 'link';
+    var title = clampStr(a.title, 80) || '참고자료';
+    var url = clampStr(a.url, 500);
+    var content = clampStr(a.content, 1000);
+    return { type: type, title: title, url: url, content: content };
+  }).filter(Boolean);
 }
 
 function sanitizeCreateGoalData(data) {
@@ -17,7 +29,12 @@ function sanitizeCreateGoalData(data) {
   var milestones = Array.isArray(data.milestones) ? data.milestones.slice(0, 8).map(function (m) {
     return {
       title: clampStr(m && m.title, 60),
-      tasks: Array.isArray(m && m.tasks) ? m.tasks.slice(0, 6).map(function (t) { return clampStr(t, 80); }).filter(Boolean) : []
+      dueDate: isDateStr(m && m.dueDate) ? m.dueDate : null,
+      tasks: Array.isArray(m && m.tasks) ? m.tasks.slice(0, 6).map(function (t) {
+        if (typeof t === 'string') return clampStr(t, 80);
+        return clampStr(t && t.title, 80);
+      }).filter(Boolean) : [],
+      attachments: sanitizeAttachments(m && m.attachments)
     };
   }).filter(function (m) { return m.title; }) : [];
   return {
@@ -42,7 +59,11 @@ function sanitizeCreateMilestoneData(data) {
   return {
     title: title,
     dueDate: isDateStr(data.dueDate) ? data.dueDate : null,
-    tasks: Array.isArray(data.tasks) ? data.tasks.slice(0, 6).map(function (t) { return clampStr(t, 80); }).filter(Boolean) : []
+    tasks: Array.isArray(data.tasks) ? data.tasks.slice(0, 6).map(function (t) {
+      if (typeof t === 'string') return clampStr(t, 80);
+      return clampStr(t && t.title, 80);
+    }).filter(Boolean) : [],
+    attachments: sanitizeAttachments(data.attachments)
   };
 }
 function sanitizeUpdateMilestoneData(data) {
@@ -51,18 +72,25 @@ function sanitizeUpdateMilestoneData(data) {
   if (typeof data.title === 'string' && data.title.trim()) { out.title = clampStr(data.title, 60); has = true; }
   if (data.dueDate === null || isDateStr(data.dueDate)) { out.dueDate = data.dueDate; has = true; }
   if (STATUS_VALUES.indexOf(data.status) !== -1) { out.status = data.status; has = true; }
+  if (Array.isArray(data.attachments)) { out.attachments = sanitizeAttachments(data.attachments); has = true; }
   return has ? out : null;
 }
 function sanitizeCreateTaskData(data) {
   data = data || {};
   var title = clampStr(data.title, 80);
-  return title ? { title: title } : null;
+  if (!title) return null;
+  var out = { title: title };
+  if (data.dueDate === null || isDateStr(data.dueDate)) out.dueDate = data.dueDate;
+  if (Array.isArray(data.attachments)) out.attachments = sanitizeAttachments(data.attachments);
+  return out;
 }
 function sanitizeUpdateTaskData(data) {
   data = data || {};
   var out = {}, has = false;
   if (typeof data.title === 'string' && data.title.trim()) { out.title = clampStr(data.title, 80); has = true; }
   if (data.done === true || data.done === false) { out.done = data.done; has = true; }
+  if (data.dueDate === null || isDateStr(data.dueDate)) { out.dueDate = data.dueDate; has = true; }
+  if (Array.isArray(data.attachments)) { out.attachments = sanitizeAttachments(data.attachments); has = true; }
   return has ? out : null;
 }
 
@@ -159,40 +187,119 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
     }
   }
 
-  // 3. 신규 목표 추가/설정 의도 (모든 일반 텍스트·목표설정 요청을 폭넓게 수용)
-  var cleanTitle = msg
-    .replace(/^(목표설정|목표 설정|새로운 목표|새 목표|신규 목표)[:\s]*/g, '')
-    .replace(/(목표설정해줘|목표설정|목표 설정해줘|목표 설정|목표를|목표로|목표|할일|마일스톤|추가해줘|추가|만들어줘|만들기|생성해줘|등록해줘|시작하기|시작|세워줘|세우기|잡아줘|잡기|설정해줘|설정|계획해줘|계획|추천해줘|추천|해줘|해주세요|하고 싶어|하고싶어|원해|요청|요청해줘|부탁해)/g, '')
-    .trim();
-
-  if (!cleanTitle || cleanTitle.length < 2 || cleanTitle === '목표' || cleanTitle === '요청') {
-    cleanTitle = '나만의 새로운 실천 목표';
+  // 3. 신규 목표/일정 추가 의도 (모든 일반 텍스트·목표설정·일정등록 요청을 폭넓게 수용)
+  // 날짜/요일 계산 헬퍼
+  function calcDayOffset(targetDayIdx, isNext) {
+    var d = new Date(today + 'T12:00:00');
+    var cur = d.getDay();
+    var diff = (targetDayIdx - cur + 7) % 7;
+    if (diff === 0 && !isNext) diff = 7;
+    if (isNext) diff += 7;
+    d.setDate(d.getDate() + diff);
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var day = String(d.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + day;
   }
 
-  // 날짜/기간 자연어 추출 (예: "한달 뒤", "30일 뒤", "다음 주" 등)
+  // 날짜/기간 자연어 추출 (예: "이번주 일요일", "내일", "한달 뒤", "30일 뒤", "다음 주" 등)
   var dueDate = null;
-  if (/(한\s*달\s*뒤|1\s*달\s*뒤|30\s*일\s*뒤|1\s*개월\s*뒤)/i.test(msg)) {
-    var d = new Date(today);
+  var isNextWk = /(다음\s*주)/i.test(msg);
+  if (/(이번\s*주\s*일요일|일요일)/i.test(msg)) {
+    dueDate = calcDayOffset(0, isNextWk);
+  } else if (/(이번\s*주\s*토요일|토요일)/i.test(msg)) {
+    dueDate = calcDayOffset(6, isNextWk);
+  } else if (/(이번\s*주\s*금요일|금요일)/i.test(msg)) {
+    dueDate = calcDayOffset(5, isNextWk);
+  } else if (/(이번\s*주\s*목요일|목요일)/i.test(msg)) {
+    dueDate = calcDayOffset(4, isNextWk);
+  } else if (/(이번\s*주\s*수요일|수요일)/i.test(msg)) {
+    dueDate = calcDayOffset(3, isNextWk);
+  } else if (/(이번\s*주\s*화요일|화요일)/i.test(msg)) {
+    dueDate = calcDayOffset(2, isNextWk);
+  } else if (/(이번\s*주\s*월요일|월요일)/i.test(msg)) {
+    dueDate = calcDayOffset(1, isNextWk);
+  } else if (/(내일)/i.test(msg)) {
+    var d = new Date(today + 'T12:00:00');
+    d.setDate(d.getDate() + 1);
+    dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  } else if (/(모레)/i.test(msg)) {
+    var d = new Date(today + 'T12:00:00');
+    d.setDate(d.getDate() + 2);
+    dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  } else if (/(한\s*달\s*뒤|1\s*달\s*뒤|30\s*일\s*뒤|1\s*개월\s*뒤)/i.test(msg)) {
+    var d = new Date(today + 'T12:00:00');
     d.setDate(d.getDate() + 30);
-    dueDate = d.toISOString().slice(0, 10);
+    dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   } else if (/(두\s*달\s*뒤|2\s*달\s*뒤|60\s*일\s*뒤|2\s*개월\s*뒤)/i.test(msg)) {
-    var d = new Date(today);
+    var d = new Date(today + 'T12:00:00');
     d.setDate(d.getDate() + 60);
-    dueDate = d.toISOString().slice(0, 10);
+    dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   } else if (/(세\s*달\s*뒤|3\s*달\s*뒤|90\s*일\s*뒤|3\s*개월\s*뒤|100\s*일\s*뒤)/i.test(msg)) {
-    var d = new Date(today);
+    var d = new Date(today + 'T12:00:00');
     d.setDate(d.getDate() + 90);
-    dueDate = d.toISOString().slice(0, 10);
+    dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   } else if (/(다음\s*주|1\s*주\s*뒤|7\s*일\s*뒤)/i.test(msg)) {
-    var d = new Date(today);
+    var d = new Date(today + 'T12:00:00');
     d.setDate(d.getDate() + 7);
-    dueDate = d.toISOString().slice(0, 10);
+    dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   } else if (/(올해\s*말|연말)/i.test(msg)) {
     var y = today.slice(0, 4);
     dueDate = y + '-12-31';
   }
 
+  // 시간 자연어 추출 (예: "오후 2시", "14시 30분", "저녁 7시")
+  var timeMatch = msg.match(/(오전|오후|저녁|아침)?\s*(\d{1,2})시(?:\s*(\d{1,2})분)?/);
+  if (timeMatch && dueDate) {
+    var period = timeMatch[1] || '';
+    var hour = parseInt(timeMatch[2], 10);
+    var min = parseInt(timeMatch[3] || '0', 10);
+    if ((period === '오후' || period === '저녁') && hour < 12) hour += 12;
+    if (period === '오전' && hour === 12) hour = 0;
+    dueDate += 'T' + String(hour).padStart(2, '0') + ':' + String(min).padStart(2, '0');
+  }
+
+  // 첨부파일 / 참고자료 / 레시피 / 유튜브 링크 요청 감지 및 자동 추출
+  var hasAttachmentReq = /(첨부|레시피|유튜브|영상링크|동영상|참고자료|링크|자료)/i.test(msg);
+  var attachKeyword = '';
+  var attachUrl = '';
+  var attachTitle = '';
+
+  if (hasAttachmentReq) {
+    if (/미역국/i.test(msg)) {
+      attachKeyword = '미역국 레시피';
+    } else {
+      var kwMatch = msg.match(/(?:첨부파일로|첨부로|참고자료로|영상으로)?\s*([가-힣a-zA-Z0-9\s]+?)\s*(?:레시피|유튜브|영상|링크|자료|팁|노하우)\s*(?:등록|추가|찾아|첨부|넣어)/i) ||
+                    msg.match(/([가-힣a-zA-Z0-9]+(?:\s+[가-힣a-zA-Z0-9]+)?\s*레시피)/i) ||
+                    msg.match(/([가-힣a-zA-Z0-9]+(?:\s+[가-힣a-zA-Z0-9]+)?\s*유튜브)/i) ||
+                    msg.match(/([가-힣a-zA-Z0-9]+(?:\s+[가-힣a-zA-Z0-9]+)?\s*(?:자세|운동법|훈련법|스피치|공부법))/i);
+      if (kwMatch) {
+        attachKeyword = kwMatch[1].trim().replace(/(등록|추가|해줘|첨부파일로|첨부로)$/, '').trim();
+        if (/레시피/i.test(msg) && !/레시피/i.test(attachKeyword)) attachKeyword += ' 레시피';
+      }
+    }
+    if (!attachKeyword) attachKeyword = '관련 가이드 영상';
+    var encodedKw = encodeURIComponent(attachKeyword);
+    attachUrl = 'https://www.youtube.com/results?search_query=' + encodedKw;
+    attachTitle = attachKeyword + ' 유튜브 영상';
+  }
+
+  var cleanTitle = msg
+    .replace(/^(목표설정|목표 설정|새로운 목표|새 목표|신규 목표|일정등록|일정 등록)[:\s]*/g, '')
+    .replace(/(이번\s*주\s*일요일|이번\s*주\s*토요일|이번\s*주\s*금요일|이번\s*주|다음\s*주|내일|모레)/g, '')
+    .replace(/(?:첨부파일로|첨부로|참고자료로|영상으로)\s*[^,\.\s]+\s*(?:레시피|유튜브|영상|링크|자료|팁)?\s*(?:등록해줘|등록|추가해줘|추가|찾아서|찾아줘|넣어줘|첨부해줘|첨부)?/g, '')
+    .replace(/(?:레시피|유튜브|영상|링크|자료|팁)\s*(?:등록해줘|등록|추가해줘|추가|찾아서|찾아줘|넣어줘|첨부해줘|첨부)/g, '')
+    .replace(/(목표설정해줘|목표설정|목표 설정해줘|목표 설정|일정등록해줘|일정등록|일정 등록해줘|일정 등록|목표를|목표로|목표|할일|마일스톤|추가해줘|추가|만들어줘|만들기|생성해줘|등록해줘|시작하기|시작|세워줘|세우기|잡아줘|잡기|설정해줘|설정|계획해줘|계획|추천해줘|추천|해줘|해주세요|하고 싶어|하고싶어|원해|요청|요청해줘|부탁해|하면서)/g, '')
+    .replace(/\s*(?:등록|설정|추가|생성|계획)\s*$/g, '')
+    .trim();
+
+  if (!cleanTitle || cleanTitle.length < 2 || cleanTitle === '목표' || cleanTitle === '요청' || cleanTitle === '일정') {
+    if (/생일/i.test(msg)) cleanTitle = '가족 생일 축하';
+    else cleanTitle = '나만의 새로운 실천 목표';
+  }
+
   // 세부 도메인 판정
+  var isBirthday = /(생일|기념일|돌잔치|축하|파티)/i.test(msg);
   var isMarathon = /(마라톤|10km|5km|달리기|러닝|조깅|하프|풀코스|트랙|페이스)/i.test(msg);
   var isDiet = /(다이어트|살빼기|체중|식단|감량|체지방|뱃살)/i.test(msg);
   var isHealth = isMarathon || isDiet || /(운동|헬스|피트니스|웨이트|근육|스쿼트|수영|자전거|사이클|필라테스|요가|크로스핏|등산|체력|건강)/i.test(msg);
@@ -200,15 +307,15 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
   var isCareer = /(일|업무|사업|매출|취업|이직|프로젝트|머니|돈|투자|수익|재테크|마케팅|창업)/i.test(msg);
   var isHobby = /(취미|음악|악기|피아노|기타|그림|사진|게임|여행|영상|유튜브|블로그|글쓰기)/i.test(msg);
   var isMind = /(마음|명상|수면|일기|감사|습관|기상|미라클|루틴|멘탈)/i.test(msg);
-  var isRelation = /(친구|가족|연인|약속|모임|대화|결혼|부모|자녀)/i.test(msg);
+  var isRelation = isBirthday || /(친구|가족|연인|약속|모임|대화|결혼|부모|자녀|아들|딸|엄마|아빠)/i.test(msg);
 
   var topic = 'health';
-  if (isHealth) topic = 'health';
+  if (isRelation) topic = 'relation';
+  else if (isHealth) topic = 'health';
   else if (isStudy) topic = 'study';
   else if (isCareer) topic = 'career';
   else if (isHobby) topic = 'hobby';
   else if (isMind) topic = 'mind';
-  else if (isRelation) topic = 'relation';
 
   var m1 = '1단계: 시작 준비 및 실행 계획 수립';
   var t1 = ['세부 실천 계획 정리하기', '필요한 준비물 및 환경 구성하기'];
@@ -216,8 +323,16 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
   var t2 = ['기본 실천 꾸준히 이어가기', '진행 과정과 느낀 점 기록하기'];
   var m3 = '3단계: 최종 목표 달성 점검 및 습관화';
   var t3 = ['최종 결과 점검 및 피드백', '다음 성장 단계 수립하기'];
+  var m1Atts = attachUrl ? [{ type: 'video', title: attachTitle, url: attachUrl }] : [];
 
-  if (isMarathon) {
+  if (isBirthday) {
+    m1 = '1단계: 생일 맞이 요리 및 선물 준비';
+    t1 = ['미역국 및 맛있는 축하 음식 만들기', '생일 케이크 및 선물 챙기기'];
+    m2 = '2단계: 가족 생일 축하 파티 및 기념';
+    t2 = ['온 가족 모여 축하 노래 부르기', '축하 사진 촬영 및 소중한 추억 기록하기'];
+    m3 = '3단계: 감사 회고 및 가족 앨범 정리';
+    t3 = ['생일 파티 사진 정리 및 회고', '가족과 감사 인사 나누기'];
+  } else if (isMarathon) {
     m1 = '1단계: 기초 러닝 적응 및 장비 점검 (주 2~3회, 3~5km)';
     t1 = ['발에 맞는 러닝화 및 복장 점검하기', '주 2~3회 가벼운 조깅(3km)으로 기초 호흡 적응하기'];
     m2 = '2단계: 주간 주행거리 증량 및 페이스 훈련 (5~8km)';
@@ -263,14 +378,19 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
       topicMajor: topic,
       topicMinor: '',
       milestones: [
-        { title: m1, tasks: t1 },
+        { title: m1, tasks: t1, attachments: m1Atts, dueDate: dueDate },
         { title: m2, tasks: t2 },
         { title: m3, tasks: t3 }
       ]
     },
-    summary: '신규 목표 "' + cleanTitle + '" 및 3단계 마일스톤 생성' + (dueDate ? ' (마감: ' + dueDate + ')' : '')
+    summary: '신규 목표 "' + cleanTitle + '" 및 3단계 마일스톤 생성' + (dueDate ? ' (일정: ' + dueDate + ')' : '') + (attachKeyword ? ' + ' + attachKeyword + ' 첨부' : '')
   });
-  reply = '"' + cleanTitle + '" 목표와 맞춤 실행 마일스톤을 준비했어요.' + (dueDate ? ' 마감일은 ' + dueDate + '로 잡았어요.' : '') + ' 이대로 적용할까요?';
+
+  if (attachKeyword) {
+    reply = attachKeyword + ' 유튜브링크를 찾아왔습니다. 첨부할까요?';
+  } else {
+    reply = '"' + cleanTitle + '" 목표와 맞춤 실행 마일스톤을 준비했어요.' + (dueDate ? ' 일정은 ' + dueDate + '로 잡았어요.' : '') + ' 이대로 적용할까요?';
+  }
 
   return { ops: ops, reply: reply };
 }
@@ -334,14 +454,18 @@ module.exports = async function handler(req, res) {
     '"summary":"이 변경사항을 설명하는 한국어 한 문장"}],' +
     '"reply":"사용자에게 보여줄 1~2문장 응답 (요청 이해 내용 요약 또는 실패 이유)"}\n\n' +
     'data 필드 규칙:\n' +
-    '- goal CREATE: title(필수), dueDate(YYYY-MM-DD 또는 null), topicMajor(health/study/career/hobby/mind/relation 중 하나, 선택), ' +
-    'topicMinor(짧은 텍스트, 선택), milestones(선택, [{"title":"","tasks":["",...]}] 형태)\n' +
+    '- goal CREATE: title(필수), dueDate(YYYY-MM-DD 또는 YYYY-MM-DDTHH:mm, null), topicMajor(health/study/career/hobby/mind/relation 중 하나, 선택), ' +
+    'topicMinor(짧은 텍스트, 선택), milestones(선택, [{"title":"","tasks":["",...],"attachments":[{"type":"video|image|text|link","title":"","url":""}]}] 형태)\n' +
     '- goal UPDATE: title, dueDate 중 바꿀 것만\n' +
-    '- milestone CREATE: title(필수), tasks(선택, 문자열 배열), dueDate(선택)\n' +
-    '- milestone UPDATE: title, dueDate, status(todo/doing/done) 중 바꿀 것만\n' +
-    '- task CREATE: title(필수)\n' +
-    '- task UPDATE: title, done(true/false) 중 바꿀 것만\n' +
-    '- DELETE는 data가 필요 없습니다.';
+    '- milestone CREATE: title(필수), tasks(선택, 문자열 배열), dueDate(선택), attachments(선택)\n' +
+    '- milestone UPDATE: title, dueDate, status(todo/doing/done), attachments 중 바꿀 것만\n' +
+    '- task CREATE: title(필수), dueDate(선택), attachments(선택)\n' +
+    '- task UPDATE: title, done(true/false), dueDate, attachments 중 바꿀 것만\n' +
+    '- DELETE는 data가 필요 없습니다.\n\n' +
+    '첨부파일/유튜브 요청 대응 규칙:\n' +
+    '- 사용자가 첨부파일, 참고자료, 레시피, 영상, 유튜브 등을 요청한 경우 (예: "이번주 일요일 아들생일 등록하면서 첨부파일로 미역국 레시피 등록해줘"), ' +
+    '관련 유튜브 검색 링크(예: "https://www.youtube.com/results?search_query=...")를 attachments에 포함하고, ' +
+    'reply는 반드시 "[키워드] 유튜브링크를 찾아왔습니다. 첨부할까요?" 형태로 명확히 응답하세요.';
 
   try {
     var parsed = null;
