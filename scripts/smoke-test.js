@@ -84,7 +84,7 @@ const FN_NAMES = [
   'fmtTime', 'getAIAnalysisPrompt', 'buildCSV', 'buildMarkdownExport',
   'triggerHaptic', 'reorderMilestones', 'filterFeedByCategory',
   'calculateWeeklyFocusStats', 'exportRecordsToCsv', 'exportRecordsToMarkdown',
-  'defaultSettings', 'getPrivacyLabel',
+  'defaultSettings', 'getPrivacyLabel', 'subscriptionState',
   'computeTrendChartData', 'formatStopwatchTime',
 ];
 
@@ -122,7 +122,7 @@ const sandboxSrc =
   'generateDynamicNotification, fmtYYMMDD, recommendTemplateFromAI, computeTableAnalytics, ' +
   'parseNaturalLanguageTemplateSpec, parseCsvText, parseVoiceToTableRow, ' +
   'triggerHaptic, reorderMilestones, filterFeedByCategory, calculateWeeklyFocusStats, exportRecordsToCsv, exportRecordsToMarkdown, ' +
-  'defaultSettings, getPrivacyLabel, computeTrendChartData, formatStopwatchTime, ' +
+  'defaultSettings, getPrivacyLabel, subscriptionState, computeTrendChartData, formatStopwatchTime, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -1457,6 +1457,29 @@ check('compliance: 11인 외부 UI/UX 감시 및 개선팀 1차 전면 개선사
 
   // 6. 200 페르소나 챌린지 룸 확장
   assert.ok(html.includes('윤다은') && html.includes('송하준') && html.includes('서예진'), '200 페르소나 다양성 챌린지 룸');
+});
+
+check('compliance: 유료 기능 잠금이 전면 해제되고 모든 기능(무제한 목표, AI 코치, 30일 리포트)이 100% 무료로 제공된다', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 토스 결제 위젯 제거 확인
+  assert.strictEqual(html.includes('tosspayments.com/v1/payment-widget'), false, '토스페이먼츠 스크립트 제거');
+
+  // 2. 랜딩 화면 목표 무제한 무료 문구 확인
+  assert.ok(html.includes('목표 · 무제한 무료'), '랜딩 화면 목표 무제한 무료 문구');
+
+  // 3. 목표 개수 제한 페이월 제거 확인
+  assert.strictEqual(html.includes("openPaywallModal('goalLimit')"), false, '목표 생성/복제 시 페이월 제거');
+
+  // 4. AI 맞춤 코치 페이월 제거 확인
+  assert.strictEqual(html.includes("openPaywallModal('customFeedback')"), false, '맞춤 AI 피드백 봇 페이월 제거');
+
+  // 5. 30일 리포트 페이월 제거 확인
+  assert.strictEqual(html.includes("openPaywallModal('report30d')"), false, '30일 리포트 열람 시 페이월 제거');
+
+  // 6. subscriptionState() 호출 시 항상 isPro: true 반환 확인
+  const sub = fns.subscriptionState();
+  assert.strictEqual(sub.isPro, true, '모든 유저 isPro: true 무제한 무료 제공');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

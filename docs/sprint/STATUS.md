@@ -36,7 +36,7 @@
 - **[필수] 체크인 분야 저장**: Supabase SQL Editor에서 `docs/sql/2026-09-06-checkins-category.sql` 실행(`checkins.category` 컬럼 추가). 실행 전에는 클라이언트가 기존 형식으로 자동 재시도해 저장이 끊기지는 않지만 분야가 계속 저장되지 않아 분야별 리포트·CSV가 부정확하다.
 - **[필수] 소셜 로그인 Provider**: Supabase에서 Kakao·Google Provider 활성화, 각 콘솔에서 앱 등록·Redirect URI 설정, Supabase Site/Redirect URL에 배포 도메인 추가. 상세는 `docs/sprint/TASK-01.md` "사용자 필요 작업". 설정 전에는 버튼을 눌러도 provider 비활성화 에러가 난다(코드 문제 아님).
 - **[선택] 캘린더 OAuth 클라이언트 ID** (PR #54 후속): GCP 콘솔에서 아워골 OAuth 클라이언트(웹, 승인된 자바스크립트 원본 = `https://ourgoal-app.vercel.app`) 발급 후 `index.html`의 `GOOGLE_OAUTH_CLIENT_ID` 상수에 입력. 값을 채우기 전까지는 캘린더가 사용자 ID 입력 방식으로만 동작한다. 주의: 캘린더 스코프는 Google 민감 스코프라 OAuth 동의화면 검수가 필요하고, 검수 전에는 "테스트 사용자" 최대 100명 한도로만 동작하며 승인까지 수일~수주 걸릴 수 있다. 상수를 채우기 전에 페이월 캘린더 문구 정직화(BACKLOG)를 먼저 처리할 것.
-- **[선택] 실제 결제 승인** (TASK-02 다음 단계): 토스페이먼츠 개발자센터 가맹점(테스트) 등록·테스트 클라이언트 키 발급. 현재는 가상 성공 처리만 구현돼 있어 이 설정 없이도 동작 중이다.
+- **[완료] 유료 기능 전면 해제 및 100% 완전 무료화** (2026-09-10): 모든 결제/페이월 및 기능 잠금(목표 3개 제한, 맞춤 AI 코치, 30일 리포트)을 전면 해제하고 토스페이먼츠 연동 코드를 정리하여 모든 기능을 전면 무료로 제공.
 - **[알림] Vercel 배포 횟수 한도**: 2026-09-07 기준 일일 빌드 한도(`Deployment rate limited — retry in 24 hours`)에 걸려 PR 체크가 FAILURE로 표시됐다. 코드 문제가 아니며, 한도가 풀린 뒤의 다음 푸시에서 프로덕션에 반영된다.
 
 TASK-03(음성 체크인)·TASK-05(다이내믹 푸시)·TASK-06(공유 카드)은 브라우저 내장 API·클라이언트 로직만 사용하므로 추가 사용자 작업이 없다. TASK-03의 마이크 버튼은 SpeechRecognition 미지원 브라우저(iOS Safari 등)에서 자동으로 숨겨지고, TASK-06의 `/share/{userId}`·`?ref=` **수신** 처리는 이번 범위 밖(링크 생성까지만)이다.

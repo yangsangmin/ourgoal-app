@@ -1538,7 +1538,7 @@
     <p class="land-headline">목표를 세우고, 오늘을 기록하고, 성장을 나눠요.</p>
     <div class="land-feats">
       <div class="land-feat"><span class="dot" style="background:var(--red);"></span><div><b>체크인</b><span>지금 뭘 했는지 자유롭게 적으면 데이터로 남아요</span></div></div>
-      <div class="land-feat"><span class="dot" style="background:var(--sage);"></span><div><b>목표 · 최대 3개</b><span>마일스톤과 할 일로 나눠 노션보다 편하게 관리해요</span></div></div>
+      <div class="land-feat"><span class="dot" style="background:var(--sage);"></span><div><b>목표 · 무제한 무료</b><span>마일스톤과 할 일로 나눠 노션보다 편하게 관리해요</span></div></div>
       <div class="land-feat"><span class="dot" style="background:var(--chip);"></span><div><b>내 위치 확인</b><span>게이지·퍼센트·D-day로 진행 상황을 한눈에 봐요</span></div></div>
       <div class="land-feat"><span class="dot mz" style="background:linear-gradient(135deg,var(--mz1),var(--mz2));"></span><div><b>성장 자랑하기</b><span>카톡·인스타·틱톡·쓰레드로, 아워골 안에서도 소통해요</span></div></div>
     </div>
@@ -2139,7 +2139,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://js.tosspayments.com/v1/payment-widget"></script>
 <script>
 (function(){
   "use strict";
@@ -2350,7 +2349,7 @@
       customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, feedReactions:{}, contentReports:{}, todayMissions:{},
       streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] },
       highContrast: false, challenges: [],
-      hasSeenGuide:false, subscription:{ isPro:false, plan:null, expiresAt:null, billingKey:null }
+      hasSeenGuide:false, subscription:{ isPro:true, plan:'free_all', expiresAt:null, billingKey:null }
     };
   }
   /* ============ 8대 화면 스타일 (테마) 정의 ============ */
@@ -2518,10 +2517,11 @@
     try{ localStorage.setItem('ourgoal_settings_'+userId, JSON.stringify(settings)); applyAppSettings(settings); } catch(e){}
   }
 
-  /* ============ Pro 구독 (토스페이먼츠, 이번 단계는 가상 성공 처리) ============ */
+  /* ============ 구독 상태 (전체 기능 100% 완전 무료 제공) ============ */
   function subscriptionState(){
-    var s = state.profile.settings;
-    if(!s.subscription) s.subscription = { isPro:false, plan:null, expiresAt:null, billingKey:null };
+    var s = (state.profile && state.profile.settings) || {};
+    if(!s.subscription) s.subscription = { isPro:true, plan:'free_all', expiresAt:null, billingKey:null };
+    s.subscription.isPro = true;
     return s.subscription;
   }
 
@@ -3530,51 +3530,13 @@
     render();
   }
 
-  /* ============ Pro 페이월 (가상 결제 성공 처리) ============ */
+  /* ============ 안내 모달 (전체 기능 100% 완전 무료 제공) ============ */
   function openPaywallModal(triggerReason){
-    openModal(
-      '<h3>🌟 아워골 Pro</h3>' +
-      '<p class="muted" style="margin:-6px 0 14px;">더 깊이, 더 자유롭게 목표를 관리해보세요.</p>' +
-      '<div class="mission-card">' +
-        '<div class="mission-row"><span class="m-icon">🎯</span><div><b class="m-goal">무제한 목표 관리</b><span class="m-text"> · 활성 목표 개수 제한 없이</span></div></div>' +
-        '<div class="mission-row"><span class="m-icon">🤖</span><div><b class="m-goal">맞춤 AI 코치 무제한</b><span class="m-text"> · 나만의 피드백 봇 자유롭게</span></div></div>' +
-        '<div class="mission-row"><span class="m-icon">📊</span><div><b class="m-goal">30일/연간 심층 분석 리포트</b><span class="m-text"> · 더 긴 흐름을 한눈에</span></div></div>' +
-        (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<div class="mission-row"><span class="m-icon">📅</span><div><b class="m-goal">구글 캘린더 내보내기 · 가져오기</b><span class="m-text"> · 📅 버튼을 누를 때 반영돼요</span></div></div>' : '') +
-      '</div>' +
-      '<div class="pw-plan-row">' +
-        '<div class="pw-plan"><div class="pw-unit">월간</div><div class="pw-price">8,900원</div><div class="pw-unit">/ 월</div></div>' +
-        '<div class="pw-plan"><span class="pw-discount">35% 할인</span><div class="pw-price">69,000원</div><div class="pw-unit">/ 년</div></div>' +
-      '</div>' +
-      '<div class="modal-actions"><button class="btn btn-primary btn-block" id="pwStartTrial" type="button">3일 무료 체험 시작하기</button></div>' +
-      '<button class="land-login-link" id="pwSkip" type="button" style="width:100%;background:none;margin-top:12px;">나중에 할게요</button>',
-      function(sheet){
-        sheet.querySelector('#pwSkip').addEventListener('click', closeModal);
-        sheet.querySelector('#pwStartTrial').addEventListener('click', async function(){
-          // 이번 단계는 토스페이먼츠 실결제 승인(서버 시크릿 키 필요) 없이 가상 성공 처리만 한다.
-          var sub = subscriptionState();
-          sub.isPro = true;
-          sub.plan = 'monthly';
-          sub.expiresAt = new Date(Date.now() + 3*86400000).toISOString();
-          await saveProfile();
-          closeModal();
-          renderProBadge();
-          toast('🌟 Pro 체험이 시작됐어요! 3일간 무제한으로 이용해보세요');
-        });
-      }
-    );
+    toast('🎉 아워골의 모든 기능은 100% 완전 무료로 제공됩니다!');
   }
 
   function renderProBadge(){
-    var isPro = subscriptionState().isPro;
     document.querySelectorAll('.pro-badge').forEach(function(el){ el.remove(); });
-    if(!isPro) return;
-    var chip = document.getElementById('topUserName');
-    if(chip){
-      var badge = document.createElement('span');
-      badge.className = 'pro-badge';
-      badge.textContent = 'PRO';
-      chip.insertAdjacentElement('afterend', badge);
-    }
   }
 
   /* ============ Gauge SVG ============ */
@@ -6465,7 +6427,6 @@
     }
   }
   function openFeedbackSetupGated(){
-    if(!subscriptionState().isPro){ openPaywallModal('customFeedback'); return; }
     openFeedbackSetup();
   }
   document.getElementById('customFeedbackBtn').addEventListener('click', openFeedbackSetupGated);
@@ -6641,7 +6602,6 @@
 
   /* ============ New goal modal ============ */
   function promptNewGoal(){
-    if(!subscriptionState().isPro && state.profile.goals.filter(function(g){ return !g.archivedAt; }).length>=3){ openPaywallModal('goalLimit'); return; }
     showNewGoalChatStep('');
   }
   async function generateGoalTemplate(description){
@@ -7514,8 +7474,6 @@
     }
   }
   async function restoreGoal(goal){
-    var active = state.profile.goals.filter(function(g){ return !g.archivedAt; });
-    if(active.length>=3){ toast('진행 중 목표가 3개예요 · 하나를 정리한 뒤 되돌릴 수 있어요'); return; }
     goal.archivedAt = null;
     await saveProfile();
     renderAll();
@@ -8907,7 +8865,6 @@
     document.getElementById('reportPeriodToggle').querySelectorAll('[data-period]').forEach(function(btn){
       btn.addEventListener('click', function(){
         var period = Number(btn.dataset.period);
-        if(period===30 && !subscriptionState().isPro){ openPaywallModal('report30d'); return; }
         state.reportPeriod = period;
         renderRecordsScreen();
       });
@@ -13353,7 +13310,7 @@
   document.getElementById('exportRecordsBtn').addEventListener('click', openExportThemeModal);
 
   /* ============ RENDER: COMM ============ */
-  /* ============ 40인 가상 페르소나 자율 활동 데이터 (TASK-OG-002: 20대 남녀 20인씩 총 40인) ============ */
+  /* ============ 200인 가상 페르소나 자율 활동 데이터 (20대~50대 남녀 각 100인씩 총 200인) ============ */
   var AI_DISCLOSURE_NOTICE = '이는 ai봇 생성물입니다 앱 런칭 초기에 앱 활용을 보여드리기 위함이고 곧 실제 사용자의 제작물로 가득 찰 것입니다';
 
   var SIM_PERSONAS = [
@@ -14232,7 +14189,6 @@
   async function cloneTemplate(tmplId, rerender){
     var t = CREATOR_TEMPLATES.find(function(x){ return x.id===tmplId; });
     if(!t) return;
-    if(!subscriptionState().isPro && state.profile.goals.filter(function(g){ return !g.archivedAt; }).length>=3){ openPaywallModal('goalLimit'); return; }
     var goal = {
       id: newId(), title: t.title, dueDate: null, category: t.category,
       createdAt: nowISO(), visibility: 'private',
