@@ -79,6 +79,7 @@ const FN_NAMES = [
   'calendarAvailable', 'fmtDateLabel', 'filterRecordsByQuery',
   'generateDynamicNotification',
   'fmtYYMMDD', 'recommendTemplateFromAI',
+  'computeTableAnalytics',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -111,7 +112,7 @@ const sandboxSrc =
   'buildCheckinRecord, updateAppBadge, ' +
   'getNavigator: function(){ return navigator; }, setNavigator: function(n){ navigator = n; }, ' +
   'calendarAvailable, fmtDateLabel, filterRecordsByQuery, ' +
-  'generateDynamicNotification, fmtYYMMDD, recommendTemplateFromAI, ' +
+  'generateDynamicNotification, fmtYYMMDD, recommendTemplateFromAI, computeTableAnalytics, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -839,6 +840,73 @@ check('compliance: 전문 템플릿 모달, 속성 편집, 상세 조회 및 일
   assert.ok(html.includes('checkRecordDeepLink'), 'checkRecordDeepLink 함수 구현');
   assert.ok(html.includes('pro-notion-table'), '노션 표 스타일 CSS 클래스 존재');
   assert.ok(html.includes('data-calviewrec'), '캘린더 일정에 기록 보기 링크 버튼 연동');
+});
+
+check('computeTableAnalytics: 헬스/운동 템플릿의 총 볼륨(kg)과 총 세트를 정확히 집계한다', () => {
+  const tpl = { title: '헬스', theme: 'workout' };
+  const cols = ['번호', '운동종목', '세트', '횟수', '무게(kg)'];
+  const rows = [
+    ['1', '벤치프레스', '4', '10', '60'],
+    ['2', '스쿼트', '5', '5', '100'],
+  ];
+  const res = fns.computeTableAnalytics(tpl, cols, rows);
+  const vol = res.stats.find(s => s.label === '총 볼륨');
+  const sets = res.stats.find(s => s.label === '총 세트');
+  const items = res.stats.find(s => s.label === '운동 종목');
+
+  assert.ok(vol, '총 볼륨 통계 존재');
+  // 4*10*60 = 2400, 5*5*100 = 2500 -> 4900 kg
+  assert.strictEqual(vol.value, '4,900 kg');
+  assert.ok(sets, '총 세트 통계 존재');
+  assert.strictEqual(sets.value, '9 세트');
+  assert.ok(items, '운동 종목 통계 존재');
+  assert.strictEqual(items.value, '2 개');
+});
+
+check('computeTableAnalytics: 공부 템플릿의 총 학습시간과 평균 집중도를 정확히 집계한다', () => {
+  const tpl = { title: '공부', theme: 'study' };
+  const cols = ['번호', '과목/주제', '공부시간(분)', '집중도(100점)'];
+  const rows = [
+    ['1', '수학', '90', '90'],
+    ['2', '영어', '60', '80'],
+  ];
+  const res = fns.computeTableAnalytics(tpl, cols, rows);
+  const time = res.stats.find(s => s.label === '총 학습시간');
+  const score = res.stats.find(s => s.label === '평균 집중도');
+
+  assert.ok(time, '총 학습시간 통계 존재');
+  assert.strictEqual(time.value, '2시간 30분');
+  assert.ok(score, '평균 집중도 통계 존재');
+  assert.strictEqual(score.value, '85점');
+});
+
+check('computeTableAnalytics: 영업 템플릿의 총 파이프라인 금액과 가중 예상매출을 정확히 계산한다', () => {
+  const tpl = { title: '영업', theme: 'business' };
+  const cols = ['번호', '고객/사명', '제안금액', '계약가능성(%)'];
+  const rows = [
+    ['1', '(주)에이비씨', '1,500만원', '80%'],
+    ['2', '(주)디이에프', '500만원', '60%'],
+  ];
+  const res = fns.computeTableAnalytics(tpl, cols, rows);
+  const pipe = res.stats.find(s => s.label === '총 파이프라인');
+  const exp = res.stats.find(s => s.label === '가중 예상매출');
+
+  assert.ok(pipe, '총 파이프라인 통계 존재');
+  assert.strictEqual(pipe.value, '2,000만원');
+  assert.ok(exp, '가중 예상매출 통계 존재');
+  // 1500 * 0.8 = 1200, 500 * 0.6 = 300 -> 1500만원
+  assert.strictEqual(exp.value, '1,500만원');
+});
+
+check('compliance: 4대 혁신 기능(자동 통계, 1초 루틴 로드, AI 프로 코치, Notion 연동) 및 캘린더 일자 수정 허브 모달이 모두 구현되어 있다', () => {
+  assert.ok(html.includes('computeTableAnalytics'), '실시간 자동 통계 엔진 존재');
+  assert.ok(html.includes('pro-analytics-banner'), '실시간 통계 배너 CSS 클래스 존재');
+  assert.ok(html.includes('id="proQuickLoadBtn"'), '1초 루틴 불러오기 버튼 존재');
+  assert.ok(html.includes('openProCoachReportModal'), 'AI 프로 코치 리포트 함수 구현');
+  assert.ok(html.includes('openProNotionExportModal'), '노션 표 직수출/클립보드 복사 함수 구현');
+  assert.ok(html.includes('openCalendarDayEditHubModal'), '캘린더 일자 수정/관리 허브 모달 함수 구현');
+  assert.ok(html.includes('id="hubAddProRecBtn"'), '캘린더 허브 모달 내 맞춤기록 작성 버튼 존재');
+  assert.ok(html.includes('.cal-pill.tpl'), '템플릿 기록 전용 캘린더 필 클래스 적용');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
