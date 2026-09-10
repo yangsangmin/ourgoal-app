@@ -1164,12 +1164,16 @@ check('compliance: AI 비전 OCR, 음성 입력, 템플릿 마켓플레이스 �
   assert.ok(fs.existsSync('api/vision-table.js'), 'api/vision-table.js 서버리스 함수 파일 존재');
 });
 
-check('triggerHaptic: 진동 지원 시 지정/기본 밀리초로 진동을 실행하고 true를 반환한다', () => {
+check('triggerHaptic: 진동 지원 시 지정/기본 밀리초 및 프리셋/배열 패턴으로 진동을 실행한다', () => {
   assert.strictEqual(fns.triggerHaptic(), true, '기본 호출 true');
   const nav = fns.getNavigator();
   assert.strictEqual(nav._vib, 12, '기본 12ms');
   fns.triggerHaptic(50);
   assert.strictEqual(nav._vib, 50, '지정 50ms');
+  fns.triggerHaptic('checkin');
+  assert.deepStrictEqual(nav._vib, [12, 35, 18], 'checkin 프리셋 패턴 [12, 35, 18]');
+  fns.triggerHaptic([20, 45, 30]);
+  assert.deepStrictEqual(nav._vib, [20, 45, 30], '다이나믹 배열 패턴 [20, 45, 30]');
 });
 
 check('reorderMilestones: 마일스톤 순서를 올바르게 교체하고 경계 밖 인덱스에는 원본을 보존한다', () => {
@@ -2003,6 +2007,13 @@ check('compliance: 작심삼일 극복 & 번아웃 케어(Anti-Guilt 리스케�
   // 2. 홈 화면 앰비언트 1줄 체크인 안내 및 플레이스홀더
   assert.ok(html.includes('AI 노션 DB 1줄 체크인'), '홈 체크인 헤더 노션 DB 1줄 체크인 명시');
   assert.ok(html.includes('AI가 노션 DB 규격으로 자동 변환해드려요'), '앰비언트 체크인 플레이스홀더 안내');
+});
+
+check('compliance: 2026 차세대 UX 표준 (View Transitions, prefers-reduced-motion, 다이나믹 햅틱 프리셋) 탑재', () => {
+  assert.ok(html.includes('prefers-reduced-motion'), 'prefers-reduced-motion 미디어 쿼리 존재');
+  assert.ok(html.includes('::view-transition-old(root)'), 'View Transitions CSS 루트 애니메이션 존재');
+  assert.ok(html.includes('document.startViewTransition'), 'setTab 내 View Transitions API 연동 존재');
+  assert.ok(html.includes('HAPTIC_PATTERNS'), '다이나믹 햅틱 프리셋 딕셔너리 존재');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

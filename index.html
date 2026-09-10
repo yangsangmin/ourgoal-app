@@ -2,7 +2,11 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="아워골">
+<meta name="format-detection" content="telephone=no">
 <title>아워골</title>
 <meta name="description" content="목표를 세우고, 기록하고, 성장을 나누는 아워골">
 <!-- 공유 링크 미리보기(카카오톡·트위터·슬랙 등 OG 크롤러용, 성장 백로그 P0 ④) -->
@@ -367,7 +371,7 @@
   .topbar .user-chip{display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:700;color:var(--ink-soft);background:var(--card);padding:5px 6px 5px 12px;border-radius:999px;box-shadow:var(--shadow-sm);backdrop-filter:var(--card-backdrop);-webkit-backdrop-filter:var(--card-backdrop);}
   .topbar .avatar{width:30px;height:30px;border-radius:50%;background:var(--chip);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;overflow:hidden;}
 
-  main.screens{flex:1;padding:6px 18px 120px;}
+  main.screens{flex:1;padding:6px 18px calc(112px + env(safe-area-inset-bottom, 14px));}
   .screen{display:none;animation:fadein .28s cubic-bezier(.2,.8,.2,1);}
   .screen.active{display:block;}
   @keyframes fadein{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
@@ -376,7 +380,7 @@
   .s-title{font-weight:900;font-size:1.6rem;margin:0 0 16px;letter-spacing:-.03em;}
 
   /* bottom nav — 플로팅 필 */
-  .bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;pointer-events:none;padding:0 14px calc(14px + env(safe-area-inset-bottom));}
+  .bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;pointer-events:none;padding:0 14px calc(14px + env(safe-area-inset-bottom, 0px));}
   .bottomnav-inner{pointer-events:auto;max-width:calc(var(--maxw) - 28px);width:100%;background:var(--bottomnav-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:flex;padding:8px;border-radius:26px;box-shadow:0 18px 40px -18px rgba(20,22,43,.35),0 0 0 1px var(--rule);transition:background .25s;}
   .navbtn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--ink-faint);font-size:.62rem;font-weight:700;padding:6px 0 4px;border-radius:18px;transition:color .15s,background .2s,transform .12s;position:relative;}
   .navbtn svg{width:22px;height:22px;transition:transform .2s;}
@@ -707,13 +711,16 @@
   .feed-action{font-size:.86rem;margin:6px 0 8px;line-height:1.5;}
   .feed-foot{display:flex;align-items:center;gap:8px;}
   .feed-time{font-size:.7rem;color:var(--ink-faint);margin-right:auto;}
-  .pill-react{background:var(--card2);border-radius:999px;padding:6px 12px;font-size:.76rem;font-weight:800;color:var(--ink-soft);transition:all .15s;}
-  .pill-react.active{background:var(--red-soft);color:var(--red);transform:scale(1.04);}
+  .pill-react{background:var(--card2);border-radius:999px;padding:6px 12px;font-size:.76rem;font-weight:800;color:var(--ink-soft);transition:all .15s;cursor:pointer;user-select:none;}
+  .pill-react:active{transform:scale(.88);}
+  .pill-react.active{background:var(--red-soft);color:var(--red);animation:spring-pop .32s cubic-bezier(.175,.885,.32,1.275);transform:scale(1.04);}
+  @keyframes spring-pop{0%{transform:scale(1);}35%{transform:scale(1.24);}65%{transform:scale(.94);}100%{transform:scale(1.05);}}
   /* 피드 다채로운 리액션 & 댓글 상호소통 스타일 */
   .feed-react-group{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
-  .feed-react-btn{display:inline-flex;align-items:center;gap:4px;background:var(--card2);border:1px solid var(--rule);border-radius:999px;padding:5px 9px;font-size:.73rem;font-weight:700;color:var(--ink-soft);cursor:pointer;transition:all .15s;}
+  .feed-react-btn{display:inline-flex;align-items:center;gap:4px;background:var(--card2);border:1px solid var(--rule);border-radius:999px;padding:5px 9px;font-size:.73rem;font-weight:700;color:var(--ink-soft);cursor:pointer;transition:all .15s;user-select:none;}
   .feed-react-btn:hover{background:rgba(20,22,43,.08);transform:translateY(-1px);}
-  .feed-react-btn.active{background:rgba(255,79,100,.12);border-color:var(--red);color:var(--red);transform:scale(1.05);}
+  .feed-react-btn:active{transform:scale(.88);}
+  .feed-react-btn.active{background:rgba(255,79,100,.12);border-color:var(--red);color:var(--red);animation:spring-pop .32s cubic-bezier(.175,.885,.32,1.275);transform:scale(1.05);}
   .feed-react-btn.active-fire{background:rgba(255,107,107,.14);border-color:#ff6b6b;color:#e03131;}
   .feed-react-btn.active-clap{background:rgba(255,192,72,.16);border-color:#ffa502;color:#d35400;}
   .feed-react-btn.active-heart{background:rgba(255,79,100,.14);border-color:#ff4757;color:#ed143d;}
@@ -1553,7 +1560,25 @@
     border-color: rgba(16, 185, 129, 0.3);
   }
 
-    /* [암행어사 M3-03] 타이포그래피 리듬 */
+    
+  /* [암행어사 WCAG-05] 감각 민감성 및 모션 감소 접근성 */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* [암행어사 HIG-05] SPA 뷰 전환(View Transitions) 부드러운 유체 전환 */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 180ms;
+    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  /* [암행어사 M3-03] 타이포그래피 리듬 */
     body, button, input, textarea, select {
       letter-spacing: -0.018em;
     }
@@ -1678,6 +1703,7 @@
       <div id="levelBadgeRow"></div>
       <div id="notifyBannerSlot"></div>
       <div id="socialNotifySlot"></div>
+      <div id="iosPwaSlot"></div>
 
       <div class="capture-card card" id="captureCardBox">
         <div style="font-weight:700;color:var(--red);font-size:.86rem;">✎ 오늘 기록하기 (AI 노션 DB 1줄 체크인)</div>
@@ -1693,12 +1719,16 @@
           <textarea id="captureInput" placeholder="오늘 달성한 내용을 줄글로 편하게 적어보세요. AI가 노션 DB 규격으로 자동 변환해드려요 (예: 5km 러닝 28분 완주, 땀 많이 흘림)"></textarea>
           <button class="mic-btn" id="micBtn" type="button" aria-label="음성으로 입력하기" title="음성으로 입력하기">🎙️</button>
         </div>
+        <div id="captureLiveMeta" class="capture-live-meta" style="display:none;font-size:0.75rem;color:var(--ink-soft);margin:-2px 0 8px;padding:5px 10px;background:var(--card2);border-radius:10px;align-items:center;justify-content:space-between;border:1px solid var(--rule-soft);">
+          <span id="captureLiveTheme" style="font-weight:700;color:var(--red);">✨ 테마 자동인식 준비</span>
+          <span id="captureCharCount" style="font-family:var(--mono);color:var(--ink-faint);">0자</span>
+        </div>
         <div id="capturePhotoPreview" style="display:none;"></div>
         <div class="capture-row" id="captureRowAnchor" style="gap:8px;flex-wrap:wrap;">
           <input type="file" id="capturePhotoInput" accept="image/*" style="display:none;">
-          <button class="btn btn-ghost btn-sm" id="capturePhotoBtn" type="button">📷 사진 인증</button>
-          <button class="btn btn-ghost btn-sm" id="importExternalBtn" type="button">🔗 외부 데이터 불러오기</button>
-          <button class="btn btn-primary btn-sm" id="captureSave" type="button">저장</button>
+          <button class="btn btn-ghost btn-sm" id="capturePhotoBtn" type="button" style="min-height:44px;padding:8px 12px;border-radius:12px;">📷 사진</button>
+          <button class="btn btn-ghost btn-sm" id="importExternalBtn" type="button" style="min-height:44px;padding:8px 12px;border-radius:12px;">🔗 불러오기</button>
+          <button class="btn btn-primary btn-sm" id="captureSave" type="button" style="min-height:44px;min-width:96px;padding:8px 20px;border-radius:12px;font-weight:800;flex:1;">저장 ✨</button>
         </div>
       </div>
       <button class="btn btn-ghost btn-sm" id="customFeedbackBtn" type="button" style="width:100%;margin-top:8px;">🤖 내 맞춤 피드백 설정하기<span id="customFeedbackStatus"></span></button>
@@ -2495,10 +2525,25 @@
   }
 
   /* ============ 가상유저 개선 10대 핵심 헬퍼 함수 ============ */
-  function triggerHaptic(duration){
+  function triggerHaptic(pattern){
+    var HAPTIC_PATTERNS = {
+      tap: 12,
+      light: 8,
+      checkin: [12, 35, 18],
+      streak: [20, 45, 30],
+      success: [15, 30, 25],
+      drag: 10,
+      warning: [25, 40, 25]
+    };
     try{
       if(typeof navigator !== 'undefined' && navigator && navigator.vibrate){
-        navigator.vibrate(duration || 12);
+        var p = pattern;
+        if(typeof pattern === 'string' && HAPTIC_PATTERNS[pattern]){
+          p = HAPTIC_PATTERNS[pattern];
+        } else if(p === undefined || p === null){
+          p = 12;
+        }
+        navigator.vibrate(p);
         return true;
       }
     }catch(e){}
@@ -3834,17 +3879,24 @@
   }
 
   function setTab(tab){
-    state.activeTab = tab;
-    navButtons.forEach(function(b){ b.classList.toggle('active', b.dataset.tab===tab); });
-    screens.forEach(function(s){ s.classList.toggle('active', s.id==='screen-'+tab); });
-    window.scrollTo({top:0, behavior:'auto'});
-    if(tab==='home') renderHome();
-    if(tab==='goals') renderGoalsScreen();
-    if(tab==='calendar') renderCalendarScreen();
-    if(tab==='records') renderRecordsScreen();
-    if(tab==='comm') renderCommScreen();
-    if(tab==='settings') renderSettingsScreen();
-    updatePrivacyBadges();
+    function updateTabDOM(){
+      state.activeTab = tab;
+      navButtons.forEach(function(b){ b.classList.toggle('active', b.dataset.tab===tab); });
+      screens.forEach(function(s){ s.classList.toggle('active', s.id==='screen-'+tab); });
+      window.scrollTo({top:0, behavior:'auto'});
+      if(tab==='home') renderHome();
+      if(tab==='goals') renderGoalsScreen();
+      if(tab==='calendar') renderCalendarScreen();
+      if(tab==='records') renderRecordsScreen();
+      if(tab==='comm') renderCommScreen();
+      if(tab==='settings') renderSettingsScreen();
+      updatePrivacyBadges();
+    }
+    if(typeof document !== 'undefined' && typeof document.startViewTransition === 'function'){
+      document.startViewTransition(updateTabDOM);
+    } else {
+      updateTabDOM();
+    }
   }
   navButtons.forEach(function(b){ b.addEventListener('click', function(){ setTab(b.dataset.tab); }); });
 
@@ -6235,6 +6287,36 @@
     }, true);
   }
 
+  /* ============ iOS 사파리 홈 화면 추가 안내 배너 ============ */
+  function renderIosPwaBanner(){
+    var slot = document.getElementById('iosPwaSlot');
+    if(!slot) return;
+    var isIos = (typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent || ''));
+    var isStandalone = (typeof window !== 'undefined' && ((window.navigator && window.navigator.standalone) || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)));
+    var dismissed = false;
+    try { dismissed = (typeof localStorage !== 'undefined' && localStorage.getItem('ios_pwa_dismissed') === '1'); } catch(e){}
+    if(!isIos || isStandalone || dismissed){
+      slot.innerHTML = '';
+      return;
+    }
+    slot.innerHTML = '<div class="ios-pwa-banner" style="margin:6px 0 12px;padding:12px 14px;background:linear-gradient(135deg,rgba(108,92,231,0.09),rgba(255,79,100,0.09));border:1.5px solid var(--violet-soft);border-radius:16px;display:flex;align-items:center;justify-content:space-between;gap:10px;animation:fadein .25s;">' +
+      '<div style="flex:1;font-size:.78rem;color:var(--ink);line-height:1.45;">' +
+        '<div style="font-weight:800;color:var(--violet);margin-bottom:2px;display:flex;align-items:center;gap:4px;">' +
+          '<span>📱 아이폰 앱으로 홈 화면에 추가</span>' +
+        '</div>' +
+        '사파리 하단 <b>공유 버튼(⎋)</b> 누른 뒤 <b>[홈 화면에 추가]</b>를 누르면 주소창 없는 전체화면과 푸시 알림을 지원해요!' +
+      '</div>' +
+      '<button type="button" id="iosPwaDismissBtn" aria-label="닫기" style="background:none;border:none;color:var(--ink-faint);font-size:1.1rem;cursor:pointer;padding:4px 6px;line-height:1;">✕</button>' +
+    '</div>';
+    var closeBtn = document.getElementById('iosPwaDismissBtn');
+    if(closeBtn){
+      closeBtn.onclick = function(){
+        try { localStorage.setItem('ios_pwa_dismissed', '1'); } catch(e){}
+        slot.innerHTML = '';
+      };
+    }
+  }
+
   /* ============ RENDER: HOME ============ */
   function renderHome(){
     refreshCustomFeedbackButtons();
@@ -6243,6 +6325,7 @@
     renderHomeGrassSummary();
     renderAdaptiveModeBar();
     renderCrewPacingWidget();
+    renderIosPwaBanner();
     var streak = computeStreakDays();
     updateAppBadge(streak);
     var badgeEl = document.getElementById('streakBadge');
@@ -6730,6 +6813,28 @@
     });
   }
 
+  var liveMeta = document.getElementById('captureLiveMeta');
+  var liveTheme = document.getElementById('captureLiveTheme');
+  var liveCount = document.getElementById('captureCharCount');
+  var capInput = document.getElementById('captureInput');
+  if(capInput && liveMeta){
+    capInput.addEventListener('input', function(){
+      var val = capInput.value.trim();
+      if(val.length > 0){
+        liveMeta.style.display = 'flex';
+        if(liveCount) liveCount.textContent = val.length + '자';
+        if(liveTheme && typeof classifyRecordTheme === 'function'){
+          var g = (state.profile.goals || []).find(function(item){ return item.id===state.activeGoalId; }) || (state.profile.goals || [])[0];
+          var cl = classifyRecordTheme(val, g ? g.category : null);
+          var tName = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[cl.theme] && RECORD_THEMES[cl.theme].label) || cl.theme;
+          liveTheme.textContent = '✨ ' + tName + ' 테마 자동인식';
+        }
+      } else {
+        liveMeta.style.display = 'none';
+      }
+    });
+  }
+
   document.getElementById('captureSave').addEventListener('click', async function(){
     var t = document.getElementById('captureInput');
     var text = t.value.trim();
@@ -6762,6 +6867,7 @@
       structured: notionRec || null
     });
     t.value = '';
+    if(liveMeta) liveMeta.style.display = 'none';
     pendingCapturePhoto = null;
     if(capturePhotoPreview){ capturePhotoPreview.innerHTML = ''; capturePhotoPreview.style.display = 'none'; }
     if(capturePhotoInput) capturePhotoInput.value = '';

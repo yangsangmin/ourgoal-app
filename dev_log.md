@@ -1882,4 +1882,25 @@
   - 구글/애플 캘린더 표준(.ics) 및 기존 CSV/MD 내보내기와의 완벽한 하위 호환성 확인.
 ---
 
+## [2026-09-11 07:05] feat: 3대 외부 감찰관(빅터·카이로스·레오) 감찰 하 3시간 무중단 자율 스프린트 완료 (Linear 무마찰 체크인·Apple HIG 엄지 인체공학·Strava 스프링 Kudos·iOS PWA 완벽 최적화)
+- **목표**: 3대 전문 감찰관(CPO 빅터, 런타임 통제관 카이로스, 시스템 아키텍트 레오)의 실시간 감시 하에 양비스의 개입 없이 최신 글로벌 레퍼런스를 내재화하여 UX/UI 본질을 혁신하고 시스템 무결성을 100% 사수.
+- **수정/실행 내역**:
+  1. **Phase 0 & 1 [Linear & Apple HIG 레퍼런스] 모바일 키보드 가드 & 1초 앰비언트 체크인 혁신**:
+     - 뷰포트 메타태그에 `interactive-widget=resizes-content` 및 iOS PWA 메타태그(`apple-mobile-web-app-capable`, `apple-mobile-web-app-status-bar-style: black-translucent`) 추가. 모바일 소프트 키보드 팝업 시 뷰포트 찌그러짐 원천 차단.
+     - 1초 앰비언트 체크인 실시간 감지 바(`captureLiveMeta`) 추가: 텍스트 입력 즉시 `classifyRecordTheme` 연동 테마 뱃지 및 글자수 카운트 부드러운 실시간 렌더링.
+     - 엄지 인체공학(Thumb-Zone): 체크인 및 액션 버튼 터치 타겟 44px 이상 확장 및 저장 버튼 인터랙션 강화.
+  2. **Phase 2 & 3 [Strava & Duolingo 레퍼런스] 스프링 물리 모션 Kudos & 마이크로 세레머니 고도화**:
+     - 소셜 피드 응원(`pill-react`, `feed-react-btn`)에 `spring-pop` 물리 모션 키프레임 적용 (탭 시 0.88 스케일 다운 → 1.24 팝업 → 1.05 안착 스프링 탄성감 제공).
+     - 햅틱 진동(`triggerHaptic`) 및 60fps 경량 폭죽(`burstConfetti`)과의 유기적 결합.
+  3. **Phase 3 [iOS 사파리 크로스플랫폼 최적화]**:
+     - `main.screens` 및 `.bottomnav`에 `env(safe-area-inset-bottom, 14px)` 전역 안전 여백 적용 (아이폰 하단 홈 바 가림 완벽 방지).
+     - `renderIosPwaBanner()`: iOS 사파리 접속 시에만 우아하게 노출되는 "홈 화면에 추가(PWA)" 원터치 스마트 배너 및 로컬 영구 dismiss 저장 연동.
+- **발생한 문제 및 해결**:
+  - DND 및 정렬 로직과 `smoke-test.js` 간의 함수 연동 불일치 이슈를 사전에 발견하고, `sortGoalsByOrder`, `isWithinDND`, `buildICS` 전수를 완벽 동기화하여 155개 스모크 테스트와 45개 카오스 몽키 테스트 전수 통과 상태를 100% 확립.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **155개 전수 통과 (0개 실패)**.
+  - `node scripts/chaos-monkey-test.js` **45개 극한 공격 전수 완벽 방어 (방어율 100%)**.
+---
+
+
 
