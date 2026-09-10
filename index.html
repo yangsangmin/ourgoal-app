@@ -1552,6 +1552,15 @@
     color: #10b981;
     border-color: rgba(16, 185, 129, 0.3);
   }
+
+    /* [암행어사 M3-03] 타이포그래피 리듬 */
+    body, button, input, textarea, select {
+      letter-spacing: -0.018em;
+    }
+    p, .modal-body, .feed-card-body, .note-text {
+      line-height: 1.62;
+    }
+
 </style>
 </head>
 <body>
@@ -18933,5 +18942,24 @@
   }
 })();
 </script>
+
+<script>
+/* [암행어사 NNG-03] 전역 모달 ESC 키 탈출 핸들러 */
+window.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    var openModals = document.querySelectorAll('.modal-overlay[style*="display: flex"], .modal-overlay[style*="display:flex"], .modal-overlay:not([style*="display: none"]):not([style*="display:none"])');
+    if (openModals.length > 0) {
+      var lastModal = openModals[openModals.length - 1];
+      var closeBtn = lastModal.querySelector('.modal-close-btn, [onclick*="closeModal"], .btn-close, #rsCancel');
+      if (closeBtn && typeof closeBtn.click === 'function') {
+        closeBtn.click();
+      } else if (typeof closeModal === 'function') {
+        closeModal();
+      }
+    }
+  }
+});
+</script>
+
 </body>
 </html>

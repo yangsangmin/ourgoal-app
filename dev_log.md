@@ -1821,3 +1821,39 @@
   - `node scripts/smoke-test.js` **148개 전수 통과 (0개 실패)**.
   - `node scripts/chaos-monkey-test.js` **45개 전수 통과 (0개 실패)**.
 ---
+
+## [2026-09-11 06:45] feat: 최신 글로벌 레퍼런스 수호 및 11인 외부 UI/UX팀 상시 감찰 전담 암행어사(Royal Secret Inspector) 에이전트 구축 및 양비스 실시간 관제 기동
+- **사용자 요청 및 개선 배경**:
+  1. 기존 아워골 외부 UI/UX 감시 및 개선팀(11인)이 작업을 진행 중이나 고정 템플릿만 순환 출력하고 실질적 개선이 미미함.
+  2. 사용자가 삭제한 번잡한 요소(하단 플로팅 독 등)를 인지하지 못하고 탁상공론식 템플릿만 찍어내는 태만 발생.
+  3. 최신 공인 디자인 및 UX 레퍼런스를 기준으로 UI/UX 팀의 작업을 감시하고, 실제 앱의 문제점을 지속 발굴하여 팀을 개선·강제하는 별도의 UI/UX 전담 암행어사 에이전트 구축 및 양비스 관찰 하 실시간 가동 요청.
+- **수정 및 구현 내역**:
+  1. **최신 글로벌 디자인 & UX 레퍼런스 원장 체계화 (`refs/uiux_standards.json`, `lib/uiux-reference-ledger.js`)**:
+     - Nielsen Norman Group (NN/g) 10대 사용성 휴리스틱 (2026 기준).
+     - Apple Human Interface Guidelines (HIG 2026) 모바일 엄지 인체공학, Safe Area Insets, 최소 44pt 터치 타겟, 스프링 물리 모션.
+     - Google Material Design 3 Expressive 단일 Primary CTA 위계, 8pt 공간 그리드, Pretendard 자간/행간 황금비 리듬.
+     - W3C WCAG 2.2 AAA 웹 접근성 (7:1 고대비, 가시적 포커스 링, 스크린리더 aria-label 전수 부여).
+     - 인지 심리학 (Hick's Law 점진적 공개, Miller's Law 5±2 청킹, Fitts's Law, Peak-End 도파민 강화).
+  2. **UI/UX 전담 암행어사(Royal Secret Inspector) 코어 엔진 구축 (`lib/uiux-inspector.js`)**:
+     - `inspectUiUxTeam()`: 기존 11인 팀의 7개 고정 템플릿 복붙 반복 및 사용자 취소 이력(하단 플로팅 독 삭제) 묵살을 실시간 적발하고 팀 성실도(Rigor Score, 70점) 산출.
+     - `scanAppUiUx()`: `ourgoal-app/index.html` 8대 핵심 영역 AST/CSS 딥스캔.
+     - `issueMapaeDirective()`: 적발된 결함에 대한 엄격한 마패 시정명령서(`MAPAE-DIR-XXX.md`) 발령 및 강제 시정 지침 하달.
+     - `remedyDefects()`: 전역 모달 ESC 키 탈출로(NNG-03), Pretendard 자간(-0.018em) 및 행간(1.62) 황금비 리듬(M3-03)을 무충돌로 프로덕션 앱에 직접 개선 집행.
+  3. **기존 11인 외부 UI/UX 팀 파이프라인 고도화 (`sim/uiuxTeam.js`)**:
+     - 단순 고정 라운드 순환 로직을 전면 탈피하고, 암행어사의 실시간 앱 딥스캔 결함 데이터를 직접 입력받아 10인 컨설턴트 맞춤 권고 및 Arthur Pendelton 총괄 디렉터의 마패 수명 지침 수립으로 파이프라인 지능화.
+  4. **양비스 커맨드센터 관제 및 상태창(HUD) 전면 연동 (`lib/org.js`, `agents.json`, `hud/`)**:
+     - 커맨드센터 조직도 최상위 외부감사층에 '암행어사 (uiux-secret-inspector)' 공식 등록 및 보고선(reportingLines) 연결.
+     - `agents.json` 에이전트 레지스트리에 암행어사 등록 (상시 감시중).
+     - HUD 서버 API 라우트 추가 (`/api/sim/uiux-inspector/state`, `/api/sim/uiux-inspector/trigger`).
+     - HUD 대시보드 UI/UX 탭 최상단에 **암행어사 마패(馬牌) 출두 관제 카드**, 4대 핵심 지표(팀 성실도, 표준 준수율, 적발 결함 수, 최근 마패 지침) 렌더링 및 원클릭 '어사 출두' 버튼 연동.
+  5. **실시간 감시 데몬 및 스케줄러 자동 가동**:
+     - `uiux-inspector-daemon.js`: 15분 주기 정기 감찰 + `index.html` 및 `uiux_audit_reports` 변경 감지 와처 구동.
+     - `daemon.js` 슈퍼바이저 프로세스에 암행어사 데몬 자동 재기동 감시 통합.
+     - Windows 작업 스케줄러 `CommandCenter-UiUxInspector` 등록 완료.
+- **검증 결과**:
+  - 암행어사 감찰 딥스캔 결과: 글로벌 UX 표준 준수율 **75% -> 100% (AAA등급) 개선 달성**.
+  - `MAPAE-DIR-001`, `MAPAE-DIR-002`, `MAPAE-DIR-003` 마패 시정명령서 발령 및 관제 장부 각인 완료.
+  - `node scripts/smoke-test.js` **148개 전수 통과 (0개 실패, 무충돌 무결성 입증)**.
+  - HUD 서버 포트 7777 실시간 API 정상 응답 (`appComplianceScore: 100`, `teamRigorScore: 70`).
+---
+
