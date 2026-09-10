@@ -1235,6 +1235,10 @@
         <div id="gcalQuickConnectRow" style="margin-top:10px;">
           <button class="btn btn-primary btn-sm btn-block" id="gcalQuickConnectBtn" type="button">⚡ 구글 계정으로 연동하기</button>
         </div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <a href="https://calendar.google.com" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.76rem;padding:6px 8px;">📅 구글 캘린더 바로가기 ↗</a>
+          <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.76rem;padding:6px 8px;">🔑 GCP OAuth 콘솔 ↗</a>
+        </div>
         <div id="gcalSyncRow" style="display:none;margin-top:10px;gap:8px;flex-direction:column;">
           <div style="display:flex;gap:6px;">
             <button class="btn btn-ghost btn-sm" id="gcalSyncNowBtn" type="button" style="flex:1;">🔄 지금 동기화</button>
@@ -1264,8 +1268,11 @@
         </div>
         <div id="geminiKeyBlock" style="display:none;margin-top:12px;">
           <div class="field"><label>Gemini API 키</label><input id="geminiKeyInput" type="password" placeholder="AIza..." autocomplete="off"></div>
-          <div class="field"><label>모델 (필요하면 바꾸세요)</label><input id="geminiModelInput" type="text" placeholder="gemini-2.5-flash"></div>
+          <div class="field"><label>모델 (필요하면 바꾸세요)</label><input id="geminiModelInput" type="text" placeholder="gemini-3.6-flash"></div>
           <p class="faint">Google AI Studio에서 발급한 키를 붙여넣으세요. 이 키는 이 기기에만 저장되고, 브라우저에서 구글로 직접 요청을 보내요 — 사용량과 비용은 이 키 소유자 몫이에요.</p>
+          <div style="margin-top:8px;">
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="btn btn-ghost btn-sm btn-block" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.76rem;padding:7px 10px;color:var(--violet);">🔑 Google AI Studio API 키 발급 페이지 바로가기 ↗</a>
+          </div>
         </div>
         <p class="ai-note" style="margin-top:12px;">홈에서 기록을 저장하면 바로 피드백을 시도해요. 실패하면 간이 판단으로 대신해요.</p>
         <div class="toggle-row" style="margin-top:12px;">
@@ -1302,6 +1309,10 @@
           <div class="field"><label>Notion Webhook URL</label><input id="notionWebhookInput" type="text" placeholder="https://..." autocomplete="off"></div>
           <p class="faint">체크인을 저장하면 기록과 AI 피드백을 이 주소로 자동 전송해요. (Notion Automation의 웹훅 주소를 붙여넣으세요)</p>
           <button class="btn btn-ghost btn-sm" id="notionTestBtn" type="button" style="margin-top:8px;">테스트 전송</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <a href="https://www.notion.so" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.76rem;padding:6px 8px;">📝 Notion 바로 열기 ↗</a>
+          <a href="https://www.notion.so/profile/integrations" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.76rem;padding:6px 8px;">⚡ Notion API/웹훅 연동 관리 ↗</a>
         </div>
       </div>
 
@@ -3405,6 +3416,10 @@
           '<input id="gcalPromptClientId" type="text" placeholder="예: xxxxxxxx.apps.googleusercontent.com" value="'+escapeHtml((state.profile.settings&&state.profile.settings.gcalClientId)||'')+'">' +
         '</div>' +
         '<p class="faint" style="font-size:.72rem;">Google Cloud Console에서 발급한 웹 클라이언트 ID를 입력해주세요.</p>' +
+        '<div style="display:flex;gap:6px;margin:10px 0 14px;">' +
+          '<a href="https://calendar.google.com" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.74rem;padding:6px 8px;">📅 구글 캘린더 열기 ↗</a>' +
+          '<a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.74rem;padding:6px 8px;">🔑 GCP 콘솔 바로가기 ↗</a>' +
+        '</div>' +
         '<div class="modal-actions">' +
           '<button class="btn btn-ghost" id="gcalPromptCancel" type="button">취소</button>' +
           '<button class="btn btn-primary" id="gcalPromptSave" type="button">저장 및 연결</button>' +
@@ -4004,6 +4019,7 @@
               '<span><b>구글 캘린더가 연동되었습니다</b>' + (gEmail ? ' <span class="faint" style="font-size:.72rem;">('+escapeHtml(gEmail)+')</span>' : '') + '</span>' +
             '</div>' +
             '<div style="display:flex;gap:6px;">' +
+              '<a href="https://calendar.google.com" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="font-size:.72rem;padding:4px 8px;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;background:rgba(255,255,255,.6);">캘린더 열기 ↗</a>' +
               '<button class="btn btn-ghost btn-sm" id="calBannerSyncBtn" type="button" style="font-size:.72rem;padding:4px 8px;white-space:nowrap;background:rgba(255,255,255,.6);">지금 동기화</button>' +
               '<button class="btn btn-ghost btn-sm" id="calBannerSetBtn" type="button" style="font-size:.72rem;padding:4px 8px;white-space:nowrap;">설정</button>' +
             '</div>' +
@@ -4019,7 +4035,10 @@
               '<span>📅</span>' +
               '<span><b>구글 캘린더를 연동하세요</b></span>' +
             '</div>' +
-            '<button class="btn btn-primary btn-sm" id="calBannerConnectBtn" type="button" style="font-size:.74rem;padding:4px 10px;white-space:nowrap;">연동하기</button>' +
+            '<div style="display:flex;gap:6px;">' +
+              '<a href="https://calendar.google.com" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="font-size:.74rem;padding:4px 8px;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;">캘린더 열기 ↗</a>' +
+              '<button class="btn btn-primary btn-sm" id="calBannerConnectBtn" type="button" style="font-size:.74rem;padding:4px 10px;white-space:nowrap;">연동하기</button>' +
+            '</div>' +
           '</div>';
         var connB = gBanner.querySelector('#calBannerConnectBtn');
         if(connB) connB.onclick = openGoogleCalendarConnectModal;
