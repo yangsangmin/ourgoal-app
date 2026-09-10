@@ -6,12 +6,6 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  var apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    res.status(500).json({ error: 'ANTHROPIC_API_KEY is not configured' });
-    return;
-  }
-
   var body = req.body || {};
   var goalTitle = body.goalTitle;
   var milestones = Array.isArray(body.milestones) ? body.milestones : [];
@@ -20,14 +14,10 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  var headers = {
-    'Content-Type': 'application/json',
-    'x-api-key': apiKey,
-    'anthropic-version': '2023-06-01'
-  };
-  if (process.env.ANTHROPIC_WORKSPACE_ID) {
-    headers['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
-  }
+  // API 키 결정: 1) 클라이언트 전달 Gemini키 2) 서버 환경변수 GEMINI_API_KEY 3) 서버 ANTHROPIC_API_KEY
+  var clientGeminiKey = (typeof body.geminiKey === 'string' && body.geminiKey.trim()) ? body.geminiKey.trim() : null;
+  var geminiApiKey = clientGeminiKey || process.env.GEMINI_API_KEY;
+  var anthropicApiKey = process.env.ANTHROPIC_API_KEY;
 
   var prompt = '당신은 목표 달성 코치입니다. 아래 목표와 마일스톤·하위 할 일의 진행 상태를 보고, ' +
     '사용자가 오늘 하루 안에 부담 없이 해낼 수 있는 아주 작은 할 일 1개를 "오늘의 미션"으로 제안하세요.\n\n' +
@@ -41,29 +31,66 @@ module.exports = async function handler(req, res) {
     '4. 공백 포함 15~40자 사이의 한 문장인가 (모자라면 보완하고, 넘치면 압축할 것)\n\n' +
     '점검을 마친 최종 문장만 출력하세요. 따옴표, 설명, 마크다운, 글자수 표기 없이 본문만 작성하세요.';
 
-  try {
-    var anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 200,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+  function localMissionFallback() {
+    var open = milestones.find(function(m){ return m && m.status !== 'done'; });
+    return open ? '오늘은 "' + open.title + '" 마일스톤을 위해 15분만 집중해볼까요?' : '오늘은 지금까지의 성장을 돌아보며 휴식을 취해보세요.';
+  }
 
-    if (!anthropicRes.ok) {
-      var errText = await anthropicRes.text().catch(function () { return ''; });
-      res.status(502).json({ error: 'Anthropic API error', detail: errText.slice(0, 300) });
-      return;
+  try {
+    var missionText = '';
+
+    // 1. Gemini 2.5 Flash 우선 호출
+    if (geminiApiKey) {
+      try {
+        var geminiRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(geminiApiKey), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.3 }
+          })
+        });
+        if (geminiRes.ok) {
+          var gData = await geminiRes.json();
+          missionText = (gData.candidates && gData.candidates[0] && gData.candidates[0].content && gData.candidates[0].content.parts && gData.candidates[0].content.parts[0] && gData.candidates[0].content.parts[0].text) || '';
+        }
+      } catch (ge) {}
     }
 
-    var data = await anthropicRes.json();
-    var mission = (data.content || []).map(function (b) { return b.type === 'text' ? b.text : ''; }).join('\n').trim();
-    if (!mission) throw new Error('empty response');
+    // 2. Anthropic Claude Sonnet 듀얼 폴백
+    if (!missionText && anthropicApiKey) {
+      try {
+        var headers = {
+          'Content-Type': 'application/json',
+          'x-api-key': anthropicApiKey,
+          'anthropic-version': '2023-06-01'
+        };
+        if (process.env.ANTHROPIC_WORKSPACE_ID) {
+          headers['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
+        }
+        var anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-6',
+            max_tokens: 200,
+            messages: [{ role: 'user', content: prompt }]
+          })
+        });
+        if (anthropicRes.ok) {
+          var data = await anthropicRes.json();
+          missionText = (data.content || []).map(function (b) { return b.type === 'text' ? b.text : ''; }).join('\n').trim();
+        }
+      } catch (ae) {}
+    }
 
-    res.status(200).json({ mission: mission });
+    // 3. 로컬 스마트 폴백
+    if (!missionText) {
+      missionText = localMissionFallback();
+    }
+
+    res.status(200).json({ mission: missionText.trim().replace(/^["']|["']$/g, '').slice(0, 100) });
   } catch (e) {
-    res.status(500).json({ error: e.message || 'unknown error' });
+    res.status(200).json({ mission: localMissionFallback() });
   }
 };
