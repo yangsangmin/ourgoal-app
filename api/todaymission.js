@@ -39,49 +39,59 @@ module.exports = async function handler(req, res) {
   try {
     var missionText = '';
 
-    // 1. Gemini 2.5 Flash 우선 호출
+    // 1. Gemini 다중 플래시 모델 캐스케이드 (우선)
     if (geminiApiKey) {
-      try {
-        var geminiRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + encodeURIComponent(geminiApiKey), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.3 }
-          })
-        });
-        if (geminiRes.ok) {
-          var gData = await geminiRes.json();
-          missionText = (gData.candidates && gData.candidates[0] && gData.candidates[0].content && gData.candidates[0].content.parts && gData.candidates[0].content.parts[0] && gData.candidates[0].content.parts[0].text) || '';
-        }
-      } catch (ge) {}
+      var geminiModels = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-flash-latest'];
+      for (var gi = 0; gi < geminiModels.length; gi++) {
+        var gModel = geminiModels[gi];
+        try {
+          var geminiRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + gModel + ':generateContent?key=' + encodeURIComponent(geminiApiKey), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: { temperature: 0.3 }
+            })
+          });
+          if (geminiRes.ok) {
+            var gData = await geminiRes.json();
+            missionText = (gData.candidates && gData.candidates[0] && gData.candidates[0].content && gData.candidates[0].content.parts && gData.candidates[0].content.parts[0] && gData.candidates[0].content.parts[0].text) || '';
+            if (missionText) break;
+          }
+        } catch (ge) {}
+      }
     }
 
-    // 2. Anthropic Claude Sonnet 듀얼 폴백
+    // 2. Anthropic Claude 최신 모델 캐스케이드 폴백
     if (!missionText && anthropicApiKey) {
-      try {
-        var headers = {
-          'Content-Type': 'application/json',
-          'x-api-key': anthropicApiKey,
-          'anthropic-version': '2023-06-01'
-        };
-        if (process.env.ANTHROPIC_WORKSPACE_ID) {
-          headers['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
-        }
-        var anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify({
-            model: 'claude-3-5-sonnet-20241022',
-            max_tokens: 200,
-            messages: [{ role: 'user', content: prompt }]
-          })
-        });
-        if (anthropicRes.ok) {
-          var data = await anthropicRes.json();
-          missionText = (data.content || []).map(function (b) { return b.type === 'text' ? b.text : ''; }).join('\n').trim();
-        }
-      } catch (ae) {}
+      var anthropicModels = ['claude-3-7-sonnet-20250219', 'claude-3-5-sonnet-latest', 'claude-3-5-haiku-latest', 'claude-3-5-sonnet-20241022'];
+      for (var mi = 0; mi < anthropicModels.length; mi++) {
+        var aModel = anthropicModels[mi];
+        try {
+          var headers = {
+            'Content-Type': 'application/json',
+            'x-api-key': anthropicApiKey,
+            'anthropic-version': '2023-06-01'
+          };
+          if (process.env.ANTHROPIC_WORKSPACE_ID) {
+            headers['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
+          }
+          var anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+              model: aModel,
+              max_tokens: 200,
+              messages: [{ role: 'user', content: prompt }]
+            })
+          });
+          if (anthropicRes.ok) {
+            var data = await anthropicRes.json();
+            missionText = (data.content || []).map(function (b) { return b.type === 'text' ? b.text : ''; }).join('\n').trim();
+            if (missionText) break;
+          }
+        } catch (ae) {}
+      }
     }
 
     // 3. 로컬 스마트 폴백

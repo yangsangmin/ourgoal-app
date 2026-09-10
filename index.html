@@ -7847,12 +7847,13 @@
     var dues = milestones.map(function(m){ return m && m.dueDate; }).filter(Boolean);
     var allSame = dues.length > 0 && dues.every(function(d){ return d === dues[0]; });
     var mostlyMissing = dues.length <= Math.ceil(milestones.length * 0.3);
-    var hasSeq = milestones.some(function(m){ return m && m.title && /(?:day\s*\d+|\d+일차|\d+주차|\d+단계)/i.test(m.title); });
+    var hasSeq = milestones.some(function(m){ return m && m.title && /(?:day\s*\d+|\d+일차|\d+주차)/i.test(m.title); });
+    var hasValidDistinctDates = dues.length === milestones.length && !allSame;
 
-    if(allSame || mostlyMissing || hasSeq){
+    if(!hasValidDistinctDates && (allSame || mostlyMissing || hasSeq)){
       var totalSpan = goalDueDate ? Math.max(1, Math.round((new Date(goalDueDate+'T12:00:00') - new Date(today+'T12:00:00')) / 86400000)) : 30;
       var isDaily = milestones.length >= 14 || milestones.some(function(m){ return m && m.title && /(?:day\s*\d+|\d+일차)/i.test(m.title); });
-      var isWeekly = !isDaily && (milestones.length <= 6 || milestones.some(function(m){ return m && m.title && /(?:\d+주차|주간)/i.test(m.title); }));
+      var isWeekly = !isDaily && milestones.some(function(m){ return m && m.title && /(?:\d+주차|주간)/i.test(m.title); });
 
       milestones.forEach(function(m, idx){
         if(!m) return;
@@ -8028,8 +8029,10 @@
           html += '<div style="font-size:.76rem;font-weight:700;color:var(--ink-soft);margin-bottom:6px;">🚩 마일스톤 및 세부 할 일 ('+gData.milestones.length+'단계)</div>';
           gData.milestones.forEach(function(m, mIdx){
             html += '<div style="margin-bottom:6px;padding:6px 8px;background:var(--card2);border-radius:8px;">';
+            var msTitle = (m.title || '마일스톤').trim();
+            var cleanMsTitle = msTitle.replace(/^(?:(?:\d+|[일이삼사오육칠팔구십]+)단계[:\.\s]*|단계\s*\d+[:\.\s]*)/i, '').trim();
             html += '<div style="font-size:.82rem;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:4px;">' +
-              '<span>' + (mIdx+1) + '단계. ' + escapeHtml(m.title||'마일스톤') + '</span>' +
+              '<span>' + (mIdx+1) + '단계. ' + escapeHtml(cleanMsTitle || msTitle) + '</span>' +
               (m.dueDate ? '<span class="faint" style="font-size:.7rem;white-space:nowrap;">📅 '+escapeHtml(m.dueDate)+'</span>' : '') +
             '</div>';
             if(m.attachments && m.attachments.length){

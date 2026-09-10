@@ -184,12 +184,15 @@ function distributeSequentialDates(ops, today, userMessage) {
         var allSameDue = nonNullDues.length > 0 && nonNullDues.every(function (d) { return d === nonNullDues[0]; });
         var mostlyMissing = nonNullDues.length <= Math.ceil(msList.length * 0.3);
         var hasSequentialTitle = msList.some(function (m) {
-          return m && m.title && /(?:day\s*\d+|\d+일차|\d+주차|\d+단계)/i.test(m.title);
+          return m && m.title && /(?:day\s*\d+|\d+일차|\d+주차)/i.test(m.title);
         });
 
-        if (allSameDue || mostlyMissing || hasSequentialTitle || isDailyIntent || isWeeklyIntent) {
+        // 이미 마일스톤 날짜들이 서로 다르고 유효하게 채워져 있다면 임의로 덮어쓰지 않음
+        var hasValidDistinctDates = nonNullDues.length === msList.length && !allSameDue;
+
+        if (!hasValidDistinctDates && (allSameDue || mostlyMissing || hasSequentialTitle || isDailyIntent || isWeeklyIntent)) {
           var isDaily = isDailyIntent || msList.length >= 14 || msList.some(function (m) { return m && m.title && /(?:day\s*\d+|\d+일차)/i.test(m.title); });
-          var isWeekly = !isDaily && (isWeeklyIntent || msList.length <= 6 || msList.some(function (m) { return m && m.title && /(?:\d+주차|주간)/i.test(m.title); }));
+          var isWeekly = !isDaily && (isWeeklyIntent || msList.some(function (m) { return m && m.title && /(?:\d+주차|주간)/i.test(m.title); }));
 
           msList.forEach(function (m, idx) {
             if (!m) return;
@@ -214,20 +217,25 @@ function distributeSequentialDates(ops, today, userMessage) {
 
       // 각 마일스톤 내부의 tasks도 날짜 순차 분배 확인
       if (Array.isArray(msList)) {
+        var prevMDue = today;
         msList.forEach(function (m) {
-          if (!m || !Array.isArray(m.tasks) || m.tasks.length < 2) return;
+          if (!m || !Array.isArray(m.tasks) || m.tasks.length < 2) {
+            if (m && m.dueDate) prevMDue = m.dueDate;
+            return;
+          }
           var tList = m.tasks;
           var tNonNullDues = tList.map(function (t) { return t && typeof t === 'object' && t.dueDate; }).filter(Boolean);
           var tAllSame = tNonNullDues.length > 0 && tNonNullDues.every(function (d) { return d === tNonNullDues[0]; });
-          var tMissing = tNonNullDues.length <= Math.ceil(tList.length * 0.3);
           var tSeq = tList.some(function (t) {
             var tTitle = typeof t === 'string' ? t : (t && t.title);
             return tTitle && /(?:day\s*\d+|\d+일차)/i.test(tTitle);
           });
 
-          if (tAllSame || tMissing || tSeq || isDailyIntent) {
+          // 할 일 순차 분배는 명시적 일일 의도가 있거나 Day 1/1일차 제목이 있거나, 모든 날짜가 동일할 때만 적용
+          if (tSeq || isDailyIntent || (tAllSame && tNonNullDues.length > 0)) {
             var mDue = m.dueDate || goalDue;
-            var mSpan = mDue ? diffDays(today, mDue) : Math.max(tList.length, 7);
+            var startBase = prevMDue || today;
+            var mSpan = mDue ? Math.max(1, diffDays(startBase, mDue)) : Math.max(tList.length, 7);
             tList.forEach(function (t, tIdx) {
               if (typeof t === 'string') {
                 t = { title: t };
@@ -237,14 +245,15 @@ function distributeSequentialDates(ops, today, userMessage) {
               var tDayIdx = tNum ? (parseInt(tNum[1] || tNum[2], 10) - 1) : tIdx;
               if (tDayIdx < 0) tDayIdx = tIdx;
 
-              if (tList.length <= mSpan) {
-                t.dueDate = addDays(today, Math.min(tDayIdx + 1, mSpan));
+              if (isDailyIntent || tSeq) {
+                t.dueDate = addDays(startBase, Math.min(tDayIdx + 1, mSpan));
               } else {
                 var tStep = Math.max(1, Math.round(((tDayIdx + 1) / tList.length) * mSpan));
-                t.dueDate = addDays(today, tStep);
+                t.dueDate = addDays(startBase, tStep);
               }
             });
           }
+          if (m && m.dueDate) prevMDue = m.dueDate;
         });
       }
     }
@@ -359,50 +368,139 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
     return y + '-' + m + '-' + day;
   }
 
-  // 날짜/기간 자연어 추출 (예: "이번주 일요일", "내일", "한달 뒤", "30일 뒤", "다음 주" 등)
+  // 수정보완 태그 사전 제거
+  var rawMsgWithoutRev = msg.replace(/\[(?:추가)?수정보완\s*\d+회차\]:?/gi, '').trim();
+
+  // 날짜/기간 자연어 및 생년월일 추출
   var dueDate = null;
+  var childBirthDate = null;
+  var childTargetDate = null;
+
+  // 1) 생년월일 + 만 N세/N살 계산 (예: "25년5월17일생 아기를 만 3살까지", "2025년 5월 17일생")
+  var birthMatch = msg.match(/(?:(\d{2,4})년\s*(\d{1,2})월\s*(\d{1,2})일\s*생|생년월일\s*[:\s]*(\d{2,4})[-.년\s]+(\d{1,2})[-.월\s]+(\d{1,2}))/i);
+  var targetAgeMatch = msg.match(/(?:만\s*)?(\d{1,2})\s*(?:살|세)(?:\s*까지|\s*목표)?/i);
+
+  if (birthMatch) {
+    var bYear = parseInt(birthMatch[1] || birthMatch[4], 10);
+    if (bYear < 100) bYear += 2000;
+    var bMonth = parseInt(birthMatch[2] || birthMatch[5], 10);
+    var bDay = parseInt(birthMatch[3] || birthMatch[6], 10);
+    childBirthDate = bYear + '-' + String(bMonth).padStart(2, '0') + '-' + String(bDay).padStart(2, '0');
+
+    if (targetAgeMatch) {
+      var targetAge = parseInt(targetAgeMatch[1], 10);
+      var tYear = bYear + targetAge;
+      childTargetDate = tYear + '-' + String(bMonth).padStart(2, '0') + '-' + String(bDay).padStart(2, '0');
+      dueDate = childTargetDate;
+    }
+  }
+
+  // 2) 명시적 연-월-일 (예: "2028년 5월 17일", "2028-05-17", "28년 12월 31일")
+  if (!dueDate) {
+    var explicitDateMatch = msg.match(/(?:(\d{2,4})년\s*(\d{1,2})월\s*(\d{1,2})일)|(?:(\d{4})[-.](\d{1,2})[-.](\d{1,2}))/);
+    if (explicitDateMatch) {
+      var expY = parseInt(explicitDateMatch[1] || explicitDateMatch[4], 10);
+      if (expY < 100) expY += 2000;
+      var expM = parseInt(explicitDateMatch[2] || explicitDateMatch[5], 10);
+      var expD = parseInt(explicitDateMatch[3] || explicitDateMatch[6], 10);
+      dueDate = expY + '-' + String(expM).padStart(2, '0') + '-' + String(expD).padStart(2, '0');
+    }
+  }
+
+  // 3) N년 / N개월 / N일 / D-Day / 연말
+  if (!dueDate) {
+    var yearAfterMatch = msg.match(/(\d{1,2})\s*년\s*(?:뒤|후|동안|간|안에|이내|까지)?/);
+    if (yearAfterMatch && !msg.match(/\d{2,4}년\s*\d{1,2}월/)) {
+      var yAdd = parseInt(yearAfterMatch[1], 10);
+      if (yAdd > 0 && yAdd <= 20) {
+        var d = new Date(today + 'T12:00:00');
+        d.setFullYear(d.getFullYear() + yAdd);
+        dueDate = d.toISOString().slice(0, 10);
+      }
+    }
+  }
+  if (!dueDate) {
+    var monthAfterMatch = msg.match(/(\d{1,2})\s*개?월\s*(?:뒤|후|동안|간|안에|이내|까지)/);
+    if (monthAfterMatch) {
+      var mAdd = parseInt(monthAfterMatch[1], 10);
+      var d = new Date(today + 'T12:00:00');
+      d.setMonth(d.getMonth() + mAdd);
+      dueDate = d.toISOString().slice(0, 10);
+    }
+  }
+  if (!dueDate) {
+    var dayAfterMatch = msg.match(/(\d{1,3})\s*일\s*(?:뒤|후|동안|간|안에|이내|챌린지)/);
+    if (dayAfterMatch) {
+      var dayAdd = parseInt(dayAfterMatch[1], 10);
+      if (dayAdd > 0 && dayAdd <= 365) {
+        dueDate = addDays(today, dayAdd);
+      }
+    }
+  }
+  if (!dueDate) {
+    var dDayMatch = msg.match(/d\s*[-–—]\s*(\d{1,3})/i);
+    if (dDayMatch) {
+      dueDate = addDays(today, parseInt(dDayMatch[1], 10));
+    }
+  }
+  if (!dueDate && /(올해\s*말|연말)/i.test(msg)) {
+    var curY = new Date(today + 'T12:00:00').getFullYear();
+    dueDate = curY + '-12-31';
+  }
+  if (!dueDate && /(상반기)/i.test(msg)) {
+    var curY = new Date(today + 'T12:00:00').getFullYear();
+    dueDate = curY + '-06-30';
+  }
+  if (!dueDate && /(하반기)/i.test(msg)) {
+    var curY = new Date(today + 'T12:00:00').getFullYear();
+    dueDate = curY + '-12-31';
+  }
+
+  // 4) 요일 및 상대 일정
   var isNextWk = /(다음\s*주)/i.test(msg);
-  if (/(이번\s*주\s*일요일|일요일)/i.test(msg)) {
-    dueDate = calcDayOffset(0, isNextWk);
-  } else if (/(이번\s*주\s*토요일|토요일)/i.test(msg)) {
-    dueDate = calcDayOffset(6, isNextWk);
-  } else if (/(이번\s*주\s*금요일|금요일)/i.test(msg)) {
-    dueDate = calcDayOffset(5, isNextWk);
-  } else if (/(이번\s*주\s*목요일|목요일)/i.test(msg)) {
-    dueDate = calcDayOffset(4, isNextWk);
-  } else if (/(이번\s*주\s*수요일|수요일)/i.test(msg)) {
-    dueDate = calcDayOffset(3, isNextWk);
-  } else if (/(이번\s*주\s*화요일|화요일)/i.test(msg)) {
-    dueDate = calcDayOffset(2, isNextWk);
-  } else if (/(이번\s*주\s*월요일|월요일)/i.test(msg)) {
-    dueDate = calcDayOffset(1, isNextWk);
-  } else if (/(내일)/i.test(msg)) {
-    var d = new Date(today + 'T12:00:00');
-    d.setDate(d.getDate() + 1);
-    dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-  } else if (/(모레)/i.test(msg)) {
-    var d = new Date(today + 'T12:00:00');
-    d.setDate(d.getDate() + 2);
-    dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-  } else if (/(한\s*달\s*뒤|1\s*달\s*뒤|30\s*일\s*뒤|1\s*개월\s*뒤)/i.test(msg)) {
-    var d = new Date(today + 'T12:00:00');
-    d.setDate(d.getDate() + 30);
-    dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-  } else if (/(두\s*달\s*뒤|2\s*달\s*뒤|60\s*일\s*뒤|2\s*개월\s*뒤)/i.test(msg)) {
-    var d = new Date(today + 'T12:00:00');
-    d.setDate(d.getDate() + 60);
-    dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-  } else if (/(세\s*달\s*뒤|3\s*달\s*뒤|90\s*일\s*뒤|3\s*개월\s*뒤|100\s*일\s*뒤)/i.test(msg)) {
-    var d = new Date(today + 'T12:00:00');
-    d.setDate(d.getDate() + 90);
-    dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-  } else if (/(다음\s*주|1\s*주\s*뒤|7\s*일\s*뒤)/i.test(msg)) {
-    var d = new Date(today + 'T12:00:00');
-    d.setDate(d.getDate() + 7);
-    dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-  } else if (/(올해\s*말|연말)/i.test(msg)) {
-    var y = today.slice(0, 4);
-    dueDate = y + '-12-31';
+  if (!dueDate) {
+    if (/(이번\s*주\s*일요일|일요일)/i.test(msg)) {
+      dueDate = calcDayOffset(0, isNextWk);
+    } else if (/(이번\s*주\s*토요일|토요일)/i.test(msg)) {
+      dueDate = calcDayOffset(6, isNextWk);
+    } else if (/(이번\s*주\s*금요일|금요일)/i.test(msg)) {
+      dueDate = calcDayOffset(5, isNextWk);
+    } else if (/(이번\s*주\s*목요일|목요일)/i.test(msg)) {
+      dueDate = calcDayOffset(4, isNextWk);
+    } else if (/(이번\s*주\s*수요일|수요일)/i.test(msg)) {
+      dueDate = calcDayOffset(3, isNextWk);
+    } else if (/(이번\s*주\s*화요일|화요일)/i.test(msg)) {
+      dueDate = calcDayOffset(2, isNextWk);
+    } else if (/(이번\s*주\s*월요일|월요일)/i.test(msg)) {
+      dueDate = calcDayOffset(1, isNextWk);
+    } else if (/(내일)/i.test(msg)) {
+      var d = new Date(today + 'T12:00:00');
+      d.setDate(d.getDate() + 1);
+      dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    } else if (/(모레)/i.test(msg)) {
+      var d = new Date(today + 'T12:00:00');
+      d.setDate(d.getDate() + 2);
+      dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    } else if (/(한\s*달\s*뒤|1\s*달\s*뒤|30\s*일\s*뒤|1\s*개월\s*뒤)/i.test(msg)) {
+      var d = new Date(today + 'T12:00:00');
+      d.setDate(d.getDate() + 30);
+      dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    } else if (/(두\s*달\s*뒤|2\s*달\s*뒤|60\s*일\s*뒤|2\s*개월\s*뒤)/i.test(msg)) {
+      var d = new Date(today + 'T12:00:00');
+      d.setDate(d.getDate() + 60);
+      dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    } else if (/(세\s*달\s*뒤|3\s*달\s*뒤|90\s*일\s*뒤|3\s*개월\s*뒤|100\s*일\s*뒤)/i.test(msg)) {
+      var d = new Date(today + 'T12:00:00');
+      d.setDate(d.getDate() + 90);
+      dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    } else if (/(다음\s*주|1\s*주\s*뒤|7\s*일\s*뒤)/i.test(msg)) {
+      var d = new Date(today + 'T12:00:00');
+      d.setDate(d.getDate() + 7);
+      dueDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    } else if (/(올해\s*말|연말)/i.test(msg)) {
+      var y = today.slice(0, 4);
+      dueDate = y + '-12-31';
+    }
   }
 
   // 시간 자연어 추출 (예: "오후 2시", "14시 30분", "저녁 7시")
@@ -441,7 +539,25 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
     attachTitle = attachKeyword + ' 유튜브 영상';
   }
 
-  var cleanTitle = msg
+  // 세부 도메인 판정
+  var isBirthday = /(생일|기념일|돌잔치|환갑|칠순|축하|파티)/i.test(rawMsgWithoutRev);
+  var isBabyCare = /(아기|아이|영유아|신생아|자녀|육아|딸|아들|돌쟁이|출산|어린이집|유치원|소아과)/i.test(rawMsgWithoutRev) ||
+                   (/(건강검진|발달|이유식|모유|분유|예방접종)/i.test(rawMsgWithoutRev) && /(아이|아기|자녀|영유아|생)/i.test(rawMsgWithoutRev));
+  var isPet = /(반려동물|반려견|반려묘|강아지|고양이|댕댕이|집사|동물병원|배변|산책)/i.test(rawMsgWithoutRev);
+  var isMarathon = /(마라톤|10km|5km|달리기|러닝|조깅|하프|풀코스|트랙|페이스)/i.test(rawMsgWithoutRev);
+  var isDiet = /(다이어트|살빼기|체중|식단|감량|체지방|뱃살|칼로리)/i.test(rawMsgWithoutRev);
+  var isExercise = isMarathon || isDiet || /(운동|헬스|피트니스|웨이트|근육|스쿼트|수영|자전거|사이클|필라테스|요가|크로스핏|등산|체력증진|유산소|근력)/i.test(rawMsgWithoutRev);
+  var isMedicalHealth = !isBabyCare && !isPet && !isExercise && /(건강검진|병원|진료|치료|수술|복약|약|혈압|혈당|치과|스케일링|영양제|비타민|검진|의료|질환|수치|건강)/i.test(rawMsgWithoutRev);
+  var isCertification = /(자격증|시험|합격|기사|토익|토플|오픽|공무원|수능|CPA|세무사|노무사|한국사|정보처리기사|취득)/i.test(rawMsgWithoutRev);
+  var isFinance = /(저축|적금|예금|투자|주식|부동산|청약|재테크|목돈|시드머니|자산|가계부|절약|모으기|\d+[억만천]원?|\b돈\b|부자|소득|월급)/i.test(rawMsgWithoutRev);
+  var isStudy = isCertification || /(공부|독서|책|학습|코딩|개발|프로그래밍|알고리즘|외국어|회화|영어|일본어|수학|강의)/i.test(rawMsgWithoutRev);
+  var isCareer = /(일|업무|사업|매출|취업|이직|프로젝트|포트폴리오|이력서|면접|퇴사|경력|마케팅|창업|스토어|고객)/i.test(rawMsgWithoutRev);
+  var isHobby = /(취미|음악|악기|피아노|기타|그림|사진|게임|여행|영상|유튜브|블로그|글쓰기|웹소설)/i.test(rawMsgWithoutRev);
+  var isMind = /(마음|명상|수면|일기|감사|습관|기상|미라클|루틴|멘탈|정리|청소|도파민|디톡스)/i.test(rawMsgWithoutRev);
+  var isRelation = isBirthday || /(친구|가족|연인|약속|모임|대화|결혼|부모|엄마|아빠|환갑|칠순)/i.test(rawMsgWithoutRev);
+
+  // 깔끔한 목표 제목 정제
+  var cleanTitle = rawMsgWithoutRev
     .replace(/^(목표설정|목표 설정|새로운 목표|새 목표|신규 목표|일정등록|일정 등록)[:\s]*/g, '')
     .replace(/(이번\s*주\s*일요일|이번\s*주\s*토요일|이번\s*주\s*금요일|이번\s*주|다음\s*주|내일|모레)/g, '')
     .replace(/(?:첨부파일로|첨부로|참고자료로|영상으로)\s*[^,\.\s]+\s*(?:레시피|유튜브|영상|링크|자료|팁)?\s*(?:등록해줘|등록|추가해줘|추가|찾아서|찾아줘|넣어줘|첨부해줘|첨부)?/g, '')
@@ -450,39 +566,115 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
     .replace(/\s*(?:등록|설정|추가|생성|계획)\s*$/g, '')
     .trim();
 
-  if (!cleanTitle || cleanTitle.length < 2 || cleanTitle === '목표' || cleanTitle === '요청' || cleanTitle === '일정') {
-    if (/생일/i.test(msg)) cleanTitle = '가족 생일 축하';
+  if (isBabyCare) {
+    if (birthMatch && targetAgeMatch) {
+      cleanTitle = (birthMatch[1] ? ('20' + birthMatch[1].slice(-2)) : bYear) + '년 ' + bMonth + '월 ' + bDay + '일생 아기 만 ' + targetAgeMatch[1] + '세 건강 성장 관리';
+    } else if (/아기|아이|자녀/i.test(cleanTitle)) {
+      cleanTitle = cleanTitle.slice(0, 40);
+    } else {
+      cleanTitle = '우리아기 건강하게 키우기 및 성장 검진 관리';
+    }
+  } else if (!cleanTitle || cleanTitle.length < 2 || cleanTitle === '목표' || cleanTitle === '요청' || cleanTitle === '일정') {
+    if (isBirthday) cleanTitle = '가족 생일 축하';
+    else if (isCertification) cleanTitle = '목표 자격증 취득 및 시험 합격';
+    else if (isFinance) cleanTitle = '목돈 모으기 및 자산 형성';
+    else if (isMedicalHealth) cleanTitle = '정기 건강검진 및 일상 건강 관리';
+    else if (isPet) cleanTitle = '반려동물 건강 관리 및 행복한 일상';
     else cleanTitle = '나만의 새로운 실천 목표';
   }
 
-  // 세부 도메인 판정
-  var isBirthday = /(생일|기념일|돌잔치|축하|파티)/i.test(msg);
-  var isMarathon = /(마라톤|10km|5km|달리기|러닝|조깅|하프|풀코스|트랙|페이스)/i.test(msg);
-  var isDiet = /(다이어트|살빼기|체중|식단|감량|체지방|뱃살)/i.test(msg);
-  var isHealth = isMarathon || isDiet || /(운동|헬스|피트니스|웨이트|근육|스쿼트|수영|자전거|사이클|필라테스|요가|크로스핏|등산|체력|건강)/i.test(msg);
-  var isStudy = /(공부|토익|영어|독서|책|자격증|시험|수학|학습|코딩|강의|프로그래밍|알고리즘|취득|합격)/i.test(msg);
-  var isCareer = /(일|업무|사업|매출|취업|이직|프로젝트|머니|돈|투자|수익|재테크|마케팅|창업)/i.test(msg);
-  var isHobby = /(취미|음악|악기|피아노|기타|그림|사진|게임|여행|영상|유튜브|블로그|글쓰기)/i.test(msg);
-  var isMind = /(마음|명상|수면|일기|감사|습관|기상|미라클|루틴|멘탈)/i.test(msg);
-  var isRelation = isBirthday || /(친구|가족|연인|약속|모임|대화|결혼|부모|자녀|아들|딸|엄마|아빠)/i.test(msg);
+  // 대분류 및 마일스톤 생성
+  var topic = 'mind';
+  var topicMinor = '자기계발';
 
-  var topic = 'health';
-  if (isRelation) topic = 'relation';
-  else if (isHealth) topic = 'health';
-  else if (isStudy) topic = 'study';
-  else if (isCareer) topic = 'career';
-  else if (isHobby) topic = 'hobby';
-  else if (isMind) topic = 'mind';
+  if (isBabyCare) {
+    topic = 'health';
+    topicMinor = '육아 건강';
+  } else if (isPet) {
+    topic = 'relation';
+    topicMinor = '반려동물';
+  } else if (isRelation) {
+    topic = 'relation';
+    topicMinor = '가족/관계';
+  } else if (isExercise) {
+    topic = 'health';
+    topicMinor = '운동/헬스';
+  } else if (isMedicalHealth) {
+    topic = 'health';
+    topicMinor = '건강/검진';
+  } else if (isCertification) {
+    topic = 'study';
+    topicMinor = '자격증/시험';
+  } else if (isStudy) {
+    topic = 'study';
+    topicMinor = '학습/공부';
+  } else if (isFinance) {
+    topic = 'career';
+    topicMinor = '재테크/자산';
+  } else if (isCareer) {
+    topic = 'career';
+    topicMinor = '커리어/업무';
+  } else if (isHobby) {
+    topic = 'hobby';
+    topicMinor = '취미/창작';
+  } else if (isMind) {
+    topic = 'mind';
+    topicMinor = '마음/습관';
+  }
 
   var m1 = '1단계: 시작 준비 및 실행 계획 수립';
   var t1 = ['세부 실천 계획 정리하기', '필요한 준비물 및 환경 구성하기'];
-  var m2 = '2단계: 주 3회 이상 꾸준한 실행 루틴 확립';
+  var m2 = '2단계: 규칙적인 실천 루틴 확립';
   var t2 = ['기본 실천 꾸준히 이어가기', '진행 과정과 느낀 점 기록하기'];
   var m3 = '3단계: 최종 목표 달성 점검 및 습관화';
   var t3 = ['최종 결과 점검 및 피드백', '다음 성장 단계 수립하기'];
   var m1Atts = attachUrl ? [{ type: 'video', title: attachTitle, url: attachUrl }] : [];
 
-  if (isBirthday) {
+  var totalDays = dueDate ? diffDays(today, dueDate) : 30;
+  var d1 = addDays(today, Math.max(1, Math.round(totalDays * 1 / 3)));
+  var d2 = addDays(today, Math.max(2, Math.round(totalDays * 2 / 3)));
+  var d3 = dueDate || addDays(today, totalDays);
+
+  if (isBabyCare) {
+    if (childBirthDate) {
+      // 2025-05-17 출생일 기준 만 3세(2028-05-17) 주요 영유아 건강검진 및 예방접종
+      var d18m = addDays(childBirthDate, 18 * 30.4375); // ~2026-11-17
+      var d24m = addDays(childBirthDate, 24 * 30.4375); // ~2027-05-17
+      var d30m = addDays(childBirthDate, 30 * 30.4375); // ~2027-11-17
+      var d36m = childTargetDate || addDays(childBirthDate, 36 * 30.4375);
+
+      m1 = '1단계: 4차 영유아 건강검진 및 필수 예방접종 (생후 18~24개월)';
+      t1 = [
+        '4차 영유아 건강검진 문진표·발달선별검사표 작성 및 소아과 예약',
+        '18개월 필수 예방접종(A형간염 2차, 일본뇌염 등) 완료',
+        '1차 영유아 구강검진(생후 18~29개월) 치과 방문'
+      ];
+      d1 = d24m > today ? d24m : addDays(today, 60);
+
+      m2 = '2단계: 만 2세 신체·언어 발달 점검 및 생활습관 형성 (생후 24~30개월)';
+      t2 = [
+        '한국 영유아 발달선별검사(K-DST) 언어 및 대소근육 발달 체크',
+        '올바른 수면 루틴 및 영양 균형 식단(편식 예방) 정착',
+        '2차 영유아 구강검진 및 치아 불소도포 점검'
+      ];
+      d2 = d30m > today && d30m > d1 ? d30m : addDays(d1, 180);
+
+      m3 = '3단계: 5차 영유아 건강검진 및 만 3세 종합 성장 점검 (생후 30~36개월)';
+      t3 = [
+        '5차 영유아 건강검진(생후 30~36개월) 수검 및 신체 계측 평가',
+        '만 3세까지의 필수 예방접종 누락 내역 종합 확인',
+        '보육기관/유치원 제출용 영유아 건강검진 결과표 발급 및 보관'
+      ];
+      d3 = childTargetDate || d36m;
+    } else {
+      m1 = '1단계: 월령별 필수 영유아 건강검진 및 예방접종 일정 정리';
+      t1 = ['국민건강보험 영유아 검진 대상 기간 조회', '필수 국가예방접종 수검 내역 체크', '단골 소아과 및 치과 검진 예약'];
+      m2 = '2단계: 연령별 신체·언어 발달 단계 모니터링 및 생활 루틴 정착';
+      t2 = ['대근육·소근육 발달 및 언어 표현력 관찰 기록', '규칙적인 수면 및 균형 잡힌 영양 식단 챙기기', '안전한 실내외 놀이 환경 조성'];
+      m3 = '3단계: 성장 발달 종합 평가 및 다음 성장 주기 준비';
+      t3 = ['영유아 건강검진 결과 확인 및 전문의 상담', '발달 상태 기록 정리', '다음 연령기 성장 가이드 확인'];
+    }
+  } else if (isBirthday) {
     m1 = '1단계: 생일 맞이 요리 및 선물 준비';
     t1 = ['미역국 및 맛있는 축하 음식 만들기', '생일 케이크 및 선물 챙기기'];
     m2 = '2단계: 가족 생일 축하 파티 및 기념';
@@ -503,13 +695,41 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
     t2 = ['주 4회 40분 이상 유산소 운동 실천하기', '단백질 위주 건강한 식사 유지하기'];
     m3 = '3단계: 목표 체중 달성 및 요요 없는 유지 습관 형성';
     t3 = ['최종 체중 및 체지방 측정 점검하기', '지속 가능한 건강 루틴 완성하기'];
-  } else if (isHealth) {
+  } else if (isPet) {
+    m1 = '1단계: 동물병원 등록 및 필수 기초 건강검진·예방접종';
+    t1 = ['단골 동물병원 등록 및 기초 신체 검진', '필수 혼합백신·광견병 예방접종 및 심장사상충 예방'];
+    m2 = '2단계: 올바른 식이 관리 및 규칙적인 산책/놀이 루틴 정착';
+    t2 = ['연령·체중별 맞춤 사료 급여 및 수분 섭취 체크', '매일 규칙적인 산책 및 실내 스트레스 해소 놀이'];
+    m3 = '3단계: 위생 케어 및 주기적 건강 모니터링';
+    t3 = ['정기 발톱·귀·치아 위생 관리 및 양치질', '이상 징후(식욕·배변 등) 관찰 및 반기별 건강 체크'];
+  } else if (isMedicalHealth) {
+    m1 = '1단계: 종합 건강검진 예약 및 현재 건강 상태 점검';
+    t1 = ['건강검진 항목 선정 및 의료기관 예약', '기초 문진표 작성 및 주의사항 확인'];
+    m2 = '2단계: 검진 결과 확인 및 맞춤 건강 관리 실천';
+    t2 = ['검진 결과표 수령 및 전문의 소견 확인', '권장 복약/영양제 복용 및 식습관 개선'];
+    m3 = '3단계: 건강 지표 추적 관리 및 정기 검진 습관화';
+    t3 = ['주요 건강 지표(혈압·혈당 등) 주기적 측정 기록', '다음 정기 검진 일정 캘린더 등록'];
+  } else if (isExercise) {
     m1 = '1단계: 운동 계획 수립 및 장비/루틴 준비';
     t1 = ['운동 루틴 및 시간대 계획하기', '필요한 장비 및 복장 챙기기'];
     m2 = '2단계: 주 3~4회 규칙적인 실천 이어가기';
     t2 = ['계획한 운동 성실히 완료하기', '운동 후 간단한 체크인 기록하기'];
     m3 = '3단계: 목표 체력/체중 달성 및 건강한 습관 정착';
     t3 = ['체력 변화 및 성취 점검하기', '다음 운동 루틴으로 업그레이드하기'];
+  } else if (isCertification) {
+    m1 = '1단계: 시험 출제 기준 분석 및 기본 개념 1회독';
+    t1 = ['시험 일정 확정 및 접수', '기본서/강의 1회독 완독'];
+    m2 = '2단계: 기출문제 집중 풀이 및 취약 단원 오답 정리';
+    t2 = ['최근 5개년 기출문제 풀이', '오답 노트 작성 및 취약 개념 보완'];
+    m3 = '3단계: 실전 모의고사 훈련 및 최종 합격 달성';
+    t3 = ['실전 시간 배분 모의고사 3회 이상 완료', '시험 응시 및 최종 합격 점검'];
+  } else if (isFinance) {
+    m1 = '1단계: 현재 자산 현황 분석 및 저축/투자 목표 수립';
+    t1 = ['월 고정 지출 및 수입 분석', '월별 목표 저축/투자 금액 확정'];
+    m2 = '2단계: 자동 저축 파이프라인 가동 및 지출 관리';
+    t2 = ['월급일 자동이체 적금/투자 계좌 설정', '불필요한 소비 줄이기 및 가계부 기록'];
+    m3 = '3단계: 목표 자산 달성 점검 및 포트폴리오 리밸런싱';
+    t3 = ['누적 자산 점검 및 성과 분석', '다음 분기 자산 배분 계획 수립'];
   } else if (isStudy) {
     m1 = '1단계: 학습 계획 수립 및 교재/강의 준비';
     t1 = ['학습 목표 분량 및 교재 선정하기', '주간 학습 스케줄 확정하기'];
@@ -524,6 +744,14 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
     t2 = ['핵심 작업물 1차 버전 완료하기', '피드백 수렴 및 개선 반영하기'];
     m3 = '3단계: 최종 성과 검증 및 지속 성장 체계 구축';
     t3 = ['프로젝트 완료 및 성과 지표 측정하기', '회고 및 다음 액션 플랜 수립하기'];
+  } else {
+    // 범용 맞춤형 3단계 플랜
+    m1 = '1단계: ' + cleanTitle.slice(0, 20) + ' 시작 준비 및 세부 계획 수립';
+    t1 = ['핵심 목표 및 필요 준비물 정리하기', '주간별 세부 실천 일정 계획하기'];
+    m2 = '2단계: ' + cleanTitle.slice(0, 20) + ' 핵심 실천 및 집중 실행';
+    t2 = ['핵심 실행 과제 꾸준히 완료하기', '진행 과정과 느낀 점 체크인 기록하기'];
+    m3 = '3단계: ' + cleanTitle.slice(0, 20) + ' 최종 달성 및 점검';
+    t3 = ['최종 성과 점검 및 피드백 회고', '다음 성장 단계 수립하기'];
   }
 
   var isDailyPlan = /(일일|일자별|매일|데일리|30일\s*계획|30일\s*챌린지|한달\s*계획|한달\s*일일|한달\s*플랜|30개)/i.test(msg);
@@ -573,7 +801,7 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
         title: cleanTitle,
         dueDate: finalDue,
         topicMajor: topic,
-        topicMinor: '',
+        topicMinor: topicMinor,
         milestones: dailyMilestones
       },
       summary: '신규 목표 "' + cleanTitle + '" 및 ' + itemCount + '일 일일 플랜 생성 (' + addDays(today, 1) + ' ~ ' + finalDue + ')'
@@ -583,11 +811,6 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
     return { ops: ops, reply: reply };
   }
 
-  var totalDays = dueDate ? diffDays(today, dueDate) : 30;
-  var d1 = addDays(today, Math.max(1, Math.round(totalDays * 1 / 3)));
-  var d2 = addDays(today, Math.max(2, Math.round(totalDays * 2 / 3)));
-  var d3 = dueDate || addDays(today, totalDays);
-
   ops.push({
     type: 'CREATE',
     level: 'goal',
@@ -595,7 +818,7 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
       title: cleanTitle,
       dueDate: dueDate || d3,
       topicMajor: topic,
-      topicMinor: '',
+      topicMinor: topicMinor,
       milestones: [
         { title: m1, tasks: t1, attachments: m1Atts, dueDate: d1 },
         { title: m2, tasks: t2, dueDate: d2 },
@@ -673,6 +896,10 @@ module.exports = async function handler(req, res) {
     '"data":{"CREATE·UPDATE에서 바꿀 필드만 (아래 규칙 참고, DELETE는 생략)"},' +
     '"summary":"이 변경사항을 설명하는 한국어 한 문장"}],' +
     '"reply":"사용자에게 보여줄 1~2문장 응답 (요청 이해 내용 요약 또는 실패 이유)"}\n\n' +
+    '전문 분야 및 특수 목표 지침:\n' +
+    '- 사용자가 아기/자녀/영유아 육아, 영유아 건강검진, 예방접종, 성장 발달 등을 요청한 경우: 절대 성인 본인의 개인 운동·피트니스·다이어트 계획을 만들지 마세요! 생년월일(예: 25년 5월 17일생)과 목표 나이(예: 만 3살까지)에 맞는 실제 영유아 건강검진 차수(4차, 5차 등)와 구강검진, 필수 예방접종(A형간염, 일본뇌염 등), 성장 발달 체크리스트로 구성하세요.\n' +
+    '- 목표가 수개월~수년 단위의 장기 목표인 경우(예: 만 3살까지 -> 2028년 5월 17일): 최종 dueDate를 해당 목표 완료 시점으로 정확히 산출하고, 마일스톤의 dueDate도 오늘부터 최종 목표일까지의 기간에 걸쳐 자연스러운 월령/연도별 시점으로 배분하세요. 절대 30일짜리 단기 일정으로 축소하지 마세요.\n' +
+    '- 새 목표의 title은 "[수정보완 1회차]", "[추가수정보완 2회차]" 같은 대화용 부가 태그나 지시어를 완전히 제거하고, 간결하고 품격 있는 목표 이름(예: "2025년 5월 17일생 아기 만 3세까지 건강하게 키우기")으로 작성하세요.\n\n' +
     'data 필드 규칙:\n' +
     '- goal CREATE: title(필수), dueDate(YYYY-MM-DD 또는 YYYY-MM-DDTHH:mm, null), topicMajor(health/study/career/hobby/mind/relation 중 하나, 선택), ' +
     'topicMinor(짧은 텍스트, 선택), milestones(선택, [{"title":"","dueDate":"YYYY-MM-DD(순차 분배)","tasks":["세부할일" 또는 {"title":"","dueDate":"YYYY-MM-DD"}],"attachments":[{"type":"video|image|text|link","title":"","url":""}]}] 형태)\n' +
@@ -690,37 +917,53 @@ module.exports = async function handler(req, res) {
   try {
     var parsed = null;
 
-    // 1. Gemini 2.5 Flash 최우선 호출
+    // 1. Gemini 모델 캐스케이드 (429 Rate Limit 및 장애 대비 다중 플래시 모델 순차 호출)
     if (geminiApiKey) {
-      try {
-        var geminiRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + encodeURIComponent(geminiApiKey), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-              temperature: 0.2,
-              responseMimeType: 'application/json'
+      var geminiModels = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-flash-latest'];
+      for (var gi = 0; gi < geminiModels.length; gi++) {
+        var gModel = geminiModels[gi];
+        try {
+          var geminiRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + gModel + ':generateContent?key=' + encodeURIComponent(geminiApiKey), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: {
+                temperature: 0.2,
+                responseMimeType: 'application/json'
+              }
+            })
+          });
+          if (geminiRes.ok) {
+            var gData = await geminiRes.json();
+            var gRaw = (gData.candidates && gData.candidates[0] && gData.candidates[0].content && gData.candidates[0].content.parts && gData.candidates[0].content.parts[0] && gData.candidates[0].content.parts[0].text) || '';
+            var gClean = gRaw.replace(/```json|```/g, '').trim();
+            parsed = JSON.parse(gClean);
+            console.log('[goalagent] Gemini (' + gModel + ') response parsed successfully');
+            break;
+          } else {
+            var gErrText = await geminiRes.text().catch(function(){ return ''; });
+            console.warn('[goalagent] Gemini (' + gModel + ') returned status:', geminiRes.status, gErrText.slice(0, 120));
+            // 429인 경우 다른 모델 전환 전 짧은 대기
+            if (geminiRes.status === 429 && gi < geminiModels.length - 1) {
+              await new Promise(function(r){ setTimeout(r, 350); });
             }
-          })
-        });
-        if (geminiRes.ok) {
-          var gData = await geminiRes.json();
-          var gRaw = (gData.candidates && gData.candidates[0] && gData.candidates[0].content && gData.candidates[0].content.parts && gData.candidates[0].content.parts[0] && gData.candidates[0].content.parts[0].text) || '';
-          var gClean = gRaw.replace(/```json|```/g, '').trim();
-          parsed = JSON.parse(gClean);
-          console.log('[goalagent] Gemini response parsed successfully');
-        } else {
-          console.warn('[goalagent] Gemini returned status:', geminiRes.status);
+          }
+        } catch (ge) {
+          console.warn('[goalagent] Gemini (' + gModel + ') error:', ge.message);
         }
-      } catch (ge) {
-        console.warn('[goalagent] Gemini error:', ge.message);
       }
     }
 
-    // 2. Anthropic Claude 3.5 Sonnet / Haiku 듀얼 폴백 (유효한 공식 모델명 사용)
+    // 2. Anthropic Claude 최신 모델 캐스케이드 폴백
     if (!parsed && anthropicApiKey) {
-      var anthropicModels = ['claude-3-5-sonnet-20241022', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307'];
+      var anthropicModels = [
+        'claude-3-7-sonnet-20250219',
+        'claude-3-5-sonnet-latest',
+        'claude-3-5-haiku-latest',
+        'claude-3-5-sonnet-20241022',
+        'claude-3-sonnet-20240229'
+      ];
       for (var mi = 0; mi < anthropicModels.length; mi++) {
         var aModel = anthropicModels[mi];
         try {

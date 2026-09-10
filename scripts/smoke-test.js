@@ -1771,6 +1771,80 @@ check('compliance: 기존 계정 목표 보존, saveProfile 비파괴성 및 최
   assert.ok(html.includes("await sb.from('checkins').delete().eq('id', id).eq('user_id', state.profile.id);"), '기록 개별 명시적 삭제 로직 구비');
 });
 
+check('localGoalAgentFallback: 25년5월17일생 아기 만 3살까지 건강 육아 요청 시 영유아 검진 일정 및 2028-05-17 마감일 생성 검증', () => {
+  const { localGoalAgentFallback, distributeSequentialDates } = require('../api/goalagent.js');
+  const userMsg = '25년5월17일생 아기를 만 3살까지 건강하게 키우고싶어. 놓치지 말아야할것들 싹다 정리 [수정보완 1회차]: 아기 건강검진 일자등 아기한테 꼭 놓치면 안될 것들과 그 날짜를 정리 25년 5월 17일생.';
+  const res = localGoalAgentFallback(userMsg, [], '2026-09-10', {});
+  res.ops = distributeSequentialDates(res.ops, '2026-09-10', userMsg);
+
+  assert.ok(res.ops && res.ops.length > 0, 'ops 생성됨');
+  const goal = res.ops[0].data;
+  assert.strictEqual(goal.title, '2025년 5월 17일생 아기 만 3세 건강 성장 관리', '정제된 목표 제목');
+  assert.strictEqual(goal.dueDate, '2028-05-17', '만 3세 생일 기준 목표 마감일 계산');
+  assert.ok(!goal.title.includes('[수정보완 1회차]'), '대화 메타태그 제거 확인');
+
+  const ms = goal.milestones;
+  assert.ok(ms.length >= 3, '최소 3개 이상의 마일스톤 생성');
+  
+  // 영유아 검진 관련 마일스톤 및 성인 운동 배제 확인
+  const allTitles = ms.map(m => m.title).join(' ');
+  assert.ok(allTitles.includes('영유아 건강검진') || allTitles.includes('검진') || allTitles.includes('예방접종'), '영유아 건강검진 마일스톤 포함');
+  assert.ok(!allTitles.includes('운동 계획') && !allTitles.includes('웨이트') && !allTitles.includes('스쿼트'), '성인 운동 루틴 배제');
+
+  // 첫 마일스톤 날짜(4차 검진 마감: 2027-05-17) 및 2028년 마일스톤 할일 날짜 검증
+  assert.strictEqual(ms[0].dueDate, '2027-05-17', '4차 검진 24개월 마감일 정확성');
+  assert.strictEqual(ms[ms.length - 1].dueDate, '2028-05-17', '최종 마일스톤 날짜 정확성');
+  
+  // 3단계 마일스톤의 세부 할일이 영유아 검진 내용으로 구성되고, dueDate 존재 시 2026년으로 뭉개지지 않는지 검증
+  const lastMsTasks = ms[ms.length - 1].tasks;
+  assert.ok(lastMsTasks && lastMsTasks.length >= 2, '세부 할 일 목록 존재');
+  const taskTexts = lastMsTasks.map(t => typeof t === 'string' ? t : (t.title || '')).join(' ');
+  assert.ok(taskTexts.includes('5차') || taskTexts.includes('검진') || taskTexts.includes('예방접종'), '영유아 검진 세부 할 일 포함');
+  lastMsTasks.forEach(t => {
+    if (t && typeof t === 'object' && t.dueDate) {
+      assert.ok(t.dueDate >= '2027-11-17' && t.dueDate <= '2028-05-17', '할일 날짜가 2026년으로 뭉개지지 않고 마일스톤 기간 내에 위치함: ' + t.dueDate);
+    }
+  });
+});
+
+check('localGoalAgentFallback: 비운동성 의료 건강 및 자격증 요청 시 도메인 분리 검증', () => {
+  const { localGoalAgentFallback } = require('../api/goalagent.js');
+  // 1. 비운동성 건강검진
+  const medRes = localGoalAgentFallback('종합건강검진 예약 및 위대장 내시경 복약 준비', [], '2026-09-10', {});
+  const medTitles = medRes.ops[0].data.milestones.map(m => m.title).join(' ');
+  assert.ok(medTitles.includes('검진') || medTitles.includes('병원') || medTitles.includes('복약'), '의료 검진 관련 마일스톤');
+  assert.ok(!medTitles.includes('운동') && !medTitles.includes('러닝') && !medTitles.includes('웨이트'), '운동 루틴 오배정 없음');
+
+  // 2. 자격증
+  const certRes = localGoalAgentFallback('정보처리기사 실기 시험 합격하기', [], '2026-09-10', {});
+  const certTitles = certRes.ops[0].data.milestones.map(m => m.title).join(' ');
+  assert.ok(certTitles.includes('필기') || certTitles.includes('실기') || certTitles.includes('기출') || certTitles.includes('이론'), '자격증 시험 관련 마일스톤');
+  assert.ok(!certTitles.includes('식단') && !certTitles.includes('운동'), '자격증에 식단/운동 오배정 없음');
+});
+
+check('compliance: 마일스톤 번호 중복(1단계. 1단계:) 방어 정규식 및 7대 AI 엔드포인트 캐스케이드 구비', () => {
+  // 1. index.html 내 마일스톤 제목 단계 번호 중복 제거 정규식
+  assert.ok(html.includes("msTitle.replace(/^(?:(?:\\d+|[일이삼사오육칠팔구십]+)단계[:\\.\\s]*|단계\\s*\\d+[:\\.\\s]*)/i, '')"), 'index.html 단계 접두사 중복 방어 정규식');
+
+  // 2. 7개 AI API 엔드포인트 모두에 다중 플래시 캐스케이드 및 최신 Claude 모델 적용 확인
+  const apiFiles = [
+    'api/goalagent.js',
+    'api/goaltemplate.js',
+    'api/feedback.js',
+    'api/goalstatus.js',
+    'api/nextaction.js',
+    'api/promptgen.js',
+    'api/todaymission.js'
+  ];
+
+  for (const file of apiFiles) {
+    const content = fs.readFileSync(file, 'utf8');
+    assert.ok(content.includes('gemini-3.6-flash'), file + ' 에 gemini-3.6-flash 포함');
+    assert.ok(content.includes('gemini-3.5-flash'), file + ' 에 gemini-3.5-flash 포함');
+    assert.ok(content.includes('claude-3-7-sonnet-20250219'), file + ' 에 최신 Claude 모델 포함');
+  }
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);

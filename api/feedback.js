@@ -73,69 +73,84 @@ module.exports = async function handler(req, res) {
     var parsed = null;
     var providerUsed = '';
 
-    // 1. Gemini 사용 (우선)
+    // 1. Gemini 다중 플래시 모델 캐스케이드 (우선)
     if (geminiApiKey) {
-      try {
-        var geminiRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + encodeURIComponent(geminiApiKey), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-              temperature: 0.2,
-              responseMimeType: 'application/json'
-            }
-          })
-        });
+      var geminiModels = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-flash-latest'];
+      for (var gi = 0; gi < geminiModels.length; gi++) {
+        var gModel = geminiModels[gi];
+        try {
+          var geminiRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + gModel + ':generateContent?key=' + encodeURIComponent(geminiApiKey), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: {
+                temperature: 0.2,
+                responseMimeType: 'application/json'
+              }
+            })
+          });
 
-        if (geminiRes.ok) {
-          var geminiData = await geminiRes.json();
-          var rawText = ((geminiData.candidates || [])[0] || {}).content && geminiData.candidates[0].content.parts
-            ? geminiData.candidates[0].content.parts.map(function (p) { return p.text || ''; }).join('\n')
-            : '';
-          if (rawText) {
-            var cleanText = rawText.replace(/```json|```/g, '').trim();
-            parsed = JSON.parse(cleanText);
-            providerUsed = 'gemini';
+          if (geminiRes.ok) {
+            var geminiData = await geminiRes.json();
+            var rawText = ((geminiData.candidates || [])[0] || {}).content && geminiData.candidates[0].content.parts
+              ? geminiData.candidates[0].content.parts.map(function (p) { return p.text || ''; }).join('\n')
+              : '';
+            if (rawText) {
+              var cleanText = rawText.replace(/```json|```/g, '').trim();
+              parsed = JSON.parse(cleanText);
+              providerUsed = 'gemini';
+              break;
+            }
+          } else {
+            var errBody = await geminiRes.text().catch(function () { return ''; });
+            console.warn('Gemini (' + gModel + ') returned error:', geminiRes.status, errBody.slice(0, 150));
+            if (geminiRes.status === 429 && gi < geminiModels.length - 1) {
+              await new Promise(function (r) { setTimeout(r, 300); });
+            }
           }
-        } else {
-          var errBody = await geminiRes.text().catch(function () { return ''; });
-          console.warn('Gemini API returned error:', geminiRes.status, errBody.slice(0, 200));
+        } catch (geminiErr) {
+          console.warn('Gemini (' + gModel + ') failed:', geminiErr.message);
         }
-      } catch (geminiErr) {
-        console.warn('Gemini call failed, trying Anthropic fallback if available:', geminiErr.message);
       }
     }
 
     // 2. Anthropic 사용 (Gemini 미설정 또는 실패 시 폴백)
     if (!parsed && anthropicApiKey) {
-      var headers = {
-        'Content-Type': 'application/json',
-        'x-api-key': anthropicApiKey,
-        'anthropic-version': '2023-06-01'
-      };
-      if (process.env.ANTHROPIC_WORKSPACE_ID) {
-        headers['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
-      }
-      var anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({
-          model: 'claude-3-5-sonnet-20241022',
-          max_tokens: 800,
-          messages: [{ role: 'user', content: prompt }]
-        })
-      });
+      var anthropicModels = ['claude-3-7-sonnet-20250219', 'claude-3-5-sonnet-latest', 'claude-3-5-haiku-latest', 'claude-3-5-sonnet-20241022'];
+      for (var mi = 0; mi < anthropicModels.length; mi++) {
+        var aModel = anthropicModels[mi];
+        try {
+          var headers = {
+            'Content-Type': 'application/json',
+            'x-api-key': anthropicApiKey,
+            'anthropic-version': '2023-06-01'
+          };
+          if (process.env.ANTHROPIC_WORKSPACE_ID) {
+            headers['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
+          }
+          var anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+              model: aModel,
+              max_tokens: 800,
+              messages: [{ role: 'user', content: prompt }]
+            })
+          });
 
-      if (anthropicRes.ok) {
-        var anthropicData = await anthropicRes.json();
-        var rawAnthropic = (anthropicData.content || []).map(function (b) { return b.type === 'text' ? b.text : ''; }).join('\n');
-        var cleanAnthropic = rawAnthropic.replace(/```json|```/g, '').trim();
-        parsed = JSON.parse(cleanAnthropic);
-        providerUsed = 'claude';
-      } else {
-        var anthropicErr = await anthropicRes.text().catch(function () { return ''; });
-        console.warn('Anthropic API error:', anthropicRes.status, anthropicErr.slice(0, 150));
+          if (anthropicRes.ok) {
+            var anthropicData = await anthropicRes.json();
+            var rawAnthropic = (anthropicData.content || []).map(function (b) { return b.type === 'text' ? b.text : ''; }).join('\n');
+            var cleanAnthropic = rawAnthropic.replace(/```json|```/g, '').trim();
+            parsed = JSON.parse(cleanAnthropic);
+            providerUsed = 'claude';
+            break;
+          } else {
+            var anthropicErr = await anthropicRes.text().catch(function () { return ''; });
+            console.warn('Anthropic (' + aModel + ') error:', anthropicRes.status, anthropicErr.slice(0, 150));
+          }
+        } catch (ae) {}
       }
     }
 
