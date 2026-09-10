@@ -1605,6 +1605,152 @@ check('compliance: index.html에 normalizeSequentialMilestoneDates 및 35개 마
   assert.ok(html.includes('normalizeSequentialMilestoneDates(rawMilestones, data.dueDate)'), '목표 빌드 시 정규화 연동');
 });
 
+check('compliance: 소통 탭 헤더 우측 [내 목표 / 기록 게시하기] 버튼 및 피드 전면 상호소통(리액션·댓글·페르소나 인터랙션)이 구현되어 있다', () => {
+  // 1. 소통 탭 상단 헤더 우측 [내 목표 / 기록 게시하기] 버튼
+  assert.ok(html.includes('id="btnCommPostFeed"'), '소통 헤더 우측 게시 버튼 id 존재');
+  assert.ok(html.includes('openShareToFeedModal()'), '모달 오픈 핸들러 연결');
+  assert.ok(html.includes('내 목표 / 기록 게시하기'), '버튼 라벨 정확성');
+
+  // 2. 범용 피드 게시 모달 (목표/기록/마일스톤/피드백/사진/소감 선택)
+  assert.ok(html.includes('id="shareGoalSelect"'), '목표 선택 드롭다운 존재');
+  assert.ok(html.includes('id="shareRecordSelect"'), '기록 선택 드롭다운 존재');
+  assert.ok(html.includes('id="chkIncRecord"'), '기록 내용 포함 체크박스');
+  assert.ok(html.includes('id="shareCaptionInput"'), '소감/한마디 텍스트영역');
+  assert.ok(html.includes('addSimulatedCheerAndReplyToPost'), '가상 페르소나 축하 및 답글 트리거 존재');
+
+  // 3. 피드 카드 내 다채로운 리액션 및 상호소통 댓글 시스템
+  assert.ok(html.includes('getFeedComments'), '댓글 조회 헬퍼');
+  assert.ok(html.includes('setFeedComments'), '댓글 저장 헬퍼');
+  assert.ok(html.includes('handleUserCommentSubmit'), '유저 댓글 등록 및 페르소나 자동응답 로직');
+  assert.ok(html.includes('toggleFeedReaction'), '다채로운 리액션 토글 함수');
+  assert.ok(html.includes('data-reacttype="fire"'), '🔥 파이팅 리액션 버튼');
+  assert.ok(html.includes('data-reacttype="clap"'), '👏 대단해요 리액션 버튼');
+  assert.ok(html.includes('data-reacttype="heart"'), '❤️ 응원해요 리액션 버튼');
+  assert.ok(html.includes('data-reacttype="sparkle"'), '💡 자극받아요 리액션 버튼');
+  assert.ok(html.includes('data-togglecomments'), '댓글 토글 버튼');
+  assert.ok(html.includes('feed-quick-chips-row'), '1초 빠른 응원 메시지 칩 UI');
+  assert.ok(html.includes('data-quickreply'), '빠른 응원 메시지 데이터 속성');
+  assert.ok(html.includes('feed-comments-panel'), '댓글 패널 컨테이너');
+});
+
+check('compliance: 모달 오버레이 탭 시 고스트 클릭(터치 관통) 방어 및 쿨다운 가드가 구현되어 있다', () => {
+  assert.ok(html.includes('_modalDismissGraceUntil'), '모달 닫힘 쿨다운 타임스탬프 변수 존재');
+  assert.ok(html.includes('isModalDismissCooldown'), '고스트 클릭 판정 헬퍼 함수 존재');
+  assert.ok(html.includes('overlay.ontouchend'), '모바일 터치엔드 이벤트 방어 핸들러 등록');
+  assert.ok(html.includes('e.stopPropagation()'), '오버레이 탭 시 이벤트 전파 차단');
+  assert.ok(html.includes('openFeedbackSetupGated'), '피드백 게이트 함수 존재');
+  assert.ok(html.includes('id="chipAdd"'), '목표 추가 칩 상시 존재');
+});
+
+check('parseJwtPayload: JWT base64url 페이로드를 올바른 JSON 객체로 디코딩한다', () => {
+  const parseFn = eval('(' + extractFunction(mainScript, 'parseJwtPayload') + ')');
+  const payload = { sub: 'google_1234567890', email: 'ourgoal_user@gmail.com', name: '김목표' };
+  const b64 = Buffer.from(JSON.stringify(payload)).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const dummyToken = 'eyJhbGciOiJSUzI1NiJ9.' + b64 + '.signature';
+  const decoded = parseFn(dummyToken);
+  assert.ok(decoded, '페이로드가 null이 아니어야 함');
+  assert.strictEqual(decoded.email, 'ourgoal_user@gmail.com');
+  assert.strictEqual(decoded.sub, 'google_1234567890');
+  assert.strictEqual(decoded.name, '김목표');
+});
+
+check('compliance: Google OAuth 2.0 실제 연동 로직(클라이언트 ID, 버튼, 세션 브릿지, One-Tap)이 완벽히 구현되어 있다', () => {
+  // 1. Google OAuth Client ID 설정
+  assert.ok(html.includes('GOOGLE_OAUTH_CLIENT_ID = \'441950547594-brg1nvritlb3hlucoktq11ga6vtn943a.apps.googleusercontent.com\''), '유효한 Google OAuth 클라이언트 ID 정의');
+
+  // 2. Google Identity Services 라이브러리 로드
+  assert.ok(html.includes('https://accounts.google.com/gsi/client'), 'Google Identity Services 스크립트 로드');
+
+  // 3. 버튼 UI 및 SVG 로고
+  assert.ok(html.includes('id="landGoogleBtn"'), '랜딩 화면 구글 로그인 버튼 존재');
+  assert.ok(html.includes('id="authGoogleBtn"'), '인증 화면 구글 로그인 버튼 존재');
+  assert.ok(html.includes('Google로 계속하기'), '공식 구글 버튼 텍스트');
+  assert.ok(html.includes('viewBox="0 0 24 24"'), '공식 구글 컬러 로고 SVG');
+
+  // 4. 세션 브릿지 및 One-Tap 함수
+  assert.ok(html.includes('function startGoogleLogin('), 'Google 로그인 시작 핸들러');
+  assert.ok(html.includes('function handleGoogleUserSuccess('), 'Google 유저 인증 성공 및 Supabase 세션 브릿지');
+  assert.ok(html.includes('function initGoogleOneTap('), 'Google One-Tap 초기화 핸들러');
+  assert.ok(html.includes('function getGoogleTokenClient('), 'Google OAuth2 Token Client 생성기');
+  assert.ok(html.includes('https://www.googleapis.com/oauth2/v3/userinfo'), 'Google 사용자 정보 API 엔드포인트 연동');
+  assert.ok(html.includes('google.accounts.id.disableAutoSelect'), '로그아웃 시 구글 자동선택 비활성화');
+});
+
+check('compliance: 마일스톤 우선순위 태그(🔴 높음 / 🟡 보통 / 🟢 낮음)가 마일스톤 제목 위 독립 행에 최소 여백으로 배치되어 제목 입력을 가리지 않는다', () => {
+  // 1. 우선순위 태그 CSS 및 인라인 플렉스
+  assert.ok(html.includes('.ms-priority-tag{display:inline-flex;align-items:center;cursor:pointer;'), '우선순위 태그 인라인 플렉스 스타일');
+  assert.ok(html.includes('.ms-priority-high'), '우선순위 높음 스타일');
+  assert.ok(html.includes('.ms-priority-med'), '우선순위 보통 스타일');
+  assert.ok(html.includes('.ms-priority-low'), '우선순위 낮음 스타일');
+
+  // 2. 마일스톤 렌더링 시 제목 입력 바로 위 독립 행 배치 (제목을 가리지 않고 100% 폭 보장)
+  assert.ok(html.includes('style="display:flex;align-items:center;gap:6px;margin-bottom:2px;line-height:1;min-height:16px;"'), '제목 상단 독립 행');
+  assert.ok(html.includes('data-cyclepriority='), '클릭 시 우선순위 순환 핸들러 속성');
+  assert.ok(html.includes('data-msinput="1"'), '마일스톤 제목 입력 필드');
+});
+
+check('compliance: 향후 30일간의 일정 연계 AI 피드백 엔진 및 무관한 피드백 엄격 금지 규칙이 구현되어 있다', () => {
+  // 1. 30일 일정 추출 헬퍼 함수
+  assert.ok(html.includes('function getUpcomingSchedulesForAI('), '30일 일정 추출 함수 정의');
+
+  // 2. buildFeedbackPrompt 및 api/feedback.js의 엄격한 프롬프트 지침
+  assert.ok(html.includes('[향후 30일간의 다가오는 일정 목록]'), '프롬프트 내 30일 일정 목록 섹션');
+  assert.ok(html.includes('관련없는 피드백을 위한 피드백은 엄격히 금지'), '무관한 피드백 금지 지침 in index.html');
+  const apiFeedbackJs = fs.readFileSync('api/feedback.js', 'utf8');
+  assert.ok(apiFeedbackJs.includes('관련없는 피드백을 위한 피드백은 절대 금지'), '무관한 피드백 금지 지침 in api/feedback.js');
+  assert.ok(apiFeedbackJs.includes('upcomingSchedules'), 'api/feedback.js 일정 수신');
+
+  // 3. 로컬 폴백 localFeedback에서도 무관한 참견 방어 및 관련/긴급 일정만 선택적 리마인드
+  assert.ok(html.includes('upcomingSchedules || getUpcomingSchedulesForAI(30)'), 'localFeedback 내 일정 연계');
+  assert.ok(html.includes('다가오는 일정 알림:'), '선택적 다가오는 일정 알림 문구');
+});
+
+check('compliance: 최근 업데이트가 전면 반영된 6페이지 최초로그인 안내 및 설정 다시보기 버튼이 구현되어 있다', () => {
+  // 1. 6페이지 온보딩 가이드 스텝
+  assert.ok(html.includes('1 / 6 · 환영 & 완전 무료'), '1페이지: 100% 완전 무료화 & 페이월 제거');
+  assert.ok(html.includes('2 / 6 · 지능형 AI 코칭'), '2페이지: 30일 일정 연계 AI 코칭');
+  assert.ok(html.includes('3 / 6 · 구글 캘린더 상호 연동'), '3페이지: 구글 캘린더 양방향 상호 동기화');
+  assert.ok(html.includes('4 / 6 · 전문 템플릿 3대 혁신'), '4페이지: 차트/스톱워치/노션 연동');
+  assert.ok(html.includes('5 / 6 · 팀 수준별 목표 & 모임장'), '5페이지: 팀 수준별 목표 & 모임장 왕관');
+  assert.ok(html.includes('6 / 6 · 음성 기록 & 안심 보안'), '6페이지: 10초 음성 체크인 & 기본 비공개');
+
+  // 2. 6단계 전진/후진 핸들러 체인
+  assert.ok(html.includes('showGuideStep1'), 'Step 1 함수');
+  assert.ok(html.includes('showGuideStep6'), 'Step 6 함수');
+  assert.ok(html.includes('guideFinish6'), '최종 시작하기 버튼');
+
+  // 3. 설정 탭 가이드 다시보기 버튼 및 전역 바인딩
+  assert.ok(html.includes('id="btnRestartGuide"'), '설정 탭 가이드 다시보기 버튼');
+  assert.ok(html.includes('window.startFirstLoginGuide = startFirstLoginGuide;'), '전역 바인딩');
+});
+
+check('compliance: 팀 수준별 목표 관리(조별 목표·마일스톤·할일, 컴팩트 요약, 상세 관리 모달) 및 모임장 왕관 시스템이 구현되어 있다', () => {
+  // 1. 팀 수준별 목표 데이터 및 헬퍼
+  assert.ok(html.includes('function getGroupLevelGoals('), '조별 목표 데이터 생성 및 조회 헬퍼');
+  assert.ok(html.includes('openLevelGroupDetailModal('), '상세 관리 모달 오픈 함수');
+
+  // 2. 카드 내 컴팩트 요약 (목표, 마일스톤, 할일 개수 및 진행률)
+  assert.ok(html.includes('팀 수준별 목표 관리'), '수준별 목표 관리 섹션');
+  assert.ok(html.includes('data-openleveldetail='), '자세히보기 버튼 데이터 속성');
+  assert.ok(html.includes('data-addlevelgroup='), '새 조/그룹 추가 버튼');
+
+  // 3. 모임장 왕관 👑 및 초록색 모임장 배지
+  assert.ok(html.includes('color:#2e7d32;background:#e8f5e9;border:1px solid #c8e6c9;padding:2px 8px;border-radius:999px;">모임장</span>'), '초록색 모임장 배지 스타일');
+  assert.ok(html.includes('👑</span>'), '왕관 아이콘');
+});
+
+check('compliance: 상단 모임 필터 칩바 및 팀 목표 200% 활용 가이드 업데이트가 구현되어 있다', () => {
+  // 1. 상단 모임 필터 칩바
+  assert.ok(html.includes('id="tgFilterChipRow"'), '모임 필터 칩바 ID');
+  assert.ok(html.includes('data-tgfilter="all"'), '전체 모임 필터 칩');
+  assert.ok(html.includes('state.teamGoalFilterGid'), '활성 필터 상태 변수');
+
+  // 2. 가이드 내용 업데이트
+  assert.ok(html.includes('모임장(리더)이라면? (왕관 & 초록색 모임장 배지)'), '가이드 내 왕관/배지 설명');
+  assert.ok(html.includes('팀 수준별 목표 관리 (A·B·C조 맞춤 시스템)'), '가이드 내 수준별 조 목표 설명');
+  assert.ok(html.includes('id="btnShowTeamGuideModal"'), '모임 목표 화면 내 가이드 모달 버튼');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);

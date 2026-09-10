@@ -10,6 +10,7 @@ module.exports = async function handler(req, res) {
   var text = body.text;
   var theme = body.theme;
   var customPrompt = typeof body.customPrompt === 'string' ? body.customPrompt.trim().slice(0, 2000) : '';
+  var upcomingSchedules = Array.isArray(body.upcomingSchedules) ? body.upcomingSchedules : [];
   if (!goalTitle || !text) {
     res.status(400).json({ error: 'goalTitle and text are required' });
     return;
@@ -39,17 +40,30 @@ module.exports = async function handler(req, res) {
     ? '당신은 위 페르소나 지침에 따라 행동하는 목표 달성 피드백 봇입니다.'
     : '당신은 목표 달성 코치입니다.';
 
+  var schedSection = '';
+  if (upcomingSchedules.length > 0) {
+    var schedListStr = upcomingSchedules.map(function (s) {
+      return '- [' + (s.dday || '') + ' / ' + (s.date || '') + '] ' + (s.title || '') + ' (관련: ' + (s.category || '일반') + ')';
+    }).join('\n');
+    schedSection = '\n\n[향후 30일간의 다가오는 일정 목록]\n' + schedListStr + '\n\n' +
+      '[일정 연계 피드백 지침 - 필수 준수]\n' +
+      '1. 사용자의 체크인/기록에 대한 피드백을 기본으로 하되, 위 [향후 30일간의 다가오는 일정 목록]을 함께 검토하세요.\n' +
+      '2. 기록과 맥락상 밀접하게 연관되어 있거나(예: 목표 훈련/시험 준비 등), 사용자가 놓치기 쉽고 미리 계획·준비해야 할 임박 일정(D-3~D-7 이내 등)이 있다면 comment 끝에 1~2문장의 다가오는 일정 리마인드와 계획 조언을 자연스럽게 덧붙이세요.\n' +
+      '3. ★ 중요(엄격 준수): 단, 관련없는 피드백을 위한 피드백은 절대 금지합니다. 기록과 무관하고 급하지도 않은 일정을 억지로 언급하거나 불필요한 참견을 하지 마세요. 연관된 일정이 없으면 기록에 대한 본연의 코칭에만 집중하세요.';
+  }
+
   var prompt = themeBlock + personaBlock + roleLine + ' 사용자의 목표 구조(마일스톤과 하위 할 일)와 방금 남긴 기록을 보고, ' +
     '그 기록이 목표 달성에 도움이 되는지 판단하고, 이 기록이 실제로 어떤 마일스톤이나 할 일의 진행 상태·결과를 바꿀 만한 확실한 근거가 되는지도 함께 판단하세요.\n\n' +
     '[사용자의 목표]\n최종 목표: ' + goalTitle + '\n\n' +
     '[마일스톤/할 일 목록 - JSON, id는 그대로 참조용. result는 {target,result,unit,note} 형태의 결과 기록칸]\n' + JSON.stringify(milestones) + '\n\n' +
-    '[방금 남긴 기록]\n"' + text + '"\n\n' +
+    '[방금 남긴 기록]\n"' + text + '"' +
+    schedSection + '\n\n' +
     '아래 JSON 형식으로만 답하세요. 다른 텍스트나 코드블록, 마크다운 없이 순수 JSON만 출력하세요.\n' +
     '근거가 확실하지 않으면 suggestions는 빈 배열로 두세요. 애매하면 절대 추측해서 제안하지 마세요.\n' +
     '특히 기록에 특정 마일스톤·할 일과 관련된 구체적인 계획·방법·루틴(예: "주 3회 루틴 만들기" 항목에 대해 언제·어떻게 운동할지)이 담겨 있다면, ' +
     'field를 "note"로 하고 value에 사용자가 말한 내용을 1~2문장으로 자연스럽게 정리해 그 항목의 결과 메모로 제안하세요(사용자의 표현을 존중하되 군더더기 없이 요약).\n' +
     '{"verdict":"도움됨 또는 애매함 또는 도움안됨 중 하나",' +
-    '"comment":"1문장의 짧고 솔직한 피드백",' +
+    '"comment":"1~2문장의 짧고 솔직한 피드백 (필요 시 자연스러운 다가오는 일정 리마인드 포함, 무관한 강제 피드백 금지)",' +
     '"suggestions":[{"type":"milestone 또는 task","id":"위 목록에 있는 id 값 그대로",' +
     '"field":"status 또는 done 또는 result 또는 note 중 하나",' +
     '"value":"status면 todo/doing/done 중 하나, done이면 true/false, result면 result.target이 이미 있는 항목에 한해 새 숫자값, note면 기록 내용을 정리한 1~2문장 요약",' +

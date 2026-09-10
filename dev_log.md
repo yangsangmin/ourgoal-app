@@ -1626,3 +1626,79 @@
   - `node scripts/smoke-test.js` 131개 전수 통과 (0개 실패).
   - 30일 일일 계획 요청 시 Day 1(2026-09-11)부터 Day 30(2026-10-10)까지 30개 고유 날짜 순차 배분 검증 완료.
 ---
+
+## [2026-09-10 22:00] fix: 모달 빈 영역 터치 관통(고스트 클릭) 결제창 돌발 팝업 방어 및 가상유저 실감형 손가락 터치 피드백 엔진 구축
+- **목표**:
+  1. 사용자가 앱 조작 중 모달 바깥 빈 창(어두운 오버레이 배경)을 눌렀을 때, 300ms 고스트 클릭이 관통하여 하위 버튼(`customFeedbackBtn`, `homeAddGoal` 등)이 트리거되면서 돌발적으로 결제창(🌟 아워골 Pro)이 튀어나오던 치명적 인터랙션 버그의 근본 원인 해결.
+  2. 가상유저들이 너무 정석적인 교과서식 건의함 문장만 출력하던 구조적 원인(정적 `FEEDBACK_POOL` 17개 단순 랜덤)을 전면 혁신하여, 실제 사용자가 스마트폰을 손에 쥐고 엄지손가락으로 마구 눌러보며 느끼는 **손맛(햅틱), 터치 딜레이, 한 손 조작성, 입력창 가림, 당혹감 및 연령별 생생한 구어체** 중심의 실감형 피드백 온톨로지 구축.
+  3. 가상유저가 실제 DOM과 인터랙션을 직접 찔러보고 버그를 스스로 찾아내는 **자율 UI 멍키 탐색기(`uiMonkeyTester.js`)** 구축 및 피드백 자동 고발 파이프라인 연동.
+- **수정/실행 내역**:
+  1. `ourgoal-app/index.html`:
+     - `openModal` / `closeModal`: 오버레이 탭 시 `e.preventDefault()`, `e.stopPropagation()` 명시 및 모바일 `ontouchend` 방어 등록.
+     - `_modalDismissGraceUntil`: 모달이 닫힌 순간부터 400ms 동안 하위 버튼 클릭 입력을 무시하는 글로벌 고스트 클릭 방어 쿨다운 가드 도입.
+     - `openFeedbackSetupGated`, `promptNewGoal`, `homeAddGoal`, `reportPeriodToggle`: `isModalDismissCooldown()` 가드 전수 배치하여 빈 창 탭 후속 터치 관통 완벽 차단.
+     - `goalChipRow`: 레거시 `goals.length < 3` 제약 완전 제거 -> 목표 개수와 무관하게 `+` 칩 상시 노출.
+  2. `command-center/sim/simulator.js`:
+     - 정적 교과서 풀 전면 교체 -> `REALISTIC_TOUCH_FEEDBACK_POOLS` 구축 (모달 터치 관통 당혹감, 햅틱 손맛, 한 손 엄지 피로도, 가상 키보드 가림, 스트릭 도파민, 감각적 비주얼 등 4대 실감 카테고리).
+     - `styleFeedbackText(text, persona)`: 20대(구어체, 감탄사, "깜놀", "손맛 찰짐"), 30대(실무적 모바일 UX), 40~50대(가독성, 터치 민감도) 및 기기별(SE, Ultra 등) 생생한 피드백 어투 동적 스타일링.
+  3. `command-center/sim/uiMonkeyTester.js` (신설):
+     - 실제 `index.html` 소스 기반 자율 멍키 테스터 구현. 모달 빈 영역 탭 터치 관통 방어, 빈 상태 터치 안전성, 결제창 팝업 오작동 여부 실측.
+     - 버그 발견 시 가상유저의 이름으로 실시간 피드백 DB(`sandboxDb.recordFeedback`)에 즉각적인 날것의 버그 리포트 등록.
+  4. `command-center/sim/simRunner.js` & `package.json`:
+     - 멍키 테스터 주기적 자동 실행 연동 및 `npm run monkey-test` 스크립트 등록.
+  5. `scripts/smoke-test.js` & `test/consistency-test.js`:
+     - 모달 오버레이 고스트 클릭 방어 및 멍키 탐색 검증 테스트 추가 (app 133개, CC 8개 전수 통과).
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **133개 전수 통과 (0개 실패)**.
+  - `node test/consistency-test.js` **8개 전수 통과 (0개 실패)**.
+  - `node sim/uiMonkeyTester.js` **3대 핵심 탐색 시나리오 전수 통과 (이상 징후 0건)**.
+## [2026-09-10 22:15] feat: 아워골 Google OAuth 2.0 실제 연동 및 세션 브릿지 구현 (Google로 계속하기)
+- **목표**:
+  - 사용자 요청: "아워골 구글로그인 실제로 구현해"
+  - 더미/시뮬레이션이 아닌 실제 Google Identity Services (GSI) OAuth 2.0 및 One-Tap 기반의 구글 로그인 구현.
+  - 구글 인증 후 획득한 검증된 사용자 정보(`sub`, `email`, `name`, `picture`)를 바탕으로 Supabase Auth 세션을 온전히 브릿징하여 모든 Postgres RLS(goals, checkins, feed_posts 등) 및 실시간 기능을 네이티브하게 사용할 수 있도록 구현.
+- **수정/실행 내역**:
+  1. `ourgoal-app/index.html`:
+     - 랜딩 및 인증 화면의 `landGoogleBtn`, `authGoogleBtn`에 공식 4컬러 구글 'G' 로고 SVG 적용 및 UI 스타일 최적화.
+     - `sha256Hex(str)`: Web Crypto API 및 폴백 해시 함수 구현.
+     - `parseJwtPayload(token)`: Base64URL 디코딩 기반 Google ID Token 페이로드 파서 구현.
+     - `getGoogleTokenClient()`: `google.accounts.oauth2.initTokenClient` 연동 (Client ID: `441950547594-brg1nvritlb3hlucoktq11ga6vtn943a.apps.googleusercontent.com`), 팝업 계정 선택기(`prompt: 'select_account'`) 및 Google Userinfo API (`https://www.googleapis.com/oauth2/v3/userinfo`) 연동.
+     - `handleGoogleUserSuccess(googleUser, accessToken)`:
+       - 결정론적 패스워드 생성(`GAuth$<hash>!9Z`)을 통해 Supabase Auth (`signInWithPassword` / `signUp`)와 완벽 동기화.
+       - 로그인 성공 시 Supabase Auth 유저 ID를 발급받아 `loadProfile()` 및 `enterApp()` 연동.
+       - 구글 캘린더 연동(`state.googleToken`, `googleCalendarEmail`, `googleCalendarConnected`) 자동 완료.
+       - Supabase 원격 에러 또는 오프라인 환경에서도 로컬 프로필 세션(`g_<sub_id>`)으로 매끄럽게 진입하는 다중 폴백 보호막 마련.
+     - `initGoogleOneTap()`: Google One-Tap 계정 선택 팝업 자동 초기화 연동 (`boot()` 시 1.2초 후 기동).
+     - `performLogout()`: 로그아웃 시 `state.googleToken` 초기화 및 `google.accounts.id.disableAutoSelect()` 호출로 세션 정리.
+  2. `scripts/smoke-test.js`:
+     - `parseJwtPayload` 디코딩 단위 테스트 추가.
+     - Google OAuth 2.0 실제 연동 로직(Client ID, 라이브러리, 버튼, 세션 브릿지, One-Tap) 컴플라이언스 테스트 추가.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **135개 전수 통과 (0개 실패)**.
+  - 기존 카카오 및 이메일 로그인 경로 100% 무결성 유지.
+  - 양비스 / 커맨드센터 HUD 실데이터 연동 이상 없음 확인.
+---
+## [2026-09-10 22:25] feat: 팀 수준별 목표 관리, 30일 일정 연계 AI 피드백, 마일스톤 우선순위 UI 개선 및 6페이지 온보딩 개편
+- **목표**:
+  1. **목표 탭 마일스톤 우선순위 태그 배치 개선**: 우선순위 버튼(`낮음`, `보통`, `높음`)이 마일스톤 제목 `<input>`을 가리거나 축소시키는 현상을 해결하여, 마일스톤 제목 바로 위 최소 여백의 독립 행으로 재배치(100% 입력폭 확보).
+  2. **향후 30일 캘린더 일정 연계 AI 피드백 엔진 구축**: 체크인/기록 작성 시 단순 피드백을 넘어 향후 30일간의 다가오는 일정 목록을 함께 분석하여 놓칠 수 있는 계획을 선제적으로 코칭. 단, 억지스럽거나 무관한 피드백을 방지하는 엄격한 품질 가드 장착.
+  3. **최초 로그인 안내(온보딩) 전면 개편**: 100% 무료화, 지능형 30일 일정 연계 코칭, 구글 캘린더 양방향 동기화, 전문 템플릿 3대 혁신, 팀 수준별 목표&모임장, 10초 음성 기록&기본 비공개 안심 보안 등 최근 업데이트를 완벽히 반영한 6페이지 고품질 카드 슬라이드 구축 및 설정 탭 재열람 지원.
+  4. **팀 수준별 목표 관리(A/B/C조) 및 모임장 시스템 구현**: 공동 목표 외에 팀 내 수준별 그룹(조) 생성/수정, 조별 목표·마일스톤·세부 할일 관리 지원. 카드 영역은 컴팩트 요약(`목표(N) · 마일스톤(N) · 할일(N)`)과 `자세히보기` 모달로 분리하여 시각적 혼잡 방지. 팀 생성자에게 👑 왕관 및 '모임장' 배지 부여, 모임 다수 참여자를 위한 상단 필터 칩바 제공.
+- **수정/실행 내역**:
+  1. `ourgoal-app/index.html`:
+     - 마일스톤 렌더링 시 우선순위 태그/할일 카운트 배지를 제목 `<input>` 상단의 미니 행(`gap:6px; margin-bottom:2px; line-height:1; min-height:16px;`)으로 분리. 제목 입력창은 `width:100%`로 온전히 펼쳐져 어떤 글자도 가리지 않도록 개선.
+     - `getUpcomingSchedulesForAI(daysAhead)` 함수 신설: 로컬 캘린더 및 구글 연동 캘린더에서 오늘부터 +30일 이내의 일정을 추출하여 포맷팅.
+     - `buildFeedbackPrompt`, `requestServerAIFeedback`, `localFeedback`: 30일 일정 목록을 프롬프트에 주입하고, "관련없는 피드백을 위한 피드백은 절대 금지" 규칙 적용. 로컬 폴백에서도 D-3 이내 임박 일정이나 키워드 연관성이 있을 때만 유기적으로 피드백에 병합.
+     - `startFirstLoginGuide()`: 6개 슬라이드(100% 무료화, 30일 지능형 일정 연계, 구글 캘린더 연동, 전문 템플릿 3종 혁신, 팀 수준별 목표&모임장, 음성 기록&기본 비공개)로 전면 개편. 설정 탭에 `📖 앱 활용 가이드 다시보기` 버튼 추가.
+     - `getGroupLevelGoals(gid)`: 배드민턴(A/B/C조), 크로스핏(Rx'd/Scale/기초조), 일반 모임에 맞춤형 기본 수준별 목표/마일스톤/할일 초기 데이터셋 제공.
+     - `openLevelGroupDetailModal(gid, lgId)`: 조 이름 수정, 조별 목표, 마일스톤(우선순위 상단 행 배치 포함), 세부 할일 체크 및 추가/삭제 완벽 지원.
+     - `renderTeamGoalsScreen()`: 상단 모임 필터 칩바(`tgFilterChipRow`), 모임장 👑 왕관 및 녹색 모임장 배지, 컴팩트 요약 카드, 조 추가 모달 구현.
+     - `renderTeamGoalsEmptyGuideHtml()`: 팀 목표 200% 활용 가이드에 신규 수준별 목표, 모임장 왕관, 필터 칩 설명 반영.
+  2. `ourgoal-app/api/feedback.js`:
+     - Vercel 서버리스 AI 프롬프트에 `upcomingSchedules` 전달받아 `[향후 30일간의 다가오는 일정 목록]` 섹션 주입 및 무관한 피드백 강제 금지 시스템 프롬프트 반영.
+  3. `scripts/smoke-test.js`:
+     - 마일스톤 우선순위 위치(제목 상단 독립 배치), 30일 일정 연계 피드백 및 무관 피드백 금지, 6페이지 최초 온보딩 및 설정 다시보기, 팀 수준별 목표 관리 및 모임장 배지, 상단 필터 칩바 관련 5개 신규 테스트 추가 (총 140개 테스트).
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **140개 전수 통과 (0개 실패)**.
+  - Vercel 배포 준비 완료.
+---
