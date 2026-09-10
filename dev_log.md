@@ -1104,3 +1104,20 @@
   - `node scripts/smoke-test.js` **85개 전수 통과 (0개 실패)**
   - `node -e "require('./api/feedback.js')"` 핸들러 모듈 로드 정상 검증
 ---
+
+## [2026-09-10 11:00] 72시간 릴리즈 Phase 2: 안드로이드 물리 뒤로가기 모달 연동 및 Safe Area 최적화
+- **목표**: 
+  1. 모바일 환경에서 안드로이드 물리 뒤로가기(Hardware Back) 또는 브라우저 뒤로가기 제스처 시 앱이 이탈하지 않고 활성 모달만 안전하게 닫히도록 개선
+  2. 최신 노치·펀치홀 디바이스 상단 가림 방지를 위한 Safe Area 인셋(`env(safe-area-inset-top)`) 보정
+  3. 기존 85개 스모크 테스트 및 단일 HTML 아키텍처 100% 무결성 유지
+- **수정/실행 내역**:
+  - `index.html`:
+    - CSS: `.topbar` 패딩에 `calc(14px + env(safe-area-inset-top, 0px))` 적용하여 스마트폰 상단바/카메라 홀과의 겹침 해소
+    - JS `openModal`: 모달 시트 오픈 시 `history.pushState({ ourgoal_modal: true }, '')`를 호출하여 뒤로가기 이벤트 가로채기 상태 등록
+    - JS `closeModal`: 취소/확인 버튼이나 배경 클릭으로 닫힐 때는 `history.back()`으로 히스토리 스택 정돈, 뒤로가기(popstate)로 닫힐 때는 불필요한 추가 back 방지
+    - JS `window.addEventListener('popstate')`: 모달이 열려 있는 상태에서 뒤로가기 입력 시 모달만 즉시 닫고 앱 화면 유지
+  - `dev_log.md`: 개발 로그 추가
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **85개 전수 통과 (0개 실패)**
+  - 인라인 스크립트 문법 및 모든 핵심 함수 회귀 0건 확인
+---

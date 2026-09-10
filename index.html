@@ -104,7 +104,7 @@
   /* ---------- App shell ---------- */
   #appShell{display:none;min-height:100vh;flex-direction:column;}
   #appShell.active{display:flex;}
-  .topbar{position:sticky;top:0;z-index:20;background:linear-gradient(to bottom,rgba(244,245,251,.96),rgba(244,245,251,.7) 70%,rgba(244,245,251,0));backdrop-filter:blur(10px);padding:14px 20px 10px;display:flex;align-items:center;justify-content:space-between;}
+  .topbar{position:sticky;top:0;z-index:20;background:linear-gradient(to bottom,rgba(244,245,251,.96),rgba(244,245,251,.7) 70%,rgba(244,245,251,0));backdrop-filter:blur(10px);padding:calc(14px + env(safe-area-inset-top, 0px)) 20px 10px;display:flex;align-items:center;justify-content:space-between;}
   .topbar .brand{font-weight:900;font-size:1.25rem;letter-spacing:-.04em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
   .topbar .user-chip{display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:700;color:var(--ink-soft);background:var(--card);padding:5px 6px 5px 12px;border-radius:999px;box-shadow:var(--shadow-sm);}
   .topbar .avatar{width:30px;height:30px;border-radius:50%;background:var(--chip);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;overflow:hidden;}
@@ -1998,7 +1998,8 @@
   }
   navButtons.forEach(function(b){ b.addEventListener('click', function(){ setTab(b.dataset.tab); }); });
 
-  /* ============ Modal helper ============ */
+  /* ============ Modal helper & Android Hardware Back Handler ============ */
+  var _modalHistoryPushed = false;
   function openModal(html, onMount){
     var overlay = document.getElementById('modalOverlay');
     var sheet = document.getElementById('modalSheet');
@@ -2006,8 +2007,35 @@
     overlay.classList.add('active');
     if(onMount) onMount(sheet);
     overlay.onclick = function(e){ if(e.target===overlay) closeModal(); };
+
+    try {
+      if(!_modalHistoryPushed && typeof window!=='undefined' && window.history && history.pushState){
+        history.pushState({ ourgoal_modal: true }, '');
+        _modalHistoryPushed = true;
+      }
+    } catch(e){}
   }
-  function closeModal(){ document.getElementById('modalOverlay').classList.remove('active'); }
+  function closeModal(skipHistoryBack){
+    var overlay = document.getElementById('modalOverlay');
+    if(!overlay || !overlay.classList.contains('active')) return;
+    overlay.classList.remove('active');
+
+    if(_modalHistoryPushed && !skipHistoryBack && typeof window!=='undefined' && window.history && history.back){
+      _modalHistoryPushed = false;
+      try { history.back(); } catch(e){}
+    } else {
+      _modalHistoryPushed = false;
+    }
+  }
+
+  if(typeof window!=='undefined' && window.addEventListener){
+    window.addEventListener('popstate', function(e){
+      var overlay = document.getElementById('modalOverlay');
+      if(overlay && overlay.classList.contains('active')){
+        closeModal(true);
+      }
+    });
+  }
 
   /* ============ 이용약관 & 개인정보처리방침 모달 ============ */
   function showLegalModal(initialTab){
