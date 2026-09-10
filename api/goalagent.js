@@ -103,14 +103,17 @@ function processOp(op, goalMap) {
   return result;
 }
 
-// API 키 부재 또는 호출 실패 시 로컬 규칙 기반 스마트 폴백 엔진
+// API 키 부재 또는 호출 실패 시 로컬 규칙 기반 스마트 폴백 엔진 (어떤 입력이든 목표 생성으로 안전하게 포용)
 function localGoalAgentFallback(message, goals, today, goalMap) {
   var msg = (message || '').trim();
+  if (!msg) {
+    return { ops: [], reply: '원하시는 목표나 할 일을 입력해 주세요.' };
+  }
   var ops = [];
   var reply = '';
 
   // 1. 완료/달성 의도 (예: "OO 완료", "OO 마일스톤 완료해줘", "OO 끝냈어")
-  if (/(완료|끝냈|다했|체크)/.test(msg)) {
+  if (/(완료|끝냈|다했|체크|달성)/.test(msg) && !/(목표|신규|새|추가|설정)/.test(msg)) {
     var foundMs = null;
     var foundGoal = null;
     for (var i = 0; i < goals.length; i++) {
@@ -139,41 +142,8 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
     }
   }
 
-  // 2. 신규 목표 추가 의도 (예: "영어 회화 목표 추가해줘", "토익 900점 목표 만들어줘")
-  if (/(추가|만들|생성|등록|시작)/.test(msg)) {
-    var cleanTitle = msg.replace(/(목표|할일|마일스톤|추가해줘|추가|만들어줘|만들기|생성해줘|등록해줘|시작하기|시작|해줘|해주세요)/g, '').trim();
-    if (!cleanTitle || cleanTitle.length < 2) cleanTitle = '새로운 실천 목표';
-
-    var topic = 'study';
-    if (/(운동|헬스|달리기|러닝|다이어트|건강|수영|자전거)/.test(msg)) topic = 'health';
-    else if (/(공부|토익|영어|독서|책|자격증|시험|수학|학습)/.test(msg)) topic = 'study';
-    else if (/(일|업무|사업|매출|취업|이직|코딩|개발|프로젝트|머니)/.test(msg)) topic = 'career';
-    else if (/(취미|음악|그림|사진|게임|여행|영상|유튜브)/.test(msg)) topic = 'hobby';
-    else if (/(마음|명상|수면|일기|감사|습관)/.test(msg)) topic = 'mind';
-    else if (/(친구|가족|연인|약속|모임|대화)/.test(msg)) topic = 'relation';
-
-    ops.push({
-      type: 'CREATE',
-      level: 'goal',
-      data: {
-        title: cleanTitle,
-        dueDate: null,
-        topicMajor: topic,
-        topicMinor: '',
-        milestones: [
-          { title: '1단계: 시작 준비 및 실행 계획 수립', tasks: ['세부 계획 정리하기', '필요 도구/자료 준비하기'] },
-          { title: '2단계: 주 3회 이상 꾸준히 실천하기', tasks: ['기본 실천 진행', '진행 과정 기록 남기기'] },
-          { title: '3단계: 목표 달성 점검 및 습관화', tasks: ['최종 결과 점검', '회고 및 다음 단계 수립'] }
-        ]
-      },
-      summary: '신규 목표 "' + cleanTitle + '" 및 3단계 마일스톤 생성'
-    });
-    reply = '"' + cleanTitle + '" 목표와 실행 마일스톤 초안을 준비했어요.';
-    return { ops: ops, reply: reply };
-  }
-
-  // 3. 삭제 의도
-  if (/(삭제|지워|제거)/.test(msg)) {
+  // 2. 삭제 의도 (예: "OO 목표 삭제해줘", "OO 지워줘")
+  if (/(삭제|지워|제거|취소)/.test(msg) && !/(추가|만들|생성|등록|시작|설정)/.test(msg)) {
     for (var k = 0; k < goals.length; k++) {
       var targetGoal = goals[k];
       if (msg.includes(targetGoal.title) || targetGoal.title.split(' ').some(function(w){ return w.length >= 2 && msg.includes(w); })) {
@@ -189,11 +159,61 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
     }
   }
 
-  // 매칭되는 기본 명령이 없을 때
-  return {
-    ops: [],
-    reply: '요청을 완전히 해석하지 못했어요. "OO 목표 추가해줘" 또는 "OO 마일스톤 완료"처럼 명령해 주시거나, 정교한 AI 자연어 처리를 위해 Vercel에 GEMINI_API_KEY를 등록해 주세요.'
-  };
+  // 3. 신규 목표 추가/설정 의도 (모든 일반 텍스트·목표설정 요청을 폭넓게 수용)
+  var cleanTitle = msg
+    .replace(/^(목표설정|목표 설정|새로운 목표|새 목표|신규 목표)[:\s]*/g, '')
+    .replace(/(목표설정해줘|목표설정|목표 설정해줘|목표 설정|목표를|목표로|목표|할일|마일스톤|추가해줘|추가|만들어줘|만들기|생성해줘|등록해줘|시작하기|시작|세워줘|세우기|잡아줘|잡기|설정해줘|설정|계획해줘|계획|추천해줘|추천|해줘|해주세요|하고 싶어|하고싶어|원해|요청|요청해줘|부탁해)/g, '')
+    .trim();
+
+  if (!cleanTitle || cleanTitle.length < 2 || cleanTitle === '목표' || cleanTitle === '요청') {
+    cleanTitle = '나만의 새로운 실천 목표';
+  }
+
+  var topic = 'study';
+  if (/(운동|헬스|달리기|러닝|다이어트|건강|수영|자전거|식단|체중|근육)/.test(msg)) topic = 'health';
+  else if (/(공부|토익|영어|독서|책|자격증|시험|수학|학습|코딩|강의)/.test(msg)) topic = 'study';
+  else if (/(일|업무|사업|매출|취업|이직|프로젝트|머니|돈|투자|수익)/.test(msg)) topic = 'career';
+  else if (/(취미|음악|그림|사진|게임|여행|영상|유튜브|블로그|글쓰기)/.test(msg)) topic = 'hobby';
+  else if (/(마음|명상|수면|일기|감사|습관|기상|미라클|루틴)/.test(msg)) topic = 'mind';
+  else if (/(친구|가족|연인|약속|모임|대화|결혼)/.test(msg)) topic = 'relation';
+
+  var m1 = '1단계: 시작 준비 및 실행 계획 수립';
+  var m2 = '2단계: 주 3회 이상 꾸준한 실행 루틴 확립';
+  var m3 = '3단계: 최종 목표 달성 점검 및 습관화';
+
+  if (topic === 'health') {
+    m1 = '1단계: 운동 계획 수립 및 장비/루틴 준비';
+    m2 = '2단계: 주 3~4회 규칙적인 실천 이어가기';
+    m3 = '3단계: 목표 체력/체중 달성 및 건강한 습관 정착';
+  } else if (topic === 'study') {
+    m1 = '1단계: 학습 계획 수립 및 교재/강의 준비';
+    m2 = '2단계: 매일 핵심 분량 학습 및 복습 진행';
+    m3 = '3단계: 모의 점검 및 최종 목표 성적/합격 달성';
+  } else if (topic === 'career') {
+    m1 = '1단계: 핵심 과제 정의 및 필요 자료 준비';
+    m2 = '2단계: 주요 산출물 완성 및 실행 가속화';
+    m3 = '3단계: 최종 성과 검증 및 지속 성장 체계 구축';
+  }
+
+  ops.push({
+    type: 'CREATE',
+    level: 'goal',
+    data: {
+      title: cleanTitle,
+      dueDate: null,
+      topicMajor: topic,
+      topicMinor: '',
+      milestones: [
+        { title: m1, tasks: ['세부 실천 계획 정리하기', '필요한 준비물 및 환경 구성하기'] },
+        { title: m2, tasks: ['기본 실천 꾸준히 이어가기', '진행 과정과 느낀 점 기록하기'] },
+        { title: m3, tasks: ['최종 결과 점검 및 피드백', '다음 성장 단계 수립하기'] }
+      ]
+    },
+    summary: '신규 목표 "' + cleanTitle + '" 및 3단계 마일스톤 생성'
+  });
+  reply = '"' + cleanTitle + '" 목표와 실행 마일스톤을 준비했어요. 이대로 적용할까요?';
+
+  return { ops: ops, reply: reply };
 }
 
 module.exports = async function handler(req, res) {
@@ -210,6 +230,8 @@ module.exports = async function handler(req, res) {
     res.status(400).json({ error: 'message is required' });
     return;
   }
+
+  console.log('[goalagent] request received: message="' + message + '", goalsCount=' + goals.length);
 
   var goalMap = {};
   goals.forEach(function (g) {
@@ -284,45 +306,58 @@ module.exports = async function handler(req, res) {
           var gRaw = (gData.candidates && gData.candidates[0] && gData.candidates[0].content && gData.candidates[0].content.parts && gData.candidates[0].content.parts[0] && gData.candidates[0].content.parts[0].text) || '';
           var gClean = gRaw.replace(/```json|```/g, '').trim();
           parsed = JSON.parse(gClean);
+          console.log('[goalagent] Gemini response parsed successfully');
+        } else {
+          console.warn('[goalagent] Gemini returned status:', geminiRes.status);
         }
       } catch (ge) {
-        // Gemini 실패 시 다음 공급자 또는 로컬 폴백
+        console.warn('[goalagent] Gemini error:', ge.message);
       }
     }
 
-    // 2. Anthropic Claude Sonnet 듀얼 폴백
+    // 2. Anthropic Claude 3.5 Sonnet / Haiku 듀얼 폴백 (유효한 공식 모델명 사용)
     if (!parsed && anthropicApiKey) {
-      try {
-        var headers = {
-          'Content-Type': 'application/json',
-          'x-api-key': anthropicApiKey,
-          'anthropic-version': '2023-06-01'
-        };
-        if (process.env.ANTHROPIC_WORKSPACE_ID) {
-          headers['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
+      var anthropicModels = ['claude-3-5-sonnet-20241022', 'claude-3-haiku-20240307'];
+      for (var mi = 0; mi < anthropicModels.length; mi++) {
+        var aModel = anthropicModels[mi];
+        try {
+          var headers = {
+            'Content-Type': 'application/json',
+            'x-api-key': anthropicApiKey,
+            'anthropic-version': '2023-06-01'
+          };
+          if (process.env.ANTHROPIC_WORKSPACE_ID) {
+            headers['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
+          }
+          var anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+              model: aModel,
+              max_tokens: 2000,
+              messages: [{ role: 'user', content: prompt }]
+            })
+          });
+          if (anthropicRes.ok) {
+            var aData = await anthropicRes.json();
+            var aRaw = (aData.content || []).map(function (b) { return b.type === 'text' ? b.text : ''; }).join('\n');
+            var aClean = aRaw.replace(/```json|```/g, '').trim();
+            parsed = JSON.parse(aClean);
+            console.log('[goalagent] Anthropic (' + aModel + ') parsed successfully');
+            break;
+          } else {
+            var aErr = await anthropicRes.text().catch(function(){ return ''; });
+            console.warn('[goalagent] Anthropic (' + aModel + ') returned:', anthropicRes.status, aErr.slice(0, 150));
+          }
+        } catch (ae) {
+          console.warn('[goalagent] Anthropic error with ' + aModel + ':', ae.message);
         }
-        var anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-6',
-            max_tokens: 2000,
-            messages: [{ role: 'user', content: prompt }]
-          })
-        });
-        if (anthropicRes.ok) {
-          var aData = await anthropicRes.json();
-          var aRaw = (aData.content || []).map(function (b) { return b.type === 'text' ? b.text : ''; }).join('\n');
-          var aClean = aRaw.replace(/```json|```/g, '').trim();
-          parsed = JSON.parse(aClean);
-        }
-      } catch (ae) {
-        // Anthropic 실패 시 로컬 폴백
       }
     }
 
     // 3. API 키가 없거나 외부 API 장애 시 로컬 스마트 폴백 적용
-    if (!parsed || !Array.isArray(parsed.ops)) {
+    if (!parsed || !Array.isArray(parsed.ops) || parsed.ops.length === 0) {
+      console.log('[goalagent] Falling back to localGoalAgentFallback for:', message);
       var fallbackResult = localGoalAgentFallback(message, goals, today, goalMap);
       res.status(200).json(fallbackResult);
       return;
@@ -333,7 +368,7 @@ module.exports = async function handler(req, res) {
 
     res.status(200).json({ ops: ops, reply: reply });
   } catch (e) {
-    // 예외 발생 시에도 로컬 폴백으로 부드럽게 복구
+    console.error('[goalagent] Exception in handler:', e.message);
     var fb = localGoalAgentFallback(message, goals, today, goalMap);
     res.status(200).json(fb);
   }
