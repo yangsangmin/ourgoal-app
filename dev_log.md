@@ -1084,3 +1084,74 @@
 - **발생한 문제 및 해결**: 일요일 저녁 18~22시 알림 분기가 기존 21:00 스트릭 경보 불변식과 충돌할 가능성 사전 감지 → 스트릭 경보 조건을 우선 평가하고 위클리 리캡은 스트릭 안전 상태 또는 미체크인 시에만 발생하도록 조건 격리 완료
 - **검증 결과**: `node scripts/smoke-test.js` **85개 전수 통과 (0개 실패)**, `sql-lint` 통과, 단일 HTML 아키텍처 및 Supabase RLS 무결성 보장
 ---
+
+## [2026-09-10 10:55] 72시간 릴리즈 Phase 1: AI API 서버리스 프록시화 및 Gemini/Claude 듀얼 지원
+- **목표**: 
+  1. 베타 테스터에게 개인 API 키 입력 부담 없이 AI 목표 피드백을 제공하기 위한 Vercel Serverless Function 프록시(`api/feedback.js`) 강화
+  2. 서버 환경변수 `GEMINI_API_KEY` (Gemini 2.5 Flash) 및 `ANTHROPIC_API_KEY` (Claude) 듀얼 지원 및 클라이언트 키 노출 차단
+  3. `index.html` 내 AI 피드백 호출 라우팅 단일화 및 장애 시 고도화된 규칙 기반 `localFeedback` 무결성 보존
+- **수정/실행 내역**:
+  - `api/feedback.js`:
+    - 클라이언트 키, 서버 `GEMINI_API_KEY`, 서버 `ANTHROPIC_API_KEY` 계층형 우선순위 라우팅 탑재
+    - Gemini 2.5 Flash API(`responseMimeType: "application/json"`) 직접 호출 및 JSON 파싱 엔진 구현
+    - Gemini 미설정 또는 오류 시 Anthropic Claude로의 자동 장애 복구(Fallback) 및 503 안전 응답 핸들링
+  - `index.html`:
+    - `requestAIFeedback`: 기본 프로바이더를 `gemini`로 전환하고, 설정된 개인 키 유무와 무관하게 서버리스 프록시(`/api/feedback`)로 라우팅
+    - `requestServerAIFeedback`: 요청 페이로드에 `geminiKey`를 포함하여 BYOK 호환성 유지 및 네트워크 장애 시 `localFeedback` 100% 안전 폴백 보장
+    - 기존 85개 스모크 테스트 및 단일 HTML 아키텍처 불변식 100% 보존
+  - `dev_log.md`: 개발 로그 추가
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **85개 전수 통과 (0개 실패)**
+  - `node -e "require('./api/feedback.js')"` 핸들러 모듈 로드 정상 검증
+---
+
+## [2026-09-10 11:00] 72시간 릴리즈 Phase 2: 안드로이드 물리 뒤로가기 모달 연동 및 Safe Area 최적화
+- **목표**: 
+  1. 모바일 환경에서 안드로이드 물리 뒤로가기(Hardware Back) 또는 브라우저 뒤로가기 제스처 시 앱이 이탈하지 않고 활성 모달만 안전하게 닫히도록 개선
+  2. 최신 노치·펀치홀 디바이스 상단 가림 방지를 위한 Safe Area 인셋(`env(safe-area-inset-top)`) 보정
+  3. 기존 85개 스모크 테스트 및 단일 HTML 아키텍처 100% 무결성 유지
+- **수정/실행 내역**:
+  - `index.html`:
+    - CSS: `.topbar` 패딩에 `calc(14px + env(safe-area-inset-top, 0px))` 적용하여 스마트폰 상단바/카메라 홀과의 겹침 해소
+    - JS `openModal`: 모달 시트 오픈 시 `history.pushState({ ourgoal_modal: true }, '')`를 호출하여 뒤로가기 이벤트 가로채기 상태 등록
+    - JS `closeModal`: 취소/확인 버튼이나 배경 클릭으로 닫힐 때는 `history.back()`으로 히스토리 스택 정돈, 뒤로가기(popstate)로 닫힐 때는 불필요한 추가 back 방지
+    - JS `window.addEventListener('popstate')`: 모달이 열려 있는 상태에서 뒤로가기 입력 시 모달만 즉시 닫고 앱 화면 유지
+  - `dev_log.md`: 개발 로그 추가
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **85개 전수 통과 (0개 실패)**
+  - 인라인 스크립트 문법 및 모든 핵심 함수 회귀 0건 확인
+---
+
+## [2026-09-10 11:05] 72시간 릴리즈 Phase 3: Capacitor 앱 식별자 확정 및 GitHub Actions 클라우드 APK 빌드 파이프라인 구축
+- **목표**: 
+  1. 로컬 환경의 Android SDK/JDK 부재 제약을 극복하고 클라우드(GitHub Actions)에서 설치형 APK를 자동 빌드·추출하는 파이프라인 수립
+  2. 향후 정식 구글 플레이스토어 배포 시 영구 승계되는 패키지 식별자(`com.yangbis.ourgoal`) 확정
+  3. 라이브 프로덕션(`https://ourgoal-app.vercel.app`) 실시간 연동을 통한 무중단 OTA 업데이트 체계 구축
+- **수정/실행 내역**:
+  - `capacitor.config.json`:
+    - `appId`: `com.yangbis.ourgoal`, `appName`: `아워골` 영구 확정
+    - `server.url`: `https://ourgoal-app.vercel.app`로 지정하여 Vercel 배포 시 APK 앱도 실시간 동기화
+  - `.github/workflows/build-apk.yml`:
+    - Ubuntu 러너, Java JDK 17, Android SDK 자동 셋업
+    - Capacitor Android 프로젝트 초기화 및 Gradle 디버그 APK(`app-debug.apk`) 자동 빌드
+    - 인터넷 권한(`android.permission.INTERNET`) 자동 주입 및 GitHub Artifacts 업로드
+  - `package.json`: `npm test` 스크립트 등록
+  - `dev_log.md`: 개발 로그 추가
+- **검증 결과**:
+  - `npm test` (스모크 테스트) **85개 전수 통과 (0개 실패)**
+  - 워크플로우 YAML 및 Capacitor JSON 구문 검증 완료
+---
+
+## [2026-09-10 11:10] 72시간 릴리즈 Phase 4: 운영 거버넌스 동기화 및 베타 테스터 배포 가이드 완성
+- **목표**: 
+  1. 72시간 실배포 전 과정(Phase 1~4)의 작업 결과를 시스템 거버넌스(`STATUS.md`, `dev_log.md`)에 완전 반영
+  2. 일반 테스터 배포용 안내 문서(`docs/growth/RELEASE_72H_GUIDE.md`) 작성 완료
+  3. 전체 85개 단위 테스트 최종 100% 통과 검증
+- **수정/실행 내역**:
+  - `docs/sprint/STATUS.md`: 72H-RELEASE 상태 등록 및 Vercel `GEMINI_API_KEY` 필수 사용자 작업 명시
+  - `docs/growth/RELEASE_72H_GUIDE.md`: PWA 1초 설치법, APK 직접 설치법, 개인정보 보안 안심 안내, 5대 핵심 기능 둘러보기 작성
+  - `dev_log.md`: 최종 릴리즈 로그 기록
+- **검증 결과**:
+  - `npm test` (스모크 테스트) **85개 전수 통과 (0개 실패)**
+  - 모든 변경 사항 브랜치 커밋 완료
+---

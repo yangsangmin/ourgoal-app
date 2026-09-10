@@ -20,6 +20,7 @@
 | TASK-04 Supabase Realtime 팀 댓글 & 피드 | PR 병합 완료 | feat/2026-09-06-task-04-realtime-comments-feed | #41 |
 | TASK-05 맥락 기반 다이내믹 푸시 알림 | PR 병합 완료 | feat/2026-09-06-task-05-dynamic-push | #42 |
 | TASK-06 딥링크 & 워터마크 공유 카드 | PR 병합 완료 | feat/2026-09-06-task-06-share-watermark | #43 |
+| 72H-RELEASE 72시간 실배포 (AI 프록시·모바일 뒤로가기·APK 파이프라인) | PR 대기 | feat/2026-09-10-phase1-ai-proxy | 생성 대기 |
 
 상태 값: `시작 전` → `진행 중` → `PR 대기` → `PR 병합 완료` (막히면 `보류(사유)`)
 
@@ -28,6 +29,8 @@
 ## 대기 중 사용자 작업
 
 코드로 해결할 수 없고 사용자 계정·콘솔 작업이 필요한 항목만 남긴다. 완료되면 줄을 지운다.
+
+- **[필수] Vercel GEMINI_API_KEY 등록**: Vercel 대시보드 Settings → Environment Variables에 `GEMINI_API_KEY` 입력 (일반 테스터 AI 피드백 무료/자동 제공용 서버리스 프록시). 키가 없어도 기존 `localFeedback`으로 안전하게 자동 폴백됩니다.
 
 - **[필수] TASK-04 팀 댓글·피드 SQL**: Supabase SQL Editor에서 `team_comments`/`feed_posts` 테이블 + RLS + `increment_post_cheers` RPC 실행 후, Database→Replication에서 두 테이블 Realtime 활성화. 정확한 SQL은 PR #41 본문. 실행 전에는 팀 댓글·피드 응원이 안전하게 실패(400/404, 크래시 없음)하지만 실제로 동작하지 않는다.
 - **[필수] 체크인 분야 저장**: Supabase SQL Editor에서 `docs/sql/2026-09-06-checkins-category.sql` 실행(`checkins.category` 컬럼 추가). 실행 전에는 클라이언트가 기존 형식으로 자동 재시도해 저장이 끊기지는 않지만 분야가 계속 저장되지 않아 분야별 리포트·CSV가 부정확하다.

@@ -4,12 +4,6 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  var apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    res.status(500).json({ error: 'ANTHROPIC_API_KEY is not configured' });
-    return;
-  }
-
   var body = req.body || {};
   var goalTitle = body.goalTitle;
   var milestones = Array.isArray(body.milestones) ? body.milestones : [];
@@ -18,6 +12,16 @@ module.exports = async function handler(req, res) {
   var customPrompt = typeof body.customPrompt === 'string' ? body.customPrompt.trim().slice(0, 2000) : '';
   if (!goalTitle || !text) {
     res.status(400).json({ error: 'goalTitle and text are required' });
+    return;
+  }
+
+  // API 키 결정: 1) 클라이언트 전달 Gemini키 2) 서버 GEMINI_API_KEY 3) 서버 ANTHROPIC_API_KEY
+  var clientGeminiKey = (typeof body.geminiKey === 'string' && body.geminiKey.trim()) ? body.geminiKey.trim() : null;
+  var geminiApiKey = clientGeminiKey || process.env.GEMINI_API_KEY;
+  var anthropicApiKey = process.env.ANTHROPIC_API_KEY;
+
+  if (!geminiApiKey && !anthropicApiKey) {
+    res.status(503).json({ error: 'AI API key is not configured on server' });
     return;
   }
 
@@ -52,40 +56,82 @@ module.exports = async function handler(req, res) {
     '"reason":"왜 이렇게 판단했는지 1문장"}]}';
 
   try {
-    var headers = {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01'
-    };
-    if (process.env.ANTHROPIC_WORKSPACE_ID) {
-      headers['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
-    }
-    var anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 800,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+    var parsed = null;
+    var providerUsed = '';
 
-    if (!anthropicRes.ok) {
-      var errText = await anthropicRes.text().catch(function () { return ''; });
-      res.status(502).json({
-        error: 'Anthropic API error',
-        detail: errText.slice(0, 300),
-        resolvedWorkspaceId: anthropicRes.headers.get('anthropic-workspace-id') || null
+    // 1. Gemini 사용 (우선)
+    if (geminiApiKey) {
+      try {
+        var geminiRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(geminiApiKey), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              temperature: 0.2,
+              responseMimeType: 'application/json'
+            }
+          })
+        });
+
+        if (geminiRes.ok) {
+          var geminiData = await geminiRes.json();
+          var rawText = ((geminiData.candidates || [])[0] || {}).content && geminiData.candidates[0].content.parts
+            ? geminiData.candidates[0].content.parts.map(function (p) { return p.text || ''; }).join('\n')
+            : '';
+          if (rawText) {
+            var cleanText = rawText.replace(/```json|```/g, '').trim();
+            parsed = JSON.parse(cleanText);
+            providerUsed = 'gemini';
+          }
+        } else {
+          var errBody = await geminiRes.text().catch(function () { return ''; });
+          console.warn('Gemini API returned error:', geminiRes.status, errBody.slice(0, 200));
+        }
+      } catch (geminiErr) {
+        console.warn('Gemini call failed, trying Anthropic fallback if available:', geminiErr.message);
+      }
+    }
+
+    // 2. Anthropic 사용 (Gemini 미설정 또는 실패 시 폴백)
+    if (!parsed && anthropicApiKey) {
+      var headers = {
+        'Content-Type': 'application/json',
+        'x-api-key': anthropicApiKey,
+        'anthropic-version': '2023-06-01'
+      };
+      if (process.env.ANTHROPIC_WORKSPACE_ID) {
+        headers['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
+      }
+      var anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 800,
+          messages: [{ role: 'user', content: prompt }]
+        })
       });
-      return;
+
+      if (anthropicRes.ok) {
+        var anthropicData = await anthropicRes.json();
+        var rawAnthropic = (anthropicData.content || []).map(function (b) { return b.type === 'text' ? b.text : ''; }).join('\n');
+        var cleanAnthropic = rawAnthropic.replace(/```json|```/g, '').trim();
+        parsed = JSON.parse(cleanAnthropic);
+        providerUsed = 'claude';
+      } else {
+        var anthropicErr = await anthropicRes.text().catch(function () { return ''; });
+        throw new Error('Anthropic API error ' + anthropicRes.status + ' ' + anthropicErr.slice(0, 200));
+      }
     }
 
-    var data = await anthropicRes.json();
-    var raw = (data.content || []).map(function (b) { return b.type === 'text' ? b.text : ''; }).join('\n');
-    var clean = raw.replace(/```json|```/g, '').trim();
-    var parsed = JSON.parse(clean);
-    if (!parsed || !parsed.verdict) throw new Error('bad shape');
-    if (!Array.isArray(parsed.suggestions)) parsed.suggestions = [];
+    if (!parsed || !parsed.verdict) {
+      throw new Error('Could not parse valid AI feedback JSON');
+    }
+    if (!Array.isArray(parsed.suggestions)) {
+      parsed.suggestions = [];
+    }
+    parsed.provider = providerUsed;
 
     res.status(200).json(parsed);
   } catch (e) {
