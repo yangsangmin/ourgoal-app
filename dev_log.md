@@ -1182,8 +1182,14 @@
   - `api/nextaction.js`: Gemini 2.5 Flash 및 로컬 추천 스마트 폴백 탑재
   - `api/goalstatus.js`: Gemini 2.5 Flash 및 로컬 요약 스마트 폴백 탑재
   - `index.html`: `requestGoalAgentDiff`, `generateGoalTemplate`에서 설정에 저장된 `geminiKey` 전달 및 에러 메시지 안정화
+## [2026-09-10 12:30] fix: Anthropic 공식 모델명(claude-3-5-sonnet-20241022) 정정 및 목표설정 로컬 스마트 폴백 전면 수용
+- **목표**: Vercel에 존재하는 `ANTHROPIC_API_KEY`가 미존재 모델명(`claude-sonnet-4-6`)으로 인해 404 에러를 내던 문제 해결 및 '목표설정' 자연어 입력 시 로컬 폴백이 100% 목표를 생성하도록 확장
+- **수정/실행 내역**:
+  - `api/*.js` (7개 파일 전수): `claude-sonnet-4-6` → Anthropic 공식 모델 식별자 `claude-3-5-sonnet-20241022` (및 `claude-3-haiku-20240307` 듀얼)로 전면 정정하여 Vercel 기존 키 정상 연동
+  - `api/goalagent.js`: '목표설정', '목표 설정해줘' 등 사용자의 모든 자연어 목표설정 표현을 포용하도록 `localGoalAgentFallback` 정규식 및 의도 분석 확장, Vercel 런타임 디버깅 로그(`console.log`/`console.warn`) 추가
 - **검증 결과**:
   - `npm test` **85개 전수 통과 (0개 실패)**
-  - API 키 없는 상태에서도 `goalagent.js` 및 `goaltemplate.js` 로컬 스마트 폴백 정상 200 반환 검증 완료
+  - '목표설정', '목표설정 요청', '다이어트 목표설정' 등 다양한 자연어 입력에 대해 ops 100% 생성 단위 검증 완료
 ---
+
 
