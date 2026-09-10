@@ -86,6 +86,7 @@ const FN_NAMES = [
   'calculateWeeklyFocusStats', 'exportRecordsToCsv', 'exportRecordsToMarkdown',
   'defaultSettings', 'getPrivacyLabel', 'subscriptionState',
   'computeTrendChartData', 'formatStopwatchTime',
+  'rescaleGoal',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -123,6 +124,7 @@ const sandboxSrc =
   'parseNaturalLanguageTemplateSpec, parseCsvText, parseVoiceToTableRow, ' +
   'triggerHaptic, reorderMilestones, filterFeedByCategory, calculateWeeklyFocusStats, exportRecordsToCsv, exportRecordsToMarkdown, ' +
   'defaultSettings, getPrivacyLabel, subscriptionState, computeTrendChartData, formatStopwatchTime, ' +
+  'rescaleGoal, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -1900,6 +1902,40 @@ check('compliance: 목표탭 결과입력 UI/UX 혁신 (커리큘럼 정하기·
   // 5. 노션 DB 프리뷰 카드 검증
   assert.ok(html.includes('id="rsNotionDbPreview"'), 'Notion DB 미리보기 컨테이너 존재');
   assert.ok(html.includes('Notion DB 변환 규격'), 'Notion DB 변환 배지 텍스트 존재');
+});
+
+check('rescaleGoal: 지연된 마일스톤과 할 일 일정을 여유롭게 연장하고 조정 횟수를 기록한다', () => {
+  const goal = {
+    id: 'g_test',
+    title: '30일 갓생 챌린지',
+    dueDate: '2026-09-01', // 이미 지난 마감일
+    milestones: [
+      { id: 'm1', title: '1단계', status: 'done', dueDate: '2026-08-20', tasks: [] },
+      { id: 'm2', title: '2단계', status: 'todo', dueDate: '2026-09-05', tasks: [
+        { id: 't1', title: '할일 1', done: false, dueDate: '2026-09-03' }
+      ] }
+    ]
+  };
+
+  const res = fns.rescaleGoal(goal, 0.5);
+  assert.ok(res, '반환 객체 존재');
+  assert.strictEqual(res.rescaledCount, 1, '리스케일링 횟수 1 증가');
+  assert.ok(res.lastRescaledAt, '리스케일링 일자 기록');
+  assert.ok(res.dueDate > '2026-09-11', '목표 마감일이 오늘 이후로 넉넉히 연장됨');
+  assert.strictEqual(res.milestones[0].dueDate, '2026-08-20', '이미 완료된 마일스톤은 변경 없음');
+  assert.ok(res.milestones[1].dueDate > '2026-09-11', '미완료 마일스톤 일정 연장');
+  assert.ok(res.milestones[1].tasks[0].dueDate > '2026-09-11', '미완료 세부 할 일 일정 연장');
+});
+
+check('compliance: 작심삼일 극복 & 번아웃 케어(Anti-Guilt 리스케일링) 및 앰비언트 1줄 체크인 UI', () => {
+  // 1. 목표 상세 내 리스케일링 UI 및 버튼
+  assert.ok(html.includes('작심삼일 극복 & 번아웃 케어'), '작심삼일 극복 및 번아웃 케어 라벨 존재');
+  assert.ok(html.includes('id="goalRescaleBtn"'), 'goalRescaleBtn 리스케일링 버튼 존재');
+  assert.ok(html.includes('50% 가볍게 조정'), '50% 가볍게 조정 텍스트 존재');
+
+  // 2. 홈 화면 앰비언트 1줄 체크인 안내 및 플레이스홀더
+  assert.ok(html.includes('AI 노션 DB 1줄 체크인'), '홈 체크인 헤더 노션 DB 1줄 체크인 명시');
+  assert.ok(html.includes('AI가 노션 DB 규격으로 자동 변환해드려요'), '앰비언트 체크인 플레이스홀더 안내');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

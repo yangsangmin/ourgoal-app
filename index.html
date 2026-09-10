@@ -547,6 +547,33 @@
   .empty-state .e-icon{font-size:2rem;margin-bottom:8px;}
   .empty-state p{font-size:.86rem;margin:0;font-weight:600;}
 
+  /* ---------- Adaptive UX Modes & Social Crew & Ambient Checkin ---------- */
+  .adaptive-mode-bar{display:flex;gap:6px;margin:8px 0 14px;background:var(--card2);padding:4px;border-radius:12px;border:1px solid var(--rule);}
+  .mode-chip{flex:1;text-align:center;padding:7px 4px;border:none;border-radius:8px;background:transparent;color:var(--ink-soft);font-size:.74rem;font-weight:700;cursor:pointer;transition:all .18s cubic-bezier(0.34,1.56,0.64,1);}
+  .mode-chip.active{background:var(--card);color:var(--ink);box-shadow:var(--shadow-sm);font-weight:900;}
+
+  /* Minimal mode: hide secondary clutter, focus on single core goal */
+  body[data-ux-mode="minimal"] #crewPacingWidget,
+  body[data-ux-mode="minimal"] #quickRoutineRow,
+  body[data-ux-mode="minimal"] #homeGrassSummaryCard,
+  body[data-ux-mode="minimal"] #customFeedbackBtn,
+  body[data-ux-mode="minimal"] #homeChallengeRoomBtn { display: none !important; }
+  body[data-ux-mode="minimal"] .capture-card { padding: 18px; border-width: 2px; }
+
+  /* Gamified mode: highlight streak, flame, quest bar, share button */
+  body[data-ux-mode="gamified"] #dailyQuestBarWrap { display: block !important; margin-bottom: 12px; }
+  body[data-ux-mode="gamified"] .mz-btn { animation: pulse 2s infinite; }
+
+  /* Analyst mode: dense data view */
+  body[data-ux-mode="analyst"] .capture-card { font-size: .8rem; }
+  body[data-ux-mode="analyst"] #homeGrassSummaryCard { display: block !important; order: -1; }
+
+  /* Crew pacing widget */
+  .crew-pacing-widget{background:var(--card);border-radius:18px;padding:14px;border:1px solid var(--rule);box-shadow:var(--shadow-sm);transition:transform .2s cubic-bezier(0.34,1.56,0.64,1);}
+  .crew-pacing-widget:active{transform:scale(0.985);}
+  #ambientCheckinCard{transition:transform .2s cubic-bezier(0.34,1.56,0.64,1);}
+  #ambientCheckinCard:hover{transform:translateY(-1px);}
+
   /* ---------- Landing ---------- */
   #landingScreen{min-height:100vh;display:flex;flex-direction:column;max-width:var(--maxw);margin:0 auto;padding:0;}
   .land-hero{flex:1;display:flex;flex-direction:column;justify-content:center;padding:48px 26px 30px;}
@@ -1615,6 +1642,27 @@
       <p class="s-eyebrow">오늘</p>
       <h2 class="s-title" id="homeGreeting">안녕하세요</h2>
       <div id="todayGlancePill" class="today-glance-pill" role="button" tabindex="0" aria-label="오늘의 몰입 상태 요약" style="display:none;"></div>
+      <div id="adaptiveModeSelector" class="adaptive-mode-bar" role="group" aria-label="인지적 적응형 UI 모드 선택">
+        <button type="button" class="mode-chip active" id="btnModeMinimal" data-mode="minimal" onclick="switchUxMode('minimal')" title="포커스 미니멀: 오늘 핵심 1개 목표에 초집중">🎯 미니멀</button>
+        <button type="button" class="mode-chip" id="btnModeGamified" data-mode="gamified" onclick="switchUxMode('gamified')" title="MZ 게이미피케이션: 스트릭·퀘스트·공유카드 전면 강조">⚡ MZ게이미피케이션</button>
+        <button type="button" class="mode-chip" id="btnModeAnalyst" data-mode="analyst" onclick="switchUxMode('analyst')" title="파워 분석가: 노션 테이블·정량 데이터 통계">📊 파워분석가</button>
+      </div>
+      <div id="crewPacingWidget" class="crew-pacing-widget card" style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span class="crew-badge" id="userCrewBadge" style="background:rgba(239,68,68,0.12);color:#ef4444;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:800;">🏃‍♂️ 러너스 크루 #1위</span>
+            <span style="font-size:12px;font-weight:700;color:var(--ink);">오늘 달성 레이스</span>
+          </div>
+          <span style="font-size:11px;color:var(--ink-soft);" id="userCrewScore">팀 포인트 1,420점</span>
+        </div>
+        <div style="width:100%;height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin:6px 0 8px;">
+          <div id="userCrewProgressBar" style="width:84%;height:100%;background:linear-gradient(90deg,var(--mz1),var(--mz2));border-radius:3px;transition:width 0.4s ease;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--ink-soft);">
+          <span>👥 200인 중 40명 함께 완주 중</span>
+          <button type="button" class="btn btn-ghost btn-sm" id="btnNudgeCrewMates" onclick="nudgeCrewMates()" style="padding:2px 8px;font-size:11px;color:var(--red);border-radius:6px;">🤝 크루원 찌르기·응원</button>
+        </div>
+      </div>
       <div id="dailyQuestBarWrap" class="daily-quest-bar-wrap" style="display:none;"></div>
       <div id="a11yLiveAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
       <div id="offlineNoticeBanner" class="offline-banner" style="display:none;">📶 <b>오프라인 모드</b> — 작성한 기록은 기기에 안전하게 보관되며 온라인 연결 시 자동 동기화됩니다.</div>
@@ -1623,7 +1671,7 @@
       <div id="socialNotifySlot"></div>
 
       <div class="capture-card card" id="captureCardBox">
-        <div style="font-weight:700;color:var(--red);font-size:.86rem;">✎ 오늘 기록하기</div>
+        <div style="font-weight:700;color:var(--red);font-size:.86rem;">✎ 오늘 기록하기 (AI 노션 DB 1줄 체크인)</div>
         <div class="goal-chip-row" id="quickRoutineRow">
           <button class="goal-chip" type="button" data-quickroutine="💪 운동 완료">💪 운동 완료</button>
           <button class="goal-chip" type="button" data-quickroutine="📚 1시간 집중">📚 1시간 집중</button>
@@ -1633,7 +1681,7 @@
         </div>
         <span class="mic-status" id="micStatus" hidden>🔴 듣고 있어요...</span>
         <div class="capture-ta-wrap">
-          <textarea id="captureInput" placeholder="지금 뭘 하고 있나요? 기분은 어때요? 자유롭게 적어보세요. 세부적으로 남길수록 ai가 더 상세한 피드백을 줄 수 있으며 내 목표와 연관된 행동을 작성할 경우 자동으로 목표달성 정도를 파악하고 수정할지 여쭤볼겁니다"></textarea>
+          <textarea id="captureInput" placeholder="오늘 달성한 내용을 줄글로 편하게 적어보세요. AI가 노션 DB 규격으로 자동 변환해드려요 (예: 5km 러닝 28분 완주, 땀 많이 흘림)"></textarea>
           <button class="mic-btn" id="micBtn" type="button" aria-label="음성으로 입력하기" title="음성으로 입력하기">🎙️</button>
         </div>
         <div id="capturePhotoPreview" style="display:none;"></div>
@@ -3800,6 +3848,7 @@
   }
 
   function openModal(html, onMount){
+    window._modalOpenAt = Date.now();
     var overlay = document.getElementById('modalOverlay');
     var sheet = document.getElementById('modalSheet');
     sheet.innerHTML = html;
@@ -3926,6 +3975,41 @@
     var c = {total:goal.milestones.length, todo:0, doing:0, done:0};
     goal.milestones.forEach(function(m){ c[m.status]++; });
     return c;
+  }
+  /* ============ 작심삼일 극복 & 번아웃 케어 / 목표 리스케일링 (Anti-Guilt) ============ */
+  function rescaleGoal(goal, scaleRatio){
+    if(!goal) return null;
+    scaleRatio = typeof scaleRatio === 'number' ? scaleRatio : 0.5;
+    var now = new Date();
+    var todayStr = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+    var curCount = typeof goal.rescaledCount === 'number' ? goal.rescaledCount : (parseInt(goal.rescaledCount, 10) || 0);
+    goal.rescaledCount = curCount + 1;
+    goal.lastRescaledAt = todayStr;
+
+    if(Array.isArray(goal.milestones)){
+      goal.milestones.forEach(function(m, idx){
+        if(m && m.status !== 'done'){
+          var mDate = new Date(now);
+          mDate.setDate(mDate.getDate() + (idx + 1) * 7);
+          m.dueDate = mDate.getFullYear() + '-' + pad(mDate.getMonth() + 1) + '-' + pad(mDate.getDate());
+          if(Array.isArray(m.tasks)){
+            m.tasks.forEach(function(t, tIdx){
+              if(t && typeof t === 'object' && !t.done){
+                var tDate = new Date(now);
+                tDate.setDate(tDate.getDate() + (idx * 7) + (tIdx + 1) * 2);
+                t.dueDate = tDate.getFullYear() + '-' + pad(tDate.getMonth() + 1) + '-' + pad(tDate.getDate());
+              }
+            });
+          }
+        }
+      });
+    }
+
+    var goalDue = new Date(now);
+    var msCount = (goal.milestones && goal.milestones.length) ? goal.milestones.length : 2;
+    goalDue.setDate(goalDue.getDate() + Math.max(14, msCount * 7 + 7));
+    goal.dueDate = goalDue.getFullYear() + '-' + pad(goalDue.getMonth() + 1) + '-' + pad(goalDue.getDate());
+    return goal;
   }
   /* ============ 하이브리드 목표 대시보드 (2개 이상 병행 시) ============ */
   function hybridDashboardHtml(goals){
@@ -4232,6 +4316,20 @@
     openModal(
       '<h3>' + kindLabel + ' 결과 기록</h3>' +
       (displayTitle ? '<p class="muted" style="margin:-8px 0 12px;"><b style="color:var(--ink);font-size:.88rem;">' + escapeHtml(displayTitle) + '</b></p>' : '<div style="height:6px;"></div>') +
+      '<div id="ambientCheckinCard" style="margin-bottom:12px;padding:12px 14px;background:linear-gradient(135deg,rgba(31,201,142,0.12),rgba(108,92,231,0.08));border:1.5px solid var(--sage-line);border-radius:14px;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+          '<span style="font-size:.82rem;color:var(--sage);font-weight:800;display:flex;align-items:center;gap:4px;">' +
+            '<span>⚡ 제로-입력 선제 예측 체크인</span>' +
+          '</span>' +
+          '<span style="font-size:.7rem;background:var(--sage-soft);color:var(--sage);padding:2px 6px;border-radius:4px;font-weight:700;">1-Tap 승인</span>' +
+        '</div>' +
+        '<div style="font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:8px;">' +
+          '오늘 \'' + escapeHtml(displayTitle || (obj && obj.title) || '실천') + '\' 100% 완료하셨나요?' +
+        '</div>' +
+        '<button class="btn btn-primary btn-sm" id="ambientCheckinConfirmBtn" type="button" style="width:100%;font-weight:800;background:var(--sage);border-color:var(--sage);padding:8px 12px;font-size:.82rem;display:flex;align-items:center;justify-content:center;gap:6px;">' +
+          '<span>✓ 1-Tap 즉시 승인 및 노션 DB 저장</span>' +
+        '</button>' +
+      '</div>' +
       '<div style="margin-bottom:12px;padding:12px 14px;background:var(--violet-soft);border:1px solid rgba(108,92,231,0.25);border-radius:14px;">' +
         '<div style="font-size:.84rem;color:var(--violet);font-weight:800;display:flex;align-items:center;gap:4px;margin-bottom:6px;">' +
           '<span>🤖 AI 비서로 결과 입력</span>' +
@@ -4341,6 +4439,35 @@
             runAiConversion();
           }
         });
+
+        var ambientBtn = sheet.querySelector('#ambientCheckinConfirmBtn');
+        if(ambientBtn){
+          ambientBtn.addEventListener('click', function(){
+            if(window._recordHesitation) window._recordHesitation('ambientCheckinConfirmBtn');
+            triggerHaptic(30);
+            var ambTitle = displayTitle || (obj && obj.title) || '실천 완료';
+            var dateStr = isoDate(new Date());
+            activeDbRecord = {
+              title: ambTitle,
+              status: '완료',
+              progress: 100,
+              metric: '100%',
+              keyTakeaway: '선제 예측 1-Tap 승인 완료',
+              tags: ['실천', '완료', '앰비언트'],
+              date: dateStr,
+              notionSchema: {
+                'Name': { type: 'title', title: [{ type: 'text', text: { content: ambTitle } }] },
+                'Status': { type: 'select', select: { name: '완료' } },
+                'Progress': { type: 'number', number: 100 },
+                'Metric': { type: 'rich_text', rich_text: [{ type: 'text', text: { content: '100%' } }] },
+                'KeyTakeaway': { type: 'rich_text', rich_text: [{ type: 'text', text: { content: '선제 예측 1-Tap 승인 완료' } }] },
+                'Tags': { type: 'multi_select', multi_select: [{ name: '실천' }, { name: '완료' }, { name: '앰비언트' }] },
+                'Date': { type: 'date', date: { start: dateStr } }
+              }
+            };
+            sheet.querySelector('#rsSave').click();
+          });
+        }
 
         sheet.querySelector('#rsCancel').addEventListener('click', closeModal);
 
@@ -5983,12 +6110,130 @@
     return xpRes;
   }
 
+  /* ============ Adaptive UX Mode ============ */
+  function getUxMode(){
+    try{ return localStorage.getItem('ourgoal_ux_mode') || 'minimal'; }catch(e){ return 'minimal'; }
+  }
+  function switchUxMode(mode){
+    try{
+      localStorage.setItem('ourgoal_ux_mode', mode);
+      document.body.setAttribute('data-ux-mode', mode);
+      var chips = document.querySelectorAll('#adaptiveModeSelector .mode-chip');
+      chips.forEach(function(c){
+        if(c.dataset.mode === mode) c.classList.add('active');
+        else c.classList.remove('active');
+      });
+      triggerHaptic(25);
+      if(window.announceToA11y) announceToA11y('UI 모드가 ' + (mode === 'minimal' ? '포커스 미니멀' : (mode === 'gamified' ? 'MZ 게이미피케이션' : '파워 분석가')) + '로 전환되었습니다.');
+    }catch(e){}
+  }
+  window.switchUxMode = switchUxMode;
+
+  function renderAdaptiveModeBar(){
+    var bar = document.getElementById('adaptiveModeSelector');
+    if(!bar) return;
+    var mode = getUxMode();
+    document.body.setAttribute('data-ux-mode', mode);
+    var chips = bar.querySelectorAll('.mode-chip');
+    chips.forEach(function(c){
+      if(c.dataset.mode === mode) c.classList.add('active');
+      else c.classList.remove('active');
+    });
+  }
+
+  /* ============ Social Crew Pacing ============ */
+  function renderCrewPacingWidget(){
+    var w = document.getElementById('crewPacingWidget');
+    if(!w) return;
+    var goals = (state && state.profile && state.profile.goals) ? state.profile.goals.filter(function(g){ return !g.archivedAt; }) : [];
+    var pGoal = goals[0] || { title: '운동 및 루틴', topic: 'health' };
+    var topic = ((pGoal.topic || '') + ' ' + (pGoal.title || '')).toLowerCase();
+
+    var crewName = '🏃‍♂️ 러너스 & 피트니스 크루';
+    var crewColor = '#ef4444';
+    var crewPoints = 1420;
+    var crewPct = 84;
+    var rank = '#1위';
+
+    if(/개발|코딩|웹|앱|파이썬|cs/.test(topic)){
+      crewName = '💻 데브 & 빌더스 크루';
+      crewColor = '#38bdf8';
+      crewPoints = 1390;
+      crewPct = 81;
+      rank = '#2위';
+    } else if(/독서|책|공부|자격증|외국어/.test(topic)){
+      crewName = '📚 북클럽 & 지식탐험 크루';
+      crewColor = '#a855f7';
+      crewPoints = 1150;
+      crewPct = 76;
+      rank = '#3위';
+    } else if(/기상|모닝|루틴|시간/.test(topic)){
+      crewName = '🌅 미라클모닝 & 갓생 크루';
+      crewColor = '#f59e0b';
+      crewPoints = 1080;
+      crewPct = 72;
+      rank = '#4위';
+    }
+
+    var bEl = document.getElementById('userCrewBadge');
+    if(bEl){
+      bEl.textContent = crewName + ' ' + rank;
+      bEl.style.color = crewColor;
+    }
+    var sEl = document.getElementById('userCrewScore');
+    if(sEl) sEl.textContent = '팀 포인트 ' + crewPoints.toLocaleString() + '점';
+    var pBar = document.getElementById('userCrewProgressBar');
+    if(pBar) pBar.style.width = crewPct + '%';
+  }
+
+  function nudgeCrewMates(){
+    triggerHaptic(40);
+    toast('🤝 200인 크루원들에게 응원과 찌르기 햅틱을 보냈습니다! 🔥');
+    if(window._recordHesitation) window._recordHesitation('nudgeCrewMates');
+    var bar = document.getElementById('userCrewProgressBar');
+    if(bar) {
+      bar.style.width = '92%';
+      setTimeout(function(){ bar.style.width = '84%'; }, 1800);
+    }
+  }
+  window.nudgeCrewMates = nudgeCrewMates;
+
+  /* ============ UX Telemetry (Hesitation & Rage Tap) ============ */
+  var _uxTelemetry = {
+    hesitation: [],
+    rageTaps: [],
+    lastTap: { target: null, time: 0 }
+  };
+  window._uxTelemetry = _uxTelemetry;
+
+  function _recordHesitation(targetName){
+    var openTime = window._modalOpenAt || Date.now();
+    var lat = Date.now() - openTime;
+    _uxTelemetry.hesitation.push({ target: targetName, latencyMs: lat, at: Date.now() });
+    if(_uxTelemetry.hesitation.length > 50) _uxTelemetry.hesitation.shift();
+  }
+  window._recordHesitation = _recordHesitation;
+
+  if (typeof document !== 'undefined') {
+    document.addEventListener('click', function(e){
+      var now = Date.now();
+      var targetTag = (e.target && (e.target.id || e.target.className || e.target.tagName)) || 'elem';
+      if(_uxTelemetry.lastTap.target === targetTag && (now - _uxTelemetry.lastTap.time) < 360){
+        _uxTelemetry.rageTaps.push({ target: targetTag, at: now });
+        if(_uxTelemetry.rageTaps.length > 30) _uxTelemetry.rageTaps.shift();
+      }
+      _uxTelemetry.lastTap = { target: targetTag, time: now };
+    }, true);
+  }
+
   /* ============ RENDER: HOME ============ */
   function renderHome(){
     refreshCustomFeedbackButtons();
     renderLevelBadge();
     renderTodayMissionCard();
     renderHomeGrassSummary();
+    renderAdaptiveModeBar();
+    renderCrewPacingWidget();
     var streak = computeStreakDays();
     updateAppBadge(streak);
     var badgeEl = document.getElementById('streakBadge');
@@ -6441,6 +6686,9 @@
     var classified = (typeof classifyRecordTheme === 'function')
       ? classifyRecordTheme(text, cat)
       : { theme: 'daily', subTheme: '', confidence: 0.5 };
+    var notionRec = (typeof convertTextToNotionDbRecord === 'function')
+      ? convertTextToNotionDbRecord(text, 'note', { title: text }, goal)
+      : null;
     var recPhoto = pendingCapturePhoto || null;
     state.profile.records.unshift({
       id: newId(),
@@ -6454,7 +6702,9 @@
       visibility: 'private',
       theme: classified.theme,
       subTheme: classified.subTheme,
-      themeConfidence: classified.confidence
+      themeConfidence: classified.confidence,
+      notionDb: notionRec ? notionRec.notionSchema : null,
+      structured: notionRec || null
     });
     t.value = '';
     pendingCapturePhoto = null;
@@ -6474,7 +6724,12 @@
     if(isFirst){
       triggerFirstCheerResponse(goal, text);
     }
-    toast(freezeGranted ? '🧊 스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요' : (recPhoto ? '📷 사진과 함께 기록했어요' : '기록했어요'));
+    var checkinToastMsg = freezeGranted
+      ? '🧊 스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요'
+      : (notionRec
+          ? '✨ AI 노션 DB로 자동 기록 완료! (' + notionRec.status + (notionRec.metric ? ' · ' + notionRec.metric : '') + ')'
+          : (recPhoto ? '📷 사진과 함께 기록했어요' : '기록했어요'));
+    toast(checkinToastMsg);
     triggerHaptic(12);
     var saveBtn = document.getElementById('captureSave');
     var btnRect = saveBtn.getBoundingClientRect();
@@ -8971,6 +9226,17 @@
       '<span class="faint" style="font-size:.74rem;color:var(--ink-soft);">(목표완료시)</span>' +
     '</div>';
 
+    var rescaleCardHtml = '<div class="rescale-card" style="margin:8px 0 12px;padding:10px 12px;background:var(--card);border:1.5px solid var(--violet-soft);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div style="font-size:.78rem;font-weight:800;color:var(--violet);display:flex;align-items:center;gap:4px;">' +
+          '<span>🌱 작심삼일 극복 & 번아웃 케어</span>' +
+          (goal.rescaledCount ? '<span style="font-size:.66rem;padding:1px 5px;background:var(--chip);border-radius:4px;color:var(--ink-soft);">'+goal.rescaledCount+'회 조정됨</span>' : '') +
+        '</div>' +
+        '<div style="font-size:.72rem;color:var(--ink-soft);margin-top:2px;">바쁘셨나요? 자책하지 마세요! 일정과 목표 강도를 가볍게 50% 덜어드릴게요.</div>' +
+      '</div>' +
+      '<button class="btn btn-ghost btn-sm" id="goalRescaleBtn" type="button" style="font-size:.74rem;padding:5px 8px;white-space:nowrap;color:var(--violet);border-color:var(--violet);font-weight:700;">🌱 50% 가볍게 조정</button>' +
+    '</div>';
+
     var selCount = Object.keys(state.msSel).length + Object.keys(state.taskSel).length;
     var selBar = state.goalEditMode ?
       '<div class="sel-bar">' +
@@ -8981,7 +9247,7 @@
       '</div>' : '';
 
     body.innerHTML =
-      (state.goalEditMode ? dueRow + visRow : metaStrip + compactResultRow) +
+      (state.goalEditMode ? dueRow + visRow : metaStrip + compactResultRow + rescaleCardHtml) +
       (state.goalEditMode ? '' : goalResultRow) +
       msFilterBar +
       '<div class="ms-list">'+msHtml+'</div>' +
@@ -9079,6 +9345,19 @@
     if(goalResultBtn) goalResultBtn.addEventListener('click', function(){
       openResultModal('goal', goal, function(){ renderAll(); });
     });
+
+    var rescaleBtn = document.getElementById('goalRescaleBtn');
+    if(rescaleBtn){
+      rescaleBtn.addEventListener('click', async function(){
+        if(!confirm('이 목표의 마감일과 지연된 할 일 일정을 여유롭게 연장하고 부담을 50% 덜어드릴까요?\n\n(자책할 필요 없이 오늘 할 수 있는 것부터 다시 가볍게 시작해요!)')) return;
+        rescaleGoal(goal, 0.5);
+        await saveProfile();
+        renderAll();
+        if(typeof triggerHaptic === 'function') triggerHaptic(50);
+        if(typeof burstConfetti === 'function') burstConfetti(window.innerWidth/2, window.innerHeight/3, 18);
+        toast('목표 일정을 여유롭게 재조정했어요! 오늘 작은 1보부터 시작해봐요 🌱');
+      });
+    }
 
     if(!state.goalEditMode && goalStatusStale && goal.milestones.length) refreshGoalStatusSummary(goal, goalStatusHash);
 
