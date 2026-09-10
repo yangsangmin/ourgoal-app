@@ -1330,3 +1330,33 @@
   - `npm test` **99개 전수 통과 (0개 실패)**.
   - Vercel 프로덕션 빌드 및 배포 무장애 통과.
 ---
+
+## [2026-09-10 17:35] feat: 활성 로그인 세션 원격 기기 실시간 로그아웃 실제 구현, 마일스톤·할일 마감일/D-day 표시 및 결과입력 AI 비서 탑재
+- **목표**:
+  1. 활성 기기 세션 관리에서 '다른 모든 기기 원격 로그아웃' 클릭 시 실제 다른 기기(태블릿, 컴퓨터 등)에서 즉각 세션이 종료되도록 실시간 세션 무효화 엔진 구축.
+  2. 목표 화면에서 마일스톤과 하위 할 일(tasks)의 마감일시 및 D-day 배지를 한눈에 확인할 수 있도록 UI 고도화 (미설정 시 상위 마일스톤/목표 마감일 또는 안내 표시).
+  3. 참고자료 옆의 단독 `🤖 AI 결과` 버튼을 제거하여 카드 영역 UI를 간소화하고, 결과 입력 모달(`openResultModal`) 내부에서 인라인 한 줄 자연어 AI 자동채우기 및 상세 AI 비서 대화가 동작하도록 통합 구현.
+- **수정/실행 내역**:
+  - `index.html`:
+    - 원격 로그아웃 실시간 엔진:
+      1) 기기별 고유 식별자(`getDeviceId`) 및 로그인 시각(`getDeviceLoginTime`, `setDeviceLoginTime`) 관리 체계 도입.
+      2) `checkRemoteSessionRevoked` 함수 구현: Supabase `sb.auth.getUser()` 세션 유효성, `user_metadata.remote_logout_at` 비교, `profile.settings.remoteLogoutTimestamp` 다층 검증.
+      3) 앱 초기 부팅(`boot()`), 로그인/회원가입, 화면 포커스(`focus`), 백그라운드 복귀(`visibilitychange`), 15초 주기 백그라운드 인터벌 검증 등록.
+      4) Supabase Realtime 채널(`user_session_<userId>`) 리스너 구현: 원격 로그아웃 발생 시 1초 이내 브로드캐스트 수신하여 타 기기 즉시 로그아웃(`performLogout`).
+      5) 동일 브라우저 다중 탭 동기화를 위한 `localStorage` `storage` 이벤트 리스너 연동.
+      6) 설정 화면 `#logoutOtherDevicesBtn`: `sb.auth.signOut({ scope: 'others' })`, `sb.auth.updateUser` 메타데이터 저장, 프로필 설정 저장, Realtime 브로드캐스트 전송, 로컬트리거 발송 5단계 일괄 실행.
+    - 마일스톤 및 하위 할 일 마감일 & D-day UI:
+      1) 마일스톤 및 할 일의 마감일(`📅 마감일 YYYY.MM.DD HH:mm`)과 D-day 배지(`D-day`, `D-n`, `D+n`)를 제목 하단에 명확하게 노출.
+      2) 할 일의 개별 마감일이 없는 경우 상위 마일스톤 또는 목표 마감일을 안내하여 일정 맥락을 직관적으로 파악 가능하도록 개선.
+      3) 편집 모드에서는 `datetime-local` 인풋 바로 옆에 D-day 배지를 동적으로 표시.
+    - 결과 입력 AI 비서 통합:
+      1) 마일스톤 및 할 일 카드의 참고자료 옆 `🤖 AI 결과` 버튼을 제거하여 카드 영역 UI 간소화.
+      2) 결과 입력 모달(`openResultModal`) 상단에 `🤖 AI 비서로 결과 입력` 섹션 탑재: 자연어 한 줄 입력창(`rsAiQuickInput`) 및 `AI 자동채우기` 버튼(`rsAiQuickApplyBtn`)을 통해 거리, 시간, 쪽수, 개수, 백분율, 목표치 대비 달성량을 자동 파싱하여 폼에 자동 입력.
+      3) `[상세 대화로 열기 ›]` 버튼(`#rsAiQuickBtn`)을 통해 대화형 AI 결과 입력 어시스턴트 모달(`openAiResultAssistantModal`)로 즉시 연결.
+  - `scripts/smoke-test.js`:
+    - 원격 세션 무효화 함수, 기기 식별자 체계, Realtime 채널 리스너, 마일스톤/할일 마감일 및 D-day 렌더링, 단독 AI 버튼 제거 및 결과입력 모달 내 AI 자동채우기 통합 검증 단위 테스트 추가.
+- **검증 결과**:
+  - `npm test` **100개 전수 통과 (0개 실패)**.
+  - 모바일·태블릿·PC 간 원격 로그아웃 시나리오 및 목표/마일스톤/할일 마감일·D-day 표시, 결과입력 내 AI 비서 정상 작동 확인.
+---
+
