@@ -686,6 +686,94 @@
       }
     }
   }
+
+  /* ============ 전문적(내 전용 템플릿) 노션 표 스타일 ============ */
+  .pro-tpl-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    background: var(--card);
+    margin: 10px 0;
+    box-shadow: var(--shadow-sm);
+  }
+  .pro-notion-table {
+    width: 100%;
+    min-width: 620px;
+    border-collapse: collapse;
+    font-size: .82rem;
+    text-align: left;
+  }
+  .pro-notion-table th {
+    background: var(--card2);
+    color: var(--ink-soft);
+    font-weight: 700;
+    padding: 8px 10px;
+    border-bottom: 1.5px solid var(--rule);
+    border-right: 1px solid var(--rule);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    user-select: none;
+  }
+  .pro-notion-table th:last-child {
+    border-right: none;
+  }
+  .pro-notion-table td {
+    padding: 4px 6px;
+    border-bottom: 1px solid var(--rule);
+    border-right: 1px solid var(--rule);
+    vertical-align: middle;
+  }
+  .pro-notion-table td:last-child {
+    border-right: none;
+  }
+  .pro-notion-table tr:hover {
+    background: rgba(99, 102, 241, 0.03);
+  }
+  .pro-tpl-cell-input {
+    width: 100%;
+    border: 1px solid transparent;
+    background: transparent;
+    padding: 6px 8px;
+    font-size: .82rem;
+    border-radius: 6px;
+    color: var(--ink);
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color .15s, background .15s;
+  }
+  .pro-tpl-cell-input:focus {
+    border-color: var(--violet);
+    background: var(--card2);
+  }
+  .pro-tpl-row-del {
+    border: none;
+    background: transparent;
+    color: var(--ink-faint);
+    cursor: pointer;
+    font-size: .95rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: color .15s, background .15s;
+  }
+  .pro-tpl-row-del:hover {
+    color: var(--red);
+    background: rgba(239, 68, 68, 0.08);
+  }
+  .pro-tpl-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 8px;
+    font-size: .72rem;
+    font-weight: 700;
+    background: var(--violet-soft);
+    color: var(--violet);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+  }
 </style>
 </head>
 <body>
@@ -886,6 +974,30 @@
         <div style="display:flex;gap:8px;">
           <input id="recAgentInput" type="text" placeholder="예: '오늘 저녁 헬스장에서 가슴운동 1시간 완료', '영어 단어 30분 공부'" style="flex:1;border:1px solid var(--rule);border-radius:12px;padding:9px 12px;font-size:.84rem;background:var(--bg);color:var(--ink);">
           <button class="btn btn-primary btn-sm" id="recAgentSendBtn" type="button" style="white-space:nowrap;padding:0 14px;">기록</button>
+        </div>
+      </div>
+      <!-- 📋 전문적(내 전용 템플릿) 기록하기 -->
+      <div class="card" id="recProTemplateCard" style="margin:0 0 14px;background:linear-gradient(135deg, rgba(99,102,241,0.06) 0%, rgba(168,85,247,0.06) 100%);border:1.5px solid var(--violet-soft);box-shadow:var(--shadow-sm);padding:14px;border-radius:18px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:1.15rem;">📋</span>
+            <b style="font-size:.92rem;color:var(--violet);">전문적(내 전용 템플릿) 기록하기</b>
+            <span class="dday-mini" style="background:var(--violet-soft);color:var(--violet);font-weight:700;">맞춤형 표 속성</span>
+          </div>
+          <button class="btn btn-primary btn-sm" id="recOpenProTemplateBtn" type="button" style="padding:6px 14px;font-size:.8rem;white-space:nowrap;display:flex;align-items:center;gap:4px;">
+            <span>맞춤 기록창 열기</span>
+            <span>›</span>
+          </button>
+        </div>
+        <div class="faint" style="font-size:.76rem;line-height:1.45;color:var(--ink-soft);">
+          하이록스·공부·헬스·영업 등 나만의 테마별 맞춤 표 속성으로 정밀 기록하고 일정에 연동하세요.
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch;" id="recQuickTemplateChips">
+          <button class="dday-pill" data-quicktpl="health" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card);font-size:.74rem;">🏋️ 헬스</button>
+          <button class="dday-pill" data-quicktpl="hyrox" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card);font-size:.74rem;">🏃 하이록스</button>
+          <button class="dday-pill" data-quicktpl="study" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card);font-size:.74rem;">📚 공부</button>
+          <button class="dday-pill" data-quicktpl="business" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card);font-size:.74rem;">💼 영업</button>
+          <button class="dday-pill" id="recCreateCustomTplQuickBtn" type="button" style="cursor:pointer;border:1px dashed var(--violet);color:var(--violet);background:var(--card);font-size:.74rem;">✨ + 템플릿 생성</button>
         </div>
       </div>
       <div class="week-summary" id="weekSummary"></div>
@@ -3368,7 +3480,7 @@
       });
     });
     (state.profile.settings.customSchedules || []).forEach(function(cs){
-      if(cs.date) push(cs.date, { date:cs.date, title:cs.title, kind:'custom', schedId:cs.id, done:!!cs.done, goalTitle:cs.note||'일반 일정', attachments:cs.attachments||[] });
+      if(cs.date) push(cs.date, { date:cs.date, title:cs.title, kind:'custom', schedId:cs.id, done:!!cs.done, goalTitle:cs.note||'일반 일정', attachments:cs.attachments||[], recordId:cs.recordId||null, linkUrl:cs.linkUrl||null, isTemplateRecord:!!cs.isTemplateRecord, templateTitle:cs.templateTitle||null });
     });
     return map;
   }
@@ -3626,13 +3738,18 @@
       (evs.length ? '<div class="ms-list">'+evs.map(function(e, evIdx){
         var timeLabel = (e.date && e.date.indexOf('T') !== -1) ? ('<span class="dday-mini" style="background:var(--violet-soft);color:var(--violet);margin-left:4px;">⏰ '+e.date.split('T')[1].slice(0,5)+'</span>') : '';
         var attChips = (e.attachments && e.attachments.length) ? ('<div style="margin-top:4px;">'+renderAttachmentChipsHtml(e.attachments, e.kind, e.msId||e.goalId||e.schedId, e.goalId)+'</div>') : '';
-        return '<div class="ms-row" '+(e.goalId?'data-calgoto="'+e.goalId+'"':'')+'>' +
+        var mRec = (e.title || '').match(/#record[=:](\w+)/);
+        var targetRecId = e.recordId || (mRec ? mRec[1] : null);
+        var tplLinkChip = targetRecId ? ('<button class="dday-pill" data-calviewrec="'+targetRecId+'" type="button" style="cursor:pointer;background:var(--violet-soft);color:var(--violet);border:1px solid rgba(99,102,241,0.3);font-size:.72rem;padding:2px 6px;margin-left:4px;">📋 기록 보기</button>') : '';
+
+        return '<div class="ms-row" '+(e.goalId?'data-calgoto="'+e.goalId+'"':'')+(targetRecId?' data-calrecid="'+targetRecId+'" style="cursor:pointer;"':'')+'>' +
           '<div class="ms-main" style="align-items:flex-start;">' +
             '<div class="ms-status'+(e.done?' done':'')+'" style="margin-top:2px;">'+(e.done?'✓':'')+'</div>' +
             '<div style="flex:1;min-width:0;">' +
               '<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">' +
                 '<span class="ms-title'+(e.done?' done-text':'')+'">'+escapeHtml(e.title)+'</span>' +
                 timeLabel +
+                tplLinkChip +
               '</div>' +
               '<div class="faint" style="font-size:.72rem;margin-top:2px;">'+escapeHtml(e.goalTitle||'일반 일정')+'</div>' +
               attChips +
@@ -3650,6 +3767,28 @@
         openCalendarManualEditModal(sel, null);
       });
     }
+    wrap.querySelectorAll('[data-calviewrec]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var rid = btn.dataset.calviewrec;
+        var rec = (state.profile.records || []).find(function(r){ return r.id === rid; });
+        if(rec){
+          openTemplateRecordDetailModal(rec);
+        } else {
+          toast('연동된 기록을 찾을 수 없습니다');
+        }
+      });
+    });
+    wrap.querySelectorAll('[data-calrecid]').forEach(function(row){
+      row.addEventListener('click', function(e){
+        if(e.target.closest('[data-calsync]') || e.target.closest('[data-caledit]') || e.target.closest('.att-chip') || e.target.closest('[data-calviewrec]')) return;
+        var rid = row.dataset.calrecid;
+        var rec = (state.profile.records || []).find(function(r){ return r.id === rid; });
+        if(rec){
+          openTemplateRecordDetailModal(rec);
+        }
+      });
+    });
     wrap.querySelectorAll('[data-caledit]').forEach(function(btn){
       btn.addEventListener('click', function(e){
         e.stopPropagation();
@@ -3677,7 +3816,7 @@
 
     wrap.querySelectorAll('[data-calgoto]').forEach(function(row){
       row.addEventListener('click', function(e){
-        if(e.target.closest('[data-calsync]') || e.target.closest('[data-caledit]') || e.target.closest('.att-chip')) return;
+        if(e.target.closest('[data-calsync]') || e.target.closest('[data-caledit]') || e.target.closest('.att-chip') || e.target.closest('[data-calviewrec]')) return;
         state.activeGoalId = row.dataset.calgoto;
         setTab('goals');
       });
@@ -7346,6 +7485,843 @@
     );
   }
 
+  /* ============ 전문적(내 전용 템플릿) 기록하기 & 일정 연동 ============ */
+  var DEFAULT_PRO_TEMPLATES = [
+    {
+      id: 'tpl_health',
+      key: 'health',
+      icon: '🏋️',
+      title: '헬스',
+      theme: 'workout',
+      desc: '운동종목, 세트, 횟수, 시간, 거리, 강도별 정밀 웨이트 기록',
+      columns: ['번호', '운동종목', '세트', '횟수', '시간', '거리', '강도(100점)'],
+      defaultRows: [
+        ['1', '벤치프레스', '5세트', '10회', '15분', '-', '85점'],
+        ['2', '스쿼트', '5세트', '8회', '20분', '-', '90점']
+      ]
+    },
+    {
+      id: 'tpl_hyrox',
+      key: 'hyrox',
+      icon: '🏃',
+      title: '하이록스',
+      theme: 'workout',
+      desc: '1km 러닝 + 8개 기능성 스테이션 복합 기록',
+      columns: ['번호', '종목/스테이션', '세트/랩', '시간', '페이스', '심박수', '강도(100점)'],
+      defaultRows: [
+        ['1', '1km 러닝 (1R)', '1랩', '4분 30초', '4:30/km', '165bpm', '80점'],
+        ['2', '스키에르그 (SkiErg)', '1,000m', '4분 10초', '2:05/500m', '172bpm', '85점']
+      ]
+    },
+    {
+      id: 'tpl_study',
+      key: 'study',
+      icon: '📚',
+      title: '공부',
+      theme: 'study',
+      desc: '과목/주제, 학습내용, 공부시간, 집중도 기록',
+      columns: ['번호', '과목/주제', '학습내용', '공부시간(분)', '페이지/범위', '집중도(100점)', '복습필요'],
+      defaultRows: [
+        ['1', '영어 토익', 'RC Part 5 문법 기출 풀이', '60분', 'p.120 ~ p.145', '90점', 'N'],
+        ['2', '코딩 알고리즘', '백준 골드 DP 문제 풀이', '90분', '2문제 풀이 완료', '85점', 'Y']
+      ]
+    },
+    {
+      id: 'tpl_business',
+      key: 'business',
+      icon: '💼',
+      title: '영업',
+      theme: 'business',
+      desc: '고객사, 미팅형태, 논의내용, 제안금액, 계약가능성 추적',
+      columns: ['번호', '고객/사명', '미팅형태', '논의내용', '제안금액', '계약가능성(%)', '다음액션'],
+      defaultRows: [
+        ['1', '(주)에이비씨', '대면 미팅', '신규 솔루션 데모 시연 및 견적 협의', '1,500만원', '80%', '다음주 화요일 계약서 초안 발송']
+      ]
+    }
+  ];
+
+  function getAllProTemplates(){
+    var custom = (state.profile && state.profile.settings && state.profile.settings.proTemplates) || [];
+    return DEFAULT_PRO_TEMPLATES.concat(custom);
+  }
+
+  function getProTemplateByKey(key){
+    var list = getAllProTemplates();
+    return list.find(function(t){ return t.key === key || t.id === key; }) || list[0];
+  }
+
+  function fmtYYMMDD(dateVal){
+    if(typeof dateVal === 'string'){
+      var m = dateVal.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if(m){
+        return m[1].slice(-2) + m[2] + m[3];
+      }
+    }
+    var d = dateVal ? new Date(dateVal) : new Date();
+    if(isNaN(d.getTime())) d = new Date();
+    var yy = String(d.getFullYear()).slice(-2);
+    var mm = pad(d.getMonth()+1);
+    var dd = pad(d.getDate());
+    return yy + mm + dd;
+  }
+
+  function recommendTemplateFromAI(query){
+    var q = (query || '').trim().toLowerCase();
+    var rec = {
+      title: query ? (query.length > 8 ? query.slice(0,8) : query) : '맞춤기록',
+      icon: '📝',
+      theme: 'daily',
+      columns: ['번호', '구분/항목', '세부내용', '수치/측정값', '소요시간', '강도/만족도(100점)'],
+      defaultRows: [
+        ['1', '1회차 실천', '핵심 활동 완료', '목표 달성', '30분', '90점']
+      ]
+    };
+
+    if(/(?:헬스|웨이트|근력|보디빌딩|피트니스|pt|쇠질|가슴|등|하체)/i.test(q)){
+      rec.title = '헬스';
+      rec.icon = '🏋️';
+      rec.theme = 'workout';
+      rec.columns = ['번호', '운동종목', '세트', '횟수', '시간', '거리', '강도(100점)'];
+      rec.defaultRows = [
+        ['1', '벤치프레스', '5세트', '10회', '15분', '-', '85점'],
+        ['2', '스쿼트', '5세트', '8회', '20분', '-', '90점']
+      ];
+    } else if(/(?:하이록스|hyrox|기능성|크로스핏|와드)/i.test(q)){
+      rec.title = '하이록스';
+      rec.icon = '🏃';
+      rec.theme = 'workout';
+      rec.columns = ['번호', '종목/스테이션', '세트/랩', '시간', '페이스', '심박수', '강도(100점)'];
+      rec.defaultRows = [
+        ['1', '1km 러닝 (1R)', '1랩', '4분 30초', '4:30/km', '165bpm', '80점'],
+        ['2', '슬레드 푸시 (Sled Push)', '50m', '2분 15초', '-', '178bpm', '95점']
+      ];
+    } else if(/(?:공부|학습|독서|시험|자격증|토익|영어|코딩|개발|수능|강의)/i.test(q)){
+      rec.title = '공부';
+      rec.icon = '📚';
+      rec.theme = 'study';
+      rec.columns = ['번호', '과목/주제', '학습내용', '공부시간(분)', '페이지/범위', '집중도(100점)', '복습필요'];
+      rec.defaultRows = [
+        ['1', '핵심 개념 학습', '1챕터 이론 요약 및 문제 풀이', '60분', 'p.10~35', '90점', 'N']
+      ];
+    } else if(/(?:영업|세일즈|고객|바이어|미팅|계약|상담|매출)/i.test(q)){
+      rec.title = '영업';
+      rec.icon = '💼';
+      rec.theme = 'business';
+      rec.columns = ['번호', '고객/사명', '미팅형태', '논의내용', '제안금액', '계약가능성(%)', '다음액션'];
+      rec.defaultRows = [
+        ['1', '주요 고객사', '방문 미팅', '제안 프레젠테이션 및 Q&A', '2,000만원', '75%', '견적서 및 세부 기획안 송부']
+      ];
+    } else if(/(?:러닝|달리기|마라톤|조깅|트레일)/i.test(q)){
+      rec.title = '러닝';
+      rec.icon = '👟';
+      rec.theme = 'workout';
+      rec.columns = ['번호', '코스/구간', '거리(km)', '소요시간', '평균페이스', '심박수', '강도(100점)'];
+      rec.defaultRows = [
+        ['1', '한강 러닝 코스', '7.5km', '38분 20초', '5:06/km', '158bpm', '85점']
+      ];
+    } else if(/(?:식단|다이어트|칼로리|영양|탄단지|체중)/i.test(q)){
+      rec.title = '식단';
+      rec.icon = '🥗';
+      rec.theme = 'daily';
+      rec.columns = ['번호', '식사구분', '메뉴/음식명', '칼로리(kcal)', '단백질(g)', '수분(ml)', '만족도(100점)'];
+      rec.defaultRows = [
+        ['1', '점심', '닭가슴살 샐러드 & 현미밥', '450kcal', '32g', '500ml', '90점']
+      ];
+    } else if(/(?:골프|연습장|라운딩|스크린)/i.test(q)){
+      rec.title = '골프';
+      rec.icon = '⛳';
+      rec.theme = 'workout';
+      rec.columns = ['번호', '클럽종류', '연습타수', '비거리(m)', '구질/탄도', '타격감(100점)', '교정포인트'];
+      rec.defaultRows = [
+        ['1', '7번 아이언', '50타', '145m', '스트레이트/보통', '85점', '백스윙 탑에서 템포 유지']
+      ];
+    } else if(/(?:수영|영법|풀장)/i.test(q)){
+      rec.title = '수영';
+      rec.icon = '🏊';
+      rec.theme = 'workout';
+      rec.columns = ['번호', '영법구분', '거리(m)', '세트/랩', '소요시간', '인터벌', '강도(100점)'];
+      rec.defaultRows = [
+        ['1', '자유형 웜업', '400m', '8랩', '8분 30초', '-', '75점']
+      ];
+    }
+    return rec;
+  }
+
+  /* 💡 내 전용 템플릿 생성 모달 (AI 비서 추천 + 세부 수정) */
+  function openCreateCustomTemplateModal(onSave){
+    var curAiRec = recommendTemplateFromAI('헬스');
+    var columns = curAiRec.columns.slice();
+
+    function renderModalHtml(){
+      var colChips = columns.map(function(c, idx){
+        return '<span class="dday-pill" style="background:var(--card);border:1px solid var(--rule);display:inline-flex;align-items:center;gap:4px;padding:4px 8px;font-size:.78rem;">' +
+          '<span>'+escapeHtml(c)+'</span>' +
+          (idx > 0 ? '<button type="button" data-delcol="'+idx+'" style="border:none;background:none;color:var(--ink-faint);cursor:pointer;padding:0 2px;font-size:.84rem;line-height:1;">×</button>' : '') +
+        '</span>';
+      }).join('');
+
+      return '<h3>✨ 내 전용 템플릿 생성하기</h3>' +
+        '<div style="padding:10px 14px;background:var(--violet-soft);border-radius:12px;margin-bottom:14px;font-size:.78rem;color:var(--violet);line-height:1.45;">' +
+          '<b>ai비서로 원하는 맞춤 템플릿을 추천받고 세부적으로 수정하세요</b><br>' +
+          '<span style="font-size:.74rem;color:var(--ink-soft);">예시) 하이록스 기록, 공부기록, 헬스 기록, 영업기록 -> 맞춤형으로 생성됩니다. 일자별로 그기록을 저장하고 일정과 연동할 수 있습니다.</span>' +
+        '</div>' +
+        '<div class="field">' +
+          '<label>어떤 기록을 위한 템플릿인가요? (AI 추천)</label>' +
+          '<div style="display:flex;gap:6px;">' +
+            '<input id="customTplAiInput" type="text" placeholder="예: 크로스핏 와드, 수영 인터벌, 주식 매매일지, 독서노트" value="' + escapeHtml(curAiRec.title) + '" style="flex:1;">' +
+            '<button class="btn btn-primary btn-sm" id="customTplAiBtn" type="button" style="white-space:nowrap;">🤖 AI 추천</button>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;margin-bottom:12px;">' +
+          '<div class="field" style="flex:0 0 60px;margin-bottom:0;">' +
+            '<label>아이콘</label>' +
+            '<input id="customTplIcon" type="text" value="' + escapeHtml(curAiRec.icon) + '" style="text-align:center;">' +
+          '</div>' +
+          '<div class="field" style="flex:1;margin-bottom:0;">' +
+            '<label>템플릿 제목</label>' +
+            '<input id="customTplTitle" type="text" value="' + escapeHtml(curAiRec.title) + '" placeholder="예: 헬스, 공부, 하이록스">' +
+          '</div>' +
+        '</div>' +
+        '<div class="field">' +
+          '<label style="display:flex;align-items:center;justify-content:space-between;">' +
+            '<span>표 카테고리(속성/열) 목록 (' + columns.length + '개)</span>' +
+            '<button class="btn btn-ghost btn-sm" id="customTplAddColBtn" type="button" style="font-size:.72rem;padding:2px 8px;">+ 속성 추가</button>' +
+          '</label>' +
+          '<div id="customTplColWrap" style="display:flex;gap:6px;flex-wrap:wrap;padding:10px;background:var(--card2);border-radius:12px;border:1px solid var(--rule);min-height:48px;align-items:center;">' +
+            colChips +
+          '</div>' +
+        '</div>' +
+        '<div class="modal-actions" style="margin-top:14px;">' +
+          '<button class="btn btn-ghost" id="customTplCancel" type="button">취소</button>' +
+          '<button class="btn btn-primary" id="customTplSave" type="button">✅ 내 템플릿으로 저장</button>' +
+        '</div>';
+    }
+
+    openModal(renderModalHtml(), function(sheet){
+      function bindEvents(){
+        var aiBtn = sheet.querySelector('#customTplAiBtn');
+        var aiInp = sheet.querySelector('#customTplAiInput');
+        if(aiBtn && aiInp){
+          aiBtn.onclick = function(){
+            var q = aiInp.value.trim();
+            if(!q) return;
+            curAiRec = recommendTemplateFromAI(q);
+            columns = curAiRec.columns.slice();
+            var tInp = sheet.querySelector('#customTplTitle');
+            var iInp = sheet.querySelector('#customTplIcon');
+            if(tInp) tInp.value = curAiRec.title;
+            if(iInp) iInp.value = curAiRec.icon;
+            updateColWrap();
+            toast('AI가 [' + curAiRec.title + '] 맞춤 표 속성을 추천했어요!');
+          };
+          aiInp.onkeydown = function(e){
+            if(e.key === 'Enter'){ e.preventDefault(); aiBtn.click(); }
+          };
+        }
+
+        var addColBtn = sheet.querySelector('#customTplAddColBtn');
+        if(addColBtn){
+          addColBtn.onclick = function(){
+            var name = prompt('추가할 표 속성(열 이름)을 입력하세요:\n(예: 심박수, 소요시간, 다음액션, 칼로리 등)');
+            if(name && name.trim()){
+              columns.push(name.trim());
+              updateColWrap();
+            }
+          };
+        }
+
+        bindDelColBtns();
+
+        sheet.querySelector('#customTplCancel').onclick = closeModal;
+        sheet.querySelector('#customTplSave').onclick = async function(){
+          var title = (sheet.querySelector('#customTplTitle').value || '').trim();
+          var icon = (sheet.querySelector('#customTplIcon').value || '📋').trim();
+          if(!title){ toast('템플릿 제목을 입력해주세요'); return; }
+          if(!columns.length){ toast('최소 1개 이상의 표 속성이 필요합니다'); return; }
+
+          var newTpl = {
+            id: 'tpl_cust_' + newId(),
+            key: 'cust_' + Date.now(),
+            icon: icon,
+            title: title,
+            theme: curAiRec.theme || 'daily',
+            desc: title + ' 맞춤 표 속성 기록',
+            columns: columns.slice(),
+            defaultRows: [
+              columns.map(function(c, i){ return i===0 ? '1' : ''; })
+            ]
+          };
+
+          state.profile.settings = state.profile.settings || {};
+          state.profile.settings.proTemplates = state.profile.settings.proTemplates || [];
+          state.profile.settings.proTemplates.push(newTpl);
+          await saveProfile();
+          toast('내 전용 템플릿 [' + title + ']을 생성했어요!');
+          closeModal();
+          if(typeof onSave === 'function') onSave(newTpl);
+        };
+      }
+
+      function bindDelColBtns(){
+        sheet.querySelectorAll('[data-delcol]').forEach(function(btn){
+          btn.onclick = function(e){
+            e.stopPropagation();
+            var idx = parseInt(btn.dataset.delcol, 10);
+            if(idx > 0 && idx < columns.length){
+              columns.splice(idx, 1);
+              updateColWrap();
+            }
+          };
+        });
+      }
+
+      function updateColWrap(){
+        var wrap = sheet.querySelector('#customTplColWrap');
+        if(!wrap) return;
+        wrap.innerHTML = columns.map(function(c, idx){
+          return '<span class="dday-pill" style="background:var(--card);border:1px solid var(--rule);display:inline-flex;align-items:center;gap:4px;padding:4px 8px;font-size:.78rem;">' +
+            '<span>'+escapeHtml(c)+'</span>' +
+            (idx > 0 ? '<button type="button" data-delcol="'+idx+'" style="border:none;background:none;color:var(--ink-faint);cursor:pointer;padding:0 2px;font-size:.84rem;line-height:1;">×</button>' : '') +
+          '</span>';
+        }).join('');
+        bindDelColBtns();
+      }
+
+      bindEvents();
+    });
+  }
+
+  /* ⚙️ 표 속성(열) 편집 모달 */
+  function openTemplateColumnEditModal(curColumns, onUpdate){
+    var tempCols = curColumns.slice();
+    openModal(
+      '<h3>⚙️ 표 속성(열) 편집</h3>' +
+      '<p class="faint" style="font-size:.76rem;margin:0 0 12px;">표의 열(속성)을 추가, 변경, 삭제할 수 있습니다.</p>' +
+      '<div id="colEditList" style="display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;margin-bottom:14px;">' +
+        tempCols.map(function(c, idx){
+          return '<div style="display:flex;gap:6px;align-items:center;">' +
+            '<span class="faint" style="width:24px;font-size:.74rem;text-align:center;">'+(idx+1)+'</span>' +
+            '<input type="text" class="col-edit-input" data-colidx="'+idx+'" value="'+escapeHtml(c)+'" style="flex:1;font-size:.82rem;padding:6px 10px;">' +
+            (idx > 0 ? '<button type="button" class="icon-btn col-del-btn" data-delidx="'+idx+'" style="color:var(--red);font-size:1.1rem;padding:4px 6px;">×</button>' : '<span style="width:26px;"></span>') +
+          '</div>';
+        }).join('') +
+      '</div>' +
+      '<div style="margin-bottom:14px;">' +
+        '<button class="btn btn-ghost btn-sm" id="addColActionBtn" type="button" style="width:100%;font-size:.78rem;border-style:dashed;">+ 새 속성(열) 추가</button>' +
+      '</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn btn-ghost btn-sm" id="colEditCancel" type="button">취소</button>' +
+        '<button class="btn btn-primary btn-sm" id="colEditConfirm" type="button">표에 적용</button>' +
+      '</div>',
+      function(sheet){
+        var listEl = sheet.querySelector('#colEditList');
+        function rebind(){
+          sheet.querySelectorAll('.col-del-btn').forEach(function(b){
+            b.onclick = function(){
+              var dIdx = parseInt(b.dataset.delidx, 10);
+              if(dIdx > 0 && dIdx < tempCols.length){
+                syncInputs();
+                tempCols.splice(dIdx, 1);
+                renderList();
+              }
+            };
+          });
+        }
+        function syncInputs(){
+          sheet.querySelectorAll('.col-edit-input').forEach(function(inp){
+            var idx = parseInt(inp.dataset.colidx, 10);
+            if(tempCols[idx] !== undefined) tempCols[idx] = inp.value.trim() || ('속성' + (idx+1));
+          });
+        }
+        function renderList(){
+          listEl.innerHTML = tempCols.map(function(c, idx){
+            return '<div style="display:flex;gap:6px;align-items:center;">' +
+              '<span class="faint" style="width:24px;font-size:.74rem;text-align:center;">'+(idx+1)+'</span>' +
+              '<input type="text" class="col-edit-input" data-colidx="'+idx+'" value="'+escapeHtml(c)+'" style="flex:1;font-size:.82rem;padding:6px 10px;">' +
+              (idx > 0 ? '<button type="button" class="icon-btn col-del-btn" data-delidx="'+idx+'" style="color:var(--red);font-size:1.1rem;padding:4px 6px;">×</button>' : '<span style="width:26px;"></span>') +
+            '</div>';
+          }).join('');
+          rebind();
+        }
+        rebind();
+        sheet.querySelector('#addColActionBtn').onclick = function(){
+          syncInputs();
+          tempCols.push('새 속성 ' + (tempCols.length + 1));
+          renderList();
+        };
+        sheet.querySelector('#colEditCancel').onclick = closeModal;
+        sheet.querySelector('#colEditConfirm').onclick = function(){
+          syncInputs();
+          if(!tempCols.length) tempCols = ['번호', '항목'];
+          closeModal();
+          if(typeof onUpdate === 'function') onUpdate(tempCols);
+        };
+      }
+    );
+  }
+
+  /* 📋 전문적(내 전용 템플릿) 기록하기 메인 창 */
+  function openProTemplateRecordModal(editRec, initialTplKey){
+    var isNew = !editRec;
+    var allTpls = getAllProTemplates();
+    var curTpl = editRec ?
+      (allTpls.find(function(t){ return t.id===editRec.templateId || t.key===editRec.templateKey; }) || { id: editRec.templateId, key: editRec.templateKey, icon:'📋', title: editRec.templateTitle || '맞춤기록', columns: editRec.columns||['번호','항목'] }) :
+      (initialTplKey ? (allTpls.find(function(t){ return t.key===initialTplKey || t.id===initialTplKey; }) || allTpls[0]) : allTpls[0]);
+
+    var columns = editRec && editRec.columns ? editRec.columns.slice() : (curTpl.columns ? curTpl.columns.slice() : ['번호','운동종목','세트','횟수','시간','거리','강도(100점)']);
+    var rows = [];
+    if(editRec && editRec.rows && editRec.rows.length){
+      rows = editRec.rows.map(function(r){ return r.slice(); });
+    } else if(curTpl.defaultRows && curTpl.defaultRows.length){
+      rows = curTpl.defaultRows.map(function(r){ return r.slice(); });
+    } else {
+      rows = [columns.map(function(c, i){ return i===0 ? '1' : ''; })];
+    }
+
+    var recordDateVal = editRec && editRec.startAt ? toDateTimeLocalValue(editRec.startAt) : toDateTimeLocalValue(nowISO());
+    var memoVal = editRec ? (editRec.memo || '') : '';
+    var attachedPhoto = editRec ? editRec.photo : null;
+
+    function renderModal(){
+      var tplOptions = allTpls.map(function(t){
+        return '<option value="'+t.key+'"'+(t.key===curTpl.key?' selected':'')+'>'+t.icon+' '+t.title+' ('+t.columns.length+'개 속성)</option>';
+      }).join('');
+
+      return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">' +
+        '<h3 style="margin:0;">' + (isNew ? '📋 전문(맞춤) 템플릿 기록' : '✏️ 전문 템플릿 기록 수정') + '</h3>' +
+        '<button class="btn btn-ghost btn-sm" id="proCreateTplBtn" type="button" style="font-size:.74rem;padding:3px 8px;color:var(--violet);border-color:var(--violet-soft);">+ 새 템플릿 생성</button>' +
+      '</div>' +
+      '<div style="padding:10px 14px;background:var(--card2);border-radius:12px;border:1px solid var(--rule);margin-bottom:12px;font-size:.76rem;line-height:1.45;color:var(--ink-soft);">' +
+        '<b>맞춤형으로 생성됩니다.</b> 일자별로 그기록을 저장하고 일정과 연동할 수 있습니다.' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">' +
+        '<div class="field" style="flex:1;min-width:140px;margin-bottom:0;">' +
+          '<label>템플릿 선택</label>' +
+          '<select id="proTplSelect">' + tplOptions + '</select>' +
+        '</div>' +
+        '<div class="field" style="flex:1;min-width:140px;margin-bottom:0;">' +
+          '<label>기록 날짜 및 시간</label>' +
+          '<input id="proRecDate" type="datetime-local" value="' + recordDateVal + '">' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin:12px 0 6px;">' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<span class="pro-tpl-badge">' + curTpl.icon + ' ' + escapeHtml(curTpl.title) + '</span>' +
+          '<span class="faint" style="font-size:.74rem;">노션 표 속성 기록</span>' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;">' +
+          '<button class="btn btn-ghost btn-sm" id="proEditColsBtn" type="button" style="font-size:.72rem;padding:3px 8px;">⚙️ 표 속성 편집</button>' +
+          '<button class="btn btn-ghost btn-sm" id="proAddRowBtn" type="button" style="font-size:.72rem;padding:3px 8px;color:var(--violet);">+ 행 추가</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="pro-tpl-table-wrap">' +
+        '<table class="pro-notion-table" id="proTable">' +
+          '<thead>' +
+            '<tr>' +
+              columns.map(function(c, cIdx){
+                return '<th style="'+(cIdx===0?'width:44px;text-align:center;':'')+'">'+escapeHtml(c)+'</th>';
+              }).join('') +
+              '<th style="width:36px;text-align:center;">삭제</th>' +
+            '</tr>' +
+          '</thead>' +
+          '<tbody id="proTableBody">' +
+            renderRowsHtml(rows, columns) +
+          '</tbody>' +
+        '</table>' +
+      '</div>' +
+      '<div style="display:flex;justify-content:flex-end;margin-bottom:12px;">' +
+        '<button class="btn btn-ghost btn-sm" id="proAddRowBtn2" type="button" style="font-size:.74rem;padding:3px 10px;">+ 새 행 추가</button>' +
+      '</div>' +
+      '<div class="field" style="margin-bottom:10px;">' +
+        '<label>오늘의 한줄 회고 및 메모 (선택)</label>' +
+        '<input id="proRecMemo" type="text" value="' + escapeHtml(memoVal) + '" placeholder="예: 오늘 컨디션 좋았음, 다음엔 3세트 무게 올려서 도전">' +
+      '</div>' +
+      '<div class="field" style="margin-bottom:14px;">' +
+        '<label>인증 사진 첨부 (선택)</label>' +
+        '<div style="display:flex;gap:10px;align-items:center;">' +
+          '<button class="btn btn-ghost btn-sm" id="proPhotoPickBtn" type="button">📷 사진 첨부</button>' +
+          '<input type="file" id="proFileInput" accept="image/*" style="display:none;">' +
+          '<div id="proPhotoPreview" style="width:40px;height:40px;border-radius:8px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;overflow:hidden;border:1px solid var(--rule);">' +
+            (attachedPhoto ? '<img src="'+attachedPhoto+'" style="width:100%;height:100%;object-fit:cover;">' : '🖼️') +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="padding:10px 14px;background:var(--card2);border-radius:12px;margin-bottom:14px;border:1px solid var(--rule);">' +
+        '<div style="font-size:.76rem;color:var(--violet);font-weight:700;margin-bottom:2px;">*일정연동 저장은 오늘 기록이 링크화되어 일정에 기록됩니다.</div>' +
+        '<div class="faint" style="font-size:.72rem;">일정에 ' + fmtYYMMDD(nowISO()) + curTpl.title + '(link주소) 형식으로 등록되며, 언제든 일정에서 바로 열람할 수 있습니다.</div>' +
+      '</div>' +
+      '<div class="modal-actions" style="gap:8px;flex-wrap:wrap;">' +
+        '<button class="btn btn-ghost btn-sm" id="proCancelBtn" type="button" style="flex:0 0 auto;">취소</button>' +
+        '<button class="btn btn-ghost btn-sm" id="proGeneralSaveBtn" type="button" style="flex:1;min-width:110px;">💾 일반저장</button>' +
+        '<button class="btn btn-primary btn-sm" id="proCalendarSaveBtn" type="button" style="flex:1;min-width:130px;">📅 일정연동저장</button>' +
+      '</div>';
+    }
+
+    function renderRowsHtml(rList, cList){
+      if(!rList.length){
+        return '<tr><td colspan="'+(cList.length+1)+'" style="text-align:center;padding:16px;color:var(--ink-faint);">+ 행 추가 버튼을 눌러 기록을 시작하세요</td></tr>';
+      }
+      return rList.map(function(row, rIdx){
+        var tds = cList.map(function(colName, cIdx){
+          var val = row[cIdx] !== undefined ? row[cIdx] : '';
+          var isFirst = (cIdx === 0);
+          var ph = isFirst ? (rIdx + 1) : colName;
+          return '<td style="'+(isFirst?'width:44px;text-align:center;':'')+'">' +
+            '<input type="text" class="pro-tpl-cell-input" data-row="'+rIdx+'" data-col="'+cIdx+'" value="'+escapeHtml(String(val))+'" placeholder="'+escapeHtml(String(ph))+'">' +
+          '</td>';
+        }).join('');
+        return '<tr data-rowidx="'+rIdx+'">' +
+          tds +
+          '<td style="width:36px;text-align:center;">' +
+            '<button type="button" class="pro-tpl-row-del" data-delrow="'+rIdx+'" aria-label="행 삭제" title="행 삭제">×</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    openModal(renderModal(), function(sheet){
+      function syncCurrentRowsFromDOM(){
+        var tbody = sheet.querySelector('#proTableBody');
+        if(!tbody) return;
+        var newRows = [];
+        tbody.querySelectorAll('tr').forEach(function(tr, rIdx){
+          var rowData = [];
+          tr.querySelectorAll('.pro-tpl-cell-input').forEach(function(inp){
+            var cIdx = parseInt(inp.dataset.col, 10);
+            rowData[cIdx] = inp.value;
+          });
+          if(rowData.length) newRows.push(rowData);
+        });
+        rows = newRows;
+      }
+
+      function refreshTableBody(){
+        var tbody = sheet.querySelector('#proTableBody');
+        if(!tbody) return;
+        tbody.innerHTML = renderRowsHtml(rows, columns);
+        bindRowEvents();
+      }
+
+      function bindRowEvents(){
+        sheet.querySelectorAll('.pro-tpl-row-del').forEach(function(b){
+          b.onclick = function(){
+            syncCurrentRowsFromDOM();
+            var dIdx = parseInt(b.dataset.delrow, 10);
+            if(rows.length > 1){
+              rows.splice(dIdx, 1);
+              // 번호 컬럼 자동 재조정
+              rows.forEach(function(r, i){ if(r[0] !== undefined) r[0] = String(i+1); });
+            } else {
+              // 1개만 남은 경우 비우기
+              rows[0] = columns.map(function(c, i){ return i===0 ? '1' : ''; });
+            }
+            refreshTableBody();
+          };
+        });
+      }
+
+      function addNewRow(){
+        syncCurrentRowsFromDOM();
+        var nextNum = String(rows.length + 1);
+        var newRow = columns.map(function(c, i){ return i===0 ? nextNum : ''; });
+        rows.push(newRow);
+        refreshTableBody();
+        // 새로 추가된 행의 첫 번째 입력 셀에 포커스
+        var inputs = sheet.querySelectorAll('.pro-tpl-cell-input[data-row="'+(rows.length-1)+'"]');
+        if(inputs && inputs[1]) inputs[1].focus();
+      }
+
+      sheet.querySelector('#proAddRowBtn').onclick = addNewRow;
+      var addBtn2 = sheet.querySelector('#proAddRowBtn2');
+      if(addBtn2) addBtn2.onclick = addNewRow;
+
+      // 표 속성 편집
+      sheet.querySelector('#proEditColsBtn').onclick = function(){
+        syncCurrentRowsFromDOM();
+        openTemplateColumnEditModal(columns, function(updatedCols){
+          // 열 구조 동기화
+          var oldColsLen = columns.length;
+          columns = updatedCols;
+          rows = rows.map(function(r){
+            var newR = [];
+            for(var i=0; i<columns.length; i++){
+              newR[i] = (r[i] !== undefined) ? r[i] : (i===0 ? r[0] : '');
+            }
+            return newR;
+          });
+          // 테이블 헤더 갱신
+          var thead = sheet.querySelector('#proTable thead tr');
+          if(thead){
+            thead.innerHTML = columns.map(function(c, cIdx){
+              return '<th style="'+(cIdx===0?'width:44px;text-align:center;':'')+'">'+escapeHtml(c)+'</th>';
+            }).join('') + '<th style="width:36px;text-align:center;">삭제</th>';
+          }
+          refreshTableBody();
+          toast('표 속성을 변경했어요');
+        });
+      };
+
+      // 템플릿 변경
+      var tplSelect = sheet.querySelector('#proTplSelect');
+      if(tplSelect){
+        tplSelect.onchange = function(){
+          syncCurrentRowsFromDOM();
+          var selKey = tplSelect.value;
+          curTpl = getProTemplateByKey(selKey);
+          columns = curTpl.columns ? curTpl.columns.slice() : ['번호','항목'];
+          rows = curTpl.defaultRows ? curTpl.defaultRows.map(function(r){ return r.slice(); }) : [columns.map(function(c, i){ return i===0 ? '1' : ''; })];
+          // 헤더 및 바디 전체 재렌더링
+          var thead = sheet.querySelector('#proTable thead tr');
+          if(thead){
+            thead.innerHTML = columns.map(function(c, cIdx){
+              return '<th style="'+(cIdx===0?'width:44px;text-align:center;':'')+'">'+escapeHtml(c)+'</th>';
+            }).join('') + '<th style="width:36px;text-align:center;">삭제</th>';
+          }
+          var badge = sheet.querySelector('.pro-tpl-badge');
+          if(badge) badge.innerHTML = curTpl.icon + ' ' + escapeHtml(curTpl.title);
+          refreshTableBody();
+        };
+      }
+
+      // 템플릿 생성 버튼
+      var createBtn = sheet.querySelector('#proCreateTplBtn');
+      if(createBtn){
+        createBtn.onclick = function(){
+          openCreateCustomTemplateModal(function(newTpl){
+            curTpl = newTpl;
+            columns = newTpl.columns.slice();
+            rows = newTpl.defaultRows ? newTpl.defaultRows.map(function(r){ return r.slice(); }) : [columns.map(function(c, i){ return i===0 ? '1' : ''; })];
+            // 셀렉트 옵션 추가 및 선택
+            allTpls = getAllProTemplates();
+            tplSelect.innerHTML = allTpls.map(function(t){
+              return '<option value="'+t.key+'"'+(t.key===curTpl.key?' selected':'')+'>'+t.icon+' '+t.title+' ('+t.columns.length+'개 속성)</option>';
+            }).join('');
+            var thead = sheet.querySelector('#proTable thead tr');
+            if(thead){
+              thead.innerHTML = columns.map(function(c, cIdx){
+                return '<th style="'+(cIdx===0?'width:44px;text-align:center;':'')+'">'+escapeHtml(c)+'</th>';
+              }).join('') + '<th style="width:36px;text-align:center;">삭제</th>';
+            }
+            var badge = sheet.querySelector('.pro-tpl-badge');
+            if(badge) badge.innerHTML = curTpl.icon + ' ' + escapeHtml(curTpl.title);
+            refreshTableBody();
+          });
+        };
+      }
+
+      // 사진 첨부
+      var fileInp = sheet.querySelector('#proFileInput');
+      var photoBtn = sheet.querySelector('#proPhotoPickBtn');
+      var photoPrev = sheet.querySelector('#proPhotoPreview');
+      if(photoBtn && fileInp){
+        photoBtn.onclick = function(){ fileInp.click(); };
+        fileInp.onchange = function(e){
+          var f = e.target.files[0];
+          if(!f) return;
+          resizeImageToDataUrl(f, 600, function(dUrl){
+            if(dUrl){
+              attachedPhoto = dUrl;
+              photoPrev.innerHTML = '<img src="'+dUrl+'" style="width:100%;height:100%;object-fit:cover;">';
+            }
+          });
+        };
+      }
+
+      bindRowEvents();
+
+      sheet.querySelector('#proCancelBtn').onclick = closeModal;
+
+      // 저장 공통 함수
+      async function executeSave(syncCalendar){
+        syncCurrentRowsFromDOM();
+        var dateVal = sheet.querySelector('#proRecDate').value;
+        var recordDateISO = dateVal ? new Date(dateVal).toISOString() : nowISO();
+        var memo = (sheet.querySelector('#proRecMemo').value || '').trim();
+        var validRows = rows.filter(function(r){
+          return r.some(function(cell, idx){ return idx > 0 && cell && String(cell).trim().length > 0; });
+        });
+        if(!validRows.length) validRows = rows.slice(0, 1);
+
+        var recId = editRec ? editRec.id : newId();
+        var yymmdd = fmtYYMMDD(recordDateISO);
+        var tplTitle = curTpl.title || '기록';
+        var linkUrl = '#record=' + recId;
+        var schedTitle = yymmdd + tplTitle + '(' + linkUrl + ')';
+
+        var summaryText = validRows.map(function(r){
+          return r.filter(Boolean).join(' | ');
+        }).join('\n');
+        var fullText = '[' + tplTitle + '] ' + validRows.length + '개 항목 기록\n' + (memo ? memo + '\n' : '') + summaryText;
+
+        var recObj = {
+          id: recId,
+          type: 'template',
+          theme: curTpl.theme || 'daily',
+          category: null,
+          templateId: curTpl.id,
+          templateKey: curTpl.key,
+          templateTitle: tplTitle,
+          columns: columns,
+          rows: validRows,
+          text: fullText,
+          summaryText: summaryText,
+          memo: memo,
+          startAt: recordDateISO,
+          endAt: null,
+          createdAt: editRec ? editRec.createdAt : nowISO(),
+          linkedScheduleId: editRec ? editRec.linkedScheduleId : null,
+          photo: attachedPhoto
+        };
+
+        state.profile.records = state.profile.records || [];
+        if(isNew){
+          state.profile.records.unshift(recObj);
+          awardXP(XP_RULES.checkin, '전문 템플릿 기록');
+        } else {
+          var existIdx = state.profile.records.findIndex(function(r){ return r.id === recId; });
+          if(existIdx !== -1) state.profile.records[existIdx] = recObj;
+          else state.profile.records.unshift(recObj);
+        }
+
+        // 일정 연동 저장 시
+        if(syncCalendar){
+          state.profile.settings = state.profile.settings || {};
+          state.profile.settings.customSchedules = state.profile.settings.customSchedules || [];
+          var schedList = state.profile.settings.customSchedules;
+
+          var existingSched = recObj.linkedScheduleId ? schedList.find(function(c){ return c.id === recObj.linkedScheduleId; }) : null;
+          if(existingSched){
+            existingSched.title = schedTitle;
+            existingSched.date = toDateTimeLocalValue(recordDateISO);
+            existingSched.note = '📋 전문 템플릿 [' + tplTitle + '] 기록 연동\n' + (memo ? memo + '\n' : '') + summaryText;
+            existingSched.recordId = recId;
+            existingSched.linkUrl = linkUrl;
+            existingSched.isTemplateRecord = true;
+            existingSched.templateTitle = tplTitle;
+          } else {
+            var newSched = {
+              id: newId(),
+              title: schedTitle,
+              date: toDateTimeLocalValue(recordDateISO),
+              note: '📋 전문 템플릿 [' + tplTitle + '] 기록 연동\n' + (memo ? memo + '\n' : '') + summaryText,
+              done: true,
+              recordId: recId,
+              linkUrl: linkUrl,
+              isTemplateRecord: true,
+              templateTitle: tplTitle
+            };
+            schedList.push(newSched);
+            recObj.linkedScheduleId = newSched.id;
+          }
+
+          if(state.profile.settings.gcalAutoSync && isGoogleCalendarConnected()){
+            syncAllToGoogleCalendar().catch(function(){});
+          }
+        }
+
+        await saveProfile();
+        closeModal();
+        renderRecordsScreen();
+        if(state.activeTab === 'calendar') renderCalendarScreen();
+        renderLevelBadge();
+
+        if(syncCalendar){
+          toast('기록 저장 및 [' + schedTitle + '] 일정에 연동 완료!');
+        } else {
+          toast('전문 템플릿 기록을 저장했어요!');
+        }
+        burstConfetti(window.innerWidth/2, window.innerHeight/2);
+      }
+
+      sheet.querySelector('#proGeneralSaveBtn').onclick = function(){ executeSave(false); };
+      sheet.querySelector('#proCalendarSaveBtn').onclick = function(){ executeSave(true); };
+    });
+  }
+
+  /* 🔍 전문 템플릿 기록 상세 조회 모달 (일정 또는 기록에서 클릭 시) */
+  function openTemplateRecordDetailModal(record){
+    if(!record) return;
+    var tplTitle = record.templateTitle || '전문 맞춤 기록';
+    var cols = record.columns || ['번호', '항목'];
+    var rList = record.rows || [];
+    var yymmdd = fmtYYMMDD(record.startAt);
+
+    openModal(
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<span class="pro-tpl-badge">📋 ' + escapeHtml(tplTitle) + '</span>' +
+          '<span class="faint" style="font-size:.76rem;">' + yymmdd + ' (' + rList.length + '개 항목)</span>' +
+        '</div>' +
+        '<button class="btn btn-ghost btn-sm" id="detailEditBtn" type="button" style="font-size:.74rem;padding:3px 8px;color:var(--violet);border-color:var(--violet-soft);">✏️ 수정</button>' +
+      '</div>' +
+      (record.memo ? '<div style="padding:8px 12px;background:var(--card2);border-radius:10px;margin-bottom:10px;font-size:.82rem;line-height:1.45;">💭 <b>메모:</b> ' + escapeHtml(record.memo) + '</div>' : '') +
+      '<div class="pro-tpl-table-wrap">' +
+        '<table class="pro-notion-table">' +
+          '<thead>' +
+            '<tr>' +
+              cols.map(function(c, idx){
+                return '<th style="'+(idx===0?'width:44px;text-align:center;':'')+'">'+escapeHtml(c)+'</th>';
+              }).join('') +
+            '</tr>' +
+          '</thead>' +
+          '<tbody>' +
+            (rList.length ? rList.map(function(r, rIdx){
+              return '<tr>' + cols.map(function(c, cIdx){
+                var cell = r[cIdx] !== undefined ? r[cIdx] : '';
+                return '<td style="padding:6px 10px;'+(cIdx===0?'width:44px;text-align:center;font-weight:700;color:var(--ink-faint);':'')+'">'+escapeHtml(String(cell))+'</td>';
+              }).join('') + '</tr>';
+            }).join('') : '<tr><td colspan="'+cols.length+'" style="text-align:center;padding:14px;color:var(--ink-faint);">기록된 행이 없습니다</td></tr>') +
+          '</tbody>' +
+        '</table>' +
+      '</div>' +
+      (record.photo ? '<div style="margin:10px 0;"><img src="'+record.photo+'" style="max-height:180px;border-radius:10px;object-fit:cover;border:1px solid var(--rule);"></div>' : '') +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:8px;">' +
+        '<span class="faint" style="font-size:.72rem;">기록일시: ' + fmtTime(record.startAt) + '</span>' +
+        '<div style="display:flex;gap:6px;">' +
+          (record.linkedScheduleId ? '<button class="btn btn-ghost btn-sm" id="detailGoCalBtn" type="button" style="font-size:.74rem;">📅 캘린더에서 보기</button>' : '') +
+          '<button class="btn btn-primary btn-sm" id="detailCloseBtn" type="button" style="padding:4px 16px;">닫기</button>' +
+        '</div>' +
+      '</div>',
+      function(sheet){
+        sheet.querySelector('#detailCloseBtn').onclick = closeModal;
+        var editBtn = sheet.querySelector('#detailEditBtn');
+        if(editBtn){
+          editBtn.onclick = function(){
+            closeModal();
+            openProTemplateRecordModal(record);
+          };
+        }
+        var calBtn = sheet.querySelector('#detailGoCalBtn');
+        if(calBtn){
+          calBtn.onclick = function(){
+            closeModal();
+            state.calSelectedDate = isoDate(new Date(record.startAt));
+            state.calDate = state.calSelectedDate;
+            setTab('calendar');
+          };
+        }
+      }
+    );
+  }
+
+  /* 🔗 URL 해시 딥링크 감지 (#record=rec_xxx 또는 #record:rec_xxx) */
+  function checkRecordDeepLink(){
+    var hash = window.location.hash || '';
+    var m = hash.match(/#record[=:](\w+)/);
+    if(m && m[1]){
+      var rid = m[1];
+      var rec = (state.profile.records || []).find(function(r){ return r.id === rid; });
+      if(rec){
+        if(rec.type === 'template'){
+          openTemplateRecordDetailModal(rec);
+        } else {
+          openRecordModal(rec);
+        }
+      }
+    }
+  }
+  window.addEventListener('hashchange', checkRecordDeepLink);
+
   function renderRecordsScreen(){
     // 1. 레거시 기록 자동 테마 백필 (Backfill Migration)
     var needsSave = false;
@@ -7400,6 +8376,23 @@
       };
     }
 
+    // 전문적(내 전용 템플릿) 기록 버튼 & 퀵 칩 리스너 연결
+    var proOpenBtn = document.getElementById('recOpenProTemplateBtn');
+    if(proOpenBtn){
+      proOpenBtn.onclick = function(){ openProTemplateRecordModal(null); };
+    }
+    document.querySelectorAll('#recQuickTemplateChips [data-quicktpl]').forEach(function(btn){
+      btn.onclick = function(){ openProTemplateRecordModal(null, btn.dataset.quicktpl); };
+    });
+    var quickCreateBtn = document.getElementById('recCreateCustomTplQuickBtn');
+    if(quickCreateBtn){
+      quickCreateBtn.onclick = function(){
+        openCreateCustomTemplateModal(function(newTpl){
+          openProTemplateRecordModal(null, newTpl.key);
+        });
+      };
+    }
+
     var listEl = document.getElementById('recordsList');
     if(!allRecs.length){
       listEl.innerHTML = '<div class="empty-state"><div class="e-icon">📝</div><p>아직 기록이 없어요. 홈에서 자유롭게 적어보세요.</p></div>';
@@ -7427,20 +8420,24 @@
     filteredRecs.forEach(function(r){
       var k = dateKey(r.startAt);
       if(k!==lastKey){ html += '<div class="rec-date-label">'+fmtDateLabel(r.startAt)+'</div>'; lastKey = k; }
+      var isTpl = r.type==='template';
       var isNote = r.type==='note';
-      var isDoing = !isNote && !r.endAt;
+      var isDoing = !isNote && !isTpl && !r.endAt;
       var durEl;
-      if(isNote){ durEl = '<span class="rec-dur note">메모</span>'; }
+      if(isTpl){ durEl = '<span class="rec-dur" style="background:var(--violet-soft);color:var(--violet);">표 속성</span>'; }
+      else if(isNote){ durEl = '<span class="rec-dur note">메모</span>'; }
       else if(isDoing){ durEl = '<span class="rec-dur doing">진행 중</span>'; }
       else{ durEl = '<span class="rec-dur">'+fmtDuration(new Date(r.endAt)-new Date(r.startAt))+'</span>'; }
-      var timeStr = isNote ? fmtTime(r.startAt) : (fmtTime(r.startAt) + ' – ' + (r.endAt?fmtTime(r.endAt):'진행중'));
+      var timeStr = (isNote || isTpl) ? fmtTime(r.startAt) : (fmtTime(r.startAt) + ' – ' + (r.endAt?fmtTime(r.endAt):'진행중'));
       var th = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[r.theme]) ? RECORD_THEMES[r.theme] : ((typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES.daily) ? RECORD_THEMES.daily : { label:'일상', icon:'🌱', color:'#64748b', bgColor:'rgba(100,116,139,0.12)', borderColor:'rgba(100,116,139,0.35)' });
       var subThText = r.subTheme ? (' · ' + escapeHtml(r.subTheme)) : '';
       var chipStyle = 'background:'+th.bgColor+';color:'+th.color+';border:1px solid '+th.borderColor+';';
       var photoHtml = r.photo ? '<div style="margin-top:6px;"><img src="'+r.photo+'" style="max-height:140px;border-radius:8px;object-fit:cover;border:1px solid var(--rule);"></div>' : '';
+      var tplBadgeHtml = isTpl ? ('<div style="margin-bottom:6px;"><span class="pro-tpl-badge">📋 ' + escapeHtml(r.templateTitle || '전문 템플릿') + ' (' + (r.rows ? r.rows.length : 0) + '개 항목) · 클릭하여 표 보기</span></div>') : '';
 
-      html += '<div class="rec-card'+(isDoing?' doing':'')+'" data-recid="'+r.id+'" style="border-left: 4px solid '+th.color+';">' +
-        '<div class="rec-top"><div class="rec-text">'+escapeHtml(r.text)+'</div>' +
+      html += '<div class="rec-card'+(isDoing?' doing':'')+'" data-recid="'+r.id+'" style="border-left: 4px solid '+th.color+';'+(isTpl?'cursor:pointer;':'')+'">' +
+        tplBadgeHtml +
+        '<div class="rec-top"><div class="rec-text" style="white-space:pre-line;">'+escapeHtml(r.text)+'</div>' +
           '<div class="rec-icons"><button class="icon-btn" data-recedit="1" aria-label="기록 수정">✎</button><button class="icon-btn" data-recdel="1" aria-label="기록 삭제">×</button></div>' +
         '</div>' +
         photoHtml +
@@ -7457,7 +8454,23 @@
     listEl.querySelectorAll('.rec-card').forEach(function(card){
       var id = card.dataset.recid;
       var rec = state.profile.records.find(function(r){ return r.id===id; });
-      card.querySelector('[data-recedit]').addEventListener('click', function(){ openRecordModal(rec); });
+      if(!rec) return;
+
+      if(rec.type === 'template'){
+        card.addEventListener('click', function(e){
+          if(e.target.closest('button') || e.target.closest('.rec-theme-chip')) return;
+          openTemplateRecordDetailModal(rec);
+        });
+      }
+
+      card.querySelector('[data-recedit]').addEventListener('click', function(e){
+        e.stopPropagation();
+        if(rec.type === 'template'){
+          openProTemplateRecordModal(rec);
+        } else {
+          openRecordModal(rec);
+        }
+      });
       var chipBtn = card.querySelector('[data-rectheme]');
       if(chipBtn){
         chipBtn.addEventListener('click', function(e){
@@ -7465,9 +8478,16 @@
           openThemePickerModal(id);
         });
       }
-      card.querySelector('[data-recdel]').addEventListener('click', async function(){
+      card.querySelector('[data-recdel]').addEventListener('click', async function(e){
+        e.stopPropagation();
         if(!confirm('이 기록을 삭제할까요?')) return;
         state.profile.records = state.profile.records.filter(function(r){ return r.id!==id; });
+        // 만약 일정과 연동되어 있었다면 일정에서도 제거
+        if(rec.linkedScheduleId && state.profile.settings && state.profile.settings.customSchedules){
+          state.profile.settings.customSchedules = state.profile.settings.customSchedules.filter(function(c){
+            return c.id !== rec.linkedScheduleId && c.recordId !== rec.id;
+          });
+        }
         await saveProfile(); renderRecordsScreen();
       });
     });

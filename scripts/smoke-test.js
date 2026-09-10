@@ -78,6 +78,7 @@ const FN_NAMES = [
   'uid', 'newId', 'nowISO', 'getSid', 'getAttribution', 'recordLanding', 'buildCheckinRecord', 'updateAppBadge',
   'calendarAvailable', 'fmtDateLabel', 'filterRecordsByQuery',
   'generateDynamicNotification',
+  'fmtYYMMDD', 'recommendTemplateFromAI',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -110,7 +111,7 @@ const sandboxSrc =
   'buildCheckinRecord, updateAppBadge, ' +
   'getNavigator: function(){ return navigator; }, setNavigator: function(n){ navigator = n; }, ' +
   'calendarAvailable, fmtDateLabel, filterRecordsByQuery, ' +
-  'generateDynamicNotification, ' +
+  'generateDynamicNotification, fmtYYMMDD, recommendTemplateFromAI, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -784,6 +785,60 @@ check('compliance: index.html 에 회원탈퇴·약관·문의·버전 마커가
 check('compliance: api/withdraw.js 가 유효한 핸들러 모듈이다', () => {
   const handler = require('../api/withdraw.js');
   assert.strictEqual(typeof handler, 'function', 'api/withdraw.js 핸들러 함수 존재');
+});
+
+/* ── 전문적(내 전용 템플릿) 기록하기 & 일정 연동 단위 테스트 ─────────────────────── */
+check('fmtYYMMDD: 날짜를 6자리 YYMMDD 형식으로 정확히 변환한다', () => {
+  assert.strictEqual(fns.fmtYYMMDD('2026-09-10T12:00:00Z'), '260910');
+  assert.strictEqual(fns.fmtYYMMDD('2026-01-05T09:30:00Z'), '260105');
+  assert.strictEqual(fns.fmtYYMMDD('2026-12-31T23:59:59Z'), '261231');
+});
+
+check('recommendTemplateFromAI: 헬스 입력 시 운동종목, 세트, 횟수, 시간, 거리, 강도(100점) 컬럼을 추천한다', () => {
+  const res = fns.recommendTemplateFromAI('헬스');
+  assert.strictEqual(res.title, '헬스');
+  assert.strictEqual(res.icon, '🏋️');
+  assert.strictEqual(res.theme, 'workout');
+  assert.deepStrictEqual(res.columns, ['번호', '운동종목', '세트', '횟수', '시간', '거리', '강도(100점)']);
+  assert.ok(res.defaultRows.length >= 1, '최소 1개 이상의 기본 예시 행 제공');
+});
+
+check('recommendTemplateFromAI: 하이록스, 공부, 영업 등 테마별 특화 속성을 지능형으로 추천한다', () => {
+  const hyrox = fns.recommendTemplateFromAI('하이록스');
+  assert.strictEqual(hyrox.title, '하이록스');
+  assert.ok(hyrox.columns.includes('종목/스테이션'));
+  assert.ok(hyrox.columns.includes('심박수'));
+  assert.ok(hyrox.columns.includes('페이스'));
+
+  const study = fns.recommendTemplateFromAI('공부');
+  assert.strictEqual(study.title, '공부');
+  assert.ok(study.columns.includes('과목/주제'));
+  assert.ok(study.columns.includes('공부시간(분)'));
+  assert.ok(study.columns.includes('집중도(100점)'));
+
+  const biz = fns.recommendTemplateFromAI('영업');
+  assert.strictEqual(biz.title, '영업');
+  assert.ok(biz.columns.includes('고객/사명'));
+  assert.ok(biz.columns.includes('제안금액'));
+  assert.ok(biz.columns.includes('계약가능성(%)'));
+});
+
+check('compliance: 전문적(내 전용 템플릿) 기록하기 UI 요소 및 안내멘트가 존재한다', () => {
+  assert.ok(html.includes('id="recProTemplateCard"'), '전문 템플릿 카드 존재');
+  assert.ok(html.includes('id="recOpenProTemplateBtn"'), '맞춤 기록창 열기 버튼 존재');
+  assert.ok(html.includes('id="recQuickTemplateChips"'), '퀵 템플릿 칩 컨테이너 존재');
+  assert.ok(html.includes('맞춤형으로 생성됩니다. 일자별로 그기록을 저장하고 일정과 연동할 수 있습니다.'), '생성 안내멘트 포함');
+  assert.ok(html.includes('*일정연동 저장은 오늘 기록이 링크화되어 일정에 기록됩니다.'), '일정연동 안내멘트 포함');
+});
+
+check('compliance: 전문 템플릿 모달, 속성 편집, 상세 조회 및 일정 링크 딥링크 함수가 존재한다', () => {
+  assert.ok(html.includes('openProTemplateRecordModal'), 'openProTemplateRecordModal 함수 구현');
+  assert.ok(html.includes('openCreateCustomTemplateModal'), 'openCreateCustomTemplateModal 함수 구현');
+  assert.ok(html.includes('openTemplateColumnEditModal'), 'openTemplateColumnEditModal 함수 구현');
+  assert.ok(html.includes('openTemplateRecordDetailModal'), 'openTemplateRecordDetailModal 함수 구현');
+  assert.ok(html.includes('checkRecordDeepLink'), 'checkRecordDeepLink 함수 구현');
+  assert.ok(html.includes('pro-notion-table'), '노션 표 스타일 CSS 클래스 존재');
+  assert.ok(html.includes('data-calviewrec'), '캘린더 일정에 기록 보기 링크 버튼 연동');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

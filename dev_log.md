@@ -1258,3 +1258,28 @@
   - JS 문법 검증(`new Function`), 규정 준수 마커(`회원 탈퇴`, `이용약관`, `개인정보처리방침`, `문의`, `v1.0.0`) 전수 통과
 ---
 
+## [2026-09-10 16:15] feat: 기록 탭 '전문적(내 전용 템플릿) 기록하기' 및 노션 표 속성·캘린더 일정 연동 구현
+- **목표**: 사용자 요청 전문 기록 기능 구현:
+  1. 기록 탭 `AI 대화형 기록 비서` 바로 밑에 `전문적(내 전용 템플릿) 기록하기` 카드 및 빠른 템플릿 칩(헬스, 하이록스, 공부, 영업, +템플릿 생성) 배치
+  2. 전문(맞춤) 창에서 테마별(본인 맞춤형) 정밀 기록 지원
+  3. `내 전용 템플릿 생성하기`: AI 비서로 원하는 맞춤 템플릿 추천 및 세부 수정 지원
+     - 안내멘트: "맞춤형으로 생성됩니다. 일자별로 그기록을 저장하고 일정과 연동할 수 있습니다."
+  4. 헬스(번호, 운동종목, 세트, 횟수, 시간, 거리, 강도(100점)), 하이록스, 공부, 영업 4대 프리셋 템플릿 탑재
+  5. 노션 표(Table) 속성 인라인 인터랙티브 그리드 구현 (행 추가, 행 삭제, 셀 인라인 수정, `⚙️ 표 속성(열) 편집`으로 열 추가/수정/삭제 지원)
+  6. 저장 분기: `[💾 일반저장]` / `[📅 일정연동저장]`
+     - 안내멘트: "*일정연동 저장은 오늘 기록이 링크화되어 일정에 기록됩니다."
+  7. 일정 연동 저장 시: `state.profile.records` 저장과 동시에 캘린더 일정에 `YYMMDD템플릿명(link주소)` (예: `260910헬스(#record:rec_xxx)`)으로 등록
+  8. 향후 일정에서 링크 또는 `[📋 기록 보기]` 클릭 시 바로 그 기록(노션 표 상세 뷰어 모달)을 즉시 열람 및 수정 지원
+  9. URL 해시 딥링크(`#record=rec_xxx`) 라우팅 지원
+- **수정/실행 내역**:
+  - `index.html`: 노션 스타일 테이블/인라인 셀/배지 CSS 스타일 추가
+  - `index.html`: 기록 탭 `#recProTemplateCard` 및 퀵 템플릿 칩 마크업 추가
+  - `index.html`: `DEFAULT_PRO_TEMPLATES`, `recommendTemplateFromAI`, `fmtYYMMDD` 구현
+  - `index.html`: `openCreateCustomTemplateModal`, `openTemplateColumnEditModal`, `openProTemplateRecordModal`, `openTemplateRecordDetailModal`, `checkRecordDeepLink` 구현
+  - `index.html`: `renderRecordsScreen`에 전문 템플릿 카드 렌더링, 클릭 시 상세 모달 오픈, 수정/삭제 연동
+  - `index.html`: `calendarItemsByDate` 및 `renderCalDayDetail`에서 연동된 일정에 `[📋 기록 보기]` 칩 노출 및 클릭 시 기록 모달 오픈 연동
+  - `scripts/smoke-test.js`: 샌드박스 함수 추출 등록 및 5개 단위 테스트 추가 (총 90개 전수 통과)
+- **검증 결과**:
+  - `npm test` **90개 전수 통과 (0개 실패)**
+  - JS 문법 검증(`new Function`), 컴플라이언스 마커 전수 통과
+---
