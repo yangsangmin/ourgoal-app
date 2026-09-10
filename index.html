@@ -3082,7 +3082,7 @@
 
   /* ============ Goal category templates ============ */
   var GOAL_TEMPLATES = {
-    study:    { label:'공부', icon:'📚', ms:['커리큘럼 정하기','1회독 끝내기','기출문제 풀어보기','약점 보완하기','최종 점검'] },
+    study:    { label:'공부', icon:'📚', ms:['학습 계획 세우기','1회독 끝내기','기출문제 풀어보기','약점 보완하기','최종 점검'] },
     exercise: { label:'운동', icon:'💪', ms:['현재 기록 재보기','주 3회 루틴 만들기','1개월차 기록 갱신','2개월차 기록 갱신','목표 기록 달성'] },
     business: { label:'사업', icon:'💼', ms:['아이디어 검증하기','MVP 만들기','첫 고객 확보하기','수익 모델 정하기','매출 목표 달성'] },
     exam:     { label:'시험', icon:'📝', ms:['시험 범위 파악하기','기본서 1회독','기출문제 분석','모의고사 반복','최종 정리'] },
@@ -3965,24 +3965,36 @@
 
   function resultPct(r){
     if(!r) return null;
+    if(typeof r.pct === 'number' && !isNaN(r.pct)) return Math.min(999, r.pct);
+    if(r.dbProperties && typeof r.dbProperties.progress === 'number' && !isNaN(r.dbProperties.progress)) return Math.min(999, r.dbProperties.progress);
     var target = Number(r.target), done = Number(r.result);
     if(!target || isNaN(target) || isNaN(done)) return null;
     return Math.min(999, Math.round((done / target) * 100));
   }
   function resultBadgeHtml(r){
     var pct = resultPct(r);
-    if(!r || (!r.target && !r.result)) return '<div class="result-btn">결과<br>입력</div>';
-    if(pct === null) return '<div class="result-btn has">기록<br>있음</div>';
+    if(!r || (!r.target && !r.result && !r.dbProperties && !r.pct && !r.summary)) return '<div class="result-btn">결과<br>입력</div>';
+    if(pct === null) return '<div class="result-btn has">기록<br>완료</div>';
     var cls = pct>=100 ? 'has' : 'miss';
-    return '<div class="result-btn '+cls+'">'+r.result+'/'+r.target+'<br>'+pct+'%</div>';
+    if(r.target && r.result && r.unit !== '%'){
+      return '<div class="result-btn '+cls+'">'+r.result+'/'+r.target+'<br>'+pct+'%</div>';
+    }
+    return '<div class="result-btn '+cls+'">달성률<br>'+pct+'%</div>';
   }
   function resultLineHtml(r){
     var pct = resultPct(r);
-    if(!r || (!r.target && !r.result && !r.note)) return '';
+    if(!r || (!r.target && !r.result && !r.note && !r.dbProperties && !r.summary)) return '';
     var bar = pct!==null ? '<div class="mini-bar"><span style="width:'+Math.min(100,pct)+'%;background:'+(pct>=100?'var(--sage)':'var(--gold)')+';"></span></div>' : '';
     var txt = [];
-    if(r.target || r.result) txt.push('실제 '+(r.result||0)+' / 목표 '+(r.target||'-')+' '+(r.unit||''));
-    if(r.note) txt.push(escapeHtml(r.note));
+    if(r.dbProperties){
+      if(r.dbProperties.status) txt.push(escapeHtml(r.dbProperties.status));
+      if(r.dbProperties.metric) txt.push(escapeHtml(r.dbProperties.metric));
+      if(r.dbProperties.keyTakeaway) txt.push(escapeHtml(r.dbProperties.keyTakeaway));
+    } else {
+      if(r.target || r.result) txt.push('실제 '+(r.result||0)+' / 목표 '+(r.target||'-')+' '+(r.unit||''));
+      if(r.note) txt.push(escapeHtml(r.note));
+    }
+    if(r.summary && !r.dbProperties) txt.push(escapeHtml(r.summary));
     return '<div class="faint" style="font-size:.72rem;margin-top:4px;">'+txt.join(' · ')+'</div>'+bar;
   }
 
@@ -4100,126 +4112,309 @@
     );
   }
 
+  /* ============ AI 결과 입력 -> Notion DB 구조화 변환기 ============ */
+  function convertTextToNotionDbRecord(text, kind, obj, goal){
+    var raw = (text || '').trim();
+    var dateStr = typeof isoDate === 'function' ? isoDate(new Date()) : new Date().toISOString().slice(0, 10);
+    var category = (goal && goal.category) || 'etc';
+
+    // Status & Progress determination
+    var isDone = /(?:완료|끝|성공|완주|다\s*했|마침|100%|올클|해냄|달성)/i.test(raw);
+    var isDoing = /(?:진행|절반|도중|일부|시작|조금)/i.test(raw);
+    var status = isDone ? '완료' : (isDoing ? '진행중' : '완료');
+
+    var progress = isDone ? 100 : (isDoing ? 50 : 100);
+    var pctMatch = raw.match(/(\d+(?:\.\d+)?)\s*%/);
+    if(pctMatch){
+      progress = Math.min(100, Math.round(parseFloat(pctMatch[1])));
+      if(progress >= 100) status = '완료';
+      else if(progress > 0) status = '진행중';
+    } else {
+      var fracMatch = raw.match(/(\d+)\s*(?:개|km|쪽|강|회)?\s*(?:중|에서|\/)\s*(\d+)/);
+      if(fracMatch){
+        var part = parseFloat(fracMatch[2]), tot = parseFloat(fracMatch[1]);
+        if(tot > 0) progress = Math.min(100, Math.round((part / tot) * 100));
+        status = progress >= 100 ? '완료' : '진행중';
+      }
+    }
+
+    // Metric extraction
+    var metrics = [];
+    var distMatch = raw.match(/(\d+(?:\.\d+)?)\s*(?:km|킬로|킬로미터)/i);
+    if(distMatch) metrics.push(distMatch[1] + 'km');
+    var timeMatch = raw.match(/(\d+)\s*시간(?:\s*(\d+)\s*분)?/) || raw.match(/(\d+)\s*(?:분|min)/i);
+    if(timeMatch){
+      if(timeMatch[2] !== undefined) metrics.push(timeMatch[1] + '시간 ' + (timeMatch[2] || 0) + '분');
+      else if(raw.includes('시간')) metrics.push(timeMatch[1] + '시간');
+      else metrics.push(timeMatch[1] + '분');
+    }
+    var countMatch = raw.match(/(\d+)\s*(?:개|문제|강|세트|쪽|페이지|회|권)/);
+    if(countMatch) metrics.push(countMatch[0]);
+    if(!metrics.length) metrics.push(progress + '% 달성');
+    var metricStr = metrics.join(' · ');
+
+    // Title generation
+    var fallbackTitle = (obj && obj.title && obj.title !== '커리큘럼 정하기' && obj.title !== '커리큘럼') ? obj.title : '오늘의 실천 기록';
+    var cleanTitle = raw.replace(/[!?,.]/g, '').trim();
+    if(cleanTitle.length > 32) cleanTitle = cleanTitle.slice(0, 32) + '…';
+    var title = cleanTitle || fallbackTitle;
+
+    // Key takeaway extraction
+    var keyTakeaway = raw;
+    var tags = [];
+    if(/운동|헬스|러닝|달리기|km|와드|하체|상체|스쿼트|벤치/.test(raw) || category === 'exercise') tags.push('운동');
+    if(/공부|강의|강|문제|인강|복습|단어|독서|페이지|쪽|시험/.test(raw) || category === 'study' || category === 'exam') tags.push('학습');
+    if(/오답|정리|노트|기록/.test(raw)) tags.push('정리');
+    if(status === '완료') tags.push('완료');
+    if(!tags.length) tags.push('실천');
+
+    var notionSchema = {
+      'Name': { type: 'title', title: [{ type: 'text', text: { content: title } }] },
+      'Status': { type: 'select', select: { name: status } },
+      'Progress': { type: 'number', number: progress },
+      'Metric': { type: 'rich_text', rich_text: [{ type: 'text', text: { content: metricStr } }] },
+      'KeyTakeaway': { type: 'rich_text', rich_text: [{ type: 'text', text: { content: keyTakeaway } }] },
+      'Tags': { type: 'multi_select', multi_select: tags.map(function(t){ return { name: t }; }) },
+      'Date': { type: 'date', date: { start: dateStr } }
+    };
+
+    return {
+      title: title,
+      status: status,
+      progress: progress,
+      metric: metricStr,
+      keyTakeaway: keyTakeaway,
+      tags: tags,
+      date: dateStr,
+      notionSchema: notionSchema
+    };
+  }
+
   /* 목표·마일스톤·할 일 공용 결과 입력 모달 */
   function openResultModal(kind, obj, onSaved, goal){
-    var r = obj.result || { target:'', result:'', unit:'회', note:'' };
+    var r = obj.result || {};
     var kindLabel = kind==='goal' ? '목표' : (kind==='ms' ? '마일스톤' : '할 일');
+    var displayTitle = (obj && obj.title && obj.title !== '커리큘럼 정하기' && obj.title !== '커리큘럼') ? obj.title : '';
+
+    var currentDb = r.dbProperties || (r.target || r.result ? {
+      title: r.summary || (displayTitle || '실천 기록'),
+      status: (resultPct(r) >= 100) ? '완료' : '진행중',
+      progress: resultPct(r) || 100,
+      metric: (r.result ? (r.result + (r.unit || '')) : '100%'),
+      keyTakeaway: r.note || '',
+      tags: ['실천'],
+      date: isoDate(new Date())
+    } : null);
+
+    function renderNotionCardHtml(db){
+      if(!db) return '';
+      var stColor = db.status==='완료' ? 'var(--sage)' : (db.status==='진행중' ? 'var(--gold)' : 'var(--ink-soft)');
+      var stBg = db.status==='완료' ? 'var(--sage-soft)' : (db.status==='진행중' ? 'var(--gold-soft)' : 'var(--rule)');
+      return '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+          '<span style="font-size:.78rem;font-weight:800;color:var(--violet);display:flex;align-items:center;gap:4px;">' +
+            '<span>📋 Notion DB 변환 규격</span>' +
+          '</span>' +
+          '<span class="dday-pill" style="background:'+stBg+';color:'+stColor+';font-weight:800;font-size:.72rem;">'+escapeHtml(db.status)+' ('+db.progress+'%)</span>' +
+        '</div>' +
+        '<table style="width:100%;font-size:.78rem;border-collapse:collapse;line-height:1.6;">' +
+          '<tr><td style="color:var(--ink-faint);width:76px;padding:2px 0;">🏷️ 항목명</td><td style="font-weight:700;color:var(--ink);">'+escapeHtml(db.title||'-')+'</td></tr>' +
+          '<tr><td style="color:var(--ink-faint);padding:2px 0;">⏱️ 수치/실적</td><td>'+escapeHtml(db.metric||'-')+'</td></tr>' +
+          '<tr><td style="color:var(--ink-faint);padding:2px 0;">💡 핵심 성과</td><td>'+escapeHtml(db.keyTakeaway||'-')+'</td></tr>' +
+          '<tr><td style="color:var(--ink-faint);padding:2px 0;">🏷️ 태그</td><td>'+(db.tags||[]).map(function(t){ return '<span class="chip" style="font-size:.68rem;padding:2px 6px;margin-right:4px;">#'+escapeHtml(t)+'</span>'; }).join('')+'</td></tr>' +
+          '<tr><td style="color:var(--ink-faint);padding:2px 0;">📅 일자</td><td>'+escapeHtml(db.date||isoDate(new Date()))+'</td></tr>' +
+        '</table>';
+    }
+
+    var previewInitialHtml = '<div id="rsNotionDbPreview" style="'+(currentDb?'':'display:none;')+'margin-bottom:12px;padding:12px;background:var(--card);border:1.5px solid var(--violet-soft);border-radius:12px;">' +
+      (currentDb ? renderNotionCardHtml(currentDb) : '') +
+    '</div>';
+
     openModal(
-      '<h3>'+kindLabel+' 결과 기록</h3>' +
-      '<p class="muted" style="margin:-8px 0 10px;"><b style="color:var(--ink);">'+escapeHtml(obj.title)+'</b></p>' +
-      '<div style="margin-bottom:14px;padding:12px;background:var(--violet-soft);border:1px solid rgba(108,92,231,0.25);border-radius:12px;">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">' +
-          '<div style="font-size:.84rem;color:var(--violet);font-weight:800;display:flex;align-items:center;gap:4px;">' +
-            '<span>🤖 AI 비서로 결과 입력</span>' +
+      '<h3>' + kindLabel + ' 결과 기록</h3>' +
+      (displayTitle ? '<p class="muted" style="margin:-8px 0 12px;"><b style="color:var(--ink);font-size:.88rem;">' + escapeHtml(displayTitle) + '</b></p>' : '<div style="height:6px;"></div>') +
+      '<div style="margin-bottom:12px;padding:12px 14px;background:var(--violet-soft);border:1px solid rgba(108,92,231,0.25);border-radius:14px;">' +
+        '<div style="font-size:.84rem;color:var(--violet);font-weight:800;display:flex;align-items:center;gap:4px;margin-bottom:6px;">' +
+          '<span>🤖 AI 비서로 결과 입력</span>' +
+        '</div>' +
+        '<div style="font-size:.76rem;color:var(--ink-soft);line-height:1.45;margin-bottom:10px;">' +
+          '오늘 달성한 내용을 줄글로 적어주시면 DB화에 알맞게 바꿔드려요(향후 데이터 활용우수)' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;gap:8px;">' +
+          '<textarea id="rsAiQuickInput" rows="2" placeholder="예: 오늘 20km 1시간 40분 완주했어 땀 많이 흘림 / 알고리즘 골드 2문제 풀고 오답노트 정리 완료 / 기본서 3단원 50페이지 다 읽음" style="width:100%;box-sizing:border-box;font-size:.82rem;padding:8px 10px;border-radius:8px;border:1px solid var(--rule);background:var(--card);color:var(--ink);resize:vertical;"></textarea>' +
+          '<button class="btn btn-primary btn-sm" id="rsAiQuickApplyBtn" type="button" style="align-self:flex-end;font-size:.76rem;font-weight:700;padding:6px 12px;white-space:nowrap;">' +
+            '✨ AI 노션 DB 변환' +
+          '</button>' +
+        '</div>' +
+      '</div>' +
+
+      previewInitialHtml +
+
+      '<div style="margin-bottom:14px;">' +
+        '<div id="rsManualToggleBtn" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:8px 12px;background:var(--card);border:1px dashed var(--rule);border-radius:10px;">' +
+          '<span style="font-size:.8rem;font-weight:700;color:var(--ink-soft);display:flex;align-items:center;gap:6px;">' +
+            '<span>✏️ 수동입력하기</span>' +
+          '</span>' +
+          '<span id="rsManualToggleArrow" style="font-size:.75rem;color:var(--ink-faint);">펼치기 ▾</span>' +
+        '</div>' +
+        '<div id="rsManualForm" style="display:none;margin-top:8px;padding:12px;background:var(--card2);border:1px solid var(--rule);border-radius:12px;">' +
+          '<div class="field" style="margin-bottom:8px;">' +
+            '<label style="font-size:.76rem;font-weight:700;">실천 내용 / 항목명</label>' +
+            '<input id="rsManualTitle" type="text" value="' + escapeHtml((currentDb && currentDb.title) || '') + '" placeholder="예: 3강 수강 완료 및 개념 복습" style="font-size:.82rem;padding:6px 10px;">' +
           '</div>' +
-          '<button class="btn btn-ghost btn-sm" id="rsAiQuickBtn" type="button" style="font-size:.74rem;padding:3px 8px;color:var(--violet);border-color:rgba(108,92,231,0.35);">상세 대화로 열기 ›</button>' +
-        '</div>' +
-        '<div style="font-size:.76rem;color:var(--ink-soft);margin-bottom:8px;">오늘 달성한 내용을 한 줄로 적어주시면 수치와 단위를 자동으로 계산해 채워드려요.</div>' +
-        '<div style="display:flex;gap:6px;">' +
-          '<input id="rsAiQuickInput" type="text" placeholder="예: 오늘 20km 1시간 40분 완주, 50개 중 42개 성공, 100% 완료" style="flex:1;min-width:0;font-size:.82rem;padding:6px 10px;border-radius:8px;border:1px solid var(--rule);background:var(--card);color:var(--ink);">' +
-          '<button class="btn btn-primary btn-sm" id="rsAiQuickApplyBtn" type="button" style="font-size:.76rem;padding:6px 10px;white-space:nowrap;">AI 자동채우기</button>' +
+          '<div style="display:flex;gap:8px;margin-bottom:8px;">' +
+            '<div class="field" style="flex:1;">' +
+              '<label style="font-size:.76rem;font-weight:700;">진행 상태</label>' +
+              '<select id="rsManualStatus" style="font-size:.82rem;padding:6px 8px;">' +
+                '<option value="완료"'+((!currentDb || currentDb.status==='완료')?' selected':'')+'>✅ 완료 (100%)</option>' +
+                '<option value="진행중"'+(currentDb && currentDb.status==='진행중'?' selected':'')+'>⏳ 진행중 (50%)</option>' +
+                '<option value="대기"'+(currentDb && currentDb.status==='대기'?' selected':'')+'>📋 계획/대기</option>' +
+              '</select>' +
+            '</div>' +
+            '<div class="field" style="flex:1;">' +
+              '<label style="font-size:.76rem;font-weight:700;">달성률 (%)</label>' +
+              '<input id="rsManualPct" type="number" min="0" max="100" value="' + (currentDb ? currentDb.progress : 100) + '" placeholder="100" style="font-size:.82rem;padding:6px 8px;">' +
+            '</div>' +
+          '</div>' +
+          '<div class="field" style="margin-bottom:8px;">' +
+            '<label style="font-size:.76rem;font-weight:700;">달성 수치 / 소요 시간</label>' +
+            '<input id="rsManualMetric" type="text" value="' + escapeHtml((currentDb && currentDb.metric) || '') + '" placeholder="예: 2시간, 5km, 30쪽" style="font-size:.82rem;padding:6px 10px;">' +
+          '</div>' +
+          '<div class="field" style="margin-bottom:0;">' +
+            '<label style="font-size:.76rem;font-weight:700;">성과 및 배운 점</label>' +
+            '<input id="rsManualKeyTakeaway" type="text" value="' + escapeHtml((currentDb && currentDb.keyTakeaway) || '') + '" placeholder="예: 핵심 공식 암기 완료" style="font-size:.82rem;padding:6px 10px;">' +
+          '</div>' +
         '</div>' +
       '</div>' +
-      '<div style="display:flex;gap:10px;">' +
-        '<div class="field" style="flex:1;"><label>목표치</label><input id="rsTarget" type="number" inputmode="numeric" value="'+escapeHtml(String(r.target||''))+'" placeholder="30"></div>' +
-        '<div class="field" style="flex:1;"><label>실제 달성</label><input id="rsResult" type="number" inputmode="numeric" value="'+escapeHtml(String(r.result||''))+'" placeholder="20"></div>' +
-        '<div class="field" style="flex:1;"><label>단위</label><select id="rsUnit">' +
-          RESULT_UNITS.map(function(u){ return '<option value="'+u+'"'+(u===(r.unit||'회')?' selected':'')+'>'+u+'</option>'; }).join('') +
-        '</select></div>' +
-      '</div>' +
-      '<div class="field"><label>메모 (선택)</label><input id="rsNote" type="text" value="'+escapeHtml(r.note||'')+'" placeholder="예: 시험 기간엔 못 했지만 나머지는 지켰어요"></div>' +
-      '<p class="faint" id="rsPreview" style="margin:0 0 4px;"></p>' +
+
       '<div class="modal-actions">' +
         '<button class="btn btn-ghost" id="rsCancel" type="button">취소</button>' +
-        '<button class="btn btn-primary" id="rsSave" type="button">기록하기</button>' +
+        '<button class="btn btn-primary" id="rsSave" type="button">결과 저장하기</button>' +
       '</div>',
       function(sheet){
-        var aiBtn = sheet.querySelector('#rsAiQuickBtn');
-        if(aiBtn){
-          aiBtn.onclick = function(){
-            closeModal();
-            openAiResultAssistantModal(kind, obj, goal, onSaved);
-          };
+        var aiInput = sheet.querySelector('#rsAiQuickInput');
+        var aiApplyBtn = sheet.querySelector('#rsAiQuickApplyBtn');
+        var previewBox = sheet.querySelector('#rsNotionDbPreview');
+
+        var manualToggleBtn = sheet.querySelector('#rsManualToggleBtn');
+        var manualToggleArrow = sheet.querySelector('#rsManualToggleArrow');
+        var manualForm = sheet.querySelector('#rsManualForm');
+
+        var manualTitle = sheet.querySelector('#rsManualTitle');
+        var manualStatus = sheet.querySelector('#rsManualStatus');
+        var manualPct = sheet.querySelector('#rsManualPct');
+        var manualMetric = sheet.querySelector('#rsManualMetric');
+        var manualKeyTakeaway = sheet.querySelector('#rsManualKeyTakeaway');
+
+        var activeDbRecord = currentDb;
+
+        // 수동입력하기 토글
+        var manualOpen = false;
+        manualToggleBtn.addEventListener('click', function(){
+          manualOpen = !manualOpen;
+          manualForm.style.display = manualOpen ? 'block' : 'none';
+          manualToggleArrow.textContent = manualOpen ? '접기 ▴' : '펼치기 ▾';
+        });
+
+        // AI 노션 DB 변환
+        function runAiConversion(){
+          var text = aiInput.value.trim();
+          if(!text){ toast('달성한 내용을 줄글로 적어주세요'); return; }
+          var converted = convertTextToNotionDbRecord(text, kind, obj, goal);
+          activeDbRecord = converted;
+          previewBox.style.display = 'block';
+          previewBox.innerHTML = renderNotionCardHtml(converted);
+
+          // 수동 입력 폼에도 동기화
+          manualTitle.value = converted.title;
+          manualStatus.value = converted.status;
+          manualPct.value = converted.progress;
+          manualMetric.value = converted.metric;
+          manualKeyTakeaway.value = converted.keyTakeaway;
+
+          toast('Notion DB 규격으로 변환 완료! ✨');
         }
-        var tEl = sheet.querySelector('#rsTarget'), dEl = sheet.querySelector('#rsResult'), uEl = sheet.querySelector('#rsUnit');
-        function preview(){
-          var pct = resultPct({ target:tEl.value, result:dEl.value });
-          sheet.querySelector('#rsPreview').innerHTML = pct===null ? ''
-            : '달성률 <b style="color:'+(pct>=100?'var(--sage)':'var(--gold)')+';">'+pct+'%</b> · '+(dEl.value||0)+uEl.value+' 완료';
-        }
-        tEl.addEventListener('input', preview); dEl.addEventListener('input', preview); uEl.addEventListener('change', preview);
-        preview();
 
-        var aiQuickInput = sheet.querySelector('#rsAiQuickInput');
-        var aiQuickApplyBtn = sheet.querySelector('#rsAiQuickApplyBtn');
-        if(aiQuickApplyBtn && aiQuickInput){
-          var runAiAutoFill = function(){
-            var text = aiQuickInput.value.trim();
-            if(!text){ toast('달성한 내용을 적어주세요'); return; }
-            
-            var targetNum = Number(tEl.value) || 10;
-            var resultNum = 0;
-            var unit = uEl.value || '회';
-            var note = text;
-
-            if(/(?:km|킬로|킬로미터)/i.test(text)) unit = 'km';
-            else if(/(?:분|min|시간|h)/i.test(text)) unit = '분';
-            else if(/(?:쪽|페이지|page|p)/i.test(text)) unit = '쪽';
-            else if(/(?:개|개수)/i.test(text)) unit = '개';
-            else if(/(?:잔|컵)/i.test(text)) unit = '잔';
-            else if(/(?:%|퍼센트)/i.test(text)) unit = '%';
-
-            var pctMatch = text.match(/(\d+(?:\.\d+)?)\s*%/);
-            if(pctMatch){
-              targetNum = 100;
-              resultNum = Math.min(999, Math.round(parseFloat(pctMatch[1])));
-              unit = '%';
-            } else {
-              var fractionMatch = text.match(/(\d+)\s*(?:개|km|회|쪽)?\s*(?:목표\s*)?(?:중|에서)\s*(\d+)/);
-              if(fractionMatch){
-                targetNum = parseInt(fractionMatch[1], 10);
-                resultNum = parseInt(fractionMatch[2], 10);
-              } else {
-                var singleNum = text.match(/(\d+(?:\.\d+)?)\s*(?:회|km|분|쪽|개|잔|시간)?/);
-                if(singleNum){
-                  resultNum = parseFloat(singleNum[1]);
-                  if(/시간/.test(text)) resultNum = Math.round(resultNum * 60);
-                  if(!targetNum || targetNum < resultNum) targetNum = resultNum;
-                } else if(/(?:다 했|완료|끝|성공|완주)/.test(text)){
-                  resultNum = targetNum || 10;
-                  targetNum = resultNum;
-                } else {
-                  resultNum = 1; targetNum = 1;
-                }
-              }
-            }
-
-            tEl.value = targetNum;
-            dEl.value = resultNum;
-            uEl.value = unit;
-            sheet.querySelector('#rsNote').value = note;
-            preview();
-            toast('AI가 목표치 ' + targetNum + unit + ', 달성 ' + resultNum + unit + '으로 자동 채웠어요 ✨');
-          };
-          aiQuickApplyBtn.onclick = runAiAutoFill;
-          aiQuickInput.onkeydown = function(e){
-            if(e.key === 'Enter'){ e.preventDefault(); runAiAutoFill(); }
-          };
-        }
+        aiApplyBtn.addEventListener('click', runAiConversion);
+        aiInput.addEventListener('keydown', function(e){
+          if(e.key === 'Enter' && (e.ctrlKey || e.metaKey)){
+            e.preventDefault();
+            runAiConversion();
+          }
+        });
 
         sheet.querySelector('#rsCancel').addEventListener('click', closeModal);
+
         sheet.querySelector('#rsSave').addEventListener('click', async function(){
+          // 1. AI 텍스트가 입력되어 있으나 아직 변환 버튼을 누르지 않은 경우 즉시 변환
+          var aiText = aiInput.value.trim();
+          if(aiText && (!activeDbRecord || activeDbRecord.keyTakeaway !== aiText)){
+            activeDbRecord = convertTextToNotionDbRecord(aiText, kind, obj, goal);
+          }
+
+          // 2. 수동입력 폼이 열려있거나 입력값이 있는 경우 수동 입력값 우선 반영
+          if(manualTitle.value.trim()){
+            var mTitle = manualTitle.value.trim();
+            var mStatus = manualStatus.value;
+            var mPct = parseInt(manualPct.value, 10);
+            if(isNaN(mPct)) mPct = (mStatus === '완료' ? 100 : (mStatus === '진행중' ? 50 : 0));
+            var mMetric = manualMetric.value.trim() || (mPct + '%');
+            var mTakeaway = manualKeyTakeaway.value.trim() || mTitle;
+            var dateStr = isoDate(new Date());
+
+            var tags = activeDbRecord ? activeDbRecord.tags : ['실천'];
+            if(mStatus === '완료' && tags.indexOf('완료') === -1) tags.push('완료');
+
+            activeDbRecord = {
+              title: mTitle,
+              status: mStatus,
+              progress: mPct,
+              metric: mMetric,
+              keyTakeaway: mTakeaway,
+              tags: tags,
+              date: dateStr,
+              notionSchema: {
+                'Name': { type: 'title', title: [{ type: 'text', text: { content: mTitle } }] },
+                'Status': { type: 'select', select: { name: mStatus } },
+                'Progress': { type: 'number', number: mPct },
+                'Metric': { type: 'rich_text', rich_text: [{ type: 'text', text: { content: mMetric } }] },
+                'KeyTakeaway': { type: 'rich_text', rich_text: [{ type: 'text', text: { content: mTakeaway } }] },
+                'Tags': { type: 'multi_select', multi_select: tags.map(function(t){ return { name: t }; }) },
+                'Date': { type: 'date', date: { start: dateStr } }
+              }
+            };
+          }
+
+          if(!activeDbRecord){
+            toast('달성한 내용을 적어주시거나 수동입력으로 저장해주세요.');
+            return;
+          }
+
           var wasDone = kind==='task' ? !!obj.done : obj.status==='done';
+          var pct = activeDbRecord.progress;
+
           obj.result = {
-            target: tEl.value ? Number(tEl.value) : '',
-            result: dEl.value ? Number(dEl.value) : '',
-            unit: uEl.value,
-            note: sheet.querySelector('#rsNote').value.trim(),
+            target: 100,
+            result: pct,
+            unit: '%',
+            pct: pct,
+            note: activeDbRecord.keyTakeaway || activeDbRecord.title,
+            summary: activeDbRecord.title,
+            dbProperties: {
+              title: activeDbRecord.title,
+              status: activeDbRecord.status,
+              progress: pct,
+              metric: activeDbRecord.metric,
+              keyTakeaway: activeDbRecord.keyTakeaway,
+              tags: activeDbRecord.tags,
+              date: activeDbRecord.date
+            },
+            notionDb: activeDbRecord.notionSchema,
             recordedAt: nowISO()
           };
-          var pct = resultPct(obj.result);
-          if(kind==='task') obj.done = pct!==null ? pct>=100 : !!obj.result.result;
-          if(kind==='ms' && pct!==null) obj.status = pct>=100 ? 'done' : (pct>0 ? 'doing' : obj.status);
+
+          if(kind==='task') obj.done = pct >= 100;
+          if(kind==='ms') obj.status = pct >= 100 ? 'done' : (pct > 0 ? 'doing' : obj.status);
+
           var nowDone = kind==='task' ? !!obj.done : obj.status==='done';
           var celebrateMs = kind==='ms' && !wasDone && nowDone && !!goal;
           if(!wasDone && nowDone && !celebrateMs){
@@ -4230,7 +4425,7 @@
           if(kind==='ms' && !wasDone && obj.status==='done') msXpRes = awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
           await saveProfile();
           closeModal();
-          toast(pct!==null ? '달성률 '+pct+'%로 기록했어요' : '결과를 기록했어요');
+          toast(pct >= 100 ? '🎉 완료로 노션 DB 규격 저장 완료!' : '달성률 ' + pct + '%로 노션 DB 규격 저장 완료!');
           if(onSaved) onSaved();
           renderLevelBadge();
           if(msXpRes && msXpRes.leveledUp) showLevelUpBanner(levelForXP(msXpRes.total));

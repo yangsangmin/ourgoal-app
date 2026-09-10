@@ -1030,11 +1030,13 @@ check('compliance: 다른 기기 원격 로그아웃, 마일스톤·할일 마�
   assert.strictEqual(html.includes('data-taskaires'), false, '할 일의 참고자료 옆 AI 결과 버튼이 제거됨');
   assert.strictEqual(html.includes('data-msaires'), false, '마일스톤의 참고자료 옆 AI 결과 버튼이 제거됨');
 
-  // 4. 결과입력 모달 내 AI 비서 탑재 확인
-  assert.ok(html.includes('rsAiQuickBtn'), '결과입력 모달 내 상세 AI 대화 열기 버튼 존재');
+  // 4. 결과입력 모달 내 AI 비서 & Notion DB 구조화 및 수동입력 탑재 확인
+  assert.strictEqual(html.includes('rsAiQuickBtn'), false, '상세 대화로 열기 버튼 삭제됨');
   assert.ok(html.includes('rsAiQuickInput'), '결과입력 모달 내 AI 자연어 한줄 입력창 존재');
-  assert.ok(html.includes('rsAiQuickApplyBtn'), '결과입력 모달 내 AI 자동채우기 버튼 존재');
-  assert.ok(html.includes('openAiResultAssistantModal'), 'AI 결과 입력 전용 상세 모달 함수 존재');
+  assert.ok(html.includes('rsAiQuickApplyBtn'), '결과입력 모달 내 AI 변환 버튼 존재');
+  assert.ok(html.includes('rsManualToggleBtn'), '결과입력 모달 내 수동입력하기 토글 존재');
+  assert.ok(html.includes('오늘 달성한 내용을 줄글로 적어주시면 DB화에 알맞게 바꿔드려요(향후 데이터 활용우수)'), '지정된 AI 설명 문구 정확성');
+  assert.ok(html.includes('convertTextToNotionDbRecord'), 'Notion DB 구조화 변환 함수 존재');
 });
 
 check('parseVoiceToTableRow: 헬스 및 운동 음성 문장에서 종목, 무게, 횟수, 세트를 추출하여 표 열에 맞춤 매핑한다', () => {
@@ -1843,6 +1845,61 @@ check('compliance: 마일스톤 번호 중복(1단계. 1단계:) 방어 정규�
     assert.ok(content.includes('gemini-3.5-flash'), file + ' 에 gemini-3.5-flash 포함');
     assert.ok(content.includes('claude-3-7-sonnet-20250219'), file + ' 에 최신 Claude 모델 포함');
   }
+});
+
+check('convertTextToNotionDbRecord: 자연어 줄글 입력을 노션 DB 프로퍼티 규격으로 구조화 변환한다', () => {
+  const fnCode = extractFunction(mainScript, 'convertTextToNotionDbRecord');
+  const convertFn = eval('(' + fnCode + ')');
+  const res = convertFn('오늘 20km 1시간 40분 완주했어 땀 많이 흘림', 'ms', { title: '러닝 완주' }, { category: 'exercise' });
+
+  assert.ok(res, '변환 결과 객체 반환');
+  assert.strictEqual(res.status, '완료', '완료 상태 인식');
+  assert.strictEqual(res.progress, 100, '완주 시 달성률 100%');
+  assert.ok(res.metric.includes('20km'), '거리 메트릭 추출');
+  assert.ok(res.metric.includes('1시간 40분'), '시간 메트릭 추출');
+  assert.ok(res.tags.includes('운동'), '카테고리 기반 태그 추출');
+  assert.ok(res.tags.includes('완료'), '상태 기반 태그 추출');
+
+  // 노션 공식 DB 스키마 구조 검증
+  assert.ok(res.notionSchema.Name.title[0].text.content, 'Notion Title 프로퍼티');
+  assert.strictEqual(res.notionSchema.Status.select.name, '완료', 'Notion Select 상태');
+  assert.strictEqual(res.notionSchema.Progress.number, 100, 'Notion Number 달성률');
+  assert.ok(res.notionSchema.Metric.rich_text[0].text.content, 'Notion RichText 메트릭');
+  assert.ok(res.notionSchema.KeyTakeaway.rich_text[0].text.content, 'Notion RichText 핵심성과');
+  assert.ok(res.notionSchema.Date.date.start, 'Notion Date 일자');
+});
+
+check('compliance: 목표탭 결과입력 UI/UX 혁신 (커리큘럼 정하기·수치단위·메모 삭제, 노션 DB AI비서, 수동입력하기)', () => {
+  // 1. 커리큘럼 정하기 템플릿 제거 및 결과입력 모달 방어
+  assert.strictEqual(html.includes("ms:['커리큘럼 정하기'"), false, "공부 템플릿에서 '커리큘럼 정하기'가 제거됨");
+  assert.ok(html.includes("obj.title !== '커리큘럼 정하기'"), '결과입력 모달 내 커리큘럼 정하기 노출 방어');
+
+  // 2. 비실용적인 목표치, 실제달성, 단위, 메모(선택) 입력창 삭제 검증
+  assert.strictEqual(html.includes('<label>목표치</label>'), false, '목표치 필드가 삭제됨');
+  assert.strictEqual(html.includes('<label>실제 달성</label>'), false, '실제 달성 필드가 삭제됨');
+  assert.strictEqual(html.includes('<label>메모 (선택)</label>'), false, '메모 (선택) 필드가 삭제됨');
+  assert.strictEqual(html.includes('id="rsTarget"'), false, 'rsTarget 엘리먼트가 제거됨');
+  assert.strictEqual(html.includes('id="rsResult"'), false, 'rsResult 엘리먼트가 제거됨');
+  assert.strictEqual(html.includes('id="rsNote"'), false, 'rsNote 엘리먼트가 제거됨');
+
+  // 3. AI 비서 안내 문구 및 상세 대화로 열기 삭제 검증
+  assert.ok(html.includes('오늘 달성한 내용을 줄글로 적어주시면 DB화에 알맞게 바꿔드려요(향후 데이터 활용우수)'), '지정된 AI비서 설명 문구 정확성');
+  assert.strictEqual(html.includes('상세 대화로 열기'), false, "'상세 대화로 열기' 버튼이 완전히 삭제됨");
+  assert.strictEqual(html.includes('id="rsAiQuickBtn"'), false, 'rsAiQuickBtn이 제거됨');
+
+  // 4. 수동입력하기 토글 및 입력 폼 탑재 검증
+  assert.ok(html.includes('id="rsManualToggleBtn"'), '수동입력하기 토글 버튼 존재');
+  assert.ok(html.includes('id="rsManualForm"'), '수동입력 폼 컨테이너 존재');
+  assert.ok(html.includes('id="rsManualTitle"'), '수동 실천내용 입력창 존재');
+  assert.ok(html.includes('id="rsManualStatus"'), '수동 상태 셀렉트 존재');
+  assert.ok(html.includes('id="rsManualPct"'), '수동 달성률 입력창 존재');
+  assert.ok(html.includes('id="rsManualMetric"'), '수동 수치/소요시간 입력창 존재');
+  assert.ok(html.includes('id="rsManualKeyTakeaway"'), '수동 성과/배운점 입력창 존재');
+  assert.ok(html.includes('수동입력하기'), '수동입력하기 라벨 텍스트 존재');
+
+  // 5. 노션 DB 프리뷰 카드 검증
+  assert.ok(html.includes('id="rsNotionDbPreview"'), 'Notion DB 미리보기 컨테이너 존재');
+  assert.ok(html.includes('Notion DB 변환 규격'), 'Notion DB 변환 배지 텍스트 존재');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
