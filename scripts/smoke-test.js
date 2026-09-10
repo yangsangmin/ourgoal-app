@@ -81,6 +81,9 @@ const FN_NAMES = [
   'fmtYYMMDD', 'recommendTemplateFromAI',
   'computeTableAnalytics',
   'parseNaturalLanguageTemplateSpec', 'parseCsvText', 'parseVoiceToTableRow',
+  'fmtTime', 'getAIAnalysisPrompt', 'buildCSV', 'buildMarkdownExport',
+  'triggerHaptic', 'reorderMilestones', 'filterFeedByCategory',
+  'calculateWeeklyFocusStats', 'exportRecordsToCsv', 'exportRecordsToMarkdown',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -93,9 +96,10 @@ const sandboxSrc =
   'var location = { search: "" };\n' +
   'var localStorage = { _m: {}, getItem: function(k){ return Object.prototype.hasOwnProperty.call(this._m, k) ? this._m[k] : null; }, setItem: function(k, v){ this._m[k] = String(v); }, removeItem: function(k){ delete this._m[k]; }, clear: function(){ this._m = {}; } };\n' +
   /* Badging API 스텁 — updateAppBadge 불변식 검증용 (setNavigator(null)로 미지원 환경 재현) */
-  'var navigator = { badge: null, setAppBadge: function(n){ this.badge = n; return Promise.resolve(); }, clearAppBadge: function(){ this.badge = 0; return Promise.resolve(); } };\n' +
+  'var navigator = { badge: null, _vib: null, setAppBadge: function(n){ this.badge = n; return Promise.resolve(); }, clearAppBadge: function(){ this.badge = 0; return Promise.resolve(); }, vibrate: function(d){ this._vib = d; return true; } };\n' +
   /* 검색(filterRecordsByQuery)의 분야 매칭 대상 — 실제 TOPICS 전체를 옮기지 않고 테스트에 필요한 만큼만 스텁 */
-  'var TOPICS = { workout: { label: "운동" } };\n' +
+  'var TOPICS = { workout: { label: "운동" }, study: { label: "공부" } };\n' +
+  'var RECORD_THEMES = { daily: { label: "일상" }, study: { label: "공부" }, workout: { label: "운동" } };\n' +
   // generateDynamicNotification의 모임 인증 분기 테스트용 최소 스텁(실제 MOCK_GROUPS는 추출하지 않음).
   'var MOCK_GROUPS = [{ id: "g1", name: "테스트 모임", activity: ["a", "b", "c"] }];\n' +
   extracted +
@@ -115,6 +119,7 @@ const sandboxSrc =
   'calendarAvailable, fmtDateLabel, filterRecordsByQuery, ' +
   'generateDynamicNotification, fmtYYMMDD, recommendTemplateFromAI, computeTableAnalytics, ' +
   'parseNaturalLanguageTemplateSpec, parseCsvText, parseVoiceToTableRow, ' +
+  'triggerHaptic, reorderMilestones, filterFeedByCategory, calculateWeeklyFocusStats, exportRecordsToCsv, exportRecordsToMarkdown, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -1063,6 +1068,183 @@ check('compliance: AI 비전 OCR, 음성 입력, 템플릿 마켓플레이스 �
   // 4. API vision-table.js
   const fs = require('fs');
   assert.ok(fs.existsSync('api/vision-table.js'), 'api/vision-table.js 서버리스 함수 파일 존재');
+});
+
+check('triggerHaptic: 진동 지원 시 지정/기본 밀리초로 진동을 실행하고 true를 반환한다', () => {
+  assert.strictEqual(fns.triggerHaptic(), true, '기본 호출 true');
+  const nav = fns.getNavigator();
+  assert.strictEqual(nav._vib, 12, '기본 12ms');
+  fns.triggerHaptic(50);
+  assert.strictEqual(nav._vib, 50, '지정 50ms');
+});
+
+check('reorderMilestones: 마일스톤 순서를 올바르게 교체하고 경계 밖 인덱스에는 원본을 보존한다', () => {
+  const goal = { milestones: [{ id: 'm1' }, { id: 'm2' }, { id: 'm3' }] };
+  const res = fns.reorderMilestones(goal, 0, 2);
+  assert.strictEqual(goal.milestones[0].id, 'm2');
+  assert.strictEqual(goal.milestones[1].id, 'm3');
+  assert.strictEqual(goal.milestones[2].id, 'm1');
+  assert.strictEqual(res.length, 3);
+  fns.reorderMilestones(goal, -1, 5);
+  assert.strictEqual(goal.milestones[0].id, 'm2');
+});
+
+check('filterFeedByCategory: 전체 또는 지정 카테고리(공부, 개발, 운동 등)에 따라 피드 아이템을 정확히 필터링한다', () => {
+  const items = [
+    { goal: '토익 900점 완성', action: '기출문제 1회독 풀이' },
+    { goal: 'React 오픈소스 기여', action: 'GitHub 풀리퀘스트 생성' },
+    { goal: '체지방 감량', action: '헬스장 웨이트 1시간' },
+    { goal: '스타트업 매출 2배', action: 'B2B 영업 미팅 3건' },
+    { goal: '자작곡 작곡', action: '기타 멜로디 녹음' }
+  ];
+  assert.strictEqual(fns.filterFeedByCategory(items, 'all').length, 5, '전체 조회');
+  assert.strictEqual(fns.filterFeedByCategory(items, null).length, 5, 'null 기본값');
+  
+  const study = fns.filterFeedByCategory(items, 'study');
+  assert.strictEqual(study.length, 1);
+  assert.ok(study[0].goal.includes('토익'));
+
+  const dev = fns.filterFeedByCategory(items, 'dev');
+  assert.strictEqual(dev.length, 1);
+  assert.ok(dev[0].goal.includes('오픈소스'));
+
+  const workout = fns.filterFeedByCategory(items, 'workout');
+  assert.strictEqual(workout.length, 1);
+  assert.ok(workout[0].goal.includes('체지방'));
+
+  const career = fns.filterFeedByCategory(items, 'career');
+  assert.strictEqual(career.length, 1);
+  assert.ok(career[0].goal.includes('매출'));
+
+  const hobby = fns.filterFeedByCategory(items, 'hobby');
+  assert.strictEqual(hobby.length, 1);
+  assert.ok(hobby[0].goal.includes('작곡'));
+});
+
+check('calculateWeeklyFocusStats: 최근 7일간의 세션 수, 누적 집중 시간 및 활동 일수를 정확히 계산한다', () => {
+  const now = new Date();
+  const d1 = new Date(now.getTime() - 1 * 86400000).toISOString();
+  const d1End = new Date(now.getTime() - 1 * 86400000 + 3600000).toISOString(); // 60분
+  const d2 = new Date(now.getTime() - 2 * 86400000).toISOString();
+  const d2End = new Date(now.getTime() - 2 * 86400000 + 1800000).toISOString(); // 30분
+  const oldDate = new Date(now.getTime() - 15 * 86400000).toISOString(); // 15일 전 (제외)
+
+  const records = [
+    { startAt: d1, endAt: d1End },
+    { startAt: d2, endAt: d2End },
+    { startAt: oldDate, endAt: oldDate }
+  ];
+
+  const stats = fns.calculateWeeklyFocusStats(records);
+  assert.strictEqual(stats.totalSessions, 2, '최근 7일 세션 수 2건');
+  assert.strictEqual(stats.totalMinutes, 90, '누적 90분');
+  assert.strictEqual(stats.activeDays, 2, '활동일 2일');
+});
+
+check('exportRecordsToCsv: UTF-8 BOM을 포함하고 테마별 필터링이 적용된 CSV 텍스트를 생성한다', () => {
+  const records = [
+    { startAt: '2026-09-10T10:00:00Z', endAt: '2026-09-10T10:45:00Z', theme: 'study', text: '형법 총론 공부' },
+    { startAt: '2026-09-10T15:00:00Z', endAt: '2026-09-10T16:00:00Z', theme: 'workout', text: '하체 스쿼트' }
+  ];
+  const csvAll = fns.exportRecordsToCsv(records, 'all');
+  assert.ok(csvAll.startsWith('\uFEFF'), 'UTF-8 BOM 헤더 포함');
+  assert.ok(csvAll.includes('형법 총론 공부'), '전체 내보내기에 공부 포함');
+  assert.ok(csvAll.includes('하체 스쿼트'), '전체 내보내기에 운동 포함');
+
+  const csvStudy = fns.exportRecordsToCsv(records, 'study');
+  assert.ok(csvStudy.includes('형법 총론 공부'), '공부 테마 필터링 포함');
+  assert.strictEqual(csvStudy.includes('하체 스쿼트'), false, '운동 테마 필터링 제외');
+});
+
+check('exportRecordsToMarkdown: 마크다운 표 구조 및 외부 AI 프롬프트 번들을 포함하여 생성한다', () => {
+  const records = [
+    { startAt: '2026-09-10T10:00:00Z', endAt: '2026-09-10T10:50:00Z', theme: 'study', subTheme: '민법', text: '계약총론 판례정리' }
+  ];
+  const mdWithPrompt = fns.exportRecordsToMarkdown(records, 'study', true);
+  assert.ok(mdWithPrompt.includes('| 날짜 | 시간 | 소요 | 테마 | 소주제 | 내용 |'), '마크다운 표 헤더');
+  assert.ok(mdWithPrompt.includes('계약총론 판례정리'), '기록 내용 포함');
+  assert.ok(mdWithPrompt.includes('[외부 AI 분석 프롬프트'), '외부 AI 프롬프트 포함');
+
+  const mdWithoutPrompt = fns.exportRecordsToMarkdown(records, 'study', false);
+  assert.strictEqual(mdWithoutPrompt.includes('[외부 AI 분석 프롬프트'), false, '프롬프트 미포함 플래그 준수');
+});
+
+check('filterFeedByCategory: 특수문자나 빈 항목, 미매칭 카테고리 입력에도 예외 없이 안전하다', () => {
+  assert.deepStrictEqual(fns.filterFeedByCategory([], 'study'), [], '빈 배열');
+  assert.deepStrictEqual(fns.filterFeedByCategory(null, 'study'), [], 'null 배열');
+  const items = [{ goal: '일상 일기' }];
+  assert.deepStrictEqual(fns.filterFeedByCategory(items, 'unknown'), items, '알 수 없는 카테고리는 기본 전체 반환');
+});
+
+check('reorderMilestones: 동일 인덱스 이동 시 배열 순서를 그대로 유지한다', () => {
+  const goal = { milestones: [{ id: 'a' }, { id: 'b' }] };
+  fns.reorderMilestones(goal, 1, 1);
+  assert.strictEqual(goal.milestones[0].id, 'a');
+  assert.strictEqual(goal.milestones[1].id, 'b');
+});
+
+check('calculateWeeklyFocusStats: endAt 누락 기록은 기본 몰입시간(25분)을 반영한다', () => {
+  const now = new Date();
+  const d = new Date(now.getTime() - 10000).toISOString();
+  const records = [{ startAt: d }]; // endAt 없음
+  const stats = fns.calculateWeeklyFocusStats(records);
+  assert.strictEqual(stats.totalSessions, 1);
+  assert.strictEqual(stats.totalMinutes, 25, '기본 25분 산정');
+});
+
+check('exportRecordsToMarkdown: 본문 내 파이프 기호(|)와 줄바꿈을 안전하게 이스케이프한다', () => {
+  const records = [{ startAt: '2026-09-10T10:00:00Z', theme: 'daily', text: '할일 1 | 할일 2\n다음 줄 내용' }];
+  const md = fns.exportRecordsToMarkdown(records, 'all', false);
+  assert.ok(md.includes('할일 1 \\| 할일 2 다음 줄 내용'), '파이프 이스케이프 및 개행 공백 치환');
+});
+
+check('exportRecordsToCsv: 따옴표(")가 포함된 본문을 CSV 표준에 맞게 더블 쿼트로 치환한다', () => {
+  const records = [{ startAt: '2026-09-10T10:00:00Z', theme: 'daily', text: '그는 "할 수 있다"고 말했다' }];
+  const csv = fns.exportRecordsToCsv(records, 'all');
+  assert.ok(csv.includes('""할 수 있다""'), 'CSV 이중따옴표 이스케이프');
+});
+
+check('compliance: 가상 페르소나 40인 및 유저 피드백 TOP 10 핵심 개선사항이 index.html에 모두 구현되어 있다', () => {
+  // P1. 사진 인증 및 뷰어
+  assert.ok(html.includes('id="capturePhotoInput"'), '사진 첨부 input 존재');
+  assert.ok(html.includes('id="capturePhotoBtn"'), '사진 첨부 버튼 존재');
+  assert.ok(html.includes('id="capturePhotoPreview"'), '사진 미리보기 컨테이너 존재');
+  assert.ok(html.includes('openPhotoViewerModal'), '사진 확대 뷰어 모달 함수 존재');
+  assert.ok(html.includes('checkin-photo-thumb'), '피드 사진 썸네일 클래스 존재');
+
+  // P2. 피드 카테고리 필터링
+  assert.ok(html.includes('feed-filter-bar'), '피드 카테고리 필터 바 클래스 존재');
+  assert.ok(html.includes('data-feedcat'), '피드 카테고리 속성 선택자 존재');
+
+  // P3. 마일스톤 우선순위 태그 및 토글
+  assert.ok(html.includes('ms-priority-tag'), '마일스톤 우선순위 태그 클래스 존재');
+  assert.ok(html.includes('data-cyclepriority'), '마일스톤 우선순위 순환 클릭 속성 존재');
+
+  // P4. 마일스톤 순서 드래그/재정렬 헬퍼
+  assert.ok(html.includes('reorderMilestones'), '마일스톤 순서 재정렬 함수 존재');
+
+  // P5. 오프라인 모드 배너 및 오프라인 싱크 매니저
+  assert.ok(html.includes('id="offlineNoticeBanner"'), '오프라인 알림 배너 마크업 존재');
+  assert.ok(html.includes('OfflineSyncManager'), '오프라인 동기화 큐 매니저 존재');
+
+  // P6. 추천 4회 루틴 프리셋 버튼
+  assert.ok(html.includes('id="presetTimesBtn"'), '추천 루틴 프리셋 버튼 마크업 존재');
+
+  // P7 & P9. 주간 잔디 & 몰입 리포트 카드
+  assert.ok(html.includes('id="homeGrassSummaryCard"'), '홈 잔디 요약 카드 마크업 존재');
+  assert.ok(html.includes('renderHomeGrassSummary'), '홈 잔디 렌더링 함수 존재');
+  assert.ok(html.includes('calculateWeeklyFocusStats'), '주간 몰입 통계 계산 함수 존재');
+
+  // P8 & P17. 소규모 챌린지 룸 및 동료 페이스메이커
+  assert.ok(html.includes('id="homeChallengeRoomBtn"'), '소규모 챌린지 룸 버튼 마크업 존재');
+  assert.ok(html.includes('openChallengeRoomModal'), '소규모 챌린지 룸 모달 함수 존재');
+  assert.ok(html.includes('정지호') && html.includes('김도윤') && html.includes('이지민'), '페이스메이커 페르소나 데이터 존재');
+
+  // P10. 시인성 강화 (고대비 모드 및 4단계 폰트)
+  assert.ok(html.includes('id="highContrastSwitch"'), '고대비 모드 스위치 마크업 존재');
+  assert.ok(html.includes('data-high-contrast'), '고대비 CSS 데이터 속성 존재');
+  assert.ok(html.includes('data-fs="small"') && html.includes('data-fs="xlarge"'), '4단계 글자크기 옵션 존재');
+  assert.ok(html.includes('triggerHaptic'), '촉각 피드백(진동) 함수 존재');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

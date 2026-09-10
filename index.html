@@ -54,7 +54,32 @@
     --rule:rgba(255,255,255,.08); --rule-soft:rgba(255,255,255,.04);
     --chip:#3B3F5C;
   }
+  [data-high-contrast="true"]{
+    --ink:#000000 !important; --ink-soft:#222222 !important; --rule:rgba(0,0,0,.4) !important;
+  }
+  [data-theme="dark"][data-high-contrast="true"]{
+    --paper:#000000 !important; --card:#121212 !important; --card2:#1e1e1e !important;
+    --ink:#FFFFFF !important; --ink-soft:#E0E0E0 !important; --ink-faint:#B0B0B0 !important;
+    --rule:rgba(255,255,255,.4) !important;
+  }
+  body.font-small{ font-size:0.92rem; }
   body.font-large{ font-size:1.06rem; }
+  body.font-xlarge{ font-size:1.18rem; }
+  .photo-preview-wrap{position:relative;display:inline-block;margin-top:8px;border-radius:12px;overflow:hidden;border:1.5px solid var(--rule);box-shadow:0 4px 12px rgba(0,0,0,.08);background:var(--card2);}
+  .photo-preview-img{display:block;max-width:180px;max-height:130px;object-fit:cover;border-radius:10px;}
+  .photo-remove-btn{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:13px;line-height:20px;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .checkin-photo-thumb{display:block;max-width:100%;max-height:200px;border-radius:12px;margin-top:8px;object-fit:cover;border:1px solid var(--rule);cursor:pointer;transition:transform .15s;}
+  .checkin-photo-thumb:hover{transform:scale(1.01);}
+  .feed-filter-bar{display:flex;align-items:center;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:6px 0 10px;margin-bottom:8px;}
+  .feed-filter-bar::-webkit-scrollbar{display:none;}
+  .feed-filter-chip{padding:5px 12px;border-radius:999px;font-size:.78rem;font-weight:700;background:var(--card2);color:var(--ink-soft);border:1px solid var(--rule);white-space:nowrap;cursor:pointer;transition:all .15s;}
+  .feed-filter-chip.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .ms-priority-tag{display:inline-block;font-size:.65rem;font-weight:700;padding:1px 6px;border-radius:4px;margin-right:4px;}
+  .ms-priority-high{background:var(--red-soft);color:var(--red);}
+  .ms-priority-med{background:var(--gold-soft);color:var(--gold);}
+  .ms-priority-low{background:var(--sage-soft);color:var(--sage);}
+  .offline-banner{background:var(--gold-soft);color:var(--gold);border:1.5px solid var(--gold);border-radius:12px;padding:8px 12px;font-size:.78rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .challenge-room-card{background:var(--card);border:1.5px solid var(--gold);border-radius:16px;padding:14px 16px;margin:12px 0;box-shadow:var(--shadow-sm);}
   .privacy-badge{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--card2);border:1px solid var(--rule);color:var(--ink-soft);cursor:pointer;user-select:none;transition:all .15s;}
   .privacy-badge:hover{background:var(--card);color:var(--ink);border-color:var(--violet-soft);}
   .scroll-preview-box{max-height:50vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px;background:var(--card2);border-radius:14px;border:1px solid var(--rule);margin:10px 0 14px;}
@@ -994,6 +1019,7 @@
     <section class="screen active" id="screen-home">
       <p class="s-eyebrow">오늘</p>
       <h2 class="s-title" id="homeGreeting">안녕하세요</h2>
+      <div id="offlineNoticeBanner" class="offline-banner" style="display:none;">📶 <b>오프라인 모드</b> — 작성한 기록은 기기에 안전하게 보관되며 온라인 연결 시 자동 동기화됩니다.</div>
       <div id="levelBadgeRow"></div>
       <div id="notifyBannerSlot"></div>
       <div id="socialNotifySlot"></div>
@@ -1012,7 +1038,10 @@
           <textarea id="captureInput" placeholder="지금 뭘 하고 있나요? 기분은 어때요? 자유롭게 적어보세요. 세부적으로 남길수록 ai가 더 상세한 피드백을 줄 수 있으며 내 목표와 연관된 행동을 작성할 경우 자동으로 목표달성 정도를 파악하고 수정할지 여쭤볼겁니다"></textarea>
           <button class="mic-btn" id="micBtn" type="button" aria-label="음성으로 입력하기" title="음성으로 입력하기">🎙️</button>
         </div>
-        <div class="capture-row" id="captureRowAnchor" style="gap:8px;">
+        <div id="capturePhotoPreview" style="display:none;"></div>
+        <div class="capture-row" id="captureRowAnchor" style="gap:8px;flex-wrap:wrap;">
+          <input type="file" id="capturePhotoInput" accept="image/*" style="display:none;">
+          <button class="btn btn-ghost btn-sm" id="capturePhotoBtn" type="button">📷 사진 인증</button>
           <button class="btn btn-ghost btn-sm" id="importExternalBtn" type="button">🔗 외부 데이터 불러오기</button>
           <button class="btn btn-primary btn-sm" id="captureSave" type="button">저장</button>
         </div>
@@ -1020,6 +1049,7 @@
       <button class="btn btn-ghost btn-sm" id="customFeedbackBtn" type="button" style="width:100%;margin-top:8px;">🤖 내 맞춤 피드백 설정하기<span id="customFeedbackStatus"></span></button>
 
       <div id="todayMissionCard"></div>
+      <div id="homeGrassSummaryCard"></div>
 
       <div class="card-title-row" style="margin:20px 0 10px;">
         <h3>내 목표 <span id="streakBadge"></span><span id="streakFreezeBadge"></span></h3>
@@ -1027,7 +1057,10 @@
       </div>
       <div id="homeGoalList"></div>
 
-      <button class="mz-btn" id="mzShareBtn" type="button">내 성장 자랑하기 🔥</button>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button class="btn btn-secondary btn-sm" id="homeChallengeRoomBtn" type="button" style="flex:1;border-radius:14px;font-weight:800;padding:12px;">🔥 소규모 챌린지 룸</button>
+        <button class="mz-btn" id="mzShareBtn" type="button" style="flex:1.4;margin:0;">내 성장 자랑하기 🔥</button>
+      </div>
     </section>
 
     <!-- GOALS -->
@@ -1242,7 +1275,10 @@
       <div class="set-block">
         <h4>🔔 알림 & 방해금지 설정</h4>
         <div class="time-chip-row" id="checkinTimesRow" style="margin-bottom:6px;"></div>
-        <button class="btn btn-ghost btn-sm" id="addTimeBtn" type="button" style="margin-bottom:12px;">+ 체크인 시간 추가</button>
+        <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" id="addTimeBtn" type="button">+ 체크인 시간 추가</button>
+          <button class="btn btn-ghost btn-sm" id="presetTimesBtn" type="button">⚡ 추천 루틴 프리셋</button>
+        </div>
         <div class="toggle-row">
           <div class="t">이 탭이 열려있는 동안 알림 받기</div>
           <div class="switch" id="notifySwitch"></div>
@@ -1279,11 +1315,17 @@
             <div class="format-opt" data-th="dark">다크</div>
           </div>
         </div>
+        <div class="toggle-row" style="margin-top:10px;">
+          <div class="t">고대비 모드 (선명한 명암비 및 텍스트 시인성 강화)</div>
+          <div class="switch" id="highContrastSwitch"></div>
+        </div>
         <div class="field" style="margin-top:10px;">
           <label>글자 크기</label>
           <div class="format-toggle" id="fontSizeToggle">
+            <div class="format-opt" data-fs="small">작게</div>
             <div class="format-opt" data-fs="normal">보통</div>
             <div class="format-opt" data-fs="large">크게</div>
+            <div class="format-opt" data-fs="xlarge">아주 크게</div>
           </div>
         </div>
         <div class="toggle-row" style="margin-top:10px;">
@@ -1690,6 +1732,7 @@
       onlineStatus: true, customSchedules: [],
       customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, feedReactions:{}, contentReports:{}, todayMissions:{},
       streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] },
+      highContrast: false, challenges: [],
       hasSeenGuide:false, subscription:{ isPro:false, plan:null, expiresAt:null, billingKey:null }
     };
   }
@@ -1708,11 +1751,127 @@
           document.documentElement.removeAttribute('data-theme');
         }
       }
+      if(settings.highContrast){
+        document.documentElement.setAttribute('data-high-contrast', 'true');
+      } else {
+        document.documentElement.removeAttribute('data-high-contrast');
+      }
       if(document.body){
+        document.body.classList.toggle('font-small', settings.fontSize === 'small');
         document.body.classList.toggle('font-large', settings.fontSize === 'large');
+        document.body.classList.toggle('font-xlarge', settings.fontSize === 'xlarge');
       }
     } catch(e){}
   }
+
+  /* ============ 가상유저 개선 10대 핵심 헬퍼 함수 ============ */
+  function triggerHaptic(duration){
+    try{
+      if(typeof navigator !== 'undefined' && navigator && navigator.vibrate){
+        navigator.vibrate(duration || 12);
+        return true;
+      }
+    }catch(e){}
+    return false;
+  }
+
+  function reorderMilestones(goal, fromIdx, toIdx){
+    if(!goal || !goal.milestones || !Array.isArray(goal.milestones)) return [];
+    var list = goal.milestones.slice();
+    if(fromIdx < 0 || fromIdx >= list.length || toIdx < 0 || toIdx >= list.length) return list;
+    var item = list.splice(fromIdx, 1)[0];
+    list.splice(toIdx, 0, item);
+    goal.milestones = list;
+    return list;
+  }
+
+  function filterFeedByCategory(items, categoryKey){
+    if(!categoryKey || categoryKey === 'all') return (items || []).slice();
+    var key = String(categoryKey).toLowerCase();
+    return (items || []).filter(function(item){
+      var text = ((item.goal || '') + ' ' + (item.action || '') + ' ' + (item.category || '')).toLowerCase();
+      if(key === 'study') return /토익|공부|시험|자격증|수험|독서실|회독|강의|leet|cpa|노무사|간호|국시|기출/.test(text);
+      if(key === 'dev') return /개발|코딩|깃허브|알고리즘|오픈소스|백준|디자인|ui|ux|saas|프론트|백엔드/.test(text);
+      if(key === 'workout') return /운동|헬스|러닝|체력|바디프로필|웨이트|필라테스|테니스|수영|인터벌/.test(text);
+      if(key === 'career') return /취업|인턴|이직|창업|매출|사업|마케터|세일즈|영업|스타트업|hr/.test(text);
+      if(key === 'hobby') return /음악|그림|공연|웹툰|댄스|사진|자작곡|뮤지컬|베이커리|로스팅/.test(text);
+      return true;
+    });
+  }
+
+  function calculateWeeklyFocusStats(records){
+    var now = new Date();
+    var sevenDaysAgo = new Date(now.getTime() - 7 * 86400000);
+    var recs = (records || []).filter(function(r){
+      return r && r.startAt && (new Date(r.startAt) >= sevenDaysAgo);
+    });
+    var totalSessions = recs.length;
+    var totalMins = 0;
+    var daysSet = {};
+    recs.forEach(function(r){
+      var k = dateKey(r.startAt);
+      daysSet[k] = true;
+      if(r.endAt && r.startAt){
+        var m = Math.round((new Date(r.endAt) - new Date(r.startAt)) / 60000);
+        if(m > 0 && m < 1440) totalMins += m;
+      } else {
+        totalMins += 25;
+      }
+    });
+    return {
+      totalSessions: totalSessions,
+      totalMinutes: totalMins,
+      activeDays: Object.keys(daysSet).length
+    };
+  }
+
+  function exportRecordsToCsv(records, themeKey){
+    var list = records || [];
+    if(themeKey && themeKey !== 'all'){
+      list = list.filter(function(r){ return (r.theme || 'daily') === themeKey; });
+    }
+    return '\uFEFF' + buildCSV(list);
+  }
+
+  function exportRecordsToMarkdown(records, themeKey, includePrompt){
+    var list = records || [];
+    if(themeKey && themeKey !== 'all'){
+      list = list.filter(function(r){ return (r.theme || 'daily') === themeKey; });
+    }
+    return buildMarkdownExport(list, themeKey || 'all', !!includePrompt);
+  }
+
+  var OfflineSyncManager = {
+    QUEUE_KEY: 'ourgoal_offline_sync_queue',
+    getQueue: function(){
+      try{
+        var raw = (typeof localStorage !== 'undefined' && localStorage) ? localStorage.getItem(this.QUEUE_KEY) : null;
+        return raw ? JSON.parse(raw) : [];
+      }catch(e){ return []; }
+    },
+    enqueue: function(action){
+      var q = this.getQueue();
+      var item = { id: (typeof uid === 'function' ? uid('act') : 'act_' + Date.now()), action: action, timestamp: (typeof nowISO === 'function' ? nowISO() : new Date().toISOString()) };
+      q.push(item);
+      try{ if(typeof localStorage !== 'undefined' && localStorage) localStorage.setItem(this.QUEUE_KEY, JSON.stringify(q)); }catch(e){}
+      return q.length;
+    },
+    clear: function(){
+      try{ if(typeof localStorage !== 'undefined' && localStorage) localStorage.removeItem(this.QUEUE_KEY); }catch(e){}
+    },
+    flush: async function(syncHandler){
+      var q = this.getQueue();
+      if(!q.length) return 0;
+      var count = q.length;
+      if(typeof syncHandler === 'function'){
+        for(var i=0; i<q.length; i++){
+          try { await syncHandler(q[i]); }catch(e){}
+        }
+      }
+      this.clear();
+      return count;
+    }
+  };
   function loadLocalSettings(userId){
     try{
       var raw = localStorage.getItem('ourgoal_settings_'+userId);
@@ -2276,6 +2435,19 @@
       checkRemoteSessionRevoked();
     }
   }, 15000);
+
+  /* 오프라인 상태 감지 및 자동 동기화 배너 제어 (가상유저 요청 P5) */
+  window.addEventListener('online', function(){
+    var b = document.getElementById('offlineNoticeBanner');
+    if(b) b.style.display = 'none';
+    toast('📶 온라인에 다시 연결되었어요. 오프라인 기록을 동기화합니다.');
+    OfflineSyncManager.flush();
+  });
+  window.addEventListener('offline', function(){
+    var b = document.getElementById('offlineNoticeBanner');
+    if(b) b.style.display = 'block';
+    toast('📶 오프라인 모드로 전환되었어요. 작성한 기록은 로컬에 안전하게 보관됩니다.');
+  });
 
   /* ============ 스트릭 프리즈 (연속기록 보호권) ============ */
   async function checkStreakFreeze(){
@@ -4555,6 +4727,7 @@
     refreshCustomFeedbackButtons();
     renderLevelBadge();
     renderTodayMissionCard();
+    renderHomeGrassSummary();
     var streak = computeStreakDays();
     updateAppBadge(streak);
     var badgeEl = document.getElementById('streakBadge');
@@ -4605,6 +4778,138 @@
         quickSyncToCalendar('goal', btn.dataset.calsyncgoal, null);
       });
     });
+
+    var challengeBtn = document.getElementById('homeChallengeRoomBtn');
+    if(challengeBtn){
+      challengeBtn.onclick = openChallengeRoomModal;
+    }
+  }
+
+  /* ============ 주간 잔디 & 몰입 리포트 요약 카드 (가상유저 요청 P7/P9) ============ */
+  function renderHomeGrassSummary(){
+    var card = document.getElementById('homeGrassSummaryCard');
+    if(!card) return;
+    var stats = calculateWeeklyFocusStats(state.profile.records);
+    var streak = computeStreakDays();
+    
+    var dotsHtml = '';
+    var now = new Date();
+    var recDates = {};
+    (state.profile.records || []).forEach(function(r){
+      if(r && r.startAt) recDates[dateKey(r.startAt)] = (recDates[dateKey(r.startAt)] || 0) + 1;
+    });
+    for(var i=13; i>=0; i--){
+      var d = new Date(now.getTime() - i * 86400000);
+      var dk = dateKey(d);
+      var cnt = recDates[dk] || 0;
+      var bg = cnt >= 3 ? '#1FC98E' : (cnt > 0 ? '#A2F2D1' : 'var(--rule)');
+      dotsHtml += '<span title="' + dk + ': ' + cnt + '회" style="display:inline-block;width:14px;height:14px;border-radius:3px;background:' + bg + ';"></span>';
+    }
+
+    card.innerHTML = '<div class="card" style="margin-top:14px;padding:12px 14px;background:var(--card);border:1px solid var(--rule);border-radius:14px;">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
+      + '  <span style="font-size:0.82rem;font-weight:700;color:var(--ink);">🌱 주간 잔디 & 몰입 리포트</span>'
+      + '  <span style="font-size:0.75rem;color:var(--ink-sub);">' + (streak > 0 ? ('🔥 ' + streak + '일 연속 몰입 중') : '오늘의 첫 잔디를 심어보세요') + '</span>'
+      + '</div>'
+      + '<div style="display:flex;gap:5px;align-items:center;margin-bottom:10px;flex-wrap:wrap;">' + dotsHtml + '</div>'
+      + '<div style="display:flex;gap:12px;font-size:0.76rem;color:var(--ink-sub);flex-wrap:wrap;">'
+      + '  <div>최근 7일 체크인: <b style="color:var(--ink);">' + stats.totalSessions + '회</b></div>'
+      + '  <div>집중 일수: <b style="color:var(--ink);">' + stats.activeDays + '일</b></div>'
+      + '  <div>누적 집중: <b style="color:var(--ink);">' + stats.totalMinutes + '분</b></div>'
+      + '</div>'
+      + '</div>';
+  }
+
+  /* ============ 소규모 챌린지 룸 모달 (가상유저 요청 P8/P17) ============ */
+  function openChallengeRoomModal(){
+    var rooms = [
+      { id: 'cpa2026', host: '정지호', goal: '2026 CPA 1차 합격 (주 50시간)', members: 4, max: 6, tag: '수험/CPA', dday: 'D-128', icon: '📖' },
+      { id: 'devlaunch', host: '김도윤', goal: '1인 SaaS 사이드 프로젝트 출시', members: 5, max: 6, tag: '개발/출시', dday: 'D-45', icon: '💻' },
+      { id: 'miracle6', host: '이지민', goal: '평일 미라클 모닝 6시 기상 & 러닝', members: 6, max: 6, tag: '습관/러닝', dday: 'D-21', icon: '🏃' },
+      { id: 'fitbody', host: '박준서', goal: '주 4회 헬스 & 클린 식단 인증', members: 3, max: 6, tag: '운동/헬스', dday: 'D-60', icon: '🏋️' },
+      { id: 'portfolio', host: '최수아', goal: '매일 1시간 UI/UX 포트폴리오 작업', members: 4, max: 6, tag: '디자인/취업', dday: 'D-30', icon: '🎨' }
+    ];
+
+    if(!state.profile.settings.challenges) state.profile.settings.challenges = [];
+    var joinedIds = state.profile.settings.challenges;
+
+    var listHtml = rooms.map(function(r){
+      var isJoined = joinedIds.indexOf(r.id) !== -1;
+      var isFull = r.members >= r.max && !isJoined;
+      return '<div class="challenge-room-card" style="margin-bottom:10px;padding:12px;background:var(--card2);border:1px solid var(--rule);border-radius:14px;">'
+        + '<div style="display:flex;justify-content:space-between;align-items:flex-start;">'
+        + '  <div>'
+        + '    <span style="font-size:0.75rem;padding:2px 6px;border-radius:6px;background:var(--violet-soft);color:var(--violet);font-weight:700;">' + r.tag + '</span>'
+        + '    <span style="font-size:0.74rem;color:var(--ink-sub);margin-left:4px;">' + r.dday + '</span>'
+        + '    <h4 style="margin:4px 0 2px;font-size:0.92rem;color:var(--ink);">' + r.icon + ' ' + escapeHtml(r.goal) + '</h4>'
+        + '    <div style="font-size:0.78rem;color:var(--ink-sub);">페이스메이커: <b>' + r.host + '</b> · 참여 ' + (isJoined ? r.members : r.members) + '/' + r.max + '명</div>'
+        + '  </div>'
+        + '  <div>'
+        + (isJoined
+            ? '<button class="btn btn-ghost btn-sm" data-leavechallenge="' + r.id + '" style="font-size:0.76rem;color:var(--red);">참여중 (퇴장)</button>'
+            : (isFull
+                ? '<button class="btn btn-ghost btn-sm" disabled style="font-size:0.76rem;opacity:0.5;">정원마감</button>'
+                : '<button class="btn btn-primary btn-sm" data-joinchallenge="' + r.id + '" style="font-size:0.76rem;">참여하기</button>'))
+        + '  </div>'
+        + '</div>'
+        + '</div>';
+    }).join('');
+
+    openModal(
+      '<h3>🔥 소규모 챌린지 룸 (동료 페이스메이커)</h3>'
+      + '<p class="faint" style="margin:-8px 0 14px;">느슨하지만 강력한 4~6인 몰입 그룹에서 매일 인증하고 상호 자극을 받아보세요.</p>'
+      + '<div style="display:flex;gap:8px;margin-bottom:12px;">'
+      + '  <button class="btn btn-ghost btn-sm" id="inviteFriendChallengeBtn" style="width:100%;border-radius:10px;">🔗 내 친구 초대 링크 복사하기</button>'
+      + '</div>'
+      + '<div style="max-height:55vh;overflow-y:auto;padding-right:2px;">'
+      + listHtml
+      + '</div>'
+      + '<div class="modal-actions" style="margin-top:14px;">'
+      + '  <button class="btn btn-ghost" id="challengeCloseBtn" type="button">닫기</button>'
+      + '</div>',
+      function(sheet){
+        sheet.querySelector('#challengeCloseBtn').onclick = closeModal;
+        var invBtn = sheet.querySelector('#inviteFriendChallengeBtn');
+        if(invBtn){
+          invBtn.onclick = function(){
+            var link = window.location.origin + window.location.pathname + '#challenge?invite=' + (state.profile.id || 'ourgoal');
+            if(navigator.clipboard && navigator.clipboard.writeText){
+              navigator.clipboard.writeText(link).then(function(){
+                toast('📋 챌린지 초대 링크가 복사되었어요! 친구에게 공유해보세요.');
+              });
+            } else {
+              prompt('아래 링크를 복사하여 친구에게 공유하세요:', link);
+            }
+          };
+        }
+        sheet.querySelectorAll('[data-joinchallenge]').forEach(function(b){
+          b.onclick = async function(){
+            var cid = b.dataset.joinchallenge;
+            if(joinedIds.indexOf(cid) === -1){
+              joinedIds.push(cid);
+              await saveProfile();
+              toast('🎉 챌린지 룸에 입장했어요! 오늘 체크인으로 동료들에게 자극을 주세요.');
+              triggerHaptic(15);
+              closeModal();
+              openChallengeRoomModal();
+            }
+          };
+        });
+        sheet.querySelectorAll('[data-leavechallenge]').forEach(function(b){
+          b.onclick = async function(){
+            var cid = b.dataset.leavechallenge;
+            var idx = joinedIds.indexOf(cid);
+            if(idx !== -1){
+              joinedIds.splice(idx, 1);
+              await saveProfile();
+              toast('챌린지 룸에서 퇴장했어요.');
+              closeModal();
+              openChallengeRoomModal();
+            }
+          };
+        });
+      }
+    );
   }
 
   /* ============ 원터치 퀵 루틴 칩 ============ */
@@ -4657,20 +4962,104 @@
     });
   })();
 
+  /* ============ 사진 인증 & 뷰어 모달 (가상유저 요청 P1) ============ */
+  var pendingCapturePhoto = null;
+
+  function openPhotoViewerModal(src){
+    if(!src) return;
+    var existing = document.getElementById('photoViewerModal');
+    if(existing) existing.remove();
+    var modal = document.createElement('div');
+    modal.id = 'photoViewerModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);';
+    modal.innerHTML = '<div style="position:relative;max-width:92vw;max-height:92vh;display:flex;flex-direction:column;align-items:center;">'
+      + '<img src="' + src + '" style="max-width:100%;max-height:85vh;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.5);object-fit:contain;" />'
+      + '<button type="button" style="margin-top:12px;background:#fff;color:#111;border:none;border-radius:20px;padding:8px 24px;font-weight:700;cursor:pointer;">닫기</button>'
+      + '</div>';
+    modal.addEventListener('click', function(e){
+      if(e.target === modal || e.target.tagName === 'BUTTON') modal.remove();
+    });
+    document.body.appendChild(modal);
+  }
+
+  function compressImage(file, maxDimension, quality, callback){
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var img = new Image();
+      img.onload = function(){
+        var w = img.width, h = img.height;
+        if(w > maxDimension || h > maxDimension){
+          if(w > h){
+            h = Math.round((h * maxDimension) / w);
+            w = maxDimension;
+          } else {
+            w = Math.round((w * maxDimension) / h);
+            h = maxDimension;
+          }
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        var dataUrl = canvas.toDataURL('image/jpeg', quality || 0.82);
+        callback(dataUrl);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  var capturePhotoBtn = document.getElementById('capturePhotoBtn');
+  var capturePhotoInput = document.getElementById('capturePhotoInput');
+  var capturePhotoPreview = document.getElementById('capturePhotoPreview');
+  if(capturePhotoBtn && capturePhotoInput){
+    capturePhotoBtn.addEventListener('click', function(){
+      capturePhotoInput.click();
+    });
+    capturePhotoInput.addEventListener('change', function(e){
+      var file = e.target.files && e.target.files[0];
+      if(!file) return;
+      compressImage(file, 1080, 0.82, function(compressedDataUrl){
+        pendingCapturePhoto = compressedDataUrl;
+        if(capturePhotoPreview){
+          capturePhotoPreview.style.display = 'block';
+          capturePhotoPreview.innerHTML = '<div class="photo-preview-wrap" style="position:relative;display:inline-block;margin:6px 0;">'
+            + '<img src="' + compressedDataUrl + '" class="photo-preview-img" style="max-height:120px;border-radius:10px;border:1px solid var(--rule);cursor:pointer;" />'
+            + '<button type="button" class="photo-preview-del" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.6);color:#fff;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:11px;line-height:22px;text-align:center;padding:0;">✕</button>'
+            + '</div>';
+          capturePhotoPreview.querySelector('.photo-preview-img').onclick = function(){
+            openPhotoViewerModal(pendingCapturePhoto);
+          };
+          capturePhotoPreview.querySelector('.photo-preview-del').onclick = function(ev){
+            ev.stopPropagation();
+            pendingCapturePhoto = null;
+            capturePhotoPreview.innerHTML = '';
+            capturePhotoPreview.style.display = 'none';
+            capturePhotoInput.value = '';
+          };
+        }
+      });
+    });
+  }
+
   document.getElementById('captureSave').addEventListener('click', async function(){
     var t = document.getElementById('captureInput');
     var text = t.value.trim();
-    if(!text) return;
+    if(!text && !pendingCapturePhoto) return;
+    if(!text && pendingCapturePhoto) text = '📷 사진 인증';
     var goal = state.profile.goals.find(function(g){ return g.id===state.activeGoalId; }) || state.profile.goals[0];
     var cat = goal ? goal.category : null;
     var isFirst = (state.profile.records.length === 0);
     var classified = (typeof classifyRecordTheme === 'function')
       ? classifyRecordTheme(text, cat)
       : { theme: 'daily', subTheme: '', confidence: 0.5 };
+    var recPhoto = pendingCapturePhoto || null;
     state.profile.records.unshift({
       id: newId(),
       type: 'note',
       text: text,
+      photo: recPhoto,
       startAt: nowISO(),
       endAt: nowISO(),
       createdAt: nowISO(),
@@ -4680,15 +5069,25 @@
       themeConfidence: classified.confidence
     });
     t.value = '';
+    pendingCapturePhoto = null;
+    if(capturePhotoPreview){ capturePhotoPreview.innerHTML = ''; capturePhotoPreview.style.display = 'none'; }
+    if(capturePhotoInput) capturePhotoInput.value = '';
+
     var xpRes = awardXP(XP_RULES.checkin, '체크인');
     var freezeGranted = maybeGrantStreakFreeze();
     await saveProfile();
-    track('checkin', { first: isFirst, has_goal: !!goal, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l') });
+
+    // 오프라인 상태일 경우 오프라인 동기화 큐에 보관 (가상유저 요청 P5)
+    if(typeof navigator !== 'undefined' && !navigator.onLine){
+      OfflineSyncManager.enqueue({ type: 'record', data: state.profile.records[0] });
+    }
+
+    track('checkin', { first: isFirst, has_goal: !!goal, has_photo: !!recPhoto, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l') });
     if(isFirst){
       triggerFirstCheerResponse(goal, text);
     }
-    toast(freezeGranted ? '🧊 스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요' : '기록했어요');
-    if(navigator.vibrate) navigator.vibrate(10);
+    toast(freezeGranted ? '🧊 스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요' : (recPhoto ? '📷 사진과 함께 기록했어요' : '기록했어요'));
+    triggerHaptic(12);
     var saveBtn = document.getElementById('captureSave');
     var btnRect = saveBtn.getBoundingClientRect();
     burstConfetti(btnRect.left+btnRect.width/2, btnRect.top, 8);
@@ -6696,6 +7095,10 @@
             '<div class="faint" style="font-size:.72rem;margin-top:3px;color:var(--ink-faint);">📅 마감일 미설정</div>')
         );
 
+      var curPrio = m.priority || 'med';
+      var prioLabel = curPrio === 'high' ? '🔴 높음' : (curPrio === 'low' ? '🟢 낮음' : '🟡 보통');
+      var prioTagHtml = '<span class="ms-priority-tag ms-priority-' + curPrio + '" data-cyclepriority="' + m.id + '" title="우선순위 변경 (클릭)">' + prioLabel + '</span>';
+
       return '<div class="ms-row'+(m.status==='doing'?' doing':'')+(mSel?' selected':'')+'" data-msid="'+m.id+'" '+(state.goalEditMode?'draggable="true"':'')+'>' +
         '<div class="ms-main" style="align-items:flex-start;">' +
           (state.goalEditMode ? '<div class="sel-check'+(mSel?' on':'')+'" data-selms="'+m.id+'" style="margin-top:3px;">'+(mSel?'✓':'')+'</div>' : '') +
@@ -6705,6 +7108,7 @@
           '<div style="flex:1;min-width:0;">' +
             '<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">' +
               '<input class="'+titleClass+'" data-msinput="1" value="'+escapeHtml(m.title)+'" '+(state.goalEditMode?'':'readonly')+'>' +
+              prioTagHtml +
               (totalTasks > 0 ? '<span class="faint" style="font-size:.68rem;background:var(--card2);padding:2px 6px;border-radius:6px;margin-left:4px;">📋 '+doneTasks+'/'+totalTasks+' 완료 ('+taskProgressPct+'%)</span>' : '') +
             '</div>' +
             msDueHtml +
@@ -6950,15 +7354,28 @@
       var dateInput = row.querySelector('[data-msdate]');
       if(dateInput) dateInput.addEventListener('change', async function(){ ms.dueDate = dateInput.value || null; await saveProfile(); renderGoalsScreen(); });
 
+      var prioTag = row.querySelector('[data-cyclepriority]');
+      if(prioTag){
+        prioTag.addEventListener('click', async function(e){
+          e.stopPropagation();
+          var pOrder = ['med', 'high', 'low'];
+          var cur = ms.priority || 'med';
+          ms.priority = pOrder[(pOrder.indexOf(cur)+1)%3];
+          triggerHaptic(10);
+          await saveProfile();
+          renderGoalsScreen();
+        });
+      }
+
       var upBtn = row.querySelector('[data-msup]');
       if(upBtn) upBtn.addEventListener('click', async function(){
         var i = goal.milestones.indexOf(ms);
-        if(i>0){ goal.milestones.splice(i,1); goal.milestones.splice(i-1,0,ms); await saveProfile(); renderGoalsScreen(); }
+        if(i>0){ reorderMilestones(goal, i, i-1); triggerHaptic(10); await saveProfile(); renderGoalsScreen(); }
       });
       var downBtn = row.querySelector('[data-msdown]');
       if(downBtn) downBtn.addEventListener('click', async function(){
         var i = goal.milestones.indexOf(ms);
-        if(i<goal.milestones.length-1){ goal.milestones.splice(i,1); goal.milestones.splice(i+1,0,ms); await saveProfile(); renderGoalsScreen(); }
+        if(i<goal.milestones.length-1){ reorderMilestones(goal, i, i+1); triggerHaptic(10); await saveProfile(); renderGoalsScreen(); }
       });
       var delBtn = row.querySelector('[data-msdel]');
       if(delBtn) delBtn.addEventListener('click', async function(){
@@ -12432,9 +12849,10 @@
     var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     var sharedGoals = goals.filter(function(g){ return (g.visibility||'public') !== 'private'; });
     var hiddenCount = goals.length - sharedGoals.length;
+    var myRecentPhoto = (state.profile.records.find(function(r){ return r && r.photo; }) || {}).photo || null;
     var myItems = sharedGoals.map(function(g){
       var pct = goalProgress(g);
-      return { id:'me_'+g.id, userId: state.profile.id, name: state.profile.displayName, avatar: state.profile.displayName.slice(0,1), goal:g.title, pct:pct, action: '"'+g.title+'" 목표를 향해 가는 중', time:'방금', cheers:0, me:true, vis:(g.visibility||'public'), is_ai:false };
+      return { id:'me_'+g.id, userId: state.profile.id, name: state.profile.displayName, avatar: state.profile.displayName.slice(0,1), goal:g.title, pct:pct, action: '"'+g.title+'" 목표를 향해 가는 중', time:'방금', cheers:0, me:true, vis:(g.visibility||'public'), is_ai:false, photo: myRecentPhoto };
     });
     var posts = filterHidden(FEED_POSTS_CACHE);
 
@@ -12450,6 +12868,7 @@
         pct: ex.goalPct || 0,
         action: p.caption,
         recordText: ex.includeRecord ? ex.recordText : null,
+        photo: ex.photo || p.photo || null,
         feedback: ex.includeFeedback ? ex.feedback : null,
         milestones: ex.milestones || [],
         time: timeAgoStr(p.created_at),
@@ -12507,10 +12926,28 @@
       (realCount <= 10 ? ' · 🤖 초기 활력 지원 (AI 70% 블렌디드)' :
       (realCount <= 50 ? ' · 👥 성장 전환기 (AI 30% 블렌디드)' : ' · 🌟 실유저 중심 (AI 5% 완충)')));
 
+    var categories = [
+      { key: 'all', label: '전체' },
+      { key: 'study', label: '📖 공부·수험' },
+      { key: 'dev', label: '💻 개발·기획' },
+      { key: 'workout', label: '🏃 운동·건강' },
+      { key: 'career', label: '💼 커리어·취업' },
+      { key: 'hobby', label: '🎨 취미·창작' }
+    ];
+    var curCat = state.feedCategory || 'all';
+    var catChipsHtml = '<div class="feed-filter-bar" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;-webkit-overflow-scrolling:touch;">'
+      + categories.map(function(c){
+        return '<button type="button" class="feed-filter-chip' + (curCat === c.key ? ' active' : '') + '" data-feedcat="' + c.key + '">' + c.label + '</button>';
+      }).join('')
+      + '</div>';
+
+    blendedItems = filterFeedByCategory(blendedItems, curCat);
+
     body.innerHTML = templatesHtml() +
+      catChipsHtml +
       '<p class="faint" style="margin:0 0 14px;">같은 목표를 향해 가는 사람들' + stageLabel +
       (hiddenCount ? ' · 🔒 나만 보기 '+hiddenCount+'개는 피드에 노출되지 않아요' : '') + '</p>' +
-      (blendedItems.length === 0 ? '<div class="faint" style="text-align:center;padding:40px 0;">아직 공유된 피드가 없어요. 첫 목표나 체크인을 공유해보세요!</div>' : '') +
+      (blendedItems.length === 0 ? '<div class="faint" style="text-align:center;padding:40px 0;">해당 카테고리에 공유된 피드가 없어요. 첫 목표나 체크인을 공유해보세요!</div>' : '') +
       blendedItems.map(function(it){
         var reacted = !!state.profile.settings.feedReactions[it.id];
         var isMe = it.me || it.isMe;
@@ -12529,6 +12966,7 @@
             '</div>' +
             '<div class="feed-action">'+escapeHtml(it.action)+'</div>' +
             (it.recordText ? '<div class="faint" style="font-size:.78rem;background:var(--card2);border-radius:12px;padding:8px 10px;margin-top:8px;">📝 '+escapeHtml(it.recordText)+'</div>' : '') +
+            (it.photo ? '<div style="margin-top:8px;"><img src="'+it.photo+'" class="checkin-photo-thumb" data-feedphoto="'+it.id+'" style="max-height:140px;max-width:200px;border-radius:10px;border:1px solid var(--rule);cursor:pointer;object-fit:cover;" /></div>' : '') +
             (it.feedback ? '<div class="fb-card '+verdictClass(it.feedback.verdict)+'" style="margin:8px 0 0;padding:10px 12px;box-shadow:none;">' +
               '<div class="fb-verdict" style="font-size:.76rem;">🤖 '+escapeHtml(it.feedback.verdict)+'</div>' +
               '<div class="fb-row" style="font-size:.78rem;margin-top:2px;">'+escapeHtml(it.feedback.comment)+'</div>' +
@@ -12546,6 +12984,21 @@
           '</div>' +
         '</div>';
       }).join('');
+
+    body.querySelectorAll('[data-feedcat]').forEach(function(chip){
+      chip.addEventListener('click', function(){
+        state.feedCategory = chip.dataset.feedcat;
+        triggerHaptic(8);
+        renderCommFeed(body);
+      });
+    });
+    body.querySelectorAll('[data-feedphoto]').forEach(function(img){
+      img.addEventListener('click', function(){
+        var pItem = blendedItems.find(function(x){ return x.id === img.dataset.feedphoto; });
+        if(pItem && pItem.photo) openPhotoViewerModal(pItem.photo);
+      });
+    });
+
     body.querySelectorAll('[data-react]').forEach(function(btn){
       btn.addEventListener('click', async function(){
         var id = btn.dataset.react;
@@ -12553,7 +13006,7 @@
         var nowOn = !reactions[id];
         if(nowOn) reactions[id] = true; else delete reactions[id];
         if(nowOn){
-          if(navigator.vibrate) navigator.vibrate(10);
+          triggerHaptic(10);
           var r = btn.getBoundingClientRect();
           burstConfetti(r.left+r.width/2, r.top, 6);
         }
@@ -13631,6 +14084,18 @@
       });
     });
 
+    var presetTimesBtn = document.getElementById('presetTimesBtn');
+    if(presetTimesBtn){
+      presetTimesBtn.onclick = async function(){
+        settings.checkinTimes = ['07:15', '12:30', '18:45', '23:15'];
+        await saveProfile();
+        renderSettingsScreen();
+        if(settings.notify) syncPushSubscription();
+        toast('⚡ 추천 4회 루틴(아침·점심·퇴근·취침 전)으로 설정했어요');
+        triggerHaptic(15);
+      };
+    }
+
     var sw = document.getElementById('notifySwitch');
     sw.className = 'switch' + (settings.notify ? ' on' : '');
     a11ySwitch(sw, settings.notify, '이 탭이 열려있는 동안 알림 받기');
@@ -13715,6 +14180,21 @@
           renderSettingsScreen();
         };
       });
+    }
+
+    var hcSw = document.getElementById('highContrastSwitch');
+    if(hcSw){
+      var hcOn = !!settings.highContrast;
+      hcSw.className = 'switch' + (hcOn ? ' on' : '');
+      a11ySwitch(hcSw, hcOn, '고대비 모드');
+      hcSw.onclick = async function(){
+        settings.highContrast = !hcOn;
+        await saveProfile();
+        applyAppSettings(settings);
+        renderSettingsScreen();
+        toast(settings.highContrast ? '고대비 모드가 켜졌어요' : '고대비 모드가 꺼졌어요');
+        triggerHaptic(10);
+      };
     }
 
     var curFs = settings.fontSize || 'normal';

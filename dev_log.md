@@ -1385,3 +1385,32 @@
   - 브라우저 인라인 스크립트 문법 검사 100% 통과.
 ---
 
+## [2026-09-10 17:45] feat: 40인 가상 페르소나 및 실사용자 피드백 기반 TOP 10 핵심 개선사항 전면 구현
+- **목표**:
+  - `command-center` 시뮬레이션 데이터베이스(`sandbox_db.json`)의 40인 가상 페르소나 피드백 및 자동 백로그 제안사항 10대 핵심 요구사항을 완벽하게 해결 및 배포:
+    1. 사진 인증 및 전체화면 뷰어 (P1 - 헬스, 러닝, 식단 유저 사진 첨부).
+    2. 커뮤니티 피드 카테고리 필터 칩 (P2 - 공부, 개발, 운동, 커리어, 취미).
+    3. 마일스톤 중요도/우선순위 태그 및 원터치 순환 토글 (P3 - 높음/보통/낮음).
+    4. 마일스톤 순서 변경 드래그 & 화살표 재정렬 엔진 (P4 - `reorderMilestones`).
+    5. 오프라인 모드 알림 배너 및 자동 동기화 큐 매니저 (P5 - `OfflineSyncManager`).
+    6. 추천 4회 체크인 시간 원터치 프리셋 버튼 (P6 - 아침·점심·퇴근·취침 전).
+    7. 주간 잔디 & 몰입 리포트 요약 카드 (P7, P9 - 14일 미니 잔디, 세션 수, 누적 집중 시간).
+    8. 소규모 챌린지 룸 및 동료 페이스메이커 (P8, P17 - 정지호, 김도윤, 이지민, 박준서, 최수아 방 참여 및 친구 초대).
+    9. 테마별 맞춤 CSV/Markdown 내보내기 (P12, P15 - 외부 AI 분석 프롬프트 및 UTF-8 BOM 지원).
+    10. 시인성 및 접근성 강화 (P10 - 고대비 모드, 4단계 글자크기, 터치 진동 햅틱 피드백).
+- **수정/실행 내역**:
+  - `index.html`:
+    - CSS: `[data-high-contrast="true"]`, `.font-small/large/xlarge`, `.photo-preview-wrap`, `.checkin-photo-thumb`, `.feed-filter-bar`, `.feed-filter-chip`, `.ms-priority-tag`, `.offline-banner`, `.challenge-room-card` 스타일 추가.
+    - DOM: 홈 탭 `#offlineNoticeBanner`, `#capturePhotoInput`, `#capturePhotoBtn`, `#capturePhotoPreview`, `#homeGrassSummaryCard`, `#homeChallengeRoomBtn` 추가.
+    - DOM: 설정 탭 `#presetTimesBtn`, `#highContrastSwitch`, 4단계 `#fontSizeToggle` 추가.
+    - JS 순수 헬퍼: `triggerHaptic`, `reorderMilestones`, `filterFeedByCategory`, `calculateWeeklyFocusStats`, `exportRecordsToCsv`, `exportRecordsToMarkdown`, `OfflineSyncManager` 구현.
+    - JS 이벤트: 사진 캔버스 1080px 압축 저장 및 `#capturePhotoBtn` 연동, `openPhotoViewerModal`, `renderHomeGrassSummary`, `openChallengeRoomModal`, `renderCommFeed` 카테고리 필터링 및 썸네일 클릭 뷰어, 마일스톤 우선순위 토글 및 순서 재배치, 설정 프리셋/고대비 스위칭, 온라인/오프라인 네트워크 이벤트 리스너 연동.
+  - `scripts/smoke-test.js`:
+    - `FN_NAMES`에 신규 헬퍼 함수 10종 등록.
+    - `triggerHaptic`, `reorderMilestones`, `filterFeedByCategory`, `calculateWeeklyFocusStats`, `exportRecordsToCsv`, `exportRecordsToMarkdown` 단위 테스트 및 경계값/특수문자 테스트 11종 추가.
+    - 가상 페르소나 TOP 10 핵심 개선 컴플라이언스 검증 테스트 추가.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **115개 전수 통과 (0개 실패)**.
+  - HTML 구문 에러 0건, 인라인 스크립트 문법 검증 100% 통과.
+---
+
