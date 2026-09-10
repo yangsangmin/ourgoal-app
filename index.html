@@ -18445,7 +18445,7 @@
     } catch(e){ /* fall through to landing screen */ }
     document.getElementById('landingScreen').style.display = 'flex';
     try{ recordLanding(location.search, dateKey(nowISO())); } catch(e){ /* 계측 실패 무시 */ }
-    setTimeout(initGoogleOneTap, 1200);
+    // 구글 로그인은 사용자가 랜딩/인증 화면에서 구글 로그인 버튼을 직접 눌렀을 때만 안전하게 시작 (의도치 않은 자동 세션 덮어쓰기 원천 차단)
   })();
 
   /* ============ PWA: Service Worker 등록 ============ */
