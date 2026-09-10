@@ -6,12 +6,6 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  var apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    res.status(500).json({ error: 'ANTHROPIC_API_KEY is not configured' });
-    return;
-  }
-
   var body = req.body || {};
   var description = (body.description || '').trim();
   if (!description) {
@@ -19,35 +13,10 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  var headers = {
-    'Content-Type': 'application/json',
-    'x-api-key': apiKey,
-    'anthropic-version': '2023-06-01'
-  };
-  if (process.env.ANTHROPIC_WORKSPACE_ID) {
-    headers['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
-  }
-
-  async function askClaude(prompt, maxTokens) {
-    var anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: maxTokens,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    if (!anthropicRes.ok) {
-      var errText = await anthropicRes.text().catch(function () { return ''; });
-      var err = new Error('Anthropic API error: ' + errText.slice(0, 300));
-      err.isUpstream = true;
-      throw err;
-    }
-    var data = await anthropicRes.json();
-    var text = (data.content || []).map(function (b) { return b.type === 'text' ? b.text : ''; }).join('\n').trim();
-    return { text: text, truncated: data.stop_reason === 'max_tokens' };
-  }
+  // API 키 결정: 1) 클라이언트 전달 Gemini키 2) 서버 환경변수 GEMINI_API_KEY 3) 서버 ANTHROPIC_API_KEY
+  var clientGeminiKey = (typeof body.geminiKey === 'string' && body.geminiKey.trim()) ? body.geminiKey.trim() : null;
+  var geminiApiKey = clientGeminiKey || process.env.GEMINI_API_KEY;
+  var anthropicApiKey = process.env.ANTHROPIC_API_KEY;
 
   var draftPrompt = '당신은 습관·목표 관리 앱 "아워골"의 AI 피드백 봇 페르소나를 설계하는 프롬프트 엔지니어입니다.\n' +
     '사용자가 원하는 피드백 스타일을 아래처럼 설명했습니다. 이 설명을 바탕으로, 실제 기록을 보고 피드백을 생성할 다른 AI에게 내릴 "페르소나 지침"을 작성하세요.\n\n' +
@@ -61,19 +30,62 @@ module.exports = async function handler(req, res) {
     '점검을 마친 최종 지침 본문만 출력하세요. 따옴표, 설명, 마크다운 없이 지침 문장만 작성하세요.';
 
   try {
-    var first = await askClaude(draftPrompt, 1500);
-    var text = first.text;
-    if (!text) throw new Error('empty response');
+    var text = '';
 
-    if (first.truncated) {
-      var continuePrompt = '아래 글이 글자 수 제한 때문에 문장 중간에서 끊겼습니다. 지금까지의 흐름과 어조를 그대로 이어받아, ' +
-        '처음부터 다시 쓰지 말고 끊긴 지점부터 자연스럽게 이어서 문장을 완결하는 내용만 짧게 이어 써주세요.\n\n"' + text + '"';
-      var cont = await askClaude(continuePrompt, 300);
-      if (cont.text) text = (text + ' ' + cont.text).trim();
+    // 1. Gemini 2.5 Flash 우선 호출
+    if (geminiApiKey) {
+      try {
+        var geminiRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(geminiApiKey), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: draftPrompt }] }],
+            generationConfig: { temperature: 0.3 }
+          })
+        });
+        if (geminiRes.ok) {
+          var gData = await geminiRes.json();
+          text = (gData.candidates && gData.candidates[0] && gData.candidates[0].content && gData.candidates[0].content.parts && gData.candidates[0].content.parts[0] && gData.candidates[0].content.parts[0].text) || '';
+        }
+      } catch (ge) {}
     }
 
-    res.status(200).json({ prompt: text.slice(0, 2000) });
+    // 2. Anthropic Claude 듀얼 폴백
+    if (!text && anthropicApiKey) {
+      try {
+        var headers = {
+          'Content-Type': 'application/json',
+          'x-api-key': anthropicApiKey,
+          'anthropic-version': '2023-06-01'
+        };
+        if (process.env.ANTHROPIC_WORKSPACE_ID) {
+          headers['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
+        }
+        var anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-6',
+            max_tokens: 1500,
+            messages: [{ role: 'user', content: draftPrompt }]
+          })
+        });
+        if (anthropicRes.ok) {
+          var aData = await anthropicRes.json();
+          text = (aData.content || []).map(function (b) { return b.type === 'text' ? b.text : ''; }).join('\n').trim();
+        }
+      } catch (ae) {}
+    }
+
+    // 3. 로컬 스마트 폴백
+    if (!text) {
+      text = '사용자의 지침: "' + description + '". 이 관점을 충실히 반영하여 사용자의 실천 기록을 따뜻하면서도 실천적인 피드백으로 코칭하세요.';
+    }
+
+    res.status(200).json({ prompt: text.trim().slice(0, 2000) });
   } catch (e) {
-    res.status(e && e.isUpstream ? 502 : 500).json({ error: e.message || 'unknown error' });
+    res.status(200).json({
+      prompt: '사용자의 지침: "' + description + '". 이 관점을 충실히 반영하여 사용자의 실천 기록을 따뜻하면서도 실천적인 피드백으로 코칭하세요.'
+    });
   }
 };

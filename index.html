@@ -3969,10 +3969,14 @@
   async function generateGoalTemplate(description){
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 28000);
+    var settings = (state.profile && state.profile.settings) || {};
     try{
       var res = await fetch('/api/goaltemplate', {
         method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
-        body: JSON.stringify({ description: description })
+        body: JSON.stringify({
+          description: description,
+          geminiKey: settings.geminiKey || ''
+        })
       });
       clearTimeout(timer);
       if(!res.ok) return null;
@@ -4161,13 +4165,22 @@
   async function requestGoalAgentDiff(message){
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 28000);
+    var settings = (state.profile && state.profile.settings) || {};
     try{
       var res = await fetch('/api/goalagent', {
         method:'POST', headers:{'Content-Type':'application/json'}, signal: controller.signal,
-        body: JSON.stringify({ message: message, goals: goalAgentSnapshot(), today: new Date().toISOString().slice(0,10) })
+        body: JSON.stringify({
+          message: message,
+          goals: goalAgentSnapshot(),
+          today: new Date().toISOString().slice(0,10),
+          geminiKey: settings.geminiKey || ''
+        })
       });
       clearTimeout(timer);
-      if(!res.ok) return null;
+      if(!res.ok) {
+        var errBody = await res.json().catch(function(){ return {}; });
+        return { ops: [], reply: errBody.error || '요청을 처리하지 못했어요 · 다시 시도해주세요' };
+      }
       var data = await res.json();
       if(!data || !Array.isArray(data.ops)) return null;
       return data;

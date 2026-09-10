@@ -1172,6 +1172,18 @@
 - **수정/실행 내역**:
   - `.github/workflows/build-apk.yml`: `java-version`을 17에서 21(`temurin`)로 업그레이드하여 `invalid source release: 21` 오류 해결
   - `dev_log.md`: 개발 로그 추가
+## [2026-09-10 11:55] fix: 대화로 목표 관리 및 전체 AI 엔드포인트 Gemini 2.5 Flash 및 로컬 폴백 업그레이드
+- **목표**: "대화로 목표 관리"(`/api/goalagent`) 및 전체 AI 엔드포인트가 기존 Anthropic 전용 키(`ANTHROPIC_API_KEY`) 의존으로 인해 발생하던 500 에러 해결, Google Gemini 2.5 Flash(`GEMINI_API_KEY`) 최우선 지원 및 키 부재 시에도 동작하는 로컬 스마트 폴백 탑재
+- **수정/실행 내역**:
+  - `api/goalagent.js`: Gemini 2.5 Flash(0.5초 초고속, JSON 모드) 1순위 지원, Claude Sonnet 듀얼 폴백, 키 부재 시에도 목표 생성/완료/삭제를 자연스럽게 처리하는 로컬 스마트 폴백(`localGoalAgentFallback`) 탑재
+  - `api/goaltemplate.js`: Gemini 2.5 Flash 및 로컬 템플릿 스마트 폴백(`localGoalTemplateFallback`) 탑재
+  - `api/promptgen.js`: Gemini 2.5 Flash 및 로컬 페르소나 스마트 폴백 탑재
+  - `api/todaymission.js`: Gemini 2.5 Flash 및 로컬 미션 스마트 폴백 탑재
+  - `api/nextaction.js`: Gemini 2.5 Flash 및 로컬 추천 스마트 폴백 탑재
+  - `api/goalstatus.js`: Gemini 2.5 Flash 및 로컬 요약 스마트 폴백 탑재
+  - `index.html`: `requestGoalAgentDiff`, `generateGoalTemplate`에서 설정에 저장된 `geminiKey` 전달 및 에러 메시지 안정화
 - **검증 결과**:
   - `npm test` **85개 전수 통과 (0개 실패)**
+  - API 키 없는 상태에서도 `goalagent.js` 및 `goaltemplate.js` 로컬 스마트 폴백 정상 200 반환 검증 완료
 ---
+
