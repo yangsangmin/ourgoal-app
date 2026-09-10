@@ -35,7 +35,7 @@
 - **[필수] TASK-04 팀 댓글·피드 SQL**: Supabase SQL Editor에서 `team_comments`/`feed_posts` 테이블 + RLS + `increment_post_cheers` RPC 실행 후, Database→Replication에서 두 테이블 Realtime 활성화. 정확한 SQL은 PR #41 본문. 실행 전에는 팀 댓글·피드 응원이 안전하게 실패(400/404, 크래시 없음)하지만 실제로 동작하지 않는다.
 - **[필수] 체크인 분야 저장**: Supabase SQL Editor에서 `docs/sql/2026-09-06-checkins-category.sql` 실행(`checkins.category` 컬럼 추가). 실행 전에는 클라이언트가 기존 형식으로 자동 재시도해 저장이 끊기지는 않지만 분야가 계속 저장되지 않아 분야별 리포트·CSV가 부정확하다.
 - **[필수] 소셜 로그인 Provider**: Supabase에서 Kakao·Google Provider 활성화, 각 콘솔에서 앱 등록·Redirect URI 설정, Supabase Site/Redirect URL에 배포 도메인 추가. 상세는 `docs/sprint/TASK-01.md` "사용자 필요 작업". 설정 전에는 버튼을 눌러도 provider 비활성화 에러가 난다(코드 문제 아님).
-- **[선택] 캘린더 OAuth 클라이언트 ID** (PR #54 후속): GCP 콘솔에서 아워골 OAuth 클라이언트(웹, 승인된 자바스크립트 원본 = `https://ourgoal-app.vercel.app`) 발급 후 `index.html`의 `GOOGLE_OAUTH_CLIENT_ID` 상수에 입력. 값을 채우기 전까지는 캘린더가 사용자 ID 입력 방식으로만 동작한다. 주의: 캘린더 스코프는 Google 민감 스코프라 OAuth 동의화면 검수가 필요하고, 검수 전에는 "테스트 사용자" 최대 100명 한도로만 동작하며 승인까지 수일~수주 걸릴 수 있다. 상수를 채우기 전에 페이월 캘린더 문구 정직화(BACKLOG)를 먼저 처리할 것.
+- **[완료] 캘린더 OAuth 클라이언트 ID** (2026-09-10): GCP 웹 애플리케이션 OAuth 클라이언트 발급 후 `index.html`의 `GOOGLE_OAUTH_CLIENT_ID` 상수에 입력 완료. 공용 클라이언트 ID를 통해 원클릭 구글 캘린더 연동 활성화.
 - **[완료] 유료 기능 전면 해제 및 100% 완전 무료화** (2026-09-10): 모든 결제/페이월 및 기능 잠금(목표 3개 제한, 맞춤 AI 코치, 30일 리포트)을 전면 해제하고 토스페이먼츠 연동 코드를 정리하여 모든 기능을 전면 무료로 제공.
 - **[알림] Vercel 배포 횟수 한도**: 2026-09-07 기준 일일 빌드 한도(`Deployment rate limited — retry in 24 hours`)에 걸려 PR 체크가 FAILURE로 표시됐다. 코드 문제가 아니며, 한도가 풀린 뒤의 다음 푸시에서 프로덕션에 반영된다.
 

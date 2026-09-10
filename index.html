@@ -1196,54 +1196,6 @@
     animation: streakFlamePulse 2.4s infinite var(--spring-bounce);
   }
 
-  /* 4. Mobile Ergonomic Bottom Floating Thumb Dock (Sarah Jenkins & Alex Rivera) */
-  .bottom-thumb-dock {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
-    z-index: 28;
-    display: flex;
-    justify-content: center;
-    pointer-events: none;
-    padding: 0 16px;
-  }
-  .bottom-thumb-dock-inner {
-    pointer-events: auto;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--card);
-    border: 1px solid var(--rule);
-    border-radius: 999px;
-    padding: 5px 8px;
-    box-shadow: 0 14px 32px -10px rgba(20, 22, 43, 0.22), 0 2px 8px rgba(20, 22, 43, 0.05);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-  }
-  .dock-action-btn {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.74rem;
-    font-weight: 700;
-    padding: 7px 11px;
-    border-radius: 999px;
-    background: transparent;
-    border: none;
-    color: var(--ink);
-    cursor: pointer;
-    transition: all 0.15s ease;
-    min-height: 36px;
-  }
-  .dock-action-btn:hover {
-    background: var(--card2);
-  }
-  .dock-action-btn.primary {
-    background: var(--grad);
-    color: #fff;
-    box-shadow: 0 4px 12px -2px rgba(255, 79, 100, 0.35);
-  }
 
   /* 5. Top Glanceable Status Pill (David Becker & Maya Patel) */
   .today-glance-pill {
@@ -1725,6 +1677,8 @@
         </div>
         <button class="btn btn-primary btn-sm fab-add" id="recAddBtn" type="button">+ 새 기록</button>
       </div>
+      <!-- 🧠 기록 탭 실시간 AI 피드백 슬롯 -->
+      <div id="recFeedbackSlot" style="margin:4px 0 14px;display:none;"></div>
       <!-- 💬 AI 대화형 기록 비서 (Req 1) -->
       <div class="card" id="recAgentCard" style="margin:4px 0 14px;background:var(--card);border:1.5px solid var(--violet-soft);box-shadow:var(--shadow-sm);padding:14px;border-radius:18px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
@@ -1776,6 +1730,51 @@
       </div>
       <h3 style="font-weight:900;letter-spacing:-.02em;font-size:1rem;margin:18px 0 8px;">완료·보관한 목표</h3>
       <div id="archivedGoals"></div>
+      <!-- 🗓️ 기간별 기록 설정 및 AI 종합 피드백 (Req 4) -->
+      <div class="card" id="periodAiCard" style="margin:20px 0 12px;background:var(--card);border:1.5px solid var(--violet-soft);box-shadow:var(--shadow-sm);padding:16px;border-radius:18px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:1.15rem;">🧠</span>
+            <b style="font-size:.92rem;color:var(--violet);">기간별 기록 AI 피드백</b>
+          </div>
+          <span class="dday-mini" style="background:var(--violet-soft);color:var(--violet);font-weight:700;">기간 맞춤 코칭</span>
+        </div>
+        <p class="faint" style="font-size:.76rem;margin:0 0 10px;line-height:1.45;">
+          기록의 기간을 설정하면, 그 기간 동안의 모든 실천 데이터를 AI가 종합 분석하여 성취 분석과 맞춤형 코칭 피드백을 제공합니다.
+        </p>
+
+        <!-- 기간 프리셋 칩 -->
+        <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;" id="periodPresetRow">
+          <button class="dday-pill active" data-perioddays="7" type="button" style="cursor:pointer;border:1px solid var(--violet);background:var(--violet-soft);color:var(--violet);font-size:.76rem;font-weight:700;">최근 7일</button>
+          <button class="dday-pill" data-perioddays="14" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card2);font-size:.76rem;">최근 14일</button>
+          <button class="dday-pill" data-perioddays="30" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card2);font-size:.76rem;">최근 30일</button>
+          <button class="dday-pill" data-perioddays="month" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card2);font-size:.76rem;">이번 달</button>
+        </div>
+
+        <!-- 시작일 / 종료일 인풋 -->
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:120px;">
+            <label class="faint" style="font-size:.7rem;display:block;margin-bottom:3px;">시작일</label>
+            <input type="date" id="periodStartDate" style="width:100%;border:1px solid var(--rule);border-radius:10px;padding:8px 10px;font-size:.82rem;background:var(--bg);color:var(--ink);">
+          </div>
+          <span style="font-size:.85rem;color:var(--ink-soft);padding-top:14px;">~</span>
+          <div style="flex:1;min-width:120px;">
+            <label class="faint" style="font-size:.7rem;display:block;margin-bottom:3px;">종료일</label>
+            <input type="date" id="periodEndDate" style="width:100%;border:1px solid var(--rule);border-radius:10px;padding:8px 10px;font-size:.82rem;background:var(--bg);color:var(--ink);">
+          </div>
+        </div>
+
+        <!-- 기간 기록 수 및 AI 피드백 요청 버튼 -->
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+          <span class="faint" id="periodRecordCountBadge" style="font-size:.78rem;font-weight:700;">기간 내 기록: 0건</span>
+          <button class="btn btn-primary btn-sm" id="periodAiRequestBtn" type="button" style="padding:8px 16px;font-size:.82rem;font-weight:700;display:flex;align-items:center;gap:6px;">
+            <span>✨ 기간 AI 피드백 받기</span>
+          </button>
+        </div>
+
+        <!-- 피드백 결과 카드 슬롯 -->
+        <div id="periodAiResultSlot" style="margin-top:14px;display:none;"></div>
+      </div>
       <h3 style="font-weight:900;letter-spacing:-.02em;font-size:1rem;margin:18px 0 8px;">체크인 기록</h3>
       <div class="theme-filter-row" id="recThemeFilters"></div>
       <div class="field" style="margin-bottom:10px;"><input id="recSearchInput" type="text" placeholder="🔍 날짜·테마·키워드로 검색"></div>
@@ -2084,24 +2083,6 @@
     </section>
   </main>
 
-  <!-- Mobile Bottom Floating Thumb Dock (Sarah Jenkins & Alex Rivera) -->
-  <div id="bottomThumbDock" class="bottom-thumb-dock" aria-label="하단 퀵 조작 바">
-    <div class="bottom-thumb-dock-inner">
-      <button id="dockQuickCheckinBtn" class="dock-action-btn primary" type="button" aria-label="1초 퀵 기록하기">
-        <span>⚡ 퀵기록</span>
-      </button>
-      <button id="dockQuickSearchBtn" class="dock-action-btn" type="button" aria-label="기록 및 목표 검색">
-        <span>🔍 검색</span>
-      </button>
-      <button id="dockTodayFocusBtn" class="dock-action-btn" type="button" aria-label="오늘의 핵심 목표 포커스">
-        <span>🎯 집중</span>
-      </button>
-      <button id="dockShareCardBtn" class="dock-action-btn" type="button" aria-label="MZ 감성 성취 공유 카드 열기">
-        <span>✨ 성취카드</span>
-      </button>
-    </div>
-  </div>
-
   <div class="bottomnav">
     <nav class="bottomnav-inner">
       <button class="navbtn active" data-tab="home" type="button">
@@ -2157,7 +2138,7 @@
 
   /* 앱 레벨 Google OAuth 클라이언트 ID(공개 식별자, 시크릿 아님). GCP 콘솔에서 이 앱을 등록한 뒤 값을 채우면
      사용자가 자기 ID를 넣을 필요가 없어진다. 비어 있으면 설정의 사용자 ID로 폴백한다 — 거시 재조정안 A2 */
-  var GOOGLE_OAUTH_CLIENT_ID = '';
+  var GOOGLE_OAUTH_CLIENT_ID = '441950547594-brg1nvritlb3hlucoktq11ga6vtn943a.apps.googleusercontent.com';
 
   /*
    * TASK-04: 아래 두 테이블 + RPC가 Supabase에 있어야 팀 댓글/피드 응원이 실제로 동작한다.
@@ -4659,13 +4640,11 @@
       function(sheet){
         sheet.querySelector('#hubCloseBtn').onclick = closeModal;
         sheet.querySelector('#hubAddNewBtn').onclick = function(){
-          closeModal();
           openCalendarManualEditModal(sel, null);
         };
         var proRecBtn = sheet.querySelector('#hubAddProRecBtn');
         if(proRecBtn){
           proRecBtn.onclick = function(){
-            closeModal();
             openProTemplateRecordModal(null, null, sel);
           };
         }
@@ -4674,7 +4653,6 @@
             var rid = btn.dataset.hubrec;
             var rec = (state.profile.records || []).find(function(r){ return r.id === rid; });
             if(rec){
-              closeModal();
               openTemplateRecordDetailModal(rec);
             }
           };
@@ -4694,10 +4672,13 @@
               targetEvent = g ? (g.milestones||[]).find(function(m){ return m.id===ev.msId; }) : null;
             } else if(ev.kind==='task'){
               var g = state.profile.goals.find(function(g){ return g.id===ev.goalId; });
-              var m = g ? (g.milestones||[]).find(function(m){ return m.id===ev.msId; }) : null;
-              targetEvent = m ? (m.tasks||[]).find(function(t){ return t.id===ev.taskId; }) : null;
+              if(g && g.milestones){
+                for(var mi=0; mi<g.milestones.length; mi++){
+                  var tk = (g.milestones[mi].tasks||[]).find(function(t){ return t.id===ev.taskId; });
+                  if(tk){ targetEvent = tk; break; }
+                }
+              }
             }
-            closeModal();
             openCalendarManualEditModal(sel, targetEvent, ev.kind);
           };
         });
@@ -4707,8 +4688,8 @@
             if(!confirm('이 일정을 삭제할까요?')) return;
             state.profile.settings.customSchedules = (state.profile.settings.customSchedules || []).filter(function(c){ return c.id !== sid; });
             await saveProfile();
-            closeModal();
             renderCalendarScreen();
+            openCalendarDayEditHubModal(sel);
             toast('일정을 삭제했어요');
           };
         });
@@ -4719,13 +4700,18 @@
   /* ============ 캘린더 수동 일정 편집 모달 (Req 2) ============ */
   function openCalendarManualEditModal(selectedDate, eventItem, kind){
     var isNew = !eventItem;
-    var defaultDateVal = selectedDate + 'T09:00';
+    var selDate = selectedDate || state.calSelectedDate || isoDate(new Date());
+    var defaultDateVal = (selDate.indexOf('T') !== -1 ? selDate : selDate + 'T09:00');
     var curTitle = eventItem ? eventItem.title : '';
     var curDate = eventItem && eventItem.dueDate ? toDateTimeLocalValue(eventItem.dueDate) : (eventItem && eventItem.date ? toDateTimeLocalValue(eventItem.date) : defaultDateVal);
     var curNote = eventItem ? (eventItem.note || '') : '';
     var curDone = eventItem ? (eventItem.done || eventItem.status==='done') : false;
 
     openModal(
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+        '<span class="dm-back" id="calEditBackToHubBtn" style="cursor:pointer;margin:0;font-size:.82rem;color:var(--violet);font-weight:700;">‹ ' + selDate + ' 일정 목록으로</span>' +
+        '<span class="faint" style="font-size:.76rem;">' + selDate + '</span>' +
+      '</div>' +
       '<h3>' + (isNew ? '🗓️ 새 일정 추가' : '✏️ 일정 수동 편집') + '</h3>' +
       '<div class="field">' +
         '<label>일정 제목 (필수)</label>' +
@@ -4749,6 +4735,12 @@
         '<button class="btn btn-primary btn-sm" id="calEditSaveBtn" type="button" style="flex:1;">저장</button>' +
       '</div>',
       function(sheet){
+        var backBtn = sheet.querySelector('#calEditBackToHubBtn');
+        if(backBtn){
+          backBtn.onclick = function(){
+            openCalendarDayEditHubModal(selDate);
+          };
+        }
         var doneSw = sheet.querySelector('#calEditDoneSwitch');
         var isDone = curDone;
         if(doneSw){
@@ -4757,7 +4749,9 @@
             doneSw.classList.toggle('on', isDone);
           };
         }
-        sheet.querySelector('#calEditCancelBtn').onclick = closeModal;
+        sheet.querySelector('#calEditCancelBtn').onclick = function(){
+          openCalendarDayEditHubModal(selDate);
+        };
 
         var delBtn = sheet.querySelector('#calEditDeleteBtn');
         if(delBtn){
@@ -4773,8 +4767,8 @@
               eventItem.dueDate = null;
             }
             await saveProfile();
-            closeModal();
             renderCalendarScreen();
+            openCalendarDayEditHubModal(selDate);
             toast('일정을 삭제했어요');
           };
         }
@@ -4817,7 +4811,9 @@
           state.calSelectedDate = dayKey;
           state.calDate = dayKey;
           saveLocalSettings(state.profile.id, state.profile.settings);
-
+          await saveProfile();
+          renderCalendarScreen();
+          openCalendarDayEditHubModal(dayKey);
           if(state.profile.settings.gcalAutoSync && isGoogleCalendarConnected()){
             syncAllToGoogleCalendar().catch(function(){});
           }
@@ -5384,7 +5380,6 @@
     }
     renderTodayGlancePill();
     renderDailyQuestBar();
-    setupBottomThumbDock();
   }
 
   /* ============ 주간 잔디 & 몰입 리포트 요약 카드 (가상유저 요청 P7/P9) ============ */
@@ -5536,51 +5531,6 @@
     );
   }
 
-  function setupBottomThumbDock(){
-    var checkinBtn = document.getElementById('dockQuickCheckinBtn');
-    if(checkinBtn && !checkinBtn._bound){
-      checkinBtn._bound = true;
-      checkinBtn.onclick = function(){
-        triggerHaptic(15);
-        setTab('home');
-        var ta = document.getElementById('captureInput');
-        if(ta){
-          ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          ta.focus();
-        }
-      };
-    }
-    var searchBtn = document.getElementById('dockQuickSearchBtn');
-    if(searchBtn && !searchBtn._bound){
-      searchBtn._bound = true;
-      searchBtn.onclick = function(){
-        triggerHaptic(15);
-        setTab('records');
-        var sq = document.getElementById('recordSearchInput');
-        if(sq){
-          sq.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          sq.focus();
-        }
-      };
-    }
-    var focusBtn = document.getElementById('dockTodayFocusBtn');
-    if(focusBtn && !focusBtn._bound){
-      focusBtn._bound = true;
-      focusBtn.onclick = function(){
-        triggerHaptic(18);
-        setTab('home');
-        var gList = document.getElementById('homeGoalList');
-        if(gList){
-          gList.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      };
-    }
-    var shareBtn = document.getElementById('dockShareCardBtn');
-    if(shareBtn && !shareBtn._bound){
-      shareBtn._bound = true;
-      shareBtn.onclick = openMzShareCardModal;
-    }
-  }
 
   /* ============ 소규모 챌린지 룸 모달 (가상유저 요청 P8/P17) ============ */
   function openChallengeRoomModal(){
@@ -11826,7 +11776,9 @@
         return '<option value="'+t.key+'"'+(t.key===curTpl.key?' selected':'')+'>'+t.icon+' '+t.title+' ('+t.columns.length+'개 속성)</option>';
       }).join('');
 
-      return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap;">' +
+      var backHtml = initialDate ? ('<div style="width:100%;margin-bottom:6px;"><span class="dm-back" id="proRecBackToHubBtn" style="cursor:pointer;margin:0;font-size:.82rem;color:var(--violet);font-weight:700;">‹ ' + initialDate + ' 일정 목록으로 돌아가기</span></div>') : '';
+
+      return backHtml + '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap;">' +
         '<h3 style="margin:0;">' + (isNew ? '📋 전문(맞춤) 템플릿 기록' : '✏️ 전문 템플릿 기록 수정') + '</h3>' +
         '<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;">' +
           '<button class="btn btn-ghost btn-sm" id="proQuickLoadBtn" type="button" style="font-size:.72rem;padding:3px 7px;color:var(--violet);border-color:var(--violet-soft);" title="이전 세션 루틴 1초 불러오기">⚡ 루틴 불러오기</button>' +
@@ -12579,7 +12531,11 @@
         renderCalendarScreen();
         renderLevelBadge();
 
-        closeModal();
+        if(initialDate){
+          openCalendarDayEditHubModal(initialDate);
+        } else {
+          closeModal();
+        }
 
         // 3. Sync to Supabase in background
         await saveProfile();
@@ -12601,6 +12557,22 @@
           toast('전문 템플릿 기록을 저장했어요!');
         }
         burstConfetti(window.innerWidth/2, window.innerHeight/2);
+      }
+
+      var backBtn = sheet.querySelector('#proRecBackToHubBtn');
+      if(backBtn){
+        backBtn.onclick = function(){
+          stopSwTimer();
+          openCalendarDayEditHubModal(initialDate);
+        };
+      }
+      var cancelBtn = sheet.querySelector('#proCancelBtn');
+      if(cancelBtn){
+        cancelBtn.onclick = function(){
+          stopSwTimer();
+          if(initialDate) openCalendarDayEditHubModal(initialDate);
+          else closeModal();
+        };
       }
 
       sheet.querySelector('#proGeneralSaveBtn').onclick = function(){ executeSave(false); };
