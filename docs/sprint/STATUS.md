@@ -20,7 +20,7 @@
 | TASK-04 Supabase Realtime 팀 댓글 & 피드 | PR 병합 완료 | feat/2026-09-06-task-04-realtime-comments-feed | #41 |
 | TASK-05 맥락 기반 다이내믹 푸시 알림 | PR 병합 완료 | feat/2026-09-06-task-05-dynamic-push | #42 |
 | TASK-06 딥링크 & 워터마크 공유 카드 | PR 병합 완료 | feat/2026-09-06-task-06-share-watermark | #43 |
-| 72H-RELEASE 72시간 실배포 (AI 프록시·모바일 뒤로가기·APK 파이프라인) | PR 대기 | feat/2026-09-10-phase1-ai-proxy | 생성 대기 |
+| 72H-RELEASE 72시간 실배포 (AI 프록시·모바일 뒤로가기·APK 파이프라인) | 진행 중 | fix/2026-09-10-apk-build-jdk21 | PR 대기 |
 
 상태 값: `시작 전` → `진행 중` → `PR 대기` → `PR 병합 완료` (막히면 `보류(사유)`)
 
