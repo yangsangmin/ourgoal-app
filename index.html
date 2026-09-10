@@ -6408,6 +6408,29 @@
       if(shareBtn) shareBtn.addEventListener('click', openShareToFeedModal);
     }
   }
+
+  function renderRecordFeedbackSlot(fb){
+    var el = document.getElementById('recFeedbackSlot');
+    if(!el) return;
+    if(!fb){ el.innerHTML = ''; el.style.display = 'none'; return; }
+    el.style.display = 'block';
+    if(fb === 'loading'){
+      el.innerHTML = '<div class="fb-card mid"><span class="fb-verdict">🧠 AI 코치 피드백 분석 중…</span></div>';
+    } else {
+      el.innerHTML = '<div class="fb-card ' + verdictClass(fb.verdict) + '">' +
+        '<span class="fb-close" id="recFbCloseBtn">×</span>' +
+        '<div style="font-size:.74rem;font-weight:800;color:var(--violet);margin-bottom:4px;display:flex;align-items:center;gap:4px;"><span>✨</span><span>기록 탭 AI 피드백</span></div>' +
+        '<div class="fb-verdict">' + escapeHtml(fb.verdict) + '</div>' +
+        '<div class="fb-row">' + escapeHtml(fb.comment) + '</div>' +
+        '<div class="fb-source">' + (fb.persona ? '🤖 내 맞춤 봇 판단' : (fb.source === 'ai' ? 'Claude 판단' : (fb.source === 'gemini' ? 'Gemini 판단' : '간이 판단'))) + '</div>' +
+        '<button class="btn btn-ghost btn-sm" id="recFbShareBtn" type="button" style="width:100%;margin-top:10px;">📤 이 기록, 피드에 공유하기</button>' +
+      '</div>';
+      var closeBtn = el.querySelector('#recFbCloseBtn');
+      if(closeBtn) closeBtn.onclick = function(){ el.innerHTML = ''; el.style.display = 'none'; };
+      var shareBtn = el.querySelector('#recFbShareBtn');
+      if(shareBtn) shareBtn.onclick = openShareToFeedModal;
+    }
+  }
   function timeAgoStr(iso){
     var diff = Math.max(0, Date.now() - new Date(iso).getTime());
     var min = Math.floor(diff/60000);
