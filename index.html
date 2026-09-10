@@ -2686,8 +2686,10 @@
   }
 
   async function loadProfile(userId, username, newUserExtra, provider){
-    var ures = await ensureUserRow(userId, username, username.split('@')[0], newUserExtra);
-    var urow = ures.row;
+    var safeUsername = String(username || (newUserExtra && newUserExtra.display_name) || userId || 'user').trim();
+    var defaultDisplayName = (newUserExtra && newUserExtra.display_name) || (safeUsername.indexOf('@') !== -1 ? safeUsername.split('@')[0] : safeUsername);
+    var ures = await ensureUserRow(userId, safeUsername, defaultDisplayName, newUserExtra);
+    var urow = ures.row || {};
     var goalsRes = await sb.from('goals').select('*').eq('user_id', userId).order('created_at', {ascending:true});
     var recsRes = await sb.from('checkins').select('*').eq('user_id', userId).order('start_at', {ascending:false});
     var goals = (goalsRes.data||[]).map(function(g){
@@ -2697,6 +2699,26 @@
         result: g.result||null, milestones: g.milestones||[]
       };
     });
+    // Supabase 일시 지연 또는 조회 실패 시 로컬 백업 자동 복구 (목표 증발 방지 및 자가 복구)
+    var localCachedGoals = [];
+    try {
+      localCachedGoals = JSON.parse(localStorage.getItem('ourgoal_goals_backup_' + userId) || '[]');
+    } catch(e){}
+    if((!goals || goals.length === 0) && localCachedGoals && localCachedGoals.length > 0){
+      goals = localCachedGoals;
+      try {
+        await sb.from('goals').upsert(goals.map(function(g){
+          return {
+            id:g.id, user_id:userId, title:g.title, category:g.category||null, due_date:g.dueDate||null,
+            visibility:g.visibility||'private', topic:g.topic||null, archived_at:g.archivedAt||null,
+            result:g.result||null, milestones:g.milestones||[]
+          };
+        }));
+      } catch(e){}
+    } else if(goals && goals.length > 0){
+      try { localStorage.setItem('ourgoal_goals_backup_' + userId, JSON.stringify(goals)); } catch(e){}
+    }
+
     var records = (recsRes.data||[]).map(function(r){
       return {
         id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at,
@@ -2706,10 +2728,19 @@
         themeConfidence: r.theme_confidence || null
       };
     });
-    if(ures.isNew){
+
+    // 기존 데이터 존재 여부 정밀 판정: DB 목표, 기록 또는 로컬 백업이 있으면 절대 최초가입 온보딩으로 보내지 않는다
+    var hasExistingData = (goals && goals.length > 0) || (records && records.length > 0) || (localCachedGoals && localCachedGoals.length > 0);
+    var isActuallyNew = ures.isNew && !hasExistingData;
+
+    if(isActuallyNew){
       track('signup', Object.assign({ method: provider || 'email' }, getAttribution()));
     }
     var settings = loadLocalSettings(userId);
+    if(hasExistingData && !settings.hasSeenGuide){
+      settings.hasSeenGuide = true;
+      saveLocalSettings(userId, settings);
+    }
     if(settings && settings.proTemplateRecords){
       records.forEach(function(rec){
         if(settings.proTemplateRecords[rec.id]){
@@ -2727,11 +2758,11 @@
       });
     }
     return {
-      id: userId, username: username, displayName: urow.display_name,
+      id: userId, username: safeUsername, displayName: urow.display_name || defaultDisplayName,
       bio: urow.bio || '', avatarUrl: urow.avatar_url || '', interests: urow.interests || [],
       region: urow.region || '', regionPublic: !!urow.region_public,
       goals: goals, records: records, settings: settings,
-      _isNewSignup: ures.isNew
+      _isNewSignup: isActuallyNew
     };
   }
 
@@ -2747,7 +2778,7 @@
         region: state.profile.region || null, region_public: !!state.profile.regionPublic
       });
 
-      var goals = state.profile.goals;
+      var goals = state.profile.goals || [];
       if(goals.length){
         await sb.from('goals').upsert(goals.map(function(g){
           return {
@@ -2756,13 +2787,12 @@
             result:g.result||null, milestones:g.milestones||[]
           };
         }));
+        try {
+          localStorage.setItem('ourgoal_goals_backup_' + uidVal, JSON.stringify(goals));
+        } catch(e){}
       }
-      var goalIds = goals.map(function(g){ return g.id; });
-      var delGoals = sb.from('goals').delete().eq('user_id', uidVal);
-      if(goalIds.length) delGoals = delGoals.not('id','in','('+goalIds.join(',')+')');
-      await delGoals;
 
-      var recs = state.profile.records;
+      var recs = state.profile.records || [];
       if(recs.length){
         var recRows = recs.map(function(r){
           return {
@@ -2786,10 +2816,6 @@
           }));
         }
       }
-      var recIds = recs.map(function(r){ return r.id; });
-      var delRecs = sb.from('checkins').delete().eq('user_id', uidVal);
-      if(recIds.length) delRecs = delRecs.not('id','in','('+recIds.join(',')+')');
-      await delRecs;
     } catch(e){ console.warn('Supabase sync failed:', e); }
     saveLocalSettings(uidVal, state.profile.settings);
   }
@@ -2930,7 +2956,7 @@
       var authScreen = document.getElementById('authScreen');
       if(authScreen) authScreen.style.display = 'none';
 
-      if(state.profile._isNewSignup){
+      if(state.profile._isNewSignup && (!state.profile.goals || state.profile.goals.length === 0) && (!state.profile.records || state.profile.records.length === 0)){
         startOnboarding();
       } else {
         enterApp();
@@ -8554,6 +8580,10 @@
         state.profile.goals = state.profile.goals.filter(function(g){ return g.id!==goal.id; });
         state.activeGoalId = null;
         state.goalEditMode = false;
+        try {
+          await sb.from('goals').delete().eq('id', goal.id).eq('user_id', state.profile.id);
+          localStorage.setItem('ourgoal_goals_backup_' + state.profile.id, JSON.stringify(state.profile.goals));
+        } catch(e){ console.warn('Supabase goal delete failed:', e); }
         await saveProfile();
         renderAll();
         toast('목표를 삭제했어요');
@@ -14753,6 +14783,9 @@
             return c.id !== rec.linkedScheduleId && c.recordId !== rec.id;
           });
         }
+        try {
+          await sb.from('checkins').delete().eq('id', id).eq('user_id', state.profile.id);
+        } catch(e){}
         await saveProfile(); renderRecordsScreen();
       });
     });
@@ -18395,14 +18428,14 @@
         var newExtra = {};
         if(um.avatar_url || um.picture) newExtra.avatar_url = um.avatar_url || um.picture;
         if(um.full_name || um.name || um.nickname) newExtra.display_name = um.full_name || um.name || um.nickname;
+        var userEmail = session.user.email || um.email || (newExtra.display_name ? (newExtra.display_name + '@kakao.local') : (session.user.id.slice(0, 8) + '@kakao.local'));
         if(!sessionStorage.getItem('ourgoal_login_at')) setDeviceLoginTime(Date.now());
-        state.profile = await loadProfile(session.user.id, session.user.email, newExtra, (session.user.app_metadata && session.user.app_metadata.provider) || null);
+        state.profile = await loadProfile(session.user.id, userEmail, newExtra, (session.user.app_metadata && session.user.app_metadata.provider) || null);
         var isRevoked = await checkRemoteSessionRevoked();
         if(isRevoked) return;
         document.getElementById('landingScreen').style.display = 'none';
         document.getElementById('authScreen').style.display = 'none';
-        if(state.profile._isNewSignup){
-          await saveProfile();
+        if(state.profile._isNewSignup && (!state.profile.goals || state.profile.goals.length === 0) && (!state.profile.records || state.profile.records.length === 0)){
           startOnboarding();
         } else {
           enterApp();

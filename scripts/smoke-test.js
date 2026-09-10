@@ -1751,6 +1751,26 @@ check('compliance: 상단 모임 필터 칩바 및 팀 목표 200% 활용 가이
   assert.ok(html.includes('id="btnShowTeamGuideModal"'), '모임 목표 화면 내 가이드 모달 버튼');
 });
 
+check('compliance: 기존 계정 목표 보존, saveProfile 비파괴성 및 최초로그인 온보딩 오작동 원천 차단', () => {
+  // 1. saveProfile에서 무조건적 또는 배열 비었을 때의 전체 삭제(delGoals/delRecs) 패턴 제거 확인
+  assert.ok(!html.includes('var delGoals = sb.from(\'goals\').delete()'), 'saveProfile 내 blind delGoals 제거 확인');
+  assert.ok(!html.includes('var delRecs = sb.from(\'checkins\').delete()'), 'saveProfile 내 blind delRecs 제거 확인');
+
+  // 2. 로컬 백업 자동 복구 및 자가 치유 안전망 구비
+  assert.ok(html.includes('ourgoal_goals_backup_'), '로컬 목표 백업 키 사용 확인');
+
+  // 3. 기존 데이터가 있는 계정의 신규가입 오판정 방어
+  assert.ok(html.includes('var hasExistingData = (goals && goals.length > 0) || (records && records.length > 0) || (localCachedGoals && localCachedGoals.length > 0);'), '기존 데이터 보유 유저 정밀 판정 로직 존재');
+  assert.ok(html.includes('var isActuallyNew = ures.isNew && !hasExistingData;'), '실제 신규 여부 계산 확인');
+
+  // 4. boot 진입 시 기존 목표 보유자는 절대 온보딩으로 빠지지 않음
+  assert.ok(html.includes('state.profile._isNewSignup && (!state.profile.goals || state.profile.goals.length === 0)'), 'boot 시 목표 보유자 온보딩 진입 차단');
+
+  // 5. 사용자의 명시적 목표 및 기록 삭제 시 개별 ID 기준 삭제 수행
+  assert.ok(html.includes("await sb.from('goals').delete().eq('id', goal.id).eq('user_id', state.profile.id);"), '목표 개별 명시적 삭제 로직 구비');
+  assert.ok(html.includes("await sb.from('checkins').delete().eq('id', id).eq('user_id', state.profile.id);"), '기록 개별 명시적 삭제 로직 구비');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
