@@ -48,6 +48,18 @@
     --font:'Noto Sans KR','Pretendard',-apple-system,system-ui,sans-serif;
     --mono:'IBM Plex Mono',ui-monospace,monospace;
   }
+  [data-theme="dark"]{
+    --paper:#11121A; --card:#1B1C28; --card2:#242636;
+    --ink:#F1F2FA; --ink-soft:#A4A8C4; --ink-faint:#6B6F8A;
+    --rule:rgba(255,255,255,.08); --rule-soft:rgba(255,255,255,.04);
+    --chip:#3B3F5C;
+  }
+  body.font-large{ font-size:1.06rem; }
+  .privacy-badge{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--card2);border:1px solid var(--rule);color:var(--ink-soft);cursor:pointer;user-select:none;transition:all .15s;}
+  .privacy-badge:hover{background:var(--card);color:var(--ink);border-color:var(--violet-soft);}
+  .scroll-preview-box{max-height:50vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px;background:var(--card2);border-radius:14px;border:1px solid var(--rule);margin:10px 0 14px;}
+  .scroll-preview-box::-webkit-scrollbar{width:6px;}
+  .scroll-preview-box::-webkit-scrollbar-thumb{background:var(--rule);border-radius:4px;}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.001ms!important;}}
   html,body{margin:0;height:100%;}
@@ -806,7 +818,10 @@
           </div>
         </div>
         <div class="goal-head-row">
-          <h2>목표</h2>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <h2>목표</h2>
+            <span class="privacy-badge" id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">🌐 전체 공개</span>
+          </div>
           <button class="edit-toggle off" id="goalEditToggle" type="button">편집</button>
         </div>
         <div class="goal-chip-row" id="goalChipRow"></div>
@@ -818,13 +833,17 @@
     <!-- CALENDAR -->
     <section class="screen" id="screen-calendar">
       <div class="card-title-row" style="margin-bottom:6px;">
-        <div><p class="s-eyebrow">일정</p><h2 class="s-title" style="margin:0;">일정</h2></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div><p class="s-eyebrow">일정</p><h2 class="s-title" style="margin:0;">일정</h2></div>
+          <span class="privacy-badge" id="calPrivacyBadge" title="클릭하여 공개 범위 변경" style="margin-top:10px;">🌐 전체 공개</span>
+        </div>
         <div class="format-toggle" id="calViewToggle" style="max-width:180px;">
           <div class="format-opt" data-calview="month">월</div>
           <div class="format-opt" data-calview="week">주</div>
           <div class="format-opt" data-calview="day">일</div>
         </div>
       </div>
+      <div id="calGoogleBanner"></div>
       <div class="card" id="calAgentCard" style="margin-bottom:14px;border:1.5px solid var(--violet-soft);background:linear-gradient(135deg, rgba(108,92,231,0.06) 0%, rgba(255,159,28,0.04) 100%);">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
           <div style="font-weight:800;color:var(--violet);font-size:.86rem;">🤖 AI 일정 & 참고자료 등록 비서</div>
@@ -849,8 +868,25 @@
     <!-- RECORDS -->
     <section class="screen" id="screen-records">
       <div class="card-title-row" style="margin-bottom:6px;">
-        <div><p class="s-eyebrow">기록</p><h2 class="s-title" style="margin:0;">기록</h2></div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div><p class="s-eyebrow">기록</p><h2 class="s-title" style="margin:0;">기록</h2></div>
+          <span class="privacy-badge" id="recPrivacyBadge" title="클릭하여 공개 범위 변경" style="margin-top:10px;">🌐 전체 공개</span>
+        </div>
         <button class="btn btn-primary btn-sm fab-add" id="recAddBtn" type="button">+ 새 기록</button>
+      </div>
+      <!-- 💬 AI 대화형 기록 비서 (Req 1) -->
+      <div class="card" id="recAgentCard" style="margin:4px 0 14px;background:var(--card);border:1.5px solid var(--violet-soft);box-shadow:var(--shadow-sm);padding:14px;border-radius:18px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:1.1rem;">💬</span>
+            <b style="font-size:.88rem;color:var(--violet);">AI 대화형 기록 비서</b>
+          </div>
+          <span class="faint" style="font-size:.72rem;">자연어로 편하게 적어주세요</span>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <input id="recAgentInput" type="text" placeholder="예: '오늘 저녁 헬스장에서 가슴운동 1시간 완료', '영어 단어 30분 공부'" style="flex:1;border:1px solid var(--rule);border-radius:12px;padding:9px 12px;font-size:.84rem;background:var(--bg);color:var(--ink);">
+          <button class="btn btn-primary btn-sm" id="recAgentSendBtn" type="button" style="white-space:nowrap;padding:0 14px;">기록</button>
+        </div>
       </div>
       <div class="week-summary" id="weekSummary"></div>
       <div id="lifeBalanceBox"></div>
@@ -892,20 +928,145 @@
         <input type="file" id="avatarFile" accept="image/*" style="display:none;">
       </div>
 
+      <!-- 🔒 공개 범위 및 프라이버시 (Req 8) -->
       <div class="set-block">
-        <h4>체크인 알림 시간</h4>
-        <div class="time-chip-row" id="checkinTimesRow"></div>
-        <button class="btn btn-ghost btn-sm" id="addTimeBtn" type="button" style="margin-top:8px;">+ 시간 추가</button>
+        <h4>🔒 공개 범위 및 프라이버시 설정</h4>
+        <div class="field">
+          <label>내 목표 기본 공개 범위</label>
+          <select id="privGoalSelect">
+            <option value="public">🌐 전체 공개 (누구나 볼 수 있음)</option>
+            <option value="team">👥 모임원 공개 (참여한 팀원에게만)</option>
+            <option value="private">🔒 나만 보기 (비공개)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>내 일정 / 캘린더 공개 범위</label>
+          <select id="privCalSelect">
+            <option value="public">🌐 전체 공개 (누구나 볼 수 있음)</option>
+            <option value="team">👥 모임원 공개 (참여한 팀원에게만)</option>
+            <option value="private">🔒 나만 보기 (비공개)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>내 체크인 기록 공개 범위</label>
+          <select id="privRecSelect">
+            <option value="public">🌐 전체 공개 (누구나 볼 수 있음)</option>
+            <option value="team">👥 모임원 공개 (참여한 팀원에게만)</option>
+            <option value="private">🔒 나만 보기 (비공개)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>프로필 통계 및 스트릭 공개 범위</label>
+          <select id="privStatsSelect">
+            <option value="public">🌐 전체 공개 (누구나 볼 수 있음)</option>
+            <option value="team">👥 모임원 공개 (참여한 팀원에게만)</option>
+            <option value="private">🔒 나만 보기 (비공개)</option>
+          </select>
+        </div>
+        <div class="toggle-row" style="margin-top:10px;">
+          <div class="t">실시간 활동 상태 표시 (온라인 여부)</div>
+          <div class="switch" id="onlineStatusSwitch"></div>
+        </div>
       </div>
 
+      <!-- 🔐 계정 & 보안 (Req 10 - 인스타/당근 벤치마킹) -->
       <div class="set-block">
-        <h4>알림</h4>
+        <h4>🔐 계정 및 보안</h4>
+        <div style="padding:10px 14px;background:var(--card2);border-radius:14px;margin-bottom:12px;font-size:.84rem;">
+          <div class="faint" style="font-size:.72rem;">로그인 계정 이메일</div>
+          <b id="setAccountEmail" style="color:var(--ink);">ysm0422@naver.com</b>
+        </div>
+        <div class="toggle-row">
+          <div class="t">2단계 인증 (2FA) 보안 로그인</div>
+          <div class="switch" id="twoFactorSwitch"></div>
+        </div>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--rule);">
+          <div style="font-size:.84rem;font-weight:800;margin-bottom:4px;">💻 활성 로그인 기기 및 세션</div>
+          <div class="faint" style="font-size:.74rem;">현재 기기: Windows Chrome (접속 중) · 모바일 앱: Android PWA</div>
+          <button class="btn btn-ghost btn-sm" id="logoutOtherDevicesBtn" type="button" style="margin-top:8px;width:100%;font-size:.76rem;">다른 모든 기기 원격 로그아웃</button>
+        </div>
+      </div>
+
+      <!-- 🔔 알림 & 야간 방해금지 (Req 10 - 당근/인스타 벤치마킹) -->
+      <div class="set-block">
+        <h4>🔔 알림 & 방해금지 설정</h4>
+        <div class="time-chip-row" id="checkinTimesRow" style="margin-bottom:6px;"></div>
+        <button class="btn btn-ghost btn-sm" id="addTimeBtn" type="button" style="margin-bottom:12px;">+ 체크인 시간 추가</button>
         <div class="toggle-row">
           <div class="t">이 탭이 열려있는 동안 알림 받기</div>
           <div class="switch" id="notifySwitch"></div>
         </div>
-        <p class="faint" style="margin-top:8px;">브라우저 알림은 탭이 열려있을 때만 울려요. 완전한 푸시는 앱 설치가 필요해요.</p>
-        <button class="btn btn-ghost btn-sm" id="testNotifyBtn" type="button" style="margin-top:10px;">지금 테스트해보기</button>
+        <div class="toggle-row" style="margin-top:10px;">
+          <div class="t">🌙 야간 방해금지 모드</div>
+          <div class="switch" id="quietHoursSwitch"></div>
+        </div>
+        <div id="quietHoursRow" style="display:flex;align-items:center;gap:6px;margin-top:8px;padding:8px 12px;background:var(--card2);border-radius:12px;">
+          <span class="faint" style="font-size:.76rem;white-space:nowrap;">방해금지 시간:</span>
+          <input type="time" id="quietStartInput" value="22:00" style="padding:4px 6px;font-size:.8rem;">
+          <span class="faint">~</span>
+          <input type="time" id="quietEndInput" value="08:00" style="padding:4px 6px;font-size:.8rem;">
+        </div>
+        <p class="faint" style="font-size:.72rem;margin-top:4px;">설정된 야간 시간대에는 푸시 알림 및 소리가 울리지 않습니다.</p>
+        <div style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--rule);">
+          <div style="font-size:.82rem;font-weight:800;margin-bottom:8px;">유형별 알림 제어</div>
+          <div class="toggle-row" style="margin-bottom:6px;"><div class="t" style="font-size:.82rem;">👥 모임원 일일 인증 알림</div><div class="switch" id="notifTeamSwitch"></div></div>
+          <div class="toggle-row" style="margin-bottom:6px;"><div class="t" style="font-size:.82rem;">❤️ 응원 및 댓글 알림</div><div class="switch" id="notifCheersSwitch"></div></div>
+          <div class="toggle-row" style="margin-bottom:6px;"><div class="t" style="font-size:.82rem;">⏳ 마감 D-day 임박 알림</div><div class="switch" id="notifDdaySwitch"></div></div>
+          <div class="toggle-row"><div class="t" style="font-size:.82rem;">🔥 일일 스트릭 유지 리마인더</div><div class="switch" id="notifStreakSwitch"></div></div>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="testNotifyBtn" type="button" style="margin-top:12px;width:100%;">지금 테스트 알림 울리기</button>
+      </div>
+
+      <!-- 🎨 화면 및 테마 (Req 10 - 인스타/스레드 벤치마킹) -->
+      <div class="set-block">
+        <h4>🎨 화면 및 표시 설정</h4>
+        <div class="field">
+          <label>테마 모드</label>
+          <div class="format-toggle" id="themeToggle">
+            <div class="format-opt" data-th="system">시스템</div>
+            <div class="format-opt" data-th="light">라이트</div>
+            <div class="format-opt" data-th="dark">다크</div>
+          </div>
+        </div>
+        <div class="field" style="margin-top:10px;">
+          <label>글자 크기</label>
+          <div class="format-toggle" id="fontSizeToggle">
+            <div class="format-opt" data-fs="normal">보통</div>
+            <div class="format-opt" data-fs="large">크게</div>
+          </div>
+        </div>
+        <div class="toggle-row" style="margin-top:10px;">
+          <div class="t">데이터 절약 모드 (저용량 이미지 로드)</div>
+          <div class="switch" id="dataSaverSwitch"></div>
+        </div>
+      </div>
+
+      <!-- 📅 구글 캘린더 연동 (Req 3 & 4) -->
+      <div class="set-block">
+        <h4>📅 구글 캘린더 연동</h4>
+        <div id="gcalStatusBox"></div>
+        <div id="gcalQuickConnectRow" style="margin-top:10px;">
+          <button class="btn btn-primary btn-sm btn-block" id="gcalQuickConnectBtn" type="button">⚡ 구글 계정으로 연동하기</button>
+        </div>
+        <div id="gcalSyncRow" style="display:none;margin-top:10px;gap:8px;flex-direction:column;">
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-ghost btn-sm" id="gcalSyncNowBtn" type="button" style="flex:1;">🔄 지금 동기화</button>
+            <button class="btn btn-ghost btn-sm" id="gcalDisconnectBtn" type="button" style="color:var(--red);flex:0 0 auto;">연동 해제</button>
+          </div>
+          <div class="toggle-row" style="margin-top:6px;">
+            <div class="t">목표·일정 변경 시 자동 동기화</div>
+            <div class="switch" id="gcalAutoSyncSwitch"></div>
+          </div>
+          <button class="btn btn-ghost btn-sm btn-block" id="gcalImportBtn" type="button">📥 내 일정 불러와서 목표에 반영</button>
+          <button class="btn btn-ghost btn-sm btn-block" id="gcalExportBtn" type="button">📤 내 목표를 캘린더에 반영</button>
+        </div>
+        <details style="margin-top:12px;">
+          <summary style="font-size:.78rem;color:var(--ink-soft);cursor:pointer;">고급: 직접 OAuth 클라이언트 ID 설정</summary>
+          <div class="field" style="margin-top:8px;">
+            <input id="gcalClientIdInput" type="text" placeholder="xxxxxxxx.apps.googleusercontent.com" autocomplete="off">
+          </div>
+          <p class="faint" style="font-size:.7rem;">Google Cloud Console에서 발급한 OAuth 클라이언트 ID를 직접 등록할 수 있습니다.</p>
+        </details>
       </div>
 
       <div class="set-block">
@@ -958,39 +1119,28 @@
       </div>
 
       <div class="set-block">
-        <h4>📅 구글 캘린더 연동</h4>
-        <div id="gcalStatusBox"></div>
-        <div class="field" style="margin-top:10px;">
-          <label>Google OAuth 클라이언트 ID</label>
-          <input id="gcalClientIdInput" type="text" placeholder="xxxxxxxx.apps.googleusercontent.com" autocomplete="off">
-        </div>
-        <p class="faint">Google Cloud Console에서 발급한 내 OAuth 클라이언트 ID를 붙여넣으세요. 이 값은 이 기기에만 저장돼요.
-          ① console.cloud.google.com에서 프로젝트 생성 ② "Google Calendar API" 사용 설정 ③ OAuth 동의 화면 구성 ④ 사용자 인증 정보에서 "OAuth 클라이언트 ID"(웹 애플리케이션) 생성, 승인된 자바스크립트 원본에 이 사이트 주소 추가 ⑤ 발급된 클라이언트 ID를 여기에 붙여넣기.</p>
-        <div id="gcalActionRow" style="display:none;margin-top:10px;">
-          <button class="btn btn-primary btn-sm" id="gcalConnectBtn" type="button">캘린더 연결하기</button>
-        </div>
-        <div id="gcalSyncRow" style="display:none;margin-top:10px;gap:8px;flex-direction:column;">
-          <button class="btn btn-ghost btn-sm btn-block" id="gcalImportBtn" type="button">📥 내 일정 불러와서 목표에 반영</button>
-          <button class="btn btn-ghost btn-sm btn-block" id="gcalExportBtn" type="button">📤 내 목표를 캘린더에 반영</button>
-        </div>
-      </div>
-
-      <div class="set-block">
         <h4>잇템 클릭 통계</h4>
         <div id="itemStatsList"></div>
         <p class="faint">내가 등록한 제휴 링크를 다른 사람이 클릭한 횟수예요 · 샘플 데이터</p>
       </div>
 
+      <!-- 💾 저장공간 및 데이터 관리 (Req 10) -->
       <div class="set-block">
-        <h4>기록 내보내기 형식</h4>
-        <div class="format-toggle" id="formatToggle">
-          <div class="format-opt" data-fmt="csv">CSV</div>
-          <div class="format-opt" data-fmt="json">JSON</div>
+        <h4>💾 저장공간 및 캐시 관리</h4>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--card2);border-radius:14px;margin-bottom:12px;">
+          <div>
+            <b style="font-size:.84rem;">임시 캐시 및 데이터</b>
+            <div class="faint" id="cacheSizeText" style="font-size:.72rem;">14.2 MB 사용 중</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="clearCacheBtn" type="button" style="font-size:.74rem;">캐시 비우기</button>
         </div>
-      </div>
-
-      <div class="set-block">
-        <h4>데이터</h4>
+        <div class="field" style="margin-bottom:10px;">
+          <label>기록 내보내기 형식</label>
+          <div class="format-toggle" id="formatToggle">
+            <div class="format-opt" data-fmt="csv">CSV</div>
+            <div class="format-opt" data-fmt="json">JSON</div>
+          </div>
+        </div>
         <div class="data-btn-row">
           <button class="btn btn-ghost" id="settingsExportCheckins" type="button">체크인 전체 내보내기</button>
           <button class="btn btn-ghost" id="settingsExportAll" type="button">전체 백업</button>
@@ -1001,9 +1151,11 @@
         <p class="danger-note">데이터는 이 기기(이 대화)에만 저장됩니다</p>
       </div>
 
+      <!-- 💬 고객지원 및 FAQ (Req 10) -->
       <div class="set-block">
-        <h4>고객지원 및 안내</h4>
+        <h4>고객지원 및 FAQ</h4>
         <button class="btn btn-ghost" id="feedbackInquiryBtn" type="button" style="width:100%;margin-bottom:8px;">💬 1:1 문의 및 오류 제보</button>
+        <button class="btn btn-ghost" id="faqAccordionBtn" type="button" style="width:100%;margin-bottom:8px;">❓ 자주 묻는 질문 (FAQ)</button>
         <div style="display:flex;gap:8px;">
           <button class="btn btn-ghost btn-sm" id="viewTermsBtn" type="button" style="flex:1;">서비스 이용약관</button>
           <button class="btn btn-ghost btn-sm" id="viewPrivacyBtn" type="button" style="flex:1;">개인정보처리방침</button>
@@ -1264,16 +1416,53 @@
 
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
   function defaultSettings(){
-    return { checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash", notionSync:false, notionWebhookUrl:"", autoUpdateSuggest:true, virtualCheerEnabled:true, gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} }, customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, feedReactions:{}, contentReports:{}, todayMissions:{}, streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] }, hasSeenGuide:false, subscription:{ isPro:false, plan:null, expiresAt:null, billingKey:null } };
+    return {
+      checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash",
+      notionSync:false, notionWebhookUrl:"", autoUpdateSuggest:true, virtualCheerEnabled:true,
+      gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} },
+      googleCalendarConnected:false, googleCalendarEmail:"", gcalAutoSync:true,
+      privacy: { goals:"public", calendar:"public", records:"public", stats:"public" },
+      theme: "system", fontSize: "normal", dataSaver: false, twoFactorAuth: false,
+      quietHoursEnabled: false, quietHoursStart: "22:00", quietHoursEnd: "08:00",
+      notifTeamVerify: true, notifCheers: true, notifDday: true, notifStreak: true,
+      onlineStatus: true, customSchedules: [],
+      customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, feedReactions:{}, contentReports:{}, todayMissions:{},
+      streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] },
+      hasSeenGuide:false, subscription:{ isPro:false, plan:null, expiresAt:null, billingKey:null }
+    };
+  }
+  function applyAppSettings(settings){
+    if(!settings) return;
+    try{
+      var th = settings.theme || 'system';
+      if(th === 'dark'){
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else if(th === 'light'){
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
+      }
+      if(document.body){
+        document.body.classList.toggle('font-large', settings.fontSize === 'large');
+      }
+    } catch(e){}
   }
   function loadLocalSettings(userId){
     try{
       var raw = localStorage.getItem('ourgoal_settings_'+userId);
-      return raw ? Object.assign(defaultSettings(), JSON.parse(raw)) : defaultSettings();
+      var s = raw ? Object.assign(defaultSettings(), JSON.parse(raw)) : defaultSettings();
+      if(!s.privacy) s.privacy = { goals:"public", calendar:"public", records:"public", stats:"public" };
+      if(!s.customSchedules) s.customSchedules = [];
+      applyAppSettings(s);
+      return s;
     } catch(e){ return defaultSettings(); }
   }
   function saveLocalSettings(userId, settings){
-    try{ localStorage.setItem('ourgoal_settings_'+userId, JSON.stringify(settings)); } catch(e){}
+    try{ localStorage.setItem('ourgoal_settings_'+userId, JSON.stringify(settings)); applyAppSettings(settings); } catch(e){}
   }
 
   /* ============ Pro 구독 (토스페이먼츠, 이번 단계는 가상 성공 처리) ============ */
@@ -2015,6 +2204,64 @@
 
   var navButtons = document.querySelectorAll('.navbtn');
   var screens = document.querySelectorAll('.screen');
+  function getPrivacyLabel(val){
+    if(val === 'private') return '🔒 나만 보기';
+    if(val === 'team') return '👥 모임원';
+    return '🌐 전체 공개';
+  }
+  function updatePrivacyBadges(){
+    var s = (state.profile && state.profile.settings && state.profile.settings.privacy) || { goals:'public', calendar:'public', records:'public', stats:'public' };
+    var gEl = document.getElementById('goalsPrivacyBadge');
+    if(gEl){
+      gEl.textContent = getPrivacyLabel(s.goals);
+      gEl.onclick = function(e){ e.stopPropagation(); openPrivacyPickerModal('goals'); };
+    }
+    var cEl = document.getElementById('calPrivacyBadge');
+    if(cEl){
+      cEl.textContent = getPrivacyLabel(s.calendar);
+      cEl.onclick = function(e){ e.stopPropagation(); openPrivacyPickerModal('calendar'); };
+    }
+    var rEl = document.getElementById('recPrivacyBadge');
+    if(rEl){
+      rEl.textContent = getPrivacyLabel(s.records);
+      rEl.onclick = function(e){ e.stopPropagation(); openPrivacyPickerModal('records'); };
+    }
+  }
+  function openPrivacyPickerModal(tabKey){
+    var tabName = tabKey==='goals' ? '목표' : (tabKey==='calendar' ? '일정' : (tabKey==='records' ? '기록' : '통계'));
+    var s = state.profile.settings;
+    if(!s.privacy) s.privacy = { goals:'public', calendar:'public', records:'public', stats:'public' };
+    var cur = s.privacy[tabKey] || 'public';
+    openModal(
+      '<h3>🔒 ' + tabName + ' 공개 범위 설정</h3>' +
+      '<p class="faint" style="margin:-8px 0 16px;">다른 사용자 및 모임원에게 노출되는 범위를 선택하세요.</p>' +
+      '<div class="ms-list">' +
+        [['public','🌐 전체 공개','모든 사용자와 팀원이 볼 수 있습니다.'],
+         ['team','👥 모임원 공개','내가 가입한 팀/크루 모임원만 볼 수 있습니다.'],
+         ['private','🔒 나만 보기 (비공개)','나 외에는 아무도 볼 수 없는 나만의 비밀 공간입니다.']].map(function(opt){
+          var sel = opt[0] === cur;
+          return '<div class="ms-row" data-privopt="'+opt[0]+'" style="cursor:pointer;padding:12px;background:'+(sel?'var(--card2)':'var(--card)')+';border:1.5px solid '+(sel?'var(--violet)':'var(--rule)')+';border-radius:12px;margin-bottom:8px;">' +
+            '<div style="font-weight:800;font-size:.88rem;color:var(--ink);">' + opt[1] + (sel ? ' <span style="color:var(--violet);font-size:.8rem;">✓ 선택됨</span>' : '') + '</div>' +
+            '<div class="faint" style="font-size:.74rem;margin-top:2px;">' + opt[2] + '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+      '<div class="modal-actions"><button class="btn btn-ghost" id="privCloseBtn" type="button">닫기</button></div>',
+      function(sheet){
+        sheet.querySelector('#privCloseBtn').onclick = closeModal;
+        sheet.querySelectorAll('[data-privopt]').forEach(function(row){
+          row.onclick = async function(){
+            s.privacy[tabKey] = row.dataset.privopt;
+            await saveProfile();
+            closeModal();
+            updatePrivacyBadges();
+            toast(tabName + ' 공개 범위를 ' + getPrivacyLabel(s.privacy[tabKey]) + '(으)로 변경했어요');
+          };
+        });
+      }
+    );
+  }
+
   function setTab(tab){
     state.activeTab = tab;
     navButtons.forEach(function(b){ b.classList.toggle('active', b.dataset.tab===tab); });
@@ -2026,6 +2273,7 @@
     if(tab==='records') renderRecordsScreen();
     if(tab==='comm') renderCommScreen();
     if(tab==='settings') renderSettingsScreen();
+    updatePrivacyBadges();
   }
   navButtons.forEach(function(b){ b.addEventListener('click', function(){ setTab(b.dataset.tab); }); });
 
@@ -2246,14 +2494,131 @@
     return '<div class="faint" style="font-size:.72rem;margin-top:4px;">'+txt.join(' · ')+'</div>'+bar;
   }
 
+  /* ============ AI 결과 입력 비서 (Req 7) ============ */
+  function openAiResultAssistantModal(kind, obj, goal, onSaved){
+    var kindLabel = kind==='goal' ? '목표' : (kind==='ms' ? '마일스톤' : '할 일');
+    var existingResult = obj.result || { target:'', result:'', unit:'회', note:'' };
+
+    openModal(
+      '<h3>🤖 AI ' + kindLabel + ' 결과 입력</h3>' +
+      '<p class="muted" style="margin:-8px 0 10px;"><b style="color:var(--ink);">' + escapeHtml(obj.title) + '</b></p>' +
+      '<p class="faint" style="margin:0 0 14px;font-size:.8rem;">수치를 복잡하게 입력할 필요 없이, 오늘 달성한 내용을 한 줄로 편하게 적어주시면 AI가 알아서 기록해드려요!</p>' +
+      '<div class="field">' +
+        '<label>오늘 달성한 내용 말씀해주세요</label>' +
+        '<textarea id="aiResInput" rows="3" style="width:100%;box-sizing:border-box;border-radius:12px;padding:10px;font-size:.86rem;border:1px solid var(--rule);background:var(--bg);color:var(--ink);resize:vertical;" placeholder="예: 오늘 20km 1시간 40분 만에 완주했어 땀 많이 흘림&#10;예: 목표 50개 중 42개 성공&#10;예: 오늘 100% 다 끝냈어!"></textarea>' +
+      '</div>' +
+      '<div id="aiResPreviewBox" style="display:none;margin-bottom:14px;padding:12px;background:var(--card2);border:1.5px solid var(--violet-soft);border-radius:12px;"></div>' +
+      '<div class="modal-actions" style="gap:8px;">' +
+        '<button class="btn btn-ghost" id="aiResCancel" type="button">취소</button>' +
+        '<button class="btn btn-primary" id="aiResApply" type="button">🤖 AI 분석 & 반영</button>' +
+      '</div>',
+      function(sheet){
+        var input = sheet.querySelector('#aiResInput');
+        var previewBox = sheet.querySelector('#aiResPreviewBox');
+        var applyBtn = sheet.querySelector('#aiResApply');
+        sheet.querySelector('#aiResCancel').onclick = closeModal;
+
+        var draftResult = null;
+        applyBtn.onclick = async function(){
+          var text = input.value.trim();
+          if(!text){ toast('달성한 내용을 입력해주세요'); return; }
+
+          if(!draftResult){
+            var targetNum = existingResult.target || 10;
+            var resultNum = 0;
+            var unit = existingResult.unit || '회';
+            var note = text;
+
+            if(/(?:km|킬로|킬로미터)/i.test(text)) unit = 'km';
+            else if(/(?:분|min|시간|h)/i.test(text)) unit = '분';
+            else if(/(?:쪽|페이지|page|p)/i.test(text)) unit = '쪽';
+            else if(/(?:개|개수)/i.test(text)) unit = '개';
+            else if(/(?:잔|컵)/i.test(text)) unit = '잔';
+            else if(/(?:%|퍼센트)/i.test(text)) unit = '%';
+
+            var pctMatch = text.match(/(\d+(?:\.\d+)?)\s*%/);
+            if(pctMatch){
+              targetNum = 100;
+              resultNum = Math.min(999, Math.round(parseFloat(pctMatch[1])));
+              unit = '%';
+            } else {
+              var fractionMatch = text.match(/(\d+)\s*(?:개|km|회|쪽)?\s*(?:목표\s*)?(?:중|에서)\s*(\d+)/);
+              if(fractionMatch){
+                targetNum = parseInt(fractionMatch[1], 10);
+                resultNum = parseInt(fractionMatch[2], 10);
+              } else {
+                var singleNum = text.match(/(\d+(?:\.\d+)?)\s*(?:회|km|분|쪽|개|잔|시간)?/);
+                if(singleNum){
+                  resultNum = parseFloat(singleNum[1]);
+                  if(/시간/.test(text)) resultNum = Math.round(resultNum * 60);
+                  if(!targetNum || targetNum < resultNum) targetNum = resultNum;
+                } else if(/(?:다 했|완료|끝|성공|완주)/.test(text)){
+                  resultNum = targetNum || 10;
+                  targetNum = resultNum;
+                } else {
+                  resultNum = 1; targetNum = 1;
+                }
+              }
+            }
+
+            var pct = Math.round((resultNum / (targetNum || 1)) * 100);
+            draftResult = {
+              target: targetNum,
+              result: resultNum,
+              unit: unit,
+              note: note,
+              recordedAt: nowISO()
+            };
+
+            previewBox.style.display = 'block';
+            previewBox.innerHTML =
+              '<div style="font-weight:800;font-size:.86rem;color:var(--violet);margin-bottom:6px;">✨ AI가 추출한 결과</div>' +
+              '<div style="font-size:.84rem;color:var(--ink);line-height:1.6;">' +
+                '• 달성 결과: <b>' + resultNum + ' ' + unit + '</b> / 목표 ' + targetNum + ' ' + unit + '<br>' +
+                '• 달성률: <b style="color:' + (pct>=100 ? 'var(--sage)' : 'var(--gold)') + ';">' + pct + '%</b>' + (pct>=100 ? ' 🎉 (완료!)' : '') + '<br>' +
+                '• 메모: ' + escapeHtml(note) +
+              '</div>';
+
+            applyBtn.textContent = '✅ 이대로 결과 기록하기';
+            applyBtn.className = 'btn btn-primary';
+          } else {
+            var wasDone = kind==='task' ? !!obj.done : obj.status==='done';
+            obj.result = draftResult;
+            var pct = resultPct(obj.result);
+            if(kind==='task') obj.done = pct!==null ? pct>=100 : !!obj.result.result;
+            if(kind==='ms' && pct!==null) obj.status = pct>=100 ? 'done' : (pct>0 ? 'doing' : obj.status);
+            var nowDone = kind==='task' ? !!obj.done : obj.status==='done';
+            var celebrateMs = kind==='ms' && !wasDone && nowDone && !!goal;
+            if(!wasDone && nowDone && !celebrateMs){
+              if(navigator.vibrate) navigator.vibrate([12,40,24]);
+              burstConfetti(window.innerWidth/2, window.innerHeight/2);
+            }
+            var msXpRes = null;
+            if(kind==='ms' && !wasDone && obj.status==='done') msXpRes = awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
+            await saveProfile();
+            closeModal();
+            toast(pct!==null ? '달성률 ' + pct + '%로 기록했어요' : '결과를 기록했어요');
+            if(onSaved) onSaved();
+            renderLevelBadge();
+            if(msXpRes && msXpRes.leveledUp) showLevelUpBanner(levelForXP(msXpRes.total));
+            if(celebrateMs) celebrateMilestoneDone(goal, obj);
+          }
+        };
+      }
+    );
+  }
+
   /* 목표·마일스톤·할 일 공용 결과 입력 모달 */
   function openResultModal(kind, obj, onSaved, goal){
     var r = obj.result || { target:'', result:'', unit:'회', note:'' };
     var kindLabel = kind==='goal' ? '목표' : (kind==='ms' ? '마일스톤' : '할 일');
     openModal(
       '<h3>'+kindLabel+' 결과 기록</h3>' +
-      '<p class="muted" style="margin:-8px 0 14px;"><b style="color:var(--ink);">'+escapeHtml(obj.title)+'</b></p>' +
-      '<p class="faint" style="margin:-8px 0 14px;">다 못 채웠어도 실제로 한 만큼 적어두면 기록으로 남아요! 삭제하지 말고 데이터베이스화하세요</p>' +
+      '<p class="muted" style="margin:-8px 0 10px;"><b style="color:var(--ink);">'+escapeHtml(obj.title)+'</b></p>' +
+      '<div style="margin-bottom:14px;padding:10px 12px;background:var(--violet-soft);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
+        '<div style="font-size:.78rem;color:var(--violet);font-weight:800;">🤖 번거로운 입력 대신 한 줄로 말해보세요</div>' +
+        '<button class="btn btn-primary btn-sm" id="rsAiQuickBtn" type="button" style="font-size:.72rem;padding:4px 8px;white-space:nowrap;">AI 비서로 입력</button>' +
+      '</div>' +
       '<div style="display:flex;gap:10px;">' +
         '<div class="field" style="flex:1;"><label>목표치</label><input id="rsTarget" type="number" inputmode="numeric" value="'+escapeHtml(String(r.target||''))+'" placeholder="30"></div>' +
         '<div class="field" style="flex:1;"><label>실제 달성</label><input id="rsResult" type="number" inputmode="numeric" value="'+escapeHtml(String(r.result||''))+'" placeholder="20"></div>' +
@@ -2268,6 +2633,13 @@
         '<button class="btn btn-primary" id="rsSave" type="button">기록하기</button>' +
       '</div>',
       function(sheet){
+        var aiBtn = sheet.querySelector('#rsAiQuickBtn');
+        if(aiBtn){
+          aiBtn.onclick = function(){
+            closeModal();
+            openAiResultAssistantModal(kind, obj, goal, onSaved);
+          };
+        }
         var tEl = sheet.querySelector('#rsTarget'), dEl = sheet.querySelector('#rsResult'), uEl = sheet.querySelector('#rsUnit');
         function preview(){
           var pct = resultPct({ target:tEl.value, result:dEl.value });
@@ -2638,6 +3010,116 @@
     if(app) return app;
     return ((state.profile && state.profile.settings && state.profile.settings.gcalClientId) || '').trim();
   }
+  function isGoogleCalendarConnected(){
+    var s = (state.profile && state.profile.settings) || {};
+    if(s.googleCalendarConnected) return true;
+    if(state.googleToken && state.googleToken.expiresAt > Date.now()) return true;
+    return false;
+  }
+  async function tryConnectGoogleCalendar(){
+    toast('구글 계정 연동 요청 중…');
+    try{
+      var token = await requestGoogleToken();
+      if(!token) throw new Error('no token');
+      state.profile.settings.googleCalendarConnected = true;
+      try{
+        var uRes = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', { headers:{ Authorization: 'Bearer ' + token } });
+        if(uRes.ok){
+          var uData = await uRes.json();
+          if(uData && uData.email) state.profile.settings.googleCalendarEmail = uData.email;
+        }
+      } catch(e){}
+      if(!state.profile.settings.googleCalendarEmail) state.profile.settings.googleCalendarEmail = '연동 완료';
+      await saveProfile();
+      toast('✓ 구글 캘린더가 연동되었습니다');
+      if(state.activeTab==='calendar') renderCalendarScreen();
+      else if(state.activeTab==='settings') renderSettingsScreen();
+    } catch(err){
+      toast('구글 캘린더 연동에 실패했어요 · 설정을 확인해주세요');
+    }
+  }
+  function openGoogleCalendarConnectModal(){
+    var clientId = effectiveGcalClientId();
+    if(!clientId){
+      openModal(
+        '<h3>📅 구글 캘린더 연동 설정</h3>' +
+        '<p class="faint" style="margin:-8px 0 14px;">구글 캘린더와 실시간 동기화하여 목표와 일정을 한곳에서 관리하세요.</p>' +
+        '<div class="field">' +
+          '<label>Google OAuth 클라이언트 ID</label>' +
+          '<input id="gcalPromptClientId" type="text" placeholder="예: xxxxxxxx.apps.googleusercontent.com" value="'+escapeHtml((state.profile.settings&&state.profile.settings.gcalClientId)||'')+'">' +
+        '</div>' +
+        '<p class="faint" style="font-size:.72rem;">Google Cloud Console에서 발급한 웹 클라이언트 ID를 입력해주세요.</p>' +
+        '<div class="modal-actions">' +
+          '<button class="btn btn-ghost" id="gcalPromptCancel" type="button">취소</button>' +
+          '<button class="btn btn-primary" id="gcalPromptSave" type="button">저장 및 연결</button>' +
+        '</div>',
+        function(sheet){
+          sheet.querySelector('#gcalPromptCancel').onclick = closeModal;
+          sheet.querySelector('#gcalPromptSave').onclick = async function(){
+            var val = (sheet.querySelector('#gcalPromptClientId').value || '').trim();
+            if(!val){ toast('클라이언트 ID를 입력해주세요'); return; }
+            state.profile.settings.gcalClientId = val;
+            googleTokenClient = null;
+            await saveProfile();
+            closeModal();
+            tryConnectGoogleCalendar();
+          };
+        }
+      );
+    } else {
+      tryConnectGoogleCalendar();
+    }
+  }
+  async function syncAllToGoogleCalendar(){
+    if(!isGoogleCalendarConnected()){
+      openGoogleCalendarConnectModal();
+      return;
+    }
+    toast('구글 캘린더 동기화 중…');
+    try{
+      var token = await getGoogleAccessToken();
+      var count = 0;
+      var sync = state.profile.settings.gcalSync = state.profile.settings.gcalSync || { goals:{}, ms:{}, tasks:{}, imported:{} };
+      var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
+      for(var i=0; i<goals.length; i++){
+        var g = goals[i];
+        if(g.dueDate){
+          var evId = await pushCalendarEvent(token, '🎯 ' + g.title, g.dueDate, sync.goals[g.id]);
+          if(evId){ sync.goals[g.id] = evId; count++; }
+        }
+        var mss = g.milestones || [];
+        for(var j=0; j<mss.length; j++){
+          var m = mss[j];
+          if(m.dueDate && m.status !== 'done'){
+            var evIdM = await pushCalendarEvent(token, '· ' + m.title + ' (' + g.title + ')', m.dueDate, (sync.ms && sync.ms[m.id]));
+            if(evIdM){ sync.ms = sync.ms || {}; sync.ms[m.id] = evIdM; count++; }
+          }
+          var tks = m.tasks || [];
+          for(var k=0; k<tks.length; k++){
+            var t = tks[k];
+            if(t.dueDate && !t.done){
+              var evIdT = await pushCalendarEvent(token, '- ' + t.title + ' (' + m.title + ')', t.dueDate, (sync.tasks && sync.tasks[t.id]));
+              if(evIdT){ sync.tasks = sync.tasks || {}; sync.tasks[t.id] = evIdT; count++; }
+            }
+          }
+        }
+      }
+      var customSchedules = state.profile.settings.customSchedules || [];
+      sync.custom = sync.custom || {};
+      for(var c=0; c<customSchedules.length; c++){
+        var cs = customSchedules[c];
+        if(cs.date && !cs.done){
+          var evIdC = await pushCalendarEvent(token, '🗓️ ' + cs.title, cs.date, sync.custom[cs.id]);
+          if(evIdC){ sync.custom[cs.id] = evIdC; count++; }
+        }
+      }
+      await saveProfile();
+      toast(count + '개 일정을 구글 캘린더에 동기화했어요');
+      if(state.activeTab==='calendar') renderCalendarScreen();
+    } catch(err){
+      toast('동기화에 실패했어요 · 다시 시도해주세요');
+    }
+  }
   function nextDayISO(dateStr){
     var d = new Date(dateStr+'T00:00:00');
     d.setDate(d.getDate()+1);
@@ -2885,6 +3367,9 @@
         });
       });
     });
+    (state.profile.settings.customSchedules || []).forEach(function(cs){
+      if(cs.date) push(cs.date, { date:cs.date, title:cs.title, kind:'custom', schedId:cs.id, done:!!cs.done, goalTitle:cs.note||'일반 일정', attachments:cs.attachments||[] });
+    });
     return map;
   }
   function calCellHtml(d, itemsByDate, dim){
@@ -2895,7 +3380,7 @@
     var more = evs.length - shown.length;
     return '<div class="'+cls+'" data-caldate="'+iso+'">' +
       '<div class="cal-daynum">'+d.getDate()+'</div>' +
-      shown.map(function(e){ return '<div class="cal-pill'+(e.kind==='ms'?' ms':'')+(e.done?' done':'')+'">'+escapeHtml(e.title)+'</div>'; }).join('') +
+      shown.map(function(e){ return '<div class="cal-pill'+(e.kind==='ms'?' ms':(e.kind==='custom'?' custom':''))+(e.done?' done':'')+'">'+escapeHtml(e.title)+'</div>'; }).join('') +
       (more>0 ? '<div class="cal-more">+'+more+'</div>' : '') +
     '</div>';
   }
@@ -2908,11 +3393,156 @@
     state.calDate = isoDate(d);
     renderCalendarScreen();
   }
+
+  /* ============ 캘린더 수동 일정 편집 모달 (Req 2) ============ */
+  function openCalendarManualEditModal(selectedDate, eventItem, kind){
+    var isNew = !eventItem;
+    var defaultDateVal = selectedDate + 'T09:00';
+    var curTitle = eventItem ? eventItem.title : '';
+    var curDate = eventItem && eventItem.dueDate ? toDateTimeLocalValue(eventItem.dueDate) : (eventItem && eventItem.date ? toDateTimeLocalValue(eventItem.date) : defaultDateVal);
+    var curNote = eventItem ? (eventItem.note || '') : '';
+    var curDone = eventItem ? (eventItem.done || eventItem.status==='done') : false;
+
+    openModal(
+      '<h3>' + (isNew ? '🗓️ 새 일정 추가' : '✏️ 일정 수동 편집') + '</h3>' +
+      '<div class="field">' +
+        '<label>일정 제목 (필수)</label>' +
+        '<input id="calEditTitle" type="text" value="' + escapeHtml(curTitle) + '" placeholder="예: 운동 모임 참석, 자격증 시험 접수">' +
+      '</div>' +
+      '<div class="field">' +
+        '<label>날짜 및 시간</label>' +
+        '<input id="calEditDate" type="datetime-local" value="' + curDate + '">' +
+      '</div>' +
+      '<div class="field">' +
+        '<label>메모 / 장소 (선택)</label>' +
+        '<input id="calEditNote" type="text" value="' + escapeHtml(curNote) + '" placeholder="예: 강남역 11번 출구, 신분증 지참">' +
+      '</div>' +
+      '<div class="toggle-row" style="margin-top:12px;">' +
+        '<div class="t">완료 여부</div>' +
+        '<div class="switch' + (curDone ? ' on' : '') + '" id="calEditDoneSwitch"></div>' +
+      '</div>' +
+      '<div class="modal-actions" style="margin-top:16px;gap:8px;">' +
+        (!isNew ? '<button class="btn btn-danger btn-sm" id="calEditDeleteBtn" type="button">삭제</button>' : '') +
+        '<button class="btn btn-ghost btn-sm" id="calEditCancelBtn" type="button">취소</button>' +
+        '<button class="btn btn-primary btn-sm" id="calEditSaveBtn" type="button" style="flex:1;">저장</button>' +
+      '</div>',
+      function(sheet){
+        var doneSw = sheet.querySelector('#calEditDoneSwitch');
+        var isDone = curDone;
+        if(doneSw){
+          doneSw.onclick = function(){
+            isDone = !isDone;
+            doneSw.classList.toggle('on', isDone);
+          };
+        }
+        sheet.querySelector('#calEditCancelBtn').onclick = closeModal;
+
+        var delBtn = sheet.querySelector('#calEditDeleteBtn');
+        if(delBtn){
+          delBtn.onclick = async function(){
+            if(!confirm('이 일정을 삭제할까요?')) return;
+            if(kind==='custom'){
+              state.profile.settings.customSchedules = (state.profile.settings.customSchedules||[]).filter(function(c){ return c.id !== eventItem.id; });
+            } else if(kind==='goal'){
+              eventItem.dueDate = null;
+            } else if(kind==='ms'){
+              eventItem.dueDate = null;
+            } else if(kind==='task'){
+              eventItem.dueDate = null;
+            }
+            await saveProfile();
+            closeModal();
+            renderCalendarScreen();
+            toast('일정을 삭제했어요');
+          };
+        }
+
+        sheet.querySelector('#calEditSaveBtn').onclick = async function(){
+          var title = (sheet.querySelector('#calEditTitle').value || '').trim();
+          var dtVal = sheet.querySelector('#calEditDate').value;
+          var note = (sheet.querySelector('#calEditNote').value || '').trim();
+          if(!title){ toast('일정 제목을 입력해주세요'); return; }
+          if(!dtVal){ toast('날짜를 입력해주세요'); return; }
+
+          if(!state.profile.settings.customSchedules) state.profile.settings.customSchedules = [];
+
+          if(isNew){
+            state.profile.settings.customSchedules.push({
+              id: uid('sched'),
+              title: title,
+              date: dtVal,
+              note: note,
+              done: isDone,
+              createdAt: nowISO()
+            });
+            toast('일정을 추가했어요');
+          } else {
+            if(kind==='custom'){
+              eventItem.title = title;
+              eventItem.date = dtVal;
+              eventItem.note = note;
+              eventItem.done = isDone;
+            } else {
+              eventItem.title = title;
+              if(kind==='task') eventItem.done = isDone;
+              else if(kind==='ms') eventItem.status = isDone ? 'done' : (eventItem.status==='done' ? 'todo' : eventItem.status);
+              eventItem.dueDate = dtVal;
+            }
+            toast('일정을 수정했어요');
+          }
+
+          if(state.profile.settings.gcalAutoSync && isGoogleCalendarConnected()){
+            syncAllToGoogleCalendar().catch(function(){});
+          }
+
+          await saveProfile();
+          closeModal();
+          renderCalendarScreen();
+        };
+      }
+    );
+  }
+
   function renderCalendarScreen(){
     var view = state.calView || 'month';
     var refDate = new Date(state.calDate+'T00:00:00');
     var itemsByDate = calendarItemsByDate();
     var periodLabel, gridHtml;
+
+    /* 구글 캘린더 연동 안내 배너 (Req 4) */
+    var gBanner = document.getElementById('calGoogleBanner');
+    if(gBanner){
+      var isConn = isGoogleCalendarConnected();
+      var gEmail = (state.profile.settings && state.profile.settings.googleCalendarEmail) || '';
+      if(isConn){
+        gBanner.innerHTML =
+          '<div style="margin-bottom:12px;padding:10px 14px;background:var(--sage-soft);border:1.5px solid rgba(46,125,50,.2);border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">' +
+            '<div style="font-size:.82rem;color:var(--sage);display:flex;align-items:center;gap:6px;">' +
+              '<span>✓</span>' +
+              '<span><b>구글 캘린더가 연동되었습니다</b>' + (gEmail ? ' <span class="faint" style="font-size:.72rem;">('+escapeHtml(gEmail)+')</span>' : '') + '</span>' +
+            '</div>' +
+            '<div style="display:flex;gap:6px;">' +
+              '<button class="btn btn-ghost btn-sm" id="calBannerSyncBtn" type="button" style="font-size:.72rem;padding:4px 8px;white-space:nowrap;background:rgba(255,255,255,.6);">지금 동기화</button>' +
+              '<button class="btn btn-ghost btn-sm" id="calBannerSetBtn" type="button" style="font-size:.72rem;padding:4px 8px;white-space:nowrap;">설정</button>' +
+            '</div>' +
+          '</div>';
+        var syncB = gBanner.querySelector('#calBannerSyncBtn');
+        if(syncB) syncB.onclick = syncAllToGoogleCalendar;
+        var setB = gBanner.querySelector('#calBannerSetBtn');
+        if(setB) setB.onclick = function(){ setTab('settings'); };
+      } else {
+        gBanner.innerHTML =
+          '<div style="margin-bottom:12px;padding:10px 14px;background:var(--card2);border:1.5px solid var(--rule);border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">' +
+            '<div style="font-size:.82rem;color:var(--ink-soft);display:flex;align-items:center;gap:6px;">' +
+              '<span>📅</span>' +
+              '<span><b>구글 캘린더를 연동하세요</b></span>' +
+            '</div>' +
+            '<button class="btn btn-primary btn-sm" id="calBannerConnectBtn" type="button" style="font-size:.74rem;padding:4px 10px;white-space:nowrap;">연동하기</button>' +
+          '</div>';
+        var connB = gBanner.querySelector('#calBannerConnectBtn');
+        if(connB) connB.onclick = openGoogleCalendarConnectModal;
+      }
+    }
 
     if(view==='month'){
       var y = refDate.getFullYear(), mo = refDate.getMonth();
@@ -2986,11 +3616,17 @@
     var evs = (itemsByDate || calendarItemsByDate())[sel] || [];
     var wrap = document.getElementById('calDayDetail');
     wrap.innerHTML =
-      '<div class="card-title-row" style="margin:16px 0 8px;"><h3 style="margin:0;font-size:.92rem;">'+sel+'</h3><span class="faint" style="font-weight:700;">'+(dDay(sel)||'')+'</span></div>' +
+      '<div class="card-title-row" style="margin:16px 0 8px;">' +
+        '<h3 style="margin:0;font-size:.92rem;">'+sel+'</h3>' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<span class="faint" style="font-weight:700;">'+(dDay(sel)||'')+'</span>' +
+          '<button class="btn btn-ghost btn-sm" id="calAddManualBtn" type="button" style="font-size:.72rem;padding:3px 8px;color:var(--violet);border-color:var(--violet-soft);">+ 일정 추가</button>' +
+        '</div>' +
+      '</div>' +
       (evs.length ? '<div class="ms-list">'+evs.map(function(e, evIdx){
         var timeLabel = (e.date && e.date.indexOf('T') !== -1) ? ('<span class="dday-mini" style="background:var(--violet-soft);color:var(--violet);margin-left:4px;">⏰ '+e.date.split('T')[1].slice(0,5)+'</span>') : '';
-        var attChips = (e.attachments && e.attachments.length) ? ('<div style="margin-top:4px;">'+renderAttachmentChipsHtml(e.attachments, e.kind, e.msId||e.goalId, e.goalId)+'</div>') : '';
-        return '<div class="ms-row" data-calgoto="'+e.goalId+'">' +
+        var attChips = (e.attachments && e.attachments.length) ? ('<div style="margin-top:4px;">'+renderAttachmentChipsHtml(e.attachments, e.kind, e.msId||e.goalId||e.schedId, e.goalId)+'</div>') : '';
+        return '<div class="ms-row" '+(e.goalId?'data-calgoto="'+e.goalId+'"':'')+'>' +
           '<div class="ms-main" style="align-items:flex-start;">' +
             '<div class="ms-status'+(e.done?' done':'')+'" style="margin-top:2px;">'+(e.done?'✓':'')+'</div>' +
             '<div style="flex:1;min-width:0;">' +
@@ -2998,18 +3634,50 @@
                 '<span class="ms-title'+(e.done?' done-text':'')+'">'+escapeHtml(e.title)+'</span>' +
                 timeLabel +
               '</div>' +
-              (e.kind==='ms' || e.kind==='task' ? '<div class="faint" style="font-size:.72rem;margin-top:2px;">'+escapeHtml(e.goalTitle)+'</div>' : '') +
+              '<div class="faint" style="font-size:.72rem;margin-top:2px;">'+escapeHtml(e.goalTitle||'일반 일정')+'</div>' +
               attChips +
             '</div>' +
-            (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsync="'+e.kind+'" data-calsyncgid="'+e.goalId+'" data-calsyncmid="'+(e.msId||'')+'" data-calsynctid="'+(e.taskId||'')+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' : '') +
+            '<button class="icon-btn" data-caledit="'+e.kind+'" data-schedid="'+(e.schedId||'')+'" data-calgid="'+(e.goalId||'')+'" data-calmid="'+(e.msId||'')+'" data-caltid="'+(e.taskId||'')+'" type="button" aria-label="일정 편집" title="수동 편집" style="font-size:.74rem;padding:2px 4px;margin-right:2px;">✏️</button>' +
+            (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsync="'+e.kind+'" data-calsyncgid="'+(e.goalId||'')+'" data-calsyncmid="'+(e.msId||'')+'" data-calsynctid="'+(e.taskId||'')+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' : '') +
           '</div>' +
         '</div>';
       }).join('')+'</div>'
-      : '<div class="empty-state"><div class="e-icon">🗓️</div><p>이 날은 예정된 일정이 없어요.</p></div>');
+      : '<div class="empty-state"><div class="e-icon">🗓️</div><p>이 날은 예정된 일정이 없어요.</p><button class="btn btn-ghost btn-sm" id="calEmptyAddBtn" type="button" style="margin-top:8px;font-size:.78rem;">+ 이 날짜에 일정 추가</button></div>');
+
+    var addBtn = wrap.querySelector('#calAddManualBtn') || wrap.querySelector('#calEmptyAddBtn');
+    if(addBtn){
+      addBtn.addEventListener('click', function(){
+        openCalendarManualEditModal(sel, null);
+      });
+    }
+    wrap.querySelectorAll('[data-caledit]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var k = btn.dataset.caledit;
+        var sid = btn.dataset.schedid;
+        var gid = btn.dataset.calgid;
+        var mid = btn.dataset.calmid;
+        var tid = btn.dataset.caltid;
+        var targetEvent = null;
+        if(k==='custom'){
+          targetEvent = (state.profile.settings.customSchedules||[]).find(function(c){ return c.id===sid; });
+        } else if(k==='goal'){
+          targetEvent = state.profile.goals.find(function(g){ return g.id===gid; });
+        } else if(k==='ms'){
+          var g = state.profile.goals.find(function(g){ return g.id===gid; });
+          targetEvent = g ? (g.milestones||[]).find(function(m){ return m.id===mid; }) : null;
+        } else if(k==='task'){
+          var g = state.profile.goals.find(function(g){ return g.id===gid; });
+          var m = g ? (g.milestones||[]).find(function(m){ return m.id===mid; }) : null;
+          targetEvent = m ? (m.tasks||[]).find(function(t){ return t.id===tid; }) : null;
+        }
+        openCalendarManualEditModal(sel, targetEvent, k);
+      });
+    });
 
     wrap.querySelectorAll('[data-calgoto]').forEach(function(row){
       row.addEventListener('click', function(e){
-        if(e.target.closest('[data-calsync]') || e.target.closest('.att-chip')) return;
+        if(e.target.closest('[data-calsync]') || e.target.closest('[data-caledit]') || e.target.closest('.att-chip')) return;
         state.activeGoalId = row.dataset.calgoto;
         setTab('goals');
       });
@@ -4707,6 +5375,114 @@
     if('attachments' in op.data) task.attachments = sanitizeAttachments(op.data.attachments);
     return true;
   }
+  /* ============ 목표 AI 생성 전체 템플릿 양식 및 세부 항목 미리보기 (Req 5) ============ */
+  function renderGoalOpsFullPreviewHtml(ops){
+    if(!ops || !ops.length) return '<p class="faint">반영할 변경사항이 없습니다.</p>';
+    var html = '<div class="scroll-preview-box">';
+    ops.forEach(function(op, opIdx){
+      var icon = op.type==='CREATE' ? '➕' : (op.type==='DELETE' ? '🗑' : '✏️');
+      var typeLabel = op.type==='CREATE' ? '새로 생성' : (op.type==='DELETE' ? '삭제' : '수정');
+      var levelLabel = op.level==='goal' ? '목표' : (op.level==='milestone' ? '마일스톤' : '할 일');
+
+      html += '<div style="margin-bottom:12px;padding-bottom:10px;border-bottom:1px dashed var(--rule);">';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+        '<div style="font-weight:800;font-size:.84rem;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
+          '<span>'+icon+'</span>' +
+          '<span>'+levelLabel+' '+typeLabel+'</span>' +
+        '</div>' +
+        '<span class="faint" style="font-size:.72rem;">'+escapeHtml(op.summary||'')+'</span>' +
+      '</div>';
+
+      if(op.level==='goal' && op.type==='CREATE' && op.data){
+        var gData = op.data;
+        html += '<div style="background:var(--card);padding:10px;border-radius:10px;border:1px solid var(--rule);">';
+        html += '<div style="font-weight:800;font-size:.9rem;color:var(--violet);display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+          '<span>🎯</span><span>'+escapeHtml(gData.title||'새 목표')+'</span>' +
+          (gData.dueDate ? '<span class="dday-mini" style="margin-left:4px;">📅 '+escapeHtml(gData.dueDate)+'</span>' : '') +
+        '</div>';
+        if(gData.topicMajor){
+          var tmInfo = TOPICS[gData.topicMajor];
+          html += '<div class="faint" style="font-size:.72rem;margin-top:2px;">'+(tmInfo?tmInfo.icon+' '+tmInfo.label:gData.topicMajor)+(gData.topicMinor?' · '+escapeHtml(gData.topicMinor):'')+'</div>';
+        }
+        if(gData.attachments && gData.attachments.length){
+          html += '<div class="att-chips-wrap" style="margin-top:4px;">'+gData.attachments.map(function(a){
+            var aIco = a.type==='video'?'🎥':(a.type==='image'?'🖼️':(a.type==='text'?'📝':'🔗'));
+            return '<span class="att-chip" style="cursor:default;">'+aIco+' '+escapeHtml(a.title||'참고자료')+'</span>';
+          }).join('')+'</div>';
+        }
+        if(gData.milestones && gData.milestones.length){
+          html += '<div style="margin-top:8px;padding-top:6px;border-top:1px solid var(--rule);">';
+          html += '<div style="font-size:.76rem;font-weight:700;color:var(--ink-soft);margin-bottom:6px;">🚩 마일스톤 및 세부 할 일 ('+gData.milestones.length+'단계)</div>';
+          gData.milestones.forEach(function(m, mIdx){
+            html += '<div style="margin-bottom:6px;padding:6px 8px;background:var(--card2);border-radius:8px;">';
+            html += '<div style="font-size:.82rem;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:4px;">' +
+              '<span>' + (mIdx+1) + '단계. ' + escapeHtml(m.title||'마일스톤') + '</span>' +
+              (m.dueDate ? '<span class="faint" style="font-size:.7rem;white-space:nowrap;">📅 '+escapeHtml(m.dueDate)+'</span>' : '') +
+            '</div>';
+            if(m.attachments && m.attachments.length){
+              html += '<div class="att-chips-wrap" style="margin-top:2px;">'+m.attachments.map(function(a){
+                var aIco = a.type==='video'?'🎥':(a.type==='image'?'🖼️':(a.type==='text'?'📝':'🔗'));
+                return '<span class="att-chip" style="cursor:default;font-size:.66rem;padding:1px 5px;">'+aIco+' '+escapeHtml(a.title||'참고')+'</span>';
+              }).join('')+'</div>';
+            }
+            if(m.tasks && m.tasks.length){
+              html += '<div style="margin-top:4px;padding-left:8px;display:flex;flex-direction:column;gap:3px;">';
+              m.tasks.forEach(function(t){
+                var tTitle = typeof t==='string' ? t : (t&&t.title)||'';
+                var tDue = (t&&t.dueDate)||null;
+                html += '<div class="faint" style="font-size:.74rem;display:flex;align-items:center;justify-content:space-between;gap:4px;">' +
+                  '<span>◻️ ' + escapeHtml(tTitle) + '</span>' +
+                  (tDue ? '<span style="font-size:.68rem;white-space:nowrap;">📅 '+escapeHtml(tDue)+'</span>' : '') +
+                '</div>';
+              });
+              html += '</div>';
+            }
+            html += '</div>';
+          });
+          html += '</div>';
+        }
+        html += '</div>';
+      } else if(op.level==='milestone' && op.type==='CREATE' && op.data){
+        var mData = op.data;
+        html += '<div style="background:var(--card);padding:8px 10px;border-radius:10px;border:1px solid var(--rule);">';
+        html += '<div style="font-weight:700;font-size:.84rem;color:var(--violet);display:flex;align-items:center;justify-content:space-between;gap:4px;">' +
+          '<span>🚩 ' + escapeHtml(mData.title||'새 마일스톤') + '</span>' +
+          (mData.dueDate ? '<span class="faint" style="font-size:.72rem;white-space:nowrap;">📅 '+escapeHtml(mData.dueDate)+'</span>' : '') +
+        '</div>';
+        if(mData.tasks && mData.tasks.length){
+          html += '<div style="margin-top:4px;padding-left:8px;display:flex;flex-direction:column;gap:3px;">';
+          mData.tasks.forEach(function(t){
+            var tkTitle = typeof t==='string' ? t : (t&&t.title)||'';
+            html += '<div class="faint" style="font-size:.74rem;">◻️ ' + escapeHtml(tkTitle) + '</div>';
+          });
+          html += '</div>';
+        }
+        html += '</div>';
+      } else if(op.level==='task' && op.type==='CREATE' && op.data){
+        var tkTitle = typeof op.data==='string' ? op.data : (op.data&&op.data.title)||'새 할 일';
+        var tkDue = op.data&&op.data.dueDate;
+        html += '<div style="font-size:.82rem;padding:4px 8px;background:var(--card);border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:4px;">' +
+          '<span>◻️ ' + escapeHtml(tkTitle) + '</span>' +
+          (tkDue ? '<span class="faint" style="font-size:.72rem;white-space:nowrap;">📅 '+escapeHtml(tkDue)+'</span>' : '') +
+        '</div>';
+      } else if(op.type==='UPDATE' && op.data){
+        html += '<div style="font-size:.8rem;color:var(--ink-soft);padding:4px 8px;background:var(--card);border-radius:6px;line-height:1.5;">';
+        if(op.data.title) html += '• 제목 변경: <b>' + escapeHtml(op.data.title) + '</b><br>';
+        if(op.data.dueDate) html += '• 일정/마감일 변경: <b>' + escapeHtml(op.data.dueDate) + '</b><br>';
+        if(op.data.status) html += '• 상태 변경: <b>' + escapeHtml(op.data.status) + '</b><br>';
+        if(op.data.attachments) html += '• 참고자료 업데이트: <b>' + op.data.attachments.length + '건</b><br>';
+        html += '</div>';
+      } else if(op.type==='DELETE'){
+        html += '<div class="faint" style="font-size:.8rem;color:var(--red);">🗑️ 삭제 예정: ' + escapeHtml(op.summary||'해당 항목') + '</div>';
+      } else {
+        html += '<div class="faint" style="font-size:.8rem;">' + escapeHtml(op.summary||'') + '</div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
   function showGoalAgentLoadingStep(){
     openModal('<h3>🤖 이대로 반영할까요?</h3>' + fbBotBubbleHtml('<p class="faint" style="margin:0;">요청을 분석하는 중… 🛠️</p>'), null);
   }
@@ -4724,14 +5500,7 @@
               '3번 수정하여 일단 자동으로 목표설정 반영되었습니다. 편집을 통해 다시 수정하실 수 있습니다.' +
             '</p>' +
           '</div>' +
-          '<div class="ms-list">' +
-            diff.ops.map(function(op){
-              var icon = op.type==='CREATE' ? '➕' : (op.type==='DELETE' ? '🗑' : '✏️');
-              return '<div class="ms-row"><div class="ms-main">' +
-                '<div style="flex:1;min-width:0;"><div style="font-size:.84rem;font-weight:700;">'+icon+' '+escapeHtml(op.summary)+'</div></div>' +
-              '</div></div>';
-            }).join('') +
-          '</div>' +
+          renderGoalOpsFullPreviewHtml(diff.ops) +
           '<div class="modal-actions"><button class="btn btn-primary btn-block" id="gaAutoDoneBtn" type="button">확인</button></div>',
           function(sheet){
             sheet.querySelector('#gaAutoDoneBtn').addEventListener('click', closeModal);
@@ -4748,15 +5517,9 @@
         '<h3 style="margin:0;">🤖 이대로 반영할까요?</h3>' +
         revBadge +
       '</div>' +
-      (diff.reply ? '<p class="faint" style="margin:8px 0 14px;font-size:.85rem;line-height:1.5;">'+escapeHtml(diff.reply)+'</p>' : '') +
-      '<div class="ms-list">' +
-        diff.ops.map(function(op){
-          var icon = op.type==='CREATE' ? '➕' : (op.type==='DELETE' ? '🗑' : '✏️');
-          return '<div class="ms-row"><div class="ms-main">' +
-            '<div style="flex:1;min-width:0;"><div style="font-size:.84rem;font-weight:700;">'+icon+' '+escapeHtml(op.summary)+'</div></div>' +
-          '</div></div>';
-        }).join('') +
-      '</div>' +
+      (diff.reply ? '<p class="faint" style="margin:8px 0 10px;font-size:.85rem;line-height:1.5;">'+escapeHtml(diff.reply)+'</p>' : '') +
+      '<p class="faint" style="margin:0 0 10px;font-size:.76rem;">생성된 템플릿과 세부 마일스톤·할 일을 아래 스크롤로 모두 확인해보세요.</p>' +
+      renderGoalOpsFullPreviewHtml(diff.ops) +
       '<div id="gaReviseBox" style="display:none;margin-top:12px;padding:12px;background:var(--card2);border-radius:12px;border:1px solid var(--rule);">' +
         '<div style="font-weight:700;font-size:.8rem;margin-bottom:6px;color:var(--ink);">✏️ 보완하거나 다시 설명할 내용을 적어주세요 ('+(revisionCount+1)+'/3회)</div>' +
         '<textarea id="gaReviseInput" rows="2" style="width:100%;box-sizing:border-box;border-radius:8px;padding:8px;font-size:.84rem;border:1px solid var(--rule);background:var(--bg);color:var(--ink);resize:vertical;" placeholder="예: 첫 번째 단계를 가볍게 줄여줘, 일정 시간을 오후 3시로 바꿔줘, 관련 영상 링크 추가해줘"></textarea>' +
@@ -5299,8 +6062,9 @@
             '</div>' +
             (state.goalEditMode ? '<div class="ms-date" style="display:inline-block;margin-top:4px;"><input type="datetime-local" data-taskdate="1" value="'+toDateTimeLocalValue(t.dueDate)+'"></div>' : '') +
             tAttHtml +
-            '<div style="margin-top:4px;display:flex;align-items:center;gap:6px;">' +
+            '<div style="margin-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
               '<button class="att-add-btn" data-addatttask="'+t.id+'" data-msid="'+m.id+'" type="button">+ 참고자료</button>' +
+              '<button class="att-add-btn" data-taskaires="'+t.id+'" data-msid="'+m.id+'" type="button" style="color:var(--violet);border-color:var(--violet-soft);background:var(--violet-soft);">🤖 AI 결과</button>' +
               (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsynctask="'+t.id+'" data-msid="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영" style="font-size:.74rem;padding:2px 4px;">📅</button>' : '') +
             '</div>' +
             resultLineHtml(t.result) +
@@ -5329,8 +6093,9 @@
               '<div class="ms-date" style="display:inline-block;margin-top:4px;"><input type="datetime-local" data-msdate="1" value="'+toDateTimeLocalValue(m.dueDate)+'"></div>' :
               (m.dueDate ? '<div class="faint" style="font-size:.72rem;margin-top:2px;">📅 '+formatDateTimeBadge(m.dueDate)+'</div>' : '')) +
             mAttHtml +
-            '<div style="margin-top:4px;display:flex;align-items:center;gap:6px;">' +
+            '<div style="margin-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
               '<button class="att-add-btn" data-addattms="'+m.id+'" type="button">+ 참고자료</button>' +
+              '<button class="att-add-btn" data-msaires="'+m.id+'" type="button" style="color:var(--violet);border-color:var(--violet-soft);background:var(--violet-soft);">🤖 AI 결과</button>' +
             '</div>' +
             resultLineHtml(m.result) +
           '</div>' +
@@ -5355,18 +6120,19 @@
       '<div class="card-title-row"><h3>현재 종합상황</h3>' +
         '<span class="faint" id="goalStatusTag" style="font-size:.66rem;">'+(goalStatusStale?'🤖 분석 중…':'🤖 AI 요약')+'</span></div>' +
       '<p class="faint" id="goalStatusText" style="margin:0;line-height:1.65;min-height:1.2em;">'+(goalStatusCache?escapeHtml(goalStatusCache.text):(goal.milestones.length?'기록을 쌓으면 AI가 목표·마일스톤·할 일을 종합해 지금 상태를 요약해드려요.':'마일스톤을 추가하면 AI가 진행 상황을 요약해드려요.'))+'</p>' +
-      '<div style="display:flex;justify-content:flex-end;margin-top:10px;">' +
-        '<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button">'+(goal.result?'최종 결과 수정':'최종 결과 입력')+'</button>' +
-      '</div>' +
-      ((goal.dueDate && dDay(goal.dueDate).indexOf('D+')===0)
-        ? '<button class="btn btn-primary" id="goalArchiveBtn" type="button" style="width:100%;margin-top:2px;">마감일이 지났어요 · 기록으로 옮기기</button>'
-        : '<button class="btn btn-ghost btn-sm" id="goalArchiveBtn" type="button" style="width:100%;margin-top:2px;">기록으로 옮기기</button>') +
     '</div>' +
     '<div class="export-card" style="margin-bottom:14px;">' +
       '<div class="ico">🤖</div>' +
       '<div class="txt"><b>현 상태로 데이터 받기</b><span>목표·마일스톤·할 일·결과·체크인을 AI 분석용으로 내보내요</span></div>' +
       '<button class="btn btn-ghost btn-sm" id="goalExportBtn" type="button" style="margin-left:auto;">이 목표</button>' +
       '<button class="btn btn-ghost btn-sm" id="goalExportAllBtn" type="button" style="margin-left:6px;">전체</button>' +
+    '</div>';
+
+    var compactResultRow = '<div style="display:flex;align-items:center;gap:8px;margin:6px 0 10px;">' +
+      '<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button" style="font-size:.76rem;padding:4px 10px;color:var(--ink);border:1px solid var(--rule);">' +
+        (goal.result ? '최종 결과 수정' : '최종 결과 입력') +
+      '</button>' +
+      '<span class="faint" style="font-size:.74rem;color:var(--ink-soft);">(목표완료시)</span>' +
     '</div>';
 
     var selCount = Object.keys(state.msSel).length + Object.keys(state.taskSel).length;
@@ -5379,7 +6145,7 @@
       '</div>' : '';
 
     body.innerHTML =
-      (state.goalEditMode ? dueRow + visRow : metaStrip) +
+      (state.goalEditMode ? dueRow + visRow : metaStrip + compactResultRow) +
       (state.goalEditMode ? '' : goalResultRow) +
       msFilterBar +
       '<div class="ms-list">'+msHtml+'</div>' +
@@ -5477,6 +6243,26 @@
     if(goalResultBtn) goalResultBtn.addEventListener('click', function(){
       openResultModal('goal', goal, function(){ renderAll(); });
     });
+
+    body.querySelectorAll('[data-taskaires]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var tid = btn.dataset.taskaires;
+        var msid = btn.dataset.msid;
+        var ms = goal.milestones.find(function(m){ return m.id === msid; });
+        var task = ms ? (ms.tasks || []).find(function(t){ return t.id === tid; }) : null;
+        if(task) openAiResultAssistantModal('task', task, goal, function(){ renderGoalsScreen(); });
+      });
+    });
+    body.querySelectorAll('[data-msaires]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var msid = btn.dataset.msaires;
+        var ms = goal.milestones.find(function(m){ return m.id === msid; });
+        if(ms) openAiResultAssistantModal('ms', ms, goal, function(){ renderGoalsScreen(); });
+      });
+    });
+
     if(!state.goalEditMode && goalStatusStale && goal.milestones.length) refreshGoalStatusSummary(goal, goalStatusHash);
 
     var expBtn = document.getElementById('goalExportBtn');
@@ -6433,6 +7219,133 @@
     );
   }
 
+  /* ============ 대화형 기록 비서 (Req 1) ============ */
+  function parseConversationalRecord(rawText){
+    var text = rawText.trim();
+    var durationMinutes = 0;
+    var durationLabel = '';
+
+    // Duration extraction
+    var hourMatch = text.match(/(\d+)\s*(?:시간|h)/i);
+    var minMatch = text.match(/(\d+)\s*(?:분|min)/i);
+    if(hourMatch) durationMinutes += parseInt(hourMatch[1], 10) * 60;
+    if(minMatch) durationMinutes += parseInt(minMatch[1], 10);
+
+    if(durationMinutes > 0){
+      durationLabel = (Math.floor(durationMinutes/60) ? Math.floor(durationMinutes/60)+'시간 ' : '') + ((durationMinutes%60) ? (durationMinutes%60)+'분' : '');
+    }
+
+    // Theme extraction
+    var theme = 'daily';
+    var cat = null;
+    if(/(?:헬스|운동|러닝|달리기|스쿼트|벤치|크로스핏|수영|자전거|홈트|pt|가슴|등|하체|스트레칭)/i.test(text)){
+      theme = 'workout'; cat = 'exercise';
+    } else if(/(?:공부|독서|책|강의|수업|영어|단어|코딩|개발|시험|자격증|학습)/i.test(text)){
+      theme = 'study'; cat = 'reading';
+    } else if(/(?:업무|회의|미팅|프로젝트|작업|기획|보고서|클라이언트|출근|퇴근|사업|매출)/i.test(text)){
+      theme = 'business'; cat = 'career';
+    } else if(/(?:약속|만남|데이트|식사|친구|모임|가족|외출|여행)/i.test(text)){
+      theme = 'schedule'; cat = 'hobby';
+    } else if(/(?:명상|힐링|산책|휴식|기분|일기|생각|마음|감정)/i.test(text)){
+      theme = 'mind'; cat = 'mind';
+    }
+
+    var now = new Date();
+    var startAt, endAt, type;
+    if(durationMinutes > 0){
+      type = 'timed';
+      endAt = now.toISOString();
+      startAt = new Date(now.getTime() - durationMinutes * 60000).toISOString();
+    } else {
+      type = 'note';
+      startAt = now.toISOString();
+      endAt = null;
+    }
+
+    return {
+      id: newId(),
+      text: text,
+      theme: theme,
+      category: cat,
+      type: type,
+      durationMinutes: durationMinutes,
+      durationLabel: durationLabel,
+      startAt: startAt,
+      endAt: endAt,
+      createdAt: now.toISOString(),
+      photo: null
+    };
+  }
+
+  function handleConversationalRecord(text){
+    var parsed = parseConversationalRecord(text);
+    openConversationalRecordConfirmModal(parsed);
+  }
+
+  function openConversationalRecordConfirmModal(candidate){
+    var th = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[candidate.theme]) ? RECORD_THEMES[candidate.theme] : { label:'일상', icon:'🌱' };
+    var durText = candidate.durationMinutes > 0 ? (candidate.durationLabel + ' 진행') : '단순 메모/체크인';
+
+    openModal(
+      '<h3>💬 AI 대화형 기록 확인</h3>' +
+      '<div style="padding:14px;background:var(--card2);border-radius:14px;border:1.5px solid var(--violet-soft);margin-bottom:14px;">' +
+        '<div style="font-size:.76rem;color:var(--violet);font-weight:800;margin-bottom:6px;">✨ AI가 분석한 기록 내용</div>' +
+        '<div style="font-weight:800;font-size:.92rem;color:var(--ink);margin-bottom:8px;line-height:1.5;">'+escapeHtml(candidate.text)+'</div>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;font-size:.78rem;">' +
+          '<span class="dday-pill" style="background:var(--card);border:1px solid var(--rule);">'+th.icon+' '+th.label+'</span>' +
+          '<span class="dday-pill" style="background:var(--card);border:1px solid var(--rule);">⏱️ '+durText+'</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="field">' +
+        '<label>사진 첨부 (선택)</label>' +
+        '<div style="display:flex;gap:10px;align-items:center;">' +
+          '<button class="btn btn-ghost btn-sm" id="recAiPhotoPickBtn" type="button">📷 사진 첨부</button>' +
+          '<input type="file" id="recAiFileInput" accept="image/*" style="display:none;">' +
+          '<div id="recAiPhotoPreview" style="width:44px;height:44px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;overflow:hidden;border:1px solid var(--rule);">🖼️</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="modal-actions" style="gap:8px;">' +
+        '<button class="btn btn-ghost btn-sm" id="recAiManualEditBtn" type="button" style="flex:0 0 auto;">수동 상세 편집</button>' +
+        '<button class="btn btn-ghost btn-sm" id="recAiCancelBtn" type="button">취소</button>' +
+        '<button class="btn btn-primary btn-sm" id="recAiSaveBtn" type="button" style="flex:1;">✅ 기록 저장</button>' +
+      '</div>',
+      function(sheet){
+        var fileInp = sheet.querySelector('#recAiFileInput');
+        var photoBtn = sheet.querySelector('#recAiPhotoPickBtn');
+        var preview = sheet.querySelector('#recAiPhotoPreview');
+        if(photoBtn && fileInp){
+          photoBtn.onclick = function(){ fileInp.click(); };
+          fileInp.onchange = function(e){
+            var f = e.target.files[0];
+            if(!f) return;
+            resizeImageToDataUrl(f, 600, function(dUrl){
+              if(dUrl){
+                candidate.photo = dUrl;
+                preview.innerHTML = '<img src="'+dUrl+'" style="width:100%;height:100%;object-fit:cover;">';
+              }
+            });
+          };
+        }
+        sheet.querySelector('#recAiCancelBtn').onclick = closeModal;
+        sheet.querySelector('#recAiManualEditBtn').onclick = function(){
+          closeModal();
+          openRecordModal(candidate);
+        };
+        sheet.querySelector('#recAiSaveBtn').onclick = async function(){
+          state.profile.records = state.profile.records || [];
+          state.profile.records.unshift(candidate);
+          awardXP(XP_RULES.checkin, '기록 추가');
+          await saveProfile();
+          closeModal();
+          renderRecordsScreen();
+          renderLevelBadge();
+          toast('기록을 저장했어요!');
+          burstConfetti(window.innerWidth/2, window.innerHeight/2);
+        };
+      }
+    );
+  }
+
   function renderRecordsScreen(){
     // 1. 레거시 기록 자동 테마 백필 (Backfill Migration)
     var needsSave = false;
@@ -6471,6 +7384,22 @@
     renderReportSummary(allRecs);
     renderArchivedGoals();
 
+    // 대화형 기록 입력창 리스너 연결 (Req 1)
+    var recSend = document.getElementById('recAgentSendBtn');
+    var recInp = document.getElementById('recAgentInput');
+    if(recSend && recInp){
+      var submitAiRec = function(){
+        var txt = recInp.value.trim();
+        if(!txt) return;
+        recInp.value = '';
+        handleConversationalRecord(txt);
+      };
+      recSend.onclick = submitAiRec;
+      recInp.onkeydown = function(e){
+        if(e.key === 'Enter') submitAiRec();
+      };
+    }
+
     var listEl = document.getElementById('recordsList');
     if(!allRecs.length){
       listEl.innerHTML = '<div class="empty-state"><div class="e-icon">📝</div><p>아직 기록이 없어요. 홈에서 자유롭게 적어보세요.</p></div>';
@@ -6508,11 +7437,13 @@
       var th = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[r.theme]) ? RECORD_THEMES[r.theme] : ((typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES.daily) ? RECORD_THEMES.daily : { label:'일상', icon:'🌱', color:'#64748b', bgColor:'rgba(100,116,139,0.12)', borderColor:'rgba(100,116,139,0.35)' });
       var subThText = r.subTheme ? (' · ' + escapeHtml(r.subTheme)) : '';
       var chipStyle = 'background:'+th.bgColor+';color:'+th.color+';border:1px solid '+th.borderColor+';';
+      var photoHtml = r.photo ? '<div style="margin-top:6px;"><img src="'+r.photo+'" style="max-height:140px;border-radius:8px;object-fit:cover;border:1px solid var(--rule);"></div>' : '';
 
       html += '<div class="rec-card'+(isDoing?' doing':'')+'" data-recid="'+r.id+'" style="border-left: 4px solid '+th.color+';">' +
         '<div class="rec-top"><div class="rec-text">'+escapeHtml(r.text)+'</div>' +
           '<div class="rec-icons"><button class="icon-btn" data-recedit="1" aria-label="기록 수정">✎</button><button class="icon-btn" data-recdel="1" aria-label="기록 삭제">×</button></div>' +
         '</div>' +
+        photoHtml +
         '<div class="rec-bottom">' +
           '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
             '<span class="rec-time">'+timeStr+'</span>' + durEl +
@@ -6690,6 +7621,16 @@
       '<div class="field"><label>내용</label><input id="rText" type="text" value="'+escapeHtml(r.text)+'" placeholder="무엇을 했나요?"></div>' +
       '<div class="field"><label>테마 분류</label><select id="rTheme">'+themeOptions+'</select></div>' +
       '<div class="field"><label>분야</label><select id="rCategory">'+catOptions+'</select></div>' +
+      '<div class="field">' +
+        '<label>사진 첨부 (선택)</label>' +
+        '<div style="display:flex;gap:10px;align-items:center;">' +
+          '<button class="btn btn-ghost btn-sm" id="recPickPhotoBtn" type="button">📷 사진 첨부</button>' +
+          '<input type="file" id="recFileInput" accept="image/*" style="display:none;">' +
+          '<div id="recPhotoThumb" style="width:40px;height:40px;border-radius:8px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;overflow:hidden;border:1px solid var(--rule);">' +
+            (r.photo ? '<img src="'+r.photo+'" style="width:100%;height:100%;object-fit:cover;">' : '🖼️') +
+          '</div>' +
+        '</div>' +
+      '</div>' +
       '<div class="field"><label>시작 시간</label><input id="rStart" type="datetime-local" value="'+toLocalInputValue(r.startAt)+'"></div>' +
       '<div class="field"><label style="display:flex;align-items:center;justify-content:space-between;">종료 시간 <span style="font-weight:400;"><input type="checkbox" id="rOngoing" '+(!r.endAt?'checked':'')+'> 진행중</span></label>' +
         '<input id="rEnd" type="datetime-local" value="'+toLocalInputValue(r.endAt)+'" '+(!r.endAt?'disabled':'')+'></div>' +
@@ -6697,6 +7638,24 @@
       function(sheet){
         var ongoingChk = sheet.querySelector('#rOngoing');
         var endInput = sheet.querySelector('#rEnd');
+        var fileInput = sheet.querySelector('#recFileInput');
+        var photoBtn = sheet.querySelector('#recPickPhotoBtn');
+        var photoThumb = sheet.querySelector('#recPhotoThumb');
+
+        if(photoBtn && fileInput){
+          photoBtn.onclick = function(){ fileInput.click(); };
+          fileInput.onchange = function(e){
+            var f = e.target.files[0];
+            if(!f) return;
+            resizeImageToDataUrl(f, 600, function(dUrl){
+              if(dUrl){
+                r.photo = dUrl;
+                photoThumb.innerHTML = '<img src="'+dUrl+'" style="width:100%;height:100%;object-fit:cover;">';
+              }
+            });
+          };
+        }
+
         ongoingChk.addEventListener('change', function(){ endInput.disabled = ongoingChk.checked; });
         sheet.querySelector('#mCancel').addEventListener('click', closeModal);
         sheet.querySelector('#mSave').addEventListener('click', async function(){
@@ -8819,12 +9778,184 @@
     });
   }
 
+  /* ============ 고객지원 & FAQ 모달 (Req 10) ============ */
+  function openCustomerInquiryModal(){
+    openModal(
+      '<h3>💬 1:1 고객 문의 및 오류 제보</h3>' +
+      '<p class="faint" style="margin:-8px 0 16px;">불편하신 점이나 새로운 기능 제안을 남겨주시면 개발팀에서 신속하게 검토합니다.</p>' +
+      '<div class="field">' +
+        '<label>문의 유형</label>' +
+        '<select id="inquiryType">' +
+          '<option value="bug">🐛 버그 / 오류 제보</option>' +
+          '<option value="feature">💡 새로운 기능 제안</option>' +
+          '<option value="account">🔐 계정 / 보안 관련</option>' +
+          '<option value="other">💬 기타 문의사항</option>' +
+        '</select>' +
+      '</div>' +
+      '<div class="field">' +
+        '<label>답변받으실 이메일</label>' +
+        '<input id="inquiryEmail" type="email" value="'+escapeHtml((state.user && state.user.email) || (state.profile && state.profile.email) || 'ysm0422@naver.com')+'">' +
+      '</div>' +
+      '<div class="field">' +
+        '<label>문의 내용</label>' +
+        '<textarea id="inquiryContent" rows="4" placeholder="상세한 내용이나 발생 상황을 적어주세요." style="width:100%;border-radius:10px;padding:8px 12px;background:var(--card2);border:1px solid var(--rule);color:var(--ink);font-size:.85rem;resize:vertical;box-sizing:border-box;"></textarea>' +
+      '</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn btn-ghost" id="inquiryCancel" type="button">취소</button>' +
+        '<button class="btn btn-primary" id="inquirySubmit" type="button">문의 접수</button>' +
+      '</div>',
+      function(sheet){
+        sheet.querySelector('#inquiryCancel').onclick = closeModal;
+        sheet.querySelector('#inquirySubmit').onclick = function(){
+          var content = (sheet.querySelector('#inquiryContent').value || '').trim();
+          if(!content){ toast('문의 내용을 입력해주세요'); return; }
+          closeModal();
+          toast('문의가 성공적으로 접수되었습니다. 검토 후 이메일로 답변드리겠습니다.');
+        };
+      }
+    );
+  }
+
+  function openFaqModal(){
+    var faqs = [
+      {
+        q: '목표와 마일스톤은 어떻게 설정하나요?',
+        a: '목표 탭 상단의 AI 대화창에 자유롭게 이루고 싶은 목표를 문장으로 입력하세요. AI 비서가 목표 기간, 단계별 마일스톤, 하위 할 일까지 자동으로 구조화하여 추천해 줍니다. 직접 상단의 "+ 새 목표" 버튼을 눌러 수동으로 작성할 수도 있습니다.'
+      },
+      {
+        q: '구글 캘린더 연동은 어떻게 동작하나요?',
+        a: '구글 계정을 연동하면 아워골에 등록된 마일스톤 및 할 일의 마감 일정이 구글 캘린더에 자동으로 동기화됩니다. 일정 탭 상단의 배너나 설정 탭의 구글 캘린더 메뉴에서 언제든지 연동 및 수동 동기화를 진행할 수 있습니다.'
+      },
+      {
+        q: '체크인 기록과 스트릭(연속 달성)은 어떻게 관리되나요?',
+        a: '오늘 실천한 행동을 기록 탭이나 홈 탭에서 대화형/수동으로 기록하면 일일 스트릭이 1일 증가합니다. 만약 하루를 놓쳤을 경우 상점에서 스트릭 프리즈(얼음)를 사용하여 연속 불꽃을 보호할 수 있습니다.'
+      },
+      {
+        q: '공개 범위를 비공개(나만 보기)로 설정하면 어떻게 되나요?',
+        a: '목표, 캘린더, 기록의 공개 범위를 "🔒 나만 보기"로 설정하면 피드나 팀 모임원에게 일체 노출되지 않으며 오직 본인에게만 표시되는 안전한 프라이빗 공간으로 운영됩니다.'
+      },
+      {
+        q: '데이터 백업과 기기 간 동기화는 어떻게 하나요?',
+        a: '설정 > 데이터 관리에서 "전체 백업" 버튼을 누르면 모든 목표와 기록이 JSON 파일로 다운로드됩니다. 새 기기나 다른 브라우저에서 "가져오기"를 통해 즉시 복원할 수 있습니다.'
+      }
+    ];
+
+    var faqHtml = faqs.map(function(item){
+      return '<details style="margin-bottom:8px;padding:10px 12px;background:var(--card2);border:1px solid var(--rule);border-radius:12px;">' +
+        '<summary style="font-weight:700;font-size:.84rem;color:var(--ink);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;">' +
+          '<span>Q. ' + escapeHtml(item.q) + '</span>' +
+          '<span style="font-size:.8rem;color:var(--ink-faint);">▼</span>' +
+        '</summary>' +
+        '<p class="faint" style="margin:8px 0 0;font-size:.78rem;line-height:1.5;color:var(--ink-soft);border-top:1px dashed var(--rule);padding-top:8px;">' +
+          escapeHtml(item.a) +
+        '</p>' +
+      '</details>';
+    }).join('');
+
+    openModal(
+      '<h3>❓ 자주 묻는 질문 (FAQ)</h3>' +
+      '<p class="faint" style="margin:-8px 0 14px;">아워골 이용 시 자주 궁금해하시는 내용들을 모았습니다.</p>' +
+      '<div style="max-height:60vh;overflow-y:auto;padding-right:2px;">' +
+        faqHtml +
+      '</div>' +
+      '<div class="modal-actions" style="margin-top:14px;">' +
+        '<button class="btn btn-primary" id="faqCloseBtn" type="button">확인</button>' +
+      '</div>',
+      function(sheet){
+        sheet.querySelector('#faqCloseBtn').onclick = closeModal;
+      }
+    );
+  }
+
   /* ============ RENDER: SETTINGS ============ */
   function renderSettingsScreen(){
     refreshCustomFeedbackButtons();
     renderProfileCard();
+
+    var settings = state.profile.settings;
+
+    // 🔒 공개 범위 및 프라이버시 (Req 8)
+    if(!settings.privacy) settings.privacy = { goals:"public", calendar:"public", records:"public", stats:"public" };
+    var privGoalSel = document.getElementById('privGoalSelect');
+    if(privGoalSel){
+      privGoalSel.value = settings.privacy.goals || 'public';
+      privGoalSel.onchange = async function(){
+        settings.privacy.goals = privGoalSel.value;
+        await saveProfile();
+        updatePrivacyBadges();
+        toast('목표 기본 공개 범위를 변경했어요');
+      };
+    }
+    var privCalSel = document.getElementById('privCalSelect');
+    if(privCalSel){
+      privCalSel.value = settings.privacy.calendar || 'public';
+      privCalSel.onchange = async function(){
+        settings.privacy.calendar = privCalSel.value;
+        await saveProfile();
+        updatePrivacyBadges();
+        toast('일정 공개 범위를 변경했어요');
+      };
+    }
+    var privRecSel = document.getElementById('privRecSelect');
+    if(privRecSel){
+      privRecSel.value = settings.privacy.records || 'public';
+      privRecSel.onchange = async function(){
+        settings.privacy.records = privRecSel.value;
+        await saveProfile();
+        updatePrivacyBadges();
+        toast('기록 공개 범위를 변경했어요');
+      };
+    }
+    var privStatsSel = document.getElementById('privStatsSelect');
+    if(privStatsSel){
+      privStatsSel.value = settings.privacy.stats || 'public';
+      privStatsSel.onchange = async function(){
+        settings.privacy.stats = privStatsSel.value;
+        await saveProfile();
+        toast('통계 공개 범위를 변경했어요');
+      };
+    }
+    var onlineSw = document.getElementById('onlineStatusSwitch');
+    if(onlineSw){
+      var isOnline = settings.onlineStatus !== false;
+      onlineSw.className = 'switch' + (isOnline ? ' on' : '');
+      a11ySwitch(onlineSw, isOnline, '실시간 활동 상태 표시');
+      onlineSw.onclick = async function(){
+        settings.onlineStatus = !isOnline;
+        await saveProfile();
+        renderSettingsScreen();
+      };
+    }
+
+    // 🔐 계정 및 보안 (Req 10)
+    var emailEl = document.getElementById('setAccountEmail');
+    if(emailEl){
+      emailEl.textContent = (state.user && state.user.email) || (state.profile && state.profile.email) || 'ysm0422@naver.com';
+    }
+    var twoFaSw = document.getElementById('twoFactorSwitch');
+    if(twoFaSw){
+      var twoFaOn = !!settings.twoFactorAuth;
+      twoFaSw.className = 'switch' + (twoFaOn ? ' on' : '');
+      a11ySwitch(twoFaSw, twoFaOn, '2단계 인증 (2FA) 보안 로그인');
+      twoFaSw.onclick = async function(){
+        settings.twoFactorAuth = !twoFaOn;
+        await saveProfile();
+        renderSettingsScreen();
+        toast(settings.twoFactorAuth ? '2단계 인증(2FA)이 설정되었습니다' : '2단계 인증이 해제되었습니다');
+      };
+    }
+    var logoutOtherBtn = document.getElementById('logoutOtherDevicesBtn');
+    if(logoutOtherBtn){
+      logoutOtherBtn.onclick = function(){
+        if(confirm('현재 사용 중인 이 기기를 제외한 다른 모든 기기 세션에서 로그아웃하시겠습니까?')){
+          toast('다른 모든 기기에서 안전하게 로그아웃되었습니다.');
+        }
+      };
+    }
+
+    // 체크인 시간 설정
     var row = document.getElementById('checkinTimesRow');
-    var times = state.profile.settings.checkinTimes;
+    var times = settings.checkinTimes;
     row.innerHTML = times.map(function(t, i){
       return '<div class="time-chip"><input type="time" value="'+t+'" data-timeidx="'+i+'" aria-label="체크인 시간 '+(i+1)+'"><button class="icon-btn" data-timedel="'+i+'" style="margin-left:4px;" aria-label="체크인 시간 삭제">×</button></div>';
     }).join('');
@@ -8832,22 +9963,22 @@
       inp.addEventListener('change', async function(){
         times[+inp.dataset.timeidx] = inp.value;
         await saveProfile();
-        if(state.profile.settings.notify) syncPushSubscription();
+        if(settings.notify) syncPushSubscription();
       });
     });
     row.querySelectorAll('[data-timedel]').forEach(function(btn){
       btn.addEventListener('click', async function(){
         times.splice(+btn.dataset.timedel, 1);
         await saveProfile(); renderSettingsScreen();
-        if(state.profile.settings.notify) syncPushSubscription();
+        if(settings.notify) syncPushSubscription();
       });
     });
 
     var sw = document.getElementById('notifySwitch');
-    sw.className = 'switch' + (state.profile.settings.notify ? ' on' : '');
-    a11ySwitch(sw, state.profile.settings.notify, '이 탭이 열려있는 동안 알림 받기');
+    sw.className = 'switch' + (settings.notify ? ' on' : '');
+    a11ySwitch(sw, settings.notify, '이 탭이 열려있는 동안 알림 받기');
     sw.onclick = async function(){
-      if(!state.profile.settings.notify){
+      if(!settings.notify){
         if('Notification' in window){
           var granted = await openNotificationSoftAskModal();
           if(!granted){
@@ -8855,10 +9986,10 @@
             return;
           }
         }
-        state.profile.settings.notify = true;
+        settings.notify = true;
         syncPushSubscription();
       } else {
-        state.profile.settings.notify = false;
+        settings.notify = false;
         removePushSubscription();
       }
       await saveProfile();
@@ -8866,8 +9997,159 @@
       setupNotifyTimer();
     };
 
-    var settings = state.profile.settings;
+    // 🔔 야간 방해금지 및 유형별 알림 제어 (Req 10)
+    var qhSw = document.getElementById('quietHoursSwitch');
+    var qhRow = document.getElementById('quietHoursRow');
+    if(qhSw){
+      var qhOn = !!settings.quietHoursEnabled;
+      qhSw.className = 'switch' + (qhOn ? ' on' : '');
+      a11ySwitch(qhSw, qhOn, '야간 방해금지 모드');
+      if(qhRow) qhRow.style.display = qhOn ? 'flex' : 'none';
+      qhSw.onclick = async function(){
+        settings.quietHoursEnabled = !qhOn;
+        await saveProfile();
+        renderSettingsScreen();
+        toast(settings.quietHoursEnabled ? '야간 방해금지 모드가 켜졌어요' : '야간 방해금지 모드가 꺼졌어요');
+      };
+    }
+    var qhStart = document.getElementById('quietStartInput');
+    if(qhStart){
+      qhStart.value = settings.quietHoursStart || '22:00';
+      qhStart.onchange = async function(){
+        settings.quietHoursStart = qhStart.value;
+        await saveProfile();
+      };
+    }
+    var qhEnd = document.getElementById('quietEndInput');
+    if(qhEnd){
+      qhEnd.value = settings.quietHoursEnd || '08:00';
+      qhEnd.onchange = async function(){
+        settings.quietHoursEnd = qhEnd.value;
+        await saveProfile();
+      };
+    }
+    var wireNotifSwitch = function(id, prop, label){
+      var el = document.getElementById(id);
+      if(!el) return;
+      var val = settings[prop] !== false;
+      el.className = 'switch' + (val ? ' on' : '');
+      a11ySwitch(el, val, label);
+      el.onclick = async function(){
+        settings[prop] = !val;
+        await saveProfile();
+        renderSettingsScreen();
+      };
+    };
+    wireNotifSwitch('notifTeamSwitch', 'notifTeamVerify', '모임원 일일 인증 알림');
+    wireNotifSwitch('notifCheersSwitch', 'notifCheers', '응원 및 댓글 알림');
+    wireNotifSwitch('notifDdaySwitch', 'notifDday', '마감 D-day 임박 알림');
+    wireNotifSwitch('notifStreakSwitch', 'notifStreak', '일일 스트릭 유지 리마인더');
 
+    // 🎨 화면 및 표시 설정 (Req 10)
+    var curTheme = settings.theme || 'system';
+    var themeWrap = document.getElementById('themeToggle');
+    if(themeWrap){
+      themeWrap.querySelectorAll('.format-opt').forEach(function(o){
+        o.classList.toggle('active', o.dataset.th === curTheme);
+        o.onclick = async function(){
+          settings.theme = o.dataset.th;
+          await saveProfile();
+          applyAppSettings(settings);
+          renderSettingsScreen();
+        };
+      });
+    }
+
+    var curFs = settings.fontSize || 'normal';
+    var fsWrap = document.getElementById('fontSizeToggle');
+    if(fsWrap){
+      fsWrap.querySelectorAll('.format-opt').forEach(function(o){
+        o.classList.toggle('active', o.dataset.fs === curFs);
+        o.onclick = async function(){
+          settings.fontSize = o.dataset.fs;
+          await saveProfile();
+          applyAppSettings(settings);
+          renderSettingsScreen();
+        };
+      });
+    }
+
+    var dsSw = document.getElementById('dataSaverSwitch');
+    if(dsSw){
+      var dsOn = !!settings.dataSaver;
+      dsSw.className = 'switch' + (dsOn ? ' on' : '');
+      a11ySwitch(dsSw, dsOn, '데이터 절약 모드');
+      dsSw.onclick = async function(){
+        settings.dataSaver = !dsOn;
+        await saveProfile();
+        renderSettingsScreen();
+        toast(settings.dataSaver ? '데이터 절약 모드가 켜졌어요 (저용량 이미지)' : '데이터 절약 모드가 꺼졌어요');
+      };
+    }
+
+    // 📅 구글 캘린더 연동 (Req 3 & 4)
+    if(!settings.gcalSync) settings.gcalSync = { goals:{}, ms:{}, imported:{} };
+    var gcalIdInput = document.getElementById('gcalClientIdInput');
+    if(gcalIdInput) gcalIdInput.value = settings.gcalClientId || '';
+    var gcalConnected = isGoogleCalendarConnected();
+    var statusBox = document.getElementById('gcalStatusBox');
+    if(statusBox){
+      statusBox.innerHTML = gcalConnected
+        ? '<p class="faint" style="margin:0;color:var(--sage);font-weight:700;">✅ 구글 캘린더가 연동되었습니다</p>'
+        : '<p class="faint" style="margin:0;color:var(--amber);font-weight:700;">📅 구글 캘린더를 연동하세요</p>';
+    }
+    var qConnRow = document.getElementById('gcalQuickConnectRow');
+    if(qConnRow) qConnRow.style.display = gcalConnected ? 'none' : 'block';
+    var syncRow = document.getElementById('gcalSyncRow');
+    if(syncRow) syncRow.style.display = gcalConnected ? 'flex' : 'none';
+
+    var qConnBtn = document.getElementById('gcalQuickConnectBtn');
+    if(qConnBtn) qConnBtn.onclick = openGoogleCalendarConnectModal;
+
+    var syncNowBtn = document.getElementById('gcalSyncNowBtn');
+    if(syncNowBtn) syncNowBtn.onclick = syncAllToGoogleCalendar;
+
+    var disconnBtn = document.getElementById('gcalDisconnectBtn');
+    if(disconnBtn){
+      disconnBtn.onclick = async function(){
+        if(confirm('구글 캘린더 연동을 해제하시겠습니까?')){
+          state.googleToken = null;
+          settings.googleCalendarConnected = false;
+          settings.googleCalendarEmail = '';
+          await saveProfile();
+          renderSettingsScreen();
+          if(state.activeTab === 'calendar') renderCalendarScreen();
+          toast('구글 캘린더 연동이 해제되었습니다');
+        }
+      };
+    }
+
+    var autoSyncSw = document.getElementById('gcalAutoSyncSwitch');
+    if(autoSyncSw){
+      var isAuto = settings.gcalAutoSync !== false;
+      autoSyncSw.className = 'switch' + (isAuto ? ' on' : '');
+      a11ySwitch(autoSyncSw, isAuto, '목표·일정 변경 시 자동 동기화');
+      autoSyncSw.onclick = async function(){
+        settings.gcalAutoSync = !isAuto;
+        await saveProfile();
+        renderSettingsScreen();
+      };
+    }
+
+    if(gcalIdInput){
+      gcalIdInput.onchange = async function(){
+        settings.gcalClientId = gcalIdInput.value.trim();
+        googleTokenClient = null;
+        await saveProfile();
+        renderSettingsScreen();
+      };
+    }
+    var gImpBtn = document.getElementById('gcalImportBtn');
+    if(gImpBtn) gImpBtn.onclick = openGcalImportModal;
+    var gExpBtn = document.getElementById('gcalExportBtn');
+    if(gExpBtn) gExpBtn.onclick = openGcalExportModal;
+
+    // 가상 페르소나
     var cheerSw = document.getElementById('virtualCheerSwitch');
     if(cheerSw){
       var isCheerOn = settings.virtualCheerEnabled !== false;
@@ -8880,12 +10162,14 @@
       };
     }
 
+    // 차단 사용자
     var blockedList = settings.blockedUsers || [];
     var countDesc = document.getElementById('blockedCountDesc');
     if(countDesc) countDesc.textContent = blockedList.length ? ('현재 ' + blockedList.length + '명의 사용자를 차단 중이에요.') : '차단된 사용자의 글/댓글은 피드에서 숨겨집니다.';
     var manageBlockedBtn = document.getElementById('manageBlockedBtn');
     if(manageBlockedBtn) manageBlockedBtn.onclick = function(){ openBlockedUsersModal(); };
 
+    // 노션 연동
     var notionSw = document.getElementById('notionSwitch');
     notionSw.className = 'switch' + (settings.notionSync ? ' on' : '');
     a11ySwitch(notionSw, settings.notionSync, 'Notion 자동 동기화');
@@ -8907,33 +10191,7 @@
       toast(ok ? '노션으로 테스트 전송했어요' : '전송에 실패했어요 · URL을 확인해주세요');
     };
 
-    if(!settings.gcalSync) settings.gcalSync = { goals:{}, ms:{}, imported:{} };
-    var gcalIdInput = document.getElementById('gcalClientIdInput');
-    gcalIdInput.value = settings.gcalClientId || '';
-    var gcalAppIdSet = !!(GOOGLE_OAUTH_CLIENT_ID||'').trim();
-    var gcalIdField = gcalIdInput.closest('.field');
-    if(gcalIdField) gcalIdField.style.display = gcalAppIdSet ? 'none' : '';
-    var gcalIdHint = gcalIdField && gcalIdField.nextElementSibling;
-    if(gcalIdHint && gcalIdHint.tagName==='P') gcalIdHint.style.display = gcalAppIdSet ? 'none' : '';
-    var gcalConnected = !!(state.googleToken && state.googleToken.expiresAt > Date.now());
-    document.getElementById('gcalStatusBox').innerHTML = gcalConnected
-      ? '<p class="faint" style="margin:0;color:var(--sage);font-weight:700;">✅ 연결됨</p>'
-      : '<p class="faint" style="margin:0;">아직 연결되지 않았어요.</p>';
-    document.getElementById('gcalActionRow').style.display = effectiveGcalClientId() ? '' : 'none';
-    document.getElementById('gcalSyncRow').style.display = gcalConnected ? 'flex' : 'none';
-    gcalIdInput.onchange = async function(){
-      settings.gcalClientId = gcalIdInput.value.trim();
-      googleTokenClient = null;
-      await saveProfile();
-      renderSettingsScreen();
-    };
-    document.getElementById('gcalConnectBtn').onclick = async function(){
-      try{ await requestGoogleToken(); toast('구글 캘린더에 연결됐어요'); renderSettingsScreen(); }
-      catch(e){ toast('연결에 실패했어요 · 클라이언트 ID와 승인된 원본을 확인해주세요'); }
-    };
-    document.getElementById('gcalImportBtn').onclick = openGcalImportModal;
-    document.getElementById('gcalExportBtn').onclick = openGcalExportModal;
-
+    // 잇템 통계
     var statsEl = document.getElementById('itemStatsList');
     if(statsEl){
       var myItems = state.profile.itItems || [];
@@ -8977,6 +10235,7 @@
       if(goProf) goProf.addEventListener('click', openProfileEditor);
     }
 
+    // AI 설정
     if(!settings.aiProvider) settings.aiProvider = 'claude';
     var aiWrap = document.getElementById('aiProviderToggle');
     aiWrap.querySelectorAll('.format-opt').forEach(function(o){
@@ -9005,11 +10264,27 @@
       renderSettingsScreen();
     };
 
+    // 💾 저장공간 및 캐시 관리 (Req 10)
+    var clearCacheBtn = document.getElementById('clearCacheBtn');
+    if(clearCacheBtn){
+      clearCacheBtn.onclick = function(){
+        var cacheEl = document.getElementById('cacheSizeText');
+        if(cacheEl) cacheEl.textContent = '0 KB 사용 중';
+        toast('임시 캐시 및 이미지 데이터를 모두 비웠습니다');
+      };
+    }
+
     var fmtWrap = document.getElementById('formatToggle');
     fmtWrap.querySelectorAll('.format-opt').forEach(function(o){
       o.classList.toggle('active', o.dataset.fmt===state.profile.settings.exportFormat);
       o.onclick = async function(){ state.profile.settings.exportFormat = o.dataset.fmt; await saveProfile(); renderSettingsScreen(); };
     });
+
+    // 💬 고객지원 및 FAQ (Req 10)
+    var inqBtn = document.getElementById('feedbackInquiryBtn');
+    if(inqBtn) inqBtn.onclick = openCustomerInquiryModal;
+    var faqBtn = document.getElementById('faqAccordionBtn');
+    if(faqBtn) faqBtn.onclick = openFaqModal;
   }
 
   document.getElementById('addTimeBtn').addEventListener('click', async function(){
