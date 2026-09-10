@@ -80,7 +80,7 @@ const FN_NAMES = [
   'generateDynamicNotification',
   'fmtYYMMDD', 'recommendTemplateFromAI',
   'computeTableAnalytics',
-  'parseNaturalLanguageTemplateSpec', 'parseCsvText',
+  'parseNaturalLanguageTemplateSpec', 'parseCsvText', 'parseVoiceToTableRow',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -114,7 +114,7 @@ const sandboxSrc =
   'getNavigator: function(){ return navigator; }, setNavigator: function(n){ navigator = n; }, ' +
   'calendarAvailable, fmtDateLabel, filterRecordsByQuery, ' +
   'generateDynamicNotification, fmtYYMMDD, recommendTemplateFromAI, computeTableAnalytics, ' +
-  'parseNaturalLanguageTemplateSpec, parseCsvText, ' +
+  'parseNaturalLanguageTemplateSpec, parseCsvText, parseVoiceToTableRow, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -1007,6 +1007,62 @@ check('compliance: 다른 기기 원격 로그아웃, 마일스톤·할일 마�
   assert.ok(html.includes('rsAiQuickInput'), '결과입력 모달 내 AI 자연어 한줄 입력창 존재');
   assert.ok(html.includes('rsAiQuickApplyBtn'), '결과입력 모달 내 AI 자동채우기 버튼 존재');
   assert.ok(html.includes('openAiResultAssistantModal'), 'AI 결과 입력 전용 상세 모달 함수 존재');
+});
+
+check('parseVoiceToTableRow: 헬스 및 운동 음성 문장에서 종목, 무게, 횟수, 세트를 추출하여 표 열에 맞춤 매핑한다', () => {
+  const cols = ['번호', '운동종목', '세트', '무게', '횟수', '시간', '거리', '강도(100점)'];
+  const tpl = { title: '헬스' };
+  const row = fns.parseVoiceToTableRow('벤치프레스 80kg 10회 3세트 45분', tpl, cols);
+  assert.ok(Array.isArray(row), '배열 반환');
+  assert.strictEqual(row.length, cols.length, '열 개수 일치');
+  assert.strictEqual(row[0], '1', '첫 번호 기본값');
+  assert.ok(row[1].includes('벤치프레스'), '종목명 추출');
+  assert.strictEqual(row[2], '3', '세트수 추출');
+  assert.strictEqual(row[3], '80kg', '무게 추출');
+  assert.strictEqual(row[4], '10', '횟수 추출');
+  assert.strictEqual(row[5], '45분', '시간 추출');
+});
+
+check('parseVoiceToTableRow: 크로스핏 및 공부 음성 문장을 정확히 인식하여 표 열에 배치한다', () => {
+  const cfCols = ['구간', '운동종목', '무게(lb)', '목표횟수', '수행시간', 'Rx여부'];
+  const cfTpl = { title: '크로스핏' };
+  const cfRow = fns.parseVoiceToTableRow('쓰러스터 45파운드 21개 5분 알엑스', cfTpl, cfCols);
+  assert.ok(cfRow[1].includes('쓰러스터'), '쓰러스터 종목명 추출');
+  assert.strictEqual(cfRow[2], '45lb', '파운드 단위 추출');
+  assert.strictEqual(cfRow[3], '21', '횟수 추출');
+  assert.strictEqual(cfRow[4], '5분', '시간 추출');
+  assert.strictEqual(cfRow[5], 'Rx', 'Rx 인식');
+
+  const studyCols = ['번호', '과목명', '소요시간', '페이지', '집중도'];
+  const studyTpl = { title: '공부' };
+  const studyRow = fns.parseVoiceToTableRow('민법 50분 15페이지 90점', studyTpl, studyCols);
+  assert.ok(studyRow[1].includes('민법'), '과목명 추출');
+  assert.strictEqual(studyRow[2], '50분', '공부 시간 추출');
+  assert.strictEqual(studyRow[3], '15', '페이지수 추출');
+  assert.strictEqual(studyRow[4], '90', '점수/집중도 추출');
+});
+
+check('compliance: AI 비전 OCR, 음성 입력, 템플릿 마켓플레이스 및 큐레이션 데이터가 완벽하게 구현되어 있다', () => {
+  // 1. AI Vision OCR
+  assert.ok(html.includes('compressImageForVision'), '클라이언트 캔버스 압축 함수 존재');
+  assert.ok(html.includes('getVisionDailyQuota'), '비전 일일 쿼터 함수 존재');
+  assert.ok(html.includes('openVisionTableModal'), 'AI 비전 OCR 모달 함수 존재');
+  assert.ok(html.includes('id="proVisionOcrBtn"'), '모달 내 AI 사진인식 버튼 마크업 존재');
+
+  // 2. Voice-to-Table
+  assert.ok(html.includes('openVoiceTableModal'), '음성 인식 모달 함수 존재');
+  assert.ok(html.includes('id="proVoiceInputBtn"'), '모달 내 음성 입력 버튼 마크업 존재');
+  assert.ok(html.includes('voice-wave-ring'), '음성 파동 애니메이션 클래스 존재');
+
+  // 3. Template Marketplace
+  assert.ok(html.includes('CURATED_MARKET_TEMPLATES'), '템플릿 마켓 큐레이션 데이터 존재');
+  assert.ok(html.includes('openTemplateMarketModal'), '템플릿 마켓플레이스 모달 함수 존재');
+  assert.ok(html.includes('id="proTplMarketBtn"'), '기록 모달 내 마켓 버튼 마크업 존재');
+  assert.ok(html.includes('id="recOpenMarketQuickBtn"'), '기록 탭 내 마켓 퀵 버튼 마크업 존재');
+
+  // 4. API vision-table.js
+  const fs = require('fs');
+  assert.ok(fs.existsSync('api/vision-table.js'), 'api/vision-table.js 서버리스 함수 파일 존재');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

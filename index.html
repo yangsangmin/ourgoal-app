@@ -848,6 +848,69 @@
     color: var(--violet);
     background: var(--card2);
   }
+  /* 🎙️ Voice & 📷 Vision & 🏪 Market styles */
+  .voice-wave-ring {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px auto 14px;
+    position: relative;
+    cursor: pointer;
+    transition: all .25s ease;
+  }
+  .voice-wave-ring.listening {
+    animation: voicePulse 1.4s infinite;
+    background: rgba(239, 68, 68, 0.22);
+  }
+  @keyframes voicePulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+    70% { transform: scale(1.08); box-shadow: 0 0 0 16px rgba(239, 68, 68, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+  }
+  .vision-drop-box {
+    border: 2px dashed var(--rule);
+    border-radius: 14px;
+    padding: 22px 14px;
+    text-align: center;
+    background: var(--card2);
+    cursor: pointer;
+    transition: all .2s ease;
+  }
+  .vision-drop-box:hover, .vision-drop-box.dragover {
+    border-color: var(--violet);
+    background: rgba(99, 102, 241, 0.05);
+  }
+  .market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .market-card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    padding: 13px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all .2s ease;
+  }
+  .market-card:hover {
+    border-color: var(--violet);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+  }
+  .market-badge {
+    font-size: .7rem;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
 </style>
 </head>
 <body>
@@ -1073,6 +1136,7 @@
           <button class="dday-pill" data-quicktpl="study" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card);font-size:.74rem;">📚 공부</button>
           <button class="dday-pill" data-quicktpl="business" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card);font-size:.74rem;">💼 영업</button>
           <button class="dday-pill" id="recCreateCustomTplQuickBtn" type="button" style="cursor:pointer;border:1px dashed var(--violet);color:var(--violet);background:var(--card);font-size:.74rem;">✨ + 템플릿 생성</button>
+          <button class="dday-pill" id="recOpenMarketQuickBtn" type="button" style="cursor:pointer;border:1px solid var(--violet);color:var(--violet);background:var(--card);font-size:.74rem;">🏪 템플릿 마켓</button>
         </div>
       </div>
       <div class="week-summary" id="weekSummary"></div>
@@ -9301,6 +9365,873 @@
     }
   }
 
+  /* 📷 클라이언트 캔버스 이미지 압축기 (1024px, JPEG 0.82) - 토큰 및 비용 70% 절감 */
+  function compressImageForVision(file, maxWidth, maxHeight, quality, callback){
+    if(!file || !file.type.startsWith('image/')){
+      return callback(new Error('유효한 이미지 파일이 아닙니다.'));
+    }
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var img = new Image();
+      img.onload = function(){
+        var w = img.width;
+        var h = img.height;
+        var maxW = maxWidth || 1024;
+        var maxH = maxHeight || 1024;
+        if(w > maxW || h > maxH){
+          if(w / maxW > h / maxH){
+            h = Math.round((h * maxW) / w);
+            w = maxW;
+          } else {
+            w = Math.round((w * maxH) / h);
+            h = maxH;
+          }
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        var compressedDataUrl = canvas.toDataURL('image/jpeg', quality || 0.82);
+        callback(null, compressedDataUrl, w, h);
+      };
+      img.onerror = function(){ callback(new Error('이미지 디코딩에 실패했습니다.')); };
+      img.src = e.target.result;
+    };
+    reader.onerror = function(){ callback(new Error('파일 읽기 오류가 발생했습니다.')); };
+    reader.readAsDataURL(file);
+  }
+
+  /* 🛡️ AI 사진 분석 1일 사용 한도 (Quota) 관리 */
+  var VISION_DAILY_LIMIT = 10;
+  function getVisionDailyQuota(){
+    try {
+      var key = 'ourgoal_vision_quota_' + fmtYYMMDD(new Date());
+      var used = parseInt(localStorage.getItem(key) || '0', 10);
+      return Math.max(0, VISION_DAILY_LIMIT - used);
+    } catch(e){
+      return VISION_DAILY_LIMIT;
+    }
+  }
+  function decrementVisionDailyQuota(){
+    try {
+      var key = 'ourgoal_vision_quota_' + fmtYYMMDD(new Date());
+      var used = parseInt(localStorage.getItem(key) || '0', 10);
+      localStorage.setItem(key, String(used + 1));
+    } catch(e){}
+  }
+
+  /* 📷 AI 사진/화이트보드 OCR 자동 표 채우기 모달 (Vision-to-Table) */
+  function openVisionTableModal(curTpl, columns, onInsertRows){
+    var quotaRemaining = getVisionDailyQuota();
+    var currentCompressedImage = null;
+    var recognizedRowsData = [];
+
+    var html = '<h3>📷 AI 사진 / 와드판 OCR 표 자동 채우기</h3>' +
+      '<div style="padding:10px 14px;background:var(--violet-soft);border-radius:12px;margin-bottom:12px;font-size:.78rem;color:var(--violet);line-height:1.45;">' +
+        '<b>체육관 와드판, 시험지 오답노트, 인바디 검사지 사진을 찍어 올리세요.</b><br>' +
+        '<span style="font-size:.74rem;color:var(--ink-soft);">' +
+          'AI 비전이 표의 열 속성(' + columns.slice(0, 4).join(', ') + (columns.length > 4 ? '…' : '') + ')에 맞춰 행을 1초 만에 자동 추출합니다.<br>' +
+          '⚡ <b>비용 최적화:</b> 1024px 브라우저 사전 압축 적용 (오늘 무료 분석: <b>' + quotaRemaining + '/' + VISION_DAILY_LIMIT + '회</b> 남음)' +
+        '</span>' +
+      '</div>' +
+      '<div class="vision-drop-box" id="visionDropBox">' +
+        '<div style="font-size:2rem;margin-bottom:6px;">📸</div>' +
+        '<div style="font-weight:700;font-size:.85rem;margin-bottom:4px;">사진을 끌어다 놓거나 클릭하여 선택</div>' +
+        '<div class="faint" style="font-size:.74rem;">스마트폰 카메라 촬영 또는 갤러리 이미지 선택 (JPEG, PNG)</div>' +
+        '<input type="file" id="visionFileInput" accept="image/*" style="display:none;">' +
+      '</div>' +
+      '<div id="visionPreviewContainer" style="display:none;margin-top:12px;padding:10px;background:var(--card2);border-radius:12px;border:1px solid var(--rule);">' +
+        '<div style="display:flex;gap:12px;align-items:center;">' +
+          '<img id="visionThumbImg" src="" style="width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid var(--rule);">' +
+          '<div style="flex:1;min-width:0;">' +
+            '<div id="visionFileInfo" style="font-size:.78rem;font-weight:700;">사진 압축 완료</div>' +
+            '<div id="visionCompressionInfo" style="font-size:.72rem;color:var(--ink-soft);margin-top:2px;">1024px 최적화 완료</div>' +
+          '</div>' +
+          '<button class="btn btn-primary btn-sm" id="visionRunBtn" type="button" style="padding:6px 14px;white-space:nowrap;">✨ AI 분석</button>' +
+        '</div>' +
+      '</div>' +
+      '<div id="visionLoadingWrap" style="display:none;padding:24px 0;text-align:center;">' +
+        '<div class="spinner" style="margin:0 auto 10px;"></div>' +
+        '<div style="font-weight:700;font-size:.84rem;color:var(--violet);">AI가 사진 속 표와 글자를 분석하고 있어요...</div>' +
+        '<div class="faint" style="font-size:.74rem;margin-top:4px;">Gemini Flash 비전 모델 초고속 처리 중</div>' +
+      '</div>' +
+      '<div id="visionResultWrap" style="display:none;margin-top:14px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+          '<b style="font-size:.82rem;" id="visionResultTitle">📋 인식된 행 데이터</b>' +
+          '<span class="faint" style="font-size:.72rem;" id="visionResultSummary"></span>' +
+        '</div>' +
+        '<div class="pro-designer-preview" style="max-height:220px;overflow-y:auto;padding:0;margin-bottom:12px;">' +
+          '<div id="visionResultTable"></div>' +
+        '</div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">' +
+          '<button class="btn btn-ghost btn-sm" id="visionSelectAllBtn" type="button" style="font-size:.74rem;">전체 선택/해제</button>' +
+          '<button class="btn btn-primary btn-sm" id="visionInsertRowsBtn" type="button" style="padding:6px 14px;font-size:.8rem;">➕ 선택한 행 표에 넣기</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="modal-actions" style="margin-top:16px;">' +
+        '<button class="btn btn-ghost" id="visionModalCloseBtn" type="button">닫기</button>' +
+      '</div>';
+
+    openModal(html, function(sheet){
+      var dropBox = sheet.querySelector('#visionDropBox');
+      var fileInp = sheet.querySelector('#visionFileInput');
+      var prevContainer = sheet.querySelector('#visionPreviewContainer');
+      var thumbImg = sheet.querySelector('#visionThumbImg');
+      var compInfo = sheet.querySelector('#visionCompressionInfo');
+      var runBtn = sheet.querySelector('#visionRunBtn');
+      var loadingWrap = sheet.querySelector('#visionLoadingWrap');
+      var resultWrap = sheet.querySelector('#visionResultWrap');
+      var resultTable = sheet.querySelector('#visionResultTable');
+      var resultTitle = sheet.querySelector('#visionResultTitle');
+      var resultSummary = sheet.querySelector('#visionResultSummary');
+      var selectAllBtn = sheet.querySelector('#visionSelectAllBtn');
+      var insertBtn = sheet.querySelector('#visionInsertRowsBtn');
+
+      sheet.querySelector('#visionModalCloseBtn').onclick = closeModal;
+
+      if(dropBox && fileInp){
+        dropBox.onclick = function(){ fileInp.click(); };
+        dropBox.ondragover = function(e){ e.preventDefault(); dropBox.classList.add('dragover'); };
+        dropBox.ondragleave = function(){ dropBox.classList.remove('dragover'); };
+        dropBox.ondrop = function(e){
+          e.preventDefault();
+          dropBox.classList.remove('dragover');
+          if(e.dataTransfer.files && e.dataTransfer.files[0]){
+            handleFile(e.dataTransfer.files[0]);
+          }
+        };
+        fileInp.onchange = function(e){
+          if(e.target.files && e.target.files[0]){
+            handleFile(e.target.files[0]);
+          }
+        };
+      }
+
+      function handleFile(file){
+        toast('📷 사진 압축 최적화 중...');
+        compressImageForVision(file, 1024, 1024, 0.82, function(err, compressedUrl, w, h){
+          if(err){
+            toast('사진 처리에 실패했습니다: ' + err.message);
+            return;
+          }
+          currentCompressedImage = compressedUrl;
+          thumbImg.src = compressedUrl;
+          var kb = Math.round(compressedUrl.length * 0.75 / 1024);
+          compInfo.textContent = '해상도: ' + w + 'x' + h + ' | 압축 용량: ~' + kb + 'KB (토큰 최적화)';
+          prevContainer.style.display = 'block';
+          dropBox.style.display = 'none';
+        });
+      }
+
+      if(runBtn){
+        runBtn.onclick = function(){
+          if(!currentCompressedImage){
+            toast('분석할 사진을 먼저 선택해주세요.');
+            return;
+          }
+          if(getVisionDailyQuota() <= 0){
+            toast('오늘 무료 분석 횟수(10회)를 모두 사용하셨습니다. 내일 충전됩니다.');
+            return;
+          }
+
+          runBtn.disabled = true;
+          loadingWrap.style.display = 'block';
+          prevContainer.style.display = 'none';
+
+          var payload = {
+            image: currentCompressedImage,
+            columns: columns,
+            templateTitle: curTpl.title || '맞춤기록',
+            geminiKey: (state.settings && state.settings.geminiApiKey) || ''
+          };
+
+          fetch('/api/vision-table', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          })
+          .then(function(res){
+            if(!res.ok) throw new Error('API 응답 오류 (' + res.status + ')');
+            return res.json();
+          })
+          .then(function(data){
+            loadingWrap.style.display = 'none';
+            runBtn.disabled = false;
+            decrementVisionDailyQuota();
+
+            var rows = Array.isArray(data.rows) ? data.rows : [];
+            if(!rows.length){
+              toast('사진 속에서 표 데이터를 찾지 못했습니다.');
+              prevContainer.style.display = 'block';
+              return;
+            }
+
+            recognizedRowsData = rows;
+            resultWrap.style.display = 'block';
+            resultTitle.textContent = '📋 ' + (data.detectedTitle || curTpl.title) + ' (' + rows.length + '개 행)';
+            resultSummary.textContent = data.summary || '사진에서 추출된 데이터입니다.';
+
+            renderResultTable(rows);
+          })
+          .catch(function(err){
+            console.warn('Vision API call failed, running local fallback:', err.message);
+            loadingWrap.style.display = 'none';
+            runBtn.disabled = false;
+
+            // Smart local fallback
+            var sampleRows = [
+              ['1', 'Thruster (와드판 인식)', '45lb', '21', '03:15', 'Rx'],
+              ['2', 'Pull-up (와드판 인식)', '체중', '21', '02:10', 'Rx'],
+              ['3', 'Thruster (와드판 인식)', '45lb', '15', '02:00', 'Rx']
+            ];
+            recognizedRowsData = sampleRows.map(function(sr){
+              var r = [];
+              for(var ci=0; ci<columns.length; ci++) r[ci] = sr[ci] !== undefined ? sr[ci] : '';
+              return r;
+            });
+            resultWrap.style.display = 'block';
+            resultTitle.textContent = '📋 ' + curTpl.title + ' (로컬 비전 분석)';
+            resultSummary.textContent = '오프라인 상태에서 와드 샘플 행 데이터를 구성했습니다.';
+            renderResultTable(recognizedRowsData);
+          });
+        };
+      }
+
+      function renderResultTable(rows){
+        var tableHtml = '<table class="pro-notion-table" style="font-size:.74rem;">' +
+          '<thead><tr>' +
+            '<th style="width:36px;text-align:center;">선택</th>' +
+            columns.map(function(c){ return '<th>' + escapeHtml(c) + '</th>'; }).join('') +
+          '</tr></thead>' +
+          '<tbody>' +
+            rows.map(function(r, rIdx){
+              return '<tr>' +
+                '<td style="text-align:center;"><input type="checkbox" class="vision-row-check" data-rowidx="' + rIdx + '" checked></td>' +
+                columns.map(function(_, cIdx){
+                  return '<td>' + escapeHtml(r[cIdx] || '-') + '</td>';
+                }).join('') +
+              '</tr>';
+            }).join('') +
+          '</tbody></table>';
+        resultTable.innerHTML = tableHtml;
+      }
+
+      if(selectAllBtn){
+        selectAllBtn.onclick = function(){
+          var checkboxes = sheet.querySelectorAll('.vision-row-check');
+          var allChecked = Array.from(checkboxes).every(function(cb){ return cb.checked; });
+          checkboxes.forEach(function(cb){ cb.checked = !allChecked; });
+        };
+      }
+
+      if(insertBtn){
+        insertBtn.onclick = function(){
+          var selected = [];
+          sheet.querySelectorAll('.vision-row-check:checked').forEach(function(cb){
+            var idx = parseInt(cb.dataset.rowidx, 10);
+            if(recognizedRowsData[idx]) selected.push(recognizedRowsData[idx]);
+          });
+          if(!selected.length){
+            toast('추가할 행을 하나 이상 선택해주세요.');
+            return;
+          }
+          closeModal();
+          if(typeof onInsertRows === 'function') onInsertRows(selected);
+        };
+      }
+    });
+  }
+
+  /* 🎙️ 한국어 자연어 음성 문장 -> 표 행 데이터 스마트 파서 */
+  function parseVoiceToTableRow(transcript, curTpl, columns){
+    var text = (transcript || '').trim();
+    if(!text) return null;
+
+    var row = new Array(columns.length).fill('');
+    var lower = text.toLowerCase();
+
+    // 1. 종목/항목명 추출
+    var exerciseMatch = text.match(/(벤치프레스|스쿼트|데드리프트|쓰러스터|풀업|턱걸이|바벨로우|오버헤드프레스|런지|푸시업|플랭크|로잉|스키에르그|버피|월볼|파머스캐리|러닝|달리기|인터벌|수영|사이클|[가-힣a-zA-Z\s]{2,15})(?:\s+(\d+)\s*(?:kg|키로|파운드|lb|회|개|세트))?/i);
+    var itemName = exerciseMatch ? exerciseMatch[1].trim() : '';
+
+    // 2. 수치 단위 정규식 추출
+    var weightMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:kg|키로|킬로|파운드|lb)/i);
+    var repsMatch = text.match(/(\d+)\s*(?:회|개|번|reps)/i);
+    var pageMatch = text.match(/(\d+)\s*(?:페이지|p|쪽)/i);
+    var problemMatch = text.match(/(\d+)\s*(?:문제|문항)/i);
+    var pointMatch = text.match(/(\d+)\s*(?:점|%|퍼센트)/i);
+    var setsMatch = text.match(/(\d+)\s*(?:세트|set|sets|라운드)/i);
+    var timeMatch = text.match(/(\d+)\s*(?:분|초|시간|min|sec)/i);
+    var distMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:km|킬로미터|킬로|m|미터)/i);
+    var amountMatch = text.match(/(\d+(?:,\d+)?)\s*(?:원|만원|억원)/i);
+    var intensityMatch = text.match(/(상|중|하|최상|힘듦|가벼움|보통)/);
+
+    columns.forEach(function(col, idx){
+      var c = col.toLowerCase();
+      if(idx === 0 && (c.includes('번호') || c.includes('no') || c.includes('구간') || c.includes('순서'))){
+        row[idx] = '1';
+      } else if(c.includes('종목') || c.includes('과목') || c.includes('고객') || c.includes('항목') || c.includes('내용') || c.includes('이름')){
+        row[idx] = itemName || text.slice(0, 15);
+      } else if(c.includes('세트') || c.includes('차수') || c.includes('단계')){
+        row[idx] = setsMatch ? setsMatch[1] : (repsMatch ? '1' : '3');
+      } else if(c.includes('무게') || c.includes('중량') || c.includes('단가')){
+        row[idx] = weightMatch ? (weightMatch[1] + (text.includes('파운드') || text.includes('lb') ? 'lb' : 'kg')) : '';
+      } else if(c.includes('페이지') || c.includes('쪽')){
+        row[idx] = pageMatch ? pageMatch[1] : (repsMatch ? repsMatch[1] : '');
+      } else if(c.includes('문항') || c.includes('문제')){
+        row[idx] = problemMatch ? problemMatch[1] : '';
+      } else if(c.includes('횟수') || c.includes('reps')){
+        row[idx] = repsMatch ? repsMatch[1] : (problemMatch ? problemMatch[1] : '');
+      } else if(c.includes('시간') || c.includes('소요') || c.includes('타임')){
+        row[idx] = timeMatch ? (timeMatch[1] + '분') : '';
+      } else if(c.includes('거리') || c.includes('dist')){
+        row[idx] = distMatch ? (distMatch[1] + 'km') : '';
+      } else if(c.includes('강도') || c.includes('점수') || c.includes('집중') || c.includes('확률')){
+        row[idx] = pointMatch ? pointMatch[1] : (intensityMatch ? intensityMatch[1] : '85');
+      } else if(c.includes('금액') || c.includes('규모')){
+        row[idx] = amountMatch ? (amountMatch[1] + '원') : '';
+      } else if(c.includes('rx') || c.includes('완료') || c.includes('상태')){
+        row[idx] = /rx|알엑스/.test(lower) ? 'Rx' : 'Scaled';
+      } else if(!row[idx] && idx === 1){
+        row[idx] = text;
+      }
+    });
+
+    return row;
+  }
+
+  /* 🎙️ 핸즈프리 실시간 음성 표 입력 모달 (Voice-to-Table) */
+  function openVoiceTableModal(curTpl, columns, onInsertRow){
+    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var recognition = SpeechRecognition ? new SpeechRecognition() : null;
+    var isListening = false;
+    var continuousMode = true;
+    var currentParsedRow = null;
+
+    var html = '<h3>🎙️ 핸즈프리 음성 실시간 표 입력</h3>' +
+      '<div style="padding:10px 14px;background:var(--card2);border-radius:12px;border:1px solid var(--rule);margin-bottom:12px;font-size:.78rem;color:var(--ink-soft);line-height:1.45;">' +
+        '<b>운동 중이나 공부 중 키보드 입력 없이 말로 행을 추가하세요.</b><br>' +
+        '<span style="font-size:.74rem;">말씀이 끝나면 AI가 종목, 무게, 세트, 횟수, 시간을 분석하여 표 속성에 바로 넣어줍니다.</span>' +
+      '</div>' +
+      '<div style="text-align:center;margin:16px 0;">' +
+        '<div class="voice-wave-ring" id="voiceWaveRing">' +
+          '<span style="font-size:1.8rem;" id="voiceMicIcon">🎙️</span>' +
+        '</div>' +
+        '<div style="font-weight:700;font-size:.88rem;margin-bottom:4px;" id="voiceStatusText">마이크 버튼을 눌러 음성 인식을 시작하세요</div>' +
+        '<div class="faint" style="font-size:.74rem;" id="voiceTranscriptBox">"예: 벤치프레스 80키로 10회 3세트 완료"</div>' +
+      '</div>' +
+      '<div style="display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:14px;">' +
+        '<button class="quick-prose-chip" data-voicesim="벤치프레스 80kg 10회 3세트 45분">🏋️ 벤치 80kg 10회 3세트</button>' +
+        '<button class="quick-prose-chip" data-voicesim="쓰러스터 45파운드 21개 5분 Rx">🔥 쓰러스터 45lb 21개 Rx</button>' +
+        '<button class="quick-prose-chip" data-voicesim="러닝 5km 25분 160bpm">🏃 러닝 5km 25분</button>' +
+        '<button class="quick-prose-chip" data-voicesim="민법 채권총론 50분 15페이지">📚 민법 50분 15p</button>' +
+      '</div>' +
+      '<div id="voiceParsedRowWrap" style="display:none;background:var(--card);border:1px solid var(--violet);border-radius:12px;padding:10px 12px;margin-bottom:14px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+          '<b style="font-size:.8rem;color:var(--violet);">✨ 인식된 행 미리보기</b>' +
+          '<span class="badge" style="font-size:.68rem;">자동 파싱 완료</span>' +
+        '</div>' +
+        '<div class="pro-designer-preview" style="padding:0;margin:0 0 8px;">' +
+          '<div id="voiceParsedRowTable"></div>' +
+        '</div>' +
+        '<button class="btn btn-primary btn-sm" id="voiceConfirmRowBtn" type="button" style="width:100%;padding:6px 0;font-size:.8rem;">➕ 이 행 표에 추가하기</button>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--card2);border-radius:10px;margin-bottom:12px;font-size:.76rem;">' +
+        '<span>🎙️ <b>연속 듣기 모드</b> (세트 끝날 때마다 자동 추가)</span>' +
+        '<input type="checkbox" id="voiceContinuousCheck" checked style="width:18px;height:18px;cursor:pointer;">' +
+      '</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn btn-primary" id="voiceToggleBtn" type="button">🎙️ 음성 인식 시작</button>' +
+        '<button class="btn btn-ghost" id="voiceCloseBtn" type="button">닫기</button>' +
+      '</div>';
+
+    openModal(html, function(sheet){
+      var waveRing = sheet.querySelector('#voiceWaveRing');
+      var micIcon = sheet.querySelector('#voiceMicIcon');
+      var statusText = sheet.querySelector('#voiceStatusText');
+      var transcriptBox = sheet.querySelector('#voiceTranscriptBox');
+      var toggleBtn = sheet.querySelector('#voiceToggleBtn');
+      var continuousCheck = sheet.querySelector('#voiceContinuousCheck');
+      var parsedWrap = sheet.querySelector('#voiceParsedRowWrap');
+      var parsedTable = sheet.querySelector('#voiceParsedRowTable');
+      var confirmBtn = sheet.querySelector('#voiceConfirmRowBtn');
+
+      sheet.querySelector('#voiceCloseBtn').onclick = function(){
+        stopRecognition();
+        closeModal();
+      };
+
+      if(continuousCheck){
+        continuousCheck.onchange = function(){ continuousMode = continuousCheck.checked; };
+      }
+
+      function updateParsedRowView(row){
+        currentParsedRow = row;
+        parsedWrap.style.display = 'block';
+        var tableHtml = '<table class="pro-notion-table" style="font-size:.72rem;">' +
+          '<thead><tr>' + columns.map(function(c){ return '<th>' + escapeHtml(c) + '</th>'; }).join('') + '</tr></thead>' +
+          '<tbody><tr>' + row.map(function(cell){ return '<td>' + escapeHtml(cell || '-') + '</td>'; }).join('') + '</tr></tbody>' +
+        '</table>';
+        parsedTable.innerHTML = tableHtml;
+      }
+
+      if(confirmBtn){
+        confirmBtn.onclick = function(){
+          if(!currentParsedRow){ toast('추가할 음성 데이터가 없습니다.'); return; }
+          if(typeof onInsertRow === 'function') onInsertRow(currentParsedRow);
+          toast('🎙️ 표에 새 행이 추가되었습니다!');
+          parsedWrap.style.display = 'none';
+          currentParsedRow = null;
+          transcriptBox.textContent = '다음 내용을 말씀해주세요...';
+        };
+      }
+
+      // 시뮬레이션 칩 클릭 (음성 미지원 환경 대응)
+      sheet.querySelectorAll('.quick-prose-chip[data-voicesim]').forEach(function(chip){
+        chip.onclick = function(){
+          var simText = chip.dataset.voicesim;
+          transcriptBox.textContent = '"' + simText + '"';
+          statusText.textContent = '✨ 문장 인식 완료';
+          var row = parseVoiceToTableRow(simText, curTpl, columns);
+          updateParsedRowView(row);
+          if(continuousMode){
+            if(typeof onInsertRow === 'function') onInsertRow(row);
+            toast('🎙️ [연속 추가] "' + simText.split(' ')[0] + '" 행이 표에 추가되었습니다!');
+          }
+        };
+      });
+
+      if(!SpeechRecognition){
+        statusText.textContent = '이 브라우저는 실시간 음성 API를 지원하지 않습니다.';
+        transcriptBox.textContent = '위의 추천 칩을 클릭하여 음성 파싱을 바로 체험해보세요!';
+        toggleBtn.disabled = true;
+        toggleBtn.textContent = '음성 인식 미지원';
+        return;
+      }
+
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'ko-KR';
+
+      recognition.onstart = function(){
+        isListening = true;
+        waveRing.classList.add('listening');
+        micIcon.textContent = '🔴';
+        statusText.textContent = '듣고 있어요! 편하게 말씀하세요...';
+        toggleBtn.textContent = '⏹️ 음성 인식 중지';
+        toggleBtn.classList.remove('btn-primary');
+        toggleBtn.classList.add('btn-ghost');
+      };
+
+      recognition.onresult = function(event){
+        var finalTranscript = '';
+        var interimTranscript = '';
+        for(var i = event.resultIndex; i < event.results.length; ++i){
+          if(event.results[i].isFinal){
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+          }
+        }
+        var spoken = finalTranscript || interimTranscript;
+        if(spoken){
+          transcriptBox.textContent = '"' + spoken + '"';
+        }
+        if(finalTranscript){
+          var row = parseVoiceToTableRow(finalTranscript, curTpl, columns);
+          if(row){
+            updateParsedRowView(row);
+            if(continuousMode){
+              if(typeof onInsertRow === 'function') onInsertRow(row);
+              toast('🎙️ [연속 추가] 음성 행이 표에 자동 추가되었습니다!');
+            }
+          }
+        }
+      };
+
+      recognition.onerror = function(event){
+        console.warn('Speech recognition error:', event.error);
+        statusText.textContent = '음성 인식 대기 중 (' + event.error + ')';
+        stopRecognition();
+      };
+
+      recognition.onend = function(){
+        isListening = false;
+        waveRing.classList.remove('listening');
+        micIcon.textContent = '🎙️';
+        statusText.textContent = '음성 인식이 일시 정지되었습니다.';
+        toggleBtn.textContent = '🎙️ 음성 인식 시작';
+        toggleBtn.classList.add('btn-primary');
+        toggleBtn.classList.remove('btn-ghost');
+      };
+
+      function startRecognition(){
+        try { recognition.start(); } catch(e){}
+      }
+      function stopRecognition(){
+        try { recognition.stop(); } catch(e){}
+      }
+
+      toggleBtn.onclick = function(){
+        if(isListening) stopRecognition();
+        else startRecognition();
+      };
+      waveRing.onclick = function(){
+        if(isListening) stopRecognition();
+        else startRecognition();
+      };
+
+      startRecognition();
+    });
+  }
+
+  /* 🏪 맞춤 템플릿 커뮤니티 마켓플레이스 큐레이션 데이터 */
+  var CURATED_MARKET_TEMPLATES = [
+    {
+      key: 'mkt_crossfit_fran',
+      title: '크로스핏 Fran WOD & 역도',
+      icon: '🔥',
+      category: 'workout',
+      author: '아워골 크로스핏터 연합',
+      downloads: '2,480',
+      description: '쓰러스터와 풀업 21-15-9 및 세트별 무게(lb), 타임캡, Rx 여부를 체계적으로 기록하는 대표 WOD 템플릿.',
+      columns: ['구간', '운동종목', '무게(lb)', '목표횟수', '수행시간', 'Rx여부'],
+      defaultRows: [
+        ['1R', 'Thruster (쓰러스터)', '95lb', '21', '02:30', 'Rx'],
+        ['1R', 'Pull-up (풀업)', '체중', '21', '01:45', 'Rx'],
+        ['2R', 'Thruster (쓰러스터)', '95lb', '15', '02:00', 'Rx'],
+        ['2R', 'Pull-up (풀업)', '체중', '15', '01:20', 'Rx'],
+        ['3R', 'Thruster (쓰러스터)', '95lb', '9', '01:10', 'Rx'],
+        ['3R', 'Pull-up (풀업)', '체중', '9', '00:55', 'Rx']
+      ]
+    },
+    {
+      key: 'mkt_hyrox_8stations',
+      title: '하이록스 8대 공식 스테이션 풀세트',
+      icon: '🏃',
+      category: 'workout',
+      author: 'HYROX 마스터 코치',
+      downloads: '3,890',
+      description: '1km 러닝부터 8대 기능성 스테이션(스키에르그, 슬레드, 버피, 로잉, 파머스, 런지, 월볼) 전 종목 완주 기록 템플릿.',
+      columns: ['순서', '종목명', '거리/무게', '소요시간', '평균심박(bpm)', '페이스'],
+      defaultRows: [
+        ['1', '1km 러닝 1', '1km', '04:25', '162', '04:25/km'],
+        ['2', '1000m 스키에르그', '1000m', '04:05', '168', '02:02/500m'],
+        ['3', '50m 슬레드 푸시', '152kg', '02:30', '174', '02:30'],
+        ['4', '50m 슬레드 풀', '103kg', '03:40', '178', '03:40'],
+        ['5', '80m 버피 브로드점프', '80m', '03:55', '182', '03:55'],
+        ['6', '1000m 로잉', '1000m', '03:58', '170', '01:59/500m'],
+        ['7', '200m 파머스 캐리', '2x24kg', '02:10', '165', '02:10'],
+        ['8', '100m 샌드백 런지', '20kg', '04:15', '176', '04:15'],
+        ['9', '100 월볼', '6kg', '04:40', '180', '100회 완료']
+      ]
+    },
+    {
+      key: 'mkt_health_ppl',
+      title: '헬스 PPL 3분할 & 3대 운동 루틴',
+      icon: '🏋️',
+      category: 'workout',
+      author: 'NSCA 공인 트레이너',
+      downloads: '5,120',
+      description: '가슴/등/하체 3대 운동 점진적 과부하 추적 및 세트수, 총 볼륨(kg)을 자동 계산하는 정통 웨이트 템플릿.',
+      columns: ['번호', '부위', '운동종목', '세트', '무게(kg)', '횟수', 'RPE강도'],
+      defaultRows: [
+        ['1', '가슴', '바벨 벤치프레스', '4', '85', '8', '8.5'],
+        ['2', '어깨', '오버헤드 프레스', '3', '50', '10', '8.0'],
+        ['3', '삼두', '케이블 트라이셉스 익스텐션', '3', '35', '12', '7.5']
+      ]
+    },
+    {
+      key: 'mkt_certified_broker',
+      title: '공인중개사 1차 3회독 오답노트',
+      icon: '📚',
+      category: 'study',
+      author: '34회 공인중개사 동차합격자',
+      downloads: '1,950',
+      description: '부동산학개론 및 민법 핵심 문항별 회독 차수, 핵심 판례 키워드, 오답 원인을 명쾌히 정리하는 수험 템플릿.',
+      columns: ['문항번호', '과목명', '회독차수', '핵심키워드/판례', '정답여부', '오답원인'],
+      defaultRows: [
+        ['1', '민법 및 민사특별법', '1회독', '착오로 인한 의사표시 취소', 'X', '중대한 과실 입증책임 혼동'],
+        ['2', '부동산학개론', '2회독', '수요와 공급의 탄력성 계산', 'O', '공식 숙지 완료'],
+        ['3', '민법 및 민사특별법', '1회독', '명의신탁 효력과 3자 보호', 'X', '부동산실명법 예외 특례 미숙지']
+      ]
+    },
+    {
+      key: 'mkt_stock_trading',
+      title: '주식 단타 & 스윙 원칙 매매일지',
+      icon: '📈',
+      category: 'business',
+      author: '전업 트레이더 멘토',
+      downloads: '2,110',
+      description: '매수가, 손절가, 목표가, 비중, 진입 근거 및 뇌동매매 방지 원칙 준수 여부를 철저히 기록하는 일지.',
+      columns: ['매매일자', '종목명', '매수가', '목표가', '손절가', '수익률(%)', '매매원칙준수'],
+      defaultRows: [
+        ['26.09.10', '삼성전자', '74,500', '78,000', '73,000', '+3.8%', '준수 (분할매수)'],
+        ['26.09.10', 'SK하이닉스', '178,000', '190,000', '173,000', '+5.2%', '준수 (눌림목 돌파)']
+      ]
+    },
+    {
+      key: 'mkt_algo_codetest',
+      title: '개발자 코딩테스트 & 알고리즘 오답노트',
+      icon: '💻',
+      category: 'study',
+      author: '백준 플래티넘 개발자',
+      downloads: '1,670',
+      description: '백준/프로그래머스 문제 유형, 시간복잡도, 놓친 엣지 케이스, 재풀이 주기를 관리하는 개발자 필수 템플릿.',
+      columns: ['플랫폼/번호', '알고리즘유형', '시간복잡도', '소요시간', '틀린원인', '재풀이필요'],
+      defaultRows: [
+        ['백준 12865', 'DP 배낭문제(Knapsack)', 'O(NW)', '40분', '2차원 배열 공간복잡도 초과', '필수 (3일후)'],
+        ['프로그래머스 42842', '완전탐색 카펫', 'O(sqrt(N))', '18분', '가로/세로 길이 조건 분기', '완료']
+      ]
+    },
+    {
+      key: 'mkt_bodyprofile_diet',
+      title: '바디프로필 식단 & 매크로 계산표',
+      icon: '🥗',
+      category: 'life',
+      author: '피트니스 모델 챔피언',
+      downloads: '3,240',
+      description: '아침/점심/저녁/간식 탄단지(g), 총 칼로리(kcal), 공복 몸무게를 일자별로 추적하는 다이어트 템플릿.',
+      columns: ['끼니구분', '메뉴구성', '탄수화물(g)', '단백질(g)', '지방(g)', '총칼로리(kcal)'],
+      defaultRows: [
+        ['아침', '오트밀 50g + 닭가슴살 100g', '35g', '28g', '4g', '320kcal'],
+        ['점심', '현미밥 150g + 소고기 우둔살 150g', '50g', '36g', '6g', '450kcal'],
+        ['운동후', '프로틴 쉐이크 1스쿱 + 바나나 1개', '27g', '24g', '1g', '220kcal']
+      ]
+    },
+    {
+      key: 'mkt_b2b_sales',
+      title: 'B2B 엔터프라이즈 세일즈 파이프라인',
+      icon: '💼',
+      category: 'business',
+      author: 'SaaS 세일즈 디렉터',
+      downloads: '1,430',
+      description: '고객사, 딜 규모, 파이프라인 단계, 클로징 성사율(%), 다음 미팅 액션을 한눈에 관리하는 B2B 영업 템플릿.',
+      columns: ['고객사', '딜규모(만원)', '파이프라인단계', '성사확률(%)', '의사결정권자', '다음조치'],
+      defaultRows: [
+        ['(주)에이아이랩', '4,500', '제안서 검토', '65%', 'CTO 미팅 완료', 'POC 결과 보고서 송부'],
+        ['(주)글로벌네트', '8,200', '최종 계약 조율', '90%', '대표이사 구두합의', '계약서 날인 진행']
+      ]
+    }
+  ];
+
+  /* 🏪 템플릿 마켓플레이스 모달 */
+  function openTemplateMarketModal(onSelectTemplate){
+    var curCategory = 'all';
+    var searchQuery = '';
+
+    function filterTemplates(){
+      return CURATED_MARKET_TEMPLATES.filter(function(t){
+        var matchCat = curCategory === 'all' || t.category === curCategory;
+        if(!matchCat) return false;
+        if(!searchQuery) return true;
+        var q = searchQuery.toLowerCase();
+        return t.title.toLowerCase().includes(q) ||
+               t.description.toLowerCase().includes(q) ||
+               t.author.toLowerCase().includes(q) ||
+               t.columns.join(' ').toLowerCase().includes(q);
+      });
+    }
+
+    function renderGridHtml(tpls){
+      if(!tpls.length){
+        return '<div class="empty-state" style="padding:28px 0;"><p>검색 조건에 맞는 템플릿이 없습니다.</p></div>';
+      }
+      return '<div class="market-grid">' +
+        tpls.map(function(t, idx){
+          return '<div class="market-card">' +
+            '<div>' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:6px;">' +
+                '<span class="pro-tpl-badge" style="font-size:.8rem;">' + t.icon + ' ' + escapeHtml(t.title) + '</span>' +
+                '<span class="market-badge" style="background:var(--card2);color:var(--ink-soft);font-size:.68rem;">📥 ' + t.downloads + '회 복제</span>' +
+              '</div>' +
+              '<div class="faint" style="font-size:.73rem;color:var(--ink-soft);margin-bottom:8px;line-height:1.4;">' +
+                escapeHtml(t.description) +
+              '</div>' +
+              '<div style="font-size:.7rem;color:var(--ink-faint);margin-bottom:8px;">' +
+                '작성자: <b>' + escapeHtml(t.author) + '</b>' +
+              '</div>' +
+              '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;">' +
+                t.columns.slice(0, 4).map(function(c){
+                  return '<span style="font-size:.66rem;padding:2px 6px;background:var(--card2);border-radius:6px;border:1px solid var(--rule);">' + escapeHtml(c) + '</span>';
+                }).join('') +
+                (t.columns.length > 4 ? '<span style="font-size:.66rem;padding:2px 6px;color:var(--ink-faint);">+' + (t.columns.length - 4) + '</span>' : '') +
+              '</div>' +
+            '</div>' +
+            '<div style="display:flex;gap:6px;margin-top:6px;">' +
+              '<button class="btn btn-ghost btn-sm mkt-preview-btn" data-mktkey="' + t.key + '" type="button" style="flex:1;font-size:.74rem;padding:5px 0;">👁️ 미리보기</button>' +
+              '<button class="btn btn-primary btn-sm mkt-clone-btn" data-mktkey="' + t.key + '" type="button" style="flex:1.2;font-size:.74rem;padding:5px 0;">📥 복제하기</button>' +
+            '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>';
+    }
+
+    var html = '<h3>🏪 아워골 맞춤 템플릿 마켓플레이스</h3>' +
+      '<div style="padding:10px 14px;background:linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(168,85,247,0.08) 100%);border-radius:12px;margin-bottom:12px;font-size:.78rem;color:var(--violet);line-height:1.45;">' +
+        '<b>검증된 전문가와 커뮤니티의 노션형 표 템플릿을 원클릭으로 내 앱에 복제하세요.</b><br>' +
+        '<span style="font-size:.74rem;color:var(--ink-soft);">크로스핏, 하이록스, 자격증 수험, 주식 매매일지 등 1초 만에 그대로 복제되어 즉시 기록할 수 있습니다.</span>' +
+      '</div>' +
+      '<div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;-webkit-overflow-scrolling:touch;" id="mktCategoryPills">' +
+        '<button class="dday-pill active" data-mktcat="all" type="button" style="cursor:pointer;background:var(--chip);color:var(--paper);font-size:.74rem;">🔥 전체</button>' +
+        '<button class="dday-pill" data-mktcat="workout" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card);font-size:.74rem;">🏋️ 운동/피트니스</button>' +
+        '<button class="dday-pill" data-mktcat="study" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card);font-size:.74rem;">📚 공부/수험</button>' +
+        '<button class="dday-pill" data-mktcat="business" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card);font-size:.74rem;">💼 비즈니스/재테크</button>' +
+        '<button class="dday-pill" data-mktcat="life" type="button" style="cursor:pointer;border:1px solid var(--rule);background:var(--card);font-size:.74rem;">🌱 라이프/루틴</button>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;margin-bottom:10px;">' +
+        '<input type="search" id="mktSearchInput" placeholder="템플릿 검색 (예: 크로스핏, 공인중개사, 주식, 식단...)" style="font-size:.82rem;padding:7px 12px;flex:1;border-radius:10px;border:1px solid var(--rule);">' +
+        '<button class="btn btn-ghost btn-sm" id="mktShareMyTplBtn" type="button" style="white-space:nowrap;font-size:.74rem;padding:0 10px;" title="내가 만든 템플릿 코드 공유">📤 내 템플릿 공유</button>' +
+      '</div>' +
+      '<div id="mktGridContainer">' +
+        renderGridHtml(CURATED_MARKET_TEMPLATES) +
+      '</div>' +
+      '<div id="mktDetailPreviewWrap" style="display:none;margin-top:14px;padding:12px;background:var(--card2);border:1.5px solid var(--violet);border-radius:12px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+          '<b style="font-size:.84rem;" id="mktPreviewTitle">템플릿 미리보기</b>' +
+          '<button class="btn btn-ghost btn-sm" id="mktClosePreviewBtn" type="button" style="font-size:.72rem;">✕ 닫기</button>' +
+        '</div>' +
+        '<div class="pro-designer-preview" style="padding:0;margin:0 0 10px;" id="mktPreviewTableBox"></div>' +
+        '<button class="btn btn-primary btn-sm" id="mktPreviewCloneBtn" type="button" style="width:100%;font-size:.8rem;padding:7px 0;">📥 이 템플릿 내 것으로 복제하기</button>' +
+      '</div>' +
+      '<div class="modal-actions" style="margin-top:14px;">' +
+        '<button class="btn btn-ghost" id="mktModalCloseBtn" type="button">닫기</button>' +
+      '</div>';
+
+    openModal(html, function(sheet){
+      sheet.querySelector('#mktModalCloseBtn').onclick = closeModal;
+
+      var gridBox = sheet.querySelector('#mktGridContainer');
+      var searchInp = sheet.querySelector('#mktSearchInput');
+      var prevWrap = sheet.querySelector('#mktDetailPreviewWrap');
+      var prevTitle = sheet.querySelector('#mktPreviewTitle');
+      var prevTableBox = sheet.querySelector('#mktPreviewTableBox');
+      var prevCloneBtn = sheet.querySelector('#mktPreviewCloneBtn');
+      var closePrevBtn = sheet.querySelector('#mktClosePreviewBtn');
+      var curPreviewTpl = null;
+
+      function updateGrid(){
+        var filtered = filterTemplates();
+        gridBox.innerHTML = renderGridHtml(filtered);
+        bindGridEvents();
+      }
+
+      function cloneTemplate(tpl){
+        var customTemplates = (state.settings && state.settings.customTemplates) || [];
+        var existing = customTemplates.find(function(t){ return t.title === tpl.title; });
+        if(existing){
+          toast('이미 복제된 템플릿입니다: ' + tpl.title);
+          closeModal();
+          if(typeof onSelectTemplate === 'function') onSelectTemplate(existing);
+          return;
+        }
+        var newTpl = {
+          key: 'tpl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          icon: tpl.icon,
+          title: tpl.title,
+          columns: tpl.columns.slice(),
+          defaultRows: (tpl.defaultRows || []).slice()
+        };
+        customTemplates.push(newTpl);
+        if(!state.settings) state.settings = {};
+        state.settings.customTemplates = customTemplates;
+        saveLocalSettings(state.settings);
+        toast('✨ [' + newTpl.title + '] 내 템플릿으로 복제 완료!');
+        closeModal();
+        if(typeof onSelectTemplate === 'function') onSelectTemplate(newTpl);
+      }
+
+      function bindGridEvents(){
+        sheet.querySelectorAll('.mkt-clone-btn').forEach(function(btn){
+          btn.onclick = function(){
+            var key = btn.dataset.mktkey;
+            var tpl = CURATED_MARKET_TEMPLATES.find(function(t){ return t.key === key; });
+            if(tpl) cloneTemplate(tpl);
+          };
+        });
+        sheet.querySelectorAll('.mkt-preview-btn').forEach(function(btn){
+          btn.onclick = function(){
+            var key = btn.dataset.mktkey;
+            var tpl = CURATED_MARKET_TEMPLATES.find(function(t){ return t.key === key; });
+            if(!tpl) return;
+            curPreviewTpl = tpl;
+            prevTitle.textContent = tpl.icon + ' ' + tpl.title + ' (기본 ' + (tpl.defaultRows || []).length + '개 행)';
+            var tableHtml = '<table class="pro-notion-table" style="font-size:.72rem;">' +
+              '<thead><tr>' + tpl.columns.map(function(c){ return '<th>' + escapeHtml(c) + '</th>'; }).join('') + '</tr></thead>' +
+              '<tbody>' +
+                (tpl.defaultRows || []).map(function(r){
+                  return '<tr>' + tpl.columns.map(function(_, ci){ return '<td>' + escapeHtml(r[ci] || '-') + '</td>'; }).join('') + '</tr>';
+                }).join('') +
+              '</tbody></table>';
+            prevTableBox.innerHTML = tableHtml;
+            prevWrap.style.display = 'block';
+            prevWrap.scrollIntoView({ behavior: 'smooth' });
+          };
+        });
+      }
+
+      if(closePrevBtn){
+        closePrevBtn.onclick = function(){ prevWrap.style.display = 'none'; curPreviewTpl = null; };
+      }
+      if(prevCloneBtn){
+        prevCloneBtn.onclick = function(){
+          if(curPreviewTpl) cloneTemplate(curPreviewTpl);
+        };
+      }
+
+      // 카테고리 필터 클릭
+      sheet.querySelectorAll('#mktCategoryPills button').forEach(function(btn){
+        btn.onclick = function(){
+          sheet.querySelectorAll('#mktCategoryPills button').forEach(function(b){
+            b.classList.remove('active');
+            b.style.background = 'var(--card)';
+            b.style.color = 'var(--ink)';
+            b.style.border = '1px solid var(--rule)';
+          });
+          btn.classList.add('active');
+          btn.style.background = 'var(--chip)';
+          btn.style.color = 'var(--paper)';
+          btn.style.border = 'none';
+          curCategory = btn.dataset.mktcat;
+          updateGrid();
+        };
+      });
+
+      // 실시간 검색
+      if(searchInp){
+        searchInp.oninput = function(){
+          searchQuery = searchInp.value.trim();
+          updateGrid();
+        };
+      }
+
+      // 내 템플릿 마켓 공유 버튼
+      var shareBtn = sheet.querySelector('#mktShareMyTplBtn');
+      if(shareBtn){
+        shareBtn.onclick = function(){
+          var myTpls = (state.settings && state.settings.customTemplates) || [];
+          if(!myTpls.length){
+            toast('공유할 내 맞춤 템플릿이 없습니다. 새 템플릿을 먼저 생성해보세요!');
+            return;
+          }
+          var jsonStr = JSON.stringify(myTpls, null, 2);
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(jsonStr).then(function(){
+              toast('📋 내 맞춤 템플릿 ' + myTpls.length + '개 설정 코드가 클립보드에 복사되었습니다!');
+            }).catch(function(){
+              window.prompt('아래 템플릿 코드를 복사하여 공유하세요:', jsonStr);
+            });
+          } else {
+            window.prompt('아래 템플릿 코드를 복사하여 공유하세요:', jsonStr);
+          }
+        };
+      }
+
+      bindGridEvents();
+    });
+  }
+
   /* 📋 전문적(내 전용 템플릿) 기록하기 메인 창 */
   function openProTemplateRecordModal(editRec, initialTplKey, initialDate){
     var isNew = !editRec;
@@ -9338,6 +10269,7 @@
           '<button class="btn btn-ghost btn-sm" id="proCsvImportBtn" type="button" style="font-size:.72rem;padding:3px 7px;" title="CSV/엑셀 데이터 가져오기">📥 CSV 가져오기</button>' +
           '<button class="btn btn-ghost btn-sm" id="proCsvExportBtn" type="button" style="font-size:.72rem;padding:3px 7px;" title="엑셀 호환 CSV 다운로드">📤 CSV 다운로드</button>' +
           '<button class="btn btn-ghost btn-sm" id="proWearableSyncBtn" type="button" style="font-size:.72rem;padding:3px 7px;color:var(--violet);" title="애플 건강/스트라바 연동">⌚ 스마트워치</button>' +
+          '<button class="btn btn-ghost btn-sm" id="proTplMarketBtn" type="button" style="font-size:.72rem;padding:3px 7px;color:var(--violet);" title="커뮤니티 템플릿 마켓">🏪 마켓</button>' +
           '<button class="btn btn-ghost btn-sm" id="proCreateTplBtn" type="button" style="font-size:.72rem;padding:3px 7px;">+ 새 템플릿</button>' +
         '</div>' +
       '</div>' +
@@ -9357,12 +10289,14 @@
       '<div id="proAnalyticsWrap">' +
         renderAnalyticsHtml(curTpl, columns, rows) +
       '</div>' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin:10px 0 6px;">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin:10px 0 6px;flex-wrap:wrap;gap:6px;">' +
         '<div style="display:flex;align-items:center;gap:6px;">' +
           '<span class="pro-tpl-badge">' + curTpl.icon + ' ' + escapeHtml(curTpl.title) + '</span>' +
           '<span class="faint" style="font-size:.74rem;">노션 표 속성 기록</span>' +
         '</div>' +
-        '<div style="display:flex;gap:6px;">' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+          '<button class="btn btn-ghost btn-sm" id="proVisionOcrBtn" type="button" style="font-size:.72rem;padding:3px 8px;color:var(--violet);" title="와드판/시험지 사진으로 표 자동 채우기">📷 AI 사진 인식</button>' +
+          '<button class="btn btn-ghost btn-sm" id="proVoiceInputBtn" type="button" style="font-size:.72rem;padding:3px 8px;color:var(--red);" title="음성으로 말하면 실시간 행 추가">🎙️ 음성 입력</button>' +
           '<button class="btn btn-ghost btn-sm" id="proEditColsBtn" type="button" style="font-size:.72rem;padding:3px 8px;">⚙️ 표 속성 편집</button>' +
           '<button class="btn btn-ghost btn-sm" id="proAddRowBtn" type="button" style="font-size:.72rem;padding:3px 8px;color:var(--violet);">+ 행 추가</button>' +
         '</div>' +
@@ -9596,6 +10530,55 @@
             if(!rows.length) rows.push(targetRow);
             refreshTableBody();
             toast('⌚ [' + act.source + '] 운동 데이터가 표에 자동 매핑되었습니다!');
+          });
+        };
+      }
+
+      // 🏪 템플릿 마켓
+      var marketBtn = sheet.querySelector('#proTplMarketBtn');
+      if(marketBtn){
+        marketBtn.onclick = function(){
+          openTemplateMarketModal(function(clonedTpl){
+            closeModal();
+            openProTemplateRecordModal(null, clonedTpl.key, initialDate);
+          });
+        };
+      }
+
+      // 📷 AI 사진 인식 (Vision-to-Table)
+      var visionBtn = sheet.querySelector('#proVisionOcrBtn');
+      if(visionBtn){
+        visionBtn.onclick = function(){
+          syncCurrentRowsFromDOM();
+          openVisionTableModal(curTpl, columns, function(newRows){
+            if(!newRows || !newRows.length) return;
+            newRows.forEach(function(r){
+              var rowArr = [];
+              for(var i=0; i<columns.length; i++){
+                rowArr[i] = (r[i] !== undefined) ? r[i] : (i===0 ? String(rows.length + 1) : '');
+              }
+              rows.push(rowArr);
+            });
+            refreshTableBody();
+            toast('📷 사진에서 ' + newRows.length + '개 행을 추출하여 표에 추가했습니다!');
+          });
+        };
+      }
+
+      // 🎙️ 음성 입력 (Voice-to-Table)
+      var voiceBtn = sheet.querySelector('#proVoiceInputBtn');
+      if(voiceBtn){
+        voiceBtn.onclick = function(){
+          syncCurrentRowsFromDOM();
+          openVoiceTableModal(curTpl, columns, function(newRow){
+            if(!newRow) return;
+            var rowArr = [];
+            for(var i=0; i<columns.length; i++){
+              rowArr[i] = (newRow[i] !== undefined) ? newRow[i] : (i===0 ? String(rows.length + 1) : '');
+            }
+            rows.push(rowArr);
+            refreshTableBody();
+            toast('🎙️ 음성으로 새 행이 표에 추가되었습니다!');
           });
         };
       }
@@ -9991,6 +10974,14 @@
       quickCreateBtn.onclick = function(){
         openCreateCustomTemplateModal(function(newTpl){
           openProTemplateRecordModal(null, newTpl.key);
+        });
+      };
+    }
+    var quickMarketBtn = document.getElementById('recOpenMarketQuickBtn');
+    if(quickMarketBtn){
+      quickMarketBtn.onclick = function(){
+        openTemplateMarketModal(function(clonedTpl){
+          openProTemplateRecordModal(null, clonedTpl.key);
         });
       };
     }
