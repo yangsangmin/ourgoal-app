@@ -1288,6 +1288,64 @@ check('compliance: 최초 로그인 시 모든 공개 범위(헤더 배지, 설�
   assert.ok(html.includes("visibility: 'private'"), '기본 목표 비공개 설정');
 });
 
+check('compliance: 가상 페르소나 200인 및 2배 다양화(신경다양성, 테크, 기기, 습관루프) 무결성 검증', () => {
+  const pPath = path.join(__dirname, '..', 'sim', 'personas.json');
+  assert.ok(fs.existsSync(pPath), 'sim/personas.json 파일 존재');
+  const personas = JSON.parse(fs.readFileSync(pPath, 'utf8'));
+  assert.strictEqual(personas.length, 200, '200명 페르소나 완전 등록');
+
+  const males = personas.filter(p => p.gender === '남');
+  const females = personas.filter(p => p.gender === '여');
+  assert.strictEqual(males.length, 100, '남성 페르소나 100명');
+  assert.strictEqual(females.length, 100, '여성 페르소나 100명');
+
+  const mbtis = new Set(personas.map(p => p.mbti));
+  assert.strictEqual(mbtis.size, 16, '16대 MBTI 전수 표본');
+
+  personas.forEach(p => {
+    assert.ok(p.neurodiversity, `페르소나 ${p.id} 신경다양성 속성`);
+    assert.ok(p.techLiteracy, `페르소나 ${p.id} 테크 리터러시 속성`);
+    assert.ok(p.device, `페르소나 ${p.id} 기기 환경 속성`);
+    assert.ok(p.painTrigger, `페르소나 ${p.id} 페인 트리거 속성`);
+    assert.ok(p.habitLoopStyle, `페르소나 ${p.id} 습관 루프 스타일`);
+    assert.ok(p.emotionalState, `페르소나 ${p.id} 감정 상태`);
+  });
+});
+
+check('compliance: 11인 외부 UI/UX 감시 및 개선팀 1차 전면 개선사항이 index.html에 구현되어 있다', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 모바일 하단 플로팅 엄지독
+  assert.ok(html.includes('id="bottomThumbDock"'), '하단 플로팅 엄지독 컨테이너');
+  assert.ok(html.includes('id="dockQuickCheckinBtn"'), '1초 퀵기록 버튼');
+  assert.ok(html.includes('id="dockQuickSearchBtn"'), '빠른 검색 버튼');
+  assert.ok(html.includes('id="dockTodayFocusBtn"'), '오늘 집중 버튼');
+  assert.ok(html.includes('id="dockShareCardBtn"'), '성취 카드 버튼');
+  assert.ok(html.includes('setupBottomThumbDock'), '엄지독 바인딩 함수');
+
+  // 2. 상단 상태 필 & 일일 퀘스트 바
+  assert.ok(html.includes('id="todayGlancePill"'), '상단 몰입 상태 필 마크업');
+  assert.ok(html.includes('renderTodayGlancePill'), '상단 상태 필 렌더링 함수');
+  assert.ok(html.includes('id="dailyQuestBarWrap"'), '일일 퀘스트 바 마크업');
+  assert.ok(html.includes('renderDailyQuestBar'), '일일 퀘스트 렌더링 함수');
+
+  // 3. WCAG AAA 접근성 포커스 & 스크린리더
+  assert.ok(html.includes('*:focus-visible'), 'WCAG 2.2 AAA 전역 포커스 링');
+  assert.ok(html.includes('id="a11yLiveAnnouncer"'), '스크린리더 실시간 아나운서');
+  assert.ok(html.includes('announceToA11y'), '접근성 알림 함수');
+
+  // 4. 스프링 물리 마이크로 인터랙션 & 스트릭 불꽃
+  assert.ok(html.includes('--spring-bounce'), '스프링 물리 이징 변수');
+  assert.ok(html.includes('streak-flame-pulse'), '스트릭 불꽃 맥동 애니메이션');
+
+  // 5. MZ 성취 공유 카드
+  assert.ok(html.includes('openMzShareCardModal'), 'MZ 성취 카드 모달 함수');
+  assert.ok(html.includes('mz-card-preview'), 'MZ 카드 프리뷰 클래스');
+
+  // 6. 200 페르소나 챌린지 룸 확장
+  assert.ok(html.includes('윤다은') && html.includes('송하준') && html.includes('서예진'), '200 페르소나 다양성 챌린지 룸');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);

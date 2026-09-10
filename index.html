@@ -5197,6 +5197,13 @@
     if(challengeBtn){
       challengeBtn.onclick = openChallengeRoomModal;
     }
+    var mzBtn = document.getElementById('mzShareBtn');
+    if(mzBtn){
+      mzBtn.onclick = openMzShareCardModal;
+    }
+    renderTodayGlancePill();
+    renderDailyQuestBar();
+    setupBottomThumbDock();
   }
 
   /* ============ 주간 잔디 & 몰입 리포트 요약 카드 (가상유저 요청 P7/P9) ============ */
@@ -5234,6 +5241,166 @@
       + '</div>';
   }
 
+  /* ============ 11인 외부 UI/UX 감시 및 개선팀 핵심 기능 구현 ============ */
+  function announceToA11y(message){
+    var announcer = document.getElementById('a11yLiveAnnouncer');
+    if(announcer){
+      announcer.textContent = '';
+      setTimeout(function(){ announcer.textContent = message; }, 50);
+    }
+  }
+
+  function renderTodayGlancePill(){
+    var pill = document.getElementById('todayGlancePill');
+    if(!pill) return;
+    var streak = computeStreakDays();
+    var stats = calculateWeeklyFocusStats(state.profile.records);
+    var nowK = dateKey(new Date());
+    var todayRecs = (state.profile.records || []).filter(function(r){ return r && r.startAt && dateKey(r.startAt) === nowK; });
+    
+    var flameHtml = streak > 0 ? '<span class="streak-flame-pulse">🔥</span> <b>' + streak + '일 연속</b>' : '🌱 <b>첫 잔디 도전</b>';
+    var checkinHtml = '✎ 오늘 기록 <b>' + todayRecs.length + '회</b>';
+    var focusHtml = stats.totalMinutes > 0 ? ('⏱️ <b>' + Math.floor(stats.totalMinutes / 60) + '시간 ' + (stats.totalMinutes % 60) + '분</b> 몰입') : '⏱️ <b>25분 집중</b> 추천';
+
+    pill.style.display = 'inline-flex';
+    pill.innerHTML = flameHtml + ' · ' + checkinHtml + ' · ' + focusHtml;
+    pill.onclick = function(){
+      triggerHaptic(15);
+      var goalCard = document.getElementById('captureCardBox');
+      if(goalCard){
+        goalCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        var ta = document.getElementById('captureInput');
+        if(ta) ta.focus();
+      }
+    };
+  }
+
+  function renderDailyQuestBar(){
+    var wrap = document.getElementById('dailyQuestBarWrap');
+    if(!wrap) return;
+    var goals = (state.profile.goals || []).filter(function(g){ return !g.archivedAt; });
+    var totalMs = 0;
+    var doneMs = 0;
+    goals.forEach(function(g){
+      (g.milestones || []).forEach(function(m){
+        totalMs++;
+        if(m.status === 'done') doneMs++;
+      });
+    });
+    if(totalMs === 0) totalMs = 3;
+    var pct = Math.min(100, Math.round((doneMs / totalMs) * 100));
+
+    wrap.style.display = 'block';
+    wrap.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-weight:700;color:var(--ink);">'
+      + '  <span>🎯 오늘의 퀘스트 진척도 (' + doneMs + '/' + totalMs + ')</span>'
+      + '  <span style="color:var(--red);font-weight:800;">' + pct + '% 달성</span>'
+      + '</div>'
+      + '<div class="daily-quest-track">'
+      + '  <div class="daily-quest-fill" style="width:' + pct + '%;"></div>'
+      + '</div>';
+  }
+
+  function openMzShareCardModal(){
+    triggerHaptic(20);
+    var streak = computeStreakDays();
+    var userName = state.profile.name || '아워골 메이커';
+    var nowK = dateKey(new Date());
+    var todayRec = (state.profile.records || []).find(function(r){ return r && r.startAt && dateKey(r.startAt) === nowK; });
+    var quote = todayRec ? ('"' + escapeHtml(todayRec.text ? todayRec.text.slice(0, 60) : '오늘의 몰입 완료') + '"') : '"목표를 향해 한 걸음씩, 꾸준함이 비범함을 만든다 ✨"';
+
+    openModal(
+      '<h3>✨ 오늘의 MZ 성취 인증 카드</h3>'
+      + '<p class="faint" style="margin:-8px 0 14px;">인스타그램 스토리, 스레드, 카카오톡에 오늘의 성취를 세련되게 공유해보세요.</p>'
+      + '<div class="mz-card-preview" id="mzShareCardCanvas">'
+      + '  <div style="font-size:0.72rem;letter-spacing:0.12em;font-weight:800;color:var(--red);text-transform:uppercase;margin-bottom:6px;">OURGOAL DAILY ACHIEVER</div>'
+      + '  <div style="font-size:2rem;margin-bottom:4px;"><span class="streak-flame-pulse">🔥</span> ' + streak + ' DAY STREAK</div>'
+      + '  <div style="font-size:1.05rem;font-weight:800;color:var(--ink);margin:8px 0;">' + escapeHtml(userName) + ' 님의 몰입 인증</div>'
+      + '  <div style="font-size:0.86rem;color:var(--ink-soft);font-style:italic;margin:12px 0 16px;line-height:1.5;">' + quote + '</div>'
+      + '  <div style="display:inline-block;padding:4px 12px;border-radius:999px;background:rgba(255,107,74,0.12);color:var(--red);font-size:0.75rem;font-weight:700;">#오운완 #자기계발 #아워골 #성장기록</div>'
+      + '</div>'
+      + '<div class="modal-actions" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;">'
+      + '  <button class="btn btn-primary" id="copyMzCardTextBtn" style="flex:1;">📋 텍스트 복사</button>'
+      + '  <button class="btn btn-secondary" id="copyMzCardLinkBtn" style="flex:1;">🔗 링크 공유</button>'
+      + '  <button class="btn btn-ghost" id="mzCardCloseBtn" type="button" style="width:100%;">닫기</button>'
+      + '</div>',
+      function(sheet){
+        sheet.querySelector('#mzCardCloseBtn').onclick = closeModal;
+        var copyTxtBtn = sheet.querySelector('#copyMzCardTextBtn');
+        if(copyTxtBtn){
+          copyTxtBtn.onclick = function(){
+            var text = '🔥 아워골 ' + streak + '일 연속 몰입 달성!\n' + userName + '님의 오늘의 한 줄:\n' + quote + '\n\n나만의 목표 완주하기 👉 https://ourgoal-app.vercel.app';
+            if(navigator.clipboard && navigator.clipboard.writeText){
+              navigator.clipboard.writeText(text).then(function(){
+                toast('📸 성취 텍스트가 클립보드에 복사되었어요! 인스타 스토리에 붙여넣으세요.');
+              });
+            } else {
+              prompt('아래 문구를 복사하세요:', text);
+            }
+          };
+        }
+        var copyLnkBtn = sheet.querySelector('#copyMzCardLinkBtn');
+        if(copyLnkBtn){
+          copyLnkBtn.onclick = function(){
+            var url = 'https://ourgoal-app.vercel.app?ref=mz_share_' + encodeURIComponent(userName);
+            if(navigator.clipboard && navigator.clipboard.writeText){
+              navigator.clipboard.writeText(url).then(function(){
+                toast('🔗 공유 링크가 복사되었어요!');
+              });
+            } else {
+              prompt('공유 링크:', url);
+            }
+          };
+        }
+      }
+    );
+  }
+
+  function setupBottomThumbDock(){
+    var checkinBtn = document.getElementById('dockQuickCheckinBtn');
+    if(checkinBtn && !checkinBtn._bound){
+      checkinBtn._bound = true;
+      checkinBtn.onclick = function(){
+        triggerHaptic(15);
+        setTab('home');
+        var ta = document.getElementById('captureInput');
+        if(ta){
+          ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          ta.focus();
+        }
+      };
+    }
+    var searchBtn = document.getElementById('dockQuickSearchBtn');
+    if(searchBtn && !searchBtn._bound){
+      searchBtn._bound = true;
+      searchBtn.onclick = function(){
+        triggerHaptic(15);
+        setTab('records');
+        var sq = document.getElementById('recordSearchInput');
+        if(sq){
+          sq.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          sq.focus();
+        }
+      };
+    }
+    var focusBtn = document.getElementById('dockTodayFocusBtn');
+    if(focusBtn && !focusBtn._bound){
+      focusBtn._bound = true;
+      focusBtn.onclick = function(){
+        triggerHaptic(18);
+        setTab('home');
+        var gList = document.getElementById('homeGoalList');
+        if(gList){
+          gList.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      };
+    }
+    var shareBtn = document.getElementById('dockShareCardBtn');
+    if(shareBtn && !shareBtn._bound){
+      shareBtn._bound = true;
+      shareBtn.onclick = openMzShareCardModal;
+    }
+  }
+
   /* ============ 소규모 챌린지 룸 모달 (가상유저 요청 P8/P17) ============ */
   function openChallengeRoomModal(){
     var rooms = [
@@ -5241,7 +5408,12 @@
       { id: 'devlaunch', host: '김도윤', goal: '1인 SaaS 사이드 프로젝트 출시', members: 5, max: 6, tag: '개발/출시', dday: 'D-45', icon: '💻' },
       { id: 'miracle6', host: '이지민', goal: '평일 미라클 모닝 6시 기상 & 러닝', members: 6, max: 6, tag: '습관/러닝', dday: 'D-21', icon: '🏃' },
       { id: 'fitbody', host: '박준서', goal: '주 4회 헬스 & 클린 식단 인증', members: 3, max: 6, tag: '운동/헬스', dday: 'D-60', icon: '🏋️' },
-      { id: 'portfolio', host: '최수아', goal: '매일 1시간 UI/UX 포트폴리오 작업', members: 4, max: 6, tag: '디자인/취업', dday: 'D-30', icon: '🎨' }
+      { id: 'portfolio', host: '최수아', goal: '매일 1시간 UI/UX 포트폴리오 작업', members: 4, max: 6, tag: '디자인/취업', dday: 'D-30', icon: '🎨' },
+      { id: 'adhdfocus', host: '윤다은', goal: 'ADHD 뽀모도로 25분 3회 집중 마일스톤', members: 5, max: 6, tag: '신경다양성/몰입', dday: 'D-14', icon: '⏱️' },
+      { id: 'nightnurse', host: '송하준', goal: '3교대 간호사 심야 루틴 & 수면 케어', members: 3, max: 6, tag: '교대/건강', dday: 'D-50', icon: '🌙' },
+      { id: 'triathlon', host: '서예진', goal: '철인 3종 완주 (수영·사이클·러닝)', members: 4, max: 6, tag: '트라이애슬론', dday: 'D-90', icon: '🚴' },
+      { id: 'indiegame', host: '권태호', goal: 'Steam 인디게임 데모 빌드 출시', members: 2, max: 6, tag: '게임개발', dday: 'D-75', icon: '🎮' },
+      { id: 'barista', host: '안소율', goal: '스페셜티 바리스타 자격증 취득', members: 4, max: 6, tag: '자격증/창업', dday: 'D-40', icon: '☕' }
     ];
 
     if(!state.profile.settings.challenges) state.profile.settings.challenges = [];
