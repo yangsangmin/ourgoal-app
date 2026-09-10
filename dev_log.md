@@ -1155,3 +1155,14 @@
   - `npm test` (스모크 테스트) **85개 전수 통과 (0개 실패)**
   - 모든 변경 사항 브랜치 커밋 완료
 ---
+
+## [2026-09-10 11:15] fix: APK 빌드 워크플로우 Node.js 22 업그레이드 및 webDir 최적화
+- **목표**: Capacitor CLI 요구사항(NodeJS >=22.0.0) 충족 및 빌드 에러 해결
+- **수정/실행 내역**:
+  - `.github/workflows/build-apk.yml`: 러너의 `node-version`을 22로 업그레이드, `www` 에셋 격리 복사 스텝 추가
+  - `capacitor.config.json`: `webDir`을 `www`로 변경하여 `node_modules`가 Android assets로 복사되는 부하 방지
+  - `dev_log.md`: 개발 로그 추가
+- **검증 결과**:
+  - `npm test` **85개 전수 통과 (0개 실패)**
+  - 워크플로우 구문 정상
+---
