@@ -1428,13 +1428,10 @@ check('compliance: 가상 페르소나 200인 및 2배 다양화(신경다양성
 check('compliance: 11인 외부 UI/UX 감시 및 개선팀 1차 전면 개선사항이 index.html에 구현되어 있다', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 
-  // 1. 모바일 하단 플로팅 엄지독
-  assert.ok(html.includes('id="bottomThumbDock"'), '하단 플로팅 엄지독 컨테이너');
-  assert.ok(html.includes('id="dockQuickCheckinBtn"'), '1초 퀵기록 버튼');
-  assert.ok(html.includes('id="dockQuickSearchBtn"'), '빠른 검색 버튼');
-  assert.ok(html.includes('id="dockTodayFocusBtn"'), '오늘 집중 버튼');
-  assert.ok(html.includes('id="dockShareCardBtn"'), '성취 카드 버튼');
-  assert.ok(html.includes('setupBottomThumbDock'), '엄지독 바인딩 함수');
+  // 1. 모바일 하단 플로팅 엄지독 제거 (사용자 UX 개선 요청으로 번잡한 퀵이동 버튼 삭제)
+  assert.ok(!html.includes('id="bottomThumbDock"'), '하단 플로팅 엄지독 컨테이너 제거 확인');
+  assert.ok(!html.includes('id="dockQuickCheckinBtn"'), '1초 퀵기록 버튼 제거 확인');
+  assert.ok(!html.includes('setupBottomThumbDock'), '엄지독 바인딩 함수 제거 확인');
 
   // 2. 상단 상태 필 & 일일 퀘스트 바
   assert.ok(html.includes('id="todayGlancePill"'), '상단 몰입 상태 필 마크업');
