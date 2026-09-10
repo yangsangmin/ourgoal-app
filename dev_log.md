@@ -1507,4 +1507,30 @@
   - Vercel Serverless Function 개수 정확히 12개 엄수 (Hobby 한도 완벽 준수).
 ---
 
+## [2026-09-10 19:10] 유료 기능 및 페이월 전면 해제 · 모든 기능 100% 완전 무료화
+- **목표**:
+  - 사용자 지시("다 삭제해 유료기능 풀고 전부 무료로 제공해. 다 바꿔 다 고치고 배포해.")에 따라, 앱 내 모든 유료 기능 잠금(Feature Gating)과 페이월을 전면 해제하고 누구나 100% 무료로 모든 핵심 기능을 제한 없이 이용할 수 있도록 개방.
+- **수정/실행 내역**:
+  1. `index.html`:
+     - 토스페이먼츠 결제위젯 SDK 스크립트(`<script src="...tosspayments...">`) 태그 완전 제거.
+     - 랜딩 화면 홍보 문구 정직화: `목표 · 최대 3개` -> `목표 · 무제한 무료`로 교체.
+     - `defaultSettings`: `subscription` 상태를 `{ isPro: true, plan: 'free_all', expiresAt: null, billingKey: null }`로 변경.
+     - `subscriptionState()`: 모든 유저에게 `isPro: true`를 항시 보장하도록 설정.
+     - `promptNewGoal()`: 활성 목표 3개 제한 및 페이월 트리거(`openPaywallModal('goalLimit')`) 삭제 -> 목표 무제한 생성 개방.
+     - `restoreGoal()`: 보관 목표 되돌리기 시의 3개 제한 차단 로직 삭제 -> 자유로운 보관/복원 개방.
+     - `cloneTemplate()`: 크리에이터 템플릿 복제 시의 목표 3개 제한 및 페이월 트리거 삭제.
+     - `openFeedbackSetupGated()`: 페이월 차단 없이 `openFeedbackSetup()` 즉시 실행 -> 나만의 맞춤 AI 피드백 봇 100% 무료 개방.
+     - `reportPeriodToggle`: 30일 심층 분석 리포트 선택 시의 페이월 차단 삭제 -> 30일 장기 추이 리포트 100% 무료 개방.
+     - `openPaywallModal()`: 결제 유도 대신 "🎉 아워골의 모든 기능은 100% 완전 무료로 제공됩니다!" 안내 토스트로 전환.
+     - `renderProBadge()`: 차별적 PRO 뱃지 표기 요구 해제 및 정리.
+  2. `docs/sprint/STATUS.md`:
+     - 대기 중 작업 중 토스페이먼츠 실결제 연동 항목을 `[완료] 유료 기능 전면 해제 및 100% 완전 무료화`로 갱신.
+  3. `scripts/smoke-test.js`:
+     - `FN_NAMES` 및 exports에 `subscriptionState` 추가.
+     - `compliance: 유료 기능 잠금이 전면 해제되고 모든 기능(무제한 목표, AI 코치, 30일 리포트)이 100% 무료로 제공된다` 스모크 테스트 추가.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **126개 전수 통과 (0개 실패)**.
+  - 자바스크립트 문법 검증 및 기존 기능(비주얼 차트, 스톱워치, 노션 연동, 가상 페르소나, 테마 등) 회귀 0건 확인.
+---
+
 
