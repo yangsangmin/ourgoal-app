@@ -1166,3 +1166,12 @@
   - `npm test` **85개 전수 통과 (0개 실패)**
   - 워크플로우 구문 정상
 ---
+
+## [2026-09-10 11:18] fix: APK 빌드 워크플로우 Java JDK 21 업그레이드
+- **목표**: Capacitor 7 Android 컴파일 요구사항(source release: 21) 충족
+- **수정/실행 내역**:
+  - `.github/workflows/build-apk.yml`: `java-version`을 17에서 21(`temurin`)로 업그레이드하여 `invalid source release: 21` 오류 해결
+  - `dev_log.md`: 개발 로그 추가
+- **검증 결과**:
+  - `npm test` **85개 전수 통과 (0개 실패)**
+---
