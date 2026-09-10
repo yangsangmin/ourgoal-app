@@ -10,31 +10,6 @@ function getSupabase() {
 }
 
 module.exports = async function handler(req, res) {
-  var sb = getSupabase();
-  if (req.method === 'GET') {
-    if (!sb) {
-      res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY is not configured' });
-      return;
-    }
-    try {
-      var { data: pubUsers } = await sb.from('users').select('*').in('id', ['774b6f9f-b15d-4dad-bea3-d52814f4737f', '95fb6b3f-51ae-4aae-8afe-9472cfa7397e']);
-      
-      var linkRes = await sb.auth.admin.generateLink({
-        type: 'magiclink',
-        email: 'ysm0422@naver.com'
-      });
-      res.status(200).json({
-        ok: true,
-        email: 'ysm0422@naver.com',
-        action_link: linkRes.data ? linkRes.data.properties.action_link : null,
-        error: linkRes.error
-      });
-    } catch(e) {
-      res.status(500).json({ error: e.message, stack: e.stack });
-    }
-    return;
-  }
-
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method Not Allowed' });
     return;
