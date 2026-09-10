@@ -87,6 +87,7 @@ const FN_NAMES = [
   'defaultSettings', 'getPrivacyLabel', 'subscriptionState',
   'computeTrendChartData', 'formatStopwatchTime',
   'rescaleGoal',
+  'sortGoalsByOrder', 'isWithinDND', 'buildICS',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -124,7 +125,7 @@ const sandboxSrc =
   'parseNaturalLanguageTemplateSpec, parseCsvText, parseVoiceToTableRow, ' +
   'triggerHaptic, reorderMilestones, filterFeedByCategory, calculateWeeklyFocusStats, exportRecordsToCsv, exportRecordsToMarkdown, ' +
   'defaultSettings, getPrivacyLabel, subscriptionState, computeTrendChartData, formatStopwatchTime, ' +
-  'rescaleGoal, ' +
+  'rescaleGoal, sortGoalsByOrder, isWithinDND, buildICS, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -468,6 +469,72 @@ check('generateDynamicNotification: 일요일 저녁 18~22시에 기록이 있�
   const msg = fns.generateDynamicNotification(profile, sundayEvening);
   assert.ok(msg.indexOf('[위클리 리캡]') !== -1);
   assert.ok(msg.indexOf('이번 주 나의 성취') !== -1);
+});
+
+/* ============ TASK-BG-10: 목표 우선순위 정렬 ============ */
+check('sortGoalsByOrder: orderList 순서대로 목표를 정확히 정렬한다', () => {
+  const goals = [{ id: 'g1', title: '목표1' }, { id: 'g2', title: '목표2' }, { id: 'g3', title: '목표3' }];
+  const sorted = fns.sortGoalsByOrder(goals, ['g3', 'g1', 'g2']);
+  assert.deepStrictEqual(sorted.map(g => g.id), ['g3', 'g1', 'g2']);
+});
+
+check('sortGoalsByOrder: orderList에 없는 신규 목표는 뒤쪽에 안전하게 배치된다', () => {
+  const goals = [{ id: 'g1', title: '목표1' }, { id: 'g2', title: '목표2' }, { id: 'gNew', title: '신규목표' }];
+  const sorted = fns.sortGoalsByOrder(goals, ['g2', 'g1']);
+  assert.strictEqual(sorted[0].id, 'g2');
+  assert.strictEqual(sorted[1].id, 'g1');
+  assert.strictEqual(sorted[2].id, 'gNew');
+});
+
+check('sortGoalsByOrder: 빈 배열이나 null orderList에도 예외 없이 원본 복사본을 반환한다', () => {
+  assert.deepStrictEqual(fns.sortGoalsByOrder(null, ['g1']), []);
+  const goals = [{ id: 'g1' }];
+  assert.deepStrictEqual(fns.sortGoalsByOrder(goals, null).map(g => g.id), ['g1']);
+});
+
+/* ============ TASK-BG-7: 방해금지 시간대(DND) ============ */
+check('isWithinDND: 자정을 넘기는 시간대(22:00~08:00)의 심야 및 아침 시간을 정확히 판별한다', () => {
+  const dnd = { enabled: true, start: '22:00', end: '08:00' };
+  const night = new Date(); night.setHours(23, 30, 0, 0);
+  const earlyMorning = new Date(); earlyMorning.setHours(6, 15, 0, 0);
+  const afternoon = new Date(); afternoon.setHours(14, 0, 0, 0);
+
+  assert.strictEqual(fns.isWithinDND(night, dnd), true);
+  assert.strictEqual(fns.isWithinDND(earlyMorning, dnd), true);
+  assert.strictEqual(fns.isWithinDND(afternoon, dnd), false);
+});
+
+check('isWithinDND: 비활성화되어 있거나 설정이 없으면 항상 false를 반환한다', () => {
+  const night = new Date(); night.setHours(23, 30, 0, 0);
+  assert.strictEqual(fns.isWithinDND(night, null), false);
+  assert.strictEqual(fns.isWithinDND(night, { enabled: false }), false);
+});
+
+check('generateDynamicNotification: 방해금지(DND) 시간대에는 알림 문구를 생성하지 않고 차단(null)한다', () => {
+  const night = new Date(); night.setHours(23, 0, 0, 0);
+  const profile = {
+    displayName: '테스트유저',
+    goals: [{ title: '급한목표', dueDate: localDateStr(1), archivedAt: null }],
+    records: [],
+    settings: { dnd: { enabled: true, start: '22:00', end: '08:00' } }
+  };
+  const msg = fns.generateDynamicNotification(profile, night);
+  assert.strictEqual(msg, null);
+});
+
+/* ============ TASK-BG-11: 캘린더 .ics 내보내기 ============ */
+check('buildICS: RFC 5545 표준 VCALENDAR 및 VEVENT 블록을 정확히 생성한다', () => {
+  const records = [
+    { id: 'r1', startAt: '2026-09-11T09:00:00.000Z', endAt: '2026-09-11T10:00:00.000Z', goalId: 'g1', theme: 'workout', text: '5km 러닝 완료' }
+  ];
+  const goals = [{ id: 'g1', title: '마라톤 완주' }];
+  const ics = fns.buildICS(records, goals);
+  assert.ok(ics.indexOf('BEGIN:VCALENDAR') !== -1);
+  assert.ok(ics.indexOf('VERSION:2.0') !== -1);
+  assert.ok(ics.indexOf('BEGIN:VEVENT') !== -1);
+  assert.ok(ics.indexOf('SUMMARY:[운동] 마라톤 완주 - 5km 러닝 완료') !== -1);
+  assert.ok(ics.indexOf('END:VEVENT') !== -1);
+  assert.ok(ics.indexOf('END:VCALENDAR') !== -1);
 });
 
 /* ============ 계측: 유입 속성 파싱 ============ */

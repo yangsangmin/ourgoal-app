@@ -6251,21 +6251,33 @@
     var sf = state.profile.settings.streakFreeze;
     if(freezeEl) freezeEl.innerHTML = (sf && sf.available>0) ? '<span class="freeze-pill" title="하루를 놓쳐도 스트릭이 끊기지 않게 지켜줘요">🧊'+sf.available+'</span>' : '';
     var wrap = document.getElementById('homeGoalList');
-    var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
+    var rawGoals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
+    var goalOrder = (state.profile.settings && state.profile.settings.goalOrder) || [];
+    var goals = sortGoalsByOrder(rawGoals, goalOrder);
     if(!goals.length){
       wrap.innerHTML = '<div class="empty-goal">아직 목표가 없어요.<br>첫 목표를 만들어보세요.</div>';
       return;
     }
-    wrap.innerHTML = hybridDashboardHtml(goals) + goals.map(function(g){
+    wrap.innerHTML = hybridDashboardHtml(goals) + goals.map(function(g, gIdx){
       var pct = goalProgress(g);
       var counts = msCounts(g);
       var color = pct>=67 ? '#1FC98E' : (pct>=34 ? '#FF9F1C' : '#FF4F64');
       var dd = g.dueDate
         ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--red);">'+g.dueDate+' · '+dDay(g.dueDate)+'</span>'
         : '';
-      return '<div class="goal-card" data-goalid="'+g.id+'">' +
-        '<div class="goal-card-top"><h4>'+escapeHtml(g.title)+'</h4>' +
-          '<div style="display:flex;align-items:center;gap:6px;">'+dd+
+      var leadBadge = (gIdx === 0 && goals.length > 1)
+        ? '<span class="focus-goal-pill" style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--accent-soft, #FFF1F2);color:var(--accent, #FF4F64);font-weight:700;">🔥 대표</span>'
+        : '';
+      return '<div class="goal-card" data-goalid="'+g.id+'" draggable="true">' +
+        '<div class="goal-card-top">' +
+          '<div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">' +
+            (goals.length > 1 ? '<span class="goal-drag-handle" data-draggoal="'+g.id+'" title="드래그하여 순서 변경" aria-label="드래그하여 순서 변경" style="cursor:grab;padding:2px 4px;color:var(--muted);font-size:14px;user-select:none;line-height:1;">⠿</span>' : '') +
+            '<h4 style="margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+escapeHtml(g.title)+'</h4>' +
+            leadBadge +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">' +
+            (goals.length > 1 ? '<button class="icon-btn order-shift-btn" data-shiftgoal="'+g.id+'" data-dir="-1" type="button" aria-label="위로 이동" title="위로 이동" style="padding:2px 4px;font-size:11px;background:none;border:none;color:var(--muted);cursor:pointer;">▲</button><button class="icon-btn order-shift-btn" data-shiftgoal="'+g.id+'" data-dir="1" type="button" aria-label="아래로 이동" title="아래로 이동" style="padding:2px 4px;font-size:11px;background:none;border:none;color:var(--muted);cursor:pointer;">▼</button>' : '') +
+            dd +
             (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsyncgoal="'+g.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' : '') +
           '</div>' +
         '</div>' +
@@ -6291,6 +6303,40 @@
       btn.addEventListener('click', function(e){
         e.stopPropagation();
         quickSyncToCalendar('goal', btn.dataset.calsyncgoal, null);
+      });
+    });
+    wrap.querySelectorAll('.order-shift-btn').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var gid = btn.dataset.shiftgoal;
+        var dir = parseInt(btn.dataset.dir, 10);
+        shiftGoalOrder(gid, dir);
+      });
+    });
+
+    var draggedGoalId = null;
+    wrap.querySelectorAll('.goal-card').forEach(function(card){
+      card.addEventListener('dragstart', function(e){
+        draggedGoalId = card.dataset.goalid;
+        card.style.opacity = '0.4';
+        if(e.dataTransfer){
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', draggedGoalId);
+        }
+      });
+      card.addEventListener('dragend', function(){
+        card.style.opacity = '1';
+        draggedGoalId = null;
+      });
+      card.addEventListener('dragover', function(e){
+        e.preventDefault();
+        if(e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+      });
+      card.addEventListener('drop', function(e){
+        e.preventDefault();
+        var targetGoalId = card.dataset.goalid;
+        if(!draggedGoalId || draggedGoalId === targetGoalId) return;
+        reorderGoal(draggedGoalId, targetGoalId);
       });
     });
 
@@ -8994,7 +9040,8 @@
     document.getElementById('teamGoalsView').style.display = state.goalsSubTab==='team' ? '' : 'none';
     if(state.goalsSubTab==='team'){ renderTeamGoalsScreen(); return; }
 
-    var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
+    var rawGoals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
+    var goals = sortGoalsByOrder(rawGoals, (state.profile.settings && state.profile.settings.goalOrder) || []);
     if(!state.activeGoalId || !goals.find(function(g){ return g.id===state.activeGoalId; })){
       state.activeGoalId = goals.length ? goals[0].id : null;
     }
@@ -9621,6 +9668,59 @@
   /* 숨김 처리된 게시물·댓글 제외(신고 자동 숨김) — 성장 백로그 P0 5 */
   function filterHidden(list){
     return (list || []).filter(function(x){ return !!x && !x.hidden; });
+  }
+
+  /* 목표 우선순위 정렬 순수 함수 (TASK-BG-10) */
+  function sortGoalsByOrder(goals, orderList){
+    if(!goals || !Array.isArray(goals)) return [];
+    if(!orderList || !Array.isArray(orderList) || !orderList.length) return goals.slice();
+    var orderMap = {};
+    orderList.forEach(function(id, idx){
+      orderMap[id] = idx;
+    });
+    return goals.slice().sort(function(a, b){
+      var aOrder = (a && a.id in orderMap) ? orderMap[a.id] : 999999;
+      var bOrder = (b && b.id in orderMap) ? orderMap[b.id] : 999999;
+      if(aOrder !== bOrder) return aOrder - bOrder;
+      return 0;
+    });
+  }
+
+  function shiftGoalOrder(goalId, dir){
+    var rawGoals = (state.profile.goals || []).filter(function(g){ return !g.archivedAt; });
+    var settings = state.profile.settings = state.profile.settings || {};
+    var currentSorted = sortGoalsByOrder(rawGoals, settings.goalOrder || []);
+    var ids = currentSorted.map(function(g){ return g.id; });
+    var idx = ids.indexOf(goalId);
+    if(idx === -1) return;
+    var targetIdx = idx + dir;
+    if(targetIdx < 0 || targetIdx >= ids.length) return;
+    var temp = ids[idx];
+    ids[idx] = ids[targetIdx];
+    ids[targetIdx] = temp;
+    settings.goalOrder = ids;
+    saveProfile();
+    renderHome();
+    if(state.activeTab === 'goals') renderGoalsScreen();
+    triggerHaptic(12);
+  }
+
+  function reorderGoal(fromId, toId){
+    var rawGoals = (state.profile.goals || []).filter(function(g){ return !g.archivedAt; });
+    var settings = state.profile.settings = state.profile.settings || {};
+    var currentSorted = sortGoalsByOrder(rawGoals, settings.goalOrder || []);
+    var ids = currentSorted.map(function(g){ return g.id; });
+    var fromIdx = ids.indexOf(fromId);
+    var toIdx = ids.indexOf(toId);
+    if(fromIdx === -1 || toIdx === -1) return;
+    ids.splice(fromIdx, 1);
+    ids.splice(toIdx, 0, fromId);
+    settings.goalOrder = ids;
+    saveProfile();
+    renderHome();
+    if(state.activeTab === 'goals') renderGoalsScreen();
+    toast('목표 순서를 변경했어요');
+    triggerHaptic(15);
   }
 
   /* 차단된 사용자의 게시물·댓글 제외 (TASK-CB-004) */
@@ -15658,6 +15758,75 @@
     }).join('\n');
   }
 
+  /* ============ RFC 5545 표준 iCalendar (.ics) 생성 순수 함수 (TASK-BG-11) ============ */
+  function buildICS(records, goals){
+    records = records || [];
+    goals = goals || [];
+    var goalMap = {};
+    goals.forEach(function(g){ if(g && g.id) goalMap[g.id] = g; });
+
+    function fmtICSDate(d){
+      var dt = new Date(d);
+      if(isNaN(dt.getTime())) dt = new Date();
+      return dt.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    }
+
+    function escapeICS(str){
+      return String(str || '')
+        .replace(/\\/g, '\\\\')
+        .replace(/;/g, '\\;')
+        .replace(/,/g, '\\,')
+        .replace(/\r?\n/g, '\\n');
+    }
+
+    function foldLine(line){
+      if(line.length <= 75) return line;
+      var parts = [];
+      parts.push(line.slice(0, 75));
+      var rest = line.slice(75);
+      while(rest.length > 74){
+        parts.push(' ' + rest.slice(0, 74));
+        rest = rest.slice(74);
+      }
+      if(rest.length > 0) parts.push(' ' + rest);
+      return parts.join('\r\n');
+    }
+
+    var lines = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//OurGoal//KR//EN',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'X-WR-CALNAME:아워골 나의 목표 & 체크인 기록'
+    ];
+
+    records.forEach(function(r, idx){
+      if(!r || !r.startAt) return;
+      var st = fmtICSDate(r.startAt);
+      var et = r.endAt ? fmtICSDate(r.endAt) : st;
+      var g = r.goalId && goalMap[r.goalId] ? goalMap[r.goalId] : null;
+      var gTitle = g ? g.title : (r.category && typeof TOPICS !== 'undefined' && TOPICS[r.category] ? TOPICS[r.category].label : '아워골 체크인');
+      var themeLabel = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[r.theme]) ? RECORD_THEMES[r.theme].label : (r.theme || '일상');
+      var summary = '[' + themeLabel + '] ' + gTitle + (r.text ? ' - ' + r.text : '');
+      var desc = '목표: ' + gTitle + '\\n테마: ' + themeLabel + (r.subTheme ? ' (' + r.subTheme + ')' : '') + '\\n기록 내용: ' + (r.text || '') + '\\n아워골 앱에서 확인: https://ourgoal-app.vercel.app';
+      var uid = (r.id || ('rec-' + idx)) + '@ourgoal-app.vercel.app';
+
+      lines.push('BEGIN:VEVENT');
+      lines.push('UID:' + uid);
+      lines.push('DTSTAMP:' + st);
+      lines.push('DTSTART:' + st);
+      lines.push('DTEND:' + et);
+      lines.push(foldLine('SUMMARY:' + escapeICS(summary)));
+      lines.push(foldLine('DESCRIPTION:' + escapeICS(desc)));
+      lines.push('CATEGORIES:' + escapeICS(themeLabel));
+      lines.push('END:VEVENT');
+    });
+
+    lines.push('END:VCALENDAR');
+    return lines.join('\r\n');
+  }
+
   function buildMarkdownExport(recordsToExport, themeKey, includePrompt){
     var thObj = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[themeKey]) ? RECORD_THEMES[themeKey] : null;
     var themeTitle = thObj ? thObj.label : (themeKey === 'all' ? '전체 테마' : '기록');
@@ -15706,6 +15875,7 @@
       '<div class="field"><label>내보내기 형식</label>' +
         '<select id="expFmtSel">' +
           '<option value="csv">CSV (엑셀 / 구글 스프레드시트 호환)</option>' +
+          '<option value="ics">📅 iCalendar (.ics - 구글/애플 캘린더 연동)</option>' +
           '<option value="json">JSON (개발자 / DB 백업 원본)</option>' +
           '<option value="md">Markdown (노션 / 옵시디언 / 보고서용)</option>' +
         '</select>' +
@@ -15766,7 +15936,11 @@
           var withPrompt = sheet.querySelector('#expWithAIPrompt').checked;
           var fnameBase = '아워골_기록_' + target.themeKey + '_' + dateKey(nowISO());
 
-          if(fmt === 'json'){
+          if(fmt === 'ics'){
+            var icsContent = buildICS(target.recs, state.profile.goals);
+            download(fnameBase + '.ics', icsContent, 'text/calendar;charset=utf-8');
+            toast('📅 캘린더 연동 파일(.ics)을 다운로드했어요! 더블클릭하면 캘린더에 일정이 추가됩니다.');
+          } else if(fmt === 'json'){
             var jsonPayload = {
               exportedAt: nowISO(),
               theme: target.themeKey,
@@ -18705,8 +18879,36 @@
     e.target.value = '';
   });
 
+  /* ============ 방해금지 시간대(DND, 조용한 시간) 판별 순수 함수 (TASK-BG-7) ============ */
+  function isWithinDND(now, dndSettings){
+    if(!dndSettings) return false;
+    var cfg = dndSettings.dnd || dndSettings;
+    var enabled = cfg.enabled !== undefined ? cfg.enabled : cfg.quietHoursEnabled;
+    if(!enabled) return false;
+    var start = cfg.start || cfg.quietHoursStart || '22:00';
+    var end = cfg.end || cfg.quietHoursEnd || '08:00';
+    var sParts = String(start).split(':').map(Number);
+    var eParts = String(end).split(':').map(Number);
+    var sMin = (sParts[0] || 0) * 60 + (sParts[1] || 0);
+    var eMin = (eParts[0] || 0) * 60 + (eParts[1] || 0);
+
+    now = now || new Date();
+    var curMin = now.getHours() * 60 + now.getMinutes();
+
+    if(sMin === eMin) return false;
+    if(sMin < eMin){
+      return curMin >= sMin && curMin < eMin;
+    } else {
+      return curMin >= sMin || curMin < eMin;
+    }
+  }
+
   /* ============ 맥락 기반 다이내믹 알림 문구 생성 ============ */
   function generateDynamicNotification(profile, now){
+    now = now || new Date();
+    if(profile && profile.settings && isWithinDND(now, profile.settings)){
+      return null;
+    }
     now = now || new Date();
     var today = new Date(now); today.setHours(0,0,0,0);
     var goals = (profile.goals || []).filter(function(g){ return !g.archivedAt && g.dueDate; });
@@ -18764,6 +18966,7 @@
     if(!state.profile.settings.notify) return;
     state.notifyTimer = setInterval(function(){
       var now = new Date();
+      if(isWithinDND(now, state.profile.settings)) return;
       var hhmm = pad(now.getHours())+':'+pad(now.getMinutes());
       var todayKey = dateKey(nowISO());
       var slotKey = todayKey+'_'+hhmm;

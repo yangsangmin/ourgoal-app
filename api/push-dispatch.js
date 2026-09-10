@@ -65,6 +65,13 @@ module.exports = async function handler(req, res) {
       try { now = localNow(tz); } catch (e) { now = localNow('Asia/Seoul'); }
       var nowMin = minutesSinceMidnight(now.hh + ':' + now.mm);
 
+      if (row.quiet_hours_enabled) {
+        var qhStart = minutesSinceMidnight(row.quiet_hours_start || '22:00');
+        var qhEnd = minutesSinceMidnight(row.quiet_hours_end || '08:00');
+        var isQuiet = qhStart < qhEnd ? (nowMin >= qhStart && nowMin < qhEnd) : (nowMin >= qhStart || nowMin < qhEnd);
+        if (isQuiet) continue;
+      }
+
       var matchedTime = null;
       for (var t = 0; t < checkinTimes.length; t++) {
         if (Math.abs(minutesSinceMidnight(checkinTimes[t]) - nowMin) <= MATCH_TOLERANCE_MIN) {

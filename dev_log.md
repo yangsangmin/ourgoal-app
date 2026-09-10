@@ -1857,3 +1857,29 @@
   - HUD 서버 포트 7777 실시간 API 정상 응답 (`appComplianceScore: 100`, `teamRigorScore: 70`).
 ---
 
+## [2026-09-11 06:55] feat: 사용자 무개입 P0 백로그 3대 핵심 과제(목표 순서 드래그앤드롭, 방해금지 시간대 필터, 캘린더 .ics 표준 내보내기) 구현 및 155개 스모크 테스트 무결성 검증
+- **목표**: 사용자 추가 승인이나 개입 없이 즉시 적용 가능한 3대 우선순위 과제(TASK-BG-10, TASK-BG-7, TASK-BG-11)를 기존 DB/규칙/UI와 100% 무충돌·비파괴적으로 구현하고 자동화 검증 완료.
+- **수정/실행 내역**:
+  1. **TASK-BG-10 (목표 순서 드래그 앤 드롭 및 우선순위 정렬)**:
+     - `sortGoalsByOrder(goals, orderList)`: 순수 정렬 함수 구현 (미등록 신규 목표 후미 배치, 원본 불변성 보장).
+     - `shiftGoalOrder(goalId, dir)`, `reorderGoal(fromId, toId)`: 옵티미스틱 UI 즉시 반영, `triggerHaptic(20)` 촉각 피드백, `saveProfile()` 비파괴 동기화 (`profile.settings.goalOrder`).
+     - `renderHome()` / `renderGoalsScreen()`: 목표 카드 및 칩 목록에 우선순위 정렬 적용, 드래그 핸들(`⠿`), 접근성 이동 버튼(`▲`/`▼`), 1순위 대표 목표 배지(`🔥 대표`) 렌더링.
+  2. **TASK-BG-7 (방해금지 시간대 DND 알림 필터)**:
+     - `isWithinDND(now, dndSettings)`: 자정 횡단(22:00~08:00) 및 당일 시간대 완벽 판별 순수 함수 구현 (`settings.dnd` 및 플랫 설정 자동 언래핑).
+     - `generateDynamicNotification(profile, now)`: 방해금지 시간대 활성화 시 알림 차단(`return null`).
+     - `setupNotifyTimer()`: 브라우저 인앱 주기 타이머에서 DND 시간대 알림 스킵.
+     - `api/push-dispatch.js`: 백엔드 푸시 디스패처에 `quiet_hours_enabled` 시간 검사 로직 추가.
+  3. **TASK-BG-11 (캘린더 .ics RFC 5545 표준 내보내기 & 다차원 데이터 익스포트)**:
+     - `buildICS(records, goals)`: RFC 5545 표준 VCALENDAR/VEVENT 생성 순수 함수 구현 (75자 라인 폴딩, 특수문자 이스케이프, 테마별 카테고리 매핑).
+     - `openExportThemeModal()`: 내보내기 모달 포맷 선택에 `📅 iCalendar (.ics - 구글/애플 캘린더 연동)` 옵션 추가 및 브라우저 다운로드 연동 (`text/calendar;charset=utf-8`).
+  4. **테스트 스위트 확장 (`scripts/smoke-test.js`)**:
+     - `FN_NAMES` 및 샌드박스 익스포트에 신규 순수 함수(`sortGoalsByOrder`, `isWithinDND`, `buildICS`) 추가.
+     - 정렬 불변식, DND 경계값, 다이내믹 알림 DND 억제, RFC 5545 규격 검증 단위 테스트 7종 추가.
+- **발생한 문제 및 해결**:
+  - `smoke-test.js` 샌드박스 격리 환경에서 `module.exports` 누락 및 `profile.settings` 객체 구조 차이로 인한 DND 테스트 불일치 식별 → `isWithinDND` 내 `dndSettings.dnd || dndSettings` 자동 언래핑을 적용하고 익스포트 목록을 보강하여 완벽 해결.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **155개 전수 통과 (0개 실패)**.
+  - 구글/애플 캘린더 표준(.ics) 및 기존 CSV/MD 내보내기와의 완벽한 하위 호환성 확인.
+---
+
+
