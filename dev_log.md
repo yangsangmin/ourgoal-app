@@ -1231,3 +1231,30 @@
   - `api/goalagent.js` 자연어 일정 등록("이번주 일요일 아들생일 등록하면서 첨부파일로 미역국 레시피 등록해줘") JSON 생성 및 유튜브 링크 응답 검증 완료
   - 3회 수정 시 자동 반영 로직 및 안내 메시지 일치 검증 완료
 ---
+
+## [2026-09-10 15:00] feat: 대화형 기록, 캘린더 수동편집/구글캘린더 연동, 목표AI 전체미리보기, AI 결과입력, 프라이버시 설정 및 플랫폼 설정 고도화
+- **목표**: 사용자 요청 10대 개선사항 완결 구현:
+  1. 기록 대화형 전환 (자연어 시간·활동 파싱 및 사진 첨부/수동 모달 보존)
+  2. 캘린더 일자 클릭 시 수동 일정 추가 및 편집 기능
+  3. 설정 탭 구글 캘린더 1-클릭 연동 및 실시간 동기화/해제 기능
+  4. 캘린더 탭 상단 구글 캘린더 연동 상태 배너 (미연동/연동 완료)
+  5. 목표 AI 대화 모달 전체 템플릿 양식/내용 미리보기 (터치 스크롤 지원)
+  6. 종합상황 카드 정리 및 목표 카드 바로 밑 컴팩트 '최종 결과 입력 (목표완료시)' 배치
+  7. 마일스톤 및 할 일 AI 결과 입력 어시스턴트 지원
+  8. 목표·일정·기록·통계 공개 범위(전체공개/모임원/나만보기) 설정 및 접속 상태 표시
+  9. 목표·일정·기록 헤더 프라이버시 배지 및 1-tap 빠른 변경 모달
+  10. 당근·인스타·스레드 벤치마킹 설정 고도화 (계정 2FA/원격로그아웃, 야간 방해금지 22:00~08:00, 테마/글자크기/데이터절약, 캐시 비우기, 1:1 고객문의 및 FAQ 아코디언)
+- **수정/실행 내역**:
+  - `index.html`: 자연어 기록 파싱(`parseConversationalRecord`), 대화형 확인 모달(`openConversationalRecordConfirmModal`), 사진 첨부 및 수동 기록 모달 기능 탑재
+  - `index.html`: 캘린더 날짜 클릭 수동 편집 모달(`openCalendarManualEditModal`), `+ 일정 추가` 버튼 및 이벤트별 `✏️` 편집 지원, `state.profile.settings.customSchedules` 영속화
+  - `index.html`: 구글 캘린더 1-클릭 연동 모달(`openGoogleCalendarConnectModal`), 원터치 동기화(`syncAllToGoogleCalendar`), 연동 해제, 자동 동기화 스위치, 캘린더 탭 상단 상태 배너(`#calGoogleBanner`) 동적 렌더링
+  - `index.html`: 목표 AI 모달에 전체 템플릿 양식과 세부 마일스톤/할일을 트리 형태로 조망할 수 있는 `renderGoalOpsFullPreviewHtml` 구현 및 모바일 터치 스크롤 박스(`.scroll-preview-box`) 탑재
+  - `index.html`: 기존 종합상황 카드에서 '최종결과 입력'과 '기록으로 옮기기'를 제거하고, 목표 카드 하단에 컴팩트 버튼 `최종 결과 입력` 및 `(목표완료시)` 안내 텍스트 배치
+  - `index.html`: 마일스톤 및 할 일별 `🤖 AI 결과` 버튼 및 `openAiResultAssistantModal` 구현, `openResultModal` 상단 AI 추천 연동
+  - `index.html`: 공개 범위 설정 (`privGoalSelect`, `privCalSelect`, `privRecSelect`, `privStatsSelect`) 및 실시간 온라인 상태 스위치, 탭 헤더 프라이버시 배지(`updatePrivacyBadges`, `openPrivacyPickerModal`) 구현
+  - `index.html`: 계정 2단계 인증, 원격 기기 로그아웃, 야간 방해금지 모드 (`quietHoursSwitch`, 시간 지정 및 카테고리별 푸시 토글), 테마 및 글자 크기(`applyAppSettings`), 데이터 절약 모드, 캐시 1-클릭 비우기, 1:1 고객지원 모달(`openCustomerInquiryModal`), 5종 FAQ 아코디언 모달(`openFaqModal`) 구현
+- **검증 결과**:
+  - `npm test` **85개 전수 통과 (0개 실패)**
+  - JS 문법 검증(`new Function`), 규정 준수 마커(`회원 탈퇴`, `이용약관`, `개인정보처리방침`, `문의`, `v1.0.0`) 전수 통과
+---
+
