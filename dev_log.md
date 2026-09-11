@@ -2015,3 +2015,21 @@
   - 암행어사 감찰 결과: 팀 성실도 **70점 -> 100점 (EXEMPLARY)** 회복, 잔존 결함 **0건**, 마패 시정명령 즉시 해소 (`MAPAE-DIR-1933` 결함 0건).
 ---
 
+## [2026-09-12 05:15] [E3] #TASK-ES-012 '함께 목표' 방 초대 루프 (웹 무설치 즉시 수락) 구현 및 배포
+- **목표**: 친구와 1:1 또는 5인 소그룹으로 '함께 목표'(예: 마라톤 완주방)를 개설하고, 카카오톡/링크 공유 시 앱 설치 없이 웹에서 원클릭으로 바로 수락·참여하는 소셜 루프(크레딧 제외) 구현 및 배포 (상민님 직접 지시 반영)
+- **수정/실행 내역**:
+  1. `docs/rules/TICKETS.md`: #TASK-ES-012 본질 승인 티켓 등록
+  2. `index.html`:
+     - `MOCK_GROUPS`: '친구와 1:1 마라톤 완주방' (정원 2명), '5인 소그룹 마라톤 완주방' (정원 5명) 프리셋 등록.
+     - `promptNewGroup`: 1:1 페어 완주방, 5인 소그룹 완주방 정원 선택 드롭다운 및 ⚡ 1초 추천 방 템플릿(마라톤 완주방 등) 탑재, 개설 완료 시 초대 모달 자동 연계.
+     - `renderGroupDetail`: 상단에 방 정원 대비 참여 인원 게이지, 잔여 자리 현황, 💬 카카오톡 친구 초대 및 🔗 초대 링크 복사 버튼 위젯 탑재.
+     - 유틸리티: `buildPeerInviteUrl`, `formatPeerInviteMessage`, `calculateRemainingSeats`, `shareGroupToKakao`, `copyGroupInviteLink`, `openPeerInviteSuccessModal`, `showPeerInviteLandingModal`, `acceptPeerInvite`, `checkAndHandlePeerInviteUrl`.
+     - `boot`: 앱 실행 시 URL 내 `?invite_group=` 감지하여 비로그인 방문자에게 앱 설치 없이 웹에서 바로 수락할 수 있는 초대장 카드 모달 노출 및 1초 게스트 원클릭 진입 지원.
+     - 사용자 요청에 따라 500 크레딧 지급 관련 포인트/로직 엄격 제외.
+  3. `scripts/smoke-test.js`:
+     - 잔여석 계산, 초대 URL 생성, 카톡 초대 메시지 생성 단위 테스트 및 컴플라이언스 테스트 추가 (총 167개 전수 통과).
+- **발생한 문제 및 해결**:
+  - 비로그인 사용자가 초대 링크를 열었을 때 앱 설치나 복잡한 가입 화면으로 이탈하지 않도록, `checkAndHandlePeerInviteUrl`을 통해 랜딩 화면 위에 전용 초대 카드를 노출하고 원클릭 웹 즉시 수락을 지원하여 마찰 0% 달성.
+- **검증 결과**:
+  - `npm test` (`node scripts/smoke-test.js`): **167개 전수 통과 (0개 실패)**.
+---

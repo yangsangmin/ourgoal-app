@@ -18321,6 +18321,42 @@
         '<p class="faint" style="margin:8px 0 0;">참여자 '+(g.members+(gs.joined?1:0))+'명의 공동 달성률 '+g.progress+'%</p>' +
       '</div>' +
 
+      /* [PEER INVITE] 친구와 1:1 또는 5인 소그룹 초대 루프 카드 */
+      (function(){
+        var max = g.maxMembers || (g.roomType==='pair' ? 2 : (g.roomType==='small' ? 5 : 50));
+        var cur = g.members + (gs.joined?1:0);
+        var rem = Math.max(0, max - cur);
+        var isPair = max === 2;
+        var isSmall = max <= 5 && !isPair;
+        var isFull = rem === 0;
+        return '<div class="card" style="background:linear-gradient(135deg,rgba(255,79,100,.04),rgba(255,159,28,.05));border:1.4px solid rgba(255,79,100,.3);margin-bottom:12px;">' +
+          '<div class="card-title-row" style="margin-bottom:6px;">' +
+            '<h3 style="display:flex;align-items:center;gap:6px;font-size:.92rem;margin:0;">' +
+              '<span>💌</span><span>'+(isPair ? '친구와 1:1 페어 완주방' : (isSmall ? '5인 소그룹 완주방' : '함께 목표 방'))+'</span>' +
+            '</h3>' +
+            '<span class="dday-pill" style="background:var(--red-soft);color:var(--red);font-size:.68rem;font-weight:700;">방 초대 루프</span>' +
+          '</div>' +
+          '<p class="muted" style="margin:0 0 10px;font-size:.78rem;line-height:1.45;">' +
+            (isPair ? (isFull ? '1:1 완주 페어 매칭이 완료되었습니다! 서로의 페이스메이커로 함께 완주해요.' : '친구 1명을 초대해 1:1 페이스메이커로 함께 목표를 완주해보세요!')
+                    : (isFull ? '소그룹 정원이 모두 찼어요! 멤버들과 함께 완주 목표를 향해 달려요.' : '친구를 초대해 소그룹을 완성하고 웹에서 앱 설치 없이 바로 함께 시작해요.')) +
+          '</p>' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;background:var(--card);padding:10px 12px;border-radius:12px;border:1px solid var(--rule);margin-bottom:10px;">' +
+            '<div>' +
+              '<div style="font-size:.72rem;color:var(--ink-faint);">참여 인원 현황</div>' +
+              '<div style="font-size:.92rem;font-weight:800;color:var(--ink);margin-top:2px;">' +
+                cur + ' / ' + max + '명 ' + (isFull ? '<span style="color:var(--sage);font-size:.8rem;font-weight:800;">(정원 마감 🏅)</span>' : '<span style="color:var(--red);font-size:.8rem;font-weight:800;">(잔여 '+rem+'자리)</span>') +
+              '</div>' +
+            '</div>' +
+            '<div style="font-size:1.5rem;">'+(isFull ? '🏅' : (isPair ? '🏃‍♂️🏃‍♀️' : '👥'))+'</div>' +
+          '</div>' +
+          '<div style="display:flex;gap:8px;">' +
+            '<button class="btn btn-kakao" id="grpKakaoInviteBtn" type="button" style="flex:1;font-size:.78rem;padding:8px 6px;justify-content:center;">💬 카카오톡 초대</button>' +
+            '<button class="btn btn-ghost" id="grpCopyLinkBtn" type="button" style="flex:1;font-size:.78rem;padding:8px 6px;justify-content:center;">🔗 초대 링크 복사</button>' +
+          '</div>' +
+          '<p class="faint" style="font-size:.68rem;text-align:center;margin:6px 0 0;">카톡 공유 시 친구가 앱 설치 없이 웹에서 바로 초대 수락하고 참여할 수 있어요</p>' +
+        '</div>';
+      })() +
+
       (gs.joined ?
         '<div class="card" style="border:1.6px solid '+(checked?'var(--sage)':'var(--red)')+';">' +
           '<div class="card-title-row"><h3>'+(checked?'오늘 인증 완료 ✅':'오늘의 인증')+'</h3>' +
@@ -18473,6 +18509,11 @@
       toast('참여했어요 · 오늘부터 인증해봐요');
       renderCommGroups(body);
     });
+
+    var kakaoInviteBtn = body.querySelector('#grpKakaoInviteBtn');
+    if(kakaoInviteBtn) kakaoInviteBtn.addEventListener('click', function(){ shareGroupToKakao(g); });
+    var copyLinkBtn = body.querySelector('#grpCopyLinkBtn');
+    if(copyLinkBtn) copyLinkBtn.addEventListener('click', function(){ copyGroupInviteLink(g); });
   }
 
   function collectiveGaugeHtml(){
@@ -18616,10 +18657,252 @@
           closeModal();
           state.activeGroupId = gid;
           renderCommGroups(body);
-          toast('모임을 만들었어요 · 오늘 인증부터 시작해봐요');
+          toast('방을 개설했어요! 친구를 초대해보세요 💌');
+          openPeerInviteSuccessModal(newGroup);
         });
       }
     );
+  }
+
+  /* ============ [PEER INVITE] '함께 목표' 방 초대 루프 (웹 무설치 즉시 수락) ============ */
+  function copyTextToClipboard(text){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).catch(function(){ fallbackCopyText(text); });
+    } else {
+      fallbackCopyText(text);
+    }
+  }
+  function fallbackCopyText(text){
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    } catch(e){}
+  }
+
+  function calculateRemainingSeats(group, extraJoined){
+    var max = group.maxMembers || (group.roomType === 'pair' ? 2 : (group.roomType === 'small' ? 5 : 50));
+    var cur = (group.members || 0) + (extraJoined ? 1 : 0);
+    return Math.max(0, max - cur);
+  }
+
+  function buildPeerInviteUrl(group, originPath){
+    var base = originPath || (window.location.origin + window.location.pathname);
+    var params = new URLSearchParams();
+    params.set('invite_group', group.id || '');
+    if(group.name) params.set('room_name', group.name);
+    if(group.maxMembers) params.set('max', String(group.maxMembers));
+    if(group.roomType) params.set('type', group.roomType);
+    if(group.inviteCode) params.set('code', group.inviteCode);
+    return base + '?' + params.toString();
+  }
+
+  function formatPeerInviteMessage(group, senderName, inviteUrl){
+    var name = senderName || '친구';
+    var isPair = group.maxMembers === 2 || group.roomType === 'pair';
+    var roomTypeLabel = isPair ? '1:1 페어 완주방' : ((group.maxMembers || 5) + '인 소그룹 완주방');
+    return '[아워골] ' + name + '님이 「' + (group.name || '함께 목표 방') + '」에 초대했어요! 🏃\n\n' +
+      '👥 방 유형: ' + roomTypeLabel + '\n' +
+      '🎯 목표: ' + (group.desc || '함께 목표 달성하기') + '\n' +
+      '📋 인증 규칙: ' + (group.rule || '매일/주간 기록 인증') + '\n\n' +
+      '✨ 앱 설치 없이 웹에서 바로 초대 수락하고 함께 시작할 수 있어요!\n' +
+      '👉 참여 링크: ' + inviteUrl;
+  }
+
+  function trackPeerInvite(action, groupId){
+    try {
+      if(typeof track === 'function'){
+        track('peer_invite_' + action, {
+          group_id: groupId,
+          user_id: state.profile ? state.profile.id : null,
+          time: nowISO()
+        });
+      }
+    } catch(e){}
+  }
+
+  async function shareGroupToKakao(group){
+    var inviteUrl = buildPeerInviteUrl(group);
+    var senderName = state.profile ? state.profile.displayName : '친구';
+    var textMsg = formatPeerInviteMessage(group, senderName, inviteUrl);
+    trackPeerInvite('share', group.id);
+
+    if(navigator.share){
+      try {
+        await navigator.share({
+          title: '[아워골] ' + (group.name || '함께 목표') + ' 초대',
+          text: textMsg,
+          url: inviteUrl
+        });
+        toast('카카오톡 또는 원하는 앱으로 초대장을 전송했어요 💌');
+        return;
+      } catch(e){
+        if(e.name === 'AbortError') return;
+      }
+    }
+
+    copyTextToClipboard(textMsg);
+    toast('초대장과 링크가 복사되었어요! 카카오톡 대화방에 붙여넣어 공유하세요 💬');
+  }
+
+  function copyGroupInviteLink(group){
+    var inviteUrl = buildPeerInviteUrl(group);
+    copyTextToClipboard(inviteUrl);
+    trackPeerInvite('copy_link', group.id);
+    toast('초대 링크가 복사되었어요! 카카오톡이나 SNS에 공유하세요 🔗');
+  }
+
+  function openPeerInviteSuccessModal(group){
+    var isPair = group.maxMembers === 2;
+    var rem = calculateRemainingSeats(group, 0);
+    var mHtml = '<div style="text-align:center;padding:10px 4px 6px;"><div style="font-size:2.4rem;margin-bottom:8px;">🎉</div><h3 style="font-size:1.15rem;font-weight:800;margin:0 0 6px;">방이 성공적으로 개설되었어요!</h3><p class="muted" style="font-size:.82rem;line-height:1.5;margin:0 0 16px;">' + (isPair ? '친구 1명을 초대해 1:1 페이스메이커로 함께 완주해보세요!' : '5인 소그룹 멤버를 초대해 함께 완주 목표를 시작해보세요.') + '<br><b>앱 설치 없이 웹에서 바로</b> 초대 수락하고 참여할 수 있어요.</p><div style="background:var(--card2);border-radius:14px;padding:12px;border:1px solid var(--rule);margin-bottom:14px;text-align:left;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span style="font-size:1.3rem;">'+group.icon+'</span><b style="font-size:.95rem;color:var(--ink);">'+escapeHtml(group.name)+'</b><span class="dday-pill" style="background:var(--red-soft);color:var(--red);">'+(isPair ? '1:1 페어' : group.maxMembers+'인 소그룹')+'</span></div><div style="font-size:.76rem;color:var(--ink-soft);margin-bottom:4px;">'+escapeHtml(group.desc)+'</div><div style="font-size:.72rem;font-weight:700;color:var(--sage);">👥 현재 1명 참여 중 · 잔여 '+rem+'자리</div></div><div style="display:flex;flex-direction:column;gap:8px;"><button class="btn btn-kakao" id="modalKakaoShareBtn" type="button" style="width:100%;padding:11px;font-size:.86rem;justify-content:center;">💬 카카오톡으로 친구 초대하기</button><button class="btn btn-ghost" id="modalCopyLinkBtn" type="button" style="width:100%;padding:10px;font-size:.84rem;justify-content:center;">🔗 초대 링크 복사하기</button><button class="mz-btn" id="modalGoRoomBtn" type="button" style="width:100%;margin-top:4px;padding:11px;font-size:.86rem;">방으로 바로 이동</button></div></div>';
+    openModal(
+      mHtml,
+      function(sheet){
+        var kBtn = sheet.querySelector('#modalKakaoShareBtn');
+        if(kBtn) kBtn.onclick = function(){ shareGroupToKakao(group); };
+        var cBtn = sheet.querySelector('#modalCopyLinkBtn');
+        if(cBtn) cBtn.onclick = function(){ copyGroupInviteLink(group); };
+        var gBtn = sheet.querySelector('#modalGoRoomBtn');
+        if(gBtn) gBtn.onclick = function(){
+          closeModal();
+          state.activeGroupId = group.id;
+          renderCommGroups(document.getElementById('commBody'));
+        };
+      }
+    );
+  }
+
+  async function acceptPeerInvite(inviteGid, customNickname, roomMeta){
+    trackPeerInvite('accept', inviteGid);
+    var targetGroup = MOCK_GROUPS.find(function(x){ return x.id === inviteGid; });
+    if(!targetGroup && roomMeta && roomMeta.name){
+      targetGroup = {
+        id: inviteGid,
+        icon: roomMeta.icon || '🏃',
+        name: roomMeta.name,
+        topic: roomMeta.topic || 'health/러닝·마라톤',
+        region: '온라인',
+        members: 1,
+        maxMembers: parseInt(roomMeta.max, 10) || 5,
+        roomType: roomMeta.type || 'small',
+        progress: 20,
+        cadence: '주 3회',
+        endDate: daysFromNow(30),
+        desc: roomMeta.desc || '함께 목표를 달성하는 소그룹 방이에요',
+        rule: roomMeta.rule || '주 3회 인증샷 또는 기록 남기기',
+        weeklyTarget: 15,
+        weeklyDone: 3,
+        roster: [],
+        activity: ['초대 링크를 통해 참여가 시작되었어요'],
+        teamGoals: []
+      };
+      MOCK_GROUPS.unshift(targetGroup);
+    }
+
+    var nick = (customNickname && customNickname.trim()) ? customNickname.trim() : (state.profile ? state.profile.displayName : '함께 달리는 러너');
+
+    if(!state.profile){
+      var guestId = 'guest_' + Math.random().toString(36).substring(2, 9);
+      state.profile = defaultProfile(guestId, guestId, nick);
+      try { localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile)); } catch(e){}
+    } else {
+      if(customNickname && customNickname.trim()) state.profile.displayName = nick;
+    }
+
+    var gs = groupState(inviteGid);
+    gs.joined = true;
+    if(!gs.myRole) gs.myRole = 'member';
+
+    if(targetGroup){
+      if(!targetGroup.roster) targetGroup.roster = [];
+      if(!targetGroup.roster.some(function(r){ return r.n === nick; })){
+        targetGroup.roster.push({ n: nick, c: 0, me: true });
+        targetGroup.members = (targetGroup.members || 1) + 1;
+      }
+      if(!targetGroup.activity) targetGroup.activity = [];
+      targetGroup.activity.unshift(nick + '님이 초대를 수락하고 방에 참여했어요! 🎉');
+    }
+
+    await saveProfile();
+    closeModal();
+
+    var landScreen = document.getElementById('landingScreen');
+    if(landScreen) landScreen.style.display = 'none';
+    var authScreen = document.getElementById('authScreen');
+    if(authScreen) authScreen.style.display = 'none';
+
+    await enterApp();
+    switchTab('comm');
+    state.commSubTab = 'groups';
+    state.activeGroupId = inviteGid;
+    var commBody = document.getElementById('commBody');
+    if(commBody) renderCommGroups(commBody);
+
+    burstConfetti(window.innerWidth / 2, window.innerHeight / 3);
+    toast('🎉 「' + (targetGroup ? targetGroup.name : '함께 목표 방') + '」에 참여했어요! 오늘 첫 인증을 남겨보세요.');
+
+    if(window.history && window.history.replaceState){
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  }
+
+  function showPeerInviteLandingModal(inviteGid, roomMeta){
+    trackPeerInvite('view', inviteGid);
+    var targetGroup = MOCK_GROUPS.find(function(x){ return x.id === inviteGid; });
+    var roomName = (targetGroup && targetGroup.name) || (roomMeta && roomMeta.name) || '함께 목표 소그룹 방';
+    var icon = (targetGroup && targetGroup.icon) || (roomMeta && roomMeta.icon) || '🏃';
+    var maxMembers = (targetGroup && targetGroup.maxMembers) || (roomMeta && parseInt(roomMeta.max, 10)) || 5;
+    var isPair = maxMembers === 2;
+    var desc = (targetGroup && targetGroup.desc) || (roomMeta && roomMeta.desc) || '친구와 함께 서로의 페이스메이커가 되어 목표를 완주해요.';
+    var rule = (targetGroup && targetGroup.rule) || (roomMeta && roomMeta.rule) || '주 3회 러닝 또는 목표 기록 인증';
+    var curMembers = targetGroup ? targetGroup.members : 1;
+    var remaining = Math.max(0, maxMembers - curMembers);
+    var defaultNick = state.profile ? state.profile.displayName : '함께 달리는 러너';
+
+    var landHtml = '<div style="text-align:center;padding:8px 4px 6px;"><div style="font-size:2.4rem;margin-bottom:8px;">💌</div><div class="dday-pill" style="background:var(--sage-soft);color:var(--sage);display:inline-block;margin-bottom:6px;font-weight:700;">Zero-Install Web Onboarding</div><h3 style="font-size:1.2rem;font-weight:800;margin:0 0 6px;">함께 목표 방 초대장이 도착했어요!</h3><p class="muted" style="font-size:.82rem;line-height:1.5;margin:0 0 14px;">앱 설치 없이 웹 브라우저에서 바로 수락하고 시작할 수 있어요.</p><div style="background:var(--card2);border-radius:14px;padding:14px;border:1px solid var(--rule);margin-bottom:14px;text-align:left;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:1.4rem;">'+icon+'</span><b style="font-size:1rem;color:var(--ink);">'+escapeHtml(roomName)+'</b><span class="dday-pill" style="background:var(--red-soft);color:var(--red);font-size:.7rem;">'+(isPair ? '1:1 페어 완주' : maxMembers+'인 소그룹')+'</span></div><p style="font-size:.78rem;color:var(--ink-soft);margin:4px 0 8px;line-height:1.4;">'+escapeHtml(desc)+'</p><div style="font-size:.74rem;color:var(--ink-faint);margin-bottom:6px;">인증 규칙: <b>'+escapeHtml(rule)+'</b></div><div style="font-size:.74rem;font-weight:700;color:var(--red);">👥 현재 '+curMembers+'명 참여 중 · 잔여 '+remaining+'자리</div></div><div style="margin-bottom:12px;text-align:left;"><label style="font-size:.76rem;font-weight:700;color:var(--ink);display:block;margin-bottom:4px;">참여할 닉네임</label><input id="peerInviteNickInput" type="text" value="'+escapeHtml(defaultNick)+'" placeholder="닉네임을 입력하세요" style="width:100%;box-sizing:border-box;font-size:.85rem;padding:9px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--card);color:var(--ink);"></div><div style="display:flex;flex-direction:column;gap:8px;"><button class="mz-btn" id="peerInviteAcceptBtn" type="button" style="width:100%;padding:12px;font-size:.92rem;font-weight:800;">🚀 초대 수락하고 바로 방 들어가기 (웹 즉시 시작)</button>'+(!state.profile ? '<button class="btn btn-kakao" id="peerInviteKakaoQuickBtn" type="button" style="width:100%;padding:10px;font-size:.82rem;justify-content:center;">💬 카카오로 3초 만에 시작하기</button>' : '')+'<button class="btn btn-ghost btn-sm" id="peerInviteDismissBtn" type="button" style="width:100%;margin-top:2px;">둘러보기만 하기</button></div><p class="faint" style="font-size:.68rem;text-align:center;margin:8px 0 0;">별도 다운로드나 앱스토어 설치 없이 이 웹 화면에서 오늘부터 바로 인증할 수 있어요</p></div>';
+    openModal(
+      landHtml,
+      function(sheet){
+        var accBtn = sheet.querySelector('#peerInviteAcceptBtn');
+        if(accBtn) accBtn.onclick = function(){
+          var nickInput = sheet.querySelector('#peerInviteNickInput');
+          var nickVal = nickInput ? nickInput.value.trim() : '';
+          acceptPeerInvite(inviteGid, nickVal, roomMeta);
+        };
+        var kakaoBtn = sheet.querySelector('#peerInviteKakaoQuickBtn');
+        if(kakaoBtn) kakaoBtn.onclick = function(){
+          closeModal();
+          startOAuthLogin('kakao');
+        };
+        var dBtn = sheet.querySelector('#peerInviteDismissBtn');
+        if(dBtn) dBtn.onclick = closeModal;
+      }
+    );
+  }
+
+  function checkAndHandlePeerInviteUrl(){
+    try {
+      var searchParams = new URLSearchParams(window.location.search);
+      var inviteGid = searchParams.get('invite_group') || searchParams.get('invite');
+      if(!inviteGid) return;
+      var roomMeta = {
+        name: searchParams.get('room_name') || '',
+        max: searchParams.get('max') || '5',
+        type: searchParams.get('type') || 'small',
+        code: searchParams.get('code') || ''
+      };
+      setTimeout(function(){
+        showPeerInviteLandingModal(inviteGid, roomMeta);
+      }, 350);
+    } catch(e){
+      console.warn('checkAndHandlePeerInviteUrl 실패:', e);
+    }
   }
 
   var MANITO_ADJ = ['새벽의','조용한','끈질긴','달리는','반짝이는','묵묵한','씩씩한','느긋한','집중하는','유쾌한'];
