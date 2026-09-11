@@ -20597,6 +20597,9 @@
     // 구글 로그인은 사용자가 랜딩/인증 화면에서 구글 로그인 버튼을 직접 눌렀을 때만 안전하게 시작 (의도치 않은 자동 세션 덮어쓰기 원천 차단)
   })();
 
+  /* ============ #TASK-ES-015 FIX: 공용 크레딧 모듈(js/credits.js)에 앱 sb 주입 ============ */
+  if(window.OurgoalCredits && typeof window.OurgoalCredits.init === "function"){ window.OurgoalCredits.init({ sb: sb }); }
+
   /* ============ KF-7 #TASK-ES-014: 반응 4종 모듈(js/reactions.js)에 앱 핸들 연결 ============ */
   if(window.OurgoalReactions && typeof window.OurgoalReactions.init === 'function'){
     window.OurgoalReactions.init({
