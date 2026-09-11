@@ -2269,10 +2269,22 @@ check('compliance: [TASK-ES-013] 템플릿 복제 보상형 광고 파이프라�
   assert.ok(appAdsContent.includes('google.com'), 'app-ads.txt 구글 퍼블리셔 형식 준수 확인');
 });
 
+check('compliance: 오늘 같은 테마 실사용자 수 집계 RPC DDL(T01-S02, #TASK-ES-001)이 존재하고 유효하다', () => {
+  const sqlPath = path.join(__dirname, '..', 'docs', 'sql', '2026-09-12-count-same-theme-checkins.sql');
+  assert.ok(fs.existsSync(sqlPath), '2026-09-12-count-same-theme-checkins.sql 존재');
+  const sql = fs.readFileSync(sqlPath, 'utf8');
+  assert.ok(sql.includes('count_same_theme_checkins_today'), 'RPC 함수명 포함');
+  assert.ok(sql.includes('security definer'), '보안 정의자 지정');
+  assert.ok(sql.includes('is_bot'), '봇 계정 필터링 포함');
+  assert.ok(sql.includes('distinct c.user_id'), '고유 실사용자 수 집계');
+  assert.ok(sql.includes('Asia/Seoul'), 'KST 당일 기준 필터링 포함');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
 }
+
 
 
 
