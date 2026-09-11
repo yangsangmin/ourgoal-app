@@ -23,8 +23,13 @@
   var policyCache = null;
   var policyPromise = null;
 
+  var injectedClient = null;
+  /* 앱 본체(IIFE) 안의 sb 를 주입받는다. 미주입 시 전역 sb 폴백 (#TASK-ES-015 FIX) */
+  function init(deps) {
+    if (deps && deps.sb && typeof deps.sb.rpc === "function") injectedClient = deps.sb;
+  }
   function client() {
-    return global.sb || null;
+    return injectedClient || global.sb || null;
   }
 
   function flagOn() {
@@ -111,6 +116,7 @@
   }
 
   global.OurgoalCredits = {
+    init: init,
     ready: ready,
     isEnabled: isEnabled,
     policy: policy,
