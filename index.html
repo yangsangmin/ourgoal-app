@@ -2078,6 +2078,13 @@
         </div>
       </div>
 
+      <!-- 🧩 앱을 내맘대로! — 홈 구성 요소 켜기/끄기 (#TASK-ES-020) -->
+      <div class="set-block">
+        <h4>🧩 앱을 내맘대로!</h4>
+        <p style="font-size:.8rem;color:var(--ink-soft);margin:0 0 8px;">내 목표에 필요한 것만 홈에 남기세요. 오늘 기록하기·내 목표·기록·소통은 항상 보여요.</p>
+        <button class="btn btn-ghost btn-sm" id="homeLayoutOpenBtn" type="button" style="width:100%;">홈 구성 고르기</button>
+      </div>
+
       <!-- 📅 구글 캘린더 연동 (Req 3 & 4) -->
       <div class="set-block">
         <h4>📅 구글 캘린더 연동</h4>
@@ -2285,6 +2292,7 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
+<script src="/js/customize.js"></script>
 <script>
 (function(){
   "use strict";
@@ -6624,6 +6632,7 @@
     }
     renderTodayGlancePill();
     renderDailyQuestBar();
+    if(window.OurgoalCustomize) OurgoalCustomize.apply(state.profile.settings); /* 앱을 내맘대로! (#TASK-ES-020) */
   }
 
   /* ============ 주간 잔디 & 몰입 리포트 요약 카드 (가상유저 요청 P7/P9) ============ */
@@ -19695,6 +19704,13 @@
     if(typeof OurgoalCredits !== 'undefined'){ OurgoalCredits.renderSettingsSection(document.getElementById('settingsCreditsBlock')); }
 
     var settings = state.profile.settings;
+
+    // 🧩 앱을 내맘대로! (#TASK-ES-020) — 로직은 js/customize.js
+    var homeLayoutBtn = document.getElementById('homeLayoutOpenBtn');
+    if(homeLayoutBtn) homeLayoutBtn.onclick = function(){
+      if(!window.OurgoalCustomize){ toast('잠시 후 다시 시도해 주세요'); return; }
+      OurgoalCustomize.open({ state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal, track: track });
+    };
 
     // 🔒 공개 범위 및 프라이버시 (Req 8)
     if(!settings.privacy) settings.privacy = { goals:"private", calendar:"private", records:"private", stats:"private" };

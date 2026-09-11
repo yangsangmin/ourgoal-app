@@ -2354,6 +2354,57 @@ check('KF-7: content_reactions SQL 이 존재하고 소프트 삭제·봇 제외
   assert.ok(!/drop\s+table|truncate\s+table|delete\s+from\s+public\.content_reactions/i.test(sql), '파괴 구문·하드 삭제 없음');
 });
 
+/* ============ 앱을 내맘대로! (#TASK-ES-020, KF-1) ============ */
+const customizePath = path.join(__dirname, '..', 'js', 'customize.js');
+check('KF-1: js/customize.js 가 존재하고 문법이 유효하며 로드 시 document 를 만지지 않는다', () => {
+  assert.ok(fs.existsSync(customizePath), 'js/customize.js 존재');
+  const src = fs.readFileSync(customizePath, 'utf8');
+  new Function(src);
+  const vm = require('vm');
+  const sandbox = { window: {}, localStorage: undefined };
+  sandbox.window.window = sandbox.window;
+  vm.runInNewContext(src, sandbox);
+  assert.ok(sandbox.window.OurgoalCustomize, 'window.OurgoalCustomize 노출');
+});
+function loadCustomize(uxMode) {
+  const vm = require('vm');
+  const store = uxMode == null ? {} : { ourgoal_ux_mode: uxMode };
+  const sandbox = { window: { localStorage: { getItem: k => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = v; } } } };
+  sandbox.window.window = sandbox.window;
+  vm.runInNewContext(fs.readFileSync(customizePath, 'utf8'), sandbox);
+  return sandbox.window.OurgoalCustomize;
+}
+check('KF-1: 화이트리스트에 체크인 루프·내 목표·기록·소통 화면 id가 없다 (본질 ①②③ 보호, REQ-P1)', () => {
+  const C = loadCustomize();
+  ['captureCardBox', 'captureInput', 'captureSave', 'homeGoalList', 'streakBadge', 'screen-records', 'screen-comm', 'screen-home'].forEach(id => {
+    assert.ok(C.WHITELIST_IDS.indexOf(id) < 0, id + ' 는 숨길 수 없어야 한다');
+    assert.ok(C.CORE_IDS.indexOf(id) >= 0, id + ' 는 CORE_IDS 로 보호되어야 한다');
+  });
+  assert.ok(C.WHITELIST.length >= 5 && C.WHITELIST.every(w => w.id && w.label), '항목마다 id·사용자 언어 라벨');
+  C.WHITELIST.forEach(w => assert.ok(!/노션|DB|엔진/.test(w.label + w.hint), '도구 언어 금지: ' + w.label));
+});
+check('KF-1: normalize 가 화이트리스트 밖·핵심 id·중복을 버리고, 저장값 없으면 기존 모드에서 유추한다 (REQ-D2·D3)', () => {
+  const C = loadCustomize('minimal');
+  const J = v => JSON.stringify(v); // vm 샌드박스 배열은 다른 realm 이라 JSON 으로 비교
+  assert.strictEqual(J(C.normalize({ hidden: ['captureCardBox', 'ghostWidget', 'mzShareBtn', 'mzShareBtn'] })), J(['mzShareBtn']));
+  assert.strictEqual(J(C.normalize(null)), J([]));
+  assert.strictEqual(J(C.normalize({ hidden: 'bad' })), J([]));
+  assert.strictEqual(J(C.effectiveHidden({})), J(C.MINIMAL_HIDDEN), '저장값 없음 + 미니멀 모드 → 미니멀 CSS와 같은 숨김');
+  assert.strictEqual(J(loadCustomize('gamified').effectiveHidden({})), J([]));
+  assert.strictEqual(J(C.effectiveHidden({ homeLayout: { hidden: ['todayMissionCard'], version: 1 } })), J(['todayMissionCard']));
+});
+check('KF-1: index.html 에 설정 진입 버튼·모듈 로드·홈 렌더 훅이 있고 되돌리기가 제공된다 (REQ-S1·S2)', () => {
+  assert.ok(html.includes('<script src="/js/customize.js"></script>'), '모듈 로드');
+  assert.ok(html.includes('id="homeLayoutOpenBtn"'), '설정 「앱을 내맘대로!」 진입 버튼');
+  assert.ok(html.includes('OurgoalCustomize.apply(state.profile.settings)'), '홈 렌더 뒤 적용 훅');
+  assert.ok(html.includes('OurgoalCustomize.open({ state: state, saveProfile: saveProfile'), '설정에서 saveProfile 경로로 저장');
+  const src = fs.readFileSync(customizePath, 'utf8');
+  assert.ok(src.includes('기본으로 되돌리기'), '되돌리기 버튼');
+  assert.ok(src.includes('homeLayout'), 'settings.homeLayout 저장 키');
+  assert.ok(/id="adaptiveModeSelector"/.test(html), '기존 UX 모드 칩은 그대로 둔다');
+});
+
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
