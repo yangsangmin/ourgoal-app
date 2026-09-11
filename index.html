@@ -2205,6 +2205,9 @@
         <p class="danger-note">데이터는 이 기기(이 대화)에만 저장됩니다</p>
       </div>
 
+      <!-- 💳 크레딧 (#TASK-ES-015) — 서버 설정 enabled 일 때만 js/credits.js 가 채운다. 아니면 비어 있고 보이지 않는다 -->
+      <div class="set-block" id="settingsCreditsBlock" style="display:none;"></div>
+
       <!-- 💬 고객지원 및 FAQ (Req 10) -->
       <div class="set-block">
         <h4>고객지원 및 가이드</h4>
@@ -2280,6 +2283,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="js/credits.js"></script>
 <script>
 (function(){
   "use strict";
@@ -2307,7 +2311,9 @@
     ENABLE_TEMPLATE_REWARDED_ADS: false,
     ADMOB_REWARDED_AD_UNIT_ID: 'ca-app-pub-3940256099942544/5224354917', // 구글 공식 테스트 보상형 동영상 ID
     AD_DELAY_SECONDS: 5,
-    AD_NOTICE_MESSAGE: '다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다'
+    AD_NOTICE_MESSAGE: '다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다',
+    // 💳 공용 크레딧(#TASK-ES-015). 서버 credit_settings.enabled 와 둘 다 true 여야 어떤 적립·표시도 일어난다. M1(유저 5천 명) 전까지 false
+    ENABLE_CREDITS: false
   };
   if(typeof window !== 'undefined'){ window.OURGOAL_CONFIG = OURGOAL_CONFIG; }
 
@@ -19680,6 +19686,7 @@
   function renderSettingsScreen(){
     refreshCustomFeedbackButtons();
     renderProfileCard();
+    if(typeof OurgoalCredits !== 'undefined'){ OurgoalCredits.renderSettingsSection(document.getElementById('settingsCreditsBlock')); }
 
     var settings = state.profile.settings;
 

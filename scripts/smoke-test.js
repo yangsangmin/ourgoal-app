@@ -2280,6 +2280,43 @@ check('compliance: 오늘 같은 테마 실사용자 수 집계 RPC DDL(T01-S02,
   assert.ok(sql.includes('Asia/Seoul'), 'KST 당일 기준 필터링 포함');
 });
 
+/* ============ [#TASK-ES-015] 공용 크레딧 원장 (INFRA) ============ */
+check('compliance: [#TASK-ES-015] js/credits.js 가 존재하고 문법이 유효하며 OurgoalCredits API 6개를 노출한다', () => {
+  const p = path.join(__dirname, '..', 'js', 'credits.js');
+  assert.ok(fs.existsSync(p), 'js/credits.js 존재');
+  const src = fs.readFileSync(p, 'utf8');
+  new Function(src);
+  ['ready', 'isEnabled', 'policy', 'award', 'balance', 'renderSettingsSection'].forEach(fn => {
+    assert.ok(src.includes(fn + ': ' + fn), 'API ' + fn + ' 노출');
+  });
+  assert.ok(html.includes('<script src="js/credits.js"></script>'), 'index.html 이 js/credits.js 를 로드');
+});
+
+check('compliance: [#TASK-ES-015] 크레딧은 기본 OFF — ENABLE_CREDITS false, 서버 enabled 기본값 false, 화면 화폐 문구 없음', () => {
+  assert.ok(html.includes('ENABLE_CREDITS: false'), 'OURGOAL_CONFIG.ENABLE_CREDITS 기본값 false');
+  assert.ok(html.includes('id="settingsCreditsBlock"'), '설정 화면 크레딧 컨테이너 존재(기본 숨김)');
+  const sql = fs.readFileSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-12-credit-ledger.sql'), 'utf8');
+  assert.ok(sql.includes("('enabled', 'false'::jsonb)"), 'credit_settings.enabled 기본값 false');
+  const js = fs.readFileSync(path.join(__dirname, '..', 'js', 'credits.js'), 'utf8');
+  const uiStrings = js.match(/textContent = [^;]+;/g) || [];
+  uiStrings.forEach(line => {
+    assert.ok(!/현금|환전|₩|달러|상품권|출금/.test(line) && !/[0-9] *원/.test(line), '화면 문구에 화폐 표현 없음: ' + line);
+  });
+  assert.ok(!/localStorage|sessionStorage/.test(js), '크레딧을 로컬에 저장하지 않는다(정본 §2 원장)');
+});
+
+check('compliance: [#TASK-ES-015] credit_ledger SQL — append-only·멱등·봇 제외·설정값 기반이며 파괴 구문이 없다', () => {
+  const sql = fs.readFileSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-12-credit-ledger.sql'), 'utf8');
+  assert.ok(sql.includes('create table if not exists public.credit_ledger'), '원장 테이블');
+  assert.ok(sql.includes('create table if not exists public.credit_settings'), '설정 테이블');
+  assert.ok(sql.includes('idempotency_key text not null unique'), '멱등 키 unique');
+  assert.ok(sql.includes('security definer'), 'RPC 는 보안 정의자');
+  assert.ok(sql.includes('is_bot'), '봇 계정 제외');
+  assert.ok(sql.includes('award_credit(') && sql.includes('my_credit_balance()') && sql.includes('credit_policy()'), 'RPC 3종');
+  assert.ok(!/for (insert|update|delete)/i.test(sql.split('credit_ledger_select_own')[1].split('-- 2)')[0]), '원장에 클라이언트 쓰기 정책 없음');
+  assert.ok(!/drop +table|truncate|delete +from/i.test(sql), 'DROP/TRUNCATE/DELETE 없음');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
