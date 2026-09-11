@@ -89,6 +89,7 @@ const FN_NAMES = [
   'rescaleGoal',
   'sortGoalsByOrder', 'isWithinDND', 'buildICS', 'buildWebCalUrl',
   'quickCreateStarterGoal', 'generateMzStoryCanvas',
+  'calculateRemainingSeats', 'buildPeerInviteUrl', 'formatPeerInviteMessage',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -134,6 +135,7 @@ const sandboxSrc =
   'defaultSettings, getPrivacyLabel, subscriptionState, computeTrendChartData, formatStopwatchTime, ' +
   'rescaleGoal, sortGoalsByOrder, isWithinDND, buildICS, buildWebCalUrl, ' +
   'quickCreateStarterGoal, generateMzStoryCanvas, ' +
+  'calculateRemainingSeats, buildPeerInviteUrl, formatPeerInviteMessage, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -2185,6 +2187,47 @@ check('compliance: 3대 혁신 기능(WebCal 실시간 구독, 9:16 인스타 �
   assert.ok(html.includes('openFocusAutoPilotModal'), '초집중 모달 함수 존재');
   assert.ok(html.includes('FOCUS POMODORO'), '초집중 뽀모도로 타이머 UI 존재');
   assert.ok(html.includes('btnFocusQuickCheckin'), '초집중 원클릭 완결 체크인 버튼 존재');
+});
+
+check('calculateRemainingSeats: 1:1 방 및 5인 소그룹 잔여석을 정확히 계산한다', () => {
+  var pairRoom = { maxMembers: 2, roomType: 'pair', members: 1 };
+  assert.strictEqual(fns.calculateRemainingSeats(pairRoom, 0), 1);
+  assert.strictEqual(fns.calculateRemainingSeats(pairRoom, 1), 0);
+
+  var smallRoom = { maxMembers: 5, roomType: 'small', members: 3 };
+  assert.strictEqual(fns.calculateRemainingSeats(smallRoom, 0), 2);
+  assert.strictEqual(fns.calculateRemainingSeats(smallRoom, 1), 1);
+});
+
+check('buildPeerInviteUrl: 웹 무설치 초대 링크를 유효한 쿼리 파라미터와 함께 생성한다', () => {
+  var room = { id: 'g-marathon-pair', name: '친구와 1:1 마라톤 완주방', maxMembers: 2, roomType: 'pair', inviteCode: 'RUN-PAIR2' };
+  var url = fns.buildPeerInviteUrl(room, 'https://ourgoal-app.vercel.app/');
+  assert.ok(url.includes('invite_group=g-marathon-pair'), '그룹 ID 포함');
+  assert.ok(url.includes('max=2'), '정원 포함');
+  assert.ok(url.includes('code=RUN-PAIR2'), '초대 코드 포함');
+});
+
+check('formatPeerInviteMessage: 카카오톡 공유용 메시지에 앱 설치 없는 웹 수락 안내와 링크를 포함한다', () => {
+  var room = { name: '5인 소그룹 마라톤 완주방', maxMembers: 5, desc: '함께 완주하기', rule: '주 3회 5km' };
+  var msg = fns.formatPeerInviteMessage(room, '민혁', 'https://ourgoal-app.vercel.app/?invite_group=g-test');
+  assert.ok(msg.includes('민혁'), '초대자 이름 포함');
+  assert.ok(msg.includes('5인 소그룹 완주방'), '소그룹 유형 포함');
+  assert.ok(msg.includes('앱 설치 없이 웹에서 바로 초대 수락'), '무설치 웹 수락 안내 포함');
+  assert.ok(!msg.includes('500 크레딧'), '크레딧 내용 엄격 제외');
+});
+
+check('compliance: [PEER INVITE] 친구와 1:1 또는 5인 소그룹 마라톤 완주방 및 웹 무설치 즉시 수락 루프가 구현되어 있다 (크레딧 제외)', () => {
+  assert.ok(html.includes('g-marathon-pair'), '1:1 마라톤 완주방 프리셋 존재');
+  assert.ok(html.includes('g-marathon-small'), '5인 소그룹 마라톤 완주방 프리셋 존재');
+  assert.ok(html.includes('grpKakaoInviteBtn'), '카카오톡 초대 버튼 존재');
+  assert.ok(html.includes('grpCopyLinkBtn'), '초대 링크 복사 버튼 존재');
+  assert.ok(html.includes('tplMarathonPair'), '1:1 마라톤 완주방 1초 템플릿 버튼 존재');
+  assert.ok(html.includes('tplMarathonSmall'), '5인 소그룹 마라톤 1초 템플릿 버튼 존재');
+  assert.ok(html.includes('openPeerInviteSuccessModal'), '방 개설 완료 후 초대 모달 존재');
+  assert.ok(html.includes('showPeerInviteLandingModal'), '웹 무설치 초대 랜딩 모달 함수 존재');
+  assert.ok(html.includes('acceptPeerInvite'), '원클릭 초대 수락 함수 존재');
+  assert.ok(html.includes('checkAndHandlePeerInviteUrl'), '초대 URL 자동 감지 함수 존재');
+  assert.ok(!html.includes('500 크레딧 지급'), '크레딧 지급 내용 엄격 제외 불변식 검증 통과');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
