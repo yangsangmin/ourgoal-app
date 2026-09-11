@@ -1,0 +1,25 @@
+name: essence-gate
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+jobs:
+  essence-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 본질 게이트 (태그·티켓·금지 패턴·승인선·증가 한도)
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            node scripts/essence-gate.js --ci --base ${{ github.event.pull_request.base.sha }} --head ${{ github.event.pull_request.head.sha }}
+          else
+            node scripts/essence-gate.js --ci --base ${{ github.event.before }} --head ${{ github.sha }}
+          fi
+      - name: 스모크 테스트
+        run: npm test
