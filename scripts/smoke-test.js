@@ -2491,6 +2491,45 @@ check('KF-5: js/reactions.js 가 도움돼요 저장 직후 이유 시트를 띄
 });
 
 
+/* ============ [KF-4 #TASK-ES-018] 카테고리별 "도움이 된 글" 상단 슬롯 ============ */
+check("KF-4: js/top-helpful.js 가 존재하고 문법이 유효하며 30일 창·슬롯 2개·라벨을 정의한다", () => {
+  const p = path.join(__dirname, "..", "js", "top-helpful.js");
+  assert.ok(fs.existsSync(p), "js/top-helpful.js 존재");
+  const src = fs.readFileSync(p, "utf8");
+  new Function(src);
+  assert.ok(src.includes("WINDOW_DAYS = 30"), "최근 30일 창(결심 D-1 권장값)");
+  assert.ok(src.includes("SLOT_LIMIT = 2"), "슬롯 2개(결심 D-2 권장값)");
+  assert.ok(src.includes("이 주제에서 도움이 된 글"), "슬롯 라벨(사용자 언어)");
+  assert.ok(src.includes("cat !== 'all'"), "전체 칩에서는 슬롯 없음(통합 점수 금지)");
+  assert.ok(src.includes("missingSchema"), "서버 미적용 폴백 판별 존재");
+  assert.ok(html.includes("<script src=\"js/top-helpful.js\"></script>"), "index.html 이 js/top-helpful.js 를 로드");
+  assert.ok(html.includes("OurgoalTopHelpful.arrange(blendedItems, curCat"), "renderCommFeed 훅 존재");
+});
+
+check("KF-4: 상단 슬롯에 서열 문구(N위·TOP·랭킹)가 없다 — 실데이터 라벨만", () => {
+  const src = fs.readFileSync(path.join(__dirname, "..", "js", "top-helpful.js"), "utf8");
+  const ui = (src.match(/'[^']*'/g) || []).join(" ");
+  assert.ok(!/d+위|TOPs*d|랭킹|순위/.test(ui), "서열 문구 없음");
+  assert.ok(!/(#d+위|d+인 중 d+명|팀 포인트)/.test(src), "위조 사회적 숫자 패턴 없음");
+});
+
+check("KF-4: top_helpful_posts SQL — 카테고리 안에서만 집계, 봇·시뮬·숨김·자기반응 제외, DROP/DELETE 없음", () => {
+  const sqlPath = path.join(__dirname, "..", "docs", "sql", "2026-09-12-top-helpful.sql");
+  assert.ok(fs.existsSync(sqlPath), "2026-09-12-top-helpful.sql 존재");
+  const sql = fs.readFileSync(sqlPath, "utf8");
+  assert.ok(sql.includes("create or replace function public.top_helpful_posts"), "RPC 정의");
+  assert.ok(sql.includes("security definer"), "보안 정의자");
+  assert.ok(sql.includes("feed_post_matches_category(p, p_category)"), "카테고리 안에서만 집계");
+  assert.ok(sql.includes("p_key = 'all' then false"), "전체에서는 집계하지 않음");
+  assert.ok(sql.includes("coalesce(u.is_bot, false) = false"), "봇 반응 제외");
+  assert.ok(sql.includes("not like 'sim\\_%'"), "시뮬 글 제외");
+  assert.ok(sql.includes("r.user_id <> p.user_id"), "자기 반응 제외");
+  assert.ok(sql.includes("coalesce(p.hidden, false) = false"), "숨김 글 제외");
+  assert.ok(!/drops+table|truncate|deletes+from/i.test(sql), "DROP/TRUNCATE/DELETE 없음");
+});
+
+
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);

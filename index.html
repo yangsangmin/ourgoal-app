@@ -2295,6 +2295,7 @@
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
 <script src="js/helpful-reason.js"></script>
+<script src="js/top-helpful.js"></script>
 <script src="/js/customize.js"></script>
 <script src="js/streaks.js"></script>
 <script>
@@ -18196,6 +18197,10 @@
       + '</div>';
 
     blendedItems = filterFeedByCategory(blendedItems, curCat);
+    /* KF-4 #TASK-ES-018: 이 주제에서 도움이 된 글을 맨 위로(실데이터·'전체' 제외). 로직은 js/top-helpful.js */
+    if(window.OurgoalTopHelpful){
+      blendedItems = window.OurgoalTopHelpful.arrange(blendedItems, curCat, { posts: FEED_POSTS_CACHE, rerender: function(){ if(state.activeTab==='comm' && state.commSubTab==='feed') renderCommFeed(body); } });
+    }
 
     var quickPostBannerHtml = '<div class="card" style="margin-bottom:14px;padding:12px 16px;background:linear-gradient(135deg, rgba(108,92,231,0.08) 0%, rgba(255,159,28,0.06) 100%);border:1.5px solid var(--violet-soft);border-radius:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:var(--shadow-sm);">' +
       '<div style="display:flex;align-items:center;gap:10px;">' +
@@ -18239,7 +18244,8 @@
         var comments = getFeedComments(it.id);
         var isExpanded = !!(state.expandedComments && state.expandedComments[it.id]);
 
-        return '<div class="feed-item">' +
+        return (it._topHelpfulLabel && window.OurgoalTopHelpful ? window.OurgoalTopHelpful.labelHtml() : '') +
+          '<div class="feed-item">' +
           '<div class="feed-avatar'+(isMe?' me':'')+'">'+escapeHtml(it.avatar)+'</div>' +
           '<div class="feed-body">' +
             '<div class="feed-head">' +
@@ -20594,6 +20600,10 @@
         if(b && state.activeTab === 'comm' && state.commSubTab === 'feed') renderCommFeed(b);
       }
     });
+  }
+  /* ============ KF-4 #TASK-ES-018: 카테고리별 도움이 된 글 슬롯 모듈(js/top-helpful.js) ============ */
+  if(window.OurgoalTopHelpful && typeof window.OurgoalTopHelpful.init === 'function'){
+    window.OurgoalTopHelpful.init({ sb: sb });
   }
 
   /* ============ KF-5 #TASK-ES-016: 도움돼요 이유 모듈(js/helpful-reason.js)에 앱 핸들 연결 ============ */
