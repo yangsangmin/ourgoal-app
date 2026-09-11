@@ -2530,6 +2530,49 @@ check("KF-4: top_helpful_posts SQL — 카테고리 안에서만 집계, 봇·�
 
 
 
+/* ============ [KF-2 #TASK-ES-017] 템플릿 복제 크레딧 + 선택형 광고 ============ */
+check('KF-2: js/template-credit.js 가 존재하고 문법이 유효하며 API 5종을 노출한다 (#TASK-ES-017)', () => {
+  const p = path.join(__dirname, '..', 'js', 'template-credit.js');
+  assert.ok(fs.existsSync(p), 'js/template-credit.js 존재');
+  const src = fs.readFileSync(p, 'utf8');
+  new Function(src);
+  ['init', 'recordCopy', 'counts', 'fillCounts', 'renderAdOptIn'].forEach(fn => assert.ok(src.includes(fn + ': ' + fn), 'API ' + fn));
+  assert.ok(!/현금|환전|₩|출금|상품권/.test(src), '화폐 문구 없음(정본 §2)');
+  assert.ok(html.includes('<script src="js/template-credit.js"></script>'), 'index.html 이 모듈을 로드');
+  assert.ok(html.includes('window.OurgoalTemplateCredit.init({ sb: sb'), '부팅 시 앱 핸들 주입');
+});
+check('KF-2: 복제 흐름에서 광고가 분리되고, 광고는 설정의 선택형 버튼 한 경로뿐이다 (정본 §3)', () => {
+  assert.ok(html.includes('var adsEnabled = !!forceAdFlow;'), '복제 흐름은 플래그와 무관하게 광고 없음');
+  assert.ok(!html.includes('var adsEnabled = forceAdFlow || isTemplateRewardedAdEnabled();'), '구 강제 경로 제거');
+  assert.ok(html.includes('function playRewardedAdVideo(tpl, onComplete)'), '광고 완료 콜백 지원');
+  assert.ok(html.includes("OurgoalTemplateCredit.renderAdOptIn(document.getElementById('settingsCreditsBlock'))"), '선택형 버튼은 설정 › 크레딧 섹션에만');
+  const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'template-credit.js'), 'utf8');
+  assert.ok(src.includes('ENABLE_TEMPLATE_REWARDED_ADS') && src.includes('isEnabled()'), '플래그와 크레딧 enabled 둘 다 켜져야 버튼 표시');
+  assert.ok(html.includes('ENABLE_TEMPLATE_REWARDED_ADS: false'), '광고 플래그 기본 OFF 유지');
+});
+check('KF-2: 마켓·기본 템플릿의 고정 복제 수·가상 크리에이터 표기가 화면에서 사라지고 서버 실데이터 배지만 남는다 (금지 6-1)', () => {
+  assert.ok(!html.includes("t.downloads + '회 복제'"), '고정 downloads 문자열 표시 없음');
+  assert.ok(!html.includes("t.users.toLocaleString()+'명이 사용 중'"), '고정 사용자 수 표시 없음');
+  assert.ok(!html.includes("escapeHtml(t.creator)+'</b>'"), '가상 크리에이터 이름 표시 없음');
+  assert.ok(html.includes('data-tplcount="\' + t.key + \'"'), '마켓 카드에 서버 집계 배지 자리(기본 숨김)');
+  assert.ok(html.includes('data-tplcount="creator:\'+t.id+\'"'), '기본 템플릿에도 서버 집계 자리');
+  assert.ok(html.includes('OurgoalTemplateCredit.recordCopy(tpl.key || tpl.title'), '마켓 복제 시 서버 기록');
+  assert.ok(html.includes("OurgoalTemplateCredit.recordCopy('creator:' + t.id"), '기본 템플릿 복제 시 서버 기록');
+});
+check('KF-2: template_copies SQL — 멱등·RLS·봇 제외·구간 적립은 서버·DROP 없음', () => {
+  const sql = fs.readFileSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-12-template-copies.sql'), 'utf8');
+  assert.ok(sql.includes('create table if not exists public.template_copies'), '원장 테이블');
+  assert.ok(sql.includes('unique (template_id, copier_user_id)'), '같은 사람 1회만');
+  assert.ok(sql.includes('enable row level security'), 'RLS');
+  assert.ok(sql.includes('record_template_copy(') && sql.includes('template_copy_counts('), 'RPC 2종');
+  assert.ok(sql.includes('security definer') && sql.includes('is_bot'), '보안 정의자·봇 제외');
+  assert.ok(sql.includes("'template_copied'") && sql.includes('template_copy_tiers'), '구간 적립은 설정값 기반');
+  assert.ok(sql.includes("('ad_watched_amount', 'null'::jsonb)"), '광고 적립 액수 기본 null');
+  assert.ok(!/drop\s+table|truncate|delete\s+from/i.test(sql), 'DROP/TRUNCATE/DELETE 없음');
+});
+
+
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);

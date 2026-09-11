@@ -2298,6 +2298,7 @@
 <script src="js/top-helpful.js"></script>
 <script src="/js/customize.js"></script>
 <script src="js/streaks.js"></script>
+<script src="js/template-credit.js"></script>
 <script>
 (function(){
   "use strict";
@@ -14525,7 +14526,7 @@
     }, 1000);
   }
 
-  function playRewardedAdVideo(tpl){
+  function playRewardedAdVideo(tpl, onComplete){
     // 1. 모바일 앱(Capacitor) AdMob 플러그인 환경
     if(typeof window !== 'undefined' && window.Capacitor && typeof window.Capacitor.isPluginAvailable === 'function' && window.Capacitor.isPluginAvailable('AdMob') && window.AdMob){
       toast('광고 영상을 준비 중입니다...');
@@ -14535,22 +14536,23 @@
           .then(function(){ return window.AdMob.showRewardVideoAd(); })
           .then(function(reward){
             toast('🎉 광고 시청이 완료되었습니다! 아워골을 이용해 주셔서 감사합니다.');
+            if(typeof onComplete === 'function') onComplete(reward);
           })
           .catch(function(err){
             console.warn('AdMob Native 재생 실패 -> 웹 플레이어로 전환:', err);
-            showWebRewardedAdModal(tpl);
+            showWebRewardedAdModal(tpl, onComplete);
           });
       } catch(e) {
-        showWebRewardedAdModal(tpl);
+        showWebRewardedAdModal(tpl, onComplete);
       }
       return;
     }
 
     // 2. 일반 웹 브라우저 환경 (시뮬레이션 플레이어)
-    showWebRewardedAdModal(tpl);
+    showWebRewardedAdModal(tpl, onComplete);
   }
 
-  function showWebRewardedAdModal(tpl){
+  function showWebRewardedAdModal(tpl, onComplete){
     var adTitle = (tpl && tpl.title) ? tpl.title : '아워골 맞춤 템플릿';
     var adDuration = 5;
     var adRemain = adDuration;
@@ -14601,6 +14603,7 @@
             closeBtn.onclick = function(){
               closeModal();
               toast('🎉 광고 시청이 완료되었습니다! 템플릿을 자유롭게 활용하세요.');
+              if(typeof onComplete === 'function') onComplete();
             };
           }
         }
@@ -14632,6 +14635,7 @@
     if(state.profile && state.profile.settings) state.profile.settings.customTemplates = customTemplates;
     saveLocalSettings(uidVal, state.settings);
     toast('✨ [' + newTpl.title + '] 내 템플릿으로 복제 완료!');
+    if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.recordCopy(tpl.key || tpl.title, tpl.ownerUserId || null); // KF-2 #TASK-ES-017: 서버 실복제 기록 (복제 뒤 광고 없음)
     closeModal();
     if(typeof onSelectTemplate === 'function') onSelectTemplate(newTpl);
     return newTpl;
@@ -14648,7 +14652,8 @@
       return;
     }
 
-    var adsEnabled = forceAdFlow || isTemplateRewardedAdEnabled();
+    // KF-2 #TASK-ES-017 · 정본 §3: 복제 흐름에서 광고를 분리한다. 플래그(ENABLE_TEMPLATE_REWARDED_ADS)는 설정의 "광고 보고 크레딧 받기" 선택형 버튼(js/template-credit.js)에서만 쓴다.
+    var adsEnabled = !!forceAdFlow; // 시연용 testTemplateAdFlow 만 강제 경로
     if(!adsEnabled){
       // 🚀 베타 테스트 기본 모드: 무마찰 100% 무료 즉시 복제
       executeDirectTemplateClone(tpl, onSelectTemplate);
@@ -14725,7 +14730,7 @@
             '<div>' +
               '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:6px;">' +
                 '<span class="pro-tpl-badge" style="font-size:.8rem;">' + t.icon + ' ' + escapeHtml(t.title) + '</span>' +
-                '<span class="market-badge" style="background:var(--card2);color:var(--ink-soft);font-size:.68rem;">📥 ' + t.downloads + '회 복제</span>' +
+                '<span class="market-badge" data-tplcount="' + t.key + '" style="background:var(--card2);color:var(--ink-soft);font-size:.68rem;display:none;"></span>' + /* KF-2 #TASK-ES-017: 복제 수는 서버 실데이터만(js/template-credit.js). 없으면 숨김 */
               '</div>' +
               '<div class="faint" style="font-size:.73rem;color:var(--ink-soft);margin-bottom:8px;line-height:1.4;">' +
                 escapeHtml(t.description) +
@@ -14791,11 +14796,13 @@
       var prevCloneBtn = sheet.querySelector('#mktPreviewCloneBtn');
       var closePrevBtn = sheet.querySelector('#mktClosePreviewBtn');
       var curPreviewTpl = null;
+      if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.fillCounts(gridBox);
 
       function updateGrid(){
         var filtered = filterTemplates();
         gridBox.innerHTML = renderGridHtml(filtered);
         bindGridEvents();
+        if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.fillCounts(gridBox);
       }
 
       function cloneTemplate(tpl){
@@ -17859,15 +17866,17 @@
 
   /* ============ 크리에이터 템플릿 ============ */
   function templatesHtml(){
-    return '<p class="faint" style="margin:0 0 10px;">Ⓜ️ 인증 크리에이터 추천 템플릿 · 마일스톤과 할 일이 통째로 복사돼요</p>' +
+    if(window.OurgoalTemplateCredit){ setTimeout(function(){ window.OurgoalTemplateCredit.fillCounts(document.getElementById('commSubBody')); }, 0); } // KF-2: 복제 수는 서버 실데이터로만 채운다
+    return '<p class="faint" style="margin:0 0 10px;">Ⓜ️ 아워골 기본 템플릿 · 마일스톤과 할 일이 통째로 복사돼요</p>' +
       CREATOR_TEMPLATES.map(function(t){
         var totalTasks = t.ms.reduce(function(a,m){ return a + m.tasks.length; }, 0);
         return '<div class="tmpl-card">' +
-          '<div class="tmpl-head"><span class="tmpl-badge">M</span><b style="font-size:.82rem;">'+escapeHtml(t.creator)+'</b>' +
-            '<span class="faint" style="font-size:.7rem;">'+escapeHtml(t.badge)+'</span></div>' +
+          '<div class="tmpl-head"><span class="tmpl-badge">M</span><b style="font-size:.82rem;">아워골 기본 템플릿</b>' + /* KF-2: 가상 크리에이터 표기는 숨김(데이터는 보존) */
+            '<span class="faint" style="font-size:.7rem;">운영자 제공</span></div>' +
           '<b>'+escapeHtml(t.title)+'</b>' +
           '<div class="tm-desc">'+escapeHtml(t.desc)+'</div>' +
-          '<div class="faint" style="font-size:.72rem;margin-bottom:8px;">'+t.weeks+'주 과정 · 마일스톤 '+t.ms.length+'개 · 할 일 '+totalTasks+'개 · '+t.users.toLocaleString()+'명이 사용 중</div>' +
+          '<div class="faint" style="font-size:.72rem;margin-bottom:8px;">'+t.weeks+'주 과정 · 마일스톤 '+t.ms.length+'개 · 할 일 '+totalTasks+'개</div>' + /* KF-2: 고정 사용자 수 숨김 */
+          '<div class="faint" data-tplcount="creator:'+t.id+'" style="font-size:.72rem;margin-bottom:8px;display:none;"></div>' +
           '<div class="tmpl-ms">' +
             t.ms.map(function(m){
               return '<div style="margin-bottom:6px;"><b style="color:var(--ink-soft);">☐ '+escapeHtml(m.title)+'</b>' +
@@ -17898,7 +17907,8 @@
     state.activeGoalId = goal.id;
     trackGoalCreated(goal, 'community_template');
     await saveProfile();
-    toast('"'+t.creator+'" 템플릿을 내 목표로 복사했어요');
+    toast('아워골 기본 템플릿을 내 목표로 복사했어요');
+    if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.recordCopy('creator:' + t.id, null); // KF-2 #TASK-ES-017: 서버 실복제 기록
     renderAll();
     if(rerender) rerender();
   }
@@ -19712,7 +19722,7 @@
   function renderSettingsScreen(){
     refreshCustomFeedbackButtons();
     renderProfileCard();
-    if(typeof OurgoalCredits !== 'undefined'){ OurgoalCredits.renderSettingsSection(document.getElementById('settingsCreditsBlock')); }
+    if(typeof OurgoalCredits !== 'undefined'){ OurgoalCredits.renderSettingsSection(document.getElementById('settingsCreditsBlock')).then(function(){ if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.renderAdOptIn(document.getElementById('settingsCreditsBlock')); }); } // KF-2 #TASK-ES-017: 선택형 "광고 보고 크레딧 받기"
 
     var settings = state.profile.settings;
 
@@ -20613,6 +20623,11 @@
       toast: toast, escapeHtml: escapeHtml, openModal: openModal, closeModal: closeModal,
       saveProfile: saveProfile, timeAgo: timeAgoStr
     });
+  }
+
+  /* ============ KF-2 #TASK-ES-017: 템플릿 복제 크레딧 모듈(js/template-credit.js)에 앱 핸들 연결 ============ */
+  if(window.OurgoalTemplateCredit && typeof window.OurgoalTemplateCredit.init === 'function'){
+    window.OurgoalTemplateCredit.init({ sb: sb, getState: function(){ return state; }, toast: toast, playRewardedAd: playRewardedAdVideo });
   }
 
   /* ============ PWA: Service Worker 등록 ============ */
