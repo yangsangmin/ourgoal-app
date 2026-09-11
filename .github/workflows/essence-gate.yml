@@ -14,6 +14,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+      - name: 의존성 설치 (스모크 테스트가 @supabase/supabase-js 등을 require 한다)
+        run: npm ci
       - name: 본질 게이트 (태그·티켓·금지 패턴·승인선·증가 한도)
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
