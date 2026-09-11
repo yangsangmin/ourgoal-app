@@ -860,7 +860,6 @@ check('verify-report-schema: 200 과 42501(anon 실행 거부) 은 적용', () =
 check('verify-report-schema: 예상 밖 응답은 적용/미적용이 아니라 판정불가(null)', () => {
   assert.strictEqual(classifyReportSchema(500, null).applied, null);
 });
-
 /* ── Gate 1 컴플라이언스 & 런칭 요건 (순서 41~44) ─────────────────────── */
 check('compliance: docs/legal/privacy.md 및 terms.md 가 존재하고 필수 조항을 포함한다', () => {
   const privPath = path.join(__dirname, '..', 'docs', 'legal', 'privacy.md');
@@ -2111,7 +2110,6 @@ check('compliance: 9:16 인스타 스토리 바이럴 카드 & Web Share API & i
   assert.strictEqual(html.includes('goalRescaleBtn'), false, '번아웃 케어 재조정하기 버튼 영구 삭제');
   assert.strictEqual(html.includes('rescaleCardHtml'), false, '번아웃 케어 카드 UI 영구 삭제');
 });
-
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
