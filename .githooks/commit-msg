@@ -1,0 +1,3 @@
+#!/bin/sh
+# 본질 게이트 commit-msg 훅 — 태그·티켓 형식 검사 (AGENTS.md 3절)
+exec node "$(git rev-parse --show-toplevel)/scripts/essence-gate.js" --commit-msg "$1"

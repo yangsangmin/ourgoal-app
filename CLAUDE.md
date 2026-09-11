@@ -1,3 +1,5 @@
+> **규칙 원본은 `AGENTS.md`다 (2026-09-11 이후).** 이 CLAUDE.md의 운영 세부(1호 직원 루틴·4블록·스프린트·AI 조직)는 그대로 유효하되, 충돌 시 AGENTS.md가 우선한다. 작업 전 `AGENTS.md` → `docs/rules/ESSENCE_OURGOAL.md` 순으로 읽는다. 커밋은 `[E1|E2|E3|INFRA|FIX] #티켓 설명` 형식이며 훅·CI(essence-gate)가 검사한다. 티켓 없는 작업, main 직접 커밋, 실데이터 없는 사회적 숫자, 화면 속 도구 언어, 아이디어 즉시 구현은 금지다.
+
 1. 기술 스택: Vanilla JS, Supabase, Vercel
 2. UI 원칙: 기존 HTML 디자인, CSS 스타일, 레이아웃은 절대 임의 변경 금지
 3. 코드 작성: 파일 전체를 다시 쓰지 말고 변경할 부분만 diff 형태로 수정할 것

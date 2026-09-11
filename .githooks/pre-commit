@@ -1,0 +1,8 @@
+#!/bin/sh
+# 본질 게이트 pre-commit 훅 — main 직접 커밋 금지 · 금지 패턴 · index.html 증가 · 스모크 (AGENTS.md 2·4절)
+ROOT="$(git rev-parse --show-toplevel)"
+node "$ROOT/scripts/essence-gate.js" --pre-commit || exit 1
+if git diff --cached --name-only | grep -q '^index.html$'; then
+  node "$ROOT/scripts/smoke-test.js" >/dev/null 2>&1 || { echo "✖ 스모크 테스트 실패 — index.html 변경은 npm test 통과 후 커밋"; exit 1; }
+fi
+exit 0
