@@ -4,7 +4,7 @@ var DEFAULT_SUPABASE_URL = 'https://dvqosviqbciohcywkzbq.supabase.co';
 
 /* 서버 경유 계측 엔드포인트 — 서비스워커(알림 클릭)처럼 supabase 클라이언트가 없는 곳에서 사용.
    허용 이벤트만 받고, sid/user_id는 저장하지 않는다(익명). 성장 백로그 P0 ③ 알림 클릭률. */
-var ALLOWED_EVENTS = ['notification_clicked'];
+var ALLOWED_EVENTS = ['notification_clicked', 'notification_received'];
 var MAX_PROPS_LENGTH = 500;
 
 function getSupabase() {

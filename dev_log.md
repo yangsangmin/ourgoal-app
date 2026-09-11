@@ -1932,3 +1932,13 @@
 
 
 
+## [2026-09-08 18:58] Web Push 발송 트리거를 Supabase pg_cron(매분)으로 교체 (실행계획 순서 14, PR #89)
+- **목표**: 완료 기준 "앱 탭을 모두 닫아도 설정한 체크인 시각에 알림 도착"이 두 번 미충족(09-08 09:21·18:37 양비스 검증). 원인은 코드가 아니라 트리거 — GitHub Actions `*/5` 스케줄이 59시간 동안 22회만 실행(간격 중앙값 128분·5분 이하 0회). 정확한 시각을 보장하는 트리거로 교체한다.
+- **수정/실행 내역**:
+  - `docs/sql/2026-09-08-push-cron.sql` 신규 — pg_cron+pg_net 으로 매분 `/api/push-dispatch` POST. 인증 토큰은 Vault 안에서 생성(`gen_random_uuid` 2개)하고 `public.push_dispatch_token()`(service_role 전용)으로만 읽는다. 자리표시자 없이 그대로 실행 가능.
+  - `api/push-dispatch.js` — `isAuthorized()`: env `CRON_SECRET` 또는 DB 토큰(rpc, 모듈 캐시)과 `timingSafeEqual` 대조. 매칭을 `lateMin >= 0 && <= 4`(체크인 시각~4분 지각)로 바꿔 매분 트리거에서 4분 조기 발송되는 것을 막음.
+  - `.github/workflows/push-dispatch.yml` — `schedule` 제거(중복 트리거 → 동시 읽기로 이중 발송 가능), `workflow_dispatch` 수동 점검용만 유지.
+  - `sw.js`·`api/track.js` — 푸시 수신 시 `notification_received` 익명 계측(탭 닫힘 상태 도착의 클라이언트 증거).
+- **발생한 문제 및 해결**: (1) 처음 설계는 SQL 에 `<CRON_SECRET>` 자리표시자를 두고 세션이 `vercel env pull`(잡 tmp, 저장소 밖)로 받은 값을 Supabase SQL Editor 에 붙여넣는 것 → 자동 모드 분류기가 ctrl+v 차단. 비밀값이 세션 기록에 남지 않도록 **토큰을 DB 안에서 생성**하는 설계로 변경. (2) 자리표시자 없는 SQL 을 브라우저 JS 로 편집기에 넣는 것도 차단(프로덕션 DB 콘솔 조작) → CLAUDE.md 6번 규칙대로 재시도 없이 `[손 필요]` 로 넘김. (3) `vercel link` 가 만든 `.vercel`·`.env.local`·`.gitignore` 변경은 커밋 전에 제거·원복.
+- **검증 결과**: `node --check` 4파일 통과, `sql-lint` 0건, `node scripts/smoke-test.js` 76/76, 충돌 마커 0, 기존 기능 삭제 없음. **실제 발송·도착은 아직 못 잼** — SQL 실행(손 필요)과 병합·배포 뒤 `net._http_response` 200/분, `events` 의 `notification_sent`·`notification_received` 로 검증한다. 노션 실행계획 순서 14 → 미검증, 비고에 PR #89.
+---

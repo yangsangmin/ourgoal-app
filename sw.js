@@ -39,14 +39,21 @@ self.addEventListener('push', function(event){
   try{ data = event.data ? event.data.json() : {}; } catch(e){ /* non-JSON payload, use defaults */ }
   var title = data.title || '아워골';
   var body = data.body || '지금 뭐 하고 있었어요?';
-  event.waitUntil(
+  /* 알림 도착 계측(익명·실패 무시) — 탭을 모두 닫은 상태에서도 도착했다는 클라이언트 측 증거 */
+  var received = fetch('/api/track', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: 'notification_received', props: { channel: 'push' } })
+  }).catch(function(){});
+  event.waitUntil(Promise.all([
     self.registration.showNotification(title, {
       body: body,
       icon: '/icons/icon-192.png',
       badge: '/icons/icon-192.png',
       data: { url: '/' }
-    })
-  );
+    }),
+    received
+  ]));
 });
 
 self.addEventListener('notificationclick', function(event){
