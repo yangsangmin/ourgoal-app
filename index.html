@@ -452,15 +452,18 @@
   .ms-main{display:flex;align-items:center;gap:10px;}
   .ms-status{width:26px;height:26px;border-radius:9px;flex:0 0 auto;border:2px solid var(--ink-faint);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;color:#fff;transition:all .15s;}
   .ms-status.todo{border-color:var(--rule);background:var(--card2);color:var(--ink-faint);}
+  .ms-status.todo:empty::after{content:'○';font-size:.7rem;color:var(--ink-faint);}
   .ms-status.doing{border-color:var(--gold);background:var(--gold);}
+  .ms-status.doing:empty::after{content:'⏳';font-size:.65rem;}
   .ms-status.done{border-color:var(--sage);background:var(--sage);}
+  .ms-status.done:empty::after{content:'✓';font-size:.78rem;font-weight:900;}
   .ms-title{flex:1;font-size:.95rem;font-weight:800;background:transparent;border:none;padding:2px 0;min-width:0;letter-spacing:-.01em;}
   .ms-title.done-text{text-decoration:line-through;color:var(--ink-faint);font-weight:600;}
   .ms-title:focus{outline:none;border-bottom:2px solid var(--violet);box-shadow:none;background:transparent;}
   .ms-date{font-family:var(--mono);font-size:.68rem;color:var(--ink-soft);border:1px solid var(--rule);border-radius:8px;padding:2px 6px;background:var(--card2);display:inline-flex;align-items:center;}
   .ms-date input{border:none;background:transparent;font-family:inherit;font-size:.68rem;color:inherit;width:118px;min-width:118px;padding:2px 0;}
   .ms-date input:focus{box-shadow:none;background:transparent;}
-  .ms-actions{display:flex;gap:6px;align-items:center;flex:0 0 auto;}
+  .ms-actions{display:flex;gap:14px;align-items:center;flex:0 0 auto;}
   .icon-btn{min-width:28px;min-height:28px;padding:3px;display:flex;align-items:center;justify-content:center;color:var(--ink-faint);border-radius:8px;font-size:.9rem;transition:all .12s;}
   .icon-btn:hover{color:var(--red);background:var(--red-soft);}
   /* [UX 개선: Fitts의 법칙 14px 안전 마진] 위험 액션(삭제)과 일반 액션(수정·이동) 간 인체공학적 오타 방지 여백 */
@@ -3617,7 +3620,8 @@
         '<h3>'+t.icon+' '+t.label+' 목표를 적어주세요</h3>' +
         '<div class="field"><label>최종 목표</label><input id="obTitle" type="text" placeholder="예: 3개월 안에 벤치프레스 100kg" value="'+escapeHtml(ob.title)+'"></div>' +
         '<div class="field"><label>목표 마감일 (선택)</label><input id="obDue" type="date" value="'+ob.dueDate+'"><p class="faint" id="obDday" style="margin:6px 0 0;">'+(ob.dueDate ? '오늘 기준 <b style="color:var(--red);">'+dDay(ob.dueDate)+'</b>' : '')+'</p></div>' +
-        '<div class="modal-actions"><button class="btn btn-ghost" id="obBack2" type="button">이전</button><button class="btn btn-primary" id="obNext2" type="button">다음</button></div>',
+        '<div class="modal-actions"><button class="btn btn-ghost" id="obBack2" type="button">이전</button><button class="btn btn-primary" id="obNext2" type="button">다음</button></div>' +
+        '<button class="land-login-link" id="obSkip2" type="button" style="width:100%;background:none;margin-top:12px;">다른 사람들의 목표 먼저 볼래요 · <b>나중에 설정하기</b></button>',
         function(sheet){
           var obDue = sheet.querySelector('#obDue');
           var obDdayEl = sheet.querySelector('#obDday');
@@ -3625,6 +3629,14 @@
             obDdayEl.innerHTML = obDue.value ? '오늘 기준 <b style="color:var(--red);">'+dDay(obDue.value)+'</b>' : '';
           });
           sheet.querySelector('#obBack2').addEventListener('click', showObStep1);
+          sheet.querySelector('#obSkip2').addEventListener('click', async function(){
+            closeModal();
+            state.commSubTab = 'feed';
+            enterApp();
+            setTab('comm');
+            toast('마음에 드는 목표를 찾으면 바로 복사할 수 있어요');
+            await maybeShowFirstLoginGuide();
+          });
           sheet.querySelector('#obNext2').addEventListener('click', function(){
             var title = sheet.querySelector('#obTitle').value.trim();
             if(!title) return;
@@ -3649,13 +3661,22 @@
         '<div class="field" style="margin-top:14px;"><label>관심 카테고리 (나중에 프로필에서 더 고를 수 있어요)</label></div>' +
         categoryPickerHtml('obTopic', ob.presetTopic || '') +
         '<p class="faint" style="margin:10px 0 0;">만든 뒤에 목표 화면에서 자유롭게 고칠 수 있어요.</p>' +
-        '<div class="modal-actions"><button class="btn btn-ghost" id="obBack3" type="button">이전</button><button class="btn btn-primary" id="obFinish" type="button">목표 만들고 시작하기</button></div>',
+        '<div class="modal-actions"><button class="btn btn-ghost" id="obBack3" type="button">이전</button><button class="btn btn-primary" id="obFinish" type="button">목표 만들고 시작하기</button></div>' +
+        '<button class="land-login-link" id="obSkip3" type="button" style="width:100%;background:none;margin-top:12px;">다른 사람들의 목표 먼저 볼래요 · <b>나중에 설정하기</b></button>',
         function(sheet){
           var obTopicRef = { value: ob.presetTopic || '' };
           wireCategoryPicker(sheet, 'obTopic', obTopicRef);
           sheet.querySelector('#obBack3').addEventListener('click', function(){
             if(ob.presetTopic) showObStep1();
             else showObStep2();
+          });
+          sheet.querySelector('#obSkip3').addEventListener('click', async function(){
+            closeModal();
+            state.commSubTab = 'feed';
+            enterApp();
+            setTab('comm');
+            toast('마음에 드는 목표를 찾으면 바로 복사할 수 있어요');
+            await maybeShowFirstLoginGuide();
           });
           sheet.querySelector('#obFinish').addEventListener('click', async function(){
             if(obTopicRef.value && (state.profile.interests||[]).indexOf(obTopicRef.value)===-1){
