@@ -90,6 +90,7 @@ const FN_NAMES = [
   'sortGoalsByOrder', 'isWithinDND', 'buildICS', 'buildWebCalUrl',
   'quickCreateStarterGoal', 'generateMzStoryCanvas',
   'calculateRemainingSeats', 'buildPeerInviteUrl', 'formatPeerInviteMessage',
+  'getTemplateAdNoticeMessage', 'computeAdCountdownProgress', 'isTemplateRewardedAdEnabled',
 ];
 
 const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
@@ -114,6 +115,7 @@ const sandboxSrc =
   '  study: { title: "매일 1시간 몰입 & 자격증 합격", category: "study", milestones: [{ title: "스마트폰 치우고 1시간 집중 몰입", status: "todo" }, { title: "기출문제 1회분 풀고 채점", status: "todo" }, { title: "핵심 오답 정리 및 내일 복습 체크", status: "todo" }] },\n' +
   '  reading: { title: "하루 15분 독서 & 지적 성장", category: "reading", milestones: [{ title: "잠들기 전 책 15분 읽기", status: "todo" }, { title: "마음에 와닿는 문장 1줄 기록", status: "todo" }, { title: "이번 주 1권 완독하기", status: "todo" }] }\n' +
   '};\n' +
+  'var OURGOAL_CONFIG = { ENABLE_TEMPLATE_REWARDED_ADS: false, AD_DELAY_SECONDS: 5, AD_NOTICE_MESSAGE: "다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다" };\n' +
   extracted +
   '\nmodule.exports = { pad, dateKey, goalProgress, msCounts, resultPct, dDay, ' +
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
@@ -136,6 +138,7 @@ const sandboxSrc =
   'rescaleGoal, sortGoalsByOrder, isWithinDND, buildICS, buildWebCalUrl, ' +
   'quickCreateStarterGoal, generateMzStoryCanvas, ' +
   'calculateRemainingSeats, buildPeerInviteUrl, formatPeerInviteMessage, ' +
+  'getTemplateAdNoticeMessage, computeAdCountdownProgress, isTemplateRewardedAdEnabled, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
 
@@ -2228,6 +2231,42 @@ check('compliance: [PEER INVITE] 친구와 1:1 또는 5인 소그룹 마라톤 �
   assert.ok(html.includes('acceptPeerInvite'), '원클릭 초대 수락 함수 존재');
   assert.ok(html.includes('checkAndHandlePeerInviteUrl'), '초대 URL 자동 감지 함수 존재');
   assert.ok(!html.includes('500 크레딧 지급'), '크레딧 지급 내용 엄격 제외 불변식 검증 통과');
+});
+
+/* ============ [TASK-ES-013] 템플릿 복제 보상형 광고 파이프라인 ============ */
+check('getTemplateAdNoticeMessage: 상민님 지시 정확한 안내 문구를 반환한다', () => {
+  const msg = fns.getTemplateAdNoticeMessage();
+  assert.strictEqual(msg, '다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다');
+});
+
+check('computeAdCountdownProgress: 5초 카운트다운의 백분율을 정확히 계산하고 경계값을 방어한다', () => {
+  assert.strictEqual(fns.computeAdCountdownProgress(5, 5), 100);
+  assert.strictEqual(fns.computeAdCountdownProgress(4, 5), 80);
+  assert.strictEqual(fns.computeAdCountdownProgress(2.5, 5), 50);
+  assert.strictEqual(fns.computeAdCountdownProgress(0, 5), 0);
+  assert.strictEqual(fns.computeAdCountdownProgress(-1, 5), 0);
+  assert.strictEqual(fns.computeAdCountdownProgress(10, 5), 100);
+});
+
+check('isTemplateRewardedAdEnabled: 플래그에 따라 활성화 여부를 판정하고 기본값은 false(베타 무마찰)이다', () => {
+  assert.strictEqual(fns.isTemplateRewardedAdEnabled({ ENABLE_TEMPLATE_REWARDED_ADS: false }), false);
+  assert.strictEqual(fns.isTemplateRewardedAdEnabled({ ENABLE_TEMPLATE_REWARDED_ADS: true }), true);
+  assert.strictEqual(fns.isTemplateRewardedAdEnabled(null), false);
+});
+
+check('compliance: [TASK-ES-013] 템플릿 복제 보상형 광고 파이프라인(5초 카운트다운, 모달 안내, AdMob 및 Web fallback, app-ads.txt) 무결성 검증', () => {
+  assert.ok(html.includes('OURGOAL_CONFIG'), 'OURGOAL_CONFIG 설정 객체 존재');
+  assert.ok(html.includes('ENABLE_TEMPLATE_REWARDED_ADS: false'), '기본값 베타 테스트 100% 무료(false) 보장');
+  assert.ok(html.includes('다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다'), '상민님 지시 정확한 안내 문구 존재');
+  assert.ok(html.includes('startTemplateAdCountdown'), '5초 카운트다운 함수 존재');
+  assert.ok(html.includes('playRewardedAdVideo'), '보상형 광고 재생 함수 존재');
+  assert.ok(html.includes('showWebRewardedAdModal'), '웹 fallback 시뮬레이션 플레이어 존재');
+  assert.ok(html.includes('handleTemplateCloneWithAd'), '광고 연동 템플릿 복제 핸들러 존재');
+  assert.ok(html.includes('testTemplateAdFlow'), '테스트/시연용 즉시 실행 함수 존재');
+  const appAdsPath = path.join(__dirname, '..', 'app-ads.txt');
+  assert.ok(fs.existsSync(appAdsPath), 'app-ads.txt 파일 실재 확인');
+  const appAdsContent = fs.readFileSync(appAdsPath, 'utf8');
+  assert.ok(appAdsContent.includes('google.com'), 'app-ads.txt 구글 퍼블리셔 형식 준수 확인');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
