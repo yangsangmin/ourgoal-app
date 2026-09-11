@@ -2297,6 +2297,17 @@
      사용자가 자기 ID를 넣을 필요가 없어진다. 비어 있으면 설정의 사용자 ID로 폴백한다 — 거시 재조정안 A2 */
   var GOOGLE_OAUTH_CLIENT_ID = '441950547594-brg1nvritlb3hlucoktq11ga6vtn943a.apps.googleusercontent.com';
 
+  /* ============ 아워골 앱 환경설정 및 보상형 광고 파이프라인 (TASK-ES-013) ============ */
+  var OURGOAL_CONFIG = {
+    // 🚀 베타 테스트 기간에는 false (사용자 확장을 위해 100% 완전 무료 무마찰 제공)
+    // 💰 유저 트래픽 확보 후 보상형 광고 수익화 전환 시 true로 변경
+    ENABLE_TEMPLATE_REWARDED_ADS: false,
+    ADMOB_REWARDED_AD_UNIT_ID: 'ca-app-pub-3940256099942544/5224354917', // 구글 공식 테스트 보상형 동영상 ID
+    AD_DELAY_SECONDS: 5,
+    AD_NOTICE_MESSAGE: '다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다'
+  };
+  if(typeof window !== 'undefined'){ window.OURGOAL_CONFIG = OURGOAL_CONFIG; }
+
   /*
    * TASK-04: 아래 두 테이블 + RPC가 Supabase에 있어야 팀 댓글/피드 응원이 실제로 동작한다.
    * (전체 CREATE TABLE / RLS / RPC SQL은 이 태스크의 PR 본문에 그대로 첨부돼 있다.)
@@ -14409,6 +14420,240 @@
     }
   ];
 
+  /* ============ 템플릿 복제 보상형 광고(Rewarded Ad) 파이프라인 (TASK-ES-013) ============ */
+  function getTemplateAdNoticeMessage(){
+    return (typeof OURGOAL_CONFIG !== 'undefined' && OURGOAL_CONFIG.AD_NOTICE_MESSAGE) ?
+      OURGOAL_CONFIG.AD_NOTICE_MESSAGE :
+      '다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다';
+  }
+
+  function computeAdCountdownProgress(remaining, totalSec){
+    var total = Number(totalSec) || 5;
+    var rem = Math.max(0, Math.min(total, Number(remaining) || 0));
+    return Math.round((rem / total) * 100);
+  }
+
+  function isTemplateRewardedAdEnabled(cfg){
+    var c = cfg || (typeof OURGOAL_CONFIG !== 'undefined' ? OURGOAL_CONFIG : null);
+    return !!(c && c.ENABLE_TEMPLATE_REWARDED_ADS);
+  }
+
+  function startTemplateAdCountdown(seconds, onComplete){
+    var totalSec = Number(seconds) || 5;
+    var remaining = totalSec;
+
+    var existingHud = document.getElementById('tplAdCountdownHud');
+    if(existingHud && existingHud.parentNode) existingHud.parentNode.removeChild(existingHud);
+
+    var hud = document.createElement('div');
+    hud.id = 'tplAdCountdownHud';
+    hud.setAttribute('style', 'position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:99999;width:calc(100% - 32px);max-width:440px;background:rgba(20,22,43,0.94);backdrop-filter:blur(12px);color:#fff;border-radius:16px;padding:12px 16px;box-shadow:0 12px 32px rgba(0,0,0,0.35);border:1.5px solid rgba(255,255,255,0.18);animation:slideDown 0.3s ease;');
+
+    function updateHud(){
+      var pct = computeAdCountdownProgress(remaining, totalSec);
+      hud.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
+          '<div style="display:flex;align-items:center;gap:6px;font-size:.84rem;font-weight:700;">' +
+            '<span>⏳</span>' +
+            '<span>' + remaining + '초 뒤 광고 영상이 시작됩니다</span>' +
+          '</div>' +
+          '<span style="font-size:.7rem;background:rgba(255,79,100,0.25);color:#FF4F64;padding:2px 8px;border-radius:8px;font-weight:700;">AD</span>' +
+        '</div>' +
+        '<div style="font-size:.75rem;color:rgba(255,255,255,0.8);margin-bottom:8px;">' +
+          '✓ 나의 목표 탭에 템플릿 복제가 완료되었습니다.' +
+        '</div>' +
+        '<div style="width:100%;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;overflow:hidden;">' +
+          '<div style="width:' + pct + '%;height:100%;background:linear-gradient(90deg,#FF4F64,#FF9F1C);transition:width 1s linear;"></div>' +
+        '</div>';
+    }
+
+    updateHud();
+    document.body.appendChild(hud);
+
+    var timer = setInterval(function(){
+      remaining--;
+      if(remaining > 0){
+        updateHud();
+      } else {
+        clearInterval(timer);
+        if(hud.parentNode) hud.parentNode.removeChild(hud);
+        if(typeof onComplete === 'function') onComplete();
+      }
+    }, 1000);
+  }
+
+  function playRewardedAdVideo(tpl){
+    // 1. 모바일 앱(Capacitor) AdMob 플러그인 환경
+    if(typeof window !== 'undefined' && window.Capacitor && typeof window.Capacitor.isPluginAvailable === 'function' && window.Capacitor.isPluginAvailable('AdMob') && window.AdMob){
+      toast('광고 영상을 준비 중입니다...');
+      var adUnitId = (typeof OURGOAL_CONFIG !== 'undefined' && OURGOAL_CONFIG.ADMOB_REWARDED_AD_UNIT_ID) || 'ca-app-pub-3940256099942544/5224354917';
+      try {
+        window.AdMob.prepareRewardVideoAd({ adId: adUnitId })
+          .then(function(){ return window.AdMob.showRewardVideoAd(); })
+          .then(function(reward){
+            toast('🎉 광고 시청이 완료되었습니다! 아워골을 이용해 주셔서 감사합니다.');
+          })
+          .catch(function(err){
+            console.warn('AdMob Native 재생 실패 -> 웹 플레이어로 전환:', err);
+            showWebRewardedAdModal(tpl);
+          });
+      } catch(e) {
+        showWebRewardedAdModal(tpl);
+      }
+      return;
+    }
+
+    // 2. 일반 웹 브라우저 환경 (시뮬레이션 플레이어)
+    showWebRewardedAdModal(tpl);
+  }
+
+  function showWebRewardedAdModal(tpl){
+    var adTitle = (tpl && tpl.title) ? tpl.title : '아워골 맞춤 템플릿';
+    var adDuration = 5;
+    var adRemain = adDuration;
+
+    var adHtml = '<div style="position:relative;padding:14px 8px;text-align:center;">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">' +
+        '<span style="background:var(--red-soft);color:var(--red);font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:6px;">스폰서 광고</span>' +
+        '<span id="webAdTimerBadge" style="font-size:.74rem;color:var(--ink-soft);font-weight:600;">' + adDuration + '초 후 건너뛰기 가능</span>' +
+      '</div>' +
+      '<div style="background:linear-gradient(135deg, #14162B 0%, #2a2d4a 100%);border-radius:16px;padding:32px 16px;color:#fff;margin-bottom:14px;box-shadow:inset 0 0 20px rgba(0,0,0,0.5);">' +
+        '<div style="font-size:2.8rem;margin-bottom:10px;">🎯</div>' +
+        '<h4 style="font-size:1.1rem;font-weight:800;color:#FF4F64;margin-bottom:6px;">OurGoal x Pro Sponsors</h4>' +
+        '<p style="font-size:.82rem;color:rgba(255,255,255,0.85);line-height:1.55;margin:0 0 14px;word-break:keep-all;">' +
+          '<b>[' + escapeHtml(adTitle) + ']</b> 목표 완주를 응원합니다!<br>체크인 루프와 함께 매일 성장하세요.' +
+        '</p>' +
+        '<div style="width:100%;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;overflow:hidden;">' +
+          '<div id="webAdProgressBar" style="width:0%;height:100%;background:#1FC98E;transition:width 1s linear;"></div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;">' +
+        '<button class="btn btn-primary" id="webAdCloseBtn" type="button" disabled style="width:100%;padding:10px 0;opacity:0.5;font-weight:700;">' +
+          '광고 시청 중 (' + adDuration + 's)' +
+        '</button>' +
+      '</div>' +
+    '</div>';
+
+    openModal(adHtml, function(adSheet){
+      var timerBadge = adSheet.querySelector('#webAdTimerBadge');
+      var progBar = adSheet.querySelector('#webAdProgressBar');
+      var closeBtn = adSheet.querySelector('#webAdCloseBtn');
+
+      var timer = setInterval(function(){
+        adRemain--;
+        var elapsed = adDuration - adRemain;
+        var pct = (elapsed / adDuration) * 100;
+        if(progBar) progBar.style.width = pct + '%';
+
+        if(adRemain > 0){
+          if(timerBadge) timerBadge.textContent = adRemain + '초 후 건너뛰기 가능';
+          if(closeBtn) closeBtn.textContent = '광고 시청 중 (' + adRemain + 's)';
+        } else {
+          clearInterval(timer);
+          if(timerBadge) timerBadge.textContent = '광고 시청 완료 ✓';
+          if(closeBtn){
+            closeBtn.disabled = false;
+            closeBtn.style.opacity = '1';
+            closeBtn.textContent = '✕ 닫기 및 앱으로 돌아가기';
+            closeBtn.onclick = function(){
+              closeModal();
+              toast('🎉 광고 시청이 완료되었습니다! 템플릿을 자유롭게 활용하세요.');
+            };
+          }
+        }
+      }, 1000);
+    });
+  }
+
+  function executeDirectTemplateClone(tpl, onSelectTemplate){
+    var customTemplates = (state.settings && state.settings.customTemplates) || [];
+    var existing = customTemplates.find(function(t){ return t.title === tpl.title; });
+    if(existing){
+      toast('이미 복제된 템플릿입니다: ' + tpl.title);
+      closeModal();
+      if(typeof onSelectTemplate === 'function') onSelectTemplate(existing);
+      return existing;
+    }
+    var newTpl = {
+      key: 'tpl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      icon: tpl.icon,
+      title: tpl.title,
+      columns: tpl.columns.slice(),
+      defaultRows: (tpl.defaultRows || []).slice()
+    };
+    customTemplates.push(newTpl);
+    if(!state.settings) state.settings = {};
+    state.settings.customTemplates = customTemplates;
+    var uidVal = (state.profile && state.profile.id) || (state.user && state.user.id) || 'local';
+    if(state.profile && !state.profile.settings) state.profile.settings = {};
+    if(state.profile && state.profile.settings) state.profile.settings.customTemplates = customTemplates;
+    saveLocalSettings(uidVal, state.settings);
+    toast('✨ [' + newTpl.title + '] 내 템플릿으로 복제 완료!');
+    closeModal();
+    if(typeof onSelectTemplate === 'function') onSelectTemplate(newTpl);
+    return newTpl;
+  }
+
+  function handleTemplateCloneWithAd(tpl, onSelectTemplate, forceAdFlow){
+    if(!tpl) return;
+    var customTemplates = (state.settings && state.settings.customTemplates) || [];
+    var existing = customTemplates.find(function(t){ return t.title === tpl.title; });
+    if(existing){
+      toast('이미 복제된 템플릿입니다: ' + tpl.title);
+      closeModal();
+      if(typeof onSelectTemplate === 'function') onSelectTemplate(existing);
+      return;
+    }
+
+    var adsEnabled = forceAdFlow || isTemplateRewardedAdEnabled();
+    if(!adsEnabled){
+      // 🚀 베타 테스트 기본 모드: 무마찰 100% 무료 즉시 복제
+      executeDirectTemplateClone(tpl, onSelectTemplate);
+      return;
+    }
+
+    // 💰 보상형 광고 모드 (안내 모달 노출 -> 확인 시 즉시 복제 + 5초 카운트다운 후 광고 재생)
+    var noticeText = getTemplateAdNoticeMessage();
+    var modalHtml = '<div style="text-align:center;padding:12px 6px;">' +
+      '<div style="font-size:2.2rem;margin-bottom:8px;">🎁</div>' +
+      '<h3 style="font-size:1.05rem;font-weight:800;margin-bottom:12px;color:var(--ink);letter-spacing:-0.02em;">템플릿 무료 복사 안내</h3>' +
+      '<div style="background:var(--card2);border:1.5px solid var(--violet-soft);border-radius:14px;padding:14px 16px;font-size:.86rem;line-height:1.6;color:var(--ink);margin-bottom:18px;word-break:keep-all;text-align:left;">' +
+        '<p style="margin:0;font-weight:600;color:var(--violet);">📢 안내사항</p>' +
+        '<p style="margin:6px 0 0;font-weight:500;">' + escapeHtml(noticeText) + '</p>' +
+      '</div>' +
+      '<div style="display:flex;gap:10px;">' +
+        '<button class="btn btn-ghost" id="tplNoticeCancelBtn" type="button" style="flex:1;">취소</button>' +
+        '<button class="btn btn-primary" id="tplNoticeConfirmBtn" type="button" style="flex:1.6;font-weight:700;">확인 (다운로드)</button>' +
+      '</div>' +
+    '</div>';
+
+    openModal(modalHtml, function(noticeSheet){
+      var cancelBtn = noticeSheet.querySelector('#tplNoticeCancelBtn');
+      if(cancelBtn) cancelBtn.onclick = closeModal;
+
+      var confirmBtn = noticeSheet.querySelector('#tplNoticeConfirmBtn');
+      if(confirmBtn){
+        confirmBtn.onclick = function(){
+          closeModal();
+          // 1. 유저 확인 즉시 템플릿 복제 완료하여 나의 목표 탭에서 바로 확인 가능하게 보장
+          executeDirectTemplateClone(tpl, onSelectTemplate);
+          // 2. 5초 뒤 광고 영상 시작 카운트다운
+          startTemplateAdCountdown(5, function(){
+            playRewardedAdVideo(tpl);
+          });
+        };
+      }
+    });
+  }
+
+  // 개발 및 시연/테스트용 강제 실행 함수 노출
+  if(typeof window !== 'undefined'){
+    window.testTemplateAdFlow = function(tplKey){
+      var tpl = (CURATED_MARKET_TEMPLATES || []).find(function(t){ return t.key === tplKey; }) || (CURATED_MARKET_TEMPLATES && CURATED_MARKET_TEMPLATES[0]);
+      if(tpl) handleTemplateCloneWithAd(tpl, null, true);
+    };
+  }
+
   /* 🏪 템플릿 마켓플레이스 모달 */
   function openTemplateMarketModal(onSelectTemplate){
     var curCategory = 'all';
@@ -14511,28 +14756,7 @@
       }
 
       function cloneTemplate(tpl){
-        var customTemplates = (state.settings && state.settings.customTemplates) || [];
-        var existing = customTemplates.find(function(t){ return t.title === tpl.title; });
-        if(existing){
-          toast('이미 복제된 템플릿입니다: ' + tpl.title);
-          closeModal();
-          if(typeof onSelectTemplate === 'function') onSelectTemplate(existing);
-          return;
-        }
-        var newTpl = {
-          key: 'tpl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-          icon: tpl.icon,
-          title: tpl.title,
-          columns: tpl.columns.slice(),
-          defaultRows: (tpl.defaultRows || []).slice()
-        };
-        customTemplates.push(newTpl);
-        if(!state.settings) state.settings = {};
-        state.settings.customTemplates = customTemplates;
-        saveLocalSettings(state.settings);
-        toast('✨ [' + newTpl.title + '] 내 템플릿으로 복제 완료!');
-        closeModal();
-        if(typeof onSelectTemplate === 'function') onSelectTemplate(newTpl);
+        return handleTemplateCloneWithAd(tpl, onSelectTemplate);
       }
 
       function bindGridEvents(){

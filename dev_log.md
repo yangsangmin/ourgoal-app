@@ -2033,3 +2033,23 @@
 - **검증 결과**:
   - `npm test` (`node scripts/smoke-test.js`): **167개 전수 통과 (0개 실패)**.
 ---
+## [2026-09-12 05:25] [INFRA] #TASK-ES-013 템플릿 복제 보상형 광고 파이프라인 (5초 딜레이 안내 및 베타 플래그 제어)
+- **목표**: 템플릿 복사하기 시 '다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다' 안내 모달 표시 및 확인 클릭 즉시 복제 완료 후 5초 뒤 광고 영상 재생 파이프라인 구축 (상민님 지시 반영, 초기 사용자 확장을 위한 베타 테스트 플래그 기본값 OFF 제어).
+- **수정/실행 내역**:
+  1. `docs/rules/TICKETS.md`: #TASK-ES-013 티켓 정식 등록.
+  2. `app-ads.txt`: Vercel 루트 배포용 Google AdMob 공식 퍼블리셔 선언 파일 생성.
+  3. `index.html`:
+     - `OURGOAL_CONFIG`: `ENABLE_TEMPLATE_REWARDED_ADS: false` (베타 기간 100% 무료 무마찰 보장), `ADMOB_REWARDED_AD_UNIT_ID`, `AD_DELAY_SECONDS: 5`, `AD_NOTICE_MESSAGE` 환경설정 배선.
+     - `handleTemplateCloneWithAd`: 상민님 지시 정확한 안내 문구('다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다') 모달 노출, 유저 확인 클릭 즉시 목표 탭 복제(`executeDirectTemplateClone`) 실행하여 이탈 불안 해소.
+     - `startTemplateAdCountdown`: 상단 플로팅 카운트다운 HUD 배너(5초 게이지 및 잔여 시간 시각화) 노출 후 5초 경과 시 광고 자동 트리거.
+     - `playRewardedAdVideo` & `showWebRewardedAdModal`: 모바일 앱 Capacitor AdMob 네이티브 연동 및 웹 환경 fallback 시뮬레이션 플레이어(5초 후 닫기) 구현.
+     - `window.testTemplateAdFlow`: 베타 테스트 중에도 개발자/테스터가 광고 플로우를 즉시 시연/검증할 수 있는 테스트 함수 노출.
+  4. `scripts/smoke-test.js`:
+     - 안내 문구 무결성, 카운트다운 게이지 퍼센트 계산, 광고 활성화 판정, 템플릿 복제 광고 파이프라인 컴플라이언스 테스트 4종 추가 (총 171개 전수 통과).
+- **발생한 문제 및 해결**:
+  - 유저가 광고를 보다가 앱을 이탈할 수 있는 우려에 대해, 상민님의 직관적 지시대로 '확인'을 누르는 즉시 나의 목표 탭에 복제를 완료시켜 놓고 5초 뒤 광고를 띄우도록 배선하여 데이터 유실 및 유저 불안을 원천 방지함.
+  - 베타 테스트 기간 동안 테스터 이탈 방지를 위해 기본 플래그를 false로 고정하여 100% 완전 무료로 작동하고, 추후 수익화 시점에는 플래그만 true로 켜면 즉시 광고가 송출되도록 배선.
+- **검증 결과**:
+  - `npm test` (`node scripts/smoke-test.js`): **171개 전수 통과 (0개 실패)**.
+  - `node scripts/prepare-google-play.js`: **6건 전수 통과 (0건 실패)**.
+---
