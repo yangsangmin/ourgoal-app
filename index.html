@@ -18760,9 +18760,29 @@
   function openPeerInviteSuccessModal(group){
     var isPair = group.maxMembers === 2;
     var rem = calculateRemainingSeats(group, 0);
-    var mHtml = '<div style="text-align:center;padding:10px 4px 6px;"><div style="font-size:2.4rem;margin-bottom:8px;">🎉</div><h3 style="font-size:1.15rem;font-weight:800;margin:0 0 6px;">방이 성공적으로 개설되었어요!</h3><p class="muted" style="font-size:.82rem;line-height:1.5;margin:0 0 16px;">' + (isPair ? '친구 1명을 초대해 1:1 페이스메이커로 함께 완주해보세요!' : '5인 소그룹 멤버를 초대해 함께 완주 목표를 시작해보세요.') + '<br><b>앱 설치 없이 웹에서 바로</b> 초대 수락하고 참여할 수 있어요.</p><div style="background:var(--card2);border-radius:14px;padding:12px;border:1px solid var(--rule);margin-bottom:14px;text-align:left;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span style="font-size:1.3rem;">'+group.icon+'</span><b style="font-size:.95rem;color:var(--ink);">'+escapeHtml(group.name)+'</b><span class="dday-pill" style="background:var(--red-soft);color:var(--red);">'+(isPair ? '1:1 페어' : group.maxMembers+'인 소그룹')+'</span></div><div style="font-size:.76rem;color:var(--ink-soft);margin-bottom:4px;">'+escapeHtml(group.desc)+'</div><div style="font-size:.72rem;font-weight:700;color:var(--sage);">👥 현재 1명 참여 중 · 잔여 '+rem+'자리</div></div><div style="display:flex;flex-direction:column;gap:8px;"><button class="btn btn-kakao" id="modalKakaoShareBtn" type="button" style="width:100%;padding:11px;font-size:.86rem;justify-content:center;">💬 카카오톡으로 친구 초대하기</button><button class="btn btn-ghost" id="modalCopyLinkBtn" type="button" style="width:100%;padding:10px;font-size:.84rem;justify-content:center;">🔗 초대 링크 복사하기</button><button class="mz-btn" id="modalGoRoomBtn" type="button" style="width:100%;margin-top:4px;padding:11px;font-size:.86rem;">방으로 바로 이동</button></div></div>';
     openModal(
-      mHtml,
+      '<div style="text-align:center;padding:10px 4px 6px;">' +
+        '<div style="font-size:2.4rem;margin-bottom:8px;">🎉</div>' +
+        '<h3 style="font-size:1.15rem;font-weight:800;margin:0 0 6px;">방이 성공적으로 개설되었어요!</h3>' +
+        '<p class="muted" style="font-size:.82rem;line-height:1.5;margin:0 0 16px;">' +
+          (isPair ? '친구 1명을 초대해 1:1 페이스메이커로 함께 완주해보세요!' : '5인 소그룹 멤버를 초대해 함께 완주 목표를 시작해보세요.') + '<br>' +
+          '<b>앱 설치 없이 웹에서 바로</b> 초대 수락하고 참여할 수 있어요.' +
+        '</p>' +
+        '<div style="background:var(--card2);border-radius:14px;padding:12px;border:1px solid var(--rule);margin-bottom:14px;text-align:left;">' +
+          '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">' +
+            '<span style="font-size:1.3rem;">'+group.icon+'</span>' +
+            '<b style="font-size:.95rem;color:var(--ink);">'+escapeHtml(group.name)+'</b>' +
+            '<span class="dday-pill" style="background:var(--red-soft);color:var(--red);">'+(isPair ? '1:1 페어' : group.maxMembers+'인 소그룹')+'</span>' +
+          '</div>' +
+          '<div style="font-size:.76rem;color:var(--ink-soft);margin-bottom:4px;">'+escapeHtml(group.desc)+'</div>' +
+          '<div style="font-size:.72rem;font-weight:700;color:var(--sage);">👥 현재 1명 참여 중 · 잔여 '+rem+'자리</div>' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;gap:8px;">' +
+          '<button class="btn btn-kakao" id="modalKakaoShareBtn" type="button" style="width:100%;padding:11px;font-size:.86rem;justify-content:center;">💬 카카오톡으로 친구 초대하기</button>' +
+          '<button class="btn btn-ghost" id="modalCopyLinkBtn" type="button" style="width:100%;padding:10px;font-size:.84rem;justify-content:center;">🔗 초대 링크 복사하기</button>' +
+          '<button class="mz-btn" id="modalGoRoomBtn" type="button" style="width:100%;margin-top:4px;padding:11px;font-size:.86rem;">방으로 바로 이동</button>' +
+        '</div>' +
+      '</div>',
       function(sheet){
         var kBtn = sheet.querySelector('#modalKakaoShareBtn');
         if(kBtn) kBtn.onclick = function(){ shareGroupToKakao(group); };
@@ -18865,9 +18885,39 @@
     var remaining = Math.max(0, maxMembers - curMembers);
     var defaultNick = state.profile ? state.profile.displayName : '함께 달리는 러너';
 
-    var landHtml = '<div style="text-align:center;padding:8px 4px 6px;"><div style="font-size:2.4rem;margin-bottom:8px;">💌</div><div class="dday-pill" style="background:var(--sage-soft);color:var(--sage);display:inline-block;margin-bottom:6px;font-weight:700;">Zero-Install Web Onboarding</div><h3 style="font-size:1.2rem;font-weight:800;margin:0 0 6px;">함께 목표 방 초대장이 도착했어요!</h3><p class="muted" style="font-size:.82rem;line-height:1.5;margin:0 0 14px;">앱 설치 없이 웹 브라우저에서 바로 수락하고 시작할 수 있어요.</p><div style="background:var(--card2);border-radius:14px;padding:14px;border:1px solid var(--rule);margin-bottom:14px;text-align:left;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:1.4rem;">'+icon+'</span><b style="font-size:1rem;color:var(--ink);">'+escapeHtml(roomName)+'</b><span class="dday-pill" style="background:var(--red-soft);color:var(--red);font-size:.7rem;">'+(isPair ? '1:1 페어 완주' : maxMembers+'인 소그룹')+'</span></div><p style="font-size:.78rem;color:var(--ink-soft);margin:4px 0 8px;line-height:1.4;">'+escapeHtml(desc)+'</p><div style="font-size:.74rem;color:var(--ink-faint);margin-bottom:6px;">인증 규칙: <b>'+escapeHtml(rule)+'</b></div><div style="font-size:.74rem;font-weight:700;color:var(--red);">👥 현재 '+curMembers+'명 참여 중 · 잔여 '+remaining+'자리</div></div><div style="margin-bottom:12px;text-align:left;"><label style="font-size:.76rem;font-weight:700;color:var(--ink);display:block;margin-bottom:4px;">참여할 닉네임</label><input id="peerInviteNickInput" type="text" value="'+escapeHtml(defaultNick)+'" placeholder="닉네임을 입력하세요" style="width:100%;box-sizing:border-box;font-size:.85rem;padding:9px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--card);color:var(--ink);"></div><div style="display:flex;flex-direction:column;gap:8px;"><button class="mz-btn" id="peerInviteAcceptBtn" type="button" style="width:100%;padding:12px;font-size:.92rem;font-weight:800;">🚀 초대 수락하고 바로 방 들어가기 (웹 즉시 시작)</button>'+(!state.profile ? '<button class="btn btn-kakao" id="peerInviteKakaoQuickBtn" type="button" style="width:100%;padding:10px;font-size:.82rem;justify-content:center;">💬 카카오로 3초 만에 시작하기</button>' : '')+'<button class="btn btn-ghost btn-sm" id="peerInviteDismissBtn" type="button" style="width:100%;margin-top:2px;">둘러보기만 하기</button></div><p class="faint" style="font-size:.68rem;text-align:center;margin:8px 0 0;">별도 다운로드나 앱스토어 설치 없이 이 웹 화면에서 오늘부터 바로 인증할 수 있어요</p></div>';
     openModal(
-      landHtml,
+      '<div style="text-align:center;padding:8px 4px 6px;">' +
+        '<div style="font-size:2.4rem;margin-bottom:8px;">💌</div>' +
+        '<div class="dday-pill" style="background:var(--sage-soft);color:var(--sage);display:inline-block;margin-bottom:6px;font-weight:700;">Zero-Install Web Onboarding</div>' +
+        '<h3 style="font-size:1.2rem;font-weight:800;margin:0 0 6px;">함께 목표 방 초대장이 도착했어요!</h3>' +
+        '<p class="muted" style="font-size:.82rem;line-height:1.5;margin:0 0 14px;">' +
+          '앱 설치 없이 웹 브라우저에서 바로 수락하고 시작할 수 있어요.' +
+        '</p>' +
+        '<div style="background:var(--card2);border-radius:14px;padding:14px;border:1px solid var(--rule);margin-bottom:14px;text-align:left;">' +
+          '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">' +
+            '<span style="font-size:1.4rem;">'+icon+'</span>' +
+            '<b style="font-size:1rem;color:var(--ink);">'+escapeHtml(roomName)+'</b>' +
+            '<span class="dday-pill" style="background:var(--red-soft);color:var(--red);font-size:.7rem;">'+(isPair ? '1:1 페어 완주' : maxMembers+'인 소그룹')+'</span>' +
+          '</div>' +
+          '<p style="font-size:.78rem;color:var(--ink-soft);margin:4px 0 8px;line-height:1.4;">'+escapeHtml(desc)+'</p>' +
+          '<div style="font-size:.74rem;color:var(--ink-faint);margin-bottom:6px;">인증 규칙: <b>'+escapeHtml(rule)+'</b></div>' +
+          '<div style="font-size:.74rem;font-weight:700;color:var(--red);">👥 현재 '+curMembers+'명 참여 중 · 잔여 '+remaining+'자리</div>' +
+        '</div>' +
+        '<div style="margin-bottom:12px;text-align:left;">' +
+          '<label style="font-size:.76rem;font-weight:700;color:var(--ink);display:block;margin-bottom:4px;">참여할 닉네임</label>' +
+          '<input id="peerInviteNickInput" type="text" value="'+escapeHtml(defaultNick)+'" placeholder="닉네임을 입력하세요" style="width:100%;box-sizing:border-box;font-size:.85rem;padding:9px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--card);color:var(--ink);">' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;gap:8px;">' +
+          '<button class="mz-btn" id="peerInviteAcceptBtn" type="button" style="width:100%;padding:12px;font-size:.92rem;font-weight:800;">' +
+            '🚀 초대 수락하고 바로 방 들어가기 (웹 즉시 시작)' +
+          '</button>' +
+          (!state.profile ? '<button class="btn btn-kakao" id="peerInviteKakaoQuickBtn" type="button" style="width:100%;padding:10px;font-size:.82rem;justify-content:center;">💬 카카오로 3초 만에 시작하기</button>' : '') +
+          '<button class="btn btn-ghost btn-sm" id="peerInviteDismissBtn" type="button" style="width:100%;margin-top:2px;">둘러보기만 하기</button>' +
+        '</div>' +
+        '<p class="faint" style="font-size:.68rem;text-align:center;margin:8px 0 0;">' +
+          '별도 다운로드나 앱스토어 설치 없이 이 웹 화면에서 오늘부터 바로 인증할 수 있어요' +
+        '</p>' +
+      '</div>',
       function(sheet){
         var accBtn = sheet.querySelector('#peerInviteAcceptBtn');
         if(accBtn) accBtn.onclick = function(){
