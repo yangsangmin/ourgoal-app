@@ -1752,6 +1752,8 @@
         <h3>내 목표 <span id="streakBadge"></span><span id="streakFreezeBadge"></span></h3>
         <button class="btn btn-ghost btn-sm" id="homeAddGoal" type="button">+ 새 목표</button>
       </div>
+      <!-- 내 위치: 출석·스트릭·배지 (#TASK-ES-019, js/streaks.js 가 채운다. 값 없으면 숨김) -->
+      <div id="homePositionStrip" class="faint" hidden style="margin:-4px 0 10px;line-height:1.7;"></div>
       <div id="homeGoalList"></div>
 
       <div style="display:flex;gap:8px;margin-top:12px;">
@@ -2078,6 +2080,13 @@
         </div>
       </div>
 
+      <!-- 🧩 앱을 내맘대로! — 홈 구성 요소 켜기/끄기 (#TASK-ES-020) -->
+      <div class="set-block">
+        <h4>🧩 앱을 내맘대로!</h4>
+        <p style="font-size:.8rem;color:var(--ink-soft);margin:0 0 8px;">내 목표에 필요한 것만 홈에 남기세요. 오늘 기록하기·내 목표·기록·소통은 항상 보여요.</p>
+        <button class="btn btn-ghost btn-sm" id="homeLayoutOpenBtn" type="button" style="width:100%;">홈 구성 고르기</button>
+      </div>
+
       <!-- 📅 구글 캘린더 연동 (Req 3 & 4) -->
       <div class="set-block">
         <h4>📅 구글 캘린더 연동</h4>
@@ -2205,6 +2214,9 @@
         <p class="danger-note">데이터는 이 기기(이 대화)에만 저장됩니다</p>
       </div>
 
+      <!-- 💳 크레딧 (#TASK-ES-015) — 서버 설정 enabled 일 때만 js/credits.js 가 채운다. 아니면 비어 있고 보이지 않는다 -->
+      <div class="set-block" id="settingsCreditsBlock" style="display:none;"></div>
+
       <!-- 💬 고객지원 및 FAQ (Req 10) -->
       <div class="set-block">
         <h4>고객지원 및 가이드</h4>
@@ -2280,6 +2292,13 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="js/credits.js"></script>
+<script src="js/reactions.js"></script>
+<script src="js/helpful-reason.js"></script>
+<script src="js/top-helpful.js"></script>
+<script src="/js/customize.js"></script>
+<script src="js/streaks.js"></script>
+<script src="js/template-credit.js"></script>
 <script>
 (function(){
   "use strict";
@@ -2307,7 +2326,9 @@
     ENABLE_TEMPLATE_REWARDED_ADS: false,
     ADMOB_REWARDED_AD_UNIT_ID: 'ca-app-pub-3940256099942544/5224354917', // 구글 공식 테스트 보상형 동영상 ID
     AD_DELAY_SECONDS: 5,
-    AD_NOTICE_MESSAGE: '다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다'
+    AD_NOTICE_MESSAGE: '다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다',
+    // 💳 공용 크레딧(#TASK-ES-015). 서버 credit_settings.enabled 와 둘 다 true 여야 어떤 적립·표시도 일어난다. M1(유저 5천 명) 전까지 false
+    ENABLE_CREDITS: false
   };
   if(typeof window !== 'undefined'){ window.OURGOAL_CONFIG = OURGOAL_CONFIG; }
 
@@ -6460,6 +6481,7 @@
     var freezeEl = document.getElementById('streakFreezeBadge');
     var sf = state.profile.settings.streakFreeze;
     if(freezeEl) freezeEl.innerHTML = (sf && sf.available>0) ? '<span class="freeze-pill" title="하루를 놓쳐도 스트릭이 끊기지 않게 지켜줘요">🧊'+sf.available+'</span>' : '';
+    if(typeof OurgoalStreaks !== 'undefined'){ OurgoalStreaks.renderHome({ state: state, BADGES: BADGES, badgeContext: badgeContext, computeStreakDays: computeStreakDays, saveProfile: saveProfile, escapeHtml: escapeHtml, dateKey: dateKey }); } // #TASK-ES-019 출석·스트릭·배지
     var wrap = document.getElementById('homeGoalList');
     var rawGoals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     var goalOrder = (state.profile.settings && state.profile.settings.goalOrder) || [];
@@ -6617,6 +6639,7 @@
     }
     renderTodayGlancePill();
     renderDailyQuestBar();
+    if(window.OurgoalCustomize) OurgoalCustomize.apply(state.profile.settings); /* 앱을 내맘대로! (#TASK-ES-020) */
   }
 
   /* ============ 주간 잔디 & 몰입 리포트 요약 카드 (가상유저 요청 P7/P9) ============ */
@@ -14503,7 +14526,7 @@
     }, 1000);
   }
 
-  function playRewardedAdVideo(tpl){
+  function playRewardedAdVideo(tpl, onComplete){
     // 1. 모바일 앱(Capacitor) AdMob 플러그인 환경
     if(typeof window !== 'undefined' && window.Capacitor && typeof window.Capacitor.isPluginAvailable === 'function' && window.Capacitor.isPluginAvailable('AdMob') && window.AdMob){
       toast('광고 영상을 준비 중입니다...');
@@ -14513,22 +14536,23 @@
           .then(function(){ return window.AdMob.showRewardVideoAd(); })
           .then(function(reward){
             toast('🎉 광고 시청이 완료되었습니다! 아워골을 이용해 주셔서 감사합니다.');
+            if(typeof onComplete === 'function') onComplete(reward);
           })
           .catch(function(err){
             console.warn('AdMob Native 재생 실패 -> 웹 플레이어로 전환:', err);
-            showWebRewardedAdModal(tpl);
+            showWebRewardedAdModal(tpl, onComplete);
           });
       } catch(e) {
-        showWebRewardedAdModal(tpl);
+        showWebRewardedAdModal(tpl, onComplete);
       }
       return;
     }
 
     // 2. 일반 웹 브라우저 환경 (시뮬레이션 플레이어)
-    showWebRewardedAdModal(tpl);
+    showWebRewardedAdModal(tpl, onComplete);
   }
 
-  function showWebRewardedAdModal(tpl){
+  function showWebRewardedAdModal(tpl, onComplete){
     var adTitle = (tpl && tpl.title) ? tpl.title : '아워골 맞춤 템플릿';
     var adDuration = 5;
     var adRemain = adDuration;
@@ -14579,6 +14603,7 @@
             closeBtn.onclick = function(){
               closeModal();
               toast('🎉 광고 시청이 완료되었습니다! 템플릿을 자유롭게 활용하세요.');
+              if(typeof onComplete === 'function') onComplete();
             };
           }
         }
@@ -14610,6 +14635,7 @@
     if(state.profile && state.profile.settings) state.profile.settings.customTemplates = customTemplates;
     saveLocalSettings(uidVal, state.settings);
     toast('✨ [' + newTpl.title + '] 내 템플릿으로 복제 완료!');
+    if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.recordCopy(tpl.key || tpl.title, tpl.ownerUserId || null); // KF-2 #TASK-ES-017: 서버 실복제 기록 (복제 뒤 광고 없음)
     closeModal();
     if(typeof onSelectTemplate === 'function') onSelectTemplate(newTpl);
     return newTpl;
@@ -14626,7 +14652,8 @@
       return;
     }
 
-    var adsEnabled = forceAdFlow || isTemplateRewardedAdEnabled();
+    // KF-2 #TASK-ES-017 · 정본 §3: 복제 흐름에서 광고를 분리한다. 플래그(ENABLE_TEMPLATE_REWARDED_ADS)는 설정의 "광고 보고 크레딧 받기" 선택형 버튼(js/template-credit.js)에서만 쓴다.
+    var adsEnabled = !!forceAdFlow; // 시연용 testTemplateAdFlow 만 강제 경로
     if(!adsEnabled){
       // 🚀 베타 테스트 기본 모드: 무마찰 100% 무료 즉시 복제
       executeDirectTemplateClone(tpl, onSelectTemplate);
@@ -14703,7 +14730,7 @@
             '<div>' +
               '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:6px;">' +
                 '<span class="pro-tpl-badge" style="font-size:.8rem;">' + t.icon + ' ' + escapeHtml(t.title) + '</span>' +
-                '<span class="market-badge" style="background:var(--card2);color:var(--ink-soft);font-size:.68rem;">📥 ' + t.downloads + '회 복제</span>' +
+                '<span class="market-badge" data-tplcount="' + t.key + '" style="background:var(--card2);color:var(--ink-soft);font-size:.68rem;display:none;"></span>' + /* KF-2 #TASK-ES-017: 복제 수는 서버 실데이터만(js/template-credit.js). 없으면 숨김 */
               '</div>' +
               '<div class="faint" style="font-size:.73rem;color:var(--ink-soft);margin-bottom:8px;line-height:1.4;">' +
                 escapeHtml(t.description) +
@@ -14769,11 +14796,13 @@
       var prevCloneBtn = sheet.querySelector('#mktPreviewCloneBtn');
       var closePrevBtn = sheet.querySelector('#mktClosePreviewBtn');
       var curPreviewTpl = null;
+      if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.fillCounts(gridBox);
 
       function updateGrid(){
         var filtered = filterTemplates();
         gridBox.innerHTML = renderGridHtml(filtered);
         bindGridEvents();
+        if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.fillCounts(gridBox);
       }
 
       function cloneTemplate(tpl){
@@ -17837,15 +17866,17 @@
 
   /* ============ 크리에이터 템플릿 ============ */
   function templatesHtml(){
-    return '<p class="faint" style="margin:0 0 10px;">Ⓜ️ 인증 크리에이터 추천 템플릿 · 마일스톤과 할 일이 통째로 복사돼요</p>' +
+    if(window.OurgoalTemplateCredit){ setTimeout(function(){ window.OurgoalTemplateCredit.fillCounts(document.getElementById('commSubBody')); }, 0); } // KF-2: 복제 수는 서버 실데이터로만 채운다
+    return '<p class="faint" style="margin:0 0 10px;">Ⓜ️ 아워골 기본 템플릿 · 마일스톤과 할 일이 통째로 복사돼요</p>' +
       CREATOR_TEMPLATES.map(function(t){
         var totalTasks = t.ms.reduce(function(a,m){ return a + m.tasks.length; }, 0);
         return '<div class="tmpl-card">' +
-          '<div class="tmpl-head"><span class="tmpl-badge">M</span><b style="font-size:.82rem;">'+escapeHtml(t.creator)+'</b>' +
-            '<span class="faint" style="font-size:.7rem;">'+escapeHtml(t.badge)+'</span></div>' +
+          '<div class="tmpl-head"><span class="tmpl-badge">M</span><b style="font-size:.82rem;">아워골 기본 템플릿</b>' + /* KF-2: 가상 크리에이터 표기는 숨김(데이터는 보존) */
+            '<span class="faint" style="font-size:.7rem;">운영자 제공</span></div>' +
           '<b>'+escapeHtml(t.title)+'</b>' +
           '<div class="tm-desc">'+escapeHtml(t.desc)+'</div>' +
-          '<div class="faint" style="font-size:.72rem;margin-bottom:8px;">'+t.weeks+'주 과정 · 마일스톤 '+t.ms.length+'개 · 할 일 '+totalTasks+'개 · '+t.users.toLocaleString()+'명이 사용 중</div>' +
+          '<div class="faint" style="font-size:.72rem;margin-bottom:8px;">'+t.weeks+'주 과정 · 마일스톤 '+t.ms.length+'개 · 할 일 '+totalTasks+'개</div>' + /* KF-2: 고정 사용자 수 숨김 */
+          '<div class="faint" data-tplcount="creator:'+t.id+'" style="font-size:.72rem;margin-bottom:8px;display:none;"></div>' +
           '<div class="tmpl-ms">' +
             t.ms.map(function(m){
               return '<div style="margin-bottom:6px;"><b style="color:var(--ink-soft);">☐ '+escapeHtml(m.title)+'</b>' +
@@ -17876,7 +17907,8 @@
     state.activeGoalId = goal.id;
     trackGoalCreated(goal, 'community_template');
     await saveProfile();
-    toast('"'+t.creator+'" 템플릿을 내 목표로 복사했어요');
+    toast('아워골 기본 템플릿을 내 목표로 복사했어요');
+    if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.recordCopy('creator:' + t.id, null); // KF-2 #TASK-ES-017: 서버 실복제 기록
     renderAll();
     if(rerender) rerender();
   }
@@ -18175,6 +18207,10 @@
       + '</div>';
 
     blendedItems = filterFeedByCategory(blendedItems, curCat);
+    /* KF-4 #TASK-ES-018: 이 주제에서 도움이 된 글을 맨 위로(실데이터·'전체' 제외). 로직은 js/top-helpful.js */
+    if(window.OurgoalTopHelpful){
+      blendedItems = window.OurgoalTopHelpful.arrange(blendedItems, curCat, { posts: FEED_POSTS_CACHE, rerender: function(){ if(state.activeTab==='comm' && state.commSubTab==='feed') renderCommFeed(body); } });
+    }
 
     var quickPostBannerHtml = '<div class="card" style="margin-bottom:14px;padding:12px 16px;background:linear-gradient(135deg, rgba(108,92,231,0.08) 0%, rgba(255,159,28,0.06) 100%);border:1.5px solid var(--violet-soft);border-radius:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:var(--shadow-sm);">' +
       '<div style="display:flex;align-items:center;gap:10px;">' +
@@ -18218,7 +18254,8 @@
         var comments = getFeedComments(it.id);
         var isExpanded = !!(state.expandedComments && state.expandedComments[it.id]);
 
-        return '<div class="feed-item">' +
+        return (it._topHelpfulLabel && window.OurgoalTopHelpful ? window.OurgoalTopHelpful.labelHtml() : '') +
+          '<div class="feed-item">' +
           '<div class="feed-avatar'+(isMe?' me':'')+'">'+escapeHtml(it.avatar)+'</div>' +
           '<div class="feed-body">' +
             '<div class="feed-head">' +
@@ -18238,12 +18275,15 @@
             '<div class="feed-foot" style="margin-top:10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
               '<span class="feed-time">'+it.time+'</span>' +
               '<div class="feed-react-group">' +
+                /* KF-7 #TASK-ES-014: 반응 4종(응원해요·도움돼요·별로에요·조언해요). js/reactions.js 가 없으면 예전 이모지 버튼으로 표시 */
+                (window.OurgoalReactions ? window.OurgoalReactions.buttonsHtml(it, { isMe: isMe }) :
                 '<button class="feed-react-btn'+(hasFire?' active active-fire':'')+'" data-reacttype="fire" data-pid="'+it.id+'" type="button" title="파이팅">🔥 '+fireCount+'</button>' +
                 '<button class="feed-react-btn'+(hasClap?' active active-clap':'')+'" data-reacttype="clap" data-pid="'+it.id+'" type="button" title="대단해요">👏 '+(clapCount > 0 ? clapCount : '')+'</button>' +
                 '<button class="feed-react-btn'+(hasHeart?' active active-heart':'')+'" data-reacttype="heart" data-pid="'+it.id+'" type="button" title="응원해요">❤️ '+(heartCount > 0 ? heartCount : '')+'</button>' +
-                '<button class="feed-react-btn'+(hasSparkle?' active active-sparkle':'')+'" data-reacttype="sparkle" data-pid="'+it.id+'" type="button" title="자극받아요">💡 '+(sparkleCount > 0 ? sparkleCount : '')+'</button>' +
+                '<button class="feed-react-btn'+(hasSparkle?' active active-sparkle':'')+'" data-reacttype="sparkle" data-pid="'+it.id+'" type="button" title="자극받아요">💡 '+(sparkleCount > 0 ? sparkleCount : '')+'</button>') +
                 '<button class="feed-comm-toggle'+(comments.length?' has-comments':'')+'" data-togglecomments="'+it.id+'" type="button">💬 댓글 '+(comments.length || 0)+'</button>' +
               '</div>' +
+              (window.OurgoalReactions ? window.OurgoalReactions.advicePanelHtml(it) : '') +
               (isMe && !it.is_ai ? '<button data-delpost="'+it.id+'" type="button" style="margin-left:auto;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">삭제</button>' : '') +
               (!isMe && !it.is_ai ? '<button data-reportpost="'+it.id+'" type="button" style="margin-left:auto;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">신고</button>' +
                 (it.userId ? '<button data-blockuser="'+it.userId+'" data-blockname="'+escapeHtml(it.name||'사용자')+'" type="button" style="margin-left:6px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">차단</button>' : '') : '') +
@@ -18306,6 +18346,8 @@
         toggleFeedReaction(btn.dataset.pid, btn.dataset.reacttype, btn);
       });
     });
+    /* KF-7 #TASK-ES-014: 반응 4종 버튼·조언 패널 바인딩 + 서버 집계 갱신 */
+    if(window.OurgoalReactions) window.OurgoalReactions.bind(body, blendedItems);
 
     // Toggle comments panel
     body.querySelectorAll('[data-togglecomments]').forEach(function(btn){
@@ -19680,8 +19722,16 @@
   function renderSettingsScreen(){
     refreshCustomFeedbackButtons();
     renderProfileCard();
+    if(typeof OurgoalCredits !== 'undefined'){ OurgoalCredits.renderSettingsSection(document.getElementById('settingsCreditsBlock')).then(function(){ if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.renderAdOptIn(document.getElementById('settingsCreditsBlock')); }); } // KF-2 #TASK-ES-017: 선택형 "광고 보고 크레딧 받기"
 
     var settings = state.profile.settings;
+
+    // 🧩 앱을 내맘대로! (#TASK-ES-020) — 로직은 js/customize.js
+    var homeLayoutBtn = document.getElementById('homeLayoutOpenBtn');
+    if(homeLayoutBtn) homeLayoutBtn.onclick = function(){
+      if(!window.OurgoalCustomize){ toast('잠시 후 다시 시도해 주세요'); return; }
+      OurgoalCustomize.open({ state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal, track: track });
+    };
 
     // 🔒 공개 범위 및 프라이버시 (Req 8)
     if(!settings.privacy) settings.privacy = { goals:"private", calendar:"private", records:"private", stats:"private" };
@@ -20546,6 +20596,42 @@
     checkAndHandlePeerInviteUrl();
     // 구글 로그인은 사용자가 랜딩/인증 화면에서 구글 로그인 버튼을 직접 눌렀을 때만 안전하게 시작 (의도치 않은 자동 세션 덮어쓰기 원천 차단)
   })();
+
+  /* ============ #TASK-ES-015 FIX: 공용 크레딧 모듈(js/credits.js)에 앱 sb 주입 ============ */
+  if(window.OurgoalCredits && typeof window.OurgoalCredits.init === "function"){ window.OurgoalCredits.init({ sb: sb }); }
+
+  /* ============ KF-7 #TASK-ES-014: 반응 4종 모듈(js/reactions.js)에 앱 핸들 연결 ============ */
+  if(window.OurgoalReactions && typeof window.OurgoalReactions.init === 'function'){
+    window.OurgoalReactions.init({
+      sb: sb,
+      getProfile: function(){ return state.profile; },
+      getState: function(){ return state; },
+      toast: toast, escapeHtml: escapeHtml, openModal: openModal, closeModal: closeModal,
+      saveProfile: saveProfile, triggerHaptic: triggerHaptic, burstConfetti: burstConfetti, timeAgo: timeAgoStr,
+      rerenderFeed: function(){
+        var b = document.getElementById('commSubBody');
+        if(b && state.activeTab === 'comm' && state.commSubTab === 'feed') renderCommFeed(b);
+      }
+    });
+  }
+  /* ============ KF-4 #TASK-ES-018: 카테고리별 도움이 된 글 슬롯 모듈(js/top-helpful.js) ============ */
+  if(window.OurgoalTopHelpful && typeof window.OurgoalTopHelpful.init === 'function'){
+    window.OurgoalTopHelpful.init({ sb: sb });
+  }
+
+  /* ============ KF-5 #TASK-ES-016: 도움돼요 이유 모듈(js/helpful-reason.js)에 앱 핸들 연결 ============ */
+  if(window.OurgoalHelpfulReason && typeof window.OurgoalHelpfulReason.init === 'function'){
+    window.OurgoalHelpfulReason.init({
+      sb: sb, getProfile: function(){ return state.profile; },
+      toast: toast, escapeHtml: escapeHtml, openModal: openModal, closeModal: closeModal,
+      saveProfile: saveProfile, timeAgo: timeAgoStr
+    });
+  }
+
+  /* ============ KF-2 #TASK-ES-017: 템플릿 복제 크레딧 모듈(js/template-credit.js)에 앱 핸들 연결 ============ */
+  if(window.OurgoalTemplateCredit && typeof window.OurgoalTemplateCredit.init === 'function'){
+    window.OurgoalTemplateCredit.init({ sb: sb, getState: function(){ return state; }, toast: toast, playRewardedAd: playRewardedAdVideo });
+  }
 
   /* ============ PWA: Service Worker 등록 ============ */
   if('serviceWorker' in navigator){
