@@ -2317,6 +2317,43 @@ check('compliance: [#TASK-ES-015] credit_ledger SQL — append-only·멱등·봇
   assert.ok(!/drop +table|truncate|delete +from/i.test(sql), 'DROP/TRUNCATE/DELETE 없음');
 });
 
+/* ============ [KF-7 #TASK-ES-014] 반응 4종(응원해요·도움돼요·별로에요·조언해요) ============ */
+check('KF-7: js/reactions.js 가 존재하고 문법이 유효하며 4종 타입·이유 선택지를 정의한다', () => {
+  const p = path.join(__dirname, '..', 'js', 'reactions.js');
+  assert.ok(fs.existsSync(p), 'js/reactions.js 존재');
+  const src = fs.readFileSync(p, 'utf8');
+  new Function(src);
+  ['cheer', 'helpful', 'poor', 'advice'].forEach(t => assert.ok(src.includes("key: '" + t + "'"), '타입 ' + t + ' 정의'));
+  ['응원해요', '도움돼요', '별로에요', '조언해요'].forEach(l => assert.ok(src.includes(l), '라벨 ' + l));
+  ['ai_suspect', 'wrong_info', 'ad', 'off_topic', 'other'].forEach(c => assert.ok(src.includes("code: '" + c + "'"), '별로에요 이유 ' + c));
+  assert.ok(src.includes('missingSchema'), '서버 미적용 폴백 판별 함수 존재');
+  assert.ok(src.includes('AI 봇 글에는 반응할 수 없어요'), '봇 글 반응 차단 문구 존재');
+});
+
+check('KF-7: index.html 이 반응 모듈을 로드하고 초기화·렌더·바인딩 훅을 가진다', () => {
+  assert.ok(html.includes('<script src="js/reactions.js"></script>'), '모듈 script 태그 존재');
+  assert.ok(html.includes('window.OurgoalReactions.init('), 'init 훅 존재');
+  assert.ok(html.includes('window.OurgoalReactions.buttonsHtml(it, { isMe: isMe })'), '피드 카드 버튼 렌더 훅 존재');
+  assert.ok(html.includes('window.OurgoalReactions.advicePanelHtml(it)'), '조언 패널 렌더 훅 존재');
+  assert.ok(html.includes('window.OurgoalReactions.bind(body, blendedItems)'), '바인딩 훅 존재');
+  assert.ok(html.includes('data-reacttype="fire"'), '예전 이모지 버튼 폴백 마크업 보존(기존 기능 삭제 아님)');
+  assert.ok(html.includes('async function toggleFeedReaction('), '기존 toggleFeedReaction 보존');
+});
+
+check('KF-7: content_reactions SQL 이 존재하고 소프트 삭제·봇 제외·SECURITY DEFINER RPC 만 쓰며 파괴 구문이 없다', () => {
+  const sqlPath = path.join(__dirname, '..', 'docs', 'sql', '2026-09-12-content-reactions.sql');
+  assert.ok(fs.existsSync(sqlPath), 'SQL 파일 존재');
+  const sql = fs.readFileSync(sqlPath, 'utf8');
+  assert.ok(sql.includes('create table if not exists public.content_reactions'), '테이블 멱등 생성');
+  assert.ok(sql.includes("check (type in ('cheer','helpful','poor','advice'))"), '4종 타입 제약');
+  assert.ok(sql.includes('deleted_at'), '소프트 삭제 컬럼');
+  assert.ok(sql.includes("sim\\_%"), '시뮬 글 제외');
+  assert.ok(sql.includes('is_bot'), '봇 계정 제외');
+  ['react_content', 'unreact_content', 'moderate_advice', 'count_content_reactions', 'my_content_reactions', 'list_content_advice'].forEach(f => assert.ok(sql.includes(f + '('), 'RPC ' + f));
+  assert.ok(sql.includes('enable row level security'), 'RLS 활성');
+  assert.ok(!/drop\s+table|truncate\s+table|delete\s+from\s+public\.content_reactions/i.test(sql), '파괴 구문·하드 삭제 없음');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);

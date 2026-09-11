@@ -2284,6 +2284,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="js/credits.js"></script>
+<script src="js/reactions.js"></script>
 <script>
 (function(){
   "use strict";
@@ -18244,12 +18245,15 @@
             '<div class="feed-foot" style="margin-top:10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
               '<span class="feed-time">'+it.time+'</span>' +
               '<div class="feed-react-group">' +
+                /* KF-7 #TASK-ES-014: 반응 4종(응원해요·도움돼요·별로에요·조언해요). js/reactions.js 가 없으면 예전 이모지 버튼으로 표시 */
+                (window.OurgoalReactions ? window.OurgoalReactions.buttonsHtml(it, { isMe: isMe }) :
                 '<button class="feed-react-btn'+(hasFire?' active active-fire':'')+'" data-reacttype="fire" data-pid="'+it.id+'" type="button" title="파이팅">🔥 '+fireCount+'</button>' +
                 '<button class="feed-react-btn'+(hasClap?' active active-clap':'')+'" data-reacttype="clap" data-pid="'+it.id+'" type="button" title="대단해요">👏 '+(clapCount > 0 ? clapCount : '')+'</button>' +
                 '<button class="feed-react-btn'+(hasHeart?' active active-heart':'')+'" data-reacttype="heart" data-pid="'+it.id+'" type="button" title="응원해요">❤️ '+(heartCount > 0 ? heartCount : '')+'</button>' +
-                '<button class="feed-react-btn'+(hasSparkle?' active active-sparkle':'')+'" data-reacttype="sparkle" data-pid="'+it.id+'" type="button" title="자극받아요">💡 '+(sparkleCount > 0 ? sparkleCount : '')+'</button>' +
+                '<button class="feed-react-btn'+(hasSparkle?' active active-sparkle':'')+'" data-reacttype="sparkle" data-pid="'+it.id+'" type="button" title="자극받아요">💡 '+(sparkleCount > 0 ? sparkleCount : '')+'</button>') +
                 '<button class="feed-comm-toggle'+(comments.length?' has-comments':'')+'" data-togglecomments="'+it.id+'" type="button">💬 댓글 '+(comments.length || 0)+'</button>' +
               '</div>' +
+              (window.OurgoalReactions ? window.OurgoalReactions.advicePanelHtml(it) : '') +
               (isMe && !it.is_ai ? '<button data-delpost="'+it.id+'" type="button" style="margin-left:auto;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">삭제</button>' : '') +
               (!isMe && !it.is_ai ? '<button data-reportpost="'+it.id+'" type="button" style="margin-left:auto;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">신고</button>' +
                 (it.userId ? '<button data-blockuser="'+it.userId+'" data-blockname="'+escapeHtml(it.name||'사용자')+'" type="button" style="margin-left:6px;background:none;border:none;color:var(--ink-faint);font-size:.72rem;cursor:pointer;">차단</button>' : '') : '') +
@@ -18312,6 +18316,8 @@
         toggleFeedReaction(btn.dataset.pid, btn.dataset.reacttype, btn);
       });
     });
+    /* KF-7 #TASK-ES-014: 반응 4종 버튼·조언 패널 바인딩 + 서버 집계 갱신 */
+    if(window.OurgoalReactions) window.OurgoalReactions.bind(body, blendedItems);
 
     // Toggle comments panel
     body.querySelectorAll('[data-togglecomments]').forEach(function(btn){
@@ -20553,6 +20559,21 @@
     checkAndHandlePeerInviteUrl();
     // 구글 로그인은 사용자가 랜딩/인증 화면에서 구글 로그인 버튼을 직접 눌렀을 때만 안전하게 시작 (의도치 않은 자동 세션 덮어쓰기 원천 차단)
   })();
+
+  /* ============ KF-7 #TASK-ES-014: 반응 4종 모듈(js/reactions.js)에 앱 핸들 연결 ============ */
+  if(window.OurgoalReactions && typeof window.OurgoalReactions.init === 'function'){
+    window.OurgoalReactions.init({
+      sb: sb,
+      getProfile: function(){ return state.profile; },
+      getState: function(){ return state; },
+      toast: toast, escapeHtml: escapeHtml, openModal: openModal, closeModal: closeModal,
+      saveProfile: saveProfile, triggerHaptic: triggerHaptic, burstConfetti: burstConfetti, timeAgo: timeAgoStr,
+      rerenderFeed: function(){
+        var b = document.getElementById('commSubBody');
+        if(b && state.activeTab === 'comm' && state.commSubTab === 'feed') renderCommFeed(b);
+      }
+    });
+  }
 
   /* ============ PWA: Service Worker 등록 ============ */
   if('serviceWorker' in navigator){
