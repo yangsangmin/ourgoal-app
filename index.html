@@ -16762,7 +16762,35 @@
   }
 
   var MOCK_GROUPS = [
-    { id:'g0', icon:'🏋️', name:'크로스핏 와드(WOD) 정복대', topic:'health/크로스핏·피트니스', region:'서울 마포구', members:89, progress:74, cadence:'매일', endDate:daysFromNow(30),
+    { id:'g-marathon-pair', icon:'🏃', name:'친구와 1:1 마라톤 완주방', topic:'health/러닝·마라톤', region:'온라인', members:1, maxMembers:2, roomType:'pair', inviteCode:'RUN-PAIR2', ownerName:'민혁', progress:50, cadence:'주 3회', endDate:daysFromNow(30),
+      desc:'친구와 둘이서 1:1로 서로의 페이스메이커가 되어 마라톤 풀코스/하프 완주를 달성해요', rule:'주 3회 러닝 거리·페이스 또는 완주 훈련 인증샷 업로드',
+      weeklyTarget:6, weeklyDone:3,
+      roster:[{n:'민혁',c:3}],
+      activity:['민혁님이 10km 빌드업 러닝 48분 페이스를 인증했어요'],
+      verifications: [
+        { id:'v-mp-1', userName:'민혁', userAvatar:'🏃', time:'오늘 07:10', photoUrl:'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=400&auto=format&fit=crop&q=80', note:'오늘 아침 10km 지속주 4분 50초 페이스 완료! 친구와 함께 완주 목표 달릴 준비 완료 🔥', cheers: 5 }
+      ],
+      teamGoals:[
+        { id:'tg-mp-1', title:'둘이서 이번 달 누적 84km 달리기', dueDate:daysFromNow(30), milestones:[
+          { id:'tgm-mp-1a', title:'1단계: 1인당 42km 달성', status:'doing' },
+          { id:'tgm-mp-1b', title:'2단계: 하프 마라톤 거리 완주', status:'todo' }
+        ] }
+      ] },
+    { id:'g-marathon-small', icon:'🏃', name:'5인 소그룹 마라톤 완주방', topic:'health/러닝·마라톤', region:'온라인', members:3, maxMembers:5, roomType:'small', inviteCode:'RUN-CREW5', ownerName:'지우', progress:60, cadence:'주 3회', endDate:daysFromNow(45),
+      desc:'5인 소그룹으로 뭉쳐 낙오자 없이 함께 달리는 마라톤 완주 크루', rule:'주 3회 5km 이상 러닝 기록 또는 완주 인증샷',
+      weeklyTarget:15, weeklyDone:9,
+      roster:[{n:'지우',c:4},{n:'태성',c:3},{n:'재훈',c:2}],
+      activity:['지우님이 15km 장거리 지속주를 완료했어요','태성님이 5km 인터벌 러닝을 인증했어요'],
+      verifications: [
+        { id:'v-ms-1', userName:'지우', userAvatar:'🏃‍♀️', time:'오늘 06:40', photoUrl:'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=400&auto=format&fit=crop&q=80', note:'새벽 15km LSD 장거리주 완료! 5인 소그룹 멤버들 모두 완주 파이팅입니다 🏃‍♀️', cheers: 9 }
+      ],
+      teamGoals:[
+        { id:'tg-ms-1', title:'크루 5인 전원 하프 마라톤 완주', dueDate:daysFromNow(45), milestones:[
+          { id:'tgm-ms-1a', title:'1단계: 전원 10km 완주', status:'done' },
+          { id:'tgm-ms-1b', title:'2단계: 전원 15km LSD 훈련', status:'doing' }
+        ] }
+      ] },
+    { id:'g0', icon:'🏋️', name:'크로스핏 와드(WOD) 정복대', topic:'health/크로스핏·피트니스', region:'서울 마포구', members:89, maxMembers:100, roomType:'open', progress:74, cadence:'매일', endDate:daysFromNow(30),
       desc:'오늘의 WOD 기록과 운동 인증샷을 공유하며 한계 돌파!', rule:'오늘의 WOD 시간·무게 또는 체육관 인증샷 업로드',
       weeklyTarget:280, weeklyDone:205,
       roster:[{n:'민혁',c:21},{n:'지우',c:19},{n:'태성',c:16},{n:'수아',c:14},{n:'재훈',c:11}],
@@ -18222,9 +18250,10 @@
           '<div class="group-ico">'+g.icon+'</div>' +
           '<div class="group-info"><b>'+escapeHtml(g.name)+ownerBadge+(gs.joined&&checked?' ✅':'')+'</b>' +
             '<div style="margin:3px 0 2px;display:flex;gap:4px;flex-wrap:wrap;">' + topicPill(g.topic) +
+              (g.maxMembers === 2 ? '<span class="topic-pill" style="background:var(--sage-soft);color:var(--sage);border-color:var(--sage-line);font-weight:700;">👥 1:1 완주방</span>' : (g.maxMembers === 5 ? '<span class="topic-pill" style="background:var(--violet-soft);color:var(--violet);border-color:var(--violet-line);font-weight:700;">👥 5인 소그룹</span>' : '')) +
               (g.region ? '<span class="topic-pill" style="background:var(--gold-soft);color:var(--gold);border-color:var(--gold-line);">'+(g.region==='온라인'?'💻 온라인':'📍 '+escapeHtml(g.region))+'</span>' : '') +
             '</div>' +
-            '<span>'+(g.members+(gs.joined?1:0))+'명 참여 · '+g.cadence+' 인증 · '+dDay(g.endDate)+'</span>' +
+            '<span>'+(g.members+(gs.joined?1:0))+(g.maxMembers ? '/'+g.maxMembers+'명' : '명')+' 참여 · '+g.cadence+' 인증 · '+dDay(g.endDate)+'</span>' +
             '<div class="group-bar"><span style="width:'+prog+'%;"></span></div>' +
             '<span class="faint" style="font-size:.7rem;">공동 달성률 '+prog+'%'+(gs.joined&&!checked?' · 오늘 인증 전이에요':'')+'</span>' +
           '</div>' +
@@ -18465,10 +18494,25 @@
   function promptNewGroup(body){
     var myGoals = state.profile.goals;
     openModal(
-      '<h3>새 모임 만들기</h3>' +
-      '<p class="muted" style="margin:-8px 0 14px;">인증 규칙과 기간을 정하면, 멤버들의 인증이 모여 공동 게이지가 올라가요.</p>' +
+      '<h3>새 모임 · 함께 목표 방 만들기</h3>' +
+      '<p class="muted" style="margin:-8px 0 12px;">친구와 1:1 또는 5인 소그룹으로 함께 목표를 완주해보세요.</p>' +
+      '<div style="margin-bottom:12px;">' +
+        '<div style="font-size:.74rem;font-weight:700;color:var(--ink);margin-bottom:6px;">⚡ 1초 추천 방 템플릿</div>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="tplMarathonPair" style="font-size:.74rem;padding:4px 8px;border-color:var(--red-line);color:var(--red);">🏃 1:1 마라톤 완주방</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="tplMarathonSmall" style="font-size:.74rem;padding:4px 8px;border-color:var(--violet-line);color:var(--violet);">🏃 5인 소그룹 마라톤방</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="tplMorningPair" style="font-size:.74rem;padding:4px 8px;">⏰ 1:1 기상 완주방</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="tplStudySmall" style="font-size:.74rem;padding:4px 8px;">📚 5인 몰입 스터디</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="field"><label>방 인원 (정원)</label><select id="grpMaxMembers">' +
+        '<option value="2">👥 친구와 1:1 페어 완주방 (2명)</option>' +
+        '<option value="5" selected>👥 5인 소그룹 완주방 (5명)</option>' +
+        '<option value="10">👥 10인 소그룹 크루 (10명)</option>' +
+        '<option value="50">🌐 오픈 모임 (최대 50명)</option>' +
+      '</select></div>' +
       '<div class="field"><label>아이콘 (이모지)</label><input id="grpIcon" type="text" value="🔥" maxlength="4"></div>' +
-      '<div class="field"><label>모임 이름</label><input id="grpName" type="text" placeholder="예: 아침 6시 기상 스터디"></div>' +
+      '<div class="field"><label>모임 이름</label><input id="grpName" type="text" placeholder="예: 친구와 1:1 마라톤 완주방"></div>' +
       '<div class="field"><label>소개글</label><input id="grpDesc" type="text" placeholder="어떤 사람들과 무엇을 함께할지 적어주세요"></div>' +
       '<div class="field"><label>카테고리 (대범위 · 중범위)</label></div>' +
       categoryPickerHtml('gTopic', '') +
@@ -18478,12 +18522,12 @@
         myGoals.map(function(g){ return '<option value="'+g.id+'">'+escapeHtml(g.title)+'</option>'; }).join('') +
       '</select></div>' : '') +
       '<div class="field"><label>인증 주기</label><select id="grpCadence">' +
-        '<option value="매일">매일</option><option value="주 3회">주 3회</option><option value="주말">주말마다</option>' +
+        '<option value="매일">매일</option><option value="주 3회" selected>주 3회</option><option value="주말">주말마다</option>' +
       '</select></div>' +
       '<div class="field"><label>챌린지 기간</label><select id="grpWeeks">' +
         '<option value="2">2주</option><option value="4" selected>4주</option><option value="8">8주</option><option value="12">12주</option>' +
       '</select></div>' +
-      '<div class="field"><label>인증 규칙 (멤버에게 보여요)</label><input id="grpRule" type="text" placeholder="예: 운동한 날 무게·세트를 남기면 인증 완료"></div>' +
+      '<div class="field"><label>인증 규칙 (멤버에게 보여요)</label><input id="grpRule" type="text" placeholder="예: 주 3회 러닝 거리·페이스 또는 완주 훈련 인증샷"></div>' +
       '<div class="field"><label>모임 방식</label><select id="grpMode">' +
         '<option value="online">온라인 모임 (어디서든 참여)</option>' +
         '<option value="local">우리 동네 모임 (오프라인 만남 가능)</option>' +
@@ -18493,7 +18537,7 @@
         regionPickerHtml('grpRegion', state.profile.region||'') +
         '<div style="height:14px;"></div>' +
       '</div>' +
-      '<div class="modal-actions"><button class="btn btn-ghost" id="grpCancel" type="button">취소</button><button class="btn btn-primary" id="grpSave" type="button">만들기</button></div>',
+      '<div class="modal-actions"><button class="btn btn-ghost" id="grpCancel" type="button">취소</button><button class="btn btn-primary" id="grpSave" type="button">방 만들기</button></div>',
       function(sheet){
         var gTopicRef = { value: '' };
         wireCategoryPicker(sheet, 'gTopic', gTopicRef);
@@ -18503,34 +18547,69 @@
         modeSel.addEventListener('change', function(){
           sheet.querySelector('#grpRegionBlock').style.display = modeSel.value==='local' ? '' : 'none';
         });
+
+        // ⚡ 1초 추천 방 템플릿 핸들러
+        var applyPreset = function(preset){
+          sheet.querySelector('#grpIcon').value = preset.icon;
+          sheet.querySelector('#grpName').value = preset.name;
+          sheet.querySelector('#grpDesc').value = preset.desc;
+          sheet.querySelector('#grpRule').value = preset.rule;
+          sheet.querySelector('#grpMaxMembers').value = preset.max;
+          sheet.querySelector('#grpCadence').value = preset.cadence;
+          gTopicRef.value = preset.topic;
+        };
+        var btnMP = sheet.querySelector('#tplMarathonPair');
+        if(btnMP) btnMP.onclick = function(){
+          applyPreset({ icon:'🏃', name:'친구와 1:1 마라톤 완주방', desc:'친구와 1:1 페이스메이커가 되어 마라톤 풀코스/하프 완주를 달성해요', rule:'주 3회 러닝 거리·페이스 또는 완주 훈련 인증샷', max:'2', cadence:'주 3회', topic:'health/러닝·마라톤' });
+        };
+        var btnMS = sheet.querySelector('#tplMarathonSmall');
+        if(btnMS) btnMS.onclick = function(){
+          applyPreset({ icon:'🏃', name:'5인 소그룹 마라톤 완주방', desc:'5인 소그룹으로 뭉쳐 낙오자 없이 함께 달리는 마라톤 완주 크루', rule:'주 3회 5km 이상 러닝 기록 또는 완주 인증샷', max:'5', cadence:'주 3회', topic:'health/러닝·마라톤' });
+        };
+        var btnMorning = sheet.querySelector('#tplMorningPair');
+        if(btnMorning) btnMorning.onclick = function(){
+          applyPreset({ icon:'⏰', name:'1:1 미라클 모닝 6시 기상방', desc:'둘이서 서로 깨워주며 아침 6시 루틴을 완성하는 1:1 페어방', rule:'오전 6시 전 기상 인증샷 또는 독서/스트레칭 기록', max:'2', cadence:'매일', topic:'mind/기상·수면' });
+        };
+        var btnStudy = sheet.querySelector('#tplStudySmall');
+        if(btnStudy) btnStudy.onclick = function(){
+          applyPreset({ icon:'📚', name:'5인 몰입 스터디 완주방', desc:'하루 1시간 이상 집중 공부를 인증하며 시험/자격증을 정복하는 소그룹', rule:'일일 타이머 몰입 시간 또는 학습 필기 인증', max:'5', cadence:'매일', topic:'study/자격증·시험' });
+        };
+
         sheet.querySelector('#grpCancel').addEventListener('click', closeModal);
         sheet.querySelector('#grpSave').addEventListener('click', async function(){
           var name = sheet.querySelector('#grpName').value.trim();
           if(!name) return;
           var weeks = parseInt(sheet.querySelector('#grpWeeks').value, 10);
           var cadence = sheet.querySelector('#grpCadence').value;
+          var maxMembers = parseInt(sheet.querySelector('#grpMaxMembers').value, 10) || 5;
           var perWeek = cadence==='매일' ? 7 : (cadence==='주 3회' ? 3 : 2);
           var goalSel = sheet.querySelector('#grpGoal');
           var linked = goalSel && goalSel.value ? myGoals.find(function(g){ return g.id===goalSel.value; }) : null;
           var gid = newId();
-          MOCK_GROUPS.push({
+          var inviteCode = 'INV-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+          var newGroup = {
             id: gid,
             icon: sheet.querySelector('#grpIcon').value.trim() || '🔥',
             name: name,
-            topic: gTopicRef.value,
+            topic: gTopicRef.value || 'health/러닝·마라톤',
             region: modeSel.value==='local' ? (gRegionRef.value || '온라인') : '온라인',
             members: 1,
+            maxMembers: maxMembers,
+            roomType: maxMembers === 2 ? 'pair' : (maxMembers <= 5 ? 'small' : 'open'),
+            inviteCode: inviteCode,
+            ownerName: state.profile.displayName,
             progress: 0,
             cadence: cadence,
             endDate: daysFromNow(weeks*7),
-            desc: sheet.querySelector('#grpDesc').value.trim() || (linked ? '"'+linked.title+'" 목표를 함께 달성해요' : '설명이 없어요'),
+            desc: sheet.querySelector('#grpDesc').value.trim() || (linked ? '"'+linked.title+'" 목표를 함께 달성해요' : '함께 목표를 완주하는 소그룹 방이에요'),
             rule: sheet.querySelector('#grpRule').value.trim() || '오늘 한 일을 기록하면 인증 완료',
-            weeklyTarget: perWeek * 5,
+            weeklyTarget: perWeek * maxMembers,
             weeklyDone: 0,
-            roster: [],
-            activity: ['모임이 만들어졌어요 · 첫 인증을 남겨보세요'],
+            roster: [{ n: state.profile.displayName, c: 0, me: true }],
+            activity: [state.profile.displayName + '님이 방을 개설했어요! 친구를 초대해보세요.'],
             teamGoals: []
-          });
+          };
+          MOCK_GROUPS.unshift(newGroup);
           groupState(gid).joined = true;
           groupState(gid).myRole = 'owner';
           await saveProfile();
@@ -18543,7 +18622,6 @@
     );
   }
 
-  /* ============ 마니또 (익명 응원 매칭) ============ */
   var MANITO_ADJ = ['새벽의','조용한','끈질긴','달리는','반짝이는','묵묵한','씩씩한','느긋한','집중하는','유쾌한'];
   var MANITO_NOUN = { health:'러너', study:'공부벌레', career:'빌더', hobby:'창작자', mind:'명상가', relation:'이웃' };
   var MANITO_EMOJI = { health:'🏃', study:'📖', career:'🚀', hobby:'🎨', mind:'🌙', relation:'🏡' };
@@ -19865,11 +19943,29 @@
         } else {
           enterApp();
         }
+        checkAndHandlePeerInviteUrl();
         return;
       }
     } catch(e){ /* fall through to landing screen */ }
+
+    try {
+      var guestRaw = localStorage.getItem('ourgoal_guest_profile');
+      if(guestRaw){
+        var gp = JSON.parse(guestRaw);
+        if(gp && gp.id){
+          state.profile = gp;
+          document.getElementById('landingScreen').style.display = 'none';
+          document.getElementById('authScreen').style.display = 'none';
+          enterApp();
+          checkAndHandlePeerInviteUrl();
+          return;
+        }
+      }
+    } catch(e){}
+
     document.getElementById('landingScreen').style.display = 'flex';
     try{ recordLanding(location.search, dateKey(nowISO())); } catch(e){ /* 계측 실패 무시 */ }
+    checkAndHandlePeerInviteUrl();
     // 구글 로그인은 사용자가 랜딩/인증 화면에서 구글 로그인 버튼을 직접 눌렀을 때만 안전하게 시작 (의도치 않은 자동 세션 덮어쓰기 원천 차단)
   })();
 
