@@ -2405,6 +2405,49 @@ check('KF-1: index.html 에 설정 진입 버튼·모듈 로드·홈 렌더 훅�
 });
 
 
+/* ============ [#TASK-ES-019] 출석·스트릭·배지 (E1, KF-3 — 크레딧 없음) ============ */
+check('compliance: [#TASK-ES-019] js/streaks.js 가 존재·문법 유효·OurgoalStreaks API 를 노출하고 index.html 이 로드·호출한다', () => {
+  const p = path.join(__dirname, '..', 'js', 'streaks.js');
+  assert.ok(fs.existsSync(p), 'js/streaks.js 존재');
+  const src = fs.readFileSync(p, 'utf8');
+  new Function(src);
+  ['renderHome', 'weekDots', 'streakNextMilestone', 'qualityDays', 'markAttendance', 'extendBadges'].forEach(fn => {
+    assert.ok(src.includes(fn + ': ' + fn), 'API ' + fn + ' 노출');
+  });
+  assert.ok(html.includes('<script src="js/streaks.js"></script>'), 'index.html 이 js/streaks.js 를 로드');
+  assert.ok(html.includes('id="homePositionStrip"'), '홈 내 위치 컨테이너 존재');
+  assert.ok(html.includes('OurgoalStreaks.renderHome({'), 'renderHome 훅 존재');
+});
+
+check('compliance: [#TASK-ES-019] 출석·기록에 화폐·XP 보상 없음 — awardXP·크레딧 미호출, 화폐 문구 0건, 로컬스토리지 직접 저장 없음', () => {
+  const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'streaks.js'), 'utf8');
+  assert.ok(!/awardXP|OurgoalCredits|award_credit|XP_RULES/.test(src), 'XP·크레딧 호출 없음');
+  assert.ok(!/크레딧|포인트|코인|현금|₩/.test(src), '화폐 문구 없음');
+  assert.ok(!/localStorage|sessionStorage/.test(src), '저장은 프로필 settings 경로만');
+  assert.ok(!/#\d+위|\d+인 중 \d+명/.test(src), '고정 사회적 숫자 없음');
+});
+
+check('compliance: [#TASK-ES-019] 조건값은 RULES 한 곳(14·100일 포함) · 순수 함수 동작 · 홈 순서(저장 → 내 위치 → 목표 목록) 유지', () => {
+  const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'streaks.js'), 'utf8');
+  const w = {};
+  new Function('window', src)(w);
+  const S = w.OurgoalStreaks;
+  assert.ok(S && S.RULES.streakMilestones.includes(14) && S.RULES.streakMilestones.includes(100), '마일스톤 14·100 포함');
+  assert.strictEqual(S.streakNextMilestone(7, [3, 7, 14]), 14, '다음 배지 계산');
+  assert.strictEqual(S.streakNextMilestone(400, [3, 7]), null, '최상위 배지 이후 null');
+  assert.strictEqual(S.weekDots([]).length, 7, '주간 7칸');
+  const s = {};
+  assert.strictEqual(S.markAttendance(s), true, '오늘 첫 출석은 기록');
+  assert.strictEqual(S.markAttendance(s), false, '같은 날 두 번째는 무시(멱등)');
+  assert.strictEqual(s.attendance.length, 1);
+  const recs = [{ text: 'a'.repeat(25), startAt: new Date().toISOString() }, { text: '짧게', startAt: new Date().toISOString() }];
+  assert.strictEqual(S.qualityDays(recs, { qualityMinChars: 20, qualityWindowDays: 7, qualityMinDays: 5 }), 1, '품질 기록 일수(20자 이상 하루)');
+  assert.ok(!/streakMilestones/.test(html), 'index.html 에 배지 조건 하드코딩 없음');
+  const a = html.indexOf('id="captureSave"'), b = html.indexOf('id="homePositionStrip"'), c = html.indexOf('id="homeGoalList"');
+  assert.ok(a > 0 && a < b && b < c, '홈 순서: 답하기(저장) → 내 위치 → 목표 목록');
+});
+
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);

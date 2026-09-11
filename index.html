@@ -1752,6 +1752,8 @@
         <h3>내 목표 <span id="streakBadge"></span><span id="streakFreezeBadge"></span></h3>
         <button class="btn btn-ghost btn-sm" id="homeAddGoal" type="button">+ 새 목표</button>
       </div>
+      <!-- 내 위치: 출석·스트릭·배지 (#TASK-ES-019, js/streaks.js 가 채운다. 값 없으면 숨김) -->
+      <div id="homePositionStrip" class="faint" hidden style="margin:-4px 0 10px;line-height:1.7;"></div>
       <div id="homeGoalList"></div>
 
       <div style="display:flex;gap:8px;margin-top:12px;">
@@ -2293,6 +2295,7 @@
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
 <script src="/js/customize.js"></script>
+<script src="js/streaks.js"></script>
 <script>
 (function(){
   "use strict";
@@ -6475,6 +6478,7 @@
     var freezeEl = document.getElementById('streakFreezeBadge');
     var sf = state.profile.settings.streakFreeze;
     if(freezeEl) freezeEl.innerHTML = (sf && sf.available>0) ? '<span class="freeze-pill" title="하루를 놓쳐도 스트릭이 끊기지 않게 지켜줘요">🧊'+sf.available+'</span>' : '';
+    if(typeof OurgoalStreaks !== 'undefined'){ OurgoalStreaks.renderHome({ state: state, BADGES: BADGES, badgeContext: badgeContext, computeStreakDays: computeStreakDays, saveProfile: saveProfile, escapeHtml: escapeHtml, dateKey: dateKey }); } // #TASK-ES-019 출석·스트릭·배지
     var wrap = document.getElementById('homeGoalList');
     var rawGoals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     var goalOrder = (state.profile.settings && state.profile.settings.goalOrder) || [];
