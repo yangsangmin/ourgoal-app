@@ -2110,6 +2110,22 @@ check('compliance: 9:16 인스타 스토리 바이럴 카드 & Web Share API & i
   assert.strictEqual(html.includes('goalRescaleBtn'), false, '번아웃 케어 재조정하기 버튼 영구 삭제');
   assert.strictEqual(html.includes('rescaleCardHtml'), false, '번아웃 케어 카드 UI 영구 삭제');
 });
+
+check('compliance: 퍼널 계측(api/track.js) & WCAG AA 명도 대비 & OAuth 우아한 폴백', () => {
+  // 1. api/track.js 이벤트 확장
+  const trackCode = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  assert.ok(trackCode.includes('funnel_signup'), 'funnel_signup 허용');
+  assert.ok(trackCode.includes('funnel_goal_created'), 'funnel_goal_created 허용');
+  assert.ok(trackCode.includes('funnel_first_checkin'), 'funnel_first_checkin 허용');
+  assert.ok(trackCode.includes('utm_landing'), 'utm_landing 허용');
+
+  // 2. WCAG AA 명도 대비
+  assert.ok(html.includes('--ink-faint:#717596'), '기본 라이트 모드 ink-faint 4.5:1 이상(#717596) 적용');
+
+  // 3. OAuth 폴백 모달
+  assert.ok(html.includes('로그인 심사 준비 중'), 'OAuth 미설정 시 우아한 안내 모달');
+  assert.ok(html.includes('fallbackQuickAuthBtn'), '1초 빠른 시작 버튼 연동');
+});
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);

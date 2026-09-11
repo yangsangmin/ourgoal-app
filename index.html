@@ -37,7 +37,7 @@
   :root{
     /* ---- 2030 타겟 팔레트: 밝고 에너지 있는 코랄·앰버 + 딥네이비 잉크 ---- */
     --paper:#F4F5FB; --card:#FFFFFF; --card2:#F1F2F8;
-    --ink:#14162B; --ink-soft:#5D6180; --ink-faint:#9A9EB8;
+    --ink:#14162B; --ink-soft:#5D6180; --ink-faint:#717596;
     --red:#FF4F64; --red-soft:rgba(255,79,100,.10); --red-line:rgba(255,79,100,.35);
     --gold:#FF9F1C; --gold-soft:rgba(255,159,28,.12); --gold-line:rgba(255,159,28,.4);
     --sage:#1FC98E; --sage-soft:rgba(31,201,142,.12); --sage-line:rgba(31,201,142,.4);
@@ -83,7 +83,7 @@
   /* 2. 화이트 (Clean Light) */
   [data-theme="white"], [data-theme="light"]{
     --paper:#F4F5FB; --card:#FFFFFF; --card2:#F1F2F8;
-    --ink:#14162B; --ink-soft:#5D6180; --ink-faint:#9A9EB8;
+    --ink:#14162B; --ink-soft:#5D6180; --ink-faint:#717596;
     --red:#FF4F64; --red-soft:rgba(255,79,100,.10); --red-line:rgba(255,79,100,.35);
     --gold:#FF9F1C; --gold-soft:rgba(255,159,28,.12); --gold-line:rgba(255,159,28,.4);
     --sage:#1FC98E; --sage-soft:rgba(31,201,142,.12); --sage-line:rgba(31,201,142,.4);
@@ -3174,7 +3174,30 @@
       if(res && res.error) throw res.error;
     } catch(err){
       console.warn('OAuth 시작 실패:', err);
-      toast((provider === 'kakao' ? '카카오' : '구글') + ' 로그인 시작에 실패했어요: ' + (err.message || '잠시 후 다시 시도해주세요'));
+      var msg = err && err.message ? String(err.message) : '';
+      if(/unsupported provider|provider is not enabled|not enabled/i.test(msg)){
+        openModal(
+          '<div style="text-align:center;padding:12px 6px;">' +
+            '<div style="font-size:2.2rem;margin-bottom:8px;">🔒</div>' +
+            '<h3 style="margin:0 0 8px;font-size:1.1rem;font-weight:800;">' + (provider === 'kakao' ? '카카오' : '구글') + ' 로그인 심사 준비 중</h3>' +
+            '<p style="font-size:.85rem;color:var(--ink-soft);line-height:1.55;margin:0 0 16px;">공식 비즈니스 앱 콘솔 심사 대기 중입니다.<br><b>이메일 또는 닉네임으로 1초 만에</b> 바로 시작하실 수 있어요!</p>' +
+            '<button class="btn btn-primary" id="fallbackQuickAuthBtn" style="width:100%;padding:12px;font-weight:800;border-radius:12px;background:var(--grad);border:none;">⚡ 1초 빠른 시작하기</button>' +
+            '<button class="btn btn-ghost btn-sm" id="fallbackQuickAuthClose" style="width:100%;margin-top:8px;">닫기</button>' +
+          '</div>',
+          function(sheet){
+            var cBtn = sheet.querySelector('#fallbackQuickAuthClose');
+            if(cBtn) cBtn.onclick = closeModal;
+            var qBtn = sheet.querySelector('#fallbackQuickAuthBtn');
+            if(qBtn) qBtn.onclick = function(){
+              closeModal();
+              var landNick = document.getElementById('landNick');
+              if(landNick){ landNick.focus(); landNick.scrollIntoView({ behavior: 'smooth' }); }
+            };
+          }
+        );
+      } else {
+        toast((provider === 'kakao' ? '카카오' : '구글') + ' 로그인 시작에 실패했어요: ' + (msg || '잠시 후 다시 시도해주세요'));
+      }
     }
   }
   ['landKakaoBtn','authKakaoBtn'].forEach(function(id){
