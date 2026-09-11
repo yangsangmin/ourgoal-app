@@ -6486,12 +6486,15 @@
       var leadBadge = (gIdx === 0 && goals.length > 1)
         ? '<span class="focus-goal-pill" style="font-size:10px;padding:2px 6px;border-radius:10px;background:var(--accent-soft, #FFF1F2);color:var(--accent, #FF4F64);font-weight:700;">🔥 대표</span>'
         : '';
+      var focusBtn = (gIdx === 0)
+        ? '<button class="btn-focus-pilot" data-focusgoal="'+g.id+'" type="button" title="1순위 대표 목표 초집중 시작" style="display:inline-flex;align-items:center;gap:3px;font-size:10px;padding:2px 7px;border-radius:8px;background:linear-gradient(135deg,#6C5CE7,#4834D4);color:#fff;border:none;font-weight:700;cursor:pointer;margin-left:4px;box-shadow:0 2px 5px rgba(108,92,231,0.25);">⚡ 초집중</button>'
+        : '';
       return '<div class="goal-card" data-goalid="'+g.id+'" draggable="true">' +
         '<div class="goal-card-top">' +
           '<div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">' +
             (goals.length > 1 ? '<span class="goal-drag-handle" data-draggoal="'+g.id+'" title="드래그하여 순서 변경" aria-label="드래그하여 순서 변경" style="cursor:grab;padding:2px 4px;color:var(--muted);font-size:14px;user-select:none;line-height:1;">⠿</span>' : '') +
             '<h4 style="margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+escapeHtml(g.title)+'</h4>' +
-            leadBadge +
+            leadBadge + focusBtn +
           '</div>' +
           '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">' +
             (goals.length > 1 ? '<button class="icon-btn order-shift-btn" data-shiftgoal="'+g.id+'" data-dir="-1" type="button" aria-label="위로 이동" title="위로 이동" style="padding:2px 4px;font-size:11px;background:none;border:none;color:var(--muted);cursor:pointer;">▲</button><button class="icon-btn order-shift-btn" data-shiftgoal="'+g.id+'" data-dir="1" type="button" aria-label="아래로 이동" title="아래로 이동" style="padding:2px 4px;font-size:11px;background:none;border:none;color:var(--muted);cursor:pointer;">▼</button>' : '') +
@@ -6515,6 +6518,15 @@
       el.addEventListener('click', function(){
         state.activeGoalId = el.dataset.detail;
         setTab('goals');
+      });
+    });
+
+    wrap.querySelectorAll('[data-focusgoal]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var gid = btn.getAttribute('data-focusgoal');
+        openFocusAutoPilotModal(gid);
       });
     });
     wrap.querySelectorAll('[data-calsyncgoal]').forEach(function(btn){
@@ -6684,28 +6696,88 @@
     var ctx = canvas.getContext ? canvas.getContext('2d') : null;
     if(!ctx) return canvas;
 
+    var theme = options.theme || 'neon';
+    var themeConfigs = {
+      neon: {
+        bg: ['#0E0C18', '#1B142E', '#0C0A14'],
+        glow1: 'rgba(108, 92, 231, 0.42)',
+        glow2: 'rgba(255, 107, 74, 0.35)',
+        headerColor: '#FF6B4A',
+        streakColors: ['#FF8A65', '#FFD54F'],
+        frameStroke: 'rgba(255, 107, 74, 0.25)',
+        tag: '🔥 갓생 네온'
+      },
+      cyber: {
+        bg: ['#040E1E', '#0B2347', '#030A17'],
+        glow1: 'rgba(0, 242, 254, 0.40)',
+        glow2: 'rgba(79, 172, 254, 0.35)',
+        headerColor: '#00F2FE',
+        streakColors: ['#00F2FE', '#4FACFE'],
+        frameStroke: 'rgba(0, 242, 254, 0.30)',
+        tag: '⚡ 사이버'
+      },
+      gold: {
+        bg: ['#161105', '#2E220A', '#100C03'],
+        glow1: 'rgba(243, 156, 18, 0.42)',
+        glow2: 'rgba(46, 204, 113, 0.28)',
+        headerColor: '#F39C12',
+        streakColors: ['#F39C12', '#F1C40F'],
+        frameStroke: 'rgba(243, 156, 18, 0.30)',
+        tag: '🏆 골드'
+      },
+      aurora: {
+        bg: ['#15061E', '#2A0E38', '#0E0315'],
+        glow1: 'rgba(253, 121, 168, 0.42)',
+        glow2: 'rgba(9, 132, 227, 0.35)',
+        headerColor: '#FD79A8',
+        streakColors: ['#FD79A8', '#E056FD'],
+        frameStroke: 'rgba(253, 121, 168, 0.30)',
+        tag: '🌌 오로라'
+      }
+    };
+    var cfg = themeConfigs[theme] || themeConfigs.neon;
+
     // 1. 다크 프리미엄 배경 그라디언트
     var bgGrad = ctx.createLinearGradient(0, 0, 720, 1280);
-    bgGrad.addColorStop(0, '#0E0C18');
-    bgGrad.addColorStop(0.5, '#1B142E');
-    bgGrad.addColorStop(1, '#0C0A14');
+    bgGrad.addColorStop(0, cfg.bg[0]);
+    bgGrad.addColorStop(0.5, cfg.bg[1]);
+    bgGrad.addColorStop(1, cfg.bg[2]);
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, 720, 1280);
 
-    // 2. 앰비언트 글로우 (보라 + 코랄)
+    // 2. 앰비언트 글로우
     try {
       var glow1 = ctx.createRadialGradient(580, 220, 20, 580, 220, 420);
-      glow1.addColorStop(0, 'rgba(108, 92, 231, 0.38)');
-      glow1.addColorStop(1, 'rgba(108, 92, 231, 0)');
+      glow1.addColorStop(0, cfg.glow1);
+      glow1.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = glow1;
       ctx.fillRect(0, 0, 720, 1280);
 
       var glow2 = ctx.createRadialGradient(140, 960, 20, 140, 960, 460);
-      glow2.addColorStop(0, 'rgba(255, 107, 74, 0.32)');
-      glow2.addColorStop(1, 'rgba(255, 107, 74, 0)');
+      glow2.addColorStop(0, cfg.glow2);
+      glow2.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = glow2;
       ctx.fillRect(0, 0, 720, 1280);
     } catch(e){}
+
+    // 파티클 효과 옵션
+    if (options.particles) {
+      var stars = [
+        [100, 220, 4, 0.8], [620, 240, 5, 0.85], [220, 460, 3, 0.75], [510, 480, 4, 0.8],
+        [90, 800, 5, 0.85], [630, 810, 3, 0.75], [180, 1080, 4, 0.8], [540, 1100, 6, 0.9],
+        [360, 200, 3, 0.65], [140, 580, 4, 0.7], [580, 590, 5, 0.8], [360, 960, 4, 0.85]
+      ];
+      ctx.save();
+      stars.forEach(function(st){
+        ctx.beginPath();
+        ctx.arc(st[0], st[1], st[2], 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, ' + st[3] + ')';
+        ctx.shadowColor = cfg.headerColor;
+        ctx.shadowBlur = 12;
+        ctx.fill();
+      });
+      ctx.restore();
+    }
 
     // 3. 카드 외곽 테두리 (네온 라운드 프레임)
     var fx = 36, fy = 48, fw = 648, fh = 1184, r = 32;
@@ -6727,7 +6799,7 @@
 
     // 4. 헤더 엠블럼 & 날짜
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#FF6B4A';
+    ctx.fillStyle = (typeof cfg !== 'undefined' ? cfg.headerColor : '#FF6B4A');
     ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
     ctx.fillText('OUR GOAL · 갓생 아카이브', 360, 130);
 
@@ -6746,8 +6818,8 @@
     ctx.font = 'bold 30px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
     try {
       var textGrad = ctx.createLinearGradient(220, 500, 500, 500);
-      textGrad.addColorStop(0, '#FF8A65');
-      textGrad.addColorStop(1, '#FFD54F');
+      textGrad.addColorStop(0, (typeof cfg !== 'undefined' ? cfg.streakColors[0] : '#FF8A65'));
+      textGrad.addColorStop(1, (typeof cfg !== 'undefined' ? cfg.streakColors[1] : '#FFD54F'));
       ctx.fillStyle = textGrad;
     } catch(e){
       ctx.fillStyle = '#FFD54F';
@@ -6828,6 +6900,135 @@
     return canvas;
   }
 
+  /* ============ 1순위 대표 목표 AI 초집중 모드 (Focus Auto-Pilot) ============ */
+  var focusTimerInterval = null;
+  var focusTimerSeconds = 25 * 60;
+  var focusTimerRunning = false;
+
+  function openFocusAutoPilotModal(goalId){
+    triggerHaptic(25);
+    var goals = (state.profile && state.profile.goals) || [];
+    var goal = goals.find(function(g){ return g.id === goalId; }) || goals[0];
+    if(!goal){
+      toast('초집중을 시작할 목표가 없습니다.');
+      return;
+    }
+
+    var milestones = goal.milestones || [];
+    var activeMilestone = milestones.find(function(m){ return m && m.status !== 'done'; }) || milestones[0];
+    var actionTitle = activeMilestone ? activeMilestone.title : (goal.title + ' 오늘의 핵심 몰입');
+
+    focusTimerSeconds = 25 * 60;
+    focusTimerRunning = false;
+    if(focusTimerInterval){ clearInterval(focusTimerInterval); focusTimerInterval = null; }
+
+    function renderTimerStr(sec){
+      var m = Math.floor(sec / 60);
+      var s = sec % 60;
+      return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }
+
+    var modalHtml = ''
+      + '<div style="text-align:center;">'
+      + '  <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;background:rgba(108,92,231,0.12);color:#6C5CE7;font-size:0.8rem;font-weight:800;margin-bottom:10px;">'
+      + '    ⚡ 1순위 대표 목표 AI 초집중 모드'
+      + '  </div>'
+      + '  <h3 style="margin:0 0 6px;font-size:1.25rem;font-weight:900;color:var(--ink);">' + escapeHtml(goal.title) + '</h3>'
+      + '  <div style="font-size:0.85rem;color:var(--ink-faint);margin-bottom:14px;">🎯 지금 집중할 단 1개의 액션: <strong style="color:var(--ink);">' + escapeHtml(actionTitle) + '</strong></div>'
+      + '  <div style="background:linear-gradient(145deg, #12101F 0%, #1A1429 100%);border-radius:24px;padding:24px 16px;margin:0 auto 16px;border:1.5px solid rgba(108,92,231,0.35);box-shadow:0 12px 35px rgba(108,92,231,0.2);">'
+      + '    <div style="font-size:0.75rem;letter-spacing:2px;color:rgba(255,255,255,0.6);font-weight:700;">FOCUS POMODORO</div>'
+      + '    <div id="focusTimerDisplay" style="font-size:3.2rem;font-weight:900;font-variant-numeric:tabular-nums;color:#FFFFFF;text-shadow:0 0 25px rgba(108,92,231,0.8);margin:8px 0 16px;">25:00</div>'
+      + '    <div style="display:flex;justify-content:center;gap:8px;">'
+      + '      <button class="btn btn-sm" id="btnFocusStartPause" type="button" style="background:#6C5CE7;color:#fff;border:none;border-radius:12px;font-weight:800;padding:8px 18px;font-size:0.85rem;">▶ 집중 시작</button>'
+      + '      <button class="btn btn-sm" id="btnFocusReset" type="button" style="background:rgba(255,255,255,0.1);color:#fff;border:none;border-radius:12px;font-weight:600;padding:8px 14px;font-size:0.85rem;">🔄 리셋</button>'
+      + '    </div>'
+      + '  </div>'
+      + '  <button class="btn btn-primary" id="btnFocusQuickCheckin" type="button" style="width:100%;padding:13px;font-size:0.95rem;font-weight:800;border-radius:14px;background:linear-gradient(135deg,#FF6B4A,#FF4757);border:none;box-shadow:0 4px 15px rgba(255,75,87,0.4);color:#fff;cursor:pointer;">'
+      + '    ⚡ 지금 25분 몰입 완료 체크인'
+      + '  </button>'
+      + '  <div style="margin-top:8px;font-size:0.75rem;color:var(--ink-faint);">체크인 즉시 스트릭과 마일스톤이 전격 갱신됩니다.</div>'
+      + '</div>';
+
+    openModal(modalHtml, function(sheet){
+      var displayEl = sheet.querySelector('#focusTimerDisplay');
+      var startBtn = sheet.querySelector('#btnFocusStartPause');
+      var resetBtn = sheet.querySelector('#btnFocusReset');
+      var checkinBtn = sheet.querySelector('#btnFocusQuickCheckin');
+
+      if(startBtn){
+        startBtn.addEventListener('click', function(){
+          triggerHaptic(15);
+          if(!focusTimerRunning){
+            focusTimerRunning = true;
+            startBtn.textContent = '⏸ 일시정지';
+            startBtn.style.background = '#FD79A8';
+            focusTimerInterval = setInterval(function(){
+              if(focusTimerSeconds > 0){
+                focusTimerSeconds--;
+                if(displayEl) displayEl.textContent = renderTimerStr(focusTimerSeconds);
+                if(focusTimerSeconds === 0){
+                  clearInterval(focusTimerInterval);
+                  focusTimerRunning = false;
+                  if(startBtn){ startBtn.textContent = '▶ 집중 시작'; startBtn.style.background = '#6C5CE7'; }
+                  triggerHaptic([40, 50, 60]);
+                  burstConfetti(window.innerWidth/2, window.innerHeight/3, 40);
+                  toast('🎉 25분 초집중 세션 달성! 완료 체크인을 눌러주세요.');
+                }
+              }
+            }, 1000);
+          } else {
+            focusTimerRunning = false;
+            clearInterval(focusTimerInterval);
+            startBtn.textContent = '▶ 다시 시작';
+            startBtn.style.background = '#6C5CE7';
+          }
+        });
+      }
+
+      if(resetBtn){
+        resetBtn.addEventListener('click', function(){
+          triggerHaptic(10);
+          if(focusTimerInterval) clearInterval(focusTimerInterval);
+          focusTimerRunning = false;
+          focusTimerSeconds = 25 * 60;
+          if(displayEl) displayEl.textContent = '25:00';
+          if(startBtn){ startBtn.textContent = '▶ 집중 시작'; startBtn.style.background = '#6C5CE7'; }
+        });
+      }
+
+      if(checkinBtn){
+        checkinBtn.addEventListener('click', async function(){
+          if(focusTimerInterval) clearInterval(focusTimerInterval);
+          var nowIso = new Date().toISOString();
+          var recordText = '[초집중 25분 몰입] ' + actionTitle + ' 완결 ⚡';
+
+          var newRecord = {
+            id: 'rec_' + Date.now(),
+            goalId: goal.id,
+            text: recordText,
+            theme: goal.category || 'workout',
+            startAt: nowIso,
+            endAt: nowIso
+          };
+          state.profile.records = state.profile.records || [];
+          state.profile.records.unshift(newRecord);
+
+          if(activeMilestone){
+            activeMilestone.status = 'done';
+            activeMilestone.completedAt = nowIso;
+          }
+
+          await saveProfile();
+          closeModal();
+          triggerHaptic([30, 40, 60]);
+          burstConfetti(window.innerWidth/2, window.innerHeight/3, 50);
+          toast('🔥 25분 초집중 완료! 스트릭과 마일스톤이 전격 갱신되었습니다 ✨');
+          if(typeof renderHome === 'function') renderHome();
+        });
+      }
+    });
+  }
+
   function openMzShareCardModal(){
     triggerHaptic(20);
     var streak = computeStreakDays();
@@ -6839,6 +7040,13 @@
     openModal(
       '<h3>✨ 오늘의 MZ 갓생 스토리 카드</h3>'
       + '<p class="faint" style="margin:-8px 0 14px;">인스타그램 스토리(9:16) 및 카카오톡에 오늘의 성취를 고화질 그래픽 카드로 인증하세요.</p>'
+      + '<div class="mz-theme-selector" style="display:flex;gap:6px;justify-content:center;margin:4px 0 12px;flex-wrap:wrap;">'
+      + '  <button class="btn btn-sm mz-theme-chip" data-mztheme="neon" type="button" style="padding:3px 9px;font-size:0.75rem;border-radius:12px;font-weight:700;border:1.5px solid #FF6B4A;background:rgba(255,107,74,0.18);color:#FF6B4A;">🔥 갓생네온</button>'
+      + '  <button class="btn btn-sm mz-theme-chip" data-mztheme="cyber" type="button" style="padding:3px 9px;font-size:0.75rem;border-radius:12px;font-weight:700;border:1px solid rgba(0,242,254,0.3);background:transparent;color:#00F2FE;">⚡ 사이버</button>'
+      + '  <button class="btn btn-sm mz-theme-chip" data-mztheme="gold" type="button" style="padding:3px 9px;font-size:0.75rem;border-radius:12px;font-weight:700;border:1px solid rgba(243,156,18,0.3);background:transparent;color:#F39C12;">🏆 골드</button>'
+      + '  <button class="btn btn-sm mz-theme-chip" data-mztheme="aurora" type="button" style="padding:3px 9px;font-size:0.75rem;border-radius:12px;font-weight:700;border:1px solid rgba(253,121,168,0.3);background:transparent;color:#FD79A8;">🌌 오로라</button>'
+      + '  <button class="btn btn-sm" id="btnBurstStoryParticles" type="button" style="padding:3px 9px;font-size:0.75rem;border-radius:12px;font-weight:700;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);color:#fff;">🎆 파티클</button>'
+      + '</div>'
       + '<div class="mz-card-preview" id="mzShareCardCanvas" style="padding:14px;background:linear-gradient(145deg,#12101F 0%,#1B152B 100%);border:1.5px solid rgba(255,107,74,0.35);border-radius:20px;">'
       + '  <canvas id="mzStoryCanvasEl" style="width:100%;max-width:260px;height:auto;aspect-ratio:9/16;border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,0.45);display:block;margin:0 auto;background:#0E0C18;"></canvas>'
       + '  <div style="font-size:0.75rem;color:var(--gold);font-weight:700;margin-top:10px;text-align:center;">✨ 9:16 인스타 스토리 맞춤 고해상도 카드</div>'
@@ -6855,17 +7063,51 @@
       function(sheet){
         sheet.querySelector('#mzCardCloseBtn').onclick = closeModal;
         var canvasEl = sheet.querySelector('#mzStoryCanvasEl');
-        if(canvasEl){
+        var curTheme = 'neon';
+        var hasParticles = false;
+
+        function redrawStoryCard(){
+          if(!canvasEl) return;
           try {
             generateMzStoryCanvas({
               canvas: canvasEl,
               streak: streak,
               userName: userName,
-              quote: quote
+              quote: quote,
+              theme: curTheme,
+              particles: hasParticles
             });
           } catch(e){
             console.error('Canvas render error', e);
           }
+        }
+        redrawStoryCard();
+
+        sheet.querySelectorAll('.mz-theme-chip').forEach(function(chip){
+          chip.onclick = function(){
+            triggerHaptic(15);
+            curTheme = chip.getAttribute('data-mztheme');
+            sheet.querySelectorAll('.mz-theme-chip').forEach(function(c){
+              c.style.background = 'transparent';
+              c.style.borderWidth = '1px';
+            });
+            chip.style.background = 'rgba(255,255,255,0.15)';
+            chip.style.borderWidth = '1.5px';
+            redrawStoryCard();
+          };
+        });
+
+        var particleBtn = sheet.querySelector('#btnBurstStoryParticles');
+        if(particleBtn){
+          particleBtn.onclick = function(){
+            hasParticles = !hasParticles;
+            particleBtn.style.background = hasParticles ? 'rgba(255,107,74,0.35)' : 'rgba(255,255,255,0.08)';
+            particleBtn.style.color = hasParticles ? '#FFD54F' : '#fff';
+            redrawStoryCard();
+            triggerHaptic([20, 30, 40]);
+            burstConfetti(window.innerWidth/2, window.innerHeight/3, 30);
+            toast(hasParticles ? '✨ 반짝이는 세레머니 파티클이 적용되었어요!' : '파티클 효과를 껐습니다.');
+          };
         }
 
         var savePngBtn = sheet.querySelector('#saveMzStoryPngBtn');
@@ -6954,7 +7196,6 @@
       }
     );
   }
-
 
   /* ============ 소규모 챌린지 룸 모달 (가상유저 요청 P8/P17) ============ */
   function openChallengeRoomModal(){
@@ -16212,6 +16453,13 @@
   }
 
   /* ============ RFC 5545 표준 iCalendar (.ics) 생성 순수 함수 (TASK-BG-11) ============ */
+  /* ============ 캘린더 실시간 구독 URL 생성기 (WebCal Feed) ============ */
+  function buildWebCalUrl(userId, origin){
+    origin = origin || (typeof window !== 'undefined' && window.location && window.location.origin ? window.location.origin : 'https://ourgoal-app.vercel.app');
+    var base = origin.replace(/^https?:\/\//, '');
+    return 'webcal://' + base + '/api/calendar?token=' + encodeURIComponent(userId || 'demo');
+  }
+
   function buildICS(records, goals){
     records = records || [];
     goals = goals || [];
@@ -16339,6 +16587,17 @@
         '</label>' +
         '<div class="faint" style="font-size:.74rem;margin-top:4px;">선택한 테마의 특성에 맞춘 전문 AI 분석가 페르소나 지침이 데이터와 함께 번들링됩니다.</div>' +
       '</div>' +
+      '<div class="webcal-feed-box" style="margin-top:14px;padding:12px;background:rgba(108,92,231,0.08);border:1px solid rgba(108,92,231,0.25);border-radius:12px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">' +
+          '<span style="font-weight:700;font-size:0.85rem;color:var(--ink);">📅 캘린더 실시간 구독 (WebCal Live Feed)</span>' +
+          '<span style="font-size:0.68rem;padding:2px 6px;border-radius:8px;background:var(--accent);color:#fff;font-weight:700;">실시간 자동연동</span>' +
+        '</div>' +
+        '<p class="faint" style="font-size:0.75rem;margin:0 0 8px;">구글 캘린더, 애플 캘린더, 아웃룩의 [URL로 캘린더 추가]에 등록하면 내 마일스톤과 D-day가 실시간 동기화됩니다.</p>' +
+        '<div style="display:flex;gap:6px;">' +
+          '<input type="text" id="webcalFeedUrl" readonly style="flex:1;font-size:0.75rem;padding:6px 8px;border-radius:8px;background:var(--bg-input, rgba(0,0,0,0.05));border:1px solid var(--border);" />' +
+          '<button class="btn btn-sm btn-secondary" id="btnCopyWebCalUrl" type="button" style="white-space:nowrap;font-size:0.75rem;padding:6px 12px;border-radius:8px;">📋 구독 링크 복사</button>' +
+        '</div>' +
+      '</div>' +
       '<div class="modal-actions" style="margin-top:16px;flex-wrap:wrap;gap:8px;">' +
         '<button class="btn btn-ghost" id="mExpCancel" type="button">취소</button>' +
         '<button class="btn btn-secondary" id="mExpCopyPrompt" type="button">📋 AI 프롬프트+데이터 복사</button>' +
@@ -16346,6 +16605,25 @@
       '</div>',
       function(sheet){
         sheet.querySelector('#mExpCancel').addEventListener('click', closeModal);
+
+        var webcalInput = sheet.querySelector('#webcalFeedUrl');
+        var webcalBtn = sheet.querySelector('#btnCopyWebCalUrl');
+        var calUrl = buildWebCalUrl((state.profile && state.profile.id) || 'demo');
+        if(webcalInput) webcalInput.value = calUrl;
+        if(webcalBtn){
+          webcalBtn.addEventListener('click', function(){
+            if(navigator.clipboard && navigator.clipboard.writeText){
+              navigator.clipboard.writeText(calUrl).then(function(){
+                triggerHaptic(20);
+                toast('📅 캘린더 실시간 구독 링크가 복사되었습니다! 캘린더 앱에 붙여넣으세요.');
+              }).catch(function(){
+                toast('복사에 실패했습니다. 링크를 직접 선택하여 복사해주세요.');
+              });
+            } else {
+              toast('클립보드 미지원 환경입니다.');
+            }
+          });
+        }
 
         function getTargetRecords(){
           var themeKey = sheet.querySelector('#expThemeSel').value;

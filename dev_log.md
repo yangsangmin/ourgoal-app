@@ -1963,3 +1963,28 @@
   - `node scripts/smoke-test.js` **160개 전수 통과 (0개 실패)**.
   - Vercel 12개 서버리스 함수 한도 엄수 유지.
 ---
+
+## [2026-09-11 09:55] feat: 3대 혁신 개혁 과제(WebCal 실시간 피드, MZ 스토리 4대 테마/파티클 캔버스, 1순위 대표 목표 초집중 모드) 구현 및 배포
+- **목표**: 앰비언트 라이브 캘린더 연동(WebCal), MZ 인스타 스토리 고도화(4대 테마/파티클 캔버스), 1순위 대표 목표 AI 초집중 모드(Focus Auto-Pilot 25분 뽀모도로)를 Vercel 12개 함수 한도 및 무충돌·비파괴 원칙을 지키며 전면 구현 및 자동화 검증 완료.
+- **수정/실행 내역**:
+  1. **WebCal 캘린더 실시간 피드 (Live WebCal Feed)**:
+     - `vercel.json`: `/api/calendar` -> `/api/push-subscribe` 리라이트 규칙 추가 (Vercel 12개 서버리스 함수 한도 100% 엄수).
+     - `api/push-subscribe.js`: `GET /api/calendar?token=...` 요청 시 Supabase 목표·체크인 데이터를 RFC 5545 표준 VCALENDAR/VEVENT 스트림으로 변환 반환 (`text/calendar; charset=utf-8`, 캐시 300초).
+     - `index.html`: `buildWebCalUrl(userId, origin)` 순수 함수 탑재 및 `openExportThemeModal` 내 [📅 캘린더 실시간 구독] UI 박스 및 원클릭 복사 핸들러 탑재.
+  2. **MZ 인스타 스토리 4대 테마 & 파티클 세레머니 캔버스**:
+     - `generateMzStoryCanvas`: `neon`(갓생네온), `cyber`(사이버스프린트), `gold`(골드챔피언), `aurora`(미드나잇오로라) 4대 전용 컬러 팔레트/그라디언트 및 반짝이는 별빛 파티클(`options.particles`) 렌더링 지원.
+     - `openMzShareCardModal`: 상단 4대 테마 전환 칩바 및 `[🎆 파티클 효과]` 원탭 토글 버튼 탑재. 클릭 시 햅틱 진동 및 캔버스 即時 리렌더링, 콘페티 폭죽 연동.
+  3. **1순위 대표 목표 AI 초집중 모드 (Focus Auto-Pilot)**:
+     - `renderHome`: 1순위 대표 목표 카드 헤더에 `[⚡ 초집중]` 전용 배지/버튼 신설.
+     - `openFocusAutoPilotModal(goalId)`: 1순위 목표의 핵심 미완료 마일스톤 자동 포커싱, 25분 뽀모도로 몰입 타이머(시작/일시정지/리셋), `[⚡ 지금 25분 몰입 완료 체크인]` 원클릭 버튼 제공.
+     - 체크인 시 기록 생성, 마일스톤 완료 전격 반영, `saveProfile()`, 햅틱/폭죽 세레머니 즉각 발동.
+  4. **테스트 스위트 확장 (`scripts/smoke-test.js`)**:
+     - `buildWebCalUrl`, `generateMzStoryCanvas` 4대 테마 렌더링, 신규 UI 컴플라이언스 3종 추가 (총 163개 전수 통과).
+- **발생한 문제 및 해결**:
+  - Vercel Hobby 플랜 12개 함수 한도 제약을 준수하기 위해 신규 파일 생성 대신 `vercel.json` rewrite를 통해 기존 엔드포인트에 WebCal 피드를 지능형 라우팅하여 서버리스 함수 추가 없이 완벽 해결.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **163개 전수 통과 (0개 실패)**.
+  - `node scripts/chaos-monkey-test.js` **45개 극한 공격 전수 완벽 방어 (100%)**.
+  - Vercel 12개 서버리스 함수 한도 엄수 (12개 유지).
+---
+

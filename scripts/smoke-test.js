@@ -87,7 +87,7 @@ const FN_NAMES = [
   'defaultSettings', 'getPrivacyLabel', 'subscriptionState',
   'computeTrendChartData', 'formatStopwatchTime',
   'rescaleGoal',
-  'sortGoalsByOrder', 'isWithinDND', 'buildICS',
+  'sortGoalsByOrder', 'isWithinDND', 'buildICS', 'buildWebCalUrl',
   'quickCreateStarterGoal', 'generateMzStoryCanvas',
 ];
 
@@ -132,7 +132,7 @@ const sandboxSrc =
   'parseNaturalLanguageTemplateSpec, parseCsvText, parseVoiceToTableRow, ' +
   'triggerHaptic, reorderMilestones, filterFeedByCategory, calculateWeeklyFocusStats, exportRecordsToCsv, exportRecordsToMarkdown, ' +
   'defaultSettings, getPrivacyLabel, subscriptionState, computeTrendChartData, formatStopwatchTime, ' +
-  'rescaleGoal, sortGoalsByOrder, isWithinDND, buildICS, ' +
+  'rescaleGoal, sortGoalsByOrder, isWithinDND, buildICS, buildWebCalUrl, ' +
   'quickCreateStarterGoal, generateMzStoryCanvas, ' +
   'setRecords: function(r){ state.profile.records = r; }, ' +
   'setStreakFreeze: function(sf){ state.profile.settings.streakFreeze = sf; } };\n';
@@ -2126,9 +2126,71 @@ check('compliance: 퍼널 계측(api/track.js) & WCAG AA 명도 대비 & OAuth �
   assert.ok(html.includes('로그인 심사 준비 중'), 'OAuth 미설정 시 우아한 안내 모달');
   assert.ok(html.includes('fallbackQuickAuthBtn'), '1초 빠른 시작 버튼 연동');
 });
+
+/* ============ 3대 혁신 개혁 과제 단위 & 컴플라이언스 테스트 ============ */
+check('buildWebCalUrl: 사용자 ID와 오리진을 기반으로 유효한 webcal:// 실시간 피드 URL을 생성한다', () => {
+  const url1 = fns.buildWebCalUrl('usr_abc123', 'https://ourgoal.app');
+  assert.strictEqual(url1, 'webcal://ourgoal.app/api/calendar?token=usr_abc123');
+
+  const url2 = fns.buildWebCalUrl('', 'https://ourgoal-app.vercel.app');
+  assert.strictEqual(url2, 'webcal://ourgoal-app.vercel.app/api/calendar?token=demo');
+});
+
+check('generateMzStoryCanvas: neon, cyber, gold, aurora 4대 테마 및 파티클 옵션으로 캔버스를 정상 렌더링한다', () => {
+  const mockCtx = {
+    createLinearGradient: () => ({ addColorStop: () => {} }),
+    createRadialGradient: () => ({ addColorStop: () => {} }),
+    fillRect: () => {},
+    strokeRect: () => {},
+    fillText: () => {},
+    beginPath: () => {},
+    moveTo: () => {},
+    lineTo: () => {},
+    quadraticCurveTo: () => {},
+    closePath: () => {},
+    stroke: () => {},
+    fill: () => {},
+    arc: () => {},
+    save: () => {},
+    restore: () => {},
+    measureText: (txt) => ({ width: txt.length * 10 })
+  };
+  const mockCanvas = {
+    getContext: () => mockCtx,
+    width: 0,
+    height: 0
+  };
+
+  const themes = ['neon', 'cyber', 'gold', 'aurora'];
+  themes.forEach(th => {
+    const res = fns.generateMzStoryCanvas({
+      canvas: mockCanvas,
+      streak: 7,
+      theme: th,
+      particles: true
+    });
+    assert.ok(res, '캔버스 객체 반환됨');
+    assert.strictEqual(mockCanvas.width, 720);
+    assert.strictEqual(mockCanvas.height, 1280);
+  });
+});
+
+check('compliance: 3대 혁신 기능(WebCal 실시간 구독, 9:16 인스타 테마/파티클 캔버스, 1순위 대표 목표 초집중 모드)이 완벽히 구비되어 있다', () => {
+  assert.ok(html.includes('webcal-feed-box'), 'WebCal 실시간 피드 박스 존재');
+  assert.ok(html.includes('webcalFeedUrl'), 'WebCal 피드 URL 인풋 존재');
+  assert.ok(html.includes('btnCopyWebCalUrl'), 'WebCal 구독 복사 버튼 존재');
+  assert.ok(html.includes('mz-theme-selector'), 'MZ 인스타 스토리 4대 테마 선택기 존재');
+  assert.ok(html.includes('btnBurstStoryParticles'), '파티클 세레머니 버튼 존재');
+  assert.ok(html.includes('btn-focus-pilot'), '1순위 대표 목표 초집중 버튼 존재');
+  assert.ok(html.includes('openFocusAutoPilotModal'), '초집중 모달 함수 존재');
+  assert.ok(html.includes('FOCUS POMODORO'), '초집중 뽀모도로 타이머 UI 존재');
+  assert.ok(html.includes('btnFocusQuickCheckin'), '초집중 원클릭 완결 체크인 버튼 존재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
 }
+
 
 
