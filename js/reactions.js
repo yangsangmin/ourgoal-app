@@ -100,7 +100,9 @@
         (bot ? ' disabled aria-disabled="true" title="AI 봇 글에는 반응할 수 없어요" style="opacity:.45;cursor:not-allowed;"' : ' title="' + esc(t.title) + '"') + '>' +
         t.icon + ' ' + t.label + (n > 0 ? ' <span class="rx-cnt" data-rxcnt="' + t.key + '">' + n + '</span>' : '<span class="rx-cnt" data-rxcnt="' + t.key + '"></span>') +
         '</button>';
-    }).join('');
+    }).join('') +
+    /* KF-5 #TASK-ES-016: 글쓴이에게 "도움된 이유 보기" (도움돼요가 1건 이상일 때만) */
+    (isMe && !bot && window.OurgoalHelpfulReason ? window.OurgoalHelpfulReason.authorButtonHtml(it, countOf(it, 'helpful')) : '');
   }
 
   function advicePanelHtml(it){
@@ -187,6 +189,7 @@
         ['active-fire','active-clap','active-heart','active-sparkle'].forEach(function(c){ btn.classList.remove(c); });
         if(on) btn.classList.add('active-' + (t === 'cheer' ? 'fire' : (t === 'helpful' ? 'clap' : (t === 'advice' ? 'sparkle' : 'heart'))));
       });
+      if(window.OurgoalHelpfulReason && window.OurgoalHelpfulReason.patchAuthorButton) window.OurgoalHelpfulReason.patchAuthorButton(body, it, countOf(it, 'helpful'));
       var wrap = body.querySelector('[data-rxadv="' + it.id + '"]');
       if(wrap){
         var tmp = document.createElement('div');
@@ -371,10 +374,15 @@
         if(type === 'poor'){ if(m.poor){ unreact(it, 'poor').then(rerender); } else openPoorSheet(it, btn); return; }
         if(type === 'advice'){ openAdviceSheet(it, btn); return; }
         if(m[type]) unreact(it, type).then(function(){ patch(body, [it]); });
-        else react(it, type, {}, btn).then(function(){ patch(body, [it]); });
+        else react(it, type, {}, btn).then(function(done){
+          patch(body, [it]);
+          /* KF-5 #TASK-ES-016: 도움돼요 저장 직후 "왜 도움이 됐나요?" 시트(건너뛰기 가능) */
+          if(done && type === 'helpful' && window.OurgoalHelpfulReason) window.OurgoalHelpfulReason.openSheet(it, btn);
+        });
       });
     });
     lastItems.forEach(function(it){ bindAdvice(body.querySelector('[data-rxadv="' + it.id + '"]'), it); });
+    if(window.OurgoalHelpfulReason && window.OurgoalHelpfulReason.bind) window.OurgoalHelpfulReason.bind(body, lastItems);
     refresh(body, lastItems);
   }
 

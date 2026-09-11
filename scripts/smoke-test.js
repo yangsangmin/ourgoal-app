@@ -2448,6 +2448,49 @@ check('compliance: [#TASK-ES-019] 조건값은 RULES 한 곳(14·100일 포함) 
 });
 
 
+/* ============ [KF-5 #TASK-ES-016] 도움돼요 이유 작성 + 크레딧 ============ */
+check('KF-5: js/helpful-reason.js 가 존재하고 문법이 유효하며 API·기본 태그 5종·기본 최소 글자 수를 정의한다', () => {
+  const p = path.join(__dirname, '..', 'js', 'helpful-reason.js');
+  assert.ok(fs.existsSync(p), 'js/helpful-reason.js 존재');
+  const src = fs.readFileSync(p, 'utf8');
+  new Function(src);
+  ['init', 'openSheet', 'openSummary', 'authorButtonHtml', 'patchAuthorButton', 'bind'].forEach(fn => assert.ok(src.includes(fn + ': ' + fn), 'API ' + fn + ' 노출'));
+  ['how_to', 'same_situation', 'motivation', 'new_info', 'other'].forEach(c => assert.ok(src.includes("code: '" + c + "'"), '기본 태그 ' + c));
+  assert.ok(/DEFAULT_MIN_CHARS = 10;\s*\/\* 기본값/.test(src), '최소 글자 수 기본값 10 + "기본값" 주석');
+  assert.ok(src.includes("'helpful_reason:' + uid + ':' + targetId"), '크레딧 멱등 키 규약 helpful_reason:<uid>:<postId>');
+  assert.ok(src.includes("award('helpful_reason', 'feed_post'"), 'OurgoalCredits.award(helpful_reason) 호출');
+  assert.ok(!/현금|환전|₩|출금|상품권/.test(src), '화면 문구에 현금 암시 없음');
+});
+
+check('KF-5: 이유 SQL — 테이블·품질 게이트·봇 제외·보안 정의자·소프트 삭제, DROP/TRUNCATE/DELETE 없음', () => {
+  const sql = fs.readFileSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-12-helpful-reason.sql'), 'utf8');
+  assert.ok(sql.includes('create table if not exists public.helpful_reasons'), '이유 테이블');
+  assert.ok(sql.includes('quality_pass'), '품질 통과 컬럼');
+  assert.ok(sql.includes("key = 'min_reason_chars'"), '최소 글자 수는 설정값');
+  assert.ok(sql.includes("'helpful_reason_tags'"), '태그 목록은 설정값');
+  assert.ok(sql.includes('is_bot'), '봇 제외');
+  assert.ok(sql.includes("type = 'helpful' and r.deleted_at is null"), '도움돼요를 누른 사람만');
+  assert.ok(sql.includes('security definer'), 'RPC 는 보안 정의자');
+  assert.ok(sql.includes('deleted_at'), '소프트 삭제');
+  assert.ok(sql.includes("public.award_credit('helpful_reason'"), '품질 통과 시 공용 원장 적립');
+  assert.ok(!/drop\s+table|truncate|delete\s+from/i.test(sql), 'DROP/TRUNCATE/DELETE 없음');
+});
+
+check('KF-5: index.html 이 js/helpful-reason.js 를 reactions.js 뒤에 로드하고 앱 핸들을 연결한다', () => {
+  const a = html.indexOf('<script src="js/reactions.js"></script>');
+  const b = html.indexOf('<script src="js/helpful-reason.js"></script>');
+  assert.ok(a > 0 && b > a, 'reactions.js 다음에 helpful-reason.js 로드');
+  assert.ok(html.includes('window.OurgoalHelpfulReason.init({'), 'init 호출');
+});
+
+check('KF-5: js/reactions.js 가 도움돼요 저장 직후 이유 시트를 띄우고 글쓴이 카드에 이유 보기 버튼을 붙인다', () => {
+  const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'reactions.js'), 'utf8');
+  assert.ok(src.includes("type === 'helpful' && window.OurgoalHelpfulReason) window.OurgoalHelpfulReason.openSheet(it, btn)"), '도움돼요 직후 시트');
+  assert.ok(src.includes("window.OurgoalHelpfulReason.authorButtonHtml(it, countOf(it, 'helpful'))"), '글쓴이 이유 보기 버튼(도움돼요 1건 이상일 때만)');
+  assert.ok(src.includes('window.OurgoalHelpfulReason.bind(body, lastItems)'), '버튼 바인딩');
+});
+
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);

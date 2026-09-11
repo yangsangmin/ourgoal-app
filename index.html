@@ -2294,6 +2294,7 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
+<script src="js/helpful-reason.js"></script>
 <script src="/js/customize.js"></script>
 <script src="js/streaks.js"></script>
 <script>
@@ -20592,6 +20593,15 @@
         var b = document.getElementById('commSubBody');
         if(b && state.activeTab === 'comm' && state.commSubTab === 'feed') renderCommFeed(b);
       }
+    });
+  }
+
+  /* ============ KF-5 #TASK-ES-016: 도움돼요 이유 모듈(js/helpful-reason.js)에 앱 핸들 연결 ============ */
+  if(window.OurgoalHelpfulReason && typeof window.OurgoalHelpfulReason.init === 'function'){
+    window.OurgoalHelpfulReason.init({
+      sb: sb, getProfile: function(){ return state.profile; },
+      toast: toast, escapeHtml: escapeHtml, openModal: openModal, closeModal: closeModal,
+      saveProfile: saveProfile, timeAgo: timeAgoStr
     });
   }
 
