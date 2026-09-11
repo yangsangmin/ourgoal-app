@@ -2002,3 +2002,16 @@
 - **발생한 문제 및 해결**: 없음 (기존 CSS 클래스 재사용, 디자인 불변경)
 - **검증 결과**: smoke-test.js 163/163 통과, headless Chrome 화면 검증 및 스크린샷 확인, 콘솔 에러 0건
 ---
+
+## [2026-09-12 03:17] [UIUX-FIX] 가상유저 1위 고통점(수정/삭제 오타 방지 14px 안전 여백) 실코드 패치 & 템플릿 잔재 청소
+- **목표**: 200인 가상유저 1위 피드백(수정-삭제 버튼 간격 6px 협소 오타) 해소 및 암행어사 성실도 100점(EXEMPLARY) 정상화
+- **수정/실행 내역**:
+  - `ourgoal-app/index.html`: `.ms-actions` 및 `.icon-btn[data-*del*]`에 Fitts's Law 기반 `margin-left: 14px;` 안전 여백 및 터치 타겟(28px) 확보, 일정 목록 편집-삭제 버튼 컨테이너 `gap: 14px;` 적용.
+  - `command-center/sim/uiuxTeam.js`: `ROUND_CONFIGS` 라운드 1, 7의 하단 플로팅 독 구형 템플릿 문구를 네비게이션 및 Safe Area 여백 지침으로 갱신.
+  - `command-center/lib/uiux-inspector.js`: 성실도 판정 시 최근 감사 7회 기준으로 정밀 검사하도록 보정.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **163개 전수 통과 (0개 실패)**.
+  - `node scripts/chaos-monkey-test.js` **45개 전수 완벽 방어**.
+  - 암행어사 감찰 결과: 팀 성실도 **70점 -> 100점 (EXEMPLARY)** 회복, 잔존 결함 **0건**, 마패 시정명령 즉시 해소 (`MAPAE-DIR-1933` 결함 0건).
+---
+

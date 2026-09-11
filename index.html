@@ -460,9 +460,14 @@
   .ms-date{font-family:var(--mono);font-size:.68rem;color:var(--ink-soft);border:1px solid var(--rule);border-radius:8px;padding:2px 6px;background:var(--card2);display:inline-flex;align-items:center;}
   .ms-date input{border:none;background:transparent;font-family:inherit;font-size:.68rem;color:inherit;width:118px;min-width:118px;padding:2px 0;}
   .ms-date input:focus{box-shadow:none;background:transparent;}
-  .ms-actions{display:flex;gap:2px;flex:0 0 auto;}
-  .icon-btn{width:26px;height:26px;display:flex;align-items:center;justify-content:center;color:var(--ink-faint);border-radius:8px;font-size:.9rem;transition:all .12s;}
+  .ms-actions{display:flex;gap:6px;align-items:center;flex:0 0 auto;}
+  .icon-btn{min-width:28px;min-height:28px;padding:3px;display:flex;align-items:center;justify-content:center;color:var(--ink-faint);border-radius:8px;font-size:.9rem;transition:all .12s;}
   .icon-btn:hover{color:var(--red);background:var(--red-soft);}
+  /* [UX 개선: Fitts의 법칙 14px 안전 마진] 위험 액션(삭제)과 일반 액션(수정·이동) 간 인체공학적 오타 방지 여백 */
+  .icon-btn[data-hubdel], .icon-btn[data-msdel], .icon-btn[data-deltask], .icon-btn[data-ngmsdel], .icon-btn[data-lgdeltask], .icon-btn[data-lgdelms], .icon-btn[data-lgdelgoal], .icon-btn[data-tgmdel], .icon-btn[data-tgdel], .icon-btn[data-delititem] {
+    margin-left: 14px;
+    color: var(--red);
+  }
   .task-list{margin:6px 0 0 14px;display:flex;flex-direction:column;gap:4px;border-left:2px solid var(--rule);padding-left:12px;}
   .task-row{display:flex;align-items:center;gap:8px;padding:4px 0;}
   .task-row.selected{background:var(--violet-soft);border-radius:10px;padding:4px 6px;margin-left:-6px;}
@@ -5474,7 +5479,7 @@
             '</div>' +
             '<div class="faint" style="font-size:.72rem;margin-top:2px;">'+escapeHtml(e.goalTitle||'일반 일정')+'</div>' +
           '</div>' +
-          '<div style="display:flex;gap:4px;align-items:center;">' +
+          '<div style="display:flex;gap:14px;align-items:center;">' +
             tplBtn +
             (e.kind === 'gcal' && e.htmlLink ? ('<a href="'+escapeHtml(e.htmlLink)+'" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="font-size:.72rem;padding:3px 7px;text-decoration:none;border-color:var(--rule);">구글 캘린더 ↗</a>') : ('<button class="icon-btn" data-hubedit="'+idx+'" type="button" title="수정" style="font-size:.82rem;padding:4px 6px;">✏️</button>')) +
             (e.kind==='custom' ? '<button class="icon-btn" data-hubdel="'+(e.schedId||'')+'" type="button" title="삭제" style="color:var(--red);font-size:.95rem;padding:4px 6px;">×</button>' : '') +
