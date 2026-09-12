@@ -24,7 +24,8 @@ function getSupabase() {
 async function handleSyncRecords(sb, body, res) {
   var userId = String(body.userId || '').trim();
   var username = String(body.username || '').trim();
-  var displayName = String(body.displayName || '').trim();
+  var displayName = String(body.displayName || body.nickname || '').trim();
+  var nickname = String(body.nickname || '').trim();
   var backupIds = Array.isArray(body.backupIds) ? body.backupIds.map(String).map(function(s){ return s.trim(); }).filter(Boolean) : [];
   var recordsToSave = Array.isArray(body.recordsToSave) ? body.recordsToSave : null;
   var profileToSave = (body.profileToSave && typeof body.profileToSave === 'object') ? body.profileToSave : null;
@@ -50,9 +51,9 @@ async function handleSyncRecords(sb, body, res) {
       } catch (e) {}
     }
 
-    if (!matchedUser && (username || displayName)) {
+    if (!matchedUser && (username || displayName || nickname)) {
       try {
-        var searchName = username || displayName;
+        var searchName = displayName || nickname || username;
         var uNameRes = await sb.from('users').select('*')
           .or('username.ilike.%' + searchName + '%,display_name.ilike.%' + searchName + '%')
           .limit(5);
@@ -155,6 +156,7 @@ async function handleSyncRecords(sb, body, res) {
       ok: true,
       targetUserId: targetUid,
       matchedUser: matchedUser,
+      user: matchedUser,
       recordsCount: fetchedRecords.length,
       records: fetchedRecords.map(function(r) {
         return {
