@@ -2574,3 +2574,22 @@
   - `node scripts/smoke-test.js` **198개 전수 통과 (0개 실패)**.
   - `index.html` 스크립트 new Function() 문법 검사 통과.
   - `essence-gate` pre-commit 통과 (금지 패턴 0건, index.html 순증 223줄).
+---
+
+## [2026-09-13 01:45] [E3] #TASK-ES-029 팀 목표 템플릿 개설·체험 분리 및 하이브리드 편집 시스템 구현 & 배포
+- **목표**: 상민님 직접 피드백("예시 목표가 참여하기 누르니까 실제로 내 팀목표에 들어와버리는데? 그리고 팀목표에는 개인목표처럼 편집이 없어") 및 승인("하이브리드로 진행하는게 좋을 것 같은데?")에 따라, 
+  1) 예시 목표 가이드 카드의 [✨ 이 템플릿으로 모임 개설]과 [👀 1초 둘러보기 체험] 분리 및 체험 모임 탈퇴/복귀 기능 구현
+  2) 개인목표와 동급의 상단 [편집]/[완료] 인라인 편집 모드 및 카드별 [✏️ 상세 편집] 바텀시트 모달(목표명, 마감일, 마일스톤 상태/우선순위/순서변경/삭제, 세부할일 추가/체크/수정/삭제) 하이브리드 시스템 완비.
+- **수정/실행 내역**:
+  1. `index.html`: 가이드 3종 카드에 `[✨ 이 템플릿으로 모임 개설]`(`data-tgtplgroup`)과 `[👀 1초 둘러보기 체험]`(`data-tgquickpreview`) 분리 탑재.
+  2. `index.html`: `getTeamGoalTemplatePreset(tpl)` 함수 및 `promptNewGroup(body, initialPreset)` 지원을 통해 사용자가 템플릿 프리셋을 기반으로 직접 모임장이 되어 새 모임을 개설하고 팀 목표를 승계받도록 구현.
+  3. `index.html`: 둘러보기 체험 모드 시 `[체험용 예시 모임]` 배지와 `[체험 모임 나가기]`(`data-tgleavepreview`) 버튼 제공으로 실제 사용자 목표 오염 방지.
+  4. `index.html`: `renderTeamGoalsScreen` 헤더에 `[편집] / [완료]`(`teamGoalEditToggle`) 버튼 추가, 활성화 시 마일스톤 순서 변경(▲/▼, `data-tgmup`/`data-tgmdown`) 및 인라인 수정 지원.
+  5. `index.html`: 각 팀 목표 카드 헤더에 `[✏️ 상세 편집]`(`data-tgeditmodal`) 버튼 탑재 및 바텀시트 모달 `openTeamGoalEditModal(gid, tgid)` 구현 (목표명, 마감일, 마일스톤 상태/우선순위 순환 토글, 순서 변경, 삭제, 세부할일 체크/추가/삭제 완비).
+  6. `scripts/smoke-test.js`: `#TASK-ES-029` 전용 종합 컴플라이언스 테스트 추가 (199개 전수 통과 확인).
+- **발생한 문제 및 해결**: 
+  - `index.html` 순증가 300줄 한도(승인선 8) 준수를 위해 이벤트 위임(`sheet.addEventListener`) 및 공통 갱신 함수(`refreshModal`)를 적용하여 순증가 260줄로 안정적 통제.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **199개 전수 통과 (0개 실패)**.
+  - `index.html` 스크립트 문법 검사 통과.
+  - `essence-gate` pre-commit 통과 (금지 패턴 0건, index.html 순증 260줄 <= 한도 300줄).

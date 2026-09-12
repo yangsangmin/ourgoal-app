@@ -2649,6 +2649,35 @@ check('compliance: [#TASK-ES-027] 팀 목표 마일스톤 및 세부할일 계�
 
 
 
+check('compliance: [#TASK-ES-029] 팀 목표 템플릿 개설·체험 분리 및 하이브리드 편집 시스템이 완벽히 구현되어 있다', () => {
+  // 1. 가이드 템플릿 개설 및 안전 체험 버튼 분리
+  assert.ok(html.includes('data-tgtplgroup="workshop"'), '워크숍 템플릿으로 개설 버튼');
+  assert.ok(html.includes('data-tgtplgroup="travel"'), '단체여행 템플릿으로 개설 버튼');
+  assert.ok(html.includes('data-tgtplgroup="fitness"'), '운동크루 템플릿으로 개설 버튼');
+  assert.ok(html.includes('data-tgquickpreview="g-workshop"'), '워크숍 1초 둘러보기 버튼');
+  assert.ok(html.includes('data-tgquickpreview="g-travel"'), '단체여행 1초 둘러보기 버튼');
+  assert.ok(html.includes('data-tgquickpreview="g0"'), '운동크루 1초 둘러보기 버튼');
+
+  // 2. 가이드 이벤트 핸들러 및 템플릿 프리셋 추출 로직
+  assert.ok(html.includes('function getTeamGoalTemplatePreset('), '팀 목표 템플릿 프리셋 함수 구비');
+  assert.ok(html.includes('promptNewGroup(body, initialPreset)'), '프리셋 기반 모임 개설 함수 연동');
+
+  // 3. 체험 모임 안전 배지 및 즉시 탈퇴(복귀) 버튼
+  assert.ok(html.includes('체험용 예시 모임'), '체험 모임 안내 배지');
+  assert.ok(html.includes('data-tgleavepreview='), '체험 모임 나가기 버튼 속성');
+
+  // 4. 헤더 레벨 인라인 편집 모드 토글 및 마일스톤 순서 변경 버튼
+  assert.ok(html.includes('id="teamGoalEditToggle"'), '팀 목표 헤더 인라인 편집 모드 토글');
+  assert.ok(html.includes('data-tgmup=') || html.includes('data-meditmove='), '마일스톤 순서 변경(▲/▼) 속성');
+
+  // 5. 카드 레벨 상세 편집 모달
+  assert.ok(html.includes('data-tgeditmodal='), '카드 레벨 팀 목표 상세 편집 모달 호출 속성');
+  assert.ok(html.includes('function openTeamGoalEditModal('), '팀 목표 상세 편집 바텀시트 모달 함수 구비');
+  assert.ok(html.includes('modalTgTitleInput') && html.includes('modalTgDueInput'), '모달 내 목표명 및 마감일 필드');
+  assert.ok(html.includes('data-meditcyclestatus=') && html.includes('data-meditcycleprio='), '모달 내 마일스톤 상태 및 우선순위 토글');
+  assert.ok(html.includes('data-medittaskcheck=') && html.includes('data-meditaddtask='), '모달 내 세부 할 일 체크 및 추가');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
