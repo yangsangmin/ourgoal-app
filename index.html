@@ -841,6 +841,17 @@
   var SUPABASE_URL = 'https://dvqosviqbciohcywkzbq.supabase.co';
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2cW9zdmlxYmNpb2hjeXdremJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0MTM0NDYsImV4cCI6MjEwMzk4OTQ0Nn0.DCMMxxHB6kzJ0CjgLN0ERaSk7WY6LDN-pDVdeZ0-cWM';
   var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  var _pendingAuthSession = null;
+  try {
+    sb.auth.onAuthStateChange(function(event, session){
+      if((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && session.user){
+        _pendingAuthSession = session;
+        if(typeof restoreSessionAndEnter === 'function' && (!state.profile || state.profile.id !== session.user.id)){
+          restoreSessionAndEnter(session);
+        }
+      }
+    });
+  } catch(e){}
 
   /* 앱 레벨 Google OAuth 클라이언트 ID(공개 식별자, 시크릿 아님). GCP 콘솔에서 이 앱을 등록한 뒤 값을 채우면
      사용자가 자기 ID를 넣을 필요가 없어진다. 비어 있으면 설정의 사용자 ID로 폴백한다 — 거시 재조정안 A2 */
@@ -1570,134 +1581,45 @@
       return;
     }
 
-    // [보호 2] 미로그인 상태에서 구글 로그인 시도
-    toast('Google 계정 인증 확인 중…');
+    // [보호 2] 미로그인 상태에서 구글 로그인 시도:
+    // Supabase Google OAuth Provider 미등록 상태에서 가짜 비밀번호 signUp으로 인한
+    // 기존 카카오 계정 오염 및 세션 파괴를 원천 차단하고, 카카오 로그인으로 안전하게 인계
+    var isAccountConflict = true;
+    try { await sb.auth.signOut(); } catch(e){}
 
-    if(accessToken){
-      state.googleToken = {
-        accessToken: accessToken,
-        expiresAt: Date.now() + 3500 * 1000
-      };
-      try { sessionStorage.setItem('ourgoal_google_token', accessToken); } catch(e){}
-    }
-
-    var subHash = await sha256Hex('ourgoal_google_' + sub + '_' + email);
-    var internalPassword = 'GAuth$' + subHash.slice(0, 20) + '!9Z';
-
-    var sessionUser = null;
-    var isAccountConflict = false;
-
-    try {
-      // 1. 기존 연동 계정으로 로그인 시도
-      var loginRes = await sb.auth.signInWithPassword({ email: email, password: internalPassword });
-      if(loginRes && loginRes.data && loginRes.data.user){
-        sessionUser = loginRes.data.user;
-      } else {
-        // 2. 신규 가입 시도
-        var upRes = await sb.auth.signUp({
-          email: email,
-          password: internalPassword,
-          options: {
-            data: {
-              full_name: name,
-              avatar_url: picture,
-              provider: 'google',
-              google_sub: sub
-            }
-          }
-        });
-        if(upRes && upRes.data && upRes.data.user){
-          sessionUser = upRes.data.user;
-          if(!upRes.data.session){
-            var reLogin = await sb.auth.signInWithPassword({ email: email, password: internalPassword });
-            if(reLogin && reLogin.data && reLogin.data.user) sessionUser = reLogin.data.user;
-          }
-        } else if(upRes && upRes.error){
-          console.warn('Supabase 구글 계정 signUp 실패:', upRes.error);
-          var errMsg = String(upRes.error.message || '');
-          if(/already registered|already in use|identity already exists/i.test(errMsg)){
-            isAccountConflict = true;
-          }
-        }
+    openModal(
+      '<div style="text-align:center;padding:16px 8px;">' +
+        '<div style="font-size:2.5rem;margin-bottom:12px;">🔗</div>' +
+        '<h3 style="margin:0 0 8px;font-size:1.15rem;font-weight:700;">기존 카카오 가입 계정 안내</h3>' +
+        '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.6;margin:0 0 16px;">' +
+          'Google 계정(<b>' + escapeHtml(email) + '</b>)을 확인했습니다.<br>' +
+          '아워골은 모든 목표와 체크인 기록을<br><b>카카오 로그인</b>으로 안전하게 보존·관리합니다.<br><br>' +
+          '기존에 작성하신 소중한 기록을 확인하시려면<br><b>카카오로 바로 시작하기</b>를 눌러주세요!' +
+        '</p>' +
+        '<button class="btn btn-block btn-kakao" id="conflictKakaoLoginBtn" style="width:100%;margin-bottom:8px;padding:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;">' +
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.86 5.31 4.66 6.72L5.5 21.5c-.08.3.24.54.5.38l4.42-2.93c.52.05 1.05.08 1.58.08 5.52 0 10-3.58 10-8S17.52 3 12 3z"/></svg>' +
+          '<span>카카오로 바로 시작하기</span>' +
+        '</button>' +
+        '<button class="btn btn-ghost btn-sm" id="conflictCloseBtn" style="width:100%;">이메일/다른 방법으로 시작</button>' +
+      '</div>',
+      function(sheet){
+        var kBtn = sheet.querySelector('#conflictKakaoLoginBtn');
+        if(kBtn) kBtn.onclick = function(){
+          closeModal();
+          startOAuthLogin('kakao');
+        };
+        var cBtn = sheet.querySelector('#conflictCloseBtn');
+        if(cBtn) cBtn.onclick = function(){
+          closeModal();
+          var authScreen = document.getElementById('authScreen');
+          var landScreen = document.getElementById('landingScreen');
+          if(landScreen) landScreen.style.display = 'none';
+          if(authScreen) authScreen.style.display = 'flex';
+          var lUser = document.getElementById('loginUser');
+          if(lUser){ lUser.value = email; lUser.focus(); }
+        };
       }
-    } catch(authErr){
-      console.warn('Supabase 연동 중 오류 발생:', authErr);
-      if(/already registered|already in use/i.test(String(authErr.message || ''))){
-        isAccountConflict = true;
-      }
-    }
-
-    // [계정 충돌 및 먹통 방지] 카카오 등으로 이미 가입된 이메일이거나 세션 생성 실패 시
-    if(isAccountConflict || (!sessionUser)){
-      // 오염된 로컬 세션 청소하여 카카오 로그인 시 간섭 방지
-      try { await sb.auth.signOut(); } catch(e){}
-
-      openModal(
-        '<div style="text-align:center;padding:16px 8px;">' +
-          '<div style="font-size:2.5rem;margin-bottom:12px;">🔗</div>' +
-          '<h3 style="margin:0 0 8px;font-size:1.15rem;font-weight:700;">기존 카카오 가입 계정 안내</h3>' +
-          '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.6;margin:0 0 16px;">' +
-            'Google 계정(<b>' + escapeHtml(email) + '</b>)은<br>' +
-            '이미 <b>카카오 로그인</b>으로 등록된 계정입니다.<br><br>' +
-            '기존에 작성하신 소중한 목표와 체크인 기록을<br>그대로 유지하시려면 카카오로 로그인해주세요!' +
-          '</p>' +
-          '<button class="btn btn-block btn-kakao" id="conflictKakaoLoginBtn" style="width:100%;margin-bottom:8px;padding:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;">' +
-            '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.86 5.31 4.66 6.72L5.5 21.5c-.08.3.24.54.5.38l4.42-2.93c.52.05 1.05.08 1.58.08 5.52 0 10-3.58 10-8S17.52 3 12 3z"/></svg>' +
-            '<span>카카오로 바로 시작하기</span>' +
-          '</button>' +
-          '<button class="btn btn-ghost btn-sm" id="conflictCloseBtn" style="width:100%;">닫기</button>' +
-        '</div>',
-        function(sheet){
-          var kBtn = sheet.querySelector('#conflictKakaoLoginBtn');
-          if(kBtn) kBtn.onclick = function(){
-            closeModal();
-            startOAuthLogin('kakao');
-          };
-          var cBtn = sheet.querySelector('#conflictCloseBtn');
-          if(cBtn) cBtn.onclick = closeModal;
-        }
-      );
-      return;
-    }
-
-    var userId = sessionUser.id;
-    var extra = {
-      avatar_url: picture,
-      display_name: name
-    };
-    setDeviceLoginTime(Date.now());
-    state.profile = await loadProfile(userId, email, extra, 'google');
-
-    if(state.profile){
-      if(!state.profile.settings) state.profile.settings = {};
-      if(email && !state.profile.settings.googleCalendarEmail){
-        state.profile.settings.googleCalendarEmail = email;
-      }
-      if(state.googleToken){
-        state.profile.settings.googleCalendarConnected = true;
-      }
-      if(picture && !state.profile.avatar){
-        state.profile.avatar = picture;
-      }
-      if(name && (!state.profile.displayName || state.profile.displayName.startsWith('user_'))){
-        state.profile.displayName = name;
-      }
-      await saveProfile();
-
-      var landScreen = document.getElementById('landingScreen');
-      if(landScreen) landScreen.style.display = 'none';
-      var authScreen = document.getElementById('authScreen');
-      if(authScreen) authScreen.style.display = 'none';
-
-      if(state.profile._isNewSignup && (!state.profile.goals || state.profile.goals.length === 0) && (!state.profile.records || state.profile.records.length === 0)){
-        startOnboarding();
-      } else {
-        enterApp();
-      }
-      toast('Google 계정으로 환영합니다, ' + (state.profile.displayName || name || '회원') + '님!');
-    } else {
-      toast('프로필 로드에 실패했습니다. 잠시 후 다시 시도해주세요.');
-    }
+    );
   }
 
   var _googleTokenClient = null;
@@ -1797,6 +1719,14 @@
       return;
     }
     try {
+      // 카카오 OAuth 진입 전 오염 세션을 정리하여 Supabase Identity 계정 충돌 원천 방어
+      try {
+        var existingSession = await sb.auth.getSession();
+        if(existingSession && existingSession.data && existingSession.data.session){
+          await sb.auth.signOut();
+        }
+      } catch(e){}
+      setDeviceLoginTime(Date.now());
       var res = await sb.auth.signInWithOAuth({ provider: provider, options: { redirectTo: window.location.origin } });
       if(res && res.error) throw res.error;
     } catch(err){
@@ -20258,14 +20188,25 @@
       if(um.avatar_url || um.picture) newExtra.avatar_url = um.avatar_url || um.picture;
       if(um.full_name || um.name || um.nickname) newExtra.display_name = um.full_name || um.name || um.nickname;
       var userEmail = session.user.email || um.email || (newExtra.display_name ? (newExtra.display_name + '@kakao.local') : (session.user.id.slice(0, 8) + '@kakao.local'));
-      if(!sessionStorage.getItem('ourgoal_login_at')) setDeviceLoginTime(Date.now());
-      state.profile = await loadProfile(session.user.id, userEmail, newExtra, (session.user.app_metadata && session.user.app_metadata.provider) || null);
-      var isRevoked = await checkRemoteSessionRevoked();
-      if(isRevoked){ _isEnteringApp = false; return false; }
+      setDeviceLoginTime(Date.now());
+
+      try {
+        state.profile = await loadProfile(session.user.id, userEmail, newExtra, (session.user.app_metadata && session.user.app_metadata.provider) || null);
+      } catch(lpErr){
+        console.warn('loadProfile 지연 또는 일시 오류, defaultProfile로 진입 보장:', lpErr);
+        if(!state.profile){
+          state.profile = defaultProfile(session.user.id, userEmail, newExtra.display_name || userEmail.split('@')[0]);
+        }
+      }
+      if(!state.profile){
+        state.profile = defaultProfile(session.user.id, userEmail, newExtra.display_name || userEmail.split('@')[0]);
+      }
+
       var ls = document.getElementById('landingScreen');
       if(ls) ls.style.display = 'none';
       var as = document.getElementById('authScreen');
       if(as) as.style.display = 'none';
+
       if(state.profile._isNewSignup && (!state.profile.goals || state.profile.goals.length === 0) && (!state.profile.records || state.profile.records.length === 0)){
         startOnboarding();
       } else {
@@ -20274,9 +20215,17 @@
       checkAndHandlePeerInviteUrl();
       return true;
     } catch(err){
-      console.warn('세션 복원 및 앱 진입 실패:', err);
+      console.warn('세션 복원 중 예외 발생, 안전 강제 진입 폴백:', err);
+      try {
+        var ls2 = document.getElementById('landingScreen');
+        if(ls2) ls2.style.display = 'none';
+        var as2 = document.getElementById('authScreen');
+        if(as2) as2.style.display = 'none';
+        enterApp();
+      } catch(e){}
+      return true;
+    } finally {
       _isEnteringApp = false;
-      return false;
     }
   }
 
@@ -20341,7 +20290,13 @@
       }
     } catch(e){}
 
-    // 3. OAuth 리다이렉트 콜백 대기 루프 (카카오 리다이렉트 시 타이밍 이슈 방어)
+    // 3. 최상단 리스너에서 미리 감지된 pending 세션이 있으면 즉시 복원
+    if(_pendingAuthSession && _pendingAuthSession.user){
+      var okPending = await restoreSessionAndEnter(_pendingAuthSession);
+      if(okPending) return;
+    }
+
+    // 4. OAuth 리다이렉트 콜백 대기 루프 (카카오 리다이렉트 시 타이밍 이슈 방어)
     var isOAuthCallback = window.location.hash.indexOf('access_token') !== -1 || window.location.search.indexOf('code=') !== -1;
     try{
       var session = null;
@@ -20360,7 +20315,7 @@
       }
     } catch(e){ /* fall through to guest / landing */ }
 
-    // 4. 게스트 세션 확인
+    // 5. 게스트 세션 확인
     try {
       var guestRaw = localStorage.getItem('ourgoal_guest_profile');
       if(guestRaw){
@@ -20376,11 +20331,10 @@
       }
     } catch(e){}
 
-    // 5. 기본 랜딩 화면
+    // 6. 기본 랜딩 화면
     document.getElementById('landingScreen').style.display = 'flex';
     try{ recordLanding(location.search, dateKey(nowISO())); } catch(e){ /* 계측 실패 무시 */ }
     checkAndHandlePeerInviteUrl();
-    // 구글 로그인은 사용자가 랜딩/인증 화면에서 구글 로그인 버튼을 직접 눌렀을 때만 안전하게 시작 (의도치 않은 자동 세션 덮어쓰기 원천 차단)
   })();
 
   /* ============ #TASK-ES-015 FIX: 공용 크레딧 모듈(js/credits.js)에 앱 sb 주입 ============ */
@@ -20447,7 +20401,5 @@ window.addEventListener('keydown', function(e) {
 </script>
 
 
-<!-- [상민클론 원격패치] -->
-<div class="sangmin-clone-remote-notice" style="text-align:center;font-size:.6875rem;color:var(--ink-faint);padding:12px 0;">상민클론 원격 지휘 파이프라인 가동 중</div>
 </body>
 </html>
