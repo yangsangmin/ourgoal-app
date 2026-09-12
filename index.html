@@ -425,7 +425,7 @@
           <button class="btn btn-ghost btn-sm" id="presetTimesBtn" type="button">추천 루틴 프리셋</button>
         </div>
         <div class="toggle-row">
-          <div class="t">이 탭이 열려있는 동안 알림 받기</div>
+          <div class="t">체크인 시간에 알림 받기 (앱을 꺼도 와요)</div>
           <div class="switch" id="notifySwitch"></div>
         </div>
         <div class="toggle-row" style="margin-top:10px;">
@@ -18293,7 +18293,7 @@
 
     var sw = document.getElementById('notifySwitch');
     sw.className = 'switch' + (settings.notify ? ' on' : '');
-    a11ySwitch(sw, settings.notify, '이 탭이 열려있는 동안 알림 받기');
+    a11ySwitch(sw, settings.notify, '체크인 시간에 알림 받기 (앱을 꺼도 와요)');
     sw.onclick = async function(){
       if(!settings.notify){
         if('Notification' in window){
