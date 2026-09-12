@@ -1815,8 +1815,8 @@
   /* ============ 회원 탈퇴 ============ */
   async function withdrawAccount(){
     if(!state.profile || !state.profile.id) return;
-    if(!confirm('정말로 아워골에서 회원 탈퇴하시겠습니까?\n\n탈퇴하시면 작성하신 모든 목표, 마일스톤, 체크인 기록, 피드백 및 프로필이 즉시 영구 삭제되며 복구할 수 없습니다.')) return;
-    if(!confirm('정말 탈퇴를 진행할까요?\n\n이 작업은 되돌릴 수 없으며, 탈퇴 즉시 모든 데이터가 완전히 파기됩니다.')) return;
+    if(!confirm('정말로 아워골에서 회원 탈퇴하시겠습니까?\r\n\r\n탈퇴하시면 작성하신 모든 목표, 마일스톤, 체크인 기록, 피드백 및 프로필이 즉시 영구 삭제되며 복구할 수 없습니다.')) return;
+    if(!confirm('정말 탈퇴를 진행할까요?\r\n\r\n이 작업은 되돌릴 수 없으며, 탈퇴 즉시 모든 데이터가 완전히 파기됩니다.')) return;
 
     var uid = state.profile.id;
     try {
@@ -1881,7 +1881,7 @@
   document.getElementById('feedbackInquiryBtn').addEventListener('click', function(){
     var ua = encodeURIComponent((navigator.userAgent || '').slice(0, 80));
     var mailto = 'mailto:ysm0422@naver.com?subject=' + encodeURIComponent('[아워골 문의/버그 제보]') +
-      '&body=' + encodeURIComponent('안녕하세요, 아워골 이용 중 문의/제보 드립니다.\n\n- 내용:\n\n[앱 v1.0.0 / ' + decodeURIComponent(ua) + ']');
+      '&body=' + encodeURIComponent('안녕하세요, 아워골 이용 중 문의/제보 드립니다.\r\n\r\n- 내용:\r\n\r\n[앱 v1.0.0 / ' + decodeURIComponent(ua) + ']');
     window.location.href = mailto;
     toast('이메일 앱을 엽니다 (ysm0422@naver.com)');
   });
@@ -5599,7 +5599,7 @@
                   if(navigator.canShare && navigator.canShare({ files: [file] })){
                     await navigator.share({
                       title: '아워골 ' + streak + '일 연속 몰입 인증',
-                      text: '오늘 목표 달성! ' + streak + '일 연속 몰입 중\nhttps://ourgoal-app.vercel.app',
+                      text: '오늘 목표 달성! ' + streak + '일 연속 몰입 중\r\nhttps://ourgoal-app.vercel.app',
                       files: [file]
                     });
                     toast('성공적으로 공유되었습니다!');
@@ -5611,7 +5611,7 @@
                 try {
                   await navigator.share({
                     title: '아워골 ' + streak + '일 연속 몰입 인증',
-                    text: '오늘 목표 달성! ' + streak + '일 연속 몰입 중\n' + quote + '\n\n나만의 목표 완주하기 👉 https://ourgoal-app.vercel.app',
+                    text: '오늘 목표 달성! ' + streak + '일 연속 몰입 중\r\n' + quote + '\r\n\r\n나만의 목표 완주하기 👉 https://ourgoal-app.vercel.app',
                     url: 'https://ourgoal-app.vercel.app'
                   });
                 } catch(e){
@@ -5627,7 +5627,7 @@
         var copyTxtBtn = sheet.querySelector('#copyMzCardTextBtn');
         if(copyTxtBtn){
           copyTxtBtn.onclick = function(){
-            var text = '아워골 ' + streak + '일 연속 몰입 달성!\n' + userName + '님의 오늘의 한 줄:\n"' + quote + '"\n\n나만의 목표 완주하기 👉 https://ourgoal-app.vercel.app';
+            var text = '아워골 ' + streak + '일 연속 몰입 달성!\r\n' + userName + '님의 오늘의 한 줄:\r\n"' + quote + '"\r\n\r\n나만의 목표 완주하기 👉 https://ourgoal-app.vercel.app';
             if(navigator.clipboard && navigator.clipboard.writeText){
               navigator.clipboard.writeText(text).then(function(){
                 toast('성취 텍스트가 클립보드에 복사되었어요! 인스타 스토리에 붙여넣으세요.');
@@ -6091,7 +6091,7 @@
     var msJson = JSON.stringify(milestonesForAI(goal));
     var settings = state.profile.settings;
     var custom = (settings.customFeedbackActive && settings.customFeedbackPrompt) ? settings.customFeedbackPrompt : '';
-    var personaBlock = custom ? ('[페르소나 지침]\n'+custom+'\n\n') : '';
+    var personaBlock = custom ? ('[페르소나 지침]\r\n'+custom+'\r\n\r\n') : '';
     var roleLine = custom
       ? '당신은 위 페르소나 지침에 따라 행동하는 목표 달성 피드백 봇입니다.'
       : '당신은 목표 달성 코치입니다.';
@@ -6102,26 +6102,26 @@
     if(Array.isArray(upcomingSchedules) && upcomingSchedules.length > 0){
       var schedListStr = upcomingSchedules.map(function(s){
         return '- [' + s.dday + ' / ' + s.date + '] ' + s.title + ' (관련: ' + (s.category||'일반') + ')';
-      }).join('\n');
-      schedSection = '\n\n[향후 30일간의 다가오는 일정 목록]\n' + schedListStr + '\n\n' +
-        '[일정 연계 피드백 지침 - 필수 준수]\n' +
-        '1. 사용자의 체크인/기록에 대한 피드백을 충실히 제공하면서, 위 [향후 30일간의 다가오는 일정 목록]을 확인하세요.\n' +
-        '2. 만약 이번 기록과 맥락상 관련이 있거나(예: 목표 준비 과정, 대회/발표/시험 대비 등), 사용자가 놓치기 쉽고 미리 계획/준비해야 할 중요한 임박 일정(D-3~D-7 이내 등)이 있다면 comment 끝에 자연스럽게 1~2문장의 일정 리마인드 및 준비 조언을 함께 포함하세요.\n' +
+      }).join('\r\n');
+      schedSection = '\r\n\r\n[향후 30일간의 다가오는 일정 목록]\r\n' + schedListStr + '\r\n\r\n' +
+        '[일정 연계 피드백 지침 - 필수 준수]\r\n' +
+        '1. 사용자의 체크인/기록에 대한 피드백을 충실히 제공하면서, 위 [향후 30일간의 다가오는 일정 목록]을 확인하세요.\r\n' +
+        '2. 만약 이번 기록과 맥락상 관련이 있거나(예: 목표 준비 과정, 대회/발표/시험 대비 등), 사용자가 놓치기 쉽고 미리 계획/준비해야 할 중요한 임박 일정(D-3~D-7 이내 등)이 있다면 comment 끝에 자연스럽게 1~2문장의 일정 리마인드 및 준비 조언을 함께 포함하세요.\r\n' +
         '3. ★ 절대 주의: 관련없는 피드백을 위한 피드백은 엄격히 금지합니다. 기록과 전혀 무관하고 급하지도 않은 일정을 억지로 끌어오거나 형식적인 참견을 하지 마세요. 연관된 일정이 없거나 특별히 챙길 것이 없을 때는 기록에 대한 본연의 코칭에만 집중하세요.';
     }
 
-    return personaBlock + roleLine + ' [기록 테마 코칭 지침: ' + thLabel + ']\n' + themeLens + '\n\n' +
+    return personaBlock + roleLine + ' [기록 테마 코칭 지침: ' + thLabel + ']\r\n' + themeLens + '\r\n\r\n' +
       '사용자의 목표 구조(마일스톤과 하위 할 일)와 방금 남긴 기록을 보고, ' +
-      '그 기록이 목표 달성에 도움이 되는지 판단하고, 이 기록이 실제로 어떤 마일스톤이나 할 일의 진행 상태·결과를 바꿀 만한 확실한 근거가 되는지도 함께 판단하세요.\n\n' +
-      '[기록 테마]\n' + thLabel + '\n\n' +
-      '[사용자의 목표]\n최종 목표: ' + goal.title + '\n\n' +
-      '[마일스톤/할 일 목록 - JSON, id는 그대로 참조용. result는 {target,result,unit,note} 형태의 결과 기록칸]\n' + msJson + '\n\n' +
-      '[방금 남긴 기록]\n"' + text + '"' +
-      schedSection + '\n\n' +
-      '아래 JSON 형식으로만 답하세요. 다른 텍스트나 코드블록, 마크다운 없이 순수 JSON만 출력하세요.\n' +
-      '근거가 확실하지 않으면 suggestions는 빈 배열로 두세요. 애매하면 절대 추측해서 제안하지 마세요.\n' +
+      '그 기록이 목표 달성에 도움이 되는지 판단하고, 이 기록이 실제로 어떤 마일스톤이나 할 일의 진행 상태·결과를 바꿀 만한 확실한 근거가 되는지도 함께 판단하세요.\r\n\r\n' +
+      '[기록 테마]\r\n' + thLabel + '\r\n\r\n' +
+      '[사용자의 목표]\r\n최종 목표: ' + goal.title + '\r\n\r\n' +
+      '[마일스톤/할 일 목록 - JSON, id는 그대로 참조용. result는 {target,result,unit,note} 형태의 결과 기록칸]\r\n' + msJson + '\r\n\r\n' +
+      '[방금 남긴 기록]\r\n"' + text + '"' +
+      schedSection + '\r\n\r\n' +
+      '아래 JSON 형식으로만 답하세요. 다른 텍스트나 코드블록, 마크다운 없이 순수 JSON만 출력하세요.\r\n' +
+      '근거가 확실하지 않으면 suggestions는 빈 배열로 두세요. 애매하면 절대 추측해서 제안하지 마세요.\r\n' +
       '특히 기록에 특정 마일스톤·할 일과 관련된 구체적인 계획·방법·루틴(예: "주 3회 루틴 만들기" 항목에 대해 언제·어떻게 운동할지)이 담겨 있다면, ' +
-      'field를 "note"로 하고 value에 사용자가 말한 내용을 1~2문장으로 자연스럽게 정리해 그 항목의 결과 메모로 제안하세요(사용자의 표현을 존중하되 군더더기 없이 요약).\n' +
+      'field를 "note"로 하고 value에 사용자가 말한 내용을 1~2문장으로 자연스럽게 정리해 그 항목의 결과 메모로 제안하세요(사용자의 표현을 존중하되 군더더기 없이 요약).\r\n' +
       '{"verdict":"도움됨 또는 애매함 또는 도움안됨 중 하나",' +
       '"comment":"1~2문장의 짧고 솔직한 피드백 (필요 시 자연스러운 다가오는 일정 리마인드 포함, 무관한 강제 피드백 금지)",' +
       '"suggestions":[{"type":"milestone 또는 task","id":"위 목록에 있는 id 값 그대로",' +
@@ -6202,7 +6202,7 @@
       }
       var data = await res.json();
       var raw = ((data.candidates||[])[0]||{}).content && data.candidates[0].content.parts
-        ? data.candidates[0].content.parts.map(function(p){ return p.text||''; }).join('\n')
+        ? data.candidates[0].content.parts.map(function(p){ return p.text||''; }).join('\r\n')
         : '';
       if(!raw) throw new Error('empty gemini response');
       var parsed = parseFeedbackJSON(raw);
@@ -6767,7 +6767,7 @@
       if(userRecords.length > 0){
         recOptsHtml += userRecords.map(function(r, idx){
           var isSel = (curRecord && (curRecord.id === r.id || curRecord.startAt === r.startAt)) ? ' selected' : '';
-          var snippet = (r.text || '').replace(/\n/g, ' ').slice(0, 32);
+          var snippet = (r.text || '').replace(/\r\n/g, ' ').slice(0, 32);
           if((r.text || '').length > 32) snippet += '…';
           var dateLabel = r.date || (r.startAt ? dateKey(r.startAt) : '기록');
           return '<option value="'+idx+'"'+isSel+'>['+dateLabel+'] '+escapeHtml(snippet)+'</option>';
@@ -6789,7 +6789,7 @@
 
       var defaultCaption = '';
       if(curRecord && curRecord.text){
-        var snippet = curRecord.text.replace(/\n/g, ' ').slice(0, 45);
+        var snippet = curRecord.text.replace(/\r\n/g, ' ').slice(0, 45);
         defaultCaption = '오늘 실천 완료! "' + snippet + (curRecord.text.length > 45 ? '…' : '') + '" 꾸준히 나아갑니다 🔥';
       } else if(curGoal){
         defaultCaption = '"' + curGoal.title + '" 목표를 향해 집중하고 있습니다. 함께 달려요! 💪';
@@ -7062,7 +7062,7 @@
             var d = EXTERNAL_DATA.find(function(x){ return x.id===row.dataset.ext; });
             if(!d) return;
             var input = document.getElementById('captureInput');
-            input.value = (input.value ? input.value.trim()+'\n' : '') + d.icon+' '+d.text;
+            input.value = (input.value ? input.value.trim()+'\r\n' : '') + d.icon+' '+d.text;
             closeModal();
             input.focus();
             toast(d.src+' 데이터를 불러왔어요');
@@ -7972,7 +7972,7 @@
     snap.recentCheckins.slice(0, 30).forEach(function(r){
       lines.push('- ' + r.date + ' · ' + r.text + (r.minutes ? ' (' + r.minutes + '분)' : ''));
     });
-    return lines.join('\n');
+    return lines.join('\r\n');
   }
   function exportGoalSnapshot(scope, goal){
     var goals = scope==='one' && goal ? [goal] : state.profile.goals;
@@ -8902,7 +8902,7 @@
       return;
     }
     var displayName = userName || '이 사용자';
-    if(!confirm(displayName + '님을 차단할까요?\n차단하면 내 화면에서 이 사용자의 게시물과 댓글이 숨겨집니다.')) return;
+    if(!confirm(displayName + '님을 차단할까요?\r\n차단하면 내 화면에서 이 사용자의 게시물과 댓글이 숨겨집니다.')) return;
     var settings = state.profile.settings;
     if(!settings.blockedUsers) settings.blockedUsers = [];
     if(!settings.blockedUsers.some(function(b){ return (typeof b === 'string' ? b : b.id) === userId; })){
@@ -9045,43 +9045,295 @@
       '</div>' +
     '</div>' +
 
-    '<div class="card" style="border:1px dashed var(--gold-line);margin-bottom:14px;">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-        '<span class="tag" style="background:var(--gold-soft);color:var(--gold);font-size:.8125rem;">실제 팀 목표 예시 화면</span>' +
-        '<span class="dday-pill" style="background:var(--sage-soft);color:var(--sage);">달성률 74%</span>' +
+    '<div style="margin:14px 0 8px;">' +
+      '<div style="font-size:.875rem;font-weight:700;color:var(--ink);margin-bottom:6px;">🎯 목적별 실제 팀 목표 예시 둘러보기</div>' +
+      '<div class="goal-chip-row" id="tgGuideTabsRow" style="margin-bottom:10px;">' +
+        '<button class="goal-chip active" data-tgexampletab="workshop" type="button">🏢 회사 워크숍</button>' +
+        '<button class="goal-chip" data-tgexampletab="travel" type="button">✈️ 단체 여행</button>' +
+        '<button class="goal-chip" data-tgexampletab="fitness" type="button">🏋️ 운동 크루</button>' +
       '</div>' +
-      '<div style="font-weight:700;font-size:1rem;margin-bottom:4px;">크로스핏 와드(WOD) 정복대</div>' +
-      '<p class="faint" style="margin:0 0 10px;font-size:.8125rem;">공동 목표: 크루 전체 이번 달 와드 250회 정복</p>' +
-      '<div class="group-bar"><span style="width:74%;"></span></div>' +
-      '<div class="faint" style="font-size:.8125rem;margin:4px 0 10px;">마일스톤 2/3 완료 (185/250회)</div>' +
-      '<div class="ms-list">' +
-        '<div class="ms-row" style="padding:8px 10px;">' +
-          '<div class="ms-main">' +
-            '<div class="ms-status done"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>' +
-            '<div style="flex:1;min-width:0;"><span class="ms-title done-text">1단계: 상반월 100회 인증 돌파</span></div>' +
-            '<span class="dday-pill" style="font-size:.6875rem;">달성완료</span>' +
+    '</div>' +
+
+    // 패널 1: 회사 워크숍 예시
+    '<div id="tgExampleWorkshop" class="tg-example-panel" style="display:block;">' +
+      '<div class="card" style="border:1px dashed var(--brand-strong);margin-bottom:14px;background:var(--card);">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+          '<span class="tag" style="background:var(--red-soft);color:var(--brand-strong);font-size:.8125rem;">실제 팀 목표 예시 화면 · 회사 워크숍</span>' +
+          '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);">D-21 · 달성률 65%</span>' +
+        '</div>' +
+        '<div style="font-weight:700;font-size:1rem;margin-bottom:4px;">🏢 2026 하반기 전사 전략 워크숍 TF</div>' +
+        '<p class="faint" style="margin:0 0 10px;font-size:.8125rem;">공동 목표: 워크숍 기획부터 현장 실행 및 2027 로드맵 수립 완료</p>' +
+        '<div class="group-bar"><span style="width:65%;background:var(--brand);"></span></div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin:4px 0 10px;">' +
+          '<span class="faint" style="font-size:.8125rem;">마일스톤 2/3 완료 (부서별 세션 아젠다 준비 중)</span>' +
+          '<button class="btn btn-ghost btn-sm tg-fold-btn" data-tgfoldms="ws" type="button" style="font-size:.75rem;padding:2px 8px;border-color:var(--rule);">마일스톤 접기 ▲</button>' +
+        '</div>' +
+        '<div class="ms-list" id="tgMsList_ws">' +
+          '<div class="ms-row" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status done"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>' +
+              '<div style="flex:1;min-width:0;">' +
+                '<span class="ms-title done-text">1단계: 장소/숙소 대관 및 워크숍 예산안 최종 승인</span>' +
+                '<button class="tg-task-toggle-btn" data-tgtoggletasks="ws1" type="button" style="background:transparent;border:none;color:var(--brand-strong);font-size:.75rem;font-weight:700;padding:2px 0;cursor:pointer;display:flex;align-items:center;gap:3px;margin-top:2px;">세부 할 일 2개 <span class="t-arrow">▼</span></button>' +
+              '</div>' +
+              '<span class="dday-pill" style="font-size:.6875rem;">달성완료</span>' +
+            '</div>' +
+            '<div id="tgTasks_ws1" style="display:none;margin-top:6px;padding:6px 10px;background:var(--surface-2);border-radius:8px;font-size:.8125rem;">' +
+              '<div style="color:var(--ink-soft);padding:2px 0;">✓ 행사장 대관 계약 체결 및 음향·빔프로젝터 점검</div>' +
+              '<div style="color:var(--ink-soft);padding:2px 0;">✓ 시간대별 세션 및 휴식 타임테이블 배포</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ms-row doing" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status doing"></div>' +
+              '<div style="flex:1;min-width:0;">' +
+                '<span class="ms-title">2단계: 부서별 세션 아젠다 및 팀빌딩 프로그램 확정</span>' +
+                '<button class="tg-task-toggle-btn" data-tgtoggletasks="ws2" type="button" style="background:transparent;border:none;color:var(--brand-strong);font-size:.75rem;font-weight:700;padding:2px 0;cursor:pointer;display:flex;align-items:center;gap:3px;margin-top:2px;">세부 할 일 2개 <span class="t-arrow">▼</span></button>' +
+              '</div>' +
+              '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);font-size:.6875rem;">진행 중</span>' +
+            '</div>' +
+            '<div id="tgTasks_ws2" style="display:none;margin-top:6px;padding:6px 10px;background:var(--surface-2);border-radius:8px;font-size:.8125rem;">' +
+              '<div style="color:var(--ink);padding:2px 0;font-weight:600;">⏳ 부서별 세션 발표자료(1page) 취합 및 슬라이드 구성</div>' +
+              '<div style="color:var(--ink-soft);padding:2px 0;">○ 팀빌딩 아이스브레이킹 게임 3종 및 상품 준비</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ms-row" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status todo"></div>' +
+              '<div style="flex:1;min-width:0;">' +
+                '<span class="ms-title">3단계: 워크숍 본행사 진행 및 팀별 액션플랜 도출·회고</span>' +
+                '<button class="tg-task-toggle-btn" data-tgtoggletasks="ws3" type="button" style="background:transparent;border:none;color:var(--brand-strong);font-size:.75rem;font-weight:700;padding:2px 0;cursor:pointer;display:flex;align-items:center;gap:3px;margin-top:2px;">세부 할 일 2개 <span class="t-arrow">▼</span></button>' +
+              '</div>' +
+              '<span class="dday-pill" style="font-size:.6875rem;">대기</span>' +
+            '</div>' +
+            '<div id="tgTasks_ws3" style="display:none;margin-top:6px;padding:6px 10px;background:var(--surface-2);border-radius:8px;font-size:.8125rem;">' +
+              '<div style="color:var(--ink-soft);padding:2px 0;">○ 워크숍 본행사 진행 및 타운홀 비전 공유</div>' +
+              '<div style="color:var(--ink-soft);padding:2px 0;">○ 결과 보고서 작성 및 2027 팀별 후속 액션플랜 도출</div>' +
+            '</div>' +
           '</div>' +
         '</div>' +
-        '<div class="ms-row doing" style="padding:8px 10px;">' +
-          '<div class="ms-main">' +
-            '<div class="ms-status doing"></div>' +
-            '<div style="flex:1;min-width:0;"><span class="ms-title">2단계: 하반월 200회 인증 돌파</span></div>' +
-            '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);font-size:.6875rem;">진행 중</span>' +
+        '<div style="margin-top:12px;padding:10px;background:var(--surface-2);border-radius:10px;font-size:.8125rem;color:var(--ink-soft);">' +
+          '<div style="font-weight:700;color:var(--ink);margin-bottom:4px;">💡 TF 역할 분담 (수준별 조 맞춤 세팅 예시)</div>' +
+          '<div style="line-height:1.6;">' +
+            '• <b>A조 (기획·운영 TF)</b>: 타임테이블 관리, 대관/예산 총괄<br>' +
+            '• <b>B조 (프로그램·레크 TF)</b>: 팀빌딩 3종 액티비티, 비전 세션<br>' +
+            '• <b>C조 (물류·지원 TF)</b>: 카풀 배차, 숙소 룸 배정, 다과·비품' +
           '</div>' +
         '</div>' +
-        '<div class="ms-row" style="padding:8px 10px;">' +
-          '<div class="ms-main">' +
-            '<div class="ms-status todo"></div>' +
-            '<div style="flex:1;min-width:0;"><span class="ms-title">3단계: 250회 완수 및 오프라인 WOD 정모</span></div>' +
-            '<span class="dday-pill" style="font-size:.6875rem;">대기</span>' +
-          '</div>' +
+        '<div style="display:flex;gap:8px;margin-top:14px;">' +
+          '<button class="btn btn-ghost btn-sm" data-tgquickpreview="g-workshop" data-tgquickjoin="g-workshop" type="button" style="flex:1;">👀 1초 둘러보기 체험</button>' +
+          '<button class="btn btn-primary btn-sm" data-tgtplgroup="workshop" type="button" style="flex:1.2;">✨ 이 템플릿으로 모임 개설</button>' +
         '</div>' +
       '</div>' +
-      '<div style="display:flex;gap:8px;margin-top:14px;">' +
-        '<button class="btn btn-ghost btn-sm" id="tgExploreGroupsBtn" type="button" style="flex:1;">인기 모임 둘러보기</button>' +
-        '<button class="btn btn-primary btn-sm" id="tgQuickJoinSampleBtn" type="button" style="flex:1;">예시 모임 바로 참여하기</button>' +
+    '</div>' +
+
+    // 패널 2: 단체 여행 예시
+    '<div id="tgExampleTravel" class="tg-example-panel" style="display:none;">' +
+      '<div class="card" style="border:1px dashed var(--teal);margin-bottom:14px;background:var(--card);">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+          '<span class="tag" style="background:rgba(20,184,166,0.12);color:var(--teal);font-size:.8125rem;">실제 팀 목표 예시 화면 · 단체 여행</span>' +
+          '<span class="dday-pill" style="background:rgba(20,184,166,0.12);color:var(--teal);">D-14 · 달성률 70%</span>' +
+        '</div>' +
+        '<div style="font-weight:700;font-size:1rem;margin-bottom:4px;">✈️ 제주 3박4일 단체 힐링여행</div>' +
+        '<p class="faint" style="margin:0 0 10px;font-size:.8125rem;">공동 목표: 낙오자 없이 5명이서 준비하는 완벽한 제주 힐링 여행</p>' +
+        '<div class="group-bar"><span style="width:70%;background:var(--teal);"></span></div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin:4px 0 10px;">' +
+          '<span class="faint" style="font-size:.8125rem;">마일스톤 2/3 완료 (렌터카 및 코스 확정)</span>' +
+          '<button class="btn btn-ghost btn-sm tg-fold-btn" data-tgfoldms="tr" type="button" style="font-size:.75rem;padding:2px 8px;border-color:var(--rule);">마일스톤 접기 ▲</button>' +
+        '</div>' +
+        '<div class="ms-list" id="tgMsList_tr">' +
+          '<div class="ms-row" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status done"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>' +
+              '<div style="flex:1;min-width:0;">' +
+                '<span class="ms-title done-text">1단계: 항공권 발권 및 독채 숙소 예약 확정</span>' +
+                '<button class="tg-task-toggle-btn" data-tgtoggletasks="tr1" type="button" style="background:transparent;border:none;color:var(--teal);font-size:.75rem;font-weight:700;padding:2px 0;cursor:pointer;display:flex;align-items:center;gap:3px;margin-top:2px;">세부 할 일 2개 <span class="t-arrow">▼</span></button>' +
+              '</div>' +
+              '<span class="dday-pill" style="font-size:.6875rem;">달성완료</span>' +
+            '</div>' +
+            '<div id="tgTasks_tr1" style="display:none;margin-top:6px;padding:6px 10px;background:var(--surface-2);border-radius:8px;font-size:.8125rem;">' +
+              '<div style="color:var(--ink-soft);padding:2px 0;">✓ 김포-제주 왕복 항공권 전원 발권 완료</div>' +
+              '<div style="color:var(--ink-soft);padding:2px 0;">✓ 애월 오션뷰 독채 펜션 예약 및 바비큐 확정</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ms-row doing" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status doing"></div>' +
+              '<div style="flex:1;min-width:0;">' +
+                '<span class="ms-title">2단계: 렌터카 배차, 일자별 드라이브 코스 및 맛집 리스트업</span>' +
+                '<button class="tg-task-toggle-btn" data-tgtoggletasks="tr2" type="button" style="background:transparent;border:none;color:var(--teal);font-size:.75rem;font-weight:700;padding:2px 0;cursor:pointer;display:flex;align-items:center;gap:3px;margin-top:2px;">세부 할 일 2개 <span class="t-arrow">▼</span></button>' +
+              '</div>' +
+              '<span class="dday-pill" style="background:rgba(20,184,166,0.12);color:var(--teal);font-size:.6875rem;">진행 중</span>' +
+            '</div>' +
+            '<div id="tgTasks_tr2" style="display:none;margin-top:6px;padding:6px 10px;background:var(--surface-2);border-radius:8px;font-size:.8125rem;">' +
+              '<div style="color:var(--ink);padding:2px 0;font-weight:600;">⏳ 7인승 카니발 렌터카 배차 및 제2운전자 사전 등록</div>' +
+              '<div style="color:var(--ink-soft);padding:2px 0;">○ 일자별 드라이브 코스 및 흑돼지 맛집 단체석 예약</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ms-row" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status todo"></div>' +
+              '<div style="flex:1;min-width:0;">' +
+                '<span class="ms-title">3단계: 안전 여행 완주, 공용 경비 정산 및 베스트 샷 앨범 공유</span>' +
+                '<button class="tg-task-toggle-btn" data-tgtoggletasks="tr3" type="button" style="background:transparent;border:none;color:var(--teal);font-size:.75rem;font-weight:700;padding:2px 0;cursor:pointer;display:flex;align-items:center;gap:3px;margin-top:2px;">세부 할 일 2개 <span class="t-arrow">▼</span></button>' +
+              '</div>' +
+              '<span class="dday-pill" style="font-size:.6875rem;">대기</span>' +
+            '</div>' +
+            '<div id="tgTasks_tr3" style="display:none;margin-top:6px;padding:6px 10px;background:var(--surface-2);border-radius:8px;font-size:.8125rem;">' +
+              '<div style="color:var(--ink-soft);padding:2px 0;">○ 여행 필수품/상비약 체크리스트 점검 완료</div>' +
+              '<div style="color:var(--ink-soft);padding:2px 0;">○ 모임통장 공용 경비 1/N 정산 및 단체 앨범 공유</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="margin-top:12px;padding:10px;background:var(--surface-2);border-radius:10px;font-size:.8125rem;color:var(--ink-soft);">' +
+          '<div style="font-weight:700;color:var(--ink);margin-bottom:4px;">💡 단체 여행 역할 분담 (수준별 조 맞춤 세팅 예시)</div>' +
+          '<div style="line-height:1.6;">' +
+            '• <b>A조 (동선·차량 조)</b>: 렌터카 예약, 1~3일차 드라이브 코스<br>' +
+            '• <b>B조 (맛집·카페 조)</b>: 흑돼지/해산물 로컬 맛집, 단체석 예약<br>' +
+            '• <b>C조 (총무·촬영 조)</b>: 모임통장 공용 경비 정산, 단체 인생샷' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;margin-top:14px;">' +
+          '<button class="btn btn-ghost btn-sm" data-tgquickpreview="g-travel" data-tgquickjoin="g-travel" type="button" style="flex:1;">👀 1초 둘러보기 체험</button>' +
+          '<button class="btn btn-primary btn-sm" data-tgtplgroup="travel" type="button" style="flex:1.2;">✨ 이 템플릿으로 모임 개설</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+
+    // 패널 3: 운동 크루 (기존 테스트 호환성 유지)
+    '<div id="tgExampleFitness" class="tg-example-panel" style="display:none;">' +
+      '<div class="card" style="border:1px dashed var(--gold-line);margin-bottom:14px;background:var(--card);">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+          '<span class="tag" style="background:var(--gold-soft);color:var(--gold);font-size:.8125rem;">실제 팀 목표 예시 화면</span>' +
+          '<span class="dday-pill" style="background:var(--sage-soft);color:var(--sage);">달성률 74%</span>' +
+        '</div>' +
+        '<div style="font-weight:700;font-size:1rem;margin-bottom:4px;">크로스핏 와드(WOD) 정복대</div>' +
+        '<p class="faint" style="margin:0 0 10px;font-size:.8125rem;">공동 목표: 크루 전체 이번 달 와드 250회 정복</p>' +
+        '<div class="group-bar"><span style="width:74%;"></span></div>' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin:4px 0 10px;">' +
+          '<span class="faint" style="font-size:.8125rem;">마일스톤 2/3 완료 (185/250회)</span>' +
+          '<button class="btn btn-ghost btn-sm tg-fold-btn" data-tgfoldms="ft" type="button" style="font-size:.75rem;padding:2px 8px;border-color:var(--rule);">마일스톤 접기 ▲</button>' +
+        '</div>' +
+        '<div class="ms-list" id="tgMsList_ft">' +
+          '<div class="ms-row" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status done"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>' +
+              '<div style="flex:1;min-width:0;">' +
+                '<span class="ms-title done-text">1단계: 상반월 100회 인증 돌파</span>' +
+                '<button class="tg-task-toggle-btn" data-tgtoggletasks="ft1" type="button" style="background:transparent;border:none;color:var(--brand-strong);font-size:.75rem;font-weight:700;padding:2px 0;cursor:pointer;display:flex;align-items:center;gap:3px;margin-top:2px;">세부 할 일 2개 <span class="t-arrow">▼</span></button>' +
+              '</div>' +
+              '<span class="dday-pill" style="font-size:.6875rem;">달성완료</span>' +
+            '</div>' +
+            '<div id="tgTasks_ft1" style="display:none;margin-top:6px;padding:6px 10px;background:var(--surface-2);border-radius:8px;font-size:.8125rem;">' +
+              '<div style="color:var(--ink-soft);padding:2px 0;">✓ 스트레칭 및 웜업 15분 필수 실시</div>' +
+              '<div style="color:var(--ink-soft);padding:2px 0;">✓ 주 3회 WOD 출석 인증샷 업로드</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ms-row doing" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status doing"></div>' +
+              '<div style="flex:1;min-width:0;">' +
+                '<span class="ms-title">2단계: 하반월 200회 인증 돌파</span>' +
+                '<button class="tg-task-toggle-btn" data-tgtoggletasks="ft2" type="button" style="background:transparent;border:none;color:var(--brand-strong);font-size:.75rem;font-weight:700;padding:2px 0;cursor:pointer;display:flex;align-items:center;gap:3px;margin-top:2px;">세부 할 일 2개 <span class="t-arrow">▼</span></button>' +
+              '</div>' +
+              '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);font-size:.6875rem;">진행 중</span>' +
+            '</div>' +
+            '<div id="tgTasks_ft2" style="display:none;margin-top:6px;padding:6px 10px;background:var(--surface-2);border-radius:8px;font-size:.8125rem;">' +
+              '<div style="color:var(--ink);padding:2px 0;font-weight:600;">⏳ 크루원 전원 Rx\'d 무게 도전 및 라운드 기록 단축</div>' +
+              '<div style="color:var(--ink-soft);padding:2px 0;">○ 무반동 턱걸이(풀업) 5개 연속 성공</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ms-row" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status todo"></div>' +
+              '<div style="flex:1;min-width:0;">' +
+                '<span class="ms-title">3단계: 250회 완수 및 오프라인 WOD 정모</span>' +
+                '<button class="tg-task-toggle-btn" data-tgtoggletasks="ft3" type="button" style="background:transparent;border:none;color:var(--brand-strong);font-size:.75rem;font-weight:700;padding:2px 0;cursor:pointer;display:flex;align-items:center;gap:3px;margin-top:2px;">세부 할 일 2개 <span class="t-arrow">▼</span></button>' +
+              '</div>' +
+              '<span class="dday-pill" style="font-size:.6875rem;">대기</span>' +
+            '</div>' +
+            '<div id="tgTasks_ft3" style="display:none;margin-top:6px;padding:6px 10px;background:var(--surface-2);border-radius:8px;font-size:.8125rem;">' +
+              '<div style="color:var(--ink-soft);padding:2px 0;">○ 250회 누적 완주 인증 파티</div>' +
+              '<div style="color:var(--ink-soft);padding:2px 0;">○ 박스 내부 페어 WOD 친선 대회</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;margin-top:14px;">' +
+          '<button class="btn btn-ghost btn-sm" id="tgExploreGroupsBtn" data-tgexplore="1" type="button" style="flex:0.8;">인기 모임</button>' +
+          '<button class="btn btn-ghost btn-sm" id="tgQuickJoinSampleBtn" data-tgquickpreview="g0" data-tgquickjoin="g0" type="button" style="flex:1;">👀 1초 체험</button>' +
+          '<button class="btn btn-primary btn-sm" data-tgtplgroup="fitness" type="button" style="flex:1.2;">✨ 템플릿 개설</button>' +
+        '</div>' +
       '</div>' +
     '</div>';
+  }
+
+  function wireTeamGoalsGuideEvents(container){
+    var tabs = container.querySelectorAll('[data-tgexampletab]');
+    tabs.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var target = btn.dataset.tgexampletab;
+        tabs.forEach(function(b){ b.classList.toggle('active', b === btn); });
+        var pWS = container.querySelector('#tgExampleWorkshop');
+        var pTR = container.querySelector('#tgExampleTravel');
+        var pFT = container.querySelector('#tgExampleFitness');
+        if(pWS) pWS.style.display = target === 'workshop' ? 'block' : 'none';
+        if(pTR) pTR.style.display = target === 'travel' ? 'block' : 'none';
+        if(pFT) pFT.style.display = target === 'fitness' ? 'block' : 'none';
+      });
+    });
+    container.querySelectorAll('[data-tgtoggletasks]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var tid = btn.dataset.tgtoggletasks;
+        var box = container.querySelector('#tgTasks_' + tid);
+        if(!box) return;
+        var isHidden = box.style.display === 'none' || !box.style.display;
+        box.style.display = isHidden ? 'block' : 'none';
+        var arr = btn.querySelector('.t-arrow');
+        if(arr) arr.textContent = isHidden ? '▲' : '▼';
+      });
+    });
+    container.querySelectorAll('[data-tgfoldms]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var fid = btn.dataset.tgfoldms;
+        var list = container.querySelector('#tgMsList_' + fid);
+        if(!list) return;
+        var isHidden = list.style.display === 'none';
+        list.style.display = isHidden ? 'block' : 'none';
+        btn.textContent = isHidden ? '마일스톤 접기 ▲' : '마일스톤 펼치기 ▼';
+      });
+    });
+    container.querySelectorAll('[data-tgexplore]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        closeModal();
+        setTab('comm');
+        state.commSubTab = 'groups';
+        var subtabs = document.getElementById('commSubtabs');
+        if(subtabs) subtabs.querySelectorAll('.comm-subtab').forEach(function(st){ st.classList.toggle('active', st.dataset.sub === 'groups'); });
+        var subBody = document.getElementById('commSubBody');
+        if(subBody) renderCommGroups(subBody);
+      });
+    });
+    container.querySelectorAll('[data-tgquickjoin],[data-tgquickpreview]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var gid = btn.dataset.tgquickpreview || btn.dataset.tgquickjoin;
+        var sampleGroup = MOCK_GROUPS.find(function(g){ return g.id === gid; }) || MOCK_GROUPS[0];
+        var gs = groupState(sampleGroup.id);
+        gs.joined = true;
+        gs.isPreview = true;
+        await saveProfile();
+        closeModal();
+        toast('"' + sampleGroup.name + '" 체험 모드로 시작했어요. [체험 모임 나가기]로 언제든 나갈 수 있어요.');
+        renderTeamGoalsScreen();
+      });
+    });
+    container.querySelectorAll('[data-tgtplgroup]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var tpl = btn.dataset.tgtplgroup;
+        closeModal();
+        var preset = getTeamGoalTemplatePreset(tpl);
+        promptNewGroup(null, preset);
+      });
+    });
   }
 
   function getGroupLevelGoals(gid){
@@ -9091,10 +9343,84 @@
       var g = MOCK_GROUPS.find(function(x){ return x.id===gid; });
       var name = g ? g.name : '';
       var topic = g ? (g.topic || '') : '';
+      var isWorkshop = topic.includes('기획') || topic.includes('업무') || topic.includes('회사') || name.includes('워크숍') || name.includes('TF');
+      var isTravel = topic.includes('여행') || topic.includes('캠핑') || name.includes('여행') || name.includes('투어');
       var isCrossfit = topic.includes('크로스핏') || name.includes('크로스핏');
       var isBadminton = name.includes('배드민턴') || topic.includes('배드민턴');
 
-      if(isBadminton){
+      if(isWorkshop){
+        state.profile.settings.groupLevelGoals[gid] = [
+          { id: 'lg_a_' + gid, name: 'A조 (기획·운영 TF)', goals: [
+            { id: 'lgg_a1_' + gid, title: '타임테이블 관리 및 예산/의전 총괄', dueDate: daysFromNow(21), milestones: [
+              { id: 'lgm_a1_' + gid, title: '워크숍 장소 대관 및 타임테이블 확정', status: 'done', priority: 'high', tasks: [
+                { id: 'lgt_a1a_' + gid, title: '행사장 대관 계약 및 음향/빔 점검', done: true },
+                { id: 'lgt_a1b_' + gid, title: '시간대별 세션 및 휴식 타임테이블 배포', done: true }
+              ] },
+              { id: 'lgm_a2_' + gid, title: '총 예산안 산정 및 지출 결재 승인', status: 'doing', priority: 'high', tasks: [
+                { id: 'lgt_a2a_' + gid, title: '항목별(대관/식대/교통/상품) 예산 취합', done: true },
+                { id: 'lgt_a2b_' + gid, title: '법인카드 한도 체크 및 사전 정산 처리', done: false }
+              ] }
+            ] }
+          ] },
+          { id: 'lg_b_' + gid, name: 'B조 (프로그램·레크 TF)', goals: [
+            { id: 'lgg_b1_' + gid, title: '팀빌딩 프로그램 및 아이스브레이킹 진행', dueDate: daysFromNow(21), milestones: [
+              { id: 'lgm_b1_' + gid, title: '아이스브레이킹 및 팀빌딩 3종 선정', status: 'doing', priority: 'med', tasks: [
+                { id: 'lgt_b1a_' + gid, title: '게임 룰 설명 슬라이드 및 진행 대본', done: true },
+                { id: 'lgt_b1b_' + gid, title: '팀 대항전 점수판 및 참가 상품 구매', done: false }
+              ] },
+              { id: 'lgm_b2_' + gid, title: '부서별 회고 & 비전 공유 세션 진행', status: 'todo', priority: 'high', tasks: [
+                { id: 'lgt_b2a_' + gid, title: '발표 양식 템플릿(1page) 사전 배포', done: false }
+              ] }
+            ] }
+          ] },
+          { id: 'lg_c_' + gid, name: 'C조 (물류·지원 TF)', goals: [
+            { id: 'lgg_c1_' + gid, title: '이동 차량, 숙소 배정 및 물품 세팅', dueDate: daysFromNow(21), milestones: [
+              { id: 'lgm_c1_' + gid, title: '참석자 이동 교통편 및 방 배정표 확정', status: 'done', priority: 'med', tasks: [
+                { id: 'lgt_c1a_' + gid, title: '카풀 차량 배차 및 셔틀 공지', done: true },
+                { id: 'lgt_c1b_' + gid, title: '숙소 룸메이트 배정 및 키 불출 계획', done: true }
+              ] },
+              { id: 'lgm_c2_' + gid, title: '현장 다과·음료 및 상비약 구비', status: 'doing', priority: 'low', tasks: [
+                { id: 'lgt_c2a_' + gid, title: '에너지바, 커피/음료 간식 구매', done: true },
+                { id: 'lgt_c2b_' + gid, title: '응급 상비약 키트 및 명찰 준비', done: false }
+              ] }
+            ] }
+          ] }
+        ];
+      } else if(isTravel){
+        state.profile.settings.groupLevelGoals[gid] = [
+          { id: 'lg_a_' + gid, name: 'A조 (동선·차량 조)', goals: [
+            { id: 'lgg_a1_' + gid, title: '여행 동선 설계 및 렌터카 안전 운행', dueDate: daysFromNow(14), milestones: [
+              { id: 'lgm_a1_' + gid, title: '일자별 최적 드라이브 코스 확정', status: 'done', priority: 'high', tasks: [
+                { id: 'lgt_a1a_' + gid, title: '공항-숙소-관광지 네비 경로 등록', done: true },
+                { id: 'lgt_a1b_' + gid, title: '우천/비상 시 대체 실내 코스 마련', done: true }
+              ] },
+              { id: 'lgm_a2_' + gid, title: '렌터카 인수 및 운전자 보험 등록', status: 'doing', priority: 'high', tasks: [
+                { id: 'lgt_a2a_' + gid, title: '승합차/SUV 렌트 및 완전자차 가입', done: true },
+                { id: 'lgt_a2b_' + gid, title: '제2운전자 사전 등록 완료', done: false }
+              ] }
+            ] }
+          ] },
+          { id: 'lg_b_' + gid, name: 'B조 (맛집·카페 조)', goals: [
+            { id: 'lgg_b1_' + gid, title: '로컬 미식 투어 및 단체석 예약', dueDate: daysFromNow(14), milestones: [
+              { id: 'lgm_b1_' + gid, title: '흑돼지/해산물 대표 맛집 리스트업', status: 'doing', priority: 'med', tasks: [
+                { id: 'lgt_b1a_' + gid, title: '알레르기 및 선호도 사전 조사', done: true },
+                { id: 'lgt_b1b_' + gid, title: '캐치테이블 원격 줄서기 세팅', done: false }
+              ] }
+            ] }
+          ] },
+          { id: 'lg_c_' + gid, name: 'C조 (총무·촬영 조)', goals: [
+            { id: 'lgg_c1_' + gid, title: '공용 경비 정산 및 단체 인생샷 촬영', dueDate: daysFromNow(14), milestones: [
+              { id: 'lgm_c1_' + gid, title: '모임 통장 개설 및 영수증 실시간 기록', status: 'doing', priority: 'med', tasks: [
+                { id: 'lgt_c1a_' + gid, title: '모임 통장 링크 공유 및 회비 수납', done: true },
+                { id: 'lgt_c1b_' + gid, title: '일차별 지출 영수증 촬영 기록', done: false }
+              ] },
+              { id: 'lgm_c2_' + gid, title: '포토스팟 선정 및 공유 앨범 생성', status: 'todo', priority: 'low', tasks: [
+                { id: 'lgt_c2a_' + gid, title: '클라우드 공유 앨범 생성 및 링크 공유', done: false }
+              ] }
+            ] }
+          ] }
+        ];
+      } else if(isBadminton){
         state.profile.settings.groupLevelGoals[gid] = [
           { id: 'lg_a_' + gid, name: 'A조 (상급/대회반)', goals: [
             { id: 'lgg_a1_' + gid, title: '전국 동호인 대회 입상 및 스매시 성공률 극대화', dueDate: daysFromNow(30), milestones: [
@@ -9486,28 +9812,7 @@
     var myTeams = MOCK_GROUPS.filter(function(g){ return groupState(g.id).joined; });
     if(!myTeams.length){
       view.innerHTML = renderTeamGoalsEmptyGuideHtml();
-      var exploreBtn = view.querySelector('#tgExploreGroupsBtn');
-      if(exploreBtn){
-        exploreBtn.addEventListener('click', function(){
-          setTab('comm');
-          state.commSubTab = 'groups';
-          var subtabs = document.getElementById('commSubtabs');
-          if(subtabs) subtabs.querySelectorAll('.comm-subtab').forEach(function(st){ st.classList.toggle('active', st.dataset.sub === 'groups'); });
-          var subBody = document.getElementById('commSubBody');
-          if(subBody) renderCommGroups(subBody);
-        });
-      }
-      var quickJoinBtn = view.querySelector('#tgQuickJoinSampleBtn');
-      if(quickJoinBtn){
-        quickJoinBtn.addEventListener('click', async function(){
-          var sampleGroup = MOCK_GROUPS.find(function(g){ return g.id === 'g0' || g.id === 'g1'; }) || MOCK_GROUPS[0];
-          var gs = groupState(sampleGroup.id);
-          gs.joined = true;
-          await saveProfile();
-          toast('"' + sampleGroup.name + '" 모임에 참여했어요! 팀 목표를 확인해보세요.');
-          renderTeamGoalsScreen();
-        });
-      }
+      wireTeamGoalsGuideEvents(view);
       return;
     }
     myTeams.forEach(function(g){
@@ -9532,7 +9837,10 @@
     var headerAndFilterHtml =
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px;">' +
         '<span style="font-weight:700;font-size:1.0625rem;color:var(--ink);">참여 중인 모임 목표</span>' +
-        '<button class="btn btn-ghost btn-sm" id="btnShowTeamGuideModal" type="button" style="font-size:.8125rem;padding:3px 9px;">활용 가이드</button>' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<button class="btn btn-ghost btn-sm" id="btnShowTeamGuideModal" type="button" style="font-size:.8125rem;padding:3px 9px;">활용 가이드</button>' +
+          '<button class="edit-toggle '+(state.teamGoalEditMode?'on':'off')+'" id="teamGoalEditToggle" type="button" style="font-size:.8125rem;padding:3px 10px;">'+(state.teamGoalEditMode?'완료':'편집')+'</button>' +
+        '</div>' +
       '</div>' +
       '<div class="goal-chip-row" id="tgFilterChipRow" style="margin-bottom:12px;">' +
         '<button class="goal-chip'+(activeFilter==='all'?' active':'')+'" data-tgfilter="all" type="button">전체 보기 ('+myTeams.length+')</button>' +
@@ -9548,7 +9856,9 @@
     var cardsHtml = displayTeams.map(function(g){
       var canManage = canManageTeamGoals(g.id);
       var isOwner = groupState(g.id).myRole === 'owner';
-      var roleLabel = roleLabels[groupState(g.id).myRole || 'member'];
+      var gs = groupState(g.id);
+      var isPreviewGroup = g.id === 'g-workshop' || g.id === 'g-travel' || g.id === 'g0' || !!gs.isPreview;
+      var roleLabel = roleLabels[gs.myRole || 'member'];
       var goals = g.teamGoals || [];
       var teamLeaderDeps = {
         mockGroups: MOCK_GROUPS,
@@ -9570,6 +9880,12 @@
         ? OurgoalTeamLeaderCheck.renderMemberFeedbackBannerHtml(g, teamLeaderDeps)
         : '';
 
+      var previewBadgeHtml = isPreviewGroup ?
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:10px;padding:6px 10px;background:var(--gold-soft);border-radius:8px;">' +
+          '<span style="font-size:.8125rem;font-weight:700;color:var(--gold);">👀 체험용 예시 모임</span>' +
+          '<button class="btn btn-ghost btn-sm" data-tgleavepreview="'+g.id+'" type="button" style="font-size:.75rem;padding:2px 8px;color:var(--brand-strong);border-color:var(--red-line);background:var(--card);">체험 모임 나가기</button>' +
+        '</div>' : '';
+
       var leaderCrownHtml = isOwner ?
         '<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">' +
           '<span style="font-size:1.125rem;" title="내가 만든 모임 (모임장)"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18"/><path d="m4 8 4 5 4-7 4 7 4-5-1 10H5z"/></svg></span>' +
@@ -9587,30 +9903,71 @@
           var msPingBtn = (!canManage && window.OurgoalTeamLeaderCheck)
             ? OurgoalTeamLeaderCheck.renderMemberPingButtonHtml(g.id, 'milestone', m.id, m.title, m.status === 'done')
             : '';
+          var tasks = m.tasks || [];
+          var nT = tasks.length;
+          var nDone = tasks.filter(function(t){ return t.done; }).length;
+          var taskRows = tasks.map(function(t){
+            return '<div class="task-row" style="padding:4px 0;display:flex;align-items:center;gap:6px;">' +
+              '<div class="task-check'+(t.done?' done':'')+'"'+(canManage?' data-tgtoggletask="'+tg.id+':'+m.id+':'+t.id+'" style="cursor:pointer;"':'')+'>'+(t.done?'✓':'')+'</div>' +
+              (canManage
+                ? '<input class="task-title'+(t.done?' done-text':'')+'" data-tgtasktitle="'+tg.id+':'+m.id+':'+t.id+'" value="'+escapeHtml(t.title)+'" style="flex:1;font-size:.8125rem;">'
+                : '<span class="task-title'+(t.done?' done-text':'')+'" style="flex:1;font-size:.8125rem;">'+escapeHtml(t.title)+'</span>') +
+              (canManage ? '<button class="icon-btn" data-tgdeltask="'+tg.id+':'+m.id+':'+t.id+'" type="button" title="삭제" style="padding:2px 4px;">×</button>' : '') +
+            '</div>';
+          }).join('');
+
+          var taskToggleBtn = nT > 0 ?
+            '<button class="tg-task-toggle-btn" data-tgtoggletasks="'+tg.id+':'+m.id+'" type="button" style="background:transparent;border:none;color:var(--brand-strong);font-size:.75rem;font-weight:700;padding:2px 0;cursor:pointer;display:inline-flex;align-items:center;gap:3px;margin-top:2px;">' +
+              '세부 할 일 ' + nDone + '/' + nT + ' <span class="t-arrow">▼</span>' +
+            '</button>' : (canManage ? '<button class="tg-task-toggle-btn" data-tgaddtaskmodal="'+tg.id+':'+m.id+'" type="button" style="background:transparent;border:none;color:var(--ink-faint);font-size:.75rem;padding:2px 0;cursor:pointer;">+ 할 일 추가</button>' : '');
+
+          var tasksBox =
+            '<div class="tg-subtask-box" data-tgtaskbox="'+tg.id+':'+m.id+'" style="display:none;margin-top:6px;padding:6px 10px;background:var(--card2);border-radius:8px;border:1px dashed var(--rule);">' +
+              taskRows +
+              (canManage ? '<div data-tgaddtask="'+tg.id+':'+m.id+'" style="cursor:pointer;font-size:.75rem;color:var(--brand-strong);margin-top:4px;font-weight:700;">+ 세부 할 일 추가</div>' : '') +
+            '</div>';
+
+          var reorderBtns = (canManage && state.teamGoalEditMode) ?
+            '<div style="display:flex;align-items:center;gap:2px;margin-right:4px;">' +
+              '<button class="icon-btn" data-tgmup="'+g.id+':'+tg.id+':'+m.id+'" type="button" title="위로" style="font-size:.75rem;padding:1px 4px;">▲</button>' +
+              '<button class="icon-btn" data-tgmdown="'+g.id+':'+tg.id+':'+m.id+'" type="button" title="아래로" style="font-size:.75rem;padding:1px 4px;">▼</button>' +
+            '</div>' : '';
+
           return '<div class="ms-row" data-tgmid="'+m.id+'" style="padding:8px 10px;">' +
               '<div class="ms-main">' +
+                reorderBtns +
                 '<div class="ms-status '+m.status+'"'+(canManage?' data-tgcycle="1" style="cursor:pointer;"':'')+'>'+(m.status==='done'?'✓':'')+'</div>' +
-                (canManage
-                  ? '<input class="'+(m.status==='done'?'ms-title done-text':'ms-title')+'" data-tgmtitle="1" value="'+escapeHtml(m.title)+'">'
-                  : '<span class="'+(m.status==='done'?'ms-title done-text':'ms-title')+'" style="display:inline-block;">'+escapeHtml(m.title)+'</span>') +
+                '<div style="flex:1;min-width:0;">' +
+                  (canManage
+                    ? '<input class="'+(m.status==='done'?'ms-title done-text':'ms-title')+'" data-tgmtitle="1" value="'+escapeHtml(m.title)+'" style="'+(state.teamGoalEditMode?'border-bottom:1.5px solid var(--brand);background:var(--surface-2);':'')+'">'
+                    : '<span class="'+(m.status==='done'?'ms-title done-text':'ms-title')+'" style="display:inline-block;">'+escapeHtml(m.title)+'</span>') +
+                  taskToggleBtn +
+                '</div>' +
                 msPingBtn +
                 (canManage ? '<div class="ms-actions"><button class="icon-btn" data-tgmdel="1" aria-label="마일스톤 삭제">×</button></div>' : '') +
               '</div>' +
+              tasksBox +
               teamCommentsBlockHtml(g.id, m.id) +
             '</div>';
         }).join('');
         return '<div data-teamgoal="'+tg.id+'" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--rule);">' +
             '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">' +
               (canManage
-                ? '<input class="ms-title" data-tgtitle="1" value="'+escapeHtml(tg.title)+'" style="flex:1;">'
+                ? '<input class="ms-title" data-tgtitle="1" value="'+escapeHtml(tg.title)+'" style="flex:1;'+(state.teamGoalEditMode?'border-bottom:1.5px solid var(--brand);background:var(--surface-2);':'')+'">'
                 : '<b style="font-size:.875rem;">'+escapeHtml(tg.title)+'</b>') +
               tgPingBtn +
               (tg.dueDate ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);flex:0 0 auto;">'+dDay(tg.dueDate)+'</span>' : '') +
               (canManage ? '<button class="icon-btn" data-tgdel="1" aria-label="팀 목표 삭제">×</button>' : '') +
             '</div>' +
             '<div class="group-bar" style="margin-top:8px;"><span style="width:'+pct+'%;"></span></div>' +
-            '<div class="faint" style="font-size:.8125rem;margin:4px 0 8px;">마일스톤 '+done+'/'+total+' 완료</div>' +
-            '<div class="ms-list">'+msHtml+'</div>' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin:4px 0 8px;">' +
+              '<span class="faint" style="font-size:.8125rem;">마일스톤 '+done+'/'+total+' 완료</span>' +
+              '<div style="display:flex;align-items:center;gap:4px;">' +
+                (canManage ? '<button class="btn btn-ghost btn-sm" data-tgeditmodal="'+g.id+':'+tg.id+'" type="button" style="font-size:.75rem;padding:1px 8px;border-color:var(--brand);color:var(--brand-strong);">✏️ 상세 편집</button>' : '') +
+                '<button class="btn btn-ghost btn-sm tg-fold-btn" data-tgfoldlist="'+tg.id+'" type="button" style="font-size:.75rem;padding:1px 7px;border-color:var(--rule);">마일스톤 접기 ▲</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="ms-list" data-tgmslist="'+tg.id+'">'+msHtml+'</div>' +
             (canManage ? '<div class="add-ms-btn" data-tgaddms="1" style="margin-top:6px;">+ 마일스톤 추가</div>' : '') +
             teamCommentsBlockHtml(g.id, tg.id) +
           '</div>';
@@ -9658,6 +10015,7 @@
       return '<div class="card" data-teamcard="'+g.id+'" style="margin-bottom:16px;">' +
           leaderDashboardHtml +
           memberFeedbackBannerHtml +
+          previewBadgeHtml +
           '<div class="card-title-row" style="align-items:flex-start;margin-bottom:10px;">' +
             '<div style="flex:1;min-width:0;">' +
               leaderCrownHtml +
@@ -9688,7 +10046,10 @@
         openModal(
           renderTeamGoalsEmptyGuideHtml() +
           '<div class="modal-actions"><button class="btn btn-primary btn-block" id="closeTeamGuideModal" type="button">확인</button></div>',
-          function(sheet){ sheet.querySelector('#closeTeamGuideModal').addEventListener('click', closeModal); }
+          function(sheet){
+            sheet.querySelector('#closeTeamGuideModal').addEventListener('click', closeModal);
+            wireTeamGoalsGuideEvents(sheet);
+          }
         );
       });
     }
@@ -9753,6 +10114,70 @@
       });
     });
 
+    var editToggle = view.querySelector('#teamGoalEditToggle');
+    if(editToggle){
+      editToggle.addEventListener('click', async function(){
+        state.teamGoalEditMode = !state.teamGoalEditMode;
+        if(!state.teamGoalEditMode) await saveProfile();
+        renderTeamGoalsScreen();
+      });
+    }
+
+    view.querySelectorAll('[data-tgleavepreview]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var gid = btn.dataset.tgleavepreview;
+        var gs = groupState(gid);
+        gs.joined = false;
+        delete gs.isPreview;
+        await saveProfile();
+        toast('체험 모임에서 나갔어요');
+        renderTeamGoalsScreen();
+      });
+    });
+
+    view.querySelectorAll('[data-tgeditmodal]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var parts = btn.dataset.tgeditmodal.split(':');
+        openTeamGoalEditModal(parts[0], parts[1]);
+      });
+    });
+
+    view.querySelectorAll('[data-tgmup]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var parts = btn.dataset.tgmup.split(':');
+        var g = MOCK_GROUPS.find(function(x){ return x.id===parts[0]; });
+        var tg = g && (g.teamGoals||[]).find(function(x){ return x.id===parts[1]; });
+        if(!tg || !tg.milestones) return;
+        var idx = tg.milestones.findIndex(function(m){ return m.id===parts[2]; });
+        if(idx > 0){
+          var temp = tg.milestones[idx];
+          tg.milestones[idx] = tg.milestones[idx-1];
+          tg.milestones[idx-1] = temp;
+          triggerHaptic(10);
+          await saveProfile();
+          renderTeamGoalsScreen();
+        }
+      });
+    });
+
+    view.querySelectorAll('[data-tgmdown]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var parts = btn.dataset.tgmdown.split(':');
+        var g = MOCK_GROUPS.find(function(x){ return x.id===parts[0]; });
+        var tg = g && (g.teamGoals||[]).find(function(x){ return x.id===parts[1]; });
+        if(!tg || !tg.milestones) return;
+        var idx = tg.milestones.findIndex(function(m){ return m.id===parts[2]; });
+        if(idx >= 0 && idx < tg.milestones.length - 1){
+          var temp = tg.milestones[idx];
+          tg.milestones[idx] = tg.milestones[idx+1];
+          tg.milestones[idx+1] = temp;
+          triggerHaptic(10);
+          await saveProfile();
+          renderTeamGoalsScreen();
+        }
+      });
+    });
+
     view.querySelectorAll('[data-teamcard]').forEach(function(card){
       var gid = card.dataset.teamcard;
       var g = MOCK_GROUPS.find(function(x){ return x.id===gid; });
@@ -9796,6 +10221,87 @@
           if(mDelBtn) mDelBtn.addEventListener('click', async function(){
             tg.milestones = tg.milestones.filter(function(x){ return x.id!==mid; });
             await saveProfile(); renderTeamGoalsScreen();
+          });
+        });
+
+        tgEl.querySelectorAll('[data-tgfoldlist]').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            var id = btn.dataset.tgfoldlist;
+            var list = tgEl.querySelector('[data-tgmslist="'+id+'"]');
+            if(!list) return;
+            var isHidden = list.style.display === 'none';
+            list.style.display = isHidden ? 'block' : 'none';
+            btn.textContent = isHidden ? '마일스톤 접기 ▲' : '마일스톤 펼치기 ▼';
+          });
+        });
+        tgEl.querySelectorAll('[data-tgtoggletasks]').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            var key = btn.dataset.tgtoggletasks;
+            var box = tgEl.querySelector('[data-tgtaskbox="'+key+'"]');
+            if(!box) return;
+            var isHidden = box.style.display === 'none' || !box.style.display;
+            box.style.display = isHidden ? 'block' : 'none';
+            var arr = btn.querySelector('.t-arrow');
+            if(arr) arr.textContent = isHidden ? '▲' : '▼';
+          });
+        });
+        tgEl.querySelectorAll('[data-tgtoggletask]').forEach(function(el){
+          el.addEventListener('click', async function(){
+            var parts = el.dataset.tgtoggletask.split(':');
+            var m = tg.milestones.find(function(x){ return x.id===parts[1]; });
+            if(!m || !m.tasks) return;
+            var t = m.tasks.find(function(x){ return x.id===parts[2]; });
+            if(!t) return;
+            t.done = !t.done;
+            await saveProfile();
+            renderTeamGoalsScreen();
+          });
+        });
+        tgEl.querySelectorAll('[data-tgtasktitle]').forEach(function(inp){
+          inp.addEventListener('change', async function(){
+            var parts = inp.dataset.tgtasktitle.split(':');
+            var m = tg.milestones.find(function(x){ return x.id===parts[1]; });
+            if(!m || !m.tasks) return;
+            var t = m.tasks.find(function(x){ return x.id===parts[2]; });
+            if(!t) return;
+            t.title = inp.value.trim() || t.title;
+            await saveProfile();
+          });
+        });
+        tgEl.querySelectorAll('[data-tgdeltask]').forEach(function(btn){
+          btn.addEventListener('click', async function(){
+            var parts = btn.dataset.tgdeltask.split(':');
+            var m = tg.milestones.find(function(x){ return x.id===parts[1]; });
+            if(!m || !m.tasks) return;
+            m.tasks = m.tasks.filter(function(x){ return x.id!==parts[2]; });
+            await saveProfile();
+            renderTeamGoalsScreen();
+          });
+        });
+        tgEl.querySelectorAll('[data-tgaddtask]').forEach(function(btn){
+          btn.addEventListener('click', async function(){
+            var parts = btn.dataset.tgaddtask.split(':');
+            var title = prompt('추가할 세부 할 일을 입력하세요:');
+            if(!title || !title.trim()) return;
+            var m = tg.milestones.find(function(x){ return x.id===parts[1]; });
+            if(!m) return;
+            if(!m.tasks) m.tasks = [];
+            m.tasks.push({ id: uid('tgt'), title: title.trim(), done: false });
+            await saveProfile();
+            renderTeamGoalsScreen();
+          });
+        });
+        tgEl.querySelectorAll('[data-tgaddtaskmodal]').forEach(function(btn){
+          btn.addEventListener('click', async function(){
+            var parts = btn.dataset.tgaddtaskmodal.split(':');
+            var title = prompt('추가할 세부 할 일을 입력하세요:');
+            if(!title || !title.trim()) return;
+            var m = tg.milestones.find(function(x){ return x.id===parts[1]; });
+            if(!m) return;
+            if(!m.tasks) m.tasks = [];
+            m.tasks.push({ id: uid('tgt'), title: title.trim(), done: false });
+            await saveProfile();
+            renderTeamGoalsScreen();
           });
         });
       });
@@ -9864,20 +10370,227 @@
     });
   }
 
+  function getTeamGoalTemplatePreset(tpl){
+    var gid = tpl === 'workshop' ? 'g-workshop' : (tpl === 'travel' ? 'g-travel' : 'g0');
+    var g = MOCK_GROUPS.find(function(x){ return x.id === gid; }) || MOCK_GROUPS[0];
+    return {
+      icon: g.icon,
+      name: g.name,
+      desc: g.desc,
+      rule: g.rule,
+      max: String(g.maxMembers || 5),
+      cadence: g.cadence || '주 3회',
+      topic: g.topic || '',
+      teamGoals: g.teamGoals ? JSON.parse(JSON.stringify(g.teamGoals)) : []
+    };
+  }
+
+  function openTeamGoalEditModal(gid, tgid){
+    var g = MOCK_GROUPS.find(function(x){ return x.id===gid; });
+    if(!g) return;
+    var tg = (g.teamGoals||[]).find(function(x){ return x.id===tgid; });
+    if(!tg) return;
+
+    var msList = tg.milestones || [];
+    var msHtml = msList.map(function(m, idx){
+      var tasks = m.tasks || [];
+      var tRows = tasks.map(function(t){
+        return '<div class="task-row" style="display:flex;align-items:center;gap:6px;padding:3px 0;">' +
+          '<div class="task-check'+(t.done?' done':'')+'" data-medittaskcheck="'+m.id+':'+t.id+'" style="cursor:pointer;flex:0 0 auto;">'+(t.done?'✓':'')+'</div>' +
+          '<input class="task-title'+(t.done?' done-text':'')+'" data-medittasktitle="'+m.id+':'+t.id+'" value="'+escapeHtml(t.title)+'" style="flex:1;font-size:.8125rem;">' +
+          '<button class="icon-btn" data-medittaskdel="'+m.id+':'+t.id+'" type="button" title="할 일 삭제" style="padding:2px 4px;">×</button>' +
+        '</div>';
+      }).join('');
+
+      var curPrio = m.priority || 'med';
+      var prioLabel = curPrio === 'high' ? '높음' : (curPrio === 'low' ? '낮음' : '보통');
+      var prioTagHtml = '<span class="ms-priority-tag ms-priority-' + curPrio + '" data-meditcycleprio="' + m.id + '" title="우선순위 변경 (클릭)" style="cursor:pointer;">' + prioLabel + '</span>';
+
+      return '<div class="ms-row" style="margin-top:6px;padding:8px 10px;background:var(--card);border-radius:12px;border:1px solid var(--rule);">' +
+        '<div class="ms-main" style="align-items:flex-start;">' +
+          '<div class="ms-status '+m.status+'" data-meditcyclestatus="'+m.id+'" style="margin-top:2px;cursor:pointer;" title="상태 변경 (클릭)">'+(m.status==='done'?'✓':'')+'</div>' +
+          '<div style="flex:1;min-width:0;">' +
+            '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">' +
+              prioTagHtml +
+              (tasks.length > 0 ? '<span class="faint" style="font-size:.6875rem;background:var(--card2);padding:1px 6px;border-radius:6px;">'+tasks.filter(function(t){return t.done;}).length+'/'+tasks.length+' 완료</span>' : '') +
+            '</div>' +
+            '<input class="ms-title'+(m.status==='done'?' done-text':'')+'" data-meditmtitle="'+m.id+'" value="'+escapeHtml(m.title)+'" style="width:100%;font-size:.9375rem;">' +
+          '</div>' +
+          '<div class="ms-actions" style="display:flex;gap:3px;align-items:center;">' +
+            (idx > 0 ? '<button class="icon-btn" data-meditmove="'+m.id+':up" type="button" title="위로">▲</button>' : '') +
+            (idx < msList.length - 1 ? '<button class="icon-btn" data-meditmove="'+m.id+':down" type="button" title="아래로">▼</button>' : '') +
+            '<button class="icon-btn" data-meditdelms="'+m.id+'" type="button" title="마일스톤 삭제" style="color:var(--brand-strong);">×</button>' +
+          '</div>' +
+        '</div>' +
+        (tRows ? '<div class="task-list" style="margin-top:6px;padding:4px 8px;background:var(--surface-2);border-radius:8px;">'+tRows+'</div>' : '') +
+        '<div data-meditaddtask="'+m.id+'" style="cursor:pointer;margin-top:6px;font-size:.75rem;color:var(--brand-strong);font-weight:700;">+ 세부 할 일 추가</div>' +
+      '</div>';
+    }).join('');
+
+    var modalHtml = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
+      '<div style="display:flex;align-items:center;gap:6px;">' +
+        '<span style="font-size:1.4rem;">🎯</span>' +
+        '<div><h3 style="margin:0;font-size:1.1rem;">팀 목표 상세 편집</h3><div class="faint" style="font-size:.8125rem;">' + g.icon + ' ' + escapeHtml(g.name) + '</div></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="field" style="margin-bottom:8px;"><label style="font-weight:700;font-size:.8125rem;">팀 목표명</label><input id="modalTgTitleInput" type="text" value="'+escapeHtml(tg.title)+'" style="font-weight:700;"></div>' +
+    '<div class="field" style="margin-bottom:12px;"><label style="font-weight:700;font-size:.8125rem;">목표 마감일</label><input id="modalTgDueInput" type="date" value="'+(tg.dueDate||'')+'"></div>' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+      '<b style="font-size:.875rem;color:var(--ink);">마일스톤 & 세부 할 일 ('+msList.length+'개)</b>' +
+      '<button class="btn btn-ghost btn-sm" id="modalTgAddMsBtn" type="button" style="padding:2px 8px;font-size:.75rem;color:var(--brand-strong);border-color:var(--red-line);">+ 마일스톤 추가</button>' +
+    '</div>' +
+    '<div style="max-height:50vh;overflow-y:auto;padding-right:2px;margin-bottom:12px;">' +
+      (msHtml || '<p class="faint" style="text-align:center;padding:20px 0;">등록된 마일스톤이 없어요.</p>') +
+    '</div>' +
+    '<div class="modal-actions">' +
+      '<button class="btn btn-danger btn-sm" id="modalTgDelGoalBtn" type="button" style="flex:0 0 auto;">목표 삭제</button>' +
+      '<button class="btn btn-ghost btn-sm" id="modalTgCloseBtn" type="button" style="flex:1;">닫기</button>' +
+      '<button class="btn btn-primary btn-sm" id="modalTgSaveBtn" type="button" style="flex:1;">저장 완료</button>' +
+    '</div>';
+
+    openModal(modalHtml, function(sheet){
+      var refreshModal = async function(){ await saveProfile(); closeModal(); openTeamGoalEditModal(gid, tgid); };
+      sheet.addEventListener('change', async function(e){
+        var t = e.target;
+        if(t.matches('#modalTgTitleInput')){ tg.title = t.value.trim() || tg.title; }
+        else if(t.matches('#modalTgDueInput')){ tg.dueDate = t.value || null; }
+        else if(t.dataset.meditmtitle){
+          var m = (tg.milestones||[]).find(function(x){ return x.id===t.dataset.meditmtitle; });
+          if(m){ m.title = t.value.trim() || m.title; await saveProfile(); }
+        } else if(t.dataset.medittasktitle){
+          var p = t.dataset.medittasktitle.split(':');
+          var m = (tg.milestones||[]).find(function(x){ return x.id===p[0]; });
+          var tk = m && (m.tasks||[]).find(function(x){ return x.id===p[1]; });
+          if(tk){ tk.title = t.value.trim() || tk.title; await saveProfile(); }
+        }
+      });
+      sheet.addEventListener('click', async function(e){
+        var t = e.target;
+        if(t.closest('#modalTgCloseBtn')){ return closeModal(); }
+        if(t.closest('#modalTgAddMsBtn')){
+          (tg.milestones = tg.milestones || []).push({ id: uid('tgm'), title: '새 마일스톤', status: 'todo', priority: 'med', tasks: [] });
+          return refreshModal();
+        }
+        if(t.closest('#modalTgDelGoalBtn')){
+          if(!confirm('정말 "' + tg.title + '" 팀 목표를 삭제할까요?')) return;
+          g.teamGoals = (g.teamGoals||[]).filter(function(x){ return x.id !== tgid; });
+          await saveProfile(); toast('팀 목표를 삭제했어요'); closeModal(); return renderTeamGoalsScreen();
+        }
+        if(t.closest('#modalTgSaveBtn')){
+          var nt = (sheet.querySelector('#modalTgTitleInput').value||'').trim();
+          if(nt) tg.title = nt;
+          tg.dueDate = sheet.querySelector('#modalTgDueInput').value || null;
+          await saveProfile(); toast('팀 목표를 저장했어요'); closeModal(); return renderTeamGoalsScreen();
+        }
+        var stEl = t.closest('[data-meditcyclestatus]');
+        if(stEl){
+          var m = (tg.milestones||[]).find(function(x){ return x.id===stEl.dataset.meditcyclestatus; });
+          if(m){ m.status = ['todo','doing','done'][(['todo','doing','done'].indexOf(m.status)+1)%3]; triggerHaptic(10); return refreshModal(); }
+        }
+        var prEl = t.closest('[data-meditcycleprio]');
+        if(prEl){
+          var m = (tg.milestones||[]).find(function(x){ return x.id===prEl.dataset.meditcycleprio; });
+          if(m){ m.priority = ['med','high','low'][(['med','high','low'].indexOf(m.priority||'med')+1)%3]; triggerHaptic(10); return refreshModal(); }
+        }
+        var mvEl = t.closest('[data-meditmove]');
+        if(mvEl){
+          var p = mvEl.dataset.meditmove.split(':'), mid = p[0], dir = p[1];
+          var idx = (tg.milestones||[]).findIndex(function(x){ return x.id===mid; });
+          if(dir==='up' && idx > 0){ var tmp = tg.milestones[idx]; tg.milestones[idx]=tg.milestones[idx-1]; tg.milestones[idx-1]=tmp; return refreshModal(); }
+          if(dir==='down' && idx >= 0 && idx < tg.milestones.length-1){ var tmp = tg.milestones[idx]; tg.milestones[idx]=tg.milestones[idx+1]; tg.milestones[idx+1]=tmp; return refreshModal(); }
+        }
+        var delMsEl = t.closest('[data-meditdelms]');
+        if(delMsEl){ tg.milestones = (tg.milestones||[]).filter(function(x){ return x.id!==delMsEl.dataset.meditdelms; }); return refreshModal(); }
+        var chkEl = t.closest('[data-medittaskcheck]');
+        if(chkEl){
+          var p = chkEl.dataset.medittaskcheck.split(':');
+          var m = (tg.milestones||[]).find(function(x){ return x.id===p[0]; });
+          var tk = m && (m.tasks||[]).find(function(x){ return x.id===p[1]; });
+          if(tk){ tk.done = !tk.done; triggerHaptic(10); return refreshModal(); }
+        }
+        var delTkEl = t.closest('[data-medittaskdel]');
+        if(delTkEl){
+          var p = delTkEl.dataset.medittaskdel.split(':');
+          var m = (tg.milestones||[]).find(function(x){ return x.id===p[0]; });
+          if(m){ m.tasks = (m.tasks||[]).filter(function(x){ return x.id!==p[1]; }); return refreshModal(); }
+        }
+        var addTkEl = t.closest('[data-meditaddtask]');
+        if(addTkEl){
+          var title = prompt('추가할 세부 할 일을 입력하세요:');
+          if(!title || !title.trim()) return;
+          var m = (tg.milestones||[]).find(function(x){ return x.id===addTkEl.dataset.meditaddtask; });
+          if(m){ (m.tasks = m.tasks || []).push({ id: uid('tgt'), title: title.trim(), done: false }); return refreshModal(); }
+        }
+      });
+    });
+  }
+
   function promptNewTeamGoal(gid){
     var g = MOCK_GROUPS.find(function(x){ return x.id===gid; });
     openModal(
       '<h3>팀 목표 추가</h3>' +
-      '<div class="field"><label>목표 이름</label><input id="tgTitleInput" type="text" placeholder="예: 이번 달 전체 300회 인증 달성"></div>' +
+      '<div style="margin-bottom:12px;">' +
+        '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">⚡ 추천 팀 목표 템플릿</div>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="tplGoalWorkshop" style="font-size:.8125rem;padding:4px 8px;border-color:var(--red-line);color:var(--brand-strong);">🏢 회사 워크숍 준비</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="tplGoalTravel" style="font-size:.8125rem;padding:4px 8px;border-color:var(--teal);color:var(--teal);">✈️ 단체여행 올패스</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="tplGoalMarathon" style="font-size:.8125rem;padding:4px 8px;">🏃 마라톤 완주</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="tplGoalFitness" style="font-size:.8125rem;padding:4px 8px;">💪 누적 300회 운동</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="field"><label>목표 이름</label><input id="tgTitleInput" type="text" placeholder="예: 2026 전사 전략 워크숍 준비 및 실행"></div>' +
       '<div class="field"><label>마감일 (선택)</label><input id="tgDueInput" type="date"></div>' +
       '<div class="modal-actions"><button class="btn btn-ghost" id="tgCancel" type="button">취소</button><button class="btn btn-primary" id="tgSave" type="button">추가</button></div>',
       function(sheet){
+        var defaultMilestones = [];
+        var applyGoalTpl = function(title, days, msList){
+          sheet.querySelector('#tgTitleInput').value = title;
+          sheet.querySelector('#tgDueInput').value = daysFromNow(days);
+          defaultMilestones = msList || [];
+        };
+        var btnWS = sheet.querySelector('#tplGoalWorkshop');
+        if(btnWS) btnWS.onclick = function(){
+          applyGoalTpl('2026 하반기 전사 전략 워크숍 준비 및 실행', 21, [
+            { id: uid('tgm'), title: '1단계: 장소/숙소 대관 및 워크숍 예산안 최종 승인', status: 'done' },
+            { id: uid('tgm'), title: '2단계: 부서별 세션 아젠다 및 팀빌딩 프로그램 확정', status: 'doing' },
+            { id: uid('tgm'), title: '3단계: 워크숍 본행사 진행 및 팀별 액션플랜 도출·회고', status: 'todo' }
+          ]);
+        };
+        var btnTR = sheet.querySelector('#tplGoalTravel');
+        if(btnTR) btnTR.onclick = function(){
+          applyGoalTpl('낙오자 없는 제주 3박 4일 단체 여행 완성', 14, [
+            { id: uid('tgm'), title: '1단계: 항공권 발권 및 독채 숙소 예약 확정', status: 'done' },
+            { id: uid('tgm'), title: '2단계: 렌터카 배차, 일자별 드라이브 코스 및 맛집 리스트업', status: 'doing' },
+            { id: uid('tgm'), title: '3단계: 안전 여행 완주, 공용 경비 정산 및 베스트 샷 앨범 공유', status: 'todo' }
+          ]);
+        };
+        var btnMR = sheet.querySelector('#tplGoalMarathon');
+        if(btnMR) btnMR.onclick = function(){
+          applyGoalTpl('크루 전원 하프 마라톤 완주 챌린지', 30, [
+            { id: uid('tgm'), title: '1단계: 10km 완주 테스트 통과', status: 'done' },
+            { id: uid('tgm'), title: '2단계: 주간 20km 마일리지 및 페이스 훈련', status: 'doing' },
+            { id: uid('tgm'), title: '3단계: 하프 마라톤 대회 전원 완주', status: 'todo' }
+          ]);
+        };
+        var btnFT = sheet.querySelector('#tplGoalFitness');
+        if(btnFT) btnFT.onclick = function(){
+          applyGoalTpl('이번 달 모임 누적 300회 운동 인증 달성', 30, [
+            { id: uid('tgm'), title: '1단계: 상반월 150회 돌파', status: 'doing' },
+            { id: uid('tgm'), title: '2단계: 하반월 300회 완수 및 모임 정모', status: 'todo' }
+          ]);
+        };
+
         sheet.querySelector('#tgCancel').addEventListener('click', closeModal);
         sheet.querySelector('#tgSave').addEventListener('click', async function(){
           var title = sheet.querySelector('#tgTitleInput').value.trim();
           if(!title) return;
           if(!g.teamGoals) g.teamGoals = [];
-          g.teamGoals.push({ id: uid('tg'), title: title, dueDate: sheet.querySelector('#tgDueInput').value || null, milestones:[] });
+          g.teamGoals.push({
+            id: uid('tg'),
+            title: title,
+            dueDate: sheet.querySelector('#tgDueInput').value || null,
+            milestones: defaultMilestones.length ? defaultMilestones : []
+          });
           await saveProfile();
           closeModal();
           renderTeamGoalsScreen();
@@ -10587,9 +11300,9 @@
     var explanation = '';
 
     // 2. 줄글(desc)에서 열(columns) 명시적 추출
-    var colMatch = desc.match(/(?:열|속성|컬럼|항목)(?:은|는|을|를|으로)?\s*[:=]?\s*['"‘“]([^'"\n]+)['"’”]/i) ||
-                   desc.match(/(?:열|속성|컬럼|항목)(?:은|는|을|를|으로)?\s*[:=]?\s*([^\n]+?)(?:으로|로)?\s*(?:해줘|해주고|해주|하고|만들어|설정|지정|추가|구성)/i) ||
-                   desc.match(/(?:열|속성|컬럼)\s*[:=]\s*([^\n]+)/i);
+    var colMatch = desc.match(/(?:열|속성|컬럼|항목)(?:은|는|을|를|으로)?\s*[:=]?\s*['"‘“]([^'"\r\n]+)['"’”]/i) ||
+                   desc.match(/(?:열|속성|컬럼|항목)(?:은|는|을|를|으로)?\s*[:=]?\s*([^\r\n]+?)(?:으로|로)?\s*(?:해줘|해주고|해주|하고|만들어|설정|지정|추가|구성)/i) ||
+                   desc.match(/(?:열|속성|컬럼)\s*[:=]\s*([^\r\n]+)/i);
 
     if(colMatch && colMatch[1]){
       var rawCols = colMatch[1].split(/[,/·|、\t]/).map(function(s){
@@ -10604,7 +11317,7 @@
     }
 
     // 3. 줄글에서 개별 열 추가/제거 명령 파싱
-    var addColMatch = desc.match(/(?:열|속성|컬럼)(?:에)?\s*['"‘“]?([^'"`\n]+?)['"’”]?\s*(?:추가|넣어)/i);
+    var addColMatch = desc.match(/(?:열|속성|컬럼)(?:에)?\s*['"‘“]?([^'"`\r\n]+?)['"’”]?\s*(?:추가|넣어)/i);
     if(addColMatch && addColMatch[1]){
       var colToAdd = addColMatch[1].replace(/['"‘“’”]/g, '').trim();
       if(colToAdd && !columns.includes(colToAdd)){
@@ -10612,7 +11325,7 @@
         explanation += '[' + colToAdd + '] 열을 추가했습니다. ';
       }
     }
-    var delColMatch = desc.match(/(?:열|속성|컬럼)(?:에서)?\s*['"‘“]?([^'"`\n]+?)['"’”]?\s*(?:빼줘|삭제|제거)/i);
+    var delColMatch = desc.match(/(?:열|속성|컬럼)(?:에서)?\s*['"‘“]?([^'"`\r\n]+?)['"’”]?\s*(?:빼줘|삭제|제거)/i);
     if(delColMatch && delColMatch[1]){
       var colToDel = delColMatch[1].replace(/['"‘“’”]/g, '').trim();
       var dIdx = columns.indexOf(colToDel);
@@ -10666,7 +11379,7 @@
       explanation += '모의고사 문항별 정답률 및 오답원인 분석용 3개 행을 구성했습니다. ';
     }
     else {
-      var rowMatch = desc.match(/(?:행|종목|데이터)(?:은|는|으로)?\s*[:=]?\s*([^\n]+?)(?:으로|로)?\s*(?:해줘|만들어|채워|넣어)/i);
+      var rowMatch = desc.match(/(?:행|종목|데이터)(?:은|는|으로)?\s*[:=]?\s*([^\r\n]+?)(?:으로|로)?\s*(?:해줘|만들어|채워|넣어)/i);
       if(rowMatch && rowMatch[1]){
         var items = rowMatch[1].split(/[,/·|、]/).map(function(s){ return s.trim(); }).filter(Boolean);
         if(items.length){
@@ -11121,7 +11834,7 @@
         var addColBtn = sheet.querySelector('#customTplAddColBtn');
         if(addColBtn){
           addColBtn.onclick = function(){
-            var name = prompt('추가할 표 속성(열 이름)을 입력하세요:\n(예: 심박수, 소요시간, 다음액션, 칼로리 등)');
+            var name = prompt('추가할 표 속성(열 이름)을 입력하세요:\r\n(예: 심박수, 소요시간, 다음액션, 칼로리 등)');
             if(name && name.trim()){
               columns.push(name.trim());
               updateColWrap();
@@ -11935,14 +12648,14 @@
     var mdDivider = '| ' + columns.map(function(){ return '---'; }).join(' | ') + ' |';
     var mdRows = validRows.map(function(r){
       return '| ' + columns.map(function(c, i){ return (r[i] !== undefined ? String(r[i]).trim() : ''); }).join(' | ') + ' |';
-    }).join('\n');
-    var mdTable = mdHeader + '\n' + mdDivider + '\n' + mdRows;
+    }).join('\r\n');
+    var mdTable = mdHeader + '\r\n' + mdDivider + '\r\n' + mdRows;
 
     var tsvHeader = columns.join('\t');
     var tsvRows = validRows.map(function(r){
       return columns.map(function(c, i){ return (r[i] !== undefined ? String(r[i]).trim() : ''); }).join('\t');
-    }).join('\n');
-    var tsvTable = tsvHeader + '\n' + tsvRows;
+    }).join('\r\n');
+    var tsvTable = tsvHeader + '\r\n' + tsvRows;
 
     openModal(
       '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;">' +
@@ -12052,7 +12765,7 @@
     if(!columns || !columns.length) return;
     function escCsv(val){
       var s = (val === null || val === undefined) ? '' : String(val);
-      if(/[",\r\n]/.test(s)){
+      if(/[",\r\r\n]/.test(s)){
         return '"' + s.replace(/"/g, '""') + '"';
       }
       return s;
@@ -12062,7 +12775,7 @@
     (rows || []).forEach(function(r){
       lines.push(columns.map(function(_, i){ return escCsv(r[i] || ''); }).join(','));
     });
-    var csvText = '\uFEFF' + lines.join('\r\n');
+    var csvText = '\uFEFF' + lines.join('\r\r\n');
     var blob = new Blob([csvText], { type: 'text/csv;charset=utf-8;' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
@@ -12122,7 +12835,7 @@
       '</div>' +
       '<div class="field" style="margin-bottom:12px;">' +
         '<label>또는 텍스트 직접 붙여넣기 (쉼표 또는 탭 구분)</label>' +
-        '<textarea id="csvTextInput" rows="5" placeholder="운동종목,세트,횟수,무게\n벤치프레스,4,10,60kg\n스쿼트,5,5,100kg" style="width:100%;box-sizing:border-box;font-family:monospace;font-size:.8125rem;"></textarea>' +
+        '<textarea id="csvTextInput" rows="5" placeholder="운동종목,세트,횟수,무게\r\n벤치프레스,4,10,60kg\r\n스쿼트,5,5,100kg" style="width:100%;box-sizing:border-box;font-family:monospace;font-size:.8125rem;"></textarea>' +
       '</div>' +
       '<div class="modal-actions">' +
         '<button class="btn btn-ghost" id="csvCancelBtn" type="button">취소</button>' +
@@ -14032,8 +14745,8 @@
 
         var summaryText = validRows.map(function(r){
           return r.filter(Boolean).join(' | ');
-        }).join('\n');
-        var fullText = '[' + tplTitle + '] ' + validRows.length + '개 항목 기록\n' + (memo ? memo + '\n' : '') + summaryText;
+        }).join('\r\n');
+        var fullText = '[' + tplTitle + '] ' + validRows.length + '개 항목 기록\r\n' + (memo ? memo + '\r\n' : '') + summaryText;
 
         var recObj = {
           id: recId,
@@ -14066,7 +14779,7 @@
           if(existingSched){
             existingSched.title = schedTitle;
             existingSched.date = schedDateVal;
-            existingSched.note = '전문 템플릿 [' + tplTitle + '] 기록 연동\n' + (memo ? memo + '\n' : '') + summaryText;
+            existingSched.note = '전문 템플릿 [' + tplTitle + '] 기록 연동\r\n' + (memo ? memo + '\r\n' : '') + summaryText;
             existingSched.recordId = recId;
             existingSched.linkUrl = linkUrl;
             existingSched.isTemplateRecord = true;
@@ -14076,7 +14789,7 @@
               id: uid('sched'),
               title: schedTitle,
               date: schedDateVal,
-              note: '전문 템플릿 [' + tplTitle + '] 기록 연동\n' + (memo ? memo + '\n' : '') + summaryText,
+              note: '전문 템플릿 [' + tplTitle + '] 기록 연동\r\n' + (memo ? memo + '\r\n' : '') + summaryText,
               done: false,
               recordId: recId,
               linkUrl: linkUrl,
@@ -14454,17 +15167,17 @@
 
     var summaryLines = filteredRecs.slice(0, 15).map(function(r, idx){
       return (idx+1) + '. [' + dateKey(r.startAt) + '] (' + (r.theme||'일상') + ') ' + r.text.slice(0, 50);
-    }).join('\n');
+    }).join('\r\n');
 
-    var prompt = '당신은 목표 달성 및 라이프 코칭 수석 AI입니다. 아래 사용자의 특정 기간(' + startDate + ' ~ ' + endDate + ') 총 ' + filteredRecs.length + '건의 실천 기록을 종합 분석하여 건설적이고 따뜻한 코칭 리포트를 작성해주세요.\n\n' +
-      '[기간 요약]\n- 기간: ' + startDate + ' ~ ' + endDate + '\n- 총 기록 수: ' + filteredRecs.length + '건\n- 테마 분포: ' + JSON.stringify(themeCounts) + '\n\n' +
-      '[주요 기록 샘플]\n' + summaryLines + '\n\n' +
-      '다음 JSON 형식으로만 답하세요. 마크다운이나 코드블록 없이 순수 JSON만 출력하세요:\n' +
-      '{\n' +
-      '  "verdict": "탁월한 실천력 또는 꾸준한 루틴 또는 도약 필요 중 하나",\n' +
-      '  "comment": "이 기간 동안의 총평 및 격려 (2문장)",\n' +
-      '  "strengths": ["잘한 점 1", "잘한 점 2"],\n' +
-      '  "advice": ["개선 및 다음 기간 추천 액션 1", "추천 액션 2"]\n' +
+    var prompt = '당신은 목표 달성 및 라이프 코칭 수석 AI입니다. 아래 사용자의 특정 기간(' + startDate + ' ~ ' + endDate + ') 총 ' + filteredRecs.length + '건의 실천 기록을 종합 분석하여 건설적이고 따뜻한 코칭 리포트를 작성해주세요.\r\n\r\n' +
+      '[기간 요약]\r\n- 기간: ' + startDate + ' ~ ' + endDate + '\r\n- 총 기록 수: ' + filteredRecs.length + '건\r\n- 테마 분포: ' + JSON.stringify(themeCounts) + '\r\n\r\n' +
+      '[주요 기록 샘플]\r\n' + summaryLines + '\r\n\r\n' +
+      '다음 JSON 형식으로만 답하세요. 마크다운이나 코드블록 없이 순수 JSON만 출력하세요:\r\n' +
+      '{\r\n' +
+      '  "verdict": "탁월한 실천력 또는 꾸준한 루틴 또는 도약 필요 중 하나",\r\n' +
+      '  "comment": "이 기간 동안의 총평 및 격려 (2문장)",\r\n' +
+      '  "strengths": ["잘한 점 1", "잘한 점 2"],\r\n' +
+      '  "advice": ["개선 및 다음 기간 추천 액션 1", "추천 액션 2"]\r\n' +
       '}';
 
     var provider = settings.aiProvider || 'gemini';
@@ -14478,7 +15191,7 @@
       if(!res.ok) throw new Error('Gemini error');
       var data = await res.json();
       var raw = ((data.candidates||[])[0]||{}).content && data.candidates[0].content.parts
-        ? data.candidates[0].content.parts.map(function(p){ return p.text||''; }).join('\n') : '';
+        ? data.candidates[0].content.parts.map(function(p){ return p.text||''; }).join('\r\n') : '';
       var parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
       parsed.source = 'gemini';
       return parsed;
@@ -15143,15 +15856,15 @@
   /* ============ 테마별 기록 DB 다운로드 & 외부 AI 분석 프롬프트 번들 (TASK-OG-001) ============ */
   function getAIAnalysisPrompt(themeKey){
     var prompts = {
-      mind: '당신은 최고 수준의 심리상담 전문가이자 마인드셋 코치입니다. 아래 제공된 사용자의 [심리상태] 기록 데이터를 바탕으로 다음 3가지를 분석하고 피드백을 작성해주세요:\n1. 주요 감정 상태의 긍정/부정 추이 및 감정 기복 패턴 분석\n2. 스트레스 및 번아웃 유발 요인과 힐링/휴식 빈도 진단\n3. 회복탄력성과 심리적 안정감을 증진하기 위한 맞춤형 주간 멘탈케어 실천 방안 3가지',
-      study: '당신은 인지과학 기반의 학습 전략 및 자기주도학습 최고 전문가입니다. 아래 제공된 사용자의 [공부기록] 데이터를 바탕으로 다음 3가지를 분석하고 피드백을 작성해주세요:\n1. 총 학습 시간, 집중도 추이 및 주요 학습 주제별 시간 배분 분석\n2. 에빙하우스 망각 곡선에 기반한 최적의 복습 주기 및 지식 유지 전략 제안\n3. 목표 시험/성취를 달성하기 위한 구체적인 학습 루틴 최적화 가이드',
-      business: '당신은 성공적인 린 스타트업 및 비즈니스 전략 수석 컨설턴트입니다. 아래 제공된 사용자의 [사업기록] 데이터를 바탕으로 다음 3가지를 분석하고 피드백을 작성해주세요:\n1. 시간 및 노력 투입 대비 실질 비즈니스 임팩트(매출, 고객, 제품) 평가\n2. 업무 프로세스 상의 병목 지점 및 우선순위 집중도 분석\n3. 다음 마일스톤 달성을 위해 즉시 실행해야 할 전략적 핵심 액션 아이템 3가지',
-      schedule: '당신은 라이프스타일 및 인적 네트워크, 시간관리 수석 컨설턴트입니다. 아래 제공된 사용자의 [약속기록] 데이터를 바탕으로 다음 3가지를 분석하고 피드백을 작성해주세요:\n1. 대인관계 및 모임 일정의 성격 분포(비즈니스, 친목, 가족 등)와 에너지 소비 분석\n2. 일정 관리의 효율성과 개인 집중 시간 확보 밸런스 평가\n3. 건강한 인간관계와 생산적인 시간 관리를 양립하기 위한 개선 가이드',
-      workout: '당신은 국가대표 스포츠 과학 전문 트레이너이자 임상 영양 코치입니다. 아래 제공된 사용자의 [운동기록] 데이터를 바탕으로 다음 3가지를 분석하고 피드백을 작성해주세요:\n1. 운동 종목(유산소, 웨이트, 스트레칭 등)의 밸런스 및 주간 운동 빈도 평가\n2. 점진적 과부하와 충분한 신체 회복 주기가 잘 지켜지고 있는지 진단\n3. 지속 가능한 건강과 신체적 목표 달성을 위한 차주 맞춤형 트레이닝 & 컨디셔닝 조언',
+      mind: '당신은 최고 수준의 심리상담 전문가이자 마인드셋 코치입니다. 아래 제공된 사용자의 [심리상태] 기록 데이터를 바탕으로 다음 3가지를 분석하고 피드백을 작성해주세요:\r\n1. 주요 감정 상태의 긍정/부정 추이 및 감정 기복 패턴 분석\r\n2. 스트레스 및 번아웃 유발 요인과 힐링/휴식 빈도 진단\r\n3. 회복탄력성과 심리적 안정감을 증진하기 위한 맞춤형 주간 멘탈케어 실천 방안 3가지',
+      study: '당신은 인지과학 기반의 학습 전략 및 자기주도학습 최고 전문가입니다. 아래 제공된 사용자의 [공부기록] 데이터를 바탕으로 다음 3가지를 분석하고 피드백을 작성해주세요:\r\n1. 총 학습 시간, 집중도 추이 및 주요 학습 주제별 시간 배분 분석\r\n2. 에빙하우스 망각 곡선에 기반한 최적의 복습 주기 및 지식 유지 전략 제안\r\n3. 목표 시험/성취를 달성하기 위한 구체적인 학습 루틴 최적화 가이드',
+      business: '당신은 성공적인 린 스타트업 및 비즈니스 전략 수석 컨설턴트입니다. 아래 제공된 사용자의 [사업기록] 데이터를 바탕으로 다음 3가지를 분석하고 피드백을 작성해주세요:\r\n1. 시간 및 노력 투입 대비 실질 비즈니스 임팩트(매출, 고객, 제품) 평가\r\n2. 업무 프로세스 상의 병목 지점 및 우선순위 집중도 분석\r\n3. 다음 마일스톤 달성을 위해 즉시 실행해야 할 전략적 핵심 액션 아이템 3가지',
+      schedule: '당신은 라이프스타일 및 인적 네트워크, 시간관리 수석 컨설턴트입니다. 아래 제공된 사용자의 [약속기록] 데이터를 바탕으로 다음 3가지를 분석하고 피드백을 작성해주세요:\r\n1. 대인관계 및 모임 일정의 성격 분포(비즈니스, 친목, 가족 등)와 에너지 소비 분석\r\n2. 일정 관리의 효율성과 개인 집중 시간 확보 밸런스 평가\r\n3. 건강한 인간관계와 생산적인 시간 관리를 양립하기 위한 개선 가이드',
+      workout: '당신은 국가대표 스포츠 과학 전문 트레이너이자 임상 영양 코치입니다. 아래 제공된 사용자의 [운동기록] 데이터를 바탕으로 다음 3가지를 분석하고 피드백을 작성해주세요:\r\n1. 운동 종목(유산소, 웨이트, 스트레칭 등)의 밸런스 및 주간 운동 빈도 평가\r\n2. 점진적 과부하와 충분한 신체 회복 주기가 잘 지켜지고 있는지 진단\r\n3. 지속 가능한 건강과 신체적 목표 달성을 위한 차주 맞춤형 트레이닝 & 컨디셔닝 조언',
       daily: '당신은 전인적 라이프 코칭 전문가입니다. 사용자의 일상 기록을 분석하여 삶의 활력과 작은 성취들의 의미를 짚어주고, 더 나은 하루를 만들기 위한 따뜻한 조언을 작성해주세요.'
     };
     var base = prompts[themeKey] || '당신은 전인적 라이프 코칭 및 데이터 분석 전문가입니다. 아래 사용자의 5대 라이프 테마(심리, 공부, 사업, 약속, 운동) 기록 데이터를 바탕으로 삶의 균형 상태를 진단하고, 테마별 집중도 분석 및 더 조화롭고 몰입도 높은 삶을 위한 실행 가능한 가이드를 작성해주세요.';
-    return '[외부 AI 분석 프롬프트 (ChatGPT / Claude 붙여넣기용)]\n' + base;
+    return '[외부 AI 분석 프롬프트 (ChatGPT / Claude 붙여넣기용)]\r\n' + base;
   }
 
   function buildCSV(recordsToExport){
@@ -15168,9 +15881,9 @@
     return rows.map(function(row){
       return row.map(function(cell){
         var s = String(cell==null?'':cell).replace(/"/g,'""');
-        return /[",\n]/.test(s) ? '"'+s+'"' : s;
+        return /[",\r\n]/.test(s) ? '"'+s+'"' : s;
       }).join(',');
-    }).join('\n');
+    }).join('\r\n');
   }
 
   /* ============ RFC 5545 표준 iCalendar (.ics) 생성 순수 함수 (TASK-BG-11) ============ */
@@ -15198,7 +15911,7 @@
         .replace(/\\/g, '\\\\')
         .replace(/;/g, '\\;')
         .replace(/,/g, '\\,')
-        .replace(/\r?\n/g, '\\n');
+        .replace(/\r?\r\n/g, '\\r\n');
     }
 
     function foldLine(line){
@@ -15211,7 +15924,7 @@
         rest = rest.slice(74);
       }
       if(rest.length > 0) parts.push(' ' + rest);
-      return parts.join('\r\n');
+      return parts.join('\r\r\n');
     }
 
     var lines = [
@@ -15231,7 +15944,7 @@
       var gTitle = g ? g.title : (r.category && typeof TOPICS !== 'undefined' && TOPICS[r.category] ? TOPICS[r.category].label : '아워골 체크인');
       var themeLabel = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[r.theme]) ? RECORD_THEMES[r.theme].label : (r.theme || '일상');
       var summary = '[' + themeLabel + '] ' + gTitle + (r.text ? ' - ' + r.text : '');
-      var desc = '목표: ' + gTitle + '\\n테마: ' + themeLabel + (r.subTheme ? ' (' + r.subTheme + ')' : '') + '\\n기록 내용: ' + (r.text || '') + '\\n아워골 앱에서 확인: https://ourgoal-app.vercel.app';
+      var desc = '목표: ' + gTitle + '\\r\n테마: ' + themeLabel + (r.subTheme ? ' (' + r.subTheme + ')' : '') + '\\r\n기록 내용: ' + (r.text || '') + '\\r\n아워골 앱에서 확인: https://ourgoal-app.vercel.app';
       var uid = (r.id || ('rec-' + idx)) + '@ourgoal-app.vercel.app';
 
       lines.push('BEGIN:VEVENT');
@@ -15246,17 +15959,17 @@
     });
 
     lines.push('END:VCALENDAR');
-    return lines.join('\r\n');
+    return lines.join('\r\r\n');
   }
 
   function buildMarkdownExport(recordsToExport, themeKey, includePrompt){
     var thObj = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[themeKey]) ? RECORD_THEMES[themeKey] : null;
     var themeTitle = thObj ? thObj.label : (themeKey === 'all' ? '전체 테마' : '기록');
-    var promptHeader = includePrompt ? (getAIAnalysisPrompt(themeKey) + '\n\n---\n\n### [데이터셋: ' + themeTitle + ' 기록 목록]\n\n') : '';
+    var promptHeader = includePrompt ? (getAIAnalysisPrompt(themeKey) + '\r\n\r\n---\r\n\r\n### [데이터셋: ' + themeTitle + ' 기록 목록]\r\n\r\n') : '';
 
-    var lines = [promptHeader + '# 📊 아워골 ' + themeTitle + ' 기록 내보내기\n'];
+    var lines = [promptHeader + '# 📊 아워골 ' + themeTitle + ' 기록 내보내기\r\n'];
     lines.push('- 추출 일시: ' + nowISO());
-    lines.push('- 총 기록 수: ' + recordsToExport.length + '건\n');
+    lines.push('- 총 기록 수: ' + recordsToExport.length + '건\r\n');
     lines.push('| 날짜 | 시간 | 소요 | 테마 | 소주제 | 내용 |');
     lines.push('|---|---|---|---|---|---|');
 
@@ -15264,11 +15977,11 @@
       var mins = r.endAt ? (Math.round((new Date(r.endAt)-new Date(r.startAt))/60000) + '분') : (r.type==='note'?'메모':'진행중');
       var th = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[r.theme]) ? RECORD_THEMES[r.theme].label : (r.theme || '일상');
       var subTh = r.subTheme || '-';
-      var safeText = (r.text || '').replace(/\|/g, '\\|').replace(/\n/g, ' ');
+      var safeText = (r.text || '').replace(/\|/g, '\\|').replace(/\r?\n|\r/g, ' ');
       lines.push('| ' + dateKey(r.startAt) + ' | ' + fmtTime(r.startAt) + ' | ' + mins + ' | ' + th + ' | ' + subTh + ' | ' + safeText + ' |');
     });
 
-    return lines.join('\n');
+    return lines.join('\r\n');
   }
 
   function openExportThemeModal(){
@@ -15407,7 +16120,7 @@
             // CSV
             var csvStr = '\uFEFF' + buildCSV(target.recs);
             if(withPrompt){
-              var promptComment = '# ' + getAIAnalysisPrompt(target.themeKey).replace(/\n/g, '\n# ') + '\n\n';
+              var promptComment = '# ' + getAIAnalysisPrompt(target.themeKey).replace(/\r\n/g, '\r\n# ') + '\r\n\r\n';
               csvStr = '\uFEFF' + promptComment + buildCSV(target.recs);
             }
             download(fnameBase + '.csv', csvStr, 'text/csv;charset=utf-8');
@@ -15478,6 +16191,54 @@
   }
 
   var MOCK_GROUPS = [
+    { id:'g-workshop', icon:'🏢', name:'2026 하반기 전략 워크숍 TF', topic:'career/기획·전략', region:'서울 강남구', members:6, maxMembers:10, roomType:'small', inviteCode:'WORK-TF10', ownerName:'상민', progress:65, cadence:'주 3회', endDate:daysFromNow(21),
+      desc:'회사 워크숍 장소·예산 확정부터 부서별 세션 발표, 팀빌딩 레크리에이션까지 성공적으로 완주해요', rule:'주 3회 담당 TF별 준비 체크리스트 및 마일스톤 인증',
+      weeklyTarget:18, weeklyDone:12,
+      roster:[{n:'상민',c:4},{n:'민혁',c:3},{n:'지우',c:3},{n:'태성',c:2}],
+      activity:['상민님이 워크숍 대관 계약서 및 타임테이블을 공유했어요','지우님이 팀빌딩 아이스브레이킹 게임 기획안을 올렸어요'],
+      verifications: [
+        { id:'v-ws-1', userName:'상민', userAvatar:'🏢', time:'오늘 10:30', photoUrl:'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400&auto=format&fit=crop&q=80', note:'워크숍 행사장 답사 및 빔프로젝터/음향 장비 체크 완료! 차질 없이 준비 중입니다 💼', cheers: 12 }
+      ],
+      teamGoals:[
+        { id:'tg-ws-1', title:'2026 하반기 전사 전략 워크숍 준비 및 실행', dueDate:daysFromNow(21), milestones:[
+          { id:'tgm-ws-1a', title:'1단계: 장소/숙소 대관 및 워크숍 예산안 최종 승인', status:'done', tasks:[
+            { id:'t-ws-1a1', title:'행사장 대관 계약 체결 및 음향·빔프로젝터 점검', done:true },
+            { id:'t-ws-1a2', title:'시간대별 세션 및 휴식 타임테이블 배포', done:true }
+          ] },
+          { id:'tgm-ws-1b', title:'2단계: 부서별 세션 아젠다 및 팀빌딩 프로그램 확정', status:'doing', tasks:[
+            { id:'t-ws-1b1', title:'부서별 세션 발표자료(1page) 취합하기', done:true },
+            { id:'t-ws-1b2', title:'팀빌딩 아이스브레이킹 게임 3종 및 상품 준비', done:false }
+          ] },
+          { id:'tgm-ws-1c', title:'3단계: 워크숍 본행사 진행 및 팀별 액션플랜 도출·회고', status:'todo', tasks:[
+            { id:'t-ws-1c1', title:'워크숍 본행사 진행 및 타운홀 비전 공유', done:false },
+            { id:'t-ws-1c2', title:'결과 보고서 작성 및 2027 후속 액션플랜 도출', done:false }
+          ] }
+        ] }
+      ] },
+    { id:'g-travel', icon:'✈️', name:'제주 3박4일 단체 힐링여행', topic:'hobby/여행·캠핑', region:'제주', members:4, maxMembers:6, roomType:'small', inviteCode:'TRIP-JEJU', ownerName:'유진', progress:70, cadence:'주 3회', endDate:daysFromNow(14),
+      desc:'낙오자 없이 전원 만족하는 제주 단체여행! 항공·숙소·맛집·드라이브 코스 완벽 준비', rule:'주 3회 여행 준비 미션(동선 투표, 렌터카 예약, 짐 챙기기) 인증',
+      weeklyTarget:12, weeklyDone:8,
+      roster:[{n:'유진',c:3},{n:'서연',c:3},{n:'현우',c:2}],
+      activity:['유진님이 애월 독채 펜션 예약 영수증을 인증했어요','서연님이 일자별 맛집 지도 동선을 완성했어요'],
+      verifications: [
+        { id:'v-tr-1', userName:'유진', userAvatar:'✈️', time:'오늘 09:15', photoUrl:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&auto=format&fit=crop&q=80', note:'제주 오션뷰 숙소 예약 완료! 바비큐 파티 준비물도 체크했습니다 🌴', cheers: 10 }
+      ],
+      teamGoals:[
+        { id:'tg-tr-1', title:'낙오자 없는 제주 3박 4일 단체 여행 완성', dueDate:daysFromNow(14), milestones:[
+          { id:'tgm-tr-1a', title:'1단계: 항공권 발권 및 독채 숙소 예약 확정', status:'done', tasks:[
+            { id:'t-tr-1a1', title:'김포-제주 왕복 항공권 전원 발권 완료', done:true },
+            { id:'t-tr-1a2', title:'애월 오션뷰 독채 펜션 예약 및 바비큐 확정', done:true }
+          ] },
+          { id:'tgm-tr-1b', title:'2단계: 렌터카 배차, 일자별 드라이브 코스 및 맛집 리스트업', status:'doing', tasks:[
+            { id:'t-tr-1b1', title:'7인승 카니발 렌터카 배차 및 제2운전자 사전 등록', done:true },
+            { id:'t-tr-1b2', title:'일자별 드라이브 코스 및 흑돼지 맛집 단체석 예약', done:false }
+          ] },
+          { id:'tgm-tr-1c', title:'3단계: 안전 여행 완주, 공용 경비 정산 및 베스트 샷 앨범 공유', status:'todo', tasks:[
+            { id:'t-tr-1c1', title:'여행 필수품/상비약 체크리스트 점검 완료', done:false },
+            { id:'t-tr-1c2', title:'모임통장 공용 경비 1/N 정산 및 앨범 공유', done:false }
+          ] }
+        ] }
+      ] },
     { id:'g-marathon-pair', icon:'🏃', name:'친구와 1:1 마라톤 완주방', topic:'health/러닝·마라톤', region:'온라인', members:1, maxMembers:2, roomType:'pair', inviteCode:'RUN-PAIR2', ownerName:'민혁', progress:50, cadence:'주 3회', endDate:daysFromNow(30),
       desc:'친구와 둘이서 1:1로 서로의 페이스메이커가 되어 마라톤 풀코스/하프 완주를 달성해요', rule:'주 3회 러닝 거리·페이스 또는 완주 훈련 인증샷 업로드',
       weeklyTarget:6, weeklyDone:3,
@@ -15762,7 +16523,7 @@
       });
       var addBtn = subGrid.querySelector('[data-addsub]');
       if(addBtn) addBtn.addEventListener('click', function(){
-        var input = window.prompt('추가할 세부 카테고리 이름을 적어주세요 (최대 20자)\n대분류: '+TOPICS[major].label);
+        var input = window.prompt('추가할 세부 카테고리 이름을 적어주세요 (최대 20자)\r\n대분류: '+TOPICS[major].label);
         if(input===null) return;
         var name = normalizeSubName(input);
         if(!name){ toast('이름을 확인해주세요'); return; }
@@ -15836,7 +16597,7 @@
     ctx.restore();
   }
   function buildInviteLinkSuffix(goalId){
-    return '\n\n'+SHARE_DOMAIN+'?ref='+encodeURIComponent(state.profile.id)+(goalId ? '&goal='+encodeURIComponent(goalId) : '');
+    return '\r\n\r\n'+SHARE_DOMAIN+'?ref='+encodeURIComponent(state.profile.id)+(goalId ? '&goal='+encodeURIComponent(goalId) : '');
   }
   function scRoundRect(ctx, x, y, w, h, r){
     ctx.beginPath();
@@ -15989,7 +16750,7 @@
     var pickedMs = g.milestones.filter(function(m){ return sel.ms[m.id]; });
     if(pickedMs.length) lines.push('마일스톤: '+pickedMs.map(function(m){ return m.title; }).join(', '));
     if(typeof days==='number') lines.push(days+'일째 진행 중');
-    var base = lines.join('\n') || ('아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪');
+    var base = lines.join('\r\n') || ('아워골에서 "'+g.title+'" '+pct+'% 달성 중! 💪');
     return base + buildInviteLinkSuffix(g.id);
   }
 
@@ -17261,7 +18022,7 @@
     '</div>';
   }
 
-  function promptNewGroup(body){
+  function promptNewGroup(body, initialPreset){
     var myGoals = state.profile.goals;
     openModal(
       '<h3>새 모임 · 함께 목표 방 만들기</h3>' +
@@ -17269,6 +18030,8 @@
       '<div style="margin-bottom:12px;">' +
         '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">1초 추천 방 템플릿</div>' +
         '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="tplWorkshop" style="font-size:.8125rem;padding:4px 8px;border-color:var(--brand-strong);color:var(--brand-strong);">🏢 회사 워크숍 TF</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="tplTravel" style="font-size:.8125rem;padding:4px 8px;border-color:var(--teal);color:var(--teal);">✈️ 단체여행 플래너</button>' +
           '<button type="button" class="btn btn-ghost btn-sm" id="tplMarathonPair" style="font-size:.8125rem;padding:4px 8px;border-color:var(--red-line);color:var(--brand-strong);">1:1 마라톤 완주방</button>' +
           '<button type="button" class="btn btn-ghost btn-sm" id="tplMarathonSmall" style="font-size:.8125rem;padding:4px 8px;border-color:var(--rule);color:var(--ink);">5인 소그룹 마라톤방</button>' +
           '<button type="button" class="btn btn-ghost btn-sm" id="tplMorningPair" style="font-size:.8125rem;padding:4px 8px;">1:1 기상 완주방</button>' +
@@ -17320,13 +18083,21 @@
 
         // ⚡ 1초 추천 방 템플릿 핸들러
         var applyPreset = function(preset){
-          sheet.querySelector('#grpIcon').value = preset.icon;
-          sheet.querySelector('#grpName').value = preset.name;
-          sheet.querySelector('#grpDesc').value = preset.desc;
-          sheet.querySelector('#grpRule').value = preset.rule;
-          sheet.querySelector('#grpMaxMembers').value = preset.max;
-          sheet.querySelector('#grpCadence').value = preset.cadence;
-          gTopicRef.value = preset.topic;
+          sheet.querySelector('#grpIcon').value = preset.icon || '🔥';
+          sheet.querySelector('#grpName').value = preset.name || '';
+          sheet.querySelector('#grpDesc').value = preset.desc || '';
+          sheet.querySelector('#grpRule').value = preset.rule || '';
+          sheet.querySelector('#grpMaxMembers').value = preset.max || '5';
+          sheet.querySelector('#grpCadence').value = preset.cadence || '주 3회';
+          if(preset.topic) gTopicRef.value = preset.topic;
+        };
+        var btnWS = sheet.querySelector('#tplWorkshop');
+        if(btnWS) btnWS.onclick = function(){
+          applyPreset({ icon:'🏢', name:'하반기 전사 전략 워크숍 TF', desc:'워크숍 장소 선정부터 프로그램·팀빌딩 기획까지 함께 완주해요', rule:'주 3회 워크숍 준비 체크리스트 및 액션 아이템 인증', max:'10', cadence:'주 3회', topic:'career/기획·전략' });
+        };
+        var btnTR = sheet.querySelector('#tplTravel');
+        if(btnTR) btnTR.onclick = function(){
+          applyPreset({ icon:'✈️', name:'설레는 단체여행 완벽 준비 크루', desc:'항공·숙소 예약부터 현장 동선 및 경비 정산까지 똑소리나게 준비해요', rule:'여행 일정 투표·준비물 챙기기·현장 미션 인증', max:'5', cadence:'주 3회', topic:'hobby/여행·캠핑' });
         };
         var btnMP = sheet.querySelector('#tplMarathonPair');
         if(btnMP) btnMP.onclick = function(){
@@ -17344,6 +18115,7 @@
         if(btnStudy) btnStudy.onclick = function(){
           applyPreset({ icon:'📚', name:'5인 몰입 스터디 완주방', desc:'하루 1시간 이상 집중 공부를 인증하며 시험/자격증을 정복하는 소그룹', rule:'일일 타이머 몰입 시간 또는 학습 필기 인증', max:'5', cadence:'매일', topic:'study/자격증·시험' });
         };
+        if(initialPreset) applyPreset(initialPreset);
 
         sheet.querySelector('#grpCancel').addEventListener('click', closeModal);
         sheet.querySelector('#grpSave').addEventListener('click', async function(){
@@ -17377,7 +18149,7 @@
             weeklyDone: 0,
             roster: [{ n: state.profile.displayName, c: 0, me: true }],
             activity: [state.profile.displayName + '님이 방을 개설했어요! 친구를 초대해보세요.'],
-            teamGoals: []
+            teamGoals: (initialPreset && initialPreset.teamGoals) ? JSON.parse(JSON.stringify(initialPreset.teamGoals)) : []
           };
           MOCK_GROUPS.unshift(newGroup);
           groupState(gid).joined = true;
@@ -17385,9 +18157,17 @@
           await saveProfile();
           closeModal();
           state.activeGroupId = gid;
-          renderCommGroups(body);
-          toast('방을 개설했어요! 친구를 초대해보세요 💌');
-          openPeerInviteSuccessModal(newGroup);
+          if(initialPreset && initialPreset.teamGoals && initialPreset.teamGoals.length){
+            state.activeTab = 'goals';
+            state.goalsSubTab = 'team';
+            state.teamGoalFilterGid = gid;
+            renderGoalsScreen();
+            toast('"' + newGroup.name + '" 모임을 템플릿으로 개설했어요! 내가 모임장이에요 👑');
+          } else {
+            renderCommGroups(body);
+            toast('방을 개설했어요! 친구를 초대해보세요 💌');
+            openPeerInviteSuccessModal(newGroup);
+          }
         });
       }
     );
@@ -17435,11 +18215,11 @@
     var name = senderName || '친구';
     var isPair = group.maxMembers === 2 || group.roomType === 'pair';
     var roomTypeLabel = isPair ? '1:1 페어 완주방' : ((group.maxMembers || 5) + '인 소그룹 완주방');
-    return '[아워골] ' + name + '님이 「' + (group.name || '함께 목표 방') + '」에 초대했어요! 🏃\n\n' +
-      '방 유형: ' + roomTypeLabel + '\n' +
-      '목표: ' + (group.desc || '함께 목표 달성하기') + '\n' +
-      '인증 규칙: ' + (group.rule || '매일/주간 기록 인증') + '\n\n' +
-      '앱 설치 없이 웹에서 바로 초대 수락하고 함께 시작할 수 있어요!\n' +
+    return '[아워골] ' + name + '님이 「' + (group.name || '함께 목표 방') + '」에 초대했어요! 🏃\r\n\r\n' +
+      '방 유형: ' + roomTypeLabel + '\r\n' +
+      '목표: ' + (group.desc || '함께 목표 달성하기') + '\r\n' +
+      '인증 규칙: ' + (group.rule || '매일/주간 기록 인증') + '\r\n\r\n' +
+      '앱 설치 없이 웹에서 바로 초대 수락하고 함께 시작할 수 있어요!\r\n' +
       '참여 링크: ' + inviteUrl;
   }
 
