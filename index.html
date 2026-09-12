@@ -1593,7 +1593,7 @@
       if(/unsupported provider|provider is not enabled|not enabled/i.test(msg)){
         openModal(
           '<div style="text-align:center;padding:12px 6px;">' +
-            '<div style="font-size:2.2rem;margin-bottom:8px;">🔒</div>' +
+            '<div style="font-size:2.2rem;margin-bottom:8px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>' +
             '<h3 style="margin:0 0 8px;font-size:1.1rem;font-weight:700;">' + (provider === 'kakao' ? '카카오' : '구글') + ' 로그인 심사 준비 중</h3>' +
             '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.55;margin:0 0 16px;">공식 비즈니스 앱 콘솔 심사 대기 중입니다.<br><b>이메일 또는 닉네임으로 1초 만에</b> 바로 시작하실 수 있어요!</p>' +
             '<button class="btn btn-primary" id="fallbackQuickAuthBtn" style="width:100%;padding:12px;font-weight:700;border-radius:12px;background:var(--brand);border:none;">1초 빠른 시작하기</button>' +
@@ -2157,9 +2157,9 @@
     openModal(
       '<h3>첫 목표를 만들었어요!</h3>' +
       '<p class="muted" style="margin:-6px 0 14px;">혼자보다 함께면 오래 갈 수 있어요. 소통 탭에서 이런 걸 할 수 있어요.</p>' +
-      '<div class="mission-card"><div class="mi">🎁</div><div><b>마니또</b><span>비슷한 목표를 가진 사람과 익명으로 매칭돼 서로 응원해요</span></div></div>' +
-      '<div class="mission-card"><div class="mi">👥</div><div><b>모임</b><span>같은 목표의 사람들과 함께 인증하고 랭킹을 확인해요</span></div></div>' +
-      '<div class="mission-card"><div class="mi">📣</div><div><b>공유</b><span>내 진행 상황을 카드 이미지로 만들어 SNS에 자랑해요</span></div></div>' +
+      '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v8h14v-8"/><path d="M12 8v12"/><path d="M12 8c-2-3-6-3-6-1s3 1 6 1c3 0 6 1 6-1s-4-2-6 1z"/></svg></div><div><b>마니또</b><span>비슷한 목표를 가진 사람과 익명으로 매칭돼 서로 응원해요</span></div></div>' +
+      '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div><b>모임</b><span>같은 목표의 사람들과 함께 인증하고 랭킹을 확인해요</span></div></div>' +
+      '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15 9a4 4 0 0 1 0 6"/><path d="M18 6a8 8 0 0 1 0 12"/></svg></div><div><b>공유</b><span>내 진행 상황을 카드 이미지로 만들어 SNS에 자랑해요</span></div></div>' +
       '<div class="modal-actions"><button class="btn btn-ghost" id="tourSkip" type="button">나중에 볼게요</button><button class="btn btn-primary" id="tourGo" type="button">소통 탭 보러가기</button></div>',
       function(sheet){
         sheet.querySelector('#tourSkip').addEventListener('click', closeModal);
@@ -2188,8 +2188,8 @@
         '<p class="ob-step-label">1 / 6 · 환영 & 완전 무료</p>' +
         '<h3 style="font-size:1.125rem;margin-bottom:6px;">안녕하세요 '+escapeHtml(state.profile.displayName)+'님, 아워골에 오신 것을 환영합니다!</h3>' +
         '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">모든 목표와 성장의 가능성을 비용 부담 없이 100% 자유롭게 누려보세요.</p>' +
-        '<div class="mission-card" style="border-left-color:var(--sage);"><div class="mi">💎</div><div><b>100% 완전 무료화 & 페이월 제거</b><span>유료 결제나 제한 없이 무제한 목표 등록, AI 코칭, 30일 심층 분석 리포트까지 모든 기능을 완전 무료로 이용할 수 있어요</span></div></div>' +
-        '<div class="mission-card" style="border-left-color:var(--ink);"><div class="mi">🎯</div><div><b>오직 목표 달성에만 집중하는 앱</b><span>과도한 유료 결제 팝업이나 강제 광고가 없어 내 루틴과 성장에 온전히 몰입할 수 있어요</span></div></div>' +
+        '<div class="mission-card" style="border-left-color:var(--sage);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20"/></svg></div><div><b>100% 완전 무료화 & 페이월 제거</b><span>유료 결제나 제한 없이 무제한 목표 등록, AI 코칭, 30일 심층 분석 리포트까지 모든 기능을 완전 무료로 이용할 수 있어요</span></div></div>' +
+        '<div class="mission-card" style="border-left-color:var(--ink);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div><div><b>오직 목표 달성에만 집중하는 앱</b><span>과도한 유료 결제 팝업이나 강제 광고가 없어 내 루틴과 성장에 온전히 몰입할 수 있어요</span></div></div>' +
         '<div class="modal-actions"><button class="btn btn-primary btn-block" id="guideNext1" type="button">다음</button></div>' +
         '<button class="land-login-link" id="guideSkip1" type="button" style="width:100%;background:none;margin-top:12px;">나중에 볼게요 (건너뛰기)</button>',
         function(sheet){
@@ -2204,8 +2204,8 @@
         '<p class="ob-step-label">2 / 6 · 지능형 AI 코칭</p>' +
         '<h3 style="font-size:1.125rem;margin-bottom:6px;">목표와 향후 30일 일정을 읽는 AI 코치</h3>' +
         '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">단순한 응원을 넘어, 내 일정과 마감일까지 똑똑하게 챙겨드려요.</p>' +
-        '<div class="mission-card"><div class="mi">📅</div><div><b>다가오는 30일 일정 지능형 연계</b><span>체크인을 남기면 기록에 대한 피드백뿐만 아니라 향후 1달간의 일정을 종합 검토하여, 놓치기 쉬운 마감일이나 계획을 똑똑하게 조언해줘요 (불필요한 참견은 배제)</span></div></div>' +
-        '<div class="mission-card"><div class="mi">🎭</div><div><b>나만의 피드백 페르소나</b><span>따뜻한 칭찬봇부터 팩트 폭격 코치까지 원하는 성격과 말투로 자유롭게 피드백을 맞춤 설정할 수 있어요</span></div></div>' +
+        '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></div><div><b>다가오는 30일 일정 지능형 연계</b><span>체크인을 남기면 기록에 대한 피드백뿐만 아니라 향후 1달간의 일정을 종합 검토하여, 놓치기 쉬운 마감일이나 계획을 똑똑하게 조언해줘요 (불필요한 참견은 배제)</span></div></div>' +
+        '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01M15 9h.01"/></svg></div><div><b>나만의 피드백 페르소나</b><span>따뜻한 칭찬봇부터 팩트 폭격 코치까지 원하는 성격과 말투로 자유롭게 피드백을 맞춤 설정할 수 있어요</span></div></div>' +
         '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack2" type="button">이전</button><button class="btn btn-primary" id="guideNext2" type="button">다음</button></div>',
         function(sheet){
           sheet.querySelector('#guideBack2').addEventListener('click', showGuideStep1);
@@ -2219,8 +2219,8 @@
         '<p class="ob-step-label">3 / 6 · 구글 캘린더 상호 연동</p>' +
         '<h3 style="font-size:1.125rem;margin-bottom:6px;">아워골과 구글 캘린더의 완벽한 하나됨</h3>' +
         '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">우리 앱과 구글 캘린더가 서로의 일정을 실시간으로 공유해요.</p>' +
-        '<div class="mission-card" style="border-left-color:var(--ink);"><div class="mi">📆</div><div><b>양방향 상호 동기화 (단일 캘린더)</b><span>아워골 마일스톤이 구글 캘린더로 가고, 구글 캘린더의 모든 일정도 아워골 일정 탭에서 배지 구분 없이 깔끔하게 함께 확인할 수 있어요</span></div></div>' +
-        '<div class="mission-card" style="border-left-color:var(--sage);"><div class="mi">⚡</div><div><b>원클릭 빠른 연결</b><span>설정에서 구글 계정을 한 번만 연결하면 모든 마일스톤과 약속 일정이 자동으로 안전하게 동기화돼요</span></div></div>' +
+        '<div class="mission-card" style="border-left-color:var(--ink);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></div><div><b>양방향 상호 동기화 (단일 캘린더)</b><span>아워골 마일스톤이 구글 캘린더로 가고, 구글 캘린더의 모든 일정도 아워골 일정 탭에서 배지 구분 없이 깔끔하게 함께 확인할 수 있어요</span></div></div>' +
+        '<div class="mission-card" style="border-left-color:var(--sage);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></div><div><b>원클릭 빠른 연결</b><span>설정에서 구글 계정을 한 번만 연결하면 모든 마일스톤과 약속 일정이 자동으로 안전하게 동기화돼요</span></div></div>' +
         '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack3" type="button">이전</button><button class="btn btn-primary" id="guideNext3" type="button">다음</button></div>',
         function(sheet){
           sheet.querySelector('#guideBack3').addEventListener('click', showGuideStep2);
@@ -2234,9 +2234,9 @@
         '<p class="ob-step-label">4 / 6 · 전문 템플릿 3대 혁신</p>' +
         '<h3 style="font-size:1.125rem;margin-bottom:6px;">차트 · 인앱 스톱워치 · 노션 연동</h3>' +
         '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">생산성과 성장을 극대화하는 3가지 전문 도구를 제공해요.</p>' +
-        '<div class="mission-card"><div class="mi">📈</div><div><b>비주얼 성장 차트</b><span>운동 총 볼륨(kg), 공부 시간, 비즈니스 성과 지표를 멋진 그래프로 한눈에 시각화해줘요</span></div></div>' +
-        '<div class="mission-card"><div class="mi">⏱️</div><div><b>인앱 스톱워치 & 1초 루틴</b><span>기록 작성 중 타이머로 실시간 몰입 시간을 측정하고 표에 즉시 반영할 수 있어요</span></div></div>' +
-        '<div class="mission-card"><div class="mi">📝</div><div><b>노션(Notion) 다이렉트 전송</b><span>기록된 전문 표 데이터를 원클릭으로 내 노션 페이지에 구조화된 표로 자동 전송해요</span></div></div>' +
+        '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div><div><b>비주얼 성장 차트</b><span>운동 총 볼륨(kg), 공부 시간, 비즈니스 성과 지표를 멋진 그래프로 한눈에 시각화해줘요</span></div></div>' +
+        '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2"/><path d="M9 2h6"/></svg></div><div><b>인앱 스톱워치 & 1초 루틴</b><span>기록 작성 중 타이머로 실시간 몰입 시간을 측정하고 표에 즉시 반영할 수 있어요</span></div></div>' +
+        '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div><div><b>노션(Notion) 다이렉트 전송</b><span>기록된 전문 표 데이터를 원클릭으로 내 노션 페이지에 구조화된 표로 자동 전송해요</span></div></div>' +
         '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack4" type="button">이전</button><button class="btn btn-primary" id="guideNext4" type="button">다음</button></div>',
         function(sheet){
           sheet.querySelector('#guideBack4').addEventListener('click', showGuideStep3);
@@ -2250,9 +2250,9 @@
         '<p class="ob-step-label">5 / 6 · 팀 수준별 목표 & 모임장</p>' +
         '<h3 style="font-size:1.125rem;margin-bottom:6px;">팀 수준별 목표 & 모임장 왕관 시스템</h3>' +
         '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">모임원들의 실력에 맞춘 조별 목표와 쾌적한 필터링을 지원해요.</p>' +
-        '<div class="mission-card" style="border-left-color:var(--gold);"><div class="mi">🎯</div><div><b>수준별 맞춤 조/그룹 목표 관리</b><span>배드민턴 A·B·C·D·E조, 스터디 초·중·고급 등 팀원 수준에 맞춰 조별 목표·마일스톤·세부 할일을 체계적으로 관리해요</span></div></div>' +
-        '<div class="mission-card" style="border-left-color:var(--sage);"><div class="mi">👑</div><div><b>모임장 왕관 배지 & 상단 모임 필터</b><span>모임장에게는 👑 왕관과 초록색 모임장 배지가 부여되며, 가입 모임이 많아도 상단 필터 칩으로 스크롤 압박 없이 편하게 탐색해요</span></div></div>' +
-        '<div class="mission-card" style="border-left-color:var(--ink);"><div class="mi">📋</div><div><b>컴팩트 요약 & 자세히보기</b><span>카드에서는 목표(N)·마일스톤(N)·할일(N) 개수와 진행률로 깔끔하게 보고, 자세히보기로 세부 할 일을 손쉽게 체크해요</span></div></div>' +
+        '<div class="mission-card" style="border-left-color:var(--gold);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div><div><b>수준별 맞춤 조/그룹 목표 관리</b><span>배드민턴 A·B·C·D·E조, 스터디 초·중·고급 등 팀원 수준에 맞춰 조별 목표·마일스톤·세부 할일을 체계적으로 관리해요</span></div></div>' +
+        '<div class="mission-card" style="border-left-color:var(--sage);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18"/><path d="m4 8 4 5 4-7 4 7 4-5-1 10H5z"/></svg></div><div><b>모임장 왕관 배지 & 상단 모임 필터</b><span>모임장에게는 👑 왕관과 초록색 모임장 배지가 부여되며, 가입 모임이 많아도 상단 필터 칩으로 스크롤 압박 없이 편하게 탐색해요</span></div></div>' +
+        '<div class="mission-card" style="border-left-color:var(--ink);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2"/><path d="M9 11h6M9 15h6"/></svg></div><div><b>컴팩트 요약 & 자세히보기</b><span>카드에서는 목표(N)·마일스톤(N)·할일(N) 개수와 진행률로 깔끔하게 보고, 자세히보기로 세부 할 일을 손쉽게 체크해요</span></div></div>' +
         '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack5" type="button">이전</button><button class="btn btn-primary" id="guideNext5" type="button">다음</button></div>',
         function(sheet){
           sheet.querySelector('#guideBack5').addEventListener('click', showGuideStep4);
@@ -2266,7 +2266,7 @@
         '<p class="ob-step-label">6 / 6 · 음성 기록 & 안심 보안</p>' +
         '<h3 style="font-size:1.125rem;margin-bottom:6px;">말 한마디로 기록 & 안심 보안</h3>' +
         '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">언제 어디서나 편리하게, 데이터는 안전하게 보관하세요.</p>' +
-        '<div class="mission-card"><div class="mi">🗣️</div><div><b>10초 AI 음성 체크인</b><span>마이크 버튼을 누르고 말하면 운동 종목, 세트, 공부 시간 등을 AI가 표 속성에 맞춤으로 쏙쏙 자동 입력해줘요</span></div></div>' +
+        '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4"/></svg></div><div><b>10초 AI 음성 체크인</b><span>마이크 버튼을 누르고 말하면 운동 종목, 세트, 공부 시간 등을 AI가 표 속성에 맞춤으로 쏙쏙 자동 입력해줘요</span></div></div>' +
         '<div class="mission-card"><div class="mi">🕶️</div><div><b>동류 발견 안심 보안</b><span>기본은 같은 목표를 가진 사람에게만 제목·진행률·한 줄 요약이 보이고, 언제든 나만 보기로 바꿀 수 있어요</span></div></div>' +
         '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack6" type="button">이전</button><button class="btn btn-primary" id="guideFinish6" type="button">아워골 시작하기</button></div>',
         function(sheet){
@@ -3106,7 +3106,7 @@
           avatarHtml(64) +
           '<div style="flex:1;min-width:0;">' +
             '<div class="profile-name">'+escapeHtml(p.displayName)+
-              (streak>=7 ? '<span class="tmpl-badge" title="7일 이상 연속 기록">🔥</span>' : '')+'</div>' +
+              (streak>=7 ? '<span class="tmpl-badge" title="7일 이상 연속 기록"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c4 0 7-3 7-7 0-3-2-5-3-6-1 2-2 3-3 3 0-3-1-6-4-8 0 4-4 6-4 11 0 4 3 7 7 7z"/></svg></span>' : '')+'</div>' +
             (p.region
               ? '<div class="faint" style="font-size:.8125rem;margin-top:2px;">'+escapeHtml(p.region)+
                 ' · '+(p.regionPublic ? '공개' : '<span style="color:var(--ink-faint);">비공개</span>')+'</div>'
@@ -3226,7 +3226,7 @@
           }
           box.innerHTML = draft.itItems.map(function(it, idx){
             return '<div class="it-item-card">' +
-              (it.imageUrl ? '<img src="'+it.imageUrl+'" class="it-item-thumb" alt="">' : '<div class="it-item-thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;">🛍️</div>') +
+              (it.imageUrl ? '<img src="'+it.imageUrl+'" class="it-item-thumb" alt="">' : '<div class="it-item-thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 14H5z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg></div>') +
               '<div style="flex:1;min-width:0;">' +
                 '<div style="font-weight:700;font-size:.875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+escapeHtml(it.name)+'</div>' +
                 (it.buyUrl ? '<a href="'+escapeHtml(it.buyUrl)+'" target="_blank" rel="noopener" style="font-size:.8125rem;color:var(--brand-strong);text-decoration:underline;word-break:break-all;display:block;">'+escapeHtml(it.buyUrl)+'</a>' : '') +
@@ -3253,7 +3253,7 @@
             '<div class="field"><label>잇템 이름 (필수)</label><input id="itNameInput" type="text" placeholder="예: 나이키 베이퍼플라이 3 러닝화"></div>' +
             '<div class="field"><label>잇템 사진 (선택)</label>' +
               '<div style="display:flex;gap:10px;align-items:center;margin-top:4px;">' +
-                '<div id="itPhotoPreview" style="width:60px;height:60px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;border:1px solid var(--rule);">📷</div>' +
+                '<div id="itPhotoPreview" style="width:60px;height:60px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;border:1px solid var(--rule);"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>' +
                 '<div>' +
                   '<button class="btn btn-ghost btn-sm" id="itPickPhotoBtn" type="button">사진 선택하기</button>' +
                   '<input type="file" id="itFileInput" accept="image/*" style="display:none;">' +
@@ -3540,7 +3540,7 @@
       for(var i=0; i<goals.length; i++){
         var g = goals[i];
         if(g.dueDate){
-          var evId = await pushCalendarEvent(token, '🎯 ' + g.title, g.dueDate, sync.goals[g.id]);
+          var evId = await pushCalendarEvent(token, '' + g.title, g.dueDate, sync.goals[g.id]);
           if(evId){ sync.goals[g.id] = evId; count++; }
         }
         var mss = g.milestones || [];
@@ -3565,7 +3565,7 @@
       for(var c=0; c<customSchedules.length; c++){
         var cs = customSchedules[c];
         if(cs.date && !cs.done){
-          var evIdC = await pushCalendarEvent(token, '🗓️ ' + cs.title, cs.date, sync.custom[cs.id]);
+          var evIdC = await pushCalendarEvent(token, '' + cs.title, cs.date, sync.custom[cs.id]);
           if(evIdC){ sync.custom[cs.id] = evIdC; count++; }
         }
       }
@@ -3687,7 +3687,7 @@
     var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     var items = [];
     goals.forEach(function(g){
-      if(g.dueDate) items.push({ key:'goal:'+g.id, label:'🎯 '+g.title, date:g.dueDate, kind:'goal', goal:g, already: sync.goals[g.id]||null });
+      if(g.dueDate) items.push({ key:'goal:'+g.id, label:''+g.title, date:g.dueDate, kind:'goal', goal:g, already: sync.goals[g.id]||null });
       g.milestones.forEach(function(m){
         if(m.dueDate && m.status!=='done') items.push({ key:'ms:'+m.id, label:'· '+m.title+' ('+g.title+')', date:m.dueDate, kind:'ms', goal:g, ms:m, already: sync.ms[m.id]||null });
       });
@@ -3702,7 +3702,7 @@
         items.map(function(it){
           return '<div class="ms-row" data-gxp="'+it.key+'" style="cursor:pointer;">' +
             '<div class="ms-main">' +
-              '<div class="sel-check on" data-gxpchk="'+it.key+'">✓</div>' +
+              '<div class="sel-check on" data-gxpchk="'+it.key+'"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>' +
               '<div style="flex:1;min-width:0;"><div style="font-size:.875rem;font-weight:700;">'+escapeHtml(it.label)+'</div><div class="faint" style="font-size:.8125rem;">'+it.date+(it.already?' · 이미 캘린더에 있어요 · 다시 반영하면 갱신돼요':'')+'</div></div>' +
             '</div>' +
           '</div>';
@@ -3800,7 +3800,7 @@
     var task = (kind==='task' && ms) ? (ms.tasks||[]).find(function(t){ return t.id===taskId; }) : null;
     var date = kind==='goal' ? goal.dueDate : (kind==='ms' ? (ms && ms.dueDate) : (task && task.dueDate));
     if(!date){ toast('먼저 마감일(또는 시간)을 설정해주세요'); return; }
-    var label = kind==='goal' ? ('🎯 '+goal.title) : (kind==='ms' ? ('· '+ms.title+' ('+goal.title+')') : ('- '+task.title+' ('+ms.title+')'));
+    var label = kind==='goal' ? (''+goal.title) : (kind==='ms' ? ('· '+ms.title+' ('+goal.title+')') : ('- '+task.title+' ('+ms.title+')'));
     if(!state.profile.settings.gcalSync) state.profile.settings.gcalSync = { goals:{}, ms:{}, tasks:{}, imported:{} };
     var sync = state.profile.settings.gcalSync;
     var existing = kind==='goal' ? sync.goals[goal.id] : (kind==='ms' ? (sync.ms&&sync.ms[ms.id]) : (sync.tasks&&sync.tasks[task.id]));
@@ -3909,14 +3909,14 @@
           '</div>' +
           '<div style="display:flex;gap:14px;align-items:center;">' +
             tplBtn +
-            (e.kind === 'gcal' && e.htmlLink ? ('<a href="'+escapeHtml(e.htmlLink)+'" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="font-size:.8125rem;padding:3px 7px;text-decoration:none;border-color:var(--rule);">구글 캘린더 ↗</a>') : ('<button class="icon-btn" data-hubedit="'+idx+'" type="button" title="수정" style="font-size:.875rem;padding:4px 6px;">✏️</button>')) +
+            (e.kind === 'gcal' && e.htmlLink ? ('<a href="'+escapeHtml(e.htmlLink)+'" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="font-size:.8125rem;padding:3px 7px;text-decoration:none;border-color:var(--rule);">구글 캘린더 ↗</a>') : ('<button class="icon-btn" data-hubedit="'+idx+'" type="button" title="수정" style="font-size:.875rem;padding:4px 6px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>')) +
             (e.kind==='custom' ? '<button class="icon-btn" data-hubdel="'+(e.schedId||'')+'" type="button" title="삭제" style="color:var(--brand-strong);font-size:1rem;padding:4px 6px;">×</button>' : '') +
           '</div>' +
         '</div>';
       }).join('') +
       '</div>'
     ) : (
-      '<div class="empty-state" style="padding:18px 10px;margin-bottom:14px;"><div class="e-icon">🗓️</div><p style="margin:4px 0 0;font-size:.875rem;">이 날짜에 등록된 일정이 없습니다.</p></div>'
+      '<div class="empty-state" style="padding:18px 10px;margin-bottom:14px;"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></div><p style="margin:4px 0 0;font-size:.875rem;">이 날짜에 등록된 일정이 없습니다.</p></div>'
     );
 
     openModal(
@@ -4159,7 +4159,7 @@
         gBanner.innerHTML =
           '<div style="margin-bottom:12px;padding:10px 14px;background:var(--sage-soft);border:1px solid rgba(46,125,50,.2);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">' +
             '<div style="font-size:.875rem;color:var(--sage);display:flex;align-items:center;gap:6px;">' +
-              '<span>✓</span>' +
+              '<span><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></span>' +
               '<span><b>구글 캘린더가 연동되었습니다</b>' + (gEmail ? ' <span class="faint" style="font-size:.8125rem;">('+escapeHtml(gEmail)+')</span>' : '') + '</span>' +
             '</div>' +
             '<div style="display:flex;gap:6px;">' +
@@ -4176,7 +4176,7 @@
         gBanner.innerHTML =
           '<div style="margin-bottom:12px;padding:10px 14px;background:var(--card2);border:1px solid var(--rule);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">' +
             '<div style="font-size:.875rem;color:var(--ink-soft);display:flex;align-items:center;gap:6px;">' +
-              '<span>📅</span>' +
+              '<span><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></span>' +
               '<span><b>구글 캘린더를 연동하세요</b></span>' +
             '</div>' +
             '<div style="display:flex;gap:6px;">' +
@@ -4290,12 +4290,12 @@
               '<div class="faint" style="font-size:.8125rem;margin-top:2px;">'+escapeHtml(e.goalTitle||'일반 일정')+'</div>' +
               attChips +
             '</div>' +
-            '<button class="icon-btn" data-caledit="'+e.kind+'" data-schedid="'+(e.schedId||'')+'" data-calgid="'+(e.goalId||'')+'" data-calmid="'+(e.msId||'')+'" data-caltid="'+(e.taskId||'')+'" type="button" aria-label="일정 편집" title="수동 편집" style="font-size:.8125rem;padding:2px 4px;margin-right:2px;">✏️</button>' +
-            (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsync="'+e.kind+'" data-calsyncgid="'+(e.goalId||'')+'" data-calsyncmid="'+(e.msId||'')+'" data-calsynctid="'+(e.taskId||'')+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' : '') +
+            '<button class="icon-btn" data-caledit="'+e.kind+'" data-schedid="'+(e.schedId||'')+'" data-calgid="'+(e.goalId||'')+'" data-calmid="'+(e.msId||'')+'" data-caltid="'+(e.taskId||'')+'" type="button" aria-label="일정 편집" title="수동 편집" style="font-size:.8125rem;padding:2px 4px;margin-right:2px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>' +
+            (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsync="'+e.kind+'" data-calsyncgid="'+(e.goalId||'')+'" data-calsyncmid="'+(e.msId||'')+'" data-calsynctid="'+(e.taskId||'')+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' : '') +
           '</div>' +
         '</div>';
       }).join('')+'</div>'
-      : '<div class="empty-state"><div class="e-icon">🗓️</div><p>이 날은 예정된 일정이 없어요.</p><button class="btn btn-ghost btn-sm" id="calEmptyAddBtn" type="button" style="margin-top:8px;font-size:.8125rem;">+ 이 날짜에 일정 추가</button></div>');
+      : '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></div><p>이 날은 예정된 일정이 없어요.</p><button class="btn btn-ghost btn-sm" id="calEmptyAddBtn" type="button" style="margin-top:8px;font-size:.8125rem;">+ 이 날짜에 일정 추가</button></div>');
 
     var hubBtn = wrap.querySelector('#calOpenHubBtn');
     if(hubBtn){
@@ -4862,24 +4862,24 @@
     var goals = sortGoalsByOrder(rawGoals, goalOrder);
     if(!goals.length){
       wrap.innerHTML = '<div class="empty-goal-starter card" style="text-align:center;padding:22px 18px;background:var(--surface-2);border:1px dashed var(--red-line);border-radius:16px;">' +
-        '<div style="font-size:2rem;margin-bottom:6px;">🚀</div>' +
+        '<div style="font-size:2rem;margin-bottom:6px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 14 3 21l7-2"/><path d="M14 4c3-1 6 0 6 0s1 3 0 6c-1 3-8 9-8 9l-3-3s6-7 5-12z"/><circle cx="15" cy="9" r="1.5"/></svg></div>' +
         '<h4 style="font-size:1.0625rem;font-weight:700;color:var(--ink);margin:0 0 4px;">아직 목표가 없으신가요?</h4>' +
         '<p class="muted" style="font-size:0.82rem;margin:0 0 14px;">고민할 필요 없이 가장 인기 있는 갓생 목표를 1초 만에 시작해보세요!</p>' +
         '<div class="starter-goals-grid" style="display:flex;flex-direction:column;gap:8px;">' +
           '<button type="button" class="btn btn-ghost btn-sm starter-goal-btn" data-starter="workout" style="justify-content:flex-start;padding:10px 14px;border-radius:12px;font-size:0.84rem;text-align:left;">' +
-            '<span style="font-size:1.2rem;margin-right:6px;">💪</span>' +
+            '<span style="font-size:1.2rem;margin-right:6px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21v-5a6 6 0 0 1 6-6h1a4 4 0 0 0 4-4V3"/><path d="M2 16h4"/><path d="M17 3h3v4"/></svg></span>' +
             '<div><b>주 3회 헬스 & 기초체력 기르기</b><br><span style="font-size:0.72rem;color:var(--ink-faint);">스트레칭 · 30분 운동 · 단백질 섭취</span></div>' +
           '</button>' +
           '<button type="button" class="btn btn-ghost btn-sm starter-goal-btn" data-starter="running" style="justify-content:flex-start;padding:10px 14px;border-radius:12px;font-size:0.84rem;text-align:left;">' +
-            '<span style="font-size:1.2rem;margin-right:6px;">🏃</span>' +
+            '<span style="font-size:1.2rem;margin-right:6px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="15" cy="4" r="1.8"/><path d="m5 21 4-6 3 2 2-5-3-2-4 3"/><path d="m13 12 3 2 2 7"/><path d="M11 9l4-2 3 3 3-1"/></svg></span>' +
             '<div><b>매일 3km 러닝 & 심폐지구력</b><br><span style="font-size:0.72rem;color:var(--ink-faint);">가벼운 조깅 · 3km 완주 · 수분 보충</span></div>' +
           '</button>' +
           '<button type="button" class="btn btn-ghost btn-sm starter-goal-btn" data-starter="study" style="justify-content:flex-start;padding:10px 14px;border-radius:12px;font-size:0.84rem;text-align:left;">' +
-            '<span style="font-size:1.2rem;margin-right:6px;">📚</span>' +
+            '<span style="font-size:1.2rem;margin-right:6px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14"/><path d="M4 19a2 2 0 0 0 2 2h14"/><path d="M8 3v18"/></svg></span>' +
             '<div><b>매일 1시간 몰입 & 자격증 합격</b><br><span style="font-size:0.72rem;color:var(--ink-faint);">개념 1단원 · 기출문제 풀이 · 오답 복습</span></div>' +
           '</button>' +
           '<button type="button" class="btn btn-ghost btn-sm starter-goal-btn" data-starter="reading" style="justify-content:flex-start;padding:10px 14px;border-radius:12px;font-size:0.84rem;text-align:left;">' +
-            '<span style="font-size:1.2rem;margin-right:6px;">📖</span>' +
+            '<span style="font-size:1.2rem;margin-right:6px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg></span>' +
             '<div><b>하루 15분 독서 & 지적 성장</b><br><span style="font-size:0.72rem;color:var(--ink-faint);">책 15분 읽기 · 인상 깊은 한 줄 메모</span></div>' +
           '</button>' +
         '</div>' +
@@ -4932,7 +4932,7 @@
           '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">' +
             (goals.length > 1 ? '<button class="icon-btn order-shift-btn" data-shiftgoal="'+g.id+'" data-dir="-1" type="button" aria-label="위로 이동" title="위로 이동" style="padding:2px 4px;font-size:.6875rem;background:none;border:none;color:var(--muted);cursor:pointer;">▲</button><button class="icon-btn order-shift-btn" data-shiftgoal="'+g.id+'" data-dir="1" type="button" aria-label="아래로 이동" title="아래로 이동" style="padding:2px 4px;font-size:.6875rem;background:none;border:none;color:var(--muted);cursor:pointer;">▼</button>' : '') +
             dd +
-            (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsyncgoal="'+g.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' : '') +
+            (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsyncgoal="'+g.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' : '') +
           '</div>' +
         '</div>' +
         (g.topic ? '<div style="margin:-4px 0 8px;">'+topicPill(g.topic)+'</div>' : '') +
@@ -5039,7 +5039,7 @@
     card.innerHTML = '<div class="card" style="margin-top:14px;padding:12px 14px;background:var(--card);border:1px solid var(--rule);border-radius:12px;">'
       + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
       + '  <span style="font-size:0.82rem;font-weight:700;color:var(--ink);">주간 잔디 & 몰입 리포트</span>'
-      + '  <span style="font-size:0.75rem;color:var(--ink-sub);">' + (streak > 0 ? ('🔥 ' + streak + '일 연속 몰입 중') : '오늘의 첫 잔디를 심어보세요') + '</span>'
+      + '  <span style="font-size:0.75rem;color:var(--ink-sub);">' + (streak > 0 ? ('' + streak + '일 연속 몰입 중') : '오늘의 첫 잔디를 심어보세요') + '</span>'
       + '</div>'
       + '<div style="display:flex;gap:5px;align-items:center;margin-bottom:10px;flex-wrap:wrap;">' + dotsHtml + '</div>'
       + '<div style="display:flex;gap:12px;font-size:0.76rem;color:var(--ink-sub);flex-wrap:wrap;">'
@@ -5067,7 +5067,7 @@
     var nowK = dateKey(new Date());
     var todayRecs = (state.profile.records || []).filter(function(r){ return r && r.startAt && dateKey(r.startAt) === nowK; });
     
-    var flameHtml = streak > 0 ? '<span class="streak-flame-pulse">🔥</span> <b>' + streak + '일 연속</b>' : '<b>첫 잔디 도전</b>';
+    var flameHtml = streak > 0 ? '<span class="streak-flame-pulse"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c4 0 7-3 7-7 0-3-2-5-3-6-1 2-2 3-3 3 0-3-1-6-4-8 0 4-4 6-4 11 0 4 3 7 7 7z"/></svg></span> <b>' + streak + '일 연속</b>' : '<b>첫 잔디 도전</b>';
     var checkinHtml = '오늘 기록 <b>' + todayRecs.length + '회</b>';
     var focusHtml = stats.totalMinutes > 0 ? ('<b>' + Math.floor(stats.totalMinutes / 60) + '시간 ' + (stats.totalMinutes % 60) + '분</b> 몰입') : '<b>25분 집중</b> 추천';
 
@@ -5285,7 +5285,7 @@
     ctx.textAlign = 'left';
     ctx.font = 'bold 23px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
     ctx.fillStyle = '#FF6B4A';
-    ctx.fillText('⚡ ' + userName + ' 님의 오늘 기록', 106, 695);
+    ctx.fillText('' + userName + ' 님의 오늘 기록', 106, 695);
 
     ctx.font = '25px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
     ctx.fillStyle = '#F5F5FA';
@@ -5872,7 +5872,7 @@
           var g = (state.profile.goals || []).find(function(item){ return item.id===state.activeGoalId; }) || (state.profile.goals || [])[0];
           var cl = classifyRecordTheme(val, g ? g.category : null);
           var tName = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[cl.theme] && RECORD_THEMES[cl.theme].label) || cl.theme;
-          liveTheme.textContent = '✨ ' + tName + ' 테마 자동인식';
+          liveTheme.textContent = '' + tName + ' 테마 자동인식';
         }
       } else {
         liveMeta.style.display = 'none';
@@ -6331,7 +6331,7 @@
           var d = describeSuggestion(goal, s);
           return '<div class="ms-row" data-sugpick="'+idx+'" style="cursor:pointer;">' +
             '<div class="ms-main">' +
-              '<div class="sel-check on" data-sugchk="'+idx+'">✓</div>' +
+              '<div class="sel-check on" data-sugchk="'+idx+'"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>' +
               '<div style="flex:1;min-width:0;">' +
                 '<div style="font-size:.875rem;font-weight:700;">'+d.icon+' '+escapeHtml(d.label)+'</div>' +
                 (d.reason ? '<div class="faint" style="font-size:.8125rem;">'+escapeHtml(d.reason)+'</div>' : '') +
@@ -6436,7 +6436,7 @@
   }
   function fbBotBubbleHtml(inner){
     return '<div class="card" style="display:flex;gap:12px;align-items:flex-start;">' +
-      '<div style="font-size:1.6rem;flex:0 0 auto;line-height:1;">🤖</div>' +
+      '<div style="font-size:1.6rem;flex:0 0 auto;line-height:1;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><rect x="4" y="7" width="16" height="12" rx="3"/><circle cx="9" cy="13" r="1.2" fill="currentColor"/><circle cx="15" cy="13" r="1.2" fill="currentColor"/><path d="M2 12h2M20 12h2"/></svg></div>' +
       '<div style="flex:1;min-width:0;">' + inner + '</div>' +
     '</div>';
   }
@@ -6635,7 +6635,7 @@
     } else {
       el.innerHTML = '<div class="fb-card ' + verdictClass(fb.verdict) + '">' +
         '<span class="fb-close" id="recFbCloseBtn">×</span>' +
-        '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:4px;display:flex;align-items:center;gap:4px;"><span>✨</span><span>기록 탭 AI 피드백</span></div>' +
+        '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:4px;display:flex;align-items:center;gap:4px;"><span><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/></svg></span><span>기록 탭 AI 피드백</span></div>' +
         '<div class="fb-verdict">' + escapeHtml(fb.verdict) + '</div>' +
         '<div class="fb-row">' + escapeHtml(fb.comment) + '</div>' +
         '<div class="fb-source">' + (fb.persona ? '내 맞춤 봇 판단' : (fb.source === 'ai' ? 'Claude 판단' : (fb.source === 'gemini' ? 'Gemini 판단' : '간이 판단'))) + '</div>' +
@@ -7187,7 +7187,7 @@
           var t = GOAL_TEMPLATES[k];
           return '<div class="cat-chip'+(k==='etc'?' active':'')+'" data-cat="'+k+'"><span class="ico">'+t.icon+'</span><span class="lbl">'+t.label+'</span></div>';
         }).join('') +
-        '<div class="cat-chip" data-cat="custom" id="mCatCustomChip"><span class="ico">✏️</span><span class="lbl">직접 입력</span></div>' +
+        '<div class="cat-chip" data-cat="custom" id="mCatCustomChip"><span class="ico"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span><span class="lbl">직접 입력</span></div>' +
       '</div>' +
       '<div class="field"><label>최종 목표</label><input id="mGoalTitle" type="text" placeholder="예: 3개월 안에 벤치프레스 100kg"></div>' +
       '<div class="field"><label>카테고리 (대범위 · 중범위)</label></div>' +
@@ -7378,7 +7378,7 @@
       '<div id="attImageField" style="display:none;margin-bottom:12px;">' +
         '<label style="display:block;font-size:.8125rem;font-weight:700;margin-bottom:4px;">이미지 파일 선택</label>' +
         '<div style="display:flex;gap:10px;align-items:center;">' +
-          '<div id="attImgPreview" style="width:60px;height:60px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;border:1px solid var(--rule);">🖼️</div>' +
+          '<div id="attImgPreview" style="width:60px;height:60px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;border:1px solid var(--rule);"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="m21 16-5-5-8 8"/></svg></div>' +
           '<div>' +
             '<button class="btn btn-ghost btn-sm" id="attPickFileBtn" type="button">사진 선택하기</button>' +
             '<input type="file" id="attFileInput" accept="image/*" style="display:none;">' +
@@ -7667,7 +7667,7 @@
         var gData = op.data;
         html += '<div style="background:var(--card);padding:10px;border-radius:10px;border:1px solid var(--rule);">';
         html += '<div style="font-weight:700;font-size:.9rem;color:var(--ink);display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
-          '<span>🎯</span><span>'+escapeHtml(gData.title||'새 목표')+'</span>' +
+          '<span><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></span><span>'+escapeHtml(gData.title||'새 목표')+'</span>' +
           (gData.dueDate ? '<span class="dday-mini" style="margin-left:4px;">'+escapeHtml(gData.dueDate)+'</span>' : '') +
         '</div>';
         if(gData.topicMajor){
@@ -8118,7 +8118,7 @@
       goals.map(function(g){
         var m = missions[g.id];
         var text = (m && m.date===today) ? m.text : '생각하는 중...';
-        return '<div class="mission-row"><span class="m-icon">✅</span><span><span class="m-goal">'+escapeHtml(g.title)+'</span> · <span class="m-text">'+escapeHtml(text)+'</span></span></div>';
+        return '<div class="mission-row"><span class="m-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg></span><span><span class="m-goal">'+escapeHtml(g.title)+'</span> · <span class="m-text">'+escapeHtml(text)+'</span></span></div>';
       }).join('') +
     '</div>';
     goals.forEach(function(g){
@@ -8172,7 +8172,7 @@
         sheet.querySelector('#naOk').addEventListener('click', closeModal);
         requestNextActionSuggestion(goal, ms).then(function(text){
           var el = sheet.querySelector('#naText');
-          if(el) el.textContent = '💡 '+text;
+          if(el) el.textContent = ''+text;
         });
       }
     );
@@ -8251,7 +8251,7 @@
     }
 
     if(!goal){
-      body.innerHTML = '<div class="empty-state"><div class="e-icon">🎯</div><p>목표를 만들면 여기에 마일스톤이 보여요.</p></div>';
+      body.innerHTML = '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div><p>목표를 만들면 여기에 마일스톤이 보여요.</p></div>';
       return;
     }
     if(!state.msSel) state.msSel = {};
@@ -8352,7 +8352,7 @@
             tAttHtml +
             '<div style="margin-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
               '<button class="att-add-btn" data-addatttask="'+t.id+'" data-msid="'+m.id+'" type="button">+ 참고자료</button>' +
-              (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsynctask="'+t.id+'" data-msid="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영" style="font-size:.8125rem;padding:2px 4px;">📅</button>' : '') +
+              (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsynctask="'+t.id+'" data-msid="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영" style="font-size:.8125rem;padding:2px 4px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' : '') +
             '</div>' +
             resultLineHtml(t.result) +
           '</div>' +
@@ -8398,7 +8398,7 @@
             resultLineHtml(m.result) +
           '</div>' +
           '<button data-msresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(m.result)+'</button>' +
-          (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsyncms="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영">📅</button>' : '') +
+          (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsyncms="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' : '') +
           (state.goalEditMode ? '<div class="ms-actions">' +
             (idx>0?'<button class="icon-btn" data-msup="1" aria-label="위로 이동">↑</button>':'') +
             (idx<goal.milestones.length-1?'<button class="icon-btn" data-msdown="1" aria-label="아래로 이동">↓</button>':'') +
@@ -8420,7 +8420,7 @@
       '<p class="faint" id="goalStatusText" style="margin:0;line-height:1.65;min-height:1.2em;">'+(goalStatusCache?escapeHtml(goalStatusCache.text):(goal.milestones.length?'기록을 쌓으면 AI가 목표·마일스톤·할 일을 종합해 지금 상태를 요약해드려요.':'마일스톤을 추가하면 AI가 진행 상황을 요약해드려요.'))+'</p>' +
     '</div>' +
     '<div class="export-card" style="margin-bottom:14px;">' +
-      '<div class="ico">🤖</div>' +
+      '<div class="ico"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><rect x="4" y="7" width="16" height="12" rx="3"/><circle cx="9" cy="13" r="1.2" fill="currentColor"/><circle cx="15" cy="13" r="1.2" fill="currentColor"/><path d="M2 12h2M20 12h2"/></svg></div>' +
       '<div class="txt"><b>현 상태로 데이터 받기</b><span>목표·마일스톤·할 일·결과·체크인을 AI 분석용으로 내보내요</span></div>' +
       '<button class="btn btn-ghost btn-sm" id="goalExportBtn" type="button" style="margin-left:auto;">이 목표</button>' +
       '<button class="btn btn-ghost btn-sm" id="goalExportAllBtn" type="button" style="margin-left:6px;">전체</button>' +
@@ -8981,7 +8981,7 @@
   function renderTeamGoalsEmptyGuideHtml(){
     return '<div class="card" style="margin-bottom:14px;background:var(--surface-2);border:1px solid var(--rule);">' +
       '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">' +
-        '<span style="font-size:1.6rem;">🏆</span>' +
+        '<span style="font-size:1.6rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M6 3h12v6a6 6 0 0 1-12 0z"/><path d="M6 5H3v2a4 4 0 0 0 3 4"/><path d="M18 5h3v2a4 4 0 0 1-3 4"/></svg></span>' +
         '<div>' +
           '<h3 style="margin:0;font-size:1.0625rem;color:var(--ink);">팀 목표 200% 활용 가이드</h3>' +
           '<p class="faint" style="margin:2px 0 0;font-size:.8125rem;">혼자 하면 작심삼일, 모임 크루들과 함께 공동 목표와 수준별 목표를 달성해보세요!</p>' +
@@ -8990,7 +8990,7 @@
       '<div style="margin-top:14px;display:flex;flex-direction:column;gap:10px;">' +
         '<div style="background:var(--card);border-radius:12px;padding:12px;border:1px solid var(--rule);">' +
           '<div style="display:flex;align-items:center;gap:6px;font-weight:700;font-size:.875rem;color:var(--brand-strong);margin-bottom:6px;">' +
-            '<span>👑</span><span>모임장(리더)이라면? (왕관 & 초록색 모임장 배지)</span>' +
+            '<span><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18"/><path d="m4 8 4 5 4-7 4 7 4-5-1 10H5z"/></svg></span><span>모임장(리더)이라면? (왕관 & 초록색 모임장 배지)</span>' +
           '</div>' +
           '<ul style="margin:0;padding-left:18px;font-size:.8125rem;line-height:1.6;color:var(--ink-soft);">' +
             '<li>내가 만든 모임에는 <b>왕관</b>과 <b>초록색 [모임장]</b> 배지가 부여돼요.</li>' +
@@ -9001,7 +9001,7 @@
         '</div>' +
         '<div style="background:var(--card);border-radius:12px;padding:12px;border:1px solid var(--rule);">' +
           '<div style="display:flex;align-items:center;gap:6px;font-weight:700;font-size:.875rem;color:var(--ink);margin-bottom:6px;">' +
-            '<span>🎯</span><span>팀 수준별 목표 관리 (A·B·C조 맞춤 시스템)</span>' +
+            '<span><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></span><span>팀 수준별 목표 관리 (A·B·C조 맞춤 시스템)</span>' +
           '</div>' +
           '<ul style="margin:0;padding-left:18px;font-size:.8125rem;line-height:1.6;color:var(--ink-soft);">' +
             '<li>배드민턴 A~E조, 스터디 초·중·고급 등 <b>실력에 맞춘 조별 목표/마일스톤/할일</b>을 운영해요.</li>' +
@@ -9011,7 +9011,7 @@
         '</div>' +
         '<div style="background:var(--card);border-radius:12px;padding:12px;border:1px solid var(--rule);">' +
           '<div style="display:flex;align-items:center;gap:6px;font-weight:700;font-size:.875rem;color:var(--teal);margin-bottom:6px;">' +
-            '<span>⚡</span><span>상단 모임 필터 & 스마트 네비게이션</span>' +
+            '<span><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><span>상단 모임 필터 & 스마트 네비게이션</span>' +
           '</div>' +
           '<ul style="margin:0;padding-left:18px;font-size:.8125rem;line-height:1.6;color:var(--ink-soft);">' +
             '<li>가입하거나 생성한 모임이 많아도 <b>상단 필터 칩</b>으로 원하는 모임만 즉시 필터링해요.</li>' +
@@ -9033,7 +9033,7 @@
       '<div class="ms-list">' +
         '<div class="ms-row" style="padding:8px 10px;">' +
           '<div class="ms-main">' +
-            '<div class="ms-status done">✓</div>' +
+            '<div class="ms-status done"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>' +
             '<div style="flex:1;min-width:0;"><span class="ms-title done-text">1단계: 상반월 100회 인증 돌파</span></div>' +
             '<span class="dday-pill" style="font-size:.6875rem;">달성완료</span>' +
           '</div>' +
@@ -9228,7 +9228,7 @@
 
     var modalHtml = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
       '<div style="display:flex;align-items:center;gap:6px;">' +
-        '<span style="font-size:1.5rem;">🎯</span>' +
+        '<span style="font-size:1.5rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></span>' +
         '<div>' +
           '<h3 style="margin:0;font-size:1.1rem;">수준별 목표 상세 관리</h3>' +
           '<div class="faint" style="font-size:.8125rem;">' + (g ? g.icon + ' ' + escapeHtml(g.name) : '') + '</div>' +
@@ -9529,7 +9529,7 @@
 
       var leaderCrownHtml = isOwner ?
         '<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">' +
-          '<span style="font-size:1.125rem;" title="내가 만든 모임 (모임장)">👑</span>' +
+          '<span style="font-size:1.125rem;" title="내가 만든 모임 (모임장)"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18"/><path d="m4 8 4 5 4-7 4 7 4-5-1 10H5z"/></svg></span>' +
           '<span style="font-size:.8125rem;font-weight:700;color:var(--sage);background:var(--sage-soft);border:1px solid var(--sage-soft);padding:2px 8px;border-radius:999px;">모임장</span>' +
         '</div>' : '';
 
@@ -9595,7 +9595,7 @@
         '<div style="margin-top:16px;padding-top:14px;border-top:1.5px solid var(--rule);">' +
           '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px;">' +
             '<div style="display:flex;align-items:center;gap:6px;min-width:0;">' +
-              '<span style="font-size:1.0625rem;">🎯</span>' +
+              '<span style="font-size:1.0625rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></span>' +
               '<b style="font-size:.9375rem;color:var(--ink);">팀 수준별 목표 관리</b>' +
               '<span class="faint" style="font-size:.8125rem;">(A·B·C조 맞춤)</span>' +
             '</div>' +
@@ -10334,7 +10334,7 @@
         '<div style="display:flex;gap:10px;align-items:center;">' +
           '<button class="btn btn-ghost btn-sm" id="recAiPhotoPickBtn" type="button">사진 첨부</button>' +
           '<input type="file" id="recAiFileInput" accept="image/*" style="display:none;">' +
-          '<div id="recAiPhotoPreview" style="width:44px;height:44px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;overflow:hidden;border:1px solid var(--rule);">🖼️</div>' +
+          '<div id="recAiPhotoPreview" style="width:44px;height:44px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;overflow:hidden;border:1px solid var(--rule);"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="m21 16-5-5-8 8"/></svg></div>' +
         '</div>' +
       '</div>' +
       '<div class="modal-actions" style="gap:8px;">' +
@@ -11015,7 +11015,7 @@
             if(titleInp && curAiRec.title) titleInp.value = curAiRec.title;
             if(iconInp && curAiRec.icon) iconInp.value = curAiRec.icon;
             if(noticeBox){
-              noticeBox.innerHTML = '💡 ' + escapeHtml(curAiRec.explanation || 'AI가 요청하신 양식에 맞춰 표 속성과 행을 생성했습니다.');
+              noticeBox.innerHTML = '' + escapeHtml(curAiRec.explanation || 'AI가 요청하신 양식에 맞춰 표 속성과 행을 생성했습니다.');
             }
             updateColWrap();
             toast('AI가 [' + curAiRec.title + '] 맞춤 양식을 생성했어요!');
@@ -11348,7 +11348,7 @@
     var a = computeTableAnalytics(tpl, cols, rList);
     if(!a.stats || !a.stats.length) return '';
     return '<div class="pro-analytics-banner" id="proAnalyticsBanner">' +
-      '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-right:2px;display:flex;align-items:center;gap:4px;white-space:nowrap;"><span>📊</span><span>실시간 분석</span></div>' +
+      '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-right:2px;display:flex;align-items:center;gap:4px;white-space:nowrap;"><span><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V10"/><path d="M10 19V5"/><path d="M16 19v-7"/><path d="M22 19H2"/></svg></span><span>실시간 분석</span></div>' +
       a.stats.map(function(s){
         return '<div class="pro-stat-chip'+(s.highlight?' highlight':'')+'">' +
           '<span class="pro-stat-label">'+escapeHtml(s.label)+'</span>' +
@@ -11595,7 +11595,7 @@
     return '<div class="pro-stopwatch-widget" id="proStopwatchWidget">' +
       '<div class="pro-stopwatch-header">' +
         '<div style="display:flex;align-items:center;gap:6px;">' +
-          '<span style="font-size:1rem;">⏱️</span>' +
+          '<span style="font-size:1rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2"/><path d="M9 2h6"/></svg></span>' +
           '<b style="font-size:.875rem;color:var(--ink);">인앱 인터벌 타이머 & 스톱워치</b>' +
         '</div>' +
         '<div class="pro-sw-modes" id="swModeRow">' +
@@ -11796,7 +11796,7 @@
       coachingHtml +
       '<div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;">' +
         '<button class="btn btn-primary btn-sm" id="coachApplySchedBtn" type="button" style="width:100%;padding:9px 0;font-size:.875rem;">' +
-          '📅 ' + targetDateISO + ' (' + followUpDays + '일 후) 추천 일정 등록하기' +
+          '' + targetDateISO + ' (' + followUpDays + '일 후) 추천 일정 등록하기' +
         '</button>' +
         '<button class="btn btn-ghost btn-sm" id="coachApplyMemoBtn" type="button" style="width:100%;font-size:.8125rem;">' +
           '오늘 메모에 AI 조언 덧붙이기' +
@@ -11930,20 +11930,20 @@
                 toast('Notion에 성공적으로 전송되었습니다!');
                 if(statusWrap){
                   statusWrap.className = 'notion-push-status-pill success';
-                  statusWrap.textContent = '✅ ' + (result.summary || '전송 완료');
+                  statusWrap.textContent = '' + (result.summary || '전송 완료');
                 }
               } else {
                 toast('Notion 전송 실패: ' + (result.error || result.summary || '설정을 확인하세요'));
                 if(statusWrap){
                   statusWrap.className = 'notion-push-status-pill error';
-                  statusWrap.textContent = '❌ ' + (result.error || result.summary || '전송 실패');
+                  statusWrap.textContent = '' + (result.error || result.summary || '전송 실패');
                 }
               }
             } catch(err){
               toast('Notion 전송 오류: ' + err.message);
               if(statusWrap){
                 statusWrap.className = 'notion-push-status-pill error';
-                statusWrap.textContent = '❌ ' + err.message;
+                statusWrap.textContent = '' + err.message;
               }
             } finally {
               pushBtn.disabled = false;
@@ -12104,7 +12104,7 @@
             '<span class="badge" style="font-size:.6875rem;">'+escapeHtml(act.type)+'</span>' +
           '</div>' +
           '<div style="font-size:.8125rem;color:var(--ink-soft);margin-top:3px;">' +
-            '⏱️ '+act.duration+' | ❤️ 평균 '+act.bpm+' (최고 '+act.maxBpm+') | 🔥 '+act.calories + (act.dist !== '-' ? ' | 📍 '+act.dist : '') +
+            ''+act.duration+' | ❤️ 평균 '+act.bpm+' (최고 '+act.maxBpm+') | 🔥 '+act.calories + (act.dist !== '-' ? ' | 📍 '+act.dist : '') +
           '</div>' +
         '</div>' +
         '<button class="btn btn-ghost btn-sm" style="font-size:.8125rem;color:var(--ink);" type="button">선택</button>' +
@@ -12390,7 +12390,7 @@
 
             recognizedRowsData = rows;
             resultWrap.style.display = 'block';
-            resultTitle.textContent = '📋 ' + (data.detectedTitle || curTpl.title) + ' (' + rows.length + '개 행)';
+            resultTitle.textContent = '' + (data.detectedTitle || curTpl.title) + ' (' + rows.length + '개 행)';
             resultSummary.textContent = data.summary || '사진에서 추출된 데이터입니다.';
 
             renderResultTable(rows);
@@ -12412,7 +12412,7 @@
               return r;
             });
             resultWrap.style.display = 'block';
-            resultTitle.textContent = '📋 ' + curTpl.title + ' (로컬 비전 분석)';
+            resultTitle.textContent = '' + curTpl.title + ' (로컬 비전 분석)';
             resultSummary.textContent = '오프라인 상태에서 와드 샘플 행 데이터를 구성했습니다.';
             renderResultTable(recognizedRowsData);
           });
@@ -12537,7 +12537,7 @@
       '</div>' +
       '<div style="text-align:center;margin:16px 0;">' +
         '<div class="voice-wave-ring" id="voiceWaveRing">' +
-          '<span style="font-size:1.8rem;" id="voiceMicIcon">🎙️</span>' +
+          '<span style="font-size:1.8rem;" id="voiceMicIcon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4"/></svg></span>' +
         '</div>' +
         '<div style="font-weight:700;font-size:.9375rem;margin-bottom:4px;" id="voiceStatusText">마이크 버튼을 눌러 음성 인식을 시작하세요</div>' +
         '<div class="faint" style="font-size:.8125rem;" id="voiceTranscriptBox">"예: 벤치프레스 80키로 10회 3세트 완료"</div>' +
@@ -12935,7 +12935,7 @@
         '<span id="webAdTimerBadge" style="font-size:.8125rem;color:var(--ink-soft);font-weight:600;">' + adDuration + '초 후 건너뛰기 가능</span>' +
       '</div>' +
       '<div style="background:var(--brand);border-radius:16px;padding:32px 16px;color:#fff;margin-bottom:14px;box-shadow:inset 0 0 20px rgba(0,0,0,0.5);">' +
-        '<div style="font-size:2.8rem;margin-bottom:10px;">🎯</div>' +
+        '<div style="font-size:2.8rem;margin-bottom:10px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div>' +
         '<h4 style="font-size:1.1rem;font-weight:700;color:var(--brand);margin-bottom:6px;">OurGoal x Pro Sponsors</h4>' +
         '<p style="font-size:.875rem;color:rgba(255,255,255,0.85);line-height:1.55;margin:0 0 14px;word-break:keep-all;">' +
           '<b>[' + escapeHtml(adTitle) + ']</b> 목표 완주를 응원합니다!<br>체크인 루프와 함께 매일 성장하세요.' +
@@ -13032,7 +13032,7 @@
     // 💰 보상형 광고 모드 (안내 모달 노출 -> 확인 시 즉시 복제 + 5초 카운트다운 후 광고 재생)
     var noticeText = getTemplateAdNoticeMessage();
     var modalHtml = '<div style="text-align:center;padding:12px 6px;">' +
-      '<div style="font-size:2.2rem;margin-bottom:8px;">🎁</div>' +
+      '<div style="font-size:2.2rem;margin-bottom:8px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v8h14v-8"/><path d="M12 8v12"/><path d="M12 8c-2-3-6-3-6-1s3 1 6 1c3 0 6 1 6-1s-4-2-6 1z"/></svg></div>' +
       '<h3 style="font-size:1.0625rem;font-weight:700;margin-bottom:12px;color:var(--ink);letter-spacing:-0.02em;">템플릿 무료 복사 안내</h3>' +
       '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:14px 16px;font-size:.875rem;line-height:1.6;color:var(--ink);margin-bottom:18px;word-break:keep-all;text-align:left;">' +
         '<p style="margin:0;font-weight:600;color:var(--ink);">안내사항</p>' +
@@ -14353,7 +14353,7 @@
 
       resultSlot.style.display = 'block';
       resultSlot.innerHTML = '<div class="fb-card mid" style="border-radius:12px;padding:16px;text-align:center;">' +
-        '<div style="font-size:1.3rem;margin-bottom:6px;">🧠</div>' +
+        '<div style="font-size:1.3rem;margin-bottom:6px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a4 4 0 0 0-4 4v1a4 4 0 0 0-3 4 4 4 0 0 0 3 4v1a4 4 0 0 0 8 0v-1a4 4 0 0 0 3-4 4 4 0 0 0-3-4V7a4 4 0 0 0-4-4z"/></svg></div>' +
         '<div style="font-weight:700;font-size:.875rem;color:var(--ink);">AI 코치가 ' + sVal + ' ~ ' + eVal + ' 기간의 기록(' + filtered.length + '건)을 종합 분석 중입니다…</div>' +
         '<div class="faint" style="font-size:.8125rem;margin-top:4px;">실천 패턴, 주요 테마 분포, 누적 성장치를 분석하고 있습니다.</div>' +
       '</div>';
@@ -14499,7 +14499,7 @@
       '<div class="fb-card ' + vClass + '" style="border-radius:16px;padding:16px;position:relative;">' +
         '<span class="fb-close" id="periodFbCloseBtn" style="cursor:pointer;position:absolute;top:10px;right:14px;font-size:1.2rem;">×</span>' +
         '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">' +
-          '<span>🧠</span>' +
+          '<span><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a4 4 0 0 0-4 4v1a4 4 0 0 0-3 4 4 4 0 0 0 3 4v1a4 4 0 0 0 8 0v-1a4 4 0 0 0 3-4 4 4 0 0 0-3-4V7a4 4 0 0 0-4-4z"/></svg></span>' +
           '<b style="font-size:.875rem;color:var(--ink);">기간 종합 코칭 리포트</b>' +
           '<span class="dday-mini" style="background:var(--surface-2);color:var(--ink);font-weight:700;">' + sVal + ' ~ ' + eVal + '</span>' +
         '</div>' +
@@ -14616,7 +14616,7 @@
 
     var listEl = document.getElementById('recordsList');
     if(!allRecs.length){
-      listEl.innerHTML = '<div class="empty-state"><div class="e-icon">📝</div><p>아직 기록이 없어요. 홈에서 자유롭게 적어보세요.</p></div>';
+      listEl.innerHTML = '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div><p>아직 기록이 없어요. 홈에서 자유롭게 적어보세요.</p></div>';
       return;
     }
 
@@ -14633,7 +14633,7 @@
     var query = searchInput ? searchInput.value : '';
     filteredRecs = filterRecordsByQuery(filteredRecs, query);
     if(!filteredRecs.length){
-      listEl.innerHTML = '<div class="empty-state"><div class="e-icon">🔍</div><p>해당 테마 또는 검색 조건에 맞는 기록이 없어요.</p></div>';
+      listEl.innerHTML = '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div><p>해당 테마 또는 검색 조건에 맞는 기록이 없어요.</p></div>';
       return;
     }
 
@@ -14659,7 +14659,7 @@
       html += '<div class="rec-card'+(isDoing?' doing':'')+'" data-recid="'+r.id+'" style="border-left: 4px solid '+th.color+';'+(isTpl?'cursor:pointer;':'')+'">' +
         tplBadgeHtml +
         '<div class="rec-top"><div class="rec-text" style="white-space:pre-line;">'+escapeHtml(r.text)+'</div>' +
-          '<div class="rec-icons"><button class="icon-btn" data-recedit="1" aria-label="기록 수정">✎</button><button class="icon-btn" data-recdel="1" aria-label="기록 삭제">×</button></div>' +
+          '<div class="rec-icons"><button class="icon-btn" data-recedit="1" aria-label="기록 수정"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn" data-recdel="1" aria-label="기록 삭제">×</button></div>' +
         '</div>' +
         photoHtml +
         '<div class="rec-bottom">' +
@@ -16028,7 +16028,7 @@
   function renderCommShare(body){
     var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     if(!goals.length){
-      body.innerHTML = '<div class="empty-state"><div class="e-icon">📣</div><p>목표를 만들면 진행 카드를 공유할 수 있어요.</p></div>';
+      body.innerHTML = '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15 9a4 4 0 0 1 0 6"/><path d="M18 6a8 8 0 0 1 0 12"/></svg></div><p>목표를 만들면 진행 카드를 공유할 수 있어요.</p></div>';
       return;
     }
     if(!state.shareComposer) state.shareComposer = { platforms:{insta:true}, ratio:{insta:'square',kakao:'wide',tiktok:'vertical',threads:'square'}, sel:{record:false, feedback:false, goal:true, ms:{}}, previews:{} };
@@ -16597,7 +16597,7 @@
         var aiTagHtml = it.is_ai ? '<span class="feed-ai-tag">AI 봇</span>' : '';
         var aiNoticeHtml = it.is_ai ?
           '<div class="ai-badge-notice">' +
-            '<span class="ai-icon">🤖</span>' +
+            '<span class="ai-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><rect x="4" y="7" width="16" height="12" rx="3"/><circle cx="9" cy="13" r="1.2" fill="currentColor"/><circle cx="15" cy="13" r="1.2" fill="currentColor"/><path d="M2 12h2M20 12h2"/></svg></span>' +
             '<span>이는 ai봇 생성물입니다 앱 런칭 초기에 앱 활용을 보여드리기 위함이고 곧 실제 사용자의 제작물로 가득 찰 것입니다</span>' +
           '</div>' : '';
 
@@ -16881,7 +16881,7 @@
         }).join('') +
       '</div>' +
       collectiveGaugeHtml() +
-      (visibleGroups.length ? '' : '<div class="empty-state"><div class="e-icon">🔍</div><p>이 카테고리에는 아직 모임이 없어요.<br>첫 모임을 만들어보세요.</p></div>') +
+      (visibleGroups.length ? '' : '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div><p>이 카테고리에는 아직 모임이 없어요.<br>첫 모임을 만들어보세요.</p></div>') +
       visibleGroups.map(function(g){
         var gs = groupState(g.id);
         var prog = typeof g.progress==='number' ? g.progress : 0;
@@ -16892,7 +16892,7 @@
           '<div class="group-info"><b>'+escapeHtml(g.name)+ownerBadge+(gs.joined&&checked?' ✅':'')+'</b>' +
             '<div style="margin:3px 0 2px;display:flex;gap:4px;flex-wrap:wrap;">' + topicPill(g.topic) +
               (g.maxMembers === 2 ? '<span class="topic-pill" style="background:var(--sage-soft);color:var(--sage);border-color:var(--sage-line);font-weight:700;">1:1 완주방</span>' : (g.maxMembers === 5 ? '<span class="topic-pill" style="background:var(--surface-2);color:var(--ink);border-color:var(--rule);font-weight:700;">5인 소그룹</span>' : '')) +
-              (g.region ? '<span class="topic-pill" style="background:var(--gold-soft);color:var(--gold);border-color:var(--gold-line);">'+(g.region==='온라인'?'온라인':'📍 '+escapeHtml(g.region))+'</span>' : '') +
+              (g.region ? '<span class="topic-pill" style="background:var(--gold-soft);color:var(--gold);border-color:var(--gold-line);">'+(g.region==='온라인'?'온라인':''+escapeHtml(g.region))+'</span>' : '') +
             '</div>' +
             '<span>'+(g.members+(gs.joined?1:0))+(g.maxMembers ? '/'+g.maxMembers+'명' : '명')+' 참여 · '+g.cadence+' 인증 · '+dDay(g.endDate)+'</span>' +
             '<div class="group-bar"><span style="width:'+prog+'%;"></span></div>' +
@@ -16947,7 +16947,7 @@
     var allVerifications = (gs.verifications || []).concat(g.verifications || []);
     var draftPhotoUrl = '';
     var isOwner = gs.myRole === 'owner';
-    var ownerBadge = isOwner ? '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;"><span style="font-size:1.1rem;">👑</span><span style="font-size:.8125rem;font-weight:700;color:var(--sage);background:var(--sage-soft);border:1px solid var(--sage-soft);padding:2px 8px;border-radius:999px;">모임장</span></div>' : '';
+    var ownerBadge = isOwner ? '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;"><span style="font-size:1.1rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18"/><path d="m4 8 4 5 4-7 4 7 4-5-1 10H5z"/></svg></span><span style="font-size:.8125rem;font-weight:700;color:var(--sage);background:var(--sage-soft);border:1px solid var(--sage-soft);padding:2px 8px;border-radius:999px;">모임장</span></div>' : '';
 
     body.innerHTML =
       '<span class="dm-back" id="grpBack">‹ 모임 목록</span>' +
@@ -16956,7 +16956,7 @@
         '<div class="collective-top"><b>'+g.icon+' '+escapeHtml(g.name)+'</b>' +
           '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);">'+g.endDate+' · '+dDay(g.endDate)+'</span></div>' +
         '<div style="margin:0 0 8px;display:flex;gap:4px;flex-wrap:wrap;">'+topicPill(g.topic)+
-          (g.region ? '<span class="topic-pill" style="background:var(--gold-soft);color:var(--gold);border-color:var(--gold-line);">'+(g.region==='온라인'?'온라인 모임':'📍 '+escapeHtml(g.region)+' 오프라인 가능')+'</span>' : '')+'</div>' +
+          (g.region ? '<span class="topic-pill" style="background:var(--gold-soft);color:var(--gold);border-color:var(--gold-line);">'+(g.region==='온라인'?'온라인 모임':''+escapeHtml(g.region)+' 오프라인 가능')+'</span>' : '')+'</div>' +
         '<p class="faint" style="margin:0 0 10px;">'+escapeHtml(g.desc)+' · '+g.cadence+' 인증</p>' +
         '<div class="collective-track"><div class="collective-fill" style="width:'+g.progress+'%;"></div></div>' +
         '<p class="faint" style="margin:8px 0 0;">참여자 '+(g.members+(gs.joined?1:0))+'명의 공동 달성률 '+g.progress+'%</p>' +
@@ -17005,7 +17005,7 @@
           '<p class="muted" style="margin:0 0 10px;">'+escapeHtml(g.rule)+'</p>' +
           '<div style="background:var(--card2);border-radius:12px;padding:12px;border:1px solid var(--rule);margin-bottom:10px;">' +
             '<div style="display:flex;align-items:center;gap:10px;">' +
-              '<div id="grpPhotoPreview" style="width:60px;height:60px;border-radius:10px;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:1.6rem;overflow:hidden;border:1px solid var(--rule);flex:0 0 auto;">📷</div>' +
+              '<div id="grpPhotoPreview" style="width:60px;height:60px;border-radius:10px;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:1.6rem;overflow:hidden;border:1px solid var(--rule);flex:0 0 auto;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>' +
               '<div style="flex:1;min-width:0;">' +
                 '<button class="btn btn-ghost btn-sm" id="grpPickPhotoBtn" type="button" style="font-size:.8125rem;">인증 사진 선택</button>' +
                 '<input type="file" id="grpPhotoFileInput" accept="image/*" style="display:none;">' +
@@ -17024,7 +17024,7 @@
           '<div class="grp-photo-grid">' +
             allVerifications.map(function(v){
               return '<div class="grp-photo-card">' +
-                (v.photoUrl ? '<img src="'+escapeHtml(v.photoUrl)+'" class="grp-photo-img" alt="인증">' : '<div class="grp-photo-img" style="display:flex;align-items:center;justify-content:center;font-size:2rem;background:var(--card2);">📷</div>') +
+                (v.photoUrl ? '<img src="'+escapeHtml(v.photoUrl)+'" class="grp-photo-img" alt="인증">' : '<div class="grp-photo-img" style="display:flex;align-items:center;justify-content:center;font-size:2rem;background:var(--card2);"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>') +
                 '<div class="grp-photo-meta">' +
                   '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">' +
                     '<b style="font-size:.8125rem;">'+(v.userAvatar||'👤')+' '+escapeHtml(v.userName)+'</b>' +
@@ -17528,7 +17528,7 @@
 
     openModal(
       '<div style="text-align:center;padding:8px 4px 6px;">' +
-        '<div style="font-size:2.4rem;margin-bottom:8px;">💌</div>' +
+        '<div style="font-size:2.4rem;margin-bottom:8px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>' +
         '<div class="dday-pill" style="background:var(--sage-soft);color:var(--sage);display:inline-block;margin-bottom:6px;font-weight:700;">Zero-Install Web Onboarding</div>' +
         '<h3 style="font-size:1.2rem;font-weight:700;margin:0 0 6px;">함께 목표 방 초대장이 도착했어요!</h3>' +
         '<p class="muted" style="font-size:.875rem;line-height:1.5;margin:0 0 14px;">' +
@@ -17709,9 +17709,9 @@
           '<div style="font-weight:700;font-size:1.125rem;" id="mnPreviewName">'+escapeHtml(ms.anonName || genAnonName(majors[0], ms.seed))+'</div>' +
           '<p class="faint" style="margin:6px 0 0;">마니또에게는 이 이름만 보여요</p>' +
         '</div>' +
-        '<div class="mission-card"><div class="mi">🎯</div><div><b>매일 미션</b><span>마니또 1명에게 응원 스탬프 보내기 → 마니또 스트릭이 쌓여요</span></div></div>' +
+        '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div><div><b>매일 미션</b><span>마니또 1명에게 응원 스탬프 보내기 → 마니또 스트릭이 쌓여요</span></div></div>' +
         '<div class="mission-card"><div class="mi">🔓</div><div><b>DM 열기</b><span>서로 3번 이상 응원하면 DM이 열려요 (양쪽 모두 허용해야 해요)</span></div></div>' +
-        '<div class="mission-card"><div class="mi">🎭</div><div><b>정체 공개</b><span>7일 동안 응원을 주고받으면 서로 원할 때 정체를 공개할 수 있어요</span></div></div>' +
+        '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01M15 9h.01"/></svg></div><div><b>정체 공개</b><span>7일 동안 응원을 주고받으면 서로 원할 때 정체를 공개할 수 있어요</span></div></div>' +
         '<button class="mz-btn" id="mnJoin" type="button" style="background:var(--brand);box-shadow:0 16px 32px -14px var(--violet-line);">마니또 시작하기</button>';
       var previewName = ms.anonName || genAnonName(majors[0], ms.seed);
       document.getElementById('mnRegen').addEventListener('click', function(){
@@ -17953,7 +17953,7 @@
       }
       openModal(
         '<div class="soft-ask-card">' +
-          '<div class="soft-ask-icon">🔔</div>' +
+          '<div class="soft-ask-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>' +
           '<h3>스트릭을 안전하게 지켜드릴까요?</h3>' +
           '<p class="muted" style="margin:6px 0 0;font-size:.875rem;line-height:1.45;">' +
             '저녁 8시까지 체크인이 없을 때 긴급 알림으로 연속 불꽃이 꺼지지 않게 지켜드려요.<br>' +
@@ -18323,7 +18323,7 @@
         return '<div class="theme-card' + (isActive ? ' active' : '') + '" data-themeid="' + t.id + '">' +
           '<div class="theme-dot" style="background:' + t.preview + '"></div>' +
           '<div class="theme-info">' +
-            '<div class="theme-name">' + t.name + (isActive ? ' <span class="theme-check">✓</span>' : '') + '</div>' +
+            '<div class="theme-name">' + t.name + (isActive ? ' <span class="theme-check"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></span>' : '') + '</div>' +
             '<div class="theme-desc">' + t.desc + '</div>' +
           '</div>' +
         '</div>';
@@ -18518,7 +18518,7 @@
       if(settings.notionApiKey && settings.notionDatabaseId){
         toast('Notion DB로 테스트 전송 중...');
         var res = await pushRecordToNotion({ startAt: nowISO(), memo: '아워골 연동 테스트' }, { title: '테스트' }, ['항목', '상태'], [['연동 확인', '성공']]);
-        toast(res.ok ? '🚀 ' + res.summary : '전송 실패: ' + (res.error || res.summary));
+        toast(res.ok ? '' + res.summary : '전송 실패: ' + (res.error || res.summary));
       } else if(settings.notionWebhookUrl){
         var ok = await sendToNotion({ text:'아워골 테스트 전송입니다', createdAt: nowISO() }, null);
         toast(ok ? '노션 웹훅으로 테스트 전송했어요' : '전송에 실패했어요 · URL을 확인해주세요');
@@ -18539,7 +18539,7 @@
           '<div style="font-size:.875rem;font-weight:700;margin-bottom:8px;color:var(--ink);">내가 등록한 잇템 ('+myItems.length+'개)</div>' +
           myItems.map(function(it){
             return '<div class="it-item-card">' +
-              (it.imageUrl ? '<img src="'+it.imageUrl+'" class="it-item-thumb" alt="">' : '<div class="it-item-thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;">🛍️</div>') +
+              (it.imageUrl ? '<img src="'+it.imageUrl+'" class="it-item-thumb" alt="">' : '<div class="it-item-thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 14H5z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg></div>') +
               '<div style="flex:1;min-width:0;">' +
                 '<div style="font-weight:700;font-size:.875rem;">'+escapeHtml(it.name)+'</div>' +
                 (it.desc ? '<div class="faint" style="font-size:.8125rem;margin-top:2px;">'+escapeHtml(it.desc)+'</div>' : '') +

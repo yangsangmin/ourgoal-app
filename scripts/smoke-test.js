@@ -1826,7 +1826,7 @@ check('compliance: 팀 수준별 목표 관리(조별 목표·마일스톤·할�
 
   // 3. 모임장 왕관 👑 및 초록색 모임장 배지
   assert.ok(/color:var\(--sage\);background:var\(--sage-soft\);[^"]*">모임장<\/span>/.test(html), '초록색 모임장 배지 스타일');
-  assert.ok(html.includes('👑</span>'), '왕관 아이콘');
+  assert.ok(html.includes('m4 8 4 5 4-7 4 7 4-5-1 10H5z'), '왕관 아이콘(SVG)');
 });
 
 check('compliance: 상단 모임 필터 칩바 및 팀 목표 200% 활용 가이드 업데이트가 구현되어 있다', () => {
