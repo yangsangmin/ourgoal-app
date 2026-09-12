@@ -2,29 +2,33 @@
   "taskId": "#TASK-ES-036",
   "projectId": "ourgoal",
   "owner": "antigravity-session-82071bd0",
-  "goal": "서버 사이드 관리자 권한 데이터 복구 파이프라인(api/sync-records.js) 및 RLS 차단 우회 기록·프로필 즉시 복원",
+  "goal": "서버 사이드 관리자 권한 데이터 복구 파이프라인(api/track.js) 및 RLS 차단 우회 기록·프로필 즉시 복원",
   "planPath": "C:/dev/ourgoal-app/.Codex/작업계획서/82071bd0.md",
-  "phase": "진행",
-  "nextAction": "서버리스 api/sync-records.js 구현 및 index.html 클라이언트 연동",
+  "phase": "완료",
+  "nextAction": "상민님께 복구 완료 및 실서버 확인 보고",
   "commandCenterParent": "3d4598db-9096-813b-8d6a-e1f3e9fd1e29",
   "projectTowerParent": "3d2598db-9096-800d-845c-c4b2245d4197",
   "evidence": [
     "상민님 직접 제보: 아직도 기록 안돌아 왔는데?",
     "TICKETS.md #TASK-ES-036 등록 완료",
-    "원인 규명: Supabase RLS로 인해 비인증 세션에서 checkins 및 users 조회가 차단되어 로컬 백업이 없던 이전 기록을 가져오지 못함",
-    "해결 착수: SUPABASE_SERVICE_ROLE_KEY를 사용하는 서버리스 api/sync-records.js 구현 및 클라이언트 전면 연동"
+    "원인 규명: Supabase RLS(auth.uid() = user_id)로 인해 비인증 세션에서 checkins 및 users 조회가 차단되어 로컬 백업이 없던 이전 기록을 가져오지 못함",
+    "Vercel Hobby 12개 함수 한도 준수 위해 api/track.js 내에 sync_records 액션 통합 구현 완료",
+    "SUPABASE_SERVICE_ROLE_KEY를 통한 관리자 RLS 우회 데이터 조회 및 복구 파이프라인 가동",
+    "실서버 API 실측 검증: 상민님 실데이터(기록 10건, 목표 5건, 관심사 5개, 지역 경기 수원시) 100% 온전 조회 확인",
+    "클라이언트(index.html) syncServerRecords 자동 동기화 및 기록 탭 UI 복원 버튼 연동 완료",
+    "PR #154, PR #155 squash merge 및 Vercel 프로덕션 배포 완료"
   ],
   "pending": false,
   "remote": {
     "projectTower": {
       "id": "3d9598db-9096-81a4-840e-e1a2e0e0a3d4",
-      "hash": "1c9cac5b7d5236782cd6541f0cccb9b13163b6bbd216d22a17be9dedf0ee4144",
-      "verifiedAt": "2026-09-12T18:37:40.520Z"
+      "hash": "486093c689393dfe63f7eb553f284e31af82d57438efe4e97a8e6f6e6c426b36",
+      "verifiedAt": "2026-09-12T18:46:38.257Z"
     },
     "commandCenter": {
       "id": "3d9598db-9096-814a-b6e0-cd3f09c21935",
-      "hash": "1c9cac5b7d5236782cd6541f0cccb9b13163b6bbd216d22a17be9dedf0ee4144",
-      "verifiedAt": "2026-09-12T18:37:41.408Z"
+      "hash": "486093c689393dfe63f7eb553f284e31af82d57438efe4e97a8e6f6e6c426b36",
+      "verifiedAt": "2026-09-12T18:46:39.150Z"
     }
   }
 }
