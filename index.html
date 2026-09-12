@@ -9044,43 +9044,192 @@
       '</div>' +
     '</div>' +
 
-    '<div class="card" style="border:1px dashed var(--gold-line);margin-bottom:14px;">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-        '<span class="tag" style="background:var(--gold-soft);color:var(--gold);font-size:.8125rem;">실제 팀 목표 예시 화면</span>' +
-        '<span class="dday-pill" style="background:var(--sage-soft);color:var(--sage);">달성률 74%</span>' +
+    '<div style="margin:14px 0 8px;">' +
+      '<div style="font-size:.875rem;font-weight:700;color:var(--ink);margin-bottom:6px;">🎯 목적별 실제 팀 목표 예시 둘러보기</div>' +
+      '<div class="goal-chip-row" id="tgGuideTabsRow" style="margin-bottom:10px;">' +
+        '<button class="goal-chip active" data-tgexampletab="workshop" type="button">🏢 회사 워크숍</button>' +
+        '<button class="goal-chip" data-tgexampletab="travel" type="button">✈️ 단체 여행</button>' +
+        '<button class="goal-chip" data-tgexampletab="fitness" type="button">🏋️ 운동 크루</button>' +
       '</div>' +
-      '<div style="font-weight:700;font-size:1rem;margin-bottom:4px;">크로스핏 와드(WOD) 정복대</div>' +
-      '<p class="faint" style="margin:0 0 10px;font-size:.8125rem;">공동 목표: 크루 전체 이번 달 와드 250회 정복</p>' +
-      '<div class="group-bar"><span style="width:74%;"></span></div>' +
-      '<div class="faint" style="font-size:.8125rem;margin:4px 0 10px;">마일스톤 2/3 완료 (185/250회)</div>' +
-      '<div class="ms-list">' +
-        '<div class="ms-row" style="padding:8px 10px;">' +
-          '<div class="ms-main">' +
-            '<div class="ms-status done"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>' +
-            '<div style="flex:1;min-width:0;"><span class="ms-title done-text">1단계: 상반월 100회 인증 돌파</span></div>' +
-            '<span class="dday-pill" style="font-size:.6875rem;">달성완료</span>' +
+    '</div>' +
+
+    // 패널 1: 회사 워크숍 예시
+    '<div id="tgExampleWorkshop" class="tg-example-panel" style="display:block;">' +
+      '<div class="card" style="border:1px dashed var(--brand-strong);margin-bottom:14px;background:var(--card);">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+          '<span class="tag" style="background:var(--red-soft);color:var(--brand-strong);font-size:.8125rem;">실제 팀 목표 예시 화면 · 회사 워크숍</span>' +
+          '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);">D-21 · 달성률 65%</span>' +
+        '</div>' +
+        '<div style="font-weight:700;font-size:1rem;margin-bottom:4px;">🏢 2026 하반기 전사 전략 워크숍 TF</div>' +
+        '<p class="faint" style="margin:0 0 10px;font-size:.8125rem;">공동 목표: 워크숍 기획부터 현장 실행 및 2027 로드맵 수립 완료</p>' +
+        '<div class="group-bar"><span style="width:65%;background:var(--brand);"></span></div>' +
+        '<div class="faint" style="font-size:.8125rem;margin:4px 0 10px;">마일스톤 2/3 완료 (부서별 세션 아젠다 준비 중)</div>' +
+        '<div class="ms-list">' +
+          '<div class="ms-row" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status done"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>' +
+              '<div style="flex:1;min-width:0;"><span class="ms-title done-text">1단계: 장소/숙소 대관 및 워크숍 예산안 최종 승인</span></div>' +
+              '<span class="dday-pill" style="font-size:.6875rem;">달성완료</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ms-row doing" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status doing"></div>' +
+              '<div style="flex:1;min-width:0;"><span class="ms-title">2단계: 부서별 세션 아젠다 및 팀빌딩 프로그램 확정</span></div>' +
+              '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);font-size:.6875rem;">진행 중</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ms-row" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status todo"></div>' +
+              '<div style="flex:1;min-width:0;"><span class="ms-title">3단계: 워크숍 본행사 진행 및 팀별 액션플랜 도출·회고</span></div>' +
+              '<span class="dday-pill" style="font-size:.6875rem;">대기</span>' +
+            '</div>' +
           '</div>' +
         '</div>' +
-        '<div class="ms-row doing" style="padding:8px 10px;">' +
-          '<div class="ms-main">' +
-            '<div class="ms-status doing"></div>' +
-            '<div style="flex:1;min-width:0;"><span class="ms-title">2단계: 하반월 200회 인증 돌파</span></div>' +
-            '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);font-size:.6875rem;">진행 중</span>' +
+        '<div style="margin-top:12px;padding:10px;background:var(--surface-2);border-radius:10px;font-size:.8125rem;color:var(--ink-soft);">' +
+          '<div style="font-weight:700;color:var(--ink);margin-bottom:4px;">💡 TF 역할 분담 (수준별 조 맞춤 세팅 예시)</div>' +
+          '<div style="line-height:1.6;">' +
+            '• <b>A조 (기획·운영 TF)</b>: 타임테이블 관리, 대관/예산 총괄<br>' +
+            '• <b>B조 (프로그램·레크 TF)</b>: 팀빌딩 3종 액티비티, 비전 세션<br>' +
+            '• <b>C조 (물류·지원 TF)</b>: 카풀 배차, 숙소 룸 배정, 다과·비품' +
           '</div>' +
         '</div>' +
-        '<div class="ms-row" style="padding:8px 10px;">' +
-          '<div class="ms-main">' +
-            '<div class="ms-status todo"></div>' +
-            '<div style="flex:1;min-width:0;"><span class="ms-title">3단계: 250회 완수 및 오프라인 WOD 정모</span></div>' +
-            '<span class="dday-pill" style="font-size:.6875rem;">대기</span>' +
-          '</div>' +
+        '<div style="display:flex;gap:8px;margin-top:14px;">' +
+          '<button class="btn btn-ghost btn-sm" data-tgexplore="1" type="button" style="flex:1;">인기 모임 둘러보기</button>' +
+          '<button class="btn btn-primary btn-sm" data-tgquickjoin="g-workshop" type="button" style="flex:1;">워크숍 모임 참여하기</button>' +
         '</div>' +
       '</div>' +
-      '<div style="display:flex;gap:8px;margin-top:14px;">' +
-        '<button class="btn btn-ghost btn-sm" id="tgExploreGroupsBtn" type="button" style="flex:1;">인기 모임 둘러보기</button>' +
-        '<button class="btn btn-primary btn-sm" id="tgQuickJoinSampleBtn" type="button" style="flex:1;">예시 모임 바로 참여하기</button>' +
+    '</div>' +
+
+    // 패널 2: 단체 여행 예시
+    '<div id="tgExampleTravel" class="tg-example-panel" style="display:none;">' +
+      '<div class="card" style="border:1px dashed var(--teal);margin-bottom:14px;background:var(--card);">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+          '<span class="tag" style="background:rgba(20,184,166,0.12);color:var(--teal);font-size:.8125rem;">실제 팀 목표 예시 화면 · 단체 여행</span>' +
+          '<span class="dday-pill" style="background:rgba(20,184,166,0.12);color:var(--teal);">D-14 · 달성률 70%</span>' +
+        '</div>' +
+        '<div style="font-weight:700;font-size:1rem;margin-bottom:4px;">✈️ 제주 3박4일 단체 힐링여행</div>' +
+        '<p class="faint" style="margin:0 0 10px;font-size:.8125rem;">공동 목표: 낙오자 없이 5명이서 준비하는 완벽한 제주 힐링 여행</p>' +
+        '<div class="group-bar"><span style="width:70%;background:var(--teal);"></span></div>' +
+        '<div class="faint" style="font-size:.8125rem;margin:4px 0 10px;">마일스톤 2/3 완료 (렌터카 및 코스 확정)</div>' +
+        '<div class="ms-list">' +
+          '<div class="ms-row" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status done"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>' +
+              '<div style="flex:1;min-width:0;"><span class="ms-title done-text">1단계: 항공권 발권 및 독채 숙소 예약 확정</span></div>' +
+              '<span class="dday-pill" style="font-size:.6875rem;">달성완료</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ms-row doing" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status doing"></div>' +
+              '<div style="flex:1;min-width:0;"><span class="ms-title">2단계: 렌터카 배차, 일자별 드라이브 코스 및 맛집 리스트업</span></div>' +
+              '<span class="dday-pill" style="background:rgba(20,184,166,0.12);color:var(--teal);font-size:.6875rem;">진행 중</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ms-row" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status todo"></div>' +
+              '<div style="flex:1;min-width:0;"><span class="ms-title">3단계: 안전 여행 완주, 공용 경비 정산 및 베스트 샷 앨범 공유</span></div>' +
+              '<span class="dday-pill" style="font-size:.6875rem;">대기</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="margin-top:12px;padding:10px;background:var(--surface-2);border-radius:10px;font-size:.8125rem;color:var(--ink-soft);">' +
+          '<div style="font-weight:700;color:var(--ink);margin-bottom:4px;">💡 단체 여행 역할 분담 (수준별 조 맞춤 세팅 예시)</div>' +
+          '<div style="line-height:1.6;">' +
+            '• <b>A조 (동선·차량 조)</b>: 렌터카 예약, 1~3일차 드라이브 코스<br>' +
+            '• <b>B조 (맛집·카페 조)</b>: 흑돼지/해산물 로컬 맛집, 단체석 예약<br>' +
+            '• <b>C조 (총무·촬영 조)</b>: 모임통장 공용 경비 정산, 단체 인생샷' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;margin-top:14px;">' +
+          '<button class="btn btn-ghost btn-sm" data-tgexplore="1" type="button" style="flex:1;">인기 모임 둘러보기</button>' +
+          '<button class="btn btn-primary btn-sm" data-tgquickjoin="g-travel" type="button" style="flex:1;">여행 모임 참여하기</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+
+    // 패널 3: 운동 크루 (기존 테스트 호환성 유지)
+    '<div id="tgExampleFitness" class="tg-example-panel" style="display:none;">' +
+      '<div class="card" style="border:1px dashed var(--gold-line);margin-bottom:14px;background:var(--card);">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+          '<span class="tag" style="background:var(--gold-soft);color:var(--gold);font-size:.8125rem;">실제 팀 목표 예시 화면</span>' +
+          '<span class="dday-pill" style="background:var(--sage-soft);color:var(--sage);">달성률 74%</span>' +
+        '</div>' +
+        '<div style="font-weight:700;font-size:1rem;margin-bottom:4px;">크로스핏 와드(WOD) 정복대</div>' +
+        '<p class="faint" style="margin:0 0 10px;font-size:.8125rem;">공동 목표: 크루 전체 이번 달 와드 250회 정복</p>' +
+        '<div class="group-bar"><span style="width:74%;"></span></div>' +
+        '<div class="faint" style="font-size:.8125rem;margin:4px 0 10px;">마일스톤 2/3 완료 (185/250회)</div>' +
+        '<div class="ms-list">' +
+          '<div class="ms-row" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status done"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></div>' +
+              '<div style="flex:1;min-width:0;"><span class="ms-title done-text">1단계: 상반월 100회 인증 돌파</span></div>' +
+              '<span class="dday-pill" style="font-size:.6875rem;">달성완료</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ms-row doing" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status doing"></div>' +
+              '<div style="flex:1;min-width:0;"><span class="ms-title">2단계: 하반월 200회 인증 돌파</span></div>' +
+              '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);font-size:.6875rem;">진행 중</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="ms-row" style="padding:8px 10px;">' +
+            '<div class="ms-main">' +
+              '<div class="ms-status todo"></div>' +
+              '<div style="flex:1;min-width:0;"><span class="ms-title">3단계: 250회 완수 및 오프라인 WOD 정모</span></div>' +
+              '<span class="dday-pill" style="font-size:.6875rem;">대기</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;margin-top:14px;">' +
+          '<button class="btn btn-ghost btn-sm" id="tgExploreGroupsBtn" data-tgexplore="1" type="button" style="flex:1;">인기 모임 둘러보기</button>' +
+          '<button class="btn btn-primary btn-sm" id="tgQuickJoinSampleBtn" data-tgquickjoin="g0" type="button" style="flex:1;">예시 모임 바로 참여하기</button>' +
+        '</div>' +
       '</div>' +
     '</div>';
+  }
+
+  function wireTeamGoalsGuideEvents(container){
+    var tabs = container.querySelectorAll('[data-tgexampletab]');
+    tabs.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var target = btn.dataset.tgexampletab;
+        tabs.forEach(function(b){ b.classList.toggle('active', b === btn); });
+        var pWS = container.querySelector('#tgExampleWorkshop');
+        var pTR = container.querySelector('#tgExampleTravel');
+        var pFT = container.querySelector('#tgExampleFitness');
+        if(pWS) pWS.style.display = target === 'workshop' ? 'block' : 'none';
+        if(pTR) pTR.style.display = target === 'travel' ? 'block' : 'none';
+        if(pFT) pFT.style.display = target === 'fitness' ? 'block' : 'none';
+      });
+    });
+    container.querySelectorAll('[data-tgexplore]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        closeModal();
+        setTab('comm');
+        state.commSubTab = 'groups';
+        var subtabs = document.getElementById('commSubtabs');
+        if(subtabs) subtabs.querySelectorAll('.comm-subtab').forEach(function(st){ st.classList.toggle('active', st.dataset.sub === 'groups'); });
+        var subBody = document.getElementById('commSubBody');
+        if(subBody) renderCommGroups(subBody);
+      });
+    });
+    container.querySelectorAll('[data-tgquickjoin]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var gid = btn.dataset.tgquickjoin;
+        var sampleGroup = MOCK_GROUPS.find(function(g){ return g.id === gid; }) || MOCK_GROUPS[0];
+        var gs = groupState(sampleGroup.id);
+        gs.joined = true;
+        await saveProfile();
+        closeModal();
+        toast('"' + sampleGroup.name + '" 모임에 참여했어요! 팀 목표를 확인해보세요.');
+        renderTeamGoalsScreen();
+      });
+    });
   }
 
   function getGroupLevelGoals(gid){
@@ -9090,10 +9239,84 @@
       var g = MOCK_GROUPS.find(function(x){ return x.id===gid; });
       var name = g ? g.name : '';
       var topic = g ? (g.topic || '') : '';
+      var isWorkshop = topic.includes('기획') || topic.includes('업무') || topic.includes('회사') || name.includes('워크숍') || name.includes('TF');
+      var isTravel = topic.includes('여행') || topic.includes('캠핑') || name.includes('여행') || name.includes('투어');
       var isCrossfit = topic.includes('크로스핏') || name.includes('크로스핏');
       var isBadminton = name.includes('배드민턴') || topic.includes('배드민턴');
 
-      if(isBadminton){
+      if(isWorkshop){
+        state.profile.settings.groupLevelGoals[gid] = [
+          { id: 'lg_a_' + gid, name: 'A조 (기획·운영 TF)', goals: [
+            { id: 'lgg_a1_' + gid, title: '타임테이블 관리 및 예산/의전 총괄', dueDate: daysFromNow(21), milestones: [
+              { id: 'lgm_a1_' + gid, title: '워크숍 장소 대관 및 타임테이블 확정', status: 'done', priority: 'high', tasks: [
+                { id: 'lgt_a1a_' + gid, title: '행사장 대관 계약 및 음향/빔 점검', done: true },
+                { id: 'lgt_a1b_' + gid, title: '시간대별 세션 및 휴식 타임테이블 배포', done: true }
+              ] },
+              { id: 'lgm_a2_' + gid, title: '총 예산안 산정 및 지출 결재 승인', status: 'doing', priority: 'high', tasks: [
+                { id: 'lgt_a2a_' + gid, title: '항목별(대관/식대/교통/상품) 예산 취합', done: true },
+                { id: 'lgt_a2b_' + gid, title: '법인카드 한도 체크 및 사전 정산 처리', done: false }
+              ] }
+            ] }
+          ] },
+          { id: 'lg_b_' + gid, name: 'B조 (프로그램·레크 TF)', goals: [
+            { id: 'lgg_b1_' + gid, title: '팀빌딩 프로그램 및 아이스브레이킹 진행', dueDate: daysFromNow(21), milestones: [
+              { id: 'lgm_b1_' + gid, title: '아이스브레이킹 및 팀빌딩 3종 선정', status: 'doing', priority: 'med', tasks: [
+                { id: 'lgt_b1a_' + gid, title: '게임 룰 설명 슬라이드 및 진행 대본', done: true },
+                { id: 'lgt_b1b_' + gid, title: '팀 대항전 점수판 및 참가 상품 구매', done: false }
+              ] },
+              { id: 'lgm_b2_' + gid, title: '부서별 회고 & 비전 공유 세션 진행', status: 'todo', priority: 'high', tasks: [
+                { id: 'lgt_b2a_' + gid, title: '발표 양식 템플릿(1page) 사전 배포', done: false }
+              ] }
+            ] }
+          ] },
+          { id: 'lg_c_' + gid, name: 'C조 (물류·지원 TF)', goals: [
+            { id: 'lgg_c1_' + gid, title: '이동 차량, 숙소 배정 및 물품 세팅', dueDate: daysFromNow(21), milestones: [
+              { id: 'lgm_c1_' + gid, title: '참석자 이동 교통편 및 방 배정표 확정', status: 'done', priority: 'med', tasks: [
+                { id: 'lgt_c1a_' + gid, title: '카풀 차량 배차 및 셔틀 공지', done: true },
+                { id: 'lgt_c1b_' + gid, title: '숙소 룸메이트 배정 및 키 불출 계획', done: true }
+              ] },
+              { id: 'lgm_c2_' + gid, title: '현장 다과·음료 및 상비약 구비', status: 'doing', priority: 'low', tasks: [
+                { id: 'lgt_c2a_' + gid, title: '에너지바, 커피/음료 간식 구매', done: true },
+                { id: 'lgt_c2b_' + gid, title: '응급 상비약 키트 및 명찰 준비', done: false }
+              ] }
+            ] }
+          ] }
+        ];
+      } else if(isTravel){
+        state.profile.settings.groupLevelGoals[gid] = [
+          { id: 'lg_a_' + gid, name: 'A조 (동선·차량 조)', goals: [
+            { id: 'lgg_a1_' + gid, title: '여행 동선 설계 및 렌터카 안전 운행', dueDate: daysFromNow(14), milestones: [
+              { id: 'lgm_a1_' + gid, title: '일자별 최적 드라이브 코스 확정', status: 'done', priority: 'high', tasks: [
+                { id: 'lgt_a1a_' + gid, title: '공항-숙소-관광지 네비 경로 등록', done: true },
+                { id: 'lgt_a1b_' + gid, title: '우천/비상 시 대체 실내 코스 마련', done: true }
+              ] },
+              { id: 'lgm_a2_' + gid, title: '렌터카 인수 및 운전자 보험 등록', status: 'doing', priority: 'high', tasks: [
+                { id: 'lgt_a2a_' + gid, title: '승합차/SUV 렌트 및 완전자차 가입', done: true },
+                { id: 'lgt_a2b_' + gid, title: '제2운전자 사전 등록 완료', done: false }
+              ] }
+            ] }
+          ] },
+          { id: 'lg_b_' + gid, name: 'B조 (맛집·카페 조)', goals: [
+            { id: 'lgg_b1_' + gid, title: '로컬 미식 투어 및 단체석 예약', dueDate: daysFromNow(14), milestones: [
+              { id: 'lgm_b1_' + gid, title: '흑돼지/해산물 대표 맛집 리스트업', status: 'doing', priority: 'med', tasks: [
+                { id: 'lgt_b1a_' + gid, title: '알레르기 및 선호도 사전 조사', done: true },
+                { id: 'lgt_b1b_' + gid, title: '캐치테이블 원격 줄서기 세팅', done: false }
+              ] }
+            ] }
+          ] },
+          { id: 'lg_c_' + gid, name: 'C조 (총무·촬영 조)', goals: [
+            { id: 'lgg_c1_' + gid, title: '공용 경비 정산 및 단체 인생샷 촬영', dueDate: daysFromNow(14), milestones: [
+              { id: 'lgm_c1_' + gid, title: '모임 통장 개설 및 영수증 실시간 기록', status: 'doing', priority: 'med', tasks: [
+                { id: 'lgt_c1a_' + gid, title: '모임 통장 링크 공유 및 회비 수납', done: true },
+                { id: 'lgt_c1b_' + gid, title: '일차별 지출 영수증 촬영 기록', done: false }
+              ] },
+              { id: 'lgm_c2_' + gid, title: '포토스팟 선정 및 공유 앨범 생성', status: 'todo', priority: 'low', tasks: [
+                { id: 'lgt_c2a_' + gid, title: '클라우드 공유 앨범 생성 및 링크 공유', done: false }
+              ] }
+            ] }
+          ] }
+        ];
+      } else if(isBadminton){
         state.profile.settings.groupLevelGoals[gid] = [
           { id: 'lg_a_' + gid, name: 'A조 (상급/대회반)', goals: [
             { id: 'lgg_a1_' + gid, title: '전국 동호인 대회 입상 및 스매시 성공률 극대화', dueDate: daysFromNow(30), milestones: [
@@ -9485,28 +9708,7 @@
     var myTeams = MOCK_GROUPS.filter(function(g){ return groupState(g.id).joined; });
     if(!myTeams.length){
       view.innerHTML = renderTeamGoalsEmptyGuideHtml();
-      var exploreBtn = view.querySelector('#tgExploreGroupsBtn');
-      if(exploreBtn){
-        exploreBtn.addEventListener('click', function(){
-          setTab('comm');
-          state.commSubTab = 'groups';
-          var subtabs = document.getElementById('commSubtabs');
-          if(subtabs) subtabs.querySelectorAll('.comm-subtab').forEach(function(st){ st.classList.toggle('active', st.dataset.sub === 'groups'); });
-          var subBody = document.getElementById('commSubBody');
-          if(subBody) renderCommGroups(subBody);
-        });
-      }
-      var quickJoinBtn = view.querySelector('#tgQuickJoinSampleBtn');
-      if(quickJoinBtn){
-        quickJoinBtn.addEventListener('click', async function(){
-          var sampleGroup = MOCK_GROUPS.find(function(g){ return g.id === 'g0' || g.id === 'g1'; }) || MOCK_GROUPS[0];
-          var gs = groupState(sampleGroup.id);
-          gs.joined = true;
-          await saveProfile();
-          toast('"' + sampleGroup.name + '" 모임에 참여했어요! 팀 목표를 확인해보세요.');
-          renderTeamGoalsScreen();
-        });
-      }
+      wireTeamGoalsGuideEvents(view);
       return;
     }
     myTeams.forEach(function(g){
@@ -9658,7 +9860,10 @@
         openModal(
           renderTeamGoalsEmptyGuideHtml() +
           '<div class="modal-actions"><button class="btn btn-primary btn-block" id="closeTeamGuideModal" type="button">확인</button></div>',
-          function(sheet){ sheet.querySelector('#closeTeamGuideModal').addEventListener('click', closeModal); }
+          function(sheet){
+            sheet.querySelector('#closeTeamGuideModal').addEventListener('click', closeModal);
+            wireTeamGoalsGuideEvents(sheet);
+          }
         );
       });
     }
@@ -9822,16 +10027,68 @@
     var g = MOCK_GROUPS.find(function(x){ return x.id===gid; });
     openModal(
       '<h3>팀 목표 추가</h3>' +
-      '<div class="field"><label>목표 이름</label><input id="tgTitleInput" type="text" placeholder="예: 이번 달 전체 300회 인증 달성"></div>' +
+      '<div style="margin-bottom:12px;">' +
+        '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">⚡ 추천 팀 목표 템플릿</div>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="tplGoalWorkshop" style="font-size:.8125rem;padding:4px 8px;border-color:var(--red-line);color:var(--brand-strong);">🏢 회사 워크숍 준비</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="tplGoalTravel" style="font-size:.8125rem;padding:4px 8px;border-color:var(--teal);color:var(--teal);">✈️ 단체여행 올패스</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="tplGoalMarathon" style="font-size:.8125rem;padding:4px 8px;">🏃 마라톤 완주</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="tplGoalFitness" style="font-size:.8125rem;padding:4px 8px;">💪 누적 300회 운동</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="field"><label>목표 이름</label><input id="tgTitleInput" type="text" placeholder="예: 2026 전사 전략 워크숍 준비 및 실행"></div>' +
       '<div class="field"><label>마감일 (선택)</label><input id="tgDueInput" type="date"></div>' +
       '<div class="modal-actions"><button class="btn btn-ghost" id="tgCancel" type="button">취소</button><button class="btn btn-primary" id="tgSave" type="button">추가</button></div>',
       function(sheet){
+        var defaultMilestones = [];
+        var applyGoalTpl = function(title, days, msList){
+          sheet.querySelector('#tgTitleInput').value = title;
+          sheet.querySelector('#tgDueInput').value = daysFromNow(days);
+          defaultMilestones = msList || [];
+        };
+        var btnWS = sheet.querySelector('#tplGoalWorkshop');
+        if(btnWS) btnWS.onclick = function(){
+          applyGoalTpl('2026 하반기 전사 전략 워크숍 준비 및 실행', 21, [
+            { id: uid('tgm'), title: '1단계: 장소/숙소 대관 및 워크숍 예산안 최종 승인', status: 'done' },
+            { id: uid('tgm'), title: '2단계: 부서별 세션 아젠다 및 팀빌딩 프로그램 확정', status: 'doing' },
+            { id: uid('tgm'), title: '3단계: 워크숍 본행사 진행 및 팀별 액션플랜 도출·회고', status: 'todo' }
+          ]);
+        };
+        var btnTR = sheet.querySelector('#tplGoalTravel');
+        if(btnTR) btnTR.onclick = function(){
+          applyGoalTpl('낙오자 없는 제주 3박 4일 단체 여행 완성', 14, [
+            { id: uid('tgm'), title: '1단계: 항공권 발권 및 독채 숙소 예약 확정', status: 'done' },
+            { id: uid('tgm'), title: '2단계: 렌터카 배차, 일자별 드라이브 코스 및 맛집 리스트업', status: 'doing' },
+            { id: uid('tgm'), title: '3단계: 안전 여행 완주, 공용 경비 정산 및 베스트 샷 앨범 공유', status: 'todo' }
+          ]);
+        };
+        var btnMR = sheet.querySelector('#tplGoalMarathon');
+        if(btnMR) btnMR.onclick = function(){
+          applyGoalTpl('크루 전원 하프 마라톤 완주 챌린지', 30, [
+            { id: uid('tgm'), title: '1단계: 10km 완주 테스트 통과', status: 'done' },
+            { id: uid('tgm'), title: '2단계: 주간 20km 마일리지 및 페이스 훈련', status: 'doing' },
+            { id: uid('tgm'), title: '3단계: 하프 마라톤 대회 전원 완주', status: 'todo' }
+          ]);
+        };
+        var btnFT = sheet.querySelector('#tplGoalFitness');
+        if(btnFT) btnFT.onclick = function(){
+          applyGoalTpl('이번 달 모임 누적 300회 운동 인증 달성', 30, [
+            { id: uid('tgm'), title: '1단계: 상반월 150회 돌파', status: 'doing' },
+            { id: uid('tgm'), title: '2단계: 하반월 300회 완수 및 모임 정모', status: 'todo' }
+          ]);
+        };
+
         sheet.querySelector('#tgCancel').addEventListener('click', closeModal);
         sheet.querySelector('#tgSave').addEventListener('click', async function(){
           var title = sheet.querySelector('#tgTitleInput').value.trim();
           if(!title) return;
           if(!g.teamGoals) g.teamGoals = [];
-          g.teamGoals.push({ id: uid('tg'), title: title, dueDate: sheet.querySelector('#tgDueInput').value || null, milestones:[] });
+          g.teamGoals.push({
+            id: uid('tg'),
+            title: title,
+            dueDate: sheet.querySelector('#tgDueInput').value || null,
+            milestones: defaultMilestones.length ? defaultMilestones : []
+          });
           await saveProfile();
           closeModal();
           renderTeamGoalsScreen();
@@ -15432,6 +15689,36 @@
   }
 
   var MOCK_GROUPS = [
+    { id:'g-workshop', icon:'🏢', name:'2026 하반기 전략 워크숍 TF', topic:'career/기획·전략', region:'서울 강남구', members:6, maxMembers:10, roomType:'small', inviteCode:'WORK-TF10', ownerName:'상민', progress:65, cadence:'주 3회', endDate:daysFromNow(21),
+      desc:'회사 워크숍 장소·예산 확정부터 부서별 세션 발표, 팀빌딩 레크리에이션까지 성공적으로 완주해요', rule:'주 3회 담당 TF별 준비 체크리스트 및 마일스톤 인증',
+      weeklyTarget:18, weeklyDone:12,
+      roster:[{n:'상민',c:4},{n:'민혁',c:3},{n:'지우',c:3},{n:'태성',c:2}],
+      activity:['상민님이 워크숍 대관 계약서 및 타임테이블을 공유했어요','지우님이 팀빌딩 아이스브레이킹 게임 기획안을 올렸어요'],
+      verifications: [
+        { id:'v-ws-1', userName:'상민', userAvatar:'🏢', time:'오늘 10:30', photoUrl:'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400&auto=format&fit=crop&q=80', note:'워크숍 행사장 답사 및 빔프로젝터/음향 장비 체크 완료! 차질 없이 준비 중입니다 💼', cheers: 12 }
+      ],
+      teamGoals:[
+        { id:'tg-ws-1', title:'2026 하반기 전사 전략 워크숍 준비 및 실행', dueDate:daysFromNow(21), milestones:[
+          { id:'tgm-ws-1a', title:'1단계: 장소/숙소 대관 및 워크숍 예산안 최종 승인', status:'done' },
+          { id:'tgm-ws-1b', title:'2단계: 부서별 세션 아젠다 및 팀빌딩 프로그램 확정', status:'doing' },
+          { id:'tgm-ws-1c', title:'3단계: 워크숍 본행사 진행 및 팀별 액션플랜 도출·회고', status:'todo' }
+        ] }
+      ] },
+    { id:'g-travel', icon:'✈️', name:'제주 3박4일 단체 힐링여행', topic:'hobby/여행·캠핑', region:'제주', members:4, maxMembers:6, roomType:'small', inviteCode:'TRIP-JEJU', ownerName:'유진', progress:70, cadence:'주 3회', endDate:daysFromNow(14),
+      desc:'낙오자 없이 전원 만족하는 제주 단체여행! 항공·숙소·맛집·드라이브 코스 완벽 준비', rule:'주 3회 여행 준비 미션(동선 투표, 렌터카 예약, 짐 챙기기) 인증',
+      weeklyTarget:12, weeklyDone:8,
+      roster:[{n:'유진',c:3},{n:'서연',c:3},{n:'현우',c:2}],
+      activity:['유진님이 애월 독채 펜션 예약 영수증을 인증했어요','서연님이 일자별 맛집 지도 동선을 완성했어요'],
+      verifications: [
+        { id:'v-tr-1', userName:'유진', userAvatar:'✈️', time:'오늘 09:15', photoUrl:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&auto=format&fit=crop&q=80', note:'제주 오션뷰 숙소 예약 완료! 바비큐 파티 준비물도 체크했습니다 🌴', cheers: 10 }
+      ],
+      teamGoals:[
+        { id:'tg-tr-1', title:'낙오자 없는 제주 3박 4일 단체 여행 완성', dueDate:daysFromNow(14), milestones:[
+          { id:'tgm-tr-1a', title:'1단계: 항공권 발권 및 독채 숙소 예약 확정', status:'done' },
+          { id:'tgm-tr-1b', title:'2단계: 렌터카 배차, 일자별 드라이브 코스 및 맛집 리스트업', status:'doing' },
+          { id:'tgm-tr-1c', title:'3단계: 안전 여행 완주, 공용 경비 정산 및 베스트 샷 앨범 공유', status:'todo' }
+        ] }
+      ] },
     { id:'g-marathon-pair', icon:'🏃', name:'친구와 1:1 마라톤 완주방', topic:'health/러닝·마라톤', region:'온라인', members:1, maxMembers:2, roomType:'pair', inviteCode:'RUN-PAIR2', ownerName:'민혁', progress:50, cadence:'주 3회', endDate:daysFromNow(30),
       desc:'친구와 둘이서 1:1로 서로의 페이스메이커가 되어 마라톤 풀코스/하프 완주를 달성해요', rule:'주 3회 러닝 거리·페이스 또는 완주 훈련 인증샷 업로드',
       weeklyTarget:6, weeklyDone:3,
@@ -17223,6 +17510,8 @@
       '<div style="margin-bottom:12px;">' +
         '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">1초 추천 방 템플릿</div>' +
         '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="tplWorkshop" style="font-size:.8125rem;padding:4px 8px;border-color:var(--brand-strong);color:var(--brand-strong);">🏢 회사 워크숍 TF</button>' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="tplTravel" style="font-size:.8125rem;padding:4px 8px;border-color:var(--teal);color:var(--teal);">✈️ 단체여행 플래너</button>' +
           '<button type="button" class="btn btn-ghost btn-sm" id="tplMarathonPair" style="font-size:.8125rem;padding:4px 8px;border-color:var(--red-line);color:var(--brand-strong);">1:1 마라톤 완주방</button>' +
           '<button type="button" class="btn btn-ghost btn-sm" id="tplMarathonSmall" style="font-size:.8125rem;padding:4px 8px;border-color:var(--rule);color:var(--ink);">5인 소그룹 마라톤방</button>' +
           '<button type="button" class="btn btn-ghost btn-sm" id="tplMorningPair" style="font-size:.8125rem;padding:4px 8px;">1:1 기상 완주방</button>' +
@@ -17281,6 +17570,14 @@
           sheet.querySelector('#grpMaxMembers').value = preset.max;
           sheet.querySelector('#grpCadence').value = preset.cadence;
           gTopicRef.value = preset.topic;
+        };
+        var btnWS = sheet.querySelector('#tplWorkshop');
+        if(btnWS) btnWS.onclick = function(){
+          applyPreset({ icon:'🏢', name:'하반기 전사 전략 워크숍 TF', desc:'워크숍 장소 선정부터 프로그램·팀빌딩 기획까지 함께 완주해요', rule:'주 3회 워크숍 준비 체크리스트 및 액션 아이템 인증', max:'10', cadence:'주 3회', topic:'career/기획·전략' });
+        };
+        var btnTR = sheet.querySelector('#tplTravel');
+        if(btnTR) btnTR.onclick = function(){
+          applyPreset({ icon:'✈️', name:'설레는 단체여행 완벽 준비 크루', desc:'항공·숙소 예약부터 현장 동선 및 경비 정산까지 똑소리나게 준비해요', rule:'여행 일정 투표·준비물 챙기기·현장 미션 인증', max:'5', cadence:'주 3회', topic:'hobby/여행·캠핑' });
         };
         var btnMP = sheet.querySelector('#tplMarathonPair');
         if(btnMP) btnMP.onclick = function(){

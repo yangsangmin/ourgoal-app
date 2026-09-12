@@ -2574,6 +2574,53 @@ check('KF-2: template_copies SQL — 멱등·RLS·봇 제외·구간 적립은 �
   assert.ok(!/drop\s+table|truncate|delete\s+from/i.test(sql), 'DROP/TRUNCATE/DELETE 없음');
 });
 
+check('compliance: [#TASK-ES-025] 팀 목표 예시 및 추천 템플릿에 회사 워크숍과 단체여행 시나리오가 완벽히 구현되어 있다', () => {
+  // 1. 가이드 내 회사 워크숍 및 단체여행 탭과 예시 패널
+  assert.ok(html.includes('data-tgexampletab="workshop"'), '가이드 내 회사 워크숍 탭');
+  assert.ok(html.includes('data-tgexampletab="travel"'), '가이드 내 단체 여행 탭');
+  assert.ok(html.includes('data-tgexampletab="fitness"'), '가이드 내 운동 크루 탭');
+  assert.ok(html.includes('id="tgExampleWorkshop"'), '회사 워크숍 예시 패널');
+  assert.ok(html.includes('id="tgExampleTravel"'), '단체 여행 예시 패널');
+  assert.ok(html.includes('id="tgExampleFitness"'), '운동 크루 예시 패널');
+  assert.ok(html.includes('2026 하반기 전사 전략 워크숍 TF'), '워크숍 모임명');
+  assert.ok(html.includes('제주 3박4일 단체 힐링여행'), '단체여행 모임명');
+  assert.ok(html.includes('function wireTeamGoalsGuideEvents('), '가이드 탭 이벤트 위임 함수 구비');
+
+  // 2. MOCK_GROUPS 프리셋 및 팀 목표 탑재
+  assert.ok(html.includes("id:'g-workshop'"), '워크숍 프리셋 모임 ID');
+  assert.ok(html.includes("id:'g-travel'"), '단체여행 프리셋 모임 ID');
+  assert.ok(html.includes("id:'tg-ws-1'"), '워크숍 팀 목표 ID');
+  assert.ok(html.includes("id:'tg-tr-1'"), '단체여행 팀 목표 ID');
+
+  // 3. getGroupLevelGoals 맞춤 조별 목표 생성
+  assert.ok(html.includes("isWorkshop"), '수준별 조 워크숍 판정 로직');
+  assert.ok(html.includes("isTravel"), '수준별 조 여행 판정 로직');
+  assert.ok(html.includes("A조 (기획·운영 TF)"), '워크숍 A조');
+  assert.ok(html.includes("B조 (프로그램·레크 TF)"), '워크숍 B조');
+  assert.ok(html.includes("C조 (물류·지원 TF)"), '워크숍 C조');
+  assert.ok(html.includes("A조 (동선·차량 조)"), '여행 A조');
+  assert.ok(html.includes("B조 (맛집·카페 조)"), '여행 B조');
+  assert.ok(html.includes("C조 (총무·촬영 조)"), '여행 C조');
+
+  // 4. 모임 내 팀 목표 추가 템플릿
+  assert.ok(html.includes('id="tplGoalWorkshop"'), '팀 목표 워크숍 1초 템플릿 버튼');
+  assert.ok(html.includes('id="tplGoalTravel"'), '팀 목표 단체여행 1초 템플릿 버튼');
+
+  // 5. 새 모임 개설 템플릿
+  assert.ok(html.includes('id="tplWorkshop"'), '모임 개설 워크숍 템플릿 버튼');
+  assert.ok(html.includes('id="tplTravel"'), '모임 개설 단체여행 템플릿 버튼');
+
+  // 6. AI 로컬 에이전트 폴백 마일스톤 생성 검증
+  const { localGoalAgentFallback } = require('../api/goalagent.js');
+  const wsRes = localGoalAgentFallback('하반기 전사 워크숍 기획');
+  assert.ok(wsRes.ops[0].data.milestones.length >= 3, '워크숍 3단계 마일스톤 생성');
+  assert.ok(wsRes.ops[0].data.milestones[0].title.includes('워크숍'), '워크숍 키워드 반영');
+
+  const trRes = localGoalAgentFallback('제주도 단체여행 코스 준비');
+  assert.ok(trRes.ops[0].data.milestones.length >= 3, '단체여행 3단계 마일스톤 생성');
+  assert.ok(trRes.ops[0].data.milestones[0].title.includes('여행'), '여행 키워드 반영');
+});
+
 
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
