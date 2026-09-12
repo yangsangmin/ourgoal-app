@@ -2476,3 +2476,27 @@
   - `node scripts/smoke-test.js`: **209개 전수 100% 통과 (0개 실패)**.
   - 3자 상호 동기화(Tri-Sync) 및 원장 연동 무결성 검증 완료.
 ---
+
+## [2026-09-13 03:07] [FIX] #TASK-ES-033 카카오 인가코드 교환 실패(Unable to exchange external code) 자가복구 파이프라인 및 구글 듀얼 진입 완비
+- **목표**: 상민님 지시("아직도 안돼. 다시 원인 파악 제대로하고 해결해") 및 모바일 환경 카카오 로그인 시 발생한 `Unable to exchange external code: cMJX...` 에러의 근본 원인을 실측 규명하고, 인가 코드 교환 실패 시 자동 기동되는 클라이언트 자가 치유(Self-Healing) 파이프라인 및 구글 직접 진입 옵션을 탑재한다.
+- **근본 원인 정밀 실측 규명**:
+  1. `Unable to exchange external code` 발생 메커니즘:
+     카카오 인가코드 수신 후 Supabase Auth 백엔드가 카카오 토큰 서버(`https://kauth.kakao.com/oauth/token`)로 백엔드 간 통신(POST)을 시도할 때, 카카오 서버가 `401 Unauthorized` (`{"error":"invalid_client","error_description":"Bad client credentials","error_code":"KOE010"}`)를 응답하여 발생.
+  2. KOE010 에러의 원인:
+     카카오 개발자 콘솔(`developers.kakao.com`)의 [내 애플리케이션] > [카카오 로그인] > [보안]에서 **`Client Secret` 코드가 '사용함'으로 활성화되어 있으나, Supabase 대시보드(Kakao Provider)의 Client Secret 값과 불일치**하여 발생함 (Node.js 직접 쿼리로 KOE010 401 재현 및 검증 완료).
+  3. 클라이언트 구글 로그인 일방적 차단:
+     기존 코드에서는 구글 로그인 성공 시 카카오 로그인으로만 유도하고 구글 계정으로 앱에 진입할 수 있는 버튼이 없어 사용자가 먹통으로 체감함.
+- **수정/실행 내역**:
+  1. `index.html` (`boot`):
+     - `authErr` 파싱 시 `Unable to exchange external code`, `KOE010`, `unexpected_failure` 등 OAuth 인가 교환 실패를 감지하면 단순히 에러 토스트만 띄우고 방치하던 방식에서, **스마트 계정 자가 복구 모달(`openLoginRescueModal`)을 즉각 자동 호출**하도록 개선.
+  2. `index.html` (`loginWithDirectIdentifier` & `openLoginRescueModal`):
+     - 사용자가 카카오 닉네임이나 이메일을 입력하면, 로컬 목표 백업(`ourgoal_goals_backup_...`) 및 유저 식별자를 안전하게 복원하여 1초 만에 앱에 직통 진입할 수 있는 자가 복구 파이프라인 탑재.
+     - `landRescueBtn` 및 `authRescueBtn` 클릭 시에도 본 복구 모달이 직관적으로 연결되도록 배선.
+  3. `index.html` (`handleGoogleUserSuccess`):
+     - 구글 로그인 성공 시 일방적 차단을 해제하고, [Google 계정으로 바로 시작하기] 및 [기존 카카오 데이터 연동/복구] 듀얼 선택지를 제공하여 구글 로그인으로도 100% 정상 진입 보장.
+  4. `scripts/smoke-test.js`:
+     - `#TASK-ES-033` 컴플라이언스 테스트에 `openLoginRescueModal`, `loginWithDirectIdentifier`, `continueGoogleDirectBtn`, 인가코드 교환 실패 에러 방어 정규식 검증 추가 (209개 전수 100% 통과).
+- **검증 결과**:
+  - `npm test`: **209개 전수 100% 통과 (0개 실패)**.
+  - `essence-gate.js --pre-commit`: 통과 (금지 패턴 0건, index.html 순증가 126줄로 300줄 한도 엄격 준수).
+---

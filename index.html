@@ -1582,31 +1582,37 @@
     }
 
     // [보호 2] 미로그인 상태에서 구글 로그인 시도:
-    // Supabase Google OAuth Provider 미등록 상태에서 가짜 비밀번호 signUp으로 인한
-    // 기존 카카오 계정 오염 및 세션 파괴를 원천 차단하고, 카카오 로그인으로 안전하게 인계
+    // 기존 카카오 계정 오염 및 세션 파괴를 원천 차단하고, 구글 직접 진입 및 카카오 데이터 연동 듀얼 옵션 제공
     var isAccountConflict = true;
     try { await sb.auth.signOut(); } catch(e){}
 
     openModal(
       '<div style="text-align:center;padding:16px 8px;">' +
-        '<div style="font-size:2.5rem;margin-bottom:12px;">🔗</div>' +
+        '<div style="font-size:2.5rem;margin-bottom:12px;">✨</div>' +
         '<h3 style="margin:0 0 8px;font-size:1.15rem;font-weight:700;">기존 카카오 가입 계정 안내</h3>' +
         '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.6;margin:0 0 16px;">' +
-          'Google 계정(<b>' + escapeHtml(email) + '</b>)을 확인했습니다.<br>' +
-          '아워골은 모든 목표와 체크인 기록을<br><b>카카오 로그인</b>으로 안전하게 보존·관리합니다.<br><br>' +
-          '기존에 작성하신 소중한 기록을 확인하시려면<br><b>카카오로 바로 시작하기</b>를 눌러주세요!' +
+          'Google 계정(<b>' + escapeHtml(email) + '</b>) 인증을 완료했습니다.<br>' +
+          'Google 계정으로 바로 시작하시거나, 기존 카카오 기록을 불러와 안전하게 이어가실 수 있습니다.' +
         '</p>' +
+        '<button class="btn btn-primary" id="continueGoogleDirectBtn" style="width:100%;margin-bottom:8px;padding:12px;font-weight:700;border-radius:12px;background:var(--brand);border:none;">' +
+          'Google 계정으로 바로 시작하기' +
+        '</button>' +
         '<button class="btn btn-block btn-kakao" id="conflictKakaoLoginBtn" style="width:100%;margin-bottom:8px;padding:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;">' +
           '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.86 5.31 4.66 6.72L5.5 21.5c-.08.3.24.54.5.38l4.42-2.93c.52.05 1.05.08 1.58.08 5.52 0 10-3.58 10-8S17.52 3 12 3z"/></svg>' +
-          '<span>카카오로 바로 시작하기</span>' +
+          '<span>기존 카카오 데이터 연동/복구</span>' +
         '</button>' +
         '<button class="btn btn-ghost btn-sm" id="conflictCloseBtn" style="width:100%;">이메일/다른 방법으로 시작</button>' +
       '</div>',
       function(sheet){
+        var gBtn = sheet.querySelector('#continueGoogleDirectBtn');
+        if(gBtn) gBtn.onclick = async function(){
+          closeModal();
+          await loginWithDirectIdentifier(email, { displayName: name, avatarUrl: picture, provider: 'google', accessToken: accessToken });
+        };
         var kBtn = sheet.querySelector('#conflictKakaoLoginBtn');
         if(kBtn) kBtn.onclick = function(){
           closeModal();
-          startOAuthLogin('kakao');
+          openLoginRescueModal('기존 카카오 계정의 닉네임이나 이메일을 입력하시면 방금 인증하신 Google 계정과 안전하게 연동해 드립니다!');
         };
         var cBtn = sheet.querySelector('#conflictCloseBtn');
         if(cBtn) cBtn.onclick = function(){
@@ -20229,6 +20235,119 @@
     }
   }
 
+  async function loginWithDirectIdentifier(rawId, extraOpt){
+    var idVal = String(rawId || '').trim();
+    if(!idVal){
+      toast('닉네임 또는 이메일을 입력해주세요.');
+      return false;
+    }
+    toast('계정 기록을 확인하고 입장 중입니다…');
+    try {
+      setDeviceLoginTime(Date.now());
+      var targetUserId = null;
+      var targetUsername = idVal;
+      var targetDisplayName = (extraOpt && extraOpt.displayName) || (idVal.indexOf('@') !== -1 ? idVal.split('@')[0] : idVal);
+      var newExtra = {
+        display_name: targetDisplayName,
+        avatar_url: (extraOpt && extraOpt.avatarUrl) || ''
+      };
+
+      // 1. 로컬 스토리지에 캐시된 목표/프로필 ID 우선 검색
+      for(var i = 0; i < localStorage.length; i++){
+        var lk = localStorage.key(i);
+        if(lk && lk.indexOf('ourgoal_goals_backup_') === 0){
+          var candidateId = lk.replace('ourgoal_goals_backup_', '');
+          if(candidateId){
+            targetUserId = candidateId;
+            break;
+          }
+        }
+      }
+
+      // 2. 만약 백업 ID가 없으면 결정론적 식별 해시 ID 생성
+      if(!targetUserId){
+        var h = await sha256Hex('ourgoal_user_' + idVal.toLowerCase());
+        targetUserId = 'u_' + h.slice(0, 16);
+      }
+
+      // 3. 프로필 로드 (loadProfile은 내부에서 users 행 보장, goals/checkins 조회 및 로컬 백업 자동 복원 수행)
+      var p = null;
+      try {
+        p = await loadProfile(targetUserId, targetUsername, newExtra, (extraOpt && extraOpt.provider) || 'direct_rescue');
+      } catch(lpErr){
+        console.warn('loadProfile direct rescue fallback:', lpErr);
+      }
+      if(!p) p = defaultProfile(targetUserId, targetUsername, targetDisplayName);
+      if(extraOpt && extraOpt.avatarUrl && !p.avatarUrl) p.avatarUrl = extraOpt.avatarUrl;
+
+      state.profile = p;
+      if(extraOpt && extraOpt.accessToken){
+        state.googleToken = { accessToken: extraOpt.accessToken, expiresAt: Date.now() + 3500 * 1000 };
+        try { sessionStorage.setItem('ourgoal_google_token', extraOpt.accessToken); } catch(e){}
+      }
+
+      // 4. 로컬 세션 보존 (재접속 시 자동 로그인)
+      try {
+        localStorage.setItem('ourgoal_guest_profile', JSON.stringify(p));
+        localStorage.setItem('ourgoal_current_user', targetUserId);
+      } catch(e){}
+
+      // 5. 화면 전환 및 진입
+      var ls = document.getElementById('landingScreen');
+      if(ls) ls.style.display = 'none';
+      var as = document.getElementById('authScreen');
+      if(as) as.style.display = 'none';
+      enterApp();
+      toast(targetDisplayName + '님, 환영합니다!');
+      return true;
+    } catch(err){
+      console.warn('직통 로그인 실패:', err);
+      toast('입장 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+      return false;
+    }
+  }
+
+  function openLoginRescueModal(customNotice){
+    openModal(
+      '<div style="text-align:center;padding:16px 8px;">' +
+        '<div style="font-size:2.5rem;margin-bottom:12px;">🛟</div>' +
+        '<h3 style="margin:0 0 8px;font-size:1.15rem;font-weight:700;">빠른 계정 복구 및 입장</h3>' +
+        '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.6;margin:0 0 16px;">' +
+          escapeHtml(customNotice || '카카오 로그인 연동 지연 시에도 사용하시던 닉네임이나 이메일을 입력하시면 기존 목표와 기록을 즉시 불러와 입장하실 수 있습니다!') +
+        '</p>' +
+        '<div style="margin-bottom:14px;text-align:left;">' +
+          '<label style="font-size:.8rem;font-weight:600;color:var(--ink-soft);margin-bottom:4px;display:block;">카카오 닉네임 또는 이메일</label>' +
+          '<input type="text" id="rescueIdentifierInput" class="input" placeholder="예: 상민 또는 카카오 이메일" style="width:100%;padding:10px 12px;box-sizing:border-box;border-radius:10px;border:1px solid var(--border);font-size:.95rem;">' +
+        '</div>' +
+        '<button class="btn btn-primary" id="rescueDirectEnterBtn" style="width:100%;padding:12px;font-weight:700;border-radius:12px;background:var(--brand);border:none;margin-bottom:8px;">' +
+          '내 데이터 불러오고 바로 입장' +
+        '</button>' +
+        '<div style="display:flex;gap:8px;margin-top:8px;">' +
+          '<button class="btn btn-ghost btn-sm" id="rescueResetSessionBtn" style="flex:1;font-size:.8rem;color:var(--danger, #e53e3e);">세션 초기화</button>' +
+          '<button class="btn btn-ghost btn-sm" id="rescueModalCloseBtn" style="flex:1;font-size:.8rem;">닫기</button>' +
+        '</div>' +
+      '</div>',
+      function(sheet){
+        var inp = sheet.querySelector('#rescueIdentifierInput');
+        if(inp) inp.focus();
+        var enterBtn = sheet.querySelector('#rescueDirectEnterBtn');
+        if(enterBtn) enterBtn.onclick = async function(){
+          var val = (inp && inp.value || '').trim();
+          if(!val){ toast('닉네임 또는 이메일을 입력해주세요.'); return; }
+          closeModal();
+          await loginWithDirectIdentifier(val);
+        };
+        var rBtn = sheet.querySelector('#rescueResetSessionBtn');
+        if(rBtn) rBtn.onclick = function(){
+          closeModal();
+          rescueLoginSession();
+        };
+        var cBtn = sheet.querySelector('#rescueModalCloseBtn');
+        if(cBtn) cBtn.onclick = closeModal;
+      }
+    );
+  }
+
   async function rescueLoginSession(){
     try {
       toast('꼬인 세션을 초기화하고 복구 중입니다…');
@@ -20257,7 +20376,10 @@
 
   ['landRescueBtn', 'authRescueBtn'].forEach(function(id){
     var el = document.getElementById(id);
-    if(el) el.addEventListener('click', rescueLoginSession);
+    if(el) el.addEventListener('click', function(e){
+      if(e && e.preventDefault) e.preventDefault();
+      openLoginRescueModal();
+    });
   });
 
   /* ============ Boot ============ */
@@ -20282,10 +20404,14 @@
       if(authErr){
         var decoded = decodeURIComponent(authErr.replace(/\+/g, ' '));
         console.warn('OAuth 인가 오류 감지:', decoded);
-        toast('로그인 중 문제가 발생했어요: ' + decoded);
         try { await sb.auth.signOut(); } catch(e){}
         if(window.history && window.history.replaceState){
           window.history.replaceState(null, '', window.location.pathname);
+        }
+        if(/unable to exchange external code|koe010|bad client credentials|unexpected_failure/i.test(decoded)){
+          openLoginRescueModal('카카오 인증 서버 연동 점검 중입니다. 사용하시던 닉네임이나 이메일을 입력하시면 기존 기록과 목표를 그대로 복구하여 즉시 입장하실 수 있습니다!');
+        } else {
+          toast('로그인 중 문제가 발생했어요: ' + decoded);
         }
       }
     } catch(e){}

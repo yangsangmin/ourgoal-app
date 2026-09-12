@@ -2840,6 +2840,10 @@ check('compliance: [#TASK-ES-033] 카카오/구글 로그인 충돌 방지, 세�
   // 4. 자가 치유(Self-Healing) UI 및 rescueLoginSession 함수
   assert.ok(html.includes('function rescueLoginSession'), '세션 초기화 및 복구 함수');
   assert.ok(html.includes('id="landRescueBtn"') && html.includes('id="authRescueBtn"'), '랜딩 및 인증 화면 세션 복구 링크');
+  assert.ok(html.includes('function openLoginRescueModal'), '로그인 자가 복구 모달');
+  assert.ok(html.includes('function loginWithDirectIdentifier'), '직통 식별자 복구 로그인');
+  assert.ok(html.includes('continueGoogleDirectBtn'), '구글 계정 직접 시작 버튼');
+  assert.ok(html.includes('unable to exchange external code'), 'OAuth 인가코드 교환 실패 에러 방어');
 });
 
 check('compliance: [#TASK-ES-034] 기록 탭 버튼 상호작용 및 런타임 안정성(ReferenceError esc 방어, min-height 0, 정적 리스너)이 완비되어 있다', () => {
