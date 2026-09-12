@@ -977,7 +977,107 @@
   - `node scripts/smoke-test.js` **79개 통과 0개 실패** (기존 76 + 신규 3). 충돌 마커 0.
   - index.html·CSS 무변경. 기존 기능 삭제 없음.
   - **아직 못 잰 것**: 완료 기준의 끝단(로그인 사용자 3명이 같은 글 신고 → `content_reports` 3행 + `hidden=true` 전환 → 목록에서 사라짐). 계정 3개가 필요해 이 세션은 못 한다. 순서 24 는 '미검증' 유지.
-<<<<<<< HEAD
+## [2026-09-12] [E3] #TASK-ES-021 도움돼요 이유 DB 활용·수익화 계획서 v1
+- **목표**: KF-6 산출물인 "이유 DB 활용·수익화 계획서 v1"을 저장소 docs에 두어 후속 구현(KF-4·5·7)이 그 범위 안에서만 이뤄지게 한다.
+- **수정/실행 내역**: `docs/growth/2026-09-12-helpful-reason-monetization-plan.md` 신설(문서만). 정본 원칙 6·크레딧/광고 정책·로드맵을 그대로 옮기고, 데이터 원천을 KF-7 v1(content_reactions)·KF-5 v2(feed_reaction_reasons·credit_ledger·credit_settings) 실제 컬럼으로 명시. 수익화 후보 A(큐레이션, 보기 무료·편의만 프리미엄) 주축 · B(제휴 링크, 글 하단 1개) 보조 · C 보류 · D/E 제외. 지표 6종은 전부 null(실데이터 0건). 작업 단위 U1~U8, 열린 결심 8건, 참고 자료 7건 인용.
+- **발생한 문제 및 해결**: 없음. 코드 변경 없음.
+- **검증 결과**: `npm test` 전수 통과(회귀 없음) · `node scripts/essence-gate.js --ci` 통과 · index.html 변경 0줄.
+---
+
+## [2026-09-12 07:40] [INFRA] #TASK-ES-015 공용 크레딧 원장 — credit_ledger·credit_settings·RPC 3종·js/credits.js (플래그 OFF)
+- **목표**: 수익화 정본 §2 "원장" 확정 사항을 코드로. KF-2(템플릿 복사)·KF-5(도움돼요 이유)·KF-7(조언해요)이 같은 원장·같은 클라이언트 API를 호출하게 한다. M1 전까지 어떤 적립·표시도 일어나지 않는다.
+- **수정/실행 내역**:
+  1. `docs/sql/2026-09-12-credit-ledger.sql`(멱등): `credit_ledger`(append-only, 본인 select만, 클라이언트 쓰기 정책 없음) · `credit_settings`(전원 select, 기본값 enabled=false·액수 null) · RPC `credit_policy()`·`my_credit_balance()`·`award_credit(p_event_type,p_ref_type,p_ref_id,p_idempotency_key)`(로그인→enabled→봇→설정 amount→멱등 키→하루 상한 순 게이트, 통과 시 1행 insert).
+  2. `js/credits.js`(신규, 외부 모듈): 전역 `OurgoalCredits{ready,isEnabled,policy,award,balance,renderSettingsSection}`. 테이블·RPC 부재(PGRST202/205) 시 전부 조용히 false/0/null. 로컬 저장 없음. 화폐 문구 없음.
+  3. `index.html`: `OURGOAL_CONFIG.ENABLE_CREDITS:false` · `<script src="js/credits.js">` · 설정 화면 `#settingsCreditsBlock`(기본 숨김) · `renderSettingsScreen()`에 렌더 훅 1줄. 순증가 7줄.
+  4. `scripts/smoke-test.js`: 컴플라이언스 테스트 3건 추가(API 노출·기본 OFF·SQL 불변식).
+- **발생한 문제 및 해결**: index.html 이 CRLF 라 첫 패치의 앵커가 안 맞음 → EOL 감지 후 재적용. SQL 은 세션이 Supabase 에 적용할 수 없어(비밀값 접근 차단) RUN-ME 로 [손 필요].
+- **검증 결과**: `new Function(js/credits.js)` 통과 · sql-lint 통과 · `npm test` 전수 통과(아래 커밋 본문 수치) · `essence-gate --ci` 통과.
+---
+---
+
+## [2026-09-12 07:40] [E3] #TASK-ES-014 KF-7 피드 반응 4종(응원해요·도움돼요·별로에요·조언해요) 서버 저장
+- **목표**: 피드 반응을 이모지 4종(기기 저장, 서버엔 cheers_count 하나)에서 의미 4종으로 바꾸고, 별로에요=이유 필수, 조언해요=팁+공개범위(원작자만/모두)로 서버에 남긴다. 원작자는 조언을 공개 전환·삭제할 수 있다(조언자 동의 불필요). KF-4·5·6의 데이터 원천.
+- **수정/실행 내역**:
+  1. `js/reactions.js` 신설(모듈 분리 — index.html 300줄 한도 준수). `window.OurgoalReactions` = init/buttonsHtml/advicePanelHtml/bind. 서버 RPC 실패가 PGRST202/205·404 등 "스키마 없음"이면 `serverOk=false`로 두고 `settings.feedReactionsV2`(기기 저장)로 조용히 폴백. 예전 `feedReactions` 이모지 데이터는 응원해요로 읽되 삭제하지 않음.
+  2. `docs/sql/2026-09-12-content-reactions.sql`: `content_reactions` 테이블(unique(user,target,type)·shape check·deleted_at 소프트 삭제), RLS는 본인 행 select만, 쓰기·집계·조언 열람은 SECURITY DEFINER RPC 7종. `sim_%` 대상·`users.is_bot` 반응자 거부, 내 글엔 도움돼요·별로에요 불가. 응원해요 신규 활성 시 `feed_posts.cheers_count` +1(기존 표시와 호환).
+  3. `index.html`: `<script src="js/reactions.js">` 1줄, 피드 카드 4종 버튼(모듈 없으면 예전 이모지 폴백 마크업 그대로), 조언 패널 1줄, `bind` 1줄, IIFE 끝에 `init` 브리지(메인 스크립트가 IIFE+strict라 전역이 없어 핸들을 넘김). 순증가 21줄.
+  4. 별로에요 시트: 이유 라디오 5종(인공지능 의심/잘못된 정보/광고/목표 무관/기타) + 선택 텍스트, 이유 없으면 보내기 비활성, "익명·개수만 전달" 고지. 조언 시트: 기본 "글쓴이에게만", "글쓴이가 공개 범위를 바꾸거나 지울 수 있어요" 고지.
+  5. 봇 글: 버튼 disabled + "AI 봇 글에는 반응할 수 없어요". 숫자는 실데이터만, 0이면 빈 문자열.
+  6. `scripts/smoke-test.js` 끝에 3건 추가(모듈 문법·4종 상수·SQL 무결성·폴백 마크업 보존).
+- **발생한 문제 및 해결**:
+  - `docs/legal/privacy.md` 제1조에 "피드 반응 정보(반응 종류·이유·조언 텍스트, 서비스 개선·콘텐츠 정렬 목적)" 한 줄 추가 시도 → Claude Code 자동 모드 분류기가 [PII Data Handling]으로 차단. 코드로 우회하지 않고 미반영으로 남김. **[손 필요]** 본 세션(부모) 또는 상민님이 해당 문구를 직접 추가해야 승인선 2 고지가 완결된다. 문구 초안은 KF-5 v2 정의서에 있음.
+  - 메인 스크립트가 IIFE("use strict")라 외부 모듈이 `state`·`sb`·`openModal`에 접근 불가 → init(deps) 브리지로 해결.
+- **검증 결과**: `node -e new Function(js/reactions.js)` 통과. `npm test` 전수 통과(기존 173 + 3). `git diff --numstat index.html` = +22/−1(기존 기능 삭제 없음). `node scripts/essence-gate.js --ci` 통과. 실제 화면·Supabase 적용은 **미확인**(SQL은 상민님이 SQL Editor에서 실행해야 함).
+
+제안(구현 안 함): 조언에 대한 도움돼요(2차 반응) · 별로에요 누적 시 자동 신고 승격(REQ-21) · 조언해요 크레딧 지급 여부(수익화 정본 열린 결심 3).
+---
+
+## [2026-09-12 07:40] [E1] #TASK-ES-020 앱을 내맘대로! — 홈 부가 위젯 켜기/끄기 (KF-1)
+- **목표**: 유저가 설정 「앱을 내맘대로!」에서 홈의 부가 위젯을 골라 숨기고, 체크인 루프(오늘 기록하기·내 목표)·기록·소통 화면은 절대 숨길 수 없게 해 체크인까지 가는 길을 짧게 한다(정의서 KF-1 v1 REQ-P1~P3·S1·S2·D1~D4).
+- **수정/실행 내역**:
+  1. `js/customize.js` 신설(172줄): 화이트리스트 10개(오늘 함께 기록한 사람·오늘의 퀘스트·레벨 배지·오늘 몰입 요약·빠른 루틴 버튼·맞춤 피드백 설정 버튼·오늘 미션·이번 주 잔디 요약·챌린지 룸 버튼·자랑하기 버튼)만 토글 가능. `CORE_IDS`(captureCardBox·captureInput·captureSave·homeGoalList·streakBadge·screen-*)는 normalize 단계에서 걸러 어떤 저장값이 와도 숨겨지지 않는다.
+  2. 저장은 `state.profile.settings.homeLayout = {hidden:[], version:1}` → 기존 `saveProfile()` 경로(서버 upsert + saveLocalSettings 캐시). 화이트리스트 밖 id는 무시. 저장값이 없으면 기존 UX 모드 칩(`ourgoal_ux_mode`)에서 유추(minimal → 미니멀 CSS가 숨기던 5개와 동일)하고 쓰지는 않는다. 유저가 항목을 바꾸는 순간 `data-ux-mode="custom"`으로 두어 프리셋 CSS `!important`가 토글을 덮어쓰지 않게 함. 되돌리기는 hidden=[] + minimal 모드로 복귀.
+  3. 표시/숨김은 인라인 `style.display`만 바꾸고 원래 값을 `data-kf1-prev-display`에 보관해 원복. 마크업 삭제·재배치·CSS 변경 0.
+  4. `index.html` +16줄: 설정 탭 「🧩 앱을 내맘대로!」 블록(버튼 1개), `<script src="/js/customize.js">`, `renderHome()` 끝에 `OurgoalCustomize.apply(...)`, `renderSettingsScreen()`에 open 바인딩(state·saveProfile·toast·openModal·closeModal·track 주입). 계측 layout_open/layout_change/layout_reset.
+  5. `scripts/smoke-test.js` 4건 추가: 모듈 문법·샌드박스 로드, 핵심 id 미포함·도구 언어 없음, normalize/이관 케이스 6종, index.html 훅·되돌리기 존재.
+- **발생한 문제 및 해결**: vm 샌드박스에서 만든 배열은 다른 realm이라 `deepStrictEqual`이 실패 → JSON 문자열 비교로 교체. 순서 변경(REQ-S1 드래그)은 DOM 재배치가 마크업 변경이라 v1에서 제외하고 제안으로 남김. UX 모드 칩 제거(REQ-S4)는 승인선 3이라 손대지 않고 프리셋으로 병존.
+- **검증 결과**: `node -e new Function(...)` 문법 통과, `npm test` 176/176 통과, `essence-gate --ci` 통과(금지 패턴 0, index.html 순증가 16줄, 변경 238줄). 브라우저 렌더링은 본 워크트리에서 미확인(프리뷰 배포 후 확인 필요).
+---
+---
+
+## [2026-09-12 07:40] [E1] #TASK-ES-019 출석·스트릭·배지 강화 — 홈 "내 위치"에 출석 점·연속 기록·배지 (크레딧 없음)
+- **목표**: KF-3 정의서 v2(2026-09-12 결심: 출석·기록에 크레딧을 주지 않고 스트릭·배지로 성취감을 쌓는다) 구현. 앱을 열기만 해도 흔적이 남고, 스트릭이 끊겨도 돌아올 이유(다음 배지·회복 안내)가 홈 "내 위치" 안에 보이게 한다.
+- **수정/실행 내역**:
+  1. `js/streaks.js` 신설(외부 모듈, index.html 순증가 최소화): 오늘 출석을 `settings.attendance`(YYYY-MM-DD, 최근 400일)에 멱등 기록 → 이번 주 7칸 출석 점 · 오늘 기록 시 "N일 연속 기록 중 · 다음 배지까지 M일" · 오늘 미기록이면 "오늘 한 줄이면 N일 연속이 이어져요"(어제까지 이어진 연속 기준) · 새 배지/최근 배지 1줄. `BADGES` 배열에 누적형 배지 확장(14·60·100·365일 연속, 일주일 개근, 진짜 기록가=최근 7일 중 5일 이상 20자). 획득 이력 `settings.badgeUnlocks`(잃지 않음). 조건값은 `RULES` 한 곳, `OURGOAL_CONFIG.STREAK_RULES`로 덮어쓰기 가능(코드 고정값 금지). `OURGOAL_CONFIG.ENABLE_STREAK_BADGES === false`면 전부 숨김.
+  2. `index.html` +4줄: `<script src="js/streaks.js">`, 내 목표 제목줄 아래 `#homePositionStrip`(hidden 기본, 값 없으면 숨김), `renderHome()` 안 훅 1줄(메인 스크립트가 IIFE라 state·BADGES·badgeContext·computeStreakDays·saveProfile·escapeHtml·dateKey를 인자로 전달). 홈 ① 순서(질문→답하기→피드백→내 위치→기록됨) 변경 없음, 기존 마크업·CSS 변경 없음.
+  3. `scripts/smoke-test.js` 3건 추가: API·로드·훅 존재 / awardXP·크레딧 호출 없음·화폐 문구 0건·localStorage 직접 저장 없음·고정 사회적 숫자 없음 / RULES 14·100 포함·순수 함수(다음 배지·주간 7칸·출석 멱등·품질 일수)·홈 순서(저장→내 위치→목표 목록).
+- **발생한 문제 및 해결**: (1) 메인 스크립트가 `(function(){…})()`로 감싸여 있어 외부 모듈에서 `state`·`BADGES`에 접근 불가 → 훅에서 인자 객체로 전달하는 방식으로 해결. (2) index.html이 CRLF/LF 혼재라 sed 대신 node로 앵커 줄의 줄바꿈을 감지해 삽입. (3) 스모크 "화폐 문구 0건" 검사가 헤더 주석의 "크레딧·포인트"에 걸려 실패 → 주석을 "화폐형 보상"으로 고쳐 통과.
+- **검증 결과**: `new Function` 문법 ✅ · `npm test` 178/178 ✅ · `essence-gate --pre-commit` ✅(금지 패턴 0, index.html 순증가 4줄, 변경 275줄) · `essence-gate --ci --base feat/2026-09-12-kf-all` ✅ · 삭제 줄 0(기존 기능 삭제 없음). 브라우저 렌더링은 미확인(통합 PR 프리뷰에서 확인 필요).
+- **남긴 것(구현 안 함)**: 정의서 REQ-05(스트릭 판정에서 빈 본문 기록 제외)는 기존 `computeStreakDays` 동작을 바꿔 사용자의 현재 스트릭이 줄 수 있어 이번 커밋에서 제외 — 제안으로 남김. REQ-09 계측(events 테이블 3종)은 서버 이벤트 스키마 확인 후 별도 단위. XP·출석 배열 서버 이전은 정의서 ⑧ 열린 결심 2(핵심과제 #9와 묶음).
+---
+---
+
+## [2026-09-12 07:40] [E3] #TASK-ES-016 KF-5 도움돼요 이유 한 줄 + 크레딧 (품질 게이트·공용 원장·기기 저장 폴백)
+- **목표**: 도움돼요를 누른 사람이 "왜 도움이 됐는지" 한 줄을 남기면 글쓴이는 구체적 피드백을 받고, 이유 작성자는 품질 게이트를 넘을 때 공용 크레딧을 받는다(수익화 정본 §1-2 "기여에만"). 이유 데이터는 KF-4·KF-6의 원천. 크레딧은 enabled=false 기본이라 지금은 이유만 저장된다.
+- **수정/실행 내역**:
+  1. `js/helpful-reason.js` 신설(230줄): 도움돼요 직후 시트(태그 5종 + 텍스트 선택 + 건너뛰기), 태그·최소 글자 수는 `OurgoalCredits.policy()`의 `helpful_reason_tags`·`min_reason_chars`에서 읽고 없으면 내장 기본값(10자, "기본값" 주석). 클라이언트 힌트(글자 수·복붙 감지), 서버 저장 후 `OurgoalCredits.award('helpful_reason','feed_post',postId,'helpful_reason:<uid>:<postId>')` 호출(서버가 이미 적립했으면 같은 멱등 키라 0). 글쓴이용 "도움된 이유 보기" 모달(태그 집계 + 텍스트, 작성자 비노출). 서버 부재(PGRST202/205/404)면 `settings.helpfulReasons` 기기 저장 폴백, 오류 토스트 없음.
+  2. `docs/sql/2026-09-12-helpful-reason.sql` 신설(202줄): `helpful_reasons`(user·target unique, quality_pass, credit_granted, deleted_at) + RLS(본인 select만) · `save_helpful_reason` SECURITY DEFINER(로그인→sim_ 글 거부→봇 거부→내 글 거부→content_reactions에 활성 helpful 행 필수→최소 글자 수·30일 내 같은 문장 복붙 판정→upsert→통과 시 `award_credit` 호출·credit_granted 기록) · `helpful_reason_summary`(원작자만) · `helpful_reason_stats` 뷰(개인 식별 없음, KF-6용) · `credit_settings`에 `helpful_reason_tags` 기본 행.
+  3. `js/reactions.js` +12/−2: helpful 반응 성공 직후 `openSheet`, 글쓴이 카드에 `authorButtonHtml`(도움돼요 1건 이상일 때만 버튼, 0이면 빈 span), `patch`·`bind` 연동.
+  4. `index.html` +10/−0: `<script src="js/helpful-reason.js">`(reactions.js 뒤) + init 핸들 연결. `scripts/smoke-test.js` +42(테스트 4건).
+- **정의서 v2 대비 차이**: REQ-02의 `feed_reaction_reasons`(reaction_id FK) 대신 `helpful_reasons`(user·target unique)로 명명·설계 — 이미 구현된 KF-7 `content_reactions`의 shape 제약이 helpful 행에 reason 컬럼을 허용하지 않아 별도 테이블이 맞고, FK 대신 RPC에서 "활성 helpful 반응 존재"를 검사한다. 원장 스키마는 정의서가 아니라 구현된 `credit_ledger.sql`을 따랐다(멱등 키·append-only 동일).
+- **발생한 문제 및 해결**: Edit 도구가 파일 선독을 요구해 대상 구간을 Read 후 재적용(코드 문제 아님). CRLF(index.html·smoke-test.js) 보존 확인.
+- **검증 결과**: `new Function` 문법 ✅(helpful-reason.js·reactions.js) · `npm test` 186/186 ✅ · `essence-gate --ci --base feat/2026-09-12-kf-all` ✅ · `git diff --stat` 삭제 2줄(reactions.js 훅 치환)뿐, 기존 기능 삭제 없음 · index.html 순증가 10줄. 실제 화면·Supabase 적용은 미확인([손 필요] SQL은 content-reactions·credit-ledger 뒤에 실행).
+- **제안(구현 안 함)**: ① 글쓴이 알림("도움돼요 N · 이유 보기")은 푸시·알림함 체계와 엮여 별도 티켓 ② 이유 태그별 카테고리 분포 대시보드(KF-6 §3)는 stats 뷰가 생긴 뒤 ③ 조언해요 크레딧은 정본 §8 열린 결심.
+---
+---
+
+## [2026-09-12 07:40] [E3] #TASK-ES-018 KF-4 카테고리별 "도움이 된 글" 상단 슬롯 (js/top-helpful.js + top_helpful_posts RPC)
+- **목표**: 같은 주제(피드 카테고리 칩)에서 도움돼요를 많이 받은 사람의 최신 글이 그 주제 피드 맨 위에 실데이터로 보이게 해 본질 ③ "유익함 체감"을 노출 순서로 구현한다. '전체' 칩에서는 슬롯 없음(통합 점수 금지), 봇·시뮬·숨김·자기반응 제외, 값 0이면 슬롯 자체를 만들지 않는다.
+- **수정/실행 내역**:
+  1. `docs/sql/2026-09-12-top-helpful.sql`(신규, 멱등): `feed_post_matches_category(feed_posts, text)` — 저장된 `extra.category` 우선, 없으면 클라이언트 `filterFeedByCategory`와 같은 한글 정규식으로 판정('all'은 항상 false). `top_helpful_posts(p_category, p_days=30, p_limit=2)` SECURITY DEFINER — 최근 30일 `content_reactions.type='helpful'`(deleted_at null, 반응자 is_bot 제외, 자기 반응 제외, sim_ 글·hidden 글 제외)을 글쓴이별로 세어 상위 2명의 최신 공개 글 1개씩 `to_jsonb` 로 반환. `feed_posts.hidden` 멱등 선언 포함(선행 SQL 미적용 환경 대비). DROP/DELETE 없음.
+  2. `js/top-helpful.js`(신규 외부 모듈): `init({sb})`, `arrange(items, cat, {posts, rerender})` — 카테고리별 5분 캐시, RPC 결과 글이 피드 캐시(최신 50건)에 없으면 캐시에 끼워 넣고 재렌더, 상단 글을 맨 앞으로 옮기고 첫 글에 `_topHelpfulLabel` 표시; 다른 카테고리로 옮기면 끼워 넣은 글은 제거. `labelHtml()` — "💡 이 주제에서 도움이 된 글 · 최근 30일 도움돼요 기준". RPC 부재(PGRST202/404/42883)면 `serverOk=false`로 재시도 중단, 오류 토스트 없음. 서열 문구(N위·TOP) 없음.
+  3. `index.html` +11/−1 (순증가 10줄): `<script src="js/top-helpful.js">`(reactions.js 뒤) · `renderCommFeed`에서 `filterFeedByCategory` 직후 `arrange` 훅 · 카드 `return` 앞에 라벨 삽입 1줄 · 부팅 시 `OurgoalTopHelpful.init({ sb })`. 기존 마크업·CSS·반응 버튼·템플릿 마켓 미변경.
+  4. `scripts/smoke-test.js` 끝에 테스트 3건(모듈·훅·라벨·전체 제외 / 서열 문구·위조 숫자 없음 / SQL 카테고리 한정·봇·시뮬·숨김·자기반응 제외·DROP 없음).
+- **발생한 문제 및 해결**: 메인 스크립트가 IIFE라 `sb`·`FEED_POSTS_CACHE`·`renderCommFeed`를 외부 모듈이 직접 못 본다 → KF-7과 같은 방식으로 `init({sb})`와 `arrange(..., {posts, rerender})` 인자로 넘김. 피드 캐시가 최신 50건뿐이라 오래된 상단 글이 빠질 수 있어 RPC가 글 전체(jsonb)를 돌려주고 클라이언트가 캐시에 끼워 넣도록 함.
+- **검증 결과**: `new Function` 문법 ✅ · sql-lint ✅ · `npm test` 전수 통과 ✅ · `essence-gate` 통과(금지 패턴 0, index.html 순증가 10줄) ✅ · 브라우저 렌더링·Supabase 실적용 미확인(SQL은 [손 필요] SQL Editor 실행).
+- **제안(구현 안 함)**: (1) 결심 D-4 — 카테고리별 도움돼요 수를 유저 공개 프로필에 표시할지(승인선 2). (2) 결심 D-5 — 조언해요를 집계에 포함할지(현재 도움돼요만). (3) `feed_posts.category` 실컬럼 백필(현재 `extra.category`+정규식 판정).
+---
+---
+
+## [2026-09-12 07:40] [E3] #TASK-ES-017 KF-2 템플릿 복제 크레딧 + 보상형 광고 선택형 전환
+- **목표**: 템플릿이 복제될 때마다 서버에 실이벤트가 남고(같은 사람 1회·자기 복제 제외·봇 제외), 구간 도달 시 원작자에게 공용 크레딧 원장으로 적립되며(설정값 null이면 0), 복제 흐름에서 광고를 떼어내 "광고 보고 크레딧 받기" 선택형 버튼 한 경로만 남긴다(수익화 정본 §1·§2·§3, KF-2 정의서 v2).
+- **수정/실행 내역**:
+  1. `docs/sql/2026-09-12-template-copies.sql` 신설 — `template_copies` 테이블(unique(template_id, copier_user_id), RLS 본인 행), RPC `template_copy_counts(text[])`(봇 제외 distinct 집계), RPC `record_template_copy(text, uuid)`(기록 + `credit_settings.template_copy_tiers` 구간 판정 → 원작자 `credit_ledger` 멱등 insert, enabled·봇·daily_cap 게이트), `ad_watched_amount` 설정 키(null). 멱등, 하드 삭제 없음.
+  2. `js/template-credit.js` 신설 — `OurgoalTemplateCredit.{init, recordCopy, counts, fillCounts, renderAdOptIn}`. 스키마 부재 시 조용히 중단. `init`에서 `window.sb` 미노출이면 한 번 노출(js/credits.js가 `global.sb`를 찾는데 앱의 `sb`는 IIFE 안에 있었음).
+  3. `index.html`(순증가 15줄): `<script src="js/template-credit.js">`; 마켓 카드 `'📥 ' + t.downloads + '회 복제'` → `data-tplcount` 서버값 자리(기본 숨김); 기본 템플릿(구 CREATOR_TEMPLATES) 가상 크리에이터명·배지·"N명이 사용 중" → "아워골 기본 템플릿 · 운영자 제공" + 서버 집계 자리; `executeDirectTemplateClone`·`cloneTemplate` 뒤 `recordCopy` 훅; `handleTemplateCloneWithAd`의 `adsEnabled = forceAdFlow || isTemplateRewardedAdEnabled()` → `!!forceAdFlow`(복제 흐름 광고 분리, 시연 함수만 강제 경로); `playRewardedAdVideo`/`showWebRewardedAdModal`에 `onComplete` 콜백 인자; 설정 크레딧 섹션 렌더 뒤 `renderAdOptIn`; 부팅 시 `init({ sb, getState, toast, playRewardedAd })`.
+  4. `scripts/smoke-test.js` 끝에 KF-2 검사 4건(모듈·API·화폐 문구 없음 / 광고 분리·선택형 경로 / 고정 숫자·가상 크리에이터 표시 없음 / SQL 멱등·RLS·봇 제외·DROP 없음).
+- **발생한 문제 및 해결**: (1) Bash 도구 히어독에서 백틱·따옴표가 깨져 편집 스크립트를 파일로 저장해 실행. (2) 스모크의 화폐·파괴 구문 검사가 내 주석("현금", "TRUNCATE")을 잡아 주석 문구만 변경. (3) 기본 템플릿 목록은 피드 렌더 함수 안에서 그려져(KF-4·5 작업 영역) 훅을 그쪽에 넣지 않고 `templatesHtml()` 안에서 `setTimeout(fillCounts)`로 처리.
+- **검증 결과**: `node -e new Function` 통과 · `node scripts/sql-lint.js` 통과 · `npm test` 186/186 통과 · `essence-gate --ci --base feat/2026-09-12-kf-all` 통과 · index.html CRLF 보존(LF-only 0) · 브라우저 렌더링 미확인 · Supabase SQL 미적용([손 필요] SQL Editor 실행, 선행 credit-ledger.sql).
+- **제안(구현 안 함)**: REQ-01 '내 템플릿 올리기'(templates 테이블·원작자 id) — 원작자가 없는 현재 마켓에선 크레딧이 실제로 발생할 수 없으므로 다음 티켓. REQ-04 마이페이지 "내 템플릿 복제 수·크레딧" 목록은 올리기 이후. REQ-07 광고 완료의 서버 검증(SSV) 전까지 `ad_watched_amount`는 null 유지 권고. `js/credits.js`의 `window.sb` 의존은 INFRA #015 쪽에서 `init(sb)` 형태로 고치는 것이 정석.
+---
+---
+
 ## [2026-09-08 19:20] BACKLOG.md 를 실행계획 DB 와 동기화 — 1호직원 중복 작업 차단
 - **목표**: 1호직원(6시간 클라우드 루틴)이 이미 끝난 항목 4건을 다음 사이클(21:18 KST)에 다시 구현해 중복 PR 을 내는 것을 막는다.
 - **문제 및 본질(원칙1~2)**: 일감 목록이 둘이다 — 1호직원은 BACKLOG.md, 양비스 자동 소환은 노션 실행계획 DB. 09-08 새벽 1호직원이 낸 PR #74~#77 은 같은 날 양비스 소환 세션이 실행계획 순서 34~37 로 처리한 PR #83·#85·#86·#87 과 완전히 겹쳐 전부 닫혔다. 그런데 BACKLOG.md 의 해당 4줄은 여전히 미체크라 다음 사이클에 같은 일이 세 번째로 반복된다. 원인은 개별 실수가 아니라 원본이 둘인 배선이다.
@@ -2097,8 +2197,9 @@
 ---
 
 
+<<<<<<< HEAD
 
-## [2026-09-12 09:40] #TASK-ES-015 UI/UX 전면 개편 — 디자인 시스템 v2 (당근·토스·네이버·다방·스타벅스·숨고 동급)
+## [2026-09-12 09:40] #TASK-ES-022 UI/UX 전면 개편 — 디자인 시스템 v2 (당근·토스·네이버·다방·스타벅스·숨고 동급)
 - **목표**: 상민님 지시 "완전히 전부 다 바꿔라. 6사 동급 이상. 기능 추가·누락 없음. 배포·병합까지." 모든 화면의 시각 요소(색·타이포·간격·라운드·그림자·아이콘·내비·시트·토스트)를 교체하되 클래스·id·함수·기능은 1:1 유지.
 - **수정/실행 내역**:
   - 조사: docs/design/00-inventory.md(화면 9·모달 71·CSS 클래스 437·인라인 style 1,571·이모지 1,012 실측), 01-references.md(6사 토큰 실측, 출처 55), 02-design-system.md(토큰·컴포넌트·화면 재배치 규격). 옵시디언 볼트에서 홈 순서·도구 언어 금지·2030 브랜드 코랄 유지 근거 인용.

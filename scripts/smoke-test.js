@@ -2283,6 +2283,299 @@ check('compliance: 오늘 같은 테마 실사용자 수 집계 RPC DDL(T01-S02,
   assert.ok(sql.includes('Asia/Seoul'), 'KST 당일 기준 필터링 포함');
 });
 
+/* ============ [#TASK-ES-015] 공용 크레딧 원장 (INFRA) ============ */
+check('compliance: [#TASK-ES-015] js/credits.js 가 존재하고 문법이 유효하며 OurgoalCredits API 6개를 노출한다', () => {
+  const p = path.join(__dirname, '..', 'js', 'credits.js');
+  assert.ok(fs.existsSync(p), 'js/credits.js 존재');
+  const src = fs.readFileSync(p, 'utf8');
+  new Function(src);
+  ['ready', 'isEnabled', 'policy', 'award', 'balance', 'renderSettingsSection'].forEach(fn => {
+    assert.ok(src.includes(fn + ': ' + fn), 'API ' + fn + ' 노출');
+  });
+  assert.ok(html.includes('<script src="js/credits.js"></script>'), 'index.html 이 js/credits.js 를 로드');
+});
+
+check('compliance: [#TASK-ES-015] 크레딧은 기본 OFF — ENABLE_CREDITS false, 서버 enabled 기본값 false, 화면 화폐 문구 없음', () => {
+  assert.ok(html.includes('ENABLE_CREDITS: false'), 'OURGOAL_CONFIG.ENABLE_CREDITS 기본값 false');
+  assert.ok(html.includes('id="settingsCreditsBlock"'), '설정 화면 크레딧 컨테이너 존재(기본 숨김)');
+  const sql = fs.readFileSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-12-credit-ledger.sql'), 'utf8');
+  assert.ok(sql.includes("('enabled', 'false'::jsonb)"), 'credit_settings.enabled 기본값 false');
+  const js = fs.readFileSync(path.join(__dirname, '..', 'js', 'credits.js'), 'utf8');
+  const uiStrings = js.match(/textContent = [^;]+;/g) || [];
+  uiStrings.forEach(line => {
+    assert.ok(!/현금|환전|₩|달러|상품권|출금/.test(line) && !/[0-9] *원/.test(line), '화면 문구에 화폐 표현 없음: ' + line);
+  });
+  assert.ok(!/localStorage|sessionStorage/.test(js), '크레딧을 로컬에 저장하지 않는다(정본 §2 원장)');
+});
+
+check('compliance: [#TASK-ES-015] credit_ledger SQL — append-only·멱등·봇 제외·설정값 기반이며 파괴 구문이 없다', () => {
+  const sql = fs.readFileSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-12-credit-ledger.sql'), 'utf8');
+  assert.ok(sql.includes('create table if not exists public.credit_ledger'), '원장 테이블');
+  assert.ok(sql.includes('create table if not exists public.credit_settings'), '설정 테이블');
+  assert.ok(sql.includes('idempotency_key text not null unique'), '멱등 키 unique');
+  assert.ok(sql.includes('security definer'), 'RPC 는 보안 정의자');
+  assert.ok(sql.includes('is_bot'), '봇 계정 제외');
+  assert.ok(sql.includes('award_credit(') && sql.includes('my_credit_balance()') && sql.includes('credit_policy()'), 'RPC 3종');
+  assert.ok(!/for (insert|update|delete)/i.test(sql.split('credit_ledger_select_own')[1].split('-- 2)')[0]), '원장에 클라이언트 쓰기 정책 없음');
+  assert.ok(!/drop +table|truncate|delete +from/i.test(sql), 'DROP/TRUNCATE/DELETE 없음');
+});
+
+/* ============ [KF-7 #TASK-ES-014] 반응 4종(응원해요·도움돼요·별로에요·조언해요) ============ */
+check('KF-7: js/reactions.js 가 존재하고 문법이 유효하며 4종 타입·이유 선택지를 정의한다', () => {
+  const p = path.join(__dirname, '..', 'js', 'reactions.js');
+  assert.ok(fs.existsSync(p), 'js/reactions.js 존재');
+  const src = fs.readFileSync(p, 'utf8');
+  new Function(src);
+  ['cheer', 'helpful', 'poor', 'advice'].forEach(t => assert.ok(src.includes("key: '" + t + "'"), '타입 ' + t + ' 정의'));
+  ['응원해요', '도움돼요', '별로에요', '조언해요'].forEach(l => assert.ok(src.includes(l), '라벨 ' + l));
+  ['ai_suspect', 'wrong_info', 'ad', 'off_topic', 'other'].forEach(c => assert.ok(src.includes("code: '" + c + "'"), '별로에요 이유 ' + c));
+  assert.ok(src.includes('missingSchema'), '서버 미적용 폴백 판별 함수 존재');
+  assert.ok(src.includes('AI 봇 글에는 반응할 수 없어요'), '봇 글 반응 차단 문구 존재');
+});
+
+check('KF-7: index.html 이 반응 모듈을 로드하고 초기화·렌더·바인딩 훅을 가진다', () => {
+  assert.ok(html.includes('<script src="js/reactions.js"></script>'), '모듈 script 태그 존재');
+  assert.ok(html.includes('window.OurgoalReactions.init('), 'init 훅 존재');
+  assert.ok(html.includes('window.OurgoalReactions.buttonsHtml(it, { isMe: isMe })'), '피드 카드 버튼 렌더 훅 존재');
+  assert.ok(html.includes('window.OurgoalReactions.advicePanelHtml(it)'), '조언 패널 렌더 훅 존재');
+  assert.ok(html.includes('window.OurgoalReactions.bind(body, blendedItems)'), '바인딩 훅 존재');
+  assert.ok(html.includes('data-reacttype="fire"'), '예전 이모지 버튼 폴백 마크업 보존(기존 기능 삭제 아님)');
+  assert.ok(html.includes('async function toggleFeedReaction('), '기존 toggleFeedReaction 보존');
+});
+
+check('KF-7: content_reactions SQL 이 존재하고 소프트 삭제·봇 제외·SECURITY DEFINER RPC 만 쓰며 파괴 구문이 없다', () => {
+  const sqlPath = path.join(__dirname, '..', 'docs', 'sql', '2026-09-12-content-reactions.sql');
+  assert.ok(fs.existsSync(sqlPath), 'SQL 파일 존재');
+  const sql = fs.readFileSync(sqlPath, 'utf8');
+  assert.ok(sql.includes('create table if not exists public.content_reactions'), '테이블 멱등 생성');
+  assert.ok(sql.includes("check (type in ('cheer','helpful','poor','advice'))"), '4종 타입 제약');
+  assert.ok(sql.includes('deleted_at'), '소프트 삭제 컬럼');
+  assert.ok(sql.includes("sim\\_%"), '시뮬 글 제외');
+  assert.ok(sql.includes('is_bot'), '봇 계정 제외');
+  ['react_content', 'unreact_content', 'moderate_advice', 'count_content_reactions', 'my_content_reactions', 'list_content_advice'].forEach(f => assert.ok(sql.includes(f + '('), 'RPC ' + f));
+  assert.ok(sql.includes('enable row level security'), 'RLS 활성');
+  assert.ok(!/drop\s+table|truncate\s+table|delete\s+from\s+public\.content_reactions/i.test(sql), '파괴 구문·하드 삭제 없음');
+});
+
+/* ============ 앱을 내맘대로! (#TASK-ES-020, KF-1) ============ */
+const customizePath = path.join(__dirname, '..', 'js', 'customize.js');
+check('KF-1: js/customize.js 가 존재하고 문법이 유효하며 로드 시 document 를 만지지 않는다', () => {
+  assert.ok(fs.existsSync(customizePath), 'js/customize.js 존재');
+  const src = fs.readFileSync(customizePath, 'utf8');
+  new Function(src);
+  const vm = require('vm');
+  const sandbox = { window: {}, localStorage: undefined };
+  sandbox.window.window = sandbox.window;
+  vm.runInNewContext(src, sandbox);
+  assert.ok(sandbox.window.OurgoalCustomize, 'window.OurgoalCustomize 노출');
+});
+function loadCustomize(uxMode) {
+  const vm = require('vm');
+  const store = uxMode == null ? {} : { ourgoal_ux_mode: uxMode };
+  const sandbox = { window: { localStorage: { getItem: k => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = v; } } } };
+  sandbox.window.window = sandbox.window;
+  vm.runInNewContext(fs.readFileSync(customizePath, 'utf8'), sandbox);
+  return sandbox.window.OurgoalCustomize;
+}
+check('KF-1: 화이트리스트에 체크인 루프·내 목표·기록·소통 화면 id가 없다 (본질 ①②③ 보호, REQ-P1)', () => {
+  const C = loadCustomize();
+  ['captureCardBox', 'captureInput', 'captureSave', 'homeGoalList', 'streakBadge', 'screen-records', 'screen-comm', 'screen-home'].forEach(id => {
+    assert.ok(C.WHITELIST_IDS.indexOf(id) < 0, id + ' 는 숨길 수 없어야 한다');
+    assert.ok(C.CORE_IDS.indexOf(id) >= 0, id + ' 는 CORE_IDS 로 보호되어야 한다');
+  });
+  assert.ok(C.WHITELIST.length >= 5 && C.WHITELIST.every(w => w.id && w.label), '항목마다 id·사용자 언어 라벨');
+  C.WHITELIST.forEach(w => assert.ok(!/노션|DB|엔진/.test(w.label + w.hint), '도구 언어 금지: ' + w.label));
+});
+check('KF-1: normalize 가 화이트리스트 밖·핵심 id·중복을 버리고, 저장값 없으면 기존 모드에서 유추한다 (REQ-D2·D3)', () => {
+  const C = loadCustomize('minimal');
+  const J = v => JSON.stringify(v); // vm 샌드박스 배열은 다른 realm 이라 JSON 으로 비교
+  assert.strictEqual(J(C.normalize({ hidden: ['captureCardBox', 'ghostWidget', 'mzShareBtn', 'mzShareBtn'] })), J(['mzShareBtn']));
+  assert.strictEqual(J(C.normalize(null)), J([]));
+  assert.strictEqual(J(C.normalize({ hidden: 'bad' })), J([]));
+  assert.strictEqual(J(C.effectiveHidden({})), J(C.MINIMAL_HIDDEN), '저장값 없음 + 미니멀 모드 → 미니멀 CSS와 같은 숨김');
+  assert.strictEqual(J(loadCustomize('gamified').effectiveHidden({})), J([]));
+  assert.strictEqual(J(C.effectiveHidden({ homeLayout: { hidden: ['todayMissionCard'], version: 1 } })), J(['todayMissionCard']));
+});
+check('KF-1: index.html 에 설정 진입 버튼·모듈 로드·홈 렌더 훅이 있고 되돌리기가 제공된다 (REQ-S1·S2)', () => {
+  assert.ok(html.includes('<script src="/js/customize.js"></script>'), '모듈 로드');
+  assert.ok(html.includes('id="homeLayoutOpenBtn"'), '설정 「앱을 내맘대로!」 진입 버튼');
+  assert.ok(html.includes('OurgoalCustomize.apply(state.profile.settings)'), '홈 렌더 뒤 적용 훅');
+  assert.ok(html.includes('OurgoalCustomize.open({ state: state, saveProfile: saveProfile'), '설정에서 saveProfile 경로로 저장');
+  const src = fs.readFileSync(customizePath, 'utf8');
+  assert.ok(src.includes('기본으로 되돌리기'), '되돌리기 버튼');
+  assert.ok(src.includes('homeLayout'), 'settings.homeLayout 저장 키');
+  assert.ok(/id="adaptiveModeSelector"/.test(html), '기존 UX 모드 칩은 그대로 둔다');
+});
+
+
+/* ============ [#TASK-ES-019] 출석·스트릭·배지 (E1, KF-3 — 크레딧 없음) ============ */
+check('compliance: [#TASK-ES-019] js/streaks.js 가 존재·문법 유효·OurgoalStreaks API 를 노출하고 index.html 이 로드·호출한다', () => {
+  const p = path.join(__dirname, '..', 'js', 'streaks.js');
+  assert.ok(fs.existsSync(p), 'js/streaks.js 존재');
+  const src = fs.readFileSync(p, 'utf8');
+  new Function(src);
+  ['renderHome', 'weekDots', 'streakNextMilestone', 'qualityDays', 'markAttendance', 'extendBadges'].forEach(fn => {
+    assert.ok(src.includes(fn + ': ' + fn), 'API ' + fn + ' 노출');
+  });
+  assert.ok(html.includes('<script src="js/streaks.js"></script>'), 'index.html 이 js/streaks.js 를 로드');
+  assert.ok(html.includes('id="homePositionStrip"'), '홈 내 위치 컨테이너 존재');
+  assert.ok(html.includes('OurgoalStreaks.renderHome({'), 'renderHome 훅 존재');
+});
+
+check('compliance: [#TASK-ES-019] 출석·기록에 화폐·XP 보상 없음 — awardXP·크레딧 미호출, 화폐 문구 0건, 로컬스토리지 직접 저장 없음', () => {
+  const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'streaks.js'), 'utf8');
+  assert.ok(!/awardXP|OurgoalCredits|award_credit|XP_RULES/.test(src), 'XP·크레딧 호출 없음');
+  assert.ok(!/크레딧|포인트|코인|현금|₩/.test(src), '화폐 문구 없음');
+  assert.ok(!/localStorage|sessionStorage/.test(src), '저장은 프로필 settings 경로만');
+  assert.ok(!/#\d+위|\d+인 중 \d+명/.test(src), '고정 사회적 숫자 없음');
+});
+
+check('compliance: [#TASK-ES-019] 조건값은 RULES 한 곳(14·100일 포함) · 순수 함수 동작 · 홈 순서(저장 → 내 위치 → 목표 목록) 유지', () => {
+  const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'streaks.js'), 'utf8');
+  const w = {};
+  new Function('window', src)(w);
+  const S = w.OurgoalStreaks;
+  assert.ok(S && S.RULES.streakMilestones.includes(14) && S.RULES.streakMilestones.includes(100), '마일스톤 14·100 포함');
+  assert.strictEqual(S.streakNextMilestone(7, [3, 7, 14]), 14, '다음 배지 계산');
+  assert.strictEqual(S.streakNextMilestone(400, [3, 7]), null, '최상위 배지 이후 null');
+  assert.strictEqual(S.weekDots([]).length, 7, '주간 7칸');
+  const s = {};
+  assert.strictEqual(S.markAttendance(s), true, '오늘 첫 출석은 기록');
+  assert.strictEqual(S.markAttendance(s), false, '같은 날 두 번째는 무시(멱등)');
+  assert.strictEqual(s.attendance.length, 1);
+  const recs = [{ text: 'a'.repeat(25), startAt: new Date().toISOString() }, { text: '짧게', startAt: new Date().toISOString() }];
+  assert.strictEqual(S.qualityDays(recs, { qualityMinChars: 20, qualityWindowDays: 7, qualityMinDays: 5 }), 1, '품질 기록 일수(20자 이상 하루)');
+  assert.ok(!/streakMilestones/.test(html), 'index.html 에 배지 조건 하드코딩 없음');
+  const a = html.indexOf('id="captureSave"'), b = html.indexOf('id="homePositionStrip"'), c = html.indexOf('id="homeGoalList"');
+  assert.ok(a > 0 && a < b && b < c, '홈 순서: 답하기(저장) → 내 위치 → 목표 목록');
+});
+
+
+/* ============ [KF-5 #TASK-ES-016] 도움돼요 이유 작성 + 크레딧 ============ */
+check('KF-5: js/helpful-reason.js 가 존재하고 문법이 유효하며 API·기본 태그 5종·기본 최소 글자 수를 정의한다', () => {
+  const p = path.join(__dirname, '..', 'js', 'helpful-reason.js');
+  assert.ok(fs.existsSync(p), 'js/helpful-reason.js 존재');
+  const src = fs.readFileSync(p, 'utf8');
+  new Function(src);
+  ['init', 'openSheet', 'openSummary', 'authorButtonHtml', 'patchAuthorButton', 'bind'].forEach(fn => assert.ok(src.includes(fn + ': ' + fn), 'API ' + fn + ' 노출'));
+  ['how_to', 'same_situation', 'motivation', 'new_info', 'other'].forEach(c => assert.ok(src.includes("code: '" + c + "'"), '기본 태그 ' + c));
+  assert.ok(/DEFAULT_MIN_CHARS = 10;\s*\/\* 기본값/.test(src), '최소 글자 수 기본값 10 + "기본값" 주석');
+  assert.ok(src.includes("'helpful_reason:' + uid + ':' + targetId"), '크레딧 멱등 키 규약 helpful_reason:<uid>:<postId>');
+  assert.ok(src.includes("award('helpful_reason', 'feed_post'"), 'OurgoalCredits.award(helpful_reason) 호출');
+  assert.ok(!/현금|환전|₩|출금|상품권/.test(src), '화면 문구에 현금 암시 없음');
+});
+
+check('KF-5: 이유 SQL — 테이블·품질 게이트·봇 제외·보안 정의자·소프트 삭제, DROP/TRUNCATE/DELETE 없음', () => {
+  const sql = fs.readFileSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-12-helpful-reason.sql'), 'utf8');
+  assert.ok(sql.includes('create table if not exists public.helpful_reasons'), '이유 테이블');
+  assert.ok(sql.includes('quality_pass'), '품질 통과 컬럼');
+  assert.ok(sql.includes("key = 'min_reason_chars'"), '최소 글자 수는 설정값');
+  assert.ok(sql.includes("'helpful_reason_tags'"), '태그 목록은 설정값');
+  assert.ok(sql.includes('is_bot'), '봇 제외');
+  assert.ok(sql.includes("type = 'helpful' and r.deleted_at is null"), '도움돼요를 누른 사람만');
+  assert.ok(sql.includes('security definer'), 'RPC 는 보안 정의자');
+  assert.ok(sql.includes('deleted_at'), '소프트 삭제');
+  assert.ok(sql.includes("public.award_credit('helpful_reason'"), '품질 통과 시 공용 원장 적립');
+  assert.ok(!/drop\s+table|truncate|delete\s+from/i.test(sql), 'DROP/TRUNCATE/DELETE 없음');
+});
+
+check('KF-5: index.html 이 js/helpful-reason.js 를 reactions.js 뒤에 로드하고 앱 핸들을 연결한다', () => {
+  const a = html.indexOf('<script src="js/reactions.js"></script>');
+  const b = html.indexOf('<script src="js/helpful-reason.js"></script>');
+  assert.ok(a > 0 && b > a, 'reactions.js 다음에 helpful-reason.js 로드');
+  assert.ok(html.includes('window.OurgoalHelpfulReason.init({'), 'init 호출');
+});
+
+check('KF-5: js/reactions.js 가 도움돼요 저장 직후 이유 시트를 띄우고 글쓴이 카드에 이유 보기 버튼을 붙인다', () => {
+  const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'reactions.js'), 'utf8');
+  assert.ok(src.includes("type === 'helpful' && window.OurgoalHelpfulReason) window.OurgoalHelpfulReason.openSheet(it, btn)"), '도움돼요 직후 시트');
+  assert.ok(src.includes("window.OurgoalHelpfulReason.authorButtonHtml(it, countOf(it, 'helpful'))"), '글쓴이 이유 보기 버튼(도움돼요 1건 이상일 때만)');
+  assert.ok(src.includes('window.OurgoalHelpfulReason.bind(body, lastItems)'), '버튼 바인딩');
+});
+
+
+/* ============ [KF-4 #TASK-ES-018] 카테고리별 "도움이 된 글" 상단 슬롯 ============ */
+check("KF-4: js/top-helpful.js 가 존재하고 문법이 유효하며 30일 창·슬롯 2개·라벨을 정의한다", () => {
+  const p = path.join(__dirname, "..", "js", "top-helpful.js");
+  assert.ok(fs.existsSync(p), "js/top-helpful.js 존재");
+  const src = fs.readFileSync(p, "utf8");
+  new Function(src);
+  assert.ok(src.includes("WINDOW_DAYS = 30"), "최근 30일 창(결심 D-1 권장값)");
+  assert.ok(src.includes("SLOT_LIMIT = 2"), "슬롯 2개(결심 D-2 권장값)");
+  assert.ok(src.includes("이 주제에서 도움이 된 글"), "슬롯 라벨(사용자 언어)");
+  assert.ok(src.includes("cat !== 'all'"), "전체 칩에서는 슬롯 없음(통합 점수 금지)");
+  assert.ok(src.includes("missingSchema"), "서버 미적용 폴백 판별 존재");
+  assert.ok(html.includes("<script src=\"js/top-helpful.js\"></script>"), "index.html 이 js/top-helpful.js 를 로드");
+  assert.ok(html.includes("OurgoalTopHelpful.arrange(blendedItems, curCat"), "renderCommFeed 훅 존재");
+});
+
+check("KF-4: 상단 슬롯에 서열 문구(N위·TOP·랭킹)가 없다 — 실데이터 라벨만", () => {
+  const src = fs.readFileSync(path.join(__dirname, "..", "js", "top-helpful.js"), "utf8");
+  const ui = (src.match(/'[^']*'/g) || []).join(" ");
+  assert.ok(!/d+위|TOPs*d|랭킹|순위/.test(ui), "서열 문구 없음");
+  assert.ok(!/(#d+위|d+인 중 d+명|팀 포인트)/.test(src), "위조 사회적 숫자 패턴 없음");
+});
+
+check("KF-4: top_helpful_posts SQL — 카테고리 안에서만 집계, 봇·시뮬·숨김·자기반응 제외, DROP/DELETE 없음", () => {
+  const sqlPath = path.join(__dirname, "..", "docs", "sql", "2026-09-12-top-helpful.sql");
+  assert.ok(fs.existsSync(sqlPath), "2026-09-12-top-helpful.sql 존재");
+  const sql = fs.readFileSync(sqlPath, "utf8");
+  assert.ok(sql.includes("create or replace function public.top_helpful_posts"), "RPC 정의");
+  assert.ok(sql.includes("security definer"), "보안 정의자");
+  assert.ok(sql.includes("feed_post_matches_category(p, p_category)"), "카테고리 안에서만 집계");
+  assert.ok(sql.includes("p_key = 'all' then false"), "전체에서는 집계하지 않음");
+  assert.ok(sql.includes("coalesce(u.is_bot, false) = false"), "봇 반응 제외");
+  assert.ok(sql.includes("not like 'sim\\_%'"), "시뮬 글 제외");
+  assert.ok(sql.includes("r.user_id <> p.user_id"), "자기 반응 제외");
+  assert.ok(sql.includes("coalesce(p.hidden, false) = false"), "숨김 글 제외");
+  assert.ok(!/drops+table|truncate|deletes+from/i.test(sql), "DROP/TRUNCATE/DELETE 없음");
+});
+
+
+
+/* ============ [KF-2 #TASK-ES-017] 템플릿 복제 크레딧 + 선택형 광고 ============ */
+check('KF-2: js/template-credit.js 가 존재하고 문법이 유효하며 API 5종을 노출한다 (#TASK-ES-017)', () => {
+  const p = path.join(__dirname, '..', 'js', 'template-credit.js');
+  assert.ok(fs.existsSync(p), 'js/template-credit.js 존재');
+  const src = fs.readFileSync(p, 'utf8');
+  new Function(src);
+  ['init', 'recordCopy', 'counts', 'fillCounts', 'renderAdOptIn'].forEach(fn => assert.ok(src.includes(fn + ': ' + fn), 'API ' + fn));
+  assert.ok(!/현금|환전|₩|출금|상품권/.test(src), '화폐 문구 없음(정본 §2)');
+  assert.ok(html.includes('<script src="js/template-credit.js"></script>'), 'index.html 이 모듈을 로드');
+  assert.ok(html.includes('window.OurgoalTemplateCredit.init({ sb: sb'), '부팅 시 앱 핸들 주입');
+});
+check('KF-2: 복제 흐름에서 광고가 분리되고, 광고는 설정의 선택형 버튼 한 경로뿐이다 (정본 §3)', () => {
+  assert.ok(html.includes('var adsEnabled = !!forceAdFlow;'), '복제 흐름은 플래그와 무관하게 광고 없음');
+  assert.ok(!html.includes('var adsEnabled = forceAdFlow || isTemplateRewardedAdEnabled();'), '구 강제 경로 제거');
+  assert.ok(html.includes('function playRewardedAdVideo(tpl, onComplete)'), '광고 완료 콜백 지원');
+  assert.ok(html.includes("OurgoalTemplateCredit.renderAdOptIn(document.getElementById('settingsCreditsBlock'))"), '선택형 버튼은 설정 › 크레딧 섹션에만');
+  const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'template-credit.js'), 'utf8');
+  assert.ok(src.includes('ENABLE_TEMPLATE_REWARDED_ADS') && src.includes('isEnabled()'), '플래그와 크레딧 enabled 둘 다 켜져야 버튼 표시');
+  assert.ok(html.includes('ENABLE_TEMPLATE_REWARDED_ADS: false'), '광고 플래그 기본 OFF 유지');
+});
+check('KF-2: 마켓·기본 템플릿의 고정 복제 수·가상 크리에이터 표기가 화면에서 사라지고 서버 실데이터 배지만 남는다 (금지 6-1)', () => {
+  assert.ok(!html.includes("t.downloads + '회 복제'"), '고정 downloads 문자열 표시 없음');
+  assert.ok(!html.includes("t.users.toLocaleString()+'명이 사용 중'"), '고정 사용자 수 표시 없음');
+  assert.ok(!html.includes("escapeHtml(t.creator)+'</b>'"), '가상 크리에이터 이름 표시 없음');
+  assert.ok(html.includes('data-tplcount="\' + t.key + \'"'), '마켓 카드에 서버 집계 배지 자리(기본 숨김)');
+  assert.ok(html.includes('data-tplcount="creator:\'+t.id+\'"'), '기본 템플릿에도 서버 집계 자리');
+  assert.ok(html.includes('OurgoalTemplateCredit.recordCopy(tpl.key || tpl.title'), '마켓 복제 시 서버 기록');
+  assert.ok(html.includes("OurgoalTemplateCredit.recordCopy('creator:' + t.id"), '기본 템플릿 복제 시 서버 기록');
+});
+check('KF-2: template_copies SQL — 멱등·RLS·봇 제외·구간 적립은 서버·DROP 없음', () => {
+  const sql = fs.readFileSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-12-template-copies.sql'), 'utf8');
+  assert.ok(sql.includes('create table if not exists public.template_copies'), '원장 테이블');
+  assert.ok(sql.includes('unique (template_id, copier_user_id)'), '같은 사람 1회만');
+  assert.ok(sql.includes('enable row level security'), 'RLS');
+  assert.ok(sql.includes('record_template_copy(') && sql.includes('template_copy_counts('), 'RPC 2종');
+  assert.ok(sql.includes('security definer') && sql.includes('is_bot'), '보안 정의자·봇 제외');
+  assert.ok(sql.includes("'template_copied'") && sql.includes('template_copy_tiers'), '구간 적립은 설정값 기반');
+  assert.ok(sql.includes("('ad_watched_amount', 'null'::jsonb)"), '광고 적립 액수 기본 null');
+  assert.ok(!/drop\s+table|truncate|delete\s+from/i.test(sql), 'DROP/TRUNCATE/DELETE 없음');
+});
+
+
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
