@@ -2960,9 +2960,30 @@ check('compliance: [#TASK-ES-037] 기록·목표 탭 12대 핵심 UX 개선 및 
   // 9. 목표 순서 가로 이동 버튼 (◀ / ▶)
   assert.ok(html.includes('shiftGoalOrder') && html.includes('goal-chip-nav-btn'), '목표 칩 가로 순서 이동 버튼');
   assert.ok(styleSrc.includes('.goal-chip-nav-btn'), '목표 순서 이동 버튼 스타일');
+});
 
-  // 10. 마일스톤 수직 배치 및 세모 토글 하단 좌측 정렬 레이아웃
-  assert.ok(styleSrc.includes('.ms-title-full-row') && styleSrc.includes('.ms-right-actions'), '마일스톤 시인성 개선 CSS');
+check('compliance: [#TASK-ES-038] 목표 탭 마일스톤 창 공간 활용 효율화 및 고밀도 UI/UX 개편이 완비되어 있다', () => {
+  // 1. 상단 AI 종합상황 슬림 미니바(Accordion) 마크업 및 핸들러 검증
+  assert.ok(html.includes('goal-status-minibar') && html.includes('id="goalStatusMinibar"'), '상단 AI 미니바 컨테이너');
+  assert.ok(html.includes('id="goalStatusToggleBtn"') && html.includes('state.goalStatusExpanded'), 'AI 미니바 접이식 토글');
+  assert.ok(styleSrc.includes('.goal-status-minibar') && styleSrc.includes('.status-minibar-head'), 'AI 미니바 스타일 구비');
+
+  // 2. 마일스톤 필터 바 뷰 모드(간결/상세) 토글 버튼 검증
+  assert.ok(html.includes('id="msDensityToggleBtn"'), '보기 모드 토글 버튼 마크업');
+  assert.ok(html.includes('state.msDensity'), '보기 모드 상태 변수');
+
+  // 3. 마일스톤 2단 고밀도 인라인 그리드 (1행: 상태+제목+진행률/D-day, 2행: 인라인 메타)
+  assert.ok(html.includes('ms-main-line') && html.includes('ms-sub-meta-line'), '마일스톤 2단 인라인 그리드 마크업');
+  assert.ok(styleSrc.includes('.ms-main-line') && styleSrc.includes('.ms-sub-meta-line'), '마일스톤 2단 인라인 CSS');
+  assert.ok(html.includes('ms-title-compact'), '마일스톤 컴팩트 타이틀');
+
+  // 4. 하위 세부 할 일(Task) 1줄 원라인 플렉스 검증
+  assert.ok(html.includes('compact-task-row') && html.includes('task-title-inline'), '1줄 원라인 할 일 마크업');
+  assert.ok(styleSrc.includes('.compact-task-row') && styleSrc.includes('.task-title-inline'), '1줄 원라인 할 일 CSS');
+  assert.ok(html.includes('task-meta-inline'), '할 일 인라인 메타 컨테이너');
+
+  // 5. 최종 결과 입력 버튼 메타 스트립 인라인 통합 검증
+  assert.ok(html.includes('meta-strip') && html.includes('id="goalResultBtn"'), '결과 입력 버튼 메타 스트립 인라인 흡수');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
