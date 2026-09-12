@@ -64,6 +64,223 @@
       .replace(/"/g, '&quot;');
   }
 
+  var TEAM_PINGS_CACHE = {}; // gid -> array of pings
+  var REALTIME_CHANNEL = null;
+  var globalDeps = null;
+
+  async function ensureTeamPingsLoaded(gid, deps){
+    var d = deps || globalDeps;
+    var sb = d && d.sb;
+    if(!sb) return;
+    if(TEAM_PINGS_CACHE[gid]) return;
+    TEAM_PINGS_CACHE[gid] = [];
+    try {
+      var res = await sb.from('team_pings')
+        .select('*, team_ping_replies(*)')
+        .eq('group_id', gid)
+        .order('created_at', { ascending: false });
+      if(!res.error && res.data){
+        TEAM_PINGS_CACHE[gid] = res.data.map(function(row){
+          return {
+            id: row.id,
+            gid: row.group_id,
+            senderId: row.sender_id,
+            senderName: row.sender_name,
+            receiverId: row.receiver_id,
+            pingType: row.ping_type,
+            targetType: row.target_type,
+            targetId: row.target_id,
+            targetTitle: row.target_title,
+            message: row.message,
+            status: row.status,
+            createdAt: row.created_at,
+            replies: (row.team_ping_replies || []).map(function(rep){
+              return {
+                id: rep.id,
+                senderId: rep.sender_id,
+                senderName: rep.sender_name,
+                receiverId: rep.receiver_id,
+                message: rep.message,
+                createdAt: rep.created_at
+              };
+            })
+          };
+        });
+        if(d && typeof d.getGroupState === 'function'){
+          var gs = d.getGroupState(gid);
+          if(gs){
+            var existingLocal = gs.memberPings || [];
+            var map = {};
+            TEAM_PINGS_CACHE[gid].forEach(function(p){ map[p.id] = p; });
+            existingLocal.forEach(function(p){ if(!map[p.id]) map[p.id] = p; });
+            gs.memberPings = Object.keys(map).map(function(k){ return map[k]; }).sort(function(a,b){
+              return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+          }
+        }
+      }
+    } catch(e){}
+  }
+
+  async function dispatchPingToDb(ping, deps){
+    var d = deps || globalDeps;
+    var sb = d && d.sb;
+    if(sb && ping.senderId){
+      try {
+        await sb.from('team_pings').insert({
+          id: ping.id,
+          group_id: ping.gid,
+          sender_id: ping.senderId,
+          sender_name: ping.senderName,
+          receiver_id: ping.receiverId,
+          target_type: ping.targetType,
+          target_id: ping.targetId,
+          target_title: ping.targetTitle,
+          ping_type: ping.pingType,
+          message: ping.message,
+          status: 'sent',
+          created_at: ping.createdAt
+        });
+      } catch(e){}
+    }
+    try {
+      if(typeof fetch === 'function' && ping.receiverId){
+        fetch('/api/push-dispatch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            targetUserId: ping.receiverId,
+            title: ping.senderName + '님의 ' + (ping.pingType === 'boast' ? '🎉 달성자랑' : '🥺 힘들어요') + ' 찌르기',
+            body: ping.message,
+            url: '/?tab=goals&sub=team&gid=' + encodeURIComponent(ping.gid)
+          })
+        }).catch(function(){});
+      }
+    } catch(e){}
+  }
+
+  async function dispatchReplyToDb(reply, ping, deps){
+    var d = deps || globalDeps;
+    var sb = d && d.sb;
+    if(sb && reply.senderId){
+      try {
+        await sb.from('team_ping_replies').insert({
+          id: reply.id,
+          ping_id: ping.id,
+          group_id: ping.gid,
+          sender_id: reply.senderId,
+          sender_name: reply.senderName,
+          receiver_id: reply.receiverId,
+          message: reply.message,
+          created_at: reply.createdAt
+        });
+        await sb.from('team_pings').update({
+          status: 'replied',
+          updated_at: new Date().toISOString()
+        }).eq('id', ping.id);
+      } catch(e){}
+    }
+    try {
+      if(typeof fetch === 'function' && reply.receiverId){
+        fetch('/api/push-dispatch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            targetUserId: reply.receiverId,
+            title: reply.senderName + '님의 1:1 DM 답장 💬',
+            body: reply.message,
+            url: '/?tab=goals&sub=team&gid=' + encodeURIComponent(ping.gid)
+          })
+        }).catch(function(){});
+      }
+    } catch(e){}
+  }
+
+  function setupTeamPingsRealtime(deps){
+    var d = deps || globalDeps;
+    var sb = d && d.sb;
+    if(!sb || REALTIME_CHANNEL) return;
+    try {
+      REALTIME_CHANNEL = sb.channel('team_pings_realtime')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'team_pings' }, function(payload){
+          var row = payload.new;
+          if(!row || !row.group_id) return;
+          var myP = (d.getProfile && d.getProfile());
+          var myUid = myP ? myP.id : null;
+          var isTargetLeader = (row.receiver_id === myUid) || (!row.receiver_id && d.canManage && d.canManage(row.group_id));
+          if(myUid && isTargetLeader && row.sender_id !== myUid){
+            if(d.toast) d.toast(row.sender_name + '님에게서 새 찌르기가 도착했습니다! 👑');
+            if(d.haptic) d.haptic('success');
+          }
+          var list = TEAM_PINGS_CACHE[row.group_id];
+          if(list && !list.find(function(x){ return x.id === row.id; })){
+            list.unshift(row);
+          }
+          if(d.getGroupState){
+            var gs = d.getGroupState(row.group_id);
+            if(gs){
+              gs.memberPings = gs.memberPings || [];
+              if(!gs.memberPings.find(function(x){ return x.id === row.id; })){
+                gs.memberPings.unshift({
+                  id: row.id,
+                  gid: row.group_id,
+                  senderId: row.sender_id,
+                  senderName: row.sender_name,
+                  receiverId: row.receiver_id,
+                  pingType: row.ping_type,
+                  targetType: row.target_type,
+                  targetId: row.target_id,
+                  targetTitle: row.target_title,
+                  message: row.message,
+                  status: row.status,
+                  createdAt: row.created_at,
+                  replies: []
+                });
+              }
+            }
+          }
+          if(d.onRefresh) d.onRefresh();
+        })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'team_ping_replies' }, function(payload){
+          var row = payload.new;
+          if(!row || !row.ping_id) return;
+          var myP = (d.getProfile && d.getProfile());
+          var myUid = myP ? myP.id : null;
+          if(myUid && row.receiver_id === myUid){
+            if(d.toast) d.toast(row.sender_name + '님이 1:1 DM 답장을 보냈습니다! 💬');
+            if(d.haptic) d.haptic('success');
+          }
+          if(d.getGroupState){
+            var gs = d.getGroupState(row.group_id);
+            if(gs && gs.memberPings){
+              var targetPing = gs.memberPings.find(function(p){ return p.id === row.ping_id; });
+              if(targetPing){
+                targetPing.replies = targetPing.replies || [];
+                if(!targetPing.replies.find(function(r){ return r.id === row.id; })){
+                  targetPing.replies.push({
+                    id: row.id,
+                    senderId: row.sender_id,
+                    senderName: row.sender_name,
+                    receiverId: row.receiver_id,
+                    message: row.message,
+                    createdAt: row.created_at
+                  });
+                  targetPing.status = 'replied';
+                }
+              }
+            }
+          }
+          if(typeof window !== 'undefined' && window.dispatchEvent){
+            try {
+              window.dispatchEvent(new CustomEvent('ourgoal:team_ping_reply_received', { detail: { pingId: row.ping_id, reply: row } }));
+            } catch(_e){}
+          }
+          if(d.onRefresh) d.onRefresh();
+        })
+        .subscribe();
+    } catch(e){}
+  }
+
   function calcGroupMembersProgress(gid, mockGroups, getGroupState, getProfile, getLevelGoals){
     var g = (mockGroups || []).find(function(x){ return x.id === gid; });
     if(!g) return { members: [], summary: { total: 0, doneToday: 0, rate: 0, avgProgress: 0, needCare: 0 } };
@@ -585,22 +802,29 @@
             var msg = (inp && inp.value.trim()) || PING_TYPES[selectedType].templates[0];
 
             gs.memberPings = gs.memberPings || [];
+            var myUid = (p && p.id) || ('guest_' + Math.random().toString(36).substr(2, 9));
+            var groupObj = (deps.mockGroups || []).find(function(x){ return x.id === gid; });
+            var leaderId = (groupObj && groupObj.ownerId) || (gs.ownerId) || '';
+
             var newPing = {
               id: 'ping_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
               gid: gid,
+              senderId: myUid,
               senderName: myName,
               senderAvatar: myAvatar,
+              receiverId: leaderId,
               pingType: selectedType,
               targetType: targetType,
               targetId: targetId,
               targetTitle: title,
               message: msg,
               createdAt: new Date().toISOString(),
-              status: 'unread',
+              status: 'sent',
               replies: []
             };
             gs.memberPings.push(newPing);
             await deps.saveProfile();
+            await dispatchPingToDb(newPing, deps);
 
             if(deps.haptic) deps.haptic('success');
             var pDef = PING_TYPES[selectedType];
@@ -704,6 +928,17 @@
       }
       scrollTimelineToBottom();
 
+      var replyEventListener = function(ev){
+        if(ev && ev.detail && ev.detail.pingId === pingId){
+          sheet.innerHTML = renderDmModalHtml();
+          setupDmHandlers();
+          scrollTimelineToBottom();
+        }
+      };
+      if(typeof window !== 'undefined'){
+        window.addEventListener('ourgoal:team_ping_reply_received', replyEventListener);
+      }
+
       function setupDmHandlers(){
         sheet.querySelector('#closeDmModalBtn').addEventListener('click', deps.closeModal);
 
@@ -722,17 +957,26 @@
             if(!text) return;
 
             ping.replies = ping.replies || [];
-            ping.replies.push({
+            var myUid = (p && p.id) || ('guest_' + Math.random().toString(36).substr(2, 9));
+            var targetReceiverId = (myRole === 'owner')
+              ? (ping.senderId || '')
+              : (ping.receiverId || (ping.replies && ping.replies.length ? ping.replies[0].senderId : ''));
+
+            var newReply = {
               id: 'reply_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+              senderId: myUid,
               senderName: myName,
               senderRole: myRole,
               senderAvatar: myAvatar,
+              receiverId: targetReceiverId,
               message: text,
               createdAt: new Date().toISOString()
-            });
+            };
+            ping.replies.push(newReply);
             ping.status = 'replied';
 
             await deps.saveProfile();
+            await dispatchReplyToDb(newReply, ping, deps);
             if(deps.haptic) deps.haptic('success');
             deps.toast('DM 답장을 전송했어요! 💬');
 
@@ -820,6 +1064,14 @@
   var OurgoalTeamLeaderCheck = {
     LEADER_STAMPS: LEADER_STAMPS,
     PING_TYPES: PING_TYPES,
+    init: function(deps){
+      globalDeps = deps;
+      if(deps && deps.sb) setupTeamPingsRealtime(deps);
+    },
+    ensureTeamPingsLoaded: ensureTeamPingsLoaded,
+    setupTeamPingsRealtime: setupTeamPingsRealtime,
+    dispatchPingToDb: dispatchPingToDb,
+    dispatchReplyToDb: dispatchReplyToDb,
     calcGroupMembersProgress: calcGroupMembersProgress,
     renderLeaderDashboardHtml: renderLeaderDashboardHtml,
     renderLeaderPingsSectionHtml: renderLeaderPingsSectionHtml,

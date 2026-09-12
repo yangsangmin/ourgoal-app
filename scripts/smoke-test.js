@@ -3004,6 +3004,140 @@ check('compliance: [#TASK-ES-039] 목표 탭 결과입력 1줄 슬림 캡슐화 
   assert.ok(html.includes("margin:4px 0 4px;"), '필터 바 마진 4px 축소');
 });
 
+
+check('compliance: [#TASK-ES-042] js/ai-feedback.js 가 존재하고 유효하며 OurgoalAIFeedback API를 노출한다', () => {
+  const aiFbPath = path.join(__dirname, '..', 'js', 'ai-feedback.js');
+  assert.ok(fs.existsSync(aiFbPath), 'js/ai-feedback.js 파일 존재');
+  const AIFeedback = require(aiFbPath);
+  assert.ok(AIFeedback, 'OurgoalAIFeedback 모듈 export');
+
+  // 마이크로 칩 정의 검증 ('이번기록의 체감' 포함)
+  assert.ok(AIFeedback.MICRO_CHIPS.condition, '컨디션 칩 정의');
+  assert.ok(AIFeedback.MICRO_CHIPS.duration, '소요시간 칩 정의');
+  assert.ok(AIFeedback.MICRO_CHIPS.sessionFeel, '이번기록의 체감 칩 정의');
+  const feelLabels = AIFeedback.MICRO_CHIPS.sessionFeel.map(c => c.label);
+  assert.ok(feelLabels.includes('뿌듯함') && feelLabels.includes('간신히 버팀'), '이번기록의 체감 라벨 구비');
+
+  // 피드백 3단 모드 검증 (기본값 설정 확인)
+  assert.ok(AIFeedback.FEEDBACK_MODES.default && AIFeedback.FEEDBACK_MODES.default.isDefault, '기본 피드백(기본값) 설정');
+  assert.ok(AIFeedback.FEEDBACK_MODES.medium, '중간 피드백 설정');
+  assert.ok(AIFeedback.FEEDBACK_MODES.macro, '장기간 고려 피드백 설정');
+
+  // 7일 롤링 TTL (8일차부터 자동 휘발)
+  assert.strictEqual(AIFeedback.TTL_MS, 7 * 24 * 60 * 60 * 1000, '7일 TTL 밀리초 일치');
+
+  // 주요 API 함수 노출
+  assert.strictEqual(typeof AIFeedback.computeVirtualRail, 'function', 'computeVirtualRail 함수');
+  assert.strictEqual(typeof AIFeedback.filterNegativeWords, 'function', 'filterNegativeWords 함수');
+  assert.strictEqual(typeof AIFeedback.generateEnhancedLocalFeedback, 'function', 'generateEnhancedLocalFeedback 함수');
+  assert.strictEqual(typeof AIFeedback.renderEnhancedCardContent, 'function', 'renderEnhancedCardContent 함수');
+});
+
+check('compliance: [#TASK-ES-042] 가상 D-Day 레일 엔진(4단계 페이즈 및 사각지대)과 상태 기억 체인이 정상 동작한다', () => {
+  const AIFeedback = require(path.join(__dirname, '..', 'js', 'ai-feedback.js'));
+
+  // 1. 가상 D-Day 레일 테스트
+  const now = new Date('2026-09-13T09:00:00Z');
+  const mockGoal = { id: 'g1', title: '정보처리기사 실기 합격', dueDate: '2026-10-13' }; // D-30
+  const rail = AIFeedback.computeVirtualRail(mockGoal, mockGoal.dueDate, now);
+  assert.strictEqual(rail.phases.length, 4, '4단계 가상 페이즈 분할');
+  assert.ok(rail.remainingDays >= 29 && rail.remainingDays <= 31, 'D-Day 잔여일 계산');
+  assert.ok(rail.currentPhase, '현재 소속 페이즈 식별');
+  assert.ok(rail.gapWarning && rail.gapWarning.includes('병목 위험'), '사각지대 병목 경고 생성');
+  assert.ok(rail.suggestedCalendarItem && rail.suggestedCalendarItem.title, '추천 일정 항목 생성');
+
+  // 2. 상투어 금지 필터링 테스트
+  const badText = '도움됨! 오늘의 목표를 향한 의미 있는 실천이었습니다. 수고 많으셨습니다. 앞으로도 꾸준히 하시면 됩니다.';
+  const cleanedText = AIFeedback.filterNegativeWords(badText);
+  assert.ok(!cleanedText.includes('도움됨'), '도움됨 제거');
+  assert.ok(!cleanedText.includes('의미 있는 실천'), '의미 있는 실천 제거');
+  assert.ok(!cleanedText.includes('수고 많으셨습니다'), '수고 많으셨습니다 제거');
+
+  // 3. 상태 기억 체인(Memory Chain) 테스트 (7일 TTL 및 휘발)
+  const mc = AIFeedback.MemoryChain;
+  const mockStorage = { adviceHistory: [] };
+  mc.saveAdvice(mockStorage, {
+    goalId: 'test-goal-1',
+    goalTitle: '정보처리기사',
+    actionSuggested: '내일 2회차 모의고사 오답노트 정리',
+    verdict: '실행 권고'
+  });
+  const recent = mc.getLastAdvice(mockStorage, 'test-goal-1');
+  assert.ok(recent && recent.actionSuggested.includes('오답노트'), '최근 조언 조회 성공');
+
+  // 8일 전 만료 데이터 휘발 테스트
+  const eightDaysAgo = new Date(Date.now() - (8 * 24 * 60 * 60 * 1000));
+  mc.saveAdvice(mockStorage, {
+    goalId: 'expired-goal',
+    actionSuggested: '과거 조언'
+  }, eightDaysAgo);
+  const expired = mc.getLastAdvice(mockStorage, 'expired-goal');
+  assert.strictEqual(expired, null, '8일 이상 경과 조언 자동 휘발 확인');
+});
+
+check('compliance: [#TASK-ES-042] index.html 및 api/feedback.js 에 마이크로 칩, 피드백 모드, 캘린더 원클릭 추가가 완벽히 연동되어 있다', () => {
+  // index.html 연동 확인
+  assert.ok(html.includes('src="js/ai-feedback.js"'), 'index.html js/ai-feedback.js 스크립트 태그 로드');
+  assert.ok(html.includes('id="aiFeedbackOptionsSlot"'), '체크인 입력단 옵션 슬롯 마크업');
+  assert.ok(html.includes('state.aiMicroChips'), '마이크로 칩 상태 변수 관리');
+  assert.ok(html.includes('state.aiFeedbackMode'), '피드백 모드 상태 변수 관리');
+  assert.ok(html.includes('btn-add-sched-ai'), '피드백 추천 일정 원클릭 캘린더 등록 버튼 핸들러');
+  assert.ok(html.includes('customSchedules.push'), '인앱 캘린더 일정 추가 파이프라인 연계');
+
+  // api/feedback.js 서버리스 엔드포인트 연동 확인
+  const apiFeedbackPath = path.join(__dirname, '..', 'api', 'feedback.js');
+  assert.ok(fs.existsSync(apiFeedbackPath), 'api/feedback.js 존재');
+  const apiFeedbackSrc = fs.readFileSync(apiFeedbackPath, 'utf8');
+  assert.ok(apiFeedbackSrc.includes('microChips'), '서버리스 엔드포인트 microChips 파라미터 처리');
+  assert.ok(apiFeedbackSrc.includes('virtualRail'), '서버리스 엔드포인트 virtualRail 파라미터 처리');
+  assert.ok(apiFeedbackSrc.includes('lastAdvice'), '서버리스 엔드포인트 lastAdvice 파라미터 처리');
+  assert.ok(apiFeedbackSrc.includes('상투적 칭찬') && apiFeedbackSrc.includes('도움됨'), '상투어 금지 네거티브 시스템 프롬프트 탑재');
+});
+
+check('compliance: [#TASK-ES-043] 9대 UX 핵심 결함(스트릭 보존, 개인정보 보호, 게스트 병합, localhost 차단, 랜딩 버튼, 연타 방어, 즉시 렌더, 도구어 순화, 인앱 안내)이 구현되어 있다', () => {
+  // 1. 스트릭 계산: 당일 미체크인 시 어제 기준 연속 달성 일수 보존
+  const startAt = d => new Date(Date.now() - d * 86400000).toISOString();
+  fns.setRecords([{ startAt: startAt(1) }, { startAt: startAt(2) }, { startAt: startAt(3) }]);
+  assert.strictEqual(fns.computeStreakDays(), 3, '오늘 미체크인 시 어제 기준 3일 스트릭 온전히 유지');
+  assert.ok(html.includes('startCursor.setDate(startCursor.getDate() - 1);'), '당일 미체크인 분기 역산 로직 탑재');
+
+  // 2. 설정 화면 및 문의 모달 개인 이메일 노출 제거
+  const settingsEmailMatch = html.match(/emailEl\.textContent\s*=\s*([^;]+);/);
+  assert.ok(settingsEmailMatch && !settingsEmailMatch[1].includes('ysm0422@naver.com'), '설정 화면 계정 이메일에 하드코딩 제거');
+  const inquiryInputMatch = html.match(/id="inquiryEmail"[^\>]+/);
+  assert.ok(inquiryInputMatch && !inquiryInputMatch[0].includes('ysm0422@naver.com'), '문의 모달 이메일 입력창 하드코딩 제거');
+
+  // 3. 게스트 세션 데이터 새 소셜 계정으로 자동 마이그레이션 (목표/기록 Supabase upsert)
+  assert.ok(html.includes("localStorage.getItem('ourgoal_guest_profile')"), '게스트 프로필 캐시 감지');
+  assert.ok(html.includes("sb.from('goals').upsert(goalsPayload)"), '게스트 목표 Supabase upsert 연동');
+  assert.ok(html.includes("sb.from('checkins').upsert(recsPayload)"), '게스트 체크인 Supabase upsert 연동');
+  assert.ok(html.includes("localStorage.removeItem('ourgoal_guest_profile')"), '마이그레이션 후 게스트 세션 정상 정리');
+
+  // 4. 첫 체크인 localhost:7777 호출 차단 및 로컬 페르소나 매칭 즉시 폴백
+  assert.ok(html.includes('isLocalDev') && html.includes('triggerFirstCheerResponse'), '첫 응원 localhost 환경 가드');
+  assert.ok(html.includes('scheduleCheerDelivery(cheerObj)'), '비개발 환경 즉시 로컬 페르소나 응원 전달');
+
+  // 5. 랜딩 화면 게스트 진입 버튼 및 원클릭 게스트 프로필 생성
+  assert.ok(html.includes('id="landGuestBtn"'), '랜딩 화면 게스트 둘러보기 버튼 마크업');
+  assert.ok(html.includes("defaultProfile(guestId, guestId, '게스트')"), '원클릭 게스트 프로필 생성 핸들러');
+
+  // 6. 체크인 저장 버튼 연타/더블클릭 방어 (saveBtn.disabled)
+  assert.ok(html.includes('saveBtn.disabled = true;'), '체크인 저장 버튼 disabled 잠금');
+  assert.ok(html.includes('saveBtn.disabled = false;'), 'finally 블록 저장 버튼 잠금 해제');
+
+  // 7. 체크인 후 홈 화면 잔디 및 스트릭 배지 즉시 리렌더링
+  assert.ok(html.includes('renderHomeGrassSummary();'), '체크인 핸들러 내 잔디 요약 즉시 리렌더링');
+  assert.ok(html.includes('updateAppBadge(streak);'), '체크인 핸들러 내 앱 배지 즉시 갱신');
+
+  // 8. 체크인 토스트 도구 언어(AI 노션 DB) 순화
+  assert.ok(!html.includes('AI 노션 DB로 자동 기록 완료!'), 'AI 노션 DB 도구형 토스트 문구 완전 제거');
+  assert.ok(html.includes('오늘의 실천이 안전하게 기록되었어요'), '사용자 중심의 따뜻한 기록 완료 토스트 탑재');
+
+  // 9. 카카오톡 인앱 브라우저 감지 및 상단 안내 바
+  assert.ok(html.includes('/KAKAOTALK/i.test(navigator.userAgent)'), '카카오톡 인앱 브라우저 감지 정규식');
+  assert.ok(html.includes('id="inAppBrowserNotice"') || html.includes("id = 'inAppBrowserNotice'"), '카카오톡 인앱 브라우저 안내 배너 DOM 생성');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
