@@ -2496,7 +2496,32 @@
      - 구글 로그인 성공 시 일방적 차단을 해제하고, [Google 계정으로 바로 시작하기] 및 [기존 카카오 데이터 연동/복구] 듀얼 선택지를 제공하여 구글 로그인으로도 100% 정상 진입 보장.
   4. `scripts/smoke-test.js`:
      - `#TASK-ES-033` 컴플라이언스 테스트에 `openLoginRescueModal`, `loginWithDirectIdentifier`, `continueGoogleDirectBtn`, 인가코드 교환 실패 에러 방어 정규식 검증 추가 (209개 전수 100% 통과).
-- **검증 결과**:
-  - `npm test`: **209개 전수 100% 통과 (0개 실패)**.
-  - `essence-gate.js --pre-commit`: 통과 (금지 패턴 0건, index.html 순증가 126줄로 300줄 한도 엄격 준수).
 ---
+
+## [2026-09-13 03:30] [FIX] #TASK-ES-035 기록 및 프로필 삼중 로컬 백업 구축, 게스트 세션 고착 해제 및 데이터 무결성 복원
+- **목표**: 상민님 질문("목표들만 살아있고 유저들의 기록, 프로필 편집 내역 모두 초기화된것처럼 나오는데?")에 따라, 목표뿐만 아니라 기록(checkins)과 프로필(users: 소개, 관심사, 지역, 잇템)이 어떤 세션이나 비인증/게스트 환경에서도 유실되지 않고 온전히 보존·복원되도록 삼중 로컬 백업 및 자가 치유 파이프라인을 구축하고 게스트 세션 영구 고착 버그를 완전히 해결한다.
+- **근본 원인 정밀 규명**:
+  1. 목표(goals)만 로컬 백업 존재: 기존 코드에는 오직 목표만 `ourgoal_goals_backup_${userId}`로 백업/복원되고 있었으며, 기록(`records`)과 프로필(`profile`)은 로컬 백업 키 자체가 없어 Supabase 쿼리가 비인증/RLS 제한으로 빈 배열을 반환했을 때 목표만 살아남고 기록과 프로필은 초기화된 것처럼 나타남.
+  2. 게스트 세션(`ourgoal_guest_profile`) 영구 고착: 인가코드 실패 시 빠른 복구로 진입했던 게스트 세션이 목표만 있고 기록이 0건인 상태로 localStorage에 저장되었고, `boot()` 5단계에서 이 객체를 읽자마자 `return;`으로 조기 진입하면서 빈 화면에 영구 갇히게 됨.
+  3. `performLogout()`에서 게스트 세션 미정리: 로그아웃 시 `ourgoal_guest_profile`을 제거하지 않아 로그아웃 후에도 게스트 세션으로 재진입되는 결함 존재.
+- **수정/실행 내역**:
+  1. `index.html` (`saveProfile` & `loadProfile`):
+     - `ourgoal_records_backup_${uidVal}` 및 `ourgoal_profile_backup_${uidVal}` 삼중 로컬 백업 체계 구축.
+     - `loadProfile` 시 로컬 백업 스캔 및 고아 데이터 자동 바인딩 자가 치유 로직 탑재.
+  2. `index.html` (`ensureUserRow`):
+     - RLS 비인증 상황에서 기존 프로필을 빈 값으로 덮어쓰지 않고 로컬 백업(`ourgoal_profile_backup_`)을 우선 보존하도록 가드 적용.
+  3. `index.html` (`boot`):
+     - 게스트 세션 로드 시 기록이 0건이거나 프로필이 비어 있으면 로컬 백업에서 자동 복원하여 채워주는 자가치유 로직 주입 및 백그라운드 Supabase 재동기화 수행.
+  4. `index.html` (`performLogout`):
+     - 로그아웃 시 `ourgoal_guest_profile`과 `ourgoal_current_user`를 완전히 파기하여 게스트 세션 영구 고착 해제.
+  5. `index.html` (`loginWithDirectIdentifier`):
+     - 다중 백업 ID 탐색(`backupPrefixes`: goals, records, profile, settings, current_user) 전수 스캔 지원.
+  6. `index.html` (설정 계정 블록):
+     - 1-클릭 수동 복원 및 동기화 버튼(`resyncAccountDataBtn`: "🔄 내 데이터(기록·프로필) 전체 복원 및 동기화") 마크업 및 핸들러 배선.
+  7. `scripts/smoke-test.js`:
+     - `#TASK-ES-035` 컴플라이언스 테스트 추가 (210개 전수 100% 통과).
+- **검증 결과**:
+  - `npm test`: **210개 전수 100% 통과 (0개 실패)**.
+  - `essence-gate.js --pre-commit`: 통과 (금지 패턴 0건, index.html 순증가 138줄로 300줄 한도 엄격 준수).
+---
+
