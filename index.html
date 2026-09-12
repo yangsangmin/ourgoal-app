@@ -1276,7 +1276,8 @@
   function renderLevelBadge(){
     var el = document.getElementById('levelBadgeRow');
     if(!el || !state.profile) return;
-    el.innerHTML = '<div class="level-badge-row">'+levelBadgeHtml(state.profile.settings.xp.total)+'</div>';
+    var xpTotal = (state.profile.settings && state.profile.settings.xp && state.profile.settings.xp.total) || 0;
+    el.innerHTML = '<div class="level-badge-row">'+levelBadgeHtml(xpTotal)+'</div>';
   }
   function showLevelUpBanner(level){
     var slot = document.getElementById('levelUpBannerSlot');
@@ -6105,7 +6106,7 @@
         getProfile: function(){ return state.profile; },
         saveProfile: saveProfile,
         toast: toast,
-        esc: esc,
+        esc: escapeHtml,
         getSelectedTheme: function(){ return selectedCaptureTheme; },
         onSelect: function(th){
           selectedCaptureTheme = th;
@@ -15894,13 +15895,32 @@
           '<div style="font-size:.8125rem;font-weight:700;color:var(--ink-soft);margin:16px 0 6px;">과거 기록 보관함 (주/월 단위)</div>' +
           pastHtml +
         '</div>';
+      } else if(recentRecs.length > 0){
+        html += '<div class="rec-past-accordion">' +
+          '<div style="font-size:.8125rem;font-weight:700;color:var(--ink-soft);margin:16px 0 6px;">과거 기록 보관함 (주/월 단위)</div>' +
+          '<div class="rec-accordion-card" data-acc="past-empty">' +
+            '<div class="rec-acc-head" data-toggleacc="1">' +
+              '<span class="rec-acc-title">📅 이전 기록 보관함 (주/월 단위 아코디언)</span>' +
+              '<div class="rec-acc-meta">' +
+                '<span>7일 이전 기록 자동 보관</span>' +
+                '<span class="rec-acc-chevron">▼</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="rec-acc-body">' +
+              '<div class="rec-acc-inner" style="padding:14px;font-size:.8125rem;color:var(--ink-faint);text-align:center;">' +
+                '7일이 지난 과거 실천 기록은 이곳에 주/월 단위 계층형 아코디언으로 깔끔하게 자동 압축 보관됩니다.' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
       }
       listEl.innerHTML = html;
     }
 
     // 아코디언 토글 리스너 연결
     listEl.querySelectorAll('[data-toggleacc]').forEach(function(head){
-      head.addEventListener('click', function(){
+      head.addEventListener('click', function(e){
+        e.stopPropagation();
         var card = head.closest('.rec-accordion-card');
         if(card) card.classList.toggle('expanded');
       });
@@ -16298,6 +16318,27 @@
   document.getElementById('recAddBtn').addEventListener('click', function(){ openRecordModal(null); });
   document.getElementById('weeklyRecapBtn').addEventListener('click', function(){ openWeeklyRecapModal(); });
   document.getElementById('recSearchInput').addEventListener('input', function(){ renderRecordsScreen(); });
+
+  // 세그먼트·펄스바·캐러셀 알약 정적 클릭 리스너 보장 (이벤트 유실 원천 방어)
+  document.querySelectorAll('#recSegmentBar [data-recseg]').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      setRecordsSegment(btn.dataset.recseg);
+    });
+  });
+  var staticPulseBar = document.getElementById('recMiniPulseBar');
+  if(staticPulseBar){
+    staticPulseBar.addEventListener('click', function(e){
+      e.preventDefault();
+      setRecordsSegment('stats');
+    });
+  }
+  document.querySelectorAll('#recCarouselPills [data-recslide]').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      setRecordsSlide(parseInt(btn.dataset.recslide, 10));
+    });
+  });
 
   /* ============ 테마별 기록 DB 다운로드 & 외부 AI 분석 프롬프트 번들 (TASK-OG-001) ============ */
   function getAIAnalysisPrompt(themeKey){
@@ -19532,7 +19573,8 @@
 
     // 체크인 시간 설정
     var row = document.getElementById('checkinTimesRow');
-    var times = settings.checkinTimes;
+    var times = (settings && Array.isArray(settings.checkinTimes)) ? settings.checkinTimes : ["10:00","15:00","21:00"];
+    if(settings) settings.checkinTimes = times;
     row.innerHTML = times.map(function(t, i){
       return '<div class="time-chip"><input type="time" value="'+t+'" data-timeidx="'+i+'" aria-label="체크인 시간 '+(i+1)+'"><button class="icon-btn" data-timedel="'+i+'" style="margin-left:4px;" aria-label="체크인 시간 삭제">×</button></div>';
     }).join('');

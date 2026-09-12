@@ -2842,6 +2842,20 @@ check('compliance: [#TASK-ES-033] 카카오/구글 로그인 충돌 방지, 세�
   assert.ok(html.includes('id="landRescueBtn"') && html.includes('id="authRescueBtn"'), '랜딩 및 인증 화면 세션 복구 링크');
 });
 
+check('compliance: [#TASK-ES-034] 기록 탭 버튼 상호작용 및 런타임 안정성(ReferenceError esc 방어, min-height 0, 정적 리스너)이 완비되어 있다', () => {
+  // 1. ReferenceError esc 방지 및 escapeHtml 주입 검증
+  assert.ok(!html.includes('esc: esc,'), '미선언 esc 전달 제거');
+  assert.ok(html.includes('esc: escapeHtml,'), '정상 escapeHtml 주입');
+
+  // 2. CSS Grid 아코디언 min-height: 0 검증
+  assert.ok(styleSrc.includes('.rec-acc-inner{overflow:hidden;padding:0;min-height:0;}'), '아코디언 축소 min-height 0');
+
+  // 3. 기록 탭 버튼 정적 리스너 검증
+  assert.ok(html.includes("document.querySelectorAll('#recSegmentBar [data-recseg]')"), '세그먼트 정적 리스너');
+  assert.ok(html.includes("document.querySelectorAll('#recCarouselPills [data-recslide]')"), '캐러셀 알약 정적 리스너');
+  assert.ok(html.includes("document.getElementById('recMiniPulseBar')"), '미니 펄스바 정적 리스너');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
