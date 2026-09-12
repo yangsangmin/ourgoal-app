@@ -2360,3 +2360,15 @@
 - **목표**: 상민님 직접 피드백("하이브리드로 진행하는게 좋을 것 같은데?")에 따라, 템플릿 개설/체험 분리 및 개인목표급 하이브리드 편집(헤더 토글+상세모달) 시스템 완비.
 - **검증 결과**: `node scripts/smoke-test.js` 199개 전수 통과.
 ---
+
+## [2026-09-13 02:10] [E2] #TASK-ES-031 기록 탭 정보과밀 해소 및 3분할 세그먼트·미니 펄스바·4단 캐러셀·계층형 아코디언 적용 & 배포
+- **목표**: 상민님 직접 지시("지금 아워골 앱을 보면 정보가 너무 많아... 사용자경험을 만족시키는 방향으로 정보를 압축할 방법들 더 구상해서... 적용하고 병합까지 진행해")에 따라, 기록 및 회고 탭의 심각한 수직 정보 과밀(5,200px)을 해소하고 본질 축 E2(성취 회고)를 보존하는 다차원 정보 압축 시스템 구축.
+- **수정/실행 내역**:
+  1. `docs/rules/TICKETS.md`: `#TASK-ES-031` 등록 (축 E2, 사용자 승인 완료).
+  2. `index.html`: `screen-records` 구조를 3분할 세그먼트(`recViewFeed`, `recViewStats`, `recViewArchive`)로 개편하고, 0초 만에 달성률을 체감하는 상단 `recMiniPulseBar`(미니 성취 펄스 바) 및 캐러셀 맹지 차단용 4분할 알약 탭(`recCarouselPills`) + 4단 캐러셀 뷰포트(`recCarouselViewport`) 탑재.
+  3. `index.html`: `renderRecordsScreen()` 내부에 최근 7일 스키밍 노출(접지 않고 시원하게 노출해 탭 피로 제거) + 지난주 및 이전 달 과거 기록 계층형 아코디언(`rec-past-accordion`) 동적 그룹화 구현. 모바일 PWA 스와이프 제스처 이벤트 탑재.
+  4. `ui.css`: `.rec-segment-bar`, `.rec-seg-btn`, `.rec-mini-pulse-bar`, `.rec-carousel-viewport`, `.rec-carousel-track`, `.rec-pill-btn`, `.rec-past-accordion` 등 Pretendard 토큰 기반 다크모드 완비 스타일 추가.
+  5. `scripts/smoke-test.js`: `#TASK-ES-031` 마크업, 함수, CSS 무결성 테스트 추가 (총 206개 전수 통과).
+- **검증 결과**: `node scripts/smoke-test.js` **206개 전수 통과 (0개 실패)**, 기존 기능·이벤트 리스너 100% 보존.
+---
+
