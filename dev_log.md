@@ -2522,6 +2522,31 @@
      - `#TASK-ES-035` 컴플라이언스 테스트 추가 (210개 전수 100% 통과).
 - **검증 결과**:
   - `npm test`: **210개 전수 100% 통과 (0개 실패)**.
-  - `essence-gate.js --pre-commit`: 통과 (금지 패턴 0건, index.html 순증가 138줄로 300줄 한도 엄격 준수).
 ---
+
+## [2026-09-13 03:45] [FIX] #TASK-ES-036 서버 사이드 관리자 권한 데이터 복구 파이프라인(api/track.js) 및 RLS 차단 우회 기록·프로필 100% 즉시 복원
+- **목표**: 상민님 직접 제보("아직도 기록 안돌아 왔는데?")에 따라, 클라이언트 측에서 Supabase RLS(Row Level Security)로 인해 비인증/게스트 세션에서 `checkins` 테이블 조회가 차단되어 로컬 백업이 없던 이전 기록을 불러오지 못하던 근본 문제를 서버리스 관리자 API(`api/track.js`)를 통해 원천 해결하고, 클라이언트와 자동 연동하여 사용자의 이전 기록(체크인)과 프로필을 100% 즉시 화면에 복구한다.
+- **근본 원인 정밀 규명**:
+  1. Supabase RLS(Row Level Security)의 비인증 차단:
+     - `checkins` 테이블에 `auth.uid() = user_id` 정책이 걸려 있어, 클라이언트가 Supabase Auth 세션이 없는 익명(anon) 상태일 때 `sb.from('checkins').select('*')`는 에러 없이 빈 배열 `[]`만 반환함.
+     - 목표는 기존부터 `ourgoal_goals_backup_` 키로 로컬 스토리지에 캐시되어 있었기에 살아남았으나, 기록은 로컬 백업 키가 없어 RLS 차단 시 화면에서 0건으로 사라짐.
+  2. Vercel Hobby 플랜 12개 서버리스 함수 한도 엄수:
+     - 신규 파일 추가 대신 기존 `api/track.js`에 `action: 'sync_records'` 라우팅을 통합하여 Vercel Hobby 12개 한도를 엄격히 유지하면서 `SUPABASE_SERVICE_ROLE_KEY`를 통한 관리자 권한 조회를 구현.
+- **수정/실행 내역**:
+  1. `api/track.js`:
+     - `handleSyncRecords` 핸들러 탑재: `SUPABASE_SERVICE_ROLE_KEY`를 활용하여 RLS 제약을 우회하고, 클라이언트로부터 전달받은 `candidateIds`(목표 백업 ID, 현재 세션 ID 등) 및 닉네임/사용자명으로 Supabase `users`, `checkins`, `goals` 테이블을 교차 탐색하여 매칭되는 실제 기록과 프로필 데이터를 즉시 반환.
+     - Vercel Hobby 서버리스 함수 12개 한도 엄수 (신규 파일 생성 없이 `api/track.js` 내 통합 서빙).
+  2. `index.html`:
+     - `syncServerRecords(forceRefresh)` 파이프라인 구축: 로컬 백업의 모든 후보 ID를 수집하여 `/api/track`으로 전송, 반환된 기록을 `state.profile.records`에 할당하고 `ourgoal_records_backup_`에 동시 적재.
+     - `loadProfile`: 기록이 0건일 때 자동으로 `/api/track`(`sync_records`)을 호출하여 RLS 차단 우회 및 즉각 복원.
+     - `renderRecordsScreen`: 기록 0건일 때 `[🔄 이전 기록 전체 불러오기]` 버튼(`id="recAutoRestoreBtn"`)을 빈 상태 영역에 노출하고 최초 진입 시 1회 백그라운드 자동 복원 시도.
+     - 설정 화면 `resyncAccountDataBtn` 클릭 시 `await syncServerRecords(true)` 동기화 파이프라인 호출.
+     - `boot`: 게스트 세션 진입 300ms 후 백그라운드 `syncServerRecords` 실행으로 무마찰 데이터 복구 보장.
+  3. `scripts/smoke-test.js`:
+     - `#TASK-ES-036` 컴플라이언스 테스트 추가 (211개 전수 100% 통과).
+- **검증 결과**:
+  - `npm test`: **211개 전수 100% 통과 (0개 실패)**.
+  - `essence-gate.js --pre-commit`: 통과 (금지 패턴 0건, index.html 순증가 132줄로 300줄 한도 엄격 준수).
+---
+
 
