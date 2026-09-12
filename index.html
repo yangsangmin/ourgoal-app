@@ -140,12 +140,13 @@
           <button class="goal-chip" type="button" data-quickroutine="명상 10분">명상 10분</button>
         </div>
         <span class="mic-status" id="micStatus" hidden>듣고 있어요…</span>
+        <div id="captureThemeQuickBar" class="theme-quick-bar" aria-label="테마 즐겨찾기"></div>
         <div class="capture-ta-wrap">
           <textarea id="captureInput" placeholder="예: 5km 러닝 28분 완주, 마지막 1km 스퍼트 성공"></textarea>
           <button class="mic-btn" id="micBtn" type="button" aria-label="음성으로 입력하기" title="음성으로 입력하기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4"/><path d="M8 23h8"/></svg></button>
         </div>
         <div id="captureLiveMeta" class="capture-live-meta">
-          <span id="captureLiveTheme" class="capture-live-theme">테마 자동 인식</span>
+          <span id="captureLiveTheme" class="capture-live-theme" style="cursor:pointer;" title="탭하여 테마 변경">테마 선택</span>
           <span id="captureCharCount" class="capture-char-count">0자</span>
         </div>
         <div id="capturePhotoPreview" style="display:none;"></div>
@@ -744,6 +745,71 @@
 </div>
 <div class="toast" id="toast"></div>
 
+<!-- 테마 탐색 & 커스텀 생성 바텀시트 모달 (#TASK-ES-028) -->
+<div id="themeSelectorModal" class="theme-modal-backdrop" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="themeModalTitle">
+  <div class="theme-modal-sheet">
+    <div class="theme-modal-header">
+      <h3 id="themeModalTitle">🎯 활동 테마 선택</h3>
+      <button type="button" class="theme-modal-close" id="themeModalCloseBtn" aria-label="닫기">&times;</button>
+    </div>
+    <div class="theme-modal-tabs">
+      <button type="button" class="theme-tab-btn active" id="tabThemeCustom">✏️ 나만의 테마 만들기</button>
+      <button type="button" class="theme-tab-btn" id="tabThemeBrowse">🔍 전체 테마 탐색</button>
+    </div>
+    <div class="theme-modal-body">
+      <!-- 탭 1: 직접 입력 -->
+      <div id="panelThemeCustom" class="theme-panel active">
+        <div class="theme-custom-field">
+          <label for="customThemeInput">테마 이름 (최대 15자)</label>
+          <input type="text" id="customThemeInput" class="theme-custom-input" placeholder="예: 바디프로필D-30, 미라클모닝, 수채화" maxlength="15">
+        </div>
+        <div class="theme-custom-field">
+          <label>대표 이모지</label>
+          <div class="theme-emoji-picker" id="customThemeEmojiPicker">
+            <button type="button" class="theme-emoji-btn active" data-emoji="⭐">⭐</button>
+            <button type="button" class="theme-emoji-btn" data-emoji="🔥">🔥</button>
+            <button type="button" class="theme-emoji-btn" data-emoji="🏃">🏃</button>
+            <button type="button" class="theme-emoji-btn" data-emoji="📖">📖</button>
+            <button type="button" class="theme-emoji-btn" data-emoji="💻">💻</button>
+            <button type="button" class="theme-emoji-btn" data-emoji="🧘">🧘</button>
+            <button type="button" class="theme-emoji-btn" data-emoji="💰">💰</button>
+            <button type="button" class="theme-emoji-btn" data-emoji="🌱">🌱</button>
+            <button type="button" class="theme-emoji-btn" data-emoji="🎨">🎨</button>
+            <button type="button" class="theme-emoji-btn" data-emoji="❤️">❤️</button>
+          </div>
+        </div>
+        <div class="theme-custom-field">
+          <label for="customThemeMajorSelect">연결할 분야 (AI 피드백 및 통계 연결용)</label>
+          <select id="customThemeMajorSelect" class="theme-custom-input">
+            <option value="routine">🌱 일상 & 습관루틴</option>
+            <option value="health">🏃 건강 & 운동</option>
+            <option value="learning">📚 학습 & 역량성장</option>
+            <option value="career">💼 업무 & 커리어</option>
+            <option value="finance">💰 재테크 & 자산</option>
+            <option value="mind">🧘 멘탈케어 & 회고</option>
+            <option value="hobby">🎨 취미 & 문화창작</option>
+            <option value="social">🤝 관계 & 가족</option>
+          </select>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);cursor:pointer;margin-top:4px;">
+          <input type="checkbox" id="customThemeFavCheck" checked style="width:16px;height:16px;">
+          <span>상단 즐겨찾기에 바로 등록하기</span>
+        </label>
+        <button type="button" class="btn btn-primary" id="btnCreateCustomTheme" style="margin-top:10px;padding:12px;">생성하고 바로 적용하기</button>
+      </div>
+
+      <!-- 탭 2: 전체 테마 탐색 -->
+      <div id="panelThemeBrowse" class="theme-panel" style="display:none;">
+        <div class="theme-search-box">
+          <input type="search" id="themeSearchInput" class="theme-custom-input" placeholder="키워드 검색 (예: 러닝, 독서, 코딩, 주식)">
+        </div>
+        <div id="themeSearchResults" style="display:none;margin-bottom:12px;" class="theme-leaf-grid"></div>
+        <div id="themeTreeContainer"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="js/credits.js"></script>
@@ -754,7 +820,9 @@
 <script src="js/streaks.js"></script>
 <script src="js/template-credit.js"></script>
 <script src="js/team-leader-check.js"></script>
+<script src="js/theme-system.js"></script>
 <script>
+
 (function(){
   "use strict";
 
@@ -5940,24 +6008,74 @@
     });
   }
 
+  /* ============ 계층형 테마 & 즐겨찾기/커스텀 시스템 UI 연동 (#TASK-ES-028) ============ */
+  var selectedCaptureTheme = null;
+  var suggestedCaptureTheme = null;
   var liveMeta = document.getElementById('captureLiveMeta');
   var liveTheme = document.getElementById('captureLiveTheme');
   var liveCount = document.getElementById('captureCharCount');
   var capInput = document.getElementById('captureInput');
+
+  function updateLiveThemeBadge(){
+    if(!liveTheme) return;
+    if(selectedCaptureTheme){
+      liveTheme.textContent = '선택: ' + (selectedCaptureTheme.icon || '') + ' ' + selectedCaptureTheme.label;
+      liveTheme.className = 'capture-live-theme active';
+    } else if(suggestedCaptureTheme){
+      liveTheme.textContent = '💡 추천: ' + (suggestedCaptureTheme.icon || '') + ' ' + suggestedCaptureTheme.label + ' (탭하여 적용)';
+      liveTheme.className = 'capture-live-theme suggested';
+    } else {
+      liveTheme.textContent = '테마 미선택 (자유 기록)';
+      liveTheme.className = 'capture-live-theme';
+    }
+  }
+
+  var themeUI = (typeof OurgoalThemeSystem !== 'undefined' && OurgoalThemeSystem.initUI)
+    ? OurgoalThemeSystem.initUI({
+        getProfile: function(){ return state.profile; },
+        saveProfile: saveProfile,
+        toast: toast,
+        esc: esc,
+        getSelectedTheme: function(){ return selectedCaptureTheme; },
+        onSelect: function(th){
+          selectedCaptureTheme = th;
+          updateLiveThemeBadge();
+        }
+      })
+    : null;
+
+  try { if(themeUI) themeUI.renderQuickBar(); } catch(e){}
+
+  if(liveTheme){
+    liveTheme.onclick = function(){
+      if(!selectedCaptureTheme && suggestedCaptureTheme){
+        selectedCaptureTheme = suggestedCaptureTheme;
+        suggestedCaptureTheme = null;
+        if(themeUI) themeUI.renderQuickBar();
+        updateLiveThemeBadge();
+        toast('추천 테마 [' + selectedCaptureTheme.label + '] 적용됨');
+      } else if(themeUI){
+        themeUI.openModal();
+      }
+    };
+  }
+
+
   if(capInput && liveMeta){
     capInput.addEventListener('input', function(){
       var val = capInput.value.trim();
       if(val.length > 0){
         liveMeta.style.display = 'flex';
         if(liveCount) liveCount.textContent = val.length + '자';
-        if(liveTheme && typeof classifyRecordTheme === 'function'){
-          var g = (state.profile.goals || []).find(function(item){ return item.id===state.activeGoalId; }) || (state.profile.goals || [])[0];
-          var cl = classifyRecordTheme(val, g ? g.category : null);
-          var tName = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[cl.theme] && RECORD_THEMES[cl.theme].label) || cl.theme;
-          liveTheme.textContent = '' + tName + ' 테마 자동인식';
+        if(!selectedCaptureTheme && typeof OurgoalThemeSystem !== 'undefined'){
+          var customThemes = (state.profile && state.profile.themeSettings) ? state.profile.themeSettings.customThemes : [];
+          suggestedCaptureTheme = OurgoalThemeSystem.suggestTheme(val, customThemes);
+          updateLiveThemeBadge();
         }
       } else {
         liveMeta.style.display = 'none';
+        suggestedCaptureTheme = null;
+        updateLiveThemeBadge();
       }
     });
   }
@@ -5970,9 +6088,12 @@
     var goal = state.profile.goals.find(function(g){ return g.id===state.activeGoalId; }) || state.profile.goals[0];
     var cat = goal ? goal.category : null;
     var isFirst = (state.profile.records.length === 0);
-    var classified = (typeof classifyRecordTheme === 'function')
-      ? classifyRecordTheme(text, cat)
-      : { theme: 'daily', subTheme: '', confidence: 0.5 };
+
+    // 테마 결정: 사용자가 선택한 테마 우선, 없으면 비강제 일상 테마
+    var themePayload = (typeof OurgoalThemeSystem !== 'undefined')
+      ? OurgoalThemeSystem.buildCheckinThemePayload(selectedCaptureTheme)
+      : { theme: 'daily', subTheme: '', themeMetadata: null };
+
     var notionRec = (typeof convertTextToNotionDbRecord === 'function')
       ? convertTextToNotionDbRecord(text, 'note', { title: text }, goal)
       : null;
@@ -5987,19 +6108,25 @@
       createdAt: nowISO(),
       category: cat,
       visibility: 'private',
-      theme: classified.theme,
-      subTheme: classified.subTheme,
-      themeConfidence: classified.confidence,
+      theme: themePayload.theme,
+      subTheme: themePayload.subTheme,
+      themeConfidence: selectedCaptureTheme ? 1.0 : 0.5,
+      themeMetadata: themePayload.themeMetadata,
       notionDb: notionRec ? notionRec.notionSchema : null,
       structured: notionRec || null
     });
     t.value = '';
     if(liveMeta) liveMeta.style.display = 'none';
+    selectedCaptureTheme = null;
+    suggestedCaptureTheme = null;
+    renderThemeQuickBar();
+    updateLiveThemeBadge();
     pendingCapturePhoto = null;
     if(capturePhotoPreview){ capturePhotoPreview.innerHTML = ''; capturePhotoPreview.style.display = 'none'; }
     if(capturePhotoInput) capturePhotoInput.value = '';
 
     var xpRes = awardXP(XP_RULES.checkin, '체크인');
+
     var freezeGranted = maybeGrantStreakFreeze();
     await saveProfile();
 

@@ -9,6 +9,7 @@ module.exports = async function handler(req, res) {
   var milestones = Array.isArray(body.milestones) ? body.milestones : [];
   var text = body.text;
   var theme = body.theme;
+  var themeHierarchy = body.themeHierarchy || null;
   var customPrompt = typeof body.customPrompt === 'string' ? body.customPrompt.trim().slice(0, 2000) : '';
   var upcomingSchedules = Array.isArray(body.upcomingSchedules) ? body.upcomingSchedules : [];
   if (!goalTitle || !text) {
@@ -33,7 +34,19 @@ module.exports = async function handler(req, res) {
     schedule: '이 기록은 [약속기록] 테마로 분류되었습니다. 대인 관계, 네트워킹, 약속 이행 및 시간 관리 관점의 조언을 제공하세요.',
     workout: '이 기록은 [운동기록] 테마로 분류되었습니다. 신체 건강, 운동 루틴의 지속성, 점진적 과부하와 부상 방지 관점에서 활력 넘치는 피드백을 제공하세요.'
   };
-  var themeBlock = (theme && THEME_PROMPTS[theme]) ? ('[기록 테마 코칭 지침]\n' + THEME_PROMPTS[theme] + '\n\n') : '';
+  var dynamicThemeLine = '';
+  if (themeHierarchy && typeof themeHierarchy === 'object') {
+    var dMajor = themeHierarchy.majorLabel || themeHierarchy.major || '';
+    var dSub = themeHierarchy.subLabel || themeHierarchy.sub || '';
+    var dLeaf = themeHierarchy.leafLabel || themeHierarchy.customName || '';
+    if (dLeaf || dMajor) {
+      dynamicThemeLine = '사용자가 선택한 세부 활동 테마는 [' + (dMajor ? dMajor + ' > ' : '') + (dSub ? dSub + ' > ' : '') + dLeaf + '] 입니다. 이 구체적인 테마 영역의 맥락에 알맞은 전문적이고 따뜻한 코칭을 제공하세요.';
+    }
+  }
+  var themeBlock = dynamicThemeLine
+    ? ('[기록 테마 코칭 지침]\n' + dynamicThemeLine + '\n\n')
+    : ((theme && THEME_PROMPTS[theme]) ? ('[기록 테마 코칭 지침]\n' + THEME_PROMPTS[theme] + '\n\n') : '');
+
 
   var personaBlock = customPrompt ? ('[페르소나 지침]\n' + customPrompt + '\n\n') : '';
   var roleLine = customPrompt
