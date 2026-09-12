@@ -2621,6 +2621,32 @@ check('compliance: [#TASK-ES-025] 팀 목표 예시 및 추천 템플릿에 회�
   assert.ok(trRes.ops[0].data.milestones[0].title.includes('여행'), '여행 키워드 반영');
 });
 
+check('compliance: [#TASK-ES-027] 팀 목표 마일스톤 및 세부할일 계층형 접기·펼치기(아코디언)가 구현되어 있다', () => {
+  // 1. 가이드 예시 카드 마일스톤 접기 및 세부할일 아코디언 버튼
+  assert.ok(html.includes('data-tgfoldms="ws"'), '워크숍 마일스톤 접기 버튼');
+  assert.ok(html.includes('data-tgfoldms="tr"'), '단체여행 마일스톤 접기 버튼');
+  assert.ok(html.includes('data-tgfoldms="ft"'), '운동크루 마일스톤 접기 버튼');
+  assert.ok(html.includes('data-tgtoggletasks="ws1"'), '워크숍 1단계 세부할일 토글 버튼');
+  assert.ok(html.includes('data-tgtoggletasks="tr1"'), '단체여행 1단계 세부할일 토글 버튼');
+  assert.ok(html.includes('data-tgtoggletasks="ft1"'), '운동크루 1단계 세부할일 토글 버튼');
+  assert.ok(html.includes('id="tgTasks_ws1"'), '워크숍 1단계 세부할일 컨테이너');
+  assert.ok(html.includes('id="tgTasks_tr1"'), '단체여행 1단계 세부할일 컨테이너');
+
+  // 2. wireTeamGoalsGuideEvents에 접기/펼치기 이벤트 바인딩 존재
+  assert.ok(html.includes("container.querySelectorAll('[data-tgtoggletasks]')"), '세부할일 토글 이벤트 바인딩');
+  assert.ok(html.includes("container.querySelectorAll('[data-tgfoldms]')"), '마일스톤 접기 이벤트 바인딩');
+
+  // 3. 실제 팀 목표 화면(renderTeamGoalsScreen) 마일스톤 및 세부할일 아코디언 속성
+  assert.ok(html.includes('data-tgfoldlist='), '실제 팀 목표 마일스톤 접기 속성');
+  assert.ok(html.includes('data-tgtaskbox='), '실제 팀 목표 세부할일 박스 속성');
+  assert.ok(html.includes('data-tgtoggletask='), '실제 팀 목표 세부할일 체크 속성');
+  assert.ok(html.includes('data-tgaddtask='), '실제 팀 목표 세부할일 추가 속성');
+
+  // 4. MOCK_GROUPS 워크숍 및 단체여행에 세부할일(tasks) 데이터 탑재 확인
+  assert.ok(html.includes('t-ws-1a1'), '워크숍 1단계 태스크 ID');
+  assert.ok(html.includes('t-tr-1a1'), '단체여행 1단계 태스크 ID');
+});
+
 
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

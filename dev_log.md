@@ -2557,3 +2557,20 @@
   - `index.html` 인라인 스크립트 new Function() 문법 검사 통과.
   - `api/goalagent.js` 워크숍/여행 키워드 3단계 마일스톤 생성 검증 완료.
   - `essence-gate` pre-commit 통과 (금지 패턴 0건).
+---
+
+## [2026-09-13 01:15] [E3] #TASK-ES-027 팀 목표 마일스톤 및 세부할일 계층형 접기·펼치기 구현 & 배포
+- **목표**: 상민님 직접 지시("잘했는데, 마일스톤, 세부할일까지 볼수 있게 제작해. 근데 너무 많은 정보가 보이면 피로하니까, 지금처럼 보이는데 마일스톤과 세부할일은 접었다 폈다 하면서 볼 수 있게... 바로 진행배포해")에 따라, 정보 과부하 및 시각적 피로를 방지하면서도 필요한 순간에 마일스톤과 세부할일 체크리스트를 자유롭게 탐색할 수 있는 계층형 아코디언(접기/펼치기) 시스템을 팀 목표 가이드 예시 카드 및 실제 팀 목표 화면 전반에 구현하고 배포.
+- **수정/실행 내역**:
+  1. `index.html`: 팀 목표 빈 화면 가이드 3종 예시 카드(`tgExampleWorkshop`, `tgExampleTravel`, `tgExampleFitness`)에 카드 레벨 `마일스톤 접기 ▲ / 펼치기 ▼` 토글 버튼 및 마일스톤별 `세부 할 일 N개 ▼ / ▲` 아코디언 토글 추가.
+  2. `index.html`: 가이드 이벤트 핸들러 `wireTeamGoalsGuideEvents`에 `data-tgtoggletasks`, `data-tgfoldms` 이벤트 위임 로직 탑재.
+  3. `index.html`: `MOCK_GROUPS`(`g-workshop`, `g-travel`) 팀 목표 마일스톤에 구체적이고 현실적인 세부 할일(tasks) 데이터 공식 탑재.
+  4. `index.html`: 실제 팀 목표 렌더러(`renderTeamGoalsScreen`)에 마일스톤 전체 접기/펼치기 및 마일스톤별 세부 할일(tasks) 아코디언 토글, 태스크 완료 체크(`data-tgtoggletask`), 태스크 인라인 수정, 태스크 추가/삭제 액션 완비.
+  5. `scripts/smoke-test.js`: `#TASK-ES-027` 컴플라이언스 단위 테스트 추가 (198개 전수 통과).
+- **발생한 문제 및 해결**: 
+  - `index.html` 순증가 300줄 제한 준수를 위해 간결한 데이터 속성(`data-tgtoggletasks`, `data-tgfoldms`)과 인라인 상태 전환 패턴을 적용하여 순증가 223줄(한도 300줄 대비 77줄 여유)로 안정적 통제.
+  - 기본 상태에서는 세부 할일 박스를 `display:none`으로 숨겨 기존의 깔끔하고 컴팩트한 비주얼을 온전히 유지하여 시각적 피로도를 원천 차단.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **198개 전수 통과 (0개 실패)**.
+  - `index.html` 스크립트 new Function() 문법 검사 통과.
+  - `essence-gate` pre-commit 통과 (금지 패턴 0건, index.html 순증 223줄).
