@@ -1015,3 +1015,14 @@ input:focus,select:focus,textarea:focus{background:var(--surface-2);}
 .card .goal-chip.active,.modal-sheet .goal-chip.active{background:var(--chip);}
 #screen-settings input[type=text],#screen-settings input[type=password],#screen-settings input[type=time],#screen-settings select,#screen-settings .time-chip,#screen-settings .set-box{background:var(--card);}
 .iospwa-banner,#iosPwaSlot > div{background:var(--card)!important;border:none!important;}
+
+/* ---------- 23. 다크 테마 바탕 복구(22절 :root 재정의보다 뒤에 와야 함) ---------- */
+[data-theme="black"],[data-theme="dark"]{--bg:#111214;--paper:#111214;}
+[data-theme="dark-space"]{--bg:#0B1220;--paper:#0B1220;}
+[data-theme="glowing-space"]{--bg:#14101F;--paper:#14101F;}
+[data-theme="deep-sea"]{--bg:#061520;--paper:#061520;}
+[data-theme="sunset-beach"]{--bg:#1C1012;--paper:#1C1012;}
+[data-theme="urban-city"]{--bg:#15171B;--paper:#15171B;}
+@media (prefers-color-scheme: dark){ html:not([data-theme]){--bg:#111214;--paper:#111214;} }
+[data-theme="black"] .card,[data-theme="dark"] .card,[data-theme="black"] .goal-chip,[data-theme="dark"] .goal-chip{background:var(--card);}
+[data-theme="black"] .comm-subtabs,[data-theme="dark"] .comm-subtabs{background:var(--bg);}

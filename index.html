@@ -4459,7 +4459,7 @@
     mind: {
       key: 'mind',
       label: '심리상태',
-      icon: '🧠',
+      icon: '',
       color: '#8b5cf6',
       bgColor: 'rgba(139,92,246,0.12)',
       borderColor: 'rgba(139,92,246,0.35)',
@@ -4468,7 +4468,7 @@
     study: {
       key: 'study',
       label: '공부기록',
-      icon: '📚',
+      icon: '',
       color: '#1D63D6',
       bgColor: 'rgba(59,130,246,0.12)',
       borderColor: 'rgba(59,130,246,0.35)',
@@ -4477,7 +4477,7 @@
     business: {
       key: 'business',
       label: '사업기록',
-      icon: '💼',
+      icon: '',
       color: '#0B7355',
       bgColor: 'rgba(16,185,129,0.12)',
       borderColor: 'rgba(16,185,129,0.35)',
@@ -4486,7 +4486,7 @@
     schedule: {
       key: 'schedule',
       label: '약속기록',
-      icon: '🤝',
+      icon: '',
       color: '#9A4508',
       bgColor: 'rgba(245,158,11,0.12)',
       borderColor: 'rgba(245,158,11,0.35)',
@@ -4495,7 +4495,7 @@
     workout: {
       key: 'workout',
       label: '운동기록',
-      icon: '💪',
+      icon: '',
       color: '#D92B41',
       bgColor: 'rgba(239,68,68,0.12)',
       borderColor: 'rgba(239,68,68,0.35)',
@@ -10172,7 +10172,7 @@
     keys.forEach(function(k){
       var count = counts[k];
       var pct = total > 0 ? Math.round((count / total) * 100) : 0;
-      var th = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[k]) ? RECORD_THEMES[k] : { label:k, icon:'🌱', color:'#5F6B7A' };
+      var th = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[k]) ? RECORD_THEMES[k] : { label:k, icon:'', color:'#5F6B7A' };
       if(count > 0){
         segsHtml += '<div class="balance-seg" style="width:'+pct+'%;background-color:'+th.color+';" title="'+th.label+' '+pct+'% ('+count+'건)"></div>';
       }
@@ -10339,7 +10339,7 @@
   }
 
   function openConversationalRecordConfirmModal(candidate){
-    var th = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[candidate.theme]) ? RECORD_THEMES[candidate.theme] : { label:'일상', icon:'🌱' };
+    var th = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[candidate.theme]) ? RECORD_THEMES[candidate.theme] : { label:'일상', icon:'' };
     var durText = candidate.durationMinutes > 0 ? (candidate.durationLabel + ' 진행') : '단순 메모/체크인';
 
     openModal(
@@ -14679,7 +14679,7 @@
       else if(isDoing){ durEl = '<span class="rec-dur doing">진행 중</span>'; }
       else{ durEl = '<span class="rec-dur">'+fmtDuration(new Date(r.endAt)-new Date(r.startAt))+'</span>'; }
       var timeStr = (isNote || isTpl) ? fmtTime(r.startAt) : (fmtTime(r.startAt) + ' – ' + (r.endAt?fmtTime(r.endAt):'진행중'));
-      var th = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[r.theme]) ? RECORD_THEMES[r.theme] : ((typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES.daily) ? RECORD_THEMES.daily : { label:'일상', icon:'🌱', color:'#64748b', bgColor:'rgba(100,116,139,0.12)', borderColor:'rgba(100,116,139,0.35)' });
+      var th = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[r.theme]) ? RECORD_THEMES[r.theme] : ((typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES.daily) ? RECORD_THEMES.daily : { label:'일상', icon:'', color:'#64748b', bgColor:'rgba(100,116,139,0.12)', borderColor:'rgba(100,116,139,0.35)' });
       var subThText = r.subTheme ? (' · ' + escapeHtml(r.subTheme)) : '';
       var chipStyle = 'background:'+th.bgColor+';color:'+th.color+';border:1px solid '+th.borderColor+';';
       var photoHtml = r.photo ? '<div style="margin-top:6px;"><img src="'+r.photo+'" style="max-height:140px;border-radius:8px;object-fit:cover;border:1px solid var(--rule);"></div>' : '';
@@ -17644,7 +17644,7 @@
   var MANITO_STAMPS = [
     { id:'fire', icon:'🔥', label:'힘내요', msg:'오늘도 불태우는 중이네요, 힘내요!' },
     { id:'clap', icon:'👏', label:'멋져요', msg:'꾸준함이 진짜 멋져요.' },
-    { id:'seed', icon:'🌱', label:'자라요', msg:'작게라도 매일 쌓이는 게 보여요.' },
+    { id:'seed', icon:'', label:'자라요', msg:'작게라도 매일 쌓이는 게 보여요.' },
     { id:'luck', icon:'🍀', label:'행운을', msg:'내일도 잘 될 거예요, 행운을 보내요.' }
   ];
   function hashStr(s){ var h=0; for(var i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))|0; } return Math.abs(h); }
