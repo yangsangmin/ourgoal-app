@@ -692,6 +692,7 @@
 
       <div class="set-block">
         <h4>계정</h4>
+        <button class="btn btn-ghost" id="resyncAccountDataBtn" type="button" style="width:100%;margin-bottom:10px;color:var(--brand);font-weight:700;">🔄 내 데이터(기록·프로필) 전체 복원 및 동기화</button>
         <button class="btn btn-ghost" id="logoutBtn" type="button" style="width:100%;margin-bottom:10px;">로그아웃</button>
         <button class="btn btn-danger" id="resetBtn" type="button" style="width:100%;margin-bottom:10px;">이 계정 데이터 초기화</button>
         <button class="btn btn-ghost" id="withdrawBtn" type="button" style="width:100%;color:var(--brand-strong);font-size:.875rem;">회원 탈퇴</button>
@@ -1363,11 +1364,30 @@
   var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7, calView: 'month', calDate: isoDate(new Date()), calSelectedDate: isoDate(new Date()), selectedRecordTheme: 'all', recordsSegment: 'feed', recordsSlide: 0 };
 
   async function ensureUserRow(userId, username, displayName, extra){
-    var found = await sb.from('users').select('*').eq('id', userId).maybeSingle();
-    if(found.data) return { row: found.data, isNew: false };
-    var row = Object.assign({ id:userId, username:username, display_name:displayName }, extra||{});
-    await sb.from('users').upsert(row);
-    return { row: row, isNew: true };
+    var found = null;
+    try {
+      found = await sb.from('users').select('*').eq('id', userId).maybeSingle();
+      if(found && found.data) return { row: found.data, isNew: false };
+    } catch(e){}
+    // 로컬 백업 확인: 기존에 편집된 프로필이 있다면 그 값을 기본값으로 보존 (데이터 유실 원천 방어)
+    var localProf = null;
+    try {
+      localProf = JSON.parse(localStorage.getItem('ourgoal_profile_backup_' + userId) || 'null');
+    } catch(e){}
+    var row = {
+      id: userId,
+      username: username,
+      display_name: (localProf && localProf.displayName) || displayName,
+      bio: (localProf && localProf.bio) || null,
+      avatar_url: (extra && extra.avatar_url) || (localProf && localProf.avatarUrl) || null,
+      interests: (localProf && localProf.interests) || [],
+      region: (localProf && localProf.region) || null,
+      region_public: localProf ? !!localProf.regionPublic : false
+    };
+    try {
+      await sb.from('users').upsert(row);
+    } catch(e){}
+    return { row: row, isNew: !localProf };
   }
 
   async function loadProfile(userId, username, newUserExtra, provider){
@@ -1414,8 +1434,79 @@
       };
     });
 
+    // 기록 로컬 백업 자동 복구 및 자가 치유 안전망 (#TASK-ES-035)
+    var localCachedRecords = [];
+    try {
+      localCachedRecords = JSON.parse(localStorage.getItem('ourgoal_records_backup_' + userId) || '[]');
+    } catch(e){}
+    if((!localCachedRecords || localCachedRecords.length === 0) && (!records || records.length === 0)){
+      for(var rkIdx = 0; rkIdx < localStorage.length; rkIdx++){
+        var rk = localStorage.key(rkIdx);
+        if(rk && rk.indexOf('ourgoal_records_backup_') === 0){
+          try {
+            var candRecs = JSON.parse(localStorage.getItem(rk) || '[]');
+            if(candRecs && candRecs.length > 0){
+              localCachedRecords = candRecs;
+              break;
+            }
+          } catch(e){}
+        }
+      }
+    }
+    if((!records || records.length === 0) && localCachedRecords && localCachedRecords.length > 0){
+      records = localCachedRecords;
+      try {
+        await sb.from('checkins').upsert(records.map(function(r){
+          return {
+            id:r.id, user_id:userId, type:r.type, text:r.text, start_at:r.startAt, end_at:r.endAt,
+            category: r.category || null, theme: r.theme || null, sub_theme: r.subTheme || null,
+            theme_confidence: r.themeConfidence || null
+          };
+        }));
+      } catch(e){}
+    } else if(records && records.length > 0){
+      try { localStorage.setItem('ourgoal_records_backup_' + userId, JSON.stringify(records)); } catch(e){}
+    }
+
+    // 프로필 편집 내역(소개, 관심사, 지역, 잇템) 로컬 백업 복원 및 무결성 보장 (#TASK-ES-035)
+    var localCachedProf = null;
+    try {
+      localCachedProf = JSON.parse(localStorage.getItem('ourgoal_profile_backup_' + userId) || 'null');
+    } catch(e){}
+    if(!localCachedProf){
+      for(var pkIdx = 0; pkIdx < localStorage.length; pkIdx++){
+        var pk = localStorage.key(pkIdx);
+        if(pk && pk.indexOf('ourgoal_profile_backup_') === 0){
+          try {
+            var candProf = JSON.parse(localStorage.getItem(pk) || 'null');
+            if(candProf && (candProf.bio || (candProf.interests && candProf.interests.length > 0) || candProf.region)){
+              localCachedProf = candProf;
+              break;
+            }
+          } catch(e){}
+        }
+      }
+    }
+    var finalDisplayName = urow.display_name || (localCachedProf && localCachedProf.displayName) || defaultDisplayName;
+    var finalBio = urow.bio || (localCachedProf && localCachedProf.bio) || '';
+    var finalAvatarUrl = urow.avatar_url || (localCachedProf && localCachedProf.avatarUrl) || '';
+    var finalInterests = (urow.interests && urow.interests.length) ? urow.interests : ((localCachedProf && localCachedProf.interests) || []);
+    var finalRegion = urow.region || (localCachedProf && localCachedProf.region) || '';
+    var finalRegionPublic = (typeof urow.region_public !== 'undefined') ? !!urow.region_public : (localCachedProf ? !!localCachedProf.regionPublic : false);
+    var finalItItems = (localCachedProf && localCachedProf.itItems) || [];
+
+    if(finalBio || finalInterests.length || finalRegion || finalItItems.length){
+      try {
+        localStorage.setItem('ourgoal_profile_backup_' + userId, JSON.stringify({
+          displayName: finalDisplayName, bio: finalBio, avatarUrl: finalAvatarUrl,
+          interests: finalInterests, region: finalRegion, regionPublic: finalRegionPublic, itItems: finalItItems
+        }));
+      } catch(e){}
+    }
+
     // 기존 데이터 존재 여부 정밀 판정: DB 목표, 기록 또는 로컬 백업이 있으면 절대 최초가입 온보딩으로 보내지 않는다
     var hasExistingData = (goals && goals.length > 0) || (records && records.length > 0) || (localCachedGoals && localCachedGoals.length > 0);
+    if(localCachedRecords && localCachedRecords.length > 0) hasExistingData = true;
     var isActuallyNew = ures.isNew && !hasExistingData;
 
     if(isActuallyNew){
@@ -1443,9 +1534,9 @@
       });
     }
     return {
-      id: userId, username: safeUsername, displayName: urow.display_name || defaultDisplayName,
-      bio: urow.bio || '', avatarUrl: urow.avatar_url || '', interests: urow.interests || [],
-      region: urow.region || '', regionPublic: !!urow.region_public,
+      id: userId, username: safeUsername, displayName: finalDisplayName,
+      bio: finalBio, avatarUrl: finalAvatarUrl, interests: finalInterests,
+      region: finalRegion, regionPublic: finalRegionPublic, itItems: finalItItems,
       goals: goals, records: records, settings: settings,
       _isNewSignup: isActuallyNew
     };
@@ -1479,6 +1570,9 @@
 
       var recs = state.profile.records || [];
       if(recs.length){
+        try {
+          localStorage.setItem('ourgoal_records_backup_' + uidVal, JSON.stringify(recs));
+        } catch(e){}
         var recRows = recs.map(function(r){
           return {
             id:r.id, user_id:uidVal, type:r.type, text:r.text, start_at:r.startAt, end_at:r.endAt,
@@ -1501,6 +1595,17 @@
           }));
         }
       }
+      try {
+        localStorage.setItem('ourgoal_profile_backup_' + uidVal, JSON.stringify({
+          displayName: state.profile.displayName,
+          bio: state.profile.bio || '',
+          avatarUrl: state.profile.avatarUrl || '',
+          interests: state.profile.interests || [],
+          region: state.profile.region || '',
+          regionPublic: !!state.profile.regionPublic,
+          itItems: state.profile.itItems || []
+        }));
+      } catch(e){}
     } catch(e){ console.warn('Supabase sync failed:', e); }
     saveLocalSettings(uidVal, state.profile.settings);
   }
@@ -1845,6 +1950,10 @@
     try { await sb.auth.signOut(); } catch(e){}
     try { state.googleToken = null; sessionStorage.removeItem('ourgoal_google_token'); } catch(e){}
     try { if(window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect(); } catch(e){}
+    try {
+      localStorage.removeItem('ourgoal_guest_profile');
+      localStorage.removeItem('ourgoal_current_user');
+    } catch(e){}
     state.profile = null;
     var shell = document.getElementById('appShell');
     if(shell) shell.classList.remove('active');
@@ -1930,6 +2039,39 @@
     state.profile = await loadProfile(res.data.user.id, u);
     enterApp();
   });
+
+  var resyncBtn = document.getElementById('resyncAccountDataBtn');
+  if(resyncBtn){
+    resyncBtn.addEventListener('click', async function(){
+      if(!state.profile || !state.profile.id){
+        toast('로그인 상태를 확인할 수 없습니다.');
+        return;
+      }
+      resyncBtn.disabled = true;
+      toast('서버 및 로컬 백업에서 목표·기록·프로필을 동기화하고 복원하는 중입니다…');
+      try {
+        var refreshed = await loadProfile(state.profile.id, state.profile.username, {
+          display_name: state.profile.displayName,
+          avatar_url: state.profile.avatarUrl
+        }, 'manual_resync');
+        if(refreshed){
+          state.profile = refreshed;
+          await saveProfile();
+          renderAll();
+          var gCount = (state.profile.goals || []).length;
+          var rCount = (state.profile.records || []).length;
+          toast('동기화 완료: 목표 ' + gCount + '개, 기록 ' + rCount + '개가 안전하게 연결되었습니다!');
+        } else {
+          toast('동기화 완료: 최신 상태입니다.');
+        }
+      } catch(err){
+        console.warn('수동 동기화 실패:', err);
+        toast('동기화 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      } finally {
+        resyncBtn.disabled = false;
+      }
+    });
+  }
 
   document.getElementById('logoutBtn').addEventListener('click', async function(){
     await performLogout();
@@ -20252,16 +20394,25 @@
         avatar_url: (extraOpt && extraOpt.avatarUrl) || ''
       };
 
-      // 1. 로컬 스토리지에 캐시된 목표/프로필 ID 우선 검색
-      for(var i = 0; i < localStorage.length; i++){
-        var lk = localStorage.key(i);
-        if(lk && lk.indexOf('ourgoal_goals_backup_') === 0){
-          var candidateId = lk.replace('ourgoal_goals_backup_', '');
-          if(candidateId){
-            targetUserId = candidateId;
-            break;
+      // 1. 로컬 스토리지에 캐시된 목표/기록/프로필 ID 우선 검색 (#TASK-ES-035)
+      var backupPrefixes = ['ourgoal_goals_backup_', 'ourgoal_records_backup_', 'ourgoal_profile_backup_', 'ourgoal_settings_'];
+      for(var bi = 0; bi < backupPrefixes.length; bi++){
+        var pfx = backupPrefixes[bi];
+        for(var i = 0; i < localStorage.length; i++){
+          var lk = localStorage.key(i);
+          if(lk && lk.indexOf(pfx) === 0){
+            var candidateId = lk.replace(pfx, '');
+            if(candidateId){
+              targetUserId = candidateId;
+              break;
+            }
           }
         }
+        if(targetUserId) break;
+      }
+      if(!targetUserId){
+        var lastUid = localStorage.getItem('ourgoal_current_user');
+        if(lastUid) targetUserId = lastUid;
       }
 
       // 2. 만약 백업 ID가 없으면 결정론적 식별 해시 ID 생성
@@ -20441,17 +20592,82 @@
       }
     } catch(e){ /* fall through to guest / landing */ }
 
-    // 5. 게스트 세션 확인
+    // 5. 게스트 세션 확인 및 자가치유 복구 (#TASK-ES-035)
     try {
       var guestRaw = localStorage.getItem('ourgoal_guest_profile');
       if(guestRaw){
         var gp = JSON.parse(guestRaw);
         if(gp && gp.id){
+          var gpUpdated = false;
+          if(!gp.records || gp.records.length === 0){
+            var recBackup = null;
+            try { recBackup = JSON.parse(localStorage.getItem('ourgoal_records_backup_' + gp.id) || 'null'); } catch(e){}
+            if(!recBackup || recBackup.length === 0){
+              for(var gRk = 0; gRk < localStorage.length; gRk++){
+                var rKey = localStorage.key(gRk);
+                if(rKey && rKey.indexOf('ourgoal_records_backup_') === 0){
+                  try {
+                    var cRecs = JSON.parse(localStorage.getItem(rKey) || '[]');
+                    if(cRecs && cRecs.length > 0){ recBackup = cRecs; break; }
+                  } catch(e){}
+                }
+              }
+            }
+            if(recBackup && recBackup.length > 0){
+              gp.records = recBackup;
+              gpUpdated = true;
+            }
+          }
+          if(!gp.bio && (!gp.interests || gp.interests.length === 0) && !gp.region){
+            var profBackup = null;
+            try { profBackup = JSON.parse(localStorage.getItem('ourgoal_profile_backup_' + gp.id) || 'null'); } catch(e){}
+            if(!profBackup){
+              for(var gPk = 0; gPk < localStorage.length; gPk++){
+                var pKey = localStorage.key(gPk);
+                if(pKey && pKey.indexOf('ourgoal_profile_backup_') === 0){
+                  try {
+                    var cProf = JSON.parse(localStorage.getItem(pKey) || 'null');
+                    if(cProf && (cProf.bio || (cProf.interests && cProf.interests.length > 0) || cProf.region)){
+                      profBackup = cProf;
+                      break;
+                    }
+                  } catch(e){}
+                }
+              }
+            }
+            if(profBackup){
+              if(profBackup.bio) gp.bio = profBackup.bio;
+              if(profBackup.interests && profBackup.interests.length) gp.interests = profBackup.interests;
+              if(profBackup.region) gp.region = profBackup.region;
+              if(typeof profBackup.regionPublic !== 'undefined') gp.regionPublic = profBackup.regionPublic;
+              if(profBackup.itItems && profBackup.itItems.length) gp.itItems = profBackup.itItems;
+              gpUpdated = true;
+            }
+          }
+          if(!gp.goals || gp.goals.length === 0){
+            var goalBackup = null;
+            try { goalBackup = JSON.parse(localStorage.getItem('ourgoal_goals_backup_' + gp.id) || 'null'); } catch(e){}
+            if(goalBackup && goalBackup.length > 0){
+              gp.goals = goalBackup;
+              gpUpdated = true;
+            }
+          }
+          if(gpUpdated){
+            try { localStorage.setItem('ourgoal_guest_profile', JSON.stringify(gp)); } catch(e){}
+          }
           state.profile = gp;
           document.getElementById('landingScreen').style.display = 'none';
           document.getElementById('authScreen').style.display = 'none';
           enterApp();
           checkAndHandlePeerInviteUrl();
+          setTimeout(function(){
+            loadProfile(gp.id, gp.username, {}, 'boot_bg_sync').then(function(refreshed){
+              if(refreshed && ((refreshed.records && refreshed.records.length > (state.profile.records || []).length) || (refreshed.goals && refreshed.goals.length > (state.profile.goals || []).length))){
+                state.profile = refreshed;
+                renderAll();
+              }
+            }).catch(function(){});
+          }, 1000);
           return;
         }
       }

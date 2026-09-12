@@ -1,35 +1,35 @@
 {
-  "taskId": "OG-2026-09-13-ui-hierarchical-accordion-analysis",
+  "taskId": "#TASK-ES-035",
   "projectId": "ourgoal",
   "owner": "antigravity-session-82071bd0",
-  "goal": "아워골 앱 정보 과밀 해소를 위한 아코디언 및 다차원 정보압축 UX 해결책 구상 및 보고",
+  "goal": "기록(checkins) 및 프로필(users) 삼중 로컬 백업 구축, 게스트 세션 영구 고착 해제 및 데이터 무결성 복원",
   "planPath": "C:/dev/ourgoal-app/.Codex/작업계획서/82071bd0.md",
   "phase": "완료",
-  "nextAction": "상민님께 버튼 복구 및 UI 인터랙션 100% 정상 작동 결과 보고",
+  "nextAction": "PR 병합 및 배포 확인, Tri-Sync 동기화 무결성 검증",
   "commandCenterParent": "3d4598db-9096-813b-8d6a-e1f3e9fd1e29",
   "projectTowerParent": "3d2598db-9096-800d-845c-c4b2245d4197",
   "evidence": [
-    "기록 탭 3분할 세그먼트(내 기록/성취 통계/보관함) 및 미니 성취 펄스 바 적용",
-    "4단 메트릭 캐러셀 뷰포트 및 4분할 알약 탭 연동",
-    "최근 7일 스키밍 노출 및 과거 기록 주/월 단위 계층형 아코디언 적용",
-    "PR #146 생성 및 squash merge 완료",
-    "#TASK-ES-034: ReferenceError(esc) 방어 및 프로필 널가드 보강으로 런타임 스크립트 중단 원천 해결",
-    "#TASK-ES-034: CSS Grid min-height: 0 적용으로 아코디언 정상 축소 보장",
-    "#TASK-ES-034: 헤드리스 크롬 E2E 테스트 10개 핵심 인터랙션 100% 통과 (JS 콘솔 에러 0건)",
-    "스모크 테스트 209개 전수 100% 통과",
-    "옵시디언 정본 갱신 및 Tri-Sync 100% 검증 완료"
+    "상민님 직접 제보: 목표들만 살아있고 유저들의 기록, 프로필 편집 내역 모두 초기화된것처럼 나오는데?",
+    "TICKETS.md #TASK-ES-035 등록 완료",
+    "원인 규명: 목표만 로컬 백업(ourgoal_goals_backup_) 존재, 기록·프로필 백업 부재로 인한 비대칭 손실",
+    "원인 규명: ourgoal_guest_profile 게스트 세션 영구 고착으로 Supabase 실세션 조회 차단",
+    "해결: ourgoal_records_backup_ 및 ourgoal_profile_backup_ 삼중 방어망 구축 및 게스트 고착 해제",
+    "해결: ensureUserRow 프로필 유실 방어 및 boot 자가 치유(self-healing) 로직 구현",
+    "해결: 설정 화면 1-클릭 수동 복원 및 재동기화 버튼(resyncAccountDataBtn) 구현",
+    "검증: npm test 210개 전수 100% 통과 (0개 실패)",
+    "검증: essence-gate pre-commit 통과"
   ],
   "pending": false,
   "remote": {
     "projectTower": {
       "id": "3d9598db-9096-81a4-840e-e1a2e0e0a3d4",
-      "hash": "73e2434a2ad313e799c84216ff37cc04599884ec8f48d34a3df86431eac2dd27",
-      "verifiedAt": "2026-09-12T17:48:18.636Z"
+      "hash": "e9be71d4847c2c209a732a141f50c14b286d592abf97bfe914f036a444725589",
+      "verifiedAt": "2026-09-12T18:26:42.027Z"
     },
     "commandCenter": {
       "id": "3d9598db-9096-814a-b6e0-cd3f09c21935",
-      "hash": "73e2434a2ad313e799c84216ff37cc04599884ec8f48d34a3df86431eac2dd27",
-      "verifiedAt": "2026-09-12T17:48:19.604Z"
+      "hash": "e9be71d4847c2c209a732a141f50c14b286d592abf97bfe914f036a444725589",
+      "verifiedAt": "2026-09-12T18:26:43.839Z"
     }
   }
 }

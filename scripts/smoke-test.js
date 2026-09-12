@@ -2860,6 +2860,30 @@ check('compliance: [#TASK-ES-034] 기록 탭 버튼 상호작용 및 런타임 �
   assert.ok(html.includes("document.getElementById('recMiniPulseBar')"), '미니 펄스바 정적 리스너');
 });
 
+check('compliance: [#TASK-ES-035] 기록 및 프로필 삼중 로컬 백업, 게스트 세션 고착 해제, 자가 치유 및 데이터 무결성 복원이 완비되어 있다', () => {
+  // 1. 기록 및 프로필 삼중 로컬 백업 키 사용 확인
+  assert.ok(html.includes('ourgoal_records_backup_'), '기록 로컬 백업 키 존재');
+  assert.ok(html.includes('ourgoal_profile_backup_'), '프로필 로컬 백업 키 존재');
+
+  // 2. ensureUserRow 프로필 유실 방어 로직 확인
+  assert.ok(html.includes("localStorage.getItem('ourgoal_profile_backup_' + userId)"), 'ensureUserRow 로컬 프로필 보존');
+
+  // 3. saveProfile 및 loadProfile 기록/프로필 백업 저장 및 복구
+  assert.ok(html.includes("localStorage.setItem('ourgoal_records_backup_' + uidVal, JSON.stringify(recs))"), 'saveProfile 기록 로컬 백업');
+  assert.ok(html.includes("localStorage.setItem('ourgoal_profile_backup_' + uidVal"), 'saveProfile 프로필 로컬 백업');
+
+  // 4. performLogout 시 게스트 프로필 및 current_user 정리 (영구 고착 해제)
+  assert.ok(html.includes("localStorage.removeItem('ourgoal_guest_profile');") && html.includes("localStorage.removeItem('ourgoal_current_user');"), '로그아웃 시 게스트 세션 완전 제거');
+
+  // 5. 설정 화면 1-클릭 수동 복원 및 재동기화 버튼 구비
+  assert.ok(html.includes('id="resyncAccountDataBtn"'), '설정 화면 재동기화 버튼 마크업 존재');
+  assert.ok(html.includes("document.getElementById('resyncAccountDataBtn')"), '재동기화 버튼 이벤트 바인딩');
+
+  // 6. loginWithDirectIdentifier 다중 백업 ID 탐색 및 boot 자가 치유
+  assert.ok(html.includes("var backupPrefixes = ['ourgoal_goals_backup_', 'ourgoal_records_backup_', 'ourgoal_profile_backup_', 'ourgoal_settings_'];"), '다중 백업 ID 탐색');
+  assert.ok(html.includes('gpUpdated') && html.includes('boot_bg_sync'), 'boot 게스트 세션 자가 치유 및 백그라운드 동기화');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
