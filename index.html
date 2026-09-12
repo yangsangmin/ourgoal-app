@@ -1677,7 +1677,8 @@
           action: 'sync_records',
           userId: uid,
           username: uname,
-          displayName: dname,
+          displayName: dname || (state.profile && (state.profile.nickname || state.profile.displayName)) || '상민',
+          nickname: (state.profile && (state.profile.nickname || state.profile.displayName)) || dname || '상민',
           backupIds: candidateIds
         })
       });
@@ -1701,8 +1702,8 @@
         }
       }
 
-      if(data.user){
-        var u = data.user;
+      var u = data.user || data.matchedUser;
+      if(u){
         if(!state.profile.bio && u.bio){ state.profile.bio = u.bio; updated = true; }
         if((!state.profile.interests || state.profile.interests.length === 0) && u.interests && u.interests.length){
           state.profile.interests = u.interests;
@@ -1711,6 +1712,8 @@
         if(!state.profile.region && u.region){ state.profile.region = u.region; updated = true; }
         if(!state.profile.avatarUrl && u.avatar_url){ state.profile.avatarUrl = u.avatar_url; updated = true; }
         if(typeof u.region_public !== 'undefined'){ state.profile.regionPublic = !!u.region_public; }
+        if(!state.profile.displayName && u.display_name){ state.profile.displayName = u.display_name; updated = true; }
+        if(!state.profile.nickname && (u.display_name || u.username)){ state.profile.nickname = u.display_name || u.username; updated = true; }
       }
 
       if((!state.profile.goals || state.profile.goals.length === 0) && data.goals && data.goals.length > 0){
