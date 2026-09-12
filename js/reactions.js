@@ -112,7 +112,7 @@
     if(!n) return '<div class="rx-advice-wrap" data-rxadv="' + esc(it.id) + '"></div>';
     var open = !!expanded[it.id];
     return '<div class="rx-advice-wrap" data-rxadv="' + esc(it.id) + '">' +
-      '<button class="feed-comm-toggle has-comments" data-rxadvtoggle="' + esc(it.id) + '" type="button" style="margin-top:6px;">💡 조언 ' + n + '개' + (open ? ' 접기' : ' 보기') + '</button>' +
+      '<button class="feed-comm-toggle has-comments" data-rxadvtoggle="' + esc(it.id) + '" type="button" style="margin-top:6px;">조언 ' + n + '개' + (open ? ' 접기' : ' 보기') + '</button>' +
       (open ? '<div class="feed-comments-list" style="margin-top:6px;">' + list.map(function(a){ return adviceRowHtml(it, a); }).join('') + '</div>' : '') +
       '</div>';
   }
@@ -266,7 +266,7 @@
     if(!deps.openModal) return;
     deps.openModal(
       '<h3>어떤 점이 별로였나요?</h3>' +
-      '<p class="muted" style="margin:0 0 10px;font-size:.82rem;line-height:1.45;">이유는 글쓴이에게 익명으로, 개수와 종류만 전해져요. 누가 눌렀는지는 보이지 않아요.</p>' +
+      '<p class="muted" style="margin:0 0 10px;font-size:.875rem;line-height:1.45;">이유는 글쓴이에게 익명으로, 개수와 종류만 전해져요. 누가 눌렀는지는 보이지 않아요.</p>' +
       '<div id="rxPoorList" style="display:flex;flex-direction:column;gap:8px;">' +
         POOR_REASONS.map(function(r){ return '<label style="display:flex;align-items:center;gap:8px;font-size:.9rem;"><input type="radio" name="rxPoorReason" value="' + r.code + '"> ' + esc(r.label) + '</label>'; }).join('') +
       '</div>' +
@@ -304,11 +304,11 @@
     deps.openModal(
       '<h3>이 목표에 도움이 될 팁을 남겨요</h3>' +
       '<textarea id="rxAdvText" rows="4" maxlength="' + ADVICE_MAX + '" placeholder="내가 해보니 이렇게 하면 좋았어요…" style="width:100%;border:1px solid var(--rule);border-radius:12px;padding:10px;font:inherit;box-sizing:border-box;"></textarea>' +
-      '<div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;font-size:.88rem;">' +
+      '<div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;font-size:.9375rem;">' +
         '<label style="display:flex;align-items:center;gap:8px;"><input type="radio" name="rxAdvVis" value="author_only" checked> 글쓴이에게만 보여요</label>' +
         '<label style="display:flex;align-items:center;gap:8px;"><input type="radio" name="rxAdvVis" value="everyone"> 이 글을 보는 모두에게 보여요</label>' +
       '</div>' +
-      '<p class="muted" style="margin:10px 0 0;font-size:.78rem;line-height:1.45;">글쓴이는 이 조언의 공개 범위를 바꾸거나 지울 수 있어요.</p>' +
+      '<p class="muted" style="margin:10px 0 0;font-size:.8125rem;line-height:1.45;">글쓴이는 이 조언의 공개 범위를 바꾸거나 지울 수 있어요.</p>' +
       '<div class="modal-actions">' +
         '<button class="btn btn-ghost" id="rxAdvCancel" type="button">취소</button>' +
         '<button class="btn btn-primary" id="rxAdvOk" type="button" disabled>남기기</button>' +

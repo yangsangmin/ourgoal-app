@@ -119,12 +119,12 @@
     loadPolicy().then(function(){
       deps.openModal(
         '<h3>어떤 점이 도움이 됐나요?</h3>' +
-        '<p class="muted" style="margin:0 0 10px;font-size:.82rem;line-height:1.45;">글쓴이에게 전해져요. 누가 적었는지는 보이지 않아요.</p>' +
+        '<p class="muted" style="margin:0 0 10px;font-size:.875rem;line-height:1.45;">글쓴이에게 전해져요. 누가 적었는지는 보이지 않아요.</p>' +
         '<div id="hrTagList" style="display:flex;flex-direction:column;gap:8px;">' +
           tags.map(function(t){ return '<label style="display:flex;align-items:center;gap:8px;font-size:.9rem;"><input type="radio" name="hrTag" value="' + esc(t.code) + '"> ' + esc(t.label) + '</label>'; }).join('') +
         '</div>' +
         '<textarea id="hrText" rows="2" maxlength="' + TEXT_MAX + '" placeholder="한 줄로 적으면 글쓴이에게 더 도움이 돼요 (선택)" style="width:100%;margin-top:10px;border:1px solid var(--rule);border-radius:12px;padding:10px;font:inherit;box-sizing:border-box;"></textarea>' +
-        '<p class="muted" id="hrHint" style="margin:6px 0 0;font-size:.76rem;line-height:1.4;">' + minChars + '자 이상 구체적으로 적어주세요.</p>' +
+        '<p class="muted" id="hrHint" style="margin:6px 0 0;font-size:.8125rem;line-height:1.4;">' + minChars + '자 이상 구체적으로 적어주세요.</p>' +
         '<div class="modal-actions">' +
           '<button class="btn btn-ghost" id="hrSkip" type="button">건너뛰기</button>' +
           '<button class="btn btn-primary" id="hrOk" type="button" disabled>보내기</button>' +
@@ -167,7 +167,7 @@
     if(isBot(it)) return '';
     var n = Number(helpfulCount) || 0;
     return '<span data-hrsumwrap="' + esc(it.id) + '">' +
-      (n > 0 ? '<button class="feed-comm-toggle has-comments" data-hrsum="' + esc(it.id) + '" type="button">👍 도움된 이유 보기</button>' : '') +
+      (n > 0 ? '<button class="feed-comm-toggle has-comments" data-hrsum="' + esc(it.id) + '" type="button">도움된 이유 보기</button>' : '') +
       '</span>';
   }
   function patchAuthorButton(body, it, helpfulCount){
@@ -184,7 +184,7 @@
     function render(tagsArr, texts){
       var tagHtml = tagsArr.length
         ? '<div style="display:flex;flex-wrap:wrap;gap:6px;">' + tagsArr.map(function(t){ return '<span class="topic-pill">' + esc(tagLabel(t.tag)) + ' ' + t.cnt + '</span>'; }).join('') + '</div>'
-        : '<p class="muted" style="font-size:.85rem;">아직 전해진 이유가 없어요.</p>';
+        : '<p class="muted" style="font-size:.875rem;">아직 전해진 이유가 없어요.</p>';
       var textHtml = texts.length
         ? '<div class="feed-comments-list" style="margin-top:10px;">' + texts.map(function(x){
             return '<div class="feed-comment-bubble"><div class="feed-c-body">' +
@@ -194,7 +194,7 @@
         : '';
       deps.openModal(
         '<h3>이 글이 도움이 된 이유</h3>' +
-        '<p class="muted" style="margin:0 0 10px;font-size:.82rem;">누가 적었는지는 보이지 않아요.</p>' +
+        '<p class="muted" style="margin:0 0 10px;font-size:.875rem;">누가 적었는지는 보이지 않아요.</p>' +
         tagHtml + textHtml +
         '<div class="modal-actions"><button class="btn btn-ghost" id="hrSumClose" type="button">닫기</button></div>',
         function(sheet){ sheet.querySelector('#hrSumClose').addEventListener('click', function(){ deps.closeModal(); }); }

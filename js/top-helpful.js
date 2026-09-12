@@ -120,7 +120,7 @@
 
   /* 슬롯 라벨(첫 상단 글 바로 위). 서열 문구 없음, 광고 자리와 분리된 독립 블록. */
   function labelHtml() {
-    return '<div class="faint" data-top-helpful-label="1" style="display:flex;align-items:center;gap:6px;margin:2px 0 8px;font-size:.78rem;font-weight:700;">' +
+    return '<div class="faint" data-top-helpful-label="1" style="display:flex;align-items:center;gap:6px;margin:2px 0 8px;font-size:.8125rem;font-weight:700;">' +
       '<span>💡</span><span>' + LABEL + '</span>' +
       '<span style="font-weight:400;opacity:.8;">· 최근 ' + WINDOW_DAYS + '일 도움돼요 기준</span></div>';
   }

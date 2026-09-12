@@ -107,12 +107,12 @@
     function rowHtml(w){
       var on = settings.homeLayout.hidden.indexOf(w.id) < 0;
       return '<div class="toggle-row" style="margin-bottom:8px;">' +
-        '<div class="t" style="font-size:.84rem;">' + esc(w.label) + '<div style="font-size:.72rem;color:var(--ink-faint);font-weight:500;">' + esc(w.hint) + '</div></div>' +
+        '<div class="t" style="font-size:.875rem;">' + esc(w.label) + '<div style="font-size:.8125rem;color:var(--ink-faint);font-weight:500;">' + esc(w.hint) + '</div></div>' +
         '<div class="switch' + (on ? ' on' : '') + '" role="switch" tabindex="0" aria-checked="' + on + '" aria-label="' + esc(w.label) + '" data-kf1-id="' + w.id + '"></div>' +
         '</div>';
     }
-    var html = '<h3 style="margin:0 0 4px;">🧩 앱을 내맘대로!</h3>' +
-      '<p style="font-size:.8rem;color:var(--ink-soft);margin:0 0 12px;">홈에 보일 것만 남기세요. 오늘 기록하기·내 목표·기록·소통은 항상 보여요.</p>' +
+    var html = '<h3 style="margin:0 0 4px;">앱을 내맘대로!</h3>' +
+      '<p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 12px;">홈에 보일 것만 남기세요. 오늘 기록하기·내 목표·기록·소통은 항상 보여요.</p>' +
       '<div id="kf1LayoutList">' + WHITELIST.map(rowHtml).join('') + '</div>' +
       '<div style="display:flex;gap:8px;margin-top:14px;">' +
         '<button class="btn btn-ghost btn-sm" type="button" id="kf1ResetBtn" style="flex:1;">기본으로 되돌리기</button>' +

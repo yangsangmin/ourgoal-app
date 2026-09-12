@@ -186,7 +186,7 @@
     // (b) 스트릭 — 오늘 기록했으면 현재 연속, 아니면 어제까지 이어진 만큼 "오늘 한 줄" 안내
     if (todayDone && streak > 0) {
       var next = streakNextMilestone(streak, r.streakMilestones);
-      lines.push('🔥 ' + streak + '일 연속 기록 중' + (next ? ' · 다음 배지까지 ' + (next - streak) + '일' : ''));
+      lines.push(streak + '일 연속 기록 중' + (next ? ' · 다음 배지까지 ' + (next - streak) + '일' : ''));
     } else if (!todayDone && throughYesterday > 0) {
       lines.push('오늘 한 줄이면 ' + (throughYesterday + 1) + '일 연속이 이어져요');
     } else if (!todayDone && Object.keys(days).length > 0) {
@@ -199,7 +199,7 @@
     var fresh = Array.isArray(api.BADGES) ? syncUnlocks(api.BADGES, ctx, p.settings) : [];
     if (fresh.length) {
       changed = true;
-      lines.push('🎉 새 배지: ' + fresh.map(function (b) { return esc(api, b.icon + ' ' + b.label); }).join(', '));
+      lines.push('새 배지: ' + fresh.map(function (b) { return esc(api, b.icon + ' ' + b.label); }).join(', '));
     } else {
       var last = Array.isArray(api.BADGES) ? latestUnlocked(api.BADGES, p.settings) : null;
       if (last) lines.push('최근 배지 ' + esc(api, last.icon + ' ' + last.label));
