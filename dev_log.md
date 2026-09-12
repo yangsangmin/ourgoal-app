@@ -2302,3 +2302,15 @@
   - 페르소나 20명 평가(docs/design/03-eval.md, 루브릭 v2): 아워골 9.60 vs 6사 평균 8.54 (통과), 응답 20/20
 ---
 <<<<<<< HEAD
+
+## [2026-09-12 12:07] 1호 직원 사이클: BACKLOG.md 재확인 — 신규 처리 항목 없음
+- **목표**: BACKLOG.md `<!-- gen-backlog -->` 구간 미체크 5건(14 Web Push, 15 소셜 로그인, 24 신고·자동숨김, 45 사용자 차단, 47 공식 이메일)을 위에서부터 재검토해 지난 사이클(2026-09-11 06:18) 이후 상태 변화가 있는지 확인.
+- **수정/실행 내역**:
+  1. `git fetch origin main` 후 HEAD(142cca8, #TASK-ES-022 UI/UX 전면 개편)와 origin/main 일치 확인, `grep -rn "^<<<<<<<"` 전체 반복 — 코드 파일(index.html·js·css·sql) 0건, `dev_log.md`에만 기존 고아 마커 3건(980행대 기존 발견분 포함, 내용 없는 `<<<<<<< HEAD` 단독 라인, `=======`/`>>>>>>>` 짝 없음) — 2026-09-11 14:30 기록에서 이미 "상민님 결정 대기"로 보고된 것과 동일 계열, 이번 사이클에서 임의로 정리하지 않음(문서 전용, 앱 동작 무관).
+  2. 대형 리디자인(#134) 이후에도 소셜 로그인 버튼(`landKakaoBtn`/`authKakaoBtn`/`landGoogleBtn`/`authGoogleBtn`)과 `report_content`/`blockUser`/`unblockUser`/`user_blocks` 관련 클라이언트 코드가 index.html에 그대로 남아있는지 grep으로 재확인 — 전부 생존.
+  3. Supabase 실측 재확인(`/auth/v1/settings`, `content_reports`/`user_blocks`/`push_subscriptions` 테이블) 시도 — 이 실행 환경의 아웃바운드 네트워크 정책이 `dvqosviqbciohcywkzbq.supabase.co` 직접 호출을 차단(proxy 403)해 실측 불가. STATUS.md의 2026-09-11 재확인 기록(전부 미해결)을 최신 근거로 유지.
+  4. 열린 PR 확인: `auto/2026-09-12-push-toggle-copy`(#136, TASK-ES-023, 06:10 생성)·`auto/2026-09-12-block-copy-fix`(#137, TASK-ES-024, 06:15 생성) — 직전 사이클이 이미 열어둔 PR이라 이번 사이클에서 건드리지 않음(수정·병합·닫기 금지 규칙).
+- **발생한 문제 및 해결**: 5건 전부가 그 항목만의 이유(외부 콘솔 설정·SQL 1회 실행·도메인 구매·실사용자 옵트인)로 여전히 막혀 있고 이번 사이클에서 상태 변화를 관측하지 못함 → 새로 시작할 코드 작업이 없어 이번 사이클은 신규 PR 없이 종료.
+- **검증 결과**: 코드 변경 없음(조사만) · `npm test`(`node scripts/smoke-test.js`) 재실행해 기존 통과 상태 유지 확인 · `grep -rn "^<<<<<<<"` 코드 파일 0건 재확인.
+---
+<<<<<<< HEAD
