@@ -11,6 +11,9 @@ const assert = require('assert');
 
 const INDEX_HTML = path.join(__dirname, '..', 'index.html');
 const html = fs.readFileSync(INDEX_HTML, 'utf8');
+// 2026-09-12 UI v2: 스타일은 ui.css(외부)로 분리됐다. CSS 존재 검사는 html+css 합본으로 본다.
+const UI_CSS = path.join(__dirname, '..', 'ui.css');
+const styleSrc = html + (fs.existsSync(UI_CSS) ? fs.readFileSync(UI_CSS, 'utf8') : '');
 
 let failures = 0;
 let passed = 0;
@@ -670,12 +673,12 @@ check('defaultSettings: 최초 로그인 기본 설정에서 모든 공개 범�
   assert.strictEqual(s.privacy.stats, 'private');
 });
 
-check('getPrivacyLabel: 기본값 및 private는 🔒 나만 보기를 반환하고, team 및 public을 올바르게 매핑한다', () => {
-  assert.strictEqual(fns.getPrivacyLabel('private'), '🔒 나만 보기');
-  assert.strictEqual(fns.getPrivacyLabel('team'), '👥 모임원');
-  assert.strictEqual(fns.getPrivacyLabel('public'), '🌐 전체 공개');
-  assert.strictEqual(fns.getPrivacyLabel(undefined), '🔒 나만 보기');
-  assert.strictEqual(fns.getPrivacyLabel(null), '🔒 나만 보기');
+check('getPrivacyLabel: 기본값 및 private는 나만 보기를 반환하고, team 및 public을 올바르게 매핑한다', () => {
+  assert.strictEqual(fns.getPrivacyLabel('private'), '나만 보기');
+  assert.strictEqual(fns.getPrivacyLabel('team'), '모임원');
+  assert.strictEqual(fns.getPrivacyLabel('public'), '전체 공개');
+  assert.strictEqual(fns.getPrivacyLabel(undefined), '나만 보기');
+  assert.strictEqual(fns.getPrivacyLabel(null), '나만 보기');
 });
 
 /* ============ PWA 앱 배지 (불변식: 미지원 환경 no-op·throw 없음 / 스트릭>0 → 숫자 / 0 → clear) ============ */
@@ -1017,7 +1020,7 @@ check('compliance: 4대 혁신 기능(자동 통계, 1초 루틴 로드, AI 프�
   assert.ok(html.includes('openProNotionExportModal'), '노션 표 직수출/클립보드 복사 함수 구현');
   assert.ok(html.includes('openCalendarDayEditHubModal'), '캘린더 일자 수정/관리 허브 모달 함수 구현');
   assert.ok(html.includes('id="hubAddProRecBtn"'), '캘린더 허브 모달 내 맞춤기록 작성 버튼 존재');
-  assert.ok(html.includes('.cal-pill.tpl'), '템플릿 기록 전용 캘린더 필 클래스 적용');
+  assert.ok(styleSrc.includes('.cal-pill.tpl'), '템플릿 기록 전용 캘린더 필 클래스 적용');
 });
 
 check('recommendTemplateFromAI: 크로스핏과 하이록스를 엄격히 분리하고 하이록스는 8대 공식 스테이션을 모두 제공한다', () => {
@@ -1105,7 +1108,7 @@ check('compliance: 다른 기기 원격 로그아웃, 마일스톤·할일 마�
   // 2. 마일스톤 및 할일 마감일과 D-day 표시
   assert.ok(html.includes('taskDueHtml'), '할 일 마감일/D-day 렌더링 로직 존재');
   assert.ok(html.includes('msDueHtml'), '마일스톤 마감일/D-day 렌더링 로직 존재');
-  assert.ok(html.includes('📅 마감일'), '마감일 레이블 렌더링 존재');
+  assert.ok(html.includes('마감일'), '마감일 레이블 렌더링 존재');
 
   // 3. 참고자료 옆 단독 AI 결과 버튼 제거 확인
   assert.strictEqual(html.includes('data-taskaires'), false, '할 일의 참고자료 옆 AI 결과 버튼이 제거됨');
@@ -1116,7 +1119,7 @@ check('compliance: 다른 기기 원격 로그아웃, 마일스톤·할일 마�
   assert.ok(html.includes('rsAiQuickInput'), '결과입력 모달 내 AI 자연어 한줄 입력창 존재');
   assert.ok(html.includes('rsAiQuickApplyBtn'), '결과입력 모달 내 AI 변환 버튼 존재');
   assert.ok(html.includes('rsManualToggleBtn'), '결과입력 모달 내 수동입력하기 토글 존재');
-  assert.ok(html.includes('오늘 달성한 내용을 줄글로 적어주시면 DB화에 알맞게 바꿔드려요(향후 데이터 활용우수)'), '지정된 AI 설명 문구 정확성');
+  assert.ok(html.includes('오늘 한 일을 한 줄로 적어주시면 기록으로 알맞게 정리해드려요'), '지정된 AI 설명 문구 정확성');
   assert.ok(html.includes('convertTextToNotionDbRecord'), 'Notion DB 구조화 변환 함수 존재');
 });
 
@@ -1473,12 +1476,12 @@ check('compliance: 최초 로그인 시 모든 공개 범위(헤더 배지, 설�
   const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 
   // 1. 헤더 배지 초기 마크업 비공개 확인
-  assert.ok(html.includes('id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">🔒 나만 보기</span>'), '목표 탭 배지 비공개 기본값');
-  assert.ok(html.includes('id="calPrivacyBadge" title="클릭하여 공개 범위 변경" style="margin-top:10px;">🔒 나만 보기</span>'), '일정 탭 배지 비공개 기본값');
-  assert.ok(html.includes('id="recPrivacyBadge" title="클릭하여 공개 범위 변경" style="margin-top:10px;">🔒 나만 보기</span>'), '기록 탭 배지 비공개 기본값');
+  assert.ok(html.includes('id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>'), '목표 탭 배지 비공개 기본값');
+  assert.ok(/id="calPrivacyBadge" title="클릭하여 공개 범위 변경"[^>]*>나만 보기<\/span>/.test(html), '일정 탭 배지 비공개 기본값');
+  assert.ok(/id="recPrivacyBadge" title="클릭하여 공개 범위 변경"[^>]*>나만 보기<\/span>/.test(html), '기록 탭 배지 비공개 기본값');
 
   // 2. 설정 셀렉트 옵션 비공개 pre-selected 확인
-  assert.ok(html.includes('<option value="private" selected>🔒 나만 보기 (비공개)</option>'), '설정 탭 비공개 pre-selected 존재');
+  assert.ok(html.includes('<option value="private" selected>나만 보기 (비공개)</option>'), '설정 탭 비공개 pre-selected 존재');
 
   // 3. 목표 생성 모달 공개 범위 셀렉트 private pre-selected 확인
   assert.ok(html.includes('<option value="private" selected>나만 보기</option>'), '목표 모달 비공개 pre-selected 존재');
@@ -1527,12 +1530,12 @@ check('compliance: 11인 외부 UI/UX 감시 및 개선팀 1차 전면 개선사
   assert.ok(html.includes('renderDailyQuestBar'), '일일 퀘스트 렌더링 함수');
 
   // 3. WCAG AAA 접근성 포커스 & 스크린리더
-  assert.ok(html.includes('*:focus-visible'), 'WCAG 2.2 AAA 전역 포커스 링');
+  assert.ok(styleSrc.includes('*:focus-visible'), 'WCAG 2.2 AAA 전역 포커스 링');
   assert.ok(html.includes('id="a11yLiveAnnouncer"'), '스크린리더 실시간 아나운서');
   assert.ok(html.includes('announceToA11y'), '접근성 알림 함수');
 
   // 4. 스프링 물리 마이크로 인터랙션 & 스트릭 불꽃
-  assert.ok(html.includes('--spring-bounce'), '스프링 물리 이징 변수');
+  assert.ok(styleSrc.includes('--spring-bounce'), '스프링 물리 이징 변수');
   assert.ok(html.includes('streak-flame-pulse'), '스트릭 불꽃 맥동 애니메이션');
 
   // 5. MZ 성취 공유 카드
@@ -1550,7 +1553,7 @@ check('compliance: 유료 기능 잠금이 전면 해제되고 모든 기능(무
   assert.strictEqual(html.includes('tosspayments.com/v1/payment-widget'), false, '토스페이먼츠 스크립트 제거');
 
   // 2. 랜딩 화면 목표 무제한 무료 문구 확인
-  assert.ok(html.includes('목표 · 무제한 무료'), '랜딩 화면 목표 무제한 무료 문구');
+  assert.ok(html.includes('무제한 무료'), '랜딩 화면 목표 무제한 무료 문구');
 
   // 3. 목표 개수 제한 페이월 제거 확인
   assert.strictEqual(html.includes("openPaywallModal('goalLimit')"), false, '목표 생성/복제 시 페이월 제거');
@@ -1765,10 +1768,10 @@ check('compliance: Google OAuth 2.0 실제 연동 로직(클라이언트 ID, 버
 
 check('compliance: 마일스톤 우선순위 태그(🔴 높음 / 🟡 보통 / 🟢 낮음)가 마일스톤 제목 위 독립 행에 최소 여백으로 배치되어 제목 입력을 가리지 않는다', () => {
   // 1. 우선순위 태그 CSS 및 인라인 플렉스
-  assert.ok(html.includes('.ms-priority-tag{display:inline-flex;align-items:center;cursor:pointer;'), '우선순위 태그 인라인 플렉스 스타일');
-  assert.ok(html.includes('.ms-priority-high'), '우선순위 높음 스타일');
-  assert.ok(html.includes('.ms-priority-med'), '우선순위 보통 스타일');
-  assert.ok(html.includes('.ms-priority-low'), '우선순위 낮음 스타일');
+  assert.ok(/.ms-priority-tag{[^}]*cursor:pointer/.test(styleSrc) && /.ms-priority-tag[^{]*{[^}]*inline-flex|.ms-priority-tag,[^{]*{[^}]*inline-flex|[^}]*.ms-priority-tag[^{]*{[^}]*inline-flex/.test(styleSrc), '우선순위 태그 인라인 플렉스 스타일');
+  assert.ok(styleSrc.includes('.ms-priority-high'), '우선순위 높음 스타일');
+  assert.ok(styleSrc.includes('.ms-priority-med'), '우선순위 보통 스타일');
+  assert.ok(styleSrc.includes('.ms-priority-low'), '우선순위 낮음 스타일');
 
   // 2. 마일스톤 렌더링 시 제목 입력 바로 위 독립 행 배치 (제목을 가리지 않고 100% 폭 보장)
   assert.ok(html.includes('style="display:flex;align-items:center;gap:6px;margin-bottom:2px;line-height:1;min-height:16px;"'), '제목 상단 독립 행');
@@ -1822,7 +1825,7 @@ check('compliance: 팀 수준별 목표 관리(조별 목표·마일스톤·할�
   assert.ok(html.includes('data-addlevelgroup='), '새 조/그룹 추가 버튼');
 
   // 3. 모임장 왕관 👑 및 초록색 모임장 배지
-  assert.ok(html.includes('color:#2e7d32;background:#e8f5e9;border:1px solid #c8e6c9;padding:2px 8px;border-radius:999px;">모임장</span>'), '초록색 모임장 배지 스타일');
+  assert.ok(/color:var\(--sage\);background:var\(--sage-soft\);[^"]*">모임장<\/span>/.test(html), '초록색 모임장 배지 스타일');
   assert.ok(html.includes('👑</span>'), '왕관 아이콘');
 });
 
@@ -1968,7 +1971,7 @@ check('compliance: 목표탭 결과입력 UI/UX 혁신 (커리큘럼 정하기·
   assert.strictEqual(html.includes('id="rsNote"'), false, 'rsNote 엘리먼트가 제거됨');
 
   // 3. AI 비서 안내 문구 및 상세 대화로 열기 삭제 검증
-  assert.ok(html.includes('오늘 달성한 내용을 줄글로 적어주시면 DB화에 알맞게 바꿔드려요(향후 데이터 활용우수)'), '지정된 AI비서 설명 문구 정확성');
+  assert.ok(html.includes('오늘 한 일을 한 줄로 적어주시면 기록으로 알맞게 정리해드려요'), '지정된 AI비서 설명 문구 정확성(사용자 언어)');
   assert.strictEqual(html.includes('상세 대화로 열기'), false, "'상세 대화로 열기' 버튼이 완전히 삭제됨");
   assert.strictEqual(html.includes('id="rsAiQuickBtn"'), false, 'rsAiQuickBtn이 제거됨');
 
@@ -2012,15 +2015,15 @@ check('rescaleGoal: 지연된 마일스톤과 할 일 일정을 여유롭게 연
 
 check('compliance: 앰비언트 1줄 체크인 및 모바일 엄지 인체공학 UI', () => {
   // 1. 홈 화면 앰비언트 1줄 체크인 안내 및 플레이스홀더
-  assert.ok(html.includes('AI 노션 DB 1줄 체크인'), '홈 체크인 헤더 노션 DB 1줄 체크인 명시');
-  assert.ok(html.includes('AI가 노션 DB 규격으로 자동 변환해드려요'), '앰비언트 체크인 플레이스홀더 안내');
+  assert.ok(html.includes('>오늘 기록하기<'), '홈 체크인 헤더 사용자 언어 명시');
+  assert.ok(html.includes('id="captureInput" placeholder="예: '), '앰비언트 체크인 플레이스홀더 안내(사용자 언어 예시)');
   assert.ok(html.includes('id="captureLiveMeta"'), '1초 앰비언트 실시간 프리뷰 힌트 바 존재');
   assert.ok(html.includes('id="iosPwaSlot"'), 'iOS PWA 스마트 설치 배너 슬롯 존재');
 });
 
 check('compliance: 2026 차세대 UX 표준 (View Transitions, prefers-reduced-motion, 다이나믹 햅틱 프리셋) 탑재', () => {
   assert.ok(html.includes('prefers-reduced-motion'), 'prefers-reduced-motion 미디어 쿼리 존재');
-  assert.ok(html.includes('::view-transition-old(root)'), 'View Transitions CSS 루트 애니메이션 존재');
+  assert.ok(styleSrc.includes('::view-transition-old(root)'), 'View Transitions CSS 루트 애니메이션 존재');
   assert.ok(html.includes('document.startViewTransition'), 'setTab 내 View Transitions API 연동 존재');
   assert.ok(html.includes('HAPTIC_PATTERNS'), '다이나믹 햅틱 프리셋 딕셔너리 존재');
 });
@@ -2125,7 +2128,7 @@ check('compliance: 퍼널 계측(api/track.js) & WCAG AA 명도 대비 & OAuth �
   assert.ok(trackCode.includes('utm_landing'), 'utm_landing 허용');
 
   // 2. WCAG AA 명도 대비
-  assert.ok(html.includes('--ink-faint:#717596'), '기본 라이트 모드 ink-faint 4.5:1 이상(#717596) 적용');
+  assert.ok(styleSrc.includes('--ink-faint:#6B7684'), '기본 라이트 모드 ink-faint 4.5:1 이상(#6B7684, 4.55:1) 적용');
 
   // 3. OAuth 폴백 모달
   assert.ok(html.includes('로그인 심사 준비 중'), 'OAuth 미설정 시 우아한 안내 모달');
