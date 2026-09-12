@@ -2329,3 +2329,22 @@
 - **검증 결과**: 코드 변경 없음(조사만) · `npm test`(`node scripts/smoke-test.js`) 재실행해 기존 통과 상태 유지 확인 · `grep -rn "^<<<<<<<"` 코드 파일 0건 재확인.
 ---
 <<<<<<< HEAD
+
+
+## [2026-09-13 01:05] [E3] #TASK-ES-026 팀 목표 모임장 팀원 목표달성도 점검 시스템 구현 및 요구사항·작업계획서 정본 완결
+- **목표**: 사용자 직접 요청("팀 목표에서 모임장이 팀원들의 목표달성정도를 체크할 수 있는 기능과 화면구성, 모든 요소를 구현하는 요구사항 정의서와 작업계획서를 제작해.")에 따라, 본질 축 E3(동류 발견·소통) 및 E1(체크인 루프 연계)을 만족하는 모임장 점검 대시보드, 다차원 필터/정렬 바, 팀원 달성도 카드, 확인 도장 4종(🌟완벽해요, 🚀폭풍성장, 👏참잘했어요, 💪힘내요), 1초 원클릭 독려 넛지, 팀원 상세 점검 바텀시트 모달, 팀원 뷰 실시간 확인 도장 알림 배너, 정본 문서 2종(REQ, PLAN) 작성 및 코드 구현과 3자 동기화(노션·옵시디언·커맨드센터) 완결.
+- **수정/실행 내역**:
+  1. docs/rules/TICKETS.md: #TASK-ES-026 티켓 등록(본질 축 E3, 체감 가설, 상민님 직접 지시 근거).
+  2. docs/specs/REQ-TEAM-GOAL-MEMBER-PROGRESS.md: 요구사항 정의서(PRD/SRS) 정본 신규 제작.
+  3. docs/specs/PLAN-TEAM-GOAL-MEMBER-PROGRESS.md: 엔지니어링 구현 작업계획서 정본 신규 제작.
+  4. 옵시디언 볼트(03_작업흐름_SOP): REQ_팀목표_모임장_팀원달성도체크_요구사항정의서.md, PLAN_팀목표_모임장_팀원달성도체크_작업계획서.md 적재 및 노션 양방향 바인딩 완료.
+  5. js/team-leader-check.js: 팀 목표 모임장-팀원 목표달성도 점검 시스템 독립 모듈 신설(4대 도장 메타, calcGroupMembersProgress 헬퍼, 대시보드 렌더러, 도장/상세 모달, 넛지 핸들러).
+  6. index.html: js/team-leader-check.js 로드 및 renderTeamGoalsScreen 내 대시보드/피드백 배너 렌더 및 이벤트 핸들 연결(순증가 38줄, 모듈 분리 준수).
+  7. scripts/smoke-test.js: #TASK-ES-026 전용 컴플라이언스 및 집계 함수 스모크 테스트 2건 신설.
+- **발생한 문제 및 해결**:
+  - index.html 인라인 구현 시 pre-commit INDEX_GROWTH 한도(300줄) 초과 감지 -> js/team-leader-check.js 로 완벽히 모듈 분리하여 index.html 순증가를 38줄로 축소 및 아키텍처 정돈.
+- **검증 결과**:
+  - node scripts/smoke-test.js **198개 전수 통과 (0개 실패)**.
+  - node C:/dev/command-center/lib/task-link.js check 통과 (ok: true, errors: []).
+  - node C:/dev/command-center/lib/tri-sync.js check 통과 (ok: true, total: 462, linked: 462, rate: 100).
+---

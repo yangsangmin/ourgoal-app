@@ -695,6 +695,7 @@
 <script src="/js/customize.js"></script>
 <script src="js/streaks.js"></script>
 <script src="js/template-credit.js"></script>
+<script src="js/team-leader-check.js"></script>
 <script>
 (function(){
   "use strict";
@@ -9549,6 +9550,25 @@
       var isOwner = groupState(g.id).myRole === 'owner';
       var roleLabel = roleLabels[groupState(g.id).myRole || 'member'];
       var goals = g.teamGoals || [];
+      var teamLeaderDeps = {
+        mockGroups: MOCK_GROUPS,
+        getGroupState: groupState,
+        getProfile: function(){ return state.profile; },
+        getLevelGoals: getGroupLevelGoals,
+        canManage: canManageTeamGoals,
+        openModal: openModal,
+        closeModal: closeModal,
+        saveProfile: saveProfile,
+        toast: toast,
+        haptic: (typeof hapticFeedback === 'function') ? hapticFeedback : null,
+        onRefresh: renderTeamGoalsScreen
+      };
+      var leaderDashboardHtml = (canManage && window.OurgoalTeamLeaderCheck)
+        ? OurgoalTeamLeaderCheck.renderLeaderDashboardHtml(g, teamLeaderDeps)
+        : '';
+      var memberFeedbackBannerHtml = (!canManage && window.OurgoalTeamLeaderCheck)
+        ? OurgoalTeamLeaderCheck.renderMemberFeedbackBannerHtml(g, teamLeaderDeps)
+        : '';
 
       var leaderCrownHtml = isOwner ?
         '<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">' +
@@ -9628,6 +9648,8 @@
         '</div>';
 
       return '<div class="card" data-teamcard="'+g.id+'" style="margin-bottom:16px;">' +
+          leaderDashboardHtml +
+          memberFeedbackBannerHtml +
           '<div class="card-title-row" style="align-items:flex-start;margin-bottom:10px;">' +
             '<div style="flex:1;min-width:0;">' +
               leaderCrownHtml +
@@ -9660,6 +9682,22 @@
           '<div class="modal-actions"><button class="btn btn-primary btn-block" id="closeTeamGuideModal" type="button">확인</button></div>',
           function(sheet){ sheet.querySelector('#closeTeamGuideModal').addEventListener('click', closeModal); }
         );
+      });
+    }
+
+    if(window.OurgoalTeamLeaderCheck){
+      OurgoalTeamLeaderCheck.bindEvents(view, {
+        mockGroups: MOCK_GROUPS,
+        getGroupState: groupState,
+        getProfile: function(){ return state.profile; },
+        getLevelGoals: getGroupLevelGoals,
+        canManage: canManageTeamGoals,
+        openModal: openModal,
+        closeModal: closeModal,
+        saveProfile: saveProfile,
+        toast: toast,
+        haptic: (typeof hapticFeedback === 'function') ? hapticFeedback : null,
+        onRefresh: renderTeamGoalsScreen
       });
     }
 

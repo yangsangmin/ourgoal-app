@@ -2576,6 +2576,31 @@ check('KF-2: template_copies SQL — 멱등·RLS·봇 제외·구간 적립은 �
 
 
 
+check('compliance: [#TASK-ES-026] js/team-leader-check.js 가 존재하고 유효한 모듈 API를 노출한다', () => {
+  const modPath = path.join(__dirname, '..', 'js', 'team-leader-check.js');
+  assert.ok(fs.existsSync(modPath), '모듈 파일 존재');
+  const src = fs.readFileSync(modPath, 'utf8');
+  assert.ok(src.includes('OurgoalTeamLeaderCheck'), 'OurgoalTeamLeaderCheck 객체 노출');
+  assert.ok(src.includes('LEADER_STAMPS'), '4대 확인 도장 메타데이터 탑재');
+  assert.ok(src.includes('calcGroupMembersProgress'), '팀원 달성도 집계 함수 탑재');
+  assert.ok(src.includes('renderLeaderDashboardHtml'), '대시보드 렌더러 탑재');
+  assert.ok(src.includes('openLeaderStampSelectModal'), '확인 도장 선택 모달 탑재');
+  assert.ok(src.includes('openMemberProgressDetailModal'), '상세 점검 바텀시트 모달 탑재');
+  assert.ok(src.includes('bindEvents'), '이벤트 바인딩 함수 탑재');
+
+  const mod = require(modPath);
+  assert.ok(typeof mod.calcGroupMembersProgress === 'function', 'calcGroupMembersProgress 함수 제공');
+  assert.ok(typeof mod.renderLeaderDashboardHtml === 'function', 'renderLeaderDashboardHtml 함수 제공');
+  assert.ok(typeof mod.bindEvents === 'function', 'bindEvents 함수 제공');
+  assert.ok(mod.LEADER_STAMPS.perfect && mod.LEADER_STAMPS.growth, '도장 종류 완비');
+});
+
+check('compliance: [#TASK-ES-026] index.html 이 js/team-leader-check.js 를 로드하고 렌더 및 이벤트 핸들을 연결한다', () => {
+  assert.ok(html.includes('<script src="js/team-leader-check.js"></script>'), '스크립트 태그 탑재');
+  assert.ok(html.includes('OurgoalTeamLeaderCheck.renderLeaderDashboardHtml'), '대시보드 렌더 호출');
+  assert.ok(html.includes('OurgoalTeamLeaderCheck.renderMemberFeedbackBannerHtml'), '피드백 배너 렌더 호출');
+  assert.ok(html.includes('OurgoalTeamLeaderCheck.bindEvents'), '이벤트 바인딩 호출');
+});
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
