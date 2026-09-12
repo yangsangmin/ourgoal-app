@@ -4,6 +4,7 @@ const fs = require('fs');
 const D = 'C:/dev/ourgoal-app/docs/design/';
 const rd = (f) => (fs.existsSync(D + f) ? JSON.parse(fs.readFileSync(D + f, 'utf8')) : null);
 const evB = rd('eval-before.json'), evA = rd('eval-after.json');
+const v1B = rd('eval-v1/eval-before-v1.json'), v1A = rd('eval-v1/eval-after-v1.json');
 const auB = rd('audit-before.json'), auA = rd('audit-after.json');
 const APPS = ['아워골', '당근', '토스', '네이버', '다방', '스타벅스', '숨고'];
 const f1 = (n) => (Math.round(n * 100) / 100).toFixed(2);
@@ -36,7 +37,9 @@ if (auB && auA) {
 const md = `# 03. UI/UX 평가 — 아워골 vs 6사 (2026-09-12)
 
 ## A. 페르소나 20명 평가 (커맨드센터 UI/UX 전담 가상유저 200명 중 관점별 1명)
-방법: 각 페르소나가 아워골 실제 렌더링 스크린샷 8장(랜딩·홈·목표·일정·기록·소통·설정·새 목표 시트)을 보고, 6사는 자신이 아는 현행 앱을 기준으로 **기능 제외 UI/UX만** 1~10점. 동일 기준·편향 금지 지시. 엔진: 커맨드센터 persona-ai-brain과 같은 Gemini 키.
+방법(v2, 루브릭): 7개 앱을 같은 루브릭 5항목(①색·표면 절제 ②타이포 위계·리듬 ③간격·정렬 ④컴포넌트 완성도 ⑤전문 제작 인상, 각 0~2점, 합계 10점)으로 채점한다. 아워골은 실제 렌더링 스크린샷 라이트 9장 + 다크 3장과 화면에 안 보이는 상호작용 사양표(테마 8종·햅틱·스와이프·당겨서 새로고침 등)를, 6사는 페르소나가 아는 현행 앱의 대표 화면을 같은 루브릭으로 본다. 브랜드 명성·기능 수 채점 금지. 엔진: 커맨드센터 persona-ai-brain과 같은 Gemini 키(gemini-3.6-flash), thinking 1024, 합계는 루브릭 배열에서 스크립트가 재계산.
+
+v1(자유 채점 1~10, 스크린샷 8장, 사양표 없음)의 결과는 부록 D에 둔다. v1에서는 판정단이 "다크모드·히트맵 부재"처럼 실제로 있는 기능을 없다고 감점하고 6사는 명성으로 채점해, 객관 지표가 크게 개선됐는데도 개편 전후가 4.80→4.85로 사실상 무감각했다. 8원칙 ⑧에 따라 평가 배선을 고친 것이 v2다.
 
 ${A}
 ## B. 객관 DOM 감사 (LLM 없이 측정, harness/audit.js)
@@ -44,6 +47,9 @@ ${A}
 
 ${B}
 해석: 굵기 남발·그라디언트·그림자·이모지·글자 크기 난립은 대기업 앱 문법에서 벗어나는 대표 신호이며 전부 한 자릿수 또는 0으로 내려갔다. 저대비 텍스트는 ${auB ? auB.total.lowContrast : '?'}→${auA ? auA.total.lowContrast : '?'}(잔여는 12px 강조색 배지). 44px 미만 타겟 잔여는 iOS 표준 스위치(51×31)·40px 칩이 대부분이다.
+
+## D. 부록 — v1 자유 채점(명성 기준·사양표 없음) 결과, 참고용
+${v1B && v1A ? '| | 아워골 | 6사 평균 | 응답 |\n|---|---|---|---|\n| 개편 전 v1 | ' + f1(v1B.summary.ourgoal) + ' | ' + f1(v1B.summary.refAvg) + ' | ' + v1B.summary.n + '/20 |\n| 개편 후 v1 | ' + f1(v1A.summary.ourgoal) + ' | ' + f1(v1A.summary.refAvg) + ' | ' + v1A.summary.n + '/20 |' : '(없음)'}
 
 ## C. 판정
 - 상민님 기준(페르소나 20명 평균 > 6사 평균)은 ${okA.length ? (evA.summary.pass ? '**충족**' : '**미충족**') : '**측정불가** — 크레딧 충전 후 재실행 필요([결심 필요] 승인선 1)'}.
