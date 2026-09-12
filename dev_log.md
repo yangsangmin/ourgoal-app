@@ -2391,3 +2391,34 @@
   - `index.html` 순증가 126줄 (승인선 8 한도 300줄 대비 174줄 여유).
   - Tri-Sync 3자 동기화 무결성 100% (노션 페이지 `3d9598db-9096-817d-af23-e81cfa489d94` 생성 및 바인딩 완료).
 ---
+
+## [2026-09-13 02:30] [FIX] #TASK-ES-033 카카오/구글 로그인 충돌 및 세션 먹통 버그 근본 해결 & 자가 치유(Self-Healing) 파이프라인 구축
+- **목표**: 상민님 긴급 장애 제보("아워골 기존 사용자가 카카오로그인으로 사용하다가 구글로 로그인 시도 하니 먹통이 됨. 구글로도 안되고 카카오로도 로그인이 안되는 사태가 발생함.")에 따라, Supabase Auth 다중 OAuth 계정 충돌 및 커스텀 패스워드 signUp 꼼수로 인한 세션 파괴·먹통 현상을 완벽히 해결하고, 기존 카카오 계정 보호 및 안전한 로그인 복구 파이프라인을 구축.
+- **원인 분석**:
+  1. `handleGoogleUserSuccess`에서 Supabase Google Provider가 비활성화된 상태에서 임의 해시 비밀번호(`GAuth$...`)로 `signInWithPassword` 및 `signUp`을 호출하는 비표준 구조로 인해:
+     - 카카오로 이미 가입된 계정(`user@gmail.com`)의 기존 세션이 클라이언트에서 파괴됨.
+     - `signUp` 시 Supabase GoTrue가 `User already registered` 에러를 반환하자 단순 toast 후 `return;`으로 종료되어 화면이 정지(먹통).
+  2. 카카오 로그인으로 다시 시도했을 때:
+     - OAuth 리다이렉트 직후 `sb.auth.onAuthStateChange` 리스너 부재로 비동기 토큰 파싱 전 `getSession()`이 null을 반환하여 랜딩 화면으로 튕김.
+     - `checkRemoteSessionRevoked`에서 로그인 직후 토큰 동기화 지연 시 `performLogout()`이 불려 즉시 로그아웃되는 오탐 발생.
+     - 로컬 스토리지에 깨진 토큰이 남아 카카오 인증 콜백과 충돌.
+- **수정/실행 내역**:
+  1. `docs/rules/TICKETS.md`: `#TASK-ES-033` 긴급 FIX 티켓 등록.
+  2. `index.html` (`handleGoogleUserSuccess`):
+     - 로그인된 상태에서 구글 시도 시 기존 세션을 절대 파괴하지 않고 캘린더 연동 정보만 보관(`CASE 1`).
+     - 미로그인 상태에서 동일 이메일 계정 충돌 감지 시 오염된 세션을 정리하고 **[기존 카카오 가입 계정 안내]** 모달을 띄워 원클릭으로 카카오 로그인 전환 지원(`CASE 2`).
+     - 비-UUID 문자열 DB 저장 시도로 인한 외래키 쿼리 에러 원천 차단.
+  3. `index.html` (`checkRemoteSessionRevoked`):
+     - 로그인 직후 60초간 그레이스 피리어드(오탐 방지 가드) 적용 및 명백한 JWT 만료 에러일 때만 로그아웃하도록 방어.
+  4. `index.html` (`boot` & `restoreSessionAndEnter`):
+     - `sb.auth.onAuthStateChange` 전역 리스너 등록으로 카카오 OAuth 리다이렉트 후 토큰 파싱 시점 즉각 감지.
+     - OAuth 리다이렉트 콜백 감지 시 최대 1.2초(200ms x 6회) 토큰 파싱 대기 루프 탑재.
+     - OAuth 에러 발생 시 오염된 세션 자동 클린업.
+  5. `index.html` (UI 및 자가 치유):
+     - 랜딩 및 로그인 화면 하단에 `[로그인이 잘 안 되시나요? (세션 초기화·복구)]` 링크 탑재.
+     - 원클릭으로 목표 로컬 백업은 유지하면서 꼬인 인증 토큰만 안전하게 purge하는 `rescueLoginSession()` 함수 배선.
+  6. `scripts/smoke-test.js`: `#TASK-ES-033` 전수 검증 추가 (총 208개 통과).
+- **검증 결과**:
+  - `npm test` 및 `node scripts/smoke-test.js` **208개 전수 통과 (0개 실패)**.
+  - `node scripts/verify-oauth-providers.js` 실측 및 Supabase Auth 설정 대조 완료.
+---
