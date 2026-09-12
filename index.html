@@ -123,7 +123,10 @@
     <section class="screen active" id="screen-home">
       <div class="home-head-row" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">
         <h2 class="home-greet" id="homeGreeting" style="margin:0;">안녕하세요</h2>
-        <button type="button" class="btn btn-ghost btn-sm" id="btnCustomHomeLayout" style="font-size:.78125rem;padding:3px 9px;white-space:nowrap;color:var(--ink-soft);border-color:var(--rule);">나만의 홈 구성</button>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+          <button type="button" class="btn btn-ghost btn-sm" id="btnCustomHomeLayout" style="font-size:.78125rem;padding:3px 9px;white-space:nowrap;color:var(--ink-soft);border-color:var(--rule);">나만의 홈 구성</button>
+          <span style="font-size:.6875rem;color:var(--ink-faint);line-height:1;">필요없는 창 지우기</span>
+        </div>
       </div>
       <div id="levelBadgeRow"></div>
       <div id="todayGlancePill" class="today-glance-pill" role="button" tabindex="0" aria-label="오늘 요약" style="display:none;"></div>
@@ -187,7 +190,7 @@
 
       <!-- ⑤ 기록됨 · 나누기 -->
       <div class="home-actions">
-        <button class="btn btn-secondary" id="homeChallengeRoomBtn" type="button">챌린지 룸</button>
+        <button class="btn btn-secondary" id="homeChallengeRoomBtn" type="button">내 성장 확인하기</button>
         <button class="mz-btn" id="mzShareBtn" type="button">내 성장 자랑하기</button>
       </div>
     </section>
@@ -1297,10 +1300,9 @@
     return '<div class="level-badge" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;width:100%;box-sizing:border-box;">' +
       '<div style="display:flex;align-items:center;gap:8px;">' +
         avatarHtml +
-        '<span class="level-num" style="font-weight:800;font-size:.9375rem;color:var(--ink);">Lv.'+p.level+'</span>' +
         '<button type="button" class="btn btn-ghost btn-sm" id="btnOpenAvatarModal" style="font-size:.75rem;padding:2px 7px;border-color:var(--rule);color:var(--ink-soft);white-space:nowrap;">내 아바타 바꾸기</button>' +
       '</div>' +
-      '<div class="level-bar-wrap" style="flex:1;max-width:130px;margin:0 4px;">' +
+      '<div class="level-bar-wrap" style="flex:1;min-width:70px;margin:0 8px;">' +
         '<div class="mini-bar"><span style="width:'+Math.max(0,Math.min(100,p.pct))+'%;background:var(--violet);"></span></div>' +
       '</div>' +
       '<span class="level-xp-txt" style="font-size:.75rem;color:var(--ink-soft);white-space:nowrap;margin-left:auto;">'+p.into+' / '+p.span+' XP</span>' +
@@ -5549,7 +5551,7 @@
 
     var challengeBtn = document.getElementById('homeChallengeRoomBtn');
     if(challengeBtn){
-      challengeBtn.onclick = openChallengeRoomModal;
+      challengeBtn.onclick = function(){ setTab('records'); };
     }
     var mzBtn = document.getElementById('mzShareBtn');
     if(mzBtn){
@@ -5560,7 +5562,7 @@
     if(window.OurgoalCustomize) OurgoalCustomize.apply(state.profile.settings); /* 앱을 내맘대로! (#TASK-ES-020) */
   }
 
-  /* ============ 주간 잔디 & 몰입 리포트 요약 카드 (가상유저 요청 P7/P9) ============ */
+  /* ============ 최근 히트맵 요약 카드 (가상유저 요청 P7/P9) ============ */
   function renderHomeGrassSummary(){
     var card = document.getElementById('homeGrassSummaryCard');
     if(!card) return;
@@ -5583,8 +5585,8 @@
 
     card.innerHTML = '<div class="card" style="margin-top:14px;padding:12px 14px;background:var(--card);border:1px solid var(--rule);border-radius:12px;">'
       + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
-      + '  <span style="font-size:0.82rem;font-weight:700;color:var(--ink);">주간 잔디 & 몰입 리포트</span>'
-      + '  <span style="font-size:0.75rem;color:var(--ink-sub);">' + (streak > 0 ? ('' + streak + '일 연속 몰입 중') : '오늘의 첫 잔디를 심어보세요') + '</span>'
+      + '  <span style="font-size:0.82rem;font-weight:700;color:var(--ink);">최근 히트맵</span>'
+      + '  <span style="font-size:0.75rem;color:var(--ink-sub);">' + (streak > 0 ? ('' + streak + '일 연속 몰입 중') : '오늘의 첫 기록을 남겨보세요') + '</span>'
       + '</div>'
       + '<div style="display:flex;gap:5px;align-items:center;margin-bottom:10px;flex-wrap:wrap;">' + dotsHtml + '</div>'
       + '<div style="display:flex;gap:12px;font-size:0.76rem;color:var(--ink-sub);flex-wrap:wrap;">'
@@ -5612,7 +5614,7 @@
     var nowK = dateKey(new Date());
     var todayRecs = (state.profile.records || []).filter(function(r){ return r && r.startAt && dateKey(r.startAt) === nowK; });
     
-    var flameHtml = streak > 0 ? '<span class="streak-flame-pulse"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c4 0 7-3 7-7 0-3-2-5-3-6-1 2-2 3-3 3 0-3-1-6-4-8 0 4-4 6-4 11 0 4 3 7 7 7z"/></svg></span> <b>' + streak + '일 연속</b>' : '<b>첫 잔디 도전</b>';
+    var flameHtml = streak > 0 ? '<span class="streak-flame-pulse"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c4 0 7-3 7-7 0-3-2-5-3-6-1 2-2 3-3 3 0-3-1-6-4-8 0 4-4 6-4 11 0 4 3 7 7 7z"/></svg></span> <b>' + streak + '일 연속</b>' : '<b>첫 기록 도전</b>';
     var checkinHtml = '오늘 기록 <b>' + todayRecs.length + '회</b>';
     var focusHtml = stats.totalMinutes > 0 ? ('<b>' + Math.floor(stats.totalMinutes / 60) + '시간 ' + (stats.totalMinutes % 60) + '분</b> 몰입') : '<b>25분 집중</b> 추천';
 
@@ -7658,10 +7660,11 @@
   var btnCustomHome = document.getElementById('btnCustomHomeLayout');
   if(btnCustomHome){
     btnCustomHome.addEventListener('click', function(){
-      if(window.OurGoalCustomize && typeof window.OurGoalCustomize.open === 'function'){
-        window.OurGoalCustomize.open();
+      if(window.OurgoalCustomize && typeof window.OurgoalCustomize.open === 'function'){
+        OurgoalCustomize.open({ state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal, track: track });
       } else {
-        toast('나만의 홈 구성을 불러오는 중입니다...');
+        var settingOpenBtn = document.getElementById('homeLayoutOpenBtn');
+        if(settingOpenBtn) settingOpenBtn.click();
       }
     });
   }
@@ -8750,17 +8753,21 @@
     var restGoals = goals.slice(1);
     var isExpanded = !!state.missionAccordionOpen;
 
-    var restHtml = restGoals.length > 0 ?
+    var moreBtnHtml = restGoals.length > 0 ?
+      ('<button class="btn btn-ghost btn-sm mission-more-btn" id="btnToggleMissionAccordion" type="button" style="font-size:.6875rem;padding:1px 6px;color:var(--ink-soft);border-color:var(--rule);line-height:1.2;">' +
+        (isExpanded ? '접기 ▴' : ('외 ' + restGoals.length + '개 미션 더보기 ▾')) +
+      '</button>') : '';
+
+    var restHtml = (restGoals.length > 0) ?
       ('<div id="missionRestList" style="display:' + (isExpanded ? 'block' : 'none') + ';">' +
         restGoals.map(missionRowHtml).join('') +
-      '</div>' +
-      '<div style="text-align:center;margin-top:6px;">' +
-        '<button class="btn btn-ghost btn-sm mission-more-btn" id="btnToggleMissionAccordion" type="button" style="font-size:.75rem;padding:2px 10px;color:var(--ink-soft);border-color:var(--rule);">' +
-          (isExpanded ? '접기 ▴' : ('외 ' + restGoals.length + '개 미션 더보기 ▾')) +
-        '</button>' +
       '</div>') : '';
 
-    el.innerHTML = '<div class="mission-card"><div class="ct-label">오늘의 미션</div>' +
+    el.innerHTML = '<div class="mission-card" style="padding:10px 14px;">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+        '<div class="ct-label" style="margin:0;">오늘의 미션</div>' +
+        moreBtnHtml +
+      '</div>' +
       missionRowHtml(firstGoal) +
       restHtml +
     '</div>';

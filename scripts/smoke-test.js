@@ -3001,7 +3001,7 @@ check('compliance: [#TASK-ES-044] 홈·목표 12대 핵심 UX 개편 및 성장�
 
   // 4. (닉네임)님, 안녕하세요 우측 끝 '나만의 홈 구성' 버튼 및 모달 연동
   assert.ok(html.includes('id="btnCustomHomeLayout"'), '나만의 홈 구성 버튼 id 존재');
-  assert.ok(html.includes('window.OurGoalCustomize.open'), '홈 구성 커스터마이즈 모달 연동 확인');
+  assert.ok(html.includes('window.OurgoalCustomize.open'), '홈 구성 커스터마이즈 모달 연동 확인');
 
   // 5. 목표탭 4종 뷰 필터 버튼 (기본, 목표만, 마일스톤, 할일)
   assert.ok(html.includes('id="msViewToggle"'), '4종 뷰 필터 컨테이너 id 존재');
@@ -3045,6 +3045,38 @@ check('compliance: [#TASK-ES-044] 홈·목표 12대 핵심 UX 개편 및 성장�
   assert.ok(html.includes('id="personalGoalsEmptyGuideSlot"'), '개인목표 빈 상태 가이드 슬롯 존재');
   assert.ok(html.includes('renderPersonalGoalsEmptyGuideHtml'), '개인목표 활용가이드 렌더러 함수 존재');
   assert.ok(html.includes('id="btnShowPersonalGuideModal"'), '목표 화면 헤더 활용가이드 버튼 존재');
+});
+
+check('compliance: [#TASK-ES-045] 홈·기록 8대 핵심 UX 고밀도화 및 테마·홈구성 모달 정상화가 완벽히 구현되어 있다', () => {
+  // 1. 레벨 표시 중복 제거 및 게이지 바 확장
+  assert.strictEqual(html.includes('<span class="level-num"'), false, '레벨 배지 내 중복 Lv.X 텍스트 제거 확인');
+  assert.ok(html.includes('id="btnOpenAvatarModal"'), '내 아바타 바꾸기 버튼 유지 확인');
+
+  // 2. 오늘의 미션 더보기 버튼 헤더 인라인 이동
+  assert.ok(html.includes('<div class="ct-label" style="margin:0;">오늘의 미션</div>'), '오늘의 미션 라벨 헤더 플렉스 컨테이너');
+  assert.ok(html.includes('moreBtnHtml'), '미션 더보기 버튼 인라인 배치 연동');
+
+  // 3. 오늘 기록하기 입력창 크기 50% 축소 & 예시 문구 3pt 축소
+  assert.ok(styleSrc.includes('min-height:36px') && styleSrc.includes('.capture-card textarea::placeholder'), '입력창 높이 50% 축소 및 플레이스홀더 폰트 축소');
+
+  // 4. 주간잔디 ➔ 최근 히트맵 변경 및 잔디 단어 배제
+  assert.ok(html.includes('최근 히트맵'), '최근 히트맵 공식 타이틀 적용');
+  assert.strictEqual(html.includes('주간 잔디 & 몰입 리포트'), false, '주간 잔디 명칭 완전 제거');
+  assert.strictEqual(html.includes('첫 잔디 도전'), false, '첫 잔디 문구 제거');
+
+  // 5. 챌린지 룸 ➔ 내 성장 확인하기 교체 및 기록창(records) 연동
+  assert.ok(html.includes('>내 성장 확인하기<'), '내 성장 확인하기 버튼 라벨');
+  assert.ok(html.includes("challengeBtn.onclick = function(){ setTab('records'); };"), '내 성장 확인하기 클릭 시 기록 탭 이동 핸들러');
+
+  // 6. 테마 선택기 텍스트 색상 검은색(#111827) 전면 개편
+  assert.ok(styleSrc.includes('.theme-custom-input') && styleSrc.includes('#111827 !important'), '테마 인풋 검은색(#111827) 스타일 적용');
+  assert.ok(styleSrc.includes('.theme-leaf-chip') && styleSrc.includes('border-color: #D1D5DB !important'), '테마 칩 테두리 및 검은색 스타일 적용');
+
+  // 7. 나만의 홈 구성 버튼 밑에 안내문구 '필요없는 창 지우기' 추가
+  assert.ok(html.includes('필요없는 창 지우기'), '필요없는 창 지우기 안내문구 마크업 존재');
+
+  // 8. 나만의 홈 구성 클릭 시 OurgoalCustomize.open 정규 연동
+  assert.ok(html.includes('window.OurgoalCustomize.open') && html.includes('saveProfile: saveProfile'), 'OurgoalCustomize.open 정규 호출 인자 완비');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

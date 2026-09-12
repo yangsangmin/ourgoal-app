@@ -706,10 +706,10 @@
       THEME_ONTOLOGY.forEach(function(m){
         html += '<div class="theme-tree-major">';
         html += '<div class="theme-tree-head" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display===\'none\'?\'flex\':\'none\'">';
-        html += '<span>' + m.icon + ' ' + esc(m.label) + '</span><span style="font-size:12px;color:var(--text-2);">펼치기 ▾</span></div>';
+        html += '<span>' + m.icon + ' ' + esc(m.label) + '</span><span style="font-size:12px;color:#111827;">펼치기 ▾</span></div>';
         html += '<div class="theme-tree-content" style="display:none;">';
         m.subs.forEach(function(s){
-          html += '<div style="font-size:12px;font-weight:600;color:var(--text-2);margin-top:4px;">• ' + esc(s.label) + '</div><div class="theme-leaf-grid">';
+          html += '<div style="font-size:12px;font-weight:600;color:#111827;margin-top:4px;">• ' + esc(s.label) + '</div><div class="theme-leaf-grid">';
           s.items.forEach(function(it){
             var isFav = ts.favorites.some(function(f){ return f.themeId === it.id; });
             html += '<div class="theme-leaf-chip" data-theme-id="' + it.id + '"><span class="theme-chip-pick">' + (it.icon || '') + ' ' + esc(it.label) + '</span><span class="theme-star-icon ' + (isFav ? 'starred' : '') + '" data-star-id="' + it.id + '">' + (isFav ? '★' : '☆') + '</span></div>';
@@ -762,7 +762,7 @@
         } else {
           var rHtml = '';
           results.forEach(function(r){
-            rHtml += '<div class="theme-leaf-chip theme-search-item" data-res-id="' + r.id + '"><span>' + (r.icon || '') + ' ' + esc(r.label) + ' <small style="color:var(--text-2);font-size:11px;">(' + esc(r.majorLabel) + ')</small></span></div>';
+            rHtml += '<div class="theme-leaf-chip theme-search-item" data-res-id="' + r.id + '"><span>' + (r.icon || '') + ' ' + esc(r.label) + ' <small style="color:#4B5563;font-size:11px;">(' + esc(r.majorLabel) + ')</small></span></div>';
           });
           searchRes.innerHTML = rHtml;
           searchRes.querySelectorAll('.theme-search-item').forEach(function(item){
