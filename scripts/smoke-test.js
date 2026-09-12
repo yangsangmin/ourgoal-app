@@ -2986,24 +2986,6 @@ check('compliance: [#TASK-ES-038] 목표 탭 마일스톤 창 공간 활용 효�
   assert.ok(html.includes('meta-strip') && html.includes('id="goalResultBtn"'), '결과 입력 버튼 메타 스트립 인라인 흡수');
 });
 
-check('compliance: [#TASK-ES-039] 목표 탭 결과입력 1줄 슬림 캡슐화 및 버튼·요소 세로 간격 고밀도 최적화가 완비되어 있다', () => {
-  // 1. 결과 배지 단일 라인 포맷팅 (<br> 태그 제거) 검증
-  assert.ok(html.includes('+결과'), '미입력 상태 1줄 결과 버튼');
-  assert.ok(html.includes('기록완료'), '기록 완료 상태 1줄 텍스트');
-  assert.strictEqual(html.includes('결과<br>입력'), false, '결과입력 2줄 강제 개행 제거 확인');
-  assert.strictEqual(html.includes('기록<br>완료'), false, '기록완료 2줄 강제 개행 제거 확인');
-
-  // 2. 결과 버튼 슬림 캡슐 CSS 검증
-  assert.ok(styleSrc.includes('.result-btn') && styleSrc.includes('height:22px'), '결과 버튼 22px 슬림 캡슐 높이');
-
-  // 3. 마일스톤 행 패딩 및 내부 액션 버튼 초고밀도 Scoped 압축 검증
-  assert.ok(styleSrc.includes('.ms-row{background:var(--card);border-radius:0;padding:7px 10px;'), '마일스톤 행 패딩 7px 10px 압축');
-  assert.ok(styleSrc.includes('.ms-sub-meta-line .icon-btn') && styleSrc.includes('.task-meta-inline .icon-btn'), '마일스톤/할일 내부 버튼 Scoped 압축');
-
-  // 4. 필터 바 마진 압축 검증
-  assert.ok(html.includes("margin:4px 0 4px;"), '필터 바 마진 4px 축소');
-});
-
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

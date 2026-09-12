@@ -3020,13 +3020,13 @@
   }
   function resultBadgeHtml(r){
     var pct = resultPct(r);
-    if(!r || (!r.target && !r.result && !r.dbProperties && !r.pct && !r.summary)) return '<div class="result-btn">+결과</div>';
-    if(pct === null) return '<div class="result-btn has">기록완료</div>';
+    if(!r || (!r.target && !r.result && !r.dbProperties && !r.pct && !r.summary)) return '<div class="result-btn">결과<br>입력</div>';
+    if(pct === null) return '<div class="result-btn has">기록<br>완료</div>';
     var cls = pct>=100 ? 'has' : 'miss';
     if(r.target && r.result && r.unit !== '%'){
-      return '<div class="result-btn '+cls+'">'+r.result+'/'+r.target+' ('+pct+'%)</div>';
+      return '<div class="result-btn '+cls+'">'+r.result+'/'+r.target+'<br>'+pct+'%</div>';
     }
-    return '<div class="result-btn '+cls+'">달성 '+pct+'%</div>';
+    return '<div class="result-btn '+cls+'">달성률<br>'+pct+'%</div>';
   }
   function resultLineHtml(r){
     var pct = resultPct(r);
@@ -8846,7 +8846,7 @@
     '</button>';
 
     var msFilterBar = totalMs > 0 ?
-      '<div class="ms-filter-bar" style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin:4px 0 4px;flex-wrap:wrap;">' +
+      '<div class="ms-filter-bar" style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin:8px 0 6px;flex-wrap:wrap;">' +
         '<div class="format-toggle" id="msFilterToggle" style="max-width:280px;">' +
           '<div class="format-opt'+(state.msFilter==='all'?' active':'')+'" data-msfilter="all">전체 ('+totalMs+')</div>' +
           '<div class="format-opt'+(state.msFilter==='doing'?' active':'')+'" data-msfilter="doing">진행 ('+doingCount+')</div>' +

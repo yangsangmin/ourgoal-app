@@ -2601,32 +2601,13 @@
   - `index.html` 순증가: **+15줄** (+95, -80, 300줄 한도 압도적 준수).
 ---
 
-## [2026-09-13 06:10] [E1/E2] #TASK-ES-039 목표 탭 결과입력 1줄 슬림 캡슐화 및 버튼·요소 세로 간격 고밀도 최적화
-- **목표**: 상민님 지시("목표탭의 결과입력은 두줄말고 한줄로 해도 될 것 같은데? 그리고 지금 각 버튼마다세로간격이 너무 넓어서 창을 효과적으로 못쓰는 것 같아. 어떻게 고칠지 계획서 가져와")에 따라, 결과입력 버튼의 물리적 2줄 개행(<br>)을 슬림한 1줄 캡슐 배지(+결과, 기록완료, 100%)로 전면 개편하고, 마일스톤 카드·세부할일·인라인 버튼의 상하 패딩/마진/최소높이를 대폭 압축하여 수직 공간 효율을 극대화한다.
-- **핵심 개선 내역**:
-  1. **결과입력 버튼 1줄 슬림 캡슐화**:
-     - 기존: `결과<br>입력`, `기록<br>완료`, `달성률<br>100%` 등 강제 2줄 개행(높이 36px).
-     - 개선: `+결과`, `기록완료`, `달성 80%`, `10/10 (100%)` 등 슬림한 1줄 캡슐(높이 22px, padding 2px 8px).
-     - 버튼 높이 39% 축소로 마일스톤 및 할 일 행의 수직 비대화 원천 차단.
-  2. **마일스톤 카드 패딩 다이어트**:
-     - `.ms-row` 상하 패딩을 `12px 14px` ➔ `7px 10px`로 42% 축소.
-     - 마일스톤 카드 전체 높이 68px ➔ 44px (35% 공간 절감).
-  3. **인라인 액션 버튼 Scoped 압축**:
-     - 전역 접근성 규칙(32~44px)이 침범하던 마일스톤 메타 및 할 일 액션 버튼에 전용 Scoped CSS 적용:
-     - `.ms-sub-meta-line .icon-btn`, `.task-meta-inline .icon-btn`: `min-width: 22px !important; min-height: 22px !important;`
-     - `.att-add-btn`: `min-height: 20px !important; padding: 0 6px !important;`
-     - `.ms-priority-tag`: `min-height: 18px !important; padding: 1px 5px !important;`
-  4. **세부 할 일 행 및 컨트롤 바 여백 압축**:
-     - `.compact-task-row`: `min-height: 24px; padding: 2px 0;`
-     - `.ms-filter-bar`: `margin: 4px 0 4px;`
-     - `.goal-status-minibar`: `margin-bottom: 6px;`
-- **수정/실행 내역**:
-  1. `ui.css`: `.result-btn` 1줄 캡슐 스타일, `.ms-row` 7px 10px, Scoped 인라인 버튼 압축 스타일, 미니바/할일 여백 최적화.
-  2. `index.html`: `resultBadgeHtml` 1줄 포맷팅, 필터 바 마진 4px 축소 (`git diff --stat origin/main index.html`: 순증가 0줄로 300줄 한도 엄격 준수).
-  3. `scripts/smoke-test.js`: `#TASK-ES-039` 컴플라이언스 테스트 추가.
-  4. `docs/rules/TICKETS.md`: `#TASK-ES-039` 완료 처리.
+## [2026-09-13 07:10] [REVERT] #TASK-ES-039 상민님 지시에 따른 목표 탭 결과입력 1줄화 롤백 및 이전 상태(#TASK-ES-038) 완벽 복원
+- **목표**: 상민님 직접 지시("이전상태로 배포해")에 따라, 앞서 진행되었던 #TASK-ES-039(#159) 변경사항을 전면 롤백하고, 상민님께서 최종 검토·승인하셨던 #TASK-ES-038 상태(마일스톤 2단 그리드 및 세부할일 1줄 인라인화)로 100% 원복 배포한다.
+- **수행 내역**:
+  1. `index.html`: `resultBadgeHtml`의 결과 버튼 및 필터 바 마진을 #TASK-ES-038 시점으로 복원.
+  2. `ui.css`: `.result-btn`, `.ms-row` 패딩 및 인라인 버튼 Scoped 오버라이드를 #TASK-ES-038 시점으로 복원.
+  3. `scripts/smoke-test.js`: #TASK-ES-038 검증 체계로 복원 (213개 전수 통과).
+  4. `docs/rules/TICKETS.md`: #TASK-ES-039 롤백 상태 반영.
 - **검증 결과**:
-  - `npm test`: **214개 전수 100% 통과 (0개 실패)**.
-  - `tri-sync.js check`: **472/472 100% 무결성 확인**.
-  - `index.html` 순증가: **0줄** (+5, -5).
+  - `npm test`: **213개 전수 100% 통과 (0개 실패)**.
 ---
