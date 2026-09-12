@@ -2647,7 +2647,51 @@ check('compliance: [#TASK-ES-027] 팀 목표 마일스톤 및 세부할일 계�
   assert.ok(html.includes('t-tr-1a1'), '단체여행 1단계 태스크 ID');
 });
 
+check('compliance: [#TASK-ES-028] 계층형 테마(대·중·소) 온톨로지, 즐겨찾기 퀵바, 커스텀 테마 및 비강제 추천 시스템이 완벽히 구현되어 있다', () => {
+  // 1. js/theme-system.js 로드 및 온톨로지 검증
+  const themeSys = require('../js/theme-system.js').OurgoalThemeSystem;
+  assert.ok(themeSys, 'OurgoalThemeSystem 객체 존재');
+  assert.strictEqual(themeSys.ONTOLOGY.length, 8, '8대 대분류 온톨로지 존재');
+  assert.ok(Object.keys(themeSys.FLAT_MAP).length >= 80, '소분류 전수 온톨로지 맵핑 구비');
 
+  // 2. 기본 즐겨찾기 5선 검증
+  assert.strictEqual(themeSys.DEFAULT_FAVORITES.length, 5, '기본 즐겨찾기 5선 프리셋 구비');
+  const dummyProfile = { themeSettings: { favorites: [], customThemes: [] } };
+  const settings = themeSys.getThemeSettings(dummyProfile);
+  assert.strictEqual(settings.favorites.length, 5, '미설정 시 기본 즐겨찾기 5선 자동 세팅');
+
+  // 3. 커스텀 테마 생성 및 즐겨찾기 토글
+  const newCustom = themeSys.addCustomTheme(dummyProfile, '바디프로필D-30', '🔥', 'health');
+  assert.ok(newCustom && newCustom.id, '커스텀 테마 생성 완료');
+  assert.strictEqual(newCustom.label, '바디프로필D-30', '커스텀 테마 이름 매핑');
+  const added = themeSys.toggleFavorite(dummyProfile, newCustom);
+  assert.strictEqual(added, true, '커스텀 테마 즐겨찾기 추가');
+  assert.strictEqual(dummyProfile.themeSettings.favorites.length, 6, '즐겨찾기 6개로 증가');
+
+  // 4. 비강제 스마트 추천기 검증
+  const sugRunning = themeSys.suggestTheme('오늘 아침 5km 조깅 완주');
+  assert.ok(sugRunning, '러닝 키워드 추천 반환');
+  assert.strictEqual(sugRunning.label, '조깅/러닝', '러닝 소분류 라벨');
+  const sugReading = themeSys.suggestTheme('독서 1시간');
+  assert.ok(sugReading, '독서 키워드 추천 반환');
+
+  // 5. 체크인 테마 페이로드 빌더 하위 호환성 검증
+  const payload = themeSys.buildCheckinThemePayload(sugRunning);
+  assert.strictEqual(payload.theme, 'workout', '기존 5대 테마 하위 호환 workout 매핑');
+  assert.strictEqual(payload.subTheme, '조깅/러닝', '세부 소분류 라벨 보존');
+  assert.ok(payload.themeMetadata && payload.themeMetadata.isUserSelected, '사용자 선택 메타데이터');
+
+  // 6. index.html 마크업 및 스크립트 로드 검증
+  assert.ok(html.includes('js/theme-system.js'), 'index.html에 js/theme-system.js 스크립트 로드');
+  assert.ok(html.includes('id="captureThemeQuickBar"'), '즐겨찾기 퀵바 컨테이너 존재');
+  assert.ok(html.includes('id="themeSelectorModal"'), '테마 선택 바텀시트 모달 존재');
+  assert.ok(html.includes('id="customThemeInput"'), '나만의 테마 입력 필드 존재');
+
+  // 7. api/feedback.js 동적 프롬프트 인젝터 검증
+  const feedbackCode = fs.readFileSync(path.join(__dirname, '..', 'api', 'feedback.js'), 'utf8');
+  assert.ok(feedbackCode.includes('themeHierarchy'), 'feedback.js에 themeHierarchy 수용 로직 구비');
+  assert.ok(feedbackCode.includes('dynamicThemeLine'), 'feedback.js에 동적 테마 코칭 지침 인젝터 구비');
+});
 
 check('compliance: [#TASK-ES-029] 팀 목표 템플릿 개설·체험 분리 및 하이브리드 편집 시스템이 완벽히 구현되어 있다', () => {
   // 1. 가이드 템플릿 개설 및 안전 체험 버튼 분리
@@ -2778,6 +2822,7 @@ check('compliance: [#TASK-ES-031] 기록 탭 3분할 세그먼트·미니 펄스
   assert.ok(styleSrc.includes('.rec-accordion-card') && styleSrc.includes('.rec-acc-body'), '계층형 아코디언 CSS');
 });
 console.log(passed + '개 통과, ' + failures + '개 실패');
+
 if (failures > 0) {
   process.exit(1);
 }

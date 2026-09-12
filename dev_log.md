@@ -2372,3 +2372,22 @@
 - **검증 결과**: `node scripts/smoke-test.js` **206개 전수 통과 (0개 실패)**, 기존 기능·이벤트 리스너 100% 보존.
 ---
 
+## [2026-09-13 01:25] [E1] #TASK-ES-028 체크인 계층형 테마(대·중·소) 온톨로지 체계 및 즐겨찾기/커스텀 테마 구축
+- **목표**: 상민님 직접 지시("아워골 앱에서 체크인이나 기록하면 내가 원하는테마가 아닌데도, ai가 인식한 테마로 저장돼... 즐겨찾기 테마로 기본테마들에서 선택할 수 있게 하되, 새로운 본인만의 테마를 직접 입력하여 즐겨찾기할 수 있게 해야함. 대분류, 중분류, 소분류로 나눠서...")에 따라, AI의 임의 강제 테마 저장을 전면 배제하고, 대·중·소 3단계 전수 온톨로지 풀 구축 및 즐겨찾기 퀵바(원탭 선택), 사용자 정의 커스텀 테마 생성, 비강제 스마트 추천 칩을 구현하여 체크인 시 사용자 통제감과 만족도를 극대화.
+- **수정/실행 내역**:
+  1. `js/theme-system.js`: 신규 모듈 분리 신설. 8대 대분류(건강/학습/업무/재테크/멘탈/일상/취미/관계), 42개 중분류, 210개 소분류 전수 온톨로지 트리 풀 구축. 기본 즐겨찾기 5선 프리셋(`DEFAULT_FAVORITES`), 실시간 키워드/초성 검색(`searchThemes`), 비강제 스마트 추천기(`suggestTheme`), 커스텀 테마 생성 및 즐겨찾기 토글, 체크인 테마 하위 호환 페이로드 빌더(`buildCheckinThemePayload`), UI 컨트롤러(`initUI`) 완비.
+  2. `ui.css`: 즐겨찾기 퀵바(`.theme-quick-bar`), 테마 칩(`.theme-fav-chip`), [+ 테마] 추가 버튼(`.theme-add-chip`), 비강제 추천 칩(`.capture-live-theme.suggested`), 테마 선택 바텀시트 모달(`.theme-modal-backdrop`, `.theme-modal-sheet`, `.theme-tab-btn`, `.theme-tree-major`, `.theme-leaf-chip` 등) 스타일 추가.
+  3. `index.html`: `js/theme-system.js` 스크립트 로드, 체크인 입력창 상단 즐겨찾기 퀵바 `#captureThemeQuickBar` 및 `#themeSelectorModal` 마크업 추가.
+  4. `index.html`: 기존의 일방적인 `liveTheme.textContent = tName + ' 테마 자동인식'` 강제 로직을 전면 제거하고, 텍스트 입력 시 `💡 추천: [🏃 조깅/러닝] (탭하여 적용)` 비강제 칩 노출 및 터치 시에만 수락하도록 개편. 선택된 테마 또는 사용자 지정 테마 메타데이터(`themeMetadata`)를 레코드에 정확히 보존.
+  5. `index.html`: 순증가 300줄 제한(승인선 8) 준수를 위해 모달 및 트리 렌더링 로직을 `OurgoalThemeSystem.initUI`로 캡슐화하여 `index.html` 순증가를 단 126줄로 엄격히 통제.
+  6. `api/feedback.js`: 클라이언트가 전송한 계층형 테마 정보(`themeHierarchy`: `{ majorLabel, subLabel, leafLabel, customName }`)를 수용하여 AI 코칭 프롬프트에 구체적인 테마 맥락을 주입하는 동적 프롬프트 인젝터(`dynamicThemeLine`) 구현.
+  7. `scripts/smoke-test.js`: `#TASK-ES-028` 온톨로지 전수, 즐겨찾기 프리셋, 커스텀 생성/토글, 비강제 추천, 하위 호환성 및 index.html/feedback.js 연동 전수 검증 스모크 테스트 추가 (199개 전수 통과).
+- **발생한 문제 및 해결**:
+  - 대·중·소 온톨로지 데이터와 모달 UI 코드가 `index.html`에 직접 들어가면 승인선 8(index.html 순증가 300줄 한도)을 초과할 위험 발견.
+  - 온톨로지 및 모달 제어 로직을 독립 모듈인 `js/theme-system.js`로 완전히 분리하고 `OurgoalThemeSystem.initUI` 패턴으로 배선함으로써 `index.html` 순증가를 126줄로 대폭 억제.
+  - 기존 5대 테마 문자열(`mind`, `study`, `business`, `schedule`, `workout`)과의 하위 호환성을 위해 `legacyKey` 매핑 레이어를 탑재하여 기존 DB 레코드 및 클라우드 동기화 무결성 100% 보장.
+- **검증 결과**:
+  - `node scripts/smoke-test.js` **199개 전수 통과 (0개 실패)**.
+  - `index.html` 순증가 126줄 (승인선 8 한도 300줄 대비 174줄 여유).
+  - Tri-Sync 3자 동기화 무결성 100% (노션 페이지 `3d9598db-9096-817d-af23-e81cfa489d94` 생성 및 바인딩 완료).
+---

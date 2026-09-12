@@ -1059,3 +1059,225 @@ input:focus,select:focus,textarea:focus{background:var(--surface-2);}
 [data-theme="black"] .card,[data-theme="dark"] .card,[data-theme="black"] .goal-chip,[data-theme="dark"] .goal-chip{background:var(--card);}
 [data-theme="black"] .comm-subtabs,[data-theme="dark"] .comm-subtabs{background:var(--bg);}
 [data-theme="black"] select,[data-theme="dark"] select,[data-theme="dark-space"] select,[data-theme="glowing-space"] select,[data-theme="deep-sea"] select,[data-theme="sunset-beach"] select,[data-theme="urban-city"] select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23AEB4BC' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");}
+
+/* ============ 24. 계층형 테마 & 즐겨찾기 시스템 (#TASK-ES-028) ============ */
+.theme-quick-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px 0 10px;
+  margin-bottom: 2px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.theme-quick-bar::-webkit-scrollbar { display: none; }
+.theme-fav-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-2, #888);
+  background: var(--surface-2, rgba(255,255,255,0.06));
+  border: 1px solid var(--line, rgba(255,255,255,0.1));
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+.theme-fav-chip:active { transform: scale(0.96); }
+.theme-fav-chip.active {
+  color: #fff;
+  background: var(--primary, #3b82f6);
+  border-color: var(--primary, #3b82f6);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
+  font-weight: 600;
+}
+.theme-add-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--primary, #3b82f6);
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px dashed rgba(59, 130, 246, 0.4);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.theme-add-chip:hover { background: rgba(59, 130, 246, 0.15); }
+.capture-live-theme.suggested {
+  color: var(--primary, #3b82f6);
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  cursor: pointer;
+  animation: pulse-soft 2s infinite;
+}
+.capture-live-theme.active {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.82; }
+}
+
+/* 바텀시트 모달 스타일 */
+.theme-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.theme-modal-sheet {
+  background: var(--card, #1e1e24);
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.4);
+  animation: slideUpModal 0.22s ease-out;
+  overflow: hidden;
+}
+@keyframes slideUpModal {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.theme-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 12px;
+  border-bottom: 1px solid var(--line, rgba(255,255,255,0.08));
+}
+.theme-modal-header h3 { margin: 0; font-size: 17px; font-weight: 700; color: var(--text, #fff); }
+.theme-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--text-2, #888);
+  cursor: pointer;
+  padding: 0 4px;
+}
+.theme-modal-tabs {
+  display: flex;
+  background: var(--surface-2, rgba(255,255,255,0.04));
+  padding: 4px 16px;
+  gap: 8px;
+  border-bottom: 1px solid var(--line, rgba(255,255,255,0.08));
+}
+.theme-tab-btn {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--text-2, #888);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+.theme-tab-btn.active {
+  color: var(--primary, #3b82f6);
+  border-bottom-color: var(--primary, #3b82f6);
+}
+.theme-modal-body {
+  padding: 16px 20px 24px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  max-height: calc(85vh - 130px);
+}
+.theme-panel { display: flex; flex-direction: column; gap: 14px; }
+.theme-custom-field { display: flex; flex-direction: column; gap: 6px; }
+.theme-custom-field label { font-size: 12.5px; font-weight: 600; color: var(--text-2, #aaa); }
+.theme-custom-input {
+  width: 100%;
+  padding: 11px 13px;
+  border-radius: 10px;
+  border: 1px solid var(--line, rgba(255,255,255,0.15));
+  background: var(--surface-2, rgba(255,255,255,0.05));
+  color: var(--text, #fff);
+  font-size: 14px;
+  box-sizing: border-box;
+}
+.theme-emoji-picker {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0;
+  scrollbar-width: none;
+}
+.theme-emoji-btn {
+  font-size: 20px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--surface-2, rgba(255,255,255,0.06));
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.theme-emoji-btn.active {
+  border-color: var(--primary, #3b82f6);
+  background: rgba(59, 130, 246, 0.2);
+}
+.theme-search-box { margin-bottom: 12px; }
+.theme-tree-major {
+  border: 1px solid var(--line, rgba(255,255,255,0.08));
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.theme-tree-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--surface-2, rgba(255,255,255,0.03));
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13.5px;
+}
+.theme-tree-content {
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--card, #1e1e24);
+  border-top: 1px solid var(--line, rgba(255,255,255,0.05));
+}
+.theme-leaf-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.theme-leaf-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 12px;
+  background: var(--surface-2, rgba(255,255,255,0.05));
+  border: 1px solid var(--line, rgba(255,255,255,0.08));
+  color: var(--text, #ddd);
+  cursor: pointer;
+}
+.theme-leaf-chip:hover { border-color: var(--primary, #3b82f6); }
+.theme-leaf-chip .theme-star-icon {
+  color: var(--text-2, #666);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0 2px;
+}
+.theme-leaf-chip .theme-star-icon.starred { color: #f59e0b; }
