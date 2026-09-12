@@ -2422,3 +2422,34 @@
   - `npm test` 및 `node scripts/smoke-test.js` **208개 전수 통과 (0개 실패)**.
   - `node scripts/verify-oauth-providers.js` 실측 및 Supabase Auth 설정 대조 완료.
 ---
+
+## [2026-09-13 02:46] [FIX] #TASK-ES-033 카카오/구글 로그인 충돌·먹통 버그 2차 정밀 해결 및 상민클론 문구 완전 삭제
+- **목표**: 상민님 2차 지시("아직도 안돼. 다시 원인 파악 제대로하고 해결해. 그리고 로그인창에서 상민클론 원격 지휘 파이프라인 가동중 글자 삭제해")에 따라 카카오 사용자의 구글/카카오 로그인 불능 먹통 현상의 런타임 5대 근본 원인을 원천 해결하고, 로그인창의 상민클론 문구를 완전 삭제한다.
+- **근본 원인 정밀 규명**:
+  1. `enterApp()` 내 `landingScreen` 은폐 누락: `enterApp()`에서 `authScreen`만 숨기고 `#landingScreen`(`min-height: 100vh; display: flex;`) 은폐가 누락되어, `#appShell.active`가 켜져도 사용자는 화면 상단에 떠 있는 랜딩 화면만 보게 되어 먹통으로 인식.
+  2. `startOAuthLogin('kakao')` 전 오염 세션 미정리로 인한 Supabase Identity 계정 충돌: 구글 가입 시도 등으로 로컬에 세션이 남은 상태에서 카카오 OAuth를 시도하면 GoTrue가 이미 로그인된 유저에 카카오 Identity Linking을 시도하다가 `identity_already_exists` 에러로 인가를 원천 거부함.
+  3. 미로그인 구글 로그인 시 비표준 가짜 비밀번호 `signUp`의 치명성: Supabase 콘솔에서 Google Provider가 미등록된 상태에서 가짜 비밀번호로 `signUp`을 시도하면 기존 카카오 계정과 동일 이메일 충돌 에러가 발생하거나 데이터가 없는 별개 깡통 계정이 생성되어 세션을 파괴함.
+  4. `checkRemoteSessionRevoked` 오탐 강제 로그아웃: 로컬스토리지의 과거 `remoteLogoutTimestamp`와 대조 시 방금 로그인한 세션을 즉시 `performLogout()`시켜버림.
+  5. `상민클론 원격 지휘 파이프라인 가동 중` 문구 배포 미반영: `index.html:20413`에 남아있던 문구 삭제 필요.
+- **수정/실행 내역**:
+  1. `index.html` (`enterApp`):
+     - 진입 즉시 `landingScreen.style.display = 'none'` 및 `authScreen.style.display = 'none'` 강제 적용.
+     - `state.profile` 널 방어 및 모든 렌더링 호출(renderProBadge, checkStreakFreeze, renderAll 등)을 개별 try-catch로 감싸 어떤 UI 예외에도 앱 진입이 차단되지 않도록 보장.
+  2. `index.html` (`startOAuthLogin`):
+     - 카카오 OAuth 진입 전 기존 로컬 오염 세션을 선제적으로 `await sb.auth.signOut()`하여 깨끗한 상태에서 카카오 인가 요청 (Identity 충돌 원천 차단).
+     - `setDeviceLoginTime(Date.now())` 사전 동기화.
+  3. `index.html` (`handleGoogleUserSuccess`):
+     - Supabase Auth를 오염시키는 비표준 가짜 비밀번호 `signUp` 로직 완전 제거.
+     - 미로그인 구글 시도 시 로컬 세션을 즉시 안전 정리하고, 친절한 모달 안내와 함께 "카카오로 바로 시작하기" 원클릭 인계 버튼을 제공.
+  4. `index.html` (`restoreSessionAndEnter`):
+     - `Never Block Enter` 원칙 적용: `loadProfile` 일시 지연/오류 시에도 `defaultProfile`로 100% `enterApp()` 진입 보장.
+     - 로그인 직후 타임스탬프 동기화 및 `checkRemoteSessionRevoked` 로그인 직후 실행 방지.
+  5. `index.html` (`sb.auth.onAuthStateChange`):
+     - 843라인 `createClient` 직후 최상단에 전역 리스너 및 `_pendingAuthSession` 버퍼를 배치하여 초기 OAuth `SIGNED_IN` 이벤트를 100% 캐치.
+  6. `index.html` (문구 삭제):
+     - `상민클론 원격 지휘 파이프라인 가동 중` HTML div 및 주석 완전 삭제.
+- **검증 결과**:
+  - `npm test` 209개 전수 100% 통과 (0개 실패).
+  - `essence-gate.js --pre-commit` 무결성 검증 통과 (금지 패턴 0건, index.html 순증가 42줄로 300줄 한도 충족).
+  - "상민클론" 단어 파일 내 0건 검증 완료.
+---

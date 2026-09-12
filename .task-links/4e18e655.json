@@ -2,20 +2,19 @@
   "taskId": "#TASK-ES-033",
   "projectId": "ourgoal",
   "owner": "Antigravity",
-  "goal": "기존 카카오 로그인 사용자가 구글 로그인 시도 시 세션 파괴 및 로그인 불능 먹통 버그 해결",
+  "goal": "기존 카카오 로그인 사용자가 구글 로그인 시도 시 세션 파괴 및 로그인 불능 먹통 버그 해결 및 상민클론 문구 완전 삭제",
   "planPath": "C:/dev/ourgoal-app/.codex/작업계획서/4e18e655.md",
   "phase": "완료",
-  "nextAction": "상민님께 원인 분석 및 해결 결과 보고 (PR 병합 대기)",
+  "nextAction": "커밋, PR 생성 및 상민님께 보고",
   "commandCenterParent": "3d4598db-9096-810c-80d7-e79798005378",
   "projectTowerParent": "3d4598db-9096-815f-8653-d99eb9ea5703",
   "evidence": [
     "상민님 직접 지시: 기존 사용자가 카카오로그인으로 사용하다가 구글로 로그인 시도 하니 먹통이 됨. 구글로도 안되고 카카오로도 로그인이 안되는 사태 발생",
+    "상민님 2차 지시: 아직도 안돼. 다시 원인 파악 제대로하고 해결해. 그리고 로그인창에서 상민클론 원격 지휘 파이프라인 가동중 글자 삭제해",
     "TICKETS.md #TASK-ES-033 등록 완료",
-    "scripts/verify-oauth-providers.js 실측: Kakao 활성, Google 미활성 확인",
-    "index.html: handleGoogleUserSuccess 로그인 상태 세션 보존(CASE 1) 및 동일 이메일 충돌 시 카카오 원클릭 안내 모달(CASE 2) 배선",
-    "index.html: checkRemoteSessionRevoked 60초 오탐 방지 가드 및 onAuthStateChange/OAuth 리다이렉트 대기 루프 탑재",
-    "index.html: 자가 치유 rescueLoginSession 및 랜딩/인증 UI 링크 탑재",
-    "smoke-test.js: 208개 전수 100% 통과 (npm test 완료)"
+    "5대 결함 규명 및 원천 해결: (1) enterApp 랜딩 은폐 및 프로필 널 방어 (2) startOAuthLogin 진입 시 오염 세션 선제적 signOut으로 카카오 OAuth 링크 충돌 원천 차단 (3) handleGoogleUserSuccess 가짜 비밀번호 signUp 제거 및 카카오 원클릭 안전 인계 모달 고도화 (4) restoreSessionAndEnter Never Block Enter(defaultProfile 폴백) 및 checkRemoteSessionRevoked 로그인 직후 오탐 차단 (5) 상민클론 원격 지휘 문구 파일 내 0건 완전 삭제",
+    "npm test: 209개 전수 100% 통과 (0개 실패)",
+    "essence-gate pre-commit 통과: index.html 순증가 42줄(300줄 한도 충족), 금지 패턴 0건"
   ],
   "remote": {
     "projectTower": {
