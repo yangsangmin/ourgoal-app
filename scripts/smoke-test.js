@@ -2574,7 +2574,164 @@ check('KF-2: template_copies SQL — 멱등·RLS·봇 제외·구간 적립은 �
   assert.ok(!/drop\s+table|truncate|delete\s+from/i.test(sql), 'DROP/TRUNCATE/DELETE 없음');
 });
 
+check('compliance: [#TASK-ES-025] 팀 목표 예시 및 추천 템플릿에 회사 워크숍과 단체여행 시나리오가 완벽히 구현되어 있다', () => {
+  // 1. 가이드 내 회사 워크숍 및 단체여행 탭과 예시 패널
+  assert.ok(html.includes('data-tgexampletab="workshop"'), '가이드 내 회사 워크숍 탭');
+  assert.ok(html.includes('data-tgexampletab="travel"'), '가이드 내 단체 여행 탭');
+  assert.ok(html.includes('data-tgexampletab="fitness"'), '가이드 내 운동 크루 탭');
+  assert.ok(html.includes('id="tgExampleWorkshop"'), '회사 워크숍 예시 패널');
+  assert.ok(html.includes('id="tgExampleTravel"'), '단체 여행 예시 패널');
+  assert.ok(html.includes('id="tgExampleFitness"'), '운동 크루 예시 패널');
+  assert.ok(html.includes('2026 하반기 전사 전략 워크숍 TF'), '워크숍 모임명');
+  assert.ok(html.includes('제주 3박4일 단체 힐링여행'), '단체여행 모임명');
+  assert.ok(html.includes('function wireTeamGoalsGuideEvents('), '가이드 탭 이벤트 위임 함수 구비');
 
+  // 2. MOCK_GROUPS 프리셋 및 팀 목표 탑재
+  assert.ok(html.includes("id:'g-workshop'"), '워크숍 프리셋 모임 ID');
+  assert.ok(html.includes("id:'g-travel'"), '단체여행 프리셋 모임 ID');
+  assert.ok(html.includes("id:'tg-ws-1'"), '워크숍 팀 목표 ID');
+  assert.ok(html.includes("id:'tg-tr-1'"), '단체여행 팀 목표 ID');
+
+  // 3. getGroupLevelGoals 맞춤 조별 목표 생성
+  assert.ok(html.includes("isWorkshop"), '수준별 조 워크숍 판정 로직');
+  assert.ok(html.includes("isTravel"), '수준별 조 여행 판정 로직');
+  assert.ok(html.includes("A조 (기획·운영 TF)"), '워크숍 A조');
+  assert.ok(html.includes("B조 (프로그램·레크 TF)"), '워크숍 B조');
+  assert.ok(html.includes("C조 (물류·지원 TF)"), '워크숍 C조');
+  assert.ok(html.includes("A조 (동선·차량 조)"), '여행 A조');
+  assert.ok(html.includes("B조 (맛집·카페 조)"), '여행 B조');
+  assert.ok(html.includes("C조 (총무·촬영 조)"), '여행 C조');
+
+  // 4. 모임 내 팀 목표 추가 템플릿
+  assert.ok(html.includes('id="tplGoalWorkshop"'), '팀 목표 워크숍 1초 템플릿 버튼');
+  assert.ok(html.includes('id="tplGoalTravel"'), '팀 목표 단체여행 1초 템플릿 버튼');
+
+  // 5. 새 모임 개설 템플릿
+  assert.ok(html.includes('id="tplWorkshop"'), '모임 개설 워크숍 템플릿 버튼');
+  assert.ok(html.includes('id="tplTravel"'), '모임 개설 단체여행 템플릿 버튼');
+
+  // 6. AI 로컬 에이전트 폴백 마일스톤 생성 검증
+  const { localGoalAgentFallback } = require('../api/goalagent.js');
+  const wsRes = localGoalAgentFallback('하반기 전사 워크숍 기획');
+  assert.ok(wsRes.ops[0].data.milestones.length >= 3, '워크숍 3단계 마일스톤 생성');
+  assert.ok(wsRes.ops[0].data.milestones[0].title.includes('워크숍'), '워크숍 키워드 반영');
+
+  const trRes = localGoalAgentFallback('제주도 단체여행 코스 준비');
+  assert.ok(trRes.ops[0].data.milestones.length >= 3, '단체여행 3단계 마일스톤 생성');
+  assert.ok(trRes.ops[0].data.milestones[0].title.includes('여행'), '여행 키워드 반영');
+});
+
+check('compliance: [#TASK-ES-027] 팀 목표 마일스톤 및 세부할일 계층형 접기·펼치기(아코디언)가 구현되어 있다', () => {
+  // 1. 가이드 예시 카드 마일스톤 접기 및 세부할일 아코디언 버튼
+  assert.ok(html.includes('data-tgfoldms="ws"'), '워크숍 마일스톤 접기 버튼');
+  assert.ok(html.includes('data-tgfoldms="tr"'), '단체여행 마일스톤 접기 버튼');
+  assert.ok(html.includes('data-tgfoldms="ft"'), '운동크루 마일스톤 접기 버튼');
+  assert.ok(html.includes('data-tgtoggletasks="ws1"'), '워크숍 1단계 세부할일 토글 버튼');
+  assert.ok(html.includes('data-tgtoggletasks="tr1"'), '단체여행 1단계 세부할일 토글 버튼');
+  assert.ok(html.includes('data-tgtoggletasks="ft1"'), '운동크루 1단계 세부할일 토글 버튼');
+  assert.ok(html.includes('id="tgTasks_ws1"'), '워크숍 1단계 세부할일 컨테이너');
+  assert.ok(html.includes('id="tgTasks_tr1"'), '단체여행 1단계 세부할일 컨테이너');
+
+  // 2. wireTeamGoalsGuideEvents에 접기/펼치기 이벤트 바인딩 존재
+  assert.ok(html.includes("container.querySelectorAll('[data-tgtoggletasks]')"), '세부할일 토글 이벤트 바인딩');
+  assert.ok(html.includes("container.querySelectorAll('[data-tgfoldms]')"), '마일스톤 접기 이벤트 바인딩');
+
+  // 3. 실제 팀 목표 화면(renderTeamGoalsScreen) 마일스톤 및 세부할일 아코디언 속성
+  assert.ok(html.includes('data-tgfoldlist='), '실제 팀 목표 마일스톤 접기 속성');
+  assert.ok(html.includes('data-tgtaskbox='), '실제 팀 목표 세부할일 박스 속성');
+  assert.ok(html.includes('data-tgtoggletask='), '실제 팀 목표 세부할일 체크 속성');
+  assert.ok(html.includes('data-tgaddtask='), '실제 팀 목표 세부할일 추가 속성');
+
+  // 4. MOCK_GROUPS 워크숍 및 단체여행에 세부할일(tasks) 데이터 탑재 확인
+  assert.ok(html.includes('t-ws-1a1'), '워크숍 1단계 태스크 ID');
+  assert.ok(html.includes('t-tr-1a1'), '단체여행 1단계 태스크 ID');
+});
+
+
+
+check('compliance: [#TASK-ES-029] 팀 목표 템플릿 개설·체험 분리 및 하이브리드 편집 시스템이 완벽히 구현되어 있다', () => {
+  // 1. 가이드 템플릿 개설 및 안전 체험 버튼 분리
+  assert.ok(html.includes('data-tgtplgroup="workshop"'), '워크숍 템플릿으로 개설 버튼');
+  assert.ok(html.includes('data-tgtplgroup="travel"'), '단체여행 템플릿으로 개설 버튼');
+  assert.ok(html.includes('data-tgtplgroup="fitness"'), '운동크루 템플릿으로 개설 버튼');
+  assert.ok(html.includes('data-tgquickpreview="g-workshop"'), '워크숍 1초 둘러보기 버튼');
+  assert.ok(html.includes('data-tgquickpreview="g-travel"'), '단체여행 1초 둘러보기 버튼');
+  assert.ok(html.includes('data-tgquickpreview="g0"'), '운동크루 1초 둘러보기 버튼');
+
+  // 2. 가이드 이벤트 핸들러 및 템플릿 프리셋 추출 로직
+  assert.ok(html.includes('function getTeamGoalTemplatePreset('), '팀 목표 템플릿 프리셋 함수 구비');
+  assert.ok(html.includes('promptNewGroup(body, initialPreset)'), '프리셋 기반 모임 개설 함수 연동');
+
+  // 3. 체험 모임 안전 배지 및 즉시 탈퇴(복귀) 버튼
+  assert.ok(html.includes('체험용 예시 모임'), '체험 모임 안내 배지');
+  assert.ok(html.includes('data-tgleavepreview='), '체험 모임 나가기 버튼 속성');
+
+  // 4. 헤더 레벨 인라인 편집 모드 토글 및 마일스톤 순서 변경 버튼
+  assert.ok(html.includes('id="teamGoalEditToggle"'), '팀 목표 헤더 인라인 편집 모드 토글');
+  assert.ok(html.includes('data-tgmup=') || html.includes('data-meditmove='), '마일스톤 순서 변경(▲/▼) 속성');
+
+  // 5. 카드 레벨 상세 편집 모달
+  assert.ok(html.includes('data-tgeditmodal='), '카드 레벨 팀 목표 상세 편집 모달 호출 속성');
+  assert.ok(html.includes('function openTeamGoalEditModal('), '팀 목표 상세 편집 바텀시트 모달 함수 구비');
+  assert.ok(html.includes('modalTgTitleInput') && html.includes('modalTgDueInput'), '모달 내 목표명 및 마감일 필드');
+  assert.ok(html.includes('data-meditcyclestatus=') && html.includes('data-meditcycleprio='), '모달 내 마일스톤 상태 및 우선순위 토글');
+  assert.ok(html.includes('data-medittaskcheck=') && html.includes('data-meditaddtask='), '모달 내 세부 할 일 체크 및 추가');
+});
+
+check('compliance: [#TASK-ES-026] js/team-leader-check.js 가 존재하고 유효한 모듈 API를 노출한다', () => {
+  const modPath = path.join(__dirname, '..', 'js', 'team-leader-check.js');
+  assert.ok(fs.existsSync(modPath), '모듈 파일 존재');
+  const src = fs.readFileSync(modPath, 'utf8');
+  assert.ok(src.includes('OurgoalTeamLeaderCheck'), 'OurgoalTeamLeaderCheck 객체 노출');
+  assert.ok(src.includes('LEADER_STAMPS'), '4대 확인 도장 메타데이터 탑재');
+  assert.ok(src.includes('calcGroupMembersProgress'), '팀원 달성도 집계 함수 탑재');
+  assert.ok(src.includes('renderLeaderDashboardHtml'), '대시보드 렌더러 탑재');
+  assert.ok(src.includes('openLeaderStampSelectModal'), '확인 도장 선택 모달 탑재');
+  assert.ok(src.includes('openMemberProgressDetailModal'), '상세 점검 바텀시트 모달 탑재');
+  assert.ok(src.includes('bindEvents'), '이벤트 바인딩 함수 탑재');
+
+  const mod = require(modPath);
+  assert.ok(typeof mod.calcGroupMembersProgress === 'function', 'calcGroupMembersProgress 함수 제공');
+  assert.ok(typeof mod.renderLeaderDashboardHtml === 'function', 'renderLeaderDashboardHtml 함수 제공');
+  assert.ok(typeof mod.bindEvents === 'function', 'bindEvents 함수 제공');
+  assert.ok(mod.LEADER_STAMPS.perfect && mod.LEADER_STAMPS.growth, '도장 종류 완비');
+});
+
+check('compliance: [#TASK-ES-026] index.html 이 js/team-leader-check.js 를 로드하고 렌더 및 이벤트 핸들을 연결한다', () => {
+  assert.ok(html.includes('<script src="js/team-leader-check.js"></script>'), '스크립트 태그 탑재');
+  assert.ok(html.includes('OurgoalTeamLeaderCheck.renderLeaderDashboardHtml'), '대시보드 렌더 호출');
+  assert.ok(html.includes('OurgoalTeamLeaderCheck.renderMemberFeedbackBannerHtml'), '피드백 배너 렌더 호출');
+  assert.ok(html.includes('OurgoalTeamLeaderCheck.bindEvents'), '이벤트 바인딩 호출');
+});
+
+check('compliance: [#TASK-ES-027] js/team-leader-check.js 에 팀원 찌르기(2종) 및 모임장 1:1 DM 반응 API가 탑재되어 있다', () => {
+  const modPath = path.join(__dirname, '..', 'js', 'team-leader-check.js');
+  const mod = require(modPath);
+  assert.ok(mod.PING_TYPES && mod.PING_TYPES.boast && mod.PING_TYPES.struggle, '달성자랑 및 힘들어요 찌르기 메타데이터 탑재');
+  assert.strictEqual(mod.PING_TYPES.boast.icon, '🎉', '달성자랑 아이콘 🎉');
+  assert.strictEqual(mod.PING_TYPES.struggle.icon, '🥺', '힘들어요 아이콘 🥺');
+  assert.ok(typeof mod.renderMemberPingButtonHtml === 'function', 'renderMemberPingButtonHtml 함수 제공');
+  assert.ok(typeof mod.renderLeaderPingsSectionHtml === 'function', 'renderLeaderPingsSectionHtml 함수 제공');
+  assert.ok(typeof mod.renderMemberDmNotificationBannerHtml === 'function', 'renderMemberDmNotificationBannerHtml 함수 제공');
+  assert.ok(typeof mod.openSendPingModal === 'function', 'openSendPingModal 함수 제공');
+  assert.ok(typeof mod.openLeaderMemberDmModal === 'function', 'openLeaderMemberDmModal 함수 제공');
+
+  const btnHtmlBoast = mod.renderMemberPingButtonHtml('g1', 'milestone', 'm1', '완료 목표', true);
+  assert.ok(btnHtmlBoast.includes('data-openping="g1:milestone:m1:1"'), '달성자랑 data 속성 탑재');
+  assert.ok(btnHtmlBoast.includes('달성자랑'), '달성자랑 라벨 표기');
+
+  const btnHtmlStruggle = mod.renderMemberPingButtonHtml('g1', 'milestone', 'm2', '진행중 목표', false);
+  assert.ok(btnHtmlStruggle.includes('data-openping="g1:milestone:m2:0"'), '힘들어요 data 속성 탑재');
+  assert.ok(btnHtmlStruggle.includes('힘들어요'), '힘들어요 라벨 표기');
+});
+
+check('compliance: [#TASK-ES-027] index.html 이 마일스톤 및 팀 목표에 찌르기 버튼을 탑재하고 찌르기/DM 이벤트를 처리한다', () => {
+  assert.ok(html.includes('OurgoalTeamLeaderCheck.renderMemberPingButtonHtml(g.id, \'teamgoal\''), '팀 목표 찌르기 버튼 호출');
+  assert.ok(html.includes('OurgoalTeamLeaderCheck.renderMemberPingButtonHtml(g.id, \'milestone\''), '마일스톤 찌르기 버튼 호출');
+  const modSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-leader-check.js'), 'utf8');
+  assert.ok(modSrc.includes('[data-openping]'), '찌르기 모달 트리거 이벤트 바인딩');
+  assert.ok(modSrc.includes('[data-openleaderdm]'), '1:1 DM 대화 모달 트리거 이벤트 바인딩');
+});
 
 check('compliance: [#TASK-ES-026] js/team-leader-check.js 가 존재하고 유효한 모듈 API를 노출한다', () => {
   const modPath = path.join(__dirname, '..', 'js', 'team-leader-check.js');
@@ -2605,7 +2762,3 @@ console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
 }
-
-
-
-

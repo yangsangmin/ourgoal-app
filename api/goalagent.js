@@ -540,6 +540,9 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
   }
 
   // 세부 도메인 판정
+  var isWorkshop = /(워크숍|워크샵|전략회의|팀빌딩|해커톤|타운홀|컨퍼런스|세미나)/i.test(rawMsgWithoutRev);
+  var isTravel = /(단체여행|팀여행|우정여행|가족여행|힐링여행|제주여행|해외여행|여행계획|여행준비|MT|엠티)/i.test(rawMsgWithoutRev) ||
+                 (/(여행|휴가|캠핑)/i.test(rawMsgWithoutRev) && /(단체|모임|친구|팀|동기|함께|동행)/i.test(rawMsgWithoutRev));
   var isBirthday = /(생일|기념일|돌잔치|환갑|칠순|축하|파티)/i.test(rawMsgWithoutRev);
   var isBabyCare = /(아기|아이|영유아|신생아|자녀|육아|딸|아들|돌쟁이|출산|어린이집|유치원|소아과)/i.test(rawMsgWithoutRev) ||
                    (/(건강검진|발달|이유식|모유|분유|예방접종)/i.test(rawMsgWithoutRev) && /(아이|아기|자녀|영유아|생)/i.test(rawMsgWithoutRev));
@@ -551,8 +554,8 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
   var isCertification = /(자격증|시험|합격|기사|토익|토플|오픽|공무원|수능|CPA|세무사|노무사|한국사|정보처리기사|취득)/i.test(rawMsgWithoutRev);
   var isFinance = /(저축|적금|예금|투자|주식|부동산|청약|재테크|목돈|시드머니|자산|가계부|절약|모으기|\d+[억만천]원?|\b돈\b|부자|소득|월급)/i.test(rawMsgWithoutRev);
   var isStudy = isCertification || /(공부|독서|책|학습|코딩|개발|프로그래밍|알고리즘|외국어|회화|영어|일본어|수학|강의)/i.test(rawMsgWithoutRev);
-  var isCareer = /(일|업무|사업|매출|취업|이직|프로젝트|포트폴리오|이력서|면접|퇴사|경력|마케팅|창업|스토어|고객)/i.test(rawMsgWithoutRev);
-  var isHobby = /(취미|음악|악기|피아노|기타|그림|사진|게임|여행|영상|유튜브|블로그|글쓰기|웹소설)/i.test(rawMsgWithoutRev);
+  var isCareer = isWorkshop || /(일|업무|사업|매출|취업|이직|프로젝트|포트폴리오|이력서|면접|퇴사|경력|마케팅|창업|스토어|고객)/i.test(rawMsgWithoutRev);
+  var isHobby = isTravel || /(취미|음악|악기|피아노|기타|그림|사진|게임|여행|영상|유튜브|블로그|글쓰기|웹소설)/i.test(rawMsgWithoutRev);
   var isMind = /(마음|명상|수면|일기|감사|습관|기상|미라클|루틴|멘탈|정리|청소|도파민|디톡스)/i.test(rawMsgWithoutRev);
   var isRelation = isBirthday || /(친구|가족|연인|약속|모임|대화|결혼|부모|엄마|아빠|환갑|칠순)/i.test(rawMsgWithoutRev);
 
@@ -576,6 +579,8 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
     }
   } else if (!cleanTitle || cleanTitle.length < 2 || cleanTitle === '목표' || cleanTitle === '요청' || cleanTitle === '일정') {
     if (isBirthday) cleanTitle = '가족 생일 축하';
+    else if (isWorkshop) cleanTitle = '성공적인 팀 워크숍 준비 및 실행';
+    else if (isTravel) cleanTitle = '완벽한 단체 여행 준비 및 추억 만들기';
     else if (isCertification) cleanTitle = '목표 자격증 취득 및 시험 합격';
     else if (isFinance) cleanTitle = '목돈 모으기 및 자산 형성';
     else if (isMedicalHealth) cleanTitle = '정기 건강검진 및 일상 건강 관리';
@@ -587,7 +592,13 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
   var topic = 'mind';
   var topicMinor = '자기계발';
 
-  if (isBabyCare) {
+  if (isWorkshop) {
+    topic = 'career';
+    topicMinor = '기획/전략';
+  } else if (isTravel) {
+    topic = 'hobby';
+    topicMinor = '여행/캠핑';
+  } else if (isBabyCare) {
     topic = 'health';
     topicMinor = '육아 건강';
   } else if (isPet) {
@@ -674,6 +685,20 @@ function localGoalAgentFallback(message, goals, today, goalMap) {
       m3 = '3단계: 성장 발달 종합 평가 및 다음 성장 주기 준비';
       t3 = ['영유아 건강검진 결과 확인 및 전문의 상담', '발달 상태 기록 정리', '다음 연령기 성장 가이드 확인'];
     }
+  } else if (isWorkshop) {
+    m1 = '1단계: 워크숍 기획안 수립 및 장소·예산 확정';
+    t1 = ['워크숍 목적 및 타임테이블 확정하기', '행사장/숙소 대관 및 총 예산안 결재 받기'];
+    m2 = '2단계: 세션 아젠다 및 팀빌딩 레크리에이션 준비';
+    t2 = ['부서별 세션 발표자료 취합하기', '팀빌딩 프로그램 및 참가자 기념품/다과 준비하기'];
+    m3 = '3단계: 워크숍 본행사 실행 및 액션플랜 도출·회고';
+    t3 = ['시간대별 프로그램 및 네트워킹 진행하기', '워크숍 결과 보고서 및 후속 실행과제 정리하기'];
+  } else if (isTravel) {
+    m1 = '1단계: 여행 일정 및 항공·숙소 예약 확정';
+    t1 = ['참여자 일정 투표 및 여행 일자 확정하기', '왕복 교통편(항공/열차) 및 숙소 예약 완료하기'];
+    m2 = '2단계: 세부 동선 설계, 렌터카 및 맛집 리스트업';
+    t2 = ['일자별 드라이브 코스 및 주요 관광지 동선 짜기', '로컬 대표 맛집 단체석 예약 및 렌터카 배차하기'];
+    m3 = '3단계: 안전 여행 완주, 공용 경비 정산 및 사진 공유';
+    t3 = ['준비물 체크리스트 점검 및 안전하게 여행 즐기기', '모임 통장 공용 경비 정산 및 단체 앨범 공유하기'];
   } else if (isBirthday) {
     m1 = '1단계: 생일 맞이 요리 및 선물 준비';
     t1 = ['미역국 및 맛있는 축하 음식 만들기', '생일 케이크 및 선물 챙기기'];
