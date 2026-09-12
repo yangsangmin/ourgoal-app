@@ -59,6 +59,7 @@
     </div>
     <span class="land-login-link"><b id="landStartBtn">이메일로 가입하기</b></span>
     <span class="land-login-link">이미 계정이 있으신가요? <b id="landLoginLink">로그인</b></span>
+    <span class="land-login-link" style="margin-top:4px;"><b id="landGuestBtn" style="color:var(--brand);cursor:pointer;">로그인 없이 바로 둘러보기 ›</b></span>
     <span class="land-login-link" style="margin-top:6px;"><a href="javascript:void(0)" id="landRescueBtn" style="color:var(--ink-faint);font-size:.75rem;text-decoration:underline;">로그인이 잘 안 되시나요? (세션 초기화·복구)</a></span>
   </div>
 </div>
@@ -154,6 +155,7 @@
           <span id="captureCharCount" class="capture-char-count">0자</span>
         </div>
         <div id="capturePhotoPreview" style="display:none;"></div>
+        <div id="aiFeedbackOptionsSlot"></div>
         <div class="capture-row" id="captureRowAnchor">
           <input type="file" id="capturePhotoInput" accept="image/*" style="display:none;">
           <button class="btn btn-ghost btn-sm" id="capturePhotoBtn" type="button" aria-label="사진 첨부"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>사진</span></button>
@@ -468,7 +470,7 @@
         <h4>계정 및 보안</h4>
         <div style="padding:10px 14px;background:var(--card2);border-radius:12px;margin-bottom:12px;font-size:.875rem;">
           <div class="faint" style="font-size:.8125rem;">로그인 계정 이메일</div>
-          <b id="setAccountEmail" style="color:var(--ink);">ysm0422@naver.com</b>
+          <b id="setAccountEmail" style="color:var(--ink);">-</b>
         </div>
         <div class="toggle-row">
           <div class="t">2단계 인증 (2FA) 보안 로그인</div>
@@ -829,6 +831,7 @@
 <script src="js/team-leader-check.js"></script>
 <script src="js/theme-system.js"></script>
 <script src="js/records-stats.js"></script>
+<script src="js/ai-feedback.js"></script>
 <script>
 
 (function(){
@@ -1364,7 +1367,7 @@
     };
   }
 
-  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7, calView: 'month', calDate: isoDate(new Date()), calSelectedDate: isoDate(new Date()), selectedRecordTheme: 'all', recordsSegment: 'feed', recordsSlide: 0 };
+  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7, calView: 'month', calDate: isoDate(new Date()), calSelectedDate: isoDate(new Date()), selectedRecordTheme: 'all', recordsSegment: 'feed', recordsSlide: 0, aiMicroChips: { condition: null, duration: null, sessionFeel: null }, aiFeedbackMode: 'default' };
 
   async function ensureUserRow(userId, username, displayName, extra){
     var found = null;
@@ -1743,6 +1746,17 @@
   }
 
   /* ============ Landing ============ */
+  if(typeof navigator !== 'undefined' && /KAKAOTALK/i.test(navigator.userAgent)){
+    var kBar = document.getElementById('inAppBrowserNotice');
+    if(!kBar && document.body){
+      var nDiv = document.createElement('div');
+      nDiv.id = 'inAppBrowserNotice';
+      nDiv.style.cssText = 'background:var(--kakao,#FEE500);color:var(--kakao-ink,#3A1D1D);padding:8px 12px;font-size:0.75rem;text-align:center;font-weight:600;z-index:99999;position:relative;';
+      nDiv.innerHTML = '카카오톡에서는 구글 로그인이 제한될 수 있어요. <b>카카오로 시작</b>하시거나 우측 상단 <b>[⋮] → [다른 브라우저로 열기]</b>를 권장해요.';
+      document.body.insertBefore(nDiv, document.body.firstChild);
+    }
+  }
+
   document.getElementById('landStartBtn').addEventListener('click', function(){
     document.getElementById('landingScreen').style.display = 'none';
     document.getElementById('authScreen').style.display = 'flex';
@@ -1753,6 +1767,18 @@
     document.getElementById('authScreen').style.display = 'flex';
     document.querySelector('[data-authtab="login"]').click();
   });
+  var landGuestBtn = document.getElementById('landGuestBtn');
+  if(landGuestBtn){
+    landGuestBtn.addEventListener('click', function(){
+      var guestId = 'guest-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      state.profile = defaultProfile(guestId, guestId, '게스트');
+      try { localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile)); } catch(e){}
+      document.getElementById('landingScreen').style.display = 'none';
+      document.getElementById('authScreen').style.display = 'none';
+      enterApp();
+      toast('게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.');
+    });
+  }
 
   /* ============ 소셜 로그인 (카카오 / 실제 구글 OAuth 연동) ============ */
   async function sha256Hex(str){
@@ -4831,10 +4857,17 @@
     recs.forEach(function(r){ days[dateKey(r.startAt)] = true; });
     frozen.forEach(function(k){ days[k] = true; });
     var streak = 0;
-    var cursor = new Date(); cursor.setHours(0,0,0,0);
-    while(days[cursor.getFullYear()+'-'+pad(cursor.getMonth()+1)+'-'+pad(cursor.getDate())]){
+    var todayCursor = new Date(); todayCursor.setHours(0,0,0,0);
+    var todayKeyStr = todayCursor.getFullYear()+'-'+pad(todayCursor.getMonth()+1)+'-'+pad(todayCursor.getDate());
+
+    // 오늘 체크인을 이미 했으면 오늘부터, 아직 안 했으면 어제부터 역산하여 스트릭 유지 (#TASK-ES-043)
+    var startCursor = new Date(todayCursor);
+    if(!days[todayKeyStr]){
+      startCursor.setDate(startCursor.getDate() - 1);
+    }
+    while(days[startCursor.getFullYear()+'-'+pad(startCursor.getMonth()+1)+'-'+pad(startCursor.getDate())]){
       streak++;
-      cursor.setDate(cursor.getDate()-1);
+      startCursor.setDate(startCursor.getDate() - 1);
     }
     return streak;
   }
@@ -5282,8 +5315,43 @@
     };
   }
 
+  /* ============ AI 피드백 3초 퀵 태그 & 3단 모드 선택 패널 (#TASK-ES-042) ============ */
+  function renderAIFeedbackOptions(){
+    var slot = document.getElementById('aiFeedbackOptionsSlot');
+    if(!slot || typeof OurgoalAIFeedback === 'undefined') return;
+    state.aiMicroChips = state.aiMicroChips || { condition: null, duration: null, sessionFeel: null };
+    state.aiFeedbackMode = state.aiFeedbackMode || 'default';
+
+    slot.innerHTML = OurgoalAIFeedback.renderMicroChipsHtml(state.aiMicroChips) +
+                     OurgoalAIFeedback.renderModeSelectorHtml(state.aiFeedbackMode);
+
+    slot.querySelectorAll('.ai-tag-chip').forEach(function(chip){
+      chip.addEventListener('click', function(){
+        var cat = chip.dataset.chipCat;
+        var id = chip.dataset.chipId;
+        if(state.aiMicroChips[cat] === id){
+          state.aiMicroChips[cat] = null;
+        } else {
+          state.aiMicroChips[cat] = id;
+        }
+        renderAIFeedbackOptions();
+      });
+    });
+
+    slot.querySelectorAll('.ai-mode-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var m = btn.dataset.fbMode;
+        state.aiFeedbackMode = m;
+        renderAIFeedbackOptions();
+        var desc = (OurgoalAIFeedback.FEEDBACK_MODES[m] || {}).desc || '';
+        toast('피드백 강도: ' + ((OurgoalAIFeedback.FEEDBACK_MODES[m] || {}).label || m) + (desc ? ' (' + desc + ')' : ''));
+      });
+    });
+  }
+
   /* ============ RENDER: HOME ============ */
   function renderHome(){
+    renderAIFeedbackOptions();
     refreshCustomFeedbackButtons();
     renderLevelBadge();
     renderTodayMissionCard();
@@ -6375,100 +6443,133 @@
   }
 
   document.getElementById('captureSave').addEventListener('click', async function(){
+    var saveBtn = document.getElementById('captureSave');
+    if(!saveBtn || saveBtn.disabled) return;
     var t = document.getElementById('captureInput');
-    var text = t.value.trim();
+    var text = t ? t.value.trim() : '';
     if(!text && !pendingCapturePhoto) return;
     if(!text && pendingCapturePhoto) text = '사진 인증';
-    var goal = state.profile.goals.find(function(g){ return g.id===state.activeGoalId; }) || state.profile.goals[0];
-    var cat = goal ? goal.category : null;
-    var isFirst = (state.profile.records.length === 0);
+    saveBtn.disabled = true;
+    var origSaveBtnHtml = saveBtn.innerHTML;
+    saveBtn.textContent = '기록 중…';
+    try {
+      var goal = state.profile.goals.find(function(g){ return g.id===state.activeGoalId; }) || state.profile.goals[0];
+      var cat = goal ? goal.category : null;
+      var isFirst = (state.profile.records.length === 0);
 
-    // 테마 결정: 사용자가 선택한 테마 우선, 없으면 비강제 일상 테마
-    var themePayload = (typeof OurgoalThemeSystem !== 'undefined')
-      ? OurgoalThemeSystem.buildCheckinThemePayload(selectedCaptureTheme)
-      : { theme: 'daily', subTheme: '', themeMetadata: null };
+      // 테마 결정: 사용자가 선택한 테마 우선, 없으면 비강제 일상 테마
+      var themePayload = (typeof OurgoalThemeSystem !== 'undefined')
+        ? OurgoalThemeSystem.buildCheckinThemePayload(selectedCaptureTheme)
+        : { theme: 'daily', subTheme: '', themeMetadata: null };
 
-    var notionRec = (typeof convertTextToNotionDbRecord === 'function')
-      ? convertTextToNotionDbRecord(text, 'note', { title: text }, goal)
-      : null;
-    var recPhoto = pendingCapturePhoto || null;
-    state.profile.records.unshift({
-      id: newId(),
-      type: 'note',
-      text: text,
-      photo: recPhoto,
-      startAt: nowISO(),
-      endAt: nowISO(),
-      createdAt: nowISO(),
-      category: cat,
-      visibility: 'private',
-      theme: themePayload.theme,
-      subTheme: themePayload.subTheme,
-      themeConfidence: selectedCaptureTheme ? 1.0 : 0.5,
-      themeMetadata: themePayload.themeMetadata,
-      notionDb: notionRec ? notionRec.notionSchema : null,
-      structured: notionRec || null
-    });
-    t.value = '';
-    if(liveMeta) liveMeta.style.display = 'none';
-    selectedCaptureTheme = null;
-    suggestedCaptureTheme = null;
-    renderThemeQuickBar();
-    updateLiveThemeBadge();
-    pendingCapturePhoto = null;
-    if(capturePhotoPreview){ capturePhotoPreview.innerHTML = ''; capturePhotoPreview.style.display = 'none'; }
-    if(capturePhotoInput) capturePhotoInput.value = '';
+      var notionRec = (typeof convertTextToNotionDbRecord === 'function')
+        ? convertTextToNotionDbRecord(text, 'note', { title: text }, goal)
+        : null;
+      var recPhoto = pendingCapturePhoto || null;
+      state.profile.records.unshift({
+        id: newId(),
+        type: 'note',
+        text: text,
+        photo: recPhoto,
+        startAt: nowISO(),
+        endAt: nowISO(),
+        createdAt: nowISO(),
+        category: cat,
+        visibility: 'private',
+        theme: themePayload.theme,
+        subTheme: themePayload.subTheme,
+        themeConfidence: selectedCaptureTheme ? 1.0 : 0.5,
+        themeMetadata: themePayload.themeMetadata,
+        notionDb: notionRec ? notionRec.notionSchema : null,
+        structured: notionRec || null
+      });
+      t.value = '';
+      if(liveMeta) liveMeta.style.display = 'none';
+      selectedCaptureTheme = null;
+      suggestedCaptureTheme = null;
+      renderThemeQuickBar();
+      updateLiveThemeBadge();
+      pendingCapturePhoto = null;
+      if(capturePhotoPreview){ capturePhotoPreview.innerHTML = ''; capturePhotoPreview.style.display = 'none'; }
+      if(capturePhotoInput) capturePhotoInput.value = '';
 
-    var xpRes = awardXP(XP_RULES.checkin, '체크인');
+      var xpRes = awardXP(XP_RULES.checkin, '체크인');
 
-    var freezeGranted = maybeGrantStreakFreeze();
-    await saveProfile();
+      var freezeGranted = maybeGrantStreakFreeze();
+      await saveProfile();
 
-    // 오프라인 상태일 경우 오프라인 동기화 큐에 보관 (가상유저 요청 P5)
-    if(typeof navigator !== 'undefined' && !navigator.onLine){
-      OfflineSyncManager.enqueue({ type: 'record', data: state.profile.records[0] });
+      // 홈 화면 잔디 및 스트릭 즉시 반영 (#TASK-ES-043)
+      renderHomeGrassSummary();
+      var streak = computeStreakDays();
+      updateAppBadge(streak);
+      var badgeEl = document.getElementById('streakBadge');
+      if(badgeEl) badgeEl.innerHTML = streak > 0 ? streakBadgeHtml(streak) : '';
+
+      // 오프라인 상태일 경우 오프라인 동기화 큐에 보관 (가상유저 요청 P5)
+      if(typeof navigator !== 'undefined' && !navigator.onLine){
+        OfflineSyncManager.enqueue({ type: 'record', data: state.profile.records[0] });
+      }
+
+      track('checkin', { first: isFirst, has_goal: !!goal, has_photo: !!recPhoto, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l') });
+      if(isFirst){
+        triggerFirstCheerResponse(goal, text);
+      }
+      var checkinToastMsg = freezeGranted
+        ? '스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요'
+        : (recPhoto ? '사진과 함께 소중한 오늘을 기록했어요' : '오늘의 실천이 안전하게 기록되었어요');
+      toast(checkinToastMsg);
+      triggerHaptic(12);
+      var btnRect = saveBtn.getBoundingClientRect();
+      burstConfetti(btnRect.left+btnRect.width/2, btnRect.top, 8);
+      saveBtn.classList.remove('btn-cs-pulse');
+      void saveBtn.offsetWidth;
+      saveBtn.classList.add('btn-cs-pulse');
+      renderFeedbackSlot(null);
+      renderRecordFeedbackSlot(null);
+      renderLevelBadge();
+      if(xpRes.leveledUp) showLevelUpBanner(levelForXP(xpRes.total));
+
+      var newRec = state.profile.records[0];
+      var fb = null;
+      var targetGoal = goal || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
+      renderFeedbackSlot('loading');
+      renderRecordFeedbackSlot('loading');
+      fb = await requestAIFeedback(targetGoal, text, newRec ? newRec.theme : null, state.aiFeedbackMode || 'default', state.aiMicroChips || {});
+      state.lastCapture = { record: newRec, goal: targetGoal, feedback: fb };
+      renderFeedbackSlot(fb);
+      renderRecordFeedbackSlot(fb);
+      if(targetGoal && targetGoal.milestones && targetGoal.milestones.length > 0){
+        maybeShowGoalUpdateModal(targetGoal, fb);
+      }
+      sendToNotion(newRec, fb);
+    } finally {
+      if(saveBtn){
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = origSaveBtnHtml;
+      }
     }
-
-    track('checkin', { first: isFirst, has_goal: !!goal, has_photo: !!recPhoto, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l') });
-    if(isFirst){
-      triggerFirstCheerResponse(goal, text);
-    }
-    var checkinToastMsg = freezeGranted
-      ? '스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요'
-      : (notionRec
-          ? 'AI 노션 DB로 자동 기록 완료! (' + notionRec.status + (notionRec.metric ? ' · ' + notionRec.metric : '') + ')'
-          : (recPhoto ? '사진과 함께 기록했어요' : '기록했어요'));
-    toast(checkinToastMsg);
-    triggerHaptic(12);
-    var saveBtn = document.getElementById('captureSave');
-    var btnRect = saveBtn.getBoundingClientRect();
-    burstConfetti(btnRect.left+btnRect.width/2, btnRect.top, 8);
-    saveBtn.classList.remove('btn-cs-pulse');
-    void saveBtn.offsetWidth;
-    saveBtn.classList.add('btn-cs-pulse');
-    renderFeedbackSlot(null);
-    renderRecordFeedbackSlot(null);
-    renderLevelBadge();
-    if(xpRes.leveledUp) showLevelUpBanner(levelForXP(xpRes.total));
-
-    var newRec = state.profile.records[0];
-    var fb = null;
-    var targetGoal = goal || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
-    renderFeedbackSlot('loading');
-    renderRecordFeedbackSlot('loading');
-    fb = await requestAIFeedback(targetGoal, text, newRec ? newRec.theme : null);
-    state.lastCapture = { record: newRec, goal: targetGoal, feedback: fb };
-    renderFeedbackSlot(fb);
-    renderRecordFeedbackSlot(fb);
-    if(targetGoal && targetGoal.milestones && targetGoal.milestones.length > 0){
-      maybeShowGoalUpdateModal(targetGoal, fb);
-    }
-    sendToNotion(newRec, fb);
   });
 
   /* ============ 신규 유저 온보딩: 가상 페르소나 3분 내 맞춤 응원 (TASK-OG-002) ============ */
   function triggerFirstCheerResponse(goal, checkinText){
     if(state.profile.settings.virtualCheerEnabled === false) return;
+    var isLocalDev = (typeof window !== 'undefined' && window.location && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'));
+    if(!isLocalDev){
+      var matched = (typeof SIM_PERSONAS !== 'undefined' && SIM_PERSONAS[0]) || { name:'김도윤', avatar:'도', goal:'목표' };
+      var gTitle = (goal ? goal.title : '').toLowerCase();
+      if(typeof SIM_PERSONAS !== 'undefined'){
+        if(gTitle.indexOf('코딩')!==-1 || gTitle.indexOf('개발')!==-1) matched = SIM_PERSONAS[1];
+        else if(gTitle.indexOf('창업')!==-1 || gTitle.indexOf('사업')!==-1) matched = SIM_PERSONAS[2];
+        else if(gTitle.indexOf('운동')!==-1 || gTitle.indexOf('헬스')!==-1) matched = SIM_PERSONAS[3];
+      }
+      var cheerObj = {
+        personaName: matched.name,
+        avatar: matched.avatar,
+        message: matched.name + '님이 첫 체크인을 격려합니다: "저도 [' + (matched.goal || '목표') + '] 도전 중인데, 함께 꾸준히 완주해봐요! 진심으로 응원합니다 🔥"'
+      };
+      scheduleCheerDelivery(cheerObj);
+      return;
+    }
     var payload = {
       userGoal: goal ? goal.title : '',
       userCheckin: checkinText || ''
@@ -6562,9 +6663,11 @@
     return upcoming.slice(0, 15);
   }
 
-  function buildFeedbackPrompt(goal, text, theme, upcomingSchedules){
+  function buildFeedbackPrompt(goal, text, theme, upcomingSchedules, mode, microChips, lastAdvice, virtualRail){
     goal = goal || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
     if(!Array.isArray(goal.milestones)) goal.milestones = [];
+    mode = mode || state.aiFeedbackMode || 'default';
+    microChips = microChips || state.aiMicroChips || {};
     var detectedTheme = theme || ((typeof classifyRecordTheme === 'function') ? classifyRecordTheme(text, goal ? goal.category : null).theme : 'daily');
     var themeLens = THEME_FEEDBACK_PROMPTS[detectedTheme] || THEME_FEEDBACK_PROMPTS.daily;
     var msJson = JSON.stringify(milestonesForAI(goal));
@@ -6572,8 +6675,8 @@
     var custom = (settings.customFeedbackActive && settings.customFeedbackPrompt) ? settings.customFeedbackPrompt : '';
     var personaBlock = custom ? ('[페르소나 지침]\r\n'+custom+'\r\n\r\n') : '';
     var roleLine = custom
-      ? '당신은 위 페르소나 지침에 따라 행동하는 목표 달성 피드백 봇입니다.'
-      : '당신은 목표 달성 코치입니다.';
+      ? '당신은 위 페르소나 지침에 따라 행동하는 목표 달성 페이스메이커입니다.'
+      : '당신은 데이터와 팩트에 기반해 솔직하고 실질적인 피드백을 주는 전문 목표 페이스메이커입니다.';
     var thLabel = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[detectedTheme]) ? RECORD_THEMES[detectedTheme].label : detectedTheme;
 
     upcomingSchedules = upcomingSchedules || getUpcomingSchedulesForAI(30);
@@ -6584,54 +6687,92 @@
       }).join('\r\n');
       schedSection = '\r\n\r\n[향후 30일간의 다가오는 일정 목록]\r\n' + schedListStr + '\r\n\r\n' +
         '[일정 연계 피드백 지침 - 필수 준수]\r\n' +
-        '1. 사용자의 체크인/기록에 대한 피드백을 충실히 제공하면서, 위 [향후 30일간의 다가오는 일정 목록]을 확인하세요.\r\n' +
-        '2. 만약 이번 기록과 맥락상 관련이 있거나(예: 목표 준비 과정, 대회/발표/시험 대비 등), 사용자가 놓치기 쉽고 미리 계획/준비해야 할 중요한 임박 일정(D-3~D-7 이내 등)이 있다면 comment 끝에 자연스럽게 1~2문장의 일정 리마인드 및 준비 조언을 함께 포함하세요.\r\n' +
-        '3. ★ 절대 주의: 관련없는 피드백을 위한 피드백은 엄격히 금지합니다. 기록과 전혀 무관하고 급하지도 않은 일정을 억지로 끌어오거나 형식적인 참견을 하지 마세요. 연관된 일정이 없거나 특별히 챙길 것이 없을 때는 기록에 대한 본연의 코칭에만 집중하세요.';
+        '1. 사용자의 체크인/기록에 대한 피드백을 기본으로 하되, 위 [향후 30일간의 다가오는 일정 목록]을 함께 검토하세요.\r\n' +
+        '2. 관련없는 피드백을 위한 피드백은 엄격히 금지합니다. 기록과 무관하고 급하지도 않은 일정을 억지로 언급하지 마세요.';
     }
 
-    return personaBlock + roleLine + ' [기록 테마 코칭 지침: ' + thLabel + ']\r\n' + themeLens + '\r\n\r\n' +
-      '사용자의 목표 구조(마일스톤과 하위 할 일)와 방금 남긴 기록을 보고, ' +
-      '그 기록이 목표 달성에 도움이 되는지 판단하고, 이 기록이 실제로 어떤 마일스톤이나 할 일의 진행 상태·결과를 바꿀 만한 확실한 근거가 되는지도 함께 판단하세요.\r\n\r\n' +
-      '[기록 테마]\r\n' + thLabel + '\r\n\r\n' +
+    var chipInfo = '';
+    var cParts = [];
+    if(microChips.condition) cParts.push('컨디션: ' + microChips.condition);
+    if(microChips.duration) cParts.push('소요시간: ' + microChips.duration);
+    if(microChips.sessionFeel) cParts.push('이번기록의 체감: ' + microChips.sessionFeel);
+    if(cParts.length > 0) chipInfo = '\r\n\r\n[3초 퀵 태그]\r\n' + cParts.join(' | ');
+
+    var memInfo = '';
+    if(lastAdvice && lastAdvice.actionSuggested){
+      memInfo = '\r\n\r\n[어제 AI 제안 액션]\r\n"' + lastAdvice.actionSuggested + '" (반영 여부를 확인하고 다음 스텝과 연결할 것)';
+    }
+
+    var railInfo = '';
+    if(mode === 'macro' || virtualRail){
+      railInfo = '\r\n\r\n[가상 D-Day 레일 및 30일 상태]\r\n' +
+        '- 잔여일수: D-' + ((virtualRail && virtualRail.remainingDays !== undefined) ? virtualRail.remainingDays : 30) +
+        '\r\n- 사각지대/누락: ' + ((virtualRail && virtualRail.gapWarning) || '없음');
+    }
+
+    var negativeRules = '\r\n\r\n[절대 금지 규칙]\r\n"도움됨", "의미 있는 실천", "참 잘하셨습니다", "수고 많으셨습니다", "꾸준히 하시면" 등 형식적 상투어 절대 금지. 유저의 구체적 기록 사실(Fact)을 기반으로 실행 가능한 액션을 코칭할 것.';
+
+    return personaBlock + roleLine + ' [기록 테마 코칭 지침: ' + thLabel + ']\r\n' + themeLens + negativeRules + chipInfo + memInfo + railInfo + '\r\n\r\n' +
       '[사용자의 목표]\r\n최종 목표: ' + goal.title + '\r\n\r\n' +
-      '[마일스톤/할 일 목록 - JSON, id는 그대로 참조용. result는 {target,result,unit,note} 형태의 결과 기록칸]\r\n' + msJson + '\r\n\r\n' +
+      '[마일스톤/할 일 목록 - JSON]\r\n' + msJson + '\r\n\r\n' +
       '[방금 남긴 기록]\r\n"' + text + '"' +
       schedSection + '\r\n\r\n' +
-      '아래 JSON 형식으로만 답하세요. 다른 텍스트나 코드블록, 마크다운 없이 순수 JSON만 출력하세요.\r\n' +
-      '근거가 확실하지 않으면 suggestions는 빈 배열로 두세요. 애매하면 절대 추측해서 제안하지 마세요.\r\n' +
-      '특히 기록에 특정 마일스톤·할 일과 관련된 구체적인 계획·방법·루틴(예: "주 3회 루틴 만들기" 항목에 대해 언제·어떻게 운동할지)이 담겨 있다면, ' +
-      'field를 "note"로 하고 value에 사용자가 말한 내용을 1~2문장으로 자연스럽게 정리해 그 항목의 결과 메모로 제안하세요(사용자의 표현을 존중하되 군더더기 없이 요약).\r\n' +
-      '{"verdict":"도움됨 또는 애매함 또는 도움안됨 중 하나",' +
-      '"comment":"1~2문장의 짧고 솔직한 피드백 (필요 시 자연스러운 다가오는 일정 리마인드 포함, 무관한 강제 피드백 금지)",' +
-      '"suggestions":[{"type":"milestone 또는 task","id":"위 목록에 있는 id 값 그대로",' +
-      '"field":"status 또는 done 또는 result 또는 note 중 하나",' +
-      '"value":"status면 todo/doing/done 중 하나, done이면 true/false, result면 result.target이 이미 있는 항목에 한해 새 숫자값, note면 기록 내용을 정리한 1~2문장 요약",' +
-      '"reason":"왜 이렇게 판단했는지 1문장"}]}';
+      '아래 순수 JSON 규격으로만 응답하세요.\r\n' +
+      '{"verdict":"핵심 발견 | 실행 권고 | 페이스 유지 | 스트릭 방어 | 루틴 보완 중 하나 (도움됨 금지)",' +
+      '"fact_insight":"이번 기록에서 포착한 구체적 팩트 분석 1문장",' +
+      '"continuity":"어제 조언에 대한 반영 확인 및 연결 1문장 (해당 없으면 null)",' +
+      '"next_action":"내일 당장 실행할 구체적 행동 1문장",' +
+      '"macro_gap":"30일 목표 대비 누락/사각지대 경고 (장기 모드 아니면 null)",' +
+      '"calendar_action":{"has_suggestion":false,"suggested_date":"YYYY-MM-DD","suggested_time":"14:00","title":"추천 일정 제목","duration_minutes":60,"note":"사유"},' +
+      '"comment":"위 내용들을 자연스럽게 엮은 명쾌한 피드백 본문",' +
+      '"suggestions":[]}';
   }
+
   function parseFeedbackJSON(raw){
     var clean = raw.replace(/```json|```/g,'').trim();
     var parsed = JSON.parse(clean);
     if(!parsed || !parsed.verdict) throw new Error('bad shape');
     if(!Array.isArray(parsed.suggestions)) parsed.suggestions = [];
+    if(typeof OurgoalAIFeedback !== 'undefined' && OurgoalAIFeedback.filterNegativeWords){
+      parsed.verdict = OurgoalAIFeedback.filterNegativeWords(parsed.verdict) || '실행 권고';
+      if(parsed.verdict === '도움됨') parsed.verdict = '핵심 발견';
+      if(parsed.comment) parsed.comment = OurgoalAIFeedback.filterNegativeWords(parsed.comment);
+      if(parsed.fact_insight) parsed.factInsight = OurgoalAIFeedback.filterNegativeWords(parsed.fact_insight);
+      if(parsed.next_action) parsed.nextAction = OurgoalAIFeedback.filterNegativeWords(parsed.next_action);
+      if(parsed.macro_gap) parsed.macroGapWarning = OurgoalAIFeedback.filterNegativeWords(parsed.macro_gap);
+      if(parsed.calendar_action) parsed.calendarAction = parsed.calendar_action;
+    }
     return parsed;
   }
-  async function requestAIFeedback(goal, text, theme){
+
+  async function requestAIFeedback(goal, text, theme, mode, microChips){
     if(!goal){
       goal = (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
     }
+    mode = mode || state.aiFeedbackMode || 'default';
+    microChips = microChips || state.aiMicroChips || {};
     var provider = (state.profile.settings.aiProvider) || 'gemini';
     if(provider==='gemini' && state.profile.settings.geminiKey){
-      var g = await requestGeminiFeedback(goal, text, theme);
+      var g = await requestGeminiFeedback(goal, text, theme, mode, microChips);
       if(g) return g;
     }
-    return requestServerAIFeedback(goal, text, theme);
+    return requestServerAIFeedback(goal, text, theme, mode, microChips);
   }
-  async function requestServerAIFeedback(goal, text, theme){
+
+  async function requestServerAIFeedback(goal, text, theme, mode, microChips){
     goal = goal || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
     if(!Array.isArray(goal.milestones)) goal.milestones = [];
+    mode = mode || state.aiFeedbackMode || 'default';
+    microChips = microChips || state.aiMicroChips || {};
     var settings = state.profile.settings;
     var custom = (settings.customFeedbackActive && settings.customFeedbackPrompt) ? settings.customFeedbackPrompt : '';
     var upcomingSchedules = getUpcomingSchedulesForAI(30);
+
+    var lastAdv = (typeof OurgoalAIFeedback !== 'undefined' && OurgoalAIFeedback.MemoryChain)
+      ? OurgoalAIFeedback.MemoryChain.getLastAdvice(settings, goal.id) : null;
+    var rail = (typeof OurgoalAIFeedback !== 'undefined' && OurgoalAIFeedback.computeVirtualRail)
+      ? OurgoalAIFeedback.computeVirtualRail(goal) : null;
+
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 12000);
     try{
@@ -6644,7 +6785,11 @@
           customPrompt: custom,
           theme: theme,
           geminiKey: settings.geminiKey || '',
-          upcomingSchedules: upcomingSchedules
+          upcomingSchedules: upcomingSchedules,
+          mode: mode,
+          microChips: microChips,
+          lastAdvice: lastAdv,
+          virtualRail: rail
         })
       });
       clearTimeout(timer);
@@ -6654,23 +6799,44 @@
       if(!Array.isArray(parsed.suggestions)) parsed.suggestions = [];
       parsed.source = 'ai';
       parsed.persona = !!custom;
+
+      // 상태 기억 체인 저장
+      if(typeof OurgoalAIFeedback !== 'undefined' && OurgoalAIFeedback.MemoryChain){
+        OurgoalAIFeedback.MemoryChain.saveAdvice(settings, {
+          goalId: goal.id,
+          goalTitle: goal.title,
+          actionSuggested: parsed.nextAction || parsed.next_action || (parsed.comment ? parsed.comment.slice(0, 40) : ''),
+          verdict: parsed.verdict,
+          mode: mode
+        });
+        saveProfile();
+      }
       return parsed;
     } catch(e){
       clearTimeout(timer);
-      return localFeedback(goal, text, theme, upcomingSchedules);
+      return localFeedback(goal, text, theme, upcomingSchedules, mode, microChips);
     }
   }
+
   var requestClaudeFeedback = requestServerAIFeedback;
-  async function requestGeminiFeedback(goal, text, theme){
-    var geminiPersona = !!(state.profile.settings.customFeedbackActive && state.profile.settings.customFeedbackPrompt);
-    var prompt = buildFeedbackPrompt(goal, text, theme);
-    var model = state.profile.settings.geminiModel || 'gemini-2.5-flash';
+  async function requestGeminiFeedback(goal, text, theme, mode, microChips){
+    mode = mode || state.aiFeedbackMode || 'default';
+    microChips = microChips || state.aiMicroChips || {};
+    var settings = state.profile.settings;
+    var geminiPersona = !!(settings.customFeedbackActive && settings.customFeedbackPrompt);
+    var lastAdv = (typeof OurgoalAIFeedback !== 'undefined' && OurgoalAIFeedback.MemoryChain)
+      ? OurgoalAIFeedback.MemoryChain.getLastAdvice(settings, goal.id) : null;
+    var rail = (typeof OurgoalAIFeedback !== 'undefined' && OurgoalAIFeedback.computeVirtualRail)
+      ? OurgoalAIFeedback.computeVirtualRail(goal) : null;
+
+    var prompt = buildFeedbackPrompt(goal, text, theme, null, mode, microChips, lastAdv, rail);
+    var model = settings.geminiModel || 'gemini-2.5-flash';
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 12000);
     try{
       var res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent', {
         method:'POST',
-        headers:{ 'Content-Type':'application/json', 'x-goog-api-key': state.profile.settings.geminiKey },
+        headers:{ 'Content-Type':'application/json', 'x-goog-api-key': settings.geminiKey },
         signal: controller.signal,
         body: JSON.stringify({ contents:[{ parts:[{ text: prompt }] }] })
       });
@@ -6687,6 +6853,18 @@
       var parsed = parseFeedbackJSON(raw);
       parsed.source = 'gemini';
       parsed.persona = geminiPersona;
+
+      // 상태 기억 체인 저장
+      if(typeof OurgoalAIFeedback !== 'undefined' && OurgoalAIFeedback.MemoryChain){
+        OurgoalAIFeedback.MemoryChain.saveAdvice(settings, {
+          goalId: goal.id,
+          goalTitle: goal.title,
+          actionSuggested: parsed.nextAction || parsed.next_action || (parsed.comment ? parsed.comment.slice(0, 40) : ''),
+          verdict: parsed.verdict,
+          mode: mode
+        });
+        saveProfile();
+      }
       return parsed;
     } catch(e){
       clearTimeout(timer);
@@ -6694,10 +6872,34 @@
       return null;
     }
   }
+
   var DONE_KEYWORDS = ['완료','다 했','다했','끝냈','끝났','달성','마쳤','마무리','성공','clear','done'];
-  function localFeedback(goal, text, theme, upcomingSchedules){
+  function localFeedback(goal, text, theme, upcomingSchedules, mode, microChips){
     goal = goal || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
     if(!Array.isArray(goal.milestones)) goal.milestones = [];
+    mode = mode || state.aiFeedbackMode || 'default';
+    microChips = microChips || state.aiMicroChips || {};
+    var settings = state.profile.settings;
+
+    if(typeof OurgoalAIFeedback !== 'undefined' && OurgoalAIFeedback.generateEnhancedLocalFeedback){
+      var lastAdv = OurgoalAIFeedback.MemoryChain.getLastAdvice(settings, goal.id);
+      var enhanced = OurgoalAIFeedback.generateEnhancedLocalFeedback({
+        goal: goal,
+        text: text,
+        microChips: microChips,
+        mode: mode,
+        lastAdvice: lastAdv
+      });
+      OurgoalAIFeedback.MemoryChain.saveAdvice(settings, {
+        goalId: goal.id,
+        goalTitle: goal.title,
+        actionSuggested: enhanced.nextAction,
+        verdict: enhanced.verdict,
+        mode: mode
+      });
+      saveProfile();
+      return enhanced;
+    }
     var hay = text.toLowerCase();
     var detectedTheme = theme || ((typeof classifyRecordTheme === 'function') ? classifyRecordTheme(text, goal ? goal.category : null).theme : 'daily');
     var goalWords = Array.from(new Set((goal.title+' '+(goal.milestones||[]).map(function(m){return m.title;}).join(' ')).toLowerCase().split(/[^a-z0-9가-힣]+/i).filter(function(w){ return w.length>1; })));
@@ -7102,7 +7304,42 @@
   document.getElementById('settingsCustomFeedbackBtn').addEventListener('click', openFeedbackSetupGated);
   document.getElementById('fbSetupBack').addEventListener('click', closeFeedbackSetup);
 
-  function verdictClass(v){ return (v==='도움됨'||v==='실천 완료')?'good':(v==='도움안됨'?'bad':'mid'); }
+  function verdictClass(v){
+    if(v==='핵심 발견'||v==='도움됨'||v==='실천 완료'||v==='페이스 유지'||v==='스트릭 방어') return 'good';
+    if(v==='실행 권고'||v==='루틴 보완') return 'mid';
+    return (v==='도움안됨'?'bad':'mid');
+  }
+
+  function bindAddSchedButtons(container){
+    if(!container) return;
+    container.querySelectorAll('.btn-add-sched-ai').forEach(function(btn){
+      btn.onclick = async function(){
+        var sTitle = btn.dataset.schedTitle;
+        var sDate = btn.dataset.schedDate;
+        var sTime = btn.dataset.schedTime;
+        state.profile.settings.customSchedules = state.profile.settings.customSchedules || [];
+        state.profile.settings.customSchedules.push({
+          id: 'cs_' + newId(),
+          title: sTitle,
+          date: sDate,
+          time: sTime,
+          note: 'AI 추천 선제 일정',
+          done: false
+        });
+        await saveProfile();
+        btn.textContent = '내 캘린더에 추가 완료 ✓';
+        btn.disabled = true;
+        btn.style.background = 'var(--surface-2, #e5e7eb)';
+        btn.style.color = 'var(--faint, #6b7280)';
+        triggerHaptic(14);
+        var rect = btn.getBoundingClientRect();
+        burstConfetti(rect.left + rect.width / 2, rect.top, 8);
+        toast('30일 캘린더에 추천 일정을 등록했어요 🗓️');
+        renderAll();
+      };
+    });
+  }
+
   function renderFeedbackSlot(fb){
     var existing = document.getElementById('fbSlot');
     if(existing) existing.remove();
@@ -7111,13 +7348,16 @@
     card.id = 'fbSlot';
     if(fb==='loading'){
       card.className = 'fb-card mid';
-      card.innerHTML = '<span class="fb-verdict">판단 중…</span>';
+      card.innerHTML = '<span class="fb-verdict">AI 코칭 및 30일 거시 분석 중…</span>';
     } else {
       card.className = 'fb-card ' + verdictClass(fb.verdict);
+      var inner = (typeof OurgoalAIFeedback !== 'undefined' && OurgoalAIFeedback.renderEnhancedCardContent)
+        ? OurgoalAIFeedback.renderEnhancedCardContent(fb)
+        : ('<div class="fb-verdict">'+escapeHtml(fb.verdict)+'</div><div class="fb-row">'+escapeHtml(fb.comment)+'</div>');
+
       card.innerHTML = '<span class="fb-close" id="fbCloseBtn">×</span>' +
-        '<div class="fb-verdict">'+escapeHtml(fb.verdict)+'</div>' +
-        '<div class="fb-row">'+escapeHtml(fb.comment)+'</div>' +
-        '<div class="fb-source">'+(fb.persona?'내 맞춤 봇 판단':(fb.source==='ai'?'Claude 판단':(fb.source==='gemini'?'Gemini 판단':'간이 판단')))+'</div>' +
+        inner +
+        '<div class="fb-source" style="margin-top:8px;">'+(fb.persona?'내 맞춤 봇 판단':(fb.source==='ai'?'Claude 판단':(fb.source==='gemini'?'Gemini 판단':(fb.source==='local_enhanced'?'AI 로컬 코칭':'간이 판단'))))+'</div>' +
         '<button class="btn btn-ghost btn-sm" id="fbShareBtn" type="button" style="width:100%;margin-top:10px;">이 기록, 피드에 공유하기</button>';
     }
     document.getElementById('captureCardBox').after(card);
@@ -7125,6 +7365,7 @@
       card.querySelector('#fbCloseBtn').addEventListener('click', function(){ card.remove(); });
       var shareBtn = card.querySelector('#fbShareBtn');
       if(shareBtn) shareBtn.addEventListener('click', openShareToFeedModal);
+      bindAddSchedButtons(card);
     }
   }
 
@@ -7136,18 +7377,22 @@
     if(fb === 'loading'){
       el.innerHTML = '<div class="fb-card mid"><span class="fb-verdict">AI 코치 피드백 분석 중…</span></div>';
     } else {
+      var inner = (typeof OurgoalAIFeedback !== 'undefined' && OurgoalAIFeedback.renderEnhancedCardContent)
+        ? OurgoalAIFeedback.renderEnhancedCardContent(fb)
+        : ('<div class="fb-verdict">' + escapeHtml(fb.verdict) + '</div><div class="fb-row">' + escapeHtml(fb.comment) + '</div>');
+
       el.innerHTML = '<div class="fb-card ' + verdictClass(fb.verdict) + '">' +
         '<span class="fb-close" id="recFbCloseBtn">×</span>' +
         '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:4px;display:flex;align-items:center;gap:4px;"><span><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/></svg></span><span>기록 탭 AI 피드백</span></div>' +
-        '<div class="fb-verdict">' + escapeHtml(fb.verdict) + '</div>' +
-        '<div class="fb-row">' + escapeHtml(fb.comment) + '</div>' +
-        '<div class="fb-source">' + (fb.persona ? '내 맞춤 봇 판단' : (fb.source === 'ai' ? 'Claude 판단' : (fb.source === 'gemini' ? 'Gemini 판단' : '간이 판단'))) + '</div>' +
+        inner +
+        '<div class="fb-source" style="margin-top:8px;">' + (fb.persona ? '내 맞춤 봇 판단' : (fb.source === 'ai' ? 'Claude 판단' : (fb.source === 'gemini' ? 'Gemini 판단' : 'AI 코칭'))) + '</div>' +
         '<button class="btn btn-ghost btn-sm" id="recFbShareBtn" type="button" style="width:100%;margin-top:10px;">이 기록, 피드에 공유하기</button>' +
       '</div>';
       var closeBtn = el.querySelector('#recFbCloseBtn');
       if(closeBtn) closeBtn.onclick = function(){ el.innerHTML = ''; el.style.display = 'none'; };
       var shareBtn = el.querySelector('#recFbShareBtn');
       if(shareBtn) shareBtn.onclick = openShareToFeedModal;
+      bindAddSchedButtons(el);
     }
   }
   function timeAgoStr(iso){
@@ -10373,6 +10618,11 @@
           if(state.activeTab==='goals' && state.goalsSubTab==='team') renderTeamGoalsScreen();
         });
       }
+      if(window.OurgoalTeamLeaderCheck && typeof window.OurgoalTeamLeaderCheck.ensureTeamPingsLoaded === 'function'){
+        window.OurgoalTeamLeaderCheck.ensureTeamPingsLoaded(g.id, { sb: sb, getGroupState: groupState }).then(function(){
+          if(state.activeTab==='goals' && state.goalsSubTab==='team') renderTeamGoalsScreen();
+        });
+      }
     });
 
     var roleLabels = { owner:'팀장', manager:'매니저', member:'팀원' };
@@ -10413,6 +10663,7 @@
       var roleLabel = roleLabels[gs.myRole || 'member'];
       var goals = g.teamGoals || [];
       var teamLeaderDeps = {
+        sb: sb,
         mockGroups: MOCK_GROUPS,
         getGroupState: groupState,
         getProfile: function(){ return state.profile; },
@@ -10608,6 +10859,7 @@
 
     if(window.OurgoalTeamLeaderCheck){
       OurgoalTeamLeaderCheck.bindEvents(view, {
+        sb: sb,
         mockGroups: MOCK_GROUPS,
         getGroupState: groupState,
         getProfile: function(){ return state.profile; },
@@ -19013,6 +19265,7 @@
             roomType: maxMembers === 2 ? 'pair' : (maxMembers <= 5 ? 'small' : 'open'),
             inviteCode: inviteCode,
             ownerName: state.profile.displayName,
+            ownerId: (state.profile && state.profile.id) || null,
             progress: 0,
             cadence: cadence,
             endDate: daysFromNow(weeks*7),
@@ -19740,7 +19993,7 @@
       '</div>' +
       '<div class="field">' +
         '<label>답변받으실 이메일</label>' +
-        '<input id="inquiryEmail" type="email" value="'+escapeHtml((state.user && state.user.email) || (state.profile && state.profile.email) || 'ysm0422@naver.com')+'">' +
+        '<input id="inquiryEmail" type="email" value="'+escapeHtml((state.user && state.user.email) || (state.profile && state.profile.email) || '')+'" placeholder="답변받으실 이메일 주소">' +
       '</div>' +
       '<div class="field">' +
         '<label>문의 내용</label>' +
@@ -19881,10 +20134,11 @@
       };
     }
 
-    // 🔐 계정 및 보안 (Req 10)
+    // 🔐 계정 및 보안 (Req 10 - #TASK-ES-043 개인 이메일 노출 제거)
     var emailEl = document.getElementById('setAccountEmail');
     if(emailEl){
-      emailEl.textContent = (state.user && state.user.email) || (state.profile && state.profile.email) || 'ysm0422@naver.com';
+      var isGuestUser = !state.user || (state.profile && String(state.profile.id).indexOf('guest-') === 0);
+      emailEl.textContent = (state.user && state.user.email) || (state.profile && state.profile.email) || (isGuestUser ? '게스트 모드 (로그인 후 계정 연동)' : '연동된 이메일 없음');
     }
     var twoFaSw = document.getElementById('twoFactorSwitch');
     if(twoFaSw){
@@ -20658,6 +20912,33 @@
         state.profile = defaultProfile(session.user.id, userEmail, newExtra.display_name || userEmail.split('@')[0]);
       }
 
+      // 게스트 세션 데이터 새 소셜 계정으로 자동 마이그레이션 (#TASK-ES-043)
+      try {
+        var rawGuest = localStorage.getItem('ourgoal_guest_profile');
+        if(rawGuest && session && session.user){
+          var gData = JSON.parse(rawGuest);
+          if(gData && gData.id !== session.user.id && ((gData.goals && gData.goals.length > 0) || (gData.records && gData.records.length > 0))){
+            var newUid = session.user.id;
+            if(gData.goals && gData.goals.length > 0){
+              var goalsPayload = gData.goals.map(function(g){
+                return { id: g.id, user_id: newUid, title: g.title, category: g.category||null, due_date: g.dueDate||null, visibility: g.visibility||'private', topic: g.topic||null, archived_at: g.archivedAt||null, result: g.result||null, milestones: g.milestones||[] };
+              });
+              await sb.from('goals').upsert(goalsPayload);
+              if(state.profile) state.profile.goals = (state.profile.goals || []).concat(gData.goals.filter(function(g){ return !(state.profile.goals || []).some(function(eg){ return eg.id === g.id; }); }));
+            }
+            if(gData.records && gData.records.length > 0){
+              var recsPayload = gData.records.map(function(r){
+                return { id: r.id, user_id: newUid, type: r.type||'note', text: r.text, start_at: r.startAt, end_at: r.endAt||r.startAt, category: r.category||null, theme: r.theme||'daily', sub_theme: r.subTheme||null };
+              });
+              await sb.from('checkins').upsert(recsPayload);
+              if(state.profile) state.profile.records = (state.profile.records || []).concat(gData.records.filter(function(r){ return !(state.profile.records || []).some(function(er){ return er.id === r.id; }); }));
+            }
+            localStorage.removeItem('ourgoal_guest_profile');
+            toast('게스트 모드에서 작성한 목표와 기록을 안전하게 가져왔어요! 🎉');
+          }
+        }
+      } catch(mErr){ console.warn('게스트 데이터 병합 예외 (무시):', mErr); }
+
       var ls = document.getElementById('landingScreen');
       if(ls) ls.style.display = 'none';
       var as = document.getElementById('authScreen');
@@ -21024,6 +21305,18 @@
   /* ============ KF-2 #TASK-ES-017: 템플릿 복제 크레딧 모듈(js/template-credit.js)에 앱 핸들 연결 ============ */
   if(window.OurgoalTemplateCredit && typeof window.OurgoalTemplateCredit.init === 'function'){
     window.OurgoalTemplateCredit.init({ sb: sb, getState: function(){ return state; }, toast: toast, playRewardedAd: playRewardedAdVideo });
+  }
+  /* ============ #TASK-ES-027: 모임장-팀원 실시간 찌르기 및 1:1 DM 모듈(js/team-leader-check.js) 핸들 연결 ============ */
+  if(window.OurgoalTeamLeaderCheck && typeof window.OurgoalTeamLeaderCheck.init === 'function'){
+    window.OurgoalTeamLeaderCheck.init({
+      sb: sb,
+      getProfile: function(){ return state.profile; },
+      getGroupState: groupState,
+      canManage: canManageTeamGoals,
+      toast: toast,
+      haptic: (typeof hapticFeedback === 'function') ? hapticFeedback : null,
+      onRefresh: function(){ if(state.view === 'teamGoals') renderTeamGoalsScreen(); }
+    });
   }
 
   /* ============ PWA: Service Worker 등록 ============ */
