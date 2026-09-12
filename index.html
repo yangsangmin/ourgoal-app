@@ -8795,13 +8795,17 @@
     /* 보기 모드: 마감·공개·카테고리를 한 줄 메타 스트립으로 (시인성) */
     var visNow = goal.visibility || 'private';
     var formattedGoalDue = goal.dueDate ? formatDateTimeBadge(goal.dueDate) : '';
-    var metaStrip = '<div class="meta-strip">' +
+    var metaStrip = '<div class="meta-strip" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
       (goal.dueDate
         ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);">'+formattedGoalDue+' · '+ddayText+'</span>'
         : '<span class="dday-pill">마감일 없음</span>') +
       '<span class="dday-pill" id="goalsPrivacyBadge" style="cursor:pointer;" title="탭하여 공개 범위 순환 변경">'+(visNow==='private'?'🔒 ':(visNow==='team'||visNow==='followers'?'👥 ':'🌐 '))+((visNow==='team'||visNow==='followers')?'모임원 공개':VISIBILITY_LABELS[visNow])+' ▾</span>' +
       (goal.topic ? topicPill(goal.topic) : '') +
       '<span class="dday-pill" style="background:var(--sage-soft);color:var(--sage);">달성 '+goalAchievement(goal)+'%</span>' +
+      (!state.goalEditMode ?
+        ('<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button" style="font-size:.75rem;padding:2px 8px;margin-left:auto;color:var(--ink-soft);border:1px solid var(--rule);">' +
+          (goal.result ? '📝 결과 수정' : '+ 최종 결과') +
+        '</button>') : '') +
     '</div>';
     var dueRow = '<div class="duedate-row"><span class="lbl">목표 마감일시 (년월일시분)</span>' +
       '<span style="display:flex;align-items:center;">' +
@@ -8835,114 +8839,106 @@
     var todoCount = goal.milestones.filter(function(m){ return m.status==='todo'; }).length;
     var doneCount = goal.milestones.filter(function(m){ return m.status==='done'; }).length;
     var allCollapsed = totalMs > 0 && goal.milestones.every(function(m){ return state.collapsedMilestones[m.id]; });
+    var density = state.msDensity || 'compact';
+
+    var densityBtnHtml = '<button class="btn btn-ghost btn-sm" id="msDensityToggleBtn" type="button" style="font-size:.75rem;padding:3px 8px;color:var(--ink-soft);" title="보기 모드 전환">' +
+      (density === 'compact' ? '⊞ 상세' : '⊟ 간결') +
+    '</button>';
 
     var msFilterBar = totalMs > 0 ?
-      '<div class="ms-filter-bar" style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin:12px 0 8px;flex-wrap:wrap;">' +
-        '<div class="format-toggle" id="msFilterToggle" style="max-width:300px;">' +
+      '<div class="ms-filter-bar" style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin:8px 0 6px;flex-wrap:wrap;">' +
+        '<div class="format-toggle" id="msFilterToggle" style="max-width:280px;">' +
           '<div class="format-opt'+(state.msFilter==='all'?' active':'')+'" data-msfilter="all">전체 ('+totalMs+')</div>' +
-          '<div class="format-opt'+(state.msFilter==='doing'?' active':'')+'" data-msfilter="doing">진행 중 ('+doingCount+')</div>' +
+          '<div class="format-opt'+(state.msFilter==='doing'?' active':'')+'" data-msfilter="doing">진행 ('+doingCount+')</div>' +
           '<div class="format-opt'+(state.msFilter==='todo'?' active':'')+'" data-msfilter="todo">대기 ('+todoCount+')</div>' +
           '<div class="format-opt'+(state.msFilter==='done'?' active':'')+'" data-msfilter="done">완료 ('+doneCount+')</div>' +
         '</div>' +
-        '<button class="btn btn-ghost btn-sm" id="msCollapseAllBtn" type="button" style="font-size:.8125rem;padding:4px 8px;">' +
-          (allCollapsed ? '전체 펼치기' : '전체 접기') +
-        '</button>' +
+        '<div style="display:flex;align-items:center;gap:4px;">' +
+          densityBtnHtml +
+          '<button class="btn btn-ghost btn-sm" id="msCollapseAllBtn" type="button" style="font-size:.75rem;padding:3px 8px;">' +
+            (allCollapsed ? '전체 펼치기' : '전체 접기') +
+          '</button>' +
+        '</div>' +
       '</div>' : '';
 
     var msHtml = goal.milestones.map(function(m, idx){
       if(state.msFilter !== 'all' && m.status !== state.msFilter) return '';
       var statusIcon = m.status==='done' ? '✓' : '';
-      var titleClass = m.status==='done' ? 'ms-title done-text' : 'ms-title';
+      var titleClass = m.status==='done' ? 'ms-title-compact done-text' : 'ms-title-compact';
       var isCollapsed = !!state.collapsedMilestones[m.id];
       var totalTasks = (m.tasks||[]).length;
       var doneTasks = (m.tasks||[]).filter(function(t){ return t.done; }).length;
 
       var taskRows = (m.tasks||[]).map(function(t){
         var tSel = !!state.taskSel[t.id];
-        var tAttHtml = renderAttachmentChipsHtml(t.attachments||[], 'task', t.id, m.id);
+        var tAttHtml = (t.attachments && t.attachments.length) ? ('<span class="faint" style="font-size:.7rem;" title="참고자료 '+t.attachments.length+'건">📎'+t.attachments.length+'</span>') : '';
         var taskDueHtml = state.goalEditMode ?
-          '<div class="ms-date" style="display:inline-flex;align-items:center;gap:6px;margin-top:4px;"><input type="datetime-local" data-taskdate="1" value="'+toDateTimeLocalValue(t.dueDate)+'">' + (t.dueDate ? ddayMini(t.dueDate) : '') + '</div>' :
-          (t.dueDate ?
-            '<div class="faint" style="font-size:.8125rem;margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><span style="color:var(--ink-soft);font-weight:700;">마감일 ' + formatDateTimeBadge(t.dueDate) + '</span>' + ddayMini(t.dueDate) + '</div>' :
-            (m.dueDate ?
-              '<div class="faint" style="font-size:.8125rem;margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><span style="color:var(--ink-faint);">마일스톤 마감 ' + formatDateTimeBadge(m.dueDate) + '</span>' + ddayMini(m.dueDate) + '</div>' :
-              (goal.dueDate ?
-                '<div class="faint" style="font-size:.8125rem;margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><span style="color:var(--ink-faint);">목표 마감 ' + formatDateTimeBadge(goal.dueDate) + '</span>' + ddayMini(goal.dueDate) + '</div>' :
-                '<div class="faint" style="font-size:.8125rem;margin-top:2px;color:var(--ink-faint);">마감일 미설정</div>')
-            )
-          );
+          ('<input type="datetime-local" data-taskdate="1" value="'+toDateTimeLocalValue(t.dueDate)+'" style="font-size:.7rem;padding:1px 3px;max-width:130px;">' + (t.dueDate ? ddayMini(t.dueDate) : '')) :
+          (t.dueDate ? ('<span class="task-due-tag" title="마감일 '+formatDateTimeBadge(t.dueDate)+'">마감 ' + dDay(t.dueDate) + '</span>') : '');
+        var tResHtml = t.result ? ('<button data-taskresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(t.result)+'</button>') : (state.goalEditMode ? '<button data-taskresult="1" type="button" style="border:none;background:none;padding:0;font-size:.7rem;color:var(--ink-faint);">+결과</button>' : '');
 
-        return '<div class="task-row'+(tSel?' selected':'')+'" data-taskid="'+t.id+'" data-msid="'+m.id+'" style="align-items:flex-start;">' +
-          (state.goalEditMode ? '<div class="sel-check'+(tSel?' on':'')+'" data-seltask="'+t.id+'" style="margin-top:4px;">'+(tSel?'✓':'')+'</div>' : '') +
-          '<div style="flex:1;min-width:0;">' +
-            '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
-              '<input class="task-title'+(t.done?' done-text':'')+'" data-taskinput="1" value="'+escapeHtml(t.title)+'" '+(state.goalEditMode?'':'readonly')+'>' +
-              (state.goalEditMode ? '<button class="icon-btn" data-deltask="1" aria-label="할 일 삭제">×</button>' : '') +
-            '</div>' +
+        return '<div class="task-row compact-task-row'+(tSel?' selected':'')+'" data-taskid="'+t.id+'" data-msid="'+m.id+'">' +
+          (state.goalEditMode ? '<div class="sel-check'+(tSel?' on':'')+'" data-seltask="'+t.id+'">'+(tSel?'✓':'')+'</div>' : '') +
+          '<div class="task-check'+(t.done?' done':'')+'" data-taskcheck="1">'+(t.done?'✓':'')+'</div>' +
+          '<input class="task-title-inline'+(t.done?' done-text':'')+'" data-taskinput="1" value="'+escapeHtml(t.title)+'" '+(state.goalEditMode?'':'readonly')+'>' +
+          '<div class="task-meta-inline">' +
             taskDueHtml +
             tAttHtml +
-            '<div style="margin-top:4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
-              '<button class="att-add-btn" data-addatttask="'+t.id+'" data-msid="'+m.id+'" type="button">+ 참고자료</button>' +
-              (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsynctask="'+t.id+'" data-msid="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영" style="font-size:.8125rem;padding:2px 4px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' : '') +
-            '</div>' +
-            resultLineHtml(t.result) +
+            (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsynctask="'+t.id+'" data-msid="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더 반영" style="padding:1px 3px;font-size:.75rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' : '') +
+            tResHtml +
+            (state.goalEditMode ? '<button class="icon-btn" data-deltask="1" aria-label="삭제" style="padding:1px 4px;font-size:.8rem;">×</button>' : '') +
           '</div>' +
-          '<button data-taskresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(t.result)+'</button>' +
         '</div>';
       }).join('');
 
       var mSel = !!state.msSel[m.id];
-      var mAttHtml = renderAttachmentChipsHtml(m.attachments||[], 'ms', m.id, goal.id);
-      var taskProgressPct = totalTasks > 0 ? Math.round(doneTasks/totalTasks*100) : 0;
-      var msDueHtml = state.goalEditMode ?
-        '<div class="ms-date" style="display:inline-flex;align-items:center;gap:6px;margin-top:4px;"><input type="datetime-local" data-msdate="1" value="'+toDateTimeLocalValue(m.dueDate)+'">' + (m.dueDate ? ddayMini(m.dueDate) : '') + '</div>' :
-        (m.dueDate ?
-          '<div class="faint" style="font-size:.8125rem;margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><span style="color:var(--ink-soft);font-weight:700;">마감일 ' + formatDateTimeBadge(m.dueDate) + '</span>' + ddayMini(m.dueDate) + '</div>' :
-          (goal.dueDate ?
-            '<div class="faint" style="font-size:.8125rem;margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><span style="color:var(--ink-faint);">목표 마감 ' + formatDateTimeBadge(goal.dueDate) + '</span>' + ddayMini(goal.dueDate) + '</div>' :
-            '<div class="faint" style="font-size:.8125rem;margin-top:3px;color:var(--ink-faint);">마감일 미설정</div>')
-        );
-
+      var ddayBadge = m.dueDate ? ('<span class="dday-mini" style="font-size:.6875rem;padding:1px 5px;">'+dDay(m.dueDate)+'</span>') : '';
+      var progBadge = totalTasks > 0 ? ('<span class="faint" style="font-size:.6875rem;background:var(--card2);padding:1px 5px;border-radius:5px;">'+doneTasks+'/'+totalTasks+'</span>') : '';
       var curPrio = m.priority || 'med';
       var prioLabel = curPrio === 'high' ? '높음' : (curPrio === 'low' ? '낮음' : '보통');
       var prioTagHtml = '<span class="ms-priority-tag ms-priority-' + curPrio + '" data-cyclepriority="' + m.id + '" title="우선순위 변경 (클릭)">' + prioLabel + '</span>';
-
-      var calBtnHtml = calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsyncms="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' : '';
+      var calBtnHtml = calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsyncms="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더 반영" style="padding:2px 4px;font-size:.75rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' : '';
       var resBtnHtml = '<button data-msresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(m.result)+'</button>';
+
+      var msDueHtml = state.goalEditMode ?
+        ('<div class="ms-date" style="display:inline-flex;align-items:center;gap:4px;"><input type="datetime-local" data-msdate="1" value="'+toDateTimeLocalValue(m.dueDate)+'" style="font-size:.75rem;padding:2px 4px;max-width:140px;">' + (m.dueDate ? ddayMini(m.dueDate) : '') + '</div>') :
+        (m.dueDate ? ('<span class="faint" style="font-size:.72rem;" title="마감일 '+formatDateTimeBadge(m.dueDate)+'"><span style="color:var(--ink-soft);font-weight:600;">마감일</span> ' + (density==='compact' ? formatDateTimeBadge(m.dueDate).slice(5) : formatDateTimeBadge(m.dueDate)) + '</span>') : '');
+      var attSnippet = (m.attachments && m.attachments.length) ? ('<span class="faint" style="font-size:.72rem;">📎' + m.attachments.length + '</span>') : '';
 
       return '<div class="ms-row'+(m.status==='doing'?' doing':'')+(mSel?' selected':'')+'" data-msid="'+m.id+'" '+(state.goalEditMode?'draggable="true"':'')+'>' +
         '<div class="ms-grid-row">' +
-          '<div class="ms-top-bar">' +
-            '<div class="ms-top-left">' +
+          '<div class="ms-main-line">' +
+            '<div class="ms-main-left">' +
               (state.goalEditMode ? '<div class="sel-check'+(mSel?' on':'')+'" data-selms="'+m.id+'">'+(mSel?'✓':'')+'</div>' : '') +
               (state.goalEditMode ? '<div class="drag-handle" title="드래그해서 순서 변경"><span></span><span></span><span></span></div>' : '') +
-              (totalTasks > 0 ? '<button class="icon-btn" data-mstoggle="'+m.id+'" type="button" title="'+(isCollapsed?'하위 할 일 펼치기':'하위 할 일 접기')+'" style="padding:2px 5px;font-size:.8125rem;color:var(--ink-soft);flex:0 0 auto;">'+(isCollapsed ? '▶' : '▼')+'</button>' : '') +
+              (totalTasks > 0 ? '<button class="icon-btn" data-mstoggle="'+m.id+'" type="button" title="'+(isCollapsed?'하위 할 일 펼치기':'하위 할 일 접기')+'" style="padding:2px 5px;font-size:.75rem;color:var(--ink-soft);flex:0 0 auto;">'+(isCollapsed ? '▶' : '▼')+'</button>' : '') +
               '<div class="ms-status '+m.status+'" data-cyclestatus="1">'+statusIcon+'</div>' +
-              prioTagHtml +
-              (totalTasks > 0 ? '<span class="faint" style="font-size:.6875rem;background:var(--card2);padding:1px 6px;border-radius:6px;">'+doneTasks+'/'+totalTasks+' 완료 ('+taskProgressPct+'%)</span>' : '') +
+              '<input class="'+titleClass+'" data-msinput="1" value="'+escapeHtml(m.title)+'" '+(state.goalEditMode?'':'readonly')+'>' +
             '</div>' +
-            '<div class="ms-right-actions">' +
-              calBtnHtml +
+            '<div class="ms-main-right">' +
+              progBadge +
+              ddayBadge +
+            '</div>' +
+          '</div>' +
+          '<div class="ms-sub-meta-line">' +
+            '<div class="ms-sub-meta-left">' +
+              prioTagHtml +
+              msDueHtml +
+              attSnippet +
+              '<button class="att-add-btn" data-addattms="'+m.id+'" type="button" style="padding:0 6px;min-height:20px;font-size:.6875rem;">+참고</button>' +
               resBtnHtml +
             '</div>' +
-            (state.goalEditMode ? '<div class="ms-actions">' +
-              (idx>0?'<button class="icon-btn" data-msup="1" aria-label="위로 이동">↑</button>':'') +
-              (idx<goal.milestones.length-1?'<button class="icon-btn" data-msdown="1" aria-label="아래로 이동">↓</button>':'') +
-              '<button class="icon-btn" data-msdel="1" aria-label="마일스톤 삭제">×</button>' +
-            '</div>' : '') +
-          '</div>' +
-          '<div class="ms-title-full-row">' +
-            '<input class="'+titleClass+' ms-title-input-full" data-msinput="1" value="'+escapeHtml(m.title)+'" '+(state.goalEditMode?'':'readonly')+'>' +
-          '</div>' +
-          '<div class="ms-meta-full-row">' +
-            msDueHtml +
-            mAttHtml +
-            '<button class="att-add-btn" data-addattms="'+m.id+'" type="button">+ 참고자료</button>' +
-            resultLineHtml(m.result) +
+            '<div class="ms-sub-meta-right">' +
+              calBtnHtml +
+              (state.goalEditMode ?
+                ((idx>0?'<button class="icon-btn" data-msup="1" aria-label="위로">↑</button>':'') +
+                 (idx<goal.milestones.length-1?'<button class="icon-btn" data-msdown="1" aria-label="아래로">↓</button>':'') +
+                 '<button class="icon-btn" data-msdel="1" aria-label="삭제">×</button>') : '') +
+            '</div>' +
           '</div>' +
         '</div>' +
-        '<div class="task-list" style="'+(isCollapsed?'display:none;':'')+'">'+taskRows+'</div>' +
-        (state.goalEditMode && !isCollapsed ? '<div class="task-add" data-addtask="1">+ 할 일 추가</div>' : '') +
+        '<div class="task-list" style="margin-left:26px;'+(isCollapsed?'display:none;':'')+'">'+taskRows+'</div>' +
+        (state.goalEditMode && !isCollapsed ? '<div class="task-add" data-addtask="1" style="margin-left:26px;font-size:.75rem;">+ 할 일 추가</div>' : '') +
       '</div>';
     }).join('');
 
@@ -8950,10 +8946,20 @@
     if(!state.profile.settings.goalStatusSummaries) state.profile.settings.goalStatusSummaries = {};
     var goalStatusCache = state.profile.settings.goalStatusSummaries[goal.id];
     var goalStatusStale = !goalStatusCache || goalStatusCache.hash !== goalStatusHash;
-    var goalStatusRow = '<div class="card" style="margin-bottom:14px;">' +
-      '<div class="card-title-row"><h3>현재 종합상황</h3>' +
-        '<span class="faint" id="goalStatusTag" style="font-size:.6875rem;">'+(goalStatusStale?'분석 중…':'AI 요약')+'</span></div>' +
-      '<p class="faint" id="goalStatusText" style="margin:0;line-height:1.65;min-height:1.2em;">'+(goalStatusCache?escapeHtml(goalStatusCache.text):(goal.milestones.length?'기록을 쌓으면 AI가 목표·마일스톤·할 일을 종합해 지금 상태를 요약해드려요.':'마일스톤을 추가하면 AI가 진행 상황을 요약해드려요.'))+'</p>' +
+    var isStatusExpanded = !!state.goalStatusExpanded;
+    var statusText = goalStatusCache ? escapeHtml(goalStatusCache.text) : (goal.milestones.length ? '기록을 쌓으면 AI가 목표·마일스톤·할 일을 종합해 지금 상태를 요약해드려요.' : '마일스톤을 추가하면 AI가 진행 상황을 요약해드려요.');
+    var statusSnippet = (goalStatusCache && goalStatusCache.text) ? (escapeHtml(goalStatusCache.text).slice(0, 42) + (goalStatusCache.text.length > 42 ? '…' : '')) : (goalStatusStale ? '진행 상황 분석 중…' : '탭하여 AI 종합현황 보기');
+
+    var goalStatusRow = '<div class="goal-status-minibar' + (isStatusExpanded ? ' expanded' : '') + '" id="goalStatusMinibar">' +
+      '<div class="status-minibar-head" id="goalStatusToggleBtn">' +
+        '<span class="minibar-icon">🤖</span>' +
+        '<span class="minibar-title">AI 현황</span>' +
+        '<span class="minibar-snippet">' + statusSnippet + '</span>' +
+        '<span class="minibar-chevron">' + (isStatusExpanded ? '▲' : '▼') + '</span>' +
+      '</div>' +
+      '<div class="status-minibar-body" style="' + (isStatusExpanded ? '' : 'display:none;') + '">' +
+        '<p class="faint" id="goalStatusText" style="margin:0;line-height:1.6;font-size:.8125rem;">' + statusText + '</p>' +
+      '</div>' +
     '</div>';
 
     var exportCardHtml = '<div class="export-card" style="margin-top:16px;margin-bottom:14px;">' +
@@ -8961,13 +8967,6 @@
       '<div class="txt"><b>현 상태로 데이터 받기</b><span>목표·마일스톤·할 일·결과·체크인을 AI 분석용으로 내보내요</span></div>' +
       '<button class="btn btn-ghost btn-sm" id="goalExportBtn" type="button" style="margin-left:auto;">이 목표</button>' +
       '<button class="btn btn-ghost btn-sm" id="goalExportAllBtn" type="button" style="margin-left:6px;">전체</button>' +
-    '</div>';
-
-    var compactResultRow = '<div style="display:flex;align-items:center;gap:8px;margin:6px 0 10px;">' +
-      '<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button" style="font-size:.8125rem;padding:4px 10px;color:var(--ink);border:1px solid var(--rule);">' +
-        (goal.result ? '최종 결과 수정' : '최종 결과 입력') +
-      '</button>' +
-      '<span class="faint" style="font-size:.8125rem;color:var(--ink-soft);">(목표완료시)</span>' +
     '</div>';
 
     var selCount = Object.keys(state.msSel).length + Object.keys(state.taskSel).length;
@@ -8980,7 +8979,7 @@
       '</div>' : '';
 
     body.innerHTML =
-      (state.goalEditMode ? dueRow + visRow : metaStrip + compactResultRow) +
+      (state.goalEditMode ? dueRow + visRow : metaStrip) +
       (state.goalEditMode ? '' : goalStatusRow) +
       msFilterBar +
       '<div class="ms-list">'+msHtml+'</div>' +
@@ -9041,6 +9040,22 @@
         } else {
           goal.milestones.forEach(function(m){ state.collapsedMilestones[m.id] = true; });
         }
+        renderGoalsScreen();
+      });
+    }
+
+    var densityToggleBtn = document.getElementById('msDensityToggleBtn');
+    if(densityToggleBtn){
+      densityToggleBtn.addEventListener('click', function(){
+        state.msDensity = (state.msDensity === 'detailed') ? 'compact' : 'detailed';
+        renderGoalsScreen();
+      });
+    }
+
+    var statusToggleBtn = document.getElementById('goalStatusToggleBtn');
+    if(statusToggleBtn){
+      statusToggleBtn.addEventListener('click', function(){
+        state.goalStatusExpanded = !state.goalStatusExpanded;
         renderGoalsScreen();
       });
     }

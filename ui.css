@@ -1425,48 +1425,161 @@ input:focus,select:focus,textarea:focus{background:var(--surface-2);}
   cursor: not-allowed;
 }
 
-/* 마일스톤 재배치 레이아웃 */
+/* 마일스톤 재배치 및 고밀도 공간 최적화 (TASK-ES-038) */
 .ms-grid-row {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   width: 100%;
 }
-.ms-top-bar {
+.ms-title-full-row { width: 100%; }
+.ms-right-actions { display: flex; gap: 4px; align-items: center; }
+.ms-main-line {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
+  width: 100%;
+  min-height: 32px;
 }
-.ms-top-left {
+.ms-main-left {
   display: flex;
   align-items: center;
   gap: 6px;
   flex: 1;
   min-width: 0;
 }
-.ms-right-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-  flex: 0 0 auto;
-}
-.ms-title-full-row {
-  width: 100%;
-}
-.ms-title-input-full {
-  width: 100%;
-  font-size: 0.95rem;
-  font-weight: 700;
+.ms-title-compact {
+  flex: 1;
+  min-width: 0;
+  font-size: .9375rem;
+  font-weight: 600;
+  color: var(--ink);
   border: none;
   background: transparent;
-  color: var(--ink);
   padding: 2px 0;
 }
-.ms-meta-full-row {
+.ms-title-compact.done-text {
+  text-decoration: line-through;
+  color: var(--ink-faint);
+  font-weight: 400;
+}
+.ms-title-compact:focus {
+  outline: none;
+  border-bottom: 1.5px solid var(--brand);
+}
+.ms-main-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+.ms-sub-meta-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding-left: 28px;
+  font-size: .75rem;
+  color: var(--ink-soft);
+  min-height: 22px;
+}
+.ms-sub-meta-left {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+.ms-sub-meta-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+/* 상단 AI 종합상황 미니바 */
+.goal-status-minibar {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: all .2s ease;
+}
+.status-minibar-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font-size: .8125rem;
+  background: var(--card);
+}
+.status-minibar-head:hover {
+  background: var(--surface-2);
+}
+.minibar-icon { font-size: 1rem; flex: 0 0 auto; }
+.minibar-title { font-weight: 700; color: var(--ink); flex: 0 0 auto; }
+.minibar-snippet {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ink-soft);
+  font-size: .78rem;
+}
+.minibar-chevron {
+  font-size: .6875rem;
+  color: var(--ink-faint);
+  flex: 0 0 auto;
+}
+.status-minibar-body {
+  padding: 10px 12px;
+  border-top: 1px solid var(--rule);
+  background: var(--surface-1);
+}
+
+/* 1줄 세부 할 일 (One-Line Task) */
+.compact-task-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  min-height: 30px;
+}
+.task-title-inline {
+  flex: 1;
+  min-width: 0;
+  font-size: .84rem;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  padding: 1px 0;
+}
+.task-title-inline.done-text {
+  text-decoration: line-through;
+  color: var(--ink-faint);
+}
+.task-title-inline:focus {
+  outline: none;
+  border-bottom: 1px solid var(--brand);
+}
+.task-meta-inline {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  font-size: .72rem;
+}
+.task-due-tag {
+  font-size: .6875rem;
+  color: var(--ink-soft);
+  background: var(--surface-2);
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
 }
