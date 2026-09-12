@@ -927,3 +927,33 @@ svg.i{width:1.15em;height:1.15em;vertical-align:-.2em;flex:0 0 auto;}
 .icon-btn svg.i{width:20px;height:20px;}
 .mission-card .mi svg.i,.group-ico svg.i,.manito-avatar svg.i{width:22px;height:22px;color:var(--ink-soft);}
 .cat-chip .ico svg.i{width:26px;height:26px;color:var(--ink);}
+
+/* ---------- 20. 접근성 보정 — 텍스트 대비 4.5:1 · 터치 타겟 ---------- */
+:root{--ink-faint:#5F6B7A;--cta:#D92B41;--cta-hover:#C4243A;--info-text:#1D63D6;--sage-text:#0B7355;--gold-text:#9A4508;}
+[data-theme="black"],[data-theme="dark"],[data-theme="dark-space"],[data-theme="glowing-space"],[data-theme="deep-sea"],[data-theme="sunset-beach"],[data-theme="urban-city"]{--ink-faint:#8A929C;--cta:var(--brand);--cta-hover:var(--brand-strong);--info-text:#8AB4FF;--sage-text:#4ADE9C;--gold-text:#FBBF5C;}
+@media (prefers-color-scheme: dark){ html:not([data-theme]){--ink-faint:#8A929C;--cta:var(--brand);--cta-hover:var(--brand-strong);--info-text:#8AB4FF;--sage-text:#4ADE9C;--gold-text:#FBBF5C;} }
+.btn-primary,.mz-btn,.btn-mz,.fab,.dm-msg.me,.cal-cell.today .cal-daynum,.switch.on,.swipe-del{background:var(--cta);}
+.btn-primary:hover{background:var(--cta-hover);}
+.feed-ai-tag,.topic-pill,.cal-pill.ms,.tag.on,.freeze-pill,.feed-c-badge.badge-ai,.feed-react-btn.active-sparkle{color:var(--info-text);}
+.rec-dur,.result-btn.has,.archive-pct,.notion-push-status-pill.connected,.pro-trend-growth-badge.up,.ms-priority-low,.fb-card.good .fb-verdict{color:var(--sage-text);}
+.ms-priority-med,.streak-t2,.pw-discount,.feed-c-badge.badge-author,.result-btn.miss,.rec-dur.doing,.fb-card.mid .fb-verdict,.feed-react-btn.active-clap{color:var(--gold-text);}
+.dday-mini,.dday-pill.brand,.mic-status,.ms-priority-high,.pro-trend-growth-badge.down,.fb-card.bad .fb-verdict,.pill-react.active,.feed-react-btn.active,.btn-danger{color:var(--cta);}
+.icon-btn{min-width:44px;min-height:44px;padding:0;}
+.ms-actions{gap:0;}
+.goal-chip,.cat-major,.theme-filter-chip,.feed-filter-chip,.cat-sub,.ob-quick-action-chip,.quick-prose-chip,.pill-react,.feed-react-btn,.feed-comm-toggle,.join-btn,.edit-toggle,.privacy-badge,.rec-theme-chip,.pro-trend-filter-chip{min-height:40px;}
+.privacy-badge,.rec-theme-chip{min-height:32px;}
+.btn-sm{min-height:40px;}
+.att-add-btn,.att-chip{min-height:32px;}
+.topbar .user-chip{min-height:44px;}
+.back-to-top{width:44px;height:44px;}
+.ms-title,.task-title{min-height:36px;}
+.feed-c-del,.att-del-btn,.fb-close,.photo-remove-btn{min-width:32px;min-height:32px;display:inline-flex;align-items:center;justify-content:center;}
+
+/* ---------- 21. 피드 리액션 아이콘 (SVG 마스크, 데이터 속성 기준) ---------- */
+.feed-react-btn::before{content:"";width:16px;height:16px;flex:0 0 auto;background:currentColor;-webkit-mask:var(--icon) center/contain no-repeat;mask:var(--icon) center/contain no-repeat;}
+.feed-react-btn{min-width:44px;justify-content:center;gap:5px;}
+.feed-react-btn[data-reacttype="fire"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22c4 0 7-3 7-7 0-3-2-5-3-6-1 2-2 3-3 3 0-3-1-6-4-8 0 4-4 6-4 11 0 4 3 7 7 7z'/%3E%3C/svg%3E");}
+.feed-react-btn[data-reacttype="clap"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 9V4a2 2 0 0 0-4 0v8'/%3E%3Cpath d='M10 10V3a2 2 0 0 0-4 0v9'/%3E%3Cpath d='M6 12V6a2 2 0 0 0-4 0v8a8 8 0 0 0 16 0v-4a2 2 0 0 0-4 0'/%3E%3C/svg%3E");}
+.feed-react-btn[data-reacttype="heart"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z'/%3E%3C/svg%3E");}
+.feed-react-btn[data-reacttype="sparkle"]{--icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18h6'/%3E%3Cpath d='M10 22h4'/%3E%3Cpath d='M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z'/%3E%3C/svg%3E");}
+.feed-react-btn.active::before{background:currentColor;}

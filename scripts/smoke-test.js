@@ -2128,7 +2128,7 @@ check('compliance: 퍼널 계측(api/track.js) & WCAG AA 명도 대비 & OAuth �
   assert.ok(trackCode.includes('utm_landing'), 'utm_landing 허용');
 
   // 2. WCAG AA 명도 대비
-  assert.ok(styleSrc.includes('--ink-faint:#6B7684'), '기본 라이트 모드 ink-faint 4.5:1 이상(#6B7684, 4.55:1) 적용');
+  assert.ok(styleSrc.includes('--ink-faint:#5F6B7A'), '기본 라이트 모드 ink-faint 4.5:1 이상(#5F6B7A, 회색 표면 위 4.9:1) 적용');
 
   // 3. OAuth 폴백 모달
   assert.ok(html.includes('로그인 심사 준비 중'), 'OAuth 미설정 시 우아한 안내 모달');
