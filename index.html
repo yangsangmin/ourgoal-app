@@ -121,7 +121,11 @@
   <main class="screens">
     <!-- HOME -->
     <section class="screen active" id="screen-home">
-      <h2 class="home-greet" id="homeGreeting">안녕하세요</h2>
+      <div class="home-head-row" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">
+        <h2 class="home-greet" id="homeGreeting" style="margin:0;">안녕하세요</h2>
+        <button type="button" class="btn btn-ghost btn-sm" id="btnCustomHomeLayout" style="font-size:.78125rem;padding:3px 9px;white-space:nowrap;color:var(--ink-soft);border-color:var(--rule);">나만의 홈 구성</button>
+      </div>
+      <div id="levelBadgeRow"></div>
       <div id="todayGlancePill" class="today-glance-pill" role="button" tabindex="0" aria-label="오늘 요약" style="display:none;"></div>
       <div id="a11yLiveAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
       <div id="offlineNoticeBanner" class="offline-banner" style="display:none;"><b>오프라인 모드</b> 작성한 기록은 기기에 보관되고, 연결되면 자동으로 동기화돼요.</div>
@@ -136,15 +140,8 @@
       <div class="capture-card card" id="captureCardBox">
         <div class="capture-title">오늘 기록하기</div>
         <div class="capture-sub">오늘 한 일을 한 줄로 적어주세요. AI가 정리해드려요</div>
-        <div class="goal-chip-row" id="quickRoutineRow">
-          <button class="goal-chip" type="button" data-quickroutine="운동 완료">운동 완료</button>
-          <button class="goal-chip" type="button" data-quickroutine="1시간 집중">1시간 집중</button>
-          <button class="goal-chip" type="button" data-quickroutine="물 2L">물 2L</button>
-          <button class="goal-chip" type="button" data-quickroutine="5km 러닝">5km 러닝</button>
-          <button class="goal-chip" type="button" data-quickroutine="명상 10분">명상 10분</button>
-        </div>
-        <span class="mic-status" id="micStatus" hidden>듣고 있어요…</span>
         <div id="captureThemeQuickBar" class="theme-quick-bar" aria-label="테마 즐겨찾기"></div>
+        <div class="theme-guide-microcopy" style="font-size:0.75rem;color:var(--ink-faint);margin:2px 0 6px 2px;line-height:1.4;">(테마 : ai 분석 및 DB시각화에 활용됨)</div>
         <div class="capture-ta-wrap">
           <textarea id="captureInput" placeholder="예: 5km 러닝 28분 완주, 마지막 1km 스퍼트 성공"></textarea>
           <button class="mic-btn" id="micBtn" type="button" aria-label="음성으로 입력하기" title="음성으로 입력하기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4"/><path d="M8 23h8"/></svg></button>
@@ -166,7 +163,6 @@
       <button class="btn btn-ghost btn-sm" id="customFeedbackBtn" type="button" style="width:100%;margin:0 0 12px;">맞춤 피드백 설정<span id="customFeedbackStatus"></span></button>
 
       <!-- ④ 내 위치 -->
-      <div id="levelBadgeRow"></div>
       <div id="dailyQuestBarWrap" class="daily-quest-bar-wrap" style="display:none;"></div>
       <div id="crewPacingWidget" class="crew-pacing-widget card">
         <div class="crew-head">
@@ -205,7 +201,10 @@
             <h2>목표</h2>
             <span class="privacy-badge" id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
           </div>
-          <button class="edit-toggle off" id="goalEditToggle" type="button">편집</button>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <button class="btn btn-ghost btn-sm" id="btnShowPersonalGuideModal" type="button" style="font-size:.8125rem;padding:3px 9px;">활용가이드</button>
+            <button class="edit-toggle off" id="goalEditToggle" type="button">편집</button>
+          </div>
         </div>
         <div class="goal-chip-row" id="goalChipRow"></div>
         <div id="goalDetailBody"></div>
@@ -217,6 +216,7 @@
             <button class="btn btn-primary btn-sm" id="goalAgentSendBtn" type="button">보내기</button>
           </div>
         </div>
+        <div id="personalGoalsEmptyGuideSlot"></div>
       </div>
       <div id="teamGoalsView" style="display:none;"></div>
     </section>
@@ -829,6 +829,7 @@
 <script src="js/team-leader-check.js"></script>
 <script src="js/theme-system.js"></script>
 <script src="js/records-stats.js"></script>
+  <script src="js/avatar-system.js"></script>
 <script>
 
 (function(){
@@ -1284,15 +1285,52 @@
   }
   function levelBadgeHtml(xp){
     var p = levelProgress(xp);
-    return '<div class="level-badge"><span class="level-num">Lv.'+p.level+'</span>' +
-      '<div class="level-bar-wrap"><div class="mini-bar"><span style="width:'+Math.max(0,Math.min(100,p.pct))+'%;background:var(--violet);"></span></div>' +
-      '<span class="level-xp-txt">'+p.into+' / '+p.span+' XP</span></div></div>';
+    var hasCheckedInToday = false;
+    if(state.profile && state.profile.records){
+      var today = dateKey(nowISO());
+      hasCheckedInToday = state.profile.records.some(function(r){ return dateKey(r.startAt) === today; });
+    }
+    var avatarHtml = (window.OurgoalAvatar && window.OurgoalAvatar.renderAvatarHtml) ?
+      window.OurgoalAvatar.renderAvatarHtml(p.level, state.profile, { size: 36, showGreeting: !hasCheckedInToday && !state.hasSeenAvatarGreeting }) :
+      '<div class="avatar-placeholder" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">🤖</div>';
+
+    return '<div class="level-badge" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;width:100%;box-sizing:border-box;">' +
+      '<div style="display:flex;align-items:center;gap:8px;">' +
+        avatarHtml +
+        '<span class="level-num" style="font-weight:800;font-size:.9375rem;color:var(--ink);">Lv.'+p.level+'</span>' +
+        '<button type="button" class="btn btn-ghost btn-sm" id="btnOpenAvatarModal" style="font-size:.75rem;padding:2px 7px;border-color:var(--rule);color:var(--ink-soft);white-space:nowrap;">내 아바타 바꾸기</button>' +
+      '</div>' +
+      '<div class="level-bar-wrap" style="flex:1;max-width:130px;margin:0 4px;">' +
+        '<div class="mini-bar"><span style="width:'+Math.max(0,Math.min(100,p.pct))+'%;background:var(--violet);"></span></div>' +
+      '</div>' +
+      '<span class="level-xp-txt" style="font-size:.75rem;color:var(--ink-soft);white-space:nowrap;margin-left:auto;">'+p.into+' / '+p.span+' XP</span>' +
+    '</div>';
   }
   function renderLevelBadge(){
     var el = document.getElementById('levelBadgeRow');
     if(!el || !state.profile) return;
     var xpTotal = (state.profile.settings && state.profile.settings.xp && state.profile.settings.xp.total) || 0;
     el.innerHTML = '<div class="level-badge-row">'+levelBadgeHtml(xpTotal)+'</div>';
+
+    var btnChangeAvatar = el.querySelector('#btnOpenAvatarModal');
+    if(btnChangeAvatar){
+      btnChangeAvatar.onclick = function(){
+        if(window.OurgoalAvatar && window.OurgoalAvatar.openAvatarModal){
+          var p = levelProgress(xpTotal);
+          window.OurgoalAvatar.openAvatarModal({
+            state: state,
+            saveProfile: saveProfile,
+            toast: toast,
+            openModal: openModal,
+            closeModal: closeModal,
+            currentLevel: p.level,
+            onAvatarChanged: function(){
+              renderLevelBadge();
+            }
+          });
+        }
+      };
+    }
   }
   function showLevelUpBanner(level){
     var slot = document.getElementById('levelUpBannerSlot');
@@ -3292,6 +3330,9 @@
         '<button class="btn btn-primary btn-sm" id="ambientCheckinConfirmBtn" type="button" style="width:100%;font-weight:700;background:var(--sage);border-color:var(--sage);padding:8px 12px;font-size:.875rem;display:flex;align-items:center;justify-content:center;gap:6px;">' +
           '<span>1-Tap 즉시 승인 및 기록 저장</span>' +
         '</button>' +
+        '<button class="btn btn-secondary btn-sm" id="ambientCheckinArchiveBtn" type="button" style="width:100%;font-weight:700;margin-top:6px;padding:8px 12px;font-size:.875rem;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border:1px solid var(--sage-line);color:var(--sage);">' +
+          '<span>1-Tap 즉시 승인 및 기록 저장 및 보관함으로 이동</span>' +
+        '</button>' +
       '</div>' +
       '<div style="margin-bottom:12px;padding:12px 14px;background:var(--surface-2);border:1px solid var(--rule);border-radius:12px;">' +
         '<div style="font-size:.875rem;color:var(--ink);font-weight:700;display:flex;align-items:center;gap:4px;margin-bottom:6px;">' +
@@ -3317,7 +3358,7 @@
           '</span>' +
           '<span id="rsManualToggleArrow" style="font-size:.8125rem;color:var(--ink-faint);">펼치기 ▾</span>' +
         '</div>' +
-        '<div id="rsManualForm" style="display:none;margin-top:8px;padding:12px;background:var(--card2);border:1px solid var(--rule);border-radius:12px;">' +
+        '<div id="rsManualForm" style="display:none;margin-top:8px;padding:14px;background:#FFFFFF;border:1.5px solid var(--rule);border-radius:12px;box-shadow:0 3px 12px rgba(0,0,0,0.06);">' +
           '<div class="field" style="margin-bottom:8px;">' +
             '<label style="font-size:.8125rem;font-weight:700;">실천 내용 / 항목명</label>' +
             '<input id="rsManualTitle" type="text" value="' + escapeHtml((currentDb && currentDb.title) || '') + '" placeholder="예: 3강 수강 완료 및 개념 복습" style="font-size:.875rem;padding:6px 10px;">' +
@@ -3347,9 +3388,11 @@
         '</div>' +
       '</div>' +
 
-      '<div class="modal-actions">' +
-        '<button class="btn btn-ghost" id="rsCancel" type="button">취소</button>' +
-        '<button class="btn btn-primary" id="rsSave" type="button">결과 저장하기</button>' +
+      '<div class="modal-actions" style="display:flex;gap:6px;flex-wrap:wrap;">' +
+        '<button class="btn btn-ghost" id="rsCancel" type="button" style="flex:1;min-width:60px;">취소</button>' +
+        '<button class="btn btn-secondary" id="rsSave" type="button" style="flex:1;min-width:60px;">저장</button>' +
+        '<button class="btn btn-primary" id="rsSaveAndArchive" type="button" style="flex:1.6;min-width:140px;background:var(--emerald);border-color:var(--emerald);">저장 및 보관함으로 이동</button>' +
+        (currentDb ? '<button class="btn btn-ghost" id="rsJustArchive" type="button" style="color:var(--amber);border-color:var(--rule);">보관</button>' : '') +
       '</div>',
       function(sheet){
         var aiInput = sheet.querySelector('#rsAiQuickInput');
@@ -3434,6 +3477,61 @@
 
         sheet.querySelector('#rsCancel').addEventListener('click', closeModal);
 
+        var runSaveAndArchive = false;
+
+        var saveAndArchiveBtn = sheet.querySelector('#rsSaveAndArchive');
+        if(saveAndArchiveBtn){
+          saveAndArchiveBtn.addEventListener('click', function(){
+            runSaveAndArchive = true;
+            sheet.querySelector('#rsSave').click();
+          });
+        }
+
+        var justArchiveBtn = sheet.querySelector('#rsJustArchive');
+        if(justArchiveBtn){
+          justArchiveBtn.addEventListener('click', async function(){
+            if(goal){
+              goal.archivedAt = nowISO();
+              await saveProfile();
+              toast('목표가 보관함으로 이동되었습니다 📦');
+              closeModal();
+              if(onSaved) onSaved();
+              renderGoalDetail();
+              renderHomeGoals();
+            }
+          });
+        }
+
+        var ambientArchiveBtn = sheet.querySelector('#ambientCheckinArchiveBtn');
+        if(ambientArchiveBtn){
+          ambientArchiveBtn.addEventListener('click', async function(){
+            if(window._recordHesitation) window._recordHesitation('ambientCheckinArchiveBtn');
+            triggerHaptic(30);
+            var ambTitle = displayTitle || (obj && obj.title) || '실천 완료';
+            var dateStr = isoDate(new Date());
+            activeDbRecord = {
+              title: ambTitle,
+              status: '완료',
+              progress: 100,
+              metric: '100%',
+              keyTakeaway: '선제 예측 1-Tap 승인 완료 및 보관',
+              tags: ['실천', '완료', '앰비언트', '보관'],
+              date: dateStr,
+              notionSchema: {
+                'Name': { type: 'title', title: [{ type: 'text', text: { content: ambTitle } }] },
+                'Status': { type: 'select', select: { name: '완료' } },
+                'Progress': { type: 'number', number: 100 },
+                'Metric': { type: 'rich_text', rich_text: [{ type: 'text', text: { content: '100%' } }] },
+                'KeyTakeaway': { type: 'rich_text', rich_text: [{ type: 'text', text: { content: '1-Tap 즉시 승인 및 보관' } }] },
+                'Tags': { type: 'multi_select', multi_select: [{ name: '실천' }, { name: '완료' }, { name: '보관' }] },
+                'Date': { type: 'date', date: { start: dateStr } }
+              }
+            };
+            runSaveAndArchive = true;
+            sheet.querySelector('#rsSave').click();
+          });
+        }
+
         sheet.querySelector('#rsSave').addEventListener('click', async function(){
           // 1. AI 텍스트가 입력되어 있으나 아직 변환 버튼을 누르지 않은 경우 즉시 변환
           var aiText = aiInput.value.trim();
@@ -3513,9 +3611,12 @@
           }
           var msXpRes = null;
           if(kind==='ms' && !wasDone && obj.status==='done') msXpRes = awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
+          if(runSaveAndArchive && goal){
+            goal.archivedAt = nowISO();
+          }
           await saveProfile();
           closeModal();
-          toast(pct >= 100 ? '완료로 정리해서 저장 완료!' : '달성률 ' + pct + '%로 정리해서 저장 완료!');
+          toast(runSaveAndArchive ? '결과 저장 및 보관함으로 이동 완료! 📦' : (pct >= 100 ? '완료로 정리해서 저장 완료!' : '달성률 ' + pct + '%로 정리해서 저장 완료!'));
           if(onSaved) onSaved();
           renderLevelBadge();
           if(msXpRes && msXpRes.leveledUp) showLevelUpBanner(levelForXP(msXpRes.total));
@@ -6172,12 +6273,15 @@
   }
 
   /* ============ 원터치 퀵 루틴 칩 ============ */
-  document.getElementById('quickRoutineRow').querySelectorAll('[data-quickroutine]').forEach(function(chip){
-    chip.addEventListener('click', function(){
-      document.getElementById('captureInput').value = chip.dataset.quickroutine;
-      document.getElementById('captureSave').click();
+  var qRoutineRow = document.getElementById('quickRoutineRow');
+  if(qRoutineRow){
+    qRoutineRow.querySelectorAll('[data-quickroutine]').forEach(function(chip){
+      chip.addEventListener('click', function(){
+        document.getElementById('captureInput').value = chip.dataset.quickroutine;
+        document.getElementById('captureSave').click();
+      });
     });
-  });
+  }
 
   /* ============ 음성 체크인 (Web Speech API) ============ */
   (function setupVoiceCheckin(){
@@ -6201,17 +6305,17 @@
     recognition.addEventListener('start', function(){
       listening = true;
       micBtn.classList.add('listening');
-      micStatus.hidden = false;
+      if(micStatus) micStatus.hidden = false;
     });
     recognition.addEventListener('end', function(){
       listening = false;
       micBtn.classList.remove('listening');
-      micStatus.hidden = true;
+      if(micStatus) micStatus.hidden = true;
     });
     recognition.addEventListener('error', function(e){
       listening = false;
       micBtn.classList.remove('listening');
-      micStatus.hidden = true;
+      if(micStatus) micStatus.hidden = true;
       if(e.error==='not-allowed' || e.error==='service-not-allowed') toast('마이크 사용 권한이 필요해요');
     });
     recognition.addEventListener('result', function(e){
@@ -7551,6 +7655,24 @@
     );
   });
 
+  var btnCustomHome = document.getElementById('btnCustomHomeLayout');
+  if(btnCustomHome){
+    btnCustomHome.addEventListener('click', function(){
+      if(window.OurGoalCustomize && typeof window.OurGoalCustomize.open === 'function'){
+        window.OurGoalCustomize.open();
+      } else {
+        toast('나만의 홈 구성을 불러오는 중입니다...');
+      }
+    });
+  }
+
+  var btnShowGuide = document.getElementById('btnShowPersonalGuideModal');
+  if(btnShowGuide){
+    btnShowGuide.addEventListener('click', function(){
+      openModal('개인 목표 200% 활용 가이드', renderPersonalGoalsEmptyGuideHtml());
+    });
+  }
+
   document.getElementById('homeAddGoal').addEventListener('click', function(e){
     if(isModalDismissCooldown()) return;
     promptNewGoal();
@@ -8617,13 +8739,39 @@
     if(!goals.length){ el.innerHTML = ''; return; }
     var today = dateKey(nowISO());
     var missions = state.profile.settings.todayMissions || {};
+
+    function missionRowHtml(g){
+      var m = missions[g.id];
+      var text = (m && m.date===today) ? m.text : '생각하는 중...';
+      return '<div class="mission-row"><span class="m-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg></span><span><span class="m-goal">'+escapeHtml(g.title)+'</span> · <span class="m-text">'+escapeHtml(text)+'</span></span></div>';
+    }
+
+    var firstGoal = goals[0];
+    var restGoals = goals.slice(1);
+    var isExpanded = !!state.missionAccordionOpen;
+
+    var restHtml = restGoals.length > 0 ?
+      ('<div id="missionRestList" style="display:' + (isExpanded ? 'block' : 'none') + ';">' +
+        restGoals.map(missionRowHtml).join('') +
+      '</div>' +
+      '<div style="text-align:center;margin-top:6px;">' +
+        '<button class="btn btn-ghost btn-sm mission-more-btn" id="btnToggleMissionAccordion" type="button" style="font-size:.75rem;padding:2px 10px;color:var(--ink-soft);border-color:var(--rule);">' +
+          (isExpanded ? '접기 ▴' : ('외 ' + restGoals.length + '개 미션 더보기 ▾')) +
+        '</button>' +
+      '</div>') : '';
+
     el.innerHTML = '<div class="mission-card"><div class="ct-label">오늘의 미션</div>' +
-      goals.map(function(g){
-        var m = missions[g.id];
-        var text = (m && m.date===today) ? m.text : '생각하는 중...';
-        return '<div class="mission-row"><span class="m-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg></span><span><span class="m-goal">'+escapeHtml(g.title)+'</span> · <span class="m-text">'+escapeHtml(text)+'</span></span></div>';
-      }).join('') +
+      missionRowHtml(firstGoal) +
+      restHtml +
     '</div>';
+
+    var toggleBtn = el.querySelector('#btnToggleMissionAccordion');
+    if(toggleBtn){
+      toggleBtn.onclick = function(){
+        state.missionAccordionOpen = !state.missionAccordionOpen;
+        renderTodayMissionCard();
+      };
+    }
     goals.forEach(function(g){
       var m = missions[g.id];
       if(m && m.date===today) return;
@@ -8781,6 +8929,11 @@
       });
     }
 
+    var emptyGuideSlot = document.getElementById('personalGoalsEmptyGuideSlot');
+    if(emptyGuideSlot){
+      emptyGuideSlot.innerHTML = (goals.length === 0) ? renderPersonalGoalsEmptyGuideHtml() : '';
+    }
+
     if(!goal){
       body.innerHTML = '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div><p>목표를 만들면 여기에 마일스톤이 보여요.</p></div>';
       return;
@@ -8845,23 +8998,57 @@
       (density === 'compact' ? '⊞ 상세' : '⊟ 간결') +
     '</button>';
 
+    var gView = state.goalViewMode || 'default';
     var msFilterBar = totalMs > 0 ?
-      '<div class="ms-filter-bar" style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin:8px 0 6px;flex-wrap:wrap;">' +
-        '<div class="format-toggle" id="msFilterToggle" style="max-width:280px;">' +
-          '<div class="format-opt'+(state.msFilter==='all'?' active':'')+'" data-msfilter="all">전체 ('+totalMs+')</div>' +
-          '<div class="format-opt'+(state.msFilter==='doing'?' active':'')+'" data-msfilter="doing">진행 ('+doingCount+')</div>' +
-          '<div class="format-opt'+(state.msFilter==='todo'?' active':'')+'" data-msfilter="todo">대기 ('+todoCount+')</div>' +
-          '<div class="format-opt'+(state.msFilter==='done'?' active':'')+'" data-msfilter="done">완료 ('+doneCount+')</div>' +
+      '<div class="ms-filter-bar" style="display:flex;flex-direction:column;gap:6px;margin:8px 0 6px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;">' +
+          '<div class="format-toggle" id="msFilterToggle" style="max-width:280px;">' +
+            '<div class="format-opt'+(state.msFilter==='all'?' active':'')+'" data-msfilter="all">전체 ('+totalMs+')</div>' +
+            '<div class="format-opt'+(state.msFilter==='doing'?' active':'')+'" data-msfilter="doing">진행 ('+doingCount+')</div>' +
+            '<div class="format-opt'+(state.msFilter==='todo'?' active':'')+'" data-msfilter="todo">대기 ('+todoCount+')</div>' +
+            '<div class="format-opt'+(state.msFilter==='done'?' active':'')+'" data-msfilter="done">완료 ('+doneCount+')</div>' +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:4px;">' +
+            densityBtnHtml +
+            '<button class="btn btn-ghost btn-sm" id="msCollapseAllBtn" type="button" style="font-size:.75rem;padding:3px 8px;">' +
+              (allCollapsed ? '전체 펼치기' : '전체 접기') +
+            '</button>' +
+          '</div>' +
         '</div>' +
-        '<div style="display:flex;align-items:center;gap:4px;">' +
-          densityBtnHtml +
-          '<button class="btn btn-ghost btn-sm" id="msCollapseAllBtn" type="button" style="font-size:.75rem;padding:3px 8px;">' +
-            (allCollapsed ? '전체 펼치기' : '전체 접기') +
-          '</button>' +
+        '<div class="format-toggle" id="msViewToggle" style="max-width:320px;">' +
+          '<div class="format-opt'+(gView==='default'?' active':'')+'" data-msview="default">기본</div>' +
+          '<div class="format-opt'+(gView==='goals_only'?' active':'')+'" data-msview="goals_only">목표만</div>' +
+          '<div class="format-opt'+(gView==='milestones_only'?' active':'')+'" data-msview="milestones_only">마일스톤</div>' +
+          '<div class="format-opt'+(gView==='tasks_only'?' active':'')+'" data-msview="tasks_only">할일</div>' +
         '</div>' +
       '</div>' : '';
 
-    var msHtml = goal.milestones.map(function(m, idx){
+    var msHtml = (gView === 'goals_only') ?
+      ['<div class="card" style="padding:16px;text-align:center;color:var(--ink-soft);font-size:.84rem;background:var(--surface-2);border:1px dashed var(--rule);margin-top:6px;">목표 요약 집중 모드입니다. (마일스톤과 세부 할 일을 숨기고 목표에만 집중합니다)</div>'] :
+      (gView === 'tasks_only') ?
+      [(function(){
+        var allTasks = [];
+        goal.milestones.forEach(function(m){
+          if(state.msFilter !== 'all' && m.status !== state.msFilter) return;
+          (m.tasks||[]).forEach(function(t){
+            allTasks.push({ task: t, ms: m });
+          });
+        });
+        if(!allTasks.length) return '<div class="faint" style="padding:14px;text-align:center;font-size:.8125rem;">해당 조건에 등록된 세부 할 일이 없습니다.</div>';
+        return '<div class="card" style="padding:8px 12px;background:var(--card);border:1px solid var(--rule);border-radius:12px;margin-top:6px;">' +
+          '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">집중 할 일 목록 (' + allTasks.length + '건)</div>' +
+          allTasks.map(function(item){
+            var t = item.task;
+            var m = item.ms;
+            return '<div class="task-row compact-task-row" data-taskid="'+t.id+'" data-msid="'+m.id+'" style="margin-bottom:4px;">' +
+              '<div class="task-check'+(t.done?' done':'')+'" data-taskcheck="1">'+(t.done?'✓':'')+'</div>' +
+              '<span class="task-title-inline'+(t.done?' done-text':'')+'" style="flex:1;">'+escapeHtml(t.title)+'</span>' +
+              '<span class="faint" style="font-size:.6875rem;background:var(--surface-2);padding:1px 5px;border-radius:4px;">'+escapeHtml(m.title)+'</span>' +
+            '</div>';
+          }).join('') +
+        '</div>';
+      })()] :
+      goal.milestones.map(function(m, idx){
       if(state.msFilter !== 'all' && m.status !== state.msFilter) return '';
       var statusIcon = m.status==='done' ? '✓' : '';
       var titleClass = m.status==='done' ? 'ms-title-compact done-text' : 'ms-title-compact';
@@ -8869,7 +9056,7 @@
       var totalTasks = (m.tasks||[]).length;
       var doneTasks = (m.tasks||[]).filter(function(t){ return t.done; }).length;
 
-      var taskRows = (m.tasks||[]).map(function(t){
+      var taskRows = (gView === 'milestones_only') ? [] : (m.tasks||[]).map(function(t){
         var tSel = !!state.taskSel[t.id];
         var tAttHtml = (t.attachments && t.attachments.length) ? ('<span class="faint" style="font-size:.7rem;" title="참고자료 '+t.attachments.length+'건">📎'+t.attachments.length+'</span>') : '';
         var taskDueHtml = state.goalEditMode ?
@@ -9028,6 +9215,16 @@
       filterToggle.querySelectorAll('[data-msfilter]').forEach(function(opt){
         opt.addEventListener('click', function(){
           state.msFilter = opt.dataset.msfilter;
+          renderGoalsScreen();
+        });
+      });
+    }
+
+    var msViewToggle = document.getElementById('msViewToggle');
+    if(msViewToggle){
+      msViewToggle.querySelectorAll('[data-msview]').forEach(function(opt){
+        opt.addEventListener('click', function(){
+          state.goalViewMode = opt.dataset.msview;
           renderGoalsScreen();
         });
       });
@@ -9552,6 +9749,52 @@
           '<button class="btn btn-primary btn-sm" data-cmtsend="'+targetId+'" type="button">등록</button>' +
         '</div>' +
       '</div>';
+  }
+
+  
+  /* ============ 개인 목표 200% 활용 가이드 (#TASK-ES-044) ============ */
+  function renderPersonalGoalsEmptyGuideHtml(){
+    return '<div class="card" id="personalGoalsEmptyGuideCard" style="margin-top:14px;background:var(--surface-2);border:1px solid var(--rule);">' +
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">' +
+        '<span style="font-size:1.6rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></span>' +
+        '<div>' +
+          '<h3 style="margin:0;font-size:1.0625rem;color:var(--ink);">개인 목표 200% 활용 가이드</h3>' +
+          '<p class="faint" style="margin:2px 0 0;font-size:.8125rem;">작심삼일을 넘어서는 아워골 3단계(목표-마일스톤-할일) 실천법</p>' +
+        '</div>' +
+      '</div>' +
+      '<div style="margin-top:14px;display:flex;flex-direction:column;gap:10px;">' +
+        '<div style="background:var(--card);border-radius:12px;padding:12px;border:1px solid var(--rule);">' +
+          '<div style="display:flex;align-items:center;gap:6px;font-weight:700;font-size:.875rem;color:var(--brand-strong);margin-bottom:6px;">' +
+            '<span>1. 🎯 목표는 크고 선명하게</span>' +
+          '</div>' +
+          '<ul style="margin:0;padding-left:18px;font-size:.8125rem;line-height:1.6;color:var(--ink-soft);">' +
+            '<li>‘하프마라톤 2시간 내 완주’, ‘정보처리기사 취득’처럼 <b>달성 여부가 뚜렷한 목표</b>를 세워보세요.</li>' +
+            '<li>마감일과 내게 중요한 이유를 함께 적으면 실천 의지가 한층 단단해집니다.</li>' +
+          '</ul>' +
+        '</div>' +
+        '<div style="background:var(--card);border-radius:12px;padding:12px;border:1px solid var(--rule);">' +
+          '<div style="display:flex;align-items:center;gap:6px;font-weight:700;font-size:.875rem;color:var(--ink);margin-bottom:6px;">' +
+            '<span>2. ⛳ 마일스톤으로 징검다리 놓기</span>' +
+          '</div>' +
+          '<ul style="margin:0;padding-left:18px;font-size:.8125rem;line-height:1.6;color:var(--ink-soft);">' +
+            '<li>목표가 너무 크면 지치기 쉽습니다. <b>2~4개의 중간 정거장(마일스톤)</b>으로 쪼개세요.</li>' +
+            '<li>예: 5km 러닝 성공 ➔ 10km 지속주 ➔ 하프 실전 대회 참가</li>' +
+          '</ul>' +
+        '</div>' +
+        '<div style="background:var(--card);border-radius:12px;padding:12px;border:1px solid var(--rule);">' +
+          '<div style="display:flex;align-items:center;gap:6px;font-weight:700;font-size:.875rem;color:var(--teal);margin-bottom:6px;">' +
+            '<span>3. 📝 오늘의 할 일과 3초 체크인</span>' +
+          '</div>' +
+          '<ul style="margin:0;padding-left:18px;font-size:.8125rem;line-height:1.6;color:var(--ink-soft);">' +
+            '<li>마일스톤 안에 오늘 바로 실천할 수 있는 <b>작은 할 일(To-Do)</b>을 추가하세요.</li>' +
+            '<li>실천 후 홈 화면에서 한 줄만 적으면 AI가 자동으로 기록하고 레벨과 아바타가 성장합니다.</li>' +
+          '</ul>' +
+        '</div>' +
+      '</div>' +
+      '<div style="margin-top:12px;text-align:right;">' +
+        '<button class="btn btn-primary btn-sm" id="btnGuideAddFirstGoal" type="button" style="font-weight:700;">+ 첫 목표 만들기</button>' +
+      '</div>' +
+    '</div>';
   }
 
   function renderTeamGoalsEmptyGuideHtml(){

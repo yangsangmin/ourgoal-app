@@ -2986,6 +2986,67 @@ check('compliance: [#TASK-ES-038] 목표 탭 마일스톤 창 공간 활용 효�
   assert.ok(html.includes('meta-strip') && html.includes('id="goalResultBtn"'), '결과 입력 버튼 메타 스트립 인라인 흡수');
 });
 
+check('compliance: [#TASK-ES-044] 홈·목표 12대 핵심 UX 개편 및 성장형 아바타 시스템이 완벽히 구현되어 있다', () => {
+  // 1. 홈 화면 오늘의 미션 아코디언화 (상위 1개 기본 노출 + 더보기 토글)
+  assert.ok(html.includes('btnToggleMissionAccordion'), '오늘의 미션 아코디언 토글 버튼 존재');
+  assert.ok(html.includes('state.missionAccordionOpen'), '오늘의 미션 아코디언 상태 변수 존재');
+  assert.ok(html.includes('외 ') && html.includes('개 미션 더보기 ▾'), '미션 더보기 라벨 형식 검증');
+
+  // 2. '오늘 기록하기' 칩 5종 및 음성인식 '듣고 있어요...' 텍스트 제거
+  assert.strictEqual(html.includes('id="quickRoutineRow"'), false, '오늘 기록하기 퀵 루틴 칩 행 제거 확인');
+  assert.strictEqual(html.includes('id="micStatus"'), false, '듣고 있어요 안내 텍스트 요소 제거 확인');
+
+  // 3. +테마와 입력창 사이 테마 안내 문구
+  assert.ok(html.includes('(테마 : ai 분석 및 DB시각화에 활용됨)'), '테마 가이드 안내 문구 존재');
+
+  // 4. (닉네임)님, 안녕하세요 우측 끝 '나만의 홈 구성' 버튼 및 모달 연동
+  assert.ok(html.includes('id="btnCustomHomeLayout"'), '나만의 홈 구성 버튼 id 존재');
+  assert.ok(html.includes('window.OurGoalCustomize.open'), '홈 구성 커스터마이즈 모달 연동 확인');
+
+  // 5. 목표탭 4종 뷰 필터 버튼 (기본, 목표만, 마일스톤, 할일)
+  assert.ok(html.includes('id="msViewToggle"'), '4종 뷰 필터 컨테이너 id 존재');
+  assert.ok(html.includes('data-msview="default"') && html.includes('data-msview="goals_only"') && html.includes('data-msview="milestones_only"') && html.includes('data-msview="tasks_only"'), '4종 뷰 필터 옵션(기본/목표만/마일스톤/할일) 존재');
+  assert.ok(html.includes('state.goalViewMode'), '목표 뷰 필터 상태 변수 연동');
+
+  // 6. 레벨창 위치: homeGreeting 바로 밑
+  const greetPos = html.indexOf('id="homeGreeting"');
+  const levelBadgePos = html.indexOf('id="levelBadgeRow"');
+  assert.ok(greetPos > 0 && levelBadgePos > greetPos, '레벨창이 인사말 바로 아래 위치함');
+  assert.ok(levelBadgePos < html.indexOf('id="todayGlancePill"'), '레벨창이 연속기록/몰입 위젯 상단에 위치함');
+
+  // 7 & 8. 성장형 아바타 시스템 (js/avatar-system.js, 1~10단계 초록 로봇 SVG, 3회 제한, 3등신 사진 아바타, 체크인 맞이 인사말)
+  const avatarModPath = path.join(__dirname, '..', 'js', 'avatar-system.js');
+  assert.ok(fs.existsSync(avatarModPath), 'js/avatar-system.js 모듈 파일 존재');
+  const AvatarSystem = require('../js/avatar-system.js');
+  assert.ok(typeof AvatarSystem.getRobotAvatarSvg === 'function', 'getRobotAvatarSvg 함수 존재');
+  assert.ok(typeof AvatarSystem.renderAvatarHtml === 'function', 'renderAvatarHtml 함수 존재');
+  assert.ok(typeof AvatarSystem.openAvatarModal === 'function', 'openAvatarModal 함수 존재');
+  
+  // 1~10단계 로봇 SVG 정상 생성 확인
+  for (let lv = 1; lv <= 10; lv++) {
+    const svg = AvatarSystem.getRobotAvatarSvg(lv, 36);
+    assert.ok(svg.includes('<svg') && svg.includes('#10B981'), '초록색 로봇 아바타 SVG Lv.' + lv + ' 생성 검증');
+  }
+  
+  // 3회 제한 및 안내문구 검증
+  assert.strictEqual(AvatarSystem.MAX_AVATAR_CHANGES, 3, '아바타 변경 최대 3회 제한');
+  assert.ok(html.includes('btnOpenAvatarModal'), '내 아바타 바꾸기 버튼 존재');
+  assert.ok(html.includes('OurgoalAvatar'), '아바타 전역 모듈 연동');
+
+  // 9 & 10. 목표 최종결과 및 완료 수정 모달 개편 (1-Tap 즉시 승인 및 저장/보관함 이동)
+  assert.ok(html.includes('id="ambientCheckinArchiveBtn"'), '상단 1-Tap 즉시 승인 및 기록 저장 및 보관함으로 이동 버튼 존재');
+  assert.ok(html.includes('id="rsSaveAndArchive"'), '저장 및 보관함으로 이동 버튼 존재');
+  assert.ok(html.includes('id="rsJustArchive"'), '완료된 목표 수정 시 보관 버튼 존재');
+
+  // 11. 결과 기록 모달 수동입력하기 배경색 순백색 (#FFFFFF)
+  assert.ok(html.includes('id="rsManualForm"') && html.includes('background:#FFFFFF;'), '수동입력하기 컨테이너 배경색 순백색(#FFFFFF)');
+
+  // 12. 개인목표 0개일 때 활용가이드 카드 노출 + 상단 활용가이드 모달 버튼
+  assert.ok(html.includes('id="personalGoalsEmptyGuideSlot"'), '개인목표 빈 상태 가이드 슬롯 존재');
+  assert.ok(html.includes('renderPersonalGoalsEmptyGuideHtml'), '개인목표 활용가이드 렌더러 함수 존재');
+  assert.ok(html.includes('id="btnShowPersonalGuideModal"'), '목표 화면 헤더 활용가이드 버튼 존재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
