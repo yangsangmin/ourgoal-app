@@ -1,15 +1,17 @@
-# 팀 목표 모임장 팀원 목표달성도 체크 기능 요구사항 정의서 및 작업계획서 제작
+# 팀원-모임장 달성자랑/힘들어요 찌르기 및 모임장 1:1 DM 반응 시스템 구축
 
-- 본질 목표: 아워골 앱의 팀 목표 화면에서 모임장(Owner) 및 매니저가 팀원들의 목표달성정도를 실시간으로 점검·체크하고 넛지/피드백/도장을 부여할 수 있는 전면 기능 및 화면구성, 데이터 모델, UI/UX 규격을 도출하는 완벽한 요구사항 정의서(PRD/SRS) 및 단계별 구현 작업계획서(Implementation Plan) 제작과 3자 동기화(노션·옵시디언·커맨드센터) 완결
+- 본질 목표: 팀원이 목표·마일스톤·세부할일을 달성했을 때 모임장에게 '달성자랑 찌르기'를, 미달성·난관 봉착 시 '힘들어요 찌르기'를 전송하고, 모임장은 대시보드에서 찌르기 알림을 확인 후 1:1 DM으로 즉각 대화·격려·조언할 수 있는 양방향 케어 시스템의 요구사항 정의서(PRD), 작업계획서(PLAN), 프론트엔드 모듈 구현 및 3자 동기화(노션·옵시디언·커맨드센터) 완결
 
 ## 체크리스트
-- [x] 1. 작업연계(task-link) 등록 및 지휘부 동기화 · 예상 2분 · b5fa17fa.json 생성 및 task-link sync 정상 통과 (완료: remote 바인딩 완료)
-- [x] 2. 티켓 등록(#TASK-ES-026) 및 본질 축·체감 가설 배선 · 예상 2분 · TICKETS.md에 E3/E1 기반 정식 티켓 등록 완료
-- [x] 3. 팀 목표 모임장 체크 기능 상세 요구사항 정의서(PRD) 제작 · 예상 5분 · docs/specs/REQ-TEAM-GOAL-MEMBER-PROGRESS.md 작성 완료
-- [x] 4. 모임장 팀원 체크 기능 단계별 엔지니어링 작업계획서 제작 · 예상 4분 · docs/specs/PLAN-TEAM-GOAL-MEMBER-PROGRESS.md 작성 완료
-- [x] 5. 옵시디언 볼트(Obsidian Vault) 정본 저장 및 Tri-Sync 연동 · 예상 3분 · 03_작업흐름_SOP 폴더 내 요구사항정의서 및 작업계획서 마크다운 적재 및 노션 2건 바인딩 완료
-- [x] 6. 커맨드센터 저널(journal.jsonl) 및 3자 무결성 검증 · 예상 2분 · task-link check 통과 및 tri-sync check 462/462(100%) 확인 완료
+- [x] 1. 작업연계(task-link) 갱신 및 지휘부 동기화 · 예상 2분 · b5fa17fa.json (#TASK-ES-027) task-link sync 정상 통과
+- [x] 2. 티켓 등록(#TASK-ES-027) 및 본질 축·체감 가설 배선 · 예상 2분 · TICKETS.md에 E3/E1 기반 정식 티켓 등록
+- [x] 3. 달성자랑/힘들어요 찌르기 및 DM 반응 요구사항 정의서(PRD) 제작 · 예상 5분 · docs/specs/REQ-MEMBER-LEADER-PING-DM.md 작성
+- [x] 4. 엔지니어링 구현 작업계획서(PLAN) 제작 · 예상 4분 · docs/specs/PLAN-MEMBER-LEADER-PING-DM.md 작성
+- [x] 5. 옵시디언 볼트 정본 적재 및 Tri-Sync 연동 · 예상 3분 · 03_작업흐름_SOP 폴더 내 REQ 및 PLAN 적재 및 노션 신규 페이지 2건 바인딩
+- [x] 6. 찌르기 및 모임장 DM 모듈 구현 · 예상 6분 · js/team-leader-check.js 확장 및 index.html 바인딩 (순증가 8줄 완벽 준수)
+- [x] 7. 스모크 테스트 신설 및 회귀 검증 · 예상 3분 · scripts/smoke-test.js 검증 케이스 추가 및 200개 전수 통과
+- [ ] 8. GitHub PR 발행 및 CI 검증 · 예상 3분 · git commit, push, gh pr create 및 essence-gate/Vercel pass 확인
 
 ## 막힐 지점 예상 (8원칙 ⑧)
-- 노션 API 속도제한 또는 task-link 동기화 시 지연 발생 가능 -> task-link.js 내장 재시도 및 지수 백오프 준수, 로컬 펜딩 없이 원격 id 확보 확인 완료
-- 옵시디언 Vault 파일 인코딩 및 Frontmatter 규격 불일치 -> UTF-8 리터럴 한글 저장 및 tri-sync 표준 프론트매터(task_id, sync_hash, last_synced) 준수 완료
+- 팀원의 찌르기 발송 시 쿨다운 가드 부재로 인한 스팸 우려 -> 동일 타깃 대상 60초 쿨다운 및 일일 횟수 제한 로컬/서버 가드 적용
+- 모임장의 DM 대화 인터페이스와 기존 소통 DM 탭 간 충돌 -> 모임 전용 1:1 인라인 DM 바텀시트 모달로 격리하여 즉시 대화 지원

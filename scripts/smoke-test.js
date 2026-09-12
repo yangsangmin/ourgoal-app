@@ -2601,11 +2601,37 @@ check('compliance: [#TASK-ES-026] index.html 이 js/team-leader-check.js 를 로
   assert.ok(html.includes('OurgoalTeamLeaderCheck.renderMemberFeedbackBannerHtml'), '피드백 배너 렌더 호출');
   assert.ok(html.includes('OurgoalTeamLeaderCheck.bindEvents'), '이벤트 바인딩 호출');
 });
+
+check('compliance: [#TASK-ES-027] js/team-leader-check.js 에 팀원 찌르기(2종) 및 모임장 1:1 DM 반응 API가 탑재되어 있다', () => {
+  const modPath = path.join(__dirname, '..', 'js', 'team-leader-check.js');
+  const mod = require(modPath);
+  assert.ok(mod.PING_TYPES && mod.PING_TYPES.boast && mod.PING_TYPES.struggle, '달성자랑 및 힘들어요 찌르기 메타데이터 탑재');
+  assert.strictEqual(mod.PING_TYPES.boast.icon, '🎉', '달성자랑 아이콘 🎉');
+  assert.strictEqual(mod.PING_TYPES.struggle.icon, '🥺', '힘들어요 아이콘 🥺');
+  assert.ok(typeof mod.renderMemberPingButtonHtml === 'function', 'renderMemberPingButtonHtml 함수 제공');
+  assert.ok(typeof mod.renderLeaderPingsSectionHtml === 'function', 'renderLeaderPingsSectionHtml 함수 제공');
+  assert.ok(typeof mod.renderMemberDmNotificationBannerHtml === 'function', 'renderMemberDmNotificationBannerHtml 함수 제공');
+  assert.ok(typeof mod.openSendPingModal === 'function', 'openSendPingModal 함수 제공');
+  assert.ok(typeof mod.openLeaderMemberDmModal === 'function', 'openLeaderMemberDmModal 함수 제공');
+
+  const btnHtmlBoast = mod.renderMemberPingButtonHtml('g1', 'milestone', 'm1', '완료 목표', true);
+  assert.ok(btnHtmlBoast.includes('data-openping="g1:milestone:m1:1"'), '달성자랑 data 속성 탑재');
+  assert.ok(btnHtmlBoast.includes('달성자랑'), '달성자랑 라벨 표기');
+
+  const btnHtmlStruggle = mod.renderMemberPingButtonHtml('g1', 'milestone', 'm2', '진행중 목표', false);
+  assert.ok(btnHtmlStruggle.includes('data-openping="g1:milestone:m2:0"'), '힘들어요 data 속성 탑재');
+  assert.ok(btnHtmlStruggle.includes('힘들어요'), '힘들어요 라벨 표기');
+});
+
+check('compliance: [#TASK-ES-027] index.html 이 마일스톤 및 팀 목표에 찌르기 버튼을 탑재하고 찌르기/DM 이벤트를 처리한다', () => {
+  assert.ok(html.includes('OurgoalTeamLeaderCheck.renderMemberPingButtonHtml(g.id, \'teamgoal\''), '팀 목표 찌르기 버튼 호출');
+  assert.ok(html.includes('OurgoalTeamLeaderCheck.renderMemberPingButtonHtml(g.id, \'milestone\''), '마일스톤 찌르기 버튼 호출');
+  const modSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-leader-check.js'), 'utf8');
+  assert.ok(modSrc.includes('[data-openping]'), '찌르기 모달 트리거 이벤트 바인딩');
+  assert.ok(modSrc.includes('[data-openleaderdm]'), '1:1 DM 대화 모달 트리거 이벤트 바인딩');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
 }
-
-
-
-

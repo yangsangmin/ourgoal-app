@@ -9580,13 +9580,20 @@
         var done = tg.milestones.filter(function(m){ return m.status==='done'; }).length;
         var total = tg.milestones.length;
         var pct = total ? Math.round(done/total*100) : 0;
+        var tgPingBtn = (!canManage && window.OurgoalTeamLeaderCheck)
+          ? OurgoalTeamLeaderCheck.renderMemberPingButtonHtml(g.id, 'teamgoal', tg.id, tg.title, pct === 100)
+          : '';
         var msHtml = tg.milestones.map(function(m){
+          var msPingBtn = (!canManage && window.OurgoalTeamLeaderCheck)
+            ? OurgoalTeamLeaderCheck.renderMemberPingButtonHtml(g.id, 'milestone', m.id, m.title, m.status === 'done')
+            : '';
           return '<div class="ms-row" data-tgmid="'+m.id+'" style="padding:8px 10px;">' +
               '<div class="ms-main">' +
                 '<div class="ms-status '+m.status+'"'+(canManage?' data-tgcycle="1" style="cursor:pointer;"':'')+'>'+(m.status==='done'?'✓':'')+'</div>' +
                 (canManage
                   ? '<input class="'+(m.status==='done'?'ms-title done-text':'ms-title')+'" data-tgmtitle="1" value="'+escapeHtml(m.title)+'">'
                   : '<span class="'+(m.status==='done'?'ms-title done-text':'ms-title')+'" style="display:inline-block;">'+escapeHtml(m.title)+'</span>') +
+                msPingBtn +
                 (canManage ? '<div class="ms-actions"><button class="icon-btn" data-tgmdel="1" aria-label="마일스톤 삭제">×</button></div>' : '') +
               '</div>' +
               teamCommentsBlockHtml(g.id, m.id) +
@@ -9597,6 +9604,7 @@
               (canManage
                 ? '<input class="ms-title" data-tgtitle="1" value="'+escapeHtml(tg.title)+'" style="flex:1;">'
                 : '<b style="font-size:.875rem;">'+escapeHtml(tg.title)+'</b>') +
+              tgPingBtn +
               (tg.dueDate ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);flex:0 0 auto;">'+dDay(tg.dueDate)+'</span>' : '') +
               (canManage ? '<button class="icon-btn" data-tgdel="1" aria-label="팀 목표 삭제">×</button>' : '') +
             '</div>' +
