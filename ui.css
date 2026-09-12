@@ -1016,6 +1016,38 @@ input:focus,select:focus,textarea:focus{background:var(--surface-2);}
 #screen-settings input[type=text],#screen-settings input[type=password],#screen-settings input[type=time],#screen-settings select,#screen-settings .time-chip,#screen-settings .set-box{background:var(--card);}
 .iospwa-banner,#iosPwaSlot > div{background:var(--card)!important;border:none!important;}
 
+/* ---------- 22-1. 기록 탭 3분할 세그먼트 & 미니 펄스 & 4단 캐러셀 & 계층형 아코디언 (TASK-ES-031) ---------- */
+.rec-segment-bar{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:var(--radius);margin-bottom:14px;}
+.rec-seg-btn{flex:1;padding:8px 10px;border-radius:var(--radius-sm);border:none;background:transparent;font-size:.8125rem;font-weight:600;color:var(--ink-soft);cursor:pointer;transition:all .18s var(--ease);display:inline-flex;align-items:center;justify-content:center;gap:6px;}
+.rec-seg-btn.active{background:var(--card);color:var(--ink);font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,0.06);}
+.rec-seg-count{font-size:.6875rem;font-weight:700;opacity:.8;padding:1px 6px;border-radius:999px;background:var(--surface-3);color:var(--ink-soft);}
+.rec-seg-btn.active .rec-seg-count{background:var(--surface-2);color:var(--ink);}
+.rec-mini-pulse-bar{background:linear-gradient(90deg,rgba(18,184,134,0.12),rgba(49,130,246,0.08));border:1px solid rgba(18,184,134,0.25);border-radius:var(--radius);padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background .15s ease,border-color .15s ease;}
+.rec-mini-pulse-bar:hover{background:linear-gradient(90deg,rgba(18,184,134,0.18),rgba(49,130,246,0.14));border-color:rgba(18,184,134,0.4);}
+.rec-pulse-content{display:flex;align-items:center;gap:8px;font-size:.8125rem;color:var(--ink);}
+.rec-pulse-icon{font-size:1.1rem;}
+.rec-pulse-link{font-size:.75rem;font-weight:700;color:var(--sage);display:flex;align-items:center;}
+.rec-carousel-container{margin-bottom:14px;}
+.rec-carousel-pills{display:flex;gap:6px;margin-bottom:10px;background:var(--surface-2);padding:4px;border-radius:var(--radius-sm);}
+.rec-pill-btn{flex:1;padding:6px 4px;border:none;background:transparent;border-radius:6px;font-size:.75rem;font-weight:600;color:var(--ink-soft);cursor:pointer;transition:all .15s ease;white-space:nowrap;text-align:center;}
+.rec-pill-btn.active{background:var(--ink);color:var(--chip-ink);font-weight:700;}
+.rec-carousel-viewport{width:100%;overflow:hidden;border-radius:var(--radius-lg);border:1px solid var(--rule);background:var(--card);}
+.rec-carousel-track{display:flex;width:400%;transition:transform 0.3s var(--ease);}
+.rec-carousel-slide{width:25%;flex:0 0 25%;box-sizing:border-box;padding:14px;}
+.rec-carousel-slide .chart-card,.rec-carousel-slide .balance-card,.rec-carousel-slide .report-summary-card{border:none;background:transparent;padding:0;margin-bottom:0;}
+.rec-past-accordion{margin-top:14px;display:flex;flex-direction:column;gap:8px;}
+.rec-accordion-card{background:var(--card);border:1px solid var(--rule);border-radius:var(--radius);overflow:hidden;}
+.rec-acc-head{padding:12px 14px;background:var(--surface-2);display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;transition:background .15s ease;}
+.rec-acc-head:hover{background:var(--surface-3);}
+.rec-acc-title{font-size:.8125rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px;}
+.rec-acc-meta{display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--ink-faint);}
+.rec-acc-chevron{font-size:.7rem;transition:transform 0.24s var(--ease);display:inline-block;}
+.rec-accordion-card.expanded .rec-acc-chevron{transform:rotate(180deg);}
+.rec-acc-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows 0.24s var(--ease);}
+.rec-accordion-card.expanded .rec-acc-body{grid-template-rows:1fr;}
+.rec-acc-inner{overflow:hidden;padding:0;}
+.rec-accordion-card.expanded .rec-acc-inner{padding:10px 12px;}
+
 /* ---------- 23. 다크 테마 바탕 복구(22절 :root 재정의보다 뒤에 와야 함) ---------- */
 [data-theme="black"],[data-theme="dark"]{--bg:#111214;--paper:#111214;}
 [data-theme="dark-space"]{--bg:#0B1220;--paper:#0B1220;}

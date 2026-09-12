@@ -262,78 +262,136 @@
       </div>
       <div id="recFeedbackSlot" style="display:none;"></div>
 
-      <div class="card agent-card" id="recAgentCard">
-        <div class="agent-title">빠른 기록</div>
-        <div class="agent-sub">한 줄로 적으면 AI가 시간·테마를 정리해요</div>
-        <div class="dm-input-row">
-          <input id="recAgentInput" type="text" placeholder="예: 저녁에 헬스장에서 가슴운동 1시간">
-          <button class="btn btn-primary btn-sm" id="recAgentSendBtn" type="button">기록</button>
-        </div>
+      <!-- 3분할 세그먼트 바 (내 기록 / 성취 통계 / 보관함) -->
+      <div class="rec-segment-bar" id="recSegmentBar">
+        <button type="button" class="rec-seg-btn active" data-recseg="feed" id="recSegFeedBtn">
+          <span>✍️ 내 기록</span><span class="rec-seg-count" id="recSegCount">0</span>
+        </button>
+        <button type="button" class="rec-seg-btn" data-recseg="stats" id="recSegStatsBtn">
+          <span>📊 성취 통계</span>
+        </button>
+        <button type="button" class="rec-seg-btn" data-recseg="archive" id="recSegArchiveBtn">
+          <span>📦 보관함</span>
+        </button>
       </div>
 
-      <div class="card" id="recProTemplateCard">
-        <div class="card-title-row">
-          <div>
-            <h3>내 템플릿으로 기록</h3>
-            <div class="faint" style="margin-top:2px;">헬스·공부·영업 등 나만의 표 형식으로 정밀하게</div>
+      <!-- [VIEW 1: FEED] 내 기록 뷰 -->
+      <div class="rec-view" id="recViewFeed">
+        <!-- V2 극대화 보완: 미니 성취 펄스 바 (0초 만에 달성률 체감 & 클릭 시 통계 뷰 이동) -->
+        <div class="rec-mini-pulse-bar" id="recMiniPulseBar" role="button" tabindex="0" title="클릭하여 성취 통계 뷰로 이동">
+          <div class="rec-pulse-content">
+            <span class="rec-pulse-icon">🔥</span>
+            <span class="rec-pulse-text" id="recMiniPulseText">이번 주 <b>0시간 실천</b></span>
           </div>
-          <button class="btn btn-ghost btn-sm" id="recOpenProTemplateBtn" type="button"><span>열기</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+          <span class="rec-pulse-link">분석 뷰 ›</span>
         </div>
-        <div class="goal-chip-row" id="recQuickTemplateChips" style="margin-bottom:0;padding-bottom:0;">
-          <button class="goal-chip" data-quicktpl="health" type="button">헬스</button>
-          <button class="goal-chip" data-quicktpl="crossfit" type="button">크로스핏</button>
-          <button class="goal-chip" data-quicktpl="hyrox" type="button">하이록스</button>
-          <button class="goal-chip" data-quicktpl="study" type="button">공부</button>
-          <button class="goal-chip" data-quicktpl="business" type="button">영업</button>
-          <button class="goal-chip addchip" id="recCreateCustomTplQuickBtn" type="button">+ 템플릿 만들기</button>
-          <button class="goal-chip" id="recOpenMarketQuickBtn" type="button">템플릿 마켓</button>
+
+        <div class="card agent-card" id="recAgentCard">
+          <div class="agent-title">빠른 기록</div>
+          <div class="agent-sub">한 줄로 적으면 AI가 시간·테마를 정리해요</div>
+          <div class="dm-input-row">
+            <input id="recAgentInput" type="text" placeholder="예: 저녁에 헬스장에서 가슴운동 1시간">
+            <button class="btn btn-primary btn-sm" id="recAgentSendBtn" type="button">기록</button>
+          </div>
+        </div>
+
+        <div class="card" id="recProTemplateCard">
+          <div class="card-title-row">
+            <div>
+              <h3>내 템플릿으로 기록</h3>
+              <div class="faint" style="margin-top:2px;">헬스·공부·영업 등 나만의 표 형식으로 정밀하게</div>
+            </div>
+            <button class="btn btn-ghost btn-sm" id="recOpenProTemplateBtn" type="button"><span>열기</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+          </div>
+          <div class="goal-chip-row" id="recQuickTemplateChips" style="margin-bottom:0;padding-bottom:0;">
+            <button class="goal-chip" data-quicktpl="health" type="button">헬스</button>
+            <button class="goal-chip" data-quicktpl="crossfit" type="button">크로스핏</button>
+            <button class="goal-chip" data-quicktpl="hyrox" type="button">하이록스</button>
+            <button class="goal-chip" data-quicktpl="study" type="button">공부</button>
+            <button class="goal-chip" data-quicktpl="business" type="button">영업</button>
+            <button class="goal-chip addchip" id="recCreateCustomTplQuickBtn" type="button">+ 템플릿 만들기</button>
+            <button class="goal-chip" id="recOpenMarketQuickBtn" type="button">템플릿 마켓</button>
+          </div>
+        </div>
+
+        <h3 class="section-title">체크인 기록</h3>
+        <div class="theme-filter-row" id="recThemeFilters"></div>
+        <div class="field search-field"><input id="recSearchInput" type="search" placeholder="날짜·테마·키워드로 검색"></div>
+        <div id="recordsList"></div>
+        <div class="export-card">
+          <div class="txt"><b>기록 내보내기</b><span>날짜별 기록을 파일로 받아요</span></div>
+          <button class="btn btn-ghost btn-sm" id="exportRecordsBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg><span>받기</span></button>
         </div>
       </div>
 
-      <div class="week-summary" id="weekSummary"></div>
-      <div id="lifeBalanceBox"></div>
-      <div id="chartContainer"></div>
-      <div id="recordHeatmap"></div>
-      <div id="reportSummary"></div>
-      <div class="card list-card">
-        <div><b class="list-card-title">이번 주 위클리 리캡</b><div class="faint">이번 주 기록을 카드 한 장으로 모아봐요</div></div>
-        <button class="btn btn-ghost btn-sm" id="weeklyRecapBtn" type="button">만들기</button>
+      <!-- [VIEW 2: STATS] 성취 통계 뷰 (4단 메트릭 캐러셀 + 기간별 AI) -->
+      <div class="rec-view" id="recViewStats" style="display:none;">
+        <div class="rec-carousel-container">
+          <!-- 4분할 알약 탭 (캐러셀 맹지 차단) -->
+          <div class="rec-carousel-pills" id="recCarouselPills">
+            <button type="button" class="rec-pill-btn active" data-recslide="0">📊 주간추이</button>
+            <button type="button" class="rec-pill-btn" data-recslide="1">🎯 밸런스</button>
+            <button type="button" class="rec-pill-btn" data-recslide="2">🟩 잔디</button>
+            <button type="button" class="rec-pill-btn" data-recslide="3">🤖 AI리포트</button>
+          </div>
+
+          <!-- 4단 메트릭 캐러셀 뷰포트 -->
+          <div class="rec-carousel-viewport" id="recCarouselViewport">
+            <div class="rec-carousel-track" id="recCarouselTrack">
+              <!-- Slide 0: 주간 실천 추이 -->
+              <div class="rec-carousel-slide">
+                <div class="week-summary" id="weekSummary"></div>
+                <div id="chartContainer"></div>
+              </div>
+              <!-- Slide 1: 라이프 밸런스 휠 -->
+              <div class="rec-carousel-slide">
+                <div id="lifeBalanceBox"></div>
+              </div>
+              <!-- Slide 2: 잔디 히트맵 -->
+              <div class="rec-carousel-slide">
+                <div id="recordHeatmap"></div>
+              </div>
+              <!-- Slide 3: AI 리포트 및 위클리 리캡 -->
+              <div class="rec-carousel-slide">
+                <div id="reportSummary"></div>
+                <div class="card list-card" style="margin-top:10px;">
+                  <div><b class="list-card-title">이번 주 위클리 리캡</b><div class="faint">이번 주 기록을 카드 한 장으로 모아봐요</div></div>
+                  <button class="btn btn-ghost btn-sm" id="weeklyRecapBtn" type="button">만들기</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="periodAiCard">
+          <div class="card-title-row">
+            <h3>기간별 AI 피드백</h3>
+            <span class="dday-pill">기간 맞춤 코칭</span>
+          </div>
+          <p class="faint" style="margin:0 0 12px;">기간을 정하면 그 동안의 기록을 AI가 종합해 성취와 다음 한 걸음을 알려드려요.</p>
+          <div class="goal-chip-row" id="periodPresetRow" style="margin-bottom:12px;">
+            <button class="goal-chip active" data-perioddays="7" type="button">최근 7일</button>
+            <button class="goal-chip" data-perioddays="14" type="button">최근 14일</button>
+            <button class="goal-chip" data-perioddays="30" type="button">최근 30일</button>
+            <button class="goal-chip" data-perioddays="month" type="button">이번 달</button>
+          </div>
+          <div class="date-range">
+            <div class="field"><label>시작일</label><input type="date" id="periodStartDate"></div>
+            <span class="date-range-sep">~</span>
+            <div class="field"><label>종료일</label><input type="date" id="periodEndDate"></div>
+          </div>
+          <div class="row-between">
+            <span class="faint" id="periodRecordCountBadge">기간 내 기록: 0건</span>
+            <button class="btn btn-primary btn-sm" id="periodAiRequestBtn" type="button">피드백 받기</button>
+          </div>
+          <div id="periodAiResultSlot" style="margin-top:14px;display:none;"></div>
+        </div>
       </div>
 
-      <div class="card" id="periodAiCard">
-        <div class="card-title-row">
-          <h3>기간별 AI 피드백</h3>
-          <span class="dday-pill">기간 맞춤 코칭</span>
-        </div>
-        <p class="faint" style="margin:0 0 12px;">기간을 정하면 그 동안의 기록을 AI가 종합해 성취와 다음 한 걸음을 알려드려요.</p>
-        <div class="goal-chip-row" id="periodPresetRow" style="margin-bottom:12px;">
-          <button class="goal-chip active" data-perioddays="7" type="button">최근 7일</button>
-          <button class="goal-chip" data-perioddays="14" type="button">최근 14일</button>
-          <button class="goal-chip" data-perioddays="30" type="button">최근 30일</button>
-          <button class="goal-chip" data-perioddays="month" type="button">이번 달</button>
-        </div>
-        <div class="date-range">
-          <div class="field"><label>시작일</label><input type="date" id="periodStartDate"></div>
-          <span class="date-range-sep">~</span>
-          <div class="field"><label>종료일</label><input type="date" id="periodEndDate"></div>
-        </div>
-        <div class="row-between">
-          <span class="faint" id="periodRecordCountBadge">기간 내 기록: 0건</span>
-          <button class="btn btn-primary btn-sm" id="periodAiRequestBtn" type="button">피드백 받기</button>
-        </div>
-        <div id="periodAiResultSlot" style="margin-top:14px;display:none;"></div>
-      </div>
-
-      <h3 class="section-title">완료·보관한 목표</h3>
-      <div id="archivedGoals"></div>
-
-      <h3 class="section-title">체크인 기록</h3>
-      <div class="theme-filter-row" id="recThemeFilters"></div>
-      <div class="field search-field"><input id="recSearchInput" type="search" placeholder="날짜·테마·키워드로 검색"></div>
-      <div id="recordsList"></div>
-      <div class="export-card">
-        <div class="txt"><b>기록 내보내기</b><span>날짜별 기록을 파일로 받아요</span></div>
-        <button class="btn btn-ghost btn-sm" id="exportRecordsBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg><span>받기</span></button>
+      <!-- [VIEW 3: ARCHIVE] 보관함 뷰 -->
+      <div class="rec-view" id="recViewArchive" style="display:none;">
+        <h3 class="section-title" style="margin-top:4px;">완료·보관한 목표</h3>
+        <div id="archivedGoals"></div>
       </div>
     </section>
 
@@ -1218,7 +1276,7 @@
     };
   }
 
-  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7, calView: 'month', calDate: isoDate(new Date()), calSelectedDate: isoDate(new Date()), selectedRecordTheme: 'all' };
+  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7, calView: 'month', calDate: isoDate(new Date()), calSelectedDate: isoDate(new Date()), selectedRecordTheme: 'all', recordsSegment: 'feed', recordsSlide: 0 };
 
   async function ensureUserRow(userId, username, displayName, extra){
     var found = await sb.from('users').select('*').eq('id', userId).maybeSingle();
@@ -15315,6 +15373,31 @@
     }
   }
 
+  function setRecordsSegment(seg){
+    state.recordsSegment = seg;
+    var viewFeed = document.getElementById('recViewFeed');
+    var viewStats = document.getElementById('recViewStats');
+    var viewArchive = document.getElementById('recViewArchive');
+    if(viewFeed) viewFeed.style.display = (seg === 'feed' ? 'block' : 'none');
+    if(viewStats) viewStats.style.display = (seg === 'stats' ? 'block' : 'none');
+    if(viewArchive) viewArchive.style.display = (seg === 'archive' ? 'block' : 'none');
+
+    document.querySelectorAll('#recSegmentBar [data-recseg]').forEach(function(btn){
+      btn.classList.toggle('active', btn.dataset.recseg === seg);
+    });
+  }
+
+  function setRecordsSlide(idx){
+    state.recordsSlide = idx;
+    var track = document.getElementById('recCarouselTrack');
+    if(track){
+      track.style.transform = 'translateX(-' + (idx * 25) + '%)';
+    }
+    document.querySelectorAll('#recCarouselPills [data-recslide]').forEach(function(btn){
+      btn.classList.toggle('active', parseInt(btn.dataset.recslide, 10) === idx);
+    });
+  }
+
   function renderRecordsScreen(){
     // 1. 레거시 기록 자동 테마 백필 (Backfill Migration)
     var needsSave = false;
@@ -15344,15 +15427,27 @@
     // 테마 필터 칩 렌더링
     renderRecordThemeFilters();
 
-    // week summary
+    // week summary & mini pulse bar calculation
     var weekAgo = Date.now() - 7*86400000;
     var totalMs = 0;
+    var weekRecCount = 0;
     allRecs.forEach(function(r){
-      if(new Date(r.startAt).getTime() >= weekAgo && r.endAt){
-        totalMs += (new Date(r.endAt) - new Date(r.startAt));
+      if(new Date(r.startAt).getTime() >= weekAgo){
+        weekRecCount++;
+        if(r.endAt){
+          totalMs += (new Date(r.endAt) - new Date(r.startAt));
+        }
       }
     });
-    document.getElementById('weekSummary').textContent = '이번 주 총 ' + fmtDuration(totalMs) + ' 기록';
+    var weekSummaryEl = document.getElementById('weekSummary');
+    if(weekSummaryEl) weekSummaryEl.textContent = '이번 주 총 ' + fmtDuration(totalMs) + ' 기록';
+
+    var pulseTextEl = document.getElementById('recMiniPulseText');
+    if(pulseTextEl){
+      var durationStr = totalMs > 0 ? fmtDuration(totalMs) : '0분';
+      pulseTextEl.innerHTML = '이번 주 <b>' + durationStr + ' 실천</b> (' + weekRecCount + '회 기록) · 성취 확인';
+    }
+
     renderWeekChart(allRecs);
     renderRecordHeatmap(allRecs);
     renderReportSummary(allRecs);
@@ -15360,6 +15455,45 @@
 
     // 기간별 기록 AI 피드백 카드 초기화 (Req 4)
     initPeriodAiCard(allRecs);
+
+    // 세그먼트 및 캐러셀 상태 동기화
+    setRecordsSegment(state.recordsSegment || 'feed');
+    setRecordsSlide(state.recordsSlide || 0);
+
+    var segCountEl = document.getElementById('recSegCount');
+    if(segCountEl) segCountEl.textContent = allRecs.length;
+
+    // 미니 펄스 바 & 세그먼트 버튼 & 캐러셀 알약 탭 이벤트 리스너 연결
+    var pulseBar = document.getElementById('recMiniPulseBar');
+    if(pulseBar){
+      pulseBar.onclick = function(){ setRecordsSegment('stats'); };
+    }
+    document.querySelectorAll('#recSegmentBar [data-recseg]').forEach(function(btn){
+      btn.onclick = function(){ setRecordsSegment(btn.dataset.recseg); };
+    });
+    document.querySelectorAll('#recCarouselPills [data-recslide]').forEach(function(btn){
+      btn.onclick = function(){ setRecordsSlide(parseInt(btn.dataset.recslide, 10)); };
+    });
+
+    // 캐러셀 스와이프 제스처 지원 (모바일 PWA 터치 최적화)
+    var vport = document.getElementById('recCarouselViewport');
+    if(vport && !vport._swipeBound){
+      vport._swipeBound = true;
+      var touchStartX = 0;
+      vport.addEventListener('touchstart', function(e){
+        if(e.touches && e.touches[0]) touchStartX = e.touches[0].clientX;
+      }, { passive: true });
+      vport.addEventListener('touchend', function(e){
+        if(e.changedTouches && e.changedTouches[0]){
+          var diff = e.changedTouches[0].clientX - touchStartX;
+          if(diff < -40 && (state.recordsSlide || 0) < 3){
+            setRecordsSlide((state.recordsSlide || 0) + 1);
+          } else if(diff > 40 && (state.recordsSlide || 0) > 0){
+            setRecordsSlide((state.recordsSlide || 0) - 1);
+          }
+        }
+      }, { passive: true });
+    }
 
     // 대화형 기록 입력창 리스너 연결 (Req 1)
     var recSend = document.getElementById('recAgentSendBtn');
@@ -15425,10 +15559,7 @@
       return;
     }
 
-    var html = ''; var lastKey = null;
-    filteredRecs.forEach(function(r){
-      var k = dateKey(r.startAt);
-      if(k!==lastKey){ html += '<div class="rec-date-label">'+fmtDateLabel(r.startAt)+'</div>'; lastKey = k; }
+    function buildRecordCardHtml(r){
       var isTpl = r.type==='template';
       var isNote = r.type==='note';
       var isDoing = !isNote && !isTpl && !r.endAt;
@@ -15444,7 +15575,7 @@
       var photoHtml = r.photo ? '<div style="margin-top:6px;"><img src="'+r.photo+'" style="max-height:140px;border-radius:8px;object-fit:cover;border:1px solid var(--rule);"></div>' : '';
       var tplBadgeHtml = isTpl ? ('<div style="margin-bottom:6px;"><span class="pro-tpl-badge">' + escapeHtml(r.templateTitle || '전문 템플릿') + ' (' + (r.rows ? r.rows.length : 0) + '개 항목) · 클릭하여 표 보기</span></div>') : '';
 
-      html += '<div class="rec-card'+(isDoing?' doing':'')+'" data-recid="'+r.id+'" style="border-left: 4px solid '+th.color+';'+(isTpl?'cursor:pointer;':'')+'">' +
+      return '<div class="rec-card'+(isDoing?' doing':'')+'" data-recid="'+r.id+'" style="border-left: 4px solid '+th.color+';'+(isTpl?'cursor:pointer;':'')+'">' +
         tplBadgeHtml +
         '<div class="rec-top"><div class="rec-text" style="white-space:pre-line;">'+escapeHtml(r.text)+'</div>' +
           '<div class="rec-icons"><button class="icon-btn" data-recedit="1" aria-label="기록 수정"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn" data-recdel="1" aria-label="기록 삭제">×</button></div>' +
@@ -15457,8 +15588,126 @@
           '<span class="rec-theme-chip" data-rectheme="'+r.id+'" style="'+chipStyle+'" title="테마 변경 (클릭)">'+th.icon+' '+th.label+subThText+' ▾</span>' +
         '</div>' +
       '</div>';
+    }
+
+    if(query || (state.selectedRecordTheme && state.selectedRecordTheme !== 'all')){
+      // 검색 및 테마 필터 상태: 일자별 평면 노출로 빠른 검색 탐색 지원
+      var html = ''; var lastKey = null;
+      filteredRecs.forEach(function(r){
+        var k = dateKey(r.startAt);
+        if(k!==lastKey){ html += '<div class="rec-date-label">'+fmtDateLabel(r.startAt)+'</div>'; lastKey = k; }
+        html += buildRecordCardHtml(r);
+      });
+      listEl.innerHTML = html;
+    } else {
+      // 일반 피드 상태: 최근 7일 스키밍 노출 + 과거 기록 주/월 단위 계층형 아코디언 압축
+      var nowTime = Date.now();
+      var sevenDaysAgo = nowTime - 7 * 86400000;
+      var fourteenDaysAgo = nowTime - 14 * 86400000;
+
+      var recentRecs = [];
+      var pastWeekRecs = [];
+      var olderMonthGroups = {};
+
+      filteredRecs.forEach(function(r){
+        var t = new Date(r.startAt).getTime();
+        if(isNaN(t) || t >= sevenDaysAgo){
+          recentRecs.push(r);
+        } else if(t >= fourteenDaysAgo){
+          pastWeekRecs.push(r);
+        } else {
+          var d = new Date(r.startAt);
+          var mKey = d.getFullYear() + '-' + pad(d.getMonth() + 1);
+          if(!olderMonthGroups[mKey]) olderMonthGroups[mKey] = [];
+          olderMonthGroups[mKey].push(r);
+        }
+      });
+
+      var html = '';
+      if(recentRecs.length > 0){
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px;">' +
+          '<span style="font-size:.8125rem;font-weight:700;color:var(--ink);">최근 실천 기록 (최근 7일)</span>' +
+          '<span class="faint" style="font-size:.75rem;">' + recentRecs.length + '건</span>' +
+        '</div>';
+        var lastKey = null;
+        recentRecs.forEach(function(r){
+          var k = dateKey(r.startAt);
+          if(k!==lastKey){ html += '<div class="rec-date-label">'+fmtDateLabel(r.startAt)+'</div>'; lastKey = k; }
+          html += buildRecordCardHtml(r);
+        });
+      } else {
+        html += '<div class="faint" style="font-size:.8125rem;padding:12px 0;">최근 7일간의 기록이 아직 없어요.</div>';
+      }
+
+      var pastHtml = '';
+      if(pastWeekRecs.length > 0){
+        var pwMs = 0;
+        pastWeekRecs.forEach(function(r){ if(r.endAt) pwMs += (new Date(r.endAt) - new Date(r.startAt)); });
+        var pwDurStr = pwMs > 0 ? (' · ' + fmtDuration(pwMs)) : '';
+        var pwCards = ''; var pwLastKey = null;
+        pastWeekRecs.forEach(function(r){
+          var k = dateKey(r.startAt);
+          if(k!==pwLastKey){ pwCards += '<div class="rec-date-label">'+fmtDateLabel(r.startAt)+'</div>'; pwLastKey = k; }
+          pwCards += buildRecordCardHtml(r);
+        });
+        pastHtml += '<div class="rec-accordion-card" data-acc="past-week">' +
+          '<div class="rec-acc-head" data-toggleacc="1">' +
+            '<span class="rec-acc-title">📅 지난주 기록 (8~14일 전)</span>' +
+            '<div class="rec-acc-meta">' +
+              '<span>' + pastWeekRecs.length + '건' + pwDurStr + '</span>' +
+              '<span class="rec-acc-chevron">▼</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="rec-acc-body">' +
+            '<div class="rec-acc-inner">' + pwCards + '</div>' +
+          '</div>' +
+        '</div>';
+      }
+
+      var mKeys = Object.keys(olderMonthGroups).sort().reverse();
+      mKeys.forEach(function(mKey){
+        var mRecs = olderMonthGroups[mKey];
+        var parts = mKey.split('-');
+        var mLabel = parts[0] + '년 ' + parseInt(parts[1], 10) + '월';
+        var mMs = 0;
+        mRecs.forEach(function(r){ if(r.endAt) mMs += (new Date(r.endAt) - new Date(r.startAt)); });
+        var mDurStr = mMs > 0 ? (' · ' + fmtDuration(mMs)) : '';
+        var mCards = ''; var mLastKey = null;
+        mRecs.forEach(function(r){
+          var k = dateKey(r.startAt);
+          if(k!==mLastKey){ mCards += '<div class="rec-date-label">'+fmtDateLabel(r.startAt)+'</div>'; mLastKey = k; }
+          mCards += buildRecordCardHtml(r);
+        });
+        pastHtml += '<div class="rec-accordion-card" data-acc="month-' + mKey + '">' +
+          '<div class="rec-acc-head" data-toggleacc="1">' +
+            '<span class="rec-acc-title">📅 ' + mLabel + ' 전체 기록</span>' +
+            '<div class="rec-acc-meta">' +
+              '<span>' + mRecs.length + '건' + mDurStr + '</span>' +
+              '<span class="rec-acc-chevron">▼</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="rec-acc-body">' +
+            '<div class="rec-acc-inner">' + mCards + '</div>' +
+          '</div>' +
+        '</div>';
+      });
+
+      if(pastHtml){
+        html += '<div class="rec-past-accordion">' +
+          '<div style="font-size:.8125rem;font-weight:700;color:var(--ink-soft);margin:16px 0 6px;">과거 기록 보관함 (주/월 단위)</div>' +
+          pastHtml +
+        '</div>';
+      }
+      listEl.innerHTML = html;
+    }
+
+    // 아코디언 토글 리스너 연결
+    listEl.querySelectorAll('[data-toggleacc]').forEach(function(head){
+      head.addEventListener('click', function(){
+        var card = head.closest('.rec-accordion-card');
+        if(card) card.classList.toggle('expanded');
+      });
     });
-    listEl.innerHTML = html;
 
     listEl.querySelectorAll('.rec-card').forEach(function(card){
       var id = card.dataset.recid;

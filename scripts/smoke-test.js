@@ -2758,6 +2758,25 @@ check('compliance: [#TASK-ES-026] index.html 이 js/team-leader-check.js 를 로
   assert.ok(html.includes('OurgoalTeamLeaderCheck.renderMemberFeedbackBannerHtml'), '피드백 배너 렌더 호출');
   assert.ok(html.includes('OurgoalTeamLeaderCheck.bindEvents'), '이벤트 바인딩 호출');
 });
+
+check('compliance: [#TASK-ES-031] 기록 탭 3분할 세그먼트·미니 펄스바·4단 캐러셀 및 과거 기록 계층형 아코디언이 구현되어 있다', () => {
+  // 1. 마크업 무결성
+  assert.ok(html.includes('id="recSegmentBar"'), '3분할 세그먼트 바 마크업');
+  assert.ok(html.includes('id="recSegFeedBtn"') && html.includes('id="recSegStatsBtn"') && html.includes('id="recSegArchiveBtn"'), '3분할 세그먼트 버튼들');
+  assert.ok(html.includes('id="recViewFeed"') && html.includes('id="recViewStats"') && html.includes('id="recViewArchive"'), '3개 뷰 컨테이너');
+  assert.ok(html.includes('id="recMiniPulseBar"') && html.includes('id="recMiniPulseText"'), '미니 성취 펄스 바 마크업');
+  assert.ok(html.includes('id="recCarouselViewport"') && html.includes('id="recCarouselTrack"') && html.includes('id="recCarouselPills"'), '4단 메트릭 캐러셀 뷰포트 및 알약 탭');
+
+  // 2. JS 로직 무결성
+  assert.ok(html.includes('function setRecordsSegment('), '세그먼트 전환 함수');
+  assert.ok(html.includes('function setRecordsSlide('), '캐러셀 슬라이드 함수');
+  assert.ok(html.includes('rec-accordion-card') && html.includes('data-toggleacc'), '과거 기록 계층형 아코디언 토글');
+
+  // 3. CSS 무결성
+  assert.ok(styleSrc.includes('.rec-segment-bar') && styleSrc.includes('.rec-mini-pulse-bar'), '세그먼트 및 펄스바 CSS');
+  assert.ok(styleSrc.includes('.rec-carousel-viewport') && styleSrc.includes('.rec-carousel-track'), '캐러셀 CSS');
+  assert.ok(styleSrc.includes('.rec-accordion-card') && styleSrc.includes('.rec-acc-body'), '계층형 아코디언 CSS');
+});
 console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
