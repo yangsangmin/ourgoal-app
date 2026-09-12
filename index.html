@@ -59,6 +59,7 @@
     </div>
     <span class="land-login-link"><b id="landStartBtn">이메일로 가입하기</b></span>
     <span class="land-login-link">이미 계정이 있으신가요? <b id="landLoginLink">로그인</b></span>
+    <span class="land-login-link" style="margin-top:6px;"><a href="javascript:void(0)" id="landRescueBtn" style="color:var(--ink-faint);font-size:.75rem;text-decoration:underline;">로그인이 잘 안 되시나요? (세션 초기화·복구)</a></span>
   </div>
 </div>
 
@@ -99,6 +100,9 @@
     <p class="auth-note">
       계속 진행하면 아워골의 <a href="#" id="authTermsLink">서비스 이용약관</a> 및 <a href="#" id="authPrivacyLink">개인정보처리방침</a>에 동의하는 것으로 봅니다.
     </p>
+    <div style="text-align:center;margin-top:8px;">
+      <a href="javascript:void(0)" id="authRescueBtn" style="color:var(--ink-faint);font-size:.75rem;text-decoration:underline;">로그인이 잘 안 되시나요? (세션 초기화·복구)</a>
+    </div>
   </div>
 </div>
 
@@ -1541,11 +1545,32 @@
       toast('구글 계정 정보를 확인할 수 없습니다.');
       return;
     }
-    toast('Google 계정 인증 성공! 세션 연동 중…');
     var email = (googleUser.email || '').trim().toLowerCase();
     var sub = googleUser.sub || googleUser.id || '';
     var name = googleUser.name || googleUser.given_name || email.split('@')[0];
     var picture = googleUser.picture || googleUser.avatar_url || '';
+
+    // [보호 1] 이미 로그인된 상태(카카오 등 기존 세션)에서 구글 연동을 시도한 경우:
+    // 기존 카카오 세션을 절대 끊거나 파괴하지 않고, 캘린더 연동 정보만 안전하게 보관
+    if(state.profile && state.profile.id){
+      if(accessToken){
+        state.googleToken = {
+          accessToken: accessToken,
+          expiresAt: Date.now() + 3500 * 1000
+        };
+        try { sessionStorage.setItem('ourgoal_google_token', accessToken); } catch(e){}
+      }
+      if(!state.profile.settings) state.profile.settings = {};
+      state.profile.settings.googleCalendarEmail = email;
+      state.profile.settings.googleCalendarConnected = true;
+      if(picture && !state.profile.avatarUrl) state.profile.avatarUrl = picture;
+      await saveProfile();
+      toast('Google 계정 및 캘린더가 안전하게 연동되었습니다!');
+      return;
+    }
+
+    // [보호 2] 미로그인 상태에서 구글 로그인 시도
+    toast('Google 계정 인증 확인 중…');
 
     if(accessToken){
       state.googleToken = {
@@ -1559,13 +1584,15 @@
     var internalPassword = 'GAuth$' + subHash.slice(0, 20) + '!9Z';
 
     var sessionUser = null;
+    var isAccountConflict = false;
+
     try {
-      // 1. 기존 비밀번호 로그인 시도 (이미 구글로 연동된 계정인 경우)
+      // 1. 기존 연동 계정으로 로그인 시도
       var loginRes = await sb.auth.signInWithPassword({ email: email, password: internalPassword });
       if(loginRes && loginRes.data && loginRes.data.user){
         sessionUser = loginRes.data.user;
       } else {
-        // 2. 계정 생성 시도
+        // 2. 신규 가입 시도
         var upRes = await sb.auth.signUp({
           email: email,
           password: internalPassword,
@@ -1586,17 +1613,53 @@
           }
         } else if(upRes && upRes.error){
           console.warn('Supabase 구글 계정 signUp 실패:', upRes.error);
-          if(/already registered/i.test(upRes.error.message || '')){
-            toast('이미 일반 이메일로 가입된 계정입니다. 기존 비밀번호로 로그인해주세요.');
-            return;
+          var errMsg = String(upRes.error.message || '');
+          if(/already registered|already in use|identity already exists/i.test(errMsg)){
+            isAccountConflict = true;
           }
         }
       }
     } catch(authErr){
       console.warn('Supabase 연동 중 오류 발생:', authErr);
+      if(/already registered|already in use/i.test(String(authErr.message || ''))){
+        isAccountConflict = true;
+      }
     }
 
-    var userId = sessionUser ? sessionUser.id : ('g_' + (sub ? sub.slice(0, 16) : Math.random().toString(36).slice(2, 10)));
+    // [계정 충돌 및 먹통 방지] 카카오 등으로 이미 가입된 이메일이거나 세션 생성 실패 시
+    if(isAccountConflict || (!sessionUser)){
+      // 오염된 로컬 세션 청소하여 카카오 로그인 시 간섭 방지
+      try { await sb.auth.signOut(); } catch(e){}
+
+      openModal(
+        '<div style="text-align:center;padding:16px 8px;">' +
+          '<div style="font-size:2.5rem;margin-bottom:12px;">🔗</div>' +
+          '<h3 style="margin:0 0 8px;font-size:1.15rem;font-weight:700;">기존 카카오 가입 계정 안내</h3>' +
+          '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.6;margin:0 0 16px;">' +
+            'Google 계정(<b>' + escapeHtml(email) + '</b>)은<br>' +
+            '이미 <b>카카오 로그인</b>으로 등록된 계정입니다.<br><br>' +
+            '기존에 작성하신 소중한 목표와 체크인 기록을<br>그대로 유지하시려면 카카오로 로그인해주세요!' +
+          '</p>' +
+          '<button class="btn btn-block btn-kakao" id="conflictKakaoLoginBtn" style="width:100%;margin-bottom:8px;padding:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;">' +
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.86 5.31 4.66 6.72L5.5 21.5c-.08.3.24.54.5.38l4.42-2.93c.52.05 1.05.08 1.58.08 5.52 0 10-3.58 10-8S17.52 3 12 3z"/></svg>' +
+            '<span>카카오로 바로 시작하기</span>' +
+          '</button>' +
+          '<button class="btn btn-ghost btn-sm" id="conflictCloseBtn" style="width:100%;">닫기</button>' +
+        '</div>',
+        function(sheet){
+          var kBtn = sheet.querySelector('#conflictKakaoLoginBtn');
+          if(kBtn) kBtn.onclick = function(){
+            closeModal();
+            startOAuthLogin('kakao');
+          };
+          var cBtn = sheet.querySelector('#conflictCloseBtn');
+          if(cBtn) cBtn.onclick = closeModal;
+        }
+      );
+      return;
+    }
+
+    var userId = sessionUser.id;
     var extra = {
       avatar_url: picture,
       display_name: name
@@ -1859,11 +1922,18 @@
       var myDev = getDeviceId();
       var myLogin = getDeviceLoginTime();
 
-      // 1. Supabase Auth 사용자 세션 유효성 검사 (scope: 'others' 등으로 무효화된 세션 즉각 감지)
+      // 방금 로그인한 직후(60초 이내)에는 토큰 동기화 및 일시적 지연으로 인한 세션 튕김 오탐 방어
+      if(Date.now() - myLogin < 60000) return false;
+
+      // 1. Supabase Auth 사용자 세션 유효성 검사 (명백한 JWT 무효/만료 에러일 때만 로그아웃)
       var uRes = await sb.auth.getUser();
       if(uRes && uRes.error){
-        await performLogout('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
-        return true;
+        var eMsg = String(uRes.error.message || '').toLowerCase();
+        if(eMsg.indexOf('jwt') !== -1 || eMsg.indexOf('invalid') !== -1 || eMsg.indexOf('expired') !== -1){
+          await performLogout('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+          return true;
+        }
+        return false;
       }
 
       // 2. Auth 메타데이터의 원격 로그아웃 타임스탬프 대조
@@ -20134,46 +20204,121 @@
     renderSettingsScreen();
   }
 
+  /* ============ 세션 복구 및 안전 앱 진입 유틸 ============ */
+  var _isEnteringApp = false;
+  async function restoreSessionAndEnter(session){
+    if(!session || !session.user) return false;
+    if(_isEnteringApp) return true;
+    _isEnteringApp = true;
+    try {
+      var um = session.user.user_metadata || {};
+      var newExtra = {};
+      if(um.avatar_url || um.picture) newExtra.avatar_url = um.avatar_url || um.picture;
+      if(um.full_name || um.name || um.nickname) newExtra.display_name = um.full_name || um.name || um.nickname;
+      var userEmail = session.user.email || um.email || (newExtra.display_name ? (newExtra.display_name + '@kakao.local') : (session.user.id.slice(0, 8) + '@kakao.local'));
+      if(!sessionStorage.getItem('ourgoal_login_at')) setDeviceLoginTime(Date.now());
+      state.profile = await loadProfile(session.user.id, userEmail, newExtra, (session.user.app_metadata && session.user.app_metadata.provider) || null);
+      var isRevoked = await checkRemoteSessionRevoked();
+      if(isRevoked){ _isEnteringApp = false; return false; }
+      var ls = document.getElementById('landingScreen');
+      if(ls) ls.style.display = 'none';
+      var as = document.getElementById('authScreen');
+      if(as) as.style.display = 'none';
+      if(state.profile._isNewSignup && (!state.profile.goals || state.profile.goals.length === 0) && (!state.profile.records || state.profile.records.length === 0)){
+        startOnboarding();
+      } else {
+        enterApp();
+      }
+      checkAndHandlePeerInviteUrl();
+      return true;
+    } catch(err){
+      console.warn('세션 복원 및 앱 진입 실패:', err);
+      _isEnteringApp = false;
+      return false;
+    }
+  }
+
+  async function rescueLoginSession(){
+    try {
+      toast('꼬인 세션을 초기화하고 복구 중입니다…');
+      await sb.auth.signOut();
+    } catch(e){}
+    try {
+      sessionStorage.clear();
+      var toRemove = [];
+      for(var i = 0; i < localStorage.length; i++){
+        var k = localStorage.key(i);
+        if(k && (k.indexOf('sb-') === 0 || k === 'ourgoal_sid' || k === 'ourgoal_login_at' || k === 'ourgoal_guest_profile')){
+          toRemove.push(k);
+        }
+      }
+      toRemove.forEach(function(k){ localStorage.removeItem(k); });
+    } catch(e){}
+    state.profile = null;
+    toast('세션을 깨끗하게 초기화했습니다. 카카오 또는 이메일로 다시 로그인해주세요.');
+    setTimeout(function(){
+      if(window.history && window.history.replaceState){
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+      window.location.reload();
+    }, 600);
+  }
+
+  ['landRescueBtn', 'authRescueBtn'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.addEventListener('click', rescueLoginSession);
+  });
+
   /* ============ Boot ============ */
   (async function boot(){
+    // 1. Supabase Auth 전역 리스너 (카카오 OAuth 리다이렉트 후 비동기 토큰 파싱 시 즉각 감지)
+    try {
+      sb.auth.onAuthStateChange(async function(event, session){
+        if((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && session.user){
+          if(!state.profile || state.profile.id !== session.user.id){
+            await restoreSessionAndEnter(session);
+          }
+        }
+      });
+    } catch(e){}
+
+    // 2. URL 해시/쿼리상의 OAuth 에러 처리 및 안전 복구
     try{
       var hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
       var searchParams = new URLSearchParams(window.location.search);
       var authErr = hashParams.get('error_description') || searchParams.get('error_description')
         || hashParams.get('error') || searchParams.get('error');
       if(authErr){
-        toast('로그인 중 문제가 발생했어요: ' + decodeURIComponent(authErr.replace(/\+/g, ' ')));
+        var decoded = decodeURIComponent(authErr.replace(/\+/g, ' '));
+        console.warn('OAuth 인가 오류 감지:', decoded);
+        toast('로그인 중 문제가 발생했어요: ' + decoded);
+        try { await sb.auth.signOut(); } catch(e){}
         if(window.history && window.history.replaceState){
           window.history.replaceState(null, '', window.location.pathname);
         }
       }
     } catch(e){}
 
+    // 3. OAuth 리다이렉트 콜백 대기 루프 (카카오 리다이렉트 시 타이밍 이슈 방어)
+    var isOAuthCallback = window.location.hash.indexOf('access_token') !== -1 || window.location.search.indexOf('code=') !== -1;
     try{
-      var res = await sb.auth.getSession();
-      var session = res.data && res.data.session;
-      if(session && session.user){
-        var um = session.user.user_metadata || {};
-        var newExtra = {};
-        if(um.avatar_url || um.picture) newExtra.avatar_url = um.avatar_url || um.picture;
-        if(um.full_name || um.name || um.nickname) newExtra.display_name = um.full_name || um.name || um.nickname;
-        var userEmail = session.user.email || um.email || (newExtra.display_name ? (newExtra.display_name + '@kakao.local') : (session.user.id.slice(0, 8) + '@kakao.local'));
-        if(!sessionStorage.getItem('ourgoal_login_at')) setDeviceLoginTime(Date.now());
-        state.profile = await loadProfile(session.user.id, userEmail, newExtra, (session.user.app_metadata && session.user.app_metadata.provider) || null);
-        var isRevoked = await checkRemoteSessionRevoked();
-        if(isRevoked) return;
-        document.getElementById('landingScreen').style.display = 'none';
-        document.getElementById('authScreen').style.display = 'none';
-        if(state.profile._isNewSignup && (!state.profile.goals || state.profile.goals.length === 0) && (!state.profile.records || state.profile.records.length === 0)){
-          startOnboarding();
-        } else {
-          enterApp();
+      var session = null;
+      var maxWait = isOAuthCallback ? 6 : 1;
+      for(var i = 0; i < maxWait; i++){
+        var res = await sb.auth.getSession();
+        session = res.data && res.data.session;
+        if(session && session.user) break;
+        if(isOAuthCallback && i < maxWait - 1){
+          await new Promise(function(r){ setTimeout(r, 200); });
         }
-        checkAndHandlePeerInviteUrl();
-        return;
       }
-    } catch(e){ /* fall through to landing screen */ }
+      if(session && session.user){
+        var ok = await restoreSessionAndEnter(session);
+        if(ok) return;
+      }
+    } catch(e){ /* fall through to guest / landing */ }
 
+    // 4. 게스트 세션 확인
     try {
       var guestRaw = localStorage.getItem('ourgoal_guest_profile');
       if(guestRaw){
@@ -20189,6 +20334,7 @@
       }
     } catch(e){}
 
+    // 5. 기본 랜딩 화면
     document.getElementById('landingScreen').style.display = 'flex';
     try{ recordLanding(location.search, dateKey(nowISO())); } catch(e){ /* 계측 실패 무시 */ }
     checkAndHandlePeerInviteUrl();

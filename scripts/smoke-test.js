@@ -2821,6 +2821,27 @@ check('compliance: [#TASK-ES-031] 기록 탭 3분할 세그먼트·미니 펄스
   assert.ok(styleSrc.includes('.rec-carousel-viewport') && styleSrc.includes('.rec-carousel-track'), '캐러셀 CSS');
   assert.ok(styleSrc.includes('.rec-accordion-card') && styleSrc.includes('.rec-acc-body'), '계층형 아코디언 CSS');
 });
+
+check('compliance: [#TASK-ES-033] 카카오/구글 로그인 충돌 방지, 세션 보존 및 자가 치유(Self-Healing) 복구 파이프라인이 구현되어 있다', () => {
+  // 1. handleGoogleUserSuccess 로그인 상태 보존 및 계정 충돌 안내 모달
+  assert.ok(html.includes('state.profile && state.profile.id'), '로그인 상태에서 구글 시도시 세션 보존');
+  assert.ok(html.includes('isAccountConflict'), '계정 충돌 플래그 검증');
+  assert.ok(html.includes('기존 카카오 가입 계정 안내'), '카카오 계정 충돌 안내 모달');
+  assert.ok(html.includes('conflictKakaoLoginBtn'), '카카오 즉시 로그인 전환 버튼');
+
+  // 2. checkRemoteSessionRevoked 오탐 방지 가드
+  assert.ok(html.includes('Date.now() - myLogin < 60000'), '로그인 직후 60초 오탐 방지 가드');
+
+  // 3. boot 함수 OAuth 세션 복원 및 onAuthStateChange
+  assert.ok(html.includes('sb.auth.onAuthStateChange'), 'Auth 상태 변화 감지 리스너');
+  assert.ok(html.includes('restoreSessionAndEnter'), '세션 복원 전담 함수');
+  assert.ok(html.includes('isOAuthCallback'), 'OAuth 리다이렉트 콜백 감지');
+
+  // 4. 자가 치유(Self-Healing) UI 및 rescueLoginSession 함수
+  assert.ok(html.includes('function rescueLoginSession'), '세션 초기화 및 복구 함수');
+  assert.ok(html.includes('id="landRescueBtn"') && html.includes('id="authRescueBtn"'), '랜딩 및 인증 화면 세션 복구 링크');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
