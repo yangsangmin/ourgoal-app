@@ -2909,6 +2909,62 @@ check('compliance: [#TASK-ES-036] 서버 사이드 관리자 권한 데이터 �
   assert.strictEqual(apiFiles.length, 12, 'Vercel Hobby 12개 서버리스 함수 한도 준수');
 });
 
+check('compliance: [#TASK-ES-037] 기록·목표 탭 12대 핵심 UX 개선 및 통계·마일스톤 구조 개편이 완비되어 있다', () => {
+  // 1. js/records-stats.js 파일 존재 및 모듈 검증
+  const statsModPath = path.join(__dirname, '..', 'js', 'records-stats.js');
+  assert.ok(fs.existsSync(statsModPath), 'js/records-stats.js 파일이 존재해야 함');
+  const RecordsStats = require('../js/records-stats.js');
+  assert.ok(typeof RecordsStats.build7DaysFeedHtml === 'function', 'build7DaysFeedHtml 함수 구비');
+  assert.ok(typeof RecordsStats.renderLifeBalancePieSvg === 'function', 'renderLifeBalancePieSvg 함수 구비');
+  assert.ok(typeof RecordsStats.computeTrendData === 'function', 'computeTrendData 함수 구비');
+  assert.ok(typeof RecordsStats.computeFixedReportSummary === 'function', 'computeFixedReportSummary 함수 구비');
+
+  // 2. 최근 7일 피드: 오늘 전면 노출 + 어제/과거 아코디언 및 최신 1건 프리뷰
+  assert.ok(html.includes('OurgoalRecordsStats.build7DaysFeedHtml'), '7일 피드 렌더러 연동');
+  assert.ok(html.includes('data-toggleday'), '일자별 아코디언 토글 바인딩');
+  assert.ok(styleSrc.includes('.rec-day-accordion') && styleSrc.includes('.rec-day-toggle-btn'), '7일 피드 아코디언 스타일 구비');
+
+  // 3. 성취 통계: 주간/월간/분기/반기/연간 5종 추이 + 막대 선택 요약 + 상세 팝업
+  assert.ok(html.includes('data-trendseg') && html.includes('trend-seg-bar'), '실천 추이 5종 세그먼트 바');
+  assert.ok(html.includes('trendDetailSummary') && html.includes('data-trendpop'), '일자 요약 박스 및 팝업 트리거');
+  assert.ok(html.includes('OurgoalRecordsStats.openDayDetailModal'), '일자/기간별 활동 세부 모달 연계');
+  assert.ok(styleSrc.includes('.trend-detail-summary') && styleSrc.includes('.chart-bar.active'), '활성 막대 및 요약 박스 스타일');
+
+  // 4. 원형 라이프 밸런스 휠 (SVG Pie/Donut Chart)
+  assert.ok(html.includes('OurgoalRecordsStats.renderLifeBalancePieSvg'), '원형 밸런스 휠 SVG 렌더러 연동');
+  assert.ok(html.includes('balance-pie-container') && html.includes('원형 라이프 밸런스 휠'), '원형 라이프 밸런스 휠 컨테이너');
+  const pieResult = RecordsStats.renderLifeBalancePieSvg([
+    { theme: 'workout', startAt: new Date().toISOString(), endAt: new Date(Date.now()+1800000).toISOString() },
+    { theme: 'study', startAt: new Date().toISOString(), endAt: new Date(Date.now()+1800000).toISOString() }
+  ]);
+  assert.ok(pieResult.svgHtml.includes('<svg') && pieResult.svgHtml.includes('balance-pie-svg'), '원형 SVG 파이 차트 정상 생성');
+
+  // 5. 공식 명칭 변경: 잔디 ➔ 히트맵
+  assert.ok(html.includes('🟩 히트맵') && html.includes('기록 히트맵'), '히트맵 공식 명칭 적용');
+
+  // 6. AI 리포트 결함(종료시간 누락) 해결 및 위클리 리캡 공통 하단 배치
+  assert.ok(html.includes('OurgoalRecordsStats.computeFixedReportSummary'), 'AI 리포트 집계기 연동');
+  assert.ok(html.includes('id="commonWeeklyRecapCard"'), '위클리 리캡 캐러셀 하단 공통 배치');
+  const dummyRecs = [{ id: 'r1', text: '열린 기록', startAt: new Date().toISOString() }]; // endAt 없음
+  const repSummary = RecordsStats.computeFixedReportSummary(dummyRecs, 7);
+  assert.strictEqual(repSummary.totalRecCount, 1, '종료시간 없는 기록도 누락 없이 집계되어야 함');
+
+  // 7. 보관함 안내 문구 및 최하단 데이터 받기
+  assert.ok(html.includes('완료된 목표는 여기로 저장됩니다.'), '보관함 상단 안내 문구');
+  assert.ok(html.includes('exportCardHtml') && /selBar\s*\+\s*exportCardHtml/.test(html), '데이터 받기 카드 목표 탭 최하단 배치');
+
+  // 8. 목표 공개 범위 3단 순환 토글 및 1초 토스트
+  assert.ok(html.includes('goalsPrivacyBadge') && html.includes("privBadge.addEventListener('click'"), '목표 공개 범위 3단 토글');
+  assert.ok(html.includes('목표 공개 범위:'), '공개 범위 토글 시 토스트 알림');
+
+  // 9. 목표 순서 가로 이동 버튼 (◀ / ▶)
+  assert.ok(html.includes('shiftGoalOrder') && html.includes('goal-chip-nav-btn'), '목표 칩 가로 순서 이동 버튼');
+  assert.ok(styleSrc.includes('.goal-chip-nav-btn'), '목표 순서 이동 버튼 스타일');
+
+  // 10. 마일스톤 수직 배치 및 세모 토글 하단 좌측 정렬 레이아웃
+  assert.ok(styleSrc.includes('.ms-title-full-row') && styleSrc.includes('.ms-right-actions'), '마일스톤 시인성 개선 CSS');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
