@@ -2453,3 +2453,26 @@
   - `essence-gate.js --pre-commit` 무결성 검증 통과 (금지 패턴 0건, index.html 순증가 42줄로 300줄 한도 충족).
   - "상민클론" 단어 파일 내 0건 검증 완료.
 ---
+
+## [2026-09-13 02:50] [FIX] #TASK-ES-034 기록 탭 버튼 상호작용 및 런타임 안정성(ReferenceError esc 방어, min-height 0, 정적 리스너) 긴급 복구
+- **목표**: 상민님 직접 지시("변경하면서 해당 버튼을 누르면 작동하지 않게됐어. 너가 말한 ui 구현하면서 동시에 실제 버튼별 작동도 다 되게 만들어야지")에 따라, 기록 탭 개편(PR #146) 및 직전 커밋(PR #147) 이후 앱 전반에서 버튼 클릭이 동작하지 않던 근본 원인을 찾아 완전히 해결하고, 3분할 세그먼트·미니 펄스바·4단 캐러셀·계층형 아코디언 및 기록 관리 모달 액션 등 모든 상호작용이 완벽히 작동하도록 보장.
+- **근본 원인 정밀 규명**:
+  1. `ReferenceError: esc is not defined` 발생: PR #147 (`cbd9033`)에서 `index.html:6108`에 추가된 `OurgoalThemeSystem.initUI` 인자에 선언되지 않은 `esc: esc`가 전달되어 스크립트 실행이 중단됨. 이로 인해 `enterApp()`, `renderRecordsScreen()`, `setTab()` 등 모든 UI 렌더러와 버튼 이벤트 바인딩이 일괄 차단되어 사용자가 누른 버튼이 전혀 반응하지 않음.
+  2. 프로필 속성 널 가드 부재: 신규/초기화 계정 접속 시 `state.profile.settings.xp` 및 `settings.checkinTimes` 접근 시 `TypeError`가 발생하여 렌더링 파이프라인이 멈출 위험 상존.
+  3. CSS Grid 아코디언 명세 결함: `.rec-acc-inner`에 `min-height: 0`이 명시되지 않아 자식 카드의 `auto` 최소 높이로 인해 0fr 상태에서도 높이가 줄어들지 않고 영구 노출되어 버튼이 고장 난 것처럼 보임.
+  4. 과거 기록 아코디언 빈 상태 안내 부재: 7일 이내 기록만 있는 신규 사용자의 경우 아코디언이 전혀 렌더링되지 않아 아코디언 구조 및 기능 확인 불가.
+- **수정/실행 내역**:
+  1. `index.html:6108`: `esc: esc`를 이미 상단에 정의된 `esc: escapeHtml`로 정상 매핑하여 런타임 스크립트 중단 원천 해결.
+  2. `index.html:1279` & `index.html:19575`: `renderLevelBadge` 및 `renderSettingsScreen`에 안전한 속성 체이닝 및 널 기본값(`xpTotal || 0`, `["10:00","15:00","21:00"]`) 가드 적용.
+  3. `index.html`:
+     - 세그먼트 버튼 3종(`recSegmentBar [data-recseg]`), 미니 펄스바(`recMiniPulseBar`), 캐러셀 4분할 알약(`recCarouselPills [data-recslide]`)에 대한 정적 이벤트 리스너를 스크립트 초기화 시점에 안전하게 선등록하여 이벤트 유실 차단.
+     - 아코디언 토글 클릭 시 `e.stopPropagation()` 적용 및 최근 7일 기록만 있는 경우에도 안내 아코디언 카드(`rec-accordion-card data-acc="past-empty"`)를 렌더링하여 계층형 접힘/펼침 UX를 즉시 체감할 수 있도록 개선.
+  4. `ui.css`: `.rec-acc-inner`에 `min-height: 0;` 및 `overflow: hidden;`을 엄격히 지정하여 CSS Grid 0fr 접힘/펼침 애니메이션이 Chromium/WebKit에서 정상 동작하도록 보정.
+  5. `scripts/smoke-test.js`: `#TASK-ES-034` 컴플라이언스 테스트(esc 방어, CSS min-height 0, 정적 리스너 검증) 추가.
+  6. Puppeteer E2E 브라우저 실제 인터랙션 10종 전수 검증 스크립트(`scratch/test_buttons.js`) 작성 및 실행:
+     - 세그먼트 전환(피드/통계/아카이브), 미니 펄스바 클릭, 캐러셀 4개 슬라이드 이동, 아코디언 펼침/접힘 토글, 모달 열기(기록 추가, 주간 결산, 내보내기, 기록 수정) 100% 정상 통과 및 JS 에러 0건 확인.
+- **검증 결과**:
+  - Puppeteer 헤드리스 크롬 E2E 테스트: 10개 핵심 인터랙션 100% PASS, 콘솔 에러 0건.
+  - `node scripts/smoke-test.js`: **209개 전수 100% 통과 (0개 실패)**.
+  - 3자 상호 동기화(Tri-Sync) 및 원장 연동 무결성 검증 완료.
+---
