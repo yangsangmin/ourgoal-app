@@ -1,35 +1,30 @@
 {
-  "taskId": "#TASK-ES-035",
+  "taskId": "#TASK-ES-036",
   "projectId": "ourgoal",
   "owner": "antigravity-session-82071bd0",
-  "goal": "기록(checkins) 및 프로필(users) 삼중 로컬 백업 구축, 게스트 세션 영구 고착 해제 및 데이터 무결성 복원",
+  "goal": "서버 사이드 관리자 권한 데이터 복구 파이프라인(api/sync-records.js) 및 RLS 차단 우회 기록·프로필 즉시 복원",
   "planPath": "C:/dev/ourgoal-app/.Codex/작업계획서/82071bd0.md",
-  "phase": "완료",
-  "nextAction": "PR 병합 및 배포 확인, Tri-Sync 동기화 무결성 검증",
+  "phase": "진행",
+  "nextAction": "서버리스 api/sync-records.js 구현 및 index.html 클라이언트 연동",
   "commandCenterParent": "3d4598db-9096-813b-8d6a-e1f3e9fd1e29",
   "projectTowerParent": "3d2598db-9096-800d-845c-c4b2245d4197",
   "evidence": [
-    "상민님 직접 제보: 목표들만 살아있고 유저들의 기록, 프로필 편집 내역 모두 초기화된것처럼 나오는데?",
-    "TICKETS.md #TASK-ES-035 등록 완료",
-    "원인 규명: 목표만 로컬 백업(ourgoal_goals_backup_) 존재, 기록·프로필 백업 부재로 인한 비대칭 손실",
-    "원인 규명: ourgoal_guest_profile 게스트 세션 영구 고착으로 Supabase 실세션 조회 차단",
-    "해결: ourgoal_records_backup_ 및 ourgoal_profile_backup_ 삼중 방어망 구축 및 게스트 고착 해제",
-    "해결: ensureUserRow 프로필 유실 방어 및 boot 자가 치유(self-healing) 로직 구현",
-    "해결: 설정 화면 1-클릭 수동 복원 및 재동기화 버튼(resyncAccountDataBtn) 구현",
-    "검증: npm test 210개 전수 100% 통과 (0개 실패)",
-    "검증: essence-gate pre-commit 통과"
+    "상민님 직접 제보: 아직도 기록 안돌아 왔는데?",
+    "TICKETS.md #TASK-ES-036 등록 완료",
+    "원인 규명: Supabase RLS로 인해 비인증 세션에서 checkins 및 users 조회가 차단되어 로컬 백업이 없던 이전 기록을 가져오지 못함",
+    "해결 착수: SUPABASE_SERVICE_ROLE_KEY를 사용하는 서버리스 api/sync-records.js 구현 및 클라이언트 전면 연동"
   ],
   "pending": false,
   "remote": {
     "projectTower": {
       "id": "3d9598db-9096-81a4-840e-e1a2e0e0a3d4",
-      "hash": "e9be71d4847c2c209a732a141f50c14b286d592abf97bfe914f036a444725589",
-      "verifiedAt": "2026-09-12T18:26:42.027Z"
+      "hash": "1c9cac5b7d5236782cd6541f0cccb9b13163b6bbd216d22a17be9dedf0ee4144",
+      "verifiedAt": "2026-09-12T18:37:40.520Z"
     },
     "commandCenter": {
       "id": "3d9598db-9096-814a-b6e0-cd3f09c21935",
-      "hash": "e9be71d4847c2c209a732a141f50c14b286d592abf97bfe914f036a444725589",
-      "verifiedAt": "2026-09-12T18:26:43.839Z"
+      "hash": "1c9cac5b7d5236782cd6541f0cccb9b13163b6bbd216d22a17be9dedf0ee4144",
+      "verifiedAt": "2026-09-12T18:37:41.408Z"
     }
   }
 }

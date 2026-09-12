@@ -1533,6 +1533,40 @@
         }
       });
     }
+
+    // 서버 관리자 엔드포인트(/api/track)를 통한 비인증 RLS 차단 우회 및 이전 기록 복원 (#TASK-ES-036)
+    if(!records || records.length === 0){
+      try {
+        var syncCandIds = [userId];
+        var curLastUid = localStorage.getItem('ourgoal_current_user');
+        if(curLastUid && syncCandIds.indexOf(curLastUid) === -1) syncCandIds.push(curLastUid);
+        for(var sIdx = 0; sIdx < localStorage.length; sIdx++){
+          var sKey = localStorage.key(sIdx);
+          if(sKey && (sKey.indexOf('ourgoal_goals_backup_') === 0 || sKey.indexOf('ourgoal_records_backup_') === 0)){
+            var sCand = sKey.replace('ourgoal_goals_backup_', '').replace('ourgoal_records_backup_', '');
+            if(sCand && syncCandIds.indexOf(sCand) === -1) syncCandIds.push(sCand);
+          }
+        }
+        var sRes = await fetch('/api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'sync_records', userId: userId, username: safeUsername, displayName: finalDisplayName, backupIds: syncCandIds })
+        });
+        if(sRes.ok){
+          var sData = await sRes.json();
+          if(sData && sData.records && sData.records.length > 0){
+            records = sData.records;
+            try { localStorage.setItem('ourgoal_records_backup_' + userId, JSON.stringify(records)); } catch(e){}
+            if(sData.user){
+              if(!finalBio && sData.user.bio) finalBio = sData.user.bio;
+              if((!finalInterests || finalInterests.length === 0) && sData.user.interests) finalInterests = sData.user.interests;
+              if(!finalRegion && sData.user.region) finalRegion = sData.user.region;
+            }
+          }
+        }
+      } catch(syncErr){}
+    }
+
     return {
       id: userId, username: safeUsername, displayName: finalDisplayName,
       bio: finalBio, avatarUrl: finalAvatarUrl, interests: finalInterests,
@@ -1608,6 +1642,98 @@
       } catch(e){}
     } catch(e){ console.warn('Supabase sync failed:', e); }
     saveLocalSettings(uidVal, state.profile.settings);
+  }
+
+  /* ============ 서버 관리자 API를 통한 기록 및 프로필 복구 (#TASK-ES-036) ============ */
+  async function syncServerRecords(forceRefresh){
+    if(!state.profile || !state.profile.id) return false;
+    var uid = state.profile.id;
+    var uname = state.profile.username || '';
+    var dname = state.profile.displayName || '';
+
+    var candidateIds = [uid];
+    try {
+      var lastUid = localStorage.getItem('ourgoal_current_user');
+      if(lastUid && candidateIds.indexOf(lastUid) === -1) candidateIds.push(lastUid);
+      for(var i = 0; i < localStorage.length; i++){
+        var lk = localStorage.key(i);
+        if(lk){
+          var pfxs = ['ourgoal_goals_backup_', 'ourgoal_records_backup_', 'ourgoal_profile_backup_', 'ourgoal_settings_'];
+          for(var pi = 0; pi < pfxs.length; pi++){
+            if(lk.indexOf(pfxs[pi]) === 0){
+              var cand = lk.replace(pfxs[pi], '');
+              if(cand && candidateIds.indexOf(cand) === -1) candidateIds.push(cand);
+            }
+          }
+        }
+      }
+    } catch(e){}
+
+    try {
+      var resp = await fetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'sync_records',
+          userId: uid,
+          username: uname,
+          displayName: dname,
+          backupIds: candidateIds
+        })
+      });
+      if(!resp.ok) return false;
+      var data = await resp.json();
+      if(!data || !data.ok) return false;
+
+      var updated = false;
+
+      if(data.records && data.records.length > 0){
+        var curCount = (state.profile.records || []).length;
+        if(data.records.length > curCount || forceRefresh || curCount === 0){
+          state.profile.records = data.records;
+          try {
+            localStorage.setItem('ourgoal_records_backup_' + uid, JSON.stringify(data.records));
+            if(data.targetUserId && data.targetUserId !== uid){
+              localStorage.setItem('ourgoal_records_backup_' + data.targetUserId, JSON.stringify(data.records));
+            }
+          } catch(e){}
+          updated = true;
+        }
+      }
+
+      if(data.user){
+        var u = data.user;
+        if(!state.profile.bio && u.bio){ state.profile.bio = u.bio; updated = true; }
+        if((!state.profile.interests || state.profile.interests.length === 0) && u.interests && u.interests.length){
+          state.profile.interests = u.interests;
+          updated = true;
+        }
+        if(!state.profile.region && u.region){ state.profile.region = u.region; updated = true; }
+        if(!state.profile.avatarUrl && u.avatar_url){ state.profile.avatarUrl = u.avatar_url; updated = true; }
+        if(typeof u.region_public !== 'undefined'){ state.profile.regionPublic = !!u.region_public; }
+      }
+
+      if((!state.profile.goals || state.profile.goals.length === 0) && data.goals && data.goals.length > 0){
+        state.profile.goals = data.goals;
+        try {
+          localStorage.setItem('ourgoal_goals_backup_' + uid, JSON.stringify(data.goals));
+        } catch(e){}
+        updated = true;
+      }
+
+      if(updated){
+        try {
+          localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile));
+        } catch(e){}
+        if(state.activeTab === 'records') renderRecordsScreen();
+        else if(state.activeTab === 'home') renderHomeScreen();
+        else if(state.activeTab === 'settings') renderSettingsScreen();
+      }
+      return updated;
+    } catch(err){
+      console.warn('syncServerRecords failed:', err);
+      return false;
+    }
   }
 
   /* ============ Landing ============ */
@@ -2050,6 +2176,7 @@
       resyncBtn.disabled = true;
       toast('서버 및 로컬 백업에서 목표·기록·프로필을 동기화하고 복원하는 중입니다…');
       try {
+        await syncServerRecords(true);
         var refreshed = await loadProfile(state.profile.id, state.profile.username, {
           display_name: state.profile.displayName,
           avatar_url: state.profile.avatarUrl
@@ -15814,7 +15941,30 @@
 
     var listEl = document.getElementById('recordsList');
     if(!allRecs.length){
-      listEl.innerHTML = '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div><p>아직 기록이 없어요. 홈에서 자유롭게 적어보세요.</p></div>';
+      listEl.innerHTML = '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div><p>아직 기록이 없어요. 홈에서 자유롭게 적어보세요.</p>' +
+        '<button class="btn btn-primary btn-sm" id="recAutoRestoreBtn" style="margin-top:12px;padding:8px 16px;border-radius:10px;font-weight:700;">🔄 이전 기록 전체 불러오기</button></div>';
+      var restoreBtn = document.getElementById('recAutoRestoreBtn');
+      if(restoreBtn){
+        restoreBtn.onclick = async function(){
+          restoreBtn.disabled = true;
+          restoreBtn.textContent = '불러오는 중…';
+          var hasUpdated = await syncServerRecords(true);
+          if(hasUpdated){
+            toast('기록 ' + (state.profile.records || []).length + '개를 성공적으로 복원했습니다!');
+            renderRecordsScreen();
+          } else {
+            toast('서버 및 로컬에서 추가로 복원할 기록이 없습니다.');
+            restoreBtn.disabled = false;
+            restoreBtn.textContent = '🔄 이전 기록 전체 불러오기';
+          }
+        };
+      }
+      if(!window._hasAutoTriedRecordSync){
+        window._hasAutoTriedRecordSync = true;
+        syncServerRecords(false).then(function(hasUpdated){
+          if(hasUpdated) renderRecordsScreen();
+        });
+      }
       return;
     }
 
@@ -20661,13 +20811,16 @@
           enterApp();
           checkAndHandlePeerInviteUrl();
           setTimeout(function(){
+            syncServerRecords(false).then(function(hasUpdated){
+              if(hasUpdated) renderAll();
+            }).catch(function(){});
             loadProfile(gp.id, gp.username, {}, 'boot_bg_sync').then(function(refreshed){
               if(refreshed && ((refreshed.records && refreshed.records.length > (state.profile.records || []).length) || (refreshed.goals && refreshed.goals.length > (state.profile.goals || []).length))){
                 state.profile = refreshed;
                 renderAll();
               }
             }).catch(function(){});
-          }, 1000);
+          }, 300);
           return;
         }
       }

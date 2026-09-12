@@ -2884,6 +2884,31 @@ check('compliance: [#TASK-ES-035] 기록 및 프로필 삼중 로컬 백업, 게
   assert.ok(html.includes('gpUpdated') && html.includes('boot_bg_sync'), 'boot 게스트 세션 자가 치유 및 백그라운드 동기화');
 });
 
+check('compliance: [#TASK-ES-036] 서버 사이드 관리자 권한 데이터 복구 파이프라인(api/track.js) 및 RLS 차단 우회 기록·프로필 즉시 복원이 완비되어 있다', () => {
+  // 1. api/track.js 내 서버 관리자 복구 핸들러 존재
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  assert.ok(trackSrc.includes('handleSyncRecords'), 'handleSyncRecords 함수 존재');
+  assert.ok(trackSrc.includes("action === 'sync_records'"), 'sync_records 액션 라우팅');
+  assert.ok(trackSrc.includes('SUPABASE_SERVICE_ROLE_KEY'), '서비스 롤 키 활용');
+  assert.ok(trackSrc.includes("from('checkins')"), 'checkins 테이블 관리자 쿼리');
+  assert.ok(trackSrc.includes("from('users')"), 'users 테이블 관리자 쿼리');
+
+  // 2. index.html syncServerRecords 파이프라인 탑재
+  assert.ok(html.includes('async function syncServerRecords'), 'syncServerRecords 함수 존재');
+  assert.ok(html.includes("action: 'sync_records'"), '클라이언트 sync_records 호출');
+
+  // 3. loadProfile 내 서버 복구 폴백
+  assert.ok(html.includes("!records || records.length === 0") && html.includes("fetch('/api/track'"), 'loadProfile 내 서버 복구 폴백');
+
+  // 4. recordsList 빈 상태 수동 복원 버튼 및 자동 백그라운드 복구
+  assert.ok(html.includes('id="recAutoRestoreBtn"'), '기록 탭 빈 화면 복원 버튼');
+  assert.ok(html.includes('_hasAutoTriedRecordSync'), '기록 탭 진입 시 1회 자동 백그라운드 복구');
+
+  // 5. Vercel Hobby 12개 한도 준수 확인
+  const apiFiles = fs.readdirSync(path.join(__dirname, '..', 'api')).filter(f => f.endsWith('.js'));
+  assert.strictEqual(apiFiles.length, 12, 'Vercel Hobby 12개 서버리스 함수 한도 준수');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
