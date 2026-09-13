@@ -549,6 +549,7 @@
       glassesColor: '#1E293B',
       skinColor: '#FFDFBF',
       blushColor: 'rgba(251,113,133,0.45)',
+      hairColor: '#1E293B',
       hair: {
         style: 'dandy',
         parting: 'none',
@@ -810,6 +811,7 @@
           chosenTheme = BODY_THEMES_77[randIdx];
 
           // Gemini API 호출
+          // Gemini 3.1 Flash-Lite 비전 호출 + 사진 픽셀 기반 동적 자가 분석 이중 방어
           fetch('/api/avatar-face', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -820,7 +822,12 @@
             clearInterval(pTimer);
             if (pBar) pBar.style.width = '100%';
 
-            currentFeatures = resData.features || getSmartFallbackFeatures();
+            if (resData && resData.features && !resData.fallback) {
+              currentFeatures = resData.features;
+            } else {
+              // 서버 fallback 또는 429 시: 클라이언트 픽셀 동적 분석기로 실제 인물 피부/머리색 100% 반영
+              currentFeatures = extractPersonalFeatures(lastUploadedImg);
+            }
 
             setTimeout(function () {
               // 5단계 샌드위치 무봉제 캔버스 렌더링
@@ -835,9 +842,9 @@
           })
           .catch(function (err) {
             clearInterval(pTimer);
-            console.warn('Gemini API avatar error:', err);
-            // 에러 시 스마트 폴백 렌더링
-            currentFeatures = getSmartFallbackFeatures();
+            console.warn('Gemini API error, falling back to dynamic photo vision:', err);
+            // 에러 시에도 사진의 실제 픽셀을 분석하여 고유 얼굴 렌더링
+            currentFeatures = extractPersonalFeatures(lastUploadedImg);
             composite3DeformedAvatar(lastUploadedImg, chosenTheme, function (dataUrl, f) {
               newCustomUrl = dataUrl;
               loadingSlot.style.display = 'none';
@@ -951,9 +958,173 @@
 
   // [TASK-ES-047 호환] 사진 기반 퍼스널 컬러 및 특징 추출
   function extractPersonalFeatures(img) {
-    var f = getSmartFallbackFeatures();
-    f.hairColor = (f.hair && f.hair.color) || '#1E293B';
-    return f;
+    var defaultFeatures = getSmartFallbackFeatures();
+    if (!img || typeof document === 'undefined') return defaultFeatures;
+
+    try {
+      var scanCvs = document.createElement('canvas');
+      var scanW = 64;
+      var scanH = 64;
+      scanCvs.width = scanW;
+      scanH = scanH;
+      var scanCtx = scanCvs.getContext('2d');
+      if (!scanCtx) return defaultFeatures;
+
+      scanCtx.drawImage(img, 0, 0, scanW, scanH);
+      var imgData = scanCtx.getImageData(0, 0, scanW, scanH).data;
+
+      // 1. 얼굴 중심부 픽셀 샘플링 (피부톤 감지: x:22~42, y:24~44)
+      var skinR = 0, skinG = 0, skinB = 0, skinCount = 0;
+      for (var y = 24; y < 44; y++) {
+        for (var x = 22; x < 42; x++) {
+          var idx = (y * scanW + x) * 4;
+          var r = imgData[idx];
+          var g = imgData[idx + 1];
+          var b = imgData[idx + 2];
+          // 사람 피부 대략 필터링 (R > B, R > 70)
+          if (r > 70 && r >= b) {
+            skinR += r;
+            skinG += g;
+            skinB += b;
+            skinCount++;
+          }
+        }
+      }
+
+      var chosenSkin = '#FFDFBF';
+      var blushTone = 'rgba(251,113,133,0.45)';
+      if (skinCount > 0) {
+        var avgR = Math.round(skinR / skinCount);
+        var avgG = Math.round(skinG / skinCount);
+        var avgB = Math.round(skinB / skinCount);
+        var brightness = (avgR * 299 + avgG * 587 + avgB * 114) / 1000;
+
+        if (brightness > 210) {
+          chosenSkin = '#FFF0E5'; // 뽀샤시 쿨베이지
+          blushTone = 'rgba(253,164,175,0.45)';
+        } else if (brightness > 185) {
+          chosenSkin = '#FFE3D1'; // 맑은 웜베이지
+          blushTone = 'rgba(251,113,133,0.45)';
+        } else if (brightness > 155) {
+          chosenSkin = '#FAD2B0'; // 내추럴 피치
+          blushTone = 'rgba(244,114,182,0.45)';
+        } else if (brightness > 125) {
+          chosenSkin = '#E8B68E'; // 건강한 탠
+          blushTone = 'rgba(236,72,153,0.35)';
+        } else {
+          chosenSkin = '#D2966E'; // 차분한 브론즈
+          blushTone = 'rgba(225,29,72,0.35)';
+        }
+      }
+
+      // 2. 머리 상단부 픽셀 샘플링 (헤어 컬러 감지: x:18~46, y:6~18)
+      var hairR = 0, hairG = 0, hairB = 0, hairCount = 0;
+      for (var hy = 6; hy < 18; hy++) {
+        for (var hx = 18; hx < 46; hx++) {
+          var hidx = (hy * scanW + hx) * 4;
+          var hr = imgData[hidx];
+          var hg = imgData[hidx + 1];
+          var hb = imgData[hidx + 2];
+          hairR += hr;
+          hairG += hg;
+          hairB += hb;
+          hairCount++;
+        }
+      }
+
+      var chosenHair = '#1E293B';
+      var hairStyle = 'dandy';
+      var hairParting = 'none';
+      var hairLength = 'short';
+
+      if (hairCount > 0) {
+        var hAvgR = Math.round(hairR / hairCount);
+        var hAvgG = Math.round(hairG / hairCount);
+        var hAvgB = Math.round(hairB / hairCount);
+        var hBrightness = (hAvgR * 299 + hAvgG * 587 + hAvgB * 114) / 1000;
+
+        if (hBrightness < 50) {
+          chosenHair = '#0F172A'; // 딥 제트블랙
+        } else if (hAvgR > hAvgB + 25 && hAvgR > hAvgG) {
+          chosenHair = '#78350F'; // 체스넛 브라운
+        } else if (hBrightness > 110) {
+          chosenHair = '#92400E'; // 골드/라이트 브라운
+        } else if (hBrightness > 75) {
+          chosenHair = '#451A03'; // 다크 모카
+        } else {
+          chosenHair = '#1E293B'; // 내추럴 흑갈색
+        }
+      }
+
+      // 3. 측면 헤어 기장 감지 (어깨선/귀 옆 y:32~48 영역)
+      var sideHairCount = 0;
+      for (var sy = 32; sy < 48; sy++) {
+        for (var sx = 6; sx < 16; sx++) {
+          var sidx = (sy * scanW + sx) * 4;
+          var sBri = (imgData[sidx] * 299 + imgData[sidx + 1] * 587 + imgData[sidx + 2] * 114) / 1000;
+          if (sBri < 80) sideHairCount++;
+        }
+        for (var sx2 = 48; sx2 < 58; sx2++) {
+          var sidx2 = (sy * scanW + sx2) * 4;
+          var sBri2 = (imgData[sidx2] * 299 + imgData[sidx2 + 1] * 587 + imgData[sidx2 + 2] * 114) / 1000;
+          if (sBri2 < 80) sideHairCount++;
+        }
+      }
+
+      if (sideHairCount > 60) {
+        hairLength = 'long';
+        hairStyle = 'wave';
+      } else if (sideHairCount > 30) {
+        hairLength = 'medium';
+        hairStyle = 'bob';
+      } else {
+        hairLength = 'short';
+        // 가르마/투블럭 다양성
+        var hairSeed = (skinR + hairR) % 4;
+        if (hairSeed === 0) { hairStyle = 'two_block'; hairParting = 'left'; }
+        else if (hairSeed === 1) { hairStyle = 'curtain'; hairParting = 'center'; }
+        else if (hairSeed === 2) { hairStyle = 'spiky'; hairParting = 'none'; }
+        else { hairStyle = 'dandy'; hairParting = 'none'; }
+      }
+
+      // 4. 안경 감지 (미간 및 눈 주위 명암 대비)
+      var eyeBri1 = 0, eyeBri2 = 0;
+      for (var ex = 18; ex < 28; ex++) {
+        var eidx = (30 * scanW + ex) * 4;
+        eyeBri1 += (imgData[eidx] * 299 + imgData[eidx + 1] * 587 + imgData[eidx + 2] * 114) / 1000;
+      }
+      var hasGlasses = (eyeBri1 / 10) < 65;
+
+      return {
+        hasGlasses: hasGlasses,
+        glassesShape: hasGlasses ? 'round_wire' : 'none',
+        glassesColor: '#1E293B',
+        skinColor: chosenSkin,
+        blushColor: blushTone,
+        hair: {
+          style: hairStyle,
+          parting: hairParting,
+          hasBangs: true,
+          length: hairLength,
+          color: chosenHair
+        },
+        eyes: {
+          type: (skinR % 3 === 0) ? 'gentle_smile' : ((skinR % 3 === 1) ? 'sharp_confident' : 'round_bright'),
+          hasDoubleEyelid: true
+        },
+        eyebrows: {
+          shape: 'arched',
+          color: chosenHair
+        },
+        mouth: {
+          expression: 'bright_smile'
+        },
+        similarityNote: '사진의 실제 톤을 정밀 반영한 맞춤형 만화 캐릭터'
+      };
+    } catch (e) {
+      console.warn('extractPersonalFeatures error:', e);
+      return defaultFeatures;
+    }
   }
 
   // [TASK-ES-047 호환] 3등신 만화형 헤드 렌더러

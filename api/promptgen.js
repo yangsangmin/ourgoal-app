@@ -167,7 +167,7 @@ async function handleAvatarFaceVision(req, res, body) {
       '  "similarityNote": "인물의 닮은 핵심 포인트 요약"\n' +
       "}";
 
-    var geminiModels = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+    var geminiModels = ['gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-3.6-flash', 'gemini-flash-latest'];
     var parsedResult = null;
 
     for (var i = 0; i < geminiModels.length; i++) {
