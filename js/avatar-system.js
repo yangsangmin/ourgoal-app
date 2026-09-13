@@ -1,7 +1,7 @@
 /**
  * Ourgoal Avatar System (#TASK-ES-044, #TASK-ES-046, #TASK-ES-047, #TASK-ES-048)
  * - 1~10단계 레벨별 초록 로봇 아바타 SVG 렌더러
- * - 사진 업로드 ➔ '내 사진으로 아바타 제작' 클릭 시 실질 3회 차감 (하단 적용하기는 횟수 차감 없음)
+ * - 사진 업로드 ➔ '내 사진으로 아바타 제작' 클릭 시 실질 10회 차감 (하단 적용하기는 횟수 차감 없음)
  * - Gemini 2.5 Flash 멀티모달 비전 연동: 실제 인물의 안경, 헤어 가르마, 눈매, 얼굴형 디코딩
  * - 77종 바디 5단계 샌드위치(Z-Index) 무봉제(Seamless) 캔버스 결합 (목선 매립 + 턱선 그림자 + 옷깃 오버랩)
  * - 캔버스 좌측 상단 번호/이름 뱃지 삭제 (순수 캐릭터 일러스트 렌더링)
@@ -20,7 +20,7 @@
 }(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  var MAX_AVATAR_CHANGES = 3;
+  var MAX_AVATAR_CHANGES = 10;
 
   // ================= 77종 3등신 캐릭터 바디 테마 풀 =================
   var BODY_THEMES_77 = [
@@ -572,7 +572,7 @@
     };
   }
 
-  // 잔여 제작 가능 횟수 계산 (계정당 최대 3회)
+  // 잔여 제작 가능 횟수 계산 (계정당 최대 10회)
   function getRemainingCrafts(profile) {
     if (!profile || !profile.settings) return MAX_AVATAR_CHANGES;
     var used = profile.settings.avatarCraftCount;
@@ -622,12 +622,12 @@
       '<div class="modal-header-custom" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">' +
         '<div style="font-weight:900;font-size:1.1875rem;color:var(--ink);">아바타 설정</div>' +
         '<div style="font-size:0.8125rem;color:var(--ink-soft);font-weight:700;">' +
-          '아바타 제작 잔여: <strong id="topRemainingCraftsTxt" style="color:' + (remainingCrafts > 0 ? 'var(--emerald)' : '#EF4444') + ';">' + remainingCrafts + '회</strong> / 3회' +
+          '아바타 제작 잔여: <strong id="topRemainingCraftsTxt" style="color:' + (remainingCrafts > 0 ? 'var(--emerald)' : '#EF4444') + ';">' + remainingCrafts + '회</strong> / 10회' +
         '</div>' +
       '</div>' +
 
       '<div style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:12px;padding:10px 14px;font-size:0.8125rem;color:var(--ink-soft);line-height:1.45;margin-bottom:16px;">' +
-        '💡 <strong>아바타 제작 안내</strong>: 계정당 <strong>최대 3회</strong>까지 Gemini AI로 내 사진 기반 만화 아바타를 제작할 수 있습니다.<br>' +
+        '💡 <strong>아바타 제작 안내</strong>: 계정당 <strong>최대 10회</strong>까지 Gemini AI로 내 사진 기반 만화 아바타를 제작할 수 있습니다.<br>' +
         '제작된 아바타는 횟수 차감 없이 언제든 자유롭게 내 프로필에 적용할 수 있습니다.' +
       '</div>' +
 
@@ -666,9 +666,8 @@
             '<input type="file" id="customAvatarFileInput" accept="image/*" style="display:none;">' +
             '<button type="button" class="btn btn-ghost btn-sm" id="btnUploadAvatarPhoto" style="font-size:.8125rem;">📷 사진 선택하기</button>' +
             '<button type="button" class="btn btn-primary btn-sm" id="btnRunCraftAvatar" style="font-size:.8125rem;display:none;">' +
-              '✨ 내 사진으로 아바타 제작 <span id="craftBtnCountSpan">(' + remainingCrafts + '/3회)</span>' +
+              '✨ 내 사진으로 아바타 제작 <span id="craftBtnCountSpan">(' + remainingCrafts + '/10회)</span>' +
             '</button>' +
-            '<button type="button" class="btn btn-ghost btn-sm" id="btnRerollAvatarTheme" style="font-size:.8125rem;display:none;">🎲 다른 바디 입히기</button><button type="button" class="btn btn-ghost btn-sm" id="btnCycleHairStyle" style="font-size:.8125rem;display:none;">💇 헤어스타일 변경</button><button type="button" class="btn btn-ghost btn-sm" id="btnCycleExpression" style="font-size:.8125rem;display:none;">✨ 표정 변경</button>' +
           '</div>' +
         '</div>' +
       '</div>' +
@@ -693,7 +692,6 @@
       var secCustom = sheet.querySelector('#secCustomAvatar');
       var btnUpload = sheet.querySelector('#btnUploadAvatarPhoto');
       var btnRunCraft = sheet.querySelector('#btnRunCraftAvatar');
-      var btnReroll = sheet.querySelector('#btnRerollAvatarTheme');
       var fileInput = sheet.querySelector('#customAvatarFileInput');
       var previewBox = sheet.querySelector('#customAvatarPreviewBox');
       var metaText = sheet.querySelector('#customAvatarMetaText');
@@ -721,14 +719,14 @@
 
       function updateRemainingUI() {
         var r = getRemainingCrafts(profile);
-        if (craftCountSpan) craftCountSpan.textContent = '(' + r + '/3회)';
+        if (craftCountSpan) craftCountSpan.textContent = '(' + r + '/10회)';
         if (topRemainingTxt) {
           topRemainingTxt.textContent = r + '회';
           topRemainingTxt.style.color = r > 0 ? 'var(--emerald)' : '#EF4444';
         }
         if (btnRunCraft) {
           btnRunCraft.disabled = r <= 0;
-          if (r <= 0) btnRunCraft.title = '제작 횟수(3회)를 모두 소진했습니다.';
+          if (r <= 0) btnRunCraft.title = '제작 횟수(10회)를 모두 소진했습니다.';
         }
       }
 
@@ -740,10 +738,6 @@
         '</div>' +
         '<div style="font-size:.78125rem;color:var(--emerald);font-weight:700;margin-top:3px;">🎨 Gemini 3.1 AI 맞춤형 웹툰 아바타 완성!</div>' +
         '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">테마: ' + chosenTheme.cat + ' · 장비: ' + chosenTheme.gear + '</div>';
-
-        if (btnReroll) btnReroll.style.display = 'inline-block';
-        if (btnHair) btnHair.style.display = currentFeatures ? 'inline-block' : 'none';
-        if (btnExpr) btnExpr.style.display = currentFeatures ? 'inline-block' : 'none';
       }
 
       // 1) 사진 선택 시: 즉시 3등신 아바타 틀 위에 사진 미리보기 적용 & '아바타 제작' 버튼 활성화
@@ -803,7 +797,7 @@
           }
           var r = getRemainingCrafts(profile);
           if (r <= 0) {
-            toast('아바타 제작 가능 횟수(최대 3회)를 모두 소진하였습니다.');
+            toast('아바타 제작 가능 횟수(최대 10회)를 모두 소진하였습니다.');
             return;
           }
 
@@ -928,52 +922,7 @@
       }
 
       
-      var btnHair = sheet.querySelector('#btnCycleHairStyle');
-      var btnExpr = sheet.querySelector('#btnCycleExpression');
-
-      if (btnHair) {
-        btnHair.onclick = function () {
-          if (!lastUploadedImg || !currentFeatures) return;
-          var styles = ['dandy', 'two_block', 'curtain', 'bob', 'wave', 'curly', 'ponytail', 'straight', 'spiky'];
-          var curIdx = styles.indexOf((currentFeatures.hair && currentFeatures.hair.style) || 'dandy');
-          currentFeatures.hair = currentFeatures.hair || {};
-          currentFeatures.hair.style = styles[(curIdx + 1) % styles.length];
-          composite3DeformedAvatar(lastUploadedImg, chosenTheme, function (dataUrl) {
-            newCustomUrl = dataUrl;
-            updateCustomAvatarView();
-            toast('헤어스타일 변경: ' + currentFeatures.hair.style);
-          }, { features: currentFeatures });
-        };
-      }
-
-      if (btnExpr) {
-        btnExpr.onclick = function () {
-          if (!lastUploadedImg || !currentFeatures) return;
-          var exprs = ['bright_smile', 'gentle_smile', 'sharp_confident', 'droopy_cute'];
-          var curIdx = exprs.indexOf((currentFeatures.eyes && currentFeatures.eyes.type) || 'round_bright');
-          currentFeatures.eyes = currentFeatures.eyes || {};
-          currentFeatures.eyes.type = exprs[(curIdx + 1) % exprs.length];
-          composite3DeformedAvatar(lastUploadedImg, chosenTheme, function (dataUrl) {
-            newCustomUrl = dataUrl;
-            updateCustomAvatarView();
-            toast('표정 변경: ' + currentFeatures.eyes.type);
-          }, { features: currentFeatures });
-        };
-      }
-  
-      // 3) 다른 바디 다시 입히기
-      if (btnReroll) {
-        btnReroll.onclick = function () {
-          if (!lastUploadedImg) return;
-          var randIdx = Math.floor(Math.random() * BODY_THEMES_77.length);
-          chosenTheme = BODY_THEMES_77[randIdx];
-          composite3DeformedAvatar(lastUploadedImg, chosenTheme, function (dataUrl) {
-            newCustomUrl = dataUrl;
-            updateCustomAvatarView();
-            toast('[' + chosenTheme.name + '] 새 바디가 배정되었습니다! 🎲');
-          }, { features: currentFeatures });
-        };
-      }
+      // [TASK-ES-053] 헤어스타일/표정/다른바디 변경 버튼 및 핸들러 상민님 지시로 완전 삭제
 
       // 4) 최종 '아바타 적용하기' 버튼 — 횟수 차감 없이 언제든 저장 & DOM 즉시 반영
       if (btnSave) {

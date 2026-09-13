@@ -3029,7 +3029,7 @@ check('compliance: [#TASK-ES-044] 홈·목표 12대 핵심 UX 개편 및 성장�
   }
   
   // 3회 제한 및 안내문구 검증
-  assert.strictEqual(AvatarSystem.MAX_AVATAR_CHANGES, 3, '아바타 변경 최대 3회 제한');
+  assert.strictEqual(AvatarSystem.MAX_AVATAR_CHANGES, 10, '아바타 변경 최대 10회 제한');
   assert.ok(html.includes('btnOpenAvatarModal'), '내 아바타 바꾸기 버튼 존재');
   assert.ok(html.includes('OurgoalAvatar'), '아바타 전역 모듈 연동');
 
@@ -3103,7 +3103,7 @@ check('compliance: [#TASK-ES-046] 77종 3등신 캐릭터 바디 풀 및 난수 
 
   // 4. 소스 코드 내 난수 추첨 및 리롤 버튼 연동 검증
   assert.ok(avatarSrc.includes('Math.floor(Math.random() * BODY_THEMES_77.length)'), '77종 중 난수(Random) 추첨 로직 연동');
-  assert.ok(avatarSrc.includes('btnRerollAvatarTheme'), '바디 다시 뽑기(Reroll) 기능 버튼 연동');
+  assert.strictEqual(avatarSrc.includes('btnRerollAvatarTheme'), false, '상민님 지시로 다른바디 입히기 버튼 삭제');
 });
 
 check('compliance: [#TASK-ES-047] 사진 기반 퍼스널 컬러/특징 분석 및 77종 바디 일체형 무봉제 만화형 페이스 합성 엔진 검증', () => {
@@ -3126,8 +3126,8 @@ check('compliance: [#TASK-ES-047] 사진 기반 퍼스널 컬러/특징 분석 �
   assert.strictEqual(typeof AvatarSystem.drawCartoonHead, 'function', 'drawCartoonHead 함수 존재');
 
   // 4. 모달 내 헤어스타일/표정 미세조정 버튼 및 일체형 합성 연동 검증
-  assert.ok(avatarSrc.includes('btnCycleHairStyle'), '헤어스타일 변경 버튼 연동');
-  assert.ok(avatarSrc.includes('btnCycleExpression'), '표정 변경 버튼 연동');
+  assert.strictEqual(avatarSrc.includes('btnCycleHairStyle'), false, '상민님 지시로 헤어스타일 변경 버튼 삭제');
+  assert.strictEqual(avatarSrc.includes('btnCycleExpression'), false, '상민님 지시로 표정 변경 버튼 삭제');
   assert.ok(avatarSrc.includes('drawCartoonHead(ctx'), '캔버스 내 무봉제 만화형 헤드 렌더링 호출');
 });
 
@@ -3146,8 +3146,8 @@ check('compliance: [#TASK-ES-048] 아바타 적용 즉시 반영, 제작 시 3�
 
   // 3. 아바타 제작 시 3회 차감 분리 및 제작 버튼 연동 확인
   assert.strictEqual(typeof AvatarSystem.getRemainingCrafts, 'function', 'getRemainingCrafts 함수 존재');
-  assert.strictEqual(AvatarSystem.getRemainingCrafts({ settings: { avatarCraftCount: 1 } }), 2, '제작 1회 사용 시 잔여 2회');
-  assert.strictEqual(AvatarSystem.getRemainingCrafts({ settings: { avatarCraftCount: 3 } }), 0, '제작 3회 소진 시 잔여 0회');
+  assert.strictEqual(AvatarSystem.getRemainingCrafts({ settings: { avatarCraftCount: 1 } }), 9, '제작 1회 사용 시 잔여 9회');
+  assert.strictEqual(AvatarSystem.getRemainingCrafts({ settings: { avatarCraftCount: 10 } }), 0, '제작 10회 소진 시 잔여 0회');
   assert.ok(avatarSrc.includes('btnRunCraftAvatar'), '내 사진으로 아바타 제작 버튼 연동');
 
   // 4. index.html openAvatarModal 호출 시 profile 전달 및 즉시 리렌더 연동 확인
@@ -3225,6 +3225,31 @@ check('compliance: [#TASK-ES-052] Gemini 3.1 Flash-Lite Image 멀티모달 이�
 
   // 3. index.html avatar-system.js 캐시 무효화 쿼리스트링 검증
   assert.ok(html.includes('avatar-system.js?v='), 'avatar-system.js 캐시 버스팅 파라미터 탑재');
+});
+
+check('compliance: [#TASK-ES-053] 아바타 모달 미세조정 버튼(헤어스타일/표정/다른바디) 삭제 및 아바타 제작 한도 10회 확대 검증', () => {
+  const AvatarSystem = require('../js/avatar-system.js');
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+
+  // 1. 제작 한도 10회 검증
+  assert.strictEqual(AvatarSystem.MAX_AVATAR_CHANGES, 10, 'MAX_AVATAR_CHANGES 10회');
+  assert.strictEqual(AvatarSystem.getRemainingCrafts({ settings: { avatarCraftCount: 0 } }), 10, '제작 미사용 시 10회 잔여');
+  assert.strictEqual(AvatarSystem.getRemainingCrafts({ settings: { avatarCraftCount: 5 } }), 5, '제작 5회 사용 시 5회 잔여');
+  assert.strictEqual(AvatarSystem.getRemainingCrafts({ settings: { avatarCraftCount: 10 } }), 0, '제작 10회 사용 시 0회 잔여');
+
+  // 2. 모달 텍스트 10회 반영 검증
+  assert.ok(avatarSrc.includes('최대 10회'), '모달 안내문구 최대 10회 표기');
+  assert.ok(avatarSrc.includes('/10회'), '버튼 및 상단 잔여 /10회 표기');
+  assert.ok(avatarSrc.includes('제작 횟수(10회)를 모두 소진했습니다'), '소진 안내 타이틀 10회');
+  assert.strictEqual(avatarSrc.includes('최대 3회'), false, '구버전 최대 3회 텍스트 전면 소멸');
+
+  // 3. 미세조정 3종 버튼 완전 삭제 검증
+  assert.strictEqual(avatarSrc.includes('btnCycleHairStyle'), false, '헤어스타일 변경 버튼 소스 내 부재');
+  assert.strictEqual(avatarSrc.includes('btnCycleExpression'), false, '표정 변경 버튼 소스 내 부재');
+  assert.strictEqual(avatarSrc.includes('btnRerollAvatarTheme'), false, '다른바디 입히기 버튼 소스 내 부재');
+
+  // 4. index.html 캐시 버스팅 es053 검증
+  assert.ok(html.includes('avatar-system.js?v=20260913-es053'), 'index.html es053 캐시 버스팅 적용');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
