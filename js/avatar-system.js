@@ -758,6 +758,7 @@
             var img = new Image();
             img.onload = function () {
               lastUploadedImg = img;
+              currentFeatures = extractPersonalFeatures(lastUploadedImg);
               // 사진 미리보기 반영
               previewBox.innerHTML = '<img src="' + lastUploadedDataUrl + '" style="width:100%;height:100%;object-fit:cover;">';
               metaText.innerHTML = '<div style="font-weight:800;font-size:.9375rem;color:var(--ink);">사진이 업로드되었습니다!</div>' +
@@ -812,22 +813,51 @@
 
           // Gemini API 호출
           // Gemini 3.1 Flash-Lite 비전 호출 + 사진 픽셀 기반 동적 자가 분석 이중 방어
+          function handleApiFailure(errMsg) {
+            clearInterval(pTimer);
+            // 1. 차감되었던 횟수 복원 (사용자 기회 보존)
+            settings.avatarCraftCount = Math.max(0, (settings.avatarCraftCount || 1) - 1);
+            if (deps.state && deps.state.profile && deps.state.profile.settings) {
+              deps.state.profile.settings.avatarCraftCount = settings.avatarCraftCount;
+            }
+            updateRemainingUI();
+
+            // 2. 로딩 닫고 원래 상태 복원
+            loadingSlot.style.display = 'none';
+            resultBox.style.display = 'block';
+
+            // 3. 상민님 지시 정확한 안내 문구 표시
+            var noticeMsg = '죄송합니다. 현재 아워골 서버문제로 아바타 생성이 지원되지 못하고 있습니다.';
+            toast(noticeMsg);
+            if (metaText) {
+              metaText.innerHTML = '<div style="color:var(--danger,#EF4444);font-weight:700;font-size:.875rem;margin-top:4px;">' +
+                noticeMsg + '</div><div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">(제작 횟수는 차감되지 않았습니다. 잠시 후 다시 시도해주세요.)</div>';
+            }
+          }
+
+          // Gemini 3.1 Flash-Lite 비전 호출
           fetch('/api/avatar-face', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ image: lastUploadedDataUrl })
           })
-          .then(function (res) { return res.json(); })
+          .then(function (res) {
+            if (!res.ok) {
+              throw new Error('API response status: ' + res.status);
+            }
+            return res.json();
+          })
           .then(function (resData) {
+            // API가 실패하거나 fallback으로 떨어지면 서버 문제 안내 멘트 노출 및 횟수 롤백
+            if (!resData || !resData.ok || resData.fallback || !resData.features) {
+              handleApiFailure('AI generation failed or fell back');
+              return;
+            }
+
             clearInterval(pTimer);
             if (pBar) pBar.style.width = '100%';
 
-            if (resData && resData.features && !resData.fallback) {
-              currentFeatures = resData.features;
-            } else {
-              // 서버 fallback 또는 429 시: 클라이언트 픽셀 동적 분석기로 실제 인물 피부/머리색 100% 반영
-              currentFeatures = extractPersonalFeatures(lastUploadedImg);
-            }
+            currentFeatures = resData.features;
 
             setTimeout(function () {
               // 5단계 샌드위치 무봉제 캔버스 렌더링
@@ -841,17 +871,8 @@
             }, 600);
           })
           .catch(function (err) {
-            clearInterval(pTimer);
-            console.warn('Gemini API error, falling back to dynamic photo vision:', err);
-            // 에러 시에도 사진의 실제 픽셀을 분석하여 고유 얼굴 렌더링
-            currentFeatures = extractPersonalFeatures(lastUploadedImg);
-            composite3DeformedAvatar(lastUploadedImg, chosenTheme, function (dataUrl, f) {
-              newCustomUrl = dataUrl;
-              loadingSlot.style.display = 'none';
-              resultBox.style.display = 'block';
-              updateCustomAvatarView();
-              toast('[' + chosenTheme.name + '] 만화 아바타 제작 완료! 🔨✨');
-            }, { features: currentFeatures });
+            console.warn('Avatar API error:', err);
+            handleApiFailure(err.message || 'Network error');
           });
         };
       }

@@ -3176,6 +3176,26 @@ check('compliance: [#TASK-ES-049] Gemini 3.1 Flash-Lite 초가성비 비전 모�
   assert.ok(avatarSrc.includes('extractPersonalFeatures(lastUploadedImg)'), '실패/fallback 시 클라이언트 사진 픽셀 자가 분석 연동');
 });
 
+
+check('compliance: [#TASK-ES-050] 아바타 API 실패 시 정중 안내 문구 및 횟수 롤백 복원 검증', () => {
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+
+  // 1. 상민님 지시 정확한 안내 멘트 탑재 확인
+  assert.ok(
+    avatarSrc.includes('죄송합니다. 현재 아워골 서버문제로 아바타 생성이 지원되지 못하고 있습니다.'),
+    '서버 문제 시 정중 안내 문구 노출'
+  );
+
+  // 2. 실패 시 횟수 롤백(복원) 로직 확인
+  assert.ok(
+    avatarSrc.includes('Math.max(0, (settings.avatarCraftCount || 1) - 1)'),
+    '실패 시 차감 횟수 원복 처리'
+  );
+
+  // 3. API 실패 핸들러 존재 확인
+  assert.ok(avatarSrc.includes('handleApiFailure'), 'handleApiFailure 함수 탑재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
