@@ -3112,3 +3112,20 @@
 ---
 
 ---
+
+## [2026-09-13 18:09] [INFRA] #TASK-ES-055 1호 직원 사이클 — BACKLOG.md 소셜 로그인 항목 중복 완료 정정
+- **목표**: 1호 직원(6시간 자동화 루틴) 사이클 시작 시 BACKLOG.md 미체크 항목을 위에서부터 점검. 노션 실행계획 미러 섹션의 "15. 카카오·구글 소셜 로그인 (코드 구현)"이 여전히 미체크였으나, 실제로는 스프린트 TASK-01(PR #38, 2026-09-06 병합)에서 이미 구현·배포되어 있어 재작업하면 중복이 된다 — 근본 원인은 노션 실행계획 DB와 BACKLOG.md 미러 간 동기화 지연.
+- **수정/실행 내역**:
+  1. index.html 코드 확인: `landKakaoBtn`/`landGoogleBtn`/`authKakaoBtn`/`authGoogleBtn` 4개 버튼(57-58·74-75행) + `signInWithOAuth` 호출부(2015행) 존재 확인.
+  2. 오늘 등록된 `#TASK-ES-033`(카카오→구글 전환 시 세션 파괴 FIX 제보)이 두 provider의 실사용 중임을 교차 증명하는 정황으로 채택.
+  3. `docs/rules/TICKETS.md`: `#TASK-ES-055`(INFRA) 신규 등록.
+  4. `BACKLOG.md`: 항목 15 `[x]` 체크 및 재확인 비고 갱신.
+  5. 사이클 시작 시 `git fetch origin main`에서 로컬 `main`/`origin/main` 추적 ref가 실제 GitHub 최신(2a963fc, PR #173)보다 훨씬 뒤처져 있던 것(force-update, c949234→2a963fc) 발견·정정 — 이후 작업은 최신 tip 기준 새 브랜치에서 진행.
+- **발생한 문제 및 해결**:
+  1. Supabase(`dvqosviqbciohcywkzbq.supabase.co`)에 직접 REST 조회로 provider 활성화 상태를 재검증하려 했으나, 이 클라우드 세션의 네트워크 정책이 아웃바운드를 차단(CONNECT 403)해 실패 → 코드 존재 확인 + 실사용 버그 이력(#TASK-ES-033) 교차 검증으로 대체.
+  2. `npm test` 최초 실행 시 `@supabase/supabase-js` 모듈 미설치로 `api/withdraw.js` 컴플라이언스 테스트 1건 실패(환경 의존성 문제, 내 변경과 무관) → `npm install` 실행 후 224/224 전수 통과로 해결.
+- **검증 결과**:
+  - `npm test`: **224개 전수 100% 통과 (0개 실패)**.
+  - 변경 파일은 `BACKLOG.md`·`docs/rules/TICKETS.md`·`dev_log.md`(문서 전용, index.html/js/api 무변경) — 디자인·기존 기능 영향 없음.
+  - BACKLOG.md 나머지 미체크 항목(14 Web Push 실사용 테스트, 24 신고·자동숨김 SQL, 45 사용자 차단 SQL, 47 공식 이메일 도메인)은 전부 사용자 콘솔·자격증명 필요한 항목별 블로커로 기존 STATUS.md/BACKLOG.md 비고에 이미 상세 기록돼 있고 이번 사이클에서 코드로 추가 진전시킬 수 없어 그대로 둠. 시스템 전반 블로커(Git push/PR 실패)는 없었음 — 이번 사이클은 이 1건만 처리 후 종료.
+---
