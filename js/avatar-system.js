@@ -758,6 +758,25 @@
             var img = new Image();
             img.onload = function () {
               lastUploadedImg = img;
+              // 모바일/PC 고해상도 사진을 최대 512x512 캔버스로 리사이징 및 JPEG(0.85) 정규화
+              // Vercel 4.5MB 페이로드 초과 방지 및 구글 Gemini 비전 전송 신뢰도 확보
+              try {
+                var normCv = document.createElement('canvas');
+                var maxDim = 512;
+                var w = img.naturalWidth || img.width || maxDim;
+                var h = img.naturalHeight || img.height || maxDim;
+                if (w > h) {
+                  if (w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                } else {
+                  if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
+                }
+                normCv.width = w;
+                normCv.height = h;
+                var nctx = normCv.getContext('2d');
+                nctx.drawImage(img, 0, 0, w, h);
+                lastUploadedDataUrl = normCv.toDataURL('image/jpeg', 0.85);
+              } catch (cvErr) {}
+
               currentFeatures = extractPersonalFeatures(lastUploadedImg);
               // 사진 미리보기 반영
               previewBox.innerHTML = '<img src="' + lastUploadedDataUrl + '" style="width:100%;height:100%;object-fit:cover;">';

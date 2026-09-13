@@ -21,7 +21,7 @@ module.exports = async function handler(req, res) {
 
   // API 키 결정: 1) 클라이언트 전달 Gemini키 2) 서버 환경변수 GEMINI_API_KEY 3) 서버 ANTHROPIC_API_KEY
   var clientGeminiKey = (typeof body.geminiKey === 'string' && body.geminiKey.trim()) ? body.geminiKey.trim() : null;
-  var geminiApiKey = clientGeminiKey || process.env.GEMINI_API_KEY;
+  var geminiApiKey = clientGeminiKey || (process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : '');
   var anthropicApiKey = process.env.ANTHROPIC_API_KEY;
 
   var draftPrompt = '당신은 습관·목표 관리 앱 "아워골"의 AI 피드백 봇 페르소나를 설계하는 프롬프트 엔지니어입니다.\n' +
@@ -110,7 +110,7 @@ async function handleAvatarFaceVision(req, res, body) {
   try {
     var imageBase64 = body.image;
     var clientGeminiKey = (typeof body.geminiKey === 'string' && body.geminiKey.trim()) ? body.geminiKey.trim() : null;
-    var geminiApiKey = clientGeminiKey || process.env.GEMINI_API_KEY;
+    var geminiApiKey = clientGeminiKey || (process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : '');
 
     if (!imageBase64) {
       return res.status(400).json({ error: 'Missing image data' });
@@ -167,7 +167,7 @@ async function handleAvatarFaceVision(req, res, body) {
       '  "similarityNote": "인물의 닮은 핵심 포인트 요약"\n' +
       "}";
 
-    var geminiModels = ['gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-3.6-flash', 'gemini-flash-latest'];
+    var geminiModels = ['gemini-3.1-flash-lite', 'gemini-3.5-flash-lite', 'gemini-3.5-flash', 'gemini-flash-latest'];
     var parsedResult = null;
 
     for (var i = 0; i < geminiModels.length; i++) {
@@ -178,12 +178,12 @@ async function handleAvatarFaceVision(req, res, body) {
           contents: [{
             parts: [
               { text: systemInstruction + '\n\n' + promptText },
-              { inline_data: { mime_type: mimeType, data: rawData } }
+              { inlineData: { mimeType: mimeType, data: rawData } }
             ]
           }],
           generationConfig: {
             temperature: 0.2,
-            response_mime_type: 'application/json'
+            responseMimeType: 'application/json'
           }
         };
 
@@ -204,8 +204,13 @@ async function handleAvatarFaceVision(req, res, body) {
             parsedResult = JSON.parse(jsonMatch[0]);
             break;
           }
+        } else {
+          var errText = await response.text();
+          console.error('[AvatarFaceVision] Gemini ' + modelName + ' HTTP ' + response.status + ':', errText.slice(0, 200));
         }
-      } catch (err) {}
+      } catch (err) {
+        console.error('[AvatarFaceVision] Gemini ' + modelName + ' exception:', err.message || err);
+      }
     }
 
     if (parsedResult) {

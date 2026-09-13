@@ -3196,6 +3196,21 @@ check('compliance: [#TASK-ES-050] 아바타 API 실패 시 정중 안내 문구 
   assert.ok(avatarSrc.includes('handleApiFailure'), 'handleApiFailure 함수 탑재');
 });
 
+check('compliance: [#TASK-ES-051] Gemini 비전 inlineData 규격 준수, API 키 트림 및 사진 512px JPEG 리사이징 검증', () => {
+  const promptgenSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'promptgen.js'), 'utf8');
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+
+  // 1. promptgen.js 내 GEMINI_API_KEY .trim() 처리 검증
+  assert.ok(promptgenSrc.includes('process.env.GEMINI_API_KEY.trim()'), 'process.env.GEMINI_API_KEY trim 처리 필수');
+
+  // 2. promptgen.js 내 inlineData 카멜케이스 규격 준수 검증
+  assert.ok(promptgenSrc.includes('inlineData: { mimeType: mimeType, data: rawData }'), 'inlineData 및 mimeType 카멜케이스 공식 규격 준수');
+
+  // 3. avatar-system.js 사진 업로드 시 512x512 캔버스 리사이징 및 image/jpeg 정규화 검증
+  assert.ok(avatarSrc.includes("toDataURL('image/jpeg', 0.85)"), '업로드 사진 캔버스 JPEG 압축 정규화 탑재');
+  assert.ok(avatarSrc.includes('maxDim = 512'), '최대 512px 리사이징 적용');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

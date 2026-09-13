@@ -1,30 +1,31 @@
 {
-  "taskId": "#TASK-ES-050",
+  "taskId": "#TASK-ES-051",
   "projectId": "ourgoal",
   "owner": "Antigravity",
-  "goal": "아바타 생성 API 실패 시 '죄송합니다. 현재 아워골 서버문제로 아바타 생성이 지원되지 못하고 있습니다.' 안내멘트 노출 및 횟수 보존",
-  "planPath": "C:/dev/wt/task-es-050/.codex/작업계획서/fcc1b948.md",
+  "goal": "Gemini 비전 요청 inlineData 규격 준수, API 키 공백 트림 및 사진 512px JPEG 리사이징 전송으로 아바타 생성 400/401 에러 해결",
+  "planPath": "C:/dev/wt/task-es-051/.codex/작업계획서/fcc1b948.md",
   "phase": "완료",
-  "nextAction": "js/avatar-system.js 내 API 실패 시 정중 안내 문구 및 횟수 보존 로직 구현",
+  "nextAction": "Vercel 배포 및 실제 엔드포인트 200 OK 검증",
   "commandCenterParent": "3d4598db-9096-810c-80d7-e79798005378",
   "projectTowerParent": "3d4598db-9096-815f-8653-d99eb9ea5703",
   "evidence": [
-    "상민님 직접 지시: api가 제대로 작동 안하면 '죄송합니다. 현재 아워골 서버문제로 아바타 생성이 지원되지 못하고 있습니다.' 안내멘트 뜨게 해.",
-    "TICKETS.md 승인 티켓 #TASK-ES-050 정식 완료",
-    "js/avatar-system.js handleApiFailure 정중 안내 문구 노출 및 차감 횟수 즉각 롤백 복원",
-    "npm test 220개 전수 100% 통과 (0 failures)"
+    "상민님 직접 지시: 지금 다시 아바타 제작 해보니까. 실패 문구 안내되는데, api 왜 안되는지 다시 확인해",
+    "TICKETS.md 승인 티켓 #TASK-ES-051 정식 완료",
+    "api/promptgen.js GEMINI_API_KEY .trim() 처리 및 inlineData/mimeType 카멜케이스 공식 규격 준수",
+    "js/avatar-system.js 업로드 사진 512x512 캔버스 리사이징 및 JPEG(0.85) 정규화 압축",
+    "npm test 221개 전수 100% 통과 (0 failures)"
   ],
   "pending": false,
   "remote": {
     "projectTower": {
       "id": "3d9598db-9096-81c6-90b8-d18487c30b3c",
-      "hash": "77b9cc9ef714a255d6d219413303fd3e2b8cd4ec193805d5099490926c40519e",
-      "verifiedAt": "2026-09-13T01:01:06.605Z"
+      "hash": "98e18469cfa5132e915046a6a49de28ba5c2c9070e37ae5cf631df838fd94ef0",
+      "verifiedAt": "2026-09-13T01:11:50.965Z"
     },
     "commandCenter": {
       "id": "3d9598db-9096-8173-acf0-e4f993a91543",
-      "hash": "77b9cc9ef714a255d6d219413303fd3e2b8cd4ec193805d5099490926c40519e",
-      "verifiedAt": "2026-09-13T01:01:08.624Z"
+      "hash": "98e18469cfa5132e915046a6a49de28ba5c2c9070e37ae5cf631df838fd94ef0",
+      "verifiedAt": "2026-09-13T01:11:51.892Z"
     }
   },
   "updated_at": "2026-09-13T01:01:05.860Z"
