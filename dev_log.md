@@ -2845,3 +2845,23 @@
   - `npm test`: **223개 전수 100% 통과 (0개 실패)**.
   - `essence-gate.js --pre-commit`: **위반 0건 통과**.
 ---
+## [2026-09-13 11:00] [E1] #TASK-ES-054 아바타 테마 번호(#숫자) 표기 삭제 및 AI 이미지 생성 프롬프트 모자(Hat/Headwear) 반영 추가
+- **목표**: 상민님 직접 지시("아바타랑 나오는 번호도 삭제해 이미지는 지금처럼 제작하는데, #(숫자) 만 없애는거야. 그리고 이미지생성 프롬프트에 안경은 들어가있는데 모자가 안들어가있잖아 모자도 추가해")에 따라, 아바타 프리뷰 메타 텍스트에서 불필요한 `#(숫자)` 테마 번호를 제거하여 순수 테마 이름만 깔끔하게 노출하고, AI 이미지 생성 프롬프트에 모자(hat/cap/headwear) 감지 및 반영 지침을 정식 탑재.
+- **핵심 구현 내역**:
+  1. **아바타 프리뷰 테마 번호(#숫자) 제거**:
+     - `js/avatar-system.js`의 `updateCustomAvatarView` 내 메타 텍스트에서 `#' + chosenTheme.id + ' '`를 삭제하여, `#1 열정 러너` 대신 순수 `열정 러너`만 렌더링되도록 개선.
+  2. **AI 이미지 생성 프롬프트 모자(Hat/Headwear) 반영 추가**:
+     - `api/promptgen.js` 멀티모달 생성 프롬프트(`imageGenPrompt`)에 `hat/cap/headwear (if wearing one)` 및 `If the person is wearing a hat, cap, beanie, or visor in the photo, naturally integrate that headwear into the cartoon character` 지침 명시 추가.
+  3. **캐시 버스팅 및 테스트 무결성**:
+     - `index.html` 내 `avatar-system.js?v=20260913-es054` 쿼리스트링 갱신 (순증가 0줄 엄수).
+     - `scripts/smoke-test.js` 내 #TASK-ES-054 검증 추가 (224개 테스트 100% 통과).
+- **수정/실행 내역**:
+  1. `js/avatar-system.js`: 아바타 테마 번호(#숫자) 삭제.
+  2. `api/promptgen.js`: 멀티모달 프롬프트에 모자 착용 감지/반영 지침 추가.
+  3. `index.html`: 캐시 버스팅 파라미터 갱신 (순증가 0줄).
+  4. `scripts/smoke-test.js`: #TASK-ES-054 검증 추가.
+  5. `docs/rules/TICKETS.md`: #TASK-ES-054 완료 처리.
+- **검증 결과**:
+  - `npm test`: **224개 전수 100% 통과 (0개 실패)**.
+  - `essence-gate.js --pre-commit`: **위반 0건 통과**.
+---

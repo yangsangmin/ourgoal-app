@@ -3249,7 +3249,32 @@ check('compliance: [#TASK-ES-053] 아바타 모달 미세조정 버튼(헤어스
   assert.strictEqual(avatarSrc.includes('btnRerollAvatarTheme'), false, '다른바디 입히기 버튼 소스 내 부재');
 
   // 4. index.html 캐시 버스팅 es053 검증
-  assert.ok(html.includes('avatar-system.js?v=20260913-es053'), 'index.html es053 캐시 버스팅 적용');
+  assert.ok(/avatar-system\.js\?v=20260913-es05[3-9]/.test(html), 'index.html 캐시 버스팅 적용');
+});
+
+check('compliance: [#TASK-ES-054] 아바타 테마 번호(#숫자) 삭제 및 AI 이미지 생성 프롬프트 모자(Hat) 반영 검증', () => {
+  const promptgenSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'promptgen.js'), 'utf8');
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+
+  // 1. promptgen.js 내 hat / headwear 지침 탑재 검증
+  assert.ok(
+    promptgenSrc.includes('hat/cap/headwear') && promptgenSrc.includes('hat or cap'),
+    '이미지 생성 프롬프트에 모자(hat/cap/headwear) 감지 및 반영 지침 탑재'
+  );
+
+  // 2. avatar-system.js 내 번호(#숫자) 표기 완전 삭제 검증
+  assert.strictEqual(
+    avatarSrc.includes("'<span>#' + chosenTheme.id"),
+    false,
+    '아바타 프리뷰 영역에서 #(숫자) 테마 번호 표기 완전 삭제'
+  );
+  assert.ok(
+    avatarSrc.includes("'<span>' + chosenTheme.name + '</span>'"),
+    '순수 테마 이름만 깔끔하게 노출'
+  );
+
+  // 3. index.html 캐시 버스팅 es054 검증
+  assert.ok(html.includes('avatar-system.js?v=20260913-es054'), 'index.html es054 캐시 버스팅 적용');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
