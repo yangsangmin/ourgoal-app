@@ -2710,3 +2710,34 @@
   - `essence-gate.js --pre-commit`: **위반 0건 통과**.
 ---
 
+## [2026-09-13 09:30] [E1] #TASK-ES-048 아바타 적용 즉시 반영, 제작 시 3회 차감 시점 분리, Gemini 비전 기반 맞춤 만화 얼굴 & 5단계 무봉제 샌드위치 렌더러, 뱃지 제거
+- **목표**: 상민님 직접 지시("1. 아바타 적용하기 눌렀는데 아이콘 변경 안됨, 2. 아바타 적용하기 3회가 아니라 내 사진으로 아바타 제작 버튼 누를 때 차감, 3. 얼굴 이미지 Gemini 연동해 닮은 만화 얼굴 생성(77개 바디와 붙었을 때 이질감 없게), 4. 아바타 만들었을 때 왼쪽 상단 #(번호) (이름) 뱃지 삭제. 병합까지 진행해")에 따라 4대 사용자 경험 문제를 완벽히 해결.
+- **핵심 구현 내역**:
+  1. **아바타 적용 즉시 DOM 반영 버그 수정**:
+     - `openAvatarModal`에서 `deps.profile`이 누락되던 바인딩 결함을 `deps.profile || (deps.state && deps.state.profile)` 양방향 바인딩으로 수정.
+     - `index.html`의 `onAvatarChanged` 콜백에 `renderLevelBadge()`와 `renderHome()`을 동시 호출하도록 연결.
+     - 모달 내 `saveProfile()` 직후 `#levelBadgeRow`의 아바타 SVG/IMG 엘리먼트를 직접 캔버스 PNG로 즉각 치환하여 새로고침 없이 홈 화면에 즉시 반영.
+  2. **아바타 제작 3회 차감 시점 정밀 분리**:
+     - 사진 업로드 시 즉시 3등신 아바타 틀 위에 기본 만화 얼굴을 올려 무료로 미리보기 지원.
+     - `✨ 내 사진으로 아바타 제작 (N/3회)` 버튼을 눌렀을 때만 `avatarCraftCount++` 실질 차감 및 Gemini 멀티모달 비전 호출 + 나무망치 제작 애니메이션 가동.
+     - 하단 `아바타 적용하기` 버튼은 차감 없이 언제든 저장 및 반영 가능하도록 정책 분리.
+  3. **Vercel Hobby 12개 한도 준수 서브라우팅 & Gemini 2.5 Flash 비전 연동**:
+     - `vercel.json`에 `/api/avatar-face` ➔ `/api/promptgen` rewrite 규칙 추가하여 Vercel Hobby 12개 서버리스 함수 파일 수 한도 엄격 준수.
+     - `api/promptgen.js` 내 `handleAvatarFaceVision` 핸들러를 구축하여 클라이언트에서 전송된 사진(base64)을 Gemini 2.5 Flash 비전 모델로 심층 분석(성별, 추정나이대, 피부톤, 헤어스타일, 모발색, 눈모양, 안경유무/스타일, 표정, 수염유무/스타일, 얼굴형 등 10개 파라미터 JSON 구조화 추출).
+  4. **무봉제 5단계 샌드위치 캔버스 렌더러 (`drawCartoonHead`)**:
+     - 기존의 어색한 단순 붙여넣기를 완전 폐기하고, 샌드위치 레이어링 구조 확립:
+       [Z-1 뒷머리 ➔ Z-2 바디 ➔ Z-3 목선 깊숙이 12px 삽입 ➔ Z-4 턱선 그림자 ➔ Z-5 바디 옷깃(칼라) 오버랩 ➔ Z-6 이목구비/안경/앞머리].
+     - 77종 바디의 고유한 테마/의상/장비를 100% 무손실 보존하면서, 목선과 턱선이 하나의 일체형 캐릭터로 완벽 융합(붙인 티 0%).
+  5. **캔버스 좌측 상단 뱃지 제거**:
+     - 캔버스 렌더링 시 그려지던 좌측 상단 `#(번호) (테마이름)` 뱃지 렌더링 로직 완전 삭제 (사진 아이콘 밑 설명 텍스트는 정상 유지).
+- **수정/실행 내역**:
+  1. `api/promptgen.js`: Gemini 2.5 Flash 비전 얼굴 분석 핸들러(`handleAvatarFaceVision`) 통합 서브라우팅.
+  2. `vercel.json`: `/api/avatar-face` ➔ `/api/promptgen` rewrite 추가.
+  3. `js/avatar-system.js`: 5단계 무봉제 샌드위치 렌더러, Gemini 연동, 3회 차감 시점 분리, 즉시 DOM 반영, 뱃지 제거.
+  4. `index.html`: `openAvatarModal` profile 바인딩 및 홈 즉시 갱신 연동.
+  5. `scripts/smoke-test.js`: #TASK-ES-048 규격 검증 테스트 추가 (총 218개 테스트).
+  6. `docs/rules/TICKETS.md`: #TASK-ES-048 완료 처리.
+- **검증 결과**:
+  - `npm test`: **218개 전수 100% 통과 (0개 실패)**.
+  - `essence-gate.js --pre-commit`: **위반 0건 통과**.
+---
