@@ -3155,6 +3155,27 @@ check('compliance: [#TASK-ES-048] 아바타 적용 즉시 반영, 제작 시 3�
   assert.ok(html.includes('renderHome()') && html.includes('renderLevelBadge()'), '아바타 변경 시 홈/레벨 즉각 리렌더 연동');
 });
 
+
+check('compliance: [#TASK-ES-049] Gemini 3.1 Flash-Lite 초가성비 비전 모델 교체 및 사진 픽셀 기반 동적 만화 얼굴 이중 방어망 검증', () => {
+  const promptgenSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'promptgen.js'), 'utf8');
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const AvatarSystem = require('../js/avatar-system.js');
+
+  // 1. api/promptgen.js 내 404 구버전 모델 퇴출 및 gemini-3.1-flash-lite 1순위 탑재 확인
+  assert.strictEqual(promptgenSrc.includes('gemini-2.5-flash'), false, '404 발생 구버전 gemini-2.5-flash 완전 제거');
+  assert.strictEqual(promptgenSrc.includes('gemini-2.0-flash'), false, '404 발생 구버전 gemini-2.0-flash 완전 제거');
+  assert.strictEqual(promptgenSrc.includes('gemini-1.5-flash'), false, '404 발생 구버전 gemini-1.5-flash 완전 제거');
+  assert.ok(promptgenSrc.includes("'gemini-3.1-flash-lite'"), '초가성비 gemini-3.1-flash-lite 1순위 모델 탑재');
+
+  // 2. js/avatar-system.js extractPersonalFeatures 동적 픽셀 추출 로직 탑재 확인
+  assert.ok(avatarSrc.includes('getImageData'), '실제 사진 픽셀 스캔 getImageData 탑재');
+  assert.ok(avatarSrc.includes('chosenSkin'), '동적 피부톤 추출 로직 탑재');
+  assert.ok(avatarSrc.includes('chosenHair'), '동적 헤어컬러 추출 로직 탑재');
+
+  // 3. 서버 429/에러/fallback 시 extractPersonalFeatures 연동 이중 방어망 확인
+  assert.ok(avatarSrc.includes('extractPersonalFeatures(lastUploadedImg)'), '실패/fallback 시 클라이언트 사진 픽셀 자가 분석 연동');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
