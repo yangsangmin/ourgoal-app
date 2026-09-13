@@ -136,11 +136,12 @@ async function handleAvatarFaceVision(req, res, body) {
     // [1순위] 구글 AI 스튜디오 최신 멀티모달 생성 모델 (Gemini 3.1 Flash-Lite Image)
     // 사용자의 실제 사진 속 이목구비, 헤어스타일, 안경, 표정을 반영한 3등신 한국 웹툰풍 캐릭터 이미지 직접 생성
     var imageGenPrompt =
-      "Create a charming 3-deformed (chibi) cartoon avatar illustration in modern Korean webtoon style based on the facial features, hairstyle, glasses (if any), and facial impression of the person in this photo.\n" +
+      "Create a charming 3-deformed (chibi) cartoon avatar illustration in modern Korean webtoon style based on the facial features, hairstyle, glasses (if any), hat/cap/headwear (if wearing one), and facial impression of the person in this photo.\n" +
       "Theme / Concept: [" + themeName + "] (" + themeCat + " theme, featuring " + themeGear + ")\n" +
       "Art Direction:\n" +
       "- 3-deformed chibi cute proportions, full body or expressive bust\n" +
-      "- Distinctive face resembling the person's real hair, eye shape, glasses, and warm friendly smile\n" +
+      "- Distinctive face accurately resembling the person's real hair, eye shape, glasses, hat or cap (if worn in photo), and warm friendly smile\n" +
+      "- If the person is wearing a hat, cap, beanie, or visor in the photo, naturally integrate that headwear into the cartoon character\n" +
       "- Clean circular badge avatar format with soft colorful background, crisp vibrant outlines\n" +
       "- High quality digital webtoon illustration";
 

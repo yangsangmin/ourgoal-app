@@ -734,7 +734,7 @@
         previewBox.innerHTML = '<img src="' + newCustomUrl + '" style="width:100%;height:100%;object-fit:cover;">';
         metaText.innerHTML = '<div style="font-weight:800;font-size:1rem;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:6px;">' +
           '<span>' + chosenTheme.icon + '</span>' +
-          '<span>#' + chosenTheme.id + ' ' + chosenTheme.name + '</span>' +
+          '<span>' + chosenTheme.name + '</span>' +
         '</div>' +
         '<div style="font-size:.78125rem;color:var(--emerald);font-weight:700;margin-top:3px;">🎨 Gemini 3.1 AI 맞춤형 웹툰 아바타 완성!</div>' +
         '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">테마: ' + chosenTheme.cat + ' · 장비: ' + chosenTheme.gear + '</div>';
