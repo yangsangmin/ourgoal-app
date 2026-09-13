@@ -1320,6 +1320,7 @@
         if(window.OurgoalAvatar && window.OurgoalAvatar.openAvatarModal){
           var p = levelProgress(xpTotal);
           window.OurgoalAvatar.openAvatarModal({
+            profile: state.profile,
             state: state,
             saveProfile: saveProfile,
             toast: toast,
@@ -1328,6 +1329,7 @@
             currentLevel: p.level,
             onAvatarChanged: function(){
               renderLevelBadge();
+              if(typeof renderHome === 'function') renderHome();
             }
           });
         }

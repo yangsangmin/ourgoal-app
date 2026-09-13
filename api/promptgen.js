@@ -7,6 +7,12 @@ module.exports = async function handler(req, res) {
   }
 
   var body = req.body || {};
+
+  // [TASK-ES-048] Gemini 2.5 Flash 기반 아바타 얼굴 비전 디코더 서브 라우팅
+  if (body.image || body.action === 'avatar-face') {
+    return handleAvatarFaceVision(req, res, body);
+  }
+
   var description = (body.description || '').trim();
   if (!description) {
     res.status(400).json({ error: 'description is required' });
@@ -99,3 +105,156 @@ module.exports = async function handler(req, res) {
     });
   }
 };
+
+async function handleAvatarFaceVision(req, res, body) {
+  try {
+    var imageBase64 = body.image;
+    var clientGeminiKey = (typeof body.geminiKey === 'string' && body.geminiKey.trim()) ? body.geminiKey.trim() : null;
+    var geminiApiKey = clientGeminiKey || process.env.GEMINI_API_KEY;
+
+    if (!imageBase64) {
+      return res.status(400).json({ error: 'Missing image data' });
+    }
+
+    var mimeType = 'image/jpeg';
+    var rawData = imageBase64;
+    var match = imageBase64.match(/^data:([^;]+);base64,(.+)$/);
+    if (match) {
+      mimeType = match[1];
+      rawData = match[2];
+    }
+
+    if (!geminiApiKey) {
+      return res.status(200).json({ ok: true, fallback: true, features: getSmartFallbackFeatures() });
+    }
+
+    var systemInstruction = 
+      "당신은 한국 웹툰 및 카툰 3등신(Chibi) 캐릭터 전문 아바타 디자이너입니다.\n" +
+      "제공된 실사 사진 속 인물의 고유한 외모 특징을 분석하여, 77종 3등신 캐릭터 바디에 완벽히 호환되는 만화형 얼굴 파라미터 JSON을 생성하십시오.\n\n" +
+      "[엄격한 분석 규칙]\n" +
+      "1. 안경 유무(hasGlasses): 안경을 썼다면 반드시 true로 두고, 테의 형태(round_wire:동글이, square_horn:사각뿔테, half_rim:하금테, black_thick:두꺼운검정테)와 색상을 지정하십시오.\n" +
+      "2. 헤어스타일(hair): 실제 인물의 가르마(center, left, right, none), 기장(short, medium, long), 형태(dandy, two_block, bob, wave, curly, ponytail, straight, spiky), 앞머리 유무(hasBangs), 흑갈색/갈색/검정 등 실제 머리색 Hex를 지정하십시오.\n" +
+      "3. 눈매(eyes): 눈꼬리 기울기(gentle_smile, sharp_confident, round_bright, droopy_cute)를 인물 인상에 맞게 지정하십시오.\n" +
+      "4. 피부톤(skinColor): 조명 왜곡을 보정하여 한국인에게 가장 자연스러운 화사한 만화 스킨톤(#FFF0E5, #FFE3D1, #FAD2B0, #E8B68E, #D2966E 중 택1)을 지정하십시오.\n" +
+      "5. 오직 JSON 객체 하나만 출력하고 마크다운 백틱이나 사족은 일체 출력하지 마십시오.";
+
+    var promptText = 
+      "이 사진 속 인물의 실제 얼굴 특징(안경, 헤어스타일, 눈매, 얼굴형, 피부톤)을 분석하여 아래 JSON Schema에 맞춰 정확히 반환하라:\n" +
+      "{\n" +
+      '  "hasGlasses": boolean,\n' +
+      '  "glassesShape": "round_wire" | "square_horn" | "half_rim" | "black_thick" | "none",\n' +
+      '  "glassesColor": "#hex",\n' +
+      '  "skinColor": "#hex",\n' +
+      '  "blushColor": "rgba(251,113,133,0.45)",\n' +
+      '  "hair": {\n' +
+      '    "style": "dandy" | "two_block" | "curtain" | "bob" | "wave" | "curly" | "ponytail" | "straight" | "spiky",\n' +
+      '    "parting": "none" | "center" | "left" | "right",\n' +
+      '    "hasBangs": boolean,\n' +
+      '    "length": "short" | "medium" | "long",\n' +
+      '    "color": "#hex"\n' +
+      '  },\n' +
+      '  "eyes": {\n' +
+      '    "type": "round_bright" | "gentle_smile" | "sharp_confident" | "droopy_cute",\n' +
+      '    "hasDoubleEyelid": boolean\n' +
+      '  },\n' +
+      '  "eyebrows": {\n' +
+      '    "shape": "straight" | "arched" | "thick",\n' +
+      '    "color": "#hex"\n' +
+      '  },\n' +
+      '  "mouth": {\n' +
+      '    "expression": "bright_smile" | "soft_smile" | "confident_grin"\n' +
+      '  },\n' +
+      '  "similarityNote": "인물의 닮은 핵심 포인트 요약"\n' +
+      "}";
+
+    var geminiModels = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+    var parsedResult = null;
+
+    for (var i = 0; i < geminiModels.length; i++) {
+      var modelName = geminiModels[i];
+      try {
+        var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent?key=' + encodeURIComponent(geminiApiKey);
+        var reqPayload = {
+          contents: [{
+            parts: [
+              { text: systemInstruction + '\n\n' + promptText },
+              { inline_data: { mime_type: mimeType, data: rawData } }
+            ]
+          }],
+          generationConfig: {
+            temperature: 0.2,
+            response_mime_type: 'application/json'
+          }
+        };
+
+        var response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(reqPayload)
+        });
+
+        if (response.ok) {
+          var resData = await response.json();
+          var rawJson = (((resData.candidates || [])[0] || {}).content || {}).parts
+            ? resData.candidates[0].content.parts.map(function (p) { return p.text || ''; }).join('\n')
+            : '';
+
+          var jsonMatch = rawJson.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            parsedResult = JSON.parse(jsonMatch[0]);
+            break;
+          }
+        }
+      } catch (err) {}
+    }
+
+    if (parsedResult) {
+      return res.status(200).json({ ok: true, features: normalizeFeatures(parsedResult) });
+    }
+
+    return res.status(200).json({ ok: true, fallback: true, features: getSmartFallbackFeatures() });
+  } catch (err) {
+    return res.status(200).json({ ok: true, fallback: true, features: getSmartFallbackFeatures() });
+  }
+}
+
+function normalizeFeatures(d) {
+  var data = d || {};
+  var h = data.hair || {};
+  var e = data.eyes || {};
+  var eb = data.eyebrows || {};
+  var m = data.mouth || {};
+  return {
+    hasGlasses: !!data.hasGlasses,
+    glassesShape: data.glassesShape || (data.hasGlasses ? 'round_wire' : 'none'),
+    glassesColor: data.glassesColor || '#1E293B',
+    skinColor: data.skinColor || '#FFDFBF',
+    blushColor: data.blushColor || 'rgba(251,113,133,0.45)',
+    hair: {
+      style: h.style || 'dandy',
+      parting: h.parting || 'none',
+      hasBangs: h.hasBangs !== undefined ? !!h.hasBangs : true,
+      length: h.length || 'short',
+      color: h.color || '#1E293B'
+    },
+    eyes: { type: e.type || 'round_bright', hasDoubleEyelid: !!e.hasDoubleEyelid },
+    eyebrows: { shape: eb.shape || 'arched', color: eb.color || '#1E293B' },
+    mouth: { expression: m.expression || 'bright_smile' },
+    similarityNote: data.similarityNote || '단정한 만화형 캐릭터 아바타'
+  };
+}
+
+function getSmartFallbackFeatures() {
+  return {
+    hasGlasses: false,
+    glassesShape: 'none',
+    glassesColor: '#1E293B',
+    skinColor: '#FFDFBF',
+    blushColor: 'rgba(251,113,133,0.45)',
+    hair: { style: 'dandy', parting: 'none', hasBangs: true, length: 'short', color: '#1E293B' },
+    eyes: { type: 'round_bright', hasDoubleEyelid: true },
+    eyebrows: { shape: 'arched', color: '#1E293B' },
+    mouth: { expression: 'bright_smile' },
+    similarityNote: '화사하고 밝은 3등신 만화 캐릭터'
+  };
+}

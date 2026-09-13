@@ -3131,6 +3131,30 @@ check('compliance: [#TASK-ES-047] 사진 기반 퍼스널 컬러/특징 분석 �
   assert.ok(avatarSrc.includes('drawCartoonHead(ctx'), '캔버스 내 무봉제 만화형 헤드 렌더링 호출');
 });
 
+check('compliance: [#TASK-ES-048] 아바타 적용 즉시 반영, 제작 시 3회 차감, Gemini 비전 엔드포인트 & 무봉제 샌드위치 렌더러, 뱃지 제거 검증', () => {
+  const AvatarSystem = require('../js/avatar-system.js');
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+
+  // 1. /api/avatar-face 리라이트 및 api/promptgen.js 비전 핸들러 무결성 검증 (Vercel 12개 한도 엄수)
+  const vercelCfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+  assert.ok(vercelCfg.rewrites.some(r => r.source === '/api/avatar-face' && r.destination === '/api/promptgen'), '/api/avatar-face 리라이트 규칙 존재');
+  const promptgenSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'promptgen.js'), 'utf8');
+  assert.ok(promptgenSrc.includes('handleAvatarFaceVision'), 'promptgen.js 내 Gemini 비전 아바타 디코더 탑재');
+
+  // 2. 캔버스 좌측 상단 번호/이름 뱃지 그리기 코드 완전 삭제 확인
+  assert.strictEqual(avatarSrc.includes("ctx.fillText('#' + theme.id"), false, '캔버스 좌측 상단 뱃지 텍스트 렌더링 완전 삭제');
+
+  // 3. 아바타 제작 시 3회 차감 분리 및 제작 버튼 연동 확인
+  assert.strictEqual(typeof AvatarSystem.getRemainingCrafts, 'function', 'getRemainingCrafts 함수 존재');
+  assert.strictEqual(AvatarSystem.getRemainingCrafts({ settings: { avatarCraftCount: 1 } }), 2, '제작 1회 사용 시 잔여 2회');
+  assert.strictEqual(AvatarSystem.getRemainingCrafts({ settings: { avatarCraftCount: 3 } }), 0, '제작 3회 소진 시 잔여 0회');
+  assert.ok(avatarSrc.includes('btnRunCraftAvatar'), '내 사진으로 아바타 제작 버튼 연동');
+
+  // 4. index.html openAvatarModal 호출 시 profile 전달 및 즉시 리렌더 연동 확인
+  assert.ok(html.includes('profile: state.profile'), 'openAvatarModal에 profile 명시 전달');
+  assert.ok(html.includes('renderHome()') && html.includes('renderLevelBadge()'), '아바타 변경 시 홈/레벨 즉각 리렌더 연동');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
