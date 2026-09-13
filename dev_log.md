@@ -2783,3 +2783,25 @@
   - `npm test`: **220개 전수 100% 통과 (0개 실패)**.
   - `essence-gate.js --pre-commit`: **위반 0건 통과**.
 ---
+
+## [2026-09-13 10:11] [E1] #TASK-ES-051 Gemini 비전 inlineData 규격 준수, API 키 공백 트림 및 사진 512px JPEG 리사이징 전송
+- **목표**: 상민님 직접 지시("지금 다시 아바타 제작 해보니까. 실패 문구 안내되는데, api 왜 안되는지 다시 확인해")에 따라, Gemini 비전 API 호출 실패의 기술적 근본 원인(키 공백/CRLF에 의한 401, inline_data 스네이크케이스에 의한 400, 대용량 사진 페이로드 이슈)을 완벽히 해결하고 실서버 200 OK 안정성 100% 확보.
+- **핵심 구현 내역**:
+  1. **Vercel GEMINI_API_KEY 환경변수 공백 없는 순수 Secret 재등록 및 `.trim()` 안전망 구축**:
+     - 기존 echo 파이프라인에서 삽입되었던 공백/CRLF를 제거하고 `--value`로 순수 Secret 등록.
+     - `api/promptgen.js`에서 `geminiApiKey` 사용 시 `(process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : '')` 적용.
+  2. **Google Gemini REST API v1beta 비전 파트 카멜케이스 규격 준수**:
+     - `api/promptgen.js` 내 payload를 `{ inlineData: { mimeType, data } }` 및 `responseMimeType: 'application/json'`으로 정규화.
+     - 최신 모델 fallback 체인(`gemini-3.1-flash-lite` -> `gemini-3.5-flash-lite` -> `gemini-3.5-flash` -> `gemini-flash-latest`) 정비 및 에러 로깅 강화.
+  3. **클라이언트 512x512 캔버스 리사이징 및 JPEG(0.85) 정규화 압축**:
+     - `js/avatar-system.js` 사진 선택 시 512x512 캔버스를 통해 50~80KB의 표준 JPEG Base64로 압축 전송하여 Vercel 4.5MB 한도 초과 및 디코딩 실패를 완벽 방지.
+- **수정/실행 내역**:
+  1. `api/promptgen.js`: API 키 트림, inlineData/mimeType 카멜케이스 적용, 모델 체인 및 에러 로그 보강.
+  2. `js/avatar-system.js`: 사진 업로드 시 512x512 캔버스 리사이징 및 JPEG(0.85) 정규화.
+  3. `scripts/smoke-test.js`: #TASK-ES-051 검증 테스트 추가 (총 221개 테스트 전수 통과).
+  4. `docs/rules/TICKETS.md`: #TASK-ES-051 완료 처리.
+- **검증 결과**:
+  - `npm test`: **221개 전수 100% 통과 (0개 실패)**.
+  - `essence-gate.js --pre-commit`: **위반 0건 통과**.
+---
+
