@@ -3106,6 +3106,31 @@ check('compliance: [#TASK-ES-046] 77종 3등신 캐릭터 바디 풀 및 난수 
   assert.ok(avatarSrc.includes('btnRerollAvatarTheme'), '바디 다시 뽑기(Reroll) 기능 버튼 연동');
 });
 
+check('compliance: [#TASK-ES-047] 사진 기반 퍼스널 컬러/특징 분석 및 77종 바디 일체형 무봉제 만화형 페이스 합성 엔진 검증', () => {
+  const AvatarSystem = require('../js/avatar-system.js');
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+
+  // 1. 퍼스널 특징 추출기 검증
+  assert.strictEqual(typeof AvatarSystem.extractPersonalFeatures, 'function', 'extractPersonalFeatures 함수 존재');
+  const features = AvatarSystem.extractPersonalFeatures(null);
+  assert.ok(features.skinColor, '기본 스킨톤 반환');
+  assert.ok(features.hairColor, '기본 헤어톤 반환');
+
+  // 2. 만화형 8종 헤어스타일 및 4종 표정 풀 검증
+  assert.strictEqual(Array.isArray(AvatarSystem.CARTOON_HAIRSTYLES), true, 'CARTOON_HAIRSTYLES 배열 존재');
+  assert.strictEqual(AvatarSystem.CARTOON_HAIRSTYLES.length, 8, '8종 만화형 헤어스타일 정의');
+  assert.strictEqual(Array.isArray(AvatarSystem.CARTOON_EXPRESSIONS), true, 'CARTOON_EXPRESSIONS 배열 존재');
+  assert.strictEqual(AvatarSystem.CARTOON_EXPRESSIONS.length, 4, '4종 만화형 표정 정의');
+
+  // 3. 무봉제 만화형 헤드 렌더러 검증
+  assert.strictEqual(typeof AvatarSystem.drawCartoonHead, 'function', 'drawCartoonHead 함수 존재');
+
+  // 4. 모달 내 헤어스타일/표정 미세조정 버튼 및 일체형 합성 연동 검증
+  assert.ok(avatarSrc.includes('btnCycleHairStyle'), '헤어스타일 변경 버튼 연동');
+  assert.ok(avatarSrc.includes('btnCycleExpression'), '표정 변경 버튼 연동');
+  assert.ok(avatarSrc.includes('drawCartoonHead(ctx'), '캔버스 내 무봉제 만화형 헤드 렌더링 호출');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
