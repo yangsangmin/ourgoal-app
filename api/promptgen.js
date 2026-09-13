@@ -128,6 +128,70 @@ async function handleAvatarFaceVision(req, res, body) {
       return res.status(200).json({ ok: true, fallback: true, features: getSmartFallbackFeatures() });
     }
 
+    var theme = body.theme || {};
+    var themeName = theme.name || '열정 러너';
+    var themeCat = theme.cat || '스포츠';
+    var themeGear = theme.gear || '활동복';
+
+    // [1순위] 구글 AI 스튜디오 최신 멀티모달 생성 모델 (Gemini 3.1 Flash-Lite Image)
+    // 사용자의 실제 사진 속 이목구비, 헤어스타일, 안경, 표정을 반영한 3등신 한국 웹툰풍 캐릭터 이미지 직접 생성
+    var imageGenPrompt =
+      "Create a charming 3-deformed (chibi) cartoon avatar illustration in modern Korean webtoon style based on the facial features, hairstyle, glasses (if any), and facial impression of the person in this photo.\n" +
+      "Theme / Concept: [" + themeName + "] (" + themeCat + " theme, featuring " + themeGear + ")\n" +
+      "Art Direction:\n" +
+      "- 3-deformed chibi cute proportions, full body or expressive bust\n" +
+      "- Distinctive face resembling the person's real hair, eye shape, glasses, and warm friendly smile\n" +
+      "- Clean circular badge avatar format with soft colorful background, crisp vibrant outlines\n" +
+      "- High quality digital webtoon illustration";
+
+    var imageModels = ['gemini-3.1-flash-lite-image', 'gemini-3.1-flash-image', 'nano-banana-pro-preview'];
+    var generatedAvatarUrl = null;
+
+    for (var m = 0; m < imageModels.length; m++) {
+      var imgModel = imageModels[m];
+      try {
+        var imgUrl = 'https://generativelanguage.googleapis.com/v1beta/models/' + imgModel + ':generateContent?key=' + encodeURIComponent(geminiApiKey);
+        var imgPayload = {
+          contents: [{
+            parts: [
+              { text: imageGenPrompt },
+              { inlineData: { mimeType: mimeType, data: rawData } }
+            ]
+          }]
+        };
+
+        var imgResponse = await fetch(imgUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(imgPayload)
+        });
+
+        if (imgResponse.ok) {
+          var imgResData = await imgResponse.json();
+          var candidate = (imgResData.candidates || [])[0];
+          var parts = (candidate && candidate.content && candidate.content.parts) || [];
+          for (var p = 0; p < parts.length; p++) {
+            if (parts[p].inlineData && parts[p].inlineData.data) {
+              var outMime = parts[p].inlineData.mimeType || 'image/jpeg';
+              generatedAvatarUrl = 'data:' + outMime + ';base64,' + parts[p].inlineData.data;
+              break;
+            }
+          }
+          if (generatedAvatarUrl) break;
+        } else {
+          var errTxt = await imgResponse.text();
+          console.error('[AvatarFaceImage] Model ' + imgModel + ' HTTP ' + imgResponse.status + ':', errTxt.slice(0, 200));
+        }
+      } catch (err) {
+        console.error('[AvatarFaceImage] Model ' + imgModel + ' exception:', err.message || err);
+      }
+    }
+
+    if (generatedAvatarUrl) {
+      return res.status(200).json({ ok: true, avatarUrl: generatedAvatarUrl, theme: theme });
+    }
+
+    // [2순위 폴백] 텍스트 비전 분석 모델 (Gemini 3.1 Flash-Lite)
     var systemInstruction = 
       "당신은 한국 웹툰 및 카툰 3등신(Chibi) 캐릭터 전문 아바타 디자이너입니다.\n" +
       "제공된 실사 사진 속 인물의 고유한 외모 특징을 분석하여, 77종 3등신 캐릭터 바디에 완벽히 호환되는 만화형 얼굴 파라미터 JSON을 생성하십시오.\n\n" +

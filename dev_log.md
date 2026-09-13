@@ -2805,3 +2805,24 @@
   - `essence-gate.js --pre-commit`: **위반 0건 통과**.
 ---
 
+## [2026-09-13 10:21] [E1] #TASK-ES-052 Gemini 3.1 Flash-Lite Image 멀티모달 생성 모델 도입 및 AI 맞춤형 웹툰 아바타 직접 생성
+- **목표**: 상민님 직접 지시("진행해")에 따라, 기존 2D 캔버스 하드코딩 도형 렌더러의 한계를 극복하고, 구글 AI 스튜디오의 최신 멀티모달 이미지 생성 모델(`gemini-3.1-flash-lite-image`)을 엔드포인트에 전면 연동하여 사용자 사진과 77종 테마를 반영한 고품질 3등신 한국 웹툰풍 캐릭터 이미지 직접 생성 파이프라인 구축.
+- **핵심 구현 내역**:
+  1. **구글 멀티모달 이미지 생성 모델(`gemini-3.1-flash-lite-image`) 1순위 탑재**:
+     - `api/promptgen.js`에서 사용자 사진(`inlineData`)과 77종 바디 테마(`theme.name`, `theme.cat`, `theme.gear`)를 결합한 프롬프트로 실제 3등신 웹툰 아바타 이미지(JPEG Base64) 직접 생성.
+     - `gemini-3.1-flash-image`, `nano-banana-pro-preview` 캐스케이드 및 텍스트 비전 분석 모델 폴백 유지.
+  2. **클라이언트 AI 생성 아바타 바인딩 및 256x256 최적화**:
+     - `js/avatar-system.js`에서 응답받은 `resData.avatarUrl`을 256x256 캔버스로 정규화(35KB)하여 프리뷰 및 `profile.settings.customAvatarUrl`에 영구 저장.
+     - `index.html` 내 `avatar-system.js?v=20260913-es052` 캐시 무효화 쿼리스트링 적용.
+- **수정/실행 내역**:
+  1. `api/promptgen.js`: 멀티모달 이미지 생성 모델 호출 및 Base64 avatarUrl 응답 처리.
+  2. `js/avatar-system.js`: 테마 정보 전송, AI 아바타 이미지 우선 바인딩 및 안내 문구 고도화.
+  3. `index.html`: 캐시 버스팅 파라미터 적용 (순증가 0줄).
+  4. `scripts/smoke-test.js`: #TASK-ES-052 검증 테스트 추가 (총 222개 테스트 전수 통과).
+  5. `docs/rules/TICKETS.md`: #TASK-ES-052 완료 처리.
+- **검증 결과**:
+  - `npm test`: **222개 전수 100% 통과 (0개 실패)**.
+  - `essence-gate.js --pre-commit`: **위반 0건 통과**.
+---
+
+

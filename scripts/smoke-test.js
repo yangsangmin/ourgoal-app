@@ -3211,6 +3211,22 @@ check('compliance: [#TASK-ES-051] Gemini 비전 inlineData 규격 준수, API �
   assert.ok(avatarSrc.includes('maxDim = 512'), '최대 512px 리사이징 적용');
 });
 
+check('compliance: [#TASK-ES-052] Gemini 3.1 Flash-Lite Image 멀티모달 이미지 생성 모델 도입 및 아바타 연동 검증', () => {
+  const promptgenSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'promptgen.js'), 'utf8');
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+
+  // 1. promptgen.js 내 gemini-3.1-flash-lite-image 모델 탑재 검증
+  assert.ok(promptgenSrc.includes("'gemini-3.1-flash-lite-image'"), '최신 멀티모달 이미지 생성 모델 1순위 탑재');
+  assert.ok(promptgenSrc.includes('generatedAvatarUrl'), 'AI 생성 아바타 이미지 URL 추출기 탑재');
+
+  // 2. avatar-system.js 내 theme 전달 및 AI avatarUrl 바인딩 검증
+  assert.ok(avatarSrc.includes('theme: chosenTheme'), '아바타 제작 시 선택된 바디 테마 전달');
+  assert.ok(avatarSrc.includes('resData.avatarUrl'), 'AI 생성 아바타 이미지 우선 바인딩');
+
+  // 3. index.html avatar-system.js 캐시 무효화 쿼리스트링 검증
+  assert.ok(html.includes('avatar-system.js?v='), 'avatar-system.js 캐시 버스팅 파라미터 탑재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

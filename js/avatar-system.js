@@ -738,12 +738,12 @@
           '<span>' + chosenTheme.icon + '</span>' +
           '<span>#' + chosenTheme.id + ' ' + chosenTheme.name + '</span>' +
         '</div>' +
-        '<div style="font-size:.78125rem;color:var(--emerald);font-weight:700;margin-top:3px;">🎨 Gemini 비전 분석 맞춤형 만화 아바타 완성!</div>' +
-        '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">' + (currentFeatures && currentFeatures.similarityNote ? currentFeatures.similarityNote : ('테마: ' + chosenTheme.cat + ' · 장비: ' + chosenTheme.gear)) + '</div>';
+        '<div style="font-size:.78125rem;color:var(--emerald);font-weight:700;margin-top:3px;">🎨 Gemini 3.1 AI 맞춤형 웹툰 아바타 완성!</div>' +
+        '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">테마: ' + chosenTheme.cat + ' · 장비: ' + chosenTheme.gear + '</div>';
 
         if (btnReroll) btnReroll.style.display = 'inline-block';
-        if (btnHair) btnHair.style.display = 'inline-block';
-        if (btnExpr) btnExpr.style.display = 'inline-block';
+        if (btnHair) btnHair.style.display = currentFeatures ? 'inline-block' : 'none';
+        if (btnExpr) btnExpr.style.display = currentFeatures ? 'inline-block' : 'none';
       }
 
       // 1) 사진 선택 시: 즉시 3등신 아바타 틀 위에 사진 미리보기 적용 & '아바타 제작' 버튼 활성화
@@ -854,11 +854,14 @@
             }
           }
 
-          // Gemini 3.1 Flash-Lite 비전 호출
+          // Gemini 3.1 Flash-Lite Image 멀티모달 생성 호출 (사용자 사진 + 테마 정보 전달)
           fetch('/api/avatar-face', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ image: lastUploadedDataUrl })
+            body: JSON.stringify({
+              image: lastUploadedDataUrl,
+              theme: chosenTheme
+            })
           })
           .then(function (res) {
             if (!res.ok) {
@@ -867,8 +870,8 @@
             return res.json();
           })
           .then(function (resData) {
-            // API가 실패하거나 fallback으로 떨어지면 서버 문제 안내 멘트 노출 및 횟수 롤백
-            if (!resData || !resData.ok || resData.fallback || !resData.features) {
+            // API가 실패하거나 이미지 및 features가 모두 없으면 서버 문제 안내 멘트 노출 및 횟수 롤백
+            if (!resData || !resData.ok || resData.fallback || (!resData.avatarUrl && !resData.features)) {
               handleApiFailure('AI generation failed or fell back');
               return;
             }
@@ -876,18 +879,46 @@
             clearInterval(pTimer);
             if (pBar) pBar.style.width = '100%';
 
-            currentFeatures = resData.features;
-
-            setTimeout(function () {
-              // 5단계 샌드위치 무봉제 캔버스 렌더링
-              composite3DeformedAvatar(lastUploadedImg, chosenTheme, function (dataUrl, f) {
-                newCustomUrl = dataUrl;
+            if (resData.avatarUrl) {
+              // 1. Gemini 3.1 Flash-Lite Image AI가 직접 생성한 고품질 웹툰 아바타 이미지 반영
+              var optImg = new Image();
+              optImg.onload = function () {
+                try {
+                  var cv = document.createElement('canvas');
+                  cv.width = 256;
+                  cv.height = 256;
+                  var ctx = cv.getContext('2d');
+                  ctx.drawImage(optImg, 0, 0, 256, 256);
+                  newCustomUrl = cv.toDataURL('image/jpeg', 0.9);
+                } catch (e) {
+                  newCustomUrl = resData.avatarUrl;
+                }
                 loadingSlot.style.display = 'none';
                 resultBox.style.display = 'block';
                 updateCustomAvatarView();
-                toast('[' + chosenTheme.name + '] 맞춤형 만화 아바타 제작 완료! 🔨✨');
-              }, { features: currentFeatures });
-            }, 600);
+                toast('[' + chosenTheme.name + '] AI 맞춤형 웹툰 아바타 제작 완료! 🎨✨');
+              };
+              optImg.onerror = function () {
+                newCustomUrl = resData.avatarUrl;
+                loadingSlot.style.display = 'none';
+                resultBox.style.display = 'block';
+                updateCustomAvatarView();
+                toast('[' + chosenTheme.name + '] AI 맞춤형 웹툰 아바타 제작 완료! 🎨✨');
+              };
+              optImg.src = resData.avatarUrl;
+            } else {
+              // 2. 텍스트 분석 기반 5단계 샌드위치 캔버스 폴백 렌더링
+              currentFeatures = resData.features;
+              setTimeout(function () {
+                composite3DeformedAvatar(lastUploadedImg, chosenTheme, function (dataUrl, f) {
+                  newCustomUrl = dataUrl;
+                  loadingSlot.style.display = 'none';
+                  resultBox.style.display = 'block';
+                  updateCustomAvatarView();
+                  toast('[' + chosenTheme.name + '] 맞춤형 만화 아바타 제작 완료! 🔨✨');
+                }, { features: currentFeatures });
+              }, 400);
+            }
           })
           .catch(function (err) {
             console.warn('Avatar API error:', err);
