@@ -3079,6 +3079,33 @@ check('compliance: [#TASK-ES-045] 홈·기록 8대 핵심 UX 고밀도화 및 �
   assert.ok(html.includes('window.OurgoalCustomize.open') && html.includes('saveProfile: saveProfile'), 'OurgoalCustomize.open 정규 호출 인자 완비');
 });
 
+check('compliance: [#TASK-ES-046] 77종 3등신 캐릭터 바디 풀 및 난수 추첨 합성 & 나무망치 제작 연출 검증', () => {
+  const AvatarSystem = require('../js/avatar-system.js');
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+
+  // 1. 77종 3등신 바디 풀 완전 탑재 검증
+  assert.strictEqual(Array.isArray(AvatarSystem.BODY_THEMES_77), true, '77종 바디 풀 배열 존재');
+  assert.strictEqual(AvatarSystem.BODY_THEMES_77.length, 77, '정확히 77종의 캐릭터 바디 테마 정의');
+  
+  // 첫 번째 및 마지막 바디 유효성 검증
+  assert.strictEqual(AvatarSystem.BODY_THEMES_77[0].id, 1, '첫 번째 바디 ID 1');
+  assert.strictEqual(AvatarSystem.BODY_THEMES_77[76].id, 77, '마지막 바디 ID 77');
+
+  // 2. 나무망치 제작 애니메이션 연출 검증
+  assert.strictEqual(typeof AvatarSystem.getWoodHammerMakerAnimationHtml, 'function', '나무망치 연출 함수 존재');
+  const animHtml = AvatarSystem.getWoodHammerMakerAnimationHtml('홍길동');
+  assert.ok(animHtml.includes('홍길동님을 형상화한 아바타를 만들고 있어요'), '닉네임 포함 제작 안내문구');
+  assert.ok(animHtml.includes('hammerStrike'), '나무망치 타격 키프레임 애니메이션');
+  assert.ok(animHtml.includes('<svg') && animHtml.includes('#92400E'), '나무망치 SVG 그래픽 엘리먼트');
+
+  // 3. 3등신 캔버스 합성기 검증
+  assert.strictEqual(typeof AvatarSystem.composite3DeformedAvatar, 'function', '3등신 캔버스 합성 함수 존재');
+
+  // 4. 소스 코드 내 난수 추첨 및 리롤 버튼 연동 검증
+  assert.ok(avatarSrc.includes('Math.floor(Math.random() * BODY_THEMES_77.length)'), '77종 중 난수(Random) 추첨 로직 연동');
+  assert.ok(avatarSrc.includes('btnRerollAvatarTheme'), '바디 다시 뽑기(Reroll) 기능 버튼 연동');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
