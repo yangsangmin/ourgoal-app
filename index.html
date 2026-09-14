@@ -58,6 +58,7 @@
       <button class="btn btn-block btn-google" id="landGoogleBtn" type="button"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg><span>Google로 계속하기</span></button>
     </div>
     <span class="land-login-link"><b id="landStartBtn">이메일로 가입하기</b></span>
+    <span class="land-login-link" style="margin-top:4px;"><b id="landGuestBtn" style="color:var(--brand);cursor:pointer;">로그인 없이 바로 둘러보기 ›</b></span>
     <span class="land-login-link">이미 계정이 있으신가요? <b id="landLoginLink">로그인</b></span>
     <span class="land-login-link" style="margin-top:6px;"><a href="javascript:void(0)" id="landRescueBtn" style="color:var(--ink-faint);font-size:.75rem;text-decoration:underline;">로그인이 잘 안 되시나요? (세션 초기화·복구)</a></span>
   </div>
@@ -511,7 +512,7 @@
         <h4>계정 및 보안</h4>
         <div style="padding:10px 14px;background:var(--card2);border-radius:12px;margin-bottom:12px;font-size:.875rem;">
           <div class="faint" style="font-size:.8125rem;">로그인 계정 이메일</div>
-          <b id="setAccountEmail" style="color:var(--ink);">ysm0422@naver.com</b>
+          <b id="setAccountEmail" style="color:var(--ink);">-</b>
         </div>
         <button class="btn btn-ghost btn-sm btn-block" id="btnChangePassModal" type="button" style="margin-bottom:12px;font-size:.8125rem;">비밀번호 변경</button>
         <div class="toggle-row">
@@ -1828,6 +1829,17 @@
   }
 
   /* ============ Landing ============ */
+  if(typeof navigator !== 'undefined' && /KAKAOTALK/i.test(navigator.userAgent)){
+    var kBar = document.getElementById('inAppBrowserNotice');
+    if(!kBar && document.body){
+      var nDiv = document.createElement('div');
+      nDiv.id = 'inAppBrowserNotice';
+      nDiv.style.cssText = 'background:var(--kakao,#FEE500);color:var(--kakao-ink,#3A1D1D);padding:8px 12px;font-size:0.75rem;text-align:center;font-weight:600;z-index:99999;position:relative;';
+      nDiv.innerHTML = '카카오톡에서는 구글 로그인이 제한될 수 있어요. <b>카카오로 시작</b>하시거나 우측 상단 <b>[⋮] → [다른 브라우저로 열기]</b>를 권장해요.';
+      document.body.insertBefore(nDiv, document.body.firstChild);
+    }
+  }
+
   document.getElementById('landStartBtn').addEventListener('click', function(){
     document.getElementById('landingScreen').style.display = 'none';
     document.getElementById('authScreen').style.display = 'flex';
@@ -1840,6 +1852,18 @@
     if(typeof initRememberedAuthFields === 'function') initRememberedAuthFields();
     document.querySelector('[data-authtab="login"]').click();
   });
+  var landGuestBtn = document.getElementById('landGuestBtn');
+  if(landGuestBtn){
+    landGuestBtn.addEventListener('click', function(){
+      var guestId = 'guest-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      state.profile = defaultProfile(guestId, guestId, '게스트');
+      try { localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile)); } catch(e){}
+      document.getElementById('landingScreen').style.display = 'none';
+      document.getElementById('authScreen').style.display = 'none';
+      enterApp();
+      toast('게스트 모드로 시작했어요. 언제든 설정에서 가입할 수 있어요.');
+    });
+  }
 
   /* ============ 소셜 로그인 (카카오 / 실제 구글 OAuth 연동) ============ */
   async function sha256Hex(str){
@@ -5047,10 +5071,17 @@
     recs.forEach(function(r){ days[dateKey(r.startAt)] = true; });
     frozen.forEach(function(k){ days[k] = true; });
     var streak = 0;
-    var cursor = new Date(); cursor.setHours(0,0,0,0);
-    while(days[cursor.getFullYear()+'-'+pad(cursor.getMonth()+1)+'-'+pad(cursor.getDate())]){
+    var todayCursor = new Date(); todayCursor.setHours(0,0,0,0);
+    var todayKeyStr = todayCursor.getFullYear()+'-'+pad(todayCursor.getMonth()+1)+'-'+pad(todayCursor.getDate());
+
+    // 오늘 체크인을 이미 했으면 오늘부터, 아직 안 했으면 어제부터 역산하여 스트릭 유지 (#TASK-ES-043)
+    var startCursor = new Date(todayCursor);
+    if(!days[todayKeyStr]){
+      startCursor.setDate(startCursor.getDate() - 1);
+    }
+    while(days[startCursor.getFullYear()+'-'+pad(startCursor.getMonth()+1)+'-'+pad(startCursor.getDate())]){
       streak++;
-      cursor.setDate(cursor.getDate()-1);
+      startCursor.setDate(startCursor.getDate() - 1);
     }
     return streak;
   }
@@ -6594,100 +6625,135 @@
   }
 
   document.getElementById('captureSave').addEventListener('click', async function(){
+    var saveBtn = document.getElementById('captureSave');
+    if(!saveBtn || saveBtn.disabled) return;
     var t = document.getElementById('captureInput');
     var text = t.value.trim();
     if(!text && !pendingCapturePhoto) return;
     if(!text && pendingCapturePhoto) text = '사진 인증';
-    var goal = state.profile.goals.find(function(g){ return g.id===state.activeGoalId; }) || state.profile.goals[0];
-    var cat = goal ? goal.category : null;
-    var isFirst = (state.profile.records.length === 0);
+    saveBtn.disabled = true;
+    var origSaveBtnHtml = saveBtn.innerHTML;
+    saveBtn.textContent = '기록 중…';
+    try {
+      var goal = state.profile.goals.find(function(g){ return g.id===state.activeGoalId; }) || state.profile.goals[0];
+      var cat = goal ? goal.category : null;
+      var isFirst = (state.profile.records.length === 0);
 
-    // 테마 결정: 사용자가 선택한 테마 우선, 없으면 비강제 일상 테마
-    var themePayload = (typeof OurgoalThemeSystem !== 'undefined')
-      ? OurgoalThemeSystem.buildCheckinThemePayload(selectedCaptureTheme)
-      : { theme: 'daily', subTheme: '', themeMetadata: null };
+      // 테마 결정: 사용자가 선택한 테마 우선, 없으면 비강제 일상 테마
+      var themePayload = (typeof OurgoalThemeSystem !== 'undefined')
+        ? OurgoalThemeSystem.buildCheckinThemePayload(selectedCaptureTheme)
+        : { theme: 'daily', subTheme: '', themeMetadata: null };
 
-    var notionRec = (typeof convertTextToNotionDbRecord === 'function')
-      ? convertTextToNotionDbRecord(text, 'note', { title: text }, goal)
-      : null;
-    var recPhoto = pendingCapturePhoto || null;
-    state.profile.records.unshift({
-      id: newId(),
-      type: 'note',
-      text: text,
-      photo: recPhoto,
-      startAt: nowISO(),
-      endAt: nowISO(),
-      createdAt: nowISO(),
-      category: cat,
-      visibility: 'private',
-      theme: themePayload.theme,
-      subTheme: themePayload.subTheme,
-      themeConfidence: selectedCaptureTheme ? 1.0 : 0.5,
-      themeMetadata: themePayload.themeMetadata,
-      notionDb: notionRec ? notionRec.notionSchema : null,
-      structured: notionRec || null
-    });
-    t.value = '';
-    if(liveMeta) liveMeta.style.display = 'none';
-    selectedCaptureTheme = null;
-    suggestedCaptureTheme = null;
-    renderThemeQuickBar();
-    updateLiveThemeBadge();
-    pendingCapturePhoto = null;
-    if(capturePhotoPreview){ capturePhotoPreview.innerHTML = ''; capturePhotoPreview.style.display = 'none'; }
-    if(capturePhotoInput) capturePhotoInput.value = '';
+      var notionRec = (typeof convertTextToNotionDbRecord === 'function')
+        ? convertTextToNotionDbRecord(text, 'note', { title: text }, goal)
+        : null;
+      var recPhoto = pendingCapturePhoto || null;
+      state.profile.records.unshift({
+        id: newId(),
+        type: 'note',
+        text: text,
+        photo: recPhoto,
+        startAt: nowISO(),
+        endAt: nowISO(),
+        createdAt: nowISO(),
+        category: cat,
+        visibility: 'private',
+        theme: themePayload.theme,
+        subTheme: themePayload.subTheme,
+        themeConfidence: selectedCaptureTheme ? 1.0 : 0.5,
+        themeMetadata: themePayload.themeMetadata,
+        notionDb: notionRec ? notionRec.notionSchema : null,
+        structured: notionRec || null
+      });
+      t.value = '';
+      if(liveMeta) liveMeta.style.display = 'none';
+      selectedCaptureTheme = null;
+      suggestedCaptureTheme = null;
+      renderThemeQuickBar();
+      updateLiveThemeBadge();
+      pendingCapturePhoto = null;
+      if(capturePhotoPreview){ capturePhotoPreview.innerHTML = ''; capturePhotoPreview.style.display = 'none'; }
+      if(capturePhotoInput) capturePhotoInput.value = '';
 
-    var xpRes = awardXP(XP_RULES.checkin, '체크인');
+      var xpRes = awardXP(XP_RULES.checkin, '체크인');
 
-    var freezeGranted = maybeGrantStreakFreeze();
-    await saveProfile();
+      var freezeGranted = maybeGrantStreakFreeze();
+      await saveProfile();
 
-    // 오프라인 상태일 경우 오프라인 동기화 큐에 보관 (가상유저 요청 P5)
-    if(typeof navigator !== 'undefined' && !navigator.onLine){
-      OfflineSyncManager.enqueue({ type: 'record', data: state.profile.records[0] });
+      // 홈 화면 잔디 및 스트릭 즉시 반영 (#TASK-ES-043)
+      renderHomeGrassSummary();
+      var streak = computeStreakDays();
+      updateAppBadge(streak);
+      var badgeEl = document.getElementById('streakBadge');
+      if(badgeEl) badgeEl.innerHTML = streak > 0 ? streakBadgeHtml(streak) : '';
+
+      // 오프라인 상태일 경우 오프라인 동기화 큐에 보관 (가상유저 요청 P5)
+      if(typeof navigator !== 'undefined' && !navigator.onLine){
+        OfflineSyncManager.enqueue({ type: 'record', data: state.profile.records[0] });
+      }
+
+      track('checkin', { first: isFirst, has_goal: !!goal, has_photo: !!recPhoto, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l') });
+      if(isFirst){
+        triggerFirstCheerResponse(goal, text);
+      }
+      var checkinToastMsg = freezeGranted
+        ? '스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요'
+        : (notionRec
+            ? '오늘의 실천이 안전하게 기록되었어요 (' + notionRec.status + (notionRec.metric ? ' · ' + notionRec.metric : '') + ')'
+            : (recPhoto ? '사진과 함께 안전하게 기록했어요' : '오늘의 실천이 안전하게 기록되었어요'));
+      toast(checkinToastMsg);
+      triggerHaptic(12);
+      var btnRect = saveBtn.getBoundingClientRect();
+      burstConfetti(btnRect.left+btnRect.width/2, btnRect.top, 8);
+      saveBtn.classList.remove('btn-cs-pulse');
+      void saveBtn.offsetWidth;
+      saveBtn.classList.add('btn-cs-pulse');
+      renderFeedbackSlot(null);
+      renderRecordFeedbackSlot(null);
+      renderLevelBadge();
+      if(xpRes.leveledUp) showLevelUpBanner(levelForXP(xpRes.total));
+
+      var newRec = state.profile.records[0];
+      var fb = null;
+      var targetGoal = goal || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
+      renderFeedbackSlot('loading');
+      renderRecordFeedbackSlot('loading');
+      fb = await requestAIFeedback(targetGoal, text, newRec ? newRec.theme : null);
+      state.lastCapture = { record: newRec, goal: targetGoal, feedback: fb };
+      renderFeedbackSlot(fb);
+      renderRecordFeedbackSlot(fb);
+      if(targetGoal && targetGoal.milestones && targetGoal.milestones.length > 0){
+        maybeShowGoalUpdateModal(targetGoal, fb);
+      }
+      sendToNotion(newRec, fb);
+    } finally {
+      if(saveBtn){
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = origSaveBtnHtml;
+      }
     }
-
-    track('checkin', { first: isFirst, has_goal: !!goal, has_photo: !!recPhoto, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l') });
-    if(isFirst){
-      triggerFirstCheerResponse(goal, text);
-    }
-    var checkinToastMsg = freezeGranted
-      ? '스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요'
-      : (notionRec
-          ? 'AI 노션 DB로 자동 기록 완료! (' + notionRec.status + (notionRec.metric ? ' · ' + notionRec.metric : '') + ')'
-          : (recPhoto ? '사진과 함께 기록했어요' : '기록했어요'));
-    toast(checkinToastMsg);
-    triggerHaptic(12);
-    var saveBtn = document.getElementById('captureSave');
-    var btnRect = saveBtn.getBoundingClientRect();
-    burstConfetti(btnRect.left+btnRect.width/2, btnRect.top, 8);
-    saveBtn.classList.remove('btn-cs-pulse');
-    void saveBtn.offsetWidth;
-    saveBtn.classList.add('btn-cs-pulse');
-    renderFeedbackSlot(null);
-    renderRecordFeedbackSlot(null);
-    renderLevelBadge();
-    if(xpRes.leveledUp) showLevelUpBanner(levelForXP(xpRes.total));
-
-    var newRec = state.profile.records[0];
-    var fb = null;
-    var targetGoal = goal || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
-    renderFeedbackSlot('loading');
-    renderRecordFeedbackSlot('loading');
-    fb = await requestAIFeedback(targetGoal, text, newRec ? newRec.theme : null);
-    state.lastCapture = { record: newRec, goal: targetGoal, feedback: fb };
-    renderFeedbackSlot(fb);
-    renderRecordFeedbackSlot(fb);
-    if(targetGoal && targetGoal.milestones && targetGoal.milestones.length > 0){
-      maybeShowGoalUpdateModal(targetGoal, fb);
-    }
-    sendToNotion(newRec, fb);
   });
 
   /* ============ 신규 유저 온보딩: 가상 페르소나 3분 내 맞춤 응원 (TASK-OG-002) ============ */
   function triggerFirstCheerResponse(goal, checkinText){
     if(state.profile.settings.virtualCheerEnabled === false) return;
+    var isLocalDev = (typeof window !== 'undefined' && window.location && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'));
+    if(!isLocalDev){
+      var matched = (typeof SIM_PERSONAS !== 'undefined' && SIM_PERSONAS[0]) || { name:'김도윤', avatar:'도', goal:'목표' };
+      var gTitle = (goal ? goal.title : '').toLowerCase();
+      if(typeof SIM_PERSONAS !== 'undefined'){
+        if(gTitle.indexOf('코딩')!==-1 || gTitle.indexOf('개발')!==-1) matched = SIM_PERSONAS[1];
+        else if(gTitle.indexOf('창업')!==-1 || gTitle.indexOf('사업')!==-1) matched = SIM_PERSONAS[2];
+        else if(gTitle.indexOf('운동')!==-1 || gTitle.indexOf('헬스')!==-1) matched = SIM_PERSONAS[3];
+      }
+      var cheerObj = {
+        personaName: matched.name,
+        avatar: matched.avatar,
+        message: matched.name + '님이 첫 체크인을 격려합니다: "저도 [' + (matched.goal || '목표') + '] 도전 중인데, 함께 꾸준히 완주해봐요! 진심으로 응원합니다 🔥"'
+      };
+      scheduleCheerDelivery(cheerObj);
+      return;
+    }
     var payload = {
       userGoal: goal ? goal.title : '',
       userCheckin: checkinText || ''
@@ -20355,7 +20421,7 @@
       '</div>' +
       '<div class="field">' +
         '<label>답변받으실 이메일</label>' +
-        '<input id="inquiryEmail" type="email" value="'+escapeHtml((state.user && state.user.email) || (state.profile && state.profile.email) || 'ysm0422@naver.com')+'">' +
+        '<input id="inquiryEmail" type="email" value="'+escapeHtml((state.user && state.user.email) || (state.profile && state.profile.email) || '')+'" placeholder="답변받으실 이메일 주소">' +
       '</div>' +
       '<div class="field">' +
         '<label>문의 내용</label>' +
@@ -20496,10 +20562,11 @@
       };
     }
 
-    // 🔐 계정 및 보안 (Req 10)
+    // 🔐 계정 및 보안 (Req 10 - #TASK-ES-043 개인 이메일 노출 제거)
     var emailEl = document.getElementById('setAccountEmail');
     if(emailEl){
-      emailEl.textContent = (state.user && state.user.email) || (state.profile && state.profile.email) || 'ysm0422@naver.com';
+      var isGuestUser = !state.user || (state.profile && String(state.profile.id).indexOf('guest-') === 0);
+      emailEl.textContent = (state.user && state.user.email) || (state.profile && state.profile.email) || (isGuestUser ? '게스트 모드 (로그인 후 계정 연동)' : '연동된 이메일 없음');
     }
     var chgPassBtn = document.getElementById('btnChangePassModal');
     if(chgPassBtn){
@@ -21287,6 +21354,33 @@
       if(!state.profile){
         state.profile = defaultProfile(session.user.id, userEmail, newExtra.display_name || userEmail.split('@')[0]);
       }
+
+      // 게스트 세션 데이터 새 소셜 계정으로 자동 마이그레이션 (#TASK-ES-043)
+      try {
+        var rawGuest = localStorage.getItem('ourgoal_guest_profile');
+        if(rawGuest && session && session.user){
+          var gData = JSON.parse(rawGuest);
+          if(gData && gData.id !== session.user.id && ((gData.goals && gData.goals.length > 0) || (gData.records && gData.records.length > 0))){
+            var newUid = session.user.id;
+            if(gData.goals && gData.goals.length > 0){
+              var goalsPayload = gData.goals.map(function(g){
+                return { id: g.id, user_id: newUid, title: g.title, category: g.category||null, due_date: g.dueDate||null, visibility: g.visibility||'private', topic: g.topic||null, archived_at: g.archivedAt||null, result: g.result||null, milestones: g.milestones||[] };
+              });
+              await sb.from('goals').upsert(goalsPayload);
+              if(state.profile) state.profile.goals = (state.profile.goals || []).concat(gData.goals.filter(function(g){ return !(state.profile.goals || []).some(function(eg){ return eg.id === g.id; }); }));
+            }
+            if(gData.records && gData.records.length > 0){
+              var recsPayload = gData.records.map(function(r){
+                return { id: r.id, user_id: newUid, type: r.type||'note', text: r.text, start_at: r.startAt, end_at: r.endAt||r.startAt, category: r.category||null, theme: r.theme||'daily', sub_theme: r.subTheme||null };
+              });
+              await sb.from('checkins').upsert(recsPayload);
+              if(state.profile) state.profile.records = (state.profile.records || []).concat(gData.records.filter(function(r){ return !(state.profile.records || []).some(function(er){ return er.id === r.id; }); }));
+            }
+            localStorage.removeItem('ourgoal_guest_profile');
+            toast('게스트 모드에서 작성한 목표와 기록을 안전하게 가져왔어요! 🎉');
+          }
+        }
+      } catch(mErr){ console.warn('게스트 데이터 병합 예외 (무시):', mErr); }
 
       var ls = document.getElementById('landingScreen');
       if(ls) ls.style.display = 'none';
