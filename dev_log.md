@@ -3324,3 +3324,30 @@
   - `node scripts/essence-gate.js --self-test`: 규칙 v2026.09.11-02 정상 로드.
   - `node C:/dev/command-center/lib/tri-sync.js check`: 100% 무결성 확인.
 ---
+## [2026-09-14 16:50] [FEAT] #TASK-ES-061-TRUE-MULTIDIMENSIONAL 범용 EAV 자율 마이닝 및 4대 다차원 분석 렌즈(추세·상관비·레이더·주기) 전면 고도화 완료
+- **목표**:
+  - 상민님의 본질적 의도("자율 다차원 통계 분석기에서 총볼륨, 세트수, 체중같이 운동, 건강 관련으로만 구성하지 말고 모든 데이터가 들어와도 다양하게 분석할 수 있도록 구성하라")를 100% 완전 수용.
+  - 표면적인 샘플 버튼 추가 수준을 넘어, 도메인 키워드 사전 의존 없이 임의의 한국어/영어 자연어 줄글 메모 및 표(Table)에서 `[명사/항목] [수치] [단위]`를 100% 자율 채굴하는 **Universal Autonomous EAV Miner** 구현.
+  - 단순 1차원 라인 차트를 탈피하여 복합적 의사결정을 지원하는 **4대 다차원 분석 렌즈(추세 트렌드, 상관 효율비, 균형 레이더, 요일 주기)** 인터랙티브 시각화 탑재.
+  - 정적 문구가 아닌 변동계수(CV%), 성장 모멘텀(Δ%), 피크 벤치마크, 요일 밀도를 실시간 수학적으로 도출하는 **자율 통계 진단 리포트 엔진** 완비.
+  - 통계 뷰 진입 시 콕핏이 축소되지 않고 즉시 한눈에 보이도록 **기본 펼침(Default Expanded = true)** 처리.
+- **수정/구현 내역**:
+  1. `js/universal-stats.js`:
+     - **완전 자율 범용 수치·단위 채굴 엔진 (`extractMetricsFromRecord`)**: 자연어 줄글 메모 및 표 칼럼/행 데이터에서 임의의 메트릭명, 수치, 단위를 자동 추출하고 `METRIC_CONFIGS`에 동적 등록.
+     - **자율 온톨로지 엔진 (`buildUniversalOntology`)**: 기록에 사전 파싱된 `metrics`가 없더라도 즉시 EAV 채굴기를 실행하여 `r.metrics.primary`, `r.metrics.secondary` 및 엔티티명을 자율 귀속.
+     - **4대 다차원 분석 렌즈 구현**:
+       - `[📈 추세 트렌드 (Trend)]`: 정규화/선형 스케일 멀티 시리즈 SVG 차트 및 자석 크로스헤어 인스펙터.
+       - `[⚡ 상관 효율비 (Cross-Ratio Matrix)]`: `computeCrossRatioSeries` & `renderCrossRatioSvg`로 지표 간 상호 비율(예: 매출액/계약수, 순공/문제수 등) 실시간 연산 및 시계열 렌더링.
+       - `[🎯 균형 레이더 (Radar / Spider)]`: `renderRadarSvg`로 엔티티별 최고치 대비 달성률(%)을 다각형 방사형 차트로 시각화.
+       - `[🗓️ 요일 주기 (Cadence Heatmap)]`: `computeCadenceData` & `renderCadenceSvg`로 주 7일간의 실천 밀도 및 최고 집중 요일(Peak Day) 시각화.
+     - **수학적 통계 진단 리포트 (`generateStatisticalDiagnosticReport`)**: 관측 데이터 기반 변동계수(CV%), 성장 모멘텀(Δ%), 피크 벤치마크(%), 상관 효율비, 주기성 분석 결과를 자연스럽게 융합 생성.
+     - **대시보드 기본 펼침 및 4대 렌즈 스위처 바 (`renderUniversalStatsDashboard`)**: `isExpanded` 기본값을 `true`로 설정하고, 렌즈 전환 시 즉시 SVG 차트와 4-KPI(PEAK/LATEST/DELTA/VELOCITY)가 렌즈 문맥에 맞춰 동적 전환되도록 배선.
+     - 외부 노출 API에 6대 신규 엔진 함수 전수 export.
+  2. `index.html`:
+     - 캐시버스터 `v=20260914-es061b` 갱신 (순증가 0줄 엄수).
+  3. `scripts/smoke-test.js`:
+     - `[#TASK-ES-061-TRUE-MULTIDIMENSIONAL]` 스모크 테스트 추가: 임의 자연어 줄글("토익 850점 오답 15개 순공 6.5시간") 및 테이블 데이터 자율 채굴, 온톨로지 자동 구축, 4대 렌즈 알고리즘 및 SVG 생성, 통계 리포트 수학적 계산, 콕핏 기본 펼침 및 렌즈 전환 전수 자동 검증.
+- **검증 결과**:
+  - `npm test`: **스모크 237개 + 무결성 게이트 11개 + 버튼 매핑 542개 100% 통과 (0개 실패)**.
+  - `node scripts/essence-gate.js --pre-commit`: 금지 패턴 0건, index.html 순증가 0줄.
+---
