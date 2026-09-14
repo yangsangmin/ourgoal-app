@@ -3146,3 +3146,47 @@
   - `npm test`: **230개 전수 100% 통과 (0개 실패)**.
   - `essence-gate.js`: 금지 패턴 0건, index.html 순증가 45줄로 한도(300줄) 이내 통과.
 ---
+
+## [2026-09-14 12:05] [FEAT] #TASK-ES-042 체크인 3단 피드백 모드(기본·중간·정밀) 및 최근 3일 기록 연계 피드백 엔진 구축
+- **목표**: 사용자가 체크인 기록을 남길 때 최근 3일간의 실천 기록과 오늘의 기록을 연계하여 3단계 깊이(`기본`, `중간`, `정밀`)로 맞춤형 코칭을 제공하고, 정밀 모드 시 D-Day 가상 레일 사각지대 진단 및 1-클릭 캘린더 등록 연계를 지원함.
+- **수정/실행 내역**:
+  1. `index.html`:
+     - 체크인 카드 상단에 `#checkinFeedbackTierBar` (기본/중간/정밀 3단 전환 탭) 신설 및 `initFeedbackTierBar()` 상태 동기화.
+     - `getRecentCheckinsForAI(3)` 헬퍼 구현으로 최근 3일간의 실천 기록을 추출하여 AI 요청 컨텍스트에 주입.
+     - `getLastFeedbackAdvice()` 헬퍼 구현으로 직전 체크인 피드백 제안 행동을 파악하여 상태 기억 체인 구축.
+     - `requestServerAIFeedback` 및 `requestGeminiFeedback`: `mode`, `recentRecords`, `lastAdvice` 페이로드 전송.
+     - `localFeedback`: 3단 모드 및 최근 실천 기록 연계 스마트 로컬 폴백 지원.
+     - `renderFeedbackSlot` & `renderRecordFeedbackSlot`: 피드백 카드 내 `[기본]` / `[중간]` / `[정밀]` 모드 배지 표시 및 정밀 모드 추천 일정 발생 시 `#btnApplyAiCalSlot` 1-클릭 캘린더 자동 등록 연동.
+  2. `api/feedback.js`:
+     - `mode`(`default`, `medium`, `macro`) 및 `recentRecords` 수신 로직 추가.
+     - 최근 3일 기록 연계 컨텍스트 블록(`recentRecordsBlock`) 및 3단 모드별 엄격한 코칭 지침 주입.
+     - 로컬 스마트 폴백 시 모드별 verdict(`핵심 발견`, `페이스 조율`, `정밀 진단`) 및 추천 캘린더 일정(`calendar_action`) 자동 공급.
+  3. `docs/rules/TICKETS.md`: `#TASK-ES-042` 승인 및 완료 상태 반영.
+  4. `scripts/smoke-test.js`: `#TASK-ES-042` 3단 피드백 모드, 최근 기록 추출, 1클릭 캘린더 버튼, 백엔드 지침 검증 추가.
+- **검증 결과**:
+  - `npm test`: **231개 전수 100% 통과 (0개 실패)**.
+  - `index.html` 순증가: 228줄 (600줄 한도 엄수).
+---
+
+
+## [2026-09-14 12:35] [FEAT] #TASK-ES-059 임의 데이터 자율 융합 및 완전 다중선택 슬라이싱 시각화 시스템 구축
+- **목표**: 고정형 시각화를 탈피하여 사용자가 원하는 임의의 데이터(예: 첨부된 52주 156세션 3대운동 파워리프팅 CSV, 러닝, 독서, 임의 CSV/일기)를 완벽 수용하고, 아워골 기존 타임라인과 시·분·초까지 100% 무손실 융합(Fusion)하며, [전체], [개별 단독], [다중 선택(2종, 3종 이상, 크로스 도메인)]을 유저 마음대로 자유롭게 골라 시각화·비교·분석할 수 있는 차세대 자율 슬라이싱 시각화 시스템 구축.
+- **수정/실행 내역**:
+  1. `js/universal-stats.js`:
+     - **임의 데이터 시·분·초 정밀 융합 엔진 (`parseCsvToUniversalRecords`)**: 깨진 인코딩(EUC-KR/CP949 바이트 열화) 자가 치유 복구 및 KST 시분초(`T19:00:00.000Z`) 타임스탬프 부여, 세부 엔티티(`subTheme`, `item`, `exercise`), 수치 메트릭(`metrics`), 원본 행(`rawRow`) 100% 무손실 보존.
+     - **오픈 온톨로지 동적 색인 엔진 (`buildUniversalOntology`)**: 기존 인앱 기록 + 외부 유입 데이터를 실시간 스캔하여 테마, 세부 항목, 측정 차원을 계층 트리로 자동 색인.
+     - **자율 다중선택 슬라이싱 및 시계열 집계 엔진 (`aggregateMultiSeries`)**: Single(개별), Multi(다중선택), ALL(전체 합산) 모드 지원 및 1RM/볼륨/세트/반복수/중량 등 복합 지표 동적 버킷 집계.
+     - **다중 라인 반응형 SVG 차트 렌더러 (`renderMultiSeriesSvg`)**: 다중 시리즈 겹쳐보기(Overlay), 개별 고유 컬러(#3b82f6, #10b981, #f59e0b, #ec4899 등), 역대 최고 기록(PR) 골드스타(★) 배지, 반응형 범례 및 인터랙티브 호버 지원.
+     - **대시보드 UI (`renderUniversalStatsDashboard`)**: 모드 스위처(전체/개별/다중선택), 엔티티 다중선택 칩 바, 측정 차원 전환 바, 4대 동적 KPI 카드(최고치, 평균, 총 볼륨, 최근 측정값), Gemini AI 시계열 심층 인사이트 리포트 카드 탑재.
+     - **1초 로더 & 임포트 모달 (`openUniversalImportModal`)**: 첨부된 52주 156세션 파워리프팅 실측 데이터(스쿼트 52세션, 벤치 52세션, 데드 52세션, 1RM 합 366kg -> 506kg 달성) 1초 원클릭 로드 및 CSV 드래그앤드롭/파일 선택/텍스트 파서 완비.
+  2. `index.html`:
+     - `universalStatsDashboardBox` 대시보드 렌더러 콜백 파라미터(`openModal`, `closeModal`, `toast`, `saveProfile`, `onDone`) 완전 배선. 순증가 3줄로 300줄 한도 완벽 준수.
+  3. `scripts/smoke-test.js`:
+     - `[#TASK-ES-059-FUSION]` 7대 검증 항목(156세션 융합, CSV 파서, 온톨로지 색인, 벤치 단독, 2종 다중선택, 3대 종합 PR 506kg, 크로스 도메인) 추가 완료.
+- **검증 결과**:
+  - `npm test`: **232개 전수 100% 통과 (0개 실패)**.
+  - `node scripts/essence-gate.js --pre-commit`: 금지 패턴 0건, index.html 순증가 3줄로 한도(300줄) 이내 통과.
+  - 벤치프레스 1RM 73kg -> 105kg 성장 및 피크 106kg PR 골드스타 마킹 확인.
+  - 벤치프레스 + 스쿼트 2종 다중 선택 오버레이 시각화 정상 작동 확인.
+  - 스쿼트 + 벤치 + 데드리프트 3대 종합 PR 506kg 산출 및 종합 볼륨 시각화 정상 작동 확인.
+---

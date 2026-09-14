@@ -13,8 +13,9 @@ module.exports = async function handler(req, res) {
   var customPrompt = typeof body.customPrompt === 'string' ? body.customPrompt.trim().slice(0, 2000) : '';
   var upcomingSchedules = Array.isArray(body.upcomingSchedules) ? body.upcomingSchedules : [];
 
-  // 신규 고도화 파라미터 (TASK-ES-042)
-  var mode = body.mode || 'default'; // 'default' | 'medium' | 'macro'
+  // 신규 고도화 파라미터 (TASK-ES-042: 3단 피드백 모드 및 최근 기록 연계)
+  var mode = body.mode || 'default'; // 'default'(기본) | 'medium'(중간) | 'macro'(정밀)
+  var recentRecords = Array.isArray(body.recentRecords) ? body.recentRecords : [];
   var microChips = body.microChips || {}; // { condition, duration, sessionFeel }
   var lastAdvice = body.lastAdvice || null; // { actionSuggested, verdict, createdAt }
   var virtualRail = body.virtualRail || null; // { currentPhase, remainingDays, gapWarning, suggestedCalendarItem }
@@ -68,6 +69,19 @@ module.exports = async function handler(req, res) {
     microChipBlock = '[사용자가 선택한 3초 퀵 태그]\n' + chipParts.join(' | ') + '\n\n';
   }
 
+  // 최근 3일 실천 기록 연계 컨텍스트 (TASK-ES-042)
+  var recentRecordsBlock = '';
+  if (recentRecords.length > 0) {
+    var recLines = recentRecords.slice(0, 5).map(function (r) {
+      var d = r.date || r.startAt || '';
+      var t = (r.text || r.title || '').slice(0, 100);
+      var th = r.theme ? ('[' + r.theme + '] ') : '';
+      return '- ' + (d ? '(' + d + ') ' : '') + th + t;
+    }).join('\n');
+    recentRecordsBlock = '[사용자의 최근 실천 기록 (연계 분석용)]\n' + recLines + '\n' +
+      '지침: 사용자의 최근 실천 흐름과 패턴을 오늘 기록과 비교·연계하여 지속성 및 페이스 관점에서 코칭하세요.\n\n';
+  }
+
   // 상태 기억 체인 컨텍스트
   var memoryBlock = '';
   if (lastAdvice && lastAdvice.actionSuggested) {
@@ -95,17 +109,17 @@ module.exports = async function handler(req, res) {
       '지침: 30일 목표 관점에서 사용자가 놓치고 있는 선행 일정이나 대비 사항을 정밀 진단하고, 필요 시 calendar_action에 추천 일정을 구체적으로 작성하세요.\n\n';
   }
 
-  // 모드별 지침
+  // 모드별 지침 (기본·중간·정밀)
   var modeInstruction = '';
   if (mode === 'default') {
     modeInstruction = '[모드: 기본 피드백]\n' +
-      '팩트 분석(1문장) + 어제 연계(1문장, 있을시) + 내일 당장 실행할 딱 1가지 행동(1문장)으로 총 3문장 이내로 극도로 명료하게 작성하세요.';
+      '오늘 기록 팩트 분석(1문장) + 어제/최근 연계(1문장, 있을시) + 내일 당장 실행할 딱 1가지 행동(1문장)으로 총 3문장 이내로 극도로 명료하게 작성하세요.';
   } else if (mode === 'medium') {
     modeInstruction = '[모드: 중간 피드백]\n' +
-      '최근 페이스 추이와 주간 루틴 마찰점 분석을 포함하여 5~6문장으로 구체적인 보완 가이드를 제공하세요.';
+      '최근 3~5일간의 실천 페이스 궤적과 주간 루틴 마찰점 분석을 포함하여 5~6문장으로 구체적인 보완 가이드를 제공하세요.';
   } else {
-    modeInstruction = '[모드: 장기간 고려 피드백]\n' +
-      'D-Day 목표 가상 레일과 향후 30일 일정을 대조하여 사각지대를 짚고, calendar_action 추천 일정을 포함한 심층 전략 리포트를 제공하세요.';
+    modeInstruction = '[모드: 정밀 피드백]\n' +
+      'D-Day 목표 가상 레일과 향후 30일 일정을 대조하여 사각지대를 정밀 진단하고, calendar_action 추천 일정을 포함한 심층 전략 리포트를 제공하세요.';
   }
 
   var negativeRules =
@@ -121,7 +135,7 @@ module.exports = async function handler(req, res) {
   } else {
     prompt = themeBlock + personaBlock + roleLine + '\n\n' +
       negativeRules + '\n\n' +
-      microChipBlock + memoryBlock + macroBlock + modeInstruction + '\n\n' +
+      microChipBlock + recentRecordsBlock + memoryBlock + macroBlock + modeInstruction + '\n\n' +
       '[사용자의 목표]\n최종 목표: ' + goalTitle + '\n\n' +
       '[마일스톤/할 일 목록 - JSON]\n' + JSON.stringify(milestones) + '\n\n' +
       '[방금 남긴 기록]\n"' + text + '"\n\n' +
@@ -211,13 +225,24 @@ module.exports = async function handler(req, res) {
         providerUsed = 'server_period_smart';
       } else {
         var isTired = microChips.condition === 'tired' || microChips.sessionFeel === 'barely';
-        var fallbackVerdict = isTired ? '스트릭 방어' : (text.length < 20 ? '페이스 유지' : '핵심 발견');
+        var fallbackVerdict = '핵심 발견';
+        if (isTired) fallbackVerdict = '스트릭 방어';
+        else if (mode === 'macro') fallbackVerdict = '정밀 진단';
+        else if (mode === 'medium') fallbackVerdict = '페이스 조율';
+        else if (text.length < 20) fallbackVerdict = '페이스 유지';
+
         var fallbackFact = text.length < 20
           ? '"' + text + '" 실천으로 오늘의 흐름을 놓치지 않고 완주하셨습니다.'
           : '오늘 기록된 구체적인 실행 내용(' + text.slice(0, 35) + '…)과 집중도가 돋보입니다.';
-        var fallbackAction = '내일은 오늘 진행한 항목의 핵심 요약이나 오답 1가지를 먼저 짚고 넘어가세요.';
+        
+        var recentNote = (recentRecords.length > 0)
+          ? ('최근 ' + recentRecords.length + '일간 이어진 실천 흐름과 연계하여, ')
+          : '';
+        var fallbackAction = (mode === 'macro')
+          ? 'D-Day 목표와 거시 일정을 점검하고 누락된 핵심 태스크를 선제적으로 보완하세요.'
+          : '내일은 오늘 진행한 항목의 핵심 요약이나 오답 1가지를 먼저 짚고 넘어가세요.';
 
-        var fallbackComment = fallbackFact + ' ' + fallbackAction;
+        var fallbackComment = recentNote + fallbackFact + ' ' + fallbackAction;
         if (lastAdvice && lastAdvice.actionSuggested) {
           fallbackComment = '어제 제안드린 [' + lastAdvice.actionSuggested + ']에 이어 ' + fallbackComment;
         }
@@ -235,7 +260,14 @@ module.exports = async function handler(req, res) {
             title: virtualRail.suggestedCalendarItem.title,
             duration_minutes: virtualRail.suggestedCalendarItem.durationMinutes || 60,
             note: virtualRail.suggestedCalendarItem.note || ''
-          } : null,
+          } : (mode === 'macro' ? {
+            has_suggestion: true,
+            suggested_date: new Date(Date.now() + 2 * 86400000).toISOString().slice(0, 10),
+            suggested_time: '14:00',
+            title: (goalTitle ? goalTitle.slice(0, 15) : '목표') + ' 정밀 점검 및 중간 회고',
+            duration_minutes: 60,
+            note: 'D-Day 가상 레일 점검을 위한 캘린더 추천 일정'
+          } : null),
           comment: fallbackComment,
           suggestions: []
         };
