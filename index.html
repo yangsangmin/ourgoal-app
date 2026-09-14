@@ -284,6 +284,7 @@
         <div class="screen-head-l">
           <h2 class="s-title">기록</h2>
           <span class="privacy-badge" id="recPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
+          <button type="button" class="btn btn-ghost btn-xs" id="recAnalyticsGuideBtn" style="font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;margin-left:6px;cursor:pointer;" title="이 페이지 활용법 보기">💡 이 페이지 활용법 보기</button>
         </div>
         <div>
           <button class="btn btn-primary btn-sm" id="recAddBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>새 기록</span></button>
@@ -877,7 +878,7 @@
   <script src="js/avatar-system.js?v=20260913-es054"></script>
   <script src="js/content-moderation.js"></script>
   <script src="js/auth-safety.js"></script>
-  <script src="js/universal-stats.js?v=20260914-es060"></script>
+  <script src="js/universal-stats.js?v=20260914-es061"></script>
 <script>
 
 (function(){
@@ -16977,6 +16978,16 @@
             saveProfile: saveProfile,
             onDone: function(){ if(state) state.recordsSegment = 'stats'; renderRecordsScreen(); }
           });
+        }
+      };
+    }
+
+    // [TASK-ES-061] 성취 통계 및 유니버설 온톨로지 콕핏 활용법 가이드 모달 바인딩
+    var guideBtn = document.getElementById('recAnalyticsGuideBtn');
+    if(guideBtn){
+      guideBtn.onclick = function(){
+        if(typeof OurgoalUniversalStats !== 'undefined' && OurgoalUniversalStats.openGuideModal){
+          OurgoalUniversalStats.openGuideModal({ openModal: openModal, closeModal: closeModal });
         }
       };
     }
