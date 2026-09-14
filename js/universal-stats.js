@@ -3011,14 +3011,24 @@
       svg += '<text x="' + lx + '" y="' + (ly + 4) + '" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--ink)">' + it.name + ' (' + it.score + '%)</text>';
     });
 
-    svg += '<polygon points="' + polyPoints.join(' ') + '" fill="rgba(37,99,235,0.25)" stroke="#2563eb" stroke-width="2.5"/>';
+    svg += '<defs><linearGradient id="uRadarGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3b82f6" stop-opacity="0.38"/><stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.16"/></linearGradient></defs>';
+    svg += '<polygon points="' + polyPoints.join(' ') + '" fill="url(#uRadarGrad)" stroke="#3b82f6" stroke-width="2.5" stroke-linejoin="round"/>';
     targetItems.forEach(function(it, i){
       var pt = polyPoints[i].split(',');
-      svg += '<circle cx="' + pt[0] + '" cy="' + pt[1] + '" r="4" fill="#2563eb" stroke="#fff" stroke-width="1.5"/>';
+      svg += '<circle cx="' + pt[0] + '" cy="' + pt[1] + '" r="4.5" fill="#3b82f6" stroke="#ffffff" stroke-width="2"/>';
     });
 
     svg += '</svg>';
-    return svg;
+
+    var topEntity = targetItems.slice().sort(function(a,b){ return b.score - a.score; })[0];
+    var avgScore = Math.round(targetItems.reduce(function(acc,it){ return acc + it.score; }, 0) / targetItems.length);
+    var footerHtml = 
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding:6px 10px;background:var(--card);border-radius:8px;border:1px solid var(--border);font-size:.75rem;">' +
+        '<span>🎯 <b>포트폴리오 균형도</b>: 평균 <b>' + avgScore + '%</b> 달성</span>' +
+        '<span style="color:var(--brand);font-weight:800;">최고 지표: ' + (topEntity ? (topEntity.icon + ' ' + topEntity.name) : '-') + '</span>' +
+      '</div>';
+
+    return svg + footerHtml;
   }
 
   // 4. 요일별(Cadence) 실천 밀도 계산 및 SVG 렌더러
@@ -3063,18 +3073,35 @@
       svg += '<text x="' + (x + bw/2) + '" y="' + (padT + chartH + 16) + '" text-anchor="middle" font-size="11" font-weight="700" fill="' + (isTop ? 'var(--primary)' : 'var(--ink-soft)') + '">' + c.day + '</text>';
     });
 
+    svg += '<defs><linearGradient id="uCadencePeakGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2563eb"/><stop offset="100%" stop-color="#38bdf8"/></linearGradient></defs>';
     svg += '</svg>';
-    return svg;
+
+    // 주중 vs 주말 통계 산출
+    var weekdayCnt = cadenceData.slice(1, 6).reduce(function(acc, c){ return acc + c.count; }, 0);
+    var weekendCnt = (cadenceData[0].count || 0) + (cadenceData[6].count || 0);
+    var totCnt = weekdayCnt + weekendCnt || 1;
+    var weekdayPct = Math.round((weekdayCnt / totCnt) * 100);
+    var weekendPct = Math.round((weekendCnt / totCnt) * 100);
+
+    var cadenceFooter = 
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding:6px 10px;background:var(--card);border-radius:8px;border:1px solid var(--border);font-size:.75rem;">' +
+        '<span>🗓️ <b>루틴 주기 분석</b></span>' +
+        '<span style="font-family:monospace;font-weight:700;color:var(--ink-soft);">주중 <b style="color:var(--primary);">' + weekdayPct + '%</b> · 주말 <b style="color:#8b5cf6;">' + weekendPct + '%</b></span>' +
+      '</div>';
+
+    return svg + cadenceFooter;
   }
 
-  // 5. 지능형 수학적 통계 리포트 생성기
-  function generateStatisticalDiagnosticReport(seriesMap, cadenceData, ratioData){
+  // 5. 지능형 수학적 통계 리포트 생성기 (텍스트 + 시각 게이지 융합)
+  function generateStatisticalDiagnosticReport(seriesMap, cadenceData, ratioData, opts){
+    opts = opts || {};
     var seriesKeys = Object.keys(seriesMap || {});
     if(seriesKeys.length === 0){
       return '수집된 데이터가 아직 충분하지 않습니다. 기록을 추가하면 자율 통계 진단이 시작됩니다.';
     }
 
     var diagnostics = [];
+    var gauges = [];
     var s1 = seriesMap[seriesKeys[0]];
     if(s1 && s1.points && s1.points.length > 0){
       var vals = s1.points.map(function(p){ return p.val; });
@@ -3082,6 +3109,16 @@
       var variance = vals.reduce(function(acc, v){ return acc + Math.pow(v - mean, 2); }, 0) / vals.length;
       var stdDev = Math.sqrt(variance);
       var cv = mean > 0 ? Math.round((stdDev / mean) * 100) : 0;
+
+      var cvColor = cv < 15 ? '#10b981' : (cv <= 30 ? '#3b82f6' : '#f59e0b');
+      var cvStatus = cv < 15 ? '극도로 일관됨' : (cv <= 30 ? '균형적 루틴' : '스프린트형 집중');
+      gauges.push({
+        label: '변동계수(CV)',
+        val: cv + '%',
+        status: cvStatus,
+        color: cvColor,
+        pct: Math.min(100, Math.max(10, cv * 2))
+      });
 
       var cvText = '';
       if(cv < 15) cvText = '변동계수(CV) ' + cv + '%로 매우 일관되고 모범적인 루틴을 유지하고 있습니다.';
@@ -3091,11 +3128,26 @@
       diagnostics.push('📊 <b>[' + s1.entity + ']</b>: 총 ' + s1.points.length + '회 관측치 기반 평균 ' + (Math.round(mean*10)/10) + ' ' + (s1.unit || '') + '. ' + cvText);
 
       if(s1.growthRate !== 0){
+        var mColor = s1.growthRate >= 0 ? '#10b981' : '#ef4444';
+        gauges.push({
+          label: '성장 모멘텀',
+          val: (s1.growthRate > 0 ? '+' : '') + s1.growthRate + '%',
+          status: '주당 ' + (s1.velocityPerWeek > 0 ? '+' : '') + s1.velocityPerWeek + (s1.unit ? (' ' + s1.unit) : ''),
+          color: mColor,
+          pct: Math.min(100, Math.max(15, Math.abs(s1.growthRate)))
+        });
         diagnostics.push('🚀 <b>성장 모멘텀</b>: 시작 지점 대비 <b>' + (s1.growthRate > 0 ? '+' : '') + s1.growthRate + '%</b> 성장 (주당 약 ' + (s1.velocityPerWeek > 0 ? '+' : '') + s1.velocityPerWeek + ' ' + (s1.unit || '') + ' 페이스).');
       }
 
       if(s1.prVal > 0){
         var prRatio = Math.round((s1.latestVal / s1.prVal) * 100);
+        gauges.push({
+          label: '피크 유지율',
+          val: prRatio + '%',
+          status: '최고 ' + s1.prVal.toLocaleString() + (s1.unit ? (' ' + s1.unit) : ''),
+          color: '#8b5cf6',
+          pct: Math.min(100, prRatio)
+        });
         diagnostics.push('🏆 <b>피크 벤치마크</b>: 역대 최고치 ' + s1.prVal.toLocaleString() + ' ' + (s1.unit || '') + ' 대비 현재 <b>' + prRatio + '%</b> 수준 유지.');
       }
     }
@@ -3109,6 +3161,35 @@
       if(sortedCadence[0].count > 0){
         diagnostics.push('🗓️ <b>주기성 분석</b>: <b>' + sortedCadence[0].day + '요일</b>(전체의 ' + sortedCadence[0].pct + '%)에 활동이 가장 집중됩니다.');
       }
+    }
+
+    if(opts.asHtml){
+      var cardsHtml = '';
+      if(gauges.length > 0){
+        cardsHtml += '<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(115px, 1fr));gap:6px;margin-bottom:10px;">';
+        gauges.forEach(function(g){
+          cardsHtml += 
+            '<div style="padding:6px 8px;border-radius:8px;background:var(--card);border:1px solid var(--border);display:flex;flex-direction:column;gap:3px;">' +
+              '<div style="display:flex;justify-content:space-between;align-items:center;font-size:.65rem;color:var(--ink-soft);font-family:monospace;">' +
+                '<span>' + g.label + '</span>' +
+                '<span style="color:' + g.color + ';font-weight:800;">' + g.val + '</span>' +
+              '</div>' +
+              '<div style="width:100%;height:4px;background:var(--border);border-radius:2px;overflow:hidden;">' +
+                '<div style="width:' + g.pct + '%;height:100%;background:' + g.color + ';border-radius:2px;"></div>' +
+              '</div>' +
+              '<div style="font-size:.625rem;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + g.status + '</div>' +
+            '</div>';
+        });
+        cardsHtml += '</div>';
+      }
+
+      var textListHtml = '<div style="display:flex;flex-direction:column;gap:5px;font-size:.75rem;line-height:1.5;">';
+      diagnostics.forEach(function(d){
+        textListHtml += '<div style="display:flex;align-items:flex-start;gap:6px;"><span style="line-height:1.4;">' + d + '</span></div>';
+      });
+      textListHtml += '</div>';
+
+      return cardsHtml + textListHtml;
     }
 
     return diagnostics.join('<br style="margin-bottom:4px;">');
@@ -3285,19 +3366,26 @@
         '<button type="button" class="u-scale-btn" data-scale="normalized" style="padding:3px 6px;border:none;border-radius:4px;font-size:.6875rem;font-weight:700;cursor:pointer;background:' + (scaleMode === 'normalized' ? 'var(--primary)' : 'transparent') + ';color:' + (scaleMode === 'normalized' ? '#fff' : 'var(--ink)') + ';">Norm %</button>' +
       '</div>';
 
-    // 4대 다차원 분석 렌즈 전환 바
+    // 4대 다차원 분석 렌즈 전환 바 (고밀도 반응형 세그먼트)
     var lenses = [
-      { id: 'trend', icon: '📈', label: '추세 트렌드' },
-      { id: 'ratio', icon: '⚡', label: '상관 효율비' },
-      { id: 'radar', icon: '🎯', label: '균형 레이더' },
-      { id: 'cadence', icon: '🗓️', label: '요일 주기' }
+      { id: 'trend', icon: '📈', label: '추세 트렌드', sub: '시계열·PR' },
+      { id: 'ratio', icon: '⚡', label: '상관 효율비', sub: '단가·비율' },
+      { id: 'radar', icon: '🎯', label: '균형 레이더', sub: '달성도·방사형' },
+      { id: 'cadence', icon: '🗓️', label: '요일 주기', sub: '루틴·밀도' }
     ];
-    var lensHtml = '<div class="u-lens-row" style="display:flex;gap:4px;background:var(--card2);padding:3px;border-radius:10px;margin-bottom:8px;overflow-x:auto;">';
+    var lensHtml = '<div class="u-lens-row" style="display:flex;gap:4px;background:var(--card2);padding:3px;border-radius:10px;margin-bottom:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;">';
     lenses.forEach(function(l){
       var isLAct = (curLens === l.id);
-      lensHtml += '<button type="button" class="u-lens-btn" data-lens="' + l.id + '" style="flex:1;min-width:70px;padding:6px 4px;border:none;border-radius:7px;font-size:.71875rem;font-weight:700;cursor:pointer;background:' + (isLAct ? 'var(--primary)' : 'transparent') + ';color:' + (isLAct ? '#fff' : 'var(--ink)') + ';box-shadow:' + (isLAct ? '0 1px 3px rgba(0,0,0,0.12)' : 'none') + ';display:flex;align-items:center;justify-content:center;gap:4px;transition:all 0.15s ease;">' +
-        '<span>' + l.icon + '</span><span>' + l.label + '</span>' +
-      '</button>';
+      var actBg = isLAct ? 'var(--primary)' : 'transparent';
+      var actFg = isLAct ? '#ffffff' : 'var(--ink)';
+      var actShadow = isLAct ? '0 2px 6px rgba(37,99,235,0.25)' : 'none';
+      lensHtml += 
+        '<button type="button" class="u-lens-btn" data-lens="' + l.id + '" style="flex:1;min-width:78px;padding:7px 4px;border:none;border-radius:8px;cursor:pointer;background:' + actBg + ';color:' + actFg + ';box-shadow:' + actShadow + ';display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:all 0.18s ease;user-select:none;">' +
+          '<div style="display:flex;align-items:center;gap:3px;font-size:.75rem;font-weight:800;">' +
+            '<span>' + l.icon + '</span><span>' + l.label + '</span>' +
+          '</div>' +
+          '<span style="font-size:.625rem;opacity:' + (isLAct ? '0.9' : '0.65') + ';font-family:sans-serif;letter-spacing:-0.2px;">' + l.sub + '</span>' +
+        '</button>';
     });
     lensHtml += '</div>';
 
@@ -3373,11 +3461,21 @@
     });
     dimHtml += '</div>';
 
-    // 4. 다차원 분석 렌즈별 데이터 계산 및 SVG 렌더링
+    // 4. 다차원 분석 렌즈별 정밀 데이터 계산 및 인터랙티브 페어 매핑
     var chartObj = renderMultiSeriesSvg(seriesMap, { width: 520, height: 210, scaleMode: scaleMode });
     var seriesKeys = Object.keys(seriesMap || {});
-    var sA = seriesMap[seriesKeys[0]];
-    var sB = seriesMap[seriesKeys[1]] || sA;
+    var allEntityNames = ontology.map(function(o){ return o.name; });
+
+    // 상관 효율비 동적 페어 선택기 (Interactive Pair Selector)
+    var selRatioNum = state.univRatioNum || allEntityNames[0] || '';
+    var selRatioDen = state.univRatioDen || (allEntityNames.length > 1 ? allEntityNames[1] : allEntityNames[0]) || '';
+    if(!allEntityNames.includes(selRatioNum)) selRatioNum = allEntityNames[0] || '';
+    if(!allEntityNames.includes(selRatioDen)) selRatioDen = (allEntityNames.length > 1 ? allEntityNames[1] : allEntityNames[0]) || '';
+    state.univRatioNum = selRatioNum;
+    state.univRatioDen = selRatioDen;
+
+    var sA = seriesMap[selRatioNum] || (seriesKeys[0] ? seriesMap[seriesKeys[0]] : null);
+    var sB = seriesMap[selRatioDen] || (seriesKeys[1] ? seriesMap[seriesKeys[1]] : sA);
     var ratioData = computeCrossRatioSeries(sA, sB);
     var cadenceData = computeCadenceData(allRecs);
 
@@ -3399,7 +3497,7 @@
     if(curLens === 'trend'){
       mainChartContentHtml = 
         chartObj.svgHtml +
-        '<div id="uFloatingInspector" style="display:none;position:absolute;z-index:30;background:rgba(15,23,42,0.92);color:#fff;padding:6px 10px;border-radius:8px;font-size:.75rem;pointer-events:auto;box-shadow:0 4px 12px rgba(0,0,0,0.25);max-width:200px;">' +
+        '<div id="uFloatingInspector" style="display:none;position:absolute;z-index:30;background:rgba(15,23,42,0.95);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.18);color:#fff;padding:8px 12px;border-radius:10px;font-size:.75rem;pointer-events:auto;box-shadow:0 12px 28px -4px rgba(0,0,0,0.48);max-width:215px;">' +
           '<div id="uTipDate" style="font-size:.6875rem;color:#94a3b8;font-family:monospace;"></div>' +
           '<div id="uTipVal" style="font-size:.875rem;font-weight:800;color:#38bdf8;margin:2px 0;"></div>' +
           '<div id="uTipDelta" style="font-size:.6875rem;color:#34d399;"></div>' +
@@ -3408,7 +3506,30 @@
         '</div>' +
         legendHtml;
     } else if(curLens === 'ratio'){
+      var ratioPairBar = 
+        '<div class="u-ratio-pair-bar" style="display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 10px;background:var(--card);border-radius:10px;margin-bottom:10px;border:1px solid var(--border);flex-wrap:wrap;">' +
+          '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+            '<div style="display:flex;align-items:center;gap:4px;">' +
+              '<span style="font-size:.6875rem;font-weight:800;color:var(--primary);font-family:monospace;">분자(A):</span>' +
+              '<select id="uRatioNumSelect" style="font-size:.75rem;padding:3px 8px;border-radius:6px;background:var(--card2);color:var(--ink);border:1px solid var(--border);font-weight:700;cursor:pointer;">' +
+                allEntityNames.map(function(n){ return '<option value="' + n + '"' + (n === selRatioNum ? ' selected' : '') + '>' + n + '</option>'; }).join('') +
+              '</select>' +
+            '</div>' +
+            '<span style="font-size:1rem;font-weight:900;color:var(--ink-soft);user-select:none;">÷</span>' +
+            '<div style="display:flex;align-items:center;gap:4px;">' +
+              '<span style="font-size:.6875rem;font-weight:800;color:#10b981;font-family:monospace;">분모(B):</span>' +
+              '<select id="uRatioDenSelect" style="font-size:.75rem;padding:3px 8px;border-radius:6px;background:var(--card2);color:var(--ink);border:1px solid var(--border);font-weight:700;cursor:pointer;">' +
+                allEntityNames.map(function(n){ return '<option value="' + n + '"' + (n === selRatioDen ? ' selected' : '') + '>' + n + '</option>'; }).join('') +
+              '</select>' +
+            '</div>' +
+          '</div>' +
+          '<div style="font-size:.6875rem;font-weight:800;color:var(--brand);padding:3px 8px;border-radius:12px;background:rgba(139,92,246,0.12);font-family:monospace;">' +
+            '효율단위: ' + (ratioData ? ratioData.unit : '-') +
+          '</div>' +
+        '</div>';
+
       mainChartContentHtml = 
+        ratioPairBar +
         '<div style="padding:4px 0;">' +
           renderCrossRatioSvg(ratioData, { width: 520, height: 210 }) +
         '</div>';
@@ -3464,40 +3585,49 @@
     }
 
     var kpiHtml = 
-      '<div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:6px;margin-top:10px;">' +
-        '<div class="card" style="padding:8px;margin:0;border-radius:8px;background:var(--card);border:1px solid var(--border);text-align:center;">' +
-          '<div style="font-size:.65rem;font-weight:700;color:var(--ink-soft);font-family:monospace;">' + (curLens === 'ratio' ? 'AVG RATIO' : (curLens === 'cadence' ? 'PEAK DAY' : 'PEAK')) + '</div>' +
-          '<div style="font-size:.875rem;font-weight:800;color:var(--primary);margin-top:2px;font-family:monospace;">' + peakStr + '</div>' +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(78px, 1fr));gap:6px;margin-top:10px;">' +
+        '<div class="card" style="padding:8px 6px;margin:0;border-radius:10px;background:var(--card);border:1px solid var(--border);text-align:center;box-shadow:0 1px 2px rgba(0,0,0,0.03);">' +
+          '<div style="font-size:.65rem;font-weight:800;color:#f59e0b;font-family:monospace;display:flex;align-items:center;justify-content:center;gap:3px;">' +
+            '<span>🏆</span><span>' + (curLens === 'ratio' ? 'AVG RATIO' : (curLens === 'cadence' ? 'PEAK DAY' : 'PEAK')) + '</span>' +
+          '</div>' +
+          '<div style="font-size:clamp(0.78rem, 2.2vw, 0.9375rem);font-weight:900;color:var(--primary);margin-top:3px;font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + peakStr + '</div>' +
         '</div>' +
-        '<div class="card" style="padding:8px;margin:0;border-radius:8px;background:var(--card);border:1px solid var(--border);text-align:center;">' +
-          '<div style="font-size:.65rem;font-weight:700;color:var(--ink-soft);font-family:monospace;">' + (curLens === 'ratio' ? 'LATEST RATIO' : (curLens === 'cadence' ? 'TOTAL SESSIONS' : 'LATEST')) + '</div>' +
-          '<div style="font-size:.875rem;font-weight:800;color:var(--ink);margin-top:2px;font-family:monospace;">' + latestStr + '</div>' +
+        '<div class="card" style="padding:8px 6px;margin:0;border-radius:10px;background:var(--card);border:1px solid var(--border);text-align:center;box-shadow:0 1px 2px rgba(0,0,0,0.03);">' +
+          '<div style="font-size:.65rem;font-weight:800;color:#0284c7;font-family:monospace;display:flex;align-items:center;justify-content:center;gap:3px;">' +
+            '<span>⚡</span><span>' + (curLens === 'ratio' ? 'LATEST RATIO' : (curLens === 'cadence' ? 'SESSIONS' : 'LATEST')) + '</span>' +
+          '</div>' +
+          '<div style="font-size:clamp(0.78rem, 2.2vw, 0.9375rem);font-weight:900;color:var(--ink);margin-top:3px;font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + latestStr + '</div>' +
         '</div>' +
-        '<div class="card" style="padding:8px;margin:0;border-radius:8px;background:var(--card);border:1px solid var(--border);text-align:center;">' +
-          '<div style="font-size:.65rem;font-weight:700;color:var(--ink-soft);font-family:monospace;">' + (curLens === 'ratio' ? 'NET SPREAD' : (curLens === 'cadence' ? 'PATTERN' : 'NET DELTA')) + '</div>' +
-          '<div style="font-size:.8125rem;font-weight:800;color:#10b981;margin-top:2px;font-family:monospace;">' + deltaStr + '</div>' +
+        '<div class="card" style="padding:8px 6px;margin:0;border-radius:10px;background:var(--card);border:1px solid var(--border);text-align:center;box-shadow:0 1px 2px rgba(0,0,0,0.03);">' +
+          '<div style="font-size:.65rem;font-weight:800;color:#10b981;font-family:monospace;display:flex;align-items:center;justify-content:center;gap:3px;">' +
+            '<span>📈</span><span>' + (curLens === 'ratio' ? 'NET SPREAD' : (curLens === 'cadence' ? 'PATTERN' : 'NET DELTA')) + '</span>' +
+          '</div>' +
+          '<div style="font-size:clamp(0.75rem, 2vw, 0.875rem);font-weight:900;color:#10b981;margin-top:3px;font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + deltaStr + '</div>' +
         '</div>' +
-        '<div class="card" style="padding:8px;margin:0;border-radius:8px;background:var(--card);border:1px solid var(--border);text-align:center;">' +
-          '<div style="font-size:.65rem;font-weight:700;color:var(--ink-soft);font-family:monospace;">' + (curLens === 'ratio' ? 'EFFICIENCY' : (curLens === 'cadence' ? 'CADENCE' : 'VELOCITY')) + '</div>' +
-          '<div style="font-size:.8125rem;font-weight:800;color:var(--ink);margin-top:2px;font-family:monospace;">' + velocityStr + '</div>' +
+        '<div class="card" style="padding:8px 6px;margin:0;border-radius:10px;background:var(--card);border:1px solid var(--border);text-align:center;box-shadow:0 1px 2px rgba(0,0,0,0.03);">' +
+          '<div style="font-size:.65rem;font-weight:800;color:#8b5cf6;font-family:monospace;display:flex;align-items:center;justify-content:center;gap:3px;">' +
+            '<span>🚀</span><span>' + (curLens === 'ratio' ? 'EFFICIENCY' : (curLens === 'cadence' ? 'CADENCE' : 'VELOCITY')) + '</span>' +
+          '</div>' +
+          '<div style="font-size:clamp(0.75rem, 2vw, 0.875rem);font-weight:900;color:var(--ink);margin-top:3px;font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + velocityStr + '</div>' +
         '</div>' +
       '</div>';
 
-    // 6. 자율 통계 진단 리포트
-    var diagReport = generateStatisticalDiagnosticReport(seriesMap, cadenceData, (curLens === 'ratio' ? ratioData : null));
+    // 6. 자율 통계 진단 리포트 (Visual Executive Briefing Card)
+    var diagReportVisual = generateStatisticalDiagnosticReport(seriesMap, cadenceData, (curLens === 'ratio' ? ratioData : null), { asHtml: true });
     var aiReportHtml = 
-      '<div class="card" style="margin-top:10px;padding:10px 12px;background:linear-gradient(135deg,rgba(14,165,233,0.06),rgba(139,92,246,0.06));border:1px solid rgba(139,92,246,0.22);border-radius:10px;">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-          '<div style="font-weight:800;font-size:.75rem;color:var(--brand);display:flex;align-items:center;gap:4px;">' +
-            '<span>✨ Gemini 3.1 Flash Lite 자율 다차원 통계 진단</span>' +
+      '<div class="card u-ai-briefing-card" style="margin-top:12px;padding:12px 14px;background:linear-gradient(135deg,rgba(37,99,235,0.05),rgba(139,92,246,0.06));border:1px solid rgba(139,92,246,0.22);border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px;">' +
+          '<div style="font-weight:800;font-size:.8125rem;color:var(--brand);display:flex;align-items:center;gap:6px;">' +
+            '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span>' +
+            '<span>✨ Gemini 3.1 Flash Lite 자율 다차원 통계 진단 브리핑</span>' +
           '</div>' +
           '<div style="display:flex;gap:4px;">' +
-            '<button type="button" class="btn btn-xs btn-ghost" id="uLinkGoalBtn" style="font-size:.65rem;padding:2px 6px;border:1px solid var(--border);">🎯 목표 연계</button>' +
-            '<button type="button" class="btn btn-xs btn-primary" id="uRegCalendarBtn" style="font-size:.65rem;padding:2px 6px;font-weight:700;">📅 캘린더 등록</button>' +
+            '<button type="button" class="btn btn-xs btn-ghost" id="uLinkGoalBtn" style="font-size:.6875rem;padding:3px 8px;border:1px solid var(--border);border-radius:6px;">🎯 목표 연계</button>' +
+            '<button type="button" class="btn btn-xs btn-primary" id="uRegCalendarBtn" style="font-size:.6875rem;padding:3px 8px;font-weight:700;border-radius:6px;">📅 캘린더 등록</button>' +
           '</div>' +
         '</div>' +
-        '<div style="font-size:.75rem;color:var(--ink);line-height:1.6;">' +
-          diagReport +
+        '<div style="font-size:.78125rem;color:var(--ink);line-height:1.6;">' +
+          diagReportVisual +
         '</div>' +
       '</div>';
 
@@ -3598,6 +3728,22 @@
         renderUniversalStatsDashboard(container, allRecs, state, callbacks);
       };
     });
+
+    // 상관 효율비 분자/분모 지표 변경 리스너
+    var numSel = container.querySelector('#uRatioNumSelect');
+    if(numSel){
+      numSel.onchange = function(){
+        state.univRatioNum = numSel.value;
+        renderUniversalStatsDashboard(container, allRecs, state, callbacks);
+      };
+    }
+    var denSel = container.querySelector('#uRatioDenSelect');
+    if(denSel){
+      denSel.onchange = function(){
+        state.univRatioDen = denSel.value;
+        renderUniversalStatsDashboard(container, allRecs, state, callbacks);
+      };
+    }
 
     // 모드 버튼
     container.querySelectorAll('.u-mode-btn').forEach(function(btn){

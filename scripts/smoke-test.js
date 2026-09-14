@@ -4089,6 +4089,58 @@ check('compliance: [#TASK-ES-061-TRUE-MULTIDIMENSIONAL] 범용 EAV 자율 마이
   assert.ok(container.innerHTML.includes('PEAK DAY') || container.innerHTML.includes('요일'), 'Cadence 렌즈 차트 및 KPI 렌더링');
 });
 
+check('compliance: [#TASK-ES-061-UIUX-MASTERPIECE] 4대 렌즈 마이크로 뱃지, 상관효율비 인터랙티브 페어 선택기, AI 비주얼 브리핑 게이지, 주중/주말 주기 분석 무결성 검증', () => {
+  const uStats = require('../js/universal-stats.js');
+
+  const multiDomainRecs = [
+    { startAt: '2026-03-02T10:00:00Z', text: 'B2B 솔루션 매출액 1500만원 계약 3건 달성' }, // 월
+    { startAt: '2026-03-03T10:00:00Z', text: 'B2B 솔루션 매출액 2000만원 계약 4건 달성' }, // 화
+    { startAt: '2026-03-07T10:00:00Z', text: '개발 커밋 12개 PR 2개 완료' }, // 토
+    { startAt: '2026-03-08T10:00:00Z', text: '수험 순공 8시간 문제 120제 풀이' } // 일
+  ];
+
+  const container = { innerHTML: '', querySelector: () => null, querySelectorAll: () => [], addEventListener: () => {} };
+  const state = { profile: { records: multiDomainRecs } };
+
+  // 1. 4대 렌즈 마이크로 서브 라벨 검증
+  uStats.renderUniversalStatsDashboard(container, multiDomainRecs, state, {});
+  assert.ok(container.innerHTML.includes('시계열·PR'), '추세 렌즈 서브라벨 시계열·PR 렌더링');
+  assert.ok(container.innerHTML.includes('단가·비율'), '효율비 렌즈 서브라벨 단가·비율 렌더링');
+  assert.ok(container.innerHTML.includes('달성도·방사형'), '레이더 렌즈 서브라벨 달성도·방사형 렌더링');
+  assert.ok(container.innerHTML.includes('루틴·밀도'), '주기 렌즈 서브라벨 루틴·밀도 렌더링');
+
+  // 2. 상관 효율비 인터랙티브 페어 선택기 (Interactive Pair Selector) 렌더링 검증
+  state.univLens = 'ratio';
+  uStats.renderUniversalStatsDashboard(container, multiDomainRecs, state, {});
+  assert.ok(container.innerHTML.includes('u-ratio-pair-bar'), '인터랙티브 페어 선택기 바(u-ratio-pair-bar) 탑재');
+  assert.ok(container.innerHTML.includes('id="uRatioNumSelect"'), '분자 지표 선택 드롭다운 탑재');
+  assert.ok(container.innerHTML.includes('id="uRatioDenSelect"'), '분모 지표 선택 드롭다운 탑재');
+  assert.ok(container.innerHTML.includes('효율단위:'), '효율비 단위 안내 뱃지 표출');
+
+  // 3. AI 통계 진단 비주얼 브리핑 카드 (Visual Executive Briefing Card) 검증
+  assert.ok(container.innerHTML.includes('u-ai-briefing-card'), 'AI 비주얼 브리핑 카드 클래스 탑재');
+  assert.ok(container.innerHTML.includes('변동계수(CV)'), 'CV 변동계수 비주얼 메트릭 카드 렌더링');
+  assert.ok(container.innerHTML.includes('Gemini 3.1 Flash Lite 자율 다차원 통계 진단 브리핑'), '브리핑 카드 헤더 렌더링');
+
+  // 4. 레이더 차트 그라디언트 & 균형 지수 푸터 검증
+  const onto = uStats.buildUniversalOntology(multiDomainRecs);
+  const radarHtml = uStats.renderRadarSvg(onto, {
+    '매출액': { points: [{ val: 2000 }], prVal: 2000, unit: '만원' },
+    '계약': { points: [{ val: 4 }], prVal: 4, unit: '건' },
+    '커밋': { points: [{ val: 12 }], prVal: 12, unit: '개' }
+  });
+  assert.ok(radarHtml.includes('uRadarGrad') || radarHtml.includes('균형'), '레이더 차트 그라디언트/균형 지수 렌더링');
+
+  // 5. 요일 주기 주중 vs 주말 통계 분석 검증
+  const cadenceData = uStats.computeCadenceData(multiDomainRecs);
+  const cadenceHtml = uStats.renderCadenceSvg(cadenceData);
+  assert.ok(cadenceHtml.includes('주중') && cadenceHtml.includes('주말'), '주중 vs 주말 통계 분석 뱃지 렌더링');
+
+  // 6. 반응형 4-KPI 카드 아이콘 & clamp 타이포그래피 검증
+  assert.ok(container.innerHTML.includes('🏆') || container.innerHTML.includes('⚡'), '4-KPI 고유 악센트 아이콘 탑재');
+  assert.ok(container.innerHTML.includes('clamp'), '반응형 clamp 타이포그래피 탑재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
