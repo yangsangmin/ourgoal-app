@@ -3632,6 +3632,30 @@ check('compliance: [#TASK-ES-043] 9대 UX 핵심 결함(스트릭 보존, 개인
   assert.ok(html.includes('id="inAppBrowserNotice"') || html.includes("id = 'inAppBrowserNotice'"), '카카오톡 인앱 브라우저 안내 배너 DOM 생성');
 });
 
+check('compliance: [#TASK-ES-042] 체크인 3단 피드백 모드(기본·중간·정밀) 및 최근 3일 기록 연계 피드백 엔진 검증', () => {
+  // 1. index.html UI 마크업: 3단 피드백 모드 바 및 3개 티어 버튼
+  assert.ok(html.includes('id="checkinFeedbackTierBar"'), '체크인 카드 3단 피드백 모드 바 마크업 존재');
+  assert.ok(html.includes('data-fbtier="default"'), '기본 모드 버튼 존재');
+  assert.ok(html.includes('data-fbtier="medium"'), '중간 모드 버튼 존재');
+  assert.ok(html.includes('data-fbtier="macro"'), '정밀 모드 버튼 존재');
+
+  // 2. index.html JS 엔진: 최근 기록 추출, 직전 피드백 조언 추출, 티어바 초기화, 1클릭 캘린더 버튼
+  assert.ok(html.includes('getRecentCheckinsForAI'), '최근 실천 기록 연계 추출 함수 탑재');
+  assert.ok(html.includes('getLastFeedbackAdvice'), '직전 피드백 조언 추출 함수 탑재');
+  assert.ok(html.includes('initFeedbackTierBar'), '3단 피드백 티어바 바인딩 및 상태 동기화 함수 탑재');
+  assert.ok(html.includes('btnApplyAiCalSlot'), '1클릭 캘린더 추천 일정 등록 버튼 탑재');
+
+  // 3. api/feedback.js 백엔드: mode(기본/중간/정밀), recentRecords 파라미터 및 프롬프트 주입
+  const feedbackApiCode = fs.readFileSync(path.join(__dirname, '..', 'api', 'feedback.js'), 'utf8');
+  assert.ok(feedbackApiCode.includes('recentRecords'), '최근 기록 recentRecords 파라미터 수신');
+  assert.ok(feedbackApiCode.includes('recentRecordsBlock'), '최근 기록 컨텍스트 프롬프트 블록 구성');
+  assert.ok(feedbackApiCode.includes('모드: 기본 피드백'), '기본 모드 지침 포함');
+  assert.ok(feedbackApiCode.includes('모드: 중간 피드백'), '중간 모드 지침 포함');
+  assert.ok(feedbackApiCode.includes('모드: 정밀 피드백'), '정밀 모드 지침 포함');
+  assert.ok(feedbackApiCode.includes('정밀 진단'), '정밀 모드 verdict 및 폴백 연동');
+  assert.ok(feedbackApiCode.includes('페이스 조율'), '중간 모드 verdict 및 폴백 연동');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
