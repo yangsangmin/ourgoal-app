@@ -3210,3 +3210,25 @@
   - `npm test`: **233개 전수 100% 통과 (0개 실패)**.
   - `essence-gate.js`: 금지 패턴 0건, `index.html` 순증가 13줄 (300줄 한도 엄수).
 ---
+
+## [2026-09-14 13:20] [FEAT] #TASK-ES-060 1900년대 및 역대 과거 임의 데이터 완벽 수용·융합·자율 시각화 및 크래시 방어 구축
+- **목표**: 1900년대(1900~1999) 및 100년 전 과거 임의 데이터까지 아워골 유니버설 데이터베이스와 자율 시각화 엔진에서 완벽하게 수용·융합하고, 비표준 날짜 구분자(점, 슬래시, 하이픈, 한글 년월일, YYYYMMDD)로 인한 `RangeError: Invalid time value` 및 `seriesKeys is not defined` 런타임 크래시를 원천 박멸하며, X축 연도 표기 및 가져오기 즉시 성취 통계 화면으로 자동 전환되도록 구현.
+- **수정/실행 내역**:
+  1. `js/universal-stats.js`:
+     - `normalizeHistoricalDate(str, offsetMin)` 신설: 1900년대 날짜(예: `1924.05.04`, `1924/05/06`, `1988년 09월 17일`, `19501225`) 및 다양한 구분자를 유효한 ISO 8601 타임스탬프로 안전하게 정규화하여 `RangeError` 원천 방지.
+     - `generate1920sOlympicStrengthSample()` 신설: 1924년 파리 올림픽 근대 체육 100년 실측 역도/스트렝스 72세션 정본 데이터(스쿼트/벤치프레스/데드리프트/밀리터리프레스/스내치 등) 및 원클릭 로더 배선.
+     - `parseCsvToUniversalRecords`: `normalizeHistoricalDate` 적용으로 임의 historical CSV 파싱 무손실 처리.
+     - `aggregateMultiSeries`: `'all'`(전체/역대) 기간 지원 및 1900년대 음수 타임스탬프(Unix epoch 이전) 무손실 수용, 기간 필터링 시 데이터셋 최신 일자 기준 안전 윈도우 계산.
+     - `renderMultiSeriesSvg`: 1900년대 또는 다년도 데이터 감지 시 X축에 `1924.05` 형식의 연도 명시 표기.
+     - `renderUniversalStatsDashboard`: `seriesKeys` 선언 스코프 결함 해결(ReferenceError 원천 방지), `data-period="all"` 버튼 탑재, 과거 데이터 감지 시 기본 기간 `'all'` 자동 활성화.
+     - `openUniversalImportModal`: 1924 올림픽 100년 역대 샘플 카드 탑재, 적용 시 `state.recordsSegment = 'stats'` 및 `state.univPeriod = 'all'` 지정으로 가져오기 완료 즉시 통계 뷰 표출.
+  2. `index.html`:
+     - `fmtDateLabel(iso)`: 현재 연도와 다른 과거 연도인 경우 `YYYY년 M월 D일`로 연도 명시 표기.
+     - `renderRecordsScreen`: 유니버설 대시보드 렌더러 호출 `try...catch` 방어막 탑재 및 `onDone` 콜백에서 `state.recordsSegment = 'stats'`로 자동 전환하여 0초 만에 대시보드 화면 표출.
+     - 스크립트 캐시버스터 `js/universal-stats.js?v=20260914-es060` 갱신.
+  3. `scripts/smoke-test.js`:
+     - `[#TASK-ES-060]` 1900년대 일자 정규화, 1924 올림픽 샘플 72건 생성, 1900년대 CSV 무손실 파싱, 'all' 기간 다중 시계열 집계, 대시보드 무중단 렌더링, `fmtDateLabel` 과거 연도 표기, `try-catch` 방어망 전수 검증 추가.
+- **검증 결과**:
+  - `npm test`: **234개 전수 100% 통과 (0개 실패)**.
+  - `node scripts/essence-gate.js --pre-commit`: 금지 패턴 0건, index.html 순증가 5줄 (300줄 한도 엄수).
+---
