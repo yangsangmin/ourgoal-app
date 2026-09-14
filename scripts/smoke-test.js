@@ -3947,6 +3947,34 @@ check('compliance: [#TASK-ES-061-DEFITNESS] 운동/건강 편향 탈피 및 임�
   });
   assert.ok(mockContainer.innerHTML.includes('u-dim-selector-row'), '대시보드 내 차원 선택 바(u-dim-selector-row) 렌더링');
   assert.ok(mockContainer.innerHTML.includes(revenueKey) || mockContainer.innerHTML.includes('u-dim-btn'), '동적 차원 전환 버튼 렌더링');
+
+  // 6. 데이터 없을 때 Empty State 4대 도메인 스타터 카드 및 가져오기 버튼 검증
+  const emptyContainer = { innerHTML: '', querySelector: () => null, querySelectorAll: () => [] };
+  uStats.renderUniversalStatsDashboard(emptyContainer, [], {}, {});
+  assert.ok(emptyContainer.innerHTML.includes('u-empty-load-btn'), 'Empty State 4대 스타터 버튼 컨테이너');
+  assert.ok(emptyContainer.innerHTML.includes('data-type="sales"'), 'B2B 영업 실적 52주 스타터 카드 탑재');
+  assert.ok(emptyContainer.innerHTML.includes('data-type="coding"'), '개발자 활동 52주 스타터 카드 탑재');
+  assert.ok(emptyContainer.innerHTML.includes('data-type="study"'), '수험·공부 52주 스타터 카드 탑재');
+  assert.ok(emptyContainer.innerHTML.includes('data-type="big3"'), '건강·운동 52주 스타터 카드 탑재');
+  assert.ok(emptyContainer.innerHTML.includes('uEmptyImportBtn'), '내 데이터 가져오기 버튼 탑재');
+
+  // 7. 통합 인제스천 모달 1순위 대표 샘플(영업, 개발) 및 3대 탭 탑재 검증
+  let capturedModalHtml = '';
+  uStats.openUniversalImportModal({
+    openModal: function(html){ capturedModalHtml = html; },
+    closeModal: function(){},
+    state: {},
+    toast: function(){}
+  });
+  assert.ok(capturedModalHtml.includes('data-sample="sales"'), '모달 1순위 카드 B2B 영업 실적 탑재');
+  assert.ok(capturedModalHtml.includes('data-sample="coding"'), '모달 2순위 카드 오픈소스 개발 활동 탑재');
+  assert.ok(capturedModalHtml.includes('uImpTabSamples'), '1년치 추천 샘플 탭 탑재');
+  assert.ok(capturedModalHtml.includes('uImpTabCsv'), 'CSV 파일 탭 탑재');
+  assert.ok(capturedModalHtml.includes('uImpTabText'), '텍스트 붙여넣기 탭 탑재');
+
+  // 8. index.html 배너 문구의 도메인 중립성 검증
+  const indexHtmlContent = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.ok(indexHtmlContent.includes('영업 실적, 개발 커밋, 수험 공부, 자산, 운동'), 'index.html 배너의 전 도메인 포용 문구 검증');
 });
 
 

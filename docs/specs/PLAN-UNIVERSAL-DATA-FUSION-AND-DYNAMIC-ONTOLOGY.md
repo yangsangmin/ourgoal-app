@@ -23,14 +23,21 @@ flowchart LR
 
 ---
 
-### [WP-1] 테크니컬 콕핏 아코디언 컨테이너 & 0-Lag 렌더링
-- **목적**: 기본 접힘 상태로 기존 UX를 방해하지 않으면서, 펼침 시 0초 만에 왜곡 없이 완벽한 비율로 렌더링.
+### [WP-1] 테크니컬 콕핏 아코디언 컨테이너 & 빈 상태(Empty State) 멀티 도메인 스타터
+- **목적**: 기본 접힘 상태로 기존 UX를 방해하지 않으면서, 펼침 시 0초 만에 왜곡 없이 완벽한 비율로 렌더링하고, 빈 화면 시 4대 도메인 1초 선택형 로더를 제공하여 피트니스 종속성 완전 탈피.
 - **세부 작업**:
   1. `localStorage` 키 `ourgoal_uStats_expanded` 연동 (`true`/`false`).
   2. 헤더 바 1행 컴팩트 레이아웃 구성:
      - 좌측: `📊 [ANALYTICS] 자율 다차원 통계 분석기` (Monospace 볼드) + 활성 시리즈 배지 (`N Series`).
      - 우측: `[DATA GRID]` 버튼, `[EXPORT CSV]` 버튼, 토글 아이콘 `[▼ / ▲]`.
-  3. 아코디언 펼침 이벤트 시 `requestAnimationFrame`을 통해 컨테이너 너비(`getBoundingClientRect().width`)를 실측하고 SVG `viewBox` 및 X축 스케일을 0-Lag 동기화.
+  3. **빈 화면(Empty State) 4대 대표 도메인 멀티 스타터 카드 신설**:
+     - `[⚡ 52주 3대운동 로드]` 단일 버튼 원천 폐기.
+     - 💼 **B2B 영업 실적** (52주 매출액 & 계약건수)
+     - 💻 **개발자 활동** (52주 커밋수 & PR 머지)
+     - 📖 **수험 / 학습** (52주 문제풀이 & 순공시간)
+     - 🏃 **건강 / 운동** (52주 세션 & 중량)
+     - `[📥 내 데이터 직접 가져오기]` 버튼 병렬 마운트.
+  4. 아코디언 펼침 이벤트 시 `requestAnimationFrame`을 통해 컨테이너 너비(`getBoundingClientRect().width`)를 실측하고 SVG `viewBox` 및 X축 스케일을 0-Lag 동기화.
 
 ---
 
@@ -66,13 +73,13 @@ flowchart LR
 ### [WP-4] 도메인 중립 엔터프라이즈 데이터 그리드 모달
 - **목적**: 엑셀/노션급 고밀도 테이블로 수천 건의 시계열 데이터를 검색·정렬·편집·내보내기.
 - **세부 작업**:
-  1. **컨텍스트 인식 동적 컬럼 매핑**:
-     - 독서 ➔ `Pages (쪽)`, `Reading Time (분)`
-     - 학술/연구 ➔ `Progress (%)`, `Deep Work (hr)`
-     - 유산소 ➔ `Distance (km)`, `Pace/Time`
-     - 근력 ➔ `Peak 1RM (kg)`, `Total Volume (kg)`
-     - 재테크 ➔ `Amount (원)`, `Return Rate (%)`
-     - 임의 CSV ➔ 원본 헤더명 유지
+  1. **컨텍스트 인식 완전 동적 컬럼 매핑**:
+     - B2B 영업 ➔ `대표 지표 1: 매출액 (만원)`, `대표 지표 2: 계약건수 (건)`
+     - 개발 코딩 ➔ `대표 지표 1: 커밋수 (개)`, `대표 지표 2: PR수 (개)`
+     - 수험 학습 ➔ `대표 지표 1: 문제수 (개)`, `대표 지표 2: 학습시간 (분)`
+     - 자산 금융 ➔ `대표 지표 1: 저축/투자액 (만원)`, `대표 지표 2: 수익률 (%)`
+     - 운동 체육 ➔ `대표 지표 1: 중량 (kg)`, `대표 지표 2: 반복수 (회)` (실제 운동 엔티티일 때만 선별 적용)
+     - 임의 CSV ➔ 원본 숫자 헤더명과 단위를 그대로 동적 매핑
   2. **모노스페이스 3상태 다차원 컬럼 정렬**:
      - Header 클릭: `None ➔ Descending ➔ Ascending ➔ None` 순환.
      - 숫자 컬럼 Monospace 우측 정렬.
@@ -82,7 +89,7 @@ flowchart LR
      - `[🗑️ Delete]`: 개별 삭제 및 단일 원장 갱신.
   4. **배치 일괄 관리 & 소스 필터**:
      - 전체 선택 체크박스 및 선택 항목 일괄 삭제 (`Bulk Delete`).
-     - 소스 태그 필터: `[All Sources]`, `[Manual In-App]`, `[CSV 52W Big3]`, `[Historical 1924]`, `[Custom Upload]`.
+     - 소스 태그 필터: `[All Sources]`, `[B2B Sales]`, `[Dev Coding]`, `[Study Exam]`, `[Historical 1924]`, `[Custom Upload]`.
   5. **클린 CSV 내보내기 (Export Clean CSV)**:
      - 정제된 데이터를 UTF-8 with BOM 형식으로 1초 다운로드.
   6. **지연 페이징 (Lazy Paging)**:

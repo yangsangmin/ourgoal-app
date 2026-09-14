@@ -2292,10 +2292,10 @@
     function getDisplayRecord(r){
       var d = (r.startAt || r.createdAt || '').slice(0, 10);
       var ent = r.subTheme || r.item || r.exercise || '일반';
-      var pVal = (r.metrics && (r.metrics.primary !== undefined ? r.metrics.primary : (r.metrics['1rm'] || r.metrics.pages || r.metrics.distance || 0))) || 0;
-      var pUnit = (r.metrics && r.metrics.primaryUnit) || (r.metrics && r.metrics['1rm'] ? 'kg' : (r.metrics && r.metrics.pages ? '쪽' : ''));
-      var sVal = (r.metrics && (r.metrics.secondary !== undefined ? r.metrics.secondary : (r.metrics.volume || r.metrics.duration || 0))) || 0;
-      var sUnit = (r.metrics && r.metrics.secondaryUnit) || (r.metrics && r.metrics.volume ? 'kg' : (r.metrics && r.metrics.duration ? '분' : ''));
+      var pVal = (r.metrics && (r.metrics.primary !== undefined ? r.metrics.primary : (r.metrics.revenue !== undefined ? r.metrics.revenue : (r.metrics.commits !== undefined ? r.metrics.commits : (r.metrics.problems !== undefined ? r.metrics.problems : (r.metrics['1rm'] || r.metrics.pages || r.metrics.distance || 0)))))) || 0;
+      var pUnit = (r.metrics && r.metrics.primaryUnit) || (r.metricUnits && (r.metricUnits.primary || r.metricUnits.revenue || r.metricUnits.commits || r.metricUnits.problems)) || (r.metrics && r.metrics['1rm'] ? 'kg' : (r.metrics && r.metrics.pages ? '쪽' : (r.metrics && r.metrics.revenue ? '만원' : '')));
+      var sVal = (r.metrics && (r.metrics.secondary !== undefined ? r.metrics.secondary : (r.metrics.deals !== undefined ? r.metrics.deals : (r.metrics.prs !== undefined ? r.metrics.prs : (r.metrics.volume || r.metrics.duration || 0))))) || 0;
+      var sUnit = (r.metrics && r.metrics.secondaryUnit) || (r.metricUnits && (r.metricUnits.secondary || r.metricUnits.deals || r.metricUnits.prs)) || (r.metrics && r.metrics.volume ? 'kg' : (r.metrics && r.metrics.duration ? '분' : (r.metrics && r.metrics.deals ? '건' : '')));
       var memo = r.text || '';
       var src = r.source || 'in_app';
       var rawTime = new Date(r.startAt || r.createdAt).getTime();
@@ -2353,21 +2353,31 @@
       var sampleRow = pagedRows[0];
       if(sampleRow){
         var entLower = (sampleRow.entity || '').toLowerCase();
+        var rawM = (sampleRow.raw && sampleRow.raw.metrics) || {};
         var isWeightlifting = /스쿼트|벤치프레스|데드리프트|역도|파워리프팅/.test(entLower);
-        if(isWeightlifting && sampleRow.primaryUnit === 'kg'){
+        if(rawM.revenue !== undefined || /영업|매출|계약/.test(entLower)){
+          h1 = '매출실적 (' + (sampleRow.primaryUnit || '만원') + ')';
+          h2 = '계약/미팅 (' + (sampleRow.secondaryUnit || '건') + ')';
+        } else if(rawM.commits !== undefined || /개발|커밋|코딩|git/.test(entLower)){
+          h1 = '커밋수 (' + (sampleRow.primaryUnit || '개') + ')';
+          h2 = 'PR/리뷰 (' + (sampleRow.secondaryUnit || '개') + ')';
+        } else if(rawM.problems !== undefined || /공부|수험|학습|문제/.test(entLower)){
+          h1 = '소요시간 (' + (sampleRow.primaryUnit || '분') + ')';
+          h2 = '문제풀이 (' + (sampleRow.secondaryUnit || '개') + ')';
+        } else if(isWeightlifting && sampleRow.primaryUnit === 'kg'){
           h1 = 'Peak 1RM (kg)';
           h2 = 'Total Vol (kg)';
-        } else if(sampleRow.primaryUnit === '쪽'){
+        } else if(sampleRow.primaryUnit === '쪽' || /독서|책/.test(entLower)){
           h1 = '독서량 (쪽)';
           h2 = '집중시간 (분)';
-        } else if(sampleRow.primaryUnit === 'km'){
+        } else if(sampleRow.primaryUnit === 'km' || /러닝|달리기/.test(entLower)){
           h1 = '거리 (km)';
           h2 = '소요시간 (분)';
-        } else if(sampleRow.primaryUnit === 'hr' || sampleRow.primaryUnit === '시간'){
-          h1 = '소요시간 (' + sampleRow.primaryUnit + ')';
-          h2 = '진척도 (%)';
-        } else if(sampleRow.primaryUnit === '원' || sampleRow.primaryUnit === '만원'){
-          h1 = '금액 (' + sampleRow.primaryUnit + ')';
+        } else if(sampleRow.primaryUnit === 'hr' || sampleRow.primaryUnit === '시간' || /수면|잠/.test(entLower)){
+          h1 = '수면시간 (' + (sampleRow.primaryUnit || '시간') + ')';
+          h2 = '컨디션 점수';
+        } else if(sampleRow.primaryUnit === '원' || sampleRow.primaryUnit === '만원' || /재테크|저축|자산/.test(entLower)){
+          h1 = '저축/투자 (' + (sampleRow.primaryUnit || '만원') + ')';
           h2 = '건수/수익률';
         } else {
           h1 = sampleRow.primaryUnit ? ('1차 지표 (' + sampleRow.primaryUnit + ')') : '1차 지표';
@@ -2728,22 +2738,66 @@
 
     if(ontology.length === 0){
       container.innerHTML = 
-        '<div class="card" style="padding:16px;text-align:center;border-radius:12px;background:var(--card);">' +
-          '<div style="font-size:1.5rem;margin-bottom:6px;">📥</div>' +
-          '<div style="font-weight:700;font-size:.9375rem;color:var(--ink);">아직 분석할 데이터가 없습니다</div>' +
-          '<div style="font-size:.8125rem;color:var(--ink-soft);margin-top:4px;margin-bottom:12px;">체중, 독서, 수면, 3대 운동 등 어떤 데이터든 1초 만에 가져와보세요.</div>' +
-          '<button type="button" class="btn btn-primary btn-sm" id="uEmptyLoadBig3Btn" style="font-weight:700;"><span>⚡ 52주 3대운동 156세션 1초 로드</span></button>' +
+        '<div class="card" style="padding:18px 14px;text-align:center;border-radius:14px;background:var(--card);border:1px solid var(--border);">' +
+          '<div style="font-size:1.6rem;margin-bottom:6px;">📊</div>' +
+          '<div style="font-weight:800;font-size:1rem;color:var(--ink);">자율 다차원 통계 분석기</div>' +
+          '<div style="font-size:.8125rem;color:var(--ink-soft);margin-top:4px;margin-bottom:14px;line-height:1.5;">영업 실적, 개발 커밋, 수험 공부, 자산, 운동 등 어떤 데이터든 AI가 감지해 다차원으로 분석해요.</div>' +
+          '<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:8px;margin-bottom:12px;">' +
+            '<button type="button" class="btn btn-ghost btn-sm u-empty-load-btn" data-type="sales" style="padding:10px 8px;border-radius:10px;border:1px solid var(--border);background:var(--card2);display:flex;flex-direction:column;align-items:center;gap:4px;height:auto;cursor:pointer;">' +
+              '<span style="font-size:1.2rem;">💼</span>' +
+              '<span style="font-weight:700;font-size:.75rem;color:var(--ink);">B2B 영업 실적</span>' +
+              '<span style="font-size:.65rem;color:var(--ink-soft);">52주 매출·계약</span>' +
+            '</button>' +
+            '<button type="button" class="btn btn-ghost btn-sm u-empty-load-btn" data-type="coding" style="padding:10px 8px;border-radius:10px;border:1px solid var(--border);background:var(--card2);display:flex;flex-direction:column;align-items:center;gap:4px;height:auto;cursor:pointer;">' +
+              '<span style="font-size:1.2rem;">💻</span>' +
+              '<span style="font-weight:700;font-size:.75rem;color:var(--ink);">개발자 활동</span>' +
+              '<span style="font-size:.65rem;color:var(--ink-soft);">52주 커밋·PR</span>' +
+            '</button>' +
+            '<button type="button" class="btn btn-ghost btn-sm u-empty-load-btn" data-type="study" style="padding:10px 8px;border-radius:10px;border:1px solid var(--border);background:var(--card2);display:flex;flex-direction:column;align-items:center;gap:4px;height:auto;cursor:pointer;">' +
+              '<span style="font-size:1.2rem;">📖</span>' +
+              '<span style="font-weight:700;font-size:.75rem;color:var(--ink);">수험·공부</span>' +
+              '<span style="font-size:.65rem;color:var(--ink-soft);">52주 문제·순공</span>' +
+            '</button>' +
+            '<button type="button" class="btn btn-ghost btn-sm u-empty-load-btn" id="uEmptyLoadBig3Btn" data-type="big3" style="padding:10px 8px;border-radius:10px;border:1px solid var(--border);background:var(--card2);display:flex;flex-direction:column;align-items:center;gap:4px;height:auto;cursor:pointer;">' +
+              '<span style="font-size:1.2rem;">🏃</span>' +
+              '<span style="font-weight:700;font-size:.75rem;color:var(--ink);">건강·운동</span>' +
+              '<span style="font-size:.65rem;color:var(--ink-soft);">52주 중량·세션</span>' +
+            '</button>' +
+          '</div>' +
+          '<button type="button" class="btn btn-primary btn-sm" id="uEmptyImportBtn" style="font-weight:700;padding:8px 16px;"><span>📥 내 데이터 가져오기 (CSV / 직접입력)</span></button>' +
         '</div>';
 
-      var eBtn = container.querySelector('#uEmptyLoadBig3Btn');
-      if(eBtn){
-        eBtn.onclick = function(){
-          var sRecs = generate52WeekPowerliftingSample();
+      container.querySelectorAll('.u-empty-load-btn').forEach(function(btn){
+        btn.onclick = function(){
+          var sType = btn.dataset.type;
+          var sRecs = [];
+          if(sType === 'sales') sRecs = generateDomainSample('sales');
+          else if(sType === 'coding') sRecs = generateDomainSample('coding');
+          else if(sType === 'study') sRecs = generateDomainSample('study');
+          else sRecs = generate52WeekPowerliftingSample();
+
           var cur = (state && state.profile && state.profile.records) || [];
-          state.profile.records = cur.concat(sRecs);
+          if(state && state.profile) state.profile.records = cur.concat(sRecs);
           if(callbacks.saveProfile) callbacks.saveProfile();
           if(callbacks.onDone) callbacks.onDone();
-          renderUniversalStatsDashboard(container, state.profile.records, state, callbacks);
+          renderUniversalStatsDashboard(container, (state && state.profile && state.profile.records) || sRecs, state, callbacks);
+        };
+      });
+
+      var impBtn = container.querySelector('#uEmptyImportBtn');
+      if(impBtn){
+        impBtn.onclick = function(){
+          openUniversalImportModal({
+            openModal: callbacks.openModal || window.openModal,
+            closeModal: callbacks.closeModal || window.closeModal,
+            toast: callbacks.toast || window.toast,
+            state: state,
+            saveProfile: callbacks.saveProfile,
+            onDone: function(){
+              if(callbacks.onDone) callbacks.onDone();
+              renderUniversalStatsDashboard(container, (state && state.profile && state.profile.records) || [], state, callbacks);
+            }
+          });
         };
       }
       return;
@@ -2763,16 +2817,23 @@
     }
 
     // 선택된 엔티티가 가진 모든 측정 차원(Metric Dimensions) 동적 수집
+    var targetEntityNames = (mode === 'all') ? ontology.map(function(o){ return o.name; }) : selected;
     var availableDims = [];
-    selected.forEach(function(name){
+    var specificDims = [];
+    targetEntityNames.forEach(function(name){
       var ent = ontology.find(function(o){ return o.name === name; });
       if(ent && Array.isArray(ent.dimensions)){
         ent.dimensions.forEach(function(d){
-          if(!availableDims.includes(d)) availableDims.push(d);
+          if(d === 'primary' || d === 'secondary' || d === 'primaryUnit' || d === 'secondaryUnit') return;
+          if(!specificDims.includes(d)) specificDims.push(d);
         });
       }
     });
-    if(availableDims.length === 0) availableDims = ['primary'];
+    if(specificDims.length > 0){
+      availableDims = specificDims;
+    } else {
+      availableDims = ['primary'];
+    }
 
     var dimension = state.univDimension;
     if(!dimension || !availableDims.includes(dimension)){
@@ -3297,14 +3358,14 @@
     }
   }
 
-function openUniversalImportModal(options){
-    options = options || {};
-    var openModalFn = options.openModal || window.openModal;
-    var closeModalFn = options.closeModal || window.closeModal;
-    var toastFn = options.toast || window.toast || console.log;
-    var state = options.state || (window.state || {});
-    var saveProfileFn = options.saveProfile;
-    var onDoneFn = options.onDone;
+  function openUniversalImportModal(opts){
+    opts = opts || {};
+    var openModalFn = opts.openModal;
+    var closeModalFn = opts.closeModal;
+    var toastFn = opts.toast;
+    var state = opts.state;
+    var saveProfileFn = opts.saveProfile;
+    var onDoneFn = opts.onDone;
 
     if(!openModalFn) return;
 
@@ -3312,89 +3373,84 @@ function openUniversalImportModal(options){
 
     var modalHtml = 
       '<div class="modal-head">' +
-        '<h3>📥 다양한 외부 데이터 가져오기 & 융합</h3>' +
+        '<h3>📥 다차원 데이터 융합 & 도메인별 52주 실측 샘플 로드</h3>' +
       '</div>' +
       '<div style="margin-bottom:12px;font-size:.8125rem;color:var(--ink-soft);line-height:1.4;">' +
-        'CSV 파일이나 텍스트를 넣으면 아워골 DB에 일자별(시·분·초까지)로 완벽히 융합되어, 성취통계 뷰에서 개별/다중 선택 시각화로 즉시 확인하실 수 있습니다.' +
+        '영업 실적·개발 활동·수험 공부·자산·운동 등 어떤 형식의 데이터든 AI가 스스로 필드를 감지하여 다차원 차트로 시각화합니다.' +
       '</div>' +
 
+      '<!-- 3개 탭 바 -->' +
       '<div class="tab-bar" style="margin-bottom:14px;display:flex;gap:4px;border-bottom:1px solid var(--border);padding-bottom:6px;">' +
-        '<button class="tab-btn active" id="uImpTabSamples" type="button" style="flex:1;padding:8px 4px;font-size:.8125rem;font-weight:700;border:none;background:transparent;color:var(--brand);border-bottom:2px solid var(--brand);cursor:pointer;">⚡ 추천 실측 샘플</button>' +
-        '<button class="tab-btn" id="uImpTabCsv" type="button" style="flex:1;padding:8px 4px;font-size:.8125rem;font-weight:600;border:none;background:transparent;color:var(--ink-soft);cursor:pointer;">📁 CSV 파일 올리기</button>' +
-        '<button class="tab-btn" id="uImpTabText" type="button" style="flex:1;padding:8px 4px;font-size:.8125rem;font-weight:600;border:none;background:transparent;color:var(--ink-soft);cursor:pointer;">✍️ 텍스트/표 붙여넣기</button>' +
+        '<button class="tab-btn active" id="uImpTabSamples" type="button" style="flex:1;padding:8px 4px;font-size:.8125rem;font-weight:700;border:none;background:transparent;color:var(--brand);border-bottom:2px solid var(--brand);cursor:pointer;">⚡ 52주 추천 샘플</button>' +
+        '<button class="tab-btn" id="uImpTabCsv" type="button" style="flex:1;padding:8px 4px;font-size:.8125rem;font-weight:600;border:none;background:transparent;color:var(--ink-soft);cursor:pointer;">📁 CSV 파일</button>' +
+        '<button class="tab-btn" id="uImpTabText" type="button" style="flex:1;padding:8px 4px;font-size:.8125rem;font-weight:600;border:none;background:transparent;color:var(--ink-soft);cursor:pointer;">✍️ 엑셀/텍스트 붙여넣기</button>' +
       '</div>' +
 
+      '<!-- Tab 1: 추천 샘플 1초 로드 -->' +
       '<div id="uImpPanelSamples" class="u-imp-panel">' +
-        '<div class="card" style="padding:12px;margin-bottom:10px;border-radius:12px;background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(59,130,246,0.06));border:1.5px solid rgba(16,185,129,0.35);">' +
-          '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
-            '<div>' +
-              '<div style="font-weight:800;font-size:.875rem;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
-                '<span>📜 1924년 파리 올림픽 근대 체육 100년 실측 (1920년대)</span>' +
-                '<span style="font-size:.6875rem;padding:2px 6px;border-radius:6px;background:#10b981;color:#fff;font-weight:800;">100년 역대 데이터</span>' +
-              '</div>' +
-              '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:3px;">' +
-                '1924년 1월~12월 역도·스트렝스 72세션. 100년 전 1900년대 기록도 무손실 융합 및 자율 시각화' +
-              '</div>' +
+        '<div style="display:flex;flex-direction:column;gap:8px;">' +
+          '<!-- 대표 도메인 1: B2B 영업 -->' +
+          '<button type="button" class="btn btn-ghost u-sample-card" data-sample="sales" style="height:auto;padding:12px;text-align:left;display:flex;flex-direction:column;gap:4px;border:1.5px solid var(--brand);background:var(--brand-faint, rgba(37,99,235,0.04));border-radius:10px;">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;">' +
+              '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">💼 B2B IT 솔루션 영업 실적 52주</span>' +
+              '<span class="badge" style="font-size:.6875rem;background:var(--brand);color:#fff;padding:2px 6px;border-radius:4px;">대표 샘플</span>' +
             '</div>' +
-            '<button type="button" class="btn btn-primary btn-sm u-sample-card" data-sample="olympic_1924" style="font-weight:700;flex-shrink:0;">선택</button>' +
-          '</div>' +
-        '</div>' +
-        '<div class="card" style="padding:12px;margin-bottom:10px;border-radius:12px;background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(239,68,68,0.06));border:1.5px solid rgba(245,158,11,0.35);">' +
-          '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
-            '<div>' +
-              '<div style="font-weight:800;font-size:.875rem;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
-                '<span>🏋️ 52주 3대운동 주기화 156세션 (상민님 첨부 정본)</span>' +
-                '<span style="font-size:.6875rem;padding:2px 6px;border-radius:6px;background:#f59e0b;color:#fff;font-weight:800;">강력 추천</span>' +
-              '</div>' +
-              '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:3px;">' +
-                '스쿼트·벤치·데드 52주 전 세션. 1RM 366->506kg 달성 궤적 & PR 일자 완벽 탑재' +
-              '</div>' +
+            '<span style="font-size:.75rem;color:var(--ink-soft);">52주간 콜 수, 미팅 수, 제안서, 수주액, 파이프라인 전환율 추적</span>' +
+          '</button>' +
+          '<!-- 대표 도메인 2: 오픈소스 개발 -->' +
+          '<button type="button" class="btn btn-ghost u-sample-card" data-sample="coding" style="height:auto;padding:12px;text-align:left;display:flex;flex-direction:column;gap:4px;border:1.5px solid var(--border);border-radius:10px;">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;">' +
+              '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">💻 풀스택 오픈소스 개발 활동 52주</span>' +
+              '<span class="badge" style="font-size:.6875rem;background:var(--card2);color:var(--ink);padding:2px 6px;border-radius:4px;">IT/개발</span>' +
             '</div>' +
-            '<button type="button" class="btn btn-primary btn-sm u-sample-card" data-sample="big3_52w" style="font-weight:700;flex-shrink:0;">선택</button>' +
+            '<span style="font-size:.75rem;color:var(--ink-soft);">52주간 일일 커밋 수, PR 병합 수, 코드 리뷰, 버그 수정 추적</span>' +
+          '</button>' +
+          '<!-- 기타 도메인 서브그리드 -->' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;">' +
+            '<button type="button" class="btn btn-ghost u-sample-card" data-sample="study" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
+              '<span style="font-weight:700;font-size:.8125rem;color:var(--ink);">📖 수험/자격증 공부</span>' +
+              '<span style="font-size:.6875rem;color:var(--ink-soft);">순공시간·문제풀이·복습량</span>' +
+            '</button>' +
+            '<button type="button" class="btn btn-ghost u-sample-card" data-sample="finance" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
+              '<span style="font-weight:700;font-size:.8125rem;color:var(--ink);">💰 재테크/자산 형성</span>' +
+              '<span style="font-size:.6875rem;color:var(--ink-soft);">저축액·투자수익·소비통제</span>' +
+            '</button>' +
+            '<button type="button" class="btn btn-ghost u-sample-card" data-sample="big3_52w" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
+              '<span style="font-weight:700;font-size:.8125rem;color:var(--ink);">🏋️ 3대 운동 52주 (156세션)</span>' +
+              '<span style="font-size:.6875rem;color:var(--ink-soft);">스쿼트·벤치·데드 366→506kg</span>' +
+            '</button>' +
+            '<button type="button" class="btn btn-ghost u-sample-card" data-sample="olympic_1924" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
+              '<span style="font-weight:700;font-size:.8125rem;color:var(--ink);">📜 1924 올림픽 역도 100년</span>' +
+              '<span style="font-size:.6875rem;color:var(--ink-soft);">100년 전 파리 올림픽 실측</span>' +
+            '</button>' +
+            '<button type="button" class="btn btn-ghost u-sample-card" data-sample="running" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
+              '<span style="font-weight:700;font-size:.8125rem;color:var(--ink);">🏃 러닝 마라톤 52주</span>' +
+              '<span style="font-size:.6875rem;color:var(--ink-soft);">5km→21km 하프 페이스</span>' +
+            '</button>' +
+            '<button type="button" class="btn btn-ghost u-sample-card" data-sample="reading" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
+              '<span style="font-weight:700;font-size:.8125rem;color:var(--ink);">📚 독서 습관 52주</span>' +
+              '<span style="font-size:.6875rem;color:var(--ink-soft);">주간 100쪽 누적 5,200쪽</span>' +
+            '</button>' +
           '</div>' +
-        '</div>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">' +
-          '<button type="button" class="btn btn-ghost u-sample-card" data-sample="weight" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
-            '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">⚖️ 체중 다이어트 1년치</span>' +
-            '<span style="font-size:.75rem;color:var(--ink-soft);">52주간 78kg → 68kg 감량 추세</span>' +
-          '</button>' +
-          '<button type="button" class="btn btn-ghost u-sample-card" data-sample="sales" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
-            '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">💼 B2B 영업 매출 및 계약 1년치</span>' +
-            '<span style="font-size:.75rem;color:var(--ink-soft);">52주간 1.4억원 매출, 48건 계약 체결</span>' +
-          '</button>' +
-          '<button type="button" class="btn btn-ghost u-sample-card" data-sample="coding" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
-            '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">💻 개발 커밋 및 PR 배포 1년치</span>' +
-            '<span style="font-size:.75rem;color:var(--ink-soft);">52주간 840커밋, 94개 PR 머지 궤적</span>' +
-          '</button>' +
-          '<button type="button" class="btn btn-ghost u-sample-card" data-sample="reading" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
-            '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">📖 독서 습관 1년치</span>' +
-            '<span style="font-size:.75rem;color:var(--ink-soft);">52주간 매주 100쪽 누적 5,200쪽</span>' +
-          '</button>' +
-          '<button type="button" class="btn btn-ghost u-sample-card" data-sample="sleep" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
-            '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">💤 수면 패턴 1년치</span>' +
-            '<span style="font-size:.75rem;color:var(--ink-soft);">6.1h → 7.8h 회복 및 수면부채 진단</span>' +
-          '</button>' +
-          '<button type="button" class="btn btn-ghost u-sample-card" data-sample="running" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
-            '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">🏃 러닝 1년치 (120회)</span>' +
-            '<span style="font-size:.75rem;color:var(--ink-soft);">5km → 하프마라톤 21.1km 페이스</span>' +
-          '</button>' +
         '</div>' +
       '</div>' +
 
+      '<!-- Tab 2: CSV 파일 -->' +
       '<div id="uImpPanelCsv" class="u-imp-panel" style="display:none;">' +
         '<div class="field" style="margin-bottom:8px;">' +
-          '<label>CSV 파일 선택</label>' +
-          '<input type="file" id="uImpCsvFileInput" accept=".csv,text/csv,text/plain" style="width:100%;box-sizing:border-box;">' +
+          '<label style="font-size:.8125rem;font-weight:600;">CSV 파일 선택</label>' +
+          '<input type="file" id="uImpCsvFileInput" accept=".csv,text/csv" style="width:100%;box-sizing:border-box;margin-top:4px;">' +
         '</div>' +
         '<div class="faint" style="font-size:.75rem;line-height:1.4;">' +
-          '💡 스프레드시트나 타 앱에서 내보낸 CSV 파일을 그대로 선택하세요. 날짜, 지표명, 수치를 AI가 자동으로 분석합니다.' +
+          '💡 영업 실적, GitHub 커밋 로그, 수험 타이머 기록, 체중 등 모든 CSV 파일을 지원합니다. 첫 번째 행(헤더)의 컬럼명을 AI가 스스로 감지합니다.' +
         '</div>' +
       '</div>' +
 
+      '<!-- Tab 3: 엑셀/텍스트 붙여넣기 -->' +
       '<div id="uImpPanelText" class="u-imp-panel" style="display:none;">' +
         '<div class="field" style="margin-bottom:8px;">' +
-          '<label>엑셀 복사 또는 일기/메모 줄글</label>' +
-          '<textarea id="uImpTextInput" rows="6" placeholder="예 1 (3대운동/파워리프팅):\nDate,Exercise,Estimated_1RM_kg,Daily_Volume_kg\n2025-01-06,스쿼트,131,4095\n2025-01-07,벤치프레스,73,2515\n\n예 2 (체중/독서):\n2025-05-10 체중 74.2kg 수면 7.5시간\n2025-05-11 책 50쪽 읽음" style="width:100%;box-sizing:border-box;font-family:monospace;font-size:.8125rem;line-height:1.4;"></textarea>' +
+          '<label style="font-size:.8125rem;font-weight:600;">엑셀 복사 또는 일기/메모 줄글</label>' +
+          '<textarea id="uImpTextInput" rows="6" placeholder="예 1 (B2B 영업 실적):&#10;2025-05-10 콜 25건 미팅 4건 제안 2건 수주 1200만원&#10;2025-05-11 콜 30건 미팅 5건 제안 3건 수주 2500만원&#10;&#10;예 2 (개발 활동):&#10;2025-06-15 커밋 12회 PR 3개 리뷰 5회 버그 2개 해결&#10;2025-06-16 커밋 8회 PR 1개 리뷰 2회&#10;&#10;예 3 (수험/운동/체중 등):&#10;2025.07.01 순공 8.5시간 문제풀이 150제&#10;2025.07.02 스쿼트 120kg 5세트 완료" style="width:100%;box-sizing:border-box;font-family:monospace;font-size:.8125rem;line-height:1.4;margin-top:4px;"></textarea>' +
         '</div>' +
       '</div>' +
 
@@ -3404,7 +3460,7 @@ function openUniversalImportModal(options){
 
       '<div class="modal-actions" style="margin-top:14px;display:flex;justify-content:flex-end;gap:8px;">' +
         '<button class="btn btn-ghost" id="uImpCancelBtn" type="button">닫기</button>' +
-        '<button class="btn btn-primary" id="uImpApplyBtn" type="button" style="display:none;">기록에 흡수하기</button>' +
+        '<button class="btn btn-primary" id="uImpApplyBtn" type="button" style="display:none;">기록에 융합하기</button>' +
       '</div>';
 
     openModalFn(modalHtml, function(modalEl){
@@ -3421,13 +3477,14 @@ function openUniversalImportModal(options){
 
       function switchTab(t){
         [tabSamples, tabCsv, tabText].forEach(function(b){
+          if(!b) return;
           b.classList.toggle('active', b === t);
           b.style.color = (b === t) ? 'var(--brand)' : 'var(--ink-soft)';
           b.style.borderBottom = (b === t) ? '2px solid var(--brand)' : 'none';
         });
-        panelSamples.style.display = (t === tabSamples) ? 'block' : 'none';
-        panelCsv.style.display = (t === tabCsv) ? 'block' : 'none';
-        panelText.style.display = (t === tabText) ? 'block' : 'none';
+        if(panelSamples) panelSamples.style.display = (t === tabSamples) ? 'block' : 'none';
+        if(panelCsv) panelCsv.style.display = (t === tabCsv) ? 'block' : 'none';
+        if(panelText) panelText.style.display = (t === tabText) ? 'block' : 'none';
       }
 
       if(tabSamples) tabSamples.onclick = function(){ switchTab(tabSamples); };
@@ -3447,7 +3504,7 @@ function openUniversalImportModal(options){
             stagedRecs = generateDomainSample(sKey);
           }
           previewBox.style.display = 'block';
-          var titleStr = sKey === 'big3_52w' ? '52주 3대운동 156세션' : btn.textContent.trim();
+          var titleStr = sKey === 'big3_52w' ? '52주 3대운동 156세션' : btn.textContent.trim().split('\n')[0];
           previewText.textContent = '선택됨: ' + titleStr + ' (' + stagedRecs.length + '개 세션 준비 완료)';
           applyBtn.style.display = 'inline-block';
           applyBtn.textContent = stagedRecs.length + '개 데이터 1초 만에 융합하기';
@@ -3463,7 +3520,7 @@ function openUniversalImportModal(options){
           var reader = new FileReader();
           reader.onload = function(evt){
             var csvStr = evt.target.result || '';
-            stagedRecs = parseCsvToUniversalRecords(csvStr, 'health');
+            stagedRecs = parseCsvToUniversalRecords(csvStr, 'general');
             if(stagedRecs.length === 0){
               if(toastFn) toastFn('CSV 파일에 유효한 행이 부족합니다.');
               return;
@@ -3487,7 +3544,7 @@ function openUniversalImportModal(options){
             previewBox.style.display = 'none';
             return;
           }
-          stagedRecs = parseCsvToUniversalRecords(raw, 'health');
+          stagedRecs = parseCsvToUniversalRecords(raw, 'general');
           if(stagedRecs.length > 0){
             previewBox.style.display = 'block';
             previewText.textContent = '텍스트 분석 완료: ' + stagedRecs.length + '건 감지됨';
@@ -3525,8 +3582,7 @@ function openUniversalImportModal(options){
     });
   }
 
-  // 모듈 외부 노출
-  
+
   // 모듈 외부 노출
   var api = {
     METRIC_CONFIGS: METRIC_CONFIGS,
