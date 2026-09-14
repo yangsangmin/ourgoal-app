@@ -65,6 +65,14 @@
       "files": ["index.html", "*.html"],
       "regex": "onclick=[\"']\\s*[\"']|onclick=[\"'](?:javascript:)?void\\(0\\);?[\"']",
       "why": "더미 onclick 속성 방치 금지 (전면 무결성 헌법 제7조)"
+    },
+    {
+      "id": "FORBIDDEN_GRASS_TERM",
+      "severity": "block",
+      "files": ["index.html", "js/*.js", "api/*.js"],
+      "regex": "잔디",
+      "why": "상민님 절대 금지어: '잔디' 단어 사용 전면 영구 금지. 반드시 '히트맵'으로만 표기해야 함 (전면 무결성 헌법 제17조)",
+      "exempt_if_line_matches": "^\\s*(//|/\\*|\\*)|renderHomeGrassSummary|homeGrassSummaryCard"
     }
   ],
   "approval_lines": [

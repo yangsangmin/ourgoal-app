@@ -291,6 +291,39 @@ check('절대 무결성 헌법 정본 문서(OURGOAL_ABSOLUTE_INTEGRITY_RULES.md
   assert.ok(rulesContent.includes('제4장 5대 무결성 전수 검증 의무'), '제4장 누락');
   assert.ok(rulesContent.includes('제5장 직관적 6단계 상태 보고 헌법'), '제5장 누락');
   assert.ok(rulesContent.includes('제6장 기계적 강제 집행 시스템'), '제6장 누락');
+  assert.ok(rulesContent.includes('제17조 (용어 헌법: \'잔디\' 단어 절대 사용 금지 및 \'히트맵\' 강제)'), '제17조 누락');
+});
+
+/* =========================================================================
+ * 6. 용어 헌법: '잔디' 단어 절대 사용 금지 및 '히트맵' 표기 검증 (헌법 제17조)
+ * ========================================================================= */
+console.log('\n[검증 6/6] 용어 헌법: \'잔디\' 단어 배제 및 \'히트맵\' 단일화 검사');
+
+check('UI 텍스트, 라벨 및 신규 스펙에서 \'잔디\' 단어가 100% 제거되고 \'히트맵\'으로 대체되었다', () => {
+  const filesToCheck = [
+    path.join(ROOT_DIR, 'js', 'universal-stats.js'),
+    path.join(ROOT_DIR, 'js', 'customize.js'),
+    path.join(ROOT_DIR, 'api', 'goaltemplate.js'),
+    path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md')
+  ];
+
+  const violations = [];
+  filesToCheck.forEach(fp => {
+    if (!fs.existsSync(fp)) return;
+    const content = fs.readFileSync(fp, 'utf8');
+    const lines = content.split('\n');
+    lines.forEach((line, idx) => {
+      // 주석, 함수명(renderHomeGrassSummary, homeGrassSummaryCard), 또는 금지조항 설명 라인은 예외
+      if (/^\s*(\/\/|\/\*|\*)/.test(line)) return;
+      if (line.includes('renderHomeGrassSummary') || line.includes('homeGrassSummaryCard')) return;
+      if (line.includes('절대 사용 금지') || line.includes('단어 배제') || line.includes('전면 영구 금지') || line.includes('해당 금지 단어')) return;
+      if (line.includes('잔디')) {
+        violations.push(`${path.basename(fp)}:${idx + 1} -> ${line.trim().slice(0, 80)}`);
+      }
+    });
+  });
+
+  assert.strictEqual(violations.length, 0, `절대 금지어 '잔디' 발견 (히트맵으로 변경 필수):\n${violations.join('\n')}`);
 });
 
 console.log('\n================================================================');

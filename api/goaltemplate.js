@@ -362,7 +362,7 @@ function localStatsAgentFallback(records, query) {
       kpi1: '💻 총 누적 커밋',
       kpi2: '🔥 1일 최다 커밋',
       kpi3: '📊 일평균 활동량',
-      kpi4: '📈 잔디 연속성'
+      kpi4: '📈 히트맵 연속성'
     });
   }
 
