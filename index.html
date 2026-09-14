@@ -85,13 +85,13 @@
     <div id="loginForm">
       <div class="field"><label for="loginUser">아이디</label><input id="loginUser" type="text" autocomplete="username" placeholder="이메일 또는 아이디"></div>
       <div class="field field-pw"><label for="loginPass">비밀번호</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="비밀번호"><button type="button" class="pw-toggle" aria-label="비밀번호 보기" onclick="var i=document.getElementById('loginPass');i.type=i.type==='password'?'text':'password';this.classList.toggle('on');">보기</button></div>
-      <div class="auth-options-row" style="display:flex;align-items:center;justify-content:space-between;margin:6px 0 12px;font-size:.8125rem;color:var(--ink-soft);">
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-          <input type="checkbox" id="rememberMeCheck" checked>
+      <div class="auth-options-row" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin:8px 0 14px;font-size:.8125rem;color:var(--ink-soft);">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;-webkit-user-select:none;padding:2px 0;">
+          <input type="checkbox" id="rememberMeCheck" checked style="accent-color:var(--brand);width:16px;height:16px;cursor:pointer;">
           <span>이 기기에서 로그인 유지</span>
         </label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-          <input type="checkbox" id="rememberIdCheck">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;-webkit-user-select:none;padding:2px 0;">
+          <input type="checkbox" id="rememberIdCheck" style="accent-color:var(--brand);width:16px;height:16px;cursor:pointer;">
           <span>아이디 저장</span>
         </label>
       </div>
@@ -2151,6 +2151,7 @@
     if(shell) shell.classList.remove('active');
     var authScreen = document.getElementById('authScreen');
     if(authScreen) authScreen.style.display = 'flex';
+    if(typeof initRememberedAuthFields === 'function') initRememberedAuthFields();
     if(state.notifyTimer){ clearInterval(state.notifyTimer); state.notifyTimer = null; }
     if(reasonMsg) toast(reasonMsg);
   }
@@ -20373,6 +20374,9 @@
     }
     var chgPassBtn = document.getElementById('btnChangePassModal');
     if(chgPassBtn){
+      var isOAuthUser = (state.profile && (state.profile.provider === 'kakao' || state.profile.provider === 'google')) ||
+                        (state.user && state.user.app_metadata && (state.user.app_metadata.provider === 'kakao' || state.user.app_metadata.provider === 'google'));
+      chgPassBtn.textContent = isOAuthUser ? '비밀번호 등록/설정 (소셜 연동)' : '비밀번호 변경';
       chgPassBtn.onclick = function(){
         openChangePasswordModal();
       };
@@ -21159,6 +21163,13 @@
       if(ls) ls.style.display = 'none';
       var as = document.getElementById('authScreen');
       if(as) as.style.display = 'none';
+
+      // P0: 회원 탈퇴 30일 유예(소프트 삭제) 복구 체크 (소셜 로그인 및 자동 복구 세션)
+      var cancelled = await checkPendingDeletionRestore();
+      if(cancelled){
+        _isEnteringApp = false;
+        return false;
+      }
 
       if(state.profile._isNewSignup && (!state.profile.goals || state.profile.goals.length === 0) && (!state.profile.records || state.profile.records.length === 0)){
         startOnboarding();
