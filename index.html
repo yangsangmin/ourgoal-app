@@ -12647,6 +12647,20 @@
         var iconInp = sheet.querySelector('#customTplIcon');
         var noticeBox = sheet.querySelector('#customTplAiNotice');
 
+        function applyAiRecResult(res){
+          curAiRec = res;
+          columns = (res.columns && res.columns.length >= 2) ? res.columns.slice() : ['번호', '항목', '세부내용'];
+          defaultRows = (res.defaultRows && res.defaultRows.length) ? res.defaultRows.map(function(r){ return r.slice(); }) : [];
+          if(titleInp && res.title) titleInp.value = res.title;
+          if(iconInp && res.icon) iconInp.value = res.icon;
+          if(noticeBox){
+            var badge = res.source === 'gemini' ? '<span style="font-weight:700;color:var(--primary);margin-right:4px;">✨ Gemini AI 맞춤설계:</span> ' : (res.isOfflineFallback ? '<span style="font-weight:600;color:var(--ink-faint);margin-right:4px;font-size:11px;">⚡ 오프라인 상태 또는 아워골 서버 문제로 기본 안내가 생성되었습니다:</span> ' : '');
+            noticeBox.innerHTML = badge + escapeHtml(res.explanation || 'AI가 요청하신 양식에 맞춰 표 속성과 행을 생성했습니다.');
+          }
+          updateColWrap();
+          toast('AI가 [' + (res.title || '맞춤 양식') + '] 템플릿을 생성했어요!');
+        }
+
         if(aiBtn){
           aiBtn.onclick = function(){
             var q = (titleInp.value || '').trim();
@@ -12655,16 +12669,42 @@
               toast('주제 또는 줄글 설명을 입력해주세요');
               return;
             }
-            curAiRec = parseNaturalLanguageTemplateSpec(q, prose, columns, defaultRows);
-            columns = curAiRec.columns.slice();
-            defaultRows = curAiRec.defaultRows ? curAiRec.defaultRows.map(function(r){ return r.slice(); }) : [];
-            if(titleInp && curAiRec.title) titleInp.value = curAiRec.title;
-            if(iconInp && curAiRec.icon) iconInp.value = curAiRec.icon;
+
+            aiBtn.disabled = true;
+            var origBtnText = aiBtn.innerHTML;
+            aiBtn.innerHTML = '<span>🧠 Gemini 3.1 Flash Lite가 양식 설계 중...</span>';
             if(noticeBox){
-              noticeBox.innerHTML = '' + escapeHtml(curAiRec.explanation || 'AI가 요청하신 양식에 맞춰 표 속성과 행을 생성했습니다.');
+              noticeBox.innerHTML = '<div style="display:flex;align-items:center;gap:6px;"><span class="spinner" style="display:inline-block;width:14px;height:14px;border:2px solid var(--violet);border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;"></span> <span>Gemini AI가 줄글 요구사항과 필수 측정 지표를 정밀 분석하고 있습니다...</span></div>';
             }
-            updateColWrap();
-            toast('AI가 [' + curAiRec.title + '] 맞춤 양식을 생성했어요!');
+
+            var payload = {
+              action: 'custom_record_template',
+              query: q,
+              prose: prose,
+              geminiKey: (typeof state !== 'undefined' && state.profile && state.profile.geminiKey) ? state.profile.geminiKey : ''
+            };
+
+            fetch('/api/customtemplate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            })
+            .then(function(r){
+              if(!r.ok) throw new Error('HTTP ' + r.status);
+              return r.json();
+            })
+            .then(function(data){
+              applyAiRecResult(data);
+            })
+            .catch(function(){
+              var fb = parseNaturalLanguageTemplateSpec(q, prose, columns, defaultRows);
+              fb.isOfflineFallback = true;
+              applyAiRecResult(fb);
+            })
+            .finally(function(){
+              aiBtn.disabled = false;
+              aiBtn.innerHTML = origBtnText;
+            });
           };
         }
 

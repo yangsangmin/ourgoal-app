@@ -2899,3 +2899,30 @@
   - `node -c api/*.js`: 8개 파일 구문 오류 0건 검증 완료.
   - 코드베이스 내 `anthropicApiKey` 및 `claude-` 호출 100% 제거 확인.
 ---
+
+## [2026-09-14 10:20] [E1] #TASK-ES-057 맞춤 템플릿 AI 줄글 분석의 Gemini 3.1 Flash Lite API 연동 및 고품질 양식 생성 배선
+- **목표**: 상민님 직접 지시("api 적용해서 병합까지 진행해")에 따라, 기록 탭 '내 전용 템플릿 생성하기'의 'AI 줄글 분석 및 맞춤 양식 생성'을 기존의 단순 정규식/15개 키워드 매칭에서 Google Gemini 3.1 Flash Lite 기반의 지능형 API로 전면 승격하고, 고품질 도메인 양식 생성 배선 및 로컬 스마트 폴백 무중단 아키텍처 구축.
+- **수정/실행 내역**:
+  1. 서버리스 API 통합 배선 (`api/goaltemplate.js` & `vercel.json`):
+     - Vercel Hobby 12개 서버리스 함수 한도를 100% 준수하기 위해 `api/goaltemplate.js`에 `custom_record_template` 전용 액션 및 핸들러 탑재.
+     - `vercel.json`에 `/api/customtemplate` -> `/api/goaltemplate` 리라이트 규칙 추가하여 프론트엔드 엔드포인트 무결성 확보.
+     - 상민님 공식 모델 지침에 따라 **Gemini 3.1 Flash Lite**(`gemini-3.1-flash-lite`) 1순위 캐스케이드 연동.
+     - 사용자의 자연어 줄글에서 도메인 의도를 추출하여 최적의 제목, 단일 이모지 아이콘, 테마(workout/study/business/daily), 4~8개 도메인 맞춤 열(columns, 첫 열은 '번호'), 실감나는 실무 샘플 데이터(defaultRows 2~4행), 1~2문장의 전문 설계 리포트(explanation)를 JSON으로 생성.
+     - API 키 부재 또는 장애 시 즉시 가동되는 무중단 `localCustomTemplateFallback` 탑재 및 외부 모듈 export.
+  2. 프론트엔드 비동기 UI 배선 개편 (`index.html`):
+     - `customTplAiBtn.onclick`을 비동기 `fetch('/api/customtemplate')` 호출로 전면 개편.
+     - 실행 시 로딩 상태 전환: 버튼 비활성화, 스피너 및 진행 멘트(`🧠 Gemini 3.1 Flash Lite가 양식 설계 중...`) 표출.
+     - 성공 시 `✨ Gemini AI 맞춤설계` 뱃지와 함께 실시간 표 미리보기 및 열 칩 즉시 갱신.
+     - 네트워크 오류/오프라인 시 기존 `parseNaturalLanguageTemplateSpec`으로 자동 폴백하며 상민님 확정 안내 문구(`⚡ 오프라인 상태 또는 아워골 서버 문제로 기본 안내가 생성되었습니다`) 장착.
+  3. 테스트 및 검증 규격 신설 (`scripts/smoke-test.js`):
+     - `#TASK-ES-057` 전용 테스트 1건 신설: `localCustomTemplateFallback` 스키마 무결성, vercel.json 리라이트 규칙, index.html 비동기 호출 및 액션 파라미터 전수 검증.
+     - 기존 `parseNaturalLanguageTemplateSpec` 동기 테스트 100% 호환 보존.
+  4. 티켓 등록 (`docs/rules/TICKETS.md`):
+     - `#TASK-ES-057` 정식 등록 및 완료 처리.
+- **발생한 문제 및 해결**:
+  - 처음에 `api/customtemplate.js`를 별도 파일로 생성했을 때 `scripts/smoke-test.js`의 Vercel Hobby 12개 서버리스 함수 한도 검증에서 13개로 감지되어 테스트 실패 발생.
+  - 이를 `api/goaltemplate.js` 내에 목표 템플릿과 맞춤 기록 템플릿을 통합 서빙하도록 배선하고 `vercel.json` 리라이트 규칙을 추가함으로써, Vercel 12개 함수 한도를 완벽히 지키면서도 깔끔한 `/api/customtemplate` 엔드포인트를 제공하도록 아키텍처를 해결함.
+- **검증 결과**:
+  - `npm test`: **226개 전수 100% 통과 (0개 실패)**.
+  - `essence-gate.js --pre-commit`: **위반 0건 통과**.
+---
