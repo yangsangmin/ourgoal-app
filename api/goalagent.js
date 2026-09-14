@@ -877,6 +877,21 @@ module.exports = async function handler(req, res) {
     return;
   }
 
+  // [TASK-ES-058] 사회적 규범 위배(범죄, 음란, 자해 등) 키워드 차단 이중 방어선
+  var moderation = require('../js/content-moderation.js');
+  var checkResult = moderation.check(message);
+  if (checkResult.flagged) {
+    res.status(400).json({
+      error: 'CONTENT_FILTER_REJECTED',
+      message: checkResult.message,
+      detail: checkResult.detail,
+      support: checkResult.support,
+      category: checkResult.category,
+      tag: checkResult.tag
+    });
+    return;
+  }
+
   console.log('[goalagent] request received: message="' + message + '", goalsCount=' + goals.length);
 
   var goalMap = {};

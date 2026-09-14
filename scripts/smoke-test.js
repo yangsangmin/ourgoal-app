@@ -3332,6 +3332,66 @@ check('compliance: [#TASK-ES-057] 맞춤 템플릿 AI 줄글 분석의 Gemini 3.
   assert.ok(htmlCode.includes("action: 'custom_record_template'"), 'index.html 이 custom_record_template 액션 전달');
 });
 
+check('compliance: [#TASK-ES-058] 아워골 AI 목표 및 템플릿 생성 유해/범죄 키워드 차단 이중 방어선 및 오탐 방지 안내 시스템 검증', () => {
+  // 1. js/content-moderation.js 모듈 로드 및 구조 검증
+  const moderation = require('../js/content-moderation.js');
+  assert.strictEqual(typeof moderation.check, 'function', 'moderation.check 함수 노출');
+  assert.ok(moderation.REJECT_MESSAGE.includes('아워골 내부 차단 키워드가 식별되어 생성이 거부되었습니다'), '정본 차단 메시지 일치');
+  assert.ok(moderation.REJECT_SUPPORT.includes('1:1 문의 및 오류 제보'), '상민님 지시 1:1 문의 지원 문구 일치');
+
+  // 2. 범죄/음란/자해 키워드 차단 검증
+  const blockedCases = [
+    '필로폰 유통 및 판매 계획',
+    '사설토토 사이트 개설 및 홍보',
+    '청부살인 의뢰 및 실행',
+    '보이스피싱 조직 구축',
+    '조건만남 성매매 알선',
+    '음란물 유포 사이트 제작',
+    '동반자살 모임 결성'
+  ];
+
+  for (const text of blockedCases) {
+    const res = moderation.check(text);
+    assert.strictEqual(res.flagged, true, '차단되어야 함: ' + text);
+    assert.strictEqual(res.message, '아워골 내부 차단 키워드가 식별되어 생성이 거부되었습니다', '거부 메시지 일치');
+    assert.ok(res.support.includes('1:1 문의 및 오류 제보'), '1:1 문의 안내 포함');
+  }
+
+  // 3. 오탐(False Positive: 치료/극복/학습/비유) 보호 검증
+  const allowedCases = [
+    '도박 끊기 30일 챌린지',
+    '마약 중독 재활 및 치료 완치',
+    '살인적인 스케줄 극복하기',
+    '화이트해커 되기 위한 정보보안 공부',
+    '모의해킹 대회 CTF 참가 준비',
+    '마약 옥수수 레시피 완성하기',
+    '매일 아침 6시 기상 및 5km 러닝',
+    '공인중개사 1차 시험 합격'
+  ];
+
+  for (const text of allowedCases) {
+    const res = moderation.check(text);
+    assert.strictEqual(res.flagged, false, '오탐 방지로 허용되어야 함: ' + text);
+  }
+
+  // 4. index.html 이중 방어망 배선 검증
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.ok(html.includes('<script src="js/content-moderation.js"></script>'), 'index.html 내 content-moderation.js 로드');
+  assert.ok(html.includes('window.OurgoalModeration.check(text)'), 'sendGoalAgentMessage 내 사전 차단 배선');
+  assert.ok(html.includes('window.OurgoalModeration.check(desc)'), 'showNewGoalChatStep 내 사전 차단 배선');
+  assert.ok(html.includes('window.OurgoalModeration.check(checkText)'), 'openCreateCustomTemplateModal 내 사전 차단 배선');
+  assert.ok(html.includes("errBody.error === 'CONTENT_FILTER_REJECTED'"), 'requestGoalAgentDiff 내 서버 거부 에러 핸들링');
+
+  // 5. 서버리스 API 2종 차단 배선 검증
+  const goalAgentCode = fs.readFileSync(path.join(__dirname, '..', 'api/goalagent.js'), 'utf8');
+  assert.ok(goalAgentCode.includes("require('../js/content-moderation.js')"), 'api/goalagent.js 내 content-moderation 연동');
+  assert.ok(goalAgentCode.includes("error: 'CONTENT_FILTER_REJECTED'"), 'api/goalagent.js 내 400 거부 반환');
+
+  const goalTemplateCode = fs.readFileSync(path.join(__dirname, '..', 'api/goaltemplate.js'), 'utf8');
+  assert.ok(goalTemplateCode.includes("require('../js/content-moderation.js')"), 'api/goaltemplate.js 내 content-moderation 연동');
+  assert.ok(goalTemplateCode.includes("error: 'CONTENT_FILTER_REJECTED'"), 'api/goaltemplate.js 내 400 거부 반환');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
