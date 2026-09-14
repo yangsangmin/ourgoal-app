@@ -832,6 +832,7 @@
 <script src="js/theme-system.js"></script>
 <script src="js/records-stats.js"></script>
   <script src="js/avatar-system.js?v=20260913-es054"></script>
+  <script src="js/content-moderation.js"></script>
 <script>
 
 (function(){
@@ -7712,7 +7713,13 @@
         })
       });
       clearTimeout(timer);
-      if(!res.ok) return null;
+      if(!res.ok) {
+        var errBody = await res.json().catch(function(){ return {}; });
+        if(errBody.error === 'CONTENT_FILTER_REJECTED'){
+          return { isBlocked: true, message: errBody.message, detail: errBody.detail, support: errBody.support };
+        }
+        return null;
+      }
       var data = await res.json();
       if(!data || !data.title || !Array.isArray(data.milestones) || !data.milestones.length) return null;
       return data;
@@ -7743,9 +7750,36 @@
         sheet.querySelector('#ngGenBtn').addEventListener('click', async function(){
           var desc = input.value.trim();
           if(!desc){ toast('목표를 먼저 적어주세요'); return; }
+          if(window.OurgoalModeration){
+            var modCheck = window.OurgoalModeration.check(desc);
+            if(modCheck.flagged){
+              openModal(
+                '<div style="text-align:center;padding:12px 4px;">' +
+                  '<div style="font-size:2rem;margin-bottom:8px;">⚠️</div>' +
+                  '<h3 style="font-size:1.05rem;font-weight:700;margin:0 0 10px;color:var(--brand-strong);">' + escapeHtml(modCheck.message) + '</h3>' +
+                  '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.55;margin:0 0 14px;word-break:keep-all;">' + escapeHtml(modCheck.detail) + '<br><br>' + escapeHtml(modCheck.support) + '</p>' +
+                  '<button class="btn btn-primary btn-block" type="button" onclick="closeModal()">확인</button>' +
+                '</div>',
+                function(){}
+              );
+              return;
+            }
+          }
           showNewGoalLoadingStep();
           var tmpl = await generateGoalTemplate(desc);
           if(!tmpl){ toast('템플릿을 만들지 못했어요 · 다시 시도하거나 직접 설정해주세요'); showNewGoalChatStep(desc); return; }
+          if(tmpl.isBlocked){
+            openModal(
+              '<div style="text-align:center;padding:12px 4px;">' +
+                '<div style="font-size:2rem;margin-bottom:8px;">⚠️</div>' +
+                '<h3 style="font-size:1.05rem;font-weight:700;margin:0 0 10px;color:var(--brand-strong);">' + escapeHtml(tmpl.message) + '</h3>' +
+                '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.55;margin:0 0 14px;word-break:keep-all;">' + escapeHtml(tmpl.detail) + '<br><br>' + escapeHtml(tmpl.support) + '</p>' +
+                '<button class="btn btn-primary btn-block" type="button" onclick="closeModal()">확인</button>' +
+              '</div>',
+              function(){}
+            );
+            return;
+          }
           showNewGoalReviewStep(tmpl);
         });
       }
@@ -7912,6 +7946,9 @@
       clearTimeout(timer);
       if(!res.ok) {
         var errBody = await res.json().catch(function(){ return {}; });
+        if(errBody.error === 'CONTENT_FILTER_REJECTED'){
+          return { ops: [], isBlocked: true, reply: errBody.message, detail: errBody.detail, support: errBody.support };
+        }
         return { ops: [], reply: errBody.error || '요청을 처리하지 못했어요 · 다시 시도해주세요' };
       }
       var data = await res.json();
@@ -8492,12 +8529,39 @@
     var input = document.getElementById('goalAgentInput');
     var text = (typeof customText === 'string' ? customText : (input ? input.value : '')).trim();
     if(!text) return;
+    if(window.OurgoalModeration){
+      var modCheck = window.OurgoalModeration.check(text);
+      if(modCheck.flagged){
+        openModal(
+          '<div style="text-align:center;padding:12px 4px;">' +
+            '<div style="font-size:2rem;margin-bottom:8px;">⚠️</div>' +
+            '<h3 style="font-size:1.05rem;font-weight:700;margin:0 0 10px;color:var(--brand-strong);">' + escapeHtml(modCheck.message) + '</h3>' +
+            '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.55;margin:0 0 14px;word-break:keep-all;">' + escapeHtml(modCheck.detail) + '<br><br>' + escapeHtml(modCheck.support) + '</p>' +
+            '<button class="btn btn-primary btn-block" type="button" onclick="closeModal()">확인</button>' +
+          '</div>',
+          function(){}
+        );
+        return;
+      }
+    }
     if(input && typeof customText !== 'string') input.value = '';
     showGoalAgentLoadingStep();
     var diff = await requestGoalAgentDiff(text);
     if(!diff || !diff.ops.length){
       closeModal();
-      toast((diff && diff.reply) || '요청을 처리하지 못했어요 · 다시 시도해주세요');
+      if(diff && diff.isBlocked){
+        openModal(
+          '<div style="text-align:center;padding:12px 4px;">' +
+            '<div style="font-size:2rem;margin-bottom:8px;">⚠️</div>' +
+            '<h3 style="font-size:1.05rem;font-weight:700;margin:0 0 10px;color:var(--brand-strong);">' + escapeHtml(diff.reply) + '</h3>' +
+            '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.55;margin:0 0 14px;word-break:keep-all;">' + escapeHtml(diff.detail) + '<br><br>' + escapeHtml(diff.support) + '</p>' +
+            '<button class="btn btn-primary btn-block" type="button" onclick="closeModal()">확인</button>' +
+          '</div>',
+          function(){}
+        );
+      } else {
+        toast((diff && diff.reply) || '요청을 처리하지 못했어요 · 다시 시도해주세요');
+      }
       return;
     }
     showGoalAgentReviewStep(diff, text, 0);
@@ -12670,6 +12734,23 @@
               return;
             }
 
+            if(window.OurgoalModeration){
+              var checkText = (q + ' ' + prose).trim();
+              var modCheck = window.OurgoalModeration.check(checkText);
+              if(modCheck.flagged){
+                openModal(
+                  '<div style="text-align:center;padding:12px 4px;">' +
+                    '<div style="font-size:2rem;margin-bottom:8px;">⚠️</div>' +
+                    '<h3 style="font-size:1.05rem;font-weight:700;margin:0 0 10px;color:var(--brand-strong);">' + escapeHtml(modCheck.message) + '</h3>' +
+                    '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.55;margin:0 0 14px;word-break:keep-all;">' + escapeHtml(modCheck.detail) + '<br><br>' + escapeHtml(modCheck.support) + '</p>' +
+                    '<button class="btn btn-primary btn-block" type="button" onclick="closeModal()">확인</button>' +
+                  '</div>',
+                  function(){}
+                );
+                return;
+              }
+            }
+
             aiBtn.disabled = true;
             var origBtnText = aiBtn.innerHTML;
             aiBtn.innerHTML = '<span>🧠 Gemini 3.1 Flash Lite가 양식 설계 중...</span>';
@@ -12689,14 +12770,31 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(payload)
             })
-            .then(function(r){
-              if(!r.ok) throw new Error('HTTP ' + r.status);
-              return r.json();
+            .then(async function(r){
+              var resData = await r.json().catch(function(){ return {}; });
+              if(!r.ok){
+                var err = new Error(resData.message || ('HTTP ' + r.status));
+                err.resData = resData;
+                throw err;
+              }
+              return resData;
             })
             .then(function(data){
               applyAiRecResult(data);
             })
-            .catch(function(){
+            .catch(function(err){
+              if(err && err.resData && err.resData.error === 'CONTENT_FILTER_REJECTED'){
+                openModal(
+                  '<div style="text-align:center;padding:12px 4px;">' +
+                    '<div style="font-size:2rem;margin-bottom:8px;">⚠️</div>' +
+                    '<h3 style="font-size:1.05rem;font-weight:700;margin:0 0 10px;color:var(--brand-strong);">' + escapeHtml(err.resData.message) + '</h3>' +
+                    '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.55;margin:0 0 14px;word-break:keep-all;">' + escapeHtml(err.resData.detail) + '<br><br>' + escapeHtml(err.resData.support) + '</p>' +
+                    '<button class="btn btn-primary btn-block" type="button" onclick="closeModal()">확인</button>' +
+                  '</div>',
+                  function(){}
+                );
+                return;
+              }
               var fb = parseNaturalLanguageTemplateSpec(q, prose, columns, defaultRows);
               fb.isOfflineFallback = true;
               applyAiRecResult(fb);
