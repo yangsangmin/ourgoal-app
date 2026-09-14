@@ -3129,3 +3129,20 @@
   - 변경 파일은 `BACKLOG.md`·`docs/rules/TICKETS.md`·`dev_log.md`(문서 전용, index.html/js/api 무변경) — 디자인·기존 기능 영향 없음.
   - BACKLOG.md 나머지 미체크 항목(14 Web Push 실사용 테스트, 24 신고·자동숨김 SQL, 45 사용자 차단 SQL, 47 공식 이메일 도메인)은 전부 사용자 콘솔·자격증명 필요한 항목별 블로커로 기존 STATUS.md/BACKLOG.md 비고에 이미 상세 기록돼 있고 이번 사이클에서 코드로 추가 진전시킬 수 없어 그대로 둠. 시스템 전반 블로커(Git push/PR 실패)는 없었음 — 이번 사이클은 이 1건만 처리 후 종료.
 ---
+
+## [2026-09-14 11:50] [FIX] #TASK-ES-043 지인 배포 대비 9대 UX 핵심 결함 및 스트릭·게스트세션 안정화
+- **목표**: 지인 배포 대비 전수 감사를 통해 식별된 4대 치명 결함(당일 미체크인 시 스트릭 0일 리셋 버그, 설정창 개인 이메일 노출, 게스트 모드 작성 후 로그인 시 데이터 유실, 첫 체크인 시 localhost 호출) 및 5대 UX 마찰점(랜딩 둘러보기 버튼, 저장 버튼 연타 방지, 잔디 즉시 렌더, 도구어 순화, 카카오톡 인앱 브라우저 안내) 완전 해소.
+- **수정/실행 내역**:
+  1. `computeStreakDays()`: 당일 미체크인 시 어제 기준 연속 달성 일수 온전히 보존 (`startCursor.setDate(startCursor.getDate() - 1);`).
+  2. `setAccountEmail` & `inquiryEmail`: 개인 이메일 하드코딩 완전 제거 및 게스트/동적 이메일 안전 치환.
+  3. `restoreSessionAndEnter()`: 게스트 세션 캐시 감지 시 Supabase 멱등한 upsert를 통해 새 계정으로 목표/체크인 데이터 100% 무손실 자동 마이그레이션.
+  4. `triggerFirstCheerResponse()`: `isLocalDev` 가드로 프로덕션/Vercel 환경에서 localhost:7777 호출 차단 및 로컬 페르소나 즉시 응원 전달.
+  5. `landingScreen`: `landGuestBtn`("로그인 없이 바로 둘러보기 ›") 신설 및 원클릭 게스트 프로필 생성 바인딩.
+  6. `captureSave`: `saveBtn.disabled = true;` 및 `finally` 복구 구문으로 연타/더블클릭 중복 저장 완벽 방어.
+  7. 체크인 완료 즉시 `renderHomeGrassSummary()` 및 `updateAppBadge(streak)` 실시간 렌더링.
+  8. 체크인 토스트 도구 언어 제거 ("오늘의 실천이 안전하게 기록되었어요"로 순화).
+  9. 카카오톡 인앱 브라우저 감지 시 상단 안내 배너 (`inAppBrowserNotice`) 탑재.
+- **검증 결과**:
+  - `npm test`: **230개 전수 100% 통과 (0개 실패)**.
+  - `essence-gate.js`: 금지 패턴 0건, index.html 순증가 45줄로 한도(300줄) 이내 통과.
+---

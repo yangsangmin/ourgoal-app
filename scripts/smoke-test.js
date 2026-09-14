@@ -3588,6 +3588,50 @@ check('compliance: [#TASK-AUTH-P0-SAFETY] 로그인/계정관리 P0 안전망 �
   assert.ok(authCode.includes('btnRestoreAccount'), '탈퇴 유예 계정 원클릭 복구 버튼');
 });
 
+check('compliance: [#TASK-ES-043] 9대 UX 핵심 결함(스트릭 보존, 개인정보 보호, 게스트 병합, localhost 차단, 랜딩 버튼, 연타 방어, 즉시 렌더, 도구어 순화, 인앱 안내)이 구현되어 있다', () => {
+  // 1. 스트릭 계산: 당일 미체크인 시 어제 기준 연속 달성 일수 보존
+  const startAt = d => new Date(Date.now() - d * 86400000).toISOString();
+  fns.setRecords([{ startAt: startAt(1) }, { startAt: startAt(2) }, { startAt: startAt(3) }]);
+  assert.strictEqual(fns.computeStreakDays(), 3, '오늘 미체크인 시 어제 기준 3일 스트릭 온전히 유지');
+  assert.ok(html.includes('startCursor.setDate(startCursor.getDate() - 1);'), '당일 미체크인 분기 역산 로직 탑재');
+
+  // 2. 설정 화면 및 문의 모달 개인 이메일 노출 제거
+  const settingsEmailMatch = html.match(/emailEl\.textContent\s*=\s*([^;]+);/);
+  assert.ok(settingsEmailMatch && !settingsEmailMatch[1].includes('ysm0422@naver.com'), '설정 화면 계정 이메일에 하드코딩 제거');
+  const inquiryInputMatch = html.match(/id="inquiryEmail"[^\>]+/);
+  assert.ok(inquiryInputMatch && !inquiryInputMatch[0].includes('ysm0422@naver.com'), '문의 모달 이메일 입력창 하드코딩 제거');
+
+  // 3. 게스트 세션 데이터 새 소셜 계정으로 자동 마이그레이션 (목표/기록 Supabase upsert)
+  assert.ok(html.includes("localStorage.getItem('ourgoal_guest_profile')"), '게스트 프로필 캐시 감지');
+  assert.ok(html.includes("sb.from('goals').upsert(goalsPayload)"), '게스트 목표 Supabase upsert 연동');
+  assert.ok(html.includes("sb.from('checkins').upsert(recsPayload)"), '게스트 체크인 Supabase upsert 연동');
+  assert.ok(html.includes("localStorage.removeItem('ourgoal_guest_profile')"), '마이그레이션 후 게스트 세션 정상 정리');
+
+  // 4. 첫 체크인 localhost:7777 호출 차단 및 로컬 페르소나 매칭 즉시 폴백
+  assert.ok(html.includes('isLocalDev') && html.includes('triggerFirstCheerResponse'), '첫 응원 localhost 환경 가드');
+  assert.ok(html.includes('scheduleCheerDelivery(cheerObj)'), '비개발 환경 즉시 로컬 페르소나 응원 전달');
+
+  // 5. 랜딩 화면 게스트 진입 버튼 및 원클릭 게스트 프로필 생성
+  assert.ok(html.includes('id="landGuestBtn"'), '랜딩 화면 게스트 둘러보기 버튼 마크업');
+  assert.ok(html.includes("defaultProfile(guestId, guestId, '게스트')"), '원클릭 게스트 프로필 생성 핸들러');
+
+  // 6. 체크인 저장 버튼 연타/더블클릭 방어 (saveBtn.disabled)
+  assert.ok(html.includes('saveBtn.disabled = true;'), '체크인 저장 버튼 disabled 잠금');
+  assert.ok(html.includes('saveBtn.disabled = false;'), 'finally 블록 저장 버튼 잠금 해제');
+
+  // 7. 체크인 후 홈 화면 잔디 및 스트릭 배지 즉시 리렌더링
+  assert.ok(html.includes('renderHomeGrassSummary();'), '체크인 핸들러 내 잔디 요약 즉시 리렌더링');
+  assert.ok(html.includes('updateAppBadge(streak);'), '체크인 핸들러 내 앱 배지 즉시 갱신');
+
+  // 8. 체크인 토스트 도구 언어(AI 노션 DB) 순화
+  assert.ok(!html.includes('AI 노션 DB로 자동 기록 완료!'), 'AI 노션 DB 도구형 토스트 문구 완전 제거');
+  assert.ok(html.includes('오늘의 실천이 안전하게 기록되었어요'), '사용자 중심의 따뜻한 기록 완료 토스트 탑재');
+
+  // 9. 카카오톡 인앱 브라우저 감지 및 상단 안내 바
+  assert.ok(html.includes('/KAKAOTALK/i.test(navigator.userAgent)'), '카카오톡 인앱 브라우저 감지 정규식');
+  assert.ok(html.includes('id="inAppBrowserNotice"') || html.includes("id = 'inAppBrowserNotice'"), '카카오톡 인앱 브라우저 안내 배너 DOM 생성');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
