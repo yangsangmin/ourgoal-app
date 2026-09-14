@@ -644,6 +644,100 @@
       chartType: 'area'
     });
 
+    // [Q] 완전 자율 범용 수치·단위 채굴 엔진 (Universal Autonomous EAV Miner)
+    // 텍스트에서 [명사/단어] [숫자] [단위] 패턴을 100% 자율 채굴하여 임의 도메인(시험, 유튜브, 마케팅, 음악 등) 즉시 수용
+    var existingKeys = new Set();
+    metrics.forEach(function(m){ existingKeys.add(m.key); existingKeys.add(m.label); });
+
+        // 1-1. Table columns and rows parsing
+    if(Array.isArray(rec.columns) && Array.isArray(rec.rows)){
+      rec.rows.forEach(function(row){
+        rec.columns.forEach(function(colName, cIdx){
+          var cell = row[cIdx];
+          if(cell === undefined || cell === null) return;
+          var cellStr = String(cell).trim();
+          var m = cellStr.match(/^([+-]?\d+(?:,\d+)*(?:\.\d+)?)\s*([가-힣a-zA-Z%$/℃°]+)?$/);
+          if(m){
+            var num = parseFloat(m[1].replace(/,/g, ''));
+            var unit = m[2] || '';
+            var cleanCol = colName.trim();
+            var uMatch = cleanCol.match(/^(.*?)\s*[\(\[]([^\)\]]+)[\)\]]$/);
+            if(uMatch){
+              cleanCol = uMatch[1].trim();
+              if(!unit) unit = uMatch[2].trim();
+            }
+            if(cleanCol && !existingKeys.has(cleanCol)){
+              existingKeys.add(cleanCol);
+              ensureMetricConfig(cleanCol, {
+                title: cleanCol,
+                label: cleanCol,
+                unit: unit || '개',
+                agg: 'sum',
+                chartType: 'bar'
+              });
+              metrics.push({
+                category: 'general',
+                key: cleanCol,
+                label: cleanCol,
+                value: num,
+                unit: unit || '개',
+                agg: 'sum',
+                chartType: 'bar'
+              });
+            }
+          }
+        });
+      });
+    }
+
+    var genericRegex = /([가-힣a-zA-Z]{2,12})\s*[:=]?\s*([+-]?\d+(?:,\d+)*(?:\.\d+)?)\s*([가-힣a-zA-Z%$/℃°]{1,6})?/g;
+    var gMatch;
+    var skipWords = {
+      '오늘':1, '내일':1, '어제':1, '오전':1, '오후':1, '매일':1, '주간':1, '월간':1, '연간':1,
+      '목표':1, '달성':1, '완료':1, '시작':1, '종료':1, '기록':1, '세션':1, '테스트':1, '테마':1,
+      '피드':1, '체크':1, '추천':1, '실천':1, '일자':1, '시간':1, '날짜':1, '하루':1, '매칭':1, '분석':1
+    };
+
+    while((gMatch = genericRegex.exec(text)) !== null){
+      var rawLabel = gMatch[1].trim();
+      var rawNumStr = gMatch[2].replace(/,/g, '');
+      var numVal = parseFloat(rawNumStr);
+      var unitStr = (gMatch[3] || '').trim();
+
+      if(isNaN(numVal) || skipWords[rawLabel]) continue;
+      if(numVal >= 1900 && numVal <= 2099 && (!unitStr || unitStr === '년')) continue;
+      if(unitStr === '시' && numVal <= 24) continue;
+
+      if(!unitStr){
+        if(rawLabel.endsWith('수') || rawLabel.endsWith('량') || rawLabel.endsWith('율') || rawLabel.endsWith('금')){
+          unitStr = rawLabel.endsWith('율') ? '%' : (rawLabel.endsWith('금') ? '원' : '개');
+        } else {
+          unitStr = '건';
+        }
+      }
+
+      if(!existingKeys.has(rawLabel)){
+        existingKeys.add(rawLabel);
+        var isLatest = /점수|타수|혈압|체중|심박|레벨|순위|등수|평점|비율|%/i.test(rawLabel + unitStr);
+        ensureMetricConfig(rawLabel, {
+          title: rawLabel,
+          label: rawLabel,
+          unit: unitStr,
+          agg: isLatest ? 'latest' : 'sum',
+          chartType: isLatest ? 'line' : 'bar'
+        });
+        metrics.push({
+          category: 'general',
+          key: rawLabel,
+          label: rawLabel,
+          value: numVal,
+          unit: unitStr,
+          agg: isLatest ? 'latest' : 'sum',
+          chartType: isLatest ? 'line' : 'bar'
+        });
+      }
+    }
+
     return metrics;
   }
 
@@ -1552,7 +1646,30 @@
     });
 
     allRecs.forEach(function(r){
-            var name = r.subTheme || r.item || r.exercise;
+      // 자율 메트릭 추출 및 레코드 동기화
+      var mList = extractMetricsFromRecord(r);
+      r.metrics = r.metrics || {};
+      r.metricUnits = r.metricUnits || {};
+      mList.forEach(function(m){
+        if(m && m.key && typeof m.value === 'number'){
+          if(r.metrics[m.key] === undefined) r.metrics[m.key] = m.value;
+          if(m.unit && !r.metricUnits[m.key]) r.metricUnits[m.key] = m.unit;
+        }
+      });
+
+      if(r.metrics.primary === undefined){
+        var nonDur = mList.filter(function(m){ return m.key !== 'duration'; });
+        if(nonDur.length > 0){
+          r.metrics.primary = nonDur[0].value;
+          r.metrics.primaryUnit = nonDur[0].unit;
+          if(nonDur.length > 1){
+            r.metrics.secondary = nonDur[1].value;
+            r.metrics.secondaryUnit = nonDur[1].unit;
+          }
+        }
+      }
+
+      var name = r.subTheme || r.item || r.exercise;
       if(!name && r.text){
         var mMatch = r.text.match(/\[([^\]]+)\]/);
         if(mMatch) name = mMatch[1].trim();
@@ -1567,8 +1684,10 @@
         else if(/(?:코딩|개발|커밋)/i.test(r.text)) name = '개발커밋';
         else if(/(?:공부|기출|문제)/i.test(r.text)) name = '기출문제';
         else if(/(?:재테크|투자|자산)/i.test(r.text)) name = '재테크';
+        else if(mList.length > 0 && mList[0].key !== 'duration') name = mList[0].label;
       }
       name = name || '일반 실천';
+      r._entityName = name;
 
       if(!entityMap[name]){
         var icon = '📊';
@@ -1635,7 +1754,7 @@
   function aggregateMultiSeries(allRecs, selectedEntities, dimension, period, mode){
     allRecs = Array.isArray(allRecs) ? allRecs : [];
     selectedEntities = Array.isArray(selectedEntities) ? selectedEntities : [];
-    dimension = dimension || '1rm';
+    dimension = dimension || 'primary';
     period = period || 'all';
     mode = mode || 'single';
 
@@ -1687,9 +1806,11 @@
       var t = new Date(r.startAt || r.createdAt).getTime();
       if(cutoff !== null && !isNaN(t) && t < cutoff) return;
 
-      var ent = r.subTheme || r.item || r.exercise;
+      var ent = r._entityName || r.subTheme || r.item || r.exercise;
       if(!ent && r.text){
-        if(/스쿼트/i.test(r.text)) ent = '스쿼트';
+        var mMatch = r.text.match(/\[([^\]]+)\]/);
+        if(mMatch) ent = mMatch[1].trim();
+        else if(/스쿼트/i.test(r.text)) ent = '스쿼트';
         else if(/벤치프레스/i.test(r.text)) ent = '벤치프레스';
         else if(/데드리프트/i.test(r.text)) ent = '데드리프트';
         else if(/러닝/i.test(r.text)) ent = '러닝';
@@ -2727,7 +2848,273 @@
     });
   }
 
-  /* ================= 10. 프로페셔널 데이터 콕핏 메인 렌더러 ================= */
+  
+  /* ================= 5-4-B. 4대 다차원 분석 렌즈 엔진 (Cross-Ratio, Radar, Cadence, Diagnostics) ================= */
+  
+  // 1. 상관 & 효율 매트릭스 계산 (Cross-Ratio Matrix)
+  function computeCrossRatioSeries(seriesA, seriesB){
+    if(!seriesA || !seriesB) return null;
+    var dateMapA = {};
+    (seriesA.points || []).forEach(function(p){ dateMapA[p.date] = p.val; });
+
+    var ratioPoints = [];
+    (seriesB.points || []).forEach(function(p){
+      var valA = dateMapA[p.date];
+      var valB = p.val;
+      if(valA !== undefined && valB !== undefined && valB > 0){
+        var rVal = Math.round((valA / valB) * 100) / 100;
+        ratioPoints.push({
+          date: p.date,
+          val: rVal,
+          valA: valA,
+          valB: valB
+        });
+      }
+    });
+
+    var avg = ratioPoints.length ? Math.round((ratioPoints.reduce(function(a,b){ return a + b.val; }, 0) / ratioPoints.length) * 100) / 100 : 0;
+    var max = ratioPoints.length ? Math.max.apply(null, ratioPoints.map(function(p){ return p.val; })) : 0;
+    var min = ratioPoints.length ? Math.min.apply(null, ratioPoints.map(function(p){ return p.val; })) : 0;
+
+    return {
+      label: seriesA.entity + ' / ' + seriesB.entity + ' 효율비',
+      entityA: seriesA.entity,
+      entityB: seriesB.entity,
+      unit: (seriesA.unit || '') + '/' + (seriesB.unit || ''),
+      points: ratioPoints,
+      avgRatio: avg,
+      peakRatio: max,
+      minRatio: min
+    };
+  }
+
+  // 2. 다차원 상관비율 SVG 차트 렌더러
+  function renderCrossRatioSvg(ratioData, opts){
+    opts = opts || {};
+    var w = opts.width || 520;
+    var h = opts.height || 210;
+    if(!ratioData || !ratioData.points || ratioData.points.length === 0){
+      return '<div style="height:' + h + 'px;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:.8125rem;">비교할 두 지표의 동일 일자 데이터가 필요합니다. 상단 엔티티를 2개 이상 선택해보세요.</div>';
+    }
+
+    var pts = ratioData.points;
+    var maxVal = Math.max.apply(null, pts.map(function(p){ return p.val; }).concat([1]));
+    var minVal = Math.min.apply(null, pts.map(function(p){ return p.val; }).concat([0]));
+    var padL = 45, padR = 15, padT = 20, padB = 30;
+    var chartW = w - padL - padR;
+    var chartH = h - padT - padB;
+
+    var coords = pts.map(function(p, idx){
+      var x = padL + (pts.length === 1 ? chartW / 2 : (idx / (pts.length - 1)) * chartW);
+      var y = padT + chartH - ((p.val - minVal) / (maxVal - minVal || 1)) * chartH;
+      return { x: Math.round(x*10)/10, y: Math.round(y*10)/10, d: p.date, val: p.val };
+    });
+
+    var lineD = coords.map(function(c, i){ return (i === 0 ? 'M' : 'L') + c.x + ',' + c.y; }).join(' ');
+    var areaD = lineD + ' L' + coords[coords.length-1].x + ',' + (padT + chartH) + ' L' + coords[0].x + ',' + (padT + chartH) + ' Z';
+
+    var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" style="width:100%;height:auto;display:block;">';
+    svg += '<defs><linearGradient id="uRatioGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#38bdf8" stop-opacity="0.35"/><stop offset="100%" stop-color="#38bdf8" stop-opacity="0.02"/></linearGradient></defs>';
+    // Y축 가이드선
+    svg += '<line x1="' + padL + '" y1="' + padT + '" x2="' + (w - padR) + '" y2="' + padT + '" stroke="var(--border)" stroke-dasharray="3,3"/>';
+    svg += '<line x1="' + padL + '" y1="' + (padT + chartH) + '" x2="' + (w - padR) + '" y2="' + (padT + chartH) + '" stroke="var(--border)"/>';
+    svg += '<text x="' + (padL - 6) + '" y="' + (padT + 4) + '" text-anchor="end" font-size="10" fill="var(--ink-soft)" font-family="monospace">' + maxVal + '</text>';
+    svg += '<text x="' + (padL - 6) + '" y="' + (padT + chartH) + '" text-anchor="end" font-size="10" fill="var(--ink-soft)" font-family="monospace">' + minVal + '</text>';
+    
+    svg += '<path d="' + areaD + '" fill="url(#uRatioGrad)"/>';
+    svg += '<path d="' + lineD + '" fill="none" stroke="#0284c7" stroke-width="2.5" stroke-linecap="round"/>';
+
+    coords.forEach(function(c){
+      svg += '<circle cx="' + c.x + '" cy="' + c.y + '" r="3.5" fill="#0284c7" stroke="#fff" stroke-width="1.5"/>';
+    });
+    svg += '</svg>';
+
+    var kpiBar = 
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding:6px 10px;background:var(--card);border-radius:8px;border:1px solid var(--border);font-size:.75rem;">' +
+        '<span>⚡ <b>' + ratioData.label + '</b></span>' +
+        '<span style="font-family:monospace;font-weight:700;color:var(--brand);">평균: ' + ratioData.avgRatio + ' ' + ratioData.unit + ' (최고: ' + ratioData.peakRatio + ')</span>' +
+      '</div>';
+
+    return svg + kpiBar;
+  }
+
+  // 3. 다차원 포트폴리오 레이더(Spider) SVG 차트 렌더러
+  function renderRadarSvg(ontology, seriesMap, opts){
+    opts = opts || {};
+    var w = opts.width || 520;
+    var h = opts.height || 230;
+    var items = [];
+
+    ontology.forEach(function(o){
+      var s = seriesMap && seriesMap[o.name];
+      var pr = s ? s.prVal : 1;
+      var cur = s ? s.latestVal : 0;
+      var score = pr > 0 ? Math.min(100, Math.max(15, Math.round((cur / pr) * 100))) : 50;
+      items.push({ name: o.name, score: score, icon: o.icon || '📌' });
+    });
+
+    if(items.length < 3){
+      // 3개 미만 시 정규화 가로 막대로 친절 표출
+      var barHtml = '<div style="padding:14px;font-size:.8125rem;">';
+      barHtml += '<div style="font-weight:700;margin-bottom:8px;color:var(--ink);">🎯 엔티티별 최고치 대비 달성률 비교</div>';
+      items.forEach(function(it){
+        barHtml += 
+          '<div style="margin-bottom:8px;">' +
+            '<div style="display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:2px;">' +
+              '<span>' + it.icon + ' ' + it.name + '</span>' +
+              '<span style="font-weight:700;font-family:monospace;">' + it.score + '%</span>' +
+            '</div>' +
+            '<div style="width:100%;height:6px;background:var(--border);border-radius:3px;overflow:hidden;">' +
+              '<div style="width:' + it.score + '%;height:100%;background:var(--brand);border-radius:3px;"></div>' +
+            '</div>' +
+          '</div>';
+      });
+      barHtml += '<div style="font-size:.7rem;color:var(--ink-soft);margin-top:6px;">💡 엔티티가 3개 이상 등록되면 다각형 레이더 밸런스 차트가 자동 활성화됩니다.</div></div>';
+      return barHtml;
+    }
+
+    var cx = w / 2;
+    var cy = h / 2;
+    var radius = Math.min(cx, cy) - 40;
+    var n = Math.min(items.length, 8);
+    var targetItems = items.slice(0, n);
+    var angleStep = (Math.PI * 2) / n;
+
+    var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" style="width:100%;height:auto;display:block;">';
+
+    // 동심원 가이드 격자 (25%, 50%, 75%, 100%)
+    [0.25, 0.5, 0.75, 1.0].forEach(function(lvl){
+      var rL = radius * lvl;
+      var gPts = [];
+      for(var i = 0; i < n; i++){
+        var a = i * angleStep - Math.PI / 2;
+        gPts.push((cx + rL * Math.cos(a)) + ',' + (cy + rL * Math.sin(a)));
+      }
+      svg += '<polygon points="' + gPts.join(' ') + '" fill="none" stroke="var(--border)" stroke-width="1" stroke-dasharray="' + (lvl < 1.0 ? '2,2' : 'none') + '"/>';
+    });
+
+    // 방사형 축 선 및 라벨
+    var polyPoints = [];
+    targetItems.forEach(function(it, i){
+      var a = i * angleStep - Math.PI / 2;
+      var ax = cx + radius * Math.cos(a);
+      var ay = cy + radius * Math.sin(a);
+      svg += '<line x1="' + cx + '" y1="' + cy + '" x2="' + ax + '" y2="' + ay + '" stroke="var(--border)" stroke-width="1"/>';
+
+      var rVal = (it.score / 100) * radius;
+      var px = cx + rVal * Math.cos(a);
+      var py = cy + rVal * Math.sin(a);
+      polyPoints.push(px + ',' + py);
+
+      var lx = cx + (radius + 20) * Math.cos(a);
+      var ly = cy + (radius + 20) * Math.sin(a);
+      svg += '<text x="' + lx + '" y="' + (ly + 4) + '" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--ink)">' + it.name + ' (' + it.score + '%)</text>';
+    });
+
+    svg += '<polygon points="' + polyPoints.join(' ') + '" fill="rgba(37,99,235,0.25)" stroke="#2563eb" stroke-width="2.5"/>';
+    targetItems.forEach(function(it, i){
+      var pt = polyPoints[i].split(',');
+      svg += '<circle cx="' + pt[0] + '" cy="' + pt[1] + '" r="4" fill="#2563eb" stroke="#fff" stroke-width="1.5"/>';
+    });
+
+    svg += '</svg>';
+    return svg;
+  }
+
+  // 4. 요일별(Cadence) 실천 밀도 계산 및 SVG 렌더러
+  function computeCadenceData(records){
+    var days = ['일', '월', '화', '수', '목', '금', '토'];
+    var counts = [0, 0, 0, 0, 0, 0, 0];
+    (records || []).forEach(function(r){
+      var d = new Date(r.startAt || r.createdAt);
+      if(!isNaN(d.getTime())) counts[d.getDay()]++;
+    });
+    var total = counts.reduce(function(a, b){ return a + b; }, 0) || 1;
+    return days.map(function(dayName, idx){
+      return { day: dayName, count: counts[idx], pct: Math.round((counts[idx] / total) * 100) };
+    });
+  }
+
+  function renderCadenceSvg(cadenceData, opts){
+    opts = opts || {};
+    var w = opts.width || 520;
+    var h = opts.height || 180;
+    var padL = 30, padR = 20, padT = 20, padB = 30;
+    var chartW = w - padL - padR;
+    var chartH = h - padT - padB;
+    var maxCnt = Math.max.apply(null, cadenceData.map(function(d){ return d.count; }).concat([1]));
+
+    var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" style="width:100%;height:auto;display:block;">';
+    var colW = chartW / 7;
+
+    cadenceData.forEach(function(c, i){
+      var barH = (c.count / maxCnt) * chartH;
+      var x = padL + i * colW + colW * 0.15;
+      var y = padT + chartH - barH;
+      var bw = colW * 0.7;
+      var isTop = (c.count === maxCnt && c.count > 0);
+      var barColor = isTop ? 'var(--primary)' : 'var(--card2)';
+      var strokeColor = isTop ? 'none' : 'var(--border)';
+
+      svg += '<rect x="' + x + '" y="' + y + '" width="' + bw + '" height="' + Math.max(4, barH) + '" rx="4" fill="' + barColor + '" stroke="' + strokeColor + '"/>';
+      if(c.count > 0){
+        svg += '<text x="' + (x + bw/2) + '" y="' + (y - 4) + '" text-anchor="middle" font-size="10" font-weight="700" fill="var(--ink)" font-family="monospace">' + c.count + '</text>';
+      }
+      svg += '<text x="' + (x + bw/2) + '" y="' + (padT + chartH + 16) + '" text-anchor="middle" font-size="11" font-weight="700" fill="' + (isTop ? 'var(--primary)' : 'var(--ink-soft)') + '">' + c.day + '</text>';
+    });
+
+    svg += '</svg>';
+    return svg;
+  }
+
+  // 5. 지능형 수학적 통계 리포트 생성기
+  function generateStatisticalDiagnosticReport(seriesMap, cadenceData, ratioData){
+    var seriesKeys = Object.keys(seriesMap || {});
+    if(seriesKeys.length === 0){
+      return '수집된 데이터가 아직 충분하지 않습니다. 기록을 추가하면 자율 통계 진단이 시작됩니다.';
+    }
+
+    var diagnostics = [];
+    var s1 = seriesMap[seriesKeys[0]];
+    if(s1 && s1.points && s1.points.length > 0){
+      var vals = s1.points.map(function(p){ return p.val; });
+      var mean = vals.reduce(function(a, b){ return a + b; }, 0) / vals.length;
+      var variance = vals.reduce(function(acc, v){ return acc + Math.pow(v - mean, 2); }, 0) / vals.length;
+      var stdDev = Math.sqrt(variance);
+      var cv = mean > 0 ? Math.round((stdDev / mean) * 100) : 0;
+
+      var cvText = '';
+      if(cv < 15) cvText = '변동계수(CV) ' + cv + '%로 매우 일관되고 모범적인 루틴을 유지하고 있습니다.';
+      else if(cv <= 30) cvText = '변동계수(CV) ' + cv + '%로 성장과 휴식이 균형을 이루는 건강한 흐름입니다.';
+      else cvText = '변동계수(CV) ' + cv + '%로 집중 구간과 완충 구간의 차이가 큽니다.';
+
+      diagnostics.push('📊 <b>[' + s1.entity + ']</b>: 총 ' + s1.points.length + '회 관측치 기반 평균 ' + (Math.round(mean*10)/10) + ' ' + (s1.unit || '') + '. ' + cvText);
+
+      if(s1.growthRate !== 0){
+        diagnostics.push('🚀 <b>성장 모멘텀</b>: 시작 지점 대비 <b>' + (s1.growthRate > 0 ? '+' : '') + s1.growthRate + '%</b> 성장 (주당 약 ' + (s1.velocityPerWeek > 0 ? '+' : '') + s1.velocityPerWeek + ' ' + (s1.unit || '') + ' 페이스).');
+      }
+
+      if(s1.prVal > 0){
+        var prRatio = Math.round((s1.latestVal / s1.prVal) * 100);
+        diagnostics.push('🏆 <b>피크 벤치마크</b>: 역대 최고치 ' + s1.prVal.toLocaleString() + ' ' + (s1.unit || '') + ' 대비 현재 <b>' + prRatio + '%</b> 수준 유지.');
+      }
+    }
+
+    if(ratioData && ratioData.points && ratioData.points.length > 0){
+      diagnostics.push('⚡ <b>효율 매트릭스</b>: ' + ratioData.label + ' 평균 <b>' + ratioData.avgRatio + ' ' + ratioData.unit + '</b> 달성.');
+    }
+
+    if(Array.isArray(cadenceData) && cadenceData.length > 0){
+      var sortedCadence = cadenceData.slice().sort(function(a, b){ return b.count - a.count; });
+      if(sortedCadence[0].count > 0){
+        diagnostics.push('🗓️ <b>주기성 분석</b>: <b>' + sortedCadence[0].day + '요일</b>(전체의 ' + sortedCadence[0].pct + '%)에 활동이 가장 집중됩니다.');
+      }
+    }
+
+    return diagnostics.join('<br style="margin-bottom:4px;">');
+  }
+
+/* ================= 10. 프로페셔널 데이터 콕핏 메인 렌더러 ================= */
   function renderUniversalStatsDashboard(container, allRecs, state, callbacks){
     if(!container) return;
     callbacks = callbacks || {};
@@ -2803,12 +3190,16 @@
       return;
     }
 
-    var isExpanded = false;
+    var isExpanded = true;
     try {
       if(typeof localStorage !== 'undefined'){
-        isExpanded = (localStorage.getItem('ourgoal_uStats_expanded') === 'true');
+        var savedExp = localStorage.getItem('ourgoal_uStats_expanded');
+        if(savedExp === 'false') isExpanded = false;
       }
     } catch(e){}
+
+    var curLens = state.univLens || 'trend';
+    state.univLens = curLens;
         var mode = state.univMode || 'single';
     var selected = state.univSelectedEntities;
     if(!selected || selected.length === 0){
@@ -2894,6 +3285,22 @@
         '<button type="button" class="u-scale-btn" data-scale="normalized" style="padding:3px 6px;border:none;border-radius:4px;font-size:.6875rem;font-weight:700;cursor:pointer;background:' + (scaleMode === 'normalized' ? 'var(--primary)' : 'transparent') + ';color:' + (scaleMode === 'normalized' ? '#fff' : 'var(--ink)') + ';">Norm %</button>' +
       '</div>';
 
+    // 4대 다차원 분석 렌즈 전환 바
+    var lenses = [
+      { id: 'trend', icon: '📈', label: '추세 트렌드' },
+      { id: 'ratio', icon: '⚡', label: '상관 효율비' },
+      { id: 'radar', icon: '🎯', label: '균형 레이더' },
+      { id: 'cadence', icon: '🗓️', label: '요일 주기' }
+    ];
+    var lensHtml = '<div class="u-lens-row" style="display:flex;gap:4px;background:var(--card2);padding:3px;border-radius:10px;margin-bottom:8px;overflow-x:auto;">';
+    lenses.forEach(function(l){
+      var isLAct = (curLens === l.id);
+      lensHtml += '<button type="button" class="u-lens-btn" data-lens="' + l.id + '" style="flex:1;min-width:70px;padding:6px 4px;border:none;border-radius:7px;font-size:.71875rem;font-weight:700;cursor:pointer;background:' + (isLAct ? 'var(--primary)' : 'transparent') + ';color:' + (isLAct ? '#fff' : 'var(--ink)') + ';box-shadow:' + (isLAct ? '0 1px 3px rgba(0,0,0,0.12)' : 'none') + ';display:flex;align-items:center;justify-content:center;gap:4px;transition:all 0.15s ease;">' +
+        '<span>' + l.icon + '</span><span>' + l.label + '</span>' +
+      '</button>';
+    });
+    lensHtml += '</div>';
+
     var controlsHtml = 
       '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:10px;flex-wrap:wrap;">' +
         '<div style="display:flex;gap:4px;align-items:center;">' +
@@ -2966,8 +3373,56 @@
     });
     dimHtml += '</div>';
 
-    // 4. 차트 SVG 생성
+    // 4. 다차원 분석 렌즈별 데이터 계산 및 SVG 렌더링
     var chartObj = renderMultiSeriesSvg(seriesMap, { width: 520, height: 210, scaleMode: scaleMode });
+    var seriesKeys = Object.keys(seriesMap || {});
+    var sA = seriesMap[seriesKeys[0]];
+    var sB = seriesMap[seriesKeys[1]] || sA;
+    var ratioData = computeCrossRatioSeries(sA, sB);
+    var cadenceData = computeCadenceData(allRecs);
+
+    // 범례 (Legend)
+    var legendHtml = '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px;padding:2px 4px;">';
+    seriesKeys.forEach(function(k, idx){
+      var s = seriesMap[k];
+      var col = colors[idx % colors.length];
+      legendHtml += 
+        '<div style="display:flex;align-items:center;gap:4px;font-size:.7rem;font-weight:700;color:var(--ink);">' +
+          '<span style="width:8px;height:8px;border-radius:50%;background:' + col + ';display:inline-block;"></span>' +
+          '<span>' + s.entity + '</span>' +
+          '<span style="color:' + col + ';font-family:monospace;">' + (s.latestVal ? (s.latestVal + (s.unit ? (' ' + s.unit) : '')) : '-') + '</span>' +
+        '</div>';
+    });
+    legendHtml += '</div>';
+
+    var mainChartContentHtml = '';
+    if(curLens === 'trend'){
+      mainChartContentHtml = 
+        chartObj.svgHtml +
+        '<div id="uFloatingInspector" style="display:none;position:absolute;z-index:30;background:rgba(15,23,42,0.92);color:#fff;padding:6px 10px;border-radius:8px;font-size:.75rem;pointer-events:auto;box-shadow:0 4px 12px rgba(0,0,0,0.25);max-width:200px;">' +
+          '<div id="uTipDate" style="font-size:.6875rem;color:#94a3b8;font-family:monospace;"></div>' +
+          '<div id="uTipVal" style="font-size:.875rem;font-weight:800;color:#38bdf8;margin:2px 0;"></div>' +
+          '<div id="uTipDelta" style="font-size:.6875rem;color:#34d399;"></div>' +
+          '<div id="uTipMemo" style="font-size:.6875rem;color:#cbd5e1;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>' +
+          '<button type="button" class="btn btn-xs btn-ghost" id="uTipEditBtn" style="margin-top:4px;padding:1px 6px;font-size:.65rem;color:#fff;border:1px solid rgba(255,255,255,0.3);width:100%;">✏️ 이 기록 수정</button>' +
+        '</div>' +
+        legendHtml;
+    } else if(curLens === 'ratio'){
+      mainChartContentHtml = 
+        '<div style="padding:4px 0;">' +
+          renderCrossRatioSvg(ratioData, { width: 520, height: 210 }) +
+        '</div>';
+    } else if(curLens === 'radar'){
+      mainChartContentHtml = 
+        '<div style="padding:6px 0;display:flex;justify-content:center;">' +
+          renderRadarSvg(ontology, seriesMap, { size: 260 }) +
+        '</div>';
+    } else if(curLens === 'cadence'){
+      mainChartContentHtml = 
+        '<div style="padding:4px 0;">' +
+          renderCadenceSvg(cadenceData, { width: 520, height: 180 }) +
+        '</div>';
+    }
 
     // 5. 4대 수학적 정량 KPI 바 (PEAK | LATEST | NET DELTA | VELOCITY)
     var seriesArray = Object.values(seriesMap);
@@ -2976,7 +3431,20 @@
     var deltaStr = '-';
     var velocityStr = '-';
 
-    if(seriesArray.length === 1){
+    if(curLens === 'ratio' && ratioData){
+      peakStr = (ratioData.avgRatio > 0 ? (ratioData.avgRatio + ' ' + ratioData.unit) : '-');
+      var rPts = ratioData.points || [];
+      latestStr = (rPts.length > 0 ? (rPts[rPts.length - 1].val + ' ' + ratioData.unit) : '-');
+      deltaStr = rPts.length > 1 ? (Math.round((rPts[rPts.length - 1].val - rPts[0].val)*10)/10 + ' ' + ratioData.unit) : '단일 관측';
+      velocityStr = ratioData.label;
+    } else if(curLens === 'cadence' && cadenceData){
+      var sortedC = cadenceData.slice().sort(function(a,b){ return b.count - a.count; });
+      peakStr = sortedC[0].count > 0 ? (sortedC[0].day + '요일 (' + sortedC[0].pct + '%)') : '-';
+      var totSess = cadenceData.reduce(function(acc, c){ return acc + c.count; }, 0);
+      latestStr = totSess + '회 총 실천';
+      deltaStr = '주 7일 분포';
+      velocityStr = (Math.round((totSess / 52)*10)/10) + '회/주 평균';
+    } else if(seriesArray.length === 1){
       var sSingle = seriesArray[0];
       peakStr = (sSingle.prVal ? (sSingle.prVal.toLocaleString() + ' ' + sSingle.unit) : '-');
       latestStr = (sSingle.latestVal ? (sSingle.latestVal.toLocaleString() + ' ' + sSingle.unit) : '-');
@@ -2992,78 +3460,56 @@
       peakStr = totalPrSum > 0 ? (totalPrSum.toLocaleString() + ' (합계)') : '-';
       latestStr = totalLatest > 0 ? (totalLatest.toLocaleString() + ' (합계)') : '-';
       deltaStr = seriesArray.map(function(s){ return s.entity + ' ' + (s.growthRate > 0 ? '+' : '') + s.growthRate + '%'; }).slice(0, 2).join(' | ');
-      velocityStr = seriesArray.length + '개 종목 추적 중';
+      velocityStr = seriesArray.length + '개 지표 추적 중';
     }
 
     var kpiHtml = 
       '<div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:6px;margin-top:10px;">' +
         '<div class="card" style="padding:8px;margin:0;border-radius:8px;background:var(--card);border:1px solid var(--border);text-align:center;">' +
-          '<div style="font-size:.65rem;font-weight:700;color:var(--ink-soft);font-family:monospace;">PEAK</div>' +
+          '<div style="font-size:.65rem;font-weight:700;color:var(--ink-soft);font-family:monospace;">' + (curLens === 'ratio' ? 'AVG RATIO' : (curLens === 'cadence' ? 'PEAK DAY' : 'PEAK')) + '</div>' +
           '<div style="font-size:.875rem;font-weight:800;color:var(--primary);margin-top:2px;font-family:monospace;">' + peakStr + '</div>' +
         '</div>' +
         '<div class="card" style="padding:8px;margin:0;border-radius:8px;background:var(--card);border:1px solid var(--border);text-align:center;">' +
-          '<div style="font-size:.65rem;font-weight:700;color:var(--ink-soft);font-family:monospace;">LATEST</div>' +
+          '<div style="font-size:.65rem;font-weight:700;color:var(--ink-soft);font-family:monospace;">' + (curLens === 'ratio' ? 'LATEST RATIO' : (curLens === 'cadence' ? 'TOTAL SESSIONS' : 'LATEST')) + '</div>' +
           '<div style="font-size:.875rem;font-weight:800;color:var(--ink);margin-top:2px;font-family:monospace;">' + latestStr + '</div>' +
         '</div>' +
         '<div class="card" style="padding:8px;margin:0;border-radius:8px;background:var(--card);border:1px solid var(--border);text-align:center;">' +
-          '<div style="font-size:.65rem;font-weight:700;color:var(--ink-soft);font-family:monospace;">NET DELTA</div>' +
+          '<div style="font-size:.65rem;font-weight:700;color:var(--ink-soft);font-family:monospace;">' + (curLens === 'ratio' ? 'NET SPREAD' : (curLens === 'cadence' ? 'PATTERN' : 'NET DELTA')) + '</div>' +
           '<div style="font-size:.8125rem;font-weight:800;color:#10b981;margin-top:2px;font-family:monospace;">' + deltaStr + '</div>' +
         '</div>' +
         '<div class="card" style="padding:8px;margin:0;border-radius:8px;background:var(--card);border:1px solid var(--border);text-align:center;">' +
-          '<div style="font-size:.65rem;font-weight:700;color:var(--ink-soft);font-family:monospace;">VELOCITY</div>' +
+          '<div style="font-size:.65rem;font-weight:700;color:var(--ink-soft);font-family:monospace;">' + (curLens === 'ratio' ? 'EFFICIENCY' : (curLens === 'cadence' ? 'CADENCE' : 'VELOCITY')) + '</div>' +
           '<div style="font-size:.8125rem;font-weight:800;color:var(--ink);margin-top:2px;font-family:monospace;">' + velocityStr + '</div>' +
         '</div>' +
       '</div>';
 
-    // 범례 (Legend)
-    var seriesKeys = Object.keys(seriesMap || {});
-    var legendHtml = '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px;padding:2px 4px;">';
-    seriesKeys.forEach(function(k, idx){
-      var s = seriesMap[k];
-      var col = colors[idx % colors.length];
-      legendHtml += 
-        '<div style="display:flex;align-items:center;gap:4px;font-size:.7rem;font-weight:700;color:var(--ink);">' +
-          '<span style="width:8px;height:8px;border-radius:50%;background:' + col + ';display:inline-block;"></span>' +
-          '<span>' + s.entity + '</span>' +
-          '<span style="color:' + col + ';font-family:monospace;">' + (s.latestVal ? (s.latestVal + (s.unit ? (' ' + s.unit) : '')) : '-') + '</span>' +
-        '</div>';
-    });
-    legendHtml += '</div>';
-
-    // AI 리포트 & 목표/캘린더 연계
-    var aiActionTitle = activeEntityKeys[0] + ' 집중 실천 세션';
+    // 6. 자율 통계 진단 리포트
+    var diagReport = generateStatisticalDiagnosticReport(seriesMap, cadenceData, (curLens === 'ratio' ? ratioData : null));
     var aiReportHtml = 
       '<div class="card" style="margin-top:10px;padding:10px 12px;background:linear-gradient(135deg,rgba(14,165,233,0.06),rgba(139,92,246,0.06));border:1px solid rgba(139,92,246,0.22);border-radius:10px;">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
           '<div style="font-weight:800;font-size:.75rem;color:var(--brand);display:flex;align-items:center;gap:4px;">' +
-            '<span>✨ Gemini 3.1 Flash Lite 자율 시계열 분석</span>' +
+            '<span>✨ Gemini 3.1 Flash Lite 자율 다차원 통계 진단</span>' +
           '</div>' +
           '<div style="display:flex;gap:4px;">' +
             '<button type="button" class="btn btn-xs btn-ghost" id="uLinkGoalBtn" style="font-size:.65rem;padding:2px 6px;border:1px solid var(--border);">🎯 목표 연계</button>' +
             '<button type="button" class="btn btn-xs btn-primary" id="uRegCalendarBtn" style="font-size:.65rem;padding:2px 6px;font-weight:700;">📅 캘린더 등록</button>' +
           '</div>' +
         '</div>' +
-        '<div style="font-size:.75rem;color:var(--ink);line-height:1.5;">' +
-          '선택된 <b>[' + activeEntityKeys.join(', ') + ']</b> 데이터의 시계열 추세 분석 결과, 최근 관측치 대비 안정적인 성장을 유지하고 있습니다. 다음 세션 주기를 규칙적으로 확립하면 추가 성장이 가속화됩니다.' +
+        '<div style="font-size:.75rem;color:var(--ink);line-height:1.6;">' +
+          diagReport +
         '</div>' +
       '</div>';
 
     // 전체 바디 조립
     var bodyHtml = 
       '<div id="uCockpitBody" style="display:' + (isExpanded ? 'block' : 'none') + ';padding-top:10px;">' +
+        lensHtml +
         controlsHtml +
         chipsHtml +
-        dimHtml +
+        (curLens === 'trend' ? dimHtml : '') +
         '<div id="uChartContainerWrapper" style="position:relative;background:var(--card2);padding:10px 6px;border-radius:10px;border:1px solid var(--border);">' +
-          chartObj.svgHtml +
-          '<div id="uFloatingInspector" style="display:none;position:absolute;z-index:30;background:rgba(15,23,42,0.92);color:#fff;padding:6px 10px;border-radius:8px;font-size:.75rem;pointer-events:auto;box-shadow:0 4px 12px rgba(0,0,0,0.25);max-width:200px;">' +
-            '<div id="uTipDate" style="font-size:.6875rem;color:#94a3b8;font-family:monospace;"></div>' +
-            '<div id="uTipVal" style="font-size:.875rem;font-weight:800;color:#38bdf8;margin:2px 0;"></div>' +
-            '<div id="uTipDelta" style="font-size:.6875rem;color:#34d399;"></div>' +
-            '<div id="uTipMemo" style="font-size:.6875rem;color:#cbd5e1;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>' +
-            '<button type="button" class="btn btn-xs btn-ghost" id="uTipEditBtn" style="margin-top:4px;padding:1px 6px;font-size:.65rem;color:#fff;border:1px solid rgba(255,255,255,0.3);width:100%;">✏️ 이 기록 수정</button>' +
-          '</div>' +
-          legendHtml +
+          mainChartContentHtml +
         '</div>' +
         kpiHtml +
         aiReportHtml +
@@ -3144,6 +3590,14 @@
         if(mainCard) captureChartSnapshot(mainCard, 'ourgoal_cockpit');
       };
     }
+
+    // 4대 렌즈 전환 버튼
+    container.querySelectorAll('.u-lens-btn').forEach(function(btn){
+      btn.onclick = function(){
+        state.univLens = btn.dataset.lens;
+        renderUniversalStatsDashboard(container, allRecs, state, callbacks);
+      };
+    });
 
     // 모드 버튼
     container.querySelectorAll('.u-mode-btn').forEach(function(btn){
@@ -3608,7 +4062,13 @@
     exportCleanCsv: exportCleanCsv,
     captureChartSnapshot: captureChartSnapshot,
     normalizeHistoricalDate: normalizeHistoricalDate,
-    generate1920sOlympicStrengthSample: generate1920sOlympicStrengthSample
+    generate1920sOlympicStrengthSample: generate1920sOlympicStrengthSample,
+    computeCrossRatioSeries: computeCrossRatioSeries,
+    renderCrossRatioSvg: renderCrossRatioSvg,
+    renderRadarSvg: renderRadarSvg,
+    computeCadenceData: computeCadenceData,
+    renderCadenceSvg: renderCadenceSvg,
+    generateStatisticalDiagnosticReport: generateStatisticalDiagnosticReport
   };
 
   if(typeof module !== 'undefined' && module.exports){

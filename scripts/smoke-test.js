@@ -3978,6 +3978,117 @@ check('compliance: [#TASK-ES-061-DEFITNESS] 운동/건강 편향 탈피 및 임�
 });
 
 
+check('compliance: [#TASK-ES-061-TRUE-MULTIDIMENSIONAL] 범용 EAV 자율 마이닝, 4대 분석 렌즈(추세·상관비·레이더·주기), 통계 리포트 및 기본 펼침 무결성 검증', () => {
+  const uStats = require('../js/universal-stats.js');
+
+  // 1. 완전 자율 범용 수치·단위 채굴 엔진 (Universal Autonomous EAV Miner) 검증
+  const t1 = { text: '토익 모의고사 850점 오답 15개 순공 6.5시간 달성' };
+  const m1 = uStats.extractMetricsFromRecord(t1);
+  const m1Map = {};
+  m1.forEach(m => { m1Map[m.key] = m; m1Map[m.label] = m; });
+  assert.ok(m1Map['모의고사'] || m1Map['토익'], '토익/모의고사 자율 채굴');
+  const toeicVal = (m1Map['모의고사'] || m1Map['토익']).value;
+  assert.strictEqual(toeicVal, 850, '850점 정확 추출');
+  assert.ok(m1Map['오답'], '오답 항목 자율 채굴');
+  assert.strictEqual(m1Map['오답'].value, 15, '오답 15개 정확 추출');
+  assert.ok(m1Map['순공'], '순공 항목 자율 채굴');
+  assert.strictEqual(m1Map['순공'].value, 6.5, '순공 6.5시간 정확 추출');
+
+  // 테이블 구조 자율 채굴 검증
+  const t2 = {
+    columns: ['채널', '광고비(만원)', '클릭수', '전환수(건)'],
+    rows: [['인스타그램', '200', '1500', '60']]
+  };
+  const m2 = uStats.extractMetricsFromRecord(t2);
+  const m2Map = {};
+  m2.forEach(m => { m2Map[m.key] = m; m2Map[m.label] = m; });
+  assert.ok(m2Map['광고비'], '광고비 테이블 칼럼 채굴');
+  assert.strictEqual(m2Map['광고비'].value, 200, '광고비 200 추출');
+  assert.strictEqual(m2Map['광고비'].unit, '만원', '단위 만원 추출');
+  assert.ok(m2Map['전환수'], '전환수 테이블 칼럼 채굴');
+  assert.strictEqual(m2Map['전환수'].value, 60, '전환수 60건 추출');
+
+  // 2. 동적 온톨로지 생성 검증
+  const rawNotes = [
+    { startAt: '2026-03-01T10:00:00Z', text: '토익 모의고사 800점 오답 20개' },
+    { startAt: '2026-03-08T10:00:00Z', text: '토익 모의고사 850점 오답 15개' },
+    { startAt: '2026-03-15T10:00:00Z', text: '토익 모의고사 900점 오답 10개' }
+  ];
+  const onto = uStats.buildUniversalOntology(rawNotes);
+  assert.ok(onto.length > 0, '임의 텍스트로부터 온톨로지 자동 구축');
+  assert.ok(rawNotes[0].metrics && typeof rawNotes[0].metrics.primary === 'number', '임의 레코드에 primary 메트릭 자동 배정');
+
+  // 3. 4대 분석 렌즈 (Lens) 알고리즘 및 렌더러 검증
+  // 3-1. Cross-Ratio (상관 효율비)
+  const seriesA = {
+    entity: '매출액',
+    unit: '만원',
+    points: [{ date: '2026-03-01', val: 1000 }, { date: '2026-03-08', val: 1500 }]
+  };
+  const seriesB = {
+    entity: '계약건수',
+    unit: '건',
+    points: [{ date: '2026-03-01', val: 2 }, { date: '2026-03-08', val: 3 }]
+  };
+  const ratioRes = uStats.computeCrossRatioSeries(seriesA, seriesB);
+  assert.strictEqual(ratioRes.points.length, 2, '효율비 시계열 2개 산출');
+  assert.strictEqual(ratioRes.points[0].val, 500, '건당 단가 500만원/건');
+  assert.strictEqual(ratioRes.avgRatio, 500, '평균 단가 500만원/건');
+
+  const ratioSvg = uStats.renderCrossRatioSvg(ratioRes);
+  assert.ok(ratioSvg.includes('<svg') && ratioSvg.includes('viewBox'), 'CrossRatio SVG 정상 생성');
+
+  // 3-2. Radar (균형 레이더)
+  const radarSvg = uStats.renderRadarSvg(onto, {
+    '모의고사': { points: [{ val: 900 }], prVal: 900, unit: '점' }
+  });
+  assert.ok(radarSvg && radarSvg.length > 20, 'Radar SVG/Bar 정상 생성');
+
+  // 3-3. Cadence (요일별 주기)
+  const cadenceData = uStats.computeCadenceData(rawNotes);
+  assert.strictEqual(cadenceData.length, 7, '7일 주기 데이터 생성');
+  const cadenceSvg = uStats.renderCadenceSvg(cadenceData);
+  assert.ok(cadenceSvg.includes('<svg') && cadenceSvg.includes('rect'), 'Cadence Bar SVG 정상 생성');
+
+  // 4. 통계적 진단 리포트 (Statistical Diagnostic Report) 검증
+  const report = uStats.generateStatisticalDiagnosticReport({
+    '모의고사': {
+      entity: '모의고사',
+      unit: '점',
+      points: [{ val: 800 }, { val: 850 }, { val: 900 }],
+      latestVal: 900,
+      prVal: 900,
+      growthRate: 13,
+      velocityPerWeek: 50
+    }
+  }, cadenceData, ratioRes);
+  assert.ok(report.includes('모의고사'), '엔티티명 포함');
+  assert.ok(report.includes('변동계수(CV)'), 'CV 변동계수 진단 포함');
+  assert.ok(report.includes('성장 모멘텀'), '성장 모멘텀 진단 포함');
+  assert.ok(report.includes('피크 벤치마크'), '피크 벤치마크 진단 포함');
+  assert.ok(report.includes('효율 매트릭스'), '효율 매트릭스 진단 포함');
+
+  // 5. 콕핏 렌더링 & 기본 펼침 & 렌즈 전환 바 검증
+  const container = { innerHTML: '', querySelector: () => null, querySelectorAll: () => [], addEventListener: () => {} };
+  const testState = { profile: { records: rawNotes } };
+  uStats.renderUniversalStatsDashboard(container, rawNotes, testState, {});
+  assert.ok(container.innerHTML.includes('u-lens-row'), '4대 분석 렌즈 전환 바(u-lens-row) 렌더링');
+  assert.ok(container.innerHTML.includes('data-lens="trend"'), '추세 렌즈 버튼 탑재');
+  assert.ok(container.innerHTML.includes('data-lens="ratio"'), '효율비 렌즈 버튼 탑재');
+  assert.ok(container.innerHTML.includes('data-lens="radar"'), '레이더 렌즈 버튼 탑재');
+  assert.ok(container.innerHTML.includes('data-lens="cadence"'), '주기 렌즈 버튼 탑재');
+  assert.ok(container.innerHTML.includes('display:block'), '콕핏 기본 펼침(isExpanded=true) 상태 검증');
+
+  // 6. 렌즈 전환 상태 유지 및 다형성 차트 렌더링 검증
+  testState.univLens = 'ratio';
+  uStats.renderUniversalStatsDashboard(container, rawNotes, testState, {});
+  assert.ok(container.innerHTML.includes('u-cross-ratio-chart') || container.innerHTML.includes('AVG RATIO'), 'Ratio 렌즈 차트 및 KPI 렌더링');
+
+  testState.univLens = 'cadence';
+  uStats.renderUniversalStatsDashboard(container, rawNotes, testState, {});
+  assert.ok(container.innerHTML.includes('PEAK DAY') || container.innerHTML.includes('요일'), 'Cadence 렌즈 차트 및 KPI 렌더링');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
