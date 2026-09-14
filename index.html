@@ -167,6 +167,12 @@
           <span id="captureCharCount" class="capture-char-count">0자</span>
         </div>
         <div id="capturePhotoPreview" style="display:none;"></div>
+        <div id="checkinFeedbackTierBar" class="feedback-tier-bar" style="display:flex;align-items:center;gap:6px;margin:8px 0 10px;padding:4px 6px;background:var(--card2);border-radius:10px;font-size:0.75rem;">
+          <span style="color:var(--ink-faint);font-weight:600;font-size:0.72rem;padding-left:4px;">AI 모드:</span>
+          <button type="button" class="tier-btn active" data-fbtier="default" style="flex:1;padding:4px 6px;border-radius:6px;border:none;background:var(--accent);color:#fff;font-weight:700;font-size:0.75rem;cursor:pointer;">기본</button>
+          <button type="button" class="tier-btn" data-fbtier="medium" style="flex:1;padding:4px 6px;border-radius:6px;border:none;background:transparent;color:var(--ink-soft);font-weight:600;font-size:0.75rem;cursor:pointer;">중간</button>
+          <button type="button" class="tier-btn" data-fbtier="macro" style="flex:1;padding:4px 6px;border-radius:6px;border:none;background:transparent;color:var(--ink-soft);font-weight:600;font-size:0.75rem;cursor:pointer;">정밀</button>
+        </div>
         <div class="capture-row" id="captureRowAnchor">
           <input type="file" id="capturePhotoInput" accept="image/*" style="display:none;">
           <button class="btn btn-ghost btn-sm" id="capturePhotoBtn" type="button" aria-label="사진 첨부"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>사진</span></button>
@@ -5536,6 +5542,7 @@
     renderTodayMissionCard();
     renderHomeGrassSummary();
     renderAdaptiveModeBar();
+    initFeedbackTierBar();
     renderCrewPacingWidget();
     renderIosPwaBanner();
     var streak = computeStreakDays();
@@ -6847,9 +6854,101 @@
     return upcoming.slice(0, 15);
   }
 
-  function buildFeedbackPrompt(goal, text, theme, upcomingSchedules){
+  function getRecentCheckinsForAI(days){
+    days = days || 3;
+    if(!state.profile || !Array.isArray(state.profile.records)) return [];
+    var recs = state.profile.records;
+    var now = new Date();
+    var cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+    var cutoffKey = (typeof dateKey === 'function') ? dateKey(cutoff.toISOString()) : cutoff.toISOString().slice(0, 10);
+    var list = [];
+    for(var i = 0; i < recs.length; i++){
+      var r = recs[i];
+      if(!r) continue;
+      var d = r.startAt ? ((typeof dateKey === 'function') ? dateKey(r.startAt) : r.startAt.slice(0, 10)) : (r.date || '');
+      if(d && d >= cutoffKey){
+        list.push({
+          date: d,
+          text: (r.text || r.title || '').slice(0, 150),
+          theme: r.theme || 'daily'
+        });
+        if(list.length >= 8) break;
+      }
+    }
+    if(list.length === 0 && recs.length > 0){
+      return recs.slice(0, days).map(function(r){
+        return {
+          date: r.startAt ? ((typeof dateKey === 'function') ? dateKey(r.startAt) : r.startAt.slice(0, 10)) : (r.date || ''),
+          text: (r.text || r.title || '').slice(0, 150),
+          theme: r.theme || 'daily'
+        };
+      });
+    }
+    return list;
+  }
+
+  function getLastFeedbackAdvice(){
+    if(state.lastCapture && state.lastCapture.feedback){
+      var fb = state.lastCapture.feedback;
+      var act = fb.next_action || fb.nextAction || (fb.suggestions && fb.suggestions[0] && fb.suggestions[0].reason) || '';
+      if(act) return { actionSuggested: act, verdict: fb.verdict || '', createdAt: nowISO() };
+    }
+    if(state.profile && Array.isArray(state.profile.records)){
+      for(var i = 0; i < state.profile.records.length; i++){
+        var r = state.profile.records[i];
+        if(r && r.feedback){
+          var act2 = r.feedback.next_action || r.feedback.nextAction || (r.feedback.suggestions && r.feedback.suggestions[0] && r.feedback.suggestions[0].reason) || '';
+          if(act2) return { actionSuggested: act2, verdict: r.feedback.verdict || '', createdAt: r.startAt || r.createdAt || nowISO() };
+        }
+      }
+    }
+    return null;
+  }
+
+  function initFeedbackTierBar(){
+    var bar = document.getElementById('checkinFeedbackTierBar');
+    if(!bar) return;
+    state.aiFeedbackMode = state.aiFeedbackMode || 'default';
+    var btns = bar.querySelectorAll('.tier-btn');
+    function updateTierUI(selectedTier){
+      btns.forEach(function(b){
+        var isMatch = b.dataset.fbtier === selectedTier;
+        b.classList.toggle('active', isMatch);
+        if(isMatch){
+          b.style.background = 'var(--accent)';
+          b.style.color = '#fff';
+          b.style.fontWeight = '700';
+        } else {
+          b.style.background = 'transparent';
+          b.style.color = 'var(--ink-soft)';
+          b.style.fontWeight = '600';
+        }
+      });
+    }
+    updateTierUI(state.aiFeedbackMode);
+    btns.forEach(function(b){
+      b.onclick = function(e){
+        e.preventDefault();
+        var tier = b.dataset.fbtier || 'default';
+        state.aiFeedbackMode = tier;
+        updateTierUI(tier);
+        if(typeof triggerHaptic === 'function') triggerHaptic(15);
+        if(tier === 'default'){
+          toast('AI 기본 모드: 오늘 팩트 + 최근 연계 + 내일 1가지 행동 (3문장)');
+        } else if(tier === 'medium'){
+          toast('AI 중간 모드: 최근 3~5일 실천 궤적 + 루틴 마찰점 분석');
+        } else if(tier === 'macro'){
+          toast('AI 정밀 모드: D-Day 가상 레일 사각지대 진단 + 캘린더 일정 추천');
+        }
+      };
+    });
+  }
+
+  function buildFeedbackPrompt(goal, text, theme, upcomingSchedules, mode, recentRecords){
     goal = goal || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
     if(!Array.isArray(goal.milestones)) goal.milestones = [];
+    mode = mode || state.aiFeedbackMode || 'default';
+    recentRecords = recentRecords || getRecentCheckinsForAI(3);
     var detectedTheme = theme || ((typeof classifyRecordTheme === 'function') ? classifyRecordTheme(text, goal ? goal.category : null).theme : 'daily');
     var themeLens = THEME_FEEDBACK_PROMPTS[detectedTheme] || THEME_FEEDBACK_PROMPTS.daily;
     var msJson = JSON.stringify(milestonesForAI(goal));
@@ -6860,6 +6959,22 @@
       ? '당신은 위 페르소나 지침에 따라 행동하는 목표 달성 피드백 봇입니다.'
       : '당신은 목표 달성 코치입니다.';
     var thLabel = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[detectedTheme]) ? RECORD_THEMES[detectedTheme].label : detectedTheme;
+
+    var recentBlock = '';
+    if(Array.isArray(recentRecords) && recentRecords.length > 0){
+      recentBlock = '\r\n\r\n[최근 3일 실천 기록 (연계 분석용)]\r\n' +
+        recentRecords.map(function(r){ return '- (' + r.date + ') ' + r.text; }).join('\r\n') +
+        '\r\n지침: 사용자의 최근 실천 흐름과 오늘 기록을 비교·연계하여 조언하세요.\r\n';
+    }
+
+    var modeInstruction = '';
+    if(mode === 'default'){
+      modeInstruction = '\r\n[모드: 기본 피드백] 오늘 기록 팩트 분석 + 어제/최근 연계 + 내일 1가지 행동 위주로 총 3문장 이내로 작성하세요.\r\n';
+    } else if(mode === 'medium'){
+      modeInstruction = '\r\n[모드: 중간 피드백] 최근 3~5일 실천 궤적과 루틴 마찰점을 분석하여 5~6문장으로 구체적인 피드백을 제공하세요.\r\n';
+    } else if(mode === 'macro'){
+      modeInstruction = '\r\n[모드: 정밀 피드백] D-Day 목표와 향후 30일 일정을 대조하여 사각지대를 진단하고 전략적 조언을 제공하세요.\r\n';
+    }
 
     upcomingSchedules = upcomingSchedules || getUpcomingSchedulesForAI(30);
     var schedSection = '';
@@ -6875,6 +6990,7 @@
     }
 
     return personaBlock + roleLine + ' [기록 테마 코칭 지침: ' + thLabel + ']\r\n' + themeLens + '\r\n\r\n' +
+      recentBlock + modeInstruction + '\r\n\r\n' +
       '사용자의 목표 구조(마일스톤과 하위 할 일)와 방금 남긴 기록을 보고, ' +
       '그 기록이 목표 달성에 도움이 되는지 판단하고, 이 기록이 실제로 어떤 마일스톤이나 할 일의 진행 상태·결과를 바꿀 만한 확실한 근거가 되는지도 함께 판단하세요.\r\n\r\n' +
       '[기록 테마]\r\n' + thLabel + '\r\n\r\n' +
@@ -6917,6 +7033,9 @@
     var settings = state.profile.settings;
     var custom = (settings.customFeedbackActive && settings.customFeedbackPrompt) ? settings.customFeedbackPrompt : '';
     var upcomingSchedules = getUpcomingSchedulesForAI(30);
+    var recentRecords = getRecentCheckinsForAI(3);
+    var lastAdvice = getLastFeedbackAdvice();
+    var mode = state.aiFeedbackMode || 'default';
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 12000);
     try{
@@ -6929,7 +7048,10 @@
           customPrompt: custom,
           theme: theme,
           geminiKey: settings.geminiKey || '',
-          upcomingSchedules: upcomingSchedules
+          upcomingSchedules: upcomingSchedules,
+          mode: mode,
+          recentRecords: recentRecords,
+          lastAdvice: lastAdvice
         })
       });
       clearTimeout(timer);
@@ -6939,16 +7061,22 @@
       if(!Array.isArray(parsed.suggestions)) parsed.suggestions = [];
       parsed.source = (parsed.provider === 'local_smart' || parsed.provider === 'server_period_smart') ? 'local_enhanced' : 'gemini';
       parsed.persona = !!custom;
+      parsed.feedbackMode = mode;
       return parsed;
     } catch(e){
       clearTimeout(timer);
-      return localFeedback(goal, text, theme, upcomingSchedules);
+      var locFb = localFeedback(goal, text, theme, upcomingSchedules);
+      locFb.feedbackMode = mode;
+      return locFb;
     }
   }
   var requestClaudeFeedback = requestServerAIFeedback;
   async function requestGeminiFeedback(goal, text, theme){
     var geminiPersona = !!(state.profile.settings.customFeedbackActive && state.profile.settings.customFeedbackPrompt);
-    var prompt = buildFeedbackPrompt(goal, text, theme);
+    var mode = state.aiFeedbackMode || 'default';
+    var recentRecords = getRecentCheckinsForAI(3);
+    var upcomingSchedules = getUpcomingSchedulesForAI(30);
+    var prompt = buildFeedbackPrompt(goal, text, theme, upcomingSchedules, mode, recentRecords);
     var model = state.profile.settings.geminiModel || 'gemini-3.1-flash-lite';
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 12000);
@@ -6972,6 +7100,7 @@
       var parsed = parseFeedbackJSON(raw);
       parsed.source = 'gemini';
       parsed.persona = geminiPersona;
+      parsed.feedbackMode = mode;
       return parsed;
     } catch(e){
       clearTimeout(timer);
@@ -6999,6 +7128,10 @@
         suggestions.push({ type:'milestone', id:m.id, field:'status', value:'doing', reason:'기록에 "'+m.title+'" 관련 내용이 있어요' });
       }
     });
+
+    var mode = (state && state.aiFeedbackMode) || 'default';
+    var recentRecs = getRecentCheckinsForAI(3);
+    var recentPrefix = (recentRecs.length > 0) ? ('최근 ' + recentRecs.length + '일간 이어진 실천 흐름과 연계하여, ') : '';
 
     var comment;
     if(hit){
@@ -7034,12 +7167,31 @@
       }
     }
 
+    var verdict = '핵심 발견';
+    if(mode === 'macro') verdict = '정밀 진단';
+    else if(mode === 'medium') verdict = '페이스 조율';
+    else if(hit || hasDoneKeyword) verdict = '실천 완주';
+
+    var calAction = null;
+    if(mode === 'macro'){
+      calAction = {
+        has_suggestion: true,
+        suggested_date: new Date(Date.now() + 2 * 86400000).toISOString().slice(0, 10),
+        suggested_time: '14:00',
+        title: (goal ? goal.title.slice(0, 15) : '목표') + ' 정밀 점검 및 중간 회고',
+        duration_minutes: 60,
+        note: 'D-Day 가상 레일 점검을 위한 캘린더 추천 일정'
+      };
+    }
+
     return {
-      verdict: (hit || hasDoneKeyword) ? '도움됨' : '실천 완료',
-      comment: comment,
+      verdict: verdict,
+      comment: recentPrefix + comment,
       source: 'local',
       theme: detectedTheme,
-      suggestions: suggestions
+      suggestions: suggestions,
+      feedbackMode: mode,
+      calendarAction: calAction
     };
   }
   /* ============ 기록 기반 목표·마일스톤·할 일 자동 업데이트 제안 ============ */
@@ -7402,10 +7554,25 @@
       var isLocalFb = (fb.source === 'local_enhanced' || fb.source === 'local' || fb.source === '간이 판단');
       var fbNoticeHtml = isLocalFb ? '<div style="font-size:11px;color:var(--ink-soft);margin-top:4px;">⚡ 오프라인 상태 또는 아워골 서버 문제로 기본 안내가 생성되었습니다</div>' : '';
 
+      var mode = fb.feedbackMode || (state && state.aiFeedbackMode) || 'default';
+      var modeLabel = mode === 'macro' ? '정밀' : (mode === 'medium' ? '중간' : '기본');
+      var modeBadgeHtml = '<span class="badge" style="font-size:11px;padding:2px 7px;margin-left:6px;border-radius:6px;background:var(--card2);color:var(--ink-soft);font-weight:600;">[' + modeLabel + ']</span>';
+
+      var calAct = fb.calendarAction || fb.calendar_action;
+      var calBtnHtml = '';
+      if(calAct && (calAct.has_suggestion || calAct.title)){
+        calBtnHtml = '<div style="margin-top:8px;padding:8px 10px;background:var(--card2);border-radius:8px;border:1px dashed var(--line);">' +
+          '<div style="font-size:0.75rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:4px;"><span>📅</span> <span>AI 추천 일정: ' + escapeHtml(calAct.title) + '</span></div>' +
+          '<div style="font-size:0.72rem;color:var(--ink-soft);margin-top:2px;">일시: ' + escapeHtml(calAct.suggested_date || calAct.date || '') + ' ' + escapeHtml(calAct.suggested_time || calAct.time || '') + (calAct.note ? (' (' + escapeHtml(calAct.note) + ')') : '') + '</div>' +
+          '<button type="button" class="btn btn-sm btn-accent" id="btnApplyAiCalSlot" style="margin-top:6px;width:100%;font-size:0.75rem;padding:4px 8px;">캘린더에 이 일정 즉시 등록 (+1클릭)</button>' +
+        '</div>';
+      }
+
       card.innerHTML = '<span class="fb-close" id="fbCloseBtn">×</span>' +
-        '<div class="fb-verdict">'+escapeHtml(fb.verdict)+'</div>' +
-        '<div class="fb-row">'+escapeHtml(fb.comment)+'</div>' +
-        '<div class="fb-source">'+(fb.persona?'내 맞춤 봇 판단':(fb.source==='ai'||fb.source==='gemini'?'Gemini 판단':'간이 판단'))+'</div>' +
+        '<div class="fb-verdict">' + escapeHtml(fb.verdict) + modeBadgeHtml + '</div>' +
+        '<div class="fb-row">' + escapeHtml(fb.comment) + '</div>' +
+        calBtnHtml +
+        '<div class="fb-source">' + (fb.persona ? '내 맞춤 봇 판단' : (fb.source === 'ai' || fb.source === 'gemini' ? 'Gemini 판단' : '간이 판단')) + '</div>' +
         fbNoticeHtml +
         '<button class="btn btn-ghost btn-sm" id="fbShareBtn" type="button" style="width:100%;margin-top:10px;">이 기록, 피드에 공유하기</button>';
     }
@@ -7414,6 +7581,29 @@
       card.querySelector('#fbCloseBtn').addEventListener('click', function(){ card.remove(); });
       var shareBtn = card.querySelector('#fbShareBtn');
       if(shareBtn) shareBtn.addEventListener('click', openShareToFeedModal);
+      var calBtn = card.querySelector('#btnApplyAiCalSlot');
+      if(calBtn){
+        calBtn.addEventListener('click', async function(){
+          var act = fb.calendarAction || fb.calendar_action;
+          if(!act) return;
+          if(!state.profile.settings.customSchedules) state.profile.settings.customSchedules = [];
+          state.profile.settings.customSchedules.push({
+            id: uid('sched'),
+            title: act.title || 'AI 추천 일정',
+            date: act.suggested_date || act.date || ((typeof dateKey === 'function') ? dateKey(nowISO()) : nowISO().slice(0,10)),
+            time: act.suggested_time || act.time || '14:00',
+            note: act.note || 'AI 피드백 추천 일정',
+            done: false,
+            createdAt: nowISO()
+          });
+          await saveProfile();
+          if(typeof renderCalendarScreen === 'function' && state.activeTab === 'calendar') renderCalendarScreen();
+          toast('캘린더에 일정을 등록했습니다: ' + (act.title || ''));
+          calBtn.disabled = true;
+          calBtn.textContent = '✓ 캘린더 등록 완료';
+          calBtn.style.opacity = '0.6';
+        });
+      }
     }
   }
 
@@ -7428,11 +7618,26 @@
       var isRecLocalFb = (fb.source === 'local_enhanced' || fb.source === 'local' || fb.source === '간이 판단');
       var recFbNoticeHtml = isRecLocalFb ? '<div style="font-size:11px;color:var(--ink-soft);margin-top:4px;">⚡ 오프라인 상태 또는 아워골 서버 문제로 기본 안내가 생성되었습니다</div>' : '';
 
+      var mode = fb.feedbackMode || (state && state.aiFeedbackMode) || 'default';
+      var modeLabel = mode === 'macro' ? '정밀' : (mode === 'medium' ? '중간' : '기본');
+      var modeBadgeHtml = '<span class="badge" style="font-size:11px;padding:2px 7px;margin-left:6px;border-radius:6px;background:var(--card2);color:var(--ink-soft);font-weight:600;">[' + modeLabel + ']</span>';
+
+      var calAct = fb.calendarAction || fb.calendar_action;
+      var calBtnHtml = '';
+      if(calAct && (calAct.has_suggestion || calAct.title)){
+        calBtnHtml = '<div style="margin-top:8px;padding:8px 10px;background:var(--card2);border-radius:8px;border:1px dashed var(--line);">' +
+          '<div style="font-size:0.75rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:4px;"><span>📅</span> <span>AI 추천 일정: ' + escapeHtml(calAct.title) + '</span></div>' +
+          '<div style="font-size:0.72rem;color:var(--ink-soft);margin-top:2px;">일시: ' + escapeHtml(calAct.suggested_date || calAct.date || '') + ' ' + escapeHtml(calAct.suggested_time || calAct.time || '') + (calAct.note ? (' (' + escapeHtml(calAct.note) + ')') : '') + '</div>' +
+          '<button type="button" class="btn btn-sm btn-accent" id="btnApplyAiRecordCalSlot" style="margin-top:6px;width:100%;font-size:0.75rem;padding:4px 8px;">캘린더에 이 일정 즉시 등록 (+1클릭)</button>' +
+        '</div>';
+      }
+
       el.innerHTML = '<div class="fb-card ' + verdictClass(fb.verdict) + '">' +
         '<span class="fb-close" id="recFbCloseBtn">×</span>' +
-        '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:4px;display:flex;align-items:center;gap:4px;"><span><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/></svg></span><span>기록 탭 AI 피드백</span></div>' +
+        '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:4px;display:flex;align-items:center;gap:4px;"><span><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/></svg></span><span>기록 탭 AI 피드백</span>' + modeBadgeHtml + '</div>' +
         '<div class="fb-verdict">' + escapeHtml(fb.verdict) + '</div>' +
         '<div class="fb-row">' + escapeHtml(fb.comment) + '</div>' +
+        calBtnHtml +
         '<div class="fb-source">' + (fb.persona ? '내 맞춤 봇 판단' : (fb.source === 'ai' || fb.source === 'gemini' ? 'Gemini 판단' : '간이 판단')) + '</div>' +
         recFbNoticeHtml +
         '<button class="btn btn-ghost btn-sm" id="recFbShareBtn" type="button" style="width:100%;margin-top:10px;">이 기록, 피드에 공유하기</button>' +
@@ -7441,6 +7646,29 @@
       if(closeBtn) closeBtn.onclick = function(){ el.innerHTML = ''; el.style.display = 'none'; };
       var shareBtn = el.querySelector('#recFbShareBtn');
       if(shareBtn) shareBtn.onclick = openShareToFeedModal;
+      var calBtn = el.querySelector('#btnApplyAiRecordCalSlot');
+      if(calBtn){
+        calBtn.addEventListener('click', async function(){
+          var act = fb.calendarAction || fb.calendar_action;
+          if(!act) return;
+          if(!state.profile.settings.customSchedules) state.profile.settings.customSchedules = [];
+          state.profile.settings.customSchedules.push({
+            id: uid('sched'),
+            title: act.title || 'AI 추천 일정',
+            date: act.suggested_date || act.date || ((typeof dateKey === 'function') ? dateKey(nowISO()) : nowISO().slice(0,10)),
+            time: act.suggested_time || act.time || '14:00',
+            note: act.note || 'AI 피드백 추천 일정',
+            done: false,
+            createdAt: nowISO()
+          });
+          await saveProfile();
+          if(typeof renderCalendarScreen === 'function' && state.activeTab === 'calendar') renderCalendarScreen();
+          toast('캘린더에 일정을 등록했습니다: ' + (act.title || ''));
+          calBtn.disabled = true;
+          calBtn.textContent = '✓ 캘린더 등록 완료';
+          calBtn.style.opacity = '0.6';
+        });
+      }
     }
   }
   function timeAgoStr(iso){

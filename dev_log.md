@@ -3146,3 +3146,25 @@
   - `npm test`: **230개 전수 100% 통과 (0개 실패)**.
   - `essence-gate.js`: 금지 패턴 0건, index.html 순증가 45줄로 한도(300줄) 이내 통과.
 ---
+
+## [2026-09-14 12:05] [FEAT] #TASK-ES-042 체크인 3단 피드백 모드(기본·중간·정밀) 및 최근 3일 기록 연계 피드백 엔진 구축
+- **목표**: 사용자가 체크인 기록을 남길 때 최근 3일간의 실천 기록과 오늘의 기록을 연계하여 3단계 깊이(`기본`, `중간`, `정밀`)로 맞춤형 코칭을 제공하고, 정밀 모드 시 D-Day 가상 레일 사각지대 진단 및 1-클릭 캘린더 등록 연계를 지원함.
+- **수정/실행 내역**:
+  1. `index.html`:
+     - 체크인 카드 상단에 `#checkinFeedbackTierBar` (기본/중간/정밀 3단 전환 탭) 신설 및 `initFeedbackTierBar()` 상태 동기화.
+     - `getRecentCheckinsForAI(3)` 헬퍼 구현으로 최근 3일간의 실천 기록을 추출하여 AI 요청 컨텍스트에 주입.
+     - `getLastFeedbackAdvice()` 헬퍼 구현으로 직전 체크인 피드백 제안 행동을 파악하여 상태 기억 체인 구축.
+     - `requestServerAIFeedback` 및 `requestGeminiFeedback`: `mode`, `recentRecords`, `lastAdvice` 페이로드 전송.
+     - `localFeedback`: 3단 모드 및 최근 실천 기록 연계 스마트 로컬 폴백 지원.
+     - `renderFeedbackSlot` & `renderRecordFeedbackSlot`: 피드백 카드 내 `[기본]` / `[중간]` / `[정밀]` 모드 배지 표시 및 정밀 모드 추천 일정 발생 시 `#btnApplyAiCalSlot` 1-클릭 캘린더 자동 등록 연동.
+  2. `api/feedback.js`:
+     - `mode`(`default`, `medium`, `macro`) 및 `recentRecords` 수신 로직 추가.
+     - 최근 3일 기록 연계 컨텍스트 블록(`recentRecordsBlock`) 및 3단 모드별 엄격한 코칭 지침 주입.
+     - 로컬 스마트 폴백 시 모드별 verdict(`핵심 발견`, `페이스 조율`, `정밀 진단`) 및 추천 캘린더 일정(`calendar_action`) 자동 공급.
+  3. `docs/rules/TICKETS.md`: `#TASK-ES-042` 승인 및 완료 상태 반영.
+  4. `scripts/smoke-test.js`: `#TASK-ES-042` 3단 피드백 모드, 최근 기록 추출, 1클릭 캘린더 버튼, 백엔드 지침 검증 추가.
+- **검증 결과**:
+  - `npm test`: **231개 전수 100% 통과 (0개 실패)**.
+  - `index.html` 순증가: 228줄 (600줄 한도 엄수).
+---
+
