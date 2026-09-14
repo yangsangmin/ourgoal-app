@@ -3338,6 +3338,7 @@ check('compliance: [#TASK-ES-058] 아워골 AI 목표 및 템플릿 생성 유�
   assert.strictEqual(typeof moderation.check, 'function', 'moderation.check 함수 노출');
   assert.ok(moderation.REJECT_MESSAGE.includes('아워골 내부 차단 키워드가 식별되어 생성이 거부되었습니다'), '정본 차단 메시지 일치');
   assert.ok(moderation.REJECT_SUPPORT.includes('1:1 문의 및 오류 제보'), '상민님 지시 1:1 문의 지원 문구 일치');
+  assert.ok(moderation.REJECT_NOTICE.includes('무공해 플랫폼을 위한 강한 제어체계'), '상민님 제안 무공해 플랫폼 신뢰 안내 문구 탑재');
 
   // 2. 범죄/음란/자해 키워드 차단 검증
   const blockedCases = [
@@ -3357,21 +3358,63 @@ check('compliance: [#TASK-ES-058] 아워골 AI 목표 및 템플릿 생성 유�
     assert.ok(res.support.includes('1:1 문의 및 오류 제보'), '1:1 문의 안내 포함');
   }
 
-  // 3. 오탐(False Positive: 치료/극복/학습/비유) 보호 검증
+  // 3. [상민님 지시] 서술어 결합(끊기, 탈출 등)을 통한 우회/오용/남용 시도 엄격 차단 검증
+  const bypassAttemptCases = [
+    '필로폰 끊기 챌린지',
+    '사설토토 탈출하고 정상 생활하기',
+    '보이스피싱 조직 그만두기',
+    '조건만남 끊기'
+  ];
+
+  for (const text of bypassAttemptCases) {
+    const res = moderation.check(text);
+    assert.strictEqual(res.flagged, true, '서술어 결합 우회 시도 차단되어야 함: ' + text);
+    assert.strictEqual(res.message, '아워골 내부 차단 키워드가 식별되어 생성이 거부되었습니다');
+    assert.ok(res.support.includes('1:1 문의 및 오류 제보'));
+  }
+
+  // 4. [문제해결 8원칙 고도화] 특수기호 삽입, 숨김 유니코드, 영문, 은어 거래 결합 오남용 방어 검증
+  const advancedEvasionCases = [
+    { text: '필.로.폰 구매 방법', expect: true },
+    { text: '사-설-토-토 사이트 개설', expect: true },
+    { text: '보!이!스!피!싱 대본', expect: true },
+    { text: '청_부_살_인 의뢰', expect: true },
+    { text: '몸~캠~피~싱 사기', expect: true },
+    { text: '카/드/깡 작업', expect: true },
+    { text: '필\u200B로\u200B폰 판매', expect: true },
+    { text: '대\u200D마\u200D초 유통', expect: true },
+    { text: 'how to buy methamphetamine online', expect: true },
+    { text: 'philopon delivery guide', expect: true },
+    { text: 'create ransomware for money', expect: true },
+    { text: 'voice phishing call center template', expect: true },
+    { text: 'make deepfake porn video', expect: true },
+    { text: '아이스 팝니다 텔레그램 문의', expect: true },
+    { text: '작대기 직거래 좌표 공유', expect: true },
+    { text: '떨 팝니다 직거래 환영', expect: true }
+  ];
+
+  for (const tc of advancedEvasionCases) {
+    const res = moderation.check(tc.text);
+    assert.strictEqual(res.flagged, tc.expect, '오남용 변칙 차단 검증: ' + tc.text);
+    assert.strictEqual(res.message, '아워골 내부 차단 키워드가 식별되어 생성이 거부되었습니다');
+  }
+
+  // 5. 일반적인 건전한 목표 통과 및 오탐 방지 검증
   const allowedCases = [
-    '도박 끊기 30일 챌린지',
-    '마약 중독 재활 및 치료 완치',
-    '살인적인 스케줄 극복하기',
-    '화이트해커 되기 위한 정보보안 공부',
-    '모의해킹 대회 CTF 참가 준비',
-    '마약 옥수수 레시피 완성하기',
     '매일 아침 6시 기상 및 5km 러닝',
-    '공인중개사 1차 시험 합격'
+    '담배 끊기 30일 습관 챌린지',
+    '스마트폰 사용 시간 줄이기',
+    '공인중개사 1차 시험 합격',
+    '살인적인 스케줄 극복하기',
+    '화이트해커 정보보안 공부',
+    '아이스 아메리카노 하루 1잔 줄이기',
+    '나무 작대기로 텐트 고정하기',
+    'methodology of software design'
   ];
 
   for (const text of allowedCases) {
     const res = moderation.check(text);
-    assert.strictEqual(res.flagged, false, '오탐 방지로 허용되어야 함: ' + text);
+    assert.strictEqual(res.flagged, false, '정상 목표는 통과되어야 함: ' + text);
   }
 
   // 4. index.html 이중 방어망 배선 검증
@@ -3381,6 +3424,7 @@ check('compliance: [#TASK-ES-058] 아워골 AI 목표 및 템플릿 생성 유�
   assert.ok(html.includes('window.OurgoalModeration.check(desc)'), 'showNewGoalChatStep 내 사전 차단 배선');
   assert.ok(html.includes('window.OurgoalModeration.check(checkText)'), 'openCreateCustomTemplateModal 내 사전 차단 배선');
   assert.ok(html.includes("errBody.error === 'CONTENT_FILTER_REJECTED'"), 'requestGoalAgentDiff 내 서버 거부 에러 핸들링');
+  assert.ok(html.includes('무공해 플랫폼을 위한 강한 제어체계를 구축했습니다'), 'index.html 모달 내 무공해 플랫폼 신뢰 멘트 렌더링');
 
   // 5. 서버리스 API 2종 차단 배선 검증
   const goalAgentCode = fs.readFileSync(path.join(__dirname, '..', 'api/goalagent.js'), 'utf8');
@@ -3390,6 +3434,120 @@ check('compliance: [#TASK-ES-058] 아워골 AI 목표 및 템플릿 생성 유�
   const goalTemplateCode = fs.readFileSync(path.join(__dirname, '..', 'api/goaltemplate.js'), 'utf8');
   assert.ok(goalTemplateCode.includes("require('../js/content-moderation.js')"), 'api/goaltemplate.js 내 content-moderation 연동');
   assert.ok(goalTemplateCode.includes("error: 'CONTENT_FILTER_REJECTED'"), 'api/goaltemplate.js 내 400 거부 반환');
+});
+
+check('[TASK-ES-059] 테마 구분 없는 임의 데이터 AI 자율 메트릭 추론 및 다형성 시각화 엔진 검증', () => {
+  const uStats = require('../js/universal-stats.js');
+  assert.ok(uStats, 'universal-stats.js 모듈 로드');
+  assert.strictEqual(typeof uStats.extractMetricsFromRecord, 'function');
+  assert.strictEqual(typeof uStats.discoverActiveMetrics, 'function');
+  assert.strictEqual(typeof uStats.aggregateMetricTimeSeries, 'function');
+  assert.strictEqual(typeof uStats.renderUniversalSvgChart, 'function');
+  assert.strictEqual(typeof uStats.generateDomainSample, 'function');
+
+  // 1. 14개 이상 임의 도메인 및 사용자 입력 메트릭 자율 추출 검증
+  const testCases = [
+    { text: '아침 공복 체중 74.5kg 기록', cat: 'weight', val: 74.5, unit: 'kg', chart: 'line' },
+    { text: '클린코드 45쪽 완독', cat: 'reading', val: 45, unit: '쪽', chart: 'bar' },
+    { text: '어제 7.5시간 꿀잠 숙면', cat: 'sleep', val: 7.5, unit: '시간', chart: 'line' },
+    { text: '청약 적금 50만원 저축 완료', cat: 'finance', val: 50, unit: '만원', chart: 'area' },
+    { text: '한강 러닝 10.5km 5:12 페이스 완주', cat: 'running', val: 10.5, unit: 'km', chart: 'area' },
+    { text: '벤치프레스 100kg, 스쿼트 140kg, 데드리프트 170kg', cat: 'big3', val: 410, unit: 'kg', chart: 'line' },
+    { text: '도서관 순공 180분, 기출 50문제', cat: 'study', val: 180, unit: '분', chart: 'bar' },
+    { text: '고객사 계약 2건 실적 500만원 달성', cat: 'sales', val: 500, unit: '만원', chart: 'area' },
+    { text: '아침 혈압 125/82 mmHg 측정', cat: 'blood_pressure', val: 125, unit: 'mmHg', chart: 'line' },
+    { text: '아메리카노 2잔 카페인 150mg 섭취', cat: 'caffeine', val: 150, unit: 'mg', chart: 'bar' },
+    { text: '주말 라운딩 84타 라베 달성', cat: 'golf', val: 84, unit: '타', chart: 'line' },
+    { text: '깃허브 잔디 심기 12커밋 푸시', cat: 'coding', val: 12, unit: '커밋', chart: 'bar' },
+    { text: '수분 2.2L 음용 완료', cat: 'water', val: 2.2, unit: 'L', chart: 'bar' },
+    { text: '인바디 체지방률 14.2% 측정', cat: 'body_fat', val: 14.2, unit: '%', chart: 'line' }
+  ];
+
+  for (const tc of testCases) {
+    const mList = uStats.extractMetricsFromRecord({ text: tc.text });
+    const found = mList.find(m => m.category === tc.cat);
+    assert.ok(found, `지표 추출 성공: ${tc.cat} from "${tc.text}"`);
+    assert.strictEqual(found.value, tc.val, `값 일치 (${tc.cat}): ${found.value} === ${tc.val}`);
+    assert.strictEqual(found.unit, tc.unit, `단위 일치 (${tc.cat}): ${found.unit} === ${tc.unit}`);
+    assert.strictEqual(found.chartType, tc.chart, `차트형태 일치 (${tc.cat}): ${found.chartType} === ${tc.chart}`);
+  }
+
+  // 2. 표/테이블 및 CSV 형식 임의 컬럼 자율 메트릭 추출 검증
+  const tableRec = {
+    columns: ['날짜', '골격근량(kg)', '기초대사량(kcal)'],
+    rows: [['2025-05-01', '34.2kg', '1680']]
+  };
+  const tableMetrics = uStats.extractMetricsFromRecord(tableRec);
+  const muscleM = tableMetrics.find(m => m.category === 'tbl_골격근량');
+  const metabM = tableMetrics.find(m => m.category === 'tbl_기초대사량');
+  assert.ok(muscleM, '임의 표 컬럼 골격근량 메트릭 자동 추출');
+  assert.strictEqual(muscleM.value, 34.2);
+  assert.strictEqual(muscleM.unit, 'kg');
+  assert.strictEqual(muscleM.chartType, 'line');
+  assert.ok(metabM, '임의 표 컬럼 기초대사량 메트릭 자동 추출');
+  assert.strictEqual(metabM.value, 1680);
+  assert.strictEqual(metabM.unit, 'kcal');
+
+  // 3. 1년치 샘플 데이터 생성기 검증 (체중, 독서, 수면, 재테크, 러닝, 3대운동 등)
+  const domains = ['weight', 'reading', 'sleep', 'finance', 'running', 'big3', 'study', 'sales'];
+  domains.forEach(d => {
+    const s = uStats.generateDomainSample(d);
+    assert.ok(Array.isArray(s) && s.length >= 50, `${d} 1년치 샘플 50건 이상 생성`);
+  });
+
+  // 4. 활성 지표 자율 발견(Auto-Discovery) 및 동적 칩 검증
+  const testSampleRecs = [].concat(
+    uStats.generateDomainSample('weight'),
+    uStats.generateDomainSample('reading'),
+    uStats.generateDomainSample('sleep')
+  );
+  const discovery = uStats.discoverActiveMetrics(testSampleRecs);
+  assert.ok(discovery.activeMetrics.length >= 4, '최소 4개 이상 활성 지표 자동 노출');
+  const cats = discovery.activeMetrics.map(m => m.category);
+  assert.ok(cats.includes('general'), 'general 실천시간 포함');
+  assert.ok(cats.includes('weight'), 'weight 체중 칩 포함');
+  assert.ok(cats.includes('reading'), 'reading 독서 칩 포함');
+  assert.ok(cats.includes('sleep'), 'sleep 수면 칩 포함');
+
+  // 5. 다차원 시계열 집계 및 다형성 SVG 차트 렌더링 검증
+  ['weight', 'reading', 'sleep'].forEach(c => {
+    const agg = uStats.aggregateMetricTimeSeries(testSampleRecs, c, '1year');
+    assert.ok(agg.hasData, `${c} 시계열 데이터 존재`);
+    assert.ok(agg.totalSessions > 0, `${c} 총 세션수 집계`);
+    const svg = uStats.renderUniversalSvgChart(agg);
+    assert.ok(svg.includes('<svg'), `${c} SVG 차트 태그 렌더링`);
+    assert.ok(svg.includes('role="img"'), `${c} 웹 접근성 role 속성`);
+  });
+
+  // 6. 서버리스 API goaltemplate.js 내 ai_stats_agent & localStatsAgentFallback 검증
+  const goaltemplate = require('../api/goaltemplate.js');
+  assert.strictEqual(typeof goaltemplate.localStatsAgentFallback, 'function', 'localStatsAgentFallback export 확인');
+  const fbRes = goaltemplate.localStatsAgentFallback(testSampleRecs);
+  assert.ok(Array.isArray(fbRes.metrics) && fbRes.metrics.length > 0, '폴백 지표 배열 반환');
+  assert.ok(typeof fbRes.analysis === 'string' && fbRes.analysis.length > 10, 'AI 분석 텍스트 생성');
+  assert.strictEqual(fbRes.isOfflineFallback, true);
+
+  // 7. vercel.json 12개 함수 한도 및 /api/statsagent 리라이트 규칙 검증
+  const vercelCfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+  assert.ok(vercelCfg.rewrites, 'vercel.json rewrites 설정');
+  const statRewrite = vercelCfg.rewrites.find(r => r.source === '/api/statsagent');
+  assert.ok(statRewrite, '/api/statsagent rewrite 규칙 존재');
+  assert.strictEqual(statRewrite.destination, '/api/goaltemplate');
+
+  const apiFiles = fs.readdirSync(path.join(__dirname, '..', 'api')).filter(f => f.endsWith('.js'));
+  assert.ok(apiFiles.length <= 12, `Vercel Hobby 12개 함수 한도 준수 (현재 ${apiFiles.length}개)`);
+
+  // 8. index.html 배선 검증
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.ok(html.includes('<script src="js/universal-stats.js"></script>'), 'index.html 내 universal-stats.js 로드');
+  assert.ok(html.includes('id="recImportTopBtn"'), '기록 상단 가져오기 버튼');
+  assert.ok(html.includes('id="recSampleTopBtn"'), '기록 상단 샘플로드 버튼');
+  assert.ok(html.includes('id="recUniversalTopBanner"'), '기록 피드 상단 고시인성 유니버설 배너');
+  assert.ok(html.includes('id="recImportBannerBtn"'), '배너 내 데이터 가져오기 버튼');
+  assert.ok(html.includes('id="recSampleBannerBtn"'), '배너 내 1년치 샘플로드 버튼');
+  assert.ok(html.includes('id="universalStatsDashboardBox"'), '성취통계 뷰 내 유니버설 대시보드 컨테이너');
+  assert.ok(html.includes('OurgoalUniversalStats.renderUniversalStatsDashboard'), 'renderRecordsScreen 내 유니버설 대시보드 호출');
+  assert.ok(html.includes('OurgoalUniversalStats.openUniversalImportModal'), '모달 오픈 배선');
 });
 
 check('compliance: [#TASK-AUTH-P0-SAFETY] 로그인/계정관리 P0 안전망 패키지(비밀번호 찾기/변경, 로그인 유지, 30일 탈퇴 유예, 최근 로그인 뱃지) 무결성 검증', () => {
@@ -3435,4 +3593,5 @@ console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
 }
+
 
