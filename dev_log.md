@@ -3232,3 +3232,68 @@
   - `npm test`: **234개 전수 100% 통과 (0개 실패)**.
   - `node scripts/essence-gate.js --pre-commit`: 금지 패턴 0건, index.html 순증가 5줄 (300줄 한도 엄수).
 ---
+
+## [2026-09-14 15:15] [FEAT] #TASK-ES-061 임의 데이터 자율 융합, 동적 EAV 온톨로지 & 프로급 데이터 콕핏 시스템 완성
+- **목표**: 테마 제약 없이 유입되는 모든 임의 데이터에 대해 동적 EAV 온톨로지 계층 트리 색인, 7-Tier 정밀 절삭 타임라인 슬라이싱(ALL/1Y/6M/3M/1M/1W/3D), 한글 초성 분해 고속 탐색기(`ㅂㅊ` ➔ 벤치프레스), 트레이딩뷰급 자석 스냅 십자선 크로스헤어 및 플로팅 인스펙터, 엔터프라이즈 모노스페이스 데이터 그리드(다차원 정렬, CRUD, 일괄 삭제, 클린 CSV 내보내기), 캔버스 2x 스냅샷, 아워골 본질 연계(목표 진척도 1초 자동 반영, 캘린더 등록 1클릭 연계, 가이드 모달)를 탑재한 프로급 데이터 콕핏 완성.
+- **수정/실행 내역**:
+  1. `js/universal-stats.js`:
+     - **한글 유니코드 초성 분해 및 자모 매칭 엔진 (`getChosung`, `matchQuery`)**: 초성 인덱스 공식(`Math.floor(((code - 0xAC00) / 28) / 21)`)을 적용하여 `ㅂㅊ` ➔ 벤치프레스, `ㅅㅋ` ➔ 스쿼트, `ㄷㅅ` ➔ 독서 등 1ms 초고속 필터링 구현.
+     - **8대 도메인 EAV 온톨로지 & 커스텀 메타데이터 스키마 관리기 (`buildUniversalOntology`, `openTaxonomyManagerModal`)**: 운동, 러닝, 학습, 업무, 자산, 멘탈, 루틴, 기타 8대 도메인 트리 및 사용자 정의 엔티티/단위/차원 동적 CRUD 및 안전 폴백(soft-fallback).
+     - **7-Tier 정밀 절삭 타임라인 슬라이서 (`aggregateMultiSeries`)**: `ALL`, `1Y`, `6M`, `3M`, `1M`, `1W`, `3D` 슬라이서 지원, 370일 1Y 버퍼 보정 및 상대 윈도우 기반 동적 필터링.
+     - **Nice Numbers 수학적 눈금 정렬 알고리즘**: $[1, 2, 2.5, 5, 10] \times 10^n$ 기반 Y축 눈금선 및 4대 수학적 KPI 바(PEAK with Date, LATEST, NET DELTA %, VELOCITY/Week).
+     - **트레이딩뷰급 자석 스냅 십자선 & 플로팅 인스펙터**: 20px 반경 마그네틱 스냅, 수직/수평 점선 크로스헤어, 실시간 델타(Δ) 계산 및 툴팁 내 `[✏️ 이 기록 수정]` 인플레이스 모달 연동.
+     - **정규화 스케일 모드 (`Linear` vs `Norm %`)**: $t_0$ 기준 100% 지수화 비교 모드 지원으로 중량(kg)과 러닝 거리(km) 등 이종 단위 간 직접 상관분석 가능.
+     - **엔터프라이즈 데이터 그리드 모달 (`openUniversalDataGrid`)**: 8대 도메인별 문맥 인식 컬럼 헤더, 모노스페이스 3상태 정렬, 단건 인플레이스 수정/추가, 체크박스 일괄 삭제, 30개 페이징, UTF-8 BOM 클린 CSV 내보내기(`exportCleanCsv`).
+     - **아워골 철학 가이드 모달 (`openGuideModal`) & 캔버스 2x 스냅샷 (`captureChartSnapshot`)**: 5대 핵심 가치 및 콕핏 사용 가이드 표출.
+  2. `index.html`:
+     - 상단 헤더(`.screen-head-l`)에 `recAnalyticsGuideBtn` [💡 이 페이지 활용법 보기] 버튼 마운트.
+     - `OurgoalUniversalStats.openGuideModal` 이벤트 배선.
+     - 스크립트 캐시버스터 `js/universal-stats.js?v=20260914-es061` 갱신. (순증가 12줄로 300줄 한도 엄수).
+  3. `scripts/smoke-test.js`:
+     - `[#TASK-ES-061]` 7대 핵심 무결성(초성 분해/매칭, 8-Domain 온톨로지, 7-Tier 슬라이싱, 4-KPI 정량 산출, 클린 CSV/스냅샷, 모달 3종 탑재, index.html 배선) 전수 검증 추가.
+- **검증 결과**:
+  - `npm test`: **235개 전수 100% 통과 (0개 실패)**.
+  - `node scripts/essence-gate.js --pre-commit`: 금지 패턴 0건, index.html 순증가 12줄 (300줄 한도 엄수).
+---
+
+## [2026-09-14 15:35] [FEAT] #TASK-ES-061-DEFITNESS 자율 다차원 통계 분석기 운동 편향 전면 탈피 및 임의 도메인 동적 OLAP 차원 분석 시스템 개편
+- **목표**: 자율 다차원 통계 분석기 내에 잔존하던 운동/피트니스 편향(1RM, 총볼륨, 세트수, 체중, kg 기본값)을 완전히 걷어내고, 영업/매출(revenue, deals), 코딩/개발(commits, prs), 공부/수험(pages, problems), 재테크/자산, 마음챙김 등 세상의 모든 임의 데이터셋이 인입되었을 때 숫자형 컬럼을 동적으로 자동 발굴하여 1-클릭 다차원 전환(OLAP 슬라이싱) 및 도메인 중립적 시각화를 완벽 지원하도록 개편.
+- **수정/실행 내역**:
+  1. `js/universal-stats.js`:
+     - **도메인 자동 추론 및 `general` 폴백 확장**: `DOMAINS`에 `general`(일반·데이터) 도메인을 공식 편입하고 기본 폴백을 `health`에서 `general`로 전환. 비즈니스, 영업, 개발, 학습 키워드 감지 엔진 강화.
+     - **도메인 중립적 CSV 파서 (`parseCsvToUniversalRecords`)**: 특정 운동 컬럼 하드코딩 제거. 헤더 내 엔티티 컬럼(고객사, 프로젝트, 과목, 타겟 등) 자동 감지 및 임의의 숫자형 컬럼을 동적으로 발굴하여 `metrics[cleanKey]` 및 `metricUnits[cleanKey]`로 정밀 매핑. 요약 텍스트 및 기본 테마 중립화.
+     - **동적 차원 추출 온톨로지 빌더 (`buildUniversalOntology`)**: 레코드에 존재하는 모든 메트릭 키를 자율 수집하여 엔티티별 `dimensions` 풀 자동 생성.
+     - **동적 다차원 집계 엔진 (`aggregateMultiSeries`)**: 하드코딩된 1RM/볼륨 계산식 대신, 요청된 임의의 차원 키(`revenue`, `commits`, `pages` 등)를 유연하게 탐색하여 Peak(최고치), Latest(최신치), Net Delta(순변화량), Growth Rate(성장률), Velocity(주당 속도), Total Sum(총합)을 동적 산출.
+     - **대시보드 동적 차원 선택기 렌더링 (`renderUniversalStatsDashboard`)**: 엔티티 칩 하단에 동적 차원 선택 바(`u-dim-selector-row`) 마운트. 발굴된 차원 버튼(`u-dim-btn`) 클릭 시 1초 만에 해당 차원 기준 시계열 그래프 및 4-KPI 즉시 재연산.
+     - **비-피트니스 범용 샘플 생성기 (`generateDomainSample`)**: B2B 영업 52주 시계열(`sales`: revenue, deals) 및 소프트웨어 개발 52주 시계열(`coding`: commits, prs) 샘플 및 가져오기 모달 연계.
+     - **문맥 인식 데이터 그리드 (`openUniversalDataGrid`)**: 피트니스 엔티티가 아닌 경우 `Peak 1RM (kg)` / `Total Vol (kg)` 헤더 대신 실제 메트릭명과 단위를 표출.
+  2. `scripts/smoke-test.js`:
+     - `[#TASK-ES-061-DEFITNESS]` 임의 B2B 매출 CSV 파싱, general 테마 지정, 동적 메트릭/차원 발굴, 매출액 및 계약건수 동적 OLAP 집계, 영업/코딩 52주 샘플 생성, 동적 차원 바 렌더링 전수 자동화 테스트 추가.
+- **검증 결과**:
+  - `npm test`: **236개 전수 100% 통과 (0개 실패)**.
+  - `node scripts/essence-gate.js --pre-commit`: 금지 패턴 0건, index.html 순증가 12줄 (300줄 한도 엄수).
+  - Tri-Sync 검증: **100% (489/489, pending 0)**.
+---
+
+## [2026-09-14 15:50] [FEAT] #TASK-ES-061-DEFITNESS-V2 자율 다차원 통계 분석기 Empty State · 인제스천 모달 · 데이터 그리드 · 배너 전 영역 운동 편향 완전 탈피 완료
+- **목표**:
+  - 통계 분석기 첫 진입 시(데이터가 없을 때) '52주 3대운동 156세션 1초 로드' 단일 버튼만 노출되던 문제를 해소하고, 4대 도메인(💼 B2B 영업, 💻 개발 활동, 📖 수험/공부, 🏃 건강/운동) 스타터 카드 및 가져오기 버튼으로 전면 개편.
+  - 외부 데이터 가져오기 모달(`openUniversalImportModal`) 최상단 추천 카드를 피트니스 중심에서 1순위 B2B IT 솔루션 영업 실적 52주, 2순위 풀스택 오픈소스 개발 활동 52주로 재배치하고, CSV/텍스트 입력 예시 역시 다채로운 비즈니스/개발/학습 실측 예시로 개편.
+  - 엔터프라이즈 데이터 그리드(`openUniversalDataGrid`) 컬럼 헤더(1차/2차 지표)를 감지된 도메인에 맞춰 매출실적(만원), 커밋수(개), 소요시간/문제수 등으로 동적 전환.
+  - `index.html` 배너 문구를 '영업 실적, 개발 커밋, 수험 공부, 자산, 운동 등 어떤 데이터도 AI가 스스로 감지해 전문 다차원 통계 차트로 시각화해요'로 도메인 중립화.
+- **수정 파일**:
+  1. `js/universal-stats.js`:
+     - Empty State 4대 도메인 스타터 카드 컨테이너 마운트 및 1-클릭 로드 배선.
+     - `openUniversalImportModal` 1순위/2순위 대표 샘플 카드(B2B 영업, 오픈소스 개발) 및 서브그리드(공부, 자산, 운동, 1924 올림픽 등) 재배치.
+     - `openUniversalDataGrid` 도메인 문맥 감지 동적 컬럼 헤더(`h1`, `h2`) 및 fallback 메트릭(`revenue`, `commits`, `problems`, `deals`, `prs`) 연계.
+     - 차원 선택 바(`availableDims`) 수집 시 현재 선택/활성 엔티티에 존재하는 측정 차원만 엄격 격리(타 도메인 피트니스 키 침범 방지).
+  2. `index.html`:
+     - 상단 인제스천 배너 안내 문구 도메인 중립화.
+  3. `scripts/smoke-test.js`:
+     - Empty State 4대 도메인 스타터 카드 존재 및 B2B/개발/수험/운동 데이터 탑재 검증.
+     - 모달 1순위/2순위 샘플 및 3대 탭 존재 검증.
+     - `index.html` 배너 도메인 중립 문구 검증.
+- **검증 결과**:
+  - `npm test`: **236개 테스트 전수 100% 통과 (0개 실패)**.
+  - `node scripts/essence-gate.js --pre-commit`: 금지 패턴 0건, index.html 순증가 0줄.
+---

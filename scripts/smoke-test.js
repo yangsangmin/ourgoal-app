@@ -3798,11 +3798,185 @@ check('compliance: [#TASK-ES-060] 1900년대 및 역대 과거 임의 데이터 
 
   // 6. index.html 무결성 검증 (캐시버스터, fmtDateLabel 연도 표기, try-catch 방어)
   const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-  assert.ok(indexHtml.includes('universal-stats.js?v=20260914-es060'), '캐시버스터 20260914-es060 갱신');
+  assert.ok(indexHtml.includes('universal-stats.js?v=20260914-es060') || indexHtml.includes('universal-stats.js?v=20260914-es061'), '캐시버스터 갱신');
   assert.ok(indexHtml.includes("d.getFullYear() !== today.getFullYear()"), 'fmtDateLabel 과거 연도 표기 로직 탑재');
   assert.ok(indexHtml.includes("OurgoalUniversalStats.renderUniversalStatsDashboard(uDashBox, allRecs, state"), '대시보드 호출 탑재');
   assert.ok(indexHtml.includes("catch(uErr)"), '대시보드 렌더링 try-catch 방어막 탑재');
 });
+
+/* ============ [#TASK-ES-061] 유니버설 데이터 자율 융합, 동적 EAV 온톨로지 & 프로급 콕핏 시스템 검증 ============ */
+check('compliance: [#TASK-ES-061] 유니버설 데이터 자율 융합, 동적 EAV 온톨로지 & 프로급 콕핏 시스템 무결성 검증', () => {
+  const uStats = require('../js/universal-stats.js');
+  assert.ok(uStats, 'OurgoalUniversalStats 모듈 export 확인');
+
+  // 1. 초성 분해 및 초성 검색 검증 (ㅂㅊ -> 벤치프레스, ㅅㅋ -> 스쿼트, ㄷㅅ -> 독서, ㄹㄴ -> 러닝)
+  assert.strictEqual(typeof uStats.getChosung, 'function', 'getChosung 함수 export');
+  assert.strictEqual(uStats.getChosung('벤치프레스'), 'ㅂㅊㅍㄹㅅ', '벤치프레스 초성 분해');
+  assert.strictEqual(uStats.getChosung('스쿼트'), 'ㅅㅋㅌ', '스쿼트 초성 분해');
+  assert.strictEqual(uStats.getChosung('독서'), 'ㄷㅅ', '독서 초성 분해');
+  assert.strictEqual(uStats.getChosung('러닝'), 'ㄹㄴ', '러닝 초성 분해');
+
+  // matchQuery 검증
+  assert.strictEqual(typeof uStats.matchQuery, 'function', 'matchQuery 함수 export');
+  assert.ok(uStats.matchQuery('벤치프레스', 'ㅂㅊ'), 'ㅂㅊ 검색어로 벤치프레스 매칭');
+  assert.ok(uStats.matchQuery('스쿼트', 'ㅅㅋ'), 'ㅅㅋ 검색어로 스쿼트 매칭');
+  assert.ok(uStats.matchQuery('독서', 'ㄷㅅ'), 'ㄷㅅ 검색어로 독서 매칭');
+
+  // 2. 8-Domain 온톨로지 및 패싯 자동 색인 검증
+  const sampleRecs = [
+    { id: '1', theme: 'health', subTheme: '벤치프레스', text: '100kg 5회', startAt: '2026-03-01T10:00:00.000Z', metrics: { '1rm': 100, volume: 2500 } },
+    { id: '2', theme: 'running', subTheme: '10km 러닝', text: '페북 러닝', startAt: '2026-03-02T10:00:00.000Z', metrics: { distance: 10, pace: 5.2 } },
+    { id: '3', theme: 'study', subTheme: '자바스크립트 독서', text: '120페이지', startAt: '2026-03-03T10:00:00.000Z', metrics: { pages: 120 } }
+  ];
+  const ontology = uStats.buildUniversalOntology(sampleRecs);
+  assert.ok(Array.isArray(ontology) && ontology.length >= 3, '최소 3개 이상 엔티티 온톨로지 추출');
+  const benchEnt = ontology.find(o => o.name === '벤치프레스');
+  assert.ok(benchEnt && (benchEnt.domainKey === 'health' || benchEnt.theme === 'health'), '벤치프레스 health 도메인 매핑');
+  assert.ok(benchEnt.dimensions.includes('1rm'), '1rm 차원 포함');
+
+  // 3. 7-Tier 정밀 절삭 타임라인 슬라이싱 검증 ('all', '1y', '6m', '3m', '1m', '1w', '3d')
+  const periods = ['all', '1y', '6m', '3m', '1m', '1w', '3d'];
+  periods.forEach(p => {
+    const agg = uStats.aggregateMultiSeries(sampleRecs, ['벤치프레스'], '1rm', p, 'single');
+    assert.ok(agg && agg['벤치프레스'], p + ' 기간 집계 성공');
+  });
+
+  // 4. 4-KPI 수학적 정량 산출 검증 (PEAK, LATEST, NET DELTA, VELOCITY)
+  const big3 = uStats.generate52WeekPowerliftingSample();
+  const benchAgg = uStats.aggregateMultiSeries(big3, ['벤치프레스'], '1rm', '1y', 'single')['벤치프레스'];
+  assert.strictEqual(benchAgg.prVal, 106, 'PEAK 106kg PR');
+  assert.strictEqual(benchAgg.latestVal, 105, 'LATEST 105kg');
+  assert.strictEqual(benchAgg.netDelta, 32, 'NET DELTA 32kg');
+  assert.ok(benchAgg.growthRate > 0, 'Growth rate positive');
+  assert.ok(typeof benchAgg.velocityPerWeek === 'number', '주당 성장속도(velocityPerWeek) 산출');
+
+  // 5. 클린 CSV 내보내기 및 캔버스 스냅샷 함수 탑재
+  assert.strictEqual(typeof uStats.exportCleanCsv, 'function', 'exportCleanCsv 함수 탑재');
+  assert.strictEqual(typeof uStats.captureChartSnapshot, 'function', 'captureChartSnapshot 함수 탑재');
+
+  // 6. 가이드 모달, 데이터 그리드 모달, 온톨로지 매니저 모달 탑재
+  assert.strictEqual(typeof uStats.openGuideModal, 'function', 'openGuideModal 함수 탑재');
+  assert.strictEqual(typeof uStats.openUniversalDataGrid, 'function', 'openUniversalDataGrid 함수 탑재');
+  assert.strictEqual(typeof uStats.openTaxonomyManagerModal, 'function', 'openTaxonomyManagerModal 함수 탑재');
+
+  // 7. index.html 배선 및 버튼 검증
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.ok(html.includes('recAnalyticsGuideBtn'), '기록 상단 가이드 버튼(#recAnalyticsGuideBtn) 마운트');
+  assert.ok(html.includes('💡 이 페이지 활용법 보기'), '가이드 버튼 텍스트 표출');
+  assert.ok(html.includes('OurgoalUniversalStats.openGuideModal'), '가이드 버튼 클릭 시 openGuideModal 호출');
+  assert.ok(html.includes('universal-stats.js?v=20260914-es061'), '캐시버스터 v=20260914-es061 갱신');
+});
+
+/* ============ [#TASK-ES-061-DEFITNESS] 운동/건강 편향 탈피 및 임의 도메인(영업, 개발, 학습 등) 자율 다차원 동적 분석 검증 ============ */
+check('compliance: [#TASK-ES-061-DEFITNESS] 운동/건강 편향 탈피 및 임의 도메인(영업, 개발, 학습 등) 자율 다차원 동적 분석 검증', () => {
+  const uStats = require('../js/universal-stats.js');
+  assert.ok(uStats, 'OurgoalUniversalStats 모듈 export 확인');
+
+  // 1. 임의 B2B 매출 CSV 파싱 검증 (건강/운동 키 강제 주입 없음, general 테마, 다차원 숫자 컬럼 자동 감지)
+  const salesCsv = [
+    '날짜,고객사,매출액(만원),계약건수,담당자메모',
+    '2025-01-10,A엔터프라이즈,500,3,1차 계약',
+    '2025-02-15,A엔터프라이즈,1200,8,확장 계약 완료',
+    '2025-03-20,B솔루션,850,5,신규 온보딩'
+  ].join('\n');
+
+  const parsed = uStats.parseCsvToUniversalRecords(salesCsv);
+  assert.strictEqual(parsed.length, 3, '3건 레코드 파싱');
+  assert.strictEqual(parsed[0].theme, 'general', '운동/건강 편향 없이 general 도메인 자동 할당');
+  
+  const recA1 = parsed[0];
+  assert.strictEqual(recA1.subTheme, 'A엔터프라이즈', '고객사 엔티티 자동 인식');
+  assert.ok(recA1.metrics, 'metrics 객체 자동 생성');
+  
+  // 매출액(만원) 및 계약건수가 metrics에 추출되었는지 확인
+  const metricKeys = Object.keys(recA1.metrics);
+  assert.ok(metricKeys.length >= 2, '최소 2개 이상의 동적 메트릭 컬럼 추출');
+  const revenueKey = metricKeys.find(k => k.includes('매출액'));
+  const dealsKey = metricKeys.find(k => k.includes('계약건수'));
+  assert.ok(revenueKey, '매출액 메트릭 자동 추출');
+  assert.ok(dealsKey, '계약건수 메트릭 자동 추출');
+  assert.strictEqual(recA1.metrics[revenueKey], 500, '매출액 500 추출');
+  assert.strictEqual(recA1.metrics[dealsKey], 3, '계약건수 3 추출');
+
+  // 운동 특정 키워드(1rm, volume) 강제 주입 부재 검증
+  assert.strictEqual(recA1.metrics['1rm'], undefined, '임의 데이터에 1RM 강제 주입 없음');
+  assert.strictEqual(recA1.metrics['volume'], undefined, '임의 데이터에 총볼륨 강제 주입 없음');
+
+  // 2. 동적 온톨로지 빌드 검증
+  const ont = uStats.buildUniversalOntology(parsed);
+  assert.strictEqual(ont.length, 2, '2개 엔티티(A엔터프라이즈, B솔루션) 온톨로지 빌드');
+  const entA = ont.find(e => e.name === 'A엔터프라이즈');
+  assert.ok(entA, 'A엔터프라이즈 온톨로지 항목 존재');
+  assert.ok(entA.dimensions.includes(revenueKey), 'A엔터프라이즈 온톨로지에 매출액 차원 포함');
+  assert.ok(entA.dimensions.includes(dealsKey), 'A엔터프라이즈 온톨로지에 계약건수 차원 포함');
+
+  // 3. 다차원 동적 OLAP 집계 (매출액 & 계약건수 각각 집계 검증)
+  const aggRevenue = uStats.aggregateMultiSeries(parsed, ['A엔터프라이즈'], revenueKey, 'all', 'single')['A엔터프라이즈'];
+  assert.ok(aggRevenue, '매출액 기준 A엔터프라이즈 집계 성공');
+  assert.strictEqual(aggRevenue.prVal, 1200, '최고 매출액 1200만원 (Peak)');
+  assert.strictEqual(aggRevenue.latestVal, 1200, '최신 매출액 1200만원 (Latest)');
+  assert.strictEqual(aggRevenue.netDelta, 700, '순성장액 +700만원 (Net Delta)');
+  assert.strictEqual(aggRevenue.growthRate, 140, '성장률 140% (Growth Rate)');
+
+  const aggDeals = uStats.aggregateMultiSeries(parsed, ['A엔터프라이즈'], dealsKey, 'all', 'single')['A엔터프라이즈'];
+  assert.ok(aggDeals, '계약건수 기준 A엔터프라이즈 집계 성공');
+  assert.strictEqual(aggDeals.prVal, 8, '최대 계약건수 8건 (Peak)');
+  assert.strictEqual(aggDeals.latestVal, 8, '최신 계약건수 8건 (Latest)');
+  assert.strictEqual(aggDeals.netDelta, 5, '순증가 +5건 (Net Delta)');
+
+  // 4. 범용 도메인 샘플 생성기(영업, 코딩) 검증
+  const salesSample = uStats.generateDomainSample('sales');
+  assert.ok(Array.isArray(salesSample) && salesSample.length >= 50, '영업 52주 시계열 샘플 생성 성공');
+  assert.ok(salesSample[0].metrics && typeof salesSample[0].metrics.revenue === 'number', '영업 샘플 revenue 메트릭 보유');
+  assert.ok(salesSample[0].metrics && typeof salesSample[0].metrics.deals === 'number', '영업 샘플 deals 메트릭 보유');
+
+  const codingSample = uStats.generateDomainSample('coding');
+  assert.ok(Array.isArray(codingSample) && codingSample.length >= 50, '개발 코딩 52주 시계열 샘플 생성 성공');
+  assert.ok(codingSample[0].metrics && typeof codingSample[0].metrics.commits === 'number', '개발 샘플 commits 메트릭 보유');
+  assert.ok(codingSample[0].metrics && typeof codingSample[0].metrics.prs === 'number', '개발 샘플 prs 메트릭 보유');
+
+  // 5. 동적 차원 선택 UI(Dimension Selector Row) 렌더링 검증
+  const mockContainer = { innerHTML: '', querySelector: () => null, querySelectorAll: () => [], addEventListener: () => {} };
+  const mockState = { profile: { records: parsed } };
+  uStats.renderUniversalStatsDashboard(mockContainer, parsed, mockState, {
+    openModal: () => {},
+    closeModal: () => {},
+    toast: () => {},
+    saveProfile: () => {},
+    onDone: () => {}
+  });
+  assert.ok(mockContainer.innerHTML.includes('u-dim-selector-row'), '대시보드 내 차원 선택 바(u-dim-selector-row) 렌더링');
+  assert.ok(mockContainer.innerHTML.includes(revenueKey) || mockContainer.innerHTML.includes('u-dim-btn'), '동적 차원 전환 버튼 렌더링');
+
+  // 6. 데이터 없을 때 Empty State 4대 도메인 스타터 카드 및 가져오기 버튼 검증
+  const emptyContainer = { innerHTML: '', querySelector: () => null, querySelectorAll: () => [] };
+  uStats.renderUniversalStatsDashboard(emptyContainer, [], {}, {});
+  assert.ok(emptyContainer.innerHTML.includes('u-empty-load-btn'), 'Empty State 4대 스타터 버튼 컨테이너');
+  assert.ok(emptyContainer.innerHTML.includes('data-type="sales"'), 'B2B 영업 실적 52주 스타터 카드 탑재');
+  assert.ok(emptyContainer.innerHTML.includes('data-type="coding"'), '개발자 활동 52주 스타터 카드 탑재');
+  assert.ok(emptyContainer.innerHTML.includes('data-type="study"'), '수험·공부 52주 스타터 카드 탑재');
+  assert.ok(emptyContainer.innerHTML.includes('data-type="big3"'), '건강·운동 52주 스타터 카드 탑재');
+  assert.ok(emptyContainer.innerHTML.includes('uEmptyImportBtn'), '내 데이터 가져오기 버튼 탑재');
+
+  // 7. 통합 인제스천 모달 1순위 대표 샘플(영업, 개발) 및 3대 탭 탑재 검증
+  let capturedModalHtml = '';
+  uStats.openUniversalImportModal({
+    openModal: function(html){ capturedModalHtml = html; },
+    closeModal: function(){},
+    state: {},
+    toast: function(){}
+  });
+  assert.ok(capturedModalHtml.includes('data-sample="sales"'), '모달 1순위 카드 B2B 영업 실적 탑재');
+  assert.ok(capturedModalHtml.includes('data-sample="coding"'), '모달 2순위 카드 오픈소스 개발 활동 탑재');
+  assert.ok(capturedModalHtml.includes('uImpTabSamples'), '1년치 추천 샘플 탭 탑재');
+  assert.ok(capturedModalHtml.includes('uImpTabCsv'), 'CSV 파일 탭 탑재');
+  assert.ok(capturedModalHtml.includes('uImpTabText'), '텍스트 붙여넣기 탭 탑재');
+
+  // 8. index.html 배너 문구의 도메인 중립성 검증
+  const indexHtmlContent = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.ok(indexHtmlContent.includes('영업 실적, 개발 커밋, 수험 공부, 자산, 운동'), 'index.html 배너의 전 도메인 포용 문구 검증');
+});
+
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
 

@@ -284,6 +284,7 @@
         <div class="screen-head-l">
           <h2 class="s-title">기록</h2>
           <span class="privacy-badge" id="recPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
+          <button type="button" class="btn btn-ghost btn-xs" id="recAnalyticsGuideBtn" style="font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;margin-left:6px;cursor:pointer;" title="이 페이지 활용법 보기">💡 이 페이지 활용법 보기</button>
         </div>
         <div>
           <button class="btn btn-primary btn-sm" id="recAddBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>새 기록</span></button>
@@ -315,7 +316,7 @@
                 <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:rgba(37,99,235,0.15);color:var(--primary);font-weight:700;">AI 자동시각화</span>
               </div>
               <div style="font-size:11.5px;color:var(--text-faint);margin-top:2px;line-height:1.4;">
-                52주 3대운동, 체중, 독서, 수면, 러닝 등 어떤 데이터도 AI가 감지해 통계 차트로 시각화해요.
+                영업 실적, 개발 커밋, 수험 공부, 자산, 운동 등 어떤 데이터도 AI가 스스로 감지해 전문 다차원 통계 차트로 시각화해요.
               </div>
             </div>
             <div>
@@ -877,7 +878,7 @@
   <script src="js/avatar-system.js?v=20260913-es054"></script>
   <script src="js/content-moderation.js"></script>
   <script src="js/auth-safety.js"></script>
-  <script src="js/universal-stats.js?v=20260914-es060"></script>
+  <script src="js/universal-stats.js?v=20260914-es061"></script>
 <script>
 
 (function(){
@@ -16977,6 +16978,16 @@
             saveProfile: saveProfile,
             onDone: function(){ if(state) state.recordsSegment = 'stats'; renderRecordsScreen(); }
           });
+        }
+      };
+    }
+
+    // [TASK-ES-061] 성취 통계 및 유니버설 온톨로지 콕핏 활용법 가이드 모달 바인딩
+    var guideBtn = document.getElementById('recAnalyticsGuideBtn');
+    if(guideBtn){
+      guideBtn.onclick = function(){
+        if(typeof OurgoalUniversalStats !== 'undefined' && OurgoalUniversalStats.openGuideModal){
+          OurgoalUniversalStats.openGuideModal({ openModal: openModal, closeModal: closeModal });
         }
       };
     }
