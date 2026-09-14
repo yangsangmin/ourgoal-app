@@ -369,6 +369,9 @@
     deps.openModal(content, function(sheet){
       var btn = sheet.querySelector('#trendModalCloseBtn');
       if(btn && deps.closeModal) btn.onclick = deps.closeModal;
+      if(deps.wireRecordCards && typeof deps.wireRecordCards === 'function'){
+        deps.wireRecordCards(sheet);
+      }
     });
   }
 

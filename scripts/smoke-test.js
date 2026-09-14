@@ -3539,15 +3539,17 @@ check('[TASK-ES-059] 테마 구분 없는 임의 데이터 AI 자율 메트릭 �
 
   // 8. index.html 배선 검증
   const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-  assert.ok(html.includes('<script src="js/universal-stats.js"></script>'), 'index.html 내 universal-stats.js 로드');
-  assert.ok(html.includes('id="recImportTopBtn"'), '기록 상단 가져오기 버튼');
-  assert.ok(html.includes('id="recSampleTopBtn"'), '기록 상단 샘플로드 버튼');
-  assert.ok(html.includes('id="recUniversalTopBanner"'), '기록 피드 상단 고시인성 유니버설 배너');
-  assert.ok(html.includes('id="recImportBannerBtn"'), '배너 내 데이터 가져오기 버튼');
-  assert.ok(html.includes('id="recSampleBannerBtn"'), '배너 내 1년치 샘플로드 버튼');
+  assert.ok(html.includes('src="js/universal-stats.js'), 'index.html 내 universal-stats.js 로드');
+  assert.ok(html.includes('id="recAddBtn"'), '기록 상단 새 기록 버튼 보존');
+  assert.ok(!html.includes('id="recSampleTopBtn"'), '새기록 왼쪽 샘플로드 버튼 삭제 완료');
+  assert.ok(!html.includes('id="recImportTopBtn"'), '새기록 왼쪽 가져오기 버튼 삭제 완료');
+  assert.ok(html.includes('id="recUniversalTopBanner"'), '기록 피드 상단 단일 통합 유니버설 배너');
+  assert.ok(html.includes('id="recImportBannerBtn"'), '배너 내 단일 통합 데이터 가져오기/샘플로드 버튼');
+  assert.ok(!html.includes('id="recSampleBannerBtn"'), '배너 내 중복 2개 버튼 삭제 완료');
   assert.ok(html.includes('id="universalStatsDashboardBox"'), '성취통계 뷰 내 유니버설 대시보드 컨테이너');
   assert.ok(html.includes('OurgoalUniversalStats.renderUniversalStatsDashboard'), 'renderRecordsScreen 내 유니버설 대시보드 호출');
   assert.ok(html.includes('OurgoalUniversalStats.openUniversalImportModal'), '모달 오픈 배선');
+  assert.ok(html.includes('wireRecordCards'), '세부 기록 모달 및 피드 카드 인터랙션 연동 함수 존재');
 });
 
 check('compliance: [#TASK-ES-059-FUSION] 임의 데이터 자율 융합(Ingest & Fusion) 및 완전 다중선택 슬라이싱 시각화 시스템 검증', () => {
@@ -3715,6 +3717,28 @@ check('compliance: [#TASK-ES-042] 체크인 3단 피드백 모드(기본·중간
   assert.ok(feedbackApiCode.includes('모드: 정밀 피드백'), '정밀 모드 지침 포함');
   assert.ok(feedbackApiCode.includes('정밀 진단'), '정밀 모드 verdict 및 폴백 연동');
   assert.ok(feedbackApiCode.includes('페이스 조율'), '중간 모드 verdict 및 폴백 연동');
+});
+
+check('compliance: [#TASK-ES-059-BUTTONS] 기록 버튼 중복 해소 및 세부기록 모달 기능 연계 검증', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const rsCode = fs.readFileSync(path.join(__dirname, '..', 'js', 'records-stats.js'), 'utf8');
+
+  // 1. 헤더 새기록 왼쪽 버튼 2종 완전 삭제 및 새기록 버튼 단독 유지
+  assert.ok(!html.includes('id="recSampleTopBtn"'), '새기록 왼쪽 샘플로드 버튼 삭제');
+  assert.ok(!html.includes('id="recImportTopBtn"'), '새기록 왼쪽 가져오기 버튼 삭제');
+  assert.ok(html.includes('id="recAddBtn"'), '새기록 버튼 보존');
+
+  // 2. 배너 내 2개 버튼 -> 단일 통합 1개 버튼 [📥 데이터 가져오기 & 1초 샘플로드]
+  assert.ok(!html.includes('id="recSampleBannerBtn"'), '배너 내 중복 샘플로드 버튼 삭제');
+  assert.ok(html.includes('id="recImportBannerBtn"'), '배너 내 단일 통합 버튼 유지');
+
+  // 3. 전역 정적 클릭 리스너 및 이벤트 위임 탑재
+  assert.ok(html.includes("closest('#recImportBannerBtn"), '유니버설 가져오기 전역 클릭 리스너 위임 탑재');
+
+  // 4. 세부 기록 보기 모달 스코프 에러 해소 및 wireRecordCards 카드 연동 탑재
+  assert.ok(html.includes('function buildRecordCardHtml(r)'), 'buildRecordCardHtml 함수 상위 스코프 호이스팅');
+  assert.ok(html.includes('function wireRecordCards(container'), 'wireRecordCards 카드 인터랙션 바인더 탑재');
+  assert.ok(rsCode.includes('deps.wireRecordCards'), 'records-stats.js openDayDetailModal 내 카드 상호작용 배선');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
