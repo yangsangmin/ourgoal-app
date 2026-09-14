@@ -114,10 +114,9 @@
 
 ### 소셜로그인 (1건)
 
-- [ ] **15. TASK-01 카카오·구글 소셜 로그인 (코드 구현)** · 상태 대기 · 예상 180분
+- [x] **15. TASK-01 카카오·구글 소셜 로그인 (코드 구현)** · 완료 (#TASK-ES-055)
   - 완료 기준: 랜딩·인증 화면에 카카오/구글 버튼이 있고 클릭 시 콘솔 에러 없이 OAuth 리다이렉트가 발생하며, 복귀 후 boot()가 세션을 받아 users 테이블에 업서트한다
-  - 선행: 순서 33
-  - 비고: 2026-09-08 3차 검증(양비스 7efd1f7e): 실측 결과 미충족 → 대기. ①버튼 4개(landKakaoBtn·landGoogleBtn·authKakaoBtn·authGoogleBtn) 프로덕션 HTML 존재 확인. ②GET /auth/v1/settings → external.kakao=false, external.google=false. GET /auth/v1/authorize?provider=kakao|google → 400 "Unsupported provider: provider is not enabled". 리다이 …(전문은 노션)
+  - 비고(2026-09-13 1호 직원 재확인): 스프린트 TASK-01(PR #38, 2026-09-06 병합)에서 이미 구현·배포 완료. index.html 57-58·74-75행 4버튼 + 2015행 signInWithOAuth 호출부 확인. 이 항목의 2026-09-08 비고("provider 비활성화 400 에러")는 그 시점 이후 사용자가 Supabase에서 Kakao·Google Provider를 활성화하며 해소된 것으로 보인다 — 같은 날 #TASK-ES-033 티켓이 "기존 카카오 로그인 사용자가 구글 로그인 시도 시 세션 파괴" 실사용 버그를 다루고 있어 두 provider가 실제로 프로덕션에서 쓰이고 있음이 교차 확인된다. 이 사이클에서는 Supabase 직접 조회로 재검증하려 했으나 환경 네트워크 정책이 `dvqosviqbciohcywkzbq.supabase.co` 아웃바운드를 차단(CONNECT 403)해 REST 호출은 못 했고, 코드 존재·실사용 버그 이력의 정황 증거로 판단했다.
 
 ### 커뮤니티 (2건)
 
