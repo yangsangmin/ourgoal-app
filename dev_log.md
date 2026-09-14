@@ -3190,3 +3190,23 @@
   - 벤치프레스 + 스쿼트 2종 다중 선택 오버레이 시각화 정상 작동 확인.
   - 스쿼트 + 벤치 + 데드리프트 3대 종합 PR 506kg 산출 및 종합 볼륨 시각화 정상 작동 확인.
 ---
+
+## [2026-09-14 12:45] [FIX] #TASK-ES-059-BUTTONS 기록 상단 버튼 중복 정리, 1통합 가져오기/샘플 로더 및 세부기록 모달 동작/기능 연계 복원
+- **목표**: 기록 탭 상단 헤더의 새기록 왼쪽 중복 버튼 2종을 삭제하고, 배너 내 2개 버튼을 1개 단일 통합 버튼([📥 데이터 가져오기 & 1초 샘플])으로 통폐합하며, 전역 이벤트 위임을 통해 버튼 무반응을 원천 해결함. 또한 "터치하여 세부 기록 보기" 클릭 시 발생하던 ReferenceError 스코프 결함을 해결하고, 모달 내 세부 기록 카드에서 수정·삭제·표 모달 보기·수치 메트릭 뱃지 표시 등 다른 시스템 기능과 100% 연동되도록 완성.
+- **수정/실행 내역**:
+  1. `index.html`:
+     - 상단 헤더(`.screen-head`)에서 `recAddBtn` 왼쪽의 중복 버튼 2종(`recSampleTopBtn`, `recImportTopBtn`) 완전 삭제.
+     - `recUniversalTopBanner` 내 2개 분리 버튼을 1개 고시인성 단일 통합 버튼(`recImportBannerBtn`, `[📥 데이터 가져오기 & 1초 샘플]`)으로 통합.
+     - `document.addEventListener('click', ...)` 전역 이벤트 위임을 통해 배너 버튼 및 퀵 버튼의 무반응 현상 원천 차단.
+     - `buildRecordCardHtml`을 상위 스코프로 호이스팅하여 `renderWeekChart`의 `[data-trendpop]`("터치하여 세부 기록 보기") 클릭 시 발생하던 `ReferenceError` 완전 박멸.
+     - `wireRecordCards` 재사용 바인더를 신설하여 세부 기록 모달과 기록 피드 양쪽에서 수정(`openRecordModal`), 삭제, 표 상세 모달(`openTemplateRecordDetailModal`), 테마 변경이 100% 동일하게 동작하도록 연계.
+     - 기록 카드 내 수치 메트릭(1RM, 볼륨, 중량 등) 뱃지 렌더링 추가.
+     - 스크립트 캐시버스터(`?v=20260914-es059b`) 적용으로 브라우저 즉시 갱신 보장.
+  2. `js/records-stats.js`:
+     - `openDayDetailModal` 내 마운트 콜백에서 `deps.wireRecordCards(sheet)` 호출을 추가하여 모달 내 카드 상호작용 완전 복원.
+  3. `scripts/smoke-test.js`:
+     - `[#TASK-ES-059-BUTTONS]` 중복 버튼 삭제, 단일 통합 버튼, 전역 클릭 위임, 세부 기록 모달 스코프 및 상호작용 연계 검증 추가.
+- **검증 결과**:
+  - `npm test`: **233개 전수 100% 통과 (0개 실패)**.
+  - `essence-gate.js`: 금지 패턴 0건, `index.html` 순증가 13줄 (300줄 한도 엄수).
+---

@@ -285,9 +285,7 @@
           <h2 class="s-title">기록</h2>
           <span class="privacy-badge" id="recPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <button class="btn btn-secondary btn-sm" id="recSampleTopBtn" type="button" title="1년치 실측 데이터 1초 로드" style="font-weight:700;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>⚡ 샘플로드</span></button>
-          <button class="btn btn-secondary btn-sm" id="recImportTopBtn" type="button" title="외부 데이터 가져오기 (CSV, 텍스트, 타앱)" style="font-weight:700;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>📥 가져오기</span></button>
+        <div>
           <button class="btn btn-primary btn-sm" id="recAddBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>새 기록</span></button>
         </div>
       </div>
@@ -308,24 +306,21 @@
 
       <!-- [VIEW 1: FEED] 내 기록 뷰 -->
       <div class="rec-view" id="recViewFeed">
-        <!-- 유니버설 데이터 가져오기 & 1년치 샘플로드 고시인성 전용 배너 -->
+        <!-- 유니버설 데이터 가져오기 & 1년치 샘플로드 단일 통합 배너 -->
         <div class="card" id="recUniversalTopBanner" style="background:linear-gradient(135deg, rgba(37,99,235,0.08) 0%, rgba(99,102,241,0.12) 100%);border:1px solid rgba(99,102,241,0.28);border-radius:12px;padding:12px 14px;margin-bottom:12px;">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
             <div style="min-width:180px;flex:1;">
               <div style="font-weight:700;font-size:13.5px;color:var(--text);display:flex;align-items:center;gap:6px;">
-                <span>📥 다양한 데이터 가져오기 & 샘플로드</span>
+                <span>📥 데이터 가져오기 & 1초 샘플로드</span>
                 <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:rgba(37,99,235,0.15);color:var(--primary);font-weight:700;">AI 자동시각화</span>
               </div>
               <div style="font-size:11.5px;color:var(--text-faint);margin-top:2px;line-height:1.4;">
-                체중·독서·수면·러닝·가계부 등 어떤 기록도 AI가 감지해 통계 차트로 시각화해요.
+                52주 3대운동, 체중, 독서, 수면, 러닝 등 어떤 데이터도 AI가 감지해 통계 차트로 시각화해요.
               </div>
             </div>
-            <div style="display:flex;align-items:center;gap:6px;">
-              <button class="btn btn-secondary btn-sm" id="recSampleBannerBtn" type="button" style="font-weight:700;border:1px solid rgba(99,102,241,0.35);">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:3px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>⚡ 샘플로드</span>
-              </button>
-              <button class="btn btn-primary btn-sm" id="recImportBannerBtn" type="button" style="font-weight:700;">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>가져오기</span>
+            <div>
+              <button class="btn btn-primary btn-sm" id="recImportBannerBtn" type="button" style="font-weight:700;padding:8px 14px;box-shadow:0 2px 6px rgba(99,102,241,0.25);">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>📥 데이터 가져오기 & 1초 샘플</span>
               </button>
             </div>
           </div>
@@ -878,11 +873,11 @@
 <script src="js/template-credit.js"></script>
 <script src="js/team-leader-check.js"></script>
 <script src="js/theme-system.js"></script>
-<script src="js/records-stats.js"></script>
+<script src="js/records-stats.js?v=20260914-es059b"></script>
   <script src="js/avatar-system.js?v=20260913-es054"></script>
   <script src="js/content-moderation.js"></script>
   <script src="js/auth-safety.js"></script>
-  <script src="js/universal-stats.js"></script>
+  <script src="js/universal-stats.js?v=20260914-es059b"></script>
 <script>
 
 (function(){
@@ -11907,6 +11902,109 @@
   }
 
   /* ============ RENDER: RECORDS ============ */
+  function buildRecordCardHtml(r){
+    var isTpl = r.type==='template';
+    var isNote = r.type==='note';
+    var isDoing = !isNote && !isTpl && !r.endAt;
+    var durEl;
+    if(isTpl){ durEl = '<span class="rec-dur" style="background:var(--surface-2);color:var(--ink);">표 속성</span>'; }
+    else if(isNote){ durEl = '<span class="rec-dur note">메모</span>'; }
+    else if(isDoing){ durEl = '<span class="rec-dur doing">진행 중</span>'; }
+    else{ durEl = '<span class="rec-dur">'+fmtDuration(new Date(r.endAt)-new Date(r.startAt))+'</span>'; }
+    var timeStr = (isNote || isTpl) ? fmtTime(r.startAt) : (fmtTime(r.startAt) + ' – ' + (r.endAt?fmtTime(r.endAt):'진행중'));
+    var th = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[r.theme]) ? RECORD_THEMES[r.theme] : ((typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES.daily) ? RECORD_THEMES.daily : { label:'일상', icon:'', color:'#64748b', bgColor:'rgba(100,116,139,0.12)', borderColor:'rgba(100,116,139,0.35)' });
+    var subThText = r.subTheme ? (' · ' + escapeHtml(r.subTheme)) : '';
+    var chipStyle = 'background:'+th.bgColor+';color:'+th.color+';border:1px solid '+th.borderColor+';';
+    var photoHtml = r.photo ? '<div style="margin-top:6px;"><img src="'+r.photo+'" style="max-height:140px;border-radius:8px;object-fit:cover;border:1px solid var(--rule);"></div>' : '';
+    var tplBadgeHtml = isTpl ? ('<div style="margin-bottom:6px;"><span class="pro-tpl-badge">' + escapeHtml(r.templateTitle || '전문 템플릿') + ' (' + (r.rows ? r.rows.length : 0) + '개 항목) · 클릭하여 표 보기</span></div>') : '';
+
+    var metricPills = '';
+    if(r.metrics && typeof r.metrics === 'object'){
+      var mKeys = Object.keys(r.metrics);
+      if(mKeys.length > 0){
+        metricPills = '<div style="display:flex;gap:4px;flex-wrap:wrap;margin:4px 0;">' +
+          mKeys.map(function(k){
+            var val = r.metrics[k];
+            var label = (k === '1rm' ? '1RM ' : (k === 'volume' ? '볼륨 ' : k + ' '));
+            var unit = (k === '1rm' || k === 'volume' || k === 'weight' ? 'kg' : '');
+            return '<span style="font-size:10.5px;padding:2px 6px;border-radius:6px;background:rgba(99,102,241,0.12);color:var(--brand);font-weight:700;">' + label + val + unit + '</span>';
+          }).join('') +
+        '</div>';
+      }
+    }
+
+    return '<div class="rec-card'+(isDoing?' doing':'')+'" data-recid="'+r.id+'" style="border-left: 4px solid '+th.color+';'+(isTpl?'cursor:pointer;':'')+'">' +
+      tplBadgeHtml +
+      '<div class="rec-top"><div class="rec-text" style="white-space:pre-line;">'+escapeHtml(r.text)+'</div>' +
+        '<div class="rec-icons"><button class="icon-btn" data-recedit="1" aria-label="기록 수정"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn" data-recdel="1" aria-label="기록 삭제">×</button></div>' +
+      '</div>' +
+      metricPills +
+      photoHtml +
+      '<div class="rec-bottom">' +
+        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+          '<span class="rec-time">'+timeStr+'</span>' + durEl +
+        '</div>' +
+        '<span class="rec-theme-chip" data-rectheme="'+r.id+'" style="'+chipStyle+'" title="테마 변경 (클릭)">'+th.icon+' '+th.label+subThText+' ▾</span>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function wireRecordCards(container, options){
+    if(!container) return;
+    options = options || {};
+    var onUpdate = options.onUpdate || function(){ renderRecordsScreen(); };
+    container.querySelectorAll('.rec-card').forEach(function(card){
+      var id = card.dataset.recid;
+      var rec = (state.profile.records || []).find(function(r){ return r.id===id; });
+      if(!rec) return;
+
+      if(rec.type === 'template'){
+        card.addEventListener('click', function(e){
+          if(e.target.closest('button') || e.target.closest('.rec-theme-chip')) return;
+          openTemplateRecordDetailModal(rec);
+        });
+      }
+
+      var editBtn = card.querySelector('[data-recedit]');
+      if(editBtn){
+        editBtn.addEventListener('click', function(e){
+          e.stopPropagation();
+          if(rec.type === 'template'){
+            openProTemplateRecordModal(rec);
+          } else {
+            openRecordModal(rec);
+          }
+        });
+      }
+      var chipBtn = card.querySelector('[data-rectheme]');
+      if(chipBtn){
+        chipBtn.addEventListener('click', function(e){
+          e.stopPropagation();
+          openThemePickerModal(id);
+        });
+      }
+      var delBtn = card.querySelector('[data-recdel]');
+      if(delBtn){
+        delBtn.addEventListener('click', async function(e){
+          e.stopPropagation();
+          if(!confirm('이 기록을 삭제할까요?')) return;
+          state.profile.records = (state.profile.records || []).filter(function(r){ return r.id!==id; });
+          if(rec.linkedScheduleId && state.profile.settings && state.profile.settings.customSchedules){
+            state.profile.settings.customSchedules = state.profile.settings.customSchedules.filter(function(c){
+              return c.id !== rec.linkedScheduleId && c.recordId !== rec.id;
+            });
+          }
+          try {
+            await sb.from('checkins').delete().eq('id', id).eq('user_id', state.profile.id);
+          } catch(e){}
+          await saveProfile();
+          card.remove();
+          onUpdate();
+        });
+      }
+    });
+  }
+
   function renderWeekChart(recs){
     var container = document.getElementById('chartContainer');
     if(!container) return;
@@ -11993,7 +12091,30 @@
           OurgoalRecordsStats.openDayDetailModal(activeItem, {
             openModal: openModal,
             closeModal: closeModal,
-            buildRecordCardHtml: buildRecordCardHtml
+            buildRecordCardHtml: buildRecordCardHtml,
+            wireRecordCards: function(sheet){
+              wireRecordCards(sheet, {
+                onUpdate: function(){
+                  renderRecordsScreen();
+                  var recsContainer = sheet.querySelector('.trend-modal-recs');
+                  if(recsContainer){
+                    var updatedRecs = (state.profile.records || []).filter(function(r){
+                      var rTime = new Date(r.startAt).getTime();
+                      if(isNaN(rTime)) return false;
+                      var rK = dateKey(r.startAt);
+                      if(periodKey === 'week') return rK === activeItem.key;
+                      return rTime >= activeItem.startTime && rTime <= activeItem.endTime;
+                    });
+                    if(!updatedRecs.length){
+                      recsContainer.innerHTML = '<div class="empty-state" style="padding:24px 0;"><p>이 기간에 기록된 활동이 없습니다.</p></div>';
+                    } else {
+                      recsContainer.innerHTML = updatedRecs.map(function(r){ return buildRecordCardHtml(r); }).join('');
+                      wireRecordCards(sheet, { onUpdate: function(){ renderRecordsScreen(); } });
+                    }
+                  }
+                }
+              });
+            }
           });
         }
       };
@@ -16838,63 +16959,10 @@
       }
     }
 
-    // 기록 화면 상단 [가져오기] & [샘플로드] 버튼 바인딩
-    var topImpBtn = document.getElementById('recImportTopBtn');
-    if(topImpBtn && !topImpBtn._bound){
-      topImpBtn._bound = true;
-      topImpBtn.onclick = function(){
-        if(typeof OurgoalUniversalStats !== 'undefined'){
-          OurgoalUniversalStats.openUniversalImportModal({
-            openModal: openModal,
-            closeModal: closeModal,
-            toast: toast,
-            state: state,
-            saveProfile: saveProfile,
-            onDone: function(){ renderRecordsScreen(); }
-          });
-        }
-      };
-    }
-
-    var topSampBtn = document.getElementById('recSampleTopBtn');
-    if(topSampBtn && !topSampBtn._bound){
-      topSampBtn._bound = true;
-      topSampBtn.onclick = function(){
-        if(typeof OurgoalUniversalStats !== 'undefined'){
-          OurgoalUniversalStats.openUniversalImportModal({
-            openModal: openModal,
-            closeModal: closeModal,
-            toast: toast,
-            state: state,
-            saveProfile: saveProfile,
-            onDone: function(){ renderRecordsScreen(); }
-          });
-        }
-      };
-    }
-
-    // 기록 화면 배너 [가져오기] & [샘플로드] 버튼 바인딩
+    // 기록 화면 배너 [데이터 가져오기 & 1초 샘플로드] 버튼 바인딩
     var bnrImpBtn = document.getElementById('recImportBannerBtn');
-    if(bnrImpBtn && !bnrImpBtn._bound){
-      bnrImpBtn._bound = true;
+    if(bnrImpBtn){
       bnrImpBtn.onclick = function(){
-        if(typeof OurgoalUniversalStats !== 'undefined'){
-          OurgoalUniversalStats.openUniversalImportModal({
-            openModal: openModal,
-            closeModal: closeModal,
-            toast: toast,
-            state: state,
-            saveProfile: saveProfile,
-            onDone: function(){ renderRecordsScreen(); }
-          });
-        }
-      };
-    }
-
-    var bnrSampBtn = document.getElementById('recSampleBannerBtn');
-    if(bnrSampBtn && !bnrSampBtn._bound){
-      bnrSampBtn._bound = true;
-      bnrSampBtn.onclick = function(){
         if(typeof OurgoalUniversalStats !== 'undefined'){
           OurgoalUniversalStats.openUniversalImportModal({
             openModal: openModal,
@@ -17032,37 +17100,6 @@
     if(!filteredRecs.length){
       listEl.innerHTML = '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div><p>해당 테마 또는 검색 조건에 맞는 기록이 없어요.</p></div>';
       return;
-    }
-
-    function buildRecordCardHtml(r){
-      var isTpl = r.type==='template';
-      var isNote = r.type==='note';
-      var isDoing = !isNote && !isTpl && !r.endAt;
-      var durEl;
-      if(isTpl){ durEl = '<span class="rec-dur" style="background:var(--surface-2);color:var(--ink);">표 속성</span>'; }
-      else if(isNote){ durEl = '<span class="rec-dur note">메모</span>'; }
-      else if(isDoing){ durEl = '<span class="rec-dur doing">진행 중</span>'; }
-      else{ durEl = '<span class="rec-dur">'+fmtDuration(new Date(r.endAt)-new Date(r.startAt))+'</span>'; }
-      var timeStr = (isNote || isTpl) ? fmtTime(r.startAt) : (fmtTime(r.startAt) + ' – ' + (r.endAt?fmtTime(r.endAt):'진행중'));
-      var th = (typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES[r.theme]) ? RECORD_THEMES[r.theme] : ((typeof RECORD_THEMES !== 'undefined' && RECORD_THEMES.daily) ? RECORD_THEMES.daily : { label:'일상', icon:'', color:'#64748b', bgColor:'rgba(100,116,139,0.12)', borderColor:'rgba(100,116,139,0.35)' });
-      var subThText = r.subTheme ? (' · ' + escapeHtml(r.subTheme)) : '';
-      var chipStyle = 'background:'+th.bgColor+';color:'+th.color+';border:1px solid '+th.borderColor+';';
-      var photoHtml = r.photo ? '<div style="margin-top:6px;"><img src="'+r.photo+'" style="max-height:140px;border-radius:8px;object-fit:cover;border:1px solid var(--rule);"></div>' : '';
-      var tplBadgeHtml = isTpl ? ('<div style="margin-bottom:6px;"><span class="pro-tpl-badge">' + escapeHtml(r.templateTitle || '전문 템플릿') + ' (' + (r.rows ? r.rows.length : 0) + '개 항목) · 클릭하여 표 보기</span></div>') : '';
-
-      return '<div class="rec-card'+(isDoing?' doing':'')+'" data-recid="'+r.id+'" style="border-left: 4px solid '+th.color+';'+(isTpl?'cursor:pointer;':'')+'">' +
-        tplBadgeHtml +
-        '<div class="rec-top"><div class="rec-text" style="white-space:pre-line;">'+escapeHtml(r.text)+'</div>' +
-          '<div class="rec-icons"><button class="icon-btn" data-recedit="1" aria-label="기록 수정"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn" data-recdel="1" aria-label="기록 삭제">×</button></div>' +
-        '</div>' +
-        photoHtml +
-        '<div class="rec-bottom">' +
-          '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
-            '<span class="rec-time">'+timeStr+'</span>' + durEl +
-          '</div>' +
-          '<span class="rec-theme-chip" data-rectheme="'+r.id+'" style="'+chipStyle+'" title="테마 변경 (클릭)">'+th.icon+' '+th.label+subThText+' ▾</span>' +
-        '</div>' +
-      '</div>';
     }
 
     if(query || (state.selectedRecordTheme && state.selectedRecordTheme !== 'all')){
@@ -17224,49 +17261,7 @@
       });
     });
 
-    listEl.querySelectorAll('.rec-card').forEach(function(card){
-      var id = card.dataset.recid;
-      var rec = state.profile.records.find(function(r){ return r.id===id; });
-      if(!rec) return;
-
-      if(rec.type === 'template'){
-        card.addEventListener('click', function(e){
-          if(e.target.closest('button') || e.target.closest('.rec-theme-chip')) return;
-          openTemplateRecordDetailModal(rec);
-        });
-      }
-
-      card.querySelector('[data-recedit]').addEventListener('click', function(e){
-        e.stopPropagation();
-        if(rec.type === 'template'){
-          openProTemplateRecordModal(rec);
-        } else {
-          openRecordModal(rec);
-        }
-      });
-      var chipBtn = card.querySelector('[data-rectheme]');
-      if(chipBtn){
-        chipBtn.addEventListener('click', function(e){
-          e.stopPropagation();
-          openThemePickerModal(id);
-        });
-      }
-      card.querySelector('[data-recdel]').addEventListener('click', async function(e){
-        e.stopPropagation();
-        if(!confirm('이 기록을 삭제할까요?')) return;
-        state.profile.records = state.profile.records.filter(function(r){ return r.id!==id; });
-        // 만약 일정과 연동되어 있었다면 일정에서도 제거
-        if(rec.linkedScheduleId && state.profile.settings && state.profile.settings.customSchedules){
-          state.profile.settings.customSchedules = state.profile.settings.customSchedules.filter(function(c){
-            return c.id !== rec.linkedScheduleId && c.recordId !== rec.id;
-          });
-        }
-        try {
-          await sb.from('checkins').delete().eq('id', id).eq('user_id', state.profile.id);
-        } catch(e){}
-        await saveProfile(); renderRecordsScreen();
-      });
-    });
+    wireRecordCards(listEl, { onUpdate: function(){ renderRecordsScreen(); } });
   }
 
   /* ============ 위클리 리캡 카드 (스포티파이 랩드 스타일, 공유 캔버스 인프라 재사용) ============ */
@@ -17636,6 +17631,24 @@
       e.preventDefault();
       setRecordsSlide(parseInt(btn.dataset.recslide, 10));
     });
+  });
+
+  // 유니버설 데이터 가져오기 & 1초 샘플로드 전역 클릭 리스너 보장 (이벤트 유실 원천 방어)
+  document.addEventListener('click', function(e){
+    var uBtn = e.target.closest('#recImportBannerBtn, [data-uimport], #uQuickImportBtn');
+    if(uBtn){
+      e.preventDefault();
+      if(typeof OurgoalUniversalStats !== 'undefined' && OurgoalUniversalStats.openUniversalImportModal){
+        OurgoalUniversalStats.openUniversalImportModal({
+          openModal: openModal,
+          closeModal: closeModal,
+          toast: toast,
+          state: state,
+          saveProfile: saveProfile,
+          onDone: function(){ renderRecordsScreen(); }
+        });
+      }
+    }
   });
 
   /* ============ 테마별 기록 DB 다운로드 & 외부 AI 분석 프롬프트 번들 (TASK-OG-001) ============ */
