@@ -3306,8 +3306,133 @@ check('compliance: [#TASK-ES-056] 아워골 전면 Gemini API 단일화 및 오�
   assert.ok(!htmlCode.includes('data-provider="claude"'), 'index.html 설정 화면에서 Claude 선택지 제거');
 });
 
+check('compliance: [#TASK-ES-057] 맞춤 템플릿 AI 줄글 분석의 Gemini 3.1 Flash Lite 연동 및 무중단 배선 무결성 검증', () => {
+  const goaltemplate = require('../api/goaltemplate.js');
+  assert.strictEqual(typeof goaltemplate.localCustomTemplateFallback, 'function', 'localCustomTemplateFallback 함수 노출');
+
+  const fbCrossfit = goaltemplate.localCustomTemplateFallback('크로스핏', 'WOD Fran 21-15-9');
+  assert.strictEqual(fbCrossfit.title, '크로스핏');
+  assert.strictEqual(fbCrossfit.theme, 'workout');
+  assert.ok(fbCrossfit.columns.includes('번호'), '첫 번째 열은 항상 번호');
+  assert.ok(fbCrossfit.columns.includes('WOD 운동종목'), '크로스핏 특화 열 포함');
+  assert.strictEqual(fbCrossfit.source, 'fallback');
+  assert.strictEqual(fbCrossfit.isOfflineFallback, true);
+
+  const fbCustom = goaltemplate.localCustomTemplateFallback('주간 회의록', '열은 안건, 담당자, 진척도로 해줘');
+  assert.strictEqual(fbCustom.title, '주간 회의록');
+  assert.ok(fbCustom.columns.includes('안건'), '자연어 열 추출 반영');
+  assert.ok(fbCustom.columns.includes('담당자'), '자연어 열 추출 반영');
+
+  const vercelCfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+  assert.ok(vercelCfg.rewrites.some(r => r.source === '/api/customtemplate' && r.destination === '/api/goaltemplate'), 'vercel.json 에 /api/customtemplate 리라이트 규칙 존재');
+
+  const htmlCode = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.ok(htmlCode.includes('/api/customtemplate'), 'index.html 이 /api/customtemplate 엔드포인트 비동기 호출');
+  assert.ok(htmlCode.includes('Gemini 3.1 Flash Lite가 양식 설계 중'), 'index.html 에 로딩 인디케이터 상태 탑재');
+  assert.ok(htmlCode.includes("action: 'custom_record_template'"), 'index.html 이 custom_record_template 액션 전달');
+});
+
+check('compliance: [#TASK-ES-058] 아워골 AI 목표 및 템플릿 생성 유해/범죄 키워드 차단 이중 방어선 및 오탐 방지 안내 시스템 검증', () => {
+  // 1. js/content-moderation.js 모듈 로드 및 구조 검증
+  const moderation = require('../js/content-moderation.js');
+  assert.strictEqual(typeof moderation.check, 'function', 'moderation.check 함수 노출');
+  assert.ok(moderation.REJECT_MESSAGE.includes('아워골 내부 차단 키워드가 식별되어 생성이 거부되었습니다'), '정본 차단 메시지 일치');
+  assert.ok(moderation.REJECT_SUPPORT.includes('1:1 문의 및 오류 제보'), '상민님 지시 1:1 문의 지원 문구 일치');
+
+  // 2. 범죄/음란/자해 키워드 차단 검증
+  const blockedCases = [
+    '필로폰 유통 및 판매 계획',
+    '사설토토 사이트 개설 및 홍보',
+    '청부살인 의뢰 및 실행',
+    '보이스피싱 조직 구축',
+    '조건만남 성매매 알선',
+    '음란물 유포 사이트 제작',
+    '동반자살 모임 결성'
+  ];
+
+  for (const text of blockedCases) {
+    const res = moderation.check(text);
+    assert.strictEqual(res.flagged, true, '차단되어야 함: ' + text);
+    assert.strictEqual(res.message, '아워골 내부 차단 키워드가 식별되어 생성이 거부되었습니다', '거부 메시지 일치');
+    assert.ok(res.support.includes('1:1 문의 및 오류 제보'), '1:1 문의 안내 포함');
+  }
+
+  // 3. 오탐(False Positive: 치료/극복/학습/비유) 보호 검증
+  const allowedCases = [
+    '도박 끊기 30일 챌린지',
+    '마약 중독 재활 및 치료 완치',
+    '살인적인 스케줄 극복하기',
+    '화이트해커 되기 위한 정보보안 공부',
+    '모의해킹 대회 CTF 참가 준비',
+    '마약 옥수수 레시피 완성하기',
+    '매일 아침 6시 기상 및 5km 러닝',
+    '공인중개사 1차 시험 합격'
+  ];
+
+  for (const text of allowedCases) {
+    const res = moderation.check(text);
+    assert.strictEqual(res.flagged, false, '오탐 방지로 허용되어야 함: ' + text);
+  }
+
+  // 4. index.html 이중 방어망 배선 검증
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.ok(html.includes('<script src="js/content-moderation.js"></script>'), 'index.html 내 content-moderation.js 로드');
+  assert.ok(html.includes('window.OurgoalModeration.check(text)'), 'sendGoalAgentMessage 내 사전 차단 배선');
+  assert.ok(html.includes('window.OurgoalModeration.check(desc)'), 'showNewGoalChatStep 내 사전 차단 배선');
+  assert.ok(html.includes('window.OurgoalModeration.check(checkText)'), 'openCreateCustomTemplateModal 내 사전 차단 배선');
+  assert.ok(html.includes("errBody.error === 'CONTENT_FILTER_REJECTED'"), 'requestGoalAgentDiff 내 서버 거부 에러 핸들링');
+
+  // 5. 서버리스 API 2종 차단 배선 검증
+  const goalAgentCode = fs.readFileSync(path.join(__dirname, '..', 'api/goalagent.js'), 'utf8');
+  assert.ok(goalAgentCode.includes("require('../js/content-moderation.js')"), 'api/goalagent.js 내 content-moderation 연동');
+  assert.ok(goalAgentCode.includes("error: 'CONTENT_FILTER_REJECTED'"), 'api/goalagent.js 내 400 거부 반환');
+
+  const goalTemplateCode = fs.readFileSync(path.join(__dirname, '..', 'api/goaltemplate.js'), 'utf8');
+  assert.ok(goalTemplateCode.includes("require('../js/content-moderation.js')"), 'api/goaltemplate.js 내 content-moderation 연동');
+  assert.ok(goalTemplateCode.includes("error: 'CONTENT_FILTER_REJECTED'"), 'api/goaltemplate.js 내 400 거부 반환');
+});
+
+check('compliance: [#TASK-AUTH-P0-SAFETY] 로그인/계정관리 P0 안전망 패키지(비밀번호 찾기/변경, 로그인 유지, 30일 탈퇴 유예, 최근 로그인 뱃지) 무결성 검증', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const authCode = fs.readFileSync(path.join(__dirname, '..', 'js/auth-safety.js'), 'utf8');
+
+  // 1. 로그인 폼 및 설정 UI 컴포넌트 검증
+  assert.ok(html.includes('id="rememberMeCheck"'), '이 기기에서 로그인 유지 체크박스 존재');
+  assert.ok(html.includes('id="rememberIdCheck"'), '아이디 저장 체크박스 존재');
+  assert.ok(html.includes('id="lastAuthBadge"'), '최근 로그인 수단 뱃지 컨테이너 존재');
+  assert.ok(html.includes('id="forgotPassBtn"'), '비밀번호 찾기 링크 존재');
+  assert.ok(html.includes('id="btnChangePassModal"'), '설정 화면 비밀번호 변경 버튼 존재');
+  assert.ok(html.includes('js/auth-safety.js'), 'auth-safety.js 스크립트 연결');
+
+  // 2. 인증 및 보안 핵심 함수 검증
+  assert.ok(html.includes('function showLastAuthBadge'), '최근 로그인 뱃지 위임 함수');
+  assert.ok(html.includes('function initRememberedAuthFields'), '저장된 아이디 및 뱃지 복원 위임 함수');
+  assert.ok(html.includes('function openForgotPasswordModal'), '비밀번호 찾기 모달 위임 함수');
+  assert.ok(html.includes('function openNewPasswordModal'), '새 비밀번호 설정 모달 위임 함수');
+  assert.ok(html.includes('function openChangePasswordModal'), '설정 비밀번호 변경 모달 위임 함수');
+  assert.ok(html.includes('function checkPendingDeletionRestore'), '30일 탈퇴 유예 복구 확인 위임 함수');
+
+  assert.ok(authCode.includes('showLastAuthBadge'), '모듈 내 showLastAuthBadge');
+  assert.ok(authCode.includes('initRememberedAuthFields'), '모듈 내 initRememberedAuthFields');
+  assert.ok(authCode.includes('openForgotPasswordModal'), '모듈 내 openForgotPasswordModal');
+  assert.ok(authCode.includes('openNewPasswordModal'), '모듈 내 openNewPasswordModal');
+  assert.ok(authCode.includes('openChangePasswordModal'), '모듈 내 openChangePasswordModal');
+  assert.ok(authCode.includes('checkPendingDeletionRestore'), '모듈 내 checkPendingDeletionRestore');
+
+  // 3. Supabase Auth API 및 이벤트 배선 검증
+  assert.ok(authCode.includes('resetPasswordForEmail'), 'Supabase 비밀번호 재설정 메일 발송 API 연동');
+  assert.ok(html.includes("event === 'PASSWORD_RECOVERY'"), 'Supabase Auth 비밀번호 복구 이벤트 감지');
+  assert.ok(html.includes('openChangePasswordModal()'), '설정 화면 비밀번호 변경 버튼 바인딩');
+
+  // 4. 회원 탈퇴 30일 소프트 딜리션 유예 검증 (즉시 하드 삭제 방어)
+  assert.ok(html.includes('pendingDeletionAt'), '탈퇴 유예 타임스탬프 설정');
+  assert.ok(html.includes('30일'), '30일 유예 기간 안내 문구');
+  assert.ok(authCode.includes('btnRestoreAccount'), '탈퇴 유예 계정 원클릭 복구 버튼');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
   process.exit(1);
 }
+
