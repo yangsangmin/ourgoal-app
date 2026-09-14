@@ -3542,9 +3542,50 @@ check('[TASK-ES-059] 테마 구분 없는 임의 데이터 AI 자율 메트릭 �
   assert.ok(html.includes('<script src="js/universal-stats.js"></script>'), 'index.html 내 universal-stats.js 로드');
   assert.ok(html.includes('id="recImportTopBtn"'), '기록 상단 가져오기 버튼');
   assert.ok(html.includes('id="recSampleTopBtn"'), '기록 상단 샘플로드 버튼');
+  assert.ok(html.includes('id="recUniversalTopBanner"'), '기록 피드 상단 고시인성 유니버설 배너');
+  assert.ok(html.includes('id="recImportBannerBtn"'), '배너 내 데이터 가져오기 버튼');
+  assert.ok(html.includes('id="recSampleBannerBtn"'), '배너 내 1년치 샘플로드 버튼');
   assert.ok(html.includes('id="universalStatsDashboardBox"'), '성취통계 뷰 내 유니버설 대시보드 컨테이너');
   assert.ok(html.includes('OurgoalUniversalStats.renderUniversalStatsDashboard'), 'renderRecordsScreen 내 유니버설 대시보드 호출');
   assert.ok(html.includes('OurgoalUniversalStats.openUniversalImportModal'), '모달 오픈 배선');
+});
+
+check('compliance: [#TASK-AUTH-P0-SAFETY] 로그인/계정관리 P0 안전망 패키지(비밀번호 찾기/변경, 로그인 유지, 30일 탈퇴 유예, 최근 로그인 뱃지) 무결성 검증', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const authCode = fs.readFileSync(path.join(__dirname, '..', 'js/auth-safety.js'), 'utf8');
+
+  // 1. 로그인 폼 및 설정 UI 컴포넌트 검증
+  assert.ok(html.includes('id="rememberMeCheck"'), '이 기기에서 로그인 유지 체크박스 존재');
+  assert.ok(html.includes('id="rememberIdCheck"'), '아이디 저장 체크박스 존재');
+  assert.ok(html.includes('id="lastAuthBadge"'), '최근 로그인 수단 뱃지 컨테이너 존재');
+  assert.ok(html.includes('id="forgotPassBtn"'), '비밀번호 찾기 링크 존재');
+  assert.ok(html.includes('id="btnChangePassModal"'), '설정 화면 비밀번호 변경 버튼 존재');
+  assert.ok(html.includes('js/auth-safety.js'), 'auth-safety.js 스크립트 연결');
+
+  // 2. 인증 및 보안 핵심 함수 검증
+  assert.ok(html.includes('function showLastAuthBadge'), '최근 로그인 뱃지 위임 함수');
+  assert.ok(html.includes('function initRememberedAuthFields'), '저장된 아이디 및 뱃지 복원 위임 함수');
+  assert.ok(html.includes('function openForgotPasswordModal'), '비밀번호 찾기 모달 위임 함수');
+  assert.ok(html.includes('function openNewPasswordModal'), '새 비밀번호 설정 모달 위임 함수');
+  assert.ok(html.includes('function openChangePasswordModal'), '설정 비밀번호 변경 모달 위임 함수');
+  assert.ok(html.includes('function checkPendingDeletionRestore'), '30일 탈퇴 유예 복구 확인 위임 함수');
+
+  assert.ok(authCode.includes('showLastAuthBadge'), '모듈 내 showLastAuthBadge');
+  assert.ok(authCode.includes('initRememberedAuthFields'), '모듈 내 initRememberedAuthFields');
+  assert.ok(authCode.includes('openForgotPasswordModal'), '모듈 내 openForgotPasswordModal');
+  assert.ok(authCode.includes('openNewPasswordModal'), '모듈 내 openNewPasswordModal');
+  assert.ok(authCode.includes('openChangePasswordModal'), '모듈 내 openChangePasswordModal');
+  assert.ok(authCode.includes('checkPendingDeletionRestore'), '모듈 내 checkPendingDeletionRestore');
+
+  // 3. Supabase Auth API 및 이벤트 배선 검증
+  assert.ok(authCode.includes('resetPasswordForEmail'), 'Supabase 비밀번호 재설정 메일 발송 API 연동');
+  assert.ok(html.includes("event === 'PASSWORD_RECOVERY'"), 'Supabase Auth 비밀번호 복구 이벤트 감지');
+  assert.ok(html.includes('openChangePasswordModal()'), '설정 화면 비밀번호 변경 버튼 바인딩');
+
+  // 4. 회원 탈퇴 30일 소프트 딜리션 유예 검증 (즉시 하드 삭제 방어)
+  assert.ok(html.includes('pendingDeletionAt'), '탈퇴 유예 타임스탬프 설정');
+  assert.ok(html.includes('30일'), '30일 유예 기간 안내 문구');
+  assert.ok(authCode.includes('btnRestoreAccount'), '탈퇴 유예 계정 원클릭 복구 버튼');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
