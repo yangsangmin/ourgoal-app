@@ -1,4 +1,5 @@
-> **규칙 원본은 `AGENTS.md`다 (2026-09-11 이후).** 이 CLAUDE.md의 운영 세부(1호 직원 루틴·4블록·스프린트·AI 조직)는 그대로 유효하되, 충돌 시 AGENTS.md가 우선한다. 작업 전 `AGENTS.md` → `docs/rules/ESSENCE_OURGOAL.md` 순으로 읽는다. 커밋은 `[E1|E2|E3|INFRA|FIX] #티켓 설명` 형식이며 훅·CI(essence-gate)가 검사한다. 티켓 없는 작업, main 직접 커밋, 실데이터 없는 사회적 숫자, 화면 속 도구 언어, 아이디어 즉시 구현은 금지다.
+> **규칙 원본은 `AGENTS.md` 및 `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`다 (2026-09-14 전면 무결성 헌법 제정).** 이 CLAUDE.md의 운영 세부(1호 직원 루틴·4블록·스프린트·AI 조직)는 그대로 유효하되, 충돌 시 AGENTS.md 및 전면 무결성 헌법이 우선한다. 작업 전 `AGENTS.md` → `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md` → `docs/rules/ESSENCE_OURGOAL.md` 순으로 필독한다. 상민님 지시 접수 즉시 2중 8원칙(1차 REQ / 2차 PLAN) 작성 필수, 무누락·무축약 집행, 5대 무결성 전수 검증(`npm test` 100% PASS), 직관적 6단계 보고 헌법 준수가 절대 의무다. 커밋은 `[E1|E2|E3|INFRA|FIX] #티켓 설명` 형식이며 훅·CI(essence-gate)가 검사한다. 티켓 없는 작업, main 직접 커밋, 껍데기 버튼 방치, 유저 데이터 유실, 실데이터 없는 사회적 숫자, 화면 속 도구 언어, 아이디어 즉시 구현은 금지다.
+
 
 1. 기술 스택: Vanilla JS, Supabase, Vercel
 2. UI 원칙: 기존 HTML 디자인, CSS 스타일, 레이아웃은 절대 임의 변경 금지

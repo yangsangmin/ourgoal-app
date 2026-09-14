@@ -51,6 +51,20 @@
       "regex": "AIza[0-9A-Za-z_-]{30,}|sk-ant-[0-9A-Za-z_-]{20,}|AQ\\.[0-9A-Za-z_-]{40,}|eyJhbGciOi[0-9A-Za-z_-]{20,}\\.[0-9A-Za-z_-]{20,}",
       "why": "API 키·토큰 커밋 금지 (9/10 노션 로그 키 노출 사례)",
       "exempt_if_line_matches": "example|EXAMPLE|placeholder"
+    },
+    {
+      "id": "DEAD_BUTTON_STUB",
+      "severity": "block",
+      "files": ["index.html", "js/*.js"],
+      "regex": "\\.onclick\\s*=\\s*function[^{]*{\\s*(?://[^\\n]*\\n\\s*)*(?:TODO|FIXME)\\s*;?\\s*}",
+      "why": "껍데기 버튼 및 TODO 미구현 클릭 핸들러 방치 금지 (전면 무결성 헌법 제7조)"
+    },
+    {
+      "id": "EMPTY_ONCLICK_ATTR",
+      "severity": "block",
+      "files": ["index.html", "*.html"],
+      "regex": "onclick=[\"']\\s*[\"']|onclick=[\"'](?:javascript:)?void\\(0\\);?[\"']",
+      "why": "더미 onclick 속성 방치 금지 (전면 무결성 헌법 제7조)"
     }
   ],
   "approval_lines": [
