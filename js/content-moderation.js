@@ -23,15 +23,9 @@
   var REJECT_DETAIL = '사회적 규범(범죄, 음란 등)에 부합하지 않는 키워드가 감지되었습니다.';
   var REJECT_SUPPORT = "정상적인 의도의 목표/템플릿이나 시스템 오인 차단인 경우, 아워골 앱 내 [설정] 탭의 '1:1 문의 및 오류 제보를 사용하세요'.";
 
-  // 1. 오탐(False Positive) 방지용 건전/치료/극복/예방 허용 패턴
-  var ALLOWED_RECOVERY_REGEX = /(?:도박|마약|담배|흡연|알코올|알콜|술|약물|스마트폰|게임|유튜브|숏폼|웹툰|폭식|야식|탄산|단것)\s*(?:끊기|끊는|탈출|치료|극복|완치|재활|상담|예방|퇴치|근절|벗어나기|중단|줄이기|금지|회복|단념)/i;
-  var ALLOWED_METAPHOR_REGEX = /살인적인\s*(?:스케줄|일정|더위|추위|업무|운동|루틴|훈련|페이스|강도|노력|성장)/i;
-  var ALLOWED_SECURITY_STUDY_REGEX = /(?:화이트\s*해커|정보보안|모의해킹\s*대회|해킹\s*(?:대회|방어|대비|스터디|자격증|공부|학습|보안|연구|강의|책|윤리)|CTF)/i;
-  var ALLOWED_FOOD_METAPHOR_REGEX = /마약\s*(?:옥수수|김밥|토스트|베이글|떡볶이|치킨|쿠키|소스|빵)/i;
-
-  // 2. 범죄 / 불법 키워드 (CRIME)
+  // 1. 범죄 / 불법 키워드 (CRIME)
   var CRIME_PATTERNS = [
-    // 마약류 (치료/극복 문맥 제외)
+    // 마약류
     { tag: '마약류', regex: /(?:필로폰|메스암페타민|대마초|대마액상|엑스터시|코카인|헤로인|케타민|LSD|환각물질|프로포폴\s*불법|졸피뎀\s*(?:불법|대리|판매|구매))/i },
     // 사기 / 피싱 / 금융범죄
     { tag: '사기/피싱', regex: /(?:보이스\s*피싱|스미싱|몸캠\s*피싱|대포\s*통장|대포\s*폰|카드깡|전세\s*사기|폰지\s*사기|작업\s*대출|통장\s*매매)/i },
@@ -43,13 +37,13 @@
     { tag: '사이버범죄', regex: /(?:악성코드\s*유포|랜섬웨어\s*제작|디도스\s*공격|DDOS\s*공격|해킹\s*툴\s*배포|계정\s*탈취|비밀번호\s*크래킹)/i }
   ];
 
-  // 3. 음란 / 성범죄 키워드 (OBSCENE)
+  // 2. 음란 / 성범죄 키워드 (OBSCENE)
   var OBSCENE_PATTERNS = [
     { tag: '성착취/성범죄', regex: /(?:성매매|조건\s*만남|원조\s*교제|불법\s*촬영|몰카\s*(?:촬영|공유|판매)|리벤지\s*포르노|성폭행|강간|아동\s*청소년\s*성착취|딥페이크\s*음란|성착취물|n번방)/i },
     { tag: '음란물', regex: /(?:음란물|야동\s*(?:사이트|유포|다운)|야설\s*연재|포르노\s*(?:사이트|제작)|성인용\s*음란)/i }
   ];
 
-  // 4. 극단선택 / 자해 키워드 (SELF_HARM)
+  // 3. 극단선택 / 자해 키워드 (SELF_HARM)
   var SELF_HARM_PATTERNS = [
     { tag: '극단선택/자해', regex: /(?:자살\s*(?:방법|동반|사이트|모의)|동반\s*자살|자해\s*(?:방법|인증|도구)|극단적\s*선택\s*방법)/i }
   ];
@@ -69,20 +63,8 @@
       return { flagged: false, keyword: null, category: null };
     }
 
-    // 1단계: 선한 의도/치료/극복/공부/비유적 표현 (오탐 방지 화이트리스트) 선제 판정
-    if (ALLOWED_RECOVERY_REGEX.test(clean) ||
-        ALLOWED_METAPHOR_REGEX.test(clean) ||
-        ALLOWED_SECURITY_STUDY_REGEX.test(clean) ||
-        ALLOWED_FOOD_METAPHOR_REGEX.test(clean)) {
-      return {
-        flagged: false,
-        keyword: null,
-        category: null,
-        isWhitelisted: true
-      };
-    }
-
-    // 2단계: 범죄(CRIME) 검사
+    // [상민님 지시] 서술어 결합(끊기, 치료 등)을 통한 오용/남용 방지를 위해 화이트리스트 우회를 전면 배제하고 엄격 검사 시행
+    // 1단계: 범죄(CRIME) 검사
     for (var ci = 0; ci < CRIME_PATTERNS.length; ci++) {
       var cp = CRIME_PATTERNS[ci];
       var cMatch = clean.match(cp.regex);

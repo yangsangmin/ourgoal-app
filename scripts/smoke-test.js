@@ -3357,21 +3357,34 @@ check('compliance: [#TASK-ES-058] 아워골 AI 목표 및 템플릿 생성 유�
     assert.ok(res.support.includes('1:1 문의 및 오류 제보'), '1:1 문의 안내 포함');
   }
 
-  // 3. 오탐(False Positive: 치료/극복/학습/비유) 보호 검증
+  // 3. [상민님 지시] 서술어 결합(끊기, 탈출 등)을 통한 우회/오용/남용 시도 엄격 차단 검증
+  const bypassAttemptCases = [
+    '필로폰 끊기 챌린지',
+    '사설토토 탈출하고 정상 생활하기',
+    '보이스피싱 조직 그만두기',
+    '조건만남 끊기'
+  ];
+
+  for (const text of bypassAttemptCases) {
+    const res = moderation.check(text);
+    assert.strictEqual(res.flagged, true, '서술어 결합 우회 시도 차단되어야 함: ' + text);
+    assert.strictEqual(res.message, '아워골 내부 차단 키워드가 식별되어 생성이 거부되었습니다');
+    assert.ok(res.support.includes('1:1 문의 및 오류 제보'));
+  }
+
+  // 4. 일반적인 건전한 목표 통과 검증
   const allowedCases = [
-    '도박 끊기 30일 챌린지',
-    '마약 중독 재활 및 치료 완치',
-    '살인적인 스케줄 극복하기',
-    '화이트해커 되기 위한 정보보안 공부',
-    '모의해킹 대회 CTF 참가 준비',
-    '마약 옥수수 레시피 완성하기',
     '매일 아침 6시 기상 및 5km 러닝',
-    '공인중개사 1차 시험 합격'
+    '담배 끊기 30일 습관 챌린지',
+    '스마트폰 사용 시간 줄이기',
+    '공인중개사 1차 시험 합격',
+    '살인적인 스케줄 극복하기',
+    '화이트해커 정보보안 공부'
   ];
 
   for (const text of allowedCases) {
     const res = moderation.check(text);
-    assert.strictEqual(res.flagged, false, '오탐 방지로 허용되어야 함: ' + text);
+    assert.strictEqual(res.flagged, false, '정상 목표는 통과되어야 함: ' + text);
   }
 
   // 4. index.html 이중 방어망 배선 검증
