@@ -178,6 +178,220 @@ function localGoalTemplateFallback(description) {
   };
 }
 
+// 3. AI 자율 메트릭 추론 & 시각화 에이전트 로컬 스마트 폴백
+function localStatsAgentFallback(records, query) {
+  var recs = Array.isArray(records) ? records : [];
+  var discovered = [];
+  var textSummary = recs.map(function (r) {
+    return (r.text || '') + ' ' + (r.summaryText || '') + ' ' + (r.memo || '') + ' ' + (r.templateTitle || '');
+  }).join(' ');
+
+  // 1. 체중/다이어트 (최신값 추세, 꺾은선 차트)
+  if (/(?:체중|몸무게|kg|인바디|골격근|체지방|다이어트|weight)/i.test(textSummary)) {
+    discovered.push({
+      category: 'weight',
+      title: '체중 / 인바디',
+      icon: '⚖️',
+      label: '체중',
+      unit: 'kg',
+      agg: 'latest',
+      chartType: 'line',
+      color: '#ec4899',
+      kpi1: '⚖️ 현재 체중',
+      kpi2: '📉 최고 감량폭',
+      kpi3: '🎯 목표 달성률',
+      kpi4: '📊 주간 변동추이'
+    });
+  }
+
+  // 2. 독서/도서 (누적합/일별 독서, 막대/면적 차트)
+  if (/(?:독서|책|페이지|쪽|권|북|reading|book)/i.test(textSummary)) {
+    discovered.push({
+      category: 'reading',
+      title: '독서 / 도서',
+      icon: '📖',
+      label: '독서량',
+      unit: '쪽',
+      agg: 'sum',
+      chartType: 'bar',
+      color: '#8b5cf6',
+      kpi1: '🏆 총 읽은 페이지',
+      kpi2: '📚 완독 도서수',
+      kpi3: '📖 일일 평균 독서',
+      kpi4: '📈 주간 성장률'
+    });
+  }
+
+  // 3. 수면/웰니스 (일일 평균 수면, 꺾은선 차트)
+  if (/(?:수면|취침|잠|수면시간|기상|수면점수|sleep)/i.test(textSummary)) {
+    discovered.push({
+      category: 'sleep',
+      title: '수면 / 웰니스',
+      icon: '💤',
+      label: '수면시간',
+      unit: '시간',
+      agg: 'avg',
+      chartType: 'line',
+      color: '#6366f1',
+      kpi1: '🌙 일일 평균 수면',
+      kpi2: '⭐ 최고 회복 세션',
+      kpi3: '💤 수면 규칙성',
+      kpi4: '📉 수면 부채 지수'
+    });
+  }
+
+  // 4. 재테크/금융 (누적 저축액, 면적 차트)
+  if (/(?:저축|적금|투자|주식|지출|만원|원|달러|\$|finance|money)/i.test(textSummary)) {
+    discovered.push({
+      category: 'finance',
+      title: '재테크 / 자산',
+      icon: '💰',
+      label: '저축/투자액',
+      unit: '만원',
+      agg: 'sum',
+      chartType: 'area',
+      color: '#10b981',
+      kpi1: '🏆 총 누적 저축',
+      kpi2: '💎 최고 단일 저축',
+      kpi3: '📈 월평균 저축액',
+      kpi4: '🎯 자산 목표 진척'
+    });
+  }
+
+  // 5. 러닝/유산소
+  if (/(?:러닝|달리기|마라톤|조깅|run|running)/i.test(textSummary)) {
+    discovered.push({
+      category: 'running',
+      title: '러닝 / 조깅',
+      icon: '🏃',
+      label: '러닝 거리',
+      unit: 'km',
+      agg: 'sum',
+      chartType: 'area',
+      color: '#0ea5e9',
+      kpi1: '🏆 총 누적 거리',
+      kpi2: '⚡ 최고 페이스',
+      kpi3: '🏃 최장 1회 거리',
+      kpi4: '📈 전월 대비 성장률'
+    });
+  }
+
+  // 6. 웨이트/3대
+  if (/(?:벤치|스쿼트|데드|헬스|웨이트|bench|squat|deadlift)/i.test(textSummary)) {
+    discovered.push({
+      category: 'big3',
+      title: '3대 웨이트',
+      icon: '🏋️',
+      label: '3대 총합 중량',
+      unit: 'kg',
+      agg: 'max',
+      chartType: 'line',
+      color: '#f59e0b',
+      kpi1: '🏆 3대 총합 (Total)',
+      kpi2: '🏋️ 벤치프레스 PR',
+      kpi3: '🦵 스쿼트 PR',
+      kpi4: '🦍 데드리프트 PR'
+    });
+  }
+
+  // 7. 혈압 (Blood Pressure)
+  if (/(?:혈압|수축기|이완기|bp)/i.test(textSummary)) {
+    discovered.push({
+      category: 'blood_pressure',
+      title: '혈압 관리',
+      icon: '❤️',
+      label: '수축기 혈압',
+      unit: 'mmHg',
+      agg: 'avg',
+      chartType: 'line',
+      color: '#ef4444',
+      kpi1: '❤️ 최근 수축기 혈압',
+      kpi2: '💓 최근 이완기 혈압',
+      kpi3: '📊 평균 혈압',
+      kpi4: '📈 혈압 안정도'
+    });
+  }
+
+  // 8. 체지방률 (Body Fat)
+  if (/(?:체지방|골격근|근육량|fat)/i.test(textSummary)) {
+    discovered.push({
+      category: 'body_fat',
+      title: '체지방률',
+      icon: '📉',
+      label: '체지방률',
+      unit: '%',
+      agg: 'latest',
+      chartType: 'line',
+      color: '#f97316',
+      kpi1: '📉 현재 체지방률',
+      kpi2: '🏆 최저 체지방률',
+      kpi3: '📊 평균 체지방률',
+      kpi4: '📈 체조성 변화'
+    });
+  }
+
+  // 9. 골프 (Golf)
+  if (/(?:골프|라운딩|스크린|라베)/i.test(textSummary)) {
+    discovered.push({
+      category: 'golf',
+      title: '골프 스코어',
+      icon: '⛳',
+      label: '타수',
+      unit: '타',
+      agg: 'latest',
+      chartType: 'line',
+      color: '#059669',
+      kpi1: '⛳ 최근 스코어',
+      kpi2: '🏆 라베 (최저타)',
+      kpi3: '📊 평균 스코어',
+      kpi4: '📈 핸디캡 추세'
+    });
+  }
+
+  // 10. 코딩 (Coding)
+  if (/(?:코딩|커밋|깃허브|github|pr|commit)/i.test(textSummary)) {
+    discovered.push({
+      category: 'coding',
+      title: '코딩 / 커밋',
+      icon: '💻',
+      label: '커밋 수',
+      unit: '커밋',
+      agg: 'sum',
+      chartType: 'bar',
+      color: '#2563eb',
+      kpi1: '💻 총 누적 커밋',
+      kpi2: '🔥 1일 최다 커밋',
+      kpi3: '📊 일평균 활동량',
+      kpi4: '📈 잔디 연속성'
+    });
+  }
+
+  // 기본 일반 실천시간 fallback
+  if (!discovered.length) {
+    discovered.push({
+      category: 'general',
+      title: '실천 시간',
+      icon: '🔥',
+      label: '실천 시간',
+      unit: '분',
+      agg: 'sum',
+      chartType: 'area',
+      color: '#3b82f6',
+      kpi1: '🏆 총 실천 시간',
+      kpi2: '✍️ 총 기록 건수',
+      kpi3: '🔥 주간 평균 몰입',
+      kpi4: '📈 꾸준함 지수'
+    });
+  }
+
+  return {
+    metrics: discovered,
+    analysis: 'AI가 사용자의 기록 ' + (recs.length || 0) + '건을 분석하여 최적의 메트릭 모델과 시각화 차트를 자동 설계했습니다. 꾸준히 기록할수록 성장 추세의 정밀도가 높아집니다.',
+    source: 'fallback',
+    isOfflineFallback: true
+  };
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
@@ -212,7 +426,86 @@ module.exports = async function handler(req, res) {
   }
 
   // -------------------------------------------------------------
-  // 분기 A: 맞춤 기록 템플릿(Custom Record Template) 생성 요청
+  // 분기 A: AI 자율 메트릭 추론 & 시계열 통계 에이전트 요청 (TASK-ES-059 고도화)
+  // -------------------------------------------------------------
+  var isStatsAgent = (body.action === 'ai_stats_agent') ||
+                     (body.action === 'ai_metric_discovery') ||
+                     (req.query && req.query.action === 'ai_stats_agent');
+
+  if (isStatsAgent) {
+    var statRecs = Array.isArray(body.records) ? body.records.slice(0, 30) : [];
+    var statQuery = (body.query || '').trim().slice(0, 100);
+
+    var statPrompt = '당신은 습관·목표 관리 앱 "아워골"의 유니버설 데이터 시각화 AI 분석관입니다.\n' +
+      '사용자가 입력한 다양한 기록 데이터(운동, 독서, 체중, 수면, 재테크, 식단, 취미 등 모든 영역)를 심층 분석하여,\n' +
+      '도메인에 제한 없이 데이터에 내재된 핵심 지표(Metric)들을 자율 식별하고, 가장 어울리는 차트 형태와 통찰 리포트를 JSON으로 반환하세요.\n\n' +
+      '[사용자 최근 기록 샘플 (' + statRecs.length + '건)]\n' +
+      JSON.stringify(statRecs.map(function (r) {
+        return { text: r.text || '', date: r.startAt || '', category: r.category || '' };
+      }), null, 2) + '\n\n' +
+      '[설계 지침]\n' +
+      '1. metrics: 식별된 지표 배열 (최대 6개).\n' +
+      '   - category: 영문 식별자 (예: weight, reading, sleep, finance, running, big3, coding 등)\n' +
+      '   - title: 직관적 한글 명칭 (예: 체중 / 인바디, 독서량, 수면시간 등)\n' +
+      '   - icon: 단일 대표 이모지 (예: ⚖️, 📖, 💤, 💰, 🏃, 🏋️)\n' +
+      '   - label: 차트 축 라벨 (예: 체중, 읽은 쪽수, 수면시간 등)\n' +
+      '   - unit: 단위 (예: kg, 쪽, 시간, 만원, 분 등)\n' +
+      '   - agg: 집계특성 ("sum" [누적합], "avg" [평균치], "max" [최고PR], "latest" [최신값추이] 중 1개)\n' +
+      '   - chartType: 최적 차트 형태 ("area" [면적], "line" [꺾은선], "bar" [막대] 중 1개)\n' +
+      '   - color: 조화로운 헥스 색상\n' +
+      '   - kpi1, kpi2, kpi3, kpi4: 4대 핵심 요약 라벨\n' +
+      '2. analysis: 해당 데이터의 시계열 추세 및 성장을 진단하고 사용자에게 맞춤 제안을 건네는 따뜻하고 전문적인 AI 리포트 (한글 2~3문장).\n\n' +
+      '오직 순수 JSON으로만 응답하세요:\n' +
+      '{\n' +
+      '  "metrics": [\n' +
+      '    { "category": "weight", "title": "체중 / 인바디", "icon": "⚖️", "label": "체중", "unit": "kg", "agg": "latest", "chartType": "line", "color": "#ec4899", "kpi1": "현재 체중", "kpi2": "최고 감량", "kpi3": "목표 달성", "kpi4": "변동률" }\n' +
+      '  ],\n' +
+      '  "analysis": "AI 통찰 분석 리포트"\n' +
+      '}';
+
+    var statParsed = null;
+    if (geminiApiKey) {
+      for (var smi = 0; smi < geminiModels.length; smi++) {
+        var sModel = geminiModels[smi];
+        try {
+          var sRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + sModel + ':generateContent?key=' + geminiApiKey, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: statPrompt }] }],
+              generationConfig: {
+                temperature: 0.2,
+                responseMimeType: 'application/json'
+              }
+            })
+          });
+          if (sRes.ok) {
+            var sData = await sRes.json();
+            var sRaw = (sData.candidates && sData.candidates[0] && sData.candidates[0].content && sData.candidates[0].content.parts && sData.candidates[0].content.parts[0] && sData.candidates[0].content.parts[0].text) || '';
+            var sClean = sRaw.replace(/```json|```/g, '').trim();
+            statParsed = JSON.parse(sClean);
+            if (statParsed && Array.isArray(statParsed.metrics) && statParsed.metrics.length) {
+              statParsed.isOfflineFallback = false;
+              statParsed.modelUsed = sModel;
+              break;
+            }
+          }
+        } catch (se) {}
+      }
+    }
+
+    if (!statParsed || !Array.isArray(statParsed.metrics) || !statParsed.metrics.length) {
+      var fbStat = localStatsAgentFallback(statRecs, statQuery);
+      res.status(200).json(fbStat);
+      return;
+    }
+
+    res.status(200).json(statParsed);
+    return;
+  }
+
+  // -------------------------------------------------------------
+  // 분기 B: 맞춤 기록 템플릿(Custom Record Template) 생성 요청
   // -------------------------------------------------------------
   var isCustomRecord = (body.action === 'custom_record_template') ||
                        (body.type === 'custom_template') ||
@@ -415,3 +708,4 @@ module.exports = async function handler(req, res) {
 
 module.exports.localCustomTemplateFallback = localCustomTemplateFallback;
 module.exports.localGoalTemplateFallback = localGoalTemplateFallback;
+module.exports.localStatsAgentFallback = localStatsAgentFallback;

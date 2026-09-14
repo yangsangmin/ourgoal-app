@@ -266,7 +266,11 @@
           <h2 class="s-title">기록</h2>
           <span class="privacy-badge" id="recPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
         </div>
-        <button class="btn btn-primary btn-sm" id="recAddBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>새 기록</span></button>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button class="btn btn-ghost btn-sm" id="recImportTopBtn" type="button" title="외부 데이터 가져오기 (CSV, 텍스트, 타앱)"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>가져오기</span></button>
+          <button class="btn btn-ghost btn-sm" id="recSampleTopBtn" type="button" title="1년치 실측 데이터 1초 로드"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>샘플로드</span></button>
+          <button class="btn btn-primary btn-sm" id="recAddBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>새 기록</span></button>
+        </div>
       </div>
       <div id="recFeedbackSlot" style="display:none;"></div>
 
@@ -334,6 +338,7 @@
 
       <!-- [VIEW 2: STATS] 성취 통계 뷰 (4단 메트릭 캐러셀 + 기간별 AI) -->
       <div class="rec-view" id="recViewStats" style="display:none;">
+        <div id="universalStatsDashboardBox" style="margin-bottom:12px;"></div>
         <div class="rec-carousel-container">
           <!-- 4분할 알약 탭 (캐러셀 맹지 차단) -->
           <div class="rec-carousel-pills" id="recCarouselPills">
@@ -833,6 +838,7 @@
 <script src="js/records-stats.js"></script>
   <script src="js/avatar-system.js?v=20260913-es054"></script>
   <script src="js/content-moderation.js"></script>
+  <script src="js/universal-stats.js"></script>
 <script>
 
 (function(){
@@ -7649,9 +7655,28 @@
         }).join('') +
       '</div>' +
       '<p class="faint" style="margin-top:12px;">지금은 샘플 데이터예요 · 실제 연동은 각 서비스의 API 인증이 필요해요</p>' +
-      '<div class="modal-actions"><button class="btn btn-ghost btn-block" id="extCancel" type="button">닫기</button></div>',
+      '<div class="modal-actions" style="display:flex;flex-direction:column;gap:6px;">' +
+        '<button class="btn btn-primary btn-block" id="extOpenUniversalModalBtn" type="button">📥 CSV/줄글/1년치 추천샘플 대량 가져오기</button>' +
+        '<button class="btn btn-ghost btn-block" id="extCancel" type="button">닫기</button>' +
+      '</div>',
       function(sheet){
         sheet.querySelector('#extCancel').addEventListener('click', closeModal);
+        var uBtn = sheet.querySelector('#extOpenUniversalModalBtn');
+        if(uBtn){
+          uBtn.onclick = function(){
+            closeModal();
+            if(typeof OurgoalUniversalStats !== 'undefined'){
+              OurgoalUniversalStats.openUniversalImportModal({
+                openModal: openModal,
+                closeModal: closeModal,
+                toast: toast,
+                state: state,
+                saveProfile: saveProfile,
+                onDone: function(){ renderRecordsScreen(); }
+              });
+            }
+          };
+        }
         sheet.querySelectorAll('[data-ext]').forEach(function(row){
           row.addEventListener('click', function(){
             var d = EXTERNAL_DATA.find(function(x){ return x.id===row.dataset.ext; });
@@ -16399,6 +16424,52 @@
 
     // 기간별 기록 AI 피드백 카드 초기화 (Req 4)
     initPeriodAiCard(allRecs);
+
+    // [TASK-ES-059] 테마 제약 없는 유니버설 AI 자율 메트릭 시계열 대시보드 렌더링
+    if(typeof OurgoalUniversalStats !== 'undefined'){
+      var uDashBox = document.getElementById('universalStatsDashboardBox');
+      if(uDashBox){
+        OurgoalUniversalStats.renderUniversalStatsDashboard(uDashBox, allRecs, state, {
+          onSelectCategory: function(cat){ state.univStatCategory = cat; },
+          onSelectPeriod: function(p){ state.univStatPeriod = p; }
+        });
+      }
+    }
+
+    // 기록 화면 상단 [가져오기] & [샘플로드] 버튼 바인딩
+    var topImpBtn = document.getElementById('recImportTopBtn');
+    if(topImpBtn && !topImpBtn._bound){
+      topImpBtn._bound = true;
+      topImpBtn.onclick = function(){
+        if(typeof OurgoalUniversalStats !== 'undefined'){
+          OurgoalUniversalStats.openUniversalImportModal({
+            openModal: openModal,
+            closeModal: closeModal,
+            toast: toast,
+            state: state,
+            saveProfile: saveProfile,
+            onDone: function(){ renderRecordsScreen(); }
+          });
+        }
+      };
+    }
+
+    var topSampBtn = document.getElementById('recSampleTopBtn');
+    if(topSampBtn && !topSampBtn._bound){
+      topSampBtn._bound = true;
+      topSampBtn.onclick = function(){
+        if(typeof OurgoalUniversalStats !== 'undefined'){
+          OurgoalUniversalStats.openUniversalImportModal({
+            openModal: openModal,
+            closeModal: closeModal,
+            toast: toast,
+            state: state,
+            saveProfile: saveProfile,
+            onDone: function(){ renderRecordsScreen(); }
+          });
+        }
+      };
+    }
 
     // 세그먼트 및 캐러셀 상태 동기화
     setRecordsSegment(state.recordsSegment || 'feed');

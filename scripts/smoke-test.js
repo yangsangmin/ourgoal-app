@@ -3436,6 +3436,117 @@ check('compliance: [#TASK-ES-058] 아워골 AI 목표 및 템플릿 생성 유�
   assert.ok(goalTemplateCode.includes("error: 'CONTENT_FILTER_REJECTED'"), 'api/goaltemplate.js 내 400 거부 반환');
 });
 
+check('[TASK-ES-059] 테마 구분 없는 임의 데이터 AI 자율 메트릭 추론 및 다형성 시각화 엔진 검증', () => {
+  const uStats = require('../js/universal-stats.js');
+  assert.ok(uStats, 'universal-stats.js 모듈 로드');
+  assert.strictEqual(typeof uStats.extractMetricsFromRecord, 'function');
+  assert.strictEqual(typeof uStats.discoverActiveMetrics, 'function');
+  assert.strictEqual(typeof uStats.aggregateMetricTimeSeries, 'function');
+  assert.strictEqual(typeof uStats.renderUniversalSvgChart, 'function');
+  assert.strictEqual(typeof uStats.generateDomainSample, 'function');
+
+  // 1. 14개 이상 임의 도메인 및 사용자 입력 메트릭 자율 추출 검증
+  const testCases = [
+    { text: '아침 공복 체중 74.5kg 기록', cat: 'weight', val: 74.5, unit: 'kg', chart: 'line' },
+    { text: '클린코드 45쪽 완독', cat: 'reading', val: 45, unit: '쪽', chart: 'bar' },
+    { text: '어제 7.5시간 꿀잠 숙면', cat: 'sleep', val: 7.5, unit: '시간', chart: 'line' },
+    { text: '청약 적금 50만원 저축 완료', cat: 'finance', val: 50, unit: '만원', chart: 'area' },
+    { text: '한강 러닝 10.5km 5:12 페이스 완주', cat: 'running', val: 10.5, unit: 'km', chart: 'area' },
+    { text: '벤치프레스 100kg, 스쿼트 140kg, 데드리프트 170kg', cat: 'big3', val: 410, unit: 'kg', chart: 'line' },
+    { text: '도서관 순공 180분, 기출 50문제', cat: 'study', val: 180, unit: '분', chart: 'bar' },
+    { text: '고객사 계약 2건 실적 500만원 달성', cat: 'sales', val: 500, unit: '만원', chart: 'area' },
+    { text: '아침 혈압 125/82 mmHg 측정', cat: 'blood_pressure', val: 125, unit: 'mmHg', chart: 'line' },
+    { text: '아메리카노 2잔 카페인 150mg 섭취', cat: 'caffeine', val: 150, unit: 'mg', chart: 'bar' },
+    { text: '주말 라운딩 84타 라베 달성', cat: 'golf', val: 84, unit: '타', chart: 'line' },
+    { text: '깃허브 잔디 심기 12커밋 푸시', cat: 'coding', val: 12, unit: '커밋', chart: 'bar' },
+    { text: '수분 2.2L 음용 완료', cat: 'water', val: 2.2, unit: 'L', chart: 'bar' },
+    { text: '인바디 체지방률 14.2% 측정', cat: 'body_fat', val: 14.2, unit: '%', chart: 'line' }
+  ];
+
+  for (const tc of testCases) {
+    const mList = uStats.extractMetricsFromRecord({ text: tc.text });
+    const found = mList.find(m => m.category === tc.cat);
+    assert.ok(found, `지표 추출 성공: ${tc.cat} from "${tc.text}"`);
+    assert.strictEqual(found.value, tc.val, `값 일치 (${tc.cat}): ${found.value} === ${tc.val}`);
+    assert.strictEqual(found.unit, tc.unit, `단위 일치 (${tc.cat}): ${found.unit} === ${tc.unit}`);
+    assert.strictEqual(found.chartType, tc.chart, `차트형태 일치 (${tc.cat}): ${found.chartType} === ${tc.chart}`);
+  }
+
+  // 2. 표/테이블 및 CSV 형식 임의 컬럼 자율 메트릭 추출 검증
+  const tableRec = {
+    columns: ['날짜', '골격근량(kg)', '기초대사량(kcal)'],
+    rows: [['2025-05-01', '34.2kg', '1680']]
+  };
+  const tableMetrics = uStats.extractMetricsFromRecord(tableRec);
+  const muscleM = tableMetrics.find(m => m.category === 'tbl_골격근량');
+  const metabM = tableMetrics.find(m => m.category === 'tbl_기초대사량');
+  assert.ok(muscleM, '임의 표 컬럼 골격근량 메트릭 자동 추출');
+  assert.strictEqual(muscleM.value, 34.2);
+  assert.strictEqual(muscleM.unit, 'kg');
+  assert.strictEqual(muscleM.chartType, 'line');
+  assert.ok(metabM, '임의 표 컬럼 기초대사량 메트릭 자동 추출');
+  assert.strictEqual(metabM.value, 1680);
+  assert.strictEqual(metabM.unit, 'kcal');
+
+  // 3. 1년치 샘플 데이터 생성기 검증 (체중, 독서, 수면, 재테크, 러닝, 3대운동 등)
+  const domains = ['weight', 'reading', 'sleep', 'finance', 'running', 'big3', 'study', 'sales'];
+  domains.forEach(d => {
+    const s = uStats.generateDomainSample(d);
+    assert.ok(Array.isArray(s) && s.length >= 50, `${d} 1년치 샘플 50건 이상 생성`);
+  });
+
+  // 4. 활성 지표 자율 발견(Auto-Discovery) 및 동적 칩 검증
+  const testSampleRecs = [].concat(
+    uStats.generateDomainSample('weight'),
+    uStats.generateDomainSample('reading'),
+    uStats.generateDomainSample('sleep')
+  );
+  const discovery = uStats.discoverActiveMetrics(testSampleRecs);
+  assert.ok(discovery.activeMetrics.length >= 4, '최소 4개 이상 활성 지표 자동 노출');
+  const cats = discovery.activeMetrics.map(m => m.category);
+  assert.ok(cats.includes('general'), 'general 실천시간 포함');
+  assert.ok(cats.includes('weight'), 'weight 체중 칩 포함');
+  assert.ok(cats.includes('reading'), 'reading 독서 칩 포함');
+  assert.ok(cats.includes('sleep'), 'sleep 수면 칩 포함');
+
+  // 5. 다차원 시계열 집계 및 다형성 SVG 차트 렌더링 검증
+  ['weight', 'reading', 'sleep'].forEach(c => {
+    const agg = uStats.aggregateMetricTimeSeries(testSampleRecs, c, '1year');
+    assert.ok(agg.hasData, `${c} 시계열 데이터 존재`);
+    assert.ok(agg.totalSessions > 0, `${c} 총 세션수 집계`);
+    const svg = uStats.renderUniversalSvgChart(agg);
+    assert.ok(svg.includes('<svg'), `${c} SVG 차트 태그 렌더링`);
+    assert.ok(svg.includes('role="img"'), `${c} 웹 접근성 role 속성`);
+  });
+
+  // 6. 서버리스 API goaltemplate.js 내 ai_stats_agent & localStatsAgentFallback 검증
+  const goaltemplate = require('../api/goaltemplate.js');
+  assert.strictEqual(typeof goaltemplate.localStatsAgentFallback, 'function', 'localStatsAgentFallback export 확인');
+  const fbRes = goaltemplate.localStatsAgentFallback(testSampleRecs);
+  assert.ok(Array.isArray(fbRes.metrics) && fbRes.metrics.length > 0, '폴백 지표 배열 반환');
+  assert.ok(typeof fbRes.analysis === 'string' && fbRes.analysis.length > 10, 'AI 분석 텍스트 생성');
+  assert.strictEqual(fbRes.isOfflineFallback, true);
+
+  // 7. vercel.json 12개 함수 한도 및 /api/statsagent 리라이트 규칙 검증
+  const vercelCfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+  assert.ok(vercelCfg.rewrites, 'vercel.json rewrites 설정');
+  const statRewrite = vercelCfg.rewrites.find(r => r.source === '/api/statsagent');
+  assert.ok(statRewrite, '/api/statsagent rewrite 규칙 존재');
+  assert.strictEqual(statRewrite.destination, '/api/goaltemplate');
+
+  const apiFiles = fs.readdirSync(path.join(__dirname, '..', 'api')).filter(f => f.endsWith('.js'));
+  assert.ok(apiFiles.length <= 12, `Vercel Hobby 12개 함수 한도 준수 (현재 ${apiFiles.length}개)`);
+
+  // 8. index.html 배선 검증
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.ok(html.includes('<script src="js/universal-stats.js"></script>'), 'index.html 내 universal-stats.js 로드');
+  assert.ok(html.includes('id="recImportTopBtn"'), '기록 상단 가져오기 버튼');
+  assert.ok(html.includes('id="recSampleTopBtn"'), '기록 상단 샘플로드 버튼');
+  assert.ok(html.includes('id="universalStatsDashboardBox"'), '성취통계 뷰 내 유니버설 대시보드 컨테이너');
+  assert.ok(html.includes('OurgoalUniversalStats.renderUniversalStatsDashboard'), 'renderRecordsScreen 내 유니버설 대시보드 호출');
+  assert.ok(html.includes('OurgoalUniversalStats.openUniversalImportModal'), '모달 오픈 배선');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
