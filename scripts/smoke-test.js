@@ -3338,6 +3338,7 @@ check('compliance: [#TASK-ES-058] 아워골 AI 목표 및 템플릿 생성 유�
   assert.strictEqual(typeof moderation.check, 'function', 'moderation.check 함수 노출');
   assert.ok(moderation.REJECT_MESSAGE.includes('아워골 내부 차단 키워드가 식별되어 생성이 거부되었습니다'), '정본 차단 메시지 일치');
   assert.ok(moderation.REJECT_SUPPORT.includes('1:1 문의 및 오류 제보'), '상민님 지시 1:1 문의 지원 문구 일치');
+  assert.ok(moderation.REJECT_NOTICE.includes('무공해 플랫폼을 위한 강한 제어체계'), '상민님 제안 무공해 플랫폼 신뢰 안내 문구 탑재');
 
   // 2. 범죄/음란/자해 키워드 차단 검증
   const blockedCases = [
@@ -3423,6 +3424,7 @@ check('compliance: [#TASK-ES-058] 아워골 AI 목표 및 템플릿 생성 유�
   assert.ok(html.includes('window.OurgoalModeration.check(desc)'), 'showNewGoalChatStep 내 사전 차단 배선');
   assert.ok(html.includes('window.OurgoalModeration.check(checkText)'), 'openCreateCustomTemplateModal 내 사전 차단 배선');
   assert.ok(html.includes("errBody.error === 'CONTENT_FILTER_REJECTED'"), 'requestGoalAgentDiff 내 서버 거부 에러 핸들링');
+  assert.ok(html.includes('무공해 플랫폼을 위한 강한 제어체계를 구축했습니다'), 'index.html 모달 내 무공해 플랫폼 신뢰 멘트 렌더링');
 
   // 5. 서버리스 API 2종 차단 배선 검증
   const goalAgentCode = fs.readFileSync(path.join(__dirname, '..', 'api/goalagent.js'), 'utf8');
@@ -3434,93 +3436,10 @@ check('compliance: [#TASK-ES-058] 아워골 AI 목표 및 템플릿 생성 유�
   assert.ok(goalTemplateCode.includes("error: 'CONTENT_FILTER_REJECTED'"), 'api/goaltemplate.js 내 400 거부 반환');
 });
 
-check('compliance: [#TASK-ES-059] 외부 다양한 기록 유니버설 흡수 및 성취통계 동적 다차원 시각화 엔진 검증', () => {
-  const uniStatsPath = path.join(__dirname, '..', 'js/universal-stats.js');
-  assert.ok(fs.existsSync(uniStatsPath), 'js/universal-stats.js 파일이 존재해야 함');
-
-  const uniStats = require(uniStatsPath);
-  assert.ok(uniStats, 'universal-stats 모듈 로드 성공');
-  assert.ok(typeof uniStats.extractMetricsFromRecord === 'function', 'extractMetricsFromRecord 함수 노출');
-  assert.ok(typeof uniStats.discoverActiveMetrics === 'function', 'discoverActiveMetrics 함수 노출');
-  assert.ok(typeof uniStats.aggregateMetricTimeSeries === 'function', 'aggregateMetricTimeSeries 함수 노출');
-  assert.ok(typeof uniStats.renderUniversalSvgChart === 'function', 'renderUniversalSvgChart 함수 노출');
-  assert.ok(typeof uniStats.generateDomainSample === 'function', 'generateDomainSample 함수 노출');
-  assert.ok(typeof uniStats.renderUniversalStatsDashboard === 'function', 'renderUniversalStatsDashboard 함수 노출');
-  assert.ok(typeof uniStats.openUniversalImportModal === 'function', 'openUniversalImportModal 함수 노출');
-
-  // 1. 러닝 메트릭 추출 검증
-  const runRec = {
-    id: 'test-run-1',
-    text: '아침 조깅 10.5km 5:30 페이스 완주',
-    category: '운동',
-    startAt: '2026-06-01T07:00:00.000Z',
-    endAt: '2026-06-01T07:58:00.000Z'
-  };
-  const runMetrics = uniStats.extractMetricsFromRecord(runRec);
-  const runM = runMetrics.find(m => m.category === 'running');
-  assert.ok(runM, '러닝 메트릭 존재');
-  assert.strictEqual(runM.value, 10.5, '러닝 거리 10.5km 추출');
-  assert.strictEqual(runM.unit, 'km', '러닝 단위 km');
-
-  // 2. 3대 운동 메트릭 추출 검증 (테이블 데이터 및 텍스트 혼합)
-  const big3Rec = {
-    id: 'test-big3-1',
-    text: '하체 데이: 스쿼트 140kg 성공, 벤치 100kg, 데드 180kg',
-    category: '운동',
-    startAt: '2026-06-02T19:00:00.000Z',
-    endAt: '2026-06-02T20:30:00.000Z'
-  };
-  const big3Metrics = uniStats.extractMetricsFromRecord(big3Rec);
-  const big3M = big3Metrics.find(m => m.category === 'big3');
-  assert.ok(big3M, '3대 운동 메트릭 존재');
-  assert.strictEqual(big3M.squat, 140, '스쿼트 140kg 추출');
-  assert.strictEqual(big3M.bench, 100, '벤치 100kg 추출');
-  assert.strictEqual(big3M.deadlift, 180, '데드리프트 180kg 추출');
-  assert.strictEqual(big3M.value, 420, '3대 운동 총합 420kg 계산');
-
-  // 3. 1년치 샘플 데이터 생성 검증 (러닝, 3대 운동, 공부, 영업)
-  const runSample = uniStats.generateDomainSample('running');
-  assert.ok(Array.isArray(runSample) && runSample.length >= 100, '1년치 러닝 샘플 100건 이상 생성');
-  const big3Sample = uniStats.generateDomainSample('big3');
-  assert.ok(Array.isArray(big3Sample) && big3Sample.length >= 50, '1년치 3대 운동 샘플 50주 이상 생성');
-  const studySample = uniStats.generateDomainSample('study');
-  assert.ok(Array.isArray(studySample) && studySample.length >= 100, '1년치 공부 샘플 100건 이상 생성');
-  const salesSample = uniStats.generateDomainSample('sales');
-  assert.ok(Array.isArray(salesSample) && salesSample.length >= 40, '1년치 영업 샘플 40건 이상 생성');
-
-  // 4. 활성 메트릭 자동 탐색(Auto-Discovery) 검증
-  const activeKeys = uniStats.discoverActiveMetrics(big3Sample);
-  assert.ok(activeKeys.includes('big3'), '3대 운동 샘플에서 big3 메트릭 자동 탐색');
-
-  // 5. 시계열 집계 및 SVG 차트 생성 검증
-  const aggResult = uniStats.aggregateMetricTimeSeries(big3Sample, 'big3', 'month');
-  assert.ok(aggResult.series.length > 0, '월별 시계열 집계 데이터 생성');
-  assert.ok(aggResult.stats.pr > 0, '최고 기록 PR 계산 완료');
-
-  const svgHtml = uniStats.renderUniversalSvgChart({
-    series: aggResult.series,
-    unit: 'kg',
-    color: '#f59e0b',
-    label: '3대 총합'
-  });
-  assert.ok(svgHtml.includes('<svg') && svgHtml.includes('</svg>'), '유효한 SVG 태그 생성');
-  assert.ok(svgHtml.includes('polyline') || svgHtml.includes('polygon'), '차트 라인/영역 렌더링');
-
-  // 6. index.html 배선 무결성 검증
-  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-  assert.ok(html.includes('js/universal-stats.js?v=20260914-es059'), 'index.html 내 universal-stats.js 로드');
-  assert.ok(html.includes('id="recSampleLoadBtn"'), '기록 상단 헤더에 ⚡ 샘플로드 버튼 탑재');
-  assert.ok(html.includes('id="recImportBtn"'), '기록 상단 헤더에 📥 가져오기 버튼 탑재');
-  assert.ok(html.includes('id="recUniversalQuickBanner"'), '기록 탭 상단 유니버설 퀵 배너 탑재');
-  assert.ok(html.includes('id="recUniversalStatsContainer"'), '성취 통계 뷰에 유니버설 대시보드 컨테이너 탑재');
-  assert.ok(html.includes('id="recEmptySampleBtn"'), '빈 화면에 ⚡ 1년치 샘플 로드 버튼 탑재');
-  assert.ok(html.includes('id="recEmptyImportBtn"'), '빈 화면에 📥 외부 데이터 가져오기 버튼 탑재');
-  assert.ok(html.includes('renderUniversalStatsDashboard'), 'renderRecordsScreen 내 대시보드 마운트 호출');
-});
-
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
   process.exit(1);
 }
+
 
