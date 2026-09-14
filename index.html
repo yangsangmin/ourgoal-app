@@ -586,15 +586,14 @@
       </div>
 
       <div class="set-block">
-        <h4>AI 피드백</h4>
+        <h4>AI 피드백 (Google Gemini API)</h4>
         <div class="format-toggle" id="aiProviderToggle">
-          <div class="format-opt" data-provider="claude">Claude (기본)</div>
-          <div class="format-opt" data-provider="gemini">Gemini</div>
+          <div class="format-opt active" data-provider="gemini">Gemini (기본)</div>
         </div>
-        <div id="geminiKeyBlock" style="display:none;margin-top:12px;">
-          <div class="field"><label>Gemini API 키</label><input id="geminiKeyInput" type="password" placeholder="AIza..." autocomplete="off"></div>
-          <div class="field"><label>모델 (필요하면 바꾸세요)</label><input id="geminiModelInput" type="text" placeholder="gemini-3.6-flash"></div>
-          <p class="faint">Google AI Studio에서 발급한 키를 붙여넣으세요. 이 키는 이 기기에만 저장되고, 브라우저에서 구글로 직접 요청을 보내요 — 사용량과 비용은 이 키 소유자 몫이에요.</p>
+        <div id="geminiKeyBlock" style="margin-top:12px;">
+          <div class="field"><label>Gemini API 키 (선택사항)</label><input id="geminiKeyInput" type="password" placeholder="미입력 시 서버 공용 Gemini 3.1 자동 연결" autocomplete="off"></div>
+          <div class="field"><label>모델 (기본: gemini-3.1-flash-lite)</label><input id="geminiModelInput" type="text" placeholder="gemini-3.1-flash-lite"></div>
+          <p class="faint">Google AI Studio에서 발급한 개인 키를 붙여넣으면 브라우저에서 구글로 직접 고속 호출해요. 미입력 시 서버 공용 Gemini 3.1 Flash Lite가 자동 동작해요.</p>
           <div style="margin-top:8px;">
             <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="btn btn-ghost btn-sm btn-block" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:7px 10px;color:var(--ink);">Google AI Studio API 키 발급 페이지 바로가기 ↗</a>
           </div>
@@ -1056,7 +1055,7 @@
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
   function defaultSettings(){
     return {
-      checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"claude", geminiKey:"", geminiModel:"gemini-2.5-flash",
+      checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"gemini", geminiKey:"", geminiModel:"gemini-3.1-flash-lite",
       notionSync:false, notionWebhookUrl:"", notionApiKey:"", notionDatabaseId:"", notionAutoPush:false, autoUpdateSuggest:true, virtualCheerEnabled:true,
       gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} },
       googleCalendarConnected:false, googleCalendarEmail:"", gcalAutoSync:true,
@@ -6760,7 +6759,7 @@
       var parsed = await res.json();
       if(!parsed || !parsed.verdict) throw new Error('bad shape');
       if(!Array.isArray(parsed.suggestions)) parsed.suggestions = [];
-      parsed.source = 'ai';
+      parsed.source = (parsed.provider === 'local_smart' || parsed.provider === 'server_period_smart') ? 'local_enhanced' : 'gemini';
       parsed.persona = !!custom;
       return parsed;
     } catch(e){
@@ -6772,7 +6771,7 @@
   async function requestGeminiFeedback(goal, text, theme){
     var geminiPersona = !!(state.profile.settings.customFeedbackActive && state.profile.settings.customFeedbackPrompt);
     var prompt = buildFeedbackPrompt(goal, text, theme);
-    var model = state.profile.settings.geminiModel || 'gemini-2.5-flash';
+    var model = state.profile.settings.geminiModel || 'gemini-3.1-flash-lite';
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 12000);
     try{
@@ -7222,10 +7221,14 @@
       card.innerHTML = '<span class="fb-verdict">판단 중…</span>';
     } else {
       card.className = 'fb-card ' + verdictClass(fb.verdict);
+      var isLocalFb = (fb.source === 'local_enhanced' || fb.source === 'local' || fb.source === '간이 판단');
+      var fbNoticeHtml = isLocalFb ? '<div style="font-size:11px;color:var(--ink-soft);margin-top:4px;">⚡ 오프라인 상태 또는 아워골 서버 문제로 기본 안내가 생성되었습니다</div>' : '';
+
       card.innerHTML = '<span class="fb-close" id="fbCloseBtn">×</span>' +
         '<div class="fb-verdict">'+escapeHtml(fb.verdict)+'</div>' +
         '<div class="fb-row">'+escapeHtml(fb.comment)+'</div>' +
-        '<div class="fb-source">'+(fb.persona?'내 맞춤 봇 판단':(fb.source==='ai'?'Claude 판단':(fb.source==='gemini'?'Gemini 판단':'간이 판단')))+'</div>' +
+        '<div class="fb-source">'+(fb.persona?'내 맞춤 봇 판단':(fb.source==='ai'||fb.source==='gemini'?'Gemini 판단':'간이 판단'))+'</div>' +
+        fbNoticeHtml +
         '<button class="btn btn-ghost btn-sm" id="fbShareBtn" type="button" style="width:100%;margin-top:10px;">이 기록, 피드에 공유하기</button>';
     }
     document.getElementById('captureCardBox').after(card);
@@ -7244,12 +7247,16 @@
     if(fb === 'loading'){
       el.innerHTML = '<div class="fb-card mid"><span class="fb-verdict">AI 코치 피드백 분석 중…</span></div>';
     } else {
+      var isRecLocalFb = (fb.source === 'local_enhanced' || fb.source === 'local' || fb.source === '간이 판단');
+      var recFbNoticeHtml = isRecLocalFb ? '<div style="font-size:11px;color:var(--ink-soft);margin-top:4px;">⚡ 오프라인 상태 또는 아워골 서버 문제로 기본 안내가 생성되었습니다</div>' : '';
+
       el.innerHTML = '<div class="fb-card ' + verdictClass(fb.verdict) + '">' +
         '<span class="fb-close" id="recFbCloseBtn">×</span>' +
         '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:4px;display:flex;align-items:center;gap:4px;"><span><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/></svg></span><span>기록 탭 AI 피드백</span></div>' +
         '<div class="fb-verdict">' + escapeHtml(fb.verdict) + '</div>' +
         '<div class="fb-row">' + escapeHtml(fb.comment) + '</div>' +
-        '<div class="fb-source">' + (fb.persona ? '내 맞춤 봇 판단' : (fb.source === 'ai' ? 'Claude 판단' : (fb.source === 'gemini' ? 'Gemini 판단' : '간이 판단'))) + '</div>' +
+        '<div class="fb-source">' + (fb.persona ? '내 맞춤 봇 판단' : (fb.source === 'ai' || fb.source === 'gemini' ? 'Gemini 판단' : '간이 판단')) + '</div>' +
+        recFbNoticeHtml +
         '<button class="btn btn-ghost btn-sm" id="recFbShareBtn" type="button" style="width:100%;margin-top:10px;">이 기록, 피드에 공유하기</button>' +
       '</div>';
       var closeBtn = el.querySelector('#recFbCloseBtn');
@@ -8813,12 +8820,12 @@
         body: JSON.stringify({ goalTitle: goal.title, completedTitle: completedMs.title, remaining: remaining })
       });
       clearTimeout(timer);
-      if(!res.ok) return localNextActionSuggestion(goal, completedMs.id);
+      if(!res.ok) return { suggestion: localNextActionSuggestion(goal, completedMs.id), fallback: true };
       var data = await res.json();
       var text = data && data.suggestion ? String(data.suggestion).trim() : '';
-      if(!text || text.length<8 || text.length>80) return localNextActionSuggestion(goal, completedMs.id);
-      return text;
-    } catch(e){ clearTimeout(timer); return localNextActionSuggestion(goal, completedMs.id); }
+      if(!text || text.length<8 || text.length>80) return { suggestion: localNextActionSuggestion(goal, completedMs.id), fallback: true };
+      return { suggestion: text, fallback: false };
+    } catch(e){ clearTimeout(timer); return { suggestion: localNextActionSuggestion(goal, completedMs.id), fallback: true }; }
   }
   function celebrateMilestoneDone(goal, ms){
     if(navigator.vibrate) navigator.vibrate([12,40,24]);
@@ -8827,12 +8834,19 @@
       '<h3>마일스톤 완료!</h3>' +
       '<p class="muted" style="margin:-8px 0 14px;"><b style="color:var(--ink);">'+escapeHtml(ms.title)+'</b></p>' +
       '<p class="faint" id="naText" style="margin:0 0 16px;">다음 행동을 생각하는 중...</p>' +
+      '<div id="naNotice" style="display:none;font-size:12px;color:var(--ink-soft);margin:-10px 0 14px;line-height:1.4;">⚡ 오프라인 상태 또는 아워골 서버 문제로 기본 안내가 생성되었습니다</div>' +
       '<div class="modal-actions"><button class="btn btn-primary" id="naOk" type="button">확인</button></div>',
       function(sheet){
         sheet.querySelector('#naOk').addEventListener('click', closeModal);
-        requestNextActionSuggestion(goal, ms).then(function(text){
+        requestNextActionSuggestion(goal, ms).then(function(res){
           var el = sheet.querySelector('#naText');
-          if(el) el.textContent = ''+text;
+          var notice = sheet.querySelector('#naNotice');
+          if(res && typeof res === 'object'){
+            if(el) el.textContent = '' + (res.suggestion || '');
+            if(notice && res.fallback) notice.style.display = 'block';
+          } else {
+            if(el) el.textContent = '' + res;
+          }
         });
       }
     );
@@ -16147,7 +16161,7 @@
         strengthsHtml +
         adviceHtml +
         '<div class="fb-source" style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;">' +
-          '<span>' + (fb.source === 'gemini' ? 'Gemini 종합 판단' : (fb.source === 'ai' ? 'AI 종합 분석' : '로컬 종합 코칭 분석')) + '</span>' +
+          '<span>' + (fb.source === 'gemini' || fb.source === 'ai' ? 'Gemini 3.1 수석 분석' : '스마트 로컬 분석') + '</span>' +
           '<button class="btn btn-ghost btn-sm" id="periodFbShareBtn" type="button" style="font-size:.8125rem;padding:4px 10px;">피드에 공유</button>' +
         '</div>' +
       '</div>';
@@ -16989,7 +17003,7 @@
       daily: '당신은 전인적 라이프 코칭 전문가입니다. 사용자의 일상 기록을 분석하여 삶의 활력과 작은 성취들의 의미를 짚어주고, 더 나은 하루를 만들기 위한 따뜻한 조언을 작성해주세요.'
     };
     var base = prompts[themeKey] || '당신은 전인적 라이프 코칭 및 데이터 분석 전문가입니다. 아래 사용자의 5대 라이프 테마(심리, 공부, 사업, 약속, 운동) 기록 데이터를 바탕으로 삶의 균형 상태를 진단하고, 테마별 집중도 분석 및 더 조화롭고 몰입도 높은 삶을 위한 실행 가능한 가이드를 작성해주세요.';
-    return '[외부 AI 분석 프롬프트 (ChatGPT / Claude 붙여넣기용)]\r\n' + base;
+    return '[외부 AI 분석 프롬프트 (Google Gemini 붙여넣기용)]\r\n' + base;
   }
 
   function buildCSV(recordsToExport){
@@ -17130,7 +17144,7 @@
 
     openModal(
       '<h3>테마별 기록 DB 다운로드 & AI 분석 프롬프트</h3>' +
-      '<p class="faint" style="font-size:.875rem;margin-bottom:14px;">기록 데이터를 테마별로 추출하고, ChatGPT나 Claude에서 즉시 심층 피드백을 받을 수 있는 분석 프롬프트 번들을 생성합니다.</p>' +
+      '<p class="faint" style="font-size:.875rem;margin-bottom:14px;">기록 데이터를 테마별로 추출하고, Google Gemini에서 즉시 심층 피드백을 받을 수 있는 분석 프롬프트 번들을 생성합니다.</p>' +
       '<div class="field"><label>내보낼 테마 선택</label><select id="expThemeSel">'+themeSelectHtml+'</select></div>' +
       '<div class="field"><label>내보내기 형식</label>' +
         '<select id="expFmtSel">' +
@@ -17142,7 +17156,7 @@
       '</div>' +
       '<div class="field" style="margin-top:12px;">' +
         '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:600;">' +
-          '<input type="checkbox" id="expWithAIPrompt" checked> 외부 AI(ChatGPT / Claude) 분석 프롬프트 번들 포함' +
+          '<input type="checkbox" id="expWithAIPrompt" checked> Google Gemini AI 분석 프롬프트 번들 포함' +
         '</label>' +
         '<div class="faint" style="font-size:.8125rem;margin-top:4px;">선택한 테마의 특성에 맞춘 전문 AI 분석가 페르소나 지침이 데이터와 함께 번들링됩니다.</div>' +
       '</div>' +
@@ -17203,7 +17217,7 @@
           var mdContent = buildMarkdownExport(target.recs, target.themeKey, true);
           if(navigator.clipboard && navigator.clipboard.writeText){
             navigator.clipboard.writeText(mdContent).then(function(){
-              toast('AI 분석 프롬프트와 '+target.recs.length+'개 기록을 복사했어요! ChatGPT/Claude에 붙여넣으세요.');
+              toast('AI 분석 프롬프트와 '+target.recs.length+'개 기록을 복사했어요! Google Gemini에 붙여넣으세요.');
               closeModal();
             }).catch(function(){
               toast('복사에 실패했습니다.');
@@ -20573,25 +20587,31 @@
       if(goProf) goProf.addEventListener('click', openProfileEditor);
     }
 
-    // AI 설정
-    if(!settings.aiProvider) settings.aiProvider = 'claude';
+    // AI 설정 (Gemini API 전면 단일화)
+    settings.aiProvider = 'gemini';
     var aiWrap = document.getElementById('aiProviderToggle');
-    aiWrap.querySelectorAll('.format-opt').forEach(function(o){
-      o.classList.toggle('active', o.dataset.provider===settings.aiProvider);
-      o.onclick = async function(){
-        settings.aiProvider = o.dataset.provider;
-        await saveProfile();
-        renderSettingsScreen();
-      };
-    });
+    if(aiWrap){
+      aiWrap.querySelectorAll('.format-opt').forEach(function(o){
+        o.classList.add('active');
+        o.onclick = async function(){
+          settings.aiProvider = 'gemini';
+          await saveProfile();
+          renderSettingsScreen();
+        };
+      });
+    }
     var geminiBlock = document.getElementById('geminiKeyBlock');
-    geminiBlock.style.display = settings.aiProvider==='gemini' ? '' : 'none';
+    if(geminiBlock) geminiBlock.style.display = '';
     var keyInput = document.getElementById('geminiKeyInput');
     var modelInput = document.getElementById('geminiModelInput');
-    keyInput.value = settings.geminiKey || '';
-    modelInput.value = settings.geminiModel || 'gemini-2.5-flash';
-    keyInput.onchange = async function(){ settings.geminiKey = keyInput.value.trim(); await saveProfile(); };
-    modelInput.onchange = async function(){ settings.geminiModel = modelInput.value.trim() || 'gemini-2.5-flash'; await saveProfile(); };
+    if(keyInput){
+      keyInput.value = settings.geminiKey || '';
+      keyInput.onchange = async function(){ settings.geminiKey = keyInput.value.trim(); await saveProfile(); };
+    }
+    if(modelInput){
+      modelInput.value = settings.geminiModel || 'gemini-3.1-flash-lite';
+      modelInput.onchange = async function(){ settings.geminiModel = modelInput.value.trim() || 'gemini-3.1-flash-lite'; await saveProfile(); };
+    }
 
     var autoSw = document.getElementById('autoUpdateSwitch');
     autoSw.className = 'switch' + (settings.autoUpdateSuggest!==false ? ' on' : '');

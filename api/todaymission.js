@@ -14,10 +14,9 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  // API 키 결정: 1) 클라이언트 전달 Gemini키 2) 서버 환경변수 GEMINI_API_KEY 3) 서버 ANTHROPIC_API_KEY
+  // API 키 결정: 1) 클라이언트 전달 Gemini키 2) 서버 환경변수 GEMINI_API_KEY
   var clientGeminiKey = (typeof body.geminiKey === 'string' && body.geminiKey.trim()) ? body.geminiKey.trim() : null;
   var geminiApiKey = clientGeminiKey || process.env.GEMINI_API_KEY;
-  var anthropicApiKey = process.env.ANTHROPIC_API_KEY;
 
   var prompt = '당신은 목표 달성 코치입니다. 아래 목표와 마일스톤·하위 할 일의 진행 상태를 보고, ' +
     '사용자가 오늘 하루 안에 부담 없이 해낼 수 있는 아주 작은 할 일 1개를 "오늘의 미션"으로 제안하세요.\n\n' +
@@ -41,7 +40,7 @@ module.exports = async function handler(req, res) {
 
     // 1. Gemini 다중 플래시 모델 캐스케이드 (우선)
     if (geminiApiKey) {
-      var geminiModels = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-flash-latest'];
+      var geminiModels = ['gemini-3.1-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest'];
       for (var gi = 0; gi < geminiModels.length; gi++) {
         var gModel = geminiModels[gi];
         try {
@@ -59,38 +58,6 @@ module.exports = async function handler(req, res) {
             if (missionText) break;
           }
         } catch (ge) {}
-      }
-    }
-
-    // 2. Anthropic Claude 최신 모델 캐스케이드 폴백
-    if (!missionText && anthropicApiKey) {
-      var anthropicModels = ['claude-3-7-sonnet-20250219', 'claude-3-5-sonnet-latest', 'claude-3-5-haiku-latest', 'claude-3-5-sonnet-20241022'];
-      for (var mi = 0; mi < anthropicModels.length; mi++) {
-        var aModel = anthropicModels[mi];
-        try {
-          var headers = {
-            'Content-Type': 'application/json',
-            'x-api-key': anthropicApiKey,
-            'anthropic-version': '2023-06-01'
-          };
-          if (process.env.ANTHROPIC_WORKSPACE_ID) {
-            headers['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
-          }
-          var anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify({
-              model: aModel,
-              max_tokens: 200,
-              messages: [{ role: 'user', content: prompt }]
-            })
-          });
-          if (anthropicRes.ok) {
-            var data = await anthropicRes.json();
-            missionText = (data.content || []).map(function (b) { return b.type === 'text' ? b.text : ''; }).join('\n').trim();
-            if (missionText) break;
-          }
-        } catch (ae) {}
       }
     }
 
