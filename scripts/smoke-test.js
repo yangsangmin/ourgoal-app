@@ -3306,8 +3306,35 @@ check('compliance: [#TASK-ES-056] 아워골 전면 Gemini API 단일화 및 오�
   assert.ok(!htmlCode.includes('data-provider="claude"'), 'index.html 설정 화면에서 Claude 선택지 제거');
 });
 
+check('compliance: [#TASK-ES-057] 맞춤 템플릿 AI 줄글 분석의 Gemini 3.1 Flash Lite 연동 및 무중단 배선 무결성 검증', () => {
+  const goaltemplate = require('../api/goaltemplate.js');
+  assert.strictEqual(typeof goaltemplate.localCustomTemplateFallback, 'function', 'localCustomTemplateFallback 함수 노출');
+
+  const fbCrossfit = goaltemplate.localCustomTemplateFallback('크로스핏', 'WOD Fran 21-15-9');
+  assert.strictEqual(fbCrossfit.title, '크로스핏');
+  assert.strictEqual(fbCrossfit.theme, 'workout');
+  assert.ok(fbCrossfit.columns.includes('번호'), '첫 번째 열은 항상 번호');
+  assert.ok(fbCrossfit.columns.includes('WOD 운동종목'), '크로스핏 특화 열 포함');
+  assert.strictEqual(fbCrossfit.source, 'fallback');
+  assert.strictEqual(fbCrossfit.isOfflineFallback, true);
+
+  const fbCustom = goaltemplate.localCustomTemplateFallback('주간 회의록', '열은 안건, 담당자, 진척도로 해줘');
+  assert.strictEqual(fbCustom.title, '주간 회의록');
+  assert.ok(fbCustom.columns.includes('안건'), '자연어 열 추출 반영');
+  assert.ok(fbCustom.columns.includes('담당자'), '자연어 열 추출 반영');
+
+  const vercelCfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+  assert.ok(vercelCfg.rewrites.some(r => r.source === '/api/customtemplate' && r.destination === '/api/goaltemplate'), 'vercel.json 에 /api/customtemplate 리라이트 규칙 존재');
+
+  const htmlCode = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.ok(htmlCode.includes('/api/customtemplate'), 'index.html 이 /api/customtemplate 엔드포인트 비동기 호출');
+  assert.ok(htmlCode.includes('Gemini 3.1 Flash Lite가 양식 설계 중'), 'index.html 에 로딩 인디케이터 상태 탑재');
+  assert.ok(htmlCode.includes("action: 'custom_record_template'"), 'index.html 이 custom_record_template 액션 전달');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
   process.exit(1);
 }
+
