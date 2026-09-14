@@ -3550,6 +3550,67 @@ check('[TASK-ES-059] 테마 구분 없는 임의 데이터 AI 자율 메트릭 �
   assert.ok(html.includes('OurgoalUniversalStats.openUniversalImportModal'), '모달 오픈 배선');
 });
 
+check('compliance: [#TASK-ES-059-FUSION] 임의 데이터 자율 융합(Ingest & Fusion) 및 완전 다중선택 슬라이싱 시각화 시스템 검증', () => {
+  const uStats = require('../js/universal-stats.js');
+
+  // 1. 52주 156세션 3대운동 주기화 프로그램 데이터 정밀 융합 검증
+  assert.strictEqual(typeof uStats.generate52WeekPowerliftingSample, 'function', 'generate52WeekPowerliftingSample export');
+  const big3Recs = uStats.generate52WeekPowerliftingSample();
+  assert.strictEqual(big3Recs.length, 156, '52주 156세션 전수 생성');
+  const entities = [...new Set(big3Recs.map(r => r.subTheme))];
+  assert.ok(entities.includes('스쿼트') && entities.includes('벤치프레스') && entities.includes('데드리프트'), '스쿼트/벤치/데드 3대 종목 완벽 분해');
+  assert.ok(big3Recs[0].startAt.includes('T19:00:00.000Z'), '시·분·초 정밀 타임스탬프 융합');
+  assert.strictEqual(big3Recs[0].metrics['1rm'], 131, '1RM 메트릭 보존');
+  assert.strictEqual(big3Recs[0].metrics['volume'], 4095, '볼륨 메트릭 보존');
+
+  // 2. 임의 CSV 파서 및 자가 인코딩 복구 검증
+  assert.strictEqual(typeof uStats.parseCsvToUniversalRecords, 'function', 'parseCsvToUniversalRecords export');
+  const testCsv = 'Date,Exercise,Estimated_1RM_kg,Daily_Volume_kg\n2025-01-06,스쿼트,131,4095\n2025-01-07,벤치프레스,73,2515';
+  const parsedFromCsv = uStats.parseCsvToUniversalRecords(testCsv, 'health');
+  assert.strictEqual(parsedFromCsv.length, 2, 'CSV 파서 2행 정상 변환');
+  assert.strictEqual(parsedFromCsv[1].subTheme, '벤치프레스', '엔티티명 정상 매핑');
+  assert.strictEqual(parsedFromCsv[1].metrics['1rm'], 73, '수치 메트릭 정상 추출');
+
+  // 3. 기존 인앱 기록 + 외부 수용 데이터의 자율 온톨로지 색인 검증
+  const existingAppRecs = [
+    { id: 'app_1', theme: 'health', subTheme: '러닝', text: '10km 러닝', startAt: '2025-05-10T07:00:00.000Z', metrics: { distance: 10, volume: 10 } },
+    { id: 'app_2', theme: 'study', subTheme: '독서', text: '50쪽 독서', startAt: '2025-05-11T20:00:00.000Z', metrics: { pages: 50, volume: 50 } }
+  ];
+  const fusedAll = big3Recs.concat(existingAppRecs);
+  const ontology = uStats.buildUniversalOntology(fusedAll);
+  const ontNames = ontology.map(o => o.name);
+  assert.ok(ontNames.includes('스쿼트') && ontNames.includes('벤치프레스') && ontNames.includes('데드리프트'), '3대운동 온톨로지 색인');
+  assert.ok(ontNames.includes('러닝') && ontNames.includes('독서'), '기존 인앱 기록 온톨로지 통합 색인');
+
+  // 4. [개별 선택(Single)] 벤치프레스 성장기록 단독 시각화 검증
+  const singleBench = uStats.aggregateMultiSeries(fusedAll, ['벤치프레스'], '1rm', '1year', 'single');
+  assert.ok(singleBench['벤치프레스'], '벤치프레스 단독 시계열 존재');
+  assert.strictEqual(singleBench['벤치프레스'].points.length, 52, '52주 벤치프레스 전 세션');
+  assert.strictEqual(singleBench['벤치프레스'].initialVal, 73, '초기 1RM 73kg');
+  assert.strictEqual(singleBench['벤치프레스'].latestVal, 105, '최종 1RM 105kg');
+  assert.strictEqual(singleBench['벤치프레스'].prVal, 106, '최고 PR 106kg');
+  assert.strictEqual(singleBench['벤치프레스'].growthRate, 43.8, '성장률 +43.8%');
+  const benchSvg = uStats.renderMultiSeriesSvg(singleBench);
+  assert.ok(benchSvg.includes('<svg') && benchSvg.includes('PR 106'), '벤치프레스 단독 SVG 렌더링 및 PR 골드스타 마킹');
+
+  // 5. [다중 선택(Multi-Select)] 벤치프레스 + 스쿼트 2개 선택 비교 검증
+  const multi2 = uStats.aggregateMultiSeries(fusedAll, ['벤치프레스', '스쿼트'], '1rm', '1year', 'multi');
+  assert.strictEqual(Object.keys(multi2).length, 2, '2개 종목 다중 선택 집계');
+  const multi2Svg = uStats.renderMultiSeriesSvg(multi2);
+  assert.ok(multi2Svg.includes('#3b82f6') && multi2Svg.includes('#10b981'), '다중 시계열 각각 고유 색상 선 분리 렌더링');
+
+  // 6. [모두(ALL)] 3대운동 전 종목 종합 PR 합계 검증
+  const multi3 = uStats.aggregateMultiSeries(fusedAll, ['벤치프레스', '스쿼트', '데드리프트'], '1rm', '1year', 'all');
+  const totalPr = multi3['벤치프레스'].prVal + multi3['스쿼트'].prVal + multi3['데드리프트'].prVal;
+  assert.strictEqual(totalPr, 506, '3대 운동 총 PR 506kg 달성 종합 계산');
+
+  // 7. 크로스 도메인 다중 선택 (벤치프레스 + 기존 러닝) 검증
+  const cross = uStats.aggregateMultiSeries(fusedAll, ['벤치프레스', '러닝'], 'volume', '1year', 'multi');
+  assert.ok(cross['벤치프레스'] && cross['러닝'], '운동과 러닝 크로스 다중선택 집계');
+  const crossSvg = uStats.renderMultiSeriesSvg(cross);
+  assert.ok(crossSvg.includes('<svg'), '크로스 도메인 SVG 정상 드로잉');
+});
+
 check('compliance: [#TASK-AUTH-P0-SAFETY] 로그인/계정관리 P0 안전망 패키지(비밀번호 찾기/변경, 로그인 유지, 30일 탈퇴 유예, 최근 로그인 뱃지) 무결성 검증', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   const authCode = fs.readFileSync(path.join(__dirname, '..', 'js/auth-safety.js'), 'utf8');

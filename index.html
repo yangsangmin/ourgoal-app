@@ -16829,8 +16829,11 @@
       var uDashBox = document.getElementById('universalStatsDashboardBox');
       if(uDashBox){
         OurgoalUniversalStats.renderUniversalStatsDashboard(uDashBox, allRecs, state, {
-          onSelectCategory: function(cat){ state.univStatCategory = cat; },
-          onSelectPeriod: function(p){ state.univStatPeriod = p; }
+          openModal: openModal,
+          closeModal: closeModal,
+          toast: toast,
+          saveProfile: saveProfile,
+          onDone: function(){ renderRecordsScreen(); }
         });
       }
     }
