@@ -3,9 +3,11 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "test": "node scripts/smoke-test.js",
+    "test": "node scripts/smoke-test.js && node scripts/verify-integrity-gate.js && node scripts/verify-all-clicks.js",
     "prepare:google-play": "node scripts/prepare-google-play.js",
-    "on-deploy": "node ../command-center/sim/uiuxTeam.js --on-deploy"
+    "on-deploy": "node ../command-center/sim/uiuxTeam.js --on-deploy",
+    "test:integrity": "node scripts/verify-integrity-gate.js",
+    "test:clicks": "node scripts/verify-all-clicks.js"
   },
   "dependencies": {
     "web-push": "^3.6.7",

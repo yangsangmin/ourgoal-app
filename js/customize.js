@@ -17,7 +17,7 @@
     { id: 'quickRoutineRow',      label: '빠른 루틴 버튼',          hint: '운동 완료·물 2L 같은 한 번 누르기' },
     { id: 'customFeedbackBtn',    label: '맞춤 피드백 설정 버튼',   hint: '피드백 말투를 고르는 버튼' },
     { id: 'todayMissionCard',     label: '오늘 미션',               hint: '오늘 하나 해볼 것' },
-    { id: 'homeGrassSummaryCard', label: '이번 주 잔디 요약',       hint: '이번 주 기록 한눈에' },
+    { id: 'homeGrassSummaryCard', label: '이번 주 히트맵 요약',     hint: '이번 주 기록 한눈에' },
     { id: 'homeChallengeRoomBtn', label: '챌린지 룸 버튼',          hint: '소규모 챌린지 열기' },
     { id: 'mzShareBtn',           label: '자랑하기 버튼',           hint: '내 성장 카드 공유' }
   ];

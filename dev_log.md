@@ -3297,3 +3297,30 @@
   - `npm test`: **236개 테스트 전수 100% 통과 (0개 실패)**.
   - `node scripts/essence-gate.js --pre-commit`: 금지 패턴 0건, index.html 순증가 0줄.
 ---
+
+## [2026-09-14 16:20] [INFRA] #TASK-ES-CONSTITUTION 아워골 전면 무결성 보장 및 2중 8원칙 작업 절대 규칙 제정 및 에이전트 강제 집행 시스템 구축
+- **목표**:
+  - 상민님의 직접 제정 지시에 따라 아워골 기능 추가/변경/삭제, UI/UX, 백엔드 일체 작업 시 고질적으로 발생해 온 결함(되던 버튼 먹통, 껍데기 버튼 방치, 기능 간 연계 불발, 아바타/목표/기록/화면세팅 유실, 뷰 동기화 누락, AI 코드 축약)을 원천 방지하기 위한 절대 규칙 정의 및 에이전트 기계적 강제 집행 체계 구축.
+- **수정/실행 내역**:
+  1. `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`:
+     - 아워골 전면 무결성 헌법 정본 제정 (총 6장 25조 전문).
+     - 2중 8원칙 파이프라인(지시→REQ 8원칙→PLAN 8원칙), 4위 1체 배선(HTML+리스너+핸들러+피드백), 5대 무결성 검증, 직관적 6단계 보고 헌법, 기계적 게이트키퍼 명문화.
+  2. `docs/specs/TEMPLATE_REQ_8STEPS.md` & `docs/specs/TEMPLATE_PLAN_8STEPS.md`:
+     - 문제해결 8원칙 1회차(요구사항 정의서) 및 2회차(작업계획서) 표준 템플릿 제작.
+  3. `scripts/verify-integrity-gate.js`:
+     - 껍데기 버튼 및 데드클릭 전수 검출, 10종 유저 데이터(아바타, 목표, 기록, 세팅값) 100% 무손실 시뮬레이션, 화면 간 상호연동 전파 검증, 계정/세션/E1/E2/E3 회귀 방지, REQ/PLAN 8원칙 규격 검증 통합 엔진 제작.
+  4. `scripts/verify-all-clicks.js`:
+     - 정적 556개 버튼 및 동적 클래스 버튼의 100% 이벤트 핸들러 배선 상태 전수 매핑 및 검증기 제작.
+  5. `package.json`:
+     - `npm test` 스크립트에 `smoke-test.js` + `verify-integrity-gate.js` + `verify-all-clicks.js` 3중 결합 배선 완료.
+  6. `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`:
+     - 제0-A절에 절대 헌법 통합 개정 및 모든 AI 에이전트 필독 의무화.
+  7. `docs/rules/rules.json`:
+     - 껍데기 버튼(`DEAD_BUTTON_STUB`) 및 더미 클릭(`EMPTY_ONCLICK_ATTR`) 차단 패턴 탑재.
+  8. 옵시디언 볼트 (`03_작업흐름_SOP/SOP_아워골_전면무결성_8원칙_절대규칙.md`):
+     - 볼트 정본 SOP 생성 및 양비스 관제센터 task-link 영구 동기화 완료.
+- **검증 결과**:
+  - `npm test`: **스모크 236개 + 무결성 게이트 10개 + 버튼 매핑 542개 100% 통과 (0개 실패)**.
+  - `node scripts/essence-gate.js --self-test`: 규칙 v2026.09.11-02 정상 로드.
+  - `node C:/dev/command-center/lib/tri-sync.js check`: 100% 무결성 확인.
+---
