@@ -886,6 +886,7 @@ module.exports = async function handler(req, res) {
       message: checkResult.message,
       detail: checkResult.detail,
       support: checkResult.support,
+      notice: checkResult.notice,
       category: checkResult.category,
       tag: checkResult.tag
     });

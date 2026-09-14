@@ -27,6 +27,7 @@
   var REJECT_MESSAGE = '아워골 내부 차단 키워드가 식별되어 생성이 거부되었습니다';
   var REJECT_DETAIL = '사회적 규범(범죄, 음란 등)에 부합하지 않는 키워드가 감지되었습니다.';
   var REJECT_SUPPORT = "정상적인 의도의 목표/템플릿이나 시스템 오인 차단인 경우, 아워골 앱 내 [설정] 탭의 '1:1 문의 및 오류 제보를 사용하세요'.";
+  var REJECT_NOTICE = '무공해 플랫폼을 위한 강한 제어체계를 구축했습니다. 양해 부탁드립니다.';
 
   // ================= 1. 한글 3대 핵심 금칙어 패턴 (CRIME, OBSCENE, SELF_HARM) =================
   var CRIME_PATTERNS = [
@@ -115,7 +116,8 @@
             tag: cp.tag,
             message: REJECT_MESSAGE,
             detail: REJECT_DETAIL,
-            support: REJECT_SUPPORT
+            support: REJECT_SUPPORT,
+            notice: REJECT_NOTICE
           };
         }
       }
@@ -132,7 +134,8 @@
             tag: op.tag,
             message: REJECT_MESSAGE,
             detail: REJECT_DETAIL,
-            support: REJECT_SUPPORT
+            support: REJECT_SUPPORT,
+            notice: REJECT_NOTICE
           };
         }
       }
@@ -149,7 +152,8 @@
             tag: sp.tag,
             message: REJECT_MESSAGE,
             detail: REJECT_DETAIL,
-            support: REJECT_SUPPORT
+            support: REJECT_SUPPORT,
+            notice: REJECT_NOTICE
           };
         }
       }
@@ -167,7 +171,8 @@
           tag: ep.tag,
           message: REJECT_MESSAGE,
           detail: REJECT_DETAIL,
-          support: REJECT_SUPPORT
+          support: REJECT_SUPPORT,
+          notice: REJECT_NOTICE
         };
       }
     }
@@ -182,7 +187,8 @@
         tag: '마약은어거래',
         message: REJECT_MESSAGE,
         detail: REJECT_DETAIL,
-        support: REJECT_SUPPORT
+        support: REJECT_SUPPORT,
+        notice: REJECT_NOTICE
       };
     }
 
@@ -198,6 +204,7 @@
     stripNoise: stripNoise,
     REJECT_MESSAGE: REJECT_MESSAGE,
     REJECT_DETAIL: REJECT_DETAIL,
-    REJECT_SUPPORT: REJECT_SUPPORT
+    REJECT_SUPPORT: REJECT_SUPPORT,
+    REJECT_NOTICE: REJECT_NOTICE
   };
 }));
