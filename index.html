@@ -70,6 +70,7 @@
     <div class="tag">목표를 세우고, 오늘을 기록하고, 성장을 나눠요</div>
   </div>
   <div class="auth-card">
+    <div id="lastAuthBadge" style="display:none;margin-bottom:10px;text-align:center;"></div>
     <div class="oauth-row">
       <button class="btn btn-block btn-kakao" id="authKakaoBtn" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.86 5.31 4.66 6.72L5.5 21.5c-.08.3.24.54.5.38l4.42-2.93c.52.05 1.05.08 1.58.08 5.52 0 10-3.58 10-8S17.52 3 12 3z"/></svg><span>카카오로 시작하기</span></button>
       <button class="btn btn-block btn-google" id="authGoogleBtn" type="button"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg><span>Google로 계속하기</span></button>
@@ -84,8 +85,22 @@
     <div id="loginForm">
       <div class="field"><label for="loginUser">아이디</label><input id="loginUser" type="text" autocomplete="username" placeholder="이메일 또는 아이디"></div>
       <div class="field field-pw"><label for="loginPass">비밀번호</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="비밀번호"><button type="button" class="pw-toggle" aria-label="비밀번호 보기" onclick="var i=document.getElementById('loginPass');i.type=i.type==='password'?'text':'password';this.classList.toggle('on');">보기</button></div>
+      <div class="auth-options-row" style="display:flex;align-items:center;justify-content:space-between;margin:6px 0 12px;font-size:.8125rem;color:var(--ink-soft);">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+          <input type="checkbox" id="rememberMeCheck" checked>
+          <span>이 기기에서 로그인 유지</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+          <input type="checkbox" id="rememberIdCheck">
+          <span>아이디 저장</span>
+        </label>
+      </div>
       <p class="auth-error" id="loginError"></p>
       <button class="btn btn-primary btn-block" id="loginSubmit" type="button">로그인</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:.8125rem;">
+        <a href="javascript:void(0)" id="forgotPassBtn" style="color:var(--brand);text-decoration:none;font-weight:600;">비밀번호를 잊으셨나요?</a>
+        <a href="javascript:void(0)" id="authRescueBtn" style="color:var(--ink-faint);text-decoration:underline;">로그인 문제 해결</a>
+      </div>
     </div>
 
     <div id="signupForm" style="display:none;">
@@ -100,9 +115,6 @@
     <p class="auth-note">
       계속 진행하면 아워골의 <a href="#" id="authTermsLink">서비스 이용약관</a> 및 <a href="#" id="authPrivacyLink">개인정보처리방침</a>에 동의하는 것으로 봅니다.
     </p>
-    <div style="text-align:center;margin-top:8px;">
-      <a href="javascript:void(0)" id="authRescueBtn" style="color:var(--ink-faint);font-size:.75rem;text-decoration:underline;">로그인이 잘 안 되시나요? (세션 초기화·복구)</a>
-    </div>
   </div>
 </div>
 
@@ -473,6 +485,7 @@
           <div class="faint" style="font-size:.8125rem;">로그인 계정 이메일</div>
           <b id="setAccountEmail" style="color:var(--ink);">ysm0422@naver.com</b>
         </div>
+        <button class="btn btn-ghost btn-sm btn-block" id="btnChangePassModal" type="button" style="margin-bottom:12px;font-size:.8125rem;">비밀번호 변경</button>
         <div class="toggle-row">
           <div class="t">2단계 인증 (2FA) 보안 로그인</div>
           <div class="switch" id="twoFactorSwitch"></div>
@@ -833,6 +846,7 @@
 <script src="js/records-stats.js"></script>
   <script src="js/avatar-system.js?v=20260913-es054"></script>
   <script src="js/content-moderation.js"></script>
+  <script src="js/auth-safety.js"></script>
 <script>
 
 (function(){
@@ -1788,11 +1802,13 @@
   document.getElementById('landStartBtn').addEventListener('click', function(){
     document.getElementById('landingScreen').style.display = 'none';
     document.getElementById('authScreen').style.display = 'flex';
+    if(typeof initRememberedAuthFields === 'function') initRememberedAuthFields();
     document.querySelector('[data-authtab="signup"]').click();
   });
   document.getElementById('landLoginLink').addEventListener('click', function(){
     document.getElementById('landingScreen').style.display = 'none';
     document.getElementById('authScreen').style.display = 'flex';
+    if(typeof initRememberedAuthFields === 'function') initRememberedAuthFields();
     document.querySelector('[data-authtab="login"]').click();
   });
 
@@ -1886,6 +1902,7 @@
         var gBtn = sheet.querySelector('#continueGoogleDirectBtn');
         if(gBtn) gBtn.onclick = async function(){
           closeModal();
+          try { localStorage.setItem('ourgoal_last_auth_provider', 'google'); } catch(e){}
           await loginWithDirectIdentifier(email, { displayName: name, avatarUrl: picture, provider: 'google', accessToken: accessToken });
         };
         var kBtn = sheet.querySelector('#conflictKakaoLoginBtn');
@@ -2012,6 +2029,7 @@
         }
       } catch(e){}
       setDeviceLoginTime(Date.now());
+      try { localStorage.setItem('ourgoal_last_auth_provider', provider); } catch(e){}
       var res = await sb.auth.signInWithOAuth({ provider: provider, options: { redirectTo: window.location.origin } });
       if(res && res.error) throw res.error;
     } catch(err){
@@ -2201,6 +2219,51 @@
     startOnboarding();
   });
 
+  /* ============ P0: 최근 로그인 뱃지 & 아이디 저장 & 로그인 유지 ============ */
+  function showLastAuthBadge(){
+    if(window.OurgoalAuthSafety && typeof window.OurgoalAuthSafety.showLastAuthBadge === 'function'){
+      window.OurgoalAuthSafety.showLastAuthBadge();
+    }
+  }
+
+  function initRememberedAuthFields(){
+    if(window.OurgoalAuthSafety && typeof window.OurgoalAuthSafety.initRememberedAuthFields === 'function'){
+      window.OurgoalAuthSafety.initRememberedAuthFields();
+    }
+  }
+
+  /* ============ P0: 비밀번호 찾기 (이메일 재설정 링크 발송) ============ */
+  function openForgotPasswordModal(){
+    if(window.OurgoalAuthSafety && typeof window.OurgoalAuthSafety.openForgotPasswordModal === 'function'){
+      window.OurgoalAuthSafety.openForgotPasswordModal();
+    }
+  }
+
+  var fpBtn = document.getElementById('forgotPassBtn');
+  if(fpBtn) fpBtn.addEventListener('click', openForgotPasswordModal);
+
+  /* ============ P0: 새 비밀번호 입력 모달 (비밀번호 복구 링크 수신 시) ============ */
+  function openNewPasswordModal(){
+    if(window.OurgoalAuthSafety && typeof window.OurgoalAuthSafety.openNewPasswordModal === 'function'){
+      window.OurgoalAuthSafety.openNewPasswordModal();
+    }
+  }
+
+  /* ============ P0: 설정 화면 내 비밀번호 변경 모달 ============ */
+  function openChangePasswordModal(){
+    if(window.OurgoalAuthSafety && typeof window.OurgoalAuthSafety.openChangePasswordModal === 'function'){
+      window.OurgoalAuthSafety.openChangePasswordModal();
+    }
+  }
+
+  /* ============ P0: 회원 탈퇴 30일 유예(소프트 삭제) 복구 체크 ============ */
+  async function checkPendingDeletionRestore(){
+    if(window.OurgoalAuthSafety && typeof window.OurgoalAuthSafety.checkPendingDeletionRestore === 'function'){
+      return await window.OurgoalAuthSafety.checkPendingDeletionRestore();
+    }
+    return false;
+  }
+
   document.getElementById('loginSubmit').addEventListener('click', async function(){
     var u = document.getElementById('loginUser').value.trim();
     var p = document.getElementById('loginPass').value;
@@ -2210,7 +2273,38 @@
     var res = await sb.auth.signInWithPassword({ email: u, password: p });
     if(res.error){ errEl.textContent = '아이디 또는 비밀번호가 올바르지 않아요.'; return; }
     setDeviceLoginTime(Date.now());
+
+    // 1. 아이디 저장
+    try {
+      var remId = document.getElementById('rememberIdCheck');
+      if(remId && remId.checked){
+        localStorage.setItem('ourgoal_saved_id', u);
+      } else {
+        localStorage.removeItem('ourgoal_saved_id');
+      }
+    } catch(e){}
+
+    // 2. 이 기기에서 로그인 유지
+    try {
+      var remMe = document.getElementById('rememberMeCheck');
+      if(remMe && !remMe.checked){
+        sessionStorage.setItem('ourgoal_session_ephemeral', 'true');
+      } else {
+        sessionStorage.removeItem('ourgoal_session_ephemeral');
+      }
+    } catch(e){}
+
+    // 3. 최근 로그인 수단 뱃지 저장
+    try {
+      localStorage.setItem('ourgoal_last_auth_provider', 'email');
+    } catch(e){}
+
     state.profile = await loadProfile(res.data.user.id, u);
+
+    // 4. 회원 탈퇴 30일 유예(소프트 삭제) 복구 체크
+    var cancelled = await checkPendingDeletionRestore();
+    if(cancelled) return;
+
     enterApp();
   });
 
@@ -2262,45 +2356,31 @@
     toast('초기화했어요');
   });
 
-  /* ============ 회원 탈퇴 ============ */
+  /* ============ 회원 탈퇴 (30일 소프트 딜리션 유예 적용) ============ */
   async function withdrawAccount(){
     if(!state.profile || !state.profile.id) return;
-    if(!confirm('정말로 아워골에서 회원 탈퇴하시겠습니까?\r\n\r\n탈퇴하시면 작성하신 모든 목표, 마일스톤, 체크인 기록, 피드백 및 프로필이 즉시 영구 삭제되며 복구할 수 없습니다.')) return;
-    if(!confirm('정말 탈퇴를 진행할까요?\r\n\r\n이 작업은 되돌릴 수 없으며, 탈퇴 즉시 모든 데이터가 완전히 파기됩니다.')) return;
+    if(!confirm('정말로 아워골 회원 탈퇴를 신청하시겠습니까?\r\n\r\n[안내]\r\n탈퇴 신청 후 30일 동안 계정이 안전하게 유예 보관됩니다.\r\n30일 이내에 다시 로그인하시면 언제든지 모든 목표와 기록을 100% 복구하실 수 있습니다.\r\n30일이 지나면 모든 데이터가 영구히 파기됩니다.')) return;
+    if(!confirm('탈퇴 신청을 진행할까요?\r\n\r\n(30일 이내 재로그인 시 원클릭 복구 가능)')) return;
 
     var uid = state.profile.id;
+    var now = Date.now();
     try {
-      toast('회원 탈퇴 처리 중입니다…');
-      var sessRes = await sb.auth.getSession();
-      var token = (sessRes && sessRes.data && sessRes.data.session) ? sessRes.data.session.access_token : null;
+      toast('탈퇴 유예 신청 처리 중입니다…');
+      if(!state.profile.settings) state.profile.settings = {};
+      state.profile.settings.pendingDeletionAt = now;
+      state.profile.settings.deletedAt = now;
+      await saveProfile();
 
-      if (token) {
-        try {
-          await fetch('/api/withdraw', {
-            method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }
-          });
-        } catch(apiErr) {
-          console.warn('Withdraw API fetch warning:', apiErr);
-        }
-      }
-
-      // 클라이언트 권한 데이터 정리
       try {
-        await sb.from('checkins').delete().eq('user_id', uid);
-        await sb.from('goals').delete().eq('user_id', uid);
-        await sb.from('push_subscriptions').delete().eq('user_id', uid);
-        await sb.from('feed_posts').delete().eq('user_id', uid);
-        await sb.from('comments').delete().eq('user_id', uid);
-        await sb.from('users').delete().eq('id', uid);
-      } catch(e){ console.warn('Client tables cleanup warning:', e); }
+        await sb.auth.updateUser({
+          data: { account_status: 'pending_deletion', deleted_at: now }
+        });
+      } catch(e){}
 
-      // 로컬 스토리지 정리
+      // 알림 및 세션 정리
       try {
-        localStorage.removeItem('ourgoal_settings_' + uid);
-        localStorage.removeItem('ourgoal_sid');
-        localStorage.removeItem('ourgoal_attrib');
-        localStorage.removeItem('ourgoal_lv_day');
+        localStorage.removeItem('ourgoal_current_user');
+        localStorage.removeItem('ourgoal_guest_profile');
       } catch(e){}
 
       updateAppBadge(0);
@@ -2311,7 +2391,8 @@
 
       document.getElementById('appShell').classList.remove('active');
       document.getElementById('authScreen').style.display = 'flex';
-      toast('회원 탈퇴가 완료되었습니다. 그동안 이용해 주셔서 감사합니다.');
+      initRememberedAuthFields();
+      toast('탈퇴 신청이 접수되었습니다. 30일 이내에 로그인하시면 언제든 복구하실 수 있습니다.');
     } catch(err){
       console.error('Withdrawal error:', err);
       toast('탈퇴 처리 중 오류가 발생했습니다: ' + (err.message || '잠시 후 다시 시도해주세요'));
@@ -20290,6 +20371,12 @@
     if(emailEl){
       emailEl.textContent = (state.user && state.user.email) || (state.profile && state.profile.email) || 'ysm0422@naver.com';
     }
+    var chgPassBtn = document.getElementById('btnChangePassModal');
+    if(chgPassBtn){
+      chgPassBtn.onclick = function(){
+        openChangePasswordModal();
+      };
+    }
     var twoFaSw = document.getElementById('twoFactorSwitch');
     if(twoFaSw){
       var twoFaOn = !!settings.twoFactorAuth;
@@ -21251,17 +21338,44 @@
     });
   });
 
+  /* ============ #TASK-AUTH-P0-SAFETY: 로그인/계정 보안 패키지 모듈 연결 ============ */
+  if(window.OurgoalAuthSafety && typeof window.OurgoalAuthSafety.init === 'function'){
+    window.OurgoalAuthSafety.init({
+      sb: sb,
+      state: state,
+      toast: toast,
+      openModal: openModal,
+      closeModal: closeModal,
+      performLogout: performLogout,
+      saveProfile: saveProfile,
+      enterApp: enterApp
+    });
+  }
+
   /* ============ Boot ============ */
   (async function boot(){
-    // 1. Supabase Auth 전역 리스너 (카카오 OAuth 리다이렉트 후 비동기 토큰 파싱 시 즉각 감지)
+    // 1. Supabase Auth 전역 리스너 (카카오 OAuth 리다이렉트 및 비밀번호 재설정 감지)
     try {
       sb.auth.onAuthStateChange(async function(event, session){
+        if(event === 'PASSWORD_RECOVERY'){
+          openNewPasswordModal();
+          return;
+        }
         if((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && session.user){
           if(!state.profile || state.profile.id !== session.user.id){
             await restoreSessionAndEnter(session);
           }
         }
       });
+    } catch(e){}
+
+    // 1-1. URL 해시 상의 비밀번호 재설정 토큰 감지
+    try {
+      var hStr = window.location.hash || '';
+      var sStr = window.location.search || '';
+      if(hStr.indexOf('type=recovery') !== -1 || sStr.indexOf('type=recovery') !== -1 || hStr.indexOf('reset-password') !== -1){
+        setTimeout(openNewPasswordModal, 400);
+      }
     } catch(e){}
 
     // 2. URL 해시/쿼리상의 OAuth 에러 처리 및 안전 복구
