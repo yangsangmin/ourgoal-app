@@ -3372,14 +3372,43 @@ check('compliance: [#TASK-ES-058] 아워골 AI 목표 및 템플릿 생성 유�
     assert.ok(res.support.includes('1:1 문의 및 오류 제보'));
   }
 
-  // 4. 일반적인 건전한 목표 통과 검증
+  // 4. [문제해결 8원칙 고도화] 특수기호 삽입, 숨김 유니코드, 영문, 은어 거래 결합 오남용 방어 검증
+  const advancedEvasionCases = [
+    { text: '필.로.폰 구매 방법', expect: true },
+    { text: '사-설-토-토 사이트 개설', expect: true },
+    { text: '보!이!스!피!싱 대본', expect: true },
+    { text: '청_부_살_인 의뢰', expect: true },
+    { text: '몸~캠~피~싱 사기', expect: true },
+    { text: '카/드/깡 작업', expect: true },
+    { text: '필\u200B로\u200B폰 판매', expect: true },
+    { text: '대\u200D마\u200D초 유통', expect: true },
+    { text: 'how to buy methamphetamine online', expect: true },
+    { text: 'philopon delivery guide', expect: true },
+    { text: 'create ransomware for money', expect: true },
+    { text: 'voice phishing call center template', expect: true },
+    { text: 'make deepfake porn video', expect: true },
+    { text: '아이스 팝니다 텔레그램 문의', expect: true },
+    { text: '작대기 직거래 좌표 공유', expect: true },
+    { text: '떨 팝니다 직거래 환영', expect: true }
+  ];
+
+  for (const tc of advancedEvasionCases) {
+    const res = moderation.check(tc.text);
+    assert.strictEqual(res.flagged, tc.expect, '오남용 변칙 차단 검증: ' + tc.text);
+    assert.strictEqual(res.message, '아워골 내부 차단 키워드가 식별되어 생성이 거부되었습니다');
+  }
+
+  // 5. 일반적인 건전한 목표 통과 및 오탐 방지 검증
   const allowedCases = [
     '매일 아침 6시 기상 및 5km 러닝',
     '담배 끊기 30일 습관 챌린지',
     '스마트폰 사용 시간 줄이기',
     '공인중개사 1차 시험 합격',
     '살인적인 스케줄 극복하기',
-    '화이트해커 정보보안 공부'
+    '화이트해커 정보보안 공부',
+    '아이스 아메리카노 하루 1잔 줄이기',
+    '나무 작대기로 텐트 고정하기',
+    'methodology of software design'
   ];
 
   for (const text of allowedCases) {
@@ -3403,6 +3432,90 @@ check('compliance: [#TASK-ES-058] 아워골 AI 목표 및 템플릿 생성 유�
   const goalTemplateCode = fs.readFileSync(path.join(__dirname, '..', 'api/goaltemplate.js'), 'utf8');
   assert.ok(goalTemplateCode.includes("require('../js/content-moderation.js')"), 'api/goaltemplate.js 내 content-moderation 연동');
   assert.ok(goalTemplateCode.includes("error: 'CONTENT_FILTER_REJECTED'"), 'api/goaltemplate.js 내 400 거부 반환');
+});
+
+check('compliance: [#TASK-ES-059] 외부 다양한 기록 유니버설 흡수 및 성취통계 동적 다차원 시각화 엔진 검증', () => {
+  const uniStatsPath = path.join(__dirname, '..', 'js/universal-stats.js');
+  assert.ok(fs.existsSync(uniStatsPath), 'js/universal-stats.js 파일이 존재해야 함');
+
+  const uniStats = require(uniStatsPath);
+  assert.ok(uniStats, 'universal-stats 모듈 로드 성공');
+  assert.ok(typeof uniStats.extractMetricsFromRecord === 'function', 'extractMetricsFromRecord 함수 노출');
+  assert.ok(typeof uniStats.discoverActiveMetrics === 'function', 'discoverActiveMetrics 함수 노출');
+  assert.ok(typeof uniStats.aggregateMetricTimeSeries === 'function', 'aggregateMetricTimeSeries 함수 노출');
+  assert.ok(typeof uniStats.renderUniversalSvgChart === 'function', 'renderUniversalSvgChart 함수 노출');
+  assert.ok(typeof uniStats.generateDomainSample === 'function', 'generateDomainSample 함수 노출');
+  assert.ok(typeof uniStats.renderUniversalStatsDashboard === 'function', 'renderUniversalStatsDashboard 함수 노출');
+  assert.ok(typeof uniStats.openUniversalImportModal === 'function', 'openUniversalImportModal 함수 노출');
+
+  // 1. 러닝 메트릭 추출 검증
+  const runRec = {
+    id: 'test-run-1',
+    text: '아침 조깅 10.5km 5:30 페이스 완주',
+    category: '운동',
+    startAt: '2026-06-01T07:00:00.000Z',
+    endAt: '2026-06-01T07:58:00.000Z'
+  };
+  const runMetrics = uniStats.extractMetricsFromRecord(runRec);
+  const runM = runMetrics.find(m => m.category === 'running');
+  assert.ok(runM, '러닝 메트릭 존재');
+  assert.strictEqual(runM.value, 10.5, '러닝 거리 10.5km 추출');
+  assert.strictEqual(runM.unit, 'km', '러닝 단위 km');
+
+  // 2. 3대 운동 메트릭 추출 검증 (테이블 데이터 및 텍스트 혼합)
+  const big3Rec = {
+    id: 'test-big3-1',
+    text: '하체 데이: 스쿼트 140kg 성공, 벤치 100kg, 데드 180kg',
+    category: '운동',
+    startAt: '2026-06-02T19:00:00.000Z',
+    endAt: '2026-06-02T20:30:00.000Z'
+  };
+  const big3Metrics = uniStats.extractMetricsFromRecord(big3Rec);
+  const big3M = big3Metrics.find(m => m.category === 'big3');
+  assert.ok(big3M, '3대 운동 메트릭 존재');
+  assert.strictEqual(big3M.squat, 140, '스쿼트 140kg 추출');
+  assert.strictEqual(big3M.bench, 100, '벤치 100kg 추출');
+  assert.strictEqual(big3M.deadlift, 180, '데드리프트 180kg 추출');
+  assert.strictEqual(big3M.value, 420, '3대 운동 총합 420kg 계산');
+
+  // 3. 1년치 샘플 데이터 생성 검증 (러닝, 3대 운동, 공부, 영업)
+  const runSample = uniStats.generateDomainSample('running');
+  assert.ok(Array.isArray(runSample) && runSample.length >= 100, '1년치 러닝 샘플 100건 이상 생성');
+  const big3Sample = uniStats.generateDomainSample('big3');
+  assert.ok(Array.isArray(big3Sample) && big3Sample.length >= 50, '1년치 3대 운동 샘플 50주 이상 생성');
+  const studySample = uniStats.generateDomainSample('study');
+  assert.ok(Array.isArray(studySample) && studySample.length >= 100, '1년치 공부 샘플 100건 이상 생성');
+  const salesSample = uniStats.generateDomainSample('sales');
+  assert.ok(Array.isArray(salesSample) && salesSample.length >= 40, '1년치 영업 샘플 40건 이상 생성');
+
+  // 4. 활성 메트릭 자동 탐색(Auto-Discovery) 검증
+  const activeKeys = uniStats.discoverActiveMetrics(big3Sample);
+  assert.ok(activeKeys.includes('big3'), '3대 운동 샘플에서 big3 메트릭 자동 탐색');
+
+  // 5. 시계열 집계 및 SVG 차트 생성 검증
+  const aggResult = uniStats.aggregateMetricTimeSeries(big3Sample, 'big3', 'month');
+  assert.ok(aggResult.series.length > 0, '월별 시계열 집계 데이터 생성');
+  assert.ok(aggResult.stats.pr > 0, '최고 기록 PR 계산 완료');
+
+  const svgHtml = uniStats.renderUniversalSvgChart({
+    series: aggResult.series,
+    unit: 'kg',
+    color: '#f59e0b',
+    label: '3대 총합'
+  });
+  assert.ok(svgHtml.includes('<svg') && svgHtml.includes('</svg>'), '유효한 SVG 태그 생성');
+  assert.ok(svgHtml.includes('polyline') || svgHtml.includes('polygon'), '차트 라인/영역 렌더링');
+
+  // 6. index.html 배선 무결성 검증
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.ok(html.includes('js/universal-stats.js?v=20260914-es059'), 'index.html 내 universal-stats.js 로드');
+  assert.ok(html.includes('id="recSampleLoadBtn"'), '기록 상단 헤더에 ⚡ 샘플로드 버튼 탑재');
+  assert.ok(html.includes('id="recImportBtn"'), '기록 상단 헤더에 📥 가져오기 버튼 탑재');
+  assert.ok(html.includes('id="recUniversalQuickBanner"'), '기록 탭 상단 유니버설 퀵 배너 탑재');
+  assert.ok(html.includes('id="recUniversalStatsContainer"'), '성취 통계 뷰에 유니버설 대시보드 컨테이너 탑재');
+  assert.ok(html.includes('id="recEmptySampleBtn"'), '빈 화면에 ⚡ 1년치 샘플 로드 버튼 탑재');
+  assert.ok(html.includes('id="recEmptyImportBtn"'), '빈 화면에 📥 외부 데이터 가져오기 버튼 탑재');
+  assert.ok(html.includes('renderUniversalStatsDashboard'), 'renderRecordsScreen 내 대시보드 마운트 호출');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
