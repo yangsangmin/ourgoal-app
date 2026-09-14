@@ -3741,6 +3741,69 @@ check('compliance: [#TASK-ES-059-BUTTONS] 기록 버튼 중복 해소 및 세부
   assert.ok(rsCode.includes('deps.wireRecordCards'), 'records-stats.js openDayDetailModal 내 카드 상호작용 배선');
 });
 
+/* ============ [#TASK-ES-060] 1900년대 및 역대 과거 임의 데이터 완벽 수용·융합·자율 시각화 및 크래시 방어 검증 ============ */
+check('compliance: [#TASK-ES-060] 1900년대 및 역대 과거 임의 데이터 완벽 수용·융합·자율 시각화 및 크래시 방어 검증', () => {
+  const uPath = path.join(__dirname, '..', 'js', 'universal-stats.js');
+  assert.ok(fs.existsSync(uPath), 'js/universal-stats.js 파일 존재');
+  const uSrc = fs.readFileSync(uPath, 'utf8');
+  new Function(uSrc); // 문법 유효성 확인
+
+  const mockWindow = {};
+  new Function('window', uSrc)(mockWindow);
+  const U = mockWindow.OurgoalUniversalStats;
+  assert.ok(U, 'OurgoalUniversalStats 객체 노출');
+
+  // 1. normalizeHistoricalDate 정규화 테스트 (1900년대, 점, 슬래시, 하이픈, 한글, YYYYMMDD 무손실 변환)
+  assert.strictEqual(typeof U.normalizeHistoricalDate, 'function', 'normalizeHistoricalDate 함수 탑재');
+  const d1 = U.normalizeHistoricalDate('1924.05.04');
+  assert.ok(d1 && d1.startsWith('1924-05-04'), '1924.05.04 -> 1924-05-04 변환');
+  const d2 = U.normalizeHistoricalDate('1900/01/01 10:30');
+  assert.ok(d2 && d2.startsWith('1900-01-01'), '1900/01/01 10:30 변환');
+  const d3 = U.normalizeHistoricalDate('1988년 09월 17일');
+  assert.ok(d3 && d3.startsWith('1988-09-17'), '한글 일자 변환');
+  const d4 = U.normalizeHistoricalDate('19501225');
+  assert.ok(d4 && d4.startsWith('1950-12-25'), 'YYYYMMDD 변환');
+
+  // 2. 1924 파리 올림픽 100년 역대 실측 샘플 생성 검증
+  assert.strictEqual(typeof U.generate1920sOlympicStrengthSample, 'function', '1924 올림픽 샘플 생성 함수 탑재');
+  const sample1924 = U.generate1920sOlympicStrengthSample();
+  assert.ok(Array.isArray(sample1924) && sample1924.length >= 70, '1924 올림픽 70건 이상 실측 레코드 생성');
+  assert.ok(sample1924[0].startAt.includes('1924'), '레코드 일자가 1924년도임');
+  assert.ok(sample1924[0].metrics && (sample1924[0].metrics['1rm'] || sample1924[0].metrics['volume']), '수치 메트릭 보존');
+
+  // 3. 1900년대 CSV 파싱 검증 (Invalid Date RangeError 원천 방어)
+  const csvText = '일자,종목,중량(kg),반복수\n1924.05.04,밀리터리 프레스,82.5,3\n1924/05/06,스내치,90,2\n1900-01-01,기초 체력,50,10';
+  const parsed = U.parseCsvToUniversalRecords(csvText);
+  assert.strictEqual(parsed.length, 3, '1900년대 CSV 3건 무손실 파싱');
+  assert.ok(parsed[0].startAt.startsWith('1924-05-04'), '첫 행 1924-05-04 ISO 변환');
+  assert.ok(parsed[2].startAt.startsWith('1900-01-01'), '셋째 행 1900-01-01 ISO 변환');
+
+  // 4. aggregateMultiSeries 'all' 전체 기간 및 음수 타임스탬프 수용 검증
+  const entities = [...new Set(parsed.map(r => r.subTheme))];
+  const agg = U.aggregateMultiSeries(parsed, entities, '1rm', 'all', 'multi');
+  assert.ok(agg && Object.keys(agg).length > 0, '전체 기간 시계열 집계 성공');
+
+  // 5. renderUniversalStatsDashboard 크래시(seriesKeys) 방어 및 1900년대 대시보드 렌더링 검증
+  const mockBox = { innerHTML: '', querySelector: () => null, querySelectorAll: () => [], addEventListener: () => {} };
+  const mockState = { profile: { records: sample1924 } };
+  U.renderUniversalStatsDashboard(mockBox, sample1924, mockState, {
+    openModal: () => {},
+    closeModal: () => {},
+    toast: () => {},
+    saveProfile: () => {},
+    onDone: () => {}
+  });
+  assert.ok(mockBox.innerHTML.includes('1924'), '대시보드 HTML에 1924 연도 및 올림픽 데이터 렌더링');
+  assert.ok(mockBox.innerHTML.includes('전체'), '전체(all) 기간 버튼 렌더링');
+
+  // 6. index.html 무결성 검증 (캐시버스터, fmtDateLabel 연도 표기, try-catch 방어)
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.ok(indexHtml.includes('universal-stats.js?v=20260914-es060'), '캐시버스터 20260914-es060 갱신');
+  assert.ok(indexHtml.includes("d.getFullYear() !== today.getFullYear()"), 'fmtDateLabel 과거 연도 표기 로직 탑재');
+  assert.ok(indexHtml.includes("OurgoalUniversalStats.renderUniversalStatsDashboard(uDashBox, allRecs, state"), '대시보드 호출 탑재');
+  assert.ok(indexHtml.includes("catch(uErr)"), '대시보드 렌더링 try-catch 방어막 탑재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
