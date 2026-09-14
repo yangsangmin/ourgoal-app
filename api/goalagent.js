@@ -892,10 +892,9 @@ module.exports = async function handler(req, res) {
     goalMap[g.id] = msMap;
   });
 
-  // API 키 결정: 1) 클라이언트 전달 Gemini키 2) 서버 환경변수 GEMINI_API_KEY 3) 서버 ANTHROPIC_API_KEY
+  // API 키 결정: 1) 클라이언트 전달 Gemini키 2) 서버 환경변수 GEMINI_API_KEY
   var clientGeminiKey = (typeof body.geminiKey === 'string' && body.geminiKey.trim()) ? body.geminiKey.trim() : null;
   var geminiApiKey = clientGeminiKey || process.env.GEMINI_API_KEY;
-  var anthropicApiKey = process.env.ANTHROPIC_API_KEY;
 
   var prompt = '당신은 습관·목표 관리 앱 "아워골"에서, 사용자가 "개인 목표" 화면 상단 채팅창에 입력한 자연어 요청을 읽고 ' +
     '목표(goal)·마일스톤(milestone)·할 일(task) 구조를 어떻게 바꿀지 판단해 변경사항(diff) 목록으로 정리해주는 도우미입니다.\n' +
@@ -944,7 +943,7 @@ module.exports = async function handler(req, res) {
 
     // 1. Gemini 모델 캐스케이드 (429 Rate Limit 및 장애 대비 다중 플래시 모델 순차 호출)
     if (geminiApiKey) {
-      var geminiModels = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-flash-latest'];
+      var geminiModels = ['gemini-3.1-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest'];
       for (var gi = 0; gi < geminiModels.length; gi++) {
         var gModel = geminiModels[gi];
         try {
@@ -976,52 +975,6 @@ module.exports = async function handler(req, res) {
           }
         } catch (ge) {
           console.warn('[goalagent] Gemini (' + gModel + ') error:', ge.message);
-        }
-      }
-    }
-
-    // 2. Anthropic Claude 최신 모델 캐스케이드 폴백
-    if (!parsed && anthropicApiKey) {
-      var anthropicModels = [
-        'claude-3-7-sonnet-20250219',
-        'claude-3-5-sonnet-latest',
-        'claude-3-5-haiku-latest',
-        'claude-3-5-sonnet-20241022',
-        'claude-3-sonnet-20240229'
-      ];
-      for (var mi = 0; mi < anthropicModels.length; mi++) {
-        var aModel = anthropicModels[mi];
-        try {
-          var headers = {
-            'Content-Type': 'application/json',
-            'x-api-key': anthropicApiKey,
-            'anthropic-version': '2023-06-01'
-          };
-          if (process.env.ANTHROPIC_WORKSPACE_ID) {
-            headers['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
-          }
-          var anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify({
-              model: aModel,
-              max_tokens: 2500,
-              messages: [{ role: 'user', content: prompt }]
-            })
-          });
-          if (anthropicRes.ok) {
-            var aData = await anthropicRes.json();
-            var aRaw = (aData.content || []).map(function (b) { return b.type === 'text' ? b.text : ''; }).join('\n');
-            var aClean = aRaw.replace(/```json|```/g, '').trim();
-            parsed = JSON.parse(aClean);
-            console.log('[goalagent] Anthropic (' + aModel + ') parsed successfully');
-            break;
-          } else {
-            var aErr = await anthropicRes.text().catch(function(){ return ''; });
-            console.warn('[goalagent] Anthropic (' + aModel + ') returned:', anthropicRes.status, aErr.slice(0, 150));
-          }
-        } catch (ae) {
-          console.warn('[goalagent] Anthropic error with ' + aModel + ':', ae.message);
         }
       }
     }

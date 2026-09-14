@@ -1912,11 +1912,11 @@ check('localGoalAgentFallback: 비운동성 의료 건강 및 자격증 요청 �
   assert.ok(!certTitles.includes('식단') && !certTitles.includes('운동'), '자격증에 식단/운동 오배정 없음');
 });
 
-check('compliance: 마일스톤 번호 중복(1단계. 1단계:) 방어 정규식 및 7대 AI 엔드포인트 캐스케이드 구비', () => {
+check('compliance: 마일스톤 번호 중복(1단계. 1단계:) 방어 정규식 및 7대 AI 엔드포인트 Gemini 3.1 캐스케이드 구비', () => {
   // 1. index.html 내 마일스톤 제목 단계 번호 중복 제거 정규식
   assert.ok(html.includes("msTitle.replace(/^(?:(?:\\d+|[일이삼사오육칠팔구십]+)단계[:\\.\\s]*|단계\\s*\\d+[:\\.\\s]*)/i, '')"), 'index.html 단계 접두사 중복 방어 정규식');
 
-  // 2. 7개 AI API 엔드포인트 모두에 다중 플래시 캐스케이드 및 최신 Claude 모델 적용 확인
+  // 2. 7개 AI API 엔드포인트 모두에 Gemini 3.1 Flash Lite 1순위 다중 플래시 캐스케이드 적용 및 Anthropic 제거 확인
   const apiFiles = [
     'api/goalagent.js',
     'api/goaltemplate.js',
@@ -1929,9 +1929,10 @@ check('compliance: 마일스톤 번호 중복(1단계. 1단계:) 방어 정규�
 
   for (const file of apiFiles) {
     const content = fs.readFileSync(file, 'utf8');
+    assert.ok(content.includes('gemini-3.1-flash-lite'), file + ' 에 gemini-3.1-flash-lite 포함');
     assert.ok(content.includes('gemini-3.6-flash'), file + ' 에 gemini-3.6-flash 포함');
     assert.ok(content.includes('gemini-3.5-flash'), file + ' 에 gemini-3.5-flash 포함');
-    assert.ok(content.includes('claude-3-7-sonnet-20250219'), file + ' 에 최신 Claude 모델 포함');
+    assert.ok(!content.includes('anthropicApiKey') && !content.includes('api.anthropic.com'), file + ' 에 Anthropic 호출 완전 배제');
   }
 });
 
@@ -3275,6 +3276,34 @@ check('compliance: [#TASK-ES-054] 아바타 테마 번호(#숫자) 삭제 및 AI
 
   // 3. index.html 캐시 버스팅 es054 검증
   assert.ok(html.includes('avatar-system.js?v=20260913-es054'), 'index.html es054 캐시 버스팅 적용');
+});
+
+check('compliance: [#TASK-ES-056] 아워골 전면 Gemini API 단일화 및 오프라인/서버 지연 안내 문구 무결성 검증', () => {
+  const targetApis = [
+    'api/feedback.js',
+    'api/goalagent.js',
+    'api/goalstatus.js',
+    'api/goaltemplate.js',
+    'api/nextaction.js',
+    'api/promptgen.js',
+    'api/todaymission.js',
+    'api/vision-table.js'
+  ];
+
+  targetApis.forEach(apiPath => {
+    const code = fs.readFileSync(path.join(__dirname, '..', apiPath), 'utf8');
+    assert.ok(code.includes('gemini-3.1-flash-lite'), `${apiPath} 에 gemini-3.1-flash-lite 탑재 확인`);
+    assert.ok(!code.includes('anthropicApiKey') && !code.includes('api.anthropic.com'), `${apiPath} 에 Anthropic 호출 코드 완전 제거 확인`);
+  });
+
+  const visionCode = fs.readFileSync(path.join(__dirname, '..', 'api', 'vision-table.js'), 'utf8');
+  assert.ok(!visionCode.includes('gemini-2.5-flash') && !visionCode.includes('gemini-1.5-flash'), 'vision-table.js 내 404 유발 구버전 모델 제거');
+
+  const htmlCode = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.ok(htmlCode.includes('⚡ 오프라인 상태 또는 아워골 서버 문제로 기본 안내가 생성되었습니다'), 'index.html 에 사용자 확정 오프라인/서버 지연 안내 문구 탑재');
+  assert.ok(htmlCode.includes('aiProvider:"gemini"') || htmlCode.includes('aiProvider: "gemini"'), 'index.html 기본 AI 프로바이더 gemini 단일화');
+  assert.ok(htmlCode.includes('gemini-3.1-flash-lite'), 'index.html 기본 모델 gemini-3.1-flash-lite 확인');
+  assert.ok(!htmlCode.includes('data-provider="claude"'), 'index.html 설정 화면에서 Claude 선택지 제거');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

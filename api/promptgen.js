@@ -19,10 +19,9 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  // API 키 결정: 1) 클라이언트 전달 Gemini키 2) 서버 환경변수 GEMINI_API_KEY 3) 서버 ANTHROPIC_API_KEY
+  // API 키 결정: 1) 클라이언트 전달 Gemini키 2) 서버 환경변수 GEMINI_API_KEY
   var clientGeminiKey = (typeof body.geminiKey === 'string' && body.geminiKey.trim()) ? body.geminiKey.trim() : null;
   var geminiApiKey = clientGeminiKey || (process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : '');
-  var anthropicApiKey = process.env.ANTHROPIC_API_KEY;
 
   var draftPrompt = '당신은 습관·목표 관리 앱 "아워골"의 AI 피드백 봇 페르소나를 설계하는 프롬프트 엔지니어입니다.\n' +
     '사용자가 원하는 피드백 스타일을 아래처럼 설명했습니다. 이 설명을 바탕으로, 실제 기록을 보고 피드백을 생성할 다른 AI에게 내릴 "페르소나 지침"을 작성하세요.\n\n' +
@@ -38,9 +37,9 @@ module.exports = async function handler(req, res) {
   try {
     var text = '';
 
-    // 1. Gemini 다중 플래시 모델 캐스케이드 (우선)
+    // 1. Google Gemini 초가성비 모델 캐스케이드 (Gemini 3.1 Flash Lite 1순위)
     if (geminiApiKey) {
-      var geminiModels = ['gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-flash-latest'];
+      var geminiModels = ['gemini-3.1-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest'];
       for (var gi = 0; gi < geminiModels.length; gi++) {
         var gModel = geminiModels[gi];
         try {
@@ -61,39 +60,7 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // 2. Anthropic Claude 최신 모델 캐스케이드 폴백
-    if (!text && anthropicApiKey) {
-      var anthropicModels = ['claude-3-7-sonnet-20250219', 'claude-3-5-sonnet-latest', 'claude-3-5-haiku-latest', 'claude-3-5-sonnet-20241022'];
-      for (var mi = 0; mi < anthropicModels.length; mi++) {
-        var aModel = anthropicModels[mi];
-        try {
-          var headers = {
-            'Content-Type': 'application/json',
-            'x-api-key': anthropicApiKey,
-            'anthropic-version': '2023-06-01'
-          };
-          if (process.env.ANTHROPIC_WORKSPACE_ID) {
-            headers['anthropic-workspace-id'] = process.env.ANTHROPIC_WORKSPACE_ID;
-          }
-          var anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify({
-              model: aModel,
-              max_tokens: 1500,
-              messages: [{ role: 'user', content: draftPrompt }]
-            })
-          });
-          if (anthropicRes.ok) {
-            var aData = await anthropicRes.json();
-            text = (aData.content || []).map(function (b) { return b.type === 'text' ? b.text : ''; }).join('\n').trim();
-            if (text) break;
-          }
-        } catch (ae) {}
-      }
-    }
-
-    // 3. 로컬 스마트 폴백
+    // 2. 스마트 로컬 폴백
     if (!text) {
       text = '사용자의 지침: "' + description + '". 이 관점을 충실히 반영하여 사용자의 실천 기록을 따뜻하면서도 실천적인 피드백으로 코칭하세요.';
     }

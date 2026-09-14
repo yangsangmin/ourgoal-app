@@ -2865,3 +2865,37 @@
   - `npm test`: **224개 전수 100% 통과 (0개 실패)**.
   - `essence-gate.js --pre-commit`: **위반 0건 통과**.
 ---
+
+## [2026-09-14 10:00] [INFRA] #TASK-ES-056 아워골 전체 외부 AI/API 활용의 Google Gemini API 전면 단일화 및 오프라인/서버 지연 안내 문구 장착
+- **목표**: 상민님 직접 지시("아워골의 모든 api 활용 및 외부ai툴 활용은 제미나이api로 모두 바꿔. 바꾸고 결과보고해. ... ⚡ 오프라인 상태 또는 아워골 서버 문제로 기본 안내가 생성되었습니다 로 하자 (축하멘트보다 3p작게) ... 병합까지 모두 진행해")에 따라, 아워골 전체에 잔존하던 Anthropic Claude 호출, 404 유발 구버전 Gemini 모델(`gemini-2.5-flash`, `gemini-1.5-flash`), 하드코딩 라벨("Claude 판단") 및 외부 프롬프트를 Google Gemini API(Gemini 3.1 Flash Lite 1순위 캐스케이드)로 100% 전면 전환·단일화하고, 오프라인 및 서버 지연 시 사용자 투명성을 보장하는 로컬 폴백 안내 문구를 장착.
+- **수정/실행 내역**:
+  1. 서버리스 API 8종 전면 개편 (`api/feedback.js`, `goalagent.js`, `goalstatus.js`, `goaltemplate.js`, `nextaction.js`, `promptgen.js`, `todaymission.js`, `vision-table.js`):
+     - `ANTHROPIC_API_KEY`, `anthropicApiKey`, `api.anthropic.com` 및 Claude 모델 캐스케이드 완전 삭제.
+     - 초가성비 모델 캐스케이드 정본화: `['gemini-3.1-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest']` 1순위 배선.
+     - `api/vision-table.js` 내 404를 유발하던 구버전 모델(`gemini-2.5-flash`, `gemini-1.5-flash`)을 제거하고 `gemini-3.1-flash-lite` 캐스케이드로 교체.
+     - `api/promptgen.js` 내 멀티모달 아바타 생성 기능은 완벽 보존하면서 Anthropic 폴백 제거 및 Gemini 단일화.
+  2. 클라이언트 UI 및 AI 배선 개편 (`index.html`):
+     - `defaultSettings()` 기본값을 `aiProvider: "gemini"`, `geminiModel: "gemini-3.1-flash-lite"`로 변경.
+     - 설정 화면 AI 프로바이더 토글에서 'Claude (기본)' 제거, 'Gemini (기본)' 단일화 및 안내 문구 갱신.
+     - 체크인 피드백 카드(`renderFeedbackSlot`, `renderRecordFeedbackSlot`) 출처 라벨의 `Claude 판단`을 `Gemini 판단`으로 교체.
+     - 서버 피드백 응답 수신 시 `parsed.source`를 `gemini`로 매핑.
+     - 클라이언트 직통 Gemini 호출(`requestGeminiFeedback`) 기본 모델을 `gemini-3.1-flash-lite`로 교체.
+     - 기간별 AI 피드백(`renderPeriodFeedbackResult`) 출처 라벨을 `Gemini 3.1 수석 분석`으로 일원화.
+     - 데이터 내보내기 프롬프트 번들(`exportDataWithAIPrompt`) 및 모달의 `ChatGPT / Claude` 문구를 `Google Gemini`로 전면 교체.
+  3. 오프라인 및 서버 지연 안내 문구 장착 (`index.html`):
+     - 마일스톤 축하 모달(`celebrateMilestoneDone`) 및 피드백 슬롯 카드(`renderFeedbackSlot`, `renderRecordFeedbackSlot`):
+       상민님 확정 안내 문구(`⚡ 오프라인 상태 또는 아워골 서버 문제로 기본 안내가 생성되었습니다`)를 축하멘트보다 3p 작게(12px / 0.75rem, ink-soft) 로컬 폴백 시 자동 표출.
+  4. 스모크 테스트 규격 갱신 (`scripts/smoke-test.js`):
+     - 7대 AI API 엔드포인트의 Gemini 3.1 Flash Lite 1순위 탑재 및 Anthropic 의존 완전 배제 검증으로 기존 테스트 갱신.
+     - 오프라인 안내 문구 및 Gemini 단일화 회귀 방지 assertion(#TASK-ES-056) 신설.
+  5. 본질 승인 티켓 등록 (`docs/rules/TICKETS.md`):
+     - `#TASK-ES-056` 정식 등록.
+- **발생한 문제 및 해결**:
+  - 기존에는 Vercel 서버리스 함수에 `GEMINI_API_KEY`가 미설정되거나 오류 발생 시 2순위인 Anthropic Claude를 호출하도록 되어 있었고, `index.html`에서 서버 응답을 받을 때 소스를 `ai`로 고정해두어 UI에 항상 "Claude 판단"으로 표시되는 심각한 불일치가 존재했음.
+  - 이를 Anthropic 잔재를 완전히 들어내고 `gemini-3.1-flash-lite` 1순위로 통일함으로써 외부 AI 호출을 Google Gemini 단일 체계로 완벽히 정립함.
+  - 네트워크 단절이나 API 지연 시에도 투명한 오프라인 안내 문구를 통해 사용자 기대치를 정확히 관리함.
+- **검증 결과**:
+  - `npm test`: **225개 전수 100% 통과 (0개 실패)**.
+  - `node -c api/*.js`: 8개 파일 구문 오류 0건 검증 완료.
+  - 코드베이스 내 `anthropicApiKey` 및 `claude-` 호출 100% 제거 확인.
+---

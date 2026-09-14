@@ -201,7 +201,7 @@ module.exports = async function handler(req, res) {
     '}\n' +
     'Respond ONLY with valid JSON. Do not include markdown fences, backticks, or extra commentary.';
 
-  var modelsToTry = ['gemini-2.5-flash', 'gemini-1.5-flash'];
+  var modelsToTry = ['gemini-3.1-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest'];
   for (var m = 0; m < modelsToTry.length; m++) {
     var modelName = modelsToTry[m];
     try {
