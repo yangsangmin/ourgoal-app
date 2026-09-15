@@ -4528,6 +4528,50 @@ check('compliance: [#TASK-ES-104] 팀 목표 초대·소통 및 소통탭 전면
   assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
 });
 
+check('compliance: [#TASK-ES-105] 추천템플릿 목표탭 이전·둘러보기 모달·게시하기 연동·모임원 DM바·동반자 소셜탭 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const modulePath = path.join(__dirname, '..', 'js', 'team-invite-comm.js');
+  assert.ok(fs.existsSync(modulePath), 'js/team-invite-comm.js 파일 존재');
+  const moduleContent = fs.readFileSync(modulePath, 'utf8');
+
+  // 1. 추천템플릿 3종 목표 탭 이전 및 슬롯/버튼/둘러보기 배선
+  assert.ok(indexHtml.includes('id="goalsTemplateAccordionSlot"'), '목표 탭 상단 추천 템플릿 아코디언 슬롯 탑재');
+  assert.ok(indexHtml.includes('id="recGoToGoalsTplBtn"'), '기록 탭에서 목표 템플릿 3종 둘러보기 바로가기 칩 탑재');
+  assert.ok(moduleContent.includes('renderTemplatesAccordionHtml'), '템플릿 3종 아코디언 렌더러 함수 탑재');
+  assert.ok(moduleContent.includes('wireTemplatesAccordionEvents'), '템플릿 3종 둘러보기/복제 이벤트 핸들러 탑재');
+
+  // 2. 추천템플릿 둘러보기 상세 모달 및 시작 버튼
+  assert.ok(moduleContent.includes('openTemplatePreviewModal'), '추천템플릿 1초 둘러보기 상세 모달 함수 탑재');
+  assert.ok(moduleContent.includes('둘러보기'), '템플릿 둘러보기 버튼 라벨 탑재');
+  assert.ok(moduleContent.includes('이 템플릿으로 시작'), '템플릿 복제 시작 버튼 탑재');
+
+  // 3. 소통 탭 게시하기 버튼 정상 동작
+  assert.ok(indexHtml.includes('id="btnCommPostFeed"'), '소통 탭 헤더 게시하기 버튼 탑재');
+  assert.ok(indexHtml.includes('id="feedQuickPostBtn"'), '소통 피드 안내창 게시하기 버튼 탑재');
+  assert.ok(indexHtml.includes('window.openShareToFeedModal = openShareToFeedModal;'), 'openShareToFeedModal 전역 노출 검증');
+
+  // 4. DM창 상단 같은 모임원 원클릭 DM 발송 바
+  assert.ok(moduleContent.includes('getTeamMembersPool'), '모임 멤버 풀 조회 함수 탑재');
+  assert.ok(moduleContent.includes('getDmPerson'), 'DM 대화 상대 단일 조회 및 답장 풀 연동 함수 탑재');
+  assert.ok(moduleContent.includes('내 모임 동료에게 바로 DM 보내기'), 'DM 상단 모임원 칩 바 헤더 탑재');
+  assert.ok(moduleContent.includes('dm-team-chip'), '모임원 원클릭 DM 발송 칩 클래스 탑재');
+
+  // 5. DM 오른쪽 동반자 탭 신설 및 소셜 시스템
+  assert.ok(indexHtml.includes('companion:동반자'), '소통 탭 하위 서브탭에 동반자 탭 탑재');
+  assert.ok(moduleContent.includes('renderCommCompanions'), '동반자 탭 렌더러 함수 탑재');
+  assert.ok(moduleContent.includes('ALL_SEARCHABLE_USERS'), '동반자 검색 유저 풀 탑재');
+  assert.ok(moduleContent.includes('openUserProfileModal'), '동반자 아바타 클릭 프로필 모달 함수 탑재');
+  assert.ok(moduleContent.includes('ensureDefaultCompanions'), '초기 시드 동반자 보장 함수 탑재');
+
+  // 6. 용어 헌법 엄수: '히트맵' 단일화 및 '잔디' 단어 배제
+  assert.ok(moduleContent.includes('실천 히트맵'), '프로필 모달에 히트맵 용어 사용 검증');
+  assert.ok(!moduleContent.includes('잔디'), 'team-invite-comm.js 내 잔디 단어 배제 검증');
+
+  // 7. 헌법 제18조: index.html 22,196줄 불변 엄수
+  const lines = indexHtml.split(/\r?\n/).length;
+  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
