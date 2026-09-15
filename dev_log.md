@@ -3427,13 +3427,14 @@
      - 랜딩 화면(`#landingScreen`) 및 인증 화면(`#authScreen`) 구글 로그인 버튼(`landGoogleBtn`, `authGoogleBtn`) 숨김 처리(`display:none; aria-hidden="true"`).
      - 카카오 버튼(`#landKakaoBtn`, `#authKakaoBtn`) 텍스트를 `카카오로 3초 만에 시작하기`로 웰컴 CTA 통일 및 풀 너비 강화.
      - 랜딩 및 인증 화면 카카오 버튼 직하단에 자물쇠 아이콘과 함께 `[🔒 카톡 실명 걱정 No! 닉네임과 개인정보는 100% 익명으로 언제든 변경 가능해요]` 안심 뱃지(`auth-anonymity-badge`, `landAnonymityBadge`, `authAnonymityBadge`) 배선.
+     - 랜딩 화면 이메일 가입 버튼(`#landStartWrap`) 및 인증 화면 회원가입 탭(`data-authtab="signup"`) 비노출 숨김 처리하여 신규 가입 진입로를 카카오 100%로 단일화.
      - 설정 탭 내 구글 캘린더 연동 버튼(`gcalQuickConnectBtn`) 및 일정 연동 파이프라인 온전 보존.
      - 기존 사용자 데이터 복구 모달(`openLoginRescueModal`) 안전망 유지.
      - 헌법 제18조 `index.html` 22,196줄 불변 엄수 (빈 줄 상쇄 치환).
   2. `js/auth-safety.js`:
      - 최근 로그인 뱃지(`showLastAuthBadge`): 과거 구글 로그인 사용자 접속 시 카카오 버튼 포커스 및 통합 친절 안내 토스트 발송.
   3. `scripts/smoke-test.js`:
-     - `[#TASK-ES-108]` 컴플라이언스 테스트에 안심 뱃지 4대 단언문 추가 (253개 테스트 100% ALL PASS).
+     - `[#TASK-ES-108]` 컴플라이언스 테스트에 안심 뱃지 4대 단언문 및 이메일 가입 버튼 비노출 단언문 추가 (253개 테스트 100% ALL PASS).
 - **검증 결과**:
   - `npm test`: 스모크 253개 + 헌법 5대 게이트 13종 + Zero Dead Click 100% ALL PASS.
   - 헌법 제18조: `index.html` 총 줄 수 정확히 22,196줄 유지.

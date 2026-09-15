@@ -4657,7 +4657,11 @@ check('compliance: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화
   assert.ok(indexHtml.includes('닉네임과 개인정보는 100% 익명으로 언제든 변경 가능해요'), '닉네임 익명 보장 안심 문구 존재');
   assert.ok(indexHtml.includes('카톡 실명 걱정 No!'), '카톡 실명 걱정 해소 카피 존재');
 
-  // 5. 헌법 제18조: index.html 22,196줄 불변 엄수
+  // 5. 이메일로 가입하기 버튼 및 회원가입 탭 비노출 숨김 (상민님 지시사항: 카카오 단일 가입 일원화)
+  assert.ok(indexHtml.includes('id="landStartWrap" style="display:none;"'), '랜딩 화면 이메일 가입 버튼 비노출 숨김');
+  assert.ok(indexHtml.includes('data-authtab="signup" type="button" style="display:none;"'), '인증 화면 이메일 회원가입 탭 비노출 숨김');
+
+  // 6. 헌법 제18조: index.html 22,196줄 불변 엄수
   const lines = indexHtml.split(/\r?\n/).length;
   assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
 });
