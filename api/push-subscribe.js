@@ -10,6 +10,26 @@ function getSupabase() {
 }
 
 module.exports = async function handler(req, res) {
+  // 1. VAPID 공개키 조회 요청 (GET이며 캘린더 요청이 아닌 경우 - Supabase 불필요)
+  if (req.method === 'GET') {
+    var parsedUrl = null;
+    try { parsedUrl = new URL(req.url, 'http://localhost'); } catch (e) {}
+    var qToken = (req.query && req.query.token) || (parsedUrl && parsedUrl.searchParams.get('token')) || '';
+    var isCalendarReq = Boolean(qToken) || (req.url && req.url.indexOf('/calendar') !== -1) || (req.headers && req.headers['accept'] && req.headers['accept'].indexOf('text/calendar') !== -1);
+
+    if (!isCalendarReq) {
+      var key = process.env.VAPID_PUBLIC_KEY;
+      if (!key) {
+        res.status(500).json({ error: 'VAPID_PUBLIC_KEY is not configured' });
+        return;
+      }
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      res.status(200).json({ publicKey: key });
+      return;
+    }
+  }
+
+  // 2. Supabase DB가 필요한 작업 (POST 구독, DELETE 구독취소, GET 캘린더 생성)
   var sb = getSupabase();
   if (!sb) {
     res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY is not configured' });
