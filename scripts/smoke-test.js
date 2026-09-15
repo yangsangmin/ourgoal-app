@@ -4572,11 +4572,73 @@ check('compliance: [#TASK-ES-105] 추천템플릿 목표탭 이전·둘러보기
   assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
 });
 
+check('compliance: [#TASK-ES-107] 팀 연계 개인목표 및 상호 달성도 체크·소통 시스템 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 목표 탭 하위 서브탭에 '팀 연계 개인목표' 탑재 및 뷰 컨테이너 검증
+  assert.ok(indexHtml.includes("['teamLinked','팀 연계 개인목표']"), '서브탭에 팀 연계 개인목표 탑재');
+  assert.ok(indexHtml.includes('id="teamLinkedGoalsView"'), 'teamLinkedGoalsView 독립 뷰 컨테이너 탑재');
+  assert.ok(indexHtml.includes('js/team-linked-goals.js'), 'team-linked-goals.js 스크립트 로드 태그 탑재');
+
+  // 2. team-linked-goals.js 모듈 파일 및 핵심 API 검증
+  const modulePath = path.join(__dirname, '..', 'js', 'team-linked-goals.js');
+  assert.ok(fs.existsSync(modulePath), 'js/team-linked-goals.js 파일 존재');
+  const moduleContent = fs.readFileSync(modulePath, 'utf8');
+  assert.ok(moduleContent.includes('OurgoalTeamLinkedGoals'), 'OurgoalTeamLinkedGoals 전역 모듈 노출');
+  assert.ok(moduleContent.includes('copyTeamGoalToPersonalLinked'), '팀 연계 개인목표 복사 참가 함수 탑재');
+  assert.ok(moduleContent.includes('renderTeamLinkedGoalsScreen'), '팀 연계 개인목표 전용 워크스페이스 렌더러 탑재');
+  assert.ok(moduleContent.includes('renderTeamGoalCardSections'), '팀 목표 카드 복사참가/참가자현황 렌더러 탑재');
+  assert.ok(moduleContent.includes('getTeamGoalParticipants'), '팀 목표 참가자 목록 및 달성도 조회 함수 탑재');
+  assert.ok(moduleContent.includes('syncTeamGoalParticipantProgress'), '개인 실천 진척도 팀 참가자 데이터 실시간 동기화 함수 탑재');
+  assert.ok(moduleContent.includes('openTeamGoalMemberDmModal'), '1:1 DM 대화 모달 함수 탑재');
+
+  // 3. 3대 상호작용(찌르기, 댓글, DM) 및 원클릭 복사 배선 검증
+  assert.ok(moduleContent.includes('data-copyteamgoal='), '팀 연계 개인목표로 복사하며 참가 속성');
+  assert.ok(moduleContent.includes('data-gotolinkedgoal='), '내 연계목표 바로가기 속성');
+  assert.ok(moduleContent.includes('data-tgpnudge='), '참가자 ⚡ 찌르기(Nudge) 속성');
+  assert.ok(moduleContent.includes('data-tgpcmt='), '참가자 💬 댓글 포커스 속성');
+  assert.ok(moduleContent.includes('data-tgpdm='), '참가자 ✉️ 1:1 DM 속성');
+
+  // 4. 용어 헌법 엄수: '히트맵' 단일화 및 '잔디' 단어 배제
+  assert.ok(!moduleContent.includes('잔디'), 'team-linked-goals.js 내 잔디 단어 배제 검증');
+
+  // 5. 헌법 제18조: index.html 22,196줄 불변 엄수
+  const lines = indexHtml.split(/\r?\n/).length;
+  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
+check('compliance: [#TASK-ES-106] 헌법 제19조 의거 실 사용자 계정 상호 연동(Real Inter-Account Interaction) DM 및 동반자 시스템 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const modulePath = path.join(__dirname, '..', 'js', 'team-invite-comm.js');
+  assert.ok(fs.existsSync(modulePath), 'js/team-invite-comm.js 파일 존재');
+  const moduleContent = fs.readFileSync(modulePath, 'utf8');
+
+  // 1. 헌법 제19조 제4항 1호/2호: 서버 DB 원장 및 Realtime 채널 백본 검증
+  assert.ok(moduleContent.includes('getDmThreadId'), '발송자/수신자 UID 기반 고유 쓰레드 ID 생성 함수 탑재');
+  assert.ok(moduleContent.includes('loadDmMessagesFromDb'), 'Supabase DB 메시지 원장 비동기 로드 함수 탑재');
+  assert.ok(moduleContent.includes('subscribeRealtimeDm'), 'Supabase Realtime 양방향 전파 채널 구독 함수 탑재');
+  assert.ok(moduleContent.includes('team_ping_replies'), 'Supabase 실시간 DM 메시지 테이블 배선 검증');
+
+  // 2. 헌법 제19조 제3항: 무충돌 안전핀(게스트 소프트 게이트 & 콜드스타트 투명 AI봇 뱃지) 검증
+  assert.ok(moduleContent.includes('showGuestSoftAuthGate'), '비로그인 사용자 소프트 로그인 안내 모달 함수 탑재');
+  assert.ok(moduleContent.includes('isAiBot'), '콜드스타트 완충재 AI 봇 투명 플래그 탑재');
+  assert.ok(moduleContent.includes('AI 봇'), 'UI 상 투명한 AI 봇 공식 뱃지 표기 검증');
+
+  // 3. 헌법 제19조 제4항 3호: 실제 가입 회원 닉네임 검색 연동 검증
+  assert.ok(moduleContent.includes("from('users')"), 'Supabase users 회원 테이블 검색 배선 검증');
+  assert.ok(moduleContent.includes('display_name.ilike'), '실제 사용자 닉네임 부분일치 검색 쿼리 검증');
+
+  // 4. 헌법 제18조: index.html 22,196줄 불변 엄수
+  const lines = indexHtml.split(/\r?\n/).length;
+  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
   process.exit(1);
 }
+
 
 
 

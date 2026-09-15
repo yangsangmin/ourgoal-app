@@ -136,6 +136,25 @@ function localCustomTemplateFallback(query, proseDesc) {
 // 2. 목표 마일스톤 템플릿 로컬 스마트 폴백
 function localGoalTemplateFallback(description) {
   var desc = (description || '').trim();
+
+  // 60대 전문가 인기 목표 템플릿 정밀 매칭 우선 적용
+  try {
+    var expertRegistry = require('../js/goal-templates-registry');
+    if (expertRegistry && typeof expertRegistry.findExpertTemplate === 'function') {
+      var expertMatch = expertRegistry.findExpertTemplate(desc);
+      if (expertMatch) {
+        return {
+          title: expertMatch.title,
+          topicMajor: expertMatch.topicMajor,
+          topicMinor: expertMatch.topicMinor,
+          milestones: expertMatch.milestones,
+          source: 'expert_knowledge_fallback',
+          isOfflineFallback: true
+        };
+      }
+    }
+  } catch (e) {}
+
   var isBaby = /(아기|아이|영유아|신생아|자녀|육아|소아과|건강검진|예방접종)/i.test(desc);
   var topic = 'study';
   var topicMinor = '';
