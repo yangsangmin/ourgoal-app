@@ -48,6 +48,22 @@
         try {
           var ep = JSON.parse(existingRaw);
           if(ep && ep.id === 'user-sangmin-pro'){
+            if(Array.isArray(ep.records)){
+              var fixed = false;
+              ep.records.forEach(function(r){
+                if(!r.text && r.content){ r.text = r.content; fixed = true; }
+                if(!r.content && r.text){ r.content = r.text; fixed = true; }
+                if(!r.startAt && r.start_at){ r.startAt = r.start_at; fixed = true; }
+                if(!r.start_at && r.startAt){ r.start_at = r.startAt; fixed = true; }
+                if(!r.endAt && r.end_at){ r.endAt = r.end_at; fixed = true; }
+                if(!r.durationMinutes && r.duration_minutes){ r.durationMinutes = r.duration_minutes; fixed = true; }
+                if(!r.type) { r.type = (r.endAt || r.durationMinutes) ? 'timed' : 'note'; fixed = true; }
+              });
+              if(fixed){
+                localStorage.setItem('ourgoal_guest_profile', JSON.stringify(ep));
+                localStorage.setItem('ourgoal_records_backup_' + ep.id, JSON.stringify(ep.records));
+              }
+            }
             window.location.replace('index.html?v=' + Date.now());
             return;
           }
@@ -119,35 +135,65 @@
           {
             id: 'rec-01',
             goal_id: 'g-hyrox-pro',
+            goalId: 'g-hyrox-pro',
+            text: '하이록스 4회차 시뮬레이션 인터벌 완료. SkiErg 1000m 03:58.4, Sled Push 50m 02:45.1 완벽 페이스 달성!',
             content: '하이록스 4회차 시뮬레이션 인터벌 완료. SkiErg 1000m 03:58.4, Sled Push 50m 02:45.1 완벽 페이스 달성!',
             duration_minutes: 48,
+            durationMinutes: 48,
+            durationLabel: '48분',
             start_at: todayIso,
+            startAt: todayIso,
+            end_at: new Date(now.getTime() - 10000).toISOString(),
+            endAt: new Date(now.getTime() - 10000).toISOString(),
             created_at: todayIso,
+            createdAt: todayIso,
             category: '운동',
             topic: 'health',
-            status: 'done'
+            theme: 'workout',
+            status: 'done',
+            type: 'timed'
           },
           {
             id: 'rec-02',
             goal_id: 'g-rn-cross',
+            goalId: 'g-rn-cross',
+            text: '아워골 전면 UI 프로 SaaS 콕핏 리파인. 헤어라인 보더 및 마이크로 섀도우, 햅틱 인터랙션 일체화 완료.',
             content: '아워골 전면 UI 프로 SaaS 콕핏 리파인. 헤어라인 보더 및 마이크로 섀도우, 햅틱 인터랙션 일체화 완료.',
             duration_minutes: 60,
+            durationMinutes: 60,
+            durationLabel: '1시간',
             start_at: yesterdayIso,
+            startAt: yesterdayIso,
+            end_at: new Date(new Date(yesterdayIso).getTime() + 3600000).toISOString(),
+            endAt: new Date(new Date(yesterdayIso).getTime() + 3600000).toISOString(),
             created_at: yesterdayIso,
+            createdAt: yesterdayIso,
             category: '개발',
             topic: 'dev',
-            status: 'done'
+            theme: 'business',
+            status: 'done',
+            type: 'timed'
           },
           {
             id: 'rec-03',
             goal_id: 'g-deepwork',
+            goalId: 'g-deepwork',
+            text: '모닝 5km 러닝 22분 10초 컷 및 모바일 콕핏 설계 구상.',
             content: '모닝 5km 러닝 22분 10초 컷 및 모바일 콕핏 설계 구상.',
             duration_minutes: 30,
+            durationMinutes: 30,
+            durationLabel: '30분',
             start_at: twoDaysAgoIso,
+            startAt: twoDaysAgoIso,
+            end_at: new Date(new Date(twoDaysAgoIso).getTime() + 1800000).toISOString(),
+            endAt: new Date(new Date(twoDaysAgoIso).getTime() + 1800000).toISOString(),
             created_at: twoDaysAgoIso,
+            createdAt: twoDaysAgoIso,
             category: '루틴',
             topic: 'routine',
-            status: 'done'
+            theme: 'workout',
+            status: 'done',
+            type: 'timed'
           }
         ],
         settings: {
