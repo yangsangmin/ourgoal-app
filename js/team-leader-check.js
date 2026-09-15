@@ -601,6 +601,7 @@
             };
             gs.memberPings.push(newPing);
             await deps.saveProfile();
+            if(window.OurgoalTeamInviteComm) window.OurgoalTeamInviteComm.handlePingSentAutoReply(newPing, gid);
 
             if(deps.haptic) deps.haptic('success');
             var pDef = PING_TYPES[selectedType];
