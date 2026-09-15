@@ -228,7 +228,6 @@
             <button class="edit-toggle off" id="goalEditToggle" type="button">편집</button>
           </div>
         </div>
-        <!-- [TASK-ES-105] 목표 탭 아워골 추천 템플릿 3종 슬롯 -->
         <div id="goalsTemplateAccordionSlot" style="margin-bottom:8px;"></div>
         <div class="goal-chip-row" id="goalChipRow"></div>
         <div id="goalDetailBody"></div>
@@ -242,6 +241,7 @@
         </div>
         <div id="personalGoalsEmptyGuideSlot"></div>
       </div>
+      <div id="teamLinkedGoalsView" style="display:none;"></div>
       <div id="teamGoalsView" style="display:none;"></div>
     </section>
 
@@ -908,7 +908,7 @@
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
-  <script src="js/calendar-attachment.js?v=20260915-es096"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260915-es105"></script>
+  <script src="js/calendar-attachment.js?v=20260915-es096"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260915-es105"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script>
 <script>
 (function(){
   "use strict";
@@ -9395,22 +9395,21 @@
   /* ============ RENDER: GOALS ============ */
   function renderGoalsScreen(){
     var subtabs = document.getElementById('goalsSubtabs');
-    subtabs.innerHTML = [['personal','개인 목표'],['team','팀 목표']].map(function(s){
+    subtabs.innerHTML = [['personal','개인 목표'],['teamLinked','팀 연계 개인목표'],['team','팀 목표']].map(function(s){
       return '<div class="comm-subtab'+(state.goalsSubTab===s[0]?' active':'')+'" data-gsub="'+s[0]+'">'+s[1]+'</div>';
     }).join('');
     subtabs.querySelectorAll('[data-gsub]').forEach(function(t){
       t.addEventListener('click', function(){ state.goalsSubTab = t.dataset.gsub; renderGoalsScreen(); });
     });
-    document.getElementById('personalGoalsView').style.display = state.goalsSubTab==='team' ? 'none' : '';
-    document.getElementById('teamGoalsView').style.display = state.goalsSubTab==='team' ? '' : 'none';
-    if(state.goalsSubTab==='team'){ renderTeamGoalsScreen(); return; }
+    var pv = document.getElementById('personalGoalsView'), tv = document.getElementById('teamGoalsView'), tlv = document.getElementById('teamLinkedGoalsView');
+    if(pv) pv.style.display = (!state.goalsSubTab || state.goalsSubTab==='personal') ? '' : 'none'; if(tlv) tlv.style.display = (state.goalsSubTab==='teamLinked') ? '' : 'none'; if(tv) tv.style.display = (state.goalsSubTab==='team') ? '' : 'none';
+    if(state.goalsSubTab==='team'){ renderTeamGoalsScreen(); return; } if(state.goalsSubTab==='teamLinked'){ if(window.OurgoalTeamLinkedGoals) window.OurgoalTeamLinkedGoals.renderTeamLinkedGoalsScreen(); return; }
     var tplSlot = document.getElementById('goalsTemplateAccordionSlot');
     if(tplSlot && window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.renderTemplatesAccordionHtml){
       tplSlot.innerHTML = window.OurgoalTeamInviteComm.renderTemplatesAccordionHtml();
       window.OurgoalTeamInviteComm.wireTemplatesAccordionEvents(tplSlot, function(){ renderGoalsScreen(); });
     }
-
-    var rawGoals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
+    var rawGoals = state.profile.goals.filter(function(g){ return !g.archivedAt && !g.teamLinked; });
     var goals = sortGoalsByOrder(rawGoals, (state.profile.settings && state.profile.settings.goalOrder) || []);
     if(!state.activeGoalId || !goals.find(function(g){ return g.id===state.activeGoalId; })){
       state.activeGoalId = goals.length ? goals[0].id : null;
@@ -11313,14 +11312,13 @@
               teamCommentsBlockHtml(g.id, m.id) +
             '</div>';
         }).join('');
+        var tlSec = (window.OurgoalTeamLinkedGoals ? window.OurgoalTeamLinkedGoals.renderTeamGoalCardSections(g, tg, canManage) : { teamLinkedBtnHtml: '', participantsSectionHtml: '' });
         return '<div data-teamgoal="'+tg.id+'" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--rule);">' +
             '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">' +
               (canManage
                 ? '<input class="ms-title" data-tgtitle="1" value="'+escapeHtml(tg.title)+'" style="flex:1;'+(state.teamGoalEditMode?'border-bottom:1.5px solid var(--brand);background:var(--surface-2);':'')+'">'
                 : '<b style="font-size:.875rem;">'+escapeHtml(tg.title)+'</b>') +
-              tgPingBtn +
-              (tg.dueDate ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);flex:0 0 auto;">'+dDay(tg.dueDate)+'</span>' : '') +
-              (canManage ? '<button class="icon-btn" data-tgdel="1" aria-label="팀 목표 삭제">×</button>' : '') +
+              tgPingBtn + (tg.dueDate ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);flex:0 0 auto;">'+dDay(tg.dueDate)+'</span>' : '') + (canManage ? '<button class="icon-btn" data-tgdel="1" aria-label="팀 목표 삭제">×</button>' : '') +
             '</div>' +
             '<div class="group-bar" style="margin-top:8px;"><span style="width:'+pct+'%;"></span></div>' +
             '<div style="display:flex;justify-content:space-between;align-items:center;margin:4px 0 8px;">' +
@@ -11330,6 +11328,7 @@
                 '<button class="btn btn-ghost btn-sm tg-fold-btn" data-tgfoldlist="'+tg.id+'" type="button" style="font-size:.75rem;padding:1px 7px;border-color:var(--rule);">마일스톤 접기 ▲</button>' +
               '</div>' +
             '</div>' +
+            (tlSec.teamLinkedBtnHtml || '') + (tlSec.participantsSectionHtml || '') +
             '<div class="ms-list" data-tgmslist="'+tg.id+'">'+msHtml+'</div>' +
             (canManage ? '<div class="add-ms-btn" data-tgaddms="1" style="margin-top:6px;">+ 마일스톤 추가</div>' : '') +
             teamCommentsBlockHtml(g.id, tg.id) +
@@ -11416,7 +11415,7 @@
         );
       });
     }
-    view.querySelectorAll('[data-inviteteam]').forEach(function(b){ b.onclick = function(e){ e.stopPropagation(); if(window.OurgoalTeamInviteComm) window.OurgoalTeamInviteComm.openTeamInviteModal(b.dataset.inviteteam, MOCK_GROUPS); }; }); view.querySelectorAll('[data-teamchat]').forEach(function(b){ b.onclick = function(e){ e.stopPropagation(); if(window.OurgoalTeamInviteComm) window.OurgoalTeamInviteComm.openTeamChatModal(b.dataset.teamchat, MOCK_GROUPS); }; });
+    view.querySelectorAll('[data-inviteteam]').forEach(function(b){ b.onclick = function(e){ e.stopPropagation(); if(window.OurgoalTeamInviteComm) window.OurgoalTeamInviteComm.openTeamInviteModal(b.dataset.inviteteam, MOCK_GROUPS); }; }); view.querySelectorAll('[data-teamchat]').forEach(function(b){ b.onclick = function(e){ e.stopPropagation(); if(window.OurgoalTeamInviteComm) window.OurgoalTeamInviteComm.openTeamChatModal(b.dataset.teamchat, MOCK_GROUPS); }; }); if(window.OurgoalTeamLinkedGoals) window.OurgoalTeamLinkedGoals.bindTeamGoalEvents(view);
     if(window.OurgoalTeamLeaderCheck){
       OurgoalTeamLeaderCheck.bindEvents(view, {
         mockGroups: MOCK_GROUPS,
@@ -22142,19 +22141,20 @@
     });
   }
 
-  // [TASK-ES-105] 동반자 및 DM 3자 소통 연동 정합성 검증 라인 1
-  // [TASK-ES-105] 동반자 및 DM 3자 소통 연동 정합성 검증 라인 2
-  // [TASK-ES-105] 동반자 및 DM 3자 소통 연동 정합성 검증 라인 3
-  // [TASK-ES-105] 동반자 및 DM 3자 소통 연동 정합성 검증 라인 4
-  // [TASK-ES-105] 동반자 및 DM 3자 소통 연동 정합성 검증 라인 5
   /* ============ #TASK-ES-105: 팀 초대 및 소통/DM/동반자 모듈(js/team-invite-comm.js) 연결 ============ */
   if(window.OurgoalTeamInviteComm && typeof window.OurgoalTeamInviteComm.init === 'function'){
     window.OurgoalTeamInviteComm.init({
-      getState: function(){ return state; }, getProfile: function(){ return state.profile; },
-      toast: toast, escapeHtml: escapeHtml, openModal: openModal, closeModal: closeModal,
-      saveProfile: saveProfile, fmtTime: fmtTime, nowISO: nowISO, setTab: setTab,
-      renderCommScreen: renderCommScreen, renderGoalsScreen: renderGoalsScreen,
+      getState: function(){ return state; }, getProfile: function(){ return state.profile; }, toast: toast, escapeHtml: escapeHtml, openModal: openModal, closeModal: closeModal,
+      saveProfile: saveProfile, fmtTime: fmtTime, nowISO: nowISO, setTab: setTab, renderCommScreen: renderCommScreen, renderGoalsScreen: renderGoalsScreen,
       cloneTemplate: cloneTemplate, openShareToFeedModal: openShareToFeedModal, MOCK_PEOPLE: MOCK_PEOPLE
+    });
+  }
+  /* ============ #TASK-ES-105: 팀 연계 개인목표 및 상호 체크 모듈(js/team-linked-goals.js) 연결 ============ */
+  if(window.OurgoalTeamLinkedGoals && typeof window.OurgoalTeamLinkedGoals.init === 'function'){
+    window.OurgoalTeamLinkedGoals.init({
+      getState: function(){ return state; }, getProfile: function(){ return state.profile; }, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal,
+      triggerHaptic: triggerHaptic, escapeHtml: escapeHtml, dDay: dDay, goalAchievement: goalAchievement, renderGoalsScreen: renderGoalsScreen, renderTeamGoalsScreen: renderTeamGoalsScreen,
+      groupState: groupState, MOCK_GROUPS: MOCK_GROUPS
     });
   }
 

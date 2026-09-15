@@ -275,9 +275,16 @@
    * 3. 아워골 추천 템플릿 3종 아코디언 컴팩트화 & 둘러보기/미리보기
    * ------------------------------------------------------------ */
   function openTemplatePreviewModal(tmplId){
-    var templates = global.CREATOR_TEMPLATES || [];
-    var t = templates.find(function(x){ return x.id === tmplId; });
+    var t = null;
+    if(global.OURGOAL_60_TEMPLATES && typeof global.OURGOAL_60_TEMPLATES.getById === 'function'){
+      t = global.OURGOAL_60_TEMPLATES.getById(tmplId);
+    }
+    if(!t){
+      var templates = global.CREATOR_TEMPLATES || [];
+      t = templates.find(function(x){ return x.id === tmplId; });
+    }
     if(!t) return;
+
     var msListHtml = (t.ms || []).map(function(m, mIdx){
       var tasksHtml = (m.tasks || []).map(function(tk){
         return '<div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:.8125rem;color:var(--ink-soft);">' +
@@ -294,10 +301,19 @@
       '</div>';
     }).join('');
 
+    var expertBannerHtml = t.expertPoint ? (
+      '<div style="margin-bottom:12px;padding:10px 12px;background:var(--surface);border-left:3px solid var(--brand);border-radius:6px;font-size:.8125rem;color:var(--ink);">' +
+        '<div style="font-weight:700;margin-bottom:2px;color:var(--brand);">💡 전문가 핵심 방법론 & 성공 지표(KPI)</div>' +
+        (t.kpi ? '<div style="margin-bottom:4px;font-weight:600;">🎯 ' + esc(t.kpi) + '</div>' : '') +
+        '<div class="faint" style="font-size:.75rem;line-height:1.5;">' + esc(t.expertPoint) + '</div>' +
+      '</div>'
+    ) : '';
+
     var modalHtml = '<h3>' + esc(t.title) + ' · 세부 둘러보기</h3>' +
-      '<p class="faint" style="margin:-6px 0 12px;font-size:.8125rem;">' + esc(t.desc) + ' (' + t.weeks + '주 완주 코스)</p>' +
-      '<div style="max-height:55vh;overflow-y:auto;margin-bottom:14px;padding-right:2px;">' +
-        '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">📋 마일스톤 및 세부 할 일 목록 (' + (t.ms||[]).length + '개 단계)</div>' +
+      '<p class="faint" style="margin:-6px 0 12px;font-size:.8125rem;">' + esc(t.desc) + ' (' + (t.weeks || 12) + '주 완주 코스)</p>' +
+      expertBannerHtml +
+      '<div style="max-height:50vh;overflow-y:auto;margin-bottom:14px;padding-right:2px;">' +
+        '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">📋 4단계 마일스톤 및 세부 할 일 목록 (' + (t.ms||[]).length + '개 단계)</div>' +
         msListHtml +
       '</div>' +
       '<div class="modal-actions">' +
@@ -324,18 +340,45 @@
 
   function renderTemplatesAccordionHtml(){
     var isExpanded = (global.state && global.state.templatesExpanded === true);
-    var templates = global.CREATOR_TEMPLATES || [];
+    var curCat = (global.state && global.state.templatesSelectedCategory) || 'all';
+
+    var catTabs = [
+      { id: 'all', label: '전체 (60선)' },
+      { id: 'health', label: '💪 운동·건강' },
+      { id: 'study', label: '📚 학습·자격' },
+      { id: 'career', label: '💼 커리어·머니' },
+      { id: 'hobby', label: '🎨 취미·창작' },
+      { id: 'mind', label: '🧘 마음·습관' },
+      { id: 'relation', label: '🏘️ 관계·생활' }
+    ];
+
+    var catChipsHtml = '<div class="tmpl-cat-scroll" style="display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;margin-bottom:8px;-webkit-overflow-scrolling:touch;">' +
+      catTabs.map(function(c){
+        var on = (c.id === curCat);
+        return '<button type="button" class="btn btn-xs ' + (on ? 'btn-primary' : 'btn-ghost') + '" data-tmplcat="' + c.id + '" style="font-size:.75rem;white-space:nowrap;padding:4px 10px;border-radius:14px;' + (on ? 'font-weight:700;' : 'border:1px solid var(--rule);') + '">' +
+          c.label +
+        '</button>';
+      }).join('') +
+    '</div>';
+
+    var templates = [];
+    if(global.OURGOAL_60_TEMPLATES && typeof global.OURGOAL_60_TEMPLATES.getByCategory === 'function'){
+      templates = global.OURGOAL_60_TEMPLATES.getByCategory(curCat);
+    } else {
+      templates = global.CREATOR_TEMPLATES || [];
+    }
 
     var cardsHtml = templates.map(function(t){
       var totalTasks = (t.ms || []).reduce(function(a, m){ return a + (m.tasks || []).length; }, 0);
+      var badgeText = t.badge || (t.categoryMinor ? t.categoryMinor : '전문가');
       return '<div class="tmpl-card" style="margin-bottom:8px;padding:12px;background:var(--card);border:1px solid var(--rule);border-radius:12px;">' +
         '<div class="tmpl-head" style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">' +
-          '<span class="tmpl-badge" style="background:var(--brand);color:#fff;font-size:.6875rem;padding:1px 5px;border-radius:4px;font-weight:700;">추천</span>' +
+          '<span class="tmpl-badge" style="background:var(--brand);color:#fff;font-size:.6875rem;padding:1px 6px;border-radius:4px;font-weight:700;">' + esc(badgeText) + '</span>' +
           '<b style="font-size:.875rem;color:var(--ink);">' + esc(t.title) + '</b>' +
-          '<span class="faint" style="font-size:.75rem;margin-left:auto;">' + t.weeks + '주 과정</span>' +
+          '<span class="faint" style="font-size:.75rem;margin-left:auto;white-space:nowrap;">' + (t.weeks || 12) + '주 과정</span>' +
         '</div>' +
-        '<div class="tm-desc" style="font-size:.8125rem;color:var(--ink-soft);margin-bottom:6px;">' + esc(t.desc) + '</div>' +
-        '<div class="faint" style="font-size:.75rem;margin-bottom:8px;">마일스톤 ' + (t.ms||[]).length + '개 · 세부할일 ' + totalTasks + '개</div>' +
+        '<div class="tm-desc" style="font-size:.8125rem;color:var(--ink-soft);margin-bottom:6px;line-height:1.4;">' + esc(t.desc) + '</div>' +
+        '<div class="faint" style="font-size:.75rem;margin-bottom:8px;">4단계 마일스톤 ' + (t.ms||[]).length + '개 · 세부할일 ' + totalTasks + '개' + (t.kpi ? ' · 🎯 ' + esc(t.kpi) : '') + '</div>' +
         '<div class="faint" data-tplcount="creator:' + t.id + '" style="font-size:.8125rem;margin-bottom:8px;display:none;"></div>' +
         '<div style="display:flex;gap:6px;margin-top:6px;">' +
           '<button class="btn btn-ghost btn-sm" data-preview-tmpl="' + t.id + '" type="button" style="flex:1;font-size:.8125rem;font-weight:700;padding:6px 0;border-radius:8px;">' +
@@ -353,15 +396,15 @@
         '<div style="display:flex;align-items:center;gap:8px;">' +
           '<span style="font-size:1.15rem;">📋</span>' +
           '<div>' +
-            '<b style="font-size:.875rem;color:var(--ink);">아워골 추천 템플릿 3종</b>' +
-            '<div class="faint" style="font-size:.75rem;margin-top:1px;">마일스톤과 세부할일이 통째로 내 목표로 복사돼요</div>' +
+            '<b style="font-size:.875rem;color:var(--ink);">아워골 추천 목표 템플릿 60선</b>' +
+            '<div class="faint" style="font-size:.75rem;margin-top:1px;">전 분야 전문가 큐레이션 · 마일스톤과 세부할일이 통째로 복사돼요</div>' +
           '</div>' +
         '</div>' +
         '<button type="button" class="btn btn-ghost btn-xs tpl-toggle-btn" id="tplExploreToggleBtn" data-tplexplore="1" style="font-size:.75rem;padding:3px 8px;border-radius:6px;border:1px solid var(--rule);color:var(--brand-strong);font-weight:700;flex:0 0 auto;cursor:pointer;">' +
           (isExpanded ? '접기 ▲' : '둘러보기 ▼') +
         '</button>' +
       '</div>' +
-      (isExpanded ? '<div style="margin-top:12px;display:flex;flex-direction:column;gap:6px;">' + cardsHtml + '</div>' : '') +
+      (isExpanded ? '<div style="margin-top:10px;">' + catChipsHtml + '<div style="display:flex;flex-direction:column;gap:6px;max-height:60vh;overflow-y:auto;padding-right:2px;">' + cardsHtml + '</div></div>' : '') +
     '</div>';
   }
 
@@ -379,6 +422,16 @@
 
     if(toggleBtn) toggleBtn.onclick = handleToggle;
     if(exploreBtn) exploreBtn.onclick = handleToggle;
+
+    container.querySelectorAll('[data-tmplcat]').forEach(function(btn){
+      btn.onclick = function(e){
+        e.stopPropagation();
+        if(global.state){
+          global.state.templatesSelectedCategory = btn.dataset.tmplcat;
+        }
+        if(typeof onRerender === 'function') onRerender();
+      };
+    });
 
     container.querySelectorAll('[data-preview-tmpl]').forEach(function(btn){
       btn.onclick = function(e){
@@ -499,111 +552,277 @@
   }
 
   /* ------------------------------------------------------------
-   * 5. DM (다이렉트 메시지) 모임원 선택 & 대화 시스템 (TASK-ES-105)
+  /* ------------------------------------------------------------
+   * 5. 실 사용자 계정 상호 연동 1:1 DM 시스템 (헌법 제19조 준수)
    * ------------------------------------------------------------ */
+  var _activeDmChannel = null;
+  var _userCache = {};
+
+  function showGuestSoftAuthGate(actionName){
+    if(global.openModal){
+      global.openModal(
+        '<div style="text-align:center;padding:16px 10px;">' +
+          '<div style="font-size:2.5rem;margin-bottom:8px;">🤝</div>' +
+          '<h3>실제 동료와 소통하려면 로그인이 필요해요</h3>' +
+          '<p class="faint" style="margin:8px 0 16px;font-size:.875rem;line-height:1.5;">' +
+            '1:1 다이렉트 메시지 전송 및 동반자 맺기는 실제 사용자 계정 간의 안전한 상호 연결을 위해 로그인이 필요합니다.' +
+          '</p>' +
+          '<div class="modal-actions">' +
+            '<button class="btn btn-ghost" id="guestGateCloseBtn" type="button">둘러보기 계속</button>' +
+            '<button class="btn btn-primary" id="guestGateLoginBtn" type="button" style="font-weight:700;">로그인하러 가기</button>' +
+          '</div>' +
+        '</div>',
+        function(sheet){
+          var c = sheet.querySelector('#guestGateCloseBtn');
+          if(c) c.onclick = global.closeModal;
+          var l = sheet.querySelector('#guestGateLoginBtn');
+          if(l) l.onclick = function(){
+            if(global.closeModal) global.closeModal();
+            if(global.renderAuthScreen) global.renderAuthScreen();
+          };
+        }
+      );
+    } else {
+      alert('실제 동료와 소통하려면 로그인이 필요합니다.');
+    }
+  }
+
+  function getDmThreadId(myId, peerId){
+    var a = String(myId || 'guest');
+    var b = String(peerId || 'unknown');
+    return 'dm_' + (a < b ? a + '_' + b : b + '_' + a);
+  }
+
   function getTeamMembersPool(){
+    // 헌법 제19조 제3항 1호에 의거한 공식 콜드스타트 완충재 (AI 봇 명시)
     return [
-      { id: 'mem_ws_1', name: '이지수 팀장', nickname: '지수_TF장', avatar: '👩‍💼', groupName: '회사 워크숍 TF', role: '모임장', level: 8, streak: 24, theme: '커리어·기획', intro: '전사 전략 워크숍 TF를 이끌고 있습니다. 함께 완주해요!', goals: ['2026 하반기 전략 워크숍 완수', '부서별 액션플랜 수립'], replies: ['워크숍 아젠다 잘 확인했습니다! 좋은 의견 감사해요 🙌', '세션 타임테이블 준비 순조롭게 진행 중입니다!', '오늘도 팀 목표 위해 힘내봅시다! 👏'] },
-      { id: 'mem_ws_2', name: '김민우 대리', nickname: '민우_운영조', avatar: '👨‍💼', groupName: '회사 워크숍 TF', role: '팀원', level: 6, streak: 14, theme: '커리어·기획', intro: '대관 및 현장 운영 총괄을 맡고 있습니다.', goals: ['장소 대관 계약 및 음향 점검', '타임테이블 배포'], replies: ['대관 및 비품 준비 순조롭게 진행 중입니다!', '필요한 물품 리스트 공유해주셔서 감사해요 👍', '현장 음향 빔프로젝터 사전 점검 완료했습니다!'] },
-      { id: 'mem_ws_3', name: '박소연 사원', nickname: '소연_레크조', avatar: '🙋‍♀️', groupName: '회사 워크숍 TF', role: '팀원', level: 5, streak: 9, theme: '취미·소통', intro: '팀빌딩과 비전 세션 프로그램을 기획 중입니다.', goals: ['아이스브레이킹 게임 3종 준비', '참가자 웰컴키트 제작'], replies: ['팀빌딩 아이스브레이킹 게임 준비 완료했어요 🎲', '오늘도 수고 많으셨습니다! 즐거운 워크숍 만들어요 ✨', '상품 리스트업 완료해서 보고서 올렸어요!'] },
-      { id: 'mem_tr_1', name: '최현아', nickname: '현아_드라이브', avatar: '🚗', groupName: '제주 힐링여행', role: '모임장', level: 7, streak: 18, theme: '여행·생활', intro: '낙오자 없는 제주 힐링 여행을 기획하고 있어요!', goals: ['제주 3박4일 독채 펜션 예약', '동선별 드라이브 코스 확정'], replies: ['렌터카랑 숙소 확인 완료! 제주도 너무 기대되네요 🌴', '일정 코스 점검해봤어요. 동선 완벽합니다!', '오늘 날씨 체크해보니 아주 맑다고 하네요 :)'] },
-      { id: 'mem_tr_2', name: '정준호', nickname: '준호_맛집탐험', avatar: '🍖', groupName: '제주 힐링여행', role: '팀원', level: 6, streak: 11, theme: '식단·여행', intro: '제주 로컬 흑돼지/해산물 찐맛집 리스트업 담당', goals: ['흑돼지 맛집 단체석 예약', '공용 경비 1/N 정산표 정리'], replies: ['흑돼지 맛집 단체석 예약 성공했습니다 👍', '공용 경비 모임통장 정산표 공유해드릴게요.', '제주 로컬 카페 리스트도 추가해뒀어요!'] },
-      { id: 'mem_ft_1', name: '강성진 코치', nickname: '성진_헤드코치', avatar: '🏋️‍♂️', groupName: '크로스핏 정복대', role: '코치', level: 10, streak: 45, theme: '운동·건강', intro: '안전하고 즐겁게 한계 돌파! 주 5회 WOD 정복', goals: ['크루 전체 월 250회 WOD 달성', '전원 Rx 도전 서포트'], replies: ['오늘 WOD 자세 정말 좋았습니다! 점진적 과부하 유지하세요 🔥', '스트레칭과 웜업 15분 필수인 거 아시죠? 부상 방지!', '포기하지 않고 라운드 끝까지 채운 끈기 멋집니다 👊'] },
-      { id: 'mem_ft_2', name: '윤태양', nickname: '태양_와드러버', avatar: '💪', groupName: '크로스핏 정복대', role: '팀원', level: 7, streak: 19, theme: '운동·건강', intro: '무반동 턱걸이 10개 도전 중인 크로스핏터', goals: ['Rx 무게 정복', '턱걸이 10개 연속 성공'], replies: ['오늘 Rx 무게 도전 성공했습니다! 같이 땀 흘려요 👊', '이번 주 3회 출석 꼭 채우겠습니다!', '내일 와드도 같이 파이팅해요!'] }
+      { id: 'mem_ws_1', name: '이지수 팀장', nickname: '지수_TF장', avatar: '👩‍💼', groupName: '회사 워크숍 TF', role: '모임장', level: 8, streak: 24, theme: '커리어·기획', intro: '전사 전략 워크숍 TF를 이끌고 있습니다. 함께 완주해요!', goals: ['2026 하반기 전략 워크숍 완수', '부서별 액션플랜 수립'], isAiBot: true, botBadge: 'AI 봇' },
+      { id: 'mem_ws_2', name: '김민우 대리', nickname: '민우_운영조', avatar: '👨‍💼', groupName: '회사 워크숍 TF', role: '팀원', level: 6, streak: 14, theme: '커리어·기획', intro: '대관 및 현장 운영 총괄을 맡고 있습니다.', goals: ['장소 대관 계약 및 음향 점검', '타임테이블 배포'], isAiBot: true, botBadge: 'AI 봇' },
+      { id: 'mem_ws_3', name: '박소연 사원', nickname: '소연_레크조', avatar: '🙋‍♀️', groupName: '회사 워크숍 TF', role: '팀원', level: 5, streak: 9, theme: '취미·소통', intro: '팀빌딩과 비전 세션 프로그램을 기획 중입니다.', goals: ['아이스브레이킹 게임 3종 준비', '참가자 웰컴키트 제작'], isAiBot: true, botBadge: 'AI 봇' },
+      { id: 'mem_tr_1', name: '최현아', nickname: '현아_드라이브', avatar: '🚗', groupName: '제주 힐링여행', role: '모임장', level: 7, streak: 18, theme: '여행·생활', intro: '낙오자 없는 제주 힐링 여행을 기획하고 있어요!', goals: ['제주 3박4일 독채 펜션 예약', '동선별 드라이브 코스 확정'], isAiBot: true, botBadge: 'AI 봇' },
+      { id: 'mem_tr_2', name: '정준호', nickname: '준호_맛집탐험', avatar: '🍖', groupName: '제주 힐링여행', role: '팀원', level: 6, streak: 11, theme: '식단·여행', intro: '제주 로컬 흑돼지/해산물 찐맛집 리스트업 담당', goals: ['흑돼지 맛집 단체석 예약', '공용 경비 1/N 정산표 정리'], isAiBot: true, botBadge: 'AI 봇' },
+      { id: 'mem_ft_1', name: '강성진 코치', nickname: '성진_헤드코치', avatar: '🏋️‍♂️', groupName: '크로스핏 정복대', role: '코치', level: 10, streak: 45, theme: '운동·건강', intro: '안전하고 즐겁게 한계 돌파! 주 5회 WOD 정복', goals: ['크루 전체 월 250회 WOD 달성', '전원 Rx 도전 서포트'], isAiBot: true, botBadge: 'AI 봇' },
+      { id: 'mem_ft_2', name: '윤태양', nickname: '태양_와드러버', avatar: '💪', groupName: '크로스핏 정복대', role: '팀원', level: 7, streak: 19, theme: '운동·건강', intro: '무반동 턱걸이 10개 도전 중인 크로스핏터', goals: ['Rx 무게 정복', '턱걸이 10개 연속 성공'], isAiBot: true, botBadge: 'AI 봇' }
     ];
   }
 
   function getDmPerson(id){
+    var comps = (global.state && global.state.profile && global.state.profile.companions) || [];
+    var c = comps.find(function(x){ return x.id === id; });
+    if(c) return c;
+
+    if(_userCache[id]) return _userCache[id];
+
+    var teamMembers = getTeamMembersPool();
+    var tm = teamMembers.find(function(x){ return x.id === id; });
+    if(tm) return tm;
+
     var mockPeople = global.MOCK_PEOPLE || [];
     var p = mockPeople.find(function(x){ return x.id === id; });
     if(p) return p;
 
-    var comps = (global.state && global.state.profile && global.state.profile.companions) || [];
-    var c = comps.find(function(x){ return x.id === id; });
-    if(c){
-      if(!c.replies){
-        c.replies = [
-          '안녕하세요! 오늘도 목표 파이팅입니다! 🔥',
-          '메시지 확인했어요! 오늘 체크인 완료하셨나요? 함께 갓생 살아요 :)',
-          '응원 감사해요! 저도 방금 오늘의 실천 기록 남겼어요 💪'
-        ];
-      }
-      return c;
-    }
+    return { id: id, nickname: '사용자', name: '사용자', avatar: '👤', intro: '아워골 회원' };
+  }
 
-    var teamMembers = getTeamMembersPool();
-    var tm = teamMembers.find(function(x){ return x.id === id; });
-    if(tm){
-      if(!tm.replies){
-        tm.replies = [
-          '안녕하세요! 우리 모임 함께 완주해요 🙌',
-          '네 말씀하신 내용 확인했습니다! 파이팅해요!',
-          '오늘도 실천 인증 완료했습니다! 다 같이 힘내봐요 ✨'
-        ];
+  async function loadDmMessagesFromDb(threadId, person){
+    if(!global.sb || !threadId) return;
+    try {
+      var res = await global.sb.from('team_ping_replies')
+        .select('*')
+        .eq('ping_id', threadId)
+        .order('created_at', { ascending: true })
+        .limit(50);
+      if(res && res.data){
+        var myId = (global.state && global.state.user && global.state.user.id) || (global.state && global.state.profile && global.state.profile.id);
+        person._thread = res.data.map(function(r){
+          return {
+            id: r.id,
+            from: (r.sender_id === myId ? 'me' : 'them'),
+            text: r.message,
+            time: global.fmtTime ? global.fmtTime(r.created_at) : '최근'
+          };
+        });
       }
-      return tm;
+    } catch(e){
+      console.warn('[DM] DB 메시지 로드 오류:', e);
     }
+  }
 
-    return null;
+  function subscribeRealtimeDm(threadId, myId, person, body){
+    if(_activeDmChannel){
+      try { _activeDmChannel.unsubscribe(); } catch(e){}
+      _activeDmChannel = null;
+    }
+    if(!global.sb || !threadId) return;
+
+    try {
+      _activeDmChannel = global.sb.channel('dm_room_' + threadId)
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'team_ping_replies',
+          filter: 'ping_id=eq.' + threadId
+        }, function(payload){
+          var r = payload.new;
+          if(!r) return;
+          if(r.sender_id !== myId){
+            person._thread = person._thread || [];
+            if(!person._thread.some(function(m){ return m.id === r.id; })){
+              person._thread.push({
+                id: r.id,
+                from: 'them',
+                text: r.message,
+                time: global.fmtTime ? global.fmtTime(r.created_at) : '방금'
+              });
+              var msgsEl = document.getElementById('dmMsgs');
+              if(msgsEl && document.body.contains(msgsEl)){
+                var div = document.createElement('div');
+                div.className = 'dm-msg them';
+                div.textContent = r.message;
+                msgsEl.appendChild(div);
+                msgsEl.scrollTop = msgsEl.scrollHeight;
+              }
+            }
+          }
+        })
+        .subscribe();
+    } catch(err){
+      console.warn('[DM] Realtime 구독 오류:', err);
+    }
   }
 
   function renderCommDM(body){
     var teamMembers = getTeamMembersPool();
     var state = global.state || {};
-    var mockPeople = global.MOCK_PEOPLE || [];
+    var myId = (state.user && state.user.id) || (state.profile && state.profile.id);
+    var isGuest = (!state.user || !state.user.id);
 
     if(state.dmActiveId){
       var person = getDmPerson(state.dmActiveId);
       if(!person){ state.dmActiveId = null; return renderCommDM(body); }
 
-      person._thread = person._thread || [
-        { from: 'them', text: (person.replies && person.replies.length) ? person.replies[0] : '안녕하세요! 함께 목표를 향해 달려요 😊', time: global.fmtTime ? global.fmtTime(new Date().toISOString()) : '방금' }
-      ];
+      var threadId = getDmThreadId(myId, person.id);
+      person._thread = person._thread || [];
 
-      var subTitle = person.groupName ? ('👥 ' + esc(person.groupName) + (person.role ? ' · ' + esc(person.role) : '')) : (person.theme ? ('🤝 동반자 · ' + esc(person.theme)) : '아워골 소통 상대');
+      // 실시간 Realtime 채널 구독 배선
+      subscribeRealtimeDm(threadId, myId, person, body);
+
+      // 서버 DB에서 실제 메시지 비동기 로드
+      if(!person._loadedThreadFromDb && !isGuest){
+        person._loadedThreadFromDb = true;
+        loadDmMessagesFromDb(threadId, person).then(function(){
+          var msgsEl = document.getElementById('dmMsgs');
+          if(msgsEl && document.body.contains(msgsEl)){
+            msgsEl.innerHTML = (person._thread && person._thread.length) ? person._thread.map(function(m){
+              return '<div class="dm-msg ' + m.from + '">' + esc(m.text) + '</div>';
+            }).join('') : '<div style="text-align:center;padding:24px 10px;font-size:.8125rem;color:var(--ink-faint);">아직 주고받은 메시지가 없습니다.<br>첫 대화를 건네보세요! 👋</div>';
+            msgsEl.scrollTop = msgsEl.scrollHeight;
+          }
+        });
+      }
+
+      var subTitle = person.groupName ? ('👥 ' + esc(person.groupName) + (person.role ? ' · ' + esc(person.role) : '')) : (person.theme ? ('🤝 동반자 · ' + esc(person.theme)) : '아워골 회원');
+      var badgeTag = person.isAiBot ? '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--brand-strong);margin-left:6px;">🤖 AI 봇</span>' : '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--ink);margin-left:6px;">실 사용자</span>';
+
+      var msgsHtml = (person._thread && person._thread.length) ? person._thread.map(function(m){
+        return '<div class="dm-msg ' + m.from + '">' + esc(m.text) + '</div>';
+      }).join('') : '<div style="text-align:center;padding:24px 10px;font-size:.8125rem;color:var(--ink-faint);">아직 주고받은 메시지가 없습니다.<br>첫 대화를 건네보세요! 👋</div>';
 
       body.innerHTML = '<span class="dm-back" id="dmBack" style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-size:.875rem;font-weight:700;color:var(--brand-strong);margin-bottom:12px;">‹ 목록으로</span>' +
         '<div class="dm-thread-wrap">' +
           '<div class="dm-thread-head" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card);border-bottom:1px solid var(--rule);">' +
             '<div class="feed-avatar" style="width:40px;height:40px;font-size:1.4rem;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border-radius:50%;">' + person.avatar + '</div>' +
             '<div style="flex:1;min-width:0;">' +
-              '<div style="font-weight:700;font-size:.9375rem;color:var(--ink);">' + esc(person.nickname || person.name) + '</div>' +
+              '<div style="font-weight:700;font-size:.9375rem;color:var(--ink);display:flex;align-items:center;">' +
+                '<span>' + esc(person.nickname || person.name) + '</span>' +
+                badgeTag +
+              '</div>' +
               '<div class="faint" style="font-size:.75rem;margin-top:1px;">' + subTitle + '</div>' +
             '</div>' +
           '</div>' +
           '<div class="dm-msgs" id="dmMsgs" style="padding:14px;min-height:240px;max-height:420px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;">' +
-            person._thread.map(function(m){
-              return '<div class="dm-msg ' + m.from + '">' + esc(m.text) + '</div>';
-            }).join('') +
+            msgsHtml +
           '</div>' +
           '<div class="dm-input-row" style="padding:10px 12px;background:var(--card);border-top:1px solid var(--rule);display:flex;gap:8px;">' +
-            '<input id="dmInput" type="text" placeholder="메시지를 입력하세요 (Enter)" style="flex:1;border:1px solid var(--rule);border-radius:10px;padding:8px 12px;font-size:.875rem;background:var(--surface-2);color:var(--ink);">' +
+            '<input id="dmInput" type="text" placeholder="' + (isGuest ? '로그인 후 메시지를 전송할 수 있습니다' : '메시지를 입력하세요 (Enter)') + '" style="flex:1;border:1px solid var(--rule);border-radius:10px;padding:8px 12px;font-size:.875rem;background:var(--surface-2);color:var(--ink);">' +
             '<button class="btn btn-primary btn-sm" id="dmSend" type="button" style="font-weight:700;border-radius:10px;padding:8px 16px;">전송</button>' +
           '</div>' +
         '</div>' +
-        '<p class="faint" style="margin-top:10px;font-size:.75rem;">💡 모임 동료 및 동반자와의 1:1 다이렉트 메시지 공간이에요</p>';
+        '<p class="faint" style="margin-top:10px;font-size:.75rem;">💡 실제 사용자 계정 간 서버 DB 원장 및 Realtime 채널로 실시간 송수신됩니다</p>';
 
       var backBtn = document.getElementById('dmBack');
-      if(backBtn) backBtn.addEventListener('click', function(){ state.dmActiveId = null; renderCommDM(body); });
+      if(backBtn) backBtn.addEventListener('click', function(){
+        if(_activeDmChannel){ try{ _activeDmChannel.unsubscribe(); }catch(e){} _activeDmChannel = null; }
+        state.dmActiveId = null;
+        renderCommDM(body);
+      });
 
       var msgsEl = document.getElementById('dmMsgs');
       if(msgsEl) msgsEl.scrollTop = msgsEl.scrollHeight;
 
-      var send = function(){
+      var send = async function(){
+        if(isGuest){
+          showGuestSoftAuthGate('1:1 DM 발송');
+          return;
+        }
         var input = document.getElementById('dmInput');
         if(!input) return;
         var text = input.value.trim();
         if(!text) return;
+
+        var myName = (state.profile && (state.profile.displayName || state.profile.name)) || (state.user && state.user.email) || '나';
+        var myAvatar = (state.profile && state.profile.avatar) || '🏃';
+        var replyId = 'reply_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
         var nowStr = global.fmtTime ? global.fmtTime(new Date().toISOString()) : '방금';
-        person._thread.push({ from: 'me', text: text, time: nowStr });
+
+        // 1. Optimistic UI 반영
+        person._thread.push({ id: replyId, from: 'me', text: text, time: nowStr });
         input.value = '';
-        renderCommDM(body);
-        setTimeout(function(){
-          var replies = person.replies || ['메시지 확인했어요! 오늘도 파이팅입니다! 🔥'];
-          var pick = replies[Math.floor(Math.random() * replies.length)];
-          person._thread.push({ from: 'them', text: pick, time: nowStr });
-          if(document.body.contains(body) && state.dmActiveId === person.id) renderCommDM(body);
-        }, 700 + Math.random() * 600);
+        var msgsEl = document.getElementById('dmMsgs');
+        if(msgsEl){
+          var div = document.createElement('div');
+          div.className = 'dm-msg me';
+          div.textContent = text;
+          msgsEl.appendChild(div);
+          msgsEl.scrollTop = msgsEl.scrollHeight;
+        }
+
+        // 2. 헌법 제19조 의거 Supabase 서버 DB 원장 영속화
+        if(global.sb){
+          try {
+            // 부모 team_pings 대화방 보장
+            await global.sb.from('team_pings').upsert({
+              id: threadId,
+              group_id: 'dm_direct',
+              sender_id: myId,
+              sender_name: myName,
+              sender_avatar: myAvatar,
+              receiver_id: person.id,
+              target_type: 'dm',
+              target_id: person.id,
+              target_title: '1:1 다이렉트 메시지',
+              ping_type: 'dm',
+              message: text,
+              status: 'active'
+            });
+
+            // 1:1 메시지 레코드 저장
+            await global.sb.from('team_ping_replies').insert({
+              id: replyId,
+              ping_id: threadId,
+              group_id: 'dm_direct',
+              sender_id: myId,
+              sender_name: myName,
+              sender_role: 'member',
+              sender_avatar: myAvatar,
+              receiver_id: person.id,
+              message: text,
+              created_at: new Date().toISOString()
+            });
+          } catch(err){
+            console.warn('[DM] Supabase 영속화 실패:', err);
+          }
+        }
       };
 
       var sendBtn = document.getElementById('dmSend');
@@ -614,6 +833,8 @@
         inputEl.addEventListener('keydown', function(e){ if(e.key === 'Enter') send(); });
       }
     } else {
+      if(_activeDmChannel){ try{ _activeDmChannel.unsubscribe(); }catch(e){} _activeDmChannel = null; }
+
       var teamMembersChipsHtml = teamMembers.map(function(m){
         return '<div class="dm-team-chip" data-openteamdm="' + m.id + '" role="button" tabindex="0" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;width:72px;padding:8px 4px;background:var(--card);border:1px solid var(--rule);border-radius:12px;cursor:pointer;text-align:center;transition:transform 0.15s ease;">' +
           '<div style="width:38px;height:38px;border-radius:50%;background:var(--surface-2);border:1.5px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin-bottom:4px;">' + m.avatar + '</div>' +
@@ -623,20 +844,17 @@
       }).join('');
 
       var allDmList = [];
-      teamMembers.forEach(function(m){
-        if(m._thread && m._thread.length) allDmList.push(m);
-      });
       var companions = (state.profile && state.profile.companions) || [];
       companions.forEach(function(c){
         allDmList.push(c);
       });
-      mockPeople.forEach(function(p){
-        if(!allDmList.find(function(x){ return x.id === p.id; })) allDmList.push(p);
+      teamMembers.forEach(function(m){
+        if(!allDmList.find(function(x){ return x.id === m.id; })) allDmList.push(m);
       });
 
       var dmListHtml = allDmList.map(function(p){
-        var last = (p._thread && p._thread.length) ? p._thread[p._thread.length - 1].text : (p.intro || (p.replies && p.replies[0]) || '새로운 대화를 시작해보세요!');
-        var badgeText = p.groupName ? p.groupName : (p.theme || '동반자');
+        var last = (p._thread && p._thread.length) ? p._thread[p._thread.length - 1].text : (p.intro || '새로운 대화를 시작해보세요!');
+        var badgeText = p.isAiBot ? 'AI 봇' : (p.groupName ? p.groupName : (p.theme || '동반자'));
         return '<div class="dm-list-item" data-open="' + p.id + '" style="cursor:pointer;padding:10px 12px;display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--rule);border-radius:12px;margin-bottom:8px;">' +
           '<div class="feed-avatar" style="width:42px;height:42px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex:0 0 auto;">' + p.avatar + '</div>' +
           '<div class="dm-preview" style="flex:1;min-width:0;">' +
@@ -685,28 +903,13 @@
   }
 
   /* ------------------------------------------------------------
-   * 6. 동반자(친구·팔로우) 소셜 시스템 (TASK-ES-105)
+   * 6. 동반자(친구·팔로우) 실제 회원 연동 시스템 (헌법 제19조 준수)
    * ------------------------------------------------------------ */
-  var ALL_SEARCHABLE_USERS = [
-    { id: 'comp_runner_1', nickname: '새벽러너_민지', name: '김민지', avatar: '🏃‍♀️', level: 7, streak: 15, theme: '러닝·마라톤', intro: '매일 아침 6시 5km 달리기 인증합니다! 꾸준함이 무기!', goals: ['10km 마라톤 완주', '주 4회 모닝런'] },
-    { id: 'comp_coder_2', nickname: '코드장인_도현', name: '박도현', avatar: '💻', level: 9, streak: 28, theme: '코딩·개발', intro: '풀스택 개발자 지망생, 1일 1커밋과 알고리즘 도전 중', goals: ['React 풀스택 앱 출시', '알고리즘 100제 완주'] },
-    { id: 'comp_study_3', nickname: '갓생사는_수아', name: '이수아', avatar: '📚', level: 5, streak: 8, theme: '학습·자격', intro: '공인중개사 1차 동차합격 목표 열공 모드입니다!', goals: ['기출문제 3회독', '하루 3시간 독서실'] },
-    { id: 'comp_cf_4', nickname: '와드전사_현석', name: '정현석', avatar: '🏋️', level: 8, streak: 21, theme: '크로스핏', intro: 'Rx 완료 인증! 부상 없이 강해지는 와드 파이터', goals: ['3대 400kg 달성', '주 5회 WOD'] },
-    { id: 'comp_work_5', nickname: '비즈니스_수진', name: '한수진', avatar: '📈', level: 6, streak: 12, theme: '커리어·머니', intro: 'B2B 영업 딜 클로징 챌린지 100일 진행 중', goals: ['분기 매출 1억 달성', '신규 고객사 30곳 유치'] },
-    { id: 'comp_eng_6', nickname: '오픽정복_준영', name: '서준영', avatar: '🗣️', level: 4, streak: 7, theme: '어학·영어', intro: '매일 영어 섀도잉 30분, AL 등급 목표입니다', goals: ['오픽 AL 취득', '미드 1편 통암기'] },
-    { id: 'comp_diet_7', nickname: '클린식단_하린', name: '윤하린', avatar: '🥗', level: 6, streak: 19, theme: '식단·다이어트', intro: '탄단지 골고루 챙기는 건강하고 든든한 식단 기록', goals: ['체지방률 18% 달성', '매일 물 2L 마시기'] },
-    { id: 'comp_read_8', nickname: '북러버_태민', name: '강태민', avatar: '📖', level: 8, streak: 33, theme: '독서·인문', intro: '한 달에 4권 책 읽고 노션에 핵심 3줄 요약 남기기', goals: ['올해 50권 완독', '독서 모임 발제문 작성'] }
-  ];
-
   function ensureDefaultCompanions(){
     var state = global.state;
     if(!state || !state.profile) return [];
     if(!state.profile.companions || !Array.isArray(state.profile.companions)){
-      state.profile.companions = [
-        { id: 'comp_runner_1', nickname: '새벽러너_민지', name: '김민지', avatar: '🏃‍♀️', level: 7, streak: 15, theme: '러닝·마라톤', intro: '매일 아침 6시 5km 달리기 인증합니다! 꾸준함이 무기!', goals: ['10km 마라톤 완주', '주 4회 모닝런'], isMutual: true, createdAt: '2026-09-10' },
-        { id: 'comp_coder_2', nickname: '코드장인_도현', name: '박도현', avatar: '💻', level: 9, streak: 28, theme: '코딩·개발', intro: '풀스택 개발자 지망생, 1일 1커밋과 알고리즘 도전 중', goals: ['React 풀스택 앱 출시', '알고리즘 100제 완주'], isMutual: true, createdAt: '2026-09-12' },
-        { id: 'comp_study_3', nickname: '갓생사는_수아', name: '이수아', avatar: '📚', level: 5, streak: 8, theme: '학습·자격', intro: '공인중개사 1차 동차합격 목표 열공 모드입니다!', goals: ['기출문제 3회독', '하루 3시간 독서실'], isMutual: true, createdAt: '2026-09-14' }
-      ];
+      state.profile.companions = [];
     }
     return state.profile.companions;
   }
@@ -714,7 +917,9 @@
   function openUserProfileModal(user){
     if(!user) return;
     var state = global.state || {};
-    var goalsHtml = (user.goals || ['진행 중인 목표 1개']).map(function(g){
+    var isAiBot = !!user.isAiBot;
+
+    var goalsHtml = (user.goals && user.goals.length ? user.goals : ['진행 중인 목표 1개']).map(function(g){
       return '<div style="padding:8px 12px;background:var(--surface-2);border-radius:10px;border:1px solid var(--rule);font-size:.8125rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
         '<span style="color:var(--ink);font-weight:600;">🎯 ' + esc(g) + '</span>' +
         '<span class="dday-pill" style="font-size:.6875rem;background:var(--card);">진행 중</span>' +
@@ -723,7 +928,7 @@
 
     var heatmapCubes = '';
     for(var d = 13; d >= 0; d--){
-      var hasCheckin = (d % 4 !== 0);
+      var hasCheckin = (d % 3 !== 0);
       var bg = hasCheckin ? 'var(--brand)' : 'var(--rule)';
       heatmapCubes += '<div style="flex:1;aspect-ratio:1/1;background:' + bg + ';border-radius:3px;" title="' + d + '일 전 실천"></div>';
     }
@@ -735,7 +940,10 @@
         '<div style="width:72px;height:72px;border-radius:50%;background:var(--surface-2);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 10px;box-shadow:0 4px 12px rgba(0,0,0,0.06);">' +
           user.avatar +
         '</div>' +
-        '<div style="font-weight:700;font-size:1.1rem;color:var(--ink);">' + esc(user.nickname || user.name) + (user.name ? ' <span class="faint" style="font-size:.8125rem;font-weight:400;">(' + esc(user.name) + ')</span>' : '') + '</div>' +
+        '<div style="font-weight:700;font-size:1.1rem;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:6px;">' +
+          '<span>' + esc(user.nickname || user.name) + '</span>' +
+          (isAiBot ? '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--brand-strong);">🤖 AI 봇</span>' : '') +
+        '</div>' +
         '<div class="faint" style="font-size:.8125rem;margin-top:2px;">' + esc(user.theme || '아워골 동반자') + '</div>' +
         '<div style="display:flex;justify-content:center;gap:6px;margin-top:8px;">' +
           '<span class="dday-pill" style="font-size:.75rem;">Lv.' + (user.level || 1) + '</span>' +
@@ -772,6 +980,12 @@
         var addCompBtn = sheet.querySelector('#userProfAddCompBtn');
         if(addCompBtn){
           addCompBtn.onclick = async function(){
+            var isGuest = (!state.user || !state.user.id);
+            if(isGuest){
+              if(global.closeModal) global.closeModal();
+              showGuestSoftAuthGate('동반자 추가');
+              return;
+            }
             var comps = ensureDefaultCompanions();
             if(!comps.some(function(x){ return x.id === user.id; })){
               comps.push({
@@ -784,7 +998,7 @@
                 theme: user.theme || '동반자',
                 intro: user.intro || '',
                 goals: user.goals || [],
-                isMutual: true,
+                isAiBot: isAiBot,
                 createdAt: new Date().toISOString()
               });
               if(global.saveProfile) await global.saveProfile();
@@ -814,31 +1028,31 @@
   function renderCommCompanions(body){
     var state = global.state || {};
     var companions = ensureDefaultCompanions();
-    var searchKeyword = (state._companionSearchKeyword || '').trim().toLowerCase();
+    var searchKeyword = (state._companionSearchKeyword || '').trim();
+    var searchResults = state._companionSearchResults || null;
+    var isSearching = state._companionIsSearching === true;
 
     var searchResultsHtml = '';
-    if(searchKeyword){
-      var matched = ALL_SEARCHABLE_USERS.filter(function(u){
-        return (u.nickname && u.nickname.toLowerCase().includes(searchKeyword)) ||
-               (u.name && u.name.toLowerCase().includes(searchKeyword)) ||
-               (u.theme && u.theme.toLowerCase().includes(searchKeyword));
-      });
-
-      if(!matched.length){
+    if(isSearching){
+      searchResultsHtml = '<div style="padding:16px 12px;background:var(--surface-2);border-radius:12px;text-align:center;font-size:.8125rem;color:var(--ink-soft);margin-bottom:14px;">' +
+        '회원 데이터베이스에서 실제 사용자를 검색하고 있습니다... 🔍' +
+      '</div>';
+    } else if(searchResults !== null){
+      if(!searchResults.length){
         searchResultsHtml = '<div style="padding:16px 12px;background:var(--surface-2);border-radius:12px;text-align:center;font-size:.8125rem;color:var(--ink-soft);margin-bottom:14px;">' +
-          '“' + esc(searchKeyword) + '” 닉네임을 가진 사용자를 찾지 못했어요.<br>다른 키워드나 테마로 검색해보세요.' +
+          '“' + esc(searchKeyword) + '” 닉네임을 가진 실제 회원을 찾지 못했어요.<br>정확한 닉네임으로 다시 검색해보세요.' +
         '</div>';
       } else {
         searchResultsHtml = '<div style="margin-bottom:14px;background:var(--surface-2);border-radius:14px;padding:12px;border:1px solid var(--rule);">' +
-          '<div style="font-size:.75rem;font-weight:700;color:var(--brand-strong);margin-bottom:8px;">🔍 닉네임 검색 결과 (' + matched.length + '명)</div>' +
-          matched.map(function(u){
+          '<div style="font-size:.75rem;font-weight:700;color:var(--brand-strong);margin-bottom:8px;">🔍 실제 회원 검색 결과 (' + searchResults.length + '명)</div>' +
+          searchResults.map(function(u){
             var isAdded = companions.some(function(c){ return c.id === u.id; });
             return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--card);border:1px solid var(--rule);border-radius:10px;margin-bottom:6px;">' +
               '<div class="comp-avatar-click" data-viewprof="' + u.id + '" style="width:36px;height:36px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;cursor:pointer;flex:0 0 auto;" title="프로필 보기">' +
                 u.avatar +
               '</div>' +
               '<div style="flex:1;min-width:0;">' +
-                '<div style="font-weight:700;font-size:.875rem;color:var(--ink);">' + esc(u.nickname) + ' <span class="dday-pill" style="font-size:.6875rem;">Lv.' + u.level + '</span></div>' +
+                '<div style="font-weight:700;font-size:.875rem;color:var(--ink);">' + esc(u.nickname) + '</div>' +
                 '<div class="faint" style="font-size:.75rem;">' + esc(u.intro) + '</div>' +
               '</div>' +
               (isAdded ?
@@ -856,7 +1070,7 @@
       listHtml = '<div class="empty-state" style="padding:30px 10px;text-align:center;">' +
         '<div style="font-size:2.5rem;margin-bottom:8px;">🤝</div>' +
         '<div style="font-weight:700;font-size:.9375rem;color:var(--ink);margin-bottom:4px;">아직 등록된 동반자가 없어요</div>' +
-        '<div class="faint" style="font-size:.8125rem;">위의 닉네임 검색을 통해 함께 달릴 동반자를 찾아보세요!</div>' +
+        '<div class="faint" style="font-size:.8125rem;">위의 닉네임 검색을 통해 실제 사용자를 찾고 동반자를 맺어보세요!</div>' +
       '</div>';
     } else {
       listHtml = companions.map(function(c){
@@ -867,7 +1081,7 @@
           '<div style="flex:1;min-width:0;">' +
             '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">' +
               '<b style="font-size:.9375rem;color:var(--ink);cursor:pointer;" class="comp-avatar-click" data-viewprof="' + c.id + '">' + esc(c.nickname || c.name) + '</b>' +
-              '<span class="dday-pill" style="font-size:.6875rem;">Lv.' + (c.level || 1) + '</span>' +
+              (c.isAiBot ? '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--brand-strong);">🤖 AI 봇</span>' : '<span class="dday-pill" style="font-size:.6875rem;">실 사용자</span>') +
               '<span style="font-size:.75rem;color:var(--brand-strong);font-weight:700;">🔥 ' + (c.streak || 1) + '일</span>' +
             '</div>' +
             '<div class="faint" style="font-size:.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(c.intro || c.theme || '목표를 향해 함께 달리는 동반자') + '</div>' +
@@ -891,12 +1105,12 @@
           '</div>' +
           '<span class="dday-pill" style="font-weight:700;">' + companions.length + '명</span>' +
         '</div>' +
-        '<div class="faint" style="font-size:.75rem;">카카오톡 친구, 인스타 팔로우처럼 동반자를 맺고 서로의 목표를 응원하세요!</div>' +
+        '<div class="faint" style="font-size:.75rem;">실제 가입된 사용자와 동반자를 맺고 서로의 목표를 응원하세요!</div>' +
       '</div>' +
 
       '<div style="margin-bottom:14px;">' +
         '<div style="display:flex;gap:6px;">' +
-          '<input type="text" id="companionSearchInput" placeholder="닉네임으로 동반자 검색 (예: 러너, 도현, 수아)" value="' + esc(state._companionSearchKeyword || '') + '" style="flex:1;border:1px solid var(--rule);border-radius:10px;padding:8px 12px;font-size:.875rem;background:var(--surface-2);color:var(--ink);">' +
+          '<input type="text" id="companionSearchInput" placeholder="실제 사용자 닉네임 검색" value="' + esc(state._companionSearchKeyword || '') + '" style="flex:1;border:1px solid var(--rule);border-radius:10px;padding:8px 12px;font-size:.875rem;background:var(--surface-2);color:var(--ink);">' +
           '<button class="btn btn-primary btn-sm" id="companionSearchBtn" type="button" style="font-weight:700;padding:0 14px;border-radius:10px;">검색</button>' +
           (searchKeyword ? '<button class="btn btn-ghost btn-sm" id="companionSearchResetBtn" type="button" style="padding:0 8px;border-radius:10px;">초기화</button>' : '') +
         '</div>' +
@@ -915,9 +1129,49 @@
     var sBtn = body.querySelector('#companionSearchBtn');
     var sResetBtn = body.querySelector('#companionSearchResetBtn');
 
-    var doSearch = function(){
+    var doSearch = async function(){
       if(!sInput) return;
-      state._companionSearchKeyword = sInput.value;
+      var q = sInput.value.trim();
+      if(!q){
+        state._companionSearchKeyword = '';
+        state._companionSearchResults = null;
+        renderCommCompanions(body);
+        return;
+      }
+      state._companionSearchKeyword = q;
+      state._companionIsSearching = true;
+      renderCommCompanions(body);
+
+      var matched = [];
+      if(global.sb){
+        try {
+          var res = await global.sb.from('users')
+            .select('id, username, display_name, bio, avatar_url, interests')
+            .or('display_name.ilike.%' + q + '%,username.ilike.%' + q + '%')
+            .limit(20);
+          if(res && res.data){
+            matched = res.data.map(function(u){
+              var obj = {
+                id: u.id,
+                nickname: u.display_name || u.username,
+                name: u.username,
+                avatar: u.avatar_url || '👤',
+                intro: u.bio || '함께 실천하는 아워골 회원',
+                level: 1,
+                streak: 1,
+                theme: (u.interests && u.interests[0]) || '일반'
+              };
+              _userCache[u.id] = obj;
+              return obj;
+            });
+          }
+        } catch(err){
+          console.warn('[동반자] Supabase 검색 오류:', err);
+        }
+      }
+
+      state._companionIsSearching = false;
+      state._companionSearchResults = matched;
       renderCommCompanions(body);
     };
 
@@ -926,6 +1180,8 @@
     if(sResetBtn){
       sResetBtn.addEventListener('click', function(){
         state._companionSearchKeyword = '';
+        state._companionSearchResults = null;
+        state._companionIsSearching = false;
         renderCommCompanions(body);
       });
     }
@@ -933,16 +1189,22 @@
     body.querySelectorAll('[data-viewprof]').forEach(function(el){
       el.addEventListener('click', function(){
         var uid = el.dataset.viewprof;
-        var u = ALL_SEARCHABLE_USERS.find(function(x){ return x.id === uid; }) ||
-                companions.find(function(x){ return x.id === uid; });
+        var u = (state._companionSearchResults && state._companionSearchResults.find(function(x){ return x.id === uid; })) ||
+                companions.find(function(x){ return x.id === uid; }) ||
+                _userCache[uid];
         if(u) openUserProfileModal(u);
       });
     });
 
     body.querySelectorAll('[data-addcomp]').forEach(function(btn){
       btn.addEventListener('click', async function(){
+        var isGuest = (!state.user || !state.user.id);
+        if(isGuest){
+          showGuestSoftAuthGate('동반자 추가');
+          return;
+        }
         var uid = btn.dataset.addcomp;
-        var target = ALL_SEARCHABLE_USERS.find(function(x){ return x.id === uid; });
+        var target = (state._companionSearchResults && state._companionSearchResults.find(function(x){ return x.id === uid; })) || _userCache[uid];
         if(!target) return;
         if(!companions.some(function(x){ return x.id === target.id; })){
           companions.push({
@@ -950,12 +1212,11 @@
             nickname: target.nickname,
             name: target.name,
             avatar: target.avatar,
-            level: target.level,
-            streak: target.streak,
-            theme: target.theme,
-            intro: target.intro,
-            goals: target.goals,
-            isMutual: true,
+            level: target.level || 1,
+            streak: target.streak || 1,
+            theme: target.theme || '동반자',
+            intro: target.intro || '',
+            goals: target.goals || [],
             createdAt: new Date().toISOString()
           });
           if(global.saveProfile) await global.saveProfile();
@@ -1008,7 +1269,9 @@
     openUserProfileModal: openUserProfileModal,
     renderCommCompanions: renderCommCompanions,
     ensureDefaultCompanions: ensureDefaultCompanions,
-    ALL_SEARCHABLE_USERS: ALL_SEARCHABLE_USERS
+    getDmThreadId: getDmThreadId,
+    loadDmMessagesFromDb: loadDmMessagesFromDb,
+    showGuestSoftAuthGate: showGuestSoftAuthGate
   };
 
 })(typeof window !== 'undefined' ? window : global);
