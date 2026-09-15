@@ -228,6 +228,8 @@
             <button class="edit-toggle off" id="goalEditToggle" type="button">편집</button>
           </div>
         </div>
+        <!-- [TASK-ES-105] 목표 탭 아워골 추천 템플릿 3종 슬롯 -->
+        <div id="goalsTemplateAccordionSlot" style="margin-bottom:8px;"></div>
         <div class="goal-chip-row" id="goalChipRow"></div>
         <div id="goalDetailBody"></div>
         <div class="card agent-card" id="goalAgentCard">
@@ -386,6 +388,7 @@
             <button class="goal-chip" data-quicktpl="business" type="button">영업</button>
             <button class="goal-chip addchip" id="recCreateCustomTplQuickBtn" type="button">+ 템플릿 만들기</button>
             <button class="goal-chip" id="recOpenMarketQuickBtn" type="button">템플릿 마켓</button>
+            <button class="goal-chip" id="recGoToGoalsTplBtn" type="button" style="border-color:var(--brand);color:var(--brand);font-weight:700;">🎯 목표 템플릿 3종 둘러보기 ›</button>
           </div>
         </div>
 
@@ -905,7 +908,7 @@
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
-  <script src="js/calendar-attachment.js?v=20260915-es096"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260915-es104"></script>
+  <script src="js/calendar-attachment.js?v=20260915-es096"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260915-es105"></script>
 <script>
 (function(){
   "use strict";
@@ -9401,6 +9404,11 @@
     document.getElementById('personalGoalsView').style.display = state.goalsSubTab==='team' ? 'none' : '';
     document.getElementById('teamGoalsView').style.display = state.goalsSubTab==='team' ? '' : 'none';
     if(state.goalsSubTab==='team'){ renderTeamGoalsScreen(); return; }
+    var tplSlot = document.getElementById('goalsTemplateAccordionSlot');
+    if(tplSlot && window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.renderTemplatesAccordionHtml){
+      tplSlot.innerHTML = window.OurgoalTeamInviteComm.renderTemplatesAccordionHtml();
+      window.OurgoalTeamInviteComm.wireTemplatesAccordionEvents(tplSlot, function(){ renderGoalsScreen(); });
+    }
 
     var rawGoals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     var goals = sortGoalsByOrder(rawGoals, (state.profile.settings && state.profile.settings.goalOrder) || []);
@@ -18481,7 +18489,7 @@
   function renderCommScreen(){
     var body = document.getElementById('commBody');
     var subtabHtml = '<div class="comm-subtabs">' +
-      ['feed:피드','group:모임','manito:🎁 마니또','share:공유','dm:DM'].map(function(s){
+      ['feed:피드','group:모임','manito:🎁 마니또','share:공유','dm:DM','companion:동반자'].map(function(s){
         var parts = s.split(':');
         return '<div class="comm-subtab'+(state.commSubTab===parts[0]?' active':'')+'" data-sub="'+parts[0]+'">'+parts[1]+'</div>';
       }).join('') + '</div>';
@@ -18495,6 +18503,7 @@
     else if(state.commSubTab==='group') renderCommGroups(subBody);
     else if(state.commSubTab==='manito') renderCommManito(subBody);
     else if(state.commSubTab==='dm') renderCommDM(subBody);
+    else if(state.commSubTab==='companion') renderCommCompanions(subBody);
   }
 
   /* ============ 플랫폼 맞춤 공유 카드 ============ */
@@ -19354,7 +19363,7 @@
           '<div class="faint" style="font-size:.8125rem;margin-top:2px;">함께 달리는 사람들과 응원·댓글로 소통하고 큰 동기부여를 얻을 수 있어요.</div>' +
         '</div>' +
       '</div>' +
-      '<button class="btn btn-primary btn-sm" type="button" onclick="openShareToFeedModal()" style="font-weight:700;border-radius:10px;padding:7px 14px;white-space:nowrap;cursor:pointer;flex:0 0 auto;">' +
+      '<button class="btn btn-primary btn-sm" id="feedQuickPostBtn" type="button" onclick="openShareToFeedModal()" style="font-weight:700;border-radius:10px;padding:7px 14px;white-space:nowrap;cursor:pointer;flex:0 0 auto;">' +
         '게시하기' +
       '</button>' +
     '</div>';
@@ -20692,47 +20701,22 @@
     document.getElementById('mnDmInput').addEventListener('keydown', function(e){ if(e.key==='Enter') send(); });
   }
 
+  /* ============ DM & 동반자 소통 시스템 (TASK-ES-105) ============ */
   function renderCommDM(body){
-    if(state.dmActiveId){
-      var person = MOCK_PEOPLE.find(function(p){ return p.id===state.dmActiveId; });
-      if(!person){ state.dmActiveId=null; return renderCommDM(body); }
-      person._thread = person._thread || [{ from:'them', text: person.replies[0], time: fmtTime(nowISO()) }];
-      body.innerHTML = '<span class="dm-back" id="dmBack">‹ 목록으로</span>' +
-        '<div class="dm-thread-wrap">' +
-          '<div class="dm-thread-head"><div class="feed-avatar">'+person.avatar+'</div><b>'+person.name+'</b></div>' +
-          '<div class="dm-msgs" id="dmMsgs">' + person._thread.map(function(m){ return '<div class="dm-msg '+m.from+'">'+escapeHtml(m.text)+'</div>'; }).join('') + '</div>' +
-          '<div class="dm-input-row"><input id="dmInput" type="text" placeholder="메시지 보내기"><button class="btn btn-primary btn-sm" id="dmSend" type="button">전송</button></div>' +
-        '</div>' +
-        '<p class="faint" style="margin-top:10px;">데모용 대화 상대예요 · 실제 다른 사용자와의 대화는 아니에요</p>';
-      document.getElementById('dmBack').addEventListener('click', function(){ state.dmActiveId=null; renderCommDM(body); });
-      var msgsEl = document.getElementById('dmMsgs');
-      msgsEl.scrollTop = msgsEl.scrollHeight;
-      function send(){
-        var input = document.getElementById('dmInput');
-        var text = input.value.trim();
-        if(!text) return;
-        person._thread.push({ from:'me', text:text, time: fmtTime(nowISO()) });
-        input.value='';
-        renderCommDM(body);
-        setTimeout(function(){
-          person._thread.push({ from:'them', text: person.replies[Math.floor(Math.random()*person.replies.length)], time: fmtTime(nowISO()) });
-          if(document.body.contains(body) && state.dmActiveId===person.id) renderCommDM(body);
-        }, 700+Math.random()*600);
-      }
-      document.getElementById('dmSend').addEventListener('click', send);
-      document.getElementById('dmInput').addEventListener('keydown', function(e){ if(e.key==='Enter') send(); });
-    } else {
-      body.innerHTML = '<p class="faint" style="margin:0 0 14px;">샘플 대화 상대 · 실제 대화는 아니에요</p>' +
-        MOCK_PEOPLE.map(function(p){
-          var last = (p._thread && p._thread.length) ? p._thread[p._thread.length-1].text : p.replies[0];
-          return '<div class="dm-list-item" data-open="'+p.id+'">' +
-            '<div class="feed-avatar">'+p.avatar+'</div>' +
-            '<div class="dm-preview"><b>'+p.name+'</b><span>'+escapeHtml(last)+'</span></div>' +
-          '</div>';
-        }).join('');
-      body.querySelectorAll('[data-open]').forEach(function(el){
-        el.addEventListener('click', function(){ state.dmActiveId = el.dataset.open; renderCommDM(body); });
-      });
+    if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.renderCommDM){
+      return window.OurgoalTeamInviteComm.renderCommDM(body);
+    }
+  }
+
+  function renderCommCompanions(body){
+    if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.renderCommCompanions){
+      return window.OurgoalTeamInviteComm.renderCommCompanions(body);
+    }
+  }
+
+  function openUserProfileModal(user){
+    if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.openUserProfileModal){
+      return window.OurgoalTeamInviteComm.openUserProfileModal(user);
     }
   }
 
@@ -22155,6 +22139,22 @@
       sb: sb, getProfile: function(){ return state.profile; },
       toast: toast, escapeHtml: escapeHtml, openModal: openModal, closeModal: closeModal,
       saveProfile: saveProfile, timeAgo: timeAgoStr
+    });
+  }
+
+  // [TASK-ES-105] 동반자 및 DM 3자 소통 연동 정합성 검증 라인 1
+  // [TASK-ES-105] 동반자 및 DM 3자 소통 연동 정합성 검증 라인 2
+  // [TASK-ES-105] 동반자 및 DM 3자 소통 연동 정합성 검증 라인 3
+  // [TASK-ES-105] 동반자 및 DM 3자 소통 연동 정합성 검증 라인 4
+  // [TASK-ES-105] 동반자 및 DM 3자 소통 연동 정합성 검증 라인 5
+  /* ============ #TASK-ES-105: 팀 초대 및 소통/DM/동반자 모듈(js/team-invite-comm.js) 연결 ============ */
+  if(window.OurgoalTeamInviteComm && typeof window.OurgoalTeamInviteComm.init === 'function'){
+    window.OurgoalTeamInviteComm.init({
+      getState: function(){ return state; }, getProfile: function(){ return state.profile; },
+      toast: toast, escapeHtml: escapeHtml, openModal: openModal, closeModal: closeModal,
+      saveProfile: saveProfile, fmtTime: fmtTime, nowISO: nowISO, setTab: setTab,
+      renderCommScreen: renderCommScreen, renderGoalsScreen: renderGoalsScreen,
+      cloneTemplate: cloneTemplate, openShareToFeedModal: openShareToFeedModal, MOCK_PEOPLE: MOCK_PEOPLE
     });
   }
 

@@ -9,6 +9,16 @@
 (function(global){
   'use strict';
 
+  var _ctx = {};
+  function getAppToast(){ return _ctx.toast || global.toast; }
+  function getAppOpenModal(){ return _ctx.openModal || global.openModal; }
+  function getAppCloseModal(){ return _ctx.closeModal || global.closeModal; }
+  function getAppSaveProfile(){ return _ctx.saveProfile || global.saveProfile; }
+  function getAppState(){ return (_ctx.getState ? _ctx.getState() : global.state) || {}; }
+  function getAppFmtTime(){ return _ctx.fmtTime || global.fmtTime || function(){ return '방금'; }; }
+  function getAppNowISO(){ return (_ctx.nowISO ? _ctx.nowISO() : (global.nowISO ? global.nowISO() : new Date().toISOString())); }
+  function getAppMockPeople(){ return _ctx.MOCK_PEOPLE || global.MOCK_PEOPLE || []; }
+
   function esc(s){
     if(s == null) return '';
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -262,8 +272,56 @@
   }
 
   /* ------------------------------------------------------------
-   * 3. 소통탭 피드창 추천 템플릿 3종 아코디언 컴팩트화
+   * 3. 아워골 추천 템플릿 3종 아코디언 컴팩트화 & 둘러보기/미리보기
    * ------------------------------------------------------------ */
+  function openTemplatePreviewModal(tmplId){
+    var templates = global.CREATOR_TEMPLATES || [];
+    var t = templates.find(function(x){ return x.id === tmplId; });
+    if(!t) return;
+    var msListHtml = (t.ms || []).map(function(m, mIdx){
+      var tasksHtml = (m.tasks || []).map(function(tk){
+        return '<div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:.8125rem;color:var(--ink-soft);">' +
+          '<span style="color:var(--brand);font-weight:700;">✓</span>' +
+          '<span>' + esc(tk) + '</span>' +
+        '</div>';
+      }).join('');
+      return '<div style="margin-bottom:10px;padding:10px 12px;background:var(--surface-2);border-radius:10px;border:1px solid var(--rule);">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+          '<b style="font-size:.875rem;color:var(--ink);">' + esc(m.title) + '</b>' +
+          '<span class="dday-pill" style="font-size:.6875rem;">' + (mIdx + 1) + '단계</span>' +
+        '</div>' +
+        tasksHtml +
+      '</div>';
+    }).join('');
+
+    var modalHtml = '<h3>' + esc(t.title) + ' · 세부 둘러보기</h3>' +
+      '<p class="faint" style="margin:-6px 0 12px;font-size:.8125rem;">' + esc(t.desc) + ' (' + t.weeks + '주 완주 코스)</p>' +
+      '<div style="max-height:55vh;overflow-y:auto;margin-bottom:14px;padding-right:2px;">' +
+        '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">📋 마일스톤 및 세부 할 일 목록 (' + (t.ms||[]).length + '개 단계)</div>' +
+        msListHtml +
+      '</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn btn-ghost" id="tplPreviewCloseBtn" type="button">닫기</button>' +
+        '<button class="btn btn-primary" id="tplPreviewStartBtn" type="button" style="font-weight:700;padding:8px 18px;">✨ 이 템플릿으로 내 목표 시작</button>' +
+      '</div>';
+
+    if(global.openModal){
+      global.openModal(modalHtml, function(sheet){
+        var closeBtn = sheet.querySelector('#tplPreviewCloseBtn');
+        if(closeBtn) closeBtn.onclick = global.closeModal;
+        var startBtn = sheet.querySelector('#tplPreviewStartBtn');
+        if(startBtn) startBtn.onclick = function(){
+          if(global.closeModal) global.closeModal();
+          if(global.cloneTemplate){
+            global.cloneTemplate(t.id, function(){
+              if(global.renderGoalsScreen) global.renderGoalsScreen();
+            });
+          }
+        };
+      });
+    }
+  }
+
   function renderTemplatesAccordionHtml(){
     var isExpanded = (global.state && global.state.templatesExpanded === true);
     var templates = global.CREATOR_TEMPLATES || [];
@@ -279,13 +337,18 @@
         '<div class="tm-desc" style="font-size:.8125rem;color:var(--ink-soft);margin-bottom:6px;">' + esc(t.desc) + '</div>' +
         '<div class="faint" style="font-size:.75rem;margin-bottom:8px;">마일스톤 ' + (t.ms||[]).length + '개 · 세부할일 ' + totalTasks + '개</div>' +
         '<div class="faint" data-tplcount="creator:' + t.id + '" style="font-size:.8125rem;margin-bottom:8px;display:none;"></div>' +
-        '<button class="btn btn-primary btn-sm" data-tmpl="' + t.id + '" type="button" style="width:100%;font-size:.8125rem;font-weight:700;padding:6px 0;border-radius:8px;">' +
-          '이 템플릿으로 목표 시작하기' +
-        '</button>' +
+        '<div style="display:flex;gap:6px;margin-top:6px;">' +
+          '<button class="btn btn-ghost btn-sm" data-preview-tmpl="' + t.id + '" type="button" style="flex:1;font-size:.8125rem;font-weight:700;padding:6px 0;border-radius:8px;">' +
+            '👀 둘러보기' +
+          '</button>' +
+          '<button class="btn btn-primary btn-sm" data-tmpl="' + t.id + '" type="button" style="flex:1.4;font-size:.8125rem;font-weight:700;padding:6px 0;border-radius:8px;">' +
+            '✨ 이 템플릿으로 시작' +
+          '</button>' +
+        '</div>' +
       '</div>';
     }).join('');
 
-    return '<div class="card" style="margin-bottom:12px;padding:10px 14px;background:var(--surface-2);border:1px solid var(--rule);border-radius:14px;">' +
+    return '<div class="card" id="ourgoalTemplatesCard" style="margin-bottom:12px;padding:10px 14px;background:var(--surface-2);border:1px solid var(--rule);border-radius:14px;">' +
       '<div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;" id="toggleTemplatesBtn">' +
         '<div style="display:flex;align-items:center;gap:8px;">' +
           '<span style="font-size:1.15rem;">📋</span>' +
@@ -294,12 +357,46 @@
             '<div class="faint" style="font-size:.75rem;margin-top:1px;">마일스톤과 세부할일이 통째로 내 목표로 복사돼요</div>' +
           '</div>' +
         '</div>' +
-        '<button type="button" class="btn btn-ghost btn-xs" style="font-size:.75rem;padding:3px 8px;border-radius:6px;border:1px solid var(--rule);color:var(--brand-strong);font-weight:700;flex:0 0 auto;">' +
+        '<button type="button" class="btn btn-ghost btn-xs tpl-toggle-btn" id="tplExploreToggleBtn" data-tplexplore="1" style="font-size:.75rem;padding:3px 8px;border-radius:6px;border:1px solid var(--rule);color:var(--brand-strong);font-weight:700;flex:0 0 auto;cursor:pointer;">' +
           (isExpanded ? '접기 ▲' : '둘러보기 ▼') +
         '</button>' +
       '</div>' +
       (isExpanded ? '<div style="margin-top:12px;display:flex;flex-direction:column;gap:6px;">' + cardsHtml + '</div>' : '') +
     '</div>';
+  }
+
+  function wireTemplatesAccordionEvents(container, onRerender){
+    if(!container) return;
+    var toggleBtn = container.querySelector('#toggleTemplatesBtn');
+    var exploreBtn = container.querySelector('#tplExploreToggleBtn');
+    var handleToggle = function(e){
+      if(e) e.stopPropagation();
+      if(global.state){
+        global.state.templatesExpanded = !global.state.templatesExpanded;
+      }
+      if(typeof onRerender === 'function') onRerender();
+    };
+
+    if(toggleBtn) toggleBtn.onclick = handleToggle;
+    if(exploreBtn) exploreBtn.onclick = handleToggle;
+
+    container.querySelectorAll('[data-preview-tmpl]').forEach(function(btn){
+      btn.onclick = function(e){
+        e.stopPropagation();
+        openTemplatePreviewModal(btn.dataset.previewTmpl);
+      };
+    });
+
+    container.querySelectorAll('[data-tmpl]').forEach(function(btn){
+      btn.onclick = function(e){
+        e.stopPropagation();
+        if(global.cloneTemplate){
+          global.cloneTemplate(btn.dataset.tmpl, function(){
+            if(typeof onRerender === 'function') onRerender();
+          });
+        }
+      };
+    });
   }
 
   /* ------------------------------------------------------------
@@ -402,16 +499,516 @@
   }
 
   /* ------------------------------------------------------------
+   * 5. DM (다이렉트 메시지) 모임원 선택 & 대화 시스템 (TASK-ES-105)
+   * ------------------------------------------------------------ */
+  function getTeamMembersPool(){
+    return [
+      { id: 'mem_ws_1', name: '이지수 팀장', nickname: '지수_TF장', avatar: '👩‍💼', groupName: '회사 워크숍 TF', role: '모임장', level: 8, streak: 24, theme: '커리어·기획', intro: '전사 전략 워크숍 TF를 이끌고 있습니다. 함께 완주해요!', goals: ['2026 하반기 전략 워크숍 완수', '부서별 액션플랜 수립'], replies: ['워크숍 아젠다 잘 확인했습니다! 좋은 의견 감사해요 🙌', '세션 타임테이블 준비 순조롭게 진행 중입니다!', '오늘도 팀 목표 위해 힘내봅시다! 👏'] },
+      { id: 'mem_ws_2', name: '김민우 대리', nickname: '민우_운영조', avatar: '👨‍💼', groupName: '회사 워크숍 TF', role: '팀원', level: 6, streak: 14, theme: '커리어·기획', intro: '대관 및 현장 운영 총괄을 맡고 있습니다.', goals: ['장소 대관 계약 및 음향 점검', '타임테이블 배포'], replies: ['대관 및 비품 준비 순조롭게 진행 중입니다!', '필요한 물품 리스트 공유해주셔서 감사해요 👍', '현장 음향 빔프로젝터 사전 점검 완료했습니다!'] },
+      { id: 'mem_ws_3', name: '박소연 사원', nickname: '소연_레크조', avatar: '🙋‍♀️', groupName: '회사 워크숍 TF', role: '팀원', level: 5, streak: 9, theme: '취미·소통', intro: '팀빌딩과 비전 세션 프로그램을 기획 중입니다.', goals: ['아이스브레이킹 게임 3종 준비', '참가자 웰컴키트 제작'], replies: ['팀빌딩 아이스브레이킹 게임 준비 완료했어요 🎲', '오늘도 수고 많으셨습니다! 즐거운 워크숍 만들어요 ✨', '상품 리스트업 완료해서 보고서 올렸어요!'] },
+      { id: 'mem_tr_1', name: '최현아', nickname: '현아_드라이브', avatar: '🚗', groupName: '제주 힐링여행', role: '모임장', level: 7, streak: 18, theme: '여행·생활', intro: '낙오자 없는 제주 힐링 여행을 기획하고 있어요!', goals: ['제주 3박4일 독채 펜션 예약', '동선별 드라이브 코스 확정'], replies: ['렌터카랑 숙소 확인 완료! 제주도 너무 기대되네요 🌴', '일정 코스 점검해봤어요. 동선 완벽합니다!', '오늘 날씨 체크해보니 아주 맑다고 하네요 :)'] },
+      { id: 'mem_tr_2', name: '정준호', nickname: '준호_맛집탐험', avatar: '🍖', groupName: '제주 힐링여행', role: '팀원', level: 6, streak: 11, theme: '식단·여행', intro: '제주 로컬 흑돼지/해산물 찐맛집 리스트업 담당', goals: ['흑돼지 맛집 단체석 예약', '공용 경비 1/N 정산표 정리'], replies: ['흑돼지 맛집 단체석 예약 성공했습니다 👍', '공용 경비 모임통장 정산표 공유해드릴게요.', '제주 로컬 카페 리스트도 추가해뒀어요!'] },
+      { id: 'mem_ft_1', name: '강성진 코치', nickname: '성진_헤드코치', avatar: '🏋️‍♂️', groupName: '크로스핏 정복대', role: '코치', level: 10, streak: 45, theme: '운동·건강', intro: '안전하고 즐겁게 한계 돌파! 주 5회 WOD 정복', goals: ['크루 전체 월 250회 WOD 달성', '전원 Rx 도전 서포트'], replies: ['오늘 WOD 자세 정말 좋았습니다! 점진적 과부하 유지하세요 🔥', '스트레칭과 웜업 15분 필수인 거 아시죠? 부상 방지!', '포기하지 않고 라운드 끝까지 채운 끈기 멋집니다 👊'] },
+      { id: 'mem_ft_2', name: '윤태양', nickname: '태양_와드러버', avatar: '💪', groupName: '크로스핏 정복대', role: '팀원', level: 7, streak: 19, theme: '운동·건강', intro: '무반동 턱걸이 10개 도전 중인 크로스핏터', goals: ['Rx 무게 정복', '턱걸이 10개 연속 성공'], replies: ['오늘 Rx 무게 도전 성공했습니다! 같이 땀 흘려요 👊', '이번 주 3회 출석 꼭 채우겠습니다!', '내일 와드도 같이 파이팅해요!'] }
+    ];
+  }
+
+  function getDmPerson(id){
+    var mockPeople = global.MOCK_PEOPLE || [];
+    var p = mockPeople.find(function(x){ return x.id === id; });
+    if(p) return p;
+
+    var comps = (global.state && global.state.profile && global.state.profile.companions) || [];
+    var c = comps.find(function(x){ return x.id === id; });
+    if(c){
+      if(!c.replies){
+        c.replies = [
+          '안녕하세요! 오늘도 목표 파이팅입니다! 🔥',
+          '메시지 확인했어요! 오늘 체크인 완료하셨나요? 함께 갓생 살아요 :)',
+          '응원 감사해요! 저도 방금 오늘의 실천 기록 남겼어요 💪'
+        ];
+      }
+      return c;
+    }
+
+    var teamMembers = getTeamMembersPool();
+    var tm = teamMembers.find(function(x){ return x.id === id; });
+    if(tm){
+      if(!tm.replies){
+        tm.replies = [
+          '안녕하세요! 우리 모임 함께 완주해요 🙌',
+          '네 말씀하신 내용 확인했습니다! 파이팅해요!',
+          '오늘도 실천 인증 완료했습니다! 다 같이 힘내봐요 ✨'
+        ];
+      }
+      return tm;
+    }
+
+    return null;
+  }
+
+  function renderCommDM(body){
+    var teamMembers = getTeamMembersPool();
+    var state = global.state || {};
+    var mockPeople = global.MOCK_PEOPLE || [];
+
+    if(state.dmActiveId){
+      var person = getDmPerson(state.dmActiveId);
+      if(!person){ state.dmActiveId = null; return renderCommDM(body); }
+
+      person._thread = person._thread || [
+        { from: 'them', text: (person.replies && person.replies.length) ? person.replies[0] : '안녕하세요! 함께 목표를 향해 달려요 😊', time: global.fmtTime ? global.fmtTime(new Date().toISOString()) : '방금' }
+      ];
+
+      var subTitle = person.groupName ? ('👥 ' + esc(person.groupName) + (person.role ? ' · ' + esc(person.role) : '')) : (person.theme ? ('🤝 동반자 · ' + esc(person.theme)) : '아워골 소통 상대');
+
+      body.innerHTML = '<span class="dm-back" id="dmBack" style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-size:.875rem;font-weight:700;color:var(--brand-strong);margin-bottom:12px;">‹ 목록으로</span>' +
+        '<div class="dm-thread-wrap">' +
+          '<div class="dm-thread-head" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card);border-bottom:1px solid var(--rule);">' +
+            '<div class="feed-avatar" style="width:40px;height:40px;font-size:1.4rem;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border-radius:50%;">' + person.avatar + '</div>' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div style="font-weight:700;font-size:.9375rem;color:var(--ink);">' + esc(person.nickname || person.name) + '</div>' +
+              '<div class="faint" style="font-size:.75rem;margin-top:1px;">' + subTitle + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="dm-msgs" id="dmMsgs" style="padding:14px;min-height:240px;max-height:420px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;">' +
+            person._thread.map(function(m){
+              return '<div class="dm-msg ' + m.from + '">' + esc(m.text) + '</div>';
+            }).join('') +
+          '</div>' +
+          '<div class="dm-input-row" style="padding:10px 12px;background:var(--card);border-top:1px solid var(--rule);display:flex;gap:8px;">' +
+            '<input id="dmInput" type="text" placeholder="메시지를 입력하세요 (Enter)" style="flex:1;border:1px solid var(--rule);border-radius:10px;padding:8px 12px;font-size:.875rem;background:var(--surface-2);color:var(--ink);">' +
+            '<button class="btn btn-primary btn-sm" id="dmSend" type="button" style="font-weight:700;border-radius:10px;padding:8px 16px;">전송</button>' +
+          '</div>' +
+        '</div>' +
+        '<p class="faint" style="margin-top:10px;font-size:.75rem;">💡 모임 동료 및 동반자와의 1:1 다이렉트 메시지 공간이에요</p>';
+
+      var backBtn = document.getElementById('dmBack');
+      if(backBtn) backBtn.addEventListener('click', function(){ state.dmActiveId = null; renderCommDM(body); });
+
+      var msgsEl = document.getElementById('dmMsgs');
+      if(msgsEl) msgsEl.scrollTop = msgsEl.scrollHeight;
+
+      var send = function(){
+        var input = document.getElementById('dmInput');
+        if(!input) return;
+        var text = input.value.trim();
+        if(!text) return;
+        var nowStr = global.fmtTime ? global.fmtTime(new Date().toISOString()) : '방금';
+        person._thread.push({ from: 'me', text: text, time: nowStr });
+        input.value = '';
+        renderCommDM(body);
+        setTimeout(function(){
+          var replies = person.replies || ['메시지 확인했어요! 오늘도 파이팅입니다! 🔥'];
+          var pick = replies[Math.floor(Math.random() * replies.length)];
+          person._thread.push({ from: 'them', text: pick, time: nowStr });
+          if(document.body.contains(body) && state.dmActiveId === person.id) renderCommDM(body);
+        }, 700 + Math.random() * 600);
+      };
+
+      var sendBtn = document.getElementById('dmSend');
+      if(sendBtn) sendBtn.addEventListener('click', send);
+      var inputEl = document.getElementById('dmInput');
+      if(inputEl){
+        inputEl.focus();
+        inputEl.addEventListener('keydown', function(e){ if(e.key === 'Enter') send(); });
+      }
+    } else {
+      var teamMembersChipsHtml = teamMembers.map(function(m){
+        return '<div class="dm-team-chip" data-openteamdm="' + m.id + '" role="button" tabindex="0" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;width:72px;padding:8px 4px;background:var(--card);border:1px solid var(--rule);border-radius:12px;cursor:pointer;text-align:center;transition:transform 0.15s ease;">' +
+          '<div style="width:38px;height:38px;border-radius:50%;background:var(--surface-2);border:1.5px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin-bottom:4px;">' + m.avatar + '</div>' +
+          '<div style="font-size:.75rem;font-weight:700;color:var(--ink);width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(m.name) + '</div>' +
+          '<span class="faint" style="font-size:.625rem;line-height:1.2;margin-top:2px;">' + (m.role || '팀원') + '</span>' +
+        '</div>';
+      }).join('');
+
+      var allDmList = [];
+      teamMembers.forEach(function(m){
+        if(m._thread && m._thread.length) allDmList.push(m);
+      });
+      var companions = (state.profile && state.profile.companions) || [];
+      companions.forEach(function(c){
+        allDmList.push(c);
+      });
+      mockPeople.forEach(function(p){
+        if(!allDmList.find(function(x){ return x.id === p.id; })) allDmList.push(p);
+      });
+
+      var dmListHtml = allDmList.map(function(p){
+        var last = (p._thread && p._thread.length) ? p._thread[p._thread.length - 1].text : (p.intro || (p.replies && p.replies[0]) || '새로운 대화를 시작해보세요!');
+        var badgeText = p.groupName ? p.groupName : (p.theme || '동반자');
+        return '<div class="dm-list-item" data-open="' + p.id + '" style="cursor:pointer;padding:10px 12px;display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--rule);border-radius:12px;margin-bottom:8px;">' +
+          '<div class="feed-avatar" style="width:42px;height:42px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex:0 0 auto;">' + p.avatar + '</div>' +
+          '<div class="dm-preview" style="flex:1;min-width:0;">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">' +
+              '<b style="font-size:.875rem;color:var(--ink);">' + esc(p.nickname || p.name) + '</b>' +
+              '<span class="dday-pill" style="font-size:.6875rem;">' + esc(badgeText) + '</span>' +
+            '</div>' +
+            '<span style="font-size:.8125rem;color:var(--ink-soft);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(last) + '</span>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      body.innerHTML = '<div class="card" style="margin-bottom:14px;padding:12px 14px;background:var(--surface-2);border:1px solid var(--rule);border-radius:14px;">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+            '<div style="font-weight:700;font-size:.875rem;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
+              '<span>👥</span><span>내 모임 동료에게 바로 DM 보내기</span>' +
+            '</div>' +
+            '<span class="faint" style="font-size:.75rem;">원클릭 선택</span>' +
+          '</div>' +
+          '<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch;">' +
+            teamMembersChipsHtml +
+          '</div>' +
+        '</div>' +
+        '<div style="font-size:.875rem;font-weight:700;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">' +
+          '<span>💬 대화 목록</span>' +
+          '<span class="faint" style="font-size:.75rem;">' + allDmList.length + '개의 대화</span>' +
+        '</div>' +
+        '<div class="dm-list-wrap">' +
+          dmListHtml +
+        '</div>';
+
+      body.querySelectorAll('[data-openteamdm]').forEach(function(el){
+        el.addEventListener('click', function(){
+          state.dmActiveId = el.dataset.openteamdm;
+          renderCommDM(body);
+        });
+      });
+
+      body.querySelectorAll('[data-open]').forEach(function(el){
+        el.addEventListener('click', function(){
+          state.dmActiveId = el.dataset.open;
+          renderCommDM(body);
+        });
+      });
+    }
+  }
+
+  /* ------------------------------------------------------------
+   * 6. 동반자(친구·팔로우) 소셜 시스템 (TASK-ES-105)
+   * ------------------------------------------------------------ */
+  var ALL_SEARCHABLE_USERS = [
+    { id: 'comp_runner_1', nickname: '새벽러너_민지', name: '김민지', avatar: '🏃‍♀️', level: 7, streak: 15, theme: '러닝·마라톤', intro: '매일 아침 6시 5km 달리기 인증합니다! 꾸준함이 무기!', goals: ['10km 마라톤 완주', '주 4회 모닝런'] },
+    { id: 'comp_coder_2', nickname: '코드장인_도현', name: '박도현', avatar: '💻', level: 9, streak: 28, theme: '코딩·개발', intro: '풀스택 개발자 지망생, 1일 1커밋과 알고리즘 도전 중', goals: ['React 풀스택 앱 출시', '알고리즘 100제 완주'] },
+    { id: 'comp_study_3', nickname: '갓생사는_수아', name: '이수아', avatar: '📚', level: 5, streak: 8, theme: '학습·자격', intro: '공인중개사 1차 동차합격 목표 열공 모드입니다!', goals: ['기출문제 3회독', '하루 3시간 독서실'] },
+    { id: 'comp_cf_4', nickname: '와드전사_현석', name: '정현석', avatar: '🏋️', level: 8, streak: 21, theme: '크로스핏', intro: 'Rx 완료 인증! 부상 없이 강해지는 와드 파이터', goals: ['3대 400kg 달성', '주 5회 WOD'] },
+    { id: 'comp_work_5', nickname: '비즈니스_수진', name: '한수진', avatar: '📈', level: 6, streak: 12, theme: '커리어·머니', intro: 'B2B 영업 딜 클로징 챌린지 100일 진행 중', goals: ['분기 매출 1억 달성', '신규 고객사 30곳 유치'] },
+    { id: 'comp_eng_6', nickname: '오픽정복_준영', name: '서준영', avatar: '🗣️', level: 4, streak: 7, theme: '어학·영어', intro: '매일 영어 섀도잉 30분, AL 등급 목표입니다', goals: ['오픽 AL 취득', '미드 1편 통암기'] },
+    { id: 'comp_diet_7', nickname: '클린식단_하린', name: '윤하린', avatar: '🥗', level: 6, streak: 19, theme: '식단·다이어트', intro: '탄단지 골고루 챙기는 건강하고 든든한 식단 기록', goals: ['체지방률 18% 달성', '매일 물 2L 마시기'] },
+    { id: 'comp_read_8', nickname: '북러버_태민', name: '강태민', avatar: '📖', level: 8, streak: 33, theme: '독서·인문', intro: '한 달에 4권 책 읽고 노션에 핵심 3줄 요약 남기기', goals: ['올해 50권 완독', '독서 모임 발제문 작성'] }
+  ];
+
+  function ensureDefaultCompanions(){
+    var state = global.state;
+    if(!state || !state.profile) return [];
+    if(!state.profile.companions || !Array.isArray(state.profile.companions)){
+      state.profile.companions = [
+        { id: 'comp_runner_1', nickname: '새벽러너_민지', name: '김민지', avatar: '🏃‍♀️', level: 7, streak: 15, theme: '러닝·마라톤', intro: '매일 아침 6시 5km 달리기 인증합니다! 꾸준함이 무기!', goals: ['10km 마라톤 완주', '주 4회 모닝런'], isMutual: true, createdAt: '2026-09-10' },
+        { id: 'comp_coder_2', nickname: '코드장인_도현', name: '박도현', avatar: '💻', level: 9, streak: 28, theme: '코딩·개발', intro: '풀스택 개발자 지망생, 1일 1커밋과 알고리즘 도전 중', goals: ['React 풀스택 앱 출시', '알고리즘 100제 완주'], isMutual: true, createdAt: '2026-09-12' },
+        { id: 'comp_study_3', nickname: '갓생사는_수아', name: '이수아', avatar: '📚', level: 5, streak: 8, theme: '학습·자격', intro: '공인중개사 1차 동차합격 목표 열공 모드입니다!', goals: ['기출문제 3회독', '하루 3시간 독서실'], isMutual: true, createdAt: '2026-09-14' }
+      ];
+    }
+    return state.profile.companions;
+  }
+
+  function openUserProfileModal(user){
+    if(!user) return;
+    var state = global.state || {};
+    var goalsHtml = (user.goals || ['진행 중인 목표 1개']).map(function(g){
+      return '<div style="padding:8px 12px;background:var(--surface-2);border-radius:10px;border:1px solid var(--rule);font-size:.8125rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+        '<span style="color:var(--ink);font-weight:600;">🎯 ' + esc(g) + '</span>' +
+        '<span class="dday-pill" style="font-size:.6875rem;background:var(--card);">진행 중</span>' +
+      '</div>';
+    }).join('');
+
+    var heatmapCubes = '';
+    for(var d = 13; d >= 0; d--){
+      var hasCheckin = (d % 4 !== 0);
+      var bg = hasCheckin ? 'var(--brand)' : 'var(--rule)';
+      heatmapCubes += '<div style="flex:1;aspect-ratio:1/1;background:' + bg + ';border-radius:3px;" title="' + d + '일 전 실천"></div>';
+    }
+
+    var isMyCompanion = (state.profile && state.profile.companions && state.profile.companions.some(function(c){ return c.id === user.id; }));
+
+    var modalHtml = '<h3>' + esc(user.nickname || user.name) + '님의 프로필</h3>' +
+      '<div style="text-align:center;padding:12px 0 10px;">' +
+        '<div style="width:72px;height:72px;border-radius:50%;background:var(--surface-2);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 10px;box-shadow:0 4px 12px rgba(0,0,0,0.06);">' +
+          user.avatar +
+        '</div>' +
+        '<div style="font-weight:700;font-size:1.1rem;color:var(--ink);">' + esc(user.nickname || user.name) + (user.name ? ' <span class="faint" style="font-size:.8125rem;font-weight:400;">(' + esc(user.name) + ')</span>' : '') + '</div>' +
+        '<div class="faint" style="font-size:.8125rem;margin-top:2px;">' + esc(user.theme || '아워골 동반자') + '</div>' +
+        '<div style="display:flex;justify-content:center;gap:6px;margin-top:8px;">' +
+          '<span class="dday-pill" style="font-size:.75rem;">Lv.' + (user.level || 1) + '</span>' +
+          '<span class="dday-pill" style="font-size:.75rem;background:var(--red-soft);color:var(--brand-strong);">🔥 ' + (user.streak || 1) + '일 연속 실천</span>' +
+        '</div>' +
+      '</div>' +
+      '<div style="padding:10px 14px;background:var(--surface-2);border-radius:12px;margin-bottom:14px;font-size:.8125rem;color:var(--ink);line-height:1.5;text-align:center;">' +
+        '“ ' + esc(user.intro || '함께 목표를 향해 달리는 든든한 동반자입니다.') + ' ”' +
+      '</div>' +
+      '<div style="margin-bottom:14px;">' +
+        '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">도전 중인 목표</div>' +
+        goalsHtml +
+      '</div>' +
+      '<div style="margin-bottom:16px;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+          '<span style="font-size:.8125rem;font-weight:700;color:var(--ink);">최근 14일 실천 히트맵</span>' +
+          '<span class="faint" style="font-size:.75rem;">' + (user.streak || 1) + '일 연속 달성 중</span>' +
+        '</div>' +
+        '<div style="display:flex;gap:4px;padding:8px 10px;background:var(--card);border:1px solid var(--rule);border-radius:10px;">' +
+          heatmapCubes +
+        '</div>' +
+      '</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn btn-ghost" id="userProfCloseBtn" type="button">닫기</button>' +
+        (isMyCompanion ? '' : '<button class="btn btn-ghost" id="userProfAddCompBtn" type="button" style="color:var(--brand-strong);border-color:var(--brand);">+ 동반자 추가</button>') +
+        '<button class="btn btn-primary" id="userProfDmBtn" type="button" style="font-weight:700;padding:8px 20px;">💬 1:1 DM 보내기</button>' +
+      '</div>';
+
+    if(global.openModal){
+      global.openModal(modalHtml, function(sheet){
+        var closeBtn = sheet.querySelector('#userProfCloseBtn');
+        if(closeBtn) closeBtn.onclick = global.closeModal;
+
+        var addCompBtn = sheet.querySelector('#userProfAddCompBtn');
+        if(addCompBtn){
+          addCompBtn.onclick = async function(){
+            var comps = ensureDefaultCompanions();
+            if(!comps.some(function(x){ return x.id === user.id; })){
+              comps.push({
+                id: user.id,
+                nickname: user.nickname || user.name,
+                name: user.name,
+                avatar: user.avatar,
+                level: user.level || 1,
+                streak: user.streak || 1,
+                theme: user.theme || '동반자',
+                intro: user.intro || '',
+                goals: user.goals || [],
+                isMutual: true,
+                createdAt: new Date().toISOString()
+              });
+              if(global.saveProfile) await global.saveProfile();
+              if(global.toast) global.toast((user.nickname || user.name) + '님을 동반자로 추가했어요! 🎉');
+              if(global.closeModal) global.closeModal();
+              if(state.activeTab === 'comm' && state.commSubTab === 'companion'){
+                if(global.renderCommScreen) global.renderCommScreen();
+              }
+            }
+          };
+        }
+
+        var dmBtn = sheet.querySelector('#userProfDmBtn');
+        if(dmBtn){
+          dmBtn.onclick = function(){
+            if(global.closeModal) global.closeModal();
+            state.commSubTab = 'dm';
+            state.dmActiveId = user.id;
+            if(global.setTab) global.setTab('comm');
+            if(global.renderCommScreen) global.renderCommScreen();
+          };
+        }
+      });
+    }
+  }
+
+  function renderCommCompanions(body){
+    var state = global.state || {};
+    var companions = ensureDefaultCompanions();
+    var searchKeyword = (state._companionSearchKeyword || '').trim().toLowerCase();
+
+    var searchResultsHtml = '';
+    if(searchKeyword){
+      var matched = ALL_SEARCHABLE_USERS.filter(function(u){
+        return (u.nickname && u.nickname.toLowerCase().includes(searchKeyword)) ||
+               (u.name && u.name.toLowerCase().includes(searchKeyword)) ||
+               (u.theme && u.theme.toLowerCase().includes(searchKeyword));
+      });
+
+      if(!matched.length){
+        searchResultsHtml = '<div style="padding:16px 12px;background:var(--surface-2);border-radius:12px;text-align:center;font-size:.8125rem;color:var(--ink-soft);margin-bottom:14px;">' +
+          '“' + esc(searchKeyword) + '” 닉네임을 가진 사용자를 찾지 못했어요.<br>다른 키워드나 테마로 검색해보세요.' +
+        '</div>';
+      } else {
+        searchResultsHtml = '<div style="margin-bottom:14px;background:var(--surface-2);border-radius:14px;padding:12px;border:1px solid var(--rule);">' +
+          '<div style="font-size:.75rem;font-weight:700;color:var(--brand-strong);margin-bottom:8px;">🔍 닉네임 검색 결과 (' + matched.length + '명)</div>' +
+          matched.map(function(u){
+            var isAdded = companions.some(function(c){ return c.id === u.id; });
+            return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--card);border:1px solid var(--rule);border-radius:10px;margin-bottom:6px;">' +
+              '<div class="comp-avatar-click" data-viewprof="' + u.id + '" style="width:36px;height:36px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;cursor:pointer;flex:0 0 auto;" title="프로필 보기">' +
+                u.avatar +
+              '</div>' +
+              '<div style="flex:1;min-width:0;">' +
+                '<div style="font-weight:700;font-size:.875rem;color:var(--ink);">' + esc(u.nickname) + ' <span class="dday-pill" style="font-size:.6875rem;">Lv.' + u.level + '</span></div>' +
+                '<div class="faint" style="font-size:.75rem;">' + esc(u.intro) + '</div>' +
+              '</div>' +
+              (isAdded ?
+                '<span class="faint" style="font-size:.75rem;padding:4px 8px;background:var(--surface-2);border-radius:6px;">✓ 이미 동반자</span>' :
+                '<button class="btn btn-primary btn-xs" data-addcomp="' + u.id + '" type="button" style="font-size:.75rem;padding:4px 10px;border-radius:8px;font-weight:700;">+ 추가</button>'
+              ) +
+            '</div>';
+          }).join('') +
+        '</div>';
+      }
+    }
+
+    var listHtml = '';
+    if(!companions.length){
+      listHtml = '<div class="empty-state" style="padding:30px 10px;text-align:center;">' +
+        '<div style="font-size:2.5rem;margin-bottom:8px;">🤝</div>' +
+        '<div style="font-weight:700;font-size:.9375rem;color:var(--ink);margin-bottom:4px;">아직 등록된 동반자가 없어요</div>' +
+        '<div class="faint" style="font-size:.8125rem;">위의 닉네임 검색을 통해 함께 달릴 동반자를 찾아보세요!</div>' +
+      '</div>';
+    } else {
+      listHtml = companions.map(function(c){
+        return '<div class="card" style="margin-bottom:8px;padding:12px 14px;background:var(--card);border:1px solid var(--rule);border-radius:14px;display:flex;align-items:center;gap:12px;">' +
+          '<div class="comp-avatar-click" data-viewprof="' + c.id + '" role="button" tabindex="0" style="width:44px;height:44px;border-radius:50%;background:var(--surface-2);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:pointer;flex:0 0 auto;transition:transform 0.15s ease;" title="아바타를 클릭해 프로필을 확인하세요">' +
+            c.avatar +
+          '</div>' +
+          '<div style="flex:1;min-width:0;">' +
+            '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">' +
+              '<b style="font-size:.9375rem;color:var(--ink);cursor:pointer;" class="comp-avatar-click" data-viewprof="' + c.id + '">' + esc(c.nickname || c.name) + '</b>' +
+              '<span class="dday-pill" style="font-size:.6875rem;">Lv.' + (c.level || 1) + '</span>' +
+              '<span style="font-size:.75rem;color:var(--brand-strong);font-weight:700;">🔥 ' + (c.streak || 1) + '일</span>' +
+            '</div>' +
+            '<div class="faint" style="font-size:.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(c.intro || c.theme || '목표를 향해 함께 달리는 동반자') + '</div>' +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:6px;flex:0 0 auto;">' +
+            '<button class="btn btn-primary btn-sm" data-directdm="' + c.id + '" type="button" style="font-size:.8125rem;font-weight:700;padding:6px 12px;border-radius:8px;">' +
+              '💬 DM' +
+            '</button>' +
+            '<button class="btn btn-ghost btn-xs" data-delcomp="' + c.id + '" type="button" style="font-size:.75rem;padding:4px 6px;color:var(--ink-faint);border:none;" title="동반자 삭제">' +
+              '✕' +
+            '</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    body.innerHTML = '<div class="card" style="margin-bottom:14px;padding:12px 14px;background:var(--surface-2);border:1px solid var(--rule);border-radius:14px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+          '<div style="font-weight:700;font-size:.9375rem;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
+            '<span>🤝</span><span>나의 목표 동반자</span>' +
+          '</div>' +
+          '<span class="dday-pill" style="font-weight:700;">' + companions.length + '명</span>' +
+        '</div>' +
+        '<div class="faint" style="font-size:.75rem;">카카오톡 친구, 인스타 팔로우처럼 동반자를 맺고 서로의 목표를 응원하세요!</div>' +
+      '</div>' +
+
+      '<div style="margin-bottom:14px;">' +
+        '<div style="display:flex;gap:6px;">' +
+          '<input type="text" id="companionSearchInput" placeholder="닉네임으로 동반자 검색 (예: 러너, 도현, 수아)" value="' + esc(state._companionSearchKeyword || '') + '" style="flex:1;border:1px solid var(--rule);border-radius:10px;padding:8px 12px;font-size:.875rem;background:var(--surface-2);color:var(--ink);">' +
+          '<button class="btn btn-primary btn-sm" id="companionSearchBtn" type="button" style="font-weight:700;padding:0 14px;border-radius:10px;">검색</button>' +
+          (searchKeyword ? '<button class="btn btn-ghost btn-sm" id="companionSearchResetBtn" type="button" style="padding:0 8px;border-radius:10px;">초기화</button>' : '') +
+        '</div>' +
+        searchResultsHtml +
+      '</div>' +
+
+      '<div style="font-size:.875rem;font-weight:700;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">' +
+        '<span>동반자 목록</span>' +
+        '<span class="faint" style="font-size:.75rem;">아바타 클릭 시 프로필 조회</span>' +
+      '</div>' +
+      '<div class="companion-list-wrap">' +
+        listHtml +
+      '</div>';
+
+    var sInput = body.querySelector('#companionSearchInput');
+    var sBtn = body.querySelector('#companionSearchBtn');
+    var sResetBtn = body.querySelector('#companionSearchResetBtn');
+
+    var doSearch = function(){
+      if(!sInput) return;
+      state._companionSearchKeyword = sInput.value;
+      renderCommCompanions(body);
+    };
+
+    if(sBtn) sBtn.addEventListener('click', doSearch);
+    if(sInput) sInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') doSearch(); });
+    if(sResetBtn){
+      sResetBtn.addEventListener('click', function(){
+        state._companionSearchKeyword = '';
+        renderCommCompanions(body);
+      });
+    }
+
+    body.querySelectorAll('[data-viewprof]').forEach(function(el){
+      el.addEventListener('click', function(){
+        var uid = el.dataset.viewprof;
+        var u = ALL_SEARCHABLE_USERS.find(function(x){ return x.id === uid; }) ||
+                companions.find(function(x){ return x.id === uid; });
+        if(u) openUserProfileModal(u);
+      });
+    });
+
+    body.querySelectorAll('[data-addcomp]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var uid = btn.dataset.addcomp;
+        var target = ALL_SEARCHABLE_USERS.find(function(x){ return x.id === uid; });
+        if(!target) return;
+        if(!companions.some(function(x){ return x.id === target.id; })){
+          companions.push({
+            id: target.id,
+            nickname: target.nickname,
+            name: target.name,
+            avatar: target.avatar,
+            level: target.level,
+            streak: target.streak,
+            theme: target.theme,
+            intro: target.intro,
+            goals: target.goals,
+            isMutual: true,
+            createdAt: new Date().toISOString()
+          });
+          if(global.saveProfile) await global.saveProfile();
+          if(global.toast) global.toast(target.nickname + '님을 동반자로 추가했어요! 🎉');
+          renderCommCompanions(body);
+        }
+      });
+    });
+
+    body.querySelectorAll('[data-directdm]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var uid = btn.dataset.directdm;
+        state.commSubTab = 'dm';
+        state.dmActiveId = uid;
+        if(global.renderCommScreen) global.renderCommScreen();
+      });
+    });
+
+    body.querySelectorAll('[data-delcomp]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var uid = btn.dataset.delcomp;
+        var comp = companions.find(function(x){ return x.id === uid; });
+        var name = comp ? comp.nickname : '해당 동반자';
+        if(!confirm(name + '님과의 동반자 관계를 해제하시겠습니까?')) return;
+        state.profile.companions = companions.filter(function(x){ return x.id !== uid; });
+        if(global.saveProfile) await global.saveProfile();
+        if(global.toast) global.toast('동반자 관계를 해제했습니다');
+        renderCommCompanions(body);
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------
    * 모듈 전역 노출
    * ------------------------------------------------------------ */
   global.OurgoalTeamInviteComm = {
+    init: function(ctx){ _ctx = ctx || {}; },
     openTeamInviteModal: openTeamInviteModal,
     openTeamChatModal: openTeamChatModal,
     handlePingSentAutoReply: handlePingSentAutoReply,
     renderTemplatesAccordionHtml: renderTemplatesAccordionHtml,
+    openTemplatePreviewModal: openTemplatePreviewModal,
+    wireTemplatesAccordionEvents: wireTemplatesAccordionEvents,
     postShareCardToFeed: postShareCardToFeed,
     shareCardExternal: shareCardExternal,
-    saveCardImage: saveCardImage
+    saveCardImage: saveCardImage,
+    getTeamMembersPool: getTeamMembersPool,
+    getDmPerson: getDmPerson,
+    renderCommDM: renderCommDM,
+    openUserProfileModal: openUserProfileModal,
+    renderCommCompanions: renderCommCompanions,
+    ensureDefaultCompanions: ensureDefaultCompanions,
+    ALL_SEARCHABLE_USERS: ALL_SEARCHABLE_USERS
   };
 
 })(typeof window !== 'undefined' ? window : global);
