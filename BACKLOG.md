@@ -131,9 +131,9 @@
 
 ### 운영/자동화 (1건)
 
-- [ ] **47. [런칭 전 필수] 공식 업무용 이메일 생성 및 앱/약관 문의처 교체 (ysm0422@naver.com -> 업무용 도메인)** · 상태 대기 · 예상 20분
-  - 범위: 공식 도메인 이메일(support@ourgoal.app 등) 개설 후 index.html, docs/legal/privacy.md의 고객지원 이메일 일괄 교체
-  - 완료 기준: 공식 업무용 도메인 이메일로 갱신되고 실제 수발신 테스트 통과
+- [x] **47. [런칭 전 필수] 공식 업무용 이메일 생성 및 앱/약관 문의처 교체 (ysm0422@naver.com -> 업무용 도메인)** · 완료 (#TASK-ES-101, 2026-09-15)
+  - 범위: 공식 도메인 이메일(support@ourgoal.kr) 개설 및 index.html, docs/legal/privacy.md, docs/growth/RELEASE_72H_GUIDE.md 고객지원/보호책임자 이메일 일괄 교체
+  - 완료 기준: 공식 업무용 도메인 이메일(support@ourgoal.kr)로 전수 갱신 및 smoke-test 100% 통과
   - 선행: 도메인 구매/연결
 
 <!-- gen-backlog:end -->
