@@ -908,7 +908,7 @@
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
-  <script src="js/calendar-attachment.js?v=20260915-es096"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260915-es105"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script>
+  <script src="js/calendar-attachment.js?v=20260915-es096"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260915-es105"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script>
 <script>
 (function(){
   "use strict";
@@ -19033,7 +19033,7 @@
   }
 
   async function cloneTemplate(tmplId, rerender){
-    var t = CREATOR_TEMPLATES.find(function(x){ return x.id===tmplId; });
+    var t = CREATOR_TEMPLATES.find(function(x){ return x.id===tmplId; }) || (window.OURGOAL_60_TEMPLATES && window.OURGOAL_60_TEMPLATES.getById ? window.OURGOAL_60_TEMPLATES.getById(tmplId) : null);
     if(!t) return;
     var goal = {
       id: newId(), title: t.title, dueDate: null, category: t.category,
@@ -19049,11 +19049,11 @@
     state.activeGoalId = goal.id;
     trackGoalCreated(goal, 'community_template');
     await saveProfile();
-    toast('아워골 기본 템플릿을 내 목표로 복사했어요');
+    toast('\'' + (t.title && t.title.length > 18 ? t.title.slice(0, 18) + '...' : t.title) + '\' 목표를 추가했어요! 🎯');
     if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.recordCopy('creator:' + t.id, null); // KF-2 #TASK-ES-017: 서버 실복제 기록
     renderAll();
     if(rerender) rerender();
-  }
+  } window.cloneTemplate = cloneTemplate;
 
   /* ============ 소통 피드 (Supabase feed_posts, 실시간 동기화) ============ */
   var FEED_POSTS_CACHE = null; // null=아직 안 불러옴, 로드 후 배열
@@ -19555,14 +19555,14 @@
         renderCommFeed(body);
       });
     });
-    var toggleTmplBtn = body.querySelector('#toggleTemplatesBtn');
-    if(toggleTmplBtn) toggleTmplBtn.onclick = function(){ state.templatesExpanded = !state.templatesExpanded; renderCommFeed(body); };
+    if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.wireTemplatesAccordionEvents){
+      window.OurgoalTeamInviteComm.wireTemplatesAccordionEvents(body, function(){ renderCommFeed(body); });
+    } else {
+      var toggleTmplBtn = body.querySelector('#toggleTemplatesBtn');
+      if(toggleTmplBtn) toggleTmplBtn.onclick = function(){ state.templatesExpanded = !state.templatesExpanded; renderCommFeed(body); };
+      body.querySelectorAll('[data-tmpl]').forEach(function(btn){ btn.onclick = function(){ cloneTemplate(btn.dataset.tmpl, function(){ renderCommFeed(body); }); }; });
+    }
 
-    body.querySelectorAll('[data-tmpl]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        cloneTemplate(btn.dataset.tmpl, function(){ renderCommFeed(body); });
-      });
-    });
 
     body.querySelectorAll('[data-delpost]').forEach(function(btn){
       btn.addEventListener('click', async function(){
