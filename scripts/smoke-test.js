@@ -4633,6 +4633,29 @@ check('compliance: [#TASK-ES-106] 헌법 제19조 의거 실 사용자 계정 �
   assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
 });
 
+check('compliance: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화 및 구글 캘린더 연동 분리 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const authSafety = fs.readFileSync(path.join(__dirname, '..', 'js', 'auth-safety.js'), 'utf8');
+
+  // 1. 랜딩 및 인증 화면 카카오 단일 메인 CTA 강조 & 구글 로그인 버튼 숨김
+  assert.ok(indexHtml.includes('카카오로 3초 만에 시작하기'), '랜딩 화면 카카오 3초 시작 문구');
+  assert.ok(indexHtml.includes('id="landGoogleBtn" type="button" style="display:none;"'), '랜딩 구글 로그인 버튼 비노출 숨김');
+  assert.ok(indexHtml.includes('id="authGoogleBtn" type="button" style="display:none;"'), '인증 화면 구글 로그인 버튼 비노출 숨김');
+
+  // 2. 구글 인증은 설정 내 구글 캘린더 연동 전용으로 배선 보존
+  assert.ok(indexHtml.includes('function tryConnectGoogleCalendar('), '구글 캘린더 연동 핸들러 보존');
+  assert.ok(indexHtml.includes('function openGoogleCalendarConnectModal('), '구글 캘린더 연동 모달 보존');
+  assert.ok(indexHtml.includes('id="gcalQuickConnectBtn"'), '설정 탭 구글 캘린더 연동 버튼 존재');
+
+  // 3. 최근 로그인 뱃지 및 기존 사용자 안전망(Rescue) 보존
+  assert.ok(authSafety.includes('아워골 로그인이 카카오로 간편 통합되었어요'), '최근 로그인 뱃지 카카오 통합 안내');
+  assert.ok(indexHtml.includes('function openLoginRescueModal('), '기존 사용자 데이터 안전 복구 모달 보존');
+
+  // 4. 헌법 제18조: index.html 22,196줄 불변 엄수
+  const lines = indexHtml.split(/\r?\n/).length;
+  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
