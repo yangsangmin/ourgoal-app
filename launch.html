@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>아워골 프로 콕핏 로컬 런처</title>
+  <style>
+    body {
+      background: #0b1220;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(255, 79, 100, 0.2);
+      border-top-color: #ff4f64;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 20px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    h2 { margin: 0 0 8px; font-size: 1.25rem; font-weight: 800; }
+    p { margin: 0; font-size: 0.9rem; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="spinner"></div>
+  <h2>⚡ 아워골 프로 콕핏 로컬 환경 로드 중...</h2>
+  <p>'지금부터 시간기록 & 데이터 가져오기' 콕핏 테마와 실제 데이터를 장착하여 즉시 진입합니다.</p>
+
+  <script>
+    (function() {
+      // 1. 다크 콕핏 테마 강제 세팅 (시간기록/데이터 가져오기와 100% 동일)
+      localStorage.setItem('ourgoal_current_theme', 'dark-space');
+
+      // 2. 실제 풍부한 목표 & 기록 데이터 프로필 세팅
+      var now = new Date();
+      var todayIso = now.toISOString();
+      var yesterdayIso = new Date(now.getTime() - 86400000).toISOString();
+      var twoDaysAgoIso = new Date(now.getTime() - 172800000).toISOString();
+
+      var profile = {
+        id: 'user-sangmin-pro',
+        username: 'sangmin',
+        displayName: '상민',
+        bio: '아워골 프로 콕핏 & 라이프 밸런스 마스터',
+        avatarUrl: '',
+        interests: ['운동/크루', '개발/IT', '자기계발'],
+        region: '서울',
+        regionPublic: true,
+        schemaVersion: 1,
+        createdAt: todayIso,
+        goals: [
+          {
+            id: 'g-hyrox-pro',
+            title: '2026 하이록스 서울 챔피언십 Sub-75 완주',
+            category: '운동',
+            topic: 'health',
+            dueDate: '2026-10-31',
+            createdAt: todayIso,
+            visibility: 'public',
+            milestones: [
+              { id: 'm1', title: '1km 인터벌 페이스 4\'10" 안정화', status: 'done' },
+              { id: 'm2', title: '8대 공식 스테이션 랩타임 단축 훈련', status: 'doing' },
+              { id: 'm3', title: '버피 브로드점프 80m 체력 보강', status: 'doing' },
+              { id: 'm4', title: '실전 풀코스 시뮬레이션 74분대 달성', status: 'todo' }
+            ]
+          },
+          {
+            id: 'g-rn-cross',
+            title: 'React Native 기반 모바일 콕핏 앱 출시',
+            category: '개발',
+            topic: 'dev',
+            dueDate: '2026-10-15',
+            createdAt: yesterdayIso,
+            visibility: 'public',
+            milestones: [
+              { id: 'm21', title: 'Fitts 법칙 기반 엄지 영역 제스처 튜닝', status: 'done' },
+              { id: 'm22', title: '오프라인 캐싱 & SQLite 동기화 엔진', status: 'doing' },
+              { id: 'm23', title: '스토어 출시 심사 통과', status: 'todo' }
+            ]
+          },
+          {
+            id: 'g-deepwork',
+            title: '매일 아침 1시간 딥워크 & 피트니스 루틴',
+            category: '루틴',
+            topic: 'routine',
+            dueDate: '2026-12-31',
+            createdAt: twoDaysAgoIso,
+            visibility: 'private',
+            milestones: [
+              { id: 'm31', title: '기상 직후 모바일 방해 요소 차단', status: 'done' },
+              { id: 'm32', title: '14일 연속 스트릭 유지', status: 'doing' }
+            ]
+          }
+        ],
+        records: [
+          {
+            id: 'rec-01',
+            goal_id: 'g-hyrox-pro',
+            content: '하이록스 4회차 시뮬레이션 인터벌 완료. SkiErg 1000m 03:58.4, Sled Push 50m 02:45.1 완벽 페이스 달성!',
+            duration_minutes: 48,
+            start_at: todayIso,
+            created_at: todayIso,
+            category: '운동',
+            topic: 'health',
+            status: 'done'
+          },
+          {
+            id: 'rec-02',
+            goal_id: 'g-rn-cross',
+            content: '아워골 전면 UI 프로 SaaS 콕핏 리파인. 헤어라인 보더 및 마이크로 섀도우, 햅틱 인터랙션 일체화 완료.',
+            duration_minutes: 60,
+            start_at: yesterdayIso,
+            created_at: yesterdayIso,
+            category: '개발',
+            topic: 'dev',
+            status: 'done'
+          },
+          {
+            id: 'rec-03',
+            goal_id: 'g-deepwork',
+            content: '모닝 5km 러닝 22분 10초 컷 및 모바일 콕핏 설계 구상.',
+            duration_minutes: 30,
+            start_at: twoDaysAgoIso,
+            created_at: twoDaysAgoIso,
+            category: '루틴',
+            topic: 'routine',
+            status: 'done'
+          }
+        ],
+        settings: {
+          theme: 'dark-space',
+          highContrast: false,
+          fontSize: 'normal'
+        }
+      };
+
+      try {
+        localStorage.setItem('ourgoal_guest_profile', JSON.stringify(profile));
+        localStorage.setItem('ourgoal_profile_backup_' + profile.id, JSON.stringify(profile));
+        localStorage.setItem('ourgoal_goals_backup_' + profile.id, JSON.stringify(profile.goals));
+        localStorage.setItem('ourgoal_records_backup_' + profile.id, JSON.stringify(profile.records));
+      } catch(e) {
+        console.error(e);
+      }
+
+      // 3. 캐시 버스팅과 함께 즉시 index.html 본체로 진입
+      setTimeout(function() {
+        window.location.replace('index.html?v=' + Date.now());
+      }, 200);
+    })();
+  </script>
+</body>
+</html>
