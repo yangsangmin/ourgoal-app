@@ -4141,6 +4141,40 @@ check('compliance: [#TASK-ES-061-UIUX-MASTERPIECE] 4대 렌즈 마이크로 뱃�
   assert.ok(container.innerHTML.includes('clamp'), '반응형 clamp 타이포그래피 탑재');
 });
 
+check('compliance: [#TASK-ES-090] 아워골 기록탭 지금부터 시간기록(전체화면, 가로세로 회전, 스톱워치 4대 버튼, 취소 안전 경고, 내 기록 저장) 무결성 검증', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const trackerJsPath = path.join(__dirname, '..', 'js', 'time-tracker.js');
+
+  // 1. 파일 및 스크립트 배선 검증
+  assert.ok(fs.existsSync(trackerJsPath), 'js/time-tracker.js 파일이 존재해야 함');
+  assert.ok(indexHtml.includes('js/time-tracker.js'), 'index.html에 time-tracker.js 스크립트 로드가 배선되어 있어야 함');
+  assert.ok(indexHtml.includes('id="btnOpenTimeTracker"'), '기록 탭 헤더에 지금부터 시간기록 버튼(btnOpenTimeTracker)이 존재해야 함');
+
+  // 2. CSS 스타일 및 반응형/회전 지원 검증
+  assert.ok(uiCss.includes('.tt-overlay'), '전체화면 오버레이 .tt-overlay 스타일이 존재해야 함');
+  assert.ok(uiCss.includes('.tt-forced-landscape'), '수동 가로모드 회전 지원 .tt-forced-landscape 스타일이 존재해야 함');
+  assert.ok(uiCss.includes('min-aspect-ratio'), '폴더블 정방형 화면비 미디어쿼리가 존재해야 함');
+
+  // 3. time-tracker.js 핵심 엔진 및 4위 1체 배선 검증
+  const trackerJs = fs.readFileSync(trackerJsPath, 'utf8');
+  assert.ok(trackerJs.includes('btnTtActionStart'), '스톱워치 시작 버튼 핸들러가 배선되어 있어야 함');
+  assert.ok(trackerJs.includes('btnTtActionLap'), '스톱워치 구간기록(Lap) 버튼 핸들러가 배선되어 있어야 함');
+  assert.ok(trackerJs.includes('btnTtActionPause'), '스톱워치 일시중지 버튼 핸들러가 배선되어 있어야 함');
+  assert.ok(trackerJs.includes('btnTtActionStopRecord'), '전체중지 및 기록하기 버튼 핸들러가 배선되어 있어야 함');
+  assert.ok(trackerJs.includes('btnTtActionReset'), '초기화 버튼 핸들러가 배선되어 있어야 함');
+
+  // 4. 취소 확인 2중 안전 경고 모달 문구 검증 (상민님 지시 원문)
+  assert.ok(trackerJs.includes('이번 세션의 시간기록과 연계된 기록이 모두 삭제됩니다. 정말 취소하시겠습니까?'), '취소 경고 모달 문구가 상민님 지시와 정확히 일치해야 함');
+  assert.ok(trackerJs.includes('btnTtCancelNo') && trackerJs.includes('btnTtCancelYes'), '취소 안함 및 정말 취소 버튼이 구비되어 있어야 함');
+
+  // 5. 내 기록 저장 및 뷰 전파 배선 검증
+  assert.ok(trackerJs.includes('state.profile.records.unshift'), '신규 시간기록이 state.profile.records에 저장되어야 함');
+  assert.ok(trackerJs.includes('renderRecordsScreen'), '저장 후 기록 탭 화면이 즉시 실시간 갱신되어야 함');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
