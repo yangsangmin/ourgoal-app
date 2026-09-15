@@ -40,12 +40,13 @@
 
     badgeEl.onclick = function(){
       if(lastProv === 'google'){
-        var gBtn = document.getElementById('authGoogleBtn');
-        if(gBtn){
-          gBtn.focus();
-          gBtn.style.boxShadow = '0 0 0 3px rgba(66,133,244,0.35)';
-          setTimeout(function(){ gBtn.style.boxShadow = ''; }, 1200);
+        var kBtnG = document.getElementById('authKakaoBtn');
+        if(kBtnG){
+          kBtnG.focus();
+          kBtnG.style.boxShadow = '0 0 0 3px rgba(254,229,0,0.45)';
+          setTimeout(function(){ kBtnG.style.boxShadow = ''; }, 1200);
         }
+        toastFn('아워골 로그인이 카카오로 간편 통합되었어요! 카카오로 편하게 시작하세요.');
       } else if(lastProv === 'kakao'){
         var kBtn = document.getElementById('authKakaoBtn');
         if(kBtn){

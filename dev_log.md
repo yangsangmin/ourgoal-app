@@ -3417,3 +3417,23 @@
   - Tri-Sync 무결성 검증 100% 일치.
 ---
 
+### 2026-09-16: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화 및 구글 캘린더 연동 분리 배선
+- **배경 및 의도**:
+  - 카카오 로그인과 구글 로그인의 동시 노출로 인한 계정 분리(UUID vs 해시 ID), 데이터 증발 착시, 동일 기기 캐시 오염 문제를 근본 해결.
+  - 상민님 지시("로그인은 카카오 하나로 통일하고, 구글은 캘린더 연동으로만 빼기")에 따라 메인 로그인 창을 카카오 단일 CTA로 단순화하고, 구글 인증은 앱 내부 [설정 > Google 캘린더 연동] 전용으로 명확히 분리 재배치.
+- **수행 내역**:
+  1. `index.html`:
+     - 랜딩 화면(`#landingScreen`) 및 인증 화면(`#authScreen`) 구글 로그인 버튼(`landGoogleBtn`, `authGoogleBtn`) 숨김 처리(`display:none;`).
+     - 카카오 버튼(`#landKakaoBtn`) 텍스트를 `카카오로 3초 만에 시작하기`로 웰컴 CTA 강화.
+     - 설정 탭 내 구글 캘린더 연동 버튼(`gcalQuickConnectBtn`) 및 일정 연동 파이프라인 온전 보존.
+     - 기존 사용자 데이터 복구 모달(`openLoginRescueModal`) 안전망 유지.
+     - 헌법 제18조 `index.html` 22,196줄 불변 엄수.
+  2. `js/auth-safety.js`:
+     - 최근 로그인 뱃지(`showLastAuthBadge`): 과거 구글 로그인 사용자 접속 시 카카오 버튼 포커스 및 통합 친절 안내 토스트 발송.
+  3. `scripts/smoke-test.js`:
+     - `[#TASK-ES-108]` 컴플라이언스 테스트 추가 (252개 테스트 100% ALL PASS).
+- **검증 결과**:
+  - `npm test`: 스모크 252개 + 헌법 5대 게이트 + Zero Dead Click 100% ALL PASS.
+  - 3단계 로컬 수동 확인 통과.
+---
+
