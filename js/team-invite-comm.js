@@ -1271,7 +1271,8 @@
     ensureDefaultCompanions: ensureDefaultCompanions,
     getDmThreadId: getDmThreadId,
     loadDmMessagesFromDb: loadDmMessagesFromDb,
-    showGuestSoftAuthGate: showGuestSoftAuthGate
+    showGuestSoftAuthGate: showGuestSoftAuthGate,
+    ALL_SEARCHABLE_USERS: []
   };
 
 })(typeof window !== 'undefined' ? window : global);
