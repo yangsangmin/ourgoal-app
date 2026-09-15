@@ -4479,6 +4479,55 @@ check('compliance: [#TASK-ES-103] Web Push VAPID API 구축 및 UGC 신고·차�
   assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
 });
 
+check('compliance: [#TASK-ES-104] 팀 목표 초대·소통 및 소통탭 전면 정비(초대·팀원대화·모임창복구·피드아코디언·게시버튼·1:1소통카드3종) 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. js/team-invite-comm.js 모듈 및 script 태그 탑재 검증
+  const modulePath = path.join(__dirname, '..', 'js', 'team-invite-comm.js');
+  assert.ok(fs.existsSync(modulePath), 'js/team-invite-comm.js 파일 존재');
+  assert.ok(indexHtml.includes('js/team-invite-comm.js'), 'index.html 내 team-invite-comm.js 로드 태그 탑재');
+
+  const moduleContent = fs.readFileSync(modulePath, 'utf8');
+  assert.ok(moduleContent.includes('openTeamInviteModal'), 'openTeamInviteModal 함수 탑재');
+  assert.ok(moduleContent.includes('openTeamChatModal'), 'openTeamChatModal 함수 탑재');
+  assert.ok(moduleContent.includes('handlePingSentAutoReply'), 'handlePingSentAutoReply 함수 탑재');
+  assert.ok(moduleContent.includes('renderTemplatesAccordionHtml'), 'renderTemplatesAccordionHtml 함수 탑재');
+  assert.ok(moduleContent.includes('postShareCardToFeed'), 'postShareCardToFeed 함수 탑재');
+  assert.ok(moduleContent.includes('shareCardExternal'), 'shareCardExternal 함수 탑재');
+  assert.ok(moduleContent.includes('saveCardImage'), 'saveCardImage 함수 탑재');
+
+  // 2. 소통탭 모임창 ReferenceError 방어 및 checked 정의 검증
+  assert.ok(indexHtml.includes('var checked = groupCheckedToday(g.id);'), 'renderCommGroups 내 checked 변수 선언 완료');
+
+  // 3. 소통탭 게시하기 버튼 및 openShareToFeedModal 전역 노출 검증
+  assert.ok(indexHtml.includes('id="btnCommPostFeed"'), '소통탭 헤더 게시하기 버튼 탑재');
+  assert.ok(indexHtml.includes('window.openShareToFeedModal = openShareToFeedModal;'), 'openShareToFeedModal 전역 노출');
+
+  // 4. 팀 목표 카드 초대 및 팀 대화 버튼 마운트 검증
+  assert.ok(indexHtml.includes('data-inviteteam='), '팀 목표 카드 팀원 초대 버튼 탑재');
+  assert.ok(indexHtml.includes('data-teamchat='), '팀 목표 카드 팀 대화 버튼 탑재');
+  assert.ok(indexHtml.includes('openTeamInviteModal'), '초대 버튼 클릭 핸들러 배선');
+  assert.ok(indexHtml.includes('openTeamChatModal'), '팀 대화 버튼 클릭 핸들러 배선');
+
+  // 5. 콕찌르기 양방향 답장 자동 배선 검증
+  const checkJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-leader-check.js'), 'utf8');
+  assert.ok(checkJs.includes('handlePingSentAutoReply'), 'team-leader-check.js 내 찌르기 후 자동 답장 배선');
+
+  // 6. 소통탭 피드 템플릿 아코디언 검증
+  assert.ok(indexHtml.includes('toggleTemplatesBtn'), '템플릿 아코디언 토글 버튼 탑재');
+  assert.ok(indexHtml.includes('renderTemplatesAccordionHtml'), 'templatesHtml 내 아코디언 렌더러 연동');
+
+  // 7. 소통탭 1:1 '외부sns 소통용 카드 제작하기' & 3대 액션 버튼 검증
+  assert.ok(indexHtml.includes('외부sns 소통용 카드 제작하기'), '외부sns 소통용 카드 제작하기 버튼 탑재');
+  assert.ok(indexHtml.includes('id="btnSharePostFeed"'), '소통 카드 피드게시 버튼 탑재');
+  assert.ok(indexHtml.includes('id="btnShareExt"'), '소통 카드 외부sns공유 버튼 탑재');
+  assert.ok(indexHtml.includes('id="btnShareSave"'), '소통 카드 이미지 저장 버튼 탑재');
+
+  // 8. 헌법 제18조: index.html 22,196줄 엄수 검증
+  const lines = indexHtml.split(/\r?\n/).length;
+  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
