@@ -135,7 +135,7 @@
     <!-- HOME -->
     <section class="screen active" id="screen-home">
       <div class="home-head-row" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">
-        <h2 class="home-greet" id="homeGreeting" style="margin:0;">안녕하세요</h2>
+        <div style="display:flex;align-items:center;gap:6px;"><h2 class="home-greet" id="homeGreeting" style="margin:0;">안녕하세요</h2><button type="button" class="btn btn-ghost btn-xs" id="homePageGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide('home');" style="font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;cursor:pointer;" title="이 페이지 활용법 보기">💡 이 페이지 활용법 보기</button></div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
           <button type="button" class="btn btn-ghost btn-sm" id="btnCustomHomeLayout" style="font-size:.78125rem;padding:3px 9px;white-space:nowrap;color:var(--ink-soft);border-color:var(--rule);">나만의 홈 구성</button>
           <span style="font-size:.6875rem;color:var(--ink-faint);line-height:1;">필요없는 창 지우기</span>
@@ -220,7 +220,7 @@
       <div id="personalGoalsView">
         <div class="goal-head-row">
           <div class="goal-head-l">
-            <h2>목표</h2>
+            <div style="display:flex;align-items:center;gap:6px;"><h2 style="margin:0;">목표</h2><button type="button" class="btn btn-ghost btn-xs" id="goalsPageGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide('goals');" style="font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;cursor:pointer;" title="이 페이지 활용법 보기">💡 이 페이지 활용법 보기</button></div>
             <span class="privacy-badge" id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
@@ -248,7 +248,7 @@
       <div class="screen-head">
         <div class="screen-head-l">
           <h2 class="s-title">일정</h2>
-          <span class="privacy-badge" id="calPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
+          <span class="privacy-badge" id="calPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span><button type="button" class="btn btn-ghost btn-xs" id="calPageGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide('calendar');" style="font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;margin-left:6px;cursor:pointer;" title="이 페이지 활용법 보기">💡 이 페이지 활용법 보기</button>
         </div>
         <div class="format-toggle seg-compact" id="calViewToggle">
           <div class="format-opt" data-calview="month">월</div>
@@ -476,7 +476,7 @@
     <!-- COMM -->
     <section class="screen" id="screen-comm">
       <div class="screen-head">
-        <h2 class="s-title">소통</h2>
+        <div style="display:flex;align-items:center;gap:6px;"><h2 class="s-title" style="margin:0;">소통</h2><button type="button" class="btn btn-ghost btn-xs" id="commPageGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide('comm');" style="font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;cursor:pointer;" title="이 페이지 활용법 보기">💡 이 페이지 활용법 보기</button></div>
         <button class="btn btn-primary btn-sm" id="btnCommPostFeed" type="button" onclick="openShareToFeedModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>게시하기</span></button>
       </div>
       <div id="commBody"></div>
@@ -485,7 +485,7 @@
     <!-- SETTINGS -->
     <section class="screen" id="screen-settings">
       <p class="s-eyebrow">설정</p>
-      <h2 class="s-title">설정</h2>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><h2 class="s-title" style="margin:0;">설정</h2><button type="button" class="btn btn-ghost btn-xs" id="settingsPageGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide('settings');" style="font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;cursor:pointer;" title="이 페이지 활용법 보기">💡 이 페이지 활용법 보기</button></div>
 
       <div class="set-block">
         <h4>내 프로필</h4>
@@ -773,7 +773,7 @@
 
       <div class="app-foot">
         <div>아워골 · v1.0.0</div>
-        <div>문의 <a href="mailto:ysm0422@naver.com">ysm0422@naver.com</a></div>
+        <div>문의 <a href="mailto:support@ourgoal.kr">support@ourgoal.kr</a></div>
         <div><a href="#" id="setTermsLink">이용약관</a> · <a href="#" id="setPrivacyLink">개인정보처리방침</a></div>
         <div>2026 OurGoal</div>
       </div>
@@ -905,7 +905,7 @@
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
-  <script src="js/calendar-attachment.js?v=20260915-es096"></script>
+  <script src="js/calendar-attachment.js?v=20260915-es096"></script><script src="js/tab-guides.js?v=20260915-es102"></script>
 <script>
 (function(){
   "use strict";
@@ -2493,10 +2493,10 @@
   /* ============ 1:1 고객 문의 / 버그 제보 ============ */
   document.getElementById('feedbackInquiryBtn').addEventListener('click', function(){
     var ua = encodeURIComponent((navigator.userAgent || '').slice(0, 80));
-    var mailto = 'mailto:ysm0422@naver.com?subject=' + encodeURIComponent('[아워골 문의/버그 제보]') +
+    var mailto = 'mailto:support@ourgoal.kr?subject=' + encodeURIComponent('[아워골 문의/버그 제보]') +
       '&body=' + encodeURIComponent('안녕하세요, 아워골 이용 중 문의/제보 드립니다.\r\n\r\n- 내용:\r\n\r\n[앱 v1.0.0 / ' + decodeURIComponent(ua) + ']');
     window.location.href = mailto;
-    toast('이메일 앱을 엽니다 (ysm0422@naver.com)');
+    toast('이메일 앱을 엽니다 (support@ourgoal.kr)');
   });
 
   /* ============ 이용약관 / 개인정보처리방침 열람 리스너 ============ */
@@ -3101,7 +3101,7 @@
           '<p><b>제3조 (보유 및 파기)</b><br>• 원칙적으로 회원 탈퇴 시 모든 개인정보는 지체 없이 즉시 영구 파기됩니다.<br>• 단, 전자상거래법 등 관계 법령에 따른 보존 의무가 있는 경우 법정 기간 동안 안전하게 보관 후 파기합니다.</p>' +
           '<p><b>제4조 (제3자 제공 및 위탁)</b><br>• 서비스는 이용자의 동의 없이 개인정보를 제3자에게 제공하지 않습니다.<br>• 인프라 위탁: Supabase Inc. (클라우드 DB), Vercel Inc. (호스팅 및 API)</p>' +
           '<p><b>제5조 (이용자의 권리와 행사)</b><br>• 이용자는 언제든지 [설정] 메뉴의 [회원 탈퇴]를 통해 계정 삭제 및 개인정보 파기를 직접 실행할 수 있습니다.</p>' +
-          '<p><b>제6조 (개인정보 보호책임자)</b><br>• 성명: 아워골 운영팀 · 문의: ysm0422@naver.com</p>' +
+          '<p><b>제6조 (개인정보 보호책임자)</b><br>• 성명: 아워골 운영팀 · 문의: support@ourgoal.kr</p>' +
           '</div>';
       } else {
         return '<h4 style="margin:4px 0 6px;">아워골 서비스 이용약관</h4>' +
@@ -9311,7 +9311,7 @@
 
     el.innerHTML = '<div class="mission-card" style="padding:10px 14px;">' +
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-        '<div class="ct-label" style="margin:0;">오늘의 미션</div>' +
+        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><div class="ct-label" style="margin:0;">오늘의 미션</div><span style="font-size:11px;color:var(--brand);background:rgba(99,102,241,0.08);padding:1px 6px;border-radius:6px;font-weight:600;">할일이 당장 안떠오르면 활용하세요</span></div>' +
         moreBtnHtml +
       '</div>' +
       missionRowHtml(firstGoal) +

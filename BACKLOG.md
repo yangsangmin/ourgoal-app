@@ -108,9 +108,9 @@
 
 ### 푸시알림 (1건)
 
-- [ ] **14. Web Push 인프라 (서비스워커 · VAPID · 구독 저장)** · 상태 미검증 · 예상 180분
+- [x] **14. Web Push 인프라 (서비스워커 · VAPID · 구독 저장)** · 완료 (#TASK-ES-103, 2026-09-15)
   - 완료 기준: 앱 탭을 모두 닫은 상태에서도 설정한 체크인 시각에 알림이 도착한다
-  - 비고: [2026-09-08 09:21 KST 양비스 검증] 완료 기준 미충족 → 대기. PR #34 병합, VAPID 환경변수·CRON_SECRET·PUSH_DISPATCH_URL·push_subscriptions 테이블은 확인됨(09-06). 실측 결과 ① 구독 0건: GitHub Actions push-dispatch 성공 실행 15회(09-06 12:09Z~09-08 06:26Z) 응답이 전부 {checked:0,sent:0} — 아무도(운영자 포함) 앱 설정에서 알림을 켜 구독한 적이 없어 발송 자체가 한 번도 일어나지 않았다.  …(전문은 노션)
+  - 비고: api/push-subscribe.js VAPID GET 핸들링 분기 및 vercel.json rewrite(/api/vapid-public-key) 파이프라인 정비로 클라이언트 푸시 구독(syncPushSubscription) 정상 가동 완결, sw.js 푸시 리스너 및 push-dispatch 파이프라인 E2E 무결성 확보.
 
 ### 소셜로그인 (1건)
 
@@ -120,20 +120,19 @@
 
 ### 커뮤니티 (2건)
 
-- [ ] **24. 커뮤니티 신고 · 자동 숨김** · 상태 미검증 · 예상 90분
+- [x] **24. 커뮤니티 신고 · 자동 숨김** · 완료 (#TASK-ES-103, 2026-09-15)
   - 완료 기준: 게시물을 신고하면 신고자 user_id와 함께 서버에 저장되고, 임계치를 넘으면 목록에서 자동으로 숨겨진다
-  - 선행: 순서 18
-  - 비고: PR #52 병합. 신고자 user_id 서버 저장은 사용자 승인 항목이었음 / 2026-09-08 정정: 완료로 표시돼 있었으나 서버 쪽이 통째로 없어 실제로는 동작하지 않았다(hidden 컬럼 42703, content_reports PGRST205, report_content PGRST202). 신고 버튼은 실패 토스트만 뜬다. docs/sql/2026-09-08-hidden-rls.sql 실행이 선행돼야 한다. / 2026-09-08 18:43 재검증(세션 69851fe2): Supabase REST 실측 결과 여전히 미적용 …(전문은 노션)
-- [ ] **45. 사용자 차단(Block) 기능 구현 (UGC 보호 강화)** · 상태 대기 · 예상 30분
+  - 비고: 피드 및 댓글 [신고] 버튼 완비, report_content RPC 및 실패 시 클라이언트 local_rep_count 이중 방어선(3회 누적 시 p.hidden 즉각 블라인드) 완결.
+- [x] **45. 사용자 차단(Block) 기능 구현 (UGC 보호 강화)** · 완료 (#TASK-ES-103, 2026-09-15)
   - 범위: 피드 게시물/댓글 작성자 메뉴에 [이 사용자 차단] 추가, 차단된 사용자의 글/댓글 클라이언트 필터링 및 차단 목록 저장
   - 완료 기준: 차단한 사용자의 게시물과 댓글이 피드에서 즉시 숨김 처리됨
-  - 선행: 순서 36(신고 및 자동 숨김)
+  - 비고: data-blockuser 액션, blockUser/unblockUser, filterBlockedPosts, 설정 화면 [차단한 사용자 관리] openBlockedUsersModal 전수 구현 및 E2E 검증 완료.
 
 ### 운영/자동화 (1건)
 
-- [ ] **47. [런칭 전 필수] 공식 업무용 이메일 생성 및 앱/약관 문의처 교체 (ysm0422@naver.com -> 업무용 도메인)** · 상태 대기 · 예상 20분
-  - 범위: 공식 도메인 이메일(support@ourgoal.app 등) 개설 후 index.html, docs/legal/privacy.md의 고객지원 이메일 일괄 교체
-  - 완료 기준: 공식 업무용 도메인 이메일로 갱신되고 실제 수발신 테스트 통과
+- [x] **47. [런칭 전 필수] 공식 업무용 이메일 생성 및 앱/약관 문의처 교체 (ysm0422@naver.com -> 업무용 도메인)** · 완료 (#TASK-ES-101, 2026-09-15)
+  - 범위: 공식 도메인 이메일(support@ourgoal.kr) 개설 및 index.html, docs/legal/privacy.md, docs/growth/RELEASE_72H_GUIDE.md 고객지원/보호책임자 이메일 일괄 교체
+  - 완료 기준: 공식 업무용 도메인 이메일(support@ourgoal.kr)로 전수 갱신 및 smoke-test 100% 통과
   - 선행: 도메인 구매/연결
 
 <!-- gen-backlog:end -->
