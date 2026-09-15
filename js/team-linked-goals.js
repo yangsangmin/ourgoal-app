@@ -390,7 +390,7 @@
         '<div style="display:flex;align-items:center;gap:6px;">' +
           (editMode ? '<button class="btn btn-danger btn-sm" id="btnDeleteTlGoal" type="button" style="font-size:.8125rem;padding:3px 9px;">연계 목표 삭제</button>' : '') +
           '<button class="edit-toggle ' + (editMode ? 'on' : 'off') + '" id="btnToggleTlEdit" type="button" style="font-size:.8125rem;padding:3px 10px;">' +
-            (editMode ? '완료' : '편집') +
+            (editMode ? '✓ 편집 완료' : '편집') +
           '</button>' +
         '</div>' +
       '</div>' +
@@ -413,7 +413,8 @@
         '<b style="font-size:.9375rem;color:var(--ink);">마일스톤 및 세부 할 일 로드맵</b>' +
         '<button class="btn btn-ghost btn-sm" id="btnAddTlMs" type="button" style="font-size:.8125rem;color:var(--brand-strong);border-color:var(--red-line);padding:2px 8px;font-weight:700;">+ 마일스톤 추가</button>' +
       '</div>' +
-      (msListHtml || '<p class="faint" style="padding:20px 0;text-align:center;">마일스톤이 없습니다.</p>');
+      (msListHtml || '<p class="faint" style="padding:20px 0;text-align:center;">마일스톤이 없습니다.</p>') +
+      (editMode ? '<button class="goal-edit-done-inline-btn" id="btnTlDoneInline" type="button">✓ 연계 목표 편집 완료 (저장)</button>' : '');
 
     // 이벤트 바인딩
     view.querySelectorAll('[data-tlchip]').forEach(function(chip){
@@ -439,18 +440,42 @@
       });
     }
 
+    async function commitAndFinishTlEdit(){
+      if(document.activeElement && typeof document.activeElement.blur === 'function'){
+        document.activeElement.blur();
+      }
+      var titleInp = view.querySelector('#tlGoalTitleInput');
+      if(titleInp && titleInp.value.trim()){
+        goal.title = titleInp.value.trim();
+      }
+      view.querySelectorAll('[data-tlminput]').forEach(function(inp){
+        var mid = inp.dataset.tlminput;
+        var m = (goal.milestones||[]).find(function(x){ return x.id===mid; });
+        if(m){ var v = inp.value.trim(); if(v) m.title = v; }
+      });
+      state.teamLinkedEditMode = false;
+      await saveProfile();
+      toast('팀 연계 개인목표 편집을 완료했어요');
+      renderTeamLinkedGoalsScreen(view);
+    }
+
     var btnToggleEdit = view.querySelector('#btnToggleTlEdit');
     if(btnToggleEdit){
       btnToggleEdit.addEventListener('click', async function(){
-        state.teamLinkedEditMode = !state.teamLinkedEditMode;
-        if(!state.teamLinkedEditMode){
-          var titleInp = view.querySelector('#tlGoalTitleInput');
-          if(titleInp && titleInp.value.trim()){
-            goal.title = titleInp.value.trim();
-          }
-          await saveProfile();
+        if(state.teamLinkedEditMode){
+          await commitAndFinishTlEdit();
+        } else {
+          state.teamLinkedEditMode = true;
+          renderTeamLinkedGoalsScreen(view);
         }
-        renderTeamLinkedGoalsScreen(view);
+      });
+    }
+
+    var btnTlDone = view.querySelector('#btnTlDoneInline');
+    if(btnTlDone){
+      btnTlDone.addEventListener('click', async function(e){
+        e.preventDefault();
+        await commitAndFinishTlEdit();
       });
     }
 

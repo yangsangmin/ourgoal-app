@@ -3417,23 +3417,45 @@
   - Tri-Sync 무결성 검증 100% 일치.
 ---
 
-### 2026-09-16: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화 및 구글 캘린더 연동 분리 배선
+### 2026-09-16: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화 및 로그인 전면 닉네임 익명 보장 안심 뱃지 배선
 - **배경 및 의도**:
   - 카카오 로그인과 구글 로그인의 동시 노출로 인한 계정 분리(UUID vs 해시 ID), 데이터 증발 착시, 동일 기기 캐시 오염 문제를 근본 해결.
-  - 상민님 지시("로그인은 카카오 하나로 통일하고, 구글은 캘린더 연동으로만 빼기")에 따라 메인 로그인 창을 카카오 단일 CTA로 단순화하고, 구글 인증은 앱 내부 [설정 > Google 캘린더 연동] 전용으로 명확히 분리 재배치.
+  - 상민님 지시("로그인은 카카오 하나로 통일하고, 구글은 캘린더 연동으로만 빼기... 카카오로 일원화하고, 가입직후가 아닌 로그인(회원가입)창부터 바로 '닉네임과 개인정보는 익명으로 변경 가능해요'로 안내하자... 바로 병합까지 진행해")에 따라 메인 로그인 창을 카카오 단일 CTA로 일원화.
+  - 카카오 로그인 시 실명 노출에 대한 심리적 거부감과 가입 마찰을 원천 차단하기 위해 로그인/가입 화면 전면에 "카톡 실명 걱정 No! 닉네임과 개인정보는 100% 익명으로 언제든 변경 가능해요" 안심 뱃지를 탑재.
 - **수행 내역**:
   1. `index.html`:
-     - 랜딩 화면(`#landingScreen`) 및 인증 화면(`#authScreen`) 구글 로그인 버튼(`landGoogleBtn`, `authGoogleBtn`) 숨김 처리(`display:none;`).
-     - 카카오 버튼(`#landKakaoBtn`) 텍스트를 `카카오로 3초 만에 시작하기`로 웰컴 CTA 강화.
+     - 랜딩 화면(`#landingScreen`) 및 인증 화면(`#authScreen`) 구글 로그인 버튼(`landGoogleBtn`, `authGoogleBtn`) 숨김 처리(`display:none; aria-hidden="true"`).
+     - 카카오 버튼(`#landKakaoBtn`, `#authKakaoBtn`) 텍스트를 `카카오로 3초 만에 시작하기`로 웰컴 CTA 통일 및 풀 너비 강화.
+     - 랜딩 및 인증 화면 카카오 버튼 직하단에 자물쇠 아이콘과 함께 `[🔒 카톡 실명 걱정 No! 닉네임과 개인정보는 100% 익명으로 언제든 변경 가능해요]` 안심 뱃지(`auth-anonymity-badge`, `landAnonymityBadge`, `authAnonymityBadge`) 배선.
      - 설정 탭 내 구글 캘린더 연동 버튼(`gcalQuickConnectBtn`) 및 일정 연동 파이프라인 온전 보존.
      - 기존 사용자 데이터 복구 모달(`openLoginRescueModal`) 안전망 유지.
-     - 헌법 제18조 `index.html` 22,196줄 불변 엄수.
+     - 헌법 제18조 `index.html` 22,196줄 불변 엄수 (빈 줄 상쇄 치환).
   2. `js/auth-safety.js`:
      - 최근 로그인 뱃지(`showLastAuthBadge`): 과거 구글 로그인 사용자 접속 시 카카오 버튼 포커스 및 통합 친절 안내 토스트 발송.
   3. `scripts/smoke-test.js`:
-     - `[#TASK-ES-108]` 컴플라이언스 테스트 추가 (252개 테스트 100% ALL PASS).
+     - `[#TASK-ES-108]` 컴플라이언스 테스트에 안심 뱃지 4대 단언문 추가 (253개 테스트 100% ALL PASS).
 - **검증 결과**:
-  - `npm test`: 스모크 252개 + 헌법 5대 게이트 + Zero Dead Click 100% ALL PASS.
-  - 3단계 로컬 수동 확인 통과.
+  - `npm test`: 스모크 253개 + 헌법 5대 게이트 13종 + Zero Dead Click 100% ALL PASS.
+  - 헌법 제18조: `index.html` 총 줄 수 정확히 22,196줄 유지.
+  - 문제해결 8원칙 준수 및 로컬 main 병합 완결.
+### 2026-09-16: [#TASK-ES-109] 목표 탭 편집 모드 완료 버튼 누락 해결 및 목표 제목 편집 지원 & 하단 고정 완료 액션바 완결
+- **배경 및 의도**:
+  - 목표 탭에서 편집 버튼 클릭 후 완료 버튼이 없어 편집한 내용을 확정/저장할 수 없던 핵심 UX 결함 해결.
+  - 상민님 지시("아워골 목표에서 편집누르고, 완료버튼이 없어서 편집한 내용들을 어떻게 할 수가 없다. 해결해")에 따라 편집 상태 시 상단 버튼 텍스트 변경(`✓ 편집 완료`), 스크롤 하단 인라인 완료 버튼, 그리고 모바일 전용 플로팅 하단 완료 액션바 3중 안전 확정 UX 구축.
+- **수행 내역**:
+  1. `js/goal-edit-ux.js`:
+     - 목표 제목 실시간 인라인 편집 지원 (`renderTitleRow`).
+     - 하단 인라인 완료 버튼 렌더러 (`renderDoneInlineBtn`, `renderTeamDoneInlineBtn`).
+     - 플로팅 하단 완료 액션바 (`wirePersonalGoalEdit`, `createFloatingBar`).
+     - 편집 데이터 일괄 저장 및 전역 상태 갱신 커밋 함수 (`commitAndFinishGoalEdit`, `commitAndFinishTeamGoalEdit`).
+  2. `js/team-linked-goals.js`:
+     - 팀 연계 개인목표 편집 모드 시 `✓ 편집 완료` 토글 및 하단 인라인 완료 버튼(`btnTlDoneInline`), `commitAndFinishTlEdit` 배선.
+  3. `ui.css`:
+     - `.goal-edit-floating-bar`, `.goal-edit-done-cta-btn`, `.goal-edit-done-inline-btn`, `.edit-toggle.on` 반응형 스타일 탑재.
+  4. `scripts/smoke-test.js`:
+     - `[#TASK-ES-109]` 컴플라이언스 5대 검증 추가.
+- **검증 결과**:
+  - `npm test`: 스모크 253개 + 헌법 5대 게이트 13종 + Zero Dead Click 100% ALL PASS.
+  - 로컬 main 병합 완료.
 ---
 
