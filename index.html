@@ -905,8 +905,8 @@
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
+  <script src="js/calendar-attachment.js?v=20260915-es096"></script>
 <script>
-
 (function(){
   "use strict";
 
@@ -4049,7 +4049,6 @@
             }
           );
         });
-
         var regionRef = { value: draft.region };
         wireRegionPicker(sheet, 'pvRegion', regionRef);
         var regionSw = sheet.querySelector('#pvRegionPublic');
@@ -4057,7 +4056,6 @@
           draft.regionPublic = !draft.regionPublic;
           regionSw.className = 'switch' + (draft.regionPublic ? ' on' : '');
         });
-
         var fileInput = document.getElementById('avatarFile');
         sheet.querySelector('#pvPick').addEventListener('click', function(){ fileInput.click(); });
         fileInput.onchange = function(e){
@@ -4075,7 +4073,6 @@
           draft.avatarUrl = '';
           sheet.querySelector('#pvAvatar').innerHTML = '<div class="profile-avatar">'+escapeHtml(draft.name.slice(0,1))+'</div>';
         });
-
         sheet.querySelector('#pvCancel').addEventListener('click', closeModal);
         sheet.querySelector('#pvSave').addEventListener('click', async function(){
           var name = sheet.querySelector('#pvName').value.trim();
@@ -4096,7 +4093,6 @@
       }
     );
   }
-
   function updateTopBar(){
     var p = state.profile;
     document.getElementById('topUserName').textContent = p.displayName;
@@ -4110,7 +4106,6 @@
       av.textContent = p.displayName.slice(0,1);
     }
   }
-
   /* ============ Notion webhook 전송 ============ */
   async function sendToNotion(record, feedback){
     var s = state.profile && state.profile.settings;
@@ -4135,7 +4130,6 @@
       return false;
     }
   }
-
   /* ============ 구글 캘린더 연동 ============ */
   var googleTokenClient = null;
   /* 캘린더 사용 가능 판단을 한 곳에: 앱 상수 우선, 비면 사용자가 설정에 넣은 ID로 폴백 (A2/R5/F4) */
@@ -4214,7 +4208,6 @@
       tryConnectGoogleCalendar();
     }
   }
-
   async function fetchGoogleCalendarEvents(token){
     if(!token){
       try{ token = await getGoogleAccessToken(); } catch(e){ return []; }
@@ -4235,7 +4228,6 @@
       if(sync.ms) Object.values(sync.ms).forEach(function(id){ ourEvIds[id]=true; });
       if(sync.tasks) Object.values(sync.tasks).forEach(function(id){ ourEvIds[id]=true; });
       if(sync.custom) Object.values(sync.custom).forEach(function(id){ ourEvIds[id]=true; });
-
       var events = (data.items||[]).filter(function(e){
         if(e.status === 'cancelled') return false;
         if(ourEvIds[e.id]) return false;
@@ -4262,7 +4254,6 @@
       return [];
     }
   }
-
   async function syncAllToGoogleCalendar(){
     if(!isGoogleCalendarConnected()){
       openGoogleCalendarConnectModal();
@@ -4307,7 +4298,6 @@
         }
       }
       await saveProfile();
-
       var gEvents = await fetchGoogleCalendarEvents(token);
       toast('구글 캘린더와 상호 동기화 완료 (내 일정 ' + count + '개 반영 · 구글 ' + gEvents.length + '개 공유)');
       if(state.activeTab==='calendar') renderCalendarScreen();
@@ -4373,7 +4363,6 @@
     });
     if(!events.length){ toast('앞으로 60일 안에 다가오는 일정이 없어요'); return; }
     var sel = {}; events.forEach(function(e){ sel[e.id] = !e.already; });
-
     openModal(
       '<h3>캘린더 일정 불러오기</h3>' +
       '<p class="faint" style="margin:-8px 0 14px;">마일스톤으로 추가할 일정과, 담을 목표를 골라주세요.</p>' +
@@ -4431,7 +4420,6 @@
     });
     if(!items.length){ toast('캘린더에 반영할 마감일이 있는 목표·마일스톤이 없어요'); return; }
     var sel = {}; items.forEach(function(it){ sel[it.key] = true; });
-
     openModal(
       '<h3>목표를 캘린더에 반영하기</h3>' +
       '<p class="faint" style="margin:-8px 0 14px;">마감일이 있는 목표·마일스톤을 구글 캘린더 일정으로 만들어요.</p>' +
@@ -4477,7 +4465,6 @@
       }
     );
   }
-
   /* ============ 일정(캘린더) 탭 ============ */
   var WEEKDAYS_KR = ['일','월','화','수','목','금','토'];
   function isoDate(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
@@ -4572,7 +4559,6 @@
     (state.profile.settings.customSchedules || []).forEach(function(cs){
       if(cs.date) push(cs.date, { date:cs.date, title:cs.title, kind:'custom', schedId:cs.id, done:!!cs.done, goalTitle:cs.note||'일반 일정', attachments:cs.attachments||[], recordId:cs.recordId||null, linkUrl:cs.linkUrl||null, isTemplateRecord:!!cs.isTemplateRecord, templateTitle:cs.templateTitle||null });
     });
-
     // 🗓️ 구글 캘린더 상호 연동 일정 (배지 없이 일반 일정과 동일하게 달력에 통합 표시)
     var gcalEvs = state.gcalEventsCache;
     if(!gcalEvs){
@@ -4594,7 +4580,6 @@
         }
       });
     }
-
     return map;
   }
   function calCellHtml(d, itemsByDate, dim){
@@ -4621,13 +4606,11 @@
     state.calDate = isoDate(d);
     renderCalendarScreen();
   }
-
   /* ============ 캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달 ============ */
   function openCalendarDayEditHubModal(selectedDate){
     var sel = selectedDate || state.calSelectedDate || isoDate(new Date());
     var itemsByDate = calendarItemsByDate();
     var evs = itemsByDate[sel] || [];
-
     var evsHtml = evs.length ? (
       '<div style="display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;margin-bottom:14px;">' +
       evs.map(function(e, idx){
@@ -4635,7 +4618,6 @@
         var mRec = (e.title || '').match(/#record[=:](\w+)/);
         var targetRecId = e.recordId || (mRec ? mRec[1] : null);
         var tplBtn = targetRecId ? ('<button class="btn btn-ghost btn-sm" data-hubrec="'+targetRecId+'" type="button" style="font-size:.8125rem;padding:2px 6px;color:var(--ink);border-color:var(--rule);">기록 보기</button>') : '';
-
         return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--card2);border-radius:10px;border:1px solid var(--rule);">' +
           '<div style="flex:1;min-width:0;">' +
             '<div style="font-weight:700;font-size:.875rem;color:var(--ink);display:flex;align-items:center;gap:4px;flex-wrap:wrap;">' +
@@ -4643,9 +4625,11 @@
               timeLabel +
             '</div>' +
             '<div class="faint" style="font-size:.8125rem;margin-top:2px;">'+escapeHtml(e.goalTitle||'일반 일정')+'</div>' +
+            (window.OurgoalCalendarAttachment ? window.OurgoalCalendarAttachment.renderHubEventChipsHtml(e) : '') +
           '</div>' +
           '<div style="display:flex;gap:14px;align-items:center;">' +
             tplBtn +
+            (e.kind==='custom' ? '<button class="icon-btn" data-hubaddatt="'+(e.schedId||'')+'" type="button" title="참고자료 첨부" style="font-size:.875rem;padding:4px 6px;">📎</button>' : '') +
             (e.kind === 'gcal' && e.htmlLink ? ('<a href="'+escapeHtml(e.htmlLink)+'" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="font-size:.8125rem;padding:3px 7px;text-decoration:none;border-color:var(--rule);">구글 캘린더 ↗</a>') : ('<button class="icon-btn" data-hubedit="'+idx+'" type="button" title="수정" style="font-size:.875rem;padding:4px 6px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>')) +
             (e.kind==='custom' ? '<button class="icon-btn" data-hubdel="'+(e.schedId||'')+'" type="button" title="삭제" style="color:var(--brand-strong);font-size:1rem;padding:4px 6px;">×</button>' : '') +
           '</div>' +
@@ -4655,7 +4639,6 @@
     ) : (
       '<div class="empty-state" style="padding:18px 10px;margin-bottom:14px;"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></div><p style="margin:4px 0 0;font-size:.875rem;">이 날짜에 등록된 일정이 없습니다.</p></div>'
     );
-
     openModal(
       '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;">' +
         '<h3 style="margin:0;">' + sel + ' 일정 관리</h3>' +
@@ -4730,10 +4713,13 @@
             toast('일정을 삭제했어요');
           };
         });
+        if(window.OurgoalCalendarAttachment && typeof window.OurgoalCalendarAttachment.wireHubModalAttachments === 'function'){
+          window.OurgoalCalendarAttachment.wireHubModalAttachments(sheet, sel);
+        }
+        wireAttachmentChipClicks(sheet);
       }
     );
   }
-
   /* ============ 캘린더 수동 일정 편집 모달 (Req 2) ============ */
   function openCalendarManualEditModal(selectedDate, eventItem, kind){
     var isNew = !eventItem;
@@ -4743,7 +4729,7 @@
     var curDate = eventItem && eventItem.dueDate ? toDateTimeLocalValue(eventItem.dueDate) : (eventItem && eventItem.date ? toDateTimeLocalValue(eventItem.date) : defaultDateVal);
     var curNote = eventItem ? (eventItem.note || '') : '';
     var curDone = eventItem ? (eventItem.done || eventItem.status==='done') : false;
-
+    var curAttachments = (eventItem && eventItem.attachments) ? [].concat(eventItem.attachments) : [];
     openModal(
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
         '<span class="dm-back" id="calEditBackToHubBtn" style="cursor:pointer;margin:0;font-size:.875rem;color:var(--ink);font-weight:700;">‹ ' + selDate + ' 일정 목록으로</span>' +
@@ -4762,6 +4748,7 @@
         '<label>메모 / 장소 (선택)</label>' +
         '<input id="calEditNote" type="text" value="' + escapeHtml(curNote) + '" placeholder="예: 강남역 11번 출구, 신분증 지참">' +
       '</div>' +
+      (window.OurgoalCalendarAttachment ? window.OurgoalCalendarAttachment.renderSectionHtml(curAttachments) : '') +
       '<div class="toggle-row" style="margin-top:12px;">' +
         '<div class="t">완료 여부</div>' +
         '<div class="switch' + (curDone ? ' on' : '') + '" id="calEditDoneSwitch"></div>' +
@@ -4789,7 +4776,27 @@
         sheet.querySelector('#calEditCancelBtn').onclick = function(){
           openCalendarDayEditHubModal(selDate);
         };
-
+        if(window.OurgoalCalendarAttachment){
+          var wireAtts = function(){
+            window.OurgoalCalendarAttachment.wireEditModalAttachments(sheet, function(){
+              return { title: (sheet.querySelector('#calEditTitle').value || '').trim(), date: sheet.querySelector('#calEditDate').value, note: (sheet.querySelector('#calEditNote').value || '').trim(), done: isDone, attachments: curAttachments };
+            }, function(updatedAtts){
+              curAttachments = updatedAtts;
+              var wrap = sheet.querySelector('#calEditAttListWrap');
+              if(wrap){
+                wrap.innerHTML = curAttachments.length
+                  ? '<div class="att-chips-wrap" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;">' +
+                      curAttachments.map(function(att, idx){
+                        var icon = att.type === 'video' ? '🎥' : (att.type === 'image' ? '🖼️' : (att.type === 'text' ? '📝' : '🔗'));
+                        return '<span class="att-chip" data-caldraftatt="'+idx+'" title="'+escapeHtml(att.title||'')+'" style="cursor:pointer;">' + icon + ' ' + escapeHtml(att.title || '참고자료') + '</span>';
+                      }).join('') + '</div>'
+                  : '<p class="faint" style="font-size:.8125rem;margin:4px 0 0;">첨부된 참고자료가 없습니다. (+ 참고자료 첨부 버튼으로 등록해보세요)</p>';
+                wireAtts();
+              }
+            });
+          };
+          wireAtts();
+        }
         var delBtn = sheet.querySelector('#calEditDeleteBtn');
         if(delBtn){
           delBtn.onclick = async function(){
@@ -4809,16 +4816,13 @@
             toast('일정을 삭제했어요');
           };
         }
-
         sheet.querySelector('#calEditSaveBtn').onclick = async function(){
           var title = (sheet.querySelector('#calEditTitle').value || '').trim();
           var dtVal = sheet.querySelector('#calEditDate').value;
           var note = (sheet.querySelector('#calEditNote').value || '').trim();
           if(!title){ toast('일정 제목을 입력해주세요'); return; }
           if(!dtVal){ toast('날짜를 입력해주세요'); return; }
-
           if(!state.profile.settings.customSchedules) state.profile.settings.customSchedules = [];
-
           if(isNew){
             state.profile.settings.customSchedules.push({
               id: uid('sched'),
@@ -4826,6 +4830,7 @@
               date: dtVal,
               note: note,
               done: isDone,
+              attachments: curAttachments,
               createdAt: nowISO()
             });
             toast('일정을 추가했어요');
@@ -4835,15 +4840,16 @@
               eventItem.date = dtVal;
               eventItem.note = note;
               eventItem.done = isDone;
+              eventItem.attachments = curAttachments;
             } else {
               eventItem.title = title;
               if(kind==='task') eventItem.done = isDone;
               else if(kind==='ms') eventItem.status = isDone ? 'done' : (eventItem.status==='done' ? 'todo' : eventItem.status);
               eventItem.dueDate = dtVal;
+              if(curAttachments.length) eventItem.attachments = curAttachments;
             }
             toast('일정을 수정했어요');
           }
-
           var dayKey = dtVal.slice(0, 10);
           state.calSelectedDate = dayKey;
           state.calDate = dayKey;
@@ -4854,7 +4860,6 @@
           if(state.profile.settings.gcalAutoSync && isGoogleCalendarConnected()){
             syncAllToGoogleCalendar().catch(function(){});
           }
-
           closeModal();
           renderCalendarScreen();
           await saveProfile();
@@ -4862,13 +4867,11 @@
       }
     );
   }
-
   function renderCalendarScreen(){
     var view = state.calView || 'month';
     var refDate = new Date(state.calDate+'T00:00:00');
     var itemsByDate = calendarItemsByDate();
     var periodLabel, gridHtml;
-
     /* 구글 캘린더 연동 안내 배너 (Req 4) */
     var gBanner = document.getElementById('calGoogleBanner');
     if(gBanner){
@@ -4925,7 +4928,6 @@
         if(connB) connB.onclick = openGoogleCalendarConnectModal;
       }
     }
-
     if(view==='month'){
       var y = refDate.getFullYear(), mo = refDate.getMonth();
       periodLabel = y+'년 '+(mo+1)+'월';
@@ -4946,7 +4948,6 @@
       gridHtml = '';
       state.calSelectedDate = isoDate(refDate);
     }
-
     document.getElementById('calPeriodLabel').textContent = periodLabel;
     document.getElementById('calGrid').innerHTML = gridHtml;
     document.querySelectorAll('#calViewToggle [data-calview]').forEach(function(opt){
@@ -4964,7 +4965,6 @@
       state.calDate = t; state.calSelectedDate = t;
       renderCalendarScreen();
     };
-
     var calSend = document.getElementById('calAgentSendBtn');
     var calInp = document.getElementById('calAgentInput');
     if(calSend && calInp){
@@ -4983,7 +4983,6 @@
         }
       };
     }
-
     document.querySelectorAll('#calGrid [data-caldate]').forEach(function(cell){
       cell.addEventListener('click', function(){
         var clickedDate = cell.dataset.caldate;
@@ -5014,7 +5013,6 @@
         var mRec = (e.title || '').match(/#record[=:](\w+)/);
         var targetRecId = e.recordId || (mRec ? mRec[1] : null);
         var tplLinkChip = targetRecId ? ('<button class="dday-pill" data-calviewrec="'+targetRecId+'" type="button" style="cursor:pointer;background:var(--surface-2);color:var(--ink);border:1px solid var(--rule);font-size:.8125rem;padding:2px 6px;margin-left:4px;">기록 보기</button>') : '';
-
         return '<div class="ms-row" '+(e.goalId?'data-calgoto="'+e.goalId+'"':'')+(targetRecId?' data-calrecid="'+targetRecId+'" style="cursor:pointer;"':'')+'>' +
           '<div class="ms-main" style="align-items:flex-start;">' +
             '<div class="ms-status'+(e.done?' done':'')+'" style="margin-top:2px;">'+(e.done?'✓':'')+'</div>' +
@@ -5033,14 +5031,12 @@
         '</div>';
       }).join('')+'</div>'
       : '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></div><p>이 날은 예정된 일정이 없어요.</p><button class="btn btn-ghost btn-sm" id="calEmptyAddBtn" type="button" style="margin-top:8px;font-size:.8125rem;">+ 이 날짜에 일정 추가</button></div>');
-
     var hubBtn = wrap.querySelector('#calOpenHubBtn');
     if(hubBtn){
       hubBtn.addEventListener('click', function(){
         openCalendarDayEditHubModal(sel);
       });
     }
-
     var addBtn = wrap.querySelector('#calAddManualBtn') || wrap.querySelector('#calEmptyAddBtn');
     if(addBtn){
       addBtn.addEventListener('click', function(){
@@ -5093,7 +5089,6 @@
         openCalendarManualEditModal(sel, targetEvent, k);
       });
     });
-
     wrap.querySelectorAll('[data-calgoto]').forEach(function(row){
       row.addEventListener('click', function(e){
         if(e.target.closest('[data-calsync]') || e.target.closest('[data-caledit]') || e.target.closest('.att-chip') || e.target.closest('[data-calviewrec]')) return;
@@ -5109,7 +5104,6 @@
     });
     wireAttachmentChipClicks(wrap);
   }
-
   function streakBadgeHtml(streak){
     var tier, flames;
     if(streak>=30){ tier='streak-t4'; flames='🔥🔥🔥'; }
@@ -5128,7 +5122,6 @@
     var streak = 0;
     var todayCursor = new Date(); todayCursor.setHours(0,0,0,0);
     var todayKeyStr = todayCursor.getFullYear()+'-'+pad(todayCursor.getMonth()+1)+'-'+pad(todayCursor.getDate());
-
     // 오늘 체크인을 이미 했으면 오늘부터, 아직 안 했으면 어제부터 역산하여 스트릭 유지 (#TASK-ES-043)
     var startCursor = new Date(todayCursor);
     if(!days[todayKeyStr]){
@@ -8509,7 +8502,7 @@
     );
   }
 
-  function openAddAttachmentModal(targetItem, onSaved){
+  function openAddAttachmentModal(targetItem, onSaved, onCancel){
     var draftAtt = { type: 'video', title: '', url: '', note: '' };
     openModal(
       '<h3>참고자료 첨부</h3>' +
@@ -8579,7 +8572,7 @@
           });
         };
 
-        sheet.querySelector('#attCancelBtn').addEventListener('click', closeModal);
+        sheet.querySelector('#attCancelBtn').addEventListener('click', function(){ closeModal(); if(typeof onCancel === 'function') onCancel(); });
         sheet.querySelector('#attSaveBtn').addEventListener('click', async function(){
           var title = (sheet.querySelector('#attTitleInput').value || '').trim();
           var url = (sheet.querySelector('#attUrlInput').value || '').trim();
@@ -8631,6 +8624,8 @@
               if(tf){ target = tf; parentGoal = g; }
             });
           });
+        } else if(kind === 'custom'){
+          target = (state.profile.settings.customSchedules || []).find(function(c){ return c.id === id; });
         }
         if(!target || !target.attachments || !target.attachments[idx]) return;
         var att = target.attachments[idx];
@@ -8638,6 +8633,11 @@
           target.attachments.splice(idx, 1);
           await saveProfile();
           renderAll();
+          if(state.activeTab === 'calendar' && typeof renderCalendarScreen === 'function') renderCalendarScreen();
+          var hubSheet = document.getElementById('modalSheet');
+          if(hubSheet && hubSheet.querySelector('#hubAddNewBtn') && state.calSelectedDate){
+            openCalendarDayEditHubModal(state.calSelectedDate);
+          }
           toast('참고자료를 삭제했어요');
         });
       });

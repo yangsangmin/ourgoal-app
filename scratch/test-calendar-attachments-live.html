@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>아워골 일정 참고자료(Attachments) 시스템 실물 검증 (#TASK-ES-096)</title>
+  <link rel="stylesheet" href="../ui.css">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #131b2e;
+      --card2: #1a253c;
+      --ink: #f1f5f9;
+      --ink-soft: #94a3b8;
+      --ink-muted: #64748b;
+      --rule: rgba(255,255,255,0.08);
+      --surface-2: rgba(255,255,255,0.04);
+      --brand: #3b82f6;
+      --brand-strong: #2563eb;
+      --red-soft: rgba(239,68,68,0.15);
+      --sage-soft: rgba(34,197,94,0.15);
+      --sage: #22c55e;
+    }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 24px;
+    }
+    .wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .header-box {
+      text-align: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8125rem;
+      font-weight: 800;
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      margin-bottom: 10px;
+      white-space: nowrap;
+    }
+    .grid-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    .panel h3 {
+      margin: 0 0 14px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #60a5fa;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .att-chips-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .att-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 9px;
+      background: var(--card2);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      font-size: 0.75rem;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .att-chip:hover {
+      border-color: var(--brand);
+      background: rgba(59, 130, 246, 0.15);
+    }
+    .icon-btn {
+      background: transparent;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      color: var(--ink-soft);
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 0.8125rem; font-weight: 700; margin-bottom: 4px; color: var(--ink-soft); }
+    .field input, .field textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px 10px;
+      background: var(--surface-2);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      color: var(--ink);
+      font-size: 0.875rem;
+    }
+    .btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary { background: var(--brand); color: #fff; }
+    .btn-ghost { background: transparent; border: 1px solid var(--rule); color: var(--ink); }
+    .btn-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .btn-sm { padding: 4px 10px; font-size: 0.75rem; }
+    .dday-mini {
+      font-size: 0.6875rem;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: var(--surface-2);
+      color: var(--ink);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header-box">
+      <div class="badge">#TASK-ES-096 · 본질 [E1] 목표 및 일정 실행 정보 완결성</div>
+      <h1 style="margin: 0 0 8px; font-size: 1.45rem;">🗓️ 캘린더 일정 참고자료(유튜브, 이미지, 메모, 웹링크) 첨부·조회·삭제 실물 콕핏</h1>
+      <p style="margin: 0; color: var(--ink-soft); font-size: 0.875rem;">일정 등록 모달 + 허브 모달 + 4대 미디어 뷰어 팝업 3위 1체 배선 검증</p>
+    </div>
+
+    <!-- 1행: [왼쪽] 일정 수동 등록/편집 모달 UI & [오른쪽] 캘린더 일자 허브 모달 UI -->
+    <div class="grid-row">
+      <!-- 패널 1: 일정 등록/편집 모달 -->
+      <div class="panel">
+        <h3><span>📝 1. 일정 등록/수정 모달</span> <span class="dday-mini" style="margin-left:auto;color:#60a5fa;">+ 참고자료 첨부</span></h3>
+        <div class="field">
+          <label>일정 제목 (필수)</label>
+          <input type="text" value="2026 하이록스 서울 챔피언십 대비 훈련">
+        </div>
+        <div class="field">
+          <label>날짜 및 시간</label>
+          <input type="text" value="2026-09-20 09:00">
+        </div>
+        <div class="field">
+          <label>메모 / 장소 (선택)</label>
+          <input type="text" value="양재 더케이호텔 하이록스 특설 트랙, 러닝화 및 파머스 그립 준비">
+        </div>
+        
+        <!-- 신규 추가된 참고자료 섹션 -->
+        <div class="field" style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--rule);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <label style="font-size:.8125rem;font-weight:700;margin:0;color:var(--ink);">참고자료 (영상, 이미지, 메모, 링크)</label>
+            <button class="btn btn-ghost btn-sm" style="border:1px solid var(--brand);color:#60a5fa;">+ 참고자료 첨부</button>
+          </div>
+          <div class="att-chips-wrap">
+            <span class="att-chip">🎥 하이록스 월볼샷 &amp; 슬레드 푸시 공식 테크닉 가이드</span>
+            <span class="att-chip">🖼️ 서울 대회장 트랙 배치도</span>
+            <span class="att-chip">📝 8대 스테이션 목표 페이스 &amp; RPE 전략표</span>
+            <span class="att-chip">🔗 공식 규정집 웹링크</span>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:10px;border-top:1px solid var(--rule);">
+          <span style="font-size:.8125rem;font-weight:700;">완료 여부</span>
+          <span class="dday-mini" style="background:#22c55e;color:#fff;font-weight:700;padding:2px 8px;">✓ 준비 완료</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:16px;">
+          <button class="btn btn-danger btn-sm">삭제</button>
+          <button class="btn btn-ghost btn-sm" style="margin-left:auto;">취소</button>
+          <button class="btn btn-primary btn-sm" style="min-width:80px;">저장</button>
+        </div>
+      </div>
+
+      <!-- 패널 2: 캘린더 일자 허브 모달 UI -->
+      <div class="panel">
+        <h3><span>🗓️ 2. 해당 일자 일정 관리 허브</span> <span class="dday-mini" style="margin-left:auto;color:#22c55e;">D-5</span></h3>
+        <p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 14px;">2026-09-20 (일) 등록된 일정 및 직결된 참고자료 목록</p>
+        
+        <!-- 일정 1 -->
+        <div style="background:var(--card2);border:1px solid var(--rule);border-radius:10px;padding:10px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div style="flex:1;">
+              <div style="font-weight:700;font-size:.875rem;display:flex;align-items:center;gap:6px;">
+                <span>2026 하이록스 서울 챔피언십 대비 훈련</span>
+                <span class="dday-mini" style="color:#60a5fa;">09:00</span>
+              </div>
+              <div style="font-size:.8125rem;color:var(--ink-soft);margin-top:2px;">양재 더케이호텔 하이록스 특설 트랙</div>
+              
+              <!-- 허브 모달 내 칩 표출 -->
+              <div class="att-chips-wrap">
+                <span class="att-chip">🎥 월볼샷 테크닉</span>
+                <span class="att-chip">🖼️ 코스배치도</span>
+                <span class="att-chip">📝 목표 페이스</span>
+                <span class="att-chip">🔗 공식규정집</span>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;margin-left:8px;">
+              <button class="icon-btn" title="참고자료 첨부" style="color:#60a5fa;">📎</button>
+              <button class="icon-btn" title="수정">✏️</button>
+              <button class="icon-btn" title="삭제" style="color:#ef4444;">×</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 일정 2 -->
+        <div style="background:var(--card2);border:1px solid var(--rule);border-radius:10px;padding:10px;margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div style="flex:1;">
+              <div style="font-weight:700;font-size:.875rem;display:flex;align-items:center;gap:6px;">
+                <span>저녁 수분 &amp; 카보로딩 식단 미팅</span>
+                <span class="dday-mini">19:00</span>
+              </div>
+              <div style="font-size:.8125rem;color:var(--ink-soft);margin-top:2px;">강남역 샐러디</div>
+              <div class="att-chips-wrap">
+                <span class="att-chip">📝 D-Day 섭취 가이드 메모</span>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;margin-left:8px;">
+              <button class="icon-btn" title="참고자료 첨부" style="color:#60a5fa;">📎</button>
+              <button class="icon-btn" title="수정">✏️</button>
+              <button class="icon-btn" title="삭제" style="color:#ef4444;">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm" style="flex:1;">+ 새 일정 추가</button>
+          <button class="btn btn-ghost btn-sm" style="flex:1;">맞춤기록 작성</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2행: [아래] 칩 클릭 시 즉시 구동되는 openAttachmentViewer 팝업 실물 -->
+    <div class="panel">
+      <h3><span>🎥 3. 참고자료 뷰어 모달 (openAttachmentViewer 팝업)</span> <span class="badge">원터치 유튜브 재생 &amp; 삭제 연동</span></h3>
+      <div style="max-width: 580px; margin: 0 auto; background: var(--card2); border: 1px solid var(--rule); border-radius: 14px; padding: 18px;">
+        <h4 style="margin: 0 0 10px; font-size: 1.05rem; display: flex; align-items: center; gap: 6px;">
+          <span>🎥</span> <span>하이록스 월볼샷 &amp; 슬레드 푸시 공식 테크닉 가이드</span>
+        </h4>
+        <!-- 비디오 임베드 시뮬레이션 -->
+        <div style="position:relative;padding-bottom:52%;height:0;overflow:hidden;border-radius:12px;margin:12px 0;background:#000;border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;">
+          <div style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg, #1e293b, #0f172a);">
+            <div style="font-size:3rem;margin-bottom:6px;">▶️</div>
+            <div style="font-weight:700;font-size:0.95rem;color:#f8fafc;">유튜브 공식 영상 재생기 (iframe Embed)</div>
+            <div style="font-size:0.75rem;color:#94a3b8;margin-top:4px;">https://www.youtube.com/watch?v=HYROX_TECHNIQUE_2026</div>
+          </div>
+        </div>
+        <p style="font-size:.8125rem;color:var(--ink-soft);line-height:1.6;margin:10px 0 14px;">
+          💡 <b>핵심 팁:</b> 월볼샷 스쿼트 깊이를 확실히 확보하고, 엉덩이 반동을 이용해 공을 던져야 어깨 피로를 최소화할 수 있습니다.
+        </p>
+        <div style="display:flex;justify-content:space-between;gap:8px;border-top:1px solid var(--rule);padding-top:12px;">
+          <button class="btn btn-danger btn-sm">참고자료 삭제</button>
+          <button class="btn btn-primary btn-sm">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
