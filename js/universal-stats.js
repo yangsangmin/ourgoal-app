@@ -1285,6 +1285,10 @@
         });
       }
     }
+    records.forEach(function(r){
+      r.isSample = true;
+      r.sampleCategory = domainKey;
+    });
     return records;
   }
 
@@ -1330,11 +1334,12 @@
 
   function generate52WeekPowerliftingSample(){
     var records = [];
+    var now = new Date();
     for(var i = 0; i < RAW_52W_POWERLIFTING_DATA.length; i++){
       var cols = RAW_52W_POWERLIFTING_DATA[i].split(',');
       if(cols.length < 18) continue;
 
-      var dStr = cols[0];
+      var origDStr = cols[0];
       var week = cols[1];
       var phase = cols[2];
       var exercise = cols[3];
@@ -1344,6 +1349,13 @@
       var est1rm = parseFloat(cols[17]) || 0;
       var rpe = parseFloat(cols[18]) || 75;
       var notes = cols[19] || '';
+
+      // 오늘 기준으로 직전 52주 동적 리베이스 (W01: 51주 전 ~ W52: 이번 주)
+      var weekNum = parseInt((week || 'W01').replace(/[^0-9]/g, ''), 10) || 1;
+      var weekOffset = Math.max(0, 52 - weekNum);
+      var dayOffset = (exercise === '스쿼트' ? 4 : (exercise === '벤치프레스' ? 2 : 0));
+      var sessionDate = new Date(now.getTime() - (weekOffset * 7 * 86400000) - (dayOffset * 86400000));
+      var dStr = sessionDate.toISOString().slice(0, 10);
 
       // 시·분·초 정밀 융합 (19:00:00 KST)
       var startIso = dStr + 'T19:00:00.000Z';
@@ -1386,7 +1398,9 @@
           Session_Notes: notes
         },
         visibility: 'private',
-        source: 'csv_import'
+        source: 'csv_import',
+        isSample: true,
+        sampleCategory: 'big3'
       });
     }
     return records;
@@ -1446,6 +1460,10 @@
       });
     });
 
+    records.forEach(function(r){
+      r.isSample = true;
+      r.sampleCategory = 'olympic_1924';
+    });
     return records;
   }
 
@@ -1455,10 +1473,15 @@
     if(!csvStr || typeof csvStr !== 'string') return [];
 
     var lines = csvStr.trim().split(/\r?\n/).filter(function(l){ return l.trim().length > 0; });
-    if(lines.length < 2) return [];
+    if(lines.length === 0) return [];
 
     var headerLine = lines[0];
-    var headers = headerLine.split(',').map(function(h){ return h.trim().replace(/^[\"\']|[\"\']$/g, ''); });
+    // 탭(\t) 구분자 vs 쉼표(,) 구분자 자동 판별
+    var tabCount = (headerLine.match(/\t/g) || []).length;
+    var commaCount = (headerLine.match(/,/g) || []).length;
+    var delim = (tabCount > commaCount || (tabCount > 0 && commaCount === 0)) ? '\t' : ',';
+
+    var headers = headerLine.split(delim).map(function(h){ return h.trim().replace(/^[\"\']|[\"\']$/g, ''); });
 
     var colMap = { date: -1, exercise: -1, notes: -1 };
 
@@ -1472,8 +1495,17 @@
     var records = [];
     var sessionOffsets = {};
 
-    for(var i = 1; i < lines.length; i++){
-      var cols = lines[i].split(',').map(function(c){ return c.trim().replace(/^[\"\']|[\"\']$/g, ''); });
+    var startIdx = 1;
+    // 만약 헤더에 날짜나 메트릭 키워드가 없고 바로 데이터인 경우(헤더 없는 데이터) 방어
+    if(colMap.date === -1 && lines.length === 1){
+      startIdx = 0;
+      headers = ['date', 'content'];
+      colMap.date = 0;
+      colMap.notes = 1;
+    }
+
+    for(var i = startIdx; i < lines.length; i++){
+      var cols = lines[i].split(delim).map(function(c){ return c.trim().replace(/^[\"\']|[\"\']$/g, ''); });
       if(cols.length < headers.length - 2) continue;
 
       var rawDate = colMap.date !== -1 ? (cols[colMap.date] || '1924-01-01') : '1924-01-01';
@@ -3959,13 +3991,29 @@
     if(!openModalFn) return;
 
     var stagedRecs = [];
+    var curRecs = (state && state.profile && state.profile.records) || [];
+    var sampleCount = curRecs.filter(function(r){ return r.isSample; }).length;
+
+    var purgeBannerHtml = '';
+    if(sampleCount > 0){
+      purgeBannerHtml = 
+        '<div class="u-sample-purge-row" id="uSamplePurgeRow" style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:10px;padding:8px 12px;margin-bottom:12px;">' +
+          '<div style="font-size:.8125rem;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
+            '<span>🧪 현재 체험 샘플 <b>' + sampleCount + '건</b> 로드됨</span>' +
+          '</div>' +
+          '<button type="button" class="btn btn-xs btn-danger" id="uPurgeSampleBtn" style="font-size:.75rem;padding:4px 10px;font-weight:700;border-radius:6px;cursor:pointer;">' +
+            '🧹 샘플만 삭제' +
+          '</button>' +
+        '</div>';
+    }
 
     var modalHtml = 
       '<div class="modal-head">' +
-        '<h3>📥 다차원 데이터 융합 & 도메인별 52주 실측 샘플 로드</h3>' +
+        '<h3>📥 데이터 가져오기 & 1초 샘플 로드</h3>' +
       '</div>' +
+      purgeBannerHtml +
       '<div style="margin-bottom:12px;font-size:.8125rem;color:var(--ink-soft);line-height:1.4;">' +
-        '영업 실적·개발 활동·수험 공부·자산·운동 등 어떤 형식의 데이터든 AI가 스스로 필드를 감지하여 다차원 차트로 시각화합니다.' +
+        '영업 실적·개발 활동·수험 공부·자산·운동 등 원하는 분야의 카드를 누르면 1초 만에 실제 데이터가 융합됩니다.' +
       '</div>' +
 
       '<!-- 3개 탭 바 -->' +
@@ -3979,47 +4027,82 @@
       '<div id="uImpPanelSamples" class="u-imp-panel">' +
         '<div style="display:flex;flex-direction:column;gap:8px;">' +
           '<!-- 대표 도메인 1: B2B 영업 -->' +
-          '<button type="button" class="btn btn-ghost u-sample-card" data-sample="sales" style="height:auto;padding:12px;text-align:left;display:flex;flex-direction:column;gap:4px;border:1.5px solid var(--brand);background:var(--brand-faint, rgba(37,99,235,0.04));border-radius:10px;">' +
-            '<div style="display:flex;align-items:center;justify-content:space-between;">' +
-              '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">💼 B2B IT 솔루션 영업 실적 52주</span>' +
-              '<span class="badge" style="font-size:.6875rem;background:var(--brand);color:#fff;padding:2px 6px;border-radius:4px;">대표 샘플</span>' +
+          '<div class="u-sample-card-wrapper" style="position:relative;">' +
+            '<div class="btn btn-ghost u-sample-card" data-sample="sales" style="height:auto;padding:12px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;">' +
+              '<div style="flex:1;">' +
+                '<div style="display:flex;align-items:center;gap:6px;">' +
+                  '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">💼 B2B IT 솔루션 영업 실적 52주</span>' +
+                  '<span class="badge" style="font-size:.6875rem;background:var(--brand);color:#fff;padding:2px 6px;border-radius:4px;">대표</span>' +
+                '</div>' +
+                '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:3px;">주간 콜 수, 미팅 수, 제안서, 수주액, 전환율 52세션 추적</div>' +
+              '</div>' +
+              '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="sales" style="font-weight:700;padding:6px 10px;white-space:nowrap;box-shadow:0 1px 3px rgba(37,99,235,0.3);">⚡ 1초 로드</button>' +
             '</div>' +
-            '<span style="font-size:.75rem;color:var(--ink-soft);">52주간 콜 수, 미팅 수, 제안서, 수주액, 파이프라인 전환율 추적</span>' +
-          '</button>' +
+          '</div>' +
+
           '<!-- 대표 도메인 2: 오픈소스 개발 -->' +
-          '<button type="button" class="btn btn-ghost u-sample-card" data-sample="coding" style="height:auto;padding:12px;text-align:left;display:flex;flex-direction:column;gap:4px;border:1.5px solid var(--border);border-radius:10px;">' +
-            '<div style="display:flex;align-items:center;justify-content:space-between;">' +
-              '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">💻 풀스택 오픈소스 개발 활동 52주</span>' +
-              '<span class="badge" style="font-size:.6875rem;background:var(--card2);color:var(--ink);padding:2px 6px;border-radius:4px;">IT/개발</span>' +
+          '<div class="u-sample-card-wrapper" style="position:relative;">' +
+            '<div class="btn btn-ghost u-sample-card" data-sample="coding" style="height:auto;padding:12px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;">' +
+              '<div style="flex:1;">' +
+                '<div style="display:flex;align-items:center;gap:6px;">' +
+                  '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">💻 풀스택 오픈소스 개발 활동 52주</span>' +
+                  '<span class="badge" style="font-size:.6875rem;background:var(--card2);color:var(--ink);padding:2px 6px;border-radius:4px;">IT</span>' +
+                '</div>' +
+                '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:3px;">일일 커밋 수, PR 병합 수, 코드 리뷰, 버그 해결 52세션</div>' +
+              '</div>' +
+              '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="coding" style="font-weight:700;padding:6px 10px;white-space:nowrap;box-shadow:0 1px 3px rgba(37,99,235,0.3);">⚡ 1초 로드</button>' +
             '</div>' +
-            '<span style="font-size:.75rem;color:var(--ink-soft);">52주간 일일 커밋 수, PR 병합 수, 코드 리뷰, 버그 수정 추적</span>' +
-          '</button>' +
+          '</div>' +
+
           '<!-- 기타 도메인 서브그리드 -->' +
           '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;">' +
-            '<button type="button" class="btn btn-ghost u-sample-card" data-sample="study" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
-              '<span style="font-weight:700;font-size:.8125rem;color:var(--ink);">📖 수험/자격증 공부</span>' +
-              '<span style="font-size:.6875rem;color:var(--ink-soft);">순공시간·문제풀이·복습량</span>' +
-            '</button>' +
-            '<button type="button" class="btn btn-ghost u-sample-card" data-sample="finance" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
-              '<span style="font-weight:700;font-size:.8125rem;color:var(--ink);">💰 재테크/자산 형성</span>' +
-              '<span style="font-size:.6875rem;color:var(--ink-soft);">저축액·투자수익·소비통제</span>' +
-            '</button>' +
-            '<button type="button" class="btn btn-ghost u-sample-card" data-sample="big3_52w" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
-              '<span style="font-weight:700;font-size:.8125rem;color:var(--ink);">🏋️ 3대 운동 52주 (156세션)</span>' +
-              '<span style="font-size:.6875rem;color:var(--ink-soft);">스쿼트·벤치·데드 366→506kg</span>' +
-            '</button>' +
-            '<button type="button" class="btn btn-ghost u-sample-card" data-sample="olympic_1924" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
-              '<span style="font-weight:700;font-size:.8125rem;color:var(--ink);">📜 1924 올림픽 역도 100년</span>' +
-              '<span style="font-size:.6875rem;color:var(--ink-soft);">100년 전 파리 올림픽 실측</span>' +
-            '</button>' +
-            '<button type="button" class="btn btn-ghost u-sample-card" data-sample="running" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
-              '<span style="font-weight:700;font-size:.8125rem;color:var(--ink);">🏃 러닝 마라톤 52주</span>' +
-              '<span style="font-size:.6875rem;color:var(--ink-soft);">5km→21km 하프 페이스</span>' +
-            '</button>' +
-            '<button type="button" class="btn btn-ghost u-sample-card" data-sample="reading" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:10px;">' +
-              '<span style="font-weight:700;font-size:.8125rem;color:var(--ink);">📚 독서 습관 52주</span>' +
-              '<span style="font-size:.6875rem;color:var(--ink-soft);">주간 100쪽 누적 5,200쪽</span>' +
-            '</button>' +
+            '<div class="btn btn-ghost u-sample-card" data-sample="study" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;border:1px solid var(--border);border-radius:10px;cursor:pointer;">' +
+              '<div>' +
+                '<div style="font-weight:700;font-size:.8125rem;color:var(--ink);">📖 수험/자격증 공부</div>' +
+                '<div style="font-size:.6875rem;color:var(--ink-soft);">순공시간·문제풀이·복습량</div>' +
+              '</div>' +
+              '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="study" style="font-size:.6875rem;padding:3px 6px;align-self:flex-end;">⚡ 1초 로드</button>' +
+            '</div>' +
+
+            '<div class="btn btn-ghost u-sample-card" data-sample="finance" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;border:1px solid var(--border);border-radius:10px;cursor:pointer;">' +
+              '<div>' +
+                '<div style="font-weight:700;font-size:.8125rem;color:var(--ink);">💰 재테크/자산 형성</div>' +
+                '<div style="font-size:.6875rem;color:var(--ink-soft);">적금·투자수익·누적 1,200만</div>' +
+              '</div>' +
+              '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="finance" style="font-size:.6875rem;padding:3px 6px;align-self:flex-end;">⚡ 1초 로드</button>' +
+            '</div>' +
+
+            '<div class="btn btn-ghost u-sample-card" data-sample="big3_52w" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;border:1px solid var(--border);border-radius:10px;cursor:pointer;">' +
+              '<div>' +
+                '<div style="font-weight:700;font-size:.8125rem;color:var(--ink);">🏋️ 3대 운동 52주 (156세션)</div>' +
+                '<div style="font-size:.6875rem;color:var(--ink-soft);">스쿼트·벤치·데드 366→506kg</div>' +
+              '</div>' +
+              '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="big3_52w" style="font-size:.6875rem;padding:3px 6px;align-self:flex-end;">⚡ 1초 로드</button>' +
+            '</div>' +
+
+            '<div class="btn btn-ghost u-sample-card" data-sample="olympic_1924" style="height:auto;padding:10px;text-align:left;display:flex-direction:column;justify-content:space-between;gap:6px;border:1px solid var(--border);border-radius:10px;cursor:pointer;">' +
+              '<div>' +
+                '<div style="font-weight:700;font-size:.8125rem;color:var(--ink);">📜 1924 올림픽 역도 100년</div>' +
+                '<div style="font-size:.6875rem;color:var(--ink-soft);">100년 전 파리 올림픽 실측</div>' +
+              '</div>' +
+              '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="olympic_1924" style="font-size:.6875rem;padding:3px 6px;align-self:flex-end;">⚡ 1초 로드</button>' +
+            '</div>' +
+
+            '<div class="btn btn-ghost u-sample-card" data-sample="running" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;border:1px solid var(--border);border-radius:10px;cursor:pointer;">' +
+              '<div>' +
+                '<div style="font-weight:700;font-size:.8125rem;color:var(--ink);">🏃 러닝 마라톤 52주</div>' +
+                '<div style="font-size:.6875rem;color:var(--ink-soft);">5km→21km 하프 페이스</div>' +
+              '</div>' +
+              '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="running" style="font-size:.6875rem;padding:3px 6px;align-self:flex-end;">⚡ 1초 로드</button>' +
+            '</div>' +
+
+            '<div class="btn btn-ghost u-sample-card" data-sample="reading" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;border:1px solid var(--border);border-radius:10px;cursor:pointer;">' +
+              '<div>' +
+                '<div style="font-weight:700;font-size:.8125rem;color:var(--ink);">📚 독서 습관 52주</div>' +
+                '<div style="font-size:.6875rem;color:var(--ink-soft);">주간 100쪽 누적 5,200쪽</div>' +
+              '</div>' +
+              '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="reading" style="font-size:.6875rem;padding:3px 6px;align-self:flex-end;">⚡ 1초 로드</button>' +
+            '</div>' +
           '</div>' +
         '</div>' +
       '</div>' +
@@ -4028,7 +4111,7 @@
       '<div id="uImpPanelCsv" class="u-imp-panel" style="display:none;">' +
         '<div class="field" style="margin-bottom:8px;">' +
           '<label style="font-size:.8125rem;font-weight:600;">CSV 파일 선택</label>' +
-          '<input type="file" id="uImpCsvFileInput" accept=".csv,text/csv" style="width:100%;box-sizing:border-box;margin-top:4px;">' +
+          '<input type="file" id="uImpCsvFileInput" accept=".csv,text/csv,text/plain" style="width:100%;box-sizing:border-box;margin-top:4px;">' +
         '</div>' +
         '<div class="faint" style="font-size:.75rem;line-height:1.4;">' +
           '💡 영업 실적, GitHub 커밋 로그, 수험 타이머 기록, 체중 등 모든 CSV 파일을 지원합니다. 첫 번째 행(헤더)의 컬럼명을 AI가 스스로 감지합니다.' +
@@ -4038,13 +4121,15 @@
       '<!-- Tab 3: 엑셀/텍스트 붙여넣기 -->' +
       '<div id="uImpPanelText" class="u-imp-panel" style="display:none;">' +
         '<div class="field" style="margin-bottom:8px;">' +
-          '<label style="font-size:.8125rem;font-weight:600;">엑셀 복사 또는 일기/메모 줄글</label>' +
-          '<textarea id="uImpTextInput" rows="6" placeholder="예 1 (B2B 영업 실적):&#10;2025-05-10 콜 25건 미팅 4건 제안 2건 수주 1200만원&#10;2025-05-11 콜 30건 미팅 5건 제안 3건 수주 2500만원&#10;&#10;예 2 (개발 활동):&#10;2025-06-15 커밋 12회 PR 3개 리뷰 5회 버그 2개 해결&#10;2025-06-16 커밋 8회 PR 1개 리뷰 2회&#10;&#10;예 3 (수험/운동/체중 등):&#10;2025.07.01 순공 8.5시간 문제풀이 150제&#10;2025.07.02 스쿼트 120kg 5세트 완료" style="width:100%;box-sizing:border-box;font-family:monospace;font-size:.8125rem;line-height:1.4;margin-top:4px;"></textarea>' +
+          '<label style="font-size:.8125rem;font-weight:600;">엑셀 복사(탭 구분) 또는 일기/메모 줄글</label>' +
+          '<textarea id="uImpTextInput" rows="5" placeholder="예 1 (B2B 영업 실적):&#10;2025-05-10\t콜 25건\t미팅 4건\t수주 1200만원&#10;2025-05-11\t콜 30건\t미팅 5건\t수주 2500만원&#10;&#10;예 2 (개발 활동):&#10;2025-06-15, 커밋 12회, PR 3개, 리뷰 5회&#10;2025-06-16, 커밋 8회, PR 1개, 리뷰 2회" style="width:100%;box-sizing:border-box;font-family:monospace;font-size:.8125rem;line-height:1.4;margin-top:4px;"></textarea>' +
         '</div>' +
       '</div>' +
 
-      '<div id="uImpPreviewBox" style="display:none;margin-top:10px;padding:10px;background:var(--card2);border-radius:8px;font-size:.8125rem;">' +
-        '<span id="uImpPreviewText" style="font-weight:700;color:var(--brand);"></span>' +
+      '<!-- 실시간 분석 결과 & 데이터 테이블 미리보기 영역 -->' +
+      '<div id="uImpPreviewBox" style="display:none;margin-top:12px;padding:10px;background:var(--card2);border-radius:10px;font-size:.8125rem;">' +
+        '<div id="uImpPreviewTitle" style="font-weight:700;color:var(--brand);margin-bottom:4px;"></div>' +
+        '<div id="uImpPreviewTableArea"></div>' +
       '</div>' +
 
       '<div class="modal-actions" style="margin-top:14px;display:flex;justify-content:flex-end;gap:8px;">' +
@@ -4060,9 +4145,11 @@
       var panelCsv = modalEl.querySelector('#uImpPanelCsv');
       var panelText = modalEl.querySelector('#uImpPanelText');
       var previewBox = modalEl.querySelector('#uImpPreviewBox');
-      var previewText = modalEl.querySelector('#uImpPreviewText');
+      var previewTitle = modalEl.querySelector('#uImpPreviewTitle');
+      var previewTableArea = modalEl.querySelector('#uImpPreviewTableArea');
       var applyBtn = modalEl.querySelector('#uImpApplyBtn');
       var cancelBtn = modalEl.querySelector('#uImpCancelBtn');
+      var purgeBtn = modalEl.querySelector('#uPurgeSampleBtn');
 
       function switchTab(t){
         [tabSamples, tabCsv, tabText].forEach(function(b){
@@ -4081,26 +4168,117 @@
       if(tabText) tabText.onclick = function(){ switchTab(tabText); };
       if(cancelBtn) cancelBtn.onclick = closeModalFn;
 
-      // 추천 샘플 클릭
-      modalEl.querySelectorAll('.u-sample-card').forEach(function(btn){
-        btn.onclick = function(){
-          var sKey = btn.dataset.sample;
-          if(sKey === 'big3_52w'){
-            stagedRecs = generate52WeekPowerliftingSample();
-          } else if(sKey === 'olympic_1924'){
-            stagedRecs = generate1920sOlympicStrengthSample();
-          } else {
-            stagedRecs = generateDomainSample(sKey);
-          }
+      // 0. 샘플 데이터 일괄 삭제/정화 안전망
+      if(purgeBtn){
+        purgeBtn.onclick = async function(){
+          if(!confirm('체험용으로 로드된 샘플 데이터 ' + sampleCount + '건만 삭제하시겠습니까?\n(회원님의 실제 기록은 100% 안전하게 보존됩니다)')) return;
+          var kept = curRecs.filter(function(r){ return !r.isSample; });
+          if(state && state.profile) state.profile.records = kept;
+          if(saveProfileFn) await saveProfileFn();
+          closeModalFn();
+          if(toastFn) toastFn('샘플 데이터 ' + sampleCount + '건이 모두 정리되었습니다! ✨');
+          if(onDoneFn) onDoneFn('purge', sampleCount);
+        };
+      }
+
+      // 공통 융합 실행 함수 (원터치 1초 로더)
+      async function executeImport(recsToImport, domainLabel){
+        if(!recsToImport || !recsToImport.length) return;
+        var cur = (state && state.profile && state.profile.records) || [];
+        var merged = cur.slice();
+        var added = 0;
+        recsToImport.forEach(function(sr){
+          merged.push(sr);
+          added++;
+        });
+        merged.sort(function(a,b){ return new Date(b.startAt) - new Date(a.startAt); });
+        if(state && state.profile) state.profile.records = merged;
+
+        if(state){
+          state.recordsSegment = 'stats';
+          state.univPeriod = 'all';
+        }
+        if(saveProfileFn) await saveProfileFn();
+        closeModalFn();
+
+        if(onDoneFn) onDoneFn(domainLabel || 'general', added);
+        if(toastFn) toastFn('총 ' + added + '건의 [' + (domainLabel || '데이터') + '] 기록을 1초 만에 융합했습니다! 콕핏 차트를 확인해보세요 🔥');
+      }
+
+      // 샘플 레코드 생성 헬퍼
+      function getSampleRecs(sKey){
+        if(sKey === 'big3_52w') return generate52WeekPowerliftingSample();
+        if(sKey === 'olympic_1924') return generate1920sOlympicStrengthSample();
+        return generateDomainSample(sKey);
+      }
+
+      // 1-A. 샘플 카드 내 [⚡ 1초 로드] 원터치 직행 버튼
+      modalEl.querySelectorAll('.u-sample-quick-btn').forEach(function(qBtn){
+        qBtn.onclick = function(e){
+          e.stopPropagation();
+          var sKey = qBtn.dataset.quickSample;
+          var recs = getSampleRecs(sKey);
+          var titleStr = qBtn.closest('.u-sample-card') ? qBtn.closest('.u-sample-card').textContent.trim().split('\n')[0] : sKey;
+          executeImport(recs, titleStr);
+        };
+      });
+
+      // 1-B. 샘플 카드 본체 클릭 시 선택 활성화 & 하단 프리뷰
+      modalEl.querySelectorAll('.u-sample-card').forEach(function(card){
+        card.onclick = function(){
+          modalEl.querySelectorAll('.u-sample-card').forEach(function(c){
+            c.style.border = '1.5px solid var(--border)';
+            c.style.background = 'transparent';
+          });
+          card.style.border = '2px solid var(--brand)';
+          card.style.background = 'var(--brand-faint, rgba(37,99,235,0.06))';
+
+          var sKey = card.dataset.sample;
+          stagedRecs = getSampleRecs(sKey);
+
           previewBox.style.display = 'block';
-          var titleStr = sKey === 'big3_52w' ? '52주 3대운동 156세션' : btn.textContent.trim().split('\n')[0];
-          previewText.textContent = '선택됨: ' + titleStr + ' (' + stagedRecs.length + '개 세션 준비 완료)';
+          var titleStr = sKey === 'big3_52w' ? '52주 3대운동 156세션' : card.textContent.trim().split('\n')[0];
+          previewTitle.textContent = '선택됨: ' + titleStr + ' (' + stagedRecs.length + '개 세션 준비 완료)';
+          previewTableArea.innerHTML = renderTablePreview(stagedRecs);
+
           applyBtn.style.display = 'inline-block';
           applyBtn.textContent = stagedRecs.length + '개 데이터 1초 만에 융합하기';
         };
       });
 
-      // CSV 파일 파싱
+      // 테이블 프리뷰 렌더러
+      function renderTablePreview(recs){
+        if(!recs || !recs.length) return '';
+        var rows = recs.slice(0, 4);
+        var trs = rows.map(function(r){
+          var d = (r.startAt || '').slice(0, 10);
+          var ent = r.subTheme || r.exercise || r.item || '일반';
+          var pVal = (r.metrics && (r.metrics.primary !== undefined ? r.metrics.primary : (r.metrics['1rm'] || r.metrics.revenue || r.metrics.commits || '-'))) + (r.metrics && r.metrics.primaryUnit ? (' ' + r.metrics.primaryUnit) : '');
+          var sVal = (r.metrics && (r.metrics.secondary !== undefined ? r.metrics.secondary : (r.metrics.volume || r.metrics.deals || r.metrics.prs || '-'))) + (r.metrics && r.metrics.secondaryUnit ? (' ' + r.metrics.secondaryUnit) : '');
+          var txt = r.text || '';
+          if(txt.length > 28) txt = txt.slice(0, 28) + '…';
+          return '<tr style="border-bottom:1px solid var(--border);">' +
+            '<td style="padding:4px 6px;white-space:nowrap;color:var(--ink);">' + d + '</td>' +
+            '<td style="padding:4px 6px;font-weight:700;color:var(--brand);white-space:nowrap;">' + ent + '</td>' +
+            '<td style="padding:4px 6px;white-space:nowrap;color:#10b981;font-weight:700;">' + pVal + '</td>' +
+            '<td style="padding:4px 6px;white-space:nowrap;color:#6366f1;">' + sVal + '</td>' +
+            '<td style="padding:4px 6px;color:var(--ink-soft);">' + txt + '</td>' +
+          '</tr>';
+        }).join('');
+
+        return '<div style="margin-top:6px;max-height:150px;overflow-x:auto;border:1px solid var(--border);border-radius:8px;background:var(--card);">' +
+          '<table style="width:100%;border-collapse:collapse;text-align:left;font-size:11px;font-family:monospace;">' +
+            '<thead style="background:var(--card2);border-bottom:1px solid var(--border);color:var(--ink-soft);">' +
+              '<tr>' +
+                '<th style="padding:4px 6px;">일자</th><th style="padding:4px 6px;">항목</th><th style="padding:4px 6px;">주요수치</th><th style="padding:4px 6px;">보조수치</th><th style="padding:4px 6px;">내용 요약</th>' +
+              '</tr>' +
+            '</thead>' +
+            '<tbody>' + trs + '</tbody>' +
+          '</table>' +
+        '</div>';
+      }
+
+      // 2. CSV 파일 파싱
       var fileInp = modalEl.querySelector('#uImpCsvFileInput');
       if(fileInp){
         fileInp.onchange = function(e){
@@ -4111,11 +4289,12 @@
             var csvStr = evt.target.result || '';
             stagedRecs = parseCsvToUniversalRecords(csvStr, 'general');
             if(stagedRecs.length === 0){
-              if(toastFn) toastFn('CSV 파일에 유효한 행이 부족합니다.');
+              if(toastFn) toastFn('CSV 파일에 유효한 데이터 행이 부족합니다.');
               return;
             }
             previewBox.style.display = 'block';
-            previewText.textContent = 'CSV 분석 완료: ' + stagedRecs.length + '건의 일자별 데이터 준비 완료';
+            previewTitle.textContent = 'CSV 분석 완료: ' + stagedRecs.length + '건의 데이터 감지됨 (상위 미리보기)';
+            previewTableArea.innerHTML = renderTablePreview(stagedRecs);
             applyBtn.style.display = 'inline-block';
             applyBtn.textContent = stagedRecs.length + '건의 기록 융합하기';
           };
@@ -4123,7 +4302,7 @@
         };
       }
 
-      // 텍스트 파싱
+      // 3. 텍스트 파싱
       var textInp = modalEl.querySelector('#uImpTextInput');
       if(textInp){
         textInp.oninput = function(){
@@ -4131,41 +4310,24 @@
           if(!raw){
             applyBtn.style.display = 'none';
             previewBox.style.display = 'none';
+            stagedRecs = [];
             return;
           }
           stagedRecs = parseCsvToUniversalRecords(raw, 'general');
           if(stagedRecs.length > 0){
             previewBox.style.display = 'block';
-            previewText.textContent = '텍스트 분석 완료: ' + stagedRecs.length + '건 감지됨';
+            previewTitle.textContent = '텍스트 분석 완료: ' + stagedRecs.length + '건 감지됨 (상위 미리보기)';
+            previewTableArea.innerHTML = renderTablePreview(stagedRecs);
             applyBtn.style.display = 'inline-block';
             applyBtn.textContent = stagedRecs.length + '건의 기록 융합하기';
           }
         };
       }
 
-      // 적용 버튼 클릭
+      // 4. 하단 적용 버튼 클릭
       if(applyBtn){
-        applyBtn.onclick = async function(){
-          if(!stagedRecs.length) return;
-          var curRecs = (state && state.profile && state.profile.records) || [];
-          var merged = curRecs.slice();
-          var added = 0;
-          stagedRecs.forEach(function(sr){
-            merged.push(sr);
-            added++;
-          });
-          merged.sort(function(a,b){ return new Date(b.startAt) - new Date(a.startAt); });
-          if(state && state.profile) state.profile.records = merged;
-
-          if(state){
-            state.recordsSegment = 'stats';
-            state.univPeriod = 'all';
-          }
-          if(saveProfileFn) await saveProfileFn();
-          closeModalFn();
-
-          if(onDoneFn) onDoneFn('general', added);
-          if(toastFn) toastFn('총 ' + added + '건의 기록을 성공적으로 융합했습니다! [성취 통계] 뷰에서 맞춤 차트를 확인해보세요 🔥');
+        applyBtn.onclick = function(){
+          executeImport(stagedRecs, '가져온 데이터');
         };
       }
     });

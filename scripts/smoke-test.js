@@ -4175,6 +4175,41 @@ check('compliance: [#TASK-ES-090] 아워골 기록탭 지금부터 시간기록(
   assert.ok(trackerJs.includes('renderRecordsScreen'), '저장 후 기록 탭 화면이 즉시 실시간 갱신되어야 함');
 });
 
+check('compliance: [#TASK-ES-091] 아워골 데이터 가져오기 & 1초 샘플(원터치 로드, 실시간 표 미리보기, 탭 구분자 지원, 샘플 정화 안전망) 무결성 검증', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const statsJsPath = path.join(__dirname, '..', 'js', 'universal-stats.js');
+
+  assert.ok(fs.existsSync(statsJsPath), 'js/universal-stats.js 파일이 존재해야 함');
+  const statsJs = fs.readFileSync(statsJsPath, 'utf8');
+
+  // 1. 원터치 1초 로드 버튼 및 카드 인터랙션 검증
+  assert.ok(statsJs.includes('u-sample-quick-btn'), '샘플 카드에 원터치 1초 로드 버튼이 배선되어 있어야 함');
+  assert.ok(statsJs.includes('⚡ 1초 로드'), '원터치 로드 버튼 텍스트가 정확해야 함');
+  assert.ok(uiCss.includes('.u-sample-quick-btn'), 'ui.css에 1초 로드 버튼 스타일이 정의되어 있어야 함');
+
+  // 2. CSV 및 엑셀 탭(\t) 구분자 자동 감지 검증
+  assert.ok(statsJs.includes('tabCount') && statsJs.includes('commaCount') && statsJs.includes("delim = (tabCount > commaCount"), '엑셀 탭 구분자 및 CSV 쉼표 자동 감지 로직이 탑재되어 있어야 함');
+
+  // 3. 실시간 테이블 미리보기 렌더링 검증
+  assert.ok(statsJs.includes('renderTablePreview'), '실시간 모노스페이스 테이블 프리뷰 렌더러가 구비되어 있어야 함');
+  assert.ok(statsJs.includes('uImpPreviewBox'), '미리보기 컨테이너(uImpPreviewBox)가 배선되어 있어야 함');
+  assert.ok(uiCss.includes('#uImpPreviewBox table'), 'ui.css에 실시간 미리보기 테이블 스타일이 정의되어 있어야 함');
+
+  // 4. 샘플 데이터 메타데이터(isSample) 및 52주 동적 리베이스 검증
+  assert.ok(statsJs.includes('isSample: true'), '샘플 데이터에 isSample 플래그가 부여되어 있어야 함');
+  assert.ok(statsJs.includes('sampleCategory'), '샘플 데이터에 sampleCategory가 부여되어 있어야 함');
+  assert.ok(statsJs.includes('generate52WeekPowerliftingSample'), '52주 파워리프팅 샘플 생성기가 존재해야 함');
+
+  // 5. 샘플 데이터 자가 정화(Purge) 안전망 및 Zero Data Loss 검증
+  assert.ok(statsJs.includes('uSamplePurgeRow'), '샘플 정화 안전망 안내 행이 존재해야 함');
+  assert.ok(statsJs.includes('uPurgeSampleBtn'), '샘플 정화 버튼이 구비되어 있어야 함');
+  assert.ok(statsJs.includes('🧹 샘플만 삭제'), '샘플 정화 버튼 텍스트가 정확해야 함');
+
+});
+
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
