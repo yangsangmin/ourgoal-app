@@ -4428,6 +4428,57 @@ check('compliance: [#TASK-ES-102] 전 탭(홈·목표·일정·기록·소통·�
   assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 엄수');
 });
 
+check('compliance: [#TASK-ES-103] Web Push VAPID API 구축 및 UGC 신고·차단 안전망 완결성 검증', async () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. api/push-subscribe.js VAPID 처리 및 vercel.json rewrite 규격 검증 (Vercel Hobby 12개 한도 준수)
+  const vercelJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+  const vapidRewrite = vercelJson.rewrites.find(r => r.source === '/api/vapid-public-key');
+  assert.ok(vapidRewrite, 'vercel.json 내 /api/vapid-public-key rewrite 정의 존재');
+  assert.strictEqual(vapidRewrite.destination, '/api/push-subscribe', '/api/vapid-public-key -> /api/push-subscribe 라우팅');
+
+  const pushSubApiPath = path.join(__dirname, '..', 'api', 'push-subscribe.js');
+  assert.ok(fs.existsSync(pushSubApiPath), 'api/push-subscribe.js 파일 존재');
+  
+  const pushSubHandler = require(pushSubApiPath);
+  assert.strictEqual(typeof pushSubHandler, 'function', '핸들러 함수 export 확인');
+
+  // 가상 req/res 로 핸들러 동작 검증 (GET 시 publicKey 반환)
+  let responseData = null;
+  let responseStatus = 200;
+  const mockRes = {
+    setHeader: () => {},
+    status: (code) => { responseStatus = code; return mockRes; },
+    json: (data) => { responseData = data; return mockRes; },
+    end: () => mockRes
+  };
+
+  // 1-1. GET 요청 검증
+  process.env.VAPID_PUBLIC_KEY = 'test_vapid_public_key_mock_12345';
+  await pushSubHandler({ method: 'GET', url: '/api/vapid-public-key' }, mockRes);
+  assert.strictEqual(responseStatus, 200, 'GET 200 OK');
+  assert.strictEqual(responseData.publicKey, 'test_vapid_public_key_mock_12345', 'VAPID 공개키 정상 반환');
+
+  // 2. index.html 내 Web Push 및 UGC 안전망 탑재 검증
+  assert.ok(indexHtml.includes("fetch('/api/vapid-public-key')"), '클라이언트 VAPID API fetch 로직 탑재');
+  assert.ok(indexHtml.includes('filterBlockedPosts'), '차단된 사용자 글 필터링 함수 탑재');
+  assert.ok(indexHtml.includes('blockUser('), '사용자 차단 함수 탑재');
+  assert.ok(indexHtml.includes('openBlockedUsersModal'), '차단 사용자 관리 모달 탑재');
+  assert.ok(indexHtml.includes('data-reportpost'), '게시글 신고 핸들러 탑재');
+  assert.ok(indexHtml.includes('data-blockuser'), '사용자 차단 핸들러 탑재');
+  assert.ok(indexHtml.includes('local_rep_count'), '3회 누적 신고 시 로컬 즉각 블라인드 자가 치유 로직 탑재');
+
+  // 3. BACKLOG.md 완료 처리 검증
+  const backlogContent = fs.readFileSync(path.join(__dirname, '..', 'BACKLOG.md'), 'utf8');
+  assert.ok(backlogContent.includes('- [x] **14. Web Push'), '백로그 14번 완료 체크');
+  assert.ok(backlogContent.includes('- [x] **24. 커뮤니티 신고'), '백로그 24번 완료 체크');
+  assert.ok(backlogContent.includes('- [x] **45. 사용자 차단'), '백로그 45번 완료 체크');
+
+  // 4. 헌법 제18조(22,196줄) 검증
+  const lines = indexHtml.split(/\r?\n/).length;
+  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
