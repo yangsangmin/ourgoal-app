@@ -4401,6 +4401,33 @@ check('compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료
   assert.ok(indexHtml.includes('attachments: curAttachments'), '일정 저장 시 attachments 영구 보존');
 });
 
+check('compliance: [#TASK-ES-102] 전 탭(홈·목표·일정·기록·소통·설정) 활용법 버튼 및 오늘의 미션 힌트 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  
+  // 1. 전 탭 활용법 버튼 마운트 검증
+  assert.ok(indexHtml.includes('id="homePageGuideBtn"'), '홈 탭 활용법 버튼 탑재');
+  assert.ok(indexHtml.includes('id="goalsPageGuideBtn"'), '목표 탭 활용법 버튼 탑재');
+  assert.ok(indexHtml.includes('id="calPageGuideBtn"'), '일정 탭 활용법 버튼 탑재');
+  assert.ok(indexHtml.includes('id="recAnalyticsGuideBtn"'), '기록 탭 활용법 버튼 탑재');
+  assert.ok(indexHtml.includes('id="commPageGuideBtn"'), '소통 탭 활용법 버튼 탑재');
+  assert.ok(indexHtml.includes('id="settingsPageGuideBtn"'), '설정 탭 활용법 버튼 탑재');
+
+  // 2. 오늘의 미션 힌트 배지 검증
+  assert.ok(indexHtml.includes('할일이 당장 안떠오르면 활용하세요'), '오늘의 미션 힌트 배지 탑재');
+
+  // 3. tab-guides.js 모듈 및 스크립트 로드 검증
+  const guideScriptPath = path.join(__dirname, '..', 'js', 'tab-guides.js');
+  assert.ok(fs.existsSync(guideScriptPath), 'js/tab-guides.js 파일 존재');
+  const guideContent = fs.readFileSync(guideScriptPath, 'utf8');
+  assert.ok(guideContent.includes('showTabUsageGuide'), 'showTabUsageGuide 전역 함수 정의');
+  assert.ok(guideContent.includes('Home Cockpit') && guideContent.includes('Goal Hierarchy'), '탭별 가이드 메타데이터 완비');
+  assert.ok(indexHtml.includes('js/tab-guides.js'), 'index.html 내 tab-guides.js 로드 태그 탑재');
+
+  // 4. 헌법 제18조(22,196줄) 검증
+  const lines = indexHtml.split(/\r?\n/).length;
+  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 엄수');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
