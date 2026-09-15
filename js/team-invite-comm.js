@@ -18,6 +18,7 @@
   function getAppFmtTime(){ return _ctx.fmtTime || global.fmtTime || function(){ return '방금'; }; }
   function getAppNowISO(){ return (_ctx.nowISO ? _ctx.nowISO() : (global.nowISO ? global.nowISO() : new Date().toISOString())); }
   function getAppMockPeople(){ return _ctx.MOCK_PEOPLE || global.MOCK_PEOPLE || []; }
+  function getAppCloneTemplate(){ return _ctx.cloneTemplate || global.cloneTemplate || (typeof window !== 'undefined' ? window.cloneTemplate : null); }
 
   function esc(s){
     if(s == null) return '';
@@ -309,7 +310,11 @@
       '</div>'
     ) : '';
 
+    var isAiModal = !!(t.isAi || (t.id && String(t.id).indexOf('tpl_') === 0));
+    var aiNoticeModalHtml = isAiModal ? '<div style="font-size:calc(.875rem - 3pt);color:var(--ink-soft);margin:-6px 0 10px;font-weight:500;">ai생성템플릿입니다</div>' : '';
+
     var modalHtml = '<h3>' + esc(t.title) + ' · 세부 둘러보기</h3>' +
+      aiNoticeModalHtml +
       '<p class="faint" style="margin:-6px 0 12px;font-size:.8125rem;">' + esc(t.desc) + ' (' + (t.weeks || 12) + '주 완주 코스)</p>' +
       expertBannerHtml +
       '<div style="max-height:50vh;overflow-y:auto;margin-bottom:14px;padding-right:2px;">' +
@@ -328,8 +333,9 @@
         var startBtn = sheet.querySelector('#tplPreviewStartBtn');
         if(startBtn) startBtn.onclick = function(){
           if(global.closeModal) global.closeModal();
-          if(global.cloneTemplate){
-            global.cloneTemplate(t.id, function(){
+          var fn = getAppCloneTemplate();
+          if(fn){
+            fn(t.id, function(){
               if(global.renderGoalsScreen) global.renderGoalsScreen();
             });
           }
@@ -371,12 +377,15 @@
     var cardsHtml = templates.map(function(t){
       var totalTasks = (t.ms || []).reduce(function(a, m){ return a + (m.tasks || []).length; }, 0);
       var badgeText = t.badge || (t.categoryMinor ? t.categoryMinor : '전문가');
+      var isAi = !!(t.isAi || (t.id && String(t.id).indexOf('tpl_') === 0));
+      var aiNoticeHtml = isAi ? '<div style="font-size:calc(.875rem - 3pt);color:var(--ink-soft);margin:2px 0 4px;font-weight:500;">ai생성템플릿입니다</div>' : '';
       return '<div class="tmpl-card" style="margin-bottom:8px;padding:12px;background:var(--card);border:1px solid var(--rule);border-radius:12px;">' +
         '<div class="tmpl-head" style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">' +
           '<span class="tmpl-badge" style="background:var(--brand);color:#fff;font-size:.6875rem;padding:1px 6px;border-radius:4px;font-weight:700;">' + esc(badgeText) + '</span>' +
           '<b style="font-size:.875rem;color:var(--ink);">' + esc(t.title) + '</b>' +
           '<span class="faint" style="font-size:.75rem;margin-left:auto;white-space:nowrap;">' + (t.weeks || 12) + '주 과정</span>' +
         '</div>' +
+        aiNoticeHtml +
         '<div class="tm-desc" style="font-size:.8125rem;color:var(--ink-soft);margin-bottom:6px;line-height:1.4;">' + esc(t.desc) + '</div>' +
         '<div class="faint" style="font-size:.75rem;margin-bottom:8px;">4단계 마일스톤 ' + (t.ms||[]).length + '개 · 세부할일 ' + totalTasks + '개' + (t.kpi ? ' · 🎯 ' + esc(t.kpi) : '') + '</div>' +
         '<div class="faint" data-tplcount="creator:' + t.id + '" style="font-size:.8125rem;margin-bottom:8px;display:none;"></div>' +
@@ -396,7 +405,7 @@
         '<div style="display:flex;align-items:center;gap:8px;">' +
           '<span style="font-size:1.15rem;">📋</span>' +
           '<div>' +
-            '<b style="font-size:.875rem;color:var(--ink);">아워골 추천 목표 템플릿 60선</b>' +
+            '<b style="font-size:.875rem;color:var(--ink);">아워골 AI 추천 목표 템플릿 테마별 예시 60선</b>' +
             '<div class="faint" style="font-size:.75rem;margin-top:1px;">전 분야 전문가 큐레이션 · 마일스톤과 세부할일이 통째로 복사돼요</div>' +
           '</div>' +
         '</div>' +
@@ -443,8 +452,9 @@
     container.querySelectorAll('[data-tmpl]').forEach(function(btn){
       btn.onclick = function(e){
         e.stopPropagation();
-        if(global.cloneTemplate){
-          global.cloneTemplate(btn.dataset.tmpl, function(){
+        var fn = getAppCloneTemplate();
+        if(fn){
+          fn(btn.dataset.tmpl, function(){
             if(typeof onRerender === 'function') onRerender();
           });
         }
