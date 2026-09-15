@@ -1,34 +1,25 @@
-# 아워골 '캘린더 일정 참고자료(유튜브, 이미지, 메모, 웹링크) 첨부·조회·삭제 시스템' 작업계획서 (#TASK-ES-096)
+# 아워골 전면 UI '지금부터 시간기록 & 데이터 가져오기' 프로 콕핏 디자인 시스템 통일 작업계획서 (#TASK-ES-098)
 
-목표: 상민님 지시("일정에서도 목표에 넣는것처럼 참고자료 넣을 수 있게 해줄래?")에 따라, 기존 목표(Goal/Milestone/Task)에만 제공되던 참고자료(유튜브 영상, 이미지 파일, 텍스트 메모, 웹링크) 첨부·조회·삭제 기능을 캘린더 일정(customSchedules) 등록 및 수동 편집 모달, 일자 허브 모달, 캘린더 일자 상세 뷰까지 전면 확장하여 실행 편의성을 극대화하고 Dead Click 0건 및 헌법 제18조(index.html 순증가 0줄)를 완벽히 준수한다.
+목표: 상민님 지시("아워골의 모든 ui를 지금부터 시간기록, 데이터 가져오기 느낌으로 바꿔줘")에 따라, 최근 구축된 '지금부터 시간기록' 및 '데이터 가져오기'의 프리미엄 SaaS 콕핏 비주얼 언어(헤어라인 보더, 마이크로 섀도우, 카드 리프트 호버, 햅틱 버튼 스케일, 필 세그먼트 탭, 글래스모피즘 블러)를 ui.css 디자인 토큰과 컴포넌트 전반에 완전 배선하여 아워골의 모든 화면에 품격과 세련미를 100% 부여하고, Dead Click 0건 및 헌법 제18조(index.html 22,196줄 불변)를 완벽히 준수한다.
 
 ## 마일스톤 및 안전 분할 계획
-- **Phase 1 [1단계: 기획·설계 상태]**: REQ-CALENDAR-EVENT-ATTACHMENTS.md 및 PLAN-CALENDAR-EVENT-ATTACHMENTS.md 수립, 작업계획서 작성, 컨트롤타워 연계(.task-links/ebe91d6b.json sync), Obsidian Vault 3자 동기화.
+- **Phase 1 [1단계: 기획·설계 상태]**: REQ-UNIFIED-MODERN-COCKPIT-THEME.md 및 PLAN-UNIFIED-MODERN-COCKPIT-THEME.md 수립, 작업계획서 작성, Tri-Sync 및 컨트롤타워 연계.
 - **Phase 2 [2단계: 내부 시뮬레이션 및 구현 상태]**:
-  - `js/calendar-attachment.js` 신설: 일정 참고자료 전용 UI 렌더링, 첨부 모달 호출 및 뷰어 연결 헬퍼.
-  - `index.html` 배선:
-    1) `openCalendarManualEditModal`에 참고자료 섹션(목록 칩 + [참고자료 첨부] 버튼) 추가 및 드래프트/저장 연동.
-    2) `openCalendarDayEditHubModal` 일정 행에 참고자료 칩 표출.
-    3) `wireAttachmentChipClicks`에 `kind === 'custom'` 핸들러 연결 (데드 클릭 완전 제거).
-    4) `index.html` 순증가 0줄 헌법 완벽 사수 (총 22,196줄 유지).
-  - 단위 테스트 `scripts/test-calendar-attachments.js` 작성 및 `scripts/smoke-test.js`에 검증 등록.
-  - `npm test` 245개 All Pass 및 5대 게이트 100% 통과.
-- **Phase 3 [3단계: 로컬 수동 확인 상태]**: `http://localhost:8000` 환경에서 일정 수동 등록 모달 내 참고자료 첨부, 일자 상세 및 허브 모달 칩 표출, 뷰어(유튜브/메모) 팝업 실제 브라우저 스크린샷 캡처 및 시각적 검증 (`view_file`).
-- **Phase 4 [4단계: 로컬 메인 병합 상태]**: feature 브랜치 커밋 및 로컬 main 병합, Vercel 프리뷰 배포 (5A단계) 준비.
-- **Phase 5~6 [5~6단계: 배포 및 실운영 최종 확인]**: 상민님 승인 후 프로덕션 배포 및 라이브 확인.
+  - `ui.css` 디자인 토큰(:root, 테마별 보더/섀도우/라운딩) 및 컴포넌트(.card, .btn, input, .comm-subtabs, 모달/시트) 전면 고도화.
+  - `npm test` 245개 All Pass 및 5대 무결성 게이트 100% 통과.
+- **Phase 3 [3단계: 로컬 수동 확인 상태]**: 로컬 환경(`http://localhost:8000`)에서 홈, 목표, 기록, 통계 화면 헤드리스 크롬 실물 스크린샷 캡처 및 '지금부터 시간기록 & 데이터 가져오기' 룩앤필 통일성 육안 검증.
+- **Phase 4 [4단계: 로컬 메인 병합 상태]**: 작업 브랜치 커밋 및 로컬 main 병합 후 정상 마감선에서 즉시 정지(STOP)하여 상민님께 실서버 배포 여부 승인 요청.
 
-## 작업 체크리스트
-- [x] 1. 요구사항 정의서(docs/specs/REQ-CALENDAR-EVENT-ATTACHMENTS.md) 수립 · 5분 · 완료 기준: 파일 생성 완료
-- [x] 2. 엔지니어링 계획서(docs/specs/PLAN-CALENDAR-EVENT-ATTACHMENTS.md) 수립 · 5분 · 완료 기준: 파일 생성 완료
-- [x] 3. 컨트롤타워 연계(.task-links/ebe91d6b.json) 갱신 및 sync · 3분 · 완료 기준: task-link.js sync 성공
-- [x] 4. Obsidian Vault 3자 동기화(Tri-Sync) 복사 · 3분 · 완료 기준: Vault 파일 복사 완료
-- [x] 5. `js/calendar-attachment.js` 신설 및 일정 첨부 헬퍼 구현 · 15분 · 완료 기준: 모듈 함수 완비
-- [x] 6. `index.html` 일정 편집/허브 모달 및 wireAttachmentChipClicks 배선 (순증가 0줄) · 15분 · 완료 기준: index.html 22,196줄 유지
-- [x] 7. 단위 테스트 작성 및 `npm test` 245개+ 전수 통과 · 10분 · 완료 기준: 0 failure
-- [x] 8. 로컬 수동 확인 (브라우저 스크린샷 캡처 및 view_file 육안 확인) · 10분 · 완료 기준: 스크린샷 획득 및 6단계 보고
+## 작업 체크리스트 (헌법 제14조 마감 상한선: 4단계)
+- [x] 1. 요구사항 정의서(docs/specs/REQ-UNIFIED-MODERN-COCKPIT-THEME.md) 수립 · 5분 · 완료 기준: 파일 생성 완료
+- [x] 2. 엔지니어링 계획서(docs/specs/PLAN-UNIFIED-MODERN-COCKPIT-THEME.md) 수립 · 5분 · 완료 기준: 파일 생성 완료
+- [x] 3. `ui.css` 디자인 토큰 및 컴포넌트 스타일 콕핏 룩앤필 전면 고도화 · 15분 · 완료 기준: ui.css 리파인 완료
+- [x] 4. 단위 테스트 및 5대 무결성 게이트(`npm test`) 전수 통과 · 5분 · 완료 기준: 245개 100% Pass
+- [x] 5. 로컬 수동 확인 (홈·기록·통계 화면 스크린샷 캡처 및 view_file 육안 확인) · 10분 · 완료 기준: 스크린샷 획득 및 검증
+- [x] 6. 안전 브랜치 커밋 및 로컬 main 병합 (4단계 완결) · 5분 · 완료 기준: 로컬 main 병합 완료 및 정상 마감 정지
 
 ## 막히는 지점 예상 (문제해결 8원칙 ⑧)
-- **막힐 지점 1 (신규 일정 생성 중 첨부 추가 시 id 미발급 문제)**:
-  신규 일정 작성 모달에서는 아직 `eventItem.id`가 발급되지 않은 상태이므로, 모달 스코프의 `draftAttachments` 배열을 임시로 운용하고, [저장] 클릭 시 생성되는 `uid('sched')` 일정 객체에 `attachments: draftAttachments`로 할당하여 데이터 유실을 방지한다. -> 해결 완료: draft 배열 유지 및 모달 재진입 시 완벽 보존.
-- **막힐 지점 2 (헌법 제18조 `index.html` 순증가 0줄 엄수)**:
-  새로운 UI 마크업과 스크립트 태그가 삽입되면서 라인이 늘어나지 않도록, `js/calendar-attachment.js`로 대부분의 로직을 위임하고, `index.html`의 중복 공백 라인을 정밀하게 정리하여 작업 전후 총 라인 수를 22,196줄로 정확히 일치시킨다. -> 해결 완료: 정확히 22,196줄 유지 (0줄 순증가).
+- **막힐 지점 1 (다크 테마에서 과도한 흰색 그림자 또는 경계선 먹통 현상)**:
+  다크 테마([data-theme="dark"], [data-theme="black"] 등)에서는 그림자 대신 반투명 헤어라인 보더(`rgba(255, 255, 255, 0.08~0.12)`)와 딥 서피스 레이어링(`--card: #16181D; --card2: #21242C`)을 사용하여 깊이감 있는 하이테크 스포츠/데이터 콕핏을 연출한다.
+- **막힐 지점 2 (기존 기능 버튼의 데드클릭 또는 레이아웃 깨짐)**:
+  기존 HTML 클래스명과 계층 구조는 100% 보존하고, 오직 CSS 비주얼 데코레이션(패딩, 보더, 섀도우, 호버 트랜지션, 폰트 웨이트)만 정밀 조율하여 5대 무결성 검증을 0 에러로 통과한다.
