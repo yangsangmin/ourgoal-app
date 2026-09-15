@@ -1044,12 +1044,252 @@
     '</svg>';
   }
 
+  /* ================= 4-9. 추천 샘플 테마별 35종 카탈로그 (#TASK-ES-093) ================= */
+  var SAMPLE_THEMES = [
+    {
+      id: 'workout',
+      label: '🏃 운동·피트니스',
+      shortLabel: '운동 (7)',
+      items: [
+        { key: 'hyrox', icon: '🏃', title: '하이록스 (HYROX)', tag: '대세', desc: '8개 스테이션 랩타임 & 페이스 52주', count: 52 },
+        { key: 'big3_52w', icon: '🏋️', title: '파워리프팅 (3대 500kg)', tag: '대표', desc: '스쿼트·벤치·데드 주기화 156세션', count: 156 },
+        { key: 'yoga', icon: '🧘', title: '요가 & 필라테스', tag: '인기', desc: '코어 정렬 및 체류시간 추적 52주', count: 52 },
+        { key: 'running', icon: '🏃', title: '마라톤 & 러닝', tag: '정석', desc: '5km→하프 마라톤 페이스 52주', count: 120 },
+        { key: 'crossfit', icon: '⚡', title: '크로스핏 WOD', tag: '고강도', desc: 'AMRAP 라운드 & 타임캡 추이 52주', count: 52 },
+        { key: 'swimming', icon: '🏊', title: '수영 랩타임', tag: '유산소', desc: '자유형 50m 랩타임 & 2.5km 52주', count: 52 },
+        { key: 'climbing', icon: '🧗', title: '볼더링 클라이밍', tag: '도전', desc: 'V-Grade 난이도 & 완등수 52주', count: 52 }
+      ]
+    },
+    {
+      id: 'career',
+      label: '💼 업무·커리어',
+      shortLabel: '업무 (7)',
+      items: [
+        { key: 'sales', icon: '💼', title: 'B2B 솔루션 영업', tag: '대표', desc: '주간 수주액 & 계약 체결 52주', count: 52 },
+        { key: 'coding', icon: '💻', title: '풀스택 오픈소스 개발', tag: 'IT', desc: 'GitHub 일일 커밋 & PR 머지 52주', count: 52 },
+        { key: 'marketing', icon: '📈', title: '퍼포먼스 마케팅', tag: '그로스', desc: '광고 ROAS & 리드 전환율 52주', count: 52 },
+        { key: 'design', icon: '🎨', title: 'UI/UX 프로덕트 디자인', tag: '디자인', desc: '화면 설계 & 사용성 점수 52주', count: 52 },
+        { key: 'techblog', icon: '✍️', title: '테크 블로그 연재', tag: '브랜딩', desc: '월간 순방문자 & 기술 아티클 52주', count: 52 },
+        { key: 'support', icon: '🎧', title: 'CS 고객 경험 케어', tag: '만족도', desc: '티켓 처리 & CSAT 98% 달성 52주', count: 52 },
+        { key: 'startup', icon: '🚀', title: '스타트업 지표 추적', tag: '스케일', desc: '주간 WAU 활성도 & 리텐션 52주', count: 52 }
+      ]
+    },
+    {
+      id: 'learning',
+      label: '📖 공부·학습',
+      shortLabel: '공부 (7)',
+      items: [
+        { key: 'study', icon: '📚', title: '공무원·고시 순공', tag: '대표', desc: '순공시간 & 일일 기출 52주', count: 104 },
+        { key: 'toeic', icon: '🎯', title: '토익·어학 시험', tag: '어학', desc: 'LC/RC 모의고사 940점 달성 52주', count: 52 },
+        { key: 'codingtest', icon: '💻', title: '알고리즘 코테 준비', tag: '개발', desc: '백준/리트코드 골드 티어 52주', count: 52 },
+        { key: 'reading', icon: '📖', title: '주간 독서 습관', tag: '정석', desc: '주 100쪽 누적 5,200쪽 완독 52주', count: 78 },
+        { key: 'cert', icon: '📜', title: '기사·전문 자격증', tag: '취득', desc: '오답노트 & 모의고사 86점 52주', count: 52 },
+        { key: 'music', icon: '🎹', title: '피아노 악기 연습', tag: '취미', desc: '주간 연습시간 & 12곡 마스터 52주', count: 52 },
+        { key: 'thesis', icon: '🎓', title: '대학원 학술 연구', tag: '연구', desc: '논문 작성 & 실험 데이터 분석 52주', count: 52 }
+      ]
+    },
+    {
+      id: 'finance',
+      label: '💰 재테크·자산',
+      shortLabel: '재테크 (7)',
+      items: [
+        { key: 'finance', icon: '💰', title: '월간 저축 & 적금', tag: '대표', desc: '월 50~150만 누적 1,200만원 52주', count: 52 },
+        { key: 'dividend', icon: '💵', title: '미국 배당주 투자', tag: '배당', desc: '월 배당금 수령 & 복리 재투자 52주', count: 52 },
+        { key: 'crypto', icon: '🪙', title: '비트코인 적립식 DCA', tag: '크립토', desc: '주간 분할 매수 & 누적 평단 52주', count: 52 },
+        { key: 'budget', icon: '📉', title: '가계부 생활비 절감', tag: '절약', desc: '식비·고정비 65만원 절감 52주', count: 52 },
+        { key: 'realestate', icon: '🏢', title: '부동산 청약 가점', tag: '청약', desc: '청약 납입 100회 & 가점 관리 52주', count: 52 },
+        { key: 'sidehustle', icon: '💡', title: '사이드 프로젝트 수입', tag: '부수입', desc: '디지털 제품 부수입 240만원 52주', count: 52 },
+        { key: 'irp', icon: '🛡️', title: '연금저축 & IRP', tag: '절세', desc: '세액공제 한도 적립 900만원 52주', count: 52 }
+      ]
+    },
+    {
+      id: 'wellness',
+      label: '🧘 웰니스·루틴',
+      shortLabel: '웰니스 (7)',
+      items: [
+        { key: 'sleep', icon: '😴', title: '수면 품질 회복', tag: '회복', desc: '6.1h→7.8h 숙면 & 피로도 케어 52주', count: 52 },
+        { key: 'miracle', icon: '🌅', title: '미라클 모닝 루틴', tag: '아침', desc: '05:45 기상 & 주 6일 루틴 52주', count: 52 },
+        { key: 'water', icon: '💧', title: '일일 수분 섭취 2L', tag: '건강', desc: '매일 물 2.3L 수분 충전 52주', count: 52 },
+        { key: 'meditation', icon: '🧘', title: '마음챙김 명상', tag: '멘탈', desc: '매일 15분 호흡 & 스트레스 케어 52주', count: 52 },
+        { key: 'screentime', icon: '📵', title: '디지털 디톡스', tag: '디톡스', desc: '스마트폰 사용 6.5h→2.2h 감소 52주', count: 52 },
+        { key: 'walking', icon: '👟', title: '만보 걷기 산책', tag: '활동량', desc: '일일 10,000보 달성률 추적 52주', count: 52 },
+        { key: 'gratitude', icon: '📝', title: '3줄 감사일기', tag: '긍정', desc: '매일 감사 노트 & 긍정 점수 52주', count: 52 }
+      ]
+    }
+  ];
+
+  var THEME_METRIC_SPECS = {
+    hyrox: { theme: 'workout', sub: '하이록스', pName: '완주시간', pUnit: '분', sName: '페이스', sUnit: '초', pStart: 88, pDelta: -0.38, sStart: 340, sDelta: -1.3, tmpl: '[하이록스] 8개 스테이션 완주 {p}분 (1km 러닝 평균 {s}초)' },
+    yoga: { theme: 'workout', sub: '요가', pName: '집중도', pUnit: '점', sName: '수련시간', sUnit: '분', pStart: 68, pDelta: 0.52, sStart: 60, sDelta: 0, tmpl: '[요가] 하타 & 빈야사 수련 60분 (코어 집중도 {p}점)' },
+    crossfit: { theme: 'workout', sub: '크로스핏', pName: '라운드', pUnit: 'Rnd', sName: '칼로리', sUnit: 'kcal', pStart: 8, pDelta: 0.19, sStart: 420, sDelta: 4.8, tmpl: '[크로스핏] WOD {p}라운드 완수 ({s}kcal 소모)' },
+    swimming: { theme: 'workout', sub: '수영', pName: '총거리', pUnit: 'm', sName: '50m랩', sUnit: '초', pStart: 1000, pDelta: 28.5, sStart: 52, sDelta: -0.3, tmpl: '[수영] 인터벌 완영 {p}m (50m 최고랩 {s}초)' },
+    climbing: { theme: 'workout', sub: '클라이밍', pName: '완등수', pUnit: '개', sName: 'V등급', sUnit: 'V', pStart: 10, pDelta: 0.31, sStart: 2, sDelta: 0.08, tmpl: '[클라이밍] 볼더링 V{s} 완등 (세션 총 {p}문제 완등)' },
+    marketing: { theme: 'career', sub: '마케팅', pName: 'ROAS', pUnit: '%', sName: '전환수', sUnit: '건', pStart: 280, pDelta: 5.1, sStart: 45, sDelta: 2.8, tmpl: '[마케팅] 캠페인 ROAS {p}% 달성 (신규 전환 {s}건)' },
+    design: { theme: 'career', sub: '디자인', pName: '설계화면', pUnit: '개', sName: '사용성점수', sUnit: '점', pStart: 12, pDelta: 0.58, sStart: 72, sDelta: 0.42, tmpl: '[디자인] UI/UX 컴포넌트 {p}개 설계 (사용성 {s}점)' },
+    techblog: { theme: 'career', sub: '테크블로그', pName: '주간PV', pUnit: '회', sName: '아티클', sUnit: '편', pStart: 850, pDelta: 220, sStart: 1, sDelta: 0.04, tmpl: '[블로그] 기술 아티클 연재 주간 PV {p}회 ({s}편 발행)' },
+    support: { theme: 'career', sub: '고객지원', pName: '티켓해결', pUnit: '건', sName: 'CSAT', sUnit: '%', pStart: 65, pDelta: 2.8, sStart: 89, sDelta: 0.18, tmpl: '[CS] 인바운드 티켓 {p}건 처리 (만족도 {s}%)' },
+    startup: { theme: 'career', sub: '스타트업', pName: '주간WAU', pUnit: '명', sName: '리텐션', sUnit: '%', pStart: 1400, pDelta: 430, sStart: 30, sDelta: 0.5, tmpl: '[그로스] 주간 활성 WAU {p}명 (7일 리텐션 {s}%)' },
+    toeic: { theme: 'learning', sub: '토익', pName: '모의점수', pUnit: '점', sName: '순공시간', sUnit: 'h', pStart: 650, pDelta: 5.7, sStart: 14, sDelta: 0.2, tmpl: '[토익] 실전 모의고사 {p}점 달성 (주간 학습 {s}시간)' },
+    codingtest: { theme: 'learning', sub: '코테', pName: '풀이수', pUnit: '문제', sName: '레이팅', sUnit: '점', pStart: 20, pDelta: 6.2, sStart: 1150, sDelta: 15, tmpl: '[알고리즘] 코테 누적 {p}문제 풀이 (레이팅 {s}점)' },
+    cert: { theme: 'learning', sub: '자격증', pName: '모의점수', pUnit: '점', sName: '정답률', sUnit: '%', pStart: 50, pDelta: 0.72, sStart: 52, sDelta: 0.76, tmpl: '[자격증] 전문 기사 모의고사 {p}점 (정답률 {s}%)' },
+    music: { theme: 'learning', sub: '악기연습', pName: '연습시간', pUnit: '분', sName: '완주곡', sUnit: '곡', pStart: 120, pDelta: 4.8, sStart: 1, sDelta: 0.21, tmpl: '[피아노] 주간 {p}분 연습 (마스터 곡수 {s}곡)' },
+    thesis: { theme: 'learning', sub: '학술연구', pName: '집필페이지', pUnit: '쪽', sName: '분석논문', sUnit: '편', pStart: 3, pDelta: 0.95, sStart: 5, sDelta: 1.5, tmpl: '[대학원] 학술 연구 {p}쪽 집필 (참고 논문 {s}편 분석)' },
+    dividend: { theme: 'finance', sub: '배당투자', pName: '월배당금', pUnit: '$', sName: '배당수익률', sUnit: '%', pStart: 40, pDelta: 8.5, sStart: 3.4, sDelta: 0.027, tmpl: '[배당주] 월 배당금 ${p} 수령 (포트폴리오 수익률 {s}%)' },
+    crypto: { theme: 'finance', sub: '비트코인', pName: '적립BTC', pUnit: 'mBTC', sName: '수익률', sUnit: '%', pStart: 4, pDelta: 4.2, sStart: -8, sDelta: 1.45, tmpl: '[DCA] 비트코인 정기 적립 누적 {p}mBTC (수익률 {s}%)' },
+    budget: { theme: 'finance', sub: '가계부', pName: '절감액', pUnit: '만원', sName: '달성률', sUnit: '%', pStart: 12, pDelta: 1.0, sStart: 74, sDelta: 0.42, tmpl: '[가계부] 생활비 {p}만원 절감 성공 (예산 준수율 {s}%)' },
+    realestate: { theme: 'finance', sub: '부동산청약', pName: '청약가점', pUnit: '점', sName: '납입횟수', sUnit: '회', pStart: 30, pDelta: 0.65, sStart: 48, sDelta: 1.0, tmpl: '[청약] 청약통장 {s}회 납입 (인정 가점 {p}점)' },
+    sidehustle: { theme: 'finance', sub: '사이드잡', pName: '부수입', pUnit: '만원', sName: '주문건수', sUnit: '건', pStart: 15, pDelta: 4.6, sStart: 3, sDelta: 0.88, tmpl: '[사이드프로젝트] 월 부수입 {p}만원 달성 ({s}건 주문)' },
+    irp: { theme: 'finance', sub: '연금저축', pName: '납입원금', pUnit: '만원', sName: '절세환급', sUnit: '만원', pStart: 75, pDelta: 16.5, sStart: 12, sDelta: 2.65, tmpl: '[IRP] 연금저축 누적 {p}만원 납입 (예상 공제 {s}만원)' },
+    miracle: { theme: 'wellness', sub: '미라클모닝', pName: '성공일수', pUnit: '일', sName: '기상시각', sUnit: '분', pStart: 2, pDelta: 0.08, sStart: 455, sDelta: -2.1, tmpl: '[미라클모닝] 주 {p}일 05시 기상 성공 (모닝 루틴 완수)' },
+    water: { theme: 'wellness', sub: '수분섭취', pName: '음용량', pUnit: 'L', sName: '물잔수', sUnit: '잔', pStart: 1.2, pDelta: 0.022, sStart: 5, sDelta: 0.08, tmpl: '[수분] 하루 물 {p}L 섭취 ({s}잔 완료)' },
+    meditation: { theme: 'wellness', sub: '명상', pName: '명상시간', pUnit: '분', sName: '평온지수', sUnit: '점', pStart: 10, pDelta: 0.3, sStart: 64, sDelta: 0.6, tmpl: '[마음챙김] 호흡 명상 {p}분 수행 (평온 지수 {s}점)' },
+    screentime: { theme: 'wellness', sub: '스크린타임', pName: '사용시간', pUnit: 'h', sName: '집중시간', sUnit: '분', pStart: 6.2, pDelta: -0.078, sStart: 60, sDelta: 3.5, tmpl: '[디지털디톡스] 스마트폰 {p}시간 제한 (딥워크 {s}분)' },
+    walking: { theme: 'wellness', sub: '만보걷기', pName: '일일걸음', pUnit: '보', sName: '거리', sUnit: 'km', pStart: 4800, pDelta: 135, sStart: 3.4, sDelta: 0.098, tmpl: '[만보] 오늘 하루 {p}보 산책 완료 (거리 {s}km)' },
+    gratitude: { theme: 'wellness', sub: '감사일기', pName: '긍정점수', pUnit: '점', sName: '감사항목', sUnit: '개', pStart: 62, pDelta: 0.65, sStart: 3, sDelta: 0.04, tmpl: '[감사일기] 3줄 감사 작성 완료 (행복 긍정 점수 {p}점)' }
+  };
+
   /* ================= 5. 도메인별 1년치 실측 샘플 생성기 ================= */
   function generateDomainSample(domainKey){
     var now = new Date();
     var records = [];
 
-    if(domainKey === 'weight'){
+    if(domainKey === 'hyrox'){
+      // 하이록스(HYROX) 8대 공식 스테이션 + 1km 인터벌러닝 + 종합 완주 52주 & 최근 7일 실측 데이터
+      // 1. 종합 완주 52주 세션 (88분 -> 68분 단축, 기존 테스트 100% 하위 호환)
+      for(var w = 51; w >= 0; w--){
+        var weekDate = new Date(now.getTime() - w * 7 * 86400000);
+        var totalMin = Math.round((88 - (51 - w) * 0.38 + (Math.sin(w) * 0.5)) * 10) / 10;
+        var runPaceSec = Math.round(340 - (51 - w) * 1.3 + (Math.cos(w) * 2));
+        var rpeVal = Math.round((8.0 + (51 - w) * 0.03 + (Math.sin(w * 0.7) * 0.3)) * 10) / 10;
+        records.push({
+          id: 'samp_hyrox_total_' + w,
+          type: 'note',
+          theme: 'workout',
+          subTheme: '하이록스',
+          text: '[하이록스] 종합 8개 스테이션 + 8km 완주 ' + totalMin + '분 (러닝 평균 페이스 ' + runPaceSec + '초/km, 체감 강도 RPE ' + rpeVal + ').',
+          startAt: weekDate.toISOString(),
+          endAt: new Date(weekDate.getTime() + Math.round(totalMin * 60000)).toISOString(),
+          createdAt: weekDate.toISOString(),
+          metrics: {
+            primary: totalMin,
+            secondary: runPaceSec,
+            record: totalMin,
+            pace: runPaceSec,
+            rpe: rpeVal,
+            intensity: Math.round(rpeVal * 10),
+            duration: totalMin
+          },
+          metricUnits: {
+            primary: '분',
+            secondary: '초',
+            record: '분',
+            pace: '초',
+            rpe: '점',
+            intensity: '%',
+            duration: '분'
+          },
+          visibility: 'private'
+        });
+      }
+
+      // 2. 8대 공식 스테이션 및 인터벌러닝 52주 주간 훈련 추세
+      var hyroxStationConfigs = [
+        { key: 'skierg', name: '스키에르그', icon: '⛷️', startRec: 260, delta: -0.85, paceUnit: '초/500m', paceRatio: 0.5, rpeBase: 7.5, dist: '1,000m' },
+        { key: 'sledpush', name: '슬레드푸시', icon: '🛷', startRec: 180, delta: -0.86, paceUnit: '초/10m', paceRatio: 0.2, rpeBase: 8.5, dist: '50m' },
+        { key: 'sledpull', name: '슬레드풀', icon: '🚜', startRec: 240, delta: -0.96, paceUnit: '초/10m', paceRatio: 0.2, rpeBase: 8.0, dist: '50m' },
+        { key: 'burpee', name: '버피점프', icon: '🤸', startRec: 320, delta: -1.44, paceUnit: '초/10m', paceRatio: 0.125, rpeBase: 8.5, dist: '80m' },
+        { key: 'rowing', name: '로잉', icon: '🚣', startRec: 255, delta: -0.86, paceUnit: '초/500m', paceRatio: 0.5, rpeBase: 7.5, dist: '1,000m' },
+        { key: 'farmers', name: '파머스캐리', icon: '🧳', startRec: 130, delta: -0.67, paceUnit: '초/50m', paceRatio: 0.25, rpeBase: 7.0, dist: '200m' },
+        { key: 'lunges', name: '샌드백런지', icon: '🎒', startRec: 270, delta: -1.25, paceUnit: '초/10m', paceRatio: 0.1, rpeBase: 8.5, dist: '100m' },
+        { key: 'wallballs', name: '월볼샷', icon: '🏐', startRec: 360, delta: -1.54, paceUnit: '초/10회', paceRatio: 0.1, rpeBase: 9.0, dist: '100회' },
+        { key: 'interval', name: '인터벌러닝', icon: '⚡', startRec: 350, delta: -1.54, paceUnit: '초/km', paceRatio: 1.0, rpeBase: 7.5, dist: '1km x 8' }
+      ];
+
+      hyroxStationConfigs.forEach(function(stn, sIdx){
+        for(var w = 51; w >= 1; w--){
+          var dayShift = (sIdx % 4) + 1;
+          var stnDate = new Date(now.getTime() - (w * 7 + dayShift) * 86400000);
+          var curSec = Math.round(stn.startRec + (51 - w) * stn.delta + (Math.sin(w + sIdx) * 2));
+          var paceVal = Math.round(curSec * stn.paceRatio * 10) / 10;
+          var curRpe = Math.round((stn.rpeBase + (51 - w) * 0.02 + (Math.cos(w) * 0.2)) * 10) / 10;
+          if(curRpe > 10) curRpe = 10;
+          records.push({
+            id: 'samp_hyrox_' + stn.key + '_w' + w,
+            type: 'note',
+            theme: 'workout',
+            subTheme: stn.name,
+            text: '[' + stn.name + '] ' + stn.dist + ' 훈련 기록 ' + curSec + '초 (페이스 ' + paceVal + stn.paceUnit + ', 체감 강도 RPE ' + curRpe + ').',
+            startAt: stnDate.toISOString(),
+            endAt: new Date(stnDate.getTime() + Math.round(curSec * 1000) + 10 * 60000).toISOString(),
+            createdAt: stnDate.toISOString(),
+            metrics: {
+              record: curSec,
+              pace: paceVal,
+              rpe: curRpe,
+              intensity: Math.round(curRpe * 10),
+              primary: curSec,
+              secondary: paceVal,
+              duration: Math.round(curSec / 60 * 10) / 10
+            },
+            metricUnits: {
+              record: '초',
+              pace: stn.paceUnit,
+              rpe: '점',
+              intensity: '%',
+              primary: '초',
+              secondary: stn.paceUnit,
+              duration: '분'
+            },
+            visibility: 'private'
+          });
+        }
+      });
+
+      // 3. 최근 7일(D-6 ~ D-0) 하이록스 스테이션별 일일 집중 훈련 세션 (1W 뷰 완벽 대응)
+      var dailyHyroxSchedule = [
+        { dayOffset: 6, key: 'skierg', name: '스키에르그', curSec: 218, pace: 109, rpe: 8.2, note: '스키에르그 1000m 인터벌 페이스 집중' },
+        { dayOffset: 5, key: 'sledpush', name: '슬레드푸시', curSec: 138, pace: 27.6, rpe: 9.3, note: '슬레드푸시 50m 지면 반발력 폭발' },
+        { dayOffset: 4, key: 'sledpull', name: '슬레드풀', curSec: 192, pace: 38.4, rpe: 8.8, note: '슬레드풀 50m 암 & 코어 그립 유지' },
+        { dayOffset: 3, key: 'burpee', name: '버피점프', curSec: 248, pace: 31.0, rpe: 9.4, note: '버피점프 80m 착지 충격 최소화 점프' },
+        { dayOffset: 2, key: 'rowing', name: '로잉', curSec: 212, pace: 106, rpe: 8.3, note: '로잉 1000m 드라이브 템포 28s/m 유지' },
+        { dayOffset: 1, key: 'farmers', name: '파머스캐리', curSec: 96, pace: 24.0, rpe: 7.8, note: '파머스캐리 200m 빠른 보폭 턴오버' },
+        { dayOffset: 0, key: 'wallballs', name: '월볼샷', curSec: 282, pace: 28.2, rpe: 9.8, note: '월볼샷 100회 언브로큰 달성 ★PR' }
+      ];
+
+      dailyHyroxSchedule.forEach(function(item){
+        var itemDate = new Date(now.getTime() - item.dayOffset * 86400000);
+        var stn = hyroxStationConfigs.find(function(s){ return s.key === item.key; }) || hyroxStationConfigs[0];
+        records.push({
+          id: 'samp_hyrox_daily_' + item.dayOffset,
+          type: 'note',
+          theme: 'workout',
+          subTheme: item.name,
+          text: '[' + item.name + '] ' + item.note + ' (' + item.curSec + '초, 페이스 ' + item.pace + stn.paceUnit + ', RPE ' + item.rpe + ').',
+          startAt: itemDate.toISOString(),
+          endAt: new Date(itemDate.getTime() + Math.round(item.curSec * 1000)).toISOString(),
+          createdAt: itemDate.toISOString(),
+          metrics: {
+            record: item.curSec,
+            pace: item.pace,
+            rpe: item.rpe,
+            intensity: Math.round(item.rpe * 10),
+            primary: item.curSec,
+            secondary: item.pace,
+            duration: Math.round(item.curSec / 60 * 10) / 10
+          },
+          metricUnits: {
+            record: '초',
+            pace: stn.paceUnit,
+            rpe: '점',
+            intensity: '%',
+            primary: '초',
+            secondary: stn.paceUnit,
+            duration: '분'
+          },
+          visibility: 'private'
+        });
+      });
+    } else if(domainKey === 'weight'){
       // 52주간 1년치 다이어트 감량 실측 데이터 (78.5kg -> 68.2kg 점진적 감량)
       for(var w = 51; w >= 0; w--){
         var weekDate = new Date(now.getTime() - w * 7 * 86400000);
@@ -1132,7 +1372,7 @@
         });
       }
     } else if(domainKey === 'running'){
-      // 52주간 1년치 주 2~3회 러닝 점진적 과부하 (총 120회 이상 세션, 5km -> 21.1km)
+      // 52주간 1년치 주 2~3회 러닝 점진적 과부하 (롱런, 조깅, 인터벌 세부 종목별 시계열 및 페이스·RPE)
       for(var w = 51; w >= 0; w--){
         var weekDate = new Date(now.getTime() - w * 7 * 86400000);
         var baseDist = 5 + (51 - w) * 0.3;
@@ -1142,61 +1382,135 @@
         var curDist = Math.round(baseDist * 10) / 10;
         var durMin = Math.round(curDist * paceMin);
         var paceStr = pM + "'" + pad(pS) + '"';
+        var rpeLong = Math.round((7.5 + (51 - w) * 0.02 + (Math.sin(w) * 0.3)) * 10) / 10;
+        if(rpeLong > 10) rpeLong = 10;
 
+        // 1. 롱런 세션
         records.push({
           id: 'samp_run_' + w + '_long',
           type: 'note',
           theme: 'workout',
-          subTheme: '러닝',
-          text: '한강 주말 롱런 ' + curDist + 'km 완주 (페이스 ' + paceStr + ', ' + durMin + '분 소요).',
+          subTheme: '롱런',
+          text: '[롱런] 주말 장거리 ' + curDist + 'km 완주 (페이스 ' + paceStr + ', ' + durMin + '분 소요, RPE ' + rpeLong + ').',
           startAt: weekDate.toISOString(),
           endAt: new Date(weekDate.getTime() + durMin * 60000).toISOString(),
           createdAt: weekDate.toISOString(),
+          metrics: {
+            distance: curDist,
+            duration: durMin,
+            pace: Math.round(paceMin * 60),
+            record: durMin,
+            rpe: rpeLong,
+            intensity: Math.round(rpeLong * 10),
+            primary: curDist,
+            secondary: Math.round(paceMin * 60)
+          },
+          metricUnits: {
+            distance: 'km',
+            duration: '분',
+            pace: '초/km',
+            record: '분',
+            rpe: '점',
+            intensity: '%',
+            primary: 'km',
+            secondary: '초/km'
+          },
           visibility: 'private'
         });
 
+        // 2. 조깅 세션
         var midDate = new Date(weekDate.getTime() - 3 * 86400000);
         var midDist = Math.round((curDist * 0.6) * 10) / 10;
-        var midDur = Math.round(midDist * (paceMin + 0.2));
+        var midPace = Math.round((paceMin + 0.3) * 60);
+        var midDur = Math.round(midDist * (paceMin + 0.3));
+        var rpeJog = Math.round((6.2 + (51 - w) * 0.015) * 10) / 10;
         records.push({
           id: 'samp_run_' + w + '_mid',
           type: 'note',
           theme: 'workout',
-          subTheme: '러닝',
-          text: '저녁 조깅 ' + midDist + 'km 완료 (' + midDur + '분 소요).',
+          subTheme: '조깅',
+          text: '[조깅] 저녁 리커버리 ' + midDist + 'km 완료 (' + midDur + '분, 페이스 ' + Math.floor(midPace/60) + "'" + pad(midPace%60) + '", RPE ' + rpeJog + ').',
           startAt: midDate.toISOString(),
           endAt: new Date(midDate.getTime() + midDur * 60000).toISOString(),
           createdAt: midDate.toISOString(),
+          metrics: {
+            distance: midDist,
+            duration: midDur,
+            pace: midPace,
+            record: midDur,
+            rpe: rpeJog,
+            intensity: Math.round(rpeJog * 10),
+            primary: midDist,
+            secondary: midPace
+          },
+          metricUnits: {
+            distance: 'km',
+            duration: '분',
+            pace: '초/km',
+            record: '분',
+            rpe: '점',
+            intensity: '%',
+            primary: 'km',
+            secondary: '초/km'
+          },
           visibility: 'private'
         });
 
+        // 3. 인터벌 러닝 세션 (격주)
         if(w % 2 === 0){
           var ivDate = new Date(weekDate.getTime() - 5 * 86400000);
+          var ivPace = Math.round((paceMin - 0.45) * 60);
+          var rpeIv = Math.round((8.8 + (51 - w) * 0.02) * 10) / 10;
+          if(rpeIv > 10) rpeIv = 10;
           records.push({
             id: 'samp_run_' + w + '_interval',
             type: 'note',
             theme: 'workout',
-            subTheme: '러닝',
-            text: '트랙 400m x 8회 인터벌 러닝 5.0km (' + paceStr + ' 집중).',
+            subTheme: '인터벌러닝',
+            text: '[인터벌] 트랙 400m x 8회 5.0km 완주 (페이스 ' + Math.floor(ivPace/60) + "'" + pad(ivPace%60) + '", 고강도 RPE ' + rpeIv + ').',
             startAt: ivDate.toISOString(),
             endAt: new Date(ivDate.getTime() + 35 * 60000).toISOString(),
             createdAt: ivDate.toISOString(),
+            metrics: {
+              distance: 5.0,
+              duration: 35,
+              pace: ivPace,
+              record: 35,
+              rpe: rpeIv,
+              intensity: Math.round(rpeIv * 10),
+              primary: 5.0,
+              secondary: ivPace
+            },
+            metricUnits: {
+              distance: 'km',
+              duration: '분',
+              pace: '초/km',
+              record: '분',
+              rpe: '점',
+              intensity: '%',
+              primary: 'km',
+              secondary: '초/km'
+            },
             visibility: 'private'
           });
         }
       }
     } else if(domainKey === 'big3'){
-      // 52주간 3대 운동 점진적 과부하 (벤치 60->95kg, 스쿼트 80->130kg, 데드 100->160kg, 합계 240->385kg)
+      // 52주간 3대 운동 점진적 과부하 (스쿼트·벤치프레스·데드리프트 개별 엔티티 및 RPE·페이스 완비)
       for(var w = 51; w >= 0; w--){
         var weekDate = new Date(now.getTime() - w * 7 * 86400000);
         var bp = Math.round(60 + (51 - w) * 0.68);
         var sq = Math.round(80 + (51 - w) * 0.98);
         var dl = Math.round(100 + (51 - w) * 1.17);
+        var rpeBig3 = Math.round((7.8 + (51 - w) * 0.03 + (Math.sin(w) * 0.3)) * 10) / 10;
+        if(rpeBig3 > 10) rpeBig3 = 10;
 
+        // 종합 템플릿 레코드 (하위 호환성)
         records.push({
           id: 'samp_big3_' + w,
           type: 'template',
           theme: 'workout',
+          subTheme: '파워리프팅',
           templateKey: 'health',
           templateTitle: '3대 웨이트 트레이닝',
           columns: ['종목', '무게(kg)', '세트', '횟수'],
@@ -1205,84 +1519,598 @@
             ['스쿼트', String(sq), '5', '5'],
             ['데드리프트', String(dl), '4', '3']
           ],
-          text: '[헬스] 벤치프레스 ' + bp + 'kg 5세트, 스쿼트 ' + sq + 'kg 5세트, 데드리프트 ' + dl + 'kg 3세트 완수 (3대 총합 ' + (bp+sq+dl) + 'kg)',
+          text: '[파워리프팅] 벤치 ' + bp + 'kg, 스쿼트 ' + sq + 'kg, 데드 ' + dl + 'kg 완수 (3대 합계 ' + (bp+sq+dl) + 'kg, RPE ' + rpeBig3 + ')',
           startAt: weekDate.toISOString(),
           endAt: new Date(weekDate.getTime() + 70 * 60000).toISOString(),
           createdAt: weekDate.toISOString(),
+          metrics: {
+            primary: bp + sq + dl,
+            secondary: bp,
+            record: bp + sq + dl,
+            volume: (bp*25 + sq*25 + dl*12),
+            rpe: rpeBig3,
+            intensity: Math.round(rpeBig3 * 10),
+            pace: 150
+          },
+          metricUnits: {
+            primary: 'kg',
+            secondary: 'kg',
+            record: 'kg',
+            volume: 'kg',
+            rpe: '점',
+            intensity: '%',
+            pace: '초/세트'
+          },
+          visibility: 'private'
+        });
+
+        // 스쿼트 개별 세션
+        var sqDate = new Date(weekDate.getTime() - 4 * 86400000);
+        records.push({
+          id: 'samp_sq_' + w,
+          type: 'note',
+          theme: 'workout',
+          subTheme: '스쿼트',
+          text: '[스쿼트] 메인 세트 ' + sq + 'kg 5x5 완수 (볼륨 ' + (sq * 25) + 'kg, RPE ' + rpeBig3 + ').',
+          startAt: sqDate.toISOString(),
+          endAt: new Date(sqDate.getTime() + 50 * 60000).toISOString(),
+          createdAt: sqDate.toISOString(),
+          metrics: {
+            '1rm': Math.round(sq * 1.16),
+            record: sq,
+            volume: sq * 25,
+            sets: 5,
+            rpe: rpeBig3,
+            intensity: Math.round(rpeBig3 * 10),
+            pace: 180,
+            primary: sq,
+            secondary: sq * 25
+          },
+          metricUnits: {
+            '1rm': 'kg',
+            record: 'kg',
+            volume: 'kg',
+            sets: 'set',
+            rpe: '점',
+            intensity: '%',
+            pace: '초/세트',
+            primary: 'kg',
+            secondary: 'kg'
+          },
+          visibility: 'private'
+        });
+
+        // 벤치프레스 개별 세션
+        var bpDate = new Date(weekDate.getTime() - 2 * 86400000);
+        records.push({
+          id: 'samp_bp_' + w,
+          type: 'note',
+          theme: 'workout',
+          subTheme: '벤치프레스',
+          text: '[벤치프레스] 메인 세트 ' + bp + 'kg 5x5 완수 (볼륨 ' + (bp * 25) + 'kg, RPE ' + (Math.round((rpeBig3 - 0.3) * 10) / 10) + ').',
+          startAt: bpDate.toISOString(),
+          endAt: new Date(bpDate.getTime() + 45 * 60000).toISOString(),
+          createdAt: bpDate.toISOString(),
+          metrics: {
+            '1rm': Math.round(bp * 1.16),
+            record: bp,
+            volume: bp * 25,
+            sets: 5,
+            rpe: Math.round((rpeBig3 - 0.3) * 10) / 10,
+            intensity: Math.round((rpeBig3 - 0.3) * 10),
+            pace: 120,
+            primary: bp,
+            secondary: bp * 25
+          },
+          metricUnits: {
+            '1rm': 'kg',
+            record: 'kg',
+            volume: 'kg',
+            sets: 'set',
+            rpe: '점',
+            intensity: '%',
+            pace: '초/세트',
+            primary: 'kg',
+            secondary: 'kg'
+          },
+          visibility: 'private'
+        });
+
+        // 데드리프트 개별 세션
+        var dlDate = new Date(weekDate.getTime() - 0 * 86400000);
+        records.push({
+          id: 'samp_dl_' + w,
+          type: 'note',
+          theme: 'workout',
+          subTheme: '데드리프트',
+          text: '[데드리프트] 메인 세트 ' + dl + 'kg 4x3 완수 (볼륨 ' + (dl * 12) + 'kg, 고강도 RPE ' + (Math.round((rpeBig3 + 0.4) * 10) / 10) + ').',
+          startAt: dlDate.toISOString(),
+          endAt: new Date(dlDate.getTime() + 40 * 60000).toISOString(),
+          createdAt: dlDate.toISOString(),
+          metrics: {
+            '1rm': Math.round(dl * 1.12),
+            record: dl,
+            volume: dl * 12,
+            sets: 4,
+            rpe: Math.min(10, Math.round((rpeBig3 + 0.4) * 10) / 10),
+            intensity: Math.min(100, Math.round((rpeBig3 + 0.4) * 10)),
+            pace: 210,
+            primary: dl,
+            secondary: dl * 12
+          },
+          metricUnits: {
+            '1rm': 'kg',
+            record: 'kg',
+            volume: 'kg',
+            sets: 'set',
+            rpe: '점',
+            intensity: '%',
+            pace: '초/세트',
+            primary: 'kg',
+            secondary: 'kg'
+          },
           visibility: 'private'
         });
       }
-        } else if(domainKey === 'study'){
-      for(var w = 51; w >= 0; w--){
-        var weekDate = new Date(now.getTime() - w * 7 * 86400000);
-        var studyMin = 180 + Math.round((51 - w) * 2.5);
-        var problems = Math.round(40 + (51 - w) * 1.2);
+    } else if(domainKey === 'study'){
+      // 과거 51주간(w = 51..1) 1년치 장기 추세 (주간 기출 + 격주 개념정리 + 월간 모의고사, w=1은 8일 전으로 1W 경계 안전 분리)
+      for(var w = 51; w >= 1; w--){
+        var weekDate = new Date(now.getTime() - (w * 7 + 1) * 86400000);
+        var studyMin = 180 + Math.round((51 - w) * 2.2);
+        var problems = Math.round(35 + (51 - w) * 0.7);
+        var rpeStudy = Math.round((7.5 + (51 - w) * 0.03 + (Math.sin(w) * 0.3)) * 10) / 10;
+        if(rpeStudy > 10) rpeStudy = 10;
+        var paceStudy = Math.round((studyMin / problems) * 10) / 10;
+
         records.push({
           id: 'samp_study_' + w + '_main',
           type: 'note',
           theme: 'learning',
           subTheme: '기출문제',
-          text: '도서관 기출문제 풀이 ' + studyMin + '분 몰입 (' + problems + '문제 완료).',
+          text: '[기출문제] 도서관 기출 풀이 ' + studyMin + '분 몰입 (' + problems + '문제, 페이스 ' + paceStudy + '분/문제, 집중도 RPE ' + rpeStudy + ').',
           startAt: weekDate.toISOString(),
           endAt: new Date(weekDate.getTime() + studyMin * 60000).toISOString(),
           createdAt: weekDate.toISOString(),
-          metrics: { duration: studyMin, problems: problems, primary: studyMin, secondary: problems },
-          metricUnits: { duration: '분', problems: '문제', primary: '분', secondary: '문제' },
+          metrics: {
+            problems: problems,
+            duration: studyMin,
+            primary: problems,
+            secondary: studyMin,
+            record: problems,
+            pace: paceStudy,
+            rpe: rpeStudy,
+            intensity: Math.round(rpeStudy * 10)
+          },
+          metricUnits: {
+            problems: '문제',
+            duration: '분',
+            primary: '문제',
+            secondary: '분',
+            record: '문제',
+            pace: '분/문제',
+            rpe: '점',
+            intensity: '%'
+          },
           visibility: 'private'
         });
-        var revDate = new Date(weekDate.getTime() - 3 * 86400000);
+
+        if(w % 2 === 0){
+          var revDate = new Date(weekDate.getTime() - 3 * 86400000);
+          records.push({
+            id: 'samp_study_' + w + '_rev',
+            type: 'note',
+            theme: 'learning',
+            subTheme: '개념정리',
+            text: '[개념정리] 핵심 요약 복습 90분 몰입 (20문제 풀이, RPE 7.2).',
+            startAt: revDate.toISOString(),
+            endAt: new Date(revDate.getTime() + 90 * 60000).toISOString(),
+            createdAt: revDate.toISOString(),
+            metrics: {
+              problems: 20,
+              duration: 90,
+              primary: 20,
+              secondary: 90,
+              record: 20,
+              pace: 4.5,
+              rpe: 7.2,
+              intensity: 72
+            },
+            metricUnits: {
+              problems: '문제',
+              duration: '분',
+              primary: '문제',
+              secondary: '분',
+              record: '문제',
+              pace: '분/문제',
+              rpe: '점',
+              intensity: '%'
+            },
+            visibility: 'private'
+          });
+        }
+
+        if(w % 4 === 0){
+          var mockDate = new Date(weekDate.getTime() - 5 * 86400000);
+          var mockScore = Math.round(62 + (51 - w) * 0.65);
+          records.push({
+            id: 'samp_study_' + w + '_mock',
+            type: 'note',
+            theme: 'learning',
+            subTheme: '모의고사',
+            text: '[모의고사] 실전 전국 모의 100문제 풀이 (' + mockScore + '점 획득, 시간 120분, 실전압박 RPE 9.2).',
+            startAt: mockDate.toISOString(),
+            endAt: new Date(mockDate.getTime() + 120 * 60000).toISOString(),
+            createdAt: mockDate.toISOString(),
+            metrics: {
+              score: mockScore,
+              problems: 100,
+              duration: 120,
+              primary: mockScore,
+              secondary: 100,
+              record: mockScore,
+              pace: 1.2,
+              rpe: 9.2,
+              intensity: 92
+            },
+            metricUnits: {
+              score: '점',
+              problems: '문제',
+              duration: '분',
+              primary: '점',
+              secondary: '문제',
+              record: '점',
+              pace: '분/문제',
+              rpe: '점',
+              intensity: '%'
+            },
+            visibility: 'private'
+          });
+        }
+      }
+      // 최근 7일(D-6 ~ D-0): 매일 1회 연속 기출문제 실전 풀이 7개 세션 (1W 뷰 완벽 대응)
+      var dailyStudyData = [
+        { dayOffset: 6, problems: 35, duration: 120, rpe: 7.8, memo: '기출문제 1회차 35문제 풀이 및 기본 이론 오답 정리' },
+        { dayOffset: 5, problems: 42, duration: 135, rpe: 8.1, memo: '기출문제 2회차 42문제 풀이 및 빈출 유형 점검' },
+        { dayOffset: 4, problems: 48, duration: 150, rpe: 8.4, memo: '기출문제 3회차 48문제 완풀 및 시간 단축 훈련' },
+        { dayOffset: 3, problems: 52, duration: 165, rpe: 8.6, memo: '기출문제 4회차 52문제 몰입 풀이 및 심화 오답 분석' },
+        { dayOffset: 2, problems: 58, duration: 180, rpe: 8.9, memo: '기출문제 5회차 58문제 실전 모의 풀이 (정답률 88%)' },
+        { dayOffset: 1, problems: 65, duration: 200, rpe: 9.2, memo: '기출문제 6회차 65문제 풀이 및 파이널 킬러문항 정복' },
+        { dayOffset: 0, problems: 72, duration: 215, rpe: 9.6, memo: '기출문제 최종 72문제 완벽 풀이 (역대 최고 기록 달성 ★PR)' }
+      ];
+      dailyStudyData.forEach(function(item){
+        var itemDate = new Date(now.getTime() - item.dayOffset * 86400000);
+        var paceVal = Math.round((item.duration / item.problems) * 10) / 10;
         records.push({
-          id: 'samp_study_' + w + '_rev',
+          id: 'samp_study_daily_' + item.dayOffset,
+          type: 'note',
+          theme: 'learning',
+          subTheme: '기출문제',
+          text: item.memo + ' (' + item.duration + '분 집중, ' + item.problems + '문제, RPE ' + item.rpe + ').',
+          startAt: itemDate.toISOString(),
+          endAt: new Date(itemDate.getTime() + item.duration * 60000).toISOString(),
+          createdAt: itemDate.toISOString(),
+          metrics: {
+            problems: item.problems,
+            duration: item.duration,
+            primary: item.problems,
+            secondary: item.duration,
+            record: item.problems,
+            pace: paceVal,
+            rpe: item.rpe,
+            intensity: Math.round(item.rpe * 10)
+          },
+          metricUnits: {
+            problems: '문제',
+            duration: '분',
+            primary: '문제',
+            secondary: '분',
+            record: '문제',
+            pace: '분/문제',
+            rpe: '점',
+            intensity: '%'
+          },
+          visibility: 'private'
+        });
+      });
+      // D-4, D-2, D-0 개념정리 복습 병행 세션
+      [4, 2, 0].forEach(function(dayOff){
+        var cDate = new Date(now.getTime() - dayOff * 86400000 - 3 * 3600000);
+        records.push({
+          id: 'samp_study_daily_concept_' + dayOff,
           type: 'note',
           theme: 'learning',
           subTheme: '개념정리',
-          text: '핵심 요약 복습 90분 몰입 (20문제 풀이).',
-          startAt: revDate.toISOString(),
-          endAt: new Date(revDate.getTime() + 90 * 60000).toISOString(),
-          createdAt: revDate.toISOString(),
-          metrics: { duration: 90, problems: 20, primary: 90, secondary: 20 },
-          metricUnits: { duration: '분', problems: '문제', primary: '분', secondary: '문제' },
+          text: '핵심 요약 복습 및 암기 노트 60분 (20문제 풀이, RPE 7.2).',
+          startAt: cDate.toISOString(),
+          endAt: new Date(cDate.getTime() + 60 * 60000).toISOString(),
+          createdAt: cDate.toISOString(),
+          metrics: {
+            problems: 20,
+            duration: 60,
+            primary: 20,
+            secondary: 60,
+            record: 20,
+            pace: 3.0,
+            rpe: 7.2,
+            intensity: 72
+          },
+          metricUnits: {
+            problems: '문제',
+            duration: '분',
+            primary: '문제',
+            secondary: '분',
+            record: '문제',
+            pace: '분/문제',
+            rpe: '점',
+            intensity: '%'
+          },
           visibility: 'private'
         });
-      }
+      });
     } else if(domainKey === "coding"){
-      // 52주간 1년치 개발 커밋 및 PR 배포 (주간 커밋 10~35개, PR 2~5개)
+      // 52주간 1년치 개발 세부 종목별 시계열 (기능구현, PR머지, 코드리뷰 및 RPE·페이스)
       for(var w = 51; w >= 0; w--){
         var weekDate = new Date(now.getTime() - w * 7 * 86400000);
         var commits = Math.round(12 + (51 - w) * 0.4 + (w % 3) * 4);
         var prs = Math.round(2 + (51 - w) * 0.06);
+        var rpeCode = Math.round((7.5 + (51 - w) * 0.03 + (Math.sin(w) * 0.3)) * 10) / 10;
+        if(rpeCode > 10) rpeCode = 10;
+
+        // 기능구현 세션
         records.push({
           id: 'samp_code_' + w,
           type: 'note',
           theme: 'career',
-          subTheme: '개발커밋',
-          text: '스프린트 개발 완료 ' + commits + '커밋, ' + prs + '개 PR 머지.',
+          subTheme: '기능구현',
+          text: '[기능구현] 스프린트 개발 완료 ' + commits + '커밋 (페이스 ' + Math.round(180/commits) + '분/커밋, 몰입 RPE ' + rpeCode + ').',
           startAt: weekDate.toISOString(),
-          endAt: new Date(weekDate.getTime() + 120 * 60000).toISOString(),
+          endAt: new Date(weekDate.getTime() + 180 * 60000).toISOString(),
           createdAt: weekDate.toISOString(),
-          metrics: { commits: commits, prs: prs, primary: commits, secondary: prs },
-          metricUnits: { commits: '개', prs: 'PR', primary: '개', secondary: 'PR' },
+          metrics: {
+            commits: commits,
+            prs: prs,
+            primary: commits,
+            secondary: prs,
+            record: commits,
+            pace: Math.round(180 / commits),
+            rpe: rpeCode,
+            intensity: Math.round(rpeCode * 10),
+            duration: 180
+          },
+          metricUnits: {
+            commits: '개',
+            prs: 'PR',
+            primary: '개',
+            secondary: 'PR',
+            record: '개',
+            pace: '분/커밋',
+            rpe: '점',
+            intensity: '%',
+            duration: '분'
+          },
           visibility: 'private'
         });
+
+        // PR머지 세션
+        var prDate = new Date(weekDate.getTime() - 2 * 86400000);
+        records.push({
+          id: 'samp_pr_' + w,
+          type: 'note',
+          theme: 'career',
+          subTheme: 'PR머지',
+          text: '[PR머지] 주요 기능 브랜치 ' + prs + '건 배포 및 머지 완료 (RPE 7.8).',
+          startAt: prDate.toISOString(),
+          endAt: new Date(prDate.getTime() + 90 * 60000).toISOString(),
+          createdAt: prDate.toISOString(),
+          metrics: {
+            prs: prs,
+            primary: prs,
+            record: prs,
+            pace: Math.round(90 / prs),
+            rpe: 7.8,
+            intensity: 78,
+            duration: 90
+          },
+          metricUnits: {
+            prs: 'PR',
+            primary: 'PR',
+            record: 'PR',
+            pace: '분/PR',
+            rpe: '점',
+            intensity: '%',
+            duration: '분'
+          },
+          visibility: 'private'
+        });
+
+        // 코드리뷰 세션 (격주)
+        if(w % 2 === 0){
+          var crDate = new Date(weekDate.getTime() - 4 * 86400000);
+          var reviews = Math.round(3 + (51 - w) * 0.08);
+          records.push({
+            id: 'samp_cr_' + w,
+            type: 'note',
+            theme: 'career',
+            subTheme: '코드리뷰',
+            text: '[코드리뷰] 동료 PR ' + reviews + '건 정밀 리뷰 및 아키텍처 피드백 (RPE 7.0).',
+            startAt: crDate.toISOString(),
+            endAt: new Date(crDate.getTime() + 60 * 60000).toISOString(),
+            createdAt: crDate.toISOString(),
+            metrics: {
+              reviews: reviews,
+              primary: reviews,
+              record: reviews,
+              pace: Math.round(60 / reviews),
+              rpe: 7.0,
+              intensity: 70,
+              duration: 60
+            },
+            metricUnits: {
+              reviews: '건',
+              primary: '건',
+              record: '건',
+              pace: '분/건',
+              rpe: '점',
+              intensity: '%',
+              duration: '분'
+            },
+            visibility: 'private'
+          });
+        }
       }
     } else if(domainKey === 'sales'){
+      // 52주간 1년치 영업 세부 종목별 시계열 (영업계약, 고객미팅, 제안서작성 및 RPE·페이스)
       for(var w = 51; w >= 0; w--){
         var weekDate = new Date(now.getTime() - w * 7 * 86400000);
         var amt = Math.round(250 + (51 - w) * 12);
         var deals = Math.round(2 + (51 - w) * 0.08);
+        var rpeSales = Math.round((8.0 + (51 - w) * 0.03 + (Math.cos(w) * 0.3)) * 10) / 10;
+        if(rpeSales > 10) rpeSales = 10;
+
+        // 영업계약 세션
         records.push({
           id: 'samp_sales_' + w,
           type: 'note',
           theme: 'career',
           subTheme: '영업계약',
-          text: '고객사 미팅 및 신규 계약 ' + deals + '건 체결 (실적 ' + amt + '만원 달성).',
+          text: '[영업계약] 신규 수주 ' + deals + '건 체결 (매출 ' + amt + '만원 달성, 성취감 RPE ' + rpeSales + ').',
           startAt: weekDate.toISOString(),
           endAt: new Date(weekDate.getTime() + 60 * 60000).toISOString(),
           createdAt: weekDate.toISOString(),
-          metrics: { revenue: amt, deals: deals, primary: amt, secondary: deals },
-          metricUnits: { revenue: '만원', deals: '건', primary: '만원', secondary: '건' },
+          metrics: {
+            revenue: amt,
+            deals: deals,
+            primary: amt,
+            secondary: deals,
+            record: amt,
+            pace: Math.round(amt / deals),
+            rpe: rpeSales,
+            intensity: Math.round(rpeSales * 10)
+          },
+          metricUnits: {
+            revenue: '만원',
+            deals: '건',
+            primary: '만원',
+            secondary: '건',
+            record: '만원',
+            pace: '만원/건',
+            rpe: '점',
+            intensity: '%'
+          },
           visibility: 'private'
         });
+
+        // 고객미팅 세션
+        var meetDate = new Date(weekDate.getTime() - 2 * 86400000);
+        var meets = Math.round(4 + (51 - w) * 0.12);
+        records.push({
+          id: 'samp_meet_' + w,
+          type: 'note',
+          theme: 'career',
+          subTheme: '고객미팅',
+          text: '[고객미팅] 주간 파트너사 미팅 ' + meets + '건 완료 (RPE 7.4).',
+          startAt: meetDate.toISOString(),
+          endAt: new Date(meetDate.getTime() + meets * 45 * 60000).toISOString(),
+          createdAt: meetDate.toISOString(),
+          metrics: {
+            meetings: meets,
+            primary: meets,
+            record: meets,
+            pace: 45,
+            rpe: 7.4,
+            intensity: 74,
+            duration: meets * 45
+          },
+          metricUnits: {
+            meetings: '회',
+            primary: '회',
+            record: '회',
+            pace: '분/회',
+            rpe: '점',
+            intensity: '%',
+            duration: '분'
+          },
+          visibility: 'private'
+        });
+
+        // 제안서작성 세션 (격주)
+        if(w % 2 === 0){
+          var propDate = new Date(weekDate.getTime() - 4 * 86400000);
+          var props = Math.round(2 + (51 - w) * 0.05);
+          records.push({
+            id: 'samp_prop_' + w,
+            type: 'note',
+            theme: 'career',
+            subTheme: '제안서작성',
+            text: '[제안서] B2B 입찰 제안서 ' + props + '종 작성 및 제출 완료 (RPE 8.2).',
+            startAt: propDate.toISOString(),
+            endAt: new Date(propDate.getTime() + 120 * 60000).toISOString(),
+            createdAt: propDate.toISOString(),
+            metrics: {
+              proposals: props,
+              primary: props,
+              record: props,
+              pace: Math.round(120 / props),
+              rpe: 8.2,
+              intensity: 82,
+              duration: 120
+            },
+            metricUnits: {
+              proposals: '건',
+              primary: '건',
+              record: '건',
+              pace: '분/건',
+              rpe: '점',
+              intensity: '%',
+              duration: '분'
+            },
+            visibility: 'private'
+          });
+        }
+      }
+    } else if(THEME_METRIC_SPECS[domainKey]){
+      var spec = THEME_METRIC_SPECS[domainKey];
+      for(var w = 51; w >= 0; w--){
+        var weekDate = new Date(now.getTime() - w * 7 * 86400000);
+        var pVal = Math.round((spec.pStart + (51 - w) * spec.pDelta + (Math.sin(w) * spec.pDelta * 0.2)) * 10) / 10;
+        var sVal = Math.round((spec.sStart + (51 - w) * spec.sDelta + (Math.cos(w) * spec.sDelta * 0.2)) * 10) / 10;
+        if(pVal < 0) pVal = 0;
+        if(sVal < 0) sVal = 0;
+        var rpeCatalog = Math.round((7.2 + (51 - w) * 0.035 + (Math.sin(w * 0.5) * 0.4)) * 10) / 10;
+        if(rpeCatalog > 10) rpeCatalog = 10;
+        var txt = spec.tmpl.replace('{p}', pVal).replace('{s}', sVal);
+        var rec = {
+          id: 'samp_' + domainKey + '_' + w,
+          type: 'note',
+          theme: spec.theme,
+          subTheme: spec.sub,
+          text: txt,
+          startAt: weekDate.toISOString(),
+          endAt: new Date(weekDate.getTime() + 60 * 60000).toISOString(),
+          createdAt: weekDate.toISOString(),
+          metrics: {
+            primary: pVal,
+            secondary: sVal,
+            record: pVal,
+            pace: sVal,
+            rpe: rpeCatalog,
+            intensity: Math.round(rpeCatalog * 10)
+          },
+          metricUnits: {
+            primary: spec.pUnit,
+            secondary: spec.sUnit,
+            record: spec.pUnit,
+            pace: spec.sUnit,
+            rpe: '점',
+            intensity: '%'
+          },
+          visibility: 'private'
+        };
+        rec.metrics[spec.pName] = pVal;
+        rec.metrics[spec.sName] = sVal;
+        rec.metricUnits[spec.pName] = spec.pUnit;
+        rec.metricUnits[spec.sName] = spec.sUnit;
+        records.push(rec);
       }
     }
     records.forEach(function(r){
@@ -1723,14 +2551,35 @@
 
       if(!entityMap[name]){
         var icon = '📊';
-        if(/스쿼트/i.test(name)) icon = '🦵';
+        if(/스키에르그/i.test(name)) icon = '⛷️';
+        else if(/슬레드푸시/i.test(name)) icon = '🛷';
+        else if(/슬레드풀/i.test(name)) icon = '🚜';
+        else if(/버피점프|버피/i.test(name)) icon = '🤸';
+        else if(/로잉/i.test(name)) icon = '🚣';
+        else if(/파머스캐리/i.test(name)) icon = '🧳';
+        else if(/샌드백런지|런지/i.test(name)) icon = '🎒';
+        else if(/월볼샷|월볼/i.test(name)) icon = '🏐';
+        else if(/인터벌러닝/i.test(name)) icon = '⚡';
+        else if(/하이록스/i.test(name)) icon = '🏃';
+        else if(/롱런/i.test(name)) icon = '🏃‍♂️';
+        else if(/조깅/i.test(name)) icon = '👟';
+        else if(/스쿼트/i.test(name)) icon = '🦵';
         else if(/벤치프레스/i.test(name)) icon = '🏋️';
         else if(/데드리프트/i.test(name)) icon = '🔥';
+        else if(/파워리프팅/i.test(name)) icon = '🏋️';
         else if(/러닝|달리기/i.test(name)) icon = '🏃';
+        else if(/모의고사/i.test(name)) icon = '📝';
+        else if(/개념정리/i.test(name)) icon = '📚';
+        else if(/기출문제|공부/i.test(name)) icon = '📖';
+        else if(/기능구현|개발커밋/i.test(name)) icon = '💻';
+        else if(/PR머지/i.test(name)) icon = '🔀';
+        else if(/코드리뷰/i.test(name)) icon = '👀';
+        else if(/영업계약/i.test(name)) icon = '💼';
+        else if(/고객미팅/i.test(name)) icon = '🤝';
+        else if(/제안서/i.test(name)) icon = '📑';
         else if(/독서|책/i.test(name)) icon = '📖';
         else if(/체중/i.test(name)) icon = '⚖️';
         else if(/수면/i.test(name)) icon = '💤';
-        else if(/공부|코딩/i.test(name)) icon = '💻';
         else if(/가계부|재테크/i.test(name)) icon = '💰';
 
         var domKey = inferDomainKey(name, r.theme);
@@ -1966,10 +2815,11 @@
     var width = options.width || 540;
     var height = options.height || 230;
     var scaleMode = options.scaleMode || 'linear';
+    var period = options.period || '';
     var padL = 48;
     var padR = 25;
     var padT = 30;
-    var padB = 35;
+    var padB = 38;
     var plotW = width - padL - padR;
     var plotH = height - padT - padB;
 
@@ -2049,12 +2899,73 @@
     sortedDates.forEach(function(d){ yearsMap[d.slice(0, 4)] = true; });
     var hasMultiYears = Object.keys(yearsMap).length > 1 || (sortedDates.length > 0 && parseInt(sortedDates[0].slice(0, 4), 10) < 2020);
 
-    var xStep = Math.max(1, Math.floor(sortedDates.length / 4));
-    for(var j = 0; j < sortedDates.length; j += xStep){
-      var dStr = sortedDates[j];
-      var xPos = dateToX(dStr);
-      var label = hasMultiYears ? (dStr.slice(0, 4) + '.' + dStr.slice(5, 7)) : dStr.slice(5);
-      svg += '<text x="' + xPos + '" y="' + (height - 12) + '" text-anchor="middle" font-size="10" fill="var(--ink-soft, #64748b)" font-weight="600">' + label + '</text>';
+    var KOR_DAYS = ['일', '월', '화', '수', '목', '금', '토'];
+
+    if(period === '1w' || sortedDates.length <= 7){
+      // 1W 또는 7일 이하 일별 뷰: 7일간의 날짜 및 요일을 빠짐없이 100% 표출
+      sortedDates.forEach(function(dStr){
+        var xPos = dateToX(dStr);
+        var dt = new Date(dStr + 'T00:00:00');
+        var dayName = KOR_DAYS[dt.getDay()] || '';
+        var dateLabel = hasMultiYears ? (dStr.slice(0, 4) + '.' + dStr.slice(5, 7)) : dStr.slice(5).replace('-', '.');
+        svg += '<text x="' + xPos + '" y="' + (height - 12) + '" text-anchor="middle" font-size="9.5" fill="var(--ink)" font-weight="700">' +
+          dateLabel + '<tspan fill="var(--primary)" font-weight="800">(' + dayName + ')</tspan></text>';
+      });
+    } else if(sortedDates.length <= 15){
+      // 2주 이내: 2일 간격
+      for(var j = 0; j < sortedDates.length; j += 2){
+        var dStr = sortedDates[j];
+        var xPos = dateToX(dStr);
+        var dt = new Date(dStr + 'T00:00:00');
+        var dayName = KOR_DAYS[dt.getDay()] || '';
+        var dateLabel = hasMultiYears ? (dStr.slice(0, 4) + '.' + dStr.slice(5, 7)) : dStr.slice(5).replace('-', '.');
+        svg += '<text x="' + xPos + '" y="' + (height - 12) + '" text-anchor="middle" font-size="9" fill="var(--ink-soft, #64748b)" font-weight="600">' +
+          dateLabel + '(' + dayName + ')</text>';
+      }
+      if((sortedDates.length - 1) % 2 !== 0){
+        var lastD = sortedDates[sortedDates.length - 1];
+        var lastX = dateToX(lastD);
+        var lastDt = new Date(lastD + 'T00:00:00');
+        var dateLabelLast = hasMultiYears ? (lastD.slice(0, 4) + '.' + lastD.slice(5, 7)) : lastD.slice(5).replace('-', '.');
+        svg += '<text x="' + lastX + '" y="' + (height - 12) + '" text-anchor="middle" font-size="9" fill="var(--ink-soft, #64748b)" font-weight="600">' +
+          dateLabelLast + '(' + KOR_DAYS[lastDt.getDay()] + ')</text>';
+      }
+    } else if(sortedDates.length <= 35){
+      // 1M 뷰: 5~7일 간격 균등 샘플링 + 시작/끝 표출
+      var tickIndices = [0];
+      var interval = Math.max(1, Math.floor(sortedDates.length / 4));
+      for(var k = interval; k < sortedDates.length - 1; k += interval){
+        tickIndices.push(k);
+      }
+      if(!tickIndices.includes(sortedDates.length - 1)){
+        tickIndices.push(sortedDates.length - 1);
+      }
+      tickIndices.forEach(function(idx){
+        var dStr = sortedDates[idx];
+        var xPos = dateToX(dStr);
+        var label = hasMultiYears ? (dStr.slice(0, 4) + '.' + dStr.slice(5, 7)) : dStr.slice(5).replace('-', '.');
+        svg += '<text x="' + xPos + '" y="' + (height - 12) + '" text-anchor="middle" font-size="9.5" fill="var(--ink-soft, #64748b)" font-weight="600">' +
+          label + '</text>';
+      });
+    } else {
+      // 3M, 6M, 1Y, ALL 등 중장기 뷰: 4~5개 균등 분할
+      var tickIndices = [0];
+      var step = Math.max(1, Math.floor((sortedDates.length - 1) / 4));
+      for(var k = 1; k < 4; k++){
+        if(k * step < sortedDates.length - 1){
+          tickIndices.push(k * step);
+        }
+      }
+      if(!tickIndices.includes(sortedDates.length - 1)){
+        tickIndices.push(sortedDates.length - 1);
+      }
+      tickIndices.forEach(function(idx){
+        var dStr = sortedDates[idx];
+        var xPos = dateToX(dStr);
+        var label = hasMultiYears ? (dStr.slice(0, 4) + '.' + dStr.slice(5, 7)) : dStr.slice(5).replace('-', '.');
+        svg += '<text x="' + xPos + '" y="' + (height - 12) + '" text-anchor="middle" font-size="9.5" fill="var(--ink-soft, #64748b)" font-weight="600">' +
+          label + '</text>';
+      });
     }
 
     var allInspectablePoints = [];
@@ -2107,16 +3018,40 @@
 
       svg += '<path d="' + pathD + '" fill="none" stroke="' + color + '" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>';
 
+      var ptCount = s.points.length;
+      var dotR = 3.0;
+      var strokeW = 1.8;
+      var showValueBadge = false;
+
+      if(period === '1w' || ptCount <= 7){
+        dotR = 4.2;
+        strokeW = 2.2;
+        showValueBadge = (seriesKeys.length <= 2);
+      } else if(ptCount <= 15){
+        dotR = 3.2;
+        strokeW = 1.8;
+      } else if(ptCount <= 35){
+        dotR = 2.4;
+        strokeW = 1.5;
+      } else {
+        dotR = 1.6;
+        strokeW = 1.0;
+      }
+
       s.points.forEach(function(p){
         var curVal = (scaleMode === 'normalized' ? p.normVal : p.val);
         var x = dateToX(p.date);
         var y = valToY(curVal);
         var isPr = (p.val === s.prVal && s.sessionCount > 3);
         if(isPr){
-          svg += '<circle cx="' + x + '" cy="' + y + '" r="6" fill="#fbbf24" stroke="#ffffff" stroke-width="1.8"/>';
-          svg += '<text x="' + x + '" y="' + (y - 8) + '" text-anchor="middle" font-size="9" font-weight="900" fill="#d97706">PR ' + p.val + '</text>';
+          var prR = (ptCount <= 7 ? 6.5 : 5.5);
+          svg += '<circle cx="' + x + '" cy="' + y + '" r="' + prR + '" fill="#fbbf24" stroke="#ffffff" stroke-width="2"/>';
+          svg += '<text x="' + x + '" y="' + (y - (ptCount <= 7 ? 10 : 8)) + '" text-anchor="middle" font-size="9.5" font-weight="900" fill="#d97706">PR ' + p.val + '</text>';
         } else {
-          svg += '<circle cx="' + x + '" cy="' + y + '" r="3" fill="#ffffff" stroke="' + color + '" stroke-width="1.8"/>';
+          svg += '<circle cx="' + x + '" cy="' + y + '" r="' + dotR + '" fill="#ffffff" stroke="' + color + '" stroke-width="' + strokeW + '"/>';
+          if(showValueBadge && !isPr){
+            svg += '<text x="' + x + '" y="' + (y - 8) + '" text-anchor="middle" font-size="9" font-weight="700" fill="var(--ink)">' + curVal + '</text>';
+          }
         }
       });
     });
@@ -3216,8 +4151,142 @@
     return diagnostics.join('<br style="margin-bottom:4px;">');
   }
 
+  /* ================= 9-B. 데이터 관리 및 도구 통합 모달 (#TASK-ES-092) ================= */
+
+  function openDataManagementModal(options){
+    options = options || {};
+    var allRecs = options.allRecs || [];
+    var state = options.state || {};
+    var callbacks = options.callbacks || {};
+    var openModalFn = callbacks.openModal || window.openModal;
+    var closeModalFn = callbacks.closeModal || window.closeModal;
+    if(!openModalFn) return;
+
+    var menuHtml = 
+      '<div class="modal-head" style="margin-bottom:12px;">' +
+        '<h3 style="margin:0;font-size:1.125rem;font-weight:800;color:var(--ink);">⚙️ 데이터 관리 & 분석 도구</h3>' +
+      '</div>' +
+      '<div style="font-size:.8125rem;color:var(--ink-soft);margin-bottom:14px;line-height:1.4;">' +
+        '새로운 데이터를 추가하거나, 기존 기록을 표로 조회·수정하고, 파일로 백업할 수 있습니다.' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:8px;">' +
+        '<button type="button" class="btn btn-ghost" id="uMenuImportBtn" style="height:auto;padding:12px 14px;text-align:left;display:flex;align-items:center;gap:12px;border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:background .15s;">' +
+          '<span style="font-size:1.4rem;">📥</span>' +
+          '<div style="flex:1;">' +
+            '<div style="font-weight:800;font-size:.875rem;color:var(--ink);">새 데이터 가져오기 & 1초 샘플</div>' +
+            '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">CSV 파일 업로드, 엑셀 텍스트 붙여넣기, 52주 추천 샘플 1초 로드</div>' +
+          '</div>' +
+        '</button>' +
+        '<button type="button" class="btn btn-ghost" id="uMenuGridBtn" style="height:auto;padding:12px 14px;text-align:left;display:flex;align-items:center;gap:12px;border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:background .15s;">' +
+          '<span style="font-size:1.4rem;">📋</span>' +
+          '<div style="flex:1;">' +
+            '<div style="font-weight:800;font-size:.875rem;color:var(--ink);">전체 기록 데이터 표 (그리드)</div>' +
+            '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">모든 기록을 테이블로 검색, 정렬하고 수치를 직접 수정·삭제</div>' +
+          '</div>' +
+        '</button>' +
+        '<button type="button" class="btn btn-ghost" id="uMenuExportCsvBtn" style="height:auto;padding:12px 14px;text-align:left;display:flex;align-items:center;gap:12px;border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:background .15s;">' +
+          '<span style="font-size:1.4rem;">💾</span>' +
+          '<div style="flex:1;">' +
+            '<div style="font-weight:800;font-size:.875rem;color:var(--ink);">CSV 파일로 백업 다운로드</div>' +
+            '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">정제된 전체 기록을 엑셀에서 열 수 있는 CSV로 다운로드</div>' +
+          '</div>' +
+        '</button>' +
+        '<button type="button" class="btn btn-ghost" id="uMenuTaxonomyBtn" style="height:auto;padding:12px 14px;text-align:left;display:flex;align-items:center;gap:12px;border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:background .15s;">' +
+          '<span style="font-size:1.4rem;">🔍</span>' +
+          '<div style="flex:1;">' +
+            '<div style="font-weight:800;font-size:.875rem;color:var(--ink);">항목 온톨로지 탐색기</div>' +
+            '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">새로운 분석 종목 및 맞춤 단위(kg, 쪽, 만원 등) 스키마 관리</div>' +
+          '</div>' +
+        '</button>' +
+        '<button type="button" class="btn btn-ghost" id="uMenuSnapBtn" style="height:auto;padding:12px 14px;text-align:left;display:flex;align-items:center;gap:12px;border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:background .15s;">' +
+          '<span style="font-size:1.4rem;">📸</span>' +
+          '<div style="flex:1;">' +
+            '<div style="font-weight:800;font-size:.875rem;color:var(--ink);">차트 스냅샷 이미지 저장</div>' +
+            '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">현재 콕핏 차트와 KPI 카드를 깨끗한 PNG 이미지로 보관</div>' +
+          '</div>' +
+        '</button>' +
+      '</div>';
+
+    openModalFn(menuHtml, function(modalEl){
+      if(!modalEl) return;
+      var curAllRecs = (state && state.profile && state.profile.records) || allRecs;
+
+      var impB = modalEl.querySelector('#uMenuImportBtn');
+      if(impB){
+        impB.onclick = function(){
+          // closeModalFn() 호출 없이 직접 import 모달로 전환 (popstate 레이스 컨디션 차단)
+          openUniversalImportModal({
+            openModal: openModalFn,
+            closeModal: closeModalFn,
+            toast: callbacks.toast || (typeof window !== 'undefined' ? window.toast : null),
+            state: state,
+            saveProfile: callbacks.saveProfile || (typeof window !== 'undefined' ? window.saveProfile : null),
+            onDone: function(type, count){
+              if(options.onDone) options.onDone(type, count);
+              if(callbacks.onDone) callbacks.onDone(type, count);
+            }
+          });
+        };
+      }
+      var gridB = modalEl.querySelector('#uMenuGridBtn');
+      if(gridB){
+        gridB.onclick = function(){
+          openUniversalDataGrid({
+            allRecs: (state && state.profile && state.profile.records) || allRecs,
+            state: state,
+            callbacks: {
+              openModal: openModalFn,
+              closeModal: closeModalFn,
+              saveProfile: callbacks.saveProfile || (typeof window !== 'undefined' ? window.saveProfile : null),
+              toast: callbacks.toast || (typeof window !== 'undefined' ? window.toast : null),
+              onDone: function(){
+                if(options.onDone) options.onDone();
+                if(callbacks.onDone) callbacks.onDone();
+              }
+            }
+          });
+        };
+      }
+      var expB = modalEl.querySelector('#uMenuExportCsvBtn');
+      if(expB){
+        expB.onclick = function(){
+          closeModalFn();
+          exportCleanCsv((state && state.profile && state.profile.records) || allRecs, 'ourgoal_analytics_export.csv');
+        };
+      }
+      var taxB = modalEl.querySelector('#uMenuTaxonomyBtn');
+      if(taxB){
+        taxB.onclick = function(){
+          openTaxonomyManagerModal({
+            allRecs: (state && state.profile && state.profile.records) || allRecs,
+            state: state,
+            callbacks: {
+              openModal: openModalFn,
+              closeModal: closeModalFn,
+              saveProfile: callbacks.saveProfile || (typeof window !== 'undefined' ? window.saveProfile : null),
+              toast: callbacks.toast || (typeof window !== 'undefined' ? window.toast : null),
+              onDone: function(){
+                if(options.onDone) options.onDone();
+                if(callbacks.onDone) callbacks.onDone();
+              }
+            }
+          });
+        };
+      }
+      var snapB = modalEl.querySelector('#uMenuSnapBtn');
+      if(snapB){
+        snapB.onclick = function(){
+          closeModalFn();
+          var mainCard = (typeof document !== 'undefined') ? document.querySelector('#uCockpitMainCard') : null;
+          if(mainCard) captureChartSnapshot(mainCard, 'ourgoal_cockpit');
+        };
+      }
+    });
+  }
+
 /* ================= 10. 프로페셔널 데이터 콕핏 메인 렌더러 ================= */
   function renderUniversalStatsDashboard(container, allRecs, state, callbacks){
+
     if(!container) return;
     callbacks = callbacks || {};
     state = state || {};
@@ -3346,24 +4415,46 @@
     var activeEntityKeys = (mode === 'all') ? ontology.map(function(o){ return o.name; }) : selected;
     var seriesMap = aggregateMultiSeries(allRecs, activeEntityKeys, dimension, period, mode);
 
-    // 1. 헤더 (1-Line Compact Header)
+    // 1. 헤더 (1-Line Compact & Intuitive Header)
     var headerHtml = 
-      '<div class="u-cockpit-header" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--card);border-radius:12px;cursor:pointer;user-select:none;border:1px solid var(--border);">' +
-        '<div style="display:flex;align-items:center;gap:6px;">' +
-          '<span style="font-size:1rem;">📊</span>' +
-          '<span style="font-family:monospace;font-weight:800;font-size:.9375rem;color:var(--ink);">[ANALYTICS] 자율 다차원 통계 분석기</span>' +
-          '<span style="font-size:.6875rem;padding:2px 6px;border-radius:10px;background:rgba(37,99,235,0.12);color:var(--primary);font-weight:800;font-family:monospace;">' + activeEntityKeys.length + ' Series</span>' +
+      '<div class="u-cockpit-header" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card);border-radius:12px;cursor:pointer;user-select:none;border:1px solid var(--border);">' +
+        '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<span style="font-size:1.15rem;">📊</span>' +
+          '<div>' +
+            '<div style="display:flex;align-items:center;gap:6px;">' +
+              '<span style="font-weight:800;font-size:.9375rem;color:var(--ink);">성취 분석 콕핏</span>' +
+              '<span class="badge" style="font-size:.6875rem;padding:2px 6px;border-radius:10px;background:rgba(37,99,235,0.12);color:var(--primary);font-weight:800;font-family:monospace;">' + activeEntityKeys.length + '개 종목</span>' +
+            '</div>' +
+            '<div style="font-size:.6875rem;color:var(--ink-soft);margin-top:1px;">기록 향상 곡선과 실천 패턴 다각도 분석</div>' +
+          '</div>' +
         '</div>' +
-        '<div style="display:flex;align-items:center;gap:4px;" onclick="event.stopPropagation();">' +
-          '<button type="button" class="btn btn-ghost btn-xs" id="uHdrGridBtn" style="font-size:.75rem;padding:2px 8px;font-weight:700;border:1px solid var(--border);">📋 DATA GRID</button>' +
-          '<button type="button" class="btn btn-ghost btn-xs" id="uHdrImportBtn" style="font-size:.75rem;padding:2px 8px;font-weight:700;border:1px solid var(--border);">📥 가져오기</button>' +
-          '<button type="button" class="btn btn-ghost btn-xs" id="uHdrExportCsvBtn" style="font-size:.75rem;padding:2px 8px;font-weight:700;border:1px solid var(--border);">💾 CSV</button>' +
-          '<button type="button" class="btn btn-ghost btn-xs" id="uHdrSnapBtn" title="차트 스냅샷" style="font-size:.75rem;padding:2px 6px;border:1px solid var(--border);">📸</button>' +
+        '<div style="display:flex;align-items:center;gap:6px;" onclick="event.stopPropagation();">' +
+          '<button type="button" class="btn btn-ghost btn-xs" id="uHdrMgmtMenuBtn" style="font-size:.75rem;padding:4px 9px;font-weight:700;border:1px solid var(--border);border-radius:8px;background:var(--card2);cursor:pointer;">' +
+            '⚙️ 데이터 관리 ▾' +
+          '</button>' +
           '<span id="uAccordionToggleIcon" style="cursor:pointer;font-size:.75rem;padding:2px 6px;font-weight:800;color:var(--ink-soft);">' + (isExpanded ? '▲' : '▼') + '</span>' +
+          '<!-- 하위 호환성 앵커 (스크립트/테스트 참조 보존) -->' +
+          '<div style="display:none;">' +
+            '<button type="button" id="uHdrGridBtn"></button>' +
+            '<button type="button" id="uHdrImportBtn"></button>' +
+            '<button type="button" id="uHdrExportCsvBtn"></button>' +
+            '<button type="button" id="uHdrSnapBtn"></button>' +
+          '</div>' +
         '</div>' +
       '</div>';
 
-    // 2. 컨트롤 바 (모드, 7-Tier 기간, 스케일 모드, 온톨로지 탐색기)
+    // 1-B. 3단계 사용법 퀵 가이드
+    var quickGuideHtml = 
+      '<div class="u-cockpit-quick-guide" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 10px;background:var(--card2);border-radius:8px;margin-bottom:10px;font-size:.75rem;color:var(--ink-soft);flex-wrap:wrap;">' +
+        '<span style="font-weight:800;color:var(--primary);display:flex;align-items:center;gap:3px;"><span>💡</span><span>사용법:</span></span>' +
+        '<span style="font-weight:700;color:var(--ink);"><b style="color:var(--primary);">1</b> 렌즈 선택</span>' +
+        '<span style="opacity:0.4;">➔</span>' +
+        '<span style="font-weight:700;color:var(--ink);"><b style="color:var(--primary);">2</b> 종목 탭</span>' +
+        '<span style="opacity:0.4;">➔</span>' +
+        '<span style="font-weight:700;color:var(--ink);"><b style="color:var(--primary);">3</b> 성장 분석 확인</span>' +
+      '</div>';
+
+    // 2. 컨트롤 바 (기간 & 스케일 알약)
     var periodTabs = [
       { id: 'all', label: '전체 (ALL)' },
       { id: '1y', label: '1Y' },
@@ -3383,21 +4474,21 @@
 
     var scaleToggleHtml = 
       '<div style="display:flex;gap:2px;background:var(--card2);padding:2px;border-radius:6px;">' +
-        '<button type="button" class="u-scale-btn" data-scale="linear" style="padding:3px 6px;border:none;border-radius:4px;font-size:.6875rem;font-weight:700;cursor:pointer;background:' + (scaleMode === 'linear' ? 'var(--primary)' : 'transparent') + ';color:' + (scaleMode === 'linear' ? '#fff' : 'var(--ink)') + ';">Linear</button>' +
-        '<button type="button" class="u-scale-btn" data-scale="normalized" style="padding:3px 6px;border:none;border-radius:4px;font-size:.6875rem;font-weight:700;cursor:pointer;background:' + (scaleMode === 'normalized' ? 'var(--primary)' : 'transparent') + ';color:' + (scaleMode === 'normalized' ? '#fff' : 'var(--ink)') + ';">Norm %</button>' +
+        '<button type="button" class="u-scale-btn" data-scale="linear" style="padding:3px 6px;border:none;border-radius:4px;font-size:.6875rem;font-weight:700;cursor:pointer;background:' + (scaleMode === 'linear' ? 'var(--primary)' : 'transparent') + ';color:' + (scaleMode === 'linear' ? '#fff' : 'var(--ink)') + ';">실제 수치</button>' +
+        '<button type="button" class="u-scale-btn" data-scale="normalized" style="padding:3px 6px;border:none;border-radius:4px;font-size:.6875rem;font-weight:700;cursor:pointer;background:' + (scaleMode === 'normalized' ? 'var(--primary)' : 'transparent') + ';color:' + (scaleMode === 'normalized' ? '#fff' : 'var(--ink)') + ';">100% 상대 비교</button>' +
       '</div>';
 
     // 4대 다차원 분석 렌즈 전환 바 (고밀도 반응형 세그먼트)
     var lenses = [
-      { id: 'trend', icon: '📈', label: '추세 트렌드', sub: '시계열·PR' },
+      { id: 'trend', icon: '📈', label: '성장 추세', sub: '시계열·PR' },
       { id: 'ratio', icon: '⚡', label: '상관 효율비', sub: '단가·비율' },
       { id: 'radar', icon: '🎯', label: '균형 레이더', sub: '달성도·방사형' },
       { id: 'cadence', icon: '🗓️', label: '요일 주기', sub: '루틴·밀도' }
     ];
-    var lensHtml = '<div class="u-lens-row" style="display:flex;gap:4px;background:var(--card2);padding:3px;border-radius:10px;margin-bottom:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;">';
+    var lensHtml = '<div class="u-lens-row" style="display:flex;gap:4px;background:var(--card2);padding:3px;border-radius:10px;margin-bottom:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;">';
     lenses.forEach(function(l){
       var isLAct = (curLens === l.id);
-      var actBg = isLAct ? 'var(--primary)' : 'transparent';
+      var actBg = isLAct ? 'var(--primary, #2563eb)' : 'transparent';
       var actFg = isLAct ? '#ffffff' : 'var(--ink)';
       var actShadow = isLAct ? '0 2px 6px rgba(37,99,235,0.25)' : 'none';
       lensHtml += 
@@ -3410,24 +4501,29 @@
     });
     lensHtml += '</div>';
 
-    var controlsHtml = 
-      '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:10px;flex-wrap:wrap;">' +
+    var lensExplanations = {
+      trend: '📈 <b>성장 추세</b>: 선택한 종목의 시간 흐름에 따른 기록 향상 곡선과 역대 최고치(PR)를 추적합니다.',
+      ratio: '⚡ <b>상관 효율비</b>: 두 지표 간의 상대적 효율비(예: 볼륨당 성과, 단가당 매출)를 분석합니다.',
+      radar: '🎯 <b>균형 레이더</b>: 전체 활동 영역의 비중과 균형도를 방사형 차트로 종합 평가합니다.',
+      cadence: '🗓️ <b>요일 주기</b>: 요일별 활동 실천 횟수와 집중 요일을 파악하여 루틴을 점검합니다.'
+    };
+    var lensExpBannerHtml = 
+      '<div class="u-lens-exp-banner" style="font-size:.75rem;color:var(--ink-soft);background:var(--card2);padding:7px 10px;border-radius:8px;margin-bottom:10px;border-left:3px solid var(--primary);line-height:1.4;">' +
+        (lensExplanations[curLens] || lensExplanations.trend) +
+      '</div>';
+
+    // 3. 엔티티 칩 타이틀 및 목록
+    var colors = ['#3b82f6', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6', '#06b6d4', '#ec4899', '#64748b'];
+    var chipsTitleHtml = 
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+        '<span style="font-size:.78125rem;font-weight:800;color:var(--ink);">🎯 분석할 항목 (탭하여 선택):</span>' +
         '<div style="display:flex;gap:4px;align-items:center;">' +
-          '<div style="display:flex;gap:2px;background:var(--card2);padding:2px;border-radius:8px;">' +
-            '<button type="button" class="u-mode-btn" data-mode="all" style="padding:4px 8px;border:none;border-radius:6px;font-size:.7rem;font-weight:700;cursor:pointer;background:' + (mode === 'all' ? 'var(--primary)' : 'transparent') + ';color:' + (mode === 'all' ? '#fff' : 'var(--ink)') + ';">✨ ALL</button>' +
-            '<button type="button" class="u-mode-btn" data-mode="single" style="padding:4px 8px;border:none;border-radius:6px;font-size:.7rem;font-weight:700;cursor:pointer;background:' + (mode === 'single' ? 'var(--primary)' : 'transparent') + ';color:' + (mode === 'single' ? '#fff' : 'var(--ink)') + ';">🎯 개별</button>' +
-            '<button type="button" class="u-mode-btn" data-mode="multi" style="padding:4px 8px;border:none;border-radius:6px;font-size:.7rem;font-weight:700;cursor:pointer;background:' + (mode === 'multi' ? 'var(--primary)' : 'transparent') + ';color:' + (mode === 'multi' ? '#fff' : 'var(--ink)') + ';">⚡ 비교</button>' +
-          '</div>' +
-          '<button type="button" class="btn btn-xs btn-ghost" id="uTaxonomyOpenBtn" style="font-size:.7rem;padding:3px 7px;border:1px solid var(--border);border-radius:8px;font-weight:700;">🔍 탐색기</button>' +
-        '</div>' +
-        '<div style="display:flex;gap:4px;align-items:center;">' +
-          periodHtml +
-          scaleToggleHtml +
+          '<button type="button" class="btn btn-xs btn-ghost u-mode-btn" data-mode="' + (mode === 'all' ? 'single' : 'all') + '" style="font-size:.6875rem;padding:2px 7px;border:1px solid var(--border);border-radius:6px;font-weight:700;cursor:pointer;">' +
+            (mode === 'all' ? '🎯 개별 선택 모드' : '✨ 전체 모아보기') +
+          '</button>' +
         '</div>' +
       '</div>';
 
-    // 3. 엔티티 칩
-    var colors = ['#3b82f6', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6', '#06b6d4', '#ec4899', '#64748b'];
     var chipsHtml = '<div class="u-entity-chip-row" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;-webkit-overflow-scrolling:touch;">';
     ontology.forEach(function(o, idx){
       var isSel = (mode === 'all') || selected.includes(o.name);
@@ -3438,12 +4534,13 @@
       var bd = isSel ? 'none' : '1px solid var(--border)';
 
       chipsHtml += 
-        '<button type="button" class="u-entity-chip" data-name="' + o.name + '" style="flex-shrink:0;padding:5px 10px;border-radius:16px;font-size:.75rem;font-weight:700;background:' + bg + ';color:' + fg + ';border:' + bd + ';cursor:pointer;display:flex;align-items:center;gap:4px;box-shadow:' + (isSel ? '0 1px 3px rgba(0,0,0,0.12)' : 'none') + ';">' +
-          '<span>' + (isSel && mode === 'multi' ? '✓ ' : '') + o.icon + ' ' + o.name + '</span>' +
-          '<span style="font-size:.65rem;opacity:0.8;">(' + o.count + ')</span>' +
+        '<button type="button" class="u-entity-chip" data-name="' + o.name + '" style="flex-shrink:0;padding:5px 11px;border-radius:16px;font-size:.75rem;font-weight:700;background:' + bg + ';color:' + fg + ';border:' + bd + ';cursor:pointer;display:flex;align-items:center;gap:4px;box-shadow:' + (isSel ? '0 1px 3px rgba(0,0,0,0.12)' : 'none') + ';">' +
+          '<span>' + (isSel && mode !== 'all' ? '✓ ' : '') + o.icon + ' ' + o.name + '</span>' +
+          '<span style="font-size:.65rem;opacity:0.85;">(' + o.count + ')</span>' +
         '</button>';
     });
     chipsHtml += '</div>';
+
     // 3-1. 측정 차원(Metric Dimension) 전환 바
     var dimDisplayNames = {
       '1rm': '추정 1RM(kg)',
@@ -3453,7 +4550,10 @@
       'bodyweight': '체중(kg)',
       'bodyweight_kg': '체중(kg)',
       'sets': '세트수',
-      'intensity': 'RPE 강도(%)',
+      'record': '완주기록(초)',
+      'pace': '페이스',
+      'rpe': '체감강도(RPE)',
+      'intensity': '운동강도(%)',
       'distance': '거리(km)',
       'pages': '독서량(쪽)',
       'duration': '소요시간(분)',
@@ -3464,6 +4564,9 @@
       'problems': '문제수(개)',
       'commits': '커밋수(개)',
       'prs': 'PR수(개)',
+      'reviews': '코드리뷰(건)',
+      'meetings': '미팅(회)',
+      'proposals': '제안서(건)',
       'savings': '저축액(만원)',
       'hours': '수면(시간)',
       'primary': '1차 지표',
@@ -3471,19 +4574,19 @@
     };
 
     var dimHtml = '<div class="u-dim-selector-row" style="display:flex;gap:5px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;-webkit-overflow-scrolling:touch;align-items:center;">';
-    dimHtml += '<span style="font-size:.6875rem;font-weight:800;color:var(--ink-soft);font-family:monospace;flex-shrink:0;margin-right:2px;">[DIMENSION]:</span>';
+    dimHtml += '<span style="font-size:.75rem;font-weight:800;color:var(--ink);flex-shrink:0;margin-right:4px;">📊 측정 지표 <span style="font-size:.65rem;color:var(--ink-soft);font-family:monospace;">[DIMENSION]</span>:</span>';
     availableDims.forEach(function(d){
       var isDAct = (d === dimension);
       var dLabel = dimDisplayNames[d] || d;
       dimHtml += 
-        '<button type="button" class="u-dim-btn" data-dim="' + d + '" style="flex-shrink:0;padding:3px 9px;border-radius:12px;font-size:.7rem;font-weight:700;font-family:monospace;cursor:pointer;border:1px solid ' + (isDAct ? 'var(--primary)' : 'var(--border)') + ';background:' + (isDAct ? 'rgba(37,99,235,0.12)' : 'var(--card2)') + ';color:' + (isDAct ? 'var(--primary)' : 'var(--ink)') + ';box-shadow:' + (isDAct ? '0 1px 2px rgba(0,0,0,0.06)' : 'none') + ';">' +
+        '<button type="button" class="u-dim-btn" data-dim="' + d + '" style="flex-shrink:0;padding:4px 10px;border-radius:14px;font-size:.75rem;font-weight:700;cursor:pointer;border:1.5px solid ' + (isDAct ? 'var(--primary, #2563eb)' : 'var(--border, #cbd5e1)') + ';background:' + (isDAct ? 'rgba(37,99,235,0.14)' : 'var(--card2)') + ';color:' + (isDAct ? 'var(--primary, #1d4ed8)' : 'var(--ink)') + ';box-shadow:' + (isDAct ? '0 1px 2px rgba(0,0,0,0.06)' : 'none') + ';transition:all 0.15s ease;">' +
           (isDAct ? '● ' : '○ ') + dLabel +
         '</button>';
     });
     dimHtml += '</div>';
 
     // 4. 다차원 분석 렌즈별 정밀 데이터 계산 및 인터랙티브 페어 매핑
-    var chartObj = renderMultiSeriesSvg(seriesMap, { width: 520, height: 210, scaleMode: scaleMode });
+    var chartObj = renderMultiSeriesSvg(seriesMap, { width: 520, height: 210, scaleMode: scaleMode, period: period });
     var seriesKeys = Object.keys(seriesMap || {});
     var allEntityNames = ontology.map(function(o){ return o.name; });
 
@@ -3605,13 +4708,38 @@
       velocityStr = seriesArray.length + '개 지표 추적 중';
     }
 
+    // 차트 상단 헤더 (분석 대상 요약 + 기간/스케일 알약)
+    var activeEntLabel = (mode === 'all' ? '전체 ' + ontology.length + '개 종목' : activeEntityKeys.join(', '));
+    var chartTitleText = '';
+    if(curLens === 'trend'){
+      chartTitleText = activeEntLabel + ' 성장 곡선';
+    } else if(curLens === 'ratio'){
+      chartTitleText = selRatioNum + ' / ' + selRatioDen + ' 상관 효율비';
+    } else if(curLens === 'radar'){
+      chartTitleText = '종목별 활동 균형도 다각도 레이더';
+    } else if(curLens === 'cadence'){
+      chartTitleText = '요일별 실천 루틴 및 활동 밀도';
+    }
+
+    var chartTitleBar = 
+      '<div class="u-chart-title-bar" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap;">' +
+        '<div style="font-weight:800;font-size:.8125rem;color:var(--ink);display:flex;align-items:center;gap:5px;">' +
+          '<span>📊</span><span>' + chartTitleText + '</span>' +
+          '<span style="font-size:.7rem;font-weight:600;color:var(--ink-soft);font-family:monospace;">(' + (period === 'all' ? '전체' : period.toUpperCase()) + ')</span>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+          periodHtml +
+          (curLens === 'trend' ? scaleToggleHtml : '') +
+        '</div>' +
+      '</div>';
+
     var kpiHtml = 
       '<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(78px, 1fr));gap:6px;margin-top:10px;">' +
         '<div class="card" style="padding:8px 6px;margin:0;border-radius:10px;background:var(--card);border:1px solid var(--border);text-align:center;box-shadow:0 1px 2px rgba(0,0,0,0.03);">' +
           '<div style="font-size:.65rem;font-weight:800;color:#f59e0b;font-family:monospace;display:flex;align-items:center;justify-content:center;gap:3px;">' +
             '<span>🏆</span><span>' + (curLens === 'ratio' ? 'AVG RATIO' : (curLens === 'cadence' ? 'PEAK DAY' : 'PEAK')) + '</span>' +
           '</div>' +
-          '<div style="font-size:clamp(0.78rem, 2.2vw, 0.9375rem);font-weight:900;color:var(--primary);margin-top:3px;font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + peakStr + '</div>' +
+          '<div style="font-size:clamp(0.78rem, 2.2vw, 0.9375rem);font-weight:900;color:var(--primary, #2563eb);margin-top:3px;font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + peakStr + '</div>' +
         '</div>' +
         '<div class="card" style="padding:8px 6px;margin:0;border-radius:10px;background:var(--card);border:1px solid var(--border);text-align:center;box-shadow:0 1px 2px rgba(0,0,0,0.03);">' +
           '<div style="font-size:.65rem;font-weight:800;color:#0284c7;font-family:monospace;display:flex;align-items:center;justify-content:center;gap:3px;">' +
@@ -3652,13 +4780,16 @@
         '</div>' +
       '</div>';
 
-    // 전체 바디 조립
+    // 전체 바디 조립 (3단 레이아웃 완비)
     var bodyHtml = 
       '<div id="uCockpitBody" style="display:' + (isExpanded ? 'block' : 'none') + ';padding-top:10px;">' +
+        quickGuideHtml +
         lensHtml +
-        controlsHtml +
+        lensExpBannerHtml +
+        chipsTitleHtml +
         chipsHtml +
         (curLens === 'trend' ? dimHtml : '') +
+        chartTitleBar +
         '<div id="uChartContainerWrapper" style="position:relative;background:var(--card2);padding:10px 6px;border-radius:10px;border:1px solid var(--border);">' +
           mainChartContentHtml +
         '</div>' +
@@ -3701,7 +4832,25 @@
       };
     }
 
-    // 상단 퀵 버튼
+    // 데이터 관리 모달 통합 메뉴 버튼
+    var mgmtMenuBtn = container.querySelector('#uHdrMgmtMenuBtn');
+    if(mgmtMenuBtn){
+      mgmtMenuBtn.onclick = function(e){
+        e.stopPropagation();
+        var curRecs = (state && state.profile && state.profile.records) || allRecs;
+        openDataManagementModal({
+          allRecs: curRecs,
+          state: state,
+          callbacks: callbacks,
+          onDone: function(){
+            var nextRecs = (state && state.profile && state.profile.records) || allRecs;
+            renderUniversalStatsDashboard(container, nextRecs, state, callbacks);
+          }
+        });
+      };
+    }
+
+    // 하위 호환성 앵커 버튼 (외부 참조 및 기존 스크립트 안전망)
     var gridBtn = container.querySelector('#uHdrGridBtn');
     if(gridBtn){
       gridBtn.onclick = function(e){
@@ -3720,7 +4869,7 @@
           toast: callbacks.toast || window.toast,
           state: state,
           saveProfile: callbacks.saveProfile,
-          onDone: function(){ renderUniversalStatsDashboard(container, state.profile.records, state, callbacks); }
+          onDone: function(){ renderUniversalStatsDashboard(container, (state && state.profile && state.profile.records) || [], state, callbacks); }
         });
       };
     }
@@ -3792,6 +4941,16 @@
       btn.onclick = function(){
         state.univScaleMode = btn.dataset.scale;
         renderUniversalStatsDashboard(container, allRecs, state, callbacks);
+      };
+    });
+
+    // 3-1. 측정 차원(Dimension) 전환 버튼 (매출액, 계약건수, 커밋수, 1RM 등)
+    container.querySelectorAll('.u-dim-btn').forEach(function(btn){
+      btn.onclick = function(e){
+        e.stopPropagation();
+        var targetDim = btn.dataset.dim;
+        state.univDimension = targetDim;
+        renderUniversalStatsDashboard(container, (state && state.profile && state.profile.records) || allRecs, state, callbacks);
       };
     });
 
@@ -4007,13 +5166,29 @@
         '</div>';
     }
 
+    function renderSampleCardsHtml(themeId){
+      var th = SAMPLE_THEMES.find(function(t){ return t.id === themeId; }) || SAMPLE_THEMES[0];
+      return th.items.map(function(item){
+        return '<div class="btn btn-ghost u-sample-card" data-sample="' + item.key + '" style="height:auto;padding:10px 12px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:var(--card);">' +
+          '<div style="flex:1;min-width:0;">' +
+            '<div style="display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' +
+              '<span style="font-weight:700;font-size:.84rem;color:var(--ink);">' + item.icon + ' ' + item.title + '</span>' +
+              '<span class="badge" style="font-size:.65rem;background:var(--card2);color:var(--brand);padding:1px 5px;border-radius:4px;font-weight:700;">' + item.tag + '</span>' +
+            '</div>' +
+            '<div style="font-size:.72rem;color:var(--ink-soft);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + item.desc + '</div>' +
+          '</div>' +
+          '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="' + item.key + '" style="font-weight:700;padding:5px 9px;font-size:.72rem;white-space:nowrap;box-shadow:0 1px 3px rgba(37,99,235,0.25);flex-shrink:0;">⚡ 1초 로드</button>' +
+        '</div>';
+      }).join('');
+    }
+
     var modalHtml = 
       '<div class="modal-head">' +
         '<h3>📥 데이터 가져오기 & 1초 샘플 로드</h3>' +
       '</div>' +
       purgeBannerHtml +
       '<div style="margin-bottom:12px;font-size:.8125rem;color:var(--ink-soft);line-height:1.4;">' +
-        '영업 실적·개발 활동·수험 공부·자산·운동 등 원하는 분야의 카드를 누르면 1초 만에 실제 데이터가 융합됩니다.' +
+        '운동·업무·학습·재테크·웰니스 5대 테마 중 원하는 분야를 골라 1초 만에 실제 52주 데이터를 융합해보세요.' +
       '</div>' +
 
       '<!-- 3개 탭 바 -->' +
@@ -4025,85 +5200,23 @@
 
       '<!-- Tab 1: 추천 샘플 1초 로드 -->' +
       '<div id="uImpPanelSamples" class="u-imp-panel">' +
-        '<div style="display:flex;flex-direction:column;gap:8px;">' +
-          '<!-- 대표 도메인 1: B2B 영업 -->' +
-          '<div class="u-sample-card-wrapper" style="position:relative;">' +
-            '<div class="btn btn-ghost u-sample-card" data-sample="sales" style="height:auto;padding:12px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;">' +
-              '<div style="flex:1;">' +
-                '<div style="display:flex;align-items:center;gap:6px;">' +
-                  '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">💼 B2B IT 솔루션 영업 실적 52주</span>' +
-                  '<span class="badge" style="font-size:.6875rem;background:var(--brand);color:#fff;padding:2px 6px;border-radius:4px;">대표</span>' +
-                '</div>' +
-                '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:3px;">주간 콜 수, 미팅 수, 제안서, 수주액, 전환율 52세션 추적</div>' +
-              '</div>' +
-              '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="sales" style="font-weight:700;padding:6px 10px;white-space:nowrap;box-shadow:0 1px 3px rgba(37,99,235,0.3);">⚡ 1초 로드</button>' +
-            '</div>' +
-          '</div>' +
-
-          '<!-- 대표 도메인 2: 오픈소스 개발 -->' +
-          '<div class="u-sample-card-wrapper" style="position:relative;">' +
-            '<div class="btn btn-ghost u-sample-card" data-sample="coding" style="height:auto;padding:12px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;">' +
-              '<div style="flex:1;">' +
-                '<div style="display:flex;align-items:center;gap:6px;">' +
-                  '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">💻 풀스택 오픈소스 개발 활동 52주</span>' +
-                  '<span class="badge" style="font-size:.6875rem;background:var(--card2);color:var(--ink);padding:2px 6px;border-radius:4px;">IT</span>' +
-                '</div>' +
-                '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:3px;">일일 커밋 수, PR 병합 수, 코드 리뷰, 버그 해결 52세션</div>' +
-              '</div>' +
-              '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="coding" style="font-weight:700;padding:6px 10px;white-space:nowrap;box-shadow:0 1px 3px rgba(37,99,235,0.3);">⚡ 1초 로드</button>' +
-            '</div>' +
-          '</div>' +
-
-          '<!-- 기타 도메인 서브그리드 -->' +
-          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;">' +
-            '<div class="btn btn-ghost u-sample-card" data-sample="study" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;border:1px solid var(--border);border-radius:10px;cursor:pointer;">' +
-              '<div>' +
-                '<div style="font-weight:700;font-size:.8125rem;color:var(--ink);">📖 수험/자격증 공부</div>' +
-                '<div style="font-size:.6875rem;color:var(--ink-soft);">순공시간·문제풀이·복습량</div>' +
-              '</div>' +
-              '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="study" style="font-size:.6875rem;padding:3px 6px;align-self:flex-end;">⚡ 1초 로드</button>' +
-            '</div>' +
-
-            '<div class="btn btn-ghost u-sample-card" data-sample="finance" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;border:1px solid var(--border);border-radius:10px;cursor:pointer;">' +
-              '<div>' +
-                '<div style="font-weight:700;font-size:.8125rem;color:var(--ink);">💰 재테크/자산 형성</div>' +
-                '<div style="font-size:.6875rem;color:var(--ink-soft);">적금·투자수익·누적 1,200만</div>' +
-              '</div>' +
-              '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="finance" style="font-size:.6875rem;padding:3px 6px;align-self:flex-end;">⚡ 1초 로드</button>' +
-            '</div>' +
-
-            '<div class="btn btn-ghost u-sample-card" data-sample="big3_52w" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;border:1px solid var(--border);border-radius:10px;cursor:pointer;">' +
-              '<div>' +
-                '<div style="font-weight:700;font-size:.8125rem;color:var(--ink);">🏋️ 3대 운동 52주 (156세션)</div>' +
-                '<div style="font-size:.6875rem;color:var(--ink-soft);">스쿼트·벤치·데드 366→506kg</div>' +
-              '</div>' +
-              '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="big3_52w" style="font-size:.6875rem;padding:3px 6px;align-self:flex-end;">⚡ 1초 로드</button>' +
-            '</div>' +
-
-            '<div class="btn btn-ghost u-sample-card" data-sample="olympic_1924" style="height:auto;padding:10px;text-align:left;display:flex-direction:column;justify-content:space-between;gap:6px;border:1px solid var(--border);border-radius:10px;cursor:pointer;">' +
-              '<div>' +
-                '<div style="font-weight:700;font-size:.8125rem;color:var(--ink);">📜 1924 올림픽 역도 100년</div>' +
-                '<div style="font-size:.6875rem;color:var(--ink-soft);">100년 전 파리 올림픽 실측</div>' +
-              '</div>' +
-              '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="olympic_1924" style="font-size:.6875rem;padding:3px 6px;align-self:flex-end;">⚡ 1초 로드</button>' +
-            '</div>' +
-
-            '<div class="btn btn-ghost u-sample-card" data-sample="running" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;border:1px solid var(--border);border-radius:10px;cursor:pointer;">' +
-              '<div>' +
-                '<div style="font-weight:700;font-size:.8125rem;color:var(--ink);">🏃 러닝 마라톤 52주</div>' +
-                '<div style="font-size:.6875rem;color:var(--ink-soft);">5km→21km 하프 페이스</div>' +
-              '</div>' +
-              '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="running" style="font-size:.6875rem;padding:3px 6px;align-self:flex-end;">⚡ 1초 로드</button>' +
-            '</div>' +
-
-            '<div class="btn btn-ghost u-sample-card" data-sample="reading" style="height:auto;padding:10px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;border:1px solid var(--border);border-radius:10px;cursor:pointer;">' +
-              '<div>' +
-                '<div style="font-weight:700;font-size:.8125rem;color:var(--ink);">📚 독서 습관 52주</div>' +
-                '<div style="font-size:.6875rem;color:var(--ink-soft);">주간 100쪽 누적 5,200쪽</div>' +
-              '</div>' +
-              '<button type="button" class="btn btn-primary btn-xs u-sample-quick-btn" data-quick-sample="reading" style="font-size:.6875rem;padding:3px 6px;align-self:flex-end;">⚡ 1초 로드</button>' +
-            '</div>' +
-          '</div>' +
+        '<!-- 5대 테마 탭 칩 바 (가로 스크롤 가능) -->' +
+        '<div class="u-theme-tab-row" id="uSampleThemeTabRow" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:10px;-webkit-overflow-scrolling:touch;scrollbar-width:none;">' +
+          SAMPLE_THEMES.map(function(th, idx){
+            var isActive = idx === 0;
+            return '<button type="button" class="btn btn-xs u-theme-tab-btn' + (isActive ? ' active' : '') + '" data-theme="' + th.id + '" style="flex-shrink:0;padding:6px 11px;border-radius:20px;font-size:.75rem;font-weight:700;border:1px solid ' + (isActive ? 'var(--brand)' : 'var(--border)') + ';background:' + (isActive ? 'var(--brand)' : 'var(--card)') + ';color:' + (isActive ? '#fff' : 'var(--ink)') + ';cursor:pointer;transition:all .15s;">' +
+              th.label + ' (7)' +
+            '</button>';
+          }).join('') +
+        '</div>' +
+        '<!-- 테마별 7개 카드 컨테이너들 (활성 테마만 표출) -->' +
+        '<div id="uSampleCardContainer" class="u-sample-cards-wrapper">' +
+          SAMPLE_THEMES.map(function(th, idx){
+            var isActive = idx === 0;
+            return '<div class="u-sample-card-grid" data-theme-panel="' + th.id + '" style="display:' + (isActive ? 'grid' : 'none') + ';grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:8px;">' +
+              renderSampleCardsHtml(th.id) +
+            '</div>';
+          }).join('') +
         '</div>' +
       '</div>' +
 
@@ -4212,39 +5325,64 @@
         return generateDomainSample(sKey);
       }
 
-      // 1-A. 샘플 카드 내 [⚡ 1초 로드] 원터치 직행 버튼
-      modalEl.querySelectorAll('.u-sample-quick-btn').forEach(function(qBtn){
-        qBtn.onclick = function(e){
-          e.stopPropagation();
-          var sKey = qBtn.dataset.quickSample;
-          var recs = getSampleRecs(sKey);
-          var titleStr = qBtn.closest('.u-sample-card') ? qBtn.closest('.u-sample-card').textContent.trim().split('\n')[0] : sKey;
-          executeImport(recs, titleStr);
-        };
-      });
+      var sampleCardContainer = modalEl.querySelector('#uSampleCardContainer');
+      var themeTabBtns = modalEl.querySelectorAll('.u-theme-tab-btn');
 
-      // 1-B. 샘플 카드 본체 클릭 시 선택 활성화 & 하단 프리뷰
-      modalEl.querySelectorAll('.u-sample-card').forEach(function(card){
-        card.onclick = function(){
-          modalEl.querySelectorAll('.u-sample-card').forEach(function(c){
-            c.style.border = '1.5px solid var(--border)';
-            c.style.background = 'transparent';
+      function bindSampleInteractions(){
+        // 1-A. 샘플 카드 내 [⚡ 1초 로드] 원터치 직행 버튼
+        modalEl.querySelectorAll('.u-sample-quick-btn').forEach(function(qBtn){
+          qBtn.onclick = function(e){
+            e.stopPropagation();
+            var sKey = qBtn.dataset.quickSample;
+            var recs = getSampleRecs(sKey);
+            var titleStr = qBtn.closest('.u-sample-card') ? qBtn.closest('.u-sample-card').textContent.trim().split('\n')[0] : sKey;
+            executeImport(recs, titleStr);
+          };
+        });
+
+        // 1-B. 샘플 카드 본체 클릭 시 선택 활성화 & 하단 프리뷰
+        modalEl.querySelectorAll('.u-sample-card').forEach(function(card){
+          card.onclick = function(){
+            modalEl.querySelectorAll('.u-sample-card').forEach(function(c){
+              c.style.border = '1.5px solid var(--border)';
+              c.style.background = 'var(--card)';
+            });
+            card.style.border = '2px solid var(--brand)';
+            card.style.background = 'var(--brand-faint, rgba(37,99,235,0.06))';
+
+            var sKey = card.dataset.sample;
+            stagedRecs = getSampleRecs(sKey);
+
+            previewBox.style.display = 'block';
+            var titleStr = sKey === 'big3_52w' ? '52주 3대운동 156세션' : card.textContent.trim().split('\n')[0];
+            previewTitle.textContent = '선택됨: ' + titleStr + ' (' + stagedRecs.length + '개 세션 준비 완료)';
+            previewTableArea.innerHTML = renderTablePreview(stagedRecs);
+
+            applyBtn.style.display = 'inline-block';
+            applyBtn.textContent = stagedRecs.length + '개 데이터 1초 만에 융합하기';
+          };
+        });
+      }
+
+      // 테마 탭 전환 이벤트 바인딩
+      themeTabBtns.forEach(function(thBtn){
+        thBtn.onclick = function(){
+          var themeId = thBtn.dataset.theme;
+          themeTabBtns.forEach(function(b){
+            var isCur = b === thBtn;
+            b.classList.toggle('active', isCur);
+            b.style.border = isCur ? '1px solid var(--brand)' : '1px solid var(--border)';
+            b.style.background = isCur ? 'var(--brand)' : 'var(--card)';
+            b.style.color = isCur ? '#fff' : 'var(--ink)';
           });
-          card.style.border = '2px solid var(--brand)';
-          card.style.background = 'var(--brand-faint, rgba(37,99,235,0.06))';
-
-          var sKey = card.dataset.sample;
-          stagedRecs = getSampleRecs(sKey);
-
-          previewBox.style.display = 'block';
-          var titleStr = sKey === 'big3_52w' ? '52주 3대운동 156세션' : card.textContent.trim().split('\n')[0];
-          previewTitle.textContent = '선택됨: ' + titleStr + ' (' + stagedRecs.length + '개 세션 준비 완료)';
-          previewTableArea.innerHTML = renderTablePreview(stagedRecs);
-
-          applyBtn.style.display = 'inline-block';
-          applyBtn.textContent = stagedRecs.length + '개 데이터 1초 만에 융합하기';
+          modalEl.querySelectorAll('.u-sample-card-grid[data-theme-panel]').forEach(function(grid){
+            grid.style.display = (grid.dataset.themePanel === themeId) ? 'grid' : 'none';
+          });
         };
       });
+
+      // 마운트 시 전체 35종 카드에 상호작용 바인딩 1회 수행 (Zero Dead Click 보장)
+      bindSampleInteractions();
 
       // 테이블 프리뷰 렌더러
       function renderTablePreview(recs){
@@ -4365,7 +5503,9 @@
     renderRadarSvg: renderRadarSvg,
     computeCadenceData: computeCadenceData,
     renderCadenceSvg: renderCadenceSvg,
-    generateStatisticalDiagnosticReport: generateStatisticalDiagnosticReport
+    generateStatisticalDiagnosticReport: generateStatisticalDiagnosticReport,
+    openDataManagementModal: openDataManagementModal,
+    SAMPLE_THEMES: SAMPLE_THEMES
   };
 
   if(typeof module !== 'undefined' && module.exports){
