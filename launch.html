@@ -41,6 +41,19 @@
       // 1. 다크 콕핏 테마 강제 세팅 (시간기록/데이터 가져오기와 100% 동일)
       localStorage.setItem('ourgoal_current_theme', 'dark-space');
 
+      // 이미 세팅된 프로필이 있고 강제 리셋(?reset=1)이 아니면 사용자 편집/삭제 보존!
+      var existingRaw = localStorage.getItem('ourgoal_guest_profile');
+      var isReset = location.search.indexOf('reset=1') !== -1;
+      if(existingRaw && !isReset){
+        try {
+          var ep = JSON.parse(existingRaw);
+          if(ep && ep.id === 'user-sangmin-pro'){
+            window.location.replace('index.html?v=' + Date.now());
+            return;
+          }
+        } catch(e){}
+      }
+
       // 2. 실제 풍부한 목표 & 기록 데이터 프로필 세팅
       var now = new Date();
       var todayIso = now.toISOString();

@@ -1708,6 +1708,7 @@
       });
 
       var goals = state.profile.goals || [];
+      try { localStorage.setItem('ourgoal_goals_backup_' + uidVal, JSON.stringify(goals)); localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile)); } catch(e){}
       if(goals.length){
         await sb.from('goals').upsert(goals.map(function(g){
           return {
@@ -1716,9 +1717,6 @@
             result:g.result||null, milestones:g.milestones||[]
           };
         }));
-        try {
-          localStorage.setItem('ourgoal_goals_backup_' + uidVal, JSON.stringify(goals));
-        } catch(e){}
       }
 
       var recs = state.profile.records || [];
@@ -5402,46 +5400,7 @@
   /* ============ Social Crew Pacing ============ */
   function renderCrewPacingWidget(){
     var w = document.getElementById('crewPacingWidget');
-    if(!w) return;
-    var goals = (state && state.profile && state.profile.goals) ? state.profile.goals.filter(function(g){ return !g.archivedAt; }) : [];
-    var pGoal = goals[0] || { title: '운동 및 루틴', topic: 'health' };
-    var topic = ((pGoal.topic || '') + ' ' + (pGoal.title || '')).toLowerCase();
-
-    var crewName = '러너스 & 피트니스 크루';
-    var crewColor = '#ef4444';
-    var crewPoints = null;
-    var crewPct = 0;
-    var rank = '';
-
-    if(/개발|코딩|웹|앱|파이썬|cs/.test(topic)){
-      crewName = '데브 & 빌더스 크루';
-      crewColor = '#38bdf8';
-      crewPoints = null;
-      crewPct = 0;
-      rank = '';
-    } else if(/독서|책|공부|자격증|외국어/.test(topic)){
-      crewName = '북클럽 & 지식탐험 크루';
-      crewColor = '#a855f7';
-      crewPoints = null;
-      crewPct = 0;
-      rank = '';
-    } else if(/기상|모닝|루틴|시간/.test(topic)){
-      crewName = '미라클모닝 & 갓생 크루';
-      crewColor = '#f59e0b';
-      crewPoints = null;
-      crewPct = 0;
-      rank = '';
-    }
-
-    var bEl = document.getElementById('userCrewBadge');
-    if(bEl){
-      bEl.textContent = crewName + (rank ? ' ' + rank : '');
-      bEl.style.color = crewColor;
-    }
-    var sEl = document.getElementById('userCrewScore');
-    if(sEl) sEl.textContent = crewPoints ? '팀 포인트 ' + crewPoints.toLocaleString() + '점' : '';
-    var pBar = document.getElementById('userCrewProgressBar');
-    if(pBar) pBar.style.width = crewPct + '%';
+    if(w) w.style.display = 'none';
   }
 
   function nudgeCrewMates(){
@@ -5826,27 +5785,68 @@
 
   function renderDailyQuestBar(){
     var wrap = document.getElementById('dailyQuestBarWrap');
-    if(!wrap) return;
+    if(!wrap || !state.profile) return;
+    var nowK = dateKey(new Date());
+    var recs = state.profile.records || [];
+    var todayRecs = recs.filter(function(r){ return r && r.startAt && dateKey(r.startAt) === nowK; });
     var goals = (state.profile.goals || []).filter(function(g){ return !g.archivedAt; });
-    var totalMs = 0;
-    var doneMs = 0;
+
+    // 1. 퀘스트 1: 오늘 한 줄 체크인 남기기 (+30 EXP)
+    var q1Done = todayRecs.length > 0;
+
+    // 2. 퀘스트 2: 핵심 마일스톤 1개 실행/완료 (+40 EXP)
+    var q2Done = false;
     goals.forEach(function(g){
-      (g.milestones || []).forEach(function(m){
-        totalMs++;
-        if(m.status === 'done') doneMs++;
-      });
+      (g.milestones || []).forEach(function(m){ if(m.status === 'done') q2Done = true; });
     });
-    if(totalMs === 0) totalMs = 3;
-    var pct = Math.min(100, Math.round((doneMs / totalMs) * 100));
+    if(!q2Done && todayRecs.some(function(r){ return !!r.goalId || !!r.goal_id; })) q2Done = true;
+
+    // 3. 퀘스트 3: 25분 집중 시간기록 완주 (+50 EXP)
+    var q3Done = todayRecs.some(function(r){
+      return (Number(r.durationMinutes || r.duration_minutes || 0) >= 25) || (r.text && r.text.indexOf('스톱워치') !== -1) || (r.text && r.text.indexOf('시간기록') !== -1);
+    });
+
+    var doneCount = (q1Done ? 1 : 0) + (q2Done ? 1 : 0) + (q3Done ? 1 : 0);
+    var pct = Math.round((doneCount / 3) * 100);
+    var earnedExp = (q1Done ? 30 : 0) + (q2Done ? 40 : 0) + (q3Done ? 50 : 0);
 
     wrap.style.display = 'block';
-    wrap.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;font-size:0.8rem;font-weight:700;color:var(--ink);">'
-      + '  <span>오늘의 퀘스트 진척도 (' + doneMs + '/' + totalMs + ')</span>'
-      + '  <span style="color:var(--brand-strong);font-weight:700;">' + pct + '% 달성</span>'
+    wrap.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
+      + '  <div style="display:flex;align-items:center;gap:6px;">'
+      + '    <span style="font-weight:900;font-size:.9rem;color:var(--ink);">⚡ 오늘의 3대 퀘스트</span>'
+      + '    <span style="font-size:.72rem;background:var(--brand-soft);color:var(--brand);padding:2px 7px;border-radius:10px;font-weight:800;">' + doneCount + ' / 3 완료</span>'
+      + '  </div>'
+      + '  <span style="font-size:.78rem;font-weight:800;color:' + (doneCount === 3 ? '#22c55e' : '#38bdf8') + ';">+' + earnedExp + ' / 120 EXP (' + pct + '%)</span>'
       + '</div>'
       + '<div class="daily-quest-track">'
       + '  <div class="daily-quest-fill" style="width:' + pct + '%;"></div>'
+      + '</div>'
+      + '<div style="display:flex;flex-direction:column;gap:6px;margin-top:12px;">'
+      + '  <div class="daily-quest-item' + (q1Done ? ' done' : '') + '" id="questItemCheckin" style="cursor:pointer;">'
+      + '    <div style="display:flex;align-items:center;gap:8px;"><span>' + (q1Done ? '✅' : '⭕') + '</span><span style="font-weight:700;font-size:.82rem;">오늘 한 줄 체크인 남기기</span></div>'
+      + '    <span style="font-size:.72rem;font-weight:800;color:' + (q1Done ? '#22c55e' : 'var(--ink-faint)') + ';">+30 EXP' + (q1Done ? ' 완료' : '') + '</span>'
+      + '  </div>'
+      + '  <div class="daily-quest-item' + (q2Done ? ' done' : '') + '" id="questItemMilestone" style="cursor:pointer;">'
+      + '    <div style="display:flex;align-items:center;gap:8px;"><span>' + (q2Done ? '✅' : '⭕') + '</span><span style="font-weight:700;font-size:.82rem;">핵심 마일스톤 1개 실행/완료</span></div>'
+      + '    <span style="font-size:.72rem;font-weight:800;color:' + (q2Done ? '#22c55e' : 'var(--ink-faint)') + ';">+40 EXP' + (q2Done ? ' 완료' : '') + '</span>'
+      + '  </div>'
+      + '  <div class="daily-quest-item' + (q3Done ? ' done' : '') + '" id="questItemTracker" style="cursor:pointer;">'
+      + '    <div style="display:flex;align-items:center;gap:8px;"><span>' + (q3Done ? '✅' : '⭕') + '</span><span style="font-weight:700;font-size:.82rem;">25분 집중 시간기록 완주</span></div>'
+      + '    <span style="font-size:.72rem;font-weight:800;color:' + (q3Done ? '#22c55e' : 'var(--ink-faint)') + ';">+50 EXP' + (q3Done ? ' 완료' : '') + '</span>'
+      + '  </div>'
       + '</div>';
+    var btn1 = wrap.querySelector('#questItemCheckin');
+    if(btn1) btn1.onclick = function(){
+      triggerHaptic(15);
+      var ta = document.getElementById('captureInput'); if(ta){ ta.scrollIntoView({ behavior:'smooth', block:'center' }); ta.focus(); }
+    };
+    var btn2 = wrap.querySelector('#questItemMilestone');
+    if(btn2) btn2.onclick = function(){
+      triggerHaptic(15);
+      if(typeof switchTab === 'function') switchTab('goals');
+    };
+    var btn3 = wrap.querySelector('#questItemTracker');
+    if(btn3) btn3.onclick = function(){ triggerHaptic(15); var openBtn = document.getElementById('btnOpenTimeTracker'); if(openBtn) openBtn.click(); else if(typeof switchTab === 'function') switchTab('records'); };
   }
 
   /* ============ MZ 9:16 인스타 스토리 고해상도 그래픽 캔버스 생성기 (Growth & Viral Loop) ============ */
@@ -22089,10 +22089,10 @@
               gpUpdated = true;
             }
           }
-          if(!gp.goals || gp.goals.length === 0){
+          if(!Array.isArray(gp.goals)){
             var goalBackup = null;
             try { goalBackup = JSON.parse(localStorage.getItem('ourgoal_goals_backup_' + gp.id) || 'null'); } catch(e){}
-            if(goalBackup && goalBackup.length > 0){
+            if(Array.isArray(goalBackup)){
               gp.goals = goalBackup;
               gpUpdated = true;
             }
@@ -22110,8 +22110,8 @@
               if(hasUpdated) renderAll();
             }).catch(function(){});
             loadProfile(gp.id, gp.username, {}, 'boot_bg_sync').then(function(refreshed){
-              if(refreshed && ((refreshed.records && refreshed.records.length > (state.profile.records || []).length) || (refreshed.goals && refreshed.goals.length > (state.profile.goals || []).length))){
-                state.profile = refreshed;
+              if(refreshed && refreshed.records && refreshed.records.length > (state.profile.records || []).length){
+                state.profile.records = refreshed.records;
                 renderAll();
               }
             }).catch(function(){});
