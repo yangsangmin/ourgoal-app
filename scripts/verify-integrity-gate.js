@@ -326,6 +326,20 @@ check('UI 텍스트, 라벨 및 신규 스펙에서 \'잔디\' 단어가 100% �
   assert.strictEqual(violations.length, 0, `절대 금지어 '잔디' 발견 (히트맵으로 변경 필수):\n${violations.join('\n')}`);
 });
 
+/* =========================================================================
+ * 7. 헌법 제14조 & 제18조: 프로덕션 배포 절대 방화벽 및 작업계획서 상한선 검증
+ * ========================================================================= */
+console.log('\n[검증 7/7] 헌법 제14조/제18조: 배포 안전핀 및 작업계획서 4단계 상한선 검사');
+
+check('헌법 정본에 원격 main PR 머지=실서버 배포 동일시(제14조 4항) 및 지시 의도 5대 모드(제18조)가 규정되어 있다', () => {
+  const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
+  const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
+  assert.ok(rulesContent.includes('원격 main PR 머지 = 실서버 프로덕션 배포 동일시'), '제14조 4항 누락');
+  assert.ok(rulesContent.includes('작업계획서 마감 상한선 엄수'), '제14조 5항 누락');
+  assert.ok(rulesContent.includes('모드 4-A [완곡한 요청 및 로컬 완결 4단계 모드]'), '제18조 모드 4-A 누락');
+  assert.ok(rulesContent.includes('모드 4-B [프로덕션 배포 모드]'), '제18조 모드 4-B 누락');
+});
+
 console.log('\n================================================================');
 console.log(`🎯 검증 결과: 총 ${totalChecks}개 검사 중 ${passedChecks}개 통과 (${failures}개 실패)`);
 console.log('================================================================');
