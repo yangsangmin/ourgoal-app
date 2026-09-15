@@ -11408,7 +11408,7 @@
         );
       });
     }
-    view.querySelectorAll('[data-inviteteam]').forEach(function(b){ b.onclick = function(e){ e.stopPropagation(); if(window.OurgoalTeamInviteComm) window.OurgoalTeamInviteComm.openTeamInviteModal(b.dataset.inviteteam); }; }); view.querySelectorAll('[data-teamchat]').forEach(function(b){ b.onclick = function(e){ e.stopPropagation(); if(window.OurgoalTeamInviteComm) window.OurgoalTeamInviteComm.openTeamChatModal(b.dataset.teamchat); }; });
+    view.querySelectorAll('[data-inviteteam]').forEach(function(b){ b.onclick = function(e){ e.stopPropagation(); if(window.OurgoalTeamInviteComm) window.OurgoalTeamInviteComm.openTeamInviteModal(b.dataset.inviteteam, MOCK_GROUPS); }; }); view.querySelectorAll('[data-teamchat]').forEach(function(b){ b.onclick = function(e){ e.stopPropagation(); if(window.OurgoalTeamInviteComm) window.OurgoalTeamInviteComm.openTeamChatModal(b.dataset.teamchat, MOCK_GROUPS); }; });
     if(window.OurgoalTeamLeaderCheck){
       OurgoalTeamLeaderCheck.bindEvents(view, {
         mockGroups: MOCK_GROUPS,
@@ -18601,9 +18601,9 @@
     ctx.fillText('아워골', pad, y);
     ctx.globalAlpha = .6;
     ctx.font = '500 ' + Math.round(dims.w*0.024) + 'px "Noto Sans KR",sans-serif';
-    ctx.fillText(p.emoji+' '+p.label+' 맞춤 카드', pad, y + dims.w*0.036);
+    // [TASK-ES-104] 카카오톡/인스타그램 맞춤카드 문구 제거 (상민님 지시 제6항)
     ctx.globalAlpha = 1;
-    y += dims.w*0.095;
+    y += dims.w*0.06;
 
     var lastRec = state.profile.records[0];
     var fbOk = sel.feedback && state.lastCapture && state.lastCapture.feedback && state.lastCapture.goal && state.lastCapture.goal.id===g.id;

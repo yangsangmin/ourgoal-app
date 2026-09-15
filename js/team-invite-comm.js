@@ -17,11 +17,16 @@
   /* ------------------------------------------------------------
    * 1. 팀 목표 모임장 카카오톡 / 문자 / 링크 초대 모달
    * ------------------------------------------------------------ */
-  function openTeamInviteModal(gid){
-    var g = (global.MOCK_GROUPS || []).find(function(x){ return x.id === gid; });
+  function openTeamInviteModal(gid, groupsPool){
+    var pool = groupsPool || global.MOCK_GROUPS || [];
+    var g = pool.find(function(x){ return x.id === gid; });
     if(!g){
-      if(global.toast) global.toast('모임 정보를 찾을 수 없습니다.');
-      return;
+      var mockDefaults = {
+        'g-workshop': { id: 'g-workshop', name: '2026 하반기 전략 워크숍 TF', icon: '🏢' },
+        'g-travel': { id: 'g-travel', name: '제주 3박4일 단체 힐링여행', icon: '✈️' },
+        'g0': { id: 'g0', name: '친구와 1:1 마라톤 완주방', icon: '🏃' }
+      };
+      g = mockDefaults[gid] || { id: gid, name: '우리 팀 목표', icon: '🎯' };
     }
     var domain = (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin : 'https://ourgoal-app.vercel.app';
     var inviteUrl = domain + '/?join_team=' + encodeURIComponent(g.id);
@@ -98,9 +103,17 @@
   /* ------------------------------------------------------------
    * 2. 콕찌르기 & 팀원 간 실질적 대화 루프 (팀 톡방 및 찌르기 양방향 답장)
    * ------------------------------------------------------------ */
-  function openTeamChatModal(gid){
-    var g = (global.MOCK_GROUPS || []).find(function(x){ return x.id === gid; });
-    if(!g) return;
+  function openTeamChatModal(gid, groupsPool){
+    var pool = groupsPool || global.MOCK_GROUPS || [];
+    var g = pool.find(function(x){ return x.id === gid; });
+    if(!g){
+      var mockDefaults = {
+        'g-workshop': { id: 'g-workshop', name: '2026 하반기 전략 워크숍 TF', icon: '🏢' },
+        'g-travel': { id: 'g-travel', name: '제주 3박4일 단체 힐링여행', icon: '✈️' },
+        'g0': { id: 'g0', name: '친구와 1:1 마라톤 완주방', icon: '🏃' }
+      };
+      g = mockDefaults[gid] || { id: gid, name: '우리 팀 목표', icon: '🎯' };
+    }
     var gs = (typeof global.groupState === 'function') ? global.groupState(gid) : {};
     gs.chatMessages = gs.chatMessages || [
       { sender: '민지 (러너)', text: '오늘 날씨 좋아서 3km 뛰고 왔어요! 다들 파이팅 🔥', time: '오전 08:30', isMe: false },
