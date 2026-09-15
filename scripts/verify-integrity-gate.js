@@ -291,7 +291,10 @@ check('절대 무결성 헌법 정본 문서(OURGOAL_ABSOLUTE_INTEGRITY_RULES.md
   assert.ok(rulesContent.includes('제4장 5대 무결성 전수 검증 의무'), '제4장 누락');
   assert.ok(rulesContent.includes('제5장 직관적 6단계 상태 보고 헌법'), '제5장 누락');
   assert.ok(rulesContent.includes('제6장 기계적 강제 집행 시스템'), '제6장 누락');
+  assert.ok(rulesContent.includes('제7장 지시 의도 스코프 및 단계별 멈춤 헌법'), '제7장 누락');
+  assert.ok(rulesContent.includes('제8장 실 사용자 계정 상호 연동 및 다자간 소통 헌법'), '제8장 누락');
   assert.ok(rulesContent.includes('제17조 (용어 헌법: \'잔디\' 단어 절대 사용 금지 및 \'히트맵\' 강제)'), '제17조 누락');
+  assert.ok(rulesContent.includes('제19조 (실 사용자 계정 상호 연동 헌법 / The Real Inter-Account Interaction Constitution)'), '제19조 누락');
 });
 
 /* =========================================================================
@@ -338,6 +341,23 @@ check('헌법 정본에 원격 main PR 머지=실서버 배포 동일시(제14�
   assert.ok(rulesContent.includes('작업계획서 마감 상한선 엄수'), '제14조 5항 누락');
   assert.ok(rulesContent.includes('모드 4-A [완곡한 요청 및 로컬 완결 4단계 모드]'), '제18조 모드 4-A 누락');
   assert.ok(rulesContent.includes('모드 4-B [프로덕션 배포 모드]'), '제18조 모드 4-B 누락');
+});
+
+/* =========================================================================
+ * 8. 헌법 제19조: 실 사용자 계정 상호 연동 헌법 검증 (가짜 실제구현 영구 금지)
+ * ========================================================================= */
+console.log('\n[검증 8/8] 헌법 제19조: 실 사용자 계정 상호 연동 헌법 검사');
+
+check('헌법 정본에 실 사용자 계정 상호 연동 헌법(제19조 1~4항) 및 가짜 실제구현 금지(제3조 6호, 제4조 7호)가 규정되어 있다', () => {
+  const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
+  const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
+  assert.ok(rulesContent.includes('제19조 (실 사용자 계정 상호 연동 헌법'), '제19조 누락');
+  assert.ok(rulesContent.includes('제1항 [실제 구현의 절대 정의]'), '제19조 1항 누락');
+  assert.ok(rulesContent.includes('제2항 [가짜 실제구현(Fake Implementation)의 정의 및 영구 금지]'), '제19조 2항 누락');
+  assert.ok(rulesContent.includes('제3항 [투명한 시스템 안내 및 게스트 모드 보호 (무충돌 안전핀)]'), '제19조 3항 누락');
+  assert.ok(rulesContent.includes('제4항 [E3 동류소통 기능의 3대 필수 백본 및 자동화 검증]'), '제19조 4항 누락');
+  assert.ok(rulesContent.includes('가짜 실제구현 및 로컬 자가발전 눈속임'), '제3조 6호 누락');
+  assert.ok(rulesContent.includes('가짜 실제구현(상대방 계정과 연동 없는 가상 봇 눈속임) 전면 금지'), '제4조 7호 누락');
 });
 
 console.log('\n================================================================');
