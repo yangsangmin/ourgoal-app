@@ -4209,11 +4209,163 @@ check('compliance: [#TASK-ES-091] 아워골 데이터 가져오기 & 1초 샘플
 
 });
 
+check('compliance: [#TASK-ES-092] 전문가용 데이터 시각화 파워 보존 및 직관적 초간편 인터페이스 전면 개편 무결성 검증', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const statsJsPath = path.join(__dirname, '..', 'js', 'universal-stats.js');
+
+  assert.ok(fs.existsSync(statsJsPath), 'js/universal-stats.js 파일이 존재해야 함');
+  const statsJs = fs.readFileSync(statsJsPath, 'utf8');
+
+  // 1. 헤더 단순화 및 데이터 관리 통합 수납 모달 검증
+  assert.ok(statsJs.includes('uHdrMgmtMenuBtn'), '헤더에 데이터 관리 메뉴 버튼(uHdrMgmtMenuBtn)이 배선되어 있어야 함');
+  assert.ok(statsJs.includes('openDataManagementModal'), 'openDataManagementModal 함수가 정의되어 있어야 함');
+  assert.ok(statsJs.includes('uMenuImportBtn') && statsJs.includes('uMenuGridBtn') && statsJs.includes('uMenuExportCsvBtn') && statsJs.includes('uMenuTaxonomyBtn'), '데이터 관리 모달 내 4대 핵심 도구가 수납되어 있어야 함');
+
+  // 2. 1단: 3단계 인터랙션 퀵 가이드 검증
+  assert.ok(statsJs.includes('u-cockpit-quick-guide'), '3단계 사용법 퀵 가이드가 배선되어 있어야 함');
+  assert.ok(statsJs.includes('💡') && statsJs.includes('사용법:') && statsJs.includes('렌즈 선택') && statsJs.includes('종목 탭') && statsJs.includes('성장 분석 확인'), '직관적인 3단계 사용법 텍스트가 표출되어야 함');
+  assert.ok(uiCss.includes('.u-cockpit-quick-guide'), 'ui.css에 퀵 가이드 스타일이 정의되어 있어야 함');
+
+  // 3. 2단: 4대 렌즈별 목적 설명 1줄 배너 검증
+  assert.ok(statsJs.includes('u-lens-exp-banner'), '렌즈별 목적 설명 배너(u-lens-exp-banner)가 탑재되어 있어야 함');
+  assert.ok(statsJs.includes('lensExplanations'), '렌즈별 친절한 설명 맵이 구현되어 있어야 함');
+  assert.ok(uiCss.includes('.u-lens-exp-banner'), 'ui.css에 렌즈 설명 배너 스타일이 정의되어 있어야 함');
+
+  // 4. 3단: 차트 상단 통합 헤더(대상 종목 + 기간/스케일) 검증
+  assert.ok(statsJs.includes('u-chart-title-bar'), '차트 상단 통합 헤더(u-chart-title-bar)가 구현되어 있어야 함');
+  assert.ok(uiCss.includes('.u-chart-title-bar'), 'ui.css에 차트 상단 헤더 스타일이 정의되어 있어야 함');
+
+  // 5. Zero Dead Click 및 하위 호환성 앵커 버튼 보존 검증
+  assert.ok(statsJs.includes('id="uHdrGridBtn"') && statsJs.includes('id="uHdrImportBtn"') && statsJs.includes('id="uHdrExportCsvBtn"') && statsJs.includes('id="uHdrSnapBtn"'), '하위 호환성 앵커 버튼이 무손실 유지되어야 함');
+
+  // 6. 다차원 지표(Dimension) 버튼 클릭 리스너 배선 검증 (#TASK-ES-092 피드백)
+  assert.ok(statsJs.includes(".querySelectorAll('.u-dim-btn').forEach") && statsJs.includes('state.univDimension = targetDim'), '디멘션 전환 버튼(u-dim-btn) 클릭 리스너가 배선되어 있어야 함');
+
+  // 7. 데이터 관리 모달 -> 새 데이터 가져오기 모달 매끄러운 안전 전환 검증 (popstate 레이스 컨디션 원천 차단)
+  assert.ok(statsJs.includes('openUniversalImportModal({') && statsJs.includes('openUniversalDataGrid({'), '데이터 관리 모달 내 도구 호출이 정상 배선되어 있어야 함');
+});
+
+/* ============ [#TASK-ES-093] 추천 샘플 데이터 테마별 카테고리화 및 효과적 UI/UX 무결성 검증 ============ */
+check('compliance: [#TASK-ES-093] 추천 샘플 데이터 5대 테마별 엄선 7종(총 35종) 카탈로그, 2열 반응형 그리드 및 하이록스 1초 융합 검증', () => {
+  const uStats = require('../js/universal-stats.js');
+  const statsJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'universal-stats.js'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. SAMPLE_THEMES 5대 테마 x 7종 카탈로그 검증
+  assert.ok(Array.isArray(uStats.SAMPLE_THEMES), 'SAMPLE_THEMES 카탈로그 배열 노출');
+  assert.strictEqual(uStats.SAMPLE_THEMES.length, 5, '5대 대분류 테마(운동, 업무, 공부, 재테크, 웰니스) 완비');
+
+  const expectedThemes = ['workout', 'career', 'learning', 'finance', 'wellness'];
+  uStats.SAMPLE_THEMES.forEach((th, idx) => {
+    assert.strictEqual(th.id, expectedThemes[idx], '테마 ID 순서 보장: ' + th.id);
+    assert.strictEqual(th.items.length, 7, th.label + ' 테마는 엄선된 7종 카탈로그 완비');
+  });
+
+  // 2. 운동 테마 내 하이록스(HYROX), 헬스(파워리프팅), 요가 검증 (상민님 필수 종목)
+  const workout = uStats.SAMPLE_THEMES.find(t => t.id === 'workout');
+  const workoutKeys = workout.items.map(it => it.key);
+  assert.ok(workoutKeys.includes('hyrox'), '최신 트렌드 하이록스(hyrox) 포함');
+  assert.ok(workoutKeys.includes('big3_52w'), '파워리프팅 헬스(big3_52w) 포함');
+  assert.ok(workoutKeys.includes('yoga'), '요가 & 필라테스(yoga) 포함');
+
+  // 3. 하이록스 52주 시계열 데이터 생성기 검증
+  const hyroxRecs = uStats.generateDomainSample('hyrox');
+  assert.ok(hyroxRecs.length >= 52, '하이록스 52주 데이터 생성 (실제: ' + hyroxRecs.length + '건)');
+  assert.strictEqual(hyroxRecs[0].isSample, true, 'isSample 태깅');
+  assert.strictEqual(hyroxRecs[0].subTheme, '하이록스', '서브테마 하이록스');
+  assert.ok(hyroxRecs[0].metrics.primary > 0, '완주시간 지표 탑재');
+
+  // 4. 모달 UI/UX 및 ui.css 스타일 탑재 검증
+  assert.ok(statsJs.includes('u-theme-tab-row') && statsJs.includes('u-theme-tab-btn'), '테마 탭 칩 행 및 버튼 구현');
+  assert.ok(statsJs.includes('u-sample-card-grid'), '2열 반응형 컴팩트 카드 그리드 구현');
+  assert.ok(statsJs.includes('data-theme-panel'), '테마별 그리드 패널 분할 탑재');
+  assert.ok(uiCss.includes('.u-theme-tab-row') && uiCss.includes('.u-sample-card-grid'), 'ui.css에 테마 탭 및 그리드 스타일 탑재');
+});
+
+/* ============ [#TASK-ES-094] 기출문제 1W 하루단위 꺾은선 그래프 및 전 기간 시인성 UX 무결성 검증 ============ */
+check('compliance: [#TASK-ES-094] 기출문제 예시 1W 기간 하루단위 꺾은선 그래프(7일 연속 세션), 요일 x축 레이블링 및 전 기간 반응형 시인성 검증', () => {
+  const uStats = require('../js/universal-stats.js');
+  const statsJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'universal-stats.js'), 'utf8');
+
+  // 1. 기출문제 샘플 생성기 1W 일별 데이터 검증
+  const studyRecs = uStats.generateDomainSample('study');
+  assert.ok(Array.isArray(studyRecs) && studyRecs.length >= 80, '공부(기출문제) 샘플 데이터 생성');
+
+  // 2. 1W 기간 집계 시 하루 단위 7개 포인트 확인
+  const series1w = uStats.aggregateMultiSeries(studyRecs, ['기출문제'], 'problems', '1w');
+  assert.ok(series1w['기출문제'], '기출문제 시리즈 존재');
+  assert.strictEqual(series1w['기출문제'].points.length, 7, '1W 기간 최근 7일(D-6~D-0) 하루 단위 7포인트 수집');
+  assert.strictEqual(series1w['기출문제'].points[0].val, 35, 'D-6 35문제');
+  assert.strictEqual(series1w['기출문제'].points[6].val, 72, 'D-0 최고치 72문제');
+
+  // 3. renderMultiSeriesSvg 1W 모드 및 요일 레이블 검증
+  const chart1w = uStats.renderMultiSeriesSvg(series1w, { width: 520, height: 210, period: '1w' });
+  assert.ok(chart1w.svgHtml.includes('<path d="M'), '꺾은선 라인 패스 생성');
+  assert.ok(chart1w.svgHtml.includes('r="4.2"'), '1W 전용 대형 서클(r=4.2)');
+  const hasDayOfWeek = ['(일)', '(월)', '(화)', '(수)', '(목)', '(금)', '(토)'].some(d => chart1w.svgHtml.includes(d));
+  assert.strictEqual(hasDayOfWeek, true, 'X축 요일 레이블 포함');
+
+  // 4. 전 기간(ALL) 대량 포인트 시인성 스케일링 검증
+  const seriesAll = uStats.aggregateMultiSeries(studyRecs, ['기출문제'], 'problems', 'all');
+  const chartAll = uStats.renderMultiSeriesSvg(seriesAll, { width: 520, height: 210, period: 'all' });
+  assert.ok(chartAll.svgHtml.includes('r="1.6"'), '장기 기간 뭉개짐 방지 초소형 서클(r=1.6)');
+
+  // 5. 콕핏 연동 소스코드 무결성 검증
+  assert.ok(statsJs.includes("period: period"), 'renderCockpit에서 renderMultiSeriesSvg로 period 옵션 전달');
+  assert.ok(statsJs.includes("KOR_DAYS"), 'SVG 렌더러에 요일 계산 엔진 탑재');
+});
+
+/* ============ [#TASK-ES-095] 하이록스 8대 공식 스테이션 및 전 테마 실측 기록·페이스·체감강도(RPE) EAV 무결성 검증 ============ */
+check('compliance: [#TASK-ES-095] 하이록스 8대 공식 스테이션 및 전 테마 세부 종목별 실측 기록·페이스·체감강도(RPE) EAV 무결성 검증', () => {
+  const uStats = require('../js/universal-stats.js');
+
+  // 1. 하이록스 8대 공식 스테이션 + 인터벌러닝 + 종합 (총 10개 엔티티)
+  const hyroxRecs = uStats.generateDomainSample('hyrox');
+  const hyroxOntology = uStats.buildUniversalOntology(hyroxRecs);
+  const hyroxNames = hyroxOntology.map(o => o.name);
+  const expectedStations = ['하이록스', '스키에르그', '슬레드푸시', '슬레드풀', '버피점프', '로잉', '파머스캐리', '샌드백런지', '월볼샷', '인터벌러닝'];
+  expectedStations.forEach(stn => {
+    assert.ok(hyroxNames.includes(stn), '하이록스 엔티티 보유: ' + stn);
+  });
+
+  // 2. 종목별 기록, 페이스, RPE 메트릭 검증
+  const skiergSample = hyroxRecs.find(r => r.subTheme === '스키에르그');
+  assert.ok(skiergSample && skiergSample.metrics.record > 0, '스키에르그 기록 보유');
+  assert.ok(skiergSample && skiergSample.metrics.pace > 0, '스키에르그 페이스 보유');
+  assert.ok(skiergSample && skiergSample.metrics.rpe >= 6.0, '스키에르그 RPE 보유');
+
+  const wallballSample = hyroxRecs.find(r => r.subTheme === '월볼샷');
+  assert.ok(wallballSample && wallballSample.metrics.record > 0, '월볼샷 기록 보유');
+  assert.ok(wallballSample && wallballSample.metrics.rpe >= 8.5, '월볼샷 고강도 RPE 보유');
+
+  // 3. 8대 스테이션 멀티 라인 집계 무결성
+  const multiSeries = uStats.aggregateMultiSeries(hyroxRecs, ['스키에르그', '슬레드푸시', '로잉', '월볼샷'], 'record', '1y', 'all');
+  assert.ok(multiSeries['스키에르그'].points.length >= 40, '스키에르그 시계열 포인트 수집');
+  assert.ok(multiSeries['월볼샷'].points.length >= 40, '월볼샷 시계열 포인트 수집');
+
+  // 4. 러닝/파워리프팅/공부/개발/영업/카탈로그 RPE 및 페이스 검증
+  const runRecs = uStats.generateDomainSample('running');
+  assert.ok(runRecs.some(r => r.subTheme === '롱런' && r.metrics.rpe >= 7.0), '롱런 RPE 검증');
+  assert.ok(runRecs.some(r => r.subTheme === '인터벌러닝' && r.metrics.pace > 0), '인터벌러닝 페이스 검증');
+
+  const big3Recs = uStats.generateDomainSample('big3');
+  assert.ok(big3Recs.some(r => r.subTheme === '스쿼트' && r.metrics.rpe >= 7.0), '스쿼트 RPE 검증');
+
+  const studyRecs = uStats.generateDomainSample('study');
+  assert.ok(studyRecs.some(r => r.subTheme === '기출문제' && r.metrics.pace > 0), '기출문제 페이스 검증');
+  assert.ok(studyRecs.some(r => r.subTheme === '모의고사' && r.metrics.rpe >= 9.0), '모의고사 RPE 검증');
+
+  const yogaRecs = uStats.generateDomainSample('yoga');
+  assert.ok(yogaRecs[0].metrics.rpe >= 6.0, '요가 카탈로그 RPE 검증');
+});
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
   process.exit(1);
 }
+
 
 
