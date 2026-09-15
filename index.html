@@ -135,7 +135,7 @@
     <!-- HOME -->
     <section class="screen active" id="screen-home">
       <div class="home-head-row" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">
-        <h2 class="home-greet" id="homeGreeting" style="margin:0;">안녕하세요</h2>
+        <div style="display:flex;align-items:center;gap:6px;"><h2 class="home-greet" id="homeGreeting" style="margin:0;">안녕하세요</h2><button type="button" class="btn btn-ghost btn-xs" id="homePageGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide('home');" style="font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;cursor:pointer;" title="이 페이지 활용법 보기">💡 이 페이지 활용법 보기</button></div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
           <button type="button" class="btn btn-ghost btn-sm" id="btnCustomHomeLayout" style="font-size:.78125rem;padding:3px 9px;white-space:nowrap;color:var(--ink-soft);border-color:var(--rule);">나만의 홈 구성</button>
           <span style="font-size:.6875rem;color:var(--ink-faint);line-height:1;">필요없는 창 지우기</span>
@@ -220,7 +220,7 @@
       <div id="personalGoalsView">
         <div class="goal-head-row">
           <div class="goal-head-l">
-            <h2>목표</h2>
+            <div style="display:flex;align-items:center;gap:6px;"><h2 style="margin:0;">목표</h2><button type="button" class="btn btn-ghost btn-xs" id="goalsPageGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide('goals');" style="font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;cursor:pointer;" title="이 페이지 활용법 보기">💡 이 페이지 활용법 보기</button></div>
             <span class="privacy-badge" id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
@@ -248,7 +248,7 @@
       <div class="screen-head">
         <div class="screen-head-l">
           <h2 class="s-title">일정</h2>
-          <span class="privacy-badge" id="calPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
+          <span class="privacy-badge" id="calPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span><button type="button" class="btn btn-ghost btn-xs" id="calPageGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide('calendar');" style="font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;margin-left:6px;cursor:pointer;" title="이 페이지 활용법 보기">💡 이 페이지 활용법 보기</button>
         </div>
         <div class="format-toggle seg-compact" id="calViewToggle">
           <div class="format-opt" data-calview="month">월</div>
@@ -476,7 +476,7 @@
     <!-- COMM -->
     <section class="screen" id="screen-comm">
       <div class="screen-head">
-        <h2 class="s-title">소통</h2>
+        <div style="display:flex;align-items:center;gap:6px;"><h2 class="s-title" style="margin:0;">소통</h2><button type="button" class="btn btn-ghost btn-xs" id="commPageGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide('comm');" style="font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;cursor:pointer;" title="이 페이지 활용법 보기">💡 이 페이지 활용법 보기</button></div>
         <button class="btn btn-primary btn-sm" id="btnCommPostFeed" type="button" onclick="openShareToFeedModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>게시하기</span></button>
       </div>
       <div id="commBody"></div>
@@ -485,7 +485,7 @@
     <!-- SETTINGS -->
     <section class="screen" id="screen-settings">
       <p class="s-eyebrow">설정</p>
-      <h2 class="s-title">설정</h2>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><h2 class="s-title" style="margin:0;">설정</h2><button type="button" class="btn btn-ghost btn-xs" id="settingsPageGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide('settings');" style="font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;cursor:pointer;" title="이 페이지 활용법 보기">💡 이 페이지 활용법 보기</button></div>
 
       <div class="set-block">
         <h4>내 프로필</h4>
@@ -905,7 +905,7 @@
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
-  <script src="js/calendar-attachment.js?v=20260915-es096"></script>
+  <script src="js/calendar-attachment.js?v=20260915-es096"></script><script src="js/tab-guides.js?v=20260915-es102"></script>
 <script>
 (function(){
   "use strict";
@@ -9311,7 +9311,7 @@
 
     el.innerHTML = '<div class="mission-card" style="padding:10px 14px;">' +
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-        '<div class="ct-label" style="margin:0;">오늘의 미션</div>' +
+        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><div class="ct-label" style="margin:0;">오늘의 미션</div><span style="font-size:11px;color:var(--brand);background:rgba(99,102,241,0.08);padding:1px 6px;border-radius:6px;font-weight:600;">할일이 당장 안떠오르면 활용하세요</span></div>' +
         moreBtnHtml +
       '</div>' +
       missionRowHtml(firstGoal) +
