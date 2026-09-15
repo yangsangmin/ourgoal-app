@@ -4361,6 +4361,46 @@ check('compliance: [#TASK-ES-095] 하이록스 8대 공식 스테이션 및 전 
   assert.ok(yogaRecs[0].metrics.rpe >= 6.0, '요가 카탈로그 RPE 검증');
 });
 
+/* ============ [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료 첨부·조회·삭제 시스템 무결성 검증 ============ */
+check('compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료 첨부·조회·삭제 시스템 무결성 검증', () => {
+  const calAttPath = path.join(__dirname, '..', 'js', 'calendar-attachment.js');
+  assert.ok(fs.existsSync(calAttPath), 'calendar-attachment.js 파일 존재');
+  const calAttCode = fs.readFileSync(calAttPath, 'utf8');
+
+  // 모듈 객체 및 함수 검증
+  const sandbox = { window: {} };
+  eval('(function(window){ ' + calAttCode + ' })(sandbox.window)');
+  const calAtt = sandbox.window.OurgoalCalendarAttachment;
+  assert.ok(calAtt, 'OurgoalCalendarAttachment 객체 로드 성공');
+  assert.strictEqual(typeof calAtt.renderSectionHtml, 'function');
+  assert.strictEqual(typeof calAtt.wireEditModalAttachments, 'function');
+  assert.strictEqual(typeof calAtt.renderHubEventChipsHtml, 'function');
+  assert.strictEqual(typeof calAtt.handleCustomScheduleAttachmentClick, 'function');
+
+  // 빈 첨부 & 4대 첨부 렌더링 검증
+  const emptyHtml = calAtt.renderSectionHtml([]);
+  assert.ok(emptyHtml.includes('calEditAddAttBtn'), '참고자료 첨부 버튼 표출');
+  assert.ok(emptyHtml.includes('첨부된 참고자료가 없습니다'), '빈 첨부 안내 표출');
+
+  const populated = calAtt.renderSectionHtml([
+    { type: 'video', title: '운동 폼' },
+    { type: 'image', title: '코스 맵' },
+    { type: 'text', title: '메모' },
+    { type: 'link', title: '웹사이트' }
+  ]);
+  assert.ok(populated.includes('🎥') && populated.includes('🖼️') && populated.includes('📝') && populated.includes('🔗'), '4대 아이콘 표출');
+
+  // index.html 무결성 & 헌법 제18조(22,196줄) 검증
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const lines = indexHtml.split(/\r?\n/).length;
+  assert.strictEqual(lines, 22196, '헌법 제18조 위반: index.html 22,196줄 엄수');
+  assert.ok(indexHtml.includes('js/calendar-attachment.js'), 'calendar-attachment.js 로드 태그');
+  assert.ok(indexHtml.includes("kind === 'custom'"), 'wireAttachmentChipClicks custom kind 처리');
+  assert.ok(indexHtml.includes('data-hubaddatt'), '허브 모달 첨부 버튼');
+  assert.ok(indexHtml.includes('renderHubEventChipsHtml'), '허브 모달 칩 렌더링');
+  assert.ok(indexHtml.includes('attachments: curAttachments'), '일정 저장 시 attachments 영구 보존');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
