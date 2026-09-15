@@ -1672,3 +1672,700 @@ input:focus,select:focus,textarea:focus{background:var(--surface-2);}
 #themeSearchResults {
   color: #111827 !important;
 }
+
+/* ==========================================================================
+   [#TASK-ES-090] 지금부터 시간기록 (Time Tracker) 몰입형 전체화면 스타일
+   ========================================================================== */
+
+.tt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: var(--bg-dark, #090d16);
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  transition: all 0.3s ease;
+}
+
+.tt-overlay.hidden {
+  display: none !important;
+}
+
+.tt-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px 20px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 상단 헤더 */
+.tt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.tt-mode-tabs {
+  display: flex;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 3px;
+  gap: 4px;
+}
+
+.tt-mode-tab {
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tt-mode-tab.active {
+  background: var(--primary, #3b82f6);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+}
+
+.tt-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tt-icon-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tt-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+/* 본체 레이아웃 */
+.tt-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  padding: 10px 0;
+}
+
+/* 초시계 디스플레이 */
+.tt-clock-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px;
+  border-radius: 24px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, rgba(15, 23, 42, 0.3) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  width: 100%;
+  max-width: 500px;
+  box-sizing: border-box;
+}
+
+.tt-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tt-status-badge.running {
+  background: rgba(34, 197, 94, 0.18);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.tt-status-badge.paused {
+  background: rgba(234, 179, 8, 0.18);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.tt-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.tt-status-badge.running .tt-status-dot {
+  animation: ttPulse 1.5s infinite;
+}
+
+@keyframes ttPulse {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.6; }
+}
+
+.tt-digits {
+  font-family: ui-monospace, "SF Mono", "Roboto Mono", Consolas, monospace;
+  font-size: clamp(2.8rem, 11vw, 5.2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  line-height: 1;
+  text-shadow: 0 4px 20px rgba(59, 130, 246, 0.25);
+  margin: 6px 0;
+}
+
+.tt-digits-sub {
+  font-family: ui-monospace, "SF Mono", "Roboto Mono", Consolas, monospace;
+  font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+/* 구간기록 목록 */
+.tt-laps-wrapper {
+  width: 100%;
+  max-width: 500px;
+  flex: 1;
+  margin-top: 14px;
+  overflow-y: auto;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 12px;
+  box-sizing: border-box;
+  max-height: 220px;
+}
+
+.tt-laps-wrapper::-webkit-scrollbar {
+  width: 5px;
+}
+
+.tt-laps-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.tt-lap-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 13px;
+  color: #cbd5e1;
+}
+
+.tt-lap-item:last-child {
+  border-bottom: none;
+}
+
+.tt-lap-item.latest {
+  color: #60a5fa;
+  font-weight: 700;
+  background: rgba(59, 130, 246, 0.08);
+  border-radius: 8px;
+}
+
+.tt-lap-num {
+  font-weight: 600;
+  min-width: 60px;
+}
+
+.tt-lap-split {
+  font-family: ui-monospace, "SF Mono", monospace;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.tt-lap-time {
+  font-family: ui-monospace, "SF Mono", monospace;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* 하단 인터랙션 컨트롤 바 */
+.tt-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 0 8px;
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.tt-btn {
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 14px;
+  padding: 12px 20px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+  flex: 1;
+  min-width: 100px;
+}
+
+.tt-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.tt-btn:active {
+  transform: translateY(0);
+}
+
+.tt-btn-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+}
+
+.tt-btn-success {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+}
+
+.tt-btn-warning {
+  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+  color: #1e293b;
+  box-shadow: 0 4px 14px rgba(202, 138, 4, 0.3);
+}
+
+.tt-btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #e2e8f0;
+}
+
+.tt-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.tt-btn-danger {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.tt-btn-danger:hover {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+/* 세션 종료 후 기록 작성 화면 (Review View) */
+.tt-review-view {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 8px 0;
+}
+
+.tt-review-view::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tt-review-view::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.tt-review-summary-card {
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(15, 23, 42, 0.6) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 20px;
+  padding: 18px 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.tt-review-total-time {
+  font-family: ui-monospace, "SF Mono", monospace;
+  font-size: clamp(2.2rem, 7vw, 3.2rem);
+  font-weight: 800;
+  color: #60a5fa;
+  margin: 6px 0;
+}
+
+.tt-form-group {
+  margin-bottom: 16px;
+}
+
+.tt-form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+}
+
+.tt-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #ffffff;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.tt-input:focus {
+  border-color: #3b82f6;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.tt-review-laps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.tt-review-lap-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.tt-review-lap-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 12.5px;
+}
+
+.tt-review-lap-num {
+  font-weight: 700;
+  color: #60a5fa;
+}
+
+.tt-review-lap-time {
+  font-family: ui-monospace, "SF Mono", monospace;
+  color: #94a3b8;
+}
+
+.tt-review-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-bottom: 16px;
+  flex-shrink: 0;
+}
+
+/* 취소 확인 2중 안전 경고 팝업 */
+.tt-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10010;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.tt-dialog-backdrop.hidden,
+.tt-overlay.hidden {
+  display: none !important;
+}
+
+.tt-dialog-box {
+  background: #1e293b;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 20px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  animation: ttPopIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes ttPopIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.tt-dialog-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.tt-dialog-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-bottom: 8px;
+}
+
+.tt-dialog-desc {
+  font-size: 13.5px;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.tt-dialog-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.tt-dialog-actions .tt-btn {
+  padding: 10px 16px;
+}
+
+/* ==========================================================================
+   화면 회전 및 가로모드 / 폴더블 / 다양한 화면비 맞춤 반응형 레이아웃
+   ========================================================================== */
+
+/* 1. 기기 물리 회전 (가로 모드) 또는 와이드 스크린 */
+@media (orientation: landscape) and (min-height: 400px) {
+  .tt-body {
+    flex-direction: row;
+    gap: 24px;
+    align-items: center;
+    justify-content: center;
+  }
+  .tt-clock-card {
+    flex: 1.2;
+    padding: 20px;
+  }
+  .tt-laps-wrapper {
+    flex: 1;
+    height: 100%;
+    max-height: 320px;
+    margin-top: 0;
+  }
+  .tt-digits {
+    font-size: clamp(2.5rem, 8vw, 4.2rem);
+  }
+}
+
+/* 2. 수동 가로모드 시뮬레이션 (기기 회전 꺼져 있을 때) */
+.tt-forced-landscape .tt-body {
+  flex-direction: row !important;
+  gap: 20px !important;
+  align-items: stretch !important;
+}
+
+.tt-forced-landscape .tt-clock-card {
+  flex: 1.1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+.tt-forced-landscape .tt-laps-wrapper {
+  flex: 1 !important;
+  margin-top: 0 !important;
+  max-height: 280px !important;
+}
+
+/* 3. 최신 폴더블 폰 (정방형 화면비 펼침 모드 - 대략 1:1 ~ 4:3) */
+@media (min-aspect-ratio: 9/10) and (max-aspect-ratio: 10/9) {
+  .tt-wrapper {
+    max-width: 680px;
+    justify-content: space-around;
+  }
+  .tt-clock-card {
+    padding: 24px;
+  }
+  .tt-digits {
+    font-size: clamp(3.2rem, 9vw, 4.8rem);
+  }
+  .tt-controls {
+    gap: 16px;
+  }
+}
+
+/* 4. 초슬림 화면비 (폴더블 폰 접힘 모드 등 21:9 비율) */
+@media (max-aspect-ratio: 1/2) {
+  .tt-digits {
+    font-size: clamp(2.2rem, 10vw, 3.2rem);
+  }
+  .tt-btn {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}
+
+
+/* 타이머(Timer) 모드 전용 시간 설정 및 프리셋 UI */
+.tt-timer-setup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  margin-top: 10px;
+}
+
+.tt-timer-presets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.tt-preset-chip {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tt-preset-chip:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.tt-preset-chip.active {
+  background: var(--primary, #3b82f6);
+  border-color: var(--primary, #3b82f6);
+  color: #ffffff;
+}
+
+.tt-timer-adjusters {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.tt-adjust-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.tt-adjust-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  width: 44px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 800;
+  transition: all 0.15s ease;
+}
+
+.tt-adjust-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.tt-adjust-val {
+  font-family: ui-monospace, "SF Mono", monospace;
+  font-size: 28px;
+  font-weight: 800;
+  color: #ffffff;
+  min-width: 48px;
+  text-align: center;
+  padding: 4px 0;
+}
+
+.tt-adjust-label {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.tt-adjust-sep {
+  font-family: ui-monospace, "SF Mono", monospace;
+  font-size: 26px;
+  font-weight: 800;
+  color: #64748b;
+  margin-top: -18px;
+}
+
+.tt-timer-complete-card {
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.2) 0%, rgba(15, 23, 42, 0.7) 100%);
+  border: 1.5px solid rgba(34, 197, 94, 0.4);
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+  animation: ttCompleteGlow 1.5s infinite alternate;
+}
+
+@keyframes ttCompleteGlow {
+  from { box-shadow: 0 0 15px rgba(34, 197, 94, 0.2); }
+  to { box-shadow: 0 0 35px rgba(34, 197, 94, 0.5); }
+}
+

@@ -2222,13 +2222,10 @@
         '</div>' +
       '</div>';
 
-    openModalFn({
-      title: '💡 아워골 자율 데이터 콕핏 안내',
-      body: bodyHtml,
-      onOpen: function(modalEl){
-        var cBtn = modalEl.querySelector('#uGuideCloseBtn');
-        if(cBtn) cBtn.onclick = closeModalFn;
-      }
+    var fullHtml = '<div class="modal-head" style="margin-bottom:12px;"><h3 style="margin:0;font-size:1.125rem;font-weight:800;color:var(--ink);">💡 아워골 자율 데이터 콕핏 안내</h3></div>' + bodyHtml;
+    openModalFn(fullHtml, function(modalEl){
+      var cBtn = modalEl ? modalEl.querySelector('#uGuideCloseBtn') : null;
+      if(cBtn && closeModalFn) cBtn.onclick = closeModalFn;
     });
   }
 
@@ -2382,13 +2379,10 @@
       }
     }
 
-    openModalFn({
-      title: '🔍 다형성 패싯 온톨로지 탐색기',
-      body: '<div id="uTaxModalContainer"></div>',
-      onOpen: function(modalEl){
-        var cEl = modalEl.querySelector('#uTaxModalContainer');
-        if(cEl) renderModalContent(cEl);
-      }
+    var fullHtml = '<div class="modal-head" style="margin-bottom:12px;"><h3 style="margin:0;font-size:1.125rem;font-weight:800;color:var(--ink);">🔍 다형성 패싯 온톨로지 탐색기</h3></div><div id="uTaxModalContainer"></div>';
+    openModalFn(fullHtml, function(modalEl){
+      var cEl = modalEl ? modalEl.querySelector('#uTaxModalContainer') : null;
+      if(cEl) renderModalContent(cEl);
     });
   }
 
@@ -2720,13 +2714,10 @@
       });
     }
 
-    openModalFn({
-      title: '📋 엔터프라이즈 데이터 관리 그리드',
-      body: '<div id="uGridModalContainer"></div>',
-      onOpen: function(modalEl){
-        var cEl = modalEl.querySelector('#uGridModalContainer');
-        if(cEl) renderGrid(cEl);
-      }
+    var fullHtml = '<div class="modal-head" style="margin-bottom:12px;"><h3 style="margin:0;font-size:1.125rem;font-weight:800;color:var(--ink);">📋 엔터프라이즈 데이터 관리 그리드</h3></div><div id="uGridModalContainer"></div>';
+    openModalFn(fullHtml, function(modalEl){
+      var cEl = modalEl ? modalEl.querySelector('#uGridModalContainer') : null;
+      if(cEl) renderGrid(cEl);
     });
   }
 
@@ -2776,11 +2767,10 @@
         '<button type="button" class="btn btn-primary" id="uEditRowSaveBtn" style="margin-top:8px;font-weight:700;">' + (isNew ? '기록 생성' : '수정 사항 저장') + '</button>' +
       '</div>';
 
-    openModalFn({
-      title: isNew ? '➕ 새 데이터 행 추가' : '✏️ 데이터 행 정밀 수정',
-      body: bodyHtml,
-      onOpen: function(modalEl){
-        var saveBtn = modalEl.querySelector('#uEditRowSaveBtn');
+    var fullHtml = '<div class="modal-head" style="margin-bottom:12px;"><h3 style="margin:0;font-size:1.125rem;font-weight:800;color:var(--ink);">' + (isNew ? '➕ 새 데이터 행 추가' : '✏️ 데이터 행 정밀 수정') + '</h3></div>' + bodyHtml;
+    openModalFn(fullHtml, function(modalEl){
+      if(!modalEl) return;
+      var saveBtn = modalEl.querySelector('#uEditRowSaveBtn');
         if(saveBtn){
           saveBtn.onclick = function(){
             var dateVal = modalEl.querySelector('#uEditRowDate').value.trim();
@@ -2844,9 +2834,8 @@
             if(options.onSaved) options.onSaved();
           };
         }
-      }
-    });
-  }
+      });
+    }
 
   
   /* ================= 5-4-B. 4대 다차원 분석 렌즈 엔진 (Cross-Ratio, Radar, Cadence, Diagnostics) ================= */

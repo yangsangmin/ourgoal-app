@@ -280,13 +280,17 @@
 
     <!-- RECORDS -->
     <section class="screen" id="screen-records">
-      <div class="screen-head">
-        <div class="screen-head-l">
+      <div class="screen-head" style="flex-wrap:wrap;gap:8px;">
+        <div class="screen-head-l" style="flex-wrap:wrap;">
           <h2 class="s-title">기록</h2>
           <span class="privacy-badge" id="recPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
           <button type="button" class="btn btn-ghost btn-xs" id="recAnalyticsGuideBtn" style="font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;margin-left:6px;cursor:pointer;" title="이 페이지 활용법 보기">💡 이 페이지 활용법 보기</button>
         </div>
-        <div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" id="btnOpenTimeTracker" type="button" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();" style="display:inline-flex;align-items:center;gap:4px;font-weight:800;background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:#ffffff;border:none;box-shadow:0 2px 6px rgba(16,185,129,0.3);" title="전체화면 스톱워치/타이머로 지금부터 시간을 측정하고 기록합니다">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>⏱️ 지금부터 시간기록</span>
+          </button>
           <button class="btn btn-primary btn-sm" id="recAddBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>새 기록</span></button>
         </div>
       </div>
@@ -307,6 +311,27 @@
 
       <!-- [VIEW 1: FEED] 내 기록 뷰 -->
       <div class="rec-view" id="recViewFeed">
+        <!-- [지금부터 시간기록] 몰입 측정 대형 액션 카드 -->
+        <div class="card" id="recTimeTrackerActionCard" style="background:linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(59,130,246,0.14) 100%);border:1.5px solid rgba(16,185,129,0.35);border-radius:14px;padding:14px 16px;margin-bottom:12px;cursor:pointer;" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:180px;">
+              <div style="font-weight:800;font-size:14px;color:var(--text);display:flex;align-items:center;gap:6px;">
+                <span>⏱️ 지금부터 시간기록</span>
+                <span style="font-size:10px;padding:2px 7px;border-radius:8px;background:rgba(16,185,129,0.2);color:#10b981;font-weight:800;">전체화면 집중</span>
+              </div>
+              <div style="font-size:12px;color:var(--text-faint);margin-top:3px;line-height:1.4;">
+                공부, 개발, 운동, 독서, 여행준비 등 지금 시작하는 활동을 전체화면으로 측정하고 구간별로 기록해요.
+              </div>
+            </div>
+            <div>
+              <button class="btn btn-primary btn-sm" id="btnOpenTimeTrackerBanner" type="button" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();" style="font-weight:800;padding:9px 16px;background:linear-gradient(135deg, #10b981 0%, #059669 100%);border:none;box-shadow:0 2px 8px rgba(16,185,129,0.35);display:inline-flex;align-items:center;gap:6px;font-size:13px;border-radius:10px;">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>지금부터 시간기록 시작</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- 유니버설 데이터 가져오기 & 1년치 샘플로드 단일 통합 배너 -->
         <div class="card" id="recUniversalTopBanner" style="background:linear-gradient(135deg, rgba(37,99,235,0.08) 0%, rgba(99,102,241,0.12) 100%);border:1px solid rgba(99,102,241,0.28);border-radius:12px;padding:12px 14px;margin-bottom:12px;">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
@@ -878,7 +903,8 @@
   <script src="js/avatar-system.js?v=20260913-es054"></script>
   <script src="js/content-moderation.js"></script>
   <script src="js/auth-safety.js"></script>
-  <script src="js/universal-stats.js?v=20260914-es061c"></script>
+  <script src="js/universal-stats.js?v=20260914-es061d"></script>
+  <script src="js/time-tracker.js?v=20260915-es090"></script>
 <script>
 
 (function(){
@@ -1454,6 +1480,7 @@
   }
 
   var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7, calView: 'month', calDate: isoDate(new Date()), calSelectedDate: isoDate(new Date()), selectedRecordTheme: 'all', recordsSegment: 'feed', recordsSlide: 0 };
+  if(typeof window !== 'undefined'){ window.state = state; }
 
   async function ensureUserRow(userId, username, displayName, extra){
     var found = null;
@@ -2981,6 +3008,7 @@
     }
   }
   navButtons.forEach(function(b){ b.addEventListener('click', function(){ setTab(b.dataset.tab); }); });
+  if(typeof window !== 'undefined'){ window.setTab = setTab; }
 
   /* ============ Modal helper & Android Hardware Back Handler ============ */
   var _modalHistoryPushed = false;
@@ -2994,9 +3022,29 @@
     window._modalOpenAt = Date.now();
     var overlay = document.getElementById('modalOverlay');
     var sheet = document.getElementById('modalSheet');
-    sheet.innerHTML = html;
+    if(!overlay || !sheet) return;
+
+    var finalHtml = '';
+    var finalOnMount = null;
+
+    if(html && typeof html === 'object'){
+      var title = html.title || '';
+      var body = html.body || html.content || html.html || '';
+      finalOnMount = html.onOpen || html.onMount || onMount;
+      finalHtml = (title ? '<div class="modal-head" style="margin-bottom:12px;"><h3 style="margin:0;font-size:1.125rem;font-weight:800;color:var(--ink);">' + title + '</h3></div>' : '') + body;
+    } else if(typeof html === 'string' && typeof onMount === 'string'){
+      finalHtml = '<div class="modal-head" style="margin-bottom:12px;"><h3 style="margin:0;font-size:1.125rem;font-weight:800;color:var(--ink);">' + html + '</h3></div>' + onMount;
+      if(arguments[2] && typeof arguments[2] === 'function') finalOnMount = arguments[2];
+    } else {
+      finalHtml = html || '';
+      finalOnMount = (typeof onMount === 'function') ? onMount : null;
+    }
+
+    sheet.innerHTML = finalHtml;
     overlay.classList.add('active');
-    if(onMount) onMount(sheet);
+    if(finalOnMount){
+      try { finalOnMount(sheet); } catch(mErr){ console.error('[openModal] mount error:', mErr); }
+    }
 
     var dismissHandler = function(e){
       if(e.target === overlay){
@@ -3027,6 +3075,10 @@
     } else {
       _modalHistoryPushed = false;
     }
+  }
+  if(typeof window !== 'undefined'){
+    window.openModal = openModal;
+    window.closeModal = closeModal;
   }
 
   if(typeof window!=='undefined' && window.addEventListener){
@@ -16890,6 +16942,14 @@
   }
 
   function renderRecordsScreen(){
+    if(!state) state = {};
+    if(!state.profile){
+      state.profile = { id: 'guest', nickname: '사용자', records: [], goals: [], settings: {} };
+    }
+    if(!Array.isArray(state.profile.records)){
+      state.profile.records = [];
+    }
+
     // 1. 레거시 기록 자동 테마 백필 (Backfill Migration)
     var needsSave = false;
     (state.profile.records || []).forEach(function(r){
@@ -17279,6 +17339,7 @@
 
     wireRecordCards(listEl, { onUpdate: function(){ renderRecordsScreen(); } });
   }
+  if(typeof window !== 'undefined'){ window.renderRecordsScreen = renderRecordsScreen; }
 
   /* ============ 위클리 리캡 카드 (스포티파이 랩드 스타일, 공유 캔버스 인프라 재사용) ============ */
   function weeklyRecapStats(records, now){
@@ -17390,7 +17451,8 @@
     return canvas;
   }
   async function openWeeklyRecapModal(){
-    var stats = weeklyRecapStats(state.profile.records);
+    var allRecs = (state && state.profile && state.profile.records) || [];
+    var stats = weeklyRecapStats(allRecs);
     var streakDays = computeStreakDays();
     if(!stats.count){ toast('이번 주 기록이 아직 없어요 · 먼저 기록을 남겨보세요'); return; }
 
@@ -17625,6 +17687,14 @@
     );
   }
   document.getElementById('recAddBtn').addEventListener('click', function(){ openRecordModal(null); });
+  var btnOpenTt = document.getElementById('btnOpenTimeTracker');
+  if(btnOpenTt){
+    btnOpenTt.addEventListener('click', function(){
+      if(typeof OurgoalTimeTracker !== 'undefined' && OurgoalTimeTracker.open){
+        OurgoalTimeTracker.open();
+      }
+    });
+  }
   document.getElementById('weeklyRecapBtn').addEventListener('click', function(){ openWeeklyRecapModal(); });
   document.getElementById('recSearchInput').addEventListener('input', function(){ renderRecordsScreen(); });
 
@@ -17649,8 +17719,24 @@
     });
   });
 
-  // 유니버설 데이터 가져오기 & 1초 샘플로드 전역 클릭 리스너 보장 (이벤트 유실 원천 방어)
+  // 유니버설 데이터 가져오기, 활용가이드 및 템플릿 전역 클릭 리스너 보장 (이벤트 유실 원천 방어)
   document.addEventListener('click', function(e){
+    var ttBtn = e.target.closest('#btnOpenTimeTracker, #btnOpenTimeTrackerBanner, #recTimeTrackerActionCard');
+    if(ttBtn){
+      e.preventDefault();
+      if(typeof OurgoalTimeTracker !== 'undefined' && OurgoalTimeTracker.open){
+        OurgoalTimeTracker.open();
+      }
+      return;
+    }
+    var gBtn = e.target.closest('#recAnalyticsGuideBtn');
+    if(gBtn){
+      e.preventDefault();
+      if(typeof OurgoalUniversalStats !== 'undefined' && OurgoalUniversalStats.openGuideModal){
+        OurgoalUniversalStats.openGuideModal({ openModal: openModal, closeModal: closeModal });
+      }
+      return;
+    }
     var uBtn = e.target.closest('#recImportBannerBtn, [data-uimport], #uQuickImportBtn');
     if(uBtn){
       e.preventDefault();
@@ -17664,6 +17750,39 @@
           onDone: function(){ if(state) state.recordsSegment = 'stats'; renderRecordsScreen(); }
         });
       }
+      return;
+    }
+    var pBtn = e.target.closest('#recOpenProTemplateBtn');
+    if(pBtn){
+      e.preventDefault();
+      if(typeof openProTemplateRecordModal === 'function') openProTemplateRecordModal(null);
+      return;
+    }
+    var qBtn = e.target.closest('#recQuickTemplateChips [data-quicktpl]');
+    if(qBtn){
+      e.preventDefault();
+      if(typeof openProTemplateRecordModal === 'function') openProTemplateRecordModal(null, qBtn.dataset.quicktpl);
+      return;
+    }
+    var mcBtn = e.target.closest('#recCreateCustomTplQuickBtn');
+    if(mcBtn){
+      e.preventDefault();
+      if(typeof openCreateCustomTemplateModal === 'function'){
+        openCreateCustomTemplateModal(function(newTpl){
+          if(typeof openProTemplateRecordModal === 'function') openProTemplateRecordModal(null, newTpl.key);
+        });
+      }
+      return;
+    }
+    var mmBtn = e.target.closest('#recOpenMarketQuickBtn');
+    if(mmBtn){
+      e.preventDefault();
+      if(typeof openTemplateMarketModal === 'function'){
+        openTemplateMarketModal(function(clonedTpl){
+          if(typeof openProTemplateRecordModal === 'function') openProTemplateRecordModal(null, clonedTpl.key);
+        });
+      }
+      return;
     }
   });
 
@@ -17799,8 +17918,8 @@
   }
 
   function openExportThemeModal(){
-    var currentFilter = (state.selectedRecordTheme && state.selectedRecordTheme !== 'all') ? state.selectedRecordTheme : 'all';
-    var allRecs = state.profile.records || [];
+    var currentFilter = (state && state.selectedRecordTheme && state.selectedRecordTheme !== 'all') ? state.selectedRecordTheme : 'all';
+    var allRecs = (state && state.profile && state.profile.records) || [];
 
     var themeOptions = [
       { key: 'all', label: '전체 테마 (모든 기록)', icon: '✨', count: allRecs.length },
