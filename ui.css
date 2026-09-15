@@ -250,7 +250,7 @@ button:active,.goal-chip:active,.dock-action-btn:active{transform:scale(.97);tra
 [data-theme="black"] .comm-subtab.active,[data-theme="dark"] .comm-subtab.active{background:transparent;}
 .edit-toggle{padding:0 14px;min-height:34px;border-radius:999px;font-size:.8125rem;font-weight:600;transition:background .15s,color .15s;}
 .edit-toggle.off{background:var(--surface-2);color:var(--ink);border:none;}
-.edit-toggle.on{background:var(--chip);color:var(--chip-ink);}
+.edit-toggle.on{background:var(--brand);color:#fff;border:none;box-shadow:0 2px 8px rgba(99,102,241,0.35);font-weight:700;}
 /* 배지·필 */
 .dday-pill,.dday-mini,.streak-pill,.freeze-pill,.topic-pill,.privacy-badge,.pro-badge,.market-badge,.pro-tpl-badge,.notion-push-status-pill,.rec-dur,.tag,.ms-priority-tag,.feed-c-badge,.feed-ai-tag,.pro-trend-growth-badge,.pw-discount,.crew-badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--font);font-size:.75rem;font-weight:600;line-height:1;padding:0 8px;min-height:22px;border-radius:6px;background:var(--surface-2);color:var(--ink-soft);white-space:nowrap;vertical-align:middle;border:none;box-shadow:none;letter-spacing:0;}
 .dday-pill{background:var(--surface-2);color:var(--ink-soft);}
@@ -2616,4 +2616,110 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   50% { transform: scale(1.02); box-shadow: 0 0 30px rgba(34, 197, 94, 0.9); }
   100% { transform: scale(1); }
 }
+
+/* 목표 편집 모드 플로팅 완료 바 및 인라인 완료 버튼 (#TASK-ES-109) */
+.goal-edit-floating-bar {
+  position: fixed;
+  bottom: 74px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 480px;
+  background: rgba(26, 28, 35, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(99, 102, 241, 0.4);
+  border-radius: 16px;
+  padding: 10px 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), 0 0 16px rgba(99, 102, 241, 0.2);
+  z-index: 850;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  animation: goalEditBarSlideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes goalEditBarSlideUp {
+  from { transform: translate(-50%, 20px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+[data-theme="light"] .goal-edit-floating-bar {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15), 0 0 16px rgba(99, 102, 241, 0.15);
+}
+.goal-edit-floating-bar .bar-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+.goal-edit-floating-bar .bar-title {
+  font-size: .84375rem;
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.goal-edit-floating-bar .bar-sub {
+  font-size: .72rem;
+  color: var(--ink-soft);
+}
+.goal-edit-done-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: 10px;
+  font-size: .84375rem;
+  font-weight: 700;
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.4);
+  transition: transform 0.1s ease, filter 0.1s ease;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+.goal-edit-done-cta-btn:hover {
+  filter: brightness(1.1);
+  transform: scale(1.02);
+}
+.goal-edit-done-cta-btn:active {
+  transform: scale(0.97);
+}
+.goal-edit-done-inline-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 44px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: .9375rem;
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  box-shadow: 0 3px 14px rgba(99, 102, 241, 0.3);
+  transition: transform 0.1s ease, filter 0.1s ease;
+}
+.goal-edit-done-inline-btn:hover {
+  filter: brightness(1.1);
+  transform: scale(1.01);
+}
+.goal-edit-done-inline-btn:active {
+  transform: scale(0.98);
+}
+
 

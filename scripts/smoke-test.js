@@ -4651,7 +4651,60 @@ check('compliance: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화
   assert.ok(authSafety.includes('아워골 로그인이 카카오로 간편 통합되었어요'), '최근 로그인 뱃지 카카오 통합 안내');
   assert.ok(indexHtml.includes('function openLoginRescueModal('), '기존 사용자 데이터 안전 복구 모달 보존');
 
-  // 4. 헌법 제18조: index.html 22,196줄 불변 엄수
+  // 4. 로그인/회원가입 화면 익명 보장 안심 뱃지 배선 (상민님 지시사항: 닉네임/개인정보 익명 변경 안내)
+  assert.ok(indexHtml.includes('id="landAnonymityBadge"'), '랜딩 화면 익명 보장 안심 뱃지 존재');
+  assert.ok(indexHtml.includes('id="authAnonymityBadge"'), '인증 화면 익명 보장 안심 뱃지 존재');
+  assert.ok(indexHtml.includes('닉네임과 개인정보는 100% 익명으로 언제든 변경 가능해요'), '닉네임 익명 보장 안심 문구 존재');
+  assert.ok(indexHtml.includes('카톡 실명 걱정 No!'), '카톡 실명 걱정 해소 카피 존재');
+
+  // 5. 헌법 제18조: index.html 22,196줄 불변 엄수
+  const lines = indexHtml.split(/\r?\n/).length;
+  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
+check('compliance: [#TASK-ES-109] 목표 탭 편집 모드 완료 버튼 누락 해결, 목표 제목 편집 지원 및 하단 고정 완료 액션바 완결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const goalEditUxPath = path.join(__dirname, '..', 'js', 'goal-edit-ux.js');
+  const teamLinkedPath = path.join(__dirname, '..', 'js', 'team-linked-goals.js');
+
+  // 1. js/goal-edit-ux.js 모듈 존재 및 무결성 검증
+  assert.ok(fs.existsSync(goalEditUxPath), 'js/goal-edit-ux.js 모듈 파일이 존재해야 함');
+  const goalEditUx = fs.readFileSync(goalEditUxPath, 'utf8');
+  assert.ok(goalEditUx.includes('renderTitleRow:'), '목표 제목 편집 인풋 렌더러가 정의되어 있어야 함');
+  assert.ok(goalEditUx.includes('renderDoneInlineBtn:'), '하단 인라인 완료 버튼 렌더러가 정의되어 있어야 함');
+  assert.ok(goalEditUx.includes('renderTeamDoneInlineBtn:'), '팀 목표 하단 인라인 완료 버튼 렌더러가 정의되어 있어야 함');
+  assert.ok(goalEditUx.includes('commitAndFinishGoalEdit:'), '개인 목표 편집 확정 커밋 핸들러가 정의되어 있어야 함');
+  assert.ok(goalEditUx.includes('commitAndFinishTeamGoalEdit:'), '팀 목표 편집 확정 커밋 핸들러가 정의되어 있어야 함');
+  assert.ok(goalEditUx.includes('wirePersonalGoalEdit:'), '개인 목표 편집 이벤트 및 플로팅 바 바인딩이 정의되어 있어야 함');
+  assert.ok(goalEditUx.includes('wireTeamGoalEdit:'), '팀 목표 편집 이벤트 바인딩이 정의되어 있어야 함');
+  assert.ok(goalEditUx.includes('handleTabChange:'), '탭 전환 시 플로팅 바 제어 핸들러가 정의되어 있어야 함');
+
+  // 2. index.html 스크립트 로드 및 4위 1체 배선 검증
+  assert.ok(indexHtml.includes('src="js/goal-edit-ux.js?v=20260916-es109"'), 'index.html에서 goal-edit-ux.js를 로드해야 함');
+  assert.ok(indexHtml.includes("editBtn.textContent = state.goalEditMode ? '✓ 편집 완료' : '편집';"), '상단 토글 버튼이 편집 모드 시 [✓ 편집 완료]로 명확히 표시되어야 함');
+  assert.ok(indexHtml.includes('commitAndFinishGoalEdit'), '상단 토글에서 commitAndFinishGoalEdit를 호출해야 함');
+  assert.ok(indexHtml.includes('renderTitleRow'), 'body.innerHTML에 목표 제목 편집 행이 포함되어야 함');
+  assert.ok(indexHtml.includes('renderDoneInlineBtn'), 'body.innerHTML에 인라인 완료 버튼이 포함되어야 함');
+  assert.ok(indexHtml.includes('wirePersonalGoalEdit'), 'renderGoalsScreen 끝에서 wirePersonalGoalEdit를 호출해야 함');
+  assert.ok(indexHtml.includes('renderTeamDoneInlineBtn'), '팀 목표 view.innerHTML에 인라인 완료 버튼이 포함되어야 함');
+  assert.ok(indexHtml.includes('wireTeamGoalEdit'), 'renderTeamGoalsScreen에서 wireTeamGoalEdit를 호출해야 함');
+  assert.ok(indexHtml.includes('handleTabChange(tab, state)'), 'setTab에서 handleTabChange를 호출해야 함');
+
+  // 3. js/team-linked-goals.js 연계 목표 편집 완료 배선 검증
+  assert.ok(fs.existsSync(teamLinkedPath), 'js/team-linked-goals.js 파일이 존재해야 함');
+  const teamLinked = fs.readFileSync(teamLinkedPath, 'utf8');
+  assert.ok(teamLinked.includes("(editMode ? '✓ 편집 완료' : '편집')"), '팀 연계 목표 상단 토글이 [✓ 편집 완료]로 표시되어야 함');
+  assert.ok(teamLinked.includes('id="btnTlDoneInline"'), '팀 연계 목표 하단 인라인 완료 버튼이 존재해야 함');
+  assert.ok(teamLinked.includes('commitAndFinishTlEdit'), '팀 연계 목표 편집 완료 확정 함수가 배선되어 있어야 함');
+
+  // 4. ui.css 플로팅 바 및 완료 버튼 디자인 검증
+  assert.ok(uiCss.includes('.goal-edit-floating-bar'), '플로팅 바 클래스 스타일이 정의되어 있어야 함');
+  assert.ok(uiCss.includes('.goal-edit-done-cta-btn'), '플로팅 바 완료 버튼 스타일이 정의되어 있어야 함');
+  assert.ok(uiCss.includes('.goal-edit-done-inline-btn'), '하단 인라인 완료 버튼 스타일이 정의되어 있어야 함');
+  assert.ok(uiCss.includes('.edit-toggle.on'), '활성화된 토글 버튼 강조 스타일이 정의되어 있어야 함');
+
+  // 5. 헌법 제18조: index.html 22,196줄 불변 엄수
   const lines = indexHtml.split(/\r?\n/).length;
   assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
 });

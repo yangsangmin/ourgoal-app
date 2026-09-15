@@ -57,13 +57,13 @@
       <button class="btn btn-block btn-kakao" id="landKakaoBtn" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.86 5.31 4.66 6.72L5.5 21.5c-.08.3.24.54.5.38l4.42-2.93c.52.05 1.05.08 1.58.08 5.52 0 10-3.58 10-8S17.52 3 12 3z"/></svg><span>카카오로 3초 만에 시작하기</span></button>
       <button class="btn btn-block btn-google" id="landGoogleBtn" type="button" style="display:none;" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg><span>Google로 계속하기</span></button>
     </div>
+    <div class="auth-anonymity-badge" id="landAnonymityBadge" style="display:flex;align-items:center;justify-content:center;gap:6px;margin:6px 0 10px;padding:7px 12px;background:rgba(254,229,0,0.12);border:1px solid rgba(254,229,0,0.35);border-radius:10px;font-size:.78rem;color:var(--ink-soft);line-height:1.35;text-align:center;"><span>🔒</span><span><b>카톡 실명 걱정 No!</b> 닉네임과 개인정보는 100% 익명으로 언제든 변경 가능해요</span></div>
     <span class="land-login-link"><b id="landStartBtn">이메일로 가입하기</b></span>
     <span class="land-login-link" style="margin-top:4px;"><b id="landGuestBtn" style="color:var(--brand);cursor:pointer;">로그인 없이 바로 둘러보기 ›</b></span>
     <span class="land-login-link">이미 계정이 있으신가요? <b id="landLoginLink">로그인</b></span>
     <span class="land-login-link" style="margin-top:6px;"><a href="javascript:void(0)" id="landRescueBtn" style="color:var(--ink-faint);font-size:.75rem;text-decoration:underline;">로그인이 잘 안 되시나요? (세션 초기화·복구)</a></span>
   </div>
 </div>
-
 <!-- ================= AUTH ================= -->
 <div id="authScreen" style="display:none;">
   <div class="auth-brand">
@@ -73,11 +73,11 @@
   <div class="auth-card">
     <div id="lastAuthBadge" style="display:none;margin-bottom:10px;text-align:center;"></div>
     <div class="oauth-row">
-      <button class="btn btn-block btn-kakao" id="authKakaoBtn" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.86 5.31 4.66 6.72L5.5 21.5c-.08.3.24.54.5.38l4.42-2.93c.52.05 1.05.08 1.58.08 5.52 0 10-3.58 10-8S17.52 3 12 3z"/></svg><span>카카오로 시작하기</span></button>
+      <button class="btn btn-block btn-kakao" id="authKakaoBtn" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.86 5.31 4.66 6.72L5.5 21.5c-.08.3.24.54.5.38l4.42-2.93c.52.05 1.05.08 1.58.08 5.52 0 10-3.58 10-8S17.52 3 12 3z"/></svg><span>카카오로 3초 만에 시작하기</span></button>
       <button class="btn btn-block btn-google" id="authGoogleBtn" type="button" style="display:none;" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg><span>Google로 계속하기</span></button>
     </div>
+    <div class="auth-anonymity-badge" id="authAnonymityBadge" style="display:flex;align-items:center;justify-content:center;gap:6px;margin:8px 0 12px;padding:7px 12px;background:rgba(254,229,0,0.12);border:1px solid rgba(254,229,0,0.35);border-radius:10px;font-size:.78rem;color:var(--ink-soft);line-height:1.35;text-align:center;"><span>🔒</span><span><b>카톡 실명 걱정 No!</b> 닉네임과 개인정보는 100% 익명으로 언제든 변경 가능해요</span></div>
     <div class="auth-divider">또는 이메일로</div>
-
     <div class="auth-tabs">
       <button class="auth-tab active" data-authtab="login" type="button">로그인</button>
       <button class="auth-tab" data-authtab="signup" type="button">회원가입</button>
@@ -908,7 +908,7 @@
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
-  <script src="js/calendar-attachment.js?v=20260915-es096"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260915-es105"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script>
+  <script src="js/calendar-attachment.js?v=20260915-es096"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260915-es105"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script>
 <script>
 (function(){
   "use strict";
@@ -3000,7 +3000,7 @@
       if(tab==='records') renderRecordsScreen();
       if(tab==='comm') renderCommScreen();
       if(tab==='settings') renderSettingsScreen();
-      updatePrivacyBadges();
+      updatePrivacyBadges(); if(window.OurgoalGoalEditUX) OurgoalGoalEditUX.handleTabChange(tab, state);
     }
     if(typeof document !== 'undefined' && typeof document.startViewTransition === 'function'){
       document.startViewTransition(updateTabDOM);
@@ -9457,12 +9457,12 @@
     });
 
     var editBtn = document.getElementById('goalEditToggle');
-    editBtn.textContent = state.goalEditMode ? '완료' : '편집';
+    editBtn.textContent = state.goalEditMode ? '✓ 편집 완료' : '편집';
     editBtn.className = 'edit-toggle ' + (state.goalEditMode ? 'on' : 'off');
     editBtn.onclick = async function(){
-      state.goalEditMode = !state.goalEditMode;
-      state.msSel = {}; state.taskSel = {};
-      if(!state.goalEditMode) await saveProfile();
+      if(state.goalEditMode && window.OurgoalGoalEditUX){ await OurgoalGoalEditUX.commitAndFinishGoalEdit({ state: state, goal: goal, body: body, saveProfile: saveProfile, toast: toast, renderGoalsScreen: renderGoalsScreen, renderAll: renderAll }); return; }
+      state.goalEditMode = !state.goalEditMode; state.msSel = {}; state.taskSel = {};
+      if(!state.goalEditMode){ if(window.OurgoalGoalEditUX) OurgoalGoalEditUX.removeFloatingBar(); await saveProfile(); }
       renderGoalsScreen();
     };
 
@@ -9485,7 +9485,7 @@
         if(!confirm('"'+goal.title+'" 목표와 마일스톤·할 일을 모두 삭제할까요? 되돌릴 수 없어요.')) return;
         state.profile.goals = state.profile.goals.filter(function(g){ return g.id!==goal.id; });
         state.activeGoalId = null;
-        state.goalEditMode = false;
+        state.goalEditMode = false; if(window.OurgoalGoalEditUX) OurgoalGoalEditUX.removeFloatingBar();
         try {
           await sb.from('goals').delete().eq('id', goal.id).eq('user_id', state.profile.id);
           localStorage.setItem('ourgoal_goals_backup_' + state.profile.id, JSON.stringify(state.profile.goals));
@@ -9733,12 +9733,12 @@
       '</div>' : '';
 
     body.innerHTML =
-      (state.goalEditMode ? dueRow + visRow : metaStrip) +
+      (state.goalEditMode ? (window.OurgoalGoalEditUX?OurgoalGoalEditUX.renderTitleRow(state,goal):'') + dueRow + visRow : metaStrip) +
       (state.goalEditMode ? '' : goalStatusRow) +
       msFilterBar +
       '<div class="ms-list">'+msHtml+'</div>' +
       (goal.milestones.length===0 ? '<div class="empty-state"><div class="e-icon">🧭</div><p>마일스톤을 추가해서 목표를 잘게 나눠보세요.</p></div>' : '') +
-      (state.goalEditMode ? '<div class="add-ms-btn" id="addMsBtn">+ 마일스톤 추가</div><div class="drag-hint">탭해서 바로 수정 · 화살표로 순서 변경 · 왼쪽 체크로 선택 삭제</div>' : '') +
+      (state.goalEditMode ? '<div class="add-ms-btn" id="addMsBtn">+ 마일스톤 추가</div>' + (window.OurgoalGoalEditUX?OurgoalGoalEditUX.renderDoneInlineBtn(state,goal):'') + '<div class="drag-hint">탭해서 바로 수정 · 화살표로 순서 변경 · 왼쪽 체크로 선택 삭제</div>' : '') +
       selBar +
       exportCardHtml;
 
@@ -10068,7 +10068,7 @@
       goal.milestones.push({ id: uid('ms'), title:'새 마일스톤', status:'todo', dueDate:null, tasks:[] });
       await saveProfile(); renderGoalsScreen();
     });
-  }
+    if(window.OurgoalGoalEditUX) OurgoalGoalEditUX.wirePersonalGoalEdit({ state:state, goal:goal, body:body, saveProfile:saveProfile, toast:toast, renderGoalsScreen:renderGoalsScreen, renderAll:renderAll }); }
 
   /* ============ RENDER: 팀 목표 (팀장·매니저만 추가/수정/삭제, 팀원은 보기만) ============ */
   function canManageTeamGoals(gid){
@@ -11201,7 +11201,7 @@
         '<span style="font-weight:700;font-size:1.0625rem;color:var(--ink);">참여 중인 모임 목표</span>' +
         '<div style="display:flex;align-items:center;gap:6px;">' +
           '<button class="btn btn-ghost btn-sm" id="btnShowTeamGuideModal" type="button" style="font-size:.8125rem;padding:3px 9px;">활용 가이드</button>' +
-          '<button class="edit-toggle '+(state.teamGoalEditMode?'on':'off')+'" id="teamGoalEditToggle" type="button" style="font-size:.8125rem;padding:3px 10px;">'+(state.teamGoalEditMode?'완료':'편집')+'</button>' +
+          '<button class="edit-toggle '+(state.teamGoalEditMode?'on':'off')+'" id="teamGoalEditToggle" type="button" style="font-size:.8125rem;padding:3px 10px;">'+(state.teamGoalEditMode?'✓ 편집 완료':'편집')+'</button>' +
         '</div>' +
       '</div>' +
       '<div class="goal-chip-row" id="tgFilterChipRow" style="margin-bottom:12px;">' +
@@ -11392,7 +11392,7 @@
         '</div>';
     }).join('');
 
-    view.innerHTML = headerAndFilterHtml + cardsHtml;
+    view.innerHTML = headerAndFilterHtml + cardsHtml + (window.OurgoalGoalEditUX ? OurgoalGoalEditUX.renderTeamDoneInlineBtn(state) : "");
 
     // Filter bar listener
     view.querySelectorAll('[data-tgfilter]').forEach(function(btn){
@@ -11479,11 +11479,11 @@
     var editToggle = view.querySelector('#teamGoalEditToggle');
     if(editToggle){
       editToggle.addEventListener('click', async function(){
-        state.teamGoalEditMode = !state.teamGoalEditMode;
-        if(!state.teamGoalEditMode) await saveProfile();
-        renderTeamGoalsScreen();
+        if(state.teamGoalEditMode && window.OurgoalGoalEditUX){ await OurgoalGoalEditUX.commitAndFinishTeamGoalEdit({ state:state, view:view, mockGroups:MOCK_GROUPS, saveProfile:saveProfile, toast:toast, renderTeamGoalsScreen:renderTeamGoalsScreen }); return; }
+        state.teamGoalEditMode = !state.teamGoalEditMode; if(!state.teamGoalEditMode) await saveProfile(); renderTeamGoalsScreen();
       });
     }
+    if(window.OurgoalGoalEditUX) OurgoalGoalEditUX.wireTeamGoalEdit({ state:state, view:view, mockGroups:MOCK_GROUPS, saveProfile:saveProfile, toast:toast, renderTeamGoalsScreen:renderTeamGoalsScreen });
 
     view.querySelectorAll('[data-tgleavepreview]').forEach(function(btn){
       btn.addEventListener('click', async function(){
