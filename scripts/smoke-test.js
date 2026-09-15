@@ -4607,6 +4607,32 @@ check('compliance: [#TASK-ES-107] 팀 연계 개인목표 및 상호 달성도 �
   assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
 });
 
+check('compliance: [#TASK-ES-106] 헌법 제19조 의거 실 사용자 계정 상호 연동(Real Inter-Account Interaction) DM 및 동반자 시스템 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const modulePath = path.join(__dirname, '..', 'js', 'team-invite-comm.js');
+  assert.ok(fs.existsSync(modulePath), 'js/team-invite-comm.js 파일 존재');
+  const moduleContent = fs.readFileSync(modulePath, 'utf8');
+
+  // 1. 헌법 제19조 제4항 1호/2호: 서버 DB 원장 및 Realtime 채널 백본 검증
+  assert.ok(moduleContent.includes('getDmThreadId'), '발송자/수신자 UID 기반 고유 쓰레드 ID 생성 함수 탑재');
+  assert.ok(moduleContent.includes('loadDmMessagesFromDb'), 'Supabase DB 메시지 원장 비동기 로드 함수 탑재');
+  assert.ok(moduleContent.includes('subscribeRealtimeDm'), 'Supabase Realtime 양방향 전파 채널 구독 함수 탑재');
+  assert.ok(moduleContent.includes('team_ping_replies'), 'Supabase 실시간 DM 메시지 테이블 배선 검증');
+
+  // 2. 헌법 제19조 제3항: 무충돌 안전핀(게스트 소프트 게이트 & 콜드스타트 투명 AI봇 뱃지) 검증
+  assert.ok(moduleContent.includes('showGuestSoftAuthGate'), '비로그인 사용자 소프트 로그인 안내 모달 함수 탑재');
+  assert.ok(moduleContent.includes('isAiBot'), '콜드스타트 완충재 AI 봇 투명 플래그 탑재');
+  assert.ok(moduleContent.includes('AI 봇'), 'UI 상 투명한 AI 봇 공식 뱃지 표기 검증');
+
+  // 3. 헌법 제19조 제4항 3호: 실제 가입 회원 닉네임 검색 연동 검증
+  assert.ok(moduleContent.includes("from('users')"), 'Supabase users 회원 테이블 검색 배선 검증');
+  assert.ok(moduleContent.includes('display_name.ilike'), '실제 사용자 닉네임 부분일치 검색 쿼리 검증');
+
+  // 4. 헌법 제18조: index.html 22,196줄 불변 엄수
+  const lines = indexHtml.split(/\r?\n/).length;
+  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
