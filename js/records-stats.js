@@ -52,7 +52,8 @@
     var groups = {};
     var dateOrder = [];
     recentRecs.forEach(function(r){
-      var k = dateKey(r.startAt);
+      var rawD = r.startAt || r.start_at || r.createdAt || r.created_at || new Date().toISOString();
+      var k = dateKey(rawD);
       if(!groups[k]){
         groups[k] = [];
         dateOrder.push(k);
@@ -68,11 +69,16 @@
     dateOrder.forEach(function(k){
       var recs = groups[k];
       var isToday = (k === todayKey);
-      var labelText = fmtDateLabel(recs[0].startAt);
+      var rawFirst = recs[0].startAt || recs[0].start_at || recs[0].createdAt || recs[0].created_at || new Date().toISOString();
+      var labelText = fmtDateLabel(rawFirst);
+
+      var dObj = new Date(rawFirst);
+      if(isNaN(dObj.getTime())) dObj = new Date();
+      var niceLabel = (dObj.getMonth() + 1) + '월 ' + dObj.getDate() + '일';
 
       if(isToday){
         // 오늘 기록: 전면 노출
-        html += '<div class="rec-date-label">' + labelText + ' <span style="color:var(--brand-strong);font-weight:700;">(오늘)</span></div>';
+        html += '<div class="rec-date-label">' + niceLabel + ' <span style="color:var(--brand-strong);font-weight:700;">(오늘)</span></div>';
         recs.forEach(function(r){
           html += buildCardFn(r);
         });
@@ -81,8 +87,9 @@
         var lastRec = recs[0]; // 최신 기록
         var remainingRecs = recs.slice(1);
         var remCount = remainingRecs.length;
+        var subTag = (labelText === '어제') ? ' <span style="color:var(--ink-sub);font-weight:600;">(어제)</span>' : '';
 
-        html += '<div class="rec-date-label">' + labelText + '</div>';
+        html += '<div class="rec-date-label">' + niceLabel + subTag + '</div>';
         if(remCount === 0){
           // 1건뿐이면 바로 노출
           html += buildCardFn(lastRec);
