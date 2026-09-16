@@ -1,7 +1,7 @@
 /* ============================================================
  * 아워골(OurGoal) — 팀 목표 초대·소통 & 소통탭 전면 정비 모듈
  * #TASK-ES-104 (2026-09-15)
- * 1. 팀 목표 모임장 카카오톡 / 문자(SMS) / 링크 초대 모달
+ * 1. 팀 목표 팀장 카카오톡 / 문자(SMS) / 링크 초대 모달
  * 2. 콕찌르기 & 팀원 간 실질적 양방향 대화(팀 톡/채팅) 루프
  * 3. 소통탭 피드창 추천 템플릿 3종 아코디언 컴팩트화
  * 4. 소통탭 공유창 1:1 '외부sns 소통용 카드 제작하기' & 3대 버튼 (피드게시/외부sns공유/이미지 저장)
@@ -26,7 +26,7 @@
   }
 
   /* ------------------------------------------------------------
-   * 1. 팀 목표 모임장 카카오톡 / 문자 / 링크 초대 모달
+   * 1. 팀 목표 팀장 카카오톡 / 문자 / 링크 초대 모달
    * ------------------------------------------------------------ */
   function openTeamInviteModal(gid, groupsPool){
     var pool = groupsPool || global.MOCK_GROUPS || [];
@@ -47,7 +47,7 @@
 
     global.openModal(
       '<h3>👥 \'' + esc(g.name) + '\' 팀원 초대하기</h3>' +
-      '<p class="faint" style="margin:-6px 0 14px;font-size:.8125rem;">모임장 권한으로 소중한 동료를 카톡이나 문자로 간편하게 초대해보세요.</p>' +
+      '<p class="faint" style="margin:-6px 0 14px;font-size:.8125rem;">팀장 권한으로 소중한 동료를 카톡이나 문자로 간편하게 초대해보세요.</p>' +
       '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:14px;">' +
         '<div style="font-size:.75rem;font-weight:700;color:var(--ink-soft);margin-bottom:6px;">초대 메시지 미리보기</div>' +
         '<div style="font-size:.8125rem;color:var(--ink);line-height:1.5;white-space:pre-line;background:var(--surface-2);padding:10px;border-radius:8px;border:1px solid var(--rule);">' + esc(inviteMsg) + '</div>' +
@@ -129,7 +129,7 @@
     gs.chatMessages = gs.chatMessages || [
       { sender: '민지 (러너)', text: '오늘 날씨 좋아서 3km 뛰고 왔어요! 다들 파이팅 🔥', time: '오전 08:30', isMe: false },
       { sender: '준호 (개발)', text: '마일스톤 하나 남았습니다. 오늘 밤에 완료할게요!', time: '오전 11:15', isMe: false },
-      { sender: '소연 (디자인)', text: '체크인 완료했습니다. 모임장님 피드백 감사해요 ✨', time: '오후 02:20', isMe: false }
+      { sender: '소연 (디자인)', text: '체크인 완료했습니다. 팀장님 피드백 감사해요 ✨', time: '오후 02:20', isMe: false }
     ];
 
     var myName = (global.state && global.state.profile && global.state.profile.displayName) || '나';
@@ -140,7 +140,7 @@
           '<div style="font-size:.75rem;color:var(--ink-soft);margin-bottom:2px;">' +
             '<b>' + esc(m.sender) + '</b>' +
           '</div>' +
-          '<div style="max-width:82%;padding:8px 12px;border-radius:12px;font-size:.875rem;line-height:1.45;background:'+(m.isMe?'var(--brand-strong)':'var(--card2)')+';color:'+(m.isMe?'#fff':'var(--ink)')+';border:'+(m.isMe?'none':'1px solid var(--rule)')+';word-break:break-word;">' +
+          '<div style="max-width:82%;padding:8px 12px;border-radius:12px;font-size:.875rem;line-height:1.45;background:'+(m.isMe?'var(--brand-strong)':'var(--card2)')+';color:'+(isMe?'#fff':'var(--ink)')+';border:'+(isMe?'none':'1px solid var(--rule)')+';word-break:break-word;">' +
             esc(m.text) +
           '</div>' +
           '<span class="faint" style="font-size:.6875rem;margin-top:2px;">' + esc(m.time) + '</span>' +
@@ -213,7 +213,7 @@
 
         // 팀원의 자연스러운 실시간 응답 (1.2초 후)
         setTimeout(async function(){
-          var responders = ['준호 (개발)', '소연 (디자인)', '민지 (러너)', '동현 (모임장)'];
+          var responders = ['준호 (개발)', '소연 (디자인)', '민지 (러너)', '동현 (팀장)'];
           var replies = [
             '멋져요! 끝까지 함께 달려봐요 🔥',
             '인증 확인했습니다! 오늘도 큰 자극 받네요 👍',
@@ -243,7 +243,7 @@
     });
   }
 
-  /* 찌르기 발송 시 모임장/팀원의 실질적 양방향 답장 자동 배선 */
+  /* 찌르기 발송 시 팀장/팀원의 실질적 양방향 답장 자동 배선 */
   function handlePingSentAutoReply(ping, gid){
     setTimeout(async function(){
       var gs = (typeof global.groupState === 'function') ? global.groupState(gid) : {};
@@ -257,7 +257,7 @@
 
       targetPing.replies = targetPing.replies || [];
       targetPing.replies.push({
-        senderName: '동현 (모임장)',
+        senderName: '동현 (팀장)',
         senderRole: 'owner',
         senderAvatar: '👑',
         message: replyMsg,
@@ -265,7 +265,7 @@
       });
 
       if(global.saveProfile) await global.saveProfile();
-      if(global.toast) global.toast('💬 모임장님의 따뜻한 DM 답장이 도착했어요!');
+      if(global.toast) global.toast('💬 팀장님의 따뜻한 DM 답장이 도착했어요!');
       if(global.renderTeamGoalsScreen && global.state && global.state.activeTab === 'goals') {
         global.renderTeamGoalsScreen();
       }
@@ -606,10 +606,10 @@
   function getTeamMembersPool(){
     // 헌법 제19조 제3항 1호에 의거한 공식 콜드스타트 완충재 (AI 봇 명시)
     return [
-      { id: 'mem_ws_1', name: '이지수 팀장', nickname: '지수_TF장', avatar: '👩‍💼', groupName: '회사 워크숍 TF', role: '모임장', level: 8, streak: 24, theme: '커리어·기획', intro: '전사 전략 워크숍 TF를 이끌고 있습니다. 함께 완주해요!', goals: ['2026 하반기 전략 워크숍 완수', '부서별 액션플랜 수립'], isAiBot: true, botBadge: 'AI 봇' },
+      { id: 'mem_ws_1', name: '이지수 팀장', nickname: '지수_TF장', avatar: '👩‍💼', groupName: '회사 워크숍 TF', role: '팀장', level: 8, streak: 24, theme: '커리어·기획', intro: '전사 전략 워크숍 TF를 이끌고 있습니다. 함께 완주해요!', goals: ['2026 하반기 전략 워크숍 완수', '부서별 액션플랜 수립'], isAiBot: true, botBadge: 'AI 봇' },
       { id: 'mem_ws_2', name: '김민우 대리', nickname: '민우_운영조', avatar: '👨‍💼', groupName: '회사 워크숍 TF', role: '팀원', level: 6, streak: 14, theme: '커리어·기획', intro: '대관 및 현장 운영 총괄을 맡고 있습니다.', goals: ['장소 대관 계약 및 음향 점검', '타임테이블 배포'], isAiBot: true, botBadge: 'AI 봇' },
       { id: 'mem_ws_3', name: '박소연 사원', nickname: '소연_레크조', avatar: '🙋‍♀️', groupName: '회사 워크숍 TF', role: '팀원', level: 5, streak: 9, theme: '취미·소통', intro: '팀빌딩과 비전 세션 프로그램을 기획 중입니다.', goals: ['아이스브레이킹 게임 3종 준비', '참가자 웰컴키트 제작'], isAiBot: true, botBadge: 'AI 봇' },
-      { id: 'mem_tr_1', name: '최현아', nickname: '현아_드라이브', avatar: '🚗', groupName: '제주 힐링여행', role: '모임장', level: 7, streak: 18, theme: '여행·생활', intro: '낙오자 없는 제주 힐링 여행을 기획하고 있어요!', goals: ['제주 3박4일 독채 펜션 예약', '동선별 드라이브 코스 확정'], isAiBot: true, botBadge: 'AI 봇' },
+      { id: 'mem_tr_1', name: '최현아', nickname: '현아_드라이브', avatar: '🚗', groupName: '제주 힐링여행', role: '팀장', level: 7, streak: 18, theme: '여행·생활', intro: '낙오자 없는 제주 힐링 여행을 기획하고 있어요!', goals: ['제주 3박4일 독채 펜션 예약', '동선별 드라이브 코스 확정'], isAiBot: true, botBadge: 'AI 봇' },
       { id: 'mem_tr_2', name: '정준호', nickname: '준호_맛집탐험', avatar: '🍖', groupName: '제주 힐링여행', role: '팀원', level: 6, streak: 11, theme: '식단·여행', intro: '제주 로컬 흑돼지/해산물 찐맛집 리스트업 담당', goals: ['흑돼지 맛집 단체석 예약', '공용 경비 1/N 정산표 정리'], isAiBot: true, botBadge: 'AI 봇' },
       { id: 'mem_ft_1', name: '강성진 코치', nickname: '성진_헤드코치', avatar: '🏋️‍♂️', groupName: '크로스핏 정복대', role: '코치', level: 10, streak: 45, theme: '운동·건강', intro: '안전하고 즐겁게 한계 돌파! 주 5회 WOD 정복', goals: ['크루 전체 월 250회 WOD 달성', '전원 Rx 도전 서포트'], isAiBot: true, botBadge: 'AI 봇' },
       { id: 'mem_ft_2', name: '윤태양', nickname: '태양_와드러버', avatar: '💪', groupName: '크로스핏 정복대', role: '팀원', level: 7, streak: 19, theme: '운동·건강', intro: '무반동 턱걸이 10개 도전 중인 크로스핏터', goals: ['Rx 무게 정복', '턱걸이 10개 연속 성공'], isAiBot: true, botBadge: 'AI 봇' }
@@ -880,7 +880,7 @@
       body.innerHTML = '<div class="card" style="margin-bottom:14px;padding:12px 14px;background:var(--surface-2);border:1px solid var(--rule);border-radius:14px;">' +
           '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
             '<div style="font-weight:700;font-size:.875rem;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
-              '<span>👥</span><span>내 모임 동료에게 바로 DM 보내기</span>' +
+              '<span>👥</span><span>내 팀 동료에게 바로 DM 보내기</span>' +
             '</div>' +
             '<span class="faint" style="font-size:.75rem;">원클릭 선택</span>' +
           '</div>' +
