@@ -1860,14 +1860,50 @@
   }
 
   /* ============ Landing ============ */
+  /* ============ #TASK-ES-116: 카카오톡 인앱 브라우저 외부 탈출 & 로그인 안내 ============ */
+  function escapeKakaoInAppBrowser(){
+    var u = window.location.href;
+    var isAndroid = /Android/i.test(navigator.userAgent);
+    if(isAndroid){
+      var clean = u.replace(/^https?:\/\//i, '');
+      window.location.href = 'intent://' + clean + '#Intent;scheme=https;package=com.android.chrome;end';
+      return;
+    }
+    try { if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(u); } catch(e){}
+    openModal(
+      '<div style="text-align:center;padding:16px 8px;">' +
+        '<div style="font-size:2.2rem;margin-bottom:10px;">🌐</div>' +
+        '<h3 style="margin:0 0 8px;font-size:1.15rem;font-weight:700;">Safari(사파리)로 열기</h3>' +
+        '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.6;margin:0 0 16px;">' +
+          '카카오톡 앱에서는 카카오 자동 로그인이 지연될 수 있어요.<br>' +
+          '화면 우측 상단 <b>[⋮]</b> 또는 하단 <b>[공유/메뉴]</b>를 누른 후<br>' +
+          '<b>[다른 브라우저로 열기]</b> 또는 <b>[Safari로 열기]</b>를 선택해주세요!<br>' +
+          '<span style="font-size:.78rem;color:var(--brand);margin-top:6px;display:block;">(아워골 접속 주소가 클립보드에 복사되었습니다)</span>' +
+        '</p>' +
+        '<button class="btn btn-primary" id="btnCopyInAppUrlAgain" style="width:100%;margin-bottom:8px;padding:12px;font-weight:700;border-radius:12px;background:var(--brand);border:none;">주소 다시 복사하기</button>' +
+        '<button class="btn btn-ghost btn-sm" id="btnCloseInAppModal" style="width:100%;">닫기</button>' +
+      '</div>',
+      function(sheet){
+        var cBtn = sheet.querySelector('#btnCloseInAppModal');
+        if(cBtn) cBtn.onclick = closeModal;
+        var cpBtn = sheet.querySelector('#btnCopyInAppUrlAgain');
+        if(cpBtn) cpBtn.onclick = function(){
+          try { navigator.clipboard.writeText(u); toast('주소가 복사되었습니다. Safari 주소창에 붙여넣어주세요!'); } catch(e){}
+        };
+      }
+    );
+  }
   if(typeof navigator !== 'undefined' && /KAKAOTALK/i.test(navigator.userAgent)){
     var kBar = document.getElementById('inAppBrowserNotice');
     if(!kBar && document.body){
       var nDiv = document.createElement('div');
       nDiv.id = 'inAppBrowserNotice';
-      nDiv.style.cssText = 'background:var(--kakao,#FEE500);color:var(--kakao-ink,#3A1D1D);padding:8px 12px;font-size:0.75rem;text-align:center;font-weight:600;z-index:99999;position:relative;';
-      nDiv.innerHTML = '카카오톡에서는 구글 로그인이 제한될 수 있어요. <b>카카오로 시작</b>하시거나 우측 상단 <b>[⋮] → [다른 브라우저로 열기]</b>를 권장해요.';
+      nDiv.style.cssText = 'background:var(--kakao,#FEE500);color:var(--kakao-ink,#3A1D1D);padding:10px 12px;font-size:0.8rem;text-align:center;font-weight:600;z-index:99999;position:relative;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;';
+      nDiv.innerHTML = '<span>⚡ 카카오톡에서는 <b>외부 브라우저</b>로 접속 시 3초 로그인이 가장 원활해요!</span>' +
+        '<button type="button" id="btnEscapeInAppNotice" style="background:#3A1D1D;color:#fff;border:none;padding:4px 10px;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;">Chrome/Safari로 열기</button>';
       document.body.insertBefore(nDiv, document.body.firstChild);
+      var escBtn = nDiv.querySelector('#btnEscapeInAppNotice');
+      if(escBtn) escBtn.addEventListener('click', escapeKakaoInAppBrowser);
     }
   }
 
@@ -2114,6 +2150,13 @@
       } catch(e){}
       setDeviceLoginTime(Date.now());
       try { localStorage.setItem('ourgoal_last_auth_provider', provider); } catch(e){}
+      // PKCE code_verifier 2중 안전 백업 (카카오톡 인앱 브라우저 localStorage 유실 방어)
+      try {
+        for(var si = 0; si < localStorage.length; si++){
+          var sk = localStorage.key(si);
+          if(sk && sk.indexOf('-code-verifier') !== -1) sessionStorage.setItem(sk, localStorage.getItem(sk));
+        }
+      } catch(e){}
       var res = await sb.auth.signInWithOAuth({ provider: provider, options: { redirectTo: window.location.origin } });
       if(res && res.error) throw res.error;
     } catch(err){
@@ -21147,7 +21190,6 @@
         };
       });
     }
-
     var hcSw = document.getElementById('highContrastSwitch');
     if(hcSw){
       var hcOn = !!settings.highContrast;
@@ -21162,7 +21204,6 @@
         triggerHaptic(10);
       };
     }
-
     var curFs = settings.fontSize || 'normal';
     var fsWrap = document.getElementById('fontSizeToggle');
     if(fsWrap){
@@ -21176,7 +21217,6 @@
         };
       });
     }
-
     var dsSw = document.getElementById('dataSaverSwitch');
     if(dsSw){
       var dsOn = !!settings.dataSaver;
@@ -21189,7 +21229,6 @@
         toast(settings.dataSaver ? '데이터 절약 모드가 켜졌어요 (저용량 이미지)' : '데이터 절약 모드가 꺼졌어요');
       };
     }
-
     // 📅 구글 캘린더 연동 (Req 3 & 4)
     if(!settings.gcalSync) settings.gcalSync = { goals:{}, ms:{}, imported:{} };
     var gcalIdInput = document.getElementById('gcalClientIdInput');
@@ -21205,13 +21244,10 @@
     if(qConnRow) qConnRow.style.display = gcalConnected ? 'none' : 'block';
     var syncRow = document.getElementById('gcalSyncRow');
     if(syncRow) syncRow.style.display = gcalConnected ? 'flex' : 'none';
-
     var qConnBtn = document.getElementById('gcalQuickConnectBtn');
     if(qConnBtn) qConnBtn.onclick = openGoogleCalendarConnectModal;
-
     var syncNowBtn = document.getElementById('gcalSyncNowBtn');
     if(syncNowBtn) syncNowBtn.onclick = syncAllToGoogleCalendar;
-
     var disconnBtn = document.getElementById('gcalDisconnectBtn');
     if(disconnBtn){
       disconnBtn.onclick = async function(){
@@ -21226,7 +21262,6 @@
         }
       };
     }
-
     var autoSyncSw = document.getElementById('gcalAutoSyncSwitch');
     if(autoSyncSw){
       var isAuto = settings.gcalAutoSync !== false;
@@ -21238,7 +21273,6 @@
         renderSettingsScreen();
       };
     }
-
     if(gcalIdInput){
       gcalIdInput.onchange = async function(){
         settings.gcalClientId = gcalIdInput.value.trim();
@@ -21251,7 +21285,6 @@
     if(gImpBtn) gImpBtn.onclick = openGcalImportModal;
     var gExpBtn = document.getElementById('gcalExportBtn');
     if(gExpBtn) gExpBtn.onclick = openGcalExportModal;
-
     // 가상 페르소나
     var cheerSw = document.getElementById('virtualCheerSwitch');
     if(cheerSw){
@@ -21264,14 +21297,12 @@
         renderSettingsScreen();
       };
     }
-
     // 차단 사용자
     var blockedList = settings.blockedUsers || [];
     var countDesc = document.getElementById('blockedCountDesc');
     if(countDesc) countDesc.textContent = blockedList.length ? ('현재 ' + blockedList.length + '명의 사용자를 차단 중이에요.') : '차단된 사용자의 글/댓글은 피드에서 숨겨집니다.';
     var manageBlockedBtn = document.getElementById('manageBlockedBtn');
     if(manageBlockedBtn) manageBlockedBtn.onclick = function(){ openBlockedUsersModal(); };
-
     // 노션 연동
     var notionSw = document.getElementById('notionSwitch');
     notionSw.className = 'switch' + (settings.notionSync ? ' on' : '');
@@ -21329,7 +21360,6 @@
         toast('API Key와 Database ID 또는 Webhook URL을 먼저 입력해주세요');
       }
     };
-
     // 잇템 통계
     var statsEl = document.getElementById('itemStatsList');
     if(statsEl){
@@ -21373,7 +21403,6 @@
       var goProf = statsEl.querySelector('#setGoProfileBtn');
       if(goProf) goProf.addEventListener('click', openProfileEditor);
     }
-
     // AI 설정 (Gemini API 전면 단일화)
     settings.aiProvider = 'gemini';
     var aiWrap = document.getElementById('aiProviderToggle');
@@ -21399,7 +21428,6 @@
       modelInput.value = settings.geminiModel || 'gemini-3.1-flash-lite';
       modelInput.onchange = async function(){ settings.geminiModel = modelInput.value.trim() || 'gemini-3.1-flash-lite'; await saveProfile(); };
     }
-
     var autoSw = document.getElementById('autoUpdateSwitch');
     autoSw.className = 'switch' + (settings.autoUpdateSuggest!==false ? ' on' : '');
     a11ySwitch(autoSw, settings.autoUpdateSuggest!==false, '기록 보고 목표 진행 상황 자동 업데이트 제안');
@@ -21408,7 +21436,6 @@
       await saveProfile();
       renderSettingsScreen();
     };
-
     // 💾 저장공간 및 캐시 관리 (Req 10)
     var clearCacheBtn = document.getElementById('clearCacheBtn');
     if(clearCacheBtn){
@@ -21418,20 +21445,17 @@
         toast('임시 캐시 및 이미지 데이터를 모두 비웠습니다');
       };
     }
-
     var fmtWrap = document.getElementById('formatToggle');
     fmtWrap.querySelectorAll('.format-opt').forEach(function(o){
       o.classList.toggle('active', o.dataset.fmt===state.profile.settings.exportFormat);
       o.onclick = async function(){ state.profile.settings.exportFormat = o.dataset.fmt; await saveProfile(); renderSettingsScreen(); };
     });
-
     // 💬 고객지원 및 FAQ (Req 10)
     var inqBtn = document.getElementById('feedbackInquiryBtn');
     if(inqBtn) inqBtn.onclick = openCustomerInquiryModal;
     var faqBtn = document.getElementById('faqAccordionBtn');
     if(faqBtn) faqBtn.onclick = openFaqModal;
   }
-
   document.getElementById('addTimeBtn').addEventListener('click', async function(){
     state.profile.settings.checkinTimes.push('12:00');
     await saveProfile(); renderSettingsScreen();
@@ -21445,7 +21469,6 @@
       new Notification('아워골', { body: msg });
     }
   });
-
   document.getElementById('settingsExportCheckins').addEventListener('click', exportAllCheckins);
   document.getElementById('settingsExportAll').addEventListener('click', function(){
     download('아워골_백업_'+state.profile.username+'.json', JSON.stringify(state.profile, null, 2), 'application/json');
@@ -21475,7 +21498,6 @@
     reader.readAsText(file);
     e.target.value = '';
   });
-
   /* ============ 방해금지 시간대(DND, 조용한 시간) 판별 순수 함수 (TASK-BG-7) ============ */
   function isWithinDND(now, dndSettings){
     if(!dndSettings) return false;
@@ -21488,10 +21510,8 @@
     var eParts = String(end).split(':').map(Number);
     var sMin = (sParts[0] || 0) * 60 + (sParts[1] || 0);
     var eMin = (eParts[0] || 0) * 60 + (eParts[1] || 0);
-
     now = now || new Date();
     var curMin = now.getHours() * 60 + now.getMinutes();
-
     if(sMin === eMin) return false;
     if(sMin < eMin){
       return curMin >= sMin && curMin < eMin;
@@ -21499,7 +21519,6 @@
       return curMin >= sMin || curMin < eMin;
     }
   }
-
   /* ============ 맥락 기반 다이내믹 알림 문구 생성 ============ */
   function generateDynamicNotification(profile, now){
     now = now || new Date();
@@ -21520,7 +21539,6 @@
     if(soonest){
       return '[D-day 임박] '+soonest.goal.title+' 마감까지 '+soonest.daysLeft+'일 남았어요! 오늘 마일스톤을 체크해보세요 🔥';
     }
-
     var checkedToday = (profile.records || []).some(function(r){ return dateKey(r.startAt)===dateKey(now.toISOString()); });
     var hourNow = now.getHours();
     if(!checkedToday && hourNow>=20){
@@ -21541,22 +21559,18 @@
         return '[스트릭 경보] '+priorStreak+'일 연속 불꽃이 꺼지기 직전이에요! 오늘 한 일을 10초 만에 남겨보세요 ⏰';
       }
     }
-
     // 일요일 저녁(18~22시) 주간 성취 리캡 (TASK-BG-8)
     if(now.getDay() === 0 && hourNow >= 18 && hourNow <= 22 && (profile.records || []).length > 0){
       return '[위클리 리캡] 이번 주 나의 성취가 정리되었어요! 지난 7일간의 기록과 테마 분석을 확인해보세요 🏆';
     }
-
     var s = profile.settings || {};
     var joinedGroup = MOCK_GROUPS.find(function(g){ return s.groupState && s.groupState[g.id] && s.groupState[g.id].joined; });
     if(joinedGroup){
       var n = (joinedGroup.activity || []).length;
       return '[팀 인증] '+joinedGroup.name+' 팀원들이 오늘 '+n+'회 인증했어요! 함께 달려볼까요? 🏃';
     }
-
     return (profile.displayName||'회원')+'님, 오늘의 성장을 기록할 시간이에요 ✨';
   }
-
   /* ============ Notifications (best-effort, tab must be open) ============ */
   function setupNotifyTimer(){
     if(state.notifyTimer){ clearInterval(state.notifyTimer); state.notifyTimer = null; }
@@ -21577,7 +21591,6 @@
       }
     }, 20000);
   }
-
   function showNotifyBanner(bodyText){
     var container = document.getElementById('notifyBannerSlot');
     if(!container) return;
@@ -21589,7 +21602,6 @@
       document.getElementById('captureInput').focus();
     });
   }
-
   /* ============ Web Push (앱이 꺼져 있어도 오는 알림) ============ */
   function urlBase64ToUint8Array(base64String){
     var padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -21599,7 +21611,6 @@
     for(var i=0; i<rawData.length; i++) outputArray[i] = rawData.charCodeAt(i);
     return outputArray;
   }
-
   async function syncPushSubscription(){
     try{
       if(!('serviceWorker' in navigator) || !('PushManager' in window)) return;
@@ -21628,7 +21639,6 @@
       });
     } catch(e){ console.warn('Web Push 구독 실패:', e); }
   }
-
   async function removePushSubscription(){
     try{
       if(!('serviceWorker' in navigator)) return;
@@ -21644,7 +21654,6 @@
       });
     } catch(e){ console.warn('Web Push 구독 해제 실패:', e); }
   }
-
   /* ============ 받은 응원 알림 (실제 내 게시물 응원 수 + 마니또 받은 응원함) ============ */
   function totalFeedCheers(){
     var myPosts = (FEED_POSTS_CACHE || []).filter(function(p){ return p.user_id === state.profile.id; });
@@ -21678,7 +21687,6 @@
       setTab('comm');
     });
   }
-
   /* ============ Render all ============ */
   function renderAll(){
     updateTopBar();
@@ -21690,7 +21698,6 @@
     renderCommScreen();
     renderSettingsScreen();
   }
-
   /* ============ 세션 복구 및 안전 앱 진입 유틸 ============ */
   var _isEnteringApp = false;
   async function restoreSessionAndEnter(session){
@@ -21704,7 +21711,6 @@
       if(um.full_name || um.name || um.nickname) newExtra.display_name = um.full_name || um.name || um.nickname;
       var userEmail = session.user.email || um.email || (newExtra.display_name ? (newExtra.display_name + '@kakao.local') : (session.user.id.slice(0, 8) + '@kakao.local'));
       setDeviceLoginTime(Date.now());
-
       try {
         state.profile = await loadProfile(session.user.id, userEmail, newExtra, (session.user.app_metadata && session.user.app_metadata.provider) || null);
       } catch(lpErr){
@@ -21716,7 +21722,6 @@
       if(!state.profile){
         state.profile = defaultProfile(session.user.id, userEmail, newExtra.display_name || userEmail.split('@')[0]);
       }
-
       // 게스트 세션 데이터 새 소셜 계정으로 자동 마이그레이션 (#TASK-ES-043)
       try {
         var rawGuest = localStorage.getItem('ourgoal_guest_profile');
@@ -21743,19 +21748,16 @@
           }
         }
       } catch(mErr){ console.warn('게스트 데이터 병합 예외 (무시):', mErr); }
-
       var ls = document.getElementById('landingScreen');
       if(ls) ls.style.display = 'none';
       var as = document.getElementById('authScreen');
       if(as) as.style.display = 'none';
-
       // P0: 회원 탈퇴 30일 유예(소프트 삭제) 복구 체크 (소셜 로그인 및 자동 복구 세션)
       var cancelled = await checkPendingDeletionRestore();
       if(cancelled){
         _isEnteringApp = false;
         return false;
       }
-
       if(state.profile._isNewSignup && (!state.profile.goals || state.profile.goals.length === 0) && (!state.profile.records || state.profile.records.length === 0)){
         startOnboarding();
       } else {
@@ -21777,7 +21779,6 @@
       _isEnteringApp = false;
     }
   }
-
   async function loginWithDirectIdentifier(rawId, extraOpt){
     var idVal = String(rawId || '').trim();
     if(!idVal){
@@ -21794,7 +21795,6 @@
         display_name: targetDisplayName,
         avatar_url: (extraOpt && extraOpt.avatarUrl) || ''
       };
-
       // 1. 로컬 스토리지에 캐시된 목표/기록/프로필 ID 우선 검색 (#TASK-ES-035)
       var backupPrefixes = ['ourgoal_goals_backup_', 'ourgoal_records_backup_', 'ourgoal_profile_backup_', 'ourgoal_settings_'];
       for(var bi = 0; bi < backupPrefixes.length; bi++){
@@ -21815,13 +21815,11 @@
         var lastUid = localStorage.getItem('ourgoal_current_user');
         if(lastUid) targetUserId = lastUid;
       }
-
       // 2. 만약 백업 ID가 없으면 결정론적 식별 해시 ID 생성
       if(!targetUserId){
         var h = await sha256Hex('ourgoal_user_' + idVal.toLowerCase());
         targetUserId = 'u_' + h.slice(0, 16);
       }
-
       // 3. 프로필 로드 (loadProfile은 내부에서 users 행 보장, goals/checkins 조회 및 로컬 백업 자동 복원 수행)
       var p = null;
       try {
@@ -21831,19 +21829,16 @@
       }
       if(!p) p = defaultProfile(targetUserId, targetUsername, targetDisplayName);
       if(extraOpt && extraOpt.avatarUrl && !p.avatarUrl) p.avatarUrl = extraOpt.avatarUrl;
-
       state.profile = p;
       if(extraOpt && extraOpt.accessToken){
         state.googleToken = { accessToken: extraOpt.accessToken, expiresAt: Date.now() + 3500 * 1000 };
         try { sessionStorage.setItem('ourgoal_google_token', extraOpt.accessToken); } catch(e){}
       }
-
       // 4. 로컬 세션 보존 (재접속 시 자동 로그인)
       try {
         localStorage.setItem('ourgoal_guest_profile', JSON.stringify(p));
         localStorage.setItem('ourgoal_current_user', targetUserId);
       } catch(e){}
-
       // 5. 화면 전환 및 진입
       var ls = document.getElementById('landingScreen');
       if(ls) ls.style.display = 'none';
@@ -21858,7 +21853,6 @@
       return false;
     }
   }
-
   function openLoginRescueModal(customNotice){
     openModal(
       '<div style="text-align:center;padding:16px 8px;">' +
@@ -21899,7 +21893,6 @@
       }
     );
   }
-
   async function rescueLoginSession(){
     try {
       toast('꼬인 세션을 초기화하고 복구 중입니다…');
@@ -21925,7 +21918,6 @@
       window.location.reload();
     }, 600);
   }
-
   ['landRescueBtn', 'authRescueBtn'].forEach(function(id){
     var el = document.getElementById(id);
     if(el) el.addEventListener('click', function(e){
@@ -21933,7 +21925,6 @@
       openLoginRescueModal();
     });
   });
-
   /* ============ #TASK-AUTH-P0-SAFETY: 로그인/계정 보안 패키지 모듈 연결 ============ */
   if(window.OurgoalAuthSafety && typeof window.OurgoalAuthSafety.init === 'function'){
     window.OurgoalAuthSafety.init({
@@ -21947,7 +21938,6 @@
       enterApp: enterApp
     });
   }
-
   /* ============ Boot ============ */
   (async function boot(){
     // 1. Supabase Auth 전역 리스너 (카카오 OAuth 리다이렉트 및 비밀번호 재설정 감지)
@@ -21964,7 +21954,6 @@
         }
       });
     } catch(e){}
-
     // 1-1. URL 해시 상의 비밀번호 재설정 토큰 감지
     try {
       var hStr = window.location.hash || '';
@@ -21973,7 +21962,15 @@
         setTimeout(openNewPasswordModal, 400);
       }
     } catch(e){}
-
+    // 0. PKCE code_verifier 복원 (카카오톡 인앱 브라우저 웹뷰 복귀 시 localStorage 유실 대비)
+    try {
+      for(var ski = 0; ski < sessionStorage.length; ski++){
+        var sKey = sessionStorage.key(ski);
+        if(sKey && sKey.indexOf('-code-verifier') !== -1 && !localStorage.getItem(sKey)){
+          localStorage.setItem(sKey, sessionStorage.getItem(sKey));
+        }
+      }
+    } catch(e){}
     // 2. URL 해시/쿼리상의 OAuth 에러 처리 및 안전 복구
     try{
       var hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
@@ -21987,25 +21984,24 @@
         if(window.history && window.history.replaceState){
           window.history.replaceState(null, '', window.location.pathname);
         }
-        if(/unable to exchange external code|koe010|bad client credentials|unexpected_failure/i.test(decoded)){
-          openLoginRescueModal('카카오 인증 서버 연동 점검 중입니다. 사용하시던 닉네임이나 이메일을 입력하시면 기존 기록과 목표를 그대로 복구하여 즉시 입장하실 수 있습니다!');
+        if(/unable to exchange external code|koe010|bad client credentials|unexpected_failure|code_verifier|invalid_grant|pkce|bad request/i.test(decoded)){
+          openLoginRescueModal('카카오톡 인앱 환경에서 인증 세션 연결이 지연되었습니다. 닉네임이나 이메일을 입력하시면 기존 기록과 함께 즉시 입장하실 수 있습니다!');
         } else {
           toast('로그인 중 문제가 발생했어요: ' + decoded);
         }
       }
     } catch(e){}
-
     // 3. 최상단 리스너에서 미리 감지된 pending 세션이 있으면 즉시 복원
     if(_pendingAuthSession && _pendingAuthSession.user){
       var okPending = await restoreSessionAndEnter(_pendingAuthSession);
       if(okPending) return;
     }
-
-    // 4. OAuth 리다이렉트 콜백 대기 루프 (카카오 리다이렉트 시 타이밍 이슈 방어)
+    // 4. OAuth 리다이렉트 콜백 대기 루프 (카카오 리다이렉트 시 4.0초 안전 대기)
     var isOAuthCallback = window.location.hash.indexOf('access_token') !== -1 || window.location.search.indexOf('code=') !== -1;
+    if(isOAuthCallback) toast('카카오 로그인 세션을 확인 중입니다…');
     try{
       var session = null;
-      var maxWait = isOAuthCallback ? 6 : 1;
+      var maxWait = isOAuthCallback ? 20 : 1; // #TASK-ES-116: 4.0초 대기
       for(var i = 0; i < maxWait; i++){
         var res = await sb.auth.getSession();
         session = res.data && res.data.session;
@@ -22017,9 +22013,12 @@
       if(session && session.user){
         var ok = await restoreSessionAndEnter(session);
         if(ok) return;
+      } else if(isOAuthCallback){
+        try { await sb.auth.signOut(); } catch(e){}
+        if(window.history && window.history.replaceState) window.history.replaceState(null, '', window.location.pathname);
+        openLoginRescueModal('카카오톡 인앱 브라우저 세션 지연이 발생했습니다. 닉네임이나 이메일을 입력하시면 즉시 내 데이터를 불러와 입장하실 수 있습니다!');
       }
     } catch(e){ /* fall through to guest / landing */ }
-
     // 5. 게스트 세션 확인 및 자가치유 복구 (#TASK-ES-035)
     try {
       var guestRaw = localStorage.getItem('ourgoal_guest_profile');
@@ -22192,4 +22191,5 @@ window.addEventListener('keydown', function(e) {
 
 
 </body>
+
 </html>

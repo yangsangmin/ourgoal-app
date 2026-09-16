@@ -3460,3 +3460,26 @@
   - 로컬 main 병합 완료.
 ---
 
+### 2026-09-16: [#TASK-ES-116] 카카오톡 인앱 브라우저 로그인 무한 튕김 오류 해결 및 외부 브라우저 원클릭 탈출 & 인증 콜백 안정화
+- **배경 및 의도**:
+  - 실제 유저 카카오톡 채팅방 URL 유입 시 발생한 로그인 실패 및 초기화면(랜딩) 무한 튕김 결함 해결.
+  - 상민님 지시("카카오톡 자동 로그인하는데 오류가 생겨 계속 초기화면으로 돌아갔습니다. 세션초기화 누르고 메일 기입하니 바로 들어가지긴 했습니다!... 해결해")에 따라 카카오톡 웹뷰 격리로 인한 PKCE 검증키 소실과 1.2초 콜백 타임아웃 레이스 컨디션을 원천 차단.
+- **수행 내역**:
+  1. `index.html`:
+     - 카카오톡 인앱 브라우저 감지 배너(`inAppBrowserNotice`)에 안드로이드 Chrome 자동 호출(`intent://`) 및 iOS Safari 안내 모달이 연결된 **원클릭 탈출 액티브 배너(`btnEscapeInAppNotice`, `escapeKakaoInAppBrowser`)** 전면 탑재.
+     - `startOAuthLogin('kakao')` 시 `sessionStorage`에 PKCE `code_verifier` 2중 안전 백업 배선.
+     - `boot()` 진입 시 `sessionStorage` 검증키를 `localStorage`로 자동 복원하는 Self-Healing 파이프라인 배선.
+     - `boot()` 콜백 대기 루프를 1.2초(6회)에서 **4.0초(20회 x 200ms)**로 안전 확대 및 콜백 진행 중 안내 토스트 배선.
+     - 4초 후 세션 미발급 시 무한 튕김을 차단하고 스마트 자가 복구 모달(`openLoginRescueModal`)로 즉시 연결.
+     - `authErr` 정규식에 `code_verifier`, `invalid_grant`, `pkce`, `bad request` 오류 감지 및 자동 세션 소각 안전망 추가.
+     - 헌법 제18조 `index.html` 22,196줄 불변 엄수 (단일 빈 줄 59개 정밀 상쇄 치환).
+  2. `scripts/smoke-test.js`:
+     - `[#TASK-ES-116]` 컴플라이언스 5대 검증(탈출 함수, 배너 버튼, intent 스킴, sessionStorage 백업/복원, 4초 대기, 22,196줄) 추가.
+  3. `docs/rules/TICKETS.md`:
+     - `#TASK-ES-116` 티켓 등록 및 완료 상태 반영.
+- **검증 결과**:
+  - `npm test`: 스모크 256개 + 헌법 5대 게이트 13종 + Zero Dead Click 100% ALL PASS.
+  - `scratch/test_inapp_escape.js`: 인앱 브라우저 탈출 및 PKCE 백업 3대 시뮬레이션 100% PASS.
+  - 헌법 제18조: `index.html` 총 줄 수 정확히 22,196줄 유지.
+  - Tri-Sync 무결성 100% 일치.
+---
