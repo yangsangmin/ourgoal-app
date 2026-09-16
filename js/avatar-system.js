@@ -936,6 +936,7 @@
           if (selectedType === 'custom') {
             settings.customAvatarUrl = newCustomUrl;
             settings.avatarThemeId = chosenTheme.id;
+            profile.avatarUrl = newCustomUrl;
           }
 
           if (deps.state && deps.state.profile) {
@@ -944,6 +945,7 @@
             if (selectedType === 'custom') {
               deps.state.profile.settings.customAvatarUrl = newCustomUrl;
               deps.state.profile.settings.avatarThemeId = chosenTheme.id;
+              deps.state.profile.avatarUrl = newCustomUrl;
             }
           }
 
