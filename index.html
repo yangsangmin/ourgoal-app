@@ -1142,7 +1142,7 @@
       customFeedbackPrompt:"", customFeedbackActive:false, goalStatusSummaries:{}, feedReactions:{}, feedComments:{}, myFeedPosts:[], contentReports:{}, todayMissions:{},
       streakFreeze:{ available:1, usedDates:[], grantedTier:0 }, social:{ cheersSeen:0, manitoSeen:0 }, xp:{ total:0, log:[] },
       highContrast: false, challenges: [],
-      hasSeenGuide:false, subscription:{ isPro:true, plan:'free_all', expiresAt:null, billingKey:null }
+      hasSeenGuide:false, subscription:{ isPro:true, plan:'free_all', expiresAt:null, billingKey:null }, maxBaseCrafts:3, bonusCraftCredits:0, lastStreakAwarded:0
     };
   }
   /* ============ 8대 화면 스타일 (테마) 정의 ============ */
@@ -2622,7 +2622,8 @@
     if(!state.profile.settings.streakFreeze) state.profile.settings.streakFreeze = { available:1, usedDates:[], grantedTier:0 };
     var applied = maybeApplyStreakFreeze();
     var granted = maybeGrantStreakFreeze();
-    if(applied || granted) await saveProfile();
+    var bonusGranted = maybeGrantAvatarCraftBonus();
+    if(applied || granted || bonusGranted) await saveProfile();
     if(applied) toast('어제 기록을 못 남겼지만 스트릭 프리즈로 연속 기록이 지켜졌어요');
     else if(granted) toast('스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요');
   }
@@ -5215,6 +5216,18 @@
     sf.usedDates.push(yKey);
     return true;
   }
+  function maybeGrantAvatarCraftBonus(){
+    if(!state.profile || !state.profile.settings) return false;
+    var streak = computeStreakDays();
+    if(typeof OurgoalAvatar !== 'undefined' && typeof OurgoalAvatar.maybeGrantStreakBonus === 'function'){
+      var res = OurgoalAvatar.maybeGrantStreakBonus(state.profile, streak);
+      if(res && res.granted){
+        toast('🎉 7일 연속 체크인 달성! 아바타 제작권 1회가 충전되었습니다! 🎨');
+        return true;
+      }
+    }
+    return false;
+  }
 
   /* ============ 5대 테마 온톨로지 & 경량 AI 분류기 (TASK-OG-001) ============ */
   var RECORD_THEMES = {
@@ -5399,6 +5412,7 @@
     state.profile.records.unshift(buildCheckinRecord(text, goal));
     var xpRes = awardXP(XP_RULES.checkin, '체크인');
     maybeGrantStreakFreeze();
+    maybeGrantAvatarCraftBonus();
     if(isFirst && state.profile.settings){
       if(!state.profile.settings.streakFreeze) state.profile.settings.streakFreeze = { available:0, usedDates:[], grantedTier:0 };
       if(state.profile.settings.streakFreeze.available === 0){
@@ -6771,6 +6785,7 @@
       var xpRes = awardXP(XP_RULES.checkin, '체크인');
 
       var freezeGranted = maybeGrantStreakFreeze();
+      maybeGrantAvatarCraftBonus();
       await saveProfile();
 
       // 홈 화면 잔디 및 스트릭 즉시 반영 (#TASK-ES-043)
