@@ -964,6 +964,19 @@
     return false;
   }
 
+  function safeAvatarHtml(avatar, size){
+    size = size || 36;
+    if(!avatar || typeof avatar !== 'string') return '👤';
+    var trimmed = avatar.trim();
+    if(trimmed.indexOf('http://') === 0 || trimmed.indexOf('https://') === 0 || trimmed.indexOf('data:image/') === 0 || trimmed.indexOf('/') === 0){
+      return '<img src="' + esc(trimmed) + '" alt="아바타" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" onerror="this.onerror=null;this.parentElement.textContent=\'👤\';">';
+    }
+    if(trimmed.indexOf('<svg') >= 0){
+      return trimmed;
+    }
+    return esc(trimmed);
+  }
+
   function ensureDefaultCompanions(){
     var state = global.state;
     if(!state || !state.profile) return [];
@@ -1022,12 +1035,12 @@
       heatmapCubes += '<div style="flex:1;aspect-ratio:1/1;background:' + bg + ';border-radius:3px;" title="' + d + '일 전 실천"></div>';
     }
 
-    var isMyCompanion = (state.profile && state.profile.companions && state.profile.companions.some(function(c){ return c.id === user.id; }));
+    var isMyCompanion = (state.profile && state.profile.companions && state.profile.companions.some(function(c){ return String(c.id || '').trim().toLowerCase() === String(user.id || '').trim().toLowerCase(); }));
 
     var modalHtml = '<h3>' + esc(user.nickname || user.name) + '님의 프로필</h3>' +
       '<div style="text-align:center;padding:12px 0 10px;">' +
-        '<div style="width:72px;height:72px;border-radius:50%;background:var(--surface-2);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 10px;box-shadow:0 4px 12px rgba(0,0,0,0.06);">' +
-          user.avatar +
+        '<div style="width:72px;height:72px;border-radius:50%;background:var(--surface-2);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 10px;box-shadow:0 4px 12px rgba(0,0,0,0.06);overflow:hidden;flex-shrink:0;">' +
+          safeAvatarHtml(user.avatar, 72) +
         '</div>' +
         '<div style="font-weight:700;font-size:1.1rem;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;">' +
           '<span>' + esc(user.nickname || user.name) + '</span>' +
@@ -1077,7 +1090,10 @@
               return;
             }
             var comps = ensureDefaultCompanions();
-            if(!comps.some(function(x){ return x.id === user.id; })){
+            var targetId = String(user.id || '').trim().toLowerCase();
+            if(!comps.some(function(x){ return String(x.id || '').trim().toLowerCase() === targetId; })){
+              addCompBtn.disabled = true;
+              addCompBtn.textContent = '✓ 추가됨';
               comps.push({
                 id: user.id,
                 nickname: user.nickname || user.name,
@@ -1102,6 +1118,9 @@
               if(state.activeTab === 'comm' && state.commSubTab === 'companion'){
                 if(global.renderCommScreen) global.renderCommScreen();
               }
+            } else {
+              if(global.toast) global.toast('이미 등록된 동반자입니다.');
+              if(global.closeModal) global.closeModal();
             }
           };
         }
@@ -1171,21 +1190,23 @@
         searchResultsHtml = '<div style="margin-bottom:14px;background:var(--surface-2);border-radius:14px;padding:12px;border:1px solid var(--rule);">' +
           '<div style="font-size:.75rem;font-weight:700;color:var(--brand-strong);margin-bottom:8px;">🔍 실제 회원 검색 결과 (' + searchResults.length + '명)</div>' +
           searchResults.map(function(u){
-            var isAdded = companions.some(function(c){ return c.id === u.id; });
-            return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--card);border:1px solid var(--rule);border-radius:10px;margin-bottom:6px;">' +
-              '<div class="comp-avatar-click" data-viewprof="' + u.id + '" style="width:36px;height:36px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;cursor:pointer;flex:0 0 auto;" title="프로필 보기">' +
-                u.avatar +
+            var isAdded = companions.some(function(c){
+              return String(c.id || '').trim().toLowerCase() === String(u.id || '').trim().toLowerCase();
+            });
+            return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--card);border:1px solid var(--rule);border-radius:10px;margin-bottom:6px;position:relative;">' +
+              '<div class="comp-avatar-click" data-viewprof="' + esc(u.id) + '" style="width:36px;height:36px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;cursor:pointer;flex:0 0 auto;overflow:hidden;" title="프로필 보기">' +
+                safeAvatarHtml(u.avatar, 36) +
               '</div>' +
               '<div style="flex:1;min-width:0;">' +
                 '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
                   '<div style="font-weight:700;font-size:.875rem;color:var(--ink);">' + esc(u.nickname) + '</div>' +
                   '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--ink-soft);">실 사용자</span>' +
                 '</div>' +
-                '<div class="faint" style="font-size:.75rem;">' + esc(u.intro) + '</div>' +
+                '<div class="faint" style="font-size:.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(u.intro) + '</div>' +
               '</div>' +
               (isAdded ?
-                '<span class="faint" style="font-size:.75rem;padding:4px 8px;background:var(--surface-2);border-radius:6px;">✓ 이미 동반자</span>' :
-                '<button class="btn btn-primary btn-xs" data-addcomp="' + u.id + '" type="button" style="font-size:.75rem;padding:4px 10px;border-radius:8px;font-weight:700;">+ 추가</button>'
+                '<span class="faint" style="font-size:.75rem;padding:4px 8px;background:var(--surface-2);border-radius:6px;flex-shrink:0;">✓ 이미 동반자</span>' :
+                '<button class="btn btn-primary btn-xs" data-addcomp="' + esc(u.id) + '" type="button" style="font-size:.75rem;padding:4px 10px;border-radius:8px;font-weight:700;position:relative;z-index:2;cursor:pointer;touch-action:manipulation;white-space:nowrap;flex-shrink:0;">+ 추가</button>'
               ) +
             '</div>';
           }).join('') +
@@ -1209,8 +1230,8 @@
           '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--ink-soft);">실 사용자</span>';
 
         return '<div class="card" style="margin-bottom:8px;padding:12px 14px;background:var(--card);border:1px solid var(--rule);border-radius:14px;display:flex;align-items:center;gap:12px;">' +
-          '<div class="comp-avatar-click" data-viewprof="' + c.id + '" role="button" tabindex="0" style="width:44px;height:44px;border-radius:50%;background:var(--surface-2);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:pointer;flex:0 0 auto;transition:transform 0.15s ease;" title="아바타를 클릭해 프로필을 확인하세요">' +
-            c.avatar +
+          '<div class="comp-avatar-click" data-viewprof="' + esc(c.id) + '" role="button" tabindex="0" style="width:44px;height:44px;border-radius:50%;background:var(--surface-2);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:pointer;flex:0 0 auto;overflow:hidden;transition:transform 0.15s ease;" title="아바타를 클릭해 프로필을 확인하세요">' +
+            safeAvatarHtml(c.avatar, 44) +
           '</div>' +
           '<div style="flex:1;min-width:0;">' +
             '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-wrap:wrap;">' +
@@ -1364,41 +1385,82 @@
     }
 
     body.querySelectorAll('[data-viewprof]').forEach(function(el){
-      el.addEventListener('click', function(){
-        var uid = el.dataset.viewprof;
-        var u = (state._companionSearchResults && state._companionSearchResults.find(function(x){ return x.id === uid; })) ||
-                companions.find(function(x){ return x.id === uid; }) ||
+      el.addEventListener('click', function(e){
+        if(e){ e.stopPropagation(); }
+        var uid = String(el.dataset.viewprof || '').trim();
+        var u = (state._companionSearchResults && state._companionSearchResults.find(function(x){ return String(x.id || '').trim().toLowerCase() === uid.toLowerCase(); })) ||
+                companions.find(function(x){ return String(x.id || '').trim().toLowerCase() === uid.toLowerCase(); }) ||
                 _userCache[uid];
         if(u) openUserProfileModal(u);
       });
     });
 
     body.querySelectorAll('[data-addcomp]').forEach(function(btn){
-      btn.addEventListener('click', async function(){
+      btn.addEventListener('click', async function(e){
+        if(e){
+          e.stopPropagation();
+          e.preventDefault();
+        }
         var isGuest = !state.profile || !state.profile.id || String(state.profile.id).indexOf('guest') === 0;
         if(isGuest){
           showGuestSoftAuthGate('동반자 추가');
           return;
         }
-        var uid = btn.dataset.addcomp;
-        var target = (state._companionSearchResults && state._companionSearchResults.find(function(x){ return x.id === uid; })) || _userCache[uid];
-        if(!target) return;
-        if(!companions.some(function(x){ return x.id === target.id; })){
-          companions.push({
+        var uid = String(btn.dataset.addcomp || '').trim();
+        var target = null;
+        if(state._companionSearchResults && Array.isArray(state._companionSearchResults)){
+          target = state._companionSearchResults.find(function(x){
+            return String(x.id || '').trim().toLowerCase() === uid.toLowerCase();
+          });
+        }
+        if(!target && _userCache[uid]){
+          target = _userCache[uid];
+        }
+        if(!target){
+          console.warn('[동반자] 추가 대상 회원을 찾을 수 없음:', uid);
+          if(global.toast) global.toast('회원 정보를 확인하는 중입니다. 다시 시도해주세요.');
+          return;
+        }
+
+        var comps = ensureDefaultCompanions();
+        var alreadyExists = comps.some(function(x){
+          return String(x.id || '').trim().toLowerCase() === String(target.id || '').trim().toLowerCase();
+        });
+
+        if(!alreadyExists){
+          // [낙관적 UI] 클릭 즉시 시각적 상태 갱신하여 멈춤 현상 제거
+          btn.disabled = true;
+          btn.textContent = '✓ 추가됨';
+          btn.style.background = 'var(--surface-2)';
+          btn.style.color = 'var(--brand-strong)';
+          btn.style.borderColor = 'var(--rule)';
+
+          var newComp = {
             id: target.id,
-            nickname: target.nickname,
-            name: target.name,
-            avatar: target.avatar,
+            nickname: target.nickname || target.name || '동반자',
+            name: target.name || target.nickname || '동반자',
+            avatar: target.avatar || '👤',
             level: target.level || 1,
             streak: target.streak || 1,
             theme: target.theme || '동반자',
             intro: target.intro || '',
             goals: target.goals || [],
+            isAiBot: false,
             createdAt: new Date().toISOString()
-          });
-          try { if(global.saveProfile) await global.saveProfile(); } catch(err){ console.warn('[동반자] saveProfile 오류(무시하고 계속):', err); }
+          };
+          comps.push(newComp);
+
+          try {
+            if(global.saveProfile) await global.saveProfile();
+          } catch(err){
+            console.warn('[동반자] saveProfile 오류(무시하고 계속):', err);
+          }
           persistCompanions();
-          if(global.toast) global.toast(target.nickname + '님을 동반자로 추가했어요! 🎉');
+
+          if(global.toast) global.toast((target.nickname || target.name) + '님을 동반자로 추가했어요! 🎉');
+          renderCommCompanions(body);
+        } else {
+          if(global.toast) global.toast('이미 등록된 동반자입니다.');
           renderCommCompanions(body);
         }
       });

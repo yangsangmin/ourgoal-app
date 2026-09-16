@@ -5091,7 +5091,15 @@ check('compliance: [#TASK-ES-124] 동반자 실 사용자 닉네임 검색 2중 
   // 4. DDL 무결성 검증
   assert.ok(rpcSql.includes('grant execute on function public.search_users_by_nickname(text) to anon, authenticated'), 'RPC 공개 권한 완화 SQL 작성');
 
-  // 5. 스마트 안전핀 TECH-RULE-01 (index.html 본체 무결성 보존)
+  // 5. 아바타 URL 안전 렌더링 및 [+ 추가] 버튼 터치 우선권 & 낙관적 UI 무결성 검증
+  assert.ok(commSrc.includes('function safeAvatarHtml('), 'safeAvatarHtml URL/이모지 안전 아바타 렌더러 구현');
+  assert.ok(commSrc.includes('safeAvatarHtml(u.avatar, 36)'), '검색 결과 내 URL 아바타 안전 렌더 배선');
+  assert.ok(commSrc.includes('safeAvatarHtml(c.avatar, 44)'), '동반자 목록 내 URL 아바타 안전 렌더 배선');
+  assert.ok(commSrc.includes('safeAvatarHtml(user.avatar, 72)'), '프로필 모달 내 URL 아바타 안전 렌더 배선');
+  assert.ok(commSrc.includes('z-index:2') && commSrc.includes('touch-action:manipulation'), '동반자 추가 버튼 z-index 및 터치 간섭 방지 배선');
+  assert.ok(commSrc.includes('btn.textContent = \'✓ 추가됨\''), '동반자 추가 버튼 즉시 반응 낙관적 UI 배선');
+
+  // 6. 스마트 안전핀 TECH-RULE-01 (index.html 본체 무결성 보존)
   const htmlSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   const lines = htmlSrc.split(/\r?\n/).length;
   assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');

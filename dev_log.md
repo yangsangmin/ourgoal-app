@@ -3779,3 +3779,24 @@
   - `npm test`: 스모크 264개 전수 통과 (0 failure), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
   - 22,196줄 고정 단언문 0개 확인 (전수 스마트 안전핀 전환 완결).
 ---
+
+### 2026-09-16: [#TASK-ES-128] 동반자 회원 검색 결과 URL 아바타 103자 텍스트 폭발 깨짐 해결 및 [+ 추가] 버튼 터치 우선권 보장 & 낙관적 UI 적용
+- **배경 및 의도**:
+  - 상민님의 직접 피드백("회원검색결과가 이렇게 이상하게 나오고 추가를 눌러도 작동안해... 착수하는데, 추가버튼이 아예 무반응은 아니야 버튼을 누르면 시각적 눌림반응은 하는데 실제 동작을 안하는게 문제야") 접수.
+  - 카카오 로그인 회원의 `avatar`가 103자 이미지 URL(`http://img1.kakaocdn.net/thumb/.../default_profile.jpeg`)로 반환될 때 `<img>` 태그 없이 텍스트 그대로 박혀 1,000px 이상 가로로 폭발하며 화면 전체와 버튼 위를 관통하는 결함 근본 해결.
+  - 오버플로우된 텍스트 노드로 인해 모바일 터치 이벤트(Touch Slop/Hit Testing)가 가로채여 `:active`만 발생하고 `click` 이벤트가 억제되던 문제, ID 대소문자/공백 매칭 불일치 위험, 낙관적 피드백 부재를 전격 개선.
+- **수행 내역**:
+  1. `js/team-invite-comm.js`:
+     - `safeAvatarHtml(avatar, size)` 헬퍼 함수 신설: URL/http/Base64 감지 시 `<img src="..." style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`로 안전 렌더링, 이미지 로드 실패 시 `👤` 자동 폴백.
+     - 아바타 컨테이너(`.comp-avatar-click`) 3곳(검색 결과 카드, 동반자 목록 카드, 프로필 모달) 전수에 `overflow: hidden; flex-shrink: 0;` 적용하여 텍스트 및 이미지의 1픽셀 외부 유출도 원천 차단.
+     - `+ 추가` 버튼에 `position: relative; z-index: 2; touch-action: manipulation; white-space: nowrap; flex-shrink: 0;` 적용하여 터치 히트 테스팅 우선순위 최상위 확보.
+     - `[data-addcomp]` 핸들러에 `e.stopPropagation(); e.preventDefault();` 적용 및 ID 대소문자 무시 트림 비교(`String(x.id).trim().toLowerCase() === uid.toLowerCase()`) 정밀 매칭.
+     - **낙관적 UI(Optimistic UI)** 적용: 클릭 즉시 버튼 텍스트를 `✓ 추가됨`으로 변경하고 비활성화하여 사용자가 지연 없이 즉각적인 시각 피드백을 체감하도록 개선.
+     - 로컬 `companions` 배열 즉시 push 및 화면 동기화, Supabase 영속화는 백그라운드에서 안전 격리 비동기 수행.
+  2. `scripts/smoke-test.js`:
+     - `#TASK-ES-124` 블록 내 URL 아바타 `safeAvatarHtml` 렌더링, `overflow:hidden`, 버튼 `z-index:2`, `touch-action`, `✓ 추가됨` 낙관적 UI 단언문 추가.
+  3. 거버넌스 티켓:
+     - `docs/rules/TICKETS.md`에 `#TASK-ES-128` 공식 등록.
+- **검증 결과**:
+  - `npm test`: 스모크 264개 전수 통과 (0 failure), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
+---
