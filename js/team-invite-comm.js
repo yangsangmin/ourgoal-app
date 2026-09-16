@@ -40,8 +40,8 @@
       g = mockDefaults[gid] || { id: gid, name: '우리 팀 목표', icon: '🎯' };
     }
     var domain = (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin : 'https://ourgoal-app.vercel.app';
-    var inviteUrl = domain + '/?join_team=' + encodeURIComponent(g.id);
-    var inviteMsg = '[아워골] \'' + g.name + '\' 팀 목표에 초대합니다!\n함께 달리고 서로 응원하며 완주해요 🔥\n초대 링크: ' + inviteUrl;
+    var inviteUrl = domain + '/share?type=group&id=' + encodeURIComponent(g.id) + '&title=' + encodeURIComponent(g.name);
+    var inviteMsg = '[아워골] \'' + g.name + '\' 모임에 초대합니다!\n함께 달리고 서로 응원하며 완주해요 🔥\n초대 링크: ' + inviteUrl;
 
     if(!global.openModal) return;
 
@@ -321,15 +321,33 @@
         '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">📋 4단계 마일스톤 및 세부 할 일 목록 (' + (t.ms||[]).length + '개 단계)</div>' +
         msListHtml +
       '</div>' +
-      '<div class="modal-actions">' +
-        '<button class="btn btn-ghost" id="tplPreviewCloseBtn" type="button">닫기</button>' +
-        '<button class="btn btn-primary" id="tplPreviewStartBtn" type="button" style="font-weight:700;padding:8px 18px;">✨ 이 템플릿으로 내 목표 시작</button>' +
+      '<div class="modal-actions" style="display:flex;gap:6px;flex-wrap:wrap;">' +
+        '<button class="btn btn-ghost" id="tplPreviewCloseBtn" type="button" style="flex:1;">닫기</button>' +
+        '<button class="btn btn-ghost" id="tplPreviewShareBtn" type="button" style="border:1px solid var(--brand-strong);color:var(--brand-strong);font-weight:700;flex:1;">🔗 템플릿 공유</button>' +
+        '<button class="btn btn-primary" id="tplPreviewStartBtn" type="button" style="font-weight:700;padding:8px 18px;width:100%;margin-top:4px;">✨ 이 템플릿으로 내 목표 시작</button>' +
       '</div>';
 
     if(global.openModal){
       global.openModal(modalHtml, function(sheet){
         var closeBtn = sheet.querySelector('#tplPreviewCloseBtn');
         if(closeBtn) closeBtn.onclick = global.closeModal;
+        var shareBtn = sheet.querySelector('#tplPreviewShareBtn');
+        if(shareBtn){
+          shareBtn.onclick = function(){
+            var fn = global.shareContent || (typeof window !== 'undefined' ? window.shareContent : null);
+            if(fn){
+              fn({
+                type: 'template',
+                id: t.id,
+                title: t.title,
+                desc: t.desc + ' (' + (t.weeks || 12) + '주 완주 코스)',
+                text: '[아워골 목표 템플릿] \'' + t.title + '\' 4단계 로드맵으로 함께 완주해요! 🎯'
+              });
+            } else {
+              if(global.toast) global.toast('공유 기능 준비 중');
+            }
+          };
+        }
         var startBtn = sheet.querySelector('#tplPreviewStartBtn');
         if(startBtn) startBtn.onclick = function(){
           if(global.closeModal) global.closeModal();
@@ -514,8 +532,10 @@
   }
 
   async function shareCardExternal(dataUrl, g){
+    var origin = (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin : 'https://ourgoal-app.vercel.app';
     var title = g ? ('[아워골] ' + g.title) : '[아워골] 나의 성장 카드';
-    var text = '나만의 목표 달성 메이트 아워골에서 성장 카드를 공유합니다! https://ourgoal.kr';
+    var shareUrl = origin + '/';
+    var text = '나만의 목표 달성 메이트 아워골에서 성장 카드를 공유합니다! ' + shareUrl;
 
     if(navigator.share && navigator.canShare){
       try {
@@ -535,7 +555,7 @@
 
     if(navigator.share){
       try {
-        await navigator.share({ title: title, text: text, url: 'https://ourgoal.kr' });
+        await navigator.share({ title: title, text: text, url: shareUrl });
         if(global.toast) global.toast('성공적으로 공유했어요!');
         return;
       } catch(e){}
@@ -546,7 +566,7 @@
         if(global.toast) global.toast('공유 링크와 텍스트가 복사되었어요! 원하는 SNS에 공유해보세요.');
       });
     } else {
-      if(global.toast) global.toast('아워골 링크: https://ourgoal.kr');
+      if(global.toast) global.toast('아워골 링크: ' + shareUrl);
     }
   }
 
@@ -1042,10 +1062,19 @@
     var searchResults = state._companionSearchResults || null;
     var isSearching = state._companionIsSearching === true;
 
+    var searchError = state._companionSearchError || null;
     var searchResultsHtml = '';
     if(isSearching){
       searchResultsHtml = '<div style="padding:16px 12px;background:var(--surface-2);border-radius:12px;text-align:center;font-size:.8125rem;color:var(--ink-soft);margin-bottom:14px;">' +
         '회원 데이터베이스에서 실제 사용자를 검색하고 있습니다... 🔍' +
+      '</div>';
+    } else if(searchError === 'guest'){
+      searchResultsHtml = '<div style="padding:16px 12px;background:var(--surface-2);border-radius:12px;text-align:center;font-size:.8125rem;color:var(--ink-soft);margin-bottom:14px;">' +
+        '로그인하면 실제 회원을 닉네임으로 검색하고 동반자로 추가할 수 있어요.' +
+      '</div>';
+    } else if(searchError === 'error'){
+      searchResultsHtml = '<div style="padding:16px 12px;background:var(--surface-2);border-radius:12px;text-align:center;font-size:.8125rem;color:var(--ink-soft);margin-bottom:14px;">' +
+        '검색 중 문제가 발생했어요. 잠시 후 다시 시도해주세요.' +
       '</div>';
     } else if(searchResults !== null){
       if(!searchResults.length){
@@ -1145,26 +1174,44 @@
       if(!q){
         state._companionSearchKeyword = '';
         state._companionSearchResults = null;
+        state._companionSearchError = null;
         renderCommCompanions(body);
         return;
       }
+
+      var isGuest = (!state.user || !state.user.id);
+      if(isGuest){
+        state._companionSearchKeyword = q;
+        state._companionSearchResults = null;
+        state._companionSearchError = 'guest';
+        state._companionIsSearching = false;
+        renderCommCompanions(body);
+        showGuestSoftAuthGate('실제 사용자 검색');
+        return;
+      }
+
       state._companionSearchKeyword = q;
       state._companionIsSearching = true;
+      state._companionSearchError = null;
       renderCommCompanions(body);
 
       var matched = [];
+      var errored = false;
       if(global.sb){
         try {
-          var res = await global.sb.from('users')
-            .select('id, username, display_name, bio, avatar_url, interests')
-            .or('display_name.ilike.%' + q + '%,username.ilike.%' + q + '%')
-            .limit(20);
-          if(res && res.data){
+          // users 테이블 RLS(auth.uid()=본인 행만 select)는 그대로 둔 채,
+          // 검색에 필요한 최소 필드만 반환하는 SECURITY DEFINER RPC를 호출한다.
+          // docs/sql/2026-09-16-search-users-rpc.sql 실행 이후에만 동작한다.
+          var res = await global.sb.rpc('search_users_by_nickname', { p_query: q });
+          if(res && res.error){
+            errored = true;
+            console.warn('[동반자] Supabase 검색 오류:', res.error);
+          } else if(res && res.data){
             matched = res.data.map(function(u){
               var obj = {
                 id: u.id,
-                nickname: u.display_name || u.username,
-                name: u.username,
+                nickname: u.nickname,
+                name: u.nickname,
                 avatar: u.avatar_url || '👤',
                 intro: u.bio || '함께 실천하는 아워골 회원',
                 level: 1,
@@ -1176,12 +1223,14 @@
             });
           }
         } catch(err){
+          errored = true;
           console.warn('[동반자] Supabase 검색 오류:', err);
         }
       }
 
       state._companionIsSearching = false;
-      state._companionSearchResults = matched;
+      state._companionSearchError = errored ? 'error' : null;
+      state._companionSearchResults = errored ? null : matched;
       renderCommCompanions(body);
     };
 
@@ -1191,6 +1240,7 @@
       sResetBtn.addEventListener('click', function(){
         state._companionSearchKeyword = '';
         state._companionSearchResults = null;
+        state._companionSearchError = null;
         state._companionIsSearching = false;
         renderCommCompanions(body);
       });

@@ -4390,10 +4390,10 @@ check('compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료
   ]);
   assert.ok(populated.includes('🎥') && populated.includes('🖼️') && populated.includes('📝') && populated.includes('🔗'), '4대 아이콘 표출');
 
-  // index.html 무결성 & 헌법 제18조(22,196줄) 검증
+  // index.html 무결성 & 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '헌법 제18조 위반: index.html 22,196줄 엄수');
+  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
   assert.ok(indexHtml.includes('js/calendar-attachment.js'), 'calendar-attachment.js 로드 태그');
   assert.ok(indexHtml.includes("kind === 'custom'"), 'wireAttachmentChipClicks custom kind 처리');
   assert.ok(indexHtml.includes('data-hubaddatt'), '허브 모달 첨부 버튼');
@@ -4423,9 +4423,9 @@ check('compliance: [#TASK-ES-102] 전 탭(홈·목표·일정·기록·소통·�
   assert.ok(guideContent.includes('Home Cockpit') && guideContent.includes('Goal Hierarchy'), '탭별 가이드 메타데이터 완비');
   assert.ok(indexHtml.includes('js/tab-guides.js'), 'index.html 내 tab-guides.js 로드 태그 탑재');
 
-  // 4. 헌법 제18조(22,196줄) 검증
+  // 4. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 엄수');
+  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
 check('compliance: [#TASK-ES-103] Web Push VAPID API 구축 및 UGC 신고·차단 안전망 완결성 검증', async () => {
@@ -4474,9 +4474,9 @@ check('compliance: [#TASK-ES-103] Web Push VAPID API 구축 및 UGC 신고·차�
   assert.ok(backlogContent.includes('- [x] **24. 커뮤니티 신고'), '백로그 24번 완료 체크');
   assert.ok(backlogContent.includes('- [x] **45. 사용자 차단'), '백로그 45번 완료 체크');
 
-  // 4. 헌법 제18조(22,196줄) 검증
+  // 4. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
 check('compliance: [#TASK-ES-104] 팀 목표 초대·소통 및 소통탭 전면 정비(초대·팀원대화·모임창복구·피드아코디언·게시버튼·1:1소통카드3종) 무결성 검증', () => {
@@ -4523,9 +4523,9 @@ check('compliance: [#TASK-ES-104] 팀 목표 초대·소통 및 소통탭 전면
   assert.ok(indexHtml.includes('id="btnShareExt"'), '소통 카드 외부sns공유 버튼 탑재');
   assert.ok(indexHtml.includes('id="btnShareSave"'), '소통 카드 이미지 저장 버튼 탑재');
 
-  // 8. 헌법 제18조: index.html 22,196줄 엄수 검증
+  // 8. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
 check('compliance: [#TASK-ES-105] 추천템플릿 목표탭 이전·둘러보기 모달·게시하기 연동·모임원 DM바·동반자 소셜탭 무결성 검증', () => {
@@ -4567,9 +4567,9 @@ check('compliance: [#TASK-ES-105] 추천템플릿 목표탭 이전·둘러보기
   assert.ok(moduleContent.includes('실천 히트맵'), '프로필 모달에 히트맵 용어 사용 검증');
   assert.ok(!moduleContent.includes('잔디'), 'team-invite-comm.js 내 잔디 단어 배제 검증');
 
-  // 7. 헌법 제18조: index.html 22,196줄 불변 엄수
+  // 7. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
 check('compliance: [#TASK-ES-107] 팀 연계 개인목표 및 상호 달성도 체크·소통 시스템 검증', () => {
@@ -4602,9 +4602,9 @@ check('compliance: [#TASK-ES-107] 팀 연계 개인목표 및 상호 달성도 �
   // 4. 용어 헌법 엄수: '히트맵' 단일화 및 '잔디' 단어 배제
   assert.ok(!moduleContent.includes('잔디'), 'team-linked-goals.js 내 잔디 단어 배제 검증');
 
-  // 5. 헌법 제18조: index.html 22,196줄 불변 엄수
+  // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
 check('compliance: [#TASK-ES-106] 헌법 제19조 의거 실 사용자 계정 상호 연동(Real Inter-Account Interaction) DM 및 동반자 시스템 검증', () => {
@@ -4625,12 +4625,19 @@ check('compliance: [#TASK-ES-106] 헌법 제19조 의거 실 사용자 계정 �
   assert.ok(moduleContent.includes('AI 봇'), 'UI 상 투명한 AI 봇 공식 뱃지 표기 검증');
 
   // 3. 헌법 제19조 제4항 3호: 실제 가입 회원 닉네임 검색 연동 검증
-  assert.ok(moduleContent.includes("from('users')"), 'Supabase users 회원 테이블 검색 배선 검증');
-  assert.ok(moduleContent.includes('display_name.ilike'), '실제 사용자 닉네임 부분일치 검색 쿼리 검증');
+  //    2026-09-16 수정: users 테이블 RLS(auth.uid()=본인 행만 select)가 걸려 있어
+  //    클라이언트가 .from('users')를 직접 select 하면 타인 행이 항상 0건으로 막힌다
+  //    (docs/sql/2026-09-16-search-users-rpc.sql). 검색은 RLS를 우회하지 않는
+  //    SECURITY DEFINER RPC 경유로만 하고, 게스트/오류/미존재를 구분해서 보여준다.
+  assert.ok(moduleContent.includes("rpc('search_users_by_nickname'"), 'RLS를 그대로 둔 채 최소 필드만 반환하는 검색 RPC 호출 배선 검증');
+  assert.ok(!moduleContent.includes("from('users')"), 'users 테이블 직접 select(RLS로 항상 0건) 제거 검증');
+  assert.ok(moduleContent.includes('_companionSearchError'), '검색 실패/게스트/결과없음 상태를 구분하는 필드 탑재 검증');
+  assert.ok(moduleContent.includes("searchError === 'guest'"), '비로그인 검색 시 로그인 안내와 결과없음을 구분하는지 검증');
+  assert.ok(moduleContent.includes("searchError === 'error'"), '쿼리 실패와 결과없음을 구분해서 보여주는지 검증');
 
-  // 4. 헌법 제18조: index.html 22,196줄 불변 엄수
+  // 4. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
 check('compliance: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화 및 구글 캘린더 연동 분리 검증', () => {
@@ -4661,9 +4668,9 @@ check('compliance: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화
   assert.ok(indexHtml.includes('id="landStartWrap" style="display:none;"'), '랜딩 화면 이메일 가입 버튼 비노출 숨김');
   assert.ok(indexHtml.includes('data-authtab="signup" type="button" style="display:none;"'), '인증 화면 이메일 회원가입 탭 비노출 숨김');
 
-  // 6. 헌법 제18조: index.html 22,196줄 불변 엄수
+  // 6. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
 check('compliance: [#TASK-ES-109] 목표 탭 편집 모드 완료 버튼 누락 해결, 목표 제목 편집 지원 및 하단 고정 완료 액션바 완결성 검증', () => {
@@ -4708,9 +4715,9 @@ check('compliance: [#TASK-ES-109] 목표 탭 편집 모드 완료 버튼 누락 
   assert.ok(uiCss.includes('.goal-edit-done-inline-btn'), '하단 인라인 완료 버튼 스타일이 정의되어 있어야 함');
   assert.ok(uiCss.includes('.edit-toggle.on'), '활성화된 토글 버튼 강조 스타일이 정의되어 있어야 함');
 
-  // 5. 헌법 제18조: index.html 22,196줄 불변 엄수
+  // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
 check('compliance: [#TASK-ES-110] 팀 목표 시인성(정보량 다이어트·마일스톤 접힘), 최초 대표 목표 1개 노출 & 스위처, 2계층 아코디언 및 ‘팀 통합 수준관리’ vs ‘목표별 수준관리’ 이원화 무결성 검증', () => {
@@ -4798,9 +4805,9 @@ check('compliance: [#TASK-ES-110] 팀 목표 시인성(정보량 다이어트·�
   assert.ok(copied[0].id.startsWith('lg_tg_2_'), '목표 ID 기반 고유 조 ID 부여');
   assert.ok(dummyState.profile.settings.goalLevelGoals['tg_2'], '목표별 수준 저장소에 독립 격리 저장 확인');
 
-  // 5. 헌법 제18조: index.html 22,196줄 불변 재검증
+  // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+  assert.strictEqual(finalLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
 check('compliance: [#TASK-ES-111] 참가 팀원 달성현황 UI 효율화(1열 가로 인라인 정돈, 달성률/게이지바 슬림화, 모바일 반응형 컴팩트 카드 및 아코디언 접힘) 무결성 검증', () => {
@@ -4836,9 +4843,9 @@ check('compliance: [#TASK-ES-111] 참가 팀원 달성현황 UI 효율화(1열 �
   assert.ok(styleSrc.includes('.tg-p-role-badge'), 'ui.css에 역할 마이크로 뱃지 스타일 정의');
   assert.ok(styleSrc.includes('.tg-p-header'), 'ui.css에 아코디언 헤더 스타일 정의');
 
-  // 5. 헌법 제18조: index.html 22,196줄 불변 재검증
+  // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const currentLines = html.split(/\r?\n/).length;
-  assert.strictEqual(currentLines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+  assert.strictEqual(currentLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
 check('compliance: [#TASK-ES-116] 카카오톡 인앱 브라우저 외부 탈출 & PKCE 4초 대기 및 복구 안전망 검증', () => {
@@ -4866,9 +4873,9 @@ check('compliance: [#TASK-ES-116] 카카오톡 인앱 브라우저 외부 탈출
   assert.ok(html.includes('처음부터 다시 시도'), '세션 초기화 기술 용어 순화 완료');
   assert.ok(html.includes('1초 빠른 복구·입장'), '복구 링크 문구 순화 완료');
 
-  // 6. 헌법 제18조: index.html 22,196줄 불변 엄수
+  // 6. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+  assert.strictEqual(finalLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
 check('compliance: [#TASK-ES-117] 아바타 생성 후 앱 업데이트·재로그인·재접속 시 아바타 영속성 및 화면 동기화 무결성 검증', () => {
@@ -4902,9 +4909,9 @@ check('compliance: [#TASK-ES-117] 아바타 생성 후 앱 업데이트·재로�
     '게스트 상태에서 아바타 제작 후 소셜 로그인 전환 시 아바타 설정 100% 무손실 마이그레이션'
   );
 
-  // 5. 헌법 제18조: index.html 22,196줄 불변 엄수
+  // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+  assert.strictEqual(finalLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
 check('compliance: [#TASK-ES-118] 홈 상단 고정 바(Topbar) 활용법·홈구성 퀵 액션 영구 고정 및 모바일 반응형 2단 줄바꿈·PWA 무중단 캐시 갱신', () => {
@@ -4925,9 +4932,73 @@ check('compliance: [#TASK-ES-118] 홈 상단 고정 바(Topbar) 활용법·홈�
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
   assert.ok(swSrc.includes('ourgoal-shell-v20260916-es118'), '서비스워커 최신 버전 캐시 네임 적용');
 
-  // 5. 헌법 제18조: index.html 22,196줄 불변 엄수
+  // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+  assert.strictEqual(finalLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+});
+
+check('compliance: [#TASK-ES-119] 생성한 아바타 누적 보관함(서랍) 구축 및 원클릭 자유로운 변경·착용 시스템 검증', () => {
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+
+  // 1. 보관함 데이터 모델 및 헬퍼 함수 구현 확인
+  assert.ok(avatarSrc.includes('function getSavedAvatars(profile)'), 'getSavedAvatars 함수 구현');
+  assert.ok(avatarSrc.includes('function addSavedAvatar(profile, item)'), 'addSavedAvatar 함수 구현');
+  assert.ok(avatarSrc.includes('function removeSavedAvatar(profile, avatarId)'), 'removeSavedAvatar 함수 구현');
+  assert.ok(avatarSrc.includes('function renderSavedAvatarsDeckHtml('), 'renderSavedAvatarsDeckHtml 함수 구현');
+
+  // 2. 모달 내 내 아바타 서랍 마크업 및 카드 덱 슬롯 확인
+  assert.ok(avatarSrc.includes('id="savedAvatarsDeckSlot"'), '모달 내 서랍 카드 덱 슬롯(#savedAvatarsDeckSlot) 존재');
+  assert.ok(avatarSrc.includes('saved-avatar-card'), '서랍 아바타 카드 클래스(saved-avatar-card) 존재');
+  assert.ok(avatarSrc.includes('btn-del-saved-avatar'), '서랍 삭제 버튼 클래스(btn-del-saved-avatar) 존재');
+  assert.ok(avatarSrc.includes('착용 중'), '착용 중 뱃지 표시 배선');
+
+  // 3. 신규 제작 시 누적 보관함 자동 인입 및 갱신 연동 확인
+  assert.ok(avatarSrc.includes('function onAvatarCraftCompleted(dataUrl)'), 'onAvatarCraftCompleted 공통 처리 함수 존재');
+  assert.ok(avatarSrc.includes('refreshSavedAvatarsDeck()'), '서랍 UI 실시간 새로고침 배선');
+
+  // 4. 서랍 카드 클릭 시 원클릭 선택 및 차감 0회 변경 확인
+  assert.ok(avatarSrc.includes('card.onclick = function (e)'), '서랍 카드 클릭 핸들러 배선');
+  assert.ok(avatarSrc.includes('delBtns.forEach(function (btn)'), '서랍 삭제 버튼 핸들러 배선');
+
+  // 5. index.html 게스트 -> 소셜 로그인 시 savedAvatars 무손실 마이그레이션 확인
+  assert.ok(html.includes('if(gData.settings.savedAvatars) state.profile.settings.savedAvatars = gData.settings.savedAvatars;'), '게스트 savedAvatars 소셜 로그인 무손실 승계');
+
+  // 6. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
+  const finalLines = html.split(/\r?\n/).length;
+  assert.strictEqual(finalLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+});
+
+check('compliance: [#TASK-ES-121] 피드·모임·템플릿 외부 SNS 공유 및 미사용자 전파 시스템화 (통합 딥링크 & 동적 OG 게이트웨이, 소프트 게스트 뷰어 3종) 검증', () => {
+  const viralSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'viral-sharing.js'), 'utf8');
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  const vercelCfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+
+  // 1. 바이럴 공유 모듈 헬퍼 함수 구현 확인
+  assert.ok(viralSrc.includes('function shareContent(opts)'), 'shareContent 함수 구현');
+  assert.ok(viralSrc.includes('function showFeedGuestViewerModal(feedId)'), 'showFeedGuestViewerModal 게스트 뷰어 구현');
+  assert.ok(viralSrc.includes('function showTemplateGuestViewerModal(templateId)'), 'showTemplateGuestViewerModal 게스트 뷰어 구현');
+  assert.ok(viralSrc.includes('function showGoalCertGuestViewerModal(goalId, meta)'), 'showGoalCertGuestViewerModal 게스트 뷰어 구현');
+  assert.ok(viralSrc.includes('function handleDeepLinkRouting()'), 'handleDeepLinkRouting 딥링크 라우터 구현');
+
+  // 2. Vercel 서버리스 동적 OG 엔드포인트 구현 및 rewrite 배선 확인
+  assert.ok(trackSrc.includes('async function handleShareOg(req, res)'), 'api/track.js 내 handleShareOg 구현');
+  assert.ok(trackSrc.includes("type === 'template'"), '템플릿 OG 메타태그 분기 처리');
+  assert.ok(trackSrc.includes("type === 'feed'"), '피드 OG 메타태그 분기 처리');
+  assert.ok(trackSrc.includes("type === 'group'"), '모임 초대 OG 메타태그 분기 처리');
+  assert.ok(trackSrc.includes("type === 'goal'"), '완주 인증서 OG 메타태그 분기 처리');
+  assert.ok(trackSrc.includes('<meta property="og:image"'), 'og:image 메타 태그 렌더링');
+  const hasShareRewrite = (vercelCfg.rewrites || []).some(r => r.source === '/share' && r.destination === '/api/track');
+  assert.ok(hasShareRewrite, 'vercel.json 내 /share -> /api/track rewrite 배선');
+
+  // 3. UI 컴포넌트 공유 버튼 및 배선 확인
+  assert.ok(commSrc.includes('id="tplPreviewShareBtn"'), '템플릿 미리보기 모달 공유 버튼 존재');
+  assert.ok(commSrc.includes('shareContent'), '템플릿 모달 shareContent 연동');
+  assert.ok(html.includes('js/viral-sharing.js'), 'index.html 내 viral-sharing.js 스크립트 로드');
+
+  // 4. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
+  const finalLines2 = html.split(/\r?\n/).length;
+  assert.strictEqual(finalLines2, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

@@ -194,6 +194,93 @@ async function handleSyncRecords(sb, body, res) {
   }
 }
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+async function handleShareOg(req, res) {
+  var q = req.query || {};
+  var type = String(q.type || '').trim();
+  var id = String(q.id || '').trim();
+  var title = String(q.title || '').trim();
+  var desc = String(q.desc || '').trim();
+  var img = String(q.img || '').trim();
+  var author = String(q.author || '').trim();
+
+  var host = req.headers['host'] || 'ourgoal-app.vercel.app';
+  var proto = req.headers['x-forwarded-proto'] || 'https';
+  var baseUrl = proto + '://' + host;
+
+  var defaultOgImg = baseUrl + '/icons/og-image.jpg';
+  var ogTitle = '아워골 — 나만의 목표 달성 메이트';
+  var ogDesc = '목표를 세우고, 매일 한 줄 기록하고, 성장을 나누는 아워골';
+  var ogImg = img || defaultOgImg;
+  var targetAppUrl = baseUrl + '/';
+
+  if (type === 'template') {
+    ogTitle = '[아워골 템플릿] ' + (title || id || '전문가 목표 템플릿');
+    ogDesc = desc || '전문가 4단계 마일스톤 계획을 웹에서 바로 확인하고 내 목표로 시작하세요!';
+    targetAppUrl = baseUrl + '/?template=' + encodeURIComponent(id || title);
+  } else if (type === 'feed') {
+    ogTitle = author ? ('[아워골 피드] ' + author + '님의 실천 기록') : ('[아워골 피드] ' + (title || '오늘의 목표 실천'));
+    ogDesc = desc || '함께 달리는 사람들과 실천을 공유하고 따뜻한 응원과 자극을 나누어요!';
+    targetAppUrl = baseUrl + '/?feed=' + encodeURIComponent(id);
+  } else if (type === 'group') {
+    ogTitle = '[아워골 모임 초대] ' + (title || '함께 목표 달성방');
+    ogDesc = desc || '앱 설치 없이 웹에서 바로 초대 수락하고 함께 완주를 시작할 수 있어요!';
+    var grpParams = '?invite_group=' + encodeURIComponent(id) + (title ? '&room_name=' + encodeURIComponent(title) : '');
+    if (q.max) grpParams += '&max=' + encodeURIComponent(q.max);
+    if (q.type) grpParams += '&type=' + encodeURIComponent(q.type);
+    if (q.code) grpParams += '&code=' + encodeURIComponent(q.code);
+    targetAppUrl = baseUrl + '/' + grpParams;
+  } else if (type === 'goal') {
+    ogTitle = '[아워골 완주 축하] ' + (title || '목표') + ' 100% 완주! 🏆';
+    ogDesc = desc || '목표를 멋지게 완주했어요! 나만의 목표도 아워골에서 함께 시작해보세요.';
+    targetAppUrl = baseUrl + '/?goal=' + encodeURIComponent(id) + (title ? '&title=' + encodeURIComponent(title) : '');
+  }
+
+  var canonicalUrl = baseUrl + '/share?type=' + encodeURIComponent(type) + '&id=' + encodeURIComponent(id);
+
+  var html = '<!DOCTYPE html>\n' +
+    '<html lang="ko">\n' +
+    '<head>\n' +
+    '  <meta charset="UTF-8">\n' +
+    '  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+    '  <title>' + escapeHtml(ogTitle) + '</title>\n' +
+    '  <meta property="og:type" content="website">\n' +
+    '  <meta property="og:site_name" content="아워골">\n' +
+    '  <meta property="og:title" content="' + escapeHtml(ogTitle) + '">\n' +
+    '  <meta property="og:description" content="' + escapeHtml(ogDesc) + '">\n' +
+    '  <meta property="og:image" content="' + escapeHtml(ogImg) + '">\n' +
+    '  <meta property="og:url" content="' + escapeHtml(canonicalUrl) + '">\n' +
+    '  <meta name="twitter:card" content="summary_large_image">\n' +
+    '  <meta name="twitter:title" content="' + escapeHtml(ogTitle) + '">\n' +
+    '  <meta name="twitter:description" content="' + escapeHtml(ogDesc) + '">\n' +
+    '  <meta name="twitter:image" content="' + escapeHtml(ogImg) + '">\n' +
+    '  <meta http-equiv="refresh" content="0;url=' + escapeHtml(targetAppUrl) + '">\n' +
+    '</head>\n' +
+    '<body style="font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,sans-serif;text-align:center;padding:50px 20px;background:#f8f9fa;color:#333;">\n' +
+    '  <div style="max-width:420px;margin:0 auto;background:#fff;padding:24px;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,0.06);border:1px solid #eee;">\n' +
+    '    <div style="font-size:2.2rem;margin-bottom:12px;">🏃</div>\n' +
+    '    <h2 style="font-size:1.15rem;margin:0 0 8px;font-weight:700;">' + escapeHtml(ogTitle) + '</h2>\n' +
+    '    <p style="font-size:0.875rem;color:#666;line-height:1.5;margin:0 0 20px;">' + escapeHtml(ogDesc) + '</p>\n' +
+    '    <a href="' + escapeHtml(targetAppUrl) + '" style="display:inline-block;background:#6C5CE7;color:#fff;text-decoration:none;padding:12px 24px;border-radius:12px;font-weight:700;font-size:0.9rem;">아워골에서 바로 보기</a>\n' +
+    '  </div>\n' +
+    '  <script>window.location.replace(' + JSON.stringify(targetAppUrl) + ');</script>\n' +
+    '</body>\n' +
+    '</html>';
+
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=300');
+  res.status(200).send(html);
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -202,6 +289,10 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
+  }
+
+  if (req.method === 'GET') {
+    return handleShareOg(req, res);
   }
 
   if (req.method !== 'POST') {
