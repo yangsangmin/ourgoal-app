@@ -593,7 +593,133 @@
    * 5. 실 사용자 계정 상호 연동 1:1 DM 시스템 (헌법 제19조 준수)
    * ------------------------------------------------------------ */
   var _activeDmChannel = null;
+  var _incomingDmChannel = null;
+  var _incomingDmRooms = [];
+  var _incomingDmLoadedForUser = null;
+  var _hasUnreadDm = false;
   var _userCache = {};
+
+  function updateDmUnreadBadge(hasUnread){
+    _hasUnreadDm = !!hasUnread;
+    try {
+      var commNavBadge = document.getElementById('commNavBadge');
+      if(commNavBadge){
+        commNavBadge.style.display = _hasUnreadDm ? 'block' : 'none';
+      }
+      var dmSubtabBadge = document.getElementById('dmSubtabBadge');
+      if(dmSubtabBadge){
+        dmSubtabBadge.style.display = _hasUnreadDm ? 'inline-block' : 'none';
+      }
+    } catch(e){}
+  }
+
+  function getDmUnreadStatus(){
+    return _hasUnreadDm;
+  }
+
+  async function loadIncomingDmRooms(myId){
+    if(!global.sb || !myId || String(myId).indexOf('guest') === 0) return [];
+    try {
+      var res = await global.sb.from('team_ping_replies')
+        .select('id, ping_id, sender_id, sender_name, sender_avatar, receiver_id, message, created_at')
+        .eq('receiver_id', myId)
+        .order('created_at', { ascending: false })
+        .limit(50);
+      if(res && res.data){
+        var state = global.state || {};
+        var comps = (state.profile && state.profile.companions) || [];
+        var seenSenders = {};
+        var rooms = [];
+        res.data.forEach(function(r){
+          if(!r.sender_id || r.sender_id === myId) return;
+          if(seenSenders[r.sender_id]) return;
+          seenSenders[r.sender_id] = true;
+
+          var isMyComp = comps.some(function(c){
+            return String(c.id || '').trim().toLowerCase() === String(r.sender_id).trim().toLowerCase();
+          });
+
+          if(!isMyComp){
+            var roomItem = {
+              id: r.sender_id,
+              name: r.sender_name || '동반자',
+              nickname: r.sender_name || '동반자',
+              avatar: r.sender_avatar || '👤',
+              intro: r.message,
+              isIncoming: true,
+              lastMsg: r.message,
+              lastTime: r.created_at,
+              theme: '새 대화 요청',
+              _thread: [{
+                id: r.id,
+                from: 'them',
+                text: r.message,
+                time: global.fmtTime ? global.fmtTime(r.created_at) : '최근'
+              }]
+            };
+            rooms.push(roomItem);
+            _userCache[r.sender_id] = roomItem;
+          }
+        });
+        _incomingDmRooms = rooms;
+        _incomingDmLoadedForUser = myId;
+        return rooms;
+      }
+    } catch(err){
+      console.warn('[DM] incoming dm rooms 로드 오류:', err);
+    }
+    return [];
+  }
+
+  function initIncomingDmListener(myId){
+    if(!global.sb || !myId || String(myId).indexOf('guest') === 0) return;
+    if(_incomingDmChannel){
+      try { _incomingDmChannel.unsubscribe(); } catch(e){}
+      _incomingDmChannel = null;
+    }
+    try {
+      _incomingDmChannel = global.sb.channel('incoming_dm_global_' + myId)
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'team_ping_replies',
+          filter: 'receiver_id=eq.' + myId
+        }, function(payload){
+          var r = payload.new;
+          if(!r || r.sender_id === myId) return;
+
+          var state = global.state || {};
+          var isInThisDm = (state.activeTab === 'comm' && state.commSubTab === 'dm' && state.dmActiveId === r.sender_id);
+
+          // 1. 인앱 토스트 알림 (대화방 안에 직접 머물러 있지 않을 때만)
+          if(!isInThisDm){
+            var senderTitle = r.sender_name || '동반자';
+            showToast('💬 ' + senderTitle + '님의 새 메시지: ' + (r.message || ''));
+            updateDmUnreadBadge(true);
+          }
+
+          // 2. 수신 목록 캐시 즉시 갱신 및 뷰 갱신
+          loadIncomingDmRooms(myId).then(function(){
+            if(state.activeTab === 'comm' && state.commSubTab === 'dm' && !state.dmActiveId){
+              var subBody = document.getElementById('commSubBody');
+              if(subBody && document.body.contains(subBody)){
+                renderCommDM(subBody);
+              }
+            }
+          });
+        })
+        .subscribe();
+
+      // 최초 1회 incoming 대화 목록 로드 & 미확인 확인
+      loadIncomingDmRooms(myId).then(function(rooms){
+        if(rooms && rooms.length > 0){
+          updateDmUnreadBadge(true);
+        }
+      });
+    } catch(err){
+      console.warn('[DM] 전역 Realtime 리스너 설정 오류:', err);
+    }
+  }
 
   function showGuestSoftAuthGate(actionName){
     if(global.openModal){
@@ -647,6 +773,9 @@
     var comps = (global.state && global.state.profile && global.state.profile.companions) || [];
     var c = comps.find(function(x){ return x.id === id; });
     if(c) return c;
+
+    var inc = _incomingDmRooms.find(function(x){ return x.id === id; });
+    if(inc) return inc;
 
     if(_userCache[id]) return _userCache[id];
 
@@ -761,11 +890,26 @@
       var subTitle = person.groupName ? ('👥 ' + esc(person.groupName) + (person.role ? ' · ' + esc(person.role) : '')) : (person.theme ? ('🤝 동반자 · ' + esc(person.theme)) : '아워골 회원');
       var badgeTag = person.isAiBot ? '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--brand-strong);margin-left:6px;">🤖 AI 봇</span>' : '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--ink);margin-left:6px;">실 사용자</span>';
 
+      var isMyCompanion = (state.profile && state.profile.companions || []).some(function(c){
+        return String(c.id || '').trim().toLowerCase() === String(person.id || '').trim().toLowerCase();
+      });
+      var canFollowBack = !isMyCompanion && !person.isAiBot && String(person.id).indexOf('mem_') !== 0;
+      var followBackBannerHtml = canFollowBack ? (
+        '<div id="dmFollowBackBanner" style="margin-bottom:12px;padding:10px 14px;background:var(--surface-2);border:1.5px solid var(--brand);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;">' +
+          '<div style="font-size:.8125rem;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
+            '<span style="font-size:1.1rem;">🤝</span>' +
+            '<span><b>' + esc(person.nickname || person.name) + '</b>님을 내 동반자로 추가하시겠습니까?</span>' +
+          '</div>' +
+          '<button type="button" class="btn btn-primary btn-sm" id="btnDmFollowBack" style="font-size:.75rem;padding:6px 12px;border-radius:8px;white-space:nowrap;font-weight:700;cursor:pointer;">+ 맞추가</button>' +
+        '</div>'
+      ) : '';
+
       var msgsHtml = (person._thread && person._thread.length) ? person._thread.map(function(m){
         return '<div class="dm-msg ' + m.from + '">' + esc(m.text) + '</div>';
       }).join('') : '<div style="text-align:center;padding:24px 10px;font-size:.8125rem;color:var(--ink-faint);">아직 주고받은 메시지가 없습니다.<br>첫 대화를 건네보세요! 👋</div>';
 
       body.innerHTML = '<span class="dm-back" id="dmBack" style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-size:.875rem;font-weight:700;color:var(--brand-strong);margin-bottom:12px;">‹ 목록으로</span>' +
+        followBackBannerHtml +
         '<div class="dm-thread-wrap">' +
           '<div class="dm-thread-head" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card);border-bottom:1px solid var(--rule);">' +
             '<div class="feed-avatar" style="width:40px;height:40px;font-size:1.4rem;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border-radius:50%;overflow:hidden;flex-shrink:0;">' + safeAvatarHtml(person.avatar, 40) + '</div>' +
@@ -793,6 +937,30 @@
         state.dmActiveId = null;
         renderCommDM(body);
       });
+
+      var btnFollow = document.getElementById('btnDmFollowBack');
+      if(btnFollow){
+        btnFollow.addEventListener('click', async function(){
+          var comps = (state.profile.companions = state.profile.companions || []);
+          var newComp = {
+            id: person.id,
+            nickname: person.nickname || person.name,
+            name: person.name || person.nickname,
+            avatar: person.avatar || '👤',
+            intro: person.intro || '함께 목표를 실천하는 소중한 동반자',
+            theme: person.theme || '전체',
+            streak: person.streak || 1,
+            level: person.level || 1,
+            goals: person.goals || ['목표 실천 중']
+          };
+          comps.unshift(newComp);
+          _incomingDmRooms = _incomingDmRooms.filter(function(x){ return x.id !== person.id; });
+          try { if(global.saveProfile) await global.saveProfile(); } catch(e){}
+          try { persistCompanions(comps); } catch(pErr){ console.warn('[동반자] persistCompanions 오류(무시):', pErr); }
+          showToast(newComp.nickname + '님을 동반자로 추가했습니다! 🎉');
+          renderCommDM(body);
+        });
+      }
 
       var msgsEl = document.getElementById('dmMsgs');
       if(msgsEl) msgsEl.scrollTop = msgsEl.scrollHeight;
@@ -889,6 +1057,15 @@
     } else {
       if(_activeDmChannel){ try{ _activeDmChannel.unsubscribe(); }catch(e){} _activeDmChannel = null; }
 
+      // 수신된 대화방 목록 비동기 프리로드 (첫 진입 시)
+      if(!isGuest && _incomingDmLoadedForUser !== myId){
+        loadIncomingDmRooms(myId).then(function(rooms){
+          if(rooms && rooms.length > 0 && document.body.contains(body) && !state.dmActiveId && state.commSubTab === 'dm'){
+            renderCommDM(body);
+          }
+        });
+      }
+
       var teamMembersChipsHtml = teamMembers.map(function(m){
         return '<div class="dm-team-chip" data-openteamdm="' + esc(m.id) + '" role="button" tabindex="0" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;width:72px;padding:8px 4px;background:var(--card);border:1px solid var(--rule);border-radius:12px;cursor:pointer;text-align:center;transition:transform 0.15s ease;">' +
           '<div style="width:38px;height:38px;border-radius:50%;background:var(--surface-2);border:1.5px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin-bottom:4px;overflow:hidden;flex-shrink:0;">' + safeAvatarHtml(m.avatar, 38) + '</div>' +
@@ -898,23 +1075,36 @@
       }).join('');
 
       var allDmList = [];
+      // 1. 수신 대화 요청 (내 companions에 아직 없는 상대방)
+      _incomingDmRooms.forEach(function(inc){
+        allDmList.push(inc);
+      });
+      // 2. 내 동반자 목록
       var companions = (state.profile && state.profile.companions) || [];
       companions.forEach(function(c){
-        allDmList.push(c);
+        if(!allDmList.some(function(x){ return String(x.id || '').trim().toLowerCase() === String(c.id || '').trim().toLowerCase(); })){
+          allDmList.push(c);
+        }
       });
+      // 3. 팀원 목록 (중복 제외)
       teamMembers.forEach(function(m){
-        if(!allDmList.find(function(x){ return String(x.id || '').trim().toLowerCase() === String(m.id || '').trim().toLowerCase(); })) allDmList.push(m);
+        if(!allDmList.some(function(x){ return String(x.id || '').trim().toLowerCase() === String(m.id || '').trim().toLowerCase(); })){
+          allDmList.push(m);
+        }
       });
 
       var dmListHtml = allDmList.map(function(p){
         var last = (p._thread && p._thread.length) ? p._thread[p._thread.length - 1].text : (p.intro || '새로운 대화를 시작해보세요!');
-        var badgeText = p.isAiBot ? 'AI 봇' : (p.groupName ? p.groupName : (p.theme || '동반자'));
-        return '<div class="dm-list-item" data-open="' + esc(p.id) + '" style="cursor:pointer;padding:10px 12px;display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--rule);border-radius:12px;margin-bottom:8px;">' +
+        var badgeText = p.isIncoming ? '📩 새 대화 요청' : (p.isAiBot ? 'AI 봇' : (p.groupName ? p.groupName : (p.theme || '동반자')));
+        var itemBorder = p.isIncoming ? 'border:1.5px solid var(--brand);background:var(--surface-2);' : 'border:1px solid var(--rule);background:var(--card);';
+        var pillStyle = p.isIncoming ? 'font-size:.6875rem;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;font-weight:700;' : 'font-size:.6875rem;';
+
+        return '<div class="dm-list-item" data-open="' + esc(p.id) + '" style="cursor:pointer;padding:10px 12px;display:flex;align-items:center;gap:12px;' + itemBorder + 'border-radius:12px;margin-bottom:8px;">' +
           '<div class="feed-avatar" style="width:42px;height:42px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex:0 0 auto;overflow:hidden;">' + safeAvatarHtml(p.avatar, 42) + '</div>' +
           '<div class="dm-preview" style="flex:1;min-width:0;">' +
             '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">' +
               '<b style="font-size:.875rem;color:var(--ink);">' + esc(p.nickname || p.name) + '</b>' +
-              '<span class="dday-pill" style="font-size:.6875rem;">' + esc(badgeText) + '</span>' +
+              '<span class="dday-pill" style="' + pillStyle + '">' + esc(badgeText) + '</span>' +
             '</div>' +
             '<span style="font-size:.8125rem;color:var(--ink-soft);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(last) + '</span>' +
           '</div>' +
@@ -1058,6 +1248,7 @@
     if(_companionsDbSynced || !state.profile || !state.profile.id) return;
     if(String(state.profile.id).indexOf('guest') === 0) return;
     _companionsDbSynced = true;
+    try { initIncomingDmListener(state.profile.id); } catch(e){}
 
     // 1단계: 로컬스토리지 자가 치유 복원
     ensureDefaultCompanions();
@@ -1662,7 +1853,16 @@
    * 모듈 전역 노출
    * ------------------------------------------------------------ */
   global.OurgoalTeamInviteComm = {
-    init: function(ctx){ _ctx = ctx || {}; },
+    init: function(ctx){
+      _ctx = ctx || {};
+      try {
+        var state = global.state || (_ctx.getState ? _ctx.getState() : {});
+        var myId = (state.user && state.user.id) || (state.profile && state.profile.id);
+        if(myId && String(myId).indexOf('guest') !== 0){
+          initIncomingDmListener(myId);
+        }
+      } catch(e){}
+    },
     openTeamInviteModal: openTeamInviteModal,
     openTeamChatModal: openTeamChatModal,
     handlePingSentAutoReply: handlePingSentAutoReply,
@@ -1680,6 +1880,10 @@
     ensureDefaultCompanions: ensureDefaultCompanions,
     getDmThreadId: getDmThreadId,
     loadDmMessagesFromDb: loadDmMessagesFromDb,
+    loadIncomingDmRooms: loadIncomingDmRooms,
+    initIncomingDmListener: initIncomingDmListener,
+    updateDmUnreadBadge: updateDmUnreadBadge,
+    getDmUnreadStatus: getDmUnreadStatus,
     showGuestSoftAuthGate: showGuestSoftAuthGate,
     ALL_SEARCHABLE_USERS: []
   };

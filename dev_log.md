@@ -3956,3 +3956,31 @@
   - verify_companion_local_cdp.js: Headless Chrome 브라우저 CDP 실측 (로그인 -> 동반자 탭 진입 -> 검색 -> 추가 -> 로컬스토리지 영구저장 -> 목록 최상단 즉시 표출 -> DM 갔다 와도 동반자 유지) 5단계 100% ALL PASS 및 브라우저 예외 0건.
   - npm test: 스모크 269개 전수 통과 (0 failures), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
 ---
+
+## [2026-09-16 15:40] #TASK-ES-131 DM 수신자 완벽 사용자 경험(UX) 파이프라인 구축 (수신함 자동인입 + 레드 닷 뱃지 + 맞추가 배너)
+- **요청 사항**:
+  - DM을 받는 사람(수신자)의 사용자 경험 구축 ("dm을 받는사람은 어떻게 사용자경험이 되지?").
+  - 메시지 도착 인지, 수신함 자동 인입, 맞추가 지원 등 카카오톡/인스타그램 수준의 수신자 전용 4단계 파이프라인 구현.
+- **원인 진단**:
+  1. 기존 DM 대화방 목록(`renderCommDM`)이 오직 발신자가 직접 추가한 `state.profile.companions`와 `teamMembers`만 참조하여, 수신자가 상대를 아직 동반자로 추가하지 않은 상태에서는 서버에 메시지가 도착해도 대화방 목록에 전혀 노출되지 않는 '단방향 고립 현상' 발생.
+  2. 수신자 기준 미확인 메시지 감지 뱃지(레드 닷 🔴) 및 전역 실시간 수신 채널 부재로 앱 내 다른 화면이나 소통 탭 외부에서 메시지 도착을 인지할 수 없음.
+  3. 미추가 회원이 보낸 DM을 열람했을 때 맞팔로우(동반자 맞추가)를 즉시 유도하는 액션 버튼 부재.
+- **수행 내역**:
+  1. `js/team-invite-comm.js`:
+     - `loadIncomingDmRooms(myId)`: Supabase `team_ping_replies`에서 `receiver_id == myId` 기준 역방향 쿼리 파이프라인 신설 및 `_incomingDmRooms` 캐시 관리.
+     - `renderCommDM(body)`: `allDmList` 구성 시 수신된 대화방(`_incomingDmRooms`)을 최상단에 `[📩 새 대화 요청]` 전용 뱃지 및 하이라이트 스타일로 자동 인입.
+     - 대화방 내부 맞추가 원클릭 배너: 대화 상대가 내 동반자가 아닌 경우 상단에 `[🤝 OOO님을 내 동반자로 추가하시겠습니까? + 맞추가]` 배너 표출 및 클릭 시 `comps.unshift(newComp)`로 즉시 동반자 편입.
+     - `initIncomingDmListener(myId)`: 전역 Realtime 채널(`incoming_dm_global_${myId}`) 구독 배선. 새 메시지 수신 시 인앱 토스트 알림, 레드 닷 뱃지 점등(`updateDmUnreadBadge(true)`), 대화 목록 자동 갱신.
+     - `updateDmUnreadBadge(hasUnread)` / `getDmUnreadStatus()`: 하단 바 `#commNavBadge` 및 상단 서브탭 `#dmSubtabBadge` 동시 제어 헬퍼 구현.
+  2. `index.html`:
+     - 하단 바 [소통] 탭 버튼 내 `#commNavBadge` 레드 닷(🔴) 엘리먼트 탑재 (스마트 안전핀 22,214줄 완벽 보존).
+     - 상단 소통 서브탭 렌더링 시 DM 탭에 `#dmSubtabBadge` 레드 닷(🔴) 연동 및 DM 서브탭 클릭 시 `updateDmUnreadBadge(false)`로 자동 소등 배선.
+     - 캐시 버스팅: `team-invite-comm.js?v=20260916-es131`.
+  3. `sw.js`:
+     - 캐시 버전 `ourgoal-shell-v20260916-es131` 갱신.
+  4. `scripts/smoke-test.js`:
+     - `#TASK-ES-131` 컴플라이언스 테스트 신설 (수신자 대화방 로더, receiver_id 쿼리, 레드 닷 뱃지 엘리먼트, 맞추가 배너 및 unshift 전수 검증).
+- **검증 결과**:
+  - `verify_dm_recipient_cdp.js`: Headless Chrome 브라우저 CDP 실측 (수신자 로그인 -> 레드 닷 뱃지 점등 -> 소통 탭 진입 -> DM 서브탭 클릭 시 새 대화 요청 자동 인입 & 뱃지 소등 -> 대화방 진입 시 맞추가 배너 노출 -> 맞추가 클릭 시 동반자 최상단 편입 & 배너 소멸) 6단계 전수 ALL PASS 및 브라우저 예외 0건.
+  - `npm test`: 스모크 270개 전수 통과 (0 failures), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
+---

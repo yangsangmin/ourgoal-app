@@ -5314,8 +5314,8 @@ check('compliance: [#TASK-ES-129] 동반자 데이터 영구 영속화 및 무�
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
   // 1. 캐시 버스팅 및 PWA 최신 갱신 검증
-  assert.ok(indexSrc.includes('team-invite-comm.js?v=20260916-es130'), 'index.html 스크립트 캐시 버스팅 v20260916-es130 갱신');
-  assert.ok(swSrc.includes('ourgoal-shell-v20260916-es130'), 'sw.js 서비스워커 캐시 네임 v20260916-es130 갱신');
+  assert.ok(/team-invite-comm\.js\?v=20260916-es13[0-9]/.test(indexSrc), 'index.html 스크립트 캐시 버스팅 v20260916-es13x 갱신');
+  assert.ok(/ourgoal-shell-v20260916-es13[0-9]/.test(swSrc), 'sw.js 서비스워커 캐시 네임 v20260916-es13x 갱신');
 
   // 2. 서버리스 파이프라인 (api/track.js) 검증
   assert.ok(trackSrc.includes('handleSyncCompanions'), 'api/track.js 내 handleSyncCompanions 함수 구현');
@@ -5348,6 +5348,35 @@ check('compliance: [#TASK-ES-130] 동반자 탭 0ms 무중단 렌더링 및 Post
   // 3. 소통 서브탭 클릭 시 dmActiveId 초기화 및 피드 렌더 null-safety
   assert.ok(indexSrc.includes("state.dmActiveId = null; renderCommScreen();"), '소통 서브탭 전환 시 dmActiveId 완벽 초기화');
   assert.ok(indexSrc.includes("var prof = state.profile || {}, profSettings = prof.settings || {};"), 'renderCommFeed null 안전 가드 구현');
+});
+
+/* ============ [#TASK-ES-131] DM 수신자 완벽 사용자 경험(UX) 파이프라인 검증 ============ */
+check('compliance: [#TASK-ES-131] DM 수신자 완벽 사용자 경험(수신함 자동인입 + 레드 닷 뱃지 + 맞추가 배너) 검증', () => {
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 캐시 버스팅 및 PWA 버전 검증
+  assert.ok(indexSrc.includes('team-invite-comm.js?v=20260916-es131'), 'index.html 스크립트 캐시 버스팅 v20260916-es131 갱신');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260916-es131'), 'sw.js 서비스워커 캐시 네임 v20260916-es131 갱신');
+
+  // 2. 수신자 DM 인입 (Inbox Discovery) 로더 검증
+  assert.ok(commSrc.includes('loadIncomingDmRooms'), 'loadIncomingDmRooms 수신 대화방 조회 함수 구현');
+  assert.ok(commSrc.includes("eq('receiver_id', myId)"), 'receiver_id 기준 수신 메시지 서버 DB 쿼리 배선');
+  assert.ok(commSrc.includes('_incomingDmRooms'), '_incomingDmRooms 캐시 관리 배열 정의');
+  assert.ok(commSrc.includes("badgeText = p.isIncoming ? '📩 새 대화 요청'"), '수신 대화방 [새 대화 요청] 뱃지 분기 구현');
+
+  // 3. 레드 닷(🔴) 뱃지 및 실시간 리스너 검증
+  assert.ok(indexSrc.includes('id="commNavBadge"'), '하단 네비게이션 소통 버튼 내 commNavBadge 레드 닷 엘리먼트 탑재');
+  assert.ok(indexSrc.includes('id="dmSubtabBadge"'), '상단 소통 서브탭 내 dmSubtabBadge 레드 닷 엘리먼트 탑재');
+  assert.ok(commSrc.includes('updateDmUnreadBadge'), 'updateDmUnreadBadge 뱃지 제어 함수 구현');
+  assert.ok(commSrc.includes('initIncomingDmListener'), 'initIncomingDmListener 전역 Realtime 수신 리스너 구현');
+  assert.ok(indexSrc.includes('updateDmUnreadBadge(false)'), 'DM 서브탭 진입 시 뱃지 자동 소등 배선');
+
+  // 4. 대화방 내 맞추가 원클릭 배너 검증
+  assert.ok(commSrc.includes('id="dmFollowBackBanner"'), '미추가 상대방 DM 열람 시 맞추가 배너 렌더링');
+  assert.ok(commSrc.includes('id="btnDmFollowBack"'), '맞추가 버튼 엘리먼트 배선');
+  assert.ok(commSrc.includes("comps.unshift(newComp);"), '맞추가 클릭 시 내 동반자 목록 최상단 편입');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

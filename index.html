@@ -806,9 +806,9 @@
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>
         기록
       </button>
-      <button class="navbtn" data-tab="comm" type="button">
+      <button class="navbtn" data-tab="comm" type="button" style="position:relative;">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linejoin="round"><path d="M4 5h16v10H8l-4 4V5z"/></svg>
-        소통
+        소통<span id="commNavBadge" style="display:none;position:absolute;top:6px;right:calc(50% - 16px);width:8px;height:8px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 2px var(--card,#fff);pointer-events:none;"></span>
       </button>
       <button class="navbtn" data-tab="settings" type="button">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
@@ -905,7 +905,7 @@
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
-  <script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es130"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script>
+  <script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script>
 <script>
 (function(){
   "use strict";
@@ -18546,12 +18546,12 @@
     var body = document.getElementById('commBody');
     var subtabHtml = '<div class="comm-subtabs">' +
       ['feed:피드','group:팀','manito:🎁 마니또','share:공유','dm:DM','companion:동반자'].map(function(s){
-        var parts = s.split(':');
-        return '<div class="comm-subtab'+(state.commSubTab===parts[0]?' active':'')+'" data-sub="'+parts[0]+'">'+parts[1]+'</div>';
+        var parts = s.split(':'), hasBadge = parts[0]==='dm' && window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.getDmUnreadStatus && window.OurgoalTeamInviteComm.getDmUnreadStatus(), bHtml = parts[0]==='dm' ? '<span id="dmSubtabBadge" style="display:'+(hasBadge?'inline-block':'none')+';width:6px;height:6px;border-radius:50%;background:#ef4444;margin-left:4px;vertical-align:middle;"></span>' : '';
+        return '<div class="comm-subtab'+(state.commSubTab===parts[0]?' active':'')+'" data-sub="'+parts[0]+'">'+parts[1]+bHtml+'</div>';
       }).join('') + '</div>';
     body.innerHTML = subtabHtml + '<div id="commSubBody"></div>';
     body.querySelectorAll('[data-sub]').forEach(function(t){
-      t.addEventListener('click', function(){ state.commSubTab = t.dataset.sub; state.activeGroupId = null; state.manitoDm = null; state.dmActiveId = null; renderCommScreen(); });
+      t.addEventListener('click', function(){ if(t.dataset.sub==='dm' && window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.updateDmUnreadBadge) window.OurgoalTeamInviteComm.updateDmUnreadBadge(false); state.commSubTab = t.dataset.sub; state.activeGroupId = null; state.manitoDm = null; state.dmActiveId = null; renderCommScreen(); });
     });
     var subBody = document.getElementById('commSubBody');
     if(state.commSubTab==='share') renderCommShare(subBody);
