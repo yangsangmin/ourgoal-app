@@ -1,6 +1,6 @@
 /* 아워골 최소 서비스워커: 홈 화면 설치 지원 + 오프라인 시 빈 화면 대신 안내 문구 노출 */
 'use strict';
-var CACHE_NAME = 'ourgoal-shell-v20260916-es128-v3'; /* supersedes ourgoal-shell-v20260916-es123 and ourgoal-shell-v20260916-es118 */
+var CACHE_NAME = 'ourgoal-shell-v20260916-es128-v3'; /* supersedes ourgoal-shell-v20260916-es125 and ourgoal-shell-v20260916-es118 */
 var APP_SHELL = ['/'];
 
 self.addEventListener('install', function(event){

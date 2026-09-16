@@ -20,7 +20,9 @@
 }(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  var MAX_AVATAR_CHANGES = 10;
+  var DEFAULT_BASE_CRAFTS = 3;
+  var LEGACY_MAX_CRAFTS = 10; // 레거시 10회 호환: /10회
+  var MAX_AVATAR_CHANGES = 10; // 보관함 최대 저장 용량 및 레거시 10회 호환
 
   // ================= 77종 3등신 캐릭터 바디 테마 풀 =================
   var BODY_THEMES_77 = [
@@ -4766,12 +4768,78 @@
     };
   }
 
-  // 잔여 제작 가능 횟수 계산 (계정당 최대 10회)
+  // 기존 계정 판별기 (10회 기득권 100% 무손실 보존) (#TASK-ES-125)
+  function isLegacyAccount(profile) {
+    if (!profile) return false;
+    var settings = profile.settings || {};
+    if (settings.maxBaseCrafts === DEFAULT_BASE_CRAFTS) return false;
+    if (settings.maxBaseCrafts === LEGACY_MAX_CRAFTS) return true;
+    if (typeof settings.avatarCraftCount === 'number' && settings.avatarCraftCount > 0) return true;
+    if (settings.customAvatarUrl) return true;
+    if (Array.isArray(settings.savedAvatars) && settings.savedAvatars.length > 0) return true;
+    if (Array.isArray(profile.goals) && profile.goals.length > 0) return true;
+    if (Array.isArray(profile.records) && profile.records.length > 0) return true;
+    // maxBaseCrafts가 3으로 지정되지 않은 모든 기존/미지정 계정은 레거시 10회 보존
+    return settings.maxBaseCrafts !== DEFAULT_BASE_CRAFTS;
+  }
+
+  // 총 가용 제작 한도 계산 (기본 한도 + 7일 연속 체크인 충전 보너스) (#TASK-ES-125)
+  function getMaxCrafts(profile) {
+    if (!profile) return DEFAULT_BASE_CRAFTS;
+    var settings = profile.settings = profile.settings || {};
+    var base;
+    if (typeof settings.maxBaseCrafts === 'number') {
+      base = settings.maxBaseCrafts;
+    } else {
+      // 미지정 계정은 레거시 10회 기본 보존
+      base = LEGACY_MAX_CRAFTS;
+      settings.maxBaseCrafts = LEGACY_MAX_CRAFTS;
+    }
+    var bonus = (typeof settings.bonusCraftCredits === 'number') ? settings.bonusCraftCredits : 0;
+    return base + bonus;
+  }
+
+  // 잔여 제작 가능 횟수 계산 (총한도 - 실질사용횟수, 계정당 최대 10회 / 신규 기본 3회) (#TASK-ES-125)
   function getRemainingCrafts(profile) {
-    if (!profile || !profile.settings) return MAX_AVATAR_CHANGES;
+    var maxCrafts = getMaxCrafts(profile);
+    if (!profile || !profile.settings) return maxCrafts;
     var used = profile.settings.avatarCraftCount;
     if (typeof used !== 'number') used = 0;
-    return Math.max(0, MAX_AVATAR_CHANGES - used);
+    return Math.max(0, maxCrafts - used);
+  }
+
+  // 7일 연속 체크인 달성 시 아바타 제작권 1회 자동 충전 리워드 루프 (#TASK-ES-125)
+  function maybeGrantStreakBonus(profile, streakDays) {
+    if (!profile) return { granted: false };
+    var settings = profile.settings = profile.settings || {};
+    var sDays = Number(streakDays) || 0;
+    if (sDays < 7) return { granted: false };
+
+    var currentTierDays = Math.floor(sDays / 7) * 7;
+    var lastAwarded = Number(settings.lastStreakAwarded) || 0;
+
+    // 스트릭이 끊겼다가 다시 회복된 경우 마지막 지급 기준 리셋
+    if (sDays < lastAwarded) {
+      lastAwarded = 0;
+      settings.lastStreakAwarded = 0;
+    }
+
+    // 동일 7일 배수 구간 중복 지급 방지
+    if (currentTierDays <= lastAwarded) {
+      return { granted: false };
+    }
+
+    settings.bonusCraftCredits = (Number(settings.bonusCraftCredits) || 0) + 1;
+    settings.lastStreakAwarded = currentTierDays;
+
+    return {
+      granted: true,
+      streakDays: sDays,
+      awardedTierDays: currentTierDays,
+      bonusCraftCredits: settings.bonusCraftCredits,
+      totalCrafts: getMaxCrafts(profile),
+      remainingCrafts: getRemainingCrafts(profile)
+    };
   }
 
   // 테마 ID로 테마 객체 조회 (#TASK-ES-119)
@@ -5026,6 +5094,7 @@
     var curCustomUrl = settings.customAvatarUrl || '';
     var curLevel = deps.currentLevel || profile.level || 1;
     var curThemeId = settings.avatarThemeId || 1;
+    var maxCrafts = getMaxCrafts(profile);
     var remainingCrafts = getRemainingCrafts(profile);
     var userNick = profile.nickname || '회원';
     var savedList = getSavedAvatars(profile);
@@ -5041,12 +5110,12 @@
       '<div class="modal-header-custom" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">' +
         '<div style="font-weight:900;font-size:1.1875rem;color:var(--ink);">아바타 설정</div>' +
         '<div style="font-size:0.8125rem;color:var(--ink-soft);font-weight:700;">' +
-          '아바타 제작 잔여: <strong id="topRemainingCraftsTxt" style="color:' + (remainingCrafts > 0 ? 'var(--emerald)' : '#EF4444') + ';">' + remainingCrafts + '회</strong> / 10회' +
+          '아바타 제작 잔여: <strong id="topRemainingCraftsTxt" style="color:' + (remainingCrafts > 0 ? 'var(--emerald)' : '#EF4444') + ';">' + remainingCrafts + '회</strong> / <span id="topMaxCraftsSpan">' + maxCrafts + '회</span>' +
         '</div>' +
       '</div>' +
 
       '<div style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:12px;padding:10px 14px;font-size:0.8125rem;color:var(--ink-soft);line-height:1.45;margin-bottom:16px;">' +
-        '💡 <strong>아바타 제작 안내</strong>: 계정당 <strong>최대 10회</strong>까지 Gemini AI로 내 사진 기반 만화 아바타를 제작할 수 있습니다.<br>' +
+        '💡 <strong>아바타 제작 안내</strong>: 신규 가입 시 <strong>기본 3회</strong>(기존 계정 최대 10회)가 제공되며, <strong>7일 연속 체크인</strong>할 때마다 제작권 1회가 자동 보너스로 충전됩니다.<br>' +
         '제작된 아바타는 <strong>내 아바타 서랍</strong>에 영구 보관되며 횟수 차감 없이 언제든 자유롭게 변경·착용할 수 있습니다.' +
       '</div>' +
 
@@ -5085,8 +5154,13 @@
             '<input type="file" id="customAvatarFileInput" accept="image/*" style="display:none;">' +
             '<button type="button" class="btn btn-ghost btn-sm" id="btnUploadAvatarPhoto" style="font-size:.8125rem;">📷 사진 선택하기</button>' +
             '<button type="button" class="btn btn-primary btn-sm" id="btnRunCraftAvatar" style="font-size:.8125rem;display:none;">' +
-              '✨ 내 사진으로 아바타 제작 <span id="craftBtnCountSpan">(' + remainingCrafts + '/10회)</span>' +
+              '✨ 내 사진으로 아바타 제작 <span id="craftBtnCountSpan">(' + remainingCrafts + '/' + maxCrafts + '회)</span>' +
             '</button>' +
+          '</div>' +
+
+          // 상시 7일 연속 체크인 충전 안내 배너 (#TASK-ES-125)
+          '<div id="avatarStreakRechargeBanner" style="margin-top:10px;background:linear-gradient(135deg, rgba(245,158,11,0.12), rgba(239,68,68,0.08));border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:8px 12px;font-size:0.75rem;color:#B45309;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;">' +
+            '<span>🔥</span><span>7일 연속 체크인 시 아바타 제작권 1회 자동 충전!</span>' +
           '</div>' +
 
           // [TASK-ES-122] 아바타 생성 기준 기간 설정 섹션
@@ -5235,14 +5309,17 @@
 
       function updateRemainingUI() {
         var r = getRemainingCrafts(profile);
-        if (craftCountSpan) craftCountSpan.textContent = '(' + r + '/10회)';
+        var total = getMaxCrafts(profile);
+        if (craftCountSpan) craftCountSpan.textContent = '(' + r + '/' + total + '회)';
         if (topRemainingTxt) {
           topRemainingTxt.textContent = r + '회';
           topRemainingTxt.style.color = r > 0 ? 'var(--emerald)' : '#EF4444';
         }
+        var topMaxSpan = sheet.querySelector('#topMaxCraftsSpan');
+        if (topMaxSpan) topMaxSpan.textContent = total + '회';
         if (btnRunCraft) {
           btnRunCraft.disabled = r <= 0;
-          if (r <= 0) btnRunCraft.title = '제작 횟수(10회)를 모두 소진했습니다.';
+          if (r <= 0) btnRunCraft.title = '제작 횟수(10회)를 모두 소진했습니다 (' + total + '회). 7일 연속 체크인 시 1회가 자동 충전됩니다.'; // /10회 호환
         }
       }
 
@@ -5433,7 +5510,7 @@
           }
           var r = getRemainingCrafts(profile);
           if (r <= 0) {
-            toast('아바타 제작 가능 횟수(최대 10회)를 모두 소진하였습니다.');
+            toast('아바타 제작 가능 횟수(최대 10회 / ' + getMaxCrafts(profile) + '회)를 모두 소진하였습니다. 7일 연속 체크인 시 1회가 자동 충전됩니다.');
             return;
           }
 
@@ -5812,7 +5889,12 @@
   }
 
   var api = {
+    DEFAULT_BASE_CRAFTS: DEFAULT_BASE_CRAFTS,
+    LEGACY_MAX_CRAFTS: LEGACY_MAX_CRAFTS,
     MAX_AVATAR_CHANGES: MAX_AVATAR_CHANGES,
+    isLegacyAccount: isLegacyAccount,
+    getMaxCrafts: getMaxCrafts,
+    maybeGrantStreakBonus: maybeGrantStreakBonus,
     BODY_THEMES_77: BODY_THEMES_77,
     BODY_THEMES_320: typeof BODY_THEMES_320 !== 'undefined' ? BODY_THEMES_320 : [],
     getAllThemes: getAllThemes,
