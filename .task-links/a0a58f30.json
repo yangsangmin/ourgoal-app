@@ -1,21 +1,22 @@
-{
-  "taskId": "#TASK-ES-126",
+﻿{
+  "taskId": "#TASK-ES-132",
   "projectId": "ourgoal",
   "owner": "Antigravity",
-  "goal": "아워골 전 탭 중복 노출 '💡 활용법' 버튼 단일화 및 통합 도움말 허브 개편",
+  "goal": "활용법 감찰 적발 미구현 시스템 전수 백엔드·로직 완결 구현 (WebCal 캘린더 피드 + 데일리퀘스트 EXP 누적 + 도달예정일 알고리즘 + 30일 탈퇴유예 안전망)",
   "planPath": "C:/dev/ourgoal-app/.codex/작업계획서/a0a58f30.md",
   "phase": "완료",
-  "nextAction": "상민님 실서버 프로덕션 배포 승인 대기",
+  "nextAction": "상민님 프로덕션 배포 승인 대기 (1 또는 배포)",
   "commandCenterParent": "3d4598db-9096-810c-80d7-e79798005378",
   "projectTowerParent": "3d4598db-9096-815f-8653-d99eb9ea5703",
   "evidence": [
-    "상민님 직접 지시: 아워골 모든 탭에 활용법이 중복적으로 들어가 있는데, 해결방안 표형태로 알기쉽게 정리해서 보고해. 1단계까지 진행해",
-    "권장안(방안 2: Topbar 단일화 + 6대 탭 통합 가이드 허브) 승인 접수",
-    "js/tab-guides.js 6대 탭 가이드 완비 및 세그먼트 스위처 구축 완료",
-    "index.html 본문 중복 버튼 6종 제거 및 타이틀 영역 100% 클린 뷰 완료",
-    "npm test 267개 ALL PASS, 5대 게이트 14종 통과, Zero Dead Click 100% 통과",
-    "Chrome Headless E2E 실측 및 모달 실측 스크린샷(modal_guide_hub.png) 확보 완료",
-    "로컬 main 브랜치 병합 및 4단계 완료"
+    "상민님 직접 지시: 활용법과 현재 시스템 차이 있는 것들 모두 확인해. 감찰이 압수수색하듯이. 아워골 헌법기준에 맞춰서 모든사항 다 점검하고, 표로 보고해 -> 옵션 2번 실제 시스템 백엔드 완결 구현 선택 승인",
+    "WebCal RFC 5545 표준 iCalendar 피드 백엔드 구축 (/api/push-subscribe 통합 라우팅, 마일스톤 dueDate VEVENT 변환)",
+    "데일리 퀘스트 3종(+30, +40, +50 EXP) 달성 시 실제 awardXP() 호출 및 레벨업 연동, 당일 중복 지급 방지 questRewards 트래커 탑재",
+    "목표 마일스톤 페이스 기반 목표 도달예정일 동적 계산 알고리즘 및 메타 스트립 뱃지(🚀 페이스 도달예정: M월 D일) 구현",
+    "api/withdraw.js 30일 탈퇴 유예 안전망(grace_period) 및 원클릭 계정 복구(restore) 파이프라인 구축",
+    "npm test 271개 ALL PASS (0 failure), 헌법 5대 게이트 14종 ALL PASS, Zero Dead Click 통과",
+    "로컬 HTTP 실측(200 OK text/calendar VCALENDAR 수신) 및 Headless Chrome E2E 실측 검증(stage3_goal_predicted_date.png) 확보 완료",
+    "4단계 로컬 main 병합 및 Vercel 프리뷰 배포 완료"
   ],
   "pending": false,
   "remote": {

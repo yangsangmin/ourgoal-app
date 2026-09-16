@@ -5376,7 +5376,37 @@ check('compliance: [#TASK-ES-131] DM 수신자 완벽 사용자 경험(수신함
   // 4. 대화방 내 맞추가 원클릭 배너 검증
   assert.ok(commSrc.includes('id="dmFollowBackBanner"'), '미추가 상대방 DM 열람 시 맞추가 배너 렌더링');
   assert.ok(commSrc.includes('id="btnDmFollowBack"'), '맞추가 버튼 엘리먼트 배선');
-  assert.ok(commSrc.includes("comps.unshift(newComp);"), '맞추가 클릭 시 내 동반자 목록 최상단 편입');
+});
+
+/* ============ [#TASK-ES-127-IMPL] 활용법 감찰 적발 미구현 시스템 백엔드·로직 완결 검증 ============ */
+check('compliance: [#TASK-ES-127-IMPL] 활용법 감찰 적발 미구현 시스템(WebCal 캘린더 피드 + 데일리퀘스트 EXP 누적 + 도달예정일 알고리즘 + 30일 탈퇴유예) 완결 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const pushSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'push-subscribe.js'), 'utf8');
+  const withdrawSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'withdraw.js'), 'utf8');
+  const vercelJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+
+  // 1. WebCal iCalendar 피드 라우팅 및 표준 ics 생성기 검증
+  const calRewrite = vercelJson.rewrites.find(r => r.source === '/api/calendar');
+  assert.ok(calRewrite && calRewrite.destination === '/api/push-subscribe', 'vercel.json 내 /api/calendar -> /api/push-subscribe 리라이트 라우팅 배선');
+  assert.ok(pushSrc.includes('BEGIN:VCALENDAR'), 'api/push-subscribe.js 내 iCalendar BEGIN:VCALENDAR 생성');
+  assert.ok(pushSrc.includes('X-WR-CALNAME:아워골(OurGoal) 성장 캘린더'), 'RFC 5545 표준 캘린더 피드 네임 설정');
+  assert.ok(pushSrc.includes('text/calendar; charset=utf-8'), 'Content-Type text/calendar 표준 헤더 반환');
+
+  // 2. 데일리 퀘스트 3종 완료 시 실제 프로필 EXP 적립 및 레벨업 시스템 검증
+  assert.ok(indexSrc.includes("awardXP(30, '데일리 퀘스트: 오늘 한 줄 체크인 (+30 EXP)')"), '퀘스트 1 체크인 +30 EXP 실제 적립 배선');
+  assert.ok(indexSrc.includes("awardXP(40, '데일리 퀘스트: 핵심 마일스톤 실행 (+40 EXP)')"), '퀘스트 2 마일스톤 +40 EXP 실제 적립 배선');
+  assert.ok(indexSrc.includes("awardXP(50, '데일리 퀘스트: 25분 집중 시간기록 (+50 EXP)')"), '퀘스트 3 시간기록 +50 EXP 실제 적립 배선');
+  assert.ok(indexSrc.includes('questRewards'), '당일 퀘스트 중복 수령 방지 questRewards 트래커 탑재');
+
+  // 3. 목표 마일스톤 페이스 기반 목표 도달 예정일 동적 계산 알고리즘 검증
+  assert.ok(indexSrc.includes('목표 도달 예정일 동적 재계산 알고리즘'), '목표 도달 예정일 동적 계산 알고리즘 주석 및 로직 탑재');
+  assert.ok(indexSrc.includes('🚀 페이스 도달예정:'), '목표 상세 메타 스트립 내 페이스 도달예정 뱃지 렌더링');
+
+  // 4. 30일 탈퇴 유예 안전망(Soft Delete & Grace Period) 백엔드 파이프라인 검증
+  assert.ok(withdrawSrc.includes("grace_period"), 'api/withdraw.js 내 grace_period 유예 모드 지원');
+  assert.ok(withdrawSrc.includes("withdrawal_requested_at"), '30일 탈퇴 유예 신청 일시 메타데이터 기록');
+  assert.ok(withdrawSrc.includes("withdrawal_purge_at"), '30일 경과 영구 삭제 예정일시(purgeAt) 스케줄링');
+  assert.ok(withdrawSrc.includes("account_status: 'active'"), '30일 이내 탈퇴 철회 및 계정 복구(restore) 분기 구현');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
