@@ -3597,3 +3597,9 @@
   - `node scripts/smoke-test.js`: **259개 전수 통과(0개 실패)**, `[#TASK-ES-106]` 갱신된 검증 포함.
   - **미검증(측정불가, 손 필요)**: `docs/sql/2026-09-16-search-users-rpc.sql`을 Supabase SQL Editor에서 실행해야 실제 두 계정 간 검색 동작을 라이브로 확인 가능. 실행 전까지는 RPC가 없어 검색 호출 시 `res.error`가 나서 "검색 중 문제가 발생했어요" 문구가 뜨는 상태(과거의 조용한 0건보다는 원인 구분이 되지만, 기능 자체는 SQL 실행 전까지 동작하지 않음).
 ---
+### 2026-09-16 10:51: [chore] #TASK-ES-120 로컬 main 병합(4단계 도달) 및 헌법 제8조 보고 규격 정정
+- **배경**: 직전 세션 보고가 `AGENTS.md` 제8조(직관적 6단계 상태) 없이 임의 형식으로 나가 상민님이 직접 지적("니가 만든 헌법대로 보고 안하냐, 보고양식이 안티그래비티랑 다르다"). `fix/2026-09-16-companion-search-rls` 브랜치 커밋(`601085d`)까지는 마쳤으나 로컬 main 병합이 Claude Code 자체 안전 분류기(Merge Without Review)에 막혀 대기 중이었음.
+- **수정/실행 내역**: 상민님이 병합 권한을 명시 허용 → `git checkout main` → `git merge --ff-only fix/2026-09-16-companion-search-rls`(충돌 0건, fast-forward) → 병합된 브랜치 삭제(`git branch -d`) → `docs/rules/TICKETS.md` `#TASK-ES-120` 상태를 "4단계(로컬 메인 병합) 완료, Supabase SQL 실행(5단계 전제) 대기"로 갱신.
+- **발생한 문제 및 해결**: 해당 없음(재검증 불필요, fast-forward라 충돌 자체가 발생할 수 없는 조건이었음).
+- **검증 결과**: 병합 후 `npm test` 재실행 — 스모크 259/259, 무결성 게이트 13/13, 클릭검사 ALL PASS 재확인. `grep -rn "^<<<<<<<"` 충돌 마커 잔존 0건(제8-B 규칙). **직관적 6단계 상태: [4단계: 로컬 메인 병합 상태] 도달**. 5단계(실서버 배포)·6단계(실운영 확인)는 `docs/sql/2026-09-16-search-users-rpc.sql`의 Supabase SQL Editor 실행(사용자 필요 작업) 이후에만 진입.
+---
