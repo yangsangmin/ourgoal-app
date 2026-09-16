@@ -4953,7 +4953,7 @@ check('compliance: [#TASK-ES-119] 생성한 아바타 누적 보관함(서랍) �
   assert.ok(avatarSrc.includes('착용 중'), '착용 중 뱃지 표시 배선');
 
   // 3. 신규 제작 시 누적 보관함 자동 인입 및 갱신 연동 확인
-  assert.ok(avatarSrc.includes('function onAvatarCraftCompleted(dataUrl)'), 'onAvatarCraftCompleted 공통 처리 함수 존재');
+  assert.ok(avatarSrc.includes('function onAvatarCraftCompleted(dataUrl, persona)'), 'onAvatarCraftCompleted 공통 처리 함수 존재(#TASK-ES-122 persona 인자 확장)');
   assert.ok(avatarSrc.includes('refreshSavedAvatarsDeck()'), '서랍 UI 실시간 새로고침 배선');
 
   // 4. 서랍 카드 클릭 시 원클릭 선택 및 차감 0회 변경 확인
@@ -4999,6 +4999,40 @@ check('compliance: [#TASK-ES-121] 피드·모임·템플릿 외부 SNS 공유 �
   // 4. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines2 = html.split(/\r?\n/).length;
   assert.strictEqual(finalLines2, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+});
+
+check('compliance: [#TASK-ES-122] 아바타 생성 기간 설정(목표·팀·기록 분석 MBTI/좌우명) 결합 및 77종 바디 안내문구 정비 검증', () => {
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const promptgenSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'promptgen.js'), 'utf8');
+  const vercelCfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+
+  // 1. 사용자 노출 "77종 바디" 안내문구가 제거되었는지 확인 (내부 카탈로그/합성 로직은 유지)
+  assert.ok(!avatarSrc.includes('77종 바디에 딱 맞는'), '아바타 제작 로딩 문구에서 77종 바디 언급 삭제');
+  assert.ok(avatarSrc.includes('function getWoodHammerMakerAnimationHtml('), '나무망치 제작 애니메이션 함수는 그대로 보존');
+  assert.ok(avatarSrc.includes('var BODY_THEMES_77 = ['), '77종 바디 테마 카탈로그 자체는 삭제되지 않고 보존');
+
+  // 2. 기간 설정 UI 마크업 및 안내멘트 존재 확인
+  assert.ok(avatarSrc.includes('id="btnSetAvatarPeriod"'), '아바타 생성 기준 기간 정하기 버튼 존재');
+  assert.ok(avatarSrc.includes('id="avatarPeriodStartInput"') && avatarSrc.includes('id="avatarPeriodEndInput"'), '기간 시작·종료 날짜 입력 존재');
+  assert.ok(avatarSrc.includes('설정한 기간의 내 목표, 팀, 기록들을 분석하여') && avatarSrc.includes('그에 맞는 MBTI와 좌우명을 가진 아바타를 생성합니다.'), '2줄 안내멘트 존재');
+  assert.ok(avatarSrc.includes("max-width:560px"), '아바타 설정 모달 확장(440px -> 560px)');
+
+  // 3. 기간별 목표/팀/기록 분석 및 MBTI·좌우명 생성 배선 확인
+  assert.ok(avatarSrc.includes('function collectPeriodPersonaSummary(profile, mockGroups, startDate, endDate)'), '기간 내 목표·기록·팀 요약 수집 함수 구현');
+  assert.ok(avatarSrc.includes('function fetchAvatarPersona(summaryText)'), 'MBTI·좌우명 분석 API 호출 함수 구현');
+  assert.ok(avatarSrc.includes("periodSummary.isEmpty"), '기간 내 분석 데이터 0건 시 제작 차단(횟수 미차감) 배선');
+  assert.ok(avatarSrc.includes('function onAvatarCraftCompleted(dataUrl, persona)'), 'persona 결과가 제작 완료 처리 함수에 결합');
+
+  // 4. 서버 사이드 MBTI/좌우명 분석 라우팅 및 rewrite 배선 확인
+  assert.ok(promptgenSrc.includes("body.action === 'avatar-persona'"), 'promptgen.js avatar-persona 서브 라우팅 분기 존재');
+  assert.ok(promptgenSrc.includes('async function handleAvatarPersonaAnalysis(req, res, body)'), 'handleAvatarPersonaAnalysis 핸들러 구현');
+  assert.ok(promptgenSrc.includes('/^[EI][NS][FT][JP]$/'), 'MBTI 4글자 형식 검증 정규식 존재');
+  const hasPersonaRewrite = (vercelCfg.rewrites || []).some(r => r.source === '/api/avatar-persona' && r.destination === '/api/promptgen');
+  assert.ok(hasPersonaRewrite, 'vercel.json 내 /api/avatar-persona -> /api/promptgen rewrite 배선');
+
+  // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
+  const finalLines3 = html.split(/\r?\n/).length;
+  assert.strictEqual(finalLines3, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

@@ -210,7 +210,7 @@
         nick + '님을 형상화한 아바타를 만들고 있어요 🔨✨' +
       '</div>' +
       '<div style="font-size:0.8125rem;color:var(--ink-soft);margin-top:4px;">' +
-        'Gemini 비전 AI가 인물의 특징을 분석하여 77종 바디에 딱 맞는 만화형 캐릭터로 제작 중입니다…' +
+        'Gemini AI가 사진 속 특징과 설정하신 기간의 목표·팀·기록을 함께 분석해 나만의 MBTI·좌우명 아바타로 제작 중입니다…' +
       '</div>' +
       '<div style="width:160px;height:6px;background:var(--surface-3);border-radius:3px;margin:14px auto 0;overflow:hidden;">' +
         '<div id="avatarGenProgress" style="width:20%;height:100%;background:var(--emerald);transition:width 0.3s ease;"></div>' +
@@ -631,6 +631,10 @@
       themeId: item.themeId || 1,
       themeName: item.themeName || getThemeById(item.themeId || 1).name,
       themeIcon: item.themeIcon || getThemeById(item.themeId || 1).icon,
+      mbti: item.mbti || null,
+      motto: item.motto || null,
+      periodStart: item.periodStart || null,
+      periodEnd: item.periodEnd || null,
       createdAt: item.createdAt || new Date().toISOString()
     });
     if (list.length > MAX_AVATAR_CHANGES) {
@@ -661,6 +665,76 @@
     return true;
   }
 
+  // [TASK-ES-122] 기간 내 목표/기록/팀 활동 요약 텍스트 생성 (MBTI/좌우명 분석 입력)
+  function collectPeriodPersonaSummary(profile, mockGroups, startDate, endDate) {
+    var startTs = startDate.getTime();
+    var endTs = endDate.getTime();
+    var goals = ((profile && profile.goals) || []).filter(function (g) {
+      var created = g.createdAt || g.startAt || null;
+      if (!created) return false;
+      var t = new Date(created).getTime();
+      return !isNaN(t) && t >= startTs && t <= endTs;
+    });
+    var records = ((profile && profile.records) || []).filter(function (r) {
+      if (!r.startAt) return false;
+      var t = new Date(r.startAt).getTime();
+      return !isNaN(t) && t >= startTs && t <= endTs;
+    });
+    var teamLines = [];
+    try {
+      var gState = (profile && profile.settings && profile.settings.groupState) || {};
+      (mockGroups || []).forEach(function (g) {
+        var gs = gState[g.id];
+        if (!gs || !gs.joined) return;
+        var role = gs.myRole || 'member';
+        var teamGoals = g.teamGoals || [];
+        if (teamGoals.length === 0) {
+          teamLines.push((g.name || '팀') + '(역할:' + role + ') 참여 중');
+          return;
+        }
+        teamGoals.forEach(function (tg) {
+          var ms = tg.milestones || [];
+          var doneCnt = ms.filter(function (m) { return m.status === 'done'; }).length;
+          teamLines.push((g.name || '팀') + '(역할:' + role + ') 팀목표 "' + (tg.title || '') + '" 진행 ' + doneCnt + '/' + ms.length);
+        });
+      });
+    } catch (e) {}
+
+    var lines = [];
+    if (goals.length) {
+      lines.push('[목표 ' + goals.length + '건] ' + goals.map(function (g) { return g.title || g.name || '목표'; }).slice(0, 20).join(', '));
+    }
+    if (records.length) {
+      lines.push('[기록 ' + records.length + '건] ' + records.map(function (r) { return r.title || r.type || r.category || '실천 기록'; }).slice(0, 30).join(', '));
+    }
+    if (teamLines.length) {
+      lines.push('[팀 활동] ' + teamLines.join(' / '));
+    }
+
+    return {
+      goalsCount: goals.length,
+      recordsCount: records.length,
+      teamCount: teamLines.length,
+      isEmpty: goals.length === 0 && records.length === 0 && teamLines.length === 0,
+      summaryText: lines.join('\n')
+    };
+  }
+
+  // [TASK-ES-122] 서버(Gemini)에 기간 요약을 전달해 MBTI·좌우명 생성
+  function fetchAvatarPersona(summaryText) {
+    return fetch('/api/avatar-persona', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'avatar-persona', summaryText: summaryText })
+    }).then(function (res) {
+      if (!res.ok) throw new Error('persona API status ' + res.status);
+      return res.json();
+    }).then(function (data) {
+      if (data && data.persona && data.persona.mbti && data.persona.motto) return data.persona;
+      return null;
+    }).catch(function () { return null; });
+  }
+
   // 내 아바타 서랍 카드 덱 HTML 렌더러 (#TASK-ES-119)
   function renderSavedAvatarsDeckHtml(savedList, activeUrl, selectedUrl) {
     if (!savedList || savedList.length === 0) {
@@ -685,6 +759,7 @@
         '<div style="font-size:10px;font-weight:800;color:var(--ink, #0F172A);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + item.themeName + '">' +
           (item.themeIcon || '🎨') + ' ' + (item.themeName || '아바타') +
         '</div>' +
+        (item.mbti ? '<div style="font-size:9px;font-weight:700;color:var(--emerald, #10B981);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + (item.motto || '') + '">' + item.mbti + (item.motto ? ' · ' + item.motto : '') + '</div>' : '') +
       '</div>';
     }).join('');
 
@@ -732,7 +807,14 @@
     var userNick = profile.nickname || '회원';
     var savedList = getSavedAvatars(profile);
 
-    var html = '<div class="modal-sheet-inner" style="max-width:440px;margin:0 auto;text-align:left;">' +
+    var todayForPeriod = new Date();
+    var defaultPeriodEnd = todayForPeriod;
+    var defaultPeriodStart = new Date(todayForPeriod.getTime() - 29 * 24 * 60 * 60 * 1000);
+    var toDateInputValue = function (d) {
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    };
+
+    var html = '<div class="modal-sheet-inner" style="max-width:560px;margin:0 auto;text-align:left;">' +
       '<div class="modal-header-custom" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">' +
         '<div style="font-weight:900;font-size:1.1875rem;color:var(--ink);">아바타 설정</div>' +
         '<div style="font-size:0.8125rem;color:var(--ink-soft);font-weight:700;">' +
@@ -783,6 +865,22 @@
               '✨ 내 사진으로 아바타 제작 <span id="craftBtnCountSpan">(' + remainingCrafts + '/10회)</span>' +
             '</button>' +
           '</div>' +
+
+          // [TASK-ES-122] 아바타 생성 기준 기간 설정 섹션
+          '<div id="avatarPeriodSection" style="margin-top:12px;text-align:left;">' +
+            '<button type="button" class="btn btn-ghost btn-sm" id="btnSetAvatarPeriod" style="font-size:.8125rem;width:100%;">' +
+              '📅 아바타 생성 기준 기간 정하기 <span id="avatarPeriodSummarySpan" style="font-weight:700;color:var(--emerald);"></span>' +
+            '</button>' +
+            '<div id="avatarPeriodInputs" style="display:none;margin-top:8px;background:var(--surface-3, #F1F5F9);border:1px solid var(--border-soft);border-radius:12px;padding:12px;">' +
+              '<div style="display:flex;align-items:center;gap:8px;">' +
+                '<input type="date" id="avatarPeriodStartInput" value="' + toDateInputValue(defaultPeriodStart) + '" style="flex:1;min-width:0;padding:6px 8px;border-radius:8px;border:1px solid var(--border-soft);background:var(--surface-1,#fff);color:var(--ink);">' +
+                '<span style="color:var(--ink-soft);">~</span>' +
+                '<input type="date" id="avatarPeriodEndInput" value="' + toDateInputValue(defaultPeriodEnd) + '" style="flex:1;min-width:0;padding:6px 8px;border-radius:8px;border:1px solid var(--border-soft);background:var(--surface-1,#fff);color:var(--ink);">' +
+              '</div>' +
+              '<div id="avatarPeriodErrorText" style="display:none;color:#EF4444;font-size:.75rem;margin-top:6px;font-weight:700;">종료일은 시작일보다 빠를 수 없어요.</div>' +
+              '<div style="font-size:.75rem;color:var(--ink-soft);line-height:1.5;margin-top:10px;">설정한 기간의 내 목표, 팀, 기록들을 분석하여<br>그에 맞는 MBTI와 좌우명을 가진 아바타를 생성합니다.</div>' +
+            '</div>' +
+          '</div>' +
         '</div>' +
 
         // 내 아바타 서랍 (누적 보관함) 섹션 (#TASK-ES-119)
@@ -811,6 +909,17 @@
       var lastUploadedDataUrl = '';
       var currentFeatures = null;
       var chosenTheme = BODY_THEMES_77[(curThemeId - 1) % 77] || BODY_THEMES_77[0];
+      var periodStart = defaultPeriodStart;
+      var periodEnd = defaultPeriodEnd;
+      var currentPersona = null;
+      (function preloadCurrentPersona() {
+        for (var pi = 0; pi < savedList.length; pi++) {
+          if (savedList[pi].url === curCustomUrl && savedList[pi].mbti) {
+            currentPersona = { mbti: savedList[pi].mbti, motto: savedList[pi].motto };
+            break;
+          }
+        }
+      })();
 
       var typeToggle = sheet.querySelector('#avatarTypeToggle');
       var secRobot = sheet.querySelector('#secRobotAvatar');
@@ -826,8 +935,43 @@
       var topRemainingTxt = sheet.querySelector('#topRemainingCraftsTxt');
       var btnSave = sheet.querySelector('#btnSaveAvatarModal');
       var btnCancel = sheet.querySelector('#btnCancelAvatarModal');
+      var btnSetPeriod = sheet.querySelector('#btnSetAvatarPeriod');
+      var periodInputsBox = sheet.querySelector('#avatarPeriodInputs');
+      var periodStartInput = sheet.querySelector('#avatarPeriodStartInput');
+      var periodEndInput = sheet.querySelector('#avatarPeriodEndInput');
+      var periodErrorText = sheet.querySelector('#avatarPeriodErrorText');
+      var periodSummarySpan = sheet.querySelector('#avatarPeriodSummarySpan');
 
       if (btnCancel) btnCancel.onclick = closeModal;
+
+      // [TASK-ES-122] 아바타 생성 기준 기간 정하기
+      function updatePeriodSummaryLabel() {
+        if (!periodSummarySpan) return;
+        periodSummarySpan.textContent = '· ' + toDateInputValue(periodStart).slice(5) + ' ~ ' + toDateInputValue(periodEnd).slice(5);
+      }
+      updatePeriodSummaryLabel();
+
+      if (btnSetPeriod && periodInputsBox) {
+        btnSetPeriod.onclick = function () {
+          periodInputsBox.style.display = (periodInputsBox.style.display === 'none' || !periodInputsBox.style.display) ? 'block' : 'none';
+        };
+      }
+
+      function handlePeriodInputChange() {
+        if (!periodStartInput || !periodEndInput) return;
+        var s = new Date(periodStartInput.value + 'T00:00:00');
+        var e = new Date(periodEndInput.value + 'T23:59:59');
+        if (isNaN(s.getTime()) || isNaN(e.getTime()) || e.getTime() < s.getTime()) {
+          if (periodErrorText) periodErrorText.style.display = 'block';
+          return;
+        }
+        if (periodErrorText) periodErrorText.style.display = 'none';
+        periodStart = s;
+        periodEnd = e;
+        updatePeriodSummaryLabel();
+      }
+      if (periodStartInput) periodStartInput.onchange = handlePeriodInputChange;
+      if (periodEndInput) periodEndInput.onchange = handlePeriodInputChange;
 
       // 탭 토글
       if (typeToggle) {
@@ -862,7 +1006,8 @@
           '<span>' + chosenTheme.name + '</span>' +
         '</div>' +
         '<div style="font-size:.78125rem;color:var(--emerald);font-weight:700;margin-top:3px;">🎨 Gemini 3.1 AI 맞춤형 웹툰 아바타 완성!</div>' +
-        '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">테마: ' + chosenTheme.cat + ' · 장비: ' + chosenTheme.gear + '</div>';
+        '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">테마: ' + chosenTheme.cat + ' · 장비: ' + chosenTheme.gear + '</div>' +
+        (currentPersona ? '<div style="font-size:.8125rem;color:var(--ink);font-weight:800;margin-top:6px;">🧬 ' + currentPersona.mbti + ' · "' + currentPersona.motto + '"</div>' : '');
       }
 
       // [#TASK-ES-119] 내 아바타 서랍 UI 새로고침
@@ -894,6 +1039,7 @@
             if (item) {
               newCustomUrl = item.url;
               chosenTheme = getThemeById(item.themeId);
+              currentPersona = item.mbti ? { mbti: item.mbti, motto: item.motto } : null;
               previewBox.innerHTML = '<img src="' + newCustomUrl + '" style="width:100%;height:100%;object-fit:cover;">';
               if (metaText) {
                 metaText.innerHTML = '<div style="font-weight:800;font-size:1rem;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:6px;">' +
@@ -901,7 +1047,8 @@
                   '<span>' + (item.themeName || chosenTheme.name) + '</span>' +
                 '</div>' +
                 '<div style="font-size:.78125rem;color:var(--emerald);font-weight:700;margin-top:3px;">🎨 서랍에서 아바타가 선택되었습니다!</div>' +
-                '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">하단 [아바타 적용하기]를 누르면 즉시 착용됩니다. (차감 0회)</div>';
+                '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">하단 [아바타 적용하기]를 누르면 즉시 착용됩니다. (차감 0회)</div>' +
+                (currentPersona ? '<div style="font-size:.8125rem;color:var(--ink);font-weight:800;margin-top:6px;">🧬 ' + currentPersona.mbti + ' · "' + currentPersona.motto + '"</div>' : '');
               }
               refreshSavedAvatarsDeck();
             }
@@ -942,8 +1089,10 @@
       }
 
       // [#TASK-ES-119] 신규 아바타 제작 완료 시 자동 보관함 인입 & UI 갱신 공통 함수
-      function onAvatarCraftCompleted(dataUrl) {
+      // [TASK-ES-122] persona({mbti, motto})가 있으면 함께 저장·표시
+      function onAvatarCraftCompleted(dataUrl, persona) {
         newCustomUrl = dataUrl;
+        currentPersona = persona || null;
         loadingSlot.style.display = 'none';
         resultBox.style.display = 'block';
         updateCustomAvatarView();
@@ -954,6 +1103,10 @@
           themeId: chosenTheme.id,
           themeName: chosenTheme.name,
           themeIcon: chosenTheme.icon,
+          mbti: currentPersona ? currentPersona.mbti : null,
+          motto: currentPersona ? currentPersona.motto : null,
+          periodStart: toDateInputValue(periodStart),
+          periodEnd: toDateInputValue(periodEnd),
           createdAt: new Date().toISOString()
         });
         if (deps.state && deps.state.profile) {
@@ -1027,6 +1180,14 @@
             toast('아바타 제작 가능 횟수(최대 10회)를 모두 소진하였습니다.');
             return;
           }
+
+          // [TASK-ES-122] 설정 기간 내 분석할 활동(목표/기록/팀)이 전혀 없으면 제작 진행 안 함(횟수 차감 없음)
+          var periodSummary = collectPeriodPersonaSummary(profile, deps.mockGroups, periodStart, periodEnd);
+          if (periodSummary.isEmpty) {
+            toast('설정하신 기간에 분석할 목표·팀·기록이 없어요. 기간을 다시 선택하거나 넓혀보세요.');
+            return;
+          }
+          var personaPromise = fetchAvatarPersona(periodSummary.summaryText);
 
           // 횟수 실질 1회 차감!
           settings.avatarCraftCount = (settings.avatarCraftCount || 0) + 1;
@@ -1113,12 +1274,16 @@
                   ctx.drawImage(optImg, 0, 0, 256, 256);
                   finalUrl = cv.toDataURL('image/jpeg', 0.9);
                 } catch (e) {}
-                onAvatarCraftCompleted(finalUrl);
-                toast('[' + chosenTheme.name + '] AI 맞춤형 웹툰 아바타 제작 완료! 🎨✨');
+                personaPromise.then(function (persona) {
+                  onAvatarCraftCompleted(finalUrl, persona);
+                  toast('[' + chosenTheme.name + '] AI 맞춤형 웹툰 아바타 제작 완료! 🎨✨');
+                });
               };
               optImg.onerror = function () {
-                onAvatarCraftCompleted(resData.avatarUrl);
-                toast('[' + chosenTheme.name + '] AI 맞춤형 웹툰 아바타 제작 완료! 🎨✨');
+                personaPromise.then(function (persona) {
+                  onAvatarCraftCompleted(resData.avatarUrl, persona);
+                  toast('[' + chosenTheme.name + '] AI 맞춤형 웹툰 아바타 제작 완료! 🎨✨');
+                });
               };
               optImg.src = resData.avatarUrl;
             } else {
@@ -1126,8 +1291,10 @@
               currentFeatures = resData.features;
               setTimeout(function () {
                 composite3DeformedAvatar(lastUploadedImg, chosenTheme, function (dataUrl, f) {
-                  onAvatarCraftCompleted(dataUrl);
-                  toast('[' + chosenTheme.name + '] 맞춤형 만화 아바타 제작 완료! 🔨✨');
+                  personaPromise.then(function (persona) {
+                    onAvatarCraftCompleted(dataUrl, persona);
+                    toast('[' + chosenTheme.name + '] 맞춤형 만화 아바타 제작 완료! 🔨✨');
+                  });
                 }, { features: currentFeatures });
               }, 400);
             }
@@ -1161,6 +1328,10 @@
               themeId: chosenTheme.id,
               themeName: chosenTheme.name,
               themeIcon: chosenTheme.icon,
+              mbti: currentPersona ? currentPersona.mbti : null,
+              motto: currentPersona ? currentPersona.motto : null,
+              periodStart: toDateInputValue(periodStart),
+              periodEnd: toDateInputValue(periodEnd),
               createdAt: new Date().toISOString()
             });
           }
