@@ -725,7 +725,7 @@
     var teamMembers = getTeamMembersPool();
     var state = global.state || {};
     var myId = (state.user && state.user.id) || (state.profile && state.profile.id);
-    var isGuest = (!state.user || !state.user.id);
+    var isGuest = !state.profile || !state.profile.id || String(state.profile.id).indexOf('guest') === 0;
 
     if(state.dmActiveId){
       var person = getDmPerson(state.dmActiveId);
@@ -1010,7 +1010,7 @@
         var addCompBtn = sheet.querySelector('#userProfAddCompBtn');
         if(addCompBtn){
           addCompBtn.onclick = async function(){
-            var isGuest = (!state.user || !state.user.id);
+            var isGuest = !state.profile || !state.profile.id || String(state.profile.id).indexOf('guest') === 0;
             if(isGuest){
               if(global.closeModal) global.closeModal();
               showGuestSoftAuthGate('동반자 추가');
@@ -1179,7 +1179,7 @@
         return;
       }
 
-      var isGuest = (!state.user || !state.user.id);
+      var isGuest = !state.profile || !state.profile.id || String(state.profile.id).indexOf('guest') === 0;
       if(isGuest){
         state._companionSearchKeyword = q;
         state._companionSearchResults = null;
@@ -1258,7 +1258,7 @@
 
     body.querySelectorAll('[data-addcomp]').forEach(function(btn){
       btn.addEventListener('click', async function(){
-        var isGuest = (!state.user || !state.user.id);
+        var isGuest = !state.profile || !state.profile.id || String(state.profile.id).indexOf('guest') === 0;
         if(isGuest){
           showGuestSoftAuthGate('동반자 추가');
           return;
