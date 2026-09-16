@@ -1,0 +1,278 @@
+---
+notion_id: "3dd598db-9096-8194-a521-ef1f099dbe31"
+---
+
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "2.0.0",
+  "last_updated": "2026-09-16",
+  "owner": "상민님 (Sole Decision Maker)",
+  "description": "상민님이 AI 에이전트들의 기술 안전핀 및 내부 규칙을 직접 On/Off 및 수치 조절하는 중앙 제어판",
+  "controls": {
+    "line_count_lock": {
+      "id": "TECH-RULE-01",
+      "name": "index.html 스마트 무결성 안전핀 (순증가 300줄 한도, 최소 본체 20,000줄 보존, // ... 무단 축약 금지)",
+      "enabled": true,
+      "strict_lines": null,
+      "allow_growth": true,
+      "max_growth_per_commit": 300,
+      "min_body_lines": 20000,
+      "description": "상민님 승인(2026-09-16): 22,196줄 고정 잠금을 해제하고, AI 무단 코드 축약(// ... 금지) 및 커밋당 순증가 300줄 한도, 최소 본체 20,000줄 보존 스마트 안전핀으로 전환."
+    },
+    "zero_dead_click": {
+      "id": "TECH-RULE-02",
+      "name": "전수 버튼/링크 데드클릭 정적 검사",
+      "enabled": true,
+      "block_on_dead_link": true,
+      "description": "껍데기 버튼(핸들러 누락, 빈 함수 TODO 방치) 배포 차단."
+    },
+    "zero_data_loss": {
+      "id": "TECH-RULE-03",
+      "name": "유저 데이터 무손실 딥이퀄 보존 시뮬레이션",
+      "enabled": true,
+      "description": "설정/화면 변경 시 아바타, 목표, 기록, 세팅값 100% 무손실 보존 검증."
+    },
+    "cross_view_sync": {
+      "id": "TECH-RULE-04",
+      "name": "화면 간 상태 전파 및 동기화 배선 검사",
+      "enabled": true,
+      "description": "기록/체크인 시 4대 뷰(홈, 기록, 통계, 캘린더) 렌더러 동시 호출 배선 검증."
+    },
+    "forbidden_patterns": {
+      "id": "TECH-RULE-05",
+      "name": "위조 지표 및 파괴적 코드 자동 차단 필터",
+      "enabled": true,
+      "rules": {
+        "fake_social_numbers": true,
+        "destructive_sync": true,
+        "tool_language_in_ui": true,
+        "hardcoded_secret": true
+      },
+      "description": "실데이터 없는 순위/숫자 위조, 일괄 삭제(TRUNCATE/DROP), UI 도구어 노출, 비밀키 하드코딩 자동 차단."
+    },
+    "grass_term_filter": {
+      "id": "TECH-RULE-06",
+      "name": "용어 헌법 자동 필터 ('히트맵' 강제)",
+      "enabled": true,
+      "description": "상민님의 절대 금지어 지시에 따라 UI/코드/주석에서 해당 단어 배제 및 '히트맵' 강제."
+    },
+    "real_user_sync": {
+      "id": "TECH-RULE-07",
+      "name": "실 사용자 계정 상호 연동 필수 (가짜 봇 금지)",
+      "enabled": true,
+      "description": "1:1 DM 및 소통 기능에서 실제 서버 DB 및 실시간 채널 연동 의무화."
+    },
+    "deployment_firewall": {
+      "id": "TECH-RULE-08",
+      "name": "배포 안전핀 및 작업계획서 4단계 상한선",
+      "enabled": true,
+      "description": "상민님 승인 없는 원격 main 푸시/머지 차단 및 작업계획서 마감선 4단계(로컬 메인 병합+프리뷰) 제한."
+    }
+  },
+  "command_scope": {
+    "current_mode": "MODE_4A",
+    "modes": [
+      {
+        "id": "MODE_01",
+        "code": "1",
+        "name": "모드 1: 탐색·질문",
+        "badge": "질문/탐색",
+        "description": "코드/파일 수정 전면 금지. 가능 여부 분석, 원인 규명, 방안만 답변 후 대기.",
+        "write_allowed": false,
+        "deploy_allowed": false,
+        "color": "#38bdf8"
+      },
+      {
+        "id": "MODE_02",
+        "code": "2",
+        "name": "모드 2: 구상·설계",
+        "badge": "구상/설계",
+        "description": "코드 적용 금지. SPEC 문서, 기획서, 아키텍처 다이어그램만 작성 후 대기.",
+        "write_allowed": "docs_only",
+        "deploy_allowed": false,
+        "color": "#a855f7"
+      },
+      {
+        "id": "MODE_03",
+        "code": "3",
+        "name": "모드 3: 단계 한정",
+        "badge": "단계한정",
+        "description": "상민님이 지정한 특정 단계(예: 단위테스트, 특정 함수 작성)까지만 수행 후 즉시 정지.",
+        "write_allowed": true,
+        "deploy_allowed": false,
+        "color": "#f59e0b"
+      },
+      {
+        "id": "MODE_4A",
+        "code": "4A",
+        "name": "모드 4-A: 완곡한 요청 (로컬 4단계 완결)",
+        "badge": "4단계자율완결",
+        "description": "1단계(기획)부터 4단계(로컬 메인 병합 및 5A 프리뷰 배포)까지만 무중단 자율 완결 후 정지. [기본값]",
+        "write_allowed": true,
+        "deploy_allowed": false,
+        "color": "#10b981"
+      },
+      {
+        "id": "MODE_4B",
+        "code": "4B",
+        "name": "모드 4-B: 프로덕션 배포",
+        "badge": "실서버배포",
+        "description": "상민님의 명시적 승인(배포, 승인, 1) 시에만 5단계(실배포) 및 6단계(실운영 확인) 진입 허용.",
+        "write_allowed": true,
+        "deploy_allowed": true,
+        "color": "#ef4444"
+      }
+    ]
+  },
+  "approval_lines": {
+    "lines": [
+      {
+        "id": "APP-01",
+        "name": "① 돈 (비용 발생)",
+        "desc": "유료 API 호출, 인프라 결제, 과금 수반 행위",
+        "status": "PROTECTED",
+        "marker": "[결심 필요]"
+      },
+      {
+        "id": "APP-02",
+        "name": "② 개인정보 수집 확대",
+        "desc": "신규 개인정보 필드 수집, 외부 전송",
+        "status": "PROTECTED",
+        "marker": "[결심 필요]"
+      },
+      {
+        "id": "APP-03",
+        "name": "③ 기존 기능 실제 삭제",
+        "desc": "기존에 동작하던 화면, 핸들러, DB 컬럼 물리 삭제",
+        "status": "PROTECTED",
+        "marker": "[결심 필요]"
+      },
+      {
+        "id": "APP-04",
+        "name": "④ 되돌릴 수 없는 바깥 행위",
+        "desc": "GitHub 원격 main PR 머지(gh pr merge) 및 직접 푸시(git push origin main)",
+        "status": "PROTECTED",
+        "marker": "[결심 필요]"
+      },
+      {
+        "id": "APP-05",
+        "name": "⑤ 규범·승인선 자체 변경",
+        "desc": "상민님 최고 헌법, 승인선 완화 및 자의적 해석 시도",
+        "status": "PROTECTED",
+        "marker": "[결심 필요]"
+      }
+    ],
+    "pending_decisions": [
+      {
+        "id": "DEC-TEST-01",
+        "decision": "approved",
+        "comment": "상민님 직접 승인",
+        "timestamp": "2026-09-16T02:02:32.959Z"
+      }
+    ]
+  },
+  "step_pipeline": {
+    "current_step": 4,
+    "limit_step": 4,
+    "steps": [
+      {
+        "step": 1,
+        "name": "1단계: 기획·설계",
+        "desc": "작업계획서 및 SPEC 문서 작성 (코드 수정 전)",
+        "type": "autonomous"
+      },
+      {
+        "step": 2,
+        "name": "2단계: 내부 시뮬레이션",
+        "desc": "작업 브랜치 코드 작성 및 npm test 자동 검증 통과",
+        "type": "autonomous"
+      },
+      {
+        "step": 3,
+        "name": "3단계: 로컬 수동 확인",
+        "desc": "로컬 브라우저(localhost)에서 화면 및 인터랙션 실측 확인",
+        "type": "autonomous"
+      },
+      {
+        "step": 4,
+        "name": "4단계: 로컬 메인 병합",
+        "desc": "로컬 main 브랜치 병합 및 Vercel 5A 프리뷰 배포 (자율 완결 마감선)",
+        "type": "autonomous_limit"
+      },
+      {
+        "step": 5,
+        "name": "5단계: 실서버 배포",
+        "desc": "원격 main PR 머지 및 Vercel 프로덕션 실서버 배포 (상민님 결심 필수)",
+        "type": "approval_required"
+      },
+      {
+        "step": 6,
+        "name": "6단계: 실운영 최종 확인",
+        "desc": "ourgoal-app.vercel.app 라이브 환경 접속 및 실동작 확인",
+        "type": "approval_required"
+      }
+    ]
+  },
+  "presets": {
+    "standard": {
+      "name": "🛡️ 표준 방어 모드",
+      "desc": "기본 권장. 모드 4-A 가동, 8대 기술 안전핀 100% ON, 5대 승인선 철통 방어.",
+      "mode": "MODE_4A",
+      "rules": {
+        "line_count_lock": true,
+        "zero_dead_click": true,
+        "zero_data_loss": true,
+        "cross_view_sync": true,
+        "forbidden_patterns": true,
+        "grass_term_filter": true,
+        "real_user_sync": true,
+        "deployment_firewall": true
+      }
+    },
+    "refactor": {
+      "name": "⚡ 리팩토링 모드",
+      "desc": "대규모 코드 정비용. index.html 라인 수 고정(TECH-01)만 임시 해제하고 나머지 안전핀 유지.",
+      "mode": "MODE_4A",
+      "rules": {
+        "line_count_lock": false,
+        "zero_dead_click": true,
+        "zero_data_loss": true,
+        "cross_view_sync": true,
+        "forbidden_patterns": true,
+        "grass_term_filter": true,
+        "real_user_sync": true,
+        "deployment_firewall": true
+      }
+    },
+    "deploy_ready": {
+      "name": "🚀 실배포 승인 모드",
+      "desc": "프로덕션 배포 진행용. 모드 4-B 전환 및 원격 배포 게이트 임시 승인.",
+      "mode": "MODE_4B",
+      "rules": {
+        "line_count_lock": true,
+        "zero_dead_click": true,
+        "zero_data_loss": true,
+        "cross_view_sync": true,
+        "forbidden_patterns": true,
+        "grass_term_filter": true,
+        "real_user_sync": true,
+        "deployment_firewall": true
+      }
+    },
+    "read_only": {
+      "name": "🔍 탐색·감찰 모드",
+      "desc": "읽기 전용 조사용. 모드 1 강제, 모든 코드/파일 쓰기 및 배포 원천 차단.",
+      "mode": "MODE_01",
+      "rules": {
+        "line_count_lock": true,
+        "zero_dead_click": true,
+        "zero_data_loss": true,
+        "cross_view_sync": true,
+        "forbidden_patterns": true,
+        "grass_term_filter": true,
+        "real_user_sync": true,
+        "deployment_firewall": true
+      }
+    }
+  }
+}

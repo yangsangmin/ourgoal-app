@@ -3724,3 +3724,58 @@
   - 실운영 프로덕션 환경에서 `/api/track` (action: `search_users`, query: `상민`) 실측 호출 결과 `200 OK`, `양상민` 실제 회원 레코드 정상 반환 확인.
   - 실운영 JS 번들(`js/team-invite-comm.js`) 내 AI 동반자 투명 뱃지(`[🤖 AI 동반자]`) 및 2중 검색 파이프라인 탑재 정상 서빙 확인.
 ---
+
+### 2026-09-16: [#TASK-ES-125] 아바타 제작 기본 3회 조정(비용 방어) + 7일 연속 체크인 1회 충전 리워드 루프 + 기존 계정 10회 보존 + 생성창 상시 안내
+- **배경 및 의도**:
+  - 초기 대량 사용자 유입 시 수익화 이전 아바타 생성 API(Gemini 3.1 Flash-Lite 멀티모달 비전) 비용 급증 위험 선제적 차단 (10회 -> 기본 3회 조정으로 초기 1인당 비용 약 430원에서 130원으로 70% 방어).
+  - 아워골 핵심 가치인 '7일 연속 체크인(스트릭)' 달성 시마다 아바타 제작권 1회씩 자동 보너스 충전하는 강력한 E1 습관 형성 리텐션 루프 구축.
+  - 기존 가입/로그인 유저의 10회 제작 권리는 100% 무손실 보존(TECH-RULE-03). 기존 계정도 7일 스트릭 보너스는 동일하게 누적 충전 적용.
+  - 횟수 소진 시뿐만 아니라 아바타 생성창 모달 내에 '🔥 7일 연속 체크인 시 아바타 제작권 1회 자동 충전!'을 상시 안내 배너로 기입하여 유저의 참여 동기 고취.
+- **수행 내역**:
+  1. `js/avatar-system.js`:
+     - 기본 상수 분기: `DEFAULT_BASE_CRAFTS = 3`, `LEGACY_MAX_CRAFTS = 10`, `MAX_AVATAR_CHANGES = 10`(보관함 용량).
+     - `isLegacyAccount(profile)` 판별기 신설: 기존 제작/보관 이력, 목표/기록 보유 등 기존 가입 계정 10회 영구 보존.
+     - `getMaxCrafts(profile)`: `maxBaseCrafts + (bonusCraftCredits || 0)` 동적 총 가용 횟수 계산.
+     - `getRemainingCrafts(profile)`: `Math.max(0, getMaxCrafts - usedCrafts)` 동적 잔여 계산.
+     - `maybeGrantStreakBonus(profile, streakDays)`: 7일 배수 도달 시 `bonusCraftCredits +1` 단발성 안전 충전 (`lastStreakAwarded` 구간 락킹).
+     - 아바타 모달 상단 및 제작 버튼에 `(남은횟수/총가용횟수)` 동적 렌더링 (`#topRemainingCraftsTxt`, `#topMaxCraftsSpan`, `#craftBtnCountSpan`).
+     - `#avatarMakerResultBox` 내 `#avatarStreakRechargeBanner` 상시 충전 안내 배너 탑재: `🔥 7일 연속 체크인 시 아바타 제작권 1회 자동 충전!`.
+  2. `index.html`:
+     - `defaultSettings()`: 신규 가입 계정 `maxBaseCrafts: 3`, `bonusCraftCredits: 0`, `lastStreakAwarded: 0` 기본 탑재.
+     - `maybeGrantAvatarCraftBonus()` 신설: 체크인 완료(`saveQuickCheckin`, 본체 체크인 `saveBtn.onclick`) 및 앱 진입(`checkStreakFreeze`) 시 스트릭 연계 보너스 충전.
+     - 7일 달성 시 축하 토스트 연동: "🎉 7일 연속 체크인 달성! 아바타 제작권 1회가 충전되었습니다! 🎨".
+     - 헌법 제18조 / TECH-RULE-01 엄수: `index.html` 총 줄 수 정확히 22,196줄 100% 보존.
+  3. `scripts/smoke-test.js`:
+     - `#TASK-ES-125` 컴플라이언스 테스트 5종 신설 (기본 3회/기존 10회 분기, 7일 스트릭 보너스 및 중복 방지, 동적 UI 및 상시 배너, index.html 배선 및 22,196줄 불변).
+     - 전체 테스트 264개 ALL PASS.
+  4. 헌법 5대 게이트 & Tri-Sync:
+     - 14대 무결성 게이트 100% PASS, Zero Dead Click 100% PASS, Tri-Sync 100% PASS.
+- **검증 결과**:
+  - `npm test`: 스모크 264개 통과 (0 failure), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
+  - `essence-gate.js --pre-commit`: 금지 패턴 없음, index.html 22,196줄 불변 통과.
+  - 컨트롤타워 연계: `.task-links/454cedb2.json` 동기화 성공 (`ok: true`).
+---
+
+### 2026-09-16: [#TASK-CONST-003] index.html 22,196줄 고정 라인수 잠금 해제 및 스마트 코드 증발 방지 안전핀 전면 전환
+- **배경 및 의도**:
+  - 상민님의 직접 질문("index.html 22,196줄 불변 엄수를 왜 해야돼?") 및 문제해결 8원칙 적용 결과에 대한 승인("승인. 적용되어야 하는 모든 곳에 적용하고 어디에 적용시켰는지 모두 누락없이 보고해") 접수.
+  - 과거 에이전트들이 코드 증발 방지용 초기 안전핀을 기형적인 '22,196줄 고정 숫자 맞추기 곡예'로 왜곡 답습하던 문제를 근본적으로 해소.
+  - 기존의 진짜 안전핀 목적(AI 무단 코드 축약 `// ...` 방지, 최소 본체 20,000줄 보존, 커밋당 순증가 300줄 한도)은 온전히 강화 보존하면서, 정상적인 코드 수정/추가 시 불필요한 줄 맞추기 노가다를 영구 폐지.
+- **수행 내역**:
+  1. `docs/rules/rules-control.json`:
+     - `TECH-RULE-01` 제어판의 `strict_lines: 22196`을 `strict_lines: null`로 공식 해제.
+     - `name`: "index.html 스마트 무결성 안전핀 (순증가 300줄 한도, 최소 본체 20,000줄 보존, // ... 무단 축약 금지)".
+     - `min_body_lines: 20000`, `allow_growth: true`, `max_growth_per_commit: 300` 명시.
+  2. `docs/rules/AI_TECHNICAL_RULES_REGISTRY.md`:
+     - `TECH-RULE-01` 공식 테이블 항목을 '스마트 무결성 안전핀'으로 전면 개정 (검증 기준: 축약 금지 + 300줄 한도 + 2만줄 본체 보존).
+  3. `scripts/smoke-test.js`:
+     - 하드코딩된 `assert.strictEqual(lines, 22196)` 단언문 20곳 전수를 스마트 안전핀(`assert.ok(lines >= 20000)`)으로 교체.
+     - '22,196줄 불변' 주석 3곳을 스마트 안전핀 설명으로 정비.
+  4. `scripts/test-calendar-attachments.js`:
+     - 라인 56의 `assert.strictEqual(indexLines, 22196)` 단언문 1곳 스마트 안전핀으로 교체.
+  5. `docs/rules/TICKETS.md`:
+     - `#TASK-CONST-003` 거버넌스 티켓 등록 완료.
+- **검증 결과**:
+  - `npm test`: 스모크 264개 전수 통과 (0 failure), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
+  - 22,196줄 고정 단언문 0개 확인 (전수 스마트 안전핀 전환 완결).
+---
