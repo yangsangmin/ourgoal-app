@@ -34,7 +34,6 @@ as $fn$
   from public.users u
   where auth.uid() is not null
     and u.id <> auth.uid()                       -- 검색자 본인 제외: RLS가 아니라 필터로 막아야 의미가 있다
-    and coalesce(u.is_bot, false) = false         -- AI 봇/시뮬 계정 제외 (users.is_bot, 2026-09-12 도입)
     and length(coalesce(trim(p_query), '')) >= 1  -- 빈 검색어로 전체 테이블 훑는 것 방지
     and (
       u.display_name ilike ('%' || p_query || '%')
