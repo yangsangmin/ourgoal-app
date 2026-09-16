@@ -35,6 +35,19 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="/ui.css?v=20260912">
+<!-- PostHog: Product Health 계측(2026-09-16, R50). 세션 리플레이 입력 마스킹 ON. -->
+<script>
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog && window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}p||((p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",p.onerror=function(){p=null},(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r));var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],Object.defineProperty(u,"toString",{configurable:!0,enumerable:!0,writable:!0,value:function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e}}),Object.defineProperty(u.people,"toString",{configurable:!0,enumerable:!0,writable:!0,value:function(){return u.toString(1)+".people (stub)"}}),o="du vu fu pu yu init Bu Hu Nu qu Vu Kl ju Zu Ou th eh ih nh sh rh capture getExtension zu hu uh calculateEventProperties ah register register_once register_for_session unregister unregister_for_session ph Lu hh getFeatureFlag getFeatureFlagPayload getFeatureFlagResult getAllFeatureFlags isFeatureEnabled reloadFeatureFlags updateFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey displaySurvey cancelPendingSurvey canRenderSurvey canRenderSurveyAsync gh identify setPersonProperties unsetPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset mh shutdown setIdentity clearIdentity get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException addExceptionStep captureLog startExceptionAutocapture stopExceptionAutocapture loadToolbar get_property getSessionProperty dh Ku createPersonProfile setInternalOrTestUser fh bu opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing get_explicit_consent_status is_capturing clear_opt_in_out_capturing Qu debug Xl Os getPageViewId captureTraceFeedback captureTraceMetric Pu".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
+  api_host: 'https://us.i.posthog.com',
+  defaults: '2026-05-30',
+  person_profiles: 'identified_only',
+  session_recording: { maskAllInputs: true, maskInputOptions: { password: true, email: true } }
+});
+window.phCapture = function(name, props){
+  try{ if(window.posthog && typeof window.posthog.capture === 'function') window.posthog.capture(name, props || {}); }catch(e){}
+};
+</script>
 <script src="/ui.js?v=20260912" defer></script>
 </head>
 <body>
@@ -1058,9 +1071,17 @@
       sb.from('events').insert({ sid: getSid(), name: name, props: props || {} }).then(function(){}, function(){});
     } catch(e){ /* 계측 실패는 조용히 무시 */ }
   }
+  function daysSinceSignup(){
+    try{
+      var createdAt = state.profile && state.profile.createdAt;
+      if(!createdAt) return null;
+      return Math.floor((Date.now() - new Date(createdAt).getTime()) / 86400000);
+    }catch(e){ return null; }
+  }
   function trackGoalCreated(goal, source){
     var goals = (state.profile && state.profile.goals) || [];
     track('goal_created', { source: source, category: goal && goal.category, first: goals.length<=1 });
+    phCapture('goal_created', { goal_type: goal && goal.category, source: source, day_index: daysSinceSignup() });
   }
   function fmtDuration(ms){
     if(ms<0) ms=0;
@@ -2346,6 +2367,7 @@
     setDeviceLoginTime(Date.now());
     await ensureUserRow(res.data.user.id, u, name);
     track('signup', Object.assign({ method: 'email' }, getAttribution())); /* 즉시 세션 경로는 loadProfile을 거치지 않으므로 여기서 기록 */
+    phCapture('signup_completed', Object.assign({ source: 'email' }, getAttribution()));
     state.profile = defaultProfile(res.data.user.id, u, name);
     await saveProfile();
     document.getElementById('authScreen').style.display = 'none';
@@ -2633,6 +2655,7 @@
     showObStep1();
 
     function showObStep1(){
+      phCapture('onboarding_step_viewed', { step: 1 });
       var presetsHtml = '<div style="margin-bottom:16px;">' +
         '<p class="faint" style="margin:0 0 8px;font-weight:700;">1초 만에 시작하는 추천 목표</p>' +
         '<div style="display:flex;flex-direction:column;gap:6px;">' +
@@ -2693,6 +2716,7 @@
     }
 
     function showObStep2(){
+      phCapture('onboarding_step_viewed', { step: 2 });
       var t = GOAL_TEMPLATES[ob.category] || GOAL_TEMPLATES.etc;
       openModal(
         '<p class="ob-step-label">2 / 4 · 목표 정하기</p>' +
@@ -2728,6 +2752,7 @@
     }
 
     function showObStep3(){
+      phCapture('onboarding_step_viewed', { step: 3 });
       var t = GOAL_TEMPLATES[ob.category] || GOAL_TEMPLATES.etc;
       var preview = (t.ms && t.ms.length)
         ? t.ms.map(function(m){ return '<div class="tp-item">'+escapeHtml(m)+'</div>'; }).join('')
@@ -2786,6 +2811,7 @@
       if(alreadySeenGuide) showCommTourModal();
     }
     function showObStep4(goal){
+      phCapture('onboarding_step_viewed', { step: 4 });
       var quickChips = QUICK_ACTIONS_BY_CAT[goal.category] || QUICK_ACTIONS_BY_CAT.etc;
       var quickChipsHtml = '<div style="margin:8px 0 14px;display:flex;flex-wrap:wrap;gap:6px;">' +
         quickChips.map(function(c){
@@ -5418,6 +5444,7 @@
     await saveProfile();
     try{ updateAppBadge(computeStreakDays()); }catch(e){}
     track('checkin', { first: isFirst, has_goal: !!goal, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l'), source: source || 'quick' });
+    phCapture('checkin_completed', { goal_type: goal && goal.category, source: source || 'quick', day_index: daysSinceSignup() });
     if(isFirst){
       triggerFirstCheerResponse(goal, text);
     }
@@ -19430,6 +19457,7 @@
       triggerHaptic(12);
       var rect = btn.getBoundingClientRect();
       burstConfetti(rect.left + rect.width / 2, rect.top, 8);
+      phCapture('cheer_sent', { source: 'feed', day_index: daysSinceSignup() });
     }
     await saveProfile();
 
@@ -20471,6 +20499,11 @@
           time: nowISO()
         });
       }
+      if(action === 'share' || action === 'copy_link'){
+        phCapture('invite_sent', { source: action, day_index: daysSinceSignup() });
+      } else if(action === 'view'){
+        phCapture('invite_opened', { source: 'peer_invite', day_index: daysSinceSignup() });
+      }
     } catch(e){}
   }
 
@@ -21008,6 +21041,7 @@
         sb.from('team_pings').insert(cheerPing).then(function(res){
           if(res.error) console.warn('[ManitoCheer] Supabase insert warn:', res.error.message);
         });
+        phCapture('cheer_sent', { source: 'manito', day_index: daysSinceSignup() });
 
         var st = manitoStreak();
         var mutual = manitoMutualCount(pid);
@@ -21999,6 +22033,8 @@
     var newManito = Math.max(0, manitoTotal - s.social.manitoSeen);
     s.social.cheersSeen = cheerTotal;
     s.social.manitoSeen = manitoTotal;
+    if(newCheers > 0) phCapture('cheer_received', { source: 'feed', count: newCheers, day_index: daysSinceSignup() });
+    if(newManito > 0) phCapture('cheer_received', { source: 'manito', count: newManito, day_index: daysSinceSignup() });
     if(newCheers > 0 || newManito > 0){
       showSocialNotifyBanner(newCheers, newManito);
       saveProfile();
@@ -22500,6 +22536,8 @@
 
   /* ============ PWA: Service Worker 등록 및 자동 업데이트 감지 (#TASK-ES-118) ============ */
   if('serviceWorker' in navigator){ window.addEventListener('load', function(){ navigator.serviceWorker.register('/sw.js').then(function(reg){ reg.addEventListener('updatefound', function(){ var newWorker = reg.installing; if(newWorker){ newWorker.addEventListener('statechange', function(){ if(newWorker.state === 'installed' && navigator.serviceWorker.controller && typeof toast === 'function'){ toast('새 버전으로 업데이트되었어요! 새로고침하면 즉시 반영돼요.'); } }); } }); }).catch(function(){}); }); }
+  /* PostHog: PWA 설치 완료 계측 (2026-09-16, R50) */
+  window.addEventListener('appinstalled', function(){ phCapture('app_installed_pwa', { source: 'beforeinstallprompt' }); });
 })();
 </script>
 

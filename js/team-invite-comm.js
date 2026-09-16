@@ -993,6 +993,7 @@
         }
 
         showToast('메시지를 전송했습니다! 💬');
+        try{ if(window.phCapture) window.phCapture('dm_sent', { source: 'manito' }); }catch(err){}
 
         // 2. 헌법 제19조 의거 Supabase 서버 DB 원장 영속화
         if(global.sb){
