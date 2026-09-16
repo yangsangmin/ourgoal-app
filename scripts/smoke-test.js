@@ -4841,6 +4841,29 @@ check('compliance: [#TASK-ES-111] 참가 팀원 달성현황 UI 효율화(1열 �
   assert.strictEqual(currentLines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
 });
 
+check('compliance: [#TASK-ES-116] 카카오톡 인앱 브라우저 외부 탈출 & PKCE 4초 대기 및 복구 안전망 검증', () => {
+  // 1. 카카오톡 인앱 브라우저 탈출 함수 및 버튼
+  assert.ok(html.includes('function escapeKakaoInAppBrowser()'), '카카오 인앱 브라우저 외부 탈출 함수 정의');
+  assert.ok(html.includes('btnEscapeInAppNotice'), '카카오 인앱 브라우저 탈출 배너 버튼 존재');
+  assert.ok(html.includes('intent://'), 'Android Chrome 외부 브라우저 탈출 intent 스킴 지원');
+  assert.ok(html.includes('Safari(사파리)로 열기'), 'iOS Safari 안내 모달 지원');
+
+  // 2. PKCE code_verifier 2중 백업 및 복원
+  assert.ok(html.includes('-code-verifier') && html.includes('sessionStorage.setItem(sk'), 'PKCE code_verifier sessionStorage 2중 백업');
+  assert.ok(html.includes('localStorage.setItem(sKey, sessionStorage.getItem(sKey))'), 'PKCE code_verifier 복원 로직 배선');
+
+  // 3. boot 콜백 4.0초 안전 대기
+  assert.ok(html.includes('maxWait = isOAuthCallback ? 20 : 1'), 'OAuth 콜백 최대 4.0초(20회) 안전 대기');
+  assert.ok(html.includes('카카오 로그인 세션을 확인 중입니다'), 'OAuth 콜백 진행 중 사용자 피드백 안내');
+
+  // 4. PKCE/OAuth 실패 시 자동 구출 모달 연계
+  assert.ok(html.includes("openLoginRescueModal('카카오톡 인앱 브라우저 세션 지연이 발생했습니다"), '콜백 지연 시 자동 구출 모달 오픈');
+
+  // 5. 헌법 제18조: index.html 22,196줄 불변 엄수
+  const finalLines = html.split(/\r?\n/).length;
+  assert.strictEqual(finalLines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
