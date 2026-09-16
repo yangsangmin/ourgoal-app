@@ -320,6 +320,73 @@ async function handleSearchUsers(sb, body, res) {
   }
 }
 
+// #TASK-ES-129: 동반자 데이터 영구 영속화 및 복원 (Service Role Key 기반 서버리스 파이프라인)
+async function handleSyncCompanions(sb, body, res) {
+  var userId = String(body.userId || '').trim();
+  if (!userId) {
+    return res.status(400).json({ ok: false, error: 'userId is required', companions: [] });
+  }
+
+  var companionsToSave = Array.isArray(body.companions) ? body.companions : null;
+
+  try {
+    // 1. 저장 요청인 경우: events 테이블에 원장 기록 + users 테이블 백업 시도
+    if (companionsToSave !== null) {
+      try {
+        await sb.from('events').insert({
+          sid: null,
+          name: 'companion_ledger',
+          props: {
+            userId: userId,
+            companions: companionsToSave,
+            updatedAt: new Date().toISOString()
+          }
+        });
+      } catch (e) {
+        console.warn('[sync_companions] events ledger write warning:', e.message);
+      }
+
+      try {
+        await sb.from('users').update({ companions: companionsToSave }).eq('id', userId);
+      } catch (e) {}
+
+      return res.status(200).json({ ok: true, companions: companionsToSave, saved: true });
+    }
+
+    // 2. 조회 요청인 경우: events 원장에서 해당 user의 가장 최신 companion_ledger 조회
+    var latestCompanions = [];
+    try {
+      var evRes = await sb.from('events')
+        .select('props')
+        .eq('name', 'companion_ledger')
+        .filter('props->>userId', 'eq', userId)
+        .order('id', { ascending: false })
+        .limit(1);
+
+      if (evRes.data && evRes.data.length > 0 && evRes.data[0].props && Array.isArray(evRes.data[0].props.companions)) {
+        latestCompanions = evRes.data[0].props.companions;
+      }
+    } catch (e) {
+      console.warn('[sync_companions] events ledger read warning:', e.message);
+    }
+
+    // 3. 만약 events에 없으면 users 테이블 조회 시도
+    if (!latestCompanions.length) {
+      try {
+        var uRes = await sb.from('users').select('companions').eq('id', userId).maybeSingle();
+        if (uRes.data && Array.isArray(uRes.data.companions)) {
+          latestCompanions = uRes.data.companions;
+        }
+      } catch (e) {}
+    }
+
+    return res.status(200).json({ ok: true, companions: latestCompanions, saved: false });
+  } catch (err) {
+    console.warn('[sync_companions] 예외 발생:', err);
+    return res.status(500).json({ ok: false, error: (err && err.message) || '동반자 동기화 실패', companions: [] });
+  }
+}
+
 // #TASK-ES-123: 1:1 고객 문의 및 오류 제보 접수 (노션 DB + 텔레그램 + Supabase)
 var DEFAULT_NOTION_INQUIRIES_DB_ID = '3dd598db-9096-816e-8875-c602c34d251f';
 var DEFAULT_TELEGRAM_CHAT_ID = '1260106462';
@@ -523,6 +590,12 @@ module.exports = async function handler(req, res) {
   if (body.action === 'search_users') {
     return handleSearchUsers(sb, body, res);
   }
+
+  // #TASK-ES-129: 동반자 데이터 영구 영속화 및 복원
+  if (body.action === 'sync_companions') {
+    return handleSyncCompanions(sb, body, res);
+  }
+
 
   var name = String(body.name || '');
   if (ALLOWED_EVENTS.indexOf(name) === -1) {

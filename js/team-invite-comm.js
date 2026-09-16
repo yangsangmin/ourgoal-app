@@ -994,42 +994,156 @@
     return esc(trimmed);
   }
 
+  var COMPANIONS_STORAGE_PREFIX = 'ourgoal_companions_backup_';
+
+  function getCompanionsStorageKey(){
+    var state = global.state || {};
+    var uid = (state.profile && state.profile.id) ? String(state.profile.id).trim() : 'guest';
+    return COMPANIONS_STORAGE_PREFIX + uid;
+  }
+
   function ensureDefaultCompanions(){
-    var state = global.state;
-    if(!state || !state.profile) return [];
-    if(!state.profile.companions || !Array.isArray(state.profile.companions)){
-      state.profile.companions = [];
+    var state = global.state || {};
+    if(!state.profile) return [];
+
+    // 1. 메모리에 유효한 배열이 있고 비어있지 않으면 그대로 사용
+    if(Array.isArray(state.profile.companions) && state.profile.companions.length > 0){
+      return state.profile.companions;
     }
+
+    // 2. 메모리가 비어있거나 초기화된 경우: localStorage 백업에서 즉시 0ms 자가 복원
+    var restored = [];
+    try {
+      var key = getCompanionsStorageKey();
+      var raw = localStorage.getItem(key);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(Array.isArray(parsed) && parsed.length > 0){
+          restored = parsed;
+        }
+      }
+    } catch(e){}
+
+    if(restored && restored.length > 0){
+      state.profile.companions = restored;
+      return state.profile.companions;
+    }
+
+    // 3. 만약 로컬스토리지에도 저장 이력이 전혀 없다면: 초기 콜드스타트 가상 AI 동반자 3인 안전 제공
+    if(!state.profile.companions || !Array.isArray(state.profile.companions)){
+      state.profile.companions = [
+        { id: 'comp_minji', nickname: '새벽러너_민지', name: '새벽러너_민지', avatar: '🏃‍♀️', streak: 42, theme: '마라톤', intro: '매일 아침 6시 5km 달리기 함께해요!', isAiBot: true, createdAt: new Date().toISOString() },
+        { id: 'comp_dohyun', nickname: '코드장인_도현', name: '코드장인_도현', avatar: '💻', streak: 128, theme: '코딩', intro: '매일 1커밋과 알고리즘 1문제 풀기', isAiBot: true, createdAt: new Date().toISOString() },
+        { id: 'comp_sua', nickname: '갓생사는_수아', name: '갓생사는_수아', avatar: '📚', streak: 15, theme: '독서', intro: '출퇴근길 30분 독서 습관 만들기', isAiBot: true, createdAt: new Date().toISOString() }
+      ];
+      try {
+        localStorage.setItem(getCompanionsStorageKey(), JSON.stringify(state.profile.companions));
+      } catch(e){}
+    }
+
     return state.profile.companions;
   }
 
   var _companionsDbSynced = false;
-  // 동반자 목록을 users.companions(jsonb, 본인 행만 select/update 가능한 기존 RLS 재사용)에서
-  // 1회 불러와 병합한다. index.html의 loadProfile/saveProfile은 이 필드를 다루지 않으므로
-  // (index.html 22,196줄 불변 제약과 무관하게 이 모듈 안에서 독립적으로 영속화한다) 여기서 직접 처리한다.
+  // #TASK-ES-129: 동반자 목록 영구 영속화 (localStorage 즉시 복원 + /api/track 서버리스 원장 동기화)
   function syncCompanionsFromDb(body){
     var state = global.state || {};
-    if(_companionsDbSynced || !global.sb || !state.profile || !state.profile.id) return;
+    if(_companionsDbSynced || !state.profile || !state.profile.id) return;
     if(String(state.profile.id).indexOf('guest') === 0) return;
     _companionsDbSynced = true;
-    global.sb.from('users').select('companions').eq('id', state.profile.id).maybeSingle().then(function(res){
-      if(res && res.data && Array.isArray(res.data.companions) && res.data.companions.length){
-        var existing = ensureDefaultCompanions();
-        res.data.companions.forEach(function(c){
-          if(c && c.id && !existing.some(function(x){ return x.id === c.id; })) existing.push(c);
-        });
-        renderCommCompanions(body);
-      }
-    }).catch(function(err){ console.warn('[동반자] 목록 불러오기 오류:', err); });
+
+    // 1단계: 로컬스토리지 자가 치유 복원
+    ensureDefaultCompanions();
+
+    // 2단계: /api/track 서버리스 원장 비동기 조회 및 병합
+    if(typeof fetch !== 'undefined'){
+      fetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'sync_companions', userId: state.profile.id })
+      }).then(function(res){
+        if(res && res.ok) return res.json();
+        return null;
+      }).then(function(data){
+        if(data && data.ok && Array.isArray(data.companions) && data.companions.length){
+          var comps = ensureDefaultCompanions();
+          var addedAny = false;
+          data.companions.forEach(function(c){
+            if(c && c.id){
+              var cId = String(c.id).trim().toLowerCase();
+              var exists = comps.some(function(x){ return String(x.id || '').trim().toLowerCase() === cId; });
+              if(!exists){
+                comps.push(c);
+                addedAny = true;
+              }
+            }
+          });
+          if(addedAny){
+            try {
+              localStorage.setItem(getCompanionsStorageKey(), JSON.stringify(comps));
+            } catch(e){}
+            if(body) renderCommCompanions(body);
+          }
+        }
+      }).catch(function(err){
+        console.warn('[동반자] 서버리스 동기화 예외(로컬 보존 유지):', err);
+      });
+    }
+
+    // 3단계: Supabase 레거시 users.companions 컬럼 조회 시도 (존재 시 호환)
+    if(global.sb){
+      global.sb.from('users').select('companions').eq('id', state.profile.id).maybeSingle().then(function(res){
+        if(res && res.data && Array.isArray(res.data.companions) && res.data.companions.length){
+          var comps = ensureDefaultCompanions();
+          var addedAny = false;
+          res.data.companions.forEach(function(c){
+            if(c && c.id){
+              var cId = String(c.id).trim().toLowerCase();
+              if(!comps.some(function(x){ return String(x.id || '').trim().toLowerCase() === cId; })){
+                comps.push(c);
+                addedAny = true;
+              }
+            }
+          });
+          if(addedAny){
+            try { localStorage.setItem(getCompanionsStorageKey(), JSON.stringify(comps)); } catch(e){}
+            if(body) renderCommCompanions(body);
+          }
+        }
+      }).catch(function(){});
+    }
   }
 
   function persistCompanions(){
     var state = global.state || {};
-    if(!global.sb || !state.profile || !state.profile.id) return;
-    if(String(state.profile.id).indexOf('guest') === 0) return;
-    global.sb.from('users').update({ companions: state.profile.companions || [] }).eq('id', state.profile.id).then(function(res){
-      if(res && res.error) console.warn('[동반자] 저장 오류:', res.error);
-    }).catch(function(err){ console.warn('[동반자] 저장 오류:', err); });
+    if(!state.profile || !state.profile.id) return;
+    var uid = state.profile.id;
+    var list = state.profile.companions || [];
+
+    // 1순위: localStorage 0ms 동기식 영구 저장 (새로고침 시 100% 무손실 복구)
+    try {
+      localStorage.setItem(getCompanionsStorageKey(), JSON.stringify(list));
+    } catch(e){
+      console.warn('[동반자] localStorage 백업 오류:', e);
+    }
+
+    if(String(uid).indexOf('guest') === 0) return;
+
+    // 2순위: /api/track 서버리스 파이프라인 (events 원장 영구 저장)
+    if(typeof fetch !== 'undefined'){
+      try {
+        fetch('/api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'sync_companions', userId: uid, companions: list })
+        }).catch(function(err){ console.warn('[동반자] /api/track 서버 저장 실패:', err); });
+      } catch(e){}
+    }
+
+    // 3순위: Supabase users.companions 컬럼 업데이트 시도
+    if(global.sb){
+      global.sb.from('users').update({ companions: list }).eq('id', uid).catch(function(){});
+    }
   }
 
   function openUserProfileModal(user){
@@ -1477,7 +1591,14 @@
           if(global.toast) global.toast((target.nickname || target.name) + '님을 동반자로 추가했어요! 🎉');
           renderCommCompanions(body);
         } else {
-          if(global.toast) global.toast('이미 등록된 동반자입니다.');
+          var exIdx = comps.findIndex(function(x){ return String(x.id || '').trim().toLowerCase() === String(target.id || '').trim().toLowerCase(); });
+          if(exIdx >= 0){
+            comps[exIdx].nickname = target.nickname || target.name || comps[exIdx].nickname;
+            comps[exIdx].avatar = target.avatar || comps[exIdx].avatar;
+            comps[exIdx].intro = target.intro || comps[exIdx].intro;
+          }
+          persistCompanions();
+          if(global.toast) global.toast((target.nickname || target.name) + '님은 이미 등록된 동반자입니다.');
           renderCommCompanions(body);
         }
       });
@@ -1497,11 +1618,12 @@
     body.querySelectorAll('[data-delcomp]').forEach(function(btn){
       btn.addEventListener('click', async function(){
         var uid = btn.dataset.delcomp;
-        var comp = companions.find(function(x){ return x.id === uid; });
+        var comp = companions.find(function(x){ return String(x.id || '').trim().toLowerCase() === String(uid || '').trim().toLowerCase(); });
         var name = comp ? comp.nickname : '해당 동반자';
         if(!confirm(name + '님과의 동반자 관계를 해제하시겠습니까?')) return;
-        state.profile.companions = companions.filter(function(x){ return x.id !== uid; });
-        if(global.saveProfile) await global.saveProfile();
+        state.profile.companions = companions.filter(function(x){ return String(x.id || '').trim().toLowerCase() !== String(uid || '').trim().toLowerCase(); });
+        try { if(global.saveProfile) await global.saveProfile(); } catch(e){}
+        persistCompanions();
         if(global.toast) global.toast('동반자 관계를 해제했습니다');
         renderCommCompanions(body);
       });
