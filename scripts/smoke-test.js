@@ -4630,10 +4630,13 @@ check('compliance: [#TASK-ES-106] 헌법 제19조 의거 실 사용자 계정 �
   //    (docs/sql/2026-09-16-search-users-rpc.sql). 검색은 RLS를 우회하지 않는
   //    SECURITY DEFINER RPC 경유로만 하고, 게스트/오류/미존재를 구분해서 보여준다.
   assert.ok(moduleContent.includes("rpc('search_users_by_nickname'"), 'RLS를 그대로 둔 채 최소 필드만 반환하는 검색 RPC 호출 배선 검증');
-  assert.ok(!moduleContent.includes("from('users')"), 'users 테이블 직접 select(RLS로 항상 0건) 제거 검증');
+  // .from('users') 자체는 본인 행만 다루는 companions get/set(persistCompanions/syncCompanionsFromDb)에서
+  // 정당하게 쓰인다(RLS 통과). 재발 방지 대상은 어디까지나 타인 검색을 anon select로 시도하던 옛 패턴이다.
+  assert.ok(!moduleContent.includes(".or('display_name.ilike"), '타인 검색을 RLS 걸린 테이블 직접 select로 시도하던 옛 결함 패턴 제거 검증');
   assert.ok(moduleContent.includes('_companionSearchError'), '검색 실패/게스트/결과없음 상태를 구분하는 필드 탑재 검증');
   assert.ok(moduleContent.includes("searchError === 'guest'"), '비로그인 검색 시 로그인 안내와 결과없음을 구분하는지 검증');
   assert.ok(moduleContent.includes("searchError === 'error'"), '쿼리 실패와 결과없음을 구분해서 보여주는지 검증');
+  assert.ok(moduleContent.includes('persistCompanions'), '동반자 추가가 users.companions에 영속화되는지 검증(#TASK-ES-120 추가 발견: 추가해도 새로고침하면 사라지던 결함)');
 
   // 4. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
