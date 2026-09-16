@@ -4859,6 +4859,49 @@ check('compliance: [#TASK-ES-116] 카카오톡 인앱 브라우저 외부 탈출
   // 4. PKCE/OAuth 실패 시 자동 구출 모달 연계
   assert.ok(html.includes("openLoginRescueModal('카카오톡 인앱 브라우저 세션 지연이 발생했습니다"), '콜백 지연 시 자동 구출 모달 오픈');
 
+  // 5. 사용자 만족 극대화: 닉네임 1초 직통 고속도로 & 무음 자동 정화 배선
+  assert.ok(html.includes('id="landNickQuickLink"'), '랜딩 화면 닉네임 1초 직통 고속도로 링크 존재');
+  assert.ok(html.includes("openLoginRescueModal('사용하실 닉네임 또는 이메일을 입력하시면 1초 만에 바로 입장하실 수 있어요!')"), '닉네임 직통 클릭 시 안내 및 구출 모달 오픈 연계');
+  assert.ok(html.includes("lk.indexOf('sb-') === 0 || lk === 'ourgoal_guest_profile'"), '구출 모달 오픈 시 무음 자동 토큰 정화 로직 배선');
+  assert.ok(html.includes('처음부터 다시 시도'), '세션 초기화 기술 용어 순화 완료');
+  assert.ok(html.includes('1초 빠른 복구·입장'), '복구 링크 문구 순화 완료');
+
+  // 6. 헌법 제18조: index.html 22,196줄 불변 엄수
+  const finalLines = html.split(/\r?\n/).length;
+  assert.strictEqual(finalLines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
+check('compliance: [#TASK-ES-117] 아바타 생성 후 앱 업데이트·재로그인·재접속 시 아바타 영속성 및 화면 동기화 무결성 검증', () => {
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+
+  // 1. avatar-system.js 에서 profile.avatarUrl 동기화 확인
+  assert.ok(
+    avatarSrc.includes('profile.avatarUrl = newCustomUrl;') &&
+    avatarSrc.includes('deps.state.profile.avatarUrl = newCustomUrl;'),
+    '아바타 생성 시 profile.avatarUrl 및 deps.state.profile.avatarUrl 동기화'
+  );
+
+  // 2. index.html loadProfile() 내 DB users.avatar_url 커스텀 아바타 자동 복원 확인
+  assert.ok(
+    html.includes('settings.customAvatarUrl = finalAvatarUrl;') &&
+    html.includes("settings.avatarType = 'custom';"),
+    'loadProfile 내 새 기기/캐시삭제 후 재로그인 시 DB avatar_url 커스텀 아바타 자동 복원'
+  );
+
+  // 3. index.html updateTopBar() 3등신 아바타 지원 확인
+  assert.ok(
+    html.includes("customUrl = (p.settings && p.settings.avatarType === 'custom' && p.settings.customAvatarUrl) || p.avatarUrl"),
+    'updateTopBar 내 3등신 아바타(customAvatarUrl) 직접 지원 및 상단바 동기화'
+  );
+
+  // 4. index.html restoreSessionAndEnter() 게스트 아바타 설정 마이그레이션 확인
+  assert.ok(
+    html.includes('state.profile.settings.avatarType = gData.settings.avatarType') &&
+    html.includes('state.profile.settings.customAvatarUrl = gData.settings.customAvatarUrl') &&
+    html.includes('state.profile.avatarUrl = gData.settings.customAvatarUrl'),
+    '게스트 상태에서 아바타 제작 후 소셜 로그인 전환 시 아바타 설정 100% 무손실 마이그레이션'
+  );
+
   // 5. 헌법 제18조: index.html 22,196줄 불변 엄수
   const finalLines = html.split(/\r?\n/).length;
   assert.strictEqual(finalLines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
