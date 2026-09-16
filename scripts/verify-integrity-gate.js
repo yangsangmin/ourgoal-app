@@ -293,8 +293,11 @@ check('절대 무결성 헌법 정본 문서(OURGOAL_ABSOLUTE_INTEGRITY_RULES.md
   assert.ok(rulesContent.includes('제6장 기계적 강제 집행 시스템'), '제6장 누락');
   assert.ok(rulesContent.includes('제7장 지시 의도 스코프 및 단계별 멈춤 헌법'), '제7장 누락');
   assert.ok(rulesContent.includes('제8장 실 사용자 계정 상호 연동 및 다자간 소통 헌법'), '제8장 누락');
+  assert.ok(rulesContent.includes('제9장 외부 연동 종단간 무결성 및 헌법 독점주의 헌법'), '제9장 누락');
   assert.ok(rulesContent.includes('제17조 (용어 헌법: \'잔디\' 단어 절대 사용 금지 및 \'히트맵\' 강제)'), '제17조 누락');
   assert.ok(rulesContent.includes('제19조 (실 사용자 계정 상호 연동 헌법 / The Real Inter-Account Interaction Constitution)'), '제19조 누락');
+  assert.ok(rulesContent.includes('제20조 (외부 연동 종단간(E2E) 무결성 및 클라우드 환경 동기화 헌법'), '제20조 누락');
+  assert.ok(rulesContent.includes('제21조 (헌법 독점주의 및 법체계 위계 단일화 헌법'), '제21조 누락');
 });
 
 /* =========================================================================
@@ -358,6 +361,26 @@ check('헌법 정본에 실 사용자 계정 상호 연동 헌법(제19조 1~4�
   assert.ok(rulesContent.includes('제4항 [E3 동류소통 기능의 3대 필수 백본 및 자동화 검증]'), '제19조 4항 누락');
   assert.ok(rulesContent.includes('가짜 실제구현 및 로컬 자가발전 눈속임'), '제3조 6호 누락');
   assert.ok(rulesContent.includes('가짜 실제구현(상대방 계정과 연동 없는 가상 봇 눈속임) 전면 금지'), '제4조 7호 누락');
+});
+
+/* =========================================================================
+ * 9. 헌법 제20조/제21조: 외부 연동 종단간 무결성 및 헌법 독점주의 검증
+ * ========================================================================= */
+console.log('\n[검증 9/9] 헌법 제20조/제21조: 외부 연동 E2E 무결성 및 헌법 독점주의 검사');
+
+check('헌법 정본에 제20조(외부연동 E2E 무결성) 및 제21조(헌법 독점주의·법체계 위계 단일화)가 규정되어 있다', () => {
+  const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
+  const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
+  assert.ok(rulesContent.includes('제20조 (외부 연동 종단간(E2E) 무결성 및 클라우드 환경 동기화 헌법'), '제20조 누락');
+  assert.ok(rulesContent.includes('제1항 [외부 앱 의존 껍데기 링크 전면 금지 및 인앱 완결 의무]'), '제20조 1항 누락');
+  assert.ok(rulesContent.includes('제2항 [클라우드 환경변수·자격증명 3자 동기화 의무 (No Silent Failure)]'), '제20조 2항 누락');
+  assert.ok(rulesContent.includes('제3항 [PWA·브라우저 캐시 강제 무효화 의무 (Cache Invalidation Gate)]'), '제20조 3항 누락');
+  assert.ok(rulesContent.includes('제4항 [6단계 실운영 최종 확인의 종단간(E2E) 실측 의무]'), '제20조 4항 누락');
+  assert.ok(rulesContent.includes('제21조 (헌법 독점주의 및 법체계 위계 단일화 헌법'), '제21조 누락');
+  assert.ok(rulesContent.includes('제1항 [법체계 위계의 단일화 (조·항·호·목 원칙)]'), '제21조 1항 누락');
+  assert.ok(rulesContent.includes('제2항 [헌법 독점주의 (사설 규칙 제정 전면 금지 / Constitutional Exclusivity)]'), '제21조 2항 누락');
+  assert.ok(rulesContent.includes('제3항 [신규 규칙 제정의 헌법 편입 의무]'), '제21조 3항 누락');
+  assert.ok(rulesContent.includes('제4항 [규범 변경의 절대 승인선 엄수]'), '제21조 4항 누락');
 });
 
 console.log('\n================================================================');
