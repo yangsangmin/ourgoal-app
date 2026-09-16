@@ -906,7 +906,7 @@
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
-  <script src="js/calendar-attachment.js?v=20260915-es096"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260915-es105"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script>
+  <script src="js/calendar-attachment.js?v=20260915-es096"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260915-es105"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script>
 <script>
 (function(){
   "use strict";
@@ -1636,7 +1636,8 @@
     if(!settings.customAvatarUrl && finalAvatarUrl && (finalAvatarUrl.indexOf('data:image') === 0 || finalAvatarUrl.indexOf('http') === 0)){
       settings.customAvatarUrl = finalAvatarUrl; if(!settings.avatarType || settings.avatarType === 'robot') settings.avatarType = 'custom'; saveLocalSettings(userId, settings);
     }
-    if(hasExistingData && !settings.hasSeenGuide){ settings.hasSeenGuide = true; saveLocalSettings(userId, settings); }
+    if(hasExistingData && !settings.hasSeenGuide){ settings.hasSeenGuide = true; saveLocalSettings(userId, settings);
+    }
     if(settings && settings.proTemplateRecords){
       records.forEach(function(rec){
         if(settings.proTemplateRecords[rec.id]){
@@ -15582,8 +15583,10 @@
           '<b style="font-size:.875rem;" id="mktPreviewTitle">템플릿 미리보기</b>' +
           '<button class="btn btn-ghost btn-sm" id="mktClosePreviewBtn" type="button" style="font-size:.8125rem;">닫기</button>' +
         '</div>' +
-        '<div class="pro-designer-preview" style="padding:0;margin:0 0 10px;" id="mktPreviewTableBox"></div>' +
-        '<button class="btn btn-primary btn-sm" id="mktPreviewCloneBtn" type="button" style="width:100%;font-size:.8125rem;padding:7px 0;">이 템플릿 내 것으로 복제하기</button>' +
+        '<div style="display:flex;gap:6px;margin-top:6px;">' +
+          '<button class="btn btn-ghost btn-sm" id="mktPreviewShareBtn" type="button" style="flex:1;border:1px solid var(--brand-strong);color:var(--brand-strong);font-weight:700;font-size:.8125rem;padding:7px 0;">🔗 템플릿 공유</button>' +
+          '<button class="btn btn-primary btn-sm" id="mktPreviewCloneBtn" type="button" style="flex:1.5;font-size:.8125rem;padding:7px 0;">이 템플릿 내 것으로 복제하기</button>' +
+        '</div>' +
       '</div>' +
       '<div class="modal-actions" style="margin-top:14px;">' +
         '<button class="btn btn-ghost" id="mktModalCloseBtn" type="button">닫기</button>' +
@@ -15650,6 +15653,7 @@
           if(curPreviewTpl) cloneTemplate(curPreviewTpl);
         };
       }
+      var prevShareBtn = sheet.querySelector('#mktPreviewShareBtn'); if(prevShareBtn){ prevShareBtn.onclick = function(){ if(!curPreviewTpl) return; shareContent({ type: 'template', id: curPreviewTpl.key || curPreviewTpl.title, title: curPreviewTpl.title, desc: (curPreviewTpl.desc || (curPreviewTpl.title + ' 노션형 맞춤 목표 템플릿')), text: '[아워골 목표 템플릿] \'' + curPreviewTpl.title + '\' 템플릿으로 함께 성장해요! 📋' }); }; }
 
       // 카테고리 필터 클릭
       sheet.querySelectorAll('#mktCategoryPills button').forEach(function(btn){
@@ -18559,8 +18563,27 @@
     tiktok:  { vertical: {w:720, h:1280} },
     threads: { square:   {w:720, h:720} }
   };
-  /* 실제 배포 도메인(커스텀 도메인 연결 전이라 vercel.app 주소 사용) */
-  var SHARE_DOMAIN = 'https://ourgoal-app.vercel.app';
+  /* 실제 배포 도메인(접속 환경에 맞춰 동적 감지, 커스텀 도메인 및 로컬/Vercel 자동 호환) */
+  var SHARE_DOMAIN = (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin : 'https://ourgoal-app.vercel.app';
+
+  /* 범용 외부 SNS 공유 엔진: js/viral-sharing.js 위임 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  var shareContent = function(opts){ return window.OurgoalViralSharing ? window.OurgoalViralSharing.shareContent(opts) : Promise.resolve(); }; window.shareContent = shareContent;
+
   /* 워터마크: 모든 공유 카드(플랫폼별 공유 카드·완주 인증서·위클리 리캡)가 공통으로 호출 */
   function drawShareWatermark(ctx, dims, userId, textColor){
     var pad = Math.round(dims.w*0.045);
@@ -18578,9 +18601,7 @@
     ctx.fillText('나만의 목표 달성 메이트 · 아워골', dims.w/2, dims.h-pad*0.35);
     ctx.restore();
   }
-  function buildInviteLinkSuffix(goalId){
-    return '\r\n\r\n'+SHARE_DOMAIN+'?ref='+encodeURIComponent(state.profile.id)+(goalId ? '&goal='+encodeURIComponent(goalId) : '');
-  }
+  function buildInviteLinkSuffix(goalId, goalTitle){ var origin = (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin : SHARE_DOMAIN; return goalId ? ('\r\n\r\n' + origin + '/share?type=goal&id=' + encodeURIComponent(goalId) + (goalTitle ? '&title=' + encodeURIComponent(goalTitle) : '')) : ('\r\n\r\n' + origin + '/share?type=app&ref=' + encodeURIComponent((state.profile && state.profile.id) || '')); }
   function scRoundRect(ctx, x, y, w, h, r){
     ctx.beginPath();
     ctx.moveTo(x+r, y);
@@ -18816,7 +18837,7 @@
     if(shareBtn) shareBtn.disabled = false;
     if(saveBtn) saveBtn.disabled = false;
     if(shareBtn) shareBtn.addEventListener('click', async function(){
-      var text = '아워골에서 "'+goal.title+'" '+pct+'% 달성으로 완주했어요! 🏆'+buildInviteLinkSuffix(goal.id);
+      var text = '아워골에서 "'+goal.title+'" '+pct+'% 달성으로 완주했어요! 🏆'+buildInviteLinkSuffix(goal.id, goal.title);
       try{
         var blob = await (await fetch(dataUrl)).blob();
         var file = new File([blob], 'ourgoal-certificate.png', { type:'image/png' });
@@ -19465,6 +19486,7 @@
                 '<button class="feed-react-btn'+(hasHeart?' active active-heart':'')+'" data-reacttype="heart" data-pid="'+it.id+'" type="button" title="응원해요">'+(heartCount > 0 ? heartCount : '')+'</button>' +
                 '<button class="feed-react-btn'+(hasSparkle?' active active-sparkle':'')+'" data-reacttype="sparkle" data-pid="'+it.id+'" type="button" title="자극받아요">'+(sparkleCount > 0 ? sparkleCount : '')+'</button>') +
                 '<button class="feed-comm-toggle'+(comments.length?' has-comments':'')+'" data-togglecomments="'+it.id+'" type="button">댓글 '+(comments.length || 0)+'</button>' +
+                '<button class="feed-share-btn" data-sharefeed="'+it.id+'" type="button" title="외부 SNS 공유 및 링크 복사" style="background:none;border:1px solid var(--rule);border-radius:12px;padding:3px 8px;font-size:.75rem;color:var(--ink-soft);cursor:pointer;display:inline-flex;align-items:center;gap:3px;margin-left:2px;">🔗 공유</button>' +
               '</div>' +
               (window.OurgoalReactions ? window.OurgoalReactions.advicePanelHtml(it) : '') +
               (isMe && !it.is_ai ? '<button data-delpost="'+it.id+'" type="button" style="margin-left:auto;background:none;border:none;color:var(--ink-faint);font-size:.8125rem;cursor:pointer;">삭제</button>' : '') +
@@ -19596,6 +19618,8 @@
         renderCommFeed(body);
       });
     });
+
+    body.querySelectorAll('[data-sharefeed]').forEach(function(btn){ btn.addEventListener('click', function(e){ e.stopPropagation(); var pid = btn.dataset.sharefeed; var post = blendedItems.find(function(x){ return x.id === pid; }); if(!post) return; var pTitle = post.goal ? ('"' + post.goal + '" 실천 기록') : (post.action || '목표 실천 기록'); var pDesc = post.action || (post.recordText ? post.recordText.slice(0, 80) : '아워골에서 함께 응원하고 성장해요!'); shareContent({ type: 'feed', id: post.id, title: pTitle, author: post.name || '동료', desc: pDesc, text: '[아워골 피드] ' + (post.name || '동료') + '님의 실천: "' + pTitle + '" 🔥' }); }); });
     if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.wireTemplatesAccordionEvents){
       window.OurgoalTeamInviteComm.wireTemplatesAccordionEvents(body, function(){ renderCommFeed(body); });
     } else {
@@ -20182,16 +20206,7 @@
     return Math.max(0, max - cur);
   }
 
-  function buildPeerInviteUrl(group, originPath){
-    var base = originPath || (window.location.origin + window.location.pathname);
-    var params = new URLSearchParams();
-    params.set('invite_group', group.id || '');
-    if(group.name) params.set('room_name', group.name);
-    if(group.maxMembers) params.set('max', String(group.maxMembers));
-    if(group.roomType) params.set('type', group.roomType);
-    if(group.inviteCode) params.set('code', group.inviteCode);
-    return base + '?' + params.toString();
-  }
+  function buildPeerInviteUrl(group, originPath){ var base = originPath || (window.location.origin + '/share'); var params = new URLSearchParams(); params.set('type', 'group'); params.set('id', group.id || ''); params.set('invite_group', group.id || ''); if(group.name) params.set('title', group.name); if(group.desc) params.set('desc', group.desc); if(group.name) params.set('room_name', group.name); if(group.maxMembers) params.set('max', String(group.maxMembers)); if(group.roomType) params.set('type', group.roomType); if(group.inviteCode) params.set('code', group.inviteCode); return base + '?' + params.toString(); }
 
   function formatPeerInviteMessage(group, senderName, inviteUrl){
     var name = senderName || '친구';
@@ -20427,24 +20442,9 @@
     );
   }
 
-  function checkAndHandlePeerInviteUrl(){
-    try {
-      var searchParams = new URLSearchParams(window.location.search);
-      var inviteGid = searchParams.get('invite_group') || searchParams.get('invite');
-      if(!inviteGid) return;
-      var roomMeta = {
-        name: searchParams.get('room_name') || '',
-        max: searchParams.get('max') || '5',
-        type: searchParams.get('type') || 'small',
-        code: searchParams.get('code') || ''
-      };
-      setTimeout(function(){
-        showPeerInviteLandingModal(inviteGid, roomMeta);
-      }, 350);
-    } catch(e){
-      console.warn('checkAndHandlePeerInviteUrl 실패:', e);
-    }
-  }
+    /* ============ 통합 딥링크 게이트웨이 & 게스트 소프트 뷰어 3종 (js/viral-sharing.js 위임) ============ */
+  function handleDeepLinkRouting(){ if(window.OurgoalViralSharing) window.OurgoalViralSharing.handleDeepLinkRouting(); }
+  var checkAndHandlePeerInviteUrl = handleDeepLinkRouting;
 
   var MANITO_ADJ = ['새벽의','조용한','끈질긴','달리는','반짝이는','묵묵한','씩씩한','느긋한','집중하는','유쾌한'];
   var MANITO_NOUN = { health:'러너', study:'공부벌레', career:'빌더', hobby:'창작자', mind:'명상가', relation:'이웃' };
