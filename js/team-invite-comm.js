@@ -1075,6 +1075,7 @@
     } else if(searchError === 'error'){
       searchResultsHtml = '<div style="padding:16px 12px;background:var(--surface-2);border-radius:12px;text-align:center;font-size:.8125rem;color:var(--ink-soft);margin-bottom:14px;">' +
         '검색 중 문제가 발생했어요. 잠시 후 다시 시도해주세요.' +
+        (state._companionSearchErrorDetail ? '<div class="faint" style="margin-top:6px;font-size:.6875rem;word-break:break-all;">' + esc(state._companionSearchErrorDetail) + '</div>' : '') +
       '</div>';
     } else if(searchResults !== null){
       if(!searchResults.length){
@@ -1197,6 +1198,7 @@
 
       var matched = [];
       var errored = false;
+      var errorDetail = '';
       if(global.sb){
         try {
           // users 테이블 RLS(auth.uid()=본인 행만 select)는 그대로 둔 채,
@@ -1205,6 +1207,7 @@
           var res = await global.sb.rpc('search_users_by_nickname', { p_query: q });
           if(res && res.error){
             errored = true;
+            errorDetail = (res.error.code || '') + ' ' + (res.error.message || '');
             console.warn('[동반자] Supabase 검색 오류:', res.error);
           } else if(res && res.data){
             matched = res.data.map(function(u){
@@ -1224,12 +1227,14 @@
           }
         } catch(err){
           errored = true;
+          errorDetail = (err && err.message) || String(err);
           console.warn('[동반자] Supabase 검색 오류:', err);
         }
       }
 
       state._companionIsSearching = false;
       state._companionSearchError = errored ? 'error' : null;
+      state._companionSearchErrorDetail = errored ? errorDetail : '';
       state._companionSearchResults = errored ? null : matched;
       renderCommCompanions(body);
     };
