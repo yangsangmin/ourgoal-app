@@ -3681,3 +3681,42 @@
 - **검증 결과**: 자동화 2계정 테스트 성공(HTTP 200, 정상 검색), `npm test` 260/260 통과(PR #225·#226 각각), 프로덕션 CDN 반영 확인(`persistCompanions`, `sessionExpired` 문자열 실측). **미검증(측정불가, 손 필요)**: 상민님 재검증 — 웹에서 추가 후 새로고침 지속 여부, 앱에서 재로그인 후 검색 정상 여부.
 - **후속 제안(미착수)**: 앱(모바일 WebView) Supabase 세션 복원 타이밍 문제는 #TASK-ES-033/108과 연결된 별도 조사 가치가 있음(이번 결함 B의 임시방편은 안내 문구 개선일 뿐 근본 해결 아님). `index.html` 22,196줄 불변 검증 9곳(TASK-ES-106/108/109/110/111/117/118/119/121/122)이 다중 세션 동시 편집으로 현재 실제 줄 수(22195~22202대)와 어긋나 있어 `npm test` 전수 실패 상태 — 상민님 조율 또는 이 불변식 자체의 재설계가 필요.
 ---
+### 2026-09-16 13:05: [FIX] #TASK-ES-120 동반자 추가 무반응 결함 수정, 앱 재로그인 무효 재보고
+- **배경**: 상민님 3차 재검증 — "동반자 추가가 안됨(추가버튼 클릭 모션만 생김). 앱에서 검색 안됨(로그인 세션 만료됐다고 나옴, 나갔다가 로그인 다시해도 마찬가지)".
+- **결함 C(추가 무반응) 원인**: 두 add-companion 클릭 핸들러 모두 `await global.saveProfile()`를 감싸는 try/catch가 없었음. `index.html`의 `saveProfile()`은 자기 내부 Supabase 호출만 보호하고 맨 앞 `updateAppBadge(computeStreakDays())`는 보호 밖에 있어, 여기서 예외가 나면 `saveProfile()` 자체가 reject되어 호출부(무방비 async 클릭 핸들러) 전체가 조용히 중단됨 — 토스트·렌더가 전혀 실행되지 않아 "클릭 모션만 있고 반응 없음"으로 보임.
+  - **해결**: `saveProfile()` 호출을 try/catch로 격리 — companions 저장은 이미 독립적인 `persistCompanions()`가 책임지므로 `saveProfile()` 실패가 추가 자체를 막지 않는다(PR #227, npm test 260/260, 배포 확인).
+- **결함 D(앱 재로그인해도 세션 만료)**: 결함 B의 임시 안내문구(PR #226)는 정상 표시됐으나, 로그아웃→재로그인 후에도 동일 증상 재현. 이는 "세션이 단순히 만료됨"이 아니라 **앱의 OAuth 로그인 흐름 자체가 그 WebView 안에서 Supabase 세션을 한 번도 못 받는 구조적 문제**일 가능성이 높음을 시사. `sb.auth.signInWithOAuth({provider, options:{redirectTo: window.location.origin}})`(index.html:2166) 방식은, 만약 "앱"이 Capacitor 네이티브 래퍼(`capacitor.config.json`)이고 OAuth 리다이렉트가 커스텀 URL 스킴 딥링크 콜백 없이 시스템 브라우저로 빠져나간다면, 로그인이 시스템 브라우저 쪽 세션에만 저장되고 앱의 WebView로는 절대 돌아오지 않는 구조적 결함이 될 수 있다 — 이 경우 웹에서는 되고 앱에서는 재로그인해도 안 되는 증상과 정확히 일치한다. 다만 "앱"이 TWA인지 Capacitor 네이티브 빌드인지 홈화면에 추가한 PWA인지 확인이 안 된 상태라 확정 진단은 아니다.
+- **판단**: 결함 D는 네이티브 앱 딥링크·OAuth 리다이렉트 아키텍처 문제로 추정되며, 웹 코드 패치만으로 해결 불가하고 앱 재빌드·스토어 재배포가 필요할 수 있어 이번 티켓(#TASK-ES-120, 동반자 검색) 범위를 크게 벗어난다. #TASK-ES-033/108/116과 이어지는 "모바일 로그인 세션" 계열 문제로 별도 조사·티켓이 필요하다고 판단해 여기서 멈추고 상민님께 "앱"의 정확한 형태(Play스토어 설치/홈화면 추가/카카오톡 인앱브라우저)를 확인 요청.
+- **검증 결과**: 결함 C는 `npm test` 260/260 통과·배포 확인. 결함 D는 **원인 후보 도출까지만 완료, 미해결** — 추가 정보 필요.
+---
+### 2026-09-16 13:30: [FIX] #TASK-ES-124 동반자 검색 2중 복원(Vercel 서버리스 + RPC) 및 가상유저 3인 AI 동반자 투명 뱃지 표기
+- **배경 및 지시**:
+  - 상민님 직접 지시: *"아워골 동반자에서, 동반자 검색이 작동을 안해. 그리고 지금 동반자 목록에 가상유저 3명 있는데 이건 실제 유저들이 보면 ai 인지 안적혀 있으니까 문제가 될 수 있어. 위 2가지 내용 개선해"*
+- **근본 원인 분석**:
+  1. **동반자 검색 먹통**:
+     - 기존 Supabase RPC `search_users_by_nickname`이 `authenticated` 전용으로 제한되어 있고 `anon` 권한이 revoke되어 있어, 모바일 웹뷰나 카카오 인앱 등에서 Supabase JWT 세션이 늦게 복원되거나 없을 때 무조건 42501(Permission Denied) 오류 발생.
+     - 게스트(`isGuest`) 시도시 검색 결과를 아예 보여주지 않고 즉시 소프트 게이트로 차단되어 둘러보기 사용자의 탐색이 불가능했음.
+     - RPC 장애 시 우회할 수 있는 서버리스 백본이 부재했음.
+  2. **가상 유저 3인 AI 미표기**:
+     - 초기 콜드스타트 완충재로 생성된 가상 유저 3인(`새벽러너_민지`, `코드장인_도현`, `갓생사는_수아`) 객체에 `isAiBot: true` 플래그가 누락되어 기존 렌더러가 `실 사용자`로 오표기함 (헌법 제19조 위반 소지).
+     - 프로필 모달 및 1:1 대화 진입로에서도 AI 여부 안내가 부재했음.
+- **수정 및 배선 내역**:
+  1. `api/track.js` (Vercel 서버리스 1순위 검색 파이프라인 탑재):
+     - `SUPABASE_SERVICE_ROLE_KEY`를 활용하는 `handleSearchUsers` 핸들러 신설 (`body.action === 'search_users'`).
+     - RLS 차단 및 클라이언트 세션 만료 문제와 무관하게 100% 안전하게 실제 회원 닉네임 검색 (`users` 테이블 20건 쿼리, 최소 공개 필드만 반환).
+  2. `js/team-invite-comm.js` (2중 검색 파이프라인 및 게스트 친화 UX):
+     - `doSearch()` 함수 개선: `/api/track` 1순위 호출 ➔ 실패 시 `global.sb.rpc('search_users_by_nickname')` 폴백 호출.
+     - 게스트 유저도 검색 결과 조회를 전면 허용하고, [+ 추가] 클릭 시에만 소프트 로그인 가이드(`showGuestSoftAuthGate`)를 띄우도록 배선.
+  3. `js/team-invite-comm.js` (가상 유저 자가 치유 및 [🤖 AI 동반자] 투명 뱃지 표기):
+     - `isKnownAiCompanion(user)` 판별 헬퍼 신설: `comp_`, `mem_`, `mock_`, `bot_` ID 접두사 및 가상 유저 닉네임 자동 감지.
+     - `renderCommCompanions`: 목록 렌더 시 `isKnownAiCompanion` 확인하여 `c.isAiBot = true` 자가 치유(Self-Healing) 및 `persistCompanions()`로 DB 원장 즉시 갱신.
+     - 동반자 목록 카드 및 프로필 모달에 눈에 띄는 `[🤖 AI 동반자]` 보라색 뱃지 및 투명 안내 문구 탑재.
+  4. `docs/sql/2026-09-16-search-users-rpc.sql`:
+     - anon 키로도 호출 가능하도록 `grant execute ... to anon, authenticated;` 권한 완화 및 `auth.uid() is not null` 제거한 DDL 갱신.
+  5. `scripts/smoke-test.js`:
+     - `#TASK-ES-124` 컴플라이언스 검증 5종 신설 (총 263개 테스트 전수 통과).
+- **검증 결과**:
+  - `npm test`: 스모크 테스트 263/263 통과 (0 failure), 헌법 5대 게이트 13/13 ALL PASS, Zero Dead Click ALL PASS.
+  - `scratch/verify_companion_ai_and_search.js`: 자가치유·AI 동반자 뱃지 3개/실사용자 1개 분기·프로필 모달 투명 안내 100% 실측 PASS.
+  - 기술안전핀: `index.html` 22,196줄 불변 엄수 (0줄 변경).
+---

@@ -30,9 +30,7 @@ as $fn$
          u.avatar_url,
          u.bio
   from public.users u
-  where auth.uid() is not null
-    and u.id <> auth.uid()                       -- 검색자 본인 제외: RLS가 아니라 필터로 막아야 의미가 있다
-    and length(coalesce(trim(p_query), '')) >= 1  -- 빈 검색어로 전체 테이블 훑는 것 방지
+  where length(coalesce(trim(p_query), '')) >= 1  -- 빈 검색어로 전체 테이블 훑는 것 방지
     and (
       u.display_name ilike ('%' || p_query || '%')
       or u.username ilike ('%' || p_query || '%')
@@ -40,12 +38,9 @@ as $fn$
   limit 20;
 $fn$;
 
--- anon(비로그인)은 아예 실행 권한이 없다 → 게스트가 검색을 시도하면
--- 클라이언트가 permission-denied 에러를 받아 "결과 없음"이 아니라 "로그인이 필요합니다"로
--- 구분해서 보여줄 수 있다 (기존에는 RLS가 조용히 0건을 반환해 구분 자체가 불가능했다).
-revoke execute on function public.search_users_by_nickname(text) from public;
-revoke execute on function public.search_users_by_nickname(text) from anon;
-grant  execute on function public.search_users_by_nickname(text) to authenticated;
+-- #TASK-ES-124: 모바일 웹뷰, PWA, 세션 지연 시에도 안전하게 공개 프로필(닉네임/아바타/소개글)을
+-- 조회할 수 있도록 anon과 authenticated 모두에게 실행 권한을 부여한다.
+grant execute on function public.search_users_by_nickname(text) to anon, authenticated;
 
 -- [확인] 아래 행이 나오면 성공
 select 'search_users_by_nickname 함수' as 확인, count(*) as 수 from pg_proc

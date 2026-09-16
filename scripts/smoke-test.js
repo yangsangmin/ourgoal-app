@@ -5038,11 +5038,71 @@ check('compliance: [#TASK-ES-122] 아바타 생성 기간 설정(목표·팀·�
   assert.strictEqual(finalLines3, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
+check('compliance: [#TASK-ES-123] 인앱 1:1 고객 문의·오류 제보 접수 시스템 완결 및 노션 DB·텔레그램 실시간 자동 연동 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  const vercelCfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+  const ddlExists = fs.existsSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-16-inquiries.sql'));
+
+  // 1. 프론트엔드 모달 및 리스너 4위 1체 배선 검증
+  assert.ok(indexSrc.includes("fetch('/api/inquiry'"), '모달 접수 시 /api/inquiry fetch 비동기 호출 배선');
+  assert.ok(indexSrc.includes("action: 'inquiry'"), 'inquiry action 페이로드 탑재');
+  assert.ok(indexSrc.includes("openCustomerInquiryModal();"), 'feedbackInquiryBtn 클릭 시 모달 오픈 일원화');
+
+  // 2. api/track.js handleInquiry 엔드포인트 및 3자 연동 검증
+  assert.ok(trackSrc.includes('handleInquiry('), 'api/track.js handleInquiry 핸들러 구현');
+  assert.ok(trackSrc.includes("3dd598db-9096-816e-8875-c602c34d251f"), '노션 고객문의 DB ID 상수 배선');
+  assert.ok(trackSrc.includes("1260106462"), '상민님 텔레그램 Chat ID 상수 배선');
+  assert.ok(trackSrc.includes("sb.from('inquiries').insert"), 'Supabase inquiries 테이블 적재 배선');
+
+  // 3. vercel.json rewrite 및 DDL 무결성 검증
+  const hasInquiryRewrite = (vercelCfg.rewrites || []).some(r => r.source === '/api/inquiry' && r.destination === '/api/track');
+  assert.ok(hasInquiryRewrite, 'vercel.json 내 /api/inquiry -> /api/track rewrite 배선');
+  assert.ok(ddlExists, 'docs/sql/2026-09-16-inquiries.sql DDL 파일 존재');
+
+  // 4. Vercel Hobby 12개 서버리스 함수 한도 검증
+  const apiFiles = fs.readdirSync(path.join(__dirname, '..', 'api')).filter(f => f.endsWith('.js'));
+  assert.strictEqual(apiFiles.length, 12, 'Vercel Hobby 12개 서버리스 함수 한도 엄수 (현재 12개)');
+
+  // 5. 헌법 제18조: index.html 22,196줄 불변 엄수
+  const lines = indexSrc.split(/\r?\n/).length;
+  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
+check('compliance: [#TASK-ES-124] 동반자 실 사용자 닉네임 검색 2중 복원(Vercel 서버리스 + RPC 폴백) 및 가상 유저 3인 AI 동반자 투명 뱃지 표기 검증', () => {
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  const rpcSql = fs.readFileSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-16-search-users-rpc.sql'), 'utf8');
+
+  // 1. api/track.js handleSearchUsers 엔드포인트 및 RLS 우회 배선 검증
+  assert.ok(trackSrc.includes('handleSearchUsers('), 'api/track.js 내 handleSearchUsers 핸들러 구현');
+  assert.ok(trackSrc.includes("body.action === 'search_users'"), 'api/track.js 내 search_users 라우팅 탑재');
+  assert.ok(trackSrc.includes("display_name.ilike"), 'users 테이블 닉네임 검색 쿼리 배선');
+
+  // 2. js/team-invite-comm.js 2중 검색 파이프라인 (/api/track 1순위 -> sb.rpc 2순위) 검증
+  assert.ok(commSrc.includes("fetch('/api/track'"), '클라이언트 검색 시 /api/track 1순위 호출 배선');
+  assert.ok(commSrc.includes("sb.rpc('search_users_by_nickname'"), '클라이언트 검색 시 sb.rpc 폴백 배선');
+
+  // 3. 가상 유저 3인 식별자 및 [🤖 AI 동반자] 투명 뱃지 표기 검증 (헌법 제19조)
+  assert.ok(commSrc.includes('function isKnownAiCompanion('), 'isKnownAiCompanion 가상 유저/AI 봇 감지 헬퍼 구현');
+  assert.ok(commSrc.includes('새벽러너_민지') && commSrc.includes('코드장인_도현') && commSrc.includes('갓생사는_수아'), '콜드스타트 가상 유저 3인 식별 명단 탑재');
+  assert.ok(commSrc.includes('🤖 AI 동반자'), '동반자 목록 및 프로필에 🤖 AI 동반자 투명 뱃지 렌더 배선');
+
+  // 4. DDL 무결성 검증
+  assert.ok(rpcSql.includes('grant execute on function public.search_users_by_nickname(text) to anon, authenticated'), 'RPC 공개 권한 완화 SQL 작성');
+
+  // 5. 헌법 제18조: index.html 22,196줄 불변 검증
+  const htmlSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const lines = htmlSrc.split(/\r?\n/).length;
+  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
   process.exit(1);
 }
+
 
 
 
