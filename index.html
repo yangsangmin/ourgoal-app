@@ -124,10 +124,7 @@
 <div id="appShell">
   <div class="topbar">
     <div class="brand">아워골</div>
-    <button class="user-chip" id="topUserChip" type="button" aria-label="내 프로필">
-      <span id="topUserName"></span>
-      <div class="avatar" id="topAvatar"></div>
-    </button>
+    <div class="topbar-right"><div class="topbar-actions" id="topbarActions"><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide(window.state && window.state.activeTab || 'home');" style="font-size:11px;padding:3px 7px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;cursor:pointer;white-space:nowrap;" title="이 페이지 활용법 보기" aria-label="이 페이지 활용법 보기">💡 활용법</button><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeLayoutBtn" style="font-size:11px;padding:3px 7px;border-radius:12px;border:1px solid var(--rule);color:var(--ink-soft);font-weight:600;cursor:pointer;white-space:nowrap;" title="나만의 홈 구성 (필요없는 창 지우기)" aria-label="나만의 홈 구성">⚙️ 홈구성</button></div><button class="user-chip" id="topUserChip" type="button" aria-label="내 프로필"><span id="topUserName"></span><div class="avatar" id="topAvatar"></div></button></div>
   </div>
   <div class="ptr-indicator" id="ptrIndicator" aria-hidden="true"><span class="spinner"></span></div>
   <div id="levelUpBannerSlot"></div>
@@ -135,8 +132,8 @@
   <main class="screens">
     <!-- HOME -->
     <section class="screen active" id="screen-home">
-      <div class="home-head-row" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">
-        <div style="display:flex;align-items:center;gap:6px;"><h2 class="home-greet" id="homeGreeting" style="margin:0;">안녕하세요</h2><button type="button" class="btn btn-ghost btn-xs" id="homePageGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide('home');" style="font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;cursor:pointer;" title="이 페이지 활용법 보기">💡 이 페이지 활용법 보기</button></div>
+      <div class="home-head-row" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><h2 class="home-greet" id="homeGreeting" style="margin:0;">안녕하세요</h2><button type="button" class="btn btn-ghost btn-xs" id="homePageGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide('home');" style="font-size:11px;padding:2px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;cursor:pointer;" title="이 페이지 활용법 보기">💡 이 페이지 활용법 보기</button></div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
           <button type="button" class="btn btn-ghost btn-sm" id="btnCustomHomeLayout" style="font-size:.78125rem;padding:3px 9px;white-space:nowrap;color:var(--ink-soft);border-color:var(--rule);">나만의 홈 구성</button>
           <span style="font-size:.6875rem;color:var(--ink-faint);line-height:1;">필요없는 창 지우기</span>
@@ -8187,17 +8184,10 @@
     );
   });
 
-  var btnCustomHome = document.getElementById('btnCustomHomeLayout');
-  if(btnCustomHome){
-    btnCustomHome.addEventListener('click', function(){
-      if(window.OurgoalCustomize && typeof window.OurgoalCustomize.open === 'function'){
-        OurgoalCustomize.open({ state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal, track: track });
-      } else {
-        var settingOpenBtn = document.getElementById('homeLayoutOpenBtn');
-        if(settingOpenBtn) settingOpenBtn.click();
-      }
-    });
-  }
+  function openHomeCustomizer(){ if(window.OurgoalCustomize && typeof window.OurgoalCustomize.open === 'function'){ OurgoalCustomize.open({ state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal, track: track }); } else { var settingOpenBtn = document.getElementById('homeLayoutOpenBtn'); if(settingOpenBtn) settingOpenBtn.click(); } }
+  var btnCustomHome = document.getElementById('btnCustomHomeLayout'); if(btnCustomHome) btnCustomHome.addEventListener('click', openHomeCustomizer);
+  var topBtnCustomHome = document.getElementById('topHomeLayoutBtn'); if(topBtnCustomHome) topBtnCustomHome.addEventListener('click', openHomeCustomizer);
+  var topBtnGuide = document.getElementById('topHomeGuideBtn'); if(topBtnGuide){ topBtnGuide.addEventListener('click', function(){ if(window.showTabUsageGuide) showTabUsageGuide((state && state.activeTab) || 'home'); }); }
 
   var btnShowGuide = document.getElementById('btnShowPersonalGuideModal');
   if(btnShowGuide){
@@ -22162,12 +22152,8 @@
     window.OurgoalTemplateCredit.init({ sb: sb, getState: function(){ return state; }, toast: toast, playRewardedAd: playRewardedAdVideo });
   }
 
-  /* ============ PWA: Service Worker 등록 ============ */
-  if('serviceWorker' in navigator){
-    window.addEventListener('load', function(){
-      navigator.serviceWorker.register('/sw.js').catch(function(){});
-    });
-  }
+  /* ============ PWA: Service Worker 등록 및 자동 업데이트 감지 (#TASK-ES-118) ============ */
+  if('serviceWorker' in navigator){ window.addEventListener('load', function(){ navigator.serviceWorker.register('/sw.js').then(function(reg){ reg.addEventListener('updatefound', function(){ var newWorker = reg.installing; if(newWorker){ newWorker.addEventListener('statechange', function(){ if(newWorker.state === 'installed' && navigator.serviceWorker.controller && typeof toast === 'function'){ toast('새 버전으로 업데이트되었어요! 새로고침하면 즉시 반영돼요.'); } }); } }); }).catch(function(){}); }); }
 })();
 </script>
 
@@ -22191,5 +22177,19 @@ window.addEventListener('keydown', function(e) {
 
 
 </body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </html>

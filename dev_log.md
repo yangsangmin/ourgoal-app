@@ -3527,6 +3527,29 @@
   - `npm test`: 스모크 257개 + 헌법 5대 게이트 13종 + Zero Dead Click 100% ALL PASS.
   - `scratch/simulate_avatar_persistence.js`: 4대 시나리오(생성, 재로그인, 게스트승계, 앱재접속) 시뮬레이션 100% PASS.
   - `scratch/verify_avatar_e2e.js`: Chrome CDP 실측 E2E 검증(게스트입장 ➔ 아바타설정 ➔ Page.reload 새로고침 ➔ 아바타/상단바 정상 복원) 100% PASS 및 스크린샷(`scratch/screen_avatar_persistence_verified.png`) 실물 확보.
+---
+### 2026-09-16: [#TASK-ES-118] 홈 상단 고정 바(Topbar) '활용법·홈구성' 퀵 액션 영구 고정 및 모바일 반응형 2단 줄바꿈·PWA 무중단 캐시 갱신
+- **배경 및 지시**:
+  - 실제 유저(김도아) 아이폰 화면에서 '나만의 홈구성'과 '이 페이지 활용법 보기'가 스크롤 다운 가림 및 모바일 좁은 폭 오버플로우로 인해 보이지 않는 결함 해결.
+  - 상민님 직접 지시: *"아이폰이나, 폰 화면 비율 문제 등 모든 인터페이스에도 이상없게 아워골의 모든 버튼과 기능이 적용되도록 하는 해결책을 표형태로 보고해... 문제해결 8원칙 적용해서 다시한번 검토해... 1"*
+- **핵심 구현 및 배선 내역**:
+  1. `ui.css`:
+     - 상단 고정 탑바 우측 액션 컨테이너(`.topbar-right`, `.topbar-actions`, `.topbar-action-btn`) 신설 (아이콘 11px, 터치 패딩, hover/active scale 피드백).
+     - 본문 인사말 행(`.home-head-row`)에 `flex-wrap: wrap` 및 390px 이하 미디어 쿼리(row-gap: 6px, 탑바 패딩/폰트 미세 조정) 적용하여 320~375px 소형 기기에서도 줄바꿈 100% 안전 보장.
+  2. `index.html`:
+     - 상단 탑바 우측 프로필 왼쪽 슬롯에 `#topHomeGuideBtn`("💡 활용법") 및 `#topHomeLayoutBtn`("⚙️ 홈구성") 퀵 액션 버튼 영구 고정 배치.
+     - 스크롤을 아무리 내려도 상단바가 `sticky; top: 0`으로 고정되어 항상 1-Tap으로 가이드 및 홈 구성 모달 진입 가능.
+     - `openHomeCustomizer()` 및 `showTabUsageGuide` 바인딩을 탑바 버튼에 1:1 완벽 연동.
+     - PWA 서비스워커 등록 시 `updatefound` 리스너를 추가하여 새 버전 배포 감지 시 자동 안내 토스트 연동.
+     - 헌법 제18조 `index.html` 22,196줄 불변 엄수 (0줄 변동).
+  3. `sw.js`:
+     - `CACHE_NAME = 'ourgoal-shell-v20260916-es118'` 갱신으로 iOS PWA 구버전 캐시 즉각 소각 및 `clients.claim()` 활성화.
+  4. `scripts/smoke-test.js`:
+     - `[#TASK-ES-118]` 컴플라이언스 5대 검증(탑바 버튼 존재, 이벤트 바인딩, flex-wrap CSS, sw.js 캐시명, 22,196줄) 추가 (총 258개 테스트 100% PASS).
+- **검증 결과**:
+  - `npm test`: 스모크 258개 + 헌법 5대 게이트 13종 + Zero Dead Click 100% ALL PASS.
+  - `scratch/verify_stage3_responsive.js`: Headless Chrome 393x852 뷰포트에서 스크롤 0px 및 스크롤 250px 다운 상태 실측 검증 (스크롤 후에도 탑바 버튼 가시성 100%, 클릭 시 "앱을 내맘대로!" 모달 팝업 정상 작동).
   - 헌법 제18조: `index.html` 총 줄 수 22,196줄 완벽 준수.
 ---
+
 
