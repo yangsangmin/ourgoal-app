@@ -3859,10 +3859,10 @@ check('compliance: [#TASK-ES-061] 유니버설 데이터 자율 융합, 동적 E
   assert.strictEqual(typeof uStats.openUniversalDataGrid, 'function', 'openUniversalDataGrid 함수 탑재');
   assert.strictEqual(typeof uStats.openTaxonomyManagerModal, 'function', 'openTaxonomyManagerModal 함수 탑재');
 
-  // 7. index.html 배선 및 버튼 검증
+  // 7. index.html 배선 및 탑바/가이드 연동 검증
   const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-  assert.ok(html.includes('recAnalyticsGuideBtn'), '기록 상단 가이드 버튼(#recAnalyticsGuideBtn) 마운트');
-  assert.ok(html.includes('💡 이 페이지 활용법 보기'), '가이드 버튼 텍스트 표출');
+  assert.ok(html.includes('recAnalyticsGuideBtn'), '기록 상단 가이드 바인딩 방어 로직 유지');
+  assert.ok(html.includes('topHomeGuideBtn'), '탑바 전역 활용법 퀵 액션 버튼(#topHomeGuideBtn) 마운트');
   assert.ok(html.includes('OurgoalUniversalStats.openGuideModal'), '가이드 버튼 클릭 시 openGuideModal 호출');
   assert.ok(html.includes('universal-stats.js?v=20260914-es061'), '캐시버스터 v=20260914-es061 갱신');
 });
@@ -4401,26 +4401,28 @@ check('compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료
   assert.ok(indexHtml.includes('attachments: curAttachments'), '일정 저장 시 attachments 영구 보존');
 });
 
-check('compliance: [#TASK-ES-102] 전 탭(홈·목표·일정·기록·소통·설정) 활용법 버튼 및 오늘의 미션 힌트 무결성 검증', () => {
+check('compliance: [#TASK-ES-102 & #TASK-ES-126] 전 탭(홈·목표·일정·기록·소통·설정) 활용법 탑바 단일화 및 6대 탭 통합 가이드 허브 무결성 검증', () => {
   const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   
-  // 1. 전 탭 활용법 버튼 마운트 검증
-  assert.ok(indexHtml.includes('id="homePageGuideBtn"'), '홈 탭 활용법 버튼 탑재');
-  assert.ok(indexHtml.includes('id="goalsPageGuideBtn"'), '목표 탭 활용법 버튼 탑재');
-  assert.ok(indexHtml.includes('id="calPageGuideBtn"'), '일정 탭 활용법 버튼 탑재');
-  assert.ok(indexHtml.includes('id="recAnalyticsGuideBtn"'), '기록 탭 활용법 버튼 탑재');
-  assert.ok(indexHtml.includes('id="commPageGuideBtn"'), '소통 탭 활용법 버튼 탑재');
-  assert.ok(indexHtml.includes('id="settingsPageGuideBtn"'), '설정 탭 활용법 버튼 탑재');
+  // 1. 탑바 전역 활용법 단일 퀵 액션(#topHomeGuideBtn) 및 본문 중복 버튼 6종 제거 무결성 검증
+  assert.ok(indexHtml.includes('id="topHomeGuideBtn"'), '탑바 내 활용법 단일 퀵 액션 버튼 탑재');
+  assert.ok(!indexHtml.includes('id="homePageGuideBtn"'), '홈 탭 본문 중복 활용법 버튼 제거 완료');
+  assert.ok(!indexHtml.includes('id="goalsPageGuideBtn"'), '목표 탭 본문 중복 활용법 버튼 제거 완료');
+  assert.ok(!indexHtml.includes('id="calPageGuideBtn"'), '일정 탭 본문 중복 활용법 버튼 제거 완료');
+  assert.ok(!indexHtml.includes('id="commPageGuideBtn"'), '소통 탭 본문 중복 활용법 버튼 제거 완료');
+  assert.ok(!indexHtml.includes('id="settingsPageGuideBtn"'), '설정 탭 본문 중복 활용법 버튼 제거 완료');
 
   // 2. 오늘의 미션 힌트 배지 검증
   assert.ok(indexHtml.includes('할일이 당장 안떠오르면 활용하세요'), '오늘의 미션 힌트 배지 탑재');
 
-  // 3. tab-guides.js 모듈 및 스크립트 로드 검증
+  // 3. tab-guides.js 6대 탭 통합 가이드 허브 모듈 검증
   const guideScriptPath = path.join(__dirname, '..', 'js', 'tab-guides.js');
   assert.ok(fs.existsSync(guideScriptPath), 'js/tab-guides.js 파일 존재');
   const guideContent = fs.readFileSync(guideScriptPath, 'utf8');
   assert.ok(guideContent.includes('showTabUsageGuide'), 'showTabUsageGuide 전역 함수 정의');
-  assert.ok(guideContent.includes('Home Cockpit') && guideContent.includes('Goal Hierarchy'), '탭별 가이드 메타데이터 완비');
+  assert.ok(guideContent.includes('Home Cockpit') && guideContent.includes('Goal Hierarchy'), '홈/목표 가이드 메타데이터 완비');
+  assert.ok(guideContent.includes('Records & Analytics'), '기록 탭 메타데이터 완비 (데드클릭 완치)');
+  assert.ok(guideContent.includes('tab-guide-seg-btn'), '6대 탭 통합 세그먼트 스위처 버튼 탑재');
   assert.ok(indexHtml.includes('js/tab-guides.js'), 'index.html 내 tab-guides.js 로드 태그 탑재');
 
   // 4. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
@@ -5185,6 +5187,47 @@ check('compliance: [#TASK-ES-127] 16개 MBTI 연계 320개 아바타 페르소�
   assert.ok(avatarJsSrc.includes('btnToggle320PersonaCatalog'), '320종 도감 토글 버튼 탑재');
   assert.ok(avatarJsSrc.includes('inputSearchPersona320'), '320종 도감 실시간 검색창 탑재');
   assert.ok(avatarJsSrc.includes('persona320GroupTabs'), '320종 도감 4대 군 탭 탑재');
+});
+
+/* ============ [#TASK-ES-126] 전 탭 중복 노출 '💡 활용법' 버튼 단일화 및 6대 탭 통합 가이드 허브 무결성 종합 검증 ============ */
+check('compliance: [#TASK-ES-126] 전 탭 중복 노출 활용법 버튼 단일화 및 6대 탭 통합 가이드 허브 무결성 종합 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const guideScriptPath = path.join(__dirname, '..', 'js', 'tab-guides.js');
+  const guideContent = fs.readFileSync(guideScriptPath, 'utf8');
+
+  // 1. 탑바 고정 전역 퀵 액션 배선 검증
+  assert.ok(indexHtml.includes('id="topHomeGuideBtn"'), '상단 탑바 전역 활용법 퀵 액션 버튼(#topHomeGuideBtn) 마운트');
+  assert.ok(indexHtml.includes("showTabUsageGuide((state && state.activeTab) || 'home')") || indexHtml.includes("showTabUsageGuide(window.state && window.state.activeTab || 'home')"), '탑바 클릭 시 활성 탭 연동 showTabUsageGuide 호출 배선');
+
+  // 2. 6대 탭 본문 헤더 중복 버튼 완전 제거(클린 콕핏) 검증
+  const duplicateBtnIds = [
+    'homePageGuideBtn',
+    'goalsPageGuideBtn',
+    'calPageGuideBtn',
+    'recAnalyticsGuideBtn',
+    'commPageGuideBtn',
+    'settingsPageGuideBtn'
+  ];
+  duplicateBtnIds.forEach(id => {
+    assert.ok(!indexHtml.includes(`id="${id}"`), `본문 헤더 중복 버튼(#${id}) 완전 제거 완료`);
+  });
+
+  // 3. 6대 탭(홈, 목표, 일정, 기록, 소통, 설정) 통합 가이드 메타데이터 100% 완비 검증
+  const requiredKeys = ['home', 'goals', 'calendar', 'records', 'comm', 'settings'];
+  requiredKeys.forEach(key => {
+    assert.ok(guideContent.includes(`${key}: {`), `6대 탭 가이드 키(${key}) 완비`);
+  });
+
+  // 4. 모달 내 6대 탭 세그먼트 스위처 및 인터랙션 배선 검증
+  assert.ok(guideContent.includes('tab-guide-seg-btn'), '모달 내 가로 세그먼트 탭 버튼 클래스 탑재');
+  assert.ok(guideContent.includes('tabGuideSegmentBar'), '모달 내 세그먼트 바 ID 탑재');
+  assert.ok(guideContent.includes('tabGuideContentSlot'), '모달 내 본문 슬롯 ID 탑재');
+  assert.ok(guideContent.includes('addEventListener(\'click\''), '세그먼트 탭 클릭 시 동적 전환 이벤트 배선');
+  assert.ok(guideContent.includes('💡 아워골 100% 활용 가이드 허브'), '통합 가이드 허브 모달 타이틀 탑재');
+
+  // 5. 기록 탭 데드클릭 완치 검증 (records 탭 전용 가이드 4대 섹션 완비)
+  assert.ok(guideContent.includes('아워골 기록 및 성취 분석 100% 활용법'), '기록 탭 전용 가이드 타이틀 완비');
+  assert.ok(guideContent.includes('지금부터 시간기록 (몰입 타이머)'), '시간기록 몰입 타이머 안내 완비');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

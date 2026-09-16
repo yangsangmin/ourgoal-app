@@ -3846,4 +3846,24 @@
 - **검증 결과**:
   - `npm test`: 스모크 265개 전수 통과 (0 failure), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
 ---
+### 2026-09-16: [#TASK-ES-126] 전 탭 중복 노출 '💡 활용법' 버튼 단일화 및 6대 탭 통합 가이드 허브 개편
+- **배경 및 지시**:
+  - 상민님 직접 지시: *"아워골 모든 탭에 활용법이 중복적으로 들어가 있는데, 해결방안 표형태로 알기쉽게 정리해서 보고해. 1단계까지 진행해"* ➔ 권장안("권장안으로 진행") 확정 승인.
+  - 문제점: 최상단 탑바(Topbar)에 상시 고정 퀵 액션 `#topHomeGuideBtn`("💡 활용법")이 있음에도 6대 탭(홈·목표·일정·기록·소통·설정) 본문 헤더에 동일한 `[💡 이 페이지 활용법 보기]` 버튼이 상/하로 이중 노출되어 시각적 피로도 및 모바일 제목 줄바꿈 왜곡 초래.
+  - 추가 결함: 기존 `js/tab-guides.js` 내에 기록(records) 탭 정의가 누락되어 탑바에서 기록 탭 상태로 클릭 시 아무 반응이 없던 데드클릭(Dead Click) 결함 존재.
+- **수행 내역**:
+  1. `js/tab-guides.js`:
+     - 6대 탭(`home`, `goals`, `calendar`, `records`, `comm`, `settings`) 메타데이터 100% 완비 (기록 탭 가이드: 내 기록·5단위 회고, 시간기록 몰입 타이머, 성취 통계·히트맵 콕핏, 안전한 보관함·데이터 주권 신설로 데드클릭 완치).
+     - 가이드 모달 상단에 6대 탭 세그먼트 스위처(`tab-guide-seg-btn`) 탑재: 모달을 닫지 않고 원클릭으로 탭별 가이드를 부드럽게 동적 전환(Dynamic Tab Switching).
+  2. `index.html`:
+     - 6대 탭 본문 헤더 중복 버튼 6종 전면 정리: `#homePageGuideBtn`, `#goalsPageGuideBtn`, `#calPageGuideBtn`, `#recAnalyticsGuideBtn`, `#commPageGuideBtn`, `#settingsPageGuideBtn` 제거로 본문 타이틀 영역 100% 클린 뷰 구현 (모바일 360~393px 제목 줄바꿈 왜곡 원천 차단).
+  3. `sw.js`:
+     - `CACHE_NAME = 'ourgoal-shell-v20260916-es126'`로 갱신하여 PWA 앱 셸 즉시 캐시 무효화.
+  4. `scripts/smoke-test.js`:
+     - `#TASK-ES-102` 및 `#TASK-ES-126` 컴플라이언스 검증 최신화 (본문 중복 버튼 제거 확인, 탑바 퀵액션 유지, 6대 탭 가이드 완비, 세그먼트 스위처 및 기록 탭 데드클릭 완치 검증).
+- **검증 결과**:
+  - `npm test`: 스모크 267개 전수 통과 (0개 실패), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
+  - `scratch/verify_stage3_es126.js`: 로컬 8000 HTTP 응답 및 중복 버튼 제거 실측 100% PASS.
+  - `scratch/verify_stage3_cdp_es126.js`: Headless Chrome 브라우저 E2E 실측 (탑바 1클릭 모달 오픈, 6개 세그먼트 버튼 확인, [✍️ 기록] 탭 클릭 즉시 동적 전환) 100% ALL PASS 및 실측 스크린샷(`scratch/modal_guide_hub.png`) 확보.
+---
 
