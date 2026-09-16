@@ -3550,6 +3550,8 @@
   - `npm test`: 스모크 258개 + 헌법 5대 게이트 13종 + Zero Dead Click 100% ALL PASS.
   - `scratch/verify_stage3_responsive.js`: Headless Chrome 393x852 뷰포트에서 스크롤 0px 및 스크롤 250px 다운 상태 실측 검증 (스크롤 후에도 탑바 버튼 가시성 100%, 클릭 시 "앱을 내맘대로!" 모달 팝업 정상 작동).
   - 헌법 제18조: `index.html` 총 줄 수 22,196줄 완벽 준수.
+  - 5단계(배포): GitHub PR #218 원격 `main` 병합 완료 및 Vercel 프로덕션(`https://ourgoal-app.vercel.app`) 자동 배포 100% 반영 (`ourgoal-shell-v20260916-es118`).
+  - 6단계(실운영 실측): Headless Chrome (iPhone 16 Pro 393x852) 프로덕션 URL 실측. 스크롤 250px 다운 후에도 탑바 `💡 활용법`, `⚙️ 홈구성` 100% 가시성 고정 및 원클릭 모달('앱을 내맘대로!' 및 '홈 화면 100% 활용법') 정상 팝업 최종 확인.
 ---
 ### 2026-09-16: [#TASK-ES-119] 생성한 아바타 누적 보관함(서랍) 구축 및 원클릭 자유로운 변경·착용 시스템 구현
 - **배경 및 지시**:
