@@ -1914,10 +1914,18 @@
   }
   document.getElementById('landStartBtn').addEventListener('click', function(){
     document.getElementById('landingScreen').style.display = 'none';
-    document.getElementById('authScreen').style.display = 'flex';
-    if(typeof initRememberedAuthFields === 'function') initRememberedAuthFields();
-    document.querySelector('[data-authtab="signup"]').click();
+    startPreSignupOnboarding();
   });
+  /* ============ #TASK-ONBOARDING-90S: 온보딩 순서 재배열 — 목표유형→첫목표→AI체크인질문을
+     먼저 로컬(게스트 프로필)로 진행하고, 그 직후에 가입 화면을 띄운다.
+     가입 전 입력값은 localStorage(ourgoal_guest_profile)에 저장했다가 가입 직후 서버에 반영한다. ============ */
+  function startPreSignupOnboarding(){
+    var guestId = 'guest-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    state.profile = defaultProfile(guestId, guestId, '게스트');
+    state._preSignupOnboarding = true;
+    try { localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile)); } catch(e){}
+    startOnboarding();
+  }
   document.getElementById('landLoginLink').addEventListener('click', function(){
     document.getElementById('landingScreen').style.display = 'none';
     document.getElementById('authScreen').style.display = 'flex';
@@ -2339,17 +2347,37 @@
     if(!p1 || p1.length<4){ errEl.textContent = '비밀번호는 4자 이상으로 입력해주세요.'; return; }
     if(p1!==p2){ errEl.textContent = '비밀번호가 서로 달라요.'; return; }
 
+    /* #TASK-ONBOARDING-90S: 가입 전 로컬(게스트)로 진행된 목표유형/첫목표/체크인 입력값을 보존해 서버에 반영한다 */
+    var wasPreSignupOnboarding = !!state._preSignupOnboarding;
+    var onboardingGoal = wasPreSignupOnboarding ? (state.profile.goals && state.profile.goals[0]) : null;
+    var onboardingCheckinText = wasPreSignupOnboarding ? (state._pendingCheerText || '') : '';
+    var onboardingMsg = state._pendingOnboardingMsg;
+    var onboardingTheme = state._pendingOnboardingTheme;
+
     var res = await sb.auth.signUp({ email: u, password: p1 });
     if(res.error){ errEl.textContent = res.error.message; return; }
     if(!res.data.session){ errEl.textContent = '가입 확인 메일을 보냈어요. 메일함에서 확인 후 로그인해주세요.'; return; }
 
     setDeviceLoginTime(Date.now());
-    await ensureUserRow(res.data.user.id, u, name);
     track('signup', Object.assign({ method: 'email' }, getAttribution())); /* 즉시 세션 경로는 loadProfile을 거치지 않으므로 여기서 기록 */
-    state.profile = defaultProfile(res.data.user.id, u, name);
-    await saveProfile();
     document.getElementById('authScreen').style.display = 'none';
-    startOnboarding();
+    if(wasPreSignupOnboarding){
+      // 가입 전 로컬로 만든 목표/체크인이 들어있는 게스트 프로필을 그대로 실제 계정 id로 승격해
+      // XP/스트릭 등 온보딩 중 이미 쌓인 값을 잃지 않고 서버에 반영한다.
+      state.profile.id = res.data.user.id;
+      state.profile.username = u;
+      state.profile.displayName = name;
+      await ensureUserRow(res.data.user.id, u, name);
+      await saveProfile();
+      try{ localStorage.removeItem('ourgoal_guest_profile'); }catch(e){}
+      state._preSignupOnboarding = false;
+      await finishOnboardingAfterSignup(onboardingMsg, onboardingGoal, onboardingCheckinText, onboardingTheme);
+    } else {
+      await ensureUserRow(res.data.user.id, u, name);
+      state.profile = defaultProfile(res.data.user.id, u, name);
+      await saveProfile();
+      startOnboarding();
+    }
   });
 
   /* ============ P0: 최근 로그인 뱃지 & 아이디 저장 & 로그인 유지 ============ */
@@ -2774,8 +2802,12 @@
 
     async function finishOnboarding(msg, firstTheme){
       closeModal();
+      if(state._preSignupOnboarding){
+        promptSignupAfterOnboarding(msg, firstTheme);
+        return;
+      }
       enterApp();
-      if(firstTheme && THEME_CONFIG && THEME_CONFIG[firstTheme]){
+      if(firstTheme && typeof THEME_CONFIG !== 'undefined' && THEME_CONFIG[firstTheme]){
         var tc = THEME_CONFIG[firstTheme];
         toast('첫 기록 완료! ['+tc.emoji+' '+tc.label+'] 테마 분류 & 웰컴 프리즈 1개가 지급되었어요 🧊');
       } else {
@@ -2833,6 +2865,33 @@
       var overlay = document.getElementById('modalOverlay');
       overlay.onclick = function(e){ if(e.target === overlay) skip(); };
     }
+  }
+
+  /* ============ #TASK-ONBOARDING-90S: 목표유형→첫목표→AI체크인질문 이후 가입 화면으로 전환 ============ */
+  function promptSignupAfterOnboarding(msg, firstTheme){
+    state._pendingOnboardingMsg = msg;
+    state._pendingOnboardingTheme = firstTheme;
+    document.getElementById('authScreen').style.display = 'flex';
+    if(typeof initRememberedAuthFields === 'function') initRememberedAuthFields();
+    document.querySelector('[data-authtab="signup"]').click();
+    toast('마지막 단계예요! 가입하고 계속 기록을 이어가요 🙌');
+  }
+
+  /* 가입 직후(이메일/카카오/구글 공통 경로) 앱 진입 + 익명 AI 응원 1개 즉시 노출 (5단계) */
+  async function finishOnboardingAfterSignup(msg, goal, checkinText, firstTheme){
+    enterApp();
+    if(firstTheme && typeof THEME_CONFIG !== 'undefined' && THEME_CONFIG[firstTheme]){
+      var tc = THEME_CONFIG[firstTheme];
+      toast('첫 기록 완료! ['+tc.emoji+' '+tc.label+'] 테마 분류 & 웰컴 프리즈 1개가 지급되었어요 🧊');
+    } else {
+      toast(msg || '가입 완료! 시작해봐요');
+    }
+    if(goal && typeof triggerFirstCheerResponse === 'function'){
+      triggerFirstCheerResponse(goal, checkinText || '', true); /* immediate: 가입 직후 지연 없이 노출 */
+    }
+    var alreadySeenGuide = state.profile.settings.hasSeenGuide;
+    await maybeShowFirstLoginGuide();
+    if(alreadySeenGuide) showCommTourModal();
   }
 
   /* ============ 온보딩 직후 소통 기능 짧은 투어 (첫 목표 생성 시 1회) ============ */
@@ -5419,7 +5478,11 @@
     try{ updateAppBadge(computeStreakDays()); }catch(e){}
     track('checkin', { first: isFirst, has_goal: !!goal, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l'), source: source || 'quick' });
     if(isFirst){
-      triggerFirstCheerResponse(goal, text);
+      if(state._preSignupOnboarding){
+        state._pendingCheerText = text; /* 가입 전이므로 응원은 가입 직후(5단계)로 미룬다 */
+      } else {
+        triggerFirstCheerResponse(goal, text);
+      }
     }
     return xpRes;
   }
@@ -5865,6 +5928,44 @@
     var doneCount = (q1Done ? 1 : 0) + (q2Done ? 1 : 0) + (q3Done ? 1 : 0);
     var pct = Math.round((doneCount / 3) * 100);
     var earnedExp = (q1Done ? 30 : 0) + (q2Done ? 40 : 0) + (q3Done ? 50 : 0);
+
+    // 데일리 퀘스트 보상 실제 EXP 적립 및 레벨업 시스템 (#TASK-ES-127)
+    if(state.profile && state.profile.settings){
+      var qReward = state.profile.settings.questRewards;
+      if(!qReward || qReward.date !== nowK){
+        qReward = state.profile.settings.questRewards = { date: nowK, q1: false, q2: false, q3: false };
+      }
+      var xpAwarded = 0;
+      var levelUpHappened = false;
+      if(q1Done && !qReward.q1){
+        qReward.q1 = true;
+        var res1 = awardXP(30, '데일리 퀘스트: 오늘 한 줄 체크인 (+30 EXP)');
+        xpAwarded += 30;
+        if(res1 && res1.leveledUp) levelUpHappened = true;
+      }
+      if(q2Done && !qReward.q2){
+        qReward.q2 = true;
+        var res2 = awardXP(40, '데일리 퀘스트: 핵심 마일스톤 실행 (+40 EXP)');
+        xpAwarded += 40;
+        if(res2 && res2.leveledUp) levelUpHappened = true;
+      }
+      if(q3Done && !qReward.q3){
+        qReward.q3 = true;
+        var res3 = awardXP(50, '데일리 퀘스트: 25분 집중 시간기록 (+50 EXP)');
+        xpAwarded += 50;
+        if(res3 && res3.leveledUp) levelUpHappened = true;
+      }
+      if(xpAwarded > 0){
+        renderLevelBadge();
+        saveLocalSettings(state.profile.id, state.profile.settings);
+        saveProfile().catch(function(){});
+        if(levelUpHappened){
+          toast('🎉 레벨업! 데일리 퀘스트 완수로 레벨이 상승했어요!');
+        } else {
+          toast('⚡ 데일리 퀘스트 완수! +' + xpAwarded + ' EXP 획득');
+        }
+      }
+    }
 
     wrap.style.display = 'block';
     wrap.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
@@ -6840,7 +6941,7 @@
   });
 
   /* ============ 신규 유저 온보딩: 가상 페르소나 3분 내 맞춤 응원 (TASK-OG-002) ============ */
-  function triggerFirstCheerResponse(goal, checkinText){
+  function triggerFirstCheerResponse(goal, checkinText, immediate){
     if(state.profile.settings.virtualCheerEnabled === false) return;
     var isLocalDev = (typeof window !== 'undefined' && window.location && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'));
     if(!isLocalDev){
@@ -6856,7 +6957,7 @@
         avatar: matched.avatar,
         message: matched.name + '님이 첫 체크인을 격려합니다: "저도 [' + (matched.goal || '목표') + '] 도전 중인데, 함께 꾸준히 완주해봐요! 진심으로 응원합니다 🔥"'
       };
-      scheduleCheerDelivery(cheerObj);
+      scheduleCheerDelivery(cheerObj, immediate);
       return;
     }
     var payload = {
@@ -6872,7 +6973,7 @@
       return res.json();
     }).then(function(data){
       if(data && data.cheers && data.cheers.length > 0){
-        scheduleCheerDelivery(data.cheers[0]);
+        scheduleCheerDelivery(data.cheers[0], immediate);
       }
     }).catch(function(){
       // 커맨드센터 서버 미실행 시 로컬 페르소나 매칭 폴백
@@ -6888,18 +6989,22 @@
         avatar: matched.avatar,
         message: matched.name + '님이 첫 체크인을 격려합니다: "저도 [' + (matched.goal || '목표') + '] 도전 중인데, 함께 꾸준히 완주해봐요! 진심으로 응원합니다 🔥"'
       };
-      scheduleCheerDelivery(cheerObj);
+      scheduleCheerDelivery(cheerObj, immediate);
     });
   }
 
-  function scheduleCheerDelivery(cheer){
-    // 신규 온보딩 체감: 4초 뒤 도착하여 유저에게 환영 메시지 전달
+  function scheduleCheerDelivery(cheer, immediate){
+    // 기본: 신규 온보딩 체감을 위해 4초 뒤 도착. immediate=true(가입 직후 5단계)면 지연 없이 즉시 노출.
+    // 문구에는 항상 "(AI 응원)"을 명시해 운영자/AI가 작성한 응원임을 숨기지 않는다.
+    var delay = immediate ? 300 : 4000;
     setTimeout(function(){
-      toast('' + (cheer.message || (cheer.personaName + '님이 첫 체크인을 응원합니다!')), 5000);
+      var rawMsg = cheer.message || (cheer.personaName + '님이 첫 체크인을 응원합니다!');
+      var msg = rawMsg.indexOf('(AI 응원)') === 0 ? rawMsg : '(AI 응원) ' + rawMsg;
+      toast(msg, 5000);
       if('Notification' in window && Notification.permission==='granted'){
-        new Notification('아워골 · ' + cheer.personaName + '님의 응원', { body: cheer.message });
+        new Notification('아워골 · (AI 응원) ' + cheer.personaName, { body: msg });
       }
-    }, 4000);
+    }, delay);
   }
 
   /* ============ AI feedback (best-effort; provider-aware; local fallback) ============ */
@@ -9566,6 +9671,27 @@
 
     var ddayText = goal.dueDate ? dDay(goal.dueDate) : '';
     var ddayPill = goal.dueDate ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);margin-left:8px;">'+ddayText+'</span>' : '';
+
+    // 목표 도달 예정일 동적 재계산 알고리즘 (#TASK-ES-127)
+    var msList = goal.milestones || [];
+    var totalMs = msList.length;
+    var doneMs = msList.filter(function(m){ return m.status === 'done'; }).length;
+    var remainMs = totalMs - doneMs;
+    var predictedPill = '';
+    if(totalMs > 0){
+      if(remainMs === 0){
+        predictedPill = '<span class="dday-pill" style="background:rgba(34,197,94,0.15);color:#16a34a;font-weight:700;">🎯 100% 달성 완료</span>';
+      } else {
+        var createdMs = goal.createdAt ? new Date(goal.createdAt).getTime() : (Date.now() - 7 * 86400000);
+        var elapsedDays = Math.max(1, Math.round((Date.now() - createdMs) / 86400000));
+        var daysPerMilestone = (doneMs > 0) ? Math.max(1, Math.round(elapsedDays / doneMs)) : 7;
+        var estDaysRemaining = remainMs * daysPerMilestone;
+        var predictedDate = new Date(Date.now() + estDaysRemaining * 86400000);
+        var predDateStr = (predictedDate.getMonth()+1) + '월 ' + predictedDate.getDate() + '일';
+        predictedPill = '<span class="dday-pill" title="현재 마일스톤 완료 속도(평균 ' + daysPerMilestone + '일/개) 기준 동적 계산된 도달 예정일" style="background:rgba(99,102,241,0.12);color:var(--primary);font-weight:700;">🚀 페이스 도달예정: ' + predDateStr + ' (D-' + estDaysRemaining + ')</span>';
+      }
+    }
+
     /* 보기 모드: 마감·공개·카테고리를 한 줄 메타 스트립으로 (시인성) */
     var visNow = goal.visibility || 'private';
     var formattedGoalDue = goal.dueDate ? formatDateTimeBadge(goal.dueDate) : '';
@@ -9576,6 +9702,7 @@
       '<span class="dday-pill" id="goalsPrivacyBadge" style="cursor:pointer;" title="탭하여 공개 범위 순환 변경">'+(visNow==='private'?'🔒 ':(visNow==='team'||visNow==='followers'?'👥 ':'🌐 '))+((visNow==='team'||visNow==='followers')?'팀원 공개':VISIBILITY_LABELS[visNow])+' ▾</span>' +
       (goal.topic ? topicPill(goal.topic) : '') +
       '<span class="dday-pill" style="background:var(--sage-soft);color:var(--sage);">달성 '+goalAchievement(goal)+'%</span>' +
+      predictedPill +
       (!state.goalEditMode ?
         ('<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button" style="font-size:.75rem;padding:2px 8px;margin-left:auto;color:var(--ink-soft);border:1px solid var(--rule);">' +
           (goal.result ? '📝 결과 수정' : '+ 최종 결과') +
@@ -21763,6 +21890,13 @@
         startOnboarding();
       } else {
         enterApp();
+        // #TASK-ONBOARDING-90S: 카카오/구글로 가입 전 로컬(게스트)로 만든 목표·체크인이 방금 이 계정에
+        // 병합되었으면(guestMigrated), 가입 직후 5단계로 동일한 익명 AI 응원을 즉시 노출한다.
+        if(typeof guestMigrated !== 'undefined' && guestMigrated && state.profile.goals && state.profile.goals.length > 0 && typeof triggerFirstCheerResponse === 'function'){
+          var mergedGoal = state.profile.goals[0];
+          var mergedRec = state.profile.records && state.profile.records[0];
+          triggerFirstCheerResponse(mergedGoal, mergedRec ? mergedRec.text : '', true);
+        }
       }
       checkAndHandlePeerInviteUrl();
       return true;

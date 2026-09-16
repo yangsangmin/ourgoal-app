@@ -3672,7 +3672,7 @@ check('compliance: [#TASK-ES-043] 9대 UX 핵심 결함(스트릭 보존, 개인
 
   // 4. 첫 체크인 localhost:7777 호출 차단 및 로컬 페르소나 매칭 즉시 폴백
   assert.ok(html.includes('isLocalDev') && html.includes('triggerFirstCheerResponse'), '첫 응원 localhost 환경 가드');
-  assert.ok(html.includes('scheduleCheerDelivery(cheerObj)'), '비개발 환경 즉시 로컬 페르소나 응원 전달');
+  assert.ok(html.includes('scheduleCheerDelivery(cheerObj, immediate)'), '비개발 환경 즉시 로컬 페르소나 응원 전달');
 
   // 5. 랜딩 화면 게스트 진입 버튼 및 원클릭 게스트 프로필 생성
   assert.ok(html.includes('id="landGuestBtn"'), '랜딩 화면 게스트 둘러보기 버튼 마크업');

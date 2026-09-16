@@ -3984,3 +3984,33 @@
   - `verify_dm_recipient_cdp.js`: Headless Chrome 브라우저 CDP 실측 (수신자 로그인 -> 레드 닷 뱃지 점등 -> 소통 탭 진입 -> DM 서브탭 클릭 시 새 대화 요청 자동 인입 & 뱃지 소등 -> 대화방 진입 시 맞추가 배너 노출 -> 맞추가 클릭 시 동반자 최상단 편입 & 배너 소멸) 6단계 전수 ALL PASS 및 브라우저 예외 0건.
   - `npm test`: 스모크 270개 전수 통과 (0 failures), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
 ---
+
+## [2026-09-16 16:20] #TASK-ONBOARDING-90S 온보딩 순서 재배열 (목표유형→첫목표→AI체크인질문→가입→AI응원)
+- **요청 사항**:
+  - 온보딩 흐름을 "1.목표 유형 3택 → 2.첫 목표 1줄 입력 → 3.AI 첫 체크인 질문 → 4.가입(카카오/이메일) → 5.가입 직후 익명 응원 1개 자동 노출(AI 응원 명시)" 순서로 재배열.
+  - 가입 전 입력값은 로컬 저장했다가 가입 직후 서버에 반영. 기존 UI 디자인·CSS·레이아웃은 변경 금지, 화면 순서와 요구 입력만 조정.
+- **재배열 전 상태(실측 기록)**:
+  - 화면 순서: 랜딩 → 가입 화면(이메일 4필드/카카오) → 온보딩 모달 1/4(목표 유형) → 2/4(첫 목표) → 3/4(마일스톤 미리보기) → 4/4(체크인, 스킵 가능) → 곧바로 앱 진입.
+  - 화면 수 6개, 필수 입력 6개(이메일·닉네임·비밀번호·비밀번호확인·목표유형·목표제목), 체크인은 선택.
+  - "응원"은 화면이 아니라 체크인 저장 4초 뒤 뜨는 토스트(`triggerFirstCheerResponse`)였고 실제로는 AI/운영자 작성임을 표기하지 않고 특정 인물이 응원한 것처럼 보이는 문구였음.
+- **원인 진단(본질)**: 가치(목표+AI 질문)를 체감하기 전에 가입 장벽(이메일/비번 4필드)이 먼저 오는 순서라 이탈 유인이 큼. 재배열의 본질은 신규 유저가 "먼저 해보고 나서" 가입하도록 순서만 바꾸는 것.
+- **해결 방식**: 기존 "게스트 모드"(로컬 프로필 + `ourgoal_guest_profile`) 및 "게스트→실계정 마이그레이션" 배선(카카오/구글 OAuth 세션 복구 시 이미 존재)을 그대로 재사용. 랜딩 "시작하기"를 게스트 온보딩 진입으로 바꾸고, 온보딩 4단계(체크인) 완료 시점에 기존처럼 바로 앱 진입시키지 않고 가입 화면으로 전환하도록 분기만 추가. 새 UI·CSS 없음, 기존 컴포넌트 재사용.
+- **수정 내역 (diff 단위, index.html)**:
+  1. `landStartBtn` 클릭 핸들러: 가입 화면 대신 `startPreSignupOnboarding()` 호출(게스트 프로필 생성 + `startOnboarding()`).
+  2. `finishOnboarding(msg, firstTheme)`: `state._preSignupOnboarding`이면 `enterApp()` 대신 신설 `promptSignupAfterOnboarding(msg, firstTheme)`으로 분기(가입 화면 노출).
+  3. 신설 `promptSignupAfterOnboarding` / `finishOnboardingAfterSignup`: 가입 직후 게스트 프로필을 실계정 id로 승격(XP·스트릭 보존), `enterApp()` + AI 응원 즉시 트리거.
+  4. `saveQuickCheckin`: 가입 전(guest) 온보딩 중에는 체크인 즉시 응원을 억제하고 텍스트만 보관(`state._pendingCheerText`), 가입 직후로 노출 시점을 미룸.
+  5. `signupSubmit`(이메일 가입) 핸들러: `wasPreSignupOnboarding`이면 게스트 프로필(goal/checkin/xp 포함)을 실계정 id로 그대로 승격 후 `saveProfile()`로 서버 반영, `finishOnboardingAfterSignup` 호출. 기존(온보딩 없이 바로 가입) 경로는 원래 동작 그대로 보존.
+  6. `restoreSessionAndEnter`(카카오/구글 OAuth 복귀): 기존 게스트→실계정 병합(`guestMigrated`) 직후, 병합된 목표가 있으면 동일한 AI 응원을 즉시 트리거하도록 3줄 추가(기존 병합 로직·조건 변경 없음).
+  7. **재사용 지시에 따른 수정(코디네이터 지시)**: 처음부터 새 응원 함수를 만들지 않고 기존 `triggerFirstCheerResponse`/`scheduleCheerDelivery`(TASK-OG-002, 4초 지연 페르소나 응원)를 재활용. `immediate` 파라미터를 추가해 가입 직후엔 4초 대신 300ms로 노출하고, 문구 앞에 항상 `(AI 응원)`을 붙여 운영자/AI가 작성한 응원임을 숨기지 않도록 라벨을 명시(`scheduleCheerDelivery` 내부에서 통일 처리, 외부 sim 서버 응답 문구에도 동일 적용).
+  8. **부수 발견 버그 수정(전제조건)**: `finishOnboarding`/신설 `finishOnboardingAfterSignup`에서 참조하는 전역 `THEME_CONFIG`가 코드베이스 어디에도 정의돼 있지 않아, 최초 체크인의 분류 테마(`firstTheme`)가 채워지는 거의 모든 경우 `ReferenceError`로 온보딩 완료가 죽는 잠재 버그가 있었음(재배열 이전부터 존재, 브라우저 실측 중 발견). `typeof THEME_CONFIG !== 'undefined'` 가드 추가로 안전하게 폴백(2곳).
+  9. `scripts/smoke-test.js`: `scheduleCheerDelivery(cheerObj)` 문자열 단언을 새 시그니처 `scheduleCheerDelivery(cheerObj, immediate)`에 맞춰 갱신.
+- **검증 결과**:
+  - 문법: `node -e`로 `<script>` 2블록 `new Function()` 파싱 전수 통과.
+  - `npm test`(스모크): 270개 중 270개 통과, 0 실패(수정 직후 1건 실패 → 시그니처 갱신 후 재검증 통과).
+  - 충돌 마커: `grep -rn "^<<<<<<<"` 0건.
+  - 로컬 실측(정적 서버 `localhost:8420` + Chrome 자동화, Supabase 네트워크는 이 브라우저 탭 세션에서만 안전하게 모킹 — 실 DB 쓰기·실 가입확인 메일 발송 없음): 목표유형→첫목표→AI체크인질문→가입→AI응원 도달까지 3회 측정 3869.9ms / 3686.9ms / 3420.0ms, **중앙값 3.69초** (목표 ≤120초 대비 여유 큼). 응원 토스트 문구에 `(AI 응원)` 라벨 3회 모두 노출 확인.
+    - 주의: 이 수치는 스크립트가 즉시 입력·클릭한 결과로 순수 앱 자체 지연(모달 렌더·토스트 딜레이)만 반영하며, 실제 사람이 타이핑·읽는 시간은 포함하지 않음. 필수 입력 개수는 재배열 전후 동일(6개)하므로 사람이 체감하는 총 소요시간은 이 최솟값에 타이핑 시간을 더한 값.
+  - PostHog `onboarding_step_viewed` 퍼널: 코드베이스에 PostHog SDK/이벤트가 전혀 없음(자체 `track()` 함수만 존재) → **측정불가**.
+- **재검증(8원칙 ⑧, 막힌 지점)**: `THEME_CONFIG` ReferenceError로 최초 체크인 완료 시 온보딩이 죽는 지점에서 막혔음 → 1~7단계 재검토 후 원인이 재배열과 무관한 기존 버그임을 확인, 최소 diff(가드 2줄×2곳)로 해결하고 계속 진행.
+---
