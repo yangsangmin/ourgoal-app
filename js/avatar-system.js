@@ -580,6 +580,119 @@
     return Math.max(0, MAX_AVATAR_CHANGES - used);
   }
 
+  // 테마 ID로 테마 객체 조회 (#TASK-ES-119)
+  function getThemeById(themeId) {
+    if (!themeId) return BODY_THEMES_77[0];
+    for (var i = 0; i < BODY_THEMES_77.length; i++) {
+      if (BODY_THEMES_77[i].id === Number(themeId)) return BODY_THEMES_77[i];
+    }
+    return BODY_THEMES_77[0];
+  }
+
+  // 누적 아바타 보관함(서랍) 목록 반환 (하위호환 자가치유 포함) (#TASK-ES-119)
+  function getSavedAvatars(profile) {
+    if (!profile) return [];
+    var settings = profile.settings = profile.settings || {};
+    if (!Array.isArray(settings.savedAvatars)) {
+      settings.savedAvatars = [];
+    }
+    // 자가 치유: 기존에 제작된 customAvatarUrl이 있는데 savedAvatars가 비어있는 경우 1번 아이템으로 자동 복원
+    if (settings.savedAvatars.length === 0 && settings.customAvatarUrl && (settings.customAvatarUrl.indexOf('data:image') === 0 || settings.customAvatarUrl.indexOf('http') === 0)) {
+      var t = getThemeById(settings.avatarThemeId || 1);
+      settings.savedAvatars.push({
+        id: 'ava_init_' + Date.now(),
+        url: settings.customAvatarUrl,
+        themeId: t.id,
+        themeName: t.name,
+        themeIcon: t.icon,
+        createdAt: new Date().toISOString()
+      });
+    }
+    return settings.savedAvatars;
+  }
+
+  // 아바타 보관함에 새 아바타 추가 (최대 10개) (#TASK-ES-119)
+  function addSavedAvatar(profile, item) {
+    if (!profile || !item || !item.url) return [];
+    var list = getSavedAvatars(profile);
+    var existingIdx = -1;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].url === item.url || (list[i].id && list[i].id === item.id)) {
+        existingIdx = i;
+        break;
+      }
+    }
+    if (existingIdx !== -1) {
+      list.splice(existingIdx, 1);
+    }
+    list.unshift({
+      id: item.id || ('ava_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4)),
+      url: item.url,
+      themeId: item.themeId || 1,
+      themeName: item.themeName || getThemeById(item.themeId || 1).name,
+      themeIcon: item.themeIcon || getThemeById(item.themeId || 1).icon,
+      createdAt: item.createdAt || new Date().toISOString()
+    });
+    if (list.length > MAX_AVATAR_CHANGES) {
+      profile.settings.savedAvatars = list.slice(0, MAX_AVATAR_CHANGES);
+    } else {
+      profile.settings.savedAvatars = list;
+    }
+    return profile.settings.savedAvatars;
+  }
+
+  // 아바타 보관함에서 삭제 (착용 중 보호) (#TASK-ES-119)
+  function removeSavedAvatar(profile, avatarId) {
+    if (!profile || !avatarId) return false;
+    var list = getSavedAvatars(profile);
+    var targetIdx = -1;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === avatarId) {
+        targetIdx = i;
+        break;
+      }
+    }
+    if (targetIdx === -1) return false;
+    if (profile.settings && profile.settings.customAvatarUrl === list[targetIdx].url) {
+      return false; // 착용 중 보호
+    }
+    list.splice(targetIdx, 1);
+    profile.settings.savedAvatars = list;
+    return true;
+  }
+
+  // 내 아바타 서랍 카드 덱 HTML 렌더러 (#TASK-ES-119)
+  function renderSavedAvatarsDeckHtml(savedList, activeUrl, selectedUrl) {
+    if (!savedList || savedList.length === 0) {
+      return '<div style="text-align:center;padding:14px 10px;background:var(--surface-3, #F1F5F9);border-radius:12px;color:var(--ink-soft, #64748B);font-size:0.8125rem;line-height:1.45;">' +
+        '🎨 아직 보관된 아바타가 없습니다.<br>아래에서 사진을 선택하고 나만의 첫 3등신 만화 아바타를 제작해보세요!' +
+      '</div>';
+    }
+
+    var cards = savedList.map(function (item) {
+      var isWearing = (item.url === activeUrl);
+      var isSelected = (item.url === selectedUrl);
+      var borderColor = isSelected ? 'var(--emerald, #10B981)' : (isWearing ? '#3B82F6' : 'var(--border-soft, #E2E8F0)');
+      var borderWeight = (isSelected || isWearing) ? '2.5px' : '1px';
+      var bgShadow = isSelected ? 'box-shadow:0 0 0 3px rgba(16,185,129,0.22);' : (isWearing ? 'box-shadow:0 0 0 2px rgba(59,130,246,0.2);' : '');
+
+      return '<div class="saved-avatar-card" data-ava-id="' + item.id + '" style="flex:0 0 84px;position:relative;background:var(--surface-1, #FFFFFF);border:' + borderWeight + ' solid ' + borderColor + ';' + bgShadow + 'border-radius:14px;padding:6px 4px 6px 4px;cursor:pointer;text-align:center;transition:all .15s ease;">' +
+        (isWearing ? '<div style="position:absolute;top:-7px;left:50%;transform:translateX(-50%);background:#3B82F6;color:#fff;font-size:9px;font-weight:900;padding:1px 6px;border-radius:10px;white-space:nowrap;z-index:2;">착용 중</div>' : '') +
+        (!isWearing ? '<button type="button" class="btn-del-saved-avatar" data-ava-id="' + item.id + '" title="보관함에서 삭제" style="position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;border:none;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;padding:0;">×</button>' : '') +
+        '<div style="width:72px;height:72px;border-radius:10px;overflow:hidden;margin:0 auto;background:#f8fafc;display:flex;align-items:center;justify-content:center;">' +
+          '<img src="' + item.url + '" alt="' + (item.themeName || '아바타') + '" style="width:100%;height:100%;object-fit:cover;">' +
+        '</div>' +
+        '<div style="font-size:10px;font-weight:800;color:var(--ink, #0F172A);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + item.themeName + '">' +
+          (item.themeIcon || '🎨') + ' ' + (item.themeName || '아바타') +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    return '<div style="display:flex;gap:8px;overflow-x:auto;padding:8px 4px 6px 4px;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;">' +
+      cards +
+    '</div>';
+  }
+
   // 아바타 HTML 렌더링
   function renderAvatarHtml(level, profile, options) {
     var opts = options || {};
@@ -617,6 +730,7 @@
     var curThemeId = settings.avatarThemeId || 1;
     var remainingCrafts = getRemainingCrafts(profile);
     var userNick = profile.nickname || '회원';
+    var savedList = getSavedAvatars(profile);
 
     var html = '<div class="modal-sheet-inner" style="max-width:440px;margin:0 auto;text-align:left;">' +
       '<div class="modal-header-custom" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">' +
@@ -628,7 +742,7 @@
 
       '<div style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:12px;padding:10px 14px;font-size:0.8125rem;color:var(--ink-soft);line-height:1.45;margin-bottom:16px;">' +
         '💡 <strong>아바타 제작 안내</strong>: 계정당 <strong>최대 10회</strong>까지 Gemini AI로 내 사진 기반 만화 아바타를 제작할 수 있습니다.<br>' +
-        '제작된 아바타는 횟수 차감 없이 언제든 자유롭게 내 프로필에 적용할 수 있습니다.' +
+        '제작된 아바타는 <strong>내 아바타 서랍</strong>에 영구 보관되며 횟수 차감 없이 언제든 자유롭게 변경·착용할 수 있습니다.' +
       '</div>' +
 
       // 탭 토글
@@ -668,6 +782,17 @@
             '<button type="button" class="btn btn-primary btn-sm" id="btnRunCraftAvatar" style="font-size:.8125rem;display:none;">' +
               '✨ 내 사진으로 아바타 제작 <span id="craftBtnCountSpan">(' + remainingCrafts + '/10회)</span>' +
             '</button>' +
+          '</div>' +
+        '</div>' +
+
+        // 내 아바타 서랍 (누적 보관함) 섹션 (#TASK-ES-119)
+        '<div style="margin-top:14px;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:14px;padding:12px 14px;">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+            '<div style="font-weight:900;font-size:.875rem;color:var(--ink);">🎨 내 아바타 서랍 <span id="savedAvatarsCountSpan" style="font-size:.75rem;color:var(--ink-soft);font-weight:700;">(' + savedList.length + '/10개)</span></div>' +
+            '<div style="font-size:.75rem;color:var(--emerald);font-weight:800;">언제든 0회 차감 변경</div>' +
+          '</div>' +
+          '<div id="savedAvatarsDeckSlot">' +
+            renderSavedAvatarsDeckHtml(savedList, curCustomUrl, curCustomUrl) +
           '</div>' +
         '</div>' +
       '</div>' +
@@ -739,6 +864,108 @@
         '<div style="font-size:.78125rem;color:var(--emerald);font-weight:700;margin-top:3px;">🎨 Gemini 3.1 AI 맞춤형 웹툰 아바타 완성!</div>' +
         '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">테마: ' + chosenTheme.cat + ' · 장비: ' + chosenTheme.gear + '</div>';
       }
+
+      // [#TASK-ES-119] 내 아바타 서랍 UI 새로고침
+      function refreshSavedAvatarsDeck() {
+        var list = getSavedAvatars(profile);
+        var deckSlot = sheet.querySelector('#savedAvatarsDeckSlot');
+        var countSpan = sheet.querySelector('#savedAvatarsCountSpan');
+        if (deckSlot) {
+          deckSlot.innerHTML = renderSavedAvatarsDeckHtml(list, profile.settings.customAvatarUrl || '', newCustomUrl);
+          bindSavedDeckEvents();
+        }
+        if (countSpan) {
+          countSpan.textContent = '(' + list.length + '/10개)';
+        }
+      }
+
+      // [#TASK-ES-119] 내 아바타 서랍 카드 클릭 및 삭제 이벤트 바인딩
+      function bindSavedDeckEvents() {
+        var cards = sheet.querySelectorAll('.saved-avatar-card');
+        cards.forEach(function (card) {
+          card.onclick = function (e) {
+            if (e.target.closest('.btn-del-saved-avatar')) return;
+            var avaId = card.getAttribute('data-ava-id');
+            var list = getSavedAvatars(profile);
+            var item = null;
+            for (var i = 0; i < list.length; i++) {
+              if (list[i].id === avaId) { item = list[i]; break; }
+            }
+            if (item) {
+              newCustomUrl = item.url;
+              chosenTheme = getThemeById(item.themeId);
+              previewBox.innerHTML = '<img src="' + newCustomUrl + '" style="width:100%;height:100%;object-fit:cover;">';
+              if (metaText) {
+                metaText.innerHTML = '<div style="font-weight:800;font-size:1rem;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:6px;">' +
+                  '<span>' + (item.themeIcon || chosenTheme.icon) + '</span>' +
+                  '<span>' + (item.themeName || chosenTheme.name) + '</span>' +
+                '</div>' +
+                '<div style="font-size:.78125rem;color:var(--emerald);font-weight:700;margin-top:3px;">🎨 서랍에서 아바타가 선택되었습니다!</div>' +
+                '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">하단 [아바타 적용하기]를 누르면 즉시 착용됩니다. (차감 0회)</div>';
+              }
+              refreshSavedAvatarsDeck();
+            }
+          };
+        });
+
+        var delBtns = sheet.querySelectorAll('.btn-del-saved-avatar');
+        delBtns.forEach(function (btn) {
+          btn.onclick = function (e) {
+            e.stopPropagation();
+            var avaId = btn.getAttribute('data-ava-id');
+            if (confirm('이 아바타를 서랍에서 삭제하시겠습니까?')) {
+              var ok = removeSavedAvatar(profile, avaId);
+              if (ok) {
+                if (deps.state && deps.state.profile) {
+                  deps.state.profile.settings = deps.state.profile.settings || {};
+                  deps.state.profile.settings.savedAvatars = profile.settings.savedAvatars;
+                }
+                saveProfile();
+                toast('아바타가 서랍에서 삭제되었습니다.');
+                var list = getSavedAvatars(profile);
+                var isCurrentUrlAlive = list.some(function (a) { return a.url === newCustomUrl; });
+                if (!isCurrentUrlAlive) {
+                  newCustomUrl = profile.settings.customAvatarUrl || (list[0] ? list[0].url : '');
+                  if (newCustomUrl) {
+                    previewBox.innerHTML = '<img src="' + newCustomUrl + '" style="width:100%;height:100%;object-fit:cover;">';
+                  } else {
+                    previewBox.innerHTML = '<span style="font-size:2.8rem;">👤</span>';
+                  }
+                }
+                refreshSavedAvatarsDeck();
+              } else {
+                toast('현재 착용 중인 아바타는 삭제할 수 없습니다.');
+              }
+            }
+          };
+        });
+      }
+
+      // [#TASK-ES-119] 신규 아바타 제작 완료 시 자동 보관함 인입 & UI 갱신 공통 함수
+      function onAvatarCraftCompleted(dataUrl) {
+        newCustomUrl = dataUrl;
+        loadingSlot.style.display = 'none';
+        resultBox.style.display = 'block';
+        updateCustomAvatarView();
+
+        addSavedAvatar(profile, {
+          id: 'ava_' + Date.now(),
+          url: newCustomUrl,
+          themeId: chosenTheme.id,
+          themeName: chosenTheme.name,
+          themeIcon: chosenTheme.icon,
+          createdAt: new Date().toISOString()
+        });
+        if (deps.state && deps.state.profile) {
+          deps.state.profile.settings = deps.state.profile.settings || {};
+          deps.state.profile.settings.savedAvatars = profile.settings.savedAvatars;
+        }
+        saveProfile();
+        refreshSavedAvatarsDeck();
+      }
+
+      // 초기 서랍 이벤트 바인딩
+      bindSavedDeckEvents();
 
       // 1) 사진 선택 시: 즉시 3등신 아바타 틀 위에 사진 미리보기 적용 & '아바타 제작' 버튼 활성화
       if (btnUpload && fileInput) {
@@ -877,26 +1104,20 @@
               // 1. Gemini 3.1 Flash-Lite Image AI가 직접 생성한 고품질 웹툰 아바타 이미지 반영
               var optImg = new Image();
               optImg.onload = function () {
+                var finalUrl = resData.avatarUrl;
                 try {
                   var cv = document.createElement('canvas');
                   cv.width = 256;
                   cv.height = 256;
                   var ctx = cv.getContext('2d');
                   ctx.drawImage(optImg, 0, 0, 256, 256);
-                  newCustomUrl = cv.toDataURL('image/jpeg', 0.9);
-                } catch (e) {
-                  newCustomUrl = resData.avatarUrl;
-                }
-                loadingSlot.style.display = 'none';
-                resultBox.style.display = 'block';
-                updateCustomAvatarView();
+                  finalUrl = cv.toDataURL('image/jpeg', 0.9);
+                } catch (e) {}
+                onAvatarCraftCompleted(finalUrl);
                 toast('[' + chosenTheme.name + '] AI 맞춤형 웹툰 아바타 제작 완료! 🎨✨');
               };
               optImg.onerror = function () {
-                newCustomUrl = resData.avatarUrl;
-                loadingSlot.style.display = 'none';
-                resultBox.style.display = 'block';
-                updateCustomAvatarView();
+                onAvatarCraftCompleted(resData.avatarUrl);
                 toast('[' + chosenTheme.name + '] AI 맞춤형 웹툰 아바타 제작 완료! 🎨✨');
               };
               optImg.src = resData.avatarUrl;
@@ -905,10 +1126,7 @@
               currentFeatures = resData.features;
               setTimeout(function () {
                 composite3DeformedAvatar(lastUploadedImg, chosenTheme, function (dataUrl, f) {
-                  newCustomUrl = dataUrl;
-                  loadingSlot.style.display = 'none';
-                  resultBox.style.display = 'block';
-                  updateCustomAvatarView();
+                  onAvatarCraftCompleted(dataUrl);
                   toast('[' + chosenTheme.name + '] 맞춤형 만화 아바타 제작 완료! 🔨✨');
                 }, { features: currentFeatures });
               }, 400);
@@ -937,6 +1155,14 @@
             settings.customAvatarUrl = newCustomUrl;
             settings.avatarThemeId = chosenTheme.id;
             profile.avatarUrl = newCustomUrl;
+            addSavedAvatar(profile, {
+              id: 'ava_' + Date.now(),
+              url: newCustomUrl,
+              themeId: chosenTheme.id,
+              themeName: chosenTheme.name,
+              themeIcon: chosenTheme.icon,
+              createdAt: new Date().toISOString()
+            });
           }
 
           if (deps.state && deps.state.profile) {
@@ -946,6 +1172,7 @@
               deps.state.profile.settings.customAvatarUrl = newCustomUrl;
               deps.state.profile.settings.avatarThemeId = chosenTheme.id;
               deps.state.profile.avatarUrl = newCustomUrl;
+              deps.state.profile.settings.savedAvatars = profile.settings.savedAvatars;
             }
           }
 
@@ -1168,7 +1395,10 @@
     composite3DeformedAvatar: composite3DeformedAvatar,
     getRemainingCrafts: getRemainingCrafts,
     renderAvatarHtml: renderAvatarHtml,
-    openAvatarModal: openAvatarModal
+    openAvatarModal: openAvatarModal,
+    getSavedAvatars: getSavedAvatars,
+    addSavedAvatar: addSavedAvatar,
+    removeSavedAvatar: removeSavedAvatar
   };
 
   return api;

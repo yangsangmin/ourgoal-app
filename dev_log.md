@@ -3551,5 +3551,26 @@
   - `scratch/verify_stage3_responsive.js`: Headless Chrome 393x852 뷰포트에서 스크롤 0px 및 스크롤 250px 다운 상태 실측 검증 (스크롤 후에도 탑바 버튼 가시성 100%, 클릭 시 "앱을 내맘대로!" 모달 팝업 정상 작동).
   - 헌법 제18조: `index.html` 총 줄 수 22,196줄 완벽 준수.
 ---
-
-
+### 2026-09-16: [#TASK-ES-119] 생성한 아바타 누적 보관함(서랍) 구축 및 원클릭 자유로운 변경·착용 시스템 구현
+- **배경 및 지시**:
+  - 기존 아바타 시스템은 제작할 때마다 최신 1개만 `settings.customAvatarUrl`에 덮어써져, 이전에 공들여 제작한 아바타들이 유실되는 한계 존재.
+  - 상민님 직접 지시: *"생성한 아바타들을 누적해서 확인할 수 있고 변경하면서 사용할 수 있게 해야해. 구체화, 구현계획 작성해서 표형태로 알기쉽게 보고해."*
+- **핵심 구현 및 배선 내역**:
+  1. `js/avatar-system.js`:
+     - `getSavedAvatars(profile)`: `settings.savedAvatars` 배열 관리 및 기존 단일 `customAvatarUrl` 보유 사용자에 대한 1번 아이템 자동 복원(Self-Healing Migration) 체계 구축.
+     - `addSavedAvatar(profile, item)`: AI 아바타 제작 완료 시 고유 ID, 256x256 정규화 DataUrl, 바디 테마(ID/이름/아이콘), 타임스탬프와 함께 최대 10개까지 누적 보관.
+     - `removeSavedAvatar(profile, avatarId)`: 보관함 내 아바타 삭제 지원 (착용 중 아바타는 실수 방지를 위해 삭제 잠금).
+     - `renderSavedAvatarsDeckHtml()`: 가로 스크롤 카드 덱 UI 렌더러 구현 (썸네일, 테마 아이콘·명칭, `[착용 중]` 블루 뱃지, 선택 에메랄드 테두리, 삭제 버튼).
+     - `openAvatarModal()`: 만화형 아바타 섹션에 '🎨 내 아바타 서랍' 컴포넌트 탑재 및 서랍 카드 클릭 시 미리보기 즉시 갱신, `[아바타 적용하기]` 클릭 시 횟수 차감 0회로 원클릭 프로필/상단바/뱃지 착용 전파.
+     - `onAvatarCraftCompleted()`: 신규 아바타 생성 즉시 서랍에 누적 추가 및 프로필 영구 저장, 서랍 UI 실시간 새로고침 연동.
+  2. `index.html`:
+     - `restoreSessionAndEnter()`: 게스트 모드에서 누적 생성한 아바타 보관함(`settings.savedAvatars`)을 소셜(카카오/구글) 계정으로 100% 무손실 복제 마이그레이션.
+     - 헌법 제18조 `index.html` 22,196줄 불변 엄수 (0줄 변동).
+  3. `scripts/smoke-test.js`:
+     - `[#TASK-ES-119]` 컴플라이언스 6대 검증(함수 4종, 모달 서랍 마크업, 자동 누적 인입, 원클릭 착용 이벤트, 게스트 무손실 마이그레이션, 22,196줄) 추가 (총 259개 테스트 100% PASS).
+- **검증 결과**:
+  - `npm test`: 스모크 259개 + 헌법 5대 게이트 13종 + Zero Dead Click 100% ALL PASS.
+  - `scratch/simulate_accumulative_avatars.js`: 자가치유·10개한도·착용보호·게스트이전 시뮬레이션 100% PASS.
+  - `scratch/verify_avatar_drawer_e2e.js`: Chrome CDP 실측 E2E 검증 (게스트입장 ➔ 서랍 3종 누적 렌더링 ➔ 2번째 카드 원클릭 선택 및 안내문 즉시 갱신) 100% PASS 및 스크린샷(`scratch/screen_avatar_drawer_verified.png`) 실물 확보.
+  - 헌법 제18조: `index.html` 총 줄 수 22,196줄 완벽 준수.
+---

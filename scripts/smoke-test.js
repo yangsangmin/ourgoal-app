@@ -4930,6 +4930,37 @@ check('compliance: [#TASK-ES-118] 홈 상단 고정 바(Topbar) 활용법·홈�
   assert.strictEqual(finalLines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
 });
 
+check('compliance: [#TASK-ES-119] 생성한 아바타 누적 보관함(서랍) 구축 및 원클릭 자유로운 변경·착용 시스템 검증', () => {
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+
+  // 1. 보관함 데이터 모델 및 헬퍼 함수 구현 확인
+  assert.ok(avatarSrc.includes('function getSavedAvatars(profile)'), 'getSavedAvatars 함수 구현');
+  assert.ok(avatarSrc.includes('function addSavedAvatar(profile, item)'), 'addSavedAvatar 함수 구현');
+  assert.ok(avatarSrc.includes('function removeSavedAvatar(profile, avatarId)'), 'removeSavedAvatar 함수 구현');
+  assert.ok(avatarSrc.includes('function renderSavedAvatarsDeckHtml('), 'renderSavedAvatarsDeckHtml 함수 구현');
+
+  // 2. 모달 내 내 아바타 서랍 마크업 및 카드 덱 슬롯 확인
+  assert.ok(avatarSrc.includes('id="savedAvatarsDeckSlot"'), '모달 내 서랍 카드 덱 슬롯(#savedAvatarsDeckSlot) 존재');
+  assert.ok(avatarSrc.includes('saved-avatar-card'), '서랍 아바타 카드 클래스(saved-avatar-card) 존재');
+  assert.ok(avatarSrc.includes('btn-del-saved-avatar'), '서랍 삭제 버튼 클래스(btn-del-saved-avatar) 존재');
+  assert.ok(avatarSrc.includes('착용 중'), '착용 중 뱃지 표시 배선');
+
+  // 3. 신규 제작 시 누적 보관함 자동 인입 및 갱신 연동 확인
+  assert.ok(avatarSrc.includes('function onAvatarCraftCompleted(dataUrl)'), 'onAvatarCraftCompleted 공통 처리 함수 존재');
+  assert.ok(avatarSrc.includes('refreshSavedAvatarsDeck()'), '서랍 UI 실시간 새로고침 배선');
+
+  // 4. 서랍 카드 클릭 시 원클릭 선택 및 차감 0회 변경 확인
+  assert.ok(avatarSrc.includes('card.onclick = function (e)'), '서랍 카드 클릭 핸들러 배선');
+  assert.ok(avatarSrc.includes('delBtns.forEach(function (btn)'), '서랍 삭제 버튼 핸들러 배선');
+
+  // 5. index.html 게스트 -> 소셜 로그인 시 savedAvatars 무손실 마이그레이션 확인
+  assert.ok(html.includes('if(gData.settings.savedAvatars) state.profile.settings.savedAvatars = gData.settings.savedAvatars;'), '게스트 savedAvatars 소셜 로그인 무손실 승계');
+
+  // 6. 헌법 제18조: index.html 22,196줄 불변 엄수
+  const finalLines = html.split(/\r?\n/).length;
+  assert.strictEqual(finalLines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
