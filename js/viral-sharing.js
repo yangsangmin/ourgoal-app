@@ -63,10 +63,26 @@
     return true;
   }
 
+  function makeGuestProfile(nick){
+    var guestId = 'guest_' + Math.random().toString(36).substring(2, 9);
+    var n = nick || '새로운 러너';
+    if(typeof global.defaultProfile === 'function'){
+      return global.defaultProfile(guestId, guestId, n);
+    }
+    return {
+      id: guestId, username: guestId, displayName: n,
+      bio: '', avatarUrl: '', interests: [], region: '', regionPublic: false,
+      schemaVersion: 1, createdAt: (new Date()).toISOString(),
+      goals: [], records: [],
+      settings: { savedAvatars: [] }
+    };
+  }
+
   /* ------------------------------------------------------------
    * 2. 게스트 소프트 뷰어 1: 피드 단독 딥링크 뷰어
    * ------------------------------------------------------------ */
   function showFeedGuestViewerModal(feedId){
+    var meta = arguments[1] || {};
     var state = global.state || {};
     var cached = (global.FEED_POSTS_CACHE || []).slice();
     var myLocalPosts = (state.profile && state.profile.settings && state.profile.settings.myFeedPosts) || [];
@@ -77,9 +93,9 @@
       post = global.SIM_PERSONAS.find(function(p){ return p && p.id === feedId; });
     }
 
-    var authorName = post ? (post.display_name || post.name || '동료') : '아워골 러너';
-    var goalTitle = post ? (post.goal_title || post.goal || '목표 실천') : '꾸준한 목표 실천';
-    var caption = post ? (post.caption || post.action || '오늘도 한 걸음 내딛었습니다!') : '오늘의 실천 기록';
+    var authorName = post ? (post.display_name || post.name || '동료') : ((meta && meta.author) || '아워골 러너');
+    var goalTitle = post ? (post.goal_title || post.goal || '목표 실천') : ((meta && meta.title) || '꾸준한 목표 실천');
+    var caption = post ? (post.caption || post.action || '오늘도 한 걸음 내딛었습니다!') : ((meta && meta.desc) || '오늘의 실천 기록');
     var photo = post ? (post.photo || (post.extra && post.extra.photo)) : null;
     var recordText = post ? (post.recordText || (post.extra && post.extra.recordText)) : null;
     var time = post ? (post.time || (post.created_at && global.timeAgoStr ? global.timeAgoStr(post.created_at) : '최근')) : '최근';
@@ -116,14 +132,14 @@
         if(cheerBtn) cheerBtn.onclick = async function(){
           if(global.closeModal) global.closeModal();
           if(!state.profile){
-            var guestId = 'guest_' + Math.random().toString(36).substring(2, 9);
-            state.profile = global.defaultProfile ? global.defaultProfile(guestId, guestId, '새로운 러너') : { id: guestId, displayName: '새로운 러너', goals:[], records:[], settings:{} };
+            state.profile = makeGuestProfile('새로운 러너');
             try { localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile)); } catch(e){}
           }
           var landScreen = document.getElementById('landingScreen');
           if(landScreen) landScreen.style.display = 'none';
           if(global.enterApp) await global.enterApp();
-          if(global.switchTab) global.switchTab('comm');
+          if(global.setTab) global.setTab('comm');
+          else if(global.switchTab) global.switchTab('comm');
           state.commSubTab = 'feed';
           if(global.renderCommScreen) global.renderCommScreen();
           if(global.toast) global.toast('피드로 이동했어요! 따뜻한 응원을 남겨보세요 🔥');
@@ -181,8 +197,7 @@
           if(global.closeModal) global.closeModal();
           var state = global.state || {};
           if(!state.profile){
-            var guestId = 'guest_' + Math.random().toString(36).substring(2, 9);
-            state.profile = global.defaultProfile ? global.defaultProfile(guestId, guestId, '새로운 러너') : { id: guestId, displayName: '새로운 러너', goals:[], records:[], settings:{} };
+            state.profile = makeGuestProfile('새로운 러너');
             try { localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile)); } catch(e){}
           }
           var landScreen = document.getElementById('landingScreen');
@@ -190,7 +205,8 @@
           if(global.enterApp) await global.enterApp();
           if(typeof global.cloneTemplate === 'function'){
             global.cloneTemplate(t ? (t.id || t.key) : tmplId, function(){
-              if(global.switchTab) global.switchTab('home');
+              if(global.setTab) global.setTab('home');
+              else if(global.switchTab) global.switchTab('home');
               if(global.renderAll) global.renderAll();
             });
           }
@@ -230,16 +246,18 @@
           if(global.closeModal) global.closeModal();
           var state = global.state || {};
           if(!state.profile){
-            var guestId = 'guest_' + Math.random().toString(36).substring(2, 9);
-            state.profile = global.defaultProfile ? global.defaultProfile(guestId, guestId, '새로운 도전자') : { id: guestId, displayName: '새로운 도전자', goals:[], records:[], settings:{} };
+            state.profile = makeGuestProfile('새로운 도전자');
             try { localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile)); } catch(e){}
           }
           var landScreen = document.getElementById('landingScreen');
           if(landScreen) landScreen.style.display = 'none';
           if(global.enterApp) await global.enterApp();
-          if(global.switchTab) global.switchTab('home');
+          if(global.setTab) global.setTab('home');
+          else if(global.switchTab) global.switchTab('home');
           if(global.renderAll) global.renderAll();
-          if(typeof global.openAddGoalModal === 'function') global.openAddGoalModal();
+          var homeAddGoal = document.getElementById('homeAddGoal');
+          if(homeAddGoal && typeof homeAddGoal.click === 'function') homeAddGoal.click();
+          else if(typeof global.openAddGoalModal === 'function') global.openAddGoalModal();
         };
         var dismissBtn = sheet.querySelector('#goalCertGuestDismissBtn');
         if(dismissBtn && global.closeModal) dismissBtn.onclick = global.closeModal;
@@ -274,8 +292,13 @@
       // 2. 피드 상세 딥링크 (?feed=, ?post=, ?feed_id=)
       var feedId = searchParams.get('feed') || searchParams.get('post') || searchParams.get('feed_id');
       if(feedId){
+        var feedMeta = {
+          author: searchParams.get('author') || '',
+          title: searchParams.get('title') || '',
+          desc: searchParams.get('desc') || ''
+        };
         setTimeout(function(){
-          showFeedGuestViewerModal(feedId);
+          showFeedGuestViewerModal(feedId, feedMeta);
         }, 350);
         return;
       }

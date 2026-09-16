@@ -1400,7 +1400,7 @@
             toast: toast,
             openModal: openModal,
             closeModal: closeModal,
-            currentLevel: p.level,
+            currentLevel: p.level, mockGroups: (typeof MOCK_GROUPS !== 'undefined' ? MOCK_GROUPS : []),
             onAvatarChanged: function(){
               renderLevelBadge();
               if(typeof updateTopBar === 'function') updateTopBar(); if(typeof renderHome === 'function') renderHome();
@@ -1478,7 +1478,7 @@
       records: [],
       settings: defaultSettings()
     };
-  }
+  } window.defaultProfile = defaultProfile;
 
   var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7, calView: 'month', calDate: isoDate(new Date()), calSelectedDate: isoDate(new Date()), selectedRecordTheme: 'all', recordsSegment: 'feed', recordsSlide: 0 };
   if(typeof window !== 'undefined'){ window.state = state; }
@@ -4771,15 +4771,15 @@
     );
   }
   /* ============ 캘린더 수동 일정 편집 모달 (Req 2) ============ */
-  function openCalendarManualEditModal(selectedDate, eventItem, kind){
+  function openCalendarManualEditModal(selectedDate, eventItem, kind, draft){
     var isNew = !eventItem;
     var selDate = selectedDate || state.calSelectedDate || isoDate(new Date());
     var defaultDateVal = (selDate.indexOf('T') !== -1 ? selDate : selDate + 'T09:00');
-    var curTitle = eventItem ? eventItem.title : '';
-    var curDate = eventItem && eventItem.dueDate ? toDateTimeLocalValue(eventItem.dueDate) : (eventItem && eventItem.date ? toDateTimeLocalValue(eventItem.date) : defaultDateVal);
-    var curNote = eventItem ? (eventItem.note || '') : '';
-    var curDone = eventItem ? (eventItem.done || eventItem.status==='done') : false;
-    var curAttachments = (eventItem && eventItem.attachments) ? [].concat(eventItem.attachments) : [];
+    var curTitle = draft ? draft.title : (eventItem ? eventItem.title : '');
+    var curDate = draft ? draft.date : (eventItem && eventItem.dueDate ? toDateTimeLocalValue(eventItem.dueDate) : (eventItem && eventItem.date ? toDateTimeLocalValue(eventItem.date) : defaultDateVal));
+    var curNote = draft ? draft.note : (eventItem ? (eventItem.note || '') : '');
+    var curDone = draft ? !!draft.done : (eventItem ? (eventItem.done || eventItem.status==='done') : false);
+    var curAttachments = draft ? [].concat(draft.attachments || []) : ((eventItem && eventItem.attachments) ? [].concat(eventItem.attachments) : []);
     openModal(
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
         '<span class="dm-back" id="calEditBackToHubBtn" style="cursor:pointer;margin:0;font-size:.875rem;color:var(--ink);font-weight:700;">‹ ' + selDate + ' 일정 목록으로</span>' +
@@ -4830,19 +4830,19 @@
           var wireAtts = function(){
             window.OurgoalCalendarAttachment.wireEditModalAttachments(sheet, function(){
               return { title: (sheet.querySelector('#calEditTitle').value || '').trim(), date: sheet.querySelector('#calEditDate').value, note: (sheet.querySelector('#calEditNote').value || '').trim(), done: isDone, attachments: curAttachments };
-            }, function(updatedAtts){
-              curAttachments = updatedAtts;
-              var wrap = sheet.querySelector('#calEditAttListWrap');
-              if(wrap){
-                wrap.innerHTML = curAttachments.length
-                  ? '<div class="att-chips-wrap" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;">' +
-                      curAttachments.map(function(att, idx){
-                        var icon = att.type === 'video' ? '🎥' : (att.type === 'image' ? '🖼️' : (att.type === 'text' ? '📝' : '🔗'));
-                        return '<span class="att-chip" data-caldraftatt="'+idx+'" title="'+escapeHtml(att.title||'')+'" style="cursor:pointer;">' + icon + ' ' + escapeHtml(att.title || '참고자료') + '</span>';
-                      }).join('') + '</div>'
-                  : '<p class="faint" style="font-size:.8125rem;margin:4px 0 0;">첨부된 참고자료가 없습니다. (+ 참고자료 첨부 버튼으로 등록해보세요)</p>';
-                wireAtts();
-              }
+            }, function(updatedAtts, ctx){
+              /* 참고자료 첨부/조회 모달이 단일 #modalSheet를 재사용해 이 화면을 덮어쓰므로,
+                 패치가 아니라 입력값(ctx)을 보존한 채로 이 모달을 다시 완전히 열어야 한다. */
+              openCalendarManualEditModal(
+                selDate, eventItem, kind,
+                {
+                  title: ctx && ctx.title !== undefined ? ctx.title : curTitle,
+                  date: ctx && ctx.date !== undefined ? ctx.date : curDate,
+                  note: ctx && ctx.note !== undefined ? ctx.note : curNote,
+                  done: ctx && ctx.done !== undefined ? ctx.done : isDone,
+                  attachments: updatedAtts
+                }
+              );
             });
           };
           wireAtts();

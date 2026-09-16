@@ -230,7 +230,7 @@ async function handleShareOg(req, res) {
   } else if (type === 'feed') {
     ogTitle = author ? ('[아워골 피드] ' + author + '님의 실천 기록') : ('[아워골 피드] ' + (title || '오늘의 목표 실천'));
     ogDesc = desc || '함께 달리는 사람들과 실천을 공유하고 따뜻한 응원과 자극을 나누어요!';
-    targetAppUrl = baseUrl + '/?feed=' + encodeURIComponent(id);
+    targetAppUrl = baseUrl + '/?feed=' + encodeURIComponent(id) + (author ? '&author=' + encodeURIComponent(author) : '') + (title ? '&title=' + encodeURIComponent(title) : '');
   } else if (type === 'group') {
     ogTitle = '[아워골 모임 초대] ' + (title || '함께 목표 달성방');
     ogDesc = desc || '앱 설치 없이 웹에서 바로 초대 수락하고 함께 완주를 시작할 수 있어요!';
