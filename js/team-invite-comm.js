@@ -1060,7 +1060,11 @@
                 isAiBot: isAiBot,
                 createdAt: new Date().toISOString()
               });
-              if(global.saveProfile) await global.saveProfile();
+              // saveProfile()이 (companions와 무관한 다른 이유로) 예외를 던지면
+              // 이 async 핸들러 전체가 조용히 중단되어 "클릭 모션만 생기고 아무 반응 없음"
+              // 처럼 보인다. companions 저장은 persistCompanions()가 독립적으로 책임지므로
+              // saveProfile() 실패가 추가 자체를 막지 않도록 여기서 격리한다.
+              try { if(global.saveProfile) await global.saveProfile(); } catch(err){ console.warn('[동반자] saveProfile 오류(무시하고 계속):', err); }
               persistCompanions();
               if(global.toast) global.toast((user.nickname || user.name) + '님을 동반자로 추가했어요! 🎉');
               if(global.closeModal) global.closeModal();
@@ -1325,7 +1329,7 @@
             goals: target.goals || [],
             createdAt: new Date().toISOString()
           });
-          if(global.saveProfile) await global.saveProfile();
+          try { if(global.saveProfile) await global.saveProfile(); } catch(err){ console.warn('[동반자] saveProfile 오류(무시하고 계속):', err); }
           persistCompanions();
           if(global.toast) global.toast(target.nickname + '님을 동반자로 추가했어요! 🎉');
           renderCommCompanions(body);
