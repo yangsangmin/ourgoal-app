@@ -4803,6 +4803,44 @@ check('compliance: [#TASK-ES-110] 팀 목표 시인성(정보량 다이어트·�
   assert.strictEqual(finalLines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
 });
 
+check('compliance: [#TASK-ES-111] 참가 팀원 달성현황 UI 효율화(1열 가로 인라인 정돈, 달성률/게이지바 슬림화, 모바일 반응형 컴팩트 카드 및 아코디언 접힘) 무결성 검증', () => {
+  const teamLinkedPath = path.join(__dirname, '..', 'js', 'team-linked-goals.js');
+  assert.ok(fs.existsSync(teamLinkedPath), 'js/team-linked-goals.js 파일이 존재해야 함');
+  const teamLinkedCode = fs.readFileSync(teamLinkedPath, 'utf8');
+
+  // 1. 1열 가로 인라인 구조 및 CSS 클래스 적용 검증
+  assert.ok(teamLinkedCode.includes('class="tg-participant-row"'), '1열 인라인 참가자 행 클래스 적용');
+  assert.ok(teamLinkedCode.includes('class="tg-p-left"'), '좌측 사용자 메타 수평 배치 래퍼');
+  assert.ok(teamLinkedCode.includes('class="tg-p-meta"'), '이름/역할/진행상태 인라인 래퍼');
+  assert.ok(teamLinkedCode.includes('class="tg-p-name"'), '참가자 이름 클래스');
+  assert.ok(teamLinkedCode.includes('class="tg-p-role-badge'), '역할 마이크로 뱃지 클래스');
+  assert.ok(teamLinkedCode.includes('class="tg-p-status"'), '마일스톤 진행상태 한 줄 텍스트 클래스');
+  assert.ok(teamLinkedCode.includes('class="tg-p-right"'), '우측 달성률 및 액션 버튼 래퍼');
+  assert.ok(teamLinkedCode.includes('class="tg-p-progress"'), '슬림 달성률 및 미니 바 래퍼');
+
+  // 2. 아코디언 접기/펼치기 토글 배선 검증
+  assert.ok(teamLinkedCode.includes('data-tgparttoggle='), '참가 팀원 현황 아코디언 헤더 토글 속성');
+  assert.ok(teamLinkedCode.includes('data-tgpartlist='), '참가 팀원 목록 바디 데이터 속성');
+  assert.ok(teamLinkedCode.includes('p.settings.foldParticipants'), '참가 팀원 접힘 상태 영구 저장');
+
+  // 3. 기존 셀렉터 및 상호작용 100% 무손실 보존 검증
+  assert.ok(teamLinkedCode.includes('참가 팀원 달성 현황'), '섹션 타이틀 텍스트 보존');
+  assert.ok(teamLinkedCode.includes('data-tgpnudge='), '응원 찌르기 버튼 데이터 속성 보존');
+  assert.ok(teamLinkedCode.includes('data-tgpcmt='), '댓글 소통 버튼 데이터 속성 보존');
+  assert.ok(teamLinkedCode.includes('data-tgpdm='), '1:1 DM 버튼 데이터 속성 보존');
+  assert.ok(teamLinkedCode.includes('data-gotolinkedgoal='), '내 목표 바로가기 버튼 데이터 속성 보존');
+
+  // 4. ui.css 전용 스타일 검증
+  assert.ok(styleSrc.includes('.tg-participant-row'), 'ui.css에 1열 인라인 행 스타일 정의');
+  assert.ok(styleSrc.includes('.tg-p-meta'), 'ui.css에 인라인 메타 스타일 정의');
+  assert.ok(styleSrc.includes('.tg-p-role-badge'), 'ui.css에 역할 마이크로 뱃지 스타일 정의');
+  assert.ok(styleSrc.includes('.tg-p-header'), 'ui.css에 아코디언 헤더 스타일 정의');
+
+  // 5. 헌법 제18조: index.html 22,196줄 불변 재검증
+  const currentLines = html.split(/\r?\n/).length;
+  assert.strictEqual(currentLines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
