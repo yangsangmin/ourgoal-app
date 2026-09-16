@@ -5038,6 +5038,37 @@ check('compliance: [#TASK-ES-122] 아바타 생성 기간 설정(목표·팀·�
   assert.strictEqual(finalLines3, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
+check('compliance: [#TASK-ES-123] 인앱 1:1 고객 문의·오류 제보 접수 시스템 완결 및 노션 DB·텔레그램 실시간 자동 연동 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  const vercelCfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+  const ddlExists = fs.existsSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-16-inquiries.sql'));
+
+  // 1. 프론트엔드 모달 및 리스너 4위 1체 배선 검증
+  assert.ok(indexSrc.includes("fetch('/api/inquiry'"), '모달 접수 시 /api/inquiry fetch 비동기 호출 배선');
+  assert.ok(indexSrc.includes("action: 'inquiry'"), 'inquiry action 페이로드 탑재');
+  assert.ok(indexSrc.includes("openCustomerInquiryModal();"), 'feedbackInquiryBtn 클릭 시 모달 오픈 일원화');
+
+  // 2. api/track.js handleInquiry 엔드포인트 및 3자 연동 검증
+  assert.ok(trackSrc.includes('handleInquiry('), 'api/track.js handleInquiry 핸들러 구현');
+  assert.ok(trackSrc.includes("3dd598db-9096-816e-8875-c602c34d251f"), '노션 고객문의 DB ID 상수 배선');
+  assert.ok(trackSrc.includes("1260106462"), '상민님 텔레그램 Chat ID 상수 배선');
+  assert.ok(trackSrc.includes("sb.from('inquiries').insert"), 'Supabase inquiries 테이블 적재 배선');
+
+  // 3. vercel.json rewrite 및 DDL 무결성 검증
+  const hasInquiryRewrite = (vercelCfg.rewrites || []).some(r => r.source === '/api/inquiry' && r.destination === '/api/track');
+  assert.ok(hasInquiryRewrite, 'vercel.json 내 /api/inquiry -> /api/track rewrite 배선');
+  assert.ok(ddlExists, 'docs/sql/2026-09-16-inquiries.sql DDL 파일 존재');
+
+  // 4. Vercel Hobby 12개 서버리스 함수 한도 검증
+  const apiFiles = fs.readdirSync(path.join(__dirname, '..', 'api')).filter(f => f.endsWith('.js'));
+  assert.strictEqual(apiFiles.length, 12, 'Vercel Hobby 12개 서버리스 함수 한도 엄수 (현재 12개)');
+
+  // 5. 헌법 제18조: index.html 22,196줄 불변 엄수
+  const lines = indexSrc.split(/\r?\n/).length;
+  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

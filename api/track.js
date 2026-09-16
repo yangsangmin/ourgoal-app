@@ -281,6 +281,202 @@ async function handleShareOg(req, res) {
   res.status(200).send(html);
 }
 
+/* #TASK-ES-124: RLS 우회 실제 회원 닉네임 검색 핸들러 (SUPABASE_SERVICE_ROLE_KEY 활용) */
+async function handleSearchUsers(sb, body, res) {
+  var q = String(body.query || body.p_query || '').trim();
+  if (!q || q.length < 1) {
+    return res.status(200).json({ ok: true, users: [] });
+  }
+
+  try {
+    var uRes = await sb.from('users')
+      .select('id, username, display_name, avatar_url, bio, interests')
+      .or('display_name.ilike.%' + q + '%,username.ilike.%' + q + '%')
+      .limit(20);
+
+    if (uRes.error) {
+      console.warn('[search_users] DB 조회 경고:', uRes.error);
+      return res.status(200).json({ ok: false, error: uRes.error.message, users: [] });
+    }
+
+    var list = (uRes.data || []).map(function(u) {
+      return {
+        id: u.id,
+        nickname: u.display_name || u.username || '아워골 회원',
+        name: u.display_name || u.username || '아워골 회원',
+        avatar: u.avatar_url || '👤',
+        intro: u.bio || '함께 실천하는 아워골 회원',
+        theme: (Array.isArray(u.interests) && u.interests[0]) || '일반',
+        level: 1,
+        streak: 1,
+        isAiBot: false
+      };
+    });
+
+    return res.status(200).json({ ok: true, users: list });
+  } catch (err) {
+    console.warn('[search_users] 예외 발생:', err);
+    return res.status(500).json({ ok: false, error: (err && err.message) || '검색 처리 실패', users: [] });
+  }
+}
+
+// #TASK-ES-123: 1:1 고객 문의 및 오류 제보 접수 (노션 DB + 텔레그램 + Supabase)
+var DEFAULT_NOTION_INQUIRIES_DB_ID = '3dd598db-9096-816e-8875-c602c34d251f';
+var DEFAULT_TELEGRAM_CHAT_ID = '1260106462';
+var TYPE_LABELS = {
+  bug: '버그/오류 제보',
+  feature: '새로운 기능 제안',
+  account: '계정/보안 관련',
+  other: '기타 문의사항'
+};
+
+async function handleInquiry(sb, body, req, res) {
+  var content = typeof body.content === 'string' ? body.content.trim() : '';
+  var inquiryType = body.inquiryType || 'other';
+  var replyEmail = typeof body.replyEmail === 'string' ? body.replyEmail.trim().slice(0, 100) : '';
+  var userId = typeof body.userId === 'string' ? body.userId.trim() : '';
+  var userNickname = typeof body.userNickname === 'string' ? body.userNickname.trim() : '익명 유저';
+  var userAgent = typeof body.userAgent === 'string' ? body.userAgent.slice(0, 300) : (req.headers && req.headers['user-agent'] ? req.headers['user-agent'].slice(0, 300) : '');
+  var appVersion = body.appVersion || 'v1.0.0';
+
+  if (!content) {
+    return res.status(400).json({ ok: false, error: '문의 내용을 입력해주세요.' });
+  }
+
+  var typeLabel = TYPE_LABELS[inquiryType] || '기타 문의사항';
+  var nowIso = new Date().toISOString();
+  var summaryTitle = '[' + typeLabel + '] ' + content.slice(0, 25).replace(/[\r\n]+/g, ' ') + (content.length > 25 ? '...' : '') + ' (' + userNickname + ')';
+
+  var results = { supabase: false, notion: false, telegram: false };
+
+  // 1. Supabase 적재 (inquiries 테이블)
+  if (sb) {
+    try {
+      var { data: sbData, error: sbErr } = await sb.from('inquiries').insert({
+        inquiry_type: inquiryType,
+        reply_email: replyEmail || null,
+        content: content,
+        user_id: userId || null,
+        user_nickname: userNickname,
+        user_agent: userAgent,
+        app_version: appVersion,
+        status: '접수',
+        created_at: nowIso
+      }).select('id').single();
+
+      if (!sbErr && sbData) {
+        results.supabase = true;
+      } else if (sbErr) {
+        console.warn('[Inquiry] Supabase warning:', sbErr.message);
+      }
+    } catch (e) {
+      console.warn('[Inquiry] Supabase exception:', e.message);
+    }
+  }
+
+  // 2. 노션 '고객 문의 및 오류 제보 원장' DB 적재
+  var notionToken = process.env.NOTION_TOKEN;
+  var notionDbId = process.env.NOTION_INQUIRIES_DB_ID || DEFAULT_NOTION_INQUIRIES_DB_ID;
+
+  if (notionToken && notionDbId) {
+    try {
+      var notionPayload = {
+        parent: { database_id: notionDbId },
+        properties: {
+          '제목': {
+            title: [{ type: 'text', text: { content: summaryTitle.slice(0, 100) } }]
+          },
+          '유형': {
+            select: { name: typeLabel }
+          },
+          '상태': {
+            select: { name: '접수' }
+          },
+          '작성자 닉네임': {
+            rich_text: [{ type: 'text', text: { content: userNickname.slice(0, 100) } }]
+          },
+          '작성자 ID': {
+            rich_text: [{ type: 'text', text: { content: (userId || '-').slice(0, 100) } }]
+          },
+          '문의 내용': {
+            rich_text: [{ type: 'text', text: { content: content.slice(0, 2000) } }]
+          },
+          '기기/앱정보': {
+            rich_text: [{ type: 'text', text: { content: (appVersion + ' / ' + userAgent).slice(0, 500) } }]
+          },
+          '접수일시': {
+            date: { start: nowIso }
+          }
+        }
+      };
+
+      if (replyEmail) {
+        notionPayload.properties['회신 이메일'] = { email: replyEmail };
+      }
+
+      var notionRes = await fetch('https://api.notion.com/v1/pages', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + notionToken,
+          'Notion-Version': '2022-06-28',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(notionPayload),
+        signal: AbortSignal.timeout(5000)
+      });
+
+      if (notionRes.ok) {
+        results.notion = true;
+      } else {
+        var nErrText = await notionRes.text();
+        console.warn('[Inquiry] Notion warning:', notionRes.status, nErrText);
+      }
+    } catch (e) {
+      console.warn('[Inquiry] Notion exception:', e.message);
+    }
+  }
+
+  // 3. 상민님 텔레그램 실시간 알림 발송
+  var tgToken = process.env.TELEGRAM_BOT_TOKEN;
+  var tgChatId = process.env.TELEGRAM_ALLOWED_CHAT_ID || DEFAULT_TELEGRAM_CHAT_ID;
+
+  if (tgToken && tgChatId) {
+    try {
+      var tgText =
+        '📩 [아워골 고객 문의/오류 제보 접수]\n\n' +
+        '• 유형: ' + typeLabel + '\n' +
+        '• 작성자: ' + userNickname + (userId ? ' (' + userId.slice(0, 8) + '...)' : '') + '\n' +
+        '• 회신 이메일: ' + (replyEmail || '미입력(익명)') + '\n' +
+        '• 앱 버전: ' + appVersion + '\n' +
+        '• 접수 시각: ' + nowIso.replace('T', ' ').slice(0, 19) + '\n\n' +
+        '[문의 내용]\n' + content + '\n\n' +
+        '👉 노션 원장: https://app.notion.com/p/' + notionDbId.replace(/-/g, '');
+
+      var tgRes = await fetch('https://api.telegram.org/bot' + tgToken + '/sendMessage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: tgChatId,
+          text: tgText
+        }),
+        signal: AbortSignal.timeout(4000)
+      });
+
+      if (tgRes.ok) {
+        results.telegram = true;
+      }
+    } catch (e) {
+      console.warn('[Inquiry] Telegram exception:', e.message);
+    }
+  }
+
+  return res.status(200).json({
+    ok: true,
+    message: '문의가 성공적으로 접수되었습니다. 신속히 검토하겠습니다.',
+    results: results
+  });
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -300,20 +496,32 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  var sb = getSupabase();
-  if (!sb) {
-    res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY is not configured' });
-    return;
-  }
-
   var body = req.body || {};
   if (typeof body === 'string') {
     try { body = JSON.parse(body); } catch (e) { body = {}; }
   }
 
+  var sb = getSupabase();
+
+  // #TASK-ES-123: 1:1 고객 문의 및 오류 제보 접수 (노션 DB + 텔레그램 + Supabase)
+  var isUrlInquiry = req.url && req.url.indexOf('/inquiry') !== -1;
+  if (body.action === 'inquiry' || isUrlInquiry || (body.content && body.inquiryType)) {
+    return handleInquiry(sb, body, req, res);
+  }
+
+  if (!sb) {
+    res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY is not configured' });
+    return;
+  }
+
   // #TASK-ES-036: RLS 차단 우회 데이터 동기화 및 복구 처리
   if (body.action === 'sync_records' || body.backupIds) {
     return handleSyncRecords(sb, body, res);
+  }
+
+  // #TASK-ES-124: RLS 차단 및 세션 만료 무관 실제 회원 닉네임 검색
+  if (body.action === 'search_users') {
+    return handleSearchUsers(sb, body, res);
   }
 
   var name = String(body.name || '');
