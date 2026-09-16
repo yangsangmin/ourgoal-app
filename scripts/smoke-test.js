@@ -5096,11 +5096,18 @@ check('compliance: [#TASK-ES-124] 동반자 실 사용자 닉네임 검색 2중 
   assert.ok(commSrc.includes('safeAvatarHtml(u.avatar, 36)'), '검색 결과 내 URL 아바타 안전 렌더 배선');
   assert.ok(commSrc.includes('safeAvatarHtml(c.avatar, 44)'), '동반자 목록 내 URL 아바타 안전 렌더 배선');
   assert.ok(commSrc.includes('safeAvatarHtml(user.avatar, 72)'), '프로필 모달 내 URL 아바타 안전 렌더 배선');
+  assert.ok(commSrc.includes('safeAvatarHtml(person.avatar, 40)'), 'DM 채팅방 내 URL 아바타 안전 렌더 배선');
   assert.ok(commSrc.includes('z-index:2') && commSrc.includes('touch-action:manipulation'), '동반자 추가 버튼 z-index 및 터치 간섭 방지 배선');
   assert.ok(commSrc.includes('btn.textContent = \'✓ 추가됨\''), '동반자 추가 버튼 즉시 반응 낙관적 UI 배선');
+  assert.ok(commSrc.includes('메시지를 전송했습니다! 💬'), 'DM 발송 즉각 피드백 배선');
 
-  // 6. 스마트 안전핀 TECH-RULE-01 (index.html 본체 무결성 보존)
+  // 6. 캐시 버스팅 및 서비스워커 갱신 무결성 검증
   const htmlSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.ok(htmlSrc.includes('team-invite-comm.js?v=20260916-es128-v3'), 'index.html 스크립트 캐시 버스팅 태그 갱신');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260916-es128-v3'), 'sw.js 캐시 네임 갱신');
+
+  // 7. 스마트 안전핀 TECH-RULE-01 (index.html 본체 무결성 보존)
   const lines = htmlSrc.split(/\r?\n/).length;
   assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
@@ -5126,6 +5133,58 @@ check('compliance: [#TASK-CONST-003] index.html 스마트 무결성 안전핀 �
 
   // 4. 레지스트리 문서 개정 확인
   assert.ok(registry.includes('index.html 스마트 무결성 안전핀'), '레지스트리에 스마트 무결성 안전핀 공식 등재');
+});
+
+check('compliance: [#TASK-ES-127] 16개 MBTI 연계 320개 아바타 페르소나 온톨로지 및 시스템 무결성 검증', () => {
+  const avatarSystem = require(path.join(__dirname, '..', 'js', 'avatar-system.js'));
+  const avatarJsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+
+  // 1. 320종 전체 페르소나 탑재 검증
+  assert.ok(avatarSystem.BODY_THEMES_320, 'BODY_THEMES_320 데이터셋 존재');
+  assert.strictEqual(avatarSystem.BODY_THEMES_320.length, 320, '320개 페르소나 전수 탑재 확인');
+  assert.strictEqual(avatarSystem.getAllThemes().length, 320, 'getAllThemes() 반환 320개 일치');
+
+  // 2. ID 무결성 검증 (1~320 중복/누락 0건)
+  const idSet = new Set();
+  avatarSystem.BODY_THEMES_320.forEach((p, idx) => {
+    assert.strictEqual(p.id, idx + 1, '페르소나 ID 순차 일치 (ID ' + p.id + ')');
+    assert.ok(!idSet.has(p.id), 'ID 중복 없음 (ID ' + p.id + ')');
+    assert.ok(p.mbti && p.name && p.cat && p.gear && p.icon, '필수 필드(mbti, name, cat, gear, icon) 누락 없음');
+    idSet.add(p.id);
+  });
+
+  // 3. 16개 MBTI 각 20개 배분 검증
+  const mbtiList = ['INTJ','INTP','ENTJ','ENTP','INFJ','INFP','ENFJ','ENFP','ISTJ','ISFJ','ESTJ','ESFJ','ISTP','ISFP','ESTP','ESFP'];
+  mbtiList.forEach(mbti => {
+    const list = avatarSystem.getThemesByMbti(mbti);
+    assert.strictEqual(list.length, 20, mbti + ' 페르소나 정확히 20개 일치');
+  });
+
+  // 4. 4대 군(NT, NF, SJ, SP) 각 80개 배분 검증
+  ['NT', 'NF', 'SJ', 'SP'].forEach(group => {
+    const list = avatarSystem.getThemesByGroup(group);
+    assert.strictEqual(list.length, 80, group + ' 그룹 페르소나 정확히 80개 일치');
+  });
+
+  // 5. 레거시 77종 100% 하위 호환 검증
+  assert.ok(avatarSystem.BODY_THEMES_77, '레거시 BODY_THEMES_77 데이터셋 보존');
+  assert.strictEqual(avatarSystem.BODY_THEMES_77.length, 77, '레거시 77종 데이터셋 보존');
+  const t1 = avatarSystem.getTheme(1);
+  const t77 = avatarSystem.getTheme(77);
+  const t320 = avatarSystem.getTheme(320);
+  assert.ok(t1 && t1.name, 'ID 1 테마 정상 조회');
+  assert.ok(t77 && t77.name, 'ID 77 테마 정상 조회');
+  assert.ok(t320 && t320.name, 'ID 320 테마 정상 조회');
+
+  // 6. 검색 엔진 동작 검증
+  const searchResult = avatarSystem.searchThemes('체스');
+  assert.ok(searchResult.length >= 2, '키워드 검색 정상 작동');
+
+  // 7. 320종 도감 UI 컴포넌트 탑재 검증
+  assert.ok(avatarJsSrc.includes('renderPersona320ListHtml'), '320종 도감 리스트 렌더러 함수 탑재');
+  assert.ok(avatarJsSrc.includes('btnToggle320PersonaCatalog'), '320종 도감 토글 버튼 탑재');
+  assert.ok(avatarJsSrc.includes('inputSearchPersona320'), '320종 도감 실시간 검색창 탑재');
+  assert.ok(avatarJsSrc.includes('persona320GroupTabs'), '320종 도감 4대 군 탭 탑재');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

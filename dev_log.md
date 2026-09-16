@@ -3800,3 +3800,50 @@
 - **검증 결과**:
   - `npm test`: 스모크 264개 전수 통과 (0 failure), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
 ---
+
+### 2026-09-16: [#TASK-ES-127] 16개 MBTI 연계 320개 아바타 페르소나 온톨로지 확장 및 시스템 통합
+- **배경 및 의도**:
+  - 상민님의 직접 지시("320개로 늘리려고... mbti와 연계해서... 작업시작하기 전에 니가 이번 작업에 해야할 것들과 이뤄야 하는 결과를 표로 모두 작성해봐. 320개 페르소나와 함께") 접수 및 사전 계획서(표 1~3, 320종 전수 명세) 승인 완료.
+  - 기존 77종 바디 테마에서 유저의 MBTI 성격 유형과 목표 라이프스타일에 정밀하게 부합하는 16개 MBTI x 20개 테마 = 총 320개 페르소나 온톨로지로 대폭 확장.
+  - 기존 1~77번 ID를 소장 중인 유저의 프로필 및 보관함 데이터와 100% 무손실 하위 호환성(TECH-RULE-03)을 보장하고, index.html 22,196줄 불변(TECH-RULE-01)을 엄수.
+- **수행 내역**:
+  1. `js/avatar-system.js`:
+     - 16개 MBTI(4대 군: NT, NF, SJ, SP) x 20개 = 총 320개 페르소나 온톨로지 카탈로그(`BODY_THEMES_320`) 전수 탑재 (ID, MBTI, Group, Cat, Name, Kw, Desc, Gear, Icon, Color, SubColor 완전 구성).
+     - 기존 `BODY_THEMES_77` 영구 보존 및 `getThemeById(themeId)` 320종 우선 + 77종 레거시 Fallback 2중 호환 레이어 구현.
+     - 신규 테마 API 확장: `getAllThemes()`, `getTheme(id)`, `getThemesByMbti(mbti)`, `getThemesByGroup(group)`, `searchThemes(query)`.
+     - 아바타 생성 시 기간 분석(`personaPromise`)으로 도출된 MBTI와 100% 매칭되는 20종 페르소나 풀 자동 선택 및 결과창 MBTI 뱃지/키워드/기어 메타 정보 렌더링.
+     - 아바타 모달 내 **320종 MBTI 페르소나 도감 아코디언** 탑재 (4대 군 탭 5종 + 실시간 키워드/이름 검색 필터 + 지연 렌더링으로 0ms 렉 방어).
+  2. `scripts/smoke-test.js`:
+     - `#TASK-ES-127` 컴플라이언스 테스트 신설: 320종 전수 탑재, ID 순차 무결성(1~320), 16개 MBTI x 20개 정확성, 4대 군 80개 배분, 레거시 77종 호환, 검색 엔진 동작, 도감 UI 컴포넌트 4종 전수 검증.
+  3. `docs/rules/TICKETS.md`:
+     - `#TASK-ES-127` 티켓 공식 등록.
+  4. `.task-links/454cedb2.json`:
+     - 노션-옵시디언-관제센터 3자 동기화 완료 (`ok: true`).
+- **검증 결과**:
+  - `npm test`: 스모크 265개 전수 통과 (0 failure), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
+  - `index.html`: 정확히 22,196줄 불변 100% 보존 확인.
+---
+
+### 2026-09-16: [#TASK-ES-128] 동반자 아바타 캐시 버스팅(v3) 및 DM 헤더 안전 렌더링, 모바일 DM 전송 터치 최적화
+- **배경 및 의도**:
+  - 상민님의 재검증 피드백("아직도 이상하게 나와 아까처럼 주소링크같은거. 그리고 추가된 동반자에게 dm 안보내져") 신속 정밀 분석 및 완전 해결.
+  - 원인 1: `index.html` 라인 909의 `<script src="js/team-invite-comm.js?v=20260915-es105">` 캐시 버전 쿼리가 어제 날짜로 락(Lock)되어 있어 사용자의 모바일 브라우저/PWA가 어제 캐시된 구버전 스크립트를 계속 실행함.
+  - 원인 2: `team-invite-comm.js` 내부의 DM 채팅방 헤더(L764) 및 DM 목록 칩/리스트(L887, L906)에서 `safeAvatarHtml` 래핑이 누락되어 카카오 프로필 원본 URL(103자)이 텍스트로 폭발하는 잔존 경로 존재.
+  - 원인 3: 모바일 인앱/사파리/크롬 가상 키보드가 열린 상태에서 [전송] 버튼 터치 시, 키보드 리사이징 애니메이션으로 인해 `click` 이벤트가 유실(터치 씹힘) 및 전송 성공 시각 피드백 부재.
+- **수행 내역**:
+  1. `index.html`:
+     - `team-invite-comm.js?v=20260915-es105` ➔ `team-invite-comm.js?v=20260916-es128-v3`로 캐시 버스팅 전격 갱신 (index.html 스마트 안전핀 준수).
+  2. `sw.js`:
+     - `CACHE_NAME = 'ourgoal-shell-v20260916-es128-v3'`로 갱신하여 서비스워커 앱 셸 캐시 즉시 교체 보장.
+  3. `js/team-invite-comm.js`:
+     - DM 채팅창 상단 헤더: `safeAvatarHtml(person.avatar, 40)` 및 `overflow:hidden; flex-shrink:0;` 적용.
+     - DM 목록 및 팀 칩: `safeAvatarHtml(m.avatar, 38)`, `safeAvatarHtml(p.avatar, 42)` 전수 적용 및 대소문자 무시 ID 매칭.
+     - DM [전송] 버튼 모바일 터치 강화: `position:relative; z-index:5; touch-action:manipulation;` 스타일 배선 및 `click` + `touchend` 2중 이벤트 리스너 탑재.
+     - DM 발송 즉시 피드백: `global.toast('메시지를 전송했습니다! 💬')` 안내 토스트 출력.
+     - 동반자 카드 `[data-directdm]` 터치 이벤트 전파 방지(`stopPropagation`, `preventDefault`) 및 `global.setTab('comm')` 확실한 화면 전환 보장.
+  4. `scripts/smoke-test.js`:
+     - DM 채팅방 URL 아바타 안전 렌더 배선, DM 발송 토스트 배선, index.html 캐시버스팅 v3, sw.js v3 캐시네임 단언문 추가.
+- **검증 결과**:
+  - `npm test`: 스모크 265개 전수 통과 (0 failure), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
+---
+

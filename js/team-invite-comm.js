@@ -761,7 +761,7 @@
       body.innerHTML = '<span class="dm-back" id="dmBack" style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-size:.875rem;font-weight:700;color:var(--brand-strong);margin-bottom:12px;">‹ 목록으로</span>' +
         '<div class="dm-thread-wrap">' +
           '<div class="dm-thread-head" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card);border-bottom:1px solid var(--rule);">' +
-            '<div class="feed-avatar" style="width:40px;height:40px;font-size:1.4rem;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border-radius:50%;">' + person.avatar + '</div>' +
+            '<div class="feed-avatar" style="width:40px;height:40px;font-size:1.4rem;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border-radius:50%;overflow:hidden;flex-shrink:0;">' + safeAvatarHtml(person.avatar, 40) + '</div>' +
             '<div style="flex:1;min-width:0;">' +
               '<div style="font-weight:700;font-size:.9375rem;color:var(--ink);display:flex;align-items:center;">' +
                 '<span>' + esc(person.nickname || person.name) + '</span>' +
@@ -775,7 +775,7 @@
           '</div>' +
           '<div class="dm-input-row" style="padding:10px 12px;background:var(--card);border-top:1px solid var(--rule);display:flex;gap:8px;">' +
             '<input id="dmInput" type="text" placeholder="' + (isGuest ? '로그인 후 메시지를 전송할 수 있습니다' : '메시지를 입력하세요 (Enter)') + '" style="flex:1;border:1px solid var(--rule);border-radius:10px;padding:8px 12px;font-size:.875rem;background:var(--surface-2);color:var(--ink);">' +
-            '<button class="btn btn-primary btn-sm" id="dmSend" type="button" style="font-weight:700;border-radius:10px;padding:8px 16px;">전송</button>' +
+            '<button class="btn btn-primary btn-sm" id="dmSend" type="button" style="font-weight:700;border-radius:10px;padding:8px 16px;position:relative;z-index:5;touch-action:manipulation;cursor:pointer;flex-shrink:0;">전송</button>' +
           '</div>' +
         '</div>' +
         '<p class="faint" style="margin-top:10px;font-size:.75rem;">💡 실제 사용자 계정 간 서버 DB 원장 및 Realtime 채널로 실시간 송수신됩니다</p>';
@@ -817,9 +817,12 @@
           msgsEl.scrollTop = msgsEl.scrollHeight;
         }
 
+        if(global.toast) global.toast('메시지를 전송했습니다! 💬');
+
         // 2. 헌법 제19조 의거 Supabase 서버 DB 원장 영속화
         if(global.sb){
           try {
+            var threadId = getDmThreadId(myId, person.id);
             // 부모 team_pings 대화방 보장
             await global.sb.from('team_pings').upsert({
               id: threadId,
@@ -856,18 +859,32 @@
       };
 
       var sendBtn = document.getElementById('dmSend');
-      if(sendBtn) sendBtn.addEventListener('click', send);
+      if(sendBtn){
+        sendBtn.addEventListener('click', function(e){
+          if(e){ e.stopPropagation(); e.preventDefault(); }
+          send();
+        });
+        sendBtn.addEventListener('touchend', function(e){
+          if(e){ e.stopPropagation(); e.preventDefault(); }
+          send();
+        });
+      }
       var inputEl = document.getElementById('dmInput');
       if(inputEl){
         inputEl.focus();
-        inputEl.addEventListener('keydown', function(e){ if(e.key === 'Enter') send(); });
+        inputEl.addEventListener('keydown', function(e){
+          if(e.key === 'Enter' && !e.shiftKey){
+            e.preventDefault();
+            send();
+          }
+        });
       }
     } else {
       if(_activeDmChannel){ try{ _activeDmChannel.unsubscribe(); }catch(e){} _activeDmChannel = null; }
 
       var teamMembersChipsHtml = teamMembers.map(function(m){
-        return '<div class="dm-team-chip" data-openteamdm="' + m.id + '" role="button" tabindex="0" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;width:72px;padding:8px 4px;background:var(--card);border:1px solid var(--rule);border-radius:12px;cursor:pointer;text-align:center;transition:transform 0.15s ease;">' +
-          '<div style="width:38px;height:38px;border-radius:50%;background:var(--surface-2);border:1.5px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin-bottom:4px;">' + m.avatar + '</div>' +
+        return '<div class="dm-team-chip" data-openteamdm="' + esc(m.id) + '" role="button" tabindex="0" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;width:72px;padding:8px 4px;background:var(--card);border:1px solid var(--rule);border-radius:12px;cursor:pointer;text-align:center;transition:transform 0.15s ease;">' +
+          '<div style="width:38px;height:38px;border-radius:50%;background:var(--surface-2);border:1.5px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin-bottom:4px;overflow:hidden;flex-shrink:0;">' + safeAvatarHtml(m.avatar, 38) + '</div>' +
           '<div style="font-size:.75rem;font-weight:700;color:var(--ink);width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(m.name) + '</div>' +
           '<span class="faint" style="font-size:.625rem;line-height:1.2;margin-top:2px;">' + (m.role || '팀원') + '</span>' +
         '</div>';
@@ -879,14 +896,14 @@
         allDmList.push(c);
       });
       teamMembers.forEach(function(m){
-        if(!allDmList.find(function(x){ return x.id === m.id; })) allDmList.push(m);
+        if(!allDmList.find(function(x){ return String(x.id || '').trim().toLowerCase() === String(m.id || '').trim().toLowerCase(); })) allDmList.push(m);
       });
 
       var dmListHtml = allDmList.map(function(p){
         var last = (p._thread && p._thread.length) ? p._thread[p._thread.length - 1].text : (p.intro || '새로운 대화를 시작해보세요!');
         var badgeText = p.isAiBot ? 'AI 봇' : (p.groupName ? p.groupName : (p.theme || '동반자'));
-        return '<div class="dm-list-item" data-open="' + p.id + '" style="cursor:pointer;padding:10px 12px;display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--rule);border-radius:12px;margin-bottom:8px;">' +
-          '<div class="feed-avatar" style="width:42px;height:42px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex:0 0 auto;">' + p.avatar + '</div>' +
+        return '<div class="dm-list-item" data-open="' + esc(p.id) + '" style="cursor:pointer;padding:10px 12px;display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--rule);border-radius:12px;margin-bottom:8px;">' +
+          '<div class="feed-avatar" style="width:42px;height:42px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex:0 0 auto;overflow:hidden;">' + safeAvatarHtml(p.avatar, 42) + '</div>' +
           '<div class="dm-preview" style="flex:1;min-width:0;">' +
             '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">' +
               '<b style="font-size:.875rem;color:var(--ink);">' + esc(p.nickname || p.name) + '</b>' +
@@ -1467,10 +1484,12 @@
     });
 
     body.querySelectorAll('[data-directdm]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var uid = btn.dataset.directdm;
+      btn.addEventListener('click', function(e){
+        if(e){ e.stopPropagation(); e.preventDefault(); }
+        var uid = String(btn.dataset.directdm || '').trim();
         state.commSubTab = 'dm';
         state.dmActiveId = uid;
+        if(global.setTab) global.setTab('comm');
         if(global.renderCommScreen) global.renderCommScreen();
       });
     });
