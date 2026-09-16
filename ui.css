@@ -2722,4 +2722,181 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   transform: scale(0.98);
 }
 
+/* ============================================================
+ * #TASK-ES-110: 팀 목표 시인성 개선 및 아코디언/수준관리 듀얼 모드 스타일
+ * ============================================================ */
+.tg-goal-switcher {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 2px 2px 8px 2px;
+  margin-bottom: 8px;
+  scrollbar-width: thin;
+}
+.tg-goal-switcher::-webkit-scrollbar {
+  height: 4px;
+}
+.tg-goal-switcher::-webkit-scrollbar-thumb {
+  background: var(--rule);
+  border-radius: 4px;
+}
+.tg-goal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: .8125rem;
+  font-weight: 600;
+  background: var(--card2, #f5f6f8);
+  border: 1px solid var(--rule);
+  color: var(--ink-soft);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .15s ease;
+  flex: 0 0 auto;
+}
+.tg-goal-chip:hover {
+  border-color: var(--brand);
+  color: var(--brand-strong);
+}
+.tg-goal-chip.active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+}
+.tg-goal-chip.active .tg-chip-dday {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+.tg-chip-dday {
+  font-size: .6875rem;
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: var(--red-soft);
+  color: var(--brand-strong);
+  font-weight: 700;
+}
+.tg-compact-goal-card {
+  background: var(--card);
+  border: 1.5px solid var(--rule);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  transition: border-color .15s ease;
+}
+.tg-compact-goal-card:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+}
+.tg-level-dual-tabs {
+  display: flex;
+  background: var(--card2, #f1f3f5);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 3px;
+  margin-bottom: 10px;
+  border: 1px solid var(--rule);
+}
+.tg-level-seg-btn {
+  flex: 1;
+  text-align: center;
+  padding: 6px 10px;
+  font-size: .8125rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all .15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.tg-level-seg-btn.active {
+  background: var(--card, #fff);
+  color: var(--brand-strong);
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+.tg-accordion-section {
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--card);
+  margin-top: 14px;
+  overflow: hidden;
+}
+.tg-accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  background: var(--card2, #f8f9fa);
+  cursor: pointer;
+  user-select: none;
+  transition: background .12s ease;
+}
+.tg-accordion-header:hover {
+  background: var(--surface-2, #eef2ff);
+}
+.tg-accordion-arrow {
+  font-size: .75rem;
+  color: var(--ink-faint);
+  transition: transform .2s ease;
+}
+.tg-accordion-arrow.rotated {
+  transform: rotate(180deg);
+}
+.tg-accordion-body {
+  padding: 12px 14px;
+}
+.tg-lg-accordion-row {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--card2, #fafafa);
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: all .15s ease;
+}
+.tg-lg-accordion-row:hover {
+  border-color: var(--rule-strong, #ccc);
+}
+.tg-lg-row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  cursor: pointer;
+  gap: 8px;
+}
+.tg-lg-row-body {
+  padding: 10px 12px;
+  background: var(--card);
+  border-top: 1px dashed var(--rule);
+}
+.tg-comments-toggle-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  background: var(--card2);
+  border: 1px solid var(--rule);
+  padding: 3px 9px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: all .15s ease;
+}
+.tg-comments-toggle-bar:hover {
+  color: var(--brand-strong);
+  border-color: var(--brand);
+}
+
+
 
