@@ -3507,5 +3507,26 @@
   - `npm test`: 스모크 257개 + 헌법 5대 게이트 13종 + Zero Dead Click 100% ALL PASS.
   - 인라인 스크립트 구문 오류 0건 (`ALL INLINE SCRIPTS SYNTAX VALID!`).
   - 헌법 제18조: `index.html` 총 줄 수 22,196줄 완벽 유지.
+
+### 2026-09-16: [#TASK-ES-117] 아바타 생성 후 앱 업데이트·재로그인·앱 재접속 시 아바타 영속성 및 화면 동기화 무결성 보장
+- **배경 및 지시**:
+  - 상민님 직접 지시: *"지금 아바타생성 후 업데이트나 로그아웃 후 다시 로그인하거나 앱 나갔다가 다시 들어오면 기존에 만든 아바타 잘 유지 되는지 확인해"*
+  - 아바타 라이프사이클(생성, 앱 업데이트, 로그아웃 후 재로그인, 브라우저 종료/재접속, 게스트->소셜 로그인 전환) 전반에 걸쳐 유저 아바타의 무손실 영속성 및 화면 간 상태 동기화 무결성 전수 검증 및 보완.
+- **취약점 식별 및 개선 배선**:
+  1. `js/avatar-system.js`:
+     - 아바타 적용(`btnSave.onclick`) 시 `settings.customAvatarUrl`뿐 아니라 `profile.avatarUrl` 및 `deps.state.profile.avatarUrl`을 함께 동기화하여 Supabase DB `users.avatar_url` 영구 저장 및 앱 전역 참조 지원.
+  2. `index.html`:
+     - `loadProfile()`: 새 기기, 시크릿 창, 또는 브라우저 캐시 삭제 후 로그인 시 DB `users.avatar_url`로부터 3등신 커스텀 아바타(`settings.customAvatarUrl`, `avatarType = 'custom'`) 자동 복원 안전망 구축.
+     - `updateTopBar()`: 상단 네비게이션 바 아바타(`topAvatar`)에서 `p.settings.customAvatarUrl`을 직접 지원하여 레벨 뱃지 아바타와 상단바 아바타 간 100% 화면 일관성 확보.
+     - `restoreSessionAndEnter()`: 게스트 모드에서 아바타를 제작한 후 소셜(카카오/구글) 로그인으로 전환할 때 게스트의 아바타 세팅(`avatarType`, `customAvatarUrl`, `avatarThemeId`, `avatarCraftCount`)을 새 소셜 프로필로 100% 무손실 마이그레이션 및 자동 저장 배선.
+     - `onAvatarChanged`: 아바타 변경 즉시 `renderLevelBadge()`와 함께 `updateTopBar()` 호출로 상단바 즉시 갱신 연동.
+     - 헌법 제18조 `index.html` 22,196줄 불변 엄수 (0줄 변동).
+  3. `scripts/smoke-test.js`:
+     - `[#TASK-ES-117]` 컴플라이언스 5대 검증(avatarUrl 동기화, loadProfile 복원, updateTopBar 지원, 게스트 마이그레이션, 22,196줄) 추가 (총 257개 테스트 100% PASS).
+- **검증 결과**:
+  - `npm test`: 스모크 257개 + 헌법 5대 게이트 13종 + Zero Dead Click 100% ALL PASS.
+  - `scratch/simulate_avatar_persistence.js`: 4대 시나리오(생성, 재로그인, 게스트승계, 앱재접속) 시뮬레이션 100% PASS.
+  - `scratch/verify_avatar_e2e.js`: Chrome CDP 실측 E2E 검증(게스트입장 ➔ 아바타설정 ➔ Page.reload 새로고침 ➔ 아바타/상단바 정상 복원) 100% PASS 및 스크린샷(`scratch/screen_avatar_persistence_verified.png`) 실물 확보.
+  - 헌법 제18조: `index.html` 총 줄 수 22,196줄 완벽 준수.
 ---
 
