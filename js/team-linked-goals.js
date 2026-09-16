@@ -633,31 +633,35 @@
       '</button>';
 
     var participants = getTeamGoalParticipants(g.id, tg);
+    var isFolded = !!(p.settings && p.settings.foldParticipants && p.settings.foldParticipants[tg.id]);
     var participantsRows = participants.map(function(item){
       var isMe = item.isMe;
       var pActionsHtml = isMe ?
-        '<button class="btn btn-ghost btn-sm" data-gotolinkedgoal="' + item.linkedGoalId + '" type="button" style="padding:2px 8px;font-size:.75rem;font-weight:700;border-color:var(--sage);color:var(--sage);cursor:pointer;">내 목표 ➔</button>' :
-        '<div style="display:flex;align-items:center;gap:4px;">' +
-          '<button class="btn btn-ghost btn-sm" data-tgpnudge="' + g.id + ':' + tg.id + ':' + esc(item.name) + '" type="button" title="응원 찌르기" style="padding:2px 6px;font-size:.75rem;font-weight:700;border-color:var(--gold);background:var(--gold-soft);color:var(--gold);cursor:pointer;">⚡ 찌르기</button>' +
-          '<button class="btn btn-ghost btn-sm" data-tgpcmt="' + g.id + ':' + tg.id + ':' + esc(item.name) + '" type="button" title="댓글로 소통" style="padding:2px 6px;font-size:.75rem;font-weight:700;border-color:var(--teal);background:rgba(20,184,166,0.1);color:var(--teal);cursor:pointer;">💬 댓글</button>' +
-          '<button class="btn btn-ghost btn-sm" data-tgpdm="' + g.id + ':' + tg.id + ':' + esc(item.name) + ':' + esc(item.avatar) + '" type="button" title="1:1 메시지" style="padding:2px 6px;font-size:.75rem;font-weight:700;border-color:var(--brand);background:var(--red-soft);color:var(--brand-strong);cursor:pointer;">✉️ DM</button>' +
+        '<button class="btn btn-ghost tg-p-action-btn" data-gotolinkedgoal="' + item.linkedGoalId + '" type="button" style="border-color:var(--sage);color:var(--sage);">내 목표 ➔</button>' :
+        '<div class="tg-p-actions">' +
+          '<button class="btn btn-ghost tg-p-action-btn" data-tgpnudge="' + g.id + ':' + tg.id + ':' + esc(item.name) + '" type="button" title="응원 찌르기" style="border-color:var(--gold);background:var(--gold-soft);color:var(--gold);">⚡ 찌르기</button>' +
+          '<button class="btn btn-ghost tg-p-action-btn" data-tgpcmt="' + g.id + ':' + tg.id + ':' + esc(item.name) + '" type="button" title="댓글로 소통" style="border-color:var(--teal);background:rgba(20,184,166,0.1);color:var(--teal);">💬 댓글</button>' +
+          '<button class="btn btn-ghost tg-p-action-btn" data-tgpdm="' + g.id + ':' + tg.id + ':' + esc(item.name) + ':' + esc(item.avatar) + '" type="button" title="1:1 메시지" style="border-color:var(--brand);background:var(--red-soft);color:var(--brand-strong);">✉️ DM</button>' +
         '</div>';
 
-      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:var(--card);border-radius:8px;border:1px solid var(--rule);gap:8px;">' +
-        '<div style="display:flex;align-items:center;gap:6px;min-width:0;">' +
-          '<span style="font-size:1.2rem;">' + (item.avatar || '🏃‍♂️') + '</span>' +
-          '<div style="min-width:0;">' +
-            '<div style="display:flex;align-items:center;gap:4px;">' +
-              '<b style="font-size:.8125rem;color:var(--ink);">' + esc(item.name) + '</b>' +
-              (isMe ? '<span style="font-size:.6875rem;padding:1px 5px;background:var(--sage-soft);color:var(--sage);border-radius:4px;font-weight:700;">나</span>' : '<span class="faint" style="font-size:.6875rem;">' + esc(item.role || '') + '</span>') +
-            '</div>' +
-            '<div class="faint" style="font-size:.6875rem;">마일스톤 ' + item.doneMs + '/' + item.totalMs + ' 완료</div>' +
+      var roleBadge = isMe ?
+        '<span class="tg-p-role-badge me">나</span>' :
+        (item.role ? '<span class="tg-p-role-badge peer">' + esc(item.role) + '</span>' : '');
+
+      return '<div class="tg-participant-row">' +
+        '<div class="tg-p-left">' +
+          '<span class="tg-p-avatar">' + (item.avatar || '🏃‍♂️') + '</span>' +
+          '<div class="tg-p-meta">' +
+            '<b class="tg-p-name">' + esc(item.name) + '</b>' +
+            roleBadge +
+            '<span class="tg-p-divider">·</span>' +
+            '<span class="tg-p-status" title="마일스톤 ' + item.doneMs + '/' + item.totalMs + ' 완료">마일스톤 ' + item.doneMs + '/' + item.totalMs + ' 완료</span>' +
           '</div>' +
         '</div>' +
-        '<div style="display:flex;align-items:center;gap:8px;flex:0 0 auto;">' +
-          '<div style="text-align:right;">' +
-            '<div style="font-weight:700;font-size:.8125rem;color:var(--brand-strong);">' + item.progressPct + '%</div>' +
-            '<div class="group-bar" style="width:48px;height:4px;margin-top:2px;"><span style="width:' + item.progressPct + '%;"></span></div>' +
+        '<div class="tg-p-right">' +
+          '<div class="tg-p-progress">' +
+            '<span class="tg-p-pct">' + item.progressPct + '%</span>' +
+            '<div class="group-bar tg-p-bar"><span style="width:' + item.progressPct + '%;"></span></div>' +
           '</div>' +
           pActionsHtml +
         '</div>' +
@@ -665,16 +669,19 @@
     }).join('');
 
     var participantsSectionHtml =
-      '<div style="margin:8px 0 10px;background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:10px 12px;">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-          '<div style="display:flex;align-items:center;gap:5px;font-size:.8125rem;font-weight:700;color:var(--ink);">' +
+      '<div class="tg-participants-section">' +
+        '<div class="tg-p-header" data-tgparttoggle="' + g.id + ':' + tg.id + '">' +
+          '<div class="tg-p-header-title">' +
             '<span>👥</span> <span>참가 팀원 달성 현황</span>' +
-            '<span style="font-size:.75rem;background:var(--card);color:var(--brand-strong);padding:1px 6px;border-radius:999px;border:1px solid var(--rule);">' + participants.length + '명</span>' +
+            '<span class="tg-p-header-badge">' + participants.length + '명</span>' +
           '</div>' +
-          '<span class="faint" style="font-size:.75rem;">실시간 상호 체크 &amp; 소통</span>' +
+          '<div style="display:flex;align-items:center;gap:6px;">' +
+            '<span class="faint" style="font-size:.75rem;">실시간 상호 체크 &amp; 소통</span>' +
+            '<span class="tg-accordion-arrow ' + (isFolded ? '' : 'rotated') + '" style="font-size:.6875rem;">▼</span>' +
+          '</div>' +
         '</div>' +
-        '<div style="display:flex;flex-direction:column;gap:6px;">' +
-          participantsRows +
+        '<div class="tg-p-list" data-tgpartlist="' + tg.id + '" style="display:' + (isFolded ? 'none' : 'flex') + ';">' +
+          (participantsRows || '<p class="faint" style="font-size:.8125rem;text-align:center;padding:8px 0;">아직 참가 팀원이 없어요.</p>') +
         '</div>' +
       '</div>';
 
@@ -750,6 +757,26 @@
         var parts = btn.dataset.tgpdm.split(':');
         var gid = parts[0], tgid = parts[1], targetName = parts[2], targetAvatar = parts[3];
         openTeamGoalMemberDmModal(gid, tgid, targetName, targetAvatar);
+      });
+    });
+
+    view.querySelectorAll('[data-tgparttoggle]').forEach(function(header){
+      header.addEventListener('click', async function(e){
+        e.stopPropagation();
+        var parts = header.dataset.tgparttoggle.split(':');
+        var tgid = parts[1];
+        var list = view.querySelector('[data-tgpartlist="' + tgid + '"]');
+        var arrow = header.querySelector('.tg-accordion-arrow');
+        if(!list) return;
+        var isHidden = list.style.display === 'none';
+        list.style.display = isHidden ? 'flex' : 'none';
+        if(arrow) arrow.classList.toggle('rotated', isHidden);
+        var p = getProfile();
+        p.settings = p.settings || {};
+        p.settings.foldParticipants = p.settings.foldParticipants || {};
+        p.settings.foldParticipants[tgid] = !isHidden;
+        triggerHaptic(10);
+        await saveProfile();
       });
     });
   }
