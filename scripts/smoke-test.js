@@ -4393,7 +4393,7 @@ check('compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료
   // index.html 무결성 & 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
   assert.ok(indexHtml.includes('js/calendar-attachment.js'), 'calendar-attachment.js 로드 태그');
   assert.ok(indexHtml.includes("kind === 'custom'"), 'wireAttachmentChipClicks custom kind 처리');
   assert.ok(indexHtml.includes('data-hubaddatt'), '허브 모달 첨부 버튼');
@@ -4425,7 +4425,7 @@ check('compliance: [#TASK-ES-102] 전 탭(홈·목표·일정·기록·소통·�
 
   // 4. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-103] Web Push VAPID API 구축 및 UGC 신고·차단 안전망 완결성 검증', async () => {
@@ -4476,7 +4476,7 @@ check('compliance: [#TASK-ES-103] Web Push VAPID API 구축 및 UGC 신고·차�
 
   // 4. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-104] 팀 목표 초대·소통 및 소통탭 전면 정비(초대·팀원대화·모임창복구·피드아코디언·게시버튼·1:1소통카드3종) 무결성 검증', () => {
@@ -4525,7 +4525,7 @@ check('compliance: [#TASK-ES-104] 팀 목표 초대·소통 및 소통탭 전면
 
   // 8. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-105] 추천템플릿 목표탭 이전·둘러보기 모달·게시하기 연동·모임원 DM바·동반자 소셜탭 무결성 검증', () => {
@@ -4569,7 +4569,7 @@ check('compliance: [#TASK-ES-105] 추천템플릿 목표탭 이전·둘러보기
 
   // 7. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-107] 팀 연계 개인목표 및 상호 달성도 체크·소통 시스템 검증', () => {
@@ -4604,7 +4604,7 @@ check('compliance: [#TASK-ES-107] 팀 연계 개인목표 및 상호 달성도 �
 
   // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-106] 헌법 제19조 의거 실 사용자 계정 상호 연동(Real Inter-Account Interaction) DM 및 동반자 시스템 검증', () => {
@@ -4640,7 +4640,7 @@ check('compliance: [#TASK-ES-106] 헌법 제19조 의거 실 사용자 계정 �
 
   // 4. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화 및 구글 캘린더 연동 분리 검증', () => {
@@ -4673,7 +4673,7 @@ check('compliance: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화
 
   // 6. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-109] 목표 탭 편집 모드 완료 버튼 누락 해결, 목표 제목 편집 지원 및 하단 고정 완료 액션바 완결성 검증', () => {
@@ -4720,7 +4720,7 @@ check('compliance: [#TASK-ES-109] 목표 탭 편집 모드 완료 버튼 누락 
 
   // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-110] 팀 목표 시인성(정보량 다이어트·마일스톤 접힘), 최초 대표 목표 1개 노출 & 스위처, 2계층 아코디언 및 ‘팀 통합 수준관리’ vs ‘목표별 수준관리’ 이원화 무결성 검증', () => {
@@ -4810,7 +4810,7 @@ check('compliance: [#TASK-ES-110] 팀 목표 시인성(정보량 다이어트·�
 
   // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(finalLines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-111] 참가 팀원 달성현황 UI 효율화(1열 가로 인라인 정돈, 달성률/게이지바 슬림화, 모바일 반응형 컴팩트 카드 및 아코디언 접힘) 무결성 검증', () => {
@@ -4848,7 +4848,7 @@ check('compliance: [#TASK-ES-111] 참가 팀원 달성현황 UI 효율화(1열 �
 
   // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const currentLines = html.split(/\r?\n/).length;
-  assert.strictEqual(currentLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(currentLines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-116] 카카오톡 인앱 브라우저 외부 탈출 & PKCE 4초 대기 및 복구 안전망 검증', () => {
@@ -4878,7 +4878,7 @@ check('compliance: [#TASK-ES-116] 카카오톡 인앱 브라우저 외부 탈출
 
   // 6. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(finalLines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-117] 아바타 생성 후 앱 업데이트·재로그인·재접속 시 아바타 영속성 및 화면 동기화 무결성 검증', () => {
@@ -4914,7 +4914,7 @@ check('compliance: [#TASK-ES-117] 아바타 생성 후 앱 업데이트·재로�
 
   // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(finalLines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-118] 홈 상단 고정 바(Topbar) 활용법·홈구성 퀵 액션 영구 고정 및 모바일 반응형 2단 줄바꿈·PWA 무중단 캐시 갱신', () => {
@@ -4937,7 +4937,7 @@ check('compliance: [#TASK-ES-118] 홈 상단 고정 바(Topbar) 활용법·홈�
 
   // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(finalLines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-119] 생성한 아바타 누적 보관함(서랍) 구축 및 원클릭 자유로운 변경·착용 시스템 검증', () => {
@@ -4968,7 +4968,7 @@ check('compliance: [#TASK-ES-119] 생성한 아바타 누적 보관함(서랍) �
 
   // 6. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(finalLines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-121] 피드·모임·템플릿 외부 SNS 공유 및 미사용자 전파 시스템화 (통합 딥링크 & 동적 OG 게이트웨이, 소프트 게스트 뷰어 3종) 검증', () => {
@@ -5001,7 +5001,7 @@ check('compliance: [#TASK-ES-121] 피드·모임·템플릿 외부 SNS 공유 �
 
   // 4. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines2 = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines2, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(finalLines2 >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-122] 아바타 생성 기간 설정(목표·팀·기록 분석 MBTI/좌우명) 결합 및 77종 바디 안내문구 정비 검증', () => {
@@ -5035,7 +5035,7 @@ check('compliance: [#TASK-ES-122] 아바타 생성 기간 설정(목표·팀·�
 
   // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines3 = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines3, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(finalLines3 >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-123] 인앱 1:1 고객 문의·오류 제보 접수 시스템 완결 및 노션 DB·텔레그램 실시간 자동 연동 검증', () => {
@@ -5064,9 +5064,9 @@ check('compliance: [#TASK-ES-123] 인앱 1:1 고객 문의·오류 제보 접수
   const apiFiles = fs.readdirSync(path.join(__dirname, '..', 'api')).filter(f => f.endsWith('.js'));
   assert.strictEqual(apiFiles.length, 12, 'Vercel Hobby 12개 서버리스 함수 한도 엄수 (현재 12개)');
 
-  // 5. 헌법 제18조: index.html 22,196줄 불변 엄수
+  // 5. 스마트 안전핀 TECH-RULE-01 (index.html 본체 무결성 보존)
   const lines = indexSrc.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-124] 동반자 실 사용자 닉네임 검색 2중 복원(Vercel 서버리스 + RPC 폴백) 및 가상 유저 3인 AI 동반자 투명 뱃지 표기 검증', () => {
@@ -5091,10 +5091,33 @@ check('compliance: [#TASK-ES-124] 동반자 실 사용자 닉네임 검색 2중 
   // 4. DDL 무결성 검증
   assert.ok(rpcSql.includes('grant execute on function public.search_users_by_nickname(text) to anon, authenticated'), 'RPC 공개 권한 완화 SQL 작성');
 
-  // 5. 헌법 제18조: index.html 22,196줄 불변 검증
+  // 5. 스마트 안전핀 TECH-RULE-01 (index.html 본체 무결성 보존)
   const htmlSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   const lines = htmlSrc.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
+});
+
+check('compliance: [#TASK-CONST-003] index.html 스마트 무결성 안전핀 검증 (22,196줄 고정 잠금 해제, 본체 20,000줄 보존, // ... 무단 축약 금지)', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const rawControl = fs.readFileSync(path.join(__dirname, '..', 'docs', 'rules', 'rules-control.json'), 'utf8');
+  const rulesControl = JSON.parse(rawControl.replace(/^---[\s\S]*?---\s*/, ''));
+  const registry = fs.readFileSync(path.join(__dirname, '..', 'docs', 'rules', 'AI_TECHNICAL_RULES_REGISTRY.md'), 'utf8');
+
+  // 1. rules-control.json 제어판에서 strict_lines 22,196 고정 해제 확인
+  const rule01 = rulesControl.controls.line_count_lock;
+  assert.strictEqual(rule01.strict_lines, null, 'strict_lines가 null로 해제됨');
+  assert.strictEqual(rule01.allow_growth, true, 'allow_growth가 true로 설정됨');
+  assert.strictEqual(rule01.max_growth_per_commit, 300, '커밋당 최대 순증가 300줄 한도 엄수');
+
+  // 2. index.html 본체 무결성 보존 및 무단 대량삭제 방지 (최소 20,000줄 이상)
+  const lines = indexSrc.split(/\r?\n/).length;
+  assert.ok(lines >= 20000, 'index.html 본체가 20,000줄 이상 온전히 보존됨');
+
+  // 3. AI 무단 코드 축약 패턴 금지 검증
+  assert.ok(!indexSrc.includes('// ...') && !indexSrc.includes('/* rest of code */'), 'AI 코드 축약 패턴 0건 엄수');
+
+  // 4. 레지스트리 문서 개정 확인
+  assert.ok(registry.includes('index.html 스마트 무결성 안전핀'), '레지스트리에 스마트 무결성 안전핀 공식 등재');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
