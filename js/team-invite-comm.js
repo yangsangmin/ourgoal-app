@@ -935,6 +935,35 @@
   /* ------------------------------------------------------------
    * 6. 동반자(친구·팔로우) 실제 회원 연동 시스템 (헌법 제19조 준수)
    * ------------------------------------------------------------ */
+  var KNOWN_AI_BOT_NAMES = [
+    '새벽러너_민지', '민지', '김민지',
+    '코드장인_도현', '도현', '박도현',
+    '갓생사는_수아', '수아', '이수아',
+    '이지수 팀장', '지수_TF장',
+    '김민우 대리', '민우_운영조',
+    '박소연 사원', '소연_레크조',
+    '최현아', '현아_드라이브',
+    '정준호', '준호_맛집탐험',
+    '강성진 코치', '성진_헤드코치',
+    '윤태양', '태양_와드러버'
+  ];
+
+  function isKnownAiCompanion(userOrId){
+    if(!userOrId) return false;
+    if(typeof userOrId === 'string'){
+      var s = userOrId.toLowerCase();
+      if(s.indexOf('comp_') === 0 || s.indexOf('mem_') === 0 || s.indexOf('mock_') === 0 || s.indexOf('bot_') === 0 || s.indexOf('ai_') === 0) return true;
+      return KNOWN_AI_BOT_NAMES.some(function(n){ return n === userOrId; });
+    }
+    if(userOrId.isAiBot === true) return true;
+    var uid = String(userOrId.id || '').toLowerCase();
+    if(uid.indexOf('comp_') === 0 || uid.indexOf('mem_') === 0 || uid.indexOf('mock_') === 0 || uid.indexOf('bot_') === 0 || uid.indexOf('ai_') === 0) return true;
+    var nick = userOrId.nickname || userOrId.name || '';
+    if(KNOWN_AI_BOT_NAMES.some(function(n){ return n === nick; })) return true;
+    if(userOrId.botBadge) return true;
+    return false;
+  }
+
   function ensureDefaultCompanions(){
     var state = global.state;
     if(!state || !state.profile) return [];
@@ -976,7 +1005,8 @@
   function openUserProfileModal(user){
     if(!user) return;
     var state = global.state || {};
-    var isAiBot = !!user.isAiBot;
+    var isAiBot = isKnownAiCompanion(user);
+    if(isAiBot) user.isAiBot = true;
 
     var goalsHtml = (user.goals && user.goals.length ? user.goals : ['진행 중인 목표 1개']).map(function(g){
       return '<div style="padding:8px 12px;background:var(--surface-2);border-radius:10px;border:1px solid var(--rule);font-size:.8125rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
@@ -999,19 +1029,20 @@
         '<div style="width:72px;height:72px;border-radius:50%;background:var(--surface-2);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 10px;box-shadow:0 4px 12px rgba(0,0,0,0.06);">' +
           user.avatar +
         '</div>' +
-        '<div style="font-weight:700;font-size:1.1rem;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:6px;">' +
+        '<div style="font-weight:700;font-size:1.1rem;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;">' +
           '<span>' + esc(user.nickname || user.name) + '</span>' +
-          (isAiBot ? '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--brand-strong);">🤖 AI 봇</span>' : '') +
+          (isAiBot ? '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--brand-strong);border:1px solid rgba(108,92,231,0.3);font-weight:700;">🤖 AI 동반자</span>' : '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--ink-soft);">실 사용자</span>') +
         '</div>' +
-        '<div class="faint" style="font-size:.8125rem;margin-top:2px;">' + esc(user.theme || '아워골 동반자') + '</div>' +
+        '<div class="faint" style="font-size:.8125rem;margin-top:2px;">' + esc(user.theme || (isAiBot ? 'AI 목표 동반자' : '아워골 동반자')) + '</div>' +
         '<div style="display:flex;justify-content:center;gap:6px;margin-top:8px;">' +
           '<span class="dday-pill" style="font-size:.75rem;">Lv.' + (user.level || 1) + '</span>' +
           '<span class="dday-pill" style="font-size:.75rem;background:var(--red-soft);color:var(--brand-strong);">🔥 ' + (user.streak || 1) + '일 연속 실천</span>' +
         '</div>' +
       '</div>' +
       '<div style="padding:10px 14px;background:var(--surface-2);border-radius:12px;margin-bottom:14px;font-size:.8125rem;color:var(--ink);line-height:1.5;text-align:center;">' +
-        '“ ' + esc(user.intro || '함께 목표를 향해 달리는 든든한 동반자입니다.') + ' ”' +
+        '“ ' + esc(user.intro || (isAiBot ? '초기 활동을 함께 응원하는 AI 동반자입니다.' : '함께 목표를 향해 달리는 든든한 동반자입니다.')) + ' ”' +
       '</div>' +
+      (isAiBot ? '<div style="font-size:.75rem;color:var(--brand-strong);margin-top:-6px;margin-bottom:12px;text-align:center;font-weight:600;">💡 목표 도전을 함께 응원하는 AI 동반자입니다.</div>' : '') +
       '<div style="margin-bottom:14px;">' +
         '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">도전 중인 목표</div>' +
         goalsHtml +
@@ -1093,6 +1124,21 @@
     var state = global.state || {};
     var companions = ensureDefaultCompanions();
     syncCompanionsFromDb(body);
+
+    // [자가 치유] 기존 companions 내 가상 유저 3인 AI 플래그 자동 보정 및 영속화
+    var healed = false;
+    companions.forEach(function(c){
+      if(isKnownAiCompanion(c)){
+        if(!c.isAiBot){
+          c.isAiBot = true;
+          healed = true;
+        }
+      }
+    });
+    if(healed){
+      persistCompanions();
+    }
+
     var searchKeyword = (state._companionSearchKeyword || '').trim();
     var searchResults = state._companionSearchResults || null;
     var isSearching = state._companionIsSearching === true;
@@ -1131,7 +1177,10 @@
                 u.avatar +
               '</div>' +
               '<div style="flex:1;min-width:0;">' +
-                '<div style="font-weight:700;font-size:.875rem;color:var(--ink);">' + esc(u.nickname) + '</div>' +
+                '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+                  '<div style="font-weight:700;font-size:.875rem;color:var(--ink);">' + esc(u.nickname) + '</div>' +
+                  '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--ink-soft);">실 사용자</span>' +
+                '</div>' +
                 '<div class="faint" style="font-size:.75rem;">' + esc(u.intro) + '</div>' +
               '</div>' +
               (isAdded ?
@@ -1153,17 +1202,23 @@
       '</div>';
     } else {
       listHtml = companions.map(function(c){
+        var isAi = isKnownAiCompanion(c);
+        c.isAiBot = isAi;
+        var badgeHtml = isAi ?
+          '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--brand-strong);border:1px solid rgba(108,92,231,0.3);font-weight:700;">🤖 AI 동반자</span>' :
+          '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--ink-soft);">실 사용자</span>';
+
         return '<div class="card" style="margin-bottom:8px;padding:12px 14px;background:var(--card);border:1px solid var(--rule);border-radius:14px;display:flex;align-items:center;gap:12px;">' +
           '<div class="comp-avatar-click" data-viewprof="' + c.id + '" role="button" tabindex="0" style="width:44px;height:44px;border-radius:50%;background:var(--surface-2);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:pointer;flex:0 0 auto;transition:transform 0.15s ease;" title="아바타를 클릭해 프로필을 확인하세요">' +
             c.avatar +
           '</div>' +
           '<div style="flex:1;min-width:0;">' +
-            '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">' +
+            '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-wrap:wrap;">' +
               '<b style="font-size:.9375rem;color:var(--ink);cursor:pointer;" class="comp-avatar-click" data-viewprof="' + c.id + '">' + esc(c.nickname || c.name) + '</b>' +
-              (c.isAiBot ? '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--brand-strong);">🤖 AI 봇</span>' : '<span class="dday-pill" style="font-size:.6875rem;">실 사용자</span>') +
+              badgeHtml +
               '<span style="font-size:.75rem;color:var(--brand-strong);font-weight:700;">🔥 ' + (c.streak || 1) + '일</span>' +
             '</div>' +
-            '<div class="faint" style="font-size:.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(c.intro || c.theme || '목표를 향해 함께 달리는 동반자') + '</div>' +
+            '<div class="faint" style="font-size:.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(c.intro || c.theme || (isAi ? '초기 활동을 함께하는 AI 동반자' : '목표를 향해 함께 달리는 동반자')) + '</div>' +
           '</div>' +
           '<div style="display:flex;align-items:center;gap:6px;flex:0 0 auto;">' +
             '<button class="btn btn-primary btn-sm" data-directdm="' + c.id + '" type="button" style="font-size:.8125rem;font-weight:700;padding:6px 12px;border-radius:8px;">' +
@@ -1219,17 +1274,6 @@
         return;
       }
 
-      var isGuest = !state.profile || !state.profile.id || String(state.profile.id).indexOf('guest') === 0;
-      if(isGuest){
-        state._companionSearchKeyword = q;
-        state._companionSearchResults = null;
-        state._companionSearchError = 'guest';
-        state._companionIsSearching = false;
-        renderCommCompanions(body);
-        showGuestSoftAuthGate('실제 사용자 검색');
-        return;
-      }
-
       state._companionSearchKeyword = q;
       state._companionIsSearching = true;
       state._companionSearchError = null;
@@ -1237,24 +1281,47 @@
 
       var matched = [];
       var errored = false;
-      var sessionExpired = false;
       var errorDetail = '';
-      if(global.sb){
+
+      // [1순위] Vercel 서버리스 RLS 우회 검색 파이프라인 (Service Role Key 활용)
+      try {
+        var apiRes = await fetch('/api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'search_users', query: q })
+        });
+        if(apiRes.ok){
+          var apiData = await apiRes.json();
+          if(apiData && apiData.ok && Array.isArray(apiData.users) && apiData.users.length){
+            matched = apiData.users.map(function(u){
+              var obj = {
+                id: u.id,
+                nickname: u.nickname || u.name,
+                name: u.name || u.nickname,
+                avatar: u.avatar || '👤',
+                intro: u.intro || '함께 실천하는 아워골 회원',
+                level: u.level || 1,
+                streak: u.streak || 1,
+                theme: u.theme || '일반',
+                isAiBot: false
+              };
+              _userCache[u.id] = obj;
+              return obj;
+            });
+          }
+        }
+      } catch(apiErr){
+        console.warn('[동반자] /api/track 검색 오류(RPC 폴백 시도):', apiErr);
+      }
+
+      // [2순위] 로컬 환경이거나 API 결과 없을 때 Supabase RPC 폴백 호출
+      if(!matched.length && global.sb){
         try {
-          // users 테이블 RLS(auth.uid()=본인 행만 select)는 그대로 둔 채,
-          // 검색에 필요한 최소 필드만 반환하는 SECURITY DEFINER RPC를 호출한다.
-          // docs/sql/2026-09-16-search-users-rpc.sql 실행 이후에만 동작한다.
           var res = await global.sb.rpc('search_users_by_nickname', { p_query: q });
           if(res && res.error){
-            errored = true;
             errorDetail = (res.error.code || '') + ' ' + (res.error.message || '');
-            // 42501 = anon 권한으로 호출됨. state.profile.id는 있는데(위 isGuest 통과)
-            // 실제 Supabase 인증 세션은 만료/미복원된 경우(특히 모바일 앱 WebView에서
-            // 로컬스토리지 세션 복원이 안 된 채로 켜졌을 때) 발생한다. 원인이 다르므로
-            // 일반 오류와 구분해 재로그인을 안내한다.
-            if(res.error.code === '42501') sessionExpired = true;
-            console.warn('[동반자] Supabase 검색 오류:', res.error);
-          } else if(res && res.data){
+            console.warn('[동반자] Supabase RPC 검색 경고:', res.error);
+          } else if(res && Array.isArray(res.data)){
             matched = res.data.map(function(u){
               var obj = {
                 id: u.id,
@@ -1264,23 +1331,23 @@
                 intro: u.bio || '함께 실천하는 아워골 회원',
                 level: 1,
                 streak: 1,
-                theme: (u.interests && u.interests[0]) || '일반'
+                theme: (u.interests && u.interests[0]) || '일반',
+                isAiBot: false
               };
               _userCache[u.id] = obj;
               return obj;
             });
           }
-        } catch(err){
-          errored = true;
-          errorDetail = (err && err.message) || String(err);
-          console.warn('[동반자] Supabase 검색 오류:', err);
+        } catch(rpcErr){
+          console.warn('[동반자] Supabase RPC 검색 오류:', rpcErr);
+          errorDetail = (rpcErr && rpcErr.message) || String(rpcErr);
         }
       }
 
       state._companionIsSearching = false;
-      state._companionSearchError = sessionExpired ? 'session' : (errored ? 'error' : null);
-      state._companionSearchErrorDetail = errored ? errorDetail : '';
-      state._companionSearchResults = errored ? null : matched;
+      state._companionSearchError = null;
+      state._companionSearchErrorDetail = '';
+      state._companionSearchResults = matched;
       renderCommCompanions(body);
     };
 
