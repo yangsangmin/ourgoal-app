@@ -5189,6 +5189,77 @@ check('compliance: [#TASK-ES-127] 16개 MBTI 연계 320개 아바타 페르소�
   assert.ok(avatarJsSrc.includes('persona320GroupTabs'), '320종 도감 4대 군 탭 탑재');
 });
 
+/* ============ [#TASK-ES-125] 아바타 기본 제작 한도 초기 3회 조정 및 7일 연속 체크인 1회 충전 리워드 루프 & 기존 10회 보존 무결성 검증 ============ */
+check('compliance: [#TASK-ES-125] 아바타 기본 제작 한도 초기 3회 조정 및 7일 연속 체크인 1회 충전 리워드 루프 & 기존 10회 보존 무결성 검증', () => {
+  const avatarSystem = require(path.join(__dirname, '..', 'js', 'avatar-system.js'));
+  const avatarJsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 상수 정의 검증
+  assert.strictEqual(avatarSystem.DEFAULT_BASE_CRAFTS, 3, '신규 기본 제작 한도 3회');
+  assert.strictEqual(avatarSystem.LEGACY_MAX_CRAFTS, 10, '기존 계정 최대 제작 한도 10회 보존');
+  assert.strictEqual(avatarSystem.MAX_AVATAR_CHANGES, 10, '아바타 보관함 최대 저장 한도 10개');
+
+  // 2. 신규 계정 기본 3회 동작 검증
+  const newProfile = { settings: { maxBaseCrafts: 3, avatarCraftCount: 0 } };
+  assert.strictEqual(avatarSystem.isLegacyAccount(newProfile), false, '신규 계정 정상 식별');
+  assert.strictEqual(avatarSystem.getMaxCrafts(newProfile), 3, '신규 계정 총 한도 3회');
+  assert.strictEqual(avatarSystem.getRemainingCrafts(newProfile), 3, '신규 계정 잔여 3회');
+
+  newProfile.settings.avatarCraftCount = 1;
+  assert.strictEqual(avatarSystem.getRemainingCrafts(newProfile), 2, '1회 사용 후 잔여 2회');
+
+  // 3. 기존 계정 10회 기득권 100% 무손실 보존 검증 (TECH-RULE-03)
+  const legacyProfile1 = { settings: { avatarCraftCount: 2 } };
+  assert.strictEqual(avatarSystem.isLegacyAccount(legacyProfile1), true, '기존 제작 이력 계정 레거시 판별');
+  assert.strictEqual(avatarSystem.getMaxCrafts(legacyProfile1), 10, '기존 계정 총 한도 10회 유지');
+  assert.strictEqual(avatarSystem.getRemainingCrafts(legacyProfile1), 8, '기존 계정 2회 사용 후 잔여 8회');
+
+  const legacyProfile2 = { goals: [{ id: 'g1', title: '운동' }], settings: {} };
+  assert.strictEqual(avatarSystem.isLegacyAccount(legacyProfile2), true, '기존 목표 보유 계정 레거시 판별');
+  assert.strictEqual(avatarSystem.getMaxCrafts(legacyProfile2), 10, '기존 목표 보유 계정 10회 보존');
+
+  // 4. 7일 연속 체크인 시 아바타 제작권 +1회 충전 리워드 검증
+  const streakProfile = { settings: { maxBaseCrafts: 3, bonusCraftCredits: 0, lastStreakAwarded: 0 } };
+  const r6 = avatarSystem.maybeGrantStreakBonus(streakProfile, 6);
+  assert.strictEqual(r6.granted, false, '6일 스트릭 시 미지급');
+  assert.strictEqual(avatarSystem.getMaxCrafts(streakProfile), 3, '미지급 시 한도 3회 유지');
+
+  const r7 = avatarSystem.maybeGrantStreakBonus(streakProfile, 7);
+  assert.strictEqual(r7.granted, true, '7일 연속 체크인 달성 시 1회 충전 승인');
+  assert.strictEqual(streakProfile.settings.bonusCraftCredits, 1, '보너스 크레딧 1회 충전');
+  assert.strictEqual(avatarSystem.getMaxCrafts(streakProfile), 4, '총 가용 한도 3 + 1 = 4회 확대');
+  assert.strictEqual(avatarSystem.getRemainingCrafts(streakProfile), 4, '잔여 4회');
+
+  // 5. 동일 7일 구간 중복 충전 방지 락킹 검증
+  const r7dup = avatarSystem.maybeGrantStreakBonus(streakProfile, 7);
+  assert.strictEqual(r7dup.granted, false, '동일 7일 구간 재진입 시 중복 지급 차단');
+  assert.strictEqual(streakProfile.settings.bonusCraftCredits, 1, '보너스 크레딧 1회 유지');
+
+  // 6. 14일 연속 체크인 2차 충전 검증
+  const r14 = avatarSystem.maybeGrantStreakBonus(streakProfile, 14);
+  assert.strictEqual(r14.granted, true, '14일 연속 체크인 달성 시 추가 1회 충전 승인');
+  assert.strictEqual(streakProfile.settings.bonusCraftCredits, 2, '보너스 크레딧 총 2회');
+  assert.strictEqual(avatarSystem.getMaxCrafts(streakProfile), 5, '총 가용 한도 3 + 2 = 5회');
+
+  // 7. 기존 계정에도 7일 스트릭 리워드 동일 적용 검증
+  const legacyStreak = { settings: { maxBaseCrafts: 10, bonusCraftCredits: 0 } };
+  const legR7 = avatarSystem.maybeGrantStreakBonus(legacyStreak, 7);
+  assert.strictEqual(legR7.granted, true, '기존 계정도 7일 스트릭 시 +1 충전 정상 적용');
+  assert.strictEqual(avatarSystem.getMaxCrafts(legacyStreak), 11, '기존 10회 + 보너스 1회 = 총 11회');
+
+  // 8. 생성창 상시 충전 안내문구 및 배너 UI 검증
+  assert.ok(avatarJsSrc.includes('avatarStreakRechargeBanner'), '아바타 생성창 상시 충전 배너 ID 탑재');
+  assert.ok(avatarJsSrc.includes('7일 연속 체크인 시 아바타 제작권 1회 자동 충전!'), '상시 배너 안내문구 탑재');
+  assert.ok(avatarJsSrc.includes('topMaxCraftsSpan'), '상단 총 한도 동적 span 탑재');
+  assert.ok(avatarJsSrc.includes('craftBtnCountSpan'), '제작 버튼 동적 잔여/총한도 표기 탑재');
+
+  // 9. index.html 체크인 완료 및 앱 진입 배선 검증
+  assert.ok(indexSrc.includes('maybeGrantAvatarCraftBonus'), 'index.html 내 아바타 보너스 충전 배선 함수 존재');
+  assert.ok(indexSrc.includes('maxBaseCrafts:3'), 'defaultSettings() 신규 계정 기본 3회 탑재');
+  assert.ok(indexSrc.includes('🎉 7일 연속 체크인 달성! 아바타 제작권 1회가 충전되었습니다! 🎨'), '7일 달성 시 축하 토스트 탑재');
+});
+
 /* ============ [#TASK-ES-126] 전 탭 중복 노출 '💡 활용법' 버튼 단일화 및 6대 탭 통합 가이드 허브 무결성 종합 검증 ============ */
 check('compliance: [#TASK-ES-126] 전 탭 중복 노출 활용법 버튼 단일화 및 6대 탭 통합 가이드 허브 무결성 종합 검증', () => {
   const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
@@ -5228,6 +5299,7 @@ check('compliance: [#TASK-ES-126] 전 탭 중복 노출 활용법 버튼 단일�
   // 5. 기록 탭 데드클릭 완치 검증 (records 탭 전용 가이드 4대 섹션 완비)
   assert.ok(guideContent.includes('아워골 기록 및 성취 분석 100% 활용법'), '기록 탭 전용 가이드 타이틀 완비');
   assert.ok(guideContent.includes('지금부터 시간기록 (몰입 타이머)'), '시간기록 몰입 타이머 안내 완비');
+  assert.ok(guideContent.includes('성취 통계 & 히트맵 콕핏'), '성취 통계 및 히트맵 안내 완비');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
