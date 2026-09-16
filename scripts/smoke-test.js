@@ -5109,9 +5109,9 @@ check('compliance: [#TASK-ES-124] 동반자 실 사용자 닉네임 검색 2중 
 
   // 6. 캐시 버스팅 및 서비스워커 갱신 무결성 검증
   const htmlSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-  assert.ok(htmlSrc.includes('team-invite-comm.js?v=20260916-es12'), 'index.html 스크립트 캐시 버스팅 태그 갱신');
+  assert.ok(htmlSrc.includes('team-invite-comm.js?v=20260916-es1'), 'index.html 스크립트 캐시 버스팅 태그 갱신');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
-  assert.ok(swSrc.includes('ourgoal-shell-v20260916-es12'), 'sw.js 캐시 네임 갱신');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260916-es1'), 'sw.js 캐시 네임 갱신');
 
   // 7. 스마트 안전핀 TECH-RULE-01 (index.html 본체 무결성 보존)
   const lines = htmlSrc.split(/\r?\n/).length;
@@ -5314,8 +5314,8 @@ check('compliance: [#TASK-ES-129] 동반자 데이터 영구 영속화 및 무�
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
   // 1. 캐시 버스팅 및 PWA 최신 갱신 검증
-  assert.ok(indexSrc.includes('team-invite-comm.js?v=20260916-es129'), 'index.html 스크립트 캐시 버스팅 v20260916-es129 갱신');
-  assert.ok(swSrc.includes('ourgoal-shell-v20260916-es129'), 'sw.js 서비스워커 캐시 네임 v20260916-es129 갱신');
+  assert.ok(indexSrc.includes('team-invite-comm.js?v=20260916-es130'), 'index.html 스크립트 캐시 버스팅 v20260916-es130 갱신');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260916-es130'), 'sw.js 서비스워커 캐시 네임 v20260916-es130 갱신');
 
   // 2. 서버리스 파이프라인 (api/track.js) 검증
   assert.ok(trackSrc.includes('handleSyncCompanions'), 'api/track.js 내 handleSyncCompanions 함수 구현');
@@ -5331,6 +5331,23 @@ check('compliance: [#TASK-ES-129] 동반자 데이터 영구 영속화 및 무�
   // 4. 추가/삭제 시 영속화 배선 검증
   assert.ok(commSrc.includes("persistCompanions();"), '동반자 추가 및 삭제 시 persistCompanions 전수 호출');
   assert.ok(commSrc.includes("safeAvatarHtml(u.avatar, 36)"), '검색 결과 내 URL 아바타 안전 렌더 배선');
+});
+
+check('compliance: [#TASK-ES-130] 동반자 탭 0ms 무중단 렌더링 및 PostgrestFilterBuilder 예외 완전 격리 검증', () => {
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. Supabase PostgrestFilterBuilder .catch 문법 에러 배제
+  assert.ok(!commSrc.includes(".eq('id', uid).catch("), 'Supabase 빌더 직접 .catch() 호출 완전 제거');
+  assert.ok(commSrc.includes("typeof queryBuilder.then === 'function'"), 'PostgrestFilterBuilder 호환 then 분기 구현');
+
+  // 2. 신규 추가 시 목록 최상단 unshift 및 자가 치유 try-catch 안전망
+  assert.ok(commSrc.includes("comps.unshift(newComp);"), '신규 동반자 추가 시 unshift로 최상단 즉시 반영');
+  assert.ok(commSrc.includes("자가 치유 동기화 예외"), 'renderCommCompanions 입구 자가 치유 try-catch 안전 격리');
+
+  // 3. 소통 서브탭 클릭 시 dmActiveId 초기화 및 피드 렌더 null-safety
+  assert.ok(indexSrc.includes("state.dmActiveId = null; renderCommScreen();"), '소통 서브탭 전환 시 dmActiveId 완벽 초기화');
+  assert.ok(indexSrc.includes("var prof = state.profile || {}, profSettings = prof.settings || {};"), 'renderCommFeed null 안전 가드 구현');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

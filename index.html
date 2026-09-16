@@ -905,7 +905,7 @@
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
-  <script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es129"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script>
+  <script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es130"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script>
 <script>
 (function(){
   "use strict";
@@ -18551,7 +18551,7 @@
       }).join('') + '</div>';
     body.innerHTML = subtabHtml + '<div id="commSubBody"></div>';
     body.querySelectorAll('[data-sub]').forEach(function(t){
-      t.addEventListener('click', function(){ state.commSubTab = t.dataset.sub; state.activeGroupId = null; state.manitoDm = null; renderCommScreen(); });
+      t.addEventListener('click', function(){ state.commSubTab = t.dataset.sub; state.activeGroupId = null; state.manitoDm = null; state.dmActiveId = null; renderCommScreen(); });
     });
     var subBody = document.getElementById('commSubBody');
     if(state.commSubTab==='share') renderCommShare(subBody);
@@ -19316,23 +19316,25 @@
   }
 
   function renderCommFeed(body){
+    if(!body) return;
     if(!FEED_POSTS_CACHE){
       ensureFeedPostsLoaded().then(function(){
         if(state.activeTab==='comm' && state.commSubTab==='feed') renderCommFeed(body);
       });
     }
-    var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
+    var prof = state.profile || {}, profSettings = prof.settings || {};
+    var goals = (prof.goals || []).filter(function(g){ return !g.archivedAt; });
     var sharedGoals = goals.filter(function(g){ return (g.visibility||'private') !== 'private'; });
     var hiddenCount = goals.length - sharedGoals.length;
-    var myRecentPhoto = (state.profile.records.find(function(r){ return r && r.photo; }) || {}).photo || null;
+    var myRecentPhoto = ((prof.records || []).find(function(r){ return r && r.photo; }) || {}).photo || null;
     var myItems = sharedGoals.map(function(g){
       var pct = goalProgress(g);
-      return { id:'me_'+g.id, userId: state.profile.id, name: state.profile.displayName, avatar: state.profile.displayName.slice(0,1), goal:g.title, pct:pct, action: '"'+g.title+'" 목표를 향해 가는 중', time:'방금', cheers:0, me:true, vis:(g.visibility||'private'), is_ai:false, photo: myRecentPhoto };
+      return { id:'me_'+g.id, userId: prof.id, name: prof.displayName, avatar: (prof.displayName||'나').slice(0,1), goal:g.title, pct:pct, action: '"'+g.title+'" 목표를 향해 가는 중', time:'방금', cheers:0, me:true, vis:(g.visibility||'private'), is_ai:false, photo: myRecentPhoto };
     });
 
     // Merge myFeedPosts if any exist in profile settings
     var cached = (FEED_POSTS_CACHE || []).slice();
-    var myLocalPosts = (state.profile && state.profile.settings && state.profile.settings.myFeedPosts) || [];
+    var myLocalPosts = profSettings.myFeedPosts || [];
     myLocalPosts.forEach(function(lp){
       if(!cached.some(function(cp){ return cp.id === lp.id; })){
         cached.unshift(lp);
@@ -19340,7 +19342,7 @@
     });
 
     var posts = filterHidden(cached);
-    var virtualCheerEnabled = state.profile.settings.virtualCheerEnabled !== false;
+    var virtualCheerEnabled = profSettings.virtualCheerEnabled !== false;
     var realCombined = myItems.concat(posts.map(function(p){
       var ex = p.extra || {};
       return {

@@ -3917,3 +3917,42 @@
 - **검증 결과**:
   - npm test: 스모크 268개 전수 통과 (0개 실패), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
 ---
+
+### 2026-09-16: [#TASK-ES-130] 동반자 탭 렌더링 정상화 및 추가 즉각 반영/영구 보존 완결
+- **배경 및 지시**:
+  - 상민님 직접 피드백:
+    1) "동반자탭 처음 누르면 아무것도 안보이다가 다른곳(DM) 갔다가 다시 누르면 dm창이 활성화돼."
+    2) "닉네임 검색은 되는데 추가가 안됨. 추가 버튼 누르면 추가됨이라고 버튼이 바뀌는데 동반자 목록에 바로 반영되지도 않고 다른창 들어갔다 와도 반영 안되어 있음."
+    3) 문제해결 8원칙 적용 원인 분석 및 해결책 보고.
+- **원인 규명**:
+  1. 원인 1 (첫 진입 빈 화면 및 추가 후 렌더링 중단):
+     - persistCompanions() 내 global.sb.from('users').update(...).eq(...).catch(...) 문법 결함.
+     - Supabase PostgrestFilterBuilder 객체에는 .catch 메서드가 없어 TypeError: .catch is not a function 예외 발생.
+     - 동반자 탭 첫 진입 시 가상 유저 자가 치유(healed) 분기에서 persistCompanions()를 호출하다가 런타임 크래시가 발생하여 body.innerHTML에 도달하지 못하고 빈 화면 표출.
+     - 검색 후 [+ 추가] 클릭 시에도 persistCompanions()에서 동일 TypeError가 발생하여 함수가 즉시 중단되고 후속 renderCommCompanions(body)에 도달하지 못해 목록에 안 나타남.
+  2. 원인 2 (서브탭 전환 시 DM창 오작동):
+     - index.html 서브탭 클릭 이벤트 핸들러에서 state.dmActiveId 초기화 누락.
+     - DM을 보고 온 뒤 동반자 탭을 누르면 state.dmActiveId가 잔존하여 뷰 상태 꼬임 발생.
+  3. 원인 3 (토스트 함수 미호출 에러):
+     - 브라우저에 <div id="toast">가 존재할 때 global.toast가 HTMLDivElement가 되어 if(global.toast) global.toast(...) 호출 시 is not a function 발생.
+  4. 원인 4 (renderCommFeed null 크래시):
+     - 소통 탭 첫 진입 시 state.profile.goals 또는 state.profile.settings 접근 시 null/undefined TypeError 발생.
+- **수행 내역**:
+  1. js/team-invite-comm.js:
+     - persistCompanions(): queryBuilder.then(resolve, reject) 호환 처리 및 전 지점 try-catch 격리.
+     - renderCommCompanions(body): if(!body) body = document.getElementById('commSubBody') 및 자가 치유 try-catch 안전 격리.
+     - [data-addcomp]: comps.unshift(newComp)로 신규 추가 동반자가 목록 최상단에 0ms 즉시 노출되도록 보장, 성공 토스트 및 renderCommCompanions(body) 즉시 실행.
+     - 전역 showToast(msg) 방어 래퍼 신설 및 21곳 global.toast 안전 치환.
+     - ensureDefaultCompanions(): 빈 배열 시 안전 fallback 강화.
+  2. index.html:
+     - 소통 서브탭 클릭 시 state.dmActiveId = null;로 완벽 초기화.
+     - renderCommFeed: state.profile 및 settings null-safety 방어.
+     - 캐시 버스팅: team-invite-comm.js?v=20260916-es130.
+  3. sw.js:
+     - 캐시 버전 ourgoal-shell-v20260916-es130 갱신.
+  4. scripts/smoke-test.js:
+     - #TASK-ES-130 검증 테스트 추가 (PostgrestFilterBuilder catch 배제, unshift 즉각 반응, dmActiveId 초기화, null-safety 검증).
+- **검증 결과**:
+  - verify_companion_local_cdp.js: Headless Chrome 브라우저 CDP 실측 (로그인 -> 동반자 탭 진입 -> 검색 -> 추가 -> 로컬스토리지 영구저장 -> 목록 최상단 즉시 표출 -> DM 갔다 와도 동반자 유지) 5단계 100% ALL PASS 및 브라우저 예외 0건.
+  - npm test: 스모크 269개 전수 통과 (0 failures), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
+---
