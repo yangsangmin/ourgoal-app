@@ -185,7 +185,7 @@
   async function copyTeamGoalToPersonalLinked(gid, tgid){
     var g = getMockGroups().find(function(item){ return item.id === gid; });
     if(!g){
-      toast('모임 정보를 찾을 수 없습니다.');
+      toast('팀 정보를 찾을 수 없습니다.');
       return;
     }
     var tg = (g.teamGoals || []).find(function(item){ return item.id === tgid; });
@@ -286,7 +286,7 @@
           '<div style="font-size:3rem;margin-bottom:12px;">🤝</div>' +
           '<h3 style="margin:0 0 8px;font-size:1.15rem;color:var(--ink);">아직 참여 중인 팀 연계 개인목표가 없어요</h3>' +
           '<p class="faint" style="font-size:.875rem;max-width:420px;margin:0 auto 20px;line-height:1.6;">' +
-            '모임 크루들이 함께 만든 팀 목표에서 <b>[팀 연계 개인목표로 복사하며 참가]</b>를 누르면<br>' +
+            '팀 크루들이 함께 만든 팀 목표에서 <b>[팀 연계 개인목표로 복사하며 참가]</b>를 누르면<br>' +
             '목표·마일스톤·세부할일 세트가 내 화면으로 복사되어 개별적으로 작성·체크하고,<br>' +
             '팀 목표 대시보드에서 다른 팀원들과 서로의 달성 정도를 상호 체크(찌르기/댓글/DM)할 수 있어요!' +
           '</p>' +
@@ -329,9 +329,9 @@
         '<div style="display:flex;align-items:center;gap:8px;">' +
           '<span style="font-size:1.3rem;">🏢</span>' +
           '<div>' +
-            '<div style="font-size:.75rem;color:var(--ink-soft);font-weight:600;">연계된 모임 및 원본 팀 목표</div>' +
+            '<div style="font-size:.75rem;color:var(--ink-soft);font-weight:600;">연계된 팀 및 원본 팀 목표</div>' +
             '<div style="font-size:.9375rem;font-weight:700;color:var(--ink);">' +
-              (goal.groupIcon || '🎯') + ' ' + esc(goal.groupName || '모임') + ' &gt; ' + esc(goal.originTitle || goal.title) +
+              (goal.groupIcon || '🎯') + ' ' + esc(goal.groupName || '팀') + ' &gt; ' + esc(goal.originTitle || goal.title) +
             '</div>' +
           '</div>' +
         '</div>' +

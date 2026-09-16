@@ -1,8 +1,8 @@
 /* ============================================================
- * 아워골 — 팀 목표 모임장-팀원 목표달성도 점검 시스템
+ * 아워골 — 팀 목표 팀장-팀원 목표달성도 점검 시스템
  * #TASK-ES-026 · #TASK-ES-027 · 본질 ③ 동류 발견·소통 / ① 체크인 루프
  *
- * 1. 모임장(Owner) 및 운영진(Manager):
+ * 1. 팀장(Owner) 및 운영진(Manager):
  *    - 팀원들의 실시간 달성률, 오늘 인증 상태, 스트릭 점검
  *    - 확인 도장(4종) 및 1초 독려 넛지, 1:1 피드백 전달
  *    - 팀원 찌르기 수신 및 1:1 DM 반응(대화)
@@ -10,7 +10,7 @@
  * 2. 팀원(Member):
  *    - 목표/마일스톤/세부할일 달성 시: 🎉 [달성자랑 찌르기]
  *    - 미달성/정체기 시: 🥺 [힘들어요 찌르기]
- *    - 모임장 1:1 DM 답장 수신 및 양방향 대화
+ *    - 팀장 1:1 DM 답장 수신 및 양방향 대화
  * ============================================================ */
 (function(global){
   'use strict';
@@ -30,11 +30,11 @@
       badgeText: '달성자랑',
       badgeColor: 'var(--gold)',
       badgeBg: 'var(--gold-soft)',
-      desc: '목표나 마일스톤을 달성했을 때 모임장님에게 뿌듯함을 자랑해요!',
+      desc: '목표나 마일스톤을 달성했을 때 팀장님에게 뿌듯함을 자랑해요!',
       templates: [
-        '목표 달성 완료했습니다! 모임장님 칭찬해주세요 🎉',
+        '목표 달성 완료했습니다! 팀장님 칭찬해주세요 🎉',
         '오늘 할 일 끝내고 마일스톤 돌파했어요! ✨',
-        '뿌듯해서 모임장님께 먼저 자랑 남깁니다! 🚀'
+        '뿌듯해서 팀장님께 먼저 자랑 남깁니다! 🚀'
       ]
     },
     struggle: {
@@ -44,11 +44,11 @@
       badgeText: '힘들어요',
       badgeColor: 'var(--brand-strong)',
       badgeBg: 'var(--red-soft)',
-      desc: '목표 달성이 막히거나 지칠 때 모임장님께 조언과 격려를 요청해요.',
+      desc: '목표 달성이 막히거나 지칠 때 팀장님께 조언과 격려를 요청해요.',
       templates: [
         '이 부분이 너무 막혀서 진행이 어려워요 🥺',
         '시간 분배가 힘들어서 조언이 필요해요..',
-        '잠시 정체기인데 모임장님 팁 부탁드려요! 💪'
+        '잠시 정체기인데 팀장님 팁 부탁드려요! 💪'
       ]
     }
   };
@@ -157,7 +157,7 @@
       'style="font-size:.75rem;padding:2px 7px;border-radius:6px;border:1px solid ' + (isDone ? 'var(--gold)' : 'var(--red-line)') + ';' +
       'background:' + (isDone ? 'var(--gold-soft)' : 'var(--red-soft)') + ';' +
       'color:' + (isDone ? 'var(--gold)' : 'var(--brand-strong)') + ';font-weight:700;display:inline-flex;align-items:center;gap:3px;flex:0 0 auto;" ' +
-      'title="' + (isDone ? '모임장에게 달성자랑 찌르기' : '모임장에게 힘들어요 찌르기') + '">' +
+      'title="' + (isDone ? '팀장에게 달성자랑 찌르기' : '팀장에게 힘들어요 찌르기') + '">' +
       pDef.icon + ' ' + (isDone ? '달성자랑' : '힘들어요') +
     '</button>';
   }
@@ -264,7 +264,7 @@
         '<div style="display:flex;align-items:center;gap:6px;">' +
           '<span style="font-size:1.1rem;">📊</span>' +
           '<b style="font-size:.9375rem;color:var(--ink);">팀원 목표달성도 점검</b>' +
-          '<span class="tag" style="font-size:.6875rem;background:var(--sage-soft);color:var(--sage);">모임장 전용</span>' +
+          '<span class="tag" style="font-size:.6875rem;background:var(--sage-soft);color:var(--sage);">팀장 전용</span>' +
         '</div>' +
         '<span class="faint" style="font-size:.75rem;">오늘 완료율 '+summary.rate+'%</span>' +
       '</div>' +
@@ -316,7 +316,7 @@
       '<div style="min-width:0;flex:1;">' +
         '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
           '<span style="font-size:1.1rem;">💬</span>' +
-          '<b style="font-size:.875rem;color:var(--ink);">모임장님의 DM 답장이 도착했어요!</b>' +
+          '<b style="font-size:.875rem;color:var(--ink);">팀장님의 DM 답장이 도착했어요!</b>' +
           '<span style="font-size:.6875rem;font-weight:700;color:'+pDef.badgeColor+';background:'+pDef.badgeBg+';padding:1px 5px;border-radius:4px;">'+pDef.icon+' '+pDef.badgeText+'</span>' +
         '</div>' +
         '<div class="faint" style="font-size:.75rem;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' +
@@ -338,8 +338,8 @@
       stampBanner = '<div style="margin-top:10px;margin-bottom:12px;padding:10px 12px;border-radius:10px;background:var(--gold-soft);border:1px solid var(--gold);display:flex;align-items:center;gap:10px;">' +
         '<span style="font-size:1.5rem;">'+myItem.stamp.icon+'</span>' +
         '<div style="flex:1;">' +
-          '<div style="font-weight:700;font-size:.875rem;color:var(--ink);">모임장 확인 도장 ['+esc(myItem.stamp.label)+']을 받았어요!</div>' +
-          '<div class="faint" style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">모임장님이 오늘 내 인증을 확인하고 응원을 남겼습니다.</div>' +
+          '<div style="font-weight:700;font-size:.875rem;color:var(--ink);">팀장 확인 도장 ['+esc(myItem.stamp.label)+']을 받았어요!</div>' +
+          '<div class="faint" style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">팀장님이 오늘 내 인증을 확인하고 응원을 남겼습니다.</div>' +
         '</div>' +
       '</div>';
     }
@@ -405,9 +405,9 @@
 
     var stampInfo = m.stamp ?
       '<div style="display:inline-flex;align-items:center;gap:6px;background:var(--card2);padding:4px 10px;border-radius:999px;border:1px solid var(--rule);font-size:.8125rem;font-weight:700;color:var(--ink);">' +
-        '<span>'+m.stamp.icon+'</span> <span>모임장 확인 도장: '+esc(m.stamp.label)+'</span>' +
+        '<span>'+m.stamp.icon+'</span> <span>팀장 확인 도장: '+esc(m.stamp.label)+'</span>' +
       '</div>' :
-      '<span class="faint" style="font-size:.8125rem;">아직 모임장 확인 도장이 없습니다</span>';
+      '<span class="faint" style="font-size:.8125rem;">아직 팀장 확인 도장이 없습니다</span>';
 
     var photoHtml = m.photoUrl ?
       '<div style="margin:10px 0;border-radius:12px;overflow:hidden;border:1px solid var(--rule);max-height:220px;">' +
@@ -423,16 +423,16 @@
       m.feedback.map(function(fb){
         return '<div style="background:var(--card2);border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:.8125rem;">' +
           '<div style="display:flex;justify-content:space-between;color:var(--ink-soft);font-size:.75rem;margin-bottom:2px;">' +
-            '<b>👑 모임장 피드백</b> <span>'+new Date(fb.createdAt).toLocaleDateString()+'</span>' +
+            '<b>👑 팀장 피드백</b> <span>'+new Date(fb.createdAt).toLocaleDateString()+'</span>' +
           '</div>' +
           '<div style="color:var(--ink);">'+esc(fb.message)+'</div>' +
         '</div>';
-      }).join('') : '<p class="faint" style="font-size:.8125rem;">아직 모임장 피드백이 없습니다.</p>';
+      }).join('') : '<p class="faint" style="font-size:.8125rem;">아직 팀장 피드백이 없습니다.</p>';
 
     var manageActionsHtml = canManage ?
       '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--rule);">' +
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
-          '<b style="font-size:.875rem;color:var(--ink);">👑 모임장 체크 액션</b>' +
+          '<b style="font-size:.875rem;color:var(--ink);">👑 팀장 체크 액션</b>' +
           '<button class="btn btn-primary btn-sm" id="btnStampInDetail" type="button" style="font-size:.8125rem;padding:4px 10px;">' +
             (m.stamp ? '도장 변경' : '확인 도장 찍기') +
           '</button>' +
@@ -461,7 +461,7 @@
         noteHtml +
       '</div>' +
       '<div style="margin-bottom:12px;">' +
-        '<b style="font-size:.875rem;color:var(--ink-soft);">💬 모임장 피드백 내역</b>' +
+        '<b style="font-size:.875rem;color:var(--ink-soft);">💬 팀장 피드백 내역</b>' +
         '<div style="margin-top:6px;">' + feedbackListHtml + '</div>' +
       '</div>' +
       manageActionsHtml +
@@ -528,7 +528,7 @@
         '</button>';
       }).join('');
 
-      return '<h3>' + activeDef.icon + ' 모임장에게 찌르기</h3>' +
+      return '<h3>' + activeDef.icon + ' 팀장에게 찌르기</h3>' +
         '<div style="background:var(--card2);padding:8px 10px;border-radius:8px;border:1px solid var(--rule);margin:8px 0 12px;font-size:.8125rem;">' +
           '📌 ' + (targetType === 'teamgoal' ? '팀 목표' : (targetType === 'task' ? '세부할일' : '마일스톤')) + ': <b style="color:var(--ink);">' + esc(title) + '</b>' +
         '</div>' +
@@ -537,12 +537,12 @@
         '<div style="margin-bottom:8px;"><b style="font-size:.8125rem;color:var(--ink);">추천 메시지 템플릿</b></div>' +
         '<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:12px;">' + templatesHtml + '</div>' +
         '<div style="margin-bottom:14px;">' +
-          '<label for="pingMsgInput" style="display:block;font-size:.8125rem;font-weight:700;margin-bottom:4px;color:var(--ink);">모임장님께 보낼 한 줄 메시지</label>' +
+          '<label for="pingMsgInput" style="display:block;font-size:.8125rem;font-weight:700;margin-bottom:4px;color:var(--ink);">팀장님께 보낼 한 줄 메시지</label>' +
           '<input id="pingMsgInput" type="text" value="' + esc(activeDef.templates[0]) + '" placeholder="메시지를 입력해주세요" style="width:100%;padding:9px 11px;border-radius:8px;border:1px solid var(--rule);background:var(--card);color:var(--ink);font-size:.875rem;box-sizing:border-box;">' +
         '</div>' +
         '<div class="modal-actions">' +
           '<button class="btn btn-ghost" id="cancelPingBtn" type="button">취소</button>' +
-          '<button class="btn btn-primary" id="sendPingBtn" type="button" style="font-weight:700;">모임장에게 전송</button>' +
+          '<button class="btn btn-primary" id="sendPingBtn" type="button" style="font-weight:700;">팀장에게 전송</button>' +
         '</div>';
     }
 
@@ -605,7 +605,7 @@
 
             if(deps.haptic) deps.haptic('success');
             var pDef = PING_TYPES[selectedType];
-            deps.toast('모임장님에게 ' + pDef.icon + ' ' + pDef.label + '를 보냈어요!');
+            deps.toast('팀장님에게 ' + pDef.icon + ' ' + pDef.label + '를 보냈어요!');
             deps.closeModal();
             if(deps.onRefresh) deps.onRefresh();
           });
@@ -633,7 +633,7 @@
       var repliesHtml = (ping.replies || []).map(function(rep){
         var isMe = rep.senderName === myName;
         var roleTag = rep.senderRole === 'owner'
-          ? '<span style="font-size:.6875rem;background:var(--sage-soft);color:var(--sage);padding:1px 5px;border-radius:4px;font-weight:700;">모임장</span>'
+          ? '<span style="font-size:.6875rem;background:var(--sage-soft);color:var(--sage);padding:1px 5px;border-radius:4px;font-weight:700;">팀장</span>'
           : '<span style="font-size:.6875rem;background:var(--card2);color:var(--ink-soft);padding:1px 5px;border-radius:4px;">팀원</span>';
 
         return '<div style="display:flex;flex-direction:column;align-items:'+(isMe?'flex-end':'flex-start')+';margin-bottom:8px;">' +
@@ -690,7 +690,7 @@
         quickRepliesHtml +
       '</div>' +
       '<div style="display:flex;gap:6px;margin-bottom:8px;">' +
-        '<input id="dmReplyInput" type="text" placeholder="' + (canManage ? '팀원에게 답장과 조언을 남겨보세요' : '모임장님께 답장을 남겨보세요') + '" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid var(--rule);background:var(--card);color:var(--ink);font-size:.875rem;">' +
+        '<input id="dmReplyInput" type="text" placeholder="' + (canManage ? '팀원에게 답장과 조언을 남겨보세요' : '팀장님께 답장을 남겨보세요') + '" style="flex:1;padding:8px 10px;border-radius:8px;border:1px solid var(--rule);background:var(--card);color:var(--ink);font-size:.875rem;">' +
         '<button class="btn btn-primary btn-sm" id="sendDmReplyBtn" type="button" style="flex:0 0 auto;font-weight:700;padding:8px 14px;">전송</button>' +
       '</div>' +
       '<div class="modal-actions">' +
@@ -806,7 +806,7 @@
       });
     });
 
-    // 모임장 찌르기 DM 모달 트리거 바인딩
+    // 팀장 찌르기 DM 모달 트리거 바인딩
     view.querySelectorAll('[data-openleaderdm]').forEach(function(btn){
       btn.addEventListener('click', function(e){
         e.stopPropagation();
