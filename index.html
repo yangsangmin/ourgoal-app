@@ -2544,11 +2544,7 @@
 
   /* ============ 1:1 고객 문의 / 버그 제보 ============ */
   document.getElementById('feedbackInquiryBtn').addEventListener('click', function(){
-    var ua = encodeURIComponent((navigator.userAgent || '').slice(0, 80));
-    var mailto = 'mailto:support@ourgoal.kr?subject=' + encodeURIComponent('[아워골 문의/버그 제보]') +
-      '&body=' + encodeURIComponent('안녕하세요, 아워골 이용 중 문의/제보 드립니다.\r\n\r\n- 내용:\r\n\r\n[앱 v1.0.0 / ' + decodeURIComponent(ua) + ']');
-    window.location.href = mailto;
-    toast('이메일 앱을 엽니다 (support@ourgoal.kr)');
+    openCustomerInquiryModal();
   });
 
   /* ============ 이용약관 / 개인정보처리방침 열람 리스너 ============ */
@@ -20836,11 +20832,15 @@
       '</div>',
       function(sheet){
         sheet.querySelector('#inquiryCancel').onclick = closeModal;
-        sheet.querySelector('#inquirySubmit').onclick = function(){
+        sheet.querySelector('#inquirySubmit').onclick = async function(){
           var content = (sheet.querySelector('#inquiryContent').value || '').trim();
           if(!content){ toast('문의 내용을 입력해주세요'); return; }
-          closeModal();
-          toast('문의가 성공적으로 접수되었습니다. 검토 후 이메일로 답변드리겠습니다.');
+          var btn = sheet.querySelector('#inquirySubmit'); var inqType = (sheet.querySelector('#inquiryType') && sheet.querySelector('#inquiryType').value) || 'other'; var replyEmail = (sheet.querySelector('#inquiryEmail') && sheet.querySelector('#inquiryEmail').value || '').trim();
+          btn.disabled = true; btn.textContent = '접수 중...'; try {
+            var payload = { action: 'inquiry', content: content, inquiryType: inqType, replyEmail: replyEmail, userId: (state.profile && state.profile.id) || (state.user && state.user.id) || '', userNickname: (state.profile && state.profile.nickname) || (state.profile && state.profile.username) || '익명 유저', userAgent: (navigator.userAgent || '').slice(0, 300), appVersion: 'v1.0.0' };
+            var res = await fetch('/api/inquiry', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); var data = await res.json().catch(function(){ return {}; });
+            if (res.ok && data.ok) { closeModal(); toast('문의가 성공적으로 접수되었습니다. 신속히 검토하겠습니다.'); } else { throw new Error((data && data.error) || '접수 중 오류가 발생했습니다.'); }
+          } catch(e) { btn.disabled = false; btn.textContent = '문의 접수'; toast(e.message || '네트워크 오류가 발생했습니다.'); }
         };
       }
     );
