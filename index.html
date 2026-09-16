@@ -5866,6 +5866,44 @@
     var pct = Math.round((doneCount / 3) * 100);
     var earnedExp = (q1Done ? 30 : 0) + (q2Done ? 40 : 0) + (q3Done ? 50 : 0);
 
+    // 데일리 퀘스트 보상 실제 EXP 적립 및 레벨업 시스템 (#TASK-ES-127)
+    if(state.profile && state.profile.settings){
+      var qReward = state.profile.settings.questRewards;
+      if(!qReward || qReward.date !== nowK){
+        qReward = state.profile.settings.questRewards = { date: nowK, q1: false, q2: false, q3: false };
+      }
+      var xpAwarded = 0;
+      var levelUpHappened = false;
+      if(q1Done && !qReward.q1){
+        qReward.q1 = true;
+        var res1 = awardXP(30, '데일리 퀘스트: 오늘 한 줄 체크인 (+30 EXP)');
+        xpAwarded += 30;
+        if(res1 && res1.leveledUp) levelUpHappened = true;
+      }
+      if(q2Done && !qReward.q2){
+        qReward.q2 = true;
+        var res2 = awardXP(40, '데일리 퀘스트: 핵심 마일스톤 실행 (+40 EXP)');
+        xpAwarded += 40;
+        if(res2 && res2.leveledUp) levelUpHappened = true;
+      }
+      if(q3Done && !qReward.q3){
+        qReward.q3 = true;
+        var res3 = awardXP(50, '데일리 퀘스트: 25분 집중 시간기록 (+50 EXP)');
+        xpAwarded += 50;
+        if(res3 && res3.leveledUp) levelUpHappened = true;
+      }
+      if(xpAwarded > 0){
+        renderLevelBadge();
+        saveLocalSettings(state.profile.id, state.profile.settings);
+        saveProfile().catch(function(){});
+        if(levelUpHappened){
+          toast('🎉 레벨업! 데일리 퀘스트 완수로 레벨이 상승했어요!');
+        } else {
+          toast('⚡ 데일리 퀘스트 완수! +' + xpAwarded + ' EXP 획득');
+        }
+      }
+    }
+
     wrap.style.display = 'block';
     wrap.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
       + '  <div style="display:flex;align-items:center;gap:6px;">'
@@ -9566,6 +9604,27 @@
 
     var ddayText = goal.dueDate ? dDay(goal.dueDate) : '';
     var ddayPill = goal.dueDate ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);margin-left:8px;">'+ddayText+'</span>' : '';
+
+    // 목표 도달 예정일 동적 재계산 알고리즘 (#TASK-ES-127)
+    var msList = goal.milestones || [];
+    var totalMs = msList.length;
+    var doneMs = msList.filter(function(m){ return m.status === 'done'; }).length;
+    var remainMs = totalMs - doneMs;
+    var predictedPill = '';
+    if(totalMs > 0){
+      if(remainMs === 0){
+        predictedPill = '<span class="dday-pill" style="background:rgba(34,197,94,0.15);color:#16a34a;font-weight:700;">🎯 100% 달성 완료</span>';
+      } else {
+        var createdMs = goal.createdAt ? new Date(goal.createdAt).getTime() : (Date.now() - 7 * 86400000);
+        var elapsedDays = Math.max(1, Math.round((Date.now() - createdMs) / 86400000));
+        var daysPerMilestone = (doneMs > 0) ? Math.max(1, Math.round(elapsedDays / doneMs)) : 7;
+        var estDaysRemaining = remainMs * daysPerMilestone;
+        var predictedDate = new Date(Date.now() + estDaysRemaining * 86400000);
+        var predDateStr = (predictedDate.getMonth()+1) + '월 ' + predictedDate.getDate() + '일';
+        predictedPill = '<span class="dday-pill" title="현재 마일스톤 완료 속도(평균 ' + daysPerMilestone + '일/개) 기준 동적 계산된 도달 예정일" style="background:rgba(99,102,241,0.12);color:var(--primary);font-weight:700;">🚀 페이스 도달예정: ' + predDateStr + ' (D-' + estDaysRemaining + ')</span>';
+      }
+    }
+
     /* 보기 모드: 마감·공개·카테고리를 한 줄 메타 스트립으로 (시인성) */
     var visNow = goal.visibility || 'private';
     var formattedGoalDue = goal.dueDate ? formatDateTimeBadge(goal.dueDate) : '';
@@ -9576,6 +9635,7 @@
       '<span class="dday-pill" id="goalsPrivacyBadge" style="cursor:pointer;" title="탭하여 공개 범위 순환 변경">'+(visNow==='private'?'🔒 ':(visNow==='team'||visNow==='followers'?'👥 ':'🌐 '))+((visNow==='team'||visNow==='followers')?'팀원 공개':VISIBILITY_LABELS[visNow])+' ▾</span>' +
       (goal.topic ? topicPill(goal.topic) : '') +
       '<span class="dday-pill" style="background:var(--sage-soft);color:var(--sage);">달성 '+goalAchievement(goal)+'%</span>' +
+      predictedPill +
       (!state.goalEditMode ?
         ('<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button" style="font-size:.75rem;padding:2px 8px;margin-left:auto;color:var(--ink-soft);border:1px solid var(--rule);">' +
           (goal.result ? '📝 결과 수정' : '+ 최종 결과') +

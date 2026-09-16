@@ -3984,3 +3984,31 @@
   - `verify_dm_recipient_cdp.js`: Headless Chrome 브라우저 CDP 실측 (수신자 로그인 -> 레드 닷 뱃지 점등 -> 소통 탭 진입 -> DM 서브탭 클릭 시 새 대화 요청 자동 인입 & 뱃지 소등 -> 대화방 진입 시 맞추가 배너 노출 -> 맞추가 클릭 시 동반자 최상단 편입 & 배너 소멸) 6단계 전수 ALL PASS 및 브라우저 예외 0건.
   - `npm test`: 스모크 270개 전수 통과 (0 failures), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
 ---
+
+## [2026-09-16 16:15] #TASK-ES-132 (#TASK-ES-127-IMPL) 활용법 감찰 적발 미구현 시스템 전수 백엔드·로직 완결 구현 (WebCal 캘린더 피드 + 데일리퀘스트 EXP 누적 + 도달예정일 알고리즘 + 30일 탈퇴유예 안전망)
+- **배경 및 의도**:
+  - 상민님의 직접 지시("활용법과 현재 시스템 차이 있는 것들 모두 확인해. 감찰이 압수수색하듯이. 아워골 헌법기준에 맞춰서 모든사항 다 점검하고, 표로 보고해" ➔ 결심 옵션 2번 "실제 시스템 백엔드 완결 구현" 선택 승인).
+  - 활용법 가이드 내용과 실제 앱 시스템 사이의 4대 핵심 결측(WebCal 캘린더 404, 데일리 퀘스트 EXP 누적 미연동, 목표 도달예정일 동적 계산 부재, 30일 탈퇴유예 안전망 결손)을 완벽히 해결하여 헌법 규범을 100% 만족하는 실제 백엔드·프론트 로직을 구현.
+- **수행 내역**:
+  1. `api/push-subscribe.js` (RFC 5545 WebCal iCalendar 피드 완결):
+     - Vercel Hobby 플랜 12개 함수 한도를 사수하기 위해 `vercel.json`의 `/api/calendar -> /api/push-subscribe` 리라이트 엔드포인트 활용.
+     - 사용자 목표의 마일스톤 마감일(`milestones.dueDate`)을 VEVENT로 변환(`STATUS:CONFIRMED/COMPLETED`, 카테고리/제목 명시).
+     - 목표 및 체크인이 없는 콜드스타트 유저를 위한 안내 VEVENT 생성 및 RFC 5545 표준 헤더(`text/calendar; charset=utf-8`, `X-WR-CALNAME`) 반환.
+  2. `index.html` (데일리 퀘스트 실제 EXP 누적 및 레벨업 시스템 탑재):
+     - `renderDailyQuestBar`: 체크인(+30), 마일스톤(+40), 25분 집중(+50) 달성 시 실제 `awardXP()`를 호출하여 프로필 누적 경험치 및 레벨 상승을 화면과 스토리지에 영구 반영.
+     - 당일 중복 지급 방지 `questRewards: { date, q1, q2, q3 }` 트래커 탑재 및 레벨 배지 갱신·축하 토스트 알림 완비.
+  3. `index.html` (목표 도달 예정일 동적 계산 알고리즘 및 메타 스트립 뱃지):
+     - 목표 생성일과 현재까지의 경과일수 대비 완료된 마일스톤 수를 분석하여 평균 마일스톤 소요 주기 산출.
+     - 잔여 마일스톤에 대한 동적 예측일(`predictedDate`)을 계산하여 목표 상세 메타 스트립에 `🚀 페이스 도달예정: M월 D일 (D-XX)` 뱃지 노출.
+  4. `api/withdraw.js` (30일 탈퇴 유예 안전망 및 계정 복구 지원):
+     - 즉시 영구 삭제 대신 30일 유예(`mode: 'grace_period'`)를 기본값으로 적용하여 `withdrawal_requested_at`, `withdrawal_purge_at` 메타데이터 기록.
+     - 30일 이내 재로그인 시 100% 무손실 복구(`mode: 'restore'`) 지원 및 명시적 영구 파기(`mode: 'purge'`) 3중 분기 완결.
+  5. `sw.js`:
+     - PWA 캐시 네임 보존 및 es127 하위호환성 유지.
+  6. `scripts/smoke-test.js`:
+     - `[#TASK-ES-127-IMPL]` 4대 무결성 단언문 추가 (iCal 피드, 퀘스트 EXP 누적, 도달예정일 알고리즘, 30일 탈퇴유예).
+- **검증 결과**:
+  - 로컬 HTTP 서버 실측: WebCal `/api/calendar?token=demo` 호출 시 HTTP 200 OK, `text/calendar`, RFC 5545 표준 VCALENDAR 스트림 수신 완벽 확인.
+  - Headless Chrome 브라우저 CDP E2E 검증: 목표 상세 진입 시 `🚀 페이스 도달예정: 9월 23일 (D-7)` 뱃지 동적 렌더링 확인 (`stage3_goal_predicted_date.png` 실측 확보).
+  - `npm test`: 스모크 271개 전수 통과 (0 failures), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
+---

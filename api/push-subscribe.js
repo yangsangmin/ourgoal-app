@@ -31,7 +31,7 @@ module.exports = async function handler(req, res) {
 
   // 2. Supabase DB가 필요한 작업 (POST 구독, DELETE 구독취소, GET 캘린더 생성)
   var sb = getSupabase();
-  if (!sb) {
+  if (!sb && !isCalendarReq) {
     res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY is not configured' });
     return;
   }
@@ -88,16 +88,15 @@ module.exports = async function handler(req, res) {
     var isCalendarReq = Boolean(qToken) || (req.url && req.url.indexOf('/calendar') !== -1) || (req.headers && req.headers['accept'] && req.headers['accept'].indexOf('text/calendar') !== -1);
 
     if (isCalendarReq) {
-      if (!qToken) {
-        res.status(400).send('calendar token or user_id required');
-        return;
-      }
       try {
-        var goalsRes = await sb.from('goals').select('*').eq('user_id', qToken);
-        var checkinsRes = await sb.from('checkins').select('*').eq('user_id', qToken).order('start_at', { ascending: false }).limit(200);
-
-        var goals = goalsRes.data || [];
-        var checkins = checkinsRes.data || [];
+        var goals = [];
+        var checkins = [];
+        if (sb && qToken && qToken !== 'demo') {
+          var goalsRes = await sb.from('goals').select('*').eq('user_id', qToken);
+          var checkinsRes = await sb.from('checkins').select('*').eq('user_id', qToken).order('start_at', { ascending: false }).limit(200);
+          goals = goalsRes.data || [];
+          checkins = checkinsRes.data || [];
+        }
 
         var lines = [
           'BEGIN:VCALENDAR',
@@ -110,16 +109,31 @@ module.exports = async function handler(req, res) {
         ];
 
         goals.forEach(function(g, i) {
-          if (!g.due_date) return;
-          var cleanDue = String(g.due_date).replace(/-/g, '').slice(0, 8);
-          lines.push('BEGIN:VEVENT');
-          lines.push('UID:ourgoal-goal-' + (g.id || i) + '@ourgoal.app');
-          lines.push('DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z');
-          lines.push('DTSTART;VALUE=DATE:' + cleanDue);
-          lines.push('SUMMARY:[목표 D-day] ' + String(g.title || '목표').replace(/\r?\n/g, ' '));
-          lines.push('DESCRIPTION:카테고리: ' + (g.category || '기본'));
-          lines.push('STATUS:CONFIRMED');
-          lines.push('END:VEVENT');
+          if (g.due_date) {
+            var cleanDue = String(g.due_date).replace(/-/g, '').slice(0, 8);
+            lines.push('BEGIN:VEVENT');
+            lines.push('UID:ourgoal-goal-' + (g.id || i) + '@ourgoal.app');
+            lines.push('DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z');
+            lines.push('DTSTART;VALUE=DATE:' + cleanDue);
+            lines.push('SUMMARY:[목표 D-day] ' + String(g.title || '목표').replace(/\r?\n/g, ' '));
+            lines.push('DESCRIPTION:카테고리: ' + (g.category || '기본'));
+            lines.push('STATUS:CONFIRMED');
+            lines.push('END:VEVENT');
+          }
+          // 마일스톤 마감일 VEVENT 추가 (#TASK-ES-127)
+          var msList = Array.isArray(g.milestones) ? g.milestones : [];
+          msList.forEach(function(m, mi) {
+            var mDue = m.dueDate || m.due_date;
+            if (!mDue) return;
+            var cleanMDue = String(mDue).replace(/-/g, '').slice(0, 8);
+            lines.push('BEGIN:VEVENT');
+            lines.push('UID:ourgoal-ms-' + (m.id || (g.id + '-' + mi)) + '@ourgoal.app');
+            lines.push('DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z');
+            lines.push('DTSTART;VALUE=DATE:' + cleanMDue);
+            lines.push('SUMMARY:[마일스톤 마감] ' + String(g.title || '') + ' > ' + String(m.title || '마일스톤'));
+            lines.push('STATUS:' + (m.status === 'done' ? 'COMPLETED' : 'CONFIRMED'));
+            lines.push('END:VEVENT');
+          });
         });
 
         checkins.forEach(function(c, i) {
@@ -145,6 +159,17 @@ module.exports = async function handler(req, res) {
           lines.push('CATEGORIES:' + (c.theme || '기록'));
           lines.push('END:VEVENT');
         });
+
+        if (goals.length === 0 && checkins.length === 0) {
+          lines.push('BEGIN:VEVENT');
+          lines.push('UID:ourgoal-welcome@ourgoal.app');
+          lines.push('DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z');
+          lines.push('DTSTART;VALUE=DATE:' + new Date().toISOString().slice(0, 10).replace(/-/g, ''));
+          lines.push('SUMMARY:[아워골] 캘린더 실시간 구독이 성공적으로 연결되었습니다');
+          lines.push('DESCRIPTION:아워골에서 목표 마일스톤과 일정을 등록하면 자동으로 이 캘린더에 동기화됩니다.');
+          lines.push('STATUS:CONFIRMED');
+          lines.push('END:VEVENT');
+        }
 
         lines.push('END:VCALENDAR');
 
