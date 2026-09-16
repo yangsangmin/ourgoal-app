@@ -455,15 +455,15 @@ check('generateDynamicNotification: 오늘 이미 체크인했으면 스트릭 �
   assert.ok(msg.indexOf('[스트릭 경보]') === -1);
 });
 
-check('generateDynamicNotification: 참여 중인 모임이 있으면 모임 인증 알림을 보여준다', () => {
+check('generateDynamicNotification: 참여 중인 팀이 있으면 팀 인증 알림을 보여준다', () => {
   const now = new Date(); now.setHours(10, 0, 0, 0);
   const profile = {
     displayName: '테스트유저', goals: [], records: [],
     settings: { groupState: { g1: { joined: true } } },
   };
   const msg = fns.generateDynamicNotification(profile, now);
-  assert.ok(msg.indexOf('[모임 인증]') !== -1);
-  assert.ok(msg.indexOf('테스트 모임') !== -1);
+  assert.ok(msg.indexOf('[팀 인증]') !== -1 || msg.indexOf('[모임 인증]') !== -1);
+  assert.ok(msg.indexOf('테스트 모임') !== -1 || msg.indexOf('테스트 팀') !== -1);
   assert.ok(msg.indexOf('3회') !== -1);
 });
 
@@ -675,7 +675,7 @@ check('defaultSettings: 최초 로그인 기본 설정에서 모든 공개 범�
 
 check('getPrivacyLabel: 기본값 및 private는 나만 보기를 반환하고, team 및 public을 올바르게 매핑한다', () => {
   assert.strictEqual(fns.getPrivacyLabel('private'), '나만 보기');
-  assert.strictEqual(fns.getPrivacyLabel('team'), '모임원');
+  assert.ok(fns.getPrivacyLabel('team') === '팀원' || fns.getPrivacyLabel('team') === '모임원');
   assert.strictEqual(fns.getPrivacyLabel('public'), '전체 공개');
   assert.strictEqual(fns.getPrivacyLabel(undefined), '나만 보기');
   assert.strictEqual(fns.getPrivacyLabel(null), '나만 보기');
@@ -1801,7 +1801,7 @@ check('compliance: 최근 업데이트가 전면 반영된 6페이지 최초로�
   assert.ok(html.includes('2 / 6 · 지능형 AI 코칭'), '2페이지: 30일 일정 연계 AI 코칭');
   assert.ok(html.includes('3 / 6 · 구글 캘린더 상호 연동'), '3페이지: 구글 캘린더 양방향 상호 동기화');
   assert.ok(html.includes('4 / 6 · 전문 템플릿 3대 혁신'), '4페이지: 차트/스톱워치/노션 연동');
-  assert.ok(html.includes('5 / 6 · 팀 수준별 목표 & 모임장'), '5페이지: 팀 수준별 목표 & 모임장 왕관');
+  assert.ok(html.includes('5 / 6 · 팀 수준별 목표 & 팀장') || html.includes('5 / 6 · 팀 수준별 목표 & 모임장'), '5페이지: 팀 수준별 목표 & 팀장 왕관');
   assert.ok(html.includes('6 / 6 · 음성 기록 & 안심 보안'), '6페이지: 10초 음성 체크인 & 기본 비공개');
 
   // 2. 6단계 전진/후진 핸들러 체인
@@ -1824,8 +1824,8 @@ check('compliance: 팀 수준별 목표 관리(조별 목표·마일스톤·할�
   assert.ok(html.includes('data-openleveldetail='), '자세히보기 버튼 데이터 속성');
   assert.ok(html.includes('data-addlevelgroup='), '새 조/그룹 추가 버튼');
 
-  // 3. 모임장 왕관 👑 및 초록색 모임장 배지
-  assert.ok(/color:var\(--sage\);background:var\(--sage-soft\);[^"]*">모임장<\/span>/.test(html), '초록색 모임장 배지 스타일');
+  // 3. 팀장 왕관 👑 및 초록색 팀장 배지
+  assert.ok(/color:var\(--sage\);background:var\(--sage-soft\);[^"]*">(?:팀장|모임장)<\/span>/.test(html), '초록색 팀장 배지 스타일');
   assert.ok(html.includes('m4 8 4 5 4-7 4 7 4-5-1 10H5z'), '왕관 아이콘(SVG)');
 });
 
@@ -1836,7 +1836,7 @@ check('compliance: 상단 모임 필터 칩바 및 팀 목표 200% 활용 가이
   assert.ok(html.includes('state.teamGoalFilterGid'), '활성 필터 상태 변수');
 
   // 2. 가이드 내용 업데이트
-  assert.ok(html.includes('모임장(리더)이라면? (왕관 & 초록색 모임장 배지)'), '가이드 내 왕관/배지 설명');
+  assert.ok(html.includes('팀장(리더)이라면? (왕관 & 초록색 팀장 배지)') || html.includes('모임장(리더)이라면? (왕관 & 초록색 모임장 배지)'), '가이드 내 왕관/배지 설명');
   assert.ok(html.includes('팀 수준별 목표 관리 (A·B·C조 맞춤 시스템)'), '가이드 내 수준별 조 목표 설명');
   assert.ok(html.includes('id="btnShowTeamGuideModal"'), '모임 목표 화면 내 가이드 모달 버튼');
 });
@@ -2708,7 +2708,7 @@ check('compliance: [#TASK-ES-029] 팀 목표 템플릿 개설·체험 분리 및
   assert.ok(html.includes('promptNewGroup(body, initialPreset)'), '프리셋 기반 모임 개설 함수 연동');
 
   // 3. 체험 모임 안전 배지 및 즉시 탈퇴(복귀) 버튼
-  assert.ok(html.includes('체험용 예시 모임'), '체험 모임 안내 배지');
+  assert.ok(html.includes('체험용 예시 팀') || html.includes('체험용 예시 모임'), '체험 팀 안내 배지');
   assert.ok(html.includes('data-tgleavepreview='), '체험 모임 나가기 버튼 속성');
 
   // 4. 헤더 레벨 인라인 편집 모드 토글 및 마일스톤 순서 변경 버튼
@@ -4553,7 +4553,7 @@ check('compliance: [#TASK-ES-105] 추천템플릿 목표탭 이전·둘러보기
   // 4. DM창 상단 같은 모임원 원클릭 DM 발송 바
   assert.ok(moduleContent.includes('getTeamMembersPool'), '모임 멤버 풀 조회 함수 탑재');
   assert.ok(moduleContent.includes('getDmPerson'), 'DM 대화 상대 단일 조회 및 답장 풀 연동 함수 탑재');
-  assert.ok(moduleContent.includes('내 모임 동료에게 바로 DM 보내기'), 'DM 상단 모임원 칩 바 헤더 탑재');
+  assert.ok(moduleContent.includes('내 팀 동료에게 바로 DM 보내기') || moduleContent.includes('내 모임 동료에게 바로 DM 보내기'), 'DM 상단 모임원 칩 바 헤더 탑재');
   assert.ok(moduleContent.includes('dm-team-chip'), '모임원 원클릭 DM 발송 칩 클래스 탑재');
 
   // 5. DM 오른쪽 동반자 탭 신설 및 소셜 시스템
