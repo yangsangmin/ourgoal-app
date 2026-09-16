@@ -37,8 +37,8 @@ as $fn$
     and coalesce(u.is_bot, false) = false         -- AI 봇/시뮬 계정 제외 (users.is_bot, 2026-09-12 도입)
     and length(coalesce(trim(p_query), '')) >= 1  -- 빈 검색어로 전체 테이블 훑는 것 방지
     and (
-      u.display_name ilike '%' || replace(replace(p_query, '%', '\%'), '_', '\_') || '%' escape '\'
-      or u.username ilike '%' || replace(replace(p_query, '%', '\%'), '_', '\_') || '%' escape '\'
+      u.display_name ilike ('%' || p_query || '%')
+      or u.username ilike ('%' || p_query || '%')
     )
   limit 20;
 $fn$;
