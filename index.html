@@ -905,7 +905,7 @@
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
-  <script src="js/calendar-attachment.js?v=20260915-es096"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es128-v3"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script>
+  <script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es128-v3"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script>
 <script>
 (function(){
   "use strict";
@@ -4906,9 +4906,6 @@
           if(state.profile.settings.gcalAutoSync && isGoogleCalendarConnected()){
             syncAllToGoogleCalendar().catch(function(){});
           }
-          closeModal();
-          renderCalendarScreen();
-          await saveProfile();
         };
       }
     );
@@ -8627,7 +8624,7 @@
           });
         };
 
-        sheet.querySelector('#attCancelBtn').addEventListener('click', function(){ closeModal(); if(typeof onCancel === 'function') onCancel(); });
+        sheet.querySelector('#attCancelBtn').addEventListener('click', function(){ closeModal(true); if(typeof onCancel === 'function') onCancel(); });
         sheet.querySelector('#attSaveBtn').addEventListener('click', async function(){
           var title = (sheet.querySelector('#attTitleInput').value || '').trim();
           var url = (sheet.querySelector('#attUrlInput').value || '').trim();
@@ -8645,12 +8642,17 @@
           targetItem.attachments = targetItem.attachments || [];
           targetItem.attachments.push(draftAtt);
           await saveProfile();
-          closeModal();
+          closeModal(true);
           if(onSaved) onSaved();
           toast('"'+title+'" 참고자료를 첨부했어요');
         });
       }
     );
+  }
+  if(typeof window !== 'undefined'){
+    window.openAddAttachmentModal = openAddAttachmentModal;
+    window.openAttachmentViewer = openAttachmentViewer;
+    window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;
   }
 
   function wireAttachmentChipClicks(container){

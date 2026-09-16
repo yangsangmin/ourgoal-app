@@ -4399,6 +4399,10 @@ check('compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료
   assert.ok(indexHtml.includes('data-hubaddatt'), '허브 모달 첨부 버튼');
   assert.ok(indexHtml.includes('renderHubEventChipsHtml'), '허브 모달 칩 렌더링');
   assert.ok(indexHtml.includes('attachments: curAttachments'), '일정 저장 시 attachments 영구 보존');
+  assert.ok(indexHtml.includes('window.openAddAttachmentModal = openAddAttachmentModal;'), 'window.openAddAttachmentModal 전역 노출');
+  assert.ok(indexHtml.includes('window.openAttachmentViewer = openAttachmentViewer;'), 'window.openAttachmentViewer 전역 노출');
+  assert.ok(indexHtml.includes('window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;'), 'window.renderAttachmentChipsHtml 전역 노출');
+  assert.ok(fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8').includes('ourgoal-shell-v20260916-es125'), 'sw.js 캐시네임 v20260916-es125 갱신');
 });
 
 check('compliance: [#TASK-ES-102 & #TASK-ES-126] 전 탭(홈·목표·일정·기록·소통·설정) 활용법 탑바 단일화 및 6대 탭 통합 가이드 허브 무결성 검증', () => {
