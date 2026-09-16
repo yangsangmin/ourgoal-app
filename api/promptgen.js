@@ -13,6 +13,11 @@ module.exports = async function handler(req, res) {
     return handleAvatarFaceVision(req, res, body);
   }
 
+  // [TASK-ES-122] 기간 기반 목표·팀·기록 분석 MBTI/좌우명 텍스트 서브 라우팅
+  if (body.action === 'avatar-persona') {
+    return handleAvatarPersonaAnalysis(req, res, body);
+  }
+
   var description = (body.description || '').trim();
   if (!description) {
     res.status(400).json({ error: 'description is required' });
@@ -252,6 +257,69 @@ async function handleAvatarFaceVision(req, res, body) {
     return res.status(200).json({ ok: true, fallback: true, features: getSmartFallbackFeatures() });
   } catch (err) {
     return res.status(200).json({ ok: true, fallback: true, features: getSmartFallbackFeatures() });
+  }
+}
+
+// [TASK-ES-122] 설정 기간의 목표·팀·기록 요약 텍스트를 분석해 MBTI 유형 + 좌우명 생성
+async function handleAvatarPersonaAnalysis(req, res, body) {
+  var FALLBACK_PERSONA = { mbti: 'ENFP', motto: '꾸준함이 오늘의 나를 만든다' };
+  try {
+    var summaryText = (body.summaryText || '').trim().slice(0, 4000);
+    var clientGeminiKey = (typeof body.geminiKey === 'string' && body.geminiKey.trim()) ? body.geminiKey.trim() : null;
+    var geminiApiKey = clientGeminiKey || (process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : '');
+
+    if (!summaryText || !geminiApiKey) {
+      return res.status(200).json({ ok: true, fallback: true, persona: FALLBACK_PERSONA });
+    }
+
+    var systemInstruction =
+      "당신은 습관·목표 관리 앱 \"아워골\"에서, 사용자가 직접 지정한 기간 동안의 목표·팀 활동·실천 기록을 분석하여 " +
+      "그 사람을 상징하는 MBTI 유형 1개와 좌우명 1개를 짓는 캐릭터 디자이너입니다.\n" +
+      "[규칙]\n" +
+      "1. mbti는 실제 MBTI 16유형(E/I, N/S, F/T, J/P 조합) 중 하나의 대문자 4글자여야 한다.\n" +
+      "2. motto는 입력된 활동 내용을 반영한 한국어 좌우명으로, 공백 포함 30자 이내의 완결된 문장이어야 한다.\n" +
+      "3. 오직 JSON 객체 하나만 출력하고 마크다운, 코드블록, 설명 문구는 절대 출력하지 마라.\n" +
+      "출력 스키마: {\"mbti\": \"ENFP\", \"motto\": \"문장\"}";
+
+    var promptText = "[분석 대상 기간 활동 요약]\n" + summaryText + "\n\n위 활동 패턴을 바탕으로 mbti와 motto를 JSON으로만 반환하라.";
+
+    var geminiModels = ['gemini-3.1-flash-lite', 'gemini-3.5-flash-lite', 'gemini-3.5-flash', 'gemini-flash-latest'];
+    for (var i = 0; i < geminiModels.length; i++) {
+      var modelName = geminiModels[i];
+      try {
+        var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent?key=' + encodeURIComponent(geminiApiKey);
+        var response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: systemInstruction + '\n\n' + promptText }] }],
+            generationConfig: { temperature: 0.4, responseMimeType: 'application/json' }
+          })
+        });
+
+        if (response.ok) {
+          var resData = await response.json();
+          var rawJson = (((resData.candidates || [])[0] || {}).content || {}).parts
+            ? resData.candidates[0].content.parts.map(function (p) { return p.text || ''; }).join('\n')
+            : '';
+          var jsonMatch = rawJson.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            var parsed = JSON.parse(jsonMatch[0]);
+            var mbti = (parsed.mbti || '').toUpperCase().trim();
+            var motto = (parsed.motto || '').trim();
+            if (/^[EI][NS][FT][JP]$/.test(mbti) && motto && motto.length <= 40) {
+              return res.status(200).json({ ok: true, persona: { mbti: mbti, motto: motto.slice(0, 30) } });
+            }
+          }
+        }
+      } catch (err) {
+        console.error('[AvatarPersona] Gemini ' + modelName + ' exception:', err.message || err);
+      }
+    }
+
+    return res.status(200).json({ ok: true, fallback: true, persona: FALLBACK_PERSONA });
+  } catch (err) {
+    return res.status(200).json({ ok: true, fallback: true, persona: FALLBACK_PERSONA });
   }
 }
 
