@@ -1042,10 +1042,19 @@
     var searchResults = state._companionSearchResults || null;
     var isSearching = state._companionIsSearching === true;
 
+    var searchError = state._companionSearchError || null;
     var searchResultsHtml = '';
     if(isSearching){
       searchResultsHtml = '<div style="padding:16px 12px;background:var(--surface-2);border-radius:12px;text-align:center;font-size:.8125rem;color:var(--ink-soft);margin-bottom:14px;">' +
         '회원 데이터베이스에서 실제 사용자를 검색하고 있습니다... 🔍' +
+      '</div>';
+    } else if(searchError === 'guest'){
+      searchResultsHtml = '<div style="padding:16px 12px;background:var(--surface-2);border-radius:12px;text-align:center;font-size:.8125rem;color:var(--ink-soft);margin-bottom:14px;">' +
+        '로그인하면 실제 회원을 닉네임으로 검색하고 동반자로 추가할 수 있어요.' +
+      '</div>';
+    } else if(searchError === 'error'){
+      searchResultsHtml = '<div style="padding:16px 12px;background:var(--surface-2);border-radius:12px;text-align:center;font-size:.8125rem;color:var(--ink-soft);margin-bottom:14px;">' +
+        '검색 중 문제가 발생했어요. 잠시 후 다시 시도해주세요.' +
       '</div>';
     } else if(searchResults !== null){
       if(!searchResults.length){
@@ -1145,26 +1154,44 @@
       if(!q){
         state._companionSearchKeyword = '';
         state._companionSearchResults = null;
+        state._companionSearchError = null;
         renderCommCompanions(body);
         return;
       }
+
+      var isGuest = (!state.user || !state.user.id);
+      if(isGuest){
+        state._companionSearchKeyword = q;
+        state._companionSearchResults = null;
+        state._companionSearchError = 'guest';
+        state._companionIsSearching = false;
+        renderCommCompanions(body);
+        showGuestSoftAuthGate('실제 사용자 검색');
+        return;
+      }
+
       state._companionSearchKeyword = q;
       state._companionIsSearching = true;
+      state._companionSearchError = null;
       renderCommCompanions(body);
 
       var matched = [];
+      var errored = false;
       if(global.sb){
         try {
-          var res = await global.sb.from('users')
-            .select('id, username, display_name, bio, avatar_url, interests')
-            .or('display_name.ilike.%' + q + '%,username.ilike.%' + q + '%')
-            .limit(20);
-          if(res && res.data){
+          // users 테이블 RLS(auth.uid()=본인 행만 select)는 그대로 둔 채,
+          // 검색에 필요한 최소 필드만 반환하는 SECURITY DEFINER RPC를 호출한다.
+          // docs/sql/2026-09-16-search-users-rpc.sql 실행 이후에만 동작한다.
+          var res = await global.sb.rpc('search_users_by_nickname', { p_query: q });
+          if(res && res.error){
+            errored = true;
+            console.warn('[동반자] Supabase 검색 오류:', res.error);
+          } else if(res && res.data){
             matched = res.data.map(function(u){
               var obj = {
                 id: u.id,
-                nickname: u.display_name || u.username,
-                name: u.username,
+                nickname: u.nickname,
+                name: u.nickname,
                 avatar: u.avatar_url || '👤',
                 intro: u.bio || '함께 실천하는 아워골 회원',
                 level: 1,
@@ -1176,12 +1203,14 @@
             });
           }
         } catch(err){
+          errored = true;
           console.warn('[동반자] Supabase 검색 오류:', err);
         }
       }
 
       state._companionIsSearching = false;
-      state._companionSearchResults = matched;
+      state._companionSearchError = errored ? 'error' : null;
+      state._companionSearchResults = errored ? null : matched;
       renderCommCompanions(body);
     };
 
@@ -1191,6 +1220,7 @@
       sResetBtn.addEventListener('click', function(){
         state._companionSearchKeyword = '';
         state._companionSearchResults = null;
+        state._companionSearchError = null;
         state._companionIsSearching = false;
         renderCommCompanions(body);
       });

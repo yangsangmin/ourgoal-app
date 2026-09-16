@@ -3576,3 +3576,24 @@
   - `scratch/verify_avatar_drawer_e2e.js`: Chrome CDP 실측 E2E 검증 (게스트입장 ➔ 서랍 3종 누적 렌더링 ➔ 2번째 카드 원클릭 선택 및 안내문 즉시 갱신) 100% PASS 및 스크린샷(`scratch/screen_avatar_drawer_verified.png`) 실물 확보.
   - 헌법 제18조: `index.html` 총 줄 수 22,196줄 완벽 준수.
 ---
+### 2026-09-16 10:30: [FIX] 소통탭 동반자 닉네임 검색이 실제 회원을 못 찾는 근본 원인 수정(RLS 우회 RPC 도입)
+- **배경 및 지시**:
+  - 상민님 직접 지시: *"아워골 소통창에서 동반자 닉네임검색시 실제 사용자의 닉네임을 검색해도 검색이 안되는데 원인파악하고, 관련된 문제사항 모두 확인하고 알기쉽게 표형태로 보고해."* → 이후 "권장안 더 구체적으로 가져와 문제해결 8원칙 적용해서".
+- **근본 원인(Root Cause)**:
+  - `js/team-invite-comm.js`의 동반자 검색이 anon key 클라이언트(`index.html` `sb`)로 `public.users` 테이블을 `.from('users').or(display_name.ilike,...)` 형태로 직접 select.
+  - `users` 테이블 RLS는 2026-09-03 설정된 `auth.uid() = 본인 id`(본인 행만 select 허용) 정책이 그대로 남아 있어(2026-09-10 재확인 기록 존재), 검색어 일치 여부와 무관하게 타인의 행 자체가 DB 단에서 걸러져 항상 0건 반환. 검색 로직 버그가 아니라 2026-09-15(#TASK-ES-104) 신규 기능이 기존 RLS 설계와 충돌한 것.
+  - 부수 결함: (1) 본인 닉네임만 우연히 검색되어 "가끔 되는 것처럼" 오인 유발 (2) `.or()` 필터에 사용자 입력을 이스케이프 없이 연결해 쉼표 등 포함 시 쿼리 파손 (3) RLS 차단·쿼리 오류·진짜 미존재가 전부 동일한 "찾지 못했어요" 문구로 뭉뚱그려져 원인 진단 불가 (4) 게스트도 검색 시도 가능하나 안내 없음 (5) 기존 컴플라이언스 테스트(#TASK-ES-106)가 `.from('users')`·`display_name.ilike` 문자열 존재만 확인하는 정적 검사라 이 결함을 못 잡고 계속 PASS 처리.
+- **해결 방식(문제해결 8원칙 적용, 채택안 vs 기각안)**:
+  - 기각 A: RLS를 `for select using (true)`로 완화 — bio·interests·region 등 users 테이블 전 컬럼이 모든 로그인 사용자에게 열려 노출 범위 과다.
+  - 기각 C: 별도 "공개 프로필" 테이블/명시적 공개 동의 UI 신설 — 지금 스코프 대비 과설계.
+  - 채택 B: 기존 `users` RLS(본인 행만)는 그대로 두고, 검색에 필요한 최소 필드(id·nickname·avatar_url·bio·interests)만 반환하는 `SECURITY DEFINER` RPC `search_users_by_nickname`를 신설(`report_content`·`save_helpful_reason` 등 기존 패턴과 동일). anon 실행 권한은 revoke, authenticated만 grant.
+- **수정 실행 내역**:
+  1. `docs/sql/2026-09-16-search-users-rpc.sql` 신설: RPC 정의(검색자 본인 제외 `id<>auth.uid()`, `is_bot` 계정 제외, `%`/`_` 이스케이프, limit 20), anon revoke·authenticated grant, 확인 쿼리 포함. **미실행(Supabase SQL Editor 실행 필요, 상민님 손 필요)**.
+  2. `js/team-invite-comm.js` `doSearch()`: `.from('users')` 직접 select → `sb.rpc('search_users_by_nickname', {p_query:q})` 호출로 교체. 게스트는 RPC 호출 전에 `showGuestSoftAuthGate()` 안내로 분기, 쿼리 에러는 `_companionSearchError='error'`로 별도 표시, `renderCommCompanions()`에 게스트/오류/결과없음 3종 문구 분리.
+  3. `scripts/smoke-test.js` `[#TASK-ES-106]`: 옛 구현(`.from('users')`, `display_name.ilike` 문자열 존재) 검증을 폐기하고, RPC 배선 존재·`.from('users')` 직접 select 부재·게스트/오류 상태 분기 존재를 검증하도록 갱신.
+- **발생한 문제 및 해결**: 렌더 함수 내부 변수명(`searchError`)과 다르게 첫 시도한 스모크 테스트 문자열(`state._companionSearchError === 'guest'`)이 코드와 정확히 일치하지 않아 1건 실패 → 실제 코드에 쓰인 표현(`searchError === 'guest'`)에 맞춰 검증 문자열 수정.
+- **검증 결과**:
+  - `node -e "new Function(src)"`: `js/team-invite-comm.js` 문법 검증 통과.
+  - `node scripts/smoke-test.js`: **259개 전수 통과(0개 실패)**, `[#TASK-ES-106]` 갱신된 검증 포함.
+  - **미검증(측정불가, 손 필요)**: `docs/sql/2026-09-16-search-users-rpc.sql`을 Supabase SQL Editor에서 실행해야 실제 두 계정 간 검색 동작을 라이브로 확인 가능. 실행 전까지는 RPC가 없어 검색 호출 시 `res.error`가 나서 "검색 중 문제가 발생했어요" 문구가 뜨는 상태(과거의 조용한 0건보다는 원인 구분이 되지만, 기능 자체는 SQL 실행 전까지 동작하지 않음).
+---
