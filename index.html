@@ -908,7 +908,7 @@
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
-  <script src="js/calendar-attachment.js?v=20260915-es096"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260915-es105"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script>
+  <script src="js/calendar-attachment.js?v=20260915-es096"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260915-es105"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script>
 <script>
 (function(){
   "use strict";
@@ -11385,10 +11385,10 @@
             '</div>' +
             '<div style="display:flex;align-items:center;gap:5px;flex:0 0 auto;flex-wrap:wrap;">' + (canManage ? '<button class="btn btn-ghost btn-sm" data-inviteteam="'+g.id+'" type="button" style="font-size:.75rem;padding:2px 7px;border-color:var(--brand);color:var(--brand-strong);font-weight:700;">👥 팀원 초대</button>' : '') + '<button class="btn btn-ghost btn-sm" data-teamchat="'+g.id+'" type="button" style="font-size:.75rem;padding:2px 7px;border-color:var(--rule);color:var(--ink);font-weight:700;">💬 팀 대화</button><span class="dday-pill">'+roleLabel+'</span></div>' +
           '</div>' +
-          '<div style="margin-bottom:6px;"><b style="font-size:.875rem;color:var(--ink-soft);">공동 팀 목표</b></div>' +
-          (goals.length ? goalsHtml : '<p class="faint" style="margin-top:4px;">아직 공동 팀 목표가 없어요.</p>') +
-          (canManage ? '<button class="btn btn-primary btn-sm" data-addteamgoal="'+g.id+'" type="button" style="margin-top:12px;width:100%;">+ 공동 팀 목표 추가</button>' : '') +
-          levelSectionHtml +
+          (window.OurgoalTeamVisibilityLevels ? OurgoalTeamVisibilityLevels.renderTeamCardContent(g, canManage, state) : (
+            '<div style="margin-bottom:6px;"><b style="font-size:.875rem;color:var(--ink-soft);">공동 팀 목표</b></div>' +
+            (goals.length ? goalsHtml : '<p class="faint" style="margin-top:4px;">아직 공동 팀 목표가 없어요.</p>') +
+            (canManage ? '<button class="btn btn-primary btn-sm" data-addteamgoal="'+g.id+'" type="button" style="margin-top:12px;width:100%;">+ 공동 팀 목표 추가</button>' : '') + levelSectionHtml)) +
         '</div>';
     }).join('');
 
@@ -11415,7 +11415,7 @@
         );
       });
     }
-    view.querySelectorAll('[data-inviteteam]').forEach(function(b){ b.onclick = function(e){ e.stopPropagation(); if(window.OurgoalTeamInviteComm) window.OurgoalTeamInviteComm.openTeamInviteModal(b.dataset.inviteteam, MOCK_GROUPS); }; }); view.querySelectorAll('[data-teamchat]').forEach(function(b){ b.onclick = function(e){ e.stopPropagation(); if(window.OurgoalTeamInviteComm) window.OurgoalTeamInviteComm.openTeamChatModal(b.dataset.teamchat, MOCK_GROUPS); }; }); if(window.OurgoalTeamLinkedGoals) window.OurgoalTeamLinkedGoals.bindTeamGoalEvents(view);
+    view.querySelectorAll('[data-inviteteam]').forEach(function(b){ b.onclick = function(e){ e.stopPropagation(); if(window.OurgoalTeamInviteComm) window.OurgoalTeamInviteComm.openTeamInviteModal(b.dataset.inviteteam, MOCK_GROUPS); }; }); view.querySelectorAll('[data-teamchat]').forEach(function(b){ b.onclick = function(e){ e.stopPropagation(); if(window.OurgoalTeamInviteComm) window.OurgoalTeamInviteComm.openTeamChatModal(b.dataset.teamchat, MOCK_GROUPS); }; }); if(window.OurgoalTeamLinkedGoals) window.OurgoalTeamLinkedGoals.bindTeamGoalEvents(view); if(window.OurgoalTeamVisibilityLevels) OurgoalTeamVisibilityLevels.bindEvents(view);
     if(window.OurgoalTeamLeaderCheck){
       OurgoalTeamLeaderCheck.bindEvents(view, {
         mockGroups: MOCK_GROUPS,
@@ -11435,13 +11435,13 @@
     view.querySelectorAll('[data-openleveldetail]').forEach(function(btn){
       btn.addEventListener('click', function(){
         var parts = btn.dataset.openleveldetail.split(':');
-        openLevelGroupDetailModal(parts[0], parts[1]);
+        if(window.OurgoalTeamVisibilityLevels) OurgoalTeamVisibilityLevels.openLevelGroupDetailModal(parts[0], parts[1], parts[2]); else openLevelGroupDetailModal(parts[0], parts[1]);
       });
     });
 
     view.querySelectorAll('[data-addlevelgroup]').forEach(function(btn){
       btn.addEventListener('click', function(){
-        var gid = btn.dataset.addlevelgroup;
+        var parts = (btn.dataset.addlevelgroup || '').split(':'); var gid = parts[0]; var tgid = parts[1];
         openModal(
           '<h3>새 수준별 조/그룹 추가</h3>' +
           '<div class="field"><label>조/그룹 이름</label><input id="newLgNameInput" type="text" placeholder="예: D조 (주말반) 또는 E조 (특훈반)"></div>' +
@@ -11451,7 +11451,7 @@
             sheet.querySelector('#saveNewLgBtn').addEventListener('click', async function(){
               var name = sheet.querySelector('#newLgNameInput').value.trim();
               if(!name) return;
-              var lgs = getGroupLevelGoals(gid);
+              var lgs = (tgid && window.OurgoalTeamVisibilityLevels) ? OurgoalTeamVisibilityLevels.getGoalLevelGoals(gid, tgid) : getGroupLevelGoals(gid);
               lgs.push({
                 id: 'lg_' + uid('l'),
                 name: name,
@@ -22157,7 +22157,7 @@
       groupState: groupState, MOCK_GROUPS: MOCK_GROUPS
     });
   }
-
+  if(window.OurgoalTeamVisibilityLevels && typeof window.OurgoalTeamVisibilityLevels.init==='function'){ window.OurgoalTeamVisibilityLevels.init({ getState:function(){return state;}, getProfile:function(){return state.profile;}, saveProfile:saveProfile, toast:toast, openModal:openModal, closeModal:closeModal, triggerHaptic:(typeof triggerHaptic==='function'?triggerHaptic:null), dDay:dDay, uid:uid, daysFromNow:daysFromNow, MOCK_GROUPS:MOCK_GROUPS, getGroupState:groupState, canManageTeamGoals:canManageTeamGoals, renderTeamGoalsScreen:renderTeamGoalsScreen, getGroupLevelGoals:getGroupLevelGoals, getTeamCommentsCache:function(){return TEAM_COMMENTS_CACHE;}, teamCommentsBlockHtml:teamCommentsBlockHtml }); }
   /* ============ KF-2 #TASK-ES-017: 템플릿 복제 크레딧 모듈(js/template-credit.js)에 앱 핸들 연결 ============ */
   if(window.OurgoalTemplateCredit && typeof window.OurgoalTemplateCredit.init === 'function'){
     window.OurgoalTemplateCredit.init({ sb: sb, getState: function(){ return state; }, toast: toast, playRewardedAd: playRewardedAdVideo });

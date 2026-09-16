@@ -4713,6 +4713,96 @@ check('compliance: [#TASK-ES-109] 목표 탭 편집 모드 완료 버튼 누락 
   assert.strictEqual(lines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
 });
 
+check('compliance: [#TASK-ES-110] 팀 목표 시인성(정보량 다이어트·마일스톤 접힘), 최초 대표 목표 1개 노출 & 스위처, 2계층 아코디언 및 ‘팀 통합 수준관리’ vs ‘목표별 수준관리’ 이원화 무결성 검증', () => {
+  const teamVisPath = path.join(__dirname, '..', 'js', 'team-visibility-levels.js');
+  assert.ok(fs.existsSync(teamVisPath), 'js/team-visibility-levels.js 파일이 존재해야 함');
+  const teamVisCode = fs.readFileSync(teamVisPath, 'utf8');
+
+  // 1. 전용 독립 모듈 함수 노출 검증
+  assert.ok(teamVisCode.includes('getGoalLevelGoals: getGoalLevelGoals'), '목표별 수준관리 조회 헬퍼 노출');
+  assert.ok(teamVisCode.includes('copyTeamLevelsToGoal: copyTeamLevelsToGoal'), '팀 통합 수준 목표별 복사 헬퍼 노출');
+  assert.ok(teamVisCode.includes('openLevelGroupDetailModal: openLevelGroupDetailModal'), '수준별 조 상세 모달(tgid 대응) 노출');
+  assert.ok(teamVisCode.includes('renderTeamCardContent: renderTeamCardContent'), '팀 카드 단일 목표 및 수준관리 아코디언 렌더러 노출');
+  assert.ok(teamVisCode.includes('bindEvents: bindEvents'), '스위처/아코디언/모드전환/복사 이벤트 바인딩 노출');
+
+  // 2. index.html 배선 검증
+  assert.ok(html.includes('js/team-visibility-levels.js'), 'index.html에 team-visibility-levels.js 스크립트 로드');
+  assert.ok(html.includes('OurgoalTeamVisibilityLevels.renderTeamCardContent(g, canManage, state)'), 'renderTeamGoalsScreen에서 renderTeamCardContent 위임 호출');
+  assert.ok(html.includes('OurgoalTeamVisibilityLevels.bindEvents(view)'), 'renderTeamGoalsScreen에서 bindEvents 위임 호출');
+  assert.ok(html.includes('OurgoalTeamVisibilityLevels.init('), 'OurgoalTeamVisibilityLevels.init 의존성 주입');
+  assert.ok(html.includes('OurgoalTeamVisibilityLevels.openLevelGroupDetailModal'), 'openLevelGroupDetailModal에 tgid 연계');
+  assert.ok(html.includes('OurgoalTeamVisibilityLevels.getGoalLevelGoals'), 'data-addlevelgroup에 목표별 tgid 분기 적용');
+
+  // 3. ui.css 전용 디자인 클래스 검증
+  assert.ok(styleSrc.includes('.tg-goal-switcher'), '상단 목표 스위처 칩 바 스타일');
+  assert.ok(styleSrc.includes('.tg-goal-chip'), '목표 칩 버튼 스타일');
+  assert.ok(styleSrc.includes('.tg-compact-goal-card'), '1개 목표 컴팩트 카드 스타일');
+  assert.ok(styleSrc.includes('.tg-level-dual-tabs'), '팀통합 vs 목표별 듀얼 탭 스위처 스타일');
+  assert.ok(styleSrc.includes('.tg-accordion-section'), '수준별 목표 2계층 아코디언 섹션 스타일');
+  assert.ok(styleSrc.includes('.tg-lg-accordion-row'), '조별 카드 인라인 아코디언 행 스타일');
+
+  // 4. 모듈 로직 시뮬레이션 및 데이터 분리 무결성 검증
+  const OurgoalTeamVis = require('../js/team-visibility-levels.js');
+  const dummyState = {
+    profile: {
+      settings: {
+        groupLevelGoals: {
+          'g1': [
+            { id: 'lg_team_1', name: 'A조 (통합)', goals: [{ id: 'g_1', title: '통합 목표 1', milestones: [{ id: 'm_1', title: 'm1', status: 'done', tasks: [{ id: 't_1', done: true }] }] }] }
+          ]
+        }
+      }
+    }
+  };
+
+  OurgoalTeamVis.init({
+    getState: () => dummyState,
+    getProfile: () => dummyState.profile,
+    saveProfile: async () => {},
+    MOCK_GROUPS: [
+      {
+        id: 'g1',
+        name: '하이록스 러닝클럽',
+        icon: '🏃',
+        teamGoals: [
+          { id: 'tg_1', title: '서울 레이스 완주', dueDate: '2026-10-01', milestones: [{ id: 'm1', title: '10km 빌드업', status: 'done', tasks: [] }] },
+          { id: 'tg_2', title: '월간 누적 100km', dueDate: '2026-10-15', milestones: [{ id: 'm2', title: '주 3회 런', status: 'todo', tasks: [] }] }
+        ]
+      }
+    ]
+  });
+
+  // 4.1 최초 진입 시 단일 대표 목표 및 칩 스위처 렌더링 검증
+  const dummyGroup = {
+    id: 'g1',
+    name: '하이록스 러닝클럽',
+    icon: '🏃',
+    teamGoals: [
+      { id: 'tg_1', title: '서울 레이스 완주', dueDate: '2026-10-01', milestones: [{ id: 'm1', title: '10km 빌드업', status: 'done', tasks: [] }] },
+      { id: 'tg_2', title: '월간 누적 100km', dueDate: '2026-10-15', milestones: [{ id: 'm2', title: '주 3회 런', status: 'todo', tasks: [] }] }
+    ]
+  };
+
+  const renderedHtml = OurgoalTeamVis.renderTeamCardContent(dummyGroup, true, dummyState);
+  assert.ok(renderedHtml.includes('class="tg-goal-switcher"'), '복수 목표 시 상단 스위처 칩 바 렌더링');
+  assert.ok(renderedHtml.includes('data-tgselectgoal="g1:tg_1"'), '1번 목표 선택 칩');
+  assert.ok(renderedHtml.includes('data-tgselectgoal="g1:tg_2"'), '2번 목표 선택 칩');
+  assert.ok(renderedHtml.includes('data-tglevelaccordion="g1"'), '수준별 목표 1계층 아코디언 헤더');
+  assert.ok(renderedHtml.includes('data-tglevelmode="g1:goal"'), '목표별 수준관리 탭 버튼');
+  assert.ok(renderedHtml.includes('data-tglevelmode="g1:team"'), '팀 통합 수준관리 탭 버튼');
+
+  // 4.2 팀 통합 수준을 특정 목표로 복사하는 copyTeamLevelsToGoal 무결성 검증
+  const copied = OurgoalTeamVis.copyTeamLevelsToGoal('g1', 'tg_2');
+  assert.strictEqual(copied.length, 1, '1개 조 복사 완료');
+  assert.strictEqual(copied[0].name, 'A조 (통합)', '조 이름 보존');
+  assert.ok(copied[0].id.startsWith('lg_tg_2_'), '목표 ID 기반 고유 조 ID 부여');
+  assert.ok(dummyState.profile.settings.goalLevelGoals['tg_2'], '목표별 수준 저장소에 독립 격리 저장 확인');
+
+  // 5. 헌법 제18조: index.html 22,196줄 불변 재검증
+  const finalLines = html.split(/\r?\n/).length;
+  assert.strictEqual(finalLines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
