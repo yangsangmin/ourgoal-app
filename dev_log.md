@@ -3640,3 +3640,34 @@
 - **발생한 문제 및 해결**: `git push origin main` 시도 → GitHub 브랜치 보호 규칙(`GH006`, PR 및 `essence-gate` 상태 체크 필수)에 의해 거부됨. main 직접 push가 원천 차단되어 있음을 확인(제4조-4와 정합) → PR 기반 배포로 전환 필요.
 - **검증 결과**: RPC 라이브 존재 확인(anon 키 REST 호출, 42501). 로컬 main은 origin 대비 11커밋 앞선 상태(#TASK-ES-121 병합분 포함)로 push 대기. **직관적 6단계 상태: 여전히 [4단계: 로컬 메인 병합]** — 5단계(PR 병합→실서버 배포) 진입 전 상민님의 명시적 배포 승인 필요(AGENTS.md 제8조-3).
 ---
+
+## [2026-09-16] #TASK-ES-122 아바타 생성 기간 설정(목표·팀·기록 분석 MBTI/좌우명) 결합 및 77종 바디 안내문구 정비
+- **목표**: 사진 기반 아바타 제작 기능에 사용자가 직접 지정한 기간의 목표·팀·기록을 분석해 MBTI 유형과 좌우명을 부여하는 기능을 결합하고, 기존 "77종 바디" 사용자 노출 안내문구를 삭제 방향으로 정비.
+- **상민님 직접 지시**: *"내가설정한 기간에 맞춰서 그에 맞는(목표, 팀, 기록) 아바타를 만들어주는 기능이 지금 아바타생성 기능과 결합되어야 해... '아바타 생성 기준 기간 정하기' 버튼을 만들고... mbti와 좌우명을 가진 아바타를 생성합니다... 아바타 설정 창을 그에 맞게 더 키워."* → *"77가지 바디 관련 안내문구 삭제하는 방향으로 하고, 지금 내용 요구사항 정의서로 구체화한번 해보자"*
+- **핵심 구현 및 배선 내역**:
+  1. `docs/specs/REQ-AVATAR-PERIOD-PERSONA.md`: 문제해결 8원칙 구조로 요구사항 정의(FR-01~09).
+  2. `api/promptgen.js`: `handleAvatarPersonaAnalysis` 신설 — 클라이언트가 보낸 기간 요약 텍스트를 Gemini 3.1 Flash-Lite 계열 모델에 전달해 MBTI(정규식 `/^[EI][NS][FT][JP]$/` 검증) + 좌우명(30자 이내)을 JSON으로 생성, 키 부재/실패 시 폴백 페르소나 반환.
+  3. `vercel.json`: `/api/avatar-persona` → `/api/promptgen` rewrite 추가.
+  4. `index.html`: `openAvatarModal` 호출부에 `mockGroups: MOCK_GROUPS` deps 1줄만 추가(라인 순증 +1로 TECH-RULE-01 기준값 22,196줄 정확히 맞춤).
+  5. `js/avatar-system.js`:
+     - 로딩 애니메이션 문구에서 "77종 바디" 사용자 노출 표현 삭제(바디 테마 카탈로그·합성 로직 자체는 보존).
+     - 아바타 제작 버튼 아래 `[📅 아바타 생성 기준 기간 정하기]` 버튼, 시작/종료 날짜 입력, 2줄 안내멘트 신설, 모달 `max-width` 440→560px 확장.
+     - `collectPeriodPersonaSummary(profile, mockGroups, startDate, endDate)`: 기간 내 목표/기록/팀(참여 팀·역할·팀목표 진행) 요약 텍스트 생성, 전부 0건이면 `isEmpty:true`.
+     - `fetchAvatarPersona(summaryText)`: `/api/avatar-persona` 호출.
+     - 제작 버튼 클릭 시 기간 내 분석 데이터 0건이면 토스트 안내 후 횟수 차감 없이 제작 중단(FR-08).
+     - `onAvatarCraftCompleted(dataUrl, persona)`로 시그니처 확장, `addSavedAvatar`에 `mbti/motto/periodStart/periodEnd` 필드 추가, 서랍 카드 및 결과박스에 MBTI·좌우명 표시.
+  6. `scripts/smoke-test.js`: `onAvatarCraftCompleted` 시그니처 변경에 맞춰 #TASK-ES-119 테스트 갱신, `#TASK-ES-122` 컴플라이언스 테스트 신설(77종 안내문구 삭제·카탈로그 보존, 기간 UI 마크업, 데이터 0건 차단 배선, 서버 라우팅·rewrite 확인).
+- **검증 결과**:
+  - `npm test`: 스모크 261개 + 헌법 5대 게이트 13종 + Zero Dead Click ALL PASS(0 failure).
+  - `node --check`로 `avatar-system.js`/`promptgen.js` 문법 검증 통과.
+  - Chrome 실측(로컬 http-server, 게스트 모드): 기간 버튼·날짜입력·2줄 안내멘트 정상 렌더, 기간 내 목표·기록·팀 0건일 때 토스트 노출 및 제작 횟수 미차감(10/10 유지) 확인, 기록 1건 추가 후에는 정상적으로 기존 서버 오류 롤백 경로(횟수 복원·안내문구)까지 무결성 유지, 콘솔 예외 없음(경고 로그 1건은 로컬 서버에 `/api` 엔드포인트가 없어 발생하는 예상된 405 응답).
+  - 기술안전핀: `index.html` 22,196줄 정확히 유지.
+  - 실제 Gemini MBTI/좌우명 생성 성공 경로는 배포 환경(GEMINI_API_KEY)에서만 검증 가능 — 로컬에서는 미검증.
+---
+### 2026-09-16 11:45: [FIX] #TASK-ES-120 진짜 근본 원인 발견 — state.user 죽은 필드로 전 사용자 게스트 오판
+- **배경**: PR #219(RLS 우회 RPC) 배포·라이브 확인(anon 키 REST 호출로 함수 실존 검증) 후에도 상민님이 실기기 2계정으로 재검증 시 "검색안돼" 재보고.
+- **원인 진단**: `js/team-invite-comm.js` 4곳(DM·프로필모달 동반자추가·검색·검색결과 동반자추가)이 전부 `!state.user || !state.user.id`로 게스트를 판정. 저장소 전체에서 `state.user`는 어디서도 대입되지 않는 죽은 필드(grep 0건) — 항상 undefined라 이 조건은 로그인 여부와 무관하게 **항상 true**(게스트로 오판). 즉 실제 로그인 사용자가 검색해도 RPC 호출 전에 게스트 안내만 뜨고 실제 검색은 한 번도 실행되지 않았다. 실제 로그인 판정은 이 코드베이스 전체에서 `state.profile.id` 기준(`defaultProfile`/`ensureUserRow`/`loadProfile`)이고, 게스트 ID는 `guest-`/`guest_`/`'guest'` 세 형태 모두 `guest`로 시작.
+- **수정/실행 내역**: 4곳 모두 `!state.profile || !state.profile.id || String(state.profile.id).indexOf('guest') === 0`로 교체(replace_all). branch(`fix/2026-09-16-isguest-state-user-bug`)→commit(5b533a7)→로컬 main 병합→origin에 새 브랜치로 push→PR #221 생성→essence-gate·Vercel 체크 통과 확인→병합(`merged:true` API 확인)→프로덕션 배포 폴링 확인(`team-invite-comm.js`에서 수정된 코드 실측, 3회 재시도 만에 CDN 반영 확인).
+- **발생한 문제 및 해결**: PR #221이 로컬 main 기준으로 열려, 그 사이 다른 세션이 로컬에만 커밋해둔 #TASK-ES-121 후속 커밋(`f1a6470`)까지 함께 실려 나감 — 반영 자체는 해당 세션의 이미 `npm test` 통과된 완성 커밋이라 위험 없음으로 판단하고 그대로 병합.
+- **검증 결과**: `npm test` 260/260 통과, essence-gate 훅 통과, 프로덕션 CDN에서 수정된 코드 실측 확인. **미검증(측정불가, 손 필요)**: 상민님 실기기 2계정 재검증 — 이번엔 진짜 RPC까지 도달할 것으로 보이나 최종 확인은 실기기에서만 가능.
+---
