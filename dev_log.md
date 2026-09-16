@@ -4012,3 +4012,32 @@
   - Headless Chrome 브라우저 CDP E2E 검증: 목표 상세 진입 시 `🚀 페이스 도달예정: 9월 23일 (D-7)` 뱃지 동적 렌더링 확인 (`stage3_goal_predicted_date.png` 실측 확보).
   - `npm test`: 스모크 271개 전수 통과 (0 failures), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
 ---
+
+## [2026-09-16 17:00] #TASK-ES-133 소통 탭 3대 핵심 상호작용(피드 댓글·새 팀 전역 공유·마니또) 실 서버 DB 완전 배선
+- **배경 및 의도**:
+  - 상민님의 직접 지시("한번더 압수수색해. 이번엔 아워골 전체 버튼, 기능, 유저간 상호작용을 중점으로." ➔ 786개 버튼 전수 감찰 보고 ➔ 옵션 1번 "P0 3대 핵심 상호작용 서버 DB 완전 배선" 승인).
+  - 로컬스토리지에만 머물러 타인과 소통이 단절되던 소통 탭의 3대 핵심 루프(피드 댓글, 새 팀 개설, 마니또 익명 응원)를 원격 Supabase DB 및 실시간 채널에 100% 완전 배선.
+  - 헌법 제4조 제1항 제7호 및 제19조에 의거하여, 가짜 봇이나 인위적 시뮬레이션 답글을 배제하고 실사용자 간 상호작용을 실서버 원장에 영구 보존하며, 콜드스타트 AI 동반자는 [🤖 AI 동반자]로 투명하게 공지.
+- **수행 내역**:
+  1. `index.html` (피드 댓글 Supabase team_pings 서버 실시간 동기화 & 삭제 연동):
+     - `handleUserCommentSubmit(postId, text)`: 로컬 낙관적 등록과 동시에 Supabase `team_pings` 테이블에 `insert({ id, group_id: 'feed', sender_id: state.profile.id, target_type: 'feed_comment', target_id: postId, ping_type: 'comment', message: trimmed })` 영구 저장.
+     - `loadServerFeedComments(postId)`: 피드 댓글 열람 시 서버에 등록된 다른 실사용자의 댓글을 비동기 페칭하여 실시간 병합 및 렌더링.
+     - `setupFeedPostsRealtime()`: `team_pings` INSERT 실시간 구독을 연결하여 다른 사용자가 댓글을 남기면 새로고침 없이 즉시 화면에 표출.
+     - 댓글 삭제 시 Supabase `team_pings`에서도 `delete().eq('id', cid)`로 동기 삭제.
+     - 타인 실사용자 게시물에는 가짜 AI 답글 시뮬레이션을 원천 배제하고 순수 유저 간 상호작용으로 전환.
+  2. `index.html` (새 팀 만들기 전역 공유 및 customGroups/team_pings 영구 보존):
+     - `promptNewGroup`: 팀 개설 시 `state.profile.settings.customGroups`에 영구 보존하여 새로고침 시에도 팀이 유실되지 않는 자가치유 안전망 탑재.
+     - 동시에 Supabase `team_pings`에 `insert({ id: gid, group_id: 'shared_groups', target_type: 'team_group', ping_type: 'group_creation', message: JSON.stringify(newGroup) })`로 마스터 레코드 등록.
+     - `loadSharedGroups()`: 전역 공유 팀 로더를 구축하여 전 세계 모든 유저가 개설한 팀을 실시간 페칭 후 `MOCK_GROUPS`에 무손실 병합 표출.
+     - `setupFeedPostsRealtime` 내 팀 개설 실시간 채널 연동으로 타 유저가 팀을 만들면 내 화면의 팀 목록에도 즉각 실시간 노출.
+  3. `index.html` (마니또 실 유저 풀 우선 매칭 및 실시간 익명 응원 연동):
+     - 마니또 시작(`mnJoin`) 시 Supabase `team_pings`에 `group_id: 'manito_pool'`, `target_type: 'manito_member'`로 실제 참여 풀에 등록.
+     - `loadServerManitoData()`: 실제 가입자 풀(`REAL_MANITO_PARTNERS_CACHE`) 및 나에게 도착한 실시간 익명 응원 편지함(`REAL_MANITO_INBOX_CACHE`) 비동기 쿼리.
+     - `manitoPartners()`: 실제 가입 유저를 최우선 1순위로 매칭하고 `[✨ 실 유저]` 뱃지 표기. 부족한 슬롯은 콜드스타트 안전망으로 채우되 헌법 제4조 1항 7호에 따라 `[🤖 AI 동반자]` 뱃지 투명 표기.
+     - 응원 스탬프 발송 시 Supabase `team_pings`에 `group_id: 'manito'`, `target_type: 'manito_cheer'`로 상대방에게 실제 익명 응원 전송.
+     - `manitoInbox()`: 나에게 도착한 실제 응원 메시지를 실시간 렌더링.
+  4. `scripts/smoke-test.js`:
+     - `#TASK-ES-133` 컴플라이언스 테스트 신설 (피드 댓글 서버 insert/delete, 팀 전역 공유 및 customGroups 보존, 마니또 실 유저 풀/실시간 응원 전송/AI 투명 표기 전수 검증).
+- **검증 결과**:
+  - `npm test`: 272개 테스트 ALL PASS (0 failures), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
+---
