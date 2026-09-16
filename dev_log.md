@@ -3867,3 +3867,26 @@
   - `scratch/verify_stage3_cdp_es126.js`: Headless Chrome 브라우저 E2E 실측 (탑바 1클릭 모달 오픈, 6개 세그먼트 버튼 확인, [✍️ 기록] 탭 클릭 즉시 동적 전환) 100% ALL PASS 및 실측 스크린샷(`scratch/modal_guide_hub.png`) 확보.
 ---
 
+
+### 2026-09-16: [#TASK-ES-125] 일정탭 새 일정 추가 화면 '참고자료 첨부' 버튼 먹통 해결 및 입력값 무손실 보존
+- **배경 및 지시**:
+  - 상민님 직접 지시: *"아워골 일정탭의 새 일정 추가 화면에서 참고자료 첨부 버튼이 작동 안함. 원인파악 및 해결책 표로 알기쉽게 보고해."* ➔ 문제해결 8원칙 심층 분석 및 상민님 승인("진행").
+  - 원인 1: `index.html` 전체가 즉시 실행 함수(IIFE)로 닫혀 있어 `openAddAttachmentModal`, `openAttachmentViewer`, `renderAttachmentChipsHtml` 3대 함수가 `window` 객체에 바인딩되지 않아 외부 분리 모듈 `js/calendar-attachment.js`에서 호출 불가(Dead Click / Silent Fail).
+  - 원인 2: 첨부 완료/취소 후 복귀 콜백에서 `js/calendar-attachment.js`가 `ctx` 인자를 누락하여 사용자가 타이핑 중이던 일정 제목·날짜·메모가 초기화될 위험(Zero Data Loss 위반).
+  - 원인 3: `openAddAttachmentModal` 내부 닫기 시 무조건 비동기 `closeModal()`을 호출하여 부모 모달로 복귀할 때 `popstate` 충돌로 모달이 강제 닫히는 레이스 컨디션 위험.
+- **수행 내역**:
+  1. `index.html`:
+     - 3대 핵심 참고자료 함수(`openAddAttachmentModal`, `openAttachmentViewer`, `renderAttachmentChipsHtml`)를 `window` 전역 객체에 명시적 바인딩.
+     - `openAddAttachmentModal` 취소 및 저장 시 `closeModal(true)`(skipHistoryBack = true)를 적용하여 부모 모달 복귀 시 `popstate` 충돌 원천 차단.
+     - `calEditSaveBtn` 내 불필요한 후속 `closeModal()` 제거로 저장 후 일자 허브 모달 정상 유지.
+     - 스크립트 로드 태그 `calendar-attachment.js?v=20260916-es125`로 캐시버스팅 갱신.
+  2. `js/calendar-attachment.js`:
+     - `wireEditModalAttachments` 내 저장/취소 콜백 및 칩 삭제 콜백에 `ctx` 인자 전달(`onAttachmentsChanged(..., ctx)`)로 사용자가 미리 입력해둔 일정 제목·시간·메모 100% 무손실 보존(Zero Data Loss 달성).
+  3. `sw.js`:
+     - `CACHE_NAME = 'ourgoal-shell-v20260916-es125'`로 갱신하여 PWA 앱 셸 즉시 캐시 무효화.
+  4. `scripts/test-calendar-attachments.js` & `scripts/smoke-test.js`:
+     - 전역 바인딩 검증, `wireEditModalAttachments` 클릭 및 `ctx` 무손실 보존 단위 테스트 추가.
+- **검증 결과**:
+  - `npm test`: 스모크 267개 전수 통과 (0개 실패), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
+  - `scratch/verify_stage3_cdp_es125.js`: Headless Chrome 브라우저 E2E 실측 (일정 탭 이동 ➜ 새 일정 추가 모달 ➜ 제목/메모 입력 ➜ [+ 참고자료 첨부] 클릭 ➜ 유튜브 첨부 ➜ 부모 모달 복귀 시 입력값 100% 보존 확인 ➜ 칩 표출 ➜ 최종 저장 ➜ 캘린더 화면 반영) 100% ALL PASS 및 실측 스크린샷 4종 확보.
+---
