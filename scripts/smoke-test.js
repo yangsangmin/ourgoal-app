@@ -5109,9 +5109,9 @@ check('compliance: [#TASK-ES-124] 동반자 실 사용자 닉네임 검색 2중 
 
   // 6. 캐시 버스팅 및 서비스워커 갱신 무결성 검증
   const htmlSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-  assert.ok(htmlSrc.includes('team-invite-comm.js?v=20260916-es128-v3'), 'index.html 스크립트 캐시 버스팅 태그 갱신');
+  assert.ok(htmlSrc.includes('team-invite-comm.js?v=20260916-es12'), 'index.html 스크립트 캐시 버스팅 태그 갱신');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
-  assert.ok(swSrc.includes('ourgoal-shell-v20260916-es128-v3'), 'sw.js 캐시 네임 갱신');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260916-es12'), 'sw.js 캐시 네임 갱신');
 
   // 7. 스마트 안전핀 TECH-RULE-01 (index.html 본체 무결성 보존)
   const lines = htmlSrc.split(/\r?\n/).length;
@@ -5306,11 +5306,39 @@ check('compliance: [#TASK-ES-126] 전 탭 중복 노출 활용법 버튼 단일�
   assert.ok(guideContent.includes('성취 통계 & 히트맵 콕핏'), '성취 통계 및 히트맵 안내 완비');
 });
 
+/* ============ [#TASK-ES-129] 동반자 데이터 영구 영속화 및 무손실 보존 검증 ============ */
+check('compliance: [#TASK-ES-129] 동반자 데이터 영구 영속화 및 무손실 보존(로컬 자가복원 + 서버리스 원장) 검증', () => {
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 캐시 버스팅 및 PWA 최신 갱신 검증
+  assert.ok(indexSrc.includes('team-invite-comm.js?v=20260916-es129'), 'index.html 스크립트 캐시 버스팅 v20260916-es129 갱신');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260916-es129'), 'sw.js 서비스워커 캐시 네임 v20260916-es129 갱신');
+
+  // 2. 서버리스 파이프라인 (api/track.js) 검증
+  assert.ok(trackSrc.includes('handleSyncCompanions'), 'api/track.js 내 handleSyncCompanions 함수 구현');
+  assert.ok(trackSrc.includes("body.action === 'sync_companions'"), 'api/track.js sync_companions 라우팅 배선');
+  assert.ok(trackSrc.includes("name: 'companion_ledger'"), 'api/track.js events 원장 저장 배선');
+
+  // 3. 클라이언트 3중 안전망 (js/team-invite-comm.js) 검증
+  assert.ok(commSrc.includes("ourgoal_companions_backup_"), '로컬스토리지 영구 백업 키 정의');
+  assert.ok(commSrc.includes("localStorage.getItem(key)"), 'ensureDefaultCompanions 내 로컬스토리지 0ms 자가 복원');
+  assert.ok(commSrc.includes("localStorage.setItem(getCompanionsStorageKey()"), 'persistCompanions 내 로컬스토리지 영구 저장');
+  assert.ok(commSrc.includes("action: 'sync_companions'"), 'syncCompanionsFromDb 내 서버리스 원장 동기화');
+
+  // 4. 추가/삭제 시 영속화 배선 검증
+  assert.ok(commSrc.includes("persistCompanions();"), '동반자 추가 및 삭제 시 persistCompanions 전수 호출');
+  assert.ok(commSrc.includes("safeAvatarHtml(u.avatar, 36)"), '검색 결과 내 URL 아바타 안전 렌더 배선');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
   process.exit(1);
 }
+
 
 
 

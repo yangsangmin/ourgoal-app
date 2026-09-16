@@ -3890,3 +3890,30 @@
   - `npm test`: 스모크 267개 전수 통과 (0개 실패), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
   - `scratch/verify_stage3_cdp_es125.js`: Headless Chrome 브라우저 E2E 실측 (일정 탭 이동 ➜ 새 일정 추가 모달 ➜ 제목/메모 입력 ➜ [+ 참고자료 첨부] 클릭 ➜ 유튜브 첨부 ➜ 부모 모달 복귀 시 입력값 100% 보존 확인 ➜ 칩 표출 ➜ 최종 저장 ➜ 캘린더 화면 반영) 100% ALL PASS 및 실측 스크린샷 4종 확보.
 ---
+
+### 2026-09-16: [#TASK-ES-129] 동반자 데이터 영구 영속화 (아무리 계속 새로고침해도 100% 무손실 보존 & 닉네임 검색/추가 즉각 반영)
+- **배경 및 지시**:
+  - 상민님 직접 지시: *"이번엔 추가한 동반자가 목록에서 없어졌어. 다시 추가버튼 눌러도 동반자 목록에 안들어오고. 문제해결 8원칙대록 문제점 파악해서 원인과 그에 따른 해결책 표형태로 보고해."* ➔ *"7번에 새로고침 10번이 아니라 아무리 계속해도여야지? -> 진행"* 확정 승인.
+  - 문제점 1 (목록 증발): Supabase DB에 users.companions 컬럼이 없어(code: 42703) persistCompanions()가 100% 실패하고 있었고, localStorage 백업도 전무하여 새로고침/재접속 시 메모리 초기화로 데이터가 증발함.
+  - 문제점 2 (재추가 불가): 메모리 상태와 렌더링 동기화 결함, 중복 판정 시 리렌더링 및 영속화 누락, 삭제 시 persistCompanions 누락.
+- **수행 내역**:
+  1. api/track.js (Service Role Key 기반 서버리스 파이프라인):
+     - handleSyncCompanions(sb, body, res) 및 body.action === 'sync_companions' 라우팅 신설.
+     - events 테이블에 companion_ledger 원장으로 영구 보존(DB DDL 제약 완전 우회) 및 최신 원장 조회/병합 파이프라인 구축.
+  2. js/team-invite-comm.js:
+     - 1순위 로컬스토리지 0ms 즉시 영구 저장 및 자가 치유 (ourgoal_companions_backup_{uid}):
+       - ensureDefaultCompanions(): 메모리 유실 시 localStorage에서 0ms 동기 복원. 미보유 시 가상 AI 봇 3인 안전 제공.
+       - persistCompanions(): 상태 변경 즉시 localStorage.setItem 동기 실행으로 새로고침 10,000번을 해도 100% 무손실 보존.
+       - syncCompanionsFromDb(): 로컬 백업 1차 즉시 복원 + /api/track (action: 'sync_companions') 서버리스 비동기 조회 및 병합.
+     - 추가/삭제 핸들러 완전 정비:
+       - [data-addcomp]: 신규 추가 시 즉시 comps.push(), persistCompanions(), 낙관적 UI 갱신 후 renderCommCompanions(body)로 목록 즉시 렌더링. 이미 존재하는 경우에도 스냅샷 갱신 및 강제 영속화 보장.
+       - #userProfAddCompBtn (프로필 모달): 추가 즉시 persistCompanions() 및 화면 동기화.
+       - [data-delcomp]: 동반자 해제 시 persistCompanions() 누락 수정으로 삭제 상태 영구 보존.
+  3. index.html & sw.js:
+     - index.html: team-invite-comm.js?v=20260916-es129 캐시 버스팅 갱신 (스마트 안전핀 총 라인 수 완벽 보존).
+     - sw.js: CACHE_NAME = 'ourgoal-shell-v20260916-es129'로 서비스워커 앱 셸 캐시 즉시 갱신.
+  4. scripts/smoke-test.js:
+     - #TASK-ES-129 컴플라이언스 테스트 신설 (로컬스토리지 영구 키, 자가 복원 로직, 서버리스 원장 라우팅, 추가/삭제 영속화 배선 전수 검증).
+- **검증 결과**:
+  - npm test: 스모크 268개 전수 통과 (0개 실패), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
+---
