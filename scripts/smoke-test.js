@@ -5409,6 +5409,32 @@ check('compliance: [#TASK-ES-127-IMPL] 활용법 감찰 적발 미구현 시스�
   assert.ok(withdrawSrc.includes("account_status: 'active'"), '30일 이내 탈퇴 철회 및 계정 복구(restore) 분기 구현');
 });
 
+/* ============ [#TASK-ES-133] 소통 탭 3대 핵심 상호작용(댓글·새팀·마니또) 실 서버 DB 완전 배선 검증 ============ */
+check('compliance: [#TASK-ES-133] 소통 탭 3대 핵심 상호작용(피드 댓글 서버 실시간 동기화 + 새 팀 전역 공유 영구 보존 + 마니또 실 유저 익명 응원 연동) 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 피드 댓글 Supabase team_pings 서버 실시간 동기화 및 삭제 배선
+  assert.ok(indexSrc.includes("loadServerFeedComments"), 'loadServerFeedComments 비동기 서버 댓글 로더 탑재');
+  assert.ok(indexSrc.includes("target_type: 'feed_comment'"), '피드 댓글 team_pings target_type feed_comment 지정');
+  assert.ok(indexSrc.includes("sb.from('team_pings').insert(cmtRow)"), '댓글 등록 시 Supabase team_pings 실시간 insert 배선');
+  assert.ok(indexSrc.includes("sb.from('team_pings').delete().eq('id', cid)"), '댓글 삭제 시 Supabase team_pings 동기 삭제 배선');
+
+  // 2. 새 팀 만들기(promptNewGroup) 전역 공유 및 영구 보존
+  assert.ok(indexSrc.includes("loadSharedGroups"), 'loadSharedGroups 전역 공유 팀 로더 탑재');
+  assert.ok(indexSrc.includes("state.profile.settings.customGroups"), '개설 팀 customGroups 로컬 스토리지 영구 보존 안전망');
+  assert.ok(indexSrc.includes("target_type: 'team_group'"), '팀 개설 team_pings target_type team_group 등록');
+  assert.ok(indexSrc.includes("ping_type: 'group_creation'"), '팀 개설 team_pings ping_type group_creation 배선');
+
+  // 3. 마니또(My Manito) 실 유저 풀 연동 및 익명 응원 실시간 수신함
+  assert.ok(indexSrc.includes("loadServerManitoData"), 'loadServerManitoData 서버 마니또 풀 및 수신함 로더 탑재');
+  assert.ok(indexSrc.includes("REAL_MANITO_PARTNERS_CACHE"), '실 가입 유저 풀 우선 매칭 캐시 탑재');
+  assert.ok(indexSrc.includes("REAL_MANITO_INBOX_CACHE"), '실제 수신 응원함 연동 캐시 탑재');
+  assert.ok(indexSrc.includes("[🤖 AI 동반자]"), '헌법 제4조 1항 7호 의거 콜드스타트 AI 동반자 투명 뱃지 표기');
+  assert.ok(indexSrc.includes("[✨ 실 유저]"), '실제 가입 유저 매칭 시 실 유저 명확 구분 뱃지 표기');
+  assert.ok(indexSrc.includes("target_type: 'manito_cheer'"), '마니또 스탬프 응원 team_pings target_type manito_cheer 실시간 전송');
+  assert.ok(indexSrc.includes("target_type: 'manito_member'"), '마니또 시작 시 team_pings manito_pool 회원 등록 배선');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
