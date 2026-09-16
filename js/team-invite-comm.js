@@ -944,6 +944,35 @@
     return state.profile.companions;
   }
 
+  var _companionsDbSynced = false;
+  // 동반자 목록을 users.companions(jsonb, 본인 행만 select/update 가능한 기존 RLS 재사용)에서
+  // 1회 불러와 병합한다. index.html의 loadProfile/saveProfile은 이 필드를 다루지 않으므로
+  // (index.html 22,196줄 불변 제약과 무관하게 이 모듈 안에서 독립적으로 영속화한다) 여기서 직접 처리한다.
+  function syncCompanionsFromDb(body){
+    var state = global.state || {};
+    if(_companionsDbSynced || !global.sb || !state.profile || !state.profile.id) return;
+    if(String(state.profile.id).indexOf('guest') === 0) return;
+    _companionsDbSynced = true;
+    global.sb.from('users').select('companions').eq('id', state.profile.id).maybeSingle().then(function(res){
+      if(res && res.data && Array.isArray(res.data.companions) && res.data.companions.length){
+        var existing = ensureDefaultCompanions();
+        res.data.companions.forEach(function(c){
+          if(c && c.id && !existing.some(function(x){ return x.id === c.id; })) existing.push(c);
+        });
+        renderCommCompanions(body);
+      }
+    }).catch(function(err){ console.warn('[동반자] 목록 불러오기 오류:', err); });
+  }
+
+  function persistCompanions(){
+    var state = global.state || {};
+    if(!global.sb || !state.profile || !state.profile.id) return;
+    if(String(state.profile.id).indexOf('guest') === 0) return;
+    global.sb.from('users').update({ companions: state.profile.companions || [] }).eq('id', state.profile.id).then(function(res){
+      if(res && res.error) console.warn('[동반자] 저장 오류:', res.error);
+    }).catch(function(err){ console.warn('[동반자] 저장 오류:', err); });
+  }
+
   function openUserProfileModal(user){
     if(!user) return;
     var state = global.state || {};
@@ -1032,6 +1061,7 @@
                 createdAt: new Date().toISOString()
               });
               if(global.saveProfile) await global.saveProfile();
+              persistCompanions();
               if(global.toast) global.toast((user.nickname || user.name) + '님을 동반자로 추가했어요! 🎉');
               if(global.closeModal) global.closeModal();
               if(state.activeTab === 'comm' && state.commSubTab === 'companion'){
@@ -1058,6 +1088,7 @@
   function renderCommCompanions(body){
     var state = global.state || {};
     var companions = ensureDefaultCompanions();
+    syncCompanionsFromDb(body);
     var searchKeyword = (state._companionSearchKeyword || '').trim();
     var searchResults = state._companionSearchResults || null;
     var isSearching = state._companionIsSearching === true;
@@ -1285,6 +1316,7 @@
             createdAt: new Date().toISOString()
           });
           if(global.saveProfile) await global.saveProfile();
+          persistCompanions();
           if(global.toast) global.toast(target.nickname + '님을 동반자로 추가했어요! 🎉');
           renderCommCompanions(body);
         }
