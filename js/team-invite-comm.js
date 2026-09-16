@@ -10,7 +10,14 @@
   'use strict';
 
   var _ctx = {};
-  function getAppToast(){ return _ctx.toast || global.toast; }
+  function showToast(msg){
+    try {
+      if(_ctx && typeof _ctx.toast === 'function') return _ctx.toast(msg);
+      if(typeof global.toast === 'function') return showToast(msg);
+      if(typeof window !== 'undefined' && typeof window.showToast === 'function') return window.showToast(msg);
+    } catch(e){}
+  }
+  function getAppToast(){ return showToast; }
   function getAppOpenModal(){ return _ctx.openModal || global.openModal; }
   function getAppCloseModal(){ return _ctx.closeModal || global.closeModal; }
   function getAppSaveProfile(){ return _ctx.saveProfile || global.saveProfile; }
@@ -78,16 +85,16 @@
                 text: inviteMsg,
                 link: { mobileWebUrl: inviteUrl, webUrl: inviteUrl }
               });
-              if(global.toast) global.toast('카카오톡 공유창이 열렸어요');
+              showToast('카카오톡 공유창이 열렸어요');
               return;
             } catch(e){}
           }
           if(navigator.clipboard && navigator.clipboard.writeText){
             navigator.clipboard.writeText(inviteMsg).then(function(){
-              if(global.toast) global.toast('초대 메시지가 복사되었어요! 카카오톡에 붙여넣어주세요.');
+              showToast('초대 메시지가 복사되었어요! 카카오톡에 붙여넣어주세요.');
             });
           } else {
-            if(global.toast) global.toast('초대 링크: ' + inviteUrl);
+            showToast('초대 링크: ' + inviteUrl);
           }
         });
 
@@ -101,10 +108,10 @@
         sheet.querySelector('#btnInviteCopy').addEventListener('click', function(){
           if(navigator.clipboard && navigator.clipboard.writeText){
             navigator.clipboard.writeText(inviteUrl).then(function(){
-              if(global.toast) global.toast('초대 링크를 복사했어요! 원하는 곳에 붙여넣으세요.');
+              showToast('초대 링크를 복사했어요! 원하는 곳에 붙여넣으세요.');
             });
           } else {
-            if(global.toast) global.toast('초대 링크: ' + inviteUrl);
+            showToast('초대 링크: ' + inviteUrl);
           }
         });
       }
@@ -199,7 +206,7 @@
         var inp = sheet.querySelector('#teamChatInput');
         var text = (inp && inp.value.trim()) || '';
         if(!text){
-          if(global.toast) global.toast('메시지를 입력해주세요');
+          showToast('메시지를 입력해주세요');
           return;
         }
         var nowStr = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
@@ -265,7 +272,7 @@
       });
 
       if(global.saveProfile) await global.saveProfile();
-      if(global.toast) global.toast('💬 팀장님의 따뜻한 DM 답장이 도착했어요!');
+      showToast('💬 팀장님의 따뜻한 DM 답장이 도착했어요!');
       if(global.renderTeamGoalsScreen && global.state && global.state.activeTab === 'goals') {
         global.renderTeamGoalsScreen();
       }
@@ -344,7 +351,7 @@
                 text: '[아워골 목표 템플릿] \'' + t.title + '\' 4단계 로드맵으로 함께 완주해요! 🎯'
               });
             } else {
-              if(global.toast) global.toast('공유 기능 준비 중');
+              showToast('공유 기능 준비 중');
             }
           };
         }
@@ -521,7 +528,7 @@
     }
     if(global.saveProfile) await global.saveProfile();
 
-    if(global.toast) global.toast('피드에 내 실천 카드가 성공적으로 게시되었어요!');
+    showToast('피드에 내 실천 카드가 성공적으로 게시되었어요!');
     if(global.triggerHaptic) global.triggerHaptic(15);
     if(global.burstConfetti) global.burstConfetti(window.innerWidth / 2, window.innerHeight / 3, 16);
 
@@ -547,7 +554,7 @@
             text: text,
             files: [file]
           });
-          if(global.toast) global.toast('성공적으로 공유했어요!');
+          showToast('성공적으로 공유했어요!');
           return;
         }
       } catch(e){}
@@ -556,17 +563,17 @@
     if(navigator.share){
       try {
         await navigator.share({ title: title, text: text, url: shareUrl });
-        if(global.toast) global.toast('성공적으로 공유했어요!');
+        showToast('성공적으로 공유했어요!');
         return;
       } catch(e){}
     }
 
     if(navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(text).then(function(){
-        if(global.toast) global.toast('공유 링크와 텍스트가 복사되었어요! 원하는 SNS에 공유해보세요.');
+        showToast('공유 링크와 텍스트가 복사되었어요! 원하는 SNS에 공유해보세요.');
       });
     } else {
-      if(global.toast) global.toast('아워골 링크: ' + shareUrl);
+      showToast('아워골 링크: ' + shareUrl);
     }
   }
 
@@ -577,7 +584,7 @@
     document.body.appendChild(a);
     a.click();
     a.remove();
-    if(global.toast) global.toast('1:1 소통 카드를 저장했어요');
+    showToast('1:1 소통 카드를 저장했어요');
     if(global.triggerHaptic) global.triggerHaptic(10);
   }
 
@@ -817,7 +824,7 @@
           msgsEl.scrollTop = msgsEl.scrollHeight;
         }
 
-        if(global.toast) global.toast('메시지를 전송했습니다! 💬');
+        showToast('메시지를 전송했습니다! 💬');
 
         // 2. 헌법 제19조 의거 Supabase 서버 DB 원장 영속화
         if(global.sb){
@@ -1030,7 +1037,7 @@
     }
 
     // 3. 만약 로컬스토리지에도 저장 이력이 전혀 없다면: 초기 콜드스타트 가상 AI 동반자 3인 안전 제공
-    if(!state.profile.companions || !Array.isArray(state.profile.companions)){
+    if(!state.profile.companions || !Array.isArray(state.profile.companions) || state.profile.companions.length === 0){
       state.profile.companions = [
         { id: 'comp_minji', nickname: '새벽러너_민지', name: '새벽러너_민지', avatar: '🏃‍♀️', streak: 42, theme: '마라톤', intro: '매일 아침 6시 5km 달리기 함께해요!', isAiBot: true, createdAt: new Date().toISOString() },
         { id: 'comp_dohyun', nickname: '코드장인_도현', name: '코드장인_도현', avatar: '💻', streak: 128, theme: '코딩', intro: '매일 1커밋과 알고리즘 1문제 풀기', isAiBot: true, createdAt: new Date().toISOString() },
@@ -1140,9 +1147,18 @@
       } catch(e){}
     }
 
-    // 3순위: Supabase users.companions 컬럼 업데이트 시도
+    // 3순위: Supabase users.companions 컬럼 업데이트 시도 (PostgrestFilterBuilder 호환)
     if(global.sb){
-      global.sb.from('users').update({ companions: list }).eq('id', uid).catch(function(){});
+      try {
+        var queryBuilder = global.sb.from('users').update({ companions: list }).eq('id', uid);
+        if(queryBuilder && typeof queryBuilder.then === 'function'){
+          queryBuilder.then(function(){}, function(err){
+            console.warn('[동반자] Supabase 컬럼 업데이트 건너뜀:', err);
+          });
+        }
+      } catch(sbErr){
+        console.warn('[동반자] Supabase 컬럼 업데이트 예외(무시):', sbErr);
+      }
     }
   }
 
@@ -1225,7 +1241,7 @@
             if(!comps.some(function(x){ return String(x.id || '').trim().toLowerCase() === targetId; })){
               addCompBtn.disabled = true;
               addCompBtn.textContent = '✓ 추가됨';
-              comps.push({
+              comps.unshift({
                 id: user.id,
                 nickname: user.nickname || user.name,
                 name: user.name,
@@ -1238,19 +1254,16 @@
                 isAiBot: isAiBot,
                 createdAt: new Date().toISOString()
               });
-              // saveProfile()이 (companions와 무관한 다른 이유로) 예외를 던지면
-              // 이 async 핸들러 전체가 조용히 중단되어 "클릭 모션만 생기고 아무 반응 없음"
-              // 처럼 보인다. companions 저장은 persistCompanions()가 독립적으로 책임지므로
-              // saveProfile() 실패가 추가 자체를 막지 않도록 여기서 격리한다.
+              // saveProfile() 실패가 추가 자체를 막지 않도록 격리
               try { if(global.saveProfile) await global.saveProfile(); } catch(err){ console.warn('[동반자] saveProfile 오류(무시하고 계속):', err); }
-              persistCompanions();
-              if(global.toast) global.toast((user.nickname || user.name) + '님을 동반자로 추가했어요! 🎉');
+              try { persistCompanions(); } catch(pErr){ console.warn('[동반자] persistCompanions 오류(무시):', pErr); }
+              showToast((user.nickname || user.name) + '님을 동반자로 추가했어요! 🎉');
               if(global.closeModal) global.closeModal();
               if(state.activeTab === 'comm' && state.commSubTab === 'companion'){
                 if(global.renderCommScreen) global.renderCommScreen();
               }
             } else {
-              if(global.toast) global.toast('이미 등록된 동반자입니다.');
+              showToast('이미 등록된 동반자입니다.');
               if(global.closeModal) global.closeModal();
             }
           };
@@ -1271,22 +1284,29 @@
   }
 
   function renderCommCompanions(body){
+    if(!body) body = document.getElementById('commSubBody');
+    if(!body) return;
+
     var state = global.state || {};
     var companions = ensureDefaultCompanions();
     syncCompanionsFromDb(body);
 
     // [자가 치유] 기존 companions 내 가상 유저 3인 AI 플래그 자동 보정 및 영속화
-    var healed = false;
-    companions.forEach(function(c){
-      if(isKnownAiCompanion(c)){
-        if(!c.isAiBot){
-          c.isAiBot = true;
-          healed = true;
+    try {
+      var healed = false;
+      companions.forEach(function(c){
+        if(isKnownAiCompanion(c)){
+          if(!c.isAiBot){
+            c.isAiBot = true;
+            healed = true;
+          }
         }
+      });
+      if(healed){
+        persistCompanions();
       }
-    });
-    if(healed){
-      persistCompanions();
+    } catch(healErr){
+      console.warn('[동반자] 자가 치유 동기화 예외(렌더링 유지):', healErr);
     }
 
     var searchKeyword = (state._companionSearchKeyword || '').trim();
@@ -1549,7 +1569,7 @@
         }
         if(!target){
           console.warn('[동반자] 추가 대상 회원을 찾을 수 없음:', uid);
-          if(global.toast) global.toast('회원 정보를 확인하는 중입니다. 다시 시도해주세요.');
+          showToast('회원 정보를 확인하는 중입니다. 다시 시도해주세요.');
           return;
         }
 
@@ -1579,16 +1599,20 @@
             isAiBot: false,
             createdAt: new Date().toISOString()
           };
-          comps.push(newComp);
+          comps.unshift(newComp);
 
           try {
             if(global.saveProfile) await global.saveProfile();
           } catch(err){
             console.warn('[동반자] saveProfile 오류(무시하고 계속):', err);
           }
-          persistCompanions();
+          try {
+            persistCompanions();
+          } catch(pErr){
+            console.warn('[동반자] persistCompanions 오류(무시):', pErr);
+          }
 
-          if(global.toast) global.toast((target.nickname || target.name) + '님을 동반자로 추가했어요! 🎉');
+          showToast((target.nickname || target.name) + '님을 동반자로 추가했어요! 🎉');
           renderCommCompanions(body);
         } else {
           var exIdx = comps.findIndex(function(x){ return String(x.id || '').trim().toLowerCase() === String(target.id || '').trim().toLowerCase(); });
@@ -1597,8 +1621,12 @@
             comps[exIdx].avatar = target.avatar || comps[exIdx].avatar;
             comps[exIdx].intro = target.intro || comps[exIdx].intro;
           }
-          persistCompanions();
-          if(global.toast) global.toast((target.nickname || target.name) + '님은 이미 등록된 동반자입니다.');
+          try {
+            persistCompanions();
+          } catch(pErr){
+            console.warn('[동반자] persistCompanions 오류(무시):', pErr);
+          }
+          showToast((target.nickname || target.name) + '님은 이미 등록된 동반자입니다.');
           renderCommCompanions(body);
         }
       });
@@ -1623,8 +1651,8 @@
         if(!confirm(name + '님과의 동반자 관계를 해제하시겠습니까?')) return;
         state.profile.companions = companions.filter(function(x){ return String(x.id || '').trim().toLowerCase() !== String(uid || '').trim().toLowerCase(); });
         try { if(global.saveProfile) await global.saveProfile(); } catch(e){}
-        persistCompanions();
-        if(global.toast) global.toast('동반자 관계를 해제했습니다');
+        try { persistCompanions(); } catch(pErr){ console.warn('[동반자] persistCompanions 오류(무시):', pErr); }
+        showToast('동반자 관계를 해제했습니다');
         renderCommCompanions(body);
       });
     });
