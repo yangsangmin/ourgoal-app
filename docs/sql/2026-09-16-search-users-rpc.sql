@@ -18,8 +18,7 @@ returns table (
   id uuid,
   nickname text,
   avatar_url text,
-  bio text,
-  interests text[]
+  bio text
 )
 language sql
 stable
@@ -29,8 +28,7 @@ as $fn$
   select u.id,
          coalesce(u.display_name, u.username) as nickname,
          u.avatar_url,
-         u.bio,
-         u.interests
+         u.bio
   from public.users u
   where auth.uid() is not null
     and u.id <> auth.uid()                       -- 검색자 본인 제외: RLS가 아니라 필터로 막아야 의미가 있다

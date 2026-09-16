@@ -31,7 +31,9 @@
 
 ### 3-1. 세부 기능 요구사항
 - **FR-01**: 기존 `users` 테이블 RLS(본인 행만 select)는 변경하지 않는다 — 전 컬럼(bio·region 등) 노출을 막기 위함.
-- **FR-02**: 검색에 필요한 최소 필드(id, nickname, avatar_url, bio, interests)만 반환하는 `SECURITY DEFINER` RPC `search_users_by_nickname(p_query)`를 신설한다. 검색자 본인·`is_bot=true` 계정은 결과에서 제외한다. anon 실행 권한은 revoke, authenticated만 grant. (2026-09-16 1차 실행 시도에서 `escape '\'` 백슬래시 이스케이프 구문이 Supabase SQL Editor에서 42601 구문 오류를 유발해 제거 — `%`/`_`를 이스케이프하지 않는 단순 ilike로 단순화. 닉네임에 `%`나 `_`가 포함된 극히 드문 경우 결과가 약간 더 넓게 매칭될 수 있으나 기능·보안상 문제 없음.)
+- **FR-02**: 검색에 필요한 최소 필드(id, nickname, avatar_url, bio)만 반환하는 `SECURITY DEFINER` RPC `search_users_by_nickname(p_query)`를 신설한다. anon 실행 권한은 revoke, authenticated만 grant. 검색자 본인은 필터로 제외한다.
+  - (2026-09-16 1차 실행 시도) `escape '\'` 백슬래시 이스케이프 구문이 Supabase SQL Editor에서 42601 구문 오류를 유발 → 제거, `%`/`_`를 이스케이프하지 않는 단순 ilike로 단순화(닉네임에 `%`·`_`가 포함된 극히 드문 경우만 매칭 범위가 약간 넓어짐, 기능·보안상 문제 없음).
+  - (2026-09-16 2차 실행 시도) `u.is_bot` 컬럼이 실제 라이브 DB에는 없어 42703 오류 발생 → 이 저장소의 `docs/sql/2026-09-12-count-same-theme-checkins.sql` 등 여러 마이그레이션이 문서에만 있고 실제 실행되지 않았다는 뜻. `is_bot` 필터 및 반환 필드 중 타입을 확신할 수 없던 `interests`(text[] 가정, 실제 컬럼 타입 미검증)도 함께 제거해 확실히 존재가 검증된 컬럼(id/username/display_name/bio/avatar_url — index.html `ensureUserRow` 실사용 upsert로 확인)만 남김.
 - **FR-03**: 클라이언트는 `.from('users')` 직접 select 대신 위 RPC만 호출한다.
 - **FR-04**: 검색 실패를 "게스트(비로그인)", "쿼리 오류", "결과 없음" 3가지로 구분해서 사용자에게 보여준다(기존엔 전부 "찾지 못했어요"로 뭉뚱그려져 원인 진단 불가).
 
