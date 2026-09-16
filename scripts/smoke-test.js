@@ -4907,6 +4907,29 @@ check('compliance: [#TASK-ES-117] 아바타 생성 후 앱 업데이트·재로�
   assert.strictEqual(finalLines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
 });
 
+check('compliance: [#TASK-ES-118] 홈 상단 고정 바(Topbar) 활용법·홈구성 퀵 액션 영구 고정 및 모바일 반응형 2단 줄바꿈·PWA 무중단 캐시 갱신', () => {
+  // 1. 탑바 우측 퀵 액션 버튼 마크업 확인
+  assert.ok(html.includes('id="topHomeGuideBtn"'), '탑바 내 활용법 퀵 액션 버튼(#topHomeGuideBtn) 존재');
+  assert.ok(html.includes('id="topHomeLayoutBtn"'), '탑바 내 홈구성 퀵 액션 버튼(#topHomeLayoutBtn) 존재');
+  assert.ok(html.includes('id="topbarActions"'), '탑바 내 액션 컨테이너(#topbarActions) 존재');
+
+  // 2. 이벤트 핸들러 배선 확인
+  assert.ok(html.includes("topBtnCustomHome.addEventListener('click', openHomeCustomizer)"), '탑바 홈구성 버튼 핸들러 연동');
+  assert.ok(html.includes("topBtnGuide.addEventListener('click'"), '탑바 활용법 버튼 핸들러 연동');
+
+  // 3. 모바일 반응형 flex-wrap 및 safe-area CSS 확인
+  assert.ok(styleSrc.includes('.topbar-actions') && styleSrc.includes('.topbar-action-btn'), '탑바 퀵 액션 버튼 스타일 정의');
+  assert.ok(styleSrc.includes('.home-head-row') && styleSrc.includes('flex-wrap: wrap;'), '홈 헤더 행 flex-wrap 줄바꿈 안전 배선');
+
+  // 4. PWA sw.js 캐시 버전 갱신 확인
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260916-es118'), '서비스워커 최신 버전 캐시 네임 적용');
+
+  // 5. 헌법 제18조: index.html 22,196줄 불변 엄수
+  const finalLines = html.split(/\r?\n/).length;
+  assert.strictEqual(finalLines, 22196, '헌법 제18조: index.html 총 줄 수 22,196줄 불변 엄수');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
