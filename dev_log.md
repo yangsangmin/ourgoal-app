@@ -3602,4 +3602,35 @@
 - **수정/실행 내역**: 상민님이 병합 권한을 명시 허용 → `git checkout main` → `git merge --ff-only fix/2026-09-16-companion-search-rls`(충돌 0건, fast-forward) → 병합된 브랜치 삭제(`git branch -d`) → `docs/rules/TICKETS.md` `#TASK-ES-120` 상태를 "4단계(로컬 메인 병합) 완료, Supabase SQL 실행(5단계 전제) 대기"로 갱신.
 - **발생한 문제 및 해결**: 해당 없음(재검증 불필요, fast-forward라 충돌 자체가 발생할 수 없는 조건이었음).
 - **검증 결과**: 병합 후 `npm test` 재실행 — 스모크 259/259, 무결성 게이트 13/13, 클릭검사 ALL PASS 재확인. `grep -rn "^<<<<<<<"` 충돌 마커 잔존 0건(제8-B 규칙). **직관적 6단계 상태: [4단계: 로컬 메인 병합 상태] 도달**. 5단계(실서버 배포)·6단계(실운영 확인)는 `docs/sql/2026-09-16-search-users-rpc.sql`의 Supabase SQL Editor 실행(사용자 필요 작업) 이후에만 진입.
+### 2026-09-16 11:20: [#TASK-ES-121] 피드·모임·템플릿 외부 SNS 바이럴 공유 및 비회원 전파 게이트웨이 구축
+- **배경 및 지시**:
+  - 기존 아워골은 외부 SNS 공유가 모임 초대/나의성장카드 일부에 국한되어 있었고, 피드 실천 공유 부재, 템플릿 외부 공유 부재, 모임 초대 딥링크 파라미터 결함(join_team 소실), 도메인 하드코딩(ourgoal.kr), 크롤러용 동적 OG 메타태그 부재 등 전파 루프 곳곳에 단절이 존재했음.
+  - 상민님 직접 지시: *"아워골 피드, 모임, 템플릿 에서 외부SNS로 피드나, 모임이나, 템플릿의 내용을 공유하거나 모임에 참여하도록 공유하거나 지금 기능들을 앱을 같이 사용하거나 아니면 아워골 앱을 사용하지 않는사람에게도 전파하여 아워골을 같이 즐길 수 있게 시스템화 되어 있는지 전수조사하고 표형태로 보고해."* ➔ *"표에 나온 x표시들 모두 한꺼번에 해결 가능한가?"* ➔ *"진행해"*
+- **핵심 구현 및 배선 내역**:
+  1. `api/track.js` (Vercel 동적 OG 메타태그 크롤러 엔드포인트):
+     - Vercel Hobby 플랜 12개 서버리스 함수 한도 제약을 엄수하기 위해 기존 `api/track.js` 내에 `handleShareOg` 통합 탑재.
+     - `vercel.json`에 `{"source": "/share", "destination": "/api/track"}` rewrite 라우팅 배선.
+     - 4대 타입(template, feed, group, goal)별 맞춤형 `og:title`, `og:description`, `og:image`, `og:url` 동적 HTML 응답 생성 및 브라우저 즉시 딥링크 리다이렉트(`http-equiv="refresh"` + `window.location.replace`).
+  2. `js/viral-sharing.js` (신규 바이럴 공유 모듈):
+     - `shareContent(opts)`: Web Share API(모바일 네이티브 공유 시트) 우선 호출 ➔ 미지원/취소 시 클립보드 복사 자동 fallback 안내.
+     - 게스트 소프트 뷰어 3종 구현:
+       - `showFeedGuestViewerModal(feedId)`: 비회원도 피드 작성자의 실천 사진/캡션을 읽고 응원하며 즉시 웹 온보딩.
+       - `showTemplateGuestViewerModal(templateId)`: 4단계 마일스톤 상세 계획을 둘러보고 "이 템플릿으로 내 목표 시작" 즉시 연결.
+       - `showGoalCertGuestViewerModal(goalId, meta)`: 100% 완주 축하 카드를 확인하고 "나도 목표 도전하기" 즉시 연결.
+     - 통합 딥링크 게이트웨이 `handleDeepLinkRouting()`: `?feed=`, `?template=`, `?invite_group=`, `?join_team=`, `?goal=` URL 파라미터 자동 라우팅 및 팝업.
+  3. `index.html`:
+     - 기술안전핀 TECH-RULE-01 엄수: 총 라인 수 **정확히 22,196줄 불변** 유지 (0줄 순증가).
+     - 피드 카드 `[🔗 공유]` 버튼 신설 및 `OurgoalViralSharing.shareContent` 연동.
+     - 완주 인증서(`buildInviteLinkSuffix`) 및 모임 초대(`buildPeerInviteUrl`)를 `/share` 엔드포인트와 연계, `invite_group` 파라미터 보존.
+  4. `js/team-invite-comm.js`:
+     - 템플릿 미리보기 모달에 `[🔗 템플릿 공유]` 버튼 신설 및 `shareContent` 배선.
+     - 외부 공유 도메인을 `window.location.origin` 기반으로 동적 정규화.
+  5. `docs/rules/TICKETS.md` 및 `scripts/smoke-test.js`:
+     - `#TASK-ES-121` 승인 티켓 등록.
+     - 스모크 테스트 `#TASK-ES-121` 컴플라이언스 검증 4종 신설 (총 260개 테스트 전수 통과).
+- **검증 결과**:
+  - `npm test`: 스모크 260개 + 헌법 5대 게이트 13종 + Zero Dead Click 100% ALL PASS.
+  - `scratch/test_og.js`: Vercel 동적 OG 4대 타입 검증 ALL PASS.
+  - `scratch/test_routing.js`: 딥링크 라우팅 및 게스트 소프트 뷰어 3종 시뮬레이션 ALL PASS.
+  - 기술안전핀: `index.html` 22,196줄 불변 엄수.
 ---

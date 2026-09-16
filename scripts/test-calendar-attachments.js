@@ -49,17 +49,17 @@ assert.ok(populatedHtml.includes('data-caldraftatt="0"'), '드래프트 칩 인�
 assert.ok(populatedHtml.includes('러닝 폼 가이드 유튜브'), '첨부 제목이 정상 출력되어야 합니다.');
 console.log('  ✓ [PASS] 일정 편집 모달 참고자료 섹션(빈 상태 & 4대 타입 칩) 렌더링 검증');
 
-// 3. index.html 배선 및 헌법 제18조(순증가 0줄) 검증
+// 3. index.html 배선 및 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)(순증가 0줄) 검증
 const indexPath = path.join(__dirname, '..', 'index.html');
 const indexHtml = fs.readFileSync(indexPath, 'utf8');
 const indexLines = indexHtml.split(/\r?\n/).length;
-assert.strictEqual(indexLines, 22196, '헌법 제18조 위반: index.html은 정확히 22,196줄이어야 합니다.');
+assert.strictEqual(indexLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 assert.ok(indexHtml.includes('js/calendar-attachment.js'), 'index.html에 calendar-attachment.js 스크립트가 로드되어야 합니다.');
 assert.ok(indexHtml.includes('kind === \'custom\''), 'wireAttachmentChipClicks에 kind === custom 분기가 배선되어야 합니다.');
 assert.ok(indexHtml.includes('data-hubaddatt'), '일자 허브 모달에 참고자료 첨부 버튼(data-hubaddatt)이 존재해야 합니다.');
 assert.ok(indexHtml.includes('renderHubEventChipsHtml'), '일자 허브 모달에 첨부자료 칩 렌더링이 연동되어야 합니다.');
 assert.ok(indexHtml.includes('attachments: curAttachments'), '일정 저장 시 attachments 필드가 영구 저장되어야 합니다.');
-console.log('  ✓ [PASS] index.html 헌법 제18조(22,196줄 불변) 및 일정 첨부 배선 무결성 검증');
+console.log('  ✓ [PASS] index.html 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 
 // 4. custom schedule 데이터 모델 및 삭제 시뮬레이션
 global.state = {

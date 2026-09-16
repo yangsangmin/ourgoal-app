@@ -4968,6 +4968,39 @@ check('compliance: [#TASK-ES-119] 생성한 아바타 누적 보관함(서랍) �
   assert.strictEqual(finalLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
 });
 
+check('compliance: [#TASK-ES-121] 피드·모임·템플릿 외부 SNS 공유 및 미사용자 전파 시스템화 (통합 딥링크 & 동적 OG 게이트웨이, 소프트 게스트 뷰어 3종) 검증', () => {
+  const viralSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'viral-sharing.js'), 'utf8');
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  const vercelCfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+
+  // 1. 바이럴 공유 모듈 헬퍼 함수 구현 확인
+  assert.ok(viralSrc.includes('function shareContent(opts)'), 'shareContent 함수 구현');
+  assert.ok(viralSrc.includes('function showFeedGuestViewerModal(feedId)'), 'showFeedGuestViewerModal 게스트 뷰어 구현');
+  assert.ok(viralSrc.includes('function showTemplateGuestViewerModal(templateId)'), 'showTemplateGuestViewerModal 게스트 뷰어 구현');
+  assert.ok(viralSrc.includes('function showGoalCertGuestViewerModal(goalId, meta)'), 'showGoalCertGuestViewerModal 게스트 뷰어 구현');
+  assert.ok(viralSrc.includes('function handleDeepLinkRouting()'), 'handleDeepLinkRouting 딥링크 라우터 구현');
+
+  // 2. Vercel 서버리스 동적 OG 엔드포인트 구현 및 rewrite 배선 확인
+  assert.ok(trackSrc.includes('async function handleShareOg(req, res)'), 'api/track.js 내 handleShareOg 구현');
+  assert.ok(trackSrc.includes("type === 'template'"), '템플릿 OG 메타태그 분기 처리');
+  assert.ok(trackSrc.includes("type === 'feed'"), '피드 OG 메타태그 분기 처리');
+  assert.ok(trackSrc.includes("type === 'group'"), '모임 초대 OG 메타태그 분기 처리');
+  assert.ok(trackSrc.includes("type === 'goal'"), '완주 인증서 OG 메타태그 분기 처리');
+  assert.ok(trackSrc.includes('<meta property="og:image"'), 'og:image 메타 태그 렌더링');
+  const hasShareRewrite = (vercelCfg.rewrites || []).some(r => r.source === '/share' && r.destination === '/api/track');
+  assert.ok(hasShareRewrite, 'vercel.json 내 /share -> /api/track rewrite 배선');
+
+  // 3. UI 컴포넌트 공유 버튼 및 배선 확인
+  assert.ok(commSrc.includes('id="tplPreviewShareBtn"'), '템플릿 미리보기 모달 공유 버튼 존재');
+  assert.ok(commSrc.includes('shareContent'), '템플릿 모달 shareContent 연동');
+  assert.ok(html.includes('js/viral-sharing.js'), 'index.html 내 viral-sharing.js 스크립트 로드');
+
+  // 4. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
+  const finalLines2 = html.split(/\r?\n/).length;
+  assert.strictEqual(finalLines2, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
