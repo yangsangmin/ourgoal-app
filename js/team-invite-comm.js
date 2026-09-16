@@ -1103,6 +1103,10 @@
       searchResultsHtml = '<div style="padding:16px 12px;background:var(--surface-2);border-radius:12px;text-align:center;font-size:.8125rem;color:var(--ink-soft);margin-bottom:14px;">' +
         '로그인하면 실제 회원을 닉네임으로 검색하고 동반자로 추가할 수 있어요.' +
       '</div>';
+    } else if(searchError === 'session'){
+      searchResultsHtml = '<div style="padding:16px 12px;background:var(--surface-2);border-radius:12px;text-align:center;font-size:.8125rem;color:var(--ink-soft);margin-bottom:14px;">' +
+        '로그인 세션이 만료됐어요. 로그아웃 후 다시 로그인해주세요.' +
+      '</div>';
     } else if(searchError === 'error'){
       searchResultsHtml = '<div style="padding:16px 12px;background:var(--surface-2);border-radius:12px;text-align:center;font-size:.8125rem;color:var(--ink-soft);margin-bottom:14px;">' +
         '검색 중 문제가 발생했어요. 잠시 후 다시 시도해주세요.' +
@@ -1229,6 +1233,7 @@
 
       var matched = [];
       var errored = false;
+      var sessionExpired = false;
       var errorDetail = '';
       if(global.sb){
         try {
@@ -1239,6 +1244,11 @@
           if(res && res.error){
             errored = true;
             errorDetail = (res.error.code || '') + ' ' + (res.error.message || '');
+            // 42501 = anon 권한으로 호출됨. state.profile.id는 있는데(위 isGuest 통과)
+            // 실제 Supabase 인증 세션은 만료/미복원된 경우(특히 모바일 앱 WebView에서
+            // 로컬스토리지 세션 복원이 안 된 채로 켜졌을 때) 발생한다. 원인이 다르므로
+            // 일반 오류와 구분해 재로그인을 안내한다.
+            if(res.error.code === '42501') sessionExpired = true;
             console.warn('[동반자] Supabase 검색 오류:', res.error);
           } else if(res && res.data){
             matched = res.data.map(function(u){
@@ -1264,7 +1274,7 @@
       }
 
       state._companionIsSearching = false;
-      state._companionSearchError = errored ? 'error' : null;
+      state._companionSearchError = sessionExpired ? 'session' : (errored ? 'error' : null);
       state._companionSearchErrorDetail = errored ? errorDetail : '';
       state._companionSearchResults = errored ? null : matched;
       renderCommCompanions(body);
