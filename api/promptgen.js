@@ -308,7 +308,7 @@ async function handleAvatarPersonaAnalysis(req, res, body) {
             var mbti = (parsed.mbti || '').toUpperCase().trim();
             var motto = (parsed.motto || '').trim();
             if (/^[EI][NS][FT][JP]$/.test(mbti) && motto && motto.length <= 40) {
-              return res.status(200).json({ ok: true, persona: { mbti: mbti, motto: motto.slice(0, 30) } });
+              return res.status(200).json({ ok: true, persona: { mbti: mbti, motto: motto } });
             }
           }
         }
