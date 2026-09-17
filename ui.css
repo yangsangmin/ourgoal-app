@@ -3615,3 +3615,79 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   width: 16px;
   height: 16px;
 }
+
+/* ============ 5대 상징 랭크 백그라운드 시스템 (#TASK-ES-159) ============ */
+.avatar-rank-aura-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  transition: transform 0.2s ease;
+}
+.avatar-rank-aura-wrap:hover {
+  transform: scale(1.05);
+}
+.rank-bg-svg-layer {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.08));
+}
+.avatar-inner-box {
+  position: relative;
+  z-index: 2;
+  transition: all 0.25s ease;
+}
+
+/* 5대 테마별 오라 펄스 & 애니메이션 */
+.rank-theme-sprout .rank-bg-svg-layer {
+  animation: sproutSway 3s ease-in-out infinite alternate;
+}
+@keyframes sproutSway {
+  0% { transform: scale(1) rotate(0deg); }
+  100% { transform: scale(1.04) rotate(1.5deg); }
+}
+
+.rank-theme-forest .rank-bg-svg-layer {
+  animation: forestBreathe 3.5s ease-in-out infinite alternate;
+}
+@keyframes forestBreathe {
+  0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(5, 150, 105, 0.3)); }
+  100% { transform: scale(1.05); filter: drop-shadow(0 0 6px rgba(5, 150, 105, 0.6)); }
+}
+
+.rank-theme-poseidon .rank-bg-svg-layer {
+  animation: poseidonTide 2.8s ease-in-out infinite alternate;
+}
+@keyframes poseidonTide {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-2px) scale(1.06); filter: drop-shadow(0 0 7px rgba(2, 132, 199, 0.6)); }
+}
+
+.rank-theme-zeus .rank-bg-svg-layer {
+  animation: zeusThunderGlow 1.8s ease-in-out infinite alternate;
+}
+@keyframes zeusThunderGlow {
+  0% { transform: scale(1); filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.4)); }
+  50% { transform: scale(1.03); filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8)); }
+  100% { transform: scale(1.07); filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.9)); }
+}
+
+.rank-theme-cosmic .rank-bg-svg-layer {
+  animation: cosmicOrbit 6s linear infinite;
+}
+@keyframes cosmicOrbit {
+  0% { filter: drop-shadow(0 0 4px rgba(139, 92, 246, 0.5)); }
+  50% { filter: drop-shadow(0 0 10px rgba(192, 132, 252, 0.8)); }
+  100% { filter: drop-shadow(0 0 4px rgba(139, 92, 246, 0.5)); }
+}
+
+.avatar-rank-summary-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.avatar-rank-summary-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
