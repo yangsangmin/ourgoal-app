@@ -6499,13 +6499,13 @@ check('compliance: [#TASK-ES-166] 활용법 내 아바타 전용 탭 최우선(�
   // 1. TAB_GUIDE_DATA 내 avatar 탭 데이터셋 존재 및 3대 혁신 기능 검증
   assert.ok(indexSrc.includes('avatar: {'), 'TAB_GUIDE_DATA 내 avatar 데이터 정의');
   assert.ok(indexSrc.includes("name: '아바타'"), "avatar 탭 이름 '아바타' 매핑");
-  assert.ok(indexSrc.includes('5대 상징 랭크 & 백그라운드 오라'), '아바타 1호 혁신 기능: 5대 상징 랭크 & 백그라운드 오라');
+  assert.ok(indexSrc.includes('베일에 싸인 시크릿 랭크 & 히든 오라'), '아바타 1호 혁신 기능: 베일에 싸인 시크릿 랭크 & 히든 오라');
   assert.ok(indexSrc.includes('앱 진입 대형 인사 팝업 & 시간대별 맞춤 멘트'), '아바타 2호 혁신 기능: 앱 진입 대형 인사 팝업');
-  assert.ok(indexSrc.includes('나만의 아바타 생성 & 보관함 관리'), '아바타 3호 혁신 기능: 보관함 및 생성 관리');
+  assert.ok(indexSrc.includes('나만의 아바타 생성 & 무제한 보관함 관리'), '아바타 3호 혁신 기능: 보관함 및 생성 관리');
 
   // 2. 아바타 우수 사용사례 쇼케이스 검증
-  assert.ok(indexSrc.includes('Lv.20 우주 윙 달성자의 나만의 페르소나 아바타 룸'), '우주 윙 달성자 아바타 쇼케이스 타이틀');
-  assert.ok(indexSrc.includes('Lv.20 우주 윙 아바타'), '아바타 목업 내 레벨/랭크 뱃지');
+  assert.ok(indexSrc.includes('“도대체 어디까지 진화하는 거야?!” 히든 랭크를 직접 깨우는 재미'), '히든 랭크 쇼케이스 타이틀');
+  assert.ok(indexSrc.includes('Lv.??? 각성 페르소나'), '아바타 목업 내 시크릿 랭크 뱃지');
 
   // 3. 탭 순서 최우선(맨 앞) 및 기본 활성화 탭 검증
   const avatarKeyIdx = indexSrc.indexOf("{ key: 'avatar'");
