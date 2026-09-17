@@ -10348,13 +10348,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* ============ 참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크) ============ */
+  /* ============ 참고자료 (유튜브/영상, 이미지, 텍스트 메모, 웹링크) ============ */
   function renderAttachmentChipsHtml(attachments, targetKind, targetId, parentId){
     if(!attachments || !attachments.length) return '';
-    return '<div class="att-chips-wrap" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">' +
+    return '<div class="att-chips-wrap" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">' +
       attachments.map(function(att, idx){
         var icon = att.type === 'video' ? '🎥' : (att.type === 'image' ? '🖼️' : (att.type === 'text' ? '📝' : '🔗'));
-        return '<span class="att-chip" data-openatt="'+idx+'" data-attkind="'+targetKind+'" data-attid="'+targetId+'" data-attpid="'+(parentId||'')+'" title="'+escapeHtml(att.title||'')+'">' +
-          icon + ' ' + escapeHtml(att.title || '참고자료') +
+        var typeClass = 'type-' + (att.type || 'link');
+        return '<span class="att-chip att-chip-rich ' + typeClass + '" data-openatt="'+idx+'" data-attkind="'+targetKind+'" data-attid="'+targetId+'" data-attpid="'+(parentId||'')+'" title="'+escapeHtml(att.title||'')+'">' +
+          '<span style="font-size:.875rem;">' + icon + '</span> ' +
+          '<span style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(att.title || '참고자료') + '</span>' +
         '</span>';
       }).join('') +
     '</div>';
@@ -10416,7 +10419,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var draftAtt = { type: 'video', title: '', url: '', note: '' };
     openModal(
       '<h3>참고자료 첨부</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;">유튜브 영상, 이미지 파일, 텍스트 메모, 웹 링크를 등록하세요.</p>' +
+      '<p class="faint" style="margin:-8px 0 12px;">유튜브 영상, 이미지 파일, 텍스트 메모, 웹 링크를 등록하세요.</p>' +
+      '<!-- 스마트 툴바: 원클릭 클립보드 붙여넣기 및 4대 실천 퀵 프리셋 -->' +
+      '<div class="att-smart-toolbar">' +
+        '<button type="button" class="att-clipboard-btn" id="attClipboardBtn">' +
+          '<span>⚡</span> 클립보드에서 링크 바로 가져오기' +
+        '</button>' +
+        '<div style="font-size:.72rem;font-weight:700;color:var(--ink-soft);margin-top:2px;">실천 퀵 프리셋:</div>' +
+        '<div class="att-preset-group">' +
+          '<button type="button" class="att-preset-chip" data-attpreset="workout">🏋️ 운동 자세 영상</button>' +
+          '<button type="button" class="att-preset-chip" data-attpreset="study">📚 공식 문서·자료</button>' +
+          '<button type="button" class="att-preset-chip" data-attpreset="note">💡 핵심 요약 메모</button>' +
+          '<button type="button" class="att-preset-chip" data-attpreset="photo">📸 오답·결과 사진</button>' +
+        '</div>' +
+      '</div>' +
       '<div class="format-toggle" id="attTypeToggle" style="margin-bottom:12px;">' +
         '<div class="format-opt active" data-atttype="video">영상/유튜브</div>' +
         '<div class="format-opt" data-atttype="image">이미지</div>' +
@@ -10424,7 +10440,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '<div class="format-opt" data-atttype="link">링크</div>' +
       '</div>' +
       '<div class="field"><label>제목 (필수)</label><input id="attTitleInput" type="text" placeholder="예: 미역국 끓이는 법 영상, 운동 폼 가이드"></div>' +
-      '<div id="attUrlField" class="field"><label>웹 주소 / 유튜브 링크</label><input id="attUrlInput" type="url" placeholder="https://www.youtube.com/watch?v=..."></div>' +
+      '<div id="attUrlField" class="field">' +
+        '<label>웹 주소 / 유튜브 링크</label>' +
+        '<input id="attUrlInput" type="url" placeholder="https://www.youtube.com/watch?v=...">' +
+      '</div>' +
+      '<!-- 실시간 스마트 비주얼 프리뷰 카드 -->' +
+      '<div id="attLivePreviewWrap" style="display:none;margin-bottom:12px;"></div>' +
       '<div id="attImageField" style="display:none;margin-bottom:12px;">' +
         '<label style="display:block;font-size:.8125rem;font-weight:700;margin-bottom:4px;">이미지 파일 선택</label>' +
         '<div style="display:flex;gap:10px;align-items:center;">' +
@@ -10446,28 +10467,176 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var imgField = sheet.querySelector('#attImageField');
         var fileInput = sheet.querySelector('#attFileInput');
         var preview = sheet.querySelector('#attImgPreview');
+        var urlInput = sheet.querySelector('#attUrlInput');
+        var titleInput = sheet.querySelector('#attTitleInput');
+        var noteInput = sheet.querySelector('#attNoteInput');
+        var previewWrap = sheet.querySelector('#attLivePreviewWrap');
+
+        function setType(typeKey){
+          draftAtt.type = typeKey;
+          sheet.querySelectorAll('#attTypeToggle .format-opt').forEach(function(o){
+            o.classList.toggle('active', o.dataset.atttype === typeKey);
+          });
+          if(typeKey === 'image'){
+            imgField.style.display = 'block';
+            urlField.style.display = 'block';
+            urlInput.placeholder = '또는 이미지 웹 주소 (https://...)';
+          } else if(typeKey === 'text'){
+            imgField.style.display = 'none';
+            urlField.style.display = 'none';
+            previewWrap.style.display = 'none';
+          } else if(typeKey === 'video'){
+            imgField.style.display = 'none';
+            urlField.style.display = 'block';
+            urlInput.placeholder = 'https://www.youtube.com/watch?v=...';
+          } else {
+            imgField.style.display = 'none';
+            urlField.style.display = 'block';
+            urlInput.placeholder = 'https://...';
+          }
+        }
+
+        function updateSmartPreview(rawUrl){
+          var url = (rawUrl || '').trim();
+          if(!url){
+            previewWrap.style.display = 'none';
+            return;
+          }
+          // 1. 유튜브 감지
+          var ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/i);
+          if(ytMatch){
+            setType('video');
+            var vid = ytMatch[1];
+            var thumbUrl = 'https://img.youtube.com/vi/' + vid + '/hqdefault.jpg';
+            previewWrap.innerHTML = '' +
+              '<div class="att-live-preview-box">' +
+                '<div class="att-preview-thumb-wrap">' +
+                  '<img src="' + thumbUrl + '" class="att-preview-thumb-img" onerror="this.src=\'\'">' +
+                  '<div class="att-yt-play-icon">▶</div>' +
+                '</div>' +
+                '<div class="att-preview-meta">' +
+                  '<span class="att-preview-badge att-badge-youtube">YouTube 영상</span>' +
+                  '<div class="att-preview-title">' + (titleInput.value.trim() || '유튜브 영상 자료') + '</div>' +
+                  '<div class="att-preview-sub">ID: ' + vid + ' · 재생 준비 완료</div>' +
+                '</div>' +
+              '</div>';
+            previewWrap.style.display = 'block';
+            if(!titleInput.value.trim()){
+              titleInput.placeholder = '유튜브 영상 제목을 입력해주세요';
+            }
+            return;
+          }
+          // 2. 이미지 URL 감지
+          if(url.match(/\.(jpeg|jpg|gif|png|webp)($|\?)/i)){
+            setType('image');
+            previewWrap.innerHTML = '' +
+              '<div class="att-live-preview-box">' +
+                '<div class="att-preview-thumb-wrap">' +
+                  '<img src="' + escapeHtml(url) + '" class="att-preview-thumb-img">' +
+                '</div>' +
+                '<div class="att-preview-meta">' +
+                  '<span class="att-preview-badge att-badge-image">이미지 파일</span>' +
+                  '<div class="att-preview-title">' + (titleInput.value.trim() || '웹 이미지') + '</div>' +
+                  '<div class="att-preview-sub">온라인 이미지 링크 감지됨</div>' +
+                '</div>' +
+              '</div>';
+            previewWrap.style.display = 'block';
+            return;
+          }
+          // 3. 일반 웹 URL 감지
+          if(url.match(/^https?:\/\//i)){
+            if(draftAtt.type !== 'image' && draftAtt.type !== 'video'){
+              setType('link');
+            }
+            var domain = '';
+            try { domain = (new URL(url)).hostname; } catch(e){}
+            previewWrap.innerHTML = '' +
+              '<div class="att-live-preview-box">' +
+                '<div class="att-preview-thumb-wrap" style="background:var(--brand-soft);color:var(--brand);font-size:1.5rem;">' +
+                  '🔗' +
+                '</div>' +
+                '<div class="att-preview-meta">' +
+                  '<span class="att-preview-badge att-badge-web">' + (domain || '웹 레퍼런스') + '</span>' +
+                  '<div class="att-preview-title">' + (titleInput.value.trim() || domain || '참고 링크') + '</div>' +
+                  '<div class="att-preview-sub">' + escapeHtml(url) + '</div>' +
+                '</div>' +
+              '</div>';
+            previewWrap.style.display = 'block';
+            return;
+          }
+          previewWrap.style.display = 'none';
+        }
 
         sheet.querySelectorAll('#attTypeToggle .format-opt').forEach(function(opt){
           opt.addEventListener('click', function(){
-            sheet.querySelectorAll('#attTypeToggle .format-opt').forEach(function(o){ o.classList.remove('active'); });
-            opt.classList.add('active');
-            draftAtt.type = opt.dataset.atttype;
-            if(draftAtt.type === 'image'){
-              imgField.style.display = 'block';
-              urlField.style.display = 'block';
-              sheet.querySelector('#attUrlInput').placeholder = '또는 이미지 웹 주소 (https://...)';
-            } else if(draftAtt.type === 'text'){
-              imgField.style.display = 'none';
-              urlField.style.display = 'none';
-            } else if(draftAtt.type === 'video'){
-              imgField.style.display = 'none';
-              urlField.style.display = 'block';
-              sheet.querySelector('#attUrlInput').placeholder = 'https://www.youtube.com/watch?v=...';
-            } else {
-              imgField.style.display = 'none';
-              urlField.style.display = 'block';
-              sheet.querySelector('#attUrlInput').placeholder = 'https://...';
+            setType(opt.dataset.atttype);
+            updateSmartPreview(urlInput.value);
+          });
+        });
+
+        // 실시간 URL 입력 리스너
+        urlInput.addEventListener('input', function(){
+          updateSmartPreview(urlInput.value);
+        });
+        urlInput.addEventListener('paste', function(){
+          setTimeout(function(){ updateSmartPreview(urlInput.value); }, 50);
+        });
+
+        // 클립보드 붙여넣기 퀵 액션
+        var clipBtn = sheet.querySelector('#attClipboardBtn');
+        if(clipBtn){
+          clipBtn.addEventListener('click', async function(){
+            try {
+              if(!navigator.clipboard || !navigator.clipboard.readText){
+                toast('브라우저 클립보드 권한을 확인해주세요. 주소를 직접 붙여넣어주세요.');
+                urlInput.focus();
+                return;
+              }
+              var text = await navigator.clipboard.readText();
+              text = (text || '').trim();
+              if(!text){
+                toast('클립보드가 비어있어요. 복사한 링크를 직접 입력해주세요.');
+                urlInput.focus();
+                return;
+              }
+              urlInput.value = text;
+              updateSmartPreview(text);
+              toast('클립보드 링크를 불러왔어요! ✨');
+            } catch(e){
+              toast('클립보드 링크를 직접 입력창에 붙여넣어주세요.');
+              urlInput.focus();
             }
+          });
+        }
+
+        // 4대 실천 퀵 프리셋
+        sheet.querySelectorAll('[data-attpreset]').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            var p = btn.dataset.attpreset;
+            if(p === 'workout'){
+              setType('video');
+              if(!titleInput.value.trim()) titleInput.value = '운동 자세 & 폼 가이드 영상';
+              if(!noteInput.value.trim()) noteInput.value = '호흡 타이밍과 세트별 자세 주의사항 체크하기';
+              urlInput.placeholder = '유튜브 영상 링크를 붙여넣으세요';
+              toast('운동 자세 영상 프리셋을 적용했어요');
+            } else if(p === 'study'){
+              setType('link');
+              if(!titleInput.value.trim()) titleInput.value = '공식 문서 & 학습 레퍼런스';
+              if(!noteInput.value.trim()) noteInput.value = '시험 및 프로젝트에 꼭 필요한 핵심 공식 문서';
+              urlInput.placeholder = '공식 가이드나 기술 블로그 링크 입력';
+              toast('공식 문서 프리셋을 적용했어요');
+            } else if(p === 'note'){
+              setType('text');
+              if(!titleInput.value.trim()) titleInput.value = '실천 핵심 요약 메모';
+              if(!noteInput.value.trim()) noteInput.value = '1. 시작 전 필수 준비사항\n2. 오늘의 핵심 실천 포인트';
+              toast('핵심 요약 메모 프리셋을 적용했어요');
+            } else if(p === 'photo'){
+              setType('image');
+              if(!titleInput.value.trim()) titleInput.value = '오답노트 & 결과 인증 사진';
+              if(!noteInput.value.trim()) noteInput.value = '기억해둘 핵심 오답 분석 및 증빙';
+              toast('사진 인증 프리셋을 적용했어요');
+            }
+            urlInput.focus();
           });
         });
 
