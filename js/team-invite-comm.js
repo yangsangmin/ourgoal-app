@@ -952,16 +952,69 @@
   }
 
   function getTeamMembersPool(){
-    // 헌법 제19조 제3항 1호에 의거한 공식 콜드스타트 완충재 (AI 봇 명시)
-    return [
-      { id: 'mem_ws_1', name: '이지수 팀장', nickname: '지수_TF장', avatar: '👩‍💼', groupName: '회사 워크숍 TF', role: '팀장', level: 8, streak: 24, theme: '커리어·기획', intro: '전사 전략 워크숍 TF를 이끌고 있습니다. 함께 완주해요!', goals: ['2026 하반기 전략 워크숍 완수', '부서별 액션플랜 수립'], isAiBot: true, botBadge: 'AI 봇' },
-      { id: 'mem_ws_2', name: '김민우 대리', nickname: '민우_운영조', avatar: '👨‍💼', groupName: '회사 워크숍 TF', role: '팀원', level: 6, streak: 14, theme: '커리어·기획', intro: '대관 및 현장 운영 총괄을 맡고 있습니다.', goals: ['장소 대관 계약 및 음향 점검', '타임테이블 배포'], isAiBot: true, botBadge: 'AI 봇' },
-      { id: 'mem_ws_3', name: '박소연 사원', nickname: '소연_레크조', avatar: '🙋‍♀️', groupName: '회사 워크숍 TF', role: '팀원', level: 5, streak: 9, theme: '취미·소통', intro: '팀빌딩과 비전 세션 프로그램을 기획 중입니다.', goals: ['아이스브레이킹 게임 3종 준비', '참가자 웰컴키트 제작'], isAiBot: true, botBadge: 'AI 봇' },
-      { id: 'mem_tr_1', name: '최현아', nickname: '현아_드라이브', avatar: '🚗', groupName: '제주 힐링여행', role: '팀장', level: 7, streak: 18, theme: '여행·생활', intro: '낙오자 없는 제주 힐링 여행을 기획하고 있어요!', goals: ['제주 3박4일 독채 펜션 예약', '동선별 드라이브 코스 확정'], isAiBot: true, botBadge: 'AI 봇' },
-      { id: 'mem_tr_2', name: '정준호', nickname: '준호_맛집탐험', avatar: '🍖', groupName: '제주 힐링여행', role: '팀원', level: 6, streak: 11, theme: '식단·여행', intro: '제주 로컬 흑돼지/해산물 찐맛집 리스트업 담당', goals: ['흑돼지 맛집 단체석 예약', '공용 경비 1/N 정산표 정리'], isAiBot: true, botBadge: 'AI 봇' },
-      { id: 'mem_ft_1', name: '강성진 코치', nickname: '성진_헤드코치', avatar: '🏋️‍♂️', groupName: '크로스핏 정복대', role: '코치', level: 10, streak: 45, theme: '운동·건강', intro: '안전하고 즐겁게 한계 돌파! 주 5회 WOD 정복', goals: ['크루 전체 월 250회 WOD 달성', '전원 Rx 도전 서포트'], isAiBot: true, botBadge: 'AI 봇' },
-      { id: 'mem_ft_2', name: '윤태양', nickname: '태양_와드러버', avatar: '💪', groupName: '크로스핏 정복대', role: '팀원', level: 7, streak: 19, theme: '운동·건강', intro: '무반동 턱걸이 10개 도전 중인 크로스핏터', goals: ['Rx 무게 정복', '턱걸이 10개 연속 성공'], isAiBot: true, botBadge: 'AI 봇' }
-    ];
+    // 실제 연결된 팀원 및 동료 풀 (AI 봇 전면 배제)
+    var state = global.state || {};
+    var pool = [];
+    var myId = (state.user && state.user.id) || (state.profile && state.profile.id);
+
+    // 1. 실제 동반자 중 실 유저
+    var comps = (state.profile && state.profile.companions) || [];
+    comps.forEach(function(c){
+      if(!isKnownAiCompanion(c) && !c.isAiBot && String(c.id || '') !== String(myId)){
+        if(!pool.some(function(x){ return String(x.id) === String(c.id); })){
+          pool.push({
+            id: c.id,
+            name: c.name || c.nickname || '동료',
+            nickname: c.nickname || c.name || '동료',
+            avatar: c.avatar || '👤',
+            groupName: c.groupName || '동반자',
+            role: c.role || '팀원',
+            isAiBot: false
+          });
+        }
+      }
+    });
+
+    // 2. 수신된 실 유저 대화방
+    (_incomingDmRooms || []).forEach(function(inc){
+      if(!isKnownAiCompanion(inc) && !inc.isAiBot && String(inc.id || '') !== String(myId)){
+        if(!pool.some(function(x){ return String(x.id) === String(inc.id); })){
+          pool.push({
+            id: inc.id,
+            name: inc.name || inc.nickname || '동료',
+            nickname: inc.nickname || inc.name || '동료',
+            avatar: inc.avatar || '👤',
+            groupName: inc.groupName || '대화 상대',
+            role: inc.role || '팀원',
+            isAiBot: false
+          });
+        }
+      }
+    });
+
+    // 3. 참여 중인 팀 목표의 실제 멤버 (존재할 경우)
+    var joinedGroups = (state.groups || []).concat(state.profile && state.profile.joinedGroups || []);
+    joinedGroups.forEach(function(grp){
+      if(grp && Array.isArray(grp.membersList)){
+        grp.membersList.forEach(function(mem){
+          if(mem && !isKnownAiCompanion(mem) && !mem.isAiBot && String(mem.id || '') !== String(myId)){
+            if(!pool.some(function(x){ return String(x.id) === String(mem.id); })){
+              pool.push({
+                id: mem.id,
+                name: mem.name || mem.nickname || '동료',
+                nickname: mem.nickname || mem.name || '동료',
+                avatar: mem.avatar || '👤',
+                groupName: grp.name || '팀',
+                role: mem.role || '팀원',
+                isAiBot: false
+              });
+            }
+          }
+        });
+      }
+    });
+
+    return pool;
   }
 
   function getDmPerson(id){
@@ -1288,13 +1341,15 @@
         });
       }
 
-      var teamMembersChipsHtml = teamMembers.map(function(m){
+      var teamMembersChipsHtml = teamMembers.length > 0 ? teamMembers.map(function(m){
         return '<div class="dm-team-chip" data-openteamdm="' + esc(m.id) + '" role="button" tabindex="0" style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;width:72px;padding:8px 4px;background:var(--card);border:1px solid var(--rule);border-radius:12px;cursor:pointer;text-align:center;transition:transform 0.15s ease;">' +
           '<div style="width:38px;height:38px;border-radius:50%;background:var(--surface-2);border:1.5px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin-bottom:4px;overflow:hidden;flex-shrink:0;">' + safeAvatarHtml(m.avatar, 38) + '</div>' +
           '<div style="font-size:.75rem;font-weight:700;color:var(--ink);width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(m.name) + '</div>' +
           '<span class="faint" style="font-size:.625rem;line-height:1.2;margin-top:2px;">' + (m.role || '팀원') + '</span>' +
         '</div>';
-      }).join('');
+      }).join('') : '<div style="padding:10px 8px;font-size:.8125rem;color:var(--ink-soft);display:flex;align-items:center;gap:6px;">' +
+        '<span>🤝</span><span>아직 연결된 실제 팀 동료가 없습니다. 팀 목표를 함께하거나 동료를 초대하면 이곳에 표시됩니다.</span>' +
+      '</div>';
 
       var allDmList = [];
       // 1. 수신 대화 요청 (내 companions에 아직 없는 상대방)
@@ -1315,7 +1370,7 @@
         }
       });
 
-      var dmListHtml = allDmList.map(function(p){
+      var dmListHtml = allDmList.length > 0 ? allDmList.map(function(p){
         var lastMsgObj = _lastDmMessageMap[p.id];
         var last = (lastMsgObj && lastMsgObj.text) ? lastMsgObj.text : ((p._thread && p._thread.length) ? p._thread[p._thread.length - 1].text : (p.lastMsg || p.intro || '새로운 대화를 시작해보세요!'));
         var isUnread = !!_unreadPeerMap[p.id] || p.isIncoming;
@@ -1334,7 +1389,7 @@
             '<span style="font-size:.8125rem;color:var(--ink-soft);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(last) + '</span>' +
           '</div>' +
         '</div>';
-      }).join('');
+      }).join('') : '<div style="text-align:center;padding:32px 14px;color:var(--ink-faint);font-size:.875rem;">주고받은 1:1 대화 내역이 없습니다.<br>팀원이나 동반자에게 첫 인사를 건네보세요! 👋</div>';
 
       body.innerHTML = '<div class="card" style="margin-bottom:14px;padding:12px 14px;background:var(--surface-2);border:1px solid var(--rule);border-radius:14px;">' +
           '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
