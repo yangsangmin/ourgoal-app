@@ -133,7 +133,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <div id="appShell">
   <div class="topbar">
     <div class="brand">아워골</div>
-    <div class="topbar-right"><div class="topbar-actions" id="topbarActions"><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide(window.state && window.state.activeTab || 'home');" style="font-size:11px;padding:3px 7px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;cursor:pointer;white-space:nowrap;" title="이 페이지 활용법 보기" aria-label="이 페이지 활용법 보기">💡 활용법</button><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeLayoutBtn" style="font-size:11px;padding:3px 7px;border-radius:12px;border:1px solid var(--rule);color:var(--ink-soft);font-weight:600;cursor:pointer;white-space:nowrap;" title="나만의 홈 구성 (필요없는 창 지우기)" aria-label="나만의 홈 구성">⚙️ 홈구성</button></div><button class="user-chip" id="topUserChip" type="button" aria-label="내 프로필"><span id="topUserName"></span><div class="avatar" id="topAvatar"></div></button></div>
+    <div class="topbar-right"><div class="topbar-actions" id="topbarActions"><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide(window.state && window.state.activeTab || 'home');" style="font-size:11px;padding:3px 7px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;cursor:pointer;white-space:nowrap;" title="이 페이지 활용법 보기" aria-label="이 페이지 활용법 보기">💡 활용법</button><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeLayoutBtn" style="font-size:11px;padding:3px 7px;border-radius:12px;border:1px solid var(--rule);color:var(--ink-soft);font-weight:600;cursor:pointer;white-space:nowrap;" title="나만의 홈 구성 (필요없는 창 지우기)" aria-label="나만의 홈 구성">⚙️ 홈구성</button></div><button type="button" class="topbar-notif-btn" id="topNotifBtn" title="알림 센터 열기" aria-label="알림 센터" onclick="if(window.openNotificationCenterModal) window.openNotificationCenterModal();"><span class="notif-bell-icon">🔔</span><span class="topbar-notif-badge" id="topNotifBadge" style="display:none;">0</span></button><button class="user-chip" id="topUserChip" type="button" aria-label="내 프로필"><span id="topUserName"></span><div class="avatar" id="topAvatar"></div></button></div>
   </div>
   <div class="ptr-indicator" id="ptrIndicator" aria-hidden="true"><span class="spinner"></span></div>
   <div id="levelUpBannerSlot"></div>
@@ -3562,6 +3562,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         }
       }
     } catch(commErr){}
+    try {
+      if(typeof updateTopNotifBadge === 'function') updateTopNotifBadge();
+    } catch(nbErr){}
   }
 
   /* PWA 실시간 배지 동기화 및 원격 세션 검사 — 앱 포커스 복귀 및 탭 가시성 전환 시 (TASK-BG-6, Req 1) */
@@ -3573,6 +3576,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(state.profile && state.profile.id && String(state.profile.id).indexOf('guest') !== 0 && window.OurgoalTeamInviteComm && typeof window.OurgoalTeamInviteComm.initIncomingDmListener === 'function'){
       try{ window.OurgoalTeamInviteComm.initIncomingDmListener(state.profile.id); }catch(e){}
     }
+    try{ if(typeof updateTopNotifBadge === 'function') updateTopNotifBadge(); }catch(e){}
   });
   document.addEventListener('visibilitychange', function(){
     if(!document.hidden && state.profile && state.profile.records){
@@ -3581,6 +3585,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
     if(!document.hidden && state.profile && state.profile.id && String(state.profile.id).indexOf('guest') !== 0 && window.OurgoalTeamInviteComm && typeof window.OurgoalTeamInviteComm.initIncomingDmListener === 'function'){
       try{ window.OurgoalTeamInviteComm.initIncomingDmListener(state.profile.id); }catch(e){}
+    }
+    if(!document.hidden){
+      try{ if(typeof updateTopNotifBadge === 'function') updateTopNotifBadge(); }catch(e){}
     }
   });
   window.addEventListener('storage', function(e){
@@ -5153,6 +5160,128 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     } else {
       av.textContent = p.displayName.slice(0,1);
     }
+    updateTopNotifBadge();
+  }
+
+  /* [#TASK-ES-168] 상단바 알림 배지 실시간 동기화 */
+  function updateTopNotifBadge(){
+    var badge = document.getElementById('topNotifBadge');
+    if(!badge) return;
+    var count = 0;
+    if(window.OurgoalNotifyEngine && typeof window.OurgoalNotifyEngine.getUnreadCount === 'function'){
+      count = window.OurgoalNotifyEngine.getUnreadCount();
+    } else {
+      var unreads = (state.profile && state.profile.settings && state.profile.settings.unreadNotifications) || [];
+      count = unreads.filter(function(n){ return !n.read; }).length;
+    }
+    if(count > 0){
+      badge.textContent = count > 99 ? '99+' : count;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+  if(typeof window !== 'undefined'){
+    window.updateTopNotifBadge = updateTopNotifBadge;
+  }
+
+  /* [#TASK-ES-168] 알림 센터 모달 열기 */
+  function openNotificationCenterModal(){
+    var list = [];
+    if(window.OurgoalNotifyEngine && typeof window.OurgoalNotifyEngine.getUnreadNotifications === 'function'){
+      list = window.OurgoalNotifyEngine.getUnreadNotifications();
+    } else {
+      list = (state.profile && state.profile.settings && state.profile.settings.unreadNotifications) || [];
+    }
+
+    var sortedList = list.slice().reverse();
+
+    var itemsHtml = '';
+    if(sortedList.length === 0){
+      itemsHtml = '<div style="text-align:center;padding:36px 16px;color:var(--ink-soft);">' +
+        '<div style="font-size:2.2rem;margin-bottom:8px;">🔔</div>' +
+        '<div style="font-weight:700;font-size:.9375rem;margin-bottom:4px;color:var(--ink);">도착한 알림이 없습니다</div>' +
+        '<div class="faint" style="font-size:.8125rem;">새로운 1:1 DM이나 팀 소식, 응원이 오면 여기에 표시돼요.</div>' +
+      '</div>';
+    } else {
+      itemsHtml = '<div style="display:flex;flex-direction:column;gap:8px;max-height:360px;overflow-y:auto;padding-right:4px;">' +
+        sortedList.map(function(item, idx){
+          var isUnread = !item.read;
+          var borderStyle = isUnread ? 'border:1.5px solid var(--brand);background:var(--surface-2);' : 'border:1px solid var(--rule);background:var(--card);';
+          var dot = isUnread ? '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#ef4444;margin-left:6px;vertical-align:middle;"></span>' : '';
+          var timeStr = item.createdAt ? (typeof fmtTime === 'function' ? fmtTime(item.createdAt) : new Date(item.createdAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})) : '최근';
+
+          return '<div class="notif-center-item" data-notifidx="' + idx + '" data-targettab="' + (item.targetTab || 'home') + '" data-targetdmid="' + (item.targetDmId || '') + '" style="cursor:pointer;padding:12px;border-radius:12px;' + borderStyle + 'display:flex;align-items:flex-start;gap:10px;transition:background 0.15s ease;">' +
+            '<div style="font-size:1.4rem;line-height:1;flex-shrink:0;margin-top:2px;">' + (item.type === 'dm' ? '💬' : (item.type === 'team' ? '👥' : (item.type === 'goal' ? '🎯' : '🔔'))) + '</div>' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">' +
+                '<b style="font-size:.875rem;color:var(--ink);">' + escapeHtml(item.title) + dot + '</b>' +
+                '<span class="faint" style="font-size:.6875rem;">' + timeStr + '</span>' +
+              '</div>' +
+              '<div style="font-size:.8125rem;color:var(--ink-soft);line-height:1.4;word-break:break-word;">' + escapeHtml(item.body) + '</div>' +
+            '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>';
+    }
+
+    var modalHtml = '<div style="padding:4px 0;">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--rule);">' +
+        '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<span style="font-size:1.3rem;">🔔</span>' +
+          '<h3 style="margin:0;font-size:1.0625rem;font-weight:700;color:var(--ink);">알림 센터</h3>' +
+        '</div>' +
+        (sortedList.length > 0 ? '<button type="button" class="btn btn-ghost btn-xs" id="notifCenterMarkAllRead" style="font-size:.75rem;padding:4px 8px;color:var(--brand-strong);font-weight:700;">모두 읽음</button>' : '') +
+      '</div>' +
+      itemsHtml +
+      '<div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--rule);display:flex;gap:8px;">' +
+        '<button type="button" class="btn btn-block btn-ghost" id="closeNotifCenterBtn" style="flex:1;padding:8px;font-weight:600;">닫기</button>' +
+        '<button type="button" class="btn btn-block btn-outline" id="goToNotifSettingsBtn" style="flex:1;padding:8px;font-weight:600;border-color:var(--rule);color:var(--ink-soft);">알림 설정 ⚙️</button>' +
+      '</div>' +
+    '</div>';
+
+    openModal(modalHtml, function(sheet){
+      var closeBtn = sheet.querySelector('#closeNotifCenterBtn');
+      if(closeBtn) closeBtn.onclick = closeModal;
+
+      var setBtn = sheet.querySelector('#goToNotifSettingsBtn');
+      if(setBtn){
+        setBtn.onclick = function(){
+          closeModal();
+          setTab('settings');
+        };
+      }
+
+      var markAllBtn = sheet.querySelector('#notifCenterMarkAllRead');
+      if(markAllBtn){
+        markAllBtn.onclick = function(){
+          if(window.OurgoalNotifyEngine && typeof window.OurgoalNotifyEngine.markAllAsRead === 'function'){
+            window.OurgoalNotifyEngine.markAllAsRead();
+          }
+          toast('모든 알림을 읽음 처리했습니다 ✨');
+          closeModal();
+        };
+      }
+
+      sheet.querySelectorAll('.notif-center-item').forEach(function(el){
+        el.onclick = function(){
+          var targetTab = el.dataset.targettab || 'home';
+          var targetDmId = el.dataset.targetdmid;
+          closeModal();
+          if(targetTab && typeof setTab === 'function'){
+            setTab(targetTab);
+          }
+          if(targetDmId && window.OurgoalComm){
+            state.commSubTab = 'dm';
+            state.dmActiveId = targetDmId;
+            if(typeof renderCommScreen === 'function') renderCommScreen();
+          }
+        };
+      });
+    });
+  }
+  if(typeof window !== 'undefined'){
+    window.openNotificationCenterModal = openNotificationCenterModal;
   }
   /* ============ Notion 실시간 동기화 (Direct API & Webhook) ============ */
   async function sendToNotion(record, feedback){

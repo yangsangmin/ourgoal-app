@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
  * 아워골(OurGoal) — 전역 알림 통합 엔진 (OurgoalNotifyEngine)
  * [#TASK-ES-152] 백그라운드·앱종료·미확인 전역 알림(DM 포함) 및 세부 제어 센터
  * ============================================================ */
@@ -17,6 +17,18 @@
       _audioCtx.resume().catch(function(){});
     }
     return _audioCtx;
+  }
+
+  function unlockAudioContext(){
+    var ctx = getAudioContext();
+    if(ctx && ctx.state === 'suspended'){
+      ctx.resume().catch(function(){});
+    }
+  }
+  if(typeof window !== 'undefined'){
+    ['click', 'touchstart', 'keydown'].forEach(function(evt){
+      window.addEventListener(evt, unlockAudioContext, { once: true, passive: true });
+    });
   }
 
   function playNotificationSound(){
@@ -185,28 +197,47 @@
       targetDmId: opts.targetDmId
     });
 
+    // 상단바 알림 배지 실시간 동기화 호출
+    if(typeof global.updateTopNotifBadge === 'function'){
+      try { global.updateTopNotifBadge(); } catch(e){}
+    }
+
     var isBackground = (typeof document !== 'undefined') && document.hidden;
-    if(isBackground && config.bgEnabled !== false && typeof window !== 'undefined' && ('Notification' in window) && Notification.permission === 'granted'){
-      try {
-        var n = new Notification(displayTitle, {
-          body: displayBody,
-          icon: opts.iconUrl || '/icons/icon-192.png',
-          badge: '/icons/badge-72.png',
-          tag: 'ourgoal-' + (opts.type || 'general')
-        });
-        n.onclick = function(){
-          window.focus();
-          if(opts.targetTab && typeof global.switchTab === 'function'){
-            global.switchTab(opts.targetTab);
+    if(isBackground && config.bgEnabled !== false && typeof window !== 'undefined'){
+      var notifOpts = {
+        body: displayBody,
+        icon: opts.iconUrl || '/icons/icon-192.png',
+        badge: '/icons/badge-72.png',
+        tag: 'ourgoal-' + (opts.type || 'general'),
+        data: {
+          targetTab: opts.targetTab || 'home',
+          targetDmId: opts.targetDmId || null
+        }
+      };
+      // [#TASK-ES-168] 모바일(Chrome Android, PWA) 대응: ServiceWorker showNotification 우선 호출
+      if('serviceWorker' in navigator && navigator.serviceWorker.ready){
+        navigator.serviceWorker.ready.then(function(reg){
+          if(reg && typeof reg.showNotification === 'function'){
+            reg.showNotification(displayTitle, notifOpts).catch(function(){});
           }
-          if(opts.type === 'dm' && opts.targetDmId && global.OurgoalComm){
-            state.commSubTab = 'dm';
-            state.dmActiveId = opts.targetDmId;
-            if(typeof global.renderCommScreen === 'function') global.renderCommScreen();
-          }
-          n.close();
-        };
-      } catch(e){}
+        }).catch(function(){});
+      } else if('Notification' in window && Notification.permission === 'granted'){
+        try {
+          var n = new Notification(displayTitle, notifOpts);
+          n.onclick = function(){
+            window.focus();
+            if(opts.targetTab && typeof global.switchTab === 'function'){
+              global.switchTab(opts.targetTab);
+            }
+            if(opts.type === 'dm' && opts.targetDmId && global.OurgoalComm){
+              state.commSubTab = 'dm';
+              state.dmActiveId = opts.targetDmId;
+              if(typeof global.renderCommScreen === 'function') global.renderCommScreen();
+            }
+            n.close();
+          };
+        } catch(e){}
+      }
     }
 
     return true;
@@ -227,6 +258,40 @@
     return Notification.permission;
   }
 
+  function getUnreadNotifications(){
+    var state = global.state || {};
+    var settings = (state.profile && state.profile.settings) || {};
+    return settings.unreadNotifications || [];
+  }
+
+  function getUnreadCount(){
+    var list = getUnreadNotifications();
+    var count = 0;
+    for(var i = 0; i < list.length; i++){
+      if(!list[i].read) count++;
+    }
+    return count;
+  }
+
+  function markAllAsRead(){
+    var state = global.state || {};
+    var settings = (state.profile && state.profile.settings) || {};
+    var list = settings.unreadNotifications || [];
+    for(var i = 0; i < list.length; i++){
+      list[i].read = true;
+    }
+    if(state.profile && state.profile.id && typeof global.saveLocalSettings === 'function'){
+      global.saveLocalSettings(state.profile.id, settings);
+    }
+    if(typeof global.saveProfile === 'function'){
+      global.saveProfile().catch(function(){});
+    }
+    if(typeof global.updateTopNotifBadge === 'function'){
+      try { global.updateTopNotifBadge(); } catch(e){}
+    }
+    return true;
+  }
+
   function escHtml(s){
     if(s == null) return '';
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -240,7 +305,10 @@
     showFloatingBanner: showFloatingBanner,
     dispatchGlobalNotification: dispatchGlobalNotification,
     requestPermission: requestPermission,
-    getPermissionStatus: getPermissionStatus
+    getPermissionStatus: getPermissionStatus,
+    getUnreadNotifications: getUnreadNotifications,
+    getUnreadCount: getUnreadCount,
+    markAllAsRead: markAllAsRead
   };
 
   global.OurgoalNotifyEngine = Engine;

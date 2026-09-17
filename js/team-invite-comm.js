@@ -740,6 +740,7 @@
     if(!global.sb || !myId || String(myId).indexOf('guest') === 0) return;
     if(_incomingDmChannel){
       try { _incomingDmChannel.unsubscribe(); } catch(e){}
+      try { if(global.sb.removeChannel) global.sb.removeChannel(_incomingDmChannel); } catch(e){}
       _incomingDmChannel = null;
     }
     try {
@@ -781,6 +782,19 @@
             }
           } else {
             markDmRoomRead(myId, senderId);
+            // [#TASK-ES-168] 활성 채팅방 DOM 실시간 즉각 추가
+            var msgsEl = document.getElementById('dmMsgs');
+            if(msgsEl && document.body.contains(msgsEl)){
+              var existing = msgsEl.querySelector('[data-msgid="' + r.id + '"]');
+              if(!existing){
+                var div = document.createElement('div');
+                div.className = 'dm-msg them';
+                div.dataset.msgid = r.id;
+                div.textContent = r.message;
+                msgsEl.appendChild(div);
+                msgsEl.scrollTop = msgsEl.scrollHeight;
+              }
+            }
           }
 
           // 수신 목록 및 뷰 갱신
@@ -791,15 +805,46 @@
                 renderCommDM(subBody);
               }
             }
+            if(typeof global.updateTopNotifBadge === 'function'){
+              global.updateTopNotifBadge();
+            }
           });
         })
         .subscribe();
 
       // 최초 1회 incoming 대화 목록 로드 & 미확인 확인
       loadIncomingDmRooms(myId);
+
+      // [#TASK-ES-168] 헌법 제13조 제5항 2호 준수: 30초 스마트 폴링(Smart Polling) 백업 루프 가동
+      startSmartDmPolling(myId);
     } catch(err){
       console.warn('[DM] 전역 Realtime 리스너 설정 오류:', err);
     }
+  }
+
+  var _smartDmPollingTimer = null;
+  function startSmartDmPolling(myId){
+    if(!myId || String(myId).indexOf('guest') === 0) return;
+    if(_smartDmPollingTimer){
+      clearInterval(_smartDmPollingTimer);
+      _smartDmPollingTimer = null;
+    }
+    _smartDmPollingTimer = setInterval(function(){
+      var state = global.state || {};
+      var curId = (state.profile && state.profile.id) || myId;
+      if(!curId || String(curId).indexOf('guest') === 0) return;
+      loadIncomingDmRooms(curId).then(function(rooms){
+        if(state.activeTab === 'comm' && state.commSubTab === 'dm' && !state.dmActiveId){
+          var subBody = document.getElementById('commSubBody');
+          if(subBody && document.body.contains(subBody)){
+            renderCommDM(subBody);
+          }
+        }
+        if(typeof global.updateTopNotifBadge === 'function'){
+          global.updateTopNotifBadge();
+        }
+      }).catch(function(){});
+    }, 30000);
   }
 
   function showGuestSoftAuthGate(actionName){
@@ -1118,6 +1163,23 @@
               message: text,
               created_at: new Date().toISOString()
             });
+
+            // [#TASK-ES-168] 상대방에게 Web Push 즉시 비동기 발송 (백그라운드/앱종료 수신 보장)
+            try {
+              fetch('/api/push-dispatch', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  targetUserId: person.id,
+                  title: '💬 ' + myName + '님의 메시지',
+                  body: text,
+                  url: '/#comm',
+                  tag: 'dm-' + threadId
+                })
+              }).catch(function(pErr){
+                console.warn('[DM] push dispatch fetch error (graceful):', pErr);
+              });
+            } catch(fetchErr){}
           } catch(err){
             console.warn('[DM] Supabase 영속화 실패:', err);
           }
