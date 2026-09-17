@@ -889,9 +889,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       </div>
 
       <div class="set-block">
-        <h4>잇템 클릭 통계</h4>
+        <h4>잇템 관리 및 통계</h4>
         <div id="itemStatsList"></div>
-        <p class="faint">내가 등록한 제휴 링크를 다른 사람이 클릭한 횟수예요 · 샘플 데이터</p>
+        <p class="faint">내가 등록한 잇템 현황과 안전한 추천 가이드예요</p>
       </div>
 
       <!-- 💾 저장공간 및 데이터 관리 (Req 10) -->
@@ -949,7 +949,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       <div class="app-foot">
         <div>아워골 · v1.0.0</div>
-        <div>문의 <a href="javascript:void(0)" id="footInquiryLink" role="button">1:1 문의 / 오류 제보</a></div>
+        <div style="font-size:.75rem;color:var(--ink-faint);line-height:1.45;margin:4px auto;max-width:320px;">
+          아워골은 등록된 추천 아이템의 판매 당사자가 아니며, 상품 거래 및 배송·환불의 책임은 각 판매처에 있습니다.
+        </div>
+        <div>문의 <a href="javascript:void(0)" id="footInquiryLink" role="button">1:1 문의 / 오류 제보</a> · 공식 지원 <a href="mailto:ourgoal.support@gmail.com" style="color:var(--ink-soft);text-decoration:underline;">ourgoal.support@gmail.com</a></div>
         <div><a href="#" id="setTermsLink">이용약관</a> · <a href="#" id="setPrivacyLink">개인정보처리방침</a></div>
         <div>2026 OurGoal</div>
       </div>
@@ -5220,14 +5223,24 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             return;
           }
           box.innerHTML = draft.itItems.map(function(it, idx){
-            return '<div class="it-item-card">' +
-              (it.imageUrl ? '<img src="'+it.imageUrl+'" class="it-item-thumb" alt="">' : '<div class="it-item-thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 14H5z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg></div>') +
-              '<div style="flex:1;min-width:0;">' +
-                '<div style="font-weight:700;font-size:.875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+escapeHtml(it.name)+'</div>' +
-                (it.buyUrl ? '<a href="'+escapeHtml(it.buyUrl)+'" target="_blank" rel="noopener" style="font-size:.8125rem;color:var(--brand-strong);text-decoration:underline;word-break:break-all;display:block;">'+escapeHtml(it.buyUrl)+'</a>' : '') +
-                (it.desc ? '<div class="faint" style="font-size:.8125rem;margin-top:2px;">'+escapeHtml(it.desc)+'</div>' : '') +
+            var isAff = it.isAffiliate || /파트너스|쿠팡|affiliate|제휴/i.test(it.desc || '');
+            return '<div class="it-item-card" style="flex-direction:column;align-items:stretch;">' +
+              '<div style="display:flex;align-items:center;gap:10px;">' +
+                (it.imageUrl ? '<img src="'+it.imageUrl+'" class="it-item-thumb" alt="">' : '<div class="it-item-thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 14H5z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg></div>') +
+                '<div style="flex:1;min-width:0;">' +
+                  '<div style="display:flex;align-items:center;gap:4px;">' +
+                    '<div style="font-weight:700;font-size:.875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+escapeHtml(it.name)+'</div>' +
+                    (isAff ? '<span class="dday-pill" style="font-size:.6875rem;background:rgba(108,92,231,0.12);color:var(--brand-strong);font-weight:700;padding:1px 5px;flex-shrink:0;">제휴</span>' : '') +
+                  '</div>' +
+                  (it.buyUrl ? '<a href="'+escapeHtml(it.buyUrl)+'" target="_blank" rel="noopener noreferrer nofollow" style="font-size:.8125rem;color:var(--brand-strong);text-decoration:underline;word-break:break-all;display:block;margin-top:2px;">'+escapeHtml(it.buyUrl)+' ↗</a>' : '') +
+                  (it.desc ? '<div class="faint" style="font-size:.8125rem;margin-top:2px;">'+escapeHtml(it.desc)+'</div>' : '') +
+                '</div>' +
+                '<button class="icon-btn" data-delititem="'+idx+'" type="button" aria-label="잇템 삭제">×</button>' +
               '</div>' +
-              '<button class="icon-btn" data-delititem="'+idx+'" type="button" aria-label="잇템 삭제">×</button>' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:6px;border-top:1px dashed var(--rule);font-size:.6875rem;color:var(--ink-faint);">' +
+                '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">※ 아워골은 상품 판매 당사자가 아닙니다.</span>' +
+                '<button class="btn btn-ghost btn-xs btn-report-ititem" data-itname="'+escapeHtml(it.name)+'" data-iturl="'+escapeHtml(it.buyUrl||'')+'" data-itowner="'+escapeHtml(draft.name||'내 잇템')+'" type="button" style="font-size:.6875rem;padding:2px 6px;color:var(--red);border:1px solid rgba(235,87,87,0.3);border-radius:6px;cursor:pointer;flex-shrink:0;margin-left:6px;">🚨 신고</button>' +
+              '</div>' +
             '</div>';
           }).join('');
           box.querySelectorAll('[data-delititem]').forEach(function(b){
@@ -5237,11 +5250,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               paintItItems();
             });
           });
+          box.querySelectorAll('.btn-report-ititem').forEach(function(rb){
+            rb.addEventListener('click', function(e){
+              e.stopPropagation();
+              if(typeof openItemReportModal === 'function'){
+                openItemReportModal({ itemName: rb.dataset.itname, itemUrl: rb.dataset.iturl, itemOwner: rb.dataset.itowner });
+              }
+            });
+          });
         }
         paintItItems();
 
         sheet.querySelector('#pvAddItItem').addEventListener('click', function(){
-          var itDraft = { name: '', imageUrl: '', buyUrl: '', desc: '' };
+          var itDraft = { name: '', imageUrl: '', buyUrl: '', desc: '', isAffiliate: false };
           openModal(
             '<h3>새 잇템 등록</h3>' +
             '<p class="faint" style="margin:-8px 0 14px;">실제 사용 중인 운동 장비, 꿀템 사진과 구매링크를 입력해주세요.</p>' +
@@ -5258,12 +5279,39 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               '<input id="itImageUrlInput" type="url" placeholder="또는 이미지 웹 주소 (https://...)" style="margin-top:8px;">' +
             '</div>' +
             '<div class="field"><label>구매 링크 (선택)</label><input id="itBuyUrlInput" type="url" placeholder="예: https://smartstore.naver.com/... 또는 쿠팡 링크"></div>' +
+            '<div class="field">' +
+              '<label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;margin:4px 0 2px;font-size:.8125rem;color:var(--brand-strong);font-weight:700;">' +
+                '<input type="checkbox" id="itIsAffiliateCheck" style="accent-color:var(--brand);width:15px;height:15px;cursor:pointer;">' +
+                '<span>쿠팡 파트너스 등 수수료를 제공받는 제휴 링크입니다</span>' +
+              '</label>' +
+            '</div>' +
             '<div class="field"><label>추천 한줄평 (선택)</label><input id="itDescInput" type="text" placeholder="예: 10km 완주할 때 발목 피로를 줄여줘서 애용해요"></div>' +
+            '<div style="margin-top:10px;padding:8px 10px;background:rgba(108,92,231,0.06);border:1px solid rgba(108,92,231,0.2);border-radius:8px;font-size:.75rem;line-height:1.45;color:var(--ink-soft);">' +
+              '<span style="color:var(--brand-strong);font-weight:700;">⚠️ 잇템 등록 안내:</span> 제휴 링크인 경우 추천평에 대가성 문구(수수료 발생 고지)를 반드시 적어주세요. 미표기 시 게시물이 삭제될 수 있습니다. 사전 승인되지 않은 앱 링크는 쇼핑몰 정책에 따라 본인 계정의 수익 정산이 취소될 수 있습니다.' +
+            '</div>' +
             '<div class="modal-actions">' +
               '<button class="btn btn-ghost" id="itCancelBtn" type="button">취소</button>' +
               '<button class="btn btn-primary" id="itConfirmBtn" type="button">잇템 추가</button>' +
             '</div>',
             function(itSheet){
+              var affCheck = itSheet.querySelector('#itIsAffiliateCheck');
+              var descInput = itSheet.querySelector('#itDescInput');
+              var AFF_NOTICE = '[파트너스 활동의 일환으로 수수료를 제공받을 수 있음]';
+              if(affCheck && descInput){
+                affCheck.addEventListener('change', function(){
+                  if(affCheck.checked){
+                    if(!descInput.value.trim()){
+                      descInput.value = AFF_NOTICE;
+                    } else if(descInput.value.indexOf(AFF_NOTICE) === -1){
+                      descInput.value = descInput.value + ' ' + AFF_NOTICE;
+                    }
+                  } else {
+                    if(descInput.value === AFF_NOTICE){
+                      descInput.value = '';
+                    }
+                  }
+                });
+              }
               var itFileInput = itSheet.querySelector('#itFileInput');
               itSheet.querySelector('#itPickPhotoBtn').addEventListener('click', function(){ itFileInput.click(); });
               itFileInput.onchange = function(e){
@@ -5291,11 +5339,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                 if(!name){ toast('잇템 이름을 입력해주세요'); return; }
                 var buyUrl = itSheet.querySelector('#itBuyUrlInput').value.trim();
                 if(buyUrl && !/^https?:\/\//i.test(buyUrl)) buyUrl = 'https://' + buyUrl;
+                var isAffiliate = affCheck ? !!affCheck.checked : false;
                 draft.itItems.push({
                   id: uid('item'),
                   name: name,
                   imageUrl: itDraft.imageUrl,
                   buyUrl: buyUrl,
+                  isAffiliate: isAffiliate,
                   desc: itSheet.querySelector('#itDescInput').value.trim(),
                   createdAt: nowISO()
                 });
@@ -22952,12 +23002,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       ] }
   ];
 
-  /* 잇템(제휴 링크) 클릭 통계 (mock) */
-  var MOCK_ITEM_STATS = [
-    { id:'i1', icon:'🏋️', name:'리프팅 벨트 프로', total:1284, weekly:63 },
-    { id:'i2', icon:'🍫', name:'WPI 초코맛 프로틴', total:842, weekly:38 },
-    { id:'i3', icon:'⏱️', name:'집중력 향상 타이머', total:317, weekly:12 }
-  ];
+  /* #TASK-ES-179: 가짜 잇템 통계 목데이터 완전 제거 (헌법 제4조 준수) */
 
   var VISIBILITY_LABELS = { public:'전체 공개', followers:'팔로워만', private:'나만 보기' };
 
@@ -25891,6 +25936,101 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.openCustomerInquiryModal = openCustomerInquiryModal;
   }
 
+  /* ============ 잇템 불법/유해 링크 3초 퀵 신고 모달 (#TASK-ES-179) ============ */
+  function openItemReportModal(reportData){
+    reportData = reportData || {};
+    var itemName = reportData.name || reportData.itemName || '등록된 잇템';
+    var itemUrl = reportData.buyUrl || reportData.url || reportData.itemUrl || '';
+    var itemOwner = reportData.owner || reportData.itemOwner || '등록 유저';
+
+    openModal(
+      '<h3>🚨 잇템 불법·유해 링크 신고</h3>' +
+      '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">안전하고 신뢰할 수 있는 목표 달성 환경을 위해 불법·유해 링크를 신속히 제보해 주세요.</p>' +
+      '<div style="padding:10px 12px;background:var(--card2);border-radius:10px;border:1px solid var(--rule);margin-bottom:12px;font-size:.8125rem;">' +
+        '<div style="font-weight:700;color:var(--ink);margin-bottom:3px;">📦 ' + escapeHtml(itemName) + '</div>' +
+        (itemOwner ? '<div class="faint" style="font-size:.75rem;margin-bottom:2px;">등록자: ' + escapeHtml(itemOwner) + '</div>' : '') +
+        (itemUrl ? '<div style="font-size:.75rem;color:var(--brand-strong);word-break:break-all;">' + escapeHtml(itemUrl) + '</div>' : '') +
+      '</div>' +
+      '<div class="field">' +
+        '<label style="font-weight:700;margin-bottom:6px;">신고 사유 선택 (필수)</label>' +
+        '<div style="display:flex;flex-direction:column;gap:6px;" id="repReasonWrap">' +
+          '<label style="display:flex;align-items:center;gap:8px;font-size:.8125rem;cursor:pointer;"><input type="radio" name="repReason" value="commission" checked style="accent-color:var(--brand);cursor:pointer;"> <span>수수료/제휴 대가성 미표기 (뒷광고)</span></label>' +
+          '<label style="display:flex;align-items:center;gap:8px;font-size:.8125rem;cursor:pointer;"><input type="radio" name="repReason" value="phishing" style="accent-color:var(--brand);cursor:pointer;"> <span>사기 · 피싱 의심 사이트 결제 유도</span></label>' +
+          '<label style="display:flex;align-items:center;gap:8px;font-size:.8125rem;cursor:pointer;"><input type="radio" name="repReason" value="harmful" style="accent-color:var(--brand);cursor:pointer;"> <span>불법 도박 · 성인물 · 유해 소프트웨어 링크</span></label>' +
+          '<label style="display:flex;align-items:center;gap:8px;font-size:.8125rem;cursor:pointer;"><input type="radio" name="repReason" value="other" style="accent-color:var(--brand);cursor:pointer;"> <span>기타 규정 위반 및 허위 정보</span></label>' +
+        '</div>' +
+      '</div>' +
+      '<div class="field" style="margin-top:10px;">' +
+        '<label>상세 설명 (선택)</label>' +
+        '<textarea id="repDetailInput" rows="3" placeholder="구체적인 문제 상황이나 의심되는 점을 적어주세요." style="width:100%;border-radius:10px;padding:8px 12px;background:var(--card2);border:1px solid var(--rule);color:var(--ink);font-size:.8125rem;resize:vertical;box-sizing:border-box;"></textarea>' +
+      '</div>' +
+      '<div style="margin:12px 0 14px;padding:8px 12px;background:rgba(235,87,87,0.08);border:1px solid rgba(235,87,87,0.25);border-radius:8px;font-size:.75rem;color:var(--red);line-height:1.45;">' +
+        '<b style="font-weight:700;">⚠️ 주의:</b> 허위 또는 악의적인 신고임이 확인될 경우, 서비스 이용 제한 등 계정에 불이익을 받으실 수 있습니다.' +
+      '</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn btn-ghost" id="repCancelBtn" type="button">취소</button>' +
+        '<button class="btn btn-primary" id="repSubmitBtn" type="button" style="background:var(--red);border-color:var(--red);">신고 접수</button>' +
+      '</div>',
+      function(sheet){
+        sheet.querySelector('#repCancelBtn').onclick = closeModal;
+        sheet.querySelector('#repSubmitBtn').onclick = async function(){
+          var btn = sheet.querySelector('#repSubmitBtn');
+          var selectedRadio = sheet.querySelector('input[name="repReason"]:checked');
+          var reasonKey = selectedRadio ? selectedRadio.value : 'other';
+          var reasonLabels = {
+            commission: '수수료/제휴 대가성 미표기 (뒷광고)',
+            phishing: '사기·피싱 의심 사이트',
+            harmful: '불법·도박·성인물 등 유해 링크',
+            other: '기타 규정 위반'
+          };
+          var detail = (sheet.querySelector('#repDetailInput').value || '').trim();
+
+          btn.disabled = true;
+          btn.textContent = '신고 접수 중...';
+
+          try {
+            var payload = {
+              action: 'inquiry',
+              inquiryType: 'item_report',
+              reportData: {
+                itemName: itemName,
+                itemUrl: itemUrl,
+                itemOwner: itemOwner,
+                reason: reasonKey,
+                reasonLabel: reasonLabels[reasonKey] || reasonKey
+              },
+              content: detail || (reasonLabels[reasonKey] + ' 사유로 신고 접수됨'),
+              userId: (state.profile && state.profile.id) || (state.user && state.user.id) || '',
+              userNickname: (state.profile && state.profile.nickname) || (state.profile && state.profile.username) || '익명 러너',
+              userAgent: (navigator.userAgent || '').slice(0, 300),
+              appVersion: 'v1.0.0'
+            };
+
+            var res = await fetch('/api/inquiry', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            var data = await res.json().catch(function(){ return {}; });
+            if(res.ok && data.ok){
+              closeModal();
+              toast('신고가 성공적으로 접수되었습니다. 신속히 검토하겠습니다.');
+            } else {
+              throw new Error((data && data.error) || '신고 접수 중 오류가 발생했습니다.');
+            }
+          } catch(e) {
+            btn.disabled = false;
+            btn.textContent = '신고 접수';
+            toast(e.message || '네트워크 오류가 발생했습니다.');
+          }
+        };
+      }
+    );
+  }
+  if(typeof window !== 'undefined'){
+    window.openItemReportModal = openItemReportModal;
+  }
+
   function openFaqModal(){
     var faqs = [
       {
@@ -26623,24 +26763,32 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         else if(!settings.notionDatabaseId && notionDbInput) notionDbInput.focus();
       }
     };
-    // 잇템 통계
+    // 잇템 통계 및 안전 관리 (#TASK-ES-179)
     var statsEl = document.getElementById('itemStatsList');
     if(statsEl){
       var myItems = state.profile.itItems || [];
-      var totalAll = MOCK_ITEM_STATS.reduce(function(a,i){ return a+i.total; }, 0);
-      var weekAll = MOCK_ITEM_STATS.reduce(function(a,i){ return a+i.weekly; }, 0);
       var myItemsHtml = '';
       if(myItems.length){
         myItemsHtml = '<div style="margin-bottom:14px;">' +
           '<div style="font-size:.875rem;font-weight:700;margin-bottom:8px;color:var(--ink);">내가 등록한 잇템 ('+myItems.length+'개)</div>' +
           myItems.map(function(it){
-            return '<div class="it-item-card">' +
-              (it.imageUrl ? '<img src="'+it.imageUrl+'" class="it-item-thumb" alt="">' : '<div class="it-item-thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 14H5z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg></div>') +
-              '<div style="flex:1;min-width:0;">' +
-                '<div style="font-weight:700;font-size:.875rem;">'+escapeHtml(it.name)+'</div>' +
-                (it.desc ? '<div class="faint" style="font-size:.8125rem;margin-top:2px;">'+escapeHtml(it.desc)+'</div>' : '') +
+            var isAff = it.isAffiliate || /파트너스|쿠팡|affiliate|제휴/i.test(it.desc || '');
+            return '<div class="it-item-card" style="flex-direction:column;align-items:stretch;">' +
+              '<div style="display:flex;align-items:center;gap:10px;">' +
+                (it.imageUrl ? '<img src="'+it.imageUrl+'" class="it-item-thumb" alt="">' : '<div class="it-item-thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 14H5z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg></div>') +
+                '<div style="flex:1;min-width:0;">' +
+                  '<div style="display:flex;align-items:center;gap:4px;">' +
+                    '<div style="font-weight:700;font-size:.875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+escapeHtml(it.name)+'</div>' +
+                    (isAff ? '<span class="dday-pill" style="font-size:.6875rem;background:rgba(108,92,231,0.12);color:var(--brand-strong);font-weight:700;padding:1px 5px;flex-shrink:0;">제휴</span>' : '') +
+                  '</div>' +
+                  (it.desc ? '<div class="faint" style="font-size:.8125rem;margin-top:2px;">'+escapeHtml(it.desc)+'</div>' : '') +
+                '</div>' +
+                (it.buyUrl ? '<a href="'+escapeHtml(it.buyUrl)+'" target="_blank" rel="noopener noreferrer nofollow" class="btn btn-ghost btn-sm" style="font-size:.8125rem;padding:4px 8px;flex:0 0 auto;">구매 링크 ↗</a>' : '') +
               '</div>' +
-              (it.buyUrl ? '<a href="'+escapeHtml(it.buyUrl)+'" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="font-size:.8125rem;padding:4px 8px;flex:0 0 auto;">구매 링크</a>' : '') +
+              '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:6px;border-top:1px dashed var(--rule);font-size:.6875rem;color:var(--ink-faint);">' +
+                '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">※ 아워골은 상품 판매 당사자가 아닙니다.</span>' +
+                '<button class="btn btn-ghost btn-xs btn-report-ititem" data-itname="'+escapeHtml(it.name)+'" data-iturl="'+escapeHtml(it.buyUrl||'')+'" data-itowner="'+escapeHtml((state.profile&&state.profile.nickname)||'내 잇템')+'" type="button" style="font-size:.6875rem;padding:2px 6px;color:var(--red);border:1px solid rgba(235,87,87,0.3);border-radius:6px;cursor:pointer;flex-shrink:0;margin-left:6px;">🚨 신고</button>' +
+              '</div>' +
             '</div>';
           }).join('') +
         '</div>';
@@ -26652,19 +26800,24 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
       statsEl.innerHTML =
         myItemsHtml +
-        '<div class="collective-card" style="border-color:var(--gold-line);margin-bottom:12px;">' +
-          '<div class="collective-top"><b>전체 클릭</b><span class="collective-pct" style="color:var(--gold);">'+totalAll.toLocaleString()+'회</span></div>' +
-          '<p class="faint" style="margin:0;">이번 주 '+weekAll.toLocaleString()+'회 · 등록한 잇템 '+(MOCK_ITEM_STATS.length + myItems.length)+'개</p>' +
-        '</div>' +
-        MOCK_ITEM_STATS.map(function(i){
-          return '<div class="item-stat-row">' +
-            '<span class="ico">'+i.icon+'</span>' +
-            '<span class="nm">'+escapeHtml(i.name)+'</span>' +
-            '<span class="ct">총 <b>'+i.total.toLocaleString()+'</b>회<br>주간 '+i.weekly+'회</span>' +
-          '</div>';
-        }).join('');
+        '<div class="collective-card" style="border-color:var(--rule);background:var(--card2);margin-bottom:12px;padding:12px 14px;border-radius:12px;">' +
+          '<div style="font-weight:700;font-size:.875rem;color:var(--ink);margin-bottom:4px;display:flex;align-items:center;gap:6px;"><span>🛡️ 투명한 잇템 추천 가이드</span></div>' +
+          '<p class="faint" style="margin:0;font-size:.8125rem;line-height:1.45;">' +
+            '아워골은 동료 러너 간의 진정성 있는 장비 추천을 지지합니다. 제휴 링크 등록 시 대가성을 꼭 표기해 주세요. 의심스러운 링크는 각 카드의 [🚨 신고]로 제보하실 수 있습니다.' +
+          '</p>' +
+        '</div>';
+
       var goProf = statsEl.querySelector('#setGoProfileBtn');
       if(goProf) goProf.addEventListener('click', openProfileEditor);
+
+      statsEl.querySelectorAll('.btn-report-ititem').forEach(function(rb){
+        rb.addEventListener('click', function(e){
+          e.stopPropagation();
+          if(typeof openItemReportModal === 'function'){
+            openItemReportModal({ itemName: rb.dataset.itname, itemUrl: rb.dataset.iturl, itemOwner: rb.dataset.itowner });
+          }
+        });
+      });
     }
     // AI 설정 (Gemini API 전면 단일화)
     settings.aiProvider = 'gemini';
