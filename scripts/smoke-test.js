@@ -6341,6 +6341,74 @@ check('compliance: [#TASK-ES-162] 공통 UI 컴포넌트 모듈화(OurgoalCompon
   assert.ok(swSrc.includes('ourgoal-shell-v20260917-es162'), 'sw.js 캐시 네임 es162 갱신');
 });
 
+/* ============ [#TASK-ES-163] 측정지표 분석할 항목별 차등 지정 및 정밀화·고도화 시스템 검증 ============ */
+check('compliance: [#TASK-ES-163] 측정지표 분석할 항목별 차등 지정 및 정밀화·고도화 시스템 검증', () => {
+  const uStats = require('../js/universal-stats.js');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 6대 도메인 특화 모델 완비 검증
+  assert.ok(uStats.METRIC_DIFFERENTIATED_MODELS, 'METRIC_DIFFERENTIATED_MODELS 객체 노출');
+  const requiredModels = ['weight', 'strength', 'running', 'study', 'finance', 'sleep'];
+  requiredModels.forEach(mKey => {
+    assert.ok(uStats.METRIC_DIFFERENTIATED_MODELS[mKey], `도메인 특화 모델 [${mKey}] 존재`);
+    assert.strictEqual(typeof uStats.METRIC_DIFFERENTIATED_MODELS[mKey].analyze, 'function', `[${mKey}] analyze 함수`);
+  });
+
+  // 2. 도메인별 계산 공식 정밀화 검증
+  // 1) 체중 (7일 이동평균 & 주간 감량속도)
+  const weightRes = uStats.computeDifferentiatedAnalysis('weight', [
+    { value: 75.0 }, { value: 74.8 }, { value: 74.5 }, { value: 74.2 }, { value: 74.0 }, { value: 73.8 }, { value: 73.5 }
+  ]);
+  assert.ok(weightRes.title.includes('7일 이동평균') && weightRes.kpis.length >= 4, '체중 7일 이동평균 모델 연산');
+
+  // 2) 헬스/3대 (에플리 1RM & 과부하)
+  const strengthRes = uStats.computeDifferentiatedAnalysis('strength', [
+    { value: 100, reps: 5 }, { value: 105, reps: 3 }
+  ]);
+  assert.ok(strengthRes.title.includes('1RM') && strengthRes.kpis.some(k => k.label.includes('1RM')), '헬스 1RM 에플리 공식 연산');
+
+  // 3) 러닝 (페이스존 & 심폐 마일리지)
+  const runRes = uStats.computeDifferentiatedAnalysis('running', [
+    { value: 5.0 }, { value: 10.0 }, { value: 7.5 }
+  ]);
+  assert.ok(runRes.title.includes('페이스존') && runRes.kpis.some(k => k.label.includes('심폐')), '러닝 심폐 마일리지 연산');
+
+  // 4) 공부 (순공 몰입 밀도 & 뽀모도로 세션)
+  const studyRes = uStats.computeDifferentiatedAnalysis('study', [
+    { value: 120 }, { value: 180 }
+  ]);
+  assert.ok(studyRes.title.includes('몰입 밀도') && studyRes.kpis.some(k => k.label.includes('뽀모도로')), '공부 뽀모도로 세션 연산');
+
+  // 5) 자산 (월간 저축가속도 & 연간 누적예측)
+  const finRes = uStats.computeDifferentiatedAnalysis('finance', [
+    { value: 100 }, { value: 150 }, { value: 200 }
+  ]);
+  assert.ok(finRes.title.includes('저축 가속도') && finRes.kpis.some(k => k.label.includes('연간')), '자산 저축 가속도 연산');
+
+  // 6) 수면 (수면 규칙성 100점 & 부채 지수)
+  const sleepRes = uStats.computeDifferentiatedAnalysis('sleep', [
+    { value: 7.5 }, { value: 8.0 }, { value: 7.0 }
+  ]);
+  assert.ok(sleepRes.title.includes('수면') && sleepRes.kpis.some(k => k.label.includes('규칙성')), '수면 규칙성 100점 지수 연산');
+
+  // 3. 리포트 카드 렌더링 검증
+  assert.strictEqual(typeof uStats.renderDifferentiatedReportCard, 'function', 'renderDifferentiatedReportCard 함수');
+  const cardHtml = uStats.renderDifferentiatedReportCard('running', [{ value: 10.0 }]);
+  assert.ok(cardHtml.includes('diff-report-card') && cardHtml.includes('diff-kpi-grid'), '차등 리포트 카드 마크업 출력');
+
+  // 4. 모달 함수 및 UI 배선 검증
+  assert.strictEqual(typeof uStats.openDifferentiatedMetricConfigModal, 'function', 'openDifferentiatedMetricConfigModal 함수');
+  assert.ok(indexSrc.includes('metricDiffCfgBtn'), 'index.html 내 metricDiffCfgBtn 바인딩');
+  assert.ok(indexSrc.includes('openDifferentiatedMetricConfigModal'), 'index.html 내 openDifferentiatedMetricConfigModal 호출');
+
+  // 5. ui.css 및 sw.js 검증
+  assert.ok(cssSrc.includes('.diff-report-card'), 'ui.css .diff-report-card 스타일');
+  assert.ok(cssSrc.includes('.diff-kpi-grid'), 'ui.css .diff-kpi-grid 스타일');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es163'), 'sw.js es163 갱신');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
