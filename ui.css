@@ -3523,3 +3523,95 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   font-size: 1rem;
   flex-shrink: 0;
 }
+
+/* ============ 회원 탈퇴 전용 안내 모달 (#TASK-ES-158) ============ */
+.withdraw-modal-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 72vh;
+  overflow-y: auto;
+  padding-right: 4px;
+  box-sizing: border-box;
+}
+.withdraw-top-banner {
+  background: var(--surface-1, #f8f9fa);
+  border: 1px solid var(--rule, #e9ecef);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.withdraw-box {
+  background: var(--card, #fff);
+  border: 1px solid var(--rule, #e9ecef);
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-sizing: border-box;
+}
+.withdraw-box-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.withdraw-box-desc {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--ink-soft, #666);
+  margin: 0;
+}
+.withdraw-box-desc ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+.withdraw-box-desc li {
+  margin-bottom: 4px;
+}
+.withdraw-box-danger {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.04);
+}
+.withdraw-box-danger .withdraw-box-title {
+  color: #dc2626;
+}
+.withdraw-box-info {
+  border-color: rgba(59, 130, 246, 0.35);
+  background: rgba(59, 130, 246, 0.04);
+}
+.withdraw-box-info .withdraw-box-title {
+  color: #2563eb;
+}
+.withdraw-box-legal {
+  border-color: rgba(107, 114, 128, 0.35);
+  background: rgba(107, 114, 128, 0.04);
+}
+.withdraw-box-legal .withdraw-box-title {
+  color: #4b5563;
+}
+.withdraw-agree-wrapper {
+  margin-top: 4px;
+}
+.withdraw-check-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(220, 38, 38, 0.06);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #b91c1c;
+  line-height: 1.45;
+}
+.withdraw-check-label input[type="checkbox"] {
+  margin-top: 2px;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}

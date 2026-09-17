@@ -6156,7 +6156,42 @@ check('compliance: [#TASK-ES-157] 캘린더 구글 캘린더 거대 배너 제�
   assert.ok(indexSrc.includes('cBtn.onclick = openGoogleCalendarConnectModal;'), '미연동 시 배지 클릭으로 연동 모달 연결');
 
   // 5. sw.js 캐시 네임 es157 갱신 확인
-  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es157'), 'sw.js 캐시 네임 es157 갱신');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es157') || swSrc.includes('ourgoal-shell-v20260917-es158'), 'sw.js 캐시 네임 es157/158 갱신');
+});
+
+/* ============ [#TASK-ES-158] 회원 탈퇴 시 법적책임·데이터 분실 사전 안내 팝업 및 동의 4위 1체 배선 검증 ============ */
+check('compliance: [#TASK-ES-158] 회원 탈퇴 시 법적책임·데이터 분실 사전 안내 팝업 및 동의 4위 1체 배선 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 모달 및 핵심 함수 정의 확인
+  assert.ok(indexSrc.includes('function openWithdrawModal()'), 'openWithdrawModal 함수 정의');
+  assert.ok(indexSrc.includes('function closeWithdrawModal()'), 'closeWithdrawModal 함수 정의');
+  assert.ok(indexSrc.includes('async function submitWithdrawAccount()'), 'submitWithdrawAccount 함수 정의');
+  assert.ok(indexSrc.includes('async function withdrawAccount()'), '하위 호환 withdrawAccount 함수 유지');
+
+  // 2. 모달 컨테이너 및 3대 안내 블록 확인
+  assert.ok(indexSrc.includes('id="withdrawModal"'), '전용 withdrawModal 컨테이너 마크업 존재');
+  assert.ok(indexSrc.includes('소중한 목표 및 기록 분실 안내'), '1. 데이터 분실 안내 문구 존재');
+  assert.ok(indexSrc.includes('30일 탈퇴 유예 안전망 및 원클릭 복구'), '2. 30일 유예 및 복구 안내 문구 존재');
+  assert.ok(indexSrc.includes('법적 책임 및 관계 법령에 따른 정보 보존'), '3. 법적 책임 보존 고지 문구 존재');
+  assert.ok(indexSrc.includes('전자상거래 등에서의 소비자보호에 관한 법률') && indexSrc.includes('통신비밀보호법'), '관련 법령 명시');
+
+  // 3. 동의 체크박스 및 인터랙티브 버튼 배선 확인
+  assert.ok(indexSrc.includes('id="withdrawAgreeCheck"'), '동의 체크박스 요소 존재');
+  assert.ok(indexSrc.includes('id="withdrawConfirmBtn"'), '탈퇴 신청 버튼 요소 존재');
+  assert.ok(indexSrc.includes('id="withdrawCancelBtn"'), '취소 버튼 요소 존재');
+  assert.ok(indexSrc.includes('id="withdrawCloseBtn"'), '닫기 버튼 요소 존재');
+  assert.ok(indexSrc.includes('confirmBtn.disabled = !this.checked;'), '체크박스 토글 시 버튼 disabled 제어 로직 존재');
+
+  // 4. ui.css 전용 스타일링 확인
+  assert.ok(cssSrc.includes('.withdraw-modal-container'), 'ui.css 모달 컨테이너 스타일 존재');
+  assert.ok(cssSrc.includes('.withdraw-box-danger'), 'ui.css 위험 고지 박스 스타일 존재');
+  assert.ok(cssSrc.includes('.withdraw-box-legal'), 'ui.css 법적 고지 박스 스타일 존재');
+
+  // 5. sw.js 캐시 네임 es158 갱신 확인
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es158'), 'sw.js 캐시 네임 es158 갱신');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
