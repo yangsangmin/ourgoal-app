@@ -139,20 +139,31 @@
       { sender: '소연 (디자인)', text: '체크인 완료했습니다. 팀장님 피드백 감사해요 ✨', time: '오후 02:20', isMe: false }
     ];
 
-    var myName = (global.state && global.state.profile && global.state.profile.displayName) || '나';
+    var myName = (global.state && global.state.profile && (global.state.profile.displayName || global.state.profile.name)) || '나';
+    var myId = (global.state && global.state.profile && global.state.profile.id) || 'guest';
+    var myAvatar = (global.state && global.state.profile && global.state.profile.avatar) || '🏃';
 
-    function renderChatBody(){
-      var msgsHtml = gs.chatMessages.map(function(m){
-        return '<div style="display:flex;flex-direction:column;align-items:'+(m.isMe?'flex-end':'flex-start')+';margin-bottom:10px;">' +
-          '<div style="font-size:.75rem;color:var(--ink-soft);margin-bottom:2px;">' +
-            '<b>' + esc(m.sender) + '</b>' +
+    function renderChatMessagesHtml(list){
+      if(!list || !list.length){
+        return '<div style="text-align:center;padding:30px 10px;font-size:.8125rem;color:var(--ink-faint);">팀 대화방에 첫 메시지를 남겨보세요! 👋</div>';
+      }
+      return list.map(function(m){
+        var isMe = !!m.isMe || (m.sender_id === myId);
+        return '<div style="display:flex;flex-direction:column;align-items:'+(isMe?'flex-end':'flex-start')+';margin-bottom:10px;">' +
+          '<div style="font-size:.75rem;color:var(--ink-soft);margin-bottom:2px;display:flex;align-items:center;gap:4px;">' +
+            (m.avatar ? '<span>' + esc(m.avatar) + '</span>' : '') +
+            '<b>' + esc(m.sender || m.sender_name || '팀원') + '</b>' +
           '</div>' +
-          '<div style="max-width:82%;padding:8px 12px;border-radius:12px;font-size:.875rem;line-height:1.45;background:'+(m.isMe?'var(--brand-strong)':'var(--card2)')+';color:'+(isMe?'#fff':'var(--ink)')+';border:'+(isMe?'none':'1px solid var(--rule)')+';word-break:break-word;">' +
-            esc(m.text) +
+          '<div style="max-width:82%;padding:8px 12px;border-radius:12px;font-size:.875rem;line-height:1.45;background:'+(isMe?'var(--brand-strong)':'var(--card2)')+';color:'+(isMe?'#fff':'var(--ink)')+';border:'+(isMe?'none':'1px solid var(--rule)')+';word-break:break-word;">' +
+            esc(m.text || m.message || '') +
           '</div>' +
-          '<span class="faint" style="font-size:.6875rem;margin-top:2px;">' + esc(m.time) + '</span>' +
+          '<span class="faint" style="font-size:.6875rem;margin-top:2px;">' + esc(m.time || (m.created_at ? (global.fmtTime ? global.fmtTime(m.created_at) : '최근') : '방금')) + '</span>' +
         '</div>';
       }).join('');
+    }
+
+    function renderChatBody(){
+      var msgsHtml = renderChatMessagesHtml(gs.chatMessages);
 
       var quickChips = [
         '오늘 목표 달성 완료했어요! 🎉',
@@ -190,10 +201,86 @@
     }
 
     global.openModal(renderChatBody(), function(sheet){
-      sheet.querySelector('#btnCloseTeamChat').addEventListener('click', global.closeModal);
+      var teamChatChannel = null;
+      var closeBtn = sheet.querySelector('#btnCloseTeamChat');
+      if(closeBtn){
+        closeBtn.addEventListener('click', function(){
+          if(teamChatChannel && global.sb && global.sb.removeChannel){
+            try { teamChatChannel.unsubscribe(); global.sb.removeChannel(teamChatChannel); } catch(e){}
+          }
+          global.closeModal();
+        });
+      }
 
       var box = sheet.querySelector('#teamChatMsgBox');
       if(box) box.scrollTop = box.scrollHeight;
+
+      // 1. Supabase 서버에서 실제 팀 채팅 메시지 로드 (#TASK-ES-169)
+      if(global.sb){
+        global.sb.from('team_pings')
+          .select('id, sender_id, sender_name, sender_avatar, message, created_at')
+          .eq('group_id', gid)
+          .eq('target_type', 'team_chat')
+          .order('created_at', { ascending: true })
+          .limit(100)
+          .then(function(res){
+            if(res && res.data && res.data.length){
+              gs.chatMessages = res.data.map(function(r){
+                return {
+                  id: r.id,
+                  sender: r.sender_name || '팀원',
+                  sender_id: r.sender_id,
+                  avatar: r.sender_avatar || '👤',
+                  text: r.message,
+                  time: global.fmtTime ? global.fmtTime(r.created_at) : '최근',
+                  isMe: r.sender_id === myId
+                };
+              });
+              var curBox = document.getElementById('teamChatMsgBox');
+              if(curBox){
+                curBox.innerHTML = renderChatMessagesHtml(gs.chatMessages);
+                curBox.scrollTop = curBox.scrollHeight;
+              }
+            }
+          }).catch(function(){});
+
+        // 2. 실시간 Realtime 채널 배선 (양방향 실시간 동기화)
+        try {
+          teamChatChannel = global.sb.channel('team_chat_room_' + gid)
+            .on('postgres_changes', {
+              event: 'INSERT',
+              schema: 'public',
+              table: 'team_pings',
+              filter: 'group_id=eq.' + gid
+            }, function(payload){
+              var r = payload.new;
+              if(!r || r.target_type !== 'team_chat') return;
+              if(r.sender_id === myId) return; // 자가 발송 제외
+
+              var newMsg = {
+                id: r.id,
+                sender: r.sender_name || '팀원',
+                sender_id: r.sender_id,
+                avatar: r.sender_avatar || '👤',
+                text: r.message,
+                time: global.fmtTime ? global.fmtTime(r.created_at) : '방금',
+                isMe: false
+              };
+              gs.chatMessages = gs.chatMessages || [];
+              if(!gs.chatMessages.some(function(m){ return m.id === r.id; })){
+                gs.chatMessages.push(newMsg);
+                var curBox = document.getElementById('teamChatMsgBox');
+                if(curBox){
+                  curBox.innerHTML = renderChatMessagesHtml(gs.chatMessages);
+                  curBox.scrollTop = curBox.scrollHeight;
+                }
+              }
+            })
+            .subscribe();
+        } catch(subErr){
+          console.warn('[팀 톡] Realtime 채널 오류:', subErr);
+        }
+      }
 
       sheet.querySelectorAll('.tg-chat-quick').forEach(function(chip){
         chip.addEventListener('click', function(){
@@ -209,38 +296,44 @@
           showToast('메시지를 입력해주세요');
           return;
         }
+
+        var msgId = 'tchat_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
         var nowStr = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-        gs.chatMessages.push({ sender: myName, text: text, time: nowStr, isMe: true });
+        var msgObj = { id: msgId, sender: myName, sender_id: myId, avatar: myAvatar, text: text, time: nowStr, isMe: true };
+        gs.chatMessages.push(msgObj);
         inp.value = '';
-        sheet.innerHTML = renderChatBody();
-        openTeamChatModal(gid); // rebind
+
+        var curBox = sheet.querySelector('#teamChatMsgBox');
+        if(curBox){
+          curBox.innerHTML = renderChatMessagesHtml(gs.chatMessages);
+          curBox.scrollTop = curBox.scrollHeight;
+        }
 
         if(global.saveProfile) await global.saveProfile();
         if(global.triggerHaptic) global.triggerHaptic(10);
 
-        // 팀원의 자연스러운 실시간 응답 (1.2초 후)
-        setTimeout(async function(){
-          var responders = ['준호 (개발)', '소연 (디자인)', '민지 (러너)', '동현 (팀장)'];
-          var replies = [
-            '멋져요! 끝까지 함께 달려봐요 🔥',
-            '인증 확인했습니다! 오늘도 큰 자극 받네요 👍',
-            '파이팅입니다! 저도 오늘 남은 할 일 얼른 끝내야겠어요 ✨',
-            '항상 꾸준한 모습 최고입니다! 응원해요 🚀'
-          ];
-          var resp = responders[Math.floor(Math.random() * responders.length)];
-          var repText = replies[Math.floor(Math.random() * replies.length)];
-          gs.chatMessages.push({
-            sender: resp,
-            text: repText,
-            time: new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
-            isMe: false
-          });
-          if(global.saveProfile) await global.saveProfile();
-          if(document.getElementById('teamChatMsgBox')){
-            var curBox = document.getElementById('teamChatMsgBox');
-            curBox.scrollTop = curBox.scrollHeight;
+        // 3. Supabase team_pings 실서버 영구 저장 (헌법 제13조 실 사용자 연동 준수)
+        if(global.sb){
+          try {
+            await global.sb.from('team_pings').insert({
+              id: msgId,
+              group_id: gid,
+              sender_id: myId,
+              sender_name: myName,
+              sender_avatar: myAvatar,
+              receiver_id: '',
+              target_type: 'team_chat',
+              target_id: gid,
+              target_title: g.name,
+              ping_type: 'team_chat',
+              message: text,
+              status: 'active',
+              created_at: new Date().toISOString()
+            });
+          } catch(err){
+            console.warn('[팀 톡] 메시지 DB 저장 실패(오프라인 유지):', err);
           }
-        }, 1200);
+        }
       }
 
       var sendBtn = sheet.querySelector('#btnSendTeamChat');
@@ -250,33 +343,9 @@
     });
   }
 
-  /* 찌르기 발송 시 팀장/팀원의 실질적 양방향 답장 자동 배선 */
+  /* 찌르기 발송 시 실제 팀 알림 등록 (#TASK-ES-169 가짜 setTimeout 자동답장 제거) */
   function handlePingSentAutoReply(ping, gid){
-    setTimeout(async function(){
-      var gs = (typeof global.groupState === 'function') ? global.groupState(gid) : {};
-      gs.memberPings = gs.memberPings || [];
-      var targetPing = gs.memberPings.find(function(p){ return p.id === ping.id; });
-      if(!targetPing) return;
-
-      var replyMsg = (ping.pingType === 'boast')
-        ? '정말 대단합니다! 꾸준함이 빛을 발하네요. 이 기세로 다음 마일스톤도 격파해봐요 🎉'
-        : '누구나 정체기는 찾아옵니다. 지금 한 걸음씩만 나아가도 충분히 잘하고 계세요! 힘내세요 💪';
-
-      targetPing.replies = targetPing.replies || [];
-      targetPing.replies.push({
-        senderName: '동현 (팀장)',
-        senderRole: 'owner',
-        senderAvatar: '👑',
-        message: replyMsg,
-        createdAt: new Date().toISOString()
-      });
-
-      if(global.saveProfile) await global.saveProfile();
-      showToast('💬 팀장님의 따뜻한 DM 답장이 도착했어요!');
-      if(global.renderTeamGoalsScreen && global.state && global.state.activeTab === 'goals') {
-        global.renderTeamGoalsScreen();
-      }
-    }, 1800);
+    showToast('💬 팀원들에게 응원 찌르기를 보냈어요! 팀원이 확인하면 1:1 대화로 이어집니다 🔥');
   }
 
   /* ------------------------------------------------------------

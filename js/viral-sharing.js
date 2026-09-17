@@ -272,13 +272,17 @@
     try {
       var searchParams = new URLSearchParams(window.location.search);
 
-      // 1. 모임 초대 (?invite_group=, ?invite=, ?join_team= 복구)
-      var inviteGid = searchParams.get('invite_group') || searchParams.get('invite') || searchParams.get('join_team');
+      // 0. 표준 type 및 id 기반 바이럴 딥링크 우선 매핑 (#TASK-ES-169)
+      var pType = (searchParams.get('type') || '').trim().toLowerCase();
+      var pId = (searchParams.get('id') || '').trim();
+
+      // 1. 모임 초대 (?type=group&id=, ?invite_group=, ?invite=, ?join_team= 완벽 복구)
+      var inviteGid = (pType === 'group' || pType === 'team') ? pId : (searchParams.get('invite_group') || searchParams.get('invite') || searchParams.get('join_team'));
       if(inviteGid){
         var roomMeta = {
-          name: searchParams.get('room_name') || searchParams.get('name') || '',
+          name: searchParams.get('title') || searchParams.get('room_name') || searchParams.get('name') || '',
           max: searchParams.get('max') || '5',
-          type: searchParams.get('type') || 'small',
+          type: searchParams.get('room_type') || searchParams.get('roomType') || 'small',
           code: searchParams.get('code') || ''
         };
         setTimeout(function(){
@@ -289,8 +293,8 @@
         return;
       }
 
-      // 2. 피드 상세 딥링크 (?feed=, ?post=, ?feed_id=)
-      var feedId = searchParams.get('feed') || searchParams.get('post') || searchParams.get('feed_id');
+      // 2. 피드 상세 딥링크 (?type=feed&id=, ?feed=, ?post=, ?feed_id=)
+      var feedId = (pType === 'feed') ? pId : (searchParams.get('feed') || searchParams.get('post') || searchParams.get('feed_id'));
       if(feedId){
         var feedMeta = {
           author: searchParams.get('author') || '',
@@ -303,8 +307,8 @@
         return;
       }
 
-      // 3. 템플릿 상세 딥링크 (?template=, ?tpl=, ?template_id=)
-      var tmplId = searchParams.get('template') || searchParams.get('tpl') || searchParams.get('template_id');
+      // 3. 템플릿 상세 딥링크 (?type=template&id=, ?template=, ?tpl=, ?template_id=)
+      var tmplId = (pType === 'template') ? pId : (searchParams.get('template') || searchParams.get('tpl') || searchParams.get('template_id'));
       if(tmplId){
         setTimeout(function(){
           showTemplateGuestViewerModal(tmplId);
@@ -312,8 +316,8 @@
         return;
       }
 
-      // 4. 완주 인증서 딥링크 (?goal=)
-      var goalId = searchParams.get('goal');
+      // 4. 완주 인증서 딥링크 (?type=goal&id=, ?goal=)
+      var goalId = (pType === 'goal') ? pId : searchParams.get('goal');
       if(goalId){
         var goalTitle = searchParams.get('title') || '목표';
         setTimeout(function(){
