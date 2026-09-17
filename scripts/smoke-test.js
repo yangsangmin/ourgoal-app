@@ -6260,7 +6260,40 @@ check('compliance: [#TASK-ES-160] 각 탭 200% 활용법 및 실제 우수 사�
   assert.ok(cssSrc.includes('.showcase-mockup-wrap'), 'UI 시각적 목업 그래픽 래퍼 스타일');
 
   // 5. sw.js 캐시 갱신
-  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es160'), 'sw.js 캐시 네임 es160 갱신');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es160') || swSrc.includes('ourgoal-shell-v20260917-es161'), 'sw.js 캐시 네임 es160/161 갱신');
+});
+
+/* ============ [#TASK-ES-161] 참고자료 첨부 스마트 감지 · 비주얼 프리뷰 · 리치 칩 UI/UX 검증 ============ */
+check('compliance: [#TASK-ES-161] 참고자료 첨부 스마트 감지 · 비주얼 프리뷰 · 리치 칩 UI/UX 4위 1체 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const calAttSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'calendar-attachment.js'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 스마트 툴바 & 클립보드 원클릭 가져오기 및 4대 프리셋 검증
+  assert.ok(indexSrc.includes('id="attClipboardBtn"'), '클립보드 원클릭 가져오기 버튼 탑재');
+  assert.ok(indexSrc.includes('navigator.clipboard.readText'), '클립보드 API 연동 로직 구현');
+  assert.ok(indexSrc.includes('data-attpreset="workout"') && indexSrc.includes('data-attpreset="study"') && indexSrc.includes('data-attpreset="note"') && indexSrc.includes('data-attpreset="photo"'), '4대 실천 퀵 프리셋 버튼 완비');
+
+  // 2. 실시간 스마트 URL 감지 및 비주얼 프리뷰 카드 검증
+  assert.ok(indexSrc.includes('id="attLivePreviewWrap"'), '실시간 비주얼 프리뷰 컨테이너 마크업 존재');
+  assert.ok(indexSrc.includes('function updateSmartPreview('), 'updateSmartPreview 실시간 URL 감지 및 프리뷰 렌더러 함수 구현');
+  assert.ok(indexSrc.includes('img.youtube.com/vi/'), '유튜브 Video ID 추출 및 고해상도 썸네일 생성 로직');
+  assert.ok(indexSrc.includes('att-badge-youtube') && indexSrc.includes('att-badge-web') && indexSrc.includes('att-badge-image'), '타입별 비주얼 배지 렌더링');
+
+  // 3. 리치 칩(Rich Chip) UI/UX 고도화 검증
+  assert.ok(indexSrc.includes('att-chip-rich') && indexSrc.includes('typeClass'), 'index.html 리치 칩 클래스 렌더링');
+  assert.ok(calAttSrc.includes('att-chip-rich'), 'calendar-attachment.js 리치 칩 클래스 적용');
+
+  // 4. ui.css 전용 스타일 검증
+  assert.ok(cssSrc.includes('.att-smart-toolbar'), 'ui.css 스마트 툴바 스타일');
+  assert.ok(cssSrc.includes('.att-clipboard-btn'), 'ui.css 클립보드 버튼 스타일');
+  assert.ok(cssSrc.includes('.att-live-preview-box'), 'ui.css 실시간 프리뷰 박스 스타일');
+  assert.ok(cssSrc.includes('.att-chip-rich'), 'ui.css 리치 칩 스타일');
+  assert.ok(cssSrc.includes('.att-chip-rich.type-video'), 'ui.css 유튜브 영상 전용 칩 스타일');
+
+  // 5. sw.js 캐시 갱신 검증
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es161'), 'sw.js 캐시 네임 es161 갱신');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

@@ -14,12 +14,14 @@
     renderSectionHtml: function(attachments){
       attachments = Array.isArray(attachments) ? attachments : [];
       var chipsHtml = attachments.length
-        ? '<div class="att-chips-wrap" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;">' +
+        ? '<div class="att-chips-wrap" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">' +
             attachments.map(function(att, idx){
               var icon = att.type === 'video' ? '🎥' : (att.type === 'image' ? '🖼️' : (att.type === 'text' ? '📝' : '🔗'));
+              var typeClass = 'type-' + (att.type || 'link');
               var safeTitle = (att.title || '참고자료').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-              return '<span class="att-chip" data-caldraftatt="' + idx + '" title="' + safeTitle + '" style="cursor:pointer;">' +
-                icon + ' ' + safeTitle +
+              return '<span class="att-chip att-chip-rich ' + typeClass + '" data-caldraftatt="' + idx + '" title="' + safeTitle + '" style="cursor:pointer;">' +
+                '<span style="font-size:.875rem;">' + icon + '</span> ' +
+                '<span style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + safeTitle + '</span>' +
               '</span>';
             }).join('') +
           '</div>'

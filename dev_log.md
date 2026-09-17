@@ -4492,3 +4492,27 @@
   - `verify-integrity-gate.js` 17개 헌법 게이트 100% ALL PASS.
   - Zero Dead Click 전수 검사 통과.
 ---
+
+## [2026-09-17 17:30] #TASK-ES-161 참고자료 첨부 효과적·효율적 UI/UX 고도화 및 스마트 감지·비주얼 프리뷰 시스템 구축
+- **배경 및 의도**:
+  - 상민님 직접 지시 ("참고자료 첨부 더 효과적, 효율적으로 사용하면서 ui 와 사용자경험을 개선시켜줄 방법과 실제 구현(ui)상태 눈으로 직접 보고 난 뒤 작업", "한개씩 헌법적용해서 진행하고, 병합까지 진행해. 단, 한 작업씩 진행해.", "모든 작업이 끝날때까지 중지 금지", 생각 메모장 [22]번).
+  - 캘린더 일정(customSchedules) 및 목표의 참고자료 등록 시 복사한 링크를 손으로 붙여넣고 탭을 변경해야 하던 4단계 비효율을 해소하고, 1초 만에 스마트 판별(클립보드 연동, 유튜브/이미지/링크 자동 분류) 및 실시간 유튜브 썸네일·도메인 배지 프리뷰, 4대 실천 퀵 프리셋을 완비하여 실제 체감 실행력을 극대화.
+- **주요 수정 및 해결 내역**:
+  1. **스마트 툴바 & 클립보드 원클릭 가져오기 (`index.html`, `ui.css`)**:
+     - `#attClipboardBtn`: 브라우저 `navigator.clipboard.readText()` API를 연동하여 복사해둔 링크를 1초 만에 자동 주입 및 감지 완료.
+     - 4대 실천 퀵 프리셋 (`[data-attpreset]`): 🏋️운동 자세 영상, 📚공식 문서·자료, 💡핵심 요약 메모, 📸오답·결과 사진 원클릭 자동 프리필.
+  2. **실시간 스마트 URL 감지 및 비주얼 리치 프리뷰 (`index.html`, `ui.css`)**:
+     - `updateSmartPreview(url)`: 유튜브 링크 입력 시 자동으로 [영상/유튜브] 탭 전환 + Video ID 추출 + 고화질 썸네일(`img.youtube.com/vi/{id}/hqdefault.jpg`)과 빨간 재생 아이콘 배지 프리뷰 노출.
+     - 이미지 URL 감지 시 [이미지] 탭 자동 전환 + 썸네일 렌더링.
+     - 일반 웹 링크 시 [링크] 탭 자동 전환 + 도메인(hostname) 배지 노출.
+  3. **비주얼 리치 칩 시스템 (`index.html`, `js/calendar-attachment.js`, `ui.css`)**:
+     - `.att-chip-rich`: 4종 타입별 고유 색상 및 아이콘 배지 (유튜브 레드 `.type-video`, 웹링크 블루 `.type-link`, 메모 앰버 `.type-text`, 이미지 에메랄드 `.type-image`) 적용.
+  4. **실제 UI 상태 시각화 검증 완료**:
+     - Headless Chrome 실측 스크린샷 캡처(`scratch/step3-es161-smart-attachment-modal.png`)를 통해 모달 UI, 클립보드 버튼, 4대 프리셋, 유튜브 실시간 썸네일 프리뷰 카드의 시각적 무결성 100% 검증 완료.
+  5. **PWA 캐시 버전 갱신**:
+     - `sw.js`: `ourgoal-shell-v20260917-es161` 캐시명 갱신.
+- **검증 결과**:
+  - `npm test` 301개 스모크 테스트 100% ALL PASS (0 failures).
+  - `verify-integrity-gate.js` 17개 헌법 게이트 100% ALL PASS.
+  - Zero Dead Click 전수 검사 통과 (598 / 615 PASS).
+---
