@@ -5837,6 +5837,109 @@ check('compliance: [#TASK-ES-145] 마니또 실 유저 판별 무결성 및 가�
   assert.ok(commSrc.includes("s.indexOf('mn_') === 0 || s.indexOf('guest') === 0"), 'isKnownAiCompanion 게스트/마니또 접두어 인식');
 });
 
+/* ============ [#TASK-ES-146] 홈 탭 최하단 <아워골 평가해주기> 고정 배너 및 90% 팝업 평가폼 무결성 검증 ============ */
+check('compliance: [#TASK-ES-146] 홈 탭 최하단 <아워골 평가해주기> 고정 배너 및 90% 팝업 평가폼 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const customSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'customize.js'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. customize.js의 CORE_IDS에 homeEvalBanner 등록 확인
+  assert.ok(customSrc.includes("'homeEvalBanner'"), 'customize.js CORE_IDS에 homeEvalBanner 등록 검증');
+
+  // 2. index.html에 홈 최하단 배너 및 버튼 탑재 확인
+  assert.ok(indexSrc.includes('id="homeEvalBanner"'), 'homeEvalBanner 요소 탑재');
+  assert.ok(indexSrc.includes('id="btnOpenEvalModal"'), 'btnOpenEvalModal 버튼 탑재');
+  assert.ok(indexSrc.includes('아워골 평가해주기'), '아워골 평가해주기 배너 텍스트 확인');
+
+  // 3. 90% 대형 평가 팝업 모달 및 5대 입력 필드 확인
+  assert.ok(indexSrc.includes('id="appEvaluationModal"'), 'appEvaluationModal 모달 탑재');
+  assert.ok(indexSrc.includes('id="evalScoreInput"'), '100점 만점 평가 입력 필드');
+  assert.ok(indexSrc.includes('id="evalProsInput"'), '장점 입력 필드');
+  assert.ok(indexSrc.includes('id="evalConsInput"'), '단점 입력 필드');
+  assert.ok(indexSrc.includes('id="evalImprovementsInput"'), '추가 및 개선요청 입력 필드');
+  assert.ok(indexSrc.includes('id="evalCeoMsgInput"'), '대표에게 하고싶은 말 입력 필드');
+  assert.ok(indexSrc.includes('placeholder="진짜 맘대로 써주셔도 됩니다. 신고안합니다"'), '상민님 지정 회색 플레이스홀더 원문 검증');
+
+  // 4. 로컬 영속화 및 백엔드 전송 배선 확인
+  assert.ok(indexSrc.includes('openAppEvaluationModal'), 'openAppEvaluationModal 함수 정의');
+  assert.ok(indexSrc.includes('closeAppEvaluationModal'), 'closeAppEvaluationModal 함수 정의');
+  assert.ok(indexSrc.includes('state.profile.settings.appEvaluations.push'), '로컬 appEvaluations 영속화 저장 배선');
+  assert.ok(indexSrc.includes("type: 'app_evaluation'"), '평가 데이터 전송 페이로드 확인');
+  assert.ok(uiSrc.includes('.home-eval-banner-box') && uiSrc.includes('.eval-modal-sheet'), 'ui.css 90% 뷰포트 반응형 스타일 정의');
+});
+
+/* ============ [#TASK-ES-147] 목표 탭 '목표만' 버튼 이격 배치 및 하위 마일스톤형 확인 UI 검증 ============ */
+check('compliance: [#TASK-ES-147] 목표 탭 \'목표만\' 버튼 이격 배치 및 하위 마일스톤형 확인 UI 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 목표 탭 상단 필터 바 [목표만] 분리 이격 배치 확인
+  assert.ok(indexSrc.includes('data-msview="goals_only"'), 'goals_only 옵션 탑재');
+  assert.ok(indexSrc.includes('goals-only-wrap') || indexSrc.includes('margin-left:14px'), '[목표만] 14px 이격 레이아웃 확인');
+  assert.ok(uiSrc.includes('.goals-only-wrap'), 'ui.css goals-only-wrap 마진 스타일 정의');
+
+  // 2. goals_only 모드 선택 시 전체 목표를 마일스톤형 카드 블록으로 수직 나열 확인
+  assert.ok(indexSrc.includes('goal-milestone-overview-card'), '마일스톤형 목표 요약 카드 클래스 확인');
+  assert.ok(indexSrc.includes('전체 목표 마일스톤 현황'), '전체 목표 마일스톤 현황 헤더 확인');
+  assert.ok(indexSrc.includes('data-selectgoal'), '목표 카드 클릭을 위한 data-selectgoal 어트리뷰트');
+
+  // 3. 목표 카드 클릭 시 해당 목표로 즉시 전환되는 이벤트 배선 확인
+  assert.ok(indexSrc.includes("body.querySelectorAll('[data-selectgoal]')"), '목표 카드 클릭 핸들러 바인딩');
+  assert.ok(indexSrc.includes('state.activeGoalId = targetGid'), '클릭한 목표로 활성 목표 전환 확인');
+});
+
+/* ============ [#TASK-ES-148] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 탑재 검증 ============ */
+check('compliance: [#TASK-ES-148] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 탑재 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. renderStopwatchWidgetHtml 내 안내 문구 탑재 확인
+  assert.ok(indexSrc.includes('넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨'), '스톱워치 표 시간기입 안내문구 원문 검증');
+  assert.ok(indexSrc.includes('sw-inject-hint'), 'sw-inject-hint 요소 클래스 탑재');
+  assert.ok(uiSrc.includes('.sw-inject-hint'), 'ui.css sw-inject-hint 스타일 정의');
+
+  // 2. 미선택 시 토스트 피드백 개선 확인
+  assert.ok(indexSrc.includes("toast('넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨')"), '셀 미선택 시 친절한 가이드 토스트 출력');
+});
+
+/* ============ [#TASK-ES-149] 팀목표 200% 활용 가이드 안내문구 ('* 팀 목표를 생성하면 사라짐') 표시 검증 ============ */
+check('compliance: [#TASK-ES-149] 팀목표 200% 활용 가이드 안내문구 (\'* 팀 목표를 생성하면 사라짐\') 표시 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. renderTeamGoalsEmptyGuideHtml 내 안내 문구 탑재 확인
+  assert.ok(indexSrc.includes('* 팀 목표를 생성하면 사라짐'), '팀목표 생성 시 소멸 안내 문구 원문 검증');
+  assert.ok(indexSrc.includes('guide-vanish-hint'), 'guide-vanish-hint 클래스 탑재');
+  assert.ok(uiSrc.includes('.guide-vanish-hint'), 'ui.css guide-vanish-hint 축소 폰트 스타일 정의');
+});
+
+/* ============ [#TASK-ES-150] 아바타 레벨업 대형 팝업 및 성장 성향 프롬프트 설정 무결성 검증 ============ */
+check('compliance: [#TASK-ES-150] 아바타 레벨업 대형 팝업 및 성장 성향 프롬프트 설정 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 대형 팝업 모달 및 대형 아바타 컨테이너 (200px 이상) 탑재 확인
+  assert.ok(indexSrc.includes('id="avatarLevelUpModal"'), 'avatarLevelUpModal 모달 탑재');
+  assert.ok(indexSrc.includes('id="avatarLevelUpImgContainer"'), 'avatarLevelUpImgContainer 대형 컨테이너 탑재');
+  assert.ok(indexSrc.includes('width:220px;height:220px'), '220px 대형 아바타 규격 확인');
+
+  // 2. 액션 버튼 3종(SNS 공유, 이미지 저장, 확인 닫기) 배선 확인
+  assert.ok(indexSrc.includes('id="btnShareLevelUp"'), 'btnShareLevelUp 버튼 탑재');
+  assert.ok(indexSrc.includes('id="btnSaveLevelUpImage"'), 'btnSaveLevelUpImage 버튼 탑재');
+  assert.ok(indexSrc.includes('id="btnConfirmLevelUpClose"'), 'btnConfirmLevelUpClose 버튼 탑재');
+  assert.ok(indexSrc.includes('openAvatarLevelUpModal'), 'openAvatarLevelUpModal 함수 정의');
+  assert.ok(indexSrc.includes('closeAvatarLevelUpModal'), 'closeAvatarLevelUpModal 함수 정의');
+
+  // 3. 아바타 성장 성향(키워드) 입력 및 유해어 필터링, 영속화 검증
+  assert.ok(indexSrc.includes('id="avatarGrowthPromptInput"'), 'avatarGrowthPromptInput 입력 필드 탑재');
+  assert.ok(indexSrc.includes('id="btnSaveGrowthPrompt"'), 'btnSaveGrowthPrompt 저장 버튼 탑재');
+  assert.ok(indexSrc.includes('function filterHarmfulWords'), 'filterHarmfulWords 유해어 필터링 함수 탑재');
+  assert.ok(indexSrc.includes('state.profile.settings.avatarGrowthPrompt'), 'avatarGrowthPrompt 로컬 영속화 바인딩');
+
+  // 4. 레벨업 트리거(showLevelUpBanner) 시 대형 팝업 자동 연동 확인
+  assert.ok(indexSrc.includes('openAvatarLevelUpModal(level)'), 'showLevelUpBanner에서 openAvatarLevelUpModal 호출 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

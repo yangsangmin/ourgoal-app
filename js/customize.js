@@ -23,7 +23,7 @@
   var WHITELIST_IDS = WHITELIST.map(function(w){ return w.id; });
 
   /* 절대 숨길 수 없는 것 — 코드로 보호한다 (REQ-P1) */
-  var CORE_IDS = ['captureCardBox', 'captureInput', 'captureSave', 'homeGoalList', 'streakBadge', 'homeAddGoal',
+  var CORE_IDS = ['captureCardBox', 'captureInput', 'captureSave', 'homeGoalList', 'streakBadge', 'homeAddGoal', 'homeEvalBanner',
                   'screen-home', 'screen-records', 'screen-comm', 'screen-goals', 'screen-calendar'];
 
   /* 기존 '포커스 미니멀' 모드 CSS가 숨기던 항목 — 저장값이 없을 때 이관 기준 (REQ-D3) */
