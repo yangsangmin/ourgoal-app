@@ -199,6 +199,9 @@
             '</div>' +
           '</div>' +
 
+          '<!-- 구간 메모 작성 인라인 컨테이너 (#TASK-ES-172, [44], [55]) -->' +
+          '<div class="tt-lap-memo-container" id="ttLapMemoContainer" style="display:none;"></div>' +
+
           '<!-- 구간기록 목록 -->' +
           '<div class="tt-laps-wrapper" id="ttLapsWrapper" style="display:none;">' +
             '<div id="ttLapsList"></div>' +
@@ -255,6 +258,7 @@
       overlay: overlay,
       wrapper: document.getElementById('ttWrapper'),
       measureView: document.getElementById('ttMeasureView'),
+      lapMemoContainer: document.getElementById('ttLapMemoContainer'),
       reviewView: document.getElementById('ttReviewView'),
       digits: document.getElementById('ttDigits'),
       digitsSub: document.getElementById('ttDigitsSub'),
@@ -391,6 +395,12 @@
     window.addEventListener('keydown', function(e) {
       if (!tracker.isOpen) return;
       if (e.key === 'Escape') {
+        if (tracker.dom.lapMemoContainer && tracker.dom.lapMemoContainer.style.display !== 'none') {
+          tracker.dom.lapMemoContainer.style.display = 'none';
+          tracker.dom.lapMemoContainer.innerHTML = '';
+          if (tracker.dom.measureView) tracker.dom.measureView.classList.remove('tt-memo-active');
+          return;
+        }
         handleCloseAttempt();
       }
     });
@@ -757,62 +767,61 @@
   }
 
   /**
-   * 실시간 구간별 활동기록 작성 팝업 (시간 정지 없음, #TASK-ES-172)
+   * 실시간 구간별 활동기록 작성 인라인 패널 (시간 정지 없음, 시간창 자연스럽게 상단 이동, #TASK-ES-172, [44], [55])
    */
   function openLapMemoModal(lap) {
     if (!lap) return;
-    var modal = document.getElementById('ttLapMemoModal');
-    if (!modal) {
-      modal = document.createElement('div');
-      modal.id = 'ttLapMemoModal';
-      modal.style.position = 'fixed';
-      modal.style.bottom = '24px';
-      modal.style.left = '50%';
-      modal.style.transform = 'translateX(-50%)';
-      modal.style.width = 'calc(100% - 32px)';
-      modal.style.maxWidth = '340px';
-      modal.style.background = 'rgba(15, 23, 42, 0.95)';
-      modal.style.backdropFilter = 'blur(16px)';
-      modal.style.webkitBackdropFilter = 'blur(16px)';
-      modal.style.border = '1px solid rgba(99, 102, 241, 0.45)';
-      modal.style.borderRadius = '16px';
-      modal.style.padding = '12px 14px';
-      modal.style.boxShadow = '0 16px 40px rgba(0,0,0,0.65)';
-      modal.style.zIndex = '100005';
-      document.body.appendChild(modal);
+
+    // 이전 구형 모달 잔재가 있으면 제거
+    var oldModal = document.getElementById('ttLapMemoModal');
+    if (oldModal && oldModal.parentNode) {
+      oldModal.parentNode.removeChild(oldModal);
     }
-    var quickTags = ['🏃 러닝', '📚 공부', '💻 코딩', '☕ 휴식', '🎯 몰입', '💪 운동', '📖 독서'];
-    modal.innerHTML = 
+
+    var container = tracker.dom.lapMemoContainer || document.getElementById('ttLapMemoContainer');
+    if (!container) return;
+
+    // 1. 상민님 의도: 구간 누르면 자연스럽게 시간창을 위로 올림 (초시계 가림 0%)
+    if (tracker.dom.measureView) {
+      tracker.dom.measureView.classList.add('tt-memo-active');
+    }
+
+    // 2. 모던 퀵 태그 목록
+    var quickTags = ['🏃 러닝', '📚 공부', '💻 코딩', '📖 독서', '☕ 휴식', '🎯 몰입', '💪 운동'];
+
+    container.innerHTML = 
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-        '<div style="display:flex;align-items:center;gap:6px;">' +
-          '<span style="background:rgba(99,102,241,0.22);color:#818cf8;font-size:0.75rem;font-weight:800;padding:2px 7px;border-radius:6px;">구간 ' + lap.lapNum + '</span>' +
-          '<h4 style="margin:0;font-size:.9rem;color:#fff;font-weight:800;">+' + lap.formattedDuration + ' <span style="font-size:.75rem;color:#94a3b8;font-weight:500;">(누적 ' + lap.formattedSplit + ')</span></h4>' +
+        '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<span class="tt-lap-num">구간 ' + lap.lapNum + '</span>' +
+          '<h4 style="margin:0;font-size:.95rem;color:#fff;font-weight:800;">+' + lap.formattedDuration + ' <span style="font-size:.75rem;color:#94a3b8;font-weight:500;">(누적 ' + lap.formattedSplit + ')</span></h4>' +
         '</div>' +
-        '<span style="display:inline-flex;align-items:center;gap:4px;font-size:.68rem;background:rgba(34,197,94,0.15);color:#4ade80;font-weight:700;padding:2px 7px;border-radius:999px;border:1px solid rgba(34,197,94,0.3);">' +
+        '<span style="display:inline-flex;align-items:center;gap:4px;font-size:.68rem;background:rgba(34,197,94,0.15);color:#4ade80;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid rgba(34,197,94,0.3);">' +
           '<span style="width:5px;height:5px;border-radius:50%;background:#22c55e;display:inline-block;box-shadow:0 0 5px #22c55e;"></span>측정 중' +
         '</span>' +
       '</div>' +
-      '<p style="font-size:.75rem;color:#94a3b8;margin:0 0 7px;line-height:1.3;">시간별로 세부 내용을 작성할 수 있어요</p>' +
-      '<div style="display:flex;gap:4px;overflow-x:auto;padding-bottom:5px;margin-bottom:7px;" class="no-scrollbar">' +
+      '<p style="font-size:.75rem;color:#94a3b8;margin:0 0 8px;line-height:1.3;">시간별로 세부 내용을 작성할 수 있어요 (시간은 멈추지 않습니다)</p>' +
+      '<div style="display:flex;gap:5px;overflow-x:auto;padding-bottom:5px;margin-bottom:8px;" class="no-scrollbar">' +
         quickTags.map(function(tag){
-          return '<button type="button" class="btn-quick-lap-tag" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);color:#cbd5e1;padding:3px 8px;border-radius:8px;font-size:0.7rem;cursor:pointer;white-space:nowrap;transition:all .15s;font-weight:600;">' + tag + '</button>';
+          return '<button type="button" class="btn-quick-lap-tag">' + tag + '</button>';
         }).join('') +
       '</div>' +
-      '<textarea id="ttLapMemoInput" style="width:100%;box-sizing:border-box;height:52px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.18);border-radius:10px;padding:7px 10px;color:#fff;font-size:.8125rem;resize:none;margin-bottom:8px;outline:none;line-height:1.35;" placeholder="예: 3km 러닝, 핵심 비즈니스 로직 작성 등">' + (lap.text || '') + '</textarea>' +
-      '<div style="display:flex;gap:6px;justify-content:flex-end;align-items:center;">' +
-        '<button type="button" class="btn btn-ghost btn-xs" id="btnTtLapMemoCancel" style="padding:5px 11px;border-radius:8px;color:#94a3b8;font-weight:600;font-size:.75rem;">취소</button>' +
-        '<button type="button" class="btn btn-primary btn-xs" id="btnTtLapMemoSave" style="padding:5px 14px;border-radius:8px;background:#6366f1;color:#fff;border:none;font-weight:700;font-size:.75rem;box-shadow:0 2px 8px rgba(99,102,241,0.4);">저장</button>' +
+      '<textarea id="ttLapMemoInput" style="width:100%;box-sizing:border-box;height:54px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.18);border-radius:10px;padding:8px 10px;color:#fff;font-size:.8125rem;resize:none;margin-bottom:10px;outline:none;line-height:1.35;" placeholder="예: 3km 러닝, 핵심 비즈니스 로직 작성 등">' + (lap.text || '') + '</textarea>' +
+      '<div style="display:flex;gap:8px;justify-content:flex-end;align-items:center;">' +
+        '<button type="button" class="btn btn-ghost btn-xs" id="btnTtLapMemoCancel" style="padding:6px 12px;border-radius:8px;color:#94a3b8;font-weight:600;font-size:.75rem;">취소</button>' +
+        '<button type="button" class="btn btn-primary btn-xs" id="btnTtLapMemoSave" style="padding:6px 16px;border-radius:8px;background:linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);color:#fff;border:none;font-weight:700;font-size:.75rem;box-shadow:0 2px 8px rgba(99,102,241,0.4);">저장</button>' +
       '</div>';
-    modal.style.display = 'block';
 
-    var txt = modal.querySelector('#ttLapMemoInput');
+    container.style.maxWidth = '340px';
+    container.style.display = 'block';
+
+    var txt = container.querySelector('#ttLapMemoInput');
     if (txt) {
       txt.focus();
       txt.onfocus = function(){ txt.style.borderColor = '#6366f1'; txt.style.boxShadow = '0 0 0 3px rgba(99,102,241,0.2)'; };
       txt.onblur = function(){ txt.style.borderColor = 'rgba(255,255,255,0.18)'; txt.style.boxShadow = 'none'; };
     }
 
-    modal.querySelectorAll('.btn-quick-lap-tag').forEach(function(btn){
+    container.querySelectorAll('.btn-quick-lap-tag').forEach(function(btn){
       btn.onclick = function(){
         if (!txt) return;
         var tag = btn.textContent;
@@ -827,12 +836,21 @@
       };
     });
 
-    modal.querySelector('#btnTtLapMemoCancel').onclick = function() {
-      modal.style.display = 'none';
+    container.querySelector('#btnTtLapMemoCancel').onclick = function() {
+      container.style.display = 'none';
+      container.innerHTML = '';
+      if (tracker.dom.measureView) {
+        tracker.dom.measureView.classList.remove('tt-memo-active');
+      }
     };
-    modal.querySelector('#btnTtLapMemoSave').onclick = function() {
+
+    container.querySelector('#btnTtLapMemoSave').onclick = function() {
       lap.text = (txt ? txt.value.trim() : '');
-      modal.style.display = 'none';
+      container.style.display = 'none';
+      container.innerHTML = '';
+      if (tracker.dom.measureView) {
+        tracker.dom.measureView.classList.remove('tt-memo-active');
+      }
       renderLapsList();
       if (typeof toast === 'function') toast('구간 ' + lap.lapNum + ' 활동 내용이 저장되었습니다.');
     };
@@ -885,7 +903,7 @@
   }
 
   /**
-   * 구간기록 목록 렌더링
+   * 구간기록 목록 렌더링 (#TASK-ES-172, [44], [55])
    */
   function renderLapsList() {
     var wrapper = tracker.dom.lapsWrapper;
@@ -904,17 +922,21 @@
     reversed.forEach(function(lap, idx) {
       var item = document.createElement('div');
       item.className = 'tt-lap-item' + (idx === 0 ? ' latest' : '');
-      item.style.cursor = 'pointer';
       item.title = '구간별 메모 작성 (시간은 계속 흘러갑니다)';
+      var noteHtml = lap.text
+        ? '<div style="font-size:0.75rem;color:#cbd5e1;display:flex;align-items:center;gap:5px;margin-top:2px;"><span>📝</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + lap.text + '</span></div>'
+        : '<div style="font-size:0.72rem;color:#818cf8;font-weight:600;display:flex;align-items:center;gap:5px;margin-top:2px;"><span>✏️</span><span>활동 메모 작성 (터치)</span></div>';
+
       item.innerHTML = 
         '<div style="display:flex;align-items:center;justify-content:space-between;width:100%;">' +
-          '<span class="tt-lap-num">구간 ' + lap.lapNum + '</span>' +
+          '<div style="display:flex;align-items:center;gap:7px;">' +
+            '<span class="tt-lap-num">구간 ' + lap.lapNum + '</span>' +
+            '<span class="tt-lap-time">+' + lap.formattedDuration + '</span>' +
+          '</div>' +
           '<span class="tt-lap-split">누적 ' + lap.formattedSplit + '</span>' +
-          '<span class="tt-lap-time">+' + lap.formattedDuration + '</span>' +
         '</div>' +
-        '<div style="font-size:0.75rem;color:#cbd5e1;margin-top:3px;text-align:left;">' +
-          (lap.text ? '📝 ' + lap.text : '<span style="color:#64748b;font-size:0.7rem;">(터치하여 활동 메모 작성)</span>') +
-        '</div>';
+        noteHtml;
+
       item.onclick = function() {
         openLapMemoModal(lap);
       };
@@ -934,6 +956,14 @@
     tracker.elapsedBeforePause = 0;
     tracker.lastLapElapsed = 0;
     tracker.laps = [];
+
+    if (tracker.dom && tracker.dom.lapMemoContainer) {
+      tracker.dom.lapMemoContainer.style.display = 'none';
+      tracker.dom.lapMemoContainer.innerHTML = '';
+    }
+    if (tracker.dom && tracker.dom.measureView) {
+      tracker.dom.measureView.classList.remove('tt-memo-active');
+    }
 
     tracker.dom.statusBadge.className = 'tt-status-badge';
     tracker.dom.statusText.textContent = '측정 대기';
@@ -957,6 +987,13 @@
    */
   function stopAndRecord() {
     safeCaf(tracker.rafId);
+    if (tracker.dom && tracker.dom.lapMemoContainer) {
+      tracker.dom.lapMemoContainer.style.display = 'none';
+      tracker.dom.lapMemoContainer.innerHTML = '';
+    }
+    if (tracker.dom && tracker.dom.measureView) {
+      tracker.dom.measureView.classList.remove('tt-memo-active');
+    }
     var finalElapsed = getElapsedMs();
     tracker.elapsedBeforePause = finalElapsed;
     tracker.state = 'paused';
@@ -1013,7 +1050,7 @@
 
     if (tracker.laps.length > 0) {
       d.reviewLapsGroup.style.display = 'block';
-      var quickReviewTags = ['🏃 러닝', '📚 공부', '💻 코딩', '☕ 휴식', '🎯 몰입'];
+      var quickReviewTags = ['🏃 러닝', '📚 공부', '💻 코딩', '📖 독서', '☕ 휴식', '🎯 몰입', '💪 운동'];
       tracker.laps.forEach(function(lap) {
         var card = document.createElement('div');
         card.className = 'tt-review-lap-card';
@@ -1028,27 +1065,29 @@
           '</div>' +
           '<div style="display:flex;gap:4px;margin-bottom:8px;overflow-x:auto;" class="no-scrollbar">' +
             quickReviewTags.map(function(tag){
-              return '<button type="button" class="btn-lap-card-tag" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:#cbd5e1;padding:2px 8px;border-radius:8px;font-size:0.72rem;cursor:pointer;white-space:nowrap;transition:all .15s;">' + tag + '</button>';
+              return '<button type="button" class="btn-lap-card-tag">' + tag + '</button>';
             }).join('') +
           '</div>' +
           '<input type="text" class="tt-input tt-lap-input" data-lap-idx="' + (lap.lapNum - 1) + '" ' +
                  'value="' + safeVal + '" ' +
                  'placeholder="' + lap.lapNum + '구간 집중 활동 입력 (예: 1단원 문제풀이, UI 코딩 등)">';
 
-        var inEl = card.querySelector('.tt-lap-input');
-        card.querySelectorAll('.btn-lap-card-tag').forEach(function(chip){
-          chip.onclick = function(){
-            if(!inEl) return;
-            if(inEl.value.trim()){
-              inEl.value = inEl.value.trim() + ' ' + chip.textContent;
-            } else {
-              inEl.value = chip.textContent;
-            }
-            chip.style.background = 'rgba(99,102,241,0.25)';
-            chip.style.borderColor = '#6366f1';
-            chip.style.color = '#fff';
-          };
-        });
+        var inEl = card.querySelector ? card.querySelector('.tt-lap-input') : null;
+        if (card.querySelectorAll) {
+          card.querySelectorAll('.btn-lap-card-tag').forEach(function(chip){
+            chip.onclick = function(){
+              if(!inEl) return;
+              if(inEl.value.trim()){
+                inEl.value = inEl.value.trim() + ' ' + chip.textContent;
+              } else {
+                inEl.value = chip.textContent;
+              }
+              chip.style.background = 'rgba(99,102,241,0.25)';
+              chip.style.borderColor = '#6366f1';
+              chip.style.color = '#fff';
+            };
+          });
+        }
         lapsList.appendChild(card);
       });
     } else {

@@ -6719,6 +6719,28 @@ check('compliance: [#TASK-ES-174] 아워골 생각 메모장 잔여 대기 과�
   assert.ok(indexHtml.includes('switchTemplateEncyclopediaTab'), '[53] 실사용 템플릿 및 AI 추천 템플릿 2개 탭 전환 확인');
 });
 
+check('compliance: [#TASK-ES-175] 기록 탭 시간기록 카드 슬림화([47]) 및 스톱워치 구간기록 시간창 자동 상단 이동([44]) & 입력창 모던 정돈([55]) 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const trackerSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'time-tracker.js'), 'utf8');
+
+  // 1. [47] 기록 탭 메인 화면 지금부터 시간기록 배너 카드 슬림화 및 한 줄 설명 반영
+  assert.ok(indexHtml.includes('id="recTimeTrackerActionCard"'), '[47] 기록 탭에 recTimeTrackerActionCard가 존재해야 함');
+  assert.ok(indexHtml.includes('시간별로 세부 내용을 작성할 수 있어요'), '[47] 기록 탭 카드 설명이 상민님 원문 지정 한 줄로 일치해야 함');
+  assert.ok(indexHtml.includes('padding:8px 12px;margin-bottom:8px;'), '[47] 기록 탭 카드가 슬림 컴팩트 패딩으로 축소되어야 함');
+
+  // 2. [44] 구간 누를 때 시간창 자연스럽게 올리기 (tt-memo-active) & 초시계 가림 0% 보장
+  assert.ok(uiCss.includes('.tt-body.tt-memo-active'), 'ui.css에 시간창 상단 이동 .tt-body.tt-memo-active 스타일이 존재해야 함');
+  assert.ok(uiCss.includes('.tt-lap-memo-container'), 'ui.css에 인라인 구간 메모 컨테이너 스타일이 존재해야 함');
+  assert.ok(trackerSrc.includes('tt-memo-active'), 'time-tracker.js에서 구간 메모 오픈 시 tt-memo-active 클래스를 부여해야 함');
+  assert.ok(trackerSrc.includes('ttLapMemoContainer'), 'time-tracker.js에서 ttLapMemoContainer를 바인딩해야 함');
+
+  // 3. [55] 구간별 텍스트 입력창 UI 정돈 및 퀵 태그 7종
+  assert.ok(trackerSrc.includes('btn-quick-lap-tag'), '구간 메모에 btn-quick-lap-tag 모던 칩이 존재해야 함');
+  assert.ok(trackerSrc.includes('btnTtLapMemoCancel') && trackerSrc.includes('btnTtLapMemoSave'), '구간 메모에 취소 및 저장 버튼이 완비되어 있어야 함');
+  assert.ok(trackerSrc.includes('tt-review-lap-card'), '리뷰 화면에 구간별 카드 스타일이 적용되어 있어야 함');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
