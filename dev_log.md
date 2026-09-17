@@ -4172,4 +4172,28 @@
   - Tri-Sync 무결성: `node C:/dev/command-center/lib/tri-sync.js check` 100% (513/513 무손실 일치).
 ---
 
+## [2026-09-17 12:20] #TASK-ES-144 동반자 새로고침(F5) 증발 결함 및 1:1 DM 실시간 수신 파이프라인 완결
+- **배경 및 의도**:
+  - 상민님 직접 지시("아워골 동반자 또 새로고침하면 추가한 동반자 없어진다. DM도 상대방에게 실제로 안가는 것 같아. 문제해결 8원칙 둘 다 적용해서 원인파악부터 해결책까지 표로 정리해").
+  - 아워골 최고 헌법 15대 조문(제2조 2중 8원칙, 제13조 실 사용자 계정 상호 연동, 제14조 캐시 무효화, 제15조 유저 자산 영속성) 준수.
+- **주요 수정 및 해결 내역**:
+  1. **동반자 새로고침(F5) 증발 결함 근본 해결**:
+     - `loadProfile()`: 반환 객체에 `companions: finalCompanions` 필드가 누락되어 F5 시 state.profile.companions가 undefined로 리셋되던 결함 수정.
+     - `ourgoal_companions_backup_<userId>`에서 0ms 로컬 동기 복원 배선.
+     - `saveProfile()`: 프로필 저장 시 `ourgoal_companions_backup_<uidVal>`에 로컬 영구 백업 보장.
+     - `persistCompanions(customList)`: UID별 격리 키 저장 및 파라미터 우선 적용.
+     - `ensureDefaultCompanions()`: 빈 배열 판단 전 백업 키 전수 복원하여 기본 AI 봇 3인으로의 덮어쓰기 원천 방어.
+  2. **1:1 DM 상대방 미수신 체감 결함 해결 (수신함·알림·뱃지 파이프라인 완결)**:
+     - `loadIncomingDmRooms()` 버그 수정: 기존 동반자의 메시지를 `if(!isMyComp)`로 통째로 버리던 로직을 제거하고, 동반자 객체에 `lastMsg`, `lastTime`, `isUnread`, `_thread`를 정상 바인딩.
+     - `renderCommDM()` DM 목록 프리뷰: 최신 메시지 맵(`_lastDmMessageMap`)을 우선 참조하여 "새로운 대화를 시작해보세요!" 대신 실제 상대방/본인 전송 메시지와 시간 노출, 미확인 메시지 존재 시 레드닷 표시.
+     - 실시간 수신 리스너 배선: `enterApp` 및 가시성 전환(`visibilitychange`, `focus`) 시 `OurgoalTeamInviteComm.initIncomingDmListener(state.profile.id)` 상시 가동(Auto-Reconnect).
+     - 읽음 상태 관리 원장: `ourgoal_dm_read_<myId>` 로컬 원장 기반 `markDmRoomRead` 신설 및 대화방 진입 시 즉각 읽음 처리.
+  3. **PWA 캐시 갱신 (헌법 제14조 제3항)**:
+     - `sw.js`: `CACHE_NAME`을 `'ourgoal-shell-v20260917-es144'`로 갱신 (supersedes 주석 완벽 보존).
+  4. **무결성 검증**:
+     - `scripts/smoke-test.js`: `compliance: [#TASK-ES-144]` 전용 단언문 5종 추가.
+     - `npm test`: 283개 테스트 전수 통과, 헌법 5대 핵심 검증 게이트 15종 100% ALL PASS, 전수 인터랙션(Dead-Click 0) 검증 통과.
+---
+
+
 
