@@ -276,6 +276,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <div class="format-opt" data-calview="day">일</div>
         </div>
       </div>
+      <div class="cal-sub-guide">
+        <span class="cal-sub-guide-icon">🖼️</span>
+        <span>일정을 사진배경으로 채워서 나만의 사진일기장을 만들어봐요</span>
+      </div>
       <div id="calGoogleBanner"></div>
       <div class="cal-nav-row">
         <button class="icon-btn icon-btn-lg" id="calPrevBtn" type="button" aria-label="이전"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
@@ -1309,10 +1313,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var toastTimer=null;
   function toast(msg){
     var el = document.getElementById('toast');
+    if(!el) return;
     el.textContent = msg;
     el.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2200);
+  }
+  if(typeof window !== 'undefined'){
+    window.toast = toast;
+    window.showToast = toast;
   }
 
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
@@ -4374,11 +4383,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     reader.readAsDataURL(file);
   }
 
-  function openProfileEditor(){
+  function openProfileEditor(existingDraft){
     var p = state.profile;
-    var draft = { name: p.displayName, bio: p.bio||'', avatarUrl: p.avatarUrl||'', interests: (p.interests||[]).slice(),
+    var draft = existingDraft || { name: p.displayName, bio: p.bio||'', avatarUrl: p.avatarUrl||'', interests: (p.interests||[]).slice(),
       region: p.region||'', regionPublic: !!p.regionPublic,
       itItems: (p.itItems||[]).slice().map(function(item){ return Object.assign({}, item); }) };
+    draft.itItems = draft.itItems || [];
     openModal(
       '<h3>프로필 편집</h3>' +
       '<div class="avatar-edit">' +
@@ -4512,8 +4522,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                 }
               });
               itSheet.querySelector('#itCancelBtn').addEventListener('click', function(){
-                closeModal();
-                openProfileEditor();
+                openProfileEditor(draft);
               });
               itSheet.querySelector('#itConfirmBtn').addEventListener('click', function(){
                 var name = itSheet.querySelector('#itNameInput').value.trim();
@@ -4528,8 +4537,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                   desc: itSheet.querySelector('#itDescInput').value.trim(),
                   createdAt: nowISO()
                 });
-                closeModal();
-                openProfileEditor();
+                openProfileEditor(draft);
                 toast('"'+name+'" 잇템을 목록에 추가했어요');
               });
             }
@@ -4578,6 +4586,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         });
       }
     );
+  }
+  if(typeof window !== 'undefined'){
+    window.openProfileEditor = openProfileEditor;
   }
   function updateTopBar(){
     var p = state.profile;
@@ -5493,7 +5504,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var isNowDone = false;
     if(kind === 'custom' && schedId){
       var csList = state.profile.settings.customSchedules || [];
-      var sched = csList.find(function(c){ return c.id === schedId; });
+      var sched = csList.find(function(c){ return String(c.id) === String(schedId); });
       if(!sched) return;
       sched.done = !sched.done;
       isNowDone = sched.done;
@@ -5501,30 +5512,30 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       // 목표/마일스톤/할 일과 양방향 연동 동기화
       if(sched.linkedTaskId || sched.linkedGoalId){
         (state.profile.goals || []).forEach(function(g){
-          if(sched.linkedGoalId && g.id !== sched.linkedGoalId) return;
+          if(sched.linkedGoalId && String(g.id) !== String(sched.linkedGoalId)) return;
           (g.milestones || []).forEach(function(m){
-            if(sched.linkedMsId && m.id !== sched.linkedMsId) return;
+            if(sched.linkedMsId && String(m.id) !== String(sched.linkedMsId)) return;
             (m.tasks || []).forEach(function(t){
-              if((sched.linkedTaskId && t.id === sched.linkedTaskId) || (!sched.linkedTaskId && t.title === sched.title)){
+              if((sched.linkedTaskId && String(t.id) === String(sched.linkedTaskId)) || (!sched.linkedTaskId && t.title === sched.title)){
                 t.done = isNowDone;
               }
             });
-            if(sched.linkedMsId && m.id === sched.linkedMsId && (!m.tasks || !m.tasks.length)){
+            if(sched.linkedMsId && String(m.id) === String(sched.linkedMsId) && (!m.tasks || !m.tasks.length)){
               m.status = isNowDone ? 'done' : 'todo';
             }
           });
         });
       }
     } else if(kind === 'task' && goalId && taskId){
-      var g = (state.profile.goals || []).find(function(x){ return x.id === goalId; });
+      var g = (state.profile.goals || []).find(function(x){ return String(x.id) === String(goalId); });
       if(g && g.milestones){
         g.milestones.forEach(function(m){
           (m.tasks || []).forEach(function(t){
-            if(t.id === taskId){
+            if(String(t.id) === String(taskId)){
               t.done = !t.done;
               isNowDone = t.done;
               (state.profile.settings.customSchedules || []).forEach(function(cs){
-                if(cs.linkedTaskId === taskId || (cs.linkedGoalId === goalId && cs.title === t.title)){
+                if(String(cs.linkedTaskId) === String(taskId) || (String(cs.linkedGoalId) === String(goalId) && cs.title === t.title)){
                   cs.done = isNowDone;
                 }
               });
@@ -5533,19 +5544,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         });
       }
     } else if(kind === 'ms' && goalId && msId){
-      var g = (state.profile.goals || []).find(function(x){ return x.id === goalId; });
+      var g = (state.profile.goals || []).find(function(x){ return String(x.id) === String(goalId); });
       if(g && g.milestones){
-        var m = g.milestones.find(function(x){ return x.id === msId; });
+        var m = g.milestones.find(function(x){ return String(x.id) === String(msId); });
         if(m){
           m.status = (m.status === 'done') ? 'todo' : 'done';
           isNowDone = (m.status === 'done');
           (state.profile.settings.customSchedules || []).forEach(function(cs){
-            if(cs.linkedMsId === msId){ cs.done = isNowDone; }
+            if(String(cs.linkedMsId) === String(msId)){ cs.done = isNowDone; }
           });
         }
       }
     } else if(kind === 'goal' && goalId){
-      var g = (state.profile.goals || []).find(function(x){ return x.id === goalId; });
+      var g = (state.profile.goals || []).find(function(x){ return String(x.id) === String(goalId); });
       if(g){
         var allDone = g.milestones && g.milestones.length && g.milestones.every(function(m){ return m.status === 'done'; });
         isNowDone = !allDone;
@@ -5554,9 +5565,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           (m.tasks || []).forEach(function(t){ t.done = isNowDone; });
         });
       }
-    } else if(kind === 'gcal' && schedId){
+    } else if(kind === 'gcal' && (schedId || goalId)){
+      var gcalTarget = schedId || goalId;
       state.gcalEventsCache = state.gcalEventsCache || [];
-      var sched = state.gcalEventsCache.find(function(c){ return c.id === schedId; });
+      var sched = state.gcalEventsCache.find(function(c){ return String(c.id) === String(gcalTarget); });
       if(sched || (sched && sched.kind === 'gcal')){
         sched.done = !sched.done;
         isNowDone = sched.done;
@@ -5579,18 +5591,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(state.activeTab === 'goals') renderGoalsScreen();
   }
 
-  /* ============ [#TASK-ES-153] 캘린더 일자별 배경 사진 지정 모달 ============ */
+  /* ============ [#TASK-ES-153 & #TASK-ES-155] 캘린더 일자별 배경 사진 지정 모달 ============ */
   function compressCalendarBgImage(file, callback){
     if(!file) return callback(new Error('파일이 없습니다.'));
     var reader = new FileReader();
     reader.onload = function(e){
+      var rawResult = e.target.result;
       var img = new Image();
       img.onload = function(){
         try {
           var canvas = document.createElement('canvas');
           var maxDim = 800;
-          var w = img.width;
-          var h = img.height;
+          var w = img.width || 800;
+          var h = img.height || 600;
           if(w > maxDim || h > maxDim){
             if(w > h){
               h = Math.round((h * maxDim) / w);
@@ -5605,20 +5618,23 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           var ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, w, h);
           var compressed = canvas.toDataURL('image/jpeg', 0.82);
-          callback(null, compressed);
+          callback(null, compressed || rawResult);
         } catch(err) {
-          callback(err);
+          callback(null, rawResult);
         }
       };
-      img.onerror = function(err){ callback(err || new Error('이미지 로드 실패')); };
-      img.src = e.target.result;
+      img.onerror = function(){
+        callback(null, rawResult);
+      };
+      img.src = rawResult;
     };
     reader.onerror = function(err){ callback(err); };
     reader.readAsDataURL(file);
   }
 
-  function openCalendarDayBgPickerModal(selectedDate){
+  function openCalendarDayBgPickerModal(selectedDate, fromHub){
     var sel = selectedDate || state.calSelectedDate || isoDate(new Date());
+    var isFromHub = (fromHub !== false && fromHub !== undefined) ? !!fromHub : false;
     state.profile = state.profile || {};
     state.profile.calendarDayBackgrounds = state.profile.calendarDayBackgrounds || {};
     var currentBg = state.profile.calendarDayBackgrounds[sel] || '';
@@ -5680,16 +5696,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         fileInput.addEventListener('change', function(evt){
           var file = evt.target.files && evt.target.files[0];
           if(!file) return;
-          showToast('사진 압축 및 변환 중...');
+          toast('사진 압축 및 변환 중...');
           compressCalendarBgImage(file, function(err, compressedDataUrl){
             if(err || !compressedDataUrl){
-              showToast('사진 처리 중 오류가 발생했습니다.');
+              toast('사진 처리 중 오류가 발생했습니다.');
               return;
             }
             tempBg = compressedDataUrl;
             if(previewLayer){
               previewLayer.style.display = 'block';
-              previewLayer.style.backgroundImage = 'url(' + tempBg + ')';
+              previewLayer.style.backgroundImage = 'url("' + tempBg + '")';
             }
             if(previewContent){
               previewContent.innerHTML =
@@ -5699,46 +5715,66 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                 '</div>' +
                 '<div style="font-size:.75rem;color:var(--ink-soft);">미리보기 적용 중 (투명도 50%)</div>';
             }
-            showToast('사진이 선택되었습니다. [저장]을 눌러 완료하세요.');
+            toast('사진이 선택되었습니다. [저장]을 눌러 완료하세요.');
           });
         });
       }
 
       if(deleteBtn){
-        deleteBtn.addEventListener('click', function(){
+        deleteBtn.addEventListener('click', async function(){
           if(confirm('이날의 배경사진을 삭제하고 기본 배경으로 되돌릴까요?')){
             delete state.profile.calendarDayBackgrounds[sel];
-            saveProfile();
-            showToast('배경사진이 삭제되었습니다.');
-            closeModal();
+            try {
+              var uidVal = (state.profile && state.profile.id) || 'guest';
+              localStorage.setItem('ourgoal_cal_day_bg_' + uidVal, JSON.stringify(state.profile.calendarDayBackgrounds));
+            } catch(e){}
+            await saveProfile();
+            toast('배경사진이 삭제되었습니다.');
             renderCalendarScreen();
-            openCalendarDayEditHubModal(sel);
+            if(isFromHub){
+              openCalendarDayEditHubModal(sel);
+            } else {
+              closeModal();
+            }
           }
         });
       }
 
       if(cancelBtn){
         cancelBtn.addEventListener('click', function(){
-          closeModal();
-          openCalendarDayEditHubModal(sel);
+          if(isFromHub){
+            openCalendarDayEditHubModal(sel);
+          } else {
+            closeModal();
+          }
         });
       }
 
       if(saveBtn){
-        saveBtn.addEventListener('click', function(){
+        saveBtn.addEventListener('click', async function(){
           if(!tempBg){
-            showToast('먼저 사진을 선택해주세요.');
+            toast('먼저 사진을 선택해주세요.');
             return;
           }
           state.profile.calendarDayBackgrounds[sel] = tempBg;
-          saveProfile();
-          showToast('이날의 배경사진이 저장되었습니다!');
-          closeModal();
+          try {
+            var uidVal = (state.profile && state.profile.id) || 'guest';
+            localStorage.setItem('ourgoal_cal_day_bg_' + uidVal, JSON.stringify(state.profile.calendarDayBackgrounds));
+          } catch(e){}
+          await saveProfile();
+          toast('이날의 배경사진이 저장되었습니다!');
           renderCalendarScreen();
-          openCalendarDayEditHubModal(sel);
+          if(isFromHub){
+            openCalendarDayEditHubModal(sel);
+          } else {
+            closeModal();
+          }
         });
       }
     });
+  }
+  if(typeof window !== 'undefined'){
+    window.openCalendarDayBgPickerModal = openCalendarDayBgPickerModal;
   }
 
   /* ============ 캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달 ============ */
@@ -5809,8 +5845,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var hubBgBtn = sheet.querySelector('#hubDayBgBtn');
         if(hubBgBtn){
           hubBgBtn.onclick = function(){
-            closeModal();
-            openCalendarDayBgPickerModal(sel);
+            openCalendarDayBgPickerModal(sel, true);
           };
         }
         sheet.querySelectorAll('[data-hubtogglesched]').forEach(function(chk){
@@ -5885,6 +5920,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         wireAttachmentChipClicks(sheet);
       }
     );
+  }
+  if(typeof window !== 'undefined'){
+    window.openCalendarDayEditHubModal = openCalendarDayEditHubModal;
   }
   /* ============ 캘린더 수동 일정 편집 모달 (Req 2) ============ */
   function openCalendarManualEditModal(selectedDate, eventItem, kind, draft){
@@ -6276,7 +6314,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var tplLinkChip = targetRecId ? ('<button class="dday-pill" data-calviewrec="'+targetRecId+'" type="button" style="cursor:pointer;background:var(--surface-2);color:var(--ink);border:1px solid var(--rule);font-size:.8125rem;padding:2px 6px;margin-left:4px;">기록 보기</button>') : '';
         return '<div class="ms-row" '+(e.goalId?'data-calgoto="'+e.goalId+'"':'')+(targetRecId?' data-calrecid="'+targetRecId+'" style="cursor:pointer;"':'')+'>' +
           '<div class="ms-main" style="align-items:flex-start;">' +
-            '<div class="ms-status'+(e.done?' done':'')+'" style="margin-top:2px;">'+(e.done?'✓':'')+'</div>' +
+            '<div class="sched-check'+(e.done?' done':'')+'" data-detailtogglesched="'+e.kind+':'+(e.schedId||e.goalId||'')+':'+(e.msId||'')+':'+(e.taskId||'')+'" style="cursor:pointer;flex:0 0 auto;margin-top:2px;" title="'+(e.done?'미완료로 변경':'완료로 변경')+'">'+(e.done?'✓':'')+'</div>' +
             '<div style="flex:1;min-width:0;">' +
               '<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">' +
                 '<span class="ms-title'+(e.done?' done-text':'')+'">'+escapeHtml(e.title)+'</span>' +
@@ -6295,7 +6333,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var detailBgBtn = wrap.querySelector('#calPickDayBgBtn');
     if(detailBgBtn){
       detailBgBtn.addEventListener('click', function(){
-        openCalendarDayBgPickerModal(sel);
+        openCalendarDayBgPickerModal(sel, false);
       });
     }
     var hubBtn = wrap.querySelector('#calOpenHubBtn');
@@ -6310,6 +6348,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         openCalendarManualEditModal(sel, null);
       });
     }
+    wrap.querySelectorAll('[data-detailtogglesched]').forEach(function(chk){
+      chk.addEventListener('click', async function(ev){
+        ev.stopPropagation();
+        var parts = chk.dataset.detailtogglesched.split(':');
+        var kind = parts[0];
+        var schedOrGoalId = parts[1];
+        var msId = parts[2] || null;
+        var taskId = parts[3] || null;
+        await toggleScheduleDone(kind==='custom'?schedOrGoalId:null, kind, (kind!=='custom'?schedOrGoalId:null), msId, taskId);
+      });
+    });
     wrap.querySelectorAll('[data-calviewrec]').forEach(function(btn){
       btn.addEventListener('click', function(e){
         e.stopPropagation();
@@ -6358,7 +6407,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
     wrap.querySelectorAll('[data-calgoto]').forEach(function(row){
       row.addEventListener('click', function(e){
-        if(e.target.closest('[data-calsync]') || e.target.closest('[data-caledit]') || e.target.closest('.att-chip') || e.target.closest('[data-calviewrec]')) return;
+        if(e.target.closest('[data-detailtogglesched]') || e.target.closest('.sched-check') || e.target.closest('[data-calsync]') || e.target.closest('[data-caledit]') || e.target.closest('.att-chip') || e.target.closest('[data-calviewrec]')) return;
         state.activeGoalId = row.dataset.calgoto;
         setTab('goals');
       });

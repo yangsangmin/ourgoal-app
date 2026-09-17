@@ -4310,3 +4310,23 @@
      - 헌법 5대 핵심 검증 게이트 15종 100% ALL PASS, Zero Dead Click 100% (587/604 전수 배선 및 위임 처리).
      - 본질 게이트 `node scripts/essence-gate.js --pre-commit` 통과.
 ---
+
+## [2026-09-17 15:00] #TASK-ES-155 캘린더 배경사진(모달전환/사진선택미리보기저장)·일정체크토글·잇템추가 결함 해결 및 일정 안내문구 추가
+- **배경 및 의도**:
+  - 상민님 직접 지시 ("1. 달력에서 일자를 선택하고, 이날의 배경사진 고르기를 누르면 작동안함 2. 달력의 밑에 있는 이날의 배경사진 고르기를 누르면 사진고르기가 보이고, 사진고르기를 누르면 사진을 선택할 수 있는데 사진을 고르면 미리보기도 안되고 저장을 눌렀을때 작동하지 않음. 3. 캘린더 일정 체크버튼 완료/미완료 토글 작동 안함 4. 잇템추가 시스템 정상작동 안함 해결해. 추가로 일정탭의 '일정' 제목과 달력 사이에 '일정을 사진배경으로 채워서 나만의 사진일기장을 만들어봐요' 문구를 사용자경험 해치지 않게 넣어줘.").
+- **주요 수정 및 해결 내역**:
+  1. **모달 전환 아키텍처 정규화 및 popstate 충돌 차단**:
+     - 일간 허브 모달(`openCalendarDayEditHubModal`)에서 `hubDayBgBtn` 클릭 시 `closeModal()`을 거치지 않고 `openCalendarDayBgPickerModal(sel)`을 직접 호출하여 `history.back()`에 의한 신규 모달 즉시 닫힘 결함 원천 해결.
+  2. **showToast 런타임 오류 해결 및 toast 표준화**:
+     - `openCalendarDayBgPickerModal` 내 정의되지 않은 `showToast` 호출을 `toast`로 전면 교체.
+     - `window.showToast = toast;` 전역 별칭을 등록하여 예기치 못한 호출에 대한 런타임 내성 확보.
+     - 이미지 선택 즉시 `compressCalendarBgImage` -> `previewLayer` 50% 투명도 미리보기 및 `tempBg` 저장 파이프라인 완결.
+  3. **캘린더 일간 일정 목록(`renderCalDayDetail`) 체크버튼 활성화**:
+     - 정적 `ms-status` 요소를 `sched-check` 인터랙티브 버튼(`data-detailtogglesched`)으로 교체.
+     - 클릭 시 `ev.stopPropagation()`과 함께 `toggleScheduleDone`을 직접 트리거하여 완료/미완료 토글 및 목표 양방향 실시간 동기화 완결.
+  4. **프로필 잇템 등록 시스템 완결**:
+     - `openProfileEditor(existingDraft)` 시그니처 확장으로 서브모달 반환 시 작성 중인 draft 인메모리 온전 보존.
+     - 잇템 추가 모달(`itConfirmBtn`) 및 취소(`itCancelBtn`) 시 `closeModal()` 대신 `openProfileEditor(draft)` 직접 복귀로 화면 깜빡임/증발 방지.
+  5. **일정 탭 감성 안내 카피 탑재**:
+     - `screen-calendar` 상단에 `.cal-sub-guide` ("일정을 사진배경으로 채워서 나만의 사진일기장을 만들어봐요") 은은하고 정돈된 카드 마크업 추가.
+---
