@@ -4397,9 +4397,23 @@
       availableDims = ['primary'];
     }
 
+    var selectedDims = state.univSelectedDimensions;
+    if(!Array.isArray(selectedDims) || selectedDims.length === 0){
+      var initDim = state.univDimension || availableDims[0];
+      if(!availableDims.includes(initDim)) initDim = availableDims[0];
+      selectedDims = [initDim];
+      state.univSelectedDimensions = selectedDims;
+    } else {
+      selectedDims = selectedDims.filter(function(d){ return availableDims.includes(d); });
+      if(selectedDims.length === 0){
+        selectedDims = [availableDims[0]];
+      }
+      state.univSelectedDimensions = selectedDims;
+    }
+
     var dimension = state.univDimension;
-    if(!dimension || !availableDims.includes(dimension)){
-      dimension = availableDims[0];
+    if(!dimension || !selectedDims.includes(dimension)){
+      dimension = selectedDims[0];
       state.univDimension = dimension;
     }
 
@@ -4576,7 +4590,7 @@
     var dimHtml = '<div class="u-dim-selector-row" style="display:flex;gap:5px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;-webkit-overflow-scrolling:touch;align-items:center;">';
     dimHtml += '<span style="font-size:.75rem;font-weight:800;color:var(--ink);flex-shrink:0;margin-right:4px;">📊 측정 지표 <span style="font-size:.65rem;color:var(--ink-soft);font-family:monospace;">[DIMENSION]</span>:</span>';
     availableDims.forEach(function(d){
-      var isDAct = (d === dimension);
+      var isDAct = (state.univSelectedDimensions || [dimension]).includes(d);
       var dLabel = dimDisplayNames[d] || d;
       dimHtml += 
         '<button type="button" class="u-dim-btn" data-dim="' + d + '" style="flex-shrink:0;padding:4px 10px;border-radius:14px;font-size:.75rem;font-weight:700;cursor:pointer;border:1.5px solid ' + (isDAct ? 'var(--primary, #2563eb)' : 'var(--border, #cbd5e1)') + ';background:' + (isDAct ? 'rgba(37,99,235,0.14)' : 'var(--card2)') + ';color:' + (isDAct ? 'var(--primary, #1d4ed8)' : 'var(--ink)') + ';box-shadow:' + (isDAct ? '0 1px 2px rgba(0,0,0,0.06)' : 'none') + ';transition:all 0.15s ease;">' +
@@ -4944,12 +4958,23 @@
       };
     });
 
-    // 3-1. 측정 차원(Dimension) 전환 버튼 (매출액, 계약건수, 커밋수, 1RM 등)
+    // 3-1. 측정 차원(Dimension) 다중 선택 토글 버튼 (매출액, 계약건수, 커밋수, 1RM 등)
     container.querySelectorAll('.u-dim-btn').forEach(function(btn){
       btn.onclick = function(e){
         e.stopPropagation();
         var targetDim = btn.dataset.dim;
         state.univDimension = targetDim;
+        var curSelected = (state.univSelectedDimensions || []).slice();
+        var idx = curSelected.indexOf(targetDim);
+        if(idx !== -1){
+          if(curSelected.length > 1){
+            curSelected.splice(idx, 1);
+            state.univDimension = curSelected[0] || targetDim;
+          }
+        } else {
+          curSelected.push(targetDim);
+        }
+        state.univSelectedDimensions = curSelected;
         renderUniversalStatsDashboard(container, (state && state.profile && state.profile.records) || allRecs, state, callbacks);
       };
     });

@@ -540,7 +540,7 @@
       resetBtn.className = 'tt-btn tt-btn-danger';
       resetBtn.id = 'btnTtActionReset';
       resetBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><span>초기화</span>';
-      resetBtn.onclick = resetTracker;
+      resetBtn.onclick = promptResetConfirm;
 
       c.appendChild(lapBtn);
       c.appendChild(pauseBtn);
@@ -574,7 +574,7 @@
       resetBtn2.className = 'tt-btn tt-btn-danger';
       resetBtn2.id = 'btnTtActionReset';
       resetBtn2.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><span>초기화</span>';
-      resetBtn2.onclick = resetTracker;
+      resetBtn2.onclick = promptResetConfirm;
 
       c.appendChild(resumeBtn);
       c.appendChild(lapBtn2);
@@ -757,6 +757,105 @@
   }
 
   /**
+   * 실시간 구간별 활동기록 작성 팝업 (시간 정지 없음, #TASK-ES-172)
+   */
+  function openLapMemoModal(lap) {
+    if (!lap) return;
+    var modal = document.getElementById('ttLapMemoModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'ttLapMemoModal';
+      modal.style.position = 'fixed';
+      modal.style.bottom = '16px';
+      modal.style.left = '50%';
+      modal.style.transform = 'translateX(-50%)';
+      modal.style.width = 'calc(100% - 32px)';
+      modal.style.maxWidth = '420px';
+      modal.style.background = 'var(--card, #1e293b)';
+      modal.style.border = '1px solid #6366f1';
+      modal.style.borderRadius = '16px';
+      modal.style.padding = '16px';
+      modal.style.boxShadow = '0 12px 32px rgba(0,0,0,0.6)';
+      modal.style.zIndex = '100005';
+      document.body.appendChild(modal);
+    }
+    modal.innerHTML = 
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<span style="font-size:1.1rem;">⏱️</span>' +
+          '<h4 style="margin:0;font-size:.95rem;color:#fff;">구간 ' + lap.lapNum + ' 활동 상세 (' + lap.formattedDuration + ')</h4>' +
+        '</div>' +
+        '<span style="font-size:.75rem;color:#4ade80;font-weight:700;">● 시간 기록 중</span>' +
+      '</div>' +
+      '<p style="font-size:.75rem;color:#94a3b8;margin:0 0 10px;">시간 정지 없이 이 구간에서 집중한 활동을 바로 메모할 수 있어요.</p>' +
+      '<textarea id="ttLapMemoInput" style="width:100%;box-sizing:border-box;height:70px;background:rgba(0,0,0,0.3);border:1px solid #475569;border-radius:10px;padding:8px;color:#fff;font-size:.875rem;resize:none;margin-bottom:10px;" placeholder="예: 3km 페이스 유지 러닝, 핵심 비즈니스 로직 작성 등">' + (lap.text || '') + '</textarea>' +
+      '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
+        '<button type="button" class="btn btn-ghost btn-sm" id="btnTtLapMemoCancel" style="padding:6px 12px;border-radius:8px;">취소</button>' +
+        '<button type="button" class="btn btn-primary btn-sm" id="btnTtLapMemoSave" style="padding:6px 14px;border-radius:8px;background:#6366f1;color:#fff;border:none;font-weight:700;">확인</button>' +
+      '</div>';
+    modal.style.display = 'block';
+
+    var txt = modal.querySelector('#ttLapMemoInput');
+    if (txt) txt.focus();
+
+    modal.querySelector('#btnTtLapMemoCancel').onclick = function() {
+      modal.style.display = 'none';
+    };
+    modal.querySelector('#btnTtLapMemoSave').onclick = function() {
+      lap.text = (txt ? txt.value.trim() : '');
+      modal.style.display = 'none';
+      renderLapsList();
+      if (typeof toast === 'function') toast('구간 ' + lap.lapNum + ' 활동 내용이 저장되었습니다.');
+    };
+  }
+
+  /**
+   * 2중 초기화 확인 안전 모달 (#TASK-ES-172)
+   */
+  function promptResetConfirm() {
+    var dialog = document.getElementById('ttResetConfirmDialog');
+    if (!dialog) {
+      dialog = document.createElement('div');
+      dialog.id = 'ttResetConfirmDialog';
+      dialog.className = 'tt-confirm-dialog';
+      dialog.style.display = 'flex';
+      dialog.style.position = 'fixed';
+      dialog.style.top = '0';
+      dialog.style.left = '0';
+      dialog.style.right = '0';
+      dialog.style.bottom = '0';
+      dialog.style.background = 'rgba(0,0,0,0.7)';
+      dialog.style.zIndex = '100010';
+      dialog.style.alignItems = 'center';
+      dialog.style.justifyContent = 'center';
+      dialog.style.padding = '16px';
+      dialog.innerHTML = 
+        '<div style="background:#1e293b;border:1px solid rgba(239,68,68,0.4);border-radius:16px;padding:20px;max-width:320px;width:100%;text-align:center;box-shadow:0 12px 36px rgba(0,0,0,0.5);">' +
+          '<div style="font-size:2rem;margin-bottom:8px;">⚠️</div>' +
+          '<h3 style="margin:0 0 8px;font-size:1.1rem;color:#f87171;">정말 초기화하시겠습니까?</h3>' +
+          '<p id="ttResetConfirmMsg" style="font-size:.85rem;color:#cbd5e1;margin:0 0 16px;line-height:1.4;">소중하게 측정한 시간과 ' + tracker.laps.length + '개의 구간 기록이 모두 사라집니다.</p>' +
+          '<div style="display:flex;gap:8px;">' +
+            '<button type="button" class="btn btn-ghost btn-sm" id="btnTtResetNo" style="flex:1;padding:10px;border-radius:10px;font-weight:700;">취소</button>' +
+            '<button type="button" class="btn btn-danger btn-sm" id="btnTtResetYes" style="flex:1;padding:10px;border-radius:10px;font-weight:700;background:#ef4444;color:#fff;border:none;">초기화</button>' +
+          '</div>' +
+        '</div>';
+      document.body.appendChild(dialog);
+      dialog.querySelector('#btnTtResetNo').onclick = function() {
+        dialog.style.display = 'none';
+      };
+      dialog.querySelector('#btnTtResetYes').onclick = function() {
+        dialog.style.display = 'none';
+        resetTracker();
+        if (typeof toast === 'function') toast('기록이 초기화되었습니다.');
+      };
+    } else {
+      var msg = dialog.querySelector('#ttResetConfirmMsg');
+      if (msg) msg.textContent = '소중하게 측정한 시간과 ' + tracker.laps.length + '개의 구간 기록이 모두 사라집니다.';
+      dialog.style.display = 'flex';
+    }
+  }
+
+  /**
    * 구간기록 목록 렌더링
    */
   function renderLapsList() {
@@ -776,10 +875,20 @@
     reversed.forEach(function(lap, idx) {
       var item = document.createElement('div');
       item.className = 'tt-lap-item' + (idx === 0 ? ' latest' : '');
+      item.style.cursor = 'pointer';
+      item.title = '구간별 메모 작성 (시간은 계속 흘러갑니다)';
       item.innerHTML = 
-        '<span class="tt-lap-num">구간 ' + lap.lapNum + '</span>' +
-        '<span class="tt-lap-split">누적 ' + lap.formattedSplit + '</span>' +
-        '<span class="tt-lap-time">+' + lap.formattedDuration + '</span>';
+        '<div style="display:flex;align-items:center;justify-content:space-between;width:100%;">' +
+          '<span class="tt-lap-num">구간 ' + lap.lapNum + '</span>' +
+          '<span class="tt-lap-split">누적 ' + lap.formattedSplit + '</span>' +
+          '<span class="tt-lap-time">+' + lap.formattedDuration + '</span>' +
+        '</div>' +
+        '<div style="font-size:0.75rem;color:#cbd5e1;margin-top:3px;text-align:left;">' +
+          (lap.text ? '📝 ' + lap.text : '<span style="color:#64748b;font-size:0.7rem;">(터치하여 활동 메모 작성)</span>') +
+        '</div>';
+      item.onclick = function() {
+        openLapMemoModal(lap);
+      };
       list.appendChild(item);
     });
 
@@ -860,7 +969,13 @@
     d.reviewTotalTime.textContent = f.timeStr;
     d.reviewLapCount.textContent = '총 ' + tracker.laps.length + '개 구간 측정 완료';
 
-    d.activityTitle.value = '';
+    // 구간별 작성 내용이 있으면 활동명 기본값 설정 및 프리필
+    var hasLapNotes = tracker.laps.some(function(l){ return l.text && l.text.trim(); });
+    if (hasLapNotes && !d.activityTitle.value) {
+      d.activityTitle.value = tracker.mode === 'timer' ? '집중 타이머 세션' : '스톱워치 몰입 세션';
+    } else if (!d.activityTitle.value) {
+      d.activityTitle.value = '';
+    }
     d.activityTitle.focus();
 
     // 구간별 작성 필드 렌더링
@@ -872,12 +987,14 @@
       tracker.laps.forEach(function(lap) {
         var card = document.createElement('div');
         card.className = 'tt-review-lap-card';
+        var safeVal = (lap.text || '').replace(/"/g, '&quot;');
         card.innerHTML = 
           '<div class="tt-review-lap-head">' +
             '<span class="tt-review-lap-num">구간 ' + lap.lapNum + ' (' + lap.formattedDuration + ')</span>' +
             '<span class="tt-review-lap-time">누적: ' + lap.formattedSplit + '</span>' +
           '</div>' +
           '<input type="text" class="tt-input tt-lap-input" data-lap-idx="' + (lap.lapNum - 1) + '" ' +
+                 'value="' + safeVal + '" ' +
                  'placeholder="' + lap.lapNum + '구간에 집중한 내용을 입력하세요 (예: 1단원 문제풀이, UI 코딩 등)">';
         lapsList.appendChild(card);
       });

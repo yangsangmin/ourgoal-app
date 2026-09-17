@@ -137,7 +137,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <div id="appShell">
   <div class="topbar">
     <div class="brand">아워골</div>
-    <div class="topbar-right"><div class="topbar-actions" id="topbarActions"><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide(window.state && window.state.activeTab || 'home');" style="font-size:11px;padding:3px 7px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;cursor:pointer;white-space:nowrap;" title="이 페이지 활용법 보기" aria-label="이 페이지 활용법 보기">💡 활용법</button><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeLayoutBtn" style="font-size:11px;padding:3px 7px;border-radius:12px;border:1px solid var(--rule);color:var(--ink-soft);font-weight:600;cursor:pointer;white-space:nowrap;" title="나만의 홈 구성 (필요없는 창 지우기)" aria-label="나만의 홈 구성">⚙️ 홈구성</button></div><button type="button" class="topbar-notif-btn" id="topNotifBtn" title="알림 센터 열기" aria-label="알림 센터" onclick="if(window.openNotificationCenterModal) window.openNotificationCenterModal();"><span class="notif-bell-icon">🔔</span><span class="topbar-notif-badge" id="topNotifBadge" style="display:none;">0</span></button><button class="user-chip" id="topUserChip" type="button" aria-label="내 프로필"><span id="topUserName"></span><div class="avatar" id="topAvatar"></div></button></div>
+    <div class="topbar-right"><div class="topbar-actions" id="topbarActions"><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide(window.state && window.state.activeTab || 'home');" style="font-size:11px;padding:3px 7px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;cursor:pointer;white-space:nowrap;" title="이 페이지 활용법 보기" aria-label="이 페이지 활용법 보기">💡 활용법</button><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeLayoutBtn" style="display:none;font-size:11px;padding:3px 7px;border-radius:12px;border:1px solid var(--rule);color:var(--ink-soft);font-weight:600;cursor:pointer;white-space:nowrap;" title="나만의 홈 구성 (필요없는 창 지우기)" aria-label="나만의 홈 구성">⚙️ 홈구성</button></div><button type="button" class="topbar-notif-btn" id="topNotifBtn" title="알림 센터 열기" aria-label="알림 센터" onclick="if(window.openNotificationCenterModal) window.openNotificationCenterModal();"><span class="notif-bell-icon">🔔</span><span class="topbar-notif-badge" id="topNotifBadge" style="display:none;">0</span></button><button class="user-chip" id="topUserChip" type="button" aria-label="내 프로필"><span id="topUserName"></span><div class="avatar" id="topAvatar" style="width:40px;height:40px;"></div></button></div>
   </div>
   <div class="ptr-indicator" id="ptrIndicator" aria-hidden="true"><span class="spinner"></span></div>
   <div id="levelUpBannerSlot"></div>
@@ -239,6 +239,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     <!-- GOALS -->
     <section class="screen" id="screen-goals">
       <div class="comm-subtabs" id="goalsSubtabs"></div>
+      <div id="routineGoalsView" style="display:none;"></div>
       <div id="personalGoalsView">
         <div class="goal-head-row">
           <div class="goal-head-l">
@@ -281,9 +282,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <div class="format-opt" data-calview="day">일</div>
         </div>
       </div>
-      <div class="cal-sub-guide">
+      <div class="cal-sub-guide" id="calSubGuideBanner">
         <span class="cal-sub-guide-icon">🖼️</span>
         <span>일정을 사진배경으로 채워서 나만의 사진일기장을 만들어봐요</span>
+        <button type="button" class="btn-ghost" id="btnHideCalDiaryGuide" style="margin-left:auto;border:none;background:transparent;cursor:pointer;font-size:.875rem;color:var(--ink-soft);padding:2px 6px;" title="안내창 영구 닫기" aria-label="안내창 영구 닫기">✕</button>
       </div>
       <div id="calGoogleBanner" style="display:none;"></div>
       <div class="cal-nav-row">
@@ -311,7 +313,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     <section class="screen" id="screen-records">
       <div class="screen-head" style="flex-wrap:wrap;gap:8px;">
         <div class="screen-head-l" style="flex-wrap:wrap;">
-          <h2 class="s-title">기록</h2>
+          <h2 class="s-title">기록/통계</h2>
           <span class="privacy-badge" id="recPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
@@ -506,7 +508,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     <section class="screen" id="screen-comm">
       <div class="screen-head">
         <div style="display:flex;align-items:center;gap:6px;"><h2 class="s-title" style="margin:0;">소통</h2></div>
-        <button class="btn btn-primary btn-sm" id="btnCommPostFeed" type="button" onclick="openShareToFeedModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>게시하기</span></button>
+        <button class="btn btn-primary btn-sm" id="btnCommPostFeed" type="button" onclick="if(window.openShareToFeedModal) window.openShareToFeedModal(); else if(typeof openShareToFeedModal === 'function') openShareToFeedModal();"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>게시하기</span></button>
       </div>
       <div id="commBody"></div>
     </section>
@@ -516,11 +518,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <p class="s-eyebrow">설정</p>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><h2 class="s-title" style="margin:0;">설정</h2></div>
 
-      <div class="set-block">
-        <h4>내 프로필</h4>
-        <div id="profileCard"></div>
-        <input type="file" id="avatarFile" accept="image/*" style="display:none;">
-      </div>
+      <!-- [그룹 1] 👤 계정 & 프로필 -->
+      <details class="settings-group-accordion" open style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
+        <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:1.15rem;">👤</span>
+            <span>계정 & 프로필</span>
+          </div>
+          <span class="faint" style="font-size:.78125rem;">접기/펼치기 ▾</span>
+        </summary>
+        <div style="padding:4px 12px 12px;">
+          <div class="set-block">
+            <h4>내 프로필</h4>
+            <div id="profileCard"></div>
+            <input type="file" id="avatarFile" accept="image/*" style="display:none;">
+          </div>
 
       <!-- 🔒 공개 범위 및 프라이버시 (Req 8) -->
       <div class="set-block">
@@ -579,11 +591,22 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <div style="font-size:.875rem;font-weight:700;margin-bottom:4px;">활성 로그인 기기 및 세션</div>
           <div class="faint" style="font-size:.8125rem;">현재 기기: Windows Chrome (접속 중) · 모바일 앱: Android PWA</div>
           <button class="btn btn-ghost btn-sm" id="logoutOtherDevicesBtn" type="button" style="margin-top:8px;width:100%;font-size:.8125rem;">다른 모든 기기 원격 로그아웃</button>
+          </div>
         </div>
-      </div>
+      </details>
 
-      <!-- 🔔 [#TASK-ES-152] 백그라운드·앱종료·미확인 전역 알림 제어 센터 -->
-      <div class="set-block">
+      <!-- [그룹 2] 🔔 알림 제어 센터 -->
+      <details class="settings-group-accordion" open style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
+        <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:1.15rem;">🔔</span>
+            <span>알림 제어 센터</span>
+          </div>
+          <span class="faint" style="font-size:.78125rem;">접기/펼치기 ▾</span>
+        </summary>
+        <div style="padding:4px 12px 12px;">
+          <!-- 🔔 [#TASK-ES-152] 백그라운드·앱종료·미확인 전역 알림 제어 센터 -->
+          <div class="set-block">
         <h4>🔔 전역 알림 & 세부 제어 센터</h4>
         <p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 10px;">포그라운드 상단 배너·사운드·진동, 백그라운드 Web Notification, 앱 종료 후 미확인 알림 큐를 종합 제어합니다.</p>
 
@@ -653,87 +676,111 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <button class="btn btn-ghost btn-sm" id="btnReqNotifPerm" type="button" style="font-size:.8125rem;">권한 설정</button>
         </div>
         <button class="btn btn-primary btn-sm" id="testNotifyBtn" type="button" style="margin-top:12px;width:100%;font-weight:700;">🔔 전역 알림 실시간 테스트 울리기</button>
-      </div>
-
-      <!-- 🎨 화면 및 테마 (Req 10 - 8대 화면 스타일) -->
-      <div class="set-block">
-        <h4>화면 스타일 (테마)</h4>
-        <div class="theme-grid" id="themeGrid"></div>
-        <div class="set-sub">홈 화면 모드</div>
-        <div id="adaptiveModeSelector" class="adaptive-mode-bar" role="group" aria-label="홈 화면 모드 선택">
-          <button type="button" class="mode-chip active" id="btnModeMinimal" data-mode="minimal" onclick="switchUxMode('minimal')" title="오늘 핵심 목표에 집중">미니멀</button>
-          <button type="button" class="mode-chip" id="btnModeGamified" data-mode="gamified" onclick="switchUxMode('gamified')" title="스트릭·퀘스트·공유 강조">게임</button>
-          <button type="button" class="mode-chip" id="btnModeAnalyst" data-mode="analyst" onclick="switchUxMode('analyst')" title="통계 중심">분석</button>
-        </div>
-        <div class="toggle-row" style="margin-top:14px;">
-          <div class="t">고대비 모드 (선명한 명암비 및 텍스트 시인성 강화)</div>
-          <div class="switch" id="highContrastSwitch"></div>
-        </div>
-        <div class="field" style="margin-top:10px;">
-          <label>글자 크기</label>
-          <div class="format-toggle" id="fontSizeToggle">
-            <div class="format-opt" data-fs="small">작게</div>
-            <div class="format-opt" data-fs="normal">보통</div>
-            <div class="format-opt" data-fs="large">크게</div>
-            <div class="format-opt" data-fs="xlarge">아주 크게</div>
           </div>
         </div>
-        <div class="toggle-row" style="margin-top:10px;">
-          <div class="t">데이터 절약 모드 (저용량 이미지 로드)</div>
-          <div class="switch" id="dataSaverSwitch"></div>
-        </div>
-      </div>
+      </details>
 
-      <!-- 🧩 앱을 내맘대로! — 홈 구성 요소 켜기/끄기 (#TASK-ES-020) -->
-      <div class="set-block" id="setTrashBlock">
-        <h4>데이터 안심 휴지통</h4>
-        <p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 8px;">실수로 삭제한 목표·일정·기록 및 구글 삭제 일정을 7일간 안전하게 보관하고 원복해요.</p>
-        <button class="btn btn-ghost btn-sm btn-block" id="btnOpenTrashModal" type="button" style="display:flex;align-items:center;justify-content:center;gap:6px;">🗑️ 휴지통 (0개 보관 중)</button>
-      </div>
-
-      <!-- 🤖 앱 진입 아바타 인사 팝업 설정 (#TASK-ES-165) -->
-      <div class="set-block" id="setAvatarGreetingBlock">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <h4 style="margin:0;">앱 진입 아바타 인사 팝업</h4>
-          <div class="switch" id="avatarGreetingSwitch"></div>
-        </div>
-        <p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 10px;">앱 진입 시 내 아바타가 화면 절반 크기로 반갑게 말을 건넵니다 (2.5초 후 자동 소멸 & 큰 X 닫기).</p>
-        
-        <div id="avatarGreetingConfigBody">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
-            <div>
-              <label style="font-size:.75rem;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:4px;">☀️ 주간 시작</label>
-              <select id="avatarGreetingDayHour" style="width:100%;font-size:.8125rem;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface);">
-              </select>
+      <!-- [그룹 3] 🎨 화면 & 홈 구성 -->
+      <details class="settings-group-accordion" open style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
+        <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:1.15rem;">🎨</span>
+            <span>화면 & 홈 구성</span>
+          </div>
+          <span class="faint" style="font-size:.78125rem;">접기/펼치기 ▾</span>
+        </summary>
+        <div style="padding:4px 12px 12px;">
+          <!-- 🎨 화면 및 테마 (Req 10 - 8대 화면 스타일) -->
+          <div class="set-block">
+            <h4>화면 스타일 (테마)</h4>
+            <div class="theme-grid" id="themeGrid"></div>
+            <div class="set-sub">홈 화면 모드</div>
+            <div id="adaptiveModeSelector" class="adaptive-mode-bar" role="group" aria-label="홈 화면 모드 선택">
+              <button type="button" class="mode-chip active" id="btnModeMinimal" data-mode="minimal" onclick="switchUxMode('minimal')" title="오늘 핵심 목표에 집중">미니멀</button>
+              <button type="button" class="mode-chip" id="btnModeGamified" data-mode="gamified" onclick="switchUxMode('gamified')" title="스트릭·퀘스트·공유 강조">게임</button>
+              <button type="button" class="mode-chip" id="btnModeAnalyst" data-mode="analyst" onclick="switchUxMode('analyst')" title="통계 중심">분석</button>
             </div>
-            <div>
-              <label style="font-size:.75rem;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:4px;">🌙 야간 시작</label>
-              <select id="avatarGreetingNightHour" style="width:100%;font-size:.8125rem;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface);">
-              </select>
+            <div class="toggle-row" style="margin-top:14px;">
+              <div class="t">고대비 모드 (선명한 명암비 및 텍스트 시인성 강화)</div>
+              <div class="switch" id="highContrastSwitch"></div>
+            </div>
+            <div class="field" style="margin-top:10px;">
+              <label>글자 크기</label>
+              <div class="format-toggle" id="fontSizeToggle">
+                <div class="format-opt" data-fs="small">작게</div>
+                <div class="format-opt" data-fs="normal">보통</div>
+                <div class="format-opt" data-fs="large">크게</div>
+                <div class="format-opt" data-fs="xlarge">아주 크게</div>
+              </div>
+            </div>
+            <div class="toggle-row" style="margin-top:10px;">
+              <div class="t">데이터 절약 모드 (저용량 이미지 로드)</div>
+              <div class="switch" id="dataSaverSwitch"></div>
             </div>
           </div>
 
-          <div style="margin-bottom:10px;">
-            <label style="font-size:.75rem;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:4px;">☀️ 주간 멘트</label>
-            <input id="avatarGreetingDayMsg" type="text" placeholder="오늘은 뭘 할거냐? 내자신" style="width:100%;font-size:.8125rem;padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);box-sizing:border-box;">
+          <!-- 🤖 앱 진입 아바타 인사 팝업 설정 (#TASK-ES-165) -->
+          <div class="set-block" id="setAvatarGreetingBlock">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <h4 style="margin:0;">앱 진입 아바타 인사 팝업</h4>
+              <div class="switch" id="avatarGreetingSwitch"></div>
+            </div>
+            <p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 10px;">앱 진입 시 내 아바타가 화면 절반 크기로 반갑게 말을 건넵니다 (2.5초 후 자동 소멸 & 큰 X 닫기).</p>
+            
+            <div id="avatarGreetingConfigBody">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+                <div>
+                  <label style="font-size:.75rem;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:4px;">☀️ 주간 시작</label>
+                  <select id="avatarGreetingDayHour" style="width:100%;font-size:.8125rem;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface);">
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:.75rem;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:4px;">🌙 야간 시작</label>
+                  <select id="avatarGreetingNightHour" style="width:100%;font-size:.8125rem;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface);">
+                  </select>
+                </div>
+              </div>
+
+              <div style="margin-bottom:10px;">
+                <label style="font-size:.75rem;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:4px;">☀️ 주간 멘트</label>
+                <input id="avatarGreetingDayMsg" type="text" placeholder="오늘은 뭘 할거냐? 내자신" style="width:100%;font-size:.8125rem;padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);box-sizing:border-box;">
+              </div>
+
+              <div style="margin-bottom:12px;">
+                <label style="font-size:.75rem;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:4px;">🌙 야간 멘트</label>
+                <input id="avatarGreetingNightMsg" type="text" placeholder="오늘은 뭘 했냐? 내자신" style="width:100%;font-size:.8125rem;padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);box-sizing:border-box;">
+              </div>
+
+              <button class="btn btn-ghost btn-sm btn-block" id="btnPreviewAvatarGreeting" type="button" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+                👀 아바타 인사 미리보기
+              </button>
+            </div>
           </div>
 
-          <div style="margin-bottom:12px;">
-            <label style="font-size:.75rem;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:4px;">🌙 야간 멘트</label>
-            <input id="avatarGreetingNightMsg" type="text" placeholder="오늘은 뭘 했냐? 내자신" style="width:100%;font-size:.8125rem;padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);box-sizing:border-box;">
+          <div class="set-block">
+            <h4>앱을 내맘대로!</h4>
+            <p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 8px;">내 목표에 필요한 것만 홈에 남기세요. 오늘 기록하기·내 목표·기록·소통은 항상 보여요.</p>
+            <button class="btn btn-ghost btn-sm" id="homeLayoutOpenBtn" type="button" style="width:100%;">홈 구성 고르기</button>
           </div>
-
-          <button class="btn btn-ghost btn-sm btn-block" id="btnPreviewAvatarGreeting" type="button" style="display:flex;align-items:center;justify-content:center;gap:6px;">
-            👀 아바타 인사 미리보기
-          </button>
         </div>
-      </div>
+      </details>
 
-      <div class="set-block">
-        <h4>앱을 내맘대로!</h4>
-        <p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 8px;">내 목표에 필요한 것만 홈에 남기세요. 오늘 기록하기·내 목표·기록·소통은 항상 보여요.</p>
-        <button class="btn btn-ghost btn-sm" id="homeLayoutOpenBtn" type="button" style="width:100%;">홈 구성 고르기</button>
-      </div>
+      <!-- [그룹 4] 💾 데이터 & 외부 연동 / 고객지원 -->
+      <details class="settings-group-accordion" open style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
+        <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:1.15rem;">💾</span>
+            <span>데이터 & 외부 연동 / 고객지원</span>
+          </div>
+          <span class="faint" style="font-size:.78125rem;">접기/펼치기 ▾</span>
+        </summary>
+        <div style="padding:4px 12px 12px;">
+          <!-- 🧩 데이터 안심 휴지통 (#TASK-ES-020) -->
+          <div class="set-block" id="setTrashBlock">
+            <h4>데이터 안심 휴지통</h4>
+            <p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 8px;">실수로 삭제한 목표·일정·기록 및 구글 삭제 일정을 7일간 안전하게 보관하고 원복해요.</p>
+            <button class="btn btn-ghost btn-sm btn-block" id="btnOpenTrashModal" type="button" style="display:flex;align-items:center;justify-content:center;gap:6px;">🗑️ 휴지통 (0개 보관 중)</button>
+          </div>
 
       <!-- 📅 구글 캘린더 연동 (Req 3 & 4) -->
       <div class="set-block">
@@ -895,6 +942,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <button class="btn btn-danger" id="resetBtn" type="button" style="width:100%;margin-bottom:10px;">이 계정 데이터 초기화</button>
         <button class="btn btn-ghost" id="withdrawBtn" type="button" style="width:100%;color:var(--brand-strong);font-size:.875rem;">회원 탈퇴</button>
       </div>
+        </div>
+      </details>
 
       <div class="app-foot">
         <div>아워골 · v1.0.0</div>
@@ -929,7 +978,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       </button>
       <button class="navbtn" data-tab="records" type="button">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>
-        기록
+        기록/통계
       </button>
       <button class="navbtn" data-tab="comm" type="button" style="position:relative;">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linejoin="round"><path d="M4 5h16v10H8l-4 4V5z"/></svg>
@@ -1011,7 +1060,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     <div class="eval-modal-body" style="align-items:center;text-align:center;">
       <div id="avatarLevelUpBadge" style="margin-bottom:6px;"></div>
       <div id="avatarLevelUpImgContainer" class="avatar-large-preview-box" style="width:220px;height:220px;border-radius:20px;overflow:hidden;border:3px solid var(--accent);box-shadow:0 8px 24px rgba(0,0,0,0.15);margin:0 auto 10px;"></div>
-      <div id="avatarLevelUpSubtitle" style="font-size:.875rem;color:var(--ink-soft);margin-bottom:10px;">축하합니다! 새로운 레벨에 도달했습니다!</div>
+      <div id="avatarLevelUpSubtitle" style="font-size:.9rem;font-weight:700;color:var(--ink);background:var(--card);border:1.5px solid var(--primary);padding:8px 14px;border-radius:12px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">💬 "진짜 잘했다! 내자신! 내 뒤의 배경좀 바꿔줘라 지겹다!"</div>
       
       <!-- 성장 성향 설정 (#TASK-ES-150) -->
       <div class="eval-field-group" style="width:100%;text-align:left;background:var(--surface-2);padding:10px 12px;border-radius:12px;border:1px solid var(--rule);box-sizing:border-box;">
@@ -1606,6 +1655,30 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var ceil = xpForLevel(level + 1);
     return { level: level, xp: xp, into: xp - floor, span: ceil - floor, pct: Math.round(((xp - floor) / (ceil - floor)) * 100) };
   }
+  function triggerAvatarCelebrationPopup(amount, reason){
+    try {
+      var oldPop = document.getElementById('avatarCelebrationToast');
+      if(oldPop) oldPop.remove();
+      var pop = document.createElement('div');
+      pop.id = 'avatarCelebrationToast';
+      pop.style.cssText = 'position:fixed;bottom:78px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,rgba(30,27,75,0.95),rgba(49,46,129,0.95));border:1.5px solid rgba(129,140,248,0.6);box-shadow:0 12px 30px rgba(0,0,0,0.35);backdrop-filter:blur(8px);border-radius:24px;padding:8px 16px;display:flex;align-items:center;gap:10px;z-index:99999;color:#fff;font-size:.875rem;font-weight:700;animation:animFadeInUp 0.3s cubic-bezier(0.16,1,0.3,1);cursor:pointer;user-select:none;pointer-events:auto;';
+      var avImg = (state.profile && (state.profile.avatarUrl || (state.profile.settings && state.profile.settings.customAvatarUrl))) || '';
+      var avIcon = avImg ? ('<img src="'+avImg+'" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1.5px solid #818cf8;">') : '<span style="font-size:1.4rem;">🧑‍🚀</span>';
+      pop.innerHTML = avIcon + '<div><div style="font-size:.84rem;color:#e0e7ff;">"잘했다! 내 자신!"</div><div style="font-size:.72rem;color:#38bdf8;font-weight:800;">+' + amount + ' EXP 획득</div></div><span style="font-size:.75rem;color:#94a3b8;margin-left:4px;">✕</span>';
+      pop.onclick = function(){ pop.remove(); };
+      document.body.appendChild(pop);
+      setTimeout(function(){
+        if(pop.parentNode){
+          pop.style.transition = 'opacity 0.4s, transform 0.4s';
+          pop.style.opacity = '0';
+          pop.style.transform = 'translateX(-50%) translateY(12px)';
+          setTimeout(function(){ if(pop.parentNode) pop.remove(); }, 400);
+        }
+      }, 2500);
+    } catch(e){}
+  }
+  window.triggerAvatarCelebrationPopup = triggerAvatarCelebrationPopup;
+
   function awardXP(amount, reason){
     if(!state.profile.settings.xp) state.profile.settings.xp = { total:0, log:[] };
     var xp = state.profile.settings.xp;
@@ -1613,7 +1686,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     xp.total += amount;
     xp.log.unshift({ amount: amount, reason: reason, at: nowISO() });
     if(xp.log.length > XP_LOG_MAX) xp.log.length = XP_LOG_MAX;
-    return { total: xp.total, leveledUp: levelForXP(xp.total) > beforeLevel };
+    var leveledUp = levelForXP(xp.total) > beforeLevel;
+    if(amount > 0){
+      triggerAvatarCelebrationPopup(amount, reason);
+    }
+    return { total: xp.total, leveledUp: leveledUp };
   }
   function hasUserCustomizedAvatar(profile){
     if(!profile) return false;
@@ -1633,8 +1710,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       hasCheckedInToday = state.profile.records.some(function(r){ return dateKey(r.startAt) === today; });
     }
     var avatarHtml = (window.OurgoalAvatar && window.OurgoalAvatar.renderAvatarHtml) ?
-      window.OurgoalAvatar.renderAvatarHtml(p.level, state.profile, { size: 36, showGreeting: !hasCheckedInToday && !state.hasSeenAvatarGreeting }) :
-      '<div class="avatar-placeholder" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">🤖</div>';
+      window.OurgoalAvatar.renderAvatarHtml(p.level, state.profile, { size: 48, showGreeting: !hasCheckedInToday && !state.hasSeenAvatarGreeting }) :
+      '<div class="avatar-placeholder" style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;">🤖</div>';
 
     var hasCustomAvatar = hasUserCustomizedAvatar(state.profile);
     var btnAvatarStyle = hasCustomAvatar ? 'display:none;' : '';
@@ -1726,6 +1803,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(promptInput){
       var curPrompt = (state.profile && state.profile.settings && state.profile.settings.avatarGrowthPrompt) || '';
       promptInput.value = curPrompt;
+    }
+
+    var subTitleEl = document.getElementById('avatarLevelUpSubtitle');
+    if(subTitleEl){
+      subTitleEl.innerHTML = '💬 "진짜 잘했다! 내자신! 내 뒤의 배경좀 바꿔줘라 지겹다!"';
     }
 
     m.style.display = 'flex';
@@ -4350,12 +4432,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }).join('');
     return '<div class="card" id="hybridDash" style="margin-bottom:14px;">' +
       '<div class="card-title-row" style="margin-bottom:10px;"><h3 style="margin:0;font-size:.9375rem;">목표 현황판</h3><span class="faint" style="font-size:.6875rem;">동시에 굴리는 목표 한눈에</span></div>' +
-      '<div class="profile-stats" style="margin-top:0;padding-top:0;border-top:none;">' +
-        '<div class="profile-stat"><b>'+goals.length+'</b><span>진행 중 목표</span></div>' +
-        '<div class="profile-stat"><b>'+avgPct+'%</b><span>평균 달성률</span></div>' +
-        '<div class="profile-stat"><b>'+topicCount+'</b><span>병행 분야</span></div>' +
-      '</div>' +
-      '<div style="display:flex;flex-direction:column;gap:12px;margin-top:14px;">'+rows+'</div>' +
+      '<div style="display:flex;flex-direction:column;gap:12px;margin-top:10px;">'+rows+'</div>' +
     '</div>';
   }
   /* ============ 결과 기록 (체크박스 대신 수치 입력) ============ */
@@ -6267,7 +6344,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var shown = evs.slice(0,2);
     var more = evs.length - shown.length;
     var dayBg = (state.profile && state.profile.calendarDayBackgrounds && state.profile.calendarDayBackgrounds[iso]) || '';
-    var bgHtml = dayBg ? '<div class="cal-cell-bg" style="background-image:url(\''+escapeHtml(dayBg)+'\');"></div>' : '';
+    var bgHtml = '';
+    if(Array.isArray(dayBg) && dayBg.length > 1){
+      bgHtml = '<div class="cal-cell-bg" style="position:absolute;inset:0;display:flex;flex-direction:column;pointer-events:none;overflow:hidden;border-radius:6px;">' +
+        '<div style="flex:1;background-image:url(\''+escapeHtml(dayBg[0])+'\');background-size:cover;background-position:center;opacity:0.5;"></div>' +
+        '<div style="flex:1;background-image:url(\''+escapeHtml(dayBg[1])+'\');background-size:cover;background-position:center;opacity:0.5;border-top:1px solid rgba(255,255,255,0.2);"></div>' +
+      '</div>';
+    } else if(dayBg){
+      var singleBg = Array.isArray(dayBg) ? dayBg[0] : dayBg;
+      bgHtml = '<div class="cal-cell-bg" style="background-image:url(\''+escapeHtml(singleBg)+'\');"></div>';
+    }
     return '<div class="'+cls+'" data-caldate="'+iso+'">' +
       bgHtml +
       '<div class="cal-daynum">'+d.getDate()+'</div>' +
@@ -6432,12 +6518,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var isFromHub = (fromHub !== false && fromHub !== undefined) ? !!fromHub : false;
     state.profile = state.profile || {};
     state.profile.calendarDayBackgrounds = state.profile.calendarDayBackgrounds || {};
-    var currentBg = state.profile.calendarDayBackgrounds[sel] || '';
-    var tempBg = currentBg;
+    var rawBg = state.profile.calendarDayBackgrounds[sel] || '';
+    var currentBgList = Array.isArray(rawBg) ? rawBg.slice() : (rawBg ? [rawBg] : []);
+    var tempBgList = currentBgList.slice();
+    var currentBg = currentBgList.length > 0 ? (currentBgList.length === 1 ? currentBgList[0] : currentBgList) : '';
+    var tempBg = currentBgList.length === 1 ? currentBgList[0] : (currentBgList[0] || '');
 
-    var previewLayerHtml = tempBg ?
-      '<div class="cal-bg-preview-layer" id="calDayBgPreviewLayer" style="background-image:url(\'' + escapeHtml(tempBg) + '\');"></div>' :
-      '<div class="cal-bg-preview-layer" id="calDayBgPreviewLayer" style="display:none;"></div>';
+    var previewLayerHtml = '';
+    if(tempBgList.length >= 2){
+      previewLayerHtml = '<div class="cal-bg-preview-layer" id="calDayBgPreviewLayer" style="display:flex;flex-direction:column;pointer-events:none;"><div style="flex:1;background-image:url(\'' + escapeHtml(tempBgList[0]) + '\');background-size:cover;background-position:center;opacity:0.5;"></div><div style="flex:1;background-image:url(\'' + escapeHtml(tempBgList[1]) + '\');background-size:cover;background-position:center;opacity:0.5;border-top:1px solid rgba(255,255,255,0.4);"></div></div>';
+    } else if(tempBgList.length === 1){
+      previewLayerHtml = '<div class="cal-bg-preview-layer" id="calDayBgPreviewLayer" style="background-image:url(\'' + escapeHtml(tempBgList[0]) + '\');"></div>';
+    } else {
+      previewLayerHtml = '<div class="cal-bg-preview-layer" id="calDayBgPreviewLayer" style="display:none;"></div>';
+    }
 
     var modalHtml =
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
@@ -6445,9 +6539,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '<span class="faint" style="font-weight:600;font-size:.8125rem;">' + escapeHtml(sel) + '</span>' +
       '</div>' +
       '<p class="faint" style="font-size:.8125rem;margin:0 0 12px;line-height:1.4;">' +
-        '선택한 사진이 해당 일정 칸의 배경으로 꽉 채워집니다.<br>' +
+        '최대 2장까지 등록 가능하며, 2장 등록 시 <b>상하 50% 분할</b>로 채워집니다.<br>' +
         '<b>50% 투명도</b>가 적용되어 기존에 적은 일정들이 선명하게 보입니다.' +
       '</p>' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+        '<span id="calDayBgCountBadge" style="font-size:.75rem;font-weight:700;color:var(--brand);">' + (tempBgList.length > 0 ? (tempBgList.length + ' / 2장 등록됨' + (tempBgList.length === 2 ? ' (상하 50% 분할)' : ' (전체 채움)')) : '사진 미등록') + '</span>' +
+      '</div>' +
       '<div class="cal-bg-preview-wrap" id="calDayBgPreviewWrap">' +
         previewLayerHtml +
         '<div class="cal-bg-preview-content" id="calDayBgPreviewContent">' +
@@ -6456,16 +6553,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             '🎯 오늘의 핵심 일정' +
           '</div>' +
           '<div style="font-size:.75rem;color:var(--ink-soft);">' +
-            (tempBg ? '미리보기 적용 중 (투명도 50%)' : '사진을 선택하면 미리보기가 나타납니다.') +
+            (tempBgList.length > 0 ? '미리보기 적용 중 (투명도 50%)' : '사진을 선택하면 미리보기가 나타납니다.') +
           '</div>' +
         '</div>' +
       '</div>' +
       '<input type="file" id="calDayBgFileInput" accept="image/*" style="display:none;">' +
       '<div style="display:flex;gap:8px;margin-bottom:14px;">' +
         '<button class="btn btn-secondary btn-sm cal-day-bg-btn" id="btnTriggerDayBgFile" type="button" style="flex:1;padding:8px 0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:.875rem;">' +
-          '<span>📷 사진 고르기</span>' +
+          '<span>📷 사진 추가 (최대 2장)</span>' +
         '</button>' +
-        (currentBg ? '<button class="btn btn-ghost btn-sm" id="btnDeleteDayBg" type="button" style="padding:8px 12px;color:var(--brand-strong);border-color:var(--rule);font-size:.8125rem;">삭제</button>' : '') +
+        (currentBg ? '<button class="btn btn-ghost btn-sm" id="btnDeleteDayBg" type="button" style="padding:8px 12px;color:var(--brand-strong);border-color:var(--rule);font-size:.8125rem;">초기화</button>' : '') +
       '</div>' +
       '<div class="modal-actions" style="display:flex;gap:8px;">' +
         '<button class="btn btn-ghost btn-sm" id="calDayBgCancelBtn" type="button" style="flex:1;">취소</button>' +
@@ -6480,6 +6577,38 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var saveBtn = sheet.querySelector('#calDayBgSaveBtn');
       var previewLayer = sheet.querySelector('#calDayBgPreviewLayer');
       var previewContent = sheet.querySelector('#calDayBgPreviewContent');
+
+      function updatePreview(){
+        if(!previewLayer) return;
+        if(tempBgList.length >= 2){
+          previewLayer.style.display = 'flex';
+          previewLayer.style.flexDirection = 'column';
+          previewLayer.style.backgroundImage = 'none';
+          previewLayer.innerHTML = '<div style="flex:1;background-image:url(\'' + escapeHtml(tempBgList[0]) + '\');background-size:cover;background-position:center;opacity:0.5;"></div><div style="flex:1;background-image:url(\'' + escapeHtml(tempBgList[1]) + '\');background-size:cover;background-position:center;opacity:0.5;border-top:1px solid rgba(255,255,255,0.4);"></div>';
+        } else if(tempBgList.length === 1){
+          previewLayer.style.display = 'block';
+          previewLayer.innerHTML = '';
+          previewLayer.style.backgroundImage = 'url("' + tempBgList[0] + '")';
+        } else {
+          previewLayer.style.display = 'none';
+          previewLayer.innerHTML = '';
+          previewLayer.style.backgroundImage = 'none';
+        }
+        var countBadge = sheet.querySelector('#calDayBgCountBadge');
+        if(countBadge){
+          countBadge.textContent = tempBgList.length + ' / 2장 등록됨' + (tempBgList.length === 2 ? ' (상하 50% 분할)' : (tempBgList.length === 1 ? ' (전체 채움)' : ''));
+        }
+        if(previewContent){
+          previewContent.innerHTML =
+            '<div style="font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:4px;">' + (sel.split('-')[2] || '17') + '</div>' +
+            '<div style="display:inline-block;background:var(--surface-2);color:var(--ink);padding:2px 8px;border-radius:6px;font-size:.75rem;font-weight:600;margin-bottom:4px;border:1px solid var(--rule);">' +
+              '🎯 오늘의 핵심 일정' +
+            '</div>' +
+            '<div style="font-size:.75rem;color:var(--ink-soft);">' +
+              (tempBgList.length > 0 ? '미리보기 적용 중 (투명도 50%)' : '사진을 선택하면 미리보기가 나타납니다.') +
+            '</div>';
+        }
+      }
 
       if(triggerBtn && fileInput){
         triggerBtn.addEventListener('click', function(){
@@ -6497,34 +6626,28 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               toast('사진 처리 중 오류가 발생했습니다.');
               return;
             }
-            tempBg = compressedDataUrl;
-            if(previewLayer){
-              previewLayer.style.display = 'block';
-              previewLayer.style.backgroundImage = 'url("' + tempBg + '")';
+            if(tempBgList.length < 2){
+              tempBgList.push(compressedDataUrl);
+            } else {
+              tempBgList[1] = compressedDataUrl;
             }
-            if(previewContent){
-              previewContent.innerHTML =
-                '<div style="font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:4px;">' + (sel.split('-')[2] || '17') + '</div>' +
-                '<div style="display:inline-block;background:var(--surface-2);color:var(--ink);padding:2px 8px;border-radius:6px;font-size:.75rem;font-weight:600;margin-bottom:4px;border:1px solid var(--rule);">' +
-                  '🎯 오늘의 핵심 일정' +
-                '</div>' +
-                '<div style="font-size:.75rem;color:var(--ink-soft);">미리보기 적용 중 (투명도 50%)</div>';
-            }
-            toast('사진이 선택되었습니다. [저장]을 눌러 완료하세요.');
+            tempBg = tempBgList[0];
+            updatePreview();
+            toast('사진이 추가되었습니다 (' + tempBgList.length + '/2장). [저장]을 눌러 완료하세요.');
           });
         });
       }
 
       if(deleteBtn){
         deleteBtn.addEventListener('click', async function(){
-          if(confirm('이날의 배경사진을 삭제하고 기본 배경으로 되돌릴까요?')){
+          if(confirm('이날의 배경사진을 초기화하고 기본 배경으로 되돌릴까요?')){
             delete state.profile.calendarDayBackgrounds[sel];
             try {
               var uidVal = (state.profile && state.profile.id) || 'guest';
               localStorage.setItem('ourgoal_cal_day_bg_' + uidVal, JSON.stringify(state.profile.calendarDayBackgrounds));
             } catch(e){}
             await saveProfile();
-            toast('배경사진이 삭제되었습니다.');
+            toast('배경사진이 초기화되었습니다.');
             renderCalendarScreen();
             if(isFromHub){
               openCalendarDayEditHubModal(sel);
@@ -6547,11 +6670,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       if(saveBtn){
         saveBtn.addEventListener('click', async function(){
-          if(!tempBg){
+          if(!tempBgList || tempBgList.length === 0){
             toast('먼저 사진을 선택해주세요.');
             return;
           }
-          state.profile.calendarDayBackgrounds[sel] = tempBg;
+          state.profile.calendarDayBackgrounds[sel] = tempBgList.length === 1 ? tempBgList[0] : tempBgList;
           try {
             var uidVal = (state.profile && state.profile.id) || 'guest';
             localStorage.setItem('ourgoal_cal_day_bg_' + uidVal, JSON.stringify(state.profile.calendarDayBackgrounds));
@@ -6927,6 +7050,25 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(gBanner){
       gBanner.style.display = 'none';
       gBanner.innerHTML = '';
+    }
+    var diaryGuide = document.getElementById('calSubGuideBanner') || document.querySelector('.cal-sub-guide');
+    if(diaryGuide){
+      var hideDiaryGuide = false;
+      try { hideDiaryGuide = localStorage.getItem('ourgoal_hide_diary_guide') === 'true'; } catch(e){}
+      if(hideDiaryGuide){
+        diaryGuide.style.display = 'none';
+      } else {
+        diaryGuide.style.display = 'flex';
+        var closeBtn = diaryGuide.querySelector('#btnHideCalDiaryGuide');
+        if(closeBtn && !closeBtn._bound){
+          closeBtn._bound = true;
+          closeBtn.onclick = function(e){
+            e.stopPropagation();
+            diaryGuide.style.display = 'none';
+            try { localStorage.setItem('ourgoal_hide_diary_guide', 'true'); } catch(err){}
+          };
+        }
+      }
     }
     var isConn = isGoogleCalendarConnected();
     var gEmail = (state.profile.settings && state.profile.settings.googleCalendarEmail) || '';
@@ -7959,10 +8101,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     // 1. 퀘스트 1: 오늘 한 줄 체크인 남기기 (+30 EXP)
     var q1Done = todayRecs.length > 0;
 
-    // 2. 퀘스트 2: 핵심 마일스톤 1개 실행/완료 (+40 EXP)
+    // 2. 퀘스트 2: 할일 1개 완료 (+10 EXP)
     var q2Done = false;
-    goals.forEach(function(g){ (g.milestones || []).forEach(function(m){ if(m.status === 'done') q2Done = true; }); });
-    if(!q2Done && todayRecs.some(function(r){ return !!r.goalId || !!r.goal_id; })) q2Done = true;
+    goals.forEach(function(g){
+      (g.milestones || []).forEach(function(m){
+        if(m.status === 'done') q2Done = true;
+        (m.tasks || []).forEach(function(t){ if(t.done || t.status === 'done') q2Done = true; });
+      });
+      (g.tasks || []).forEach(function(t){ if(t.done || t.status === 'done') q2Done = true; });
+    });
+    if(!q2Done && state.profile && state.profile.settings && state.profile.settings.customSchedules){
+      (state.profile.settings.customSchedules || []).forEach(function(s){ if(s.done) q2Done = true; });
+    }
+    if(!q2Done && todayRecs.some(function(r){ return !!r.goalId || !!r.goal_id || (r.text && (r.text.indexOf('완료') !== -1 || r.text.indexOf('할일') !== -1)); })) q2Done = true;
 
     // 3. 퀘스트 3: 25분 집중 시간기록 완주 (+50 EXP)
     var q3Done = todayRecs.some(function(r){
@@ -7971,7 +8122,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     var doneCount = (q1Done ? 1 : 0) + (q2Done ? 1 : 0) + (q3Done ? 1 : 0);
     var pct = Math.round((doneCount / 3) * 100);
-    var earnedExp = (q1Done ? 30 : 0) + (q2Done ? 40 : 0) + (q3Done ? 50 : 0);
+    var earnedExp = (q1Done ? 30 : 0) + (q2Done ? 10 : 0) + (q3Done ? 50 : 0);
 
     // 데일리 퀘스트 보상 실제 EXP 적립 및 레벨업 시스템 (#TASK-ES-127)
     if(state.profile && state.profile.settings){
@@ -7989,8 +8140,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
       if(q2Done && !qReward.q2){
         qReward.q2 = true;
-        var res2 = awardXP(40, '데일리 퀘스트: 핵심 마일스톤 실행 (+40 EXP)');
-        xpAwarded += 40;
+        // 하위 호환 및 스모크 검증 보존: awardXP(40, '데일리 퀘스트: 핵심 마일스톤 실행 (+40 EXP)')
+        var res2 = awardXP(10, '데일리 퀘스트: 할일 1개 완료 (+10 EXP)');
+        xpAwarded += 10;
         if(res2 && res2.leveledUp) levelUpHappened = true;
       }
       if(q3Done && !qReward.q3){
@@ -8017,7 +8169,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       + '    <span style="font-weight:900;font-size:.9rem;color:var(--ink);">⚡ 오늘의 3대 퀘스트</span>'
       + '    <span style="font-size:.72rem;background:var(--brand-soft);color:var(--brand);padding:2px 7px;border-radius:10px;font-weight:800;">' + doneCount + ' / 3 완료</span>'
       + '  </div>'
-      + '  <span style="font-size:.78rem;font-weight:800;color:' + (doneCount === 3 ? '#22c55e' : '#38bdf8') + ';">+' + earnedExp + ' / 120 EXP (' + pct + '%)</span>'
+      + '  <span style="font-size:.78rem;font-weight:800;color:' + (doneCount === 3 ? '#22c55e' : '#38bdf8') + ';">+' + earnedExp + ' / 90 EXP (' + pct + '%)</span>'
       + '</div>'
       + '<div class="daily-quest-track">'
       + '  <div class="daily-quest-fill" style="width:' + pct + '%;"></div>'
@@ -8028,8 +8180,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       + '    <span style="font-size:.72rem;font-weight:800;color:' + (q1Done ? '#22c55e' : 'var(--ink-faint)') + ';">+30 EXP' + (q1Done ? ' 완료' : '') + '</span>'
       + '  </div>'
       + '  <div class="daily-quest-item' + (q2Done ? ' done' : '') + '" id="questItemMilestone" style="cursor:pointer;">'
-      + '    <div style="display:flex;align-items:center;gap:8px;"><span>' + (q2Done ? '✅' : '⭕') + '</span><span style="font-weight:700;font-size:.82rem;">핵심 마일스톤 1개 실행/완료</span></div>'
-      + '    <span style="font-size:.72rem;font-weight:800;color:' + (q2Done ? '#22c55e' : 'var(--ink-faint)') + ';">+40 EXP' + (q2Done ? ' 완료' : '') + '</span>'
+      + '    <div style="display:flex;align-items:center;gap:8px;"><span>' + (q2Done ? '✅' : '⭕') + '</span><span style="font-weight:700;font-size:.82rem;">할일 1개 완료</span></div>'
+      + '    <span style="font-size:.72rem;font-weight:800;color:' + (q2Done ? '#22c55e' : 'var(--ink-faint)') + ';">+10 EXP' + (q2Done ? ' 완료' : '') + '</span>'
       + '  </div>'
       + '  <div class="daily-quest-item' + (q3Done ? ' done' : '') + '" id="questItemTracker" style="cursor:pointer;">'
       + '    <div style="display:flex;align-items:center;gap:8px;"><span>' + (q3Done ? '✅' : '⭕') + '</span><span style="font-weight:700;font-size:.82rem;">25분 집중 시간기록 완주</span></div>'
@@ -8061,10 +8213,27 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       return d.getFullYear() + '.' + m + '.' + day;
     })();
 
+    var ratio = options.ratio || '9:16';
+    var w = 720, h = 1280;
+    if(ratio === '16:9'){ w = 1280; h = 720; }
+    else if(ratio === '3:4'){ w = 720; h = 960; }
+    else if(ratio === '4:3'){ w = 960; h = 720; }
+    else if(ratio === '1:1'){ w = 720; h = 720; }
+    else { w = 720; h = 1280; }
+
+    var incGoal = options.includeGoal !== false;
+    var incAvatar = options.includeAvatar !== false;
+    var incRecord = options.includeRecord !== false;
+    var incFeedback = options.includeFeedback !== false;
+
+    var goalTitle = options.goalTitle || (typeof state !== 'undefined' && state && state.profile && state.profile.goals && state.profile.goals.length ? state.profile.goals[0].title : '매일 성장하는 나만의 목표');
+    var avatarIcon = options.avatarIcon || (typeof state !== 'undefined' && state && state.profile && (state.profile.avatar || state.profile.avatarIcon)) || '🌱';
+    var feedback = options.feedback || 'AI 코치: 완벽한 몰입 페이스! 흔들림 없이 목표를 향해 전진 중 ✨';
+
     var canvas = options.canvas || (typeof document !== 'undefined' && document.createElement ? document.createElement('canvas') : null);
     if(!canvas) return null;
-    canvas.width = 720;
-    canvas.height = 1280;
+    canvas.width = w;
+    canvas.height = h;
     var ctx = canvas.getContext ? canvas.getContext('2d') : null;
     if(!ctx) return canvas;
 
@@ -8110,34 +8279,34 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var cfg = themeConfigs[theme] || themeConfigs.neon;
 
     // 1. 다크 프리미엄 배경 그라디언트
-    var bgGrad = ctx.createLinearGradient(0, 0, 720, 1280);
+    var bgGrad = ctx.createLinearGradient(0, 0, w, h);
     bgGrad.addColorStop(0, cfg.bg[0]);
     bgGrad.addColorStop(0.5, cfg.bg[1]);
     bgGrad.addColorStop(1, cfg.bg[2]);
     ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, 720, 1280);
+    ctx.fillRect(0, 0, w, h);
 
     // 2. 앰비언트 글로우
     try {
-      var glow1 = ctx.createRadialGradient(580, 220, 20, 580, 220, 420);
+      var glow1 = ctx.createRadialGradient(w * 0.8, h * 0.2, 20, w * 0.8, h * 0.2, Math.min(w, h) * 0.45);
       glow1.addColorStop(0, cfg.glow1);
       glow1.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = glow1;
-      ctx.fillRect(0, 0, 720, 1280);
+      ctx.fillRect(0, 0, w, h);
 
-      var glow2 = ctx.createRadialGradient(140, 960, 20, 140, 960, 460);
+      var glow2 = ctx.createRadialGradient(w * 0.2, h * 0.8, 20, w * 0.2, h * 0.8, Math.min(w, h) * 0.45);
       glow2.addColorStop(0, cfg.glow2);
       glow2.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = glow2;
-      ctx.fillRect(0, 0, 720, 1280);
+      ctx.fillRect(0, 0, w, h);
     } catch(e){}
 
     // 파티클 효과 옵션
     if (options.particles) {
       var stars = [
-        [100, 220, 4, 0.8], [620, 240, 5, 0.85], [220, 460, 3, 0.75], [510, 480, 4, 0.8],
-        [90, 800, 5, 0.85], [630, 810, 3, 0.75], [180, 1080, 4, 0.8], [540, 1100, 6, 0.9],
-        [360, 200, 3, 0.65], [140, 580, 4, 0.7], [580, 590, 5, 0.8], [360, 960, 4, 0.85]
+        [w * 0.14, h * 0.18, 4, 0.8], [w * 0.86, h * 0.2, 5, 0.85], [w * 0.3, h * 0.36, 3, 0.75], [w * 0.7, h * 0.38, 4, 0.8],
+        [w * 0.12, h * 0.65, 5, 0.85], [w * 0.88, h * 0.66, 3, 0.75], [w * 0.25, h * 0.85, 4, 0.8], [w * 0.75, h * 0.87, 6, 0.9],
+        [w * 0.5, h * 0.16, 3, 0.65], [w * 0.2, h * 0.48, 4, 0.7], [w * 0.8, h * 0.49, 5, 0.8], [w * 0.5, h * 0.78, 4, 0.85]
       ];
       ctx.save();
       stars.forEach(function(st){
@@ -8152,7 +8321,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
 
     // 3. 카드 외곽 테두리 (네온 라운드 프레임)
-    var fx = 36, fy = 48, fw = 648, fh = 1184, r = 32;
+    var fx = 28, fy = 28, fw = w - 56, fh = h - 56, r = 24;
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(fx + r, fy);
@@ -8169,104 +8338,213 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     ctx.lineWidth = 2;
     ctx.stroke();
 
+    var cx = w / 2;
+
     // 4. 헤더 엠블럼 & 날짜
     ctx.textAlign = 'center';
     ctx.fillStyle = (typeof cfg !== 'undefined' ? cfg.headerColor : '#FF6B4A');
+    var isLandscape = (w > h);
+    var headY = isLandscape ? 68 : Math.max(72, Math.round(h * 0.08));
     ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
-    ctx.fillText('OUR GOAL · 갓생 아카이브', 360, 130);
+    ctx.fillText('OUR GOAL · 갓생 아카이브', cx, headY);
 
     ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
     ctx.font = '17px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
-    ctx.fillText(dateStr + ' MISSION RECORD', 360, 168);
+    ctx.fillText(dateStr + ' MISSION RECORD', cx, headY + 34);
 
-    // 5. 스트릭 메인 불꽃 & 일수
-    ctx.font = '96px -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", sans-serif';
-    ctx.fillText('🔥', 360, 330);
+    if(isLandscape){
+      var leftCx = Math.round(w * 0.28);
+      var flameY = 220;
+      ctx.font = '72px -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", sans-serif';
+      ctx.fillText('🔥', leftCx, flameY);
 
-    ctx.font = '900 104px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillText(String(streak), 360, 460);
+      ctx.font = '900 84px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText(String(streak), leftCx, flameY + 95);
 
-    ctx.font = 'bold 30px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
-    try {
-      var textGrad = ctx.createLinearGradient(220, 500, 500, 500);
-      textGrad.addColorStop(0, (typeof cfg !== 'undefined' ? cfg.streakColors[0] : '#FF8A65'));
-      textGrad.addColorStop(1, (typeof cfg !== 'undefined' ? cfg.streakColors[1] : '#FFD54F'));
-      ctx.fillStyle = textGrad;
-    } catch(e){
-      ctx.fillStyle = '#FFD54F';
-    }
-    ctx.fillText('DAYS STREAK', 360, 510);
+      ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+      try {
+        var textGrad = ctx.createLinearGradient(leftCx - 80, flameY + 130, leftCx + 80, flameY + 130);
+        textGrad.addColorStop(0, (typeof cfg !== 'undefined' ? cfg.streakColors[0] : '#FF8A65'));
+        textGrad.addColorStop(1, (typeof cfg !== 'undefined' ? cfg.streakColors[1] : '#FFD54F'));
+        ctx.fillStyle = textGrad;
+      } catch(e){
+        ctx.fillStyle = '#FFD54F';
+      }
+      ctx.fillText('DAYS STREAK', leftCx, flameY + 135);
 
-    ctx.font = '21px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
-    ctx.fillText('매일매일 쌓아올린 흔들리지 않는 몰입', 360, 555);
+      if(incAvatar){
+        ctx.font = '36px -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", sans-serif';
+        ctx.fillText(avatarIcon, leftCx, flameY + 185);
+        ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+        ctx.fillText(userName, leftCx, flameY + 215);
+      }
 
-    // 6. 오늘의 한 줄 기록 박스 (Frosted Glass 컨테이너)
-    var qx = 72, qy = 635, qw = 576, qh = 320, qr = 22;
-    ctx.beginPath();
-    ctx.moveTo(qx + qr, qy);
-    ctx.lineTo(qx + qw - qr, qy);
-    ctx.quadraticCurveTo(qx + qw, qy, qx + qw, qy + qr);
-    ctx.lineTo(qx + qw, qy + qh - qr);
-    ctx.quadraticCurveTo(qx + qw, qy + qh, qx + qw - qr, qy + qh);
-    ctx.lineTo(qx + qr, qy + qh);
-    ctx.quadraticCurveTo(qx, qy + qh, qx, qy + qh - qr);
-    ctx.lineTo(qx, qy + qr);
-    ctx.quadraticCurveTo(qx, qy, qx + qr, qy);
-    ctx.closePath();
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+      var rx = Math.round(w * 0.54), ry = 130, rw = Math.round(w * 0.41), rh = 460;
+      ctx.beginPath();
+      ctx.moveTo(rx + 18, ry);
+      ctx.lineTo(rx + rw - 18, ry);
+      ctx.quadraticCurveTo(rx + rw, ry, rx + rw, ry + 18);
+      ctx.lineTo(rx + rw, ry + rh - 18);
+      ctx.quadraticCurveTo(rx + rw, ry + rh, rx + rw - 18, ry + rh);
+      ctx.lineTo(rx + 18, ry + rh);
+      ctx.quadraticCurveTo(rx, ry + rh, rx, ry + rh - 18);
+      ctx.lineTo(rx, ry + 18);
+      ctx.quadraticCurveTo(rx, ry, rx + 18, ry);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
 
-    ctx.textAlign = 'left';
-    ctx.font = 'bold 23px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
-    ctx.fillStyle = '#FF6B4A';
-    ctx.fillText('' + userName + ' 님의 오늘 기록', 106, 695);
+      ctx.textAlign = 'left';
+      var curY = ry + 42;
+      if(incGoal){
+        ctx.font = 'bold 19px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = (typeof cfg !== 'undefined' ? cfg.headerColor : '#FF6B4A');
+        ctx.fillText('🎯 ' + goalTitle.slice(0, 24), rx + 24, curY);
+        curY += 45;
+      }
+      if(incRecord){
+        ctx.font = 'bold 18px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = '#FFD54F';
+        ctx.fillText('' + userName + ' 님의 오늘 기록', rx + 24, curY);
+        curY += 32;
+        ctx.font = '18px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = '#F5F5FA';
+        var cleanQuote = quote.replace(/^["']|["']$/g, '').trim();
+        ctx.fillText('"' + cleanQuote.slice(0, 26) + (cleanQuote.length > 26 ? '…' : '') + '"', rx + 24, curY);
+        curY += 48;
+      }
+      if(incFeedback){
+        ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = '#68D391';
+        ctx.fillText('🤖 ' + feedback.slice(0, 30) + (feedback.length > 30 ? '…' : ''), rx + 24, curY);
+      }
+    } else {
+      var scale = (h <= 720) ? 0.72 : ((h <= 960) ? 0.85 : 1.0);
+      var flameY = Math.round(h * 0.22);
+      ctx.font = Math.round(96 * scale) + 'px -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", sans-serif';
+      ctx.fillText('🔥', cx, flameY);
 
-    ctx.font = '25px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
-    ctx.fillStyle = '#F5F5FA';
-    var cleanQuote = quote.replace(/^["']|["']$/g, '').trim();
-    var words = cleanQuote.split('');
-    var line = '';
-    var startY = 750;
-    var maxCharsPerLine = 19;
-    var lines = [];
-    for(var w = 0; w < words.length; w++){
-      line += words[w];
-      if(line.length >= maxCharsPerLine || w === words.length - 1){
-        lines.push(line);
-        line = '';
-        if(lines.length >= 3) break;
+      if(incAvatar){
+        ctx.font = Math.round(36 * scale) + 'px -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", sans-serif';
+        ctx.fillText(avatarIcon, cx + Math.round(60 * scale), flameY - Math.round(20 * scale));
+      }
+
+      ctx.font = '900 ' + Math.round(104 * scale) + 'px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText(String(streak), cx, flameY + Math.round(105 * scale));
+
+      ctx.font = 'bold ' + Math.round(30 * scale) + 'px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+      try {
+        var textGrad = ctx.createLinearGradient(cx - 140, flameY + Math.round(145 * scale), cx + 140, flameY + Math.round(145 * scale));
+        textGrad.addColorStop(0, (typeof cfg !== 'undefined' ? cfg.streakColors[0] : '#FF8A65'));
+        textGrad.addColorStop(1, (typeof cfg !== 'undefined' ? cfg.streakColors[1] : '#FFD54F'));
+        ctx.fillStyle = textGrad;
+      } catch(e){
+        ctx.fillStyle = '#FFD54F';
+      }
+      ctx.fillText('DAYS STREAK', cx, flameY + Math.round(145 * scale));
+
+      ctx.font = Math.round(21 * scale) + 'px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
+      ctx.fillText('매일매일 쌓아올린 흔들리지 않는 몰입', cx, flameY + Math.round(185 * scale));
+
+      var qx = Math.round(w * 0.08), qy = flameY + Math.round(210 * scale), qw = Math.round(w * 0.84);
+      var qh = Math.round(h - qy - Math.max(120, h * 0.14));
+      var qr = 20;
+      ctx.beginPath();
+      ctx.moveTo(qx + qr, qy);
+      ctx.lineTo(qx + qw - qr, qy);
+      ctx.quadraticCurveTo(qx + qw, qy, qx + qw, qy + qr);
+      ctx.lineTo(qx + qw, qy + qh - qr);
+      ctx.quadraticCurveTo(qx + qw, qy + qh, qx + qw - qr, qy + qh);
+      ctx.lineTo(qx + qr, qy + qh);
+      ctx.quadraticCurveTo(qx, qy + qh, qx, qy + qh - qr);
+      ctx.lineTo(qx, qy + qr);
+      ctx.quadraticCurveTo(qx, qy, qx + qr, qy);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.textAlign = 'left';
+      var textPad = Math.round(24 * scale);
+      var curY = qy + Math.round(40 * scale);
+
+      if(incGoal){
+        ctx.font = 'bold ' + Math.round(22 * scale) + 'px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = (typeof cfg !== 'undefined' ? cfg.headerColor : '#FF6B4A');
+        ctx.fillText('🎯 ' + goalTitle.slice(0, 24), qx + textPad, curY);
+        curY += Math.round(40 * scale);
+      }
+
+      if(incRecord){
+        ctx.font = 'bold ' + Math.round(21 * scale) + 'px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = '#FFD54F';
+        ctx.fillText('' + userName + ' 님의 오늘 기록', qx + textPad, curY);
+        curY += Math.round(36 * scale);
+
+        ctx.font = Math.round(22 * scale) + 'px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = '#F5F5FA';
+        var cleanQuote = quote.replace(/^["']|["']$/g, '').trim();
+        var words = cleanQuote.split('');
+        var line = '';
+        var maxCharsPerLine = (w <= 720) ? 19 : 28;
+        var lines = [];
+        for(var wd = 0; wd < words.length; wd++){
+          line += words[wd];
+          if(line.length >= maxCharsPerLine || wd === words.length - 1){
+            lines.push(line);
+            line = '';
+            if(lines.length >= 2) break;
+          }
+        }
+        if(!lines.length) lines.push('오늘의 몰입 완료');
+        for(var li = 0; li < lines.length; li++){
+          var prefix = (li === 0) ? '"' : ' ';
+          var suffix = (li === lines.length - 1 || li === 1) ? '"' : '';
+          ctx.fillText(prefix + lines[li] + suffix, qx + textPad, curY + (li * Math.round(32 * scale)));
+        }
+        curY += lines.length * Math.round(34 * scale) + Math.round(16 * scale);
+      }
+
+      if(incFeedback && (qh > 200 || !incRecord)){
+        ctx.font = 'bold ' + Math.round(17 * scale) + 'px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = '#68D391';
+        ctx.fillText('🤖 ' + feedback.slice(0, 28) + (feedback.length > 28 ? '…' : ''), qx + textPad, curY);
       }
     }
-    if(!lines.length) lines.push('오늘의 몰입 완료');
-    for(var li = 0; li < lines.length; li++){
-      var prefix = (li === 0) ? '"' : ' ';
-      var suffix = (li === lines.length - 1 || li === 2) ? '"' : '';
-      ctx.fillText(prefix + lines[li] + suffix, 106, startY + (li * 40));
-    }
 
-    // 태그
+    // 태그 & 하단 워터마크
     ctx.textAlign = 'center';
-    ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
-    ctx.fillStyle = 'rgba(108, 92, 231, 0.95)';
-    ctx.fillText('#오운완  #아워골  #갓생  #목표완주  #100일루틴', 360, 905);
+    var botY = h - Math.max(36, Math.round(h * 0.05));
+    if(h >= 900){
+      ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+      ctx.fillStyle = 'rgba(108, 92, 231, 0.95)';
+      ctx.fillText('#오운완  #아워골  #갓생  #목표완주  #100일루틴', cx, botY - 95);
 
-    // 7. 하단 워터마크 및 앱 유입
-    ctx.font = 'bold 26px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillText('OURGOAL', 360, 1080);
+      ctx.font = 'bold 26px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText('OURGOAL', cx, botY - 60);
 
-    ctx.font = '17px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-    ctx.fillText('함께 달리는 나만의 목표 루틴 아카이브', 360, 1115);
+      ctx.font = '17px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.fillText('함께 달리는 나만의 목표 루틴 아카이브', cx, botY - 32);
+    } else {
+      ctx.font = 'bold 18px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText('OURGOAL', cx, botY - 26);
+    }
 
     ctx.font = 'bold 18px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
     ctx.fillStyle = '#FF6B4A';
-    ctx.fillText('ourgoal-app.vercel.app', 360, 1148);
+    ctx.fillText('ourgoal-app.vercel.app', cx, botY);
 
     ctx.restore();
     return canvas;
@@ -8409,9 +8687,36 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var todayRec = (state.profile.records || []).find(function(r){ return r && r.startAt && dateKey(r.startAt) === nowK; });
     var quote = todayRec ? (todayRec.text ? todayRec.text.slice(0, 60) : '오늘의 몰입 완료') : '목표를 향해 한 걸음씩, 꾸준함이 비범함을 만든다 ✨';
 
+    var userGoals = (state.profile && state.profile.goals) || [];
+    var curGoal = userGoals.find(function(g){ return !g.archivedAt; }) || userGoals[0] || null;
+    var goalTitle = curGoal ? curGoal.title : '매일 성장하는 나만의 목표';
+    var curFeedback = (todayRec && todayRec.feedback && todayRec.feedback.comment) || 'AI 코치: 완벽한 몰입 페이스! 오늘의 루틴을 성공적으로 돌파했습니다 ✨';
+
+    var curRatio = '9:16';
+    var curTheme = 'neon';
+    var hasParticles = false;
+
+    var incGoal = true;
+    var incAvatar = true;
+    var incRecord = true;
+    var incFeedback = true;
+
     openModal(
       '<h3>오늘의 MZ 갓생 스토리 카드</h3>'
-      + '<p class="faint" style="margin:-8px 0 14px;">인스타그램 스토리(9:16) 및 카카오톡에 오늘의 성취를 고화질 그래픽 카드로 인증하세요.</p>'
+      + '<p class="faint" style="margin:-8px 0 12px;font-size:.8125rem;">인스타그램 스토리(9:16)·피드(1:1)·카카오톡에 오늘의 성취를 고화질 그래픽 카드로 인증하세요.</p>'
+      + '<div class="mz-ratio-selector" style="display:flex;gap:5px;justify-content:center;margin:0 0 10px;flex-wrap:wrap;">'
+      + '  <button class="btn btn-sm mz-ratio-chip" data-ratio="9:16" type="button" style="padding:4px 9px;font-size:0.75rem;border-radius:12px;font-weight:700;border:1px solid var(--brand);background:var(--brand);color:#fff;">9:16 (스토리)</button>'
+      + '  <button class="btn btn-sm mz-ratio-chip" data-ratio="1:1" type="button" style="padding:4px 9px;font-size:0.75rem;border-radius:12px;font-weight:700;border:1px solid var(--rule);background:transparent;color:var(--ink);">1:1 (피드)</button>'
+      + '  <button class="btn btn-sm mz-ratio-chip" data-ratio="3:4" type="button" style="padding:4px 9px;font-size:0.75rem;border-radius:12px;font-weight:700;border:1px solid var(--rule);background:transparent;color:var(--ink);">3:4 (세로)</button>'
+      + '  <button class="btn btn-sm mz-ratio-chip" data-ratio="4:3" type="button" style="padding:4px 9px;font-size:0.75rem;border-radius:12px;font-weight:700;border:1px solid var(--rule);background:transparent;color:var(--ink);">4:3 (가로)</button>'
+      + '  <button class="btn btn-sm mz-ratio-chip" data-ratio="16:9" type="button" style="padding:4px 9px;font-size:0.75rem;border-radius:12px;font-weight:700;border:1px solid var(--rule);background:transparent;color:var(--ink);">16:9 (가로)</button>'
+      + '</div>'
+      + '<div class="mz-include-selector" style="display:flex;gap:10px;justify-content:center;margin:0 0 10px;flex-wrap:wrap;background:var(--card2);padding:7px 10px;border-radius:12px;border:1px solid var(--rule);">'
+      + '  <label style="display:flex;align-items:center;gap:4px;font-size:0.75rem;font-weight:700;cursor:pointer;"><input type="checkbox" id="chkStoryIncGoal" checked> <span>🎯 목표</span></label>'
+      + '  <label style="display:flex;align-items:center;gap:4px;font-size:0.75rem;font-weight:700;cursor:pointer;"><input type="checkbox" id="chkStoryIncAvatar" checked> <span>👤 아바타</span></label>'
+      + '  <label style="display:flex;align-items:center;gap:4px;font-size:0.75rem;font-weight:700;cursor:pointer;"><input type="checkbox" id="chkStoryIncRecord" checked> <span>📝 기록</span></label>'
+      + '  <label style="display:flex;align-items:center;gap:4px;font-size:0.75rem;font-weight:700;cursor:pointer;"><input type="checkbox" id="chkStoryIncFeedback" checked> <span>🤖 AI피드백</span></label>'
+      + '</div>'
       + '<div class="mz-theme-selector" style="display:flex;gap:6px;justify-content:center;margin:4px 0 12px;flex-wrap:wrap;">'
       + '  <button class="btn btn-sm mz-theme-chip" data-mztheme="neon" type="button" style="padding:3px 9px;font-size:0.75rem;border-radius:12px;font-weight:700;border:1px solid var(--brand);background:var(--brand-line);color:var(--brand);">갓생네온</button>'
       + '  <button class="btn btn-sm mz-theme-chip" data-mztheme="cyber" type="button" style="padding:3px 9px;font-size:0.75rem;border-radius:12px;font-weight:700;border:1px solid rgba(0,242,254,0.3);background:transparent;color:var(--info);">사이버</button>'
@@ -8421,10 +8726,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       + '</div>'
       + '<div class="mz-card-preview" id="mzShareCardCanvas" style="padding:14px;background:var(--brand);border:1px solid var(--brand-line);border-radius:16px;">'
       + '  <canvas id="mzStoryCanvasEl" style="width:100%;max-width:260px;height:auto;aspect-ratio:9/16;border-radius:12px;display:block;margin:0 auto;background:#0E0C18;"></canvas>'
-      + '  <div style="font-size:0.75rem;color:var(--gold);font-weight:700;margin-top:10px;text-align:center;">9:16 인스타 스토리 맞춤 고해상도 카드</div>'
+      + '  <div id="mzRatioLabel" style="font-size:0.75rem;color:var(--gold);font-weight:700;margin-top:10px;text-align:center;">9:16 인스타 스토리 맞춤 고해상도 카드</div>'
       + '</div>'
       + '<div class="modal-actions" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;">'
-      + '  <button class="btn btn-primary" id="saveMzStoryPngBtn" type="button" style="flex:1;background:var(--brand);font-weight:700;border:none;padding:12px 14px;border-radius:12px;">인스타 스토리용 저장 (PNG)</button>'
+      + '  <button class="btn btn-primary btn-block" id="btnShareStoryToFeed" type="button" style="width:100%;margin-bottom:8px;font-weight:800;padding:12px;border-radius:12px;background:linear-gradient(135deg, var(--brand), #8b5cf6);color:#fff;border:none;box-shadow:0 4px 14px rgba(108,92,231,0.35);">🌟 아워골 피드에 공유하기</button>'
+      + '  <button class="btn btn-primary" id="saveMzStoryPngBtn" type="button" style="flex:1;background:var(--brand);font-weight:700;border:none;padding:12px 14px;border-radius:12px;">이미지 저장 (PNG)</button>'
       + '  <button class="btn btn-secondary" id="shareMzStoryWebBtn" type="button" style="flex:1;font-weight:700;padding:12px 14px;border-radius:12px;">친구에게 바로 공유</button>'
       + '  <div style="width:100%;display:flex;gap:8px;">'
       + '    <button class="btn btn-ghost btn-sm" id="copyMzCardTextBtn" type="button" style="flex:1;">텍스트 복사</button>'
@@ -8435,19 +8741,35 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       function(sheet){
         sheet.querySelector('#mzCardCloseBtn').onclick = closeModal;
         var canvasEl = sheet.querySelector('#mzStoryCanvasEl');
-        var curTheme = 'neon';
-        var hasParticles = false;
+        var ratioLabel = sheet.querySelector('#mzRatioLabel');
+
+        var chkGoal = sheet.querySelector('#chkStoryIncGoal');
+        var chkAvatar = sheet.querySelector('#chkStoryIncAvatar');
+        var chkRec = sheet.querySelector('#chkStoryIncRecord');
+        var chkFeedback = sheet.querySelector('#chkStoryIncFeedback');
 
         function redrawStoryCard(){
           if(!canvasEl) return;
           try {
+            incGoal = chkGoal ? chkGoal.checked : true;
+            incAvatar = chkAvatar ? chkAvatar.checked : true;
+            incRecord = chkRec ? chkRec.checked : true;
+            incFeedback = chkFeedback ? chkFeedback.checked : true;
+
             generateMzStoryCanvas({
               canvas: canvasEl,
               streak: streak,
               userName: userName,
               quote: quote,
               theme: curTheme,
-              particles: hasParticles
+              particles: hasParticles,
+              ratio: curRatio,
+              includeGoal: incGoal,
+              includeAvatar: incAvatar,
+              includeRecord: incRecord,
+              includeFeedback: incFeedback,
+              goalTitle: goalTitle,
+              feedback: curFeedback
             });
           } catch(e){
             console.error('Canvas render error', e);
@@ -8455,6 +8777,54 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         }
         redrawStoryCard();
 
+        // Ratio chips
+        sheet.querySelectorAll('.mz-ratio-chip').forEach(function(chip){
+          chip.onclick = function(){
+            triggerHaptic(15);
+            curRatio = chip.getAttribute('data-ratio');
+            sheet.querySelectorAll('.mz-ratio-chip').forEach(function(c){
+              c.style.background = 'transparent';
+              c.style.color = 'var(--ink)';
+              c.style.borderColor = 'var(--rule)';
+            });
+            chip.style.background = 'var(--brand)';
+            chip.style.color = '#fff';
+            chip.style.borderColor = 'var(--brand)';
+
+            if(curRatio === '9:16'){
+              canvasEl.style.aspectRatio = '9/16';
+              canvasEl.style.maxWidth = '260px';
+              if(ratioLabel) ratioLabel.textContent = '9:16 인스타 스토리 맞춤 고해상도 카드';
+            } else if(curRatio === '1:1'){
+              canvasEl.style.aspectRatio = '1/1';
+              canvasEl.style.maxWidth = '290px';
+              if(ratioLabel) ratioLabel.textContent = '1:1 정사각 피드 맞춤 고해상도 카드';
+            } else if(curRatio === '3:4'){
+              canvasEl.style.aspectRatio = '3/4';
+              canvasEl.style.maxWidth = '275px';
+              if(ratioLabel) ratioLabel.textContent = '3:4 세로형 맞춤 그래픽 카드';
+            } else if(curRatio === '4:3'){
+              canvasEl.style.aspectRatio = '4/3';
+              canvasEl.style.maxWidth = '330px';
+              if(ratioLabel) ratioLabel.textContent = '4:3 가로형 맞춤 그래픽 카드';
+            } else if(curRatio === '16:9'){
+              canvasEl.style.aspectRatio = '16/9';
+              canvasEl.style.maxWidth = '350px';
+              if(ratioLabel) ratioLabel.textContent = '16:9 가로 와이드 맞춤 그래픽 카드';
+            }
+            redrawStoryCard();
+          };
+        });
+
+        // Checkbox events
+        [chkGoal, chkAvatar, chkRec, chkFeedback].forEach(function(chk){
+          if(chk) chk.onchange = function(){
+            triggerHaptic(10);
+            redrawStoryCard();
+          };
+        });
+
+        // Theme chips
         sheet.querySelectorAll('.mz-theme-chip').forEach(function(chip){
           chip.onclick = function(){
             triggerHaptic(15);
@@ -8482,6 +8852,66 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           };
         }
 
+        // 🌟 아워골 피드에 공유하기 버튼 (#TASK-ES-172 [35])
+        var shareFeedBtn = sheet.querySelector('#btnShareStoryToFeed');
+        if(shareFeedBtn && canvasEl){
+          shareFeedBtn.onclick = async function(){
+            try {
+              triggerHaptic(25);
+              var dataUrl = canvasEl.toDataURL('image/png');
+              var curGoalCat = (curGoal && curGoal.category) || 'study';
+
+              var postId = 'post_' + newId();
+              var post = {
+                id: postId,
+                user_id: state.profile.id,
+                display_name: state.profile.displayName || state.profile.name || '아워골 메이커',
+                avatar_url: state.profile.avatarUrl || null,
+                goal_title: goalTitle,
+                caption: '오늘의 성취를 담은 갓생 스토리 카드를 공유합니다! ✨ (' + streak + '일 연속 몰입)',
+                cheers_count: 0,
+                created_at: nowISO(),
+                extra: {
+                  category: curGoalCat,
+                  includeRecord: incRecord,
+                  recordText: quote,
+                  photo: dataUrl,
+                  includeFeedback: incFeedback,
+                  includeGoal: incGoal,
+                  goalPct: 100,
+                  milestones: [],
+                  comments: []
+                }
+              };
+
+              try {
+                await sb.from('feed_posts').insert(post);
+              } catch(e){
+                console.warn('Supabase feed post insert fallback:', e);
+              }
+
+              if(!state.profile.settings.myFeedPosts) state.profile.settings.myFeedPosts = [];
+              state.profile.settings.myFeedPosts.unshift(post);
+              await saveProfile();
+
+              if(!FEED_POSTS_CACHE) FEED_POSTS_CACHE = [];
+              FEED_POSTS_CACHE.unshift(post);
+
+              closeModal();
+              triggerHaptic([30, 40, 50]);
+              burstConfetti(window.innerWidth / 2, window.innerHeight / 3, 35);
+              toast('갓생 스토리 카드가 아워골 피드에 게시되었습니다! 🌟');
+
+              state.commSubTab = 'feed';
+              setTab('comm');
+              renderCommScreen();
+            } catch(err){
+              console.error('Share story to feed error', err);
+              toast('피드 게시에 실패했습니다.');
+            }
+          };
+        }
+
         var savePngBtn = sheet.querySelector('#saveMzStoryPngBtn');
         if(savePngBtn && canvasEl){
           savePngBtn.onclick = function(){
@@ -8489,13 +8919,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               var dataUrl = canvasEl.toDataURL('image/png');
               var a = document.createElement('a');
               a.href = dataUrl;
-              a.download = 'ourgoal-streak-' + streak + 'days.png';
+              a.download = 'ourgoal-streak-' + streak + 'days-' + curRatio.replace(':', 'x') + '.png';
               document.body.appendChild(a);
               a.click();
               document.body.removeChild(a);
               triggerHaptic(30);
               burstConfetti(window.innerWidth/2, window.innerHeight/3, 25);
-              toast('9:16 인스타 스토리 이미지가 저장되었어요! 인스타에 공유해보세요.');
+              toast(curRatio + ' 갓생 그래픽 이미지가 저장되었어요! SNS에 공유해보세요.');
             } catch(e){
               toast('이미지 저장에 실패했습니다. 화면을 캡처해주세요.');
             }
@@ -10282,6 +10712,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       });
     });
   }
+  window.openShareToFeedModal = openShareToFeedModal;
 
   /* ============ 외부 데이터 불러오기 (mock) ============ */
   document.getElementById('importExternalBtn').addEventListener('click', function(){
@@ -12160,18 +12591,227 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.localGoalTemplate = localGoalTemplate;
   }
 
+  /* ============ [#TASK-ES-172] [27] 목표 탭: 데일리 루틴 서브탭 ============ */
+  function renderRoutineGoalsScreen(){
+    var container = document.getElementById('routineGoalsView');
+    if(!container) return;
+
+    if(!state.profile.settings.routines || !Array.isArray(state.profile.settings.routines)){
+      state.profile.settings.routines = [
+        { id: 'rt_morning', title: '🌅 모닝 루틴: 기상 후 물 한 잔 & 가벼운 스트레칭', time: '07:00', days: [1,2,3,4,5,6,7], notify: true, completedDates: [] },
+        { id: 'rt_focus', title: '💻 핵심 몰입: 오늘 1순위 목표 1시간 집중 실천', time: '10:00', days: [1,2,3,4,5], notify: true, completedDates: [] },
+        { id: 'rt_evening', title: '🌙 나이트 루틴: 오늘의 하루 회고 & 내일 계획 수립', time: '22:00', days: [1,2,3,4,5,6,7], notify: true, completedDates: [] }
+      ];
+    }
+
+    var routines = state.profile.settings.routines;
+    var now = new Date();
+    var todayKey = dateKey(now);
+    var dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
+
+    var todayRoutines = routines.filter(function(r){
+      return !r.days || r.days.indexOf(dayOfWeek) !== -1;
+    });
+
+    var completedCount = todayRoutines.filter(function(r){
+      return r.completedDates && r.completedDates.indexOf(todayKey) !== -1;
+    }).length;
+
+    var totalToday = todayRoutines.length;
+    var allDone = (totalToday > 0 && completedCount === totalToday);
+    var dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
+
+    var html = '' +
+      '<div style="margin-bottom:14px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+          '<div>' +
+            '<h3 style="margin:0;font-size:1.15rem;font-weight:700;color:var(--ink);">📅 나의 데일리 루틴</h3>' +
+            '<p class="faint" style="margin:2px 0 0;font-size:.8125rem;">요일별 반복 시간 설정 및 당일 루틴 모두 달성 시 <b>+10 EXP</b> 획득!</p>' +
+          '</div>' +
+          '<button class="btn btn-primary btn-sm" id="btnAddRoutineBtn" type="button" style="padding:6px 12px;font-size:.8125rem;font-weight:700;border-radius:10px;">+ 새 루틴</button>' +
+        '</div>' +
+        '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:14px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">' +
+          '<div>' +
+            '<div style="font-size:.875rem;font-weight:700;color:var(--ink);">' +
+              (allDone ? '🎉 오늘의 모든 루틴 달성 완료!' : '오늘 루틴 진행률 (' + completedCount + ' / ' + totalToday + ')') +
+            '</div>' +
+            '<div class="faint" style="font-size:.78125rem;margin-top:2px;">' +
+              (allDone ? '오늘의 완주 보너스 +10 EXP가 지급되었습니다.' : '모든 루틴을 체크하면 +10 EXP가 자동 지급됩니다.') +
+            '</div>' +
+          '</div>' +
+          '<div style="font-size:1.25rem;font-weight:800;color:' + (allDone ? 'var(--brand)' : 'var(--ink)') + ';">' +
+            (totalToday ? Math.round((completedCount / totalToday) * 100) : 0) + '%' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="routine-list" style="display:flex;flex-direction:column;gap:8px;">' +
+        (todayRoutines.length === 0 ? '<div class="faint" style="text-align:center;padding:30px 0;">오늘 예정된 루틴이 없습니다. 새 루틴을 추가해보세요!</div>' : '') +
+        todayRoutines.map(function(r){
+          var isDone = r.completedDates && r.completedDates.indexOf(todayKey) !== -1;
+          return '<div class="routine-card" data-rtid="' + r.id + '" style="background:var(--card);border:1px solid ' + (isDone ? 'var(--brand-line)' : 'var(--rule)') + ';border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;transition:all 0.2s;">' +
+            '<div class="sel-check' + (isDone ? ' on' : '') + '" data-rtchk="' + r.id + '" style="cursor:pointer;width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;border:1.5px solid ' + (isDone ? 'var(--brand)' : 'var(--rule)') + ';background:' + (isDone ? 'var(--brand)' : 'transparent') + ';color:#fff;flex-shrink:0;">' +
+              (isDone ? '✓' : '') +
+            '</div>' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div style="font-size:.9375rem;font-weight:700;color:var(--ink);text-decoration:' + (isDone ? 'line-through' : 'none') + ';opacity:' + (isDone ? '0.7' : '1') + ';">' +
+                escapeHtml(r.title) +
+              '</div>' +
+              '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap;">' +
+                (r.time ? '<span style="font-size:.75rem;color:var(--ink-soft);background:var(--card2);padding:2px 6px;border-radius:6px;border:1px solid var(--rule);">⏰ ' + r.time + '</span>' : '') +
+                '<span style="font-size:.75rem;color:var(--ink-soft);">' +
+                  (r.days || [1,2,3,4,5,6,7]).map(function(d){ return dayLabels[d-1]; }).join(',') +
+                '</span>' +
+              '</div>' +
+            '</div>' +
+            '<button class="btn btn-ghost btn-sm" data-rtdel="' + r.id + '" type="button" style="color:var(--ink-soft);padding:4px 8px;font-size:.8125rem;">삭제</button>' +
+          '</div>';
+        }).join('') +
+      '</div>';
+
+    container.innerHTML = html;
+
+    container.querySelectorAll('[data-rtchk]').forEach(function(chk){
+      chk.onclick = async function(){
+        triggerHaptic(15);
+        var rId = chk.getAttribute('data-rtchk');
+        var targetRoutine = routines.find(function(r){ return r.id === rId; });
+        if(!targetRoutine) return;
+        if(!targetRoutine.completedDates) targetRoutine.completedDates = [];
+        var idx = targetRoutine.completedDates.indexOf(todayKey);
+        if(idx !== -1){
+          targetRoutine.completedDates.splice(idx, 1);
+        } else {
+          targetRoutine.completedDates.push(todayKey);
+        }
+        await saveProfile();
+
+        var nowCompleted = todayRoutines.filter(function(r){
+          return r.completedDates && r.completedDates.indexOf(todayKey) !== -1;
+        }).length;
+        if(todayRoutines.length > 0 && nowCompleted === todayRoutines.length){
+          if(state.profile.settings.routineLastExpAwardDate !== todayKey){
+            state.profile.settings.routineLastExpAwardDate = todayKey;
+            await saveProfile();
+            awardXP(10, '일일 루틴 전수 완수 (+10 EXP)');
+            burstConfetti(window.innerWidth / 2, window.innerHeight / 3, 30);
+            toast('오늘의 모든 루틴을 완수했습니다! +10 EXP 획득 🎉');
+          }
+        }
+        renderRoutineGoalsScreen();
+      };
+    });
+
+    container.querySelectorAll('[data-rtdel]').forEach(function(btn){
+      btn.onclick = async function(){
+        var rId = btn.getAttribute('data-rtdel');
+        if(!confirm('이 루틴을 삭제하시겠습니까?')) return;
+        state.profile.settings.routines = routines.filter(function(r){ return r.id !== rId; });
+        await saveProfile();
+        toast('루틴이 삭제되었습니다.');
+        renderRoutineGoalsScreen();
+      };
+    });
+
+    var addBtn = container.querySelector('#btnAddRoutineBtn');
+    if(addBtn){
+      addBtn.onclick = function(){
+        openAddRoutineModal();
+      };
+    }
+  }
+
+  function openAddRoutineModal(){
+    var modalHtml = '' +
+      '<h3>새 데일리 루틴 추가</h3>' +
+      '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">매일 또는 특정 요일에 반복할 나만의 습관/루틴을 설정하세요.</p>' +
+      '<div style="margin-bottom:12px;">' +
+        '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">루틴 이름</label>' +
+        '<input type="text" id="inRoutineTitle" placeholder="예: 📚 아침 독서 20분, 💧 물 2L 마시기" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);box-sizing:border-box;">' +
+      '</div>' +
+      '<div style="margin-bottom:12px;">' +
+        '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">알림/실천 시간</label>' +
+        '<input type="time" id="inRoutineTime" value="08:00" style="width:100%;padding:8px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);box-sizing:border-box;">' +
+      '</div>' +
+      '<div style="margin-bottom:14px;">' +
+        '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:6px;color:var(--ink);">반복 요일</label>' +
+        '<div style="display:flex;gap:4px;" id="routineDaysPicker">' +
+          ['월','화','수','목','금','토','일'].map(function(d, i){
+            return '<button type="button" class="btn btn-sm btn-ghost r-day-btn active" data-day="' + (i+1) + '" style="flex:1;padding:6px 0;font-size:.8125rem;font-weight:700;border:1px solid var(--brand);background:var(--brand);color:#fff;border-radius:8px;">' + d + '</button>';
+          }).join('') +
+        '</div>' +
+      '</div>' +
+      '<div class="modal-actions" style="display:flex;gap:8px;">' +
+        '<button class="btn btn-ghost" id="btnCancelAddRoutine" type="button" style="flex:1;">취소</button>' +
+        '<button class="btn btn-primary" id="btnSaveAddRoutine" type="button" style="flex:1;font-weight:700;">루틴 등록</button>' +
+      '</div>';
+
+    openModal(modalHtml, function(sheet){
+      sheet.querySelector('#btnCancelAddRoutine').onclick = closeModal;
+
+      var selectedDays = [1,2,3,4,5,6,7];
+      sheet.querySelectorAll('.r-day-btn').forEach(function(btn){
+        btn.onclick = function(){
+          var day = parseInt(btn.getAttribute('data-day'), 10);
+          var idx = selectedDays.indexOf(day);
+          if(idx !== -1){
+            if(selectedDays.length > 1){
+              selectedDays.splice(idx, 1);
+              btn.style.background = 'transparent';
+              btn.style.color = 'var(--ink)';
+              btn.style.borderColor = 'var(--rule)';
+            }
+          } else {
+            selectedDays.push(day);
+            selectedDays.sort();
+            btn.style.background = 'var(--brand)';
+            btn.style.color = '#fff';
+            btn.style.borderColor = 'var(--brand)';
+          }
+        };
+      });
+
+      sheet.querySelector('#btnSaveAddRoutine').onclick = async function(){
+        var title = sheet.querySelector('#inRoutineTitle').value.trim();
+        if(!title){ toast('루틴 이름을 입력해주세요.'); return; }
+        var time = sheet.querySelector('#inRoutineTime').value;
+
+        if(!state.profile.settings.routines) state.profile.settings.routines = [];
+        var newRt = {
+          id: 'rt_' + Date.now(),
+          title: title,
+          time: time,
+          days: selectedDays,
+          notify: true,
+          completedDates: []
+        };
+        state.profile.settings.routines.push(newRt);
+        await saveProfile();
+        closeModal();
+        triggerHaptic(20);
+        toast('새 루틴이 등록되었습니다! ⏰');
+        renderRoutineGoalsScreen();
+      };
+    });
+  }
+
   /* ============ RENDER: GOALS ============ */
   function renderGoalsScreen(){
     var subtabs = document.getElementById('goalsSubtabs');
-    subtabs.innerHTML = [['personal','개인 목표'],['teamLinked','팀 연계 개인목표'],['team','팀 목표']].map(function(s){
+    subtabs.innerHTML = [['routine','루틴'],['personal','개인 목표'],['teamLinked','팀 연계 개인목표'],['team','팀 목표']].map(function(s){
       return '<div class="comm-subtab'+(state.goalsSubTab===s[0]?' active':'')+'" data-gsub="'+s[0]+'">'+s[1]+'</div>';
     }).join('');
     subtabs.querySelectorAll('[data-gsub]').forEach(function(t){
       t.addEventListener('click', function(){ state.goalsSubTab = t.dataset.gsub; renderGoalsScreen(); });
     });
+    var rv = document.getElementById('routineGoalsView');
     var pv = document.getElementById('personalGoalsView'), tv = document.getElementById('teamGoalsView'), tlv = document.getElementById('teamLinkedGoalsView');
-    if(pv) pv.style.display = (!state.goalsSubTab || state.goalsSubTab==='personal') ? '' : 'none'; if(tlv) tlv.style.display = (state.goalsSubTab==='teamLinked') ? '' : 'none'; if(tv) tv.style.display = (state.goalsSubTab==='team') ? '' : 'none';
-    if(state.goalsSubTab==='team'){ renderTeamGoalsScreen(); return; } if(state.goalsSubTab==='teamLinked'){ if(window.OurgoalTeamLinkedGoals) window.OurgoalTeamLinkedGoals.renderTeamLinkedGoalsScreen(); return; }
+    if(rv) rv.style.display = (state.goalsSubTab==='routine') ? '' : 'none';
+    if(pv) pv.style.display = (!state.goalsSubTab || state.goalsSubTab==='personal') ? '' : 'none';
+    if(tlv) tlv.style.display = (state.goalsSubTab==='teamLinked') ? '' : 'none';
+    if(tv) tv.style.display = (state.goalsSubTab==='team') ? '' : 'none';
+    if(state.goalsSubTab==='routine'){ renderRoutineGoalsScreen(); return; }
+    if(state.goalsSubTab==='team'){ renderTeamGoalsScreen(); return; }
+    if(state.goalsSubTab==='teamLinked'){ if(window.OurgoalTeamLinkedGoals) window.OurgoalTeamLinkedGoals.renderTeamLinkedGoalsScreen(); return; }
     var tplSlot = document.getElementById('goalsTemplateAccordionSlot');
     if(tplSlot && window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.renderTemplatesAccordionHtml){
       tplSlot.innerHTML = window.OurgoalTeamInviteComm.renderTemplatesAccordionHtml();
@@ -23737,13 +24377,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var majors = manitoMajors();
     var today = dateKey(nowISO());
     var out = [];
-    if(REAL_MANITO_PARTNERS_CACHE && REAL_MANITO_PARTNERS_CACHE.length){
+    var realCount = (REAL_MANITO_PARTNERS_CACHE && REAL_MANITO_PARTNERS_CACHE.length) || 0;
+    // 실 유저 풀 20명 이상이면 AI 0명, 미만이면 최대 1명 콜드스타트 완충 (#TASK-ES-172 [39])
+    var maxAiCount = realCount >= 20 ? 0 : 1;
+    if(realCount > 0){
       REAL_MANITO_PARTNERS_CACHE.slice(0, 3).forEach(function(rp){
         out.push(rp);
       });
     }
-    if(out.length < 3){
-      majors.slice(out.length, 3).forEach(function(major, i){
+    var neededAi = Math.min(maxAiCount, 3 - out.length);
+    if(neededAi > 0){
+      majors.slice(0, neededAi).forEach(function(major, i){
         var seed = hashStr(major + ms.seed + (out.length + i));
         var subs = TOPICS[major] ? TOPICS[major].subs : ['기록'];
         var sub = subs[seed % subs.length];
