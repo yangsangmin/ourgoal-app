@@ -6108,6 +6108,34 @@ check('compliance: [#TASK-ES-153-SILENT] 구글 캘린더 일정 저장 시 계�
   assert.ok(indexSrc.includes('syncAllToGoogleCalendar(true)'), '수동 [지금 동기화] 클릭 시 인터랙티브 인증 호출');
 });
 
+/* ============ [#TASK-ES-156] 캘린더 일정 체크 토글 및 구글 연동 일정 편집 시 제목 프리필 결함 해결 검증 ============ */
+check('compliance: [#TASK-ES-156] 캘린더 일정 체크 토글 및 구글 연동 일정 편집 시 제목 프리필 결함 해결 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. calendarItemsByDate 내 구글 이벤트에 schedId 및 gcalDoneMap 기반 done 보존 검증
+  assert.ok(indexSrc.includes('schedId: ge.id'), 'calendarItemsByDate 내 gcal 이벤트 schedId 부여');
+  assert.ok(indexSrc.includes('gcalDoneMap[ge.id]'), 'calendarItemsByDate 내 gcalDoneMap 영구 완료 상태 참조');
+
+  // 2. toggleScheduleDone 내 gcalDoneEvents 영구 원장화 검증
+  assert.ok(indexSrc.includes('state.profile.settings.gcalDoneEvents[gcalTarget] = isNowDone'), 'toggleScheduleDone 내 gcalDoneEvents 설정 영구 저장');
+
+  // 3. 3대 뷰(일간 상세, 허브 모달, 시간표) 토글 속성 및 호출 배선 검증
+  assert.ok(indexSrc.includes('data-detailtogglesched="\'+\ne.kind+\':\'+(e.schedId||e.goalId||e.gcalId||\'\')') || indexSrc.includes('(e.schedId||e.goalId||e.gcalId||\'\')'), '토글 마크업에 e.gcalId 백업 포함');
+  assert.ok(indexSrc.includes("(kind==='custom'||kind==='gcal')?schedOrGoalId:null"), '토글 클릭 시 gcal 이벤트 ID 첫 번째 인자 전달');
+
+  // 4. [data-caledit] 및 [data-hubedit] 핸들러 내 gcal 타깃 이벤트 검색 검증
+  assert.ok(indexSrc.includes("} else if(k==='gcal'){") && indexSrc.includes("c.kind==='gcal' && String(c.schedId||c.gcalId||c.id)===String(sid)"), '일간 상세 data-caledit 클릭 시 gcal 타깃 이벤트 검색');
+  assert.ok(indexSrc.includes("} else if(ev.kind==='gcal'){") && indexSrc.includes("String(ev.schedId||ev.gcalId||ev.id)"), '허브 모달 data-hubedit 클릭 시 gcal 타깃 이벤트 검색');
+
+  // 5. openCalendarManualEditModal 내 gcal 삭제 및 저장(구글 무음 동기화 포함) 검증
+  assert.ok(indexSrc.includes("toast('구글 일정을 캘린더에서 제거했어요');"), '수동 편집 모달 내 구글 일정 삭제 지원');
+  assert.ok(indexSrc.includes("pushCalendarEvent(token, title, dtVal, eventItem.id)"), '수동 편집 모달 내 구글 일정 수정 시 원격 동기화 지원');
+
+  // 6. sw.js 캐시 버전 갱신 검증
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es156'), 'sw.js 캐시 네임 es156 갱신');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

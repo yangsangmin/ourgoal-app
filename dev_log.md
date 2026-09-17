@@ -4371,3 +4371,29 @@
   - `sw.js` 캐시명 `ourgoal-shell-v20260917-gcal-silent-sync` 갱신.
 ---
 
+## [2026-09-17 16:00] #TASK-ES-156 캘린더 일정 체크 토글 및 구글 연동 일정 편집 시 제목 프리필 결함 해결
+- **배경 및 의도**:
+  - 상민님 직접 지시 ("1. 일정의 토글을 누르면 체크완료 안됨. 해결해야하고, 2. 일정에서 편집(펜버튼)을 누르면 제목이 이미 있는 일정인데 일정 제목이 빈칸으로 나옴(구글연동의 경우). 다른세션 작업중이니까 방해 안되는 지점까지만 작업해").
+- **주요 원인 분석**:
+  1. `calendarItemsByDate`에서 구글 이벤트 변환 시 `schedId` 누락 및 `done: false` 하드코딩으로 인해 일간 상세/허브/타임라인의 토글 속성에 빈 ID(`gcal::::`)가 전달되어 토글이 무시됨.
+  2. 일간 상세 `[data-caledit]` 및 허브 모달 `[data-hubedit]` 클릭 핸들러에 `custom`, `goal`, `ms`, `task` 분기만 존재하고 `gcal` 분기가 전무하여 `targetEvent = null`이 됨. 이로 인해 수동 편집 모달이 새 일정 모드로 진입하며 제목이 빈칸으로 노출됨.
+- **주요 수정 및 해결 내역**:
+  1. **구글 이벤트 완료 상태 영구 원장화 및 토글 배선**:
+     - `calendarItemsByDate`: `state.gcalEventsCache`가 비어있을 때 `localStorage`에서 자동 복원, 구글 이벤트 매핑 시 `schedId: ge.id`, `gcalId: ge.id`, `done: isGeDone` 보존 및 `gcalDoneMap` 연동.
+     - `toggleScheduleDone`: `kind === 'gcal'` 처리 보강, `state.profile.settings.gcalDoneEvents[gcalTarget] = isNowDone` 영구 저장 및 saveProfile() 호출.
+     - 3대 뷰(`renderCalDayDetail`, `openCalendarDayEditHubModal`, `renderCalendarTimetable`): `data-detailtogglesched`, `data-hubtogglesched`, `data-togglesched`에 `e.gcalId` 폴백 배선 및 토글 핸들러에서 `kind === 'gcal'` ID 정확히 전달.
+  2. **구글 연동 일정 편집 시 제목 프리필 및 수정/삭제 완결**:
+     - `[data-caledit]` 및 `[data-hubedit]` 핸들러에 `k === 'gcal'` 분기 탑재. `state.gcalEventsCache` 및 `evs`에서 대상 구글 이벤트를 정확히 조회하여 `targetEvent` 전달.
+     - `openCalendarManualEditModal`: `curTitle = eventItem.title`로 기존 제목 100% 프리필.
+     - `calEditSaveBtn`: `kind === 'gcal'` 일정 수정 시 `state.gcalEventsCache` 및 `localStorage`, `gcalDoneEvents` 갱신 + 구글 캘린더 연동 시 백그라운드 무음 `pushCalendarEvent(token, title, dtVal, eventItem.id)` 호출.
+     - `calEditDeleteBtn`: `kind === 'gcal'` 일정 삭제 시 캐시 제거 및 캘린더 즉각 리렌더링.
+  3. **PWA 캐시 버전 갱신**:
+     - `sw.js`: `ourgoal-shell-v20260917-es156` 캐시명 갱신.
+- **검증 결과**:
+  - `npm test` 296개 스모크 테스트 100% ALL PASS (0 failures).
+  - `verify-integrity-gate.js` 17개 헌법 게이트 100% ALL PASS.
+  - Zero Dead Click 전수 검사 통과 (587 / 604 PASS).
+  - Tri-Sync 100% 무결성 유지 (517/517 linked).
+  - 타 세션 보호 격리: `main` 직접 병합/배포 파이프라인 미발동, 독립 브랜치(`fix/2026-09-17-cal-toggle-and-gcal-edit-title-es156`) 로컬 완결.
+---
+
