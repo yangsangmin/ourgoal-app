@@ -386,6 +386,27 @@
               stampedAt: new Date().toISOString()
             };
             await deps.saveProfile();
+            if(window.sb){
+              try {
+                var p = (typeof deps.getProfile === 'function') ? deps.getProfile() : null;
+                var myId = (p && p.id) || 'guest';
+                var myName = (p && p.displayName) || '팀장';
+                window.sb.from('team_pings').insert({
+                  id: 'stamp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+                  group_id: gid,
+                  sender_id: myId,
+                  sender_name: myName,
+                  receiver_id: memberName,
+                  target_type: 'leader_action',
+                  target_id: gid,
+                  target_title: memberName,
+                  ping_type: 'stamp',
+                  message: JSON.stringify(gs.leaderStamps[memberName]),
+                  status: 'active',
+                  created_at: new Date().toISOString()
+                }).then(function(){});
+              } catch(e){}
+            }
             if(deps.haptic) deps.haptic('success');
             deps.toast('"' + memberName + '"님에게 ' + stampObj.icon + ' ' + stampObj.label + ' 도장을 찍었어요!');
             deps.closeModal();
@@ -601,6 +622,26 @@
             };
             gs.memberPings.push(newPing);
             await deps.saveProfile();
+            if(window.sb){
+              try {
+                var myUid = (p && p.id) || 'guest';
+                window.sb.from('team_pings').insert({
+                  id: newPing.id,
+                  group_id: gid,
+                  sender_id: myUid,
+                  sender_name: myName,
+                  sender_avatar: myAvatar,
+                  receiver_id: '',
+                  target_type: 'member_ping',
+                  target_id: targetId,
+                  target_title: title,
+                  ping_type: selectedType,
+                  message: msg,
+                  status: 'active',
+                  created_at: new Date().toISOString()
+                }).then(function(){});
+              } catch(e){}
+            }
             if(window.OurgoalTeamInviteComm) window.OurgoalTeamInviteComm.handlePingSentAutoReply(newPing, gid);
 
             if(deps.haptic) deps.haptic('success');

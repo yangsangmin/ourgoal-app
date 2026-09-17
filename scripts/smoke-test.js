@@ -6577,7 +6577,41 @@ check('compliance: [#TASK-ES-168] 1:1 DM 및 전역 알림(Web Push·ServiceWork
   // 5. ui.css 스타일 및 sw.js 캐시 검증
   assert.ok(cssSrc.includes('.topbar-notif-btn'), 'ui.css .topbar-notif-btn 스타일 정의');
   assert.ok(cssSrc.includes('.topbar-notif-badge'), 'ui.css .topbar-notif-badge 스타일 정의');
-  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es168'), 'sw.js es168 캐시 갱신 확인');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es168') || swSrc.includes('ourgoal-shell-v20260917-es169'), 'sw.js 캐시 갱신 확인');
+});
+
+/* ============ [#TASK-ES-169] 2계정 실제 유저 상호작용 무결성 및 가짜 타이머 제거·직통 배선 검증 ============ */
+check('compliance: [#TASK-ES-169] 2계정 실제 유저 상호작용 무결성 및 가짜 타이머 제거·직통 배선 검증', () => {
+  const viralSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'viral-sharing.js'), 'utf8');
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const leaderSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-leader-check.js'), 'utf8');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 딥링크 파라미터 매핑 (type=group&id=...) 검증
+  assert.ok(viralSrc.includes("searchParams.get('type')"), 'viral-sharing.js searchParams type 파싱 지원');
+  assert.ok(viralSrc.includes("searchParams.get('id')"), 'viral-sharing.js searchParams id 파싱 지원');
+
+  // 2. 가짜 봇 setTimeout 타이머 전면 제거 및 실 DB/Realtime 배선 검증
+  assert.ok(!commSrc.includes("['준호', '소연', '민지', '동현']"), 'team-invite-comm.js 가짜 봇 페르소나 응답 배열 제거 확인');
+  assert.ok(commSrc.includes("target_type: 'team_chat'"), 'team-invite-comm.js Supabase team_pings 채팅 영속화 배선');
+  assert.ok(commSrc.includes('team_chat_room_'), 'team-invite-comm.js Supabase Realtime 채널 실시간 구독 탑재');
+
+  // 3. 팀장 도장/찌르기 Supabase team_pings 영속화 검증
+  assert.ok(leaderSrc.includes("target_type: 'leader_action'"), 'team-leader-check.js 팀장 도장 Supabase 영속화 탑재');
+  assert.ok(leaderSrc.includes("target_type: 'member_ping'"), 'team-leader-check.js 팀원 찌르기 Supabase 영속화 탑재');
+
+  // 4. 사진 뷰어 닫기 버튼 ID 부여 검증
+  assert.ok(indexSrc.includes('id="photoViewerCloseBtn"'), 'index.html 사진 뷰어 닫기 버튼 photoViewerCloseBtn ID 탑재');
+
+  // 5. 2계정 테스트 빠른 입장 (테스터 B) 및 UUID 규격 검증
+  assert.ok(indexSrc.includes('id="landTesterBBtn"'), '랜딩 화면 테스터 B 직통 버튼 landTesterBBtn 탑재');
+  assert.ok(indexSrc.includes('id="authTesterBBtn"'), '로그인 화면 테스터 B 직통 버튼 authTesterBBtn 탑재');
+  assert.ok(indexSrc.includes('enterAsTesterB'), '테스터 B 직통 진입 함수 enterAsTesterB 구현');
+  assert.ok(indexSrc.includes('00000000-0000-4000-a000-000000000002'), '테스터 B RFC-4122 유효 UUIDv4 발급');
+
+  // 6. 서비스워커 캐시 갱신 확인
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es169'), 'sw.js es169 캐시 갱신 확인');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
