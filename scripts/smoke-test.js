@@ -6774,6 +6774,36 @@ check('compliance: [#TASK-ES-176] 팀 목표창 View ↔ Edit 완전 분리(A안
   assert.ok(indexHtml.includes('btnConfirmDelMs'), '마일스톤 삭제 시 브라우저 confirm 대신 인앱 모달 적용 확인');
 });
 
+check('compliance: [#TASK-ES-177] 아워골 생각 메모장 3대 완결 과제([58] 소통 피드 직접 사진 첨부 · [59] 카테고리 10종 확장 및 가로스크롤 · [60] 성취통계 껍데기 버튼 영구 삭제)', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uStatsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'universal-stats.js'), 'utf8');
+
+  // 1. [60] 성취통계 껍데기 버튼 삭제 검증
+  assert.ok(!uStatsSrc.includes('uLinkGoalBtn'), 'universal-stats.js에 uLinkGoalBtn이 존재하지 않아야 함');
+  assert.ok(!uStatsSrc.includes('uRegCalendarBtn'), 'universal-stats.js에 uRegCalendarBtn이 존재하지 않아야 함');
+  assert.ok(!uStatsSrc.includes('🎯 목표 연계'), 'universal-stats.js에 껍데기 목표 연계 버튼 라벨이 없어야 함');
+  assert.ok(!uStatsSrc.includes('📅 캘린더 등록'), 'universal-stats.js에 껍데기 캘린더 등록 버튼 라벨이 없어야 함');
+
+  // 2. [58] 소통 피드 직접 사진 첨부 기능 검증
+  assert.ok(indexHtml.includes('id="shareDirectPhotoInput"'), '직접 사진 선택 파일 input이 모달에 존재해야 함');
+  assert.ok(indexHtml.includes('id="btnSharePickPhoto"'), '사진 선택/촬영 버튼이 모달에 존재해야 함');
+  assert.ok(indexHtml.includes('id="shareDirectPhotoPreviewWrap"'), '사진 미리보기 영역이 모달에 존재해야 함');
+  assert.ok(indexHtml.includes('id="btnShareRemovePhoto"'), '사진 삭제 버튼이 모달에 존재해야 함');
+  assert.ok(indexHtml.includes('compressImage(file, 800, 0.82'), '직접 사진 업로드 시 800px 압축 파이프라인이 호출되어야 함');
+  assert.ok(indexHtml.includes('var finalPhoto = customUploadedPhoto'), '게시글 저장 시 직접 첨부된 사진이 우선 반영되어야 함');
+
+  // 3. [59] 소통 피드 카테고리 10종 확장 및 가로 스크롤 UI 검증
+  const expectedCats = ['study', 'dev', 'workout', 'career', 'hobby', 'life', 'parenting', 'finance', 'mental', 'reading'];
+  expectedCats.forEach(cat => {
+    assert.ok(indexHtml.includes("'" + cat + "'") || indexHtml.includes('"' + cat + '"'), '10종 카테고리 [' + cat + ']가 index.html에 정의되어야 함');
+  });
+  assert.ok(indexHtml.includes('FEED_CATEGORIES_10 = ['), '모달 내 FEED_CATEGORIES_10 배열이 정의되어 있어야 함');
+  assert.ok(indexHtml.includes('id="shareCatPicker"'), '카테고리 선택 컨테이너 id="shareCatPicker"가 존재해야 함');
+  assert.ok(indexHtml.includes('overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;white-space:nowrap;'), '모달 카테고리 가로 스크롤 스타일이 적용되어 있어야 함');
+  assert.ok(indexHtml.includes('overflow-x:auto;padding-bottom:8px;margin-bottom:12px;-webkit-overflow-scrolling:touch;white-space:nowrap;'), '메인 피드 카테고리 가로 스크롤 스타일이 적용되어 있어야 함');
+  assert.ok(indexHtml.includes('c.k === \'mental\'') || indexHtml.includes('selectedCat === \'mental\'') || indexHtml.includes("'mental'"), '멘탈 카테고리 지원 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

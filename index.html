@@ -1577,14 +1577,22 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function filterFeedByCategory(items, categoryKey){
     if(!categoryKey || categoryKey === 'all') return (items || []).slice();
     var key = String(categoryKey).toLowerCase();
+    var validCategories = ['study','dev','workout','career','hobby','life','parenting','finance','mental','reading'];
+    if(validCategories.indexOf(key) === -1) return (items || []).slice();
     return (items || []).filter(function(item){
+      if(item.category && String(item.category).toLowerCase() === key) return true;
       var text = ((item.goal || '') + ' ' + (item.action || '') + ' ' + (item.category || '')).toLowerCase();
       if(key === 'study') return /토익|공부|시험|자격증|수험|독서실|회독|강의|leet|cpa|노무사|간호|국시|기출/.test(text);
       if(key === 'dev') return /개발|코딩|깃허브|알고리즘|오픈소스|백준|디자인|ui|ux|saas|프론트|백엔드/.test(text);
       if(key === 'workout') return /운동|헬스|러닝|체력|바디프로필|웨이트|필라테스|테니스|수영|인터벌/.test(text);
       if(key === 'career') return /취업|인턴|이직|창업|매출|사업|마케터|세일즈|영업|스타트업|hr/.test(text);
       if(key === 'hobby') return /음악|그림|공연|웹툰|댄스|사진|자작곡|뮤지컬|베이커리|로스팅/.test(text);
-      return true;
+      if(key === 'life') return /생활|습관|기상|미라클모닝|청소|정리|식단|건강관리|루틴|수면/.test(text);
+      if(key === 'parenting') return /육아|가족|아이|자녀|놀이|등하원|이유식|부모|가정/.test(text);
+      if(key === 'finance') return /재테크|투자|주식|저축|가계부|부동산|예금|펀드|소비|자산/.test(text);
+      if(key === 'mental') return /멘탈|마인드|명상|일기|감사|회고|스트레스|휴식|힐링|마음/.test(text);
+      if(key === 'reading') return /독서|책|서평|인문|독서모임|완독|필사|리딩/.test(text);
+      return false;
     });
   }
 
@@ -10501,8 +10509,22 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       curGoal.milestones.forEach(function(m){ sel.ms[m.id] = (m.status === 'doing' || m.status === 'done'); });
     }
 
+    var FEED_CATEGORIES_10 = [
+      {k:'study', l:'공부·수험'},
+      {k:'dev', l:'개발·기획'},
+      {k:'workout', l:'운동·건강'},
+      {k:'career', l:'커리어·취업'},
+      {k:'hobby', l:'취미·창작'},
+      {k:'life', l:'생활·습관'},
+      {k:'parenting', l:'육아·가족'},
+      {k:'finance', l:'재테크·투자'},
+      {k:'mental', l:'멘탈·마인드'},
+      {k:'reading', l:'독서·인문'}
+    ];
+    var customUploadedPhoto = null;
+
     var selectedCat = (curGoal && curGoal.category) || 'study';
-    if(['study','dev','workout','career','hobby'].indexOf(selectedCat) === -1){
+    if(FEED_CATEGORIES_10.map(function(c){ return c.k; }).indexOf(selectedCat) === -1){
       selectedCat = 'study';
     }
 
@@ -10610,17 +10632,32 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '</div>' +
         '</div>' +
         (msRows ? '<div style="margin-bottom:12px;" id="shareMsSection"><label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">함께 보여줄 마일스톤 (선택)</label><div class="ms-list" id="shareMsListSlot">'+msRows+'</div></div>' : '<div id="shareMsSection" style="display:none;"><div class="ms-list" id="shareMsListSlot"></div></div>') +
+        // 직접 사진 첨부 섹션 ([#TASK-ES-177], [58])
         '<div style="margin-bottom:12px;">' +
-          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">카테고리 분류</label>' +
-          '<div style="display:flex;gap:5px;flex-wrap:wrap;" id="shareCatPicker">' +
-            [
-              {k:'study', l:'공부·수험'},
-              {k:'dev', l:'개발·기획'},
-              {k:'workout', l:'운동·건강'},
-              {k:'career', l:'커리어·취업'},
-              {k:'hobby', l:'취미·창작'}
-            ].map(function(c){
-              return '<button type="button" class="feed-filter-chip'+(selectedCat===c.k?' active':'')+'" data-shcat="'+c.k+'" style="font-size:.8125rem;padding:5px 9px;">'+c.l+'</button>';
+          '<label style="font-size:.8125rem;font-weight:700;display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;color:var(--ink);">' +
+            '<span>📸 실천 사진 첨부 (선택)</span>' +
+            '<span class="faint" style="font-size:.72rem;font-weight:500;">카메라 / 앨범 직접 업로드</span>' +
+          '</label>' +
+          '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">' +
+            '<input type="file" id="shareDirectPhotoInput" accept="image/*" style="display:none;" />' +
+            '<button type="button" class="btn btn-ghost btn-sm" id="btnSharePickPhoto" style="border:1px solid var(--rule);padding:7px 12px;font-size:.8125rem;display:flex;align-items:center;gap:6px;font-weight:700;border-radius:10px;">' +
+              '📷 <span>사진 선택 / 촬영</span>' +
+            '</button>' +
+            '<div id="shareDirectPhotoPreviewWrap" style="display:none;position:relative;align-items:center;">' +
+              '<img id="shareDirectPhotoPreviewImg" src="" style="height:54px;width:54px;border-radius:10px;object-fit:cover;border:1px solid var(--rule);" />' +
+              '<button type="button" id="btnShareRemovePhoto" style="position:absolute;top:-6px;right:-6px;background:rgba(0,0,0,0.65);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;">×</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        // 카테고리 10종 가로 스크롤 섹션 ([#TASK-ES-177], [59])
+        '<div style="margin-bottom:12px;">' +
+          '<label style="font-size:.8125rem;font-weight:700;display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;color:var(--ink);">' +
+            '<span>카테고리 분류</span>' +
+            '<span class="faint" style="font-size:.72rem;font-weight:500;">좌우로 스크롤하여 선택</span>' +
+          '</label>' +
+          '<div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;white-space:nowrap;" id="shareCatPicker">' +
+            FEED_CATEGORIES_10.map(function(c){
+              return '<button type="button" class="feed-filter-chip'+(selectedCat===c.k?' active':'')+'" data-shcat="'+c.k+'" style="font-size:.8125rem;padding:6px 11px;flex:0 0 auto;">'+c.l+'</button>';
             }).join('') +
           '</div>' +
         '</div>' +
@@ -10647,6 +10684,36 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     openModal(renderModalHtml(), function(sheet){
       sheet.querySelector('#shareCancelBtn').addEventListener('click', closeModal);
 
+      // 직접 사진 첨부 핸들러 ([#TASK-ES-177], [58])
+      var btnPickPhoto = sheet.querySelector('#btnSharePickPhoto');
+      var photoInput = sheet.querySelector('#shareDirectPhotoInput');
+      var photoPreviewWrap = sheet.querySelector('#shareDirectPhotoPreviewWrap');
+      var photoPreviewImg = sheet.querySelector('#shareDirectPhotoPreviewImg');
+      var btnRemovePhoto = sheet.querySelector('#btnShareRemovePhoto');
+
+      if(btnPickPhoto && photoInput){
+        btnPickPhoto.onclick = function(){
+          photoInput.click();
+        };
+        photoInput.onchange = function(e){
+          var file = e.target.files && e.target.files[0];
+          if(!file) return;
+          compressImage(file, 800, 0.82, function(dataUrl){
+            customUploadedPhoto = dataUrl;
+            if(photoPreviewImg) photoPreviewImg.src = dataUrl;
+            if(photoPreviewWrap) photoPreviewWrap.style.display = 'flex';
+            toast('인증 사진이 성공적으로 첨부되었어요! 📸');
+          });
+        };
+      }
+      if(btnRemovePhoto){
+        btnRemovePhoto.onclick = function(){
+          customUploadedPhoto = null;
+          if(photoInput) photoInput.value = '';
+          if(photoPreviewWrap) photoPreviewWrap.style.display = 'none';
+        };
+      }
+
       // 미리보기 버튼 핸들러 (#TASK-ES-174)
       var prevBtn = sheet.querySelector('#sharePreviewBtn');
       var prevSlot = sheet.querySelector('#sharePreviewSlot');
@@ -10662,8 +10729,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           var caption = (sheet.querySelector('#shareCaptionInput') ? sheet.querySelector('#shareCaptionInput').value.trim() : '') || '갓생 목표를 향해 한 걸음 더 나아가는 중!';
           var goalTitle = curGoal ? curGoal.title : '';
           var p = state.profile;
-          var catMap = { study:'공부·수험', dev:'개발·기획', workout:'운동·건강', career:'커리어·취업', hobby:'취미·창작' };
+          var catMap = {
+            study:'공부·수험', dev:'개발·기획', workout:'운동·건강', career:'커리어·취업', hobby:'취미·창작',
+            life:'생활·습관', parenting:'육아·가족', finance:'재테크·투자', mental:'멘탈·마인드', reading:'독서·인문'
+          };
           var catLabel = catMap[selectedCat] || '공부·수험';
+          var previewPhoto = customUploadedPhoto || (curRecord && curPhoto ? curPhoto : null);
+          var photoSnippet = previewPhoto ? 
+            '<div style="margin:8px 0;"><img src="'+previewPhoto+'" style="max-height:140px;max-width:200px;border-radius:10px;border:1px solid var(--rule);object-fit:cover;" /></div>' : '';
 
           var msChips = '';
           if(curGoal && curGoal.milestones){
@@ -10698,6 +10771,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               (goalTitle ? '<div style="font-weight:800;font-size:.9rem;color:var(--primary);margin-bottom:4px;">🎯 ' + escapeHtml(goalTitle) + '</div>' : '') +
               msChips +
               recordSnippet +
+              photoSnippet +
               '<p style="font-size:.84rem;color:var(--ink);margin:6px 0;line-height:1.45;white-space:pre-wrap;">' + escapeHtml(caption) + '</p>' +
               '<div style="display:flex;gap:12px;margin-top:8px;padding-top:6px;border-top:1px solid var(--rule);font-size:.75rem;color:var(--ink-soft);">' +
                 '<span>❤️ 응원 0</span><span>💬 댓글 0</span>' +
@@ -10859,6 +10933,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var incRecord = sheet.querySelector('#chkIncRecord') ? sheet.querySelector('#chkIncRecord').checked : false;
         var incFeedback = curFeedback ? true : (sheet.querySelector('#chkIncFeedback') ? sheet.querySelector('#chkIncFeedback').checked : false);
         var incPhoto = sheet.querySelector('#chkIncPhoto') ? sheet.querySelector('#chkIncPhoto').checked : false;
+        var finalPhoto = customUploadedPhoto || ((incPhoto && curPhoto) ? curPhoto : null);
 
         var postId = 'post_' + newId();
         var post = {
@@ -10874,7 +10949,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             category: selectedCat,
             includeRecord: (incRecord && curRecord) ? true : false,
             recordText: (incRecord && curRecord) ? curRecord.text : null,
-            photo: (incPhoto && curPhoto) ? curPhoto : null,
+            photo: finalPhoto,
             includeFeedback: (incFeedback && curFeedback) ? true : false,
             feedback: (incFeedback && curFeedback) ? (typeof curFeedback === 'string' ? { comment: curFeedback, verdict: 'PASS', source: 'ai_coach' } : { verdict: curFeedback.verdict, comment: curFeedback.comment || curFeedback.text, source: curFeedback.source || 'ai_coach' }) : null,
             includeGoal: !!finalGoalTitle,
@@ -23968,6 +24043,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         name: p.display_name,
         avatar: (p.display_name||'').slice(0,1),
         goal: p.goal_title,
+        category: ex.category || null,
         pct: ex.goalPct || 0,
         action: p.caption,
         recordText: ex.includeRecord ? ex.recordText : null,
@@ -24032,12 +24108,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       { key: 'dev', label: '개발·기획' },
       { key: 'workout', label: '운동·건강' },
       { key: 'career', label: '커리어·취업' },
-      { key: 'hobby', label: '취미·창작' }
+      { key: 'hobby', label: '취미·창작' },
+      { key: 'life', label: '생활·습관' },
+      { key: 'parenting', label: '육아·가족' },
+      { key: 'finance', label: '재테크·투자' },
+      { key: 'mental', label: '멘탈·마인드' },
+      { key: 'reading', label: '독서·인문' }
     ];
     var curCat = state.feedCategory || 'all';
-    var catChipsHtml = '<div class="feed-filter-bar" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;-webkit-overflow-scrolling:touch;">'
+    var catChipsHtml = '<div class="feed-filter-bar" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;-webkit-overflow-scrolling:touch;white-space:nowrap;">'
       + categories.map(function(c){
-        return '<button type="button" class="feed-filter-chip' + (curCat === c.key ? ' active' : '') + '" data-feedcat="' + c.key + '">' + c.label + '</button>';
+        return '<button type="button" class="feed-filter-chip' + (curCat === c.key ? ' active' : '') + '" data-feedcat="' + c.key + '" style="flex:0 0 auto;">' + c.label + '</button>';
       }).join('')
       + '</div>';
 
