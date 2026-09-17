@@ -3691,3 +3691,125 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+
+/* ============ 각 탭 200% 활용법 및 우수 사용사례 쇼케이스 (#TASK-ES-160) ============ */
+.tab-guide-hub-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 75vh;
+  overflow-y: auto;
+  padding-right: 4px;
+  box-sizing: border-box;
+}
+.tab-guide-nav-bar {
+  display: flex;
+  gap: 6px;
+  background: var(--surface-2, #f1f3f5);
+  padding: 4px;
+  border-radius: 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  flex-shrink: 0;
+}
+.guide-tab-nav-btn {
+  flex: 1;
+  min-width: 60px;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 9px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--ink-soft, #666);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.guide-tab-nav-btn.active {
+  background: var(--card, #fff);
+  color: var(--brand, #3b82f6);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.guide-feature-block {
+  background: var(--surface-1, #f8f9fa);
+  border: 1px solid var(--rule, #e9ecef);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.guide-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.guide-feature-item:last-child {
+  margin-bottom: 0;
+}
+.guide-feature-bullet {
+  color: var(--brand, #3b82f6);
+  font-weight: 800;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+.guide-showcase-card {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.04), rgba(59, 130, 246, 0.06));
+  border: 1.5px solid rgba(99, 102, 241, 0.25);
+  border-radius: 14px;
+  padding: 14px;
+  box-sizing: border-box;
+}
+.guide-showcase-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.showcase-badge {
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: -0.2px;
+}
+.showcase-user-info {
+  font-size: 0.78125rem;
+  color: var(--ink-soft);
+}
+.guide-showcase-title {
+  font-size: 0.96875rem;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0 0 6px;
+  line-height: 1.4;
+}
+.guide-showcase-quote {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  line-height: 1.55;
+  background: var(--card, #fff);
+  border-left: 3px solid #6366f1;
+  padding: 8px 12px;
+  border-radius: 0 8px 8px 0;
+  margin: 8px 0 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+.showcase-mockup-wrap {
+  background: var(--card, #fff);
+  border: 1px solid var(--rule, #e9ecef);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
