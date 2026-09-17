@@ -6133,7 +6133,30 @@ check('compliance: [#TASK-ES-156] 캘린더 일정 체크 토글 및 구글 연�
   assert.ok(indexSrc.includes("pushCalendarEvent(token, title, dtVal, eventItem.id)"), '수동 편집 모달 내 구글 일정 수정 시 원격 동기화 지원');
 
   // 6. sw.js 캐시 버전 갱신 검증
-  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es156'), 'sw.js 캐시 네임 es156 갱신');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es156') || swSrc.includes('ourgoal-shell-v20260917-es157'), 'sw.js 캐시 네임 갱신');
+});
+
+/* ============ [#TASK-ES-157] 캘린더 구글 캘린더 거대 배너 제거 및 헤더 미니 구글 아이콘 배지 콤팩트화 검증 ============ */
+check('compliance: [#TASK-ES-157] 캘린더 구글 캘린더 거대 배너 제거 및 헤더 미니 구글 아이콘 배지 콤팩트화 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 캘린더 헤더 내 calGcalMiniBadgeSlot 마운트 포인트 확인
+  assert.ok(indexSrc.includes('id="calGcalMiniBadgeSlot"'), '캘린더 헤더 내 미니 배지 슬롯 존재');
+
+  // 2. 상단 거대 calGoogleBanner 상시 숨김 및 비우기 확인
+  assert.ok(indexSrc.includes("gBanner.style.display = 'none';") && indexSrc.includes("gBanner.innerHTML = '';"), '거대 배너 상시 숨김 및 비우기 처리');
+
+  // 3. 미니 구글 'G' 4색 SVG 아이콘 및 콤팩트 배지 렌더링 확인
+  assert.ok(indexSrc.includes('id="calGcalMiniBadge"'), '미니 구글 배지 버튼 렌더링');
+  assert.ok(indexSrc.includes('#4285F4') && indexSrc.includes('#34A853') && indexSrc.includes('#FBBC05') && indexSrc.includes('#EA4335'), '구글 4색 SVG 아이콘 포함');
+
+  // 4. 배지 클릭 시 동기화 및 모달 연결 확인
+  assert.ok(indexSrc.includes("toast('구글 캘린더와 동기화 중…');"), '배지 클릭 시 동기화 진행 토스트 피드백');
+  assert.ok(indexSrc.includes('cBtn.onclick = openGoogleCalendarConnectModal;'), '미연동 시 배지 클릭으로 연동 모달 연결');
+
+  // 5. sw.js 캐시 네임 es157 갱신 확인
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es157'), 'sw.js 캐시 네임 es157 갱신');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
