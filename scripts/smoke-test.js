@@ -6819,6 +6819,42 @@ check('compliance: [#TASK-ES-177] 아워골 생각 메모장 3대 완결 과제(
   assert.ok(indexHtml.includes('c.k === \'mental\'') || indexHtml.includes('selectedCat === \'mental\'') || indexHtml.includes("'mental'"), '멘탈 카테고리 지원 확인');
 });
 
+check('compliance: [#TASK-ES-179] 잇템(제휴링크) 법적 안전장치 및 텔레그램/노션 3초 퀵 신고 파이프라인 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 공정위 대가성 표기 안내 및 제휴 체크박스 자동 문구 삽입
+  assert.ok(indexHtml.includes('id="itIsAffiliateCheck"'), '잇템 등록 모달에 제휴 링크 여부 체크박스가 존재해야 함');
+  assert.ok(indexHtml.includes('파트너스 활동의 일환으로 수수료를 제공받을 수 있음'), '공정위 필수 대가성 고지 문구가 자동 반영되어야 함');
+  assert.ok(indexHtml.includes('⚠️ 잇템 등록 안내:'), '잇템 등록 모달에 법적 가이드 안내 박스가 존재해야 함');
+
+  // 2. 잇템 카드 렌더링 시 제휴 뱃지, rel 보안, 면책 문구 및 신고 버튼
+  assert.ok(indexHtml.includes("rel=\"noopener noreferrer nofollow\""), '외부 링크에 rel=noopener noreferrer nofollow가 적용되어야 함');
+  assert.ok(indexHtml.includes('openItemReportModal'), '아이템 카드에 openItemReportModal 호출 버튼이 배선되어야 함');
+  assert.ok(indexHtml.includes('※ 아워골은 상품 판매 당사자가 아닙니다.'), '아이템 카드/목록에 서비스 제공자 면책 안내가 표시되어야 함');
+
+  // 3. 3초 퀵 신고 모달 & 악의적 신고 계정 불이익 경고
+  assert.ok(indexHtml.includes('openItemReportModal'), '3초 퀵 신고 모달 함수가 정의되어야 함');
+  assert.ok(indexHtml.includes('name="repReason"'), '신고 사유 선택지가 존재해야 함');
+  assert.ok(indexHtml.includes('id="repSubmitBtn"'), '신고 접수 제출 버튼이 존재해야 함');
+  assert.ok(indexHtml.includes('허위 또는 악의적인 신고임이 확인될 경우, 서비스 이용 제한 등 계정에 불이익을 받으실 수 있습니다'), '신고 모달에 악의적/허위 신고 방지 경고문이 탑재되어야 함');
+  assert.ok(indexHtml.includes('window.openItemReportModal = openItemReportModal'), 'openItemReportModal 함수가 전역에 노출되어야 함');
+
+  // 4. api/track.js 3중 파이프라인 (item_report)
+  assert.ok(trackSrc.includes("item_report: '잇템 불법/유해 신고'"), 'api/track.js에 item_report 유형 라벨이 정의되어야 함');
+  assert.ok(trackSrc.includes('isItemReport'), 'api/track.js에 잇템 신고 전용 포맷 분기가 존재해야 함');
+  assert.ok(trackSrc.includes('🚨 [아워골 잇템 불법/유해 링크 신고 접수]'), '텔레그램 잇템 신고 전용 알림 헤더가 존재해야 함');
+
+  // 5. 날조 통계 MOCK_ITEM_STATS 완전 제거 (헌법 제4조) 및 푸터 면책/공식 지원 이메일
+  assert.ok(!indexHtml.includes('MOCK_ITEM_STATS'), '헌법 제4조: MOCK_ITEM_STATS 위조 통계가 존재하지 않아야 함');
+  assert.ok(indexHtml.includes('ourgoal.support@gmail.com'), '푸터 및 설정창에 공식 지원 이메일이 명시되어야 함');
+  assert.ok(indexHtml.includes('아워골은 등록된 추천 아이템의 판매 당사자가 아니며'), '전자상거래법 제20조 준수 면책 고지가 푸터에 탑재되어야 함');
+
+  // 6. 서비스워커 캐시 갱신
+  assert.ok(swSrc.includes('es179'), 'sw.js 캐시 버전에 es179 식별자가 포함되어야 함');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
