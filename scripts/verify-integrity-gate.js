@@ -539,6 +539,63 @@ check('헌법 정본에 제15조 및 5대 고도화 규정이 완전 편입되�
   assert.ok(rulesContent.includes('클라이언트 스토리지 및 네트워크 이상 실시간 관제 연동'), '제11조 3항 누락');
 });
 
+/* =========================================================================
+ * 11. [#TASK-ES-175] 공식 운영 이메일(ourgoal.support@gmail.com) 전수 단일화 및 구 이메일 영구 방화벽 검증
+ * ========================================================================= */
+console.log('\n[검증 11/11] 공식 운영 이메일(ourgoal.support@gmail.com) 전수 단일화 및 구 이메일 영구 방화벽 검사');
+
+check('공식 운영 이메일(ourgoal.support@gmail.com)이 런타임 및 정본 문서에 필수 배선되어 있다', () => {
+  const privPath = path.join(ROOT_DIR, 'docs', 'legal', 'privacy.md');
+  const privContent = fs.readFileSync(privPath, 'utf8');
+  const tabGuidesPath = path.join(ROOT_DIR, 'js', 'tab-guides.js');
+  const tabGuidesContent = fs.readFileSync(tabGuidesPath, 'utf8');
+
+  assert.ok(html.includes('ourgoal.support@gmail.com'), 'index.html에 ourgoal.support@gmail.com 필수 기재');
+  assert.ok(privContent.includes('ourgoal.support@gmail.com'), 'docs/legal/privacy.md에 ourgoal.support@gmail.com 필수 기재');
+  assert.ok(tabGuidesContent.includes('ourgoal.support@gmail.com'), 'js/tab-guides.js에 ourgoal.support@gmail.com 필수 기재');
+});
+
+check('구 이메일(ysm0422@naver.com, support@ourgoal.kr)이 런타임, 법률 문서, 가이드에 0건(Zero)임을 물리적으로 보증한다', () => {
+  const bannedEmails = ['ysm0422@naver.com', 'support@ourgoal.kr'];
+  const scanTargets = [
+    { name: 'index.html', content: html },
+    { name: 'docs/legal/privacy.md', content: fs.readFileSync(path.join(ROOT_DIR, 'docs', 'legal', 'privacy.md'), 'utf8') },
+    { name: 'js/tab-guides.js', content: fs.readFileSync(path.join(ROOT_DIR, 'js', 'tab-guides.js'), 'utf8') },
+    { name: 'docs/growth/RELEASE_72H_GUIDE.md', content: fs.readFileSync(path.join(ROOT_DIR, 'docs', 'growth', 'RELEASE_72H_GUIDE.md'), 'utf8') }
+  ];
+
+  const apiDir = path.join(ROOT_DIR, 'api');
+  if (fs.existsSync(apiDir)) {
+    fs.readdirSync(apiDir).filter(f => f.endsWith('.js')).forEach(f => {
+      scanTargets.push({
+        name: `api/${f}`,
+        content: fs.readFileSync(path.join(apiDir, f), 'utf8')
+      });
+    });
+  }
+
+  const jsDir = path.join(ROOT_DIR, 'js');
+  if (fs.existsSync(jsDir)) {
+    fs.readdirSync(jsDir).filter(f => f.endsWith('.js')).forEach(f => {
+      scanTargets.push({
+        name: `js/${f}`,
+        content: fs.readFileSync(path.join(jsDir, f), 'utf8')
+      });
+    });
+  }
+
+  const detected = [];
+  scanTargets.forEach(target => {
+    bannedEmails.forEach(banned => {
+      if (target.content.includes(banned)) {
+        detected.push(`${target.name} 에서 금지 이메일 [${banned}] 발견`);
+      }
+    });
+  });
+
+  assert.strictEqual(detected.length, 0, `금지된 구 이메일 재발 감지:\n${detected.join('\n')}`);
+});
+
 console.log('\n================================================================');
 console.log(`🎯 검증 결과: 총 ${totalChecks}개 검사 중 ${passedChecks}개 통과 (${failures}개 실패)`);
 console.log('================================================================');
