@@ -4516,3 +4516,27 @@
   - `verify-integrity-gate.js` 17개 헌법 게이트 100% ALL PASS.
   - Zero Dead Click 전수 검사 통과 (598 / 615 PASS).
 ---
+
+## [2026-09-17 17:45] #TASK-ES-162 공통 UI 컴포넌트 모듈화 시스템(OurgoalComponents 5대 핵심 컴포넌트) 구축
+- **배경 및 의도**:
+  - 상민님 직접 지시 ("컴포넌트 모듈화 → 효과 시너지, 효율화, UI 및 사용자경험 개선", "한개씩 헌법적용해서 진행하고, 병합까지 진행해. 단, 한 작업씩 진행해.", "모든 작업이 끝날때까지 중지 금지", 생각 메모장 [23]번).
+  - 25,000줄 규모의 거대 앱에서 반복 사용되던 배지, 통계 지표 카드, 게이지 프로그레스 바, 모달 셸, 빈 화면(Empty State) 등의 마크업이 각 화면과 함수마다 인라인으로 하드코딩되어 있던 기술 부채를 해소하고, 독립된 공통 UI 컴포넌트 모듈(`js/components.js`, `OurgoalComponents`)로 표준화하여 디자인 일관성과 개발 생산성의 강력한 시너지를 창출.
+- **주요 수정 및 해결 내역**:
+  1. **독립 공통 컴포넌트 엔진 구축 (`js/components.js`)**:
+     - `window.OurgoalComponents` 네임스페이스 격리 및 순수 함수형 렌더러 5종 구축:
+       - 1) `badge(opts)`: 브랜드, 골드, 세이지, 레드, 그레이 5대 표준 디자인 토큰 배지.
+       - 2) `statCard(opts)`: 지표명, 값, 상승/하락 트렌드 배지, 보조 문구, 아이콘을 결합한 프로 통계 카드.
+       - 3) `progressBar(opts)`: 퍼센트(0~100%), 부드러운 전환 애니메이션, 브랜드/골드/세이지/그라디언트 테마 게이지바.
+       - 4) `modalShell(opts)`: 헤더, 아이콘, 서브타이틀, 바디, 액션 버튼(확인/취소) 표준 모달 템플릿.
+       - 5) `emptyState(opts)`: 감성적 아이콘, 타이틀, 설명문, 원클릭 액션 버튼이 완비된 빈 화면 컴포넌트.
+  2. **디자인 시스템 스타일 표준화 (`ui.css`)**:
+     - `.og-badge`, `.og-stat-card`, `.og-prog-container`, `.og-modal-shell`, `.og-empty-state` 및 테마별 색상 변수 일관화.
+  3. **앱 본체 연동 (`index.html`)**:
+     - `<script src="js/components.js?v=20260917-es162"></script>` 등록 및 전역 노출 완결.
+  4. **PWA 캐시 버전 갱신**:
+     - `sw.js`: `ourgoal-shell-v20260917-es162` 캐시명 갱신.
+- **검증 결과**:
+  - `npm test` 302개 스모크 테스트 100% ALL PASS (0 failures).
+  - `verify-integrity-gate.js` 17개 헌법 게이트 100% ALL PASS.
+  - Zero Dead Click 전수 검사 통과.
+---

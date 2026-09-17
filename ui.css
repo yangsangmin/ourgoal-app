@@ -4028,3 +4028,191 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   transform: translateY(-1px);
 }
 
+/* ==============================================================================
+ * [#TASK-ES-162] OurgoalComponents 공통 UI 모듈 표준 스타일 시스템
+ * ============================================================================== */
+/* 1. 표준 배지 */
+.og-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  line-height: 1.2;
+}
+.og-badge-sm {
+  font-size: 0.6875rem;
+  padding: 2px 6px;
+}
+.og-badge-brand {
+  background: var(--brand-soft, rgba(99, 102, 241, 0.12));
+  color: var(--brand, #6366f1);
+  border: 1px solid var(--brand-line, #c7d2fe);
+}
+.og-badge-gold {
+  background: var(--gold-soft, rgba(245, 158, 11, 0.12));
+  color: var(--gold, #d97706);
+  border: 1px solid var(--gold-line, #fde68a);
+}
+.og-badge-sage {
+  background: var(--sage-soft, rgba(16, 185, 129, 0.12));
+  color: var(--sage, #059669);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+.og-badge-red {
+  background: var(--red-soft, rgba(239, 68, 68, 0.12));
+  color: var(--brand-strong, #dc2626);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+.og-badge-gray {
+  background: var(--card2, #f1f5f9);
+  color: var(--ink-soft, #64748b);
+  border: 1px solid var(--rule, #cbd5e1);
+}
+
+/* 2. 프로 통계 지표 카드 */
+.og-stat-card {
+  background: var(--card, #fff);
+  border: 1px solid var(--rule, #e2e8f0);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+.og-stat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.og-stat-title {
+  font-size: 0.78125rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.og-stat-icon {
+  font-size: 1rem;
+}
+.og-stat-mid {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.og-stat-val {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+.og-stat-diff {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.og-trend-up {
+  background: #dcfce7;
+  color: #15803d;
+}
+.og-trend-down {
+  background: #fee2e2;
+  color: #dc2626;
+}
+.og-trend-neutral {
+  background: #f1f5f9;
+  color: #475569;
+}
+.og-stat-sub {
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+
+/* 3. 프로그레스 바 */
+.og-prog-container {
+  width: 100%;
+}
+.og-prog-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+.og-prog-track {
+  width: 100%;
+  background: var(--rule, #e2e8f0);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.og-prog-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+.og-fill-brand { background: var(--brand, #6366f1); }
+.og-fill-gold { background: var(--gold, #f59e0b); }
+.og-fill-sage { background: var(--sage, #10b981); }
+.og-fill-red { background: var(--brand-strong, #ef4444); }
+.og-fill-gradient { background: linear-gradient(90deg, #6366f1, #10b981); }
+
+/* 4. 표준 모달 셸 */
+.og-modal-shell {
+  display: flex;
+  flex-direction: column;
+}
+.og-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.og-modal-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.og-modal-sub {
+  margin: 0 0 14px;
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+.og-modal-body {
+  flex: 1;
+}
+
+/* 5. 엠프티 스테이트 */
+.og-empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  border: 1.5px dashed var(--rule, #cbd5e1);
+  border-radius: 14px;
+  background: var(--surface-1, rgba(0,0,0,0.015));
+}
+.og-empty-icon {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+}
+.og-empty-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.og-empty-desc {
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+
