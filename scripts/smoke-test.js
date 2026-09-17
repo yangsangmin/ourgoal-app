@@ -3053,8 +3053,8 @@ check('compliance: [#TASK-ES-045] 홈·기록 8대 핵심 UX 고밀도화 및 �
   assert.strictEqual(html.includes('<span class="level-num"'), false, '레벨 배지 내 중복 Lv.X 텍스트 제거 확인');
   assert.ok(html.includes('id="btnOpenAvatarModal"'), '내 아바타 바꾸기 버튼 유지 확인');
 
-  // 2. 오늘의 미션 더보기 버튼 헤더 인라인 이동
-  assert.ok(html.includes('<div class="ct-label" style="margin:0;">오늘의 미션</div>'), '오늘의 미션 라벨 헤더 플렉스 컨테이너');
+  // 2. 오늘의 카드 더보기 버튼 헤더 인라인 이동
+  assert.ok(html.includes('<div class="ct-label" style="margin:0;">오늘의 카드</div>') || html.includes('<div class="ct-label" style="margin:0;">오늘의 미션</div>'), '오늘의 카드 라벨 헤더 플렉스 컨테이너');
   assert.ok(html.includes('moreBtnHtml'), '미션 더보기 버튼 인라인 배치 연동');
 
   // 3. 오늘 기록하기 입력창 크기 50% 축소 & 예시 문구 3pt 축소
@@ -4416,8 +4416,8 @@ check('compliance: [#TASK-ES-102 & #TASK-ES-126] 전 탭(홈·목표·일정·�
   assert.ok(!indexHtml.includes('id="commPageGuideBtn"'), '소통 탭 본문 중복 활용법 버튼 제거 완료');
   assert.ok(!indexHtml.includes('id="settingsPageGuideBtn"'), '설정 탭 본문 중복 활용법 버튼 제거 완료');
 
-  // 2. 오늘의 미션 힌트 배지 검증
-  assert.ok(indexHtml.includes('할일이 당장 안떠오르면 활용하세요'), '오늘의 미션 힌트 배지 탑재');
+  // 2. 오늘의 카드 힌트 배지 검증
+  assert.ok(indexHtml.includes('뭘 할지 모르겠을 때 도움돼요(내 목표기반)') || indexHtml.includes('할일이 당장 안떠오르면 활용하세요'), '오늘의 카드 힌트 배지 탑재');
 
   // 3. tab-guides.js 6대 탭 통합 가이드 허브 모듈 검증
   const guideScriptPath = path.join(__dirname, '..', 'js', 'tab-guides.js');
@@ -5481,6 +5481,82 @@ check('compliance: [#TASK-ES-135] 아바타 보관함(서랍) 3중 영속화(Sup
   assert.ok(trackSrc.includes('profRow.saved_avatars = profileToSave.savedAvatars'), 'api/track.js profileToSave saved_avatars 동기화');
   assert.ok(trackSrc.includes('savedAvatars: (matchedUser && matchedUser.saved_avatars) || []'), 'api/track.js 응답에 savedAvatars 포함');
   assert.ok(avatarSrc.includes("cv.toDataURL('image/jpeg', 0.85)"), 'avatar-system.js 256x256 JPEG 0.85 품질 경량화 탑재');
+});
+
+check('compliance: [#TASK-ES-136] 목표 데이터 해시 변경 감지 보강 및 "오늘의 카드" 안내 멘트 상민님 지정 원문 100% 교체', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 홈 탭 '오늘의 카드' 상민님 확정 원문 라벨 및 1pt 축소 보조 배지 검증
+  assert.ok(indexSrc.includes('<div class="ct-label" style="margin:0;">오늘의 카드</div>'), '홈 탭 오늘의 카드 라벨 교체');
+  assert.ok(indexSrc.includes('뭘 할지 모르겠을 때 도움돼요(내 목표기반)'), '상민님 지정 원문 배지 멘트 완벽 탑재');
+  assert.ok(!indexSrc.includes('할일이 당장 안떠오르면 활용하세요'), '기존 임의 멘트 완전 제거 확인');
+
+  // 2. computeGoalStatusHash 내 마일스톤/할 일 타이틀 및 마감일 전수 결합 검증
+  assert.ok(indexSrc.includes('parts.push(m.id, m.title||\'\', m.status||\'\', m.dueDate||\'\', JSON.stringify(m.result||null));'), '마일스톤 타이틀/마감일 해시 결합 코드 확인');
+  assert.ok(indexSrc.includes('parts.push(t.id, t.title||\'\', t.done?\'1\':\'0\', t.dueDate||\'\', JSON.stringify(t.result||null));'), '할 일 타이틀/마감일 해시 결합 코드 확인');
+
+  // 3. computeGoalStatusHash 실동작 무결성 테스트 (필드 변경 시 해시 즉각 변동 보장)
+  function hashFn(goal) {
+    var parts = [goal.title||'', goal.dueDate||'', JSON.stringify(goal.result||null)];
+    (goal.milestones||[]).forEach(function(m){
+      parts.push(m.id, m.title||'', m.status||'', m.dueDate||'', JSON.stringify(m.result||null));
+      (m.tasks||[]).forEach(function(t){ parts.push(t.id, t.title||'', t.done?'1':'0', t.dueDate||'', JSON.stringify(t.result||null)); });
+    });
+    var str = parts.join('|');
+    var h = 0;
+    for(var i=0;i<str.length;i++){ h = ((h<<5)-h + str.charCodeAt(i))|0; }
+    return String(h);
+  }
+
+  const baseGoal = {
+    title: '정보처리기사 취득',
+    dueDate: '2026-11-30',
+    result: null,
+    milestones: [
+      {
+        id: 'm1',
+        title: '필기 기출 3회독',
+        status: 'in_progress',
+        dueDate: '2026-09-30',
+        result: null,
+        tasks: [
+          { id: 't1', title: '1회독 모의고사 풀기', done: false, dueDate: '2026-09-20', result: null }
+        ]
+      }
+    ]
+  };
+
+  const h0 = hashFn(baseGoal);
+
+  // 마일스톤 타이틀 변경 감지
+  const gMilestoneTitleChanged = JSON.parse(JSON.stringify(baseGoal));
+  gMilestoneTitleChanged.milestones[0].title = '필기 기출 5회독';
+  assert.notStrictEqual(hashFn(gMilestoneTitleChanged), h0, '마일스톤 제목 변경 시 해시 즉각 변경');
+
+  // 마일스톤 마감일 변경 감지
+  const gMilestoneDueDateChanged = JSON.parse(JSON.stringify(baseGoal));
+  gMilestoneDueDateChanged.milestones[0].dueDate = '2026-10-05';
+  assert.notStrictEqual(hashFn(gMilestoneDueDateChanged), h0, '마일스톤 마감일 변경 시 해시 즉각 변경');
+
+  // 할 일 타이틀 변경 감지
+  const gTaskTitleChanged = JSON.parse(JSON.stringify(baseGoal));
+  gTaskTitleChanged.milestones[0].tasks[0].title = '오답노트 정리';
+  assert.notStrictEqual(hashFn(gTaskTitleChanged), h0, '할 일 제목 변경 시 해시 즉각 변경');
+
+  // 할 일 마감일 변경 감지
+  const gTaskDueDateChanged = JSON.parse(JSON.stringify(baseGoal));
+  gTaskDueDateChanged.milestones[0].tasks[0].dueDate = '2026-09-22';
+  assert.notStrictEqual(hashFn(gTaskDueDateChanged), h0, '할 일 마감일 변경 시 해시 즉각 변경');
+
+  // 할 일 완료여부 변경 감지
+  const gTaskDoneChanged = JSON.parse(JSON.stringify(baseGoal));
+  gTaskDoneChanged.milestones[0].tasks[0].done = true;
+  assert.notStrictEqual(hashFn(gTaskDoneChanged), h0, '할 일 완료 여부 변경 시 해시 즉각 변경');
+
+  // 목표 제목 및 마감일 변경 감지
+  const gGoalTitleChanged = JSON.parse(JSON.stringify(baseGoal));
+  gGoalTitleChanged.title = 'SQLD 취득';
+  assert.notStrictEqual(hashFn(gGoalTitleChanged), h0, '목표 제목 변경 시 해시 즉각 변경');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

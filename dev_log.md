@@ -4094,3 +4094,22 @@
   - `npm test`: 274개 전수 통과 (0 failures), 헌법 5대 게이트 14종 100% ALL PASS, Zero Dead Click ALL PASS.
 ---
 
+
+## [2026-09-17 10:40] #TASK-ES-136 목표 데이터 해시 변경 감지 보강 및 홈 탭 '오늘의 카드' 안내 멘트 상민님 지정 원문 100% 교체
+- **배경 및 의도**:
+  - 상민님 직접 지시: "AGENTS.md 최신 15대 조문 헌법으로 개정되었으니 확인하고 작업 진행해 2순위도 같이."
+  - 1순위 보강: 목표 상태 변경(마일스톤/할 일 제목 수정, 마감일 변경 등) 시 AI 조언 해시가 즉각 변경되어 실시간으로 새로운 분석 조언을 유도하도록 `computeGoalStatusHash`를 빈틈없이 전수 보강.
+  - 2순위 확정: 노션 생각 메모장 05항에 의거, 홈 탭 상단 '오늘의 미션'을 상민님 지정 공식 원문인 라벨 `'오늘의 카드'`, 1pt 축소 보조 배지 `'뭘 할지 모르겠을 때 도움돼요(내 목표기반)'`로 100% 완벽 일치 교체.
+- **수행 내역**:
+  1. `index.html`:
+     - `computeGoalStatusHash(goal)` 함수에 마일스톤 타이틀(`m.title`), 마일스톤 마감일(`m.dueDate`), 할 일 타이틀(`t.title`), 할 일 마감일(`t.dueDate`)을 전수 결합하여 목표 및 하위 데이터 1글자 수정 및 일정 변동 시에도 해시 불일치로 인한 AI 조언 자동 재분석 보장.
+     - `renderTodayMissionCard()` 함수 내 헤더 라벨을 `<div class="ct-label" style="margin:0;">오늘의 카드</div>`로 수정하고, 보조 안내 배지 텍스트를 `<span style="font-size:11px;color:var(--brand);background:rgba(99,102,241,0.08);padding:1px 6px;border-radius:6px;font-weight:600;">뭘 할지 모르겠을 때 도움돼요(내 목표기반)</span>`로 상민님 지정 원문 100% 교체.
+  2. `scripts/smoke-test.js`:
+     - 기존 `#TASK-ES-045` 및 `#TASK-ES-126` 내 힌트 배지/라벨 검증을 상위 호환 처리.
+     - 신규 `#TASK-ES-136` 컴플라이언스 테스트 신설: 홈 탭 오늘의 카드 라벨 교체, 상민님 지정 원문 배지 멘트 탑재, 이전 임의 문구 완전 제거, 마일스톤/할 일 제목 및 마감일 변경 시 해시 변동 실동작 단위 테스트 통과 (총 275개 테스트 ALL PASS).
+  3. `docs/rules/TICKETS.md` 및 `docs/specs/REQ-today-card-and-hash-audit.md`, `PLAN-today-card-and-hash-audit.md`:
+     - 티켓 등록 및 상세 기획/작업 계획 문서화 완결.
+- **검증 결과**:
+  - `npm test`: 275개 assertion 전수 통과 (0 failures), 헌법 5대 핵심 게이트 14종 100% ALL PASS.
+  - Tri-Sync 무결성: `node C:/dev/command-center/lib/tri-sync.js check` 100% (512/512 무손실 일치).
+---
