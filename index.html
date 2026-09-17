@@ -4761,7 +4761,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         state.profile.settings.customSchedules.push(payload);
       }
       if(isGoogleCalendarConnected()){
-        syncAllToGoogleCalendar().catch(function(){});
+        syncAllToGoogleCalendar(false).catch(function(){});
       }
     } else if(item.entityType === 'record'){
       state.profile.records = state.profile.records || [];
@@ -4774,7 +4774,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         state.gcalEventsCache.push(payload);
       }
       if(isGoogleCalendarConnected()){
-        syncAllToGoogleCalendar().catch(function(){});
+        syncAllToGoogleCalendar(false).catch(function(){});
       }
     }
 
@@ -5077,14 +5077,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       return [];
     }
   }
-  async function syncAllToGoogleCalendar(){
+  async function syncAllToGoogleCalendar(interactive){
     if(!isGoogleCalendarConnected()){
-      openGoogleCalendarConnectModal();
+      if(interactive) openGoogleCalendarConnectModal();
       return;
     }
-    toast('구글 캘린더 상호 동기화 중…');
+    var token = await getGoogleAccessToken(interactive);
+    if(!token){
+      if(interactive) toast('구글 인증이 필요해요 · [지금 동기화]를 눌러주세요');
+      return;
+    }
+    if(interactive) toast('구글 캘린더 상호 동기화 중…');
     try{
-      var token = await getGoogleAccessToken();
       var count = 0;
       var sync = state.profile.settings.gcalSync = state.profile.settings.gcalSync || { goals:{}, ms:{}, tasks:{}, imported:{} };
       var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
@@ -5188,13 +5192,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       };
       var hasSavedToken = !!restoreGoogleToken();
       var isConnected = isGoogleCalendarConnected();
-      try{ client.requestAccessToken({ prompt: (state.googleToken || hasSavedToken || isConnected) ? '' : 'consent' }); }
+      var reqOpts = { prompt: (state.googleToken || hasSavedToken || isConnected) ? '' : 'consent' };
+      var gEmail = (state.profile && state.profile.settings && state.profile.settings.googleCalendarEmail) || '';
+      if(gEmail && gEmail.indexOf('@') !== -1) reqOpts.hint = gEmail;
+      try{ client.requestAccessToken(reqOpts); }
       catch(e){ reject(e); }
     });
   }
-  async function getGoogleAccessToken(){
+  async function getGoogleAccessToken(interactive){
     if(!state.googleToken) restoreGoogleToken();
     if(state.googleToken && state.googleToken.expiresAt > Date.now()+30000) return state.googleToken.accessToken;
+    if(!interactive) return null;
     return requestGoogleToken();
   }
   async function openGcalImportModal(){
@@ -6087,7 +6095,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           renderCalendarScreen();
           openCalendarDayEditHubModal(dayKey);
           if(state.profile.settings.gcalAutoSync && isGoogleCalendarConnected()){
-            syncAllToGoogleCalendar().catch(function(){});
+            syncAllToGoogleCalendar(false).catch(function(){});
           }
         };
       }
@@ -6115,7 +6123,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           var savedEvents = null;
           try { savedEvents = JSON.parse(localStorage.getItem('ourgoal_gcal_events') || '[]'); } catch(e){}
           if(!savedEvents || !savedEvents.length){
-            getGoogleAccessToken().then(function(tok){
+            getGoogleAccessToken(false).then(function(tok){
               if(tok) return fetchGoogleCalendarEvents(tok);
             }).then(function(evs){
               if(evs && evs.length && state.activeTab==='calendar') renderCalendarScreen();
@@ -6135,7 +6143,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             '</div>' +
           '</div>';
         var syncB = gBanner.querySelector('#calBannerSyncBtn');
-        if(syncB) syncB.onclick = syncAllToGoogleCalendar;
+        if(syncB) syncB.onclick = function(){ syncAllToGoogleCalendar(true); };
         var setB = gBanner.querySelector('#calBannerSetBtn');
         if(setB) setB.onclick = function(){ setTab('settings'); };
       } else {
@@ -23568,7 +23576,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var qConnBtn = document.getElementById('gcalQuickConnectBtn');
     if(qConnBtn) qConnBtn.onclick = openGoogleCalendarConnectModal;
     var syncNowBtn = document.getElementById('gcalSyncNowBtn');
-    if(syncNowBtn) syncNowBtn.onclick = syncAllToGoogleCalendar;
+    if(syncNowBtn) syncNowBtn.onclick = function(){ syncAllToGoogleCalendar(true); };
     var disconnBtn = document.getElementById('gcalDisconnectBtn');
     if(disconnBtn){
       disconnBtn.onclick = async function(){
