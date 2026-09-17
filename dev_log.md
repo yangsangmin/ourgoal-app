@@ -4252,6 +4252,36 @@
      - 본질 게이트 `node scripts/essence-gate.js --pre-commit` 통과.
 ---
 
-
-
-
+## [2026-09-17 14:25] #TASK-ES-151 & #TASK-ES-152 캘린더 일정 체크 토글 및 목표 양방향 연동 & 전역 알림 엔진(DM 포함) 구축
+- **배경 및 의도**:
+  - 상민님 직접 지시 ("💡 아워골 생각 메모장 18번, 19번 항목... 진행해").
+  - 노션/옵시디언 생각 메모장 18항(#TASK-ES-151) 및 19항(#TASK-ES-152) 2대 과제를 헌법 15개 조문 및 8원칙에 의거 완전 구현.
+- **주요 수정 및 해결 내역**:
+  1. **#TASK-ES-151 (메모장 18항) 일정 체크버튼 완료/미완료 토글 및 목표 양방향 연동 UI/UX**:
+     - `calendarItemsByDate`: `customSchedules`로부터 `linkedGoalId`, `linkedGoalTitle`, `linkedMsId`, `linkedTaskId` 속성 보존 전달.
+     - `toggleScheduleDone(schedId, kind, goalId, msId, taskId)`:
+       - 캘린더 일정 및 타임테이블 완료 토글 시 연계된 목표/마일스톤/세부할일의 완료 상태(`task.done`, `ms.done`, 목표 진척률) 양방향 동시 갱신.
+       - 반대로 목표 화면의 할 일 체크박스(`[data-taskcheck]`) 토글 시 매칭되는 캘린더 일정(`customSchedules`) 완료 상태 양방향 동시 갱신.
+       - 완료 토글 시 진동 햅틱 피드백(`navigator.vibrate`), 경험치 지급(`awardExp`), 상태 저장(`saveProfile`), 캘린더/목표 재렌더링 무결성 확보.
+     - 캘린더 일간 타임라인 시간표 및 일정 편집 모달에 `.sched-check` 인터랙티브 체크 버튼 장착 (`done` 클래스 시 체크마크 및 취소선 표시).
+     - 연계 목표가 존재하는 일정 칩 및 모달 리스트에 `🎯 {목표명}` 뱃지(`sched-goal-badge`) 표기.
+     - 일정 수동 등록/수정 모달에 목표 연계 선택 셀렉터(`<select id="calEditLinkedGoal">`) 탑재 및 저장 영속화.
+  2. **#TASK-ES-152 (메모장 19항) 백그라운드·앱종료·미확인 전역 알림(DM 포함) 전수 구현 및 세부 알림 설정창 구축**:
+     - 3대 상태별 전역 알림 엔진 `OurgoalNotifyEngine` (`js/notify-engine.js` 신설):
+       - 포그라운드(앱 켜짐): 화면 상단 플로팅 배너(`#globalNotifyBanner`) + Web Audio API 2음 차임 사운드 + 햅틱 진동.
+       - 백그라운드/최소화: 시스템 알림(`new Notification`), 서비스워커 알림 연동.
+       - 앱 종료/재접속: 로컬 미확인 알림 큐(`unreadNotifications`, 최대 50건) 자동 보존 및 재접속 시 안내.
+       - 프라이버시 수준 제어: `detail`(전체 내용 표시) vs `summary`(내용 마스킹 보안 모드).
+     - 1:1 DM 실시간 알림 파이프라인 배선:
+       - `OurgoalTeamInviteComm.initIncomingDmListener` 내에서 현재 활성화된 DM 대화방이 아니거나 다른 탭/화면일 때 `OurgoalNotifyEngine.dispatchGlobalNotification` 자동 호출.
+     - 설정창 내 세부 알림 제어 센터 구축:
+       - 피드백 모드 4종 선택 그리드: `all` (소리+진동), `sound` (소리만), `vibrate` (진동만), `silent` (무음).
+       - 프라이버시 수준 토글: 상세 내용 vs 간략 마스킹.
+       - 유형별 알림 스위치 7종: DM 메시지, 브라우저 시스템 알림, 팀 활동, 응원/찌르기, 목표 마감 D-Day, 스트릭 알림, 방해금지 시간대.
+       - 시스템 알림 권한 상태 실시간 라벨 및 권한 요청 버튼 (`#btnReqNotifPerm`).
+       - 실제 전역 알림 테스트 발송 버튼 (`#testNotifyBtn`) 연동.
+  3. **무결성 검증**:
+     - `scripts/smoke-test.js`: 컴플라이언스 테스트 2종 추가 (총 291개 테스트 0 failures 전수 통과).
+     - 헌법 5대 핵심 검증 게이트 15종 100% ALL PASS, Zero Dead Click 100% (574/591 전수 배선 및 위임 처리).
+     - 본질 게이트 `node scripts/essence-gate.js --pre-commit` 통과.
+---

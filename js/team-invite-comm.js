@@ -768,6 +768,17 @@
             var senderTitle = r.sender_name || '동반자';
             showToast('💬 ' + senderTitle + '님의 새 메시지: ' + (r.message || ''));
             updateDmUnreadBadge(true);
+            if(global.OurgoalNotifyEngine && typeof global.OurgoalNotifyEngine.dispatchGlobalNotification === 'function'){
+              global.OurgoalNotifyEngine.dispatchGlobalNotification({
+                type: 'dm',
+                title: '💬 ' + senderTitle,
+                body: r.message || '',
+                senderName: senderTitle,
+                targetTab: 'comm',
+                targetDmId: senderId,
+                icon: '💬'
+              });
+            }
           } else {
             markDmRoomRead(myId, senderId);
           }

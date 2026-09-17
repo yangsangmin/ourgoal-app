@@ -5940,6 +5940,67 @@ check('compliance: [#TASK-ES-150] 아바타 레벨업 대형 팝업 및 성장 �
   assert.ok(indexSrc.includes('openAvatarLevelUpModal(level)'), 'showLevelUpBanner에서 openAvatarLevelUpModal 호출 확인');
 });
 
+/* ============ [#TASK-ES-151] 캘린더 일정 체크버튼 완료/미완료 토글 및 목표 양방향 동기화 무결성 검증 ============ */
+check('compliance: [#TASK-ES-151] 캘린더 일정 체크버튼 완료/미완료 토글 및 목표 양방향 동기화 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 체크버튼 및 완료 상태 UI/CSS 검증
+  assert.ok(uiSrc.includes('.sched-check'), 'ui.css .sched-check 스타일 정의');
+  assert.ok(uiSrc.includes('.sched-check.done'), 'ui.css .sched-check.done 완료 스타일 정의');
+  assert.ok(uiSrc.includes('.timetable-chip.done-chip'), 'ui.css .timetable-chip.done-chip 취소선/투명도 스타일');
+  assert.ok(uiSrc.includes('.sched-goal-badge'), 'ui.css .sched-goal-badge 목표 배지 스타일');
+
+  // 2. toggleScheduleDone 함수 및 양방향 동기화 로직 검증
+  assert.ok(indexSrc.includes('async function toggleScheduleDone('), 'toggleScheduleDone 전담 비동기 함수 구현');
+  assert.ok(indexSrc.includes('sched.linkedTaskId || sched.linkedGoalId'), '일정 완료 시 연동된 목표/태스크 동기화 분기');
+  assert.ok(indexSrc.includes('cs.linkedTaskId === targetTask.id'), '태스크 완료 시 연동된 일정(customSchedules) 동기화');
+
+  // 3. 일자 허브 모달 및 시간표 타임라인 체크버튼 배선 검증
+  assert.ok(indexSrc.includes('data-hubtogglesched='), 'openCalendarDayEditHubModal 내 data-hubtogglesched 체크버튼 배선');
+  assert.ok(indexSrc.includes('data-togglesched='), 'renderCalendarScreen 타임라인 내 data-togglesched 체크버튼 배선');
+
+  // 4. 일정 수동 등록/수정 모달 내 목표 연계 선택 셀렉터 검증
+  assert.ok(indexSrc.includes('id="calEditLinkedGoal"'), 'calEditLinkedGoal 목표 선택 셀렉터 탑재');
+  assert.ok(indexSrc.includes('linkedGoalId: linkedGoalId || null'), '일정 저장 시 linkedGoalId 영속화');
+  assert.ok(indexSrc.includes('linkedGoalTitle: linkedGoalTitle || null'), '일정 저장 시 linkedGoalTitle 영속화');
+});
+
+/* ============ [#TASK-ES-152] 백그라운드·앱종료·미확인 전역 알림 엔진(OurgoalNotifyEngine) 및 세부 제어 센터 무결성 검증 ============ */
+check('compliance: [#TASK-ES-152] 백그라운드·앱종료·미확인 전역 알림 엔진(OurgoalNotifyEngine) 및 세부 제어 센터 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const notifyModPath = path.join(__dirname, '..', 'js', 'notify-engine.js');
+
+  // 1. OurgoalNotifyEngine 모듈 및 API 완비 검증
+  assert.ok(fs.existsSync(notifyModPath), 'js/notify-engine.js 모듈 파일 존재');
+  const notifyMod = require(notifyModPath);
+  assert.ok(typeof notifyMod.dispatchGlobalNotification === 'function', 'dispatchGlobalNotification 함수 제공');
+  assert.ok(typeof notifyMod.playNotificationSound === 'function', 'playNotificationSound 함수 제공');
+  assert.ok(typeof notifyMod.vibrate === 'function', 'vibrate 함수 제공');
+  assert.ok(typeof notifyMod.getNotifConfig === 'function', 'getNotifConfig 함수 제공');
+  assert.ok(indexSrc.includes('src="js/notify-engine.js'), 'index.html에서 notify-engine.js 로드');
+
+  // 2. 플로팅 상단 알림 배너 UI 및 CSS 무결성 검증
+  assert.ok(uiSrc.includes('.notify-floating-banner'), 'ui.css .notify-floating-banner 스타일 정의');
+  assert.ok(uiSrc.includes('.notify-floating-banner.visible'), 'ui.css .notify-floating-banner.visible 노출 애니메이션 정의');
+  assert.ok(uiSrc.includes('.notify-mode-grid'), 'ui.css .notify-mode-grid 피드백 모드 그리드 정의');
+
+  // 3. DM 실시간 수신 시 전역 알림 발송 배선 검증
+  assert.ok(commSrc.includes('OurgoalNotifyEngine.dispatchGlobalNotification'), 'team-invite-comm.js 수신 시 dispatchGlobalNotification 배선');
+  assert.ok(commSrc.includes("type: 'dm'"), 'DM 타입 전역 알림 발송 검증');
+
+  // 4. 설정창 내 전역 알림 세부 제어 센터 UI 및 영속화 바인딩 검증
+  assert.ok(indexSrc.includes('id="notifFeedbackModeGrid"'), '피드백 방식 선택 그리드 탑재');
+  assert.ok(indexSrc.includes('id="notifPrivacyToggle"'), '알림 프라이버시 보호 토글 탑재');
+  assert.ok(indexSrc.includes('id="notifBgSwitch"'), '백그라운드 Web Notification 토글 탑재');
+  assert.ok(indexSrc.includes('id="notifDmSwitch"'), '1:1 DM 알림 토글 스위치 탑재');
+  assert.ok(indexSrc.includes('id="notifPermStatusLabel"'), '브라우저 시스템 알림 권한 상태 레이블 탑재');
+  assert.ok(indexSrc.includes('id="btnReqNotifPerm"'), '권한 요청 버튼 탑재');
+  assert.ok(indexSrc.includes('state.profile.settings.notifications'), 'notifications 설정 영속화 바인딩');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
