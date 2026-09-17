@@ -6409,6 +6409,43 @@ check('compliance: [#TASK-ES-163] 측정지표 분석할 항목별 차등 지정
   assert.ok(swSrc.includes('ourgoal-shell-v20260917-es163'), 'sw.js es163 갱신');
 });
 
+/* ============ [#TASK-ES-164] 소통창 화면정리 및 피드·소통 UI 시인성·피로도 개선 시스템 검증 ============ */
+check('compliance: [#TASK-ES-164] 소통창 화면정리 및 피드·소통 UI 시인성·피로도 개선 시스템 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 소통창 서브탭 모던 세그먼트 필 및 6대 탭 아이콘·라벨 검증
+  assert.ok(indexSrc.includes('comm-subtabs-clean'), 'index.html 내 comm-subtabs-clean 클래스 탑재');
+  const requiredSubs = ['feed', 'group', 'companion', 'dm', 'manito', 'share'];
+  requiredSubs.forEach(sub => {
+    assert.ok(indexSrc.includes(`data-sub="${sub}"`) || indexSrc.includes(`s.key`), `서브탭 키 [${sub}] 보존`);
+  });
+  assert.ok(indexSrc.includes('id="dmSubtabBadge"'), 'DM 미확인 레드 닷 뱃지 #dmSubtabBadge 보존');
+
+  // 2. 피드 상단 1줄 컴팩트 툴바 및 퀵게시 버튼 보존 검증
+  assert.ok(indexSrc.includes('comm-quick-strip'), '피드 상단 comm-quick-strip 슬림 툴바 적용');
+  assert.ok(indexSrc.includes('id="feedQuickPostBtn"'), '퀵게시 버튼 #feedQuickPostBtn 엘리먼트 보존');
+
+  // 3. 소통 퀵 필터 칩 (전체 / 내 소통 / 사진인증만) 바인딩 검증
+  assert.ok(indexSrc.includes('comm-feed-type-bar'), '소통 피드 타입 필터 바 탑재');
+  assert.ok(indexSrc.includes('comm-type-pill'), '타입 필터 알약 버튼 comm-type-pill 클래스');
+  assert.ok(indexSrc.includes('data-feedtype="all"'), '전체 소통 필터 data-feedtype="all"');
+  assert.ok(indexSrc.includes('data-feedtype="mine"'), '내 소통 필터 data-feedtype="mine"');
+  assert.ok(indexSrc.includes('data-feedtype="photo"'), '사진인증 필터 data-feedtype="photo"');
+
+  // 4. AI 안내문 슬림 뱃지화 검증 (피로도 절감)
+  assert.ok(indexSrc.includes('ai-badge-notice-clean'), '슬림 AI 뱃지 ai-badge-notice-clean 적용');
+  assert.ok(indexSrc.includes('AI 가이드'), 'AI 가이드 텍스트 라벨 적용');
+
+  // 5. ui.css 전용 스타일 및 sw.js 검증
+  assert.ok(cssSrc.includes('.comm-subtabs-clean'), 'ui.css .comm-subtabs-clean 스타일');
+  assert.ok(cssSrc.includes('.comm-quick-strip'), 'ui.css .comm-quick-strip 스타일');
+  assert.ok(cssSrc.includes('.comm-type-pill'), 'ui.css .comm-type-pill 스타일');
+  assert.ok(cssSrc.includes('.ai-badge-notice-clean'), 'ui.css .ai-badge-notice-clean 스타일');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es164'), 'sw.js es164 캐시 갱신');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

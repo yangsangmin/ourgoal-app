@@ -21017,14 +21017,29 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   function renderCommScreen(){
     var body = document.getElementById('commBody');
-    var subtabHtml = '<div class="comm-subtabs">' +
-      ['feed:피드','group:팀','manito:🎁 마니또','share:공유','dm:DM','companion:동반자'].map(function(s){
-        var parts = s.split(':'), hasBadge = parts[0]==='dm' && window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.getDmUnreadStatus && window.OurgoalTeamInviteComm.getDmUnreadStatus(), bHtml = parts[0]==='dm' ? '<span id="dmSubtabBadge" style="display:'+(hasBadge?'inline-block':'none')+';width:6px;height:6px;border-radius:50%;background:#ef4444;margin-left:4px;vertical-align:middle;"></span>' : '';
-        return '<div class="comm-subtab'+(state.commSubTab===parts[0]?' active':'')+'" data-sub="'+parts[0]+'">'+parts[1]+bHtml+'</div>';
+    var subtabsList = [
+      { key: 'feed', label: '피드', icon: '📰' },
+      { key: 'group', label: '팀', icon: '👥' },
+      { key: 'companion', label: '동반자', icon: '🤝' }, /* companion:동반자 */
+      { key: 'dm', label: 'DM', icon: '💬' },
+      { key: 'manito', label: '마니또', icon: '🎁' },
+      { key: 'share', label: '공유', icon: '📤' }
+    ];
+    var hasBadge = window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.getDmUnreadStatus && window.OurgoalTeamInviteComm.getDmUnreadStatus();
+    var subtabHtml = '<div class="comm-subtabs comm-subtabs-clean">' +
+      subtabsList.map(function(s){
+        var bHtml = (s.key === 'dm') ? '<span id="dmSubtabBadge" style="display:'+(hasBadge?'inline-block':'none')+';width:6px;height:6px;border-radius:50%;background:#ef4444;margin-left:4px;vertical-align:middle;"></span>' : '';
+        return '<div class="comm-subtab'+(state.commSubTab===s.key?' active':'')+'" data-sub="'+s.key+'">'+s.icon+' '+s.label+bHtml+'</div>';
       }).join('') + '</div>';
     body.innerHTML = subtabHtml + '<div id="commSubBody"></div>';
     body.querySelectorAll('[data-sub]').forEach(function(t){
-      t.addEventListener('click', function(){ if(t.dataset.sub==='dm' && window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.updateDmUnreadBadge) window.OurgoalTeamInviteComm.updateDmUnreadBadge(false); state.commSubTab = t.dataset.sub; state.activeGroupId = null; state.manitoDm = null; state.dmActiveId = null; renderCommScreen(); });
+      t.addEventListener('click', function(){
+        if(t.dataset.sub==='dm' && window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.updateDmUnreadBadge) window.OurgoalTeamInviteComm.updateDmUnreadBadge(false);
+        state.commSubTab = t.dataset.sub;
+        state.activeGroupId = null;
+        state.manitoDm = null;
+        state.dmActiveId = null; renderCommScreen();
+      });
     });
     var subBody = document.getElementById('commSubBody');
     if(state.commSubTab==='share') renderCommShare(subBody);
@@ -22004,33 +22019,44 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       blendedItems = window.OurgoalTopHelpful.arrange(blendedItems, curCat, { posts: FEED_POSTS_CACHE, rerender: function(){ if(state.activeTab==='comm' && state.commSubTab==='feed') renderCommFeed(body); } });
     }
 
-    var quickPostBannerHtml = '<div class="card" style="margin-bottom:14px;padding:12px 16px;background:var(--surface-2);border:1px solid var(--rule);border-radius:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">' +
-      '<div style="display:flex;align-items:center;gap:10px;">' +
-        '<span style="font-size:1.5rem;">📢</span>' +
-        '<div>' +
-          '<div style="font-weight:700;font-size:.875rem;color:var(--ink);">오늘 달성한 실천이나 목표를 피드에 공유해보세요!</div>' +
-          '<div class="faint" style="font-size:.8125rem;margin-top:2px;">함께 달리는 사람들과 응원·댓글로 소통하고 큰 동기부여를 얻을 수 있어요.</div>' +
-        '</div>' +
+    var quickPostBannerHtml = '<div class="comm-quick-strip">' +
+      '<div class="comm-quick-strip-left">' +
+        '<span style="font-size:1.15rem;">📢</span>' +
+        '<span class="comm-quick-strip-text">오늘 달성한 실천을 피드에 공유하고 동료들과 응원을 나눠보세요!</span>' +
       '</div>' +
-      '<button class="btn btn-primary btn-sm" id="feedQuickPostBtn" type="button" onclick="openShareToFeedModal()" style="font-weight:700;border-radius:10px;padding:7px 14px;white-space:nowrap;cursor:pointer;flex:0 0 auto;">' +
+      '<button class="btn btn-primary btn-sm" id="feedQuickPostBtn" type="button" onclick="openShareToFeedModal()" style="font-weight:700;border-radius:8px;padding:6px 12px;font-size:0.75rem;white-space:nowrap;cursor:pointer;flex:0 0 auto;">' +
         '게시하기' +
       '</button>' +
     '</div>';
 
-    body.innerHTML = templatesHtml() +
-      quickPostBannerHtml +
+    var feedType = state.commFeedType || 'all';
+    var typeFilterHtml = '<div class="comm-feed-type-bar">' +
+      '<button type="button" class="comm-type-pill' + (feedType === 'all' ? ' active' : '') + '" data-feedtype="all">전체 피드</button>' +
+      '<button type="button" class="comm-type-pill' + (feedType === 'mine' ? ' active' : '') + '" data-feedtype="mine">내 소통</button>' +
+      '<button type="button" class="comm-type-pill' + (feedType === 'photo' ? ' active' : '') + '" data-feedtype="photo">📸 사진인증만</button>' +
+    '</div>';
+
+    if(feedType === 'mine'){
+      blendedItems = blendedItems.filter(function(it){ return it.me || it.isMe; });
+    } else if(feedType === 'photo'){
+      blendedItems = blendedItems.filter(function(it){ return !!it.photo; });
+    }
+
+    body.innerHTML = quickPostBannerHtml +
+      typeFilterHtml +
       catChipsHtml +
+      templatesHtml() +
       '<p class="faint" style="margin:0 0 14px;">같은 목표를 향해 가는 사람들' + stageLabel +
       (hiddenCount ? ' · 🔒 나만 보기 '+hiddenCount+'개는 피드에 노출되지 않아요' : '') + '</p>' +
-      (blendedItems.length === 0 ? '<div class="faint" style="text-align:center;padding:40px 0;">해당 카테고리에 공유된 피드가 없어요. 첫 목표나 체크인을 공유해보세요!</div>' : '') +
+      (blendedItems.length === 0 ? (typeof OurgoalComponents !== 'undefined' && OurgoalComponents.emptyState ? OurgoalComponents.emptyState({ icon: '💬', title: '표시할 소통 글이 없어요', desc: '해당 필터에 등록된 피드가 없습니다. 첫 실천을 공유해보세요!' }) : '<div class="faint" style="text-align:center;padding:40px 0;">해당 카테고리에 공유된 피드가 없어요. 첫 목표나 체크인을 공유해보세요!</div>') : '') +
       blendedItems.map(function(it){
         var reactions = (state.profile && state.profile.settings && state.profile.settings.feedReactions) || {};
         var isMe = it.me || it.isMe;
         var aiTagHtml = it.is_ai ? '<span class="feed-ai-tag">AI 봇</span>' : '';
         var aiNoticeHtml = it.is_ai ?
-          '<div class="ai-badge-notice">' +
-            '<span class="ai-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><rect x="4" y="7" width="16" height="12" rx="3"/><circle cx="9" cy="13" r="1.2" fill="currentColor"/><circle cx="15" cy="13" r="1.2" fill="currentColor"/><path d="M2 12h2M20 12h2"/></svg></span>' +
-            '<span>이는 ai봇 생성물입니다 앱 런칭 초기에 앱 활용을 보여드리기 위함이고 곧 실제 사용자의 제작물로 가득 찰 것입니다</span>' +
+          '<div class="ai-badge-notice ai-badge-notice-clean" title="초기 앱 활용을 돕는 가상 동료입니다">' +
+            '<span class="ai-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><path d="M12 3v3"/><rect x="4" y="7" width="16" height="12" rx="3"/><circle cx="9" cy="13" r="1.2" fill="currentColor"/><circle cx="15" cy="13" r="1.2" fill="currentColor"/><path d="M2 12h2M20 12h2"/></svg></span>' +
+            '<span>AI 가이드</span>' +
           '</div>' : '';
 
         var hasFire = !!reactions[it.id + ':fire'] || (!reactions[it.id + ':fire'] && !reactions[it.id + ':clap'] && !reactions[it.id + ':heart'] && !reactions[it.id + ':sparkle'] && !!reactions[it.id]);
@@ -22121,6 +22147,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     body.querySelectorAll('[data-feedcat]').forEach(function(chip){
       chip.addEventListener('click', function(){
         state.feedCategory = chip.dataset.feedcat;
+        triggerHaptic(8);
+        renderCommFeed(body);
+      });
+    });
+
+    body.querySelectorAll('[data-feedtype]').forEach(function(pill){
+      pill.addEventListener('click', function(){
+        state.commFeedType = pill.dataset.feedtype;
         triggerHaptic(8);
         renderCommFeed(body);
       });
