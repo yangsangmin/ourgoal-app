@@ -6156,7 +6156,339 @@ check('compliance: [#TASK-ES-157] 캘린더 구글 캘린더 거대 배너 제�
   assert.ok(indexSrc.includes('cBtn.onclick = openGoogleCalendarConnectModal;'), '미연동 시 배지 클릭으로 연동 모달 연결');
 
   // 5. sw.js 캐시 네임 es157 갱신 확인
-  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es157'), 'sw.js 캐시 네임 es157 갱신');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es157') || swSrc.includes('ourgoal-shell-v20260917-es158'), 'sw.js 캐시 네임 es157/158 갱신');
+});
+
+/* ============ [#TASK-ES-158] 회원 탈퇴 시 법적책임·데이터 분실 사전 안내 팝업 및 동의 4위 1체 배선 검증 ============ */
+check('compliance: [#TASK-ES-158] 회원 탈퇴 시 법적책임·데이터 분실 사전 안내 팝업 및 동의 4위 1체 배선 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 모달 및 핵심 함수 정의 확인
+  assert.ok(indexSrc.includes('function openWithdrawModal()'), 'openWithdrawModal 함수 정의');
+  assert.ok(indexSrc.includes('function closeWithdrawModal()'), 'closeWithdrawModal 함수 정의');
+  assert.ok(indexSrc.includes('async function submitWithdrawAccount()'), 'submitWithdrawAccount 함수 정의');
+  assert.ok(indexSrc.includes('async function withdrawAccount()'), '하위 호환 withdrawAccount 함수 유지');
+
+  // 2. 모달 컨테이너 및 3대 안내 블록 확인
+  assert.ok(indexSrc.includes('id="withdrawModal"'), '전용 withdrawModal 컨테이너 마크업 존재');
+  assert.ok(indexSrc.includes('소중한 목표 및 기록 분실 안내'), '1. 데이터 분실 안내 문구 존재');
+  assert.ok(indexSrc.includes('30일 탈퇴 유예 안전망 및 원클릭 복구'), '2. 30일 유예 및 복구 안내 문구 존재');
+  assert.ok(indexSrc.includes('법적 책임 및 관계 법령에 따른 정보 보존'), '3. 법적 책임 보존 고지 문구 존재');
+  assert.ok(indexSrc.includes('전자상거래 등에서의 소비자보호에 관한 법률') && indexSrc.includes('통신비밀보호법'), '관련 법령 명시');
+
+  // 3. 동의 체크박스 및 인터랙티브 버튼 배선 확인
+  assert.ok(indexSrc.includes('id="withdrawAgreeCheck"'), '동의 체크박스 요소 존재');
+  assert.ok(indexSrc.includes('id="withdrawConfirmBtn"'), '탈퇴 신청 버튼 요소 존재');
+  assert.ok(indexSrc.includes('id="withdrawCancelBtn"'), '취소 버튼 요소 존재');
+  assert.ok(indexSrc.includes('id="withdrawCloseBtn"'), '닫기 버튼 요소 존재');
+  assert.ok(indexSrc.includes('confirmBtn.disabled = !this.checked;'), '체크박스 토글 시 버튼 disabled 제어 로직 존재');
+
+  // 4. ui.css 전용 스타일링 확인
+  assert.ok(cssSrc.includes('.withdraw-modal-container'), 'ui.css 모달 컨테이너 스타일 존재');
+  assert.ok(cssSrc.includes('.withdraw-box-danger'), 'ui.css 위험 고지 박스 스타일 존재');
+  assert.ok(cssSrc.includes('.withdraw-box-legal'), 'ui.css 법적 고지 박스 스타일 존재');
+
+  // 5. sw.js 캐시 네임 es158 갱신 확인
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es158') || swSrc.includes('ourgoal-shell-v20260917-es159'), 'sw.js 캐시 네임 es158/159 갱신');
+});
+
+/* ============ [#TASK-ES-159] 아바타 레벨별 상징 백그라운드 이미지 결합 시스템 검증 ============ */
+check('compliance: [#TASK-ES-159] 아바타 레벨별 상징 백그라운드 이미지(새싹·숲·포세이돈·제우스·우주 5대 테마) 결합 검증', () => {
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 5대 테마 정의 및 5레벨 기준 룰 검증
+  assert.ok(avatarSrc.includes('var RANK_THEMES_5 = ['), '5대 상징 랭크 테마 배열 정의');
+  assert.ok(avatarSrc.includes("name: '새싹'") && avatarSrc.includes('minLv: 1') && avatarSrc.includes('maxLv: 5'), '테마 1: 새싹 (Lv.1~5)');
+  assert.ok(avatarSrc.includes("name: '울창한 숲'") && avatarSrc.includes('minLv: 6') && avatarSrc.includes('maxLv: 10'), '테마 2: 숲 (Lv.6~10)');
+  assert.ok(avatarSrc.includes("name: '포세이돈'") && avatarSrc.includes('minLv: 11') && avatarSrc.includes('maxLv: 15'), '테마 3: 포세이돈 (Lv.11~15)');
+  assert.ok(avatarSrc.includes("name: '제우스'") && avatarSrc.includes('minLv: 16') && avatarSrc.includes('maxLv: 20'), '테마 4: 제우스 (Lv.16~20)');
+  assert.ok(avatarSrc.includes("name: '코스믹 우주'") && avatarSrc.includes('minLv: 21'), '테마 5: 우주 (Lv.21+)');
+
+  // 2. 랭크 윙/오라 SVG 렌더러 및 아바타 미가림 래퍼 검증
+  assert.ok(avatarSrc.includes('function getRankWingsSvg('), 'getRankWingsSvg 함수 구현');
+  assert.ok(avatarSrc.includes('avatar-rank-aura-wrap'), '아바타 외곽 래퍼 클래스 결합');
+  assert.ok(avatarSrc.includes('rank-bg-svg-layer'), '외곽 오라 SVG 레이어 생성');
+  assert.ok(avatarSrc.includes('avatar-inner-box'), '중앙 아바타 내부 박스 분리 (미가림)');
+
+  // 3. 모달 및 레벨업 화면 연동 검증
+  assert.ok(avatarSrc.includes('id="avatarRankThemeCard"'), '아바타 설정 모달 내 랭크 테마 안내 카드 탑재');
+  assert.ok(indexSrc.includes('getRankThemeInfo'), '레벨업 모달 내 상징 랭크 테마 정보 연동');
+
+  // 4. ui.css 전용 스타일 및 5대 테마 키프레임 애니메이션 검증
+  assert.ok(cssSrc.includes('.avatar-rank-aura-wrap'), 'ui.css 아바타 랭크 래퍼 스타일');
+  assert.ok(cssSrc.includes('.rank-bg-svg-layer'), 'ui.css 랭크 SVG 레이어 스타일');
+  assert.ok(cssSrc.includes('@keyframes sproutSway'), '새싹 테마 애니메이션');
+  assert.ok(cssSrc.includes('@keyframes forestBreathe'), '숲 테마 애니메이션');
+  assert.ok(cssSrc.includes('@keyframes poseidonTide'), '포세이돈 테마 애니메이션');
+  assert.ok(cssSrc.includes('@keyframes zeusThunderGlow'), '제우스 테마 애니메이션');
+  assert.ok(cssSrc.includes('@keyframes cosmicOrbit'), '우주 테마 애니메이션');
+
+  // 5. sw.js 캐시 갱신
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es159') || swSrc.includes('ourgoal-shell-v20260917-es160'), 'sw.js 캐시 네임 es159/160 갱신');
+});
+
+/* ============ [#TASK-ES-160] 각 탭 200% 활용법 및 실제 우수 사용사례 쇼케이스 허브 모달 검증 ============ */
+check('compliance: [#TASK-ES-160] 각 탭 200% 활용법 및 실제 우수 사용사례 쇼케이스 허브 모달 4위 1체 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 설정 탭 진입 버튼 및 전용 모달 컨테이너 확인
+  assert.ok(indexSrc.includes('id="btnTabGuideHub"'), '설정 탭 내 탭 200% 활용법 버튼 구비');
+  assert.ok(indexSrc.includes('id="tabGuideHubModal"'), '전용 tabGuideHubModal 컨테이너 마크업 존재');
+
+  // 2. 5대 탭 데이터셋 및 쇼케이스 구조 확인
+  assert.ok(indexSrc.includes('var TAB_GUIDE_DATA = {'), 'TAB_GUIDE_DATA 5대 탭 데이터셋 정의');
+  assert.ok(indexSrc.includes("name: '홈'") && indexSrc.includes("name: '목표'") && (indexSrc.includes("name: '일정'") || indexSrc.includes("name: '캘린더'")) && indexSrc.includes("name: '기록'") && indexSrc.includes("name: '소통'"), '5대 탭 데이터 매핑');
+  assert.ok(indexSrc.includes('showcase:'), '탭별 실제 우수 활용사례(쇼케이스) 객체 포함');
+  assert.ok(indexSrc.includes('features:'), '탭별 3대 핵심 혁신 기능 목록 포함');
+
+  // 3. 네비게이션 및 렌더링 함수 확인
+  assert.ok(indexSrc.includes('function openTabGuideHubModal('), 'openTabGuideHubModal 함수 구현');
+  assert.ok(indexSrc.includes('function renderTabGuideContent('), 'renderTabGuideContent 함수 구현');
+  assert.ok(indexSrc.includes('btn.getAttribute(\'data-tabkey\')'), '가이드 탭 네비게이션 액션 구현');
+
+  // 4. ui.css 전용 스타일 클래스 확인
+  assert.ok(cssSrc.includes('.tab-guide-hub-container'), '가이드 허브 모달 컨테이너 스타일');
+  assert.ok(cssSrc.includes('.tab-guide-nav-bar'), '5대 탭 가로 칩 네비게이션 바 스타일');
+  assert.ok(cssSrc.includes('.guide-showcase-card'), '우수사례 쇼케이스 카드 스타일');
+  assert.ok(cssSrc.includes('.showcase-mockup-wrap'), 'UI 시각적 목업 그래픽 래퍼 스타일');
+
+  // 5. sw.js 캐시 갱신
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es160') || swSrc.includes('ourgoal-shell-v20260917-es161'), 'sw.js 캐시 네임 es160/161 갱신');
+});
+
+/* ============ [#TASK-ES-161] 참고자료 첨부 스마트 감지 · 비주얼 프리뷰 · 리치 칩 UI/UX 검증 ============ */
+check('compliance: [#TASK-ES-161] 참고자료 첨부 스마트 감지 · 비주얼 프리뷰 · 리치 칩 UI/UX 4위 1체 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const calAttSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'calendar-attachment.js'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 스마트 툴바 & 클립보드 원클릭 가져오기 및 4대 프리셋 검증
+  assert.ok(indexSrc.includes('id="attClipboardBtn"'), '클립보드 원클릭 가져오기 버튼 탑재');
+  assert.ok(indexSrc.includes('navigator.clipboard.readText'), '클립보드 API 연동 로직 구현');
+  assert.ok(indexSrc.includes('data-attpreset="workout"') && indexSrc.includes('data-attpreset="study"') && indexSrc.includes('data-attpreset="note"') && indexSrc.includes('data-attpreset="photo"'), '4대 실천 퀵 프리셋 버튼 완비');
+
+  // 2. 실시간 스마트 URL 감지 및 비주얼 프리뷰 카드 검증
+  assert.ok(indexSrc.includes('id="attLivePreviewWrap"'), '실시간 비주얼 프리뷰 컨테이너 마크업 존재');
+  assert.ok(indexSrc.includes('function updateSmartPreview('), 'updateSmartPreview 실시간 URL 감지 및 프리뷰 렌더러 함수 구현');
+  assert.ok(indexSrc.includes('img.youtube.com/vi/'), '유튜브 Video ID 추출 및 고해상도 썸네일 생성 로직');
+  assert.ok(indexSrc.includes('att-badge-youtube') && indexSrc.includes('att-badge-web') && indexSrc.includes('att-badge-image'), '타입별 비주얼 배지 렌더링');
+
+  // 3. 리치 칩(Rich Chip) UI/UX 고도화 검증
+  assert.ok(indexSrc.includes('att-chip-rich') && indexSrc.includes('typeClass'), 'index.html 리치 칩 클래스 렌더링');
+  assert.ok(calAttSrc.includes('att-chip-rich'), 'calendar-attachment.js 리치 칩 클래스 적용');
+
+  // 4. ui.css 전용 스타일 검증
+  assert.ok(cssSrc.includes('.att-smart-toolbar'), 'ui.css 스마트 툴바 스타일');
+  assert.ok(cssSrc.includes('.att-clipboard-btn'), 'ui.css 클립보드 버튼 스타일');
+  assert.ok(cssSrc.includes('.att-live-preview-box'), 'ui.css 실시간 프리뷰 박스 스타일');
+  assert.ok(cssSrc.includes('.att-chip-rich'), 'ui.css 리치 칩 스타일');
+  assert.ok(cssSrc.includes('.att-chip-rich.type-video'), 'ui.css 유튜브 영상 전용 칩 스타일');
+
+  // 5. sw.js 캐시 갱신 검증
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es161') || swSrc.includes('ourgoal-shell-v20260917-es162'), 'sw.js 캐시 네임 es161/162 갱신');
+});
+
+/* ============ [#TASK-ES-162] 공통 UI 컴포넌트 모듈화(OurgoalComponents 5대 컴포넌트) 검증 ============ */
+check('compliance: [#TASK-ES-162] 공통 UI 컴포넌트 모듈화(OurgoalComponents 5대 컴포넌트) 시스템 4위 1체 검증', () => {
+  const compModule = require('../js/components.js');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. js/components.js 5대 핵심 컴포넌트 기능 및 렌더링 검증
+  assert.ok(compModule && typeof compModule === 'object', 'OurgoalComponents 모듈 export 확인');
+  assert.strictEqual(typeof compModule.badge, 'function', '1. badge 컴포넌트 함수');
+  assert.strictEqual(typeof compModule.statCard, 'function', '2. statCard 컴포넌트 함수');
+  assert.strictEqual(typeof compModule.progressBar, 'function', '3. progressBar 컴포넌트 함수');
+  assert.strictEqual(typeof compModule.modalShell, 'function', '4. modalShell 컴포넌트 함수');
+  assert.strictEqual(typeof compModule.emptyState, 'function', '5. emptyState 컴포넌트 함수');
+
+  // 2. 컴포넌트 출력 마크업 무결성 검증
+  const badgeHtml = compModule.badge({ type: 'gold', text: 'D-3', icon: '⚡' });
+  assert.ok(badgeHtml.includes('og-badge og-badge-gold') && badgeHtml.includes('D-3') && badgeHtml.includes('⚡'), 'badge 올바른 클래스 및 텍스트 렌더링');
+
+  const statHtml = compModule.statCard({ title: '순공 시간', value: '320분', diff: '+15%', trend: 'up', icon: '⏱️' });
+  assert.ok(statHtml.includes('og-stat-card') && statHtml.includes('순공 시간') && statHtml.includes('320분') && statHtml.includes('og-trend-up'), 'statCard 올바른 지표 렌더링');
+
+  const progHtml = compModule.progressBar({ percent: 75, colorType: 'sage', showLabel: true });
+  assert.ok(progHtml.includes('og-prog-container') && progHtml.includes('75%') && progHtml.includes('og-fill-sage'), 'progressBar 게이지바 렌더링');
+
+  const modalHtml = compModule.modalShell({ id: 'testModal', title: '설정 모달', confirmText: '저장', cancelText: '닫기' });
+  assert.ok(modalHtml.includes('og-modal-shell') && modalHtml.includes('testModal') && modalHtml.includes('저장'), 'modalShell 셸 마크업 렌더링');
+
+  const emptyHtml = compModule.emptyState({ icon: '🎯', title: '목표 없음', desc: '새 목표를 등록하세요' });
+  assert.ok(emptyHtml.includes('og-empty-state') && emptyHtml.includes('목표 없음'), 'emptyState 렌더링');
+
+  // 3. index.html 스크립트 태그 등록 검증
+  assert.ok(indexSrc.includes('src="js/components.js?v=20260917-es162"'), 'index.html 내 components.js 스크립트 태그 로드');
+
+  // 4. ui.css 전용 스타일 클래스 검증
+  assert.ok(cssSrc.includes('.og-badge'), 'ui.css og-badge 스타일');
+  assert.ok(cssSrc.includes('.og-stat-card'), 'ui.css og-stat-card 스타일');
+  assert.ok(cssSrc.includes('.og-prog-container'), 'ui.css og-prog-container 스타일');
+  assert.ok(cssSrc.includes('.og-modal-shell'), 'ui.css og-modal-shell 스타일');
+  assert.ok(cssSrc.includes('.og-empty-state'), 'ui.css og-empty-state 스타일');
+
+  // 5. sw.js 캐시 갱신 검증
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es162'), 'sw.js 캐시 네임 es162 갱신');
+});
+
+/* ============ [#TASK-ES-163] 측정지표 분석할 항목별 차등 지정 및 정밀화·고도화 시스템 검증 ============ */
+check('compliance: [#TASK-ES-163] 측정지표 분석할 항목별 차등 지정 및 정밀화·고도화 시스템 검증', () => {
+  const uStats = require('../js/universal-stats.js');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 6대 도메인 특화 모델 완비 검증
+  assert.ok(uStats.METRIC_DIFFERENTIATED_MODELS, 'METRIC_DIFFERENTIATED_MODELS 객체 노출');
+  const requiredModels = ['weight', 'strength', 'running', 'study', 'finance', 'sleep'];
+  requiredModels.forEach(mKey => {
+    assert.ok(uStats.METRIC_DIFFERENTIATED_MODELS[mKey], `도메인 특화 모델 [${mKey}] 존재`);
+    assert.strictEqual(typeof uStats.METRIC_DIFFERENTIATED_MODELS[mKey].analyze, 'function', `[${mKey}] analyze 함수`);
+  });
+
+  // 2. 도메인별 계산 공식 정밀화 검증
+  // 1) 체중 (7일 이동평균 & 주간 감량속도)
+  const weightRes = uStats.computeDifferentiatedAnalysis('weight', [
+    { value: 75.0 }, { value: 74.8 }, { value: 74.5 }, { value: 74.2 }, { value: 74.0 }, { value: 73.8 }, { value: 73.5 }
+  ]);
+  assert.ok(weightRes.title.includes('7일 이동평균') && weightRes.kpis.length >= 4, '체중 7일 이동평균 모델 연산');
+
+  // 2) 헬스/3대 (에플리 1RM & 과부하)
+  const strengthRes = uStats.computeDifferentiatedAnalysis('strength', [
+    { value: 100, reps: 5 }, { value: 105, reps: 3 }
+  ]);
+  assert.ok(strengthRes.title.includes('1RM') && strengthRes.kpis.some(k => k.label.includes('1RM')), '헬스 1RM 에플리 공식 연산');
+
+  // 3) 러닝 (페이스존 & 심폐 마일리지)
+  const runRes = uStats.computeDifferentiatedAnalysis('running', [
+    { value: 5.0 }, { value: 10.0 }, { value: 7.5 }
+  ]);
+  assert.ok(runRes.title.includes('페이스존') && runRes.kpis.some(k => k.label.includes('심폐')), '러닝 심폐 마일리지 연산');
+
+  // 4) 공부 (순공 몰입 밀도 & 뽀모도로 세션)
+  const studyRes = uStats.computeDifferentiatedAnalysis('study', [
+    { value: 120 }, { value: 180 }
+  ]);
+  assert.ok(studyRes.title.includes('몰입 밀도') && studyRes.kpis.some(k => k.label.includes('뽀모도로')), '공부 뽀모도로 세션 연산');
+
+  // 5) 자산 (월간 저축가속도 & 연간 누적예측)
+  const finRes = uStats.computeDifferentiatedAnalysis('finance', [
+    { value: 100 }, { value: 150 }, { value: 200 }
+  ]);
+  assert.ok(finRes.title.includes('저축 가속도') && finRes.kpis.some(k => k.label.includes('연간')), '자산 저축 가속도 연산');
+
+  // 6) 수면 (수면 규칙성 100점 & 부채 지수)
+  const sleepRes = uStats.computeDifferentiatedAnalysis('sleep', [
+    { value: 7.5 }, { value: 8.0 }, { value: 7.0 }
+  ]);
+  assert.ok(sleepRes.title.includes('수면') && sleepRes.kpis.some(k => k.label.includes('규칙성')), '수면 규칙성 100점 지수 연산');
+
+  // 3. 리포트 카드 렌더링 검증
+  assert.strictEqual(typeof uStats.renderDifferentiatedReportCard, 'function', 'renderDifferentiatedReportCard 함수');
+  const cardHtml = uStats.renderDifferentiatedReportCard('running', [{ value: 10.0 }]);
+  assert.ok(cardHtml.includes('diff-report-card') && cardHtml.includes('diff-kpi-grid'), '차등 리포트 카드 마크업 출력');
+
+  // 4. 모달 함수 및 UI 배선 검증
+  assert.strictEqual(typeof uStats.openDifferentiatedMetricConfigModal, 'function', 'openDifferentiatedMetricConfigModal 함수');
+  assert.ok(indexSrc.includes('metricDiffCfgBtn'), 'index.html 내 metricDiffCfgBtn 바인딩');
+  assert.ok(indexSrc.includes('openDifferentiatedMetricConfigModal'), 'index.html 내 openDifferentiatedMetricConfigModal 호출');
+
+  // 5. ui.css 및 sw.js 검증
+  assert.ok(cssSrc.includes('.diff-report-card'), 'ui.css .diff-report-card 스타일');
+  assert.ok(cssSrc.includes('.diff-kpi-grid'), 'ui.css .diff-kpi-grid 스타일');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es163'), 'sw.js es163 갱신');
+});
+
+/* ============ [#TASK-ES-164] 소통창 화면정리 및 피드·소통 UI 시인성·피로도 개선 시스템 검증 ============ */
+check('compliance: [#TASK-ES-164] 소통창 화면정리 및 피드·소통 UI 시인성·피로도 개선 시스템 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 소통창 서브탭 모던 세그먼트 필 및 6대 탭 아이콘·라벨 검증
+  assert.ok(indexSrc.includes('comm-subtabs-clean'), 'index.html 내 comm-subtabs-clean 클래스 탑재');
+  const requiredSubs = ['feed', 'group', 'companion', 'dm', 'manito', 'share'];
+  requiredSubs.forEach(sub => {
+    assert.ok(indexSrc.includes(`data-sub="${sub}"`) || indexSrc.includes(`s.key`), `서브탭 키 [${sub}] 보존`);
+  });
+  assert.ok(indexSrc.includes('id="dmSubtabBadge"'), 'DM 미확인 레드 닷 뱃지 #dmSubtabBadge 보존');
+
+  // 2. 피드 상단 1줄 컴팩트 툴바 및 퀵게시 버튼 보존 검증
+  assert.ok(indexSrc.includes('comm-quick-strip'), '피드 상단 comm-quick-strip 슬림 툴바 적용');
+  assert.ok(indexSrc.includes('id="feedQuickPostBtn"'), '퀵게시 버튼 #feedQuickPostBtn 엘리먼트 보존');
+
+  // 3. 소통 퀵 필터 칩 (전체 / 내 소통 / 사진인증만) 바인딩 검증
+  assert.ok(indexSrc.includes('comm-feed-type-bar'), '소통 피드 타입 필터 바 탑재');
+  assert.ok(indexSrc.includes('comm-type-pill'), '타입 필터 알약 버튼 comm-type-pill 클래스');
+  assert.ok(indexSrc.includes('data-feedtype="all"'), '전체 소통 필터 data-feedtype="all"');
+  assert.ok(indexSrc.includes('data-feedtype="mine"'), '내 소통 필터 data-feedtype="mine"');
+  assert.ok(indexSrc.includes('data-feedtype="photo"'), '사진인증 필터 data-feedtype="photo"');
+
+  // 4. AI 안내문 슬림 뱃지화 검증 (피로도 절감)
+  assert.ok(indexSrc.includes('ai-badge-notice-clean'), '슬림 AI 뱃지 ai-badge-notice-clean 적용');
+  assert.ok(indexSrc.includes('AI 가이드'), 'AI 가이드 텍스트 라벨 적용');
+
+  // 5. ui.css 전용 스타일 및 sw.js 검증
+  assert.ok(cssSrc.includes('.comm-subtabs-clean'), 'ui.css .comm-subtabs-clean 스타일');
+  assert.ok(cssSrc.includes('.comm-quick-strip'), 'ui.css .comm-quick-strip 스타일');
+  assert.ok(cssSrc.includes('.comm-type-pill'), 'ui.css .comm-type-pill 스타일');
+  assert.ok(cssSrc.includes('.ai-badge-notice-clean'), 'ui.css .ai-badge-notice-clean 스타일');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es164'), 'sw.js es164 캐시 갱신');
+});
+
+/* ============ [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 시스템 검증 ============ */
+check('compliance: [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 시스템 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+  // 1. 아바타 인사 팝업 모달 마크업 및 필수 요소 검증
+  assert.ok(indexSrc.includes('id="avatarGreetingModal"'), '#avatarGreetingModal 모달 엘리먼트 탑재');
+  assert.ok(indexSrc.includes('id="btnAvatarGreetClose"'), '#btnAvatarGreetClose 대형 닫기 버튼 탑재');
+  assert.ok(indexSrc.includes('avatar-greet-close-big'), 'avatar-greet-close-big 큰 X 버튼 클래스');
+  assert.ok(indexSrc.includes('id="avatarGreetMessageText"'), '#avatarGreetMessageText 멘트 텍스트 엘리먼트');
+  assert.ok(indexSrc.includes('id="avatarGreetFigureContainer"'), '#avatarGreetFigureContainer 화면 절반 크기 아바타 컨테이너');
+  assert.ok(indexSrc.includes('avatar-greet-timer-bar'), '2.5초 자동 소멸 타이머 바 탑재');
+
+  // 2. 엔진 함수 및 앱 진입 배선 검증
+  assert.ok(indexSrc.includes('function openAvatarGreetingPopup('), 'openAvatarGreetingPopup 함수 정의');
+  assert.ok(indexSrc.includes('function closeAvatarGreetingPopup('), 'closeAvatarGreetingPopup 함수 정의');
+  assert.ok(indexSrc.includes('window.openAvatarGreetingPopup = openAvatarGreetingPopup;'), 'openAvatarGreetingPopup 전역 노출');
+  assert.ok(indexSrc.includes('window.closeAvatarGreetingPopup = closeAvatarGreetingPopup;'), 'closeAvatarGreetingPopup 전역 노출');
+  assert.ok(indexSrc.includes('openAvatarGreetingPopup(state.profile, false)'), 'enterApp 진입 시 openAvatarGreetingPopup 호출 배선');
+
+  // 3. 시간대별 멘트 및 2.5초 자동 소멸 로직 검증
+  assert.ok(indexSrc.includes('오늘은 뭘 할거냐? 내자신'), '주간 기본 멘트(오늘은 뭘 할거냐? 내자신) 탑재');
+  assert.ok(indexSrc.includes('오늘은 뭘 했냐? 내자신'), '야간 기본 멘트(오늘은 뭘 했냐? 내자신) 탑재');
+  assert.ok(indexSrc.includes('dayStartHour'), '주간 시작 시간 변수');
+  assert.ok(indexSrc.includes('nightStartHour'), '야간 시작 시간 변수');
+  assert.ok(indexSrc.includes('2500'), '2.5초(2500ms) 자동 페이드아웃 타이머');
+
+  // 4. 설정창(#screen-settings) 커스텀 UI 검증
+  assert.ok(indexSrc.includes('id="setAvatarGreetingBlock"'), '설정창 아바타 인사 섹션 #setAvatarGreetingBlock');
+  assert.ok(indexSrc.includes('id="avatarGreetingSwitch"'), '아바타 인사 토글 스위치 #avatarGreetingSwitch');
+  assert.ok(indexSrc.includes('id="avatarGreetingDayHour"'), '주간 시작 시간 셀렉터 #avatarGreetingDayHour');
+  assert.ok(indexSrc.includes('id="avatarGreetingNightHour"'), '야간 시작 시간 셀렉터 #avatarGreetingNightHour');
+  assert.ok(indexSrc.includes('id="avatarGreetingDayMsg"'), '주간 멘트 인풋 #avatarGreetingDayMsg');
+  assert.ok(indexSrc.includes('id="avatarGreetingNightMsg"'), '야간 멘트 인풋 #avatarGreetingNightMsg');
+  assert.ok(indexSrc.includes('id="btnPreviewAvatarGreeting"'), '아바타 인사 미리보기 버튼 #btnPreviewAvatarGreeting');
+
+  // 5. ui.css 전용 스타일 및 sw.js 캐시 검증
+  assert.ok(cssSrc.includes('.avatar-greet-overlay'), 'ui.css .avatar-greet-overlay 스타일');
+  assert.ok(cssSrc.includes('.avatar-greet-close-big'), 'ui.css .avatar-greet-close-big 스타일');
+  assert.ok(cssSrc.includes('.avatar-greet-bubble'), 'ui.css .avatar-greet-bubble 스타일');
+  assert.ok(cssSrc.includes('.avatar-greet-figure-container'), 'ui.css .avatar-greet-figure-container 스타일');
+  assert.ok(cssSrc.includes('.avatar-greet-timer-bar'), 'ui.css .avatar-greet-timer-bar 스타일');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es165'), 'sw.js es165 캐시 갱신');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

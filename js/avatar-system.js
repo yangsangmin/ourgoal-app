@@ -5059,24 +5059,184 @@
     '</div>';
   }
 
-  // 아바타 HTML 렌더링
+  // ================= 5대 상징 랭크 백그라운드 시스템 (#TASK-ES-159) =================
+  // 상민님 원문: 오버워치·롤 랭크 스타일, 새싹(1~5) -> 숲(6~10) -> 포세이돈(11~15) -> 제우스(16~20) -> 우주(21+)
+  var RANK_THEMES_5 = [
+    {
+      id: 'sprout',
+      themeId: 1,
+      minLv: 1,
+      maxLv: 5,
+      name: '새싹',
+      icon: '🌱',
+      title: '파릇한 새싹 랭크',
+      desc: '작은 실천과 습관으로 틔워낸 소중한 새싹',
+      mainColor: '#10B981',
+      subColor: '#34D399',
+      glow: 'rgba(16, 185, 129, 0.45)',
+      badgeGradient: 'linear-gradient(135deg, #10B981, #059669)'
+    },
+    {
+      id: 'forest',
+      themeId: 2,
+      minLv: 6,
+      maxLv: 10,
+      name: '울창한 숲',
+      icon: '🌲',
+      title: '울창한 숲 랭크',
+      desc: '매일의 노력이 모여 울창한 숲을 이룬 성장',
+      mainColor: '#059669',
+      subColor: '#10B981',
+      glow: 'rgba(5, 150, 105, 0.5)',
+      badgeGradient: 'linear-gradient(135deg, #059669, #047857)'
+    },
+    {
+      id: 'poseidon',
+      themeId: 3,
+      minLv: 11,
+      maxLv: 15,
+      name: '포세이돈',
+      icon: '🌊',
+      title: '포세이돈의 바다 랭크',
+      desc: '거친 한계와 파도를 넘어선 깊은 몰입의 경지',
+      mainColor: '#0284C7',
+      subColor: '#38BDF8',
+      glow: 'rgba(2, 132, 199, 0.55)',
+      badgeGradient: 'linear-gradient(135deg, #0284C7, #0369A1)'
+    },
+    {
+      id: 'zeus',
+      themeId: 4,
+      minLv: 16,
+      maxLv: 20,
+      name: '제우스',
+      icon: '⚡',
+      title: '제우스의 번개 랭크',
+      desc: '목표를 단숨에 꿰뚫는 찬란한 황금빛 섬광',
+      mainColor: '#F59E0B',
+      subColor: '#FBBF24',
+      glow: 'rgba(245, 158, 11, 0.6)',
+      badgeGradient: 'linear-gradient(135deg, #F59E0B, #D97706)'
+    },
+    {
+      id: 'cosmic',
+      themeId: 5,
+      minLv: 21,
+      maxLv: 999,
+      name: '코스믹 우주',
+      icon: '🌌',
+      title: '코스믹 우주 마스터 랭크',
+      desc: '지구를 넘어 무한한 은하를 개척하는 최고 존엄',
+      mainColor: '#8B5CF6',
+      subColor: '#C084FC',
+      glow: 'rgba(139, 92, 246, 0.65)',
+      badgeGradient: 'linear-gradient(135deg, #8B5CF6, #6D28D9)'
+    }
+  ];
+
+  function getRankThemeInfo(level) {
+    var lv = Math.max(1, parseInt(level, 10) || 1);
+    for (var i = 0; i < RANK_THEMES_5.length; i++) {
+      if (lv >= RANK_THEMES_5[i].minLv && lv <= RANK_THEMES_5[i].maxLv) {
+        var theme = Object.assign({}, RANK_THEMES_5[i]);
+        theme.subStep = Math.min(5, ((lv - 1) % 5) + 1);
+        theme.nextTier = (i < RANK_THEMES_5.length - 1) ? RANK_THEMES_5[i + 1] : null;
+        theme.nextLv = (i < RANK_THEMES_5.length - 1) ? RANK_THEMES_5[i + 1].minLv : null;
+        return theme;
+      }
+    }
+    return Object.assign({ subStep: 5, nextTier: null, nextLv: null }, RANK_THEMES_5[4]);
+  }
+
+  function getRankWingsSvg(level, size) {
+    var s = size || 38;
+    var theme = getRankThemeInfo(level);
+    var tid = theme.id;
+    var c1 = theme.mainColor;
+    var c2 = theme.subColor;
+    var pad = Math.round(s * 0.42); // 날개 양옆 확장 패딩 (아바타 중앙 1도 안가림)
+    var totalW = s + pad * 2;
+    var totalH = s + Math.round(pad * 0.4);
+
+    var wingsContent = '';
+
+    if (tid === 'sprout') {
+      // 1. 새싹: 양옆으로 아치형으로 귀엽게 돋아나는 새싹 잎사귀
+      wingsContent = '' +
+        '<path d="M ' + (pad - 2) + ' ' + (totalH * 0.65) + ' C ' + (pad - 12) + ' ' + (totalH * 0.45) + ', ' + (pad - 8) + ' ' + (totalH * 0.2) + ', ' + (pad + 4) + ' ' + (totalH * 0.3) + ' C ' + (pad + 2) + ' ' + (totalH * 0.45) + ', ' + (pad + 2) + ' ' + (totalH * 0.6) + ', ' + (pad - 2) + ' ' + (totalH * 0.65) + ' Z" fill="' + c1 + '" opacity="0.9" />' +
+        '<circle cx="' + (pad - 4) + '" cy="' + (totalH * 0.28) + '" r="2" fill="#E6FFFA" />' +
+        '<path d="M ' + (totalW - pad + 2) + ' ' + (totalH * 0.65) + ' C ' + (totalW - pad + 12) + ' ' + (totalH * 0.45) + ', ' + (totalW - pad + 8) + ' ' + (totalH * 0.2) + ', ' + (totalW - pad - 4) + ' ' + (totalH * 0.3) + ' C ' + (totalW - pad - 2) + ' ' + (totalH * 0.45) + ', ' + (totalW - pad - 2) + ' ' + (totalH * 0.6) + ', ' + (totalW - pad + 2) + ' ' + (totalH * 0.65) + ' Z" fill="' + c2 + '" opacity="0.9" />' +
+        '<circle cx="' + (totalW - pad + 4) + '" cy="' + (totalH * 0.28) + '" r="2" fill="#E6FFFA" />';
+    } else if (tid === 'forest') {
+      // 2. 숲: 양옆으로 풍성하게 퍼져나가는 잎사귀 윙
+      wingsContent = '' +
+        '<path d="M ' + pad + ' ' + (totalH * 0.7) + ' Q ' + (pad - 14) + ' ' + (totalH * 0.5) + ' ' + (pad - 16) + ' ' + (totalH * 0.25) + ' Q ' + (pad - 6) + ' ' + (totalH * 0.35) + ' ' + pad + ' ' + (totalH * 0.5) + ' Z" fill="' + c1 + '" />' +
+        '<path d="M ' + pad + ' ' + (totalH * 0.8) + ' Q ' + (pad - 10) + ' ' + (totalH * 0.7) + ' ' + (pad - 12) + ' ' + (totalH * 0.5) + ' Q ' + (pad - 4) + ' ' + (totalH * 0.6) + ' ' + pad + ' ' + (totalH * 0.65) + ' Z" fill="' + c2 + '" opacity="0.8" />' +
+        '<path d="M ' + (totalW - pad) + ' ' + (totalH * 0.7) + ' Q ' + (totalW - pad + 14) + ' ' + (totalH * 0.5) + ' ' + (totalW - pad + 16) + ' ' + (totalH * 0.25) + ' Q ' + (totalW - pad + 6) + ' ' + (totalH * 0.35) + ' ' + (totalW - pad) + ' ' + (totalH * 0.5) + ' Z" fill="' + c1 + '" />' +
+        '<path d="M ' + (totalW - pad) + ' ' + (totalH * 0.8) + ' Q ' + (totalW - pad + 10) + ' ' + (totalH * 0.7) + ' ' + (totalW - pad + 12) + ' ' + (totalH * 0.5) + ' Q ' + (totalW - pad + 4) + ' ' + (totalH * 0.6) + ' ' + (totalW - pad) + ' ' + (totalH * 0.65) + ' Z" fill="' + c2 + '" opacity="0.8" />';
+    } else if (tid === 'poseidon') {
+      // 3. 포세이돈: 시원하게 솟구치는 파도와 물보라 윙
+      wingsContent = '' +
+        '<path d="M ' + pad + ' ' + (totalH * 0.75) + ' C ' + (pad - 18) + ' ' + (totalH * 0.6) + ', ' + (pad - 18) + ' ' + (totalH * 0.15) + ', ' + (pad - 6) + ' ' + (totalH * 0.2) + ' C ' + (pad - 12) + ' ' + (totalH * 0.35) + ', ' + (pad - 4) + ' ' + (totalH * 0.5) + ', ' + pad + ' ' + (totalH * 0.6) + ' Z" fill="' + c1 + '" />' +
+        '<circle cx="' + (pad - 12) + '" cy="' + (totalH * 0.15) + '" r="2.5" fill="#BAE6FD" />' +
+        '<circle cx="' + (pad - 18) + '" cy="' + (totalH * 0.35) + '" r="1.8" fill="#E0F2FE" />' +
+        '<path d="M ' + (totalW - pad) + ' ' + (totalH * 0.75) + ' C ' + (totalW - pad + 18) + ' ' + (totalH * 0.6) + ', ' + (totalW - pad + 18) + ' ' + (totalH * 0.15) + ', ' + (totalW - pad + 6) + ' ' + (totalH * 0.2) + ' C ' + (totalW - pad + 12) + ' ' + (totalH * 0.35) + ', ' + (totalW - pad + 4) + ' ' + (totalH * 0.5) + ', ' + (totalW - pad) + ' ' + (totalH * 0.6) + ' Z" fill="' + c2 + '" />' +
+        '<circle cx="' + (totalW - pad + 12) + '" cy="' + (totalH * 0.15) + '" r="2.5" fill="#BAE6FD" />' +
+        '<circle cx="' + (totalW - pad + 18) + '" cy="' + (totalH * 0.35) + '" r="1.8" fill="#E0F2FE" />';
+    } else if (tid === 'zeus') {
+      // 4. 제우스: 찬란한 지그재그 황금 번개와 썬더 윙
+      wingsContent = '' +
+        '<polygon points="' + pad + ',' + (totalH * 0.7) + ' ' + (pad - 16) + ',' + (totalH * 0.45) + ' ' + (pad - 7) + ',' + (totalH * 0.45) + ' ' + (pad - 18) + ',' + (totalH * 0.15) + ' ' + (pad - 2) + ',' + (totalH * 0.35) + ' ' + (pad - 8) + ',' + (totalH * 0.38) + '" fill="' + c1 + '" />' +
+        '<polygon points="' + (totalW - pad) + ',' + (totalH * 0.7) + ' ' + (totalW - pad + 16) + ',' + (totalH * 0.45) + ' ' + (totalW - pad + 7) + ',' + (totalH * 0.45) + ' ' + (totalW - pad + 18) + ',' + (totalH * 0.15) + ' ' + (totalW - pad + 2) + ',' + (totalH * 0.35) + ' ' + (totalW - pad + 8) + ',' + (totalH * 0.38) + '" fill="' + c2 + '" />';
+    } else {
+      // 5. 코스믹 우주: 신비로운 행성 궤도 링과 은하수 성운 날개
+      var cx = totalW / 2;
+      var cy = totalH / 2;
+      var rx = totalW * 0.48;
+      var ry = totalH * 0.26;
+      wingsContent = '' +
+        '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="none" stroke="' + c1 + '" stroke-width="2" stroke-dasharray="4,2" transform="rotate(-15 ' + cx + ' ' + cy + ')" opacity="0.85" />' +
+        '<circle cx="' + (pad - 10) + '" cy="' + (totalH * 0.3) + '" r="3" fill="#F472B6" />' +
+        '<circle cx="' + (totalW - pad + 10) + '" cy="' + (totalH * 0.7) + '" r="2.5" fill="#38BDF8" />' +
+        '<polygon points="' + (cx - s * 0.35) + ',' + (totalH * 0.1) + ' ' + (cx - s * 0.32) + ',' + (totalH * 0.16) + ' ' + (cx - s * 0.26) + ',' + (totalH * 0.17) + ' ' + (cx - s * 0.31) + ',' + (totalH * 0.22) + ' ' + (cx - s * 0.35) + ',' + (totalH * 0.19) + '" fill="#FDE047" />';
+    }
+
+    return '<svg class="rank-bg-svg-layer rank-theme-' + tid + '" width="' + totalW + '" height="' + totalH + '" viewBox="0 0 ' + totalW + ' ' + totalH + '" style="position:absolute;left:-' + pad + 'px;top:-' + Math.round(pad * 0.2) + 'px;pointer-events:none;z-index:1;overflow:visible;">' +
+      wingsContent +
+    '</svg>';
+  }
+
+  // 아바타 HTML 렌더링 (5대 상징 랭크 백그라운드 결합)
   function renderAvatarHtml(level, profile, options) {
     var opts = options || {};
     var size = opts.size || 38;
     var settings = (profile && profile.settings) || {};
     var avatarType = settings.avatarType || 'robot';
     var customUrl = settings.customAvatarUrl || '';
+    var withRankBg = (opts.withRankBg !== false);
+    var rankTheme = getRankThemeInfo(level);
 
+    var innerFrameHtml = '';
     if (avatarType === 'custom' && customUrl) {
-      return '<div class="custom-avatar-frame" style="width:' + size + 'px;height:' + size + 'px;border-radius:12px;overflow:hidden;border:2px solid var(--emerald);position:relative;background:#fff;display:flex;align-items:center;justify-content:center;">' +
+      innerFrameHtml = '<div class="custom-avatar-frame avatar-inner-box" style="width:' + size + 'px;height:' + size + 'px;border-radius:12px;overflow:hidden;border:2px solid ' + rankTheme.mainColor + ';position:relative;background:#fff;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 0 8px ' + rankTheme.glow + ';">' +
         '<img src="' + customUrl + '" alt="3등신 아바타" style="width:100%;height:100%;object-fit:cover;">' +
-        '<span class="avatar-lv-pill" style="position:absolute;bottom:0;right:0;background:var(--emerald);color:#fff;font-size:9px;padding:0 3px;border-radius:4px 0 0 0;font-weight:800;">Lv.' + level + '</span>' +
+        '<span class="avatar-lv-pill" style="position:absolute;bottom:0;right:0;background:' + rankTheme.badgeGradient + ';color:#fff;font-size:9px;padding:0 4px;border-radius:4px 0 0 0;font-weight:800;letter-spacing:-0.2px;">Lv.' + level + '</span>' +
+      '</div>';
+    } else {
+      innerFrameHtml = '<div class="robot-avatar-frame avatar-inner-box" style="width:' + size + 'px;height:' + size + 'px;border-radius:12px;overflow:hidden;background:var(--surface-2);border:1.5px solid ' + rankTheme.mainColor + ';display:flex;align-items:center;justify-content:center;position:relative;z-index:2;box-shadow:0 0 8px ' + rankTheme.glow + ';">' +
+        getRobotAvatarSvg(level, size) +
+        '<span class="avatar-lv-pill" style="position:absolute;bottom:0;right:0;background:' + rankTheme.badgeGradient + ';color:#fff;font-size:9px;padding:0 4px;border-radius:4px 0 0 0;font-weight:800;letter-spacing:-0.2px;">Lv.' + level + '</span>' +
       '</div>';
     }
 
-    return '<div class="robot-avatar-frame" style="width:' + size + 'px;height:' + size + 'px;border-radius:12px;overflow:hidden;background:var(--surface-2);border:1.5px solid var(--emerald-line, #A7F3D0);display:flex;align-items:center;justify-content:center;position:relative;">' +
-      getRobotAvatarSvg(level, size) +
-      '<span class="avatar-lv-pill" style="position:absolute;bottom:0;right:0;background:var(--emerald);color:#fff;font-size:9px;padding:0 3px;border-radius:4px 0 0 0;font-weight:800;">Lv.' + level + '</span>' +
+    if (!withRankBg) {
+      return innerFrameHtml;
+    }
+
+    var wingsSvg = getRankWingsSvg(level, size);
+    return '<div class="avatar-rank-aura-wrap rank-theme-' + rankTheme.id + '" title="' + rankTheme.title + '" style="position:relative;display:inline-flex;align-items:center;justify-content:center;overflow:visible;">' +
+      wingsSvg +
+      innerFrameHtml +
     '</div>';
   }
 
@@ -5117,6 +5277,28 @@
       '<div style="background:var(--surface-2);border:1px solid var(--border-soft);border-radius:12px;padding:10px 14px;font-size:0.8125rem;color:var(--ink-soft);line-height:1.45;margin-bottom:16px;">' +
         '💡 <strong>아바타 제작 안내</strong>: 신규 가입 시 <strong>기본 3회</strong>(기존 계정 최대 10회)가 제공되며, <strong>7일 연속 체크인</strong>할 때마다 제작권 1회가 자동 보너스로 충전됩니다.<br>' +
         '제작된 아바타는 <strong>내 아바타 서랍</strong>에 영구 보관되며 횟수 차감 없이 언제든 자유롭게 변경·착용할 수 있습니다.' +
+      '</div>' +
+
+      // 5대 상징 랭크 백그라운드 안내 카드 (#TASK-ES-159)
+      '<div id="avatarRankThemeCard" class="avatar-rank-summary-card" style="background:linear-gradient(135deg, ' + getRankThemeInfo(curLevel).mainColor + '18, ' + getRankThemeInfo(curLevel).subColor + '10);border:1px solid ' + getRankThemeInfo(curLevel).mainColor + '40;border-radius:14px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">' +
+        '<div style="display:flex;align-items:center;gap:10px;">' +
+          '<div style="width:40px;height:40px;border-radius:10px;background:var(--card, #fff);border:1.5px solid ' + getRankThemeInfo(curLevel).mainColor + ';display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 0 8px ' + getRankThemeInfo(curLevel).glow + ';">' +
+            getRankThemeInfo(curLevel).icon +
+          '</div>' +
+          '<div>' +
+            '<div style="font-weight:800;font-size:0.9375rem;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
+              getRankThemeInfo(curLevel).title +
+              '<span style="background:' + getRankThemeInfo(curLevel).badgeGradient + ';color:#fff;font-size:0.75rem;padding:1px 6px;border-radius:6px;font-weight:800;">Lv.' + curLevel + '</span>' +
+            '</div>' +
+            '<div style="font-size:0.78125rem;color:var(--ink-soft);margin-top:2px;">' + getRankThemeInfo(curLevel).desc + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="text-align:right;flex-shrink:0;">' +
+          (getRankThemeInfo(curLevel).nextTier ?
+            '<div style="font-size:0.72rem;color:var(--ink-soft);">다음 진화</div><div style="font-size:0.8125rem;font-weight:700;color:' + getRankThemeInfo(curLevel).nextTier.mainColor + ';">' + getRankThemeInfo(curLevel).nextTier.icon + ' ' + getRankThemeInfo(curLevel).nextTier.name + ' (Lv.' + getRankThemeInfo(curLevel).nextLv + ')</div>' :
+            '<div style="font-size:0.75rem;font-weight:800;color:var(--violet);">🌌 우주 마스터 달성</div>'
+          ) +
+        '</div>' +
       '</div>' +
 
       // 탭 토글
@@ -5916,7 +6098,10 @@
     openAvatarModal: openAvatarModal,
     getSavedAvatars: getSavedAvatars,
     addSavedAvatar: addSavedAvatar,
-    removeSavedAvatar: removeSavedAvatar
+    removeSavedAvatar: removeSavedAvatar,
+    RANK_THEMES_5: RANK_THEMES_5,
+    getRankThemeInfo: getRankThemeInfo,
+    getRankWingsSvg: getRankWingsSvg
   };
 
   return api;
