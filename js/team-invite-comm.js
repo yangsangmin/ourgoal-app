@@ -965,7 +965,8 @@
       }
 
       var subTitle = person.groupName ? ('👥 ' + esc(person.groupName) + (person.role ? ' · ' + esc(person.role) : '')) : (person.theme ? ('🤝 동반자 · ' + esc(person.theme)) : '아워골 회원');
-      var badgeTag = person.isAiBot ? '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--brand-strong);margin-left:6px;">🤖 AI 봇</span>' : '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--ink);margin-left:6px;">실 사용자</span>';
+      var isPersonReal = !person.isAiBot && !isKnownAiCompanion(person) && (typeof window !== 'undefined' && typeof window.isValidRealUser === 'function' ? window.isValidRealUser(person.id) : (String(person.id).indexOf('guest') !== 0 && String(person.id).indexOf('comp_') !== 0 && String(person.id).indexOf('mem_') !== 0));
+      var badgeTag = isPersonReal ? '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--ink);margin-left:6px;">실 사용자</span>' : '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--brand-strong);margin-left:6px;">🤖 AI 봇</span>';
 
       var isMyCompanion = (state.profile && state.profile.companions || []).some(function(c){
         return String(c.id || '').trim().toLowerCase() === String(person.id || '').trim().toLowerCase();
@@ -1248,12 +1249,12 @@
     if(!userOrId) return false;
     if(typeof userOrId === 'string'){
       var s = userOrId.toLowerCase();
-      if(s.indexOf('comp_') === 0 || s.indexOf('mem_') === 0 || s.indexOf('mock_') === 0 || s.indexOf('bot_') === 0 || s.indexOf('ai_') === 0) return true;
+      if(s.indexOf('comp_') === 0 || s.indexOf('mem_') === 0 || s.indexOf('mock_') === 0 || s.indexOf('bot_') === 0 || s.indexOf('ai_') === 0 || s.indexOf('mn_') === 0 || s.indexOf('guest') === 0) return true;
       return KNOWN_AI_BOT_NAMES.some(function(n){ return n === userOrId; });
     }
     if(userOrId.isAiBot === true) return true;
     var uid = String(userOrId.id || '').toLowerCase();
-    if(uid.indexOf('comp_') === 0 || uid.indexOf('mem_') === 0 || uid.indexOf('mock_') === 0 || uid.indexOf('bot_') === 0 || uid.indexOf('ai_') === 0) return true;
+    if(uid.indexOf('comp_') === 0 || uid.indexOf('mem_') === 0 || uid.indexOf('mock_') === 0 || uid.indexOf('bot_') === 0 || uid.indexOf('ai_') === 0 || uid.indexOf('mn_') === 0 || uid.indexOf('guest') === 0) return true;
     var nick = userOrId.nickname || userOrId.name || '';
     if(KNOWN_AI_BOT_NAMES.some(function(n){ return n === nick; })) return true;
     if(userOrId.botBadge) return true;
@@ -1480,7 +1481,7 @@
         '</div>' +
         '<div style="font-weight:700;font-size:1.1rem;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;">' +
           '<span>' + esc(user.nickname || user.name) + '</span>' +
-          (isAiBot ? '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--brand-strong);border:1px solid rgba(108,92,231,0.3);font-weight:700;">🤖 AI 동반자</span>' : '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--ink-soft);">실 사용자</span>') +
+          (isAiBot ? '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--brand-strong);border:1px solid rgba(108,92,231,0.3);font-weight:700;">🤖 AI 동반자</span>' : ((typeof window !== 'undefined' && typeof window.isValidRealUser === 'function' ? window.isValidRealUser(user.id) : (String(user.id).indexOf('guest') !== 0 && String(user.id).indexOf('comp_') !== 0 && String(user.id).indexOf('mem_') !== 0)) ? '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--ink-soft);">실 사용자</span>' : '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--brand-strong);border:1px solid rgba(108,92,231,0.3);font-weight:700;">🤖 AI 동반자</span>')) +
         '</div>' +
         '<div class="faint" style="font-size:.8125rem;margin-top:2px;">' + esc(user.theme || (isAiBot ? 'AI 목표 동반자' : '아워골 동반자')) + '</div>' +
         '<div style="display:flex;justify-content:center;gap:6px;margin-top:8px;">' +

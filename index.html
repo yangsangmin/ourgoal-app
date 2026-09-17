@@ -21280,20 +21280,61 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function genAnonName(major, seed){
     return MANITO_ADJ[seed % MANITO_ADJ.length]+' '+(MANITO_NOUN[major]||'동료')+' #'+String(seed%900+100);
   }
-  /* ============ 마니또 실 유저 익명 응원 연동 (#TASK-ES-133) ============ */
+  /* ============ 마니또 실 유저 익명 응원 연동 (#TASK-ES-133, #TASK-ES-145) ============ */
   var REAL_MANITO_PARTNERS_CACHE = [];
   var REAL_MANITO_INBOX_CACHE = [];
   var MANITO_SERVER_LOADED = false;
 
+  /* 실제 인증 가입 회원(Supabase Auth UUID) 정밀 식별기 (#TASK-ES-145) */
+  function isValidRealUser(id){
+    if(!id || typeof id !== 'string') return false;
+    var cleanId = id.trim().toLowerCase();
+    if(cleanId.indexOf('guest') === 0) return false;
+    if(cleanId.indexOf('test') === 0 || cleanId.indexOf('probe') === 0 || cleanId.indexOf('sim_') === 0 ||
+       cleanId.indexOf('comp_') === 0 || cleanId.indexOf('mem_') === 0 || cleanId.indexOf('mn_') === 0 ||
+       cleanId.indexOf('mock_') === 0 || cleanId.indexOf('anon_') === 0 || cleanId.indexOf('u_tester') === 0){
+      return false;
+    }
+    // Supabase Auth UUID (36자 표준 UUID: 8-4-4-4-12)
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanId);
+  }
+  window.isValidRealUser = isValidRealUser;
+
   async function loadServerManitoData(){
     try {
-      // 1. 실제 가입자 풀 조회
-      var poolRes = await sb.from('team_pings').select('*').eq('group_id', 'manito_pool').neq('sender_id', state.profile ? state.profile.id : '').limit(10);
+      // 1. 실제 가입자 풀 조회 (엄격한 실 사용자 검증 필터 적용 #TASK-ES-145)
+      var poolRes = await sb.from('team_pings').select('*')
+        .eq('group_id', 'manito_pool')
+        .neq('sender_id', state.profile ? state.profile.id : '')
+        .limit(20);
+
+      REAL_MANITO_PARTNERS_CACHE = [];
       if(poolRes.data && poolRes.data.length){
-        REAL_MANITO_PARTNERS_CACHE = poolRes.data.map(function(row){
+        poolRes.data.forEach(function(row){
+          // 게스트 계정 및 가상/비인증 엔티티 원천 차단 (#TASK-ES-145)
+          if(!isValidRealUser(row.sender_id)) return;
+          if(row.hidden === true || row.status === 'inactive') return;
           var info = {}; try { info = JSON.parse(row.message); } catch(e){}
           var major = row.target_id || info.major || 'health';
-          return { id: row.sender_id, major: major, emoji: row.sender_avatar || (MANITO_EMOJI[major] || '🎯'), name: row.sender_name, sub: info.sub || (TOPICS[major] ? TOPICS[major].subs[0] : '함께 완주'), goalTitle: row.target_title || info.goalTitle || '목표 달성', pct: 50, streak: 3, logs: ['오늘도 목표를 향해 한 걸음 나아갔어요!','꾸준히 기록을 채우고 있습니다','함께 완주해요'], is_ai: false };
+          var realStreak = typeof info.streak === 'number' ? Math.max(1, info.streak) : 1;
+          var realPct = typeof info.pct === 'number' ? Math.max(0, Math.min(100, info.pct)) : 20;
+          var realLogs = (Array.isArray(info.logs) && info.logs.length) ? info.logs : [
+            '아직 작성된 기록이 없습니다',
+            '응원을 보내 목표 달성을 격려해보세요!',
+            '함께 완주해요'
+          ];
+          REAL_MANITO_PARTNERS_CACHE.push({
+            id: row.sender_id,
+            major: major,
+            emoji: row.sender_avatar || (MANITO_EMOJI[major] || '🎯'),
+            name: row.sender_name || '동료 러너',
+            sub: info.sub || (TOPICS[major] ? TOPICS[major].subs[0] : '함께 완주'),
+            goalTitle: row.target_title || info.goalTitle || '목표 달성',
+            pct: realPct,
+            streak: realStreak,
+            logs: realLogs,
+            is_ai: false
+          });
         });
       }
 
@@ -21436,7 +21477,24 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         ms.joined = true; ms.joinedAt = nowISO(); ms.anonName = previewName; ms.allowDm = true;
         await saveProfile();
 
-        // Supabase team_pings 마니또 풀 등록 (#TASK-ES-133)
+        var isGuest = !state.user || (state.profile && (String(state.profile.id).indexOf('guest') === 0 || !isValidRealUser(state.profile.id)));
+
+        // 게스트 모드일 경우 서버 team_pings manito_pool 등록 차단 (로컬 AI 동반자 안전 격리 #TASK-ES-145)
+        if(isGuest){
+          if(navigator.vibrate) navigator.vibrate([12,40,24]);
+          burstConfetti(window.innerWidth/2, window.innerHeight/3);
+          toast('게스트 모드로 AI 마니또 3명이 배정됐어요 🎁 (실 유저 풀에 참여하려면 로그인해주세요)');
+          renderCommManito(body);
+          return;
+        }
+
+        // 인증된 실 사용자(UUID)만 Supabase team_pings 마니또 풀 등록 (#TASK-ES-133, #TASK-ES-145)
+        var myGoal = (state.profile && state.profile.goals && state.profile.goals.filter(function(g){ return !g.archivedAt; })[0]) || null;
+        var myStreak = (typeof computeStreakDays === 'function') ? computeStreakDays() : 1;
+        var myPct = myGoal ? Math.round(((myGoal.milestones||[]).filter(function(m){ return m.done; }).length / Math.max(1, (myGoal.milestones||[]).length)) * 100) : 20;
+        var myRecs = (state.profile && state.profile.records || []).slice(0, 3).map(function(r){ return r.text; });
+        if(!myRecs.length) myRecs = ['목표를 향해 첫 발걸음을 뗐어요!'];
+
         var poolJoin = {
           id: 'mn_pool_' + state.profile.id,
           group_id: 'manito_pool',
@@ -21446,9 +21504,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           receiver_id: '',
           target_type: 'manito_member',
           target_id: majors[0],
-          target_title: (state.profile.goals && state.profile.goals[0] ? state.profile.goals[0].title : '목표 달성'),
+          target_title: myGoal ? myGoal.title : '목표 달성',
           ping_type: 'join',
-          message: JSON.stringify({ major: majors[0], anonName: previewName, goalTitle: (state.profile.goals && state.profile.goals[0] ? state.profile.goals[0].title : '목표 달성') }),
+          message: JSON.stringify({
+            major: majors[0],
+            anonName: previewName,
+            goalTitle: myGoal ? myGoal.title : '목표 달성',
+            sub: (TOPICS[majors[0]] ? TOPICS[majors[0]].subs[0] : '함께 완주'),
+            streak: myStreak,
+            pct: myPct,
+            logs: myRecs
+          }),
           status: 'active',
           hidden: false,
           created_at: nowISO()
@@ -21502,11 +21568,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var dmOpen = ms.allowDm && mutual>=3;
         var canReveal = mutual>=7;
         var color = p.pct>=67 ? '#1FC98E' : (p.pct>=34 ? '#FF9F1C' : '#FF4F64');
+        var isActuallyReal = !p.is_ai && isValidRealUser(p.id);
+        var partnerBadgeHtml = isActuallyReal
+          ? '<span class="badge-real" style="font-size:.6875rem;font-weight:700;padding:2px 6px;border-radius:6px;background:rgba(16,185,129,.12);color:#10b981;margin-left:6px;vertical-align:middle;">[✨ 실 유저]</span>'
+          : '<span class="badge-ai" style="font-size:.6875rem;font-weight:700;padding:2px 6px;border-radius:6px;background:rgba(99,102,241,.12);color:#6366f1;margin-left:6px;vertical-align:middle;">[🤖 AI 동반자]</span>';
         return '<div class="manito-card">' +
           '<div class="manito-head">' +
             '<div class="manito-avatar">'+p.emoji+'</div>' +
             '<div style="flex:1;min-width:0;">' +
-              '<div class="manito-name">'+escapeHtml(p.name)+(p.is_ai ? '<span class="badge-ai" style="font-size:.6875rem;font-weight:700;padding:2px 6px;border-radius:6px;background:rgba(99,102,241,.12);color:#6366f1;margin-left:6px;vertical-align:middle;">[🤖 AI 동반자]</span>' : '<span class="badge-real" style="font-size:.6875rem;font-weight:700;padding:2px 6px;border-radius:6px;background:rgba(16,185,129,.12);color:#10b981;margin-left:6px;vertical-align:middle;">[✨ 실 유저]</span>')+'</div>' +
+              '<div class="manito-name">'+escapeHtml(p.name)+partnerBadgeHtml+'</div>' +
               '<div class="manito-sub">'+TOPICS[p.major].icon+' '+TOPICS[p.major].label+' · '+escapeHtml(p.sub)+' · 🔥 '+p.streak+'일 연속</div>' +
             '</div>' +
             '<div class="gauge">'+gaugeSvg(p.pct, 46, color)+'</div>' +

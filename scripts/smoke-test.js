@@ -5811,6 +5811,32 @@ check('compliance: [#TASK-ES-144] 동반자 새로고침(F5) 증발 결함 근�
   assert.ok(commSrc.includes('COMPANIONS_STORAGE_PREFIX + uid'), 'persistCompanions에서 UID 기반 격리 백업 저장');
 });
 
+/* ============ [#TASK-ES-145] 마니또 실 유저 판별 무결성 및 가짜 실 유저 표기 오류 개선 검증 ============ */
+check('compliance: [#TASK-ES-145] 마니또 실 유저 판별 무결성 및 가짜 실 유저 표기 오류 개선 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+
+  // 1. index.html isValidRealUser 탑재 및 실 사용자 UUID 정밀 식별
+  assert.ok(indexSrc.includes('function isValidRealUser(id)'), 'isValidRealUser 함수 탑재');
+  assert.ok(indexSrc.includes("cleanId.indexOf('guest') === 0"), '게스트 계정 실 사용자 배제 로직');
+  assert.ok(indexSrc.includes("cleanId.indexOf('test') === 0"), '테스트 계정 실 사용자 배제 로직');
+  assert.ok(indexSrc.includes('[0-9a-f]{8}-[0-9a-f]{4}'), 'Supabase Auth UUID 규격 정규식 검증');
+
+  // 2. loadServerManitoData에서 게스트 및 무효 계정 원천 필터링
+  assert.ok(indexSrc.includes('if(!isValidRealUser(row.sender_id)) return;'), '마니또 서버 풀 페칭 시 비실사용자 즉시 드롭');
+  assert.ok(indexSrc.includes("if(row.hidden === true || row.status === 'inactive') return;"), '비활성/숨김 처리된 풀 데이터 필터링');
+
+  // 3. mnJoin 게스트 등록 차단 및 로컬 AI 마니또 안전 격리
+  assert.ok(indexSrc.includes("String(state.profile.id).indexOf('guest') === 0 || !isValidRealUser(state.profile.id)"), 'mnJoin 게스트 상태 판별');
+  assert.ok(indexSrc.includes('게스트 모드로 AI 마니또 3명이 배정됐어요'), '게스트 마니또 시작 시 로컬 안전 격리 및 안내 토스트');
+
+  // 4. 마니또 카드 2중 방화벽 (isActuallyReal) 검증
+  assert.ok(indexSrc.includes('var isActuallyReal = !p.is_ai && isValidRealUser(p.id);'), '마니또 카드 실 유저 뱃지 2중 방화벽 검증');
+
+  // 5. js/team-invite-comm.js isKnownAiCompanion 게스트 및 마니또 접두어 보강
+  assert.ok(commSrc.includes("s.indexOf('mn_') === 0 || s.indexOf('guest') === 0"), 'isKnownAiCompanion 게스트/마니또 접두어 인식');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
