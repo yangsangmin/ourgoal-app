@@ -1,3 +1,7 @@
+---
+notion_id: "3de598db-9096-81a3-a278-e1da39247b0d"
+---
+
 # 작업계획서 (PLAN) — 잇템(제휴링크) 법적 안전장치 및 텔레그램/노션 원장 퀵 신고 배선
 
 > **문서 ID**: PLAN-TASK-ES-179-ITITEM-LEGAL-SAFETY-AND-REPORT  

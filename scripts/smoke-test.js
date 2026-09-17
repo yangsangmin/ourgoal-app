@@ -6855,6 +6855,66 @@ check('compliance: [#TASK-ES-179] 잇템(제휴링크) 법적 안전장치 및 �
   assert.ok(swSrc.includes('es179'), 'sw.js 캐시 버전에 es179 식별자가 포함되어야 함');
 });
 
+/* ============ [#TASK-ES-180] 아워골 생각 메모장 9대 대기 과제([61]~[69]) 및 6대 탭 활용법 모달 최신화 검증 ============ */
+check('compliance: [#TASK-ES-180] 아워골 생각 메모장 9대 대기 과제([61]~[69]) 및 6대 탭 활용법 모달 최신화 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const manifestJson = fs.readFileSync(path.join(__dirname, '..', 'manifest.json'), 'utf8');
+  const widgetHtml = fs.readFileSync(path.join(__dirname, '..', 'widget.html'), 'utf8');
+  const commJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // [61] 피드 내 AI 봇 축소 및 20명 초과 시 제거 검증
+  assert.ok(indexHtml.includes("!virtualCheerEnabled || realCount > 20") && indexHtml.includes("singleAiGuide"), '피드 AI 봇 1개 축소 및 실 유저 20명 초과 시 전면 제거 알고리즘 탑재');
+
+  // [62] 기기 바탕화면용 위젯 3종 × 3구성 인프라 검증
+  assert.ok(manifestJson.includes('"shortcuts":'), 'manifest.json PWA 바로가기 숏컷 탑재');
+  assert.ok(manifestJson.includes('#calendar') && manifestJson.includes('#goals') && manifestJson.includes('#records'), '3종 숏컷 URL 배선');
+  assert.ok(fs.existsSync(path.join(__dirname, '..', 'widget.html')), '독립 위젯 뷰어 widget.html 존재');
+  assert.ok(widgetHtml.includes('widget-card') && widgetHtml.includes('renderWidget'), 'widget.html 렌더링 엔진 탑재');
+  assert.ok(indexHtml.includes('btnOpenWidgetModal'), '설정창 위젯 모달 오픈 버튼 탑재');
+  assert.ok(indexHtml.includes('openWidgetSettingsModal'), 'openWidgetSettingsModal 함수 및 실시간 미리보기 배선');
+
+  // [63] 피드 공유 최신 기록 프리셀렉트 및 맞춤형 AI피드백/다짐 연동 검증
+  assert.ok(indexHtml.includes('userRecords[0]'), '피드 공유 모달 진입 시 최신 실천기록 자동 프리셀렉트');
+  assert.ok(indexHtml.includes("recSelect.addEventListener('change'"), '기록 변경 시 실시간 다짐 및 AI 피드백 동적 맞춤 이벤트 바인딩');
+
+  // [64] 잔존 아코디언 정리 및 템플릿백과사전 일원화 검증
+  assert.ok(indexHtml.includes('id="btnGoalTemplateEncyclopedia"'), '목표 탭 템플릿백과사전 버튼 배선');
+
+  // [65] 일정 편집 내 사전 알림 설정(울릴 시간 N분 전 지정) 검증
+  assert.ok(indexHtml.includes('calEditNotifySwitch'), '일정 편집 모달 내 사전 알림 스위치 탑재');
+  assert.ok(indexHtml.includes('calEditNotifyOffset'), '울릴 시간 N분 전 드롭다운 셀렉터 탑재');
+  assert.ok(indexHtml.includes('notifyMinutes'), '일정 사전 알림 N분 옵션 영속화');
+
+  // [66] 평가해주기 상시 평가 문구 검증
+  assert.ok(indexHtml.includes('언제 얼마든지 평가해주실 수 있습니다'), '평가 모달 하단 상시 평가 안내 문구 탑재');
+
+  // [67] DM 카카오톡 방식 노란색 1 및 전송/수신 시각 상세 표시 검증
+  assert.ok(commJs.includes('dm-unread-badge') && commJs.includes('#eab308'), 'DM 카톡 스타일 노란색 1 안읽음 뱃지 표출');
+  assert.ok(commJs.includes('formatDmTime') && commJs.includes('renderSingleDmMsg'), 'DM 상세 시각 포맷터 및 단일 메시지 렌더러 탑재');
+
+  // [68] 팀 만들기 5대 제약 제거 및 간소화 검증
+  assert.ok(!indexHtml.includes('<select id="grpMaxMembers">'), '팀 만들기 모달 정원 제한 선택란 영구 삭제');
+  assert.ok(!indexHtml.includes('<select id="grpCadence">'), '팀 만들기 모달 인증 주기 선택란 영구 삭제');
+  assert.ok(!indexHtml.includes('<select id="grpWeeks">'), '팀 만들기 모달 챌린지 기간 선택란 영구 삭제');
+  assert.ok(!indexHtml.includes('<input id="grpRule"'), '팀 만들기 모달 인증 규칙 입력란 영구 삭제');
+  assert.ok(!indexHtml.includes('<select id="grpMode">'), '팀 만들기 모달 진행 방식 선택란 영구 삭제');
+
+  // [69] 카카오 로그인 동명이인 중복 닉네임 방지 태그 부여 검증
+  assert.ok(indexHtml.includes('resolveUniqueDisplayName'), '동명이인 고유 식별자 태그 부여 함수 탑재');
+
+  // [추가 과제] 6대 탭 TAB_GUIDE_DATA 최신 혁신 기능 전면 반영 검증
+  assert.ok(indexHtml.includes('오늘의 성장 루틴 & 위젯'), '홈 탭 가이드 최신화 확인');
+  assert.ok(indexHtml.includes('기기 바탕화면 위젯'), '가이드 내 기기 바탕화면 위젯 기능 반영');
+  assert.ok(indexHtml.includes('루틴(Routine) 관리 & 10 EXP'), '목표 탭 가이드 내 루틴 기능 반영');
+  assert.ok(indexHtml.includes('일정 사전 알림') && indexHtml.includes('N분 전'), '일정 탭 가이드 내 사전 알림 반영');
+  assert.ok(indexHtml.includes('스톱워치 랩타임 메모') && indexHtml.includes('표에시간기입'), '기록 탭 가이드 내 스톱워치 랩메모 반영');
+  assert.ok(indexHtml.includes('사진인증 피드') && indexHtml.includes('카톡 스타일 DM'), '소통 탭 가이드 내 사진인증 및 카톡 DM 반영');
+
+  // 서비스워커 캐시 갱신 검증
+  assert.ok(swSrc.includes('es180'), 'sw.js 캐시 버전에 es180 식별자 포함');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

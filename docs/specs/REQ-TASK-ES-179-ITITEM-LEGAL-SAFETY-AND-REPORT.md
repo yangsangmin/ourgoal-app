@@ -1,3 +1,7 @@
+---
+notion_id: "3de598db-9096-81ae-b4e8-c02b2b0072c1"
+---
+
 # 요구사항 정의서 (REQ) — 잇템(제휴링크) 법적 안전장치 및 텔레그램/노션 원장 퀵 신고 배선
 
 > **문서 ID**: REQ-TASK-ES-179-ITITEM-LEGAL-SAFETY-AND-REPORT  
