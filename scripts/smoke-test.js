@@ -6033,6 +6033,63 @@ check('compliance: [#TASK-ES-153] 캘린더 일자별 배경 사진 지정 및 5
   assert.ok(indexSrc.includes('calendarDayBackgrounds: localCalDayBg'), 'loadProfile 내 배경사진 복원 배선');
 });
 
+/* ============ [#TASK-ES-154] 아워골 평가하기 3중 접수창구(텔레그램·노션·DB) 및 피드백 파이프라인 무결성 검증 ============ */
+check('compliance: [#TASK-ES-154] 아워골 평가하기 3중 접수창구(텔레그램·노션·DB) 및 피드백 파이프라인 무결성 검증', () => {
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. api/track.js 백엔드 app_evaluation 수신 및 5대 항목 리포트 조립 검증
+  assert.ok(trackSrc.includes("body.type === 'app_evaluation'"), 'api/track.js app_evaluation 수신 분기');
+  assert.ok(trackSrc.includes("body.evaluation"), 'api/track.js body.evaluation 객체 인식');
+  assert.ok(trackSrc.includes('[아워골 종합 앱 평가 리포트]'), '5대 평가 항목 리포트 본문 자동 조립');
+  assert.ok(trackSrc.includes("evaluation: '앱 평가/피드백'"), '앱 평가 전용 유형 라벨 매핑');
+  assert.ok(trackSrc.includes('[앱 평가] ⭐'), '노션 및 요약 제목 별점/점수 프리픽스');
+
+  // 2. 텔레그램 실시간 알림 전용 서식 검증
+  assert.ok(trackSrc.includes('[아워골 사용자 앱 평가 접수]'), '텔레그램 평가 전용 알림 서식');
+  assert.ok(trackSrc.includes('• 종합 점수:'), '텔레그램 점수 항목 표기');
+
+  // 3. index.html 프론트엔드 4위 1체 피드백 검증
+  assert.ok(indexSrc.includes("btnSubmitEval.disabled = true"), '평가 제출 시 버튼 비활성화 (중복 제출 방지)');
+  assert.ok(indexSrc.includes("btnSubmitEval.textContent = '제출 중...'"), '평가 제출 중 로딩 인디케이터');
+  assert.ok(indexSrc.includes("btnSubmitEval.textContent = '평가 제출하기'"), '제출 완료/실패 시 버튼 원복');
+  assert.ok(indexSrc.includes("closeAppEvaluationModal"), '성공 시 모달 닫기');
+
+  // 4. 서비스워커 캐시 무효화 게이트 검증
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es154'), 'sw.js 캐시 네임 es154 갱신');
+});
+
+/* ============ [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템추가 결함 해결 및 감성 안내문구 무결성 검증 ============ */
+check('compliance: [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템추가 결함 해결 및 감성 안내문구 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const styleSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. showToast 런타임 오류 방어 및 전역 등록 검증
+  assert.ok(indexSrc.includes('window.showToast = toast;'), 'window.showToast = toast 전역 별칭 선언');
+  assert.strictEqual(indexSrc.includes('showToast('), false, 'index.html 내 정의되지 않은 showToast() 호출 완전 박멸');
+
+  // 2. 모달 전환 popstate 간섭 차단 검증
+  assert.ok(indexSrc.includes('openCalendarDayBgPickerModal(sel, true)'), '일간 허브 모달에서 배경사진 모달 진입 시 closeModal 없이 직접 전환');
+
+  // 3. 캘린더 일간 일정 목록(renderCalDayDetail) 체크 버튼 토글 배선 검증
+  assert.ok(indexSrc.includes('data-detailtogglesched'), 'renderCalDayDetail 내 인터랙티브 체크박스 data-detailtogglesched 존재');
+  assert.ok(indexSrc.includes("wrap.querySelectorAll('[data-detailtogglesched]')"), '캘린더 상세 체크박스 클릭 리스너 배선');
+
+  // 4. 프로필 편집기 openProfileEditor(existingDraft) 및 잇템 추가 인메모리 보존 검증
+  assert.ok(indexSrc.includes('function openProfileEditor(existingDraft)'), 'openProfileEditor existingDraft 수신 지원');
+  assert.ok(indexSrc.includes('openProfileEditor(draft)'), '잇템 추가/취소 시 closeModal 없이 부모 모달로 draft 보존 복귀');
+
+  // 5. 일정 탭 감성 안내 카피 탑재 검증
+  assert.ok(indexSrc.includes('일정을 사진배경으로 채워서 나만의 사진일기장을 만들어봐요'), '캘린더 상단 상민님 지정 감성 문구 탑재');
+  assert.ok(indexSrc.includes('class="cal-sub-guide"'), '캘린더 상단 안내 카드 마크업 존재');
+  assert.ok(styleSrc.includes('.cal-sub-guide'), 'ui.css 내 .cal-sub-guide 스타일 정의');
+
+  // 6. 서비스워커 캐시 무효화 게이트 검증
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es155'), 'sw.js 캐시 네임 es155 갱신');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

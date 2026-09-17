@@ -398,25 +398,49 @@ var TYPE_LABELS = {
   bug: '버그/오류 제보',
   feature: '새로운 기능 제안',
   account: '계정/보안 관련',
+  evaluation: '앱 평가/피드백',
   other: '기타 문의사항'
 };
 
 async function handleInquiry(sb, body, req, res) {
+  var isAppEval = body.type === 'app_evaluation' || !!body.evaluation;
+  var evalData = body.evaluation || {};
+  var evalScore = (evalData.score !== undefined && evalData.score !== null && !isNaN(evalData.score)) ? Number(evalData.score) : null;
+  var evalPros = typeof evalData.pros === 'string' ? evalData.pros.trim() : '';
+  var evalCons = typeof evalData.cons === 'string' ? evalData.cons.trim() : '';
+  var evalImp = typeof evalData.improvements === 'string' ? evalData.improvements.trim() : '';
+  var evalCeo = typeof evalData.ceoMsg === 'string' ? evalData.ceoMsg.trim() : '';
+
   var content = typeof body.content === 'string' ? body.content.trim() : '';
-  var inquiryType = body.inquiryType || 'other';
+
+  // #TASK-ES-154: 아워골 앱 평가 데이터인 경우 5개 항목을 리포트 본문으로 자동 조립
+  if (isAppEval) {
+    var evalParts = [];
+    evalParts.push('[아워골 종합 앱 평가 리포트]');
+    if (evalScore !== null) evalParts.push('• 종합 점수: ' + evalScore + '점 / 100점');
+    if (evalPros) evalParts.push('• 장점 (좋았던 점): ' + evalPros);
+    if (evalCons) evalParts.push('• 단점 (아쉬웠던 점): ' + evalCons);
+    if (evalImp) evalParts.push('• 추가 및 개선 요청: ' + evalImp);
+    if (evalCeo) evalParts.push('• 대표에게 하고 싶은 말: ' + evalCeo);
+    content = evalParts.join('\n');
+  }
+
+  var inquiryType = isAppEval ? 'evaluation' : (body.inquiryType || 'other');
   var replyEmail = typeof body.replyEmail === 'string' ? body.replyEmail.trim().slice(0, 100) : '';
   var userId = typeof body.userId === 'string' ? body.userId.trim() : '';
-  var userNickname = typeof body.userNickname === 'string' ? body.userNickname.trim() : '익명 유저';
+  var userNickname = typeof body.userNickname === 'string' ? body.userNickname.trim() : (typeof body.userName === 'string' ? body.userName.trim() : '익명 유저');
   var userAgent = typeof body.userAgent === 'string' ? body.userAgent.slice(0, 300) : (req.headers && req.headers['user-agent'] ? req.headers['user-agent'].slice(0, 300) : '');
   var appVersion = body.appVersion || 'v1.0.0';
 
   if (!content) {
-    return res.status(400).json({ ok: false, error: '문의 내용을 입력해주세요.' });
+    return res.status(400).json({ ok: false, error: '문의 또는 평가 내용을 입력해주세요.' });
   }
 
-  var typeLabel = TYPE_LABELS[inquiryType] || '기타 문의사항';
+  var typeLabel = TYPE_LABELS[inquiryType] || (isAppEval ? '앱 평가/피드백' : '기타 문의사항');
   var nowIso = new Date().toISOString();
-  var summaryTitle = '[' + typeLabel + '] ' + content.slice(0, 25).replace(/[\r\n]+/g, ' ') + (content.length > 25 ? '...' : '') + ' (' + userNickname + ')';
+  var summaryTitle = isAppEval
+    ? ('[앱 평가] ⭐ ' + (evalScore !== null ? evalScore + '점' : '점수미기재') + ' - ' + (evalCeo || evalPros || evalImp || '사용자 평가').slice(0, 20).replace(/[\r\n]+/g, ' ') + ' (' + userNickname + ')')
+    : ('[' + typeLabel + '] ' + content.slice(0, 25).replace(/[\r\n]+/g, ' ') + (content.length > 25 ? '...' : '') + ' (' + userNickname + ')');
 
   var results = { supabase: false, notion: false, telegram: false };
 
@@ -513,15 +537,22 @@ async function handleInquiry(sb, body, req, res) {
 
   if (tgToken && tgChatId) {
     try {
-      var tgText =
-        '📩 [아워골 고객 문의/오류 제보 접수]\n\n' +
-        '• 유형: ' + typeLabel + '\n' +
-        '• 작성자: ' + userNickname + (userId ? ' (' + userId.slice(0, 8) + '...)' : '') + '\n' +
-        '• 회신 이메일: ' + (replyEmail || '미입력(익명)') + '\n' +
-        '• 앱 버전: ' + appVersion + '\n' +
-        '• 접수 시각: ' + nowIso.replace('T', ' ').slice(0, 19) + '\n\n' +
-        '[문의 내용]\n' + content + '\n\n' +
-        '👉 노션 원장: https://app.notion.com/p/' + notionDbId.replace(/-/g, '');
+      var tgText = isAppEval
+        ? ('⭐ [아워골 사용자 앱 평가 접수]\n\n' +
+           (evalScore !== null ? '• 종합 점수: ' + evalScore + '점 / 100점\n' : '') +
+           '• 작성자: ' + userNickname + (userId ? ' (' + userId.slice(0, 8) + '...)' : '') + '\n' +
+           '• 앱 버전: ' + appVersion + '\n' +
+           '• 접수 시각: ' + nowIso.replace('T', ' ').slice(0, 19) + '\n\n' +
+           '[평가 리포트 상세]\n' + content + '\n\n' +
+           '👉 노션 원장: https://app.notion.com/p/' + notionDbId.replace(/-/g, ''))
+        : ('📩 [아워골 고객 문의/오류 제보 접수]\n\n' +
+           '• 유형: ' + typeLabel + '\n' +
+           '• 작성자: ' + userNickname + (userId ? ' (' + userId.slice(0, 8) + '...)' : '') + '\n' +
+           '• 회신 이메일: ' + (replyEmail || '미입력(익명)') + '\n' +
+           '• 앱 버전: ' + appVersion + '\n' +
+           '• 접수 시각: ' + nowIso.replace('T', ' ').slice(0, 19) + '\n\n' +
+           '[문의 내용]\n' + content + '\n\n' +
+           '👉 노션 원장: https://app.notion.com/p/' + notionDbId.replace(/-/g, ''));
 
       var tgRes = await fetch('https://api.telegram.org/bot' + tgToken + '/sendMessage', {
         method: 'POST',
@@ -543,7 +574,7 @@ async function handleInquiry(sb, body, req, res) {
 
   return res.status(200).json({
     ok: true,
-    message: '문의가 성공적으로 접수되었습니다. 신속히 검토하겠습니다.',
+    message: isAppEval ? '소중한 평가가 접수되었습니다. 감사합니다! ⭐' : '문의가 성공적으로 접수되었습니다. 신속히 검토하겠습니다.',
     results: results
   });
 }
@@ -574,9 +605,10 @@ module.exports = async function handler(req, res) {
 
   var sb = getSupabase();
 
-  // #TASK-ES-123: 1:1 고객 문의 및 오류 제보 접수 (노션 DB + 텔레그램 + Supabase)
+  // #TASK-ES-123 & #TASK-ES-154: 1:1 고객 문의, 오류 제보 및 앱 평가 접수 (노션 DB + 텔레그램 + Supabase)
   var isUrlInquiry = req.url && req.url.indexOf('/inquiry') !== -1;
-  if (body.action === 'inquiry' || isUrlInquiry || (body.content && body.inquiryType)) {
+  var isAppEval = body.type === 'app_evaluation' || !!body.evaluation;
+  if (body.action === 'inquiry' || isUrlInquiry || isAppEval || (body.content && body.inquiryType)) {
     return handleInquiry(sb, body, req, res);
   }
 
