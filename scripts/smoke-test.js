@@ -6650,6 +6650,55 @@ check('compliance: [#TASK-ES-173] 나만의 홈 구성 상단 고정(아바타·
   assert.ok(uiCssSrc.includes('.switch.locked'), 'ui.css에 .switch.locked 스타일 탑재');
 });
 
+check('compliance: [#TASK-ES-174] 아워골 생각 메모장 잔여 대기 과제 9건([45]~[53]) 전수 구현 및 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const statsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'universal-stats.js'), 'utf8');
+  const teamLinkedSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-linked-goals.js'), 'utf8');
+  const trackerSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'time-tracker.js'), 'utf8');
+  const teamLevelsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-visibility-levels.js'), 'utf8');
+
+  // [45] 성취통계 데이터 관리 옆 접기토글 먹통 수정
+  assert.ok(statsSrc.includes('togIco.onclick = function(e){'), '[45] 성취통계 아코디언 토글 전용 클릭 핸들러 바인딩 확인');
+
+  // [46] 팀 연계 개인목표 우수 사용사례 예시 카드 및 자동 숨김
+  assert.ok(teamLinkedSrc.includes('id="tlSampleShowcaseCard"'), '[46] 팀 연계 목표 빈화면 우수 사용사례 시각 카드 탑재 확인');
+  assert.ok(teamLinkedSrc.includes('실제 우수 사용사례 예시'), '[46] 팀 연계 목표 우수 사용사례 뱃지 안내문구 확인');
+
+  // [47] 시간기록 모달창 설명 간소화 및 크기 축소
+  assert.ok(trackerSrc.includes('시간별로 세부 내용을 작성할 수 있어요'), '[47] 시간기록 모달 한 줄 설명 간소화 확인');
+  assert.ok(trackerSrc.includes("maxWidth = '340px'"), '[47] 시간기록 모달 340px 컴팩트 크기 축소 확인');
+
+  // [48] 아바타 아이콘 크기 일괄 확대
+  assert.ok(indexHtml.includes('size: 54') && indexHtml.includes('width:54px;height:54px;'), '[48] 홈 EXP 바 아바타 54px 확대 확인');
+  assert.ok(indexHtml.includes('style="width:46px;height:46px;"'), '[48] 상단바 우측 프로필 아바타 46px 확대 확인');
+  assert.ok(indexHtml.includes('avatarHtml(72)'), '[48] 설정창 프로필 아바타 72px 확대 확인');
+
+  // [49] 팀 목표 댓글 작성 및 전송 기능 먹통 오류 수정 (로컬 영속화 및 상태 보존)
+  assert.ok(indexHtml.includes('state.profile.settings.localTeamComments[gid]'), '[49] 팀 댓글 로컬 영속화 안전망 확인');
+  assert.ok(indexHtml.includes("input.value = '';"), '[49] 팀 댓글 작성 후 입력창 초기화 확인');
+  assert.ok(indexHtml.includes('state.lastOpenCommentKey'), '[49] 팀 댓글 리렌더링 후 댓글창 오픈 상태 유지 확인');
+
+  // [50] 설정창 진입 시 모든 설정 섹션 기본 접힘(Collapsed) 적용
+  assert.ok(!indexHtml.includes('<details class="settings-group-accordion" open>'), '[50] 설정창 4대 아코디언 기본 open 속성 제거 확인');
+
+  // [51] 피드 게시 모달 내 '미리보기' 버튼 추가 및 피드 렌더링 사전 확인
+  assert.ok(indexHtml.includes('id="sharePreviewBtn"'), '[51] 피드 공유 모달 내 미리보기 버튼 탑재 확인');
+  assert.ok(indexHtml.includes('id="sharePreviewSlot"'), '[51] 피드 실시간 프리뷰 카드 슬롯 탑재 확인');
+
+  // [52] 팀 목표 탭 최초 진입 시 접을 수 있는 모든 아코디언 기본 접힘
+  assert.ok(teamLevelsSrc.includes('data-tgmslist') && teamLevelsSrc.includes('display:none;'), '[52] 팀 목표 마일스톤 리스트 기본 접힘 확인');
+  assert.ok(teamLevelsSrc.includes('isLevelFolded = p.settings.foldLevelSection[g.id] !== false;'), '[52] 수준별 조 관리 아코디언 기본 접힘 확인');
+
+  // [53] 목표탭 '템플릿백과사전' 전체화면 팝업 신설 및 상호작용 구현
+  assert.ok(indexHtml.includes('id="btnGoalTemplateEncyclopedia"'), '[53] 목표탭 나만보기 배지 옆 템플릿백과사전 버튼 탑재 확인');
+  assert.ok(indexHtml.includes('id="templateEncyclopediaModal"'), '[53] 템플릿백과사전 전체화면 팝업 모달 마크업 탑재 확인');
+  assert.ok(indexHtml.includes('openTemplateEncyclopediaModal'), '[53] 템플릿백과사전 모달 오픈 함수 확인');
+  assert.ok(indexHtml.includes('REAL_USER_TEMPLATES'), '[53] 실사용 템플릿 사전 데이터셋 확인');
+  assert.ok(indexHtml.includes('copyRealUserTemplate'), '[53] 실사용 템플릿 내 목표 복사 함수 확인');
+  assert.ok(indexHtml.includes('cheerRealUserTemplate'), '[53] 실사용 템플릿 응원하기 상호작용 함수 확인');
+  assert.ok(indexHtml.includes('switchTemplateEncyclopediaTab'), '[53] 실사용 템플릿 및 AI 추천 템플릿 2개 탭 전환 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

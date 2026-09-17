@@ -282,17 +282,62 @@
             '<span class="faint" style="font-size:.8125rem;">팀 로드맵을 복사해 나만의 페이스로 실행하고 팀원과 상호 체크해요</span>' +
           '</div>' +
         '</div>' +
-        '<div class="card" style="text-align:center;padding:36px 20px;background:var(--surface-2);border:1px dashed var(--rule);border-radius:16px;margin-top:12px;">' +
-          '<div style="font-size:3rem;margin-bottom:12px;">🤝</div>' +
+        '<div class="card" style="text-align:center;padding:30px 20px;background:var(--surface-2);border:1px dashed var(--rule);border-radius:16px;margin-top:12px;">' +
+          '<div style="font-size:3rem;margin-bottom:10px;">🤝</div>' +
           '<h3 style="margin:0 0 8px;font-size:1.15rem;color:var(--ink);">아직 참여 중인 팀 연계 개인목표가 없어요</h3>' +
-          '<p class="faint" style="font-size:.875rem;max-width:420px;margin:0 auto 20px;line-height:1.6;">' +
+          '<p class="faint" style="font-size:.875rem;max-width:420px;margin:0 auto 16px;line-height:1.6;">' +
             '팀 크루들이 함께 만든 팀 목표에서 <b>[팀 연계 개인목표로 복사하며 참가]</b>를 누르면<br>' +
             '목표·마일스톤·세부할일 세트가 내 화면으로 복사되어 개별적으로 작성·체크하고,<br>' +
             '팀 목표 대시보드에서 다른 팀원들과 서로의 달성 정도를 상호 체크(찌르기/댓글/DM)할 수 있어요!' +
           '</p>' +
-          '<button class="btn btn-primary" id="btnGoToTeamGoalsExplore" type="button" style="padding:10px 22px;font-weight:700;font-size:.9375rem;background:linear-gradient(135deg, var(--brand), #ec4899);border:none;border-radius:10px;box-shadow:0 3px 10px rgba(225,29,72,0.25);cursor:pointer;">' +
+          '<button class="btn btn-primary" id="btnGoToTeamGoalsExplore" type="button" style="padding:10px 22px;font-weight:700;font-size:.9375rem;background:linear-gradient(135deg, var(--brand), #ec4899);border:none;border-radius:10px;box-shadow:0 3px 10px rgba(225,29,72,0.25);cursor:pointer;margin-bottom:24px;">' +
             '🎯 팀 목표 둘러보고 참가하기' +
           '</button>' +
+          '<!-- 실제 우수 사용사례 예시 프리뷰 카드 (#TASK-ES-174) -->' +
+          '<div id="tlSampleShowcaseCard" style="text-align:left;background:var(--card);border:1.5px solid rgba(99,102,241,0.3);border-radius:14px;padding:16px;box-shadow:0 4px 16px rgba(0,0,0,0.06);">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;border-bottom:1px solid var(--rule);padding-bottom:10px;">' +
+              '<div style="display:flex;align-items:center;gap:6px;">' +
+                '<span style="font-size:1.1rem;">💡</span>' +
+                '<span style="font-size:.875rem;font-weight:800;color:var(--primary);">실제 우수 사용사례 예시 (참가 후 내 화면)</span>' +
+              '</div>' +
+              '<span class="badge" style="font-size:.7rem;padding:2px 8px;border-radius:10px;background:rgba(99,102,241,0.12);color:var(--primary);font-weight:700;">실제 동작 화면 예시</span>' +
+            '</div>' +
+            '<div style="background:var(--card2);border-radius:10px;padding:10px 12px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">' +
+              '<div>' +
+                '<div style="font-size:.75rem;color:var(--ink-soft);font-weight:600;">연계 팀: 🏃‍♂️ 모닝 러닝 크루</div>' +
+                '<div style="font-size:.9375rem;font-weight:800;color:var(--ink);margin-top:2px;">가을 10km 완주 & 페이스 단축 프로젝트</div>' +
+              '</div>' +
+              '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);font-weight:700;">D-28</span>' +
+            '</div>' +
+            '<div style="margin-bottom:10px;">' +
+              '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+                '<span style="font-size:.78125rem;font-weight:700;color:var(--ink);">내 개인 달성률 75%</span>' +
+                '<span class="faint" style="font-size:.75rem;">마일스톤 3/4 완료</span>' +
+              '</div>' +
+              '<div class="group-bar" style="height:6px;margin:0;"><span style="width:75%;background:var(--primary);"></span></div>' +
+            '</div>' +
+            '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">' +
+              '<div style="font-size:.8125rem;padding:6px 10px;background:var(--surface-2);border-radius:8px;display:flex;align-items:center;gap:8px;">' +
+                '<span style="color:#10b981;font-weight:800;">✓</span>' +
+                '<span style="text-decoration:line-through;color:var(--ink-faint);">1단계: 주 3회 3km 지속주 러닝 완주</span>' +
+              '</div>' +
+              '<div style="font-size:.8125rem;padding:6px 10px;background:var(--surface-2);border-radius:8px;display:flex;align-items:center;gap:8px;">' +
+                '<span style="color:#10b981;font-weight:800;">✓</span>' +
+                '<span style="text-decoration:line-through;color:var(--ink-faint);">2단계: 5km 러닝 6분 30초 페이스 유지</span>' +
+              '</div>' +
+              '<div style="font-size:.8125rem;padding:6px 10px;background:var(--card);border:1px solid var(--primary);border-radius:8px;display:flex;align-items:center;gap:8px;">' +
+                '<span style="color:var(--primary);font-weight:800;">●</span>' +
+                '<span style="color:var(--ink);font-weight:700;">3단계: 주말 8km 빌드업 지속주 러닝 (오늘 실천 중)</span>' +
+              '</div>' +
+            '</div>' +
+            '<div style="padding:8px 10px;background:var(--card2);border-radius:8px;font-size:.75rem;color:var(--ink-soft);display:flex;align-items:center;justify-content:space-between;">' +
+              '<span>👥 <b>팀원 실시간 상호 체크</b>: 김민우(75%) · 이서연(50%) · 박진혁(25%)</span>' +
+              '<span style="color:var(--primary);font-weight:700;">⚡ 찌르기 · 💬 대화</span>' +
+            '</div>' +
+            '<div style="margin-top:8px;font-size:.72rem;color:var(--ink-faint);text-align:right;">' +
+              '* 팀 연계 개인목표를 생성하면 이 예시 카드는 자동으로 사라집니다.' +
+            '</div>' +
+          '</div>' +
         '</div>';
 
       var btnExplore = view.querySelector('#btnGoToTeamGoalsExplore');
