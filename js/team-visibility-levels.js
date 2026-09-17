@@ -465,10 +465,12 @@
     }
 
     // 3.2 대표 1개 목표 카드 렌더링
+    var isEdit = canManage && !!state.teamGoalEditMode;
     var singleGoalCardHtml = '';
     if(!goals.length){
-      singleGoalCardHtml = '<p class="faint" style="margin-top:4px;">아직 공동 팀 목표가 없어요.</p>' +
-        (canManage ? '<button class="btn btn-primary btn-sm" data-addteamgoal="' + g.id + '" type="button" style="margin-top:12px;width:100%;">+ 공동 팀 목표 추가</button>' : '');
+      singleGoalCardHtml = isEdit
+        ? '<div style="text-align:center;padding:20px;background:var(--card2);border-radius:12px;border:1px dashed var(--rule);margin:10px 0;"><p class="faint" style="margin:0 0 8px;">아직 공동 팀 목표가 없어요.</p><button class="btn btn-primary btn-sm" data-addteamgoal="' + g.id + '" type="button">+ 새 공동 팀 목표 추가 (추천 템플릿)</button></div>'
+        : '<div style="text-align:center;padding:20px;background:var(--card2);border-radius:12px;border:1px dashed var(--rule);margin:10px 0;"><p class="faint" style="margin:0;">아직 공동 팀 목표가 없어요.</p></div>';
     } else if(activeTg){
       var tg = activeTg;
       var done = (tg.milestones || []).filter(function(m){ return m.status === 'done'; }).length;
@@ -487,29 +489,33 @@
         var taskRows = tasks.map(function(t){
           return '<div class="task-row" style="padding:4px 0;display:flex;align-items:center;gap:6px;">' +
             '<div class="task-check' + (t.done ? ' done' : '') + '"' + (canManage ? ' data-tgtoggletask="' + tg.id + ':' + m.id + ':' + t.id + '" style="cursor:pointer;"' : '') + '>' + (t.done ? '✓' : '') + '</div>' +
-            (canManage
+            (isEdit
               ? '<input class="task-title' + (t.done ? ' done-text' : '') + '" data-tgtasktitle="' + tg.id + ':' + m.id + ':' + t.id + '" value="' + esc(t.title) + '" style="flex:1;font-size:.8125rem;">'
               : '<span class="task-title' + (t.done ? ' done-text' : '') + '" style="flex:1;font-size:.8125rem;">' + esc(t.title) + '</span>') +
-            (canManage ? '<button class="icon-btn" data-tgdeltask="' + tg.id + ':' + m.id + ':' + t.id + '" type="button" title="삭제" style="padding:2px 4px;">×</button>' : '') +
+            (isEdit ? '<button class="icon-btn" data-tgdeltask="' + tg.id + ':' + m.id + ':' + t.id + '" type="button" title="삭제" style="padding:2px 4px;">×</button>' : '') +
           '</div>';
         }).join('');
 
         var taskToggleBtn = nT > 0 ?
           '<button class="tg-task-toggle-btn" data-tgtoggletasks="' + tg.id + ':' + m.id + '" type="button" style="background:transparent;border:none;color:var(--brand-strong);font-size:.75rem;font-weight:700;padding:2px 0;cursor:pointer;display:inline-flex;align-items:center;gap:3px;margin-top:2px;">' +
             '세부 할 일 ' + nDone + '/' + nT + ' <span class="t-arrow">▼</span>' +
-          '</button>' : (canManage ? '<button class="tg-task-toggle-btn" data-tgaddtaskmodal="' + tg.id + ':' + m.id + '" type="button" style="background:transparent;border:none;color:var(--ink-faint);font-size:.75rem;padding:2px 0;cursor:pointer;">+ 할 일 추가</button>' : '');
+          '</button>' : (isEdit ? '<button class="tg-task-toggle-btn" data-tgaddtaskmodal="' + tg.id + ':' + m.id + '" type="button" style="background:transparent;border:none;color:var(--ink-faint);font-size:.75rem;padding:2px 0;cursor:pointer;">+ 할 일 추가</button>' : '');
 
         var tasksBox =
-          '<div class="tg-subtask-box" data-tgtaskbox="' + tg.id + ':' + m.id + '" style="display:none;margin-top:6px;padding:6px 10px;background:var(--card2);border-radius:8px;border:1px dashed var(--rule);">' +
+          '<div class="tg-subtask-box" data-tgtaskbox="' + tg.id + ':' + m.id + '" style="' + (isEdit ? '' : 'display:none;') + 'margin-top:6px;padding:6px 10px;background:var(--card2);border-radius:8px;border:1px dashed var(--rule);">' +
             taskRows +
-            (canManage ? '<div data-tgaddtask="' + tg.id + ':' + m.id + '" style="cursor:pointer;font-size:.75rem;color:var(--brand-strong);margin-top:4px;font-weight:700;">+ 세부 할 일 추가</div>' : '') +
+            (isEdit ? '<div data-tgaddtask="' + tg.id + ':' + m.id + '" style="cursor:pointer;font-size:.75rem;color:var(--brand-strong);margin-top:4px;font-weight:700;">+ 세부 할 일 추가</div>' : '') +
           '</div>';
 
-        var reorderBtns = (canManage && state.teamGoalEditMode) ?
-          '<div style="display:flex;align-items:center;gap:2px;margin-right:4px;">' +
-            '<button class="icon-btn" data-tgmup="' + g.id + ':' + tg.id + ':' + m.id + '" type="button" title="위로" style="font-size:.75rem;padding:1px 4px;">▲</button>' +
-            '<button class="icon-btn" data-tgmdown="' + g.id + ':' + tg.id + ':' + m.id + '" type="button" title="아래로" style="font-size:.75rem;padding:1px 4px;">▼</button>' +
+        var reorderBtns = isEdit ?
+          '<div style="display:flex;align-items:center;gap:4px;margin-right:6px;">' +
+            '<button class="tg-reorder-btn" data-tgmup="' + g.id + ':' + tg.id + ':' + m.id + '" type="button" title="위로" aria-label="위로 이동">▲</button>' +
+            '<button class="tg-reorder-btn" data-tgmdown="' + g.id + ':' + tg.id + ':' + m.id + '" type="button" title="아래로" aria-label="아래로 이동">▼</button>' +
           '</div>' : '';
+
+        var priorityBadgeOrSelect = isEdit ?
+          '<select data-tgmprio="' + g.id + ':' + tg.id + ':' + m.id + '" style="font-size:.75rem;padding:2px 4px;border-radius:6px;border:1px solid var(--rule);background:var(--card);margin-right:6px;"><option value="high"' + (m.priority==='high'?' selected':'') + '>높음</option><option value="medium"' + (!m.priority||m.priority==='medium'?' selected':'') + '>보통</option><option value="low"' + (m.priority==='low'?' selected':'') + '>낮음</option></select>' :
+          (m.priority ? '<span class="ms-priority-tag ms-priority-' + m.priority + '" style="margin-right:4px;">' + (m.priority==='high'?'높음':(m.priority==='low'?'낮음':'보통')) + '</span>' : '');
 
         var msCmtList = (getTeamCommentsCache()[g.id] || []).filter(function(c){ return c.target_id === m.id; });
         var msCmtCount = msCmtList.length;
@@ -526,14 +532,15 @@
             '<div class="ms-main">' +
               reorderBtns +
               '<div class="ms-status ' + m.status + '"' + (canManage ? ' data-tgcycle="1" style="cursor:pointer;"' : '') + '>' + (m.status === 'done' ? '✓' : '') + '</div>' +
+              priorityBadgeOrSelect +
               '<div style="flex:1;min-width:0;">' +
-                (canManage
-                  ? '<input class="' + (m.status === 'done' ? 'ms-title done-text' : 'ms-title') + '" data-tgmtitle="1" value="' + esc(m.title) + '" style="' + (state.teamGoalEditMode ? 'border-bottom:1.5px solid var(--brand);background:var(--surface-2);' : '') + '">'
+                (isEdit
+                  ? '<input class="' + (m.status === 'done' ? 'ms-title done-text' : 'ms-title') + '" data-tgmtitle="1" value="' + esc(m.title) + '" style="border-bottom:1.5px solid var(--brand);background:var(--surface-2);border-radius:6px;padding:3px 6px;">'
                   : '<span class="' + (m.status === 'done' ? 'ms-title done-text' : 'ms-title') + '" style="display:inline-block;">' + esc(m.title) + '</span>') +
                 taskToggleBtn +
               '</div>' +
               msPingBtn +
-              (canManage ? '<div class="ms-actions"><button class="icon-btn" data-tgmdel="1" aria-label="마일스톤 삭제">×</button></div>' : '') +
+              (isEdit ? '<div class="ms-actions"><button class="icon-btn" data-tgmdel="1" aria-label="마일스톤 삭제">×</button></div>' : '') +
             '</div>' +
             tasksBox +
             msCommentsBox +
@@ -553,24 +560,29 @@
         '</div>' +
       '</div>';
 
+      var inlineDueHtml = isEdit
+        ? '<div style="display:flex;align-items:center;gap:6px;margin:6px 0 8px;"><span class="faint" style="font-size:.75rem;">마감일</span><input type="date" data-tgdue="' + g.id + ':' + tg.id + '" value="' + (tg.dueDate || '') + '" style="font-size:.8125rem;padding:2px 6px;border-radius:6px;border:1px solid var(--rule);background:var(--card);"></div>'
+        : '';
+
       singleGoalCardHtml = '<div class="tg-compact-goal-card" data-teamgoal="' + tg.id + '">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">' +
-            (canManage
-              ? '<input class="ms-title" data-tgtitle="1" value="' + esc(tg.title) + '" style="flex:1;font-weight:700;font-size:1rem;' + (state.teamGoalEditMode ? 'border-bottom:1.5px solid var(--brand);background:var(--surface-2);' : '') + '">'
+            (isEdit
+              ? '<input class="ms-title" data-tgtitle="1" value="' + esc(tg.title) + '" style="flex:1;font-weight:700;font-size:1rem;border-bottom:1.5px solid var(--brand);background:var(--surface-2);border-radius:6px;padding:3px 6px;">'
               : '<b style="font-size:1rem;color:var(--ink);">' + esc(tg.title) + '</b>') +
-            tgPingBtn + (tg.dueDate ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);flex:0 0 auto;">' + dDay(tg.dueDate) + '</span>' : '') + (canManage ? '<button class="icon-btn" data-tgdel="1" aria-label="팀 목표 삭제">×</button>' : '') +
+            tgPingBtn + (tg.dueDate ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);flex:0 0 auto;">' + dDay(tg.dueDate) + '</span>' : '') + (isEdit ? '<button class="icon-btn" data-tgdel="1" aria-label="팀 목표 삭제">×</button>' : '') +
           '</div>' +
+          inlineDueHtml +
           '<div class="group-bar" style="margin-top:8px;"><span style="width:' + pct + '%;"></span></div>' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0 8px;">' +
             '<span class="faint" style="font-size:.8125rem;font-weight:600;">달성률 ' + pct + '% · 마일스톤 ' + done + '/' + total + ' 완료</span>' +
             '<div style="display:flex;align-items:center;gap:4px;">' +
-              (canManage ? '<button class="btn btn-ghost btn-sm" data-tgeditmodal="' + g.id + ':' + tg.id + '" type="button" style="font-size:.75rem;padding:2px 8px;border-color:var(--brand);color:var(--brand-strong);">✏️ 상세 편집</button>' : '') +
+              (isEdit ? '<button class="btn btn-ghost btn-sm" data-tgeditmodal="' + g.id + ':' + tg.id + '" type="button" style="font-size:.75rem;padding:2px 8px;border-color:var(--brand);color:var(--brand-strong);">✏️ 모달 상세 편집</button>' : '') +
               '<button class="btn btn-ghost btn-sm tg-fold-btn" data-tgfoldlist="' + tg.id + '" type="button" style="font-size:.75rem;padding:2px 7px;border-color:var(--rule);">' + ((state.profile && state.profile.settings && state.profile.settings.unfoldMsList && state.profile.settings.unfoldMsList[tg.id]) ? '마일스톤 접기 ▲' : '마일스톤 펼치기 ▼') + '</button>' +
             '</div>' +
           '</div>' +
           (tlSec.teamLinkedBtnHtml || '') + (tlSec.participantsSectionHtml || '') +
-          '<div class="ms-list" data-tgmslist="' + tg.id + '" style="' + ((state.profile && state.profile.settings && state.profile.settings.unfoldMsList && state.profile.settings.unfoldMsList[tg.id]) ? '' : 'display:none;') + '">' + (msHtml || '<p class="faint" style="font-size:.8125rem;padding:6px 0;">등록된 마일스톤이 없어요.</p>') + '</div>' +
-          (canManage ? '<div class="add-ms-btn" data-tgaddms="1" style="margin-top:6px;">+ 마일스톤 추가</div>' : '') +
+          '<div class="ms-list" data-tgmslist="' + tg.id + '" style="' + ((isEdit || (state.profile && state.profile.settings && state.profile.settings.unfoldMsList && state.profile.settings.unfoldMsList[tg.id])) ? '' : 'display:none;') + '">' + (msHtml || '<p class="faint" style="font-size:.8125rem;padding:6px 0;">등록된 마일스톤이 없어요.</p>') + '</div>' +
+          (isEdit ? '<div class="add-ms-btn" data-tgaddms="1" style="margin-top:6px;cursor:pointer;">+ 마일스톤 추가</div>' : '') +
           goalCommentsBox +
         '</div>';
     }
@@ -666,7 +678,7 @@
           '</div>' +
           '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
             '<span class="faint" style="font-size:.75rem;">' + (curMode === 'goal' ? '💡 현재 선택된 목표 전용 조 목록입니다.' : '💡 팀 전반에 공통 적용되는 기본 조 목록입니다.') + '</span>' +
-            '<button class="btn btn-ghost btn-sm" data-addlevelgroup="' + addGroupTargetKey + '" type="button" style="padding:2px 8px;font-size:.75rem;color:var(--brand-strong);border-color:var(--red-line);flex:0 0 auto;">+ 조 추가</button>' +
+            (isEdit ? '<button class="btn btn-ghost btn-sm" data-addlevelgroup="' + addGroupTargetKey + '" type="button" style="padding:2px 8px;font-size:.75rem;color:var(--brand-strong);border-color:var(--red-line);flex:0 0 auto;">+ 조 추가</button>' : '') +
           '</div>' +
           (levelGroupsHtml || '<p class="faint" style="font-size:.8125rem;">등록된 수준별 조가 없어요.</p>') +
         '</div>' +

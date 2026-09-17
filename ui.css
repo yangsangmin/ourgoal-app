@@ -1920,9 +1920,10 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow-y: auto;
   position: relative;
   padding: 10px 0;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* 초시계 디스플레이 */
@@ -1939,6 +1940,71 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   width: 100%;
   max-width: 500px;
   box-sizing: border-box;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), padding 0.3s ease, margin 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* [상민님 의도 44] 구간 메모 작성 시 시간창 자연스럽게 위로 올리기 */
+.tt-body.tt-memo-active {
+  justify-content: flex-start;
+  padding-top: 4px;
+}
+
+.tt-body.tt-memo-active .tt-clock-card {
+  transform: translateY(-4px) scale(0.82);
+  padding: 8px 14px;
+  margin-bottom: 6px;
+  border-color: rgba(99, 102, 241, 0.35);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(15, 23, 42, 0.5) 100%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.tt-body.tt-memo-active .tt-status-badge {
+  margin-bottom: 2px;
+  padding: 2px 8px;
+  font-size: 10px;
+}
+
+.tt-body.tt-memo-active .tt-digits {
+  font-size: clamp(2rem, 7.5vw, 3.2rem);
+  margin: 2px 0;
+}
+
+.tt-body.tt-memo-active .tt-digits-sub {
+  font-size: clamp(0.9rem, 2.6vw, 1.2rem);
+  margin-bottom: 0;
+}
+
+/* 인라인 구간 메모 컨테이너 (#TASK-ES-172, [44], [55]) */
+.tt-lap-memo-container {
+  width: 100%;
+  max-width: 500px;
+  background: rgba(15, 23, 42, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(99, 102, 241, 0.45);
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-sizing: border-box;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+  margin-bottom: 8px;
+  animation: ttMemoSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 100;
+}
+
+@keyframes ttMemoSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.tt-body.tt-memo-active .tt-laps-wrapper {
+  max-height: 110px;
+  opacity: 0.6;
 }
 
 .tt-status-badge {
@@ -1954,6 +2020,7 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  transition: all 0.25s ease;
 }
 
 .tt-status-badge.running {
@@ -1994,6 +2061,7 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   line-height: 1;
   text-shadow: 0 4px 20px rgba(59, 130, 246, 0.25);
   margin: 6px 0;
+  transition: all 0.3s ease;
 }
 
 .tt-digits-sub {
@@ -2002,6 +2070,7 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   font-weight: 600;
   color: #64748b;
   margin-bottom: 4px;
+  transition: all 0.3s ease;
 }
 
 /* 구간기록 목록 */
@@ -2017,6 +2086,7 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   padding: 8px 12px;
   box-sizing: border-box;
   max-height: 220px;
+  transition: all 0.3s ease;
 }
 
 .tt-laps-wrapper::-webkit-scrollbar {
@@ -2030,28 +2100,45 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
 
 .tt-lap-item {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   font-size: 13px;
   color: #cbd5e1;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.tt-lap-item:last-child {
-  border-bottom: none;
+.tt-lap-item:hover {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.3);
+  transform: translateY(-1px);
 }
 
 .tt-lap-item.latest {
-  color: #60a5fa;
+  color: #818cf8;
   font-weight: 700;
-  background: rgba(59, 130, 246, 0.08);
-  border-radius: 8px;
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.15);
+}
+
+.tt-lap-item:last-child {
+  margin-bottom: 0;
 }
 
 .tt-lap-num {
-  font-weight: 600;
-  min-width: 60px;
+  font-weight: 700;
+  font-size: 11.5px;
+  background: rgba(99, 102, 241, 0.2);
+  color: #818cf8;
+  padding: 2px 7px;
+  border-radius: 6px;
+  display: inline-block;
 }
 
 .tt-lap-split {
@@ -2064,6 +2151,28 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   font-family: ui-monospace, "SF Mono", monospace;
   font-weight: 700;
   font-size: 14px;
+  color: #e2e8f0;
+}
+
+.btn-quick-lap-tag,
+.btn-lap-card-tag {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #cbd5e1;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.btn-quick-lap-tag:hover,
+.btn-lap-card-tag:hover {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: #6366f1;
+  color: #ffffff;
 }
 
 /* 하단 인터랙션 컨트롤 바 */

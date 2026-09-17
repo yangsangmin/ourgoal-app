@@ -127,7 +127,7 @@
     /**
      * 팀 목표 편집 완료 확정 및 저장
      */
-    commitAndFinishTeamGoalEdit: async function(deps){
+        commitAndFinishTeamGoalEdit: async function(deps){
       if(!deps || !deps.state || !deps.view) return;
       var view = deps.view;
       var state = deps.state;
@@ -137,6 +137,7 @@
         document.activeElement.blur();
       }
 
+      // 1. 팀 목표명 수집
       view.querySelectorAll('[data-tgtitle]').forEach(function(inp){
         var card = inp.closest('[data-teamgoal]');
         var tgid = card && card.dataset.teamgoal;
@@ -147,6 +148,17 @@
         if(tg && inp.value.trim()){ tg.title = inp.value.trim(); }
       });
 
+      // 2. 팀 목표 인라인 마감일 수집
+      view.querySelectorAll('[data-tgdue]').forEach(function(inp){
+        var parts = (inp.dataset.tgdue || '').split(':');
+        var gid = parts[0];
+        var tgid = parts[1];
+        var g = mockGroups.find(function(x){ return x.id===gid; });
+        var tg = g && (g.teamGoals||[]).find(function(x){ return x.id===tgid; });
+        if(tg){ tg.dueDate = inp.value || null; }
+      });
+
+      // 3. 마일스톤 제목 수집
       view.querySelectorAll('[data-tgmtitle]').forEach(function(inp){
         var row = inp.closest('[data-tgmid]');
         var mid = row && row.dataset.tgmid;
@@ -160,7 +172,76 @@
         if(m && inp.value.trim()){ m.title = inp.value.trim(); }
       });
 
+      // 4. 마일스톤 우선순위 수집
+      view.querySelectorAll('[data-tgmprio]').forEach(function(sel){
+        var parts = (sel.dataset.tgmprio || '').split(':');
+        var gid = parts[0];
+        var tgid = parts[1];
+        var mid = parts[2];
+        var g = mockGroups.find(function(x){ return x.id===gid; });
+        var tg = g && (g.teamGoals||[]).find(function(x){ return x.id===tgid; });
+        var m = tg && (tg.milestones||[]).find(function(x){ return x.id===mid; });
+        if(m){ m.priority = sel.value || 'medium'; }
+      });
+
+      // 5. 세부 할일 제목 수집
+      view.querySelectorAll('[data-tgtasktitle]').forEach(function(inp){
+        var parts = (inp.dataset.tgtasktitle || '').split(':');
+        var tgid = parts[0];
+        var mid = parts[1];
+        var tid = parts[2];
+        var card = inp.closest('[data-teamgoal]');
+        var pCard = inp.closest('[data-teamcard]');
+        var gid = pCard && pCard.dataset.teamcard;
+        var g = mockGroups.find(function(x){ return x.id===gid; });
+        var tg = g && (g.teamGoals||[]).find(function(x){ return x.id===tgid; });
+        var m = tg && (tg.milestones||[]).find(function(x){ return x.id===mid; });
+        var t = m && (m.tasks||[]).find(function(x){ return x.id===tid; });
+        if(t && inp.value.trim()){ t.title = inp.value.trim(); }
+      });
+
+      // 6. [시너지 E2] 팀 연계 개인목표(Linked Goals) 참조 무결성 자동 수호
+      if(window.OurgoalTeamLinkedGoals && typeof OurgoalTeamLinkedGoals.syncWithTeamGoals === 'function'){
+        mockGroups.forEach(function(g){
+          if(g.teamGoals && g.teamGoals.length){
+            OurgoalTeamLinkedGoals.syncWithTeamGoals(g.teamGoals, g.id);
+          }
+        });
+      }
+
+      // 7. [시너지 E3] 편집 완료 실시간 시스템 공지 발행 (team_comments)
+      mockGroups.forEach(function(g){
+        if(g.teamGoals && g.teamGoals.length){
+          var lastEditedGoal = g.teamGoals[0];
+          var nowISO = new Date().toISOString();
+          var noticeRow = {
+            id: 'cmt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+            group_id: g.id,
+            user_id: 'system',
+            display_name: '📢 팀 공지',
+            target_id: lastEditedGoal.id,
+            text: '팀장님이 공동 목표 [' + (lastEditedGoal.title || '목표') + '] 세부 계획을 업데이트했습니다!',
+            created_at: nowISO,
+            is_system: true
+          };
+          if(window.TEAM_COMMENTS_CACHE){
+            window.TEAM_COMMENTS_CACHE[g.id] = window.TEAM_COMMENTS_CACHE[g.id] || [];
+            window.TEAM_COMMENTS_CACHE[g.id].push(noticeRow);
+          }
+          if(state.profile && state.profile.settings){
+            state.profile.settings.localTeamComments = state.profile.settings.localTeamComments || {};
+            state.profile.settings.localTeamComments[g.id] = state.profile.settings.localTeamComments[g.id] || [];
+            state.profile.settings.localTeamComments[g.id].push(noticeRow);
+          }
+          if(window.sb && window.sb.from){
+            try { window.sb.from('team_comments').insert(noticeRow).catch(function(){}); } catch(e){}
+          }
+        }
+      });
+
       state.teamGoalEditMode = false;
+      OurgoalGoalEditUX.removeFloatingBar();
+
       if(typeof deps.saveProfile === 'function'){
         await deps.saveProfile();
       }
@@ -238,14 +319,41 @@
     /**
      * 팀 목표 화면 인라인 완료 버튼 바인딩
      */
-    wireTeamGoalEdit: function(deps){
-      if(!deps || !deps.view) return;
+        wireTeamGoalEdit: function(deps){
+      if(!deps || !deps.view || !deps.state) return;
+      var state = deps.state;
       var teamDoneBtn = deps.view.querySelector('#btnTeamGoalEditDoneInline');
       if(teamDoneBtn){
         teamDoneBtn.addEventListener('click', async function(e){
           e.preventDefault();
           await OurgoalGoalEditUX.commitAndFinishTeamGoalEdit(deps);
         });
+      }
+
+      // 하단 플로팅 완료 바 (#TASK-ES-176)
+      OurgoalGoalEditUX.removeFloatingBar();
+      if(state.teamGoalEditMode){
+        var fb = document.createElement('div');
+        fb.id = 'goalEditFloatingBar';
+        fb.className = 'goal-edit-floating-bar';
+        fb.innerHTML =
+          '<div class="bar-info">' +
+            '<span class="bar-title">✏️ 팀 목표 편집 중</span>' +
+            '<span class="bar-sub">수정 후 완료를 누르면 팀에 반영돼요</span>' +
+          '</div>' +
+          '<button class="goal-edit-done-cta-btn" id="btnTeamGoalEditDoneFloating" type="button">' +
+            '✓ 편집 완료' +
+          '</button>';
+        document.body.appendChild(fb);
+
+        var fbDoneBtn = fb.querySelector('#btnTeamGoalEditDoneFloating');
+        if(fbDoneBtn){
+          fbDoneBtn.addEventListener('click', async function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            await OurgoalGoalEditUX.commitAndFinishTeamGoalEdit(deps);
+          });
+        }
       }
     },
 
@@ -256,7 +364,7 @@
       var fb = document.getElementById('goalEditFloatingBar');
       if(fb){
         if(tab !== 'goals') fb.style.display = 'none';
-        else if(state && state.goalEditMode) fb.style.display = 'flex';
+        else if(state && (state.goalEditMode || (state.goalsSubTab === 'team' && state.teamGoalEditMode))) fb.style.display = 'flex';
       }
     }
   };
