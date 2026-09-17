@@ -4231,29 +4231,49 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       av.textContent = p.displayName.slice(0,1);
     }
   }
-  /* ============ Notion webhook 전송 ============ */
+  /* ============ Notion 실시간 동기화 (Direct API & Webhook) ============ */
   async function sendToNotion(record, feedback){
     var s = state.profile && state.profile.settings;
-    if(!s || !s.notionSync || !s.notionWebhookUrl) return false;
-    try{
-      await fetch(s.notionWebhookUrl, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        mode:'no-cors',
-        body: JSON.stringify({
-          source:'아워골',
-          user: state.profile.displayName,
-          text: record.text,
-          createdAt: record.createdAt || nowISO(),
-          verdict: feedback ? feedback.verdict : null,
-          comment: feedback ? feedback.comment : null
-        })
-      });
-      return true;
-    } catch(e){
-      console.warn('Notion webhook failed:', e);
-      return false;
+    if(!s || !s.notionSync) return false;
+
+    // 1. Direct Notion Database API 푸시 (API Key & Database ID)
+    if(s.notionApiKey && s.notionDatabaseId && typeof pushRecordToNotion === 'function'){
+      try {
+        var columns = ['항목', '내용'];
+        var rows = [
+          ['실천 내용', record.text || ''],
+          ['기록 일시', (record.createdAt || nowISO()).slice(0, 19).replace('T', ' ')]
+        ];
+        if(feedback && (feedback.comment || feedback.text)){
+          rows.push(['AI 피드백', String(feedback.comment || feedback.text || '')]);
+        }
+        pushRecordToNotion(record, { title: '체크인' }, columns, rows).catch(function(err){
+          console.warn('[Notion Checkin Push Error]', err);
+        });
+      } catch(e){}
     }
+
+    // 2. Notion Webhook (선택 연동)
+    if(s.notionWebhookUrl){
+      try{
+        await fetch(s.notionWebhookUrl, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          mode:'no-cors',
+          body: JSON.stringify({
+            source:'아워골',
+            user: state.profile.displayName,
+            text: record.text,
+            createdAt: record.createdAt || nowISO(),
+            verdict: feedback ? feedback.verdict : null,
+            comment: feedback ? feedback.comment : null
+          })
+        });
+      } catch(e){
+        console.warn('Notion webhook failed:', e);
+      }
+    }
+    return true;
   }
   /* ============ 구글 캘린더 연동 ============ */
   var googleTokenClient = null;
