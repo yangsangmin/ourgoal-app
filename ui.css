@@ -4215,4 +4215,111 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   margin: 0 auto;
 }
 
+/* ============ [#TASK-ES-163] 지표별 차등 분석 및 정밀화 고도화 스타일 ============ */
+.diff-report-card {
+  background: var(--card, #ffffff);
+  border: 1px solid var(--rule, #e2e8f0);
+  border-radius: 14px;
+  padding: 16px;
+  margin-top: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.diff-report-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.diff-report-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--ink, #0f172a);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.diff-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+@media (min-width: 480px) {
+  .diff-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.diff-kpi-cell {
+  background: var(--surface-1, #f8fafc);
+  border: 1px solid var(--rule, #e2e8f0);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.diff-kpi-label {
+  font-size: 0.725rem;
+  color: var(--ink-soft, #64748b);
+  font-weight: 600;
+}
+.diff-kpi-val {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--ink, #0f172a);
+  line-height: 1.2;
+}
+.diff-kpi-badge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--brand, #4f46e5);
+  background: var(--brand-bg, rgba(79, 70, 229, 0.08));
+  border-radius: 4px;
+  padding: 2px 6px;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+.diff-summary-box {
+  background: var(--surface-1, #f8fafc);
+  border-left: 3px solid var(--brand, #4f46e5);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.8125rem;
+  color: var(--ink, #1e293b);
+  line-height: 1.55;
+}
+.diff-cfg-card {
+  border: 1px solid var(--rule, #e2e8f0);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: var(--card, #ffffff);
+}
+.diff-cfg-title {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--ink, #0f172a);
+  margin-bottom: 6px;
+}
+.diff-opt-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.diff-opt-btn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--rule, #cbd5e1);
+  background: var(--card, #fff);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink-soft, #64748b);
+  cursor: pointer;
+}
+.diff-opt-btn.active {
+  background: var(--brand, #4f46e5);
+  color: #fff;
+  border-color: var(--brand, #4f46e5);
+}
+
 

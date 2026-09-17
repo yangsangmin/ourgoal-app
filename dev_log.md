@@ -4540,3 +4540,32 @@
   - `verify-integrity-gate.js` 17개 헌법 게이트 100% ALL PASS.
   - Zero Dead Click 전수 검사 통과.
 ---
+
+## [2026-09-17 18:15] #TASK-ES-163 측정지표 분석할 항목별 차등 지정 및 정밀화·고도화 시스템 구축
+- **배경 및 의도**:
+  - 상민님 직접 지시 ("측정지표 분석할 항목별로 다르게 지정, 정밀화 고도화", "한개씩 헌법적용해서 진행하고, 병합까지 진행해. 단, 한 작업씩 진행해.", "모든 작업이 끝날때까지 중지 금지", 생각 메모장 [24]번).
+  - 기존 모든 지표에 단순 합계/평균만을 일률 적용하던 한계를 극복하고, 6대 핵심 도메인(체중, 헬스, 러닝, 공부, 자산, 수면)별 전문 분석 공식을 차등 적용하며 유저가 지표별 집계 기준(누적합, 평균값, 최고기록, 7일이평선 등)을 직접 맞춤 지정할 수 있는 정밀화·고도화 시스템을 완결 구축.
+- **주요 수정 및 해결 내역**:
+  1. **6대 도메인 특화 차등 분석 엔진 구축 (`js/universal-stats.js`)**:
+     - `METRIC_DIFFERENTIATED_MODELS`:
+       - 1) 체중(`weight`): 체수분 왜곡을 배제한 7일 이동평균(MA7) 및 주간 감량속도 안전성 판별(골디락스).
+       - 2) 헬스/3대(`strength`/`big3`): 에플리(Epley) 공식 기준 추정 1RM(1RM = Weight*(1+Reps/30)) 및 점진적 과부하 성장률·추정 총 볼륨 톤수 산출.
+       - 3) 러닝(`running`): 5단계 페이스존(Zone 2/3) 판별 및 심폐 마일리지 부하 지수 계산.
+       - 4) 공부(`study`): 분당 순공 몰입 밀도 및 25분 뽀모도로 세션 누적 분석.
+       - 5) 자산(`finance`): 월간 저축 가속도 및 복리성장 연간 예상 누적 자산 전망 산출.
+       - 6) 수면(`sleep`): 기상/취침 표준편차 기반 수면 리듬 규칙성 100점 점수 및 주간 수면 부채 지수 산출.
+     - `computeDifferentiatedAnalysis(key, points, customAgg)`: 도메인별 특화 리포트 및 일반 지표 분석 객체 생성.
+     - `renderDifferentiatedReportCard`: `.diff-report-card` 및 `.diff-kpi-grid` 마크업 자동 생성.
+     - `openDifferentiatedMetricConfigModal`: 지표별 집계 기준(맞춤 전문모델/누적합/평균/최고기록/7일이평) 커스텀 설정 모달.
+  2. **디자인 시스템 및 모달 UI 스타일링 (`ui.css`)**:
+     - `.diff-report-card`, `.diff-kpi-grid`, `.diff-kpi-cell`, `.diff-summary-box`, `.diff-cfg-card`, `.diff-opt-btn` 등 반응형 고품질 스타일 탑재.
+  3. **앱 본체 배선 및 이벤트 연결 (`index.html`)**:
+     - `#metricDiffCfgBtn`, `.diff-cfg-open-btn` 클릭 시 차등 분석 기준 설정 모달 열림 및 변경 저장 시 실시간 리렌더링 배선.
+  4. **PWA 캐시 버전 갱신**:
+     - `sw.js`: `ourgoal-shell-v20260917-es163` 캐시명 갱신.
+- **검증 결과**:
+  - `npm test` 303개 스모크 테스트 100% ALL PASS (0 failures).
+  - `verify-integrity-gate.js` 17개 헌법 게이트 100% ALL PASS.
+  - Zero Dead Click 전수 검사 통과.
+---
+

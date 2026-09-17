@@ -19557,6 +19557,23 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       };
     }
 
+    // [TASK-ES-163] 지표별 차등 분석 기준 설정 모달 바인딩
+    var diffCfgBtn = document.getElementById('metricDiffCfgBtn');
+    if(diffCfgBtn){
+      diffCfgBtn.onclick = function(){
+        if(typeof OurgoalUniversalStats !== 'undefined' && OurgoalUniversalStats.openDifferentiatedMetricConfigModal){
+          OurgoalUniversalStats.openDifferentiatedMetricConfigModal({
+            openModal: openModal,
+            closeModal: closeModal,
+            onSave: function(){
+              renderRecordsScreen();
+              if(typeof toast === 'function') toast('지표별 차등 분석 기준이 적용되었습니다.');
+            }
+          });
+        }
+      };
+    }
+
     // 세그먼트 및 캐러셀 상태 동기화
     setRecordsSegment(state.recordsSegment || 'feed');
     setRecordsSlide(state.recordsSlide || 0);
@@ -20239,6 +20256,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       e.preventDefault();
       if(typeof OurgoalUniversalStats !== 'undefined' && OurgoalUniversalStats.openGuideModal){
         OurgoalUniversalStats.openGuideModal({ openModal: openModal, closeModal: closeModal });
+      }
+      return;
+    }
+    var diffCfgBtn = e.target.closest('#metricDiffCfgBtn, .diff-cfg-open-btn');
+    if(diffCfgBtn){
+      e.preventDefault();
+      if(typeof OurgoalUniversalStats !== 'undefined' && OurgoalUniversalStats.openDifferentiatedMetricConfigModal){
+        OurgoalUniversalStats.openDifferentiatedMetricConfigModal({
+          openModal: openModal,
+          closeModal: closeModal,
+          onSave: function(){
+            renderRecordsScreen();
+            if(typeof toast === 'function') toast('지표별 차등 분석 기준이 적용되었습니다.');
+          }
+        });
       }
       return;
     }

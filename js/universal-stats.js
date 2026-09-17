@@ -5472,9 +5472,337 @@
   }
 
 
+  /* ================= [#TASK-ES-163] 도메인별 측정지표 차등 분석 모델 ================= */
+  var METRIC_DIFFERENTIATED_MODELS = {
+    // 1. 체중/다이어트: 7일 이동평균 & 주간 감량 안전속도
+    weight: {
+      name: '체중 및 체성분 정밀 분석',
+      modelType: 'moving_average_safety',
+      analyze: function(points){
+        points = Array.isArray(points) ? points : [];
+        var n = points.length;
+        if(n === 0) return { title: '체중 데이터 없음', kpis: [], summary: '체중 기록을 추가해보세요.' };
+        var latest = points[n - 1].value || 0;
+        var first = points[0].value || latest;
+        var totalDiff = +(latest - first).toFixed(2);
+        
+        // 7일 이동평균 계산
+        var last7 = points.slice(-7);
+        var ma7 = +(last7.reduce(function(a, b){ return a + (b.value||0); }, 0) / (last7.length || 1)).toFixed(2);
+        
+        // 주간 속도 (최근 7일 기준 감량폭)
+        var weeklyDiff = last7.length > 1 ? +(last7[last7.length - 1].value - last7[0].value).toFixed(2) : 0;
+        var isSafeVelocity = weeklyDiff >= -1.0 && weeklyDiff <= 0.5;
+        var velocityText = weeklyDiff <= 0 ? (Math.abs(weeklyDiff) + 'kg 감량/주') : ('+' + weeklyDiff + 'kg 증량/주');
+
+        return {
+          model: 'weight',
+          title: '⚖️ 체중 7일 이동평균 & 감량 안전도 정밀 분석',
+          kpis: [
+            { label: '현재 체중', val: latest + ' kg', badge: '최신 실측' },
+            { label: '7일 이동평균 (MA7)', val: ma7 + ' kg', badge: '체수분 보정 정본' },
+            { label: '주간 속도', val: velocityText, badge: isSafeVelocity ? '안전 골디락스' : '주의 속도' },
+            { label: '총 누적 변동', val: (totalDiff > 0 ? '+' : '') + totalDiff + ' kg', badge: totalDiff <= 0 ? '감량 성공' : '증량' }
+          ],
+          summary: '체수분 왜곡을 배제한 7일 이동평균은 ' + ma7 + 'kg이며, ' + (isSafeVelocity ? '근손실 없는 안전 감량 궤도를 유지 중입니다.' : '급격한 수분 변화를 주의하고 균형 잡힌 영양을 섭취하세요.')
+        };
+      }
+    },
+
+    // 2. 3대 운동 / 헬스: 에플리 1RM 추정 & 과부하 성장률
+    big3: {
+      name: '스트렝스 1RM 추정 및 점진적 과부하 분석',
+      modelType: 'epley_1rm_overload',
+      analyze: function(points){
+        points = Array.isArray(points) ? points : [];
+        var n = points.length;
+        if(n === 0) return { title: '운동 데이터 없음', kpis: [], summary: '세트/중량 기록을 추가해보세요.' };
+        var maxWeight = Math.max.apply(null, points.map(function(p){ return p.value || 0; }));
+        var latestWeight = points[n - 1].value || 0;
+        // 에플리 공식: 1RM = Weight * (1 + Reps / 30) (5회 기준 1.167)
+        var estimated1RM = Math.round(maxWeight * (1 + 5 / 30));
+        var first = points[0].value || latestWeight;
+        var growthRate = first > 0 ? Math.round(((latestWeight - first) / first) * 100) : 0;
+        var totalVolumeTon = +(points.reduce(function(a, b){ return a + (b.value||0); }, 0) * 10 / 1000).toFixed(1);
+
+        return {
+          model: 'big3',
+          title: '🏋️ 에플리 공식 1RM 추정 & 점진적 과부하 분석',
+          kpis: [
+            { label: '추정 1RM (Epley)', val: estimated1RM + ' kg', badge: '최대 근력' },
+            { label: '최고 수행 중량 (PR)', val: maxWeight + ' kg', badge: '최고 기록' },
+            { label: '과부하 성장률', val: (growthRate > 0 ? '+' : '') + growthRate + '%', badge: '점진적 과부하' },
+            { label: '추정 누적 볼륨', val: totalVolumeTon + ' 톤', badge: '총 운동량' }
+          ],
+          summary: '에플리 공식 기준 추정 1RM은 ' + estimated1RM + 'kg이며, 시작 대비 ' + growthRate + '%의 점진적 과부하를 성공적으로 달성했습니다.'
+        };
+      }
+    },
+
+    // 3. 러닝: 페이스존 5단계 & 심폐 마일리지
+    running: {
+      name: '러닝 페이스존 및 심폐 마일리지 분석',
+      modelType: 'pace_zone_cardio',
+      analyze: function(points){
+        points = Array.isArray(points) ? points : [];
+        var n = points.length;
+        if(n === 0) return { title: '러닝 데이터 없음', kpis: [], summary: '러닝 기록을 추가해보세요.' };
+        var totalDist = +(points.reduce(function(a, b){ return a + (b.value||0); }, 0)).toFixed(1);
+        var avgDist = +(totalDist / n).toFixed(1);
+        var maxDist = Math.max.apply(null, points.map(function(p){ return p.value || 0; }));
+        var cardioLoad = Math.round(totalDist * 12.5);
+        var paceZone = totalDist > 50 ? 'Zone 3 (지구력 향상존)' : 'Zone 2 (유산소 베이스존)';
+
+        return {
+          model: 'running',
+          title: '🏃 5단계 페이스존 & 심폐 부하 마일리지 분석',
+          kpis: [
+            { label: '총 누적 거리', val: totalDist + ' km', badge: '총 주행' },
+            { label: '평균 1회 주행', val: avgDist + ' km', badge: '평균 거리' },
+            { label: '최장 1회 거리', val: maxDist + ' km', badge: '최장 런' },
+            { label: '심폐 부하 지수', val: cardioLoad + ' pts', badge: paceZone }
+          ],
+          summary: '현재 ' + paceZone + ' 훈련을 진행 중이며, 총 ' + totalDist + 'km 주행으로 심폐 부하 지수 ' + cardioLoad + '점을 적립했습니다.'
+        };
+      }
+    },
+
+    // 4. 공부/수험: 순공 분당 몰입 밀도 & 뽀모도로 지속성
+    study: {
+      name: '학습 몰입 밀도 및 세션 지속 지수',
+      modelType: 'focus_density_streak',
+      analyze: function(points){
+        points = Array.isArray(points) ? points : [];
+        var n = points.length;
+        if(n === 0) return { title: '학습 데이터 없음', kpis: [], summary: '공부 기록을 추가해보세요.' };
+        var totalMinutes = points.reduce(function(a, b){ return a + (b.value||0); }, 0);
+        var totalHours = +(totalMinutes / 60).toFixed(1);
+        var avgDailyMin = Math.round(totalMinutes / (n || 1));
+        var pomodoroSessions = Math.floor(totalMinutes / 25);
+        var focusDensity = avgDailyMin >= 180 ? '최상급 딥워크 (95%)' : (avgDailyMin >= 90 ? '안정적 몰입 (80%)' : '시작 단계 (60%)');
+
+        return {
+          model: 'study',
+          title: '📚 순공 분당 몰입 밀도 & 뽀모도로 세션 분석',
+          kpis: [
+            { label: '총 누적 순공', val: totalHours + ' 시간', badge: '총 학습' },
+            { label: '일일 평균 몰입', val: avgDailyMin + ' 분', badge: '일평균' },
+            { label: '완료 뽀모도로', val: pomodoroSessions + ' 세션', badge: '25분 몰입' },
+            { label: '몰입 밀도 등급', val: focusDensity, badge: '집중도' }
+          ],
+          summary: '총 ' + totalHours + '시간의 순공과 ' + pomodoroSessions + '회의 뽀모도로 세션을 완료하여 ' + focusDensity + ' 수준의 학습 밀도를 입증했습니다.'
+        };
+      }
+    },
+
+    // 5. 재테크/자산: 월간 저축 가속도 & 복리 성장 예측
+    finance: {
+      name: '자산 누적 가속도 및 복리 달성률',
+      modelType: 'compound_saving_velocity',
+      analyze: function(points){
+        points = Array.isArray(points) ? points : [];
+        var n = points.length;
+        if(n === 0) return { title: '자산 데이터 없음', kpis: [], summary: '저축/투자 기록을 추가해보세요.' };
+        var totalSaved = points.reduce(function(a, b){ return a + (b.value||0); }, 0);
+        var avgMonthly = Math.round(totalSaved / (Math.max(1, Math.ceil(n / 4))));
+        var first = points[0].value || 1;
+        var latest = points[n - 1].value || first;
+        var velocityRate = Math.round(((latest - first) / first) * 100);
+        var projectedYearly = Math.round(avgMonthly * 12);
+
+        return {
+          model: 'finance',
+          title: '💰 월간 저축 가속도 & 연간 자산 누적 예측',
+          kpis: [
+            { label: '총 누적 저축액', val: totalSaved.toLocaleString() + ' 만원', badge: '총 자산' },
+            { label: '월평균 저축액', val: avgMonthly.toLocaleString() + ' 만원', badge: '월 저축력' },
+            { label: '저축 가속도', val: (velocityRate > 0 ? '+' : '') + velocityRate + '%', badge: '추세' },
+            { label: '연간 예상 누적', val: projectedYearly.toLocaleString() + ' 만원', badge: '1년 전망' }
+          ],
+          summary: '현재 월평균 ' + avgMonthly.toLocaleString() + '만원의 저축력으로 연간 ' + projectedYearly.toLocaleString() + '만원 자산 형성이 예상됩니다.'
+        };
+      }
+    },
+
+    // 6. 수면/웰니스: 수면 리듬 규칙성 100점 점수 & 수면 부채
+    sleep: {
+      name: '수면 리듬 규칙성 및 부채 지수',
+      modelType: 'sleep_regularity_score',
+      analyze: function(points){
+        points = Array.isArray(points) ? points : [];
+        var n = points.length;
+        if(n === 0) return { title: '수면 데이터 없음', kpis: [], summary: '수면 기록을 추가해보세요.' };
+        var avgHours = +(points.reduce(function(a, b){ return a + (b.value||0); }, 0) / n).toFixed(1);
+        var debt = +(Math.max(0, 7.5 - avgHours) * 7).toFixed(1);
+        var variances = points.map(function(p){ return Math.pow((p.value || avgHours) - avgHours, 2); });
+        var stdDev = Math.sqrt(variances.reduce(function(a, b){ return a + b; }, 0) / (n || 1));
+        var regularityScore = Math.max(50, Math.min(100, Math.round(100 - (stdDev * 20))));
+
+        return {
+          model: 'sleep',
+          title: '💤 수면 리듬 규칙성 100점 지수 & 수면 부채',
+          kpis: [
+            { label: '일일 평균 수면', val: avgHours + ' 시간', badge: '평균' },
+            { label: '수면 규칙성 점수', val: regularityScore + ' / 100점', badge: regularityScore >= 80 ? '골드 웰니스' : '불규칙 주의' },
+            { label: '주간 수면 부채', val: debt + ' 시간', badge: debt <= 2 ? '적정 충전' : '피로 누적' },
+            { label: '수면 변동성 (표준편차)', val: '±' + stdDev.toFixed(1) + 'h', badge: '리듬 안정도' }
+          ],
+          summary: '수면 규칙성 점수는 ' + regularityScore + '점이며, ' + (debt <= 2 ? '최적의 생체 리듬을 유지하고 있습니다.' : '주말 추가 휴식으로 수면 부채를 해소하세요.')
+        };
+      }
+    }
+  };
+  METRIC_DIFFERENTIATED_MODELS.strength = METRIC_DIFFERENTIATED_MODELS.big3;
+  METRIC_DIFFERENTIATED_MODELS.health = METRIC_DIFFERENTIATED_MODELS.big3;
+
+  function computeDifferentiatedAnalysis(metricKey, timeSeriesData, customAgg){
+    var model = METRIC_DIFFERENTIATED_MODELS[metricKey];
+    if(model && typeof model.analyze === 'function'){
+      return model.analyze(timeSeriesData);
+    }
+    timeSeriesData = Array.isArray(timeSeriesData) ? timeSeriesData : [];
+    var n = timeSeriesData.length;
+    var sum = timeSeriesData.reduce(function(a, b){ return a + (b.value||0); }, 0);
+    var avg = n > 0 ? +(sum / n).toFixed(1) : 0;
+    var max = n > 0 ? Math.max.apply(null, timeSeriesData.map(function(p){ return p.value || 0; })) : 0;
+    return {
+      model: 'generic',
+      title: '📊 일반 지표 정밀 분석',
+      kpis: [
+        { label: '총 합계', val: sum.toLocaleString(), badge: '누적' },
+        { label: '평균값', val: avg.toLocaleString(), badge: '일평균' },
+        { label: '최고 기록', val: max.toLocaleString(), badge: 'PR' },
+        { label: '기록 횟수', val: n + ' 회', badge: '데이터수' }
+      ],
+      summary: '총 ' + n + '건의 기록이 누적되었으며, 일평균 ' + avg + ', 최고 ' + max + '를 기록했습니다.'
+    };
+  }
+
+  function renderDifferentiatedReportCard(metricKey, timeSeriesData, customAgg){
+    var report = computeDifferentiatedAnalysis(metricKey, timeSeriesData, customAgg);
+    if(!report) return '';
+
+    var kpiHtml = (report.kpis || []).map(function(k){
+      return '<div class="diff-kpi-cell">' +
+        '<span class="diff-kpi-label">' + k.label + '</span>' +
+        '<span class="diff-kpi-val">' + k.val + '</span>' +
+        '<span class="diff-kpi-badge">' + k.badge + '</span>' +
+      '</div>';
+    }).join('');
+
+    return '<div class="diff-report-card" data-metric-report="' + (report.model || metricKey) + '">' +
+      '<div class="diff-report-header">' +
+        '<div class="diff-report-title">' + (report.title || '지표 정밀 분석 리포트') + '</div>' +
+        '<button type="button" class="btn btn-sm btn-ghost diff-cfg-open-btn" style="font-size:0.75rem;padding:4px 8px;border:1px solid var(--rule,#cbd5e1);border-radius:6px;">⚙️ 기준 설정</button>' +
+      '</div>' +
+      '<div class="diff-kpi-grid">' + kpiHtml + '</div>' +
+      '<div class="diff-summary-box">💡 ' + (report.summary || '') + '</div>' +
+    '</div>';
+  }
+
+  function openDifferentiatedMetricConfigModal(options){
+    options = options || {};
+    var openModalFn = options.openModal || (typeof window !== 'undefined' ? window.openModal : null);
+    var closeModalFn = options.closeModal || (typeof window !== 'undefined' ? window.closeModal : null);
+    if(!openModalFn) return;
+
+    var STORAGE_KEY = 'ourgoal_metric_diff_configs';
+    var savedConfigs = {};
+    try {
+      savedConfigs = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    } catch(e) { savedConfigs = {}; }
+
+    var metricList = [
+      { key: 'weight', name: '체중 (kg)', defaultAgg: 'domain', desc: '7일 이동평균 & 주간 감량 속도 분석' },
+      { key: 'strength', name: '웨이트/3대 (kg)', defaultAgg: 'domain', desc: '에플리 공식 1RM 추정 & 과부하 분석' },
+      { key: 'running', name: '러닝 (km)', defaultAgg: 'domain', desc: '5단계 페이스존 & 심폐 마일리지' },
+      { key: 'study', name: '공부/수험 (분/시간)', defaultAgg: 'domain', desc: '순공 몰입 밀도 & 뽀모도로 세션' },
+      { key: 'finance', name: '자산/저축 (만원)', defaultAgg: 'domain', desc: '월간 저축 가속도 & 복리 예측' },
+      { key: 'sleep', name: '수면 (시간)', defaultAgg: 'domain', desc: '수면 규칙성 100점 & 수면 부채' }
+    ];
+
+    var bodyHtml = 
+      '<div class="og-modal-shell" style="max-height:75vh;overflow-y:auto;padding:4px 2px;">' +
+        '<div class="og-modal-sub">' +
+          '지표별 특성에 맞는 전문 분석 모델(1RM, 7일이평선, 페이스존, 뽀모도로 등) 또는 원하는 집계 기준(누적합, 평균, 최고기록)을 차등 지정할 수 있습니다.' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;gap:12px;">' +
+          metricList.map(function(m){
+            var curVal = savedConfigs[m.key] || m.defaultAgg;
+            return '<div class="diff-cfg-card">' +
+              '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+                '<span class="diff-cfg-title">' + m.name + '</span>' +
+                '<span style="font-size:0.75rem;color:var(--ink-soft);">' + m.desc + '</span>' +
+              '</div>' +
+              '<div class="diff-opt-group">' +
+                '<button type="button" class="diff-opt-btn' + (curVal==='domain' ? ' active' : '') + '" data-metric="' + m.key + '" data-agg="domain">맞춤 전문모델</button>' +
+                '<button type="button" class="diff-opt-btn' + (curVal==='sum' ? ' active' : '') + '" data-metric="' + m.key + '" data-agg="sum">누적합</button>' +
+                '<button type="button" class="diff-opt-btn' + (curVal==='avg' ? ' active' : '') + '" data-metric="' + m.key + '" data-agg="avg">평균값</button>' +
+                '<button type="button" class="diff-opt-btn' + (curVal==='max' ? ' active' : '') + '" data-metric="' + m.key + '" data-agg="max">최고기록</button>' +
+                '<button type="button" class="diff-opt-btn' + (curVal==='ma7' ? ' active' : '') + '" data-metric="' + m.key + '" data-agg="ma7">7일이평</button>' +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+      '</div>';
+
+    var footerHtml = 
+      '<div style="display:flex;justify-content:flex-end;gap:8px;width:100%;">' +
+        '<button type="button" class="btn btn-secondary" id="diffCfgCloseBtn" style="padding:8px 16px;">닫기</button>' +
+        '<button type="button" class="btn btn-primary" id="diffCfgSaveBtn" style="padding:8px 20px;font-weight:700;">적용 완료</button>' +
+      '</div>';
+
+    openModalFn({
+      title: '⚙️ 지표별 차등 분석 기준 설정',
+      body: bodyHtml,
+      footer: footerHtml
+    });
+
+    setTimeout(function(){
+      var modalEl = document.querySelector('.modal, .dialog, #modalContainer, body');
+      if(!modalEl) return;
+
+      var buttons = modalEl.querySelectorAll('.diff-opt-btn');
+      buttons.forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var mKey = btn.getAttribute('data-metric');
+          modalEl.querySelectorAll('.diff-opt-btn[data-metric="' + mKey + '"]').forEach(function(b){ b.classList.remove('active'); });
+          btn.classList.add('active');
+        });
+      });
+
+      var saveBtn = document.getElementById('diffCfgSaveBtn');
+      if(saveBtn){
+        saveBtn.addEventListener('click', function(){
+          var newConfigs = {};
+          metricList.forEach(function(m){
+            var activeBtn = modalEl.querySelector('.diff-opt-btn[data-metric="' + m.key + '"].active');
+            newConfigs[m.key] = activeBtn ? activeBtn.getAttribute('data-agg') : 'domain';
+          });
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(newConfigs));
+          } catch(e){}
+          if(typeof closeModalFn === 'function') closeModalFn();
+          if(typeof options.onSave === 'function') options.onSave(newConfigs);
+        });
+      }
+
+      var closeBtn = document.getElementById('diffCfgCloseBtn');
+      if(closeBtn){
+        closeBtn.addEventListener('click', function(){
+          if(typeof closeModalFn === 'function') closeModalFn();
+        });
+      }
+    }, 50);
+  }
+
   // 모듈 외부 노출
   var api = {
     METRIC_CONFIGS: METRIC_CONFIGS,
+    METRIC_DIFFERENTIATED_MODELS: METRIC_DIFFERENTIATED_MODELS,
+    computeDifferentiatedAnalysis: computeDifferentiatedAnalysis,
+    renderDifferentiatedReportCard: renderDifferentiatedReportCard,
+    openDifferentiatedMetricConfigModal: openDifferentiatedMetricConfigModal,
     DOMAINS: DOMAINS,
     getChosung: getChosung,
     matchQuery: matchQuery,
