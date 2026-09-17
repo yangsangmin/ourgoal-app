@@ -276,9 +276,118 @@ check('3대 본질 루프(E1 체크인, E2 회고, E3 동류소통) 핵심 로�
  * ========================================================================= */
 console.log('\n[검증 5/5] 문제해결 8원칙 적용 REQ / PLAN 표준 규격 검사');
 
-check('표준 템플릿(TEMPLATE_REQ_8STEPS.md, TEMPLATE_PLAN_8STEPS.md)이 존재한다', () => {
-  assert.ok(fs.existsSync(path.join(SPECS_DIR, 'TEMPLATE_REQ_8STEPS.md')), 'TEMPLATE_REQ_8STEPS.md 부재');
-  assert.ok(fs.existsSync(path.join(SPECS_DIR, 'TEMPLATE_PLAN_8STEPS.md')), 'TEMPLATE_PLAN_8STEPS.md 부재');
+check('표준 템플릿(TEMPLATE_REQ_8STEPS.md, TEMPLATE_PLAN_8STEPS.md)이 존재하고 8원칙 규격을 완비했다', () => {
+  const reqTemplatePath = path.join(SPECS_DIR, 'TEMPLATE_REQ_8STEPS.md');
+  const planTemplatePath = path.join(SPECS_DIR, 'TEMPLATE_PLAN_8STEPS.md');
+  assert.ok(fs.existsSync(reqTemplatePath), 'TEMPLATE_REQ_8STEPS.md 부재');
+  assert.ok(fs.existsSync(planTemplatePath), 'TEMPLATE_PLAN_8STEPS.md 부재');
+
+  const reqContent = fs.readFileSync(reqTemplatePath, 'utf8');
+  const planContent = fs.readFileSync(planTemplatePath, 'utf8');
+
+  // 템플릿 8개 독립 섹션 및 원칙 ② 4대 요소 검증
+  [reqContent, planContent].forEach((c, idx) => {
+    const name = idx === 0 ? 'TEMPLATE_REQ_8STEPS.md' : 'TEMPLATE_PLAN_8STEPS.md';
+    for (let i = 1; i <= 8; i++) {
+      assert.ok(c.includes(`## ${i}. [원칙 `), `${name} 내 원칙 ${i} 헤더 누락`);
+    }
+    assert.ok(c.includes('본질') && c.includes('원인') && c.includes('중심') && c.includes('핵심'), `${name} 내 4대 요소(본질·원인·중심·핵심) 누락`);
+    assert.ok(c.includes('절차 재검증'), `${name} 내 원칙 ⑥ 절차 재검증 누락`);
+  });
+});
+
+check('헌법 정본에 문제해결 8원칙 세부 기준(제2조 1~2항) 및 기계적 무결성 헌법(제2조 5항)이 명시되어 있다', () => {
+  const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
+  const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
+  assert.ok(rulesContent.includes('제2조 (2중 8원칙 및 핫픽스 헌법)'), '제2조 누락');
+  assert.ok(rulesContent.includes('본질 · 원인 · 중심 · 핵심 파악'), '제2조 1항 2호 본질·원인·중심·핵심 누락');
+  assert.ok(rulesContent.includes('제5항 [8원칙 기계적 무결성 및 임의 축약 · 합체 · 생략 영구 금지'), '제2조 5항 누락');
+  assert.ok(rulesContent.includes('원칙 번호 임의 합체 전면 금지'), '제2조 5항 1호 누락');
+  assert.ok(rulesContent.includes('원칙 ⑥ 절차 재검증 누락 영구 금지'), '제2조 5항 2호 누락');
+  assert.ok(rulesContent.includes('1줄 bullet point 날림 축약 금지'), '제2조 5항 3호 누락');
+  assert.ok(rulesContent.includes('기계적 린터 강제 배선 및 물리적 차단'), '제2조 5항 4호 누락');
+});
+
+check('신규 및 변경 대상 REQ/PLAN 문서의 8원칙 기계적 무결성(린터)이 100% 통과한다', () => {
+  function lint8Principles(filePath) {
+    if (!fs.existsSync(filePath)) return [];
+    const content = fs.readFileSync(filePath, 'utf8');
+    const fileName = path.basename(filePath);
+    const errors = [];
+
+    // 1. 8개 헤더 독립성 검증
+    for (let i = 1; i <= 8; i++) {
+      const hRegex = new RegExp(`(^|\\n)##\\s*${i}\\.`, 'm');
+      const circledRegex = new RegExp(`(^|\\n)##.*[원칙\\[(]\\s*[${i}①②③④⑤⑥⑦⑧]`, 'm');
+      if (!hRegex.test(content) && !circledRegex.test(content)) {
+        errors.push(`${fileName}: 원칙 ${i} 독립 헤더 누락`);
+      }
+    }
+
+    // 2. 원칙 번호 임의 합체 검사 (섹션 헤더 내 "원칙 ⑤, ⑦", "원칙 ①, ②, ③" 등)
+    const headerLines = content.split('\n').filter(line => line.trim().startsWith('##'));
+    headerLines.forEach(h => {
+      const mergePattern = /원칙\s*[①-⑧1-8]\s*[,·~+&]\s*[①-⑧1-8]|##.*원칙.*[,·~+&].*원칙/i;
+      if (mergePattern.test(h)) {
+        errors.push(`${fileName}: 헤더 내 원칙 번호 임의 합체 발견 (${h.trim()})`);
+      }
+    });
+
+    // 3. 원칙 ⑥(절차 재검증) 독립 존재 검사
+    const hasStep6 = /(^|\n)##\s*6\..*재검증|(^|\n)##.*원칙\s*[⑥6].*재검증/i.test(content);
+    if (!hasStep6) {
+      errors.push(`${fileName}: 원칙 ⑥(절차 재검증) 누락 (제2조 제5항 2호 위반)`);
+    }
+
+    // 4. 원칙 ② 본질·원인·중심·핵심 4대 요소 검사
+    const step2Match = content.match(/(?:^|\n)##\s*2\.[^#]+|##.*원칙\s*[②2][^#]+/);
+    if (step2Match) {
+      const step2Text = step2Match[0];
+      const missing = [];
+      if (!step2Text.includes('본질')) missing.push('본질');
+      if (!step2Text.includes('원인')) missing.push('원인');
+      if (!step2Text.includes('중심')) missing.push('중심');
+      if (!step2Text.includes('핵심')) missing.push('핵심');
+      if (missing.length > 0) {
+        errors.push(`${fileName}: 원칙 ②에 4대 요소 중 [${missing.join(', ')}] 누락`);
+      }
+    }
+
+    return errors;
+  }
+
+  // 템플릿 2종 자체 린트 통과 검증
+  const reqLint = lint8Principles(path.join(SPECS_DIR, 'TEMPLATE_REQ_8STEPS.md'));
+  assert.strictEqual(reqLint.length, 0, `TEMPLATE_REQ_8STEPS 린트 실패: ${reqLint.join('; ')}`);
+  const planLint = lint8Principles(path.join(SPECS_DIR, 'TEMPLATE_PLAN_8STEPS.md'));
+  assert.strictEqual(planLint.length, 0, `TEMPLATE_PLAN_8STEPS 린트 실패: ${planLint.join('; ')}`);
+
+  // git 변경 중인 REQ/PLAN 파일이 있을 경우 린트 검사
+  try {
+    const { execSync } = require('child_process');
+    const changedFiles = execSync('git status --porcelain', { encoding: 'utf8' })
+      .split('\n')
+      .map(line => line.slice(3).trim())
+      .filter(fp => fp.startsWith('docs/specs/') && (fp.includes('REQ-') || fp.includes('PLAN-')) && fp.endsWith('.md') && !fp.includes('TEMPLATE'));
+
+    // 최근 24시간 이내 수정되었거나 git staging/추적 변경 중인 REQ/PLAN 파일 린트 검사
+    const now = Date.now();
+    const oneDayMs = 24 * 60 * 60 * 1000;
+
+    changedFiles.forEach(fp => {
+      const fullPath = path.join(ROOT_DIR, fp);
+      if (!fs.existsSync(fullPath)) return;
+      const stat = fs.statSync(fullPath);
+      // 최근 24시간 이내에 생성/수정된 파일만 엄격 검사 (오래된 레거시 untracked 파일 제외)
+      if (now - stat.mtimeMs > oneDayMs) return;
+
+      const errors = lint8Principles(fullPath);
+      assert.strictEqual(errors.length, 0, `신규/수정된 스펙 8원칙 위반 적발:\n${errors.join('\n')}`);
+    });
+  } catch (e) {
+    if (e.name === 'AssertionError') throw e;
+    // git status 실패 시 스킵
+  }
 });
 
 check('절대 무결성 헌법 정본 문서(OURGOAL_ABSOLUTE_INTEGRITY_RULES.md)가 존재하고 15대 조문을 포괄한다', () => {
