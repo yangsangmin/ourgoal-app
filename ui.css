@@ -4564,32 +4564,47 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
 }
 
 /* ==========================================================================
-   #TASK-ES-165: 홈탭 UI 전면 개편 — 볼드 모듈러 보더 & 퀘스트형 UI
-   초보자 및 공간 지각력 취약 사용자를 위한 뚜렷한 칸 구분(2px Bold Border)
+   #TASK-ES-170: 아워골 전 탭 UI 전면 개편 — 볼드 모듈러 보더 (Bold Modular Borders)
+   초보자 및 공간 지각력 취약 사용자를 위한 전 탭 뚜렷한 칸 구분(2px Bold Border)
+   적용 탭: 홈(#screen-home), 목표(#screen-goals), 캘린더(#screen-calendar),
+            기록(#screen-records), 소통(#screen-comm), 설정(#screen-settings)
    ========================================================================== */
 :root {
   --home-card-border: #1E293B;
   --home-card-border-soft: rgba(30, 41, 59, 0.18);
   --home-quest-check: #3B82F6;
+  --card-border: 2px solid var(--home-card-border);
 }
 
 [data-theme="black"], [data-theme="dark"], [data-theme="dark-space"], [data-theme="glowing-space"], [data-theme="deep-sea"], [data-theme="sunset-beach"], [data-theme="urban-city"] {
   --home-card-border: rgba(255, 255, 255, 0.28);
   --home-card-border-soft: rgba(255, 255, 255, 0.15);
   --home-quest-check: #60A5FA;
+  --card-border: 2px solid var(--home-card-border);
 }
 
-/* 홈탭 전체 카드의 볼드 모듈러 보더 적용: 칸 구분을 명확히 분리 */
-#screen-home .card,
-#screen-home .capture-card,
-#screen-home .goal-card,
-#screen-home .crew-pacing-widget,
-#screen-home .daily-quest-bar-wrap,
-#screen-home .level-badge,
-#screen-home .mission-card,
-#screen-home .empty-goal-starter,
-#screen-home .home-eval-banner-box,
-#screen-home #hybridDash {
+/* 전 탭 공통 카드의 2px 볼드 모듈러 보더 적용: 칸 구분을 명확히 분리 */
+.screen .card,
+.screen .goal-card,
+.screen .rec-card,
+.screen .comm-clean-card,
+.screen .feed-card,
+.screen .team-card,
+.screen .cal-schedule-card,
+.screen .set-box,
+.screen .capture-card,
+.screen .crew-pacing-widget,
+.screen .daily-quest-bar-wrap,
+.screen .level-badge,
+.screen .mission-card,
+.screen .empty-goal-starter,
+.screen .home-eval-banner-box,
+.screen .tmpl-card,
+.screen .archive-card,
+.screen .pro-trend-chart-card,
+.screen .pro-stopwatch-widget,
+.screen .grp-photo-card,
+.screen #hybridDash {
   border: 2px solid var(--home-card-border) !important;
   border-radius: 20px !important;
   margin-bottom: 16px !important;
@@ -4597,10 +4612,12 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
-#screen-home .card:hover,
-#screen-home .capture-card:hover,
-#screen-home .goal-card:hover,
-#screen-home .crew-pacing-widget:hover {
+.screen .card:hover,
+.screen .goal-card:hover,
+.screen .rec-card:hover,
+.screen .comm-clean-card:hover,
+.screen .capture-card:hover,
+.screen .set-box:hover {
   border-color: var(--brand) !important;
   box-shadow: 0 8px 22px rgba(255, 79, 100, 0.14) !important;
   transform: translateY(-2px);
@@ -4657,17 +4674,41 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
 }
 
 /* 목표 퀘스트 카드 스타일 */
-#screen-home .goal-card {
+.goal-card {
   padding: 18px !important;
 }
 
-#screen-home .goal-card-top h4 {
+.goal-card-top h4 {
   font-size: 1.05rem !important;
   font-weight: 700 !important;
   color: var(--ink);
 }
 
-#screen-home .goal-body {
+.goal-body {
   margin-top: 8px;
 }
+
+/* 목표탭 헤더 & 세그먼트 바 고도화 */
+#screen-goals .goal-head-row,
+#screen-calendar .cal-top-row,
+#screen-records .rec-head-row,
+#screen-comm .comm-top-bar,
+#screen-settings .set-head-row {
+  margin-bottom: 14px;
+}
+
+/* 캘린더 탭 카드 구획 강화 */
+#screen-calendar .cal-card,
+#screen-calendar #calViewWrap {
+  border: 2px solid var(--home-card-border) !important;
+  border-radius: 20px !important;
+}
+
+/* 소통 탭 서브탭 및 피드 카드 강화 */
+.comm-subtabs, .comm-subtabs-clean {
+  border: 1.5px solid var(--rule);
+  border-radius: 16px;
+  padding: 4px;
+}
+
 
