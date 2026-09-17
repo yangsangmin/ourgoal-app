@@ -7682,13 +7682,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var classified = (typeof classifyRecordTheme === 'function')
       ? classifyRecordTheme(text, cat)
       : { theme: 'daily', subTheme: '', confidence: 0.5 };
+    var now = nowISO();
     return {
       id: newId(),
       type: 'note',
       text: text,
-      startAt: nowISO(),
-      endAt: nowISO(),
-      createdAt: nowISO(),
+      startAt: now,
+      endAt: now,
+      createdAt: now,
       category: cat,
       visibility: 'private',
       theme: classified.theme,
