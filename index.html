@@ -9529,21 +9529,37 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       state.profile.settings.appEvaluations.push(evalItem);
       saveProfile();
 
-      try {
-        fetch('/api/inquiry', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'app_evaluation',
-            userId: state.profile.id,
-            userName: state.profile.name,
-            evaluation: evalItem
-          })
-        }).catch(function(){});
-      } catch(e) {}
+      btnSubmitEval.disabled = true;
+      btnSubmitEval.textContent = '제출 중...';
 
-      toast('소중한 평가가 접수되었습니다. 감사합니다! ⭐');
-      closeAppEvaluationModal();
+      fetch('/api/inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'app_evaluation',
+          userId: state.profile.id,
+          userName: (state.profile && (state.profile.displayName || state.profile.nickname || state.profile.name)) || '회원',
+          evaluation: evalItem
+        })
+      })
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if(data && data.ok){
+          toast('소중한 평가가 접수되었습니다. 감사합니다! ⭐');
+          closeAppEvaluationModal();
+        } else {
+          toast((data && data.error) || '접수 중 오류가 발생했습니다.');
+        }
+      })
+      .catch(function(err){
+        console.warn('[AppEvaluation] 제출 통신 오류:', err);
+        toast('네트워크 상태를 확인해주세요. 평가는 안전하게 보관되었습니다.');
+        closeAppEvaluationModal();
+      })
+      .finally(function(){
+        btnSubmitEval.disabled = false;
+        btnSubmitEval.textContent = '평가 제출하기';
+      });
     });
   }
 

@@ -6033,6 +6033,33 @@ check('compliance: [#TASK-ES-153] 캘린더 일자별 배경 사진 지정 및 5
   assert.ok(indexSrc.includes('calendarDayBackgrounds: localCalDayBg'), 'loadProfile 내 배경사진 복원 배선');
 });
 
+/* ============ [#TASK-ES-154] 아워골 평가하기 3중 접수창구(텔레그램·노션·DB) 및 피드백 파이프라인 무결성 검증 ============ */
+check('compliance: [#TASK-ES-154] 아워골 평가하기 3중 접수창구(텔레그램·노션·DB) 및 피드백 파이프라인 무결성 검증', () => {
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. api/track.js 백엔드 app_evaluation 수신 및 5대 항목 리포트 조립 검증
+  assert.ok(trackSrc.includes("body.type === 'app_evaluation'"), 'api/track.js app_evaluation 수신 분기');
+  assert.ok(trackSrc.includes("body.evaluation"), 'api/track.js body.evaluation 객체 인식');
+  assert.ok(trackSrc.includes('[아워골 종합 앱 평가 리포트]'), '5대 평가 항목 리포트 본문 자동 조립');
+  assert.ok(trackSrc.includes("evaluation: '앱 평가/피드백'"), '앱 평가 전용 유형 라벨 매핑');
+  assert.ok(trackSrc.includes('[앱 평가] ⭐'), '노션 및 요약 제목 별점/점수 프리픽스');
+
+  // 2. 텔레그램 실시간 알림 전용 서식 검증
+  assert.ok(trackSrc.includes('[아워골 사용자 앱 평가 접수]'), '텔레그램 평가 전용 알림 서식');
+  assert.ok(trackSrc.includes('• 종합 점수:'), '텔레그램 점수 항목 표기');
+
+  // 3. index.html 프론트엔드 4위 1체 피드백 검증
+  assert.ok(indexSrc.includes("btnSubmitEval.disabled = true"), '평가 제출 시 버튼 비활성화 (중복 제출 방지)');
+  assert.ok(indexSrc.includes("btnSubmitEval.textContent = '제출 중...'"), '평가 제출 중 로딩 인디케이터');
+  assert.ok(indexSrc.includes("btnSubmitEval.textContent = '평가 제출하기'"), '제출 완료/실패 시 버튼 원복');
+  assert.ok(indexSrc.includes("closeAppEvaluationModal"), '성공 시 모달 닫기');
+
+  // 4. 서비스워커 캐시 무효화 게이트 검증
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es154'), 'sw.js 캐시 네임 es154 갱신');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
