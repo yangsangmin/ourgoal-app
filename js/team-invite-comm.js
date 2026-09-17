@@ -1321,7 +1321,7 @@
       }
       var inputEl = document.getElementById('dmInput');
       if(inputEl){
-        inputEl.focus();
+        // [#TASK-ES-172] 상민님 지시 [28]: 타 유저 클릭 시 키보드 자동 팝업 방지 (텍스트창 터치 시에만 오픈)
         inputEl.addEventListener('keydown', function(e){
           if(e.key === 'Enter' && !e.shiftKey){
             e.preventDefault();
@@ -1521,16 +1521,13 @@
       return state.profile.companions;
     }
 
-    // 3. 만약 로컬스토리지에도 저장 이력이 전혀 없다면: 초기 콜드스타트 가상 AI 동반자 3인 안전 제공
-    if(!state.profile.companions || !Array.isArray(state.profile.companions) || state.profile.companions.length === 0){
-      state.profile.companions = [
-        { id: 'comp_minji', nickname: '새벽러너_민지', name: '새벽러너_민지', avatar: '🏃‍♀️', streak: 42, theme: '마라톤', intro: '매일 아침 6시 5km 달리기 함께해요!', isAiBot: true, createdAt: new Date().toISOString() },
-        { id: 'comp_dohyun', nickname: '코드장인_도현', name: '코드장인_도현', avatar: '💻', streak: 128, theme: '코딩', intro: '매일 1커밋과 알고리즘 1문제 풀기', isAiBot: true, createdAt: new Date().toISOString() },
-        { id: 'comp_sua', nickname: '갓생사는_수아', name: '갓생사는_수아', avatar: '📚', streak: 15, theme: '독서', intro: '출퇴근길 30분 독서 습관 만들기', isAiBot: true, createdAt: new Date().toISOString() }
-      ];
-      try {
-        localStorage.setItem(getCompanionsStorageKey(), JSON.stringify(state.profile.companions));
-      } catch(e){}
+    // 3. [#TASK-ES-172] 상민님 지시 [37]: 동반자 탭에서 AI 동반자 전면 제거 (실 사용자 중심 전환)
+    if(!state.profile.companions || !Array.isArray(state.profile.companions)){
+      state.profile.companions = [];
+    } else {
+      state.profile.companions = state.profile.companions.filter(function(c){
+        return !isKnownAiCompanion(c) && !c.isAiBot && String(c.id || '').indexOf('comp_') !== 0;
+      });
     }
 
     return state.profile.companions;

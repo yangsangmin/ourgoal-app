@@ -4397,9 +4397,23 @@
       availableDims = ['primary'];
     }
 
+    var selectedDims = state.univSelectedDimensions;
+    if(!Array.isArray(selectedDims) || selectedDims.length === 0){
+      var initDim = state.univDimension || availableDims[0];
+      if(!availableDims.includes(initDim)) initDim = availableDims[0];
+      selectedDims = [initDim];
+      state.univSelectedDimensions = selectedDims;
+    } else {
+      selectedDims = selectedDims.filter(function(d){ return availableDims.includes(d); });
+      if(selectedDims.length === 0){
+        selectedDims = [availableDims[0]];
+      }
+      state.univSelectedDimensions = selectedDims;
+    }
+
     var dimension = state.univDimension;
-    if(!dimension || !availableDims.includes(dimension)){
-      dimension = availableDims[0];
+    if(!dimension || !selectedDims.includes(dimension)){
+      dimension = selectedDims[0];
       state.univDimension = dimension;
     }
 
@@ -4412,8 +4426,60 @@
 
     var scaleMode = state.univScaleMode || 'linear';
 
+    var dimDisplayNames = {
+      '1rm': '추정 1RM(kg)',
+      'estimated_1rm_kg': '1RM(kg)',
+      'volume': '총 볼륨(kg)',
+      'daily_volume_kg': '일일 볼륨(kg)',
+      'bodyweight': '체중(kg)',
+      'bodyweight_kg': '체중(kg)',
+      'sets': '세트수',
+      'record': '완주기록(초)',
+      'pace': '페이스',
+      'rpe': '체감강도(RPE)',
+      'intensity': '운동강도(%)',
+      'distance': '거리(km)',
+      'pages': '독서량(쪽)',
+      'duration': '소요시간(분)',
+      'revenue': '매출액(만원)',
+      'contracts': '계약건수(건)',
+      'deals': '계약건수(건)',
+      'score': '점수(점)',
+      'problems': '문제수(개)',
+      'commits': '커밋수(개)',
+      'prs': 'PR수(개)',
+      'reviews': '코드리뷰(건)',
+      'meetings': '미팅(회)',
+      'proposals': '제안서(건)',
+      'savings': '저축액(만원)',
+      'hours': '수면(시간)',
+      'primary': '1차 지표',
+      'secondary': '2차 지표'
+    };
+
     var activeEntityKeys = (mode === 'all') ? ontology.map(function(o){ return o.name; }) : selected;
-    var seriesMap = aggregateMultiSeries(allRecs, activeEntityKeys, dimension, period, mode);
+    var seriesMap = {};
+    if(selectedDims.length <= 1){
+      seriesMap = aggregateMultiSeries(allRecs, activeEntityKeys, dimension, period, mode);
+    } else {
+      // 복수 지표 다중 선택 시: 모든 선택된 지표의 시계열을 단일 차트에 오버레이 (#TASK-ES-172)
+      selectedDims.forEach(function(d){
+        var dLabel = dimDisplayNames[d] || d;
+        var subMap = aggregateMultiSeries(allRecs, activeEntityKeys, d, period, mode);
+        Object.keys(subMap).forEach(function(entKey){
+          var subSeries = subMap[entKey];
+          if(subSeries && subSeries.points && subSeries.points.length > 0){
+            var combinedKey = (activeEntityKeys.length === 1 && mode !== 'all') ? dLabel : (entKey + ' (' + dLabel + ')');
+            var cloned = Object.assign({}, subSeries);
+            cloned.entity = combinedKey;
+            seriesMap[combinedKey] = cloned;
+          }
+        });
+      });
+      if(Object.keys(seriesMap).length === 0){
+        seriesMap = aggregateMultiSeries(allRecs, activeEntityKeys, dimension, period, mode);
+      }
+    }
 
     // 1. 헤더 (1-Line Compact & Intuitive Header)
     var headerHtml = 
@@ -4542,41 +4608,11 @@
     chipsHtml += '</div>';
 
     // 3-1. 측정 차원(Metric Dimension) 전환 바
-    var dimDisplayNames = {
-      '1rm': '추정 1RM(kg)',
-      'estimated_1rm_kg': '1RM(kg)',
-      'volume': '총 볼륨(kg)',
-      'daily_volume_kg': '일일 볼륨(kg)',
-      'bodyweight': '체중(kg)',
-      'bodyweight_kg': '체중(kg)',
-      'sets': '세트수',
-      'record': '완주기록(초)',
-      'pace': '페이스',
-      'rpe': '체감강도(RPE)',
-      'intensity': '운동강도(%)',
-      'distance': '거리(km)',
-      'pages': '독서량(쪽)',
-      'duration': '소요시간(분)',
-      'revenue': '매출액(만원)',
-      'contracts': '계약건수(건)',
-      'deals': '계약건수(건)',
-      'score': '점수(점)',
-      'problems': '문제수(개)',
-      'commits': '커밋수(개)',
-      'prs': 'PR수(개)',
-      'reviews': '코드리뷰(건)',
-      'meetings': '미팅(회)',
-      'proposals': '제안서(건)',
-      'savings': '저축액(만원)',
-      'hours': '수면(시간)',
-      'primary': '1차 지표',
-      'secondary': '2차 지표'
-    };
 
     var dimHtml = '<div class="u-dim-selector-row" style="display:flex;gap:5px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;-webkit-overflow-scrolling:touch;align-items:center;">';
     dimHtml += '<span style="font-size:.75rem;font-weight:800;color:var(--ink);flex-shrink:0;margin-right:4px;">📊 측정 지표 <span style="font-size:.65rem;color:var(--ink-soft);font-family:monospace;">[DIMENSION]</span>:</span>';
     availableDims.forEach(function(d){
-      var isDAct = (d === dimension);
+      var isDAct = (state.univSelectedDimensions || [dimension]).includes(d);
       var dLabel = dimDisplayNames[d] || d;
       dimHtml += 
         '<button type="button" class="u-dim-btn" data-dim="' + d + '" style="flex-shrink:0;padding:4px 10px;border-radius:14px;font-size:.75rem;font-weight:700;cursor:pointer;border:1.5px solid ' + (isDAct ? 'var(--primary, #2563eb)' : 'var(--border, #cbd5e1)') + ';background:' + (isDAct ? 'rgba(37,99,235,0.14)' : 'var(--card2)') + ';color:' + (isDAct ? 'var(--primary, #1d4ed8)' : 'var(--ink)') + ';box-shadow:' + (isDAct ? '0 1px 2px rgba(0,0,0,0.06)' : 'none') + ';transition:all 0.15s ease;">' +
@@ -4730,6 +4766,12 @@
         '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
           periodHtml +
           (curLens === 'trend' ? scaleToggleHtml : '') +
+          '<button type="button" class="btn btn-ghost btn-xs" id="uBtnGraphFullscreen" title="전체화면(가로) 보기" style="font-size:.75rem;padding:3px 8px;border:1px solid var(--border);border-radius:6px;background:var(--card2);cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-weight:700;color:var(--ink);">' +
+            '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+              '<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>' +
+            '</svg>' +
+            '<span>전체화면</span>' +
+          '</button>' +
         '</div>' +
       '</div>';
 
@@ -4944,12 +4986,23 @@
       };
     });
 
-    // 3-1. 측정 차원(Dimension) 전환 버튼 (매출액, 계약건수, 커밋수, 1RM 등)
+    // 3-1. 측정 차원(Dimension) 다중 선택 토글 버튼 (매출액, 계약건수, 커밋수, 1RM 등)
     container.querySelectorAll('.u-dim-btn').forEach(function(btn){
       btn.onclick = function(e){
         e.stopPropagation();
         var targetDim = btn.dataset.dim;
         state.univDimension = targetDim;
+        var curSelected = (state.univSelectedDimensions || []).slice();
+        var idx = curSelected.indexOf(targetDim);
+        if(idx !== -1){
+          if(curSelected.length > 1){
+            curSelected.splice(idx, 1);
+            state.univDimension = curSelected[0] || targetDim;
+          }
+        } else {
+          curSelected.push(targetDim);
+        }
+        state.univSelectedDimensions = curSelected;
         renderUniversalStatsDashboard(container, (state && state.profile && state.profile.records) || allRecs, state, callbacks);
       };
     });
@@ -5136,6 +5189,217 @@
         if(callbacks.toast) callbacks.toast('[' + activeEntityKeys[0] + '] 지표가 목표 진척도 계산식과 실시간 연계되었습니다! 🎯');
       };
     }
+
+    // 전체화면 (가로 모드) 버튼 바인딩 (#TASK-ES-172)
+    var fsBtn = container.querySelector('#uBtnGraphFullscreen');
+    if(fsBtn){
+      fsBtn.onclick = function(e){
+        e.stopPropagation();
+        openStatsFullscreenModal(seriesMap, allRecs, state, callbacks);
+      };
+    }
+  }
+
+  /**
+   * 성취통계 전체화면(가로) 뷰포트 모달 (#TASK-ES-172)
+   * 디바이스 기기 화면비율에 알맞게 자동 피팅하며, 세로 폰에서도 가로 꽉 찬 뷰 지원
+   */
+  function openStatsFullscreenModal(seriesMap, allRecs, state, callbacks){
+    var oldModal = document.getElementById('uStatsFullscreenModal');
+    if(oldModal) oldModal.remove();
+
+    var modal = document.createElement('div');
+    modal.id = 'uStatsFullscreenModal';
+    modal.style.position = 'fixed';
+    modal.style.inset = '0';
+    modal.style.zIndex = '100030';
+    modal.style.background = 'rgba(11, 17, 32, 0.98)';
+    modal.style.backdropFilter = 'blur(20px)';
+    modal.style.webkitBackdropFilter = 'blur(20px)';
+    modal.style.display = 'flex';
+    modal.style.flexDirection = 'column';
+    modal.style.padding = '12px 16px';
+    modal.style.boxSizing = 'border-box';
+    modal.style.overflow = 'hidden';
+    modal.style.color = '#fff';
+
+    document.body.appendChild(modal);
+
+    var curPeriod = state.univPeriod || 'all';
+    var curScale = state.univScaleMode || 'linear';
+    var isForcedRotated = false;
+
+    var dimNames = {
+      '1rm': '추정 1RM(kg)', 'estimated_1rm_kg': '1RM(kg)', 'volume': '총 볼륨(kg)',
+      'daily_volume_kg': '일일 볼륨(kg)', 'bodyweight': '체중(kg)', 'bodyweight_kg': '체중(kg)',
+      'sets': '세트수', 'record': '완주기록(초)', 'pace': '페이스', 'rpe': '체감강도(RPE)',
+      'intensity': '운동강도(%)', 'distance': '거리(km)', 'pages': '독서량(쪽)', 'duration': '소요시간(분)',
+      'revenue': '매출액(만원)', 'contracts': '계약건수(건)', 'deals': '계약건수(건)', 'score': '점수(점)',
+      'problems': '문제수(개)', 'commits': '커밋수(개)', 'prs': 'PR수(개)', 'reviews': '코드리뷰(건)',
+      'meetings': '미팅(회)', 'proposals': '제안서(건)', 'savings': '저축액(만원)', 'hours': '수면(시간)',
+      'primary': '1차 지표', 'secondary': '2차 지표'
+    };
+
+    function renderFullscreenContent(){
+      var winW = window.innerWidth;
+      var winH = window.innerHeight;
+      var isLandscape = winW >= winH;
+
+      var plotW, plotH;
+      if(isForcedRotated && !isLandscape){
+        plotW = Math.max(winH - 32, 480);
+        plotH = Math.max(winW - 130, 240);
+      } else {
+        plotW = Math.max(winW - 32, 320);
+        plotH = Math.max(winH - 120, 240);
+      }
+
+      var fsChartObj = renderMultiSeriesSvg(seriesMap, {
+        width: plotW,
+        height: plotH,
+        scaleMode: curScale,
+        period: curPeriod
+      });
+
+      var activeEntities = Object.keys(seriesMap || {});
+      var colors = ['#3b82f6', '#10b981', '#f59e0b', '#f43f5e', '#8b5cf6', '#06b6d4', '#ec4899', '#64748b'];
+
+      var fsPeriodTabs = [
+        { id: 'all', label: '전체 (ALL)' },
+        { id: '1y', label: '1Y' },
+        { id: '6m', label: '6M' },
+        { id: '3m', label: '3M' },
+        { id: '1m', label: '1M' },
+        { id: '1w', label: '1W' },
+        { id: '3d', label: '3D' }
+      ];
+
+      var periodBtnsHtml = '<div style="display:flex;gap:3px;background:rgba(255,255,255,0.08);padding:3px;border-radius:8px;">' +
+        fsPeriodTabs.map(function(pt){
+          var isAct = curPeriod === pt.id;
+          return '<button type="button" class="u-fs-period-btn" data-p="' + pt.id + '" style="padding:4px 8px;border:none;border-radius:6px;font-size:0.75rem;font-weight:700;font-family:monospace;cursor:pointer;background:' + (isAct ? '#3b82f6' : 'transparent') + ';color:' + (isAct ? '#fff' : '#cbd5e1') + ';">' + pt.label + '</button>';
+        }).join('') +
+      '</div>';
+
+      var scaleBtnsHtml = '<div style="display:flex;gap:3px;background:rgba(255,255,255,0.08);padding:3px;border-radius:8px;">' +
+        '<button type="button" class="u-fs-scale-btn" data-s="linear" style="padding:4px 8px;border:none;border-radius:6px;font-size:0.75rem;font-weight:700;cursor:pointer;background:' + (curScale === 'linear' ? '#3b82f6' : 'transparent') + ';color:' + (curScale === 'linear' ? '#fff' : '#cbd5e1') + ';">실제 수치</button>' +
+        '<button type="button" class="u-fs-scale-btn" data-s="normalized" style="padding:4px 8px;border:none;border-radius:6px;font-size:0.75rem;font-weight:700;cursor:pointer;background:' + (curScale === 'normalized' ? '#3b82f6' : 'transparent') + ';color:' + (curScale === 'normalized' ? '#fff' : '#cbd5e1') + ';">100% 상대 비교</button>' +
+      '</div>';
+
+      var rotateBtnHtml = '';
+      if(!isLandscape){
+        rotateBtnHtml = '<button type="button" id="uFsRotateBtn" style="padding:5px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);color:#fff;font-size:0.75rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">' +
+          '<span>🔄 ' + (isForcedRotated ? '세로 보기' : '가로 회전') + '</span>' +
+        '</button>';
+      }
+
+      var fsLegendHtml = '<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:6px 4px;margin-top:6px;overflow-x:auto;">' +
+        activeEntities.map(function(k, idx){
+          var s = seriesMap[k];
+          var col = colors[idx % colors.length];
+          return '<div style="display:flex;align-items:center;gap:5px;font-size:.78rem;font-weight:700;color:#cbd5e1;white-space:nowrap;">' +
+            '<span style="width:10px;height:10px;border-radius:50%;background:' + col + ';display:inline-block;box-shadow:0 0 6px ' + col + ';"></span>' +
+            '<span>' + s.entity + '</span>' +
+            '<span style="color:' + col + ';font-family:monospace;font-weight:800;">' + (s.latestVal ? (s.latestVal + (s.unit ? (' ' + s.unit) : '')) : '-') + '</span>' +
+          '</div>';
+        }).join('') +
+      '</div>';
+
+      var rotationStyle = '';
+      if(isForcedRotated && !isLandscape){
+        rotationStyle = 'transform:rotate(90deg);transform-origin:center center;width:' + (winH - 32) + 'px;height:' + (winW - 130) + 'px;position:absolute;top:50%;left:50%;margin-left:-' + ((winH - 32)/2) + 'px;margin-top:-' + ((winW - 130)/2) + 'px;';
+      } else {
+        rotationStyle = 'width:100%;box-sizing:border-box;';
+      }
+
+      modal.innerHTML = 
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-shrink:0;gap:8px;flex-wrap:wrap;">' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<span style="font-size:1.3rem;">📊</span>' +
+            '<div>' +
+              '<h3 style="margin:0;font-size:1.05rem;font-weight:800;color:#fff;letter-spacing:-0.3px;">성취 분석 전체화면 뷰</h3>' +
+              '<span style="font-size:0.75rem;color:#94a3b8;font-family:monospace;">화면 비율: ' + (isLandscape ? '가로 와이드 핏' : (isForcedRotated ? '가로 회전 핏' : '모바일 핏')) + ' (' + winW + 'x' + winH + ')</span>' +
+            '</div>' +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+            periodBtnsHtml +
+            scaleBtnsHtml +
+            rotateBtnHtml +
+            '<button type="button" id="uFsCloseBtn" style="padding:6px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.25);background:rgba(239,68,68,0.2);color:#fca5a5;font-weight:800;cursor:pointer;font-size:0.85rem;display:inline-flex;align-items:center;gap:4px;">' +
+              '<span>✕ 닫기</span>' +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+        '<div id="uFsChartWrapper" style="flex:1;min-height:0;position:relative;background:rgba(15,23,42,0.85);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:8px;display:flex;flex-direction:column;justify-content:center;align-items:center;overflow:hidden;' + rotationStyle + '">' +
+          fsChartObj.svgHtml +
+        '</div>' +
+        fsLegendHtml;
+
+      modal.querySelector('#uFsCloseBtn').onclick = function(){
+        window.removeEventListener('resize', handleResize);
+        window.removeEventListener('keydown', handleKey);
+        modal.remove();
+      };
+
+      modal.querySelectorAll('.u-fs-period-btn').forEach(function(btn){
+        btn.onclick = function(){
+          curPeriod = btn.dataset.p;
+          state.univPeriod = curPeriod;
+          var selectedDims = state.univSelectedDimensions || [state.univDimension || 'primary'];
+          seriesMap = {};
+          if(selectedDims.length > 1){
+            selectedDims.forEach(function(d){
+              var dLabel = dimNames[d] || d;
+              var subMap = aggregateMultiSeries(allRecs, state.univSelectedEntities || [], d, curPeriod, state.univMode || 'single');
+              Object.keys(subMap).forEach(function(entKey){
+                var subSeries = subMap[entKey];
+                if(subSeries && subSeries.points && subSeries.points.length > 0){
+                  var combinedKey = entKey + ' (' + dLabel + ')';
+                  var cloned = Object.assign({}, subSeries);
+                  cloned.entity = combinedKey;
+                  seriesMap[combinedKey] = cloned;
+                }
+              });
+            });
+          } else {
+            seriesMap = aggregateMultiSeries(allRecs, state.univSelectedEntities || [], state.univDimension || 'primary', curPeriod, state.univMode || 'single');
+          }
+          renderFullscreenContent();
+        };
+      });
+
+      modal.querySelectorAll('.u-fs-scale-btn').forEach(function(btn){
+        btn.onclick = function(){
+          curScale = btn.dataset.s;
+          state.univScaleMode = curScale;
+          renderFullscreenContent();
+        };
+      });
+
+      var rotBtn = modal.querySelector('#uFsRotateBtn');
+      if(rotBtn){
+        rotBtn.onclick = function(){
+          isForcedRotated = !isForcedRotated;
+          renderFullscreenContent();
+        };
+      }
+    }
+
+    function handleResize(){
+      renderFullscreenContent();
+    }
+    function handleKey(e){
+      if(e.key === 'Escape'){
+        window.removeEventListener('resize', handleResize);
+        window.removeEventListener('keydown', handleKey);
+        modal.remove();
+      }
+    }
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('keydown', handleKey);
+
+    renderFullscreenContent();
   }
 
   function openUniversalImportModal(opts){
@@ -5833,6 +6097,7 @@
     renderCadenceSvg: renderCadenceSvg,
     generateStatisticalDiagnosticReport: generateStatisticalDiagnosticReport,
     openDataManagementModal: openDataManagementModal,
+    openStatsFullscreenModal: openStatsFullscreenModal,
     SAMPLE_THEMES: SAMPLE_THEMES
   };
 
