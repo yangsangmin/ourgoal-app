@@ -108,7 +108,7 @@
 - [x] **[2단계: 내부 시뮬레이션 상태]**: 코드 구현 및 단위/스모크/게이트키퍼 테스트 통과 (306 PASS).
 - [x] **[3단계: 로컬 수동 확인 상태]**: 로컬 환경에서 가이드 허브 아바타 탭 렌더링 및 클릭 동작 실측 확인 (스크린샷 확보).
 - [x] **[4단계: 로컬 메인 병합 상태]**: feature 브랜치를 로컬 main에 병합 (정상 마감점).
-- [x] **[5A단계: Vercel 프리뷰 배포]**: Vercel 임시 프리뷰 배포 자동 실행 및 상민님께 URL 제공 (https://ourgoal-khxv7hdbs-yangsangmin.vercel.app).
+- [x] **[5A단계: Vercel 프리뷰 배포]**: Vercel 임시 프리뷰 배포 자동 실행 및 상민님께 URL 제공 (https://ourgoal-6tv884oyg-yangsangmin.vercel.app).
 
 ---
 
