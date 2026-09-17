@@ -949,7 +949,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       <div class="app-foot">
         <div>아워골 · v1.0.0</div>
-        <div>문의 <a href="#" id="footInquiryLink" onclick="openCustomerInquiryModal();return false;">1:1 문의 / 오류 제보</a></div>
+        <div>문의 <a href="javascript:void(0)" id="footInquiryLink" role="button">1:1 문의 / 오류 제보</a></div>
         <div><a href="#" id="setTermsLink">이용약관</a> · <a href="#" id="setPrivacyLink">개인정보처리방침</a></div>
         <div>2026 OurGoal</div>
       </div>
@@ -3716,9 +3716,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
   }
 
-  /* ============ 1:1 고객 문의 / 버그 제보 ============ */
-  document.getElementById('feedbackInquiryBtn').addEventListener('click', function(){
-    openCustomerInquiryModal();
+  /* ============ 1:1 고객 문의 / 버그 제보 (#TASK-ES-178) ============ */
+  ['feedbackInquiryBtn', 'footInquiryLink'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.addEventListener('click', function(e){
+      e.preventDefault();
+      openCustomerInquiryModal();
+    });
   });
 
   /* ============ 이용약관 / 개인정보처리방침 열람 리스너 ============ */
@@ -4389,6 +4393,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       );
     }
     render();
+  }
+  if(typeof window !== 'undefined'){
+    window.showLegalModal = showLegalModal;
   }
 
   /* ============ 안내 모달 (전체 기능 100% 완전 무료 제공) ============ */
@@ -25879,6 +25886,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         };
       }
     );
+  }
+  if(typeof window !== 'undefined'){
+    window.openCustomerInquiryModal = openCustomerInquiryModal;
   }
 
   function openFaqModal(){
