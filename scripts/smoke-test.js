@@ -878,7 +878,7 @@ check('compliance: docs/legal/privacy.md 및 terms.md 가 존재하고 필수 �
   const priv = fs.readFileSync(privPath, 'utf8');
   assert.ok(priv.includes('개인정보처리방침'), '개인정보처리방침 제목 포함');
   assert.ok(priv.includes('파기'), '파기 절차 포함');
-  assert.ok(priv.includes('support@ourgoal.kr'), '보호책임자 연락처 포함');
+  assert.ok(priv.includes('ourgoal.support@gmail.com'), '보호책임자 연락처 포함');
 
   const terms = fs.readFileSync(termsPath, 'utf8');
   assert.ok(terms.includes('이용약관'), '이용약관 제목 포함');
@@ -892,9 +892,29 @@ check('compliance: index.html 에 회원탈퇴·약관·문의·버전 마커가
   assert.ok(html.includes('id="viewTermsBtn"'), '약관 보기 버튼 마커');
   assert.ok(html.includes('id="viewPrivacyBtn"'), '방침 보기 버튼 마커');
   assert.ok(html.includes('v1.0.0'), '앱 버전 v1.0.0 표기');
-  assert.ok(html.includes('support@ourgoal.kr'), '고객지원 이메일 표기');
+  assert.ok(html.includes('ourgoal.support@gmail.com'), '고객지원 이메일 표기');
   assert.ok(html.includes('withdrawAccount'), '회원 탈퇴 함수 구현');
   assert.ok(html.includes('showLegalModal'), '약관 모달 뷰어 함수 구현');
+});
+
+check('compliance: [#TASK-ES-175] 공식 운영 이메일(ourgoal.support@gmail.com) 전수 단일화 및 구 이메일(ysm0422@naver.com, support@ourgoal.kr) 0건 방화벽 검증', () => {
+  const rootDir = path.join(__dirname, '..');
+  const privPath = path.join(rootDir, 'docs', 'legal', 'privacy.md');
+  const priv = fs.readFileSync(privPath, 'utf8');
+  const tabGuides = fs.readFileSync(path.join(rootDir, 'js', 'tab-guides.js'), 'utf8');
+
+  // 1. 공식 이메일 필수 배선 검증
+  assert.ok(html.includes('ourgoal.support@gmail.com'), 'index.html에 공식 지원 이메일 포함');
+  assert.ok(priv.includes('ourgoal.support@gmail.com'), 'privacy.md에 공식 지원 이메일 포함');
+  assert.ok(tabGuides.includes('ourgoal.support@gmail.com'), 'js/tab-guides.js에 공식 지원 이메일 포함');
+
+  // 2. 금지 이메일 0건 검증 (상민님 개인정보 및 임시 도메인 메일 원천 차단)
+  assert.ok(!html.includes('ysm0422@naver.com'), 'index.html에 ysm0422@naver.com 부재');
+  assert.ok(!html.includes('support@ourgoal.kr'), 'index.html에 support@ourgoal.kr 부재');
+  assert.ok(!priv.includes('ysm0422@naver.com'), 'privacy.md에 ysm0422@naver.com 부재');
+  assert.ok(!priv.includes('support@ourgoal.kr'), 'privacy.md에 support@ourgoal.kr 부재');
+  assert.ok(!tabGuides.includes('ysm0422@naver.com'), 'js/tab-guides.js에 ysm0422@naver.com 부재');
+  assert.ok(!tabGuides.includes('support@ourgoal.kr'), 'js/tab-guides.js에 support@ourgoal.kr 부재');
 });
 
 check('compliance: api/withdraw.js 가 유효한 핸들러 모듈이다', () => {

@@ -130,9 +130,8 @@
 
 ### 운영/자동화 (1건)
 
-- [x] **47. [런칭 전 필수] 공식 업무용 이메일 생성 및 앱/약관 문의처 교체 (ysm0422@naver.com -> 업무용 도메인)** · 완료 (#TASK-ES-101, 2026-09-15)
-  - 범위: 공식 도메인 이메일(support@ourgoal.kr) 개설 및 index.html, docs/legal/privacy.md, docs/growth/RELEASE_72H_GUIDE.md 고객지원/보호책임자 이메일 일괄 교체
-  - 완료 기준: 공식 업무용 도메인 이메일(support@ourgoal.kr)로 전수 갱신 및 smoke-test 100% 통과
-  - 선행: 도메인 구매/연결
+- [x] **47. [런칭 전 필수] 공식 업무용 이메일 생성 및 앱/약관 문의처 교체 (ourgoal.support@gmail.com)** · 최종 완료 (#TASK-ES-175, 2026-09-18)
+  - 범위: 공식 지원 이메일(`ourgoal.support@gmail.com`) 개설 및 index.html, docs/legal/privacy.md, js/tab-guides.js, docs/growth/RELEASE_72H_GUIDE.md, docs/GOOGLE_PLAY_CLOSED_TEST_RUNBOOK.md 고객지원/보호책임자/스토어 연락처 이메일 일괄 교체 및 구 이메일(`ysm0422@naver.com`, `support@ourgoal.kr`) 영구 방화벽 배선
+  - 완료 기준: 공식 업무용 이메일(`ourgoal.support@gmail.com`)로 전수 갱신, 금지 이메일 0건 방화벽 배선 및 smoke-test/무결성 게이트 100% 통과
 
 <!-- gen-backlog:end -->
