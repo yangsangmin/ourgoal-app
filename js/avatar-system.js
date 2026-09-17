@@ -5607,7 +5607,7 @@
                   cv.height = 256;
                   var ctx = cv.getContext('2d');
                   ctx.drawImage(optImg, 0, 0, 256, 256);
-                  finalUrl = cv.toDataURL('image/jpeg', 0.9);
+                  finalUrl = cv.toDataURL('image/jpeg', 0.85);
                 } catch (e) {}
                 personaPromise.then(function (persona) {
                   onAvatarCraftCompleted(finalUrl, persona);

@@ -148,6 +148,9 @@ async function handleSyncRecords(sb, body, res) {
           region: profileToSave.region || null,
           region_public: !!profileToSave.regionPublic
         };
+        if (profileToSave.savedAvatars && Array.isArray(profileToSave.savedAvatars)) {
+          profRow.saved_avatars = profileToSave.savedAvatars;
+        }
         await sb.from('users').upsert(profRow);
       } catch (e) {}
     }
@@ -157,6 +160,7 @@ async function handleSyncRecords(sb, body, res) {
       targetUserId: targetUid,
       matchedUser: matchedUser,
       user: matchedUser,
+      savedAvatars: (matchedUser && matchedUser.saved_avatars) || [],
       recordsCount: fetchedRecords.length,
       records: fetchedRecords.map(function(r) {
         return {

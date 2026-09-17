@@ -11,4 +11,5 @@
 3. **브랜치 & PR 배포**: main 직접 커밋 금지. `feat/` 또는 `fix/` 브랜치 → PR → 상민님 병합(또는 사전 자동지시).
 4. **보고 헌법**: 직관적 6단계 상태(1단계 기획설계 ~ 6단계 실운영 최종확인) 및 물리적 의미 명시.
 5. **금지 6 및 승인선 8** 절대 준수, 작업마다 dev_log.md 기록 및 Tri-Sync(노션-옵시디언-관제센터) 동기화.
+   - **관제센터 저널(`C:\dev\command-center\journal.jsonl`)은 직접 열어 쓰지 않는다** — `fs.appendFileSync` 로 인라인 기록하면 prev·hash 체인이 끊긴다(실측: 2026-09-11~12 체인 밖 줄 3건, 전부 이 저장소 세션이 PR 병합/생성 뒤 직접 쓴 것). 기록은 반드시 `node C:/dev/command-center/lib/journal.js append <event> k=v ...` 한 문으로만 한다.
 
