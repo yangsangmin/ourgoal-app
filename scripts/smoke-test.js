@@ -5435,6 +5435,24 @@ check('compliance: [#TASK-ES-133] 소통 탭 3대 핵심 상호작용(피드 댓
   assert.ok(indexSrc.includes("target_type: 'manito_member'"), '마니또 시작 시 team_pings manito_pool 회원 등록 배선');
 });
 
+check('compliance: [#TASK-ES-134] 목표 탭 현상태 분석 AI 조언 명칭 변경, 분석완료 상태 전환 배지 및 스마트 캐시 제어 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 라벨 명칭 '현상태 분석 AI 조언' 단일화 및 'AI 현황' 미니바 타이틀 제거
+  assert.ok(indexSrc.includes('현상태 분석 AI 조언'), '목표 탭 상단 타이틀이 현상태 분석 AI 조언으로 명시되어야 함');
+  assert.ok(!indexSrc.includes('<span class="minibar-title">AI 현황</span>'), '기존 기계적 명칭 AI 현황 미니바 타이틀이 완전 교체되어야 함');
+
+  // 2. 3단계 상태 배지 (#goalStatusBadge) 및 스니펫 ID 배선
+  assert.ok(indexSrc.includes('id="goalStatusBadge"'), '3단계 상태 배지 #goalStatusBadge 엘리먼트 탑재');
+  assert.ok(indexSrc.includes('id="goalStatusSnippet"'), '스니펫 실시간 갱신용 #goalStatusSnippet 엘리먼트 탑재');
+  assert.ok(indexSrc.includes('statusBadgeText = \'분석완료\''), '분석 완료 시 분석완료 배지 텍스트 할당');
+  assert.ok(indexSrc.includes('statusBadgeText = \'진행 상황 분석 중…\''), '분석 중일 때 진행 상황 분석 중… 배지 텍스트 할당');
+
+  // 3. refreshGoalStatusSummary 및 글자 수 완화 (30자 이상 수용)
+  assert.ok(indexSrc.includes('text.length<30 || text.length>300'), '로컬 폴백 정상 수용을 위한 글자 수 30~300자 유효성 완화');
+  assert.ok(indexSrc.includes("badge.textContent = '분석완료'"), 'AI 요약 성공 콜백 시 배지 분석완료 즉각 전환 배선');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

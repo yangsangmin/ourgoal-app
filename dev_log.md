@@ -4041,3 +4041,29 @@
 - **검증 결과**:
   - `npm test`: 272개 테스트 ALL PASS (0 failures), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
 ---
+
+## [2026-09-17 09:25] #TASK-ES-134 목표 탭 '현상태 분석 AI 조언' 명칭 변경, '분석완료' 상태 배지 및 스마트 캐시 제어 완결
+- **배경 및 의도**:
+  - 상민님 직접 지시 ("1번부터 진행해" — 노션 생각 메모장 02항: *"목표탭의 ‘ai현황’(최종결과 밑에 있는)을 ‘현상태 분석 ai 조언’으로 바꿔. 그리고 분석하여 결과를 보여주고도 진행상황 분석중… 안내가 계속 나타나있음. 분석할때만 띄우고 결과값 나오면 ‘분석완료’ 안내하도록 해. 그리고 다른 창을 갔다가 다시 목표탭으로 돌아오거나 목표탭을 새로고침 할 경우 지금 다시 생성되고 있는데, 이것을 방지해."*).
+  - 헌법 제4조 제1항 3호(도구 언어 노출 금지) 및 제1조(E1 목표 본질 루프 무결성)에 의거하여 기계적 용어를 순화하고, 껍데기 상태 배지 결함을 해소하며 불필요한 Gemini API 무한 재호출 낭비를 원천 차단.
+- **수행 내역**:
+  1. `index.html` (라벨 명칭 표준화 및 3단계 상태 배지 신설):
+     - 미니바 타이틀 `<span class="minibar-title">AI 현황</span>` ➔ `<span class="minibar-title">현상태 분석 AI 조언</span>` 전면 교체.
+     - 3단계 상태 배지 `<span class="minibar-status-tag" id="goalStatusBadge">` 신설:
+       - 마일스톤 0개 시: `마일스톤 필요` (회색 뱃지)
+       - 분석 진행 중: `진행 상황 분석 중…` (주황 뱃지)
+       - 분석 완료 시: `분석완료` (초록 안심 뱃지)
+     - 스니펫 엘리먼트에 `id="goalStatusSnippet"` 부여하여 실시간 동기화 배선.
+  2. `index.html` (클라이언트 글자 수 유효성 현실화 및 무한 재호출 차단):
+     - `generateGoalStatusSummary`: 기존 `text.length < 80` 하한선으로 인해 서버 스마트 로컬 폴백(65~75자)이 버려져 캐시 누락 ➔ 무한 재호출 루프를 유발하던 버그 수정 (`text.length < 30 || text.length > 300`으로 현실화).
+     - `refreshGoalStatusSummary`: AI 분석 완료 콜백 즉시 `#goalStatusBadge`를 `'분석완료'`로 전환하고 `#goalStatusSnippet`에 요약 텍스트 실시간 반영.
+     - 목표 데이터 해시 불변 시 탭 이동 및 단순 새로고침에 의한 중복 호출 0건 보장.
+  3. `scripts/smoke-test.js`:
+     - `#TASK-ES-134` 컴플라이언스 테스트 신설 (라벨 명칭 '현상태 분석 AI 조언' 단일화, 기존 'AI 현황' 제거, #goalStatusBadge 탑재, 분석완료 배지 할당, 글자수 30~300자 유효성 및 배지 즉각 전환 배선 검증).
+  4. `docs/specs/REQ-goal-ai-advice-caching.md` 및 `docs/specs/PLAN-goal-ai-advice-caching.md` 표준 작성.
+  5. `.Codex/작업계획서/7393e646.md` 등록.
+- **검증 결과**:
+  - `npm test`: 273개 전수 통과 (0 failures), 헌법 5대 게이트 14종 100% ALL PASS, Zero Dead Click ALL PASS.
+  - Headless Chrome 브라우저 CDP E2E 실측: 목표 탭 진입 시 `현상태 분석 AI 조언` 타이틀 및 `#goalStatusBadge` 정상 렌더링 확인 (`goal_ai_advice_verified.png` 실측 확보).
+---
+
