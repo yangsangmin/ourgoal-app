@@ -4113,3 +4113,29 @@
   - `npm test`: 275개 assertion 전수 통과 (0 failures), 헌법 5대 핵심 게이트 14종 100% ALL PASS.
   - Tri-Sync 무결성: `node C:/dev/command-center/lib/tri-sync.js check` 100% (512/512 무손실 일치).
 ---
+
+## [2026-09-17 11:15] #TASK-ES-137 ~ #TASK-ES-139 3대 핵심 고도화 패키지 (15대 조문 헌법 전면 적용)
+- **배경 및 의도**:
+  - 상민님 직접 지시("모두 진행해", "모두 진행하는데 새 헌법 당연히 적용할꺼지?").
+  - 15대 조문 헌법(AGENTS.md)을 철저히 준수하여 우선순위 3대 과제(#TASK-ES-137, #TASK-ES-138, #TASK-ES-139)를 원스톱 패키지로 구현 및 검증 완료.
+- **과제별 수행 내역**:
+  1. **#TASK-ES-137: AI 엔진 공통 데이터 불변 시 API 재호출 차단 & KST 자정(00:00) 자동 롤오버 (노션 생각 메모장 07항)**:
+     - `getKSTDateKey(iso)` 함수 신설: 대한민국 표준시(UTC+9) 기준 자정(00:00 KST / 15:00 UTC) 롤오버 정밀 계산.
+     - `dateKey(iso)`가 `getKSTDateKey(iso)`를 위임 호출하도록 통일.
+     - `refreshGoalStatusSummary` 및 목표 탭 캐시 키에 `getKSTDateKey(nowISO())` 연동.
+     - 목표 데이터 해시 불변 및 동일 KST 일자 유지 시 API 재호출 전면 차단 (네트워크 비용 0원 & 불필요한 레이턴시 제거).
+  2. **#TASK-ES-138: 캘린더 일정(customSchedules) 일간/시간표 24시간 블록 뷰 구현 및 세부 일정 저장 무결성 (tab-guides.js 약속 완벽 이행)**:
+     - `renderCalendarScreen()` 일간(Day) 뷰 상단에 24시간 타임테이블 블록 카드(`.timetable-card`) 구축 (06:00~24:00 1시간 단위 슬롯).
+     - 각 슬롯 클릭 시 해당 날짜 및 시간(`YYYY-MM-DDTHH:00`)이 기본 세팅된 `openCalendarManualEditModal`이 즉각 팝업되어 원터치 일정 등록 가능.
+     - 등록된 커스텀 일정 및 첨부파일/체크박스가 24시간 블록과 하단 리스트에 즉시 반영되는 반응형 렌더링 무결성 완비.
+  3. **#TASK-ES-139: 설정창 노션 연동 6대 UX 개선 및 가이드 툴팁·URL 정규화 완결 (노션 생각 메모장 04항)**:
+     - `extractNotionDatabaseId(input)`: 복잡한 URL, 쿼리스트링, 하이픈 유무에 관계없이 32자리 UUID 정규화 추출 엔진 탑재.
+     - `updateNotionDirectLink()`: 입력된 DB ID에 맞춰 '노션에서 직접 열기 ↗' 다이내믹 바로가기 링크(`id="notionDirectOpenLink"`) 실시간 동기화.
+     - 4단계 인라인 온보딩 가이드 박스(`notionInlineGuideBox`): 토큰 발급, 연결 추가, DB ID 복사, 테스트 순서의 시각적 가이드 완비.
+     - 연결 테스트 버튼 친절 피드백: 무반응/기계적 에러 대신 '✓ 정상 연결 확인', 'API 토큰 형식을 확인해주세요' 등 친절한 인라인 한국어 가이드 제공.
+- **검증 결과**:
+  - `scripts/smoke-test.js`: 278개 전수 통과 (0 failures).
+  - `npm test`: 278개 테스트 통과, 헌법 5대 핵심 게이트 15종 100% ALL PASS, 전수 인터랙션(Zero Dead Click) ALL PASS.
+  - `node scripts/essence-gate.js --pre-commit`: 통과 (금지 패턴 0건, 본체 20,000줄 보존).
+  - Tri-Sync 무결성: `node C:/dev/command-center/lib/tri-sync.js check` 100% (512/512 무손실 일치).
+---

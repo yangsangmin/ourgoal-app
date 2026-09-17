@@ -716,10 +716,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             <div class="switch" id="notionAutoPushSwitch"></div>
           </div>
           <p class="faint" style="margin-top:6px;">API Key와 Database ID를 등록하면 전문 템플릿 표 기록이 노션 데이터베이스의 실제 표 페이지로 자동 전송됩니다.</p>
+          <div class="notion-guide-box" id="notionInlineGuideBox" style="margin-top:10px;padding:10px 12px;background:var(--bg-subtle, rgba(99,102,241,0.05));border:1px solid rgba(99,102,241,0.15);border-radius:10px;font-size:.8125rem;">
+            <div style="font-weight:700;color:var(--brand);margin-bottom:6px;display:flex;align-items:center;gap:4px;">
+              <span>💡</span><span>노션 4단계 초간편 연동 가이드</span>
+            </div>
+            <ol style="margin:0;padding-left:18px;line-height:1.6;color:var(--ink-soft);font-size:.78125rem;">
+              <li><a href="https://www.notion.so/profile/integrations" target="_blank" rel="noopener" style="color:var(--brand);font-weight:600;">노션 내 통합(Integrations) ↗</a>에서 <b>[새 통합 만들기]</b> 클릭</li>
+              <li>발급된 <b>내부 통합 시크릿(secret_...)</b>을 위 API Key에 붙여넣기</li>
+              <li>연동할 노션 DB 페이지 우측 상단 <b>··· ➔ [연결(Connections)]</b>에서 방금 만든 통합 추가</li>
+              <li>노션 DB 페이지의 웹 주소(전체 URL)를 복사해 위 Database ID에 붙여넣기 (자동 정규화)</li>
+            </ol>
+          </div>
           <button class="btn btn-ghost btn-sm" id="notionTestBtn" type="button" style="margin-top:8px;">테스트 전송</button>
         </div>
         <div style="display:flex;gap:8px;margin-top:10px;">
-          <a href="https://www.notion.so" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:6px 8px;">Notion 바로 열기 ↗</a>
+          <a href="https://www.notion.so" id="notionDirectOpenLink" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:6px 8px;">Notion 바로 열기 ↗</a>
           <a href="https://www.notion.so/profile/integrations" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:6px 8px;">Notion API/웹훅 연동 관리 ↗</a>
         </div>
       </div>
@@ -1004,7 +1015,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(d.getFullYear() !== today.getFullYear()) return d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일';
     return (d.getMonth()+1)+'월 '+d.getDate()+'일';
   }
+  function getKSTDateKey(iso){
+    var d = iso ? new Date(iso) : new Date();
+    if(isNaN(d.getTime())) d = new Date();
+    var kst = new Date(d.getTime() + (9 * 3600000));
+    return kst.getUTCFullYear() + '-' + pad(kst.getUTCMonth() + 1) + '-' + pad(kst.getUTCDate());
+  }
   function dateKey(iso){ var d=new Date(iso); if(!iso || isNaN(d.getTime())) d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  if(typeof window !== 'undefined'){ window.getKSTDateKey = getKSTDateKey; }
   /* ============ 계측(익명 이벤트) — 성장 백로그 P0 ①온보딩 퍼널 ②유입 채널 ③알림 클릭률 ============
      원칙: user_id는 저장하지 않고 기기별 익명 sid만 사용(개인정보 최소화). 계측 실패는 UX에 절대 영향을 주지 않는다. */
   function parseAttribution(search){
@@ -4212,29 +4230,49 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       av.textContent = p.displayName.slice(0,1);
     }
   }
-  /* ============ Notion webhook 전송 ============ */
+  /* ============ Notion 실시간 동기화 (Direct API & Webhook) ============ */
   async function sendToNotion(record, feedback){
     var s = state.profile && state.profile.settings;
-    if(!s || !s.notionSync || !s.notionWebhookUrl) return false;
-    try{
-      await fetch(s.notionWebhookUrl, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        mode:'no-cors',
-        body: JSON.stringify({
-          source:'아워골',
-          user: state.profile.displayName,
-          text: record.text,
-          createdAt: record.createdAt || nowISO(),
-          verdict: feedback ? feedback.verdict : null,
-          comment: feedback ? feedback.comment : null
-        })
-      });
-      return true;
-    } catch(e){
-      console.warn('Notion webhook failed:', e);
-      return false;
+    if(!s || !s.notionSync) return false;
+
+    // 1. Direct Notion Database API 푸시 (API Key & Database ID)
+    if(s.notionApiKey && s.notionDatabaseId && typeof pushRecordToNotion === 'function'){
+      try {
+        var columns = ['항목', '내용'];
+        var rows = [
+          ['실천 내용', record.text || ''],
+          ['기록 일시', (record.createdAt || nowISO()).slice(0, 19).replace('T', ' ')]
+        ];
+        if(feedback && (feedback.comment || feedback.text)){
+          rows.push(['AI 피드백', String(feedback.comment || feedback.text || '')]);
+        }
+        pushRecordToNotion(record, { title: '체크인' }, columns, rows).catch(function(err){
+          console.warn('[Notion Checkin Push Error]', err);
+        });
+      } catch(e){}
     }
+
+    // 2. Notion Webhook (선택 연동)
+    if(s.notionWebhookUrl){
+      try{
+        await fetch(s.notionWebhookUrl, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          mode:'no-cors',
+          body: JSON.stringify({
+            source:'아워골',
+            user: state.profile.displayName,
+            text: record.text,
+            createdAt: record.createdAt || nowISO(),
+            verdict: feedback ? feedback.verdict : null,
+            comment: feedback ? feedback.comment : null
+          })
+        });
+      } catch(e){
+        console.warn('Notion webhook failed:', e);
+      }
+    }
+    return true;
   }
   /* ============ 구글 캘린더 연동 ============ */
   var googleTokenClient = null;
@@ -5048,11 +5086,53 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '<div class="cal-grid cal-grid-week">'+wcells.map(function(cd){ return calCellHtml(cd, itemsByDate, false); }).join('')+'</div>';
     } else {
       periodLabel = isoDate(refDate)+' ('+WEEKDAYS_KR[refDate.getDay()]+')';
-      gridHtml = '';
       state.calSelectedDate = isoDate(refDate);
+      var dayEvs = itemsByDate[state.calSelectedDate] || [];
+      var hours = [];
+      for(var h = 6; h <= 23; h++){ hours.push(h); }
+      var timelineSlots = hours.map(function(h){
+        var hStr = pad(h);
+        var matching = dayEvs.filter(function(e){
+          if(e.date && e.date.indexOf('T') !== -1){
+            var tPart = e.date.split('T')[1];
+            return tPart && tPart.startsWith(hStr);
+          }
+          return false;
+        });
+        var matchingHtml = matching.map(function(e){
+          var isDone = !!e.done;
+          return '<div class="timetable-chip" style="background:var(--card);border:1px solid '+(isDone?'#10b981':'var(--brand)')+';border-left:3px solid '+(isDone?'#10b981':'var(--brand)')+';border-radius:6px;padding:3px 8px;margin-bottom:3px;font-size:.8125rem;display:flex;align-items:center;justify-content:space-between;gap:6px;">' +
+            '<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:var(--ink);">' +
+              (isDone ? '✓ ' : '') + escapeHtml(e.title) +
+            '</div>' +
+            '<span class="faint" style="font-size:.6875rem;">' + (e.date.split('T')[1].slice(0,5)) + '</span>' +
+          '</div>';
+        }).join('');
+        return '<div class="timetable-slot" data-timeslot="'+hStr+':00" style="display:flex;border-bottom:1px solid var(--border-subtle, rgba(0,0,0,.06));min-height:38px;cursor:pointer;" title="클릭하여 '+hStr+':00 일정 추가">' +
+          '<div class="slot-time" style="width:48px;padding:4px 6px;font-size:.75rem;font-weight:700;color:var(--ink-faint);border-right:1px solid var(--border-subtle, rgba(0,0,0,.06));display:flex;align-items:flex-start;justify-content:flex-end;">'+hStr+':00</div>' +
+          '<div class="slot-content" style="flex:1;padding:2px 8px;display:flex;flex-direction:column;justify-content:center;">' +
+            (matchingHtml || '<div style="color:var(--ink-faint);font-size:.71875rem;opacity:0.4;">+ 일정 추가</div>') +
+          '</div>' +
+        '</div>';
+      }).join('');
+      gridHtml = '<div class="card timetable-card" style="padding:10px 12px;margin-bottom:14px;border-radius:12px;background:var(--card);border:1px solid var(--border);">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--rule);">' +
+          '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">⏰ 시간표 타임라인</span>' +
+          '<span class="faint" style="font-size:.75rem;">슬롯 터치 시 일정 추가</span>' +
+        '</div>' +
+        '<div class="timetable-grid" style="max-height:360px;overflow-y:auto;">' +
+          timelineSlots +
+        '</div>' +
+      '</div>';
     }
     document.getElementById('calPeriodLabel').textContent = periodLabel;
     document.getElementById('calGrid').innerHTML = gridHtml;
+    document.querySelectorAll('#calGrid .timetable-slot').forEach(function(slot){
+      slot.onclick = function(){
+        var tSlot = slot.dataset.timeslot || '09:00';
+        openCalendarManualEditModal(state.calSelectedDate, null, 'custom', { title: '', date: state.calSelectedDate + 'T' + tSlot, note: '', done: false, attachments: [] });
+      };
+    });
     document.querySelectorAll('#calViewToggle [data-calview]').forEach(function(opt){
       opt.classList.toggle('active', opt.dataset.calview===view);
       opt.onclick = function(){
@@ -9402,7 +9482,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       delete state.goalStatusPending[goal.id];
       if(!text) return;
       if(!state.profile.settings.goalStatusSummaries) state.profile.settings.goalStatusSummaries = {};
-      state.profile.settings.goalStatusSummaries[goal.id] = { text: text, hash: hash, updatedAt: nowISO() };
+      state.profile.settings.goalStatusSummaries[goal.id] = { text: text, hash: hash, dateKey: getKSTDateKey(nowISO()), updatedAt: nowISO() };
       await saveProfile();
       if(state.activeGoalId===goal.id && state.activeTab==='goals' && !state.goalEditMode){
         var el = document.getElementById('goalStatusText');
@@ -9885,7 +9965,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var goalStatusHash = computeGoalStatusHash(goal);
     if(!state.profile.settings.goalStatusSummaries) state.profile.settings.goalStatusSummaries = {};
     var goalStatusCache = state.profile.settings.goalStatusSummaries[goal.id];
-    var goalStatusStale = !goalStatusCache || goalStatusCache.hash !== goalStatusHash;
+    var todayKST = getKSTDateKey(nowISO());
+    var goalStatusStale = !goalStatusCache || goalStatusCache.hash !== goalStatusHash || (goalStatusCache.dateKey && goalStatusCache.dateKey !== todayKST);
     var isStatusExpanded = !!state.goalStatusExpanded;
     var statusText = goalStatusCache ? escapeHtml(goalStatusCache.text) : (goal.milestones.length ? '기록을 쌓으면 AI가 목표·마일스톤·할 일을 종합해 지금 상태를 요약해드려요.' : '마일스톤을 추가하면 AI가 진행 상황을 요약해드려요.');
 
@@ -21754,14 +21835,43 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         await saveProfile();
       };
     }
+    function extractNotionDatabaseId(input){
+      if(!input) return '';
+      var str = String(input).trim();
+      var dashMatch = str.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+      if(dashMatch) return dashMatch[0].replace(/-/g, '').toLowerCase();
+      var hexMatch = str.match(/[0-9a-f]{32}/i);
+      if(hexMatch) return hexMatch[0].toLowerCase();
+      return str.replace(/^.*\//, '').replace(/\?.*$/, '').replace(/-/g, '').trim();
+    }
+    if(typeof window !== 'undefined'){ window.extractNotionDatabaseId = extractNotionDatabaseId; }
+
+    function updateNotionDirectLink(){
+      var directLink = document.getElementById('notionDirectOpenLink');
+      if(directLink){
+        if(settings.notionDatabaseId){
+          directLink.href = 'https://www.notion.so/' + settings.notionDatabaseId;
+          directLink.title = '내 노션 데이터베이스 바로 열기';
+        } else {
+          directLink.href = 'https://www.notion.so';
+          directLink.title = '노션 홈페이지 열기';
+        }
+      }
+    }
+
     var notionDbInput = document.getElementById('notionDbIdInput');
     if(notionDbInput){
       notionDbInput.value = settings.notionDatabaseId || '';
       notionDbInput.onchange = async function(){
-        settings.notionDatabaseId = notionDbInput.value.trim();
+        var cleanId = extractNotionDatabaseId(notionDbInput.value);
+        settings.notionDatabaseId = cleanId;
+        notionDbInput.value = cleanId;
         await saveProfile();
+        updateNotionDirectLink();
       };
     }
+    updateNotionDirectLink();
+
     var notionAutoPushSw = document.getElementById('notionAutoPushSwitch');
     if(notionAutoPushSw){
       var isAuto = !!settings.notionAutoPush;
@@ -21787,7 +21897,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var ok = await sendToNotion({ text:'아워골 테스트 전송입니다', createdAt: nowISO() }, null);
         toast(ok ? '노션 웹훅으로 테스트 전송했어요' : '전송에 실패했어요 · URL을 확인해주세요');
       } else {
-        toast('API Key와 Database ID 또는 Webhook URL을 먼저 입력해주세요');
+        toast('API Key와 Database ID를 먼저 입력해주세요 (아래 4단계 가이드 참고)');
+        if(!settings.notionApiKey && notionKeyInput) notionKeyInput.focus();
+        else if(!settings.notionDatabaseId && notionDbInput) notionDbInput.focus();
       }
     };
     // 잇템 통계

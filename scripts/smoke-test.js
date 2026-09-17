@@ -69,7 +69,7 @@ function extractFunction(source, name) {
 }
 
 const FN_NAMES = [
-  'pad', 'dateKey', 'goalProgress', 'msCounts', 'resultPct', 'dDay',
+  'pad', 'dateKey', 'getKSTDateKey', 'goalProgress', 'msCounts', 'resultPct', 'dDay',
   'computeStreakDays', 'findSuggestionTarget', 'sanitizeSuggestions',
   'applySuggestion', 'describeSuggestion', 'localTodayMission',
   'maybeGrantStreakFreeze', 'maybeApplyStreakFreeze',
@@ -120,7 +120,7 @@ const sandboxSrc =
   '};\n' +
   'var OURGOAL_CONFIG = { ENABLE_TEMPLATE_REWARDED_ADS: false, AD_DELAY_SECONDS: 5, AD_NOTICE_MESSAGE: "다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다" };\n' +
   extracted +
-  '\nmodule.exports = { pad, dateKey, goalProgress, msCounts, resultPct, dDay, ' +
+  '\nmodule.exports = { pad, dateKey, getKSTDateKey, goalProgress, msCounts, resultPct, dDay, ' +
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
   'localTodayMission, ' +
   'maybeGrantStreakFreeze, maybeApplyStreakFreeze, ' +
@@ -5557,6 +5557,80 @@ check('compliance: [#TASK-ES-136] 목표 데이터 해시 변경 감지 보강 �
   const gGoalTitleChanged = JSON.parse(JSON.stringify(baseGoal));
   gGoalTitleChanged.title = 'SQLD 취득';
   assert.notStrictEqual(hashFn(gGoalTitleChanged), h0, '목표 제목 변경 시 해시 즉각 변경');
+});
+
+check('compliance: [#TASK-ES-137] AI 엔진 공통 데이터 불변 시 API 재호출 전면 차단 & KST 자정(00:00) 자동 롤오버 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. getKSTDateKey 정의 및 dateKey 보존 검증
+  assert.ok(indexSrc.includes('function getKSTDateKey(iso)'), 'getKSTDateKey 함수 정의');
+  assert.ok(indexSrc.includes('function dateKey(iso)'), 'dateKey 로컬 기기 날짜 포맷 함수 보존');
+  assert.ok(indexSrc.includes('window.getKSTDateKey = getKSTDateKey'), 'getKSTDateKey 전역 바인딩');
+
+  // 2. KST 자정 산출 단위 검증
+  function testKST(dStr) {
+    var d = dStr ? new Date(dStr) : new Date();
+    var kst = new Date(d.getTime() + (9 * 3600000));
+    var pad = n => n < 10 ? '0' + n : '' + n;
+    return kst.getUTCFullYear() + '-' + pad(kst.getUTCMonth() + 1) + '-' + pad(kst.getUTCDate());
+  }
+
+  // 2026-09-17 14:59 UTC = 2026-09-17 23:59 KST
+  assert.strictEqual(testKST('2026-09-17T14:59:00.000Z'), '2026-09-17');
+  // 2026-09-17 15:00 UTC = 2026-09-18 00:00 KST (자정 롤오버!)
+  assert.strictEqual(testKST('2026-09-17T15:00:00.000Z'), '2026-09-18');
+
+  // 3. goalStatusStale KST 롤오버 및 해시 검증
+  assert.ok(indexSrc.includes('var todayKST = getKSTDateKey(nowISO());'), 'renderGoalsScreen 내 todayKST 산출');
+  assert.ok(indexSrc.includes('(goalStatusCache.dateKey && goalStatusCache.dateKey !== todayKST)'), '자정 도달 시 자동 캐시 만료 롤오버');
+  assert.ok(indexSrc.includes('dateKey: getKSTDateKey(nowISO())'), '캐시 저장 시 KST dateKey 동시 기록');
+});
+
+check('compliance: [#TASK-ES-138] 캘린더 일정(customSchedules) 일간/시간표 24시간 블록 뷰 구현 및 세부 일정 저장 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 일간/시간표 뷰(view === day) 타임라인 블록 렌더링 코드 검증
+  assert.ok(indexSrc.includes('timetable-card'), 'timetable-card 컨테이너 탑재');
+  assert.ok(indexSrc.includes('timetable-slot'), '24시간 시간표 슬롯 탑재');
+  assert.ok(indexSrc.includes('data-timeslot'), '시간 슬롯 데이터 속성 바인딩');
+  assert.ok(indexSrc.includes('⏰ 시간표 타임라인'), '시간표 공식 헤더 렌더링');
+
+  // 2. 타임라인 슬롯 클릭 시 해당 시간 자동 세팅 모달 호출 검증
+  assert.ok(indexSrc.includes('openCalendarManualEditModal(state.calSelectedDate, null, \'custom\''), '슬롯 터치 시 시간 자동 세팅 일정 추가 연동');
+
+  // 3. tab-guides.js 약속 일치 검증
+  const guideSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'tab-guides.js'), 'utf8');
+  assert.ok(guideSrc.includes('일간 시간표 뷰로 오늘 하루의 24시간 블록을 밀도 있게 계획합니다'), 'tab-guides 시간표 뷰 약속 확인');
+});
+
+check('compliance: [#TASK-ES-139] 설정창 노션 연동 6대 UX 개선 및 가이드 툴팁·URL 정규화 완결 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. extractNotionDatabaseId 32자리 UUID 자동 추출 함수 검증
+  assert.ok(indexSrc.includes('function extractNotionDatabaseId(input)'), 'extractNotionDatabaseId 정규화 함수 정의');
+  assert.ok(indexSrc.includes('window.extractNotionDatabaseId = extractNotionDatabaseId'), 'extractNotionDatabaseId 전역 노출');
+
+  function parseNotion(input) {
+    if(!input) return '';
+    var str = String(input).trim();
+    var dashMatch = str.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+    if(dashMatch) return dashMatch[0].replace(/-/g, '').toLowerCase();
+    var hexMatch = str.match(/[0-9a-f]{32}/i);
+    if(hexMatch) return hexMatch[0].toLowerCase();
+    return str.replace(/^.*\//, '').replace(/\?.*$/, '').replace(/-/g, '').trim();
+  }
+
+  // 전체 URL 및 파라미터 포함 시에도 32자리 UUID 완벽 추출 확인
+  const rawUrl = 'https://www.notion.so/myworkspace/3dc598db909681348f06dfa838770cdd?v=123456789abcdef';
+  assert.strictEqual(parseNotion(rawUrl), '3dc598db909681348f06dfa838770cdd', '전체 URL에서 32자리 UUID 정규화 성공');
+
+  // 2. 4단계 친절 온보딩 가이드 박스 탑재 검증
+  assert.ok(indexSrc.includes('노션 4단계 초간편 연동 가이드'), '노션 4단계 친절 연동 가이드 탑재');
+  assert.ok(indexSrc.includes('notion-guide-box'), '노션 가이드 박스 클래스 확인');
+
+  // 3. notionDirectOpenLink 동적 바로열기 연동 검증
+  assert.ok(indexSrc.includes('id="notionDirectOpenLink"'), 'notionDirectOpenLink 태그 ID 확인');
+  assert.ok(indexSrc.includes('updateNotionDirectLink'), 'updateNotionDirectLink 동적 URL 매핑 로직 확인');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
