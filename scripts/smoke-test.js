@@ -2378,11 +2378,18 @@ function loadCustomize(uxMode) {
   vm.runInNewContext(fs.readFileSync(customizePath, 'utf8'), sandbox);
   return sandbox.window.OurgoalCustomize;
 }
-check('KF-1: 화이트리스트에 체크인 루프·내 목표·기록·소통 화면 id가 없다 (본질 ①②③ 보호, REQ-P1)', () => {
+check('KF-1: 화이트리스트에 체크인 루프·내 목표·기록·소통 화면 id가 없거나 상단 고정 잠금된다 (본질 ①②③ 보호, REQ-P1, REQ-TASK-ES-173)', () => {
   const C = loadCustomize();
-  ['captureCardBox', 'captureInput', 'captureSave', 'homeGoalList', 'streakBadge', 'screen-records', 'screen-comm', 'screen-home'].forEach(id => {
+  ['captureInput', 'captureSave', 'homeGoalList', 'streakBadge', 'screen-records', 'screen-comm', 'screen-home'].forEach(id => {
     assert.ok(C.WHITELIST_IDS.indexOf(id) < 0, id + ' 는 숨길 수 없어야 한다');
     assert.ok(C.CORE_IDS.indexOf(id) >= 0, id + ' 는 CORE_IDS 로 보호되어야 한다');
+  });
+  // 상민님 지시(#TASK-ES-173): 아바타 & 오늘 기록하기는 표현하되 상단 고정 잠금(fixed: true, CORE_IDS)
+  ['levelBadgeRow', 'captureCardBox'].forEach(id => {
+    assert.ok(C.CORE_IDS.indexOf(id) >= 0, id + ' 는 CORE_IDS 로 영구 보호되어야 한다');
+    const w = C.WHITELIST.find(item => item.id === id);
+    assert.ok(w && w.fixed === true, id + ' 는 WHITELIST 에서 fixed: true 로 상단 잠금이어야 한다');
+    assert.ok(C.normalize({ hidden: [id] }).indexOf(id) < 0, id + ' 는 normalize 에서 절대 hidden 에 들어갈 수 없다');
   });
   assert.ok(C.WHITELIST.length >= 5 && C.WHITELIST.every(w => w.id && w.label), '항목마다 id·사용자 언어 라벨');
   C.WHITELIST.forEach(w => assert.ok(!/노션|DB|엔진/.test(w.label + w.hint), '도구 언어 금지: ' + w.label));
@@ -6611,7 +6618,36 @@ check('compliance: [#TASK-ES-169] 2계정 실제 유저 상호작용 무결성 �
   assert.ok(indexSrc.includes('00000000-0000-4000-a000-000000000002'), '테스터 B RFC-4122 유효 UUIDv4 발급');
 
   // 6. 서비스워커 캐시 갱신 확인
-  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es169'), 'sw.js es169 캐시 갱신 확인');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260918-es173'), 'sw.js es173 캐시 갱신 확인');
+});
+
+check('compliance: [#TASK-ES-173] 나만의 홈 구성 상단 고정(아바타·오늘 기록하기 잠금) 및 유령 항목 정리·정합성 고도화 검증', () => {
+  const customSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'customize.js'), 'utf8');
+  const uiCssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 최상단 고정 2종 잠금(fixed: true, CORE_IDS) 탑재 확인
+  assert.ok(customSrc.includes("id: 'levelBadgeRow'") && customSrc.includes("fixed: true"), 'levelBadgeRow가 fixed: true로 WHITELIST 최상단 등록');
+  assert.ok(customSrc.includes("id: 'captureCardBox'") && customSrc.includes("fixed: true"), 'captureCardBox가 fixed: true로 WHITELIST 상단 등록');
+  assert.ok(customSrc.includes("CORE_IDS = ['levelBadgeRow', 'captureCardBox'"), 'CORE_IDS에 levelBadgeRow, captureCardBox 등록');
+  assert.ok(customSrc.includes('data-kf1-locked="true"'), '잠금 스위치 속성 부여');
+  assert.ok(customSrc.includes('🔒 상단 고정'), '상단 고정 자물쇠 뱃지 문구 렌더링');
+
+  // 2. 유령 식별자 crewPacingWidget 영구 삭제 확인
+  const C = loadCustomize();
+  assert.strictEqual(C.WHITELIST_IDS.indexOf('crewPacingWidget'), -1, 'crewPacingWidget이 WHITELIST에서 완전 삭제됨');
+  assert.strictEqual(C.MINIMAL_HIDDEN.indexOf('crewPacingWidget'), -1, 'crewPacingWidget이 MINIMAL_HIDDEN에서 완전 삭제됨');
+
+  // 3. 실제 UI와 1:1 라벨/힌트 정합화 확인
+  assert.ok(customSrc.includes("label: '내 성장 확인하기 버튼'"), "homeChallengeRoomBtn 라벨이 '내 성장 확인하기 버튼'으로 일치");
+  assert.ok(customSrc.includes("hint: '기록 탭으로 바로 이동하는 버튼'"), "homeChallengeRoomBtn 힌트가 '기록 탭으로 바로 이동하는 버튼'으로 일치");
+  assert.ok(customSrc.includes("label: '최근 히트맵 요약'"), "homeGrassSummaryCard 라벨이 '최근 히트맵 요약'으로 일치");
+  assert.ok(customSrc.includes("hint: '최근 2주간의 기록 한눈에'"), "homeGrassSummaryCard 힌트가 '최근 2주간의 기록 한눈에'로 일치");
+  assert.ok(customSrc.includes("label: '오늘의 3대 퀘스트'"), "dailyQuestBarWrap 라벨이 '오늘의 3대 퀘스트'로 일치");
+
+  // 4. ui.css 레거시 정리 및 .switch.locked 스타일 확인
+  assert.ok(!uiCssSrc.includes('body[data-ux-mode="minimal"] #crewPacingWidget'), 'ui.css 미니멀 모드에서 crewPacingWidget 제거');
+  assert.ok(!uiCssSrc.includes('body[data-ux-mode="minimal"] #quickRoutineRow'), 'ui.css 미니멀 모드에서 quickRoutineRow 제거');
+  assert.ok(uiCssSrc.includes('.switch.locked'), 'ui.css에 .switch.locked 스타일 탑재');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

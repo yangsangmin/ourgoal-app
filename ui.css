@@ -297,6 +297,7 @@ button:active,.goal-chip:active,.dock-action-btn:active{transform:scale(.97);tra
 .switch.on{background:var(--brand);}
 .switch::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;transition:transform .2s var(--ease);box-shadow:0 2px 4px rgba(0,0,0,.2);}
 .switch.on::after{transform:translateX(20px);}
+.switch.locked{opacity:0.65;cursor:not-allowed;}
 .toggle-row{display:flex;align-items:center;gap:12px;background:transparent;border-radius:0;padding:14px 0;box-shadow:none;border-bottom:1px solid var(--rule);min-height:56px;}
 .toggle-row:last-child{border-bottom:none;}
 .toggle-row .t{flex:1;font-size:.9375rem;font-weight:500;color:var(--ink);}
@@ -494,7 +495,7 @@ button:active,.goal-chip:active,.dock-action-btn:active{transform:scale(.97);tra
 .btn-cs-pulse{animation:cs-pulse .36s ease;}
 @keyframes cs-pulse{0%{transform:scale(1);}45%{transform:scale(1.06);}100%{transform:scale(1);}}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.85;}}
-body[data-ux-mode="minimal"] #crewPacingWidget,body[data-ux-mode="minimal"] #quickRoutineRow,body[data-ux-mode="minimal"] #homeGrassSummaryCard,body[data-ux-mode="minimal"] #customFeedbackBtn,body[data-ux-mode="minimal"] #homeChallengeRoomBtn{display:none!important;}
+body[data-ux-mode="minimal"] #homeGrassSummaryCard,body[data-ux-mode="minimal"] #customFeedbackBtn,body[data-ux-mode="minimal"] #homeChallengeRoomBtn{display:none!important;}
 body[data-ux-mode="gamified"] #dailyQuestBarWrap{display:block!important;margin-bottom:12px;}
 body[data-ux-mode="analyst"] #homeGrassSummaryCard{display:block!important;}
 
@@ -2766,6 +2767,34 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
 }
 .goal-edit-done-inline-btn:active {
   transform: scale(0.98);
+}
+
+.tg-reorder-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  background: var(--card2);
+  color: var(--ink);
+  font-size: .8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background .12s, border-color .12s, transform .08s;
+  padding: 0;
+  margin: 0;
+}
+.tg-reorder-btn:hover {
+  background: var(--surface-2);
+  border-color: var(--brand);
+}
+.tg-reorder-btn:active {
+  background: var(--brand);
+  color: #fff;
+  transform: scale(0.92);
 }
 
 /* ============================================================
