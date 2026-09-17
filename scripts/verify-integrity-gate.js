@@ -434,6 +434,39 @@ check('UI 텍스트, 라벨 및 신규 스펙에서 \'잔디\' 단어가 100% �
   assert.strictEqual(violations.length, 0, `절대 금지어 '잔디' 발견 (히트맵으로 변경 필수):\n${violations.join('\n')}`);
 });
 
+check('UI 텍스트, 라벨, 가이드 및 프롬프트에서 아바타 \'77종/77가지\' 노출이 영구 배제되고 \'320종\'으로 단일화되었다 (헌법 제10조 제4~5항)', () => {
+  const uiFilesToCheck = [
+    INDEX_HTML,
+    path.join(ROOT_DIR, 'api', 'promptgen.js')
+  ];
+
+  const violations = [];
+  uiFilesToCheck.forEach(fp => {
+    if (!fs.existsSync(fp)) return;
+    const content = fs.readFileSync(fp, 'utf8');
+    const lines = content.split('\n');
+    lines.forEach((line, idx) => {
+      if (/^\s*(\/\/|\/\*|\*)/.test(line)) return;
+      if (line.includes('BODY_THEMES_77')) return;
+      if (line.includes('절대 사용 금지') || line.includes('영구 금지') || line.includes('전면 영구') || line.includes('용어 헌법')) return;
+      if (line.includes('77종') || line.includes('77가지')) {
+        violations.push(`${path.basename(fp)}:${idx + 1} -> ${line.trim().slice(0, 80)}`);
+      }
+    });
+  });
+
+  assert.strictEqual(violations.length, 0, `아바타 금지 표현 '77종/77가지' 발견 (320종으로 변경 필수):\n${violations.join('\n')}`);
+
+  // index.html 및 rules 정본 내 320종 단일 표기 검증
+  const freshHtml = fs.readFileSync(INDEX_HTML, 'utf8');
+  assert.ok(freshHtml.includes('320종'), 'index.html 내 320종 페르소나 표기 누락');
+
+  const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
+  const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
+  assert.ok(rulesContent.includes('제4항 [아바타 페르소나 \'77종/77가지\' 사용자 노출 전면 영구 금지]'), '헌법 제10조 제4항 누락');
+  assert.ok(rulesContent.includes('제5항 [아바타 페르소나 \'320종\' 단일 표기 강제]'), '헌법 제10조 제5항 누락');
+});
+
 /* =========================================================================
  * 7. 헌법 제9조 & 제12조: 프로덕션 배포 절대 방화벽 및 작업계획서 상한선 검증
  * ========================================================================= */

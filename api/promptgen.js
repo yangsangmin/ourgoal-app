@@ -167,7 +167,7 @@ async function handleAvatarFaceVision(req, res, body) {
     // [2순위 폴백] 텍스트 비전 분석 모델 (Gemini 3.1 Flash-Lite)
     var systemInstruction = 
       "당신은 한국 웹툰 및 카툰 3등신(Chibi) 캐릭터 전문 아바타 디자이너입니다.\n" +
-      "제공된 실사 사진 속 인물의 고유한 외모 특징을 분석하여, 77종 3등신 캐릭터 바디에 완벽히 호환되는 만화형 얼굴 파라미터 JSON을 생성하십시오.\n\n" +
+      "제공된 실사 사진 속 인물의 고유한 외모 특징을 분석하여, 320종 3등신 캐릭터 바디·페르소나에 완벽히 호환되는 만화형 얼굴 파라미터 JSON을 생성하십시오.\n\n" +
       "[엄격한 분석 규칙]\n" +
       "1. 안경 유무(hasGlasses): 안경을 썼다면 반드시 true로 두고, 테의 형태(round_wire:동글이, square_horn:사각뿔테, half_rim:하금테, black_thick:두꺼운검정테)와 색상을 지정하십시오.\n" +
       "2. 헤어스타일(hair): 실제 인물의 가르마(center, left, right, none), 기장(short, medium, long), 형태(dandy, two_block, bob, wave, curly, ponytail, straight, spiky), 앞머리 유무(hasBangs), 흑갈색/갈색/검정 등 실제 머리색 Hex를 지정하십시오.\n" +
