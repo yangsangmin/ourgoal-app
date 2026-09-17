@@ -5856,6 +5856,7 @@
           if (deps.state && deps.state.profile) {
             deps.state.profile.settings = deps.state.profile.settings || {};
             deps.state.profile.settings.avatarType = selectedType;
+            deps.state.profile.settings.avatarChangedOnce = true;
             if (selectedType === 'custom') {
               deps.state.profile.settings.customAvatarUrl = newCustomUrl;
               deps.state.profile.settings.avatarThemeId = chosenTheme.id;
