@@ -6229,7 +6229,38 @@ check('compliance: [#TASK-ES-159] 아바타 레벨별 상징 백그라운드 이
   assert.ok(cssSrc.includes('@keyframes cosmicOrbit'), '우주 테마 애니메이션');
 
   // 5. sw.js 캐시 갱신
-  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es159'), 'sw.js 캐시 네임 es159 갱신');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es159') || swSrc.includes('ourgoal-shell-v20260917-es160'), 'sw.js 캐시 네임 es159/160 갱신');
+});
+
+/* ============ [#TASK-ES-160] 각 탭 200% 활용법 및 실제 우수 사용사례 쇼케이스 허브 모달 검증 ============ */
+check('compliance: [#TASK-ES-160] 각 탭 200% 활용법 및 실제 우수 사용사례 쇼케이스 허브 모달 4위 1체 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 설정 탭 진입 버튼 및 전용 모달 컨테이너 확인
+  assert.ok(indexSrc.includes('id="btnTabGuideHub"'), '설정 탭 내 탭 200% 활용법 버튼 구비');
+  assert.ok(indexSrc.includes('id="tabGuideHubModal"'), '전용 tabGuideHubModal 컨테이너 마크업 존재');
+
+  // 2. 5대 탭 데이터셋 및 쇼케이스 구조 확인
+  assert.ok(indexSrc.includes('var TAB_GUIDE_DATA = {'), 'TAB_GUIDE_DATA 5대 탭 데이터셋 정의');
+  assert.ok(indexSrc.includes("name: '홈'") && indexSrc.includes("name: '목표'") && (indexSrc.includes("name: '일정'") || indexSrc.includes("name: '캘린더'")) && indexSrc.includes("name: '기록'") && indexSrc.includes("name: '소통'"), '5대 탭 데이터 매핑');
+  assert.ok(indexSrc.includes('showcase:'), '탭별 실제 우수 활용사례(쇼케이스) 객체 포함');
+  assert.ok(indexSrc.includes('features:'), '탭별 3대 핵심 혁신 기능 목록 포함');
+
+  // 3. 네비게이션 및 렌더링 함수 확인
+  assert.ok(indexSrc.includes('function openTabGuideHubModal('), 'openTabGuideHubModal 함수 구현');
+  assert.ok(indexSrc.includes('function renderTabGuideContent('), 'renderTabGuideContent 함수 구현');
+  assert.ok(indexSrc.includes('btn.getAttribute(\'data-tabkey\')'), '가이드 탭 네비게이션 액션 구현');
+
+  // 4. ui.css 전용 스타일 클래스 확인
+  assert.ok(cssSrc.includes('.tab-guide-hub-container'), '가이드 허브 모달 컨테이너 스타일');
+  assert.ok(cssSrc.includes('.tab-guide-nav-bar'), '5대 탭 가로 칩 네비게이션 바 스타일');
+  assert.ok(cssSrc.includes('.guide-showcase-card'), '우수사례 쇼케이스 카드 스타일');
+  assert.ok(cssSrc.includes('.showcase-mockup-wrap'), 'UI 시각적 목업 그래픽 래퍼 스타일');
+
+  // 5. sw.js 캐시 갱신
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es160'), 'sw.js 캐시 네임 es160 갱신');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
