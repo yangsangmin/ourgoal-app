@@ -687,6 +687,44 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <button class="btn btn-ghost btn-sm btn-block" id="btnOpenTrashModal" type="button" style="display:flex;align-items:center;justify-content:center;gap:6px;">🗑️ 휴지통 (0개 보관 중)</button>
       </div>
 
+      <!-- 🤖 앱 진입 아바타 인사 팝업 설정 (#TASK-ES-165) -->
+      <div class="set-block" id="setAvatarGreetingBlock">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <h4 style="margin:0;">앱 진입 아바타 인사 팝업</h4>
+          <div class="switch" id="avatarGreetingSwitch"></div>
+        </div>
+        <p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 10px;">앱 진입 시 내 아바타가 화면 절반 크기로 반갑게 말을 건넵니다 (2.5초 후 자동 소멸 & 큰 X 닫기).</p>
+        
+        <div id="avatarGreetingConfigBody">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+            <div>
+              <label style="font-size:.75rem;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:4px;">☀️ 주간 시작</label>
+              <select id="avatarGreetingDayHour" style="width:100%;font-size:.8125rem;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface);">
+              </select>
+            </div>
+            <div>
+              <label style="font-size:.75rem;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:4px;">🌙 야간 시작</label>
+              <select id="avatarGreetingNightHour" style="width:100%;font-size:.8125rem;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface);">
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-bottom:10px;">
+            <label style="font-size:.75rem;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:4px;">☀️ 주간 멘트</label>
+            <input id="avatarGreetingDayMsg" type="text" placeholder="오늘은 뭘 할거냐? 내자신" style="width:100%;font-size:.8125rem;padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);box-sizing:border-box;">
+          </div>
+
+          <div style="margin-bottom:12px;">
+            <label style="font-size:.75rem;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:4px;">🌙 야간 멘트</label>
+            <input id="avatarGreetingNightMsg" type="text" placeholder="오늘은 뭘 했냐? 내자신" style="width:100%;font-size:.8125rem;padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--surface);box-sizing:border-box;">
+          </div>
+
+          <button class="btn btn-ghost btn-sm btn-block" id="btnPreviewAvatarGreeting" type="button" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+            👀 아바타 인사 미리보기
+          </button>
+        </div>
+      </div>
+
       <div class="set-block">
         <h4>앱을 내맘대로!</h4>
         <p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 8px;">내 목표에 필요한 것만 홈에 남기세요. 오늘 기록하기·내 목표·기록·소통은 항상 보여요.</p>
@@ -995,6 +1033,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         </div>
         <button type="button" class="btn btn-primary" id="btnConfirmLevelUpClose" style="width:100%;font-size:.9rem;font-weight:700;padding:10px 0;">확인</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- #TASK-ES-165: 앱 진입 시 화면 절반 크기 아바타 인사 팝업 -->
+<div id="avatarGreetingModal" class="avatar-greet-overlay" style="display:none;" role="dialog" aria-modal="true" aria-label="아바타 인사">
+  <div class="avatar-greet-modal-content">
+    <button type="button" class="avatar-greet-close-big" id="btnAvatarGreetClose" onclick="closeAvatarGreetingPopup(false)" aria-label="닫기">✕</button>
+    <div class="avatar-greet-bubble">
+      <span id="avatarGreetMessageText" class="avatar-greet-text">오늘은 뭘 할거냐? 내자신</span>
+    </div>
+    <div id="avatarGreetFigureContainer" class="avatar-greet-figure-container"></div>
+    <div class="avatar-greet-timer-bar">
+      <div class="avatar-greet-timer-progress"></div>
     </div>
   </div>
 </div>
@@ -1749,6 +1801,112 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
     });
   }
+
+  /* ============ #TASK-ES-165: 앱 진입 아바타 인사 팝업 (화면 절반 크기 & 시간대별 멘트) ============ */
+  var __avatarGreetTimer = null;
+  function openAvatarGreetingPopup(profile, isPreview){
+    try {
+      var p = profile || state.profile;
+      if(!p) return;
+      var settings = p.settings || {};
+      var conf = settings.avatarGreeting || {};
+      
+      // 비활성화 설정 시 (미리보기가 아닐 때) 건너뜀
+      if(!isPreview && conf.enabled === false) return;
+      
+      // 일반 실행 시 1회 노출 방어 (세션 기준)
+      if(!isPreview){
+        var greetedKey = 'ourgoal_avatar_greeted_session';
+        try {
+          if(sessionStorage.getItem(greetedKey)) return;
+          sessionStorage.setItem(greetedKey, '1');
+        } catch(e){}
+      }
+
+      var modal = document.getElementById('avatarGreetingModal');
+      if(!modal) return;
+
+      // 시간대별 멘트 분기 (기본 기준: 오전 4시, 오후 4시)
+      var dayStartHour = typeof conf.dayStartHour === 'number' ? conf.dayStartHour : 4;
+      var nightStartHour = typeof conf.nightStartHour === 'number' ? conf.nightStartHour : 16;
+      var defaultDayMsg = conf.dayGreeting || '오늘은 뭘 할거냐? 내자신';
+      var defaultNightMsg = conf.nightGreeting || '오늘은 뭘 했냐? 내자신';
+
+      var curHour = new Date().getHours();
+      var isDay = false;
+      if(dayStartHour < nightStartHour){
+        isDay = (curHour >= dayStartHour && curHour < nightStartHour);
+      } else {
+        isDay = (curHour >= dayStartHour || curHour < nightStartHour);
+      }
+
+      var greetingText = isDay ? defaultDayMsg : defaultNightMsg;
+      var textEl = document.getElementById('avatarGreetMessageText');
+      if(textEl) textEl.textContent = greetingText;
+
+      // 화면 절반 크기 (높이 ~48vh, 240px) 아바타 렌더링
+      var figContainer = document.getElementById('avatarGreetFigureContainer');
+      if(figContainer){
+        var xpTotal = (settings.xp && settings.xp.total) || 0;
+        var curLv = (typeof levelForXP === 'function') ? levelForXP(xpTotal) : 1;
+        var avatarMarkup = '';
+        if(window.OurgoalAvatar && typeof window.OurgoalAvatar.renderAvatarHtml === 'function'){
+          avatarMarkup = window.OurgoalAvatar.renderAvatarHtml(curLv, p, { size: 240, withRankBg: true });
+        } else if(typeof avatarHtml === 'function'){
+          avatarMarkup = avatarHtml(240);
+        } else {
+          avatarMarkup = '<div style="font-size:120px;">🤖</div>';
+        }
+        figContainer.innerHTML = avatarMarkup;
+      }
+
+      // 기존 타이머 클리어
+      if(__avatarGreetTimer){
+        clearTimeout(__avatarGreetTimer);
+        __avatarGreetTimer = null;
+      }
+
+      // 팝업 표시 및 리셋
+      modal.classList.remove('fade-out');
+      modal.style.display = 'flex';
+
+      // 2.5초(2500ms) 자동 페이드아웃 등록
+      __avatarGreetTimer = setTimeout(function(){
+        closeAvatarGreetingPopup(true);
+      }, 2500);
+
+      // 백드롭 클릭 시 즉시 닫힘 (컨텐츠 클릭 제외)
+      modal.onclick = function(e){
+        if(e.target === modal){
+          closeAvatarGreetingPopup(false);
+        }
+      };
+    } catch(err){
+      console.warn('openAvatarGreetingPopup error:', err);
+    }
+  }
+
+  function closeAvatarGreetingPopup(withFade){
+    if(__avatarGreetTimer){
+      clearTimeout(__avatarGreetTimer);
+      __avatarGreetTimer = null;
+    }
+    var modal = document.getElementById('avatarGreetingModal');
+    if(!modal) return;
+
+    if(withFade){
+      modal.classList.add('fade-out');
+      setTimeout(function(){
+        modal.style.display = 'none';
+        modal.classList.remove('fade-out');
+      }, 350);
+    } else {
+      modal.style.display = 'none';
+      modal.classList.remove('fade-out');
+    }
+  }
+  window.openAvatarGreetingPopup = openAvatarGreetingPopup;
+  window.closeAvatarGreetingPopup = closeAvatarGreetingPopup;
 
   function showLevelUpBanner(level){
     var slot = document.getElementById('levelUpBannerSlot');
@@ -3347,6 +3505,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     setupRealtimeChannelsOnce();
     await ensureFeedPostsLoaded();
     checkSocialNotifications();
+    // #TASK-ES-165: 앱 진입 시 화면 절반 크기 아바타 인사 팝업
+    try {
+      setTimeout(function(){
+        openAvatarGreetingPopup(state.profile, false);
+      }, 150);
+    } catch(greetErr){}
     try {
       if(window.OurgoalTeamInviteComm && state.profile && state.profile.id && String(state.profile.id).indexOf('guest') !== 0){
         if(typeof window.OurgoalTeamInviteComm.initIncomingDmListener === 'function'){
@@ -23821,6 +23985,88 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         toast('통계 공개 범위를 변경했어요');
       };
     }
+    // 🤖 아바타 인사 팝업 커스텀 (#TASK-ES-165)
+    if(!settings.avatarGreeting) {
+      settings.avatarGreeting = {
+        enabled: true,
+        dayStartHour: 4,
+        nightStartHour: 16,
+        dayGreeting: '오늘은 뭘 할거냐? 내자신',
+        nightGreeting: '오늘은 뭘 했냐? 내자신'
+      };
+    }
+    var agConf = settings.avatarGreeting;
+    var agSw = document.getElementById('avatarGreetingSwitch');
+    if(agSw){
+      var isAgOn = agConf.enabled !== false;
+      agSw.className = 'switch' + (isAgOn ? ' on' : '');
+      a11ySwitch(agSw, isAgOn, '아바타 인사 팝업');
+      agSw.onclick = async function(){
+        agConf.enabled = !isAgOn;
+        await saveProfile();
+        renderSettingsScreen();
+        toast(agConf.enabled ? '아바타 인사 팝업을 켰어요' : '아바타 인사 팝업을 껐어요');
+      };
+    }
+    var agDayHourSel = document.getElementById('avatarGreetingDayHour');
+    if(agDayHourSel){
+      if(agDayHourSel.options.length === 0){
+        for(var h = 0; h < 24; h++){
+          var opt = document.createElement('option');
+          opt.value = h;
+          opt.textContent = (h < 12 ? '오전 ' : '오후 ') + (h === 0 ? 12 : (h > 12 ? h - 12 : h)) + '시 (' + (h < 10 ? '0' + h : h) + ':00)';
+          agDayHourSel.appendChild(opt);
+        }
+      }
+      agDayHourSel.value = typeof agConf.dayStartHour === 'number' ? agConf.dayStartHour : 4;
+      agDayHourSel.onchange = async function(){
+        agConf.dayStartHour = parseInt(agDayHourSel.value, 10);
+        await saveProfile();
+        toast('주간 시작 시간을 변경했어요');
+      };
+    }
+    var agNightHourSel = document.getElementById('avatarGreetingNightHour');
+    if(agNightHourSel){
+      if(agNightHourSel.options.length === 0){
+        for(var nh = 0; nh < 24; nh++){
+          var nopt = document.createElement('option');
+          nopt.value = nh;
+          nopt.textContent = (nh < 12 ? '오전 ' : '오후 ') + (nh === 0 ? 12 : (nh > 12 ? nh - 12 : nh)) + '시 (' + (nh < 10 ? '0' + nh : nh) + ':00)';
+          agNightHourSel.appendChild(nopt);
+        }
+      }
+      agNightHourSel.value = typeof agConf.nightStartHour === 'number' ? agConf.nightStartHour : 16;
+      agNightHourSel.onchange = async function(){
+        agConf.nightStartHour = parseInt(agNightHourSel.value, 10);
+        await saveProfile();
+        toast('야간 시작 시간을 변경했어요');
+      };
+    }
+    var agDayMsgInput = document.getElementById('avatarGreetingDayMsg');
+    if(agDayMsgInput){
+      agDayMsgInput.value = agConf.dayGreeting || '오늘은 뭘 할거냐? 내자신';
+      agDayMsgInput.onchange = async function(){
+        agConf.dayGreeting = agDayMsgInput.value.trim() || '오늘은 뭘 할거냐? 내자신';
+        await saveProfile();
+        toast('주간 인사 멘트를 저장했어요');
+      };
+    }
+    var agNightMsgInput = document.getElementById('avatarGreetingNightMsg');
+    if(agNightMsgInput){
+      agNightMsgInput.value = agConf.nightGreeting || '오늘은 뭘 했냐? 내자신';
+      agNightMsgInput.onchange = async function(){
+        agConf.nightGreeting = agNightMsgInput.value.trim() || '오늘은 뭘 했냐? 내자신';
+        await saveProfile();
+        toast('야간 인사 멘트를 저장했어요');
+      };
+    }
+    var agPreviewBtn = document.getElementById('btnPreviewAvatarGreeting');
+    if(agPreviewBtn){
+      agPreviewBtn.onclick = function(){
+        openAvatarGreetingPopup(state.profile, true);
+      };
+    }
+
     var onlineSw = document.getElementById('onlineStatusSwitch');
     if(onlineSw){
       var isOnline = settings.onlineStatus !== false;

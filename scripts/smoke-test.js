@@ -6446,6 +6446,51 @@ check('compliance: [#TASK-ES-164] 소통창 화면정리 및 피드·소통 UI �
   assert.ok(swSrc.includes('ourgoal-shell-v20260917-es164'), 'sw.js es164 캐시 갱신');
 });
 
+/* ============ [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 시스템 검증 ============ */
+check('compliance: [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 시스템 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+  // 1. 아바타 인사 팝업 모달 마크업 및 필수 요소 검증
+  assert.ok(indexSrc.includes('id="avatarGreetingModal"'), '#avatarGreetingModal 모달 엘리먼트 탑재');
+  assert.ok(indexSrc.includes('id="btnAvatarGreetClose"'), '#btnAvatarGreetClose 대형 닫기 버튼 탑재');
+  assert.ok(indexSrc.includes('avatar-greet-close-big'), 'avatar-greet-close-big 큰 X 버튼 클래스');
+  assert.ok(indexSrc.includes('id="avatarGreetMessageText"'), '#avatarGreetMessageText 멘트 텍스트 엘리먼트');
+  assert.ok(indexSrc.includes('id="avatarGreetFigureContainer"'), '#avatarGreetFigureContainer 화면 절반 크기 아바타 컨테이너');
+  assert.ok(indexSrc.includes('avatar-greet-timer-bar'), '2.5초 자동 소멸 타이머 바 탑재');
+
+  // 2. 엔진 함수 및 앱 진입 배선 검증
+  assert.ok(indexSrc.includes('function openAvatarGreetingPopup('), 'openAvatarGreetingPopup 함수 정의');
+  assert.ok(indexSrc.includes('function closeAvatarGreetingPopup('), 'closeAvatarGreetingPopup 함수 정의');
+  assert.ok(indexSrc.includes('window.openAvatarGreetingPopup = openAvatarGreetingPopup;'), 'openAvatarGreetingPopup 전역 노출');
+  assert.ok(indexSrc.includes('window.closeAvatarGreetingPopup = closeAvatarGreetingPopup;'), 'closeAvatarGreetingPopup 전역 노출');
+  assert.ok(indexSrc.includes('openAvatarGreetingPopup(state.profile, false)'), 'enterApp 진입 시 openAvatarGreetingPopup 호출 배선');
+
+  // 3. 시간대별 멘트 및 2.5초 자동 소멸 로직 검증
+  assert.ok(indexSrc.includes('오늘은 뭘 할거냐? 내자신'), '주간 기본 멘트(오늘은 뭘 할거냐? 내자신) 탑재');
+  assert.ok(indexSrc.includes('오늘은 뭘 했냐? 내자신'), '야간 기본 멘트(오늘은 뭘 했냐? 내자신) 탑재');
+  assert.ok(indexSrc.includes('dayStartHour'), '주간 시작 시간 변수');
+  assert.ok(indexSrc.includes('nightStartHour'), '야간 시작 시간 변수');
+  assert.ok(indexSrc.includes('2500'), '2.5초(2500ms) 자동 페이드아웃 타이머');
+
+  // 4. 설정창(#screen-settings) 커스텀 UI 검증
+  assert.ok(indexSrc.includes('id="setAvatarGreetingBlock"'), '설정창 아바타 인사 섹션 #setAvatarGreetingBlock');
+  assert.ok(indexSrc.includes('id="avatarGreetingSwitch"'), '아바타 인사 토글 스위치 #avatarGreetingSwitch');
+  assert.ok(indexSrc.includes('id="avatarGreetingDayHour"'), '주간 시작 시간 셀렉터 #avatarGreetingDayHour');
+  assert.ok(indexSrc.includes('id="avatarGreetingNightHour"'), '야간 시작 시간 셀렉터 #avatarGreetingNightHour');
+  assert.ok(indexSrc.includes('id="avatarGreetingDayMsg"'), '주간 멘트 인풋 #avatarGreetingDayMsg');
+  assert.ok(indexSrc.includes('id="avatarGreetingNightMsg"'), '야간 멘트 인풋 #avatarGreetingNightMsg');
+  assert.ok(indexSrc.includes('id="btnPreviewAvatarGreeting"'), '아바타 인사 미리보기 버튼 #btnPreviewAvatarGreeting');
+
+  // 5. ui.css 전용 스타일 및 sw.js 캐시 검증
+  assert.ok(cssSrc.includes('.avatar-greet-overlay'), 'ui.css .avatar-greet-overlay 스타일');
+  assert.ok(cssSrc.includes('.avatar-greet-close-big'), 'ui.css .avatar-greet-close-big 스타일');
+  assert.ok(cssSrc.includes('.avatar-greet-bubble'), 'ui.css .avatar-greet-bubble 스타일');
+  assert.ok(cssSrc.includes('.avatar-greet-figure-container'), 'ui.css .avatar-greet-figure-container 스타일');
+  assert.ok(cssSrc.includes('.avatar-greet-timer-bar'), 'ui.css .avatar-greet-timer-bar 스타일');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es165'), 'sw.js es165 캐시 갱신');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
