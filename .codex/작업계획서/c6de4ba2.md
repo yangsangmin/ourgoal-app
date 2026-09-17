@@ -1,57 +1,30 @@
-# 엔지니어링 작업계획서 (PLAN) — #TASK-ES-176 팀 목표창 View ↔ Edit 완전 분리(A안) · 3대 본질 시너지 및 60선 대형창 제거
+# [작업계획서] 아워골 생각 메모장 3대 완결 과제([58] 소통 피드 직접 사진 첨부 · [59] 카테고리 10종 확장 및 가로스크롤 · [60] 성취통계 껍데기 버튼 영구 삭제)
+목표: 아워골 생각 메모장 잔여 대기 과제인 [58] 소통 피드 직접 사진 첨부, [59] 카테고리 10종 확장 및 가로 스크롤, [60] 성취통계 껍데기 버튼 영구 삭제를 무결하게 구현하고 E2E 브라우저 실측 및 자동화 테스트 315개를 100% 통과하여 프로덕션 배포를 완수한다.
 
-> **문서 ID**: PLAN-TASK-ES-176-TEAM-GOALS-VIEW-EDIT-CLEAN  
-> **티켓 연계**: #TASK-ES-176  
-> **작성 일시**: 2026-09-18  
-> **작성자**: Antigravity Gemini Session  
-> **규범 준수**: OURGOAL_ABSOLUTE_INTEGRITY_RULES 준수 (헌법 제2조 2중 8원칙 엄수)
+## 체크리스트
+- [x] 1. [기능 60] 성취통계 메뉴 내 미작동 껍데기 버튼(uLinkGoalBtn, uRegCalendarBtn) 영구 삭제
+  - js/universal-stats.js 5164-5193 라인의 마크업 및 이벤트 리스너 완전 제거
+  - 껍데기 토스트 및 데드 클릭 0건 보장
+- [x] 2. [기능 58] 소통 피드 게시하기 내 직접 사진(이미지) 첨부 기능 추가
+  - 카메라/앨범 직접 사진 업로드 input (#shareDirectPhotoInput) 및 버튼 (#btnSharePickPhoto)
+  - in-scope compressImage(file, 800, 0.82) 기반 800px 최적 압축 파이프라인 탑재
+  - 실시간 썸네일 미리보기 (#shareDirectPhotoPreviewWrap) 및 삭제 버튼 (#btnShareRemovePhoto)
+  - 피드 미리보기 (#sharePreviewSlot) 및 최종 피드 게시 (finalPhoto) 연동
+  - 소통 피드 '📸 사진인증만' 필터 자동 노출 보장
+- [x] 3. [기능 59] 소통 피드 게시하기 카테고리 분류 다양화(10종) 및 가로 스크롤 UI
+  - 10종 카테고리 (공부·수험, 개발·기획, 운동·건강, 커리어·취업, 취미·창작, 생활·습관, 육아·가족, 재테크·투자, 멘탈·마인드, 독서·인문)
+  - 피드 게시 모달: #shareCatPicker 내 가로 스크롤 chip row (overflow-x: auto, white-space: nowrap)
+  - 메인 피드: feed-filter-bar 10종 카테고리 가로 스크롤 및 필터링 (filterFeedByCategory)
+  - 未매칭/unknown 카테고리 안전 방어망 유지
+- [x] 4. [검증] 스모크 테스트 및 E2E 브라우저 실측
+  - scripts/smoke-test.js 신규 컴플라이언스 테스트 추가 (315개 통과, 0개 실패)
+  - verify-integrity-gate.js 20/20 전수 통과
+  - Headless Chrome CDP 기반 모달, 사진 첨부, 10종 가로 스크롤, 성취통계 3대 스크린샷 검증 완료
+- [x] 5. [문서화 및 3자 동기화]
+  - docs/rules/TICKETS.md #TASK-ES-177 등록
+  - 옵시디언 메모장 DB [58], [59], [60] '완료' 갱신
+  - Tri-Sync 무결성 검증
 
----
-
-## 1. [원칙 ①] 엔지니어링 아키텍처 및 변경 범위 파악
-- **지시 사항 요약**:
-  1. 팀 목표 편집버튼(A안) 확정: 평소에는 100% 클린한 텍스트 대시보드(무입력창·무삭제버튼), [편집] 토글 시에만 목표/마일스톤 인라인 수정·마감일·우선순위·40px 순서변경·세부할일 편집 및 하단 플로팅 액션바 활성화.
-  2. 일반 멤버는 상단 [편집] 버튼 자체를 원천 숨김 (팀장/매니저만 활성화).
-  3. 3대 본질 시너지 구축:
-     - E1: 팀 목표 생성창에서 '📖 템플릿백과사전' 원터치 연계.
-     - E2: 팀 목표/마일스톤 수정 시 팀 연계 개인목표(teamLinked) 자동 양방향 동기화.
-     - E3: 팀 목표 편집 완료 시 팀 피드(team_comments) 공지 자동 게시.
-  4. 대형창 정리: 목표 탭 및 소통 탭의 거대 '아워골 AI 추천 목표 템플릿 테마별 예시 60선' 창 완전 제거 및 '템플릿백과사전' 모달로 단일화.
-- **영향 파일**:
-  - `index.html`: 60선 아코디언 숨김/제거, canManageAny 가드, 템플릿백과사전 버튼 연동, 마감일/우선순위/순서변경/세부할일 이벤트 리스너 배선, confirm 모달화.
-  - `js/goal-edit-ux.js`: commitAndFinishTeamGoalEdit 고도화, 팀 연계 동기화 호출, team_comments 시스템 공지 브로드캐스트, 하단 플로팅 액션바 배선.
-  - `js/team-linked-goals.js`: syncWithTeamGoals(teamGoals, groupId) 구현 및 내보내기.
-  - `js/team-visibility-levels.js`: renderTeamCardContent의 isEdit 조건부 렌더링.
-  - `scripts/smoke-test.js`: #TASK-ES-176 무결성 검증 추가.
-  - `docs/rules/TICKETS.md`: 티켓 추가.
-
----
-
-## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심 배선 식별
-- **본질**: 목표 달성 몰입을 방해하는 상시 편집 UI(테두리, x 버튼 등)의 시각적 노이즈를 제거하고, 실제 편집 시에만 모던 인라인 워크스페이스를 제공함과 동시에 팀 목표-개인목표-소통 3대 축을 유기적으로 결합.
-- **중심 배선**:
-  - `state.teamGoalEditMode`: 팀 목표 편집 활성화 플래그.
-  - `OurgoalTeamLinkedGoals.syncWithTeamGoals(teamGoals, groupId)`: 연계 개인목표 무결성 유지.
-  - `OurgoalGoalEditUX.commitAndFinishTeamGoalEdit()`: 마감일/우선순위/할일 수집 및 팀 피드 공지.
-  - `#goalEditFloatingBar`: 뷰포트 하단 고정 편집 완료 액션바.
-
----
-
-## 3. [원칙 ③] 효과적 해결방식 및 파일별 변경 예산
-- `index.html`: +113 / -59 (넷 +54)
-- `js/goal-edit-ux.js`: +116 / -2 (넷 +114)
-- `js/team-linked-goals.js`: +47 / -1 (넷 +46)
-- `js/team-visibility-levels.js`: +54 / -18 (넷 +36)
-- `scripts/smoke-test.js`: +33 / -0 (넷 +33)
-
----
-
-## 4. [원칙 ④] 무손실 보증 및 검증
-- 314개 스모크 테스트 100% PASS.
-- 20개 무결성 게이트 100% PASS.
-- CDP 브라우저 실측 검증 (일반 조회 모드, 인라인 편집 모드, 완료 후 복원 모드, 목표탭 60선 제거, 소통탭 60선 제거, 팀모달 백과사전 연계) 전수 검증 완료.
-
----
-
-## 5. [원칙 ⑤] 실행 상태
-- 4단계(로컬 및 CDP 브라우저 실측 검증 완료, PR/배포 대기)
+## 막힐 지점 예상 (8원칙 ⑧)
+- 직접 사진 업로드 시 원본 고해상도 이미지를 그대로 base64로 올리면 로컬 스토리지 한도(5MB) 초과 및 피드 렌더링 랙 발생 위험: 기존에 검증된 compressImage 유틸을 호출하여 최대 800px, 0.82 퀄리티로 압축하여 저장 용량을 수십 KB로 경량화함.
+- 10종 카테고리 도입 시 기존 5종 하드코딩된 filterFeedByCategory 및 미리보기 catMap에서 신규 카테고리가 누락되거나 기본값으로 튕길 위험: 10종 카테고리 키-라벨 매핑 테이블을 모달, 메인 피드, 필터 함수 전 영역에 통일되게 배선하고 키워드 정규식까지 완비함.
