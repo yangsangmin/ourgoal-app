@@ -4041,3 +4041,13 @@
 - **검증 결과**:
   - `npm test`: 272개 테스트 ALL PASS (0 failures), 헌법 5대 게이트 14종 통과, Zero Dead Click 통과.
 ---
+
+## [2026-09-17 10:50] PostHog Cloud 분석 설치 및 이벤트 10종 계측 (아워골 로드맵 D0~2 지인 배포)
+- **[원칙 1~2] 문제 및 본질**: 성장 지표(활성화율·리텐션·TTV)를 측정할 계측이 전무해 D0~2 지인 배포 단계의 의사결정이 감으로만 이루어짐. 근본 원인은 이벤트 계측 계층 부재.
+- **[원칙 3~4] 해결 방식 및 타당성 검토**: 기존 `track(name, props)` 단일 계측 훅(Supabase `events` 테이블 기록용)을 확장해 PostHog capture를 동시 발신하도록 해 기존 6종 이벤트(signup, goal_created, checkin, peer_invite_*, content_reported, landing_view)를 무료로 자동 계측 승계. 로드맵이 요구한 정확한 10개 snake_case 이벤트명(signup_completed 등)은 관련 기능 지점(회원가입 2곳, 목표 생성, 체크인 2곳, 피드 응원 토글, 응원 수신, 초대 공유/열람, 마니또 DM 전송, 온보딩 4단계, PWA 설치)에 개별 `track()` 호출을 추가. 디자인·CSS·기존 로직 변경 없이 diff 단위로만 수정해 CLAUDE.md 3번 규칙 준수.
+- **[원칙 5~7] 구현 절차 및 검증 결과**:
+  - `<head>`에 PostHog 공식 HTML 스니펫 삽입(`phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2`, US Cloud, `session_recording.maskAllInputs: true`로 세션 리플레이 입력 마스킹 ON).
+  - `track()`에 `window.posthog.capture()` 전달 추가, `dayIndexSinceSignup()` 헬퍼 신설(가입 후 경과일수 → day_index 속성).
+  - 10개 필수 이벤트(signup_completed, goal_created, checkin_completed, cheer_sent, cheer_received, invite_sent, invite_opened, dm_sent, onboarding_step_viewed[step], app_installed_pwa) 각각 goal_type/source/day_index 속성 부착.
+  - 검증: `node -e "new Function(...)"` 인라인 스크립트 3블록 문법 100% 통과, `node scripts/smoke-test.js` 271/272 통과(1개 실패는 `api/withdraw.js` 핸들러 관련으로 이 브랜치 기준 커밋(origin/main)에서도 동일하게 실패하는 기존 결함이며 본 작업과 무관함을 `git stash` 대조로 확인).
+- **[원칙 8] 재검증 내역**: 작업 도중 동일 저장소(C:\dev\ourgoal-app)에 다른 세션이 index.html을 실시간으로 편집 중(TASK-ES-136 진행 중, dev_log.md 최종수정 4분 전 확인)임을 발견 → 해당 작업 공간을 건드리지 않고 `C:\dev\ourgoal-app-posthog`에 별도 git worktree(브랜치 `feat/2026-09-17-posthog-analytics`, origin/main 기준)를 만들어 격리 적용, 세션 간 충돌을 원천 차단.
