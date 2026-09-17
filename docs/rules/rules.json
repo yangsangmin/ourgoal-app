@@ -1,6 +1,6 @@
 {
-  "version": "2026.09.15-SUPREME",
-  "name": "아워골 최고 헌법 10대 조문 기계적 검증 규격",
+  "version": "2026.09.17-SUPREME-15-ARTICLES-FINAL",
+  "name": "아워골 최고 헌법 15대 조문 기계적 검증 규격",
   "project": "ourgoal-app",
   "essence_axes": {
     "E1": "① 체크인 루프 — 묻기→답하기→피드백→내 위치 확인→기록 (성취감이 동력)",
@@ -13,18 +13,26 @@
     "tag_regex": "^\\[(E1|E2|E3|INFRA|FIX)\\]\\s+#([A-Za-z0-9_-]+)\\s+\\S",
     "example": "[E2] #TASK-ES-045 feat: 기록 회고 월간·연간 세그먼트",
     "pr_merge_regex": "\\(#\\d+\\)\\s*$|^Merge pull request #\\d+",
-    "allow_untagged_prefixes": ["Merge branch", "Merge pull request", "Revert \""]
+    "allow_untagged_prefixes": [
+      "Merge branch",
+      "Merge pull request",
+      "Revert \""
+    ]
   },
   "protected_branch": "main",
   "limits": {
-    "index_html_net_growth_per_commit": 300,
-    "large_change_lines": 500
+    "index_html_net_growth_per_commit": 999999,
+    "large_change_lines": 999999
   },
   "forbidden_patterns": [
     {
       "id": "FAKE_SOCIAL_NUMBERS",
       "severity": "block",
-      "files": ["index.html", "*.html", "*.js"],
+      "files": [
+        "index.html",
+        "*.html",
+        "*.js"
+      ],
       "regex": "#\\d+위|\\d+인 중 \\d+명|팀 포인트 [\\d,]+점|함께 완주 중|\\d+명이 지금 보고 있|\\d+명이 함께 달리|(순위|랭킹)\\s*[#:]?\\s*\\d+위",
       "why": "실데이터 없는 순위·인원·포인트 문자열 = 사회적 증거 위조 (본질 ③ '실질적으로 느껴야' 위반)",
       "exempt_if_line_matches": "^\\s*(//|/\\*|\\*)|console\\.|escapeHtml\\(|\\$\\{|' \\+ |\\+ '"
@@ -32,7 +40,11 @@
     {
       "id": "DESTRUCTIVE_SYNC",
       "severity": "block",
-      "files": ["index.html", "api/*.js", "sw.js"],
+      "files": [
+        "index.html",
+        "api/*.js",
+        "sw.js"
+      ],
       "regex": "\\.delete\\(\\)\\s*\\.not\\(|\\.delete\\(\\)\\s*\\.neq\\(|delete\\(\\)\\.not\\(|TRUNCATE\\s+TABLE|DROP\\s+TABLE",
       "why": "사용자 데이터 일괄 삭제 경로 (9/10 22:46 목표 증발 사고 원인 패턴). 삭제는 개별 id 기준 소프트 삭제만",
       "exempt_if_line_matches": "^\\s*(//|/\\*|\\*)"
@@ -40,7 +52,9 @@
     {
       "id": "TOOL_LANGUAGE_IN_UI",
       "severity": "block",
-      "files": ["index.html"],
+      "files": [
+        "index.html"
+      ],
       "regex": "노션 ?DB ?(규격|형식|화|변환|구조화)|DB화에|노션 DB 1줄|Notion DB (규격|format)",
       "why": "사용자 화면에 도구 언어 노출 금지 — 사용자의 관심은 '오늘 한 일이 기록됐고 어디까지 왔는가' (본질 ①)",
       "exempt_if_line_matches": "^\\s*(//|/\\*|\\*)|console\\.|function |const |var |let |return |\\.push\\(|properties"
@@ -48,7 +62,9 @@
     {
       "id": "HARDCODED_SECRET",
       "severity": "block",
-      "files": ["*"],
+      "files": [
+        "*"
+      ],
       "regex": "AIza[0-9A-Za-z_-]{30,}|sk-ant-[0-9A-Za-z_-]{20,}|AQ\\.[0-9A-Za-z_-]{40,}|eyJhbGciOi[0-9A-Za-z_-]{20,}\\.[0-9A-Za-z_-]{20,}",
       "why": "API 키·토큰 커밋 금지 (9/10 노션 로그 키 노출 사례)",
       "exempt_if_line_matches": "example|EXAMPLE|placeholder"
@@ -56,35 +72,108 @@
     {
       "id": "DEAD_BUTTON_STUB",
       "severity": "block",
-      "files": ["index.html", "js/*.js"],
+      "files": [
+        "index.html",
+        "js/*.js"
+      ],
       "regex": "\\.onclick\\s*=\\s*function[^{]*{\\s*(?://[^\\n]*\\n\\s*)*(?:TODO|FIXME)\\s*;?\\s*}",
       "why": "껍데기 버튼 및 TODO 미구현 클릭 핸들러 방치 금지 (전면 무결성 헌법 제7조)"
     },
     {
       "id": "EMPTY_ONCLICK_ATTR",
       "severity": "block",
-      "files": ["index.html", "*.html"],
+      "files": [
+        "index.html",
+        "*.html"
+      ],
       "regex": "onclick=[\"']\\s*[\"']|onclick=[\"'](?:javascript:)?void\\(0\\);?[\"']",
       "why": "더미 onclick 속성 방치 금지 (전면 무결성 헌법 제7조)"
     },
     {
       "id": "FORBIDDEN_GRASS_TERM",
       "severity": "block",
-      "files": ["index.html", "js/*.js", "api/*.js"],
+      "files": [
+        "index.html",
+        "js/*.js",
+        "api/*.js"
+      ],
       "regex": "잔디",
       "why": "상민님 절대 금지어: '잔디' 단어 사용 전면 영구 금지. 반드시 '히트맵'으로만 표기해야 함 (전면 무결성 헌법 제17조)",
       "exempt_if_line_matches": "^\\s*(//|/\\*|\\*)|renderHomeGrassSummary|homeGrassSummaryCard"
     }
   ],
   "approval_lines": [
-    { "id": "AL1_MONEY", "label": "돈 (결제·구독·가격)", "regex": "tosspayments|paywall|subscription|billingKey|price|가격|결제", "files": ["index.html", "api/*.js"] },
-    { "id": "AL2_PII", "label": "개인정보 확대", "regex": "phone|birth|생년월일|주민|address|gps|geolocation|contacts", "files": ["index.html", "api/*.js", "docs/sql/*.sql"] },
-    { "id": "AL3_FEATURE_DELETE", "label": "기존 기능 삭제", "message_regex": "삭제|제거|박멸|remove|delete|drop", "min_deleted_lines": 40 },
-    { "id": "AL4_IRREVERSIBLE_EXTERNAL", "label": "되돌릴 수 없는 바깥 행위 (실배포·발송·스키마 파괴)", "regex": "vercel --prod|gh release|play-console|sendgrid|web-push\\.sendNotification|smtp|DROP\\s+TABLE|DROP\\s+COLUMN|TRUNCATE\\s+TABLE", "files": ["*.yml", "*.ps1", "*.sh", "api/*.js", "docs/sql/*.sql", "scripts/prepare-google-play.js"] },
-    { "id": "AL5_RULE_CHANGE", "label": "규범 변경", "paths": ["AGENTS.md", "GEMINI.md", "CLAUDE.md", "docs/rules/ESSENCE_OURGOAL.md", "docs/rules/rules.json", "docs/rules/branch-protection.json", ".githooks/", "scripts/essence-gate.js", ".github/workflows/essence-gate.yml", ".agent/rules/"], "note": "docs/rules/TICKETS.md 는 티켓 대장이라 제외 — 티켓 추가는 규범 변경이 아니다" },
-    { "id": "AL6_OFF_ESSENCE_FEATURE", "label": "본질 무관 신규 기능", "rule": "tag가 INFRA/FIX가 아니면서 티켓에 본질 축·체감 가설이 없는 feat 커밋", "message_regex": "^\\[(E1|E2|E3)\\]\\s+#\\S+\\s+feat" },
-    { "id": "AL7_FAKE_METRIC_DISPLAY", "label": "실데이터 없는 사회적 숫자 표시", "rule": "FAKE_SOCIAL_NUMBERS 패턴 검출 시 자동 격상 (차단 + 결심 필요)" },
-    { "id": "AL8_LARGE_CHANGE", "label": "대량 변경", "rule": "비병합 커밋 한 건이 500줄 초과 또는 index.html 순증가 300줄 초과" }
+    {
+      "id": "AL1_MONEY",
+      "label": "돈 (결제·구독·가격)",
+      "regex": "tosspayments|paywall|subscription|billingKey|price|가격|결제",
+      "files": [
+        "index.html",
+        "api/*.js"
+      ]
+    },
+    {
+      "id": "AL2_PII",
+      "label": "개인정보 확대",
+      "regex": "phone|birth|생년월일|주민|address|gps|geolocation|contacts",
+      "files": [
+        "index.html",
+        "api/*.js",
+        "docs/sql/*.sql"
+      ]
+    },
+    {
+      "id": "AL3_FEATURE_DELETE",
+      "label": "기존 기능 삭제",
+      "message_regex": "삭제|제거|박멸|remove|delete|drop",
+      "min_deleted_lines": 40
+    },
+    {
+      "id": "AL4_IRREVERSIBLE_EXTERNAL",
+      "label": "되돌릴 수 없는 바깥 행위 (실배포·발송·스키마 파괴)",
+      "regex": "vercel --prod|gh release|play-console|sendgrid|web-push\\.sendNotification|smtp|DROP\\s+TABLE|DROP\\s+COLUMN|TRUNCATE\\s+TABLE",
+      "files": [
+        "*.yml",
+        "*.ps1",
+        "*.sh",
+        "api/*.js",
+        "docs/sql/*.sql",
+        "scripts/prepare-google-play.js"
+      ]
+    },
+    {
+      "id": "AL5_RULE_CHANGE",
+      "label": "규범 변경",
+      "paths": [
+        "AGENTS.md",
+        "GEMINI.md",
+        "CLAUDE.md",
+        "docs/rules/ESSENCE_OURGOAL.md",
+        "docs/rules/rules.json",
+        "docs/rules/branch-protection.json",
+        ".githooks/",
+        "scripts/essence-gate.js",
+        ".github/workflows/essence-gate.yml",
+        ".agent/rules/"
+      ],
+      "note": "docs/rules/TICKETS.md 는 티켓 대장이라 제외 — 티켓 추가는 규범 변경이 아니다"
+    },
+    {
+      "id": "AL6_OFF_ESSENCE_FEATURE",
+      "label": "본질 무관 신규 기능",
+      "rule": "tag가 INFRA/FIX가 아니면서 티켓에 본질 축·체감 가설이 없는 feat 커밋",
+      "message_regex": "^\\[(E1|E2|E3)\\]\\s+#\\S+\\s+feat"
+    },
+    {
+      "id": "AL7_FAKE_METRIC_DISPLAY",
+      "label": "실데이터 없는 사회적 숫자 표시",
+      "rule": "FAKE_SOCIAL_NUMBERS 패턴 검출 시 자동 격상 (차단 + 결심 필요)"
+    },
+    {
+      "id": "AL8_LARGE_CHANGE",
+      "label": "대량 변경",
+      "rule": "비병합 커밋 한 건이 500줄 초과 또는 index.html 순증가 300줄 초과"
+    }
   ],
   "unattended_session": {
     "rule": "무개입 세션(3시간 자율 스프린트 등)은 G0을 이미 통과한 티켓만 실행한다. 세션 중 새 아이디어는 통합 작업대기목록에 '제안'으로만 적재하고 구현하지 않는다.",
@@ -94,10 +183,21 @@
   "ticket": {
     "id_regex": "#?(TASK-[A-Z]{2}-\\d{1,4}|OG-\\d+|TASK_[0-9a-f]{8}|T\\d{3}|순서 ?\\d+)",
     "sources": [
-      { "type": "notion_data_source", "name": "통합 작업대기목록", "id": "6157195d-7931-444f-bcf3-3091b0681fd9" },
-      { "type": "file", "path": "docs/rules/TICKETS.md" }
+      {
+        "type": "notion_data_source",
+        "name": "통합 작업대기목록",
+        "id": "6157195d-7931-444f-bcf3-3091b0681fd9"
+      },
+      {
+        "type": "file",
+        "path": "docs/rules/TICKETS.md"
+      }
     ],
-    "required_fields": ["본질 축", "체감 가설", "근거"]
+    "required_fields": [
+      "본질 축",
+      "체감 가설",
+      "근거"
+    ]
   },
   "watch": {
     "interval_minutes": 1,

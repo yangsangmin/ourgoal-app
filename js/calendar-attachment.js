@@ -47,9 +47,9 @@
           var dummyTarget = { attachments: [].concat(ctx.attachments || []) };
           if(typeof window.openAddAttachmentModal === 'function'){
             window.openAddAttachmentModal(dummyTarget, function(){
-              if(onAttachmentsChanged) onAttachmentsChanged(dummyTarget.attachments);
+              if(onAttachmentsChanged) onAttachmentsChanged(dummyTarget.attachments, ctx);
             }, function(){
-              if(onAttachmentsChanged) onAttachmentsChanged(dummyTarget.attachments);
+              if(onAttachmentsChanged) onAttachmentsChanged(dummyTarget.attachments, ctx);
             });
           }
         };
@@ -66,7 +66,7 @@
           if(typeof window.openAttachmentViewer === 'function'){
             window.openAttachmentViewer(att, null, function(){
               curAtts.splice(idx, 1);
-              if(onAttachmentsChanged) onAttachmentsChanged(curAtts);
+              if(onAttachmentsChanged) onAttachmentsChanged(curAtts, ctx);
               if(typeof window.toast === 'function') window.toast('참고자료를 삭제했어요');
             });
           }

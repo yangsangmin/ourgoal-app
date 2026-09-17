@@ -3071,3 +3071,455 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   line-height: 1.2;
   white-space: nowrap;
 }
+
+/* 목표탭 3계층 일정설정 / 디데이·기간 표시 배지 (#TASK-ES-140) */
+.schedule-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: var(--card2);
+  color: var(--ink-soft);
+  transition: all 0.15s ease;
+  line-height: 1.2;
+  white-space: nowrap;
+  vertical-align: middle;
+  text-decoration: none;
+}
+.schedule-pill-btn.empty {
+  border: 1px dashed var(--line);
+  color: var(--ink-faint);
+  background: transparent;
+}
+.schedule-pill-btn.empty:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+  background: var(--brand-soft);
+}
+.schedule-pill-btn.has-date {
+  border-color: var(--brand-line);
+  background: var(--brand-soft);
+  color: var(--brand-strong);
+}
+.schedule-pill-btn.has-date:hover {
+  border-color: var(--brand);
+  filter: brightness(0.95);
+}
+
+/* ========================================================
+   [#TASK-ES-146] 홈 탭 평가해주기 배너 & 90% 대형 평가 팝업
+   ======================================================== */
+.home-eval-banner-box {
+  margin: 16px 0 10px;
+  width: 100%;
+}
+.eval-banner-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.12) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 12px;
+  color: var(--ink);
+  font-size: .875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+  box-sizing: border-box;
+}
+.eval-banner-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+}
+.eval-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.eval-modal-sheet {
+  width: 90vw;
+  max-width: 680px;
+  height: 88vh;
+  max-height: 88vh;
+  background: var(--card);
+  border-radius: 18px;
+  border: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+}
+.eval-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface-2);
+}
+.eval-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 1.6rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+  line-height: 1;
+}
+.eval-modal-body {
+  padding: 18px 20px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.eval-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.eval-field-label {
+  font-size: .8125rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.eval-textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: .84rem;
+  resize: vertical;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.eval-num-input {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  background: var(--surface-2);
+  color: var(--ink);
+  box-sizing: border-box;
+}
+
+/* ========================================================
+   [#TASK-ES-147] 목표 탭 '목표만' 이격 배치 및 카드 뷰
+   ======================================================== */
+.goals-only-wrap {
+  margin-left: 14px;
+}
+.goal-milestone-overview-card:hover {
+  border-color: var(--accent) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* ========================================================
+   [#TASK-ES-148] 스톱워치 표 시간기입 마이크로 카피
+   ======================================================== */
+.sw-inject-hint {
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+  line-height: 1.4;
+}
+
+/* ========================================================
+   [#TASK-ES-149] 팀 목표 가이드 소멸 안내문구
+   ======================================================== */
+.guide-vanish-hint {
+  font-size: 0.8125rem;
+  color: var(--ink-faint);
+  font-weight: 400;
+}
+
+/* ========================================================
+   [#TASK-ES-150] 아바타 레벨업 대형 팝업
+   ======================================================== */
+.avatar-large-preview-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+}
+
+/* ========================================================
+   [#TASK-ES-151] 캘린더 일정 체크버튼 및 목표 연동 UI
+   ======================================================== */
+.sched-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 1.5px solid var(--ink-disabled);
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .7rem;
+  color: #fff;
+  cursor: pointer;
+  transition: all .15s ease;
+  user-select: none;
+  background: var(--card);
+}
+.sched-check:hover {
+  border-color: var(--accent);
+  transform: scale(1.08);
+}
+.sched-check.done {
+  background: #10b981;
+  border-color: #10b981;
+  color: #fff;
+}
+.timetable-chip.done-chip {
+  opacity: 0.68;
+  border-color: #10b981 !important;
+  border-left-color: #10b981 !important;
+  background: var(--card2) !important;
+}
+.timetable-chip.done-chip .sched-title {
+  text-decoration: line-through;
+  color: var(--ink-faint) !important;
+}
+.sched-goal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: .6875rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--accent);
+  font-weight: 600;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sched-title.done-text {
+  text-decoration: line-through;
+  color: var(--ink-faint);
+}
+
+/* ========================================================
+   [#TASK-ES-152] 백그라운드·앱종료·미확인 전역 알림 배너 & 설정창
+   ======================================================== */
+.notify-floating-banner {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-120px);
+  z-index: 99999;
+  max-width: 440px;
+  width: calc(100% - 32px);
+  background: var(--card);
+  border: 1px solid var(--border-strong, var(--rule));
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  transition: transform .32s cubic-bezier(0.16, 1, 0.3, 1), opacity .3s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+.notify-floating-banner.visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.notify-floating-banner:hover {
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.26);
+}
+.notify-banner-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--surface-2);
+  border-radius: 10px;
+}
+.notify-banner-content {
+  flex: 1;
+  min-width: 0;
+}
+.notify-banner-title {
+  font-size: .875rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.notify-banner-body {
+  font-size: .8125rem;
+  color: var(--ink-soft);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.notify-banner-close {
+  border: none;
+  background: none;
+  color: var(--ink-faint);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  border-radius: 4px;
+}
+.notify-banner-close:hover {
+  color: var(--ink);
+  background: var(--surface-2);
+}
+.notify-settings-card {
+  background: var(--card2);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.notify-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+.notify-mode-btn {
+  padding: 9px 10px;
+  font-size: .8125rem;
+  font-weight: 600;
+  border: 1.5px solid var(--rule);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all .15s ease;
+}
+.notify-mode-btn:hover {
+  border-color: var(--accent);
+}
+.notify-mode-btn.active {
+  border-color: var(--accent);
+  background: rgba(99, 102, 241, 0.08);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ---------- [#TASK-ES-153] 캘린더 일자별 배경 사진 지정 및 50% 투명도 전역 렌더링 ---------- */
+.cal-cell {
+  position: relative !important;
+}
+.cal-cell-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+.cal-cell .cal-daynum,
+.cal-cell .cal-pill,
+.cal-cell .cal-more {
+  position: relative;
+  z-index: 1;
+}
+.timetable-day-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.2;
+  pointer-events: none;
+  z-index: 0;
+}
+.cal-bg-preview-wrap {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px dashed var(--rule);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.cal-bg-preview-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.cal-bg-preview-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 12px;
+}
+.cal-day-bg-btn {
+  transition: all .15s ease;
+}
+.cal-day-bg-btn:hover {
+  border-color: var(--brand) !important;
+  color: var(--brand) !important;
+}
+
+/* 캘린더 상단 사진일기장 감성 안내 문구 */
+.cal-sub-guide {
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+  margin: -4px 0 12px;
+  padding: 8px 12px;
+  background: var(--surface-1);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.4;
+}
+.cal-sub-guide .cal-sub-guide-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}

@@ -148,6 +148,9 @@ async function handleSyncRecords(sb, body, res) {
           region: profileToSave.region || null,
           region_public: !!profileToSave.regionPublic
         };
+        if (profileToSave.savedAvatars && Array.isArray(profileToSave.savedAvatars)) {
+          profRow.saved_avatars = profileToSave.savedAvatars;
+        }
         await sb.from('users').upsert(profRow);
       } catch (e) {}
     }
@@ -157,6 +160,7 @@ async function handleSyncRecords(sb, body, res) {
       targetUserId: targetUid,
       matchedUser: matchedUser,
       user: matchedUser,
+      savedAvatars: (matchedUser && matchedUser.saved_avatars) || [],
       recordsCount: fetchedRecords.length,
       records: fetchedRecords.map(function(r) {
         return {
@@ -281,6 +285,300 @@ async function handleShareOg(req, res) {
   res.status(200).send(html);
 }
 
+/* #TASK-ES-124: RLS 우회 실제 회원 닉네임 검색 핸들러 (SUPABASE_SERVICE_ROLE_KEY 활용) */
+async function handleSearchUsers(sb, body, res) {
+  var q = String(body.query || body.p_query || '').trim();
+  if (!q || q.length < 1) {
+    return res.status(200).json({ ok: true, users: [] });
+  }
+
+  try {
+    var uRes = await sb.from('users')
+      .select('id, username, display_name, avatar_url, bio, interests')
+      .or('display_name.ilike.%' + q + '%,username.ilike.%' + q + '%')
+      .limit(20);
+
+    if (uRes.error) {
+      console.warn('[search_users] DB 조회 경고:', uRes.error);
+      return res.status(200).json({ ok: false, error: uRes.error.message, users: [] });
+    }
+
+    var list = (uRes.data || []).map(function(u) {
+      return {
+        id: u.id,
+        nickname: u.display_name || u.username || '아워골 회원',
+        name: u.display_name || u.username || '아워골 회원',
+        avatar: u.avatar_url || '👤',
+        intro: u.bio || '함께 실천하는 아워골 회원',
+        theme: (Array.isArray(u.interests) && u.interests[0]) || '일반',
+        level: 1,
+        streak: 1,
+        isAiBot: false
+      };
+    });
+
+    return res.status(200).json({ ok: true, users: list });
+  } catch (err) {
+    console.warn('[search_users] 예외 발생:', err);
+    return res.status(500).json({ ok: false, error: (err && err.message) || '검색 처리 실패', users: [] });
+  }
+}
+
+// #TASK-ES-129: 동반자 데이터 영구 영속화 및 복원 (Service Role Key 기반 서버리스 파이프라인)
+async function handleSyncCompanions(sb, body, res) {
+  var userId = String(body.userId || '').trim();
+  if (!userId) {
+    return res.status(400).json({ ok: false, error: 'userId is required', companions: [] });
+  }
+
+  var companionsToSave = Array.isArray(body.companions) ? body.companions : null;
+
+  try {
+    // 1. 저장 요청인 경우: events 테이블에 원장 기록 + users 테이블 백업 시도
+    if (companionsToSave !== null) {
+      try {
+        await sb.from('events').insert({
+          sid: null,
+          name: 'companion_ledger',
+          props: {
+            userId: userId,
+            companions: companionsToSave,
+            updatedAt: new Date().toISOString()
+          }
+        });
+      } catch (e) {
+        console.warn('[sync_companions] events ledger write warning:', e.message);
+      }
+
+      try {
+        await sb.from('users').update({ companions: companionsToSave }).eq('id', userId);
+      } catch (e) {}
+
+      return res.status(200).json({ ok: true, companions: companionsToSave, saved: true });
+    }
+
+    // 2. 조회 요청인 경우: events 원장에서 해당 user의 가장 최신 companion_ledger 조회
+    var latestCompanions = [];
+    try {
+      var evRes = await sb.from('events')
+        .select('props')
+        .eq('name', 'companion_ledger')
+        .filter('props->>userId', 'eq', userId)
+        .order('id', { ascending: false })
+        .limit(1);
+
+      if (evRes.data && evRes.data.length > 0 && evRes.data[0].props && Array.isArray(evRes.data[0].props.companions)) {
+        latestCompanions = evRes.data[0].props.companions;
+      }
+    } catch (e) {
+      console.warn('[sync_companions] events ledger read warning:', e.message);
+    }
+
+    // 3. 만약 events에 없으면 users 테이블 조회 시도
+    if (!latestCompanions.length) {
+      try {
+        var uRes = await sb.from('users').select('companions').eq('id', userId).maybeSingle();
+        if (uRes.data && Array.isArray(uRes.data.companions)) {
+          latestCompanions = uRes.data.companions;
+        }
+      } catch (e) {}
+    }
+
+    return res.status(200).json({ ok: true, companions: latestCompanions, saved: false });
+  } catch (err) {
+    console.warn('[sync_companions] 예외 발생:', err);
+    return res.status(500).json({ ok: false, error: (err && err.message) || '동반자 동기화 실패', companions: [] });
+  }
+}
+
+// #TASK-ES-123: 1:1 고객 문의 및 오류 제보 접수 (노션 DB + 텔레그램 + Supabase)
+var DEFAULT_NOTION_INQUIRIES_DB_ID = '3dd598db-9096-816e-8875-c602c34d251f';
+var DEFAULT_TELEGRAM_CHAT_ID = '1260106462';
+var TYPE_LABELS = {
+  bug: '버그/오류 제보',
+  feature: '새로운 기능 제안',
+  account: '계정/보안 관련',
+  evaluation: '앱 평가/피드백',
+  other: '기타 문의사항'
+};
+
+async function handleInquiry(sb, body, req, res) {
+  var isAppEval = body.type === 'app_evaluation' || !!body.evaluation;
+  var evalData = body.evaluation || {};
+  var evalScore = (evalData.score !== undefined && evalData.score !== null && !isNaN(evalData.score)) ? Number(evalData.score) : null;
+  var evalPros = typeof evalData.pros === 'string' ? evalData.pros.trim() : '';
+  var evalCons = typeof evalData.cons === 'string' ? evalData.cons.trim() : '';
+  var evalImp = typeof evalData.improvements === 'string' ? evalData.improvements.trim() : '';
+  var evalCeo = typeof evalData.ceoMsg === 'string' ? evalData.ceoMsg.trim() : '';
+
+  var content = typeof body.content === 'string' ? body.content.trim() : '';
+
+  // #TASK-ES-154: 아워골 앱 평가 데이터인 경우 5개 항목을 리포트 본문으로 자동 조립
+  if (isAppEval) {
+    var evalParts = [];
+    evalParts.push('[아워골 종합 앱 평가 리포트]');
+    if (evalScore !== null) evalParts.push('• 종합 점수: ' + evalScore + '점 / 100점');
+    if (evalPros) evalParts.push('• 장점 (좋았던 점): ' + evalPros);
+    if (evalCons) evalParts.push('• 단점 (아쉬웠던 점): ' + evalCons);
+    if (evalImp) evalParts.push('• 추가 및 개선 요청: ' + evalImp);
+    if (evalCeo) evalParts.push('• 대표에게 하고 싶은 말: ' + evalCeo);
+    content = evalParts.join('\n');
+  }
+
+  var inquiryType = isAppEval ? 'evaluation' : (body.inquiryType || 'other');
+  var replyEmail = typeof body.replyEmail === 'string' ? body.replyEmail.trim().slice(0, 100) : '';
+  var userId = typeof body.userId === 'string' ? body.userId.trim() : '';
+  var userNickname = typeof body.userNickname === 'string' ? body.userNickname.trim() : (typeof body.userName === 'string' ? body.userName.trim() : '익명 유저');
+  var userAgent = typeof body.userAgent === 'string' ? body.userAgent.slice(0, 300) : (req.headers && req.headers['user-agent'] ? req.headers['user-agent'].slice(0, 300) : '');
+  var appVersion = body.appVersion || 'v1.0.0';
+
+  if (!content) {
+    return res.status(400).json({ ok: false, error: '문의 또는 평가 내용을 입력해주세요.' });
+  }
+
+  var typeLabel = TYPE_LABELS[inquiryType] || (isAppEval ? '앱 평가/피드백' : '기타 문의사항');
+  var nowIso = new Date().toISOString();
+  var summaryTitle = isAppEval
+    ? ('[앱 평가] ⭐ ' + (evalScore !== null ? evalScore + '점' : '점수미기재') + ' - ' + (evalCeo || evalPros || evalImp || '사용자 평가').slice(0, 20).replace(/[\r\n]+/g, ' ') + ' (' + userNickname + ')')
+    : ('[' + typeLabel + '] ' + content.slice(0, 25).replace(/[\r\n]+/g, ' ') + (content.length > 25 ? '...' : '') + ' (' + userNickname + ')');
+
+  var results = { supabase: false, notion: false, telegram: false };
+
+  // 1. Supabase 적재 (inquiries 테이블)
+  if (sb) {
+    try {
+      var { data: sbData, error: sbErr } = await sb.from('inquiries').insert({
+        inquiry_type: inquiryType,
+        reply_email: replyEmail || null,
+        content: content,
+        user_id: userId || null,
+        user_nickname: userNickname,
+        user_agent: userAgent,
+        app_version: appVersion,
+        status: '접수',
+        created_at: nowIso
+      }).select('id').single();
+
+      if (!sbErr && sbData) {
+        results.supabase = true;
+      } else if (sbErr) {
+        console.warn('[Inquiry] Supabase warning:', sbErr.message);
+      }
+    } catch (e) {
+      console.warn('[Inquiry] Supabase exception:', e.message);
+    }
+  }
+
+  // 2. 노션 '고객 문의 및 오류 제보 원장' DB 적재
+  var notionToken = process.env.NOTION_TOKEN;
+  var notionDbId = process.env.NOTION_INQUIRIES_DB_ID || DEFAULT_NOTION_INQUIRIES_DB_ID;
+
+  if (notionToken && notionDbId) {
+    try {
+      var notionPayload = {
+        parent: { database_id: notionDbId },
+        properties: {
+          '제목': {
+            title: [{ type: 'text', text: { content: summaryTitle.slice(0, 100) } }]
+          },
+          '유형': {
+            select: { name: typeLabel }
+          },
+          '상태': {
+            select: { name: '접수' }
+          },
+          '작성자 닉네임': {
+            rich_text: [{ type: 'text', text: { content: userNickname.slice(0, 100) } }]
+          },
+          '작성자 ID': {
+            rich_text: [{ type: 'text', text: { content: (userId || '-').slice(0, 100) } }]
+          },
+          '문의 내용': {
+            rich_text: [{ type: 'text', text: { content: content.slice(0, 2000) } }]
+          },
+          '기기/앱정보': {
+            rich_text: [{ type: 'text', text: { content: (appVersion + ' / ' + userAgent).slice(0, 500) } }]
+          },
+          '접수일시': {
+            date: { start: nowIso }
+          }
+        }
+      };
+
+      if (replyEmail) {
+        notionPayload.properties['회신 이메일'] = { email: replyEmail };
+      }
+
+      var notionRes = await fetch('https://api.notion.com/v1/pages', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + notionToken,
+          'Notion-Version': '2022-06-28',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(notionPayload),
+        signal: AbortSignal.timeout(5000)
+      });
+
+      if (notionRes.ok) {
+        results.notion = true;
+      } else {
+        var nErrText = await notionRes.text();
+        console.warn('[Inquiry] Notion warning:', notionRes.status, nErrText);
+      }
+    } catch (e) {
+      console.warn('[Inquiry] Notion exception:', e.message);
+    }
+  }
+
+  // 3. 상민님 텔레그램 실시간 알림 발송
+  var tgToken = process.env.TELEGRAM_BOT_TOKEN;
+  var tgChatId = process.env.TELEGRAM_ALLOWED_CHAT_ID || DEFAULT_TELEGRAM_CHAT_ID;
+
+  if (tgToken && tgChatId) {
+    try {
+      var tgText = isAppEval
+        ? ('⭐ [아워골 사용자 앱 평가 접수]\n\n' +
+           (evalScore !== null ? '• 종합 점수: ' + evalScore + '점 / 100점\n' : '') +
+           '• 작성자: ' + userNickname + (userId ? ' (' + userId.slice(0, 8) + '...)' : '') + '\n' +
+           '• 앱 버전: ' + appVersion + '\n' +
+           '• 접수 시각: ' + nowIso.replace('T', ' ').slice(0, 19) + '\n\n' +
+           '[평가 리포트 상세]\n' + content + '\n\n' +
+           '👉 노션 원장: https://app.notion.com/p/' + notionDbId.replace(/-/g, ''))
+        : ('📩 [아워골 고객 문의/오류 제보 접수]\n\n' +
+           '• 유형: ' + typeLabel + '\n' +
+           '• 작성자: ' + userNickname + (userId ? ' (' + userId.slice(0, 8) + '...)' : '') + '\n' +
+           '• 회신 이메일: ' + (replyEmail || '미입력(익명)') + '\n' +
+           '• 앱 버전: ' + appVersion + '\n' +
+           '• 접수 시각: ' + nowIso.replace('T', ' ').slice(0, 19) + '\n\n' +
+           '[문의 내용]\n' + content + '\n\n' +
+           '👉 노션 원장: https://app.notion.com/p/' + notionDbId.replace(/-/g, ''));
+
+      var tgRes = await fetch('https://api.telegram.org/bot' + tgToken + '/sendMessage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: tgChatId,
+          text: tgText
+        }),
+        signal: AbortSignal.timeout(4000)
+      });
+
+      if (tgRes.ok) {
+        results.telegram = true;
+      }
+    } catch (e) {
+      console.warn('[Inquiry] Telegram exception:', e.message);
+    }
+  }
+
+  return res.status(200).json({
+    ok: true,
+    message: isAppEval ? '소중한 평가가 접수되었습니다. 감사합니다! ⭐' : '문의가 성공적으로 접수되었습니다. 신속히 검토하겠습니다.',
+    results: results
+  });
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -300,21 +598,40 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  var sb = getSupabase();
-  if (!sb) {
-    res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY is not configured' });
-    return;
-  }
-
   var body = req.body || {};
   if (typeof body === 'string') {
     try { body = JSON.parse(body); } catch (e) { body = {}; }
+  }
+
+  var sb = getSupabase();
+
+  // #TASK-ES-123 & #TASK-ES-154: 1:1 고객 문의, 오류 제보 및 앱 평가 접수 (노션 DB + 텔레그램 + Supabase)
+  var isUrlInquiry = req.url && req.url.indexOf('/inquiry') !== -1;
+  var isAppEval = body.type === 'app_evaluation' || !!body.evaluation;
+  if (body.action === 'inquiry' || isUrlInquiry || isAppEval || (body.content && body.inquiryType)) {
+    return handleInquiry(sb, body, req, res);
+  }
+
+  if (!sb) {
+    res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY is not configured' });
+    return;
   }
 
   // #TASK-ES-036: RLS 차단 우회 데이터 동기화 및 복구 처리
   if (body.action === 'sync_records' || body.backupIds) {
     return handleSyncRecords(sb, body, res);
   }
+
+  // #TASK-ES-124: RLS 차단 및 세션 만료 무관 실제 회원 닉네임 검색
+  if (body.action === 'search_users') {
+    return handleSearchUsers(sb, body, res);
+  }
+
+  // #TASK-ES-129: 동반자 데이터 영구 영속화 및 복원
+  if (body.action === 'sync_companions') {
+    return handleSyncCompanions(sb, body, res);
+  }
+
 
   var name = String(body.name || '');
   if (ALLOWED_EVENTS.indexOf(name) === -1) {

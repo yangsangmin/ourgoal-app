@@ -276,29 +276,134 @@ check('3대 본질 루프(E1 체크인, E2 회고, E3 동류소통) 핵심 로�
  * ========================================================================= */
 console.log('\n[검증 5/5] 문제해결 8원칙 적용 REQ / PLAN 표준 규격 검사');
 
-check('표준 템플릿(TEMPLATE_REQ_8STEPS.md, TEMPLATE_PLAN_8STEPS.md)이 존재한다', () => {
-  assert.ok(fs.existsSync(path.join(SPECS_DIR, 'TEMPLATE_REQ_8STEPS.md')), 'TEMPLATE_REQ_8STEPS.md 부재');
-  assert.ok(fs.existsSync(path.join(SPECS_DIR, 'TEMPLATE_PLAN_8STEPS.md')), 'TEMPLATE_PLAN_8STEPS.md 부재');
+check('표준 템플릿(TEMPLATE_REQ_8STEPS.md, TEMPLATE_PLAN_8STEPS.md)이 존재하고 8원칙 규격을 완비했다', () => {
+  const reqTemplatePath = path.join(SPECS_DIR, 'TEMPLATE_REQ_8STEPS.md');
+  const planTemplatePath = path.join(SPECS_DIR, 'TEMPLATE_PLAN_8STEPS.md');
+  assert.ok(fs.existsSync(reqTemplatePath), 'TEMPLATE_REQ_8STEPS.md 부재');
+  assert.ok(fs.existsSync(planTemplatePath), 'TEMPLATE_PLAN_8STEPS.md 부재');
+
+  const reqContent = fs.readFileSync(reqTemplatePath, 'utf8');
+  const planContent = fs.readFileSync(planTemplatePath, 'utf8');
+
+  // 템플릿 8개 독립 섹션 및 원칙 ② 4대 요소 검증
+  [reqContent, planContent].forEach((c, idx) => {
+    const name = idx === 0 ? 'TEMPLATE_REQ_8STEPS.md' : 'TEMPLATE_PLAN_8STEPS.md';
+    for (let i = 1; i <= 8; i++) {
+      assert.ok(c.includes(`## ${i}. [원칙 `), `${name} 내 원칙 ${i} 헤더 누락`);
+    }
+    assert.ok(c.includes('본질') && c.includes('원인') && c.includes('중심') && c.includes('핵심'), `${name} 내 4대 요소(본질·원인·중심·핵심) 누락`);
+    assert.ok(c.includes('절차 재검증'), `${name} 내 원칙 ⑥ 절차 재검증 누락`);
+  });
 });
 
-check('절대 무결성 헌법 정본 문서(OURGOAL_ABSOLUTE_INTEGRITY_RULES.md)가 존재하고 6장 25조를 포괄한다', () => {
+check('헌법 정본에 문제해결 8원칙 세부 기준(제2조 1~2항) 및 기계적 무결성 헌법(제2조 5항)이 명시되어 있다', () => {
+  const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
+  const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
+  assert.ok(rulesContent.includes('제2조 (2중 8원칙 및 핫픽스 헌법)'), '제2조 누락');
+  assert.ok(rulesContent.includes('본질 · 원인 · 중심 · 핵심 파악'), '제2조 1항 2호 본질·원인·중심·핵심 누락');
+  assert.ok(rulesContent.includes('제5항 [8원칙 기계적 무결성 및 임의 축약 · 합체 · 생략 영구 금지'), '제2조 5항 누락');
+  assert.ok(rulesContent.includes('원칙 번호 임의 합체 전면 금지'), '제2조 5항 1호 누락');
+  assert.ok(rulesContent.includes('원칙 ⑥ 절차 재검증 누락 영구 금지'), '제2조 5항 2호 누락');
+  assert.ok(rulesContent.includes('1줄 bullet point 날림 축약 금지'), '제2조 5항 3호 누락');
+  assert.ok(rulesContent.includes('기계적 린터 강제 배선 및 물리적 차단'), '제2조 5항 4호 누락');
+});
+
+check('신규 및 변경 대상 REQ/PLAN 문서의 8원칙 기계적 무결성(린터)이 100% 통과한다', () => {
+  function lint8Principles(filePath) {
+    if (!fs.existsSync(filePath)) return [];
+    const content = fs.readFileSync(filePath, 'utf8');
+    const fileName = path.basename(filePath);
+    const errors = [];
+
+    // 1. 8개 헤더 독립성 검증
+    for (let i = 1; i <= 8; i++) {
+      const hRegex = new RegExp(`(^|\\n)##\\s*${i}\\.`, 'm');
+      const circledRegex = new RegExp(`(^|\\n)##.*[원칙\\[(]\\s*[${i}①②③④⑤⑥⑦⑧]`, 'm');
+      if (!hRegex.test(content) && !circledRegex.test(content)) {
+        errors.push(`${fileName}: 원칙 ${i} 독립 헤더 누락`);
+      }
+    }
+
+    // 2. 원칙 번호 임의 합체 검사 (섹션 헤더 내 "원칙 ⑤, ⑦", "원칙 ①, ②, ③" 등)
+    const headerLines = content.split('\n').filter(line => line.trim().startsWith('##'));
+    headerLines.forEach(h => {
+      const mergePattern = /원칙\s*[①-⑧1-8]\s*[,·~+&]\s*[①-⑧1-8]|##.*원칙.*[,·~+&].*원칙/i;
+      if (mergePattern.test(h)) {
+        errors.push(`${fileName}: 헤더 내 원칙 번호 임의 합체 발견 (${h.trim()})`);
+      }
+    });
+
+    // 3. 원칙 ⑥(절차 재검증) 독립 존재 검사
+    const hasStep6 = /(^|\n)##\s*6\..*재검증|(^|\n)##.*원칙\s*[⑥6].*재검증/i.test(content);
+    if (!hasStep6) {
+      errors.push(`${fileName}: 원칙 ⑥(절차 재검증) 누락 (제2조 제5항 2호 위반)`);
+    }
+
+    // 4. 원칙 ② 본질·원인·중심·핵심 4대 요소 검사
+    const step2Match = content.match(/(?:^|\n)##\s*2\.[^#]+|##.*원칙\s*[②2][^#]+/);
+    if (step2Match) {
+      const step2Text = step2Match[0];
+      const missing = [];
+      if (!step2Text.includes('본질')) missing.push('본질');
+      if (!step2Text.includes('원인')) missing.push('원인');
+      if (!step2Text.includes('중심')) missing.push('중심');
+      if (!step2Text.includes('핵심')) missing.push('핵심');
+      if (missing.length > 0) {
+        errors.push(`${fileName}: 원칙 ②에 4대 요소 중 [${missing.join(', ')}] 누락`);
+      }
+    }
+
+    return errors;
+  }
+
+  // 템플릿 2종 자체 린트 통과 검증
+  const reqLint = lint8Principles(path.join(SPECS_DIR, 'TEMPLATE_REQ_8STEPS.md'));
+  assert.strictEqual(reqLint.length, 0, `TEMPLATE_REQ_8STEPS 린트 실패: ${reqLint.join('; ')}`);
+  const planLint = lint8Principles(path.join(SPECS_DIR, 'TEMPLATE_PLAN_8STEPS.md'));
+  assert.strictEqual(planLint.length, 0, `TEMPLATE_PLAN_8STEPS 린트 실패: ${planLint.join('; ')}`);
+
+  // git 변경 중인 REQ/PLAN 파일이 있을 경우 린트 검사
+  try {
+    const { execSync } = require('child_process');
+    const changedFiles = execSync('git status --porcelain', { encoding: 'utf8' })
+      .split('\n')
+      .map(line => line.slice(3).trim())
+      .filter(fp => fp.startsWith('docs/specs/') && (fp.includes('REQ-') || fp.includes('PLAN-')) && fp.endsWith('.md') && !fp.includes('TEMPLATE'));
+
+    // 최근 24시간 이내 수정되었거나 git staging/추적 변경 중인 REQ/PLAN 파일 린트 검사
+    const now = Date.now();
+    const oneDayMs = 24 * 60 * 60 * 1000;
+
+    changedFiles.forEach(fp => {
+      const fullPath = path.join(ROOT_DIR, fp);
+      if (!fs.existsSync(fullPath)) return;
+      const stat = fs.statSync(fullPath);
+      // 최근 24시간 이내에 생성/수정된 파일만 엄격 검사 (오래된 레거시 untracked 파일 제외)
+      if (now - stat.mtimeMs > oneDayMs) return;
+
+      const errors = lint8Principles(fullPath);
+      assert.strictEqual(errors.length, 0, `신규/수정된 스펙 8원칙 위반 적발:\n${errors.join('\n')}`);
+    });
+  } catch (e) {
+    if (e.name === 'AssertionError') throw e;
+    // git status 실패 시 스킵
+  }
+});
+
+check('절대 무결성 헌법 정본 문서(OURGOAL_ABSOLUTE_INTEGRITY_RULES.md)가 존재하고 15대 조문을 포괄한다', () => {
   const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
   assert.ok(fs.existsSync(rulesDoc), 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md 부재');
   const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
-  assert.ok(rulesContent.includes('제1장 총칙'), '제1장 총칙 누락');
-  assert.ok(rulesContent.includes('제2장 작업 착수 및 2중 8원칙 프로세스'), '제2장 누락');
-  assert.ok(rulesContent.includes('제3장 무누락·무축약 작업 이행 규범'), '제3장 누락');
-  assert.ok(rulesContent.includes('제4장 5대 무결성 전수 검증 의무'), '제4장 누락');
-  assert.ok(rulesContent.includes('제5장 직관적 6단계 상태 보고 헌법'), '제5장 누락');
-  assert.ok(rulesContent.includes('제6장 기계적 강제 집행 시스템'), '제6장 누락');
-  assert.ok(rulesContent.includes('제7장 지시 의도 스코프 및 단계별 멈춤 헌법'), '제7장 누락');
-  assert.ok(rulesContent.includes('제8장 실 사용자 계정 상호 연동 및 다자간 소통 헌법'), '제8장 누락');
-  assert.ok(rulesContent.includes('제17조 (용어 헌법: \'잔디\' 단어 절대 사용 금지 및 \'히트맵\' 강제)'), '제17조 누락');
-  assert.ok(rulesContent.includes('제19조 (실 사용자 계정 상호 연동 헌법 / The Real Inter-Account Interaction Constitution)'), '제19조 누락');
+  for (let i = 1; i <= 15; i++) {
+    assert.ok(rulesContent.includes(`제${i}조 (`), `제${i}조 누락`);
+  }
+  // 16조 이상은 존재하지 않음을 단언 (조 번호 난립 영구 방지)
+  assert.ok(!rulesContent.includes('제16조 ('), '제16조 이상 불법 조문 발견 (15대 조문 엄수 위반)');
+  assert.ok(!rulesContent.includes('제21조 ('), '제21조 불법 조문 잔존');
 });
 
 /* =========================================================================
- * 6. 용어 헌법: '잔디' 단어 절대 사용 금지 및 '히트맵' 표기 검증 (헌법 제17조)
+ * 6. 용어 헌법: '잔디' 단어 절대 사용 금지 및 '히트맵' 표기 검증 (헌법 제10조)
  * ========================================================================= */
 console.log('\n[검증 6/6] 용어 헌법: \'잔디\' 단어 배제 및 \'히트맵\' 단일화 검사');
 
@@ -319,7 +424,7 @@ check('UI 텍스트, 라벨 및 신규 스펙에서 \'잔디\' 단어가 100% �
       // 주석, 함수명(renderHomeGrassSummary, homeGrassSummaryCard), 또는 금지조항 설명 라인은 예외
       if (/^\s*(\/\/|\/\*|\*)/.test(line)) return;
       if (line.includes('renderHomeGrassSummary') || line.includes('homeGrassSummaryCard')) return;
-      if (line.includes('절대 사용 금지') || line.includes('단어 배제') || line.includes('전면 영구 금지') || line.includes('해당 금지 단어')) return;
+      if (line.includes('절대 사용 금지') || line.includes('단어 배제') || line.includes('전면 영구 금지') || line.includes('전면 영구 배제') || line.includes('해당 금지 단어') || line.includes('용어 헌법')) return;
       if (line.includes('잔디')) {
         violations.push(`${path.basename(fp)}:${idx + 1} -> ${line.trim().slice(0, 80)}`);
       }
@@ -330,34 +435,75 @@ check('UI 텍스트, 라벨 및 신규 스펙에서 \'잔디\' 단어가 100% �
 });
 
 /* =========================================================================
- * 7. 헌법 제14조 & 제18조: 프로덕션 배포 절대 방화벽 및 작업계획서 상한선 검증
+ * 7. 헌법 제9조 & 제12조: 프로덕션 배포 절대 방화벽 및 작업계획서 상한선 검증
  * ========================================================================= */
-console.log('\n[검증 7/7] 헌법 제14조/제18조: 배포 안전핀 및 작업계획서 4단계 상한선 검사');
+console.log('\n[검증 7/7] 헌법 제9조/제12조: 배포 안전핀 및 작업계획서 4단계 상한선 검사');
 
-check('헌법 정본에 원격 main PR 머지=실서버 배포 동일시(제14조 4항) 및 지시 의도 5대 모드(제18조)가 규정되어 있다', () => {
+check('헌법 정본에 원격 main PR 머지=실서버 배포 동일시(제9조 2항) 및 지시 의도 5대 모드(제12조)가 규정되어 있다', () => {
   const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
   const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
-  assert.ok(rulesContent.includes('원격 main PR 머지 = 실서버 프로덕션 배포 동일시'), '제14조 4항 누락');
-  assert.ok(rulesContent.includes('작업계획서 마감 상한선 엄수'), '제14조 5항 누락');
-  assert.ok(rulesContent.includes('모드 4-A [완곡한 요청 및 로컬 완결 4단계 모드]'), '제18조 모드 4-A 누락');
-  assert.ok(rulesContent.includes('모드 4-B [프로덕션 배포 모드]'), '제18조 모드 4-B 누락');
+  assert.ok(rulesContent.includes('원격 main PR 머지 = 실서버 프로덕션 배포 동일시 규정'), '제9조 2항 누락');
+  assert.ok(rulesContent.includes('작업계획서 4단계 마감 상한선 엄수'), '제9조 3항 누락');
+  assert.ok(rulesContent.includes('모드 4-A [완곡한 요청 및 로컬 완결 4단계 모드]'), '제12조 모드 4-A 누락');
+  assert.ok(rulesContent.includes('모드 4-B [프로덕션 배포 모드]'), '제12조 모드 4-B 누락');
 });
 
 /* =========================================================================
- * 8. 헌법 제19조: 실 사용자 계정 상호 연동 헌법 검증 (가짜 실제구현 영구 금지)
+ * 8. 헌법 제13조: 실 사용자 계정 상호 연동 헌법 검증 (가짜 실제구현 영구 금지)
  * ========================================================================= */
-console.log('\n[검증 8/8] 헌법 제19조: 실 사용자 계정 상호 연동 헌법 검사');
+console.log('\n[검증 8/8] 헌법 제13조: 실 사용자 계정 상호 연동 헌법 검사');
 
-check('헌법 정본에 실 사용자 계정 상호 연동 헌법(제19조 1~4항) 및 가짜 실제구현 금지(제3조 6호, 제4조 7호)가 규정되어 있다', () => {
+check('헌법 정본에 실 사용자 계정 상호 연동 헌법(제13조 1~5항) 및 가짜 실제구현 금지(제1조 4항 6호, 제4조 1항 7호)가 규정되어 있다', () => {
   const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
   const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
-  assert.ok(rulesContent.includes('제19조 (실 사용자 계정 상호 연동 헌법'), '제19조 누락');
-  assert.ok(rulesContent.includes('제1항 [실제 구현의 절대 정의]'), '제19조 1항 누락');
-  assert.ok(rulesContent.includes('제2항 [가짜 실제구현(Fake Implementation)의 정의 및 영구 금지]'), '제19조 2항 누락');
-  assert.ok(rulesContent.includes('제3항 [투명한 시스템 안내 및 게스트 모드 보호 (무충돌 안전핀)]'), '제19조 3항 누락');
-  assert.ok(rulesContent.includes('제4항 [E3 동류소통 기능의 3대 필수 백본 및 자동화 검증]'), '제19조 4항 누락');
-  assert.ok(rulesContent.includes('가짜 실제구현 및 로컬 자가발전 눈속임'), '제3조 6호 누락');
-  assert.ok(rulesContent.includes('가짜 실제구현(상대방 계정과 연동 없는 가상 봇 눈속임) 전면 금지'), '제4조 7호 누락');
+  assert.ok(rulesContent.includes('제13조 (실 사용자 계정 상호 연동 헌법'), '제13조 누락');
+  assert.ok(rulesContent.includes('제1항 [실제 구현의 절대 정의]'), '제13조 1항 누락');
+  assert.ok(rulesContent.includes('제2항 [가짜 실제구현(Fake Implementation)의 정의 및 영구 금지]'), '제13조 2항 누락');
+  assert.ok(rulesContent.includes('제3항 [투명한 시스템 안내 및 게스트 모드 보호 (무충돌 안전핀)]'), '제13조 3항 누락');
+  assert.ok(rulesContent.includes('제4항 [E3 동류소통 기능의 3대 필수 백본 및 자동화 검증]'), '제13조 4항 누락');
+  assert.ok(rulesContent.includes('제5항 [상호작용 양방향 전달성 및 구독 생존 보장의 의무'), '제13조 5항 누락');
+  assert.ok(rulesContent.includes('가짜 실제구현 및 로컬 자가발전 눈속임'), '제1조 4항 6호 누락');
+  assert.ok(rulesContent.includes('가짜 실제구현 전면 금지'), '제4조 1항 7호 누락');
+});
+
+/* =========================================================================
+ * 9. 헌법 제14조: 외부 연동 종단간 무결성 및 헌법 독점주의 검증
+ * ========================================================================= */
+console.log('\n[검증 9/9] 헌법 제14조: 외부 연동 E2E 무결성 및 헌법 독점주의 검사');
+
+check('헌법 정본에 제14조(외부연동 E2E 무결성·헌법 독점주의·법체계 위계 단일화)가 규정되어 있다', () => {
+  const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
+  const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
+  assert.ok(rulesContent.includes('제14조 (외부 연동 E2E 무결성 및 헌법 독점주의 헌법'), '제14조 누락');
+  assert.ok(rulesContent.includes('제1항 [외부 앱 의존 껍데기 링크 전면 금지 및 인앱 완결 의무]'), '제14조 1항 누락');
+  assert.ok(rulesContent.includes('제2항 [클라우드 환경변수·자격증명 3자 사전 동기화 의무 (No Silent Failure)]'), '제14조 2항 누락');
+  assert.ok(rulesContent.includes('제3항 [PWA·브라우저 캐시 강제 무효화 의무 (Cache Invalidation Gate)]'), '제14조 3항 누락');
+  assert.ok(rulesContent.includes('제4항 [6단계 실운영 최종 확인의 종단간(E2E) 실측 의무]'), '제14조 4항 누락');
+  assert.ok(rulesContent.includes('제5항 [법체계 위계의 단일화 (조·항·호·목 원칙)]'), '제14조 5항 누락');
+  assert.ok(rulesContent.includes('제6항 [헌법 독점주의 (사설 규칙 제정 전면 금지 / Constitutional Exclusivity)]'), '제14조 6항 누락');
+  assert.ok(rulesContent.includes('제7항 [신규 규칙 제정의 헌법 편입 의무]'), '제14조 7항 누락');
+  assert.ok(rulesContent.includes('제8항 [규범 변경의 절대 승인선 엄수 및 기계적 무결성 게이트 강제]'), '제14조 8항 누락');
+});
+
+/* =========================================================================
+ * 10. 헌법 제15조 및 5대 돌파 규정 검증 (유저 자산 원격 원장화 및 수명주기 영속성)
+ * ========================================================================= */
+console.log('\n[검증 10/10] 헌법 제15조: 유저 자산 원격 원장화 및 수명주기 영속성 헌법 검사');
+
+check('헌법 정본에 제15조 및 5대 고도화 규정이 완전 편입되어 있다', () => {
+  const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
+  const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
+  assert.ok(rulesContent.includes('제15조 (유저 자산 원격 원장화 및 수명주기 영속성 헌법'), '제15조 누락');
+  assert.ok(rulesContent.includes('제1항 [원격 원장 우선의 원칙 (Server-First Storage Mandate)]'), '제15조 1항 누락');
+  assert.ok(rulesContent.includes('제2항 [파괴적 스토리지 삭제의 합집합 보존 의무 (Non-Destructive Union Merge)]'), '제15조 2항 누락');
+  assert.ok(rulesContent.includes('제3항 [시각적 무손실 최고화질 보장 및 3계층 스마트 스토리지 헌법'), '제15조 3항 누락');
+  assert.ok(rulesContent.includes('제4항 [수명주기(Lifecycle) 4단계 E2E 검증 의무화]'), '제15조 4항 누락');
+  assert.ok(rulesContent.includes('제5항 [데이터 유실 사고 시 횡단 압수수색 의무 (Horizontal Storage Audit)]'), '제15조 5항 누락');
+  assert.ok(rulesContent.includes('제6항 [기록의 전 수명주기(CRUD) 무결성 및 4대 연계 뷰 동시 전파의 의무'), '제15조 6항 누락');
+  assert.ok(rulesContent.includes('제7항 [동시성 세션 보호 및 스키마 자가 정규화의 의무'), '제15조 7항 누락');
+  assert.ok(rulesContent.includes('코드 줄 수 족쇄 철폐 및 고품질 완결성 보장 원칙'), '제5조 3항 누락');
+  assert.ok(rulesContent.includes('기획 단계 스토리지 원장화 3대 명세 의무'), '제2조 4항 누락');
+  assert.ok(rulesContent.includes('클라이언트 스토리지 및 네트워크 이상 실시간 관제 연동'), '제11조 3항 누락');
 });
 
 console.log('\n================================================================');

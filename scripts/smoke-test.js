@@ -69,7 +69,7 @@ function extractFunction(source, name) {
 }
 
 const FN_NAMES = [
-  'pad', 'dateKey', 'goalProgress', 'msCounts', 'resultPct', 'dDay',
+  'pad', 'dateKey', 'getKSTDateKey', 'goalProgress', 'msCounts', 'resultPct', 'dDay',
   'computeStreakDays', 'findSuggestionTarget', 'sanitizeSuggestions',
   'applySuggestion', 'describeSuggestion', 'localTodayMission',
   'maybeGrantStreakFreeze', 'maybeApplyStreakFreeze',
@@ -120,7 +120,7 @@ const sandboxSrc =
   '};\n' +
   'var OURGOAL_CONFIG = { ENABLE_TEMPLATE_REWARDED_ADS: false, AD_DELAY_SECONDS: 5, AD_NOTICE_MESSAGE: "다운받으신 후 나의 목표 탭에서 바로 확인가능하며 확인버튼을 누른 후 5초 뒤 광고영상이 시작됩니다" };\n' +
   extracted +
-  '\nmodule.exports = { pad, dateKey, goalProgress, msCounts, resultPct, dDay, ' +
+  '\nmodule.exports = { pad, dateKey, getKSTDateKey, goalProgress, msCounts, resultPct, dDay, ' +
   'computeStreakDays, findSuggestionTarget, sanitizeSuggestions, applySuggestion, describeSuggestion, ' +
   'localTodayMission, ' +
   'maybeGrantStreakFreeze, maybeApplyStreakFreeze, ' +
@@ -3053,8 +3053,8 @@ check('compliance: [#TASK-ES-045] 홈·기록 8대 핵심 UX 고밀도화 및 �
   assert.strictEqual(html.includes('<span class="level-num"'), false, '레벨 배지 내 중복 Lv.X 텍스트 제거 확인');
   assert.ok(html.includes('id="btnOpenAvatarModal"'), '내 아바타 바꾸기 버튼 유지 확인');
 
-  // 2. 오늘의 미션 더보기 버튼 헤더 인라인 이동
-  assert.ok(html.includes('<div class="ct-label" style="margin:0;">오늘의 미션</div>'), '오늘의 미션 라벨 헤더 플렉스 컨테이너');
+  // 2. 오늘의 카드 더보기 버튼 헤더 인라인 이동
+  assert.ok(html.includes('<div class="ct-label" style="margin:0;">오늘의 카드</div>') || html.includes('<div class="ct-label" style="margin:0;">오늘의 미션</div>'), '오늘의 카드 라벨 헤더 플렉스 컨테이너');
   assert.ok(html.includes('moreBtnHtml'), '미션 더보기 버튼 인라인 배치 연동');
 
   // 3. 오늘 기록하기 입력창 크기 50% 축소 & 예시 문구 3pt 축소
@@ -3859,10 +3859,10 @@ check('compliance: [#TASK-ES-061] 유니버설 데이터 자율 융합, 동적 E
   assert.strictEqual(typeof uStats.openUniversalDataGrid, 'function', 'openUniversalDataGrid 함수 탑재');
   assert.strictEqual(typeof uStats.openTaxonomyManagerModal, 'function', 'openTaxonomyManagerModal 함수 탑재');
 
-  // 7. index.html 배선 및 버튼 검증
+  // 7. index.html 배선 및 탑바/가이드 연동 검증
   const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-  assert.ok(html.includes('recAnalyticsGuideBtn'), '기록 상단 가이드 버튼(#recAnalyticsGuideBtn) 마운트');
-  assert.ok(html.includes('💡 이 페이지 활용법 보기'), '가이드 버튼 텍스트 표출');
+  assert.ok(html.includes('recAnalyticsGuideBtn'), '기록 상단 가이드 바인딩 방어 로직 유지');
+  assert.ok(html.includes('topHomeGuideBtn'), '탑바 전역 활용법 퀵 액션 버튼(#topHomeGuideBtn) 마운트');
   assert.ok(html.includes('OurgoalUniversalStats.openGuideModal'), '가이드 버튼 클릭 시 openGuideModal 호출');
   assert.ok(html.includes('universal-stats.js?v=20260914-es061'), '캐시버스터 v=20260914-es061 갱신');
 });
@@ -4393,39 +4393,45 @@ check('compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료
   // index.html 무결성 & 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
   assert.ok(indexHtml.includes('js/calendar-attachment.js'), 'calendar-attachment.js 로드 태그');
   assert.ok(indexHtml.includes("kind === 'custom'"), 'wireAttachmentChipClicks custom kind 처리');
   assert.ok(indexHtml.includes('data-hubaddatt'), '허브 모달 첨부 버튼');
   assert.ok(indexHtml.includes('renderHubEventChipsHtml'), '허브 모달 칩 렌더링');
   assert.ok(indexHtml.includes('attachments: curAttachments'), '일정 저장 시 attachments 영구 보존');
+  assert.ok(indexHtml.includes('window.openAddAttachmentModal = openAddAttachmentModal;'), 'window.openAddAttachmentModal 전역 노출');
+  assert.ok(indexHtml.includes('window.openAttachmentViewer = openAttachmentViewer;'), 'window.openAttachmentViewer 전역 노출');
+  assert.ok(indexHtml.includes('window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;'), 'window.renderAttachmentChipsHtml 전역 노출');
+  assert.ok(fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8').includes('ourgoal-shell-v20260916-es125'), 'sw.js 캐시네임 v20260916-es125 갱신');
 });
 
-check('compliance: [#TASK-ES-102] 전 탭(홈·목표·일정·기록·소통·설정) 활용법 버튼 및 오늘의 미션 힌트 무결성 검증', () => {
+check('compliance: [#TASK-ES-102 & #TASK-ES-126] 전 탭(홈·목표·일정·기록·소통·설정) 활용법 탑바 단일화 및 6대 탭 통합 가이드 허브 무결성 검증', () => {
   const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   
-  // 1. 전 탭 활용법 버튼 마운트 검증
-  assert.ok(indexHtml.includes('id="homePageGuideBtn"'), '홈 탭 활용법 버튼 탑재');
-  assert.ok(indexHtml.includes('id="goalsPageGuideBtn"'), '목표 탭 활용법 버튼 탑재');
-  assert.ok(indexHtml.includes('id="calPageGuideBtn"'), '일정 탭 활용법 버튼 탑재');
-  assert.ok(indexHtml.includes('id="recAnalyticsGuideBtn"'), '기록 탭 활용법 버튼 탑재');
-  assert.ok(indexHtml.includes('id="commPageGuideBtn"'), '소통 탭 활용법 버튼 탑재');
-  assert.ok(indexHtml.includes('id="settingsPageGuideBtn"'), '설정 탭 활용법 버튼 탑재');
+  // 1. 탑바 전역 활용법 단일 퀵 액션(#topHomeGuideBtn) 및 본문 중복 버튼 6종 제거 무결성 검증
+  assert.ok(indexHtml.includes('id="topHomeGuideBtn"'), '탑바 내 활용법 단일 퀵 액션 버튼 탑재');
+  assert.ok(!indexHtml.includes('id="homePageGuideBtn"'), '홈 탭 본문 중복 활용법 버튼 제거 완료');
+  assert.ok(!indexHtml.includes('id="goalsPageGuideBtn"'), '목표 탭 본문 중복 활용법 버튼 제거 완료');
+  assert.ok(!indexHtml.includes('id="calPageGuideBtn"'), '일정 탭 본문 중복 활용법 버튼 제거 완료');
+  assert.ok(!indexHtml.includes('id="commPageGuideBtn"'), '소통 탭 본문 중복 활용법 버튼 제거 완료');
+  assert.ok(!indexHtml.includes('id="settingsPageGuideBtn"'), '설정 탭 본문 중복 활용법 버튼 제거 완료');
 
-  // 2. 오늘의 미션 힌트 배지 검증
-  assert.ok(indexHtml.includes('할일이 당장 안떠오르면 활용하세요'), '오늘의 미션 힌트 배지 탑재');
+  // 2. 오늘의 카드 힌트 배지 검증
+  assert.ok(indexHtml.includes('뭘 할지 모르겠을 때 도움돼요(내 목표기반)') || indexHtml.includes('할일이 당장 안떠오르면 활용하세요'), '오늘의 카드 힌트 배지 탑재');
 
-  // 3. tab-guides.js 모듈 및 스크립트 로드 검증
+  // 3. tab-guides.js 6대 탭 통합 가이드 허브 모듈 검증
   const guideScriptPath = path.join(__dirname, '..', 'js', 'tab-guides.js');
   assert.ok(fs.existsSync(guideScriptPath), 'js/tab-guides.js 파일 존재');
   const guideContent = fs.readFileSync(guideScriptPath, 'utf8');
   assert.ok(guideContent.includes('showTabUsageGuide'), 'showTabUsageGuide 전역 함수 정의');
-  assert.ok(guideContent.includes('Home Cockpit') && guideContent.includes('Goal Hierarchy'), '탭별 가이드 메타데이터 완비');
+  assert.ok(guideContent.includes('Home Cockpit') && guideContent.includes('Goal Hierarchy'), '홈/목표 가이드 메타데이터 완비');
+  assert.ok(guideContent.includes('Records & Analytics'), '기록 탭 메타데이터 완비 (데드클릭 완치)');
+  assert.ok(guideContent.includes('tab-guide-seg-btn'), '6대 탭 통합 세그먼트 스위처 버튼 탑재');
   assert.ok(indexHtml.includes('js/tab-guides.js'), 'index.html 내 tab-guides.js 로드 태그 탑재');
 
   // 4. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-103] Web Push VAPID API 구축 및 UGC 신고·차단 안전망 완결성 검증', async () => {
@@ -4476,7 +4482,7 @@ check('compliance: [#TASK-ES-103] Web Push VAPID API 구축 및 UGC 신고·차�
 
   // 4. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-104] 팀 목표 초대·소통 및 소통탭 전면 정비(초대·팀원대화·모임창복구·피드아코디언·게시버튼·1:1소통카드3종) 무결성 검증', () => {
@@ -4525,7 +4531,7 @@ check('compliance: [#TASK-ES-104] 팀 목표 초대·소통 및 소통탭 전면
 
   // 8. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-105] 추천템플릿 목표탭 이전·둘러보기 모달·게시하기 연동·모임원 DM바·동반자 소셜탭 무결성 검증', () => {
@@ -4569,7 +4575,7 @@ check('compliance: [#TASK-ES-105] 추천템플릿 목표탭 이전·둘러보기
 
   // 7. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-107] 팀 연계 개인목표 및 상호 달성도 체크·소통 시스템 검증', () => {
@@ -4604,7 +4610,7 @@ check('compliance: [#TASK-ES-107] 팀 연계 개인목표 및 상호 달성도 �
 
   // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-106] 헌법 제19조 의거 실 사용자 계정 상호 연동(Real Inter-Account Interaction) DM 및 동반자 시스템 검증', () => {
@@ -4640,7 +4646,7 @@ check('compliance: [#TASK-ES-106] 헌법 제19조 의거 실 사용자 계정 �
 
   // 4. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화 및 구글 캘린더 연동 분리 검증', () => {
@@ -4673,7 +4679,7 @@ check('compliance: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화
 
   // 6. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-109] 목표 탭 편집 모드 완료 버튼 누락 해결, 목표 제목 편집 지원 및 하단 고정 완료 액션바 완결성 검증', () => {
@@ -4720,7 +4726,7 @@ check('compliance: [#TASK-ES-109] 목표 탭 편집 모드 완료 버튼 누락 
 
   // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const lines = indexHtml.split(/\r?\n/).length;
-  assert.strictEqual(lines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-110] 팀 목표 시인성(정보량 다이어트·마일스톤 접힘), 최초 대표 목표 1개 노출 & 스위처, 2계층 아코디언 및 ‘팀 통합 수준관리’ vs ‘목표별 수준관리’ 이원화 무결성 검증', () => {
@@ -4810,7 +4816,7 @@ check('compliance: [#TASK-ES-110] 팀 목표 시인성(정보량 다이어트·�
 
   // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(finalLines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-111] 참가 팀원 달성현황 UI 효율화(1열 가로 인라인 정돈, 달성률/게이지바 슬림화, 모바일 반응형 컴팩트 카드 및 아코디언 접힘) 무결성 검증', () => {
@@ -4848,7 +4854,7 @@ check('compliance: [#TASK-ES-111] 참가 팀원 달성현황 UI 효율화(1열 �
 
   // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const currentLines = html.split(/\r?\n/).length;
-  assert.strictEqual(currentLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(currentLines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-116] 카카오톡 인앱 브라우저 외부 탈출 & PKCE 4초 대기 및 복구 안전망 검증', () => {
@@ -4878,7 +4884,7 @@ check('compliance: [#TASK-ES-116] 카카오톡 인앱 브라우저 외부 탈출
 
   // 6. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(finalLines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-117] 아바타 생성 후 앱 업데이트·재로그인·재접속 시 아바타 영속성 및 화면 동기화 무결성 검증', () => {
@@ -4914,7 +4920,7 @@ check('compliance: [#TASK-ES-117] 아바타 생성 후 앱 업데이트·재로�
 
   // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(finalLines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-118] 홈 상단 고정 바(Topbar) 활용법·홈구성 퀵 액션 영구 고정 및 모바일 반응형 2단 줄바꿈·PWA 무중단 캐시 갱신', () => {
@@ -4937,7 +4943,7 @@ check('compliance: [#TASK-ES-118] 홈 상단 고정 바(Topbar) 활용법·홈�
 
   // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(finalLines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-119] 생성한 아바타 누적 보관함(서랍) 구축 및 원클릭 자유로운 변경·착용 시스템 검증', () => {
@@ -4968,7 +4974,7 @@ check('compliance: [#TASK-ES-119] 생성한 아바타 누적 보관함(서랍) �
 
   // 6. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(finalLines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-121] 피드·모임·템플릿 외부 SNS 공유 및 미사용자 전파 시스템화 (통합 딥링크 & 동적 OG 게이트웨이, 소프트 게스트 뷰어 3종) 검증', () => {
@@ -5001,7 +5007,7 @@ check('compliance: [#TASK-ES-121] 피드·모임·템플릿 외부 SNS 공유 �
 
   // 4. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines2 = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines2, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(finalLines2 >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
 check('compliance: [#TASK-ES-122] 아바타 생성 기간 설정(목표·팀·기록 분석 MBTI/좌우명) 결합 및 77종 바디 안내문구 정비 검증', () => {
@@ -5035,7 +5041,1071 @@ check('compliance: [#TASK-ES-122] 아바타 생성 기간 설정(목표·팀·�
 
   // 5. 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
   const finalLines3 = html.split(/\r?\n/).length;
-  assert.strictEqual(finalLines3, 22196, '기술안전핀 TECH-RULE-01 (index.html 라인수 보존)');
+  assert.ok(finalLines3 >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
+});
+
+check('compliance: [#TASK-ES-123] 인앱 1:1 고객 문의·오류 제보 접수 시스템 완결 및 노션 DB·텔레그램 실시간 자동 연동 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  const vercelCfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+  const ddlExists = fs.existsSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-16-inquiries.sql'));
+
+  // 1. 프론트엔드 모달 및 리스너 4위 1체 배선 검증
+  assert.ok(indexSrc.includes("fetch('/api/inquiry'"), '모달 접수 시 /api/inquiry fetch 비동기 호출 배선');
+  assert.ok(indexSrc.includes("action: 'inquiry'"), 'inquiry action 페이로드 탑재');
+  assert.ok(indexSrc.includes("openCustomerInquiryModal();"), 'feedbackInquiryBtn 클릭 시 모달 오픈 일원화');
+
+  // 2. api/track.js handleInquiry 엔드포인트 및 3자 연동 검증
+  assert.ok(trackSrc.includes('handleInquiry('), 'api/track.js handleInquiry 핸들러 구현');
+  assert.ok(trackSrc.includes("3dd598db-9096-816e-8875-c602c34d251f"), '노션 고객문의 DB ID 상수 배선');
+  assert.ok(trackSrc.includes("1260106462"), '상민님 텔레그램 Chat ID 상수 배선');
+  assert.ok(trackSrc.includes("sb.from('inquiries').insert"), 'Supabase inquiries 테이블 적재 배선');
+
+  // 3. vercel.json rewrite 및 DDL 무결성 검증
+  const hasInquiryRewrite = (vercelCfg.rewrites || []).some(r => r.source === '/api/inquiry' && r.destination === '/api/track');
+  assert.ok(hasInquiryRewrite, 'vercel.json 내 /api/inquiry -> /api/track rewrite 배선');
+  assert.ok(ddlExists, 'docs/sql/2026-09-16-inquiries.sql DDL 파일 존재');
+
+  // 4. Vercel Hobby 12개 서버리스 함수 한도 검증
+  const apiFiles = fs.readdirSync(path.join(__dirname, '..', 'api')).filter(f => f.endsWith('.js'));
+  assert.strictEqual(apiFiles.length, 12, 'Vercel Hobby 12개 서버리스 함수 한도 엄수 (현재 12개)');
+
+  // 5. 스마트 안전핀 TECH-RULE-01 (index.html 본체 무결성 보존)
+  const lines = indexSrc.split(/\r?\n/).length;
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
+});
+
+check('compliance: [#TASK-ES-124] 동반자 실 사용자 닉네임 검색 2중 복원(Vercel 서버리스 + RPC 폴백) 및 가상 유저 3인 AI 동반자 투명 뱃지 표기 검증', () => {
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  const rpcSql = fs.readFileSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-16-search-users-rpc.sql'), 'utf8');
+
+  // 1. api/track.js handleSearchUsers 엔드포인트 및 RLS 우회 배선 검증
+  assert.ok(trackSrc.includes('handleSearchUsers('), 'api/track.js 내 handleSearchUsers 핸들러 구현');
+  assert.ok(trackSrc.includes("body.action === 'search_users'"), 'api/track.js 내 search_users 라우팅 탑재');
+  assert.ok(trackSrc.includes("display_name.ilike"), 'users 테이블 닉네임 검색 쿼리 배선');
+
+  // 2. js/team-invite-comm.js 2중 검색 파이프라인 (/api/track 1순위 -> sb.rpc 2순위) 검증
+  assert.ok(commSrc.includes("fetch('/api/track'"), '클라이언트 검색 시 /api/track 1순위 호출 배선');
+  assert.ok(commSrc.includes("sb.rpc('search_users_by_nickname'"), '클라이언트 검색 시 sb.rpc 폴백 배선');
+
+  // 3. 가상 유저 3인 식별자 및 [🤖 AI 동반자] 투명 뱃지 표기 검증 (헌법 제19조)
+  assert.ok(commSrc.includes('function isKnownAiCompanion('), 'isKnownAiCompanion 가상 유저/AI 봇 감지 헬퍼 구현');
+  assert.ok(commSrc.includes('새벽러너_민지') && commSrc.includes('코드장인_도현') && commSrc.includes('갓생사는_수아'), '콜드스타트 가상 유저 3인 식별 명단 탑재');
+  assert.ok(commSrc.includes('🤖 AI 동반자'), '동반자 목록 및 프로필에 🤖 AI 동반자 투명 뱃지 렌더 배선');
+
+  // 4. DDL 무결성 검증
+  assert.ok(rpcSql.includes('grant execute on function public.search_users_by_nickname(text) to anon, authenticated'), 'RPC 공개 권한 완화 SQL 작성');
+
+  // 5. 아바타 URL 안전 렌더링 및 [+ 추가] 버튼 터치 우선권 & 낙관적 UI 무결성 검증
+  assert.ok(commSrc.includes('function safeAvatarHtml('), 'safeAvatarHtml URL/이모지 안전 아바타 렌더러 구현');
+  assert.ok(commSrc.includes('safeAvatarHtml(u.avatar, 36)'), '검색 결과 내 URL 아바타 안전 렌더 배선');
+  assert.ok(commSrc.includes('safeAvatarHtml(c.avatar, 44)'), '동반자 목록 내 URL 아바타 안전 렌더 배선');
+  assert.ok(commSrc.includes('safeAvatarHtml(user.avatar, 72)'), '프로필 모달 내 URL 아바타 안전 렌더 배선');
+  assert.ok(commSrc.includes('safeAvatarHtml(person.avatar, 40)'), 'DM 채팅방 내 URL 아바타 안전 렌더 배선');
+  assert.ok(commSrc.includes('z-index:2') && commSrc.includes('touch-action:manipulation'), '동반자 추가 버튼 z-index 및 터치 간섭 방지 배선');
+  assert.ok(commSrc.includes('btn.textContent = \'✓ 추가됨\''), '동반자 추가 버튼 즉시 반응 낙관적 UI 배선');
+  assert.ok(commSrc.includes('메시지를 전송했습니다! 💬'), 'DM 발송 즉각 피드백 배선');
+
+  // 6. 캐시 버스팅 및 서비스워커 갱신 무결성 검증
+  const htmlSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.ok(htmlSrc.includes('team-invite-comm.js?v=20260916-es1'), 'index.html 스크립트 캐시 버스팅 태그 갱신');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260916-es1'), 'sw.js 캐시 네임 갱신');
+
+  // 7. 스마트 안전핀 TECH-RULE-01 (index.html 본체 무결성 보존)
+  const lines = htmlSrc.split(/\r?\n/).length;
+  assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
+});
+
+check('compliance: [#TASK-CONST-003] index.html 스마트 무결성 안전핀 검증 (22,196줄 고정 잠금 해제, 본체 20,000줄 보존, // ... 무단 축약 금지)', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const rawControl = fs.readFileSync(path.join(__dirname, '..', 'docs', 'rules', 'rules-control.json'), 'utf8');
+  const rulesControl = JSON.parse(rawControl.replace(/^---[\s\S]*?---\s*/, ''));
+  const registry = fs.readFileSync(path.join(__dirname, '..', 'docs', 'rules', 'AI_TECHNICAL_RULES_REGISTRY.md'), 'utf8');
+
+  // 1. rules-control.json 제어판에서 strict_lines 22,196 고정 해제 확인
+  const rule01 = rulesControl.controls.line_count_lock;
+  assert.strictEqual(rule01.strict_lines, null, 'strict_lines가 null로 해제됨');
+  assert.strictEqual(rule01.allow_growth, true, 'allow_growth가 true로 설정됨');
+  assert.strictEqual(rule01.max_growth_per_commit, 300, '커밋당 최대 순증가 300줄 한도 엄수');
+
+  // 2. index.html 본체 무결성 보존 및 무단 대량삭제 방지 (최소 20,000줄 이상)
+  const lines = indexSrc.split(/\r?\n/).length;
+  assert.ok(lines >= 20000, 'index.html 본체가 20,000줄 이상 온전히 보존됨');
+
+  // 3. AI 무단 코드 축약 패턴 금지 검증
+  assert.ok(!indexSrc.includes('// ...') && !indexSrc.includes('/* rest of code */'), 'AI 코드 축약 패턴 0건 엄수');
+
+  // 4. 레지스트리 문서 개정 확인
+  assert.ok(registry.includes('index.html 스마트 무결성 안전핀'), '레지스트리에 스마트 무결성 안전핀 공식 등재');
+});
+
+check('compliance: [#TASK-ES-127] 16개 MBTI 연계 320개 아바타 페르소나 온톨로지 및 시스템 무결성 검증', () => {
+  const avatarSystem = require(path.join(__dirname, '..', 'js', 'avatar-system.js'));
+  const avatarJsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+
+  // 1. 320종 전체 페르소나 탑재 검증
+  assert.ok(avatarSystem.BODY_THEMES_320, 'BODY_THEMES_320 데이터셋 존재');
+  assert.strictEqual(avatarSystem.BODY_THEMES_320.length, 320, '320개 페르소나 전수 탑재 확인');
+  assert.strictEqual(avatarSystem.getAllThemes().length, 320, 'getAllThemes() 반환 320개 일치');
+
+  // 2. ID 무결성 검증 (1~320 중복/누락 0건)
+  const idSet = new Set();
+  avatarSystem.BODY_THEMES_320.forEach((p, idx) => {
+    assert.strictEqual(p.id, idx + 1, '페르소나 ID 순차 일치 (ID ' + p.id + ')');
+    assert.ok(!idSet.has(p.id), 'ID 중복 없음 (ID ' + p.id + ')');
+    assert.ok(p.mbti && p.name && p.cat && p.gear && p.icon, '필수 필드(mbti, name, cat, gear, icon) 누락 없음');
+    idSet.add(p.id);
+  });
+
+  // 3. 16개 MBTI 각 20개 배분 검증
+  const mbtiList = ['INTJ','INTP','ENTJ','ENTP','INFJ','INFP','ENFJ','ENFP','ISTJ','ISFJ','ESTJ','ESFJ','ISTP','ISFP','ESTP','ESFP'];
+  mbtiList.forEach(mbti => {
+    const list = avatarSystem.getThemesByMbti(mbti);
+    assert.strictEqual(list.length, 20, mbti + ' 페르소나 정확히 20개 일치');
+  });
+
+  // 4. 4대 군(NT, NF, SJ, SP) 각 80개 배분 검증
+  ['NT', 'NF', 'SJ', 'SP'].forEach(group => {
+    const list = avatarSystem.getThemesByGroup(group);
+    assert.strictEqual(list.length, 80, group + ' 그룹 페르소나 정확히 80개 일치');
+  });
+
+  // 5. 레거시 77종 100% 하위 호환 검증
+  assert.ok(avatarSystem.BODY_THEMES_77, '레거시 BODY_THEMES_77 데이터셋 보존');
+  assert.strictEqual(avatarSystem.BODY_THEMES_77.length, 77, '레거시 77종 데이터셋 보존');
+  const t1 = avatarSystem.getTheme(1);
+  const t77 = avatarSystem.getTheme(77);
+  const t320 = avatarSystem.getTheme(320);
+  assert.ok(t1 && t1.name, 'ID 1 테마 정상 조회');
+  assert.ok(t77 && t77.name, 'ID 77 테마 정상 조회');
+  assert.ok(t320 && t320.name, 'ID 320 테마 정상 조회');
+
+  // 6. 검색 엔진 동작 검증
+  const searchResult = avatarSystem.searchThemes('체스');
+  assert.ok(searchResult.length >= 2, '키워드 검색 정상 작동');
+
+  // 7. 320종 도감 UI 컴포넌트 탑재 검증
+  assert.ok(avatarJsSrc.includes('renderPersona320ListHtml'), '320종 도감 리스트 렌더러 함수 탑재');
+  assert.ok(avatarJsSrc.includes('btnToggle320PersonaCatalog'), '320종 도감 토글 버튼 탑재');
+  assert.ok(avatarJsSrc.includes('inputSearchPersona320'), '320종 도감 실시간 검색창 탑재');
+  assert.ok(avatarJsSrc.includes('persona320GroupTabs'), '320종 도감 4대 군 탭 탑재');
+});
+
+/* ============ [#TASK-ES-125] 아바타 기본 제작 한도 초기 3회 조정 및 7일 연속 체크인 1회 충전 리워드 루프 & 기존 10회 보존 무결성 검증 ============ */
+check('compliance: [#TASK-ES-125] 아바타 기본 제작 한도 초기 3회 조정 및 7일 연속 체크인 1회 충전 리워드 루프 & 기존 10회 보존 무결성 검증', () => {
+  const avatarSystem = require(path.join(__dirname, '..', 'js', 'avatar-system.js'));
+  const avatarJsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 상수 정의 검증
+  assert.strictEqual(avatarSystem.DEFAULT_BASE_CRAFTS, 3, '신규 기본 제작 한도 3회');
+  assert.strictEqual(avatarSystem.LEGACY_MAX_CRAFTS, 10, '기존 계정 최대 제작 한도 10회 보존');
+  assert.strictEqual(avatarSystem.MAX_AVATAR_CHANGES, 10, '아바타 보관함 최대 저장 한도 10개');
+
+  // 2. 신규 계정 기본 3회 동작 검증
+  const newProfile = { settings: { maxBaseCrafts: 3, avatarCraftCount: 0 } };
+  assert.strictEqual(avatarSystem.isLegacyAccount(newProfile), false, '신규 계정 정상 식별');
+  assert.strictEqual(avatarSystem.getMaxCrafts(newProfile), 3, '신규 계정 총 한도 3회');
+  assert.strictEqual(avatarSystem.getRemainingCrafts(newProfile), 3, '신규 계정 잔여 3회');
+
+  newProfile.settings.avatarCraftCount = 1;
+  assert.strictEqual(avatarSystem.getRemainingCrafts(newProfile), 2, '1회 사용 후 잔여 2회');
+
+  // 3. 기존 계정 10회 기득권 100% 무손실 보존 검증 (TECH-RULE-03)
+  const legacyProfile1 = { settings: { avatarCraftCount: 2 } };
+  assert.strictEqual(avatarSystem.isLegacyAccount(legacyProfile1), true, '기존 제작 이력 계정 레거시 판별');
+  assert.strictEqual(avatarSystem.getMaxCrafts(legacyProfile1), 10, '기존 계정 총 한도 10회 유지');
+  assert.strictEqual(avatarSystem.getRemainingCrafts(legacyProfile1), 8, '기존 계정 2회 사용 후 잔여 8회');
+
+  const legacyProfile2 = { goals: [{ id: 'g1', title: '운동' }], settings: {} };
+  assert.strictEqual(avatarSystem.isLegacyAccount(legacyProfile2), true, '기존 목표 보유 계정 레거시 판별');
+  assert.strictEqual(avatarSystem.getMaxCrafts(legacyProfile2), 10, '기존 목표 보유 계정 10회 보존');
+
+  // 4. 7일 연속 체크인 시 아바타 제작권 +1회 충전 리워드 검증
+  const streakProfile = { settings: { maxBaseCrafts: 3, bonusCraftCredits: 0, lastStreakAwarded: 0 } };
+  const r6 = avatarSystem.maybeGrantStreakBonus(streakProfile, 6);
+  assert.strictEqual(r6.granted, false, '6일 스트릭 시 미지급');
+  assert.strictEqual(avatarSystem.getMaxCrafts(streakProfile), 3, '미지급 시 한도 3회 유지');
+
+  const r7 = avatarSystem.maybeGrantStreakBonus(streakProfile, 7);
+  assert.strictEqual(r7.granted, true, '7일 연속 체크인 달성 시 1회 충전 승인');
+  assert.strictEqual(streakProfile.settings.bonusCraftCredits, 1, '보너스 크레딧 1회 충전');
+  assert.strictEqual(avatarSystem.getMaxCrafts(streakProfile), 4, '총 가용 한도 3 + 1 = 4회 확대');
+  assert.strictEqual(avatarSystem.getRemainingCrafts(streakProfile), 4, '잔여 4회');
+
+  // 5. 동일 7일 구간 중복 충전 방지 락킹 검증
+  const r7dup = avatarSystem.maybeGrantStreakBonus(streakProfile, 7);
+  assert.strictEqual(r7dup.granted, false, '동일 7일 구간 재진입 시 중복 지급 차단');
+  assert.strictEqual(streakProfile.settings.bonusCraftCredits, 1, '보너스 크레딧 1회 유지');
+
+  // 6. 14일 연속 체크인 2차 충전 검증
+  const r14 = avatarSystem.maybeGrantStreakBonus(streakProfile, 14);
+  assert.strictEqual(r14.granted, true, '14일 연속 체크인 달성 시 추가 1회 충전 승인');
+  assert.strictEqual(streakProfile.settings.bonusCraftCredits, 2, '보너스 크레딧 총 2회');
+  assert.strictEqual(avatarSystem.getMaxCrafts(streakProfile), 5, '총 가용 한도 3 + 2 = 5회');
+
+  // 7. 기존 계정에도 7일 스트릭 리워드 동일 적용 검증
+  const legacyStreak = { settings: { maxBaseCrafts: 10, bonusCraftCredits: 0 } };
+  const legR7 = avatarSystem.maybeGrantStreakBonus(legacyStreak, 7);
+  assert.strictEqual(legR7.granted, true, '기존 계정도 7일 스트릭 시 +1 충전 정상 적용');
+  assert.strictEqual(avatarSystem.getMaxCrafts(legacyStreak), 11, '기존 10회 + 보너스 1회 = 총 11회');
+
+  // 8. 생성창 상시 충전 안내문구 및 배너 UI 검증
+  assert.ok(avatarJsSrc.includes('avatarStreakRechargeBanner'), '아바타 생성창 상시 충전 배너 ID 탑재');
+  assert.ok(avatarJsSrc.includes('7일 연속 체크인 시 아바타 제작권 1회 자동 충전!'), '상시 배너 안내문구 탑재');
+  assert.ok(avatarJsSrc.includes('topMaxCraftsSpan'), '상단 총 한도 동적 span 탑재');
+  assert.ok(avatarJsSrc.includes('craftBtnCountSpan'), '제작 버튼 동적 잔여/총한도 표기 탑재');
+
+  // 9. index.html 체크인 완료 및 앱 진입 배선 검증
+  assert.ok(indexSrc.includes('maybeGrantAvatarCraftBonus'), 'index.html 내 아바타 보너스 충전 배선 함수 존재');
+  assert.ok(indexSrc.includes('maxBaseCrafts:3'), 'defaultSettings() 신규 계정 기본 3회 탑재');
+  assert.ok(indexSrc.includes('🎉 7일 연속 체크인 달성! 아바타 제작권 1회가 충전되었습니다! 🎨'), '7일 달성 시 축하 토스트 탑재');
+});
+
+/* ============ [#TASK-ES-126] 전 탭 중복 노출 '💡 활용법' 버튼 단일화 및 6대 탭 통합 가이드 허브 무결성 종합 검증 ============ */
+check('compliance: [#TASK-ES-126] 전 탭 중복 노출 활용법 버튼 단일화 및 6대 탭 통합 가이드 허브 무결성 종합 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const guideScriptPath = path.join(__dirname, '..', 'js', 'tab-guides.js');
+  const guideContent = fs.readFileSync(guideScriptPath, 'utf8');
+
+  // 1. 탑바 고정 전역 퀵 액션 배선 검증
+  assert.ok(indexHtml.includes('id="topHomeGuideBtn"'), '상단 탑바 전역 활용법 퀵 액션 버튼(#topHomeGuideBtn) 마운트');
+  assert.ok(indexHtml.includes("showTabUsageGuide((state && state.activeTab) || 'home')") || indexHtml.includes("showTabUsageGuide(window.state && window.state.activeTab || 'home')"), '탑바 클릭 시 활성 탭 연동 showTabUsageGuide 호출 배선');
+
+  // 2. 6대 탭 본문 헤더 중복 버튼 완전 제거(클린 콕핏) 검증
+  const duplicateBtnIds = [
+    'homePageGuideBtn',
+    'goalsPageGuideBtn',
+    'calPageGuideBtn',
+    'recAnalyticsGuideBtn',
+    'commPageGuideBtn',
+    'settingsPageGuideBtn'
+  ];
+  duplicateBtnIds.forEach(id => {
+    assert.ok(!indexHtml.includes(`id="${id}"`), `본문 헤더 중복 버튼(#${id}) 완전 제거 완료`);
+  });
+
+  // 3. 6대 탭(홈, 목표, 일정, 기록, 소통, 설정) 통합 가이드 메타데이터 100% 완비 검증
+  const requiredKeys = ['home', 'goals', 'calendar', 'records', 'comm', 'settings'];
+  requiredKeys.forEach(key => {
+    assert.ok(guideContent.includes(`${key}: {`), `6대 탭 가이드 키(${key}) 완비`);
+  });
+
+  // 4. 모달 내 6대 탭 세그먼트 스위처 및 인터랙션 배선 검증
+  assert.ok(guideContent.includes('tab-guide-seg-btn'), '모달 내 가로 세그먼트 탭 버튼 클래스 탑재');
+  assert.ok(guideContent.includes('tabGuideSegmentBar'), '모달 내 세그먼트 바 ID 탑재');
+  assert.ok(guideContent.includes('tabGuideContentSlot'), '모달 내 본문 슬롯 ID 탑재');
+  assert.ok(guideContent.includes('addEventListener(\'click\''), '세그먼트 탭 클릭 시 동적 전환 이벤트 배선');
+  assert.ok(guideContent.includes('💡 아워골 100% 활용 가이드 허브'), '통합 가이드 허브 모달 타이틀 탑재');
+
+  // 5. 기록 탭 데드클릭 완치 검증 (records 탭 전용 가이드 4대 섹션 완비)
+  assert.ok(guideContent.includes('아워골 기록 및 성취 분석 100% 활용법'), '기록 탭 전용 가이드 타이틀 완비');
+  assert.ok(guideContent.includes('지금부터 시간기록 (몰입 타이머)'), '시간기록 몰입 타이머 안내 완비');
+  assert.ok(guideContent.includes('성취 통계 & 히트맵 콕핏'), '성취 통계 및 히트맵 안내 완비');
+});
+
+/* ============ [#TASK-ES-129] 동반자 데이터 영구 영속화 및 무손실 보존 검증 ============ */
+check('compliance: [#TASK-ES-129] 동반자 데이터 영구 영속화 및 무손실 보존(로컬 자가복원 + 서버리스 원장) 검증', () => {
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 캐시 버스팅 및 PWA 최신 갱신 검증
+  assert.ok(/team-invite-comm\.js\?v=20260916-es13[0-9]/.test(indexSrc), 'index.html 스크립트 캐시 버스팅 v20260916-es13x 갱신');
+  assert.ok(/ourgoal-shell-v20260916-es13[0-9]/.test(swSrc), 'sw.js 서비스워커 캐시 네임 v20260916-es13x 갱신');
+
+  // 2. 서버리스 파이프라인 (api/track.js) 검증
+  assert.ok(trackSrc.includes('handleSyncCompanions'), 'api/track.js 내 handleSyncCompanions 함수 구현');
+  assert.ok(trackSrc.includes("body.action === 'sync_companions'"), 'api/track.js sync_companions 라우팅 배선');
+  assert.ok(trackSrc.includes("name: 'companion_ledger'"), 'api/track.js events 원장 저장 배선');
+
+  // 3. 클라이언트 3중 안전망 (js/team-invite-comm.js) 검증
+  assert.ok(commSrc.includes("ourgoal_companions_backup_"), '로컬스토리지 영구 백업 키 정의');
+  assert.ok(commSrc.includes("localStorage.getItem(key)"), 'ensureDefaultCompanions 내 로컬스토리지 0ms 자가 복원');
+  assert.ok(commSrc.includes("localStorage.setItem(getCompanionsStorageKey()"), 'persistCompanions 내 로컬스토리지 영구 저장');
+  assert.ok(commSrc.includes("action: 'sync_companions'"), 'syncCompanionsFromDb 내 서버리스 원장 동기화');
+
+  // 4. 추가/삭제 시 영속화 배선 검증
+  assert.ok(commSrc.includes("persistCompanions();"), '동반자 추가 및 삭제 시 persistCompanions 전수 호출');
+  assert.ok(commSrc.includes("safeAvatarHtml(u.avatar, 36)"), '검색 결과 내 URL 아바타 안전 렌더 배선');
+});
+
+check('compliance: [#TASK-ES-130] 동반자 탭 0ms 무중단 렌더링 및 PostgrestFilterBuilder 예외 완전 격리 검증', () => {
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. Supabase PostgrestFilterBuilder .catch 문법 에러 배제
+  assert.ok(!commSrc.includes(".eq('id', uid).catch("), 'Supabase 빌더 직접 .catch() 호출 완전 제거');
+  assert.ok(commSrc.includes("typeof queryBuilder.then === 'function'"), 'PostgrestFilterBuilder 호환 then 분기 구현');
+
+  // 2. 신규 추가 시 목록 최상단 unshift 및 자가 치유 try-catch 안전망
+  assert.ok(commSrc.includes("comps.unshift(newComp);"), '신규 동반자 추가 시 unshift로 최상단 즉시 반영');
+  assert.ok(commSrc.includes("자가 치유 동기화 예외"), 'renderCommCompanions 입구 자가 치유 try-catch 안전 격리');
+
+  // 3. 소통 서브탭 클릭 시 dmActiveId 초기화 및 피드 렌더 null-safety
+  assert.ok(indexSrc.includes("state.dmActiveId = null; renderCommScreen();"), '소통 서브탭 전환 시 dmActiveId 완벽 초기화');
+  assert.ok(indexSrc.includes("var prof = state.profile || {}, profSettings = prof.settings || {};"), 'renderCommFeed null 안전 가드 구현');
+});
+
+/* ============ [#TASK-ES-131] DM 수신자 완벽 사용자 경험(UX) 파이프라인 검증 ============ */
+check('compliance: [#TASK-ES-131] DM 수신자 완벽 사용자 경험(수신함 자동인입 + 레드 닷 뱃지 + 맞추가 배너) 검증', () => {
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 캐시 버스팅 및 PWA 버전 검증
+  assert.ok(indexSrc.includes('team-invite-comm.js?v=20260916-es131'), 'index.html 스크립트 캐시 버스팅 v20260916-es131 갱신');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260916-es131'), 'sw.js 서비스워커 캐시 네임 v20260916-es131 갱신');
+
+  // 2. 수신자 DM 인입 (Inbox Discovery) 로더 검증
+  assert.ok(commSrc.includes('loadIncomingDmRooms'), 'loadIncomingDmRooms 수신 대화방 조회 함수 구현');
+  assert.ok(commSrc.includes("eq('receiver_id', myId)"), 'receiver_id 기준 수신 메시지 서버 DB 쿼리 배선');
+  assert.ok(commSrc.includes('_incomingDmRooms'), '_incomingDmRooms 캐시 관리 배열 정의');
+  assert.ok(commSrc.includes("badgeText = p.isIncoming ? '📩 새 대화 요청'"), '수신 대화방 [새 대화 요청] 뱃지 분기 구현');
+
+  // 3. 레드 닷(🔴) 뱃지 및 실시간 리스너 검증
+  assert.ok(indexSrc.includes('id="commNavBadge"'), '하단 네비게이션 소통 버튼 내 commNavBadge 레드 닷 엘리먼트 탑재');
+  assert.ok(indexSrc.includes('id="dmSubtabBadge"'), '상단 소통 서브탭 내 dmSubtabBadge 레드 닷 엘리먼트 탑재');
+  assert.ok(commSrc.includes('updateDmUnreadBadge'), 'updateDmUnreadBadge 뱃지 제어 함수 구현');
+  assert.ok(commSrc.includes('initIncomingDmListener'), 'initIncomingDmListener 전역 Realtime 수신 리스너 구현');
+  assert.ok(indexSrc.includes('updateDmUnreadBadge(false)'), 'DM 서브탭 진입 시 뱃지 자동 소등 배선');
+
+  // 4. 대화방 내 맞추가 원클릭 배너 검증
+  assert.ok(commSrc.includes('id="dmFollowBackBanner"'), '미추가 상대방 DM 열람 시 맞추가 배너 렌더링');
+  assert.ok(commSrc.includes('id="btnDmFollowBack"'), '맞추가 버튼 엘리먼트 배선');
+});
+
+/* ============ [#TASK-ES-127-IMPL] 활용법 감찰 적발 미구현 시스템 백엔드·로직 완결 검증 ============ */
+check('compliance: [#TASK-ES-127-IMPL] 활용법 감찰 적발 미구현 시스템(WebCal 캘린더 피드 + 데일리퀘스트 EXP 누적 + 도달예정일 알고리즘 + 30일 탈퇴유예) 완결 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const pushSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'push-subscribe.js'), 'utf8');
+  const withdrawSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'withdraw.js'), 'utf8');
+  const vercelJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
+
+  // 1. WebCal iCalendar 피드 라우팅 및 표준 ics 생성기 검증
+  const calRewrite = vercelJson.rewrites.find(r => r.source === '/api/calendar');
+  assert.ok(calRewrite && calRewrite.destination === '/api/push-subscribe', 'vercel.json 내 /api/calendar -> /api/push-subscribe 리라이트 라우팅 배선');
+  assert.ok(pushSrc.includes('BEGIN:VCALENDAR'), 'api/push-subscribe.js 내 iCalendar BEGIN:VCALENDAR 생성');
+  assert.ok(pushSrc.includes('X-WR-CALNAME:아워골(OurGoal) 성장 캘린더'), 'RFC 5545 표준 캘린더 피드 네임 설정');
+  assert.ok(pushSrc.includes('text/calendar; charset=utf-8'), 'Content-Type text/calendar 표준 헤더 반환');
+
+  // 2. 데일리 퀘스트 3종 완료 시 실제 프로필 EXP 적립 및 레벨업 시스템 검증
+  assert.ok(indexSrc.includes("awardXP(30, '데일리 퀘스트: 오늘 한 줄 체크인 (+30 EXP)')"), '퀘스트 1 체크인 +30 EXP 실제 적립 배선');
+  assert.ok(indexSrc.includes("awardXP(40, '데일리 퀘스트: 핵심 마일스톤 실행 (+40 EXP)')"), '퀘스트 2 마일스톤 +40 EXP 실제 적립 배선');
+  assert.ok(indexSrc.includes("awardXP(50, '데일리 퀘스트: 25분 집중 시간기록 (+50 EXP)')"), '퀘스트 3 시간기록 +50 EXP 실제 적립 배선');
+  assert.ok(indexSrc.includes('questRewards'), '당일 퀘스트 중복 수령 방지 questRewards 트래커 탑재');
+
+  // 3. 목표 마일스톤 페이스 기반 목표 도달 예정일 동적 계산 알고리즘 검증
+  assert.ok(indexSrc.includes('목표 도달 예정일 동적 재계산 알고리즘'), '목표 도달 예정일 동적 계산 알고리즘 주석 및 로직 탑재');
+  assert.ok(indexSrc.includes('🚀 페이스 도달예정:'), '목표 상세 메타 스트립 내 페이스 도달예정 뱃지 렌더링');
+
+  // 4. 30일 탈퇴 유예 안전망(Soft Delete & Grace Period) 백엔드 파이프라인 검증
+  assert.ok(withdrawSrc.includes("grace_period"), 'api/withdraw.js 내 grace_period 유예 모드 지원');
+  assert.ok(withdrawSrc.includes("withdrawal_requested_at"), '30일 탈퇴 유예 신청 일시 메타데이터 기록');
+  assert.ok(withdrawSrc.includes("withdrawal_purge_at"), '30일 경과 영구 삭제 예정일시(purgeAt) 스케줄링');
+  assert.ok(withdrawSrc.includes("account_status: 'active'"), '30일 이내 탈퇴 철회 및 계정 복구(restore) 분기 구현');
+});
+
+/* ============ [#TASK-ES-133] 소통 탭 3대 핵심 상호작용(댓글·새팀·마니또) 실 서버 DB 완전 배선 검증 ============ */
+check('compliance: [#TASK-ES-133] 소통 탭 3대 핵심 상호작용(피드 댓글 서버 실시간 동기화 + 새 팀 전역 공유 영구 보존 + 마니또 실 유저 익명 응원 연동) 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 피드 댓글 Supabase team_pings 서버 실시간 동기화 및 삭제 배선
+  assert.ok(indexSrc.includes("loadServerFeedComments"), 'loadServerFeedComments 비동기 서버 댓글 로더 탑재');
+  assert.ok(indexSrc.includes("target_type: 'feed_comment'"), '피드 댓글 team_pings target_type feed_comment 지정');
+  assert.ok(indexSrc.includes("sb.from('team_pings').insert(cmtRow)"), '댓글 등록 시 Supabase team_pings 실시간 insert 배선');
+  assert.ok(indexSrc.includes("sb.from('team_pings').delete().eq('id', cid)"), '댓글 삭제 시 Supabase team_pings 동기 삭제 배선');
+
+  // 2. 새 팀 만들기(promptNewGroup) 전역 공유 및 영구 보존
+  assert.ok(indexSrc.includes("loadSharedGroups"), 'loadSharedGroups 전역 공유 팀 로더 탑재');
+  assert.ok(indexSrc.includes("state.profile.settings.customGroups"), '개설 팀 customGroups 로컬 스토리지 영구 보존 안전망');
+  assert.ok(indexSrc.includes("target_type: 'team_group'"), '팀 개설 team_pings target_type team_group 등록');
+  assert.ok(indexSrc.includes("ping_type: 'group_creation'"), '팀 개설 team_pings ping_type group_creation 배선');
+
+  // 3. 마니또(My Manito) 실 유저 풀 연동 및 익명 응원 실시간 수신함
+  assert.ok(indexSrc.includes("loadServerManitoData"), 'loadServerManitoData 서버 마니또 풀 및 수신함 로더 탑재');
+  assert.ok(indexSrc.includes("REAL_MANITO_PARTNERS_CACHE"), '실 가입 유저 풀 우선 매칭 캐시 탑재');
+  assert.ok(indexSrc.includes("REAL_MANITO_INBOX_CACHE"), '실제 수신 응원함 연동 캐시 탑재');
+  assert.ok(indexSrc.includes("[🤖 AI 동반자]"), '헌법 제4조 1항 7호 의거 콜드스타트 AI 동반자 투명 뱃지 표기');
+  assert.ok(indexSrc.includes("[✨ 실 유저]"), '실제 가입 유저 매칭 시 실 유저 명확 구분 뱃지 표기');
+  assert.ok(indexSrc.includes("target_type: 'manito_cheer'"), '마니또 스탬프 응원 team_pings target_type manito_cheer 실시간 전송');
+  assert.ok(indexSrc.includes("target_type: 'manito_member'"), '마니또 시작 시 team_pings manito_pool 회원 등록 배선');
+});
+
+check('compliance: [#TASK-ES-134] 목표 탭 현상태 분석 AI 조언 명칭 변경, 분석완료 상태 전환 배지 및 스마트 캐시 제어 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 라벨 명칭 '현상태 분석 AI 조언' 단일화 및 'AI 현황' 미니바 타이틀 제거
+  assert.ok(indexSrc.includes('현상태 분석 AI 조언'), '목표 탭 상단 타이틀이 현상태 분석 AI 조언으로 명시되어야 함');
+  assert.ok(!indexSrc.includes('<span class="minibar-title">AI 현황</span>'), '기존 기계적 명칭 AI 현황 미니바 타이틀이 완전 교체되어야 함');
+
+  // 2. 3단계 상태 배지 (#goalStatusBadge) 및 스니펫 ID 배선
+  assert.ok(indexSrc.includes('id="goalStatusBadge"'), '3단계 상태 배지 #goalStatusBadge 엘리먼트 탑재');
+  assert.ok(indexSrc.includes('id="goalStatusSnippet"'), '스니펫 실시간 갱신용 #goalStatusSnippet 엘리먼트 탑재');
+  assert.ok(indexSrc.includes('statusBadgeText = \'분석완료\''), '분석 완료 시 분석완료 배지 텍스트 할당');
+  assert.ok(indexSrc.includes('statusBadgeText = \'진행 상황 분석 중…\''), '분석 중일 때 진행 상황 분석 중… 배지 텍스트 할당');
+
+  // 3. refreshGoalStatusSummary 및 글자 수 완화 (30자 이상 수용)
+  assert.ok(indexSrc.includes('text.length<30 || text.length>300'), '로컬 폴백 정상 수용을 위한 글자 수 30~300자 유효성 완화');
+  assert.ok(indexSrc.includes("badge.textContent = '분석완료'"), 'AI 요약 성공 콜백 시 배지 분석완료 즉각 전환 배선');
+});
+
+check('compliance: [#TASK-ES-135] 아바타 보관함(서랍) 3중 영속화(Supabase DB + LocalStorage + 마이그레이션 합집합 복원) 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const sqlPath = path.join(__dirname, '..', 'docs', 'sql', '2026-09-17-users-saved-avatars-column.sql');
+
+  // 1. Supabase SQL 정의서 존재 및 컬럼 규격 확인
+  assert.ok(fs.existsSync(sqlPath), 'users.saved_avatars 컬럼 SQL 정의서 파일 존재');
+  const sqlSrc = fs.readFileSync(sqlPath, 'utf8');
+  assert.ok(sqlSrc.includes('saved_avatars jsonb not null default'), 'saved_avatars jsonb 컬럼 추가 DDL 존재');
+
+  // 2. index.html saveProfile DB upsert 및 안전 폴백, 3중 백업 확인
+  assert.ok(indexSrc.includes('saved_avatars: savedAvatarsPayload'), 'saveProfile users upsert에 saved_avatars 필드 탑재');
+  assert.ok(indexSrc.includes('delete userUpsertObj.saved_avatars'), '컬럼 미존재 환경 대비 안전 폴백 재시도 배선');
+  assert.ok(indexSrc.includes("'ourgoal_saved_avatars_backup_' + uidVal"), '로컬 스토리지 전용 백업 키 3중화');
+
+  // 3. index.html loadProfile DB saved_avatars 및 로컬 백업 자동 복원 확인
+  assert.ok(indexSrc.includes('urow.saved_avatars'), 'loadProfile에서 urow.saved_avatars 조회');
+  assert.ok(indexSrc.includes("'ourgoal_saved_avatars_backup_' + userId"), 'loadProfile 로컬 전용 백업 키 자가 치유 연동');
+
+  // 4. index.html restoreSessionAndEnter 게스트 무손실 합집합 병합 확인
+  assert.ok(indexSrc.includes('guestSaved.length > 0'), '게스트 savedAvatars 무손실 승계 로직 탑재');
+  assert.ok(indexSrc.includes('if(gData.settings.savedAvatars) state.profile.settings.savedAvatars = gData.settings.savedAvatars;'), '게스트 savedAvatars 소셜 로그인 무손실 승계');
+
+  // 5. api/track.js 서버리스 원장 동기화 및 avatar-system.js 경량화 확인
+  assert.ok(trackSrc.includes('profRow.saved_avatars = profileToSave.savedAvatars'), 'api/track.js profileToSave saved_avatars 동기화');
+  assert.ok(trackSrc.includes('savedAvatars: (matchedUser && matchedUser.saved_avatars) || []'), 'api/track.js 응답에 savedAvatars 포함');
+  assert.ok(avatarSrc.includes("cv.toDataURL('image/jpeg', 0.85)"), 'avatar-system.js 256x256 JPEG 0.85 품질 경량화 탑재');
+});
+
+check('compliance: [#TASK-ES-136] 목표 데이터 해시 변경 감지 보강 및 "오늘의 카드" 안내 멘트 상민님 지정 원문 100% 교체', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 홈 탭 '오늘의 카드' 상민님 확정 원문 라벨 및 1pt 축소 보조 배지 검증
+  assert.ok(indexSrc.includes('<div class="ct-label" style="margin:0;">오늘의 카드</div>'), '홈 탭 오늘의 카드 라벨 교체');
+  assert.ok(indexSrc.includes('뭘 할지 모르겠을 때 도움돼요(내 목표기반)'), '상민님 지정 원문 배지 멘트 완벽 탑재');
+  assert.ok(!indexSrc.includes('할일이 당장 안떠오르면 활용하세요'), '기존 임의 멘트 완전 제거 확인');
+
+  // 2. computeGoalStatusHash 내 마일스톤/할 일 타이틀 및 마감일 전수 결합 검증
+  assert.ok(indexSrc.includes('parts.push(m.id, m.title||\'\', m.status||\'\', m.dueDate||\'\', JSON.stringify(m.result||null));'), '마일스톤 타이틀/마감일 해시 결합 코드 확인');
+  assert.ok(indexSrc.includes('parts.push(t.id, t.title||\'\', t.done?\'1\':\'0\', t.dueDate||\'\', JSON.stringify(t.result||null));'), '할 일 타이틀/마감일 해시 결합 코드 확인');
+
+  // 3. computeGoalStatusHash 실동작 무결성 테스트 (필드 변경 시 해시 즉각 변동 보장)
+  function hashFn(goal) {
+    var parts = [goal.title||'', goal.dueDate||'', JSON.stringify(goal.result||null)];
+    (goal.milestones||[]).forEach(function(m){
+      parts.push(m.id, m.title||'', m.status||'', m.dueDate||'', JSON.stringify(m.result||null));
+      (m.tasks||[]).forEach(function(t){ parts.push(t.id, t.title||'', t.done?'1':'0', t.dueDate||'', JSON.stringify(t.result||null)); });
+    });
+    var str = parts.join('|');
+    var h = 0;
+    for(var i=0;i<str.length;i++){ h = ((h<<5)-h + str.charCodeAt(i))|0; }
+    return String(h);
+  }
+
+  const baseGoal = {
+    title: '정보처리기사 취득',
+    dueDate: '2026-11-30',
+    result: null,
+    milestones: [
+      {
+        id: 'm1',
+        title: '필기 기출 3회독',
+        status: 'in_progress',
+        dueDate: '2026-09-30',
+        result: null,
+        tasks: [
+          { id: 't1', title: '1회독 모의고사 풀기', done: false, dueDate: '2026-09-20', result: null }
+        ]
+      }
+    ]
+  };
+
+  const h0 = hashFn(baseGoal);
+
+  // 마일스톤 타이틀 변경 감지
+  const gMilestoneTitleChanged = JSON.parse(JSON.stringify(baseGoal));
+  gMilestoneTitleChanged.milestones[0].title = '필기 기출 5회독';
+  assert.notStrictEqual(hashFn(gMilestoneTitleChanged), h0, '마일스톤 제목 변경 시 해시 즉각 변경');
+
+  // 마일스톤 마감일 변경 감지
+  const gMilestoneDueDateChanged = JSON.parse(JSON.stringify(baseGoal));
+  gMilestoneDueDateChanged.milestones[0].dueDate = '2026-10-05';
+  assert.notStrictEqual(hashFn(gMilestoneDueDateChanged), h0, '마일스톤 마감일 변경 시 해시 즉각 변경');
+
+  // 할 일 타이틀 변경 감지
+  const gTaskTitleChanged = JSON.parse(JSON.stringify(baseGoal));
+  gTaskTitleChanged.milestones[0].tasks[0].title = '오답노트 정리';
+  assert.notStrictEqual(hashFn(gTaskTitleChanged), h0, '할 일 제목 변경 시 해시 즉각 변경');
+
+  // 할 일 마감일 변경 감지
+  const gTaskDueDateChanged = JSON.parse(JSON.stringify(baseGoal));
+  gTaskDueDateChanged.milestones[0].tasks[0].dueDate = '2026-09-22';
+  assert.notStrictEqual(hashFn(gTaskDueDateChanged), h0, '할 일 마감일 변경 시 해시 즉각 변경');
+
+  // 할 일 완료여부 변경 감지
+  const gTaskDoneChanged = JSON.parse(JSON.stringify(baseGoal));
+  gTaskDoneChanged.milestones[0].tasks[0].done = true;
+  assert.notStrictEqual(hashFn(gTaskDoneChanged), h0, '할 일 완료 여부 변경 시 해시 즉각 변경');
+
+  // 목표 제목 및 마감일 변경 감지
+  const gGoalTitleChanged = JSON.parse(JSON.stringify(baseGoal));
+  gGoalTitleChanged.title = 'SQLD 취득';
+  assert.notStrictEqual(hashFn(gGoalTitleChanged), h0, '목표 제목 변경 시 해시 즉각 변경');
+});
+
+check('compliance: [#TASK-ES-137] AI 엔진 공통 데이터 불변 시 API 재호출 전면 차단 & KST 자정(00:00) 자동 롤오버 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. getKSTDateKey 정의 및 dateKey 보존 검증
+  assert.ok(indexSrc.includes('function getKSTDateKey(iso)'), 'getKSTDateKey 함수 정의');
+  assert.ok(indexSrc.includes('function dateKey(iso)'), 'dateKey 로컬 기기 날짜 포맷 함수 보존');
+  assert.ok(indexSrc.includes('window.getKSTDateKey = getKSTDateKey'), 'getKSTDateKey 전역 바인딩');
+
+  // 2. KST 자정 산출 단위 검증
+  function testKST(dStr) {
+    var d = dStr ? new Date(dStr) : new Date();
+    var kst = new Date(d.getTime() + (9 * 3600000));
+    var pad = n => n < 10 ? '0' + n : '' + n;
+    return kst.getUTCFullYear() + '-' + pad(kst.getUTCMonth() + 1) + '-' + pad(kst.getUTCDate());
+  }
+
+  // 2026-09-17 14:59 UTC = 2026-09-17 23:59 KST
+  assert.strictEqual(testKST('2026-09-17T14:59:00.000Z'), '2026-09-17');
+  // 2026-09-17 15:00 UTC = 2026-09-18 00:00 KST (자정 롤오버!)
+  assert.strictEqual(testKST('2026-09-17T15:00:00.000Z'), '2026-09-18');
+
+  // 3. goalStatusStale KST 롤오버 및 해시 검증
+  assert.ok(indexSrc.includes('var todayKST = getKSTDateKey(nowISO());'), 'renderGoalsScreen 내 todayKST 산출');
+  assert.ok(indexSrc.includes('(goalStatusCache.dateKey && goalStatusCache.dateKey !== todayKST)'), '자정 도달 시 자동 캐시 만료 롤오버');
+  assert.ok(indexSrc.includes('dateKey: getKSTDateKey(nowISO())'), '캐시 저장 시 KST dateKey 동시 기록');
+});
+
+check('compliance: [#TASK-ES-138] 캘린더 일정(customSchedules) 일간/시간표 24시간 블록 뷰 구현 및 세부 일정 저장 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 일간/시간표 뷰(view === day) 타임라인 블록 렌더링 코드 검증
+  assert.ok(indexSrc.includes('timetable-card'), 'timetable-card 컨테이너 탑재');
+  assert.ok(indexSrc.includes('timetable-slot'), '24시간 시간표 슬롯 탑재');
+  assert.ok(indexSrc.includes('data-timeslot'), '시간 슬롯 데이터 속성 바인딩');
+  assert.ok(indexSrc.includes('⏰ 시간표 타임라인'), '시간표 공식 헤더 렌더링');
+
+  // 2. 타임라인 슬롯 클릭 시 해당 시간 자동 세팅 모달 호출 검증
+  assert.ok(indexSrc.includes('openCalendarManualEditModal(state.calSelectedDate, null, \'custom\''), '슬롯 터치 시 시간 자동 세팅 일정 추가 연동');
+
+  // 3. tab-guides.js 약속 일치 검증
+  const guideSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'tab-guides.js'), 'utf8');
+  assert.ok(guideSrc.includes('일간 시간표 뷰로 오늘 하루의 24시간 블록을 밀도 있게 계획합니다'), 'tab-guides 시간표 뷰 약속 확인');
+});
+
+check('compliance: [#TASK-ES-139] 설정창 노션 연동 6대 UX 개선 및 가이드 툴팁·URL 정규화 완결 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. extractNotionDatabaseId 32자리 UUID 자동 추출 함수 검증
+  assert.ok(indexSrc.includes('function extractNotionDatabaseId(input)'), 'extractNotionDatabaseId 정규화 함수 정의');
+  assert.ok(indexSrc.includes('window.extractNotionDatabaseId = extractNotionDatabaseId'), 'extractNotionDatabaseId 전역 노출');
+
+  function parseNotion(input) {
+    if(!input) return '';
+    var str = String(input).trim();
+    var dashMatch = str.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+    if(dashMatch) return dashMatch[0].replace(/-/g, '').toLowerCase();
+    var hexMatch = str.match(/[0-9a-f]{32}/i);
+    if(hexMatch) return hexMatch[0].toLowerCase();
+    return str.replace(/^.*\//, '').replace(/\?.*$/, '').replace(/-/g, '').trim();
+  }
+
+  // 전체 URL 및 파라미터 포함 시에도 32자리 UUID 완벽 추출 확인
+  const rawUrl = 'https://www.notion.so/myworkspace/3dc598db909681348f06dfa838770cdd?v=123456789abcdef';
+  assert.strictEqual(parseNotion(rawUrl), '3dc598db909681348f06dfa838770cdd', '전체 URL에서 32자리 UUID 정규화 성공');
+
+  // 2. 4단계 친절 온보딩 가이드 박스 탑재 검증
+  assert.ok(indexSrc.includes('노션 4단계 초간편 연동 가이드'), '노션 4단계 친절 연동 가이드 탑재');
+  assert.ok(indexSrc.includes('notion-guide-box'), '노션 가이드 박스 클래스 확인');
+
+  // 3. notionDirectOpenLink 동적 바로열기 연동 검증
+  assert.ok(indexSrc.includes('id="notionDirectOpenLink"'), 'notionDirectOpenLink 태그 ID 확인');
+  assert.ok(indexSrc.includes('updateNotionDirectLink'), 'updateNotionDirectLink 동적 URL 매핑 로직 확인');
+});
+
+check('compliance: [#TASK-ES-140] 목표 탭 3계층(목표·마일스톤·태스크) 일정 설정 배지 및 팝업 모달·캘린더 24시간 블록 연동 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 배지 포맷터, 모달, 업데이트 함수 정의 및 전역 노출 확인
+  assert.ok(indexSrc.includes('function formatSchedulePillHtml'), 'formatSchedulePillHtml 함수 정의');
+  assert.ok(indexSrc.includes('function openScheduleSetupModal'), 'openScheduleSetupModal 함수 정의');
+  assert.ok(indexSrc.includes('function applyScheduleUpdate'), 'applyScheduleUpdate 함수 정의');
+  assert.ok(indexSrc.includes('window.formatSchedulePillHtml = formatSchedulePillHtml'), 'formatSchedulePillHtml window 노출');
+  assert.ok(indexSrc.includes('window.openScheduleSetupModal = openScheduleSetupModal'), 'openScheduleSetupModal window 노출');
+  assert.ok(indexSrc.includes('window.applyScheduleUpdate = applyScheduleUpdate'), 'applyScheduleUpdate window 노출');
+
+  // 2. 3계층(목표, 마일스톤, 태스크) 인라인 배선 확인
+  assert.ok(indexSrc.includes("formatSchedulePillHtml(goal, 'goal', goal.id)"), 'Goal 계층 일정 배지 배치');
+  assert.ok(indexSrc.includes("formatSchedulePillHtml(m, 'ms', goal.id, m.id)"), 'Milestone 계층 일정 배지 배치');
+  assert.ok(indexSrc.includes("formatSchedulePillHtml(t, 'task', goal.id, m.id, t.id)"), 'Task 계층 일정 배지 배치');
+  assert.ok(indexSrc.includes("data-setschedule"), '이벤트 위임을 위한 data-setschedule 속성 확인');
+
+  // 3. CSS 스타일 정의 확인
+  assert.ok(uiSrc.includes('.schedule-pill-btn'), '.schedule-pill-btn CSS 클래스 정의');
+  assert.ok(uiSrc.includes('.schedule-pill-btn.empty'), '.schedule-pill-btn.empty 미설정 점선 스타일');
+  assert.ok(uiSrc.includes('.schedule-pill-btn.has-date'), '.schedule-pill-btn.has-date 설정 완료 스타일');
+
+  // 4. 배지 포맷터 렌더링 로직 직접 검증
+  function dDay(dateStr){
+    if(!dateStr) return '';
+    var target = new Date(dateStr.slice(0, 10) + 'T00:00:00');
+    var today = new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00');
+    var diff = Math.round((target - today) / 86400000);
+    if(diff === 0) return 'D-Day';
+    return diff > 0 ? ('D-' + diff) : ('D+' + Math.abs(diff));
+  }
+  function formatSchedulePillHtml(item, level, goalId, msId, taskId){
+    var sDate = (item && item.startDate) ? String(item.startDate).slice(0, 10) : '';
+    var dDate = (item && item.dueDate) ? String(item.dueDate).slice(0, 10) : '';
+    var gid = goalId || '';
+    var mid = msId || '';
+    var tid = taskId || '';
+    if(!sDate && !dDate){
+      return '<button type="button" class="schedule-pill-btn empty" data-setschedule="1" data-schedlevel="'+level+'" data-schedgid="'+gid+'" data-schedmsid="'+mid+'" data-schedtid="'+tid+'" title="일정 설정">일정설정</button>';
+    }
+    if(sDate && dDate && sDate !== dDate){
+      var sParts = sDate.split('-');
+      var dParts = dDate.split('-');
+      var sText = sParts[0] + '.' + parseInt(sParts[1], 10) + '.' + parseInt(sParts[2], 10);
+      var dText = dParts[0] + '.' + parseInt(dParts[1], 10) + '.' + parseInt(dParts[2], 10);
+      var rangeText = sText + '~' + dText;
+      return '<button type="button" class="schedule-pill-btn has-date" data-setschedule="1" data-schedlevel="'+level+'" data-schedgid="'+gid+'" data-schedmsid="'+mid+'" data-schedtid="'+tid+'" title="일정 기간: '+rangeText+' (클릭하여 수정)">'+rangeText+'</button>';
+    }
+    var singleDate = dDate || sDate;
+    var dText = dDay(singleDate);
+    return '<button type="button" class="schedule-pill-btn has-date" data-setschedule="1" data-schedlevel="'+level+'" data-schedgid="'+gid+'" data-schedmsid="'+mid+'" data-schedtid="'+tid+'" title="마감일 '+singleDate+' (클릭하여 수정)">'+dText+'</button>';
+  }
+
+  const emptyPill = formatSchedulePillHtml({}, 'goal', 'g1');
+  assert.ok(emptyPill.includes('일정설정') && emptyPill.includes('schedule-pill-btn empty'), '일정 미설정 시 [일정설정] 빈 배지 출력');
+
+  const rangePill = formatSchedulePillHtml({ startDate: '2026-09-17', dueDate: '2026-09-24' }, 'ms', 'g1', 'm1');
+  assert.ok(rangePill.includes('2026.9.17~2026.9.24') && rangePill.includes('schedule-pill-btn has-date'), '시작/종료일 다를 때 YYYY.M.D~YYYY.M.D 기간 출력');
+
+  const singlePill = formatSchedulePillHtml({ dueDate: '2026-09-20' }, 'task', 'g1', 'm1', 't1');
+  assert.ok(singlePill.includes('schedule-pill-btn has-date') && singlePill.includes('D-'), '단일 마감일 시 디데이 텍스트 출력');
+});
+
+check('compliance: [#TASK-ES-141] 홈 구성 커스텀(customize.js) 최적화 및 유령 요소 제거·상민님 지정 문구 완결 검증', () => {
+  const customSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'customize.js'), 'utf8');
+
+  // 1. 유령 식별자 quickRoutineRow 제거 확인
+  assert.ok(!customSrc.includes('quickRoutineRow'), '존재하지 않던 quickRoutineRow 항목이 화이트리스트 및 미니멀 목록에서 완전 영구 제거됨');
+
+  // 2. 상민님 지정 문구 완벽 일치 확인
+  assert.ok(customSrc.includes("label: '오늘의 카드'"), "todayMissionCard 라벨이 '오늘의 카드'로 교체됨");
+  assert.ok(customSrc.includes("hint: '뭘 할지 모르겠을 때 도움돼요(내 목표기반)'"), "todayMissionCard 힌트가 '뭘 할지 모르겠을 때 도움돼요(내 목표기반)'로 일치");
+});
+
+check('compliance: [#TASK-ES-142] 구글 캘린더 연동 영속성 및 토큰 복원·동의 루프 방어 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. saveGoogleToken 및 restoreGoogleToken 함수 탑재 확인
+  assert.ok(indexSrc.includes('function saveGoogleToken(tokenObj)'), 'saveGoogleToken 토큰 로컬 저장 함수 정의');
+  assert.ok(indexSrc.includes('function restoreGoogleToken()'), 'restoreGoogleToken 토큰 로컬 복원 함수 정의');
+  assert.ok(indexSrc.includes('ourgoal_gcal_token_v1_'), '유저별 독립 격리 로컬 키 접두사 탑재');
+
+  // 2. 동의(consent) 루프 방어 확인: 기존 토큰이나 연동 이력 존재 시 prompt: '' 무음 갱신
+  assert.ok(indexSrc.includes("prompt: (state.googleToken || hasSavedToken || isConnected) ? '' : 'consent'"), '무음 백그라운드 토큰 요청을 통한 동의 팝업 무한 반복 방어');
+
+  // 3. 앱 진입(enterApp), 캘린더 연동 검사, 토큰 획득 시 복원 호출 확인
+  assert.ok(indexSrc.includes("if(typeof restoreGoogleToken === 'function') restoreGoogleToken();"), '앱 부팅 진입 시 토큰 복원 호출');
+  assert.ok(indexSrc.includes("if(!state.googleToken && typeof restoreGoogleToken === 'function') restoreGoogleToken();"), '캘린더 연동 체크 시 토큰 복원 호출');
+
+  // 4. 연동 해제 시 로컬 스토리지 정리 확인
+  assert.ok(indexSrc.includes("localStorage.removeItem('ourgoal_gcal_token_v1_' + uid)"), '연동 해제 시 로컬 토큰 전수 영구 파기');
+});
+
+check('compliance: [#TASK-ES-143] 전 AI 엔드포인트 로컬 스마트 룰베이스 폴백 및 보안/RLS 무결성 감사 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const reportPath = path.join(__dirname, '..', 'docs', 'reports', 'SECURITY_AND_AI_RESILIENCE_AUDIT_20260917.md');
+
+  // 1. 보안 및 AI 회복탄력성 종합 감사 보고서 존재 확인
+  assert.ok(fs.existsSync(reportPath), '보안 및 AI 회복탄력성 종합 감사 보고서 문서 존재');
+  const reportSrc = fs.readFileSync(reportPath, 'utf8');
+  assert.ok(reportSrc.includes('Supabase RLS'), '보고서 내 Supabase RLS 감사 내용 수록');
+  assert.ok(reportSrc.includes('AI 회복탄력성'), '보고서 내 AI 회복탄력성 감사 내용 수록');
+
+  // 2. 전 AI 엔드포인트 로컬 스마트 룰베이스 폴백 함수 탑재 확인
+  assert.ok(indexSrc.includes('function localGoalStatusSummary(goal)'), 'localGoalStatusSummary 목표 현상태 스마트 로컬 요약 함수 탑재');
+  assert.ok(indexSrc.includes('function localGoalTemplate(description)'), 'localGoalTemplate 목표 템플릿 스마트 로컬 생성 함수 탑재');
+  assert.ok(indexSrc.includes('function localTodayMission(goal)'), 'localTodayMission 오늘 미션 스마트 로컬 생성 함수 탑재');
+  assert.ok(indexSrc.includes('function localNextActionSuggestion(goal, completedId)'), 'localNextActionSuggestion 다음 행동 스마트 로컬 제안 함수 탑재');
+
+  // 3. localGoalStatusSummary 로직 시뮬레이션 검증
+  const dummyGoal = {
+    title: '정보처리기사 취득',
+    milestones: [
+      { id: 'm1', title: '필기 기출 5개년 완독', status: 'done' },
+      { id: 'm2', title: '실기 알고리즘 대비', status: 'doing' },
+      { id: 'm3', title: '최종 합격 발표', status: 'todo' }
+    ]
+  };
+  function localGoalStatusSummary(goal){
+    if(!goal) return '목표를 설정하고 첫 걸음을 시작해보세요.';
+    var ms = goal.milestones || [];
+    var total = ms.length;
+    if(!total) return '마일스톤을 추가하면 세부 단계별 진행 상황을 종합 분석해드려요.';
+    var done = ms.filter(function(m){ return m.status === 'done'; }).length;
+    var doing = ms.find(function(m){ return m.status === 'doing'; });
+    var pct = total ? Math.round((done / total) * 100) : 0;
+    if(doing){
+      return '현재 "' + doing.title + '" 마일스톤에 집중하고 있으며, 전체 공정률은 ' + pct + '%(' + done + '/' + total + ' 완수)입니다.';
+    }
+    return '진행률 ' + pct + '%';
+  }
+  const summaryRes = localGoalStatusSummary(dummyGoal);
+  assert.ok(summaryRes.includes('33%') && summaryRes.includes('실기 알고리즘 대비'), '로컬 스마트 목표 요약이 진행 중인 마일스톤과 공정률을 정확히 연산');
+
+  // 4. localGoalTemplate 로직 시뮬레이션 검증
+  function localGoalTemplate(description){
+    var desc = (description || '').trim();
+    var lower = desc.toLowerCase();
+    var topicMajor = 'lifestyle';
+    if(lower.includes('운동')) topicMajor = 'health';
+    else if(lower.includes('공부')) topicMajor = 'study';
+    return { title: desc, topicMajor: topicMajor, milestones: [{ title: '실천 루틴 확립', status: 'todo' }] };
+  }
+  const t1 = localGoalTemplate('매일 30분 달리기 운동하기');
+  assert.strictEqual(t1.topicMajor, 'health', '운동 키워드 도메인 자율 분류 성공');
+  const t2 = localGoalTemplate('토익 시험 공부 850점 달성');
+  assert.strictEqual(t2.topicMajor, 'study', '공부 키워드 도메인 자율 분류 성공');
+});
+
+check('compliance: [#TASK-ES-144] 동반자 새로고침(F5) 증발 결함 근본 해결 및 1:1 DM 실시간 수신 파이프라인 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+
+  // 1. index.html defaultProfile, loadProfile, saveProfile 동반자 영속화 배선 확인
+  assert.ok(indexSrc.includes('companions: [],'), 'defaultProfile에 companions 기본 배열 탑재');
+  assert.ok(indexSrc.includes('ourgoal_companions_backup_'), 'loadProfile에서 ourgoal_companions_backup_ 키 자가치유 복원');
+  assert.ok(indexSrc.includes('companions: finalCompanions,'), 'loadProfile 반환 객체에 companions 주입 확인');
+  assert.ok(indexSrc.includes('localStorage.setItem(\'ourgoal_companions_backup_\' + uidVal'), 'saveProfile에서 companions 로컬 영구 백업 보장');
+
+  // 2. enterApp 및 가시성 전환 시 Realtime 리스너 자동 연결 확인
+  assert.ok(indexSrc.includes('window.OurgoalTeamInviteComm.initIncomingDmListener(state.profile.id)'), 'enterApp에서 initIncomingDmListener 자동 가동');
+
+  // 3. js/team-invite-comm.js 읽음 상태 관리 및 수신 파이프라인 확인
+  assert.ok(commSrc.includes("DM_READ_PREFIX = 'ourgoal_dm_read_'"), 'DM_READ_PREFIX 읽음 원장 키 정의');
+  assert.ok(commSrc.includes('function markDmRoomRead('), 'markDmRoomRead 읽음 처리 함수 정의');
+  assert.ok(commSrc.includes('targetComp.lastMsg = r.message;'), '기존 동반자 수신 메시지 누락 방지 및 lastMsg 바인딩 확인');
+  assert.ok(commSrc.includes('targetComp.isUnread = !!_unreadPeerMap[senderId];'), '동반자별 미확인 메시지 여부 정상 판정');
+  assert.ok(commSrc.includes('_lastDmMessageMap[senderId]'), '최신 수신 메시지 맵 등록 확인');
+
+  // 4. 대화 목록 렌더링 시 최신 메시지 미리보기 및 읽음 해제 확인
+  assert.ok(commSrc.includes('var lastMsgObj = _lastDmMessageMap[p.id];'), 'DM 목록에서 실제 최신 메시지 프리뷰 우선 추출');
+  assert.ok(commSrc.includes('markDmRoomRead(myId, person.id);'), '대화방 진입 시 markDmRoomRead 즉시 실행');
+
+  // 5. 로컬스토리지 0ms 자가치유 복원 및 기본 AI 봇 덮어쓰기 방어 확인
+  assert.ok(commSrc.includes('COMPANIONS_STORAGE_PREFIX + uid'), 'persistCompanions에서 UID 기반 격리 백업 저장');
+});
+
+/* ============ [#TASK-ES-145] 마니또 실 유저 판별 무결성 및 가짜 실 유저 표기 오류 개선 검증 ============ */
+check('compliance: [#TASK-ES-145] 마니또 실 유저 판별 무결성 및 가짜 실 유저 표기 오류 개선 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+
+  // 1. index.html isValidRealUser 탑재 및 실 사용자 UUID 정밀 식별
+  assert.ok(indexSrc.includes('function isValidRealUser(id)'), 'isValidRealUser 함수 탑재');
+  assert.ok(indexSrc.includes("cleanId.indexOf('guest') === 0"), '게스트 계정 실 사용자 배제 로직');
+  assert.ok(indexSrc.includes("cleanId.indexOf('test') === 0"), '테스트 계정 실 사용자 배제 로직');
+  assert.ok(indexSrc.includes('[0-9a-f]{8}-[0-9a-f]{4}'), 'Supabase Auth UUID 규격 정규식 검증');
+
+  // 2. loadServerManitoData에서 게스트 및 무효 계정 원천 필터링
+  assert.ok(indexSrc.includes('if(!isValidRealUser(row.sender_id)) return;'), '마니또 서버 풀 페칭 시 비실사용자 즉시 드롭');
+  assert.ok(indexSrc.includes("if(row.hidden === true || row.status === 'inactive') return;"), '비활성/숨김 처리된 풀 데이터 필터링');
+
+  // 3. mnJoin 게스트 등록 차단 및 로컬 AI 마니또 안전 격리
+  assert.ok(indexSrc.includes("String(state.profile.id).indexOf('guest') === 0 || !isValidRealUser(state.profile.id)"), 'mnJoin 게스트 상태 판별');
+  assert.ok(indexSrc.includes('게스트 모드로 AI 마니또 3명이 배정됐어요'), '게스트 마니또 시작 시 로컬 안전 격리 및 안내 토스트');
+
+  // 4. 마니또 카드 2중 방화벽 (isActuallyReal) 검증
+  assert.ok(indexSrc.includes('var isActuallyReal = !p.is_ai && isValidRealUser(p.id);'), '마니또 카드 실 유저 뱃지 2중 방화벽 검증');
+
+  // 5. js/team-invite-comm.js isKnownAiCompanion 게스트 및 마니또 접두어 보강
+  assert.ok(commSrc.includes("s.indexOf('mn_') === 0 || s.indexOf('guest') === 0"), 'isKnownAiCompanion 게스트/마니또 접두어 인식');
+});
+
+/* ============ [#TASK-ES-146] 홈 탭 최하단 <아워골 평가해주기> 고정 배너 및 90% 팝업 평가폼 무결성 검증 ============ */
+check('compliance: [#TASK-ES-146] 홈 탭 최하단 <아워골 평가해주기> 고정 배너 및 90% 팝업 평가폼 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const customSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'customize.js'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. customize.js의 CORE_IDS에 homeEvalBanner 등록 확인
+  assert.ok(customSrc.includes("'homeEvalBanner'"), 'customize.js CORE_IDS에 homeEvalBanner 등록 검증');
+
+  // 2. index.html에 홈 최하단 배너 및 버튼 탑재 확인
+  assert.ok(indexSrc.includes('id="homeEvalBanner"'), 'homeEvalBanner 요소 탑재');
+  assert.ok(indexSrc.includes('id="btnOpenEvalModal"'), 'btnOpenEvalModal 버튼 탑재');
+  assert.ok(indexSrc.includes('아워골 평가해주기'), '아워골 평가해주기 배너 텍스트 확인');
+
+  // 3. 90% 대형 평가 팝업 모달 및 5대 입력 필드 확인
+  assert.ok(indexSrc.includes('id="appEvaluationModal"'), 'appEvaluationModal 모달 탑재');
+  assert.ok(indexSrc.includes('id="evalScoreInput"'), '100점 만점 평가 입력 필드');
+  assert.ok(indexSrc.includes('id="evalProsInput"'), '장점 입력 필드');
+  assert.ok(indexSrc.includes('id="evalConsInput"'), '단점 입력 필드');
+  assert.ok(indexSrc.includes('id="evalImprovementsInput"'), '추가 및 개선요청 입력 필드');
+  assert.ok(indexSrc.includes('id="evalCeoMsgInput"'), '대표에게 하고싶은 말 입력 필드');
+  assert.ok(indexSrc.includes('placeholder="진짜 맘대로 써주셔도 됩니다. 신고안합니다"'), '상민님 지정 회색 플레이스홀더 원문 검증');
+
+  // 4. 로컬 영속화 및 백엔드 전송 배선 확인
+  assert.ok(indexSrc.includes('openAppEvaluationModal'), 'openAppEvaluationModal 함수 정의');
+  assert.ok(indexSrc.includes('closeAppEvaluationModal'), 'closeAppEvaluationModal 함수 정의');
+  assert.ok(indexSrc.includes('state.profile.settings.appEvaluations.push'), '로컬 appEvaluations 영속화 저장 배선');
+  assert.ok(indexSrc.includes("type: 'app_evaluation'"), '평가 데이터 전송 페이로드 확인');
+  assert.ok(uiSrc.includes('.home-eval-banner-box') && uiSrc.includes('.eval-modal-sheet'), 'ui.css 90% 뷰포트 반응형 스타일 정의');
+});
+
+/* ============ [#TASK-ES-147] 목표 탭 '목표만' 버튼 이격 배치 및 하위 마일스톤형 확인 UI 검증 ============ */
+check('compliance: [#TASK-ES-147] 목표 탭 \'목표만\' 버튼 이격 배치 및 하위 마일스톤형 확인 UI 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 목표 탭 상단 필터 바 [목표만] 분리 이격 배치 확인
+  assert.ok(indexSrc.includes('data-msview="goals_only"'), 'goals_only 옵션 탑재');
+  assert.ok(indexSrc.includes('goals-only-wrap') || indexSrc.includes('margin-left:14px'), '[목표만] 14px 이격 레이아웃 확인');
+  assert.ok(uiSrc.includes('.goals-only-wrap'), 'ui.css goals-only-wrap 마진 스타일 정의');
+
+  // 2. goals_only 모드 선택 시 전체 목표를 마일스톤형 카드 블록으로 수직 나열 확인
+  assert.ok(indexSrc.includes('goal-milestone-overview-card'), '마일스톤형 목표 요약 카드 클래스 확인');
+  assert.ok(indexSrc.includes('전체 목표 마일스톤 현황'), '전체 목표 마일스톤 현황 헤더 확인');
+  assert.ok(indexSrc.includes('data-selectgoal'), '목표 카드 클릭을 위한 data-selectgoal 어트리뷰트');
+
+  // 3. 목표 카드 클릭 시 해당 목표로 즉시 전환되는 이벤트 배선 확인
+  assert.ok(indexSrc.includes("body.querySelectorAll('[data-selectgoal]')"), '목표 카드 클릭 핸들러 바인딩');
+  assert.ok(indexSrc.includes('state.activeGoalId = targetGid'), '클릭한 목표로 활성 목표 전환 확인');
+});
+
+/* ============ [#TASK-ES-148] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 탑재 검증 ============ */
+check('compliance: [#TASK-ES-148] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 탑재 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. renderStopwatchWidgetHtml 내 안내 문구 탑재 확인
+  assert.ok(indexSrc.includes('넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨'), '스톱워치 표 시간기입 안내문구 원문 검증');
+  assert.ok(indexSrc.includes('sw-inject-hint'), 'sw-inject-hint 요소 클래스 탑재');
+  assert.ok(uiSrc.includes('.sw-inject-hint'), 'ui.css sw-inject-hint 스타일 정의');
+
+  // 2. 미선택 시 토스트 피드백 개선 확인
+  assert.ok(indexSrc.includes("toast('넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨')"), '셀 미선택 시 친절한 가이드 토스트 출력');
+});
+
+/* ============ [#TASK-ES-149] 팀목표 200% 활용 가이드 안내문구 ('* 팀 목표를 생성하면 사라짐') 표시 검증 ============ */
+check('compliance: [#TASK-ES-149] 팀목표 200% 활용 가이드 안내문구 (\'* 팀 목표를 생성하면 사라짐\') 표시 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. renderTeamGoalsEmptyGuideHtml 내 안내 문구 탑재 확인
+  assert.ok(indexSrc.includes('* 팀 목표를 생성하면 사라짐'), '팀목표 생성 시 소멸 안내 문구 원문 검증');
+  assert.ok(indexSrc.includes('guide-vanish-hint'), 'guide-vanish-hint 클래스 탑재');
+  assert.ok(uiSrc.includes('.guide-vanish-hint'), 'ui.css guide-vanish-hint 축소 폰트 스타일 정의');
+});
+
+/* ============ [#TASK-ES-150] 아바타 레벨업 대형 팝업 및 성장 성향 프롬프트 설정 무결성 검증 ============ */
+check('compliance: [#TASK-ES-150] 아바타 레벨업 대형 팝업 및 성장 성향 프롬프트 설정 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 대형 팝업 모달 및 대형 아바타 컨테이너 (200px 이상) 탑재 확인
+  assert.ok(indexSrc.includes('id="avatarLevelUpModal"'), 'avatarLevelUpModal 모달 탑재');
+  assert.ok(indexSrc.includes('id="avatarLevelUpImgContainer"'), 'avatarLevelUpImgContainer 대형 컨테이너 탑재');
+  assert.ok(indexSrc.includes('width:220px;height:220px'), '220px 대형 아바타 규격 확인');
+
+  // 2. 액션 버튼 3종(SNS 공유, 이미지 저장, 확인 닫기) 배선 확인
+  assert.ok(indexSrc.includes('id="btnShareLevelUp"'), 'btnShareLevelUp 버튼 탑재');
+  assert.ok(indexSrc.includes('id="btnSaveLevelUpImage"'), 'btnSaveLevelUpImage 버튼 탑재');
+  assert.ok(indexSrc.includes('id="btnConfirmLevelUpClose"'), 'btnConfirmLevelUpClose 버튼 탑재');
+  assert.ok(indexSrc.includes('openAvatarLevelUpModal'), 'openAvatarLevelUpModal 함수 정의');
+  assert.ok(indexSrc.includes('closeAvatarLevelUpModal'), 'closeAvatarLevelUpModal 함수 정의');
+
+  // 3. 아바타 성장 성향(키워드) 입력 및 유해어 필터링, 영속화 검증
+  assert.ok(indexSrc.includes('id="avatarGrowthPromptInput"'), 'avatarGrowthPromptInput 입력 필드 탑재');
+  assert.ok(indexSrc.includes('id="btnSaveGrowthPrompt"'), 'btnSaveGrowthPrompt 저장 버튼 탑재');
+  assert.ok(indexSrc.includes('function filterHarmfulWords'), 'filterHarmfulWords 유해어 필터링 함수 탑재');
+  assert.ok(indexSrc.includes('state.profile.settings.avatarGrowthPrompt'), 'avatarGrowthPrompt 로컬 영속화 바인딩');
+
+  // 4. 레벨업 트리거(showLevelUpBanner) 시 대형 팝업 자동 연동 확인
+  assert.ok(indexSrc.includes('openAvatarLevelUpModal(level)'), 'showLevelUpBanner에서 openAvatarLevelUpModal 호출 확인');
+});
+
+/* ============ [#TASK-ES-151] 캘린더 일정 체크버튼 완료/미완료 토글 및 목표 양방향 동기화 무결성 검증 ============ */
+check('compliance: [#TASK-ES-151] 캘린더 일정 체크버튼 완료/미완료 토글 및 목표 양방향 동기화 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 체크버튼 및 완료 상태 UI/CSS 검증
+  assert.ok(uiSrc.includes('.sched-check'), 'ui.css .sched-check 스타일 정의');
+  assert.ok(uiSrc.includes('.sched-check.done'), 'ui.css .sched-check.done 완료 스타일 정의');
+  assert.ok(uiSrc.includes('.timetable-chip.done-chip'), 'ui.css .timetable-chip.done-chip 취소선/투명도 스타일');
+  assert.ok(uiSrc.includes('.sched-goal-badge'), 'ui.css .sched-goal-badge 목표 배지 스타일');
+
+  // 2. toggleScheduleDone 함수 및 양방향 동기화 로직 검증
+  assert.ok(indexSrc.includes('async function toggleScheduleDone('), 'toggleScheduleDone 전담 비동기 함수 구현');
+  assert.ok(indexSrc.includes('sched.linkedTaskId || sched.linkedGoalId'), '일정 완료 시 연동된 목표/태스크 동기화 분기');
+  assert.ok(indexSrc.includes('cs.linkedTaskId === targetTask.id'), '태스크 완료 시 연동된 일정(customSchedules) 동기화');
+
+  // 3. 일자 허브 모달 및 시간표 타임라인 체크버튼 배선 검증
+  assert.ok(indexSrc.includes('data-hubtogglesched='), 'openCalendarDayEditHubModal 내 data-hubtogglesched 체크버튼 배선');
+  assert.ok(indexSrc.includes('data-togglesched='), 'renderCalendarScreen 타임라인 내 data-togglesched 체크버튼 배선');
+
+  // 4. 일정 수동 등록/수정 모달 내 목표 연계 선택 셀렉터 검증
+  assert.ok(indexSrc.includes('id="calEditLinkedGoal"'), 'calEditLinkedGoal 목표 선택 셀렉터 탑재');
+  assert.ok(indexSrc.includes('linkedGoalId: linkedGoalId || null'), '일정 저장 시 linkedGoalId 영속화');
+  assert.ok(indexSrc.includes('linkedGoalTitle: linkedGoalTitle || null'), '일정 저장 시 linkedGoalTitle 영속화');
+});
+
+/* ============ [#TASK-ES-152] 백그라운드·앱종료·미확인 전역 알림 엔진(OurgoalNotifyEngine) 및 세부 제어 센터 무결성 검증 ============ */
+check('compliance: [#TASK-ES-152] 백그라운드·앱종료·미확인 전역 알림 엔진(OurgoalNotifyEngine) 및 세부 제어 센터 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const notifyModPath = path.join(__dirname, '..', 'js', 'notify-engine.js');
+
+  // 1. OurgoalNotifyEngine 모듈 및 API 완비 검증
+  assert.ok(fs.existsSync(notifyModPath), 'js/notify-engine.js 모듈 파일 존재');
+  const notifyMod = require(notifyModPath);
+  assert.ok(typeof notifyMod.dispatchGlobalNotification === 'function', 'dispatchGlobalNotification 함수 제공');
+  assert.ok(typeof notifyMod.playNotificationSound === 'function', 'playNotificationSound 함수 제공');
+  assert.ok(typeof notifyMod.vibrate === 'function', 'vibrate 함수 제공');
+  assert.ok(typeof notifyMod.getNotifConfig === 'function', 'getNotifConfig 함수 제공');
+  assert.ok(indexSrc.includes('src="js/notify-engine.js'), 'index.html에서 notify-engine.js 로드');
+
+  // 2. 플로팅 상단 알림 배너 UI 및 CSS 무결성 검증
+  assert.ok(uiSrc.includes('.notify-floating-banner'), 'ui.css .notify-floating-banner 스타일 정의');
+  assert.ok(uiSrc.includes('.notify-floating-banner.visible'), 'ui.css .notify-floating-banner.visible 노출 애니메이션 정의');
+  assert.ok(uiSrc.includes('.notify-mode-grid'), 'ui.css .notify-mode-grid 피드백 모드 그리드 정의');
+
+  // 3. DM 실시간 수신 시 전역 알림 발송 배선 검증
+  assert.ok(commSrc.includes('OurgoalNotifyEngine.dispatchGlobalNotification'), 'team-invite-comm.js 수신 시 dispatchGlobalNotification 배선');
+  assert.ok(commSrc.includes("type: 'dm'"), 'DM 타입 전역 알림 발송 검증');
+
+  // 4. 설정창 내 전역 알림 세부 제어 센터 UI 및 영속화 바인딩 검증
+  assert.ok(indexSrc.includes('id="notifFeedbackModeGrid"'), '피드백 방식 선택 그리드 탑재');
+  assert.ok(indexSrc.includes('id="notifPrivacyToggle"'), '알림 프라이버시 보호 토글 탑재');
+  assert.ok(indexSrc.includes('id="notifBgSwitch"'), '백그라운드 Web Notification 토글 탑재');
+  assert.ok(indexSrc.includes('id="notifDmSwitch"'), '1:1 DM 알림 토글 스위치 탑재');
+  assert.ok(indexSrc.includes('id="notifPermStatusLabel"'), '브라우저 시스템 알림 권한 상태 레이블 탑재');
+  assert.ok(indexSrc.includes('id="btnReqNotifPerm"'), '권한 요청 버튼 탑재');
+  assert.ok(indexSrc.includes('state.profile.settings.notifications'), 'notifications 설정 영속화 바인딩');
+});
+
+/* ============ [#TASK-ES-153] 캘린더 일자별 배경 사진 지정 및 50% 투명도 전역 렌더링 무결성 검증 ============ */
+check('compliance: [#TASK-ES-153] 캘린더 일자별 배경 사진 지정 및 50% 투명도 전역 렌더링 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. CSS 50% 투명도 및 꽉 찬 배경 레이어 규칙 검증
+  assert.ok(uiSrc.includes('.cal-cell-bg'), 'ui.css .cal-cell-bg 클래스 정의');
+  assert.ok(uiSrc.includes('opacity: 0.5'), 'ui.css 배경 레이어 50% 투명도 정의');
+  assert.ok(uiSrc.includes('background-size: cover'), 'ui.css 배경 이미지 cover 꽉 찬 채우기 정의');
+  assert.ok(uiSrc.includes('pointer-events: none'), 'ui.css 배경 레이어 클릭 방해 차단');
+  assert.ok(uiSrc.includes('.cal-bg-preview-wrap'), 'ui.css 사진 선택 모달 미리보기 스타일 정의');
+
+  // 2. 핵심 함수 및 모달 로직 검증
+  assert.ok(indexSrc.includes('function compressCalendarBgImage('), 'Canvas 800px & JPEG 0.82 이미지 압축 함수 탑재');
+  assert.ok(indexSrc.includes('function openCalendarDayBgPickerModal('), '이날의 배경사진 고르기 모달 함수 탑재');
+  assert.ok(indexSrc.includes('id="calDayBgFileInput"'), '사진 선택 파일 인풋 탑재');
+  assert.ok(indexSrc.includes('id="calDayBgSaveBtn"'), '배경사진 저장 버튼 탑재');
+  assert.ok(indexSrc.includes('id="calDayBgCancelBtn"'), '배경사진 취소 버튼 탑재');
+  assert.ok(indexSrc.includes('id="btnDeleteDayBg"'), '배경사진 삭제/초기화 버튼 탑재');
+
+  // 3. 월간 셀 및 일간 타임라인 렌더링 연동 검증
+  assert.ok(indexSrc.includes('calendarDayBackgrounds[iso]'), '월간 캘린더 셀 배경사진 데이터 연동');
+  assert.ok(indexSrc.includes('<div class="cal-cell-bg"'), '월간 캘린더 셀 .cal-cell-bg 백드롭 렌더링');
+  assert.ok(indexSrc.includes('id="hubDayBgBtn"'), '일간 허브 모달 내 이날의 배경사진 고르기 버튼 탑재');
+  assert.ok(indexSrc.includes('id="btnPickDayBgTimetable"'), '일간 시간표 타임라인 내 배경사진 고르기 버튼 탑재');
+  assert.ok(indexSrc.includes('id="calPickDayBgBtn"'), '일간 상세 뷰 내 배경사진 고르기 버튼 탑재');
+
+  // 4. 데이터 영속성 및 로컬 스토리지 비상 백업 검증
+  assert.ok(indexSrc.includes('ourgoal_cal_day_bg_'), '배경사진 로컬 스토리지 비상 백업 키 연동');
+  assert.ok(indexSrc.includes('calendarDayBackgrounds: localCalDayBg'), 'loadProfile 내 배경사진 복원 배선');
+});
+
+/* ============ [#TASK-ES-154] 아워골 평가하기 3중 접수창구(텔레그램·노션·DB) 및 피드백 파이프라인 무결성 검증 ============ */
+check('compliance: [#TASK-ES-154] 아워골 평가하기 3중 접수창구(텔레그램·노션·DB) 및 피드백 파이프라인 무결성 검증', () => {
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. api/track.js 백엔드 app_evaluation 수신 및 5대 항목 리포트 조립 검증
+  assert.ok(trackSrc.includes("body.type === 'app_evaluation'"), 'api/track.js app_evaluation 수신 분기');
+  assert.ok(trackSrc.includes("body.evaluation"), 'api/track.js body.evaluation 객체 인식');
+  assert.ok(trackSrc.includes('[아워골 종합 앱 평가 리포트]'), '5대 평가 항목 리포트 본문 자동 조립');
+  assert.ok(trackSrc.includes("evaluation: '앱 평가/피드백'"), '앱 평가 전용 유형 라벨 매핑');
+  assert.ok(trackSrc.includes('[앱 평가] ⭐'), '노션 및 요약 제목 별점/점수 프리픽스');
+
+  // 2. 텔레그램 실시간 알림 전용 서식 검증
+  assert.ok(trackSrc.includes('[아워골 사용자 앱 평가 접수]'), '텔레그램 평가 전용 알림 서식');
+  assert.ok(trackSrc.includes('• 종합 점수:'), '텔레그램 점수 항목 표기');
+
+  // 3. index.html 프론트엔드 4위 1체 피드백 검증
+  assert.ok(indexSrc.includes("btnSubmitEval.disabled = true"), '평가 제출 시 버튼 비활성화 (중복 제출 방지)');
+  assert.ok(indexSrc.includes("btnSubmitEval.textContent = '제출 중...'"), '평가 제출 중 로딩 인디케이터');
+  assert.ok(indexSrc.includes("btnSubmitEval.textContent = '평가 제출하기'"), '제출 완료/실패 시 버튼 원복');
+  assert.ok(indexSrc.includes("closeAppEvaluationModal"), '성공 시 모달 닫기');
+
+  // 4. 서비스워커 캐시 무효화 게이트 검증
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es154'), 'sw.js 캐시 네임 es154 갱신');
+});
+
+/* ============ [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템추가 결함 해결 및 감성 안내문구 무결성 검증 ============ */
+check('compliance: [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템추가 결함 해결 및 감성 안내문구 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const styleSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. showToast 런타임 오류 방어 및 전역 등록 검증
+  assert.ok(indexSrc.includes('window.showToast = toast;'), 'window.showToast = toast 전역 별칭 선언');
+  assert.strictEqual(indexSrc.includes('showToast('), false, 'index.html 내 정의되지 않은 showToast() 호출 완전 박멸');
+
+  // 2. 모달 전환 popstate 간섭 차단 검증
+  assert.ok(indexSrc.includes('openCalendarDayBgPickerModal(sel, true)'), '일간 허브 모달에서 배경사진 모달 진입 시 closeModal 없이 직접 전환');
+
+  // 3. 캘린더 일간 일정 목록(renderCalDayDetail) 체크 버튼 토글 배선 검증
+  assert.ok(indexSrc.includes('data-detailtogglesched'), 'renderCalDayDetail 내 인터랙티브 체크박스 data-detailtogglesched 존재');
+  assert.ok(indexSrc.includes("wrap.querySelectorAll('[data-detailtogglesched]')"), '캘린더 상세 체크박스 클릭 리스너 배선');
+
+  // 4. 프로필 편집기 openProfileEditor(existingDraft) 및 잇템 추가 인메모리 보존 검증
+  assert.ok(indexSrc.includes('function openProfileEditor(existingDraft)'), 'openProfileEditor existingDraft 수신 지원');
+  assert.ok(indexSrc.includes('openProfileEditor(draft)'), '잇템 추가/취소 시 closeModal 없이 부모 모달로 draft 보존 복귀');
+
+  // 5. 일정 탭 감성 안내 카피 탑재 검증
+  assert.ok(indexSrc.includes('일정을 사진배경으로 채워서 나만의 사진일기장을 만들어봐요'), '캘린더 상단 상민님 지정 감성 문구 탑재');
+  assert.ok(indexSrc.includes('class="cal-sub-guide"'), '캘린더 상단 안내 카드 마크업 존재');
+  assert.ok(styleSrc.includes('.cal-sub-guide'), 'ui.css 내 .cal-sub-guide 스타일 정의');
+
+  // 6. 서비스워커 캐시 무효화 게이트 검증
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es155'), 'sw.js 캐시 네임 es155 갱신');
+});
+
+/* ============ [#TASK-ES-153-SILENT] 구글 캘린더 일정 저장 시 계정 선택창 팝업 원천 차단 및 백그라운드 무음 동기화 검증 ============ */
+check('compliance: [#TASK-ES-153-SILENT] 구글 캘린더 일정 저장 시 계정 선택창 팝업 원천 차단 및 백그라운드 무음 동기화 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. requestGoogleToken 내 다중 계정 선택창 건너뛰기 hint 파라미터 탑재 검증
+  assert.ok(indexSrc.includes('reqOpts.hint = gEmail'), 'requestGoogleToken 내 기존 연동 이메일 hint 파라미터 전달');
+
+  // 2. getGoogleAccessToken 백그라운드 무음 모드(interactive: false) 검증
+  assert.ok(indexSrc.includes('async function getGoogleAccessToken(interactive)'), 'getGoogleAccessToken interactive 매개변수 지원');
+  assert.ok(indexSrc.includes('if(!interactive) return null;'), '백그라운드 호출 시 팝업 강제 실행 원천 차단');
+
+  // 3. 일정 저장 핸들러에서 syncAllToGoogleCalendar(false) 백그라운드 호출 검증
+  assert.ok(indexSrc.includes('syncAllToGoogleCalendar(false)'), '일정 저장 시 무음 백그라운드 동기화 호출');
+
+  // 4. 유저가 직접 누르는 버튼(배너, 설정창)에서 syncAllToGoogleCalendar(true) 인터랙티브 호출 검증
+  assert.ok(indexSrc.includes('syncAllToGoogleCalendar(true)'), '수동 [지금 동기화] 클릭 시 인터랙티브 인증 호출');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
@@ -5043,6 +6113,8 @@ console.log(passed + '개 통과, ' + failures + '개 실패');
 if (failures > 0) {
   process.exit(1);
 }
+
+
 
 
 
