@@ -918,7 +918,49 @@
     });
   }
 
-  /* ------------------------------------------------------------
+    /* ------------------------------------------------------------
+   * 6.5 팀 목표 수정/삭제 시 연계 개인목표(Linked Goals) 참조 무결성 자동 수호
+   * #TASK-ES-176 (시너지 E2)
+   * ------------------------------------------------------------ */
+  function syncWithTeamGoals(teamGoals, groupId){
+    if(!teamGoals || !Array.isArray(teamGoals) || !groupId) return;
+    var p = getProfile();
+    if(!p || !p.goals) return;
+
+    var linkedGoals = p.goals.filter(function(gItem){
+      return gItem.teamLinked && gItem.groupId === groupId;
+    });
+
+    linkedGoals.forEach(function(lg){
+      var tg = teamGoals.find(function(item){ return item.id === lg.teamGoalId; });
+      if(!tg){
+        lg.teamLinkedStatus = 'detached';
+        return;
+      }
+
+      lg.originTitle = tg.title;
+      if(!lg.customizedTitle){
+        lg.title = tg.title;
+      }
+      if(tg.dueDate) lg.dueDate = tg.dueDate;
+
+      if(Array.isArray(tg.milestones)){
+        var tgMilestones = tg.milestones;
+        (lg.milestones || []).forEach(function(lm, idx){
+          if(tgMilestones[idx]){
+            lm.teamMilestoneTitle = tgMilestones[idx].title;
+            if(!lm.customized){
+              lm.title = tgMilestones[idx].title;
+            }
+          }
+        });
+      }
+
+      syncTeamGoalParticipantProgress(lg);
+    });
+  }
+
+/* ------------------------------------------------------------
    * 7. 전역 모듈 등록 및 init
    * ------------------------------------------------------------ */
   var OurgoalTeamLinkedGoals = {
@@ -931,7 +973,8 @@
     renderTeamLinkedGoalsScreen: renderTeamLinkedGoalsScreen,
     renderTeamGoalCardSections: renderTeamGoalCardSections,
     bindTeamGoalEvents: bindTeamGoalEvents,
-    openTeamGoalMemberDmModal: openTeamGoalMemberDmModal
+    openTeamGoalMemberDmModal: openTeamGoalMemberDmModal,
+    syncWithTeamGoals: syncWithTeamGoals
   };
 
   global.OurgoalTeamLinkedGoals = OurgoalTeamLinkedGoals;
