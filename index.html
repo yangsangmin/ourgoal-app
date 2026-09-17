@@ -1632,9 +1632,32 @@
       track('signup', Object.assign({ method: provider || 'email' }, getAttribution()));
     }
     var settings = loadLocalSettings(userId);
-    if(!settings.customAvatarUrl && finalAvatarUrl && (finalAvatarUrl.indexOf('data:image') === 0 || finalAvatarUrl.indexOf('http') === 0)){
-      settings.customAvatarUrl = finalAvatarUrl; if(!settings.avatarType || settings.avatarType === 'robot') settings.avatarType = 'custom'; saveLocalSettings(userId, settings);
+    var dbSavedAvatars = Array.isArray(urow.saved_avatars) ? urow.saved_avatars : [];
+    if(!settings.savedAvatars || settings.savedAvatars.length === 0){
+      if(dbSavedAvatars.length > 0){
+        settings.savedAvatars = dbSavedAvatars;
+      } else {
+        var localSavedBackup = null;
+        try { localSavedBackup = JSON.parse(localStorage.getItem('ourgoal_saved_avatars_backup_' + userId) || 'null'); } catch(e){}
+        if(Array.isArray(localSavedBackup) && localSavedBackup.length > 0){
+          settings.savedAvatars = localSavedBackup;
+        }
+      }
+    } else if(dbSavedAvatars.length > 0){
+      var aMap = {};
+      settings.savedAvatars.forEach(function(a){ if(a && (a.id || a.url)) aMap[a.id || a.url] = true; });
+      dbSavedAvatars.forEach(function(da){
+        if(da && (da.id || da.url) && !aMap[da.id || da.url]){
+          settings.savedAvatars.push(da);
+          aMap[da.id || da.url] = true;
+        }
+      });
+      if(settings.savedAvatars.length > 10) settings.savedAvatars = settings.savedAvatars.slice(0, 10);
     }
+    if(!settings.customAvatarUrl && finalAvatarUrl && (finalAvatarUrl.indexOf('data:image') === 0 || finalAvatarUrl.indexOf('http') === 0)){
+      settings.customAvatarUrl = finalAvatarUrl; if(!settings.avatarType || settings.avatarType === 'robot') settings.avatarType = 'custom';
+    }
+    saveLocalSettings(userId, settings);
     if(hasExistingData && !settings.hasSeenGuide){ settings.hasSeenGuide = true; saveLocalSettings(userId, settings);
     }
     if(settings && settings.proTemplateRecords){
@@ -1701,12 +1724,22 @@
     updateAppBadge(computeStreakDays()); /* 기록이 바뀌는 모든 경로(홈 체크인·기록 모달·온보딩)가 여기를 지나므로 배지는 여기서 갱신 */
     var uidVal = state.profile.id;
     try{
-      await sb.from('users').upsert({
+      var savedAvatarsPayload = (state.profile.settings && Array.isArray(state.profile.settings.savedAvatars)) ? state.profile.settings.savedAvatars : [];
+      var userUpsertObj = {
         id: uidVal, username: state.profile.username, display_name: state.profile.displayName,
         bio: state.profile.bio || null, avatar_url: state.profile.avatarUrl || null,
         interests: state.profile.interests || [],
-        region: state.profile.region || null, region_public: !!state.profile.regionPublic
-      });
+        region: state.profile.region || null, region_public: !!state.profile.regionPublic,
+        saved_avatars: savedAvatarsPayload
+      };
+      var uUpsertRes = await sb.from('users').upsert(userUpsertObj);
+      if(uUpsertRes && uUpsertRes.error && /saved_avatars/i.test(uUpsertRes.error.message || '')){
+        delete userUpsertObj.saved_avatars;
+        await sb.from('users').upsert(userUpsertObj);
+      }
+      if(savedAvatarsPayload.length){
+        try { localStorage.setItem('ourgoal_saved_avatars_backup_' + uidVal, JSON.stringify(savedAvatarsPayload)); } catch(e){}
+      }
 
       var goals = state.profile.goals || [];
       try { localStorage.setItem('ourgoal_goals_backup_' + uidVal, JSON.stringify(goals)); localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile)); } catch(e){}
@@ -22090,8 +22123,35 @@
           var hasGuestData = (gData.goals && gData.goals.length > 0) || (gData.records && gData.records.length > 0) || (gData.settings && (gData.settings.customAvatarUrl || gData.settings.avatarType === 'custom')) || (gData.avatarUrl && gData.avatarUrl.indexOf('data:image') === 0);
           if(gData && gData.id !== session.user.id && hasGuestData){
             var newUid = session.user.id; var guestMigrated = false;
-            if(state.profile && gData.settings && gData.settings.customAvatarUrl && (!state.profile.settings.customAvatarUrl || state.profile.settings.avatarType !== 'custom')){
-              state.profile.settings = state.profile.settings || {}; state.profile.settings.avatarType = gData.settings.avatarType || 'custom'; state.profile.settings.customAvatarUrl = gData.settings.customAvatarUrl; if(gData.settings.avatarThemeId) state.profile.settings.avatarThemeId = gData.settings.avatarThemeId; if(gData.settings.avatarCraftCount) state.profile.settings.avatarCraftCount = gData.settings.avatarCraftCount; if(gData.settings.savedAvatars) state.profile.settings.savedAvatars = gData.settings.savedAvatars; state.profile.avatarUrl = gData.settings.customAvatarUrl; guestMigrated = true;
+            if(state.profile && gData.settings){
+              state.profile.settings = state.profile.settings || {};
+              var guestSaved = Array.isArray(gData.settings.savedAvatars) ? gData.settings.savedAvatars : [];
+              if(guestSaved.length > 0){
+                var socialSaved = state.profile.settings.savedAvatars;
+                if(!socialSaved || socialSaved.length === 0){
+                  if(gData.settings.savedAvatars) state.profile.settings.savedAvatars = gData.settings.savedAvatars;
+                } else {
+                  var sMap = {};
+                  socialSaved.forEach(function(a){ if(a && (a.id || a.url)) sMap[a.id || a.url] = true; });
+                  guestSaved.forEach(function(ga){
+                    if(ga && (ga.id || ga.url) && !sMap[ga.id || ga.url]){
+                      socialSaved.push(ga);
+                      sMap[ga.id || ga.url] = true;
+                    }
+                  });
+                  if(socialSaved.length > 10) socialSaved = socialSaved.slice(0, 10);
+                  state.profile.settings.savedAvatars = socialSaved;
+                }
+                guestMigrated = true;
+              }
+              if(gData.settings.customAvatarUrl && (!state.profile.settings.customAvatarUrl || state.profile.settings.avatarType !== 'custom')){
+                state.profile.settings.avatarType = gData.settings.avatarType || 'custom';
+                state.profile.settings.customAvatarUrl = gData.settings.customAvatarUrl;
+                if(gData.settings.avatarThemeId) state.profile.settings.avatarThemeId = gData.settings.avatarThemeId;
+                if(gData.settings.avatarCraftCount) state.profile.settings.avatarCraftCount = gData.settings.avatarCraftCount;
+                state.profile.avatarUrl = gData.settings.customAvatarUrl;
+                guestMigrated = true;
+              }
             } else if(state.profile && gData.avatarUrl && !state.profile.avatarUrl){ state.profile.avatarUrl = gData.avatarUrl; guestMigrated = true; }
             if(gData.goals && gData.goals.length > 0){
               var goalsPayload = gData.goals.map(function(g){ return { id: g.id, user_id: newUid, title: g.title, category: g.category||null, due_date: g.dueDate||null, visibility: g.visibility||'private', topic: g.topic||null, archived_at: g.archivedAt||null, result: g.result||null, milestones: g.milestones||[] }; });

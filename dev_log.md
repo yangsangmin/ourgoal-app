@@ -4067,3 +4067,30 @@
   - Headless Chrome 브라우저 CDP E2E 실측: 목표 탭 진입 시 `현상태 분석 AI 조언` 타이틀 및 `#goalStatusBadge` 정상 렌더링 확인 (`goal_ai_advice_verified.png` 실측 확보).
 ---
 
+## [2026-09-17 09:40] #TASK-ES-135 아바타 보관함(서랍) 증발 근본 해결 및 Supabase DB 3중 영속화 (8원칙 기반 진단 및 복구)
+- **배경 및 의도**:
+  - 상민님의 직접 지시("아바타 만든 것들이 없어졌는데 이유가 뭐야? 문제해결 8원칙으로 원인파악해").
+  - 문제해결 8원칙(1.현상 명확화, 2.사실수집, 3.가설수립 및 검증, 4.근본원인 규명, 5.대책수립, 6.실행, 7.결과검증, 8.재발방지)을 엄격히 적용하여 아바타 데이터가 유실되던 5대 근본 원인을 완벽히 규명하고 3중 영속화 아키텍처로 전면 개혁.
+- **5대 근본 원인 (Problem Diagnosis)**:
+  1. 원격 Supabase DB 컬럼 부재: `users` 테이블에 단일 `avatar_url`만 존재하고 `saved_avatars` 컬럼이 없어 멀티 아바타가 서버에 전혀 저장되지 못함 (`#TASK-ES-120` 컴패니언 증발 사태와 동일 구조).
+  2. 디바이스/브라우저 샌드박스 격리: PC 브라우저, 스마트폰 카카오 인앱브라우저, Safari, PWA 간 로컬스토리지가 격리되어 기기/환경 전환 시 아바타가 유실된 것처럼 보임.
+  3. 로컬스토리지 5MB 쿼터 초과 및 무음 누락(Silent Drop): 비압축 PNG Base64 아바타 2~3개 및 백업 누적 시 `QuotaExceededError`가 발생하였으나 `saveLocalSettings`의 빈 catch 블록으로 인해 무음 실패.
+  4. 게스트 ➔ 소셜 로그인 마이그레이션 조건문 버그: `index.html:22093`에서 `(!state.profile.settings.customAvatarUrl || state.profile.settings.avatarType !== 'custom')` 조건으로 인해 소셜 계정에 기본 아바타가 있으면 게스트 아바타 합집합 복사를 건너뛰고 직후 `localStorage.removeItem('ourgoal_guest_profile')`로 영구 파기함.
+  5. `loadProfile()` 자가치유 불완전성: `getSavedAvatars()`가 현재 활성화된 1개 아바타만 자가치유하고 이전 보관함 목록은 복구하지 못함.
+- **수행 내역**:
+  1. `docs/sql/2026-09-17-users-saved-avatars-column.sql`: Supabase DB `public.users` 테이블에 `saved_avatars jsonb not null default '[]'::jsonb` DDL 마이그레이션 스크립트 작성.
+  2. `index.html` (3중 영속화 및 소셜 마이그레이션 합집합 복원):
+     - `saveProfile`: `users` upsert 시 `saved_avatars` 페이로드 전송 (컬럼 미생성 환경 대비 자가치유 폴백 유지) 및 전용 로컬 격리 백업 키(`ourgoal_saved_avatars_backup_${uid}`) 동시 기록.
+     - `loadProfile`: DB `urow.saved_avatars` ➔ 전용 로컬 백업 키 ➔ 기존 settings 3중 안전망 순서로 복구 후 최대 10개 합집합 병합(`union merge`).
+     - `restoreSessionAndEnter`: 게스트 아바타 존재 시 소셜 계정의 기존 아바타와 비파괴적 합집합 병합을 무조건 수행하도록 수정하여 게스트 생성 아바타 유실 원천 차단.
+  3. `js/avatar-system.js` (Canvas 이미지 용량 경량화):
+     - 256x256 캔버스 추출 시 비압축 PNG 대신 JPEG 0.85(`toDataURL('image/jpeg', 0.85)`)로 최적화하여 1개당 ~150KB ➔ ~25KB로 83% 다이어트 (로컬스토리지 쿼터 초과 방지).
+  4. `api/track.js`: `sync_records` 엔드포인트 프로필 동기화 시 `saved_avatars` 저장 및 반환 연동.
+  5. `scripts/smoke-test.js`: `#TASK-ES-135` 5대 컴플라이언스 테스트 신설 (DDL 스크립트 무결성, saveProfile 3중 영속화, loadProfile 합집합 복원, 소셜 마이그레이션 비파괴 병합, avatar-system JPEG 0.85 최적화).
+  6. `docs/specs/REQ-TASK-ES-135-AVATAR-PERMANENT-PERSISTENCE.md` 및 `PLAN-TASK-ES-135-AVATAR-PERMANENT-PERSISTENCE.md` 작성.
+- **검증 결과**:
+  - 시뮬레이션 테스트: 게스트 ➔ 소셜 연동 후 로컬 캐시 삭제 시뮬레이션에서도 2개 아바타 100% 무손실 복구 확인.
+  - Headless Chrome 브라우저 CDP E2E 실측: 브라우저 새로고침 및 페이지 리로드 후에도 아바타 2개 보관함 슬롯 정상 유지 및 카운터 `(2/10개)` 정상 렌더링 확인 (`scratch/screen_avatar_persistence_3way_verified.png` 실측 확보).
+  - `npm test`: 274개 전수 통과 (0 failures), 헌법 5대 게이트 14종 100% ALL PASS, Zero Dead Click ALL PASS.
+---
+

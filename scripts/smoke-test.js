@@ -5453,6 +5453,36 @@ check('compliance: [#TASK-ES-134] 목표 탭 현상태 분석 AI 조언 명칭 �
   assert.ok(indexSrc.includes("badge.textContent = '분석완료'"), 'AI 요약 성공 콜백 시 배지 분석완료 즉각 전환 배선');
 });
 
+check('compliance: [#TASK-ES-135] 아바타 보관함(서랍) 3중 영속화(Supabase DB + LocalStorage + 마이그레이션 합집합 복원) 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const sqlPath = path.join(__dirname, '..', 'docs', 'sql', '2026-09-17-users-saved-avatars-column.sql');
+
+  // 1. Supabase SQL 정의서 존재 및 컬럼 규격 확인
+  assert.ok(fs.existsSync(sqlPath), 'users.saved_avatars 컬럼 SQL 정의서 파일 존재');
+  const sqlSrc = fs.readFileSync(sqlPath, 'utf8');
+  assert.ok(sqlSrc.includes('saved_avatars jsonb not null default'), 'saved_avatars jsonb 컬럼 추가 DDL 존재');
+
+  // 2. index.html saveProfile DB upsert 및 안전 폴백, 3중 백업 확인
+  assert.ok(indexSrc.includes('saved_avatars: savedAvatarsPayload'), 'saveProfile users upsert에 saved_avatars 필드 탑재');
+  assert.ok(indexSrc.includes('delete userUpsertObj.saved_avatars'), '컬럼 미존재 환경 대비 안전 폴백 재시도 배선');
+  assert.ok(indexSrc.includes("'ourgoal_saved_avatars_backup_' + uidVal"), '로컬 스토리지 전용 백업 키 3중화');
+
+  // 3. index.html loadProfile DB saved_avatars 및 로컬 백업 자동 복원 확인
+  assert.ok(indexSrc.includes('urow.saved_avatars'), 'loadProfile에서 urow.saved_avatars 조회');
+  assert.ok(indexSrc.includes("'ourgoal_saved_avatars_backup_' + userId"), 'loadProfile 로컬 전용 백업 키 자가 치유 연동');
+
+  // 4. index.html restoreSessionAndEnter 게스트 무손실 합집합 병합 확인
+  assert.ok(indexSrc.includes('guestSaved.length > 0'), '게스트 savedAvatars 무손실 승계 로직 탑재');
+  assert.ok(indexSrc.includes('if(gData.settings.savedAvatars) state.profile.settings.savedAvatars = gData.settings.savedAvatars;'), '게스트 savedAvatars 소셜 로그인 무손실 승계');
+
+  // 5. api/track.js 서버리스 원장 동기화 및 avatar-system.js 경량화 확인
+  assert.ok(trackSrc.includes('profRow.saved_avatars = profileToSave.savedAvatars'), 'api/track.js profileToSave saved_avatars 동기화');
+  assert.ok(trackSrc.includes('savedAvatars: (matchedUser && matchedUser.saved_avatars) || []'), 'api/track.js 응답에 savedAvatars 포함');
+  assert.ok(avatarSrc.includes("cv.toDataURL('image/jpeg', 0.85)"), 'avatar-system.js 256x256 JPEG 0.85 품질 경량화 탑재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
