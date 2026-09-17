@@ -676,6 +676,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       </div>
 
       <!-- 🧩 앱을 내맘대로! — 홈 구성 요소 켜기/끄기 (#TASK-ES-020) -->
+      <div class="set-block" id="setTrashBlock">
+        <h4>데이터 안심 휴지통</h4>
+        <p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 8px;">실수로 삭제한 목표·일정·기록 및 구글 삭제 일정을 7일간 안전하게 보관하고 원복해요.</p>
+        <button class="btn btn-ghost btn-sm btn-block" id="btnOpenTrashModal" type="button" style="display:flex;align-items:center;justify-content:center;gap:6px;">🗑️ 휴지통 (0개 보관 중)</button>
+      </div>
+
       <div class="set-block">
         <h4>앱을 내맘대로!</h4>
         <p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 8px;">내 목표에 필요한 것만 홈에 남기세요. 오늘 기록하기·내 목표·기록·소통은 항상 보여요.</p>
@@ -2058,6 +2064,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
     }
     var finalCompanions = (Array.isArray(localCachedCompanions) && localCachedCompanions.length > 0) ? localCachedCompanions : [];
+    var localCachedTrash = [];
+    try { localCachedTrash = JSON.parse(localStorage.getItem('ourgoal_trash_backup_' + userId) || '[]'); } catch(e){}
+    var dbTrash = Array.isArray(urow.trash) ? urow.trash : [];
+    var finalTrash = (dbTrash && dbTrash.length > 0) ? dbTrash : localCachedTrash;
+
+    // 캘린더 일자별 배경 사진 복원 (#TASK-ES-153)
+    var localCalDayBg = {};
+    try {
+      localCalDayBg = JSON.parse(localStorage.getItem('ourgoal_cal_day_bg_' + userId) || '{}');
+      if(!localCalDayBg || typeof localCalDayBg !== 'object') localCalDayBg = {};
+    } catch(e){}
+    if(Object.keys(localCalDayBg).length === 0 && localCachedProf && localCachedProf.calendarDayBackgrounds){
+      localCalDayBg = localCachedProf.calendarDayBackgrounds;
+    }
 
     return {
       id: userId, username: safeUsername, displayName: finalDisplayName,
@@ -2065,6 +2085,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       region: finalRegion, regionPublic: finalRegionPublic, itItems: finalItItems,
       goals: goals, records: records, settings: settings,
       companions: finalCompanions,
+      calendarDayBackgrounds: localCalDayBg,
       _isNewSignup: isActuallyNew
     };
   }
@@ -2075,7 +2096,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var uidVal = state.profile.id;
     try{
       var savedAvatarsPayload = (state.profile.settings && Array.isArray(state.profile.settings.savedAvatars)) ? state.profile.settings.savedAvatars : [];
+      var trashPayload = Array.isArray(state.profile.trash) ? state.profile.trash : [];
+      if(trashPayload.length){
+        try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify(trashPayload)); } catch(e){}
+      }
       var userUpsertObj = {
+        trash: trashPayload,
         id: uidVal, username: state.profile.username, display_name: state.profile.displayName,
         bio: state.profile.bio || null, avatar_url: state.profile.avatarUrl || null,
         interests: state.profile.interests || [],
@@ -2092,7 +2118,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
 
       var goals = state.profile.goals || [];
-      try { localStorage.setItem('ourgoal_goals_backup_' + uidVal, JSON.stringify(goals)); localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile)); } catch(e){}
+      try {
+        localStorage.setItem('ourgoal_goals_backup_' + uidVal, JSON.stringify(goals));
+        localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile));
+        if(state.profile.calendarDayBackgrounds){
+          localStorage.setItem('ourgoal_cal_day_bg_' + uidVal, JSON.stringify(state.profile.calendarDayBackgrounds));
+        }
+      } catch(e){}
       if(goals.length){
         await sb.from('goals').upsert(goals.map(function(g){
           return {
@@ -4605,6 +4637,311 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     return true;
   }
   /* ============ 구글 캘린더 연동 ============ */
+    /* ============ [#TASK-ES-153] 전역 7일 유예 통합 휴지통 (Recycle Bin) 시스템 ============ */
+  function getTrashList(){
+    if(!state.profile) return [];
+    if(Array.isArray(state.profile.trash)) return state.profile.trash;
+    var uidVal = state.profile.id || 'guest';
+    var cached = [];
+    try { cached = JSON.parse(localStorage.getItem('ourgoal_trash_backup_' + uidVal) || '[]'); } catch(e){}
+    state.profile.trash = Array.isArray(cached) ? cached : [];
+    return state.profile.trash;
+  }
+
+  function autoPurgeExpiredTrash(){
+    if(!state.profile || !Array.isArray(state.profile.trash)) return;
+    var now = Date.now();
+    var beforeLen = state.profile.trash.length;
+    state.profile.trash = state.profile.trash.filter(function(item){
+      return item && item.expiresAt && item.expiresAt > now;
+    });
+    if(state.profile.trash.length !== beforeLen){
+      var uidVal = state.profile.id || 'guest';
+      try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify(state.profile.trash)); } catch(e){}
+      if(typeof saveProfile === 'function') saveProfile().catch(function(){});
+    }
+  }
+
+  async function moveToTrash(entityType, entityId, payload, source, title){
+    if(!state.profile) return;
+    autoPurgeExpiredTrash();
+    var trash = getTrashList();
+    var itemTitle = title || (payload && (payload.title || payload.text)) || '항목';
+    var expiresAt = Date.now() + (7 * 24 * 60 * 60 * 1000);
+
+    var snapshot = null;
+    try { snapshot = JSON.parse(JSON.stringify(payload)); } catch(e){ snapshot = payload; }
+
+    var trashItem = {
+      id: uid('trash'),
+      originalId: entityId,
+      entityType: entityType,
+      title: itemTitle,
+      payload: snapshot,
+      deletedAt: Date.now(),
+      expiresAt: expiresAt,
+      source: source || 'in_app'
+    };
+
+    trash.unshift(trashItem);
+    if(trash.length > 100) state.profile.trash = trash.slice(0, 100);
+
+    if(entityType === 'goal'){
+      state.profile.goals = (state.profile.goals || []).filter(function(g){ return g.id !== entityId; });
+      if(state.activeGoalId === entityId) state.activeGoalId = null;
+      var goal = { id: entityId };
+      try { await sb.from('goals').delete().eq('id', goal.id).eq('user_id', state.profile.id); } catch(e){}
+    } else if(entityType === 'schedule'){
+      state.profile.settings = state.profile.settings || {};
+      state.profile.settings.customSchedules = (state.profile.settings.customSchedules || []).filter(function(c){ return c.id !== entityId; });
+    } else if(entityType === 'record'){
+      state.profile.records = (state.profile.records || []).filter(function(r){ return r.id !== entityId; });
+      if(payload && payload.linkedScheduleId && state.profile.settings && state.profile.settings.customSchedules){
+        state.profile.settings.customSchedules = state.profile.settings.customSchedules.filter(function(c){
+          return c.id !== payload.linkedScheduleId && c.recordId !== entityId;
+        });
+      }
+      var id = entityId;
+      try { await sb.from('checkins').delete().eq('id', id).eq('user_id', state.profile.id); } catch(e){}
+    } else if(entityType === 'gcal'){
+      if(Array.isArray(state.gcalEventsCache)){
+        state.gcalEventsCache = state.gcalEventsCache.filter(function(e){ return e.id !== entityId; });
+        try { localStorage.setItem('ourgoal_gcal_events', JSON.stringify(state.gcalEventsCache)); } catch(e){}
+      }
+    }
+
+    var uidVal = state.profile.id || 'guest';
+    try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify(state.profile.trash)); } catch(e){}
+    await saveProfile();
+
+    if(typeof renderHome === 'function') renderHome();
+    if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
+    if(typeof renderStatsScreen === 'function') renderStatsScreen();
+    if(typeof renderCalendarScreen === 'function') renderCalendarScreen();
+
+    toastWithTrashUndo('🗑️ "' + escapeHtml(itemTitle) + '" 항목을 휴지통으로 이동했어요 (7일간 보관)', trashItem.id);
+    return trashItem;
+  }
+
+  async function restoreFromTrash(trashId){
+    if(!state.profile) return;
+    var trash = getTrashList();
+    var idx = trash.findIndex(function(x){ return x.id === trashId; });
+    if(idx === -1){ toast('복원할 항목을 찾을 수 없습니다.'); return; }
+    var item = trash[idx];
+    var payload = item.payload;
+
+    if(item.entityType === 'goal'){
+      state.profile.goals = state.profile.goals || [];
+      if(!state.profile.goals.some(function(g){ return g.id === payload.id; })){
+        state.profile.goals.push(payload);
+      }
+    } else if(item.entityType === 'schedule'){
+      state.profile.settings = state.profile.settings || {};
+      state.profile.settings.customSchedules = state.profile.settings.customSchedules || [];
+      if(payload.linkedGoalId){
+        var goalExists = (state.profile.goals || []).some(function(g){ return g.id === payload.linkedGoalId; });
+        if(!goalExists){
+          payload.linkedGoalId = null;
+          payload.linkedGoalTitle = null;
+        }
+      }
+      if(!state.profile.settings.customSchedules.some(function(c){ return c.id === payload.id; })){
+        state.profile.settings.customSchedules.push(payload);
+      }
+      if(isGoogleCalendarConnected()){
+        syncAllToGoogleCalendar().catch(function(){});
+      }
+    } else if(item.entityType === 'record'){
+      state.profile.records = state.profile.records || [];
+      if(!state.profile.records.some(function(r){ return r.id === payload.id; })){
+        state.profile.records.unshift(payload);
+      }
+    } else if(item.entityType === 'gcal'){
+      state.gcalEventsCache = state.gcalEventsCache || [];
+      if(!state.gcalEventsCache.some(function(e){ return e.id === payload.id; })){
+        state.gcalEventsCache.push(payload);
+      }
+      if(isGoogleCalendarConnected()){
+        syncAllToGoogleCalendar().catch(function(){});
+      }
+    }
+
+    trash.splice(idx, 1);
+    var uidVal = state.profile.id || 'guest';
+    try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify(trash)); } catch(e){}
+    await saveProfile();
+
+    if(typeof renderHome === 'function') renderHome();
+    if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
+    if(typeof renderStatsScreen === 'function') renderStatsScreen();
+    if(typeof renderCalendarScreen === 'function') renderCalendarScreen();
+
+    toast('✨ "' + escapeHtml(item.title) + '" 항목을 원래 위치로 원복했어요!');
+  }
+
+  async function permanentDeleteFromTrash(trashId){
+    if(!state.profile) return;
+    var trash = getTrashList();
+    var item = trash.find(function(x){ return x.id === trashId; });
+    if(!item) return;
+    if(!confirm('"' + item.title + '" 항목을 영구 삭제할까요?\n더 이상 복구할 수 없습니다.')) return;
+    state.profile.trash = trash.filter(function(x){ return x.id !== trashId; });
+    var uidVal = state.profile.id || 'guest';
+    try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify(state.profile.trash)); } catch(e){}
+    await saveProfile();
+    toast('항목을 완전히 영구 삭제했습니다');
+  }
+
+  async function emptyTrash(){
+    if(!state.profile) return;
+    var trash = getTrashList();
+    if(!trash.length){ toast('휴지통이 이미 비어 있습니다'); return; }
+    if(!confirm('휴지통을 완전히 비울까요?\n보관 중인 ' + trash.length + '개 항목이 모두 영구 삭제되며 복구할 수 없습니다.')) return;
+    state.profile.trash = [];
+    var uidVal = state.profile.id || 'guest';
+    try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify([])); } catch(e){}
+    await saveProfile();
+    toast('휴지통을 완전히 비웠습니다');
+  }
+
+  function toastWithTrashUndo(msg, trashId){
+    var prev = document.getElementById('trashUndoToast');
+    if(prev) prev.remove();
+    var bar = document.createElement('div');
+    bar.id = 'trashUndoToast';
+    bar.style.cssText = 'position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:24px;font-size:.875rem;font-weight:700;display:flex;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.28);z-index:99999;max-width:92vw;';
+    bar.innerHTML = '<span>' + msg + '</span><button type="button" id="btnTrashUndoAction" style="background:var(--brand);color:#fff;border:none;padding:4px 10px;border-radius:12px;font-size:.8125rem;font-weight:700;cursor:pointer;flex:0 0 auto;">실행 취소</button>';
+    document.body.appendChild(bar);
+    var uBtn = bar.querySelector('#btnTrashUndoAction');
+    if(uBtn){
+      uBtn.onclick = async function(){
+        bar.remove();
+        await restoreFromTrash(trashId);
+      };
+    }
+    setTimeout(function(){ if(bar.parentNode) bar.remove(); }, 6000);
+  }
+
+  function openTrashModal(){
+    autoPurgeExpiredTrash();
+    var trash = getTrashList();
+    var activeFilter = 'all';
+
+    function renderModalContent(filter){
+      activeFilter = filter || activeFilter;
+      var filtered = trash.filter(function(it){
+        if(activeFilter === 'all') return true;
+        return it.entityType === activeFilter;
+      });
+
+      var typeIcon = function(t){
+        if(t === 'goal') return '🎯 목표';
+        if(t === 'schedule') return '📅 일정';
+        if(t === 'record') return '📝 기록';
+        if(t === 'gcal') return '🗓️ 구글';
+        return '📦 항목';
+      };
+
+      var listHtml = filtered.length ? (
+        '<div style="display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto;margin:12px 0;">' +
+        filtered.map(function(item){
+          var remainingDays = Math.max(1, Math.ceil((item.expiresAt - Date.now()) / (86400000)));
+          var dDayText = (remainingDays <= 1) ? '<span style="color:var(--brand-strong);font-weight:700;font-size:.75rem;">오늘 자동삭제</span>' : ('<span class="dday-mini">D-' + remainingDays + '</span>');
+          var delDateStr = new Date(item.deletedAt).toLocaleDateString('ko-KR', { month:'short', day:'numeric' });
+          return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;background:var(--card2);border:1px solid var(--rule);border-radius:12px;">' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;flex-wrap:wrap;">' +
+                '<span class="sched-goal-badge" style="font-size:.75rem;padding:1px 6px;">' + typeIcon(item.entityType) + '</span>' +
+                dDayText +
+                '<span class="faint" style="font-size:.75rem;">(' + delDateStr + ' 삭제)</span>' +
+              '</div>' +
+              '<div style="font-weight:700;font-size:.875rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' +
+                escapeHtml(item.title) +
+              '</div>' +
+            '</div>' +
+            '<div style="display:flex;align-items:center;gap:6px;flex:0 0 auto;">' +
+              '<button class="btn btn-primary btn-sm" data-trashrestore="' + item.id + '" type="button" style="font-size:.8125rem;padding:4px 8px;">원복</button>' +
+              '<button class="icon-btn" data-trashdel="' + item.id + '" type="button" title="영구 삭제" style="color:var(--brand-strong);font-size:1rem;padding:4px 6px;">×</button>' +
+            '</div>' +
+          '</div>';
+        }).join('') +
+        '</div>'
+      ) : (
+        '<div class="empty-state" style="padding:24px 10px;margin:14px 0;">' +
+          '<div class="e-icon">🗑️</div>' +
+          '<p style="margin:4px 0 0;font-size:.875rem;font-weight:700;">휴지통이 비어 있습니다</p>' +
+          '<p class="faint" style="margin:2px 0 0;font-size:.8125rem;">삭제된 목표, 일정, 기록은 7일간 안전하게 보관됩니다.</p>' +
+        '</div>'
+      );
+
+      return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">' +
+        '<h3 style="margin:0;display:flex;align-items:center;gap:6px;"><span>🗑️ 휴지통</span> <span class="faint" style="font-size:.875rem;font-weight:400;">(' + trash.length + '개 보관 중)</span></h3>' +
+        (trash.length ? '<button class="btn btn-ghost btn-sm" id="btnEmptyTrashAll" type="button" style="color:var(--brand-strong);font-size:.8125rem;padding:3px 8px;border-color:var(--rule);">휴지통 비우기</button>' : '') +
+      '</div>' +
+      '<p class="faint" style="font-size:.8125rem;margin:0 0 10px;">삭제된 항목은 7일 후 완전히 자동 삭제됩니다. 언제든 원래 위치로 원복할 수 있습니다.</p>' +
+      '<div class="format-toggle" id="trashFilterWrap" style="margin-bottom:10px;">' +
+        '<div class="format-opt' + (activeFilter==='all'?' active':'') + '" data-trashfilt="all">전체 (' + trash.length + ')</div>' +
+        '<div class="format-opt' + (activeFilter==='goal'?' active':'') + '" data-trashfilt="goal">🎯 목표</div>' +
+        '<div class="format-opt' + (activeFilter==='schedule'?' active':'') + '" data-trashfilt="schedule">📅 일정</div>' +
+        '<div class="format-opt' + (activeFilter==='record'?' active':'') + '" data-trashfilt="record">📝 기록</div>' +
+        '<div class="format-opt' + (activeFilter==='gcal'?' active':'') + '" data-trashfilt="gcal">🗓️ 구글</div>' +
+      '</div>' +
+      '<div id="trashListContentSlot">' + listHtml + '</div>' +
+      '<div class="modal-actions" style="margin-top:12px;">' +
+        '<button class="btn btn-ghost btn-sm" id="trashCloseBtn" type="button" style="width:100%;">닫기</button>' +
+      '</div>';
+    }
+
+    openModal(renderModalContent('all'), function(sheet){
+      function bindTrashEvents(){
+        var closeBtn = sheet.querySelector('#trashCloseBtn');
+        if(closeBtn) closeBtn.onclick = closeModal;
+
+        var emptyBtn = sheet.querySelector('#btnEmptyTrashAll');
+        if(emptyBtn){
+          emptyBtn.onclick = async function(){
+            await emptyTrash();
+            trash = getTrashList();
+            sheet.innerHTML = renderModalContent(activeFilter);
+            bindTrashEvents();
+          };
+        }
+
+        sheet.querySelectorAll('[data-trashfilt]').forEach(function(opt){
+          opt.onclick = function(){
+            var f = opt.dataset.trashfilt;
+            sheet.innerHTML = renderModalContent(f);
+            bindTrashEvents();
+          };
+        });
+
+        sheet.querySelectorAll('[data-trashrestore]').forEach(function(btn){
+          btn.onclick = async function(e){
+            e.stopPropagation();
+            var tid = btn.dataset.trashrestore;
+            await restoreFromTrash(tid);
+            trash = getTrashList();
+            sheet.innerHTML = renderModalContent(activeFilter);
+            bindTrashEvents();
+          };
+        });
+
+        sheet.querySelectorAll('[data-trashdel]').forEach(function(btn){
+          btn.onclick = async function(e){
+            e.stopPropagation();
+            var tid = btn.dataset.trashdel;
+            await permanentDeleteFromTrash(tid);
+            trash = getTrashList();
+            sheet.innerHTML = renderModalContent(activeFilter);
+            bindTrashEvents();
+          };
+        });
+      }
+      bindTrashEvents();
+    });
+  }
+
   var googleTokenClient = null;
   /* 캘린더 사용 가능 판단을 한 곳에: 앱 상수 우선, 비면 사용자가 설정에 넣은 ID로 폴백 (A2/R5/F4) */
   function calendarAvailable(appClientId, settings){
@@ -5014,13 +5351,25 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       };
     }
     try{
-      var r = await fetch(eventUrl, {
+      var res = await fetch(eventUrl, {
         method: existingEventId ? 'PATCH' : 'POST',
         headers:{ 'Content-Type':'application/json', Authorization:'Bearer '+token },
         body: JSON.stringify(payload)
       });
-      if(!r.ok) return null;
-      var ev = await r.json();
+      if(res.status === 404 || res.status === 410){
+        // 기존 이벤트가 구글 캘린더에서 삭제됨 -> 신규 POST로 자가치유 재시도
+        var postUrl = 'https://www.googleapis.com/calendar/v3/calendars/primary/events';
+        var res2 = await fetch(postUrl, {
+          method: 'POST',
+          headers:{ 'Content-Type':'application/json', Authorization:'Bearer '+token },
+          body: JSON.stringify(payload)
+        });
+        if(!res2.ok) return null;
+        var ev2 = await res2.json();
+        return ev2.id;
+      }
+      if(!res.ok) return null;
+      var ev = await res.json();
       return ev.id;
     } catch(e){ return null; }
   }
@@ -5117,7 +5466,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var cls = 'cal-cell'+(dim?' other-month':'')+(iso===isoDate(new Date())?' today':'')+(iso===state.calSelectedDate?' selected':'');
     var shown = evs.slice(0,2);
     var more = evs.length - shown.length;
+    var dayBg = (state.profile && state.profile.calendarDayBackgrounds && state.profile.calendarDayBackgrounds[iso]) || '';
+    var bgHtml = dayBg ? '<div class="cal-cell-bg" style="background-image:url(\''+escapeHtml(dayBg)+'\');"></div>' : '';
     return '<div class="'+cls+'" data-caldate="'+iso+'">' +
+      bgHtml +
       '<div class="cal-daynum">'+d.getDate()+'</div>' +
       shown.map(function(e){
         var pillKind = e.isTemplateRecord ? ' tpl' : (e.kind==='ms'?' ms':(e.kind==='custom'?' custom':''));
@@ -5202,6 +5554,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           (m.tasks || []).forEach(function(t){ t.done = isNowDone; });
         });
       }
+    } else if(kind === 'gcal' && schedId){
+      state.gcalEventsCache = state.gcalEventsCache || [];
+      var sched = state.gcalEventsCache.find(function(c){ return c.id === schedId; });
+      if(sched || (sched && sched.kind === 'gcal')){
+        sched.done = !sched.done;
+        isNowDone = sched.done;
+        try { localStorage.setItem('ourgoal_gcal_events', JSON.stringify(state.gcalEventsCache)); } catch(e){}
+      }
     }
 
     if(isNowDone){
@@ -5217,6 +5577,168 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     await saveProfile();
     renderCalendarScreen();
     if(state.activeTab === 'goals') renderGoalsScreen();
+  }
+
+  /* ============ [#TASK-ES-153] 캘린더 일자별 배경 사진 지정 모달 ============ */
+  function compressCalendarBgImage(file, callback){
+    if(!file) return callback(new Error('파일이 없습니다.'));
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var img = new Image();
+      img.onload = function(){
+        try {
+          var canvas = document.createElement('canvas');
+          var maxDim = 800;
+          var w = img.width;
+          var h = img.height;
+          if(w > maxDim || h > maxDim){
+            if(w > h){
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          var compressed = canvas.toDataURL('image/jpeg', 0.82);
+          callback(null, compressed);
+        } catch(err) {
+          callback(err);
+        }
+      };
+      img.onerror = function(err){ callback(err || new Error('이미지 로드 실패')); };
+      img.src = e.target.result;
+    };
+    reader.onerror = function(err){ callback(err); };
+    reader.readAsDataURL(file);
+  }
+
+  function openCalendarDayBgPickerModal(selectedDate){
+    var sel = selectedDate || state.calSelectedDate || isoDate(new Date());
+    state.profile = state.profile || {};
+    state.profile.calendarDayBackgrounds = state.profile.calendarDayBackgrounds || {};
+    var currentBg = state.profile.calendarDayBackgrounds[sel] || '';
+    var tempBg = currentBg;
+
+    var previewLayerHtml = tempBg ?
+      '<div class="cal-bg-preview-layer" id="calDayBgPreviewLayer" style="background-image:url(\'' + escapeHtml(tempBg) + '\');"></div>' :
+      '<div class="cal-bg-preview-layer" id="calDayBgPreviewLayer" style="display:none;"></div>';
+
+    var modalHtml =
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+        '<h3 style="margin:0;font-size:1.1rem;color:var(--ink);">🖼️ 이날의 배경사진 고르기</h3>' +
+        '<span class="faint" style="font-weight:600;font-size:.8125rem;">' + escapeHtml(sel) + '</span>' +
+      '</div>' +
+      '<p class="faint" style="font-size:.8125rem;margin:0 0 12px;line-height:1.4;">' +
+        '선택한 사진이 해당 일정 칸의 배경으로 꽉 채워집니다.<br>' +
+        '<b>50% 투명도</b>가 적용되어 기존에 적은 일정들이 선명하게 보입니다.' +
+      '</p>' +
+      '<div class="cal-bg-preview-wrap" id="calDayBgPreviewWrap">' +
+        previewLayerHtml +
+        '<div class="cal-bg-preview-content" id="calDayBgPreviewContent">' +
+          '<div style="font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:4px;">' + (sel.split('-')[2] || '17') + '</div>' +
+          '<div style="display:inline-block;background:var(--surface-2);color:var(--ink);padding:2px 8px;border-radius:6px;font-size:.75rem;font-weight:600;margin-bottom:4px;border:1px solid var(--rule);">' +
+            '🎯 오늘의 핵심 일정' +
+          '</div>' +
+          '<div style="font-size:.75rem;color:var(--ink-soft);">' +
+            (tempBg ? '미리보기 적용 중 (투명도 50%)' : '사진을 선택하면 미리보기가 나타납니다.') +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<input type="file" id="calDayBgFileInput" accept="image/*" style="display:none;">' +
+      '<div style="display:flex;gap:8px;margin-bottom:14px;">' +
+        '<button class="btn btn-secondary btn-sm cal-day-bg-btn" id="btnTriggerDayBgFile" type="button" style="flex:1;padding:8px 0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:.875rem;">' +
+          '<span>📷 사진 고르기</span>' +
+        '</button>' +
+        (currentBg ? '<button class="btn btn-ghost btn-sm" id="btnDeleteDayBg" type="button" style="padding:8px 12px;color:var(--brand-strong);border-color:var(--rule);font-size:.8125rem;">삭제</button>' : '') +
+      '</div>' +
+      '<div class="modal-actions" style="display:flex;gap:8px;">' +
+        '<button class="btn btn-ghost btn-sm" id="calDayBgCancelBtn" type="button" style="flex:1;">취소</button>' +
+        '<button class="btn btn-primary btn-sm" id="calDayBgSaveBtn" type="button" style="flex:1;">저장</button>' +
+      '</div>';
+
+    openModal(modalHtml, function(sheet){
+      var fileInput = sheet.querySelector('#calDayBgFileInput');
+      var triggerBtn = sheet.querySelector('#btnTriggerDayBgFile');
+      var deleteBtn = sheet.querySelector('#btnDeleteDayBg');
+      var cancelBtn = sheet.querySelector('#calDayBgCancelBtn');
+      var saveBtn = sheet.querySelector('#calDayBgSaveBtn');
+      var previewLayer = sheet.querySelector('#calDayBgPreviewLayer');
+      var previewContent = sheet.querySelector('#calDayBgPreviewContent');
+
+      if(triggerBtn && fileInput){
+        triggerBtn.addEventListener('click', function(){
+          fileInput.click();
+        });
+      }
+
+      if(fileInput){
+        fileInput.addEventListener('change', function(evt){
+          var file = evt.target.files && evt.target.files[0];
+          if(!file) return;
+          showToast('사진 압축 및 변환 중...');
+          compressCalendarBgImage(file, function(err, compressedDataUrl){
+            if(err || !compressedDataUrl){
+              showToast('사진 처리 중 오류가 발생했습니다.');
+              return;
+            }
+            tempBg = compressedDataUrl;
+            if(previewLayer){
+              previewLayer.style.display = 'block';
+              previewLayer.style.backgroundImage = 'url(' + tempBg + ')';
+            }
+            if(previewContent){
+              previewContent.innerHTML =
+                '<div style="font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:4px;">' + (sel.split('-')[2] || '17') + '</div>' +
+                '<div style="display:inline-block;background:var(--surface-2);color:var(--ink);padding:2px 8px;border-radius:6px;font-size:.75rem;font-weight:600;margin-bottom:4px;border:1px solid var(--rule);">' +
+                  '🎯 오늘의 핵심 일정' +
+                '</div>' +
+                '<div style="font-size:.75rem;color:var(--ink-soft);">미리보기 적용 중 (투명도 50%)</div>';
+            }
+            showToast('사진이 선택되었습니다. [저장]을 눌러 완료하세요.');
+          });
+        });
+      }
+
+      if(deleteBtn){
+        deleteBtn.addEventListener('click', function(){
+          if(confirm('이날의 배경사진을 삭제하고 기본 배경으로 되돌릴까요?')){
+            delete state.profile.calendarDayBackgrounds[sel];
+            saveProfile();
+            showToast('배경사진이 삭제되었습니다.');
+            closeModal();
+            renderCalendarScreen();
+            openCalendarDayEditHubModal(sel);
+          }
+        });
+      }
+
+      if(cancelBtn){
+        cancelBtn.addEventListener('click', function(){
+          closeModal();
+          openCalendarDayEditHubModal(sel);
+        });
+      }
+
+      if(saveBtn){
+        saveBtn.addEventListener('click', function(){
+          if(!tempBg){
+            showToast('먼저 사진을 선택해주세요.');
+            return;
+          }
+          state.profile.calendarDayBackgrounds[sel] = tempBg;
+          saveProfile();
+          showToast('이날의 배경사진이 저장되었습니다!');
+          closeModal();
+          renderCalendarScreen();
+          openCalendarDayEditHubModal(sel);
+        });
+      }
+    });
   }
 
   /* ============ 캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달 ============ */
@@ -5266,6 +5788,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '</div>' +
       '<p class="faint" style="font-size:.8125rem;margin:0 0 12px;">해당 일자의 일정을 수정하거나 새로운 일정·맞춤기록을 추가하세요.</p>' +
       evsHtml +
+      '<div style="margin-bottom:10px;">' +
+        '<button class="btn btn-secondary btn-sm cal-day-bg-btn" id="hubDayBgBtn" type="button" style="width:100%;padding:8px 0;font-size:.84rem;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--surface-2);color:var(--ink);border:1px solid var(--rule);border-radius:8px;">' +
+          '<span>🖼️ 이날의 배경사진 고르기' + (((state.profile && state.profile.calendarDayBackgrounds && state.profile.calendarDayBackgrounds[sel])) ? ' (설정됨)' : '') + '</span>' +
+        '</button>' +
+      '</div>' +
       '<div style="display:flex;gap:6px;margin-bottom:12px;">' +
         '<button class="btn btn-primary btn-sm" id="hubAddNewBtn" type="button" style="flex:1;padding:8px 0;font-size:.875rem;display:flex;align-items:center;justify-content:center;gap:6px;">' +
           '<span>+ 새 일정 추가</span>' +
@@ -5279,6 +5806,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '</div>',
       function(sheet){
         sheet.querySelector('#hubCloseBtn').onclick = closeModal;
+        var hubBgBtn = sheet.querySelector('#hubDayBgBtn');
+        if(hubBgBtn){
+          hubBgBtn.onclick = function(){
+            closeModal();
+            openCalendarDayBgPickerModal(sel);
+          };
+        }
         sheet.querySelectorAll('[data-hubtogglesched]').forEach(function(chk){
           chk.onclick = async function(ev){
             ev.stopPropagation();
@@ -5337,12 +5871,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         sheet.querySelectorAll('[data-hubdel]').forEach(function(btn){
           btn.onclick = async function(){
             var sid = btn.dataset.hubdel;
-            if(!confirm('이 일정을 삭제할까요?')) return;
-            state.profile.settings.customSchedules = (state.profile.settings.customSchedules || []).filter(function(c){ return c.id !== sid; });
-            await saveProfile();
-            renderCalendarScreen();
-            openCalendarDayEditHubModal(sel);
-            toast('일정을 삭제했어요');
+            if(!confirm('이 일정을 휴지통으로 이동할까요?\n7일간 보관되며 언제든 원복할 수 있습니다.')) return;
+            var targetSched = (state.profile.settings.customSchedules || []).find(function(c){ return c.id === sid; });
+            if(targetSched){
+              await moveToTrash('schedule', sid, targetSched, 'in_app', targetSched.title);
+              openCalendarDayEditHubModal(sel);
+            }
           };
         });
         if(window.OurgoalCalendarAttachment && typeof window.OurgoalCalendarAttachment.wireHubModalAttachments === 'function'){
@@ -5447,20 +5981,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var delBtn = sheet.querySelector('#calEditDeleteBtn');
         if(delBtn){
           delBtn.onclick = async function(){
-            if(!confirm('이 일정을 삭제할까요?')) return;
+            if(!confirm('이 일정을 휴지통으로 이동할까요?\n7일간 보관되며 언제든 원복할 수 있습니다.')) return;
             if(kind==='custom'){
-              state.profile.settings.customSchedules = (state.profile.settings.customSchedules||[]).filter(function(c){ return c.id !== eventItem.id; });
+              await moveToTrash('schedule', eventItem.id, eventItem, 'in_app', eventItem.title);
             } else if(kind==='goal'){
               eventItem.dueDate = null;
-            } else if(kind==='ms'){
+              await saveProfile();
+              renderCalendarScreen();
+            } else if(kind==='ms'||kind==='task'){
               eventItem.dueDate = null;
-            } else if(kind==='task'){
-              eventItem.dueDate = null;
+              await saveProfile();
+              renderCalendarScreen();
             }
-            await saveProfile();
-            renderCalendarScreen();
             openCalendarDayEditHubModal(selDate);
-            toast('일정을 삭제했어요');
           };
         }
         sheet.querySelector('#calEditSaveBtn').onclick = async function(){
@@ -5636,12 +6169,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '</div>' +
         '</div>';
       }).join('');
-      gridHtml = '<div class="card timetable-card" style="padding:10px 12px;margin-bottom:14px;border-radius:12px;background:var(--card);border:1px solid var(--border);">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--rule);">' +
-          '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">⏰ 시간표 타임라인</span>' +
+      var ttDayBg = (state.profile && state.profile.calendarDayBackgrounds && state.profile.calendarDayBackgrounds[state.calSelectedDate]) || '';
+      var ttDayBgHtml = ttDayBg ? '<div class="timetable-day-bg" style="background-image:url(\''+escapeHtml(ttDayBg)+'\');"></div>' : '';
+      gridHtml = '<div class="card timetable-card" style="position:relative;overflow:hidden;padding:10px 12px;margin-bottom:14px;border-radius:12px;background:var(--card);border:1px solid var(--border);">' +
+        ttDayBgHtml +
+        '<div style="position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--rule);">' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">⏰ 시간표 타임라인</span>' +
+            '<button class="btn btn-secondary btn-sm cal-day-bg-btn" id="btnPickDayBgTimetable" type="button" style="font-size:.75rem;padding:2px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;">🖼️ 이날의 배경사진 고르기' + (ttDayBg ? ' (설정됨)' : '') + '</button>' +
+          '</div>' +
           '<span class="faint" style="font-size:.75rem;">슬롯 터치 시 일정 추가</span>' +
         '</div>' +
-        '<div class="timetable-grid" style="max-height:360px;overflow-y:auto;">' +
+        '<div class="timetable-grid" style="position:relative;z-index:1;max-height:360px;overflow-y:auto;">' +
           timelineSlots +
         '</div>' +
       '</div>';
@@ -5659,6 +6198,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         await toggleScheduleDone(kind==='custom'?schedOrGoalId:null, kind, (kind!=='custom'?schedOrGoalId:null), msId, taskId);
       };
     });
+    var ttBgBtn = document.getElementById('btnPickDayBgTimetable');
+    if(ttBgBtn){
+      ttBgBtn.onclick = function(){
+        openCalendarDayBgPickerModal(state.calSelectedDate);
+      };
+    }
     document.querySelectorAll('#calGrid .timetable-slot').forEach(function(slot){
       slot.onclick = function(){
         var tSlot = slot.dataset.timeslot || '09:00';
@@ -5718,6 +6263,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '<h3 style="margin:0;font-size:.9375rem;">'+sel+'</h3>' +
         '<div style="display:flex;align-items:center;gap:6px;">' +
           '<span class="faint" style="font-weight:700;">'+(dDay(sel)||'')+'</span>' +
+          '<button class="btn btn-secondary btn-sm cal-day-bg-btn" id="calPickDayBgBtn" type="button" style="font-size:.8125rem;padding:3px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;">🖼️ 이날의 배경사진 고르기' + (((state.profile && state.profile.calendarDayBackgrounds && state.profile.calendarDayBackgrounds[sel])) ? ' (설정됨)' : '') + '</button>' +
           '<button class="btn btn-ghost btn-sm" id="calOpenHubBtn" type="button" style="font-size:.8125rem;padding:3px 8px;color:var(--ink);border-color:var(--rule);">해당일자 관리</button>' +
           '<button class="btn btn-primary btn-sm" id="calAddManualBtn" type="button" style="font-size:.8125rem;padding:3px 8px;">+ 일정 추가</button>' +
         '</div>' +
@@ -5746,6 +6292,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '</div>';
       }).join('')+'</div>'
       : '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></div><p>이 날은 예정된 일정이 없어요.</p><button class="btn btn-ghost btn-sm" id="calEmptyAddBtn" type="button" style="margin-top:8px;font-size:.8125rem;">+ 이 날짜에 일정 추가</button></div>');
+    var detailBgBtn = wrap.querySelector('#calPickDayBgBtn');
+    if(detailBgBtn){
+      detailBgBtn.addEventListener('click', function(){
+        openCalendarDayBgPickerModal(sel);
+      });
+    }
     var hubBtn = wrap.querySelector('#calOpenHubBtn');
     if(hubBtn){
       hubBtn.addEventListener('click', function(){
@@ -10631,17 +11183,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       delInline.style.marginRight = '6px';
       headRow.insertBefore(delInline, editBtn);
       delInline.addEventListener('click', async function(){
-        if(!confirm('"'+goal.title+'" 목표와 마일스톤·할 일을 모두 삭제할까요? 되돌릴 수 없어요.')) return;
-        state.profile.goals = state.profile.goals.filter(function(g){ return g.id!==goal.id; });
-        state.activeGoalId = null;
+        if(!confirm('"'+goal.title+'" 목표를 휴지통으로 이동할까요?\n7일간 안전하게 보관되며 언제든 원복할 수 있습니다.')) return;
+        await moveToTrash('goal', goal.id, goal, 'in_app', goal.title);
         state.goalEditMode = false; if(window.OurgoalGoalEditUX) OurgoalGoalEditUX.removeFloatingBar();
-        try {
-          await sb.from('goals').delete().eq('id', goal.id).eq('user_id', state.profile.id);
-          localStorage.setItem('ourgoal_goals_backup_' + state.profile.id, JSON.stringify(state.profile.goals));
-        } catch(e){ console.warn('Supabase goal delete failed:', e); }
-        await saveProfile();
         renderAll();
-        toast('목표를 삭제했어요');
       });
     }
 
@@ -13363,17 +13908,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(delBtn){
         delBtn.addEventListener('click', async function(e){
           e.stopPropagation();
-          if(!confirm('이 기록을 삭제할까요?')) return;
-          state.profile.records = (state.profile.records || []).filter(function(r){ return r.id!==id; });
-          if(rec.linkedScheduleId && state.profile.settings && state.profile.settings.customSchedules){
-            state.profile.settings.customSchedules = state.profile.settings.customSchedules.filter(function(c){
-              return c.id !== rec.linkedScheduleId && c.recordId !== rec.id;
-            });
-          }
-          try {
-            await sb.from('checkins').delete().eq('id', id).eq('user_id', state.profile.id);
-          } catch(e){}
-          await saveProfile();
+          if(!confirm('이 기록을 휴지통으로 이동할까요?\n7일간 보관되며 언제든 원복할 수 있습니다.')) return;
+          await moveToTrash('record', id, rec, 'in_app', rec.text || rec.title || '체크인 기록');
           card.remove();
           onUpdate();
         });
@@ -23024,6 +23560,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       };
     }
     // 차단 사용자
+    var trashList = getTrashList();
+    var trashBtn = document.getElementById('btnOpenTrashModal');
+    if(trashBtn){
+      trashBtn.textContent = '🗑️ 휴지통 (' + trashList.length + '개 보관 중)';
+      trashBtn.onclick = openTrashModal;
+    }
     var blockedList = settings.blockedUsers || [];
     var countDesc = document.getElementById('blockedCountDesc');
     if(countDesc) countDesc.textContent = blockedList.length ? ('현재 ' + blockedList.length + '명의 사용자를 차단 중이에요.') : '차단된 사용자의 글/댓글은 피드에서 숨겨집니다.';

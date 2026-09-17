@@ -6001,6 +6001,38 @@ check('compliance: [#TASK-ES-152] 백그라운드·앱종료·미확인 전역 �
   assert.ok(indexSrc.includes('state.profile.settings.notifications'), 'notifications 설정 영속화 바인딩');
 });
 
+/* ============ [#TASK-ES-153] 캘린더 일자별 배경 사진 지정 및 50% 투명도 전역 렌더링 무결성 검증 ============ */
+check('compliance: [#TASK-ES-153] 캘린더 일자별 배경 사진 지정 및 50% 투명도 전역 렌더링 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. CSS 50% 투명도 및 꽉 찬 배경 레이어 규칙 검증
+  assert.ok(uiSrc.includes('.cal-cell-bg'), 'ui.css .cal-cell-bg 클래스 정의');
+  assert.ok(uiSrc.includes('opacity: 0.5'), 'ui.css 배경 레이어 50% 투명도 정의');
+  assert.ok(uiSrc.includes('background-size: cover'), 'ui.css 배경 이미지 cover 꽉 찬 채우기 정의');
+  assert.ok(uiSrc.includes('pointer-events: none'), 'ui.css 배경 레이어 클릭 방해 차단');
+  assert.ok(uiSrc.includes('.cal-bg-preview-wrap'), 'ui.css 사진 선택 모달 미리보기 스타일 정의');
+
+  // 2. 핵심 함수 및 모달 로직 검증
+  assert.ok(indexSrc.includes('function compressCalendarBgImage('), 'Canvas 800px & JPEG 0.82 이미지 압축 함수 탑재');
+  assert.ok(indexSrc.includes('function openCalendarDayBgPickerModal('), '이날의 배경사진 고르기 모달 함수 탑재');
+  assert.ok(indexSrc.includes('id="calDayBgFileInput"'), '사진 선택 파일 인풋 탑재');
+  assert.ok(indexSrc.includes('id="calDayBgSaveBtn"'), '배경사진 저장 버튼 탑재');
+  assert.ok(indexSrc.includes('id="calDayBgCancelBtn"'), '배경사진 취소 버튼 탑재');
+  assert.ok(indexSrc.includes('id="btnDeleteDayBg"'), '배경사진 삭제/초기화 버튼 탑재');
+
+  // 3. 월간 셀 및 일간 타임라인 렌더링 연동 검증
+  assert.ok(indexSrc.includes('calendarDayBackgrounds[iso]'), '월간 캘린더 셀 배경사진 데이터 연동');
+  assert.ok(indexSrc.includes('<div class="cal-cell-bg"'), '월간 캘린더 셀 .cal-cell-bg 백드롭 렌더링');
+  assert.ok(indexSrc.includes('id="hubDayBgBtn"'), '일간 허브 모달 내 이날의 배경사진 고르기 버튼 탑재');
+  assert.ok(indexSrc.includes('id="btnPickDayBgTimetable"'), '일간 시간표 타임라인 내 배경사진 고르기 버튼 탑재');
+  assert.ok(indexSrc.includes('id="calPickDayBgBtn"'), '일간 상세 뷰 내 배경사진 고르기 버튼 탑재');
+
+  // 4. 데이터 영속성 및 로컬 스토리지 비상 백업 검증
+  assert.ok(indexSrc.includes('ourgoal_cal_day_bg_'), '배경사진 로컬 스토리지 비상 백업 키 연동');
+  assert.ok(indexSrc.includes('calendarDayBackgrounds: localCalDayBg'), 'loadProfile 내 배경사진 복원 배선');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
