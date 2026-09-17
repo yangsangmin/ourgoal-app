@@ -1615,6 +1615,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(xp.log.length > XP_LOG_MAX) xp.log.length = XP_LOG_MAX;
     return { total: xp.total, leveledUp: levelForXP(xp.total) > beforeLevel };
   }
+  function hasUserCustomizedAvatar(profile){
+    if(!profile) return false;
+    var s = profile.settings || {};
+    return Boolean(
+      s.avatarChangedOnce ||
+      (s.savedAvatars && s.savedAvatars.length > 0) ||
+      (s.avatarType === 'custom' && s.customAvatarUrl) ||
+      (profile.avatarUrl && (profile.avatarUrl.indexOf('data:image') === 0 || profile.avatarUrl.indexOf('http') === 0))
+    );
+  }
   function levelBadgeHtml(xp){
     var p = levelProgress(xp);
     var hasCheckedInToday = false;
@@ -1626,10 +1636,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       window.OurgoalAvatar.renderAvatarHtml(p.level, state.profile, { size: 36, showGreeting: !hasCheckedInToday && !state.hasSeenAvatarGreeting }) :
       '<div class="avatar-placeholder" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">🤖</div>';
 
+    var hasCustomAvatar = hasUserCustomizedAvatar(state.profile);
+    var btnAvatarStyle = hasCustomAvatar ? 'display:none;' : '';
+
     return '<div class="level-badge" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;width:100%;box-sizing:border-box;">' +
-      '<div style="display:flex;align-items:center;gap:8px;">' +
+      '<div class="level-badge-avatar-wrap" style="display:flex;align-items:center;gap:8px;cursor:pointer;" title="내 아바타 바꾸기">' +
         avatarHtml +
-        '<button type="button" class="btn btn-ghost btn-sm" id="btnOpenAvatarModal" style="font-size:.75rem;padding:2px 7px;border-color:var(--rule);color:var(--ink-soft);white-space:nowrap;">내 아바타 바꾸기</button>' +
+        '<button type="button" class="btn btn-ghost btn-sm" id="btnOpenAvatarModal" style="font-size:.75rem;padding:2px 7px;border-color:var(--rule);color:var(--ink-soft);white-space:nowrap;' + btnAvatarStyle + '">내 아바타 바꾸기</button>' +
       '</div>' +
       '<div class="level-bar-wrap" style="flex:1;min-width:70px;margin:0 8px;">' +
         '<div class="mini-bar"><span style="width:'+Math.max(0,Math.min(100,p.pct))+'%;background:var(--violet);"></span></div>' +
@@ -1643,25 +1656,34 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var xpTotal = (state.profile.settings && state.profile.settings.xp && state.profile.settings.xp.total) || 0;
     el.innerHTML = '<div class="level-badge-row">'+levelBadgeHtml(xpTotal)+'</div>';
 
+    var openAvatarTrigger = function(){
+      if(window.OurgoalAvatar && window.OurgoalAvatar.openAvatarModal){
+        var p = levelProgress(xpTotal);
+        window.OurgoalAvatar.openAvatarModal({
+          profile: state.profile,
+          state: state,
+          saveProfile: saveProfile,
+          toast: toast,
+          openModal: openModal,
+          closeModal: closeModal,
+          currentLevel: p.level, mockGroups: (typeof MOCK_GROUPS !== 'undefined' ? MOCK_GROUPS : []),
+          onAvatarChanged: function(){
+            renderLevelBadge();
+            if(typeof updateTopBar === 'function') updateTopBar(); if(typeof renderHome === 'function') renderHome();
+          }
+        });
+      }
+    };
+
     var btnChangeAvatar = el.querySelector('#btnOpenAvatarModal');
     if(btnChangeAvatar){
-      btnChangeAvatar.onclick = function(){
-        if(window.OurgoalAvatar && window.OurgoalAvatar.openAvatarModal){
-          var p = levelProgress(xpTotal);
-          window.OurgoalAvatar.openAvatarModal({
-            profile: state.profile,
-            state: state,
-            saveProfile: saveProfile,
-            toast: toast,
-            openModal: openModal,
-            closeModal: closeModal,
-            currentLevel: p.level, mockGroups: (typeof MOCK_GROUPS !== 'undefined' ? MOCK_GROUPS : []),
-            onAvatarChanged: function(){
-              renderLevelBadge();
-              if(typeof updateTopBar === 'function') updateTopBar(); if(typeof renderHome === 'function') renderHome();
-            }
-          });
-        }
+      btnChangeAvatar.onclick = openAvatarTrigger;
+    }
+
+    var avatarWrap = el.querySelector('.level-badge-avatar-wrap');
+    if(avatarWrap){
+      avatarWrap.onclick = function(e){
+        openAvatarTrigger();
       };
     }
   }
@@ -5205,6 +5227,29 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       av.textContent = p.displayName.slice(0,1);
     }
     updateTopNotifBadge();
+
+    // 화면 제일 우측 상단 프로필(topUserChip) 클릭 시 아바타 변경 모달 직통 연결 (#TASK-ES-170)
+    var chip = document.getElementById('topUserChip');
+    if(chip && !chip._avatarBound){
+      chip._avatarBound = true;
+      chip.style.cursor = 'pointer';
+      chip.setAttribute('title', '내 아바타 바꾸기');
+      chip.onclick = function(e){
+        e.preventDefault();
+        var btn = document.getElementById('btnOpenAvatarModal');
+        if(btn) btn.click();
+        else if(window.OurgoalAvatar && window.OurgoalAvatar.openAvatarModal){
+          var xpTotal = (state.profile && state.profile.settings && state.profile.settings.xp && state.profile.settings.xp.total) || 0;
+          var pLvl = levelProgress(xpTotal);
+          window.OurgoalAvatar.openAvatarModal({
+            profile: state.profile, state: state, saveProfile: saveProfile, toast: toast,
+            openModal: openModal, closeModal: closeModal, currentLevel: pLvl.level,
+            mockGroups: (typeof MOCK_GROUPS !== 'undefined' ? MOCK_GROUPS : []),
+            onAvatarChanged: function(){ renderLevelBadge(); updateTopBar(); if(typeof renderHome === 'function') renderHome(); }
+          });
+        }
+      };
+    }
   }
 
   /* [#TASK-ES-168] 상단바 알림 배지 실시간 동기화 */
