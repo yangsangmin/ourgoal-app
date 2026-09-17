@@ -4722,4 +4722,9 @@
      - 308개 스모크 테스트 전수 100% ALL PASS (0 failures).
      - `verify-integrity-gate.js` 18개 헌법 게이트 100% ALL PASS.
      - 3단계 로컬 실측 (Headless Chrome CDP): 플로팅 배너 및 알림 센터 모달 렌더링 정상 검증 완료 (`scratch/step3_es168_notif_center.png`).
+  7. **GitHub PR #277 생성 및 원격 main 머지 (commit 4d5994d)**:
+     - CI essence-gate 통과 후 상민님 프로덕션 배포 승인("1") 접수 및 머지 완료.
+  8. **6단계 실운영 최종 확인 (Chrome CDP)**:
+     - 실서버 프로덕션(https://ourgoal-app.vercel.app) 직접 접속 실측.
+     - 상단 고정바 🔔 알림 버튼 클릭 시 알림 센터 모달 정상 오픈 및 빈 알림 가이드 렌더링 스크린샷 증적 확보 (`scratch/prod_stage6_es168_notif_center.png`).
 ---
