@@ -4138,4 +4138,38 @@
   - `npm test`: 278개 테스트 통과, 헌법 5대 핵심 게이트 15종 100% ALL PASS, 전수 인터랙션(Zero Dead Click) ALL PASS.
   - `node scripts/essence-gate.js --pre-commit`: 통과 (금지 패턴 0건, 본체 20,000줄 보존).
   - Tri-Sync 무결성: `node C:/dev/command-center/lib/tri-sync.js check` 100% (512/512 무손실 일치).
+- **PR 머지 및 실서버 프로덕션 배포 완결**:
+  - GitHub PR #255 머지 (`0106b28`), GitHub Actions `essence-gate` 및 Vercel 배포 통과.
+  - 실서버 [https://ourgoal-app.vercel.app](https://ourgoal-app.vercel.app) 실시간 HTTP 200 및 신규 스크립트 라이브 완벽 검증.
 ---
+
+## [2026-09-17 12:15] #TASK-ES-140 ~ #TASK-ES-143 4대 핵심 고도화 패키지 완결 (상민님 생각메모장 잔여 과제 전수 완결)
+- **배경 및 의도**:
+  - 상민님 직접 지시("모두 진행" — 15대 헌법 AGENTS.md 및 문제해결 8원칙 전면 준수).
+  - 상민님 생각 메모장 4대 과제(#TASK-ES-140, #TASK-ES-141, #TASK-ES-142, #TASK-ES-143)를 단일 브랜치에서 일괄 구현 및 검증 완료.
+- **과제별 수행 내역**:
+  1. **#TASK-ES-140: 목표 탭 3계층(목표·마일스톤·태스크) 일정 설정 배지 및 팝업 모달·캘린더 24시간 블록 연동 (생각 메모장 03항)**:
+     - `formatSchedulePillHtml`: 일정 미설정 시 `[일정설정]` 점선 배지, 시작/마감일이 다를 때 `[YYYY.MM.DD~YYYY.MM.DD]`, 단일 마감일 시 `[D-X]` 동적 뱃지 렌더링.
+     - 3계층(목표 헤더/마감일 행, 마일스톤 메타 라인, 태스크 메타 인라인)에 일정 배지 버튼 전수 배치.
+     - 클릭 시 `openScheduleSetupModal`: 시작일/시간, 종료일/시간, 오늘/내일/1주/1달 프리셋 및 삭제/저장 팝업 모달 지원.
+     - `applyScheduleUpdate`: 목표/마일스톤/할 일 일정 저장 시 `state.profile.settings.customSchedules` 및 캘린더 24시간 타임테이블 블록에 즉각 동기화.
+  2. **#TASK-ES-141: 홈 구성 커스텀(customize.js) 최적화 및 유령 요소 제거·상민님 지정 문구 완결 (생각 메모장 06항)**:
+     - `quickRoutineRow`: 화면에 존재하지 않던 유령 식별자를 `WHITELIST` 및 `MINIMAL_HIDDEN`에서 완전 영구 제거.
+     - `todayMissionCard`: 라벨을 `'오늘의 카드'`, 힌트를 상민님 지정 원문인 `'뭘 할지 모르겠을 때 도움돼요(내 목표기반)'`로 100% 일치 교체.
+  3. **#TASK-ES-142: 구글 캘린더 연동 영속성 및 토큰 복원·동의 루프 방어 (생각 메모장 08항)**:
+     - 토큰 휘발 및 반복 동의 팝업 원인 규명: 새로고침 시 메모리 토큰 유실 + 강제 `consent` 루프.
+     - `saveGoogleToken` / `restoreGoogleToken`: 유저별 격리 로컬 키(`ourgoal_gcal_token_v1_{uid}`)로 로컬 스토리지에 토큰 및 만료시각 안전 보존.
+     - 앱 부팅(`enterApp`), 캘린더 연동 체크(`isGoogleCalendarConnected`), 토큰 발급(`getGoogleAccessToken`) 시 자동 복원.
+     - 기존 토큰 또는 연동 상태일 경우 `prompt: ''`로 무음 백그라운드 갱신 수행하여 동의 루프 완전 해소.
+     - 연동 해제 시 로컬 및 세션 스토리지 전수 정리.
+  4. **#TASK-ES-143: 전 AI 엔드포인트 로컬 스마트 룰베이스 폴백 및 보안/RLS 무결성 전수 감사 (생각 메모장 01항 & 17항)**:
+     - 외부 Gemini API 장애, 오프라인 또는 쿼터 초과 시 영구 로딩에 머물던 `/api/goalstatus`에 `localGoalStatusSummary(goal)` 클라이언트 즉각 폴백 신설.
+     - `/api/goaltemplate` 장애 시 키워드(운동/공부/개발/재테크) 기반 3단계 마일스톤 및 세부 할 일을 즉각 자동 제안하는 `localGoalTemplate(description)` 폴백 구축.
+     - Supabase RLS 10개 테이블 전수 감사 및 서비스 롤 키 완전 격리 검증 완료 (`docs/reports/SECURITY_AND_AI_RESILIENCE_AUDIT_20260917.md` 발행).
+- **검증 결과**:
+  - `scripts/smoke-test.js`: 282개 전수 통과 (0 failures).
+  - `npm test`: 282개 테스트 통과, 헌법 5대 핵심 게이트 15종 100% ALL PASS, 전수 인터랙션(Zero Dead Click) ALL PASS.
+  - Tri-Sync 무결성: `node C:/dev/command-center/lib/tri-sync.js check` 100% (513/513 무손실 일치).
+---
+
+

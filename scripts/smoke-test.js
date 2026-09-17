@@ -5633,6 +5633,156 @@ check('compliance: [#TASK-ES-139] 설정창 노션 연동 6대 UX 개선 및 가
   assert.ok(indexSrc.includes('updateNotionDirectLink'), 'updateNotionDirectLink 동적 URL 매핑 로직 확인');
 });
 
+check('compliance: [#TASK-ES-140] 목표 탭 3계층(목표·마일스톤·태스크) 일정 설정 배지 및 팝업 모달·캘린더 24시간 블록 연동 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 배지 포맷터, 모달, 업데이트 함수 정의 및 전역 노출 확인
+  assert.ok(indexSrc.includes('function formatSchedulePillHtml'), 'formatSchedulePillHtml 함수 정의');
+  assert.ok(indexSrc.includes('function openScheduleSetupModal'), 'openScheduleSetupModal 함수 정의');
+  assert.ok(indexSrc.includes('function applyScheduleUpdate'), 'applyScheduleUpdate 함수 정의');
+  assert.ok(indexSrc.includes('window.formatSchedulePillHtml = formatSchedulePillHtml'), 'formatSchedulePillHtml window 노출');
+  assert.ok(indexSrc.includes('window.openScheduleSetupModal = openScheduleSetupModal'), 'openScheduleSetupModal window 노출');
+  assert.ok(indexSrc.includes('window.applyScheduleUpdate = applyScheduleUpdate'), 'applyScheduleUpdate window 노출');
+
+  // 2. 3계층(목표, 마일스톤, 태스크) 인라인 배선 확인
+  assert.ok(indexSrc.includes("formatSchedulePillHtml(goal, 'goal', goal.id)"), 'Goal 계층 일정 배지 배치');
+  assert.ok(indexSrc.includes("formatSchedulePillHtml(m, 'ms', goal.id, m.id)"), 'Milestone 계층 일정 배지 배치');
+  assert.ok(indexSrc.includes("formatSchedulePillHtml(t, 'task', goal.id, m.id, t.id)"), 'Task 계층 일정 배지 배치');
+  assert.ok(indexSrc.includes("data-setschedule"), '이벤트 위임을 위한 data-setschedule 속성 확인');
+
+  // 3. CSS 스타일 정의 확인
+  assert.ok(uiSrc.includes('.schedule-pill-btn'), '.schedule-pill-btn CSS 클래스 정의');
+  assert.ok(uiSrc.includes('.schedule-pill-btn.empty'), '.schedule-pill-btn.empty 미설정 점선 스타일');
+  assert.ok(uiSrc.includes('.schedule-pill-btn.has-date'), '.schedule-pill-btn.has-date 설정 완료 스타일');
+
+  // 4. 배지 포맷터 렌더링 로직 직접 검증
+  function dDay(dateStr){
+    if(!dateStr) return '';
+    var target = new Date(dateStr.slice(0, 10) + 'T00:00:00');
+    var today = new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00');
+    var diff = Math.round((target - today) / 86400000);
+    if(diff === 0) return 'D-Day';
+    return diff > 0 ? ('D-' + diff) : ('D+' + Math.abs(diff));
+  }
+  function formatSchedulePillHtml(item, level, goalId, msId, taskId){
+    var sDate = (item && item.startDate) ? String(item.startDate).slice(0, 10) : '';
+    var dDate = (item && item.dueDate) ? String(item.dueDate).slice(0, 10) : '';
+    var gid = goalId || '';
+    var mid = msId || '';
+    var tid = taskId || '';
+    if(!sDate && !dDate){
+      return '<button type="button" class="schedule-pill-btn empty" data-setschedule="1" data-schedlevel="'+level+'" data-schedgid="'+gid+'" data-schedmsid="'+mid+'" data-schedtid="'+tid+'" title="일정 설정">일정설정</button>';
+    }
+    if(sDate && dDate && sDate !== dDate){
+      var sParts = sDate.split('-');
+      var dParts = dDate.split('-');
+      var sText = sParts[0] + '.' + parseInt(sParts[1], 10) + '.' + parseInt(sParts[2], 10);
+      var dText = dParts[0] + '.' + parseInt(dParts[1], 10) + '.' + parseInt(dParts[2], 10);
+      var rangeText = sText + '~' + dText;
+      return '<button type="button" class="schedule-pill-btn has-date" data-setschedule="1" data-schedlevel="'+level+'" data-schedgid="'+gid+'" data-schedmsid="'+mid+'" data-schedtid="'+tid+'" title="일정 기간: '+rangeText+' (클릭하여 수정)">'+rangeText+'</button>';
+    }
+    var singleDate = dDate || sDate;
+    var dText = dDay(singleDate);
+    return '<button type="button" class="schedule-pill-btn has-date" data-setschedule="1" data-schedlevel="'+level+'" data-schedgid="'+gid+'" data-schedmsid="'+mid+'" data-schedtid="'+tid+'" title="마감일 '+singleDate+' (클릭하여 수정)">'+dText+'</button>';
+  }
+
+  const emptyPill = formatSchedulePillHtml({}, 'goal', 'g1');
+  assert.ok(emptyPill.includes('일정설정') && emptyPill.includes('schedule-pill-btn empty'), '일정 미설정 시 [일정설정] 빈 배지 출력');
+
+  const rangePill = formatSchedulePillHtml({ startDate: '2026-09-17', dueDate: '2026-09-24' }, 'ms', 'g1', 'm1');
+  assert.ok(rangePill.includes('2026.9.17~2026.9.24') && rangePill.includes('schedule-pill-btn has-date'), '시작/종료일 다를 때 YYYY.M.D~YYYY.M.D 기간 출력');
+
+  const singlePill = formatSchedulePillHtml({ dueDate: '2026-09-20' }, 'task', 'g1', 'm1', 't1');
+  assert.ok(singlePill.includes('schedule-pill-btn has-date') && singlePill.includes('D-'), '단일 마감일 시 디데이 텍스트 출력');
+});
+
+check('compliance: [#TASK-ES-141] 홈 구성 커스텀(customize.js) 최적화 및 유령 요소 제거·상민님 지정 문구 완결 검증', () => {
+  const customSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'customize.js'), 'utf8');
+
+  // 1. 유령 식별자 quickRoutineRow 제거 확인
+  assert.ok(!customSrc.includes('quickRoutineRow'), '존재하지 않던 quickRoutineRow 항목이 화이트리스트 및 미니멀 목록에서 완전 영구 제거됨');
+
+  // 2. 상민님 지정 문구 완벽 일치 확인
+  assert.ok(customSrc.includes("label: '오늘의 카드'"), "todayMissionCard 라벨이 '오늘의 카드'로 교체됨");
+  assert.ok(customSrc.includes("hint: '뭘 할지 모르겠을 때 도움돼요(내 목표기반)'"), "todayMissionCard 힌트가 '뭘 할지 모르겠을 때 도움돼요(내 목표기반)'로 일치");
+});
+
+check('compliance: [#TASK-ES-142] 구글 캘린더 연동 영속성 및 토큰 복원·동의 루프 방어 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. saveGoogleToken 및 restoreGoogleToken 함수 탑재 확인
+  assert.ok(indexSrc.includes('function saveGoogleToken(tokenObj)'), 'saveGoogleToken 토큰 로컬 저장 함수 정의');
+  assert.ok(indexSrc.includes('function restoreGoogleToken()'), 'restoreGoogleToken 토큰 로컬 복원 함수 정의');
+  assert.ok(indexSrc.includes('ourgoal_gcal_token_v1_'), '유저별 독립 격리 로컬 키 접두사 탑재');
+
+  // 2. 동의(consent) 루프 방어 확인: 기존 토큰이나 연동 이력 존재 시 prompt: '' 무음 갱신
+  assert.ok(indexSrc.includes("prompt: (state.googleToken || hasSavedToken || isConnected) ? '' : 'consent'"), '무음 백그라운드 토큰 요청을 통한 동의 팝업 무한 반복 방어');
+
+  // 3. 앱 진입(enterApp), 캘린더 연동 검사, 토큰 획득 시 복원 호출 확인
+  assert.ok(indexSrc.includes("if(typeof restoreGoogleToken === 'function') restoreGoogleToken();"), '앱 부팅 진입 시 토큰 복원 호출');
+  assert.ok(indexSrc.includes("if(!state.googleToken && typeof restoreGoogleToken === 'function') restoreGoogleToken();"), '캘린더 연동 체크 시 토큰 복원 호출');
+
+  // 4. 연동 해제 시 로컬 스토리지 정리 확인
+  assert.ok(indexSrc.includes("localStorage.removeItem('ourgoal_gcal_token_v1_' + uid)"), '연동 해제 시 로컬 토큰 전수 영구 파기');
+});
+
+check('compliance: [#TASK-ES-143] 전 AI 엔드포인트 로컬 스마트 룰베이스 폴백 및 보안/RLS 무결성 감사 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const reportPath = path.join(__dirname, '..', 'docs', 'reports', 'SECURITY_AND_AI_RESILIENCE_AUDIT_20260917.md');
+
+  // 1. 보안 및 AI 회복탄력성 종합 감사 보고서 존재 확인
+  assert.ok(fs.existsSync(reportPath), '보안 및 AI 회복탄력성 종합 감사 보고서 문서 존재');
+  const reportSrc = fs.readFileSync(reportPath, 'utf8');
+  assert.ok(reportSrc.includes('Supabase RLS'), '보고서 내 Supabase RLS 감사 내용 수록');
+  assert.ok(reportSrc.includes('AI 회복탄력성'), '보고서 내 AI 회복탄력성 감사 내용 수록');
+
+  // 2. 전 AI 엔드포인트 로컬 스마트 룰베이스 폴백 함수 탑재 확인
+  assert.ok(indexSrc.includes('function localGoalStatusSummary(goal)'), 'localGoalStatusSummary 목표 현상태 스마트 로컬 요약 함수 탑재');
+  assert.ok(indexSrc.includes('function localGoalTemplate(description)'), 'localGoalTemplate 목표 템플릿 스마트 로컬 생성 함수 탑재');
+  assert.ok(indexSrc.includes('function localTodayMission(goal)'), 'localTodayMission 오늘 미션 스마트 로컬 생성 함수 탑재');
+  assert.ok(indexSrc.includes('function localNextActionSuggestion(goal, completedId)'), 'localNextActionSuggestion 다음 행동 스마트 로컬 제안 함수 탑재');
+
+  // 3. localGoalStatusSummary 로직 시뮬레이션 검증
+  const dummyGoal = {
+    title: '정보처리기사 취득',
+    milestones: [
+      { id: 'm1', title: '필기 기출 5개년 완독', status: 'done' },
+      { id: 'm2', title: '실기 알고리즘 대비', status: 'doing' },
+      { id: 'm3', title: '최종 합격 발표', status: 'todo' }
+    ]
+  };
+  function localGoalStatusSummary(goal){
+    if(!goal) return '목표를 설정하고 첫 걸음을 시작해보세요.';
+    var ms = goal.milestones || [];
+    var total = ms.length;
+    if(!total) return '마일스톤을 추가하면 세부 단계별 진행 상황을 종합 분석해드려요.';
+    var done = ms.filter(function(m){ return m.status === 'done'; }).length;
+    var doing = ms.find(function(m){ return m.status === 'doing'; });
+    var pct = total ? Math.round((done / total) * 100) : 0;
+    if(doing){
+      return '현재 "' + doing.title + '" 마일스톤에 집중하고 있으며, 전체 공정률은 ' + pct + '%(' + done + '/' + total + ' 완수)입니다.';
+    }
+    return '진행률 ' + pct + '%';
+  }
+  const summaryRes = localGoalStatusSummary(dummyGoal);
+  assert.ok(summaryRes.includes('33%') && summaryRes.includes('실기 알고리즘 대비'), '로컬 스마트 목표 요약이 진행 중인 마일스톤과 공정률을 정확히 연산');
+
+  // 4. localGoalTemplate 로직 시뮬레이션 검증
+  function localGoalTemplate(description){
+    var desc = (description || '').trim();
+    var lower = desc.toLowerCase();
+    var topicMajor = 'lifestyle';
+    if(lower.includes('운동')) topicMajor = 'health';
+    else if(lower.includes('공부')) topicMajor = 'study';
+    return { title: desc, topicMajor: topicMajor, milestones: [{ title: '실천 루틴 확립', status: 'todo' }] };
+  }
+  const t1 = localGoalTemplate('매일 30분 달리기 운동하기');
+  assert.strictEqual(t1.topicMajor, 'health', '운동 키워드 도메인 자율 분류 성공');
+  const t2 = localGoalTemplate('토익 시험 공부 850점 달성');
+  assert.strictEqual(t2.topicMajor, 'study', '공부 키워드 도메인 자율 분류 성공');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

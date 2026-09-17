@@ -14,9 +14,8 @@
     { id: 'dailyQuestBarWrap',    label: '오늘의 퀘스트',           hint: '작은 도전 과제 바' },
     { id: 'levelBadgeRow',        label: '레벨 배지',               hint: '내 레벨과 경험치' },
     { id: 'todayGlancePill',      label: '오늘 몰입 요약',          hint: '오늘 상태 한 줄' },
-    { id: 'quickRoutineRow',      label: '빠른 루틴 버튼',          hint: '운동 완료·물 2L 같은 한 번 누르기' },
     { id: 'customFeedbackBtn',    label: '맞춤 피드백 설정 버튼',   hint: '피드백 말투를 고르는 버튼' },
-    { id: 'todayMissionCard',     label: '오늘 미션',               hint: '오늘 하나 해볼 것' },
+    { id: 'todayMissionCard',     label: '오늘의 카드',             hint: '뭘 할지 모르겠을 때 도움돼요(내 목표기반)' },
     { id: 'homeGrassSummaryCard', label: '이번 주 히트맵 요약',     hint: '이번 주 기록 한눈에' },
     { id: 'homeChallengeRoomBtn', label: '챌린지 룸 버튼',          hint: '소규모 챌린지 열기' },
     { id: 'mzShareBtn',           label: '자랑하기 버튼',           hint: '내 성장 카드 공유' }
@@ -28,7 +27,7 @@
                   'screen-home', 'screen-records', 'screen-comm', 'screen-goals', 'screen-calendar'];
 
   /* 기존 '포커스 미니멀' 모드 CSS가 숨기던 항목 — 저장값이 없을 때 이관 기준 (REQ-D3) */
-  var MINIMAL_HIDDEN = ['crewPacingWidget', 'quickRoutineRow', 'homeGrassSummaryCard', 'customFeedbackBtn', 'homeChallengeRoomBtn'];
+  var MINIMAL_HIDDEN = ['crewPacingWidget', 'homeGrassSummaryCard', 'customFeedbackBtn', 'homeChallengeRoomBtn'];
   var UX_MODE_KEY = 'ourgoal_ux_mode';
   var CUSTOM_MODE = 'custom';
   var PREV_ATTR = 'data-kf1-prev-display';
