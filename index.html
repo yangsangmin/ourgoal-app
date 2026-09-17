@@ -3244,15 +3244,43 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
   document.getElementById('withdrawBtn').addEventListener('click', openWithdrawModal);
 
-  /* ============ [#TASK-ES-160] 각 탭 200% 활용법 및 실제 우수 사용사례 쇼케이스 ============ */
+  /* ============ [#TASK-ES-160, #TASK-ES-166] 각 탭 200% 활용법 및 실제 우수 사용사례 쇼케이스 (아바타 최우선) ============ */
   var TAB_GUIDE_DATA = {
+    avatar: {
+      name: '아바타',
+      icon: '👤',
+      badge: '성장 랭크 & 페르소나',
+      features: [
+        { title: '5대 상징 랭크 & 백그라운드 오라', desc: '실천 XP가 쌓일 때마다 🌱새싹(Lv.1~3) ➔ 🌲숲(Lv.4~7) ➔ 🌊포세이돈(Lv.8~12) ➔ ⚡제우스(Lv.13~17) ➔ 🌌우주 윙(Lv.18+) 화려한 테마 오라가 결합돼요.' },
+        { title: '앱 진입 대형 인사 팝업 & 시간대별 맞춤 멘트', desc: '앱을 켤 때마다 화면 절반 크기로 아바타가 반갑게 맞이하며, 아침/오후/저녁/새벽 시간대별 격려 멘트를 설정창에서 나답게 자유롭게 커스텀할 수 있어요.' },
+        { title: '나만의 아바타 생성 & 보관함 관리', desc: '77종 바디 풀과 퍼스널 컬러 합성으로 유일무이한 캐릭터를 만들고, 보관함에서 언제든 원하는 아바타로 자유롭게 교체할 수 있어요.' }
+      ],
+      showcase: {
+        badgeText: '우수 사용사례',
+        user: '윤하람 (목표 올클리어 180일, Lv.20 우주 윙)',
+        title: 'Lv.20 우주 윙 달성자의 나만의 페르소나 아바타 룸',
+        quote: '“매일 아침 앱을 켤 때마다 내 아바타가 화면 절반 가득 ‘오늘도 우주급으로 성장해볼까요!’라며 반겨줘요. 은하수처럼 빛나는 우주 오라를 볼 때마다 하루를 시작할 엄청난 힘을 얻습니다!”',
+        mockupHtml: '<div style="background:var(--surface-1);padding:10px 12px;border-radius:10px;border:1px solid rgba(168,85,247,0.3);box-shadow:0 4px 14px rgba(168,85,247,0.15);">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+            '<div style="display:flex;align-items:center;gap:8px;">' +
+              '<span style="font-size:1.6rem;filter:drop-shadow(0 0 6px rgba(168,85,247,0.6));">🌌</span>' +
+              '<div><b style="font-size:.875rem;">Lv.20 우주 윙 아바타</b><br><span style="font-size:.72rem;color:var(--brand);">✨ 최고 등급 전설 오라 발동 중</span></div>' +
+            '</div>' +
+            '<span class="badge" style="background:linear-gradient(135deg,#8B5CF6,#EC4899);color:#fff;font-size:.72rem;padding:3px 8px;border-radius:6px;font-weight:800;">🌌 우주 랭크</span>' +
+          '</div>' +
+          '<div style="font-size:.75rem;background:rgba(255,255,255,0.06);padding:6px 10px;border-radius:6px;color:var(--ink-soft);">' +
+            '💬 인사 멘트: “하람님, 오늘 3대 목표 달성하고 우주 끝까지 질주해요! 🚀”' +
+          '</div>' +
+        '</div>'
+      }
+    },
     home: {
       name: '홈',
       icon: '🏠',
       badge: '오늘의 성장 루틴',
       features: [
         { title: '오늘의 미션 & 스마트 스트릭', desc: '당일 필수 체크인과 루틴을 한눈에 파악하고 끊김 없는 성장 연속일수(Streak)를 유지해요.' },
-        { title: '5대 상징 랭크 아바타 (새싹~우주)', desc: '실천 XP가 쌓일 때마다 🌱새싹 ➔ 🌲숲 ➔ 🌊포세이돈 ➔ ⚡제우스 ➔ 🌌우주 윙 오라가 결합되어 성장감을 시각화해요.' },
+        { title: '나만의 홈 구성 & 스마트 위젯', desc: '히트맵, 일일 루틴 체크, 최근 달성률 위젯의 위치와 순서를 내 취향대로 자유롭게 커스텀해요.' },
         { title: '90초 갓생 온보딩 & 맞춤 추천', desc: '고민 없이 헬스·러닝·자격증·독서 등 인기 갓생 목표를 1초 만에 바로 시작할 수 있어요.' }
       ],
       showcase: {
@@ -3356,7 +3384,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   };
 
   function renderTabGuideContent(tabKey){
-    var item = TAB_GUIDE_DATA[tabKey] || TAB_GUIDE_DATA.home;
+    var item = TAB_GUIDE_DATA[tabKey] || TAB_GUIDE_DATA.avatar || TAB_GUIDE_DATA.home;
     var sc = item.showcase;
 
     var featsHtml = item.features.map(function(f){
@@ -3365,6 +3393,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '<div><b>' + escapeHtml(f.title) + '</b><br><span style="font-size:.8rem;color:var(--ink-soft);">' + escapeHtml(f.desc) + '</span></div>' +
       '</div>';
     }).join('');
+
+    var actionBtnText = (tabKey === 'avatar') 
+      ? '🎨 나만의 아바타 꾸미러 가기' 
+      : ('🚀 ' + escapeHtml(item.name) + ' 탭 바로 실천하러 가기');
 
     return '<div class="guide-feature-block">' +
         '<div style="font-size:.8125rem;font-weight:800;color:var(--brand);margin-bottom:8px;">✨ ' + escapeHtml(item.name) + ' 탭 핵심 혁신 기능</div>' +
@@ -3386,14 +3418,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       '<div style="margin-top:14px;">' +
         '<button type="button" class="btn btn-primary guide-action-try-btn" data-targettab="' + tabKey + '" style="width:100%;font-weight:800;padding:12px 14px;border-radius:12px;">' +
-          '🚀 ' + escapeHtml(item.name) + ' 탭 바로 실천하러 가기' +
+          actionBtnText +
         '</button>' +
       '</div>';
   }
 
   function openTabGuideHubModal(initialTab){
-    var curTab = initialTab || 'home';
+    var curTab = initialTab || 'avatar';
     var tabs = [
+      { key: 'avatar', label: '아바타', icon: '👤' },
       { key: 'home', label: '홈', icon: '🏠' },
       { key: 'goals', label: '목표', icon: '🎯' },
       { key: 'calendar', label: '일정', icon: '📅' },
@@ -3436,9 +3469,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             var target = tryBtn.getAttribute('data-targettab');
             closeModal();
             setTimeout(function(){
-              if(typeof switchTab === 'function') switchTab(target);
-              toast(TAB_GUIDE_DATA[target].name + ' 탭으로 이동했어요! 지금 시작해보세요.');
-            }, 50);
+              if(target === 'avatar'){
+                if(typeof openAvatarModal === 'function'){
+                  openAvatarModal();
+                } else if(typeof openProfileEditor === 'function'){
+                  openProfileEditor();
+                } else {
+                  toast('아바타 설정창을 불러오는 중입니다.');
+                }
+              } else {
+                if(typeof switchTab === 'function') switchTab(target);
+                var tabName = (TAB_GUIDE_DATA[target] && TAB_GUIDE_DATA[target].name) ? TAB_GUIDE_DATA[target].name : target;
+                toast(tabName + ' 탭으로 이동했어요! 지금 시작해보세요.');
+              }
+            }, 80);
           };
         }
       }
@@ -3461,7 +3505,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var tabGuideBtn = document.getElementById('btnTabGuideHub');
   if(tabGuideBtn){
     tabGuideBtn.addEventListener('click', function(){
-      openTabGuideHubModal('home');
+      openTabGuideHubModal('avatar');
     });
   }
 
