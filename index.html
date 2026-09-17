@@ -573,9 +573,33 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         </div>
       </div>
 
-      <!-- 🔔 알림 & 야간 방해금지 (Req 10 - 당근/인스타 벤치마킹) -->
+      <!-- 🔔 [#TASK-ES-152] 백그라운드·앱종료·미확인 전역 알림 제어 센터 -->
       <div class="set-block">
-        <h4>알림 & 방해금지 설정</h4>
+        <h4>🔔 전역 알림 & 세부 제어 센터</h4>
+        <p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 10px;">포그라운드 상단 배너·사운드·진동, 백그라운드 Web Notification, 앱 종료 후 미확인 알림 큐를 종합 제어합니다.</p>
+
+        <!-- 1. 알림 피드백 모드 (소리/진동) -->
+        <div class="notify-settings-card">
+          <div style="font-size:.875rem;font-weight:700;color:var(--ink);margin-bottom:4px;">🔊 알림 피드백 방식</div>
+          <div class="notify-mode-grid" id="notifFeedbackModeGrid">
+            <button type="button" class="notify-mode-btn" data-notifmode="all"><span>🔊+📳</span><span>소리+진동</span></button>
+            <button type="button" class="notify-mode-btn" data-notifmode="sound"><span>🔊</span><span>소리만</span></button>
+            <button type="button" class="notify-mode-btn" data-notifmode="vibrate"><span>📳</span><span>진동만</span></button>
+            <button type="button" class="notify-mode-btn" data-notifmode="silent"><span>🔇</span><span>무음</span></button>
+          </div>
+        </div>
+
+        <!-- 2. 알림 프라이버시 보호 -->
+        <div class="notify-settings-card">
+          <div style="font-size:.875rem;font-weight:700;color:var(--ink);margin-bottom:6px;">🔒 알림 프라이버시 보호</div>
+          <div class="format-toggle" id="notifPrivacyToggle" style="width:100%;">
+            <div class="format-opt" data-privacy="detail">상세 내용 표시</div>
+            <div class="format-opt" data-privacy="summary">간략형 (보안 마스킹)</div>
+          </div>
+          <p class="faint" style="font-size:.75rem;margin:6px 0 0;">간략형 선택 시 화면 잠금이나 공공장소에서 메시지 본문이 노출되지 않습니다.</p>
+        </div>
+
+        <!-- 3. 체크인 시간 및 기본 알림 스위치 -->
         <div class="time-chip-row" id="checkinTimesRow" style="margin-bottom:6px;"></div>
         <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
           <button class="btn btn-ghost btn-sm" id="addTimeBtn" type="button">+ 체크인 시간 추가</button>
@@ -584,6 +608,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <div class="toggle-row">
           <div class="t">체크인 시간에 알림 받기 (앱을 꺼도 와요)</div>
           <div class="switch" id="notifySwitch"></div>
+        </div>
+        <div class="toggle-row" style="margin-top:10px;">
+          <div class="t">백그라운드 Web Notification 수신</div>
+          <div class="switch" id="notifBgSwitch"></div>
         </div>
         <div class="toggle-row" style="margin-top:10px;">
           <div class="t">야간 방해금지 모드</div>
@@ -596,14 +624,26 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <input type="time" id="quietEndInput" value="08:00" style="padding:4px 6px;font-size:.8125rem;">
         </div>
         <p class="faint" style="font-size:.8125rem;margin-top:4px;">설정된 야간 시간대에는 푸시 알림 및 소리가 울리지 않습니다.</p>
+
+        <!-- 4. 유형별 알림 제어 -->
         <div style="margin-top:12px;padding-top:10px;border-top:1px dashed var(--rule);">
           <div style="font-size:.875rem;font-weight:700;margin-bottom:8px;">유형별 알림 제어</div>
-          <div class="toggle-row" style="margin-bottom:6px;"><div class="t" style="font-size:.875rem;">팀원 일일 인증 알림</div><div class="switch" id="notifTeamSwitch"></div></div>
+          <div class="toggle-row" style="margin-bottom:6px;"><div class="t" style="font-size:.875rem;">1:1 DM 및 메시지 수신 알림</div><div class="switch" id="notifDmSwitch"></div></div>
+          <div class="toggle-row" style="margin-bottom:6px;"><div class="t" style="font-size:.875rem;">팀원 일일 인증 및 활동 알림</div><div class="switch" id="notifTeamSwitch"></div></div>
           <div class="toggle-row" style="margin-bottom:6px;"><div class="t" style="font-size:.875rem;">응원 및 댓글 알림</div><div class="switch" id="notifCheersSwitch"></div></div>
-          <div class="toggle-row" style="margin-bottom:6px;"><div class="t" style="font-size:.875rem;">마감 D-day 임박 알림</div><div class="switch" id="notifDdaySwitch"></div></div>
+          <div class="toggle-row" style="margin-bottom:6px;"><div class="t" style="font-size:.875rem;">마감 D-day 및 캘린더 리마인더</div><div class="switch" id="notifDdaySwitch"></div></div>
           <div class="toggle-row"><div class="t" style="font-size:.875rem;">일일 스트릭 유지 리마인더</div><div class="switch" id="notifStreakSwitch"></div></div>
         </div>
-        <button class="btn btn-ghost btn-sm" id="testNotifyBtn" type="button" style="margin-top:12px;width:100%;">지금 테스트 알림 울리기</button>
+
+        <!-- 5. 시스템 권한 상태 및 테스트 버튼 -->
+        <div class="notify-settings-card" style="margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <div>
+            <div style="font-size:.84rem;font-weight:700;color:var(--ink);">브라우저 시스템 알림 권한</div>
+            <div class="faint" id="notifPermStatusLabel" style="font-size:.78rem;">확인 중…</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="btnReqNotifPerm" type="button" style="font-size:.8125rem;">권한 설정</button>
+        </div>
+        <button class="btn btn-primary btn-sm" id="testNotifyBtn" type="button" style="margin-top:12px;width:100%;font-weight:700;">🔔 전역 알림 실시간 테스트 울리기</button>
       </div>
 
       <!-- 🎨 화면 및 테마 (Req 10 - 8대 화면 스타일) -->
@@ -1029,7 +1069,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
-  <script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script>
+  <script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script><script src="js/notify-engine.js?v=20260917-es152"></script>
 <script>
 (function(){
   "use strict";
@@ -5024,7 +5064,29 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       });
     });
     (state.profile.settings.customSchedules || []).forEach(function(cs){
-      if(cs.date) push(cs.date, { date:cs.date, title:cs.title, kind:'custom', schedId:cs.id, done:!!cs.done, goalTitle:cs.note||'일반 일정', attachments:cs.attachments||[], recordId:cs.recordId||null, linkUrl:cs.linkUrl||null, isTemplateRecord:!!cs.isTemplateRecord, templateTitle:cs.templateTitle||null });
+      var gTitle = cs.note || '일반 일정';
+      if(cs.linkedGoalTitle) gTitle = cs.linkedGoalTitle;
+      else if(cs.linkedGoalId){
+        var linkedG = (state.profile.goals || []).find(function(g){ return g.id === cs.linkedGoalId; });
+        if(linkedG) gTitle = linkedG.title;
+      }
+      if(cs.date) push(cs.date, {
+        date:cs.date,
+        title:cs.title,
+        kind:'custom',
+        schedId:cs.id,
+        done:!!cs.done,
+        goalTitle:gTitle,
+        attachments:cs.attachments||[],
+        recordId:cs.recordId||null,
+        linkUrl:cs.linkUrl||null,
+        isTemplateRecord:!!cs.isTemplateRecord,
+        templateTitle:cs.templateTitle||null,
+        linkedGoalId:cs.linkedGoalId||null,
+        linkedGoalTitle:cs.linkedGoalTitle||null,
+        linkedMsId:cs.linkedMsId||null,
+        linkedTaskId:cs.linkedTaskId||null
+      });
     });
     // 🗓️ 구글 캘린더 상호 연동 일정 (배지 없이 일반 일정과 동일하게 달력에 통합 표시)
     var gcalEvs = state.gcalEventsCache;
@@ -5073,6 +5135,90 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     state.calDate = isoDate(d);
     renderCalendarScreen();
   }
+
+  /* ============ [#TASK-ES-151] 일정 체크 완료 토글 및 목표 양방향 동기화 ============ */
+  async function toggleScheduleDone(schedId, kind, goalId, msId, taskId){
+    var isNowDone = false;
+    if(kind === 'custom' && schedId){
+      var csList = state.profile.settings.customSchedules || [];
+      var sched = csList.find(function(c){ return c.id === schedId; });
+      if(!sched) return;
+      sched.done = !sched.done;
+      isNowDone = sched.done;
+
+      // 목표/마일스톤/할 일과 양방향 연동 동기화
+      if(sched.linkedTaskId || sched.linkedGoalId){
+        (state.profile.goals || []).forEach(function(g){
+          if(sched.linkedGoalId && g.id !== sched.linkedGoalId) return;
+          (g.milestones || []).forEach(function(m){
+            if(sched.linkedMsId && m.id !== sched.linkedMsId) return;
+            (m.tasks || []).forEach(function(t){
+              if((sched.linkedTaskId && t.id === sched.linkedTaskId) || (!sched.linkedTaskId && t.title === sched.title)){
+                t.done = isNowDone;
+              }
+            });
+            if(sched.linkedMsId && m.id === sched.linkedMsId && (!m.tasks || !m.tasks.length)){
+              m.status = isNowDone ? 'done' : 'todo';
+            }
+          });
+        });
+      }
+    } else if(kind === 'task' && goalId && taskId){
+      var g = (state.profile.goals || []).find(function(x){ return x.id === goalId; });
+      if(g && g.milestones){
+        g.milestones.forEach(function(m){
+          (m.tasks || []).forEach(function(t){
+            if(t.id === taskId){
+              t.done = !t.done;
+              isNowDone = t.done;
+              (state.profile.settings.customSchedules || []).forEach(function(cs){
+                if(cs.linkedTaskId === taskId || (cs.linkedGoalId === goalId && cs.title === t.title)){
+                  cs.done = isNowDone;
+                }
+              });
+            }
+          });
+        });
+      }
+    } else if(kind === 'ms' && goalId && msId){
+      var g = (state.profile.goals || []).find(function(x){ return x.id === goalId; });
+      if(g && g.milestones){
+        var m = g.milestones.find(function(x){ return x.id === msId; });
+        if(m){
+          m.status = (m.status === 'done') ? 'todo' : 'done';
+          isNowDone = (m.status === 'done');
+          (state.profile.settings.customSchedules || []).forEach(function(cs){
+            if(cs.linkedMsId === msId){ cs.done = isNowDone; }
+          });
+        }
+      }
+    } else if(kind === 'goal' && goalId){
+      var g = (state.profile.goals || []).find(function(x){ return x.id === goalId; });
+      if(g){
+        var allDone = g.milestones && g.milestones.length && g.milestones.every(function(m){ return m.status === 'done'; });
+        isNowDone = !allDone;
+        (g.milestones || []).forEach(function(m){
+          m.status = isNowDone ? 'done' : 'todo';
+          (m.tasks || []).forEach(function(t){ t.done = isNowDone; });
+        });
+      }
+    }
+
+    if(isNowDone){
+      triggerHaptic(15);
+      awardXP(XP_RULES.taskDone || 5, '일정 완료');
+      toast('일정을 완료했어요! 🎯');
+    } else {
+      triggerHaptic(10);
+      toast('일정을 미완료로 변경했어요');
+    }
+
+    saveLocalSettings(state.profile.id, state.profile.settings);
+    await saveProfile();
+    renderCalendarScreen();
+    if(state.activeTab === 'goals') renderGoalsScreen();
+  }
+
   /* ============ 캘린더 날짜 클릭 시 해당 일자 일정 수정/관리 허브 모달 ============ */
   function openCalendarDayEditHubModal(selectedDate){
     var sel = selectedDate || state.calSelectedDate || isoDate(new Date());
@@ -5085,14 +5231,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var mRec = (e.title || '').match(/#record[=:](\w+)/);
         var targetRecId = e.recordId || (mRec ? mRec[1] : null);
         var tplBtn = targetRecId ? ('<button class="btn btn-ghost btn-sm" data-hubrec="'+targetRecId+'" type="button" style="font-size:.8125rem;padding:2px 6px;color:var(--ink);border-color:var(--rule);">기록 보기</button>') : '';
+        var isDone = !!e.done;
+        var checkBtn = '<div class="sched-check'+(isDone?' done':'')+'" data-hubtogglesched="'+e.kind+':'+(e.schedId||e.goalId||'')+':'+(e.msId||'')+':'+(e.taskId||'')+'" style="cursor:pointer;flex:0 0 auto;" title="'+(isDone?'미완료로 변경':'완료로 변경')+'">'+(isDone?'✓':'')+'</div>';
+        var goalBadge = (e.linkedGoalTitle || (e.goalTitle && e.goalTitle !== '일반 일정' && e.goalTitle !== '구글 캘린더')) ? ('<span class="sched-goal-badge">🎯 '+escapeHtml(e.linkedGoalTitle || e.goalTitle)+'</span>') : '';
         return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--card2);border-radius:10px;border:1px solid var(--rule);">' +
-          '<div style="flex:1;min-width:0;">' +
-            '<div style="font-weight:700;font-size:.875rem;color:var(--ink);display:flex;align-items:center;gap:4px;flex-wrap:wrap;">' +
-              '<span>'+(e.done?'✓ ':'')+escapeHtml(e.title)+'</span>' +
-              timeLabel +
+          '<div style="display:flex;align-items:flex-start;gap:8px;flex:1;min-width:0;">' +
+            checkBtn +
+            '<div style="flex:1;min-width:0;">' +
+              '<div style="font-weight:700;font-size:.875rem;color:var(--ink);display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+                '<span class="sched-title'+(isDone?' done-text':'')+'">'+escapeHtml(e.title)+'</span>' +
+                goalBadge +
+                timeLabel +
+              '</div>' +
+              '<div class="faint" style="font-size:.8125rem;margin-top:2px;">'+escapeHtml(e.goalTitle||'일반 일정')+'</div>' +
+              (window.OurgoalCalendarAttachment ? window.OurgoalCalendarAttachment.renderHubEventChipsHtml(e) : '') +
             '</div>' +
-            '<div class="faint" style="font-size:.8125rem;margin-top:2px;">'+escapeHtml(e.goalTitle||'일반 일정')+'</div>' +
-            (window.OurgoalCalendarAttachment ? window.OurgoalCalendarAttachment.renderHubEventChipsHtml(e) : '') +
           '</div>' +
           '<div style="display:flex;gap:14px;align-items:center;">' +
             tplBtn +
@@ -5126,6 +5279,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '</div>',
       function(sheet){
         sheet.querySelector('#hubCloseBtn').onclick = closeModal;
+        sheet.querySelectorAll('[data-hubtogglesched]').forEach(function(chk){
+          chk.onclick = async function(ev){
+            ev.stopPropagation();
+            var parts = chk.dataset.hubtogglesched.split(':');
+            var kind = parts[0];
+            var schedOrGoalId = parts[1];
+            var msId = parts[2] || null;
+            var taskId = parts[3] || null;
+            await toggleScheduleDone(kind==='custom'?schedOrGoalId:null, kind, (kind!=='custom'?schedOrGoalId:null), msId, taskId);
+            openCalendarDayEditHubModal(sel);
+          };
+        });
         sheet.querySelector('#hubAddNewBtn').onclick = function(){
           openCalendarManualEditModal(sel, null);
         };
@@ -5196,7 +5361,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var curDate = draft ? draft.date : (eventItem && eventItem.dueDate ? toDateTimeLocalValue(eventItem.dueDate) : (eventItem && eventItem.date ? toDateTimeLocalValue(eventItem.date) : defaultDateVal));
     var curNote = draft ? draft.note : (eventItem ? (eventItem.note || '') : '');
     var curDone = draft ? !!draft.done : (eventItem ? (eventItem.done || eventItem.status==='done') : false);
+    var curLinkedGoalId = draft ? draft.linkedGoalId : (eventItem ? (eventItem.linkedGoalId || (kind==='goal'?eventItem.id:(kind==='ms'||kind==='task'?eventItem.goalId:null))) : null);
     var curAttachments = draft ? [].concat(draft.attachments || []) : ((eventItem && eventItem.attachments) ? [].concat(eventItem.attachments) : []);
+    var goalsList = (state.profile && state.profile.goals) || [];
+    var goalSelectOptions = '<option value="">-- 목표 미연계 (일반 일정) --</option>' +
+      goalsList.map(function(g){
+        var isSel = (curLinkedGoalId === g.id) ? ' selected' : '';
+        return '<option value="' + g.id + '"' + isSel + '>🎯 ' + escapeHtml(g.title) + '</option>';
+      }).join('');
     openModal(
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
         '<span class="dm-back" id="calEditBackToHubBtn" style="cursor:pointer;margin:0;font-size:.875rem;color:var(--ink);font-weight:700;">‹ ' + selDate + ' 일정 목록으로</span>' +
@@ -5210,6 +5382,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '<div class="field">' +
         '<label>날짜 및 시간</label>' +
         '<input id="calEditDate" type="datetime-local" value="' + curDate + '">' +
+      '</div>' +
+      '<div class="field">' +
+        '<label>연계할 목표 (선택)</label>' +
+        '<select id="calEditLinkedGoal" style="width:100%;">' +
+          goalSelectOptions +
+        '</select>' +
       '</div>' +
       '<div class="field">' +
         '<label>메모 / 장소 (선택)</label>' +
@@ -5246,7 +5424,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         if(window.OurgoalCalendarAttachment){
           var wireAtts = function(){
             window.OurgoalCalendarAttachment.wireEditModalAttachments(sheet, function(){
-              return { title: (sheet.querySelector('#calEditTitle').value || '').trim(), date: sheet.querySelector('#calEditDate').value, note: (sheet.querySelector('#calEditNote').value || '').trim(), done: isDone, attachments: curAttachments };
+              var curG = sheet.querySelector('#calEditLinkedGoal') ? sheet.querySelector('#calEditLinkedGoal').value : curLinkedGoalId;
+              return { title: (sheet.querySelector('#calEditTitle').value || '').trim(), date: sheet.querySelector('#calEditDate').value, note: (sheet.querySelector('#calEditNote').value || '').trim(), done: isDone, linkedGoalId: curG, attachments: curAttachments };
             }, function(updatedAtts, ctx){
               /* 참고자료 첨부/조회 모달이 단일 #modalSheet를 재사용해 이 화면을 덮어쓰므로,
                  패치가 아니라 입력값(ctx)을 보존한 채로 이 모달을 다시 완전히 열어야 한다. */
@@ -5257,6 +5436,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                   date: ctx && ctx.date !== undefined ? ctx.date : curDate,
                   note: ctx && ctx.note !== undefined ? ctx.note : curNote,
                   done: ctx && ctx.done !== undefined ? ctx.done : isDone,
+                  linkedGoalId: ctx && ctx.linkedGoalId !== undefined ? ctx.linkedGoalId : curLinkedGoalId,
                   attachments: updatedAtts
                 }
               );
@@ -5287,6 +5467,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           var title = (sheet.querySelector('#calEditTitle').value || '').trim();
           var dtVal = sheet.querySelector('#calEditDate').value;
           var note = (sheet.querySelector('#calEditNote').value || '').trim();
+          var goalSelEl = sheet.querySelector('#calEditLinkedGoal');
+          var linkedGoalId = goalSelEl ? goalSelEl.value : null;
+          var linkedGoalTitle = null;
+          if(linkedGoalId){
+            var matchedGoal = (state.profile.goals || []).find(function(g){ return g.id === linkedGoalId; });
+            if(matchedGoal) linkedGoalTitle = matchedGoal.title;
+          }
           if(!title){ toast('일정 제목을 입력해주세요'); return; }
           if(!dtVal){ toast('날짜를 입력해주세요'); return; }
           if(!state.profile.settings.customSchedules) state.profile.settings.customSchedules = [];
@@ -5297,6 +5484,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               date: dtVal,
               note: note,
               done: isDone,
+              linkedGoalId: linkedGoalId || null,
+              linkedGoalTitle: linkedGoalTitle || null,
               attachments: curAttachments,
               createdAt: nowISO()
             });
@@ -5307,6 +5496,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               eventItem.date = dtVal;
               eventItem.note = note;
               eventItem.done = isDone;
+              eventItem.linkedGoalId = linkedGoalId || null;
+              eventItem.linkedGoalTitle = linkedGoalTitle || null;
               eventItem.attachments = curAttachments;
             } else {
               eventItem.title = title;
@@ -5424,11 +5615,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         });
         var matchingHtml = matching.map(function(e){
           var isDone = !!e.done;
-          return '<div class="timetable-chip" style="background:var(--card);border:1px solid '+(isDone?'#10b981':'var(--brand)')+';border-left:3px solid '+(isDone?'#10b981':'var(--brand)')+';border-radius:6px;padding:3px 8px;margin-bottom:3px;font-size:.8125rem;display:flex;align-items:center;justify-content:space-between;gap:6px;">' +
-            '<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:var(--ink);">' +
-              (isDone ? '✓ ' : '') + escapeHtml(e.title) +
+          var goalBadgeHtml = (e.linkedGoalTitle || (e.goalTitle && e.goalTitle !== '일반 일정' && e.goalTitle !== '구글 캘린더')) ?
+            '<span class="sched-goal-badge" style="font-size:.65rem;padding:1px 5px;">🎯 ' + escapeHtml(e.linkedGoalTitle || e.goalTitle) + '</span>' : '';
+          var checkBtn = '<div class="sched-check' + (isDone ? ' done' : '') + '" data-togglesched="' + e.kind + ':' + (e.schedId || e.goalId || '') + ':' + (e.msId || '') + ':' + (e.taskId || '') + '" style="cursor:pointer;width:18px;height:18px;font-size:.65rem;" title="' + (isDone ? '미완료로 변경' : '완료로 변경') + '">' + (isDone ? '✓' : '') + '</div>';
+          return '<div class="timetable-chip' + (isDone ? ' done-chip' : '') + '" style="background:var(--card);border:1px solid ' + (isDone ? '#10b981' : 'var(--brand)') + ';border-left:3px solid ' + (isDone ? '#10b981' : 'var(--brand)') + ';border-radius:6px;padding:4px 8px;margin-bottom:3px;font-size:.8125rem;display:flex;align-items:center;justify-content:space-between;gap:6px;">' +
+            '<div style="display:flex;align-items:center;gap:6px;overflow:hidden;flex:1;min-width:0;">' +
+              checkBtn +
+              '<span class="sched-title' + (isDone ? ' done-text' : '') + '" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:var(--ink);">' +
+                escapeHtml(e.title) +
+              '</span>' +
+              goalBadgeHtml +
             '</div>' +
-            '<span class="faint" style="font-size:.6875rem;">' + (e.date.split('T')[1].slice(0,5)) + '</span>' +
+            '<span class="faint" style="font-size:.6875rem;flex-shrink:0;">' + (e.date.split('T')[1].slice(0,5)) + '</span>' +
           '</div>';
         }).join('');
         return '<div class="timetable-slot" data-timeslot="'+hStr+':00" style="display:flex;border-bottom:1px solid var(--border-subtle, rgba(0,0,0,.06));min-height:38px;cursor:pointer;" title="클릭하여 '+hStr+':00 일정 추가">' +
@@ -5450,6 +5648,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
     document.getElementById('calPeriodLabel').textContent = periodLabel;
     document.getElementById('calGrid').innerHTML = gridHtml;
+    document.querySelectorAll('#calGrid [data-togglesched]').forEach(function(chk){
+      chk.onclick = async function(ev){
+        ev.stopPropagation();
+        var parts = chk.dataset.togglesched.split(':');
+        var kind = parts[0];
+        var schedOrGoalId = parts[1];
+        var msId = parts[2] || null;
+        var taskId = parts[3] || null;
+        await toggleScheduleDone(kind==='custom'?schedOrGoalId:null, kind, (kind!=='custom'?schedOrGoalId:null), msId, taskId);
+      };
+    });
     document.querySelectorAll('#calGrid .timetable-slot').forEach(function(slot){
       slot.onclick = function(){
         var tSlot = slot.dataset.timeslot || '09:00';
@@ -11114,6 +11323,46 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
 
     wireAttachmentChipClicks(body);
+
+    /* [#TASK-ES-151] 개인 목표 태스크 완료 토글 및 캘린더 일정 양방향 동기화 */
+    body.querySelectorAll('[data-taskcheck]').forEach(function(chk){
+      chk.addEventListener('click', async function(ev){
+        ev.stopPropagation();
+        var rowEl = chk.closest('.task-row');
+        if(!rowEl) return;
+        var tid = rowEl.dataset.taskid;
+        var mid = rowEl.dataset.msid;
+        var targetTask = null;
+        var targetGoal = goal;
+        (goal.milestones || []).forEach(function(m){
+          if(!mid || m.id === mid){
+            (m.tasks || []).forEach(function(t){
+              if(t.id === tid){ targetTask = t; }
+            });
+          }
+        });
+        if(!targetTask) return;
+        targetTask.done = !targetTask.done;
+        var isNowDone = targetTask.done;
+        if(isNowDone){
+          triggerHaptic(15);
+          awardXP(XP_RULES.taskDone || 5, '할 일 완료');
+          toast('할 일을 완료했어요! 🎯');
+        } else {
+          triggerHaptic(10);
+          toast('할 일을 미완료로 변경했어요');
+        }
+        (state.profile.settings.customSchedules || []).forEach(function(cs){
+          if(cs.linkedTaskId === targetTask.id || (cs.linkedGoalId === targetGoal.id && cs.title === targetTask.title)){
+            cs.done = isNowDone;
+          }
+        });
+        saveLocalSettings(state.profile.id, state.profile.settings);
+        await saveProfile();
+        renderGoalsScreen();
+        if(state.activeTab === 'calendar') renderCalendarScreen();
+      });
+    });
 
     body.querySelectorAll('[data-setschedule]').forEach(function(btn){
       btn.addEventListener('click', function(e){
@@ -22451,6 +22700,103 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         triggerHaptic(15);
       };
     }
+    // 🔔 [#TASK-ES-152] 전역 알림 설정 센터 바인딩
+    if(!state.profile.settings.notifications){
+      state.profile.settings.notifications = {
+        feedbackMode: 'all',
+        privacyLevel: 'detail',
+        dmMessages: true,
+        teamActivities: true,
+        goalReminders: true,
+        bgEnabled: true
+      };
+    }
+    var notifConfig = state.profile.settings.notifications;
+
+    // 1. 피드백 모드 (소리/진동)
+    var fbModeGrid = document.getElementById('notifFeedbackModeGrid');
+    if(fbModeGrid){
+      fbModeGrid.querySelectorAll('[data-notifmode]').forEach(function(btn){
+        var mode = btn.dataset.notifmode;
+        btn.classList.toggle('active', (notifConfig.feedbackMode || 'all') === mode);
+        btn.onclick = async function(){
+          notifConfig.feedbackMode = mode;
+          if(mode === 'all' || mode === 'sound'){
+            if(window.OurgoalNotifyEngine) window.OurgoalNotifyEngine.playNotificationSound();
+          }
+          if(mode === 'all' || mode === 'vibrate'){
+            if(window.OurgoalNotifyEngine) window.OurgoalNotifyEngine.vibrate([80, 40, 80]);
+          }
+          await saveProfile();
+          renderSettingsScreen();
+          var labels = { all: '소리+진동', sound: '소리만', vibrate: '진동만', silent: '무음' };
+          toast('알림 피드백을 ' + labels[mode] + '(으)로 설정했어요');
+        };
+      });
+    }
+
+    // 2. 알림 프라이버시 토글
+    var privToggle = document.getElementById('notifPrivacyToggle');
+    if(privToggle){
+      privToggle.querySelectorAll('[data-privacy]').forEach(function(btn){
+        var pLevel = btn.dataset.privacy;
+        btn.classList.toggle('active', (notifConfig.privacyLevel || 'detail') === pLevel);
+        btn.onclick = async function(){
+          notifConfig.privacyLevel = pLevel;
+          await saveProfile();
+          renderSettingsScreen();
+          toast(pLevel === 'summary' ? '알림 보안 마스킹(간략형)이 적용되었어요' : '알림 상세 내용 표시가 설정되었어요');
+        };
+      });
+    }
+
+    // 3. 백그라운드 Web Notification 토글
+    var bgSw = document.getElementById('notifBgSwitch');
+    if(bgSw){
+      var isBg = notifConfig.bgEnabled !== false;
+      bgSw.className = 'switch' + (isBg ? ' on' : '');
+      a11ySwitch(bgSw, isBg, '백그라운드 Web Notification 수신');
+      bgSw.onclick = async function(){
+        notifConfig.bgEnabled = !isBg;
+        await saveProfile();
+        renderSettingsScreen();
+        toast(notifConfig.bgEnabled ? '백그라운드 알림을 켰어요' : '백그라운드 알림을 껐어요');
+      };
+    }
+
+    // 4. 시스템 권한 상태 및 요청 버튼
+    var permLabel = document.getElementById('notifPermStatusLabel');
+    var reqPermBtn = document.getElementById('btnReqNotifPerm');
+    if(permLabel){
+      if(typeof window !== 'undefined' && ('Notification' in window)){
+        var pStatus = Notification.permission;
+        if(pStatus === 'granted'){
+          permLabel.innerHTML = '<span style="color:#10b981;font-weight:700;">✓ 허용됨</span> (백그라운드 알림 가능)';
+          if(reqPermBtn) reqPermBtn.style.display = 'none';
+        } else if(pStatus === 'denied'){
+          permLabel.innerHTML = '<span style="color:var(--brand-strong);font-weight:700;">✗ 차단됨</span> (브라우저 설정에서 허용)';
+          if(reqPermBtn){
+            reqPermBtn.textContent = '설정 안내';
+            reqPermBtn.onclick = function(){ alert('브라우저 주소창 좌측의 사이트 설정 아이콘을 눌러 알림을 [허용]으로 변경해주세요.'); };
+          }
+        } else {
+          permLabel.innerHTML = '<span style="color:#f59e0b;font-weight:700;">미설정</span> (권한 요청 필요)';
+          if(reqPermBtn){
+            reqPermBtn.textContent = '권한 요청';
+            reqPermBtn.onclick = async function(){
+              var res = await (window.OurgoalNotifyEngine ? window.OurgoalNotifyEngine.requestPermission() : Notification.requestPermission());
+              renderSettingsScreen();
+              if(res === 'granted') toast('시스템 알림 권한이 허용되었어요! 🎉');
+              else toast('시스템 알림 권한이 거부되었어요');
+            };
+          }
+        }
+      } else {
+        permLabel.textContent = '현재 브라우저 미지원';
+        if(reqPermBtn) reqPermBtn.style.display = 'none';
+      }
+    }
+
     var sw = document.getElementById('notifySwitch');
     sw.className = 'switch' + (settings.notify ? ' on' : '');
     a11ySwitch(sw, settings.notify, '체크인 시간에 알림 받기 (앱을 꺼도 와요)');
@@ -22507,6 +22853,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var wireNotifSwitch = function(id, prop, label){
       var el = document.getElementById(id);
       if(!el) return;
+      if(id === 'notifDmSwitch'){
+        var dmVal = notifConfig.dmMessages !== false;
+        el.className = 'switch' + (dmVal ? ' on' : '');
+        a11ySwitch(el, dmVal, label);
+        el.onclick = async function(){
+          notifConfig.dmMessages = !dmVal;
+          await saveProfile();
+          renderSettingsScreen();
+          toast(notifConfig.dmMessages ? '1:1 DM 알림을 켰어요' : '1:1 DM 알림을 껐어요');
+        };
+        return;
+      }
       var val = settings[prop] !== false;
       el.className = 'switch' + (val ? ' on' : '');
       a11ySwitch(el, val, label);
@@ -22516,6 +22874,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         renderSettingsScreen();
       };
     };
+    wireNotifSwitch('notifDmSwitch', 'notifDm', '1:1 DM 및 메시지 수신 알림');
     wireNotifSwitch('notifTeamSwitch', 'notifTeamVerify', '팀원 일일 인증 알림');
     wireNotifSwitch('notifCheersSwitch', 'notifCheers', '응원 및 댓글 알림');
     wireNotifSwitch('notifDdaySwitch', 'notifDday', '마감 D-day 임박 알림');
@@ -22860,12 +23219,22 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(state.profile.settings.notify) syncPushSubscription();
   });
   document.getElementById('testNotifyBtn').addEventListener('click', function(){
-    var msg = generateDynamicNotification(state.profile);
-    setTab('home');
-    showNotifyBanner(msg);
-    if('Notification' in window && Notification.permission==='granted'){
-      new Notification('아워골', { body: msg });
+    if(window.OurgoalNotifyEngine){
+      window.OurgoalNotifyEngine.dispatchGlobalNotification({
+        type: 'system',
+        title: '🔔 아워골 알림 센터',
+        body: '전역 알림(사운드·진동·포그라운드 배너·백그라운드)이 완벽하게 연동되었습니다! ✨',
+        icon: '🔔'
+      });
+    } else {
+      var msg = generateDynamicNotification(state.profile);
+      setTab('home');
+      showNotifyBanner(msg);
+      if('Notification' in window && Notification.permission==='granted'){
+        new Notification('아워골', { body: msg });
+      }
     }
+    toast('테스트 알림을 발송했어요! 🔔');
   });
   document.getElementById('settingsExportCheckins').addEventListener('click', exportAllCheckins);
   document.getElementById('settingsExportAll').addEventListener('click', function(){
