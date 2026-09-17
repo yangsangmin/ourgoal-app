@@ -4562,3 +4562,112 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   0% { width: 100%; }
   100% { width: 0%; }
 }
+
+/* ==========================================================================
+   #TASK-ES-165: 홈탭 UI 전면 개편 — 볼드 모듈러 보더 & 퀘스트형 UI
+   초보자 및 공간 지각력 취약 사용자를 위한 뚜렷한 칸 구분(2px Bold Border)
+   ========================================================================== */
+:root {
+  --home-card-border: #1E293B;
+  --home-card-border-soft: rgba(30, 41, 59, 0.18);
+  --home-quest-check: #3B82F6;
+}
+
+[data-theme="black"], [data-theme="dark"], [data-theme="dark-space"], [data-theme="glowing-space"], [data-theme="deep-sea"], [data-theme="sunset-beach"], [data-theme="urban-city"] {
+  --home-card-border: rgba(255, 255, 255, 0.28);
+  --home-card-border-soft: rgba(255, 255, 255, 0.15);
+  --home-quest-check: #60A5FA;
+}
+
+/* 홈탭 전체 카드의 볼드 모듈러 보더 적용: 칸 구분을 명확히 분리 */
+#screen-home .card,
+#screen-home .capture-card,
+#screen-home .goal-card,
+#screen-home .crew-pacing-widget,
+#screen-home .daily-quest-bar-wrap,
+#screen-home .level-badge,
+#screen-home .mission-card,
+#screen-home .empty-goal-starter,
+#screen-home .home-eval-banner-box,
+#screen-home #hybridDash {
+  border: 2px solid var(--home-card-border) !important;
+  border-radius: 20px !important;
+  margin-bottom: 16px !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+#screen-home .card:hover,
+#screen-home .capture-card:hover,
+#screen-home .goal-card:hover,
+#screen-home .crew-pacing-widget:hover {
+  border-color: var(--brand) !important;
+  box-shadow: 0 8px 22px rgba(255, 79, 100, 0.14) !important;
+  transform: translateY(-2px);
+}
+
+/* 홈탭 상단 인사 & 히어로 바 */
+#screen-home .home-head-row {
+  background: var(--card);
+  border: 2px solid var(--home-card-border);
+  border-radius: 20px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+#screen-home .home-greet {
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+/* 1줄 기록 입력창 고도화 */
+#screen-home #captureInput {
+  border: 1.5px solid var(--rule) !important;
+  border-radius: 14px !important;
+  padding: 14px 16px !important;
+  font-size: 0.95rem !important;
+  line-height: 1.55 !important;
+  background: var(--input-bg) !important;
+  transition: all 0.18s ease;
+}
+
+#screen-home #captureInput:focus {
+  border-color: var(--brand) !important;
+  background: var(--card) !important;
+  box-shadow: 0 0 0 3px var(--brand-soft) !important;
+  outline: none;
+}
+
+/* 저장 버튼 메인 CTA 스타일 */
+#screen-home #captureSave {
+  height: 46px !important;
+  border-radius: 14px !important;
+  font-size: 0.95rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.01em !important;
+  box-shadow: 0 4px 14px var(--brand-line) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+#screen-home #captureSave:active {
+  transform: scale(0.97);
+}
+
+/* 목표 퀘스트 카드 스타일 */
+#screen-home .goal-card {
+  padding: 18px !important;
+}
+
+#screen-home .goal-card-top h4 {
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  color: var(--ink);
+}
+
+#screen-home .goal-body {
+  margin-top: 8px;
+}
+
