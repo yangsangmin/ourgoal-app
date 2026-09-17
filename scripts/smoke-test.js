@@ -5783,6 +5783,34 @@ check('compliance: [#TASK-ES-143] 전 AI 엔드포인트 로컬 스마트 룰베
   assert.strictEqual(t2.topicMajor, 'study', '공부 키워드 도메인 자율 분류 성공');
 });
 
+check('compliance: [#TASK-ES-144] 동반자 새로고침(F5) 증발 결함 근본 해결 및 1:1 DM 실시간 수신 파이프라인 무결성 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+
+  // 1. index.html defaultProfile, loadProfile, saveProfile 동반자 영속화 배선 확인
+  assert.ok(indexSrc.includes('companions: [],'), 'defaultProfile에 companions 기본 배열 탑재');
+  assert.ok(indexSrc.includes('ourgoal_companions_backup_'), 'loadProfile에서 ourgoal_companions_backup_ 키 자가치유 복원');
+  assert.ok(indexSrc.includes('companions: finalCompanions,'), 'loadProfile 반환 객체에 companions 주입 확인');
+  assert.ok(indexSrc.includes('localStorage.setItem(\'ourgoal_companions_backup_\' + uidVal'), 'saveProfile에서 companions 로컬 영구 백업 보장');
+
+  // 2. enterApp 및 가시성 전환 시 Realtime 리스너 자동 연결 확인
+  assert.ok(indexSrc.includes('window.OurgoalTeamInviteComm.initIncomingDmListener(state.profile.id)'), 'enterApp에서 initIncomingDmListener 자동 가동');
+
+  // 3. js/team-invite-comm.js 읽음 상태 관리 및 수신 파이프라인 확인
+  assert.ok(commSrc.includes("DM_READ_PREFIX = 'ourgoal_dm_read_'"), 'DM_READ_PREFIX 읽음 원장 키 정의');
+  assert.ok(commSrc.includes('function markDmRoomRead('), 'markDmRoomRead 읽음 처리 함수 정의');
+  assert.ok(commSrc.includes('targetComp.lastMsg = r.message;'), '기존 동반자 수신 메시지 누락 방지 및 lastMsg 바인딩 확인');
+  assert.ok(commSrc.includes('targetComp.isUnread = !!_unreadPeerMap[senderId];'), '동반자별 미확인 메시지 여부 정상 판정');
+  assert.ok(commSrc.includes('_lastDmMessageMap[senderId]'), '최신 수신 메시지 맵 등록 확인');
+
+  // 4. 대화 목록 렌더링 시 최신 메시지 미리보기 및 읽음 해제 확인
+  assert.ok(commSrc.includes('var lastMsgObj = _lastDmMessageMap[p.id];'), 'DM 목록에서 실제 최신 메시지 프리뷰 우선 추출');
+  assert.ok(commSrc.includes('markDmRoomRead(myId, person.id);'), '대화방 진입 시 markDmRoomRead 즉시 실행');
+
+  // 5. 로컬스토리지 0ms 자가치유 복원 및 기본 AI 봇 덮어쓰기 방어 확인
+  assert.ok(commSrc.includes('COMPANIONS_STORAGE_PREFIX + uid'), 'persistCompanions에서 UID 기반 격리 백업 저장');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

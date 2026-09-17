@@ -1861,6 +1861,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     } catch(e){ console.warn('Supabase sync failed:', e); }
     saveLocalSettings(uidVal, state.profile.settings);
   }
+  if(typeof window !== 'undefined'){ window.loadProfile = loadProfile; window.saveProfile = saveProfile; }
 
   /* ============ 서버 관리자 API를 통한 기록 및 프로필 복구 (#TASK-ES-036) ============ */
   async function syncServerRecords(forceRefresh){

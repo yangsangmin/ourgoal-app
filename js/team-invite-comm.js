@@ -930,6 +930,8 @@
   }
 
   function renderCommDM(body){
+    body = body || (typeof document !== 'undefined' ? (document.getElementById('commSubBody') || document.getElementById('commBody')) : null);
+    if(!body) return;
     var teamMembers = getTeamMembersPool();
     var state = global.state || {};
     var myId = (state.user && state.user.id) || (state.profile && state.profile.id);
@@ -1171,16 +1173,19 @@
       });
 
       var dmListHtml = allDmList.map(function(p){
-        var last = (p._thread && p._thread.length) ? p._thread[p._thread.length - 1].text : (p.intro || '새로운 대화를 시작해보세요!');
+        var lastMsgObj = _lastDmMessageMap[p.id];
+        var last = (lastMsgObj && lastMsgObj.text) ? lastMsgObj.text : ((p._thread && p._thread.length) ? p._thread[p._thread.length - 1].text : (p.lastMsg || p.intro || '새로운 대화를 시작해보세요!'));
+        var isUnread = !!_unreadPeerMap[p.id] || p.isIncoming;
         var badgeText = p.isIncoming ? '📩 새 대화 요청' : (p.isAiBot ? 'AI 봇' : (p.groupName ? p.groupName : (p.theme || '동반자')));
-        var itemBorder = p.isIncoming ? 'border:1.5px solid var(--brand);background:var(--surface-2);' : 'border:1px solid var(--rule);background:var(--card);';
-        var pillStyle = p.isIncoming ? 'font-size:.6875rem;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;font-weight:700;' : 'font-size:.6875rem;';
+        var itemBorder = isUnread ? 'border:1.5px solid var(--brand);background:var(--surface-2);' : 'border:1px solid var(--rule);background:var(--card);';
+        var pillStyle = isUnread ? 'font-size:.6875rem;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;font-weight:700;' : 'font-size:.6875rem;';
+        var unreadDot = isUnread ? '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#ef4444;margin-left:6px;vertical-align:middle;"></span>' : '';
 
         return '<div class="dm-list-item" data-open="' + esc(p.id) + '" style="cursor:pointer;padding:10px 12px;display:flex;align-items:center;gap:12px;' + itemBorder + 'border-radius:12px;margin-bottom:8px;">' +
           '<div class="feed-avatar" style="width:42px;height:42px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex:0 0 auto;overflow:hidden;">' + safeAvatarHtml(p.avatar, 42) + '</div>' +
           '<div class="dm-preview" style="flex:1;min-width:0;">' +
             '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">' +
-              '<b style="font-size:.875rem;color:var(--ink);">' + esc(p.nickname || p.name) + '</b>' +
+              '<b style="font-size:.875rem;color:var(--ink);display:flex;align-items:center;">' + esc(p.nickname || p.name) + unreadDot + '</b>' +
               '<span class="dday-pill" style="' + pillStyle + '">' + esc(badgeText) + '</span>' +
             '</div>' +
             '<span style="font-size:.8125rem;color:var(--ink-soft);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(last) + '</span>' +
@@ -1296,6 +1301,21 @@
           restored = parsed;
         }
       }
+      if(!restored || restored.length === 0){
+        for(var kIdx = 0; kIdx < localStorage.length; kIdx++){
+          var lk = localStorage.key(kIdx);
+          if(lk && lk.indexOf(COMPANIONS_STORAGE_PREFIX) === 0){
+            var cRaw = localStorage.getItem(lk);
+            if(cRaw){
+              var cParsed = JSON.parse(cRaw);
+              if(Array.isArray(cParsed) && cParsed.length > 0){
+                restored = cParsed;
+                break;
+              }
+            }
+          }
+        }
+      }
     } catch(e){}
 
     if(restored && restored.length > 0){
@@ -1389,15 +1409,16 @@
     }
   }
 
-  function persistCompanions(){
+  function persistCompanions(customList){
     var state = global.state || {};
     if(!state.profile || !state.profile.id) return;
     var uid = state.profile.id;
-    var list = state.profile.companions || [];
+    var list = (Array.isArray(customList) && customList.length) ? customList : ((state.profile && state.profile.companions) || []);
 
     // 1순위: localStorage 0ms 동기식 영구 저장 (새로고침 시 100% 무손실 복구)
     try {
       localStorage.setItem(getCompanionsStorageKey(), JSON.stringify(list));
+      localStorage.setItem(COMPANIONS_STORAGE_PREFIX + uid, JSON.stringify(list));
     } catch(e){
       console.warn('[동반자] localStorage 백업 오류:', e);
     }
@@ -1962,6 +1983,11 @@
     updateDmUnreadBadge: updateDmUnreadBadge,
     getDmUnreadStatus: getDmUnreadStatus,
     showGuestSoftAuthGate: showGuestSoftAuthGate,
+    persistCompanions: persistCompanions,
+    markDmRoomRead: markDmRoomRead,
+    getDmReadMap: getDmReadMap,
+    _lastDmMessageMap: _lastDmMessageMap,
+    _unreadPeerMap: _unreadPeerMap,
     ALL_SEARCHABLE_USERS: []
   };
 
