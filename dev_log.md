@@ -4351,3 +4351,23 @@
   - `npm test` 294개 스모크 테스트 100% ALL PASS.
   - Tri-Sync 100% 무결성 유지 (517/517 linked).
 ---
+
+## [2026-09-17 15:45] #TASK-ES-153-SILENT 구글 캘린더 일정 저장 시 계정 선택창 팝업 원천 차단 및 백그라운드 무음 동기화
+- **배경 및 의도**:
+  - 상민님 피드백 ("새 일정추가, 저장을 누르면 구글계정선택창이 뜬다? 이미 연동이 되어 있는데? 이것도 반영해서 수정했나?").
+  - 원인 분석: 일정 저장 시 `gcalAutoSync`에 의해 백그라운드로 `syncAllToGoogleCalendar()`가 실행되는데, 토큰 만료 또는 미보유 시 무조건 `requestGoogleToken()`을 호출하여 불필요한 구글 계정 선택 팝업이 뜸. 또한 `requestAccessToken`에 `hint: googleCalendarEmail`이 없어서 다중 계정 브라우저에서 계정 선택창이 강제 노출됨.
+- **주요 수정 및 해결 내역**:
+  1. **백그라운드 무음 동기화 모드 (`interactive: false`) 분리**:
+     - `getGoogleAccessToken(interactive)`에서 `!interactive`일 때 유효 토큰이 없으면 `requestGoogleToken()`을 강제 호출하지 않고 `null` 반환.
+     - 일정 저장 핸들러, 휴지통 원복 핸들러, 캘린더 화면 렌더링 시에는 `syncAllToGoogleCalendar(false)`로 호출하여 팝업 0회 무음 처리.
+     - 아워골 내부 저장은 지체 없이 즉시 100% 완료.
+  2. **계정 선택창 건너뛰기 `hint: googleCalendarEmail` 탑재**:
+     - 연동된 이메일 계정이 있을 경우 `reqOpts.hint = gEmail`을 구글 GIS에 전달하여, 계정 선택창 없이 기존 연동 계정으로 다이렉트 자동 인증.
+  3. **수동 [지금 동기화] 인터랙티브 배선**:
+     - 캘린더 상단 배너 `#calBannerSyncBtn` 및 설정 화면 `#gcalSyncNowBtn` 클릭 시 `syncAllToGoogleCalendar(true)`로 호출하여, 필요 시에만 사용자가 의도한 시점에 인증창 팝업 실행.
+- **검증 결과**:
+  - `npm test` 295개 스모크 테스트 100% ALL PASS (0 failures).
+  - `verify-integrity-gate.js` 17개 헌법 게이트 100% ALL PASS.
+  - `sw.js` 캐시명 `ourgoal-shell-v20260917-gcal-silent-sync` 갱신.
+---
+

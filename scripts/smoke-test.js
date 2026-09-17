@@ -6090,6 +6090,24 @@ check('compliance: [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템�
   assert.ok(swSrc.includes('ourgoal-shell-v20260917-es155'), 'sw.js 캐시 네임 es155 갱신');
 });
 
+/* ============ [#TASK-ES-153-SILENT] 구글 캘린더 일정 저장 시 계정 선택창 팝업 원천 차단 및 백그라운드 무음 동기화 검증 ============ */
+check('compliance: [#TASK-ES-153-SILENT] 구글 캘린더 일정 저장 시 계정 선택창 팝업 원천 차단 및 백그라운드 무음 동기화 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. requestGoogleToken 내 다중 계정 선택창 건너뛰기 hint 파라미터 탑재 검증
+  assert.ok(indexSrc.includes('reqOpts.hint = gEmail'), 'requestGoogleToken 내 기존 연동 이메일 hint 파라미터 전달');
+
+  // 2. getGoogleAccessToken 백그라운드 무음 모드(interactive: false) 검증
+  assert.ok(indexSrc.includes('async function getGoogleAccessToken(interactive)'), 'getGoogleAccessToken interactive 매개변수 지원');
+  assert.ok(indexSrc.includes('if(!interactive) return null;'), '백그라운드 호출 시 팝업 강제 실행 원천 차단');
+
+  // 3. 일정 저장 핸들러에서 syncAllToGoogleCalendar(false) 백그라운드 호출 검증
+  assert.ok(indexSrc.includes('syncAllToGoogleCalendar(false)'), '일정 저장 시 무음 백그라운드 동기화 호출');
+
+  // 4. 유저가 직접 누르는 버튼(배너, 설정창)에서 syncAllToGoogleCalendar(true) 인터랙티브 호출 검증
+  assert.ok(indexSrc.includes('syncAllToGoogleCalendar(true)'), '수동 [지금 동기화] 클릭 시 인터랙티브 인증 호출');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
