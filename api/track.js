@@ -399,11 +399,13 @@ var TYPE_LABELS = {
   feature: '새로운 기능 제안',
   account: '계정/보안 관련',
   evaluation: '앱 평가/피드백',
+  item_report: '잇템 불법/유해 신고',
   other: '기타 문의사항'
 };
 
 async function handleInquiry(sb, body, req, res) {
   var isAppEval = body.type === 'app_evaluation' || !!body.evaluation;
+  var isItemReport = body.inquiryType === 'item_report' || body.type === 'item_report';
   var evalData = body.evaluation || {};
   var evalScore = (evalData.score !== undefined && evalData.score !== null && !isNaN(evalData.score)) ? Number(evalData.score) : null;
   var evalPros = typeof evalData.pros === 'string' ? evalData.pros.trim() : '';
@@ -425,7 +427,20 @@ async function handleInquiry(sb, body, req, res) {
     content = evalParts.join('\n');
   }
 
-  var inquiryType = isAppEval ? 'evaluation' : (body.inquiryType || 'other');
+  // #TASK-ES-179: 잇템 불법/유해 링크 신고 데이터인 경우 리포트 본문 자동 조립
+  var repData = body.reportData || {};
+  if (isItemReport && repData.itemName) {
+    var repParts = [];
+    repParts.push('[잇템 불법·유해 링크 신고]');
+    repParts.push('• 대상 잇템: ' + (repData.itemName || '-'));
+    repParts.push('• 등록 유저: ' + (repData.itemOwner || '-'));
+    repParts.push('• 구매 링크: ' + (repData.itemUrl || '-'));
+    repParts.push('• 신고 사유: ' + (repData.reasonLabel || repData.reason || '-'));
+    if (content) repParts.push('• 상세 설명: ' + content);
+    content = repParts.join('\n');
+  }
+
+  var inquiryType = isAppEval ? 'evaluation' : (isItemReport ? 'item_report' : (body.inquiryType || 'other'));
   var replyEmail = typeof body.replyEmail === 'string' ? body.replyEmail.trim().slice(0, 100) : '';
   var userId = typeof body.userId === 'string' ? body.userId.trim() : '';
   var userNickname = typeof body.userNickname === 'string' ? body.userNickname.trim() : (typeof body.userName === 'string' ? body.userName.trim() : '익명 유저');
@@ -433,14 +448,16 @@ async function handleInquiry(sb, body, req, res) {
   var appVersion = body.appVersion || 'v1.0.0';
 
   if (!content) {
-    return res.status(400).json({ ok: false, error: '문의 또는 평가 내용을 입력해주세요.' });
+    return res.status(400).json({ ok: false, error: '문의 또는 신고 내용을 입력해주세요.' });
   }
 
-  var typeLabel = TYPE_LABELS[inquiryType] || (isAppEval ? '앱 평가/피드백' : '기타 문의사항');
+  var typeLabel = TYPE_LABELS[inquiryType] || (isAppEval ? '앱 평가/피드백' : (isItemReport ? '잇템 불법/유해 신고' : '기타 문의사항'));
   var nowIso = new Date().toISOString();
   var summaryTitle = isAppEval
     ? ('[앱 평가] ⭐ ' + (evalScore !== null ? evalScore + '점' : '점수미기재') + ' - ' + (evalCeo || evalPros || evalImp || '사용자 평가').slice(0, 20).replace(/[\r\n]+/g, ' ') + ' (' + userNickname + ')')
-    : ('[' + typeLabel + '] ' + content.slice(0, 25).replace(/[\r\n]+/g, ' ') + (content.length > 25 ? '...' : '') + ' (' + userNickname + ')');
+    : (isItemReport
+      ? ('[🚨 잇템 신고] ' + (repData.itemName || '아이템').slice(0, 20) + ' (' + (repData.reasonLabel || '신고') + ') - ' + userNickname)
+      : ('[' + typeLabel + '] ' + content.slice(0, 25).replace(/[\r\n]+/g, ' ') + (content.length > 25 ? '...' : '') + ' (' + userNickname + ')'));
 
   var results = { supabase: false, notion: false, telegram: false };
 
@@ -545,14 +562,26 @@ async function handleInquiry(sb, body, req, res) {
            '• 접수 시각: ' + nowIso.replace('T', ' ').slice(0, 19) + '\n\n' +
            '[평가 리포트 상세]\n' + content + '\n\n' +
            '👉 노션 원장: https://app.notion.com/p/' + notionDbId.replace(/-/g, ''))
-        : ('📩 [아워골 고객 문의/오류 제보 접수]\n\n' +
-           '• 유형: ' + typeLabel + '\n' +
-           '• 작성자: ' + userNickname + (userId ? ' (' + userId.slice(0, 8) + '...)' : '') + '\n' +
-           '• 회신 이메일: ' + (replyEmail || '미입력(익명)') + '\n' +
-           '• 앱 버전: ' + appVersion + '\n' +
-           '• 접수 시각: ' + nowIso.replace('T', ' ').slice(0, 19) + '\n\n' +
-           '[문의 내용]\n' + content + '\n\n' +
-           '👉 노션 원장: https://app.notion.com/p/' + notionDbId.replace(/-/g, ''));
+        : (isItemReport
+          ? ('🚨 [아워골 잇템 불법/유해 링크 신고 접수]\n\n' +
+             '• 대상 아이템: ' + (repData.itemName || '-') + '\n' +
+             '• 등록 유저: ' + (repData.itemOwner || '-') + '\n' +
+             '• 구매 링크: ' + (repData.itemUrl || '-') + '\n' +
+             '• 신고 사유: ' + (repData.reasonLabel || repData.reason || '-') + '\n' +
+             '• 상세 사유: ' + (content || '-') + '\n' +
+             '• 신고자: ' + userNickname + (userId ? ' (' + userId.slice(0, 8) + '...)' : '') + '\n' +
+             '• 회신 이메일: ' + (replyEmail || '미입력(익명)') + '\n' +
+             '• 앱 버전: ' + appVersion + '\n' +
+             '• 접수 시각: ' + nowIso.replace('T', ' ').slice(0, 19) + '\n\n' +
+             '👉 노션 원장: https://app.notion.com/p/' + notionDbId.replace(/-/g, ''))
+          : ('📩 [아워골 고객 문의/오류 제보 접수]\n\n' +
+             '• 유형: ' + typeLabel + '\n' +
+             '• 작성자: ' + userNickname + (userId ? ' (' + userId.slice(0, 8) + '...)' : '') + '\n' +
+             '• 회신 이메일: ' + (replyEmail || '미입력(익명)') + '\n' +
+             '• 앱 버전: ' + appVersion + '\n' +
+             '• 접수 시각: ' + nowIso.replace('T', ' ').slice(0, 19) + '\n\n' +
+             '[문의 내용]\n' + content + '\n\n' +
+             '👉 노션 원장: https://app.notion.com/p/' + notionDbId.replace(/-/g, '')));
 
       var tgRes = await fetch('https://api.telegram.org/bot' + tgToken + '/sendMessage', {
         method: 'POST',
@@ -574,7 +603,11 @@ async function handleInquiry(sb, body, req, res) {
 
   return res.status(200).json({
     ok: true,
-    message: isAppEval ? '소중한 평가가 접수되었습니다. 감사합니다! ⭐' : '문의가 성공적으로 접수되었습니다. 신속히 검토하겠습니다.',
+    message: isAppEval
+      ? '소중한 평가가 접수되었습니다. 감사합니다! ⭐'
+      : (isItemReport
+        ? '신고가 정상 접수되었습니다. 신속히 검토하여 조치하겠습니다.'
+        : '문의가 성공적으로 접수되었습니다. 신속히 검토하겠습니다.'),
     results: results
   });
 }
