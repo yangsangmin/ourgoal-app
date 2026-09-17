@@ -6519,7 +6519,30 @@ check('compliance: [#TASK-ES-166] 활용법 내 아바타 전용 탭 최우선(�
 
   // 5. ui.css 및 sw.js 캐시 검증
   assert.ok(cssSrc.includes('.tab-guide-nav-bar'), 'ui.css .tab-guide-nav-bar 스타일');
-  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es166'), 'sw.js es166 캐시 갱신');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es166') || swSrc.includes('ourgoal-shell-v20260917-es167'), 'sw.js es166/es167 캐시 갱신');
+});
+
+/* ============ [#TASK-ES-167] 아바타 페르소나 사용자 노출 '77종' 전면 배제·'320종' 단일화 및 영구 금지 헌법 규제 검증 ============ */
+check('compliance: [#TASK-ES-167] 아바타 페르소나 사용자 노출 \'77종\' 전면 배제·\'320종\' 단일화 및 영구 금지 헌법 규제 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const promptSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'promptgen.js'), 'utf8');
+  const rulesSrc = fs.readFileSync(path.join(__dirname, '..', 'docs', 'rules', 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. index.html 가이드 허브 카피 내 320종 페르소나 풀 정규화 및 77종 배제 검증
+  assert.ok(indexSrc.includes('320종 페르소나 풀과 퍼스널 컬러 합성'), '가이드 허브 내 320종 페르소나 표기 확인');
+  assert.ok(!indexSrc.includes('77종 바디 풀'), '가이드 허브 내 레거시 77종 바디 풀 표현 완전 삭제');
+
+  // 2. api/promptgen.js 비전 프롬프트 내 320종 정규화 검증
+  assert.ok(promptSrc.includes('320종 3등신 캐릭터 바디·페르소나에 완벽히 호환'), 'Gemini 비전 인스트럭션 320종 캐릭터 바디·페르소나 표기 확인');
+  assert.ok(!promptSrc.includes('77종 3등신 캐릭터 바디에 완벽히'), '비전 인스트럭션 내 77종 표현 완전 삭제');
+
+  // 3. 최고 헌법 제10조 제4항/제5항 명문화 검증
+  assert.ok(rulesSrc.includes('제4항 [아바타 페르소나 \'77종/77가지\' 사용자 노출 전면 영구 금지]'), '헌법 제10조 제4항 77종 영구 금지 명문화 확인');
+  assert.ok(rulesSrc.includes('제5항 [아바타 페르소나 \'320종\' 단일 표기 강제]'), '헌법 제10조 제5항 320종 단일 표기 강제 명문화 확인');
+
+  // 4. sw.js 캐시 es167 갱신 검증
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es167'), 'sw.js es167 캐시 갱신 확인');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
