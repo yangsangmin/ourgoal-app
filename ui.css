@@ -3111,3 +3111,149 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   filter: brightness(0.95);
 }
 
+/* ========================================================
+   [#TASK-ES-146] 홈 탭 평가해주기 배너 & 90% 대형 평가 팝업
+   ======================================================== */
+.home-eval-banner-box {
+  margin: 16px 0 10px;
+  width: 100%;
+}
+.eval-banner-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.12) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 12px;
+  color: var(--ink);
+  font-size: .875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+  box-sizing: border-box;
+}
+.eval-banner-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+}
+.eval-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.eval-modal-sheet {
+  width: 90vw;
+  max-width: 680px;
+  height: 88vh;
+  max-height: 88vh;
+  background: var(--card);
+  border-radius: 18px;
+  border: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+}
+.eval-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface-2);
+}
+.eval-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 1.6rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+  line-height: 1;
+}
+.eval-modal-body {
+  padding: 18px 20px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.eval-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.eval-field-label {
+  font-size: .8125rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.eval-textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: .84rem;
+  resize: vertical;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.eval-num-input {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  background: var(--surface-2);
+  color: var(--ink);
+  box-sizing: border-box;
+}
+
+/* ========================================================
+   [#TASK-ES-147] 목표 탭 '목표만' 이격 배치 및 카드 뷰
+   ======================================================== */
+.goals-only-wrap {
+  margin-left: 14px;
+}
+.goal-milestone-overview-card:hover {
+  border-color: var(--accent) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* ========================================================
+   [#TASK-ES-148] 스톱워치 표 시간기입 마이크로 카피
+   ======================================================== */
+.sw-inject-hint {
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+  line-height: 1.4;
+}
+
+/* ========================================================
+   [#TASK-ES-149] 팀 목표 가이드 소멸 안내문구
+   ======================================================== */
+.guide-vanish-hint {
+  font-size: 0.8125rem;
+  color: var(--ink-faint);
+  font-weight: 400;
+}
+
+/* ========================================================
+   [#TASK-ES-150] 아바타 레벨업 대형 팝업
+   ======================================================== */
+.avatar-large-preview-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+}
+
+

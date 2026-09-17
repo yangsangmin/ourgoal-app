@@ -219,6 +219,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <button class="btn btn-secondary" id="homeChallengeRoomBtn" type="button">내 성장 확인하기</button>
         <button class="mz-btn" id="mzShareBtn" type="button">내 성장 자랑하기</button>
       </div>
+
+      <!-- ⑥ 아워골 평가해주기 상시 배너 (#TASK-ES-146, CORE_IDS 보호) -->
+      <div id="homeEvalBanner" class="home-eval-banner-box">
+        <button type="button" class="eval-banner-btn" id="btnOpenEvalModal">
+          <span style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:1.2rem;">⭐</span>
+            <span><b>아워골 평가해주기</b> <span style="font-size:.78rem;font-weight:400;color:var(--ink-soft);">(100점 평가 & 피드백)</span></span>
+          </span>
+          <span style="font-size:.875rem;color:var(--ink-soft);">👉 작성하기</span>
+        </button>
+      </div>
     </section>
 
     <!-- GOALS -->
@@ -843,6 +854,99 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 </div>
 <div class="toast" id="toast"></div>
 
+<!-- #TASK-ES-146: 아워골 90% 평가 팝업 모달 -->
+<div id="appEvaluationModal" class="eval-modal-backdrop" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="evalModalTitle">
+  <div class="eval-modal-sheet">
+    <div class="eval-modal-header">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:1.3rem;">⭐</span>
+        <h3 id="evalModalTitle" style="margin:0;font-size:1.125rem;color:var(--ink);">아워골 솔직 평가 & 피드백</h3>
+      </div>
+      <button type="button" class="eval-modal-close" id="btnAppEvalClose" aria-label="닫기">&times;</button>
+    </div>
+    <div class="eval-modal-body">
+      <p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 6px;line-height:1.5;">
+        여러분의 솔직한 피드백이 아워골을 더 훌륭하게 만듭니다. 가감 없이 자유롭게 적어주세요!
+      </p>
+      
+      <div class="eval-field-group">
+        <label for="evalScoreInput" class="eval-field-label">1. 아워골 종합 점수 평가 (100점 만점)</label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <input type="number" id="evalScoreInput" min="0" max="100" placeholder="0 ~ 100" class="eval-num-input" style="max-width:140px;font-size:1rem;font-weight:700;">
+          <span style="font-size:.875rem;color:var(--ink);font-weight:700;">점 / 100점</span>
+        </div>
+      </div>
+
+      <div class="eval-field-group">
+        <label for="evalProsInput" class="eval-field-label">2. 아워골의 장점 (좋았던 점)</label>
+        <textarea id="evalProsInput" class="eval-textarea" rows="2" placeholder="예: 목표를 마일스톤과 세부 할일로 쪼개 관리하기 편리해요."></textarea>
+      </div>
+
+      <div class="eval-field-group">
+        <label for="evalConsInput" class="eval-field-label">3. 아워골의 단점 (아쉬웠던 점)</label>
+        <textarea id="evalConsInput" class="eval-textarea" rows="2" placeholder="예: 초기 설정이나 세부 기능 안내가 더 친절했으면 좋겠어요."></textarea>
+      </div>
+
+      <div class="eval-field-group">
+        <label for="evalImprovementsInput" class="eval-field-label">4. 추가 및 개선 요청</label>
+        <textarea id="evalImprovementsInput" class="eval-textarea" rows="2" placeholder="예: 워치 연동, 주간 리포트 이메일 발송 등"></textarea>
+      </div>
+
+      <div class="eval-field-group">
+        <label for="evalCeoMsgInput" class="eval-field-label">5. 대표에게 하고 싶은 말</label>
+        <textarea id="evalCeoMsgInput" class="eval-textarea" rows="3" placeholder="진짜 맘대로 써주셔도 됩니다. 신고안합니다"></textarea>
+      </div>
+
+      <div style="margin-top:8px;">
+        <button type="button" class="btn btn-primary" id="btnSubmitAppEval" style="width:100%;padding:12px 0;font-size:.95rem;font-weight:800;">평가 제출하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- #TASK-ES-150: 아바타 레벨업 대형 팝업 모달 -->
+<div id="avatarLevelUpModal" class="eval-modal-backdrop" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="avatarLevelUpTitle">
+  <div class="eval-modal-sheet" style="max-width:440px;height:auto;max-height:90vh;">
+    <div class="eval-modal-header">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:1.3rem;">🎉</span>
+        <h3 id="avatarLevelUpTitle" style="margin:0;font-size:1.125rem;color:var(--ink);">LEVEL UP! 레벨 달성</h3>
+      </div>
+      <button type="button" class="eval-modal-close" id="btnAvatarLevelUpClose" aria-label="닫기">&times;</button>
+    </div>
+    <div class="eval-modal-body" style="align-items:center;text-align:center;">
+      <div id="avatarLevelUpBadge" style="margin-bottom:6px;"></div>
+      <div id="avatarLevelUpImgContainer" class="avatar-large-preview-box" style="width:220px;height:220px;border-radius:20px;overflow:hidden;border:3px solid var(--accent);box-shadow:0 8px 24px rgba(0,0,0,0.15);margin:0 auto 10px;"></div>
+      <div id="avatarLevelUpSubtitle" style="font-size:.875rem;color:var(--ink-soft);margin-bottom:10px;">축하합니다! 새로운 레벨에 도달했습니다!</div>
+      
+      <!-- 성장 성향 설정 (#TASK-ES-150) -->
+      <div class="eval-field-group" style="width:100%;text-align:left;background:var(--surface-2);padding:10px 12px;border-radius:12px;border:1px solid var(--rule);box-sizing:border-box;">
+        <label for="avatarGrowthPromptInput" class="eval-field-label" style="display:flex;align-items:center;gap:4px;">
+          <span>✨ 아바타 성장 성향 (스타일 키워드)</span>
+        </label>
+        <div style="font-size:.72rem;color:var(--ink-faint);margin-bottom:4px;">아바타가 성장/진화할 때 스타일이 반영돼요 (예: 더 강하게, 잘생기게, 이쁘게)</div>
+        <div style="display:flex;gap:6px;">
+          <input type="text" id="avatarGrowthPromptInput" placeholder="예: 더 강하게, 잘생기게, 지적으로" style="flex:1;font-size:.8125rem;padding:6px 10px;border-radius:8px;border:1px solid var(--rule);background:var(--card);color:var(--ink);">
+          <button type="button" class="btn btn-secondary btn-sm" id="btnSaveGrowthPrompt" style="white-space:nowrap;font-size:.78125rem;">성향 저장</button>
+        </div>
+      </div>
+
+      <!-- 액션 버튼 3종 (SNS 공유, 이미지 저장, 확인 닫기) -->
+      <div style="display:flex;flex-direction:column;gap:8px;width:100%;margin-top:12px;">
+        <div style="display:flex;gap:8px;width:100%;">
+          <button type="button" class="btn btn-secondary" id="btnShareLevelUp" style="flex:1;font-size:.84rem;display:flex;align-items:center;justify-content:center;gap:4px;">
+            <span>📱 SNS 공유</span>
+          </button>
+          <button type="button" class="btn btn-secondary" id="btnSaveLevelUpImage" style="flex:1;font-size:.84rem;display:flex;align-items:center;justify-content:center;gap:4px;">
+            <span>💾 이미지 저장</span>
+          </button>
+        </div>
+        <button type="button" class="btn btn-primary" id="btnConfirmLevelUpClose" style="width:100%;font-size:.9rem;font-weight:700;padding:10px 0;">확인</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- 테마 탐색 & 커스텀 생성 바텀시트 모달 (#TASK-ES-028) -->
 <div id="themeSelectorModal" class="theme-modal-backdrop" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="themeModalTitle">
   <div class="theme-modal-sheet">
@@ -1448,15 +1552,158 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       };
     }
   }
+  /* ============ [#TASK-ES-150] 아바타 레벨업 대형 팝업 & 성장 성향 키워드 ============ */
+  function filterHarmfulWords(text){
+    if(!text) return { clean: '', hasHarmful: false };
+    var harmfulRegex = /씨발|시발|병신|개새|지랄|존나|썅|꺼져|죽어|자살|섹스|야동|보지|자지|바보|멍청이/gi;
+    if(harmfulRegex.test(text)){
+      return { clean: text.replace(harmfulRegex, '***'), hasHarmful: true };
+    }
+    return { clean: text, hasHarmful: false };
+  }
+
+  function openAvatarLevelUpModal(level){
+    var m = document.getElementById('avatarLevelUpModal');
+    if(!m) return;
+    var xpTotal = (state.profile && state.profile.settings && state.profile.settings.xp && state.profile.settings.xp.total) || 0;
+    var curLv = level || levelForXP(xpTotal);
+    
+    var titleEl = document.getElementById('avatarLevelUpTitle');
+    if(titleEl) titleEl.textContent = '🎉 LEVEL UP! Lv.' + curLv + ' 달성!';
+    
+    var badgeEl = document.getElementById('avatarLevelUpBadge');
+    if(badgeEl) badgeEl.innerHTML = '<span class="badge" style="background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;font-size:.9rem;padding:4px 14px;border-radius:12px;font-weight:800;display:inline-block;">Lv.' + curLv + ' 마스터 달성</span>';
+    
+    var imgContainer = document.getElementById('avatarLevelUpImgContainer');
+    if(imgContainer){
+      var av = state.profile && state.profile.avatar;
+      if(state.profile && state.profile.avatarImage){
+        imgContainer.innerHTML = '<img src="' + state.profile.avatarImage + '" alt="아바타" style="width:100%;height:100%;object-fit:cover;">';
+      } else if(window.OurgoalAvatar && window.OurgoalAvatar.renderAvatarHtml){
+        imgContainer.innerHTML = window.OurgoalAvatar.renderAvatarHtml(av, 220);
+      } else {
+        imgContainer.innerHTML = '<span style="font-size:5rem;">🧑‍🚀</span>';
+      }
+    }
+
+    var promptInput = document.getElementById('avatarGrowthPromptInput');
+    if(promptInput){
+      var curPrompt = (state.profile && state.profile.settings && state.profile.settings.avatarGrowthPrompt) || '';
+      promptInput.value = curPrompt;
+    }
+
+    m.style.display = 'flex';
+  }
+
+  function closeAvatarLevelUpModal(){
+    var m = document.getElementById('avatarLevelUpModal');
+    if(m) m.style.display = 'none';
+  }
+  window.openAvatarLevelUpModal = openAvatarLevelUpModal;
+  window.closeAvatarLevelUpModal = closeAvatarLevelUpModal;
+
+  // 아바타 레벨업 모달 이벤트 배선 (#TASK-ES-150)
+  var btnAvLvClose = document.getElementById('btnAvatarLevelUpClose');
+  if(btnAvLvClose) btnAvLvClose.addEventListener('click', closeAvatarLevelUpModal);
+  var btnAvLvConfirm = document.getElementById('btnConfirmLevelUpClose');
+  if(btnAvLvConfirm) btnAvLvConfirm.addEventListener('click', closeAvatarLevelUpModal);
+  var avLvModalElem = document.getElementById('avatarLevelUpModal');
+  if(avLvModalElem){
+    avLvModalElem.addEventListener('click', function(e){
+      if(e.target === avLvModalElem) closeAvatarLevelUpModal();
+    });
+  }
+
+  var btnSaveGrowth = document.getElementById('btnSaveGrowthPrompt');
+  if(btnSaveGrowth){
+    btnSaveGrowth.addEventListener('click', function(){
+      var promptInp = document.getElementById('avatarGrowthPromptInput');
+      var rawVal = promptInp ? promptInp.value.trim() : '';
+      var res = filterHarmfulWords(rawVal);
+      if(res.hasHarmful){
+        toast('부적절한 단어가 포함되어 정화되었습니다.');
+        if(promptInp) promptInp.value = res.clean;
+      }
+      if(!state.profile.settings) state.profile.settings = {};
+      state.profile.settings.avatarGrowthPrompt = res.clean;
+      saveProfile();
+      toast('아바타 성장 성향이 저장되었습니다 ✨');
+    });
+  }
+
+  var btnShareLv = document.getElementById('btnShareLevelUp');
+  if(btnShareLv){
+    btnShareLv.addEventListener('click', function(){
+      var xpTotal = (state.profile && state.profile.settings && state.profile.settings.xp && state.profile.settings.xp.total) || 0;
+      var curLv = levelForXP(xpTotal);
+      var shareText = '🎉 아워골에서 레벨 ' + curLv + '을(를) 달성했어요! 함께 목표를 달성해요 🚀\nhttps://ourgoal-app.vercel.app';
+      if(navigator.share){
+        navigator.share({ title: '아워골 레벨업 달성!', text: shareText, url: 'https://ourgoal-app.vercel.app' }).catch(function(){});
+      } else if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(shareText).then(function(){ toast('공유 문구가 복사되었습니다! 📋'); });
+      } else {
+        toast('공유 문구가 준비되었습니다: ' + shareText);
+      }
+    });
+  }
+
+  var btnSaveLvImg = document.getElementById('btnSaveLevelUpImage');
+  if(btnSaveLvImg){
+    btnSaveLvImg.addEventListener('click', function(){
+      try {
+        var xpTotal = (state.profile && state.profile.settings && state.profile.settings.xp && state.profile.settings.xp.total) || 0;
+        var curLv = levelForXP(xpTotal);
+        var canvas = document.createElement('canvas');
+        canvas.width = 440;
+        canvas.height = 440;
+        var ctx = canvas.getContext('2d');
+        var grad = ctx.createLinearGradient(0, 0, 440, 440);
+        grad.addColorStop(0, '#4f46e5');
+        grad.addColorStop(1, '#9333ea');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 440, 440);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 24px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('OURGOAL LEVEL UP!', 220, 60);
+        ctx.font = 'bold 36px sans-serif';
+        ctx.fillText('Lv.' + curLv, 220, 110);
+        ctx.font = '16px sans-serif';
+        ctx.fillText((state.profile && state.profile.name ? state.profile.name : '크루원') + '님의 눈부신 성장', 220, 145);
+        ctx.font = '60px sans-serif';
+        ctx.fillText('✨ 🧑‍🚀 ✨', 220, 240);
+        var promptText = (state.profile && state.profile.settings && state.profile.settings.avatarGrowthPrompt) || '';
+        if(promptText){
+          ctx.font = 'italic 15px sans-serif';
+          ctx.fillText('"' + promptText + '"', 220, 310);
+        }
+        ctx.font = '14px sans-serif';
+        ctx.fillText('https://ourgoal-app.vercel.app', 220, 400);
+
+        var link = document.createElement('a');
+        link.download = 'ourgoal_avatar_lv' + curLv + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        toast('아바타 레벨업 카드가 저장되었습니다! 💾');
+      } catch(imgErr){
+        console.error('[btnSaveLevelUpImage error]', imgErr);
+        toast('이미지 저장 중 오류가 발생했습니다.');
+      }
+    });
+  }
+
   function showLevelUpBanner(level){
     var slot = document.getElementById('levelUpBannerSlot');
-    if(!slot) return;
     if(navigator.vibrate) navigator.vibrate([12,40,24]);
     burstConfetti(window.innerWidth/2, 80, 14);
-    slot.innerHTML = '<div class="notify-banner levelup"><div class="nb-txt"><b>레벨 업!</b>Lv.'+level+'이 됐어요. 계속 이어가 볼까요?</div><button id="lvBannerClose" type="button">확인</button></div>';
-    var closeBtn = document.getElementById('lvBannerClose');
-    if(closeBtn) closeBtn.addEventListener('click', function(){ slot.innerHTML = ''; });
-    setTimeout(function(){ if(slot.innerHTML) slot.innerHTML = ''; }, 6000);
+    if(slot){
+      slot.innerHTML = '<div class="notify-banner levelup"><div class="nb-txt"><b>레벨 업!</b>Lv.'+level+'이 됐어요. 계속 이어가 볼까요?</div><button id="lvBannerClose" type="button">확인</button></div>';
+      var closeBtn = document.getElementById('lvBannerClose');
+      if(closeBtn) closeBtn.addEventListener('click', function(){ slot.innerHTML = ''; });
+      setTimeout(function(){ if(slot.innerHTML) slot.innerHTML = ''; }, 6000);
+    }
+    // #TASK-ES-150: 레벨업 대형 팝업 자동 오픈
+    openAvatarLevelUpModal(level);
   }
 
   /* ============ 뱃지 컬렉션 (명예의 전당) ============ */
@@ -8461,6 +8708,84 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
   }
 
+  /* ============ [#TASK-ES-146] 아워골 평가해주기 90% 팝업 ============ */
+  function openAppEvaluationModal(){
+    var m = document.getElementById('appEvaluationModal');
+    if(!m) return;
+    m.style.display = 'flex';
+  }
+  function closeAppEvaluationModal(){
+    var m = document.getElementById('appEvaluationModal');
+    if(!m) return;
+    m.style.display = 'none';
+  }
+  window.openAppEvaluationModal = openAppEvaluationModal;
+  window.closeAppEvaluationModal = closeAppEvaluationModal;
+
+  var btnEvalBanner = document.getElementById('btnOpenEvalModal');
+  if(btnEvalBanner){
+    btnEvalBanner.addEventListener('click', openAppEvaluationModal);
+  }
+  var btnEvalClose = document.getElementById('btnAppEvalClose');
+  if(btnEvalClose){
+    btnEvalClose.addEventListener('click', closeAppEvaluationModal);
+  }
+  var modalEvalElem = document.getElementById('appEvaluationModal');
+  if(modalEvalElem){
+    modalEvalElem.addEventListener('click', function(e){
+      if(e.target === modalEvalElem) closeAppEvaluationModal();
+    });
+  }
+  var btnSubmitEval = document.getElementById('btnSubmitAppEval');
+  if(btnSubmitEval){
+    btnSubmitEval.addEventListener('click', function(){
+      var scoreVal = parseInt((document.getElementById('evalScoreInput') ? document.getElementById('evalScoreInput').value : ''), 10);
+      var prosVal = (document.getElementById('evalProsInput') ? document.getElementById('evalProsInput').value : '').trim();
+      var consVal = (document.getElementById('evalConsInput') ? document.getElementById('evalConsInput').value : '').trim();
+      var impVal = (document.getElementById('evalImprovementsInput') ? document.getElementById('evalImprovementsInput').value : '').trim();
+      var ceoVal = (document.getElementById('evalCeoMsgInput') ? document.getElementById('evalCeoMsgInput').value : '').trim();
+
+      if(isNaN(scoreVal) && !prosVal && !consVal && !impVal && !ceoVal){
+        toast('평가 항목을 최소 하나 이상 입력해주세요.');
+        return;
+      }
+      if(!isNaN(scoreVal) && (scoreVal < 0 || scoreVal > 100)){
+        toast('종합 점수는 0~100점 사이로 입력해주세요.');
+        return;
+      }
+
+      if(!state.profile.settings) state.profile.settings = {};
+      if(!Array.isArray(state.profile.settings.appEvaluations)) state.profile.settings.appEvaluations = [];
+      var evalItem = {
+        id: 'eval_' + Date.now(),
+        score: isNaN(scoreVal) ? null : scoreVal,
+        pros: prosVal,
+        cons: consVal,
+        improvements: impVal,
+        ceoMsg: ceoVal,
+        createdAt: new Date().toISOString()
+      };
+      state.profile.settings.appEvaluations.push(evalItem);
+      saveProfile();
+
+      try {
+        fetch('/api/inquiry', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'app_evaluation',
+            userId: state.profile.id,
+            userName: state.profile.name,
+            evaluation: evalItem
+          })
+        }).catch(function(){});
+      } catch(e) {}
+
+      toast('소중한 평가가 접수되었습니다. 감사합니다! ⭐');
+      closeAppEvaluationModal();
+    });
+  }
+
   document.getElementById('homeAddGoal').addEventListener('click', function(e){
     if(isModalDismissCooldown()) return;
     promptNewGoal();
@@ -10221,16 +10546,68 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             '</button>' +
           '</div>' +
         '</div>' +
-        '<div class="format-toggle" id="msViewToggle" style="max-width:320px;">' +
-          '<div class="format-opt'+(gView==='default'?' active':'')+'" data-msview="default">기본</div>' +
-          '<div class="format-opt'+(gView==='goals_only'?' active':'')+'" data-msview="goals_only">목표만</div>' +
-          '<div class="format-opt'+(gView==='milestones_only'?' active':'')+'" data-msview="milestones_only">마일스톤</div>' +
-          '<div class="format-opt'+(gView==='tasks_only'?' active':'')+'" data-msview="tasks_only">할일</div>' +
+        '<div id="msViewToggle" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">' +
+          '<div class="format-toggle" style="max-width:240px;">' +
+            '<div class="format-opt'+(gView==='default'?' active':'')+'" data-msview="default">기본</div>' +
+            '<div class="format-opt'+(gView==='milestones_only'?' active':'')+'" data-msview="milestones_only">마일스톤</div>' +
+            '<div class="format-opt'+(gView==='tasks_only'?' active':'')+'" data-msview="tasks_only">할일</div>' +
+          '</div>' +
+          '<div class="format-toggle goals-only-wrap" style="margin-left:14px;">' +
+            '<div class="format-opt'+(gView==='goals_only'?' active':'')+'" data-msview="goals_only" style="font-weight:700;">🎯 목표만</div>' +
+          '</div>' +
         '</div>' +
       '</div>' : '';
 
     var msHtml = (gView === 'goals_only') ?
-      ['<div class="card" style="padding:16px;text-align:center;color:var(--ink-soft);font-size:.84rem;background:var(--surface-2);border:1px dashed var(--rule);margin-top:6px;">목표 요약 집중 모드입니다. (마일스톤과 세부 할 일을 숨기고 목표에만 집중합니다)</div>'] :
+      [(function(){
+        var allGoals = (state.profile && state.profile.goals) || [];
+        if(!allGoals.length) return '<div class="faint" style="padding:16px;text-align:center;">등록된 목표가 없습니다.</div>';
+        return '<div class="goals-only-overview" style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">' +
+          '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);display:flex;align-items:center;justify-content:space-between;">' +
+            '<span>전체 목표 마일스톤 현황 (' + allGoals.length + '개)</span>' +
+            '<span style="font-size:.75rem;color:var(--ink-faint);font-weight:400;">카드를 클릭하면 해당 목표로 전환됩니다</span>' +
+          '</div>' +
+          allGoals.map(function(g){
+            var gMs = g.milestones || [];
+            var gDone = gMs.filter(function(m){ return m.status === 'done'; }).length;
+            var gPct = gMs.length ? Math.round((gDone / gMs.length) * 100) : 0;
+            var isCur = g.id === state.activeGoalId;
+            var d = g.deadline ? ddayMini(g.deadline) : '';
+            return '<div class="card goal-milestone-overview-card" data-selectgoal="'+g.id+'" style="padding:12px;background:var(--card);border:'+(isCur?'2px solid var(--accent)':'1px solid var(--rule)')+';border-radius:14px;cursor:pointer;transition:all .15s ease;">' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
+                '<div style="display:flex;align-items:center;gap:6px;min-width:0;">' +
+                  '<span style="font-size:1.1rem;">' + (g.icon || '🎯') + '</span>' +
+                  '<b style="font-size:.9rem;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(g.title) + '</b>' +
+                  (isCur ? '<span class="badge" style="font-size:.6875rem;background:var(--accent);color:#fff;padding:1px 6px;border-radius:6px;font-weight:700;">선택됨</span>' : '') +
+                '</div>' +
+                '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">' +
+                  d +
+                  '<span style="font-size:.8125rem;font-weight:800;color:var(--accent);">' + gPct + '%</span>' +
+                '</div>' +
+              '</div>' +
+              '<div style="width:100%;height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin-bottom:8px;">' +
+                '<div style="width:'+gPct+'%;height:100%;background:var(--accent);transition:width .25s ease;"></div>' +
+              '</div>' +
+              (gMs.length ?
+                '<div style="display:flex;flex-direction:column;gap:5px;padding-left:6px;border-left:2px solid var(--rule);margin-left:4px;">' +
+                  gMs.map(function(m){
+                    var stIcon = m.status === 'done' ? '✅' : (m.status === 'doing' ? '⏳' : '⬜');
+                    var mTasks = m.tasks || [];
+                    var tDone = mTasks.filter(function(t){ return t.done; }).length;
+                    return '<div style="display:flex;align-items:center;justify-content:space-between;font-size:.78125rem;color:var(--ink-soft);">' +
+                      '<div style="display:flex;align-items:center;gap:6px;min-width:0;">' +
+                        '<span>' + stIcon + '</span>' +
+                        '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(m.title) + '</span>' +
+                      '</div>' +
+                      '<span style="font-size:.72rem;color:var(--ink-faint);flex-shrink:0;margin-left:6px;">' + (mTasks.length ? '(' + tDone + '/' + mTasks.length + ')' : '') + '</span>' +
+                    '</div>';
+                  }).join('') +
+                '</div>' :
+                '<div class="faint" style="font-size:.75rem;">등록된 마일스톤이 없습니다.</div>') +
+            '</div>';
+          }).join('') +
+        '</div>';
+      })()] :
       (gView === 'tasks_only') ?
       [(function(){
         var allTasks = [];
@@ -10487,6 +10864,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         renderGoalsScreen();
       });
     }
+
+    /* 전체 목표 마일스톤 카드 클릭 시 목표 전환 (#TASK-ES-147) */
+    body.querySelectorAll('[data-selectgoal]').forEach(function(el){
+      el.addEventListener('click', function(){
+        var targetGid = el.dataset.selectgoal;
+        if(targetGid && targetGid !== state.activeGoalId){
+          state.activeGoalId = targetGid;
+          renderGoalsScreen();
+        }
+      });
+    });
 
     /* 선택 삭제 / 전체 삭제 (마일스톤·할 일) */
     body.querySelectorAll('[data-selms]').forEach(function(el){
@@ -11044,7 +11432,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">' +
         '<span style="font-size:1.6rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M6 3h12v6a6 6 0 0 1-12 0z"/><path d="M6 5H3v2a4 4 0 0 0 3 4"/><path d="M18 5h3v2a4 4 0 0 1-3 4"/></svg></span>' +
         '<div>' +
-          '<h3 style="margin:0;font-size:1.0625rem;color:var(--ink);">팀 목표 200% 활용 가이드</h3>' +
+          '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+            '<h3 style="margin:0;font-size:1.0625rem;color:var(--ink);">팀 목표 200% 활용 가이드</h3>' +
+            '<span class="guide-vanish-hint" style="font-size:0.8125rem;color:var(--ink-faint);font-weight:400;">* 팀 목표를 생성하면 사라짐</span>' +
+          '</div>' +
           '<p class="faint" style="margin:2px 0 0;font-size:.8125rem;">혼자 하면 작심삼일, 팀 크루들과 함께 공동 목표와 수준별 목표를 달성해보세요!</p>' +
         '</div>' +
       '</div>' +
@@ -14680,6 +15071,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<button class="btn btn-ghost btn-sm" id="swInjectBtn" type="button" style="color:var(--ink);border-color:var(--rule);font-weight:700;" title="현재 측정 시간을 표의 시간 열에 기입">표에 시간 기입</button>' +
         '</div>' +
       '</div>' +
+      '<div class="sw-inject-hint" style="margin-top:5px;font-size:0.75rem;color:var(--ink-faint);line-height:1.4;">' +
+        '💡 넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨' +
+      '</div>' +
       '<div id="swLapsList" style="display:none;margin-top:6px;font-size:.8125rem;color:var(--ink-soft);max-height:54px;overflow-y:auto;padding-top:4px;border-top:1px dashed var(--rule);"></div>' +
     '</div>';
   }
@@ -16989,7 +17383,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           }
 
           if(!targetInp){
-            toast('시간을 기입할 셀을 선택해주세요');
+            toast('넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨');
             return;
           }
 

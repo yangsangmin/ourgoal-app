@@ -4222,5 +4222,36 @@
      - `npm test`: 283개 테스트 전수 통과, 헌법 5대 핵심 검증 게이트 15종 100% ALL PASS, 전수 인터랙션(Dead-Click 0) 검증 통과.
 ---
 
+## [2026-09-17 14:00] #TASK-ES-146 ~ #TASK-ES-150 생각 메모장 5대 과제 일괄 완결
+- **배경 및 의도**:
+  - 상민님 직접 지시("다음스텝? 5개 알려줘" -> "모두 진행해").
+  - 노션 생각 메모장 13항, 04항, 12항, 11항, 10항 5건에 대한 2사이클 REQ/PLAN 설계 및 전수 구현.
+- **주요 수정 및 해결 내역**:
+  1. **#TASK-ES-146 (메모장 13항) 홈 탭 최하단 <아워골 평가해주기> 고정 배너 및 90% 팝업**:
+     - `js/customize.js`: `CORE_IDS`에 `homeEvalBanner` 등록하여 나만의 홈 구성에서 삭제/숨김 불가 보호.
+     - `index.html`: 홈 탭 최하단에 `#homeEvalBanner` 및 `#btnOpenEvalModal` 고정 배너 탑재.
+     - 90% 대형 팝업 모달 `#appEvaluationModal`: 100점 만점 점수, 장점, 단점, 추가 및 개선요청, 대표에게 하고싶은 말 5개 필드 탑재.
+     - 대표에게 하고 싶은 말 플레이스홀더: 상민님 지정 원문 `"진짜 맘대로 써주셔도 됩니다. 신고안합니다"` 100% 일치.
+     - 제출 시 `state.profile.settings.appEvaluations` 영속화 및 `/api/inquiry` 서버리스 연동.
+  2. **#TASK-ES-147 (메모장 04항) 목표 탭 '목표만' 버튼 분리 이격 배치 & 하위 마일스톤형 확인 UI**:
+     - `index.html`: `msViewToggle` 내 `[목표만]` 옵션을 `상세 ↔ 전체접기` 간격(14px)만큼 우측으로 분리 이격 배치 (`.goals-only-wrap`).
+     - `gView === 'goals_only'` 선택 시 사용자가 설정한 전체 목표를 마일스톤형 카드 블록(`goal-milestone-overview-card`)으로 수직 나열하여 진척도 및 마일스톤 목록 직관 확인.
+     - 목표 카드 클릭 시 해당 목표로 즉각 전환(`state.activeGoalId`) 연동.
+  3. **#TASK-ES-148 (메모장 12항) 맞춤 템플릿 스톱워치 표 시간기입 안내문구**:
+     - `renderStopwatchWidgetHtml`: 스톱워치/타이머 컨트롤 하단에 `💡 넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨` 마이크로카피 탑재.
+     - 셀 미선택 시 안내 토스트: `'넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨'` 출력.
+  4. **#TASK-ES-149 (메모장 11항) 팀 목표 200% 활용 가이드 안내문구**:
+     - `renderTeamGoalsEmptyGuideHtml`: '팀 목표 200% 활용 가이드' 헤더 우측에 3pt 축소 폰트로 `* 팀 목표를 생성하면 사라짐` 배지 표시.
+  5. **#TASK-ES-150 (메모장 10항) 아바타 레벨업 대형 팝업(공유·저장) 및 성장 성향 프롬프트 설정**:
+     - `openAvatarLevelUpModal`: 220px 대형 아바타 렌더링 컨테이너, SNS 공유(`btnShareLevelUp`), 이미지 저장 다운로드(`btnSaveLevelUpImage`), 확인 닫기(`btnConfirmLevelUpClose`) 3종 버튼 탑재 (Zero Dead Click 100%).
+     - 아바타 성장 성향(키워드) 입력 칸 및 유해어 필터링(`filterHarmfulWords`), `state.profile.settings.avatarGrowthPrompt` 로컬 영속화.
+     - `showLevelUpBanner` 레벨업 트리거 시 대형 팝업 자동 오픈.
+  6. **무결성 검증**:
+     - `scripts/smoke-test.js`: 컴플라이언스 테스트 5종 추가 (총 289개 테스트 0 failures 전수 통과).
+     - 헌법 5대 핵심 검증 게이트 15종 100% ALL PASS, Zero Dead Click 전수 통과.
+     - 본질 게이트 `node scripts/essence-gate.js --pre-commit` 통과.
+---
+
+
 
 
