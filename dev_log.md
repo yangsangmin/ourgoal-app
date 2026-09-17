@@ -4693,3 +4693,33 @@
      - 실서버 프로덕션(https://ourgoal-app.vercel.app) 직접 접속 실측.
      - `has320: true`, `has77: false`, 아바타 1순위 노출 물리적 증거 스크린샷 확보.
 ---
+
+## [2026-09-17 21:00] #TASK-ES-168 1:1 DM 및 전역 알림(Web Push·ServiceWorker·스마트 폴링·상단바 알림센터) 무결성 전면 고도화 및 결함 개선
+- **배경 및 의도**:
+  - 상민님 직접 지시 ("아워골 dm 등, 알림이 제대로 작동 안함. 개선해").
+  - 1:1 DM 및 전역 알림이 수신자에게 안정적으로 도달하지 못하고, 모바일(Chrome/PWA) 환경에서 `new Notification()` 생성자 호출 시 발생하는 Illegal constructor 오류 및 백그라운드 Web Push 디스패치 단절 결함을 근본적으로 해결.
+  - 상단 고정바에 알림 센터(🔔) 버튼 및 미확인 배지를 신설하여 수신된 알림 내역을 언제든 모아보고 관리할 수 있는 사용자 경험 완성.
+- **주요 수정 및 해결 내역**:
+  1. **서버 사이드 특정 유저 타깃 Web Push 디스패치 파이프라인 구축 (`api/push-dispatch.js`)**:
+     - `targetUserId` 인자 수신 분기 신설: Supabase `push_subscriptions` 테이블에서 해당 유저의 유효 구독 목록을 조회하여 VAPID Web Push 즉시 발송.
+     - 발송 결과 만료된 엔드포인트(410 Gone / 404 Not Found) 자동 정리 로직 완비.
+  2. **모바일 크롬 및 PWA 호환 알림 발송 엔진 고도화 (`js/notify-engine.js`)**:
+     - 모바일 브라우저 `new Notification()` 생성자 금지 대응: `navigator.serviceWorker.ready.then(reg => reg.showNotification(title, options))` 최우선 호출 및 데스크톱 브라우저 폴백 안전 배선.
+     - 오디오 자동재생(Autoplay) 정책 대응: 최초 사용자 제스처(click, touchstart, keydown) 감지 시 `unlockAudioContext()`를 통한 자동 AudioContext resume 배선.
+     - 알림 센터 연동 헬퍼 함수 (`getUnreadNotifications()`, `getUnreadCount()`, `markAllAsRead()`) 구현 및 전역 노출.
+  3. **1:1 DM 전송 시 Web Push 발송 연동 및 30초 스마트 폴링 루프 구축 (`js/team-invite-comm.js`)**:
+     - DM 전송(`send()`) 시 비동기로 `fetch('/api/push-dispatch')`를 호출하여 수신자가 앱을 닫았거나 백그라운드일 때도 VAPID Web Push 도달 보장.
+     - 헌법 제13조 제5항 2호 준수: 30초 주기 스마트 폴링(`startSmartDmPolling`)을 가동하여 웹소켓 끊김이나 네트워크 전환 시에도 새 DM 자동 감지 및 배지 점등.
+     - 활성 대화방 실시간 DOM 동기화: 사용자가 해당 대화방을 보고 있을 때 수신된 새 메시지를 즉시 말풍선 DOM에 추가 및 스크롤.
+  4. **상단 고정바 🔔 알림 버튼 & 알림 센터 모달 및 실시간 배지 연동 (`index.html`, `ui.css`)**:
+     - 상단바 우측에 `#topNotifBtn`(🔔) 및 미확인 알림 개수 배지 `#topNotifBadge` 배치.
+     - 알림 센터 모달(`openNotificationCenterModal()`): 최근 알림 목록 렌더링, 읽지 않은 알림 하이라이트, '모두 읽음' 및 '닫기' 액션 완비.
+     - `enterApp`, `focus`, `visibilitychange`, `updateTopBar`에 실시간 배지 동기화 바인딩.
+  5. **PWA 캐시 버전 갱신 (`sw.js`)**:
+     - 헌법 제14조 제3항 준수하여 `CACHE_NAME`을 `'ourgoal-shell-v20260917-es168'`로 최신화.
+  6. **테스트 및 검증**:
+     - `scripts/smoke-test.js`: `#TASK-ES-168` 컴플라이언스 테스트 추가.
+     - 308개 스모크 테스트 전수 100% ALL PASS (0 failures).
+     - `verify-integrity-gate.js` 18개 헌법 게이트 100% ALL PASS.
+     - 3단계 로컬 실측 (Headless Chrome CDP): 플로팅 배너 및 알림 센터 모달 렌더링 정상 검증 완료 (`scratch/step3_es168_notif_center.png`).
+---

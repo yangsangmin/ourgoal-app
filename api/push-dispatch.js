@@ -61,6 +61,53 @@ module.exports = async function handler(req, res) {
   }
 
   var sb = createClient(process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL, supabaseKey);
+
+  // [#TASK-ES-168] 특정 대상 유저 1:1 DM 및 전역 알림 즉시 푸시 발송 분기
+  if (req.method === 'POST' && req.body && req.body.targetUserId) {
+    webpush.setVapidDetails(
+      'mailto:' + (process.env.VAPID_CONTACT_EMAIL || 'admin@ourgoal.app'),
+      vapidPublic,
+      vapidPrivate
+    );
+    try {
+      var targetUserId = String(req.body.targetUserId).trim();
+      var subRes = await sb.from('push_subscriptions').select('*').eq('user_id', targetUserId);
+      if (subRes.error) throw subRes.error;
+      var subs = subRes.data || [];
+      var sentCount = 0;
+      var payload = JSON.stringify({
+        title: req.body.title || '아워골 알림',
+        body: req.body.body || '',
+        icon: req.body.icon || '/icons/icon-192.png',
+        badge: '/icons/badge-72.png',
+        url: req.body.url || '/#comm',
+        tag: req.body.tag || ('dm-' + Date.now()),
+        timestamp: Date.now()
+      });
+
+      for (var s = 0; s < subs.length; s++) {
+        var sub = subs[s];
+        try {
+          await webpush.sendNotification(
+            { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
+            payload
+          );
+          sentCount++;
+        } catch (err) {
+          var sc = err && err.statusCode;
+          if (sc === 410 || sc === 404) {
+            await sb.from('push_subscriptions').delete().eq('endpoint', sub.endpoint);
+          }
+        }
+      }
+      res.status(200).json({ ok: true, sent: sentCount, targetUserId: targetUserId });
+      return;
+    } catch (err) {
+      res.status(500).json({ error: err.message || 'instant push failed' });
+      return;
+    }
+  }
+
   if (!(await isAuthorized(req, sb))) {
     res.status(401).json({ error: 'unauthorized' });
     return;

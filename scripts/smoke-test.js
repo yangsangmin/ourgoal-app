@@ -6541,8 +6541,43 @@ check('compliance: [#TASK-ES-167] 아바타 페르소나 사용자 노출 \'77�
   assert.ok(rulesSrc.includes('제4항 [아바타 페르소나 \'77종/77가지\' 사용자 노출 전면 영구 금지]'), '헌법 제10조 제4항 77종 영구 금지 명문화 확인');
   assert.ok(rulesSrc.includes('제5항 [아바타 페르소나 \'320종\' 단일 표기 강제]'), '헌법 제10조 제5항 320종 단일 표기 강제 명문화 확인');
 
-  // 4. sw.js 캐시 es167 갱신 검증
-  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es167'), 'sw.js es167 캐시 갱신 확인');
+  // 4. sw.js 캐시 es167/es168 갱신 검증
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es167') || swSrc.includes('ourgoal-shell-v20260917-es168'), 'sw.js es167/es168 캐시 갱신 확인');
+});
+
+/* ============ [#TASK-ES-168] 1:1 DM 및 전역 알림(Web Push·ServiceWorker·스마트 폴링·상단바 알림센터) 무결성 전면 고도화 검증 ============ */
+check('compliance: [#TASK-ES-168] 1:1 DM 및 전역 알림(Web Push·ServiceWorker·스마트 폴링·상단바 알림센터) 무결성 전면 고도화 검증', () => {
+  const pushSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'push-dispatch.js'), 'utf8');
+  const notifySrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'notify-engine.js'), 'utf8');
+  const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. api/push-dispatch.js 타깃 유저 푸시 발송 분기 검증
+  assert.ok(pushSrc.includes('targetUserId'), 'push-dispatch.js 에 targetUserId 분기 지원');
+  assert.ok(pushSrc.includes('webpush.sendNotification'), 'push-dispatch.js 에 webpush.sendNotification 호출');
+
+  // 2. js/notify-engine.js 모바일 ServiceWorker showNotification 및 Audio unlock 검증
+  assert.ok(notifySrc.includes('reg.showNotification'), 'notify-engine.js 모바일 ServiceWorker showNotification 우선 호출');
+  assert.ok(notifySrc.includes('unlockAudioContext'), 'notify-engine.js AudioContext unlock 리스너 탑재');
+  assert.ok(notifySrc.includes('getUnreadNotifications') && notifySrc.includes('markAllAsRead'), 'notify-engine.js 미확인 알림 헬퍼 메서드 완비');
+
+  // 3. js/team-invite-comm.js DM 푸시 연동 및 30초 스마트 폴링 검증
+  assert.ok(commSrc.includes('/api/push-dispatch'), 'team-invite-comm.js DM send 시 /api/push-dispatch 비동기 발송 연동');
+  assert.ok(commSrc.includes('startSmartDmPolling'), 'team-invite-comm.js 30초 스마트 폴링 startSmartDmPolling 함수 탑재');
+  assert.ok(commSrc.includes('30000'), '30초 주기 스마트 폴링 인터벌 확인');
+
+  // 4. index.html 상단바 🔔 알림 버튼 및 알림 센터 모달 검증
+  assert.ok(indexSrc.includes('id="topNotifBtn"'), 'index.html 상단바에 topNotifBtn 버튼 탑재');
+  assert.ok(indexSrc.includes('id="topNotifBadge"'), 'index.html 상단바에 topNotifBadge 뱃지 탑재');
+  assert.ok(indexSrc.includes('openNotificationCenterModal'), 'index.html 에 openNotificationCenterModal 함수 구현');
+  assert.ok(indexSrc.includes('updateTopNotifBadge'), 'index.html 에 updateTopNotifBadge 함수 구현');
+
+  // 5. ui.css 스타일 및 sw.js 캐시 검증
+  assert.ok(cssSrc.includes('.topbar-notif-btn'), 'ui.css .topbar-notif-btn 스타일 정의');
+  assert.ok(cssSrc.includes('.topbar-notif-badge'), 'ui.css .topbar-notif-badge 스타일 정의');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es168'), 'sw.js es168 캐시 갱신 확인');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
