@@ -770,38 +770,38 @@
       modal.style.left = '50%';
       modal.style.transform = 'translateX(-50%)';
       modal.style.width = 'calc(100% - 32px)';
-      modal.style.maxWidth = '440px';
+      modal.style.maxWidth = '340px';
       modal.style.background = 'rgba(15, 23, 42, 0.95)';
       modal.style.backdropFilter = 'blur(16px)';
       modal.style.webkitBackdropFilter = 'blur(16px)';
       modal.style.border = '1px solid rgba(99, 102, 241, 0.45)';
-      modal.style.borderRadius = '20px';
-      modal.style.padding = '18px 20px';
-      modal.style.boxShadow = '0 20px 48px rgba(0,0,0,0.65)';
+      modal.style.borderRadius = '16px';
+      modal.style.padding = '12px 14px';
+      modal.style.boxShadow = '0 16px 40px rgba(0,0,0,0.65)';
       modal.style.zIndex = '100005';
       document.body.appendChild(modal);
     }
     var quickTags = ['🏃 러닝', '📚 공부', '💻 코딩', '☕ 휴식', '🎯 몰입', '💪 운동', '📖 독서'];
     modal.innerHTML = 
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">' +
-        '<div style="display:flex;align-items:center;gap:8px;">' +
-          '<span style="background:rgba(99,102,241,0.22);color:#818cf8;font-size:0.8rem;font-weight:800;padding:3px 9px;border-radius:8px;">구간 ' + lap.lapNum + '</span>' +
-          '<h4 style="margin:0;font-size:1rem;color:#fff;font-weight:800;">+' + lap.formattedDuration + ' <span style="font-size:.8rem;color:#94a3b8;font-weight:500;">(누적 ' + lap.formattedSplit + ')</span></h4>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<span style="background:rgba(99,102,241,0.22);color:#818cf8;font-size:0.75rem;font-weight:800;padding:2px 7px;border-radius:6px;">구간 ' + lap.lapNum + '</span>' +
+          '<h4 style="margin:0;font-size:.9rem;color:#fff;font-weight:800;">+' + lap.formattedDuration + ' <span style="font-size:.75rem;color:#94a3b8;font-weight:500;">(누적 ' + lap.formattedSplit + ')</span></h4>' +
         '</div>' +
-        '<span style="display:inline-flex;align-items:center;gap:5px;font-size:.72rem;background:rgba(34,197,94,0.15);color:#4ade80;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid rgba(34,197,94,0.3);">' +
-          '<span style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;box-shadow:0 0 6px #22c55e;"></span>시간 측정 중' +
+        '<span style="display:inline-flex;align-items:center;gap:4px;font-size:.68rem;background:rgba(34,197,94,0.15);color:#4ade80;font-weight:700;padding:2px 7px;border-radius:999px;border:1px solid rgba(34,197,94,0.3);">' +
+          '<span style="width:5px;height:5px;border-radius:50%;background:#22c55e;display:inline-block;box-shadow:0 0 5px #22c55e;"></span>측정 중' +
         '</span>' +
       '</div>' +
-      '<p style="font-size:.78rem;color:#94a3b8;margin:0 0 10px;line-height:1.4;">시간 정지 없이 이 구간에서 몰입한 활동을 기록하세요.</p>' +
-      '<div style="display:flex;gap:5px;overflow-x:auto;padding-bottom:8px;margin-bottom:10px;" class="no-scrollbar">' +
+      '<p style="font-size:.75rem;color:#94a3b8;margin:0 0 7px;line-height:1.3;">시간별로 세부 내용을 작성할 수 있어요</p>' +
+      '<div style="display:flex;gap:4px;overflow-x:auto;padding-bottom:5px;margin-bottom:7px;" class="no-scrollbar">' +
         quickTags.map(function(tag){
-          return '<button type="button" class="btn-quick-lap-tag" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);color:#cbd5e1;padding:4px 10px;border-radius:10px;font-size:0.75rem;cursor:pointer;white-space:nowrap;transition:all .15s;font-weight:600;">' + tag + '</button>';
+          return '<button type="button" class="btn-quick-lap-tag" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);color:#cbd5e1;padding:3px 8px;border-radius:8px;font-size:0.7rem;cursor:pointer;white-space:nowrap;transition:all .15s;font-weight:600;">' + tag + '</button>';
         }).join('') +
       '</div>' +
-      '<textarea id="ttLapMemoInput" style="width:100%;box-sizing:border-box;height:75px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.18);border-radius:12px;padding:10px 12px;color:#fff;font-size:.875rem;resize:none;margin-bottom:12px;outline:none;line-height:1.4;" placeholder="예: 3km 페이스 유지 러닝, 핵심 비즈니스 로직 작성 등">' + (lap.text || '') + '</textarea>' +
-      '<div style="display:flex;gap:8px;justify-content:flex-end;align-items:center;">' +
-        '<button type="button" class="btn btn-ghost btn-sm" id="btnTtLapMemoCancel" style="padding:7px 14px;border-radius:10px;color:#94a3b8;font-weight:600;">취소</button>' +
-        '<button type="button" class="btn btn-primary btn-sm" id="btnTtLapMemoSave" style="padding:7px 18px;border-radius:10px;background:#6366f1;color:#fff;border:none;font-weight:700;box-shadow:0 2px 10px rgba(99,102,241,0.4);">저장</button>' +
+      '<textarea id="ttLapMemoInput" style="width:100%;box-sizing:border-box;height:52px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.18);border-radius:10px;padding:7px 10px;color:#fff;font-size:.8125rem;resize:none;margin-bottom:8px;outline:none;line-height:1.35;" placeholder="예: 3km 러닝, 핵심 비즈니스 로직 작성 등">' + (lap.text || '') + '</textarea>' +
+      '<div style="display:flex;gap:6px;justify-content:flex-end;align-items:center;">' +
+        '<button type="button" class="btn btn-ghost btn-xs" id="btnTtLapMemoCancel" style="padding:5px 11px;border-radius:8px;color:#94a3b8;font-weight:600;font-size:.75rem;">취소</button>' +
+        '<button type="button" class="btn btn-primary btn-xs" id="btnTtLapMemoSave" style="padding:5px 14px;border-radius:8px;background:#6366f1;color:#fff;border:none;font-weight:700;font-size:.75rem;box-shadow:0 2px 8px rgba(99,102,241,0.4);">저장</button>' +
       '</div>';
     modal.style.display = 'block';
 

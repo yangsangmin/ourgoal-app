@@ -4494,11 +4494,11 @@
             '<div style="font-size:.6875rem;color:var(--ink-soft);margin-top:1px;">기록 향상 곡선과 실천 패턴 다각도 분석</div>' +
           '</div>' +
         '</div>' +
-        '<div style="display:flex;align-items:center;gap:6px;" onclick="event.stopPropagation();">' +
-          '<button type="button" class="btn btn-ghost btn-xs" id="uHdrMgmtMenuBtn" style="font-size:.75rem;padding:4px 9px;font-weight:700;border:1px solid var(--border);border-radius:8px;background:var(--card2);cursor:pointer;">' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<button type="button" class="btn btn-ghost btn-xs" id="uHdrMgmtMenuBtn" onclick="event.stopPropagation();" style="font-size:.75rem;padding:4px 9px;font-weight:700;border:1px solid var(--border);border-radius:8px;background:var(--card2);cursor:pointer;">' +
             '⚙️ 데이터 관리 ▾' +
           '</button>' +
-          '<span id="uAccordionToggleIcon" style="cursor:pointer;font-size:.75rem;padding:2px 6px;font-weight:800;color:var(--ink-soft);">' + (isExpanded ? '▲' : '▼') + '</span>' +
+          '<span id="uAccordionToggleIcon" title="접기/펼치기" style="cursor:pointer;font-size:.75rem;padding:2px 6px;font-weight:800;color:var(--ink-soft);">' + (isExpanded ? '▲' : '▼') + '</span>' +
           '<!-- 하위 호환성 앵커 (스크립트/테스트 참조 보존) -->' +
           '<div style="display:none;">' +
             '<button type="button" id="uHdrGridBtn"></button>' +
@@ -4872,6 +4872,12 @@
           });
         }
       };
+      if(togIco){
+        togIco.onclick = function(e){
+          e.stopPropagation();
+          hdrEl.click();
+        };
+      }
     }
 
     // 데이터 관리 모달 통합 메뉴 버튼

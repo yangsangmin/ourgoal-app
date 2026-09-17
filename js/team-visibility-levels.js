@@ -565,11 +565,11 @@
             '<span class="faint" style="font-size:.8125rem;font-weight:600;">달성률 ' + pct + '% · 마일스톤 ' + done + '/' + total + ' 완료</span>' +
             '<div style="display:flex;align-items:center;gap:4px;">' +
               (canManage ? '<button class="btn btn-ghost btn-sm" data-tgeditmodal="' + g.id + ':' + tg.id + '" type="button" style="font-size:.75rem;padding:2px 8px;border-color:var(--brand);color:var(--brand-strong);">✏️ 상세 편집</button>' : '') +
-              '<button class="btn btn-ghost btn-sm tg-fold-btn" data-tgfoldlist="' + tg.id + '" type="button" style="font-size:.75rem;padding:2px 7px;border-color:var(--rule);">마일스톤 접기 ▲</button>' +
+              '<button class="btn btn-ghost btn-sm tg-fold-btn" data-tgfoldlist="' + tg.id + '" type="button" style="font-size:.75rem;padding:2px 7px;border-color:var(--rule);">' + ((state.profile && state.profile.settings && state.profile.settings.unfoldMsList && state.profile.settings.unfoldMsList[tg.id]) ? '마일스톤 접기 ▲' : '마일스톤 펼치기 ▼') + '</button>' +
             '</div>' +
           '</div>' +
           (tlSec.teamLinkedBtnHtml || '') + (tlSec.participantsSectionHtml || '') +
-          '<div class="ms-list" data-tgmslist="' + tg.id + '">' + (msHtml || '<p class="faint" style="font-size:.8125rem;padding:6px 0;">등록된 마일스톤이 없어요.</p>') + '</div>' +
+          '<div class="ms-list" data-tgmslist="' + tg.id + '" style="' + ((state.profile && state.profile.settings && state.profile.settings.unfoldMsList && state.profile.settings.unfoldMsList[tg.id]) ? '' : 'display:none;') + '">' + (msHtml || '<p class="faint" style="font-size:.8125rem;padding:6px 0;">등록된 마일스톤이 없어요.</p>') + '</div>' +
           (canManage ? '<div class="add-ms-btn" data-tgaddms="1" style="margin-top:6px;">+ 마일스톤 추가</div>' : '') +
           goalCommentsBox +
         '</div>';
@@ -581,7 +581,7 @@
     var p = getProfile();
     p.settings = p.settings || {};
     p.settings.foldLevelSection = p.settings.foldLevelSection || {};
-    var isLevelFolded = !!p.settings.foldLevelSection[g.id];
+    var isLevelFolded = p.settings.foldLevelSection[g.id] !== false;
 
     var levelGroups = (curMode === 'goal' && curTgid)
       ? getGoalLevelGoals(g.id, curTgid)
