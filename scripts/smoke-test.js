@@ -5102,6 +5102,21 @@ check('compliance: [#TASK-ES-123] 인앱 1:1 고객 문의·오류 제보 접수
   assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
 });
 
+check('compliance: [#TASK-ES-178] 설정 탭 1:1 고객 문의 링크(footInquiryLink) 무반응 결함 수술 및 4위1체 리스너·글로벌 스코프 배선 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 푸터 1:1 고객 문의 링크 마크업 및 인라인 핸들러 제거 검증
+  assert.ok(indexSrc.includes('id="footInquiryLink"'), '설정 탭 푸터에 footInquiryLink 마크업 존재');
+  assert.ok(!indexSrc.includes('onclick="openCustomerInquiryModal()'), '깨지기 쉬운 인라인 onclick="openCustomerInquiryModal() 제거 완료');
+
+  // 2. 4위 1체 이벤트 리스너 통합 등록 검증
+  assert.ok(indexSrc.includes("['feedbackInquiryBtn', 'footInquiryLink'].forEach("), 'feedbackInquiryBtn 및 footInquiryLink 통합 addEventListener 배선');
+
+  // 3. window 전역 스코프 안전망 검증
+  assert.ok(indexSrc.includes('window.openCustomerInquiryModal = openCustomerInquiryModal'), 'openCustomerInquiryModal 함수 window 전역 노출');
+  assert.ok(indexSrc.includes('window.showLegalModal = showLegalModal'), 'showLegalModal 함수 window 전역 노출');
+});
+
 check('compliance: [#TASK-ES-124] 동반자 실 사용자 닉네임 검색 2중 복원(Vercel 서버리스 + RPC 폴백) 및 가상 유저 3인 AI 동반자 투명 뱃지 표기 검증', () => {
   const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
   const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
