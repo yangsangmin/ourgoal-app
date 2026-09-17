@@ -315,7 +315,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <span class="privacy-badge" id="recPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-          <button class="btn btn-primary btn-sm" id="btnOpenTimeTracker" type="button" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();" style="display:inline-flex;align-items:center;gap:4px;font-weight:800;background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:#ffffff;border:none;box-shadow:0 2px 6px rgba(16,185,129,0.3);" title="전체화면 스톱워치/타이머로 지금부터 시간을 측정하고 기록합니다">
+          <button class="btn btn-primary btn-sm" id="btnOpenTimeTracker" type="button" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();" style="display:none !important;" title="전체화면 스톱워치/타이머로 지금부터 시간을 측정하고 기록합니다">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
             <span>⏱️ 지금부터 시간기록</span>
           </button>
@@ -22450,7 +22450,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       blendedItems = window.OurgoalTopHelpful.arrange(blendedItems, curCat, { posts: FEED_POSTS_CACHE, rerender: function(){ if(state.activeTab==='comm' && state.commSubTab==='feed') renderCommFeed(body); } });
     }
 
-    var quickPostBannerHtml = '<div class="comm-quick-strip">' +
+    var quickPostBannerHtml = '<div class="comm-quick-strip" style="display:none !important;">' +
       '<div class="comm-quick-strip-left">' +
         '<span style="font-size:1.15rem;">📢</span>' +
         '<span class="comm-quick-strip-text">오늘 달성한 실천을 피드에 공유하고 동료들과 응원을 나눠보세요!</span>' +
@@ -22467,10 +22467,60 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '<button type="button" class="comm-type-pill' + (feedType === 'photo' ? ' active' : '') + '" data-feedtype="photo">📸 사진인증만</button>' +
     '</div>';
 
+    var AI_PHOTO_VERIFICATIONS = [
+      {
+        id: 'ai_photo_01',
+        name: '민혁 (AI 가이드)',
+        avatar: '🏃',
+        goal: '새벽 러닝 10km 완주',
+        pct: 70,
+        action: '오늘 아침 10km 페이스 4분 50초 지속주 완료! 사진 인증합니다 🏃',
+        recordText: '[기록] 아침 러닝 10.02km / 48분 20초 / 610kcal 소모',
+        photo: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=400&auto=format&fit=crop&q=80',
+        time: '오늘 07:10',
+        cheers: 12,
+        is_ai: true,
+        ai_notice: 'AI 가이드 사진인증'
+      },
+      {
+        id: 'ai_photo_02',
+        name: '지우 (AI 가이드)',
+        avatar: '🏋️‍♀️',
+        goal: '바디프로필 & 3대 300 달성',
+        pct: 65,
+        action: '오늘 하체 루틴 및 스쿼트 80kg 5세트 완료! 득근하는 하루 되세요 💪',
+        recordText: '[기록] 스쿼트 80kg 5x5 / 레그프레스 160kg 4세트',
+        photo: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=400&auto=format&fit=crop&q=80',
+        time: '오늘 08:30',
+        cheers: 15,
+        is_ai: true,
+        ai_notice: 'AI 가이드 사진인증'
+      },
+      {
+        id: 'ai_photo_03',
+        name: '서연 (AI 가이드)',
+        avatar: '📝',
+        goal: '기출문제 10회독 & 자격증 취득',
+        pct: 80,
+        action: '도서관에서 3시간 순공 완료! 오답노트 작성 및 파트별 복습 마쳤습니다 💼',
+        recordText: '[기록] 순공 3시간 15분 / 기출 40제 풀이 및 오답 정리',
+        photo: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400&auto=format&fit=crop&q=80',
+        time: '오늘 10:30',
+        cheers: 18,
+        is_ai: true,
+        ai_notice: 'AI 가이드 사진인증'
+      }
+    ];
+
     if(feedType === 'mine'){
       blendedItems = blendedItems.filter(function(it){ return it.me || it.isMe; });
     } else if(feedType === 'photo'){
-      blendedItems = blendedItems.filter(function(it){ return !!it.photo; });
+      var realPhotoItems = blendedItems.filter(function(it){ return !!it.photo && !it.is_ai; });
+      if(realPhotoItems.length >= 3){
+        blendedItems = realPhotoItems;
+      } else {
+        blendedItems = realPhotoItems.concat(AI_PHOTO_VERIFICATIONS);
+      }
     }
 
     body.innerHTML = quickPostBannerHtml +
@@ -22483,7 +22533,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       blendedItems.map(function(it){
         var reactions = (state.profile && state.profile.settings && state.profile.settings.feedReactions) || {};
         var isMe = it.me || it.isMe;
-        var aiTagHtml = it.is_ai ? '<span class="feed-ai-tag">AI 봇</span>' : '';
+        var aiTagHtml = it.is_ai ? ('<span class="feed-ai-tag' + (it.photo ? ' ai-photo-tag' : '') + '">' + (it.photo ? '🤖 AI 사진인증' : 'AI 봇') + '</span>') : '';
         var aiNoticeHtml = it.is_ai ?
           '<div class="ai-badge-notice ai-badge-notice-clean" title="초기 앱 활용을 돕는 가상 동료입니다">' +
             '<span class="ai-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><path d="M12 3v3"/><rect x="4" y="7" width="16" height="12" rx="3"/><circle cx="9" cy="13" r="1.2" fill="currentColor"/><circle cx="15" cy="13" r="1.2" fill="currentColor"/><path d="M2 12h2M20 12h2"/></svg></span>' +
@@ -22513,7 +22563,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             '</div>' +
             '<div class="feed-action">'+escapeHtml(it.action)+'</div>' +
             (it.recordText ? '<div class="faint" style="font-size:.8125rem;background:var(--card2);border-radius:12px;padding:8px 10px;margin-top:8px;">'+escapeHtml(it.recordText)+'</div>' : '') +
-            (it.photo ? '<div style="margin-top:8px;"><img src="'+it.photo+'" class="checkin-photo-thumb" data-feedphoto="'+it.id+'" style="max-height:140px;max-width:200px;border-radius:10px;border:1px solid var(--rule);cursor:pointer;object-fit:cover;" /></div>' : '') +
+            (it.photo ? '<div style="position:relative;display:inline-block;margin-top:8px;"><img src="'+it.photo+'" class="checkin-photo-thumb" data-feedphoto="'+it.id+'" style="max-height:140px;max-width:200px;border-radius:10px;border:1px solid var(--rule);cursor:pointer;object-fit:cover;" />' + (it.is_ai ? '<span style="position:absolute;top:6px;left:6px;background:rgba(15,23,42,0.8);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;box-shadow:0 1px 4px rgba(0,0,0,0.3);">🤖 AI 인증</span>' : '') + '</div>' : '') +
             (it.feedback ? '<div class="fb-card '+verdictClass(it.feedback.verdict)+'" style="margin:8px 0 0;padding:10px 12px;box-shadow:none;">' +
               '<div class="fb-verdict" style="font-size:.8125rem;">'+escapeHtml(it.feedback.verdict)+'</div>' +
               '<div class="fb-row" style="font-size:.8125rem;margin-top:2px;">'+escapeHtml(it.feedback.comment)+'</div>' +
