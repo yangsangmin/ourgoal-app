@@ -6293,7 +6293,52 @@ check('compliance: [#TASK-ES-161] 참고자료 첨부 스마트 감지 · 비주
   assert.ok(cssSrc.includes('.att-chip-rich.type-video'), 'ui.css 유튜브 영상 전용 칩 스타일');
 
   // 5. sw.js 캐시 갱신 검증
-  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es161'), 'sw.js 캐시 네임 es161 갱신');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es161') || swSrc.includes('ourgoal-shell-v20260917-es162'), 'sw.js 캐시 네임 es161/162 갱신');
+});
+
+/* ============ [#TASK-ES-162] 공통 UI 컴포넌트 모듈화(OurgoalComponents 5대 컴포넌트) 검증 ============ */
+check('compliance: [#TASK-ES-162] 공통 UI 컴포넌트 모듈화(OurgoalComponents 5대 컴포넌트) 시스템 4위 1체 검증', () => {
+  const compModule = require('../js/components.js');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. js/components.js 5대 핵심 컴포넌트 기능 및 렌더링 검증
+  assert.ok(compModule && typeof compModule === 'object', 'OurgoalComponents 모듈 export 확인');
+  assert.strictEqual(typeof compModule.badge, 'function', '1. badge 컴포넌트 함수');
+  assert.strictEqual(typeof compModule.statCard, 'function', '2. statCard 컴포넌트 함수');
+  assert.strictEqual(typeof compModule.progressBar, 'function', '3. progressBar 컴포넌트 함수');
+  assert.strictEqual(typeof compModule.modalShell, 'function', '4. modalShell 컴포넌트 함수');
+  assert.strictEqual(typeof compModule.emptyState, 'function', '5. emptyState 컴포넌트 함수');
+
+  // 2. 컴포넌트 출력 마크업 무결성 검증
+  const badgeHtml = compModule.badge({ type: 'gold', text: 'D-3', icon: '⚡' });
+  assert.ok(badgeHtml.includes('og-badge og-badge-gold') && badgeHtml.includes('D-3') && badgeHtml.includes('⚡'), 'badge 올바른 클래스 및 텍스트 렌더링');
+
+  const statHtml = compModule.statCard({ title: '순공 시간', value: '320분', diff: '+15%', trend: 'up', icon: '⏱️' });
+  assert.ok(statHtml.includes('og-stat-card') && statHtml.includes('순공 시간') && statHtml.includes('320분') && statHtml.includes('og-trend-up'), 'statCard 올바른 지표 렌더링');
+
+  const progHtml = compModule.progressBar({ percent: 75, colorType: 'sage', showLabel: true });
+  assert.ok(progHtml.includes('og-prog-container') && progHtml.includes('75%') && progHtml.includes('og-fill-sage'), 'progressBar 게이지바 렌더링');
+
+  const modalHtml = compModule.modalShell({ id: 'testModal', title: '설정 모달', confirmText: '저장', cancelText: '닫기' });
+  assert.ok(modalHtml.includes('og-modal-shell') && modalHtml.includes('testModal') && modalHtml.includes('저장'), 'modalShell 셸 마크업 렌더링');
+
+  const emptyHtml = compModule.emptyState({ icon: '🎯', title: '목표 없음', desc: '새 목표를 등록하세요' });
+  assert.ok(emptyHtml.includes('og-empty-state') && emptyHtml.includes('목표 없음'), 'emptyState 렌더링');
+
+  // 3. index.html 스크립트 태그 등록 검증
+  assert.ok(indexSrc.includes('src="js/components.js?v=20260917-es162"'), 'index.html 내 components.js 스크립트 태그 로드');
+
+  // 4. ui.css 전용 스타일 클래스 검증
+  assert.ok(cssSrc.includes('.og-badge'), 'ui.css og-badge 스타일');
+  assert.ok(cssSrc.includes('.og-stat-card'), 'ui.css og-stat-card 스타일');
+  assert.ok(cssSrc.includes('.og-prog-container'), 'ui.css og-prog-container 스타일');
+  assert.ok(cssSrc.includes('.og-modal-shell'), 'ui.css og-modal-shell 스타일');
+  assert.ok(cssSrc.includes('.og-empty-state'), 'ui.css og-empty-state 스타일');
+
+  // 5. sw.js 캐시 갱신 검증
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es162'), 'sw.js 캐시 네임 es162 갱신');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
