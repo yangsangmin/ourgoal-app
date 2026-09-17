@@ -1627,16 +1627,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var titleEl = document.getElementById('avatarLevelUpTitle');
     if(titleEl) titleEl.textContent = '🎉 LEVEL UP! Lv.' + curLv + ' 달성!';
     
+    var themeInfo = (window.OurgoalAvatar && window.OurgoalAvatar.getRankThemeInfo) ? window.OurgoalAvatar.getRankThemeInfo(curLv) : { title: 'Lv.' + curLv + ' 달성', badgeGradient: 'linear-gradient(135deg,#6366f1,#a855f7)', icon: '⭐', glow: 'rgba(99,102,241,0.5)' };
+
     var badgeEl = document.getElementById('avatarLevelUpBadge');
-    if(badgeEl) badgeEl.innerHTML = '<span class="badge" style="background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;font-size:.9rem;padding:4px 14px;border-radius:12px;font-weight:800;display:inline-block;">Lv.' + curLv + ' 마스터 달성</span>';
-    
+    if(badgeEl) badgeEl.innerHTML = '<span class="badge" style="background:' + themeInfo.badgeGradient + ';color:#fff;font-size:.9rem;padding:4px 14px;border-radius:12px;font-weight:800;display:inline-flex;align-items:center;gap:6px;box-shadow:0 0 10px ' + themeInfo.glow + ';">' + themeInfo.icon + ' ' + themeInfo.title + ' (Lv.' + curLv + ')</span>';
+
     var imgContainer = document.getElementById('avatarLevelUpImgContainer');
     if(imgContainer){
-      var av = state.profile && state.profile.avatar;
-      if(state.profile && state.profile.avatarImage){
-        imgContainer.innerHTML = '<img src="' + state.profile.avatarImage + '" alt="아바타" style="width:100%;height:100%;object-fit:cover;">';
-      } else if(window.OurgoalAvatar && window.OurgoalAvatar.renderAvatarHtml){
-        imgContainer.innerHTML = window.OurgoalAvatar.renderAvatarHtml(av, 220);
+      if(window.OurgoalAvatar && window.OurgoalAvatar.renderAvatarHtml){
+        imgContainer.innerHTML = window.OurgoalAvatar.renderAvatarHtml(curLv, state.profile, { size: 130, withRankBg: true });
+      } else if(state.profile && state.profile.avatarImage){
+        imgContainer.innerHTML = '<img src="' + state.profile.avatarImage + '" alt="아바타" style="width:100%;height:100%;object-fit:cover;border-radius:14px;">';
       } else {
         imgContainer.innerHTML = '<span style="font-size:5rem;">🧑‍🚀</span>';
       }

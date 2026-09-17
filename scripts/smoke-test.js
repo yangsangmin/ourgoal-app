@@ -6191,7 +6191,45 @@ check('compliance: [#TASK-ES-158] 회원 탈퇴 시 법적책임·데이터 분�
   assert.ok(cssSrc.includes('.withdraw-box-legal'), 'ui.css 법적 고지 박스 스타일 존재');
 
   // 5. sw.js 캐시 네임 es158 갱신 확인
-  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es158'), 'sw.js 캐시 네임 es158 갱신');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es158') || swSrc.includes('ourgoal-shell-v20260917-es159'), 'sw.js 캐시 네임 es158/159 갱신');
+});
+
+/* ============ [#TASK-ES-159] 아바타 레벨별 상징 백그라운드 이미지 결합 시스템 검증 ============ */
+check('compliance: [#TASK-ES-159] 아바타 레벨별 상징 백그라운드 이미지(새싹·숲·포세이돈·제우스·우주 5대 테마) 결합 검증', () => {
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 5대 테마 정의 및 5레벨 기준 룰 검증
+  assert.ok(avatarSrc.includes('var RANK_THEMES_5 = ['), '5대 상징 랭크 테마 배열 정의');
+  assert.ok(avatarSrc.includes("name: '새싹'") && avatarSrc.includes('minLv: 1') && avatarSrc.includes('maxLv: 5'), '테마 1: 새싹 (Lv.1~5)');
+  assert.ok(avatarSrc.includes("name: '울창한 숲'") && avatarSrc.includes('minLv: 6') && avatarSrc.includes('maxLv: 10'), '테마 2: 숲 (Lv.6~10)');
+  assert.ok(avatarSrc.includes("name: '포세이돈'") && avatarSrc.includes('minLv: 11') && avatarSrc.includes('maxLv: 15'), '테마 3: 포세이돈 (Lv.11~15)');
+  assert.ok(avatarSrc.includes("name: '제우스'") && avatarSrc.includes('minLv: 16') && avatarSrc.includes('maxLv: 20'), '테마 4: 제우스 (Lv.16~20)');
+  assert.ok(avatarSrc.includes("name: '코스믹 우주'") && avatarSrc.includes('minLv: 21'), '테마 5: 우주 (Lv.21+)');
+
+  // 2. 랭크 윙/오라 SVG 렌더러 및 아바타 미가림 래퍼 검증
+  assert.ok(avatarSrc.includes('function getRankWingsSvg('), 'getRankWingsSvg 함수 구현');
+  assert.ok(avatarSrc.includes('avatar-rank-aura-wrap'), '아바타 외곽 래퍼 클래스 결합');
+  assert.ok(avatarSrc.includes('rank-bg-svg-layer'), '외곽 오라 SVG 레이어 생성');
+  assert.ok(avatarSrc.includes('avatar-inner-box'), '중앙 아바타 내부 박스 분리 (미가림)');
+
+  // 3. 모달 및 레벨업 화면 연동 검증
+  assert.ok(avatarSrc.includes('id="avatarRankThemeCard"'), '아바타 설정 모달 내 랭크 테마 안내 카드 탑재');
+  assert.ok(indexSrc.includes('getRankThemeInfo'), '레벨업 모달 내 상징 랭크 테마 정보 연동');
+
+  // 4. ui.css 전용 스타일 및 5대 테마 키프레임 애니메이션 검증
+  assert.ok(cssSrc.includes('.avatar-rank-aura-wrap'), 'ui.css 아바타 랭크 래퍼 스타일');
+  assert.ok(cssSrc.includes('.rank-bg-svg-layer'), 'ui.css 랭크 SVG 레이어 스타일');
+  assert.ok(cssSrc.includes('@keyframes sproutSway'), '새싹 테마 애니메이션');
+  assert.ok(cssSrc.includes('@keyframes forestBreathe'), '숲 테마 애니메이션');
+  assert.ok(cssSrc.includes('@keyframes poseidonTide'), '포세이돈 테마 애니메이션');
+  assert.ok(cssSrc.includes('@keyframes zeusThunderGlow'), '제우스 테마 애니메이션');
+  assert.ok(cssSrc.includes('@keyframes cosmicOrbit'), '우주 테마 애니메이션');
+
+  // 5. sw.js 캐시 갱신
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es159'), 'sw.js 캐시 네임 es159 갱신');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
