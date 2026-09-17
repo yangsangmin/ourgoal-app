@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>아워골 위젯 - 기기 바탕화면</title>
+  <link rel="icon" href="/icons/icon-192.png">
+  <link rel="manifest" href="/manifest.json">
+  <style>
+    :root {
+      --bg: #0F172A;
+      --card: rgba(30, 41, 59, 0.85);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --text: #F8FAFC;
+      --text-soft: #94A3B8;
+      --brand: #6366F1;
+      --brand-glow: rgba(99, 102, 241, 0.35);
+      --accent: #FF4F64;
+      --success: #10B981;
+      --warning: #F59E0B;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #F1F5F9;
+        --card: rgba(255, 255, 255, 0.9);
+        --card-border: rgba(0, 0, 0, 0.08);
+        --text: #0F172A;
+        --text-soft: #64748B;
+        --brand: #4F46E5;
+        --brand-glow: rgba(79, 70, 229, 0.2);
+        --accent: #E11D48;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+    .widget-container {
+      width: 100%;
+      max-width: 440px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .widget-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .widget-logo {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 800;
+      font-size: 0.875rem;
+      letter-spacing: -0.5px;
+    }
+    .widget-time {
+      font-size: 0.75rem;
+      color: var(--text-soft);
+      font-weight: 600;
+    }
+    .widget-content { flex: 1; }
+    .widget-pill {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: var(--brand-glow);
+      color: var(--brand);
+    }
+    .btn-open-app {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      margin-top: 14px;
+      padding: 10px;
+      border-radius: 12px;
+      background: var(--brand);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.875rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 14px var(--brand-glow);
+    }
+    .btn-open-app:active { transform: scale(0.98); }
+    /* 위젯 크기별 클래스 */
+    .widget-compact { min-height: 120px; }
+    .widget-standard { min-height: 190px; }
+    .widget-detail { min-height: 290px; }
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 8px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      margin-bottom: 6px;
+    }
+    .item-title { flex: 1; min-width: 0; font-size: 0.8125rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item-sub { font-size: 0.7rem; color: var(--text-soft); }
+    .progress-bar-wrap { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+    .progress-bar-fill { height: 100%; background: var(--brand); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+  <div class="widget-container" id="widgetBox">
+    <div class="widget-header">
+      <div class="widget-logo">
+        <span style="font-size:1.1rem;">🔥</span>
+        <span>아워골</span>
+        <span class="widget-pill" id="widgetTypeBadge">위젯</span>
+      </div>
+      <div class="widget-time" id="widgetClock">--:--</div>
+    </div>
+    
+    <div class="widget-content" id="widgetContent">
+      <div style="text-align:center;padding:24px 0;font-size:0.875rem;color:var(--text-soft);">
+        위젯 데이터를 불러오는 중...
+      </div>
+    </div>
+
+    <a href="/" id="btnOpenApp" class="btn-open-app">
+      <span>아워골 앱으로 열기</span>
+      <span>›</span>
+    </a>
+  </div>
+
+  <script>
+    (function(){
+      // URL 파라미터 파싱
+      var params = new URLSearchParams(window.location.search);
+      var type = params.get('type') || 'calendar'; // 'calendar', 'goals', 'records'
+      var size = params.get('size') || 'standard'; // 'compact', 'standard', 'detail'
+
+      var box = document.getElementById('widgetBox');
+      box.className = 'widget-container widget-card widget-' + size;
+
+      var badge = document.getElementById('widgetTypeBadge');
+      var content = document.getElementById('widgetContent');
+      var openApp = document.getElementById('btnOpenApp');
+
+      // 실시간 시계
+      function updateClock(){
+        var now = new Date();
+        var h = String(now.getHours()).padStart(2, '0');
+        var m = String(now.getMinutes()).padStart(2, '0');
+        var dStr = (now.getMonth() + 1) + '월 ' + now.getDate() + '일';
+        document.getElementById('widgetClock').textContent = dStr + ' ' + h + ':' + m;
+      }
+      updateClock();
+      setInterval(updateClock, 1000);
+
+      function renderWidget(){
+        // 로컬 스토리지 데이터 로드 (자가 치유 안전망)
+        var state = null;
+        try {
+          var rawState = localStorage.getItem('ourgoal_state_v1');
+          if(rawState) state = JSON.parse(rawState);
+        } catch(e){}
+
+        var prof = (state && state.profile) || null;
+        if(!prof){
+          try {
+            var kList = Object.keys(localStorage);
+            var pKey = kList.find(function(k){ return k.indexOf('ourgoal_profile_backup_') === 0; });
+            if(pKey){
+              prof = JSON.parse(localStorage.getItem(pKey));
+            }
+          } catch(e){}
+        }
+
+        var goals = (prof && prof.goals) || [];
+        var records = (prof && prof.records) || [];
+        var schedules = (prof && prof.settings && prof.settings.customSchedules) || [];
+
+        // 위젯 유형별 렌더링
+        if(type === 'calendar'){
+        badge.textContent = '📅 일정 위젯';
+        openApp.href = '/#calendar';
+
+        var todayStr = new Date().toISOString().slice(0, 10);
+        var todayScheds = schedules.filter(function(s){
+          return s && s.date && s.date.slice(0, 10) === todayStr;
+        });
+
+        if(size === 'compact'){
+          var next = todayScheds[0];
+          content.innerHTML = next ? (
+            '<div style="padding:6px 0;">' +
+              '<div style="font-size:0.75rem;color:var(--text-soft);margin-bottom:4px;">오늘의 다음 일정</div>' +
+              '<div style="font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:4px;">' + (next.done ? '✅ ' : '⏳ ') + (next.title || '일정') + '</div>' +
+              '<div style="font-size:0.75rem;color:var(--brand);font-weight:700;">' + (next.date.split('T')[1] || '하루 종일') + (next.note ? ' · ' + next.note : '') + '</div>' +
+            '</div>'
+          ) : (
+            '<div style="text-align:center;padding:12px 0;">' +
+              '<div style="font-size:1rem;font-weight:700;">오늘 예정된 일정이 없어요 🎉</div>' +
+              '<div style="font-size:0.75rem;color:var(--text-soft);margin-top:2px;">여유롭고 알찬 하루 보내세요!</div>' +
+            '</div>'
+          );
+        } else if(size === 'standard'){
+          content.innerHTML = '<div style="font-size:0.8125rem;font-weight:700;margin-bottom:8px;color:var(--text-soft);">오늘의 일정 (' + todayScheds.length + '건)</div>' +
+            (todayScheds.length > 0 ? todayScheds.slice(0, 3).map(function(s){
+              return '<div class="item-row">' +
+                '<span style="font-size:0.9rem;">' + (s.done ? '✅' : '⏳') + '</span>' +
+                '<div class="item-title">' + (s.title || '일정') + '</div>' +
+                '<span class="item-sub">' + (s.date.split('T')[1] || '종일') + '</span>' +
+              '</div>';
+            }).join('') : '<div style="text-align:center;padding:16px 0;font-size:0.8125rem;color:var(--text-soft);">오늘 등록된 일정이 없습니다.<br>원터치로 일정을 등록해보세요!</div>');
+        } else {
+          // detail (4x2)
+          content.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+              '<b style="font-size:0.875rem;">오늘의 24시간 타임라인</b>' +
+              '<span class="item-sub">총 ' + todayScheds.length + '개 일정</span>' +
+            '</div>' +
+            '<div style="display:flex;flex-direction:column;gap:6px;max-height:190px;overflow-y:auto;">' +
+              (todayScheds.length > 0 ? todayScheds.map(function(s){
+                return '<div class="item-row">' +
+                  '<span style="font-size:0.9rem;">' + (s.done ? '✅' : '🔔') + '</span>' +
+                  '<div style="flex:1;min-width:0;">' +
+                    '<div class="item-title">' + (s.title || '일정') + '</div>' +
+                    '<div class="item-sub">' + (s.date.replace('T', ' ') || '') + (s.note ? ' · ' + s.note : '') + '</div>' +
+                  '</div>' +
+                  '<span class="widget-pill">' + (s.done ? '완료' : '예정') + '</span>' +
+                '</div>';
+              }).join('') : '<div style="text-align:center;padding:32px 0;color:var(--text-soft);font-size:0.8125rem;">등록된 일정이 없습니다.</div>') +
+            '</div>';
+        }
+
+      } else if(type === 'goals'){
+        badge.textContent = '🎯 목표 위젯';
+        openApp.href = '/#goals';
+
+        var activeGoals = goals.filter(function(g){ return !g.archivedAt; });
+        var topGoal = activeGoals[0];
+
+        if(size === 'compact'){
+          content.innerHTML = topGoal ? (
+            '<div style="padding:6px 0;">' +
+              '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+                '<span style="font-size:0.75rem;color:var(--text-soft);">최우선 목표</span>' +
+                '<span class="widget-pill">진행 중</span>' +
+              '</div>' +
+              '<div style="font-size:1rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (topGoal.title || '목표') + '</div>' +
+              '<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:65%;"></div></div>' +
+            '</div>'
+          ) : (
+            '<div style="text-align:center;padding:12px 0;">등록된 목표가 없습니다. 목표를 세워보세요!</div>'
+          );
+        } else if(size === 'standard'){
+          content.innerHTML = '<div style="font-size:0.8125rem;font-weight:700;margin-bottom:8px;color:var(--text-soft);">핵심 실천 목표 (' + activeGoals.length + '개)</div>' +
+            (activeGoals.length > 0 ? activeGoals.slice(0, 3).map(function(g){
+              return '<div class="item-row">' +
+                '<span style="font-size:1rem;">🎯</span>' +
+                '<div style="flex:1;min-width:0;">' +
+                  '<div class="item-title">' + (g.title || '목표') + '</div>' +
+                  '<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:50%;"></div></div>' +
+                '</div>' +
+              '</div>';
+            }).join('') : '<div style="text-align:center;padding:16px 0;color:var(--text-soft);">등록된 목표가 없습니다.</div>');
+        } else {
+          // detail
+          content.innerHTML = '<div style="font-size:0.875rem;font-weight:800;margin-bottom:8px;">🎯 3계층 목표 & 마일스톤 현황</div>' +
+            '<div style="display:flex;flex-direction:column;gap:8px;max-height:190px;overflow-y:auto;">' +
+              (activeGoals.length > 0 ? activeGoals.map(function(g){
+                var msLen = (g.milestones || []).length;
+                return '<div style="background:rgba(255,255,255,0.04);padding:8px 10px;border-radius:10px;border:1px solid var(--card-border);">' +
+                  '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+                    '<b style="font-size:0.8125rem;">' + (g.title || '목표') + '</b>' +
+                    '<span class="item-sub">마일스톤 ' + msLen + '개</span>' +
+                  '</div>' +
+                  '<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:60%;"></div></div>' +
+                '</div>';
+              }).join('') : '<div style="text-align:center;padding:32px 0;color:var(--text-soft);">등록된 목표가 없습니다.</div>') +
+            '</div>';
+        }
+
+      } else {
+        // records
+        badge.textContent = '📝 기록 위젯';
+        openApp.href = '/#records';
+
+        if(size === 'compact'){
+          content.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;">' +
+            '<div>' +
+              '<div style="font-size:0.75rem;color:var(--text-soft);">오늘의 실천</div>' +
+              '<div style="font-size:1.1rem;font-weight:800;color:var(--brand);">원터치 빠른 기록</div>' +
+            '</div>' +
+            '<span style="font-size:2rem;">⏱️</span>' +
+          '</div>';
+        } else if(size === 'standard'){
+          var recent = records[0];
+          content.innerHTML = '<div style="font-size:0.8125rem;font-weight:700;margin-bottom:8px;color:var(--text-soft);">최근 실천 기록 & 스톱워치</div>' +
+            '<div style="background:rgba(255,255,255,0.04);padding:10px;border-radius:12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">' +
+              '<div>' +
+                '<div style="font-size:0.75rem;color:var(--text-soft);">' + (recent ? (recent.date || '최근') : '오늘') + '</div>' +
+                '<div style="font-size:0.875rem;font-weight:700;">' + (recent ? (recent.title || recent.text || '실천 완료') : '첫 실천을 기록해보세요!') + '</div>' +
+              '</div>' +
+              '<span class="widget-pill">기록됨</span>' +
+            '</div>';
+        } else {
+          // detail
+          content.innerHTML = '<div style="font-size:0.875rem;font-weight:800;margin-bottom:8px;">📈 최근 실천 히트맵 & 기록 요약</div>' +
+            '<div style="display:flex;flex-direction:column;gap:6px;max-height:190px;overflow-y:auto;">' +
+              (records.length > 0 ? records.slice(0, 4).map(function(r){
+                return '<div class="item-row">' +
+                  '<span style="font-size:1rem;">📝</span>' +
+                  '<div class="item-title">' + (r.title || r.text || '실천 기록') + '</div>' +
+                  '<span class="item-sub">' + (r.date || '') + '</span>' +
+                '</div>';
+              }).join('') : '<div style="text-align:center;padding:32px 0;color:var(--text-soft);">아직 기록된 실천이 없습니다.</div>') +
+            '</div>';
+        }
+      }
+    }
+    renderWidget();
+    })();
+  </script>
+</body>
+</html>

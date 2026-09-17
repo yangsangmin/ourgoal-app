@@ -1038,6 +1038,50 @@
     return { id: id, nickname: '사용자', name: '사용자', avatar: '👤', intro: '아워골 회원' };
   }
 
+  function formatDmTime(isoOrDate){
+    if(!isoOrDate) return '방금';
+    try {
+      var d = new Date(isoOrDate);
+      if(isNaN(d.getTime())) return String(isoOrDate);
+      var h = d.getHours();
+      var m = d.getMinutes();
+      var ampm = h >= 12 ? '오후' : '오전';
+      var h12 = h % 12;
+      if(h12 === 0) h12 = 12;
+      return ampm + ' ' + h12 + ':' + (m < 10 ? '0' : '') + m;
+    } catch(e){
+      return '방금';
+    }
+  }
+
+  function renderSingleDmMsg(m){
+    var isMe = (m.from === 'me');
+    var timeStr = formatDmTime(m.createdAt || m.time);
+    var unreadBadge = (!m.read && isMe) ? '<span class="dm-unread-badge" style="color:#eab308;font-size:0.6875rem;font-weight:800;line-height:1;margin-bottom:2px;">1</span>' : '';
+    var timeSpan = '<span class="dm-msg-time" style="font-size:0.6875rem;color:var(--ink-faint);line-height:1;white-space:nowrap;">' + esc(timeStr) + '</span>';
+
+    if(isMe){
+      return '<div class="dm-row me" style="display:flex;justify-content:flex-end;align-items:flex-end;gap:5px;margin:4px 0;">' +
+        '<div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-end;gap:2px;">' +
+          unreadBadge +
+          timeSpan +
+        '</div>' +
+        '<div class="dm-msg me" style="max-width:72%;padding:9px 13px;border-radius:14px 14px 2px 14px;background:var(--brand-strong);color:#fff;font-size:0.875rem;line-height:1.45;word-break:break-word;box-shadow:0 1px 2px rgba(0,0,0,0.06);">' +
+          esc(m.text) +
+        '</div>' +
+      '</div>';
+    } else {
+      return '<div class="dm-row them" style="display:flex;justify-content:flex-start;align-items:flex-end;gap:5px;margin:4px 0;">' +
+        '<div class="dm-msg them" style="max-width:72%;padding:9px 13px;border-radius:14px 14px 14px 2px;background:var(--surface-2);color:var(--ink);border:1px solid var(--rule);font-size:0.875rem;line-height:1.45;word-break:break-word;box-shadow:0 1px 2px rgba(0,0,0,0.03);">' +
+          esc(m.text) +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:2px;">' +
+          timeSpan +
+        '</div>' +
+      '</div>';
+    }
+  }
+
   async function loadDmMessagesFromDb(threadId, person){
     if(!global.sb || !threadId) return;
     try {
@@ -1049,11 +1093,14 @@
       if(res && res.data){
         var myId = (global.state && global.state.user && global.state.user.id) || (global.state && global.state.profile && global.state.profile.id);
         person._thread = res.data.map(function(r){
+          var isMe = (r.sender_id === myId);
           return {
             id: r.id,
-            from: (r.sender_id === myId ? 'me' : 'them'),
+            from: (isMe ? 'me' : 'them'),
             text: r.message,
-            time: global.fmtTime ? global.fmtTime(r.created_at) : '최근'
+            time: r.created_at,
+            createdAt: r.created_at,
+            read: isMe ? (r.is_read === true || r.status === 'read') : true
           };
         });
       }
@@ -1083,20 +1130,26 @@
             markDmRoomRead(myId, r.sender_id);
             person.isUnread = false;
             person._thread = person._thread || [];
+            // 상대방의 새 메시지가 수신되면 내가 보낸 이전 메시지는 읽음 처리
+            person._thread.forEach(function(m){ if(m.from === 'me') m.read = true; });
             if(!person._thread.some(function(m){ return m.id === r.id; })){
-              person._thread.push({
+              var newThemMsg = {
                 id: r.id,
                 from: 'them',
                 text: r.message,
-                time: global.fmtTime ? global.fmtTime(r.created_at) : '방금'
-              });
+                time: r.created_at,
+                createdAt: r.created_at,
+                read: true
+              };
+              person._thread.push(newThemMsg);
               var msgsEl = document.getElementById('dmMsgs');
               if(msgsEl && document.body.contains(msgsEl)){
-                var div = document.createElement('div');
-                div.className = 'dm-msg them';
-                div.textContent = r.message;
-                msgsEl.appendChild(div);
-                msgsEl.scrollTop = msgsEl.scrollHeight;
+                var tempDiv = document.createElement('div');
+                tempDiv.innerHTML = renderSingleDmMsg(newThemMsg);
+                if(tempDiv.firstElementChild){
+                  msgsEl.appendChild(tempDiv.firstElementChild);
+                  msgsEl.scrollTop = msgsEl.scrollHeight;
+                }
               }
             }
           }
@@ -1134,9 +1187,7 @@
         loadDmMessagesFromDb(threadId, person).then(function(){
           var msgsEl = document.getElementById('dmMsgs');
           if(msgsEl && document.body.contains(msgsEl)){
-            msgsEl.innerHTML = (person._thread && person._thread.length) ? person._thread.map(function(m){
-              return '<div class="dm-msg ' + m.from + '">' + esc(m.text) + '</div>';
-            }).join('') : '<div style="text-align:center;padding:24px 10px;font-size:.8125rem;color:var(--ink-faint);">아직 주고받은 메시지가 없습니다.<br>첫 대화를 건네보세요! 👋</div>';
+            msgsEl.innerHTML = (person._thread && person._thread.length) ? person._thread.map(renderSingleDmMsg).join('') : '<div style="text-align:center;padding:24px 10px;font-size:.8125rem;color:var(--ink-faint);">아직 주고받은 메시지가 없습니다.<br>첫 대화를 건네보세요! 👋</div>';
             msgsEl.scrollTop = msgsEl.scrollHeight;
           }
         });
@@ -1160,9 +1211,7 @@
         '</div>'
       ) : '';
 
-      var msgsHtml = (person._thread && person._thread.length) ? person._thread.map(function(m){
-        return '<div class="dm-msg ' + m.from + '">' + esc(m.text) + '</div>';
-      }).join('') : '<div style="text-align:center;padding:24px 10px;font-size:.8125rem;color:var(--ink-faint);">아직 주고받은 메시지가 없습니다.<br>첫 대화를 건네보세요! 👋</div>';
+      var msgsHtml = (person._thread && person._thread.length) ? person._thread.map(renderSingleDmMsg).join('') : '<div style="text-align:center;padding:24px 10px;font-size:.8125rem;color:var(--ink-faint);">아직 주고받은 메시지가 없습니다.<br>첫 대화를 건네보세요! 👋</div>';
 
       body.innerHTML = '<span class="dm-back" id="dmBack" style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;font-size:.875rem;font-weight:700;color:var(--brand-strong);margin-bottom:12px;">‹ 목록으로</span>' +
         followBackBannerHtml +
@@ -1234,20 +1283,22 @@
         var myName = (state.profile && (state.profile.displayName || state.profile.name)) || (state.user && state.user.email) || '나';
         var myAvatar = (state.profile && state.profile.avatar) || '🏃';
         var replyId = 'reply_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
-        var nowStr = global.fmtTime ? global.fmtTime(new Date().toISOString()) : '방금';
+        var nowIso = new Date().toISOString();
 
-        // 1. Optimistic UI 반영
-        person._thread.push({ id: replyId, from: 'me', text: text, time: nowStr });
-        _lastDmMessageMap[person.id] = { text: text, time: new Date().toISOString(), from: 'me' };
+        // 1. Optimistic UI 반영 (카카오톡 방식 노란색 1 및 전송 시각)
+        var newMeMsg = { id: replyId, from: 'me', text: text, time: nowIso, createdAt: nowIso, read: false };
+        person._thread.push(newMeMsg);
+        _lastDmMessageMap[person.id] = { text: text, time: nowIso, from: 'me' };
         markDmRoomRead(myId, person.id);
         input.value = '';
         var msgsEl = document.getElementById('dmMsgs');
         if(msgsEl){
-          var div = document.createElement('div');
-          div.className = 'dm-msg me';
-          div.textContent = text;
-          msgsEl.appendChild(div);
-          msgsEl.scrollTop = msgsEl.scrollHeight;
+          var tempWrap = document.createElement('div');
+          tempWrap.innerHTML = renderSingleDmMsg(newMeMsg);
+          if(tempWrap.firstElementChild){
+            msgsEl.appendChild(tempWrap.firstElementChild);
+            msgsEl.scrollTop = msgsEl.scrollHeight;
+          }
         }
 
         showToast('메시지를 전송했습니다! 💬');
