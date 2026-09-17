@@ -281,15 +281,15 @@ check('표준 템플릿(TEMPLATE_REQ_8STEPS.md, TEMPLATE_PLAN_8STEPS.md)이 존�
   assert.ok(fs.existsSync(path.join(SPECS_DIR, 'TEMPLATE_PLAN_8STEPS.md')), 'TEMPLATE_PLAN_8STEPS.md 부재');
 });
 
-check('절대 무결성 헌법 정본 문서(OURGOAL_ABSOLUTE_INTEGRITY_RULES.md)가 존재하고 14대 조문을 포괄한다', () => {
+check('절대 무결성 헌법 정본 문서(OURGOAL_ABSOLUTE_INTEGRITY_RULES.md)가 존재하고 15대 조문을 포괄한다', () => {
   const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
   assert.ok(fs.existsSync(rulesDoc), 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md 부재');
   const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
-  for (let i = 1; i <= 14; i++) {
+  for (let i = 1; i <= 15; i++) {
     assert.ok(rulesContent.includes(`제${i}조 (`), `제${i}조 누락`);
   }
-  // 15조 이상은 존재하지 않음을 단언 (21조 등 난립 영구 방지)
-  assert.ok(!rulesContent.includes('제15조 ('), '제15조 이상 불법 조문 발견 (14대 조문 엄수 위반)');
+  // 16조 이상은 존재하지 않음을 단언 (조 번호 난립 영구 방지)
+  assert.ok(!rulesContent.includes('제16조 ('), '제16조 이상 불법 조문 발견 (15대 조문 엄수 위반)');
   assert.ok(!rulesContent.includes('제21조 ('), '제21조 불법 조문 잔존');
 });
 
@@ -344,7 +344,7 @@ check('헌법 정본에 원격 main PR 머지=실서버 배포 동일시(제9조
  * ========================================================================= */
 console.log('\n[검증 8/8] 헌법 제13조: 실 사용자 계정 상호 연동 헌법 검사');
 
-check('헌법 정본에 실 사용자 계정 상호 연동 헌법(제13조 1~4항) 및 가짜 실제구현 금지(제1조 4항 6호, 제4조 1항 7호)가 규정되어 있다', () => {
+check('헌법 정본에 실 사용자 계정 상호 연동 헌법(제13조 1~5항) 및 가짜 실제구현 금지(제1조 4항 6호, 제4조 1항 7호)가 규정되어 있다', () => {
   const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
   const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
   assert.ok(rulesContent.includes('제13조 (실 사용자 계정 상호 연동 헌법'), '제13조 누락');
@@ -352,6 +352,7 @@ check('헌법 정본에 실 사용자 계정 상호 연동 헌법(제13조 1~4�
   assert.ok(rulesContent.includes('제2항 [가짜 실제구현(Fake Implementation)의 정의 및 영구 금지]'), '제13조 2항 누락');
   assert.ok(rulesContent.includes('제3항 [투명한 시스템 안내 및 게스트 모드 보호 (무충돌 안전핀)]'), '제13조 3항 누락');
   assert.ok(rulesContent.includes('제4항 [E3 동류소통 기능의 3대 필수 백본 및 자동화 검증]'), '제13조 4항 누락');
+  assert.ok(rulesContent.includes('제5항 [상호작용 양방향 전달성 및 구독 생존 보장의 의무'), '제13조 5항 누락');
   assert.ok(rulesContent.includes('가짜 실제구현 및 로컬 자가발전 눈속임'), '제1조 4항 6호 누락');
   assert.ok(rulesContent.includes('가짜 실제구현 전면 금지'), '제4조 1항 7호 누락');
 });
@@ -373,6 +374,27 @@ check('헌법 정본에 제14조(외부연동 E2E 무결성·헌법 독점주의
   assert.ok(rulesContent.includes('제6항 [헌법 독점주의 (사설 규칙 제정 전면 금지 / Constitutional Exclusivity)]'), '제14조 6항 누락');
   assert.ok(rulesContent.includes('제7항 [신규 규칙 제정의 헌법 편입 의무]'), '제14조 7항 누락');
   assert.ok(rulesContent.includes('제8항 [규범 변경의 절대 승인선 엄수 및 기계적 무결성 게이트 강제]'), '제14조 8항 누락');
+});
+
+/* =========================================================================
+ * 10. 헌법 제15조 및 5대 돌파 규정 검증 (유저 자산 원격 원장화 및 수명주기 영속성)
+ * ========================================================================= */
+console.log('\n[검증 10/10] 헌법 제15조: 유저 자산 원격 원장화 및 수명주기 영속성 헌법 검사');
+
+check('헌법 정본에 제15조 및 5대 고도화 규정이 완전 편입되어 있다', () => {
+  const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
+  const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
+  assert.ok(rulesContent.includes('제15조 (유저 자산 원격 원장화 및 수명주기 영속성 헌법'), '제15조 누락');
+  assert.ok(rulesContent.includes('제1항 [원격 원장 우선의 원칙 (Server-First Storage Mandate)]'), '제15조 1항 누락');
+  assert.ok(rulesContent.includes('제2항 [파괴적 스토리지 삭제의 합집합 보존 의무 (Non-Destructive Union Merge)]'), '제15조 2항 누락');
+  assert.ok(rulesContent.includes('제3항 [시각적 무손실 최고화질 보장 및 3계층 스마트 스토리지 헌법'), '제15조 3항 누락');
+  assert.ok(rulesContent.includes('제4항 [수명주기(Lifecycle) 4단계 E2E 검증 의무화]'), '제15조 4항 누락');
+  assert.ok(rulesContent.includes('제5항 [데이터 유실 사고 시 횡단 압수수색 의무 (Horizontal Storage Audit)]'), '제15조 5항 누락');
+  assert.ok(rulesContent.includes('제6항 [기록의 전 수명주기(CRUD) 무결성 및 4대 연계 뷰 동시 전파의 의무'), '제15조 6항 누락');
+  assert.ok(rulesContent.includes('제7항 [동시성 세션 보호 및 스키마 자가 정규화의 의무'), '제15조 7항 누락');
+  assert.ok(rulesContent.includes('코드 줄 수 족쇄 철폐 및 고품질 완결성 보장 원칙'), '제5조 3항 누락');
+  assert.ok(rulesContent.includes('기획 단계 스토리지 원장화 3대 명세 의무'), '제2조 4항 누락');
+  assert.ok(rulesContent.includes('클라이언트 스토리지 및 네트워크 이상 실시간 관제 연동'), '제11조 3항 누락');
 });
 
 console.log('\n================================================================');
