@@ -590,7 +590,7 @@
 
   /* ------------------------------------------------------------
   /* ------------------------------------------------------------
-   * 5. 실 사용자 계정 상호 연동 1:1 DM 시스템 (헌법 제19조 준수)
+   * 5. 실 사용자 계정 상호 연동 1:1 DM 시스템 (헌법 제13조 준수)
    * ------------------------------------------------------------ */
   var _activeDmChannel = null;
   var _incomingDmChannel = null;
@@ -598,6 +598,30 @@
   var _incomingDmLoadedForUser = null;
   var _hasUnreadDm = false;
   var _userCache = {};
+  var _lastDmMessageMap = {};
+  var _unreadPeerMap = {};
+  var DM_READ_PREFIX = 'ourgoal_dm_read_';
+
+  function getDmReadMap(myId){
+    if(!myId || String(myId).indexOf('guest') === 0) return {};
+    try {
+      var raw = localStorage.getItem(DM_READ_PREFIX + myId);
+      return raw ? JSON.parse(raw) : {};
+    } catch(e){ return {}; }
+  }
+
+  function markDmRoomRead(myId, peerId){
+    if(!myId || !peerId || String(myId).indexOf('guest') === 0) return;
+    try {
+      var pid = String(peerId).trim();
+      var map = getDmReadMap(myId);
+      map[pid] = Date.now();
+      localStorage.setItem(DM_READ_PREFIX + myId, JSON.stringify(map));
+      delete _unreadPeerMap[pid];
+      var stillUnread = Object.keys(_unreadPeerMap).some(function(k){ return !!_unreadPeerMap[k]; });
+      updateDmUnreadBadge(stillUnread);
+    } catch(e){}
+  }
 
   function updateDmUnreadBadge(hasUnread){
     _hasUnreadDm = !!hasUnread;
@@ -624,24 +648,58 @@
         .select('id, ping_id, sender_id, sender_name, sender_avatar, receiver_id, message, created_at')
         .eq('receiver_id', myId)
         .order('created_at', { ascending: false })
-        .limit(50);
+        .limit(100);
       if(res && res.data){
         var state = global.state || {};
         var comps = (state.profile && state.profile.companions) || [];
+        var readMap = getDmReadMap(myId);
         var seenSenders = {};
         var rooms = [];
+
         res.data.forEach(function(r){
           if(!r.sender_id || r.sender_id === myId) return;
-          if(seenSenders[r.sender_id]) return;
-          seenSenders[r.sender_id] = true;
+          var senderId = String(r.sender_id).trim();
 
-          var isMyComp = comps.some(function(c){
-            return String(c.id || '').trim().toLowerCase() === String(r.sender_id).trim().toLowerCase();
+          // 최신 메시지 매핑 (최신 순이므로 첫 번째 발견된 메시지가 가장 최신)
+          if(!_lastDmMessageMap[senderId]){
+            _lastDmMessageMap[senderId] = {
+              text: r.message,
+              time: r.created_at,
+              from: 'them'
+            };
+          }
+
+          var msgTime = new Date(r.created_at).getTime();
+          var lastRead = readMap[senderId] || 0;
+          if(msgTime > lastRead){
+            _unreadPeerMap[senderId] = true;
+          }
+
+          if(seenSenders[senderId]) return;
+          seenSenders[senderId] = true;
+
+          // 동반자 목록에 존재하는지 확인
+          var targetComp = comps.find(function(c){
+            return String(c.id || '').trim().toLowerCase() === senderId.toLowerCase();
           });
 
-          if(!isMyComp){
+          if(targetComp){
+            // 기존 동반자인 경우 최신 메시지 및 미확인 상태 갱신
+            targetComp.lastMsg = r.message;
+            targetComp.lastTime = r.created_at;
+            targetComp.isUnread = !!_unreadPeerMap[senderId];
+            if(!targetComp._thread || targetComp._thread.length === 0){
+              targetComp._thread = [{
+                id: r.id,
+                from: 'them',
+                text: r.message,
+                time: global.fmtTime ? global.fmtTime(r.created_at) : '최근'
+              }];
+            }
+          } else {
+            // 동반자가 아닌 신규 대화 요청
             var roomItem = {
-              id: r.sender_id,
+              id: senderId,
               name: r.sender_name || '동반자',
               nickname: r.sender_name || '동반자',
               avatar: r.sender_avatar || '👤',
@@ -649,6 +707,7 @@
               isIncoming: true,
               lastMsg: r.message,
               lastTime: r.created_at,
+              isUnread: !!_unreadPeerMap[senderId],
               theme: '새 대화 요청',
               _thread: [{
                 id: r.id,
@@ -658,11 +717,17 @@
               }]
             };
             rooms.push(roomItem);
-            _userCache[r.sender_id] = roomItem;
+            _userCache[senderId] = roomItem;
           }
         });
+
         _incomingDmRooms = rooms;
         _incomingDmLoadedForUser = myId;
+
+        // 미확인 DM 유무 종합 판정
+        var hasUnread = Object.keys(_unreadPeerMap).some(function(k){ return !!_unreadPeerMap[k]; });
+        updateDmUnreadBadge(hasUnread);
+
         return rooms;
       }
     } catch(err){
@@ -687,18 +752,27 @@
         }, function(payload){
           var r = payload.new;
           if(!r || r.sender_id === myId) return;
+          var senderId = String(r.sender_id).trim();
+
+          _lastDmMessageMap[senderId] = {
+            text: r.message,
+            time: r.created_at || new Date().toISOString(),
+            from: 'them'
+          };
 
           var state = global.state || {};
-          var isInThisDm = (state.activeTab === 'comm' && state.commSubTab === 'dm' && state.dmActiveId === r.sender_id);
+          var isInThisDm = (state.activeTab === 'comm' && state.commSubTab === 'dm' && state.dmActiveId === senderId);
 
-          // 1. 인앱 토스트 알림 (대화방 안에 직접 머물러 있지 않을 때만)
           if(!isInThisDm){
+            _unreadPeerMap[senderId] = true;
             var senderTitle = r.sender_name || '동반자';
             showToast('💬 ' + senderTitle + '님의 새 메시지: ' + (r.message || ''));
             updateDmUnreadBadge(true);
+          } else {
+            markDmRoomRead(myId, senderId);
           }
 
-          // 2. 수신 목록 캐시 즉시 갱신 및 뷰 갱신
+          // 수신 목록 및 뷰 갱신
           loadIncomingDmRooms(myId).then(function(){
             if(state.activeTab === 'comm' && state.commSubTab === 'dm' && !state.dmActiveId){
               var subBody = document.getElementById('commSubBody');
@@ -711,11 +785,7 @@
         .subscribe();
 
       // 최초 1회 incoming 대화 목록 로드 & 미확인 확인
-      loadIncomingDmRooms(myId).then(function(rooms){
-        if(rooms && rooms.length > 0){
-          updateDmUnreadBadge(true);
-        }
-      });
+      loadIncomingDmRooms(myId);
     } catch(err){
       console.warn('[DM] 전역 Realtime 리스너 설정 오류:', err);
     }
@@ -832,6 +902,8 @@
           var r = payload.new;
           if(!r) return;
           if(r.sender_id !== myId){
+            markDmRoomRead(myId, r.sender_id);
+            person.isUnread = false;
             person._thread = person._thread || [];
             if(!person._thread.some(function(m){ return m.id === r.id; })){
               person._thread.push({
@@ -866,6 +938,9 @@
     if(state.dmActiveId){
       var person = getDmPerson(state.dmActiveId);
       if(!person){ state.dmActiveId = null; return renderCommDM(body); }
+
+      markDmRoomRead(myId, person.id);
+      person.isUnread = false;
 
       var threadId = getDmThreadId(myId, person.id);
       person._thread = person._thread || [];
@@ -982,6 +1057,8 @@
 
         // 1. Optimistic UI 반영
         person._thread.push({ id: replyId, from: 'me', text: text, time: nowStr });
+        _lastDmMessageMap[person.id] = { text: text, time: new Date().toISOString(), from: 'me' };
+        markDmRoomRead(myId, person.id);
         input.value = '';
         var msgsEl = document.getElementById('dmMsgs');
         if(msgsEl){
