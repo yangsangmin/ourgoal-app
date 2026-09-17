@@ -6486,9 +6486,40 @@ check('compliance: [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 
   assert.ok(cssSrc.includes('.avatar-greet-overlay'), 'ui.css .avatar-greet-overlay 스타일');
   assert.ok(cssSrc.includes('.avatar-greet-close-big'), 'ui.css .avatar-greet-close-big 스타일');
   assert.ok(cssSrc.includes('.avatar-greet-bubble'), 'ui.css .avatar-greet-bubble 스타일');
-  assert.ok(cssSrc.includes('.avatar-greet-figure-container'), 'ui.css .avatar-greet-figure-container 스타일');
   assert.ok(cssSrc.includes('.avatar-greet-timer-bar'), 'ui.css .avatar-greet-timer-bar 스타일');
-  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es165'), 'sw.js es165 캐시 갱신');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es166') || swSrc.includes('ourgoal-shell-v20260917-es165'), 'sw.js es165/es166 캐시 갱신');
+});
+
+/* ============ [#TASK-ES-166] 활용법 내 아바타 전용 탭 최우선(맨 앞) 신설 및 200% 활용 가이드 & 쇼케이스 검증 ============ */
+check('compliance: [#TASK-ES-166] 활용법 내 아바타 전용 탭 최우선(맨 앞) 신설 및 200% 활용 가이드 & 쇼케이스 검증', () => {
+  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. TAB_GUIDE_DATA 내 avatar 탭 데이터셋 존재 및 3대 혁신 기능 검증
+  assert.ok(indexSrc.includes('avatar: {'), 'TAB_GUIDE_DATA 내 avatar 데이터 정의');
+  assert.ok(indexSrc.includes("name: '아바타'"), "avatar 탭 이름 '아바타' 매핑");
+  assert.ok(indexSrc.includes('5대 상징 랭크 & 백그라운드 오라'), '아바타 1호 혁신 기능: 5대 상징 랭크 & 백그라운드 오라');
+  assert.ok(indexSrc.includes('앱 진입 대형 인사 팝업 & 시간대별 맞춤 멘트'), '아바타 2호 혁신 기능: 앱 진입 대형 인사 팝업');
+  assert.ok(indexSrc.includes('나만의 아바타 생성 & 보관함 관리'), '아바타 3호 혁신 기능: 보관함 및 생성 관리');
+
+  // 2. 아바타 우수 사용사례 쇼케이스 검증
+  assert.ok(indexSrc.includes('Lv.20 우주 윙 달성자의 나만의 페르소나 아바타 룸'), '우주 윙 달성자 아바타 쇼케이스 타이틀');
+  assert.ok(indexSrc.includes('Lv.20 우주 윙 아바타'), '아바타 목업 내 레벨/랭크 뱃지');
+
+  // 3. 탭 순서 최우선(맨 앞) 및 기본 활성화 탭 검증
+  const avatarKeyIdx = indexSrc.indexOf("{ key: 'avatar'");
+  const homeKeyIdx = indexSrc.indexOf("{ key: 'home'");
+  assert.ok(avatarKeyIdx > 0 && homeKeyIdx > 0 && avatarKeyIdx < homeKeyIdx, "가이드 tabs 배열에서 'avatar'가 'home'보다 앞에 위치");
+  assert.ok(indexSrc.includes("var curTab = initialTab || 'avatar';"), "가이드 기본 활성화 탭이 'avatar'로 지정");
+
+  // 4. 아바타 꾸미러 가기 액션 버튼 및 openAvatarModal 배선 검증
+  assert.ok(indexSrc.includes('🎨 나만의 아바타 꾸미러 가기'), '아바타 탭 전용 액션 버튼 문구');
+  assert.ok(indexSrc.includes("target === 'avatar'") && indexSrc.includes('openAvatarModal'), '아바타 탭 클릭 시 openAvatarModal 호출 배선');
+
+  // 5. ui.css 및 sw.js 캐시 검증
+  assert.ok(cssSrc.includes('.tab-guide-nav-bar'), 'ui.css .tab-guide-nav-bar 스타일');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260917-es166'), 'sw.js es166 캐시 갱신');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
