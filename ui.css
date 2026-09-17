@@ -3433,5 +3433,74 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   font-weight: 700;
 }
 
-
-
+/* ---------- [#TASK-ES-153] 캘린더 일자별 배경 사진 지정 및 50% 투명도 전역 렌더링 ---------- */
+.cal-cell {
+  position: relative !important;
+}
+.cal-cell-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+.cal-cell .cal-daynum,
+.cal-cell .cal-pill,
+.cal-cell .cal-more {
+  position: relative;
+  z-index: 1;
+}
+.timetable-day-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.2;
+  pointer-events: none;
+  z-index: 0;
+}
+.cal-bg-preview-wrap {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px dashed var(--rule);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.cal-bg-preview-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.cal-bg-preview-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 12px;
+}
+.cal-day-bg-btn {
+  transition: all .15s ease;
+}
+.cal-day-bg-btn:hover {
+  border-color: var(--brand) !important;
+  color: var(--brand) !important;
+}

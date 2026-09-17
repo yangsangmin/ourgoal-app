@@ -4283,5 +4283,30 @@
   3. **무결성 검증**:
      - `scripts/smoke-test.js`: 컴플라이언스 테스트 2종 추가 (총 291개 테스트 0 failures 전수 통과).
      - 헌법 5대 핵심 검증 게이트 15종 100% ALL PASS, Zero Dead Click 100% (574/591 전수 배선 및 위임 처리).
+---
+
+## [2026-09-17 14:45] #TASK-ES-153 캘린더 일자별 배경 사진 지정 및 50% 투명도 전역 렌더링 시스템 구현
+- **배경 및 의도**:
+  - 상민님 직접 지시 ("일정에서 각 일정 칸의 배경 이미지를 선택할 수 있는 기능을 만들자. 각 일정에서 '이날의 배경사진 고르기' 버튼을 누르면 원하는 사진을 선택하고 취소, 저장할 수 있고, 저장하면 내가 선택한 사진이 일정의 배경으로 (투명도 50%, 기존에 적은 일정들이 보이게) 해당일정칸이 꽉 차는거야... 진행").
+  - 캘린더가 텍스트 리스트를 넘어 일자별 기억과 감성을 담는 비주얼 다이어리로 진화하면서도, 일정 텍스트와 체크 칩의 가독성을 100% 보존.
+- **주요 수정 및 해결 내역**:
+  1. **50% 투명도 & 꽉 찬 배경 레이어 아키텍처 (`ui.css`)**:
+     - `.cal-cell`: `position: relative; overflow: hidden;` 보장.
+     - `.cal-cell-bg`: `position: absolute; inset: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0.5; pointer-events: none; z-index: 0;` (해당 칸을 꽉 채우며 50% 투명도로 렌더링).
+     - `.cal-daynum`, `.cal-pill`, `.cal-more`: `position: relative; z-index: 1;`로 분리하여 텍스트 및 클릭 영역 100% 보존.
+     - `.timetable-day-bg`: 일간 시간표 타임라인 배경 20% 오버레이 스타일 정의.
+     - `.cal-bg-preview-wrap`: 사진 선택 모달 내 50% 투명도 및 목업 일정 텍스트 실시간 시뮬레이션 미리보기 스타일 탑재.
+  2. **사진 선택·경량 압축·저장 모달 및 진입점 (`index.html`)**:
+     - `compressCalendarBgImage`: Canvas 800px & JPEG 0.82 자동 압축 파이프라인 (장당 ~60KB로 경량화하여 LocalStorage 5MB 한도 절대 보호).
+     - `openCalendarDayBgPickerModal`: 선택한 일자 라벨, 실시간 50% 투명도 미리보기, 파일 선택기(`accept="image/*"`), `[취소]`, `[저장]`, `[삭제]` 3종 버튼 완비 (Zero Dead Click).
+     - `openCalendarDayEditHubModal`: 일간 일정 관리 모달 상단에 `[🖼️ 이날의 배경사진 고르기]` 버튼 배선 및 `(설정됨)` 상태 안내.
+     - `renderCalendarScreen`: 일간 시간표 헤더 및 일간 상세 카드 헤더에 `[🖼️ 이날의 배경사진 고르기]` 버튼 배선 및 월간 셀 `.cal-cell-bg` 주입.
+  3. **데이터 영속성 (Zero Data Loss)**:
+     - `state.profile.calendarDayBackgrounds[sel]` 날짜별 딕셔너리 매핑.
+     - `loadProfile`: `ourgoal_cal_day_bg_<userId>` 로컬 비상 백업 및 프로필 캐시 양방향 자가 치유 복원.
+     - `saveProfile`: `ourgoal_cal_day_bg_<userId>` 로컬 스토리지 안전 저장.
+  4. **무결성 검증**:
+     - `scripts/smoke-test.js`: 컴플라이언스 테스트 1종 추가 (총 292개 테스트 0 failures 전수 통과).
+     - 헌법 5대 핵심 검증 게이트 15종 100% ALL PASS, Zero Dead Click 100% (587/604 전수 배선 및 위임 처리).
      - 본질 게이트 `node scripts/essence-gate.js --pre-commit` 통과.
 ---
