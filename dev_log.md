@@ -4310,3 +4310,64 @@
      - 헌법 5대 핵심 검증 게이트 15종 100% ALL PASS, Zero Dead Click 100% (587/604 전수 배선 및 위임 처리).
      - 본질 게이트 `node scripts/essence-gate.js --pre-commit` 통과.
 ---
+
+## [2026-09-17 15:00] #TASK-ES-155 캘린더 배경사진(모달전환/사진선택미리보기저장)·일정체크토글·잇템추가 결함 해결 및 일정 안내문구 추가
+- **배경 및 의도**:
+  - 상민님 직접 지시 ("1. 달력에서 일자를 선택하고, 이날의 배경사진 고르기를 누르면 작동안함 2. 달력의 밑에 있는 이날의 배경사진 고르기를 누르면 사진고르기가 보이고, 사진고르기를 누르면 사진을 선택할 수 있는데 사진을 고르면 미리보기도 안되고 저장을 눌렀을때 작동하지 않음. 3. 캘린더 일정 체크버튼 완료/미완료 토글 작동 안함 4. 잇템추가 시스템 정상작동 안함 해결해. 추가로 일정탭의 '일정' 제목과 달력 사이에 '일정을 사진배경으로 채워서 나만의 사진일기장을 만들어봐요' 문구를 사용자경험 해치지 않게 넣어줘.").
+- **주요 수정 및 해결 내역**:
+  1. **모달 전환 아키텍처 정규화 및 popstate 충돌 차단**:
+     - 일간 허브 모달(`openCalendarDayEditHubModal`)에서 `hubDayBgBtn` 클릭 시 `closeModal()`을 거치지 않고 `openCalendarDayBgPickerModal(sel)`을 직접 호출하여 `history.back()`에 의한 신규 모달 즉시 닫힘 결함 원천 해결.
+  2. **showToast 런타임 오류 해결 및 toast 표준화**:
+     - `openCalendarDayBgPickerModal` 내 정의되지 않은 `showToast` 호출을 `toast`로 전면 교체.
+     - `window.showToast = toast;` 전역 별칭을 등록하여 예기치 못한 호출에 대한 런타임 내성 확보.
+     - 이미지 선택 즉시 `compressCalendarBgImage` -> `previewLayer` 50% 투명도 미리보기 및 `tempBg` 저장 파이프라인 완결.
+  3. **캘린더 일간 일정 목록(`renderCalDayDetail`) 체크버튼 활성화**:
+     - 정적 `ms-status` 요소를 `sched-check` 인터랙티브 버튼(`data-detailtogglesched`)으로 교체.
+     - 클릭 시 `ev.stopPropagation()`과 함께 `toggleScheduleDone`을 직접 트리거하여 완료/미완료 토글 및 목표 양방향 실시간 동기화 완결.
+  4. **프로필 잇템 등록 시스템 완결**:
+     - `openProfileEditor(existingDraft)` 시그니처 확장으로 서브모달 반환 시 작성 중인 draft 인메모리 온전 보존.
+     - 잇템 추가 모달(`itConfirmBtn`) 및 취소(`itCancelBtn`) 시 `closeModal()` 대신 `openProfileEditor(draft)` 직접 복귀로 화면 깜빡임/증발 방지.
+  5. **일정 탭 감성 안내 카피 탑재**:
+     - `screen-calendar` 상단에 `.cal-sub-guide` ("일정을 사진배경으로 채워서 나만의 사진일기장을 만들어봐요") 은은하고 정돈된 카드 마크업 추가.
+---
+
+## [2026-09-17 15:15] #TASK-CONSTITUTION-8STEPS 기존 헌법 효과 100% 보존 기반 문제해결 8원칙 전면 반영 및 기계적 게이트키퍼 배선
+- **배경 및 의도**:
+  - 상민님 직접 지시 ("아워골 작업들을 시켜보면, 내가 설정한 문제해결 8원칙이 제대로 적용되지 않는 것 같아. 헌법에 잘 적용되어 있는지 확인해봐", "기존 헌법의 효과를 해치지 않으면서 문제해결 8원칙이 잘 적용되도록 반영해야해. 이해했어?").
+- **주요 수정 및 해결 내역**:
+  1. **최고 헌법 제2조 정밀 보강**:
+     - 기존 15대 조문 체계 및 효과(3대 본질 루프, 껍데기 UI 방지, 5대 무결성, 6단계 보고, 배포 안전핀, Tri-Sync 등) 100% 온전 계승.
+     - 제1항 (1차 REQ): 상민님 원형의 8개 호(1호~8호) 상세 분석 기준(기저 층위, 본질·원인·중심·핵심 4대 요소, 스토리지 3대 명세, 비판적 재검토, 절차 재검증, 재검증 트리거) 법제화.
+     - 제5항 신설: 원칙 번호 임의 합체(①~③, ⑤+⑦) 전면 금지, 원칙 ⑥(절차 재검증) 생략/누락 영구 금지, 1줄 bullet point 날림 축약 금지, 기계적 린터 강제 배선 명시.
+  2. **기계적 게이트키퍼 린터 배선 (`scripts/verify-integrity-gate.js`)**:
+     - 신규/수정된 REQ/PLAN 문서 정적 린터 신설 (8개 독립 헤더, 합체 금지, ⑥누락 금지, 4대 요소 구비 여부 자동 검증 및 미달 시 빌드 차단).
+  3. **표준 템플릿 및 보조 지침 동기화**:
+     - `TEMPLATE_REQ_8STEPS.md`, `TEMPLATE_PLAN_8STEPS.md` 고도화.
+     - `CLAUDE.md` 내 구버전 4블록 혼선 제거 및 독립 8원칙 + PR 4블록 정본 단일화.
+     - `GEMINI.md` 동기화.
+     - Obsidian `SOP_아워골_전면무결성_8원칙_절대규칙.md` 개정 반영 및 커맨드센터 저널(`journal.jsonl`) 공식 기록.
+- **검증 결과**:
+  - `verify-integrity-gate.js` 총 17개 검사 17개 ALL PASS (0개 실패).
+  - `npm test` 294개 스모크 테스트 100% ALL PASS.
+  - Tri-Sync 100% 무결성 유지 (517/517 linked).
+---
+
+## [2026-09-17 15:45] #TASK-ES-153-SILENT 구글 캘린더 일정 저장 시 계정 선택창 팝업 원천 차단 및 백그라운드 무음 동기화
+- **배경 및 의도**:
+  - 상민님 피드백 ("새 일정추가, 저장을 누르면 구글계정선택창이 뜬다? 이미 연동이 되어 있는데? 이것도 반영해서 수정했나?").
+  - 원인 분석: 일정 저장 시 `gcalAutoSync`에 의해 백그라운드로 `syncAllToGoogleCalendar()`가 실행되는데, 토큰 만료 또는 미보유 시 무조건 `requestGoogleToken()`을 호출하여 불필요한 구글 계정 선택 팝업이 뜸. 또한 `requestAccessToken`에 `hint: googleCalendarEmail`이 없어서 다중 계정 브라우저에서 계정 선택창이 강제 노출됨.
+- **주요 수정 및 해결 내역**:
+  1. **백그라운드 무음 동기화 모드 (`interactive: false`) 분리**:
+     - `getGoogleAccessToken(interactive)`에서 `!interactive`일 때 유효 토큰이 없으면 `requestGoogleToken()`을 강제 호출하지 않고 `null` 반환.
+     - 일정 저장 핸들러, 휴지통 원복 핸들러, 캘린더 화면 렌더링 시에는 `syncAllToGoogleCalendar(false)`로 호출하여 팝업 0회 무음 처리.
+     - 아워골 내부 저장은 지체 없이 즉시 100% 완료.
+  2. **계정 선택창 건너뛰기 `hint: googleCalendarEmail` 탑재**:
+     - 연동된 이메일 계정이 있을 경우 `reqOpts.hint = gEmail`을 구글 GIS에 전달하여, 계정 선택창 없이 기존 연동 계정으로 다이렉트 자동 인증.
+  3. **수동 [지금 동기화] 인터랙티브 배선**:
+     - 캘린더 상단 배너 `#calBannerSyncBtn` 및 설정 화면 `#gcalSyncNowBtn` 클릭 시 `syncAllToGoogleCalendar(true)`로 호출하여, 필요 시에만 사용자가 의도한 시점에 인증창 팝업 실행.
+- **검증 결과**:
+  - `npm test` 295개 스모크 테스트 100% ALL PASS (0 failures).
+  - `verify-integrity-gate.js` 17개 헌법 게이트 100% ALL PASS.
+  - `sw.js` 캐시명 `ourgoal-shell-v20260917-gcal-silent-sync` 갱신.
+---
+
