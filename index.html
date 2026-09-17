@@ -1018,11 +1018,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function getKSTDateKey(iso){
     var d = iso ? new Date(iso) : new Date();
     if(isNaN(d.getTime())) d = new Date();
-    var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
-    var kst = new Date(utc + (9 * 3600000));
-    return kst.getFullYear() + '-' + pad(kst.getMonth() + 1) + '-' + pad(kst.getDate());
+    var kst = new Date(d.getTime() + (9 * 3600000));
+    return kst.getUTCFullYear() + '-' + pad(kst.getUTCMonth() + 1) + '-' + pad(kst.getUTCDate());
   }
-  function dateKey(iso){ return getKSTDateKey(iso); }
+  function dateKey(iso){ var d=new Date(iso); if(!iso || isNaN(d.getTime())) d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
   if(typeof window !== 'undefined'){ window.getKSTDateKey = getKSTDateKey; }
   /* ============ 계측(익명 이벤트) — 성장 백로그 P0 ①온보딩 퍼널 ②유입 채널 ③알림 클릭률 ============
      원칙: user_id는 저장하지 않고 기기별 익명 sid만 사용(개인정보 최소화). 계측 실패는 UX에 절대 영향을 주지 않는다. */

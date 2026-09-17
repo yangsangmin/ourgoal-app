@@ -5562,18 +5562,17 @@ check('compliance: [#TASK-ES-136] 목표 데이터 해시 변경 감지 보강 �
 check('compliance: [#TASK-ES-137] AI 엔진 공통 데이터 불변 시 API 재호출 전면 차단 & KST 자정(00:00) 자동 롤오버 검증', () => {
   const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 
-  // 1. getKSTDateKey 정의 및 dateKey 연동 검증
+  // 1. getKSTDateKey 정의 및 dateKey 보존 검증
   assert.ok(indexSrc.includes('function getKSTDateKey(iso)'), 'getKSTDateKey 함수 정의');
-  assert.ok(indexSrc.includes('function dateKey(iso){ return getKSTDateKey(iso); }'), 'dateKey의 getKSTDateKey 단일 위계 위임');
+  assert.ok(indexSrc.includes('function dateKey(iso)'), 'dateKey 로컬 기기 날짜 포맷 함수 보존');
   assert.ok(indexSrc.includes('window.getKSTDateKey = getKSTDateKey'), 'getKSTDateKey 전역 바인딩');
 
   // 2. KST 자정 산출 단위 검증
   function testKST(dStr) {
     var d = dStr ? new Date(dStr) : new Date();
-    var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
-    var kst = new Date(utc + (9 * 3600000));
+    var kst = new Date(d.getTime() + (9 * 3600000));
     var pad = n => n < 10 ? '0' + n : '' + n;
-    return kst.getFullYear() + '-' + pad(kst.getMonth() + 1) + '-' + pad(kst.getDate());
+    return kst.getUTCFullYear() + '-' + pad(kst.getUTCMonth() + 1) + '-' + pad(kst.getUTCDate());
   }
 
   // 2026-09-17 14:59 UTC = 2026-09-17 23:59 KST
