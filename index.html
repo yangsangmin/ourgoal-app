@@ -926,6 +926,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <!-- 💬 고객지원 및 FAQ (Req 10) -->
       <div class="set-block">
         <h4>고객지원 및 가이드</h4>
+        <button class="btn btn-secondary" id="btnInstallGuide" type="button" style="width:100%;margin-bottom:8px;font-weight:800;background:linear-gradient(135deg,#FF4F64,#FF7B8B);color:#fff;border:none;">📲 크롬으로 홈 화면 앱 설치하기 (10초 카드뉴스)</button>
         <button class="btn btn-primary" id="btnTabGuideHub" type="button" style="width:100%;margin-bottom:8px;font-weight:800;background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;border:none;">🌟 각 탭 200% 활용법 & 우수 사용사례</button>
         <button class="btn btn-ghost" id="btnRestartGuide" type="button" style="width:100%;margin-bottom:8px;font-weight:700;color:var(--ink);">앱 기본 가이드 다시보기 (온보딩 안내)</button>
         <button class="btn btn-ghost" id="feedbackInquiryBtn" type="button" style="width:100%;margin-bottom:8px;">1:1 문의 및 오류 제보</button>
@@ -3570,6 +3571,32 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<div style="font-size:.72rem;color:var(--ink-soft);margin-top:4px;">“오늘도 멋져요 유나님! 하루 힘차게 시작해봐요 👏” · 찌르기 피드백 수신</div>' +
         '</div>'
       }
+    },
+    install: {
+      name: '앱설치',
+      icon: '📲',
+      badge: '10초 크롬 설치',
+      features: [
+        { title: '바탕화면 1초 바로가기 앱 설치', desc: '크롬 우측 상단 더보기(⋮) ➔ [홈 화면에 추가] 또는 [앱 설치]로 정식 스토어 앱과 동일하게 사용해요.' },
+        { title: '주소창 없는 시원한 전체화면', desc: '브라우저 주소창과 뒤로가기 버튼 없이 풀스크린 Standalone 앱 경험을 제공해요.' },
+        { title: '지인 초대 & 5단계 카드뉴스 공유', desc: '카카오톡이나 문자로 친구에게 5단계 카드뉴스 설치 링크를 1초 만에 바로 복사/공유할 수 있어요.' }
+      ],
+      showcase: {
+        badgeText: '크롬 설치 가이드',
+        user: 'OurGoal 공식 가이드 (안드로이드 & PC)',
+        title: '크롬 브라우저로 아워골 홈 화면 앱 설치하기 (5단계 카드뉴스)',
+        quote: '“크롬 주소창에서 [홈 화면에 추가]만 누르면 스마트폰 바탕화면에 예쁜 아워골 아이콘이 깔려요! 지인들에게 링크 하나로 손쉽게 소개해보세요.”',
+        mockupHtml: '<div style="text-align:center;padding:12px 6px;">' +
+          '<a href="/install-guide.html" target="_blank" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:12px;font-weight:800;text-decoration:none;color:#FFF;background:linear-gradient(135deg,#FF4F64,#FF7B8B);box-shadow:0 4px 12px rgba(255,79,100,0.3);">' +
+            '<span>📲</span> 5단계 카드뉴스 전체화면 보기' +
+          '</a>' +
+          '<div style="margin-top:8px;">' +
+            '<button type="button" onclick="navigator.clipboard.writeText(window.location.origin+\'/install-guide.html\');if(typeof toast===\'function\')toast(\'설명서 링크가 복사되었습니다!\');" class="btn btn-ghost" style="font-size:.8rem;color:var(--brand);font-weight:700;border:none;background:none;cursor:pointer;">' +
+              '📋 지인 공유용 설명서 링크 복사하기' +
+            '</button>' +
+          '</div>' +
+        '</div>'
+      }
     }
   };
 
@@ -3586,6 +3613,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     var actionBtnText = (tabKey === 'avatar') 
       ? '🎨 나만의 아바타 꾸미러 가기' 
+      : (tabKey === 'install')
+      ? '📲 5단계 카드뉴스 설명서 전체화면으로 보기'
       : ('🚀 ' + escapeHtml(item.name) + ' 탭 바로 실천하러 가기');
 
     return '<div class="guide-feature-block">' +
@@ -3621,7 +3650,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       { key: 'goals', label: '목표', icon: '🎯' },
       { key: 'calendar', label: '일정', icon: '📅' },
       { key: 'records', label: '기록', icon: '📝' },
-      { key: 'social', label: '소통', icon: '💬' }
+      { key: 'social', label: '소통', icon: '💬' },
+      { key: 'install', label: '앱설치', icon: '📲' }
     ];
 
     var navHtml = tabs.map(function(t){
@@ -3667,6 +3697,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                 } else {
                   toast('아바타 설정창을 불러오는 중입니다.');
                 }
+              } else if(target === 'install'){
+                window.open('/install-guide.html', '_blank');
               } else {
                 if(typeof switchTab === 'function') switchTab(target);
                 var tabName = (TAB_GUIDE_DATA[target] && TAB_GUIDE_DATA[target].name) ? TAB_GUIDE_DATA[target].name : target;
@@ -3691,11 +3723,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
   }
   window.openTabGuideHubModal = openTabGuideHubModal;
+  window.openInstallGuideModal = function(){
+    openTabGuideHubModal('install');
+  };
 
   var tabGuideBtn = document.getElementById('btnTabGuideHub');
   if(tabGuideBtn){
     tabGuideBtn.addEventListener('click', function(){
       openTabGuideHubModal('avatar');
+    });
+  }
+
+  var installGuideBtn = document.getElementById('btnInstallGuide');
+  if(installGuideBtn){
+    installGuideBtn.addEventListener('click', function(){
+      openTabGuideHubModal('install');
     });
   }
 
