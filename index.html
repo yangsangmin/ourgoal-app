@@ -269,6 +269,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <div class="screen-head-l">
           <h2 class="s-title">일정</h2>
           <span class="privacy-badge" id="calPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
+          <span id="calGcalMiniBadgeSlot"></span>
         </div>
         <div class="format-toggle seg-compact" id="calViewToggle">
           <div class="format-opt" data-calview="month">월</div>
@@ -280,7 +281,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <span class="cal-sub-guide-icon">🖼️</span>
         <span>일정을 사진배경으로 채워서 나만의 사진일기장을 만들어봐요</span>
       </div>
-      <div id="calGoogleBanner"></div>
+      <div id="calGoogleBanner" style="display:none;"></div>
       <div class="cal-nav-row">
         <button class="icon-btn icon-btn-lg" id="calPrevBtn" type="button" aria-label="이전"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
         <h3 id="calPeriodLabel"></h3>
@@ -6153,60 +6154,65 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var refDate = new Date(state.calDate+'T00:00:00');
     var itemsByDate = calendarItemsByDate();
     var periodLabel, gridHtml;
-    /* 구글 캘린더 연동 안내 배너 (Req 4) */
+    /* 구글 캘린더 연동 안내 배너 -> 헤더 미니 구글 배지화 (#TASK-ES-157) */
     var gBanner = document.getElementById('calGoogleBanner');
     if(gBanner){
-      var isConn = isGoogleCalendarConnected();
-      var gEmail = (state.profile.settings && state.profile.settings.googleCalendarEmail) || '';
-      if(isConn){
-        if(state.googleToken && state.googleToken.expiresAt > Date.now()){
-          if(!state._lastGcalFetch || (Date.now() - state._lastGcalFetch > 60000)){
-            state._lastGcalFetch = Date.now();
-            fetchGoogleCalendarEvents(state.googleToken.accessToken).then(function(evs){
-              if(evs && evs.length && state.activeTab==='calendar') renderCalendarScreen();
-            }).catch(function(){});
-          }
-        } else if(!state.gcalEventsCache || !state.gcalEventsCache.length){
-          var savedEvents = null;
-          try { savedEvents = JSON.parse(localStorage.getItem('ourgoal_gcal_events') || '[]'); } catch(e){}
-          if(!savedEvents || !savedEvents.length){
-            getGoogleAccessToken(false).then(function(tok){
-              if(tok) return fetchGoogleCalendarEvents(tok);
-            }).then(function(evs){
-              if(evs && evs.length && state.activeTab==='calendar') renderCalendarScreen();
-            }).catch(function(){});
-          }
+      gBanner.style.display = 'none';
+      gBanner.innerHTML = '';
+    }
+    var isConn = isGoogleCalendarConnected();
+    var gEmail = (state.profile.settings && state.profile.settings.googleCalendarEmail) || '';
+    if(isConn){
+      if(state.googleToken && state.googleToken.expiresAt > Date.now()){
+        if(!state._lastGcalFetch || (Date.now() - state._lastGcalFetch > 60000)){
+          state._lastGcalFetch = Date.now();
+          fetchGoogleCalendarEvents(state.googleToken.accessToken).then(function(evs){
+            if(evs && evs.length && state.activeTab==='calendar') renderCalendarScreen();
+          }).catch(function(){});
         }
-        gBanner.innerHTML =
-          '<div style="margin-bottom:12px;padding:10px 14px;background:var(--sage-soft);border:1px solid rgba(46,125,50,.2);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">' +
-            '<div style="font-size:.875rem;color:var(--sage);display:flex;align-items:center;gap:6px;">' +
-              '<span><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></span>' +
-              '<span><b>구글 캘린더가 연동되었습니다</b>' + (gEmail ? ' <span class="faint" style="font-size:.8125rem;">('+escapeHtml(gEmail)+')</span>' : '') + '</span>' +
-            '</div>' +
-            '<div style="display:flex;gap:6px;">' +
-              '<a href="https://calendar.google.com" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="font-size:.8125rem;padding:4px 8px;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;background:rgba(255,255,255,.6);">캘린더 열기 ↗</a>' +
-              '<button class="btn btn-ghost btn-sm" id="calBannerSyncBtn" type="button" style="font-size:.8125rem;padding:4px 8px;white-space:nowrap;background:rgba(255,255,255,.6);">지금 동기화</button>' +
-              '<button class="btn btn-ghost btn-sm" id="calBannerSetBtn" type="button" style="font-size:.8125rem;padding:4px 8px;white-space:nowrap;">설정</button>' +
-            '</div>' +
-          '</div>';
-        var syncB = gBanner.querySelector('#calBannerSyncBtn');
-        if(syncB) syncB.onclick = function(){ syncAllToGoogleCalendar(true); };
-        var setB = gBanner.querySelector('#calBannerSetBtn');
-        if(setB) setB.onclick = function(){ setTab('settings'); };
+      } else if(!state.gcalEventsCache || !state.gcalEventsCache.length){
+        var savedEvents = null;
+        try { savedEvents = JSON.parse(localStorage.getItem('ourgoal_gcal_events') || '[]'); } catch(e){}
+        if(!savedEvents || !savedEvents.length){
+          getGoogleAccessToken(false).then(function(tok){
+            if(tok) return fetchGoogleCalendarEvents(tok);
+          }).then(function(evs){
+            if(evs && evs.length && state.activeTab==='calendar') renderCalendarScreen();
+          }).catch(function(){});
+        }
+      }
+    }
+    var gBadgeSlot = document.getElementById('calGcalMiniBadgeSlot');
+    if(gBadgeSlot){
+      var gIconSvg = '<svg width="13" height="13" viewBox="0 0 24 24" style="flex:0 0 13px;display:inline-block;vertical-align:middle;">' +
+        '<path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>' +
+        '<path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>' +
+        '<path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>' +
+        '<path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>' +
+      '</svg>';
+      if(isConn){
+        gBadgeSlot.innerHTML =
+          '<button class="dday-pill" id="calGcalMiniBadge" type="button" style="cursor:pointer;background:var(--surface-2);border:1px solid var(--rule);padding:2px 8px;min-height:22px;border-radius:20px;display:inline-flex;align-items:center;gap:5px;font-size:.75rem;font-weight:600;" title="구글 캘린더 연동됨' + (gEmail ? ' ('+escapeHtml(gEmail)+')' : '') + ' · 클릭하여 지금 동기화">' +
+            gIconSvg +
+            '<span style="color:var(--ink);">연동됨</span>' +
+          '</button>';
+        var bBtn = gBadgeSlot.querySelector('#calGcalMiniBadge');
+        if(bBtn){
+          bBtn.onclick = function(){
+            toast('구글 캘린더와 동기화 중…');
+            syncAllToGoogleCalendar(true);
+          };
+        }
       } else {
-        gBanner.innerHTML =
-          '<div style="margin-bottom:12px;padding:10px 14px;background:var(--card2);border:1px solid var(--rule);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">' +
-            '<div style="font-size:.875rem;color:var(--ink-soft);display:flex;align-items:center;gap:6px;">' +
-              '<span><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></span>' +
-              '<span><b>구글 캘린더를 연동하세요</b></span>' +
-            '</div>' +
-            '<div style="display:flex;gap:6px;">' +
-              '<a href="https://calendar.google.com" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="font-size:.8125rem;padding:4px 8px;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;">캘린더 열기 ↗</a>' +
-              '<button class="btn btn-primary btn-sm" id="calBannerConnectBtn" type="button" style="font-size:.8125rem;padding:4px 10px;white-space:nowrap;">연동하기</button>' +
-            '</div>' +
-          '</div>';
-        var connB = gBanner.querySelector('#calBannerConnectBtn');
-        if(connB) connB.onclick = openGoogleCalendarConnectModal;
+        gBadgeSlot.innerHTML =
+          '<button class="dday-pill" id="calGcalMiniBadge" type="button" style="cursor:pointer;background:var(--surface-2);border:1px solid var(--rule);padding:2px 8px;min-height:22px;border-radius:20px;display:inline-flex;align-items:center;gap:5px;font-size:.75rem;font-weight:600;" title="구글 캘린더 연동하기">' +
+            '<span style="opacity:.6;display:inline-flex;align-items:center;">' + gIconSvg + '</span>' +
+            '<span style="color:var(--ink-soft);">+ 연동</span>' +
+          '</button>';
+        var cBtn = gBadgeSlot.querySelector('#calGcalMiniBadge');
+        if(cBtn){
+          cBtn.onclick = openGoogleCalendarConnectModal;
+        }
       }
     }
     if(view==='month'){

@@ -4397,3 +4397,22 @@
   - 타 세션 보호 격리: `main` 직접 병합/배포 파이프라인 미발동, 독립 브랜치(`fix/2026-09-17-cal-toggle-and-gcal-edit-title-es156`) 로컬 완결.
 ---
 
+## [2026-09-17 16:15] #TASK-ES-157 캘린더 구글 캘린더 거대 배너 제거 및 헤더 미니 구글 아이콘 배지 콤팩트화
+- **배경 및 의도**:
+  - 상민님 직접 지시 ("지금 구글 캘린더가 연동되었습니다 창이 너무 비효율적이고 사용자 경험을 해치는 것 같지않아?", "1로 헌법 지키면서 병합까지 진행해. 미니구글아이콘으로.").
+- **주요 수정 및 해결 내역**:
+  1. **상단 상시 점유 거대 배너 전면 제거**:
+     - 캘린더 탭 상단의 `#calGoogleBanner` 상시 노출을 전면 숨김/비우기 처리(`gBanner.style.display = 'none'; gBanner.innerHTML = '';`)하여 모바일/데스크톱 뷰포트 상단 80~100px 공간을 즉각 확보하고 달력/타임라인 시야를 100% 개방.
+  2. **헤더 콤팩트 미니 구글 아이콘 배지 구현**:
+     - `screen-calendar`의 `screen-head-l` 내에 `#calGcalMiniBadgeSlot` 마운트.
+     - 4색 컬러 미니 구글 'G' SVG 아이콘과 은은한 알약 칩(`calGcalMiniBadge`) 배치.
+     - **연동 완료 시**: '연동됨' 텍스트 + 이메일 툴팁, 클릭 시 `toast('구글 캘린더와 동기화 중…'); syncAllToGoogleCalendar(true);` 원터치 수동 동기화 실행.
+     - **미연동 시**: '+ 연동' 텍스트, 클릭 시 `openGoogleCalendarConnectModal()` 연결.
+  3. **PWA 캐시 버전 갱신**:
+     - `sw.js`: `ourgoal-shell-v20260917-es157` 캐시명 갱신.
+- **검증 결과**:
+  - `npm test` 297개 스모크 테스트 100% ALL PASS (0 failures).
+  - `verify-integrity-gate.js` 17개 헌법 게이트 100% ALL PASS.
+  - Zero Dead Click 전수 검사 통과 (586 / 603 PASS).
+  - Tri-Sync 100% 무결성 유지 (517/517 linked).
+---
