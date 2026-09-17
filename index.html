@@ -165,12 +165,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       <!-- ② 답하기 -->
       <div class="capture-card card" id="captureCardBox">
-        <div class="capture-title">오늘 기록하기</div>
-        <div class="capture-sub">오늘 한 일을 한 줄로 적어주세요. AI가 정리해드려요</div>
+        <div class="capture-title" style="display:flex;align-items:center;gap:6px;"><span style="font-size:1.15rem;">📝</span><span>오늘 기록하기</span><span style="font-size:0.75rem;font-weight:600;color:var(--ink-faint);">(1-Line 실천)</span></div>
+        <div class="capture-sub">오늘 실천한 멋진 일을 한 줄로 톡 적어보세요! AI가 갓생 기록으로 완성해드려요 ✨</div>
         <div id="captureThemeQuickBar" class="theme-quick-bar" aria-label="테마 즐겨찾기"></div>
         <div class="theme-guide-microcopy" style="font-size:0.75rem;color:var(--ink-faint);margin:2px 0 6px 2px;line-height:1.4;">(테마 : ai 분석 및 DB시각화에 활용됨)</div>
         <div class="capture-ta-wrap">
-          <textarea id="captureInput" placeholder="예: 5km 러닝 28분 완주, 마지막 1km 스퍼트 성공"></textarea>
+          <textarea id="captureInput" placeholder="예: 5km 러닝 28분 완주, 마지막 1km 스퍼트 성공 (오늘 실천한 멋진 일을 적어보세요)"></textarea>
           <button class="mic-btn" id="micBtn" type="button" aria-label="음성으로 입력하기" title="음성으로 입력하기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4"/><path d="M8 23h8"/></svg></button>
         </div>
         <div id="captureLiveMeta" class="capture-live-meta">
@@ -188,7 +188,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <input type="file" id="capturePhotoInput" accept="image/*" style="display:none;">
           <button class="btn btn-ghost btn-sm" id="capturePhotoBtn" type="button" aria-label="사진 첨부"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>사진</span></button>
           <button class="btn btn-ghost btn-sm" id="importExternalBtn" type="button" aria-label="외부 기록 불러오기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span>불러오기</span></button>
-          <button class="btn btn-primary btn-sm" id="captureSave" type="button" style="flex:1;min-width:96px;">저장</button>
+          <button class="btn btn-primary btn-sm" id="captureSave" type="button" style="flex:1;min-width:96px;">기록 완료하기 ✨</button>
         </div>
       </div>
 
@@ -211,7 +211,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div id="homeGrassSummaryCard"></div>
 
       <div class="card-title-row home-recent-title">
-        <h3>내 목표 <span id="streakBadge"></span><span id="streakFreezeBadge"></span></h3>
+        <h3>나의 갓생 퀘스트 <span id="streakBadge"></span><span id="streakFreezeBadge"></span></h3>
         <button class="btn btn-ghost btn-sm" id="homeAddGoal" type="button">새 목표</button>
       </div>
       <!-- 내 위치: 출석·스트릭·배지 (#TASK-ES-019, js/streaks.js 가 채운다. 값 없으면 숨김) -->
