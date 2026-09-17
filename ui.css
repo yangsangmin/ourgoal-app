@@ -4426,3 +4426,134 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
 
 
 
+
+
+/* ============ #TASK-ES-165: 앱 진입 대형 아바타 인사 팝업 ============ */
+.avatar-greet-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 1;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  user-select: none;
+}
+.avatar-greet-overlay.fade-out {
+  opacity: 0;
+  transform: scale(0.96);
+  pointer-events: none;
+}
+.avatar-greet-modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 380px;
+  width: 90%;
+  animation: avatarGreetPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes avatarGreetPop {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.avatar-greet-close-big {
+  position: absolute;
+  top: -18px;
+  right: -12px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #0f172a;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  font-size: 22px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  z-index: 10002;
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+  line-height: 1;
+  padding: 0;
+}
+.avatar-greet-close-big:hover,
+.avatar-greet-close-big:active {
+  transform: scale(1.12);
+  background: #fee2e2;
+  color: #ef4444;
+}
+.avatar-greet-bubble {
+  position: relative;
+  background: rgba(255, 255, 255, 0.98);
+  color: #0f172a;
+  border-radius: 20px;
+  padding: 14px 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  text-align: center;
+  margin-bottom: 22px;
+  z-index: 10001;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  max-width: 90%;
+  line-height: 1.4;
+}
+.avatar-greet-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 12px 10px 0 10px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.98) transparent transparent transparent;
+  display: block;
+  width: 0;
+}
+.avatar-greet-figure-container {
+  height: 48vh;
+  max-height: 350px;
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  filter: drop-shadow(0 14px 32px rgba(0, 0, 0, 0.5));
+}
+.avatar-greet-figure-container .avatar-inner-box {
+  width: 220px !important;
+  height: 220px !important;
+  border-radius: 28px !important;
+}
+.avatar-greet-timer-bar {
+  width: 180px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 2px;
+  margin-top: 18px;
+  overflow: hidden;
+}
+.avatar-greet-timer-progress {
+  height: 100%;
+  background: #3b82f6;
+  width: 100%;
+  animation: avatarTimerProgress 2.5s linear forwards;
+}
+@keyframes avatarTimerProgress {
+  0% { width: 100%; }
+  100% { width: 0%; }
+}
