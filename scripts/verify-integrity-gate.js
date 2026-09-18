@@ -596,6 +596,36 @@ check('구 이메일(ysm0422@naver.com, support@ourgoal.kr)이 런타임, 법률
   assert.strictEqual(detected.length, 0, `금지된 구 이메일 재발 감지:\n${detected.join('\n')}`);
 });
 
+/* =========================================================================
+ * 12. 헌법 v2026.09.18: 시각 및 공간 조형 무결성(Visual Self-Audit) 및 CSS 은폐 린터 검증
+ * ========================================================================= */
+console.log('\n[검증 12/12] 헌법 v2026.09.18: 시각 및 공간 조형 무결성 및 CSS 은폐 린터 검사');
+
+check('헌법 정본에 시각 자가감사(제7조 8항), 시각 IA 명세(제2조 6항), CSS 은폐 금지(제3조 5항), 4-Block 팩트 보고(제8조 3항)가 규정되어 있다', () => {
+  const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
+  const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
+  assert.ok(rulesContent.includes('제6항 [기획 단계 시각적 IA 및 시맨틱 통합 배선도 명세 의무'), '제2조 6항 누락');
+  assert.ok(rulesContent.includes('제5항 [가짜 듀얼레이어 및 CSS 편의주의적 은폐 원천 금지 헌법'), '제3조 5항 누락');
+  assert.ok(rulesContent.includes('위조 숫자 및 허상 지표 날조 금지 - Vanity Metrics Zero Tolerance'), '제4조 1항 1호 누락');
+  assert.ok(rulesContent.includes('제8항 [제6검증: 시각 및 공간 조형 무결성 검증 (Visual Self-Audit Mandate)]'), '제7조 8항 누락');
+  assert.ok(rulesContent.includes('제3항 [보고 서식의 팩트 중심 4-Block 규격화 및 감정적 미사여구 영구 금지]'), '제8조 3항 누락');
+});
+
+check('CSS 내에 핵심 뷰 슬롯(#commBody, #personalGoalsView)을 은폐하는 위헌 패턴이 존재하지 않는다', () => {
+  const cssPath = path.join(ROOT_DIR, 'ui.css');
+  const cssContent = fs.readFileSync(cssPath, 'utf8');
+
+  // #commBody 또는 #personalGoalsView에 display: none이 걸려있는지 정규식 검사
+  const bannedCssPatterns = [
+    /#commBody\s*\{[^}]*display\s*:\s*none/i,
+    /#personalGoalsView\s*\{[^}]*display\s*:\s*none/i
+  ];
+
+  bannedCssPatterns.forEach(pattern => {
+    assert.ok(!pattern.test(cssContent), `ui.css 내 핵심 기능 뷰 CSS 은폐(display: none) 위헌 패턴 발견!`);
+  });
+});
+
 console.log('\n================================================================');
 console.log(`🎯 검증 결과: 총 ${totalChecks}개 검사 중 ${passedChecks}개 통과 (${failures}개 실패)`);
 console.log('================================================================');
