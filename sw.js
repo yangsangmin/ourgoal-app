@@ -1,6 +1,6 @@
 /* 아워골 최소 서비스워커: 홈 화면 설치 지원 + 오프라인 시 빈 화면 대신 안내 문구 노출 */
 'use strict';
-var CACHE_NAME = 'ourgoal-shell-v20260918-es181-lockscreen-hub'; /* supersedes ourgoal-shell-v20260918-es180-notepad-batch-and-guide-renewal, ourgoal-shell-v20260918-es179-ititem-legal-safety, ourgoal-shell-v20260918-es175-lap-clock-lift, ourgoal-shell-v20260918-es175-guide, ourgoal-shell-v20260918-es173, ourgoal-shell-v20260917-es171, ourgoal-shell-v20260917-es170, ourgoal-shell-v20260917-es165-home-ui-renewal, ourgoal-shell-v20260917-es169, ourgoal-shell-v20260917-es168, ourgoal-shell-v20260917-es167, ourgoal-shell-v20260917-es166-v2, ourgoal-shell-v20260917-es166, ourgoal-shell-v20260917-es165, ourgoal-shell-v20260917-es164, ourgoal-shell-v20260917-es163, ourgoal-shell-v20260917-es162, ourgoal-shell-v20260917-es161, ourgoal-shell-v20260917-es160, ourgoal-shell-v20260917-es159, ourgoal-shell-v20260917-es158, ourgoal-shell-v20260917-es157, ourgoal-shell-v20260917-es156, ourgoal-shell-v20260917-gcal-silent-sync, ourgoal-shell-v20260917-es155, ourgoal-shell-v20260917-es154, ourgoal-shell-v20260917-es153, ourgoal-shell-v20260917-recycle-bin, ourgoal-shell-v20260917-es145, ourgoal-shell-v20260917-es144, ourgoal-shell-v20260916-es131, ourgoal-shell-v20260916-es130, ourgoal-shell-v20260916-es129, ourgoal-shell-v20260916-es128-v3, ourgoal-shell-v20260916-es127, ourgoal-shell-v20260916-es126, ourgoal-shell-v20260916-es125 and ourgoal-shell-v20260916-es118 */
+var CACHE_NAME = 'ourgoal-shell-v20260918-es182-lockscreen-live-sync'; /* supersedes ourgoal-shell-v20260918-es181-lockscreen-hub, ourgoal-shell-v20260918-es180-notepad-batch-and-guide-renewal, ourgoal-shell-v20260918-es179-ititem-legal-safety, ourgoal-shell-v20260918-es175-lap-clock-lift, ourgoal-shell-v20260918-es175-guide, ourgoal-shell-v20260918-es173, ourgoal-shell-v20260917-es171, ourgoal-shell-v20260917-es170, ourgoal-shell-v20260917-es165-home-ui-renewal, ourgoal-shell-v20260917-es169, ourgoal-shell-v20260917-es168, ourgoal-shell-v20260917-es167, ourgoal-shell-v20260917-es166-v2, ourgoal-shell-v20260917-es166, ourgoal-shell-v20260917-es165, ourgoal-shell-v20260917-es164, ourgoal-shell-v20260917-es163, ourgoal-shell-v20260917-es162, ourgoal-shell-v20260917-es161, ourgoal-shell-v20260917-es160, ourgoal-shell-v20260917-es159, ourgoal-shell-v20260917-es158, ourgoal-shell-v20260917-es157, ourgoal-shell-v20260917-es156, ourgoal-shell-v20260917-gcal-silent-sync, ourgoal-shell-v20260917-es155, ourgoal-shell-v20260917-es154, ourgoal-shell-v20260917-es153, ourgoal-shell-v20260917-recycle-bin, ourgoal-shell-v20260917-es145, ourgoal-shell-v20260917-es144, ourgoal-shell-v20260916-es131, ourgoal-shell-v20260916-es130, ourgoal-shell-v20260916-es129, ourgoal-shell-v20260916-es128-v3, ourgoal-shell-v20260916-es127, ourgoal-shell-v20260916-es126, ourgoal-shell-v20260916-es125 and ourgoal-shell-v20260916-es118 */
 var APP_SHELL = ['/'];
 
 self.addEventListener('install', function(event){
@@ -58,18 +58,34 @@ self.addEventListener('push', function(event){
 
 self.addEventListener('notificationclick', function(event){
   event.notification.close();
+  var action = event.action;
+  var targetUrl = '/';
+  if(action === 'action-checkin'){
+    targetUrl = '/?action=checkin';
+  } else if(action === 'action-calendar'){
+    targetUrl = '/?tab=calendar';
+  } else if(event.notification.data && event.notification.data.url){
+    targetUrl = event.notification.data.url;
+  }
+
   /* 알림 클릭률 계측(익명·실패 무시) — 성장 백로그 P0 ③ */
   var tracked = fetch('/api/track', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: 'notification_clicked', props: { channel: 'push' } })
+    body: JSON.stringify({ name: 'notification_clicked', props: { channel: 'push', action: action || 'open' } })
   }).catch(function(){});
+
   var focused = self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(list){
-      for(var i=0; i<list.length; i++){
-        if('focus' in list[i]) return list[i].focus();
+    for(var i=0; i<list.length; i++){
+      if('focus' in list[i]){
+        if(list[i].postMessage){
+          list[i].postMessage({ type: 'LOCKSCREEN_ACTION', action: action, url: targetUrl });
+        }
+        return list[i].focus();
       }
-      if(self.clients.openWindow) return self.clients.openWindow('/');
-    });
+    }
+    if(self.clients.openWindow) return self.clients.openWindow(targetUrl);
+  });
   event.waitUntil(Promise.all([tracked, focused]));
 });
 
