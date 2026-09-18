@@ -1300,9 +1300,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   "use strict";
 
   try{
-    var _initTh = localStorage.getItem('ourgoal_current_theme'); if(!_initTh || _initTh === 'white' || _initTh === 'light' || _initTh === 'system') _initTh = 'focus-sanctuary';
+    var _initTh = localStorage.getItem('ourgoal_current_theme') || 'focus-sanctuary';
     if(_initTh === 'dark') _initTh = 'black';
     if(_initTh === 'light' || _initTh === 'system') _initTh = 'white';
+    if(['focus-sanctuary', 'black', 'white', 'urban-city'].indexOf(_initTh) === -1) _initTh = 'focus-sanctuary';
     document.documentElement.setAttribute('data-theme', _initTh);
   }catch(e){}
 
@@ -1560,15 +1561,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ 8대 화면 스타일 (테마) 정의 ============ */
   var THEMES = [
     { id: 'focus-sanctuary', name: '성소 (Sanctuary)', desc: '오로라 에메랄드 다크 테마', preview: '#0B0F17', metaColor: '#0B0F17' },
-    { id: 'black', name: '블랙 (Black)', desc: '선명한 딥 블랙 다크 테마', preview: '#111214', metaColor: '#111214' },
-    { id: 'white', name: '화이트 (White)', desc: '화사하고 깔끔한 라이트 테마', preview: '#FFFFFF', metaColor: '#FFFFFF' },
-    { id: 'urban-city', name: '도심 (City)', desc: '세련된 모던 슬레이트 네이비 테마', preview: '#15171B', metaColor: '#15171B' }
+    { id: 'black', name: '블랙 (Black)', desc: '선명한 딥 블랙 OLED 다크 테마', preview: '#000000', metaColor: '#000000' },
+    { id: 'white', name: '화이트 (White)', desc: '화사하고 깔끔한 순백 라이트 테마', preview: '#FFFFFF', metaColor: '#FFFFFF' },
+    { id: 'urban-city', name: '도심 (City)', desc: '세련된 모던 슬레이트 네이비 테마', preview: '#0B0F19', metaColor: '#0B0F19' }
   ];
 
   function applyTheme(themeId){
-    if(!themeId) themeId = 'white';
+    if(!themeId) themeId = 'focus-sanctuary';
     if(themeId === 'dark') themeId = 'black';
     if(themeId === 'light' || themeId === 'system') themeId = 'white';
+    if(['focus-sanctuary', 'black', 'white', 'urban-city'].indexOf(themeId) === -1) themeId = 'focus-sanctuary';
     document.documentElement.setAttribute('data-theme', themeId);
     var found = THEMES.find(function(t){ return t.id === themeId; });
     if(found && found.metaColor){
@@ -1577,11 +1579,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
     try{ localStorage.setItem('ourgoal_current_theme', themeId); } catch(e){}
   }
+  if(typeof window !== 'undefined'){
+    window.applyTheme = applyTheme;
+    window.THEMES = THEMES;
+  }
 
   function applyAppSettings(settings){
     if(!settings) return;
     try{
-      var th = settings.theme || localStorage.getItem('ourgoal_current_theme') || 'focus-sanctuary'; if(th === 'white' || th === 'system') th = 'focus-sanctuary';
+      var th = settings.theme || localStorage.getItem('ourgoal_current_theme') || 'focus-sanctuary';
       applyTheme(th);
       if(settings.highContrast){
         document.documentElement.setAttribute('data-high-contrast', 'true');
@@ -28549,7 +28555,7 @@ wirePromptEncyclopediaEvents(body);
     wireNotifSwitch('notifDdaySwitch', 'notifDday', '마감 D-day 임박 알림');
     wireNotifSwitch('notifStreakSwitch', 'notifStreak', '일일 스트릭 유지 리마인더');
     // 🎨 화면 스타일 (Req 10 - 8대 테마)
-    var curTheme = (settings && settings.theme) || localStorage.getItem('ourgoal_current_theme') || 'white';
+    var curTheme = (settings && settings.theme) || localStorage.getItem('ourgoal_current_theme') || 'focus-sanctuary';
     if(curTheme === 'dark') curTheme = 'black';
     if(curTheme === 'light' || curTheme === 'system') curTheme = 'white';
     var themeGrid = document.getElementById('themeGrid');
