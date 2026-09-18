@@ -8,13 +8,15 @@
 
   var engine = {
     activeCalMode: 'month',   // 'month' | 'timeline' | 'timer'
-    activeRecMode: 'heatmap', // 'heatmap' | 'feed' | 'recap'
+    activeRecMode: 'heatmap', // 'heatmap' | 'feed' | 'stats' | 'archive' | 'recap'
     activeGoalId: null,
     timerInterval: null,
     timerSeconds: 1500, // 25:00
     timerRunning: false,
     selectedCalDate: null,
-    recFilter: 'all',
+    calYear: null,
+    calMonth: null,
+    heatFilter: 'all',        // 'today' | 'week' | 'month' | 'year' | 'all'
     activeDmPeer: null,
     dmHistory: {}
   };
@@ -172,8 +174,15 @@
     var slot = document.getElementById('sanctuaryCalendarView');
     if (!slot) return;
 
+    if (!engine.calYear || !engine.calMonth) {
+      var baseDate = (window.state && window.state.calDate) ? new Date(window.state.calDate + 'T00:00:00') : new Date();
+      if (isNaN(baseDate.getTime())) baseDate = new Date();
+      engine.calYear = baseDate.getFullYear();
+      engine.calMonth = baseDate.getMonth() + 1;
+    }
+
     if (!engine.selectedCalDate) {
-      engine.selectedCalDate = getTodayStr();
+      engine.selectedCalDate = (window.state && window.state.calSelectedDate) || getTodayStr();
     }
 
     var modeNav = '<div class="s-cal-modes-wrap">' +
@@ -186,24 +195,43 @@
     var itemsByDate = (typeof window.calendarItemsByDate === 'function') ? window.calendarItemsByDate() : {};
 
     if (engine.activeCalMode === 'month') {
-      var dNow = new Date();
-      var curYear = dNow.getFullYear();
-      var curMonth = dNow.getMonth() + 1;
+      var curYear = engine.calYear;
+      var curMonth = engine.calMonth;
       var daysInMonth = new Date(curYear, curMonth, 0).getDate();
-      var todayDay = dNow.getDate();
+      var firstDayOfWeek = new Date(curYear, curMonth - 1, 1).getDay(); // 0(일) ~ 6(토)
+      var todayStr = getTodayStr();
 
+      // 첫 요일 이전 빈 칸 생성 (일요일 시작 정렬)
+      var emptyCellsHtml = '';
+      for (var ei = 0; ei < firstDayOfWeek; ei++) {
+        emptyCellsHtml += '<div class="s-cal-day-cell empty" style="opacity:0.2;pointer-events:none;"></div>';
+      }
+
+      // 일자별 셀 렌더링
       var daysHtml = Array.from({ length: daysInMonth }, function(_, i) {
         var d = i + 1;
         var dateKey = curYear + '-' + String(curMonth).padStart(2, '0') + '-' + String(d).padStart(2, '0');
-        var isToday = (d === todayDay);
+        var isToday = (dateKey === todayStr);
         var isSelected = (dateKey === engine.selectedCalDate);
         var dayItems = itemsByDate[dateKey] || [];
         var hasItems = dayItems.length > 0;
 
-        return '<div class="s-cal-day-cell ' + (isToday ? 'today' : '') + ' ' + (isSelected ? 'selected' : '') + ' ' + (hasItems ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.selectCalDay(\'' + dateKey + '\')">' +
-          '<span class="s-day-num">' + d + '</span>' +
-          (hasItems ? '<span class="s-day-dot"></span>' : '') +
-          (isToday && dayItems.length ? '<span class="s-day-today-tag">' + escapeHtml(dayItems[0].title || dayItems[0].text || '체크인') + '</span>' : '') +
+        // 일자별 배경 사진 지정 여부 확인
+        var dayBg = (window.state && window.state.profile && window.state.profile.calendarDayBackgrounds && window.state.profile.calendarDayBackgrounds[dateKey]) || '';
+        var bgStyle = '';
+        if (Array.isArray(dayBg) && dayBg.length > 0) {
+          bgStyle = 'background-image:url(\'' + escapeHtml(dayBg[0]) + '\');background-size:cover;background-position:center;';
+        } else if (typeof dayBg === 'string' && dayBg) {
+          bgStyle = 'background-image:url(\'' + escapeHtml(dayBg) + '\');background-size:cover;background-position:center;';
+        }
+
+        var bgLayer = bgStyle ? '<div style="position:absolute;inset:0;opacity:0.38;border-radius:10px;' + bgStyle + 'pointer-events:none;"></div>' : '';
+
+        return '<div class="s-cal-day-cell ' + (isToday ? 'today' : '') + ' ' + (isSelected ? 'selected' : '') + ' ' + (hasItems ? 'active' : '') + '" style="position:relative;" onclick="window.OurgoalSanctuaryV3.selectCalDay(\'' + dateKey + '\')">' +
+          bgLayer +
+          '<span class="s-day-num" style="position:relative;z-index:1;">' + d + '</span>' +
+          (hasItems ? '<span class="s-day-dot" style="position:relative;z-index:1;"></span>' : '') +
+          (dayItems.length ? '<span class="s-day-today-tag" style="position:relative;z-index:1;">' + escapeHtml(dayItems[0].title || '일정') + '</span>' : '') +
         '</div>';
       }).join('');
 
@@ -214,15 +242,16 @@
 
       contentHtml = '<div class="s-month-cal-card">' +
         '<div class="s-month-header">' +
-          '<button class="s-cal-arrow" type="button" onclick="toast(\'이전 달로 이동합니다\');">◀</button>' +
+          '<button class="s-cal-arrow" type="button" onclick="window.OurgoalSanctuaryV3.shiftCal(-1);">◀</button>' +
           '<h3 class="s-cal-month-title">' + curYear + '년 ' + curMonth + '월</h3>' +
-          '<button class="s-cal-arrow" type="button" onclick="toast(\'다음 달로 이동합니다\');">▶</button>' +
-          '<span class="s-cal-today-badge" onclick="window.OurgoalSanctuaryV3.selectCalDay(\'' + getTodayStr() + '\');">오늘</span>' +
+          '<button class="s-cal-arrow" type="button" onclick="window.OurgoalSanctuaryV3.shiftCal(1);">▶</button>' +
+          '<span class="s-cal-today-badge" onclick="window.OurgoalSanctuaryV3.selectToday();">오늘</span>' +
         '</div>' +
         '<div class="s-month-days-header">' +
           '<span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>' +
         '</div>' +
         '<div class="s-month-grid">' +
+          emptyCellsHtml +
           daysHtml +
         '</div>' +
         '<div class="s-cal-selected-bar">' +
@@ -230,7 +259,11 @@
             '<span class="s-cal-sel-date">' + engine.selectedCalDate + ' · 일정 ' + selectedItems.length + '건</span>' +
             '<span class="s-cal-sel-task">' + escapeHtml(selItemTitle) + '</span>' +
           '</div>' +
-          '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.openAddScheduleModal) window.openAddScheduleModal(\'' + engine.selectedCalDate + '\'); else toast(\'일정 추가창을 엽니다\');">+ 일정 추가</button>' +
+          '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+            '<button class="btn btn-ghost btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openBgPickerModal();" title="배경사진 선택">🖼️ 사진</button>' +
+            '<button class="btn btn-ghost btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openDayHubModal();" title="일자 관리 종합 허브">📅 허브</button>' +
+            '<button class="btn btn-primary btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();">+ 일정 추가</button>' +
+          '</div>' +
         '</div>' +
       '</div>';
     } else if (engine.activeCalMode === 'timeline') {
@@ -239,14 +272,25 @@
 
       var rowsHtml = '';
       if (todayItems.length === 0) {
-        rowsHtml = '<div style="text-align:center;padding:30px 10px;color:var(--ink-sub);font-size:0.875rem;">' +
-          '오늘 등록된 타임라인 일정이 없습니다.<br>새 일정을 등록하여 24시간 타임라인을 채워보세요.' +
+        rowsHtml = '<div style="text-align:center;padding:36px 14px;color:var(--ink-sub);font-size:0.875rem;">' +
+          '선택된 일자(' + todayKey + ')에 등록된 타임라인 일정이 없습니다.<br>새 일정을 추가하여 하루 실천 궤적을 기록해보세요.' +
         '</div>';
       } else {
         rowsHtml = todayItems.map(function(item) {
-          var timeStr = item.startTime || item.time || '10:00';
+          var timeStr = '10:00';
+          if (item.date && item.date.indexOf('T') !== -1) {
+            timeStr = item.date.split('T')[1].slice(0, 5);
+          } else if (item.time) {
+            timeStr = item.time;
+          }
           var isDone = !!item.done;
-          return '<div class="s-timeline-row ' + (isDone ? 'done' : 'active') + '" onclick="window.OurgoalSanctuaryV3.toggleScheduleItem(\'' + item.id + '\');">' +
+          var schedId = item.schedId || item.id || '';
+          var kind = item.kind || 'custom';
+          var goalId = item.goalId || '';
+          var msId = item.msId || '';
+          var taskId = item.taskId || '';
+
+          return '<div class="s-timeline-row ' + (isDone ? 'done' : 'active') + '" onclick="window.OurgoalSanctuaryV3.toggleScheduleItem(\'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\', \'' + msId + '\', \'' + taskId + '\');">' +
             '<span class="s-t-time">' + timeStr + '</span>' +
             '<div class="s-t-block">' +
               '<span class="s-t-badge ' + (isDone ? '' : 'active') + '">' + (isDone ? '✓ 완료' : '⚡ 진행 중') + '</span>' +
@@ -264,8 +308,9 @@
         '<div class="s-timeline-track">' +
           rowsHtml +
         '</div>' +
-        '<div style="margin-top:14px;display:flex;justify-content:flex-end;">' +
-          '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.openAddScheduleModal) window.openAddScheduleModal(); else toast(\'일정 추가창을 엽니다\');">+ 새 일정 등록</button>' +
+        '<div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;gap:8px;">' +
+          '<button class="btn btn-ghost btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openDayHubModal();">📅 일자 종합 허브</button>' +
+          '<button class="btn btn-primary btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();">+ 새 일정 등록</button>' +
         '</div>' +
       '</div>';
     } else if (engine.activeCalMode === 'timer') {
@@ -313,9 +358,11 @@
     var slot = document.getElementById('sanctuaryRecordsView');
     if (!slot) return;
 
-    var modeNav = '<div class="s-rec-modes-wrap">' +
+    var modeNav = '<div class="s-rec-modes-wrap" style="display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin-bottom:12px;">' +
       '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'heatmap' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'heatmap\')">🟩 365일 히트맵</button>' +
       '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'feed' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'feed\')">✍️ 내 기록 피드</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'stats' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'stats\')">📊 성취 통계</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'archive' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'archive\')">📦 보관함</button>' +
       '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'recap' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'recap\')">📸 위클리 리캡</button>' +
     '</div>';
 
@@ -323,10 +370,6 @@
     var contentHtml = '';
 
     if (engine.activeRecMode === 'heatmap') {
-      var totalRecCount = records.length;
-      var streakDays = (window.state && window.state.profile && window.state.profile.streak) || 3;
-
-      // 일자별 기록 수 집계 (실제 records 데이터 기반)
       var countByDay = {};
       records.forEach(function(r) {
         var dStr = (r.startAt || r.created_at || r.start_at || '').slice(0, 10);
@@ -334,8 +377,26 @@
       });
 
       var todayMs = Date.now();
-      var cellsHtml = Array.from({ length: 140 }, function(_, i) {
-        var dayOffset = 139 - i;
+      var filterDays = 140;
+      if (engine.heatFilter === 'today') filterDays = 1;
+      else if (engine.heatFilter === 'week') filterDays = 7;
+      else if (engine.heatFilter === 'month') filterDays = 30;
+      else if (engine.heatFilter === 'year') filterDays = 365;
+      else filterDays = 140;
+
+      // 필터 기간 내 총 실천 건수 집계
+      var filteredCount = 0;
+      for (var fIdx = 0; fIdx < filterDays; fIdx++) {
+        var fDate = new Date(todayMs - fIdx * 86400000);
+        var fKey = fDate.getFullYear() + '-' + String(fDate.getMonth() + 1).padStart(2, '0') + '-' + String(fDate.getDate()).padStart(2, '0');
+        filteredCount += (countByDay[fKey] || 0);
+      }
+
+      var streakDays = (window.state && window.state.profile && window.state.profile.streak) || 3;
+
+      var cellsCount = (engine.heatFilter === 'today') ? 7 : ((engine.heatFilter === 'week') ? 14 : ((engine.heatFilter === 'month') ? 35 : 140));
+      var cellsHtml = Array.from({ length: cellsCount }, function(_, i) {
+        var dayOffset = (cellsCount - 1) - i;
         var cellD = new Date(todayMs - dayOffset * 86400000);
         var cKey = cellD.getFullYear() + '-' + String(cellD.getMonth() + 1).padStart(2, '0') + '-' + String(cellD.getDate()).padStart(2, '0');
         var cnt = countByDay[cKey] || 0;
@@ -350,16 +411,16 @@
             '<h3>365일 연간 히트맵</h3>' +
           '</div>' +
           '<div class="s-heat-stat">' +
-            '<span class="s-heat-val">' + totalRecCount + '개 누적</span>' +
+            '<span class="s-heat-val">' + filteredCount + '개 실천</span>' +
             '<span class="s-heat-sub">' + streakDays + '일 연속 몰입 🔥</span>' +
           '</div>' +
         '</div>' +
         '<div class="s-segment-pills">' +
-          '<button class="s-seg-pill active" type="button">오늘</button>' +
-          '<button class="s-seg-pill" type="button">이번 주</button>' +
-          '<button class="s-seg-pill" type="button">이번 달</button>' +
-          '<button class="s-seg-pill" type="button">올해</button>' +
-          '<button class="s-seg-pill" type="button">전체</button>' +
+          '<button class="s-seg-pill ' + (engine.heatFilter === 'today' ? 'active' : '') + '" type="button" onclick="window.OurgoalSanctuaryV3.setHeatFilter(\'today\')">오늘</button>' +
+          '<button class="s-seg-pill ' + (engine.heatFilter === 'week' ? 'active' : '') + '" type="button" onclick="window.OurgoalSanctuaryV3.setHeatFilter(\'week\')">이번 주</button>' +
+          '<button class="s-seg-pill ' + (engine.heatFilter === 'month' ? 'active' : '') + '" type="button" onclick="window.OurgoalSanctuaryV3.setHeatFilter(\'month\')">이번 달</button>' +
+          '<button class="s-seg-pill ' + (engine.heatFilter === 'year' ? 'active' : '') + '" type="button" onclick="window.OurgoalSanctuaryV3.setHeatFilter(\'year\')">올해</button>' +
+          '<button class="s-seg-pill ' + (engine.heatFilter === 'all' ? 'active' : '') + '" type="button" onclick="window.OurgoalSanctuaryV3.setHeatFilter(\'all\')">전체</button>' +
         '</div>' +
         '<div class="s-annual-heatmap-matrix">' +
           cellsHtml +
@@ -385,9 +446,8 @@
           '등록된 기록이 없습니다.<br>오늘의 첫 체크인과 회고를 남겨보세요.' +
         '</div>';
       } else {
-        // 최신순 정렬
         var sortedRecs = records.slice().reverse();
-        feedItemsHtml = sortedRecs.map(function(r) {
+        feedItemsHtml = sortedRecs.slice(0, 30).map(function(r) {
           var dateStr = (r.startAt || r.created_at || r.start_at || '').slice(0, 16).replace('T', ' ');
           var topicTag = r.topic ? '<span class="s-f-tag">#' + escapeHtml(r.topic) + '</span>' : '';
           return '<div class="s-feed-item-card">' +
@@ -413,6 +473,30 @@
         '</div>' +
         feedItemsHtml +
       '</div>';
+    } else if (engine.activeRecMode === 'stats') {
+      contentHtml = '<div class="s-heatmap-card" style="margin-bottom:12px;">' +
+        '<div class="s-heat-head">' +
+          '<div class="s-heat-title-col">' +
+            '<span class="s-heat-badge">성취 분석 리포트</span>' +
+            '<h3>성취 통계 & 라이프 밸런스</h3>' +
+          '</div>' +
+        '</div>' +
+        '<p style="font-size:0.875rem;color:var(--ink-sub);margin:0 0 14px;line-height:1.5;">' +
+          '목표 달성률, 주간 몰입 시간, 라이프 밸런스 휠 분석이 아래 성취 통계 대시보드에 실시간 반영되어 있습니다.' +
+        '</p>' +
+      '</div>';
+    } else if (engine.activeRecMode === 'archive') {
+      contentHtml = '<div class="s-heatmap-card" style="margin-bottom:12px;">' +
+        '<div class="s-heat-head">' +
+          '<div class="s-heat-title-col">' +
+            '<span class="s-heat-badge">완료 및 보관 데이터</span>' +
+            '<h3>실천 및 목표 보관함</h3>' +
+          '</div>' +
+        '</div>' +
+        '<p style="font-size:0.875rem;color:var(--ink-sub);margin:0 0 14px;line-height:1.5;">' +
+          '달성 완료된 과거 목표 및 보관된 기록 데이터가 아래 보관함 목록에 안전하게 보존되어 있습니다.' +
+        '</p>' +
+      '</div>';
     } else if (engine.activeRecMode === 'recap') {
       var streakVal = (window.state && window.state.profile && window.state.profile.streak) || 3;
       var totalMinutes = 0;
@@ -433,8 +517,9 @@
           '</div>' +
           '<div class="s-rc-foot">우리들의 목표 성소 · ourgoal.kr</div>' +
         '</div>' +
-        '<div class="s-recap-actions">' +
-          '<button class="btn btn-primary btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.downloadRecapImage();">💾 이미지 다운로드</button>' +
+        '<div class="s-recap-actions" style="display:flex;gap:8px;flex-wrap:wrap;">' +
+          '<button class="btn btn-primary btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.downloadRecapImage();">💾 이미지 다운로드 (PNG)</button>' +
+          '<button class="btn btn-ghost btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openWeeklyRecapModal();">🔍 리캡 커스텀 모달</button>' +
           '<button class="btn btn-ghost btn-sm" type="button" onclick="if(window.OurgoalViralSharing) window.OurgoalViralSharing.shareStreakKakao(); else toast(\'카카오톡 공유 링크를 생성했습니다!\');">💬 카카오톡 공유</button>' +
         '</div>' +
       '</div>';
@@ -532,12 +617,110 @@
 
   window.OurgoalSanctuaryV3 = {
     render: renderSanctuaryV3,
-    setCalMode: function(m) { engine.activeCalMode = m; renderSanctuaryCalendar(); },
-    setRecMode: function(m) { engine.activeRecMode = m; renderSanctuaryRecords(); },
+    setCalMode: function(m) {
+      engine.activeCalMode = m;
+      renderSanctuaryCalendar();
+    },
+    setRecMode: function(m) {
+      engine.activeRecMode = m;
+      if (m === 'stats' || m === 'archive' || m === 'feed') {
+        if (typeof window.setRecordsSegment === 'function') {
+          window.setRecordsSegment(m);
+        }
+      }
+      renderSanctuaryRecords();
+    },
+    setHeatFilter: function(f) {
+      engine.heatFilter = f;
+      var fNames = { today: '오늘', week: '이번 주', month: '이번 달', year: '올해', all: '전체' };
+      toast('히트맵 기간: ' + (fNames[f] || f));
+      renderSanctuaryRecords();
+    },
+    shiftCal: function(dir) {
+      if (!engine.calYear || !engine.calMonth) {
+        var d0 = new Date();
+        engine.calYear = d0.getFullYear();
+        engine.calMonth = d0.getMonth() + 1;
+      }
+      var newDate = new Date(engine.calYear, engine.calMonth - 1 + dir, 1);
+      engine.calYear = newDate.getFullYear();
+      engine.calMonth = newDate.getMonth() + 1;
+      var newKey = engine.calYear + '-' + String(engine.calMonth).padStart(2, '0') + '-01';
+      engine.selectedCalDate = newKey;
+      if (window.state) {
+        window.state.calDate = newKey;
+        window.state.calSelectedDate = newKey;
+      }
+      toast(engine.calYear + '년 ' + engine.calMonth + '월로 이동했습니다.');
+      renderSanctuaryCalendar();
+    },
+    selectToday: function() {
+      var d = new Date();
+      engine.calYear = d.getFullYear();
+      engine.calMonth = d.getMonth() + 1;
+      var tStr = getTodayStr();
+      engine.selectedCalDate = tStr;
+      if (window.state) {
+        window.state.calDate = tStr;
+        window.state.calSelectedDate = tStr;
+      }
+      toast('오늘(' + tStr + ')로 이동했습니다.');
+      renderSanctuaryCalendar();
+    },
     selectCalDay: function(dateKey) {
       engine.selectedCalDate = dateKey;
+      if (window.state) {
+        window.state.calSelectedDate = dateKey;
+      }
       toast(dateKey + ' 일정을 선택했습니다.');
       renderSanctuaryCalendar();
+    },
+    openAddScheduleModal: function(dateKey) {
+      var dt = dateKey || engine.selectedCalDate || getTodayStr();
+      if (typeof window.openCalendarManualEditModal === 'function') {
+        window.openCalendarManualEditModal(dt, null, 'custom', {
+          title: '',
+          date: dt + 'T10:00',
+          note: '',
+          done: false,
+          attachments: []
+        });
+      } else if (typeof window.openAddScheduleModal === 'function') {
+        window.openAddScheduleModal(dt);
+      } else {
+        toast('일정 추가 창을 준비 중입니다.');
+      }
+    },
+    openDayHubModal: function(dateKey) {
+      var dt = dateKey || engine.selectedCalDate || getTodayStr();
+      if (typeof window.openCalendarDayEditHubModal === 'function') {
+        window.openCalendarDayEditHubModal(dt);
+      } else {
+        toast('일자 관리 종합 허브를 엽니다.');
+      }
+    },
+    openBgPickerModal: function(dateKey) {
+      var dt = dateKey || engine.selectedCalDate || getTodayStr();
+      if (typeof window.openCalendarDayBgPickerModal === 'function') {
+        window.openCalendarDayBgPickerModal(dt);
+      } else {
+        toast('배경사진 선택 모달을 엽니다.');
+      }
+    },
+    toggleScheduleItem: async function(schedId, kind, goalId, msId, taskId) {
+      if (typeof window.toggleScheduleDone === 'function') {
+        await window.toggleScheduleDone(schedId, kind || 'custom', goalId, msId, taskId);
+        renderSanctuaryCalendar();
+      } else {
+        var scheds = (window.state && window.state.profile && window.state.profile.settings && window.state.profile.settings.customSchedules) || [];
+        var s = scheds.find(function(item) { return item.id === schedId; });
+        if (s) {
+          s.done = !s.done;
+          if (window.saveProfile) await window.saveProfile();
+          toast('일정을 ' + (s.done ? '완료 처리했습니다! (+5P)' : '미완료로 변경했습니다.'));
+          renderSanctuaryCalendar();
+        }
+      }
     },
     toggleMilestone: async function(goalId, msId) {
       var goals = (window.state && window.state.profile && window.state.profile.goals) || [];
@@ -625,16 +808,6 @@
       toast('⚡ [10km 하프마라톤 완주] 루틴이 내 목표에 1초 만에 담겼습니다! 🎉');
       renderSanctuaryGoals();
     },
-    toggleScheduleItem: async function(schedId) {
-      var scheds = (window.state && window.state.profile && window.state.profile.customSchedules) || [];
-      var s = scheds.find(function(item) { return item.id === schedId; });
-      if (s) {
-        s.done = !s.done;
-        if (window.saveProfile) await window.saveProfile();
-        toast('일정을 ' + (s.done ? '완료 처리했습니다! (+5P)' : '미완료로 변경했습니다.'));
-        renderSanctuaryCalendar();
-      }
-    },
     togglePomodoro: function() {
       engine.timerRunning = !engine.timerRunning;
       if (engine.timerRunning) {
@@ -713,8 +886,122 @@
       toast('[' + peerName + '] 님과의 1:1 DM 대화창으로 연결되었습니다 💬');
       if (window.triggerHaptic) window.triggerHaptic(15);
     },
-    downloadRecapImage: function() {
-      toast('📸 위클리 리캡 카드를 이미지(PNG)로 저장했습니다!');
+    downloadRecapImage: async function() {
+      try {
+        var allRecs = (window.state && window.state.profile && window.state.profile.records) || [];
+        var streakVal = (window.state && window.state.profile && window.state.profile.streak) || 3;
+        var totalMs = 0;
+        allRecs.forEach(function(r) { totalMs += ((r.durationMinutes || 25) * 60000); });
+
+        var canvas = document.createElement('canvas');
+        canvas.width = 1080;
+        canvas.height = 1920;
+        var ctx = canvas.getContext('2d');
+
+        // 배경 그라디언트 (포커스 성소 다크 슬레이트 & 에메랄드 네온 아우라)
+        var grad = ctx.createLinearGradient(0, 0, 0, 1920);
+        grad.addColorStop(0, '#090d16');
+        grad.addColorStop(0.5, '#0f172a');
+        grad.addColorStop(1, '#020617');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 1080, 1920);
+
+        // 상단 네온 글로우 원
+        var auraGrad = ctx.createRadialGradient(540, 400, 50, 540, 400, 500);
+        auraGrad.addColorStop(0, 'rgba(16, 185, 129, 0.25)');
+        auraGrad.addColorStop(1, 'rgba(16, 185, 129, 0)');
+        ctx.fillStyle = auraGrad;
+        ctx.fillRect(0, 0, 1080, 1000);
+
+        // 카드 박스
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        if (typeof ctx.roundRect === 'function') {
+          ctx.roundRect(80, 160, 920, 1560, 40);
+        } else {
+          ctx.rect(80, 160, 920, 1560);
+        }
+        ctx.fill();
+        ctx.stroke();
+
+        // 텍스트 렌더링
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#10b981';
+        ctx.font = '700 36px sans-serif';
+        ctx.fillText('OURGOAL WEEKLY RECAP', 540, 280);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '800 68px sans-serif';
+        ctx.fillText('위클리 퍼펙트 리캡', 540, 380);
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.font = '500 32px sans-serif';
+        ctx.fillText('나의 몰입과 성장의 성소 궤적', 540, 440);
+
+        // 아바타
+        ctx.font = '100px sans-serif';
+        ctx.fillText('🦉', 540, 620);
+        ctx.fillStyle = '#10b981';
+        ctx.font = '700 34px sans-serif';
+        var nick = (window.state && window.state.profile && (window.state.profile.nickname || window.state.profile.displayName)) || '목표 달성자';
+        ctx.fillText(nick + ' · Lv.1 성소 탐험가', 540, 680);
+
+        // 메트릭 1: 누적 몰입 시간
+        var hoursStr = (Math.round(totalMs / 3600000 * 10) / 10) + '시간';
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = '900 84px sans-serif';
+        ctx.fillText(hoursStr, 540, 890);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+        ctx.font = '600 34px sans-serif';
+        ctx.fillText('총 누적 몰입 시간', 540, 950);
+
+        // 메트릭 2: 연속 스트릭
+        ctx.fillStyle = '#f59e0b';
+        ctx.font = '900 84px sans-serif';
+        ctx.fillText(streakVal + '일 연속', 540, 1140);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+        ctx.font = '600 34px sans-serif';
+        ctx.fillText('포커스 스트릭 달성 🔥', 540, 1200);
+
+        // 메트릭 3: 누적 실천 횟수
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = '900 84px sans-serif';
+        ctx.fillText(allRecs.length + '회 실천', 540, 1390);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+        ctx.font = '600 34px sans-serif';
+        ctx.fillText('체크인 & 회고 완료', 540, 1450);
+
+        // 하단 워터마크
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.font = '500 28px sans-serif';
+        ctx.fillText('우리들의 목표 성소 · ourgoal.kr · ' + getTodayStr(), 540, 1640);
+
+        var dataUrl = canvas.toDataURL('image/png');
+        var link = document.createElement('a');
+        link.download = 'ourgoal-weekly-recap-' + getTodayStr() + '.png';
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        toast('📸 위클리 리캡 카드가 이미지(PNG)로 다운로드되었습니다!');
+      } catch (err) {
+        console.error('downloadRecapImage error:', err);
+        if (typeof window.openWeeklyRecapModal === 'function') {
+          window.openWeeklyRecapModal();
+        } else {
+          toast('위클리 리캡 모달을 엽니다.');
+        }
+      }
+    },
+    openWeeklyRecapModal: function() {
+      if (typeof window.openWeeklyRecapModal === 'function') {
+        window.openWeeklyRecapModal();
+      } else {
+        toast('위클리 리캡 모달을 로드 중입니다.');
+      }
     }
   };
 

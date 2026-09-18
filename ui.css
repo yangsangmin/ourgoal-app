@@ -7012,14 +7012,17 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   display: block;
 }
 
-/* 캘린더/기록 탭의 구형 독립 슬롯만 성소 뷰로 교체 */
+/* 캘린더/기록 탭: 성소 뷰와 기존 실기능 슬롯(상세, AI등록, 잠금화면) 조화 */
 [data-theme="focus-sanctuary"] #calGrid,
+[data-theme="focus-sanctuary"] .cal-nav-row {
+  display: none !important;
+}
+
 [data-theme="focus-sanctuary"] #calDayDetail,
 [data-theme="focus-sanctuary"] #calAgentCard,
-[data-theme="focus-sanctuary"] .cal-nav-row,
-[data-theme="focus-sanctuary"] .cal-sub-guide,
-[data-theme="focus-sanctuary"] #recSegmentBar {
-  display: none !important;
+[data-theme="focus-sanctuary"] .cal-quick-bar,
+[data-theme="focus-sanctuary"] .cal-sub-guide {
+  display: block !important;
 }
 
 /* 목표 탭: 성소 테마에서는 상단에 이미 알약 칩이 있으므로 중복 칩 행만 숨기고 본문 카드는 온전히 보존 */
@@ -7033,13 +7036,16 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   display: none !important;
 }
 
-/* 소통 탭: 피드/DM/동반자/마니또 공통 성소 글래스모피즘 스타일링 */
+/* 소통 탭: 피드/DM/동반자/마니또 공통 성소 글래스모피즘 스타일링 및 게시하기 버튼 보존 */
 [data-theme="focus-sanctuary"] #commBody {
   display: block !important;
   margin-top: 10px;
 }
 [data-theme="focus-sanctuary"] #screen-comm .screen-head {
-  display: none !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
 }
 [data-theme="focus-sanctuary"] .comm-subtabs {
   background: rgba(255, 255, 255, 0.04) !important;
