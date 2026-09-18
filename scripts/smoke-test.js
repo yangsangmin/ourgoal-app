@@ -6946,6 +6946,45 @@ check('compliance: [#TASK-ES-181] 폰 잠금화면에서 바로 보기 통합 �
   assert.ok(swSrc.includes('es181-lockscreen-hub'), 'sw.js 캐시 버전에 es181 식별자 포함');
 });
 
+check('compliance: [#TASK-ES-182] 폰 잠금화면 실시간 정보 연동 라이브 서비스 및 백그라운드 동기화·원클릭 액션 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 실시간 잠금화면 연동 엔진 및 페이로드 빌더 함수 탑재 검증
+  assert.ok(indexHtml.includes('function buildLockScreenCardPayload'), 'buildLockScreenCardPayload 함수 탑재');
+  assert.ok(indexHtml.includes('function syncLockScreenLiveCard'), 'syncLockScreenLiveCard 함수 탑재');
+  assert.ok(indexHtml.includes('function closeLockScreenLiveCard'), 'closeLockScreenLiveCard 함수 탑재');
+  assert.ok(indexHtml.includes('window.syncLockScreenLiveCard = syncLockScreenLiveCard'), 'syncLockScreenLiveCard 전역 노출');
+  assert.ok(indexHtml.includes('window.buildLockScreenCardPayload = buildLockScreenCardPayload'), 'buildLockScreenCardPayload 전역 노출');
+
+  // 2. 잠금화면 허브 모달 1순위 실시간 라이브 탭 및 시뮬레이터 검증
+  assert.ok(indexHtml.includes('id="lsPaneLive"'), '1순위 실시간 라이브 패널(#lsPaneLive) 탑재');
+  assert.ok(indexHtml.includes('id="btnToggleLiveLockScreen"'), '실시간 잠금화면 연동 토글 버튼(#btnToggleLiveLockScreen) 완비');
+  assert.ok(indexHtml.includes('id="btnRefreshLiveLockScreen"'), '원터치 즉시 최신화 버튼(#btnRefreshLiveLockScreen) 완비');
+  assert.ok(indexHtml.includes('id="lsSimClockTime"') && indexHtml.includes('id="lsLiveCardMockup"'), '실물 스마트폰 잠금화면 시뮬레이터 목업 완비');
+
+  // 3. 4종 정보 선택 체크박스 옵션 검증
+  assert.ok(indexHtml.includes('id="lsOptGoals"'), '오늘 목표 달성률 옵션 체크박스');
+  assert.ok(indexHtml.includes('id="lsOptSchedules"'), '다음 예정 일정 옵션 체크박스');
+  assert.ok(indexHtml.includes('id="lsOptStreak"'), '연속 실천 스트릭 옵션 체크박스');
+  assert.ok(indexHtml.includes('id="lsOptDday"'), '핵심 D-Day 옵션 체크박스');
+
+  // 4. 무음 갱신(silent, renotify, tag) 규격 및 알림 액션 2종 검증
+  assert.ok(indexHtml.includes("tag: payload.tag") || indexHtml.includes("ourgoal-lockscreen-live"), '상주형 단일 카드 tag 유지');
+  assert.ok(indexHtml.includes("silent: true") && indexHtml.includes("renotify: false"), '무음 실시간 갱신(silent: true, renotify: false) 보장');
+  assert.ok(indexHtml.includes("action-checkin") && indexHtml.includes("action-calendar"), '알림 액션 2종(빠른 체크인·일정 확인) 탑재');
+
+  // 5. 서비스워커(sw.js) 인터랙티브 액션 라우팅 및 캐시 버전 갱신 검증
+  assert.ok(swSrc.includes('ourgoal-shell-v20260918-es182-lockscreen-live-sync'), 'sw.js 캐시 버전에 es182 식별자 적용');
+  assert.ok(swSrc.includes("action === 'action-checkin'") && swSrc.includes("targetUrl = '/?action=checkin'"), 'sw.js 체크인 액션 라우팅');
+  assert.ok(swSrc.includes("action === 'action-calendar'") && swSrc.includes("targetUrl = '/?tab=calendar'"), 'sw.js 캘린더 액션 라우팅');
+  assert.ok(swSrc.includes("LOCKSCREEN_ACTION"), 'sw.js 클라이언트 postMessage 통신 완비');
+
+  // 6. 앱 시동 시 액션 딥링크 처리 및 서비스워커 메시지 리스너 검증
+  assert.ok(indexHtml.includes("qAction === 'checkin'") || indexHtml.includes("urlParams.get('action')"), '앱 시동 시 checkin 액션 감지');
+  assert.ok(indexHtml.includes("LOCKSCREEN_ACTION"), '앱 본체에서 LOCKSCREEN_ACTION 수신 리스너 탑재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
