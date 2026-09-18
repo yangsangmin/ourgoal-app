@@ -6981,7 +6981,7 @@ check('compliance: [#TASK-ES-182] 폰 잠금화면 실시간 라이브 서비스
   assert.ok(indexHtml.includes("action-checkin") && indexHtml.includes("action-calendar"), '알림 액션 2종(빠른 체크인·일정 확인) 탑재');
 
   // 7. 서비스워커(sw.js) 인터랙티브 액션 라우팅 및 캐시 버전 갱신 검증
-  assert.ok(swSrc.includes('ourgoal-shell-v20260918-es182-lockscreen-live-sync'), 'sw.js 캐시 버전에 es182 식별자 적용');
+  assert.ok(swSrc.includes('ourgoal-shell-v20260918-es182-lockscreen-live-sync') || swSrc.includes('ourgoal-shell-v20260918-es183-lockscreen-takeover'), 'sw.js 캐시 버전에 es182/es183 식별자 적용');
   assert.ok(swSrc.includes("action === 'action-checkin'") && swSrc.includes("targetUrl = '/?action=checkin'"), 'sw.js 체크인 액션 라우팅');
   assert.ok(swSrc.includes("action === 'action-calendar'") && swSrc.includes("targetUrl = '/?tab=calendar'"), 'sw.js 캘린더 액션 라우팅');
   assert.ok(swSrc.includes("LOCKSCREEN_ACTION"), 'sw.js 클라이언트 postMessage 통신 완비');
@@ -6989,6 +6989,43 @@ check('compliance: [#TASK-ES-182] 폰 잠금화면 실시간 라이브 서비스
   // 8. 앱 시동 시 액션 딥링크 처리 및 서비스워커 메시지 리스너 검증
   assert.ok(indexHtml.includes("qAction === 'checkin'") || indexHtml.includes("urlParams.get('action')"), '앱 시동 시 checkin 액션 감지');
   assert.ok(indexHtml.includes("LOCKSCREEN_ACTION"), '앱 본체에서 LOCKSCREEN_ACTION 수신 리스너 탑재');
+});
+
+check('compliance: [#TASK-ES-183] 스마트폰 잠금화면 전체 장악 (Screen-On Full-Screen LockScreen Takeover) 네이티브 서비스 및 사용자 통제 파이프라인 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 잠금화면 전체 장악 제어 버튼 및 슬라이더 탑재 검증
+  assert.ok(indexHtml.includes('id="btnToggleLockScreenTakeover"'), '잠금화면 전체 장악 제어 버튼(#btnToggleLockScreenTakeover) 탑재');
+  assert.ok(indexHtml.includes('id="lsSimUnlockSlider"'), '밀어서 잠금해제 슬라이더(#lsSimUnlockSlider) 탑재');
+  assert.ok(indexHtml.includes('밀어서 잠금해제'), '슬라이더 안내 텍스트 탑재');
+  assert.ok(indexHtml.includes('id="btnDownloadLockScreenApk"'), '안드로이드 전용 잠금화면 APK 안내 버튼 탑재');
+
+  // 2. 안드로이드 네이티브 서비스 및 액티비티 파일 존재 검증 (캐시워크형 구조)
+  const manifestPath = path.join(__dirname, '..', 'android', 'app', 'src', 'main', 'AndroidManifest.xml');
+  const servicePath = path.join(__dirname, '..', 'android', 'app', 'src', 'main', 'java', 'kr', 'ourgoal', 'app', 'LockScreenService.java');
+  const activityPath = path.join(__dirname, '..', 'android', 'app', 'src', 'main', 'java', 'kr', 'ourgoal', 'app', 'LockScreenActivity.java');
+  const receiverPath = path.join(__dirname, '..', 'android', 'app', 'src', 'main', 'java', 'kr', 'ourgoal', 'app', 'LockScreenReceiver.java');
+
+  assert.ok(fs.existsSync(manifestPath), 'AndroidManifest.xml 존재');
+  assert.ok(fs.existsSync(servicePath), 'LockScreenService.java 존재');
+  assert.ok(fs.existsSync(activityPath), 'LockScreenActivity.java 존재');
+  assert.ok(fs.existsSync(receiverPath), 'LockScreenReceiver.java 존재');
+
+  const manifestSrc = fs.readFileSync(manifestPath, 'utf8');
+  const serviceSrc = fs.readFileSync(servicePath, 'utf8');
+  const activitySrc = fs.readFileSync(activityPath, 'utf8');
+
+  assert.ok(manifestSrc.includes('SYSTEM_ALERT_WINDOW'), 'SYSTEM_ALERT_WINDOW 권한 선언');
+  assert.ok(manifestSrc.includes('LockScreenService') && manifestSrc.includes('LockScreenActivity'), '매니페스트 내 서비스/액티비티 등록');
+  assert.ok(serviceSrc.includes('ACTION_SCREEN_ON'), 'LockScreenService 내 ACTION_SCREEN_ON 감지 리시버');
+  assert.ok(activitySrc.includes('setShowWhenLocked') && activitySrc.includes('setTurnScreenOn'), 'LockScreenActivity 내 setShowWhenLocked/setTurnScreenOn 적용');
+
+  // 3. 기종별(Android/iOS) 안내 문구 분기 검증
+  assert.ok(indexHtml.includes('갤럭시(Android)') && indexHtml.includes('아이폰(iOS)'), '기종별 잠금화면 전체 장악 및 위젯 분기 안내');
+
+  // 4. 서비스워커 캐시 버전 es183 검증
+  assert.ok(swSrc.includes('es183-lockscreen-takeover'), 'sw.js 캐시 버전에 es183 식별자 포함');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
