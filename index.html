@@ -295,6 +295,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <button class="btn btn-ghost btn-sm" id="calTodayBtn" type="button">오늘</button>
         <button class="icon-btn icon-btn-lg" id="calNextBtn" type="button" aria-label="다음"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
       </div>
+      <div class="cal-quick-bar" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0 10px;padding:0 2px;">
+        <button type="button" class="btn-ghost" id="calLockScreenBtn" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;font-size:.8125rem;font-weight:600;border-radius:9999px;background:var(--bg-card);border:1px solid var(--border-color);color:var(--ink);cursor:pointer;transition:all .15s ease;">
+          <span style="font-size:1rem;">📱</span>
+          <span>폰 잠금화면에서 보기</span>
+          <span style="font-size:.7rem;padding:2px 6px;border-radius:999px;background:rgba(99,102,241,0.12);color:var(--primary);font-weight:700;">선택형 3종</span>
+        </button>
+      </div>
       <div id="calGrid"></div>
       <div id="calDayDetail"></div>
       <div class="card agent-card" id="calAgentCard">
@@ -7427,6 +7434,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       state.calDate = t; state.calSelectedDate = t;
       renderCalendarScreen();
     };
+    var lockScreenBtn = document.getElementById('calLockScreenBtn');
+    if(lockScreenBtn){
+      lockScreenBtn.onclick = function(){
+        openLockScreenHubModal();
+      };
+    }
     var calSend = document.getElementById('calAgentSendBtn');
     var calInp = document.getElementById('calAgentInput');
     if(calSend && calInp){
@@ -7587,7 +7600,640 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
     wireAttachmentChipClicks(wrap);
   }
-  if(typeof window !== 'undefined'){ window.renderCalendarScreen = renderCalendarScreen; window.openCalendarManualEditModal = openCalendarManualEditModal; }
+
+  /* =========================================================================
+     [#TASK-ES-181] 폰 잠금화면용 고해상도 월간 달력 배경화면 캔버스 엔진
+     - 해상도: 1080 x 2340 (스마트폰 최적 19.5:9 비율)
+     - 상단 노치/시계 영역(y: 0~520) 세이프존 확보
+     - 중앙 월간 캘린더 그리드 (오늘 하이라이트 + 일정 도트)
+     - 하단 오늘 일정 및 핵심 D-Day 브리핑 카드
+     - 다크(OLED 절전 블랙) & 라이트(감성 웜화이트) 테마
+  ========================================================================= */
+  function lsDrawRoundRect(ctx, x, y, w, h, r, fill, stroke){
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+    if(fill){ ctx.fillStyle = fill; ctx.fill(); }
+    if(stroke && stroke !== 'transparent'){ ctx.strokeStyle = stroke; ctx.stroke(); }
+    ctx.restore();
+  }
+
+  async function generateLockScreenCalendarImage(targetYear, targetMonth, records, goals, options){
+    options = options || {};
+    var theme = options.theme || 'dark';
+
+    var canvas = document.createElement('canvas');
+    canvas.width = 1080;
+    canvas.height = 2340;
+    var ctx = canvas.getContext('2d');
+    if(!ctx) return canvas;
+
+    var now = new Date();
+    var y = targetYear || now.getFullYear();
+    var m = (targetMonth !== undefined && targetMonth !== null) ? targetMonth : now.getMonth();
+    var todayStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+
+    var isDark = (theme === 'dark');
+    var cBg = isDark ? '#0A0C10' : '#F8FAFC';
+    var cCard = isDark ? '#141721' : '#FFFFFF';
+    var cCardBorder = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+    var cTextMain = isDark ? '#FFFFFF' : '#0F172A';
+    var cTextSub = isDark ? '#94A3B8' : '#64748B';
+    var cTextMuted = isDark ? '#475569' : '#94A3B8';
+    var cAccent = '#6366F1';
+    var cAccentGlow = isDark ? 'rgba(99, 102, 241, 0.18)' : 'rgba(99, 102, 241, 0.08)';
+    var cTodayBg = '#6366F1';
+    var cTodayText = '#FFFFFF';
+    var cDotColor = isDark ? '#38BDF8' : '#0284C7';
+    var cSunColor = '#EF4444';
+    var cSatColor = '#3B82F6';
+
+    // 1. 배경
+    ctx.fillStyle = cBg;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // 상단 앰비언트 글로우
+    var grad = ctx.createRadialGradient(540, 260, 20, 540, 260, 460);
+    grad.addColorStop(0, cAccentGlow);
+    grad.addColorStop(1, 'transparent');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 1080, 650);
+
+    // 2. 상단 노치 및 시계 세이프존 안내
+    ctx.save();
+    ctx.font = '600 24px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = cTextMuted;
+    ctx.textAlign = 'center';
+    ctx.fillText('OURGOAL LOCK SCREEN', 540, 130);
+    ctx.restore();
+
+    // 3. 월간 타이틀
+    var monthNamesKr = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+    var titleMonthStr = y + '. ' + String(m + 1).padStart(2, '0');
+
+    ctx.save();
+    ctx.font = '900 52px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = cTextMain;
+    ctx.textAlign = 'center';
+    ctx.fillText(titleMonthStr, 540, 530);
+
+    ctx.font = '700 22px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = cAccent;
+    ctx.fillText(monthNamesKr[m] + ' 캘린더', 540, 575);
+    ctx.restore();
+
+    // 4. 달력 카드 박스
+    var calBoxX = 60, calBoxY = 615, calBoxW = 960, calBoxH = 750;
+    lsDrawRoundRect(ctx, calBoxX, calBoxY, calBoxW, calBoxH, 28, cCard, cCardBorder);
+
+    // 요일 헤더
+    var weekDays = ['일', '월', '화', '수', '목', '금', '토'];
+    var colW = calBoxW / 7;
+    var startGridY = calBoxY + 75;
+
+    ctx.font = '700 26px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.textAlign = 'center';
+    for(var wd = 0; wd < 7; wd++){
+      if(wd === 0) ctx.fillStyle = cSunColor;
+      else if(wd === 6) ctx.fillStyle = cSatColor;
+      else ctx.fillStyle = cTextSub;
+      ctx.fillText(weekDays[wd], calBoxX + (wd * colW) + (colW / 2), calBoxY + 50);
+    }
+
+    var firstDay = new Date(y, m, 1).getDay();
+    var lastDate = new Date(y, m + 1, 0).getDate();
+
+    var eventMap = {};
+    if(Array.isArray(records)){
+      records.forEach(function(r){
+        if(!r) return;
+        var rDate = (r.startAt || r.date || '').slice(0, 10);
+        if(rDate) eventMap[rDate] = (eventMap[rDate] || 0) + 1;
+      });
+    }
+
+    var rowH = (calBoxH - 80) / 6;
+    var dayCounter = 1;
+    var gridY = startGridY;
+
+    for(var row = 0; row < 6; row++){
+      for(var col = 0; col < 7; col++){
+        var cellIndex = row * 7 + col;
+        if(cellIndex >= firstDay && dayCounter <= lastDate){
+          var curDay = dayCounter;
+          var curDateStr = y + '-' + String(m+1).padStart(2, '0') + '-' + String(curDay).padStart(2, '0');
+          var isToday = (curDateStr === todayStr);
+          var hasEvents = !!eventMap[curDateStr];
+          var cellCenterX = calBoxX + (col * colW) + (colW / 2);
+          var cellCenterY = gridY + (row * rowH) + (rowH / 2) - 4;
+
+          if(isToday){
+            ctx.fillStyle = cTodayBg;
+            ctx.beginPath();
+            ctx.arc(cellCenterX, cellCenterY, 34, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          ctx.font = isToday ? '900 32px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif' : '600 28px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+          if(isToday){
+            ctx.fillStyle = cTodayText;
+          } else if(col === 0){
+            ctx.fillStyle = cSunColor;
+          } else if(col === 6){
+            ctx.fillStyle = cSatColor;
+          } else {
+            ctx.fillStyle = cTextMain;
+          }
+          ctx.fillText(String(curDay), cellCenterX, cellCenterY + 10);
+
+          if(hasEvents){
+            ctx.fillStyle = isToday ? '#FFFFFF' : cDotColor;
+            ctx.beginPath();
+            ctx.arc(cellCenterX, cellCenterY + 28, 4, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          dayCounter++;
+        }
+      }
+    }
+
+    // 5. 하단 "THIS MONTH & TODAY" 브리핑 카드
+    var bCardX = 60, bCardY = 1400, bCardW = 960, bCardH = 750;
+    lsDrawRoundRect(ctx, bCardX, bCardY, bCardW, bCardH, 28, cCard, cCardBorder);
+
+    ctx.font = '800 32px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = cTextMain;
+    ctx.textAlign = 'left';
+    ctx.fillText('📌 TODAY & KEY SCHEDULE', bCardX + 44, bCardY + 68);
+
+    ctx.font = '500 22px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = cTextSub;
+    ctx.fillText('오늘 하루 핵심 일정과 이달의 주요 목표입니다', bCardX + 44, bCardY + 106);
+
+    ctx.strokeStyle = cCardBorder;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(bCardX + 44, bCardY + 130);
+    ctx.lineTo(bCardX + bCardW - 44, bCardY + 130);
+    ctx.stroke();
+
+    var scheduleItems = [];
+    if(Array.isArray(records)){
+      records.forEach(function(r){
+        var rDate = (r.startAt || r.date || '').slice(0, 10);
+        if(rDate === todayStr && r.text){
+          var tStr = (r.startAt && r.startAt.includes('T')) ? r.startAt.slice(11, 16) : '';
+          scheduleItems.push({ type: 'today', time: tStr, text: r.text });
+        }
+      });
+    }
+
+    var goalItems = [];
+    if(Array.isArray(goals)){
+      goals.forEach(function(g){
+        if(!g || !g.title) return;
+        var ddayStr = '';
+        if(g.targetDate){
+          var tTime = new Date(g.targetDate).getTime();
+          var nTime = new Date(todayStr).getTime();
+          var diff = Math.ceil((tTime - nTime) / (1000 * 60 * 60 * 24));
+          if(diff >= 0) ddayStr = 'D-' + diff;
+          else ddayStr = 'D+' + Math.abs(diff);
+        }
+        goalItems.push({ title: g.title, dday: ddayStr });
+      });
+    }
+
+    var startItemY = bCardY + 190;
+    var maxSlots = 5;
+    var currentSlot = 0;
+
+    if(scheduleItems.length > 0){
+      scheduleItems.slice(0, 3).forEach(function(item){
+        if(currentSlot >= maxSlots) return;
+        var itemY = startItemY + (currentSlot * 95);
+
+        lsDrawRoundRect(ctx, bCardX + 44, itemY - 32, 120, 52, 12, cAccentGlow, 'transparent');
+
+        ctx.font = '700 24px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = cAccent;
+        ctx.textAlign = 'center';
+        ctx.fillText(item.time || '오늘', bCardX + 104, itemY + 3);
+
+        ctx.font = '600 28px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = cTextMain;
+        ctx.textAlign = 'left';
+        var txt = item.text;
+        if(txt.length > 24) txt = txt.slice(0, 24) + '…';
+        ctx.fillText(txt, bCardX + 185, itemY + 4);
+
+        currentSlot++;
+      });
+    }
+
+    if(goalItems.length > 0 && currentSlot < maxSlots){
+      goalItems.slice(0, maxSlots - currentSlot).forEach(function(gItem){
+        var itemY = startItemY + (currentSlot * 95);
+
+        var badgeBg = isDark ? 'rgba(56, 189, 248, 0.15)' : 'rgba(2, 132, 199, 0.1)';
+        var badgeColor = isDark ? '#38BDF8' : '#0284C7';
+        lsDrawRoundRect(ctx, bCardX + 44, itemY - 32, 120, 52, 12, badgeBg, 'transparent');
+
+        ctx.font = '700 24px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = badgeColor;
+        ctx.textAlign = 'center';
+        ctx.fillText(gItem.dday || '목표', bCardX + 104, itemY + 3);
+
+        ctx.font = '600 28px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = cTextMain;
+        ctx.textAlign = 'left';
+        var gTxt = gItem.title;
+        if(gTxt.length > 22) gTxt = gTxt.slice(0, 22) + '…';
+        ctx.fillText(gTxt, bCardX + 185, itemY + 4);
+
+        currentSlot++;
+      });
+    }
+
+    if(currentSlot === 0){
+      ctx.font = '600 28px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+      ctx.fillStyle = cTextSub;
+      ctx.textAlign = 'center';
+      ctx.fillText('✨ 오늘 등록된 일정이 없습니다.', bCardX + (bCardW/2), bCardY + 280);
+      ctx.font = '500 24px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+      ctx.fillStyle = cTextMuted;
+      ctx.fillText('오늘도 나만의 소중한 목표를 향해 한 걸음 나아가세요!', bCardX + (bCardW/2), bCardY + 330);
+    }
+
+    // 6. 하단 워터마크
+    ctx.font = '600 22px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = cTextMuted;
+    ctx.textAlign = 'center';
+    ctx.fillText('OURGOAL · 매일 성장하는 나만의 목표 캘린더', 540, 2240);
+
+    return canvas;
+  }
+
+  /* =========================================================================
+     [#TASK-ES-181] 폰 잠금화면에서 바로 보기 통합 허브 모달
+  ========================================================================= */
+  function openLockScreenHubModal(){
+    var isDark = true;
+    var currentCanvas = null;
+
+    var curYear = state.calDate ? parseInt(state.calDate.slice(0, 4), 10) : new Date().getFullYear();
+    var curMonth = state.calDate ? (parseInt(state.calDate.slice(5, 7), 10) - 1) : new Date().getMonth();
+
+    var digestSetting = { enabled: false, time: '07:30' };
+    try {
+      var saved = localStorage.getItem('ourgoal_lockscreen_digest');
+      if(saved) digestSetting = JSON.parse(saved);
+    } catch(e){}
+
+    var webCalUrl = '';
+    try {
+      if(typeof buildWebCalUrl === 'function'){
+        webCalUrl = buildWebCalUrl(state.profile.id, window.location.origin);
+      } else {
+        var base = window.location.origin.replace(/^https?:\/\//, '');
+        webCalUrl = 'webcal://' + base + '/api/calendar?token=' + encodeURIComponent(state.profile.id || 'demo');
+      }
+    } catch(err){
+      webCalUrl = 'webcal://ourgoal-app.vercel.app/api/calendar?token=' + encodeURIComponent(state.profile.id || 'demo');
+    }
+
+    var html = '' +
+      '<div class="lockscreen-hub-container" style="max-height:85vh;overflow-y:auto;padding-bottom:16px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+          '<h3 style="margin:0;font-size:1.15rem;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
+            '<span>📱</span> 폰 잠금화면에서 바로 보기' +
+          '</h3>' +
+          '<button type="button" class="btn-ghost" onclick="closeModal()" style="border:none;background:transparent;font-size:1.25rem;cursor:pointer;color:var(--ink-soft);padding:4px 8px;" aria-label="닫기">✕</button>' +
+        '</div>' +
+        '<p style="margin:0 0 14px;font-size:.84rem;color:var(--ink-soft);line-height:1.45;">' +
+          '앱에 들어오지 않아도 폰을 켤 때마다 이번 달 일정을 바로 볼 수 있는 <strong>3가지 방법</strong>입니다. 원하시는 방식을 골라 바로 설정해 보세요!' +
+        '</p>' +
+
+        '<div class="ls-seg-bar" style="display:flex;background:var(--surface-2);padding:4px;border-radius:12px;gap:4px;margin-bottom:16px;">' +
+          '<button type="button" class="ls-tab-btn active" data-tab="wallpaper" style="flex:1;border:none;background:var(--bg-card);color:var(--ink);padding:8px 4px;font-size:.78rem;font-weight:700;border-radius:8px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.08);transition:all .15s ease;">🖼️ 달력 배경화면</button>' +
+          '<button type="button" class="ls-tab-btn" data-tab="widget" style="flex:1;border:none;background:transparent;color:var(--ink-soft);padding:8px 4px;font-size:.78rem;font-weight:600;border-radius:8px;cursor:pointer;transition:all .15s ease;">📅 위젯 연동</button>' +
+          '<button type="button" class="ls-tab-btn" data-tab="digest" style="flex:1;border:none;background:transparent;color:var(--ink-soft);padding:8px 4px;font-size:.78rem;font-weight:600;border-radius:8px;cursor:pointer;transition:all .15s ease;">🔔 모닝 알림</button>' +
+        '</div>' +
+
+        // 패널 1: 달력 배경화면
+        '<div class="ls-content-pane" id="lsPaneWallpaper" style="display:block;">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
+            '<span style="font-size:.84rem;font-weight:700;color:var(--ink);">테마 선택</span>' +
+            '<div style="display:flex;gap:6px;">' +
+              '<button type="button" class="btn btn-xs ls-theme-btn" id="btnThemeDark" style="border-radius:999px;padding:5px 12px;font-size:.78rem;font-weight:700;background:#0f172a;color:#ffffff;border:1px solid #334155;cursor:pointer;">🖤 다크 블랙</button>' +
+              '<button type="button" class="btn btn-xs ls-theme-btn" id="btnThemeLight" style="border-radius:999px;padding:5px 12px;font-size:.78rem;font-weight:600;background:var(--surface-2);color:var(--ink-soft);border:1px solid transparent;cursor:pointer;">🤍 웜 화이트</button>' +
+            '</div>' +
+          '</div>' +
+
+          '<div style="background:var(--surface-2);border-radius:20px;padding:14px;text-align:center;border:1px solid var(--border-color);margin-bottom:14px;">' +
+            '<div style="font-size:.76rem;color:var(--ink-soft);margin-bottom:8px;">폰 시계 위치를 피해 이번 달 달력과 일정이 실시간 각인됩니다</div>' +
+            '<div id="lsWallpaperPreviewWrap" style="max-width:200px;margin:0 auto;box-shadow:0 8px 24px rgba(0,0,0,0.18);border-radius:18px;overflow:hidden;border:3px solid #334155;background:#000;position:relative;line-height:0;">' +
+              '<div style="padding:90px 0;color:#94a3b8;font-size:.8rem;">배경화면 생성 중…</div>' +
+            '</div>' +
+          '</div>' +
+
+          '<button type="button" class="btn btn-primary btn-block" id="btnDownloadWallpaper" style="font-size:.9rem;font-weight:700;padding:12px;border-radius:12px;margin-bottom:14px;cursor:pointer;">' +
+            '📥 고화질 잠금화면 이미지 다운로드' +
+          '</button>' +
+
+          '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:14px;">' +
+            '<div style="font-size:.84rem;font-weight:800;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:6px;">' +
+              '<span>💡</span> 다운로드 후 잠금화면 설정 방법' +
+            '</div>' +
+            '<div style="display:flex;gap:6px;margin-bottom:10px;">' +
+              '<button type="button" class="btn-ghost ls-guide-device-btn active" data-device="ios" style="flex:1;padding:6px;font-size:.78rem;font-weight:700;border-radius:8px;border:1px solid var(--border-color);background:var(--surface-2);cursor:pointer;">🍎 아이폰 (iOS)</button>' +
+              '<button type="button" class="btn-ghost ls-guide-device-btn" data-device="aos" style="flex:1;padding:6px;font-size:.78rem;font-weight:600;border-radius:8px;border:1px solid var(--border-color);background:transparent;cursor:pointer;">🤖 갤럭시 (Android)</button>' +
+            '</div>' +
+            '<div id="lsGuideTextIos" style="font-size:.8125rem;color:var(--ink-soft);line-height:1.6;">' +
+              '1. 위 <strong>[다운로드]</strong> 버튼을 눌러 이미지를 사진 앱에 저장합니다.<br>' +
+              '2. <strong>사진 앱</strong>에서 저장된 이미지를 열고 좌측 하단 <strong>공유(↑)</strong>를 누릅니다.<br>' +
+              '3. <strong>[배경화면으로 지정]</strong> ➔ <strong>[잠금화면으로 설정]</strong>을 누르면 끝!' +
+            '</div>' +
+            '<div id="lsGuideTextAos" style="display:none;font-size:.8125rem;color:var(--ink-soft);line-height:1.6;">' +
+              '1. 위 <strong>[다운로드]</strong> 버튼을 눌러 이미지를 갤러리에 저장합니다.<br>' +
+              '2. <strong>갤러리 앱</strong>에서 이미지를 열고 우측 상단 <strong>더보기(⋮)</strong>를 누릅니다.<br>' +
+              '3. <strong>[배경화면으로 설정]</strong> ➔ <strong>[잠금화면]</strong>을 누르면 완료됩니다!' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        // 패널 2: 캘린더 위젯 연동
+        '<div class="ls-content-pane" id="lsPaneWidget" style="display:none;">' +
+          '<div style="background:var(--surface-2);border-radius:14px;padding:14px;border:1px solid var(--border-color);margin-bottom:14px;">' +
+            '<div style="font-size:.84rem;font-weight:800;color:var(--ink);margin-bottom:4px;">📅 실시간 캘린더 구독 연동</div>' +
+            '<div style="font-size:.78rem;color:var(--ink-soft);line-height:1.45;">' +
+              '아워골 일정을 스마트폰 기본 캘린더에 구독 등록하면, 폰 기본 <strong>잠금화면 캘린더 위젯</strong>을 통해 일정이 실시간 자동 동기화됩니다.' +
+            '</div>' +
+          '</div>' +
+
+          '<div style="margin-bottom:14px;">' +
+            '<label style="display:block;font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">내 캘린더 구독 URL (WebCal)</label>' +
+            '<div style="display:flex;gap:6px;">' +
+              '<input type="text" id="lsWebCalInput" readonly value="' + escapeHtml(webCalUrl) + '" style="flex:1;padding:8px 10px;font-size:.8125rem;border-radius:10px;border:1px solid var(--border-color);background:var(--bg-card);color:var(--ink);">' +
+              '<button type="button" class="btn btn-primary btn-sm" id="btnCopyLsWebCal" style="border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer;">주소 복사</button>' +
+            '</div>' +
+          '</div>' +
+
+          '<button type="button" class="btn btn-ghost btn-sm btn-block" id="btnDownloadLsICS" style="font-size:.8125rem;font-weight:600;padding:8px;border-radius:10px;border:1px solid var(--border-color);margin-bottom:14px;cursor:pointer;">' +
+            '📥 iCalendar (.ics) 파일 수동 다운로드' +
+          '</button>' +
+
+          '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:14px;">' +
+            '<div style="font-size:.84rem;font-weight:800;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:6px;">' +
+              '<span>⚙️</span> 잠금화면 위젯 등록 1분 가이드' +
+            '</div>' +
+            '<div style="display:flex;gap:6px;margin-bottom:10px;">' +
+              '<button type="button" class="btn-ghost ls-widget-device-btn active" data-wdevice="ios" style="flex:1;padding:6px;font-size:.78rem;font-weight:700;border-radius:8px;border:1px solid var(--border-color);background:var(--surface-2);cursor:pointer;">🍎 아이폰 (iOS)</button>' +
+              '<button type="button" class="btn-ghost ls-widget-device-btn" data-wdevice="aos" style="flex:1;padding:6px;font-size:.78rem;font-weight:600;border-radius:8px;border:1px solid var(--border-color);background:transparent;cursor:pointer;">🤖 갤럭시 (구글캘린더)</button>' +
+            '</div>' +
+            '<div id="lsWGuideIos" style="font-size:.8125rem;color:var(--ink-soft);line-height:1.6;">' +
+              '1. 위 <strong>[주소 복사]</strong> 버튼을 누릅니다.<br>' +
+              '2. 아이폰 <strong>설정 ➔ 캘린더 ➔ 계정 ➔ 계정 추가 ➔ 기타 ➔ [구독할 캘린더 추가]</strong>에 붙여넣고 저장합니다.<br>' +
+              '3. 폰 잠금화면을 길게 눌러 <strong>[사용자화] ➔ [위젯 추가] ➔ 캘린더 위젯</strong>을 배치하면 완료!' +
+            '</div>' +
+            '<div id="lsWGuideAos" style="display:none;font-size:.8125rem;color:var(--ink-soft);line-height:1.6;">' +
+              '1. 위 <strong>[주소 복사]</strong> 버튼을 누릅니다.<br>' +
+              '2. PC/모바일 브라우저로 <strong>Google 캘린더 웹</strong>에 접속하여 좌측 [다른 캘린더 +] ➔ <strong>[URL로 추가]</strong>에 주소를 넣습니다.<br>' +
+              '3. 갤럭시 <strong>설정 ➔ 잠금화면 ➔ [위젯] ➔ [오늘의 일정]</strong>을 켜면 잠금화면에 실시간으로 뜹니다!' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+
+        // 패널 3: 모닝 알림
+        '<div class="ls-content-pane" id="lsPaneDigest" style="display:none;">' +
+          '<div style="background:var(--surface-2);border-radius:14px;padding:14px;border:1px solid var(--border-color);margin-bottom:14px;">' +
+            '<div style="font-size:.84rem;font-weight:800;color:var(--ink);margin-bottom:4px;">🔔 아침 잠금화면 모닝 브리핑</div>' +
+            '<div style="font-size:.78rem;color:var(--ink-soft);line-height:1.45;">' +
+              '매일 아침 눈떠서 폰 화면을 켤 때 오늘 하루 일정과 이달의 핵심 D-Day를 잠금화면 알림 카드로 바로 띄워드립니다.' +
+            '</div>' +
+          '</div>' +
+
+          '<div style="margin-bottom:16px;">' +
+            '<label style="display:block;font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">알림 받을 시간</label>' +
+            '<select id="lsDigestTimeSelect" style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border-color);background:var(--bg-card);color:var(--ink);font-size:.875rem;font-weight:600;">' +
+              '<option value="07:00"' + (digestSetting.time==='07:00'?' selected':'') + '>오전 07:00 (이른 아침 기상)</option>' +
+              '<option value="07:30"' + (digestSetting.time==='07:30'?' selected':'') + '>오전 07:30 (출근·등교 준비 시간)</option>' +
+              '<option value="08:00"' + (digestSetting.time==='08:00'?' selected':'') + '>오전 08:00 (기본)</option>' +
+              '<option value="08:30"' + (digestSetting.time==='08:30'?' selected':'') + '>오전 08:30</option>' +
+              '<option value="09:00"' + (digestSetting.time==='09:00'?' selected':'') + '>오전 09:00 (하루 시작)</option>' +
+            '</select>' +
+          '</div>' +
+
+          '<button type="button" class="btn ' + (digestSetting.enabled ? 'btn-ghost' : 'btn-primary') + ' btn-block" id="btnToggleDigest" style="font-size:.9rem;font-weight:700;padding:12px;border-radius:12px;margin-bottom:14px;cursor:pointer;">' +
+            (digestSetting.enabled ? '✅ 아침 잠금화면 알림 켜짐 (클릭하여 끄기)' : '🔔 아침 잠금화면 알림 켜기') +
+          '</button>' +
+
+          '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:14px;font-size:.8125rem;color:var(--ink-soft);line-height:1.55;">' +
+            '💡 <strong>동작 안내</strong><br>' +
+            '• 브라우저 푸시 알림 권한을 허용하시면 설정한 시각에 자동으로 잠금화면에 브리핑 카드가 도착합니다.<br>' +
+            '• 잠금화면에서 바로 확인하고 스와이프하여 아워골로 즉시 체크인할 수 있습니다.' +
+          '</div>' +
+        '</div>' +
+
+      '</div>';
+
+    openModal(html, function(sheet){
+      // 1. 3단 탭 전환 바인딩
+      sheet.querySelectorAll('.ls-tab-btn').forEach(function(btn){
+        btn.onclick = function(){
+          var targetTab = btn.dataset.tab;
+          sheet.querySelectorAll('.ls-tab-btn').forEach(function(b){
+            b.classList.toggle('active', b.dataset.tab === targetTab);
+            if(b.dataset.tab === targetTab){
+              b.style.background = 'var(--bg-card)';
+              b.style.color = 'var(--ink)';
+              b.style.fontWeight = '700';
+              b.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
+            } else {
+              b.style.background = 'transparent';
+              b.style.color = 'var(--ink-soft)';
+              b.style.fontWeight = '600';
+              b.style.boxShadow = 'none';
+            }
+          });
+          sheet.querySelector('#lsPaneWallpaper').style.display = (targetTab === 'wallpaper') ? 'block' : 'none';
+          sheet.querySelector('#lsPaneWidget').style.display = (targetTab === 'widget') ? 'block' : 'none';
+          sheet.querySelector('#lsPaneDigest').style.display = (targetTab === 'digest') ? 'block' : 'none';
+        };
+      });
+
+      // 2. 배경화면 렌더링 함수
+      async function updateWallpaperPreview(){
+        var wrap = sheet.querySelector('#lsWallpaperPreviewWrap');
+        if(!wrap) return;
+        var cvs = await generateLockScreenCalendarImage(curYear, curMonth, state.profile.records, state.profile.goals, { theme: isDark ? 'dark' : 'light' });
+        currentCanvas = cvs;
+        var dataUrl = cvs.toDataURL('image/png');
+        wrap.innerHTML = '<img src="' + dataUrl + '" alt="잠금화면 달력 미리보기" style="width:100%;height:auto;display:block;">';
+      }
+
+      updateWallpaperPreview();
+
+      // 테마 전환 버튼
+      var btnDark = sheet.querySelector('#btnThemeDark');
+      var btnLight = sheet.querySelector('#btnThemeLight');
+      if(btnDark && btnLight){
+        btnDark.onclick = function(){
+          isDark = true;
+          btnDark.style.background = '#0f172a';
+          btnDark.style.color = '#ffffff';
+          btnDark.style.border = '1px solid #334155';
+          btnDark.style.fontWeight = '700';
+          btnLight.style.background = 'var(--surface-2)';
+          btnLight.style.color = 'var(--ink-soft)';
+          btnLight.style.border = '1px solid transparent';
+          btnLight.style.fontWeight = '600';
+          updateWallpaperPreview();
+        };
+        btnLight.onclick = function(){
+          isDark = false;
+          btnLight.style.background = '#ffffff';
+          btnLight.style.color = '#0f172a';
+          btnLight.style.border = '1px solid #cbd5e1';
+          btnLight.style.fontWeight = '700';
+          btnDark.style.background = 'var(--surface-2)';
+          btnDark.style.color = 'var(--ink-soft)';
+          btnDark.style.border = '1px solid transparent';
+          btnDark.style.fontWeight = '600';
+          updateWallpaperPreview();
+        };
+      }
+
+      // 배경화면 다운로드 버튼
+      var btnDl = sheet.querySelector('#btnDownloadWallpaper');
+      if(btnDl){
+        btnDl.onclick = function(){
+          if(!currentCanvas) return;
+          var link = document.createElement('a');
+          link.download = 'ourgoal_calendar_' + curYear + '_' + (curMonth+1) + '_' + (isDark ? 'dark' : 'light') + '.png';
+          link.href = currentCanvas.toDataURL('image/png');
+          link.click();
+          toast('고화질 잠금화면 이미지가 저장되었습니다!');
+        };
+      }
+
+      // 배경화면 기종 가이드 탭 전환
+      sheet.querySelectorAll('.ls-guide-device-btn').forEach(function(gBtn){
+        gBtn.onclick = function(){
+          var dev = gBtn.dataset.device;
+          sheet.querySelectorAll('.ls-guide-device-btn').forEach(function(b){
+            b.classList.toggle('active', b.dataset.device === dev);
+            b.style.background = (b.dataset.device === dev) ? 'var(--surface-2)' : 'transparent';
+            b.style.fontWeight = (b.dataset.device === dev) ? '700' : '600';
+          });
+          sheet.querySelector('#lsGuideTextIos').style.display = (dev === 'ios') ? 'block' : 'none';
+          sheet.querySelector('#lsGuideTextAos').style.display = (dev === 'aos') ? 'block' : 'none';
+        };
+      });
+
+      // 3. 위젯 연동 탭: WebCal 복사
+      var btnCopy = sheet.querySelector('#btnCopyLsWebCal');
+      var webCalInput = sheet.querySelector('#lsWebCalInput');
+      if(btnCopy && webCalInput){
+        btnCopy.onclick = function(){
+          var val = webCalInput.value;
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(val).then(function(){
+              toast('구독 주소가 클립보드에 복사되었습니다!');
+            }).catch(function(){
+              webCalInput.select();
+              document.execCommand('copy');
+              toast('구독 주소가 복사되었습니다!');
+            });
+          } else {
+            webCalInput.select();
+            document.execCommand('copy');
+            toast('구독 주소가 복사되었습니다!');
+          }
+        };
+      }
+
+      // .ics 다운로드 버튼
+      var btnDlICS = sheet.querySelector('#btnDownloadLsICS');
+      if(btnDlICS){
+        btnDlICS.onclick = function(){
+          var icsData = (typeof buildICS === 'function') ? buildICS(state.profile.records, state.profile.goals) : '';
+          var blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' });
+          var blobUrl = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = 'ourgoal_calendar.ics';
+          a.click();
+          setTimeout(function(){ URL.revokeObjectURL(blobUrl); }, 2000);
+          toast('iCalendar (.ics) 파일이 다운로드되었습니다!');
+        };
+      }
+
+      // 위젯 기종 가이드 탭 전환
+      sheet.querySelectorAll('.ls-widget-device-btn').forEach(function(wBtn){
+        wBtn.onclick = function(){
+          var dev = wBtn.dataset.wdevice;
+          sheet.querySelectorAll('.ls-widget-device-btn').forEach(function(b){
+            b.classList.toggle('active', b.dataset.wdevice === dev);
+            b.style.background = (b.dataset.wdevice === dev) ? 'var(--surface-2)' : 'transparent';
+            b.style.fontWeight = (b.dataset.wdevice === dev) ? '700' : '600';
+          });
+          sheet.querySelector('#lsWGuideIos').style.display = (dev === 'ios') ? 'block' : 'none';
+          sheet.querySelector('#lsWGuideAos').style.display = (dev === 'aos') ? 'block' : 'none';
+        };
+      });
+
+      // 4. 모닝 알림 탭 토글
+      var btnDigest = sheet.querySelector('#btnToggleDigest');
+      var selTime = sheet.querySelector('#lsDigestTimeSelect');
+      if(btnDigest && selTime){
+        btnDigest.onclick = function(){
+          if(!digestSetting.enabled){
+            if('Notification' in window){
+              Notification.requestPermission().then(function(perm){
+                if(perm === 'granted'){
+                  digestSetting.enabled = true;
+                  digestSetting.time = selTime.value;
+                  localStorage.setItem('ourgoal_lockscreen_digest', JSON.stringify(digestSetting));
+                  btnDigest.textContent = '✅ 아침 잠금화면 알림 켜짐 (클릭하여 끄기)';
+                  btnDigest.classList.remove('btn-primary');
+                  btnDigest.classList.add('btn-ghost');
+                  toast('매일 ' + digestSetting.time + '에 잠금화면 모닝 알림이 전송됩니다!');
+                } else {
+                  toast('알림 권한이 허용되지 않았습니다. 브라우저 설정에서 허용해 주세요.');
+                }
+              });
+            } else {
+              toast('이 브라우저는 웹 푸시 알림을 지원하지 않습니다.');
+            }
+          } else {
+            digestSetting.enabled = false;
+            localStorage.setItem('ourgoal_lockscreen_digest', JSON.stringify(digestSetting));
+            btnDigest.textContent = '🔔 아침 잠금화면 알림 켜기';
+            btnDigest.classList.remove('btn-ghost');
+            btnDigest.classList.add('btn-primary');
+            toast('아침 잠금화면 알림이 해제되었습니다.');
+          }
+        };
+
+        selTime.onchange = function(){
+          if(digestSetting.enabled){
+            digestSetting.time = selTime.value;
+            localStorage.setItem('ourgoal_lockscreen_digest', JSON.stringify(digestSetting));
+            toast('알림 시간이 ' + digestSetting.time + '로 변경되었습니다.');
+          }
+        };
+      }
+    });
+  }
+
+  if(typeof window !== 'undefined'){ window.renderCalendarScreen = renderCalendarScreen; window.openCalendarManualEditModal = openCalendarManualEditModal; window.openLockScreenHubModal = openLockScreenHubModal; window.generateLockScreenCalendarImage = generateLockScreenCalendarImage; }
   function streakBadgeHtml(streak){
     var tier, flames;
     if(streak>=30){ tier='streak-t4'; flames='🔥🔥🔥'; }
