@@ -47,10 +47,32 @@
   color-scheme:dark;
 }
 [data-theme="black"],[data-theme="dark"]{
-  --bg:#111214; --paper:#111214; --card:#1B1C1F; --surface:#1B1C1F; --card2:#26272B; --surface-2:#26272B; --surface-3:#313236;
-  --topbar-bg:#111214; --bottomnav-bg:#151619; --input-bg:#26272B;
+  --bg:#000000; --paper:#000000; --card:#0A0A0C; --surface:#121214; --card2:#18181C; --surface-2:#1E1E24; --surface-3:#2A2A32;
+  --ink:#FFFFFF; --ink-soft:#E2E8F0; --ink-faint:#94A3B8; --ink-disabled:#64748B;
+  --rule:rgba(255,255,255,.16); --line:rgba(255,255,255,.16); --rule-soft:rgba(255,255,255,.08);
+  --card-border:1px solid rgba(255,255,255,.18);
+  --topbar-bg:rgba(0,0,0,.95); --bottomnav-bg:rgba(0,0,0,.96); --input-bg:#121214;
+  --brand:#10B981; --brand-strong:#34D399; --brand-soft:rgba(16,185,129,.18); --brand-line:rgba(16,185,129,.40);
+  --chip:#FFFFFF; --chip-ink:#000000;
+  --shadow:0 6px 24px rgba(0,0,0,.75); --shadow-sm:0 2px 8px rgba(0,0,0,.60);
+  color-scheme:dark;
 }
-[data-theme="white"],[data-theme="light"]{ color-scheme:light; }
+[data-theme="white"],[data-theme="light"]{
+  --bg:#F8FAFC; --paper:#FFFFFF; --card:#FFFFFF; --surface:#F1F5F9; --card2:#EDF2F7; --surface-2:#E2E8F0; --surface-3:#CBD5E1;
+  --ink:#0F172A; --ink-soft:#334155; --ink-faint:#64748B; --ink-disabled:#94A3B8;
+  --rule:#E2E8F0; --line:#E2E8F0; --rule-soft:#F1F5F9;
+  --card-border:1px solid #CBD5E1;
+  --topbar-bg:rgba(255,255,255,.95); --bottomnav-bg:rgba(255,255,255,.96); --input-bg:#FFFFFF;
+  --brand:#059669; --brand-strong:#047857; --brand-soft:rgba(5,150,105,.12); --brand-line:rgba(5,150,105,.35);
+  --red:var(--brand); --red-soft:var(--brand-soft); --red-line:var(--brand-line);
+  --gold:#D97706; --gold-soft:rgba(217,119,6,.14); --gold-line:rgba(217,119,6,.30);
+  --sage:#059669; --sage-soft:rgba(5,150,105,.12); --sage-line:rgba(5,150,105,.35);
+  --violet:#2563EB; --info:#2563EB; --violet-soft:rgba(37,99,235,.14); --violet-line:rgba(37,99,235,.28);
+  --chip:#059669; --chip-ink:#FFFFFF;
+  --shadow:0 4px 20px rgba(15,23,42,.08); --shadow-sm:0 1px 3px rgba(15,23,42,.06);
+  --shadow-sheet:0 -8px 24px rgba(15,23,42,.12); --shadow-float:0 8px 28px rgba(15,23,42,.14);
+  color-scheme:light;
+}
 [data-theme="dark-space"]{
   --bg:#0B1220; --paper:#0B1220; --card:#121B2E; --surface:#121B2E; --card2:#1B2740; --surface-2:#1B2740; --surface-3:#24324F;
   --brand:#7C8CF8; --brand-strong:#9AA6FA; --brand-soft:rgba(124,140,248,.14); --brand-line:rgba(124,140,248,.35);
@@ -77,9 +99,15 @@
   --topbar-bg:#1C1012; --bottomnav-bg:#211316; --input-bg:#352226;
 }
 [data-theme="urban-city"]{
-  --bg:#15171B; --paper:#15171B; --card:#1E2126; --surface:#1E2126; --card2:#282C33; --surface-2:#282C33; --surface-3:#333841;
-  --brand:#3B82F6; --brand-strong:#60A5FA; --brand-soft:rgba(59,130,246,.14); --brand-line:rgba(59,130,246,.35);
-  --topbar-bg:#15171B; --bottomnav-bg:#191C21; --input-bg:#282C33;
+  --bg:#0B0F19; --paper:#0F172A; --card:#131B2E; --surface:#18223A; --card2:#1E2B48; --surface-2:#243456; --surface-3:#2E426C;
+  --ink:#F8FAFC; --ink-soft:#CBD5E1; --ink-faint:#94A3B8; --ink-disabled:#475569;
+  --rule:rgba(56,189,248,.18); --line:rgba(56,189,248,.18); --rule-soft:rgba(56,189,248,.08);
+  --card-border:1px solid rgba(56,189,248,.22);
+  --topbar-bg:rgba(11,15,25,.95); --bottomnav-bg:rgba(11,15,25,.96); --input-bg:#18223A;
+  --brand:#0EA5E9; --brand-strong:#38BDF8; --brand-soft:rgba(14,165,233,.18); --brand-line:rgba(56,189,248,.40);
+  --chip:#38BDF8; --chip-ink:#0B0F19;
+  --shadow:0 6px 24px rgba(11,15,25,.70); --shadow-sm:0 2px 8px rgba(11,15,25,.50);
+  color-scheme:dark;
 }
 [data-theme="dark-space"],[data-theme="glowing-space"],[data-theme="deep-sea"],[data-theme="sunset-beach"],[data-theme="urban-city"],[data-theme="daylight-beach"]{
   --red:var(--brand); --red-soft:var(--brand-soft); --red-line:var(--brand-line); --mz1:var(--brand); --mz2:var(--brand);
@@ -7106,4 +7134,254 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   color: #10B981 !important;
   border: 1px solid rgba(16, 185, 129, 0.3) !important;
 }
+
+/* ==========================================================================
+   🎨 테마별 시인성 고도화 전용 룰셋 (#TASK-ES-185)
+   - 성소 (focus-sanctuary): 100% 무변경 보존
+   - 화이트 (white): 진정한 순백 라이트 테마 (#FFFFFF / #0F172A)
+   - 블랙 (black): 선명한 OLED 트루 블랙 (#000000 / #FFFFFF)
+   - 도심 (urban-city): 모던 메트로폴리탄 쿨 슬레이트 & 시안 (#0B0F19 / #38BDF8)
+   ========================================================================== */
+
+/* ---------- 1. 화이트 (White) 테마 고시인성 룰 ---------- */
+html[data-theme="white"] body,
+html[data-theme="white"] .app,
+html[data-theme="white"] #appShell {
+  background: #F8FAFC !important;
+  color: #0F172A !important;
+}
+html[data-theme="white"] .card,
+html[data-theme="white"] .screen .card {
+  background: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05) !important;
+  color: #0F172A !important;
+}
+html[data-theme="white"] input,
+html[data-theme="white"] select,
+html[data-theme="white"] textarea {
+  background: #FFFFFF !important;
+  border: 1.5px solid #CBD5E1 !important;
+  color: #0F172A !important;
+}
+html[data-theme="white"] input::placeholder,
+html[data-theme="white"] textarea::placeholder {
+  color: #94A3B8 !important;
+}
+html[data-theme="white"] details.settings-group-accordion {
+  background: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+}
+html[data-theme="white"] details.settings-group-accordion summary {
+  background: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+html[data-theme="white"] #appShell .topbar,
+html[data-theme="white"] .topbar {
+  background: #FFFFFF !important;
+  border-bottom: 1px solid #E2E8F0 !important;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06) !important;
+}
+html[data-theme="white"] #appShell .topbar .brand,
+html[data-theme="white"] .topbar .brand {
+  color: #0F172A !important;
+}
+html[data-theme="white"] #appShell .bottomnav,
+html[data-theme="white"] .bottomnav {
+  background: #FFFFFF !important;
+  border-top: 1px solid #E2E8F0 !important;
+}
+html[data-theme="white"] .bottomnav-inner {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-top: 1px solid #E2E8F0 !important;
+  box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.05) !important;
+}
+html[data-theme="white"] .navbtn {
+  color: #64748B !important;
+}
+html[data-theme="white"] .navbtn.active {
+  color: #059669 !important;
+  font-weight: 700 !important;
+}
+html[data-theme="white"] #screen-home #captureInput,
+html[data-theme="white"] #captureInput {
+  background: #F8FAFC !important;
+  border: 1.5px solid #CBD5E1 !important;
+  color: #0F172A !important;
+}
+html[data-theme="white"] #screen-home #captureInput::placeholder,
+html[data-theme="white"] #captureInput::placeholder {
+  color: #94A3B8 !important;
+}
+html[data-theme="white"] #screen-home #captureInput:focus,
+html[data-theme="white"] #captureInput:focus {
+  background: #FFFFFF !important;
+  border-color: #059669 !important;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15) !important;
+}
+html[data-theme="white"] #screen-home #captureCardBox .capture-sub {
+  color: #64748B !important;
+}
+html[data-theme="white"] #screen-home .btn-quick-chip {
+  background: #F1F5F9 !important;
+  border: 1px solid #CBD5E1 !important;
+  color: #1E293B !important;
+}
+html[data-theme="white"] .theme-card {
+  background: #FFFFFF !important;
+  border: 1.5px solid #CBD5E1 !important;
+}
+html[data-theme="white"] .theme-card .theme-name {
+  color: #0F172A !important;
+}
+html[data-theme="white"] .theme-card .theme-desc {
+  color: #64748B !important;
+}
+html[data-theme="white"] .theme-card.active {
+  background: rgba(5, 150, 105, 0.08) !important;
+  border-color: #059669 !important;
+}
+html[data-theme="white"] .theme-card.active .theme-name {
+  color: #059669 !important;
+}
+html[data-theme="white"] .btn-ghost,
+html[data-theme="white"] .btn-secondary {
+  background: #F1F5F9 !important;
+  color: #0F172A !important;
+  border: 1px solid #CBD5E1 !important;
+}
+html[data-theme="white"] .modal-box {
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1px solid #CBD5E1 !important;
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.16) !important;
+}
+html[data-theme="white"] .s-title,
+html[data-theme="white"] h1,
+html[data-theme="white"] h2,
+html[data-theme="white"] h3,
+html[data-theme="white"] h4 {
+  color: #0F172A !important;
+}
+html[data-theme="white"] .muted {
+  color: #334155 !important;
+}
+html[data-theme="white"] .faint {
+  color: #64748B !important;
+}
+html[data-theme="white"] .quick-checkin-guide-chip {
+  background: #F1F5F9 !important;
+  color: #334155 !important;
+  border-color: #CBD5E1 !important;
+}
+html[data-theme="white"] .quick-checkin-guide-chip:hover {
+  background: rgba(5, 150, 105, 0.1) !important;
+  border-color: #059669 !important;
+  color: #059669 !important;
+}
+
+/* ---------- 2. 블랙 (Black) 테마 고시인성 룰 ---------- */
+html[data-theme="black"] body,
+html[data-theme="black"] .app,
+html[data-theme="black"] #appShell {
+  background: #000000 !important;
+  color: #FFFFFF !important;
+}
+html[data-theme="black"] .card,
+html[data-theme="black"] .screen .card {
+  background: #0A0A0C !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7) !important;
+  color: #FFFFFF !important;
+}
+html[data-theme="black"] input,
+html[data-theme="black"] select,
+html[data-theme="black"] textarea {
+  background: #121214 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.22) !important;
+  color: #FFFFFF !important;
+}
+html[data-theme="black"] details.settings-group-accordion {
+  background: #0A0A0C !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+html[data-theme="black"] details.settings-group-accordion summary {
+  background: #141418 !important;
+  color: #FFFFFF !important;
+}
+html[data-theme="black"] #appShell .topbar,
+html[data-theme="black"] .topbar {
+  background: rgba(0, 0, 0, 0.95) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+html[data-theme="black"] #appShell .bottomnav,
+html[data-theme="black"] .bottomnav {
+  background: rgba(0, 0, 0, 0.95) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+html[data-theme="black"] .bottomnav-inner {
+  background: rgba(0, 0, 0, 0.96) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+html[data-theme="black"] .theme-card {
+  background: #0A0A0C !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+}
+html[data-theme="black"] .theme-card.active {
+  background: rgba(16, 185, 129, 0.16) !important;
+  border-color: #10B981 !important;
+}
+
+/* ---------- 3. 도심 (Urban City) 테마 고시인성 룰 ---------- */
+html[data-theme="urban-city"] body,
+html[data-theme="urban-city"] .app,
+html[data-theme="urban-city"] #appShell {
+  background: #0B0F19 !important;
+  color: #F8FAFC !important;
+}
+html[data-theme="urban-city"] .card,
+html[data-theme="urban-city"] .screen .card {
+  background: #131B2E !important;
+  border: 1px solid rgba(56, 189, 248, 0.22) !important;
+  box-shadow: 0 4px 16px rgba(11, 15, 25, 0.6) !important;
+  color: #F8FAFC !important;
+}
+html[data-theme="urban-city"] input,
+html[data-theme="urban-city"] select,
+html[data-theme="urban-city"] textarea {
+  background: #18223A !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.25) !important;
+  color: #F8FAFC !important;
+}
+html[data-theme="urban-city"] details.settings-group-accordion {
+  background: #131B2E !important;
+  border: 1px solid rgba(56, 189, 248, 0.22) !important;
+}
+html[data-theme="urban-city"] details.settings-group-accordion summary {
+  background: #1E2B48 !important;
+  color: #F8FAFC !important;
+}
+html[data-theme="urban-city"] #appShell .topbar,
+html[data-theme="urban-city"] .topbar {
+  background: rgba(11, 15, 25, 0.95) !important;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.18) !important;
+}
+html[data-theme="urban-city"] #appShell .bottomnav,
+html[data-theme="urban-city"] .bottomnav {
+  background: rgba(11, 15, 25, 0.95) !important;
+  border-top: 1px solid rgba(56, 189, 248, 0.18) !important;
+}
+html[data-theme="urban-city"] .bottomnav-inner {
+  background: rgba(11, 15, 25, 0.96) !important;
+  border-top: 1px solid rgba(56, 189, 248, 0.18) !important;
+}
+html[data-theme="urban-city"] .theme-card {
+  background: #131B2E !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.22) !important;
+}
+html[data-theme="urban-city"] .theme-card.active {
+  background: rgba(14, 165, 233, 0.16) !important;
+  border-color: #38BDF8 !important;
+}
+
 

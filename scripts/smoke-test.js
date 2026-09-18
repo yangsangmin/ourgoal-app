@@ -7139,6 +7139,34 @@ check('compliance: [#TASK-ES-184] 아워골 생각 메모장 18대 잔여 대기
   assert.ok(html.includes('btn-toggle-group-verify'), '[85] 완수 통제 버튼 존재');
 });
 
+check('[#TASK-ES-185] 화이트 테마 렌더링 먹통 버그 근본 척결 및 성소 외 3대 테마(화이트·블랙·도심) 시인성·대비 전면 고도화 검증', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const html = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
+  const css = fs.readFileSync(path.join(__dirname, '../ui.css'), 'utf8');
+
+  // 1. index.html 강제 치환 버그 척결 검증
+  assert.ok(!html.includes("if(th === 'white' || th === 'system') th = 'focus-sanctuary'"), 'th === white 강제 성소 치환 코드 완전 제거');
+  assert.ok(!html.includes("if(!_initTh || _initTh === 'white'"), '_initTh === white 강제 성소 치환 코드 완전 제거');
+
+  // 2. ui.css 화이트 라이트 테마 풀 토큰 검증
+  assert.ok(css.includes('[data-theme="white"],[data-theme="light"]'), '화이트 테마 토큰 블록 존재');
+  assert.ok(css.includes('--bg:#F8FAFC;') || css.includes('--bg: #F8FAFC;'), '화이트 배경 토큰 F8FAFC 검증');
+  assert.ok(css.includes('--ink:#0F172A;') || css.includes('--ink: #0F172A;'), '화이트 텍스트 잉크 토큰 0F172A 검증');
+  assert.ok(css.includes('html[data-theme="white"] body'), '화이트 테마 바디 고시인성 스타일 존재');
+
+  // 3. ui.css 블랙 OLED 트루블랙 테마 토큰 검증
+  assert.ok(css.includes('--bg:#000000;'), '블랙 배경 트루 블랙 000000 검증');
+  assert.ok(css.includes('--ink:#FFFFFF;'), '블랙 텍스트 순백 FFFFFF 검증');
+
+  // 4. ui.css 도심 테마 쿨슬레이트 & 시안 토큰 검증
+  assert.ok(css.includes('--bg:#0B0F19;'), '도심 배경 쿨 슬레이트 0B0F19 검증');
+  assert.ok(css.includes('--brand-strong:#38BDF8;'), '도심 시안 네온 브랜드 토큰 검증');
+
+  // 5. 성소(focus-sanctuary) 테마 무결성 보존 검증
+  assert.ok(css.includes('[data-theme="focus-sanctuary"]'), '성소 테마 룰 보존 검증');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
