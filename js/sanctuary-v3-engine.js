@@ -529,71 +529,123 @@
   }
 
   /* =========================================================================
-   * 4. 소통 탭: 28인 러닝메이트 레이더 & 4단계 건강 상호작용 직결
+   * 4. 소통 탭: 실시간 러닝메이트 레이더 & 4위 1체 실기능 직결 (헌법 제13조 & 제4조 준수)
    * ========================================================================= */
+  function renderPeerAvatarHtml(avatar) {
+    if (!avatar) return '👤';
+    if (typeof avatar === 'string' && (avatar.indexOf('data:image') === 0 || avatar.indexOf('http') === 0 || avatar.indexOf('/') === 0)) {
+      return '<img src="' + escapeHtml(avatar) + '" alt="avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+    }
+    return escapeHtml(String(avatar)[0] || '👤');
+  }
+
+  function getRealRunningMates() {
+    var peers = [];
+    var seenIds = {};
+    var myId = (window.state && window.state.profile && window.state.profile.id) ? String(window.state.profile.id).trim().toLowerCase() : '';
+
+    // 1. 실제 동반자 목록 (state.profile.companions or state.companions)
+    var companions = (window.state && window.state.profile && window.state.profile.companions) || (window.state && window.state.companions) || [];
+    if (Array.isArray(companions)) {
+      companions.forEach(function(c) {
+        if (!c || !c.id) return;
+        var cId = String(c.id).trim().toLowerCase();
+        if (cId === myId || seenIds[cId]) return;
+        seenIds[cId] = true;
+        peers.push({
+          id: c.id,
+          name: c.nickname || c.name || '동반자',
+          avatar: c.avatar || '👤',
+          avatarUrl: c.avatarUrl || null,
+          streak: c.streak || 1,
+          goal: (c.goals && c.goals[0] && (c.goals[0].title || c.goals[0])) || c.goal || c.theme || '목표 실천',
+          status: '함께 실천 중',
+          theme: c.theme || '동반자',
+          isCompanion: true,
+          isTeam: false,
+          raw: c
+        });
+      });
+    }
+
+    // 2. 내가 속한 팀원 풀 (OurgoalTeamInviteComm.getTeamMembersPool())
+    if (window.OurgoalTeamInviteComm && typeof window.OurgoalTeamInviteComm.getTeamMembersPool === 'function') {
+      try {
+        var teamMems = window.OurgoalTeamInviteComm.getTeamMembersPool() || [];
+        if (Array.isArray(teamMems)) {
+          teamMems.forEach(function(m) {
+            if (!m || !m.id) return;
+            var mId = String(m.id).trim().toLowerCase();
+            if (mId === myId || seenIds[mId]) return;
+            seenIds[mId] = true;
+            peers.push({
+              id: m.id,
+              name: m.name || m.nickname || '팀원',
+              avatar: m.avatar || '👥',
+              avatarUrl: m.avatarUrl || null,
+              streak: m.streak || 1,
+              goal: m.goal || m.role || '팀 목표 완주',
+              status: m.role || '팀원',
+              theme: m.groupName || '팀',
+              isCompanion: false,
+              isTeam: true,
+              raw: m
+            });
+          });
+        }
+      } catch (e) {
+        console.warn('[레이더] 팀원 풀 로드 경고:', e);
+      }
+    }
+
+    return peers;
+  }
+
   function renderSanctuaryComm() {
     var slot = document.getElementById('sanctuaryCommView');
     if (!slot) return;
 
-    var companions = (window.state && window.state.companions) || [];
-    var defaultPeers = [
-      { name: '도윤', goal: '토익 900점', status: '몰입 중 🔥', avatar: '도' },
-      { name: '민지', goal: '10km 러닝', status: '달리는 중 🏃', avatar: '민' },
-      { name: '수진', goal: '코딩 1시간', status: '코딩 중 💻', avatar: '수' },
-      { name: '준혁', goal: '바디프로필', status: '헬스 중 🏋️', avatar: '준' },
-      { name: '서연', goal: '자격증 취득', status: '열공 중 📚', avatar: '서' },
-      { name: '태오', goal: '기상 06:00', status: '기상 완료 🌅', avatar: '태' },
-      { name: '예은', goal: '매일 독서', status: '독서 중 📖', avatar: '예' }
-    ];
-
-    var peers = companions.length > 0 ?
-      companions.map(function(c) {
-        return { name: c.name || c.nickname || '동반자', goal: c.goal || '목표 실천', status: '함께 실천 중', avatar: (c.name || '동')[0] };
-      }) : defaultPeers;
+    var peers = getRealRunningMates();
+    var countText = peers.length > 0 ? (peers.length + '명 함께하는 중') : '0명 (새 동반자 찾기)';
+    var countClass = peers.length > 0 ? 's-radar-count' : 's-radar-count s-radar-zero';
 
     var radarHtml = '<div class="s-peer-radar-card">' +
       '<div class="s-radar-head">' +
         '<div class="s-radar-title">' +
           '<span class="s-live-dot"></span>' +
           '<b>실시간 러닝메이트 레이더</b>' +
-          '<span class="s-radar-count">28명 몰입 중</span>' +
+          '<span class="' + countClass + '">' + countText + '</span>' +
         '</div>' +
-        '<button class="btn btn-ghost btn-xs" type="button" onclick="toast(\'새로운 러닝메이트 레이더를 스캔했습니다!\');">새로고침</button>' +
-      '</div>' +
-      '<div class="s-radar-scroll">' +
+        '<button class="btn btn-ghost btn-xs s-radar-refresh-btn" type="button" onclick="window.OurgoalSanctuaryV3.refreshRadar(this);">새로고침</button>' +
+      '</div>';
+
+    if (peers.length > 0) {
+      radarHtml += '<div class="s-radar-scroll">' +
         peers.map(function(p) {
-          return '<div class="s-radar-item" onclick="window.OurgoalSanctuaryV3.openPeerDm(\'' + escapeHtml(p.name) + '\', \'' + escapeHtml(p.goal) + '\');">' +
+          return '<div class="s-radar-item" data-peerid="' + escapeHtml(p.id) + '" role="button" tabindex="0" onclick="window.OurgoalSanctuaryV3.openPeerInteraction(\'' + escapeHtml(p.id) + '\');">' +
             '<div class="s-r-avatar-ring">' +
-              '<span class="s-r-avatar">' + escapeHtml(p.avatar) + '</span>' +
-              '<span class="s-r-badge"></span>' +
+              '<span class="s-r-avatar">' + renderPeerAvatarHtml(p.avatarUrl || p.avatar) + '</span>' +
+              '<span class="s-r-badge" title="함께 실천 중"></span>' +
             '</div>' +
             '<span class="s-r-name">' + escapeHtml(p.name) + '</span>' +
             '<span class="s-r-goal">' + escapeHtml(p.goal) + '</span>' +
           '</div>';
         }).join('') +
-      '</div>' +
-    '</div>';
-
-    var feedSampleHtml = '<div class="s-comm-feed-list">' +
-      '<div class="s-comm-post-card">' +
-        '<div class="s-cp-head">' +
-          '<div class="s-cp-avatar">민</div>' +
-          '<div class="s-cp-user-col">' +
-            '<span class="s-cp-name">민우 러너 <b class="s-cp-badge">페이스메이커</b></span>' +
-            '<span class="s-cp-sub">마라톤 완주 D-21 · 25분 전</span>' +
+      '</div>';
+    } else {
+      radarHtml += '<div class="s-radar-empty-card">' +
+        '<div class="s-r-empty-info">' +
+          '<span style="font-size:1.4rem;">🤝</span>' +
+          '<div>' +
+            '<b>아직 연결된 러닝메이트가 없습니다</b>' +
+            '<span>닉네임으로 동반자를 검색하거나 팀에 참여해보세요!</span>' +
           '</div>' +
         '</div>' +
-        '<div class="s-cp-body">' +
-          '오늘 아침 한강 7km 완주! 맞바람이 상쾌하네요. [10km 지속 페이스 5:30] 루틴 공유합니다.' +
-        '</div>' +
-        '<div class="s-cp-reactions">' +
-          '<button class="s-react-pill" type="button" onclick="window.OurgoalSanctuaryV3.cheerPost(this, \'👏\');">👏 박수 48</button>' +
-          '<button class="s-react-pill" type="button" onclick="window.OurgoalSanctuaryV3.cheerPost(this, \'🔥\');">🔥 응원 35</button>' +
-          '<button class="s-react-pill" type="button" onclick="window.OurgoalSanctuaryV3.cheerPost(this, \'💪\');">💪 함께해요 19</button>' +
-          '<button class="s-react-pill transplant" type="button" onclick="window.OurgoalSanctuaryV3.transplantSampleRoutine();">⚡ 1초 이식</button>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
+        '<button class="btn btn-primary btn-xs" id="sRadarEmptyBtn" type="button" onclick="window.OurgoalSanctuaryV3.gotoCompanions();">+ 동반자 찾기</button>' +
+      '</div>';
+    }
+
+    radarHtml += '</div>';
 
     slot.innerHTML = radarHtml;
   }
@@ -617,6 +669,7 @@
 
   window.OurgoalSanctuaryV3 = {
     render: renderSanctuaryV3,
+    renderRadar: renderSanctuaryComm,
     setCalMode: function(m) {
       engine.activeCalMode = m;
       renderSanctuaryCalendar();
@@ -1001,6 +1054,56 @@
         window.openWeeklyRecapModal();
       } else {
         toast('위클리 리캡 모달을 로드 중입니다.');
+      }
+    },
+    openPeerInteraction: function(peerId) {
+      var peers = getRealRunningMates();
+      var p = peers.find(function(x) { return String(x.id).trim().toLowerCase() === String(peerId).trim().toLowerCase(); });
+      if (!p) {
+        p = peers.find(function(x) { return String(x.name).trim() === String(peerId).trim(); });
+      }
+      if (p && window.OurgoalTeamInviteComm && typeof window.OurgoalTeamInviteComm.openUserProfileModal === 'function') {
+        window.OurgoalTeamInviteComm.openUserProfileModal(p.raw || p);
+        return;
+      }
+      if (window.state) {
+        window.state.commSubTab = 'dm';
+        if (p && p.id) window.state.dmActiveId = p.id;
+        if (typeof renderCommScreen === 'function') renderCommScreen();
+        toast((p ? p.name : '러닝메이트') + '님과의 1:1 대화방으로 이동했습니다.');
+      }
+    },
+    openPeerDm: function(peerIdOrName, goal) {
+      this.openPeerInteraction(peerIdOrName);
+    },
+    refreshRadar: function(btn) {
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = '스캔 중...';
+      }
+      if (window.OurgoalTeamInviteComm && typeof window.OurgoalTeamInviteComm.syncCompanionsFromDb === 'function') {
+        try {
+          window.OurgoalTeamInviteComm.syncCompanionsFromDb();
+        } catch (e) {}
+      }
+      setTimeout(function() {
+        renderSanctuaryComm();
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '새로고침';
+        }
+        var peers = getRealRunningMates();
+        toast('러닝메이트 레이더 갱신 완료: 현재 ' + peers.length + '명 확인');
+      }, 350);
+    },
+    gotoCompanions: function() {
+      if (window.state) {
+        window.state.commSubTab = 'companion';
+        if (typeof renderCommScreen === 'function') renderCommScreen();
+        setTimeout(function() {
+          var inp = document.getElementById('companionSearchInput');
+          if (inp) inp.focus();
+        }, 150);
       }
     }
   };
