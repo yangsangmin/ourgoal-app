@@ -7541,6 +7541,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       });
     });
     renderCalDayDetail(itemsByDate);
+    if(typeof window.OurgoalSanctuaryV3 !== 'undefined' && window.OurgoalSanctuaryV3.render){
+      window.OurgoalSanctuaryV3.render('calendar');
+    }
   }
   function renderCalDayDetail(itemsByDate){
     var sel = state.calSelectedDate || isoDate(new Date());
@@ -8869,6 +8872,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   if(typeof window !== 'undefined'){
     window.renderCalendarScreen = renderCalendarScreen;
     window.openCalendarManualEditModal = openCalendarManualEditModal;
+    window.openCalendarDayEditHubModal = openCalendarDayEditHubModal;
+    window.openCalendarDayBgPickerModal = openCalendarDayBgPickerModal;
+    window.calShift = calShift;
+    window.toggleScheduleDone = toggleScheduleDone;
+    window.calendarItemsByDate = calendarItemsByDate;
+    window.setRecordsSegment = setRecordsSegment;
     window.openLockScreenHubModal = openLockScreenHubModal;
     window.generateLockScreenCalendarImage = generateLockScreenCalendarImage;
     window.syncLockScreenLiveCard = syncLockScreenLiveCard;
@@ -23420,8 +23429,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
 
     wireRecordCards(listEl, { onUpdate: function(){ renderRecordsScreen(); } });
+    if(typeof window.OurgoalSanctuaryV3 !== 'undefined' && window.OurgoalSanctuaryV3.render){
+      window.OurgoalSanctuaryV3.render('records');
+    }
   }
-  if(typeof window !== 'undefined'){ window.renderRecordsScreen = renderRecordsScreen; }
+  if(typeof window !== 'undefined'){
+    window.renderRecordsScreen = renderRecordsScreen;
+    window.openWeeklyRecapModal = openWeeklyRecapModal;
+    window.generateWeeklyRecapImage = generateWeeklyRecapImage;
+    window.weeklyRecapStats = weeklyRecapStats;
+  }
 
   /* ============ 위클리 리캡 카드 (스포티파이 랩드 스타일, 공유 캔버스 인프라 재사용) ============ */
   function weeklyRecapStats(records, now){
