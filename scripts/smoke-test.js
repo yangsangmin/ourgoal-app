@@ -6915,6 +6915,37 @@ check('compliance: [#TASK-ES-180] 아워골 생각 메모장 9대 대기 과제(
   assert.ok(swSrc.includes('es180'), 'sw.js 캐시 버전에 es180 식별자 포함');
 });
 
+check('compliance: [#TASK-ES-181] 폰 잠금화면에서 바로 보기 통합 허브 및 선택형 3대 기능(월간 달력 배경화면·위젯 구독·모닝 알림) 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+
+  // 1. 일정 탭 내 잠금화면 버튼 마운트 검증
+  assert.ok(indexHtml.includes('id="calLockScreenBtn"'), '일정 탭 내 #calLockScreenBtn 마운트 확인');
+  assert.ok(indexHtml.includes('폰 잠금화면에서 보기'), '버튼 텍스트 확인');
+
+  // 2. 고해상도 캔버스 달력 생성 엔진 검증
+  assert.ok(indexHtml.includes('function generateLockScreenCalendarImage'), 'generateLockScreenCalendarImage 함수 탑재');
+  assert.ok(indexHtml.includes('OURGOAL LOCK SCREEN'), '캔버스 상단 세이프존 워터마크');
+  assert.ok(indexHtml.includes('TODAY & KEY SCHEDULE'), '캔버스 하단 브리핑 카드');
+
+  // 3. 통합 허브 모달 및 3대 선택 탭 검증
+  assert.ok(indexHtml.includes('function openLockScreenHubModal'), 'openLockScreenHubModal 함수 탑재');
+  assert.ok(indexHtml.includes('id="lsPaneWallpaper"') && indexHtml.includes('id="lsPaneWidget"') && indexHtml.includes('id="lsPaneDigest"'), '3대 선택형 탭 패널(배경화면·위젯·모닝알림) 완비');
+
+  // 4. 원클릭 액션 버튼들 검증
+  assert.ok(indexHtml.includes('id="btnDownloadWallpaper"'), '고화질 잠금화면 다운로드 버튼 탑재');
+  assert.ok(indexHtml.includes('id="btnCopyLsWebCal"'), 'WebCal 구독 주소 복사 버튼 탑재');
+  assert.ok(indexHtml.includes('id="btnToggleDigest"'), '아침 잠금화면 알림 토글 버튼 탑재');
+
+  // 5. 기종별(아이폰/갤럭시) 친절 가이드 탭 검증
+  assert.ok(indexHtml.includes('ls-guide-device-btn') && indexHtml.includes('lsGuideTextIos') && indexHtml.includes('lsGuideTextAos'), '배경화면 기종별(iOS/AOS) 가이드 완비');
+  assert.ok(indexHtml.includes('ls-widget-device-btn') && indexHtml.includes('lsWGuideIos') && indexHtml.includes('lsWGuideAos'), '위젯 연동 기종별(iOS/AOS) 가이드 완비');
+
+  // 6. 전역 노출 및 서비스워커 캐시 갱신 검증
+  assert.ok(indexHtml.includes('window.openLockScreenHubModal = openLockScreenHubModal'), 'openLockScreenHubModal 전역 노출');
+  assert.ok(swSrc.includes('es181-lockscreen-hub'), 'sw.js 캐시 버전에 es181 식별자 포함');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
