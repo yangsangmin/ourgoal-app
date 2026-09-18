@@ -7028,6 +7028,34 @@ check('compliance: [#TASK-ES-183] 스마트폰 잠금화면 전체 장악 (Scree
   assert.ok(swSrc.includes('es183-lockscreen-takeover'), 'sw.js 캐시 버전에 es183 식별자 포함');
 });
 
+check('compliance: [#TASK-SANCTUARY-COMM-RADAR-REAL-INTEGRITY] 소통 탭 실시간 러닝메이트 레이더 실데이터 직결 및 위조숫자·가짜봇 완전 척결 무결성 검증', () => {
+  const sanctuarySrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+  const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 위조 숫자('28명') 및 가짜 더미 봇 배열('defaultPeers') 완전 박멸 (헌법 제4조 제1항 제1호, 제13조 위반 방지)
+  assert.strictEqual(sanctuarySrc.includes('28명 몰입 중'), false, '하드코딩 위조 카운트 28명 영구 박멸');
+  assert.strictEqual(sanctuarySrc.includes('const defaultPeers = ['), false, '가짜 봇 defaultPeers 배열 영구 박멸');
+
+  // 2. 실제 데이터 SSOT 추출 함수(getRealRunningMates) 및 실데이터 바인딩 탑재
+  assert.ok(sanctuarySrc.includes('function getRealRunningMates()'), '실제 러닝메이트 SSOT 추출 함수 탑재');
+  assert.ok(sanctuarySrc.includes('state.profile.companions'), '실제 사용자 동반자 목록 참조');
+  assert.ok(sanctuarySrc.includes('getTeamMembersPool'), '실제 팀원 목록 참조');
+
+  // 3. 0명 콜드스타트 투명 고지 및 동반자 찾기 배선
+  assert.ok(sanctuarySrc.includes('s-radar-empty-card'), '0명 엠프티 상태 카드 탑재');
+  assert.ok(sanctuarySrc.includes('gotoCompanions'), '동반자 찾기 탭 전환 함수 탑재');
+  assert.ok(uiCss.includes('.s-radar-empty-card'), '엠프티 카드 CSS 스타일 탑재');
+
+  // 4. 4위1체 인터랙션 배선 (프로필 모달, 1:1 DM, 새로고침 동기화)
+  assert.ok(sanctuarySrc.includes('openPeerInteraction'), '러닝메이트 클릭 상호작용 모달 배선');
+  assert.ok(sanctuarySrc.includes('openPeerDm'), '1:1 DM 대화방 전환 배선');
+  assert.ok(sanctuarySrc.includes('refreshRadar'), '실제 DB 동기화 파이프라인 새로고침 배선');
+
+  // 5. PWA 캐시 버전 식별자 탑재
+  assert.ok(swSrc.includes('ourgoal-shell-v20260918-sanctuary-comm-radar-restore'), 'sw.js 캐시 버전에 sanctuary-comm-radar-restore 식별자 포함');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
