@@ -258,8 +258,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     <!-- GOALS -->
     <section class="screen" id="screen-goals">
+      <div class="comm-subtabs" id="goalsSubtabs" style="margin-bottom:12px;"></div>
       <div id="sanctuaryGoalsView"></div>
-      <div class="comm-subtabs" id="goalsSubtabs"></div>
       <div id="routineGoalsView" style="display:none;"></div>
       <div id="personalGoalsView">
         <div class="goal-head-row">
@@ -15202,16 +15202,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ RENDER: GOALS ============ */
   function renderGoalsScreen(){
     var subtabs = document.getElementById('goalsSubtabs');
-    subtabs.innerHTML = [['routine','루틴'],['personal','개인 목표'],['teamLinked','팀 연계 개인목표'],['team','팀 목표']].map(function(s){
-      return '<div class="comm-subtab'+(state.goalsSubTab===s[0]?' active':'')+'" data-gsub="'+s[0]+'">'+s[1]+'</div>';
+    subtabs.innerHTML = [['personal','개인 목표'],['routine','루틴'],['teamLinked','팀 연계 개인목표'],['team','팀 목표']].map(function(s){
+      return '<div class="comm-subtab'+((!state.goalsSubTab && s[0]==='personal') || state.goalsSubTab===s[0]?' active':'')+'" data-gsub="'+s[0]+'">'+s[1]+'</div>';
     }).join('');
     subtabs.querySelectorAll('[data-gsub]').forEach(function(t){
       t.addEventListener('click', function(){ state.goalsSubTab = t.dataset.gsub; renderGoalsScreen(); });
     });
+    var isPersonal = (!state.goalsSubTab || state.goalsSubTab==='personal');
+    var sv = document.getElementById('sanctuaryGoalsView');
+    if(sv) sv.style.display = isPersonal ? '' : 'none';
     var rv = document.getElementById('routineGoalsView');
     var pv = document.getElementById('personalGoalsView'), tv = document.getElementById('teamGoalsView'), tlv = document.getElementById('teamLinkedGoalsView');
     if(rv) rv.style.display = (state.goalsSubTab==='routine') ? '' : 'none';
-    if(pv) pv.style.display = (!state.goalsSubTab || state.goalsSubTab==='personal') ? '' : 'none';
+    if(pv) pv.style.display = isPersonal ? '' : 'none';
     if(tlv) tlv.style.display = (state.goalsSubTab==='teamLinked') ? '' : 'none';
     if(tv) tv.style.display = (state.goalsSubTab==='team') ? '' : 'none';
     if(state.goalsSubTab==='routine'){ renderRoutineGoalsScreen(); return; }
