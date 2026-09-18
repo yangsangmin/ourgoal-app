@@ -35,7 +35,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <meta name="twitter:image" content="https://ourgoal-app.vercel.app/icons/og-image.jpg">
 <meta name="twitter:image:alt" content="아워골 — 나만의 목표 달성 메이트">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#0B0F17">
 <link rel="icon" href="/icons/favicon.png" type="image/png">
 <link rel="icon" href="/icons/icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
@@ -43,8 +43,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="/ui.css?v=20260912">
-<script src="/ui.js?v=20260912" defer></script>
+<link rel="stylesheet" href="/ui.css?v=20260918-focus-sanctuary">
+<script src="/ui.js?v=20260918-focus-sanctuary" defer></script>
 </head>
 <body>
 
@@ -62,6 +62,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     </div>
   </div>
   <div class="land-cta">
+    <button class="btn btn-block" id="btnLandingPreviewDirect" onclick="document.getElementById('landGuestBtn').click();" type="button" style="background:linear-gradient(135deg,#10B981,#059669);color:#fff;font-weight:700;padding:14px 16px;border-radius:14px;margin-bottom:12px;font-size:0.95rem;box-shadow:0 6px 20px rgba(16,185,129,0.38);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;"><span>⚡ 3초 성소 새 UI/UX 바로 둘러보기</span></button>
     <div class="oauth-row">
       <button class="btn btn-block btn-kakao" id="landKakaoBtn" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.86 5.31 4.66 6.72L5.5 21.5c-.08.3.24.54.5.38l4.42-2.93c.52.05 1.05.08 1.58.08 5.52 0 10-3.58 10-8S17.52 3 12 3z"/></svg><span>카카오로 3초 만에 시작하기</span></button>
       <button class="btn btn-block btn-google" id="landGoogleBtn" type="button" style="display:none;" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg><span>Google로 계속하기</span></button>
@@ -145,6 +146,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   <main class="screens">
     <!-- HOME -->
     <section class="screen active" id="screen-home">
+      <!-- 🌟 FOCUS SANCTUARY V2 TOP BAR -->
+      <div class="sanctuary-top-bar" id="sanctuaryTopBar">
+        <h1 class="sanctuary-app-title">아워골</h1>
+        <div class="sanctuary-top-right">
+          <button type="button" class="sanctuary-bell-btn" id="sanctuaryBellBtn" aria-label="알림" title="알림 확인" onclick="if(typeof openNotifyModal==='function')openNotifyModal();">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span class="sanctuary-bell-dot"></span>
+          </button>
+          <div class="sanctuary-avatar-badge" id="sanctuaryAvatarBadge" role="button" tabindex="0" title="내 아바타 관리 (클릭하여 변경)" onclick="var b=document.getElementById('btnOpenAvatarModal'); if(b) b.click(); else if(window.OurgoalAvatar && window.OurgoalAvatar.openAvatarModal) window.OurgoalAvatar.openAvatarModal({ profile: state.profile, state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal });">
+            <span style="font-size:1.3rem;">🧑</span>
+          </div>
+        </div>
+      </div>
       <div class="home-head-row" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><h2 class="home-greet" id="homeGreeting" style="margin:0;">안녕하세요</h2></div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
@@ -164,13 +178,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div id="todayMissionCard"></div>
 
       <!-- ② 답하기 -->
+      <div id="homeGrassSummaryCard"></div>
       <div class="capture-card card" id="captureCardBox">
-        <div class="capture-title" style="display:flex;align-items:center;gap:6px;"><span style="font-size:1.15rem;">📝</span><span>오늘 기록하기</span><span style="font-size:0.75rem;font-weight:600;color:var(--ink-faint);">(1-Line 실천)</span></div>
+        <div class="capture-title" style="display:flex;align-items:center;gap:6px;"><span class="sanctuary-title-text" style="font-size:1.25rem;">오늘의 3초 체크인</span><span class="sr-only" style="display:none;">>오늘 기록하기<</span></div>
         <div class="capture-sub">오늘 실천한 멋진 일을 한 줄로 톡 적어보세요! AI가 갓생 기록으로 완성해드려요 ✨</div>
         <div id="captureThemeQuickBar" class="theme-quick-bar" aria-label="테마 즐겨찾기"></div>
         <div class="theme-guide-microcopy" style="font-size:0.75rem;color:var(--ink-faint);margin:2px 0 6px 2px;line-height:1.4;">(테마 : ai 분석 및 DB시각화에 활용됨)</div>
+        <div class="quick-checkin-chips" style="display:flex;gap:6px;margin:6px 0 10px;flex-wrap:wrap;">
+          <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='👟 5km 러닝 28분 완주, 마지막 1km 스퍼트 성공!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">👟 5km 러닝</button>
+          <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='📖 독서 30분 인간관계론 완독 & 핵심 메모!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">📖 독서 30분</button>
+          <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='💻 핵심 알고리즘 1시간 몰입 코딩 완료!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">&lt;/&gt; 코딩 1시간</button>
+        </div>
         <div class="capture-ta-wrap">
-          <textarea id="captureInput" placeholder="예: 5km 러닝 28분 완주, 마지막 1km 스퍼트 성공 (오늘 실천한 멋진 일을 적어보세요)"></textarea>
+          <textarea id="captureInput" placeholder="예: 오늘 실천한 멋진 일을 한 줄로 적어보세요 |"></textarea>
           <button class="mic-btn" id="micBtn" type="button" aria-label="음성으로 입력하기" title="음성으로 입력하기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4"/><path d="M8 23h8"/></svg></button>
         </div>
         <div id="captureLiveMeta" class="capture-live-meta">
@@ -188,7 +208,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <input type="file" id="capturePhotoInput" accept="image/*" style="display:none;">
           <button class="btn btn-ghost btn-sm" id="capturePhotoBtn" type="button" aria-label="사진 첨부"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>사진</span></button>
           <button class="btn btn-ghost btn-sm" id="importExternalBtn" type="button" aria-label="외부 기록 불러오기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span>불러오기</span></button>
-          <button class="btn btn-primary btn-sm" id="captureSave" type="button" style="flex:1;min-width:96px;">기록 완료하기 ✨</button>
+          <button class="btn btn-primary btn-sm" id="captureSave" type="button" style="flex:1;min-width:96px;">기록 완료 ✨ (+10P)</button>
         </div>
       </div>
 
@@ -208,10 +228,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <button type="button" class="btn btn-ghost btn-sm" id="btnNudgeCrewMates" onclick="nudgeCrewMates()">응원 보내기</button>
         </div>
       </div>
-      <div id="homeGrassSummaryCard"></div>
+      
 
       <div class="card-title-row home-recent-title">
-        <h3>나의 갓생 퀘스트 <span id="streakBadge"></span><span id="streakFreezeBadge"></span></h3>
+        <h3>오늘의 갓생 퀘스트 <span id="streakBadge"></span><span id="streakFreezeBadge"></span></h3>
         <button class="btn btn-ghost btn-sm" id="homeAddGoal" type="button">새 목표</button>
       </div>
       <!-- 내 위치: 출석·스트릭·배지 (#TASK-ES-019, js/streaks.js 가 채운다. 값 없으면 숨김) -->
@@ -238,6 +258,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     <!-- GOALS -->
     <section class="screen" id="screen-goals">
+      <div id="sanctuaryGoalsView"></div>
       <div class="comm-subtabs" id="goalsSubtabs"></div>
       <div id="routineGoalsView" style="display:none;"></div>
       <div id="personalGoalsView">
@@ -267,10 +288,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       </div>
       <div id="teamLinkedGoalsView" style="display:none;"></div>
       <div id="teamGoalsView" style="display:none;"></div>
+          
     </section>
 
     <!-- CALENDAR -->
     <section class="screen" id="screen-calendar">
+      <div id="sanctuaryCalendarView"></div>
       <div class="screen-head">
         <div class="screen-head-l">
           <h2 class="s-title">일정</h2>
@@ -315,10 +338,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <button class="btn btn-primary btn-sm" id="calAgentSendBtn" type="button">등록</button>
         </div>
       </div>
+          
     </section>
 
     <!-- RECORDS -->
     <section class="screen" id="screen-records">
+      <div id="sanctuaryRecordsView"></div>
       <div class="screen-head" style="flex-wrap:wrap;gap:8px;">
         <div class="screen-head-l" style="flex-wrap:wrap;">
           <h2 class="s-title">기록/통계</h2>
@@ -511,15 +536,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <p style="font-size:0.875rem;font-weight:700;color:var(--brand-strong);margin:4px 0 8px;">완료된 목표는 여기로 저장됩니다.</p>
         <div id="archivedGoals"></div>
       </div>
+          
     </section>
 
     <!-- COMM -->
     <section class="screen" id="screen-comm">
+      <div id="sanctuaryCommView"></div>
       <div class="screen-head">
         <div style="display:flex;align-items:center;gap:6px;"><h2 class="s-title" style="margin:0;">소통</h2></div>
         <button class="btn btn-primary btn-sm" id="btnCommPostFeed" type="button" onclick="if(window.openShareToFeedModal) window.openShareToFeedModal(); else if(typeof openShareToFeedModal === 'function') openShareToFeedModal();"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>게시하기</span></button>
       </div>
       <div id="commBody"></div>
+          
     </section>
 
     <!-- SETTINGS -->
@@ -991,6 +1019,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
         목표
       </button>
+      <button class="navbtn-fab" id="bottomNavFab" type="button" aria-label="빠른 체크인" onclick="var inp=document.getElementById('captureInput');if(inp){inp.focus();inp.scrollIntoView({behavior:'smooth',block:'center'});}">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      </button>
       <button class="navbtn" data-tab="calendar" type="button">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg>
         일정
@@ -1253,13 +1284,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
-  <script src="js/components.js?v=20260917-es162"></script><script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script><script src="js/notify-engine.js?v=20260917-es152"></script>
+  <script src="js/components.js?v=20260917-es162"></script><script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script><script src="js/notify-engine.js?v=20260917-es152"></script><script src="js/sanctuary-v3-engine.js?v=20260918-v3"></script>
 <script>
 (function(){
   "use strict";
 
   try{
-    var _initTh = localStorage.getItem('ourgoal_current_theme') || 'white';
+    var _initTh = localStorage.getItem('ourgoal_current_theme'); if(!_initTh || _initTh === 'white' || _initTh === 'light' || _initTh === 'system') _initTh = 'focus-sanctuary';
     if(_initTh === 'dark') _initTh = 'black';
     if(_initTh === 'light' || _initTh === 'system') _initTh = 'white';
     document.documentElement.setAttribute('data-theme', _initTh);
@@ -1506,7 +1537,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} },
       googleCalendarConnected:false, googleCalendarEmail:"", gcalAutoSync:true,
       privacy: { goals:"private", calendar:"private", records:"private", stats:"private" },
-      theme: "system", fontSize: "normal", dataSaver: false, twoFactorAuth: false,
+      theme: "focus-sanctuary", fontSize: "normal", dataSaver: false, twoFactorAuth: false,
       quietHoursEnabled: false, quietHoursStart: "22:00", quietHoursEnd: "08:00",
       notifTeamVerify: true, notifCheers: true, notifDday: true, notifStreak: true,
       onlineStatus: true, customSchedules: [],
@@ -1518,6 +1549,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
   /* ============ 8대 화면 스타일 (테마) 정의 ============ */
   var THEMES = [
+    { id: 'focus-sanctuary', name: '성소 (Focus Sanctuary)', desc: '몰입과 흐름의 다크 에메랄드', preview: '#0B0F17', metaColor: '#0B0F17' },
     { id: 'black', name: '블랙', desc: '기본 다크', preview: '#111214', metaColor: '#111214' },
     { id: 'white', name: '화이트', desc: '기본 라이트', preview: '#FFFFFF', metaColor: '#FFFFFF' },
     { id: 'dark-space', name: '까만 우주', desc: '칠흑 같은 심우주 & 별빛', preview: '#0B1220', metaColor: '#0B1220' },
@@ -1544,7 +1576,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function applyAppSettings(settings){
     if(!settings) return;
     try{
-      var th = settings.theme || localStorage.getItem('ourgoal_current_theme') || 'white';
+      var th = settings.theme || localStorage.getItem('ourgoal_current_theme') || 'focus-sanctuary'; if(th === 'white' || th === 'system') th = 'focus-sanctuary';
       applyTheme(th);
       if(settings.highContrast){
         document.documentElement.setAttribute('data-high-contrast', 'true');
@@ -4332,6 +4364,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(tab==='comm') renderCommScreen();
       if(tab==='settings') renderSettingsScreen();
       updatePrivacyBadges(); if(window.OurgoalGoalEditUX) OurgoalGoalEditUX.handleTabChange(tab, state);
+      if(window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render) window.OurgoalSanctuaryV3.render(tab);
     }
     if(typeof document !== 'undefined' && typeof document.startViewTransition === 'function'){
       document.startViewTransition(updateTabDOM);
@@ -5473,6 +5506,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.openProfileEditor = openProfileEditor;
   }
   function updateTopBar(){
+    try {
+      var p = state.profile;
+      var sancAv = document.getElementById('sanctuaryAvatarBadge');
+      if(sancAv && p){
+        var customUrl = (p.settings && p.settings.avatarType === 'custom' && p.settings.customAvatarUrl) || p.avatarUrl;
+        if(customUrl){
+          sancAv.innerHTML = '<img src="'+customUrl+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        } else if(window.OurgoalAvatar && window.OurgoalAvatar.renderAvatarHtml){
+          var xpTotal = (p.settings && p.settings.xp && p.settings.xp.total) || 0;
+          var pLvl = levelProgress(xpTotal);
+          sancAv.innerHTML = window.OurgoalAvatar.renderAvatarHtml(pLvl.level, p, { size: 40 });
+        }
+      }
+    } catch(e){}
     var p = state.profile;
     document.getElementById('topUserName').textContent = p.displayName;
     renderProBadge();
@@ -9456,6 +9503,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* ============ 최근 히트맵 요약 카드 (가상유저 요청 P7/P9) ============ */
+  /* ============ 최근 히트맵 요약 카드 (가상유저 요청 P7/P9) ============ */
   function renderHomeGrassSummary(){
     var card = document.getElementById('homeGrassSummaryCard');
     if(!card) return;
@@ -9472,17 +9520,23 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var d = new Date(now.getTime() - i * 86400000);
       var dk = dateKey(d);
       var cnt = recDates[dk] || 0;
-      var bg = cnt >= 3 ? '#1FC98E' : (cnt > 0 ? '#A2F2D1' : 'var(--rule)');
-      dotsHtml += '<span title="' + dk + ': ' + cnt + '회" style="display:inline-block;width:14px;height:14px;border-radius:3px;background:' + bg + ';"></span>';
+      var isToday = (i === 0);
+      var dayNum = d.getDate();
+      var bg = isToday ? 'linear-gradient(180deg, #F59E0B, #D97706)' : (cnt >= 2 ? 'linear-gradient(180deg, #10B981, #059669)' : (cnt > 0 ? 'rgba(16,185,129,0.55)' : 'rgba(255,255,255,0.06)'));
+      var shadow = isToday ? 'box-shadow:0 0 10px rgba(245,158,11,0.6);' : (cnt > 0 ? 'box-shadow:0 0 8px rgba(16,185,129,0.4);' : '');
+      dotsHtml += '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:0;">'
+        + '<span title="' + dk + ': ' + cnt + '회" style="display:inline-block;width:100%;max-width:20px;height:34px;border-radius:8px;background:' + bg + ';' + shadow + 'border:1px solid rgba(255,255,255,0.08);transition:all 0.2s ease;"></span>'
+        + '<span style="font-size:0.65rem;color:var(--ink-faint);">' + dayNum + '</span>'
+        + '</div>';
     }
 
-    card.innerHTML = '<div class="card" style="margin-top:14px;padding:12px 14px;background:var(--card);border:1px solid var(--rule);border-radius:12px;">'
-      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
-      + '  <span style="font-size:0.82rem;font-weight:700;color:var(--ink);">최근 히트맵</span>'
-      + '  <span style="font-size:0.75rem;color:var(--ink-sub);">' + (streak > 0 ? ('' + streak + '일 연속 몰입 중') : '오늘의 첫 기록을 남겨보세요') + '</span>'
+    card.innerHTML = '<div class="card" style="margin-top:14px;padding:14px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;backdrop-filter:blur(16px);">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">'
+      + '  <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:1rem;">🔥</span><span style="font-size:0.88rem;font-weight:700;color:var(--ink);">14일 활동 기록</span><span style="font-size:0.75rem;color:var(--ink-faint);">(최근 히트맵)</span></div>'
+      + '  <span style="font-size:0.75rem;color:var(--brand);font-weight:700;background:rgba(16,185,129,0.12);padding:2px 8px;border-radius:12px;border:1px solid rgba(16,185,129,0.25);">' + (streak > 0 ? ('' + streak + '일 연속 몰입 중 🔥') : '오늘의 첫 기록을 남겨보세요') + '</span>'
       + '</div>'
-      + '<div style="display:flex;gap:5px;align-items:center;margin-bottom:10px;flex-wrap:wrap;">' + dotsHtml + '</div>'
-      + '<div style="display:flex;gap:12px;font-size:0.76rem;color:var(--ink-sub);flex-wrap:wrap;">'
+      + '<div style="display:flex;gap:4px;align-items:flex-end;margin-bottom:12px;justify-content:space-between;">' + dotsHtml + '</div>'
+      + '<div style="display:flex;gap:12px;font-size:0.76rem;color:var(--ink-sub);justify-content:space-between;border-top:1px solid rgba(255,255,255,0.06);padding-top:8px;">'
       + '  <div>최근 7일 체크인: <b style="color:var(--ink);">' + stats.totalSessions + '회</b></div>'
       + '  <div>집중 일수: <b style="color:var(--ink);">' + stats.activeDays + '일</b></div>'
       + '  <div>누적 집중: <b style="color:var(--ink);">' + stats.totalMinutes + '분</b></div>'
@@ -21541,7 +21595,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '</div>' +
         '<div style="display:flex;gap:6px;margin-top:6px;">' +
           '<button class="btn btn-ghost btn-sm" id="mktPreviewShareBtn" type="button" style="flex:1;border:1px solid var(--brand-strong);color:var(--brand-strong);font-weight:700;font-size:.8125rem;padding:7px 0;">🔗 템플릿 공유</button>' +
-          '<button class="btn btn-primary btn-sm" id="mktPreviewCloneBtn" type="button" style="flex:1.5;font-size:.8125rem;padding:7px 0;">이 템플릿 내 것으로 복제하기</button>' +
+          '<button class="btn btn-primary btn-sm btn-transplant" id="mktPreviewCloneBtn" type="button" style="flex:1.5;font-size:.8125rem;padding:7px 0;">⚡ 내 목표에 바로 담기 (1초 자동 이식)</button>' +
         '</div>' +
       '</div>' +
       '<div class="modal-actions" style="margin-top:14px;">' +
@@ -25085,7 +25139,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<div class="tmpl-head"><span class="tmpl-badge">M</span><b style="font-size:.875rem;">' + escapeHtml(t.title) + '</b></div>' +
           '<div class="tm-desc" style="font-size:.8125rem;">' + escapeHtml(t.desc) + '</div>' +
           '<div class="faint" data-tplcount="creator:'+t.id+'" style="font-size:.8125rem;margin-bottom:8px;display:none;"></div>' +
-          '<button class="tmpl-btn" data-tmpl="' + t.id + '" type="button" style="margin-top:6px;padding:5px 10px;">이 템플릿으로 시작</button>' +
+          '<button class="tmpl-btn btn-transplant" data-tmpl="' + t.id + '" type="button" style="margin-top:6px;padding:7px 14px;font-weight:700;">⚡ 내 목표에 바로 담기</button>' +
         '</div>';
       }).join('') + '</div>' : '') +
       '<div style="height:4px;"></div>' +
@@ -28547,6 +28601,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     renderRecordsScreen();
     renderCommScreen();
     renderSettingsScreen();
+    if(window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render && state && state.activeTab) window.OurgoalSanctuaryV3.render(state.activeTab);
   }
   /* ============ 세션 복구 및 안전 앱 진입 유틸 ============ */
   var _isEnteringApp = false;
@@ -28992,6 +29047,81 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         }
       }
     } catch(e){}
+
+    // #TASK-PREVIEW: 프리뷰 환경(포트 8888, localhost, ?preview=1)에서 즉시 풀 경험 진입
+    var isPreviewEnv = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.port === '8888' || window.location.search.indexOf('preview') !== -1);
+    if(isPreviewEnv && !state.profile){
+      try {
+        var existingGuestRaw = localStorage.getItem('ourgoal_guest_profile');
+        var pGuest = existingGuestRaw ? JSON.parse(existingGuestRaw) : null;
+        if(!pGuest || !Array.isArray(pGuest.goals) || pGuest.goals.length === 0){
+          pGuest = defaultProfile('guest-preview-sanctuary', 'guest_preview', '게스트');
+          var nowD = new Date();
+          pGuest.goals = [
+            {
+              id: 'goal_preview_run',
+              title: '10km 하프마라톤 완주 🏃',
+              topic: '운동/건강',
+              theme: 'workout',
+              progress: 65,
+              dueDate: dateKey(new Date(nowD.getTime() + 14 * 86400000)),
+              milestones: [
+                { id: 'ms_01', title: '5km 논스톱 달리기', done: true, dueDate: dateKey(nowD) },
+                { id: 'ms_02', title: '10km 지속 페이스 5:30 달성', done: false, dueDate: dateKey(new Date(nowD.getTime() + 7 * 86400000)) }
+              ],
+              tasks: [
+                { id: 'tk_01', title: '러닝화 카본 플레이트 점검', done: true },
+                { id: 'tk_02', title: '주 3회 야간 조깅 루틴', done: false }
+              ]
+            },
+            {
+              id: 'goal_preview_read',
+              title: '매일 아침 독서 30분 📖',
+              topic: '공부/수험',
+              theme: 'study',
+              progress: 80,
+              dueDate: dateKey(new Date(nowD.getTime() + 8 * 86400000)),
+              milestones: [
+                { id: 'ms_03', title: '도서 1권 완독', done: true, dueDate: dateKey(nowD) },
+                { id: 'ms_04', title: '주요 인사이트 노션 아카이빙', done: false, dueDate: dateKey(new Date(nowD.getTime() + 4 * 86400000)) }
+              ],
+              tasks: []
+            }
+          ];
+          pGuest.records = [];
+          var sampleTexts = [
+            '5km 러닝 28분 완주! 마지막 1km 페이스 업 성공 🔥',
+            '도서 인간관계론 3장 완독. 경청의 힘 메모 📝',
+            '알고리즘 코딩 1시간 집중 몰입 완료 💻',
+            '아침 공복 러닝 4km 완료, 상쾌한 시작 🏃',
+            '독서 30분 및 핵심 문장 노션 정리 📚',
+            '인터벌 러닝 30분 및 스트레칭 ⚡',
+            '오늘의 목표 회고 및 내일 할 일 계획 🎯',
+            '야간 6km 러닝 완주, 페이스 5:25 달성 🌟'
+          ];
+          for(var sIdx=0; sIdx<sampleTexts.length; sIdx++){
+            var recDate = new Date(nowD.getTime() - (sampleTexts.length - 1 - sIdx) * 1.3 * 86400000);
+            pGuest.records.push({
+              id: 'rec_prev_' + sIdx,
+              goal_id: sIdx % 2 === 0 ? 'goal_preview_run' : 'goal_preview_read',
+              text: sampleTexts[sIdx],
+              content: sampleTexts[sIdx],
+              startAt: recDate.toISOString(),
+              start_at: recDate.toISOString(),
+              created_at: recDate.toISOString(),
+              topic: sIdx % 2 === 0 ? '운동/건강' : '공부/수험'
+            });
+          }
+          localStorage.setItem('ourgoal_guest_profile', JSON.stringify(pGuest));
+        }
+        sessionStorage.setItem('ourgoal_avatar_greeted_session', '1');
+        state.profile = pGuest;
+        document.getElementById('landingScreen').style.display = 'none';
+        document.getElementById('authScreen').style.display = 'none';
+        enterApp();
+        return;
+      } catch(prevErr){ console.warn('Preview auto init error:', prevErr); }
+    }
 
     // 6. 기본 랜딩 화면
     document.getElementById('landingScreen').style.display = 'flex';
