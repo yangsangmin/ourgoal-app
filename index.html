@@ -8207,14 +8207,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<button type="button" class="ls-tab-btn" data-tab="digest" style="flex:1;border:none;background:transparent;color:var(--ink-soft);padding:8px 4px;font-size:.78rem;font-weight:600;border-radius:8px;cursor:pointer;transition:all .15s ease;">🔔 모닝 알림</button>' +
         '</div>' +
 
-        // 패널 1: 실시간 잠금화면 라이브
+        // 패널 1: 폰 켤 때마다 잠금화면 전체 장악
         '<div class="ls-content-pane" id="lsPaneLive" style="display:block;">' +
           '<div style="background:var(--surface-2);border-radius:14px;padding:14px;border:1px solid var(--border-color);margin-bottom:14px;">' +
             '<div style="font-size:.84rem;font-weight:800;color:var(--ink);margin-bottom:4px;display:flex;align-items:center;gap:6px;">' +
-              '<span>⚡</span> 스마트폰 잠금화면 실시간 연동 (Live Card)' +
+              '<span>⚡</span> 폰 켤 때마다 잠금화면 전체 장악 (LockScreen Takeover)' +
             '</div>' +
             '<div style="font-size:.78rem;color:var(--ink-soft);line-height:1.45;">' +
-              '스마트폰을 켤 때마다(잠금화면·AOD·상단 알림창) 이번 달 달력, 목표 달성률, 다음 일정이 <strong>실시간으로 자동 갱신</strong>됩니다.' +
+              '작은 알림 상자가 아닌, 폰 전원을 켤 때마다 9:19.5 월간 달력, 목표 달성률, 다음 일정이 <strong>스마트폰 화면 100% 전체를 완벽히 장악</strong>합니다.' +
             '</div>' +
           '</div>' +
 
@@ -8263,6 +8263,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                   '📅 일정 확인' +
                 '</div>' +
               '</div>' +
+
+              // 5. 슬라이드 잠금해제 시뮬레이터 인터랙션 (#TASK-ES-183)
+              '<div id="lsSimUnlockSlider" title="클릭하여 잠금해제 테스트" style="margin-top:8px;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.18);border-radius:999px;padding:3px 6px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;transition:all .2s ease;">' +
+                '<div id="lsSimSliderKnob" style="width:24px;height:24px;border-radius:50%;background:#38bdf8;display:flex;align-items:center;justify-content:center;color:#0f172a;font-weight:900;font-size:.7rem;box-shadow:0 2px 6px rgba(0,0,0,0.3);transition:transform .3s ease;">〉</div>' +
+                '<span id="lsSimSliderText" style="font-size:.62rem;color:#cbd5e1;font-weight:700;letter-spacing:0.5px;padding-right:6px;">밀어서 잠금해제 ➔</span>' +
+              '</div>' +
             '</div>' +
             '<div style="width:90px;height:4px;background:rgba(255,255,255,0.35);border-radius:2px;margin:18px auto 0;"></div>' +
           '</div>' +
@@ -8270,14 +8276,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           // 상태 배지
           '<div id="lsLiveStatusBadge" style="text-align:center;margin-bottom:12px;font-size:.78rem;font-weight:700;padding:6px 12px;border-radius:999px;width:100%;box-sizing:border-box;"></div>' +
 
-          // 메인 토글 버튼
-          '<button type="button" class="btn ' + (liveSetting.enabled ? 'btn-ghost' : 'btn-primary') + ' btn-block" id="btnToggleLiveLockScreen" style="font-size:.9rem;font-weight:700;padding:12px;border-radius:12px;margin-bottom:8px;cursor:pointer;">' +
-            (liveSetting.enabled ? '✅ 실시간 잠금화면 연동 켜짐 (클릭하여 끄기)' : '⚡ 실시간 잠금화면 폰에 띄우기 (연동 켜기)') +
+          // 메인 토글 버튼 (#TASK-ES-183)
+          '<button type="button" class="btn ' + (liveSetting.enabled ? 'btn-ghost' : 'btn-primary') + ' btn-block" id="btnToggleLockScreenTakeover" style="font-size:.9rem;font-weight:700;padding:12px;border-radius:12px;margin-bottom:8px;cursor:pointer;">' +
+            (liveSetting.enabled ? '✅ 폰 켤 때마다 잠금화면 전체 장악 중 (클릭하여 끄기)' : '⚡ 폰 켤 때마다 잠금화면 전체 장악 (연동 켜기)') +
           '</button>' +
+          '<button type="button" id="btnToggleLiveLockScreen" style="display:none;" aria-hidden="true"></button>' +
 
           // 즉시 갱신 버튼
           '<button type="button" class="btn btn-ghost btn-sm btn-block" id="btnRefreshLiveLockScreen" style="font-size:.8125rem;font-weight:600;padding:9px;border-radius:10px;border:1px solid var(--border-color);margin-bottom:16px;cursor:pointer;">' +
-            '🔄 지금 바로 잠금화면 카드 최신화하기' +
+            '🔄 잠금화면 화면 최신 데이터로 동기화하기' +
           '</button>' +
 
           // 개별 선택 체크박스 (5종)
@@ -8315,9 +8322,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
           // 동작 및 기종별 팁 안내
           '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:14px;font-size:.8125rem;color:var(--ink-soft);line-height:1.55;">' +
-            '<div style="font-weight:800;color:var(--ink);margin-bottom:6px;">💡 기종별 실시간 잠금화면 동작 안내</div>' +
-            '• <strong>갤럭시(Android) / PC</strong>: 연동을 켜면 화면을 켤 때마다 잠금화면 및 상단 알림바에 최신 카드가 머무르며, 체크인이나 목표 변경 시 무음으로 자동 최신화됩니다.<br>' +
-            '• <strong>아이폰(iOS)</strong>: 사파리 브라우저 하단 공유(↑) ➔ <strong>[홈 화면에 추가]</strong>로 설치하여 실행하시면 iOS 16.4+ 잠금화면 실시간 알림 카드가 100% 완벽 지원됩니다. (더 간편한 위젯을 원하시면 2번째 탭 &quot;위젯 연동&quot;을 추천해요)' +
+            '<div style="font-weight:800;color:var(--ink);margin-bottom:6px;">💡 스마트폰 기종별 전체 장악 동작 안내</div>' +
+            '• <strong>갤럭시(Android)</strong>: 폰 전원을 켤 때마다 기본 잠금화면 위로 아워골 풀스크린이 100% 뜹니다. 전용 안드로이드 앱(APK) 설치 후 &quot;다른 앱 위에 표시&quot; 권한을 허용하시면 완벽히 장악합니다.<br>' +
+            '<div style="margin:6px 0 8px;">' +
+              '<button type="button" class="btn btn-ghost btn-xs" id="btnDownloadLockScreenApk" style="border:1px solid #38bdf8;color:#38bdf8;border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;">🤖 안드로이드 잠금화면 패키지(APK) 안내</button>' +
+            '</div>' +
+            '• <strong>아이폰(iOS)</strong>: 애플의 엄격한 보안 정책상 전 세계 어떤 앱도 전원 화면 가로채기가 금지되어 있습니다. 아이폰 사용자는 <strong>2번째 탭 [📅 위젯 연동]</strong>을 통해 잠금화면 시계 바로 아래에 <strong>정품 잠금화면 위젯</strong>으로 100% 실시간 연동하실 수 있습니다.' +
           '</div>' +
         '</div>' +
 
@@ -8569,43 +8579,30 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       function updateLiveStatusUI(){
         var badge = sheet.querySelector('#lsLiveStatusBadge');
-        var btn = sheet.querySelector('#btnToggleLiveLockScreen');
-        var isPermGranted = (typeof Notification !== 'undefined') && (Notification.permission === 'granted');
+        var btn = sheet.querySelector('#btnToggleLockScreenTakeover') || sheet.querySelector('#btnToggleLiveLockScreen');
         var isEnabled = !!liveSetting.enabled;
 
-        if(isEnabled && isPermGranted){
+        if(isEnabled){
           if(badge){
             badge.style.background = 'rgba(34, 197, 94, 0.12)';
             badge.style.color = '#16a34a';
             badge.style.border = '1px solid rgba(34, 197, 94, 0.3)';
-            badge.textContent = '🟢 실시간 잠금화면 카드가 폰에 연동 중입니다';
+            badge.textContent = '🟢 폰을 켤 때마다 아워골 전체 화면이 잠금화면을 장악합니다';
           }
           if(btn){
-            btn.textContent = '✅ 실시간 잠금화면 연동 켜짐 (클릭하여 끄기)';
+            btn.textContent = '✅ 폰 켤 때마다 잠금화면 전체 장악 중 (클릭하여 끄기)';
             btn.classList.remove('btn-primary');
             btn.classList.add('btn-ghost');
-          }
-        } else if(!isPermGranted && typeof Notification !== 'undefined' && Notification.permission === 'denied'){
-          if(badge){
-            badge.style.background = 'rgba(239, 68, 68, 0.12)';
-            badge.style.color = '#dc2626';
-            badge.style.border = '1px solid rgba(239, 68, 68, 0.3)';
-            badge.textContent = '⚠️ 브라우저 알림 권한이 차단되어 있습니다 (설정에서 허용 필요)';
-          }
-          if(btn){
-            btn.textContent = '⚡ 실시간 잠금화면 폰에 띄우기 (연동 켜기)';
-            btn.classList.remove('btn-ghost');
-            btn.classList.add('btn-primary');
           }
         } else {
           if(badge){
             badge.style.background = 'var(--surface-2)';
             badge.style.color = 'var(--ink-soft)';
             badge.style.border = '1px solid var(--border-color)';
-            badge.textContent = '⚪ 실시간 잠금화면 연동이 꺼져 있습니다';
+            badge.textContent = '⚪ 잠금화면 전체 장악 연동이 꺼져 있습니다';
           }
           if(btn){
-            btn.textContent = '⚡ 실시간 잠금화면 폰에 띄우기 (연동 켜기)';
+            btn.textContent = '⚡ 폰 켤 때마다 잠금화면 전체 장악 (연동 켜기)';
             btn.classList.remove('btn-ghost');
             btn.classList.add('btn-primary');
           }
@@ -8616,48 +8613,62 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       updateLiveSim();
       updateLiveStatusUI();
 
-      // 라이브 토글 버튼 바인딩
-      var btnToggleLive = sheet.querySelector('#btnToggleLiveLockScreen');
-      if(btnToggleLive){
-        btnToggleLive.onclick = async function(){
-          if(!liveSetting.enabled){
-            if(typeof Notification === 'undefined'){
-              toast('이 브라우저는 웹 실시간 알림 카드를 지원하지 않습니다.');
-              return;
-            }
-            var perm = Notification.permission;
-            if(perm !== 'granted'){
-              perm = await Notification.requestPermission();
-            }
-            if(perm === 'granted'){
-              liveSetting.enabled = true;
-              if(!state.profile.settings) state.profile.settings = {};
-              state.profile.settings.lockScreenLive = liveSetting;
-              saveLocalSettings(state.profile.id, state.profile.settings);
-              try { localStorage.setItem('ourgoal_lockscreen_live_v1', JSON.stringify(liveSetting)); } catch(e){}
-              await saveProfile();
-              updateLiveStatusUI();
-              var ok = await syncLockScreenLiveCard(true);
-              if(ok){
-                toast('⚡ 스마트폰 잠금화면에 실시간 라이브 카드가 띄워졌어요!');
-              } else {
-                toast('실시간 잠금화면 연동이 활성화되었습니다.');
-              }
-            } else {
-              updateLiveStatusUI();
-              toast('알림 권한이 허용되지 않았습니다. 브라우저 설정에서 허용해 주세요.');
-            }
-          } else {
-            liveSetting.enabled = false;
-            if(!state.profile.settings) state.profile.settings = {};
-            state.profile.settings.lockScreenLive = liveSetting;
-            saveLocalSettings(state.profile.id, state.profile.settings);
-            try { localStorage.setItem('ourgoal_lockscreen_live_v1', JSON.stringify(liveSetting)); } catch(e){}
-            await saveProfile();
-            await closeLockScreenLiveCard();
-            updateLiveStatusUI();
-            toast('실시간 잠금화면 연동이 해제되었습니다.');
-          }
+      // 라이브 전체 장악 토글 버튼 바인딩 (#TASK-ES-183)
+      var handleToggleTakeover = async function(){
+        if(!liveSetting.enabled){
+          liveSetting.enabled = true;
+          if(!state.profile.settings) state.profile.settings = {};
+          state.profile.settings.lockScreenLive = liveSetting;
+          state.profile.settings.lockScreenTakeover = liveSetting;
+          saveLocalSettings(state.profile.id, state.profile.settings);
+          try { localStorage.setItem('ourgoal_lockscreen_live_v1', JSON.stringify(liveSetting)); } catch(e){}
+          try { localStorage.setItem('ourgoal_lockscreen_takeover_v1', JSON.stringify(liveSetting)); } catch(e){}
+          await saveProfile();
+          updateLiveStatusUI();
+          try { await syncLockScreenLiveCard(true); } catch(e){}
+          toast('⚡ 폰 켤 때마다 잠금화면 전체 장악 연동이 켜졌습니다!');
+        } else {
+          liveSetting.enabled = false;
+          if(!state.profile.settings) state.profile.settings = {};
+          state.profile.settings.lockScreenLive = liveSetting;
+          state.profile.settings.lockScreenTakeover = liveSetting;
+          saveLocalSettings(state.profile.id, state.profile.settings);
+          try { localStorage.setItem('ourgoal_lockscreen_live_v1', JSON.stringify(liveSetting)); } catch(e){}
+          try { localStorage.setItem('ourgoal_lockscreen_takeover_v1', JSON.stringify(liveSetting)); } catch(e){}
+          await saveProfile();
+          try { await closeLockScreenLiveCard(); } catch(e){}
+          updateLiveStatusUI();
+          toast('잠금화면 전체 장악 연동이 해제되었습니다.');
+        }
+      };
+
+      var btnTakeover = sheet.querySelector('#btnToggleLockScreenTakeover');
+      var btnLiveLegacy = sheet.querySelector('#btnToggleLiveLockScreen');
+      if(btnTakeover) btnTakeover.onclick = handleToggleTakeover;
+      if(btnLiveLegacy && btnLiveLegacy !== btnTakeover) btnLiveLegacy.onclick = handleToggleTakeover;
+
+      // 슬라이더 인터랙션 (#TASK-ES-183)
+      var unlockSlider = sheet.querySelector('#lsSimUnlockSlider');
+      if(unlockSlider){
+        unlockSlider.onclick = function(){
+          var knob = sheet.querySelector('#lsSimSliderKnob');
+          var text = sheet.querySelector('#lsSimSliderText');
+          if(knob) knob.style.transform = 'translateX(180px)';
+          if(text) text.textContent = '잠금해제 완료! ✨';
+          if(typeof triggerHaptic === 'function') triggerHaptic('success');
+          setTimeout(function(){
+            toast('🔓 스마트폰 잠금이 해제되었습니다 (홈 화면으로 전환)');
+            if(knob) knob.style.transform = 'translateX(0)';
+            if(text) text.textContent = '밀어서 잠금해제 ➔';
+          }, 350);
+        };
+      }
+
+      // 안드로이드 APK 패키지 가이드 버튼
+      var btnApk = sheet.querySelector('#btnDownloadLockScreenApk');
+      if(btnApk){
+        btnApk.onclick = function(){
+          alert('🤖 안드로이드 잠금화면 전체 장악 안내:\n\n1. 캐시워크와 동일하게 안드로이드 백그라운드 서비스(LockScreenService)가 폰 전원 켜짐을 감지하여 동작합니다.\n2. APK 설치 후 [설정 > 애플리케이션 > 아워골 > 다른 앱 위에 표시: 허용]을 켜시면 폰을 켤 때마다 전체 화면이 자동으로 뜹니다.\n3. 소스코드 및 네이티브 아키텍처가 android/ 디렉토리에 100% 탑재되어 있습니다.');
         };
       }
 
