@@ -16,34 +16,39 @@ notion_id: "3dc598db-9096-81ef-8ee0-cf8c1c126795"
 
 ## 1. [원칙 ①] 엔지니어링 아키텍처 및 변경 범위 파악
 
-- **REQ 핵심 요약**: 정적 이미지 다운로드 위주였던 기존 잠금화면 모달을 실시간 정보가 연동되는 라이브 서비스로 전면 개편. Web Notification API 및 Service Worker를 활용하여 스마트폰 잠금화면에 상주형 실시간 브리핑 카드를 띄우고, 목표·체크인·일정 상태 변경 시 무음으로 자동 최신화.
+- **REQ 핵심 요약**: 불필요한 정적 달력 배경화면 다운로드 기능을 전면 삭제하고, 실시간 정보가 연동되는 라이브 서비스에 완전 집중. 스마트폰 화면비(9:19.5)에 맞춘 실제 월 달력 그리드, 목표 달성률 게이지 바, 오늘의 다음 일정 최대 3개(길면 줄바꿈 금지, `...` 한 줄 처리), 스트릭, D-Day 등 5종 선택의 폭을 넓히고, 설정 전 화면 시뮬레이터에서 0ms 실시간 미리보기를 제공.
 - **영향받는 파일 전수 목록**:
   1. `docs/rules/TICKETS.md`: #TASK-ES-182 승인 티켓 등록
   2. `sw.js`: CACHE_NAME 버전 범프 및 notificationclick 인터랙티브 액션(action-checkin, action-calendar) 라우팅 핸들러 추가
   3. `index.html`:
-     - 잠금화면 실시간 알림 엔진 (`syncLockScreenLiveCard`, `buildLockScreenCardPayload`)
+     - 정적 달력 배경화면 다운로드 탭(#lsPaneWallpaper 및 버튼) 완전 삭제
+     - 잠금화면 실시간 알림 엔진 (`syncLockScreenLiveCard`, `buildLockScreenCardPayload`) 고도화 (월 달력 그리드 데이터, 오늘 일정 최대 3선 한 줄 추출)
      - 실시간 자동 동기화 트리거 배선 (`captureSave`, `saveGoal`, `updateGoal`, `toggleScheduleDone`, `initApp`)
-     - 폰 잠금화면 허브 모달 (`openLockScreenHubModal`) 1순위 "⚡ 실시간 잠금화면 라이브" 탭 개편, 실물 시뮬레이터 렌더링, 4종 정보 토글 스위치, 원터치 즉시 갱신 버튼
-  4. `scripts/smoke-test.js`: TASK-ES-182 전용 컴플라이언스 테스트 케이스 추가
+     - 폰 잠금화면 허브 모달 (`openLockScreenHubModal`): 스마트폰 화면비 시뮬레이터, 5종 정보 선택 체크박스, 체크박스 클릭 즉시 0ms 반응하는 `updateLiveSim()` 미리보기 루프, 원터치 즉시 갱신 버튼
+  4. `scripts/smoke-test.js`: 구버전 배경화면 다운로드 검증 제거, 5종 옵션 및 시뮬레이터 월 달력/일정 3선 말줄임표 컴플라이언스 테스트 추가
 
 ---
 
 ## 2. [원칙 ②] 본질 · 원인 · 중심 · 핵심 배선(Wire) 식별
 
 - **[본질] (Essence)**:
-  - 잠금화면에서 사용자가 앱을 열지 않고도 살아있는 최신 목표·일정·달성률을 체감하도록 실시간 상주형 라이브 알림 카드와 양방향 동기화 파이프라인을 구축함.
+  - 잠금화면에서 사용자가 앱을 열지 않고도 살아있는 최신 월 달력·목표 달성률·다음 일정 3선·스트릭을 체감하도록 실시간 상주형 라이브 알림 카드와 개별 옵션 선택 시 0ms 즉각 반응하는 시뮬레이터 미리보기 파이프라인을 구축함.
 - **[원인] (Root Causes)**:
-  - 기존 캔버스 배경화면은 정적 이미지라 데이터가 바뀌어도 자동 갱신되지 않으며, ServiceWorker showNotification 실시간 갱신 루프와 데이터 상태 훅이 부재했음.
+  - 불필요한 정적 캔버스 배경화면 다운로드 기능이 남아 유저의 요구와 어긋났으며, 폰 화면비 월 달력과 일정 3선(줄바꿈 금지, ...)의 개별 선택지 및 설정 전 리액티브 미리보기가 결여되었음.
 - **[중심] (Core Bottleneck)**:
-  - silent: true 및 renotify: false 기반 무음 실시간 알림 카드 갱신(syncLockScreenLiveCard)과 앱 내 체크인/목표/일정 데이터 변경 시점의 실시간 전파 결합.
+  - 폰 화면비에 맞춘 실시간 월 달력 그리드 + 한 줄 일정 3선 + 목표 달성률 게이지를 개별 토글할 때 시뮬레이터와 백그라운드 Service Worker 알림에 완벽히 상호 반영되는 리액티브 엔진(syncLockScreenLiveCard) 구축.
 - **[핵심] (Critical Anchor)**:
-  - 100% 동작하는 4위 1체 배선 및 스마트폰 시뮬레이터, 잠금화면 알림 액션(빠른 체크인/일정 확인) 원클릭 라우팅.
+  - 정적 배경화면 다운로드 100% 완전 삭제.
+  - 5종 개별 선택 체크박스 및 체크박스 변경 시 0ms 즉시 시뮬레이터 갱신.
+  - 일정 3선: 길어도 줄바꿈 절대 금지(`white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;`).
+  - 100% 동작하는 4위 1체 배선 및 잠금화면 알림 액션(빠른 체크인/일정 확인) 원클릭 라우팅.
 
 - **전역 상태(`state`) 영향 분석**:
-  - `state.profile.settings.lockScreenLive = { enabled: true/false, showGoals: true/false, showSchedules: true/false, showDday: true/false, showStreak: true/false, lastSyncAt: string }`
+  - `state.profile.settings.lockScreenLive = { enabled: true/false, showMonthGrid: true/false, showGoalRate: true/false, showSchedules: true/false, showDday: true/false, showStreak: true/false, lastSyncAt: string }`
 - **종단간 데이터 흐름 다이어그램**:
   ```
   [유저 동작 / 상태 변경]
+    ├─ 체크박스 토글 (5종) ──> 0ms 즉시 updateLiveSim() (시뮬레이터 미리보기)
     ├─ 체크인 완료 (captureSave)
     ├─ 목표 변경 (saveGoal / updateGoal)
     └─ 일정 완료 토글 (toggleScheduleDone)
@@ -52,8 +57,9 @@ notion_id: "3dc598db-9096-81ef-8ee0-cf8c1c126795"
   [syncLockScreenLiveCard()]
           │
           ├─ state 및 로컬스토리지 최신 데이터 집계 (buildLockScreenCardPayload)
-          │    - 오늘 목표 완료/전체 (달성률%)
-          │    - 다음 예정 일정 (시각 + 일정명)
+          │    - 이번 달 월 달력 그리드 (Phone Ratio Grid)
+          │    - 오늘 목표 완료/전체 (목표 달성률 게이지%)
+          │    - 오늘의 다음 일정 최대 3개 (한 줄 말줄임표 ...)
           │    - 스트릭 (🔥 연속일)
           │    - 핵심 D-Day
           │
@@ -75,21 +81,21 @@ notion_id: "3dc598db-9096-81ef-8ee0-cf8c1c126795"
 
 - **파일별 변경 예산**:
   - `sw.js`: ~25줄 추가 / 2줄 수정 (Notificationclick action routing)
-  - `index.html`: ~280줄 추가 / ~40줄 수정 (실시간 엔진, 허브 모달 1번 탭 개편, 시뮬레이터)
-  - `scripts/smoke-test.js`: ~35줄 추가
+  - `index.html`: ~260줄 추가 / ~80줄 삭제/수정 (배경화면 다운로드 완전 삭제, 폰 화면비 월 달력 그리드, 일정 3선 말줄임표, 5종 체크박스 및 0ms 프리뷰)
+  - `scripts/smoke-test.js`: ~40줄 수정
   - `docs/rules/TICKETS.md`: 1줄 추가
 - **4위 1체 배선 명세**:
-  - **마크업**: 잠금화면 실시간 연동 제어 패널, 잠금화면 폰 프레임 시뮬레이터, 4종 정보 선택 체크박스, 원터치 [지금 바로 잠금화면에 띄우기/갱신] 버튼.
-  - **리스너**: 스위치 change 이벤트, 즉시 갱신 click 이벤트, 권한 요청 click 이벤트.
-  - **로직**: `syncLockScreenLiveCard()`, ServiceWorker showNotification 발행, 데이터 수명주기 훅.
-  - **피드백**: 권한 상태 배지(허용됨/차단됨/대기중), 갱신 성공 토스트, 권한 거부 시 브라우저 설정 안내.
+  - **마크업**: 잠금화면 실시간 연동 제어 패널, 폰 화면비(9:19.5) 시뮬레이터(시계, 월 달력 그리드, 목표 달성률 바, 한 줄 일정 3선), 5종 정보 선택 체크박스, 원터치 [지금 바로 잠금화면에 띄우기/갱신] 버튼.
+  - **리스너**: 체크박스 5종 change 이벤트 (즉시 `updateLiveSim()`), 즉시 갱신 click 이벤트, 권한 요청 click 이벤트.
+  - **로직**: `syncLockScreenLiveCard()`, `buildLockScreenCardPayload()`, ServiceWorker showNotification 발행, 데이터 수명주기 훅.
+  - **피드백**: 권한 상태 배지(허용됨/차단됨/대기중), 0ms 실시간 목업 반응, 갱신 성공 토스트, 권한 거부 시 브라우저 설정 안내.
 
 ---
 
 ## 4. [원칙 ④] 1~3 재검토 및 기존 기능 불파괴 보증
 
 - **기존 기능 불파괴 검증**:
-  - 기존 181에서 구축된 '월간 달력 배경화면' 캔버스 이미지 생성 기능은 삭제하지 않고 2번 탭으로 그대로 보존하여 유저 선택권 보장.
+  - 상민님의 명시적 지시에 따라 불필요한 '달력 배경화면 다운로드' 탭은 완전 삭제(승인선 ③ 규범 준수).
   - 기존 캘린더 WebCal 및 모닝 알림 기능 100% 호환 보존.
   - 기존 318개 스모크 테스트와 20개 무결성 게이트 불파괴 확인.
 
