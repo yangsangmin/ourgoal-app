@@ -5,7 +5,7 @@
 > **작성 일시**: 2026-09-18  
 > **작성자**: Antigravity  
 > **귀속 축**: E1 / UX  
-> **진행 상태**: 3단계(로컬 구현 중)  
+> **진행 상태**: 6단계(실서버 프로덕션 배포 완료 — PR #302 머지 50d80e5, 라이브: https://ourgoal-app.vercel.app)  
 > **규범 준수**: [OURGOAL_ABSOLUTE_INTEGRITY_RULES](file:///C:/dev/ourgoal-app/docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md) 준수 (헌법 제2조 2중 8원칙 2회차 엄수)
 
 ---
