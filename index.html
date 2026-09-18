@@ -1578,6 +1578,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(meta) meta.setAttribute('content', found.metaColor);
     }
     try{ localStorage.setItem('ourgoal_current_theme', themeId); } catch(e){}
+    try{
+      if(typeof window !== 'undefined' && window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render && window.state && window.state.activeTab){
+        window.OurgoalSanctuaryV3.render(window.state.activeTab);
+      }
+    }catch(e){}
   }
   if(typeof window !== 'undefined'){
     window.applyTheme = applyTheme;

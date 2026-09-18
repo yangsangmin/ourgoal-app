@@ -22,7 +22,8 @@
   };
 
   function isFocusSanctuary() {
-    return document.documentElement.getAttribute('data-theme') === 'focus-sanctuary';
+    var th = document.documentElement.getAttribute('data-theme') || 'focus-sanctuary';
+    return ['focus-sanctuary', 'black', 'white', 'urban-city'].indexOf(th) !== -1;
   }
 
   function escapeHtml(str) {

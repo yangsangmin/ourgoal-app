@@ -7167,6 +7167,50 @@ check('[#TASK-ES-185] 화이트 테마 렌더링 먹통 버그 근본 척결 및
   assert.ok(css.includes('[data-theme="focus-sanctuary"]'), '성소 테마 룰 보존 검증');
 });
 
+check('[#TASK-ES-186] 성소 기준 4대 테마(성소·블랙·화이트·도심) 조형·레이아웃·컴포넌트 100% 동일 동기화 및 테마별 컬러 분리 검증', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const html = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
+  const css = fs.readFileSync(path.join(__dirname, '../ui.css'), 'utf8');
+  const engineSrc = fs.readFileSync(path.join(__dirname, '../js/sanctuary-v3-engine.js'), 'utf8');
+
+  // 1. sanctuary-v3-engine.js: isFocusSanctuary() 4대 테마 전수 지원 검증
+  assert.ok(
+    engineSrc.includes("'focus-sanctuary', 'black', 'white', 'urban-city'") ||
+    (engineSrc.includes('focus-sanctuary') && engineSrc.includes('black') && engineSrc.includes('white') && engineSrc.includes('urban-city')),
+    'isFocusSanctuary()가 성소·블랙·화이트·도심 4대 테마를 전수 포함해야 함'
+  );
+
+  // 2. index.html: 테마 전환 시 Sanctuary V3 렌더러 연계 호출 검증
+  assert.ok(
+    html.includes('OurgoalSanctuaryV3.render(state.activeTab)'),
+    'applyTheme() 시점에 OurgoalSanctuaryV3.render(state.activeTab) 호출 필수'
+  );
+
+  // 3. ui.css: 4대 테마 상단바 및 뷰 슬롯 표시 동기화 검증
+  const themes = ['focus-sanctuary', 'black', 'white', 'urban-city'];
+  themes.forEach(th => {
+    assert.ok(css.includes(`[data-theme="${th}"] .sanctuary-top-bar`), `${th} 테마 sanctuary-top-bar 활성화 셀렉터 구비`);
+    assert.ok(css.includes(`[data-theme="${th}"] #sanctuaryGoalsView`), `${th} 테마 sanctuaryGoalsView 활성화 셀렉터 구비`);
+    assert.ok(css.includes(`[data-theme="${th}"] #sanctuaryCalendarView`), `${th} 테마 sanctuaryCalendarView 활성화 셀렉터 구비`);
+    assert.ok(css.includes(`[data-theme="${th}"] #sanctuaryRecordsView`), `${th} 테마 sanctuaryRecordsView 활성화 셀렉터 구비`);
+    assert.ok(css.includes(`[data-theme="${th}"] #sanctuaryCommView`), `${th} 테마 sanctuaryCommView 활성화 셀렉터 구비`);
+    assert.ok(css.includes(`[data-theme="${th}"] #homeGrassSummaryCard`), `${th} 테마 14일 활동 카드(#homeGrassSummaryCard) 표시`);
+    assert.ok(css.includes(`[data-theme="${th}"] #captureCardBox`), `${th} 테마 3초 체크인 히어로 카드(#captureCardBox) 활성화`);
+    assert.ok(css.includes(`[data-theme="${th}"] #calGrid`), `${th} 테마 구형 calGrid 은폐`);
+    assert.ok(css.includes(`[data-theme="${th}"] #goalChipRow`), `${th} 테마 구형 goalChipRow 은폐`);
+    assert.ok(css.includes(`[data-theme="${th}"] #bottomNavFab`), `${th} 테마 하단바 중앙 돌출 FAB 배제`);
+  });
+
+  // 4. ui.css: 테마별 독자 고시인성 컬러 분리 검증
+  assert.ok(css.includes('html[data-theme="white"] .mountain-trail-card'), '화이트 테마 Mountain Trail 카드 순백 컬러 규칙');
+  assert.ok(css.includes('html[data-theme="black"] .mountain-trail-card'), '블랙 테마 Mountain Trail 카드 OLED 블랙 컬러 규칙');
+  assert.ok(css.includes('html[data-theme="urban-city"] .mountain-trail-card'), '도심 테마 Mountain Trail 카드 쿨네이비/시안 컬러 규칙');
+
+  // 5. 성소(focus-sanctuary) 원형 100% 무변경 보존
+  assert.ok(css.includes('html[data-theme="focus-sanctuary"] body'), '성소 테마 바디 무변경 보존');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
