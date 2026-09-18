@@ -7056,6 +7056,89 @@ check('compliance: [#TASK-SANCTUARY-COMM-RADAR-REAL-INTEGRITY] 소통 탭 실시
   assert.ok(swSrc.includes('ourgoal-shell-v20260918-sanctuary-comm-radar-restore'), 'sw.js 캐시 버전에 sanctuary-comm-radar-restore 식별자 포함');
 });
 
+
+check('compliance: [#TASK-ES-184] 아워골 생각 메모장 18대 잔여 대기 과제([70]~[87]) 전수 구현 및 개정 헌법(v2026.09.18) 6대 무결성 검증', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // [그룹 1: 계정 & 보안]
+  // [70] 원격 로그아웃 전 로그인 기기 목록 확인 및 개별 세션 제어 기능
+  assert.ok(html.includes('id="activeDevicesContainer"'), '[70] 활성 기기 컨테이너 마크업 존재');
+  assert.ok(html.includes('function renderActiveDevicesList()'), '[70] 활성 기기 목록 실시간 렌더러 함수 존재');
+  assert.ok(html.includes('btn-revoke-device'), '[70] 개별 기기 원격 로그아웃 버튼 클래스 존재');
+
+  // [71] 2단계 인증(2FA) 실질적 보안 작동
+  assert.ok(html.includes('function openTwoFactorSetupModal()'), '[71] 2FA 보안 PIN 설정 모달 함수 존재');
+  assert.ok(html.includes('function challengeTwoFactorModal('), '[71] 2FA 세션 진입 챌린지 모달 함수 존재');
+  assert.ok(html.includes('id="twoFaPinInput"'), '[71] 4자리 PIN 입력 인풋 존재');
+
+  // [72] 설정 이메일 게스트모드 오표기 오류 수정
+  assert.ok(html.includes('카카오 계정 연동됨'), '[72] 카카오 연동 시 정상 표기 분기 존재');
+
+  // [그룹 2: 프로필 & 설정 테마]
+  // [73] 프로필 편집 내 잇템등록 > 잇템추가 인라인 확장 및 draft 무손실 보존
+  assert.ok(html.includes('id="pvInlineItItemForm"'), '[73] 인라인 잇템 등록 폼 존재');
+  assert.ok(html.includes('id="btnConfirmInlineItItem"'), '[73] 잇템 등록 완료 버튼 존재');
+
+  // [74] 프로필 관심 카테고리 8개 선택/저장
+  assert.ok(html.includes('관심 카테고리 (최대 8개 선택)'), '[74] 관심 카테고리 라벨 및 가이드 존재');
+  assert.ok(html.includes('paintInterests();'), '[74] 관심 카테고리 렌더러 호출 존재');
+
+  // [75] 프로필 지역공개 토글 스위치 설정 및 저장
+  assert.ok(html.includes('id="pvRegionPublic"'), '[75] 지역공개 스위치 존재');
+
+  // [76] 프로필 내 동네(Region) 시군구 설정 및 저장
+  assert.ok(html.includes("wireRegionPicker(sheet, 'pvRegion', regionRef);"), "[76] 동네 선택기 배선 존재");
+
+  // [79] 설정 테마 4종(성소·블랙·화이트·도심) 압축 및 시인성 개선
+  assert.ok(html.includes("id: 'focus-sanctuary', name: '성소 (Sanctuary)'"), '[79] 성소 테마 존재');
+  assert.ok(html.includes("id: 'black', name: '블랙 (Black)'"), '[79] 블랙 테마 존재');
+  assert.ok(html.includes("id: 'white', name: '화이트 (White)'"), '[79] 화이트 테마 존재');
+  assert.ok(html.includes("id: 'urban-city', name: '도심 (City)'"), '[79] 도심 테마 존재');
+
+  // [그룹 3: 홈 탭 & 체크인 / 평가하기]
+  // [81] 오늘의 3초 체크인 내 목표 기반 추천 및 커닝페이퍼형 가이드
+  assert.ok(html.includes('renderQuickCheckinGuideChips();'), '[81] 3초 체크인 커닝페이퍼 렌더러 호출');
+  assert.ok(html.includes('내 목표 맞춤 커닝페이퍼'), '[81] 커닝페이퍼 섹션 라벨 존재');
+  assert.ok(html.includes('data-cunningtext='), '[81] 커닝페이퍼 원클릭 채우기 속성 존재');
+
+  // [86] 홈 탭 아워골 평가하기 창 최신 UI 규격 적용 복원
+  assert.ok(html.includes('언제 얼마든지 평가해주실 수 있습니다'), '[86] 상시/반복 평가 안내문구 존재');
+  assert.ok(html.includes('id="btnOpenEvalModal"'), '[86] 평가 작성 버튼 존재');
+
+  // [그룹 4: 목표 탭 & 템플릿 / 프롬프트 백과사전]
+  // [77] 목표 탭 '현 상태로 데이터 받기' 최하단 재배치
+  assert.ok(html.includes("renderPromptEncyclopediaHtml('goals')"), '[77] 목표 탭 최하단 슬롯 연결 존재');
+
+  // [78] 목표 데이터받기·기록 내보내기 하단 '데이터분석 프롬프트 백과사전' 신설
+  assert.ok(html.includes('function renderPromptEncyclopediaHtml('), '[78] 프롬프트 백과사전 렌더러 존재');
+  assert.ok(html.includes('데이터분석 프롬프트 백과사전'), '[78] 프롬프트 백과사전 타이틀 존재');
+  assert.ok(html.includes('btn-copy-prompt'), '[78] 프롬프트 원클릭 복사 버튼 클래스 존재');
+
+  // [80] 템플릿백과사전 1초 자동이식 선택 연동 및 로드맵-목표상태 동기화
+  assert.ok(html.includes('function importTemplateInstantly('), '[80] 1초 자동이식 함수 존재');
+  assert.ok(html.includes('1초 만에 자동이식되었습니다'), '[80] 자동이식 완료 토스트 안내 존재');
+
+  // [87] 템플릿백과사전 실 유저 공유 템플릿 '둘러보기' 기능 추가
+  assert.ok(html.includes('실 유저 공유 템플릿 둘러보기'), '[87] 둘러보기 뷰 모드 헤더 존재');
+  assert.ok(html.includes('btn-auto-import-tpl'), '[87] 둘러보기 카드 내 1초 자동이식 버튼 존재');
+
+  // [그룹 5: 소통 & 팀 목표 / 피드]
+  // [82] 팀 목표 내 '팀 연계 개인목표' 생성 의도 버튼 및 접목 기능
+  assert.ok(html.includes('function openTeamLinkedPersonalGoalModal('), '[82] 팀 연계 개인목표 생성 모달 함수 존재');
+  assert.ok(html.includes('btn-team-personal-goal'), '[82] 팀 연계 개인목표 버튼 클래스 존재');
+
+  // [83] 팀원 초대 시 '아워골 동반자 초대하기' 인앱 초대·참가 기능
+  assert.ok(html.includes('function openTeamInviteModal('), '[83] 팀원 초대 모달 함수 존재');
+  assert.ok(html.includes('btn-send-companion-invite'), '[83] 인앱 동반자 초대장 발송 버튼 클래스 존재');
+
+  // [84] 피드 게시하기 공유할 목표 '미설정(공개 안함)' 옵션 추가
+  assert.ok(html.includes('미설정 (목표 공개 안 함)'), '[84] 피드 공유 목표 미설정 옵션 존재');
+
+  // [85] 팀 수준별 목표관리 조별 실 유저 편성 및 완수 통제·실시간 연동
+  assert.ok(html.includes('실 유저 편성:'), '[85] 조별 실 유저 편성 라벨 존재');
+  assert.ok(html.includes('btn-toggle-group-verify'), '[85] 완수 통제 버튼 존재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
