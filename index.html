@@ -299,7 +299,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <button type="button" class="btn-ghost" id="calLockScreenBtn" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;font-size:.8125rem;font-weight:600;border-radius:9999px;background:var(--bg-card);border:1px solid var(--border-color);color:var(--ink);cursor:pointer;transition:all .15s ease;">
           <span style="font-size:1rem;">📱</span>
           <span>폰 잠금화면에서 보기</span>
-          <span style="font-size:.7rem;padding:2px 6px;border-radius:999px;background:rgba(99,102,241,0.12);color:var(--primary);font-weight:700;">선택형 3종</span>
+          <span style="font-size:.7rem;padding:2px 6px;border-radius:999px;background:rgba(99,102,241,0.12);color:var(--primary);font-weight:700;">⚡ 실시간 라이브 연동</span>
         </button>
       </div>
       <div id="calGrid"></div>
@@ -2558,6 +2558,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
     } catch(e){ console.warn('Supabase sync failed:', e); }
     saveLocalSettings(uidVal, state.profile.settings);
+    try { if(typeof syncLockScreenLiveCard === 'function') syncLockScreenLiveCard(false); } catch(lsErr){}
   }
   if(typeof window !== 'undefined'){ window.loadProfile = loadProfile; window.saveProfile = saveProfile; }
 
@@ -3818,6 +3819,29 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     try {
       if(typeof updateTopNotifBadge === 'function') updateTopNotifBadge();
     } catch(nbErr){}
+    try {
+      if(typeof syncLockScreenLiveCard === 'function') syncLockScreenLiveCard(false);
+    } catch(lsErr){}
+    try {
+      var urlParams = new URLSearchParams(window.location.search);
+      var qAction = urlParams.get('action');
+      var qTab = urlParams.get('tab');
+      if(qAction === 'checkin'){
+        setTimeout(function(){
+          var capInput = document.getElementById('captureInput');
+          if(capInput){
+            capInput.focus();
+            capInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else if(typeof openRecordModal === 'function'){
+            openRecordModal();
+          }
+        }, 400);
+      } else if(qTab === 'calendar'){
+        setTimeout(function(){
+          if(typeof setTab === 'function') setTab('calendar');
+        }, 200);
+      }
+    } catch(actErr){}
   }
 
   /* PWA 실시간 배지 동기화 및 원격 세션 검사 — 앱 포커스 복귀 및 탭 가시성 전환 시 (TASK-BG-6, Req 1) */
@@ -3830,6 +3854,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       try{ window.OurgoalTeamInviteComm.initIncomingDmListener(state.profile.id); }catch(e){}
     }
     try{ if(typeof updateTopNotifBadge === 'function') updateTopNotifBadge(); }catch(e){}
+    try{ if(typeof syncLockScreenLiveCard === 'function') syncLockScreenLiveCard(false); }catch(e){}
   });
   document.addEventListener('visibilitychange', function(){
     if(!document.hidden && state.profile && state.profile.records){
@@ -3841,6 +3866,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
     if(!document.hidden){
       try{ if(typeof updateTopNotifBadge === 'function') updateTopNotifBadge(); }catch(e){}
+      try{ if(typeof syncLockScreenLiveCard === 'function') syncLockScreenLiveCard(false); }catch(e){}
     }
   });
   window.addEventListener('storage', function(e){
@@ -7881,7 +7907,211 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* =========================================================================
-     [#TASK-ES-181] 폰 잠금화면에서 바로 보기 통합 허브 모달
+     [#TASK-ES-182] 폰 잠금화면 실시간 정보 연동 라이브 서비스 (Live Sync)
+  ========================================================================= */
+  function buildLockScreenCardPayload(options){
+    var opts = Object.assign({
+      showGoals: true,
+      showSchedules: true,
+      showDday: true,
+      showStreak: true
+    }, options || {});
+
+    var now = new Date();
+    var todayKey = (typeof dateKey === 'function') ? dateKey(now) : now.toISOString().slice(0, 10);
+    var streak = (typeof computeStreakDays === 'function') ? computeStreakDays() : 0;
+
+    // 1. 오늘 일정 및 태스크 집계
+    var todayItems = [];
+    try {
+      if(typeof calendarItemsByDate === 'function'){
+        var calMap = calendarItemsByDate();
+        todayItems = calMap[todayKey] || [];
+      }
+    } catch(e){}
+
+    var totalScheds = todayItems.length;
+    var doneScheds = todayItems.filter(function(it){ return !!it.done; }).length;
+
+    // 2. 오늘의 목표 및 달성률
+    var activeGoals = (state.profile && state.profile.goals) ? state.profile.goals.filter(function(g){ return !g.archivedAt; }) : [];
+    var topGoal = activeGoals[0] || null;
+
+    // 다음 예정 미완료 일정
+    var nextItem = todayItems.find(function(it){ return !it.done; }) || null;
+    var nextText = '';
+    if(nextItem){
+      var timePart = '';
+      if(nextItem.date && nextItem.date.length > 10){
+        timePart = nextItem.date.slice(11, 16) + ' ';
+      }
+      nextText = timePart + nextItem.title;
+    }
+
+    // 핵심 D-Day
+    var ddayText = '';
+    if(opts.showDday && activeGoals.length){
+      var withDue = activeGoals.filter(function(g){ return g.dueDate; }).sort(function(a,b){ return new Date(a.dueDate) - new Date(b.dueDate); });
+      if(withDue.length && typeof dDay === 'function'){
+        var dd = dDay(withDue[0].dueDate);
+        ddayText = withDue[0].title + ' ' + (dd === 0 ? 'D-Day' : (dd > 0 ? 'D-' + dd : 'D+' + Math.abs(dd)));
+      }
+    }
+
+    // 오늘 체크인 수
+    var recs = (state.profile && state.profile.records) ? state.profile.records : [];
+    var todayRecs = recs.filter(function(r){
+      var d = r && (r.startAt || r.start_at || r.createdAt || r.created_at);
+      return d && (typeof dateKey === 'function' ? dateKey(d) : String(d).slice(0,10)) === todayKey;
+    });
+
+    // 달성률 계산 (일정이 있으면 일정 완료율, 없으면 체크인 여부 또는 목표 진행률)
+    var ratePct = 0;
+    if(totalScheds > 0){
+      ratePct = Math.round((doneScheds / totalScheds) * 100);
+    } else if(todayRecs.length > 0){
+      ratePct = 100;
+    } else if(topGoal && typeof goalAchievement === 'function'){
+      ratePct = goalAchievement(topGoal);
+    }
+
+    // 알림 타이틀 조립: [아워골 라이브] 오늘 목표 N/M 완료 (P%) 🔥 S일 연속
+    var titleParts = ['[아워골 라이브]'];
+    if(opts.showGoals){
+      if(totalScheds > 0){
+        titleParts.push('오늘 일정 ' + doneScheds + '/' + totalScheds + ' (' + ratePct + '%)');
+      } else if(todayRecs.length > 0){
+        titleParts.push('오늘 체크인 완료 (' + ratePct + '%)');
+      } else {
+        titleParts.push('오늘 목표 달성률 ' + ratePct + '%');
+      }
+    }
+    if(opts.showStreak && streak > 0){
+      titleParts.push('🔥 ' + streak + '일 연속');
+    }
+    var notifTitle = titleParts.join(' ');
+
+    // 알림 바디 조립: 🕒 다음: [시각] [일정명] · 🎯 [진행중 목표명] · ⏳ [D-Day]
+    var bodyParts = [];
+    if(opts.showSchedules && nextText){
+      bodyParts.push('🕒 다음: ' + nextText);
+    }
+    if(topGoal && opts.showGoals){
+      bodyParts.push('🎯 ' + topGoal.title);
+    }
+    if(opts.showDday && ddayText){
+      bodyParts.push('⏳ ' + ddayText);
+    }
+    if(!bodyParts.length){
+      bodyParts.push('오늘도 나만의 소중한 목표를 향해 한 걸음 나아가세요! ✨');
+    }
+    var notifBody = bodyParts.join(' · ');
+
+    return {
+      title: notifTitle,
+      body: notifBody,
+      streak: streak,
+      ratePct: ratePct,
+      doneScheds: doneScheds,
+      totalScheds: totalScheds,
+      todayCheckins: todayRecs.length,
+      nextSchedule: nextText,
+      ddayText: ddayText,
+      topGoalTitle: topGoal ? topGoal.title : '',
+      tag: 'ourgoal-lockscreen-live'
+    };
+  }
+
+  async function syncLockScreenLiveCard(force){
+    if(!state.profile) return false;
+    var settings = state.profile.settings || {};
+    var lockLive = settings.lockScreenLive || null;
+    if(!lockLive){
+      try {
+        var saved = localStorage.getItem('ourgoal_lockscreen_live_v1');
+        if(saved) lockLive = JSON.parse(saved);
+      } catch(e){}
+    }
+    if((!lockLive || !lockLive.enabled) && !force){
+      return false;
+    }
+
+    var payload = buildLockScreenCardPayload(lockLive || {});
+
+    if(!state.profile.settings) state.profile.settings = {};
+    if(!state.profile.settings.lockScreenLive){
+      state.profile.settings.lockScreenLive = lockLive || { enabled: !!force, showGoals: true, showSchedules: true, showDday: true, showStreak: true };
+    }
+    state.profile.settings.lockScreenLive.lastSyncAt = (typeof nowISO === 'function') ? nowISO() : new Date().toISOString();
+    try {
+      localStorage.setItem('ourgoal_lockscreen_live_v1', JSON.stringify(state.profile.settings.lockScreenLive));
+    } catch(e){}
+
+    if(typeof Notification === 'undefined'){
+      return false;
+    }
+
+    if(Notification.permission !== 'granted'){
+      return false;
+    }
+
+    var notifOptions = {
+      body: payload.body,
+      icon: '/icons/icon-192.png',
+      badge: '/icons/icon-192.png',
+      tag: payload.tag,
+      silent: true,
+      renotify: false,
+      requireInteraction: true,
+      data: {
+        url: '/?action=checkin',
+        source: 'lockscreen-live',
+        syncedAt: state.profile.settings.lockScreenLive.lastSyncAt
+      },
+      actions: [
+        { action: 'action-checkin', title: '⚡ 빠른 체크인' },
+        { action: 'action-calendar', title: '📅 일정 확인' }
+      ]
+    };
+
+    try {
+      if('serviceWorker' in navigator && navigator.serviceWorker.ready){
+        var reg = await Promise.race([
+          navigator.serviceWorker.ready,
+          new Promise(function(resolve){ setTimeout(function(){ resolve(null); }, 1500); })
+        ]);
+        if(reg && reg.showNotification){
+          await reg.showNotification(payload.title, notifOptions);
+          return true;
+        }
+      }
+    } catch(swErr){
+      console.warn('SW showNotification fallback:', swErr);
+    }
+
+    try {
+      new Notification(payload.title, notifOptions);
+      return true;
+    } catch(notifErr){
+      console.warn('Notification API fallback error:', notifErr);
+      return false;
+    }
+  }
+
+  async function closeLockScreenLiveCard(){
+    try {
+      if('serviceWorker' in navigator && navigator.serviceWorker.ready){
+        var reg = await navigator.serviceWorker.ready;
+        if(reg && reg.getNotifications){
+          var notifs = await reg.getNotifications({ tag: 'ourgoal-lockscreen-live' });
+          (notifs || []).forEach(function(n){ n.close(); });
+        }
+      }
+    } catch(e){}
+  }
+
+  /* =========================================================================
+     [#TASK-ES-181 & #TASK-ES-182] 폰 잠금화면에서 바로 보기 통합 허브 모달
   ========================================================================= */
   function openLockScreenHubModal(){
     var isDark = true;
@@ -7889,6 +8119,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     var curYear = state.calDate ? parseInt(state.calDate.slice(0, 4), 10) : new Date().getFullYear();
     var curMonth = state.calDate ? (parseInt(state.calDate.slice(5, 7), 10) - 1) : new Date().getMonth();
+
+    // 1. 실시간 잠금화면 설정 로드
+    var liveSetting = { enabled: false, showGoals: true, showSchedules: true, showDday: true, showStreak: true };
+    try {
+      if(state.profile && state.profile.settings && state.profile.settings.lockScreenLive){
+        liveSetting = Object.assign(liveSetting, state.profile.settings.lockScreenLive);
+      } else {
+        var savedLive = localStorage.getItem('ourgoal_lockscreen_live_v1');
+        if(savedLive) liveSetting = Object.assign(liveSetting, JSON.parse(savedLive));
+      }
+    } catch(e){}
 
     var digestSetting = { enabled: false, time: '07:30' };
     try {
@@ -7917,17 +8158,112 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<button type="button" class="btn-ghost" onclick="closeModal()" style="border:none;background:transparent;font-size:1.25rem;cursor:pointer;color:var(--ink-soft);padding:4px 8px;" aria-label="닫기">✕</button>' +
         '</div>' +
         '<p style="margin:0 0 14px;font-size:.84rem;color:var(--ink-soft);line-height:1.45;">' +
-          '앱에 들어오지 않아도 폰을 켤 때마다 이번 달 일정을 바로 볼 수 있는 <strong>3가지 방법</strong>입니다. 원하시는 방식을 골라 바로 설정해 보세요!' +
+          '앱에 들어오지 않아도 폰을 켤 때마다 내 목표와 일정을 실시간으로 확인하는 <strong>스마트 잠금화면 허브</strong>입니다.' +
         '</p>' +
 
         '<div class="ls-seg-bar" style="display:flex;background:var(--surface-2);padding:4px;border-radius:12px;gap:4px;margin-bottom:16px;">' +
-          '<button type="button" class="ls-tab-btn active" data-tab="wallpaper" style="flex:1;border:none;background:var(--bg-card);color:var(--ink);padding:8px 4px;font-size:.78rem;font-weight:700;border-radius:8px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.08);transition:all .15s ease;">🖼️ 달력 배경화면</button>' +
+          '<button type="button" class="ls-tab-btn active" data-tab="live" style="flex:1;border:none;background:var(--bg-card);color:var(--ink);padding:8px 4px;font-size:.78rem;font-weight:700;border-radius:8px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.08);transition:all .15s ease;">⚡ 실시간 라이브</button>' +
+          '<button type="button" class="ls-tab-btn" data-tab="wallpaper" style="flex:1;border:none;background:transparent;color:var(--ink-soft);padding:8px 4px;font-size:.78rem;font-weight:600;border-radius:8px;cursor:pointer;transition:all .15s ease;">🖼️ 달력 배경화면</button>' +
           '<button type="button" class="ls-tab-btn" data-tab="widget" style="flex:1;border:none;background:transparent;color:var(--ink-soft);padding:8px 4px;font-size:.78rem;font-weight:600;border-radius:8px;cursor:pointer;transition:all .15s ease;">📅 위젯 연동</button>' +
           '<button type="button" class="ls-tab-btn" data-tab="digest" style="flex:1;border:none;background:transparent;color:var(--ink-soft);padding:8px 4px;font-size:.78rem;font-weight:600;border-radius:8px;cursor:pointer;transition:all .15s ease;">🔔 모닝 알림</button>' +
         '</div>' +
 
-        // 패널 1: 달력 배경화면
-        '<div class="ls-content-pane" id="lsPaneWallpaper" style="display:block;">' +
+        // 패널 1: 실시간 잠금화면 라이브
+        '<div class="ls-content-pane" id="lsPaneLive" style="display:block;">' +
+          '<div style="background:var(--surface-2);border-radius:14px;padding:14px;border:1px solid var(--border-color);margin-bottom:14px;">' +
+            '<div style="font-size:.84rem;font-weight:800;color:var(--ink);margin-bottom:4px;display:flex;align-items:center;gap:6px;">' +
+              '<span>⚡</span> 스마트폰 잠금화면 실시간 연동 (Live Card)' +
+            '</div>' +
+            '<div style="font-size:.78rem;color:var(--ink-soft);line-height:1.45;">' +
+              '스마트폰을 켤 때마다(잠금화면·AOD·상단 알림창) 오늘의 목표 달성률, 다음 일정, 스트릭이 <strong>실시간으로 자동 갱신</strong>됩니다.' +
+            '</div>' +
+          '</div>' +
+
+          // 실물 스마트폰 시뮬레이터 목업
+          '<div style="background:linear-gradient(180deg, #090d16 0%, #172033 100%);border-radius:28px;padding:16px 12px 14px;border:3px solid #334155;margin:0 auto 16px;box-shadow:0 12px 30px rgba(0,0,0,0.3);position:relative;max-width:280px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">' +
+            '<div style="width:68px;height:12px;background:#000000;border-radius:999px;margin:0 auto 10px;box-shadow:inset 0 1px 2px rgba(255,255,255,0.1);"></div>' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;padding:0 6px;margin-bottom:12px;font-size:.7rem;color:#94a3b8;font-weight:600;">' +
+              '<span id="lsSimStatusTime">12:30</span>' +
+              '<div style="display:flex;align-items:center;gap:4px;"><span>5G</span><span>98% 🔋</span></div>' +
+            '</div>' +
+            '<div style="text-align:center;margin-bottom:16px;">' +
+              '<div id="lsSimClockTime" style="font-size:2.2rem;font-weight:800;color:#f8fafc;letter-spacing:-1px;line-height:1;">12:30</div>' +
+              '<div id="lsSimClockDate" style="font-size:.75rem;font-weight:600;color:#cbd5e1;margin-top:4px;">9월 18일 금요일</div>' +
+            '</div>' +
+            '<div id="lsLiveCardMockup" style="background:rgba(30, 41, 59, 0.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.14);border-radius:16px;padding:12px 10px;color:#f8fafc;box-shadow:0 8px 24px rgba(0,0,0,0.35);">' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;font-size:.68rem;color:#94a3b8;">' +
+                '<div style="display:flex;align-items:center;gap:4px;font-weight:700;color:#f8fafc;">' +
+                  '<span style="font-size:.8rem;">🎯</span>' +
+                  '<span>OURGOAL · 라이브</span>' +
+                '</div>' +
+                '<span>지금</span>' +
+              '</div>' +
+              '<div id="lsSimCardTitle" style="font-size:.8rem;font-weight:800;color:#38bdf8;margin-bottom:4px;line-height:1.35;">' +
+                '[아워골 라이브] 오늘 목표 계산 중…' +
+              '</div>' +
+              '<div id="lsSimCardBody" style="font-size:.72rem;color:#e2e8f0;line-height:1.4;margin-bottom:10px;">' +
+                '일정 및 실천 상태 집계 중…' +
+              '</div>' +
+              '<div style="display:flex;gap:6px;">' +
+                '<div style="flex:1;text-align:center;background:rgba(255,255,255,0.12);border-radius:8px;padding:5px;font-size:.68rem;font-weight:700;color:#ffffff;">' +
+                  '⚡ 빠른 체크인' +
+                '</div>' +
+                '<div style="flex:1;text-align:center;background:rgba(255,255,255,0.12);border-radius:8px;padding:5px;font-size:.68rem;font-weight:700;color:#ffffff;">' +
+                  '📅 일정 확인' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div style="width:90px;height:4px;background:rgba(255,255,255,0.35);border-radius:2px;margin:18px auto 0;"></div>' +
+          '</div>' +
+
+          // 상태 배지
+          '<div id="lsLiveStatusBadge" style="text-align:center;margin-bottom:12px;font-size:.78rem;font-weight:700;padding:6px 12px;border-radius:999px;width:100%;box-sizing:border-box;"></div>' +
+
+          // 메인 토글 버튼
+          '<button type="button" class="btn ' + (liveSetting.enabled ? 'btn-ghost' : 'btn-primary') + ' btn-block" id="btnToggleLiveLockScreen" style="font-size:.9rem;font-weight:700;padding:12px;border-radius:12px;margin-bottom:8px;cursor:pointer;">' +
+            (liveSetting.enabled ? '✅ 실시간 잠금화면 연동 켜짐 (클릭하여 끄기)' : '⚡ 실시간 잠금화면 폰에 띄우기 (연동 켜기)') +
+          '</button>' +
+
+          // 즉시 갱신 버튼
+          '<button type="button" class="btn btn-ghost btn-sm btn-block" id="btnRefreshLiveLockScreen" style="font-size:.8125rem;font-weight:600;padding:9px;border-radius:10px;border:1px solid var(--border-color);margin-bottom:16px;cursor:pointer;">' +
+            '🔄 지금 바로 잠금화면 카드 최신화하기' +
+          '</button>' +
+
+          // 상세 표시 항목 체크박스
+          '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:14px;margin-bottom:14px;">' +
+            '<div style="font-size:.84rem;font-weight:800;color:var(--ink);margin-bottom:10px;display:flex;align-items:center;gap:6px;">' +
+              '<span>⚙️</span> 잠금화면 실시간 카드 표시 항목' +
+            '</div>' +
+            '<div style="display:flex;flex-direction:column;gap:8px;font-size:.8125rem;color:var(--ink);">' +
+              '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;">' +
+                '<input type="checkbox" id="lsOptGoals" style="accent-color:var(--primary);width:16px;height:16px;"' + (liveSetting.showGoals ? ' checked' : '') + '>' +
+                '<span>🎯 오늘 목표 달성률 표시</span>' +
+              '</label>' +
+              '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;">' +
+                '<input type="checkbox" id="lsOptSchedules" style="accent-color:var(--primary);width:16px;height:16px;"' + (liveSetting.showSchedules ? ' checked' : '') + '>' +
+                '<span>🕒 다음 예정 일정(시각·일정명) 표시</span>' +
+              '</label>' +
+              '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;">' +
+                '<input type="checkbox" id="lsOptStreak" style="accent-color:var(--primary);width:16px;height:16px;"' + (liveSetting.showStreak ? ' checked' : '') + '>' +
+                '<span>🔥 연속 실천 스트릭 표시</span>' +
+              '</label>' +
+              '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;">' +
+                '<input type="checkbox" id="lsOptDday" style="accent-color:var(--primary);width:16px;height:16px;"' + (liveSetting.showDday ? ' checked' : '') + '>' +
+                '<span>⏳ 핵심 목표 D-Day 카운트다운 표시</span>' +
+              '</label>' +
+            '</div>' +
+          '</div>' +
+
+          // 동작 및 기종별 팁 안내
+          '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:14px;font-size:.8125rem;color:var(--ink-soft);line-height:1.55;">' +
+            '<div style="font-weight:800;color:var(--ink);margin-bottom:6px;">💡 기종별 실시간 잠금화면 동작 안내</div>' +
+            '• <strong>갤럭시(Android) / PC</strong>: 연동을 켜면 화면을 켤 때마다 잠금화면 및 상단 알림바에 최신 카드가 머무르며, 체크인이나 목표 변경 시 무음으로 자동 최신화됩니다.<br>' +
+            '• <strong>아이폰(iOS)</strong>: 사파리 브라우저 하단 공유(↑) ➔ <strong>[홈 화면에 추가]</strong>로 설치하여 실행하시면 iOS 16.4+ 잠금화면 실시간 알림 카드가 100% 완벽 지원됩니다. (더 간편한 위젯을 원하시면 3번째 탭 &quot;위젯 연동&quot;을 추천해요)' +
+          '</div>' +
+        '</div>' +
+
+        // 패널 2: 달력 배경화면
+        '<div class="ls-content-pane" id="lsPaneWallpaper" style="display:none;">' +
           '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
             '<span style="font-size:.84rem;font-weight:700;color:var(--ink);">테마 선택</span>' +
             '<div style="display:flex;gap:6px;">' +
@@ -7968,7 +8304,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '</div>' +
         '</div>' +
 
-        // 패널 2: 캘린더 위젯 연동
+        // 패널 3: 캘린더 위젯 연동
         '<div class="ls-content-pane" id="lsPaneWidget" style="display:none;">' +
           '<div style="background:var(--surface-2);border-radius:14px;padding:14px;border:1px solid var(--border-color);margin-bottom:14px;">' +
             '<div style="font-size:.84rem;font-weight:800;color:var(--ink);margin-bottom:4px;">📅 실시간 캘린더 구독 연동</div>' +
@@ -8010,7 +8346,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '</div>' +
         '</div>' +
 
-        // 패널 3: 모닝 알림
+        // 패널 4: 모닝 알림
         '<div class="ls-content-pane" id="lsPaneDigest" style="display:none;">' +
           '<div style="background:var(--surface-2);border-radius:14px;padding:14px;border:1px solid var(--border-color);margin-bottom:14px;">' +
             '<div style="font-size:.84rem;font-weight:800;color:var(--ink);margin-bottom:4px;">🔔 아침 잠금화면 모닝 브리핑</div>' +
@@ -8044,7 +8380,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '</div>';
 
     openModal(html, function(sheet){
-      // 1. 3단 탭 전환 바인딩
+      // 1. 4단 탭 전환 바인딩
       sheet.querySelectorAll('.ls-tab-btn').forEach(function(btn){
         btn.onclick = function(){
           var targetTab = btn.dataset.tab;
@@ -8062,13 +8398,178 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               b.style.boxShadow = 'none';
             }
           });
+          sheet.querySelector('#lsPaneLive').style.display = (targetTab === 'live') ? 'block' : 'none';
           sheet.querySelector('#lsPaneWallpaper').style.display = (targetTab === 'wallpaper') ? 'block' : 'none';
           sheet.querySelector('#lsPaneWidget').style.display = (targetTab === 'widget') ? 'block' : 'none';
           sheet.querySelector('#lsPaneDigest').style.display = (targetTab === 'digest') ? 'block' : 'none';
+          if(targetTab === 'wallpaper' && !currentCanvas){
+            updateWallpaperPreview();
+          }
         };
       });
 
-      // 2. 배경화면 렌더링 함수
+      // 2. 실시간 라이브 시뮬레이터 & 상태 갱신 로직
+      function updateLiveSim(){
+        var opts = {
+          showGoals: sheet.querySelector('#lsOptGoals') ? sheet.querySelector('#lsOptGoals').checked : true,
+          showSchedules: sheet.querySelector('#lsOptSchedules') ? sheet.querySelector('#lsOptSchedules').checked : true,
+          showStreak: sheet.querySelector('#lsOptStreak') ? sheet.querySelector('#lsOptStreak').checked : true,
+          showDday: sheet.querySelector('#lsOptDday') ? sheet.querySelector('#lsOptDday').checked : true
+        };
+        var payload = buildLockScreenCardPayload(opts);
+        var titleEl = sheet.querySelector('#lsSimCardTitle');
+        var bodyEl = sheet.querySelector('#lsSimCardBody');
+        if(titleEl) titleEl.textContent = payload.title;
+        if(bodyEl) bodyEl.textContent = payload.body;
+
+        var now = new Date();
+        var hours = String(now.getHours()).padStart(2, '0');
+        var mins = String(now.getMinutes()).padStart(2, '0');
+        var timeStr = hours + ':' + mins;
+        var clockEl = sheet.querySelector('#lsSimClockTime');
+        var statusTimeEl = sheet.querySelector('#lsSimStatusTime');
+        if(clockEl) clockEl.textContent = timeStr;
+        if(statusTimeEl) statusTimeEl.textContent = timeStr;
+
+        var monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+        var dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+        var dateStr = monthNames[now.getMonth()] + ' ' + now.getDate() + '일 ' + dayNames[now.getDay()];
+        var dateEl = sheet.querySelector('#lsSimClockDate');
+        if(dateEl) dateEl.textContent = dateStr;
+      }
+
+      function updateLiveStatusUI(){
+        var badge = sheet.querySelector('#lsLiveStatusBadge');
+        var btn = sheet.querySelector('#btnToggleLiveLockScreen');
+        var isPermGranted = (typeof Notification !== 'undefined') && (Notification.permission === 'granted');
+        var isEnabled = !!liveSetting.enabled;
+
+        if(isEnabled && isPermGranted){
+          if(badge){
+            badge.style.background = 'rgba(34, 197, 94, 0.12)';
+            badge.style.color = '#16a34a';
+            badge.style.border = '1px solid rgba(34, 197, 94, 0.3)';
+            badge.textContent = '🟢 실시간 잠금화면 카드가 폰에 연동 중입니다';
+          }
+          if(btn){
+            btn.textContent = '✅ 실시간 잠금화면 연동 켜짐 (클릭하여 끄기)';
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-ghost');
+          }
+        } else if(!isPermGranted && typeof Notification !== 'undefined' && Notification.permission === 'denied'){
+          if(badge){
+            badge.style.background = 'rgba(239, 68, 68, 0.12)';
+            badge.style.color = '#dc2626';
+            badge.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+            badge.textContent = '⚠️ 브라우저 알림 권한이 차단되어 있습니다 (설정에서 허용 필요)';
+          }
+          if(btn){
+            btn.textContent = '⚡ 실시간 잠금화면 폰에 띄우기 (연동 켜기)';
+            btn.classList.remove('btn-ghost');
+            btn.classList.add('btn-primary');
+          }
+        } else {
+          if(badge){
+            badge.style.background = 'var(--surface-2)';
+            badge.style.color = 'var(--ink-soft)';
+            badge.style.border = '1px solid var(--border-color)';
+            badge.textContent = '⚪ 실시간 잠금화면 연동이 꺼져 있습니다';
+          }
+          if(btn){
+            btn.textContent = '⚡ 실시간 잠금화면 폰에 띄우기 (연동 켜기)';
+            btn.classList.remove('btn-ghost');
+            btn.classList.add('btn-primary');
+          }
+        }
+      }
+
+      updateLiveSim();
+      updateLiveStatusUI();
+
+      // 라이브 토글 버튼 바인딩
+      var btnToggleLive = sheet.querySelector('#btnToggleLiveLockScreen');
+      if(btnToggleLive){
+        btnToggleLive.onclick = async function(){
+          if(!liveSetting.enabled){
+            if(typeof Notification === 'undefined'){
+              toast('이 브라우저는 웹 실시간 알림 카드를 지원하지 않습니다.');
+              return;
+            }
+            var perm = Notification.permission;
+            if(perm !== 'granted'){
+              perm = await Notification.requestPermission();
+            }
+            if(perm === 'granted'){
+              liveSetting.enabled = true;
+              if(!state.profile.settings) state.profile.settings = {};
+              state.profile.settings.lockScreenLive = liveSetting;
+              saveLocalSettings(state.profile.id, state.profile.settings);
+              try { localStorage.setItem('ourgoal_lockscreen_live_v1', JSON.stringify(liveSetting)); } catch(e){}
+              await saveProfile();
+              updateLiveStatusUI();
+              var ok = await syncLockScreenLiveCard(true);
+              if(ok){
+                toast('⚡ 스마트폰 잠금화면에 실시간 라이브 카드가 띄워졌어요!');
+              } else {
+                toast('실시간 잠금화면 연동이 활성화되었습니다.');
+              }
+            } else {
+              updateLiveStatusUI();
+              toast('알림 권한이 허용되지 않았습니다. 브라우저 설정에서 허용해 주세요.');
+            }
+          } else {
+            liveSetting.enabled = false;
+            if(!state.profile.settings) state.profile.settings = {};
+            state.profile.settings.lockScreenLive = liveSetting;
+            saveLocalSettings(state.profile.id, state.profile.settings);
+            try { localStorage.setItem('ourgoal_lockscreen_live_v1', JSON.stringify(liveSetting)); } catch(e){}
+            await saveProfile();
+            await closeLockScreenLiveCard();
+            updateLiveStatusUI();
+            toast('실시간 잠금화면 연동이 해제되었습니다.');
+          }
+        };
+      }
+
+      // 지금 바로 갱신 버튼
+      var btnRefreshLive = sheet.querySelector('#btnRefreshLiveLockScreen');
+      if(btnRefreshLive){
+        btnRefreshLive.onclick = async function(){
+          updateLiveSim();
+          if(liveSetting.enabled){
+            var ok = await syncLockScreenLiveCard(true);
+            if(ok){
+              toast('🔄 잠금화면 실시간 카드가 최신 데이터로 갱신되었습니다!');
+            } else {
+              toast('잠금화면 카드를 갱신했습니다.');
+            }
+          } else {
+            toast('잠금화면 시뮬레이터가 최신 상태로 갱신되었습니다. (연동을 켜면 폰에도 반영됩니다)');
+          }
+        };
+      }
+
+      // 체크박스 옵션 변경 바인딩
+      ['lsOptGoals', 'lsOptSchedules', 'lsOptStreak', 'lsOptDday'].forEach(function(optId){
+        var chk = sheet.querySelector('#' + optId);
+        if(chk){
+          chk.onchange = async function(){
+            liveSetting.showGoals = sheet.querySelector('#lsOptGoals').checked;
+            liveSetting.showSchedules = sheet.querySelector('#lsOptSchedules').checked;
+            liveSetting.showStreak = sheet.querySelector('#lsOptStreak').checked;
+            liveSetting.showDday = sheet.querySelector('#lsOptDday').checked;
+            if(!state.profile.settings) state.profile.settings = {};
+            state.profile.settings.lockScreenLive = liveSetting;
+            try { localStorage.setItem('ourgoal_lockscreen_live_v1', JSON.stringify(liveSetting)); } catch(e){}
+            updateLiveSim();
+            if(liveSetting.enabled){
+              await syncLockScreenLiveCard(true);
+            }
+          };
+        }
+      });
+
+      // 3. 배경화면 렌더링 함수
       async function updateWallpaperPreview(){
         var wrap = sheet.querySelector('#lsWallpaperPreviewWrap');
         if(!wrap) return;
@@ -8077,8 +8578,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var dataUrl = cvs.toDataURL('image/png');
         wrap.innerHTML = '<img src="' + dataUrl + '" alt="잠금화면 달력 미리보기" style="width:100%;height:auto;display:block;">';
       }
-
-      updateWallpaperPreview();
 
       // 테마 전환 버튼
       var btnDark = sheet.querySelector('#btnThemeDark');
@@ -8137,7 +8636,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         };
       });
 
-      // 3. 위젯 연동 탭: WebCal 복사
+      // 4. 위젯 연동 탭: WebCal 복사
       var btnCopy = sheet.querySelector('#btnCopyLsWebCal');
       var webCalInput = sheet.querySelector('#lsWebCalInput');
       if(btnCopy && webCalInput){
@@ -8189,7 +8688,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         };
       });
 
-      // 4. 모닝 알림 탭 토글
+      // 5. 모닝 알림 탭 토글
       var btnDigest = sheet.querySelector('#btnToggleDigest');
       var selTime = sheet.querySelector('#lsDigestTimeSelect');
       if(btnDigest && selTime){
@@ -8233,7 +8732,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
   }
 
-  if(typeof window !== 'undefined'){ window.renderCalendarScreen = renderCalendarScreen; window.openCalendarManualEditModal = openCalendarManualEditModal; window.openLockScreenHubModal = openLockScreenHubModal; window.generateLockScreenCalendarImage = generateLockScreenCalendarImage; }
+  if(typeof window !== 'undefined'){
+    window.renderCalendarScreen = renderCalendarScreen;
+    window.openCalendarManualEditModal = openCalendarManualEditModal;
+    window.openLockScreenHubModal = openLockScreenHubModal;
+    window.generateLockScreenCalendarImage = generateLockScreenCalendarImage;
+    window.syncLockScreenLiveCard = syncLockScreenLiveCard;
+    window.buildLockScreenCardPayload = buildLockScreenCardPayload;
+    window.closeLockScreenLiveCard = closeLockScreenLiveCard;
+  }
   function streakBadgeHtml(streak){
     var tier, flames;
     if(streak>=30){ tier='streak-t4'; flames='🔥🔥🔥'; }
@@ -28459,7 +28966,37 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* ============ PWA: Service Worker 등록 및 자동 업데이트 감지 (#TASK-ES-118) ============ */
-  if('serviceWorker' in navigator){ window.addEventListener('load', function(){ navigator.serviceWorker.register('/sw.js').then(function(reg){ reg.addEventListener('updatefound', function(){ var newWorker = reg.installing; if(newWorker){ newWorker.addEventListener('statechange', function(){ if(newWorker.state === 'installed' && navigator.serviceWorker.controller && typeof toast === 'function'){ toast('새 버전으로 업데이트되었어요! 새로고침하면 즉시 반영돼요.'); } }); } }); }).catch(function(){}); }); }
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('/sw.js').then(function(reg){
+        reg.addEventListener('updatefound', function(){
+          var newWorker = reg.installing;
+          if(newWorker){
+            newWorker.addEventListener('statechange', function(){
+              if(newWorker.state === 'installed' && navigator.serviceWorker.controller && typeof toast === 'function'){
+                toast('새 버전으로 업데이트되었어요! 새로고침하면 즉시 반영돼요.');
+              }
+            });
+          }
+        });
+      }).catch(function(){});
+    });
+    navigator.serviceWorker.addEventListener('message', function(event){
+      if(event.data && event.data.type === 'LOCKSCREEN_ACTION'){
+        if(event.data.action === 'action-checkin'){
+          var capInput = document.getElementById('captureInput');
+          if(capInput){
+            capInput.focus();
+            capInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else if(typeof openRecordModal === 'function'){
+            openRecordModal();
+          }
+        } else if(event.data.action === 'action-calendar'){
+          if(typeof setTab === 'function') setTab('calendar');
+        }
+      }
+    });
+  }
   window.addEventListener('appinstalled', function(){ try{ track('app_installed_pwa', { source: 'pwa', goal_type: null, day_index: dayIndexSinceSignup() }); }catch(e){} });
 })();
 </script>
