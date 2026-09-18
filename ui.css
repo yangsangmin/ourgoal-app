@@ -6226,9 +6226,20 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
 }
 .mountain-actions {
   display: flex;
-  gap: 10px;
-  margin-top: 22px;
-  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 18px;
+  width: 100%;
+}
+.mountain-actions .btn {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  white-space: normal;
+  word-break: keep-all;
 }
 .btn-transplant {
   background: linear-gradient(135deg, #10B981, #059669) !important;
@@ -7001,13 +7012,57 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   display: block;
 }
 
-[data-theme="focus-sanctuary"] #personalGoalsView,
+/* 캘린더/기록 탭의 구형 독립 슬롯만 성소 뷰로 교체 */
 [data-theme="focus-sanctuary"] #calGrid,
 [data-theme="focus-sanctuary"] #calDayDetail,
 [data-theme="focus-sanctuary"] #calAgentCard,
 [data-theme="focus-sanctuary"] .cal-nav-row,
 [data-theme="focus-sanctuary"] .cal-sub-guide,
-[data-theme="focus-sanctuary"] #recSegmentBar,
-[data-theme="focus-sanctuary"] #commBody {
+[data-theme="focus-sanctuary"] #recSegmentBar {
   display: none !important;
 }
+
+/* 목표 탭: 성소 테마에서는 상단에 이미 알약 칩이 있으므로 중복 칩 행만 숨기고 본문 카드는 온전히 보존 */
+[data-theme="focus-sanctuary"] #goalChipRow {
+  display: none !important;
+}
+
+/* 하단 내비게이션 바: 중앙 돌출 (+) 버튼 배제 및 5대 탭 균등 배치 */
+[data-theme="focus-sanctuary"] #bottomNavFab,
+[data-theme="focus-sanctuary"] .navbtn-fab {
+  display: none !important;
+}
+
+/* 소통 탭: 피드/DM/동반자/마니또 공통 성소 글래스모피즘 스타일링 */
+[data-theme="focus-sanctuary"] #commBody {
+  display: block !important;
+  margin-top: 10px;
+}
+[data-theme="focus-sanctuary"] #screen-comm .screen-head {
+  display: none !important;
+}
+[data-theme="focus-sanctuary"] .comm-subtabs {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 14px !important;
+  padding: 4px !important;
+  display: flex !important;
+  gap: 4px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+}
+[data-theme="focus-sanctuary"] .comm-subtab {
+  color: #94A3B8 !important;
+  font-weight: 600 !important;
+  border-radius: 10px !important;
+  padding: 8px 12px !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+[data-theme="focus-sanctuary"] .comm-subtab.active {
+  background: rgba(16, 185, 129, 0.18) !important;
+  color: #10B981 !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+

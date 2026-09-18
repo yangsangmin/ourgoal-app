@@ -147,8 +147,8 @@
           nodesHtml +
         '</div>' +
         '<div class="mountain-actions">' +
-          '<button class="btn btn-ghost btn-sm" type="button" id="sTmplMarketBtn" onclick="if(document.getElementById(\'btnGoalTemplateEncyclopedia\')) document.getElementById(\'btnGoalTemplateEncyclopedia\').click(); else toast(\'템플릿 백과사전을 엽니다\');">📖 템플릿백과사전</button>' +
           '<button class="btn btn-primary btn-sm btn-transplant" type="button" id="sTransplantBtn" onclick="window.OurgoalSanctuaryV3.transplantSampleRoutine();">⚡ 내 목표에 바로 담기 (1초 자동 이식)</button>' +
+          '<button class="btn btn-ghost btn-sm" type="button" id="sTmplMarketBtn" onclick="if(document.getElementById(\'btnGoalTemplateEncyclopedia\')) document.getElementById(\'btnGoalTemplateEncyclopedia\').click(); else toast(\'템플릿 백과사전을 엽니다\');">📖 템플릿백과사전</button>' +
         '</div>' +
       '</div>';
     }
@@ -510,7 +510,7 @@
       '</div>' +
     '</div>';
 
-    slot.innerHTML = radarHtml + feedSampleHtml;
+    slot.innerHTML = radarHtml;
   }
 
   /* =========================================================================
@@ -518,10 +518,16 @@
    * ========================================================================= */
   function renderSanctuaryV3(tab) {
     if (!isFocusSanctuary()) return;
-    if (tab === 'goals') renderSanctuaryGoals();
+    if (tab === 'goals') {
+      renderSanctuaryGoals();
+      if (typeof renderGoalsScreen === 'function') renderGoalsScreen();
+    }
     if (tab === 'calendar') renderSanctuaryCalendar();
     if (tab === 'records') renderSanctuaryRecords();
-    if (tab === 'comm') renderSanctuaryComm();
+    if (tab === 'comm') {
+      renderSanctuaryComm();
+      if (typeof renderCommScreen === 'function') renderCommScreen();
+    }
   }
 
   window.OurgoalSanctuaryV3 = {
@@ -700,11 +706,12 @@
       if (window.triggerHaptic) window.triggerHaptic(10);
     },
     openPeerDm: function(peerName, peerGoal) {
-      var dmMsg = prompt('[' + peerName + '] 페이스메이커에게 응원 메시지를 보내세요:', '오늘도 목표 달성 함께 파이팅입니다! 🔥');
-      if (dmMsg) {
-        toast(peerName + '님에게 메시지를 전송했습니다 💬');
-        if (window.triggerHaptic) window.triggerHaptic(15);
+      if (window.state) {
+        window.state.commSubTab = 'dm';
       }
+      if (typeof renderCommScreen === 'function') renderCommScreen();
+      toast('[' + peerName + '] 님과의 1:1 DM 대화창으로 연결되었습니다 💬');
+      if (window.triggerHaptic) window.triggerHaptic(15);
     },
     downloadRecapImage: function() {
       toast('📸 위클리 리캡 카드를 이미지(PNG)로 저장했습니다!');
