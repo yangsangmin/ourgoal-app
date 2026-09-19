@@ -1311,17 +1311,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ Supabase ============ */
   var SUPABASE_URL = 'https://dvqosviqbciohcywkzbq.supabase.co';
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2cW9zdmlxYmNpb2hjeXdremJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0MTM0NDYsImV4cCI6MjEwMzk4OTQ0Nn0.DCMMxxHB6kzJ0CjgLN0ERaSk7WY6LDN-pDVdeZ0-cWM';
-  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  var sb = (window.supabase && typeof window.supabase.createClient === 'function') ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
   var _pendingAuthSession = null;
   try {
-    sb.auth.onAuthStateChange(function(event, session){
-      if((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && session.user){
-        _pendingAuthSession = session;
-        if(typeof restoreSessionAndEnter === 'function' && (!state.profile || state.profile.id !== session.user.id)){
-          restoreSessionAndEnter(session);
+    if(sb && sb.auth){
+      sb.auth.onAuthStateChange(function(event, session){
+        if((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && session.user){
+          _pendingAuthSession = session;
+          if(typeof restoreSessionAndEnter === 'function' && (!state.profile || state.profile.id !== session.user.id)){
+            restoreSessionAndEnter(session);
+          }
         }
-      }
-    });
+      });
+    }
   } catch(e){}
 
   /* 앱 레벨 Google OAuth 클라이언트 ID(공개 식별자, 시크릿 아님). GCP 콘솔에서 이 앱을 등록한 뒤 값을 채우면
@@ -2849,7 +2851,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     openModal(
       '<h3>🎯 팀 연계 개인목표 만들기</h3>' +
       '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">[' + escapeHtml(teamName) + '] 팀 활동과 연계된 나만의 개인 실천 목표를 생성합니다.</p>' +
-      '<div class="field"><label>개인 목표 제목 (필수)</label><input id="tlpTitleInput" type="text" placeholder="예: [' + escapeHtml(teamName) + '] 매일 30분 팀 실천 완수하기" value="[' + escapeHtml(teamName) + '] 나의 실천 미션"></div>' +
+      '<div class="field"><label>개인 목표 제목 (필수)</label><input id="tlpTitleInput" type="text" placeholder="예: [' + escapeHtml(teamName) + '] 나의 실천 미션"></div>' +
       '<div class="field"><label>마감 D-day (선택)</label><input id="tlpDueInput" type="date"></div>' +
       '<div class="field"><label>목표 카테고리</label>' +
         '<select id="tlpCatSelect" style="width:100%;padding:8px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--card2);color:var(--ink);">' +
@@ -2870,7 +2872,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       function(sheet){
         sheet.querySelector('#tlpCancel').addEventListener('click', closeModal);
         sheet.querySelector('#tlpConfirm').addEventListener('click', async function(){
-          var title = sheet.querySelector('#tlpTitleInput').value.trim();
+          var tlpInp = sheet.querySelector('#tlpTitleInput');
+          var title = (tlpInp ? tlpInp.value.trim() : '') || (tlpInp && tlpInp.placeholder ? tlpInp.placeholder.replace(/^예:\s*/, '') : ('[' + teamName + '] 나의 실천 미션'));
           if(!title){ toast('목표 제목을 입력해주세요.'); return; }
           var due = sheet.querySelector('#tlpDueInput').value;
           var cat = sheet.querySelector('#tlpCatSelect').value;
@@ -4654,13 +4657,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         ta.addEventListener('input', function(){ saveBtn.disabled = !ta.value.trim(); });
         sheet.querySelectorAll('.ob-quick-action-chip').forEach(function(chip){
           chip.addEventListener('click', function(){
-            ta.value = chip.dataset.chip;
+            // [#TASK-ES-191] 입력창 지움 피로도 근절: value 강제 주입 제거 및 placeholder 힌트화
+            ta.value = '';
+            ta.placeholder = '예: ' + chip.dataset.chip;
+            ta.dataset.preset = chip.dataset.chip;
             saveBtn.disabled = false;
             ta.focus();
           });
         });
         saveBtn.addEventListener('click', async function(){
-          var text = ta.value.trim();
+          var text = ta.value.trim() || ta.dataset.preset || (ta.placeholder ? ta.placeholder.replace(/^예:\s*/, '') : '');
           if(!text || busy) return;
           busy = true; saveBtn.disabled = true;
           var xpRes = null;
@@ -12635,7 +12641,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '</div>' +
         '<div style="margin-bottom:14px;">' +
           '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">나누고 싶은 한마디 / 다짐</label>' +
-          '<textarea id="shareCaptionInput" style="width:100%;min-height:76px;border:1px solid var(--rule);border-radius:12px;padding:10px 12px;font-size:.875rem;background:var(--surface-2);color:var(--ink);resize:vertical;">'+escapeHtml(defaultCaption)+'</textarea>' +
+          '<textarea id="shareCaptionInput" style="width:100%;min-height:76px;border:1px solid var(--rule);border-radius:12px;padding:10px 12px;font-size:.875rem;background:var(--surface-2);color:var(--ink);resize:vertical;" placeholder="예: '+escapeHtml(defaultCaption)+'"></textarea>' +
         '</div>' +
         '<div class="modal-actions" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
           '<button class="btn btn-ghost" id="shareCancelBtn" type="button">취소</button>' +
@@ -12831,11 +12837,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               curPhoto = curRecord.photo || null;
               rowIncPhoto.style.display = curPhoto ? 'flex' : 'none';
 
-              // [#TASK-ES-180], [63] 1) 기록 맞춤형 다짐 문구 실시간 자동 갱신
+              // [#TASK-ES-191] 입력창 지움 피로도 근절: value 강제 주입 제거 및 placeholder 힌트화
               if(captionInput){
                 var rText = (curRecord.title || curRecord.text || '').replace(/\r\n/g, ' ').trim();
                 var snippet = rText.slice(0, 45);
-                captionInput.value = '오늘 실천 완료! "' + snippet + (rText.length > 45 ? '…' : '') + '" 꾸준히 나아갑니다 🔥';
+                captionInput.value = '';
+                captionInput.placeholder = '예: 오늘 실천 완료! "' + snippet + (rText.length > 45 ? '…' : '') + '" 꾸준히 나아갑니다 🔥';
               }
 
               // [#TASK-ES-180], [63] 2) 기록 맞춤형 AI 피드백 실시간 자동 연동
@@ -12898,7 +12905,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       // Submit
       sheet.querySelector('#shareConfirmBtn').addEventListener('click', async function(){
-        var caption = sheet.querySelector('#shareCaptionInput').value.trim();
+        var capInp = sheet.querySelector('#shareCaptionInput');
+        var caption = (capInp ? capInp.value.trim() : '') || (capInp && capInp.placeholder ? capInp.placeholder.replace(/^예:\s*/, '') : '갓생 목표를 향해 한 걸음 더 나아가는 중!');
         if(!caption){ toast('한마디 소감을 입력해주세요'); return; }
 
         var finalGoalTitle = null;
@@ -14184,31 +14192,47 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           });
         }
 
-        // 4대 실천 퀵 프리셋
+        // 4대 실천 퀵 프리셋 ([#TASK-ES-191] 입력창 지움 피로도 근절: value 강제 주입 제거 및 placeholder 힌트화)
         sheet.querySelectorAll('[data-attpreset]').forEach(function(btn){
           btn.addEventListener('click', function(){
             var p = btn.dataset.attpreset;
             if(p === 'workout'){
               setType('video');
-              if(!titleInput.value.trim()) titleInput.value = '운동 자세 & 폼 가이드 영상';
-              if(!noteInput.value.trim()) noteInput.value = '호흡 타이밍과 세트별 자세 주의사항 체크하기';
+              titleInput.value = '';
+              titleInput.placeholder = '예: 운동 자세 & 폼 가이드 영상';
+              titleInput.dataset.presetTitle = '운동 자세 & 폼 가이드 영상';
+              noteInput.value = '';
+              noteInput.placeholder = '예: 호흡 타이밍과 세트별 자세 주의사항 체크하기';
+              noteInput.dataset.presetNote = '호흡 타이밍과 세트별 자세 주의사항 체크하기';
               urlInput.placeholder = '유튜브 영상 링크를 붙여넣으세요';
               toast('운동 자세 영상 프리셋을 적용했어요');
             } else if(p === 'study'){
               setType('link');
-              if(!titleInput.value.trim()) titleInput.value = '공식 문서 & 학습 레퍼런스';
-              if(!noteInput.value.trim()) noteInput.value = '시험 및 프로젝트에 꼭 필요한 핵심 공식 문서';
+              titleInput.value = '';
+              titleInput.placeholder = '예: 공식 문서 & 학습 레퍼런스';
+              titleInput.dataset.presetTitle = '공식 문서 & 학습 레퍼런스';
+              noteInput.value = '';
+              noteInput.placeholder = '예: 시험 및 프로젝트에 꼭 필요한 핵심 공식 문서';
+              noteInput.dataset.presetNote = '시험 및 프로젝트에 꼭 필요한 핵심 공식 문서';
               urlInput.placeholder = '공식 가이드나 기술 블로그 링크 입력';
               toast('공식 문서 프리셋을 적용했어요');
             } else if(p === 'note'){
               setType('text');
-              if(!titleInput.value.trim()) titleInput.value = '실천 핵심 요약 메모';
-              if(!noteInput.value.trim()) noteInput.value = '1. 시작 전 필수 준비사항\n2. 오늘의 핵심 실천 포인트';
+              titleInput.value = '';
+              titleInput.placeholder = '예: 실천 핵심 요약 메모';
+              titleInput.dataset.presetTitle = '실천 핵심 요약 메모';
+              noteInput.value = '';
+              noteInput.placeholder = '예: 1. 시작 전 필수 준비사항\n2. 오늘의 핵심 실천 포인트';
+              noteInput.dataset.presetNote = '1. 시작 전 필수 준비사항\n2. 오늘의 핵심 실천 포인트';
               toast('핵심 요약 메모 프리셋을 적용했어요');
             } else if(p === 'photo'){
               setType('image');
-              if(!titleInput.value.trim()) titleInput.value = '오답노트 & 결과 인증 사진';
-              if(!noteInput.value.trim()) noteInput.value = '기억해둘 핵심 오답 분석 및 증빙';
+              titleInput.value = '';
+              titleInput.placeholder = '예: 오답노트 & 결과 인증 사진';
+              titleInput.dataset.presetTitle = '오답노트 & 결과 인증 사진';
+              noteInput.value = '';
+              noteInput.placeholder = '예: 기억해둘 핵심 오답 분석 및 증빙';
+              noteInput.dataset.presetNote = '기억해둘 핵심 오답 분석 및 증빙';
               toast('사진 인증 프리셋을 적용했어요');
             }
             urlInput.focus();
@@ -14228,9 +14252,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
         sheet.querySelector('#attCancelBtn').addEventListener('click', function(){ closeModal(true); if(typeof onCancel === 'function') onCancel(); });
         sheet.querySelector('#attSaveBtn').addEventListener('click', async function(){
-          var title = (sheet.querySelector('#attTitleInput').value || '').trim();
+          var titleInp = sheet.querySelector('#attTitleInput');
+          var noteInp = sheet.querySelector('#attNoteInput');
+          var title = (titleInp ? titleInp.value.trim() : '') || (titleInp && titleInp.dataset.presetTitle) || (titleInp && titleInp.placeholder ? titleInp.placeholder.replace(/^예:\s*/, '') : '');
           var url = (sheet.querySelector('#attUrlInput').value || '').trim();
-          var note = (sheet.querySelector('#attNoteInput').value || '').trim();
+          var note = (noteInp ? noteInp.value.trim() : '') || (noteInp && noteInp.dataset.presetNote) || (noteInp && noteInp.placeholder ? noteInp.placeholder.replace(/^예:\s*/, '') : '');
           if(!title){ toast('제목을 입력해주세요'); return; }
           if(draftAtt.type !== 'text' && !url && !draftAtt.url){
             toast('웹 주소나 사진 파일을 등록해주세요');
@@ -17615,9 +17641,6 @@ wirePromptEncyclopediaEvents(body);
           '</ul>' +
         '</div>' +
       '</div>' +
-      '<div style="margin-top:12px;text-align:right;">' +
-        '<button class="btn btn-primary btn-sm" id="btnGuideAddFirstGoal" type="button" style="font-weight:700;">+ 첫 목표 만들기</button>' +
-      '</div>' +
     '</div>';
   }
 
@@ -19257,9 +19280,14 @@ wirePromptEncyclopediaEvents(body);
       function(sheet){
         var defaultMilestones = [];
         var applyGoalTpl = function(title, days, msList){
-          sheet.querySelector('#tgTitleInput').value = title;
+          var inp = sheet.querySelector('#tgTitleInput');
+          // [#TASK-ES-191] 입력창 지움 피로도 근절: value 강제 주입 제거 및 placeholder 힌트화
+          inp.value = '';
+          inp.placeholder = '예: ' + title;
+          inp.dataset.tplTitle = title;
           sheet.querySelector('#tgDueInput').value = daysFromNow(days);
           defaultMilestones = msList || [];
+          inp.focus();
         };
                 var btnEnc = sheet.querySelector('#btnOpenEncyclopediaFromTeam');
         if(btnEnc) btnEnc.onclick = function(){
@@ -19302,7 +19330,8 @@ wirePromptEncyclopediaEvents(body);
 
         sheet.querySelector('#tgCancel').addEventListener('click', closeModal);
         sheet.querySelector('#tgSave').addEventListener('click', async function(){
-          var title = sheet.querySelector('#tgTitleInput').value.trim();
+          var inp = sheet.querySelector('#tgTitleInput');
+          var title = (inp ? inp.value.trim() : '') || (inp && inp.dataset.tplTitle) || (inp && inp.placeholder ? inp.placeholder.replace(/^예:\s*/, '') : '');
           if(!title) return;
           if(!g.teamGoals) g.teamGoals = [];
           g.teamGoals.push({
@@ -20575,7 +20604,7 @@ wirePromptEncyclopediaEvents(body);
         '</div>' +
         '<div class="field" style="margin-bottom:10px;">' +
           '<label>기록 주제 또는 템플릿 이름</label>' +
-          '<input id="customTplTitle" type="text" placeholder="예: 크로스핏 와드, 하이록스 8종목, 공인중개사 모의고사" value="' + escapeHtml(curAiRec.title) + '">' +
+          '<input id="customTplTitle" type="text" placeholder="예: ' + escapeHtml(curAiRec.title) + ', 하이록스 8종목, 공인중개사 모의고사" value="">' +
         '</div>' +
         '<div class="field" style="margin-bottom:10px;">' +
           '<label style="display:flex;align-items:center;justify-content:space-between;">' +
@@ -20803,7 +20832,7 @@ wirePromptEncyclopediaEvents(body);
 
         sheet.querySelector('#customTplCancel').onclick = closeModal;
         sheet.querySelector('#customTplSave').onclick = async function(){
-          var title = (titleInp.value || '').trim();
+          var title = (titleInp.value || '').trim() || (curAiRec && curAiRec.title) || (titleInp && titleInp.placeholder ? titleInp.placeholder.replace(/^예:\s*/, '').split(',')[0].trim() : '맞춤 템플릿');
           var icon = (iconInp.value || '📋').trim();
           if(!title){ toast('템플릿 제목을 입력해주세요'); return; }
           if(!columns.length){ toast('최소 1개 이상의 표 속성이 필요합니다'); return; }
@@ -28922,14 +28951,14 @@ wirePromptEncyclopediaEvents(body);
         toast('통계 공개 범위를 변경했어요');
       };
     }
-    // 🤖 아바타 인사 팝업 커스텀 (#TASK-ES-165)
+    // 🤖 아바타 인사 팝업 커스텀 (#TASK-ES-165, #TASK-ES-191)
     if(!settings.avatarGreeting) {
       settings.avatarGreeting = {
         enabled: true,
         dayStartHour: 4,
         nightStartHour: 16,
-        dayGreeting: '오늘은 뭘 할거냐? 내자신',
-        nightGreeting: '오늘은 뭘 했냐? 내자신'
+        dayGreeting: '',
+        nightGreeting: ''
       };
     }
     var agConf = settings.avatarGreeting;
@@ -28981,18 +29010,21 @@ wirePromptEncyclopediaEvents(body);
     }
     var agDayMsgInput = document.getElementById('avatarGreetingDayMsg');
     if(agDayMsgInput){
-      agDayMsgInput.value = agConf.dayGreeting || '오늘은 뭘 할거냐? 내자신';
+      // [#TASK-ES-191] 입력창 지움 피로도 근절: 기본값은 placeholder로만 안내
+      agDayMsgInput.value = agConf.dayGreeting || '';
+      agDayMsgInput.placeholder = '오늘은 뭘 할거냐? 내자신';
       agDayMsgInput.onchange = async function(){
-        agConf.dayGreeting = agDayMsgInput.value.trim() || '오늘은 뭘 할거냐? 내자신';
+        agConf.dayGreeting = agDayMsgInput.value.trim();
         await saveProfile();
         toast('주간 인사 멘트를 저장했어요');
       };
     }
     var agNightMsgInput = document.getElementById('avatarGreetingNightMsg');
     if(agNightMsgInput){
-      agNightMsgInput.value = agConf.nightGreeting || '오늘은 뭘 했냐? 내자신';
+      agNightMsgInput.value = agConf.nightGreeting || '';
+      agNightMsgInput.placeholder = '오늘은 뭘 했냐? 내자신';
       agNightMsgInput.onchange = async function(){
-        agConf.nightGreeting = agNightMsgInput.value.trim() || '오늘은 뭘 했냐? 내자신';
+        agConf.nightGreeting = agNightMsgInput.value.trim();
         await saveProfile();
         toast('야간 인사 멘트를 저장했어요');
       };
