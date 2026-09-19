@@ -733,15 +733,14 @@
         }).join('') +
       '</div>';
     } else {
-      radarHtml += '<div class="s-radar-empty-card">' +
-        '<div class="s-r-empty-info">' +
-          '<span style="font-size:1.4rem;">🤝</span>' +
-          '<div>' +
-            '<b>아직 연결된 러닝메이트가 없습니다</b>' +
-            '<span>닉네임으로 동반자를 검색하거나 팀에 참여해보세요!</span>' +
+      radarHtml += '<div class="s-radar-empty-card" style="padding:8px 12px;margin-top:6px;border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
+        '<div class="s-r-empty-info" style="display:flex;align-items:center;gap:8px;">' +
+          '<span style="font-size:1.1rem;">🤝</span>' +
+          '<div style="font-size:.78rem;">' +
+            '<b style="color:var(--ink);">함께 달릴 동반자를 찾아보세요</b>' +
           '</div>' +
         '</div>' +
-        '<button class="btn btn-primary btn-xs" id="sRadarEmptyBtn" type="button" onclick="window.OurgoalSanctuaryV3.gotoCompanions();">+ 동반자 찾기</button>' +
+        '<button class="btn btn-primary btn-xs" id="sRadarEmptyBtn" type="button" onclick="window.OurgoalSanctuaryV3.gotoCompanions();" style="padding:4px 10px;font-size:.75rem;white-space:nowrap;">+ 동반자 찾기</button>' +
       '</div>';
     }
 

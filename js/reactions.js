@@ -91,11 +91,11 @@
     var bot = isBot(it);
     var m = myState(it.id);
     var isMe = !!(ctx && ctx.isMe);
-    return TYPES.map(function(t){
-      if(isMe && (t.key === 'helpful' || t.key === 'poor')) return '';   /* 내 글엔 도움돼요·별로에요 없음 */
+    return TYPES.filter(function(t){ return t.key !== 'poor'; }).map(function(t){
+      if(isMe && (t.key === 'helpful')) return '';   /* 내 글엔 도움돼요 없음 */
       var n = bot ? 0 : countOf(it, t.key);
       var on = !bot && !!m[t.key];
-      var cls = 'feed-react-btn rx-btn' + (on ? ' active active-' + (t.key === 'cheer' ? 'fire' : (t.key === 'helpful' ? 'clap' : (t.key === 'advice' ? 'sparkle' : 'heart'))) : '');
+      var cls = 'feed-react-btn rx-btn' + (on ? ' active active-' + (t.key === 'cheer' ? 'fire' : (t.key === 'helpful' ? 'clap' : 'sparkle')) : '');
       return '<button class="' + cls + '" data-rx="' + t.key + '" data-rxid="' + esc(it.id) + '" type="button"' +
         (bot ? ' disabled aria-disabled="true" title="AI 봇 글에는 반응할 수 없어요" style="opacity:.45;cursor:not-allowed;"' : ' title="' + esc(t.title) + '"') + '>' +
         t.icon + ' ' + t.label + (n > 0 ? ' <span class="rx-cnt" data-rxcnt="' + t.key + '">' + n + '</span>' : '<span class="rx-cnt" data-rxcnt="' + t.key + '"></span>') +
