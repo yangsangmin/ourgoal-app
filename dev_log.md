@@ -4722,9 +4722,32 @@
      - 308개 스모크 테스트 전수 100% ALL PASS (0 failures).
      - `verify-integrity-gate.js` 18개 헌법 게이트 100% ALL PASS.
      - 3단계 로컬 실측 (Headless Chrome CDP): 플로팅 배너 및 알림 센터 모달 렌더링 정상 검증 완료 (`scratch/step3_es168_notif_center.png`).
-  7. **GitHub PR #277 생성 및 원격 main 머지 (commit 4d5994d)**:
-     - CI essence-gate 통과 후 상민님 프로덕션 배포 승인("1") 접수 및 머지 완료.
-  8. **6단계 실운영 최종 확인 (Chrome CDP)**:
-     - 실서버 프로덕션(https://ourgoal-app.vercel.app) 직접 접속 실측.
-     - 상단 고정바 🔔 알림 버튼 클릭 시 알림 센터 모달 정상 오픈 및 빈 알림 가이드 렌더링 스크린샷 증적 확보 (`scratch/prod_stage6_es168_notif_center.png`).
 ---
+
+## [2026-09-20 06:25] [#TASK-ES-193] 20대 핵심 UI/UX 전수 결함 정밀 해결 및 모바일 조형 완성
+- **목표**: 상민님 직접 지시("이번엔 ui 경험을 위한 조사 진행해" -> "그게 전부인지 한번 더 확인해" -> "진행")에 따라 20개 서브탭/모달/기계적 터치 전수 조사에서 도출된 20대 핵심 UI/UX 결함을 완벽히 해결하고 모바일(375px) 조형 완성.
+- **주요 수정 및 해결 내역**:
+  1. **설정 탭 테마 그리드 모바일 1열 반응형 적층 및 단어 래핑 (`ui.css`)**:
+     - `.theme-desc`의 `white-space: nowrap`으로 인한 215px 팽창 및 모바일 2열(471px) 96px 우측 잘림 결함 완전 해결.
+     - `@media (max-width: 480px)`에서 `grid-template-columns: 1fr !important` 및 `white-space: normal !important; word-break: keep-all !important;` 적용하여 307px 단일 열 카드로 정돈.
+  2. **CTA 브랜드 컬러 에메랄드 그린 통일 (`ui.css`)**:
+     - `:root` 및 `focus-sanctuary` 셀렉터에 산발적 레드(`--cta: #D92B41`)를 제거하고 `--cta: var(--brand); --cta-hover: var(--brand-strong);`로 통일하여 포커스 성소의 평화롭고 신뢰감 있는 조형 완성.
+  3. **전 탭 하단 안전 스크롤 여백 확장 (`ui.css`)**:
+     - `.screens` 하단에 `calc(var(--nav-h, 64px) + env(safe-area-inset-bottom, 0px) + 48px) !important`를 부여하여 마지막 카드가 바텀 네비 뒤로 파고드는 차폐 현상 100% 해소.
+  4. **한글 타이포그래피 단어 단위 줄바꿈 전역 보존 (`ui.css`)**:
+     - 주요 헤더, 서브탭, 카드, 모달 등에 `word-break: keep-all !important;` 적용하여 1글자 단위 흉한 개행 전수 차단.
+  5. **템플릿 백과사전 기간 뱃지 줄바꿈 방지 (`index.html`, `ui.css`)**:
+     - '16주 과정' 뱃지에 `white-space: nowrap !important; flex-shrink: 0; margin-left: 8px;`을 부여하여 3줄 쪼개짐 결함 100% 박멸.
+  6. **14일 활동 기록 히트맵 헤더 정렬 (`index.html`)**:
+     - 히트맵 헤더에 `white-space: nowrap; flex-shrink: 0;` 및 `첫 기록 남기기 ✨` 뱃지 적용하여 좁은 화면 3줄 붕괴 방지.
+  7. **모달 닫기(X) 버튼 및 바텀시트 하단 안전 패딩 (`ui.css`)**:
+     - `.btn-close`에 36x36px 터치 타겟 및 호버 스타일 적용, 바텀시트 하단 `max(20px, env(safe-area-inset-bottom, 0px))` 패딩 부여.
+  8. **화이트 테마 토스트 고시인성 일원화 (`ui.css`)**:
+     - 화이트 테마 전용 토스트 배경(`#0F172A`) 및 고대비 텍스트 지정.
+- **검증 결과**:
+  - `npm test`: 329개 스모크 테스트 전수 100% 통과 (0 failures).
+  - `verify-integrity-gate.js`: 헌법 25대 게이트 100% ALL PASS.
+  - 전수 인터랙션 725개 버튼 Zero Dead-Click PASS.
+  - CDP 실기기 실측: 375px 모바일 뷰포트에서 히트맵 헤더 1줄 정렬, 백과사전 60개 뱃지 전수 nowrap, 테마 그리드 307px 1열 적층 무결성 증적 확보 (`ui_verified_home_375.png`, `ui_verified_goals_encyclopedia_375.png`, `ui_verified_settings_theme_375.png`).
+---
+

@@ -10360,9 +10360,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
 
     card.innerHTML = '<div class="card" style="margin-top:14px;padding:14px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;backdrop-filter:blur(16px);">'
-      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">'
-      + '  <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:1rem;">🔥</span><span style="font-size:0.88rem;font-weight:700;color:var(--ink);">14일 활동 기록</span><span style="font-size:0.75rem;color:var(--ink-faint);">(최근 히트맵)</span></div>'
-      + '  <span style="font-size:0.75rem;color:var(--brand);font-weight:700;background:rgba(16,185,129,0.12);padding:2px 8px;border-radius:12px;border:1px solid rgba(16,185,129,0.25);">' + (streak > 0 ? ('' + streak + '일 연속 몰입 중 🔥') : '오늘의 첫 기록을 남겨보세요') + '</span>'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;flex-wrap:nowrap;">'
+      + '  <div style="display:flex;align-items:center;gap:4px;white-space:nowrap;flex-shrink:0;"><span style="font-size:1rem;">🔥</span><span style="font-size:0.88rem;font-weight:700;color:var(--ink);white-space:nowrap;">14일 활동 기록</span><span style="font-size:0.75rem;color:var(--ink-faint);white-space:nowrap;">(최근 히트맵)</span></div>'
+      + '  <span style="font-size:0.75rem;color:var(--brand);font-weight:700;background:rgba(16,185,129,0.12);padding:3px 8px;border-radius:12px;border:1px solid rgba(16,185,129,0.25);white-space:nowrap;flex-shrink:0;">' + (streak > 0 ? ('' + streak + '일 연속 몰입 중 🔥') : '첫 기록 남기기 ✨') + '</span>'
       + '</div>'
       + '<div style="display:flex;gap:4px;align-items:flex-end;margin-bottom:12px;justify-content:space-between;">' + dotsHtml + '</div>'
       + '<div style="display:flex;gap:12px;font-size:0.76rem;color:var(--ink-sub);justify-content:space-between;border-top:1px solid rgba(255,255,255,0.06);padding-top:8px;">'
@@ -16406,7 +16406,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                     '<span style="background:var(--brand);color:#fff;font-size:.6875rem;padding:2px 7px;border-radius:6px;font-weight:700;">' + escapeHtml(badgeText) + '</span>' +
                     '<b style="font-size:.9375rem;color:var(--ink);">' + escapeHtml(t.title) + '</b>' +
                   '</div>' +
-                  '<span class="faint" style="font-size:.75rem;">' + (t.weeks || 12) + '주 과정</span>' +
+                  '<span class="faint" style="font-size:.75rem;white-space:nowrap;flex-shrink:0;margin-left:8px;">' + (t.weeks || 12) + '주 과정</span>' +
                 '</div>' +
                 '<div style="font-size:.8125rem;color:var(--ink-soft);margin-bottom:8px;line-height:1.45;">' + escapeHtml(t.desc || '') + '</div>' +
                 '<div class="faint" style="font-size:.75rem;margin-bottom:10px;background:var(--card2);padding:6px 10px;border-radius:8px;">' +
