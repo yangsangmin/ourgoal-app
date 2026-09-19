@@ -149,10 +149,6 @@
         '<div class="mountain-trail-path">' +
           nodesHtml +
         '</div>' +
-        '<div class="mountain-actions">' +
-          '<button class="btn btn-primary btn-sm btn-transplant" type="button" id="sTransplantBtn" onclick="window.OurgoalSanctuaryV3.transplantSampleRoutine();">⚡ 내 목표에 바로 담기 (1초 자동 이식)</button>' +
-          '<button class="btn btn-ghost btn-sm" type="button" id="sTmplMarketBtn" onclick="if(document.getElementById(\'btnGoalTemplateEncyclopedia\')) document.getElementById(\'btnGoalTemplateEncyclopedia\').click(); else toast(\'템플릿 백과사전을 엽니다\');">📖 템플릿백과사전</button>' +
-        '</div>' +
       '</div>';
     }
 

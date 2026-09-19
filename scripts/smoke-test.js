@@ -7211,6 +7211,70 @@ check('[#TASK-ES-186] 성소 기준 4대 테마(성소·블랙·화이트·도�
   assert.ok(css.includes('html[data-theme="focus-sanctuary"] body'), '성소 테마 바디 무변경 보존');
 });
 
+check('[#TASK-ES-187] 목표 탭 템플릿 백과사전 단일 서브탭 분리 및 상단 중복 버튼 제거 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+
+  // 1. 마운틴 트레일 카드 내 mountain-actions 및 불필요 버튼 0건 검증
+  assert.ok(!sanctuaryJs.includes("id=\"sTransplantBtn\""), '마운틴 트레일 카드 내 하드코딩 sTransplantBtn 제거 확인');
+  assert.ok(!sanctuaryJs.includes("id=\"sTmplMarketBtn\""), '마운틴 트레일 카드 내 sTmplMarketBtn 제거 확인');
+
+  // 2. 목표 서브탭에 templateEncyclopedia 정식 등록 확인
+  assert.ok(indexHtml.includes("['templateEncyclopedia','📖 템플릿 백과사전']"), 'goalsSubtabs 내 템플릿 백과사전 서브탭 등록 확인');
+
+  // 3. templateEncyclopediaView 슬롯 및 전용 렌더러 배선 확인
+  assert.ok(indexHtml.includes('id="templateEncyclopediaView"'), 'templateEncyclopediaView 컨테이너 구비 확인');
+  assert.ok(indexHtml.includes('function renderTemplateEncyclopediaScreen()'), 'renderTemplateEncyclopediaScreen 렌더러 함수 구비 확인');
+  assert.ok(indexHtml.includes('if(state.goalsSubTab===\'templateEncyclopedia\'){ renderTemplateEncyclopediaScreen(); return; }'), '서브탭 라우팅 분기 배선 확인');
+
+  // 4. 레거시 버튼 하위 호환 가드 및 서브탭 전환 연동 확인
+  assert.ok(indexHtml.includes('state.goalsSubTab = \'templateEncyclopedia\';'), '헤더 템플릿 버튼 클릭 시 서브탭 전환 연동 확인');
+});
+
+check('[#TASK-ES-188] 로그인 창 둘러보기 버튼 문구 정돈 (로그인 없이 둘러보기) 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 메인 버튼 텍스트 '로그인 없이 둘러보기' 탑재 확인
+  assert.ok(indexHtml.includes('id="btnLandingPreviewDirect"'), '랜딩 메인 둘러보기 버튼 구비');
+  assert.ok(indexHtml.includes('<span>로그인 없이 둘러보기</span>'), '둘러보기 버튼 텍스트 로그인 없이 둘러보기 확인');
+
+  // 2. '3초 성소' 문구 랜딩 화면에서 완전 제거 확인
+  assert.ok(!indexHtml.includes('3초 성소 새 UI/UX 바로 둘러보기'), '과거 3초 성소 둘러보기 문구 완전 제거 확인');
+
+  // 3. 하위 호환성 landGuestBtn ID 보존 확인
+  assert.ok(indexHtml.includes('id="landGuestBtn"'), 'landGuestBtn ID 보존 확인');
+});
+
+
+check('[#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) 및 AI/실유저 2원화 이식 시스템 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 3대 도메인 탭 버튼 구비 확인
+  assert.ok(indexHtml.includes('id="encyclDomainPersonal"'), '개인목표 백과사전 버튼 구비');
+  assert.ok(indexHtml.includes('id="encyclDomainRoutine"'), '루틴 백과사전 버튼 구비');
+  assert.ok(indexHtml.includes('id="encyclDomainTeam"'), '팀 목표 백과사전 버튼 구비');
+
+  // 2. 2대 출처 탭 버튼 구비 확인
+  assert.ok(indexHtml.includes('id="subtabTplBtnAi"'), 'AI 추천 템플릿 버튼 구비');
+  assert.ok(indexHtml.includes('id="subtabTplBtnReal"'), '실사용자 템플릿 버튼 구비');
+
+  // 3. 3대 도메인별 데이터셋 완비 확인
+  assert.ok(indexHtml.includes('ROUTINE_TEMPLATES_AI'), '루틴 AI 추천 데이터셋 구비');
+  assert.ok(indexHtml.includes('ROUTINE_TEMPLATES_REAL'), '루틴 실사용자 데이터셋 구비');
+  assert.ok(indexHtml.includes('TEAM_TEMPLATES_AI'), '팀 목표 AI 추천 데이터셋 구비');
+  assert.ok(indexHtml.includes('TEAM_TEMPLATES_REAL'), '팀 목표 실사용자 데이터셋 구비');
+  assert.ok(indexHtml.includes('PERSONAL_TEMPLATES_REAL'), '개인목표 실사용자 데이터셋 구비');
+
+  // 4. 도메인별 1초 이식 및 해당 서브탭 자동 이동 파이프라인 배선 확인
+  assert.ok(indexHtml.includes("state.goalsSubTab = 'personal';"), '개인목표 이식 후 personal 서브탭 전환 배선');
+  assert.ok(indexHtml.includes("state.goalsSubTab = 'routine';"), '루틴 이식 후 routine 서브탭 전환 배선');
+  assert.ok(indexHtml.includes("state.goalsSubTab = 'team';"), '팀 목표 이식 후 team 서브탭 전환 배선');
+  assert.ok(indexHtml.includes("state.profile.settings.routines.unshift"), '루틴 원장 안전 unshift 배선');
+
+  // 5. 모바일 터치 타겟 44px 이상 준수 확인
+  assert.ok(indexHtml.includes('min-height:44px'), '도메인 탭 버튼 터치타겟 44px 이상 확보');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
