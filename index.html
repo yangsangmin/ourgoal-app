@@ -185,12 +185,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <div id="captureThemeQuickBar" class="theme-quick-bar" aria-label="테마 즐겨찾기"></div>
         <div class="theme-guide-microcopy" style="font-size:0.75rem;color:var(--ink-faint);margin:2px 0 6px 2px;line-height:1.4;">(테마 : ai 분석 및 DB시각화에 활용됨)</div>
         <div class="quick-checkin-chips" style="display:flex;gap:6px;margin:6px 0 10px;flex-wrap:wrap;">
-          <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='👟 5km 러닝 28분 완주, 마지막 1km 스퍼트 성공!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">👟 5km 러닝</button>
-          <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='📖 독서 30분 인간관계론 완독 & 핵심 메모!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">📖 독서 30분</button>
-          <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='💻 핵심 알고리즘 1시간 몰입 코딩 완료!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">&lt;/&gt; 코딩 1시간</button>
+          <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='';inp.placeholder='예: 👟 5km 러닝 28분 완주, 마지막 1km 스퍼트 성공!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">👟 5km 러닝</button>
+          <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='';inp.placeholder='예: 📖 독서 30분 인간관계론 완독 & 핵심 메모!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">📖 독서 30분</button>
+          <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='';inp.placeholder='예: 💻 핵심 알고리즘 1시간 몰입 코딩 완료!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">&lt;/&gt; 코딩 1시간</button>
         </div>
         <div class="capture-ta-wrap">
-          <textarea id="captureInput" placeholder="예: 오늘 실천한 멋진 일을 한 줄로 적어보세요 |"></textarea>
+          <textarea id="captureInput" placeholder="예: 오늘 실천한 멋진 일을 한 줄로 적어보세요"></textarea>
           <button class="mic-btn" id="micBtn" type="button" aria-label="음성으로 입력하기" title="음성으로 입력하기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4"/><path d="M8 23h8"/></svg></button>
         </div>
         <div id="captureLiveMeta" class="capture-live-meta">
@@ -2997,7 +2997,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     wrap.innerHTML = '<div style="width:100%;font-size:.75rem;color:var(--brand);font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:4px;">' +
       '<span>💡 내 목표 맞춤 커닝페이퍼</span>' +
-      '<span class="faint" style="font-size:.6875rem;font-weight:400;color:var(--ink-soft);">(탭하면 입력창에 자동 채워져요)</span>' +
+      '<span class="faint" style="font-size:.6875rem;font-weight:400;color:var(--ink-soft);">(탭하면 지울 필요 없이 힌트 적용)</span>' +
     '</div>' +
     chips.map(function(c){
       return '<button type="button" class="btn-quick-chip" data-cunningtext="'+escapeHtml(c.text)+'" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(108,92,231,0.08);border:1px solid rgba(108,92,231,0.25);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all .15s ease;">' +
@@ -3009,10 +3009,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       btn.addEventListener('click', function(){
         var inp = document.getElementById('captureInput');
         if(inp){
-          inp.value = btn.dataset.cunningtext;
+          // 사용자가 지우고 쓰는 번거로움을 0으로 만들기 위해 값을 강제 주입하지 않고 빈 상태를 유지하며 placeholder에 예시 힌트 설정
+          if(!inp.value || inp.value.trim().length === 0){
+            inp.value = '';
+            inp.placeholder = '예: ' + (btn.dataset.cunningtext || '');
+          } else {
+            inp.placeholder = '예: ' + (btn.dataset.cunningtext || '');
+          }
           inp.focus();
           triggerHaptic(10);
-          toast('커닝페이퍼 내용이 입력되었습니다 ✨');
+          toast('예시 힌트가 적용되었습니다. 지울 필요 없이 바로 적어보세요 ✨');
         }
       });
     });
