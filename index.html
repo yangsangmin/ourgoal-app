@@ -2939,6 +2939,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ [83] 팀원 초대 시 '아워골 동반자 초대하기' 인앱 초대·참가 기능 ============ */
   function openTeamInviteModal(teamId, teamName){
+    if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.openTeamInviteModal){
+      return window.OurgoalTeamInviteComm.openTeamInviteModal(teamId, (typeof MOCK_GROUPS !== 'undefined' ? MOCK_GROUPS : []));
+    }
     var companions = [];
     try {
       var mates = (window.OurgoalCompanion && window.OurgoalCompanion.getRunningMates) ? window.OurgoalCompanion.getRunningMates() : [];
@@ -3525,6 +3528,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function startGoogleLogin(){
     if(!window.google || !google.accounts){
       toast('Google 로그인 서비스를 준비 중입니다. 잠시 후 다시 시도해주세요.');
+      if(typeof openLoginRescueModal === 'function'){
+        openLoginRescueModal('Google 로그인 라이브러리 연결이 지연되고 있습니다. 닉네임 또는 이메일로 1초 만에 바로 입장하실 수 있어요!');
+      }
       return;
     }
     var client = getGoogleTokenClient();
@@ -3616,7 +3622,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             if(qBtn) qBtn.onclick = function(){
               closeModal();
               var landNick = document.getElementById('landNick');
-              if(landNick){ landNick.focus(); landNick.scrollIntoView({ behavior: 'smooth' }); }
+              if(landNick){
+                landNick.focus();
+                landNick.scrollIntoView({ behavior: 'smooth' });
+              } else if(typeof openLoginRescueModal === 'function'){
+                openLoginRescueModal('사용하실 닉네임 또는 이메일을 입력하시면 1초 만에 바로 입장하실 수 있어요!');
+              }
             };
           }
         );
@@ -9502,7 +9513,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var btnApk = sheet.querySelector('#btnDownloadLockScreenApk');
       if(btnApk){
         btnApk.onclick = function(){
-          alert('🤖 안드로이드 잠금화면 전체 장악 안내:\n\n1. 캐시워크와 동일하게 안드로이드 백그라운드 서비스(LockScreenService)가 폰 전원 켜짐을 감지하여 동작합니다.\n2. APK 설치 후 [설정 > 애플리케이션 > 아워골 > 다른 앱 위에 표시: 허용]을 켜시면 폰을 켤 때마다 전체 화면이 자동으로 뜹니다.\n3. 소스코드 및 네이티브 아키텍처가 android/ 디렉토리에 100% 탑재되어 있습니다.');
+          openModal(
+            '<div style="padding:16px 8px;text-align:left;">' +
+              '<h3 style="margin:0 0 10px;font-size:1.15rem;font-weight:800;color:var(--ink);">🤖 안드로이드 전용 잠금화면 가이드</h3>' +
+              '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:14px;font-size:.875rem;line-height:1.6;color:var(--ink);margin-bottom:14px;">' +
+                '<p style="margin:0 0 8px;"><strong>1. 백그라운드 서비스 탑재</strong><br>캐시워크와 동일한 안드로이드 네이티브 백그라운드 서비스(LockScreenService) 아키텍처가 android/ 프로젝트에 구축되어 있습니다.</p>' +
+                '<p style="margin:0 0 8px;"><strong>2. 다른 앱 위에 표시 권한</strong><br>APK 설치 후 [설정 > 애플리케이션 > 아워골 > 다른 앱 위에 표시: 허용]을 켜시면 화면 켤 때마다 풀스크린이 뜹니다.</p>' +
+                '<p style="margin:0;"><strong>3. 웹/PWA 환경</strong><br>웹 브라우저에서는 2번째 탭 [위젯 연동] 및 홈 화면에 바로가기를 추가하여 편리하게 이용하실 수 있습니다.</p>' +
+              '</div>' +
+              '<button class="btn btn-primary btn-block" id="btnCloseApkGuideModal" style="padding:12px;font-weight:700;border-radius:12px;">확인 완료</button>' +
+            '</div>',
+            function(guideSheet){
+              var closeBtn = guideSheet.querySelector('#btnCloseApkGuideModal');
+              if(closeBtn) closeBtn.onclick = closeModal;
+            }
+          );
         };
       }
 
@@ -9625,6 +9650,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                   btnDigest.classList.remove('btn-primary');
                   btnDigest.classList.add('btn-ghost');
                   toast('매일 ' + digestSetting.time + '에 잠금화면 모닝 알림이 전송됩니다!');
+                  if(typeof syncPushSubscription === 'function'){
+                    syncPushSubscription();
+                  }
                 } else {
                   toast('알림 권한이 허용되지 않았습니다. 브라우저 설정에서 허용해 주세요.');
                 }
@@ -22898,132 +22926,18 @@ wirePromptEncyclopediaEvents(body);
   }
 
   function startTemplateAdCountdown(seconds, onComplete){
-    var totalSec = Number(seconds) || 5;
-    var remaining = totalSec;
-
-    var existingHud = document.getElementById('tplAdCountdownHud');
-    if(existingHud && existingHud.parentNode) existingHud.parentNode.removeChild(existingHud);
-
-    var hud = document.createElement('div');
-    hud.id = 'tplAdCountdownHud';
-    hud.setAttribute('style', 'position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:99999;width:calc(100% - 32px);max-width:440px;background:rgba(20,22,43,0.94);backdrop-filter:blur(12px);color:#fff;border-radius:16px;padding:12px 16px;box-shadow:0 12px 32px rgba(0,0,0,0.35);border:1.5px solid rgba(255,255,255,0.18);animation:slideDown 0.3s ease;');
-
-    function updateHud(){
-      var pct = computeAdCountdownProgress(remaining, totalSec);
-      hud.innerHTML =
-        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
-          '<div style="display:flex;align-items:center;gap:6px;font-size:.875rem;font-weight:700;">' +
-            '<span>⏳</span>' +
-            '<span>' + remaining + '초 뒤 광고 영상이 시작됩니다</span>' +
-          '</div>' +
-          '<span style="font-size:.7rem;background:var(--brand-line);color:var(--brand);padding:2px 8px;border-radius:8px;font-weight:700;">AD</span>' +
-        '</div>' +
-        '<div style="font-size:.8125rem;color:rgba(255,255,255,0.8);margin-bottom:8px;">' +
-          '나의 목표 탭에 템플릿 복제가 완료되었습니다.' +
-        '</div>' +
-        '<div style="width:100%;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;overflow:hidden;">' +
-          '<div style="width:' + pct + '%;height:100%;background:var(--brand);transition:width 1s linear;"></div>' +
-        '</div>';
-    }
-
-    updateHud();
-    document.body.appendChild(hud);
-
-    var timer = setInterval(function(){
-      remaining--;
-      if(remaining > 0){
-        updateHud();
-      } else {
-        clearInterval(timer);
-        if(hud.parentNode) hud.parentNode.removeChild(hud);
-        if(typeof onComplete === 'function') onComplete();
-      }
-    }, 1000);
+    // 최고 헌법 제4조 제1항 제8호 및 상민님 직접 지시: 런칭 초기 광고 카운트다운 전면 배제 (직접 지시 전까지 절대 사용 금지)
+    if(typeof onComplete === 'function') onComplete();
   }
 
   function playRewardedAdVideo(tpl, onComplete){
-    // 1. 모바일 앱(Capacitor) AdMob 플러그인 환경
-    if(typeof window !== 'undefined' && window.Capacitor && typeof window.Capacitor.isPluginAvailable === 'function' && window.Capacitor.isPluginAvailable('AdMob') && window.AdMob){
-      toast('광고 영상을 준비 중입니다...');
-      var adUnitId = (typeof OURGOAL_CONFIG !== 'undefined' && OURGOAL_CONFIG.ADMOB_REWARDED_AD_UNIT_ID) || 'ca-app-pub-3940256099942544/5224354917';
-      try {
-        window.AdMob.prepareRewardVideoAd({ adId: adUnitId })
-          .then(function(){ return window.AdMob.showRewardVideoAd(); })
-          .then(function(reward){
-            toast('광고 시청이 완료되었습니다! 아워골을 이용해 주셔서 감사합니다.');
-            if(typeof onComplete === 'function') onComplete(reward);
-          })
-          .catch(function(err){
-            console.warn('AdMob Native 재생 실패 -> 웹 플레이어로 전환:', err);
-            showWebRewardedAdModal(tpl, onComplete);
-          });
-      } catch(e) {
-        showWebRewardedAdModal(tpl, onComplete);
-      }
-      return;
-    }
-
-    // 2. 일반 웹 브라우저 환경 (시뮬레이션 플레이어)
-    showWebRewardedAdModal(tpl, onComplete);
+    // 최고 헌법 제4조 제1항 제8호 및 상민님 직접 지시: 런칭 초기 광고 전면 배제 (직접 지시 전까지 절대 사용 금지)
+    if(typeof onComplete === 'function') onComplete({ rewarded: true });
   }
 
   function showWebRewardedAdModal(tpl, onComplete){
-    var adTitle = (tpl && tpl.title) ? tpl.title : '아워골 맞춤 템플릿';
-    var adDuration = 5;
-    var adRemain = adDuration;
-
-    var adHtml = '<div style="position:relative;padding:14px 8px;text-align:center;">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">' +
-        '<span style="background:var(--red-soft);color:var(--brand-strong);font-size:.8125rem;font-weight:700;padding:3px 8px;border-radius:6px;">스폰서 광고</span>' +
-        '<span id="webAdTimerBadge" style="font-size:.8125rem;color:var(--ink-soft);font-weight:600;">' + adDuration + '초 후 건너뛰기 가능</span>' +
-      '</div>' +
-      '<div style="background:var(--brand);border-radius:16px;padding:32px 16px;color:#fff;margin-bottom:14px;box-shadow:inset 0 0 20px rgba(0,0,0,0.5);">' +
-        '<div style="font-size:2.8rem;margin-bottom:10px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div>' +
-        '<h4 style="font-size:1.1rem;font-weight:700;color:var(--brand);margin-bottom:6px;">OurGoal x Pro Sponsors</h4>' +
-        '<p style="font-size:.875rem;color:rgba(255,255,255,0.85);line-height:1.55;margin:0 0 14px;word-break:keep-all;">' +
-          '<b>[' + escapeHtml(adTitle) + ']</b> 목표 완주를 응원합니다!<br>체크인 루프와 함께 매일 성장하세요.' +
-        '</p>' +
-        '<div style="width:100%;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;overflow:hidden;">' +
-          '<div id="webAdProgressBar" style="width:0%;height:100%;background:var(--sage);transition:width 1s linear;"></div>' +
-        '</div>' +
-      '</div>' +
-      '<div style="display:flex;gap:8px;">' +
-        '<button class="btn btn-primary" id="webAdCloseBtn" type="button" disabled style="width:100%;padding:10px 0;opacity:0.5;font-weight:700;">' +
-          '광고 시청 중 (' + adDuration + 's)' +
-        '</button>' +
-      '</div>' +
-    '</div>';
-
-    openModal(adHtml, function(adSheet){
-      var timerBadge = adSheet.querySelector('#webAdTimerBadge');
-      var progBar = adSheet.querySelector('#webAdProgressBar');
-      var closeBtn = adSheet.querySelector('#webAdCloseBtn');
-
-      var timer = setInterval(function(){
-        adRemain--;
-        var elapsed = adDuration - adRemain;
-        var pct = (elapsed / adDuration) * 100;
-        if(progBar) progBar.style.width = pct + '%';
-
-        if(adRemain > 0){
-          if(timerBadge) timerBadge.textContent = adRemain + '초 후 건너뛰기 가능';
-          if(closeBtn) closeBtn.textContent = '광고 시청 중 (' + adRemain + 's)';
-        } else {
-          clearInterval(timer);
-          if(timerBadge) timerBadge.textContent = '광고 시청 완료 ✓';
-          if(closeBtn){
-            closeBtn.disabled = false;
-            closeBtn.style.opacity = '1';
-            closeBtn.textContent = '닫기 및 앱으로 돌아가기';
-            closeBtn.onclick = function(){
-              closeModal();
-              toast('광고 시청이 완료되었습니다! 템플릿을 자유롭게 활용하세요.');
-              if(typeof onComplete === 'function') onComplete();
-            };
-          }
-        }
-      }, 1000);
-    });
+    // 최고 헌법 제4조 제1항 제8호 및 상민님 직접 지시: 웹 보상형 광고 모달 전면 배제
+    if(typeof onComplete === 'function') onComplete();
   }
 
   function executeDirectTemplateClone(tpl, onSelectTemplate){
@@ -23068,52 +22982,18 @@ wirePromptEncyclopediaEvents(body);
     }
 
     // KF-2 #TASK-ES-017 · 정본 §3: 복제 흐름에서 광고를 분리한다. 플래그(ENABLE_TEMPLATE_REWARDED_ADS)는 설정의 "광고 보고 크레딧 받기" 선택형 버튼(js/template-credit.js)에서만 쓴다.
-    var adsEnabled = !!forceAdFlow; // 시연용 testTemplateAdFlow 만 강제 경로
-    if(!adsEnabled){
-      // 🚀 베타 테스트 기본 모드: 무마찰 100% 무료 즉시 복제
-      executeDirectTemplateClone(tpl, onSelectTemplate);
-      return;
-    }
-
-    // 💰 보상형 광고 모드 (안내 모달 노출 -> 확인 시 즉시 복제 + 5초 카운트다운 후 광고 재생)
-    var noticeText = getTemplateAdNoticeMessage();
-    var modalHtml = '<div style="text-align:center;padding:12px 6px;">' +
-      '<div style="font-size:2.2rem;margin-bottom:8px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v8h14v-8"/><path d="M12 8v12"/><path d="M12 8c-2-3-6-3-6-1s3 1 6 1c3 0 6 1 6-1s-4-2-6 1z"/></svg></div>' +
-      '<h3 style="font-size:1.0625rem;font-weight:700;margin-bottom:12px;color:var(--ink);letter-spacing:-0.02em;">템플릿 무료 복사 안내</h3>' +
-      '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:14px 16px;font-size:.875rem;line-height:1.6;color:var(--ink);margin-bottom:18px;word-break:keep-all;text-align:left;">' +
-        '<p style="margin:0;font-weight:600;color:var(--ink);">안내사항</p>' +
-        '<p style="margin:6px 0 0;font-weight:500;">' + escapeHtml(noticeText) + '</p>' +
-      '</div>' +
-      '<div style="display:flex;gap:10px;">' +
-        '<button class="btn btn-ghost" id="tplNoticeCancelBtn" type="button" style="flex:1;">취소</button>' +
-        '<button class="btn btn-primary" id="tplNoticeConfirmBtn" type="button" style="flex:1.6;font-weight:700;">확인 (다운로드)</button>' +
-      '</div>' +
-    '</div>';
-
-    openModal(modalHtml, function(noticeSheet){
-      var cancelBtn = noticeSheet.querySelector('#tplNoticeCancelBtn');
-      if(cancelBtn) cancelBtn.onclick = closeModal;
-
-      var confirmBtn = noticeSheet.querySelector('#tplNoticeConfirmBtn');
-      if(confirmBtn){
-        confirmBtn.onclick = function(){
-          closeModal();
-          // 1. 유저 확인 즉시 템플릿 복제 완료하여 나의 목표 탭에서 바로 확인 가능하게 보장
-          executeDirectTemplateClone(tpl, onSelectTemplate);
-          // 2. 5초 뒤 광고 영상 시작 카운트다운
-          startTemplateAdCountdown(5, function(){
-            playRewardedAdVideo(tpl);
-          });
-        };
-      }
-    });
+    var adsEnabled = !!forceAdFlow; // 복제 흐름은 플래그와 무관하게 광고 없음
+    // 최고 헌법 제4조 제1항 제8호 및 상민님 직접 지시: 런칭 초기 광고 전면 배제 (직접 지시 전까지 절대 사용 금지)
+    // 🚀 무마찰 100% 무료 1초 즉시 복제
+    executeDirectTemplateClone(tpl, onSelectTemplate);
+    return;
   }
 
-  // 개발 및 시연/테스트용 강제 실행 함수 노출
+  // 개발 및 시연/테스트용 함수
   if(typeof window !== 'undefined'){
     window.testTemplateAdFlow = function(tplKey){
       var tpl = (CURATED_MARKET_TEMPLATES || []).find(function(t){ return t.key === tplKey; }) || (CURATED_MARKET_TEMPLATES && CURATED_MARKET_TEMPLATES[0]);
-      if(tpl) handleTemplateCloneWithAd(tpl, null, true);
+      if(tpl) handleTemplateCloneWithAd(tpl, null, false);
     };
   }
 
@@ -27045,9 +26925,9 @@ wirePromptEncyclopediaEvents(body);
     var isMe = p.user_id === state.profile.id;
     var reported = !!((state.profile.settings.contentReports||{})['feed_post:'+p.id]);
     return '<div class="feed-item">' +
-      '<div class="feed-avatar'+(isMe?' me':'')+'">'+escapeHtml((p.display_name||'').slice(0,1))+'</div>' +
+      '<div class="feed-avatar'+(isMe?' me':'')+'" data-feedprof="'+p.id+'" style="cursor:pointer;" title="프로필 보기">'+escapeHtml((p.display_name||'').slice(0,1))+'</div>' +
       '<div class="feed-body">' +
-        '<div class="feed-head"><span class="feed-name">'+escapeHtml(p.display_name)+'</span>' +
+        '<div class="feed-head"><span class="feed-name" data-feedprof="'+p.id+'" style="cursor:pointer;" title="프로필 보기">'+escapeHtml(p.display_name)+'</span>' +
           (ex.includeGoal ? '<span class="feed-goal">'+escapeHtml(p.goal_title)+' · '+ex.goalPct+'%</span>' : '') +
         '</div>' +
         '<div class="feed-action">'+escapeHtml(p.caption)+'</div>' +
@@ -27272,10 +27152,10 @@ wirePromptEncyclopediaEvents(body);
 
         return (it._topHelpfulLabel && window.OurgoalTopHelpful ? window.OurgoalTopHelpful.labelHtml() : '') +
           '<div class="feed-item">' +
-          '<div class="feed-avatar'+(isMe?' me':'')+'">'+escapeHtml(it.avatar)+'</div>' +
+          '<div class="feed-avatar'+(isMe?' me':'')+'" data-feedprof="'+it.id+'" style="cursor:pointer;" title="프로필 보기">'+escapeHtml(it.avatar)+'</div>' +
           '<div class="feed-body">' +
             '<div class="feed-head">' +
-              '<span class="feed-name">'+escapeHtml(it.name)+aiTagHtml+(it.vis==='followers'?' 👥':'')+'</span>' +
+              '<span class="feed-name" data-feedprof="'+it.id+'" style="cursor:pointer;" title="프로필 보기">'+escapeHtml(it.name)+aiTagHtml+(it.vis==='followers'?' 👥':'')+'</span>' +
               (it.goal ? '<span class="feed-goal">'+escapeHtml(it.goal)+' · '+it.pct+'%</span>' : '') +
             '</div>' +
             '<div class="feed-action">'+escapeHtml(it.action)+'</div>' +
@@ -27298,7 +27178,11 @@ wirePromptEncyclopediaEvents(body);
                 '<button class="feed-react-btn'+(hasHeart?' active active-heart':'')+'" data-reacttype="heart" data-pid="'+it.id+'" type="button" title="응원해요">'+(heartCount > 0 ? heartCount : '')+'</button>' +
                 '<button class="feed-react-btn'+(hasSparkle?' active active-sparkle':'')+'" data-reacttype="sparkle" data-pid="'+it.id+'" type="button" title="자극받아요">'+(sparkleCount > 0 ? sparkleCount : '')+'</button>') +
                 '<button class="feed-comm-toggle'+(comments.length?' has-comments':'')+'" data-togglecomments="'+it.id+'" type="button">댓글 '+(comments.length || 0)+'</button>' +
-                '<button class="feed-share-btn" data-sharefeed="'+it.id+'" type="button" title="외부 SNS 공유 및 링크 복사" style="background:none;border:1px solid var(--rule);border-radius:12px;padding:3px 8px;font-size:.75rem;color:var(--ink-soft);cursor:pointer;display:inline-flex;align-items:center;gap:3px;margin-left:2px;">🔗 공유</button>' +
+                '<button class="feed-share-btn" data-sharefeed="'+it.id+'" type="button" title="피드 글 공유 (동반자 DM · 팀 톡방 · 외부 SNS)" style="background:none;border:1px solid var(--rule);border-radius:12px;padding:3px 8px;font-size:.75rem;color:var(--ink-soft);cursor:pointer;display:inline-flex;align-items:center;gap:3px;margin-left:2px;">🔗 공유</button>' +
+                (!isMe ?
+                  '<button class="feed-social-btn" data-feedcomp="'+it.id+'" type="button" title="동반자로 추가" style="background:none;border:1px solid var(--brand-line);border-radius:12px;padding:3px 8px;font-size:.75rem;color:var(--brand);cursor:pointer;display:inline-flex;align-items:center;gap:3px;margin-left:2px;font-weight:600;">+ 동반자</button>' +
+                  '<button class="feed-social-btn" data-feeddm="'+it.id+'" type="button" title="1:1 응원 DM" style="background:none;border:1px solid var(--rule);border-radius:12px;padding:3px 8px;font-size:.75rem;color:var(--teal);cursor:pointer;display:inline-flex;align-items:center;gap:3px;margin-left:2px;font-weight:600;">✉️ DM</button>' +
+                  '<button class="feed-social-btn" data-feedscout="'+it.id+'" type="button" title="내 팀 목표로 영입 초대" style="background:none;border:1px solid rgba(245,158,11,0.3);border-radius:12px;padding:3px 8px;font-size:.75rem;color:var(--gold);cursor:pointer;display:inline-flex;align-items:center;gap:3px;margin-left:2px;font-weight:600;">👑 영입</button>' : '') +
               '</div>' +
               (window.OurgoalReactions ? window.OurgoalReactions.advicePanelHtml(it) : '') +
               (isMe && !it.is_ai ? '<button data-delpost="'+it.id+'" type="button" style="margin-left:auto;background:none;border:none;color:var(--ink-faint);font-size:.8125rem;cursor:pointer;">삭제</button>' : '') +
@@ -27441,7 +27325,129 @@ wirePromptEncyclopediaEvents(body);
       });
     });
 
-    body.querySelectorAll('[data-sharefeed]').forEach(function(btn){ btn.addEventListener('click', function(e){ e.stopPropagation(); var pid = btn.dataset.sharefeed; var post = blendedItems.find(function(x){ return x.id === pid; }); if(!post) return; var pTitle = post.goal ? ('"' + post.goal + '" 실천 기록') : (post.action || '목표 실천 기록'); var pDesc = post.action || (post.recordText ? post.recordText.slice(0, 80) : '아워골에서 함께 응원하고 성장해요!'); shareContent({ type: 'feed', id: post.id, title: pTitle, author: post.name || '동료', desc: pDesc, text: '[아워골 피드] ' + (post.name || '동료') + '님의 실천: "' + pTitle + '" 🔥' }); }); });
+    // 피드 작성자 아바타/닉네임 클릭 -> 프로필 모달 조회 (#TASK-COMM-FEED-SOCIAL-BRIDGE)
+    body.querySelectorAll('[data-feedprof]').forEach(function(el){
+      el.addEventListener('click', function(e){
+        e.stopPropagation();
+        var pid = el.dataset.feedprof;
+        var post = blendedItems.find(function(x){ return x.id === pid; });
+        if(!post && FEED_POSTS_CACHE){ post = FEED_POSTS_CACHE.find(function(x){ return x.id === pid; }); }
+        if(!post) return;
+        var pName = post.name || post.display_name || '아워골 메이커';
+        var pAvatar = post.avatar || (pName ? pName.slice(0, 1) : '👤');
+        var userObj = {
+          id: post.userId || post.user_id || ('user_' + pName),
+          nickname: pName,
+          name: pName,
+          avatar: pAvatar,
+          goals: post.goal ? [post.goal] : (post.goal_title ? [post.goal_title] : ['아워골 목표 실천 중']),
+          streak: 7,
+          level: 2,
+          theme: post.category || '목표 달성',
+          intro: post.action || post.caption || (post.recordText ? post.recordText.slice(0, 80) : '매일 꾸준히 목표를 향해 나아가는 중입니다.'),
+          isAiBot: !!post.is_ai
+        };
+        if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.openUserProfileModal){
+          window.OurgoalTeamInviteComm.openUserProfileModal(userObj);
+        } else if(typeof openUserProfileModal === 'function'){
+          openUserProfileModal(userObj);
+        }
+      });
+    });
+
+    // 피드 카드 내 동반자 추가 원탭 배선
+    body.querySelectorAll('[data-feedcomp]').forEach(function(btn){
+      btn.addEventListener('click', async function(e){
+        e.stopPropagation();
+        var pid = btn.dataset.feedcomp;
+        var post = blendedItems.find(function(x){ return x.id === pid; });
+        if(!post) return;
+        var pName = post.name || post.display_name || '동반자';
+        var userObj = {
+          id: post.userId || post.user_id || ('user_' + pName),
+          nickname: pName,
+          name: pName,
+          avatar: post.avatar || (pName ? pName.slice(0, 1) : '👤'),
+          goals: post.goal ? [post.goal] : ['아워골 목표 실천 중'],
+          streak: 7,
+          level: 2,
+          theme: post.category || '목표 달성',
+          intro: post.action || '아워골 러닝메이트',
+          isAiBot: !!post.is_ai
+        };
+        if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.ensureDefaultCompanions){
+          var comps = window.OurgoalTeamInviteComm.ensureDefaultCompanions();
+          var targetId = String(userObj.id || '').trim().toLowerCase();
+          if(!comps.some(function(x){ return String(x.id || '').trim().toLowerCase() === targetId; })){
+            comps.unshift(userObj);
+            try { if(window.saveProfile) await window.saveProfile(); } catch(err){}
+            if(window.OurgoalTeamInviteComm.persistCompanions) window.OurgoalTeamInviteComm.persistCompanions();
+            btn.disabled = true;
+            btn.textContent = '✓ 동반자';
+            toast((userObj.nickname || userObj.name) + '님을 동반자로 추가했어요! 🎉');
+          } else {
+            toast('이미 등록된 동반자입니다.');
+          }
+        }
+      });
+    });
+
+    // 피드 카드 내 1:1 응원 DM 원탭 배선
+    body.querySelectorAll('[data-feeddm]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var pid = btn.dataset.feeddm;
+        var post = blendedItems.find(function(x){ return x.id === pid; });
+        if(!post) return;
+        var pName = post.name || post.display_name || '동료';
+        var pUid = post.userId || post.user_id || ('user_' + pName);
+        state.activeTab = 'comm';
+        state.commSubTab = 'dm';
+        state.activeDmPeer = pUid;
+        state.activeDmPeerName = pName;
+        state.activeDmPeerAvatar = post.avatar || (pName ? pName.slice(0, 1) : '👤');
+        if(typeof renderCommScreen === 'function') renderCommScreen();
+      });
+    });
+
+    // 피드 카드 내 팀 목표 영입 초대 배선
+    body.querySelectorAll('[data-feedscout]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var pid = btn.dataset.feedscout;
+        var post = blendedItems.find(function(x){ return x.id === pid; });
+        if(!post) return;
+        var pName = post.name || post.display_name || '동료';
+        var userObj = {
+          id: post.userId || post.user_id || ('user_' + pName),
+          nickname: pName,
+          name: pName,
+          avatar: post.avatar || (pName ? pName.slice(0, 1) : '👤'),
+          streak: 7,
+          isAiBot: !!post.is_ai
+        };
+        if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.openScoutToTeamModal){
+          window.OurgoalTeamInviteComm.openScoutToTeamModal(userObj);
+        }
+      });
+    });
+
+    // 피드 글 인앱 통합 공유 (동반자 DM · 팀 톡방 · 외부 SNS)
+    body.querySelectorAll('[data-sharefeed]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var pid = btn.dataset.sharefeed;
+        var post = blendedItems.find(function(x){ return x.id === pid; });
+        if(!post) return;
+        if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.openFeedShareModal){
+          window.OurgoalTeamInviteComm.openFeedShareModal(post);
+        } else {
+          var pTitle = post.goal ? ('"' + post.goal + '" 실천 기록') : (post.action || '목표 실천 기록');
+          var pDesc = post.action || (post.recordText ? post.recordText.slice(0, 80) : '아워골에서 함께 응원하고 성장해요!');
+          shareContent({ type: 'feed', id: post.id, title: pTitle, author: post.name || '동료', desc: pDesc, text: '[아워골 피드] ' + (post.name || '동료') + '님의 실천: "' + pTitle + '" 🔥' });
+        }
+      });
+    });
     if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.wireTemplatesAccordionEvents){
       window.OurgoalTeamInviteComm.wireTemplatesAccordionEvents(body, function(){ renderCommFeed(body); });
     } else {
