@@ -279,7 +279,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div id="personalGoalsView">
         <div class="goal-head-row">
           <div class="goal-head-l">
-            <div style="display:flex;align-items:center;gap:6px;"><h2 style="margin:0;">목표</h2></div>
+            <div style="display:flex;align-items:center;gap:6px;"><h2 style="margin:0;font-size:1.15rem;">세부 마일스톤 & 할 일</h2></div>
             <span class="privacy-badge" id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;">
@@ -289,7 +289,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           </div>
         </div>
         <div id="goalsTemplateAccordionSlot" style="display:none;"></div>
-        <div class="goal-chip-row" id="goalChipRow"></div>
+        <div class="goal-chip-row" id="goalChipRow" style="display:none;" aria-hidden="true"></div>
         <div id="goalDetailBody"></div>
         <div class="card agent-card" id="goalAgentCard">
           <div class="agent-title">AI로 목표 관리</div>
@@ -636,8 +636,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div class="set-block">
         <h4>계정 및 보안</h4>
         <div style="padding:10px 14px;background:var(--card2);border-radius:12px;margin-bottom:12px;font-size:.875rem;">
-          <div class="faint" style="font-size:.8125rem;">로그인 계정 이메일</div>
-          <b id="setAccountEmail" style="color:var(--ink);">-</b>
+          <div class="faint" style="font-size:.8125rem;">로그인 계정 상태</div>
+          <b id="setAccountEmail" style="color:var(--ink);">게스트 체험 모드 (로컬 안전 보관)</b>
         </div>
         <button class="btn btn-ghost btn-sm btn-block" id="btnChangePassModal" type="button" style="margin-bottom:12px;font-size:.8125rem;">비밀번호 변경</button>
         <div class="toggle-row">
@@ -5837,9 +5837,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '<div class="avatar-edit">' +
         '<div id="pvAvatar">'+avatarHtml(64)+'</div>' +
         '<div style="flex:1;">' +
-          '<button class="btn btn-ghost btn-sm" id="pvPick" type="button">사진 변경</button>' +
-          (draft.avatarUrl ? ' <button class="btn btn-ghost btn-sm" id="pvClear" type="button">삭제</button>' : '') +
-          '<div class="hint">정사각형 사진이 가장 잘 보여요 · 128px로 줄여 저장돼요</div>' +
+          '<button class="btn btn-ghost btn-sm" id="pvPick" type="button" style="display:inline-flex;align-items:center;gap:4px;font-weight:700;">🎨 아바타 변경 (320종)</button>' +
+          '<div class="hint">아워골 320종 아바타 도감에서 내 캐릭터를 선택해요</div>' +
         '</div>' +
       '</div>' +
       '<div class="field"><label>닉네임</label><input id="pvName" type="text" value="'+escapeHtml(draft.name)+'" maxlength="20"></div>' +
@@ -6022,25 +6021,40 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           });
         }
 
-        var fileInput = document.getElementById('avatarFile');
-        sheet.querySelector('#pvPick').addEventListener('click', function(){ if(fileInput) fileInput.click(); });
-        if(fileInput){
-          fileInput.onchange = function(e){
-            var f = e.target.files[0];
-            if(!f) return;
-            resizeImageToDataUrl(f, 128, function(dataUrl){
-              if(!dataUrl){ toast('사진을 읽을 수 없어요'); return; }
-              draft.avatarUrl = dataUrl;
-              sheet.querySelector('#pvAvatar').innerHTML = '<div class="profile-avatar"><img src="'+dataUrl+'" alt=""></div>';
+        sheet.querySelector('#pvPick').addEventListener('click', function(){
+          syncInputsToDraft();
+          if(window.OurgoalAvatar && window.OurgoalAvatar.openAvatarModal){
+            var xpTotal = (state.profile && state.profile.settings && state.profile.settings.xp && state.profile.settings.xp.total) || 0;
+            var pLvl = levelProgress(xpTotal);
+            window.OurgoalAvatar.openAvatarModal({
+              profile: state.profile,
+              state: state,
+              saveProfile: saveProfile,
+              toast: toast,
+              openModal: openModal,
+              closeModal: function(){
+                openProfileEditor(draft);
+              },
+              currentLevel: pLvl.level,
+              mockGroups: (typeof MOCK_GROUPS !== 'undefined' ? MOCK_GROUPS : []),
+              onAvatarChanged: function(newAvatarKey){
+                draft.avatarUrl = newAvatarKey;
+                syncInputsToDraft();
+                openProfileEditor(draft);
+                renderLevelBadge();
+                updateTopBar();
+                toast('아바타가 선택되었습니다 ✨');
+              }
             });
-            e.target.value = '';
-          };
-        }
+          } else {
+            toast('아바타 도감을 불러오는 중입니다...');
+          }
+        });
 
         var clearBtn = sheet.querySelector('#pvClear');
         if(clearBtn) clearBtn.addEventListener('click', function(){
           draft.avatarUrl = '';
-          sheet.querySelector('#pvAvatar').innerHTML = '<div class="profile-avatar">'+escapeHtml(draft.name.slice(0,1))+'</div>';
+          sheet.querySelector('#pvAvatar').innerHTML = '<div class="profile-avatar">'+escapeHtml((draft.name || '나').slice(0,1))+'</div>';
         });
 
         sheet.querySelector('#pvCancel').addEventListener('click', closeModal);
@@ -24618,8 +24632,13 @@ wirePromptEncyclopediaEvents(body);
 
     var pulseTextEl = document.getElementById('recMiniPulseText');
     if(pulseTextEl){
-      var durationStr = totalMs > 0 ? fmtDuration(totalMs) : '0분';
-      pulseTextEl.innerHTML = '이번 주 <b>' + durationStr + ' 실천</b> (' + weekRecCount + '회 기록) · 성취 확인';
+      if(totalMs > 0){
+        pulseTextEl.innerHTML = '이번 주 <b>' + fmtDuration(totalMs) + ' 실천</b> (' + weekRecCount + '회 기록) · 성취 확인';
+      } else if(weekRecCount > 0){
+        pulseTextEl.innerHTML = '이번 주 <b>' + weekRecCount + '회 실천 완료 ✨</b> · 성취 확인';
+      } else {
+        pulseTextEl.innerHTML = '이번 주 <b>0회 실천</b> · 실천을 기록해보세요';
+      }
     }
 
     renderWeekChart(allRecs);
@@ -29295,17 +29314,25 @@ wirePromptEncyclopediaEvents(body);
       } else if(!isGuest && (p.id || u.id)){
         emailEl.textContent = (p.displayName || '회원') + ' 계정 연동됨';
       } else {
-        emailEl.textContent = '게스트 모드 (로그인 후 계정 연동)';
+        emailEl.textContent = '게스트 체험 모드 (로컬 안전 보관)';
       }
     }
     var chgPassBtn = document.getElementById('btnChangePassModal');
     if(chgPassBtn){
       var isOAuthUser = (state.profile && (state.profile.provider === 'kakao' || state.profile.provider === 'google')) ||
                         (state.user && state.user.app_metadata && (state.user.app_metadata.provider === 'kakao' || state.user.app_metadata.provider === 'google'));
-      chgPassBtn.textContent = isOAuthUser ? '비밀번호 등록/설정 (소셜 연동)' : '비밀번호 변경';
-      chgPassBtn.onclick = function(){
-        openChangePasswordModal();
-      };
+      if(isGuest){
+        chgPassBtn.textContent = '🔒 간편 회원가입 / 계정 연동';
+        chgPassBtn.onclick = function(){
+          if(typeof openAuthModal === 'function') openAuthModal();
+          else toast('소셜 로그인으로 내 소중한 데이터를 안전하게 보관하세요');
+        };
+      } else {
+        chgPassBtn.textContent = isOAuthUser ? '비밀번호 등록/설정 (소셜 연동)' : '비밀번호 변경';
+        chgPassBtn.onclick = function(){
+          openChangePasswordModal();
+        };
+      }
     }
     var twoFaSw = document.getElementById('twoFactorSwitch');
     if(twoFaSw){
