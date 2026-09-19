@@ -184,10 +184,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <div class="capture-sub">오늘 실천한 멋진 일을 한 줄로 톡 적어보세요! AI가 갓생 기록으로 완성해드려요 ✨</div>
         <div id="captureThemeQuickBar" class="theme-quick-bar" aria-label="테마 즐겨찾기"></div>
         <div class="theme-guide-microcopy" style="font-size:0.75rem;color:var(--ink-faint);margin:2px 0 6px 2px;line-height:1.4;">(테마 : ai 분석 및 DB시각화에 활용됨)</div>
-        <div class="quick-checkin-chips" style="display:flex;gap:6px;margin:6px 0 10px;flex-wrap:wrap;">
-          <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='';inp.placeholder='예: 👟 5km 러닝 28분 완주, 마지막 1km 스퍼트 성공!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">👟 5km 러닝</button>
-          <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='';inp.placeholder='예: 📖 독서 30분 인간관계론 완독 & 핵심 메모!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">📖 독서 30분</button>
-          <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='';inp.placeholder='예: 💻 핵심 알고리즘 1시간 몰입 코딩 완료!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">&lt;/&gt; 코딩 1시간</button>
+        <div class="quick-checkin-chips" style="display:flex;gap:6px;margin:4px 0 8px;flex-wrap:wrap;">
+          <details class="cunning-paper-details" style="width:100%;">
+            <summary style="cursor:pointer;font-size:.78rem;color:var(--brand);font-weight:700;display:flex;align-items:center;gap:4px;user-select:none;list-style:none;padding:2px 0;">
+              <span>💡 내 목표 맞춤 커닝페이퍼 (추천 예시)</span>
+              <span class="faint" style="font-size:.6875rem;font-weight:400;color:var(--ink-soft);">(탭하여 펼치기 ▾)</span>
+            </summary>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;padding:6px;background:rgba(255,255,255,0.02);border-radius:12px;border:1px dashed var(--rule);">
+              <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='';inp.placeholder='예: 👟 5km 러닝 28분 완주, 마지막 1km 스퍼트 성공!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">👟 5km 러닝</button>
+              <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='';inp.placeholder='예: 📖 독서 30분 인간관계론 완독 & 핵심 메모!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">📖 독서 30분</button>
+              <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='';inp.placeholder='예: 💻 핵심 알고리즘 1시간 몰입 코딩 완료!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">&lt;/&gt; 코딩 1시간</button>
+            </div>
+          </details>
         </div>
         <div class="capture-ta-wrap">
           <textarea id="captureInput" placeholder="예: 오늘 실천한 멋진 일을 한 줄로 적어보세요"></textarea>
@@ -352,9 +360,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     <!-- RECORDS -->
     <section class="screen" id="screen-records">
       <div id="sanctuaryRecordsView"></div>
-      <div class="screen-head" style="flex-wrap:wrap;gap:8px;">
+      <div class="screen-head" style="flex-wrap:wrap;gap:8px;margin-bottom:8px;">
         <div class="screen-head-l" style="flex-wrap:wrap;">
-          <h2 class="s-title">기록/통계</h2>
+          <h2 class="s-title" style="font-size:1.15rem;margin:0;">기록/통계</h2>
           <span class="privacy-badge" id="recPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
@@ -362,7 +370,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
             <span>⏱️ 지금부터 시간기록</span>
           </button>
-          <button class="btn btn-primary btn-sm" id="recAddBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>새 기록</span></button>
+          <button class="btn btn-primary btn-sm" id="recAddBtn" type="button" style="display:none !important;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>새 기록</span></button>
         </div>
       </div>
       <div id="recFeedbackSlot" style="display:none;"></div>
@@ -404,25 +412,26 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           </div>
         </div>
 
-        <!-- 유니버설 데이터 가져오기 & 1년치 샘플로드 단일 통합 배너 -->
-        <div class="card" id="recUniversalTopBanner" style="background:linear-gradient(135deg, rgba(37,99,235,0.08) 0%, rgba(99,102,241,0.12) 100%);border:1px solid rgba(99,102,241,0.28);border-radius:12px;padding:12px 14px;margin-bottom:12px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-            <div style="min-width:180px;flex:1;">
-              <div style="font-weight:700;font-size:13.5px;color:var(--text);display:flex;align-items:center;gap:6px;">
-                <span>📥 데이터 가져오기 & 1초 샘플로드</span>
-                <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:rgba(37,99,235,0.15);color:var(--primary);font-weight:700;">AI 자동시각화</span>
-              </div>
-              <div style="font-size:11.5px;color:var(--text-faint);margin-top:2px;line-height:1.4;">
-                영업 실적, 개발 커밋, 수험 공부, 자산, 운동 등 어떤 데이터도 AI가 스스로 감지해 전문 다차원 통계 차트로 시각화해요.
-              </div>
+        <!-- 유니버설 데이터 가져오기 & 1년치 샘플로드 단일 통합 배너 (컴팩트 개선) -->
+        <details class="card" id="recUniversalTopBanner" style="background:linear-gradient(135deg, rgba(37,99,235,0.08) 0%, rgba(99,102,241,0.12) 100%);border:1px solid rgba(99,102,241,0.28);border-radius:12px;padding:10px 14px;margin-bottom:10px;">
+          <summary style="cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;user-select:none;">
+            <div style="font-weight:700;font-size:13px;color:var(--text);display:flex;align-items:center;gap:6px;">
+              <span>📥 외부 데이터 가져오기 & 1초 샘플로드</span>
+              <span style="font-size:10px;padding:1px 6px;border-radius:6px;background:rgba(37,99,235,0.15);color:var(--primary);font-weight:700;">AI 시각화</span>
+            </div>
+            <span class="faint" style="font-size:11px;color:var(--text-faint);">열기 ▾</span>
+          </summary>
+          <div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+            <div style="font-size:11.5px;color:var(--text-faint);line-height:1.4;flex:1;min-width:160px;">
+              영업 실적, 개발 커밋, 수험 공부, 자산, 운동 등 어떤 데이터도 AI가 스스로 감지해 전문 다차원 통계 차트로 시각화해요.
             </div>
             <div>
-              <button class="btn btn-primary btn-sm" id="recImportBannerBtn" type="button" style="font-weight:700;padding:8px 14px;box-shadow:0 2px 6px rgba(99,102,241,0.25);">
+              <button class="btn btn-primary btn-sm" id="recImportBannerBtn" type="button" style="font-weight:700;padding:6px 12px;box-shadow:0 2px 6px rgba(99,102,241,0.25);">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span>📥 데이터 가져오기 & 1초 샘플</span>
               </button>
             </div>
           </div>
-        </div>
+        </details>
 
         <!-- V2 극대화 보완: 미니 성취 펄스 바 (0초 만에 달성률 체감 & 클릭 시 통계 뷰 이동) -->
         <div class="rec-mini-pulse-bar" id="recMiniPulseBar" role="button" tabindex="0" title="클릭하여 성취 통계 뷰로 이동">
@@ -566,9 +575,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <!-- [그룹 1] 👤 계정 & 프로필 -->
       <details class="settings-group-accordion" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
         <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:1.15rem;">👤</span>
-            <span>계정 & 프로필</span>
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:1.15rem;">👤</span>
+              <span>계정 & 프로필</span>
+            </div>
+            <span class="faint" style="font-size:.75rem;font-weight:400;margin-left:26px;">프로필, 소셜 로그인 연동, 320종 아바타, 2단계 인증</span>
           </div>
           <span class="faint" style="font-size:.78125rem;">접기/펼치기 ▾</span>
         </summary>
@@ -646,9 +658,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <!-- [그룹 2] 🔔 알림 제어 센터 -->
       <details class="settings-group-accordion" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
         <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:1.15rem;">🔔</span>
-            <span>알림 제어 센터</span>
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:1.15rem;">🔔</span>
+              <span>알림 제어 센터</span>
+            </div>
+            <span class="faint" style="font-size:.75rem;font-weight:400;margin-left:26px;">웹푸시, 소리/진동 모드, 방해금지 시간, 알림 유형</span>
           </div>
           <span class="faint" style="font-size:.78125rem;">접기/펼치기 ▾</span>
         </summary>
@@ -731,9 +746,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <!-- [그룹 3] 🎨 화면 & 홈 구성 -->
       <details class="settings-group-accordion" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
         <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:1.15rem;">🎨</span>
-            <span>화면 & 홈 구성</span>
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:1.15rem;">🎨</span>
+              <span>화면 & 홈 구성</span>
+            </div>
+            <span class="faint" style="font-size:.75rem;font-weight:400;margin-left:26px;">4대 테마 설정, 잠금화면 위젯, 테마 컬러</span>
           </div>
           <span class="faint" style="font-size:.78125rem;">접기/펼치기 ▾</span>
         </summary>
@@ -823,9 +841,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <!-- [그룹 4] 💾 데이터 & 외부 연동 / 고객지원 -->
       <details class="settings-group-accordion" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
         <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:1.15rem;">💾</span>
-            <span>데이터 & 외부 연동 / 고객지원</span>
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:1.15rem;">💾</span>
+              <span>데이터 & 외부 연동 / 고객지원</span>
+            </div>
+            <span class="faint" style="font-size:.75rem;font-weight:400;margin-left:26px;">데이터 백업/복원, 노션 연동, 1:1 고객지원 및 FAQ</span>
           </div>
           <span class="faint" style="font-size:.78125rem;">접기/펼치기 ▾</span>
         </summary>
@@ -2998,15 +3019,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       chips.push({ label: '💻 코딩/업무 집중', text: '💻 핵심 태스크 1시간 딥워크 완수 & 커밋 완료 🚀' });
     }
 
-    wrap.innerHTML = '<div style="width:100%;font-size:.75rem;color:var(--brand);font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:4px;">' +
-      '<span>💡 내 목표 맞춤 커닝페이퍼</span>' +
-      '<span class="faint" style="font-size:.6875rem;font-weight:400;color:var(--ink-soft);">(탭하면 지울 필요 없이 힌트 적용)</span>' +
-    '</div>' +
-    chips.map(function(c){
-      return '<button type="button" class="btn-quick-chip" data-cunningtext="'+escapeHtml(c.text)+'" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(108,92,231,0.08);border:1px solid rgba(108,92,231,0.25);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all .15s ease;">' +
-        escapeHtml(c.label) +
-      '</button>';
-    }).join('');
+    wrap.innerHTML = '<details class="cunning-paper-details" style="width:100%;margin-bottom:6px;">' +
+      '<summary style="cursor:pointer;font-size:.78rem;color:var(--brand);font-weight:700;display:flex;align-items:center;gap:4px;user-select:none;list-style:none;padding:2px 0;">' +
+        '<span>💡 내 목표 맞춤 커닝페이퍼 (추천 예시)</span>' +
+        '<span class="faint" style="font-size:.6875rem;font-weight:400;color:var(--ink-soft);">(탭하여 펼치기 ▾)</span>' +
+      '</summary>' +
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;padding:6px;background:rgba(255,255,255,0.02);border-radius:12px;border:1px dashed var(--rule);">' +
+      chips.map(function(c){
+        return '<button type="button" class="btn-quick-chip" data-cunningtext="'+escapeHtml(c.text)+'" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(108,92,231,0.08);border:1px solid rgba(108,92,231,0.25);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all .15s ease;">' +
+          escapeHtml(c.label) +
+        '</button>';
+      }).join('') +
+      '</div></details>';
 
     wrap.querySelectorAll('[data-cunningtext]').forEach(function(btn){
       btn.addEventListener('click', function(){
@@ -7706,14 +7730,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<option value="1440"' + (curNotifyMinutes===1440 ? ' selected' : '') + '>1일 전</option>' +
         '</select>' +
       '</div>' +
-      '<div class="toggle-row" style="margin-top:12px;">' +
-        '<div class="t">완료 여부</div>' +
-        '<div class="switch' + (curDone ? ' on' : '') + '" id="calEditDoneSwitch"></div>' +
-      '</div>' +
+      (!isNew ?
+        ('<div class="toggle-row" style="margin-top:12px;">' +
+          '<div class="t">완료 여부</div>' +
+          '<div class="switch' + (curDone ? ' on' : '') + '" id="calEditDoneSwitch"></div>' +
+        '</div>') : '') +
       '<div class="modal-actions" style="margin-top:16px;gap:8px;">' +
         (!isNew ? '<button class="btn btn-danger btn-sm" id="calEditDeleteBtn" type="button">삭제</button>' : '') +
         '<button class="btn btn-ghost btn-sm" id="calEditCancelBtn" type="button">취소</button>' +
-        '<button class="btn btn-primary btn-sm" id="calEditSaveBtn" type="button" style="flex:1;">저장</button>' +
+        '<button class="btn btn-primary btn-sm" id="calEditSaveBtn" type="button" style="flex:1;background:var(--primary, #10b981) !important;color:#fff !important;font-weight:700;box-shadow:0 2px 8px rgba(16,185,129,0.3);">저장</button>' +
       '</div>',
       function(sheet){
         var backBtn = sheet.querySelector('#calEditBackToHubBtn');
@@ -8289,7 +8314,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<h3 style="margin:0;font-size:.9375rem;white-space:nowrap;">'+sel+'</h3>' +
           '<span class="faint dday-faint" style="font-weight:700;white-space:nowrap;">'+(dDay(sel)||'')+'</span>' +
         '</div>' +
-        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+        '<div style="display:none;align-items:center;gap:6px;flex-wrap:wrap;">' +
           '<button class="btn btn-secondary btn-sm cal-day-bg-btn" id="calPickDayBgBtn" type="button" style="font-size:.8125rem;padding:3px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">🖼️ 배경사진' + (((state.profile && state.profile.calendarDayBackgrounds && state.profile.calendarDayBackgrounds[sel])) ? ' (설정됨)' : '') + '</button>' +
           '<button class="btn btn-ghost btn-sm" id="calOpenHubBtn" type="button" style="font-size:.8125rem;padding:3px 8px;color:var(--ink);border-color:var(--rule);white-space:nowrap;">해당일자 관리</button>' +
           '<button class="btn btn-primary btn-sm" id="calAddManualBtn" type="button" style="font-size:.8125rem;padding:3px 8px;white-space:nowrap;">+ 일정 추가</button>' +
@@ -10260,6 +10285,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var dotsHtml = '';
     var now = new Date();
     var recDates = {};
+    var dayNames = ['일', '월', '화', '수', '목', '금', '토'];
     (state.profile.records || []).forEach(function(r){
       if(r && r.startAt) recDates[dateKey(r.startAt)] = (recDates[dateKey(r.startAt)] || 0) + 1;
     });
@@ -10269,11 +10295,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var cnt = recDates[dk] || 0;
       var isToday = (i === 0);
       var dayNum = d.getDate();
+      var dayName = dayNames[d.getDay()];
+      var isWeekend = (d.getDay() === 0 || d.getDay() === 6);
       var bg = isToday ? 'linear-gradient(180deg, #F59E0B, #D97706)' : (cnt >= 2 ? 'linear-gradient(180deg, #10B981, #059669)' : (cnt > 0 ? 'rgba(16,185,129,0.55)' : 'rgba(255,255,255,0.06)'));
       var shadow = isToday ? 'box-shadow:0 0 10px rgba(245,158,11,0.6);' : (cnt > 0 ? 'box-shadow:0 0 8px rgba(16,185,129,0.4);' : '');
-      dotsHtml += '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:0;">'
-        + '<span title="' + dk + ': ' + cnt + '회" style="display:inline-block;width:100%;max-width:20px;height:34px;border-radius:8px;background:' + bg + ';' + shadow + 'border:1px solid rgba(255,255,255,0.08);transition:all 0.2s ease;"></span>'
-        + '<span style="font-size:0.65rem;color:var(--ink-faint);">' + dayNum + '</span>'
+      var border = isToday ? 'border:2px solid #F59E0B;' : 'border:1px solid rgba(255,255,255,0.08);';
+      var dayColor = isToday ? '#F59E0B;font-weight:800;' : (isWeekend ? 'var(--ink-soft);' : 'var(--ink-faint);');
+      dotsHtml += '<div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;min-width:0;">'
+        + '<span style="font-size:0.6rem;color:' + dayColor + '">' + (isToday ? '오늘' : dayName) + '</span>'
+        + '<span title="' + dk + ' (' + dayName + '): ' + cnt + '회" style="display:inline-block;width:100%;max-width:20px;height:34px;border-radius:8px;background:' + bg + ';' + shadow + border + 'transition:all 0.2s ease;"></span>'
+        + '<span style="font-size:0.65rem;color:' + (isToday ? '#F59E0B;font-weight:800;' : 'var(--ink-faint);') + '">' + dayNum + '</span>'
         + '</div>';
     }
 
@@ -16837,7 +16868,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var estDaysRemaining = remainMs * daysPerMilestone;
         var predictedDate = new Date(Date.now() + estDaysRemaining * 86400000);
         var predDateStr = (predictedDate.getMonth()+1) + '월 ' + predictedDate.getDate() + '일';
-        predictedPill = '<span class="dday-pill" title="현재 마일스톤 완료 속도(평균 ' + daysPerMilestone + '일/개) 기준 동적 계산된 도달 예정일" style="background:rgba(99,102,241,0.12);color:var(--primary);font-weight:700;">🚀 페이스 도달예정: ' + predDateStr + ' (D-' + estDaysRemaining + ')</span>';
+        predictedPill = '<span class="dday-pill" title="현재 마일스톤 완료 속도 기준 예상일" style="background:rgba(99,102,241,0.12);color:var(--primary);font-weight:700;">🚀 페이스 도달예정: ' + predDateStr + '</span>';
       }
     }
 
@@ -16846,9 +16877,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var formattedGoalDue = goal.dueDate ? formatDateTimeBadge(goal.dueDate) : '';
     var metaStrip = '<div class="meta-strip" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
       (goal.dueDate
-        ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);">'+formattedGoalDue+' · '+ddayText+'</span>'
+        ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);font-weight:700;">'+formattedGoalDue+' · '+ddayText+'</span>'
         : '<span class="dday-pill">마감일 없음</span>') +
-      formatSchedulePillHtml(goal, 'goal', goal.id) +
+      (!goal.dueDate ? formatSchedulePillHtml(goal, 'goal', goal.id) : '') +
       '<span class="dday-pill" id="goalsPrivacyBadge" style="cursor:pointer;" title="탭하여 공개 범위 순환 변경">'+(visNow==='private'?'🔒 ':(visNow==='team'||visNow==='followers'?'👥 ':'🌐 '))+((visNow==='team'||visNow==='followers')?'팀원 공개':VISIBILITY_LABELS[visNow])+' ▾</span>' +
       (goal.topic ? topicPill(goal.topic) : '') +
       '<span class="dday-pill" style="background:var(--sage-soft);color:var(--sage);">달성 '+goalAchievement(goal)+'%</span>' +
@@ -16899,7 +16930,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     var gView = state.goalViewMode || 'default';
     var msFilterBar = totalMs > 0 ?
-      '<div class="ms-filter-bar" style="display:flex;flex-direction:column;gap:6px;margin:8px 0 6px;">' +
+      '<div class="ms-filter-bar" style="display:flex;flex-direction:column;gap:6px;margin:6px 0;">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;">' +
           '<div class="format-toggle" id="msFilterToggle" style="max-width:280px;">' +
             '<div class="format-opt'+(state.msFilter==='all'?' active':'')+'" data-msfilter="all">전체 ('+totalMs+')</div>' +
@@ -16914,14 +16945,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             '</button>' +
           '</div>' +
         '</div>' +
-        '<div id="msViewToggle" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">' +
-          '<div class="format-toggle" style="max-width:240px;">' +
-            '<div class="format-opt'+(gView==='default'?' active':'')+'" data-msview="default">기본</div>' +
-            '<div class="format-opt'+(gView==='milestones_only'?' active':'')+'" data-msview="milestones_only">마일스톤</div>' +
-            '<div class="format-opt'+(gView==='tasks_only'?' active':'')+'" data-msview="tasks_only">할일</div>' +
+        '<div id="msViewToggle" style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;">' +
+          '<div class="format-toggle" style="flex:1;max-width:280px;">' +
+            '<div class="format-opt'+(gView==='default'?' active':'')+'" data-msview="default">기본 뷰</div>' +
+            '<div class="format-opt'+(gView==='milestones_only'?' active':'')+'" data-msview="milestones_only">마일스톤만</div>' +
+            '<div class="format-opt'+(gView==='tasks_only'?' active':'')+'" data-msview="tasks_only">할일만</div>' +
           '</div>' +
-          '<div class="format-toggle goals-only-wrap" style="margin-left:14px;">' +
-            '<div class="format-opt'+(gView==='goals_only'?' active':'')+'" data-msview="goals_only" style="font-weight:700;">🎯 목표만</div>' +
+          '<div class="format-toggle goals-only-wrap">' +
+            '<div class="format-opt'+(gView==='goals_only'?' active':'')+'" data-msview="goals_only" style="font-weight:700;">🎯 목표별 요약</div>' +
           '</div>' +
         '</div>' +
       '</div>' : '';

@@ -4511,7 +4511,7 @@
 
     // 1-B. 3단계 사용법 퀵 가이드
     var quickGuideHtml = 
-      '<div class="u-cockpit-quick-guide" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 10px;background:var(--card2);border-radius:8px;margin-bottom:10px;font-size:.75rem;color:var(--ink-soft);flex-wrap:wrap;">' +
+      '<div class="u-cockpit-quick-guide" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 10px;background:var(--card2);border-radius:8px;margin-bottom:8px;font-size:.75rem;color:var(--ink-soft);flex-wrap:wrap;">' +
         '<span style="font-weight:800;color:var(--primary);display:flex;align-items:center;gap:3px;"><span>💡</span><span>사용법:</span></span>' +
         '<span style="font-weight:700;color:var(--ink);"><b style="color:var(--primary);">1</b> 렌즈 선택</span>' +
         '<span style="opacity:0.4;">➔</span>' +
@@ -4547,7 +4547,7 @@
     // 4대 다차원 분석 렌즈 전환 바 (고밀도 반응형 세그먼트)
     var lenses = [
       { id: 'trend', icon: '📈', label: '성장 추세', sub: '시계열·PR' },
-      { id: 'ratio', icon: '⚡', label: '상관 효율비', sub: '단가·비율' },
+      { id: 'ratio', icon: '⚡', label: '효율 분석', sub: '단가·비율' },
       { id: 'radar', icon: '🎯', label: '균형 레이더', sub: '달성도·방사형' },
       { id: 'cadence', icon: '🗓️', label: '요일 주기', sub: '루틴·밀도' }
     ];
@@ -4568,8 +4568,8 @@
     lensHtml += '</div>';
 
     var lensExplanations = {
-      trend: '📈 <b>성장 추세</b>: 선택한 종목의 시간 흐름에 따른 기록 향상 곡선과 역대 최고치(PR)를 추적합니다.',
-      ratio: '⚡ <b>상관 효율비</b>: 두 지표 간의 상대적 효율비(예: 볼륨당 성과, 단가당 매출)를 분석합니다.',
+      trend: '📈 <b>성장 추세</b>: 선택한 종목의 시간 흐름에 따른 기록 향상 곡선과 역대 최고 기록을 추적합니다.',
+      ratio: '⚡ <b>성과 효율 분석</b>: 투자한 시간이나 노력 대비 실질적 성과 비율을 분석합니다.',
       radar: '🎯 <b>균형 레이더</b>: 전체 활동 영역의 비중과 균형도를 방사형 차트로 종합 평가합니다.',
       cadence: '🗓️ <b>요일 주기</b>: 요일별 활동 실천 횟수와 집중 요일을 파악하여 루틴을 점검합니다.'
     };
@@ -4610,7 +4610,7 @@
     // 3-1. 측정 차원(Metric Dimension) 전환 바
 
     var dimHtml = '<div class="u-dim-selector-row" style="display:flex;gap:5px;overflow-x:auto;padding-bottom:6px;margin-bottom:8px;-webkit-overflow-scrolling:touch;align-items:center;">';
-    dimHtml += '<span style="font-size:.75rem;font-weight:800;color:var(--ink);flex-shrink:0;margin-right:4px;">📊 측정 지표 <span style="font-size:.65rem;color:var(--ink-soft);font-family:monospace;">[DIMENSION]</span>:</span>';
+    dimHtml += '<span style="font-size:.75rem;font-weight:800;color:var(--ink);flex-shrink:0;margin-right:4px;">📊 측정 기준:</span>';
     availableDims.forEach(function(d){
       var isDAct = (state.univSelectedDimensions || [dimension]).includes(d);
       var dLabel = dimDisplayNames[d] || d;
