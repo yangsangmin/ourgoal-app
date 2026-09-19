@@ -4749,5 +4749,12 @@
   - `verify-integrity-gate.js`: 헌법 25대 게이트 100% ALL PASS.
   - 전수 인터랙션 725개 버튼 Zero Dead-Click PASS.
   - CDP 실기기 실측: 375px 모바일 뷰포트에서 히트맵 헤더 1줄 정렬, 백과사전 60개 뱃지 전수 nowrap, 테마 그리드 307px 1열 적층 무결성 증적 확보 (`ui_verified_home_375.png`, `ui_verified_goals_encyclopedia_375.png`, `ui_verified_settings_theme_375.png`).
+- **배포 및 실서버 프로덕션 실측 (Stage 6)**:
+  - GitHub PR #337 생성 및 CI `essence-gate` 통과 확인 후 `main` 머지 완료 (커밋 `3068305`).
+  - Vercel 프로덕션 배포 완료 (Deployment `6546066811`).
+  - Headless Chrome CDP (375x812) 실서버(https://ourgoal-app.vercel.app) 직접 접속 실측:
+    - 4대 테마 그리드 307px 단일 열 정상 렌더링, 가로 오버플로우 0px 완전 해소 (`prod_stage6_es193_settings_theme.png`).
+    - 템플릿 백과사전 기간 뱃지(16주 과정) 1줄 단정 정렬 확인 (`prod_stage6_es193_goals_encyclopedia.png`).
+    - 아바타 웰컴 인사말 팝업 및 홈 진입 렌더링 정상 확인 (`prod_stage6_es193_home.png`).
 ---
 
