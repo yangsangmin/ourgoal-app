@@ -7211,6 +7211,26 @@ check('[#TASK-ES-186] 성소 기준 4대 테마(성소·블랙·화이트·도�
   assert.ok(css.includes('html[data-theme="focus-sanctuary"] body'), '성소 테마 바디 무변경 보존');
 });
 
+check('[#TASK-ES-187] 목표 탭 템플릿 백과사전 단일 서브탭 분리 및 상단 중복 버튼 제거 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+
+  // 1. 마운틴 트레일 카드 내 mountain-actions 및 불필요 버튼 0건 검증
+  assert.ok(!sanctuaryJs.includes("id=\"sTransplantBtn\""), '마운틴 트레일 카드 내 하드코딩 sTransplantBtn 제거 확인');
+  assert.ok(!sanctuaryJs.includes("id=\"sTmplMarketBtn\""), '마운틴 트레일 카드 내 sTmplMarketBtn 제거 확인');
+
+  // 2. 목표 서브탭에 templateEncyclopedia 정식 등록 확인
+  assert.ok(indexHtml.includes("['templateEncyclopedia','📖 템플릿 백과사전']"), 'goalsSubtabs 내 템플릿 백과사전 서브탭 등록 확인');
+
+  // 3. templateEncyclopediaView 슬롯 및 전용 렌더러 배선 확인
+  assert.ok(indexHtml.includes('id="templateEncyclopediaView"'), 'templateEncyclopediaView 컨테이너 구비 확인');
+  assert.ok(indexHtml.includes('function renderTemplateEncyclopediaScreen()'), 'renderTemplateEncyclopediaScreen 렌더러 함수 구비 확인');
+  assert.ok(indexHtml.includes('if(state.goalsSubTab===\'templateEncyclopedia\'){ renderTemplateEncyclopediaScreen(); return; }'), '서브탭 라우팅 분기 배선 확인');
+
+  // 4. 레거시 버튼 하위 호환 가드 및 서브탭 전환 연동 확인
+  assert.ok(indexHtml.includes('state.goalsSubTab = \'templateEncyclopedia\';'), '헤더 템플릿 버튼 클릭 시 서브탭 전환 연동 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
