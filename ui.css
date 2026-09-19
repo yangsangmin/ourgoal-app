@@ -7480,6 +7480,50 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   display: block !important;
 }
 
+/* [#TASK-CALENDAR-TAB-RESTORATION] 성소 캘린더 모드별(월간/타임라인/타이머) 하단 슬롯 조건부 가시성 제어 */
+#screen-calendar[data-cal-mode="timeline"] #calDayDetail,
+#screen-calendar[data-cal-mode="timeline"] .cal-sub-guide,
+#screen-calendar[data-cal-mode="timeline"] .cal-quick-bar,
+#screen-calendar[data-cal-mode="timeline"] #calAgentCard,
+#screen-calendar[data-cal-mode="timer"] #calDayDetail,
+#screen-calendar[data-cal-mode="timer"] .cal-sub-guide,
+#screen-calendar[data-cal-mode="timer"] .cal-quick-bar,
+#screen-calendar[data-cal-mode="timer"] #calAgentCard {
+  display: none !important;
+}
+
+#screen-calendar[data-cal-mode="month"] .cal-sub-guide {
+  display: flex !important;
+}
+#screen-calendar[data-cal-mode="month"] #calDayDetail {
+  display: block !important;
+}
+#screen-calendar[data-cal-mode="month"] .cal-quick-bar {
+  display: flex !important;
+}
+#screen-calendar[data-cal-mode="month"] #calAgentCard {
+  display: block !important;
+}
+
+/* 캘린더 일자 셀 멀티 도트 인디케이터 */
+.s-cal-dots-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 7px;
+  margin-top: 1px;
+}
+.s-cal-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--brand, #10b981);
+}
+.s-cal-dot.done {
+  background: #10b981 !important;
+}
+
 /* 목표 탭: 성소 테마에서는 상단에 이미 알약 칩이 있으므로 중복 칩 행만 숨기고 본문 카드는 온전히 보존 */
 [data-theme="focus-sanctuary"] #goalChipRow,
 [data-theme="black"] #goalChipRow,

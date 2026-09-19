@@ -7275,6 +7275,37 @@ check('[#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) �
   assert.ok(indexHtml.includes('min-height:44px'), '도메인 탭 버튼 터치타겟 44px 이상 확보');
 });
 
+check('[#TASK-CALENDAR-TAB-RESTORATION 일정 탭 전수 결함 정상화 및 4위 1체 시맨틱 복원 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. screen-calendar 최상단 헤더 및 기본 모드 배선 확인
+  assert.ok(indexHtml.includes('id="screen-calendar" data-cal-mode="month"'), '일정 탭 data-cal-mode 기본값 month 배선');
+  const headPos = indexHtml.indexOf('<div class="screen-head">');
+  const sViewPos = indexHtml.indexOf('<div id="sanctuaryCalendarView"></div>');
+  assert.ok(headPos !== -1 && sViewPos !== -1 && headPos < sViewPos, '헤더(.screen-head)가 성소 뷰 상단에 올바르게 배치');
+
+  // 2. 상하 날짜 동기화 (selectCalDay -> renderCalDayDetail 호출 확인)
+  assert.ok(sanctuaryJs.includes('renderCalDayDetail()'), '날짜 선택 시 하단 일간 상세 동시 갱신 배선');
+
+  // 3. 타임라인 상세/수정 모달 분기 배선 확인
+  assert.ok(sanctuaryJs.includes('openScheduleDetail('), '타임라인 일정 클릭 시 상세 모달 오픈 파이프라인 배선');
+
+  // 4. 뽀모도로 세션 완료 시 4대 뷰 동시 전파 배선 확인
+  assert.ok(sanctuaryJs.includes("renderHome()"), '뽀모도로 완료 시 홈 화면 동시 전파 배선');
+  assert.ok(sanctuaryJs.includes("renderRecordsScreen()"), '뽀모도로 완료 시 기록 화면 동시 전파 배선');
+  assert.ok(sanctuaryJs.includes("renderStatsScreen()"), '뽀모도로 완료 시 통계 화면 동시 전파 배선');
+
+  // 5. 모드별 하단 슬롯 조건부 가시성 CSS 규칙 확인
+  assert.ok(uiCss.includes('#screen-calendar[data-cal-mode="timeline"] #calDayDetail'), '타임라인 모드 시 일간 상세 숨김 CSS 배선');
+  assert.ok(uiCss.includes('#screen-calendar[data-cal-mode="timer"] #calDayDetail'), '타이머 모드 시 일간 상세 숨김 CSS 배선');
+
+  // 6. 멀티 인디케이터 도트 렌더러 구비 확인
+  assert.ok(sanctuaryJs.includes('s-cal-dots-row'), '날짜 셀 멀티 인디케이터 도트 렌더러 구비');
+  assert.ok(uiCss.includes('.s-cal-dots-row'), '멀티 인디케이터 도트 CSS 구비');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
