@@ -7231,6 +7231,20 @@ check('[#TASK-ES-187] 목표 탭 템플릿 백과사전 단일 서브탭 분리 
   assert.ok(indexHtml.includes('state.goalsSubTab = \'templateEncyclopedia\';'), '헤더 템플릿 버튼 클릭 시 서브탭 전환 연동 확인');
 });
 
+check('[#TASK-ES-188] 로그인 창 둘러보기 버튼 문구 정돈 (로그인 없이 둘러보기) 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 메인 버튼 텍스트 '로그인 없이 둘러보기' 탑재 확인
+  assert.ok(indexHtml.includes('id="btnLandingPreviewDirect"'), '랜딩 메인 둘러보기 버튼 구비');
+  assert.ok(indexHtml.includes('<span>로그인 없이 둘러보기</span>'), '둘러보기 버튼 텍스트 로그인 없이 둘러보기 확인');
+
+  // 2. '3초 성소' 문구 랜딩 화면에서 완전 제거 확인
+  assert.ok(!indexHtml.includes('3초 성소 새 UI/UX 바로 둘러보기'), '과거 3초 성소 둘러보기 문구 완전 제거 확인');
+
+  // 3. 하위 호환성 landGuestBtn ID 보존 확인
+  assert.ok(indexHtml.includes('id="landGuestBtn"'), 'landGuestBtn ID 보존 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
