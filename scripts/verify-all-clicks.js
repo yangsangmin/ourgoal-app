@@ -84,6 +84,25 @@ staticButtons.forEach(btn => {
     isWired = true;
   }
 
+  // E. data-* 속성 기반 이벤트 위임 매칭 (헌법 제7조 제1항)
+  if (!isWired) {
+    const dataAttrs = [...btn.raw.matchAll(/\b(data-[a-zA-Z0-9_-]+)=/g)].map(m => m[1]);
+    for (const dAttr of dataAttrs) {
+      const camelCase = dAttr.replace('data-', '').replace(/-([a-z])/g, (_, l) => l.toUpperCase());
+      const hasDelegation =
+        combinedJs.includes(`[${dAttr}]`) ||
+        combinedJs.includes(`[${dAttr}=`) ||
+        combinedJs.includes(`getAttribute('${dAttr}')`) ||
+        combinedJs.includes(`getAttribute("${dAttr}")`) ||
+        combinedJs.includes(`dataset.${camelCase}`) ||
+        combinedJs.includes(`dataset['${camelCase}']`);
+      if (hasDelegation) {
+        isWired = true;
+        break;
+      }
+    }
+  }
+
   if (isWired) {
     wiredCount++;
   } else {
@@ -97,10 +116,11 @@ staticButtons.forEach(btn => {
 console.log(`[결과] 핸들러 배선 확인 버튼: ${wiredCount}개 / ${staticButtons.length}개`);
 
 if (unhandledButtons.length > 0) {
-  console.log(`\n⚠️  주의: 정적 분석 상 핸들러가 명시되지 않은 버튼 (${unhandledButtons.length}개):`);
-  unhandledButtons.slice(0, 10).forEach(b => console.log(`   - ${b}`));
+  console.error(`\n❌ [FAIL] 정적 분석 상 핸들러가 명시되지 않은 껍데기 버튼 (${unhandledButtons.length}개) 발견:`);
+  unhandledButtons.forEach(b => console.error(`   - ${b}`));
+  process.exit(1);
 } else {
-  console.log('✓ [PASS] 모든 정적 버튼에 100% 이벤트 핸들러가 배선되어 있습니다.');
+  console.log('✓ [PASS] 모든 정적 버튼에 100% 이벤트 핸들러가 배선되어 있습니다. (Zero Dead-Click)');
 }
 
 // 3. 링크 태그 dead-link 검사 (href="#"에 onclick이나 리스너 없는 경우)

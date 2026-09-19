@@ -1005,7 +1005,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <div style="font-size:.75rem;color:var(--ink-faint);line-height:1.45;margin:4px auto;max-width:320px;">
           아워골은 등록된 추천 아이템의 판매 당사자가 아니며, 상품 거래 및 배송·환불의 책임은 각 판매처에 있습니다.
         </div>
-        <div>문의 <a href="javascript:void(0)" id="footInquiryLink" role="button">1:1 문의 / 오류 제보</a> · 공식 지원 <a href="mailto:ourgoal.support@gmail.com" style="color:var(--ink-soft);text-decoration:underline;">ourgoal.support@gmail.com</a></div>
+        <div>문의 <a href="javascript:void(0)" id="footInquiryLink" role="button">1:1 문의 / 오류 제보</a> · 공식 지원 <a href="javascript:void(0)" id="footSupportEmailLink" role="button" style="color:var(--ink-soft);text-decoration:underline;" title="공식 지원 이메일 복사 및 문의하기">ourgoal.support@gmail.com</a></div>
         <div><a href="#" id="setTermsLink">이용약관</a> · <a href="#" id="setPrivacyLink">개인정보처리방침</a></div>
         <div>2026 OurGoal</div>
       </div>
@@ -4333,6 +4333,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       e.preventDefault();
       openCustomerInquiryModal();
     });
+  });
+  var footEmailEl = document.getElementById('footSupportEmailLink');
+  if(footEmailEl) footEmailEl.addEventListener('click', function(e){
+    e.preventDefault();
+    try {
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText('ourgoal.support@gmail.com');
+      }
+      toast('공식 지원 이메일(ourgoal.support@gmail.com)이 복사되었습니다.');
+    } catch(copyErr){}
+    openCustomerInquiryModal();
   });
 
   /* ============ 이용약관 / 개인정보처리방침 열람 리스너 ============ */
@@ -9880,6 +9891,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
     await saveProfile();
     try{ updateAppBadge(computeStreakDays()); }catch(e){}
+    try{ if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation(); }catch(propErr){ console.warn('[saveQuickCheckin] propagation warning:', propErr); }
     track('checkin', { first: isFirst, has_goal: !!goal, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l'), source: source || 'quick' });
     track('checkin_completed', { source: source || 'quick', goal_type: goal && goal.category, day_index: dayIndexSinceSignup() });
     if(isFirst){
@@ -20253,7 +20265,7 @@ wirePromptEncyclopediaEvents(body);
           awardXP(XP_RULES.checkin, '기록 추가');
           await saveProfile();
           closeModal();
-          renderRecordsScreen();
+          try{ if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation(); else renderRecordsScreen(); }catch(e){ renderRecordsScreen(); }
           renderLevelBadge();
           toast('기록을 저장했어요!');
           burstConfetti(window.innerWidth/2, window.innerHeight/2);
@@ -30133,6 +30145,39 @@ wirePromptEncyclopediaEvents(body);
       setTab('comm');
     });
   }
+
+  /* ============ 4대 연계 뷰 원자적 동시 전파 디스패처 (헌법 제1조 제4항 제5호 & 제15조 제6항 제3호) ============ */
+  function dispatchFullViewPropagation(specificViews){
+    if(!state || !state.profile) return;
+    var views = Array.isArray(specificViews) ? specificViews : ['home', 'records', 'stats', 'calendar'];
+    try {
+      if(views.includes('home') && typeof renderHome === 'function') renderHome();
+    } catch(e){ console.warn('[FullViewPropagation] renderHome error:', e); }
+    try {
+      if(views.includes('records') && typeof renderRecordsScreen === 'function') renderRecordsScreen();
+    } catch(e){ console.warn('[FullViewPropagation] renderRecordsScreen error:', e); }
+    try {
+      if(views.includes('stats')){
+        if(typeof renderStatsScreen === 'function') renderStatsScreen();
+        if(typeof universalStatsRender === 'function') universalStatsRender();
+      }
+    } catch(e){ console.warn('[FullViewPropagation] stats render error:', e); }
+    try {
+      if(views.includes('calendar')){
+        if(typeof renderCalendarScreen === 'function') renderCalendarScreen();
+        if(typeof renderCalendar === 'function') renderCalendar();
+      }
+    } catch(e){ console.warn('[FullViewPropagation] calendar render error:', e); }
+    try {
+      if(window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render && state.activeTab){
+        window.OurgoalSanctuaryV3.render(state.activeTab);
+      }
+    } catch(e){ console.warn('[FullViewPropagation] SanctuaryV3 render error:', e); }
+  }
+  if(typeof window !== 'undefined'){
+    window.dispatchFullViewPropagation = dispatchFullViewPropagation;
+  }
+
   /* ============ Render all ============ */
   function renderAll(){
     updateTopBar();
