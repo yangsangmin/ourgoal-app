@@ -464,6 +464,18 @@
         '</div>' +
       '</div>' : '';
 
+    var isSelf = m.isMe || (deps.getProfile && deps.getProfile() && (deps.getProfile().displayName === memberName || deps.getProfile().id === m.id));
+
+    var memberInteractionHtml = !isSelf ?
+      '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--rule);">' +
+        '<div style="font-size:.875rem;font-weight:700;color:var(--ink);margin-bottom:8px;">🤝 팀원 소통 & 응원 액션</div>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+          '<button class="btn btn-primary btn-sm" id="btnNudgeMemberInDetail" type="button" style="flex:1;font-weight:700;padding:8px 10px;font-size:.8125rem;">👏 1초 응원 찌르기</button>' +
+          '<button class="btn btn-ghost btn-sm" id="btnDmMemberInDetail" type="button" style="flex:1;font-weight:700;border:1.5px solid var(--brand);color:var(--brand);padding:8px 10px;font-size:.8125rem;">✉️ 1:1 DM 보내기</button>' +
+          '<button class="btn btn-ghost btn-sm" id="btnAddCompanionInDetail" type="button" style="font-weight:700;border:1px solid var(--rule);padding:8px 10px;font-size:.8125rem;">+ 동반자</button>' +
+        '</div>' +
+      '</div>' : '';
+
     deps.openModal(
       '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">' +
         '<span style="font-size:2rem;">'+m.avatar+'</span>' +
@@ -486,6 +498,7 @@
         '<div style="margin-top:6px;">' + feedbackListHtml + '</div>' +
       '</div>' +
       manageActionsHtml +
+      memberInteractionHtml +
       '<div class="modal-actions" style="margin-top:14px;">' +
         '<button class="btn btn-block btn-ghost" id="closeDetailModalBtn" type="button">닫기</button>' +
       '</div>',
@@ -514,6 +527,84 @@
             deps.toast('"' + memberName + '"님에게 피드백을 전달했어요!');
             deps.closeModal();
             if(deps.onRefresh) deps.onRefresh();
+          });
+        }
+
+        // 👏 1초 응원 찌르기 핸들러 (#TASK-TEAM-MEMBER-INTERACTION)
+        var nudgeBtn = sheet.querySelector('#btnNudgeMemberInDetail');
+        if(nudgeBtn){
+          nudgeBtn.addEventListener('click', async function(){
+            var myProfile = deps.getProfile ? deps.getProfile() : null;
+            var myName = (myProfile && (myProfile.displayName || myProfile.name)) || '팀원';
+            var myId = (myProfile && myProfile.id) || 'guest';
+            gs.nudges = gs.nudges || {};
+            gs.nudges[memberName] = { time: '방금', text: '👏 ' + myName + '님이 보낸 힘찬 응원!' };
+            if(window.sb){
+              try {
+                await window.sb.from('team_pings').insert({
+                  id: 'nudge_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+                  group_id: gid,
+                  sender_id: myId,
+                  sender_name: myName,
+                  receiver_id: memberName,
+                  target_type: 'member_nudge',
+                  target_id: gid,
+                  target_title: memberName,
+                  ping_type: 'nudge',
+                  message: '👏 ' + myName + '님이 ' + memberName + '님을 힘차게 응원했습니다! 오늘도 파이팅!',
+                  status: 'active',
+                  created_at: new Date().toISOString()
+                });
+              } catch(e){}
+            }
+            if(deps.haptic) deps.haptic('success');
+            deps.toast('"' + memberName + '"님에게 힘찬 응원 찌르기를 보냈어요! 👏');
+            deps.closeModal();
+            if(deps.onRefresh) deps.onRefresh();
+          });
+        }
+
+        // ✉️ 1:1 DM 보내기 핸들러 (#TASK-TEAM-MEMBER-INTERACTION)
+        var dmBtn = sheet.querySelector('#btnDmMemberInDetail');
+        if(dmBtn){
+          dmBtn.addEventListener('click', function(){
+            deps.closeModal();
+            if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.renderCommDM){
+              var state = (global.state || {});
+              state.commSubTab = 'dm';
+              if(typeof global.setTab === 'function') global.setTab('comm');
+              if(typeof global.renderCommScreen === 'function') global.renderCommScreen();
+              setTimeout(function(){
+                var personObj = { id: m.id || ('user_' + memberName), name: memberName, avatar: m.avatar || '👤' };
+                window.OurgoalTeamInviteComm.renderCommDM(personObj);
+              }, 100);
+            } else {
+              deps.toast('"' + memberName + '"님과의 1:1 대화방을 열었습니다.');
+            }
+          });
+        }
+
+        // + 동반자 추가 핸들러 (#TASK-TEAM-MEMBER-INTERACTION)
+        var compBtn = sheet.querySelector('#btnAddCompanionInDetail');
+        if(compBtn){
+          compBtn.addEventListener('click', async function(){
+            var p = deps.getProfile ? deps.getProfile() : null;
+            if(p){
+              p.settings = p.settings || {};
+              p.settings.companions = p.settings.companions || [];
+              if(!p.settings.companions.some(function(c){ return (c.name === memberName || c.id === m.id); })){
+                p.settings.companions.push({
+                  id: m.id || ('comp_' + Date.now()),
+                  name: memberName,
+                  avatar: m.avatar || '👤',
+                  addedAt: new Date().toISOString()
+                });
+                await deps.saveProfile();
+                deps.toast('"' + memberName + '"님이 나의 동반자로 추가되었어요! 🤝');
+              } else {
+                deps.toast('이미 등록된 동반자입니다.');
+              }
+            }
           });
         }
       }

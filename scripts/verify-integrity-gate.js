@@ -648,6 +648,47 @@ check('4대 뷰 동시 전파 디스패처(dispatchFullViewPropagation)가 존�
   assert.ok(html.includes('dispatchFullViewPropagation()'), 'dispatchFullViewPropagation 호출 배선 부재');
 });
 
+/* =========================================================================
+ * 14. 헌법 v2026.09.20: 체계적 시너지 및 물리적 집행력 (Zero Ads · 모바일 4대 규격 · 아바타 단일화)
+ * ========================================================================= */
+console.log('\n[검증 14/14] 헌법 v2026.09.20: 체계적 시너지 및 물리적 집행력 검사');
+
+check('헌법 정본에 6대 신설/개정 조항(제2조 7항, 제3조 6항, 제4조 1항 9호, 제7조 8항 3호, 제11조 4항, 제14조 9항)이 완전 수록되어 있다', () => {
+  const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
+  const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
+  assert.ok(rulesContent.includes('제7항 [감찰 및 전수 조사 시 4차원 심층 매트릭스 의무 (Deep Audit Mandate)]'), '제2조 7항 누락');
+  assert.ok(rulesContent.includes('제6항 [연속적 유저 여정 단절 제로 헌법 (Zero Broken Journey Mandate)]'), '제3조 6항 누락');
+  assert.ok(rulesContent.includes('9호 (도메인 철학 역행 및 상식적 개념 괴리 방치 금지 - Conceptual Integrity)'), '제4조 1항 9호 누락');
+  assert.ok(rulesContent.includes('모바일 375px 4대 시각 물리 규격 강제'), '제7조 8항 모바일 4대 규격 누락');
+  assert.ok(rulesContent.includes('제4항 [세션 착수 시 Step 0 최신 브랜치 동기화 및 다중 세션 정합성 검증 (Step 0 Pre-flight Sync)]'), '제11조 4항 누락');
+  assert.ok(rulesContent.includes('제9항 [헌법 개정 즉시 레거시 코드 소탕 및 게이트키퍼 동시 배선 의무 (Co-wiring Mandate)]'), '제14조 9항 누락');
+});
+
+check('런칭 초기 광고 전면 배제 (Zero Ads Gate): 광고 모달/카운트다운 타이머 잔존 0건을 물리적으로 보증한다 (제4조 1항 8호, 제5조 1항 1호, 제14조 9항)', () => {
+  // 광고 팝업 모달, 카운트다운 잔존 검사
+  const bannedAdStrings = [
+    'id="adCountdown"',
+    'class="ad-countdown"',
+    'id="templateAdModal"',
+    'id="btnWatchRewardAd"'
+  ];
+  bannedAdStrings.forEach(str => {
+    assert.ok(!html.includes(str), `런칭 초기 광고 잔재 발견: ${str}`);
+  });
+});
+
+check('도메인 철학 일관성 (Zero Photo Profile Gate): 설정 프로필 사진 업로드 잔재가 0건이고 아바타 보관함이 직결되어 있다 (제4조 1항 9호, 제10조 5항)', () => {
+  // 프로필 전용 사진 업로드 파일 인풋 잔재 검사
+  const hasProfilePhotoInput = /<input[^>]*id=["'](?:profilePhotoFile|userPhotoInput)["'][^>]*>/i.test(html);
+  assert.ok(!hasProfilePhotoInput, '레거시 프로필 사진 업로드 파일 인풋이 index.html에 잔존함');
+  assert.ok(html.includes('openAvatarDrawerModal') || html.includes('openAvatarLevelUpModal'), '아바타 보관함 모달 배선 누락');
+});
+
+check('모바일 375px 4대 시각 물리 규격이 ui.css에 배선되어 있다 (제7조 제8항 제3호)', () => {
+  assert.ok(uiCss.includes('calc(var(--nav-h, 64px) + env(safe-area-inset-bottom, 0px) + 48px) !important'), '바텀 네비 차폐 제로 48px 여백 누락');
+  assert.ok(uiCss.includes('word-break: keep-all !important'), '한글 단어 보존 word-break: keep-all 누락');
+});
+
 console.log('\n================================================================');
 console.log(`🎯 검증 결과: 총 ${totalChecks}개 검사 중 ${passedChecks}개 통과 (${failures}개 실패)`);
 console.log('================================================================');

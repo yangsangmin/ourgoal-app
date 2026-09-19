@@ -711,8 +711,10 @@
       '</div>' +
       '<div class="modal-actions" style="display:flex;gap:6px;flex-wrap:wrap;">' +
         '<button class="btn btn-ghost" id="tplPreviewCloseBtn" type="button" style="flex:1;">닫기</button>' +
-        '<button class="btn btn-ghost" id="tplPreviewShareBtn" type="button" style="border:1px solid var(--brand-strong);color:var(--brand-strong);font-weight:700;flex:1;">🔗 템플릿 공유</button>' +
-        '<button class="btn btn-primary" id="tplPreviewStartBtn" type="button" style="font-weight:700;padding:8px 18px;width:100%;margin-top:4px;">✨ 이 템플릿으로 내 목표 시작</button>' +
+        '<button class="btn btn-ghost" id="tplPreviewShareBtn" type="button" style="border:1px solid var(--rule);color:var(--ink);font-weight:700;flex:1;">🔗 템플릿 공유</button>' +
+        '<button class="btn btn-ghost" id="tplPreviewGiftBtn" type="button" style="border:1.5px solid var(--gold);color:var(--gold);font-weight:700;flex:1;background:var(--gold-soft);">🎁 동반자에게 추천</button>' +
+        '<button class="btn btn-primary" id="tplPreviewStartTeamBtn" type="button" style="font-weight:700;padding:9px 14px;width:100%;margin-top:4px;background:var(--card2);border:1.5px solid var(--sage);color:var(--sage);">👑 이 템플릿으로 팀 목표 만들기</button>' +
+        '<button class="btn btn-primary" id="tplPreviewStartBtn" type="button" style="font-weight:700;padding:10px 18px;width:100%;margin-top:2px;">✨ 이 템플릿으로 내 개인 목표 시작</button>' +
       '</div>';
 
     if(global.openModal){
@@ -748,6 +750,78 @@
             }
           };
         }
+
+        // 🎁 동반자에게 템플릿 추천/선물 (#TASK-TEMPLATE-COMPANION-GIFT)
+        var giftBtn = sheet.querySelector('#tplPreviewGiftBtn');
+        if(giftBtn){
+          giftBtn.onclick = function(){
+            var state = global.state || {};
+            var compList = (state.profile && state.profile.settings && state.profile.settings.companions) || ensureDefaultCompanions();
+            if(!compList || !compList.length){
+              showToast('등록된 동반자가 없습니다. 소통 탭에서 동반자를 먼저 추가해보세요!');
+              return;
+            }
+            openRecommendTemplateModal(t, compList);
+          };
+        }
+
+        // 👑 이 템플릿으로 팀 목표 만들기 (#TASK-TEMPLATE-TO-TEAM-GOAL)
+        var startTeamBtn = sheet.querySelector('#tplPreviewStartTeamBtn');
+        if(startTeamBtn){
+          startTeamBtn.onclick = async function(){
+            if(global.closeModal) global.closeModal();
+            var state = global.state || {};
+            var myProfile = state.profile || {};
+            var myName = myProfile.displayName || myProfile.name || '팀장';
+            var myId = myProfile.id || 'guest';
+            var mockGroups = global.MOCK_GROUPS || [];
+
+            var newTeamGoal = {
+              id: 'tg_' + Date.now(),
+              title: t.title,
+              category: t.category || 'study',
+              dueDate: (typeof global.daysFromNow === 'function') ? global.daysFromNow((t.weeks || 12) * 7) : null,
+              milestones: (t.ms || []).map(function(m, idx){
+                return {
+                  id: 'tgm_' + Date.now() + '_' + idx,
+                  title: m.title,
+                  status: 'todo',
+                  priority: 'high',
+                  tasks: (m.tasks || []).map(function(tk, tkIdx){
+                    return { id: 'tgt_' + Date.now() + '_' + idx + '_' + tkIdx, title: tk, done: false };
+                  })
+                };
+              })
+            };
+
+            var newGroup = {
+              id: 'g_' + Date.now(),
+              name: t.title + ' 챌린지 팀',
+              icon: t.icon || '🎯',
+              category: t.category || 'study',
+              members: 1,
+              weeklyTarget: 5,
+              teamGoals: [newTeamGoal],
+              ownerName: myName,
+              roster: [{ n: myName, id: myId, c: 0 }]
+            };
+
+            mockGroups.unshift(newGroup);
+            if(typeof global.groupState === 'function'){
+              var gs = global.groupState(newGroup.id);
+              gs.joined = true;
+              gs.myRole = 'owner';
+            }
+            if(global.saveProfile) await global.saveProfile();
+            showToast('"' + newGroup.name + '" 팀 목표가 개설되었어요! 팀원을 초대해보세요 👑');
+            state.goalsSubTab = 'team';
+            if(typeof global.setTab === 'function') global.setTab('goals');
+            if(typeof global.renderGoalsScreen === 'function') global.renderGoalsScreen();
+            // 바로 팀원 초대 모달 오픈!
+            openTeamInviteModal(newGroup.id, mockGroups);
+          };
+        }
+
         var startBtn = sheet.querySelector('#tplPreviewStartBtn');
         if(startBtn) startBtn.onclick = function(){
           if(global.closeModal) global.closeModal();
@@ -759,6 +833,72 @@
           }
         };
       });
+    }
+  }
+
+  /* ------------------------------------------------------------
+   * 템플릿 동반자 추천/선물 모달 (#TASK-TEMPLATE-COMPANION-GIFT)
+   * ------------------------------------------------------------ */
+  function openRecommendTemplateModal(t, compList){
+    var listHtml = compList.map(function(c){
+      var cName = c.nickname || c.name || '동반자';
+      var cAvatar = c.avatar || '👤';
+      return '<div class="user-row" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface-2);border-radius:10px;border:1px solid var(--rule);margin-bottom:8px;">' +
+        '<div style="display:flex;align-items:center;gap:10px;">' +
+          '<span style="font-size:1.6rem;">' + cAvatar + '</span>' +
+          '<div>' +
+            '<div style="font-weight:700;font-size:.9375rem;color:var(--ink);">' + esc(cName) + '</div>' +
+            '<div class="faint" style="font-size:.75rem;">나의 아워골 동반자</div>' +
+          '</div>' +
+        '</div>' +
+        '<button class="btn btn-primary btn-sm" data-sendrecom="' + esc(c.id || cName) + '" data-cname="' + esc(cName) + '" type="button" style="font-size:.8125rem;padding:5px 12px;font-weight:700;">추천 선물</button>' +
+      '</div>';
+    }).join('');
+
+    if(global.openModal){
+      global.openModal(
+        '<h3>🎁 동반자에게 템플릿 추천/선물하기</h3>' +
+        '<p class="faint" style="margin:-6px 0 14px;font-size:.8125rem;">[\'' + esc(t.title) + '\'] 템플릿을 함께 도전하고 싶은 동반자에게 선물합니다.</p>' +
+        '<div style="max-height:45vh;overflow-y:auto;margin-bottom:14px;">' + listHtml + '</div>' +
+        '<div class="modal-actions">' +
+          '<button class="btn btn-ghost btn-block" id="closeRecomModalBtn" type="button">닫기</button>' +
+        '</div>',
+        function(sheet){
+          var clBtn = sheet.querySelector('#closeRecomModalBtn');
+          if(clBtn) clBtn.onclick = global.closeModal;
+          sheet.querySelectorAll('[data-sendrecom]').forEach(function(btn){
+            btn.onclick = async function(){
+              var compId = btn.dataset.sendrecom;
+              var compName = btn.dataset.cname;
+              var state = global.state || {};
+              var myProfile = state.profile || {};
+              var myName = myProfile.displayName || myProfile.name || '나';
+              var myId = myProfile.id || 'guest';
+              var pingPayload = {
+                id: 'ping_recom_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+                group_id: 'dm_' + [myId, compId].sort().join('_'),
+                sender_id: myId,
+                sender_name: myName,
+                receiver_id: compId,
+                target_type: 'template_recommend',
+                target_id: t.id,
+                target_title: t.title,
+                ping_type: 'template_gift',
+                message: '🎁 [' + myName + '님의 템플릿 추천]\n"' + t.title + '" (' + (t.weeks || 12) + '주 완주 코스) 함께 도전해봐요! 🎯',
+                status: 'active',
+                created_at: new Date().toISOString()
+              };
+              if(window.sb){
+                try {
+                  await window.sb.from('team_pings').insert(pingPayload);
+                } catch(e){}
+              }
+              showToast('"' + compName + '"님에게 \'' + t.title + '\' 템플릿을 추천 선물했어요! 🎁');
+              if(global.closeModal) global.closeModal();
+            };
+          });
+        }
+      );
     }
   }
 
