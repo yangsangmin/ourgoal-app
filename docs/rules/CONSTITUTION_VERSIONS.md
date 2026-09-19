@@ -12,7 +12,8 @@
 | `v2026.09.14-SUPREME-14` | 2026-09-14 | 상민님 | 외부 연동 E2E 무결성(제20조), 헌법 독점주의·단일 위계(제21조) 신설 및 14대 조문 전면 개편 | git commit: `1c4a4ae` |
 | `v2026.09.15-SUPREME-15` | 2026-09-15 | 상민님 | 15대 조문 단일 위계 대통합, 유저 자산 원격 원장화(제15조) 편입, 코드 줄수 족쇄 철폐 | git commit: `739186c` |
 | `v2026.09.17-ULTIMATE` | 2026-09-17 | 상민님 | 문제해결 8원칙 정밀 린터 배선(제2조 5항), 아바타 320종 단일화(제10조 4~5항), 스토리지 5대 고도화 | [`OURGOAL_..._v2026.09.17_ULTIMATE.md`](archive/OURGOAL_ABSOLUTE_INTEGRITY_RULES_v2026.09.17_ULTIMATE.md) |
-| **`v2026.09.18-VISUAL-INTEGRITY`** | 2026-09-18 | 상민님 | **6대 무결성 체계 승격(제7조 8항 시각 자가감사), CSS 은폐 꼼수 금지(제3조 5항), 기획 시각 IA 명세(제2조 6항), 허상지표 척결(제4조 1항), 4-Block 팩트 보고(제8조 3항)** | [`OURGOAL_..._v2026.09.18_VISUAL_INTEGRITY.md`](archive/OURGOAL_ABSOLUTE_INTEGRITY_RULES_v2026.09.18_VISUAL_INTEGRITY.md) |
+| `v2026.09.18-VISUAL-INTEGRITY` | 2026-09-18 | 상민님 | 6대 무결성 체계 승격(제7조 8항 시각 자가감사), CSS 은폐 꼼수 금지(제3조 5항), 기획 시각 IA 명세(제2조 6항), 허상지표 척결(제4조 1항), 4-Block 팩트 보고(제8조 3항) | [`OURGOAL_..._v2026.09.18_VISUAL_INTEGRITY.md`](archive/OURGOAL_ABSOLUTE_INTEGRITY_RULES_v2026.09.18_VISUAL_INTEGRITY.md) |
+| **`v2026.09.19-PHILOSOPHY-INTEGRATED`** | 2026-09-19 | 상민님 | **상민님 핵심 철학 헌법 전격 통합: 실존적 삶의 불안 해소 목적(제1조 1항), RPG식 퀘스트/청사진 연결 E1 & 무공해 동류연대 E3 재정의(제1조 3항), 8원칙 REQ 3대 철학 심사 배선(제2조 1항 2호), 코어루프 침해 과금/광고 전면 금지(제4조 1항 8호), 수익화 4대 규범 및 초기 광고 배제 명문화(제5조 1항 1호)** | [`OURGOAL_..._v2026.09.19_PHILOSOPHY_INTEGRATED.md`](archive/OURGOAL_ABSOLUTE_INTEGRITY_RULES_v2026.09.19_PHILOSOPHY_INTEGRATED.md) |
 
 ---
 
