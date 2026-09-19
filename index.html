@@ -300,27 +300,27 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     </section>
 
     <!-- CALENDAR -->
-    <section class="screen" id="screen-calendar">
-      <div id="sanctuaryCalendarView"></div>
+    <section class="screen" id="screen-calendar" data-cal-mode="month">
       <div class="screen-head">
         <div class="screen-head-l">
           <h2 class="s-title">일정</h2>
           <span class="privacy-badge" id="calPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
           <span id="calGcalMiniBadgeSlot"></span>
         </div>
-        <div class="format-toggle seg-compact" id="calViewToggle">
+        <div class="format-toggle seg-compact" id="calViewToggle" style="display:none;">
           <div class="format-opt" data-calview="month">월</div>
           <div class="format-opt" data-calview="week">주</div>
           <div class="format-opt" data-calview="day">일</div>
         </div>
       </div>
+      <div id="sanctuaryCalendarView"></div>
       <div class="cal-sub-guide" id="calSubGuideBanner">
         <span class="cal-sub-guide-icon">🖼️</span>
         <span>일정을 사진배경으로 채워서 나만의 사진일기장을 만들어봐요</span>
         <button type="button" class="btn-ghost" id="btnHideCalDiaryGuide" style="margin-left:auto;border:none;background:transparent;cursor:pointer;font-size:.875rem;color:var(--ink-soft);padding:2px 6px;" title="안내창 영구 닫기" aria-label="안내창 영구 닫기">✕</button>
       </div>
       <div id="calGoogleBanner" style="display:none;"></div>
-      <div class="cal-nav-row">
+      <div class="cal-nav-row" style="display:none;">
         <button class="icon-btn icon-btn-lg" id="calPrevBtn" type="button" aria-label="이전"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
         <h3 id="calPeriodLabel"></h3>
         <button class="btn btn-ghost btn-sm" id="calTodayBtn" type="button">오늘</button>
@@ -333,7 +333,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <span style="font-size:.7rem;padding:2px 6px;border-radius:999px;background:rgba(99,102,241,0.12);color:var(--primary);font-weight:700;">⚡ 실시간 라이브 연동</span>
         </button>
       </div>
-      <div id="calGrid"></div>
+      <div id="calGrid" style="display:none;"></div>
       <div id="calDayDetail"></div>
       <div class="card agent-card" id="calAgentCard">
         <div class="agent-head">
