@@ -7304,6 +7304,19 @@ check('[#TASK-CALENDAR-TAB-RESTORATION 일정 탭 전수 결함 정상화 및 4�
   // 6. 멀티 인디케이터 도트 렌더러 구비 확인
   assert.ok(sanctuaryJs.includes('s-cal-dots-row'), '날짜 셀 멀티 인디케이터 도트 렌더러 구비');
   assert.ok(uiCss.includes('.s-cal-dots-row'), '멀티 인디케이터 도트 CSS 구비');
+
+  // 7. 주간(Week) 아젠다 뷰 및 내비게이터 배선 확인
+  assert.ok(sanctuaryJs.includes("engine.activeCalMode === 'week'"), '주간 아젠다 뷰 렌더러 구비');
+  assert.ok(sanctuaryJs.includes("shiftTimelineDay"), '타임라인 일간 내비게이터 구비');
+  assert.ok(sanctuaryJs.includes("shiftWeek"), '주간 이동 내비게이터 구비');
+
+  // 8. AI 자연어 일정 파서 및 배선 확인
+  assert.ok(indexHtml.includes('function parseNaturalScheduleText'), '자연어 일정 파서 함수 구비');
+  assert.ok(indexHtml.includes('executeCalAgentNaturalSchedule'), 'AI 일정 등록 핸들러 배선');
+
+  // 9. 일반 일정 구글 캘린더 반영 및 데이터 속성 배선 확인
+  assert.ok(indexHtml.includes('data-calsyncsched'), '구글 캘린더 반영 버튼에 schedId 전달');
+  assert.ok(indexHtml.includes('btn.dataset.calsyncsched||null'), 'quickSyncToCalendar 호출 시 calsyncsched 전달');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
