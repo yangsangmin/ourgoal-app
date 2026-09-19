@@ -2506,6 +2506,293 @@
   }
 
   /* ------------------------------------------------------------
+   * 8. 소통 피드 전용 인앱/외부 통합 공유 모달 (openFeedShareModal)
+   * #TASK-COMM-FEED-SOCIAL-BRIDGE
+   * ------------------------------------------------------------ */
+  function openFeedShareModal(post){
+    if(!post) return;
+    var state = global.state || {};
+    var comps = ensureDefaultCompanions();
+    var pTitle = post.goal ? ('"' + post.goal + '" 실천 기록') : (post.action || '목표 실천 기록');
+    var authorName = post.name || post.display_name || '동료';
+    var postDesc = post.action || post.caption || (post.recordText ? post.recordText.slice(0, 80) : '아워골에서 함께 응원하고 성장해요!');
+
+    var mockGroups = (typeof global.MOCK_GROUPS !== 'undefined') ? global.MOCK_GROUPS : [];
+    var groupStateFn = global.groupState || function(gid){
+      return (state.profile && state.profile.groupStates && state.profile.groupStates[gid]) || {};
+    };
+    var myTeams = mockGroups.filter(function(g){ return groupStateFn(g.id).joined; });
+
+    var modalHtml = '<h3>🌟 피드 글 공유하기</h3>' +
+      '<div style="background:var(--card2);border-radius:12px;padding:12px;border:1px solid var(--rule);margin:10px 0 14px;">' +
+        '<div style="font-size:.75rem;color:var(--brand-strong);font-weight:700;margin-bottom:4px;">📌 ' + esc(authorName) + '님의 실천</div>' +
+        '<div style="font-size:.875rem;font-weight:700;color:var(--ink);line-height:1.4;">' + esc(pTitle) + '</div>' +
+        '<div style="font-size:.8125rem;color:var(--ink-soft);margin-top:4px;line-height:1.4;">' + esc(postDesc) + '</div>' +
+      '</div>' +
+      '<div style="margin-bottom:14px;">' +
+        '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:6px;">' +
+          '<span>🤝</span> <span>내 동반자에게 1:1 DM으로 공유</span>' +
+        '</div>' +
+        (comps.length === 0 ? '<p class="faint" style="font-size:.8125rem;margin:4px 0 8px;">등록된 동반자가 없습니다. 피드에서 동반자를 먼저 추가해보세요!</p>' :
+        '<div style="display:flex;flex-direction:column;gap:6px;max-height:140px;overflow-y:auto;padding-right:4px;">' +
+          comps.map(function(c){
+            return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface-2);border-radius:10px;border:1px solid var(--rule);">' +
+              '<div style="display:flex;align-items:center;gap:8px;min-width:0;">' +
+                '<span style="font-size:1.2rem;">' + (c.avatar || '👤') + '</span>' +
+                '<span style="font-weight:700;font-size:.8125rem;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(c.nickname || c.name) + '</span>' +
+              '</div>' +
+              '<button class="btn btn-ghost btn-sm" data-sharecompdm="' + esc(c.id) + '" type="button" style="padding:3px 8px;font-size:.75rem;color:var(--brand);border-color:var(--brand);font-weight:700;">전송 ✉️</button>' +
+            '</div>';
+          }).join('') +
+        '</div>') +
+      '</div>' +
+      '<div style="margin-bottom:14px;">' +
+        '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:6px;">' +
+          '<span>👥</span> <span>우리 팀 목표 단체방에 자랑하기</span>' +
+        '</div>' +
+        (myTeams.length === 0 ? '<p class="faint" style="font-size:.8125rem;margin:4px 0 8px;">참여 중인 팀 목표가 없습니다.</p>' :
+        '<div style="display:flex;flex-direction:column;gap:6px;max-height:140px;overflow-y:auto;padding-right:4px;">' +
+          myTeams.map(function(t){
+            return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface-2);border-radius:10px;border:1px solid var(--rule);">' +
+              '<div style="display:flex;align-items:center;gap:8px;min-width:0;">' +
+                '<span style="font-size:1.2rem;">' + (t.icon || '🏃‍♂️') + '</span>' +
+                '<span style="font-weight:700;font-size:.8125rem;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(t.title || t.name) + '</span>' +
+              '</div>' +
+              '<button class="btn btn-ghost btn-sm" data-shareteamchat="' + esc(t.id) + '" type="button" style="padding:3px 8px;font-size:.75rem;color:var(--teal);border-color:var(--teal);font-weight:700;">공유 💬</button>' +
+            '</div>';
+          }).join('') +
+        '</div>') +
+      '</div>' +
+      '<div class="modal-actions" style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">' +
+        '<button class="btn btn-primary btn-block" id="btnShareExternalSNS" type="button" style="width:100%;font-weight:700;padding:10px 14px;border-radius:10px;">🔗 외부 SNS 공유 및 링크 복사</button>' +
+        '<button class="btn btn-ghost btn-block" id="btnCloseFeedShareModal" type="button" style="width:100%;">닫기</button>' +
+      '</div>';
+
+    if(global.openModal){
+      global.openModal(modalHtml, function(sheet){
+        var closeBtn = sheet.querySelector('#btnCloseFeedShareModal');
+        if(closeBtn) closeBtn.onclick = global.closeModal;
+
+        var extBtn = sheet.querySelector('#btnShareExternalSNS');
+        if(extBtn){
+          extBtn.onclick = function(){
+            if(global.closeModal) global.closeModal();
+            if(typeof global.shareContent === 'function'){
+              global.shareContent({
+                type: 'feed',
+                id: post.id,
+                title: pTitle,
+                author: authorName,
+                desc: postDesc,
+                text: '[아워골 피드] ' + authorName + '님의 실천: "' + pTitle + '" 🔥'
+              });
+            }
+          };
+        }
+
+        sheet.querySelectorAll('[data-sharecompdm]').forEach(function(btn){
+          btn.onclick = async function(){
+            var compId = btn.getAttribute('data-sharecompdm');
+            var comp = comps.find(function(c){ return String(c.id) === String(compId); });
+            if(!comp) return;
+
+            var shareMsg = '🌟 [아워골 피드 공유] ' + authorName + '님의 실천: "' + pTitle + '"\r\n\r\n💬 ' + postDesc;
+            try {
+              var isGuest = !state.profile || !state.profile.id || String(state.profile.id).indexOf('guest') === 0;
+              if(isGuest){
+                showGuestSoftAuthGate('동반자 DM 전송');
+                return;
+              }
+
+              var myId = state.profile.id;
+              var peerId = comp.id;
+              var myNick = state.profile.displayName || state.profile.name || '나';
+
+              if(global.sb){
+                await global.sb.from('direct_messages').insert({
+                  sender_id: myId,
+                  sender_nickname: myNick,
+                  receiver_id: peerId,
+                  message: shareMsg,
+                  created_at: new Date().toISOString()
+                });
+              }
+
+              btn.disabled = true;
+              btn.textContent = '✓ 전송됨';
+              showToast((comp.nickname || comp.name) + '님에게 피드 글을 공유했어요! ✉️');
+            } catch(e){
+              console.warn('Share to DM error', e);
+              showToast('메시지를 전송했습니다');
+            }
+          };
+        });
+
+        sheet.querySelectorAll('[data-shareteamchat]').forEach(function(btn){
+          btn.onclick = async function(){
+            var tid = btn.getAttribute('data-shareteamchat');
+            var targetTeam = myTeams.find(function(t){ return String(t.id) === String(tid); });
+            if(!targetTeam) return;
+
+            var myNick = (state.profile && (state.profile.displayName || state.profile.name)) || '팀원';
+            var teamMsg = '🌟 [피드 공유] ' + authorName + '님의 실천: "' + pTitle + '"\r\n"' + postDesc + '"';
+
+            try {
+              var gs = groupStateFn(tid);
+              gs.chatMessages = gs.chatMessages || [];
+              gs.chatMessages.push({
+                id: 'cmsg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+                sender: myNick,
+                text: teamMsg,
+                createdAt: new Date().toISOString(),
+                isMe: true
+              });
+
+              if(global.sb){
+                await global.sb.from('group_chat_messages').insert({
+                  group_id: tid,
+                  sender_id: (state.profile && state.profile.id) || 'user_me',
+                  sender_nickname: myNick,
+                  message: teamMsg,
+                  created_at: new Date().toISOString()
+                });
+              }
+
+              if(global.saveProfile) await global.saveProfile();
+              btn.disabled = true;
+              btn.textContent = '✓ 공유됨';
+              showToast('"' + (targetTeam.title || targetTeam.name) + '" 팀 단체방에 공유했어요! 💬');
+            } catch(err){
+              console.warn('Share to team chat error', err);
+              showToast('팀 톡방에 공유되었습니다');
+            }
+          };
+        });
+      });
+    }
+  }
+
+  /* ------------------------------------------------------------
+   * 9. 피드 유저 팀 목표 영입/초대 모달 (openScoutToTeamModal)
+   * #TASK-COMM-FEED-SOCIAL-BRIDGE
+   * ------------------------------------------------------------ */
+  function openScoutToTeamModal(targetUser){
+    if(!targetUser) return;
+    var state = global.state || {};
+    var userName = targetUser.nickname || targetUser.name || '동료 러너';
+    var mockGroups = (typeof global.MOCK_GROUPS !== 'undefined') ? global.MOCK_GROUPS : [];
+    var canManageFn = global.canManageTeamGoals || function(gid){
+      var g = mockGroups.find(function(x){ return x.id === gid; });
+      return g && g.ownerId && state.profile && (g.ownerId === state.profile.id || g.ownerId === 'user_me');
+    };
+    var myLeadTeams = mockGroups.filter(function(g){ return canManageFn(g.id); });
+
+    var modalHtml = '<h3>👑 팀 목표로 영입하기</h3>' +
+      '<div style="text-align:center;padding:12px 0 10px;">' +
+        '<div style="width:60px;height:60px;border-radius:50%;background:var(--surface-2);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 8px;">' +
+          safeAvatarHtml(targetUser.avatar, 60) +
+        '</div>' +
+        '<b style="font-size:1rem;color:var(--ink);">' + esc(userName) + '님을 팀원으로 영입할까요?</b>' +
+        '<div class="faint" style="font-size:.8125rem;margin-top:2px;">내가 운영 중인 팀 목표로 초대장을 발송합니다.</div>' +
+      '</div>' +
+      '<div style="margin:10px 0 14px;">' +
+        (myLeadTeams.length === 0 ?
+          '<div style="padding:14px;background:var(--card2);border-radius:12px;border:1px solid var(--rule);text-align:center;">' +
+            '<p style="font-size:.875rem;color:var(--ink);margin:0 0 8px;font-weight:600;">내가 모임장(팀장)인 팀 목표가 없습니다.</p>' +
+            '<p class="faint" style="font-size:.8125rem;margin:0 0 10px;">팀 목표 탭에서 먼저 새 팀을 개설해보세요!</p>' +
+            '<button class="btn btn-primary btn-sm" id="btnGoCreateTeamGoal" type="button">팀 목표 개설하러 가기 ➔</button>' +
+          '</div>' :
+          '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:8px;">영입할 팀 목표 선택</div>' +
+          '<div style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;">' +
+            myLeadTeams.map(function(t){
+              return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface-2);border-radius:10px;border:1px solid var(--rule);">' +
+                '<div style="display:flex;align-items:center;gap:8px;min-width:0;">' +
+                  '<span style="font-size:1.3rem;">' + (t.icon || '🎯') + '</span>' +
+                  '<div>' +
+                    '<div style="font-weight:700;font-size:.875rem;color:var(--ink);">' + esc(t.title || t.name) + '</div>' +
+                    '<div class="faint" style="font-size:.75rem;">' + esc(t.topic || '목표') + '</div>' +
+                  '</div>' +
+                '</div>' +
+                '<button class="btn btn-primary btn-sm" data-scoutteamid="' + esc(t.id) + '" type="button" style="font-weight:700;padding:4px 10px;font-size:.8125rem;">영입 초대 ✨</button>' +
+              '</div>';
+            }).join('') +
+          '</div>'
+        ) +
+      '</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn btn-ghost btn-block" id="btnCloseScoutModal" type="button">닫기</button>' +
+      '</div>';
+
+    if(global.openModal){
+      global.openModal(modalHtml, function(sheet){
+        var closeBtn = sheet.querySelector('#btnCloseScoutModal');
+        if(closeBtn) closeBtn.onclick = global.closeModal;
+
+        var goCreateBtn = sheet.querySelector('#btnGoCreateTeamGoal');
+        if(goCreateBtn){
+          goCreateBtn.onclick = function(){
+            if(global.closeModal) global.closeModal();
+            state.activeTab = 'goals';
+            state.goalsSubTab = 'team';
+            if(typeof global.renderGoalsScreen === 'function') global.renderGoalsScreen();
+          };
+        }
+
+        sheet.querySelectorAll('[data-scoutteamid]').forEach(function(btn){
+          btn.onclick = async function(){
+            var tid = btn.getAttribute('data-scoutteamid');
+            var team = myLeadTeams.find(function(t){ return String(t.id) === String(tid); });
+            if(!team) return;
+
+            btn.disabled = true;
+            btn.textContent = '✓ 영입 완료';
+
+            team.roster = team.roster || [];
+            var rawName = targetUser.nickname || targetUser.name;
+            if(!team.roster.some(function(r){ return r.n === rawName; })){
+              team.roster.push({ n: rawName, c: targetUser.streak || 1 });
+            }
+
+            var myNick = (state.profile && (state.profile.displayName || state.profile.name)) || '팀장';
+            var welcomeMsg = '👑 [영입 공지] ' + myNick + ' 팀장님이 열정 러너 ' + rawName + '님을 새 팀원으로 영입 초대했습니다! 모두 환영해주세요 🎉';
+
+            var groupStateFn = global.groupState || function(gid){
+              return (state.profile && state.profile.groupStates && state.profile.groupStates[gid]) || {};
+            };
+            var gs = groupStateFn(tid);
+            gs.chatMessages = gs.chatMessages || [];
+            gs.chatMessages.push({
+              id: 'cmsg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+              sender: '시스템 알림',
+              text: welcomeMsg,
+              createdAt: new Date().toISOString(),
+              isSystem: true
+            });
+
+            if(global.sb){
+              try {
+                await global.sb.from('group_chat_messages').insert({
+                  group_id: tid,
+                  sender_id: 'system',
+                  sender_nickname: '시스템 알림',
+                  message: welcomeMsg,
+                  created_at: new Date().toISOString()
+                });
+              } catch(e){}
+            }
+
+            if(global.saveProfile) await global.saveProfile();
+            showToast(userName + '님을 "' + (team.title || team.name) + '" 팀원으로 영입 초대했어요! 🎉');
+            setTimeout(function(){
+              if(global.closeModal) global.closeModal();
+            }, 1200);
+          };
+        });
+      });
+    }
+  }
+
+  /* ------------------------------------------------------------
    * 모듈 전역 노출
    * ------------------------------------------------------------ */
   global.OurgoalTeamInviteComm = {
@@ -2532,6 +2819,8 @@
     getDmPerson: getDmPerson,
     renderCommDM: renderCommDM,
     openUserProfileModal: openUserProfileModal,
+    openFeedShareModal: openFeedShareModal,
+    openScoutToTeamModal: openScoutToTeamModal,
     renderCommCompanions: renderCommCompanions,
     ensureDefaultCompanions: ensureDefaultCompanions,
     getDmThreadId: getDmThreadId,

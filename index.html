@@ -27048,9 +27048,9 @@ wirePromptEncyclopediaEvents(body);
     var isMe = p.user_id === state.profile.id;
     var reported = !!((state.profile.settings.contentReports||{})['feed_post:'+p.id]);
     return '<div class="feed-item">' +
-      '<div class="feed-avatar'+(isMe?' me':'')+'">'+escapeHtml((p.display_name||'').slice(0,1))+'</div>' +
+      '<div class="feed-avatar'+(isMe?' me':'')+'" data-feedprof="'+p.id+'" style="cursor:pointer;" title="프로필 보기">'+escapeHtml((p.display_name||'').slice(0,1))+'</div>' +
       '<div class="feed-body">' +
-        '<div class="feed-head"><span class="feed-name">'+escapeHtml(p.display_name)+'</span>' +
+        '<div class="feed-head"><span class="feed-name" data-feedprof="'+p.id+'" style="cursor:pointer;" title="프로필 보기">'+escapeHtml(p.display_name)+'</span>' +
           (ex.includeGoal ? '<span class="feed-goal">'+escapeHtml(p.goal_title)+' · '+ex.goalPct+'%</span>' : '') +
         '</div>' +
         '<div class="feed-action">'+escapeHtml(p.caption)+'</div>' +
@@ -27275,10 +27275,10 @@ wirePromptEncyclopediaEvents(body);
 
         return (it._topHelpfulLabel && window.OurgoalTopHelpful ? window.OurgoalTopHelpful.labelHtml() : '') +
           '<div class="feed-item">' +
-          '<div class="feed-avatar'+(isMe?' me':'')+'">'+escapeHtml(it.avatar)+'</div>' +
+          '<div class="feed-avatar'+(isMe?' me':'')+'" data-feedprof="'+it.id+'" style="cursor:pointer;" title="프로필 보기">'+escapeHtml(it.avatar)+'</div>' +
           '<div class="feed-body">' +
             '<div class="feed-head">' +
-              '<span class="feed-name">'+escapeHtml(it.name)+aiTagHtml+(it.vis==='followers'?' 👥':'')+'</span>' +
+              '<span class="feed-name" data-feedprof="'+it.id+'" style="cursor:pointer;" title="프로필 보기">'+escapeHtml(it.name)+aiTagHtml+(it.vis==='followers'?' 👥':'')+'</span>' +
               (it.goal ? '<span class="feed-goal">'+escapeHtml(it.goal)+' · '+it.pct+'%</span>' : '') +
             '</div>' +
             '<div class="feed-action">'+escapeHtml(it.action)+'</div>' +
@@ -27301,7 +27301,11 @@ wirePromptEncyclopediaEvents(body);
                 '<button class="feed-react-btn'+(hasHeart?' active active-heart':'')+'" data-reacttype="heart" data-pid="'+it.id+'" type="button" title="응원해요">'+(heartCount > 0 ? heartCount : '')+'</button>' +
                 '<button class="feed-react-btn'+(hasSparkle?' active active-sparkle':'')+'" data-reacttype="sparkle" data-pid="'+it.id+'" type="button" title="자극받아요">'+(sparkleCount > 0 ? sparkleCount : '')+'</button>') +
                 '<button class="feed-comm-toggle'+(comments.length?' has-comments':'')+'" data-togglecomments="'+it.id+'" type="button">댓글 '+(comments.length || 0)+'</button>' +
-                '<button class="feed-share-btn" data-sharefeed="'+it.id+'" type="button" title="외부 SNS 공유 및 링크 복사" style="background:none;border:1px solid var(--rule);border-radius:12px;padding:3px 8px;font-size:.75rem;color:var(--ink-soft);cursor:pointer;display:inline-flex;align-items:center;gap:3px;margin-left:2px;">🔗 공유</button>' +
+                '<button class="feed-share-btn" data-sharefeed="'+it.id+'" type="button" title="피드 글 공유 (동반자 DM · 팀 톡방 · 외부 SNS)" style="background:none;border:1px solid var(--rule);border-radius:12px;padding:3px 8px;font-size:.75rem;color:var(--ink-soft);cursor:pointer;display:inline-flex;align-items:center;gap:3px;margin-left:2px;">🔗 공유</button>' +
+                (!isMe ?
+                  '<button class="feed-social-btn" data-feedcomp="'+it.id+'" type="button" title="동반자로 추가" style="background:none;border:1px solid var(--brand-line);border-radius:12px;padding:3px 8px;font-size:.75rem;color:var(--brand);cursor:pointer;display:inline-flex;align-items:center;gap:3px;margin-left:2px;font-weight:600;">+ 동반자</button>' +
+                  '<button class="feed-social-btn" data-feeddm="'+it.id+'" type="button" title="1:1 응원 DM" style="background:none;border:1px solid var(--rule);border-radius:12px;padding:3px 8px;font-size:.75rem;color:var(--teal);cursor:pointer;display:inline-flex;align-items:center;gap:3px;margin-left:2px;font-weight:600;">✉️ DM</button>' +
+                  '<button class="feed-social-btn" data-feedscout="'+it.id+'" type="button" title="내 팀 목표로 영입 초대" style="background:none;border:1px solid rgba(245,158,11,0.3);border-radius:12px;padding:3px 8px;font-size:.75rem;color:var(--gold);cursor:pointer;display:inline-flex;align-items:center;gap:3px;margin-left:2px;font-weight:600;">👑 영입</button>' : '') +
               '</div>' +
               (window.OurgoalReactions ? window.OurgoalReactions.advicePanelHtml(it) : '') +
               (isMe && !it.is_ai ? '<button data-delpost="'+it.id+'" type="button" style="margin-left:auto;background:none;border:none;color:var(--ink-faint);font-size:.8125rem;cursor:pointer;">삭제</button>' : '') +
@@ -27444,7 +27448,129 @@ wirePromptEncyclopediaEvents(body);
       });
     });
 
-    body.querySelectorAll('[data-sharefeed]').forEach(function(btn){ btn.addEventListener('click', function(e){ e.stopPropagation(); var pid = btn.dataset.sharefeed; var post = blendedItems.find(function(x){ return x.id === pid; }); if(!post) return; var pTitle = post.goal ? ('"' + post.goal + '" 실천 기록') : (post.action || '목표 실천 기록'); var pDesc = post.action || (post.recordText ? post.recordText.slice(0, 80) : '아워골에서 함께 응원하고 성장해요!'); shareContent({ type: 'feed', id: post.id, title: pTitle, author: post.name || '동료', desc: pDesc, text: '[아워골 피드] ' + (post.name || '동료') + '님의 실천: "' + pTitle + '" 🔥' }); }); });
+    // 피드 작성자 아바타/닉네임 클릭 -> 프로필 모달 조회 (#TASK-COMM-FEED-SOCIAL-BRIDGE)
+    body.querySelectorAll('[data-feedprof]').forEach(function(el){
+      el.addEventListener('click', function(e){
+        e.stopPropagation();
+        var pid = el.dataset.feedprof;
+        var post = blendedItems.find(function(x){ return x.id === pid; });
+        if(!post && FEED_POSTS_CACHE){ post = FEED_POSTS_CACHE.find(function(x){ return x.id === pid; }); }
+        if(!post) return;
+        var pName = post.name || post.display_name || '아워골 메이커';
+        var pAvatar = post.avatar || (pName ? pName.slice(0, 1) : '👤');
+        var userObj = {
+          id: post.userId || post.user_id || ('user_' + pName),
+          nickname: pName,
+          name: pName,
+          avatar: pAvatar,
+          goals: post.goal ? [post.goal] : (post.goal_title ? [post.goal_title] : ['아워골 목표 실천 중']),
+          streak: 7,
+          level: 2,
+          theme: post.category || '목표 달성',
+          intro: post.action || post.caption || (post.recordText ? post.recordText.slice(0, 80) : '매일 꾸준히 목표를 향해 나아가는 중입니다.'),
+          isAiBot: !!post.is_ai
+        };
+        if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.openUserProfileModal){
+          window.OurgoalTeamInviteComm.openUserProfileModal(userObj);
+        } else if(typeof openUserProfileModal === 'function'){
+          openUserProfileModal(userObj);
+        }
+      });
+    });
+
+    // 피드 카드 내 동반자 추가 원탭 배선
+    body.querySelectorAll('[data-feedcomp]').forEach(function(btn){
+      btn.addEventListener('click', async function(e){
+        e.stopPropagation();
+        var pid = btn.dataset.feedcomp;
+        var post = blendedItems.find(function(x){ return x.id === pid; });
+        if(!post) return;
+        var pName = post.name || post.display_name || '동반자';
+        var userObj = {
+          id: post.userId || post.user_id || ('user_' + pName),
+          nickname: pName,
+          name: pName,
+          avatar: post.avatar || (pName ? pName.slice(0, 1) : '👤'),
+          goals: post.goal ? [post.goal] : ['아워골 목표 실천 중'],
+          streak: 7,
+          level: 2,
+          theme: post.category || '목표 달성',
+          intro: post.action || '아워골 러닝메이트',
+          isAiBot: !!post.is_ai
+        };
+        if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.ensureDefaultCompanions){
+          var comps = window.OurgoalTeamInviteComm.ensureDefaultCompanions();
+          var targetId = String(userObj.id || '').trim().toLowerCase();
+          if(!comps.some(function(x){ return String(x.id || '').trim().toLowerCase() === targetId; })){
+            comps.unshift(userObj);
+            try { if(window.saveProfile) await window.saveProfile(); } catch(err){}
+            if(window.OurgoalTeamInviteComm.persistCompanions) window.OurgoalTeamInviteComm.persistCompanions();
+            btn.disabled = true;
+            btn.textContent = '✓ 동반자';
+            toast((userObj.nickname || userObj.name) + '님을 동반자로 추가했어요! 🎉');
+          } else {
+            toast('이미 등록된 동반자입니다.');
+          }
+        }
+      });
+    });
+
+    // 피드 카드 내 1:1 응원 DM 원탭 배선
+    body.querySelectorAll('[data-feeddm]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var pid = btn.dataset.feeddm;
+        var post = blendedItems.find(function(x){ return x.id === pid; });
+        if(!post) return;
+        var pName = post.name || post.display_name || '동료';
+        var pUid = post.userId || post.user_id || ('user_' + pName);
+        state.activeTab = 'comm';
+        state.commSubTab = 'dm';
+        state.activeDmPeer = pUid;
+        state.activeDmPeerName = pName;
+        state.activeDmPeerAvatar = post.avatar || (pName ? pName.slice(0, 1) : '👤');
+        if(typeof renderCommScreen === 'function') renderCommScreen();
+      });
+    });
+
+    // 피드 카드 내 팀 목표 영입 초대 배선
+    body.querySelectorAll('[data-feedscout]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var pid = btn.dataset.feedscout;
+        var post = blendedItems.find(function(x){ return x.id === pid; });
+        if(!post) return;
+        var pName = post.name || post.display_name || '동료';
+        var userObj = {
+          id: post.userId || post.user_id || ('user_' + pName),
+          nickname: pName,
+          name: pName,
+          avatar: post.avatar || (pName ? pName.slice(0, 1) : '👤'),
+          streak: 7,
+          isAiBot: !!post.is_ai
+        };
+        if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.openScoutToTeamModal){
+          window.OurgoalTeamInviteComm.openScoutToTeamModal(userObj);
+        }
+      });
+    });
+
+    // 피드 글 인앱 통합 공유 (동반자 DM · 팀 톡방 · 외부 SNS)
+    body.querySelectorAll('[data-sharefeed]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var pid = btn.dataset.sharefeed;
+        var post = blendedItems.find(function(x){ return x.id === pid; });
+        if(!post) return;
+        if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.openFeedShareModal){
+          window.OurgoalTeamInviteComm.openFeedShareModal(post);
+        } else {
+          var pTitle = post.goal ? ('"' + post.goal + '" 실천 기록') : (post.action || '목표 실천 기록');
+          var pDesc = post.action || (post.recordText ? post.recordText.slice(0, 80) : '아워골에서 함께 응원하고 성장해요!');
+          shareContent({ type: 'feed', id: post.id, title: pTitle, author: post.name || '동료', desc: pDesc, text: '[아워골 피드] ' + (post.name || '동료') + '님의 실천: "' + pTitle + '" 🔥' });
+        }
+      });
+    });
     if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.wireTemplatesAccordionEvents){
       window.OurgoalTeamInviteComm.wireTemplatesAccordionEvents(body, function(){ renderCommFeed(body); });
     } else {
