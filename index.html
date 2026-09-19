@@ -2939,6 +2939,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ [83] 팀원 초대 시 '아워골 동반자 초대하기' 인앱 초대·참가 기능 ============ */
   function openTeamInviteModal(teamId, teamName){
+    if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.openTeamInviteModal){
+      return window.OurgoalTeamInviteComm.openTeamInviteModal(teamId, (typeof MOCK_GROUPS !== 'undefined' ? MOCK_GROUPS : []));
+    }
     var companions = [];
     try {
       var mates = (window.OurgoalCompanion && window.OurgoalCompanion.getRunningMates) ? window.OurgoalCompanion.getRunningMates() : [];
