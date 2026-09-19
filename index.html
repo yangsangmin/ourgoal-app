@@ -273,11 +273,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     <!-- GOALS -->
     <section class="screen" id="screen-goals">
-      <div class="comm-subtabs" id="goalsSubtabs" style="margin-bottom:12px;"></div>
+      <div class="comm-subtabs comm-subtabs-clean" id="goalsSubtabs" style="margin-bottom:14px;"></div>
       <div id="sanctuaryGoalsView"></div>
       <div id="routineGoalsView" style="display:none;"></div>
       <div id="personalGoalsView">
-        <div class="goal-head-row">
+        <div class="goal-head-row" style="margin-top:10px;">
           <div class="goal-head-l">
             <div style="display:flex;align-items:center;gap:6px;"><h2 style="margin:0;font-size:1.15rem;">세부 마일스톤 & 할 일</h2></div>
             <span class="privacy-badge" id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
@@ -291,12 +291,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <div id="goalsTemplateAccordionSlot" style="display:none;"></div>
         <div class="goal-chip-row" id="goalChipRow" style="display:none;" aria-hidden="true"></div>
         <div id="goalDetailBody"></div>
-        <div class="card agent-card" id="goalAgentCard">
-          <div class="agent-title">AI로 목표 관리</div>
-          <div class="agent-sub">말로 목표와 할 일을 추가·변경·삭제할 수 있어요</div>
-          <div class="dm-input-row">
-            <input id="goalAgentInput" type="text" placeholder="예: 다음 주까지 5km 러닝 마일스톤 추가해줘">
-            <button class="btn btn-primary btn-sm" id="goalAgentSendBtn" type="button">보내기</button>
+        <div class="card agent-card" id="goalAgentCard" style="padding:12px 16px;margin-top:16px;">
+          <div class="agent-title-bar" id="btnToggleGoalAgent" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:1.05rem;">✨</span>
+              <span class="agent-title" style="margin:0;font-size:.9rem;font-weight:700;color:var(--ink);">AI 목표 어시스턴트</span>
+              <span class="faint" style="font-size:.78rem;">(말로 마일스톤·할 일 추가)</span>
+            </div>
+            <span id="goalAgentChevron" style="font-size:.75rem;color:var(--ink-soft);transition:transform .2s ease;">▼</span>
+          </div>
+          <div id="goalAgentDrawer" style="display:none;margin-top:12px;padding-top:10px;border-top:1px dashed var(--rule);">
+            <div class="agent-sub" style="margin-bottom:8px;font-size:.78rem;">말로 목표와 할 일을 추가·변경·삭제할 수 있어요</div>
+            <div class="dm-input-row">
+              <input id="goalAgentInput" type="text" placeholder="예: 다음 주까지 5km 러닝 마일스톤 추가해줘">
+              <button class="btn btn-primary btn-sm" id="goalAgentSendBtn" type="button">보내기</button>
+            </div>
           </div>
         </div>
         <div id="personalGoalsEmptyGuideSlot"></div>
@@ -14970,6 +14979,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
     showGoalAgentReviewStep(diff, text, 0);
   }
+  var toggleAgentBtn = document.getElementById('btnToggleGoalAgent');
+  if(toggleAgentBtn){
+    toggleAgentBtn.addEventListener('click', function(){
+      var drawer = document.getElementById('goalAgentDrawer');
+      var chevron = document.getElementById('goalAgentChevron');
+      if(!drawer) return;
+      var isClosed = (drawer.style.display === 'none');
+      drawer.style.display = isClosed ? 'block' : 'none';
+      if(chevron) chevron.style.transform = isClosed ? 'rotate(180deg)' : 'rotate(0deg)';
+      if(isClosed){
+        var inp = document.getElementById('goalAgentInput');
+        if(inp) setTimeout(function(){ inp.focus(); }, 50);
+      }
+    });
+  }
   document.getElementById('goalAgentSendBtn').addEventListener('click', function(){ sendGoalAgentMessage(); });
   document.getElementById('goalAgentInput').addEventListener('keydown', function(e){ if(e.key==='Enter') sendGoalAgentMessage(); });
 
@@ -16749,6 +16773,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     subtabs.querySelectorAll('[data-gsub]').forEach(function(t){
       t.addEventListener('click', function(){ state.goalsSubTab = t.dataset.gsub; renderGoalsScreen(); });
     });
+    var rawGoals = state.profile.goals.filter(function(g){ return !g.archivedAt && !g.teamLinked; });
+    var goals = sortGoalsByOrder(rawGoals, (state.profile.settings && state.profile.settings.goalOrder) || []);
+    if(!state.activeGoalId || !goals.find(function(g){ return g.id===state.activeGoalId; })){
+      state.activeGoalId = goals.length ? goals[0].id : null;
+    }
+
     var isPersonal = (!state.goalsSubTab || state.goalsSubTab==='personal');
     var sv = document.getElementById('sanctuaryGoalsView');
     if(sv) sv.style.display = isPersonal ? '' : 'none';
@@ -16756,7 +16786,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var pv = document.getElementById('personalGoalsView'), tv = document.getElementById('teamGoalsView'), tlv = document.getElementById('teamLinkedGoalsView');
     var tev = document.getElementById('templateEncyclopediaView');
     if(rv) rv.style.display = (state.goalsSubTab==='routine') ? '' : 'none';
-    if(pv) pv.style.display = isPersonal ? '' : 'none';
+    if(pv) pv.style.display = (isPersonal && goals.length > 0) ? '' : 'none';
     if(tlv) tlv.style.display = (state.goalsSubTab==='teamLinked') ? '' : 'none';
     if(tv) tv.style.display = (state.goalsSubTab==='team') ? '' : 'none';
     if(tev) tev.style.display = (state.goalsSubTab==='templateEncyclopedia') ? '' : 'none';
@@ -16768,11 +16798,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(tplSlot && window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.renderTemplatesAccordionHtml){
       tplSlot.innerHTML = window.OurgoalTeamInviteComm.renderTemplatesAccordionHtml();
       window.OurgoalTeamInviteComm.wireTemplatesAccordionEvents(tplSlot, function(){ renderGoalsScreen(); });
-    }
-    var rawGoals = state.profile.goals.filter(function(g){ return !g.archivedAt && !g.teamLinked; });
-    var goals = sortGoalsByOrder(rawGoals, (state.profile.settings && state.profile.settings.goalOrder) || []);
-    if(!state.activeGoalId || !goals.find(function(g){ return g.id===state.activeGoalId; })){
-      state.activeGoalId = goals.length ? goals[0].id : null;
     }
     var chipRow = document.getElementById('goalChipRow');
     if(state.goalEditMode){
