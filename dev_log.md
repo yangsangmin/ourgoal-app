@@ -4758,3 +4758,30 @@
     - 아바타 웰컴 인사말 팝업 및 홈 진입 렌더링 정상 확인 (`prod_stage6_es193_home.png`).
 ---
 
+## [2026-09-20 07:05] [#TASK-CHORE-CONSTITUTION-SYSTEMIC-SYNERGY] 최고 헌법 6대 체계적 시너지 및 물리적 집행력 전격 개정 (v2026.09.20)
+- **목표**: 상민님의 헌법 개정 이후 작업 전수 분석 명령 및 "문제해결 8원칙 전수 심층 재검토"에 따른 6대 핵심 개정안(제2조 7항, 제3조 6항, 제4조 1항 9호, 제7조 8항 3호, 제11조 4항, 제14조 9항)을 헌법 정본 및 글로벌 규범에 반영하고, 물리적 게이트키퍼(Gate 14/14)와 동시 배선(Co-wiring) 완결.
+- **주요 수정 및 반영 내역**:
+  1. **헌법 개정 정본 및 글로벌 규범 100% 동기화**:
+     - `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md` 및 `C:\Users\HP\AGENTS.md`에 6대 신설/개정 조항 반영 및 SHA256 해시 일치 검증.
+     - `docs/rules/CONSTITUTION_VERSIONS.md`에 `v2026.09.20-SYSTEMIC-SYNERGY` 공식 등록 및 비파괴 아카이브 원본 생성 (`docs/rules/archive/OURGOAL_ABSOLUTE_INTEGRITY_RULES_v2026.09.20_SYSTEMIC_SYNERGY.md`).
+  2. **6대 핵심 조항 신설 및 개정**:
+     - **제2조 제7항 신설**: 감찰 및 전수 조사 시 4차원 심층 매트릭스 의무 (Deep Audit Mandate).
+     - **제3조 제6항 신설**: 연속적 유저 여정 단절 제로 헌법 (Zero Broken Journey Mandate).
+     - **제4조 제1항 제9호 신설**: 도메인 철학 역행 및 상식적 개념 괴리 방치 금지 (Conceptual Integrity).
+     - **제7조 제8항 개정**: 모바일 375px 4대 시각 물리 규격(바텀 네비 48px 안전 여백, 1fr 반응형 적층, keep-all 한글 단어 보존, nowrap 뱃지) 및 스크린샷 선제공 의무화.
+     - **제11조 제4항 신설**: 세션 착수 시 Step 0 최신 브랜치 동기화 및 다중 세션 정합성 검증 (Step 0 Pre-flight Sync).
+     - **제14조 제9항 신설**: 헌법 개정 즉시 레거시 코드 소탕 및 게이트키퍼 동시 배선 의무 (Co-wiring Mandate).
+  3. **게이트키퍼 물리적 단언문 동시 배선 (`scripts/verify-integrity-gate.js`)**:
+     - [검증 14/14] 헌법 v2026.09.20 체계적 시너지 검사 추가 (Zero Ads Gate, 아바타 단일화 Gate, 모바일 4대 시각 규격 CSS Gate).
+  4. **PWA 캐시 버전 최신화 (`sw.js`)**:
+     - `CACHE_NAME`: `ourgoal-shell-v20260920-supreme-constitution-upgrade` 최신화 및 역대 supersedes 목록 보존.
+  5. **티켓 레지스트리 갱신 (`docs/rules/TICKETS.md`)**:
+     - `#TASK-CHORE-CONSTITUTION-SYSTEMIC-SYNERGY` 승인 티켓 등재.
+- **검증 결과**:
+  - `npm test`: 329개 스모크 테스트 전수 통과 (0 failures).
+  - `verify-integrity-gate.js`: 29개 무결성 게이트 전수 ALL PASS (Gate 14/14 포함).
+  - 인터랙션 무결성: 732개 정적 버튼 Zero Dead-Click PASS.
+- **진행 단계**:
+  - [4단계 로컬 main 병합] 완료. (헌법 제9조 제2항 배포 안전핀 준수에 따라 상민님의 명시적 배포 지시 전까지 원격 push 및 Vercel 배포 대기).
+---
+

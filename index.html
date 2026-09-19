@@ -7191,6 +7191,43 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         }
       });
     }
+
+    // 👥 참여 중인 팀 목표 D-Day 및 마일스톤 일정 자동 연동 (#TASK-CALENDAR-TEAM-GOAL-INTEGRATION)
+    try {
+      var joinedTeams = (typeof MOCK_GROUPS !== 'undefined' ? MOCK_GROUPS : []).filter(function(g){
+        return typeof groupState === 'function' && groupState(g.id).joined;
+      });
+      joinedTeams.forEach(function(g){
+        (g.teamGoals || []).forEach(function(tg){
+          var d = tg.dueDate;
+          if(d){
+            push(d, {
+              date: d,
+              title: '👑 [' + g.name + '] ' + (tg.title || '목표') + ' D-Day',
+              kind: 'team_goal',
+              teamId: g.id,
+              teamName: g.name,
+              goalTitle: '👥 ' + g.name,
+              done: (tg.milestones || []).length > 0 && (tg.milestones || []).every(function(m){ return m.status === 'done'; })
+            });
+          }
+          (tg.milestones || []).forEach(function(m){
+            if(m.dueDate){
+              push(m.dueDate, {
+                date: m.dueDate,
+                title: '👥 [' + g.name + '] ' + m.title,
+                kind: 'team_goal',
+                teamId: g.id,
+                teamName: g.name,
+                goalTitle: '👥 ' + g.name,
+                done: m.status === 'done'
+              });
+            }
+          });
+        });
+      });
+    } catch(tgCalErr){ console.warn('team goal calendar mapping error', tgCalErr); }
+
     return map;
   }
   function calCellHtml(d, itemsByDate, dim){
@@ -7214,7 +7251,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       bgHtml +
       '<div class="cal-daynum">'+d.getDate()+'</div>' +
       shown.map(function(e){
-        var pillKind = e.isTemplateRecord ? ' tpl' : (e.kind==='ms'?' ms':(e.kind==='custom'?' custom':''));
+        var pillKind = e.isTemplateRecord ? ' tpl' : (e.kind==='team_goal'?' team':(e.kind==='ms'?' ms':(e.kind==='custom'?' custom':'')));
         return '<div class="cal-pill'+pillKind+(e.done?' done':'')+'">'+escapeHtml(e.title)+'</div>';
       }).join('') +
       (more>0 ? '<div class="cal-more">+'+more+'</div>' : '') +
@@ -9968,6 +10005,47 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     await saveProfile();
     try{ updateAppBadge(computeStreakDays()); }catch(e){}
     try{ if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation(); }catch(propErr){ console.warn('[saveQuickCheckin] propagation warning:', propErr); }
+
+    // 👥 참여 중인 팀 단체방 자동 인증 브릿지 (#TASK-CHECKIN-TEAM-CERTIFICATION)
+    try {
+      var joinedTeams = (typeof MOCK_GROUPS !== 'undefined' ? MOCK_GROUPS : []).filter(function(g){
+        return typeof groupState === 'function' && groupState(g.id).joined;
+      });
+      if(joinedTeams.length > 0){
+        var myName = (state.profile && (state.profile.displayName || state.profile.name)) || '팀원';
+        var myId = (state.profile && state.profile.id) || 'guest';
+        var gTitle = goal ? goal.title : '오늘의 실천 과제';
+        joinedTeams.forEach(function(team){
+          var certMsg = '✅ [오늘의 인증] ' + myName + '님이 "' + gTitle + '" 체크인을 완료했습니다! (' + String(text || '').slice(0, 40) + ')';
+          if(typeof groupState === 'function'){
+            var gs = groupState(team.id);
+            gs.chatMessages = gs.chatMessages || [];
+            gs.chatMessages.push({
+              sender: myName,
+              text: certMsg,
+              time: '방금',
+              isMe: true
+            });
+          }
+          if(window.sb){
+            window.sb.from('team_pings').insert({
+              id: 'ping_cert_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+              group_id: team.id,
+              sender_id: myId,
+              sender_name: myName,
+              target_type: 'checkin_certification',
+              target_id: team.id,
+              target_title: gTitle,
+              ping_type: 'checkin_cert',
+              message: certMsg,
+              status: 'active',
+              created_at: new Date().toISOString()
+            }).then(function(){}).catch(function(){});
+          }
+        });
+      }
+    } catch(certErr){ console.warn('[saveQuickCheckin] team certification broadcast warning:', certErr); }
+
     track('checkin', { first: isFirst, has_goal: !!goal, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l'), source: source || 'quick' });
     track('checkin_completed', { source: source || 'quick', goal_type: goal && goal.category, day_index: dayIndexSinceSignup() });
     if(isFirst){
@@ -11047,6 +11125,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       + '</div>'
       + '<div class="modal-actions" style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;">'
       + '  <button class="btn btn-primary btn-block" id="btnShareStoryToFeed" type="button" style="width:100%;margin-bottom:8px;font-weight:800;padding:12px;border-radius:12px;background:linear-gradient(135deg, var(--brand), #8b5cf6);color:#fff;border:none;box-shadow:0 4px 14px rgba(108,92,231,0.35);">🌟 아워골 피드에 공유하기</button>'
+      + '  <div style="width:100%;display:flex;gap:8px;margin-bottom:4px;">'
+      + '    <button class="btn btn-ghost" id="btnShareStoryToCompanion" type="button" style="flex:1;font-weight:700;padding:10px 8px;border-radius:10px;border:1.5px solid var(--brand);color:var(--brand);background:var(--card2);font-size:.8125rem;">🤝 동반자에게 보내기</button>'
+      + '    <button class="btn btn-ghost" id="btnShareStoryToTeam" type="button" style="flex:1;font-weight:700;padding:10px 8px;border-radius:10px;border:1.5px solid var(--sage);color:var(--sage);background:var(--card2);font-size:.8125rem;">👥 팀 단체방에 인증</button>'
+      + '  </div>'
       + '  <button class="btn btn-primary" id="saveMzStoryPngBtn" type="button" style="flex:1;background:var(--brand);font-weight:700;border:none;padding:12px 14px;border-radius:12px;">이미지 저장 (PNG)</button>'
       + '  <button class="btn btn-secondary" id="shareMzStoryWebBtn" type="button" style="flex:1;font-weight:700;padding:12px 14px;border-radius:12px;">친구에게 바로 공유</button>'
       + '  <div style="width:100%;display:flex;gap:8px;">'
@@ -11312,6 +11394,175 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             }
           };
         }
+
+        // 🤝 동반자에게 보내기 (#TASK-MZ-STORY-INAPP-SOCIAL)
+        var shareCompanionBtn = sheet.querySelector('#btnShareStoryToCompanion');
+        if(shareCompanionBtn){
+          shareCompanionBtn.onclick = function(){
+            triggerHaptic(15);
+            var compList = (state.profile && state.profile.settings && state.profile.settings.companions) || [];
+            if(!compList.length && window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.ensureDefaultCompanions){
+              compList = window.OurgoalTeamInviteComm.ensureDefaultCompanions();
+            }
+            if(!compList || !compList.length){
+              toast('등록된 동반자가 없습니다. 소통 탭에서 동반자를 추가해보세요!');
+              return;
+            }
+            openSelectCompanionForStoryModal(compList, streak, userName, quote, canvasEl);
+          };
+        }
+
+        // 👥 팀 단체방에 인증 (#TASK-MZ-STORY-INAPP-SOCIAL)
+        var shareTeamBtn = sheet.querySelector('#btnShareStoryToTeam');
+        if(shareTeamBtn){
+          shareTeamBtn.onclick = function(){
+            triggerHaptic(15);
+            var myTeams = (typeof MOCK_GROUPS !== 'undefined' ? MOCK_GROUPS : []).filter(function(g){
+              return typeof groupState === 'function' && groupState(g.id).joined;
+            });
+            if(!myTeams.length){
+              toast('참여 중인 팀 목표가 없습니다. 팀 목표를 개설하거나 참여해보세요!');
+              return;
+            }
+            openSelectTeamForStoryModal(myTeams, streak, userName, quote, canvasEl);
+          };
+        }
+      }
+    );
+  }
+
+  /* ============ MZ 갓생 카드: 동반자 1:1 DM 전송 모달 ============ */
+  function openSelectCompanionForStoryModal(compList, streak, userName, quote, canvasEl){
+    var listHtml = compList.map(function(c){
+      var cName = c.nickname || c.name || '동반자';
+      var cAvatar = c.avatar || '👤';
+      return '<div class="user-row" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card);border-radius:10px;border:1px solid var(--rule);margin-bottom:8px;">' +
+        '<div style="display:flex;align-items:center;gap:10px;">' +
+          '<span style="font-size:1.6rem;">' + cAvatar + '</span>' +
+          '<div>' +
+            '<div style="font-weight:700;font-size:.9375rem;color:var(--ink);">' + escapeHtml(cName) + '</div>' +
+            '<div class="faint" style="font-size:.75rem;">나의 아워골 동반자</div>' +
+          '</div>' +
+        '</div>' +
+        '<button class="btn btn-primary btn-sm" data-sendcompstory="' + escapeHtml(c.id || cName) + '" data-compname="' + escapeHtml(cName) + '" type="button" style="font-size:.8125rem;padding:5px 12px;font-weight:700;">전송</button>' +
+      '</div>';
+    }).join('');
+
+    openModal(
+      '<h3>🤝 동반자에게 갓생 카드 보내기</h3>' +
+      '<p class="faint" style="margin:-6px 0 14px;font-size:.8125rem;">나의 ' + streak + '일 연속 몰입 갓생 카드를 보낼 동반자를 선택하세요.</p>' +
+      '<div style="max-height:45vh;overflow-y:auto;margin-bottom:14px;">' + listHtml + '</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn btn-ghost btn-block" id="closeCompStoryModalBtn" type="button">닫기</button>' +
+      '</div>',
+      function(sheet){
+        sheet.querySelector('#closeCompStoryModalBtn').onclick = closeModal;
+        sheet.querySelectorAll('[data-sendcompstory]').forEach(function(btn){
+          btn.onclick = async function(){
+            var compId = btn.dataset.sendcompstory;
+            var compName = btn.dataset.compname;
+            triggerHaptic(20);
+            try {
+              var dataUrl = canvasEl ? canvasEl.toDataURL('image/png') : null;
+              var myId = (state.profile && state.profile.id) || 'guest';
+              var myName = (state.profile && (state.profile.displayName || state.profile.name)) || userName || '나';
+              var pingPayload = {
+                id: 'ping_story_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+                group_id: 'dm_' + [myId, compId].sort().join('_'),
+                sender_id: myId,
+                sender_name: myName,
+                receiver_id: compId,
+                target_type: 'story_card',
+                target_id: 'story_' + Date.now(),
+                target_title: streak + '일 연속 몰입 갓생 카드',
+                ping_type: 'story_card',
+                message: '✨ [' + myName + '님의 ' + streak + '일 연속 몰입 갓생 카드]\n"' + quote + '"',
+                status: 'active',
+                created_at: new Date().toISOString()
+              };
+              if(window.sb){
+                await window.sb.from('team_pings').insert(pingPayload).catch(function(e){ console.warn(e); });
+              }
+              burstConfetti(window.innerWidth/2, window.innerHeight/3, 25);
+              toast('"' + compName + '"님에게 갓생 카드를 성공적으로 보냈어요! 💌');
+              closeModal();
+            } catch(e){
+              toast('전송 중 오류가 발생했습니다.');
+            }
+          };
+        });
+      }
+    );
+  }
+
+  /* ============ MZ 갓생 카드: 팀 단체방 인증 전송 모달 ============ */
+  function openSelectTeamForStoryModal(myTeams, streak, userName, quote, canvasEl){
+    var listHtml = myTeams.map(function(tg){
+      return '<div class="team-row" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card);border-radius:10px;border:1px solid var(--rule);margin-bottom:8px;">' +
+        '<div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">' +
+          '<span style="font-size:1.6rem;">' + tg.icon + '</span>' +
+          '<div style="min-width:0;">' +
+            '<div style="font-weight:700;font-size:.9375rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(tg.name) + '</div>' +
+            '<div class="faint" style="font-size:.75rem;">팀원 ' + (tg.members || 1) + '명 참여 중</div>' +
+          '</div>' +
+        '</div>' +
+        '<button class="btn btn-primary btn-sm" data-sendteamstory="' + escapeHtml(tg.id) + '" data-teamname="' + escapeHtml(tg.name) + '" type="button" style="font-size:.8125rem;padding:5px 12px;font-weight:700;flex:0 0 auto;">인증하기</button>' +
+      '</div>';
+    }).join('');
+
+    openModal(
+      '<h3>👥 팀 단체방에 갓생 카드 인증</h3>' +
+      '<p class="faint" style="margin:-6px 0 14px;font-size:.8125rem;">오늘의 ' + streak + '일 연속 몰입 카드로 인증할 팀 단체방을 선택하세요.</p>' +
+      '<div style="max-height:45vh;overflow-y:auto;margin-bottom:14px;">' + listHtml + '</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn btn-ghost btn-block" id="closeTeamStoryModalBtn" type="button">닫기</button>' +
+      '</div>',
+      function(sheet){
+        sheet.querySelector('#closeTeamStoryModalBtn').onclick = closeModal;
+        sheet.querySelectorAll('[data-sendteamstory]').forEach(function(btn){
+          btn.onclick = async function(){
+            var teamId = btn.dataset.sendteamstory;
+            var teamName = btn.dataset.teamname;
+            triggerHaptic(25);
+            try {
+              var myId = (state.profile && state.profile.id) || 'guest';
+              var myName = (state.profile && (state.profile.displayName || state.profile.name)) || userName || '팀원';
+              var pingPayload = {
+                id: 'ping_team_story_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+                group_id: teamId,
+                sender_id: myId,
+                sender_name: myName,
+                receiver_id: null,
+                target_type: 'team_group',
+                target_id: teamId,
+                target_title: teamName,
+                ping_type: 'story_card_share',
+                message: '🌟 [팀원 인증] ' + myName + '님이 ' + streak + '일 연속 몰입 갓생 카드를 공유했습니다!\n"' + quote + '"',
+                status: 'active',
+                created_at: new Date().toISOString()
+              };
+              if(window.sb){
+                await window.sb.from('team_pings').insert(pingPayload).catch(function(e){ console.warn(e); });
+              }
+              // 로컬 팀 채팅방 낙관적 반영
+              if(typeof groupState === 'function'){
+                var gs = groupState(teamId);
+                gs.chatMessages = gs.chatMessages || [];
+                gs.chatMessages.push({
+                  sender: myName,
+                  text: '🌟 ' + streak + '일 연속 몰입 갓생 카드를 공유했습니다!\n"' + quote + '"',
+                  time: '방금',
+                  isMe: true
+                });
+              }
+              burstConfetti(window.innerWidth/2, window.innerHeight/3, 30);
+              toast('"' + teamName + '" 팀 단체방에 인증 카드를 공유했어요! 👥');
+              closeModal();
+            } catch(e){
+              toast('인증 공유 중 오류가 발생했습니다.');
+            }
+          };
+        });
       }
     );
   }
@@ -18922,6 +19173,7 @@ wirePromptEncyclopediaEvents(body);
             '<div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0 8px;">' +
               '<span class="faint" style="font-size:.8125rem;font-weight:600;">달성률 '+pct+'% · 마일스톤 '+done+'/'+total+' 완료</span>' +
               '<div style="display:flex;align-items:center;gap:4px;">' +
+                (pct === 100 ? '<button class="btn btn-sm btn-gold btn-feed-brag" data-tgbrag="'+g.id+':'+tg.id+'" type="button" style="font-size:.75rem;padding:3px 9px;background:linear-gradient(135deg, #f59e0b, #d97706);color:#fff;font-weight:800;border:none;border-radius:6px;box-shadow:0 2px 6px rgba(245,158,11,0.35);">🎉 완주 자랑</button>' : '') +
                 (isEdit ? '<button class="btn btn-ghost btn-sm" data-tgeditmodal="'+g.id+':'+tg.id+'" type="button" style="font-size:.75rem;padding:2px 8px;border-color:var(--brand);color:var(--brand-strong);">✏️ 모달 상세 편집</button>' : '') +
                 '<button class="btn btn-ghost btn-sm tg-fold-btn" data-tgfoldlist="'+tg.id+'" type="button" style="font-size:.75rem;padding:2px 7px;border-color:var(--rule);">마일스톤 접기 ▲</button>' +
               '</div>' +
@@ -19123,6 +19375,52 @@ wirePromptEncyclopediaEvents(body);
         await saveProfile();
         toast('체험 팀에서 나갔어요');
         renderTeamGoalsScreen();
+      });
+    });
+
+    view.querySelectorAll('[data-tgbrag]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var parts = btn.dataset.tgbrag.split(':');
+        var g = MOCK_GROUPS.find(function(x){ return x.id===parts[0]; });
+        var tg = g && (g.teamGoals||[]).find(function(x){ return x.id===parts[1]; });
+        if(!g || !tg) return;
+        triggerHaptic([20, 30, 40]);
+        var myName = (state.profile && (state.profile.displayName || state.profile.name)) || '팀원';
+        var myId = (state.profile && state.profile.id) || 'guest';
+        var postId = 'post_brag_' + newId();
+        var post = {
+          id: postId,
+          user_id: myId,
+          display_name: myName,
+          avatar_url: (state.profile && state.profile.avatarUrl) || null,
+          goal_title: '[' + g.name + '] ' + tg.title,
+          caption: '🏆 우리 팀 [' + g.name + '] 목표를 100% 완주했습니다! 함께 달려준 팀원 여러분 진심으로 수고 많으셨습니다! 🎉✨',
+          cheers_count: 0,
+          created_at: nowISO(),
+          extra: {
+            category: 'team',
+            badge: '팀 완주 🏆',
+            isTeamCompletion: true,
+            teamName: g.name,
+            teamGoalTitle: tg.title,
+            goalPct: 100,
+            milestones: tg.milestones || []
+          }
+        };
+        try {
+          if(window.sb) await window.sb.from('feed_posts').insert(post);
+        } catch(e){ console.warn('Supabase feed post fallback', e); }
+        state.profile.settings = state.profile.settings || {};
+        state.profile.settings.myFeedPosts = state.profile.settings.myFeedPosts || [];
+        state.profile.settings.myFeedPosts.unshift(post);
+        await saveProfile();
+        if(!window.FEED_POSTS_CACHE) window.FEED_POSTS_CACHE = [];
+        window.FEED_POSTS_CACHE.unshift(post);
+        burstConfetti(window.innerWidth / 2, window.innerHeight / 3, 40);
+        toast('우리 팀의 100% 완주 소식이 소통 피드에 성공적으로 자랑되었어요! 🏆');
+        state.commSubTab = 'feed';
+        setTab('comm');
+        renderCommScreen();
       });
     });
 
@@ -25891,6 +26189,7 @@ wirePromptEncyclopediaEvents(body);
         { title:'10~12주차 · 목표 기록 도전', tasks:['1RM 측정일 정하기','측정 전 주 디로드 하기','시작 전후 사진·기록 비교 정리'] }
       ] }
   ];
+  window.CREATOR_TEMPLATES = CREATOR_TEMPLATES;
 
   /* #TASK-ES-179: 가짜 잇템 통계 목데이터 완전 제거 (헌법 제4조 준수) */
 
@@ -30890,6 +31189,15 @@ wirePromptEncyclopediaEvents(body);
       }
     });
   }
+  window.openMzShareCardModal = openMzShareCardModal;
+  window.renderGoalsScreen = renderGoalsScreen;
+  window.renderCalendarScreen = renderCalendarScreen;
+  window.setTab = setTab;
+  window.MOCK_GROUPS = MOCK_GROUPS;
+  window.groupState = groupState;
+  window.openModal = openModal;
+  window.closeModal = closeModal;
+
   window.addEventListener('appinstalled', function(){ try{ track('app_installed_pwa', { source: 'pwa', goal_type: null, day_index: dayIndexSinceSignup() }); }catch(e){} });
 })();
 </script>
