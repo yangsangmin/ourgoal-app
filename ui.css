@@ -998,8 +998,8 @@ svg.i{width:1.15em;height:1.15em;vertical-align:-.2em;flex:0 0 auto;}
 .cat-chip .ico svg.i{width:26px;height:26px;color:var(--ink);}
 
 /* ---------- 20. 접근성 보정 — 텍스트 대비 4.5:1 · 터치 타겟 ---------- */
-:root{--ink-faint:#5F6B7A;--cta:#D92B41;--cta-hover:#C4243A;--info-text:#1D63D6;--sage-text:#0B7355;--gold-text:#9A4508;}
-[data-theme="black"],[data-theme="dark"],[data-theme="dark-space"],[data-theme="glowing-space"],[data-theme="deep-sea"],[data-theme="sunset-beach"],[data-theme="urban-city"]{--ink-faint:#8A929C;--cta:var(--brand);--cta-hover:var(--brand-strong);--info-text:#8AB4FF;--sage-text:#4ADE9C;--gold-text:#FBBF5C;}
+:root{--ink-faint:#5F6B7A;--cta:var(--brand);--cta-hover:var(--brand-strong);--info-text:#1D63D6;--sage-text:#0B7355;--gold-text:#9A4508;}
+[data-theme="focus-sanctuary"],[data-theme="black"],[data-theme="dark"],[data-theme="dark-space"],[data-theme="glowing-space"],[data-theme="deep-sea"],[data-theme="sunset-beach"],[data-theme="urban-city"]{--ink-faint:#8A929C;--cta:var(--brand);--cta-hover:var(--brand-strong);--info-text:#8AB4FF;--sage-text:#4ADE9C;--gold-text:#FBBF5C;}
 @media (prefers-color-scheme: dark){ html:not([data-theme]){--ink-faint:#8A929C;--cta:var(--brand);--cta-hover:var(--brand-strong);--info-text:#8AB4FF;--sage-text:#4ADE9C;--gold-text:#FBBF5C;} }
 .btn-primary,.mz-btn,.btn-mz,.fab,.dm-msg.me,.cal-cell.today .cal-daynum,.switch.on,.swipe-del{background:var(--cta);}
 .btn-primary:hover{background:var(--cta-hover);}
@@ -8585,3 +8585,129 @@ html[data-theme="urban-city"] .theme-card.active {
   background: rgba(14, 165, 233, 0.16) !important;
   border-color: #38BDF8 !important;
 }
+
+/* =========================================================================
+   🌟 [2026-09-20] 20대 핵심 UI/UX 전수 결함 정밀 해결 헌법 스타일 블록
+   - 1. 설정 탭 테마 그리드 모바일 1열 반응형 적층 및 텍스트 래핑
+   - 2. 전 탭 하단 안전 스크롤 여백 일괄 확장 (바텀 네비 차폐 완전 해소)
+   - 3. 한글 타이포그래피 줄바꿈 단어 보존 (word-break: keep-all)
+   - 4. 템플릿 백과사전 '16주 과정' 뱃지 3줄 쪼개짐 방지 (white-space: nowrap)
+   - 5. 목표 탭 및 소통 탭 가로스크롤 컨테이너 패딩 및 터치 가독성 확보
+   - 6. 상단바 활용법 및 헤더 미니 뱃지 터치 타겟 확장 (>= 36~44px)
+   - 7. 모달 닫기(X) 버튼 및 하단 안전영역 패딩 보강
+   - 8. 화이트 테마 토스트 및 모달 고시인성 일원화
+   ========================================================================= */
+
+/* 1. 설정 탭 테마 그리드 반응형 (모바일 375px~480px 1열 적층) */
+@media (max-width: 480px) {
+  .theme-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  .theme-card {
+    padding: 14px 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .theme-desc {
+    white-space: normal !important;
+    word-break: keep-all !important;
+    line-height: 1.4 !important;
+  }
+}
+
+/* 2. 전 탭 하단 안전 여백 확장 (바텀 네비 차폐 완전 해소) */
+.screens {
+  padding-bottom: calc(var(--nav-h, 64px) + env(safe-area-inset-bottom, 0px) + 48px) !important;
+}
+#screen-home, #screen-goals, #screen-calendar, #screen-records, #screen-comm, #screen-settings {
+  padding-bottom: 24px !important;
+}
+
+/* 3. 한글 타이포그래피 단어 단위 줄바꿈 전역 보정 (1글자 개행 전수 방지) */
+.sanctuary-app-title, .home-greet, .capture-title, .capture-sub,
+.theme-name, .theme-desc, .s-title, .screen-head, .faint,
+.comm-subtab, .feed-filter-chip, .goal-chip, .dday-pill,
+.modal-header, .modal-title, .modal-body, .card,
+.today-glance-pill, .offline-banner {
+  word-break: keep-all !important;
+}
+
+/* 4. 템플릿 백과사전 기간 라벨 3줄 쪼개짐 방지 */
+.tpl-duration-pill, [class*="duration"], [class*="badge-duration"],
+.encyclopedia-card .badge, [data-domain="encyclopedia"] .badge,
+.theme-filter-row .badge, .feed-card .badge {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  width: auto !important;
+  min-width: max-content !important;
+}
+
+/* 5. 목표 탭 서브탭 및 소통 탭 가로스크롤 패딩 */
+#goalsSubtabs, .feed-filter-bar, .comm-subtabs-wrap {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-right: 28px !important;
+}
+#goalsSubtabs::-webkit-scrollbar, .feed-filter-bar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 6. 상단바 버튼 및 인라인 뱃지 터치 타겟 확장 */
+.topbar-action-btn, #topHomeGuideBtn {
+  font-size: 12px !important;
+  padding: 5px 10px !important;
+  min-height: 34px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+#calGcalMiniBadge {
+  min-height: 32px !important;
+  padding: 4px 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  border-radius: 12px !important;
+}
+
+/* 7. 체크인 입력창 플레이스홀더 명도 대비 확보 */
+#captureInput::placeholder, textarea::placeholder, input::placeholder {
+  color: var(--ink-soft) !important;
+  opacity: 0.75 !important;
+}
+
+/* 8. 모달 바텀시트 하단 안전 영역 패딩 */
+.modal-sheet, .sheet, .modal-box, .theme-modal-sheet {
+  padding-bottom: max(20px, env(safe-area-inset-bottom, 0px)) !important;
+  box-sizing: border-box !important;
+}
+.modal-actions, .sheet-actions {
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* 9. 화이트 테마 토스트 고시인성 */
+html[data-theme="white"] .toast {
+  background: #0F172A !important;
+  color: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.25) !important;
+}
+
+/* 10. 모달 및 시트 상단 닫기(X) 버튼 터치 영역 및 시인성 강화 */
+.btn-close, [aria-label="닫기"], .modal-close {
+  min-width: 36px !important;
+  min-height: 36px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.3rem !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  border-radius: 8px !important;
+  transition: background 0.15s ease !important;
+}
+.btn-close:hover, [aria-label="닫기"]:hover, .modal-close:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
