@@ -7005,7 +7005,30 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       return ev.id;
     } catch(e){ return null; }
   }
-  async function quickSyncToCalendar(kind, goalId, msId, taskId){
+  async function quickSyncToCalendar(kind, goalId, msId, taskId, schedId){
+    var schedTarget = schedId || ((kind==='custom') ? goalId : null);
+    if(kind === 'custom' && schedTarget){
+      var csList = (state.profile && state.profile.settings && state.profile.settings.customSchedules) || [];
+      var cs = csList.find(function(c){ return String(c.id) === String(schedTarget); });
+      if(!cs){ toast('일정을 찾을 수 없어요'); return; }
+      var csDate = cs.date;
+      if(!csDate){ toast('먼저 일시를 설정해주세요'); return; }
+      var csLabel = cs.title + (cs.note ? ' (' + cs.note + ')' : '');
+      if(!state.profile.settings.gcalSync) state.profile.settings.gcalSync = { goals:{}, ms:{}, tasks:{}, imported:{}, custom:{} };
+      var sync = state.profile.settings.gcalSync;
+      sync.custom = sync.custom || {};
+      var existing = sync.custom[cs.id];
+      var token;
+      try{ token = await getGoogleAccessToken(); } catch(e){ toast('구글 인증에 실패했어요'); return; }
+      toast('캘린더에 반영하는 중…');
+      var evId = await pushCalendarEvent(token, csLabel, csDate, existing);
+      if(!evId){ toast('캘린더 반영에 실패했어요'); return; }
+      sync.custom[cs.id] = evId;
+      await saveProfile();
+      toast('"'+cs.title+'" 일정을 구글 캘린더에 반영했어요 📅');
+      if(state.activeTab==='calendar') renderCalendarScreen();
+      return;
+    }
     var goal = state.profile.goals.find(function(g){ return g.id===goalId; });
     if(!goal) return;
     var ms = (kind==='ms'||kind==='task') ? (goal.milestones||[]).find(function(m){ return m.id===msId; }) : null;
@@ -7013,7 +7036,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var date = kind==='goal' ? goal.dueDate : (kind==='ms' ? (ms && ms.dueDate) : (task && task.dueDate));
     if(!date){ toast('먼저 마감일(또는 시간)을 설정해주세요'); return; }
     var label = kind==='goal' ? (''+goal.title) : (kind==='ms' ? ('· '+ms.title+' ('+goal.title+')') : ('- '+task.title+' ('+ms.title+')'));
-    if(!state.profile.settings.gcalSync) state.profile.settings.gcalSync = { goals:{}, ms:{}, tasks:{}, imported:{} };
+    if(!state.profile.settings.gcalSync) state.profile.settings.gcalSync = { goals:{}, ms:{}, tasks:{}, imported:{}, custom:{} };
     var sync = state.profile.settings.gcalSync;
     var existing = kind==='goal' ? sync.goals[goal.id] : (kind==='ms' ? (sync.ms&&sync.ms[ms.id]) : (sync.tasks&&sync.tasks[task.id]));
     var token;
@@ -7233,7 +7256,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     saveLocalSettings(state.profile.id, state.profile.settings);
     await saveProfile();
     renderCalendarScreen();
-    if(state.activeTab === 'goals') renderGoalsScreen();
+    if(typeof renderHome === 'function') renderHome();
+    if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
+    if(typeof renderStatsScreen === 'function') renderStatsScreen();
+    if(state.activeTab === 'goals' && typeof renderGoalsScreen === 'function') renderGoalsScreen();
   }
 
   /* ============ [#TASK-ES-153 & #TASK-ES-155] 캘린더 일자별 배경 사진 지정 모달 ============ */
@@ -7742,15 +7768,24 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               eventItem.dueDate = null;
               await saveProfile();
               renderCalendarScreen();
+              if(typeof renderHome === 'function') renderHome();
+              if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
+              if(typeof renderStatsScreen === 'function') renderStatsScreen();
             } else if(kind==='ms'||kind==='task'){
               eventItem.dueDate = null;
               await saveProfile();
               renderCalendarScreen();
+              if(typeof renderHome === 'function') renderHome();
+              if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
+              if(typeof renderStatsScreen === 'function') renderStatsScreen();
             } else if(kind==='gcal'){
               state.gcalEventsCache = (state.gcalEventsCache || []).filter(function(c){ return String(c.id) !== String(eventItem.id); });
               try { localStorage.setItem('ourgoal_gcal_events', JSON.stringify(state.gcalEventsCache)); } catch(e){}
               toast('구글 일정을 캘린더에서 제거했어요');
               renderCalendarScreen();
+              if(typeof renderHome === 'function') renderHome();
+              if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
+              if(typeof renderStatsScreen === 'function') renderStatsScreen();
             }
             openCalendarDayEditHubModal(selDate);
           };
@@ -7841,6 +7876,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           saveLocalSettings(state.profile.id, state.profile.settings);
           await saveProfile();
           renderCalendarScreen();
+          if(typeof renderHome === 'function') renderHome();
+          if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
+          if(typeof renderStatsScreen === 'function') renderStatsScreen();
           openCalendarDayEditHubModal(dayKey);
           if(state.profile.settings.gcalAutoSync && isGoogleCalendarConnected()){
             syncAllToGoogleCalendar(false).catch(function(){});
@@ -7849,6 +7887,155 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
     );
   }
+
+  function parseNaturalScheduleText(text){
+    var raw = (text || '').trim();
+    if(!raw) return null;
+
+    // 1. 링크(URL) 추출 및 첨부 배열 구성
+    var attachments = [];
+    var urlMatches = raw.match(/https?:\/\/[^\s]+/g);
+    if(urlMatches){
+      urlMatches.forEach(function(u){
+        attachments.push({ type: 'link', url: u, name: u });
+      });
+      raw = raw.replace(/https?:\/\/[^\s]+/g, ' ').trim();
+    }
+
+    // 2. 날짜 분석 (기준일: 오늘)
+    var now = new Date();
+    var targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var dateMatched = false;
+
+    // 2-1. 상대 날짜
+    if(/\b오늘\b/.test(raw)){
+      dateMatched = true;
+      raw = raw.replace(/\b오늘\b/, ' ');
+    } else if(/\b내일\b/.test(raw)){
+      targetDate.setDate(targetDate.getDate() + 1);
+      dateMatched = true;
+      raw = raw.replace(/\b내일\b/, ' ');
+    } else if(/\b모레\b/.test(raw)){
+      targetDate.setDate(targetDate.getDate() + 2);
+      dateMatched = true;
+      raw = raw.replace(/\b모레\b/, ' ');
+    } else if(/\b글피\b/.test(raw)){
+      targetDate.setDate(targetDate.getDate() + 3);
+      dateMatched = true;
+      raw = raw.replace(/\b글피\b/, ' ');
+    }
+
+    // 2-2. 이번 주 / 다음 주 요일
+    var dayMap = { '일': 0, '월': 1, '화': 2, '수': 3, '목': 4, '금': 5, '토': 6 };
+    var weekMatch = raw.match(/(이번\s*주|다음\s*주)?\s*([월화수목금토일])(?:요일)?/);
+    if(weekMatch && !dateMatched){
+      var isNextWeek = weekMatch[1] && weekMatch[1].indexOf('다음') !== -1;
+      var targetDay = dayMap[weekMatch[2]];
+      var curDay = now.getDay();
+      var diff = targetDay - curDay;
+      if(isNextWeek){
+        diff += 7;
+      } else if(diff < 0){
+        diff += 7;
+      }
+      targetDate.setDate(targetDate.getDate() + diff);
+      dateMatched = true;
+      raw = raw.replace(weekMatch[0], ' ');
+    }
+
+    // 2-3. 구체적 날짜 (YYYY년 M월 D일 or M월 D일 or M/D or YYYY-MM-DD)
+    var fullDateMatch = raw.match(/(\d{4})[.\-\/년]\s*(\d{1,2})[.\-\/월]\s*(\d{1,2})일?/);
+    if(fullDateMatch){
+      targetDate = new Date(parseInt(fullDateMatch[1], 10), parseInt(fullDateMatch[2], 10) - 1, parseInt(fullDateMatch[3], 10));
+      dateMatched = true;
+      raw = raw.replace(fullDateMatch[0], ' ');
+    } else {
+      var monthDayMatch = raw.match(/(\d{1,2})[.\/월]\s*(\d{1,2})일?/);
+      if(monthDayMatch){
+        targetDate = new Date(now.getFullYear(), parseInt(monthDayMatch[1], 10) - 1, parseInt(monthDayMatch[2], 10));
+        dateMatched = true;
+        raw = raw.replace(monthDayMatch[0], ' ');
+      }
+    }
+
+    var y = targetDate.getFullYear();
+    var m = String(targetDate.getMonth() + 1).padStart(2, '0');
+    var d = String(targetDate.getDate()).padStart(2, '0');
+    var dateStr = y + '-' + m + '-' + d;
+
+    // 3. 시간 분석 (오전/오후/낮/저녁/밤 N시 M분 or HH:mm)
+    var timeStr = '';
+    var timeMatch1 = raw.match(/(오전|오후|낮|저녁|밤|새벽)?\s*(\d{1,2})시(?:\s*(\d{1,2})분)?/);
+    var timeMatch2 = raw.match(/(\d{1,2}):(\d{2})/);
+
+    if(timeMatch1){
+      var meridiem = timeMatch1[1] || '';
+      var hour = parseInt(timeMatch1[2], 10);
+      var min = timeMatch1[3] ? parseInt(timeMatch1[3], 10) : 0;
+      if(/오후|저녁|밤/.test(meridiem) && hour < 12) hour += 12;
+      if(/오전|새벽/.test(meridiem) && hour === 12) hour = 0;
+      timeStr = 'T' + String(hour).padStart(2, '0') + ':' + String(min).padStart(2, '0');
+      raw = raw.replace(timeMatch1[0], ' ');
+    } else if(timeMatch2){
+      var hour = parseInt(timeMatch2[1], 10);
+      var min = parseInt(timeMatch2[2], 10);
+      timeStr = 'T' + String(hour).padStart(2, '0') + ':' + String(min).padStart(2, '0');
+      raw = raw.replace(timeMatch2[0], ' ');
+    }
+
+    // 4. 불용어 및 서술어 제거하여 제목 정제
+    raw = raw.replace(/\b(등록해줘|등록해|등록|추가해줘|추가해|추가|잡아줘|잡아|생성해줘|알려줘|일정)\b/g, ' ');
+    raw = raw.replace(/\s+/g, ' ').trim();
+
+    var title = raw || '새 일정';
+
+    return {
+      title: title,
+      date: dateStr + timeStr,
+      attachments: attachments,
+      raw: text
+    };
+  }
+
+  async function executeCalAgentNaturalSchedule(txt){
+    var parsed = parseNaturalScheduleText(txt);
+    if(!parsed){ toast('일정 내용을 입력해주세요'); return; }
+    if(!state.profile.settings) state.profile.settings = {};
+    if(!state.profile.settings.customSchedules) state.profile.settings.customSchedules = [];
+
+    var newSched = {
+      id: uid('sched'),
+      title: parsed.title,
+      date: parsed.date,
+      note: parsed.attachments.length ? ('참고 링크: ' + parsed.attachments.map(function(a){ return a.url; }).join(', ')) : '',
+      done: false,
+      notifyEnabled: true,
+      notifyMinutes: 10,
+      linkedGoalId: null,
+      linkedGoalTitle: null,
+      attachments: parsed.attachments,
+      createdAt: nowISO()
+    };
+
+    state.profile.settings.customSchedules.push(newSched);
+    var targetDateKey = parsed.date.slice(0, 10);
+    state.calSelectedDate = targetDateKey;
+    state.calDate = targetDateKey;
+    saveLocalSettings(state.profile.id, state.profile.settings);
+    await saveProfile();
+
+    renderCalendarScreen();
+    if(typeof renderHome === 'function') renderHome();
+    if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
+    if(typeof renderStatsScreen === 'function') renderStatsScreen();
+
+    toast('📅 AI 일정 등록 완료: "' + escapeHtml(parsed.title) + '" (' + parsed.date.replace('T', ' ') + ')');
+
+    if(state.profile.settings.gcalAutoSync && isGoogleCalendarConnected()){
+      syncAllToGoogleCalendar(false).catch(function(){});
+    }
+  }
+
   function renderCalendarScreen(){
     var view = state.calView || 'month';
     var refDate = new Date(state.calDate+'T00:00:00');
@@ -8052,18 +8239,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var calSend = document.getElementById('calAgentSendBtn');
     var calInp = document.getElementById('calAgentInput');
     if(calSend && calInp){
-      calSend.onclick = function(){
+      calSend.onclick = async function(){
         var txt = calInp.value.trim();
         if(!txt) return;
         calInp.value = '';
-        sendGoalAgentMessage(txt);
+        await executeCalAgentNaturalSchedule(txt);
       };
-      calInp.onkeydown = function(e){
+      calInp.onkeydown = async function(e){
         if(e.key === 'Enter'){
           var txt = calInp.value.trim();
           if(!txt) return;
           calInp.value = '';
-          sendGoalAgentMessage(txt);
+          await executeCalAgentNaturalSchedule(txt);
         }
       };
     }
@@ -8086,13 +8273,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var evs = (itemsByDate || calendarItemsByDate())[sel] || [];
     var wrap = document.getElementById('calDayDetail');
     wrap.innerHTML =
-      '<div class="card-title-row" style="margin:16px 0 8px;">' +
-        '<h3 style="margin:0;font-size:.9375rem;">'+sel+'</h3>' +
-        '<div style="display:flex;align-items:center;gap:6px;">' +
-          '<span class="faint" style="font-weight:700;">'+(dDay(sel)||'')+'</span>' +
-          '<button class="btn btn-secondary btn-sm cal-day-bg-btn" id="calPickDayBgBtn" type="button" style="font-size:.8125rem;padding:3px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;">🖼️ 이날의 배경사진 고르기' + (((state.profile && state.profile.calendarDayBackgrounds && state.profile.calendarDayBackgrounds[sel])) ? ' (설정됨)' : '') + '</button>' +
-          '<button class="btn btn-ghost btn-sm" id="calOpenHubBtn" type="button" style="font-size:.8125rem;padding:3px 8px;color:var(--ink);border-color:var(--rule);">해당일자 관리</button>' +
-          '<button class="btn btn-primary btn-sm" id="calAddManualBtn" type="button" style="font-size:.8125rem;padding:3px 8px;">+ 일정 추가</button>' +
+      '<div class="card-title-row" style="margin:16px 0 8px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;">' +
+        '<div style="display:flex;align-items:center;gap:6px;white-space:nowrap;">' +
+          '<h3 style="margin:0;font-size:.9375rem;white-space:nowrap;">'+sel+'</h3>' +
+          '<span class="faint dday-faint" style="font-weight:700;white-space:nowrap;">'+(dDay(sel)||'')+'</span>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+          '<button class="btn btn-secondary btn-sm cal-day-bg-btn" id="calPickDayBgBtn" type="button" style="font-size:.8125rem;padding:3px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">🖼️ 배경사진' + (((state.profile && state.profile.calendarDayBackgrounds && state.profile.calendarDayBackgrounds[sel])) ? ' (설정됨)' : '') + '</button>' +
+          '<button class="btn btn-ghost btn-sm" id="calOpenHubBtn" type="button" style="font-size:.8125rem;padding:3px 8px;color:var(--ink);border-color:var(--rule);white-space:nowrap;">해당일자 관리</button>' +
+          '<button class="btn btn-primary btn-sm" id="calAddManualBtn" type="button" style="font-size:.8125rem;padding:3px 8px;white-space:nowrap;">+ 일정 추가</button>' +
         '</div>' +
       '</div>' +
       (evs.length ? '<div class="ms-list">'+evs.map(function(e, evIdx){
@@ -8114,7 +8303,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               attChips +
             '</div>' +
             '<button class="icon-btn" data-caledit="'+e.kind+'" data-schedid="'+(e.schedId||e.gcalId||'')+'" data-calgid="'+(e.goalId||'')+'" data-calmid="'+(e.msId||'')+'" data-caltid="'+(e.taskId||'')+'" type="button" aria-label="일정 편집" title="수동 편집" style="font-size:.8125rem;padding:2px 4px;margin-right:2px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>' +
-            (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsync="'+e.kind+'" data-calsyncgid="'+(e.goalId||'')+'" data-calsyncmid="'+(e.msId||'')+'" data-calsynctid="'+(e.taskId||'')+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' : '') +
+            (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsync="'+e.kind+'" data-calsyncgid="'+(e.goalId||'')+'" data-calsyncmid="'+(e.msId||'')+'" data-calsynctid="'+(e.taskId||'')+'" data-calsyncsched="'+(e.schedId||'')+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' : '') +
           '</div>' +
         '</div>';
       }).join('')+'</div>'
@@ -8207,7 +8396,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     wrap.querySelectorAll('[data-calsync]').forEach(function(btn){
       btn.addEventListener('click', function(e){
         e.stopPropagation();
-        quickSyncToCalendar(btn.dataset.calsync, btn.dataset.calsyncgid, btn.dataset.calsyncmid||null, btn.dataset.calsynctid||null);
+        quickSyncToCalendar(btn.dataset.calsync, btn.dataset.calsyncgid, btn.dataset.calsyncmid||null, btn.dataset.calsynctid||null, btn.dataset.calsyncsched||null);
       });
     });
     wireAttachmentChipClicks(wrap);

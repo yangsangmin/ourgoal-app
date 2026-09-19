@@ -188,7 +188,8 @@
     }
 
     var modeNav = '<div class="s-cal-modes-wrap">' +
-      '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'month' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'month\')">📅 월간 캘린더</button>' +
+      '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'month' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'month\')">📅 월간</button>' +
+      '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'week' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'week\')">📆 주간</button>' +
       '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'timeline' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'timeline\')">⏱️ 일간 타임라인</button>' +
       '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'timer' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'timer\')">🧘 집중 타이머</button>' +
     '</div>';
@@ -246,7 +247,7 @@
         var tagHtml = '';
         if (dayItems.length > 0) {
           var firstTitle = escapeHtml(dayItems[0].title || dayItems[0].text || '일정');
-          tagHtml = '<span class="s-day-today-tag" style="position:relative;z-index:1;font-size:0.58rem;max-width:92%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;margin-top:1px;">' + firstTitle + '</span>';
+          tagHtml = '<span class="s-day-today-tag" style="position:relative;z-index:1;font-size:0.56rem;max-width:96%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;margin-top:1px;">' + firstTitle + '</span>';
         }
 
         return '<div class="s-cal-day-cell ' + (isToday ? 'today' : '') + ' ' + (isSelected ? 'selected' : '') + ' ' + (hasItems ? 'active' : '') + '" style="position:relative;" onclick="window.OurgoalSanctuaryV3.selectCalDay(\'' + dateKey + '\')">' +
@@ -288,6 +289,72 @@
           '</div>' +
         '</div>' +
       '</div>';
+    } else if (engine.activeCalMode === 'week') {
+      var weekBase = engine.selectedCalDate || getTodayStr();
+      var wParts = weekBase.split('-');
+      var wDate = new Date(parseInt(wParts[0], 10), parseInt(wParts[1], 10) - 1, parseInt(wParts[2], 10));
+      if (isNaN(wDate.getTime())) wDate = new Date();
+      var wDay = wDate.getDay(); // 0(일) ~ 6(토)
+      var sundayMs = wDate.getTime() - wDay * 86400000;
+      var saturdayMs = sundayMs + 6 * 86400000;
+      var sunDate = new Date(sundayMs);
+      var satDate = new Date(saturdayMs);
+      var sunStr = sunDate.getFullYear() + '-' + String(sunDate.getMonth() + 1).padStart(2, '0') + '-' + String(sunDate.getDate()).padStart(2, '0');
+      var satStr = satDate.getFullYear() + '-' + String(satDate.getMonth() + 1).padStart(2, '0') + '-' + String(satDate.getDate()).padStart(2, '0');
+      var dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+
+      var weekRowsHtml = Array.from({ length: 7 }, function(_, idx) {
+        var dayMs = sundayMs + idx * 86400000;
+        var dayObj = new Date(dayMs);
+        var dateKey = dayObj.getFullYear() + '-' + String(dayObj.getMonth() + 1).padStart(2, '0') + '-' + String(dayObj.getDate()).padStart(2, '0');
+        var isToday = (dateKey === getTodayStr());
+        var isSelected = (dateKey === engine.selectedCalDate);
+        var dayEvs = itemsByDate[dateKey] || [];
+
+        var evSummary = '';
+        if (dayEvs.length === 0) {
+          evSummary = '<span style="font-size:0.8125rem;color:var(--ink-soft);opacity:0.6;">등록된 일정 없음</span>';
+        } else {
+          evSummary = dayEvs.slice(0, 2).map(function(it) {
+            var tPart = (it.date && it.date.indexOf('T') !== -1) ? it.date.split('T')[1].slice(0, 5) : (it.time || '종일');
+            return '<div style="display:flex;align-items:center;gap:6px;font-size:0.8125rem;margin-bottom:2px;">' +
+              '<span style="color:' + (it.done ? '#10b981' : 'var(--brand)') + ';font-size:0.65rem;">' + (it.done ? '✓' : '●') + '</span>' +
+              '<span style="color:var(--ink-soft);font-size:0.75rem;min-width:32px;">' + tPart + '</span>' +
+              '<span style="font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' + (it.done ? 'text-decoration:line-through;opacity:0.6;' : '') + '">' + escapeHtml(it.title || it.text) + '</span>' +
+            '</div>';
+          }).join('');
+          if (dayEvs.length > 2) {
+            evSummary += '<div style="font-size:0.7rem;color:var(--brand);font-weight:600;">+ 외 ' + (dayEvs.length - 2) + '건 더보기</div>';
+          }
+        }
+
+        return '<div class="s-week-day-row ' + (isSelected ? 'selected' : '') + '" onclick="window.OurgoalSanctuaryV3.selectCalDay(\'' + dateKey + '\')">' +
+          '<div class="s-week-day-badge ' + (isToday ? 'today' : '') + '">' +
+            '<span class="s-week-day-name">' + dayNames[idx] + '</span>' +
+            '<span class="s-week-day-num">' + dayObj.getDate() + '</span>' +
+          '</div>' +
+          '<div class="s-week-day-content">' +
+            '<div style="flex:1;min-width:0;">' + evSummary + '</div>' +
+            '<span style="font-size:0.75rem;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,0.06);color:var(--ink-soft);font-weight:600;">' + dayEvs.length + '건</span>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      contentHtml = '<div class="s-week-cal-card">' +
+        '<div class="s-week-header">' +
+          '<button class="s-cal-arrow" type="button" onclick="window.OurgoalSanctuaryV3.shiftWeek(-1)">◀</button>' +
+          '<h3 class="s-cal-month-title" style="font-size:0.95rem;">' + sunStr.slice(5) + ' ~ ' + satStr.slice(5) + '</h3>' +
+          '<button class="s-cal-arrow" type="button" onclick="window.OurgoalSanctuaryV3.shiftWeek(1)">▶</button>' +
+          '<span class="s-cal-today-badge" onclick="window.OurgoalSanctuaryV3.selectToday()">오늘</span>' +
+        '</div>' +
+        '<div class="s-week-grid">' +
+          weekRowsHtml +
+        '</div>' +
+        '<div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;gap:8px;">' +
+          '<span style="font-size:0.8125rem;color:var(--ink-soft);">요일 탭 시 상세 일정 연동</span>' +
+          '<button class="btn btn-primary btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();">+ 일정 추가</button>' +
+        '</div>' +
+      '</div>';
     } else if (engine.activeCalMode === 'timeline') {
       var todayKey = engine.selectedCalDate || getTodayStr();
       var todayItems = itemsByDate[todayKey] || [];
@@ -326,8 +393,13 @@
       }
 
       contentHtml = '<div class="s-timeline-card">' +
-        '<div class="s-timeline-header">' +
-          '<h4>' + todayKey + ' 24시간 타임라인</h4>' +
+        '<div class="s-timeline-header" style="flex-wrap:wrap;gap:8px;">' +
+          '<div style="display:flex;align-items:center;gap:6px;">' +
+            '<button class="s-cal-arrow" type="button" style="padding:6px 10px;min-height:36px;min-width:36px;" onclick="window.OurgoalSanctuaryV3.shiftTimelineDay(-1)">◀</button>' +
+            '<h4 style="margin:0;white-space:nowrap;font-size:0.95rem;">' + todayKey + ' 타임라인</h4>' +
+            '<button class="s-cal-arrow" type="button" style="padding:6px 10px;min-height:36px;min-width:36px;" onclick="window.OurgoalSanctuaryV3.shiftTimelineDay(1)">▶</button>' +
+            '<span class="s-cal-today-badge" style="cursor:pointer;" onclick="window.OurgoalSanctuaryV3.selectToday()">오늘</span>' +
+          '</div>' +
           '<span class="s-timeline-status">실천 ' + todayItems.length + '건</span>' +
         '</div>' +
         '<div class="s-timeline-track">' +
@@ -345,7 +417,10 @@
 
       var goals = (window.state && window.state.profile && window.state.profile.goals) || [];
       var curGoal = goals.find(function(g) { return g.id === engine.activeGoalId; }) || goals[0];
-      var goalTitle = curGoal ? curGoal.title : '25분 딥워크 몰입';
+      var todayKeyForTimer = engine.selectedCalDate || getTodayStr();
+      var dayItemsForTimer = itemsByDate[todayKeyForTimer] || [];
+      var firstActiveItem = dayItemsForTimer.find(function(it) { return !it.done; });
+      var goalTitle = firstActiveItem ? ('[' + todayKeyForTimer + '] ' + (firstActiveItem.title || firstActiveItem.text)) : (curGoal ? curGoal.title : '25분 딥워크 몰입');
 
       contentHtml = '<div class="s-timer-card">' +
         '<div class="s-timer-header">' +
@@ -753,6 +828,44 @@
         window.state.calSelectedDate = tStr;
       }
       toast('오늘(' + tStr + ')로 이동했습니다.');
+      renderSanctuaryCalendar();
+      if (typeof window.renderCalDayDetail === 'function') {
+        window.renderCalDayDetail();
+      }
+    },
+    shiftWeek: function(dir) {
+      var base = engine.selectedCalDate || getTodayStr();
+      var parts = base.split('-');
+      var dt = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10) + (dir * 7));
+      if (isNaN(dt.getTime())) dt = new Date();
+      var newKey = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
+      engine.selectedCalDate = newKey;
+      engine.calYear = dt.getFullYear();
+      engine.calMonth = dt.getMonth() + 1;
+      if (window.state) {
+        window.state.calDate = newKey;
+        window.state.calSelectedDate = newKey;
+      }
+      toast(newKey + ' 주간으로 이동했습니다.');
+      renderSanctuaryCalendar();
+      if (typeof window.renderCalDayDetail === 'function') {
+        window.renderCalDayDetail();
+      }
+    },
+    shiftTimelineDay: function(dir) {
+      var base = engine.selectedCalDate || getTodayStr();
+      var parts = base.split('-');
+      var dt = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10) + dir);
+      if (isNaN(dt.getTime())) dt = new Date();
+      var newKey = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
+      engine.selectedCalDate = newKey;
+      engine.calYear = dt.getFullYear();
+      engine.calMonth = dt.getMonth() + 1;
+      if (window.state) {
+        window.state.calDate = newKey;
+        window.state.calSelectedDate = newKey;
+      }
+      toast(newKey + ' 타임라인으로 이동했습니다.');
       renderSanctuaryCalendar();
       if (typeof window.renderCalDayDetail === 'function') {
         window.renderCalDayDetail();
