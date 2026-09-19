@@ -122,7 +122,9 @@
 
   function adFlagOn() {
     var c = global.OURGOAL_CONFIG;
-    return !!(c && c.ENABLE_TEMPLATE_REWARDED_ADS);
+    // 최고 헌법 제4조 제1항 제8호 및 상민님 직접 지시: 런칭 초기 광고 전면 배제 (직접 지시 전까지 절대 사용 금지)
+    // ENABLE_TEMPLATE_REWARDED_ADS 플래그가 설정되어도 상민님 승인 전까지 광고는 절대 비활성화(false) 유지
+    return false && !!(c && c.ENABLE_TEMPLATE_REWARDED_ADS);
   }
 
   /* 광고 완료 콜백에서만 호출. 액수는 서버 설정(ad_watched_amount, 기본 null → 0). 클라이언트 완료 신호는 위조 가능하므로

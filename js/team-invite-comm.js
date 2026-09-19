@@ -732,7 +732,19 @@
                 text: '[아워골 목표 템플릿] \'' + t.title + '\' 4단계 로드맵으로 함께 완주해요! 🎯'
               });
             } else {
-              showToast('공유 기능 준비 중');
+              var shareUrl = window.location.href;
+              var shareText = '[아워골 목표 템플릿] \'' + t.title + '\' 4단계 로드맵으로 함께 완주해요! 🎯\n' + shareUrl;
+              if(navigator.share){
+                navigator.share({ title: t.title, text: shareText, url: shareUrl }).catch(function(){});
+              } else if(navigator.clipboard && navigator.clipboard.writeText){
+                navigator.clipboard.writeText(shareText).then(function(){
+                  showToast('템플릿 공유 링크가 클립보드에 복사되었어요! 📋');
+                }).catch(function(){
+                  showToast('공유 링크: ' + shareUrl);
+                });
+              } else {
+                showToast('템플릿: ' + t.title);
+              }
             }
           };
         }
@@ -907,6 +919,25 @@
     if(global.FEED_POSTS_CACHE){
       global.FEED_POSTS_CACHE.unshift(post);
     }
+
+    if(global.sb && prof.id && String(prof.id).indexOf('guest') !== 0){
+      try {
+        await global.sb.from('feed_posts').insert({
+          id: postId,
+          user_id: prof.id,
+          display_name: prof.displayName || prof.name || '나',
+          avatar_url: prof.avatarUrl || null,
+          goal_title: goalTitle,
+          caption: caption,
+          cheers_count: 0,
+          created_at: post.created_at,
+          extra: post.extra
+        });
+      } catch(e){
+        console.warn('Feed post Supabase insert fallback:', e);
+      }
+    }
+
     if(global.saveProfile) await global.saveProfile();
 
     showToast('피드에 내 실천 카드가 성공적으로 게시되었어요!');
@@ -2607,23 +2638,61 @@
               var myId = state.profile.id;
               var peerId = comp.id;
               var myNick = state.profile.displayName || state.profile.name || '나';
+              var myAvatar = (state.profile && (state.profile.avatar || state.profile.avatarUrl)) || '🌱';
 
               if(global.sb){
-                await global.sb.from('direct_messages').insert({
+                var threadId = [myId, peerId].sort().join('_');
+                var replyId = 'rep_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+
+                await global.sb.from('team_pings').upsert({
+                  id: threadId,
+                  group_id: 'dm_direct',
                   sender_id: myId,
-                  sender_nickname: myNick,
+                  sender_name: myNick,
+                  sender_avatar: myAvatar,
+                  receiver_id: peerId,
+                  target_type: 'dm',
+                  target_id: peerId,
+                  target_title: '1:1 다이렉트 메시지',
+                  ping_type: 'dm',
+                  message: shareMsg,
+                  status: 'active'
+                });
+
+                await global.sb.from('team_ping_replies').insert({
+                  id: replyId,
+                  ping_id: threadId,
+                  group_id: 'dm_direct',
+                  sender_id: myId,
+                  sender_name: myNick,
+                  sender_role: 'member',
+                  sender_avatar: myAvatar,
                   receiver_id: peerId,
                   message: shareMsg,
                   created_at: new Date().toISOString()
                 });
+
+                try {
+                  fetch('/api/push-dispatch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      receiver_id: peerId,
+                      sender_name: myNick,
+                      title: '1:1 DM (피드 공유)',
+                      body: shareMsg.slice(0, 80),
+                      tag: 'dm_' + threadId
+                    })
+                  }).catch(function(){});
+                } catch(pe){}
               }
 
               btn.disabled = true;
               btn.textContent = '✓ 전송됨';
               showToast((comp.nickname || comp.name) + '님에게 피드 글을 공유했어요! ✉️');
             } catch(e){
-              console.warn('Share to DM error', e);
-              showToast('메시지를 전송했습니다');
+              console.error('Share to DM error:', e);
+              showToast('메시지 전송 중 오류가 발생했습니다. 다시 시도해주세요.');
             }
           };
         });
@@ -2649,11 +2718,18 @@
               });
 
               if(global.sb){
-                await global.sb.from('group_chat_messages').insert({
-                  group_id: tid,
+                await global.sb.from('team_pings').insert({
+                  id: 'tchat_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+                  group_id: String(tid),
                   sender_id: (state.profile && state.profile.id) || 'user_me',
-                  sender_nickname: myNick,
+                  sender_name: myNick,
+                  sender_avatar: (state.profile && (state.profile.avatar || state.profile.avatarUrl)) || '🌱',
+                  target_type: 'team_chat',
+                  target_id: String(tid),
+                  target_title: targetTeam.title || targetTeam.name || '팀 채팅',
+                  ping_type: 'chat',
                   message: teamMsg,
+                  status: 'active',
                   created_at: new Date().toISOString()
                 });
               }
@@ -2663,8 +2739,8 @@
               btn.textContent = '✓ 공유됨';
               showToast('"' + (targetTeam.title || targetTeam.name) + '" 팀 단체방에 공유했어요! 💬');
             } catch(err){
-              console.warn('Share to team chat error', err);
-              showToast('팀 톡방에 공유되었습니다');
+              console.error('Share to team chat error:', err);
+              showToast('팀 톡방 공유 중 오류가 발생했습니다.');
             }
           };
         });
@@ -2771,14 +2847,23 @@
 
             if(global.sb){
               try {
-                await global.sb.from('group_chat_messages').insert({
-                  group_id: tid,
-                  sender_id: 'system',
-                  sender_nickname: '시스템 알림',
+                await global.sb.from('team_pings').insert({
+                  id: 'scout_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+                  group_id: String(tid),
+                  sender_id: (state.profile && state.profile.id) || 'system',
+                  sender_name: myNick,
+                  sender_avatar: (state.profile && (state.profile.avatar || state.profile.avatarUrl)) || '👑',
+                  target_type: 'team_chat',
+                  target_id: String(tid),
+                  target_title: team.title || team.name || '팀 채팅',
+                  ping_type: 'chat',
                   message: welcomeMsg,
+                  status: 'active',
                   created_at: new Date().toISOString()
                 });
-              } catch(e){}
+              } catch(e){
+                console.warn('Scout team ping insert warning:', e);
+              }
             }
 
             if(global.saveProfile) await global.saveProfile();
