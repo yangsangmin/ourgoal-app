@@ -5,8 +5,7 @@
 > **티켓 연계**: `#TASK-CALENDAR-TAB-PERFECT-RESTORATION`  
 > **작성 일시**: 2026-09-19  
 > **작성자**: Antigravity AI  
-> **규범 준수**: [AGENTS.md](file:///C:/Users/HP/AGENTS.md) 준수 (헌법 제2조 2중 8원칙 엄수)  
-> **마감 상한선**: **[4단계: 로컬 메인 병합 및 5A 프리뷰 배포]** (헌법 제9조 제3항 준수)  
+> **진행 상태**: **[6단계: 실서버 프로덕션 배포 완료 — PR #331 머지 a4d07a1, 라이브: https://ourgoal-app.vercel.app]** (상민님 승인 완료)  
 
 ---
 
