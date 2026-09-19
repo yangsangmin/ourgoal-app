@@ -626,6 +626,28 @@ check('CSS 내에 핵심 뷰 슬롯(#commBody, #personalGoalsView)을 은폐하�
   });
 });
 
+/* =========================================================================
+ * 13. 헌법 v2026.09.19: PWA 캐시 무효화 · 인앱 완결(Zero mailto) · 4대 뷰 동시 전파 디스패처 검증
+ * ========================================================================= */
+console.log('\n[검증 13/13] 헌법 v2026.09.19: PWA 캐시 무효화 · 인앱 완결(Zero mailto) · 4대 뷰 동시 전파 검사');
+
+check('sw.js의 CACHE_NAME이 20260919 당일 최신 버전으로 갱신되어 있다 (헌법 제14조 제3항)', () => {
+  const swPath = path.join(ROOT_DIR, 'sw.js');
+  assert.ok(fs.existsSync(swPath), 'sw.js 부재');
+  const swContent = fs.readFileSync(swPath, 'utf8');
+  assert.ok(swContent.includes('v20260919'), 'sw.js CACHE_NAME 당일(20260919) 갱신 누락');
+});
+
+check('index.html 내 외부 이메일 앱 의존 링크(mailto:)가 0건(Zero)이다 (헌법 제3조 제4항, 제14조 제1항)', () => {
+  const mailtoMatches = [...html.matchAll(/mailto:[^\s"'>]+/g)];
+  assert.strictEqual(mailtoMatches.length, 0, `index.html 내 위헌 mailto 링크 잔존: ${mailtoMatches.map(m => m[0]).join(', ')}`);
+});
+
+check('4대 뷰 동시 전파 디스패처(dispatchFullViewPropagation)가 존재하고 체크인 저장에 배선되어 있다 (헌법 제1조 제4항 제5호, 제15조 제6항 제3호)', () => {
+  assert.ok(html.includes('function dispatchFullViewPropagation'), 'dispatchFullViewPropagation 함수 부재');
+  assert.ok(html.includes('dispatchFullViewPropagation()'), 'dispatchFullViewPropagation 호출 배선 부재');
+});
+
 console.log('\n================================================================');
 console.log(`🎯 검증 결과: 총 ${totalChecks}개 검사 중 ${passedChecks}개 통과 (${failures}개 실패)`);
 console.log('================================================================');
