@@ -69,7 +69,7 @@ function probeModules(siteDir, dirs) {
 }
 
 // base 에서 멀쩡하던 모듈이 head 에서 죽거나, 등록하던 전역이 사라지면 회귀다.
-function compare(baseRes, headRes) {
+function compare(baseRes, headRes, headIndexHtml) {
   const regressions = [], insufficient = [], fixed = [];
   for (const [rel, h] of Object.entries(headRes)) {
     const b = baseRes[rel];
@@ -83,7 +83,15 @@ function compare(baseRes, headRes) {
     }
     if (b.ok && !h.ok && b.globals.length) regressions[regressions.length - 1].detail += ' → 이 모듈이 등록하던 전역(' + b.globals.join(', ') + ')이 앱에 없게 된다';
   }
-  return { regressions, insufficient, fixed, counts: { head: Object.keys(headRes).length, headOk: Object.values(headRes).filter(x => x.ok).length, base: Object.keys(baseRes).length, baseOk: Object.values(baseRes).filter(x => x.ok).length } };
+  // 기준 커밋에 있던 부품이 작업 커밋에서 통째로 사라진 경우. 첫 화면(index.html)이 아직 그 파일을 부르면 앱이 깨진다.
+  const removed = [];
+  for (const rel of Object.keys(baseRes)) {
+    if (headRes[rel]) continue;
+    const stillReferenced = typeof headIndexHtml === 'string' && headIndexHtml.includes(rel);
+    removed.push({ file: rel, stillReferenced });
+    if (stillReferenced) regressions.push({ file: rel, kind: 'MODULE_REMOVED', detail: '부품 파일이 사라졌는데 index.html 은 아직 그 파일을 부른다' });
+  }
+  return { regressions, insufficient, fixed, removed, counts: { head: Object.keys(headRes).length, headOk: Object.values(headRes).filter(x => x.ok).length, base: Object.keys(baseRes).length, baseOk: Object.values(baseRes).filter(x => x.ok).length } };
 }
 
 module.exports = { probeModules, compare, loadOne, listModules };
@@ -91,7 +99,9 @@ module.exports = { probeModules, compare, loadOne, listModules };
 if (require.main === module) {
   const [baseDir, headDir] = process.argv.slice(2);
   if (!baseDir || !headDir) { console.error('사용: node court/probes/module-load.js <base 스냅샷 폴더> <head 스냅샷 폴더>'); process.exit(2); }
-  const r = compare(probeModules(baseDir), probeModules(headDir));
+  let headIndexHtml = null;
+  try { headIndexHtml = fs.readFileSync(path.join(headDir, 'index.html'), 'utf8'); } catch (_) { headIndexHtml = null; }
+  const r = compare(probeModules(baseDir), probeModules(headDir), headIndexHtml);
   r.readErrors = listModules.errors;
   console.log(JSON.stringify(r, null, 2));
   process.exit(r.regressions.length ? 1 : 0);

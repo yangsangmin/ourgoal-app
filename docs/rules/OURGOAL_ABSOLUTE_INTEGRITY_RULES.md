@@ -384,6 +384,8 @@
 | 16 | `scripts/install-essence-gate.js` |
 | 17 | `.vercelignore` |
 | 18 | `.gitattributes` |
+| 19 | `scripts/hook-smoke-on-index.js` |
+| 20 | `.claude/settings.json` |
 
 **고칠 수 없는 설정 칸(동결)**
 

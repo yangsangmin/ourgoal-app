@@ -106,7 +106,8 @@ async function judge(opts) {
     for (const x of v.vault.violations) {
       if (x.severity === 'block') reject(x.id === 'VAULT_MIXED' ? '채점 기준을 같이 고침' : (x.id === 'ASSERTION_REMOVED' ? '있던 검사 기준을 지우거나 고침' : '테스트 파일 삭제'), x.message + ' [' + x.files.join(', ') + ']');
       else if (x.severity === 'decision') warn('채점 기준(금고) 변경', x.message + ' [' + x.files.slice(0, 12).join(', ') + (x.files.length > 12 ? ' 외 ' + (x.files.length - 12) + '개' : '') + ']');
-      else warn('자기가 낸 시험', x.message + ' [' + x.files.join(', ') + ']');
+      else if (x.id === 'SELF_GRADING_VERIFIER') warn('자기가 낸 시험', x.message + ' [' + x.files.join(', ') + ']');
+      // ASSERTION_CHANGED(테스트 단언 변경)는 아래에서 사유(retire) 유무까지 보고 따로 다룬다 — 여기서 찍으면 제목이 틀리고 중복된다.
     }
     const changed = git.changedFiles(repo, v.base.sha, v.head.sha);
     const isProduct = matcher(vault.product), isAppendOnly = matcher(vault.baseTests), isFrozen = matcher(vault.frozen);
@@ -254,7 +255,11 @@ async function judge(opts) {
   fs.writeFileSync(path.join(outDir, 'verdict.json'), JSON.stringify(v, null, 2), 'utf8');
   fs.writeFileSync(path.join(outDir, 'REPORT.md'), report.render(v), 'utf8');
   v.outDir = outDir;
-  try { fs.rmSync(path.join(tmp, 'base'), { recursive: true, force: true }); fs.rmSync(path.join(tmp, 'head'), { recursive: true, force: true }); } catch (_) { /* 임시 폴더 정리 실패는 무시 */ }
+  // 법정은 자기가 만든 임시 폴더만 지운다. 공용 임시 폴더를 이름(court-*)으로 훑어 지우지 않는다 — 동시에 도는 다른 법정의 스냅샷을 지우면 그 법정이 가짜 결과를 낸다(자가시험 초기판이 실제로 낸 사고).
+  try {
+    if (opts.out) fs.rmSync(tmp, { recursive: true, force: true });  // 판정서를 밖에 썼으면 임시 폴더는 통째로 치운다
+    else { fs.rmSync(path.join(tmp, 'base'), { recursive: true, force: true }); fs.rmSync(path.join(tmp, 'head'), { recursive: true, force: true }); } // 판정서가 임시 폴더 안에 있으면 그것만 남긴다
+  } catch (_) { /* 임시 폴더 정리 실패는 판정에 영향 없음 */ }
   return v;
 }
 
