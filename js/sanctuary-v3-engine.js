@@ -910,7 +910,12 @@
       } else if (typeof window.openAddScheduleModal === 'function') {
         window.openAddScheduleModal(dt);
       } else {
-        toast('일정 추가 창을 준비 중입니다.');
+        if (typeof window.switchTab === 'function') {
+          window.switchTab('screen-calendar');
+          toast('캘린더 일정 화면으로 이동했습니다.');
+        } else {
+          toast('일정을 등록할 날짜를 선택해주세요.');
+        }
       }
     },
     openDayHubModal: function(dateKey) {

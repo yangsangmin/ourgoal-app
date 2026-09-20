@@ -7346,6 +7346,30 @@ check('[#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도
   assert.ok(indexHtml.includes("'목표 구체화 및 실행 준비'"), 'etc 카테고리 기본 마일스톤 구비');
 });
 
+/* ============ [#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결성 검증 ============ */
+check('[#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+
+  // 1. 순수 데드클릭 박멸 확인
+  assert.ok(indexHtml.includes('id="btnSwitchCompanionInvite"'), '동반자 초대 탭 칩 버튼 ID 존재');
+  assert.ok(indexHtml.includes('switchInviteTab'), '동반자 초대/링크 복사 탭 전환 핸들러 존재');
+  assert.ok(indexHtml.includes('btn-select-wearable'), '스마트워치 선택 버튼 클래스 존재');
+  assert.ok(indexHtml.includes('id="toggleTemplatesBtnInner"'), '추천 템플릿 토글 버튼 ID 존재');
+
+  // 2. 유령 버튼(#goalArchiveBtn) 마크업 복원 확인
+  assert.ok(indexHtml.includes("archiveBtnEl.id = 'goalArchiveBtn'"), '목표 상세 보관함 버튼(#goalArchiveBtn) 생성 확인');
+
+  // 3. 거짓말 토스트 영구 척결 확인
+  assert.ok(!indexHtml.includes('Google 로그인 서비스를 준비 중입니다'), '구글 로그인 준비중 토스트 부재');
+  assert.ok(!indexHtml.includes('피드 게시 기능을 준비 중입니다'), '피드 게시 준비중 토스트 부재');
+  assert.ok(!indexHtml.includes('외부 공유 기능을 준비 중입니다'), '외부 공유 준비중 토스트 부재');
+  assert.ok(!sanctuaryJs.includes('일정 추가 창을 준비 중입니다'), '성소 캘린더 준비중 토스트 부재');
+
+  // 4. 완전 무료 선언 공식 모달 승화 확인
+  assert.ok(indexHtml.includes('아워골 완전 무료화 헌법 선언'), '아워골 완전 무료 선언 모달 마크업 존재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
