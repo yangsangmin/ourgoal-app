@@ -2961,38 +2961,84 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '<h3>👥 팀원 초대하기</h3>' +
       '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">[' + escapeHtml(teamName || '팀') + ']에 함께할 팀원을 초대합니다.</p>' +
       '<div style="display:flex;gap:4px;border-bottom:1px solid var(--rule);margin-bottom:12px;">' +
-        '<button type="button" class="tab-chip active" style="padding:6px 12px;font-size:.8125rem;border-bottom:2px solid var(--brand);font-weight:700;">아워골 동반자 초대</button>' +
-        '<button type="button" class="tab-chip" id="btnSwitchShareLink" style="padding:6px 12px;font-size:.8125rem;color:var(--ink-soft);">공유 링크 복사</button>' +
+        '<button type="button" class="tab-chip active" id="btnSwitchCompanionInvite" style="padding:6px 12px;font-size:.8125rem;border-bottom:2px solid var(--brand);font-weight:700;color:var(--brand);">아워골 동반자 초대</button>' +
+        '<button type="button" class="tab-chip" id="btnSwitchShareLink" style="padding:6px 12px;font-size:.8125rem;color:var(--ink-soft);border-bottom:2px solid transparent;">공유 링크 복사</button>' +
       '</div>' +
-      '<div style="font-size:.8125rem;font-weight:700;margin-bottom:6px;color:var(--ink);">맺어진 아워골 동반자 목록</div>' +
-      '<div style="display:flex;flex-direction:column;gap:8px;max-height:220px;overflow-y:auto;margin-bottom:12px;">' +
-        companions.map(function(m){
-          return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--card2);border:1px solid var(--rule);border-radius:10px;">' +
-            '<div style="display:flex;align-items:center;gap:8px;">' +
-              '<span style="font-size:1.3rem;">' + (m.avatar || '👤') + '</span>' +
-              '<div>' +
-                '<div style="font-weight:700;font-size:.875rem;color:var(--ink);">' + escapeHtml(m.nickname || m.name || '동반자') + '</div>' +
-                '<div class="faint" style="font-size:.72rem;">' + escapeHtml(m.bio || '함께 달리는 러닝메이트') + '</div>' +
+      '<div id="tabBodyCompanionInvite">' +
+        '<div style="font-size:.8125rem;font-weight:700;margin-bottom:6px;color:var(--ink);">맺어진 아워골 동반자 목록</div>' +
+        '<div style="display:flex;flex-direction:column;gap:8px;max-height:220px;overflow-y:auto;margin-bottom:12px;">' +
+          companions.map(function(m){
+            return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--card2);border:1px solid var(--rule);border-radius:10px;">' +
+              '<div style="display:flex;align-items:center;gap:8px;">' +
+                '<span style="font-size:1.3rem;">' + (m.avatar || '👤') + '</span>' +
+                '<div>' +
+                  '<div style="font-weight:700;font-size:.875rem;color:var(--ink);">' + escapeHtml(m.nickname || m.name || '동반자') + '</div>' +
+                  '<div class="faint" style="font-size:.72rem;">' + escapeHtml(m.bio || '함께 달리는 러닝메이트') + '</div>' +
+                '</div>' +
               '</div>' +
-            '</div>' +
-            '<button type="button" class="btn btn-primary btn-xs btn-send-companion-invite" data-mid="'+m.id+'" data-mname="'+escapeHtml(m.nickname || m.name || '동반자')+'" style="font-size:.75rem;padding:3px 9px;">인앱 초대장 발송</button>' +
-          '</div>';
-        }).join('') +
+              '<button type="button" class="btn btn-primary btn-xs btn-send-companion-invite" data-mid="'+m.id+'" data-mname="'+escapeHtml(m.nickname || m.name || '동반자')+'" style="font-size:.75rem;padding:3px 9px;">인앱 초대장 발송</button>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+      '</div>' +
+      '<div id="tabBodyShareLink" style="display:none;margin-bottom:12px;">' +
+        '<div style="padding:12px;background:var(--card2);border:1px solid var(--rule);border-radius:12px;text-align:center;">' +
+          '<div style="font-size:.875rem;font-weight:700;color:var(--ink);margin-bottom:6px;">웹 초대 링크로 바로 참여</div>' +
+          '<p class="faint" style="font-size:.78rem;margin-bottom:12px;">카카오톡이나 SNS에 공유하여 누구나 팀에 합류할 수 있습니다.</p>' +
+          '<button type="button" class="btn btn-primary btn-sm" id="btnCopyTeamInviteLink" style="width:100%;">📋 팀 초대 링크 복사하기</button>' +
+        '</div>' +
       '</div>' +
       '<div class="modal-actions">' +
         '<button class="btn btn-ghost btn-block" id="closeInviteModal" type="button">닫기</button>' +
       '</div>',
       function(sheet){
         sheet.querySelector('#closeInviteModal').addEventListener('click', closeModal);
-        var shareLinkBtn = sheet.querySelector('#btnSwitchShareLink');
-        if(shareLinkBtn){
-          shareLinkBtn.addEventListener('click', function(){
-            var url = window.location.origin + '?invite_group=' + teamId;
-            navigator.clipboard.writeText(url).then(function(){
-              toast('초대 링크가 복사되었습니다: ' + url);
-            });
+        var btnCompanionTab = sheet.querySelector('#btnSwitchCompanionInvite');
+        var btnShareTab = sheet.querySelector('#btnSwitchShareLink');
+        var bodyCompanion = sheet.querySelector('#tabBodyCompanionInvite');
+        var bodyShare = sheet.querySelector('#tabBodyShareLink');
+
+        function switchInviteTab(mode){
+          if(mode === 'companion'){
+            btnCompanionTab.classList.add('active');
+            btnCompanionTab.style.borderBottom = '2px solid var(--brand)';
+            btnCompanionTab.style.fontWeight = '700';
+            btnCompanionTab.style.color = 'var(--brand)';
+            btnShareTab.classList.remove('active');
+            btnShareTab.style.borderBottom = '2px solid transparent';
+            btnShareTab.style.fontWeight = '400';
+            btnShareTab.style.color = 'var(--ink-soft)';
+            if(bodyCompanion) bodyCompanion.style.display = 'block';
+            if(bodyShare) bodyShare.style.display = 'none';
+          } else {
+            btnShareTab.classList.add('active');
+            btnShareTab.style.borderBottom = '2px solid var(--brand)';
+            btnShareTab.style.fontWeight = '700';
+            btnShareTab.style.color = 'var(--brand)';
+            btnCompanionTab.classList.remove('active');
+            btnCompanionTab.style.borderBottom = '2px solid transparent';
+            btnCompanionTab.style.fontWeight = '400';
+            btnCompanionTab.style.color = 'var(--ink-soft)';
+            if(bodyCompanion) bodyCompanion.style.display = 'none';
+            if(bodyShare) bodyShare.style.display = 'block';
+          }
+        }
+
+        if(btnCompanionTab) btnCompanionTab.addEventListener('click', function(){ switchInviteTab('companion'); });
+        if(btnShareTab) btnShareTab.addEventListener('click', function(){ switchInviteTab('share'); });
+
+        function copyLink(){
+          var url = window.location.origin + '?invite_group=' + teamId;
+          navigator.clipboard.writeText(url).then(function(){
+            toast('초대 링크가 복사되었습니다: ' + url);
+          }).catch(function(){
+            toast('초대 링크: ' + url);
           });
         }
+
+        var copyBtn = sheet.querySelector('#btnCopyTeamInviteLink');
+        if(copyBtn) copyBtn.addEventListener('click', copyLink);
+
         sheet.querySelectorAll('.btn-send-companion-invite').forEach(function(btn){
           btn.addEventListener('click', function(){
             var mname = btn.dataset.mname;
@@ -3528,9 +3574,33 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   function startGoogleLogin(){
     if(!window.google || !google.accounts){
-      toast('Google 로그인 서비스를 준비 중입니다. 잠시 후 다시 시도해주세요.');
-      if(typeof openLoginRescueModal === 'function'){
-        openLoginRescueModal('Google 로그인 라이브러리 연결이 지연되고 있습니다. 닉네임 또는 이메일로 1초 만에 바로 입장하실 수 있어요!');
+      toast('Google 인증 모듈을 불러오는 중입니다...');
+      var existing = document.getElementById('googleGsiScript');
+      if(!existing){
+        var s = document.createElement('script');
+        s.id = 'googleGsiScript';
+        s.src = 'https://accounts.google.com/gsi/client';
+        s.async = true;
+        s.defer = true;
+        s.onload = function(){
+          initGoogleOneTap();
+          var client = getGoogleTokenClient();
+          if(client){
+            try { client.requestAccessToken(); } catch(e){}
+          }
+        };
+        s.onerror = function(){
+          if(typeof openLoginRescueModal === 'function'){
+            openLoginRescueModal('Google 인증 모듈 연결이 원활하지 않습니다. 카카오 3초 시작 또는 닉네임으로 즉시 입장하실 수 있습니다!');
+          } else {
+            toast('Google 인증 서버 연결 실패. 카카오 로그인을 이용해주세요.');
+          }
+        };
+        document.head.appendChild(s);
+      } else {
+        if(typeof openLoginRescueModal === 'function'){
+          openLoginRescueModal('Google 로그인 연결 중입니다. 닉네임 또는 카카오로 1초 만에 바로 입장하실 수 있어요!');
+        }
       }
       return;
     }
@@ -3545,7 +3615,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     } else if(google.accounts && google.accounts.id){
       google.accounts.id.prompt();
     } else {
-      toast('Google 클라이언트를 시작할 수 없습니다.');
+      if(typeof openLoginRescueModal === 'function'){
+        openLoginRescueModal('Google 클라이언트를 초기화할 수 없습니다. 닉네임 또는 카카오로 바로 시작하세요!');
+      } else {
+        toast('카카오 또는 닉네임으로 바로 입장해주세요.');
+      }
     }
   }
 
@@ -5095,8 +5169,27 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ 안내 모달 (전체 기능 100% 완전 무료 제공) ============ */
   function openPaywallModal(triggerReason){
-    toast('아워골의 모든 기능은 100% 완전 무료로 제공됩니다!');
+    var reasonText = triggerReason ? ('(' + escapeHtml(triggerReason) + ')') : '';
+    openModal(
+      '<h3>🎉 아워골은 100% 평생 무료입니다</h3>' +
+      '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">모든 유저의 무공해 성장과 도전을 응원합니다 ' + reasonText + '</p>' +
+      '<div style="padding:14px;background:var(--surface-2);border:1px solid var(--rule);border-radius:14px;margin-bottom:14px;line-height:1.6;font-size:.84rem;color:var(--ink);">' +
+        '<div style="font-weight:700;color:var(--brand);margin-bottom:6px;display:flex;align-items:center;gap:6px;">' +
+          '<span>✨</span> <b>아워골 완전 무료화 헌법 선언</b>' +
+        '</div>' +
+        '아워골은 유저의 코어 루프(목표 수립, 체크인, 회고, 통계, AI 조언, 캘린더 연동)에 어떠한 유료 장벽도 두지 않습니다.<br>' +
+        '모든 기능을 제한 없이 <b>100% 완전 무료</b>로 자유롭게 이용하세요! 🚀' +
+      '</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn btn-primary btn-block" id="freeManifestConfirmBtn" type="button">자유롭게 이용하기</button>' +
+      '</div>',
+      function(sheet){
+        var confirmBtn = sheet.querySelector('#freeManifestConfirmBtn');
+        if(confirmBtn) confirmBtn.onclick = closeModal;
+      }
+    );
   }
+  window.openPaywallModal = openPaywallModal;
 
   function renderProBadge(){
     document.querySelectorAll('.pro-badge').forEach(function(el){ el.remove(); });
@@ -14536,10 +14629,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<iframe src="https://www.youtube.com/embed/'+ytMatch[1]+'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:12px;" allowfullscreen></iframe>' +
         '</div>';
       } else {
+        var hasYtUrl = att.url && att.url.trim() && /^https?:\/\//i.test(att.url.trim());
         contentHtml = '<div style="margin:12px 0;padding:16px;background:var(--card2);border-radius:12px;text-align:center;">' +
           '<div style="font-size:2.5rem;margin-bottom:8px;">🎥</div>' +
           '<p class="faint" style="margin:0 0 12px;font-size:.875rem;">유튜브에서 관련 영상 자료를 확인해보세요</p>' +
-          '<a href="'+escapeHtml(att.url)+'" target="_blank" rel="noopener" class="btn btn-primary btn-sm">유튜브에서 보기</a>' +
+          (hasYtUrl ? '<a href="'+escapeHtml(att.url)+'" target="_blank" rel="noopener" class="btn btn-primary btn-sm">유튜브에서 보기</a>' : '<button type="button" class="btn btn-ghost btn-sm" onclick="toast(\'등록된 영상 주소가 없습니다.\')" style="cursor:pointer;">영상 주소 없음</button>') +
         '</div>';
       }
     } else if(att.type === 'image'){
@@ -14551,9 +14645,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         escapeHtml(att.note || att.url || '') +
       '</div>';
     } else {
+      var hasLinkUrl = att.url && att.url.trim() && /^https?:\/\//i.test(att.url.trim());
       contentHtml = '<div style="margin:12px 0;padding:14px;background:var(--card2);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--rule);">' +
-        '<span style="font-size:.875rem;word-break:break-all;color:var(--ink-soft);">'+escapeHtml(att.url)+'</span>' +
-        '<a href="'+escapeHtml(att.url)+'" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="flex:0 0 auto;">열기</a>' +
+        '<span style="font-size:.875rem;word-break:break-all;color:var(--ink-soft);">'+escapeHtml(att.url || '링크 주소 없음')+'</span>' +
+        (hasLinkUrl ? '<a href="'+escapeHtml(att.url)+'" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="flex:0 0 auto;">열기</a>' : '<button type="button" class="btn btn-ghost btn-sm" onclick="toast(\'등록된 링크 주소가 없습니다.\')" style="flex:0 0 auto;cursor:pointer;">열기 불가</button>') +
       '</div>';
     }
 
@@ -17187,18 +17282,32 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var body = document.getElementById('goalDetailBody');
     var goal = goals.find(function(g){ return g.id===state.activeGoalId; });
 
-    /* 편집 모드: 목표 옆에서 바로 삭제 */
+    /* 편집 모드: 목표 옆에서 바로 삭제 및 보관 */
     var headRow = editBtn.parentElement;
     var oldDel = document.getElementById('goalDeleteInline');
     if(oldDel) oldDel.remove();
+    var oldArchive = document.getElementById('goalArchiveBtn');
+    if(oldArchive) oldArchive.remove();
+
     if(state.goalEditMode && goal){
+      var archiveBtnEl = document.createElement('button');
+      archiveBtnEl.id = 'goalArchiveBtn';
+      archiveBtnEl.type = 'button';
+      archiveBtnEl.className = 'btn btn-ghost btn-sm';
+      archiveBtnEl.textContent = '📦 보관';
+      archiveBtnEl.title = '목표를 보관함으로 이동';
+      archiveBtnEl.style.marginRight = '6px';
+      archiveBtnEl.style.fontSize = '.78rem';
+      archiveBtnEl.style.padding = '4px 8px';
+      headRow.insertBefore(archiveBtnEl, editBtn);
+
       var delInline = document.createElement('button');
       delInline.id = 'goalDeleteInline';
       delInline.type = 'button';
       delInline.className = 'btn btn-danger btn-sm';
       delInline.textContent = '목표 삭제';
       delInline.style.marginRight = '6px';
-      headRow.insertBefore(delInline, editBtn);
+      headRow.insertBefore(delInline, archiveBtnEl);
       delInline.addEventListener('click', async function(){
         if(!confirm('"'+goal.title+'" 목표를 휴지통으로 이동할까요?\n7일간 안전하게 보관되며 언제든 원복할 수 있습니다.')) return;
         await moveToTrash('goal', goal.id, goal, 'in_app', goal.title);
@@ -22529,7 +22638,7 @@ wirePromptEncyclopediaEvents(body);
             ''+act.duration+' | ❤️ 평균 '+act.bpm+' (최고 '+act.maxBpm+') | 🔥 '+act.calories + (act.dist !== '-' ? ' | 📍 '+act.dist : '') +
           '</div>' +
         '</div>' +
-        '<button class="btn btn-ghost btn-sm" style="font-size:.8125rem;color:var(--ink);" type="button">선택</button>' +
+        '<button class="btn btn-ghost btn-sm btn-select-wearable" data-actidx="'+idx+'" style="font-size:.8125rem;color:var(--ink);cursor:pointer;" type="button" aria-label="이 운동 세션 선택">선택</button>' +
       '</div>';
     }).join('');
 
@@ -22551,9 +22660,10 @@ wirePromptEncyclopediaEvents(body);
 
     openModal(html, function(sheet){
       sheet.querySelector('#wearableCancelBtn').onclick = closeModal;
-      sheet.querySelectorAll('.wearable-act-card').forEach(function(card){
-        card.onclick = function(){
-          var idx = parseInt(card.dataset.actidx, 10);
+      sheet.querySelectorAll('.wearable-act-card, .btn-select-wearable').forEach(function(el){
+        el.onclick = function(e){
+          e.stopPropagation();
+          var idx = parseInt(el.dataset.actidx, 10);
           var act = sampleActivities[idx];
           closeModal();
           if(typeof onApply === 'function') onApply(act);
@@ -26915,7 +27025,27 @@ wirePromptEncyclopediaEvents(body);
         if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.postShareCardToFeed){
           window.OurgoalTeamInviteComm.postShareCardToFeed(g, lastRec, comp.singlePreview);
         } else {
-          toast('피드 게시 기능을 준비 중입니다');
+          var newPost = {
+            id: 'feed_card_' + Date.now(),
+            user_id: (state.profile && state.profile.id) || 'guest',
+            name: (state.profile && state.profile.displayName) || '나',
+            avatar: (state.profile && state.profile.avatar) || '👤',
+            goal: g ? g.title : '목표 실천',
+            action: (lastRec && lastRec.text) || '1:1 소통 카드를 공유했습니다! 🔥',
+            image: comp.singlePreview,
+            created_at: new Date().toISOString(),
+            cheers_count: 0
+          };
+          if(!Array.isArray(FEED_POSTS_CACHE)) FEED_POSTS_CACHE = [];
+          FEED_POSTS_CACHE.unshift(newPost);
+          if(state.profile && state.profile.settings){
+            if(!Array.isArray(state.profile.settings.myFeedPosts)) state.profile.settings.myFeedPosts = [];
+            state.profile.settings.myFeedPosts.unshift(newPost);
+          }
+          saveProfile();
+          toast('아워골 피드에 카드가 성공적으로 게시되었습니다! 🎉');
+          state.commSubTab = 'feed';
+          renderCommScreen();
         }
       });
     }
@@ -26931,7 +27061,25 @@ wirePromptEncyclopediaEvents(body);
         if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.shareCardExternal){
           window.OurgoalTeamInviteComm.shareCardExternal(comp.singlePreview, g);
         } else {
-          toast('외부 공유 기능을 준비 중입니다');
+          var shareTitle = '[아워골] ' + ((state.profile && state.profile.displayName) || '나') + '님의 "' + (g ? g.title : '목표') + '" 실천 카드';
+          var shareUrl = window.location.origin;
+          if(navigator.share){
+            navigator.share({
+              title: shareTitle,
+              text: shareTitle + ' - 함께 성장해요!',
+              url: shareUrl
+            }).then(function(){
+              toast('성공적으로 공유되었습니다! 🚀');
+            }).catch(function(){
+              navigator.clipboard.writeText(shareUrl).then(function(){
+                toast('공유 링크가 클립보드에 복사되었습니다: ' + shareUrl);
+              });
+            });
+          } else {
+            navigator.clipboard.writeText(shareUrl).then(function(){
+              toast('공유 링크가 클립보드에 복사되었습니다: ' + shareUrl);
+            });
+          }
         }
       });
     }
@@ -26978,7 +27126,7 @@ wirePromptEncyclopediaEvents(body);
     return '<div class="card" style="margin-bottom:12px;padding:10px 14px;background:var(--surface-2);border:1px solid var(--rule);border-radius:14px;">' +
       '<div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;" id="toggleTemplatesBtn">' +
         '<div style="display:flex;align-items:center;gap:8px;"><span style="font-size:1.15rem;">📋</span><b style="font-size:.875rem;">아워골 추천 템플릿 3종</b></div>' +
-        '<button type="button" class="btn btn-ghost btn-xs" style="font-size:.75rem;padding:2px 8px;border:1px solid var(--rule);color:var(--brand-strong);">' + (isExpanded ? '접기 ▲' : '둘러보기 ▼') + '</button>' +
+        '<button type="button" class="btn btn-ghost btn-xs" id="toggleTemplatesBtnInner" aria-expanded="' + isExpanded + '" style="font-size:.75rem;padding:2px 8px;border:1px solid var(--rule);color:var(--brand-strong);cursor:pointer;">' + (isExpanded ? '접기 ▲' : '둘러보기 ▼') + '</button>' +
       '</div>' +
       (isExpanded ? '<div style="margin-top:10px;">' + CREATOR_TEMPLATES.map(function(t){
         return '<div class="tmpl-card" style="margin-bottom:8px;padding:10px;">' +
@@ -27805,7 +27953,14 @@ wirePromptEncyclopediaEvents(body);
       window.OurgoalTeamInviteComm.wireTemplatesAccordionEvents(body, function(){ renderCommFeed(body); });
     } else {
       var toggleTmplBtn = body.querySelector('#toggleTemplatesBtn');
-      if(toggleTmplBtn) toggleTmplBtn.onclick = function(){ state.templatesExpanded = !state.templatesExpanded; renderCommFeed(body); };
+      var toggleTmplBtnInner = body.querySelector('#toggleTemplatesBtnInner');
+      function doToggleTemplates(e){
+        if(e) e.stopPropagation();
+        state.templatesExpanded = !state.templatesExpanded;
+        renderCommFeed(body);
+      }
+      if(toggleTmplBtn) toggleTmplBtn.onclick = doToggleTemplates;
+      if(toggleTmplBtnInner) toggleTmplBtnInner.onclick = doToggleTemplates;
       body.querySelectorAll('[data-tmpl]').forEach(function(btn){ btn.onclick = function(){ cloneTemplate(btn.dataset.tmpl, function(){ renderCommFeed(body); }); }; });
     }
 

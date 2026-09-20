@@ -714,6 +714,29 @@ check('[검증 15/15] [#TASK-ES-190] 목표 추가 파이프라인 및 4위 1체
   assert.ok(html.includes("toast('목표 제목을 입력해주세요');"), '직접 설정 폼 공백 검증 토스트 누락');
 });
 
+check('[검증 16/16] [#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결성 정적 방화벽 검사', () => {
+  const sanctuaryPath = path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js');
+  const sanctuaryContent = fs.readFileSync(sanctuaryPath, 'utf8');
+
+  // 1. 순수 데드클릭 박멸 검증
+  assert.ok(html.includes('id="btnSwitchCompanionInvite"'), '#btnSwitchCompanionInvite 탭 버튼 ID 누락');
+  assert.ok(html.includes('switchInviteTab'), '팀원 초대 모달 탭 전환 로직 누락');
+  assert.ok(html.includes('btn-select-wearable'), '스마트워치 선택 버튼 클래스 누락');
+  assert.ok(html.includes('id="toggleTemplatesBtnInner"'), '#toggleTemplatesBtnInner ID 누락');
+
+  // 2. 유령 버튼 복원 검증
+  assert.ok(html.includes("archiveBtnEl.id = 'goalArchiveBtn'"), '목표 상세 보관함 버튼(#goalArchiveBtn) 마크업 생성 누락');
+
+  // 3. 거짓말 토스트(Empty Promise) 0건 영구 방화벽
+  assert.ok(!html.includes('Google 로그인 서비스를 준비 중입니다'), '구글 로그인 준비중 거짓말 토스트 잔존');
+  assert.ok(!html.includes('피드 게시 기능을 준비 중입니다'), '피드 게시 준비중 거짓말 토스트 잔존');
+  assert.ok(!html.includes('외부 공유 기능을 준비 중입니다'), '외부 공유 준비중 거짓말 토스트 잔존');
+  assert.ok(!sanctuaryContent.includes('일정 추가 창을 준비 중입니다'), '성소 캘린더 일정 추가 준비중 토스트 잔존');
+
+  // 4. 완전 무료 선언 정식 모달 승화 검증
+  assert.ok(html.includes('아워골 완전 무료화 헌법 선언'), '아워골 완전 무료 선언 모달 마크업 누락');
+});
+
 console.log('\n================================================================');
 console.log(`🎯 검증 결과: 총 ${totalChecks}개 검사 중 ${passedChecks}개 통과 (${failures}개 실패)`);
 console.log('================================================================');
