@@ -137,6 +137,7 @@ async function judge(opts) {
         v.task = typeof doc.task === 'string' && /^[A-Za-z0-9_-]{3,40}$/.test(doc.task) ? doc.task : null;
         const errs = claimsLib.validateClaims(doc);
         if (errs.length) reject('주장 파일 형식 오류', errs.slice(0, 8).join(' / ')); else docOk = true;
+        if (docOk && !doc.claims.length && v.vault.productChanged.length) reject('주장 없음', '제품 코드 ' + v.vault.productChanged.length + '개 파일을 바꿨는데 주장 파일에 폐기 신청(retire)만 있고 주장이 없다.');
       }
     } else if (v.vault.productChanged.length) {
       reject('주장 없음', '제품 코드 ' + v.vault.productChanged.length + '개 파일을 바꿨는데 이번 변경에 reports/<작업번호>/claims.json 이 없다. 무엇을 했는지 주장하지 않으면 법정은 회귀만 볼 수 있을 뿐 "됐다"를 확인해 줄 수 없다.');

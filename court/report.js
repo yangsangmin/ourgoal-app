@@ -119,7 +119,10 @@ function render(v) {
 
   L.push('## 주장과 무관하게 법정이 직접 본 것');
   if (v.modules) L.push('- 부품 로드 점검: 작업 커밋 ' + v.modules.counts.headOk + '/' + v.modules.counts.head + '개 로드됨 (기준 커밋 ' + v.modules.counts.baseOk + '/' + v.modules.counts.base + ')' + (v.modules.insufficient.length ? ' · 점검 환경 한계로 못 본 부품 ' + v.modules.insufficient.length + '개: ' + v.modules.insufficient.map(x => x.file).join(', ') : ''));
-  for (const r of (v.baseTests && v.baseTests.runners) || []) L.push('- 기준 시험지 채점(' + r.file + '): 기준 커밋의 검사 ' + r.base.passed + '개 중 작업 커밋에서 ' + (r.base.passed - r.head.failed) + '개 통과' + (r.head.failed ? ' · **' + r.head.failed + '개 깨짐**' : '') + ' — 작업자가 고친 테스트는 판정에 쓰지 않았습니다');
+  for (const r of (v.baseTests && v.baseTests.runners) || []) {
+    const broken = ((v.baseTests && v.baseTests.newlyBroken) || []).filter(b => b.file === r.file).length;
+    L.push('- 기준 시험지 채점(' + r.file + '): 기준 커밋에서 통과하던 검사 ' + r.base.passed + '개 중 작업 커밋에서 깨진 것 ' + (broken ? '**' + broken + '개**' : '0개') + (r.base.failed ? ' (법정의 격리 환경에서는 기준 커밋에서도 실패하는 검사 ' + r.base.failed + '개 — 비교에서 제외)' : '') + ' — 작업자가 고친 테스트는 판정에 쓰지 않았습니다');
+  }
   if (v.browserSkipped) L.push('- 화면 점검: 하지 않음(' + v.browserSkipped + ')');
   if (v.boot && v.boot.boot) L.push('- 앱 띄우기: 기준 커밋 ' + (v.boot.boot.base.passed ? '뜸' : '안 뜸') + ' / 작업 커밋 ' + (v.boot.boot.head.passed ? '뜸' : '안 뜸') + ' · 띄울 때 난 오류 ' + v.boot.boot.base.exceptions.length + '건 → ' + v.boot.boot.head.exceptions.length + '건');
   for (const s of (v.boot && v.boot.std) || []) L.push('- 표준 점검 ' + q(s.title) + ': 기준 ' + (s.base.passed ? '통과' : '실패') + ' / 작업 ' + (s.head.passed ? '통과' : '**실패**(' + clean(s.head.detail, 300) + ')'));

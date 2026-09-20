@@ -39,7 +39,10 @@ function validateClaims(doc) {
   const errors = [];
   if (!doc || typeof doc !== 'object') return ['claims.json 이 객체가 아니다'];
   if (typeof doc.task !== 'string' || !/^[A-Za-z0-9_-]{3,40}$/.test(doc.task)) errors.push('task 누락 또는 형식 오류');
-  if (!Array.isArray(doc.requirements) || !doc.requirements.length) errors.push('requirements(상민님 지시 항목) 가 비어 있다 — 보고서의 분모는 주장 수가 아니라 지시 항목 수다');
+  // 제품 코드를 안 바꾸는 변경(문서·규범)도 기존 검사를 깨뜨릴 수 있다(예: 조항 제목을 바꾸면 그 제목 글자를 찾던 검사가 깨진다).
+  // 그때는 주장 없이 폐기 사유(retire)만 적은 문서를 낼 수 있다. 제품 코드를 바꿨는데 주장이 없으면 법정(judge)이 돌려보낸다.
+  const retireOnly = Array.isArray(doc.retire) && doc.retire.length > 0 && Array.isArray(doc.claims) && doc.claims.length === 0 && Array.isArray(doc.requirements) && doc.requirements.length === 0;
+  if (!retireOnly && (!Array.isArray(doc.requirements) || !doc.requirements.length)) errors.push('requirements(상민님 지시 항목) 가 비어 있다 — 보고서의 분모는 주장 수가 아니라 지시 항목 수다');
   const reqIds = new Set();
   for (const r of doc.requirements || []) {
     if (!r || typeof r.id !== 'string' || typeof r.text !== 'string' || !r.text.trim()) { errors.push('requirements 항목은 {id, text}'); continue; }
