@@ -1,0 +1,55 @@
+#!/bin/sh
+# 법정(court) pre-push 훅 — 올리기 전 빠른 예비 점검(금고 + 부품 로드 탐침). 화면 점검은 하지 않는다.
+# 왜 있는가: 돌려보낼 것이 뻔한 커밋(채점 기준을 같이 고침, 로드하자마자 죽는 부품)을 GitHub 에 올리기 전에
+#           작업자 PC 에서 먼저 걸러 왕복을 줄인다.
+# 이것은 판정이 아니다. 판정은 GitHub 의 법정(court 검사)만 낸다(헌법 제7조 제10항 2호).
+#           여기서 막히지 않았다는 사실을 어디에도 "통과"라고 옮겨 적을 수 없다.
+# 법정 종료코드: 1(돌려보냄)·2(심사 못 함 — 통과가 아니다) = 푸시를 막는다 / 0·3 = 그대로 올린다.
+# git 이 표준입력으로 주는 줄: <로컬 ref> <로컬 sha> <원격 ref> <원격 sha>
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
+# 법정이 아직 없는 브랜치(법정 도입 전에 갈라진 작업 등)는 점검할 도구가 없으므로 그대로 통과시킨다.
+[ -f "$ROOT/court/judge.js" ] || exit 0
+
+if ! command -v node >/dev/null 2>&1; then
+  echo "✖ 법정 예비 점검을 돌릴 수 없습니다: node 를 찾지 못했습니다 (심사 못 함 — 통과가 아니므로 푸시를 막습니다)" >&2
+  exit 1
+fi
+
+SEEN=""
+BLOCKED=0
+while read -r LOCAL_REF LOCAL_SHA REMOTE_REF REMOTE_SHA || [ -n "$LOCAL_SHA" ]; do
+  [ -n "$LOCAL_SHA" ] || continue
+  # 삭제 푸시(로컬 sha 가 0000…)는 심사할 커밋이 없다.
+  case "$LOCAL_SHA" in *[!0]*) ;; *) LOCAL_SHA=""; continue ;; esac
+  # 커밋이 아닌 것을 가리키는 ref(예: 나무·파일에 붙인 태그)는 법정의 심사 대상이 아니다.
+  git -C "$ROOT" rev-parse --verify --quiet "$LOCAL_SHA^{commit}" >/dev/null 2>&1 || { LOCAL_SHA=""; continue; }
+  # 같은 커밋을 여러 ref 로 올릴 때 한 번만 본다.
+  case " $SEEN " in *" $LOCAL_SHA "*) LOCAL_SHA=""; continue ;; esac
+  SEEN="$SEEN $LOCAL_SHA"
+
+  # 표준입력을 /dev/null 로 돌린다: 자식 프로세스가 남은 ref 줄을 먹어 버리면 뒤의 ref 가 점검 없이 올라간다.
+  OUT="$(node "$ROOT/court/judge.js" --repo "$ROOT" --head "$LOCAL_SHA" --quick </dev/null 2>&1)"
+  CODE=$?
+  SHORT="$(printf '%s' "$LOCAL_SHA" | cut -c1-7)"
+  if [ "$CODE" -eq 1 ] || [ "$CODE" -eq 2 ]; then
+    BLOCKED=1
+    {
+      echo ""
+      if [ "$CODE" -eq 1 ]; then
+        echo "✖ 법정 예비 점검에서 막혔습니다 — 이 커밋은 GitHub 에 올려도 돌려보내집니다 ($LOCAL_REF $SHORT)"
+      else
+        echo "✖ 법정 예비 점검을 끝내지 못했습니다 — 심사 못 함은 통과가 아니므로 올리지 않습니다 ($LOCAL_REF $SHORT)"
+      fi
+      # 판정서의 첫 네 줄(판정 · 상민님이 하실 일 · 지시 항목 분포 · 심사 대상)을 그대로 보여 준다.
+      printf '%s\n' "$OUT" | head -n 4
+      printf '%s\n' "$OUT" | grep '^판정서: ' | head -n 1
+      echo "  고친 뒤 다시 올리십시오. 법정·금고 파일을 고쳐서 통과시키는 것은 금지입니다(헌법 제7조 제10항 3호)."
+    } >&2
+  else
+    echo "법정 예비 점검: 막을 이유 없음 ($LOCAL_REF $SHORT) — 이것은 판정이 아닙니다. 판정은 GitHub 의 법정이 냅니다." >&2
+  fi
+  LOCAL_SHA=""
+done
+
+exit $BLOCKED

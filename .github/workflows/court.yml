@@ -1,0 +1,182 @@
+name: court
+
+# 법정(court) — 판정 분리의 GitHub 쪽 검문소 (헌법 제7조 제10항 2호: "판정은 작업 세션 밖에서 실행된 결과만을 말한다").
+#
+# 왜 pull_request_target 인가
+#   이 이벤트는 PR 이 들고 온 워크플로가 아니라 "기준 브랜치(main)에 이미 있는 워크플로"로 돈다.
+#   그래서 PR 이 워크플로·법정(court/)·금고를 같이 고쳐 와도 심사에는 쓰이지 않는다(잣대를 든 손 ≠ 시험 보는 손).
+#   대가: 법정을 처음 들여오는 PR 은 main 에 이 파일이 아직 없으므로 돌지 않는다(court/README.md 참조).
+#
+# 왜 권한이 contents: read 하나뿐인가
+#   이 잡은 PR 코드를 (법정의 자식 프로세스·headless Chrome 안에서) 실행한다. 쓰기 권한·시크릿이 있으면 PR 이 그것을 노릴 수 있다.
+#   PR 에 댓글을 다는 일은 PR 코드를 전혀 만지지 않는 court-publish.yml 이 따로 한다.
+#
+# 왜 PR 쪽에 npm ci 를 하지 않는가
+#   법정은 외부 의존성이 0 이다. PR 의 package.json 을 설치하면 설치 스크립트(postinstall)가 PR 코드로서 이 잡 안에서 돌게 된다.
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+# 같은 PR 에 새 커밋이 오면 앞선 심사는 그만둔다(옛 커밋의 판정이 뒤늦게 게시되는 혼선을 줄인다).
+concurrency:
+  group: court-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  # 잡 이름 'court' 가 브랜치 보호의 필수 검사 이름이 된다(docs/rules/branch-protection.json). 바꾸면 보호 설정도 같이 바꿔야 한다.
+  #
+  # 주의 — 이 잡에는 일부러 잡 수준 if 를 달지 않았다.
+  #   GitHub 는 조건(if) 때문에 건너뛴 잡을 필수 검사에서 "성공"으로 친다. 포크 PR 을 잡 수준 if 로 건너뛰면
+  #   "심사받지 않은 PR 이 필수 검사를 통과한 것"이 된다. 그래서 건너뛰지 않고 첫 단계에서 실패시킨다(포크 PR = 병합 불가).
+  court:
+    name: court
+    # 러너 이미지를 고정한다. ubuntu-latest 는 이미지가 바뀔 때 Chrome 판이 바뀌어 같은 코드의 판정이 흔들릴 수 있다.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      # 화면의 "오늘"이 작업자 PC(KST)와 러너(UTC)에서 갈리지 않게 한다. 법정 브라우저 안의 시간대는 법정이 따로 고정한다(court/config.json).
+      TZ: Asia/Seoul
+      # 이벤트 값은 스크립트 글자에 직접 끼워 넣지 않고 환경변수로만 넘긴다(명령 주입 방지).
+      TRUSTED_SHA: ${{ github.sha }}
+      EVENT_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      SAME_REPO: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    steps:
+      # 판정 게시(court-publish.yml)가 "어느 PR 의 어느 커밋이었는지" 알 수 있게, 이벤트에서 읽은 사실을 가장 먼저 적어 둔다.
+      # 법정이 판정서를 못 만들고 죽어도 이 기록은 남아서 "심사 못 함"을 PR 에 알릴 수 있다.
+      - name: 심사 기록 시작
+        run: |
+          mkdir -p court-out
+          printf '{"schema":"court-meta/1","pr":%s,"headSha":"%s","trustedSha":"%s","runId":"%s","sameRepo":%s}\n' \
+            "$PR_NUMBER" "$HEAD_SHA" "$TRUSTED_SHA" "$GITHUB_RUN_ID" "$SAME_REPO" > court-out/meta.json
+          cat court-out/meta.json
+
+      - name: 포크 PR 은 심사하지 않는다 (실패로 남겨 병합을 막는다)
+        if: github.event.pull_request.head.repo.full_name != github.repository
+        run: |
+          echo "::error::포크에서 온 PR 은 법정이 심사하지 않습니다. 필수 검사 court 가 실패로 남으므로 병합할 수 없습니다."
+          exit 1
+
+      # ① 잣대: 기준 브랜치(main)의 법정. pull_request_target 에서 github.sha 는 "이 워크플로 파일이 나온 바로 그 main 커밋"이다.
+      #    event.pull_request.base.sha 는 PR 이 마지막으로 갱신된 때의 main 이라 더 낡았을 수 있다. 그러면 새 워크플로가 옛 법정을 부르는
+      #    어긋남이 생기므로, 워크플로와 법정을 같은 커밋에서 가져온다. 어느 쪽이든 main 의 커밋이며 PR 이 고를 수 없다.
+      - name: ① 법정(기준 브랜치의 court/)을 받는다
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: trusted
+          persist-credentials: false
+
+      # ② 심사 대상. 이 폴더의 코드는 워크플로가 직접 실행하지 않는다. 법정이 커밋을 임시 폴더에 풀어 격리 실행한다.
+      #    fetch-depth 0: 법정이 기준 커밋(merge-base)을 계산하고 주장 파일의 커밋 이력(말없이 지운 주장)을 본다.
+      - name: ② 심사 대상(작업 커밋)을 받는다
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: pr
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: ③ Node 22 (법정은 전역 WebSocket 을 쓴다 — 22 이상 필요, 의존성 설치 없음)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # 한글 글꼴이 없으면 글자 폭이 달라져 화면 배치 확인(가로 넘침·터치 영역 크기)이 작업자 PC 와 다르게 나온다.
+      - name: ③-1 한글 글꼴 설치
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq fonts-noto-cjk
+
+      # 기준 시험지 채점(court/probes/base-tests.js)은 기준 커밋의 테스트를 돌린다. 그 테스트가 쓰는 의존성은 "잣대 쪽(main)"의
+      # package-lock 으로만 설치한다. --ignore-scripts: 설치 스크립트를 돌리지 않는다. PR 쪽에는 아무것도 설치하지 않는다.
+      - name: ③-2 기준 시험지용 의존성 (잣대 쪽에만, 설치 스크립트 없이)
+        run: npm ci --ignore-scripts --no-audit --no-fund
+        working-directory: trusted
+
+      # ④ 법정은 --base 를 주지 않으면 origin/main 과 작업 커밋의 merge-base 를 기준으로 삼는다.
+      #    --base 를 손으로 주면 판정서 넷째 줄에 "비표준 기준점"이 찍히므로, 인자 대신 origin/main 참조를 고정한다.
+      - name: ④ 기준점 고정 — pr 저장소의 origin/main 을 잣대와 같은 main 커밋에 맞춘다
+        run: |
+          if ! git -C pr cat-file -e "${TRUSTED_SHA}^{commit}" 2>/dev/null; then
+            echo "::error::기준 커밋 ${TRUSTED_SHA} 이 심사 대상 저장소에 없습니다 — 심사 못 함(통과가 아닙니다)"
+            exit 2
+          fi
+          git -C pr update-ref refs/remotes/origin/main "$TRUSTED_SHA"
+          echo "origin/main → $(git -C pr rev-parse refs/remotes/origin/main)"
+          echo "merge-base  → $(git -C pr merge-base refs/remotes/origin/main "$HEAD_SHA")"
+          if [ "$EVENT_BASE_SHA" != "$TRUSTED_SHA" ]; then
+            echo "::notice::이벤트의 base.sha(${EVENT_BASE_SHA})가 현재 main(${TRUSTED_SHA})보다 낡았습니다. 현재 main 을 기준으로 심사합니다."
+          fi
+
+      # ⑤ 법정도 의심한다: 가짜를 걸러내지 못하는 법정은 판정할 자격이 없다. 실패하면 심사하지 않는다(= 심사 못 함, 통과 아님).
+      - name: ⑤ 법정 자체 점검
+        env:
+          # 러너에는 git 사용자 설정이 없다. 자체 점검이 임시 저장소에 커밋을 만들 때 멈추지 않게 이름만 준다(어디에도 푸시되지 않는다).
+          GIT_AUTHOR_NAME: court-selftest
+          GIT_AUTHOR_EMAIL: court-selftest@users.noreply.github.com
+          GIT_COMMITTER_NAME: court-selftest
+          GIT_COMMITTER_EMAIL: court-selftest@users.noreply.github.com
+        run: node trusted/court/selftest/run.js --unit-only
+
+      # ⑥ 종료코드: 0 통과 · 3 확인 부족 · 1 돌려보냄 · 2 심사 못 함.
+      #    0·3 만 이 단계를 성공으로 끝낸다. 최종 판단(⑨)은 파일이 아니라 러너가 기록한 이 단계의 성공/실패를 본다.
+      - name: ⑥ 심사 (PR 코드는 법정의 자식 프로세스·headless Chrome 안에서만 실행된다)
+        id: judge
+        continue-on-error: true
+        run: |
+          code=0
+          node trusted/court/judge.js --repo pr --head "$HEAD_SHA" --out court-out || code=$?
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          echo "법정 종료코드: $code (0 통과 · 3 확인 부족 · 1 돌려보냄 · 2 심사 못 함)"
+          case "$code" in
+            0|3) exit 0 ;;
+            *) exit 1 ;;
+          esac
+
+      - name: ⑦ 판정서 앞부분을 실행 요약에 남긴다
+        if: always()
+        run: |
+          if [ -f court-out/REPORT.md ]; then
+            head -n 80 court-out/REPORT.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "**판정: 심사 못 함 — 법정이 판정서를 만들지 못했습니다. 통과가 아닙니다.**" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: ⑧ 판정서·증거 올리기 (verdict.json · REPORT.md · 법정이 찍은 화면)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: court-verdict
+          path: court-out
+          if-no-files-found: warn
+          retention-days: 30
+
+      # ⑨ 통과(0)·확인 부족(3)만 성공이다. 돌려보냄(1)·심사 못 함(2)·심사 단계가 돌지 못한 경우는 전부 실패다.
+      #    종료코드와 판정서가 서로 어긋나면(예: 빠른 점검 결과가 끼어듦, 다른 커밋의 판정서) 그것도 실패로 본다.
+      - name: ⑨ 판정 반영
+        if: always()
+        env:
+          JUDGE_OUTCOME: ${{ steps.judge.outcome }}
+          JUDGE_CODE: ${{ steps.judge.outputs.code }}
+        run: |
+          echo "심사 단계: ${JUDGE_OUTCOME:-없음} · 종료코드: ${JUDGE_CODE:-없음}"
+          if [ "$JUDGE_OUTCOME" != "success" ]; then
+            echo "::error::법정 판정이 통과·확인 부족이 아닙니다(돌려보냄 또는 심사 못 함). 병합할 수 없습니다."
+            exit 1
+          fi
+          node -e "
+            const v = JSON.parse(require('node:fs').readFileSync('court-out/verdict.json', 'utf8'));
+            const want = { '0': '통과', '3': '확인 부족' }[process.env.JUDGE_CODE];
+            const bad = [];
+            if (v.schema !== 'court-verdict/1') bad.push('schema=' + v.schema);
+            if (!want || v.verdict !== want) bad.push('종료코드 ' + process.env.JUDGE_CODE + ' 인데 판정은 ' + v.verdict);
+            if (!v.head || v.head.sha !== process.env.HEAD_SHA) bad.push('판정서의 작업 커밋이 이 PR 의 커밋과 다르다');
+            if (v.quick) bad.push('빠른 점검 결과다(화면 점검 없음)');
+            if (v.where !== 'ci') bad.push('GitHub 에서 실행된 판정이 아니다');
+            if (bad.length) { console.log('::error::판정서와 종료코드가 어긋납니다 — ' + bad.join(' / ')); process.exit(1); }
+            console.log('법정 판정: ' + v.verdict + ' · 판정번호 ' + v.verdictId);
+          "
