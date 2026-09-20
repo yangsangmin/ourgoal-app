@@ -608,7 +608,11 @@ check('헌법 정본에 시각 자가감사(제7조 8항), 시각 IA 명세(제2
   assert.ok(rulesContent.includes('제5항 [가짜 듀얼레이어 및 CSS 편의주의적 은폐 원천 금지 헌법'), '제3조 5항 누락');
   assert.ok(rulesContent.includes('위조 숫자 및 허상 지표 날조 금지 - Vanity Metrics Zero Tolerance'), '제4조 1항 1호 누락');
   assert.ok(rulesContent.includes('제8항 [제6검증: 시각 및 공간 조형 무결성 검증 (Visual Self-Audit Mandate)]'), '제7조 8항 누락');
-  assert.ok(rulesContent.includes('제3항 [보고 서식의 팩트 중심 4-Block 규격화 및 감정적 미사여구 영구 금지]'), '제8조 3항 누락');
+  assert.ok(
+    rulesContent.includes('제3항 [보고 서식의 팩트 중심 4-Block 규격화 및 감정적 미사여구 영구 금지]') ||
+    rulesContent.includes('제3항 [보고 서식의 실물 전수 검증 6-Block 규격화 및 표준 템플릿 헌법 내장 강제]'),
+    '제8조 3항 누락'
+  );
 });
 
 check('CSS 내에 핵심 뷰 슬롯(#commBody, #personalGoalsView)을 은폐하는 위헌 패턴이 존재하지 않는다', () => {
@@ -657,7 +661,11 @@ check('헌법 정본에 6대 신설/개정 조항(제2조 7항, 제3조 6항, �
   const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
   const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
   assert.ok(rulesContent.includes('제7항 [감찰 및 전수 조사 시 4차원 심층 매트릭스 의무 (Deep Audit Mandate)]'), '제2조 7항 누락');
-  assert.ok(rulesContent.includes('제6항 [연속적 유저 여정 단절 제로 헌법 (Zero Broken Journey Mandate)]'), '제3조 6항 누락');
+  assert.ok(
+    rulesContent.includes('제6항 [연속적 유저 여정 단절 제로 헌법 (Zero Broken Journey Mandate)]') ||
+    rulesContent.includes('제6항 [연속적 유저 여정 및 모바일 하드웨어 OS 인터랙션 단절 제로 헌법'),
+    '제3조 6항 누락'
+  );
   assert.ok(rulesContent.includes('9호 (도메인 철학 역행 및 상식적 개념 괴리 방치 금지 - Conceptual Integrity)'), '제4조 1항 9호 누락');
   assert.ok(rulesContent.includes('모바일 375px 4대 시각 물리 규격 강제'), '제7조 8항 모바일 4대 규격 누락');
   assert.ok(rulesContent.includes('제4항 [세션 착수 시 Step 0 최신 브랜치 동기화 및 다중 세션 정합성 검증 (Step 0 Pre-flight Sync)]'), '제11조 4항 누락');
