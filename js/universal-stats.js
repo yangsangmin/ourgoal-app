@@ -6071,6 +6071,19 @@
     SAMPLE_THEMES: SAMPLE_THEMES
   };
 
+  // [.diff-cfg-open-btn] 지표별 차등 분석 기준 설정 클릭 이벤트 전역 위임
+  if (typeof document !== 'undefined') {
+    document.addEventListener('click', function (e) {
+      var btn = e.target && e.target.closest && e.target.closest('.diff-cfg-open-btn');
+      if (btn) {
+        openDifferentiatedMetricConfigModal({
+          openModal: typeof window !== 'undefined' ? window.openModal : null,
+          closeModal: typeof window !== 'undefined' ? window.closeModal : null
+        });
+      }
+    });
+  }
+
   if(typeof module !== 'undefined' && module.exports){
     module.exports = api;
   }

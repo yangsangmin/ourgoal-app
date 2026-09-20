@@ -133,6 +133,15 @@
     }
   };
 
+  if(typeof document !== 'undefined'){
+    document.addEventListener('click', function(e){
+      var closeBtn = e.target && e.target.closest && (e.target.closest('.og-modal-close') || e.target.closest('#ogModalCancelBtn'));
+      if(closeBtn && typeof window !== 'undefined' && typeof window.closeModal === 'function'){
+        window.closeModal();
+      }
+    });
+  }
+
   if(typeof window !== 'undefined'){
     window.OurgoalComponents = OurgoalComponents;
   }
