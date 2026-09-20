@@ -1,20 +1,30 @@
-# 작업계획서 (Session 11fcefcf) — 일정 달력 셀 확대 및 사진형 일기(Photo Diary) 연계 & 히트맵 시인성 극대화
+# 작업계획서 (Session 11fcefcf) — #TASK-ES-198 캘린더/일정 탭 6대 결함 전수 일괄 정상화
 
-- **작업 ID**: TASK-ES-197
+- **작업 ID**: TASK-ES-198
 - **세션 ID**: 11fcefcf-368c-4ff5-bf9e-d6555389c690
-- **브랜치**: feat/2026-09-20-task-es-197-calendar-photo-diary-and-heatmap-scaling
+- **브랜치**: feat/2026-09-20-task-es-198-calendar-full-fix
 - **작성 일시**: 2026-09-20
 
 ## 1. 개요 및 배경
-- 상민님 지시: "히트맵이랑 일정 시인성 개선도 좀 했으면 좋겠는데 일정 달력을 좀 더 크게 만들 수 있지 않나? 사람들이 사진형 일기처럼 쓸 수 있게 하는 걸 좋아하던데 지금보다 한칸한칸이 조금씩 더 컸으면 좋겠어. 한달이 한 페이지에서 잘 보이는 한도 내에서. 히트맵도 마찬가지" -> "진행"
-- 일정 달력 셀(`min-height: 76px`)과 히트맵 셀(`14px × 14px`)을 시원하게 확대하고, 체크인/기록 사진이 달력 셀에 감성 썸네일로 자동 노출되는 포토 다이어리 기능을 완성하여 모바일 1화면 안에서 감성 아카이빙 경험을 극대화.
+- 상민님 지시: "일정 제대로 작동 안하는 것들 모두 찾아서 보고해" -> 11개 항목 정밀 진단 및 6대 결함 보고 -> "진행" 지시 접수.
+- 캘린더 탭의 6대 결함(주간 모드 런타임 크래시, 타임라인 일정 수정 미반영, AI 일정 등록 카드 은폐, 폰 잠금화면 바로가기 버튼 은폐, 팀 목표 마일스톤 토글 미구현, 배경사진 선택 모달 복귀 플로우 유실)을 일괄 해결하여 캘린더/일정 시스템의 완전성을 달성.
 
-## 2. 작업 순서
-1. `docs/rules/TICKETS.md`: #TASK-ES-197 승인 티켓 등록
-2. `ui.css`: `.cal-cell` 높이 76px, `.heatmap-cell` 14px, 포토 다이어리 썸네일 스타일링
-3. `index.html`: `calCellHtml` 사진 첨부물 자동 감지 썸네일 렌더러 구현
-4. `sw.js`: 최신 캐시 네임 갱신
-5. `scripts/smoke-test.js` & `scripts/verify-integrity-gate.js`: [검증 21] 결속
-6. `npm test` 및 게이트 통과 확인 (335+ 테스트)
-7. Chrome CDP 모바일 375px 실측 캡처 (달력 포토 다이어리 & 히트맵)
-8. 로컬 main 병합 및 Vercel 프리뷰 배포 (5A)
+## 2. 6대 결함 해결 순서
+1. `js/sanctuary-v3-engine.js`:
+   - 주간 모드 `weekDays.join('')` 및 `dayDetails` 미정의 오류 완전 해결 (`weekRowsHtml` 및 요일 그리드 + 상세 리스트 정상 렌더링).
+   - 타임라인 모드 `openScheduleDetail`에서 `openCalendarManualEditModal(dt, found || null, kind || 'custom')` 인자 교정 (Zero-Save 수정 실패 버그 퇴치).
+   - 성소 캘린더 헤더에 폰 잠금화면 바로가기 버튼(`data-action="open-lockscreen"`) 배치.
+2. `ui.css`:
+   - `#calAgentCard`의 `display: none !important;` 해제 및 성소 캘린더 하단 맞춤 스타일링 적용.
+   - 주간 모드 그리드 레이아웃 및 요일별 셀 인터랙션 스타일 보강.
+3. `index.html`:
+   - `toggleScheduleDone`에 `kind === 'team_goal'` 분기 추가 (팀 목표 마일스톤 완료 토글 정상 연동).
+   - `data-hubedit`에 `kind === 'team_goal'` 분기 추가 (팀 마일스톤 수정 연동).
+   - `openCalendarDayBgPickerModal`에서 `fromHub` 플래그 보존 및 모달 닫기/완료 시 허브 모달 복귀 플로우 보장.
+4. `sw.js`:
+   - 최신 캐시 네임 갱신 (`ourgoal-shell-v20260920-task-es198-cal-full-fix`).
+5. `scripts/smoke-test.js` & `scripts/verify-integrity-gate.js`:
+   - `[검증 22]` 게이트 추가 및 방화벽 결속.
+6. `npm test` 및 무결성 게이트 통과 (335+ ALL PASS).
+7. Chrome CDP 모바일 375px 실측 캡처 (주간 모드, 타임라인 수정 반영, AI 등록 & 잠금화면 버튼).
+8. 로컬 main 병합 및 Vercel 프리뷰 배포 집행 (모드 4-A).
