@@ -477,7 +477,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             <button class="goal-chip" data-quicktpl="business" type="button">영업</button>
             <button class="goal-chip addchip" id="recCreateCustomTplQuickBtn" type="button">+ 템플릿 만들기</button>
             <button class="goal-chip" id="recOpenMarketQuickBtn" type="button">템플릿 마켓</button>
-            <button class="goal-chip" id="recGoToGoalsTplBtn" type="button" style="border-color:var(--brand);color:var(--brand);font-weight:700;">🎯 목표 템플릿 3종 둘러보기 ›</button>
+            <button class="goal-chip" id="recGoToGoalsTplBtn" type="button" onclick="setTab('goals'); if(typeof openGoalTemplatesModal==='function') openGoalTemplatesModal(); else if(typeof openCustomTemplateModal==='function') openCustomTemplateModal();" style="border-color:var(--brand);color:var(--brand);font-weight:700;">🎯 목표 템플릿 3종 둘러보기 ›</button>
           </div>
         </div>
 
@@ -5036,7 +5036,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
   }
   navButtons.forEach(function(b){ b.addEventListener('click', function(){ setTab(b.dataset.tab); }); });
-  if(typeof window !== 'undefined'){ window.setTab = setTab; }
+  function switchTab(tab){ return setTab(tab); }
+  if(typeof window !== 'undefined'){ window.setTab = setTab; window.switchTab = setTab; }
 
   /* ============ Modal helper & Android Hardware Back Handler ============ */
   var _modalHistoryPushed = false;
@@ -7938,6 +7939,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             if(targetSched){
               await moveToTrash('schedule', sid, targetSched, 'in_app', targetSched.title);
               openCalendarDayEditHubModal(sel);
+            }
+          };
+        });
+        sheet.querySelectorAll('[data-hubaddatt]').forEach(function(btn){
+          btn.onclick = function(){
+            var sid = btn.dataset.hubaddatt;
+            if(window.OurgoalCalendarAttachment && typeof window.OurgoalCalendarAttachment.openAttachmentModal === 'function'){
+              window.OurgoalCalendarAttachment.openAttachmentModal(sid, sel);
             }
           };
         });
@@ -25533,6 +25542,14 @@ wirePromptEncyclopediaEvents(body);
         });
       };
     }
+    var goToGoalsTplBtn = document.getElementById('recGoToGoalsTplBtn');
+    if(goToGoalsTplBtn){
+      goToGoalsTplBtn.onclick = function(){
+        switchTab('goals');
+        if(typeof openGoalTemplatesModal === 'function') openGoalTemplatesModal();
+        else if(typeof openCustomTemplateModal === 'function') openCustomTemplateModal();
+      };
+    }
 
     var listEl = document.getElementById('recordsList');
     if(!allRecs.length){
@@ -26210,6 +26227,14 @@ wirePromptEncyclopediaEvents(body);
           if(typeof openProTemplateRecordModal === 'function') openProTemplateRecordModal(null, clonedTpl.key);
         });
       }
+      return;
+    }
+    var ggBtn = e.target.closest('#recGoToGoalsTplBtn');
+    if(ggBtn){
+      e.preventDefault();
+      switchTab('goals');
+      if(typeof openGoalTemplatesModal === 'function') openGoalTemplatesModal();
+      else if(typeof openCustomTemplateModal === 'function') openCustomTemplateModal();
       return;
     }
   });
@@ -28343,6 +28368,32 @@ wirePromptEncyclopediaEvents(body);
       body.querySelectorAll('[data-tmpl]').forEach(function(btn){ btn.onclick = function(){ cloneTemplate(btn.dataset.tmpl, function(){ renderCommFeed(body); }); }; });
     }
 
+
+    body.querySelectorAll('[data-react]').forEach(function(btn){
+      btn.addEventListener('click', async function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var id = btn.dataset.react;
+        if(!id) return;
+        if(!state.profile.settings.feedReactions) state.profile.settings.feedReactions = {};
+        var wasReacted = !!state.profile.settings.feedReactions[id];
+        state.profile.settings.feedReactions[id] = !wasReacted;
+        var curPost = (FEED_POSTS_CACHE||[]).find(function(p){ return p.id === id; });
+        if(curPost){
+          curPost.cheers_count = Math.max(0, (curPost.cheers_count || 0) + (wasReacted ? -1 : 1));
+        }
+        btn.classList.toggle('active', !wasReacted);
+        btn.textContent = '응원 ' + ((curPost && curPost.cheers_count) || 0);
+        if(!wasReacted){
+          if(navigator.vibrate) navigator.vibrate(15);
+          toast('따뜻한 응원을 보냈어요! 🔥');
+          try {
+            await sb.rpc('increment_post_cheers', { p_post_id: id });
+          } catch(err){}
+        }
+        await saveProfile();
+      });
+    });
 
     body.querySelectorAll('[data-delpost]').forEach(function(btn){
       btn.addEventListener('click', async function(){
