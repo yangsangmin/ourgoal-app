@@ -7395,6 +7395,23 @@ check('[#TASK-ES-193] 집중 타이머 기록 탭 이전 및 기록 탭 6종 3×
   assert.ok(sanctuaryJs.includes("engine.activeRecMode === 'timer'"), '기록 탭 타이머 카드 렌더링 분기 확인');
 });
 
+check('[#TASK-ES-194] 소통 탭 6종 3×2 그리드 조형 및 가로스크롤 은폐 해소 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 소통 탭 6종 서브탭 확인
+  assert.ok(indexHtml.includes("{ key: 'feed', label: '피드'"), '피드 서브탭 존재');
+  assert.ok(indexHtml.includes("{ key: 'group', label: '팀'"), '팀 서브탭 존재');
+  assert.ok(indexHtml.includes("{ key: 'companion', label: '동반자'"), '동반자 서브탭 존재');
+  assert.ok(indexHtml.includes("{ key: 'dm', label: 'DM'"), 'DM 서브탭 존재');
+  assert.ok(indexHtml.includes("{ key: 'manito', label: '마니또'"), '마니또 서브탭 존재');
+  assert.ok(indexHtml.includes("{ key: 'share', label: '공유'"), '공유 서브탭 존재');
+
+  // 2. comm-subtabs-grid 클래스 및 CSS 확인
+  assert.ok(indexHtml.includes('comm-subtabs-grid'), 'comm-subtabs-grid 클래스 배선 확인');
+  assert.ok(cssContent.includes('.comm-subtabs-grid'), '.comm-subtabs-grid CSS 선언 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

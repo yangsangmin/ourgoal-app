@@ -765,6 +765,28 @@ check('[검증 17/17] [#TASK-ES-193] 집중 타이머 기록 탭 이전 및 기�
   assert.ok(sanctuaryContent.includes("engine.activeRecMode === 'timer'"), '기록 탭 타이머 분기 렌더링 누락');
 });
 
+check('[검증 18/18] [#TASK-ES-194] 소통 탭 6종 3×2 그리드 조형 정적 방화벽 검사', () => {
+  const indexPath = path.join(__dirname, '..', 'index.html');
+  const indexContent = fs.readFileSync(indexPath, 'utf8');
+  const cssPath = path.join(__dirname, '..', 'ui.css');
+  const cssContent = fs.readFileSync(cssPath, 'utf8');
+
+  // 1. 소통 탭 서브탭 6종 완비 확인
+  assert.ok(indexContent.includes("{ key: 'feed', label: '피드'"), '소통 탭 피드 서브탭 누락');
+  assert.ok(indexContent.includes("{ key: 'group', label: '팀'"), '소통 탭 팀 서브탭 누락');
+  assert.ok(indexContent.includes("{ key: 'companion', label: '동반자'"), '소통 탭 동반자 서브탭 누락');
+  assert.ok(indexContent.includes("{ key: 'dm', label: 'DM'"), '소통 탭 DM 서브탭 누락');
+  assert.ok(indexContent.includes("{ key: 'manito', label: '마니또'"), '소통 탭 마니또 서브탭 누락');
+  assert.ok(indexContent.includes("{ key: 'share', label: '공유'"), '소통 탭 공유 서브탭 누락');
+
+  // 2. comm-subtabs-grid 클래스 배선 확인
+  assert.ok(indexContent.includes('comm-subtabs-grid'), '소통 탭 서브탭에 comm-subtabs-grid 클래스 누락');
+
+  // 3. CSS 3×2 그리드 스타일 확인
+  assert.ok(cssContent.includes('.comm-subtabs-grid'), '.comm-subtabs-grid CSS 클래스 누락');
+  assert.ok(cssContent.includes('.comm-subtabs-grid .comm-subtab'), '.comm-subtabs-grid 버튼 스타일 누락');
+});
+
 console.log('\n================================================================');
 console.log(`🎯 검증 결과: 총 ${totalChecks}개 검사 중 ${passedChecks}개 통과 (${failures}개 실패)`);
 console.log('================================================================');

@@ -26534,7 +26534,7 @@ wirePromptEncyclopediaEvents(body);
       { key: 'share', label: '공유', icon: '📤' }
     ];
     var hasBadge = window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.getDmUnreadStatus && window.OurgoalTeamInviteComm.getDmUnreadStatus();
-    var subtabHtml = '<div class="comm-subtabs comm-subtabs-clean">' +
+    var subtabHtml = '<div class="comm-subtabs comm-subtabs-clean comm-subtabs-grid">' +
       subtabsList.map(function(s){
         var bHtml = (s.key === 'dm') ? '<span id="dmSubtabBadge" style="display:'+(hasBadge?'inline-block':'none')+';width:6px;height:6px;border-radius:50%;background:#ef4444;margin-left:4px;vertical-align:middle;"></span>' : '';
         return '<div class="comm-subtab'+(state.commSubTab===s.key?' active':'')+'" data-sub="'+s.key+'">'+s.icon+' '+s.label+bHtml+'</div>';
