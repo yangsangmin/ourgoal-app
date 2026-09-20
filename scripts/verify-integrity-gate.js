@@ -765,6 +765,50 @@ check('[검증 17/17] [#TASK-ES-193] 집중 타이머 기록 탭 이전 및 기�
   assert.ok(sanctuaryContent.includes("engine.activeRecMode === 'timer'"), '기록 탭 타이머 분기 렌더링 누락');
 });
 
+check('[검증 18/18] [#TASK-ES-194] 소통 탭 6종 3×2 그리드 조형 정적 방화벽 검사', () => {
+  const indexPath = path.join(__dirname, '..', 'index.html');
+  const indexContent = fs.readFileSync(indexPath, 'utf8');
+  const cssPath = path.join(__dirname, '..', 'ui.css');
+  const cssContent = fs.readFileSync(cssPath, 'utf8');
+
+  // 1. 소통 탭 서브탭 6종 완비 확인
+  assert.ok(indexContent.includes("{ key: 'feed', label: '피드'"), '소통 탭 피드 서브탭 누락');
+  assert.ok(indexContent.includes("{ key: 'group', label: '팀'"), '소통 탭 팀 서브탭 누락');
+  assert.ok(indexContent.includes("{ key: 'companion', label: '동반자'"), '소통 탭 동반자 서브탭 누락');
+  assert.ok(indexContent.includes("{ key: 'dm', label: 'DM'"), '소통 탭 DM 서브탭 누락');
+  assert.ok(indexContent.includes("{ key: 'manito', label: '마니또'"), '소통 탭 마니또 서브탭 누락');
+  assert.ok(indexContent.includes("{ key: 'share', label: '공유'"), '소통 탭 공유 서브탭 누락');
+
+  // 2. comm-subtabs-grid 클래스 배선 확인
+  assert.ok(indexContent.includes('comm-subtabs-grid'), '소통 탭 서브탭에 comm-subtabs-grid 클래스 누락');
+
+  // 3. CSS 3×2 그리드 스타일 확인
+  assert.ok(cssContent.includes('.comm-subtabs-grid'), '.comm-subtabs-grid CSS 클래스 누락');
+  assert.ok(cssContent.includes('.comm-subtabs-grid .comm-subtab'), '.comm-subtabs-grid 버튼 스타일 누락');
+});
+
+check('[검증 19/19] [#TASK-ES-195] 목표 탭 5종 서브탭 5열 그리드 단정화 및 통계 세그먼트 버튼 40px 정적 방화벽 검사', () => {
+  const indexPath = path.join(__dirname, '..', 'index.html');
+  const indexContent = fs.readFileSync(indexPath, 'utf8');
+  const cssPath = path.join(__dirname, '..', 'ui.css');
+  const cssContent = fs.readFileSync(cssPath, 'utf8');
+
+  // 1. goalsSubtabs 라벨 단정화 확인
+  assert.ok(indexContent.includes("['teamLinked','팀 연계']"), '목표 탭 팀 연계 라벨 단정화 누락');
+  assert.ok(indexContent.includes("['templateEncyclopedia','📖 템플릿']"), '목표 탭 템플릿 라벨 단정화 누락');
+
+  // 2. goals-subtabs-grid 클래스 배선 확인
+  assert.ok(indexContent.includes('goals-subtabs-grid'), 'goalsSubtabs에 goals-subtabs-grid 클래스 누락');
+
+  // 3. CSS 5열 그리드 스타일 확인
+  assert.ok(cssContent.includes('.goals-subtabs-grid'), '.goals-subtabs-grid CSS 클래스 누락');
+  assert.ok(cssContent.includes('grid-template-columns: repeat(5, 1fr)'), '5열 그리드 스타일 누락');
+
+  // 4. 통계 세그먼트 버튼(.s-seg-pill) 40px 터치 규격 확인
+  assert.ok(cssContent.includes('.s-seg-pill'), '.s-seg-pill 스타일 선언 누락');
+  assert.ok(cssContent.includes('min-height: 40px !important;'), '40px 터치 타겟 규격 누락');
+});
+
 console.log('\n================================================================');
 console.log(`🎯 검증 결과: 총 ${totalChecks}개 검사 중 ${passedChecks}개 통과 (${failures}개 실패)`);
 console.log('================================================================');

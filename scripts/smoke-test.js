@@ -4608,8 +4608,8 @@ check('compliance: [#TASK-ES-105] 추천템플릿 목표탭 이전·둘러보기
 check('compliance: [#TASK-ES-107] 팀 연계 개인목표 및 상호 달성도 체크·소통 시스템 검증', () => {
   const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 
-  // 1. 목표 탭 하위 서브탭에 '팀 연계 개인목표' 탑재 및 뷰 컨테이너 검증
-  assert.ok(indexHtml.includes("['teamLinked','팀 연계 개인목표']"), '서브탭에 팀 연계 개인목표 탑재');
+  // 1. 목표 탭 하위 서브탭에 '팀 연계' 탑재 및 뷰 컨테이너 검증
+  assert.ok(indexHtml.includes("['teamLinked','팀 연계']") || indexHtml.includes("['teamLinked','팀 연계 개인목표']"), '서브탭에 팀 연계 탑재');
   assert.ok(indexHtml.includes('id="teamLinkedGoalsView"'), 'teamLinkedGoalsView 독립 뷰 컨테이너 탑재');
   assert.ok(indexHtml.includes('js/team-linked-goals.js'), 'team-linked-goals.js 스크립트 로드 태그 탑재');
 
@@ -7220,7 +7220,7 @@ check('[#TASK-ES-187] 목표 탭 템플릿 백과사전 단일 서브탭 분리 
   assert.ok(!sanctuaryJs.includes("id=\"sTmplMarketBtn\""), '마운틴 트레일 카드 내 sTmplMarketBtn 제거 확인');
 
   // 2. 목표 서브탭에 templateEncyclopedia 정식 등록 확인
-  assert.ok(indexHtml.includes("['templateEncyclopedia','📖 템플릿 백과사전']"), 'goalsSubtabs 내 템플릿 백과사전 서브탭 등록 확인');
+  assert.ok(indexHtml.includes("['templateEncyclopedia','📖 템플릿']") || indexHtml.includes("['templateEncyclopedia','📖 템플릿 백과사전']"), 'goalsSubtabs 내 템플릿 서브탭 등록 확인');
 
   // 3. templateEncyclopediaView 슬롯 및 전용 렌더러 배선 확인
   assert.ok(indexHtml.includes('id="templateEncyclopediaView"'), 'templateEncyclopediaView 컨테이너 구비 확인');
@@ -7393,6 +7393,23 @@ check('[#TASK-ES-193] 집중 타이머 기록 탭 이전 및 기록 탭 6종 3×
 
   // 4. 타이머 렌더링 분기 확인
   assert.ok(sanctuaryJs.includes("engine.activeRecMode === 'timer'"), '기록 탭 타이머 카드 렌더링 분기 확인');
+});
+
+check('[#TASK-ES-194] 소통 탭 6종 3×2 그리드 조형 및 가로스크롤 은폐 해소 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 소통 탭 6종 서브탭 확인
+  assert.ok(indexHtml.includes("{ key: 'feed', label: '피드'"), '피드 서브탭 존재');
+  assert.ok(indexHtml.includes("{ key: 'group', label: '팀'"), '팀 서브탭 존재');
+  assert.ok(indexHtml.includes("{ key: 'companion', label: '동반자'"), '동반자 서브탭 존재');
+  assert.ok(indexHtml.includes("{ key: 'dm', label: 'DM'"), 'DM 서브탭 존재');
+  assert.ok(indexHtml.includes("{ key: 'manito', label: '마니또'"), '마니또 서브탭 존재');
+  assert.ok(indexHtml.includes("{ key: 'share', label: '공유'"), '공유 서브탭 존재');
+
+  // 2. comm-subtabs-grid 클래스 및 CSS 확인
+  assert.ok(indexHtml.includes('comm-subtabs-grid'), 'comm-subtabs-grid 클래스 배선 확인');
+  assert.ok(cssContent.includes('.comm-subtabs-grid'), '.comm-subtabs-grid CSS 선언 확인');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
