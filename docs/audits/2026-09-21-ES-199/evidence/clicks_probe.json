@@ -1,0 +1,242 @@
+{
+  "measured_at": "2026-09-20T21:24:07.113Z",
+  "verifier": "C:\\dev\\ourgoal-app\\scripts\\verify-all-clicks.js",
+  "extracted_fn_chars": 2234,
+  "blacklist_size": 23,
+  "js_dir_files": 27,
+  "buttons_total": 743,
+  "real_pass": 743,
+  "my_rule_breakdown_mismatch_vs_real": 0,
+  "buttons_inside_script_blocks": 597,
+  "buttons_outside_script_blocks": 146,
+  "regex_match_swallowing_multiple_button_tags": 0,
+  "multiSwallow_examples": [],
+  "first_passing_rule_count": {
+    "r1_onclick": 31,
+    "r2_id": 435,
+    "r4_data_rawwide": 262,
+    "r0_disabled": 14,
+    "r5_class": 1
+  },
+  "any_rule_hit_count": {
+    "r1_onclick": 31,
+    "r2_id": 457,
+    "r4_data_rawwide": 275,
+    "r5_class": 87,
+    "r0_disabled": 14
+  },
+  "rule2_id_pass_only_because_of_own_id_attribute": 17,
+  "rule2_self_match_is_sole_reason_for_pass": 0,
+  "rule2_self_match_sole_examples": [],
+  "rule5_auto_close_class_is_sole_reason": 0,
+  "rule5_auto_close_examples": [],
+  "rule4_data_attr_name_is_sole_reason": 184,
+  "rule4_examples": [
+    {
+      "attrs": [
+        "data-quicktpl"
+      ],
+      "text": "헬스"
+    },
+    {
+      "attrs": [
+        "data-quicktpl"
+      ],
+      "text": "크로스핏"
+    },
+    {
+      "attrs": [
+        "data-quicktpl"
+      ],
+      "text": "하이록스"
+    },
+    {
+      "attrs": [
+        "data-quicktpl"
+      ],
+      "text": "공부"
+    },
+    {
+      "attrs": [
+        "data-quicktpl"
+      ],
+      "text": "영업"
+    },
+    {
+      "attrs": [
+        "data-recslide"
+      ],
+      "text": "📊 실천추이"
+    },
+    {
+      "attrs": [
+        "data-recslide"
+      ],
+      "text": "🎯 밸런스"
+    },
+    {
+      "attrs": [
+        "data-recslide"
+      ],
+      "text": "🟩 히트맵"
+    },
+    {
+      "attrs": [
+        "data-recslide"
+      ],
+      "text": "🤖 AI리포트"
+    },
+    {
+      "attrs": [
+        "data-perioddays"
+      ],
+      "text": "최근 7일"
+    },
+    {
+      "attrs": [
+        "data-perioddays"
+      ],
+      "text": "최근 14일"
+    },
+    {
+      "attrs": [
+        "data-perioddays"
+      ],
+      "text": "최근 30일"
+    },
+    {
+      "attrs": [
+        "data-perioddays"
+      ],
+      "text": "이번 달"
+    },
+    {
+      "attrs": [
+        "data-notifmode"
+      ],
+      "text": "🔊+📳소리+진동"
+    },
+    {
+      "attrs": [
+        "data-notifmode"
+      ],
+      "text": "🔊소리만"
+    }
+  ],
+  "rule1_onclick_nonempty_is_sole_reason": 15,
+  "not_counted_by_verifier": {
+    "button_tags_in_ui_js": 0,
+    "button_tags_in_js_dir_total": 306,
+    "button_tags_in_js_dir_by_file": {
+      "auth-safety.js": 12,
+      "avatar-system.js": 11,
+      "calendar-attachment.js": 1,
+      "components.js": 4,
+      "customize.js": 2,
+      "goal-edit-ux.js": 4,
+      "helpful-reason.js": 4,
+      "notify-engine.js": 1,
+      "reactions.js": 9,
+      "records-stats.js": 2,
+      "sanctuary-v3-engine.js": 44,
+      "tab-guides.js": 1,
+      "team-invite-comm.js": 42,
+      "team-leader-check.js": 27,
+      "team-linked-goals.js": 19,
+      "team-visibility-levels.js": 27,
+      "theme-system.js": 2,
+      "time-tracker.js": 26,
+      "universal-stats.js": 62,
+      "viral-sharing.js": 6
+    },
+    "createElement_button_in_index_html": 2,
+    "createElement_button_in_js_dir_and_ui_js": 13,
+    "index_html_button_open_tags_total": 743,
+    "index_html_button_matches_by_verifier_regex": 743,
+    "index_html_onclick_attr_total": 33,
+    "index_html_role_button": 5,
+    "index_html_input_type_button": 0,
+    "index_html_onclick_on_button_open_tag": 31
+  },
+  "mutations": [
+    {
+      "name": "대조군: 공통 클래스만(원본 카나리와 동일 계열)",
+      "markup": "<button class=\"btn btn-primary\">죽은 버튼</button>",
+      "verifier_says_wired": false,
+      "sound_verifier_should_say": false,
+      "false_pass": false
+    },
+    {
+      "name": "A: 고유 id 만 있고 핸들러 없음",
+      "markup": "<button id=\"zzDeadCanaryBtn9471\" class=\"btn\">죽은 버튼</button>",
+      "verifier_says_wired": true,
+      "sound_verifier_should_say": false,
+      "false_pass": true
+    },
+    {
+      "name": "B: class=\"modal-close\" 핸들러 없음",
+      "markup": "<button class=\"modal-close\">죽은 닫기</button>",
+      "verifier_says_wired": true,
+      "sound_verifier_should_say": false,
+      "false_pass": true
+    },
+    {
+      "name": "C: 존재하지 않는 함수 onclick",
+      "markup": "<button onclick=\"__noSuchFunction9471__()\">죽은 버튼</button>",
+      "verifier_says_wired": true,
+      "sound_verifier_should_say": false,
+      "false_pass": true
+    },
+    {
+      "name": "D: 글자에 disabled 단어 포함",
+      "markup": "<button class=\"btn\">disabled 아님 그냥 글자</button>",
+      "verifier_says_wired": true,
+      "sound_verifier_should_say": false,
+      "false_pass": true
+    },
+    {
+      "name": "E: form 밖 type=\"submit\"",
+      "markup": "<button type=\"submit\" class=\"btn\">죽은 제출</button>",
+      "verifier_says_wired": true,
+      "sound_verifier_should_say": false,
+      "false_pass": true
+    },
+    {
+      "name": "F1: data-id 속성만",
+      "markup": "<button class=\"btn\" data-id=\"nope\">죽은 버튼</button>",
+      "verifier_says_wired": true,
+      "sound_verifier_should_say": false,
+      "false_pass": true
+    },
+    {
+      "name": "F2: data-action 에 없는 값",
+      "markup": "<button class=\"btn\" data-action=\"__no_such_action__\">죽은 버튼</button>",
+      "verifier_says_wired": false,
+      "sound_verifier_should_say": false,
+      "false_pass": false
+    },
+    {
+      "name": "F3: data-tab 에 없는 값",
+      "markup": "<button class=\"btn\" data-tab=\"__no_such_tab__\">죽은 버튼</button>",
+      "verifier_says_wired": true,
+      "sound_verifier_should_say": false,
+      "false_pass": true
+    },
+    {
+      "name": "F4: data-idx 속성만",
+      "markup": "<button class=\"btn\" data-idx=\"0\">죽은 버튼</button>",
+      "verifier_says_wired": false,
+      "sound_verifier_should_say": false,
+      "false_pass": false
+    },
+    {
+      "name": "G: 블랙리스트 밖 흔한 스타일 클래스",
+      "markup": "<button class=\"btn-block\">죽은 버튼</button>",
+      "verifier_says_wired": false,
+      "sound_verifier_should_say": false,
+      "false_pass": false
+    }
+  ],
+  "mutation_false_pass_count": 7,
+  "mutation_total_dead": 11
+}

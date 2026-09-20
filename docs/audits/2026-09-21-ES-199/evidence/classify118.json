@@ -1,0 +1,6630 @@
+{
+  "summary": {
+    "source": "C:\\dev\\ourgoal-app\\scripts\\verify-master-integrity.js",
+    "sourceLines": 618,
+    "totalChecks": 118,
+    "totalAsserts": 132,
+    "totalAtoms": 216,
+    "atomsByKind": {
+      "includes": 158,
+      "truthy": 32,
+      "regex": 21,
+      "exists": 4,
+      "length": 1
+    },
+    "atomsByClass": {
+      "A": 173,
+      "C": 37,
+      "B": 6
+    },
+    "negatedAtoms": 10,
+    "residueOkChecks": 118,
+    "byMechanism": {
+      "A": 104,
+      "C": 10,
+      "B": 4
+    },
+    "byPrimary": {
+      "A": 65,
+      "C": 10,
+      "F": 41,
+      "B": 2
+    },
+    "D_runtime": 0,
+    "E_external": 0,
+    "F1_vacuous": [
+      "SEC-05",
+      "SEC-09",
+      "SEC-10",
+      "SEC-11",
+      "PER-11",
+      "STO-09",
+      "STO-16"
+    ],
+    "F2_saturated_K20": [
+      "SOC-13",
+      "ACC-01",
+      "ACC-05",
+      "ACC-09",
+      "ACC-12",
+      "ACC-13",
+      "4VW-01",
+      "4VW-02",
+      "4VW-08",
+      "4VW-12",
+      "4VW-14",
+      "MOB-07",
+      "MOB-08",
+      "MOB-09",
+      "MOB-11",
+      "MOB-15",
+      "MOB-16",
+      "OFF-02",
+      "OFF-06",
+      "OFF-07",
+      "OFF-08",
+      "OFF-09",
+      "OFF-10",
+      "SEC-03",
+      "SEC-12",
+      "PER-03",
+      "PER-04",
+      "PER-05",
+      "PER-06",
+      "PER-07",
+      "PER-08",
+      "PER-12",
+      "STO-10",
+      "STO-13"
+    ],
+    "saturatedCountByK": {
+      "5": 55,
+      "20": 34,
+      "50": 21,
+      "100": 13
+    },
+    "distinctConditions": 113,
+    "duplicatedChecks": [
+      "MOB-01",
+      "MOB-02",
+      "MOB-03",
+      "MOB-04",
+      "MOB-07",
+      "MOB-08",
+      "MOB-09"
+    ],
+    "staticPassOnWorkingTree": 118,
+    "checksPassingWithZeroHitBranch": [
+      "SOC-02",
+      "SOC-11",
+      "ACC-04",
+      "ACC-08",
+      "ACC-09",
+      "ACC-11",
+      "4VW-01",
+      "4VW-02",
+      "4VW-04",
+      "4VW-12",
+      "MOB-10",
+      "PER-01",
+      "PER-03",
+      "STO-10"
+    ],
+    "requires": [
+      {
+        "line": 20,
+        "module": "fs"
+      },
+      {
+        "line": 21,
+        "module": "path"
+      },
+      {
+        "line": 22,
+        "module": "assert"
+      }
+    ],
+    "fsCalls": {
+      "readFileSync": 10,
+      "existsSync": 13,
+      "readdirSync": 1
+    },
+    "byDomainPrimary": {
+      "소셜 상호작용": {
+        "A": 12,
+        "C": 3,
+        "F": 1
+      },
+      "계정/영속성": {
+        "F": 5,
+        "A": 7,
+        "C": 2
+      },
+      "4대 뷰 동시 전파": {
+        "F": 5,
+        "A": 7,
+        "C": 2
+      },
+      "모바일 네이티브": {
+        "A": 11,
+        "F": 6,
+        "B": 1
+      },
+      "오프라인/네트워크": {
+        "A": 8,
+        "F": 6
+      },
+      "클라우드 보안/RLS": {
+        "A": 6,
+        "F": 6,
+        "C": 2
+      },
+      "성능/메모리": {
+        "A": 3,
+        "F": 8,
+        "C": 1
+      },
+      "스토어 규정/접근성": {
+        "A": 11,
+        "F": 4,
+        "B": 1
+      }
+    }
+  },
+  "checks": [
+    {
+      "id": "SOC-01",
+      "domain": "소셜 상호작용",
+      "theme": "피드 응원",
+      "severity": "P0",
+      "title": "피드 응원(data-react) 클릭 핸들러 및 리액션 엔진 배선 검증",
+      "lines": "78-81",
+      "assertLines": [
+        79,
+        80
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('data-react') ;; jsFiles['reactions.js'] && jsFiles['reactions.js'].includes('feed_cheers')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"data-react\"",
+          "hits": 7,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/reactions.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "js/reactions.js 에 문자열 \"feed_cheers\"",
+          "hits": 2,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 79,
+          "cond": "html.includes('data-react')",
+          "message": "피드 응원 data-react 속성이 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        },
+        {
+          "line": 80,
+          "cond": "jsFiles['reactions.js'] && jsFiles['reactions.js'].includes('feed_cheers')",
+          "message": "reactions.js에 feed_cheers 연동 로직이 정의되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SOC-02",
+      "domain": "소셜 상호작용",
+      "theme": "응원 멱등성",
+      "severity": "P1",
+      "title": "응원 고속 연타 방어 디바운스 및 쓰로틀링 로직 검증",
+      "lines": "83-85",
+      "assertLines": [
+        84
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [
+        "js/reactions.js 에 정규식 /debounce|throttle|_isReacting|isSubmitting/i"
+      ],
+      "condKey": "html.includes('data-react') || (jsFiles['reactions.js'] && /debounce|throttle|_isReacting|isSubmitting/i.test(jsFiles['reactions.js']))",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"data-react\"",
+          "hits": 7,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/reactions.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "js/reactions.js 에 정규식 /debounce|throttle|_isReacting|isSubmitting/i",
+          "hits": 0,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 84,
+          "cond": "html.includes('data-react') || (jsFiles['reactions.js'] && /debounce|throttle|_isReacting|isSubmitting/i.test(jsFiles['reactions.js']))",
+          "message": "반복 클릭 방어 플래그 또는 디바운스가 배선되어 있어야 합니다.",
+          "skeleton": "a[0] || (a[1] && a[2])",
+          "residue": "|| ( && )"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SOC-03",
+      "domain": "소셜 상호작용",
+      "theme": "팀 초대 딥링크",
+      "severity": "P0",
+      "title": "팀 목표 초대 링크 및 딥링크 프로토콜 배선 검증",
+      "lines": "87-90",
+      "assertLines": [
+        88,
+        89
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['team-invite-comm.js'] ;; /invite|share|clipboard/i.test(jsFiles['team-invite-comm.js'])",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/team-invite-comm.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "js/team-invite-comm.js 에 정규식 /invite|share|clipboard/i",
+          "hits": 109,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 88,
+          "cond": "jsFiles['team-invite-comm.js']",
+          "message": "team-invite-comm.js 모듈이 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        },
+        {
+          "line": 89,
+          "cond": "/invite|share|clipboard/i.test(jsFiles['team-invite-comm.js'])",
+          "message": "초대 및 공유 로직이 정의되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SOC-04",
+      "domain": "소셜 상호작용",
+      "theme": "팀원 합류",
+      "severity": "P1",
+      "title": "팀 목표 멤버십 및 실시간 브로드캐스트 배선 검증",
+      "lines": "92-95",
+      "assertLines": [
+        93,
+        94
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['team-linked-goals.js'] ;; html.includes('team_pings') || html.includes('team_comments') || jsFiles['team-linked-goals.js'].includes('groupState')",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/team-linked-goals.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"team_pings\"",
+          "hits": 19,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"team_comments\"",
+          "hits": 7,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "js/team-linked-goals.js 에 문자열 \"groupState\"",
+          "hits": 9,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 93,
+          "cond": "jsFiles['team-linked-goals.js']",
+          "message": "team-linked-goals.js 모듈이 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        },
+        {
+          "line": 94,
+          "cond": "html.includes('team_pings') || html.includes('team_comments') || jsFiles['team-linked-goals.js'].includes('groupState')",
+          "message": "팀 멤버십 DB 테이블이 참조되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1] || a[2]",
+          "residue": "|| ||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SOC-05",
+      "domain": "소셜 상호작용",
+      "theme": "팀 달성률 롤업",
+      "severity": "P0",
+      "title": "팀원 체크인 시 팀 전체 달성률(%) 롤업 계산 로직 검증",
+      "lines": "97-100",
+      "assertLines": [
+        98,
+        99
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['team-leader-check.js'] || jsFiles['team-visibility-levels.js'] ;; /compute|progress|rollup|percent|pct/i.test(jsFiles['team-leader-check.js'] + (jsFiles['team-visibility-levels.js'] || ''))",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/team-leader-check.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/team-visibility-levels.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "js/team-leader-check.js+js/team-visibility-levels.js 에 정규식 /compute|progress|rollup|percent|pct/i",
+          "hits": 46,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 98,
+          "cond": "jsFiles['team-leader-check.js'] || jsFiles['team-visibility-levels.js']",
+          "message": "팀 목표 검증 모듈이 존재해야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        },
+        {
+          "line": 99,
+          "cond": "/compute|progress|rollup|percent|pct/i.test(jsFiles['team-leader-check.js'] + (jsFiles['team-visibility-levels.js'] || ''))",
+          "message": "달성률 계산 로직이 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SOC-06",
+      "domain": "소셜 상호작용",
+      "theme": "방장 권한 제어",
+      "severity": "P0",
+      "title": "방장(Owner) 전용 권한 분기 및 일반 멤버 제어 검증",
+      "lines": "102-104",
+      "assertLines": [
+        103
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['team-leader-check.js'] && /owner|isLeader|isOwner|leader/i.test(jsFiles['team-leader-check.js'])",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/team-leader-check.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "js/team-leader-check.js 에 정규식 /owner|isLeader|isOwner|leader/i",
+          "hits": 58,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 103,
+          "cond": "jsFiles['team-leader-check.js'] && /owner|isLeader|isOwner|leader/i.test(jsFiles['team-leader-check.js'])",
+          "message": "방장 식별 및 권한 제어 로직이 정의되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SOC-07",
+      "domain": "소셜 상호작용",
+      "theme": "방장 위임/탈퇴",
+      "severity": "P1",
+      "title": "방장 탈퇴 시 차순위 승계 또는 팀 보호 로직 검증",
+      "lines": "106-108",
+      "assertLines": [
+        107
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "/leave|withdraw|delegate|owner/i.test(jsFiles['team-leader-check.js'] + (jsFiles['team-linked-goals.js'] || ''))",
+      "atoms": [
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "js/team-leader-check.js+js/team-linked-goals.js 에 정규식 /leave|withdraw|delegate|owner/i",
+          "hits": 5,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 107,
+          "cond": "/leave|withdraw|delegate|owner/i.test(jsFiles['team-leader-check.js'] + (jsFiles['team-linked-goals.js'] || ''))",
+          "message": "팀 탈퇴 및 권한 처리 로직이 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SOC-08",
+      "domain": "소셜 상호작용",
+      "theme": "댓글 실시간 알림",
+      "severity": "P1",
+      "title": "소셜 코멘트 작성 시 푸시 디스패치 및 알림 엔진 배선",
+      "lines": "110-113",
+      "assertLines": [
+        111,
+        112
+      ],
+      "mechanism": "C",
+      "primary": "C",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['notify-engine.js'] ;; fs.existsSync(path.join(ROOT_DIR, 'api', 'push-dispatch.js'))",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/notify-engine.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "exists",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재 api/push-dispatch.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 111,
+          "cond": "jsFiles['notify-engine.js']",
+          "message": "notify-engine.js 모듈이 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        },
+        {
+          "line": 112,
+          "cond": "fs.existsSync(path.join(ROOT_DIR, 'api', 'push-dispatch.js'))",
+          "message": "api/push-dispatch.js 엔드포인트가 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SOC-09",
+      "domain": "소셜 상호작용",
+      "theme": "댓글 트리 무결성",
+      "severity": "P1",
+      "title": "댓글 삭제 시 대댓글 보존 및 마스킹 처리 검증",
+      "lines": "115-118",
+      "assertLines": [
+        116,
+        117
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('comments') || html.includes('cmt') ;; /삭제된 댓글|is_deleted|deleted_at|deleted/i.test(html)",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"comments\"",
+          "hits": 31,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"cmt\"",
+          "hits": 11,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 정규식 /삭제된 댓글|is_deleted|deleted_at|deleted/i",
+          "hits": 8,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 116,
+          "cond": "html.includes('comments') || html.includes('cmt')",
+          "message": "댓글 처리 로직이 존재해야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        },
+        {
+          "line": 117,
+          "cond": "/삭제된 댓글|is_deleted|deleted_at|deleted/i.test(html)",
+          "message": "삭제 댓글 마스킹 또는 삭제 플래그 처리가 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SOC-10",
+      "domain": "소셜 상호작용",
+      "theme": "프로필/아바타",
+      "severity": "P2",
+      "title": "320종 아바타 시스템 및 프로필 모달 렌더링 검증",
+      "lines": "120-122",
+      "assertLines": [
+        121
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['avatar-system.js'] && jsFiles['avatar-system.js'].includes('320')",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/avatar-system.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "js/avatar-system.js 에 문자열 \"320\"",
+          "hits": 69,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 121,
+          "cond": "jsFiles['avatar-system.js'] && jsFiles['avatar-system.js'].includes('320')",
+          "message": "avatar-system.js에 320종 아바타 규격이 명시되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SOC-11",
+      "domain": "소셜 상호작용",
+      "theme": "불량 유저 신고",
+      "severity": "P0",
+      "title": "UGC 불량 사용자 및 콘텐츠 신고 기능(content_reports) 배선 검증",
+      "lines": "124-127",
+      "assertLines": [
+        125,
+        126
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [
+        "api/feedback.js 에 문자열 \"content_reports\""
+      ],
+      "condKey": "html.includes('data-reportpost') || html.includes('data-reportcmt') || html.includes('openItemReportModal') ;; feedbackApi.includes('content_reports') || html.includes('content_reports') || jsFiles['content-moderation.js']",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"data-reportpost\"",
+          "hits": 3,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"data-reportcmt\"",
+          "hits": 2,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"openItemReportModal\"",
+          "hits": 6,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "api/feedback.js 에 문자열 \"content_reports\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"content_reports\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/content-moderation.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 125,
+          "cond": "html.includes('data-reportpost') || html.includes('data-reportcmt') || html.includes('openItemReportModal')",
+          "message": "신고 트리거 버튼이 존재해야 합니다.",
+          "skeleton": "a[0] || a[1] || a[2]",
+          "residue": "|| ||"
+        },
+        {
+          "line": 126,
+          "cond": "feedbackApi.includes('content_reports') || html.includes('content_reports') || jsFiles['content-moderation.js']",
+          "message": "신고 처리 DB 및 모더레이션 엔진이 배선되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1] || a[2]",
+          "residue": "|| ||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SOC-12",
+      "domain": "소셜 상호작용",
+      "theme": "유저 즉각 차단",
+      "severity": "P0",
+      "title": "불량 유저 차단(Block) 및 피드 영구 숨김 처리 검증",
+      "lines": "129-132",
+      "assertLines": [
+        130,
+        131
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('data-blockuser') ;; html.includes('차단한 사용자') || html.includes('blockedList')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"data-blockuser\"",
+          "hits": 5,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"차단한 사용자\"",
+          "hits": 3,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"blockedList\"",
+          "hits": 9,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 130,
+          "cond": "html.includes('data-blockuser')",
+          "message": "유저 차단 액션 버튼이 배선되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        },
+        {
+          "line": 131,
+          "cond": "html.includes('차단한 사용자') || html.includes('blockedList')",
+          "message": "차단 사용자 목록 관리 및 필터링이 구현되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SOC-13",
+      "domain": "소셜 상호작용",
+      "theme": "유저 멘션 태깅",
+      "severity": "P2",
+      "title": "소통 피드 내 유저 멘션(@) 및 하이라이트 배선 검증",
+      "lines": "134-136",
+      "assertLines": [
+        135
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": true
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "/@|mention|displayName/i.test(html)",
+      "atoms": [
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 정규식 /@|mention|displayName/i",
+          "hits": 130,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 135,
+          "cond": "/@|mention|displayName/i.test(html)",
+          "message": "유저 멘션 또는 식별자 태깅 처리가 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SOC-14",
+      "domain": "소셜 상호작용",
+      "theme": "템플릿 크레딧",
+      "severity": "P2",
+      "title": "템플릿 복제 시 원작자 크레딧 및 통계 연동 검증",
+      "lines": "138-140",
+      "assertLines": [
+        139
+      ],
+      "mechanism": "C",
+      "primary": "C",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['template-credit.js'] || jsFiles['credits.js']",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/template-credit.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/credits.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 139,
+          "cond": "jsFiles['template-credit.js'] || jsFiles['credits.js']",
+          "message": "템플릿 크레딧 모듈이 존재해야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SOC-15",
+      "domain": "소셜 상호작용",
+      "theme": "도움돼요 투표",
+      "severity": "P2",
+      "title": "도움돼요(Helpful) 투표 및 사유 분석 엔진 검증",
+      "lines": "142-144",
+      "assertLines": [
+        143
+      ],
+      "mechanism": "C",
+      "primary": "C",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['helpful-reason.js'] || jsFiles['top-helpful.js']",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/helpful-reason.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/top-helpful.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 143,
+          "cond": "jsFiles['helpful-reason.js'] || jsFiles['top-helpful.js']",
+          "message": "helpful-reason.js 또는 top-helpful.js 모듈이 존재해야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SOC-16",
+      "domain": "소셜 상호작용",
+      "theme": "바이럴 공유 카드",
+      "severity": "P1",
+      "title": "성취 카드 Canvas 렌더링 및 웹 공유 API 배선 검증",
+      "lines": "146-149",
+      "assertLines": [
+        147,
+        148
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['viral-sharing.js'] ;; jsFiles['viral-sharing.js'].includes('canvas') || jsFiles['viral-sharing.js'].includes('getContext')",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/viral-sharing.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "js/viral-sharing.js 에 문자열 \"canvas\"",
+          "hits": 6,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "js/viral-sharing.js 에 문자열 \"getContext\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 147,
+          "cond": "jsFiles['viral-sharing.js']",
+          "message": "viral-sharing.js 모듈이 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        },
+        {
+          "line": 148,
+          "cond": "jsFiles['viral-sharing.js'].includes('canvas') || jsFiles['viral-sharing.js'].includes('getContext')",
+          "message": "Canvas 그래픽 합성 엔진이 구현되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "ACC-01",
+      "domain": "계정/영속성",
+      "theme": "익명 모드 진입",
+      "severity": "P0",
+      "title": "게스트 모드 로컬 스토리지 초기화 및 기본 데이터 보장",
+      "lines": "154-156",
+      "assertLines": [
+        155
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('ourgoal_guest_profile') || html.includes('guest')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"ourgoal_guest_profile\"",
+          "hits": 15,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"guest\"",
+          "hits": 66,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 155,
+          "cond": "html.includes('ourgoal_guest_profile') || html.includes('guest')",
+          "message": "게스트 프로필 초기화 키가 존재해야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "ACC-02",
+      "domain": "계정/영속성",
+      "theme": "계정 병합 (Merge)",
+      "severity": "P0",
+      "title": "게스트 데이터의 소셜 로그인 클라우드 자동 이관 무결성",
+      "lines": "158-160",
+      "assertLines": [
+        159
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "/ourgoal_guest_profile|migrateGuestData|mergeGuestData|guestGoals/i.test(html)",
+      "atoms": [
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 정규식 /ourgoal_guest_profile|migrateGuestData|mergeGuestData|guestGoals/i",
+          "hits": 15,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 159,
+          "cond": "/ourgoal_guest_profile|migrateGuestData|mergeGuestData|guestGoals/i.test(html)",
+          "message": "게스트 데이터 마이그레이션 루틴이 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "ACC-03",
+      "domain": "계정/영속성",
+      "theme": "토큰 자동 갱신",
+      "severity": "P0",
+      "title": "Supabase Auth onAuthStateChange 토큰 세션 갱신 리스너 검증",
+      "lines": "162-164",
+      "assertLines": [
+        163
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('onAuthStateChange')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"onAuthStateChange\"",
+          "hits": 2,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 163,
+          "cond": "html.includes('onAuthStateChange')",
+          "message": "onAuthStateChange 이벤트 리스너가 배선되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "ACC-04",
+      "domain": "계정/영속성",
+      "theme": "로그아웃 캐시 소거",
+      "severity": "P0",
+      "title": "로그아웃 시 민감 세션 및 로컬 사용자 캐시 완전 파기 검증",
+      "lines": "166-169",
+      "assertLines": [
+        167,
+        168
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [
+        "index.html 에 문자열 \"localStorage.clear\""
+      ],
+      "condKey": "html.includes('signOut') || html.includes('auth.signOut') ;; html.includes('localStorage.removeItem') || html.includes('localStorage.clear') || jsFiles['auth-safety.js']",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"signOut\"",
+          "hits": 10,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"auth.signOut\"",
+          "hits": 9,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"localStorage.removeItem\"",
+          "hits": 11,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"localStorage.clear\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/auth-safety.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 167,
+          "cond": "html.includes('signOut') || html.includes('auth.signOut')",
+          "message": "로그아웃 실행 함수가 존재해야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        },
+        {
+          "line": 168,
+          "cond": "html.includes('localStorage.removeItem') || html.includes('localStorage.clear') || jsFiles['auth-safety.js']",
+          "message": "로그아웃 시 로컬 캐시 파기 처리가 존재해야 합니다.",
+          "skeleton": "a[0] || a[1] || a[2]",
+          "residue": "|| ||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "ACC-05",
+      "domain": "계정/영속성",
+      "theme": "계정 간 교차 오염",
+      "severity": "P0",
+      "title": "사용자별 스토리지 키 분리(ourgoal_settings_userId 등) 검증",
+      "lines": "171-173",
+      "assertLines": [
+        172
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('ourgoal_settings_') || html.includes('uidVal')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"ourgoal_settings_\"",
+          "hits": 4,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"uidVal\"",
+          "hits": 37,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 172,
+          "cond": "html.includes('ourgoal_settings_') || html.includes('uidVal')",
+          "message": "유저 ID 기반 격리 스토리지 키가 적용되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "ACC-06",
+      "domain": "계정/영속성",
+      "theme": "회원 탈퇴 API",
+      "severity": "P0",
+      "title": "api/withdraw.js CASCADE 데이터 영구 파기 및 탈퇴 로직 검증",
+      "lines": "175-177",
+      "assertLines": [
+        176
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "withdrawApi.includes('deleteUser') && withdrawApi.includes('checkins')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "api/withdraw.js 에 문자열 \"deleteUser\"",
+          "hits": 2,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "api/withdraw.js 에 문자열 \"checkins\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 176,
+          "cond": "withdrawApi.includes('deleteUser') && withdrawApi.includes('checkins')",
+          "message": "api/withdraw.js에 회원 탈퇴 및 관련 테이블 삭제 로직이 완비되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "ACC-07",
+      "domain": "계정/영속성",
+      "theme": "탈퇴 후 라우팅",
+      "severity": "P0",
+      "title": "회원 탈퇴 완료 후 세션 초기화 및 로그인/온보딩 강제 이동",
+      "lines": "179-181",
+      "assertLines": [
+        180
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('withdrawConfirmBtn') && html.includes('signOut')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"withdrawConfirmBtn\"",
+          "hits": 3,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"signOut\"",
+          "hits": 10,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 180,
+          "cond": "html.includes('withdrawConfirmBtn') && html.includes('signOut')",
+          "message": "탈퇴 확정 버튼 및 세션 파기 후 이동 배선이 연결되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "ACC-08",
+      "domain": "계정/영속성",
+      "theme": "다중 기기 동시성",
+      "severity": "P1",
+      "title": "Supabase Realtime 변경 감지 및 화면 상태 갱신 루틴",
+      "lines": "183-185",
+      "assertLines": [
+        184
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [
+        "index.html 에 문자열 \"realtime\""
+      ],
+      "condKey": "html.includes('realtime') || html.includes('channel(') || html.includes('onAuthStateChange')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"realtime\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"channel(\"",
+          "hits": 4,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"onAuthStateChange\"",
+          "hits": 2,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 184,
+          "cond": "html.includes('realtime') || html.includes('channel(') || html.includes('onAuthStateChange')",
+          "message": "실시간 채널 또는 세션 변경 리스너가 존재해야 합니다.",
+          "skeleton": "a[0] || a[1] || a[2]",
+          "residue": "|| ||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "ACC-09",
+      "domain": "계정/영속성",
+      "theme": "전체 JSON 백업",
+      "severity": "P1",
+      "title": "데이터 전체 JSON 내보내기(Export) 함수 구현 검증",
+      "lines": "187-189",
+      "assertLines": [
+        188
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [
+        "index.html 에 문자열 \"exportData\""
+      ],
+      "condKey": "html.includes('application/json') || html.includes('exportData') || jsFiles['universal-stats.js'].includes('export')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"application/json\"",
+          "hits": 29,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"exportData\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "js/universal-stats.js 에 문자열 \"export\"",
+          "hits": 12,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 188,
+          "cond": "html.includes('application/json') || html.includes('exportData') || jsFiles['universal-stats.js'].includes('export')",
+          "message": "JSON 데이터 백업 내보내기 로직이 구현되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1] || a[2]",
+          "residue": "|| ||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "ACC-10",
+      "domain": "계정/영속성",
+      "theme": "JSON 복원 무결성",
+      "severity": "P1",
+      "title": "JSON 데이터 복원 및 스키마 유효성 검증 루틴",
+      "lines": "191-193",
+      "assertLines": [
+        192
+      ],
+      "mechanism": "C",
+      "primary": "C",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "fs.existsSync(path.join(ROOT_DIR, 'scripts', 'test-universal-import.js'))",
+      "atoms": [
+        {
+          "kind": "exists",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재 scripts/test-universal-import.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 192,
+          "cond": "fs.existsSync(path.join(ROOT_DIR, 'scripts', 'test-universal-import.js'))",
+          "message": "scripts/test-universal-import.js 검증 스크립트가 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "ACC-11",
+      "domain": "계정/영속성",
+      "theme": "CSV 내보내기",
+      "severity": "P1",
+      "title": "CSV 내보내기 시 UTF-8 with BOM(\\\\uFEFF) 인코딩 적용 검증",
+      "lines": "195-197",
+      "assertLines": [
+        196
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [
+        "index.html 에 문자열 \"%EF%BB%BF\""
+      ],
+      "condKey": "html.includes('\\\\uFEFF') || html.includes('%EF%BB%BF') || /charset=utf-8/i.test(html)",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"\\\\uFEFF\"",
+          "hits": 4,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"%EF%BB%BF\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 정규식 /charset=utf-8/i",
+          "hits": 7,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 196,
+          "cond": "html.includes('\\\\uFEFF') || html.includes('%EF%BB%BF') || /charset=utf-8/i.test(html)",
+          "message": "엑셀 한글 깨짐 방지 UTF-8 BOM이 적용되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1] || a[2]",
+          "residue": "|| ||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "ACC-12",
+      "domain": "계정/영속성",
+      "theme": "비정상 종료 복구",
+      "severity": "P2",
+      "title": "임시 저장소(Draft) 또는 삼중 백업 복구 루틴 검증",
+      "lines": "199-201",
+      "assertLines": [
+        200
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('ourgoal_goals_backup_') || html.includes('backup')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"ourgoal_goals_backup_\"",
+          "hits": 9,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"backup\"",
+          "hits": 50,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 200,
+          "cond": "html.includes('ourgoal_goals_backup_') || html.includes('backup')",
+          "message": "삼중 백업 키가 존재해야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "ACC-13",
+      "domain": "계정/영속성",
+      "theme": "로컬 쿼터 오버플로",
+      "severity": "P1",
+      "title": "QuotaExceededError 발생 방지 및 가비지 컬렉션/예외 처리 검증",
+      "lines": "203-205",
+      "assertLines": [
+        204
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "/try\\s*\\{[\\s\\S]*?localStorage\\.setItem[\\s\\S]*?\\}\\s*catch/i.test(html)",
+      "atoms": [
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 정규식 /try\\s*\\{[\\s\\S]*?localStorage\\.setItem[\\s\\S]*?\\}\\s*catch/i",
+          "hits": 25,
+          "capped": true
+        }
+      ],
+      "asserts": [
+        {
+          "line": 204,
+          "cond": "/try\\s*\\{[\\s\\S]*?localStorage\\.setItem[\\s\\S]*?\\}\\s*catch/i.test(html)",
+          "message": "localStorage 저장 시 try-catch 예외 방어가 적용되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "ACC-14",
+      "domain": "계정/영속성",
+      "theme": "테마/커스텀 영속성",
+      "severity": "P1",
+      "title": "테마 및 아바타 커스텀 설정값 영속 저장 검증",
+      "lines": "207-209",
+      "assertLines": [
+        208
+      ],
+      "mechanism": "C",
+      "primary": "C",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['theme-system.js'] && jsFiles['avatar-system.js']",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/theme-system.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/avatar-system.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 208,
+          "cond": "jsFiles['theme-system.js'] && jsFiles['avatar-system.js']",
+          "message": "theme-system.js 및 avatar-system.js 모듈이 존재해야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "4VW-01",
+      "domain": "4대 뷰 동시 전파",
+      "theme": "목표 -> 캘린더",
+      "severity": "P0",
+      "title": "목표 완료 체크인 시 캘린더 히트맵 잔디 승급 배선 검증",
+      "lines": "214-216",
+      "assertLines": [
+        215
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [
+        "index.html 에 문자열 \"updateCalendarState\""
+      ],
+      "condKey": "html.includes('updateCalendarState') || html.includes('renderCalendarScreen') || html.includes('renderCalendar')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"updateCalendarState\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"renderCalendarScreen\"",
+          "hits": 45,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"renderCalendar\"",
+          "hits": 47,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 215,
+          "cond": "html.includes('updateCalendarState') || html.includes('renderCalendarScreen') || html.includes('renderCalendar')",
+          "message": "캘린더 화면 갱신 함수가 배선되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1] || a[2]",
+          "residue": "|| ||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "4VW-02",
+      "domain": "4대 뷰 동시 전파",
+      "theme": "목표 -> 기록",
+      "severity": "P0",
+      "title": "목표 완료 체크인 시 기록 타임라인 체크인 카드 자동 생성 배선",
+      "lines": "218-220",
+      "assertLines": [
+        219
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [
+        "index.html 에 문자열 \"renderRecordsTimeline\""
+      ],
+      "condKey": "html.includes('renderRecordsTimeline') || html.includes('renderRecordsScreen')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"renderRecordsTimeline\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"renderRecordsScreen\"",
+          "hits": 51,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 219,
+          "cond": "html.includes('renderRecordsTimeline') || html.includes('renderRecordsScreen')",
+          "message": "기록 탭 렌더링 함수가 배선되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "4VW-03",
+      "domain": "4대 뷰 동시 전파",
+      "theme": "목표 -> 통계",
+      "severity": "P0",
+      "title": "목표 체크인 시 연속 달성일수(Streak) 및 달성률 즉시 재계산",
+      "lines": "222-224",
+      "assertLines": [
+        223
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['streaks.js'] && html.includes('computeStreakDays')",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/streaks.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"computeStreakDays\"",
+          "hits": 24,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 223,
+          "cond": "jsFiles['streaks.js'] && html.includes('computeStreakDays')",
+          "message": "streaks.js 및 computeStreakDays 함수가 연동되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "4VW-04",
+      "domain": "4대 뷰 동시 전파",
+      "theme": "목표 -> 잠금화면",
+      "severity": "P1",
+      "title": "목표 체크인 시 잠금화면 모달 및 상단 HUD 게이지 전파",
+      "lines": "226-228",
+      "assertLines": [
+        227
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [
+        "index.html 에 문자열 \"renderLockscreenModal\""
+      ],
+      "condKey": "html.includes('renderLockscreenModal') || html.includes('dispatchFullViewPropagation')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"renderLockscreenModal\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"dispatchFullViewPropagation\"",
+          "hits": 13,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 227,
+          "cond": "html.includes('renderLockscreenModal') || html.includes('dispatchFullViewPropagation')",
+          "message": "전역 전파 디스패처에 잠금화면/HUD 연동이 구현되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "4VW-05",
+      "domain": "4대 뷰 동시 전파",
+      "theme": "캘린더 -> 전 뷰",
+      "severity": "P0",
+      "title": "캘린더에서 체크인 취소/삭제 시 목표/기록/통계 역방향 동시 갱신",
+      "lines": "230-232",
+      "assertLines": [
+        231
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('dispatchFullViewPropagation')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"dispatchFullViewPropagation\"",
+          "hits": 13,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 231,
+          "cond": "html.includes('dispatchFullViewPropagation')",
+          "message": "4대 뷰 동시 전파 디스패처가 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "4VW-06",
+      "domain": "4대 뷰 동시 전파",
+      "theme": "기록 -> 전 뷰",
+      "severity": "P1",
+      "title": "기록 탭에서 사진/메모 수정 시 캘린더 모달 동기화 배선",
+      "lines": "234-236",
+      "assertLines": [
+        235
+      ],
+      "mechanism": "C",
+      "primary": "C",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['calendar-attachment.js']",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/calendar-attachment.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 235,
+          "cond": "jsFiles['calendar-attachment.js']",
+          "message": "calendar-attachment.js 모듈이 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "4VW-07",
+      "domain": "4대 뷰 동시 전파",
+      "theme": "메타데이터 갱신",
+      "severity": "P0",
+      "title": "목표 제목/카테고리 수정 시 4대 뷰 내 해당 목표 일괄 갱신",
+      "lines": "238-240",
+      "assertLines": [
+        239
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['goal-edit-ux.js'] && html.includes('saveProfile')",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/goal-edit-ux.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"saveProfile\"",
+          "hits": 293,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 239,
+          "cond": "jsFiles['goal-edit-ux.js'] && html.includes('saveProfile')",
+          "message": "goal-edit-ux.js 및 saveProfile이 연동되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "4VW-08",
+      "domain": "4대 뷰 동시 전파",
+      "theme": "고아 객체 방지",
+      "severity": "P0",
+      "title": "목표 삭제 시 캘린더/통계/기록에서 안전한 참조 제거(Cascade) 처리",
+      "lines": "242-244",
+      "assertLines": [
+        243
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": true
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "/trash|delete|filter/i.test(html)",
+      "atoms": [
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 정규식 /trash|delete|filter/i",
+          "hits": 534,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 243,
+          "cond": "/trash|delete|filter/i.test(html)",
+          "message": "삭제 목표에 대한 안전 필터링이 구현되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "4VW-09",
+      "domain": "4대 뷰 동시 전파",
+      "theme": "타이머 백그라운드",
+      "severity": "P0",
+      "title": "타임 트래커 가동 중 탭 전환 시 타이머 중단 없는 지속 카운팅",
+      "lines": "246-248",
+      "assertLines": [
+        247
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['time-tracker.js'] && /setInterval|Date\\.now/i.test(jsFiles['time-tracker.js'])",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/time-tracker.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "js/time-tracker.js 에 정규식 /setInterval|Date\\.now/i",
+          "hits": 8,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 247,
+          "cond": "jsFiles['time-tracker.js'] && /setInterval|Date\\.now/i.test(jsFiles['time-tracker.js'])",
+          "message": "time-tracker.js에 절대 시간 기반 카운팅이 구현되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "4VW-10",
+      "domain": "4대 뷰 동시 전파",
+      "theme": "타이머 완료 전파",
+      "severity": "P1",
+      "title": "타이머 종료 시 기록 탭 타임라인 및 통계 탭 누적 합산 전파",
+      "lines": "250-252",
+      "assertLines": [
+        251
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['time-tracker.js'] && /save|record|finish/i.test(jsFiles['time-tracker.js'])",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/time-tracker.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "js/time-tracker.js 에 정규식 /save|record|finish/i",
+          "hits": 54,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 251,
+          "cond": "jsFiles['time-tracker.js'] && /save|record|finish/i.test(jsFiles['time-tracker.js'])",
+          "message": "타이머 저장 완료 루틴이 정의되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "4VW-11",
+      "domain": "4대 뷰 동시 전파",
+      "theme": "성역 모드 전파",
+      "severity": "P1",
+      "title": "성역(Sanctuary v3) 모드 전환 시 4대 뷰 상태 동기화 검증",
+      "lines": "254-256",
+      "assertLines": [
+        255
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['sanctuary-v3-engine.js'] && html.includes('OurgoalSanctuaryV3')",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/sanctuary-v3-engine.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"OurgoalSanctuaryV3\"",
+          "hits": 24,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 255,
+          "cond": "jsFiles['sanctuary-v3-engine.js'] && html.includes('OurgoalSanctuaryV3')",
+          "message": "sanctuary-v3-engine.js가 index.html과 통합되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "4VW-12",
+      "domain": "4대 뷰 동시 전파",
+      "theme": "주간/일간 전환",
+      "severity": "P1",
+      "title": "캘린더 주간/월간 모드 토글 시 포커스 날짜 보존 검증",
+      "lines": "258-260",
+      "assertLines": [
+        259
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [
+        "index.html 에 문자열 \"renderCalendarMode\""
+      ],
+      "condKey": "html.includes('renderCalendarMode') || html.includes('renderCalendarScreen')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"renderCalendarMode\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"renderCalendarScreen\"",
+          "hits": 45,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 259,
+          "cond": "html.includes('renderCalendarMode') || html.includes('renderCalendarScreen')",
+          "message": "캘린더 모드 렌더링이 존재해야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "4VW-13",
+      "domain": "4대 뷰 동시 전파",
+      "theme": "AI 설계 목표 전파",
+      "severity": "P1",
+      "title": "AI 추천 목표 승인 시 목표 탭 및 4대 뷰 즉시 슬롯 배치",
+      "lines": "262-264",
+      "assertLines": [
+        263
+      ],
+      "mechanism": "C",
+      "primary": "C",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "fs.existsSync(path.join(ROOT_DIR, 'api', 'goalagent.js')) || jsFiles['goal-templates-registry.js']",
+      "atoms": [
+        {
+          "kind": "exists",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재 api/goalagent.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/goal-templates-registry.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 263,
+          "cond": "fs.existsSync(path.join(ROOT_DIR, 'api', 'goalagent.js')) || jsFiles['goal-templates-registry.js']",
+          "message": "AI 목표 에이전트 또는 레지스트리가 존재해야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "4VW-14",
+      "domain": "4대 뷰 동시 전파",
+      "theme": "FOUC 제로",
+      "severity": "P1",
+      "title": "탭 전환 시 display 제어를 통한 화면 깜빡임 제로 검증",
+      "lines": "266-268",
+      "assertLines": [
+        267
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('setTab')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"setTab\"",
+          "hits": 40,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 267,
+          "cond": "html.includes('setTab')",
+          "message": "setTab 네비게이션 함수가 정의되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "MOB-01",
+      "domain": "모바일 네이티브",
+      "theme": "물리 백버튼 (단일)",
+      "severity": "P0",
+      "title": "모달 오픈 시 하드웨어 뒤로가기 입력으로 모달만 닫힘 검증",
+      "lines": "273-275",
+      "assertLines": [
+        274
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('handleHardwareBackButton')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"handleHardwareBackButton\"",
+          "hits": 6,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 274,
+          "cond": "html.includes('handleHardwareBackButton')",
+          "message": "handleHardwareBackButton 하드웨어 백버튼 핸들러가 구현되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": [
+        "MOB-02",
+        "MOB-03",
+        "MOB-04"
+      ]
+    },
+    {
+      "id": "MOB-02",
+      "domain": "모바일 네이티브",
+      "theme": "물리 백버튼 (중첩)",
+      "severity": "P0",
+      "title": "중첩 모달/백드롭 상태에서 최상위 팝업 순차적 닫힘 검증",
+      "lines": "277-279",
+      "assertLines": [
+        278
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('handleHardwareBackButton')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"handleHardwareBackButton\"",
+          "hits": 6,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 278,
+          "cond": "html.includes('handleHardwareBackButton')",
+          "message": "모달 스택 순차 닫힘 처리가 배선되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": [
+        "MOB-01",
+        "MOB-03",
+        "MOB-04"
+      ]
+    },
+    {
+      "id": "MOB-03",
+      "domain": "모바일 네이티브",
+      "theme": "물리 백버튼 (드로어)",
+      "severity": "P1",
+      "title": "사이드 드로어 열림 상태에서 뒤로가기 입력 시 드로어 닫힘",
+      "lines": "281-283",
+      "assertLines": [
+        282
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('handleHardwareBackButton')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"handleHardwareBackButton\"",
+          "hits": 6,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 282,
+          "cond": "html.includes('handleHardwareBackButton')",
+          "message": "드로어 닫힘 처리가 배선되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": [
+        "MOB-01",
+        "MOB-02",
+        "MOB-04"
+      ]
+    },
+    {
+      "id": "MOB-04",
+      "domain": "모바일 네이티브",
+      "theme": "물리 백버튼 (서브탭)",
+      "severity": "P1",
+      "title": "서브 탭 탐색 중 뒤로가기 시 홈 탭 복귀 네비게이션 검증",
+      "lines": "285-287",
+      "assertLines": [
+        286
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('handleHardwareBackButton')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"handleHardwareBackButton\"",
+          "hits": 6,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 286,
+          "cond": "html.includes('handleHardwareBackButton')",
+          "message": "서브 탭 뒤로가기 복귀 처리가 배선되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": [
+        "MOB-01",
+        "MOB-02",
+        "MOB-03"
+      ]
+    },
+    {
+      "id": "MOB-05",
+      "domain": "모바일 네이티브",
+      "theme": "물리 백버튼 (종료1)",
+      "severity": "P0",
+      "title": "홈 최상단 뒤로가기 시 \"한 번 더 누르면 앱이 종료됩니다\" 토스트 안내",
+      "lines": "289-291",
+      "assertLines": [
+        290
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('한 번 더 누르면 앱이 종료됩니다')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"한 번 더 누르면 앱이 종료됩니다\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 290,
+          "cond": "html.includes('한 번 더 누르면 앱이 종료됩니다')",
+          "message": "2단 연속 종료 안내 토스트가 명시되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "MOB-06",
+      "domain": "모바일 네이티브",
+      "theme": "물리 백버튼 (종료2)",
+      "severity": "P0",
+      "title": "2초 내 뒤로가기 재입력 시 Capacitor App.exitApp() 정상 종료",
+      "lines": "293-295",
+      "assertLines": [
+        294
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('exitApp')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"exitApp\"",
+          "hits": 4,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 294,
+          "cond": "html.includes('exitApp')",
+          "message": "Capacitor App.exitApp 호출 배선이 연결되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "MOB-07",
+      "domain": "모바일 네이티브",
+      "theme": "체크 햅틱 진동",
+      "severity": "P1",
+      "title": "체크박스 및 잔디 터치 시 햅틱 피드백(Haptics/vibrate) 작동",
+      "lines": "297-299",
+      "assertLines": [
+        298
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('triggerHaptic') || html.includes('navigator.vibrate')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"triggerHaptic\"",
+          "hits": 85,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"navigator.vibrate\"",
+          "hits": 28,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 298,
+          "cond": "html.includes('triggerHaptic') || html.includes('navigator.vibrate')",
+          "message": "햅틱 피드백 트리거가 구현되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": [
+        "MOB-08",
+        "MOB-09"
+      ]
+    },
+    {
+      "id": "MOB-08",
+      "domain": "모바일 네이티브",
+      "theme": "응원 펄스 햅틱",
+      "severity": "P2",
+      "title": "피드 응원 버튼 클릭 시 리듬감 있는 진동 펄스 전달",
+      "lines": "301-303",
+      "assertLines": [
+        302
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('triggerHaptic') || html.includes('navigator.vibrate')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"triggerHaptic\"",
+          "hits": 85,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"navigator.vibrate\"",
+          "hits": 28,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 302,
+          "cond": "html.includes('triggerHaptic') || html.includes('navigator.vibrate')",
+          "message": "응원 진동 펄스가 연결되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": [
+        "MOB-07",
+        "MOB-09"
+      ]
+    },
+    {
+      "id": "MOB-09",
+      "domain": "모바일 네이티브",
+      "theme": "순서변경 햅틱",
+      "severity": "P2",
+      "title": "목표 드래그앤드롭 순서 변경 시 햅틱 피드백 제공",
+      "lines": "305-307",
+      "assertLines": [
+        306
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('triggerHaptic') || html.includes('navigator.vibrate')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"triggerHaptic\"",
+          "hits": 85,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"navigator.vibrate\"",
+          "hits": 28,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 306,
+          "cond": "html.includes('triggerHaptic') || html.includes('navigator.vibrate')",
+          "message": "드래그앤드롭 햅틱이 연결되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": [
+        "MOB-07",
+        "MOB-08"
+      ]
+    },
+    {
+      "id": "MOB-10",
+      "domain": "모바일 네이티브",
+      "theme": "키보드 뷰포트 밀림",
+      "severity": "P1",
+      "title": "소프트 키보드 활성화 시 하단 바 가림 방지 및 visualViewport 대응",
+      "lines": "309-311",
+      "assertLines": [
+        310
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [
+        "index.html 에 문자열 \"visualViewport\""
+      ],
+      "condKey": "uiCss.includes('safe-area-inset-bottom') || html.includes('visualViewport')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "ui.css 에 문자열 \"safe-area-inset-bottom\"",
+          "hits": 12,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"visualViewport\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 310,
+          "cond": "uiCss.includes('safe-area-inset-bottom') || html.includes('visualViewport')",
+          "message": "키보드 뷰포트 및 safe-area가 스타일시트에 정의되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "MOB-11",
+      "domain": "모바일 네이티브",
+      "theme": "인풋 자동 스크롤",
+      "severity": "P1",
+      "title": "긴 폼 입력 시 키보드 뒤 가림 방지 scrollIntoView 대응",
+      "lines": "313-315",
+      "assertLines": [
+        314
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": true
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "/scrollIntoView|focus/i.test(html)",
+      "atoms": [
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 정규식 /scrollIntoView|focus/i",
+          "hits": 113,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 314,
+          "cond": "/scrollIntoView|focus/i.test(html)",
+          "message": "인풋 포커스 대응 처리가 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "MOB-12",
+      "domain": "모바일 네이티브",
+      "theme": "상단 Safe Area",
+      "severity": "P0",
+      "title": "노치/상태표시줄 영역 겹침 방지 env(safe-area-inset-top) 검증",
+      "lines": "317-319",
+      "assertLines": [
+        318
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "uiCss.includes('safe-area-inset-top')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "ui.css 에 문자열 \"safe-area-inset-top\"",
+          "hits": 6,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 318,
+          "cond": "uiCss.includes('safe-area-inset-top')",
+          "message": "ui.css에 safe-area-inset-top이 선언되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "MOB-13",
+      "domain": "모바일 네이티브",
+      "theme": "하단 Safe Area",
+      "severity": "P0",
+      "title": "홈 인디케이터 겹침 방지 env(safe-area-inset-bottom) 검증",
+      "lines": "321-323",
+      "assertLines": [
+        322
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "uiCss.includes('safe-area-inset-bottom')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "ui.css 에 문자열 \"safe-area-inset-bottom\"",
+          "hits": 12,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 322,
+          "cond": "uiCss.includes('safe-area-inset-bottom')",
+          "message": "ui.css에 safe-area-inset-bottom이 선언되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "MOB-14",
+      "domain": "모바일 네이티브",
+      "theme": "OS 다크 테마 감지",
+      "severity": "P1",
+      "title": "OS prefers-color-scheme 시스템 테마 실시간 연동 검증",
+      "lines": "325-327",
+      "assertLines": [
+        326
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['theme-system.js'] && jsFiles['theme-system.js'].includes('prefers-color-scheme')",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/theme-system.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "js/theme-system.js 에 문자열 \"prefers-color-scheme\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 326,
+          "cond": "jsFiles['theme-system.js'] && jsFiles['theme-system.js'].includes('prefers-color-scheme')",
+          "message": "theme-system.js에 prefers-color-scheme 리스너가 정의되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "MOB-15",
+      "domain": "모바일 네이티브",
+      "theme": "앱 일시정지 (Pause)",
+      "severity": "P0",
+      "title": "앱 백그라운드 전환 시 로컬 스토리지 데이터 강제 플러시",
+      "lines": "329-331",
+      "assertLines": [
+        330
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "/appStateChange|visibilitychange|beforeunload|freeze/i.test(html)",
+      "atoms": [
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 정규식 /appStateChange|visibilitychange|beforeunload|freeze/i",
+          "hits": 34,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 330,
+          "cond": "/appStateChange|visibilitychange|beforeunload|freeze/i.test(html)",
+          "message": "앱 상태 변화 감지 리스너가 배선되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "MOB-16",
+      "domain": "모바일 네이티브",
+      "theme": "앱 재개 (Resume)",
+      "severity": "P0",
+      "title": "앱 포그라운드 복귀 시 자정 날짜 갱신 및 소켓 헬스체크",
+      "lines": "333-335",
+      "assertLines": [
+        334
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": true
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "/appStateChange|visibilitychange|focus/i.test(html)",
+      "atoms": [
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 정규식 /appStateChange|visibilitychange|focus/i",
+          "hits": 104,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 334,
+          "cond": "/appStateChange|visibilitychange|focus/i.test(html)",
+          "message": "앱 포그라운드 복귀 이벤트 리스너가 배선되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "MOB-17",
+      "domain": "모바일 네이티브",
+      "theme": "화면 방향 고정",
+      "severity": "P1",
+      "title": "안드로이드 매니페스트 세로 모드(portrait) 고정 검증",
+      "lines": "337-339",
+      "assertLines": [
+        338
+      ],
+      "mechanism": "B",
+      "primary": "B",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "androidManifest.includes('android:screenOrientation=\"portrait\"')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "B",
+          "negated": false,
+          "desc": "android/app/src/main/AndroidManifest.xml 에 문자열 \"android:screenOrientation=\\\"portrait\\\"\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 338,
+          "cond": "androidManifest.includes('android:screenOrientation=\"portrait\"')",
+          "message": "AndroidManifest.xml에 screenOrientation portrait이 설정되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "MOB-18",
+      "domain": "모바일 네이티브",
+      "theme": "상태바 스타일 동기화",
+      "severity": "P2",
+      "title": "테마에 따른 안드로이드 상태표시줄 스타일 및 메타 테마색 검증",
+      "lines": "341-343",
+      "assertLines": [
+        342
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('theme-color')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"theme-color\"",
+          "hits": 2,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 342,
+          "cond": "html.includes('theme-color')",
+          "message": "index.html에 meta name=\"theme-color\"가 정의되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "OFF-01",
+      "domain": "오프라인/네트워크",
+      "theme": "오프라인 감지",
+      "severity": "P1",
+      "title": "네트워크 단절 시 상단 오프라인 안내 배너 자동 노출 검증",
+      "lines": "348-350",
+      "assertLines": [
+        349
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('offlineNoticeBanner')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"offlineNoticeBanner\"",
+          "hits": 3,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 349,
+          "cond": "html.includes('offlineNoticeBanner')",
+          "message": "offlineNoticeBanner DOM 요소가 정의되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "OFF-02",
+      "domain": "오프라인/네트워크",
+      "theme": "오프라인 목표 생성",
+      "severity": "P0",
+      "title": "오프라인 상태에서 목표 생성 시 로컬 스토리지 안전 저장 검증",
+      "lines": "352-354",
+      "assertLines": [
+        353
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": true
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('ourgoal_goals_backup_') || html.includes('saveProfile')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"ourgoal_goals_backup_\"",
+          "hits": 9,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"saveProfile\"",
+          "hits": 293,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 353,
+          "cond": "html.includes('ourgoal_goals_backup_') || html.includes('saveProfile')",
+          "message": "로컬 목표 저장 백업이 보장되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "OFF-03",
+      "domain": "오프라인/네트워크",
+      "theme": "오프라인 체크인",
+      "severity": "P0",
+      "title": "오프라인 상태에서 체크박스 토글 시 로컬 기록 즉각 반영",
+      "lines": "356-358",
+      "assertLines": [
+        357
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('saveQuickCheckin')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"saveQuickCheckin\"",
+          "hits": 4,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 357,
+          "cond": "html.includes('saveQuickCheckin')",
+          "message": "saveQuickCheckin 함수가 로컬 우선으로 기록을 적재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "OFF-04",
+      "domain": "오프라인/네트워크",
+      "theme": "오프라인 큐 적재",
+      "severity": "P0",
+      "title": "OfflineSyncManager를 통한 선입선출(FIFO) 변경 큐 적재",
+      "lines": "360-362",
+      "assertLines": [
+        361
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('OfflineSyncManager') && html.includes('ourgoal_offline_sync_queue')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"OfflineSyncManager\"",
+          "hits": 4,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"ourgoal_offline_sync_queue\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 361,
+          "cond": "html.includes('OfflineSyncManager') && html.includes('ourgoal_offline_sync_queue')",
+          "message": "OfflineSyncManager에 큐 키가 정의되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "OFF-05",
+      "domain": "오프라인/네트워크",
+      "theme": "온라인 자동 복구",
+      "severity": "P0",
+      "title": "온라인 복귀 시 OfflineSyncManager.flush() 자동 클라우드 동기화",
+      "lines": "364-366",
+      "assertLines": [
+        365
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('OfflineSyncManager.flush')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"OfflineSyncManager.flush\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 365,
+          "cond": "html.includes('OfflineSyncManager.flush')",
+          "message": "온라인 복귀 이벤트 시 OfflineSyncManager.flush가 호출되어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "OFF-06",
+      "domain": "오프라인/네트워크",
+      "theme": "동기화 피드백",
+      "severity": "P1",
+      "title": "동기화 완료 후 사용자 안내 토스트 및 배너 퇴장 피드백",
+      "lines": "368-370",
+      "assertLines": [
+        369
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('온라인에 다시 연결되었어요') || html.includes('동기화')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"온라인에 다시 연결되었어요\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"동기화\"",
+          "hits": 55,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 369,
+          "cond": "html.includes('온라인에 다시 연결되었어요') || html.includes('동기화')",
+          "message": "온라인 복귀 안내 메시지가 연결되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "OFF-07",
+      "domain": "오프라인/네트워크",
+      "theme": "충돌 해결 (LWW)",
+      "severity": "P1",
+      "title": "서버-로컬 데이터 충돌 시 Last-Write-Wins 타임스탬프 무결성",
+      "lines": "372-374",
+      "assertLines": [
+        373
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": true
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('timestamp') || html.includes('nowISO')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"timestamp\"",
+          "hits": 5,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"nowISO\"",
+          "hits": 104,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 373,
+          "cond": "html.includes('timestamp') || html.includes('nowISO')",
+          "message": "타임스탬프 기반 정렬/병합 로직이 구현되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "OFF-08",
+      "domain": "오프라인/네트워크",
+      "theme": "초저속 3G 스로틀링",
+      "severity": "P0",
+      "title": "지연 네트워크 환경에서 다중 제출(Double Submit) 차단 디바운스",
+      "lines": "376-378",
+      "assertLines": [
+        377
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "/disabled|isSubmitting|loading|btn\\.disabled/i.test(html)",
+      "atoms": [
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 정규식 /disabled|isSubmitting|loading|btn\\.disabled/i",
+          "hits": 97,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 377,
+          "cond": "/disabled|isSubmitting|loading|btn\\.disabled/i.test(html)",
+          "message": "버튼 비활성화 및 중복 제출 방지 로직이 구현되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "OFF-09",
+      "domain": "오프라인/네트워크",
+      "theme": "낙관적 업데이트 롤백",
+      "severity": "P0",
+      "title": "API 에러 발생 시 UI 상태 롤백 및 사용자 오류 피드백",
+      "lines": "380-382",
+      "assertLines": [
+        381
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "/catch\\s*\\(.*?\\)[\\s\\S]*?toast/i.test(html)",
+      "atoms": [
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 정규식 /catch\\s*\\(.*?\\)[\\s\\S]*?toast/i",
+          "hits": 25,
+          "capped": true
+        }
+      ],
+      "asserts": [
+        {
+          "line": 381,
+          "cond": "/catch\\s*\\(.*?\\)[\\s\\S]*?toast/i.test(html)",
+          "message": "에러 catch 블록에서 토스트 안내 처리가 배선되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "OFF-10",
+      "domain": "오프라인/네트워크",
+      "theme": "지수 백오프 재시도",
+      "severity": "P1",
+      "title": "일시적 서버 에러 시 무차별 폭풍 요청 방지 지연 로직",
+      "lines": "384-386",
+      "assertLines": [
+        385
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "/setTimeout|delay|retry|backoff/i.test(html)",
+      "atoms": [
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 정규식 /setTimeout|delay|retry|backoff/i",
+          "hits": 46,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 385,
+          "cond": "/setTimeout|delay|retry|backoff/i.test(html)",
+          "message": "재시도 또는 타이머 지연 로직이 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "OFF-11",
+      "domain": "오프라인/네트워크",
+      "theme": "서비스워커 캐싱",
+      "severity": "P0",
+      "title": "sw.js의 CacheFirst 전략 및 정적 핵심 에셋 100% 캐싱 보증",
+      "lines": "388-390",
+      "assertLines": [
+        389
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "swJs.includes('caches.open') && swJs.includes('cache.addAll')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "sw.js 에 문자열 \"caches.open\"",
+          "hits": 2,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "sw.js 에 문자열 \"cache.addAll\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 389,
+          "cond": "swJs.includes('caches.open') && swJs.includes('cache.addAll')",
+          "message": "sw.js에 에셋 사전 캐싱 로직이 완비되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "OFF-12",
+      "domain": "오프라인/네트워크",
+      "theme": "SW 버전 업데이트",
+      "severity": "P1",
+      "title": "새로운 배포 감지 시 서비스워커 갱신 및 캐시 무효화",
+      "lines": "392-394",
+      "assertLines": [
+        393
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "swJs.includes('CACHE_NAME') && swJs.includes('activate')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "sw.js 에 문자열 \"CACHE_NAME\"",
+          "hits": 4,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "sw.js 에 문자열 \"activate\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 393,
+          "cond": "swJs.includes('CACHE_NAME') && swJs.includes('activate')",
+          "message": "sw.js에 캐시 정리 및 버전 갱신 라이프사이클이 정의되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "OFF-13",
+      "domain": "오프라인/네트워크",
+      "theme": "오프라인 사진 첨부",
+      "severity": "P1",
+      "title": "오프라인 사진 첨부 시 로컬 Blob URL 선반영 검증",
+      "lines": "396-398",
+      "assertLines": [
+        397
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('createObjectURL') || html.includes('readAsDataURL') || jsFiles['calendar-attachment.js']",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"createObjectURL\"",
+          "hits": 3,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"readAsDataURL\"",
+          "hits": 4,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/calendar-attachment.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 397,
+          "cond": "html.includes('createObjectURL') || html.includes('readAsDataURL') || jsFiles['calendar-attachment.js']",
+          "message": "로컬 이미지 Blob 미리보기 처리가 지원되어야 합니다.",
+          "skeleton": "a[0] || a[1] || a[2]",
+          "residue": "|| ||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "OFF-14",
+      "domain": "오프라인/네트워크",
+      "theme": "재시도 UI 제공",
+      "severity": "P1",
+      "title": "네트워크 실패 시 무한 로딩 탈출 및 \"다시 시도\" 버튼 제공",
+      "lines": "400-402",
+      "assertLines": [
+        401
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "/다시 시도|재시도|retry/i.test(html)",
+      "atoms": [
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 정규식 /다시 시도|재시도|retry/i",
+          "hits": 19,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 401,
+          "cond": "/다시 시도|재시도|retry/i.test(html)",
+          "message": "네트워크 실패 재시도 UI가 구현되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SEC-01",
+      "domain": "클라우드 보안/RLS",
+      "theme": "비공개 목표 IDOR",
+      "severity": "P0",
+      "title": "비공개 목표(is_private=true) 타인 조회 원천 차단 RLS 정책",
+      "lines": "407-409",
+      "assertLines": [
+        408
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes(\"visibility:g.visibility||'private'\")",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"visibility:g.visibility||'private'\"",
+          "hits": 2,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 408,
+          "cond": "html.includes(\"visibility:g.visibility||'private'\")",
+          "message": "기본 목표 가시성이 private으로 강제 격리되어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SEC-02",
+      "domain": "클라우드 보안/RLS",
+      "theme": "타인 데이터 위변조",
+      "severity": "P0",
+      "title": "UPDATE/DELETE 시 auth.uid() = user_id 엄격 검증",
+      "lines": "411-413",
+      "assertLines": [
+        412
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('user_id:uidVal') || html.includes('id: uidVal')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"user_id:uidVal\"",
+          "hits": 2,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"id: uidVal\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 412,
+          "cond": "html.includes('user_id:uidVal') || html.includes('id: uidVal')",
+          "message": "모든 쓰기 쿼리가 로그인된 사용자 ID로 바인딩되어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SEC-03",
+      "domain": "클라우드 보안/RLS",
+      "theme": "타인 명의 데이터 삽입",
+      "severity": "P0",
+      "title": "INSERT 페이로드의 user_id 조작 차단",
+      "lines": "415-417",
+      "assertLines": [
+        416
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('uidVal')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"uidVal\"",
+          "hits": 37,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 416,
+          "cond": "html.includes('uidVal')",
+          "message": "클라이언트 식별자가 세션 UID와 일치하게 강제 바인딩되어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SEC-04",
+      "domain": "클라우드 보안/RLS",
+      "theme": "비회원 팀 데이터 침투",
+      "severity": "P0",
+      "title": "미가입 외부 유저의 비공개 팀 데이터 접근 차단",
+      "lines": "419-421",
+      "assertLines": [
+        420
+      ],
+      "mechanism": "C",
+      "primary": "C",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['team-visibility-levels.js'] || jsFiles['team-linked-goals.js']",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/team-visibility-levels.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/team-linked-goals.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 420,
+          "cond": "jsFiles['team-visibility-levels.js'] || jsFiles['team-linked-goals.js']",
+          "message": "팀 가시성 레벨 엔진이 배선되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SEC-05",
+      "domain": "클라우드 보안/RLS",
+      "theme": "서비스 키 누출 감사",
+      "severity": "P0",
+      "title": "프론트엔드 코드 내 SUPABASE_SERVICE_ROLE_KEY 누출 제로 검증",
+      "lines": "423-426",
+      "assertLines": [
+        424,
+        425
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": true,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "!html.includes('SUPABASE_SERVICE_ROLE_KEY') ;; !uiJs.includes('SUPABASE_SERVICE_ROLE_KEY')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": true,
+          "desc": "NOT index.html 에 문자열 \"SUPABASE_SERVICE_ROLE_KEY\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": true,
+          "desc": "NOT ui.js 에 문자열 \"SUPABASE_SERVICE_ROLE_KEY\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 424,
+          "cond": "!html.includes('SUPABASE_SERVICE_ROLE_KEY')",
+          "message": "클라이언트 index.html에 service_role 키가 노출되지 않아야 합니다.",
+          "skeleton": "!a[0]",
+          "residue": "!"
+        },
+        {
+          "line": 425,
+          "cond": "!uiJs.includes('SUPABASE_SERVICE_ROLE_KEY')",
+          "message": "ui.js에 service_role 키가 노출되지 않아야 합니다.",
+          "skeleton": "!a[0]",
+          "residue": "!"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SEC-06",
+      "domain": "클라우드 보안/RLS",
+      "theme": "XSS 스크립트 인젝션",
+      "severity": "P0",
+      "title": "목표 제목 및 메모 escapeHtml() XSS 살균 방어 검증",
+      "lines": "428-431",
+      "assertLines": [
+        429,
+        430
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('function escapeHtml(s)') ;; html.includes('escapeHtml(g.title)') || html.includes('escapeHtml(item.title)') || html.includes('escapeHtml(text')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"function escapeHtml(s)\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"escapeHtml(g.title)\"",
+          "hits": 13,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"escapeHtml(item.title)\"",
+          "hits": 4,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"escapeHtml(text\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 429,
+          "cond": "html.includes('function escapeHtml(s)')",
+          "message": "escapeHtml 함수가 정의되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        },
+        {
+          "line": 430,
+          "cond": "html.includes('escapeHtml(g.title)') || html.includes('escapeHtml(item.title)') || html.includes('escapeHtml(text')",
+          "message": "사용자 입력 텍스트에 escapeHtml이 적용되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1] || a[2]",
+          "residue": "|| ||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SEC-07",
+      "domain": "클라우드 보안/RLS",
+      "theme": "피드 XSS 방어",
+      "severity": "P0",
+      "title": "피드 및 댓글 렌더링 시 악의적 HTML 살균 검증",
+      "lines": "433-435",
+      "assertLines": [
+        434
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('escapeHtml(c.display_name') || html.includes('escapeHtml(p.display_name')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"escapeHtml(c.display_name\"",
+          "hits": 2,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"escapeHtml(p.display_name\"",
+          "hits": 2,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 434,
+          "cond": "html.includes('escapeHtml(c.display_name') || html.includes('escapeHtml(p.display_name')",
+          "message": "소셜 사용자 이름 및 콘텐츠가 살균되어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SEC-08",
+      "domain": "클라우드 보안/RLS",
+      "theme": "SQL 인젝션 방어",
+      "severity": "P0",
+      "title": "Supabase Client Parameterized Query 사용 검증",
+      "lines": "437-439",
+      "assertLines": [
+        438
+      ],
+      "mechanism": "C",
+      "primary": "C",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "fs.existsSync(path.join(ROOT_DIR, 'scripts', 'sql-lint.js'))",
+      "atoms": [
+        {
+          "kind": "exists",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재 scripts/sql-lint.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 438,
+          "cond": "fs.existsSync(path.join(ROOT_DIR, 'scripts', 'sql-lint.js'))",
+          "message": "sql-lint.js 정적 린터가 구비되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SEC-09",
+      "domain": "클라우드 보안/RLS",
+      "theme": "민감정보 콘솔 노출",
+      "severity": "P0",
+      "title": "브라우저 콘솔 내 비밀번호 및 인증 토큰 평문 로깅 차단",
+      "lines": "441-444",
+      "assertLines": [
+        442,
+        443
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": true,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "!html.includes('console.log(password)') ;; !html.includes('console.log(token)')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": true,
+          "desc": "NOT index.html 에 문자열 \"console.log(password)\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": true,
+          "desc": "NOT index.html 에 문자열 \"console.log(token)\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 442,
+          "cond": "!html.includes('console.log(password)')",
+          "message": "비밀번호 평문 콘솔 로깅이 없어야 합니다.",
+          "skeleton": "!a[0]",
+          "residue": "!"
+        },
+        {
+          "line": 443,
+          "cond": "!html.includes('console.log(token)')",
+          "message": "토큰 평문 콘솔 로깅이 없어야 합니다.",
+          "skeleton": "!a[0]",
+          "residue": "!"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SEC-10",
+      "domain": "클라우드 보안/RLS",
+      "theme": "전송 구간 암호화",
+      "severity": "P0",
+      "title": "HTTPS 강제 및 평문 HTTP 비인가 접근 차단 검증",
+      "lines": "446-448",
+      "assertLines": [
+        447
+      ],
+      "mechanism": "B",
+      "primary": "F",
+      "F1_vacuous": true,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "!capConfig.includes('\"cleartext\": true')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "B",
+          "negated": true,
+          "desc": "NOT capacitor.config.json 에 문자열 \"\\\"cleartext\\\": true\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 447,
+          "cond": "!capConfig.includes('\"cleartext\": true')",
+          "message": "capacitor.config.json에 cleartext true가 허용되지 않아야 합니다.",
+          "skeleton": "!a[0]",
+          "residue": "!"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SEC-11",
+      "domain": "클라우드 보안/RLS",
+      "theme": "로컬 토큰 보관 안전성",
+      "severity": "P1",
+      "title": "localStorage 비밀번호 평문 보관 금지 검증",
+      "lines": "450-452",
+      "assertLines": [
+        451
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": true,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "!html.includes(\"localStorage.setItem('password'\")",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": true,
+          "desc": "NOT index.html 에 문자열 \"localStorage.setItem('password'\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 451,
+          "cond": "!html.includes(\"localStorage.setItem('password'\")",
+          "message": "로컬스토리지에 비밀번호를 직접 평문 저장하지 않아야 합니다.",
+          "skeleton": "!a[0]",
+          "residue": "!"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SEC-12",
+      "domain": "클라우드 보안/RLS",
+      "theme": "파일 업로드 검증",
+      "severity": "P0",
+      "title": "사진 업로드 시 MIME-Type 및 5MB 용량 제한 검증",
+      "lines": "454-456",
+      "assertLines": [
+        455
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('image/') || jsFiles['calendar-attachment.js']",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"image/\"",
+          "hits": 28,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/calendar-attachment.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 455,
+          "cond": "html.includes('image/') || jsFiles['calendar-attachment.js']",
+          "message": "이미지 파일 타입 검증 로직이 존재해야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SEC-13",
+      "domain": "클라우드 보안/RLS",
+      "theme": "서버리스 CORS 검증",
+      "severity": "P1",
+      "title": "api/ 엔드포인트 메서드(POST/GET) 검증 및 CORS 방어",
+      "lines": "458-460",
+      "assertLines": [
+        459
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "withdrawApi.includes(\"req.method !== 'POST'\")",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "api/withdraw.js 에 문자열 \"req.method !== 'POST'\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 459,
+          "cond": "withdrawApi.includes(\"req.method !== 'POST'\")",
+          "message": "api/withdraw.js에 POST 메서드 강제 검증이 적용되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "SEC-14",
+      "domain": "클라우드 보안/RLS",
+      "theme": "대용량 페이로드 방어",
+      "severity": "P1",
+      "title": "입력 필드 maxlength 속성 및 텍스트 슬라이싱 방어",
+      "lines": "462-464",
+      "assertLines": [
+        463
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('maxlength')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"maxlength\"",
+          "hits": 12,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 463,
+          "cond": "html.includes('maxlength')",
+          "message": "입력창에 maxlength 속성이 배선되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "PER-01",
+      "domain": "성능/메모리",
+      "theme": "FCP 최적화",
+      "severity": "P1",
+      "title": "렌더 블로킹 CSS 최소화 및 중요 스타일 인라인 배치",
+      "lines": "469-471",
+      "assertLines": [
+        470
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [
+        "index.html 에 문자열 \"<style>\""
+      ],
+      "condKey": "html.includes('<style>') || html.includes('ui.css')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"<style>\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"ui.css\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 470,
+          "cond": "html.includes('<style>') || html.includes('ui.css')",
+          "message": "핵심 스타일시트가 로드되어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "PER-02",
+      "domain": "성능/메모리",
+      "theme": "LCP 최적화",
+      "severity": "P1",
+      "title": "초기 렌더링 시 대형 외부 이미지 의존성 배제 및 SVG 인라인화",
+      "lines": "473-475",
+      "assertLines": [
+        474
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('<svg') && html.includes('avatar-system.js')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"<svg\"",
+          "hits": 110,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"avatar-system.js\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 474,
+          "cond": "html.includes('<svg') && html.includes('avatar-system.js')",
+          "message": "경량 SVG 벡터 그래픽이 우선 렌더링되어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "PER-03",
+      "domain": "성능/메모리",
+      "theme": "INP 반응성",
+      "severity": "P1",
+      "title": "터치 이벤트 시 불필요한 메인스레드 블로킹 방어 (async/await 및 rAF)",
+      "lines": "477-479",
+      "assertLines": [
+        478
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": true
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [
+        "index.html 에 문자열 \"requestAnimationFrame\""
+      ],
+      "condKey": "html.includes('requestAnimationFrame') || html.includes('async function')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"requestAnimationFrame\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"async function\"",
+          "hits": 317,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 478,
+          "cond": "html.includes('requestAnimationFrame') || html.includes('async function')",
+          "message": "비동기 렌더링 최적화가 적용되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "PER-04",
+      "domain": "성능/메모리",
+      "theme": "CLS 제로",
+      "severity": "P1",
+      "title": "폰트 로딩 및 이미지 레이아웃 이동 방지 크기 고정",
+      "lines": "481-483",
+      "assertLines": [
+        482
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": true
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "uiCss.includes('width:') && uiCss.includes('height:')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "ui.css 에 문자열 \"width:\"",
+          "hits": 312,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "ui.css 에 문자열 \"height:\"",
+          "hits": 359,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 482,
+          "cond": "uiCss.includes('width:') && uiCss.includes('height:')",
+          "message": "컴포넌트 크기 명시가 적용되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "PER-05",
+      "domain": "성능/메모리",
+      "theme": "고주사율 스크롤",
+      "severity": "P1",
+      "title": "하드웨어 가속 transform/will-change 및 overscroll 최적화",
+      "lines": "485-487",
+      "assertLines": [
+        486
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": true
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "uiCss.includes('transform') || uiCss.includes('overflow-y:auto')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "ui.css 에 문자열 \"transform\"",
+          "hits": 218,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "ui.css 에 문자열 \"overflow-y:auto\"",
+          "hits": 3,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 486,
+          "cond": "uiCss.includes('transform') || uiCss.includes('overflow-y:auto')",
+          "message": "부드러운 스크롤 가속 속성이 정의되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "PER-06",
+      "domain": "성능/메모리",
+      "theme": "대량 데이터 부하",
+      "severity": "P1",
+      "title": "피드 및 기록 탭 slice(0, 30) 등 청크 렌더링 검증",
+      "lines": "489-491",
+      "assertLines": [
+        490
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": true
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('.slice(0,') || html.includes('.slice(0, 50)')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \".slice(0,\"",
+          "hits": 136,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \".slice(0, 50)\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 490,
+          "cond": "html.includes('.slice(0,') || html.includes('.slice(0, 50)')",
+          "message": "대량 데이터 렌더링 시 슬라이스 청크 처리가 적용되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "PER-07",
+      "domain": "성능/메모리",
+      "theme": "SPA 탭 왕복 누수",
+      "severity": "P0",
+      "title": "탭 전환 시 중복 DOM 생성 방지 (기존 노드 innerHTML=\"\" 또는 재사용)",
+      "lines": "493-495",
+      "assertLines": [
+        494
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes(\"container.innerHTML = ''\") || html.includes('setTab')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"container.innerHTML = ''\"",
+          "hits": 2,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"setTab\"",
+          "hits": 40,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 494,
+          "cond": "html.includes(\"container.innerHTML = ''\") || html.includes('setTab')",
+          "message": "탭 전환 시 이전 뷰 메모리 정리가 구현되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "PER-08",
+      "domain": "성능/메모리",
+      "theme": "모달 리스너 누수",
+      "severity": "P0",
+      "title": "모달 개폐 시 전역 리스너 누적 방어 및 일회성 핸들러 관리",
+      "lines": "497-499",
+      "assertLines": [
+        498
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": true
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('closeModal')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"closeModal\"",
+          "hits": 238,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 498,
+          "cond": "html.includes('closeModal')",
+          "message": "closeModal 시 정리 루틴이 동작해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "PER-09",
+      "domain": "성능/메모리",
+      "theme": "정밀 DOM 패치",
+      "severity": "P1",
+      "title": "실시간 알림 수신 시 전체 리렌더 없이 타겟 노드만 부분 갱신",
+      "lines": "501-503",
+      "assertLines": [
+        502
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('topNotifBadge') && html.includes('textContent')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"topNotifBadge\"",
+          "hits": 2,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"textContent\"",
+          "hits": 165,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 502,
+          "cond": "html.includes('topNotifBadge') && html.includes('textContent')",
+          "message": "배지 등 부분 노드 정밀 패치가 적용되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "PER-10",
+      "domain": "성능/메모리",
+      "theme": "아바타 SVG 캐싱",
+      "severity": "P2",
+      "title": "320종 아바타 SVG 심볼 캐시 및 중복 렌더링 방지",
+      "lines": "505-507",
+      "assertLines": [
+        506
+      ],
+      "mechanism": "C",
+      "primary": "C",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "jsFiles['avatar-system.js']",
+      "atoms": [
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/avatar-system.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 506,
+          "cond": "jsFiles['avatar-system.js']",
+          "message": "avatar-system.js 모듈이 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "PER-11",
+      "domain": "성능/메모리",
+      "theme": "번들 최적화",
+      "severity": "P2",
+      "title": "바닐라 JS 기반 무거운 프레임워크 런타임 배제 경량화",
+      "lines": "509-511",
+      "assertLines": [
+        510
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": true,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "!html.includes('react.production.min.js')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": true,
+          "desc": "NOT index.html 에 문자열 \"react.production.min.js\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 510,
+          "cond": "!html.includes('react.production.min.js')",
+          "message": "불필요한 무거운 프레임워크 스크립트가 배제되어 있어야 합니다.",
+          "skeleton": "!a[0]",
+          "residue": "!"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "PER-12",
+      "domain": "성능/메모리",
+      "theme": "백그라운드 배터리",
+      "severity": "P1",
+      "title": "비활성 화면 시 애니메이션 중단 및 타이머 최적화",
+      "lines": "513-515",
+      "assertLines": [
+        514
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": true
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "/visibilitychange|hidden/i.test(html) || jsFiles['time-tracker.js']",
+      "atoms": [
+        {
+          "kind": "regex",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 정규식 /visibilitychange|hidden/i",
+          "hits": 111,
+          "capped": false
+        },
+        {
+          "kind": "truthy",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일존재(비어있지않음) js/time-tracker.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 514,
+          "cond": "/visibilitychange|hidden/i.test(html) || jsFiles['time-tracker.js']",
+          "message": "화면 가시성 상태에 따른 백그라운드 최적화가 배선되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1]",
+          "residue": "||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "STO-01",
+      "domain": "스토어 규정/접근성",
+      "theme": "회원 탈퇴 접근성",
+      "severity": "P0",
+      "title": "설정 탭 내 명확한 회원 탈퇴 버튼(withdrawBtn) 3클릭 도달 배치",
+      "lines": "520-522",
+      "assertLines": [
+        521
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('id=\"withdrawBtn\"')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"id=\\\"withdrawBtn\\\"\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 521,
+          "cond": "html.includes('id=\"withdrawBtn\"')",
+          "message": "설정 탭에 withdrawBtn 회원 탈퇴 버튼이 존재해야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "STO-02",
+      "domain": "스토어 규정/접근성",
+      "theme": "데이터 즉각 파기 고지",
+      "severity": "P0",
+      "title": "탈퇴 모달 내 개인정보 영구 파기 정책 명시 검증",
+      "lines": "524-526",
+      "assertLines": [
+        525
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('데이터 영구 파기 및 법적 보존 고지사항')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"데이터 영구 파기 및 법적 보존 고지사항\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 525,
+          "cond": "html.includes('데이터 영구 파기 및 법적 보존 고지사항')",
+          "message": "탈퇴 모달에 데이터 영구 파기 및 법적 보존 고지가 명시되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "STO-03",
+      "domain": "스토어 규정/접근성",
+      "theme": "개인정보 처리방침",
+      "severity": "P0",
+      "title": "앱 내 개인정보 처리방침 전문 모달 및 3조 보유/파기 조항 검증",
+      "lines": "528-530",
+      "assertLines": [
+        529
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('아워골 개인정보처리방침') && html.includes('제3조 (보유 및 파기)')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"아워골 개인정보처리방침\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"제3조 (보유 및 파기)\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 529,
+          "cond": "html.includes('아워골 개인정보처리방침') && html.includes('제3조 (보유 및 파기)')",
+          "message": "개인정보처리방침 전문이 수록되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "STO-04",
+      "domain": "스토어 규정/접근성",
+      "theme": "서비스 이용약관",
+      "severity": "P0",
+      "title": "앱 내 서비스 이용약관 전문 모달 및 3조 커뮤니티 정책 조항 검증",
+      "lines": "532-534",
+      "assertLines": [
+        533
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('아워골 서비스 이용약관') && html.includes('제3조 (사용자 콘텐츠 및 커뮤니티 정책)')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"아워골 서비스 이용약관\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"제3조 (사용자 콘텐츠 및 커뮤니티 정책)\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 533,
+          "cond": "html.includes('아워골 서비스 이용약관') && html.includes('제3조 (사용자 콘텐츠 및 커뮤니티 정책)')",
+          "message": "서비스 이용약관 전문이 수록되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "STO-05",
+      "domain": "스토어 규정/접근성",
+      "theme": "UGC 상시 신고 버튼",
+      "severity": "P0",
+      "title": "유저 게시물/댓글에 상시 노출되는 신고(Report) 버튼 배선",
+      "lines": "536-538",
+      "assertLines": [
+        537
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('data-reportpost') && html.includes('data-reportcmt')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"data-reportpost\"",
+          "hits": 3,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"data-reportcmt\"",
+          "hits": 2,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 537,
+          "cond": "html.includes('data-reportpost') && html.includes('data-reportcmt')",
+          "message": "게시물 및 댓글에 신고 버튼이 배선되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "STO-06",
+      "domain": "스토어 규정/접근성",
+      "theme": "UGC 상시 차단 버튼",
+      "severity": "P0",
+      "title": "유저 게시물/댓글에 상시 노출되는 차단(Block) 버튼 배선",
+      "lines": "540-542",
+      "assertLines": [
+        541
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('data-blockuser')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"data-blockuser\"",
+          "hits": 5,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 541,
+          "cond": "html.includes('data-blockuser')",
+          "message": "게시물 및 댓글에 차단 버튼이 배선되어 있어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "STO-07",
+      "domain": "스토어 규정/접근성",
+      "theme": "개발자 문의 창구",
+      "severity": "P1",
+      "title": "설정 탭 내 오류 제보 및 1:1 문의 채널(api/feedback.js) 배선",
+      "lines": "544-546",
+      "assertLines": [
+        545
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "feedbackApi.length > 0 && html.includes('feedback')",
+      "atoms": [
+        {
+          "kind": "length",
+          "cls": "C",
+          "negated": false,
+          "desc": "파일 길이>0 api/feedback.js",
+          "hits": null,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"feedback\"",
+          "hits": 119,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 545,
+          "cond": "feedbackApi.length > 0 && html.includes('feedback')",
+          "message": "피드백 수신 API 및 앱 내 문의 경로가 존재해야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "STO-08",
+      "domain": "스토어 규정/접근성",
+      "theme": "다크패턴 배제",
+      "severity": "P0",
+      "title": "광고/결제 유도 다크패턴 배제 및 명확한 닫기(X) 버튼 보장",
+      "lines": "548-550",
+      "assertLines": [
+        549
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('subscriptionState') && html.includes('isPro:true, plan:\\'free_all\\'')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"subscriptionState\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"isPro:true, plan:'free_all'\"",
+          "hits": 2,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 549,
+          "cond": "html.includes('subscriptionState') && html.includes('isPro:true, plan:\\'free_all\\'')",
+          "message": "전체 기능 100% 완전 무료 제공 원칙이 보장되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "STO-09",
+      "domain": "스토어 규정/접근성",
+      "theme": "외부 이탈 방지",
+      "severity": "P1",
+      "title": "외부 메일 앱 의존 링크(mailto:) 제로 검증",
+      "lines": "552-554",
+      "assertLines": [
+        553
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": true,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "!html.includes('href=\"mailto:')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": true,
+          "desc": "NOT index.html 에 문자열 \"href=\\\"mailto:\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 553,
+          "cond": "!html.includes('href=\"mailto:')",
+          "message": "mailto: 링크가 일체 없어야 합니다.",
+          "skeleton": "!a[0]",
+          "residue": "!"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "STO-10",
+      "domain": "스토어 규정/접근성",
+      "theme": "최소 터치 영역",
+      "severity": "P1",
+      "title": "주요 버튼 및 탭의 48x48px 터치 영역 규격 충족 검증",
+      "lines": "556-558",
+      "assertLines": [
+        557
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [
+        "ui.css 에 문자열 \"min-height: 48px\""
+      ],
+      "condKey": "uiCss.includes('min-height: 48px') || uiCss.includes('min-width: 48px') || uiCss.includes('min-height:var(--topbar-h)') || uiCss.includes('44px') || uiCss.includes('48px')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "ui.css 에 문자열 \"min-height: 48px\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "ui.css 에 문자열 \"min-width: 48px\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "ui.css 에 문자열 \"min-height:var(--topbar-h)\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "ui.css 에 문자열 \"44px\"",
+          "hits": 27,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "ui.css 에 문자열 \"48px\"",
+          "hits": 21,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 557,
+          "cond": "uiCss.includes('min-height: 48px') || uiCss.includes('min-width: 48px') || uiCss.includes('min-height:var(--topbar-h)') || uiCss.includes('44px') || uiCss.includes('48px')",
+          "message": "모바일 권장 터치 타겟 규격이 선언되어 있어야 합니다.",
+          "skeleton": "a[0] || a[1] || a[2] || a[3] || a[4]",
+          "residue": "|| || || ||"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "STO-11",
+      "domain": "스토어 규정/접근성",
+      "theme": "명도 대비 규격",
+      "severity": "P1",
+      "title": "WCAG AA 4.5:1 이상 명도 대비 색상 팔레트 검증",
+      "lines": "560-562",
+      "assertLines": [
+        561
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "uiCss.includes('--ink:') && uiCss.includes('--bg:')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "ui.css 에 문자열 \"--ink:\"",
+          "hits": 8,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "ui.css 에 문자열 \"--bg:\"",
+          "hits": 21,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 561,
+          "cond": "uiCss.includes('--ink:') && uiCss.includes('--bg:')",
+          "message": "텍스트 및 배경 명도 변수가 체계적으로 정의되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "STO-12",
+      "domain": "스토어 규정/접근성",
+      "theme": "스크린리더 레이블",
+      "severity": "P1",
+      "title": "아이콘 버튼에 aria-label 및 role=\"button\" 부여 검증",
+      "lines": "564-566",
+      "assertLines": [
+        565
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": true,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('aria-label=') && html.includes('role=')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"aria-label=\"",
+          "hits": 57,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"role=\"",
+          "hits": 15,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 565,
+          "cond": "html.includes('aria-label=') && html.includes('role=')",
+          "message": "접근성 aria-label 및 role 속성이 배선되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "STO-13",
+      "domain": "스토어 규정/접근성",
+      "theme": "시스템 폰트 확대",
+      "severity": "P2",
+      "title": "가변 폰트 단위(rem/em) 사용으로 시스템 폰트 확대 대응",
+      "lines": "568-570",
+      "assertLines": [
+        569
+      ],
+      "mechanism": "A",
+      "primary": "F",
+      "F1_vacuous": false,
+      "F2_saturated": true,
+      "saturatedAtK": {
+        "5": true,
+        "20": true,
+        "50": true,
+        "100": true
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "uiCss.includes('rem')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "ui.css 에 문자열 \"rem\"",
+          "hits": 471,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 569,
+          "cond": "uiCss.includes('rem')",
+          "message": "ui.css에 rem 가변 글꼴 단위가 사용되어야 합니다.",
+          "skeleton": "a[0]",
+          "residue": ""
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "STO-14",
+      "domain": "스토어 규정/접근성",
+      "theme": "첫 실행 무네트워크",
+      "severity": "P0",
+      "title": "네트워크 미연결 시에도 화이트아웃 크래시 없는 오프라인 가드",
+      "lines": "572-574",
+      "assertLines": [
+        573
+      ],
+      "mechanism": "A",
+      "primary": "A",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "html.includes('offlineNoticeBanner') && html.includes('window.addEventListener(\\'offline\\'')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"offlineNoticeBanner\"",
+          "hits": 3,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "A",
+          "negated": false,
+          "desc": "index.html 에 문자열 \"window.addEventListener('offline'\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 573,
+          "cond": "html.includes('offlineNoticeBanner') && html.includes('window.addEventListener(\\'offline\\'')",
+          "message": "오프라인 감지 및 안내 UI가 완비되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "STO-15",
+      "domain": "스토어 규정/접근성",
+      "theme": "TWA/assetlinks 일치",
+      "severity": "P0",
+      "title": ".well-known/assetlinks.json SHA-256 서명 링크 무결성 검증",
+      "lines": "576-578",
+      "assertLines": [
+        577
+      ],
+      "mechanism": "B",
+      "primary": "B",
+      "F1_vacuous": false,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "assetLinks.includes('com.yangbis.ourgoal') && assetLinks.includes('sha256_cert_fingerprints')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "B",
+          "negated": false,
+          "desc": ".well-known/assetlinks.json 에 문자열 \"com.yangbis.ourgoal\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "B",
+          "negated": false,
+          "desc": ".well-known/assetlinks.json 에 문자열 \"sha256_cert_fingerprints\"",
+          "hits": 1,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 577,
+          "cond": "assetLinks.includes('com.yangbis.ourgoal') && assetLinks.includes('sha256_cert_fingerprints')",
+          "message": "assetlinks.json에 패키지명과 지문이 정상 기재되어 있어야 합니다.",
+          "skeleton": "a[0] && a[1]",
+          "residue": "&&"
+        }
+      ],
+      "duplicateOf": []
+    },
+    {
+      "id": "STO-16",
+      "domain": "스토어 규정/접근성",
+      "theme": "최소 권한 원칙",
+      "severity": "P0",
+      "title": "AndroidManifest.xml 내 불필요한 민감 권한 요구 제로 검증",
+      "lines": "580-583",
+      "assertLines": [
+        581,
+        582
+      ],
+      "mechanism": "B",
+      "primary": "F",
+      "F1_vacuous": true,
+      "F2_saturated": false,
+      "saturatedAtK": {
+        "5": false,
+        "20": false,
+        "50": false,
+        "100": false
+      },
+      "residueOk": true,
+      "staticPassOnWorkingTree": true,
+      "zeroHitAtoms": [],
+      "condKey": "!androidManifest.includes('android.permission.READ_CONTACTS') ;; !androidManifest.includes('android.permission.ACCESS_FINE_LOCATION')",
+      "atoms": [
+        {
+          "kind": "includes",
+          "cls": "B",
+          "negated": true,
+          "desc": "NOT android/app/src/main/AndroidManifest.xml 에 문자열 \"android.permission.READ_CONTACTS\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        },
+        {
+          "kind": "includes",
+          "cls": "B",
+          "negated": true,
+          "desc": "NOT android/app/src/main/AndroidManifest.xml 에 문자열 \"android.permission.ACCESS_FINE_LOCATION\"",
+          "hits": 0,
+          "fileExists": true,
+          "capped": false
+        }
+      ],
+      "asserts": [
+        {
+          "line": 581,
+          "cond": "!androidManifest.includes('android.permission.READ_CONTACTS')",
+          "message": "연락처 권한을 요구하지 않아야 합니다.",
+          "skeleton": "!a[0]",
+          "residue": "!"
+        },
+        {
+          "line": 582,
+          "cond": "!androidManifest.includes('android.permission.ACCESS_FINE_LOCATION')",
+          "message": "정밀 위치 권한을 요구하지 않아야 합니다.",
+          "skeleton": "!a[0]",
+          "residue": "!"
+        }
+      ],
+      "duplicateOf": []
+    }
+  ]
+}
