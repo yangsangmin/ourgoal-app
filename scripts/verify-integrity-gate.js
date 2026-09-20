@@ -610,7 +610,7 @@ check('헌법 정본에 시각 자가감사(제7조 8항), 시각 IA 명세(제2
   assert.ok(rulesContent.includes('제8항 [제6검증: 시각 및 공간 조형 무결성 검증 (Visual Self-Audit Mandate)]'), '제7조 8항 누락');
   assert.ok(
     rulesContent.includes('제3항 [보고 서식의 팩트 중심 4-Block 규격화 및 감정적 미사여구 영구 금지]') ||
-    rulesContent.includes('제3항 [보고 서식의 실물 전수 검증 6-Block 규격화 및 표준 템플릿 헌법 내장 강제]'),
+    rulesContent.includes('제3항 [보고의 정본은 법정 판정서다]'),
     '제8조 3항 누락'
   );
 });
