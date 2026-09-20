@@ -7294,27 +7294,42 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       joinedTeams.forEach(function(g){
         (g.teamGoals || []).forEach(function(tg){
           var d = tg.dueDate;
+          var tgDone = (tg.milestones || []).length > 0 && (tg.milestones || []).every(function(m){ return m.status === 'done'; });
+          if(state.profile && state.profile.settings && state.profile.settings.teamGoalDoneEvents && state.profile.settings.teamGoalDoneEvents[tg.id] !== undefined){
+            tgDone = !!state.profile.settings.teamGoalDoneEvents[tg.id];
+          }
           if(d){
             push(d, {
+              schedId: tg.id,
+              id: tg.id,
               date: d,
               title: '👑 [' + g.name + '] ' + (tg.title || '목표') + ' D-Day',
               kind: 'team_goal',
               teamId: g.id,
               teamName: g.name,
+              goalId: tg.id,
               goalTitle: '👥 ' + g.name,
-              done: (tg.milestones || []).length > 0 && (tg.milestones || []).every(function(m){ return m.status === 'done'; })
+              done: tgDone
             });
           }
           (tg.milestones || []).forEach(function(m){
             if(m.dueDate){
+              var mDone = m.status === 'done';
+              if(state.profile && state.profile.settings && state.profile.settings.teamGoalDoneEvents && state.profile.settings.teamGoalDoneEvents[m.id] !== undefined){
+                mDone = !!state.profile.settings.teamGoalDoneEvents[m.id];
+              }
               push(m.dueDate, {
+                schedId: m.id,
+                id: m.id,
                 date: m.dueDate,
                 title: '👥 [' + g.name + '] ' + m.title,
                 kind: 'team_goal',
                 teamId: g.id,
                 teamName: g.name,
+                goalId: tg.id,
+                msId: m.id,
                 goalTitle: '👥 ' + g.name,
-                done: m.status === 'done'
+                done: mDone
               });
             }
           });
@@ -7492,6 +7507,30 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(!state.profile.settings) state.profile.settings = {};
       if(!state.profile.settings.gcalDoneEvents) state.profile.settings.gcalDoneEvents = {};
       state.profile.settings.gcalDoneEvents[gcalTarget] = isNowDone;
+    } else if(kind === 'team_goal' && (schedId || msId || goalId)){
+      var tgTarget = schedId || msId || goalId;
+      if(!state.profile.settings) state.profile.settings = {};
+      if(!state.profile.settings.teamGoalDoneEvents) state.profile.settings.teamGoalDoneEvents = {};
+      var curDone = !!state.profile.settings.teamGoalDoneEvents[tgTarget];
+      isNowDone = !curDone;
+      state.profile.settings.teamGoalDoneEvents[tgTarget] = isNowDone;
+      try {
+        localStorage.setItem('ourgoal_team_goal_done_events', JSON.stringify(state.profile.settings.teamGoalDoneEvents));
+      } catch(e){}
+      if(typeof MOCK_GROUPS !== 'undefined'){
+        MOCK_GROUPS.forEach(function(g){
+          (g.teamGoals || []).forEach(function(tg){
+            if(String(tg.id) === String(tgTarget)){
+              (tg.milestones || []).forEach(function(m){ m.status = isNowDone ? 'done' : 'todo'; });
+            }
+            (tg.milestones || []).forEach(function(m){
+              if(String(m.id) === String(tgTarget)){
+                m.status = isNowDone ? 'done' : 'todo';
+              }
+            });
+          });
+        });
+      }
     }
 
     if(isNowDone){
@@ -7575,9 +7614,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     var modalHtml =
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-        '<h3 style="margin:0;font-size:1.1rem;color:var(--ink);">🖼️ 이날의 배경사진 고르기</h3>' +
+        (isFromHub ? '<span class="dm-back" id="calDayBgBackToHubBtn" style="cursor:pointer;margin:0;font-size:.875rem;color:var(--ink);font-weight:700;">‹ ' + sel + ' 일정 목록으로</span>' : '<h3 style="margin:0;font-size:1.1rem;color:var(--ink);">🖼️ 이날의 배경사진 고르기</h3>') +
         '<span class="faint" style="font-weight:600;font-size:.8125rem;">' + escapeHtml(sel) + '</span>' +
       '</div>' +
+      (isFromHub ? '<h3 style="margin:0 0 8px;font-size:1.1rem;color:var(--ink);">🖼️ 이날의 배경사진 고르기</h3>' : '') +
       '<p class="faint" style="font-size:.8125rem;margin:0 0 12px;line-height:1.4;">' +
         '최대 2장까지 등록 가능하며, 2장 등록 시 <b>상하 50% 분할</b>로 채워집니다.<br>' +
         '<b>50% 투명도</b>가 적용되어 기존에 적은 일정들이 선명하게 보입니다.' +
@@ -7610,6 +7650,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '</div>';
 
     openModal(modalHtml, function(sheet){
+      var backToHubBtn = sheet.querySelector('#calDayBgBackToHubBtn');
+      if(backToHubBtn){
+        backToHubBtn.onclick = function(){
+          openCalendarDayEditHubModal(sel);
+        };
+      }
       var fileInput = sheet.querySelector('#calDayBgFileInput');
       var triggerBtn = sheet.querySelector('#btnTriggerDayBgFile');
       var deleteBtn = sheet.querySelector('#btnDeleteDayBg');
@@ -7878,6 +7924,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               }
             } else if(ev.kind==='gcal'){
               targetEvent = (state.gcalEventsCache||[]).find(function(c){ return String(c.id)===String(ev.schedId||ev.gcalId||ev.id); }) || ev;
+            } else if(ev.kind==='team_goal'){
+              targetEvent = ev;
             }
             openCalendarManualEditModal(sel, targetEvent, ev.kind);
           };
@@ -8094,15 +8142,32 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             toast('일정을 추가했어요' + (isNotifyOn ? ' (' + (notifyMinutesVal === 0 ? '정시' : notifyMinutesVal + '분 전') + ' 알림)' : ''));
           } else {
             if(kind==='custom'){
-              eventItem.title = title;
-              eventItem.date = dtVal;
-              eventItem.note = note;
-              eventItem.done = isDone;
-              eventItem.notifyEnabled = isNotifyOn;
-              eventItem.notifyMinutes = notifyMinutesVal;
-              eventItem.linkedGoalId = linkedGoalId || null;
-              eventItem.linkedGoalTitle = linkedGoalTitle || null;
-              eventItem.attachments = curAttachments;
+              if(eventItem && typeof eventItem === 'object'){
+                eventItem.title = title;
+                eventItem.date = dtVal;
+                eventItem.note = note;
+                eventItem.done = isDone;
+                eventItem.notifyEnabled = isNotifyOn;
+                eventItem.notifyMinutes = notifyMinutesVal;
+                eventItem.linkedGoalId = linkedGoalId || null;
+                eventItem.linkedGoalTitle = linkedGoalTitle || null;
+                eventItem.attachments = curAttachments;
+              }
+              var targetSchedId = (eventItem && typeof eventItem === 'object') ? (eventItem.id || eventItem.schedId) : eventItem;
+              var rawSched = (state.profile.settings.customSchedules || []).find(function(c){
+                return String(c.id) === String(targetSchedId);
+              });
+              if(rawSched && rawSched !== eventItem){
+                rawSched.title = title;
+                rawSched.date = dtVal;
+                rawSched.note = note;
+                rawSched.done = isDone;
+                rawSched.notifyEnabled = isNotifyOn;
+                rawSched.notifyMinutes = notifyMinutesVal;
+                rawSched.linkedGoalId = linkedGoalId || null;
+                rawSched.linkedGoalTitle = linkedGoalTitle || null;
+                rawSched.attachments = curAttachments;
+              }
             } else if(kind==='gcal'){
               eventItem.title = title;
               eventItem.date = dtVal;

@@ -190,10 +190,19 @@
       calScreen.setAttribute('data-cal-mode', engine.activeCalMode || 'month');
     }
 
-    var modeNav = '<div class="s-cal-modes-wrap" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;">' +
+    var modeNav = '<div class="s-cal-modes-wrap" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;">' +
       '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'month' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'month\')">📅 월간</button>' +
       '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'week' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'week\')">📆 주간</button>' +
       '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'timeline' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'timeline\')">⏱️ 일간 타임라인</button>' +
+    '</div>' +
+    '<div class="s-cal-quick-action-bar" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;">' +
+      '<button type="button" class="btn-ghost" onclick="if(typeof window.openCalendarLockScreenModal===\'function\'){window.openCalendarLockScreenModal();}else{var b=document.getElementById(\'calLockScreenBtn\');if(b)b.click();}" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;font-size:0.8125rem;font-weight:600;border-radius:9999px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--ink);cursor:pointer;">' +
+        '<span>📱 폰 잠금화면에서 보기</span>' +
+        '<span style="font-size:0.7rem;padding:2px 6px;border-radius:999px;background:rgba(99,102,241,0.15);color:#818cf8;font-weight:700;">⚡ 실시간 연동</span>' +
+      '</button>' +
+      '<button type="button" class="btn-ghost" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();" style="display:inline-flex;align-items:center;gap:4px;padding:6px 12px;font-size:0.8125rem;font-weight:600;border-radius:9999px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);color:#10b981;cursor:pointer;">' +
+        '<span>+ 새 일정</span>' +
+      '</button>' +
     '</div>';
 
     var contentHtml = '';
@@ -387,6 +396,29 @@
         '</div>';
       }).join('');
 
+      var selectedDayItems = itemsByDate[engine.selectedCalDate] || [];
+      var dayDetailsHtml = '';
+      if (selectedDayItems.length > 0) {
+        dayDetailsHtml = selectedDayItems.map(function(it) {
+          var tPart = (it.date && it.date.indexOf('T') !== -1) ? it.date.split('T')[1].slice(0, 5) : (it.time || '종일');
+          var isDone = !!it.done;
+          var schedId = it.schedId || it.id || '';
+          var kind = it.kind || 'custom';
+          var goalId = it.goalId || '';
+          var msId = it.msId || '';
+          return '<div class="s-cal-item ' + (isDone ? 'done' : '') + '" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,0.04);margin-bottom:8px;cursor:pointer;" onclick="window.OurgoalSanctuaryV3.openScheduleDetail(\'' + engine.selectedCalDate + '\', \'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\');">' +
+            '<button type="button" class="s-cal-check-btn" style="background:none;border:none;padding:4px;cursor:pointer;color:' + (isDone ? '#10b981' : 'var(--ink-sub)') + ';" onclick="event.stopPropagation(); window.OurgoalSanctuaryV3.toggleScheduleItem(\'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\', \'' + msId + '\');">' +
+              (isDone ? '☑' : '☐') +
+            '</button>' +
+            '<div style="flex:1;min-width:0;">' +
+              '<div style="font-weight:600;font-size:0.875rem;color:var(--ink);' + (isDone ? 'text-decoration:line-through;opacity:0.6;' : '') + '">' + escapeHtml(it.title || it.text) + '</div>' +
+              '<div style="font-size:0.75rem;color:var(--ink-soft);">' + tPart + (it.category ? ' · ' + escapeHtml(it.category) : '') + '</div>' +
+            '</div>' +
+            '<span style="font-size:0.75rem;color:var(--brand);font-weight:600;">상세</span>' +
+          '</div>';
+        }).join('');
+      }
+
       contentHtml = '<div class="s-week-cal-card">' +
         '<div class="s-week-header">' +
           '<button class="s-cal-arrow" type="button" onclick="window.OurgoalSanctuaryV3.shiftWeek(-1)">◀</button>' +
@@ -394,15 +426,15 @@
           '<button class="s-cal-arrow" type="button" onclick="window.OurgoalSanctuaryV3.shiftWeek(1)">▶</button>' +
           '<span class="s-cal-today-badge" onclick="window.OurgoalSanctuaryV3.selectToday()">오늘</span>' +
         '</div>' +
-        '<div class="s-week-strip">' +
-          weekDays.join('') +
+        '<div class="s-week-grid">' +
+          weekRowsHtml +
         '</div>' +
         '<div class="s-week-day-detail" style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
             '<h4 style="margin:0;font-size:0.9rem;color:var(--ink-soft);">' + engine.selectedCalDate + ' 상세 일정</h4>' +
             '<button class="btn btn-primary btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal(\'' + engine.selectedCalDate + '\');">+ 일정 추가</button>' +
           '</div>' +
-          (dayDetails || '<div style="text-align:center;padding:18px 0;color:var(--ink-soft);font-size:0.85rem;">등록된 일정이 없습니다.</div>') +
+          (dayDetailsHtml || '<div style="text-align:center;padding:18px 0;color:var(--ink-soft);font-size:0.85rem;">등록된 일정이 없습니다.</div>') +
         '</div>' +
       '</div>';
     } else if (engine.activeCalMode === 'timeline') {
@@ -945,10 +977,14 @@
       if (typeof window.openCalendarManualEditModal === 'function') {
         var itemsByDate = (typeof window.calendarItemsByDate === 'function') ? window.calendarItemsByDate() : {};
         var dayItems = itemsByDate[dt] || [];
-        var found = dayItems.find(function(it) {
-          return (String(it.schedId || it.id) === String(schedId)) || (goalId && String(it.goalId) === String(goalId));
-        });
-        window.openCalendarManualEditModal(dt, schedId, kind || 'custom', found || null);
+        var editEvent = null;
+        if ((kind === 'custom' || !kind) && window.state && window.state.profile && window.state.profile.settings && window.state.profile.settings.customSchedules) {
+          editEvent = window.state.profile.settings.customSchedules.find(function(cs) {
+            return String(cs.id) === String(schedId);
+          });
+        }
+        if (!editEvent) editEvent = found;
+        window.openCalendarManualEditModal(dt, editEvent || null, kind || 'custom');
       } else {
         window.OurgoalSanctuaryV3.openAddScheduleModal(dt);
       }
@@ -982,10 +1018,10 @@
         toast('일자 관리 종합 허브를 엽니다.');
       }
     },
-    openBgPickerModal: function(dateKey) {
+    openBgPickerModal: function(dateKey, fromHub) {
       var dt = dateKey || engine.selectedCalDate || getTodayStr();
       if (typeof window.openCalendarDayBgPickerModal === 'function') {
-        window.openCalendarDayBgPickerModal(dt);
+        window.openCalendarDayBgPickerModal(dt, !!fromHub);
       } else {
         toast('배경사진 선택 모달을 엽니다.');
       }

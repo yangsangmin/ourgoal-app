@@ -858,6 +858,35 @@ check('[검증 21/21] [#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진�
   assert.ok(indexContent.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 누락');
 });
 
+// ============================================================================
+// [검증 22/22] #TASK-ES-198: 캘린더 6대 결함 전수 일괄 정상화 게이트
+// ============================================================================
+check('[검증 22/22] #TASK-ES-198: 캘린더 6대 결함 전수 일괄 정상화 검증', () => {
+  const sanctPath = path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js');
+  const sanctContent = fs.readFileSync(sanctPath, 'utf8');
+  const indexPath = path.join(__dirname, '..', 'index.html');
+  const indexContent = fs.readFileSync(indexPath, 'utf8');
+
+  // 1. 주간 모드 크래시 방어 확인 (weekRowsHtml 정상 사용, weekDays.join 미호출, dayDetailsHtml 정의)
+  assert.ok(!sanctContent.includes('weekDays.join'), 'sanctuary-v3-engine.js 내 정의되지 않은 weekDays.join 호출 차단 실패');
+  assert.ok(sanctContent.includes('s-week-grid'), 'sanctuary-v3-engine.js 내 .s-week-grid 레이아웃 배선 누락');
+  assert.ok(sanctContent.includes('dayDetailsHtml'), 'sanctuary-v3-engine.js 내 dayDetailsHtml 상세 일정 렌더링 누락');
+
+  // 2. 타임라인 일정 수정 Zero-Save 버그 방어 확인 (openCalendarManualEditModal에 editEvent 올바른 인자 전달)
+  assert.ok(sanctContent.includes('window.openCalendarManualEditModal(dt, editEvent || null, kind || \'custom\')'), 'openScheduleDetail 내 openCalendarManualEditModal 인자 순서 교정 누락');
+
+  // 3. 잠금화면 퀵버튼 성소 캘린더 헤더 배선 확인
+  assert.ok(sanctContent.includes('s-cal-quick-action-bar'), '성소 캘린더 헤더 내 s-cal-quick-action-bar 배선 누락');
+  assert.ok(sanctContent.includes('폰 잠금화면에서 보기'), '성소 캘린더 헤더 내 폰 잠금화면 바로가기 버튼 누락');
+
+  // 4. index.html 내 팀 목표 마일스톤 토글 및 허브 편집 배선 확인
+  assert.ok(indexContent.includes('kind === \'team_goal\''), 'toggleScheduleDone 내 kind === team_goal 분기 누락');
+  assert.ok(indexContent.includes('teamGoalDoneEvents'), '팀 목표 마일스톤 완료 상태 영속화 원장 누락');
+
+  // 5. 배경사진 선택 모달 뒤로가기 플로우 확인
+  assert.ok(indexContent.includes('calDayBgBackToHubBtn'), 'openCalendarDayBgPickerModal 내 calDayBgBackToHubBtn 뒤로가기 링크 누락');
+});
+
 console.log('\n================================================================');
 console.log(`🎯 검증 결과: 총 ${totalChecks}개 검사 중 ${passedChecks}개 통과 (${failures}개 실패)`);
 console.log('================================================================');
