@@ -8754,3 +8754,64 @@ html[data-theme="white"] .toast {
   background: rgba(255, 255, 255, 0.08) !important;
 }
 
+/* ============ [#TASK-ES-194] 소통 탭 서브탭 6종 2줄(3×2 그리드) 조형 정돈 ============ */
+[data-theme="focus-sanctuary"] .comm-subtabs.comm-subtabs-grid,
+[data-theme="black"] .comm-subtabs.comm-subtabs-grid,
+[data-theme="white"] .comm-subtabs.comm-subtabs-grid,
+[data-theme="urban-city"] .comm-subtabs.comm-subtabs-grid,
+html[data-theme="focus-sanctuary"] .comm-subtabs.comm-subtabs-grid,
+html[data-theme="black"] .comm-subtabs.comm-subtabs-grid,
+html[data-theme="white"] .comm-subtabs.comm-subtabs-grid,
+html[data-theme="urban-city"] .comm-subtabs.comm-subtabs-grid,
+.comm-subtabs.comm-subtabs-grid,
+.comm-subtabs-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 6px !important;
+  padding: 6px !important;
+  margin-bottom: 12px !important;
+  overflow-x: visible !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+[data-theme="focus-sanctuary"] .comm-subtabs.comm-subtabs-grid .comm-subtab,
+[data-theme="black"] .comm-subtabs.comm-subtabs-grid .comm-subtab,
+[data-theme="white"] .comm-subtabs.comm-subtabs-grid .comm-subtab,
+[data-theme="urban-city"] .comm-subtabs.comm-subtabs-grid .comm-subtab,
+html[data-theme="focus-sanctuary"] .comm-subtabs.comm-subtabs-grid .comm-subtab,
+html[data-theme="black"] .comm-subtabs.comm-subtabs-grid .comm-subtab,
+html[data-theme="white"] .comm-subtabs.comm-subtabs-grid .comm-subtab,
+html[data-theme="urban-city"] .comm-subtabs.comm-subtabs-grid .comm-subtab,
+.comm-subtabs.comm-subtabs-grid .comm-subtab,
+.comm-subtabs-grid .comm-subtab {
+  flex: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 40px !important;
+  padding: 6px 4px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.2px !important;
+  white-space: nowrap !important;
+  border-radius: 9px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  cursor: pointer !important;
+}
+
+@media (max-width: 375px) {
+  .comm-subtabs.comm-subtabs-grid,
+  .comm-subtabs-grid {
+    gap: 4px !important;
+    padding: 4px !important;
+  }
+  .comm-subtabs.comm-subtabs-grid .comm-subtab,
+  .comm-subtabs-grid .comm-subtab {
+    font-size: 10.5px !important;
+    padding: 6px 2px !important;
+    min-height: 40px !important;
+  }
+}
+
