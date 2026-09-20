@@ -787,7 +787,7 @@ check('[검증 18/18] [#TASK-ES-194] 소통 탭 6종 3×2 그리드 조형 정�
   assert.ok(cssContent.includes('.comm-subtabs-grid .comm-subtab'), '.comm-subtabs-grid 버튼 스타일 누락');
 });
 
-check('[검증 19/19] [#TASK-ES-195] 목표 탭 5종 서브탭 5열 그리드 단정화 및 통계 세그먼트 버튼 40px 정적 방화벽 검사', () => {
+check('[검증 19/20] [#TASK-ES-195] 목표 탭 5종 서브탭 5열 그리드 단정화 및 통계 세그먼트 버튼 40px 정적 방화벽 검사', () => {
   const indexPath = path.join(__dirname, '..', 'index.html');
   const indexContent = fs.readFileSync(indexPath, 'utf8');
   const cssPath = path.join(__dirname, '..', 'ui.css');
@@ -807,6 +807,55 @@ check('[검증 19/19] [#TASK-ES-195] 목표 탭 5종 서브탭 5열 그리드 �
   // 4. 통계 세그먼트 버튼(.s-seg-pill) 40px 터치 규격 확인
   assert.ok(cssContent.includes('.s-seg-pill'), '.s-seg-pill 스타일 선언 누락');
   assert.ok(cssContent.includes('min-height: 40px !important;'), '40px 터치 타겟 규격 누락');
+});
+
+check('[검증 20/20] [#TASK-ES-196] 체크인 즉시 아바타 AI 피드백 고도화 & 영구 원장 영속화 및 기록 탭 상시 노출 무결성 검사', () => {
+  const indexPath = path.join(__dirname, '..', 'index.html');
+  const indexContent = fs.readFileSync(indexPath, 'utf8');
+  const cssPath = path.join(__dirname, '..', 'ui.css');
+  const cssContent = fs.readFileSync(cssPath, 'utf8');
+
+  // 1. 체크인 저장 시 피드백 영구 보존 배선 확인
+  assert.ok(indexContent.includes('newRec.feedback = fb;'), 'newRec.feedback 영구 할당 누락');
+  assert.ok(indexContent.includes('showCheckinFeedbackSheet(newRec, fb);'), 'showCheckinFeedbackSheet 피드백 배선 누락');
+
+  // 2. 아바타 피드백 바텀시트 함수 및 1클릭 액션 연계 확인
+  assert.ok(indexContent.includes('function showCheckinFeedbackSheet'), 'showCheckinFeedbackSheet 함수 누락');
+  assert.ok(indexContent.includes('btnCheckinAiApplyNext'), '1클릭 퀘스트 등록 버튼 배선 누락');
+
+  // 3. 기록 탭 buildRecordCardHtml 내 AI 피드백 렌더링 확인
+  assert.ok(indexContent.includes('rec-ai-feedback-box'), '기록 탭 AI 피드백 박스 렌더링 누락');
+  assert.ok(indexContent.includes('rec-ai-verdict-badge'), '기록 탭 AI 판정 뱃지 렌더링 누락');
+
+  // 4. CSS 바텀시트 및 기록 탭 AI 박스 스타일 선언 확인
+  assert.ok(cssContent.includes('.checkin-ai-backdrop'), '.checkin-ai-backdrop CSS 누락');
+  assert.ok(cssContent.includes('.checkin-ai-sheet'), '.checkin-ai-sheet CSS 누락');
+  assert.ok(cssContent.includes('.rec-ai-feedback-box'), '.rec-ai-feedback-box CSS 누락');
+  assert.ok(cssContent.includes('.checkin-ai-close-btn'), '.checkin-ai-close-btn CSS 누락');
+});
+
+check('[검증 21/21] [#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo Diary) 썸네일 자동 연계 & 히트맵 14px 스케일업 무결성 검사', () => {
+  const indexPath = path.join(__dirname, '..', 'index.html');
+  const indexContent = fs.readFileSync(indexPath, 'utf8');
+  const cssPath = path.join(__dirname, '..', 'ui.css');
+  const cssContent = fs.readFileSync(cssPath, 'utf8');
+
+  // 1. 달력 셀 min-height 76px 및 사진형 일기 클래스 선언 확인
+  assert.ok(cssContent.includes('.cal-cell{background:var(--card);border-radius:10px;border:1px solid var(--rule);padding:4px 2px;min-height:76px;'), 'cal-cell min-height: 76px 선언 누락');
+  assert.ok(cssContent.includes('.cal-photo-badge'), '.cal-photo-badge CSS 누락');
+  assert.ok(cssContent.includes('.cal-photo-diary-bg'), '.cal-photo-diary-bg CSS 누락');
+
+  // 2. 히트맵 셀 14px 및 그리드 14px 선언 확인
+  assert.ok(cssContent.includes('.heatmap-cell{width:14px;height:14px;border-radius:3px;'), '.heatmap-cell width/height: 14px 선언 누락');
+  assert.ok(cssContent.includes('.heatmap-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,14px);gap:3px;}'), '.heatmap-grid repeat(7,14px) 선언 누락');
+
+  // 3. index.html 내 사진형 일기 자동 감지 및 썸네일 렌더러 확인
+  assert.ok(indexContent.includes('cal-photo-diary-bg'), 'calCellHtml 내 cal-photo-diary-bg 배선 누락');
+  assert.ok(indexContent.includes('cal-photo-badge'), 'calCellHtml 내 cal-photo-badge 배선 누락');
+  assert.ok(indexContent.includes('cal-day-photo-diary-card'), 'openCalendarDayEditHubModal 내 cal-day-photo-diary-card 배선 누락');
+
+  // 4. 히트맵 월 라벨 17px 간격 확인
+  assert.ok(indexContent.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 누락');
 });
 
 console.log('\n================================================================');

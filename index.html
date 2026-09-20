@@ -7332,6 +7332,48 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var more = evs.length - shown.length;
     var dayBg = (state.profile && state.profile.calendarDayBackgrounds && state.profile.calendarDayBackgrounds[iso]) || '';
     var bgHtml = '';
+    var photoUrl = '';
+
+    // 사진형 일기(Photo Diary): 사용자가 등록한 체크인/기록의 사진 자동 추출 (#TASK-ES-197)
+    if(!dayBg && state.profile && state.profile.records){
+      for(var ri=0; ri<state.profile.records.length; ri++){
+        var rec = state.profile.records[ri];
+        var rDate = (rec.startAt || rec.createdAt || rec.date || '').slice(0, 10);
+        if(rDate === iso){
+          if(rec.photo){
+            photoUrl = rec.photo;
+            break;
+          }
+          if(rec.attachments && rec.attachments.length){
+            var imgAtt = rec.attachments.find(function(a){
+              return a.type === 'image' || (a.url && (a.url.startsWith('data:image') || a.url.match(/\.(png|jpe?g|webp|gif)/i)));
+            });
+            if(imgAtt){
+              photoUrl = imgAtt.url;
+              break;
+            }
+          }
+        }
+      }
+    }
+    if(!dayBg && !photoUrl && evs && evs.length){
+      for(var ei=0; ei<evs.length; ei++){
+        var ev = evs[ei];
+        if(ev.attachments && ev.attachments.length){
+          var evImg = ev.attachments.find(function(a){
+            return a.type === 'image' || (a.url && (a.url.startsWith('data:image') || a.url.match(/\.(png|jpe?g|webp|gif)/i)));
+          });
+          if(evImg){
+            photoUrl = evImg.url;
+            break;
+          }
+        }
+      }
+    }
+
+    var hasPhoto = !!(dayBg || photoUrl);
+    if(hasPhoto) cls += ' has-photo';
+
     if(Array.isArray(dayBg) && dayBg.length > 1){
       bgHtml = '<div class="cal-cell-bg" style="position:absolute;inset:0;display:flex;flex-direction:column;pointer-events:none;overflow:hidden;border-radius:6px;">' +
         '<div style="flex:1;background-image:url(\''+escapeHtml(dayBg[0])+'\');background-size:cover;background-position:center;opacity:0.5;"></div>' +
@@ -7340,15 +7382,23 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     } else if(dayBg){
       var singleBg = Array.isArray(dayBg) ? dayBg[0] : dayBg;
       bgHtml = '<div class="cal-cell-bg" style="background-image:url(\''+escapeHtml(singleBg)+'\');"></div>';
+    } else if(photoUrl){
+      bgHtml = '<div class="cal-cell-bg cal-photo-diary-bg" style="background-image:url(\''+escapeHtml(photoUrl)+'\');"></div>';
     }
+
+    var photoBadge = hasPhoto ? '<span class="cal-photo-badge" title="사진형 일기 포함">📸</span>' : '';
+    var photoTag = (shown.length === 0 && hasPhoto) ? '<div class="cal-photo-tag">📷 사진 일기</div>' : '';
+
     return '<div class="'+cls+'" data-caldate="'+iso+'">' +
       bgHtml +
       '<div class="cal-daynum">'+d.getDate()+'</div>' +
+      photoBadge +
       shown.map(function(e){
         var pillKind = e.isTemplateRecord ? ' tpl' : (e.kind==='team_goal'?' team':(e.kind==='ms'?' ms':(e.kind==='custom'?' custom':'')));
         return '<div class="cal-pill'+pillKind+(e.done?' done':'')+'">'+escapeHtml(e.title)+'</div>';
       }).join('') +
       (more>0 ? '<div class="cal-more">+'+more+'</div>' : '') +
+      photoTag +
     '</div>';
   }
   function calShift(dir){
@@ -7725,12 +7775,31 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     ) : (
       '<div class="empty-state" style="padding:18px 10px;margin-bottom:14px;"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></div><p style="margin:4px 0 0;font-size:.875rem;">이 날짜에 등록된 일정이 없습니다.</p></div>'
     );
+    var dayRecs = (state.profile && state.profile.records) ? state.profile.records.filter(function(r){
+      return (r.startAt || r.createdAt || r.date || '').slice(0, 10) === sel;
+    }) : [];
+    var photoRec = dayRecs.find(function(r){
+      return r.photo || (r.attachments && r.attachments.some(function(a){ return a.type==='image'||(a.url&&a.url.startsWith('data:image')); }));
+    });
+    var photoDiaryHtml = '';
+    if(photoRec){
+      var pUrl = photoRec.photo || (photoRec.attachments && photoRec.attachments.find(function(a){ return a.type==='image'||(a.url&&a.url.startsWith('data:image')); }).url);
+      photoDiaryHtml = '<div class="cal-day-photo-diary-card" style="margin-bottom:12px;padding:10px;background:var(--surface-2);border-radius:10px;border:1px solid var(--rule);display:flex;gap:10px;align-items:center;">' +
+        '<div style="width:56px;height:56px;border-radius:8px;background-image:url(\''+escapeHtml(pUrl)+'\');background-size:cover;background-position:center;flex:0 0 56px;border:1px solid var(--rule);"></div>' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:.75rem;font-weight:700;color:var(--ink-soft);display:flex;align-items:center;gap:4px;"><span>📸 이날의 사진 일기</span></div>' +
+          '<div style="font-size:.84rem;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;">'+escapeHtml(photoRec.text||'사진 기록')+'</div>' +
+          (photoRec.feedback ? ('<div style="font-size:.72rem;color:var(--sage);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">✨ AI: '+escapeHtml(photoRec.feedback.cheer||photoRec.feedback.analysis||'')+ '</div>') : '') +
+        '</div>' +
+      '</div>';
+    }
     openModal(
       '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;">' +
         '<h3 style="margin:0;">' + sel + ' 일정 관리</h3>' +
         '<span class="faint" style="font-weight:700;font-size:.8125rem;">' + (dDay(sel)||'') + '</span>' +
       '</div>' +
       '<p class="faint" style="font-size:.8125rem;margin:0 0 12px;">해당 일자의 일정을 수정하거나 새로운 일정·맞춤기록을 추가하세요.</p>' +
+      photoDiaryHtml +
       evsHtml +
       '<div style="margin-bottom:10px;">' +
         '<button class="btn btn-secondary btn-sm cal-day-bg-btn" id="hubDayBgBtn" type="button" style="width:100%;padding:8px 0;font-size:.84rem;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--surface-2);color:var(--ink);border:1px solid var(--rule);border-radius:8px;">' +
@@ -12061,10 +12130,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var targetGoal = goal || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
       renderFeedbackSlot('loading');
       renderRecordFeedbackSlot('loading');
+      showCheckinFeedbackSheet(newRec, 'loading');
       fb = await requestAIFeedback(targetGoal, text, newRec ? newRec.theme : null);
+      if(newRec && fb){
+        newRec.feedback = fb;
+        await saveProfile();
+      }
       state.lastCapture = { record: newRec, goal: targetGoal, feedback: fb };
       renderFeedbackSlot(fb);
       renderRecordFeedbackSlot(fb);
+      showCheckinFeedbackSheet(newRec, fb);
       if(targetGoal && targetGoal.milestones && targetGoal.milestones.length > 0){
         maybeShowGoalUpdateModal(targetGoal, fb);
       }
@@ -12523,6 +12598,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     return {
       verdict: verdict,
       comment: comment,
+      next_action: nextSentence,
+      nextAction: nextSentence,
+      fact_insight: hitSentence,
+      factInsight: hitSentence,
       source: 'local',
       theme: detectedTheme,
       suggestions: suggestions,
@@ -12943,6 +13022,215 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           calBtn.style.opacity = '0.6';
         });
       }
+    }
+  }
+
+  function getUserAvatarHtml(size){
+    size = size || 48;
+    try {
+      var p = (state && state.profile) || {};
+      var customUrl = (p.settings && p.settings.avatarType === 'custom' && p.settings.customAvatarUrl) || p.avatarUrl;
+      if(customUrl){
+        return '<img src="' + customUrl + '" alt="" style="width:'+size+'px;height:'+size+'px;object-fit:cover;border-radius:50%;border:2px solid var(--primary);">';
+      }
+      if(window.OurgoalAvatar && window.OurgoalAvatar.renderAvatarHtml){
+        var xpTotal = (p.settings && p.settings.xp && p.settings.xp.total) || 0;
+        var pLvl = (typeof levelProgress === 'function') ? levelProgress(xpTotal) : { level: 1 };
+        return window.OurgoalAvatar.renderAvatarHtml(pLvl.level, p, { size: size });
+      }
+      var icon = (p.avatar || p.avatarIcon || '🌱');
+      return '<div style="width:'+size+'px;height:'+size+'px;border-radius:50%;background:var(--primary-glow, rgba(99,102,241,0.15));display:flex;align-items:center;justify-content:center;font-size:'+Math.round(size*0.55)+'px;border:2px solid var(--primary);">'+icon+'</div>';
+    } catch(e){
+      return '<div style="width:'+size+'px;height:'+size+'px;border-radius:50%;background:var(--primary-glow, rgba(99,102,241,0.15));display:flex;align-items:center;justify-content:center;font-size:24px;">🌱</div>';
+    }
+  }
+
+  function showCheckinFeedbackSheet(rec, fb){
+    var existingBackdrop = document.getElementById('checkinAiSheetBackdrop');
+    if(!fb){
+      if(existingBackdrop) existingBackdrop.remove();
+      return;
+    }
+    if(!existingBackdrop){
+      existingBackdrop = document.createElement('div');
+      existingBackdrop.id = 'checkinAiSheetBackdrop';
+      existingBackdrop.className = 'checkin-ai-backdrop';
+      document.body.appendChild(existingBackdrop);
+      existingBackdrop.addEventListener('click', function(e){
+        if(e.target === existingBackdrop){
+          closeCheckinFeedbackSheet();
+        }
+      });
+    }
+
+    var avatarHtml = getUserAvatarHtml(52);
+    var p = (state && state.profile) || {};
+    var userName = p.displayName || '나';
+
+    if(fb === 'loading'){
+      existingBackdrop.innerHTML = 
+        '<div class="checkin-ai-sheet card" role="dialog" aria-modal="true" aria-label="AI 코치 체크인 피드백">' +
+          '<div class="checkin-ai-header">' +
+            '<div class="checkin-ai-header-title">✨ 오늘의 체크인 AI 코칭</div>' +
+            '<button type="button" class="checkin-ai-close-btn" id="btnCheckinAiClose" aria-label="닫기">×</button>' +
+          '</div>' +
+          '<div class="checkin-ai-body">' +
+            '<div class="checkin-ai-profile-row">' +
+              '<div class="checkin-ai-avatar-wrap pulse">' + avatarHtml + '</div>' +
+              '<div class="checkin-ai-profile-info">' +
+                '<div class="checkin-ai-speaker"><b>' + escapeHtml(userName) + '</b> 님의 페이스메이커</div>' +
+                '<div class="checkin-ai-status-sub">오늘의 실천 데이터를 정밀 분석하고 있어요...</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="checkin-ai-loading-box">' +
+              '<div class="checkin-ai-dots"><span></span><span></span><span></span></div>' +
+              '<div class="checkin-ai-loading-text">방금 남긴 실천에 맞는 맞춤 조언을 준비 중입니다</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      existingBackdrop.style.display = 'flex';
+      var closeBtn = existingBackdrop.querySelector('#btnCheckinAiClose');
+      if(closeBtn) closeBtn.addEventListener('click', closeCheckinFeedbackSheet);
+      return;
+    }
+
+    // fb loaded
+    var mode = fb.feedbackMode || (state && state.aiFeedbackMode) || 'default';
+    var modeLabel = mode === 'macro' ? '정밀 진단' : (mode === 'medium' ? '중간 코칭' : '기본 코칭');
+    var verdict = fb.verdict || '핵심 발견';
+    var factText = fb.fact_insight || fb.factInsight || fb.comment || '오늘의 실천을 멋지게 완수하셨습니다.';
+    var nextAction = fb.next_action || fb.nextAction || '내일도 같은 시간대에 꾸준한 실천으로 성장 흐름을 이어가보세요!';
+    var calAct = fb.calendarAction || fb.calendar_action;
+
+    var calBtnHtml = '';
+    if(calAct && (calAct.has_suggestion || calAct.title)){
+      calBtnHtml = '<button type="button" class="btn btn-secondary btn-sm" id="btnCheckinAiCal" style="width:100%;min-height:40px;margin-top:6px;font-size:0.8125rem;">📅 AI 추천 일정 캘린더 등록: ' + escapeHtml(calAct.title) + '</button>';
+    }
+
+    var nextActionHtml = '';
+    if(nextAction){
+      nextActionHtml = 
+        '<div class="checkin-ai-next-card">' +
+          '<div class="checkin-ai-next-head">🎯 내일의 1가지 행동 제안</div>' +
+          '<div class="checkin-ai-next-body">' + escapeHtml(nextAction) + '</div>' +
+          '<button type="button" class="btn btn-primary" id="btnCheckinAiApplyNext" style="width:100%;min-height:40px;margin-top:8px;font-weight:700;">내일 퀘스트로 등록 (+1클릭)</button>' +
+        '</div>';
+    }
+
+    existingBackdrop.innerHTML = 
+      '<div class="checkin-ai-sheet card" role="dialog" aria-modal="true" aria-label="AI 코치 체크인 피드백">' +
+        '<div class="checkin-ai-header">' +
+          '<div class="checkin-ai-header-title">✨ 오늘의 체크인 AI 코칭</div>' +
+          '<button type="button" class="checkin-ai-close-btn" id="btnCheckinAiClose" aria-label="닫기">×</button>' +
+        '</div>' +
+        '<div class="checkin-ai-body">' +
+          '<div class="checkin-ai-profile-row">' +
+            '<div class="checkin-ai-avatar-wrap">' + avatarHtml + '</div>' +
+            '<div class="checkin-ai-profile-info">' +
+              '<div class="checkin-ai-speaker"><b>' + escapeHtml(userName) + '</b> 님의 페이스메이커</div>' +
+              '<div style="display:flex;align-items:center;gap:6px;margin-top:2px;">' +
+                '<span class="checkin-ai-verdict-tag">' + escapeHtml(verdict) + '</span>' +
+                '<span class="checkin-ai-mode-tag">[' + modeLabel + ']</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="checkin-ai-speech-bubble">' +
+            '<div class="checkin-ai-speech-text">' + escapeHtml(factText) + '</div>' +
+          '</div>' +
+          nextActionHtml +
+          calBtnHtml +
+          '<div class="checkin-ai-footer-actions">' +
+            '<button type="button" class="btn btn-ghost" id="btnCheckinAiGoRecords" style="flex:1;min-height:40px;font-size:0.8125rem;">기록 탭에서 확인</button>' +
+            '<button type="button" class="btn btn-ghost" id="btnCheckinAiShareFeed" style="flex:1;min-height:40px;font-size:0.8125rem;">피드에 공유하기</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    existingBackdrop.style.display = 'flex';
+    triggerHaptic(18);
+
+    // wire listeners
+    var closeBtn = existingBackdrop.querySelector('#btnCheckinAiClose');
+    if(closeBtn) closeBtn.addEventListener('click', closeCheckinFeedbackSheet);
+
+    var btnApplyNext = existingBackdrop.querySelector('#btnCheckinAiApplyNext');
+    if(btnApplyNext && nextAction){
+      btnApplyNext.addEventListener('click', async function(){
+        try {
+          btnApplyNext.disabled = true;
+          btnApplyNext.textContent = '등록 중…';
+          if(!state.profile.settings.customSchedules) state.profile.settings.customSchedules = [];
+          var tomorrow = new Date(Date.now() + 86400000);
+          var tomorrowKey = (typeof dateKey === 'function') ? dateKey(tomorrow.toISOString()) : tomorrow.toISOString().slice(0, 10);
+          state.profile.settings.customSchedules.push({
+            id: uid('sched'),
+            title: nextAction,
+            date: tomorrowKey,
+            time: '09:00',
+            note: 'AI 체크인 코칭 제안 액션',
+            done: false,
+            createdAt: nowISO()
+          });
+          await saveProfile();
+          if(typeof renderCalendarScreen === 'function' && state.activeTab === 'calendar') renderCalendarScreen();
+          toast('내일 퀘스트로 등록되었습니다! 🎯');
+          burstConfetti(window.innerWidth / 2, window.innerHeight / 2, 10);
+          btnApplyNext.textContent = '✓ 내일 퀘스트 등록 완료';
+          btnApplyNext.style.opacity = '0.7';
+        } catch(err){
+          toast('등록 중 문제가 발생했습니다.');
+          btnApplyNext.disabled = false;
+          btnApplyNext.textContent = '내일 퀘스트로 등록 (+1클릭)';
+        }
+      });
+    }
+
+    var btnCal = existingBackdrop.querySelector('#btnCheckinAiCal');
+    if(btnCal && calAct){
+      btnCal.addEventListener('click', async function(){
+        if(!state.profile.settings.customSchedules) state.profile.settings.customSchedules = [];
+        state.profile.settings.customSchedules.push({
+          id: uid('sched'),
+          title: calAct.title || 'AI 추천 일정',
+          date: calAct.suggested_date || calAct.date || ((typeof dateKey === 'function') ? dateKey(nowISO()) : nowISO().slice(0,10)),
+          time: calAct.suggested_time || calAct.time || '14:00',
+          note: calAct.note || 'AI 피드백 추천 일정',
+          done: false,
+          createdAt: nowISO()
+        });
+        await saveProfile();
+        if(typeof renderCalendarScreen === 'function' && state.activeTab === 'calendar') renderCalendarScreen();
+        toast('캘린더에 일정을 등록했습니다: ' + (calAct.title || ''));
+        btnCal.disabled = true;
+        btnCal.textContent = '✓ 캘린더 등록 완료';
+        btnCal.style.opacity = '0.6';
+      });
+    }
+
+    var btnGoRec = existingBackdrop.querySelector('#btnCheckinAiGoRecords');
+    if(btnGoRec){
+      btnGoRec.addEventListener('click', function(){
+        closeCheckinFeedbackSheet();
+        var navRecords = document.querySelector('.navbtn[data-tab="records"]');
+        if(navRecords) navRecords.click();
+        else if(typeof switchTab === 'function') switchTab('records');
+      });
+    }
+
+    var btnShareFeed = existingBackdrop.querySelector('#btnCheckinAiShareFeed');
+    if(btnShareFeed){
+      btnShareFeed.addEventListener('click', function(){
+        closeCheckinFeedbackSheet();
+        if(typeof openShareToFeedModal === 'function') openShareToFeedModal();
+      });
+    }
+  }
+
+  function closeCheckinFeedbackSheet(){
+    var existingBackdrop = document.getElementById('checkinAiSheetBackdrop');
+    if(existingBackdrop){
+      existingBackdrop.classList.add('closing');
+      setTimeout(function(){ existingBackdrop.remove(); }, 200);
     }
   }
 
@@ -20148,6 +20436,23 @@ wirePromptEncyclopediaEvents(body);
       '</div>' +
       metricPills +
       photoHtml +
+      (function(){
+        if(!r.feedback || (!r.feedback.comment && !r.feedback.verdict && typeof r.feedback !== 'string')) return '';
+        var fbVerdict = typeof r.feedback === 'string' ? 'AI 코칭' : (r.feedback.verdict || 'AI 코칭');
+        var fbComment = typeof r.feedback === 'string' ? r.feedback : (r.feedback.comment || '');
+        var fbNext = (r.feedback && typeof r.feedback === 'object' && (r.feedback.next_action || r.feedback.nextAction)) || '';
+        var fbMode = (r.feedback && typeof r.feedback === 'object' && r.feedback.feedbackMode) || '';
+        var modeBadge = fbMode ? ('<span class="rec-ai-mode-tag">[' + (fbMode==='macro'?'정밀':(fbMode==='medium'?'중간':'기본')) + ']</span>') : '';
+        return '<div class="rec-ai-feedback-box">' +
+          '<div class="rec-ai-head">' +
+            '<span class="rec-ai-icon">🤖</span>' +
+            '<span class="rec-ai-verdict-badge">' + escapeHtml(fbVerdict) + '</span>' +
+            modeBadge +
+          '</div>' +
+          '<div class="rec-ai-comment">' + escapeHtml(fbComment) + '</div>' +
+          (fbNext ? ('<div class="rec-ai-next"><span class="rec-ai-next-label">🎯 추천 액션:</span> ' + escapeHtml(fbNext) + '</div>') : '') +
+        '</div>';
+      })() +
       '<div class="rec-bottom">' +
         '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
           '<span class="rec-time">'+timeStr+'</span>' + durEl +
@@ -20359,7 +20664,7 @@ wirePromptEncyclopediaEvents(body);
       var m = dWeek.getMonth();
       if(m !== prevMonth){
         prevMonth = m;
-        var leftPx = w * 14;
+        var leftPx = w * 17;
         monthLabels.push('<span class="heatmap-month-lbl" style="left:' + leftPx + 'px;">' + (m+1) + '월</span>');
       }
     }
@@ -20831,11 +21136,14 @@ wirePromptEncyclopediaEvents(body);
 
           renderRecordFeedbackSlot('loading');
           var recGoal = (state.profile.goals || []).find(function(g){ return g.category === candidate.category; }) || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
-          requestAIFeedback(recGoal, candidate.text, candidate.theme).then(function(fb){
+          requestAIFeedback(recGoal, candidate.text, candidate.theme).then(async function(fb){
             if(fb){
+              candidate.feedback = fb;
+              await saveProfile();
               state.lastCapture = { record: candidate, goal: recGoal, feedback: fb };
               renderRecordFeedbackSlot(fb);
               renderFeedbackSlot(fb);
+              if(state.activeTab === 'records') renderRecordsScreen();
               if(recGoal && recGoal.milestones && recGoal.milestones.length > 0){
                 maybeShowGoalUpdateModal(recGoal, fb);
               }
@@ -24473,11 +24781,14 @@ wirePromptEncyclopediaEvents(body);
           renderRecordFeedbackSlot('loading');
           var summaryText = (curTpl ? curTpl.title + ': ' : '') + validRows.map(function(r){ return r.filter(Boolean).join(' '); }).join(', ');
           var recGoal = (state.profile.goals || []).find(function(g){ return g.category === recObj.category; }) || (state.profile.goals && state.profile.goals[0]) || { title: '나의 맞춤 템플릿 성장', milestones: [] };
-          requestAIFeedback(recGoal, summaryText || recObj.text, recObj.theme).then(function(fb){
+          requestAIFeedback(recGoal, summaryText || recObj.text, recObj.theme).then(async function(fb){
             if(fb){
+              recObj.feedback = fb;
+              await saveProfile();
               state.lastCapture = { record: recObj, goal: recGoal, feedback: fb };
               renderRecordFeedbackSlot(fb);
               renderFeedbackSlot(fb);
+              if(state.activeTab === 'records') renderRecordsScreen();
               if(recGoal && recGoal.milestones && recGoal.milestones.length > 0){
                 maybeShowGoalUpdateModal(recGoal, fb);
               }
@@ -25702,11 +26013,14 @@ wirePromptEncyclopediaEvents(body);
           if(isNew){
             renderRecordFeedbackSlot('loading');
             var recGoal = (state.profile.goals || []).find(function(g){ return g.category === r.category; }) || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
-            requestAIFeedback(recGoal, r.text, r.theme).then(function(fb){
+            requestAIFeedback(recGoal, r.text, r.theme).then(async function(fb){
               if(fb){
+                r.feedback = fb;
+                await saveProfile();
                 state.lastCapture = { record: r, goal: recGoal, feedback: fb };
                 renderRecordFeedbackSlot(fb);
                 renderFeedbackSlot(fb);
+                if(state.activeTab === 'records') renderRecordsScreen();
                 if(recGoal && recGoal.milestones && recGoal.milestones.length > 0){
                   maybeShowGoalUpdateModal(recGoal, fb);
                 }
