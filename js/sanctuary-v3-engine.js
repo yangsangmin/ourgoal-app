@@ -221,16 +221,58 @@
         var dayItems = itemsByDate[dateKey] || [];
         var hasItems = dayItems.length > 0;
 
-        // 일자별 배경 사진 지정 여부 확인
+        // 일자별 배경 사진 지정 여부 확인 및 사진형 일기(Photo Diary) 연동 (#TASK-ES-197)
         var dayBg = (window.state && window.state.profile && window.state.profile.calendarDayBackgrounds && window.state.profile.calendarDayBackgrounds[dateKey]) || '';
+        var photoUrl = '';
+
+        if (!dayBg && window.state && window.state.profile && window.state.profile.records) {
+          for (var ri = 0; ri < window.state.profile.records.length; ri++) {
+            var rec = window.state.profile.records[ri];
+            var rDate = (rec.startAt || rec.createdAt || rec.date || '').slice(0, 10);
+            if (rDate === dateKey) {
+              if (rec.photo) {
+                photoUrl = rec.photo;
+                break;
+              }
+              if (rec.attachments && rec.attachments.length) {
+                var imgAtt = rec.attachments.find(function(a) {
+                  return a.type === 'image' || (a.url && (a.url.startsWith('data:image') || a.url.match(/\.(png|jpe?g|webp|gif)/i)));
+                });
+                if (imgAtt) {
+                  photoUrl = imgAtt.url;
+                  break;
+                }
+              }
+            }
+          }
+        }
+        if (!dayBg && !photoUrl && dayItems && dayItems.length) {
+          for (var ei = 0; ei < dayItems.length; ei++) {
+            var ev = dayItems[ei];
+            if (ev.attachments && ev.attachments.length) {
+              var evImg = ev.attachments.find(function(a) {
+                return a.type === 'image' || (a.url && (a.url.startsWith('data:image') || a.url.match(/\.(png|jpe?g|webp|gif)/i)));
+              });
+              if (evImg) {
+                photoUrl = evImg.url;
+                break;
+              }
+            }
+          }
+        }
+
+        var hasPhoto = !!(dayBg || photoUrl);
         var bgStyle = '';
         if (Array.isArray(dayBg) && dayBg.length > 0) {
           bgStyle = 'background-image:url(\'' + escapeHtml(dayBg[0]) + '\');background-size:cover;background-position:center;';
         } else if (typeof dayBg === 'string' && dayBg) {
           bgStyle = 'background-image:url(\'' + escapeHtml(dayBg) + '\');background-size:cover;background-position:center;';
+        } else if (photoUrl) {
+          bgStyle = 'background-image:url(\'' + escapeHtml(photoUrl) + '\');background-size:cover;background-position:center;';
         }
 
         var bgLayer = bgStyle ? '<div style="position:absolute;inset:0;opacity:0.38;border-radius:10px;' + bgStyle + 'pointer-events:none;"></div>' : '';
+        var photoBadge = hasPhoto ? '<span class="s-cal-photo-badge" title="사진형 일기 포함">📸</span>' : '';
 
         var dotsHtml = '';
         if (dayItems.length > 0) {
@@ -250,11 +292,14 @@
         if (dayItems.length > 0) {
           var firstTitle = escapeHtml(dayItems[0].title || dayItems[0].text || '일정');
           tagHtml = '<span class="s-day-today-tag" style="position:relative;z-index:1;font-size:0.56rem;max-width:96%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;margin-top:1px;">' + firstTitle + '</span>';
+        } else if (hasPhoto) {
+          tagHtml = '<span class="s-cal-photo-tag">📷 사진 일기</span>';
         }
 
-        return '<div class="s-cal-day-cell ' + (isToday ? 'today' : '') + ' ' + (isSelected ? 'selected' : '') + ' ' + (hasItems ? 'active' : '') + '" style="position:relative;" onclick="window.OurgoalSanctuaryV3.selectCalDay(\'' + dateKey + '\')">' +
+        return '<div class="s-cal-day-cell ' + (isToday ? 'today' : '') + ' ' + (isSelected ? 'selected' : '') + ' ' + (hasItems ? 'active' : '') + (hasPhoto ? ' has-photo' : '') + '" style="position:relative;" onclick="window.OurgoalSanctuaryV3.selectCalDay(\'' + dateKey + '\')">' +
           bgLayer +
           '<span class="s-day-num" style="position:relative;z-index:1;">' + d + '</span>' +
+          photoBadge +
           dotsHtml +
           tagHtml +
         '</div>';

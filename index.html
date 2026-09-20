@@ -7332,6 +7332,48 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var more = evs.length - shown.length;
     var dayBg = (state.profile && state.profile.calendarDayBackgrounds && state.profile.calendarDayBackgrounds[iso]) || '';
     var bgHtml = '';
+    var photoUrl = '';
+
+    // 사진형 일기(Photo Diary): 사용자가 등록한 체크인/기록의 사진 자동 추출 (#TASK-ES-197)
+    if(!dayBg && state.profile && state.profile.records){
+      for(var ri=0; ri<state.profile.records.length; ri++){
+        var rec = state.profile.records[ri];
+        var rDate = (rec.startAt || rec.createdAt || rec.date || '').slice(0, 10);
+        if(rDate === iso){
+          if(rec.photo){
+            photoUrl = rec.photo;
+            break;
+          }
+          if(rec.attachments && rec.attachments.length){
+            var imgAtt = rec.attachments.find(function(a){
+              return a.type === 'image' || (a.url && (a.url.startsWith('data:image') || a.url.match(/\.(png|jpe?g|webp|gif)/i)));
+            });
+            if(imgAtt){
+              photoUrl = imgAtt.url;
+              break;
+            }
+          }
+        }
+      }
+    }
+    if(!dayBg && !photoUrl && evs && evs.length){
+      for(var ei=0; ei<evs.length; ei++){
+        var ev = evs[ei];
+        if(ev.attachments && ev.attachments.length){
+          var evImg = ev.attachments.find(function(a){
+            return a.type === 'image' || (a.url && (a.url.startsWith('data:image') || a.url.match(/\.(png|jpe?g|webp|gif)/i)));
+          });
+          if(evImg){
+            photoUrl = evImg.url;
+            break;
+          }
+        }
+      }
+    }
+
+    var hasPhoto = !!(dayBg || photoUrl);
+    if(hasPhoto) cls += ' has-photo';
+
     if(Array.isArray(dayBg) && dayBg.length > 1){
       bgHtml = '<div class="cal-cell-bg" style="position:absolute;inset:0;display:flex;flex-direction:column;pointer-events:none;overflow:hidden;border-radius:6px;">' +
         '<div style="flex:1;background-image:url(\''+escapeHtml(dayBg[0])+'\');background-size:cover;background-position:center;opacity:0.5;"></div>' +
@@ -7340,15 +7382,23 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     } else if(dayBg){
       var singleBg = Array.isArray(dayBg) ? dayBg[0] : dayBg;
       bgHtml = '<div class="cal-cell-bg" style="background-image:url(\''+escapeHtml(singleBg)+'\');"></div>';
+    } else if(photoUrl){
+      bgHtml = '<div class="cal-cell-bg cal-photo-diary-bg" style="background-image:url(\''+escapeHtml(photoUrl)+'\');"></div>';
     }
+
+    var photoBadge = hasPhoto ? '<span class="cal-photo-badge" title="사진형 일기 포함">📸</span>' : '';
+    var photoTag = (shown.length === 0 && hasPhoto) ? '<div class="cal-photo-tag">📷 사진 일기</div>' : '';
+
     return '<div class="'+cls+'" data-caldate="'+iso+'">' +
       bgHtml +
       '<div class="cal-daynum">'+d.getDate()+'</div>' +
+      photoBadge +
       shown.map(function(e){
         var pillKind = e.isTemplateRecord ? ' tpl' : (e.kind==='team_goal'?' team':(e.kind==='ms'?' ms':(e.kind==='custom'?' custom':'')));
         return '<div class="cal-pill'+pillKind+(e.done?' done':'')+'">'+escapeHtml(e.title)+'</div>';
       }).join('') +
       (more>0 ? '<div class="cal-more">+'+more+'</div>' : '') +
+      photoTag +
     '</div>';
   }
   function calShift(dir){
@@ -7725,12 +7775,31 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     ) : (
       '<div class="empty-state" style="padding:18px 10px;margin-bottom:14px;"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></div><p style="margin:4px 0 0;font-size:.875rem;">이 날짜에 등록된 일정이 없습니다.</p></div>'
     );
+    var dayRecs = (state.profile && state.profile.records) ? state.profile.records.filter(function(r){
+      return (r.startAt || r.createdAt || r.date || '').slice(0, 10) === sel;
+    }) : [];
+    var photoRec = dayRecs.find(function(r){
+      return r.photo || (r.attachments && r.attachments.some(function(a){ return a.type==='image'||(a.url&&a.url.startsWith('data:image')); }));
+    });
+    var photoDiaryHtml = '';
+    if(photoRec){
+      var pUrl = photoRec.photo || (photoRec.attachments && photoRec.attachments.find(function(a){ return a.type==='image'||(a.url&&a.url.startsWith('data:image')); }).url);
+      photoDiaryHtml = '<div class="cal-day-photo-diary-card" style="margin-bottom:12px;padding:10px;background:var(--surface-2);border-radius:10px;border:1px solid var(--rule);display:flex;gap:10px;align-items:center;">' +
+        '<div style="width:56px;height:56px;border-radius:8px;background-image:url(\''+escapeHtml(pUrl)+'\');background-size:cover;background-position:center;flex:0 0 56px;border:1px solid var(--rule);"></div>' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:.75rem;font-weight:700;color:var(--ink-soft);display:flex;align-items:center;gap:4px;"><span>📸 이날의 사진 일기</span></div>' +
+          '<div style="font-size:.84rem;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;">'+escapeHtml(photoRec.text||'사진 기록')+'</div>' +
+          (photoRec.feedback ? ('<div style="font-size:.72rem;color:var(--sage);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">✨ AI: '+escapeHtml(photoRec.feedback.cheer||photoRec.feedback.analysis||'')+ '</div>') : '') +
+        '</div>' +
+      '</div>';
+    }
     openModal(
       '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;">' +
         '<h3 style="margin:0;">' + sel + ' 일정 관리</h3>' +
         '<span class="faint" style="font-weight:700;font-size:.8125rem;">' + (dDay(sel)||'') + '</span>' +
       '</div>' +
       '<p class="faint" style="font-size:.8125rem;margin:0 0 12px;">해당 일자의 일정을 수정하거나 새로운 일정·맞춤기록을 추가하세요.</p>' +
+      photoDiaryHtml +
       evsHtml +
       '<div style="margin-bottom:10px;">' +
         '<button class="btn btn-secondary btn-sm cal-day-bg-btn" id="hubDayBgBtn" type="button" style="width:100%;padding:8px 0;font-size:.84rem;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--surface-2);color:var(--ink);border:1px solid var(--rule);border-radius:8px;">' +
@@ -20595,7 +20664,7 @@ wirePromptEncyclopediaEvents(body);
       var m = dWeek.getMonth();
       if(m !== prevMonth){
         prevMonth = m;
-        var leftPx = w * 14;
+        var leftPx = w * 17;
         monthLabels.push('<span class="heatmap-month-lbl" style="left:' + leftPx + 'px;">' + (m+1) + '월</span>');
       }
     }

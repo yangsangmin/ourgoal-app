@@ -7435,6 +7435,28 @@ check('[#TASK-ES-196] 체크인 즉시 아바타 AI 피드백 고도화 & 영구
   assert.ok(cssContent.includes('.checkin-ai-close-btn'), '.checkin-ai-close-btn CSS 누락');
 });
 
+check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo Diary) 썸네일 자동 연계 & 히트맵 14px 스케일업 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 달력 셀 min-height 76px 및 사진형 일기 클래스 선언 확인
+  assert.ok(cssContent.includes('.cal-cell{background:var(--card);border-radius:10px;border:1px solid var(--rule);padding:4px 2px;min-height:76px;'), 'cal-cell min-height: 76px 선언 확인');
+  assert.ok(cssContent.includes('.cal-photo-badge'), '.cal-photo-badge CSS 선언 확인');
+  assert.ok(cssContent.includes('.cal-photo-diary-bg'), '.cal-photo-diary-bg CSS 선언 확인');
+
+  // 2. 히트맵 셀 14px 및 그리드 14px 선언 확인
+  assert.ok(cssContent.includes('.heatmap-cell{width:14px;height:14px;border-radius:3px;'), '.heatmap-cell width/height: 14px 선언 확인');
+  assert.ok(cssContent.includes('.heatmap-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,14px);gap:3px;}'), '.heatmap-grid repeat(7,14px) 선언 확인');
+
+  // 3. index.html 내 사진형 일기 자동 감지 및 썸네일 렌더러 확인
+  assert.ok(indexHtml.includes('cal-photo-diary-bg'), 'calCellHtml 내 cal-photo-diary-bg 배선 확인');
+  assert.ok(indexHtml.includes('cal-photo-badge'), 'calCellHtml 내 cal-photo-badge 배선 확인');
+  assert.ok(indexHtml.includes('cal-day-photo-diary-card'), 'openCalendarDayEditHubModal 내 cal-day-photo-diary-card 배선 확인');
+
+  // 4. 히트맵 월 라벨 17px 간격 확인
+  assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
