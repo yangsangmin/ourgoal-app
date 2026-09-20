@@ -6969,18 +6969,19 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   cursor: pointer;
 }
 
-/* 4. [기록 탭] 365일 연간 발광 히트맵 / 피드 / 리캡 */
-.s-rec-modes-wrap {
-  display: flex;
+/* 3. [일정 탭] 3대 캘린더 뷰 (월간/주간/일간) 3열 그리드 */
+.s-cal-modes-wrap {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
   background: rgba(255, 255, 255, 0.04);
   padding: 4px;
   border-radius: 12px;
   margin-bottom: 16px;
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
-.s-rec-mode-btn {
-  flex: 1;
-  padding: 8px 10px;
+.s-cal-mode-btn {
+  padding: 8px 4px;
   border-radius: 8px;
   border: none;
   background: transparent;
@@ -6989,6 +6990,48 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   color: #94A3B8;
   cursor: pointer;
   transition: all 0.2s;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+}
+.s-cal-mode-btn.active {
+  background: rgba(255, 255, 255, 0.12);
+  color: #F8FAFC;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 4. [기록 탭] 365일 연간 발광 히트맵 / 피드 / 타이머 / 통계 / 보관함 / 리캡 (3×2 그리드) */
+.s-rec-modes-wrap {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 6px;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.s-rec-mode-btn {
+  padding: 8px 4px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #94A3B8;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  letter-spacing: -0.3px;
 }
 .s-rec-mode-btn.active {
   background: rgba(255, 255, 255, 0.12);

@@ -190,11 +190,10 @@
       calScreen.setAttribute('data-cal-mode', engine.activeCalMode || 'month');
     }
 
-    var modeNav = '<div class="s-cal-modes-wrap">' +
+    var modeNav = '<div class="s-cal-modes-wrap" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;">' +
       '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'month' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'month\')">📅 월간</button>' +
       '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'week' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'week\')">📆 주간</button>' +
       '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'timeline' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'timeline\')">⏱️ 일간 타임라인</button>' +
-      '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'timer' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'timer\')">🧘 집중 타이머</button>' +
     '</div>';
 
     var contentHtml = '';
@@ -350,12 +349,15 @@
           '<button class="s-cal-arrow" type="button" onclick="window.OurgoalSanctuaryV3.shiftWeek(1)">▶</button>' +
           '<span class="s-cal-today-badge" onclick="window.OurgoalSanctuaryV3.selectToday()">오늘</span>' +
         '</div>' +
-        '<div class="s-week-grid">' +
-          weekRowsHtml +
+        '<div class="s-week-strip">' +
+          weekDays.join('') +
         '</div>' +
-        '<div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;gap:8px;">' +
-          '<span style="font-size:0.8125rem;color:var(--ink-soft);">요일 탭 시 상세 일정 연동</span>' +
-          '<button class="btn btn-primary btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();">+ 일정 추가</button>' +
+        '<div class="s-week-day-detail" style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
+            '<h4 style="margin:0;font-size:0.9rem;color:var(--ink-soft);">' + engine.selectedCalDate + ' 상세 일정</h4>' +
+            '<button class="btn btn-primary btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal(\'' + engine.selectedCalDate + '\');">+ 일정 추가</button>' +
+          '</div>' +
+          (dayDetails || '<div style="text-align:center;padding:18px 0;color:var(--ink-soft);font-size:0.85rem;">등록된 일정이 없습니다.</div>') +
         '</div>' +
       '</div>';
     } else if (engine.activeCalMode === 'timeline') {
@@ -413,42 +415,6 @@
           '<button class="btn btn-primary btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();">+ 새 일정 등록</button>' +
         '</div>' +
       '</div>';
-    } else if (engine.activeCalMode === 'timer') {
-      var mins = Math.floor(engine.timerSeconds / 60);
-      var secs = engine.timerSeconds % 60;
-      var timeStr = (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
-
-      var goals = (window.state && window.state.profile && window.state.profile.goals) || [];
-      var curGoal = goals.find(function(g) { return g.id === engine.activeGoalId; }) || goals[0];
-      var todayKeyForTimer = engine.selectedCalDate || getTodayStr();
-      var dayItemsForTimer = itemsByDate[todayKeyForTimer] || [];
-      var firstActiveItem = dayItemsForTimer.find(function(it) { return !it.done; });
-      var goalTitle = firstActiveItem ? ('[' + todayKeyForTimer + '] ' + (firstActiveItem.title || firstActiveItem.text)) : (curGoal ? curGoal.title : '25분 딥워크 몰입');
-
-      contentHtml = '<div class="s-timer-card">' +
-        '<div class="s-timer-header">' +
-          '<span class="s-timer-badge">뽀모도로 딥워크 세션</span>' +
-          '<h4>' + escapeHtml(goalTitle) + '</h4>' +
-        '</div>' +
-        '<div class="s-timer-dial-wrap">' +
-          '<svg class="s-timer-svg" viewBox="0 0 200 200">' +
-            '<circle class="s-dial-bg" cx="100" cy="100" r="85"></circle>' +
-            '<circle class="s-dial-progress ' + (engine.timerRunning ? 'pulsing' : '') + '" cx="100" cy="100" r="85" style="stroke-dashoffset: ' + (534 * (1 - engine.timerSeconds / 1500)) + ';"></circle>' +
-          '</svg>' +
-          '<div class="s-timer-display" id="sPomodoroDisplay">' + timeStr + '</div>' +
-        '</div>' +
-        '<div class="s-timer-controls">' +
-          '<button class="btn btn-primary s-timer-main-btn" type="button" onclick="window.OurgoalSanctuaryV3.togglePomodoro()">' +
-            (engine.timerRunning ? '⏸️ 일시정지' : '▶️ 몰입 시작') +
-          '</button>' +
-          '<button class="btn btn-ghost btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.resetPomodoro()">' +
-            '↺ 리셋' +
-          '</button>' +
-          '<button class="btn btn-ghost btn-sm" type="button" style="color:var(--brand-strong);border:1px solid var(--brand);" onclick="window.OurgoalSanctuaryV3.finishPomodoroSession()">' +
-            '✨ 완성 & 기록 적립' +
-          '</button>' +
-        '</div>' +
-      '</div>';
     }
 
     slot.innerHTML = modeNav + contentHtml;
@@ -461,9 +427,10 @@
     var slot = document.getElementById('sanctuaryRecordsView');
     if (!slot) return;
 
-    var modeNav = '<div class="s-rec-modes-wrap" style="display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin-bottom:12px;">' +
+    var modeNav = '<div class="s-rec-modes-wrap" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;">' +
       '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'heatmap' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'heatmap\')">🟩 365일 히트맵</button>' +
       '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'feed' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'feed\')">✍️ 내 기록 피드</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'timer' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'timer\')">🧘 집중 타이머</button>' +
       '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'stats' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'stats\')">📊 성취 통계</button>' +
       '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'archive' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'archive\')">📦 보관함</button>' +
       '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'recap' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'recap\')">📸 위클리 리캡</button>' +
@@ -626,6 +593,43 @@
           '<button class="btn btn-ghost btn-sm" type="button" onclick="if(window.OurgoalViralSharing) window.OurgoalViralSharing.shareStreakKakao(); else toast(\'카카오톡 공유 링크를 생성했습니다!\');">💬 카카오톡 공유</button>' +
         '</div>' +
       '</div>';
+    } else if (engine.activeRecMode === 'timer') {
+      var mins = Math.floor(engine.timerSeconds / 60);
+      var secs = engine.timerSeconds % 60;
+      var timeStr = (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+
+      var goals = (window.state && window.state.profile && window.state.profile.goals) || [];
+      var curGoal = goals.find(function(g) { return g.id === engine.activeGoalId; }) || goals[0];
+      var todayKeyForTimer = getTodayStr();
+      var itemsByDate = (typeof window.calendarItemsByDate === 'function') ? window.calendarItemsByDate() : {};
+      var dayItemsForTimer = itemsByDate[todayKeyForTimer] || [];
+      var firstActiveItem = dayItemsForTimer.find(function(it) { return !it.done; });
+      var goalTitle = firstActiveItem ? ('[' + todayKeyForTimer + '] ' + (firstActiveItem.title || firstActiveItem.text)) : (curGoal ? curGoal.title : '25분 딥워크 몰입');
+
+      contentHtml = '<div class="s-timer-card">' +
+        '<div class="s-timer-header">' +
+          '<span class="s-timer-badge">뽀모도로 딥워크 세션</span>' +
+          '<h4>' + escapeHtml(goalTitle) + '</h4>' +
+        '</div>' +
+        '<div class="s-timer-dial-wrap">' +
+          '<svg class="s-timer-svg" viewBox="0 0 200 200">' +
+            '<circle class="s-dial-bg" cx="100" cy="100" r="85"></circle>' +
+            '<circle class="s-dial-progress ' + (engine.timerRunning ? 'pulsing' : '') + '" cx="100" cy="100" r="85" style="stroke-dashoffset: ' + (534 * (1 - engine.timerSeconds / 1500)) + ';"></circle>' +
+          '</svg>' +
+          '<div class="s-timer-display" id="sPomodoroDisplay">' + timeStr + '</div>' +
+        '</div>' +
+        '<div class="s-timer-controls">' +
+          '<button class="btn btn-primary s-timer-main-btn" type="button" onclick="window.OurgoalSanctuaryV3.togglePomodoro()">' +
+            (engine.timerRunning ? '⏸️ 일시정지' : '▶️ 몰입 시작') +
+          '</button>' +
+          '<button class="btn btn-ghost btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.resetPomodoro()">' +
+            '↺ 리셋' +
+          '</button>' +
+          '<button class="btn btn-ghost btn-sm" type="button" style="color:var(--brand-strong);border:1px solid var(--brand);" onclick="window.OurgoalSanctuaryV3.finishPomodoroSession()">' +
+            '✨ 완성 & 기록 적립' +
+          '</button>' +
+        '</div>' +
+      '</div>';
     }
 
     slot.innerHTML = modeNav + contentHtml;
@@ -773,6 +777,13 @@
     render: renderSanctuaryV3,
     renderRadar: renderSanctuaryComm,
     setCalMode: function(m) {
+      if (m === 'timer') {
+        if (typeof window.switchTab === 'function') window.switchTab('records');
+        else if (typeof window.setTab === 'function') window.setTab('records');
+        else if (typeof window.showScreen === 'function') window.showScreen('screen-records');
+        this.setRecMode('timer');
+        return;
+      }
       engine.activeCalMode = m;
       var calScreen = document.getElementById('screen-calendar');
       if (calScreen) {
@@ -1059,6 +1070,7 @@
         clearInterval(engine.timerInterval);
         engine.timerInterval = null;
       }
+      renderSanctuaryRecords();
       renderSanctuaryCalendar();
     },
     resetPomodoro: function() {
@@ -1067,6 +1079,7 @@
       engine.timerRunning = false;
       engine.timerSeconds = 1500;
       toast('타이머가 리셋되었습니다.');
+      renderSanctuaryRecords();
       renderSanctuaryCalendar();
     },
     finishPomodoroSession: async function() {
@@ -1098,6 +1111,7 @@
       if (window.playTimerBeep) window.playTimerBeep();
 
       toast('🎉 뽀모도로 세션 완료! 기록 탭에 25분이 자동 적립되었습니다 (+25 EXP).');
+      renderSanctuaryRecords();
       renderSanctuaryCalendar();
       if (typeof renderCalendarScreen === 'function') renderCalendarScreen();
       if (typeof renderHome === 'function') renderHome();
