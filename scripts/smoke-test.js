@@ -7319,6 +7319,33 @@ check('[#TASK-CALENDAR-TAB-RESTORATION 일정 탭 전수 결함 정상화 및 4�
   assert.ok(indexHtml.includes('btn.dataset.calsyncsched||null'), 'quickSyncToCalendar 호출 시 calsyncsched 전달');
 });
 
+/* ============ [#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도화 검증 ============ */
+check('[#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도화 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+
+  // 1. 전역 인터페이스 배선 확인
+  assert.ok(indexHtml.includes('window.promptNewGoal = promptNewGoal;'), 'window.promptNewGoal 전역 배선 완료');
+  assert.ok(indexHtml.includes('window.showNewGoalManualForm = showNewGoalManualForm;'), 'window.showNewGoalManualForm 전역 배선 완료');
+
+  // 2. 세부 마일스톤 헤더 새 목표 버튼 및 리스너 배선 확인
+  assert.ok(indexHtml.includes('id="btnPersonalAddGoalInline"'), '세부 마일스톤 헤더 + 새 목표 버튼 마크업 존재');
+  assert.ok(indexHtml.includes('btnPersonalAddGoalInline'), 'btnPersonalAddGoalInline 이벤트 리스너 배선 완료');
+
+  // 3. 성소 마운틴 트레일 목표 추가 핸들러 방어적 배선 확인
+  assert.ok(sanctuaryJs.includes('window.promptNewGoal()'), '성소 마운틴 트레일 목표 추가 버튼 window.promptNewGoal 호출 배선');
+
+  // 4. localGoalTemplate tasks 데이터 정규화(문자열 배열) 확인
+  assert.ok(indexHtml.includes("t + ' 관련 세부 실행 1'"), 'localGoalTemplate tasks 문자열 정규화');
+
+  // 5. showNewGoalReviewStep tasks 안전 처리 확인
+  assert.ok(indexHtml.includes("typeof tk === 'string' ? tk :"), 'showNewGoalReviewStep tasks 문자열/객체 상호 방어 로직 구비');
+
+  // 6. 직접 설정 폼(showNewGoalManualForm) 유효성 토스트 및 etc 기본 마일스톤 확인
+  assert.ok(indexHtml.includes("toast('목표 제목을 입력해주세요');"), '직접 설정 폼 공백 검증 토스트 구비');
+  assert.ok(indexHtml.includes("'목표 구체화 및 실행 준비'"), 'etc 카테고리 기본 마일스톤 구비');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

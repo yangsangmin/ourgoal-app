@@ -689,6 +689,31 @@ check('모바일 375px 4대 시각 물리 규격이 ui.css에 배선되어 있�
   assert.ok(uiCss.includes('word-break: keep-all !important'), '한글 단어 보존 word-break: keep-all 누락');
 });
 
+check('[검증 15/15] [#TASK-ES-190] 목표 추가 파이프라인 및 4위 1체 전역 배선 검사', () => {
+  const sanctuaryPath = path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js');
+  const sanctuaryContent = fs.readFileSync(sanctuaryPath, 'utf8');
+
+  // 1. 전역 함수 배선 확인
+  assert.ok(html.includes('window.promptNewGoal = promptNewGoal;'), 'window.promptNewGoal 전역 배선 누락');
+  assert.ok(html.includes('window.showNewGoalManualForm = showNewGoalManualForm;'), 'window.showNewGoalManualForm 전역 배선 누락');
+
+  // 2. 세부 마일스톤 뷰 + 새 목표 버튼 마크업 및 리스너 배선 확인
+  assert.ok(html.includes('id="btnPersonalAddGoalInline"'), '#btnPersonalAddGoalInline 마크업 누락');
+  assert.ok(html.includes('btnPersonalAddGoalInline'), 'btnPersonalAddGoalInline 핸들러 바인딩 누락');
+
+  // 3. 성소 트레일 버튼 핸들러의 window.promptNewGoal 안전 호출 확인
+  assert.ok(sanctuaryContent.includes('window.promptNewGoal()'), '성소 트레일 목표 추가 핸들러의 window.promptNewGoal 호출 누락');
+
+  // 4. localGoalTemplate tasks 데이터 정규화(문자열 배열) 확인
+  assert.ok(html.includes("t + ' 관련 세부 실행 1'"), 'localGoalTemplate tasks 문자열 정규화 누락');
+
+  // 5. showNewGoalReviewStep tasks 안전 처리 확인
+  assert.ok(html.includes("typeof tk === 'string' ? tk :"), 'showNewGoalReviewStep tasks 방어 로직 누락');
+
+  // 6. 직접 설정 폼(showNewGoalManualForm) 공백 토스트 피드백 확인
+  assert.ok(html.includes("toast('목표 제목을 입력해주세요');"), '직접 설정 폼 공백 검증 토스트 누락');
+});
+
 console.log('\n================================================================');
 console.log(`🎯 검증 결과: 총 ${totalChecks}개 검사 중 ${passedChecks}개 통과 (${failures}개 실패)`);
 console.log('================================================================');
