@@ -737,6 +737,34 @@ check('[검증 16/16] [#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터
   assert.ok(html.includes('아워골 완전 무료화 헌법 선언'), '아워골 완전 무료 선언 모달 마크업 누락');
 });
 
+check('[검증 17/17] [#TASK-ES-193] 집중 타이머 기록 탭 이전 및 기록 탭 6종 3×2 그리드 조형 정적 방화벽 검사', () => {
+  const sanctuaryPath = path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js');
+  const sanctuaryContent = fs.readFileSync(sanctuaryPath, 'utf8');
+  const cssPath = path.join(__dirname, '..', 'ui.css');
+  const cssContent = fs.readFileSync(cssPath, 'utf8');
+
+  // 1. 일정 탭: timer 제거 및 3종(월간/주간/일간) 정돈 확인
+  assert.ok(!sanctuaryContent.includes("setCalMode(\\'timer\\')"), '일정 탭 모드 바에 setCalMode timer 버튼 잔존');
+  assert.ok(sanctuaryContent.includes("setCalMode(\\'month\\')"), '일정 탭 월간 모드 누락');
+  assert.ok(sanctuaryContent.includes("setCalMode(\\'week\\')"), '일정 탭 주간 모드 누락');
+  assert.ok(sanctuaryContent.includes("setCalMode(\\'timeline\\')"), '일정 탭 일간 타임라인 모드 누락');
+
+  // 2. 기록 탭: 6종 서브탭 완비 확인
+  assert.ok(sanctuaryContent.includes("setRecMode(\\'heatmap\\')"), '기록 탭 히트맵 모드 누락');
+  assert.ok(sanctuaryContent.includes("setRecMode(\\'feed\\')"), '기록 탭 피드 모드 누락');
+  assert.ok(sanctuaryContent.includes("setRecMode(\\'timer\\')"), '기록 탭 집중 타이머 모드 누락');
+  assert.ok(sanctuaryContent.includes("setRecMode(\\'stats\\')"), '기록 탭 통계 모드 누락');
+  assert.ok(sanctuaryContent.includes("setRecMode(\\'archive\\')"), '기록 탭 보관함 모드 누락');
+  assert.ok(sanctuaryContent.includes("setRecMode(\\'recap\\')"), '기록 탭 리캡 모드 누락');
+
+  // 3. 3×2 그리드 조형 확인
+  assert.ok(cssContent.includes('.s-rec-modes-wrap'), '.s-rec-modes-wrap CSS 클래스 누락');
+  assert.ok(cssContent.includes('grid-template-columns: repeat(3, 1fr)'), '3열 그리드 스타일 누락');
+
+  // 4. 타이머 렌더링 분기 확인
+  assert.ok(sanctuaryContent.includes("engine.activeRecMode === 'timer'"), '기록 탭 타이머 분기 렌더링 누락');
+});
+
 console.log('\n================================================================');
 console.log(`🎯 검증 결과: 총 ${totalChecks}개 검사 중 ${passedChecks}개 통과 (${failures}개 실패)`);
 console.log('================================================================');

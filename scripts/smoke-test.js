@@ -7370,6 +7370,31 @@ check('[#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결�
   assert.ok(indexHtml.includes('아워골 완전 무료화 헌법 선언'), '아워골 완전 무료 선언 모달 마크업 존재');
 });
 
+check('[#TASK-ES-193] 집중 타이머 기록 탭 이전 및 기록 탭 6종 3×2 그리드 검증', () => {
+  const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 일정 탭 3종 단일화
+  assert.ok(!sanctuaryJs.includes("setCalMode(\\'timer\\')"), '일정 탭에 timer 버튼 없음');
+  assert.ok(sanctuaryJs.includes("setCalMode(\\'month\\')"), '일정 탭 월간 모드 확인');
+  assert.ok(sanctuaryJs.includes("setCalMode(\\'week\\')"), '일정 탭 주간 모드 확인');
+  assert.ok(sanctuaryJs.includes("setCalMode(\\'timeline\\')"), '일정 탭 타임라인 모드 확인');
+
+  // 2. 기록 탭 6종 서브탭 완비
+  assert.ok(sanctuaryJs.includes("setRecMode(\\'heatmap\\')"), '기록 탭 히트맵 확인');
+  assert.ok(sanctuaryJs.includes("setRecMode(\\'feed\\')"), '기록 탭 피드 확인');
+  assert.ok(sanctuaryJs.includes("setRecMode(\\'timer\\')"), '기록 탭 집중 타이머 확인');
+  assert.ok(sanctuaryJs.includes("setRecMode(\\'stats\\')"), '기록 탭 성취 통계 확인');
+  assert.ok(sanctuaryJs.includes("setRecMode(\\'archive\\')"), '기록 탭 보관함 확인');
+  assert.ok(sanctuaryJs.includes("setRecMode(\\'recap\\')"), '기록 탭 위클리 리캡 확인');
+
+  // 3. 3×2 그리드 조형 확인
+  assert.ok(cssContent.includes('grid-template-columns: repeat(3, 1fr)'), '3열 그리드 CSS 스타일 존재');
+
+  // 4. 타이머 렌더링 분기 확인
+  assert.ok(sanctuaryJs.includes("engine.activeRecMode === 'timer'"), '기록 탭 타이머 카드 렌더링 분기 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
