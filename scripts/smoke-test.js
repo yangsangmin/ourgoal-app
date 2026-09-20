@@ -7412,6 +7412,29 @@ check('[#TASK-ES-194] 소통 탭 6종 3×2 그리드 조형 및 가로스크롤 
   assert.ok(cssContent.includes('.comm-subtabs-grid'), '.comm-subtabs-grid CSS 선언 확인');
 });
 
+check('[#TASK-ES-196] 체크인 즉시 아바타 AI 피드백 고도화 & 영구 원장 영속화 및 기록 탭 상시 노출 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 체크인 저장 시 피드백 영구 보존 배선 확인
+  assert.ok(indexHtml.includes('newRec.feedback = fb;'), 'newRec.feedback 영구 할당 누락');
+  assert.ok(indexHtml.includes('showCheckinFeedbackSheet(newRec, fb);'), 'showCheckinFeedbackSheet 피드백 배선 누락');
+
+  // 2. 아바타 피드백 바텀시트 함수 및 1클릭 액션 연계 확인
+  assert.ok(indexHtml.includes('function showCheckinFeedbackSheet'), 'showCheckinFeedbackSheet 함수 누락');
+  assert.ok(indexHtml.includes('btnCheckinAiApplyNext'), '1클릭 퀘스트 등록 버튼 배선 누락');
+
+  // 3. 기록 탭 buildRecordCardHtml 내 AI 피드백 렌더링 확인
+  assert.ok(indexHtml.includes('rec-ai-feedback-box'), '기록 탭 AI 피드백 박스 렌더링 누락');
+  assert.ok(indexHtml.includes('rec-ai-verdict-badge'), '기록 탭 AI 판정 뱃지 렌더링 누락');
+
+  // 4. CSS 바텀시트 및 기록 탭 AI 박스 스타일 선언 확인
+  assert.ok(cssContent.includes('.checkin-ai-backdrop'), '.checkin-ai-backdrop CSS 누락');
+  assert.ok(cssContent.includes('.checkin-ai-sheet'), '.checkin-ai-sheet CSS 누락');
+  assert.ok(cssContent.includes('.rec-ai-feedback-box'), '.rec-ai-feedback-box CSS 누락');
+  assert.ok(cssContent.includes('.checkin-ai-close-btn'), '.checkin-ai-close-btn CSS 누락');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

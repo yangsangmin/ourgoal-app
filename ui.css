@@ -8892,4 +8892,252 @@ html[data-theme="urban-city"] .s-seg-pill {
   padding: 8px 14px !important;
 }
 
+/* ============================================================
+   [#TASK-ES-196] 체크인 즉시 아바타 AI 피드백 바텀시트 & 기록 탭 AI 카드
+   ============================================================ */
+.checkin-ai-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: checkinAiFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.checkin-ai-backdrop.closing {
+  animation: checkinAiFadeOut 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes checkinAiFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes checkinAiFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+.checkin-ai-sheet {
+  width: 100%;
+  max-width: 480px;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-bottom: none;
+  border-radius: 24px 24px 0 0;
+  padding: 16px 20px calc(24px + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.35);
+  animation: checkinAiSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  max-height: 85vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+@keyframes checkinAiSlideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.checkin-ai-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.checkin-ai-header-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.checkin-ai-close-btn {
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  min-width: 40px;
+  background: transparent;
+  border: none;
+  color: var(--ink-soft);
+  font-size: 1.5rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0;
+  touch-action: manipulation;
+}
+.checkin-ai-close-btn:hover, .checkin-ai-close-btn:active {
+  background: var(--card2);
+  color: var(--ink);
+}
+.checkin-ai-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.checkin-ai-avatar-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.checkin-ai-avatar-wrap.pulse {
+  animation: avatarPulseGlow 1.4s ease-in-out infinite alternate;
+}
+@keyframes avatarPulseGlow {
+  0% { transform: scale(0.96); filter: drop-shadow(0 0 4px var(--primary)); }
+  100% { transform: scale(1.04); filter: drop-shadow(0 0 12px var(--brand)); }
+}
+.checkin-ai-speaker {
+  font-size: 0.875rem;
+  color: var(--ink);
+}
+.checkin-ai-status-sub {
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+.checkin-ai-verdict-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 12px;
+  background: var(--primary-glow, rgba(99, 102, 241, 0.15));
+  color: var(--primary, #6366f1);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+.checkin-ai-mode-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ink-faint);
+}
+.checkin-ai-speech-bubble {
+  background: var(--card2);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  position: relative;
+}
+.checkin-ai-speech-text {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--ink);
+  white-space: pre-line;
+  word-break: break-word;
+}
+.checkin-ai-loading-box {
+  padding: 24px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.checkin-ai-dots {
+  display: flex;
+  gap: 6px;
+}
+.checkin-ai-dots span {
+  width: 8px;
+  height: 8px;
+  background: var(--brand);
+  border-radius: 50%;
+  animation: dotBlink 1.4s infinite both;
+}
+.checkin-ai-dots span:nth-child(2) { animation-delay: 0.2s; }
+.checkin-ai-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotBlink {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1.2); }
+}
+.checkin-ai-loading-text {
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+}
+.checkin-ai-next-card {
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px dashed rgba(99, 102, 241, 0.35);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.checkin-ai-next-head {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--brand, #6366f1);
+  margin-bottom: 4px;
+}
+.checkin-ai-next-body {
+  font-size: 0.84rem;
+  color: var(--ink);
+  line-height: 1.5;
+  word-break: break-word;
+}
+.checkin-ai-footer-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* 기록 탭 AI 코칭 피드백 박스 */
+.rec-ai-feedback-box {
+  margin: 8px 0 6px;
+  padding: 8px 12px;
+  background: var(--card2, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  border-left: 3px solid var(--primary, #6366f1);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.rec-ai-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rec-ai-icon {
+  font-size: 0.9rem;
+}
+.rec-ai-verdict-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary, #6366f1);
+  background: var(--primary-glow, rgba(99, 102, 241, 0.12));
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.rec-ai-mode-tag {
+  font-size: 0.6875rem;
+  color: var(--ink-faint);
+}
+.rec-ai-comment {
+  font-size: 0.78125rem;
+  color: var(--ink);
+  line-height: 1.45;
+  word-break: break-word;
+}
+.rec-ai-next {
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  line-height: 1.4;
+  margin-top: 2px;
+  padding-top: 4px;
+  border-top: 1px dashed var(--rule, rgba(255, 255, 255, 0.08));
+  word-break: break-word;
+}
+.rec-ai-next-label {
+  font-weight: 700;
+  color: var(--brand, #6366f1);
+}
+
+
 
