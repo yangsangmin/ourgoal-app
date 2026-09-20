@@ -1,0 +1,17 @@
+{
+  "id": "std-tab-switch",
+  "title": "아래 메뉴에서 기록 탭을 누르면 기록 탭으로 바뀌고, 홈을 누르면 홈으로 돌아온다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"records\"]", "className": "active" },
+    { "expect": "notHasClass", "selector": ".navbtn[data-tab=\"home\"]", "className": "active" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"home\"]" },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"home\"]", "className": "active" },
+    { "expect": "visible", "selector": "#homeAddGoal" },
+    { "capture": "back-home" }
+  ]
+}

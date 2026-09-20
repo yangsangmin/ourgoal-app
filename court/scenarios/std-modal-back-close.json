@@ -1,0 +1,17 @@
+{
+  "id": "std-modal-back-close",
+  "title": "새 목표 창을 열고 뒤로가기를 누르면 창만 닫힌다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal" },
+    { "do": "click", "selector": "#homeAddGoal" },
+    { "expect": "visible", "selector": "#modalOverlay.active" },
+    { "do": "back" },
+    { "expect": "notVisible", "selector": "#modalOverlay.active" },
+    { "expect": "stillInApp" },
+    { "expect": "visible", "selector": "#homeAddGoal" },
+    { "capture": "after-back" }
+  ]
+}

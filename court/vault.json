@@ -1,0 +1,77 @@
+{
+  "_설명": "검증기 금고. frozen=채점 기준 그 자체(작업과 같은 변경 묶음에서 바뀌면 돌려보냄, 바꾸려면 금고만 담은 별도 PR + 상민님 결심). baseTests=테스트 파일(고칠 수는 있지만 법정은 항상 기준 커밋의 시험지로 작업 커밋의 제품을 채점한다 — 깨지는 기존 검사는 주장 파일의 retire 에 사유를 적어야 한다). 이 파일 자체도 금고 안에 있다.",
+  "frozen": [
+    "court/**",
+    "AGENTS.md",
+    "GEMINI.md",
+    "CLAUDE.md",
+    ".agent/rules/**",
+    "docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md",
+    "docs/rules/CONSTITUTION_VERSIONS.md",
+    "docs/rules/ESSENCE_OURGOAL.md",
+    "docs/rules/rules.json",
+    "docs/rules/rules-control.json",
+    "docs/rules/branch-protection*.json",
+    "docs/rules/archive/**",
+    ".github/**",
+    ".githooks/**",
+    "scripts/essence-gate.js",
+    "scripts/install-essence-gate.js",
+    ".vercelignore"
+  ],
+  "frozenJsonKeys": {
+    "package.json": [
+      "scripts"
+    ],
+    "vercel.json": [
+      "headers",
+      "redirects",
+      "crons",
+      "functions",
+      "build",
+      "git",
+      "github"
+    ]
+  },
+  "baseTests": [
+    "scripts/smoke-test.js",
+    "scripts/verify-integrity-gate.js",
+    "scripts/verify-all-clicks.js",
+    "scripts/test-*.js"
+  ],
+  "baseTestRunners": [
+    {
+      "file": "scripts/smoke-test.js",
+      "pass": "^\\s*✓ (?!\\[PASS\\])(.+)$",
+      "fail": "^\\s*✗ (?!\\[FAIL\\])(.+)$"
+    },
+    {
+      "file": "scripts/verify-integrity-gate.js",
+      "pass": "^\\s*✓ \\[PASS\\] (.+)$",
+      "fail": "^\\s*✗ \\[FAIL\\] (.+)$"
+    }
+  ],
+  "product": [
+    "index.html",
+    "ui.js",
+    "ui.css",
+    "sw.js",
+    "manifest.json",
+    "manifest.webmanifest",
+    "js/**",
+    "api/**",
+    "css/**",
+    "android/**",
+    "capacitor.config.json",
+    "docs/sql/**"
+  ],
+  "verifierLike": [
+    "scripts/verify-*.js",
+    "scripts/check-*.js",
+    "scripts/audit-*.js",
+    "scripts/*integrity*.js",
+    "scripts/*verify*.js",
+    "scratch/**",
+    "tools/**"
+  ]
+}
