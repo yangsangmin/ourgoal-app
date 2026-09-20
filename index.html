@@ -273,7 +273,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     <!-- GOALS -->
     <section class="screen" id="screen-goals">
-      <div class="comm-subtabs comm-subtabs-clean" id="goalsSubtabs" style="margin-bottom:14px;"></div>
+      <div class="comm-subtabs comm-subtabs-clean goals-subtabs-grid" id="goalsSubtabs" style="margin-bottom:14px;"></div>
       <div id="sanctuaryGoalsView"></div>
       <div id="routineGoalsView" style="display:none;"></div>
       <div id="personalGoalsView">
@@ -17188,7 +17188,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ RENDER: GOALS ============ */
   function renderGoalsScreen(){
     var subtabs = document.getElementById('goalsSubtabs');
-    subtabs.innerHTML = [['personal','개인 목표'],['routine','루틴'],['teamLinked','팀 연계 개인목표'],['team','팀 목표'],['templateEncyclopedia','📖 템플릿 백과사전']].map(function(s){
+    subtabs.innerHTML = [['personal','개인 목표'],['routine','루틴'],['teamLinked','팀 연계'],['team','팀 목표'],['templateEncyclopedia','📖 템플릿']].map(function(s){
       return '<div class="comm-subtab'+((!state.goalsSubTab && s[0]==='personal') || state.goalsSubTab===s[0]?' active':'')+'" data-gsub="'+s[0]+'">'+s[1]+'</div>';
     }).join('');
     subtabs.querySelectorAll('[data-gsub]').forEach(function(t){
