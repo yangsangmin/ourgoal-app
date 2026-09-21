@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B0F17">
+<title>지원·문의 · 아워골</title>
+<meta name="description" content="아워골 문의 이메일, 오류 제보 방법, 자주 묻는 질문 5가지를 안내합니다.">
+<link rel="icon" href="/icons/favicon.png" type="image/png">
+<style>
+  :root{ --bg:#0B0F17; --card:rgba(255,255,255,.04); --line:rgba(255,255,255,.10); --ink:#F8FAFC; --ink-soft:#CBD5E1; --ink-faint:#94A3B8; --brand:#10B981; }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{background:var(--bg);color:var(--ink);font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;font-size:15px;line-height:1.7;letter-spacing:-.01em;-webkit-text-size-adjust:100%;}
+  main{max-width:720px;margin:0 auto;padding:28px 18px 56px;}
+  h1{font-size:1.5rem;margin:0 0 4px;font-weight:800;}
+  h2{font-size:1.06rem;margin:30px 0 10px;font-weight:800;}
+  p{margin:0 0 10px;color:var(--ink-soft);}
+  a{color:var(--brand);text-decoration:underline;text-underline-offset:2px;}
+  .meta{color:var(--ink-faint);font-size:.85rem;margin:0 0 18px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 10px;}
+  .card b.k{display:block;color:var(--ink);margin-bottom:2px;}
+  .faint{color:var(--ink-faint);font-size:.9rem;}
+  details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 16px;margin:0 0 8px;}
+  summary{cursor:pointer;padding:12px 0;font-weight:700;color:var(--ink);list-style-position:inside;}
+  details p{padding-bottom:6px;}
+  nav.top{display:flex;gap:14px;margin:0 0 18px;font-size:.9rem;flex-wrap:wrap;}
+  footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);color:var(--ink-faint);font-size:.85rem;}
+</style>
+</head>
+<body>
+<main>
+  <nav class="top" aria-label="바로가기">
+    <a href="/">아워골 앱으로</a>
+    <a href="/privacy">개인정보처리방침</a>
+  </nav>
+
+  <h1>지원·문의</h1>
+  <p class="meta">막히거나 이상한 점이 있으면 아래로 알려 주세요.</p>
+
+  <h2>문의하는 곳</h2>
+  <div class="card">
+    <b class="k">이메일 (공식 지원)</b>
+    <a href="mailto:ourgoal.support@gmail.com">ourgoal.support@gmail.com</a>
+    <div class="faint">오류 제보는 어떤 화면에서 무엇을 눌렀는지, 기기와 브라우저 종류를 함께 적어 주시면 빨리 찾을 수 있어요.</div>
+  </div>
+  <div class="card">
+    <b class="k">앱 안에서</b>
+    <span>[설정] → [1:1 문의 및 오류 제보]</span>
+  </div>
+  <div class="card" id="openchat">
+    <b class="k">카카오 오픈채팅</b>
+    <span class="faint">오픈채팅방은 준비 중이에요. 열리면 이 자리에 링크가 올라옵니다. 그때까지는 위 이메일이나 앱 안 문의를 이용해 주세요.</span>
+  </div>
+
+  <h2>자주 묻는 질문</h2>
+  <details>
+    <summary>체크인은 어떻게 하나요?</summary>
+    <p>홈 화면에서 오늘 한 실천을 한두 줄로 적고 저장하면 기록이 쌓이고 경험치가 올라요. 사진을 함께 남길 수도 있어요.</p>
+  </details>
+  <details>
+    <summary>AI 피드백은 어디에 쓰이고, 끌 수 있나요?</summary>
+    <p>체크인을 저장하면 AI(Google Gemini)가 목표에 도움이 되는 기록인지 짧게 피드백해요. 처음 쓰기 전에 어떤 데이터가 전송되는지 보여 드리고 동의를 받아요. 동의하지 않아도 기록은 그대로 저장되고, AI 대신 기기 안에서 만든 간단한 피드백이 나와요. 선택은 [설정] → AI 피드백에서 언제든 바꿀 수 있어요.</p>
+  </details>
+  <details>
+    <summary>내 데이터는 어디에 저장되나요?</summary>
+    <p>계정과 기록은 데이터베이스 호스팅사(Supabase)에 저장돼요. 어떤 항목을 어디에서 처리하는지는 <a href="/privacy">개인정보처리방침</a>에 표로 정리해 두었어요.</p>
+  </details>
+  <details>
+    <summary>계정과 데이터를 지우고 싶어요.</summary>
+    <p>앱의 [설정] → [회원 탈퇴]에서 요청할 수 있어요. 앱에 들어갈 수 없다면 <a href="mailto:ourgoal.support@gmail.com">ourgoal.support@gmail.com</a> 으로 가입한 이메일(또는 닉네임)과 함께 삭제를 요청해 주세요.</p>
+  </details>
+  <details>
+    <summary>오류가 나거나 화면이 이상해요.</summary>
+    <p>앱을 완전히 닫았다가 다시 열어 보세요. 그래도 같으면 [설정] → [1:1 문의 및 오류 제보] 또는 이메일로 화면과 상황을 알려 주세요. 확인하는 대로 답변드릴게요.</p>
+  </details>
+
+  <footer>
+    <a href="/">아워골 앱</a> · <a href="/privacy">개인정보처리방침</a>
+  </footer>
+</main>
+</body>
+</html>

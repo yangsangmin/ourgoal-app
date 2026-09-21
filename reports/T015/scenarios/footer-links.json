@@ -1,0 +1,18 @@
+{
+  "id": "t015-footer-links",
+  "title": "설정 화면 아래쪽에 개인정보처리방침·지원 센터 웹 링크가 보이고, 데이터·연동 그룹을 열면 같은 링크가 고객지원 블록에도 있다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "expect": "visible", "selector": "#footPrivacyPageLink" },
+    { "expect": "attr", "selector": "#footPrivacyPageLink", "name": "href", "equals": "/privacy" },
+    { "expect": "attr", "selector": "#footSupportPageLink", "name": "href", "equals": "/support" },
+    { "do": "click", "selector": "#settingsGroupData > summary" },
+    { "expect": "visible", "selector": "#setPrivacyPageLink" },
+    { "expect": "attr", "selector": "#setPrivacyPageLink", "name": "href", "equals": "/privacy" },
+    { "expect": "attr", "selector": "#setSupportPageLink", "name": "href", "equals": "/support" }
+  ]
+}
