@@ -151,7 +151,9 @@ function check(constitutionPath, opts) {
     mismatches.push({ appendix: n, reason: '정본의 표와 JSON 에서 만든 표가 다르다', line: got.line + d.offset, expected: d.expected, actual: d.actual });
   }
   // 버전 대장의 마지막 행 승인 근거 칸에 병합 기록(PR #숫자)이 있는가. 없으면 근거 없는 행이 main 에 들어온 것이므로 실패로 알린다.
-  const ledgerPath = o.ledger || path.join(path.dirname(path.resolve(constitutionPath)), 'CONSTITUTION_VERSIONS.md');
+  // 버전 대장은 저장소의 정해진 자리(docs/rules)에 하나뿐이다. 검사 대상 파일 옆에서만 찾으면 헌법 사본(AGENTS.md·archive 사본)을 점검할 때 대장을 못 찾아 거짓 불일치가 난다.
+  const beside = path.join(path.dirname(path.resolve(constitutionPath)), 'CONSTITUTION_VERSIONS.md');
+  const ledgerPath = o.ledger || (fs.existsSync(beside) ? beside : path.join(__dirname, '..', 'docs', 'rules', 'CONSTITUTION_VERSIONS.md'));
   const led = checkLedger(ledgerPath);
   if (!led.ok) mismatches.push({ appendix: 'ledger', reason: led.reason });
   return { ok: mismatches.length === 0, mismatches };

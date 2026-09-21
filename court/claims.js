@@ -37,6 +37,8 @@ const CANNOT_BECAUSE_SHORT = {
 };
 const STATIC_TYPES = ['jsonPath', 'fileExists', 'codeContains', 'codeNotContains'];
 const MEASURABLE_TOP = 'L3'; // 법정이 직접 잴 수 있는 가장 높은 수준(PC 화면에서 눌러 봄)
+// "무엇을 하면(행동) 무엇이 된다(결과)"를 말하는 문장. 이런 주장은 눌러 보면 되는 것이라 "눈으로 봐야 아는 품질"이라는 사유로는 받지 않는다.
+const ACTION_RESULT = /(누르면|눌렀을 때|클릭하면|탭하면|선택하면|입력하면|끄면|켜면|열면|닫으면|스크롤하면|밀면).{0,40}(보인다|보여|나타난다|나타나|열린다|열려|닫힌다|닫혀|사라진다|사라져|이동한다|이동해|저장된다|저장되|바뀐다|바뀌|표시된다|표시되|올라간다|내려간다|추가된다|삭제된다)/;
 
 // 판정 결과 값(상민님용 쉬운 말)
 const OUTCOME = {
@@ -197,7 +199,12 @@ async function judgeClaim(ctx, claim) {
     // 필요한 확인 수준이 "PC 화면에서 눌러 봄" 이하면 법정이 직접 잴 수 있는 종류다. 그런 주장은 닫힌 목록의 사유가 있을 때만 "확인 못 함"으로 받는다.
     if (grade.rank(ef.floor) <= grade.rank(MEASURABLE_TOP)) {
       const listed = u.reason === 'tool-cannot-measure' && typeof u.cannotBecause === 'string' && Object.prototype.hasOwnProperty.call(CANNOT_BECAUSE, u.cannotBecause);
-      if (listed) {
+      // 사유는 작업자가 골라 적는 것이라 법정이 그 진위를 확인하지 못한다. 다만 "눈으로 봐야 아는 품질"은 문장만 봐도 가려지는 경우가 있다:
+      // "누르면 …가 보인다/열린다/닫힌다"처럼 행동과 결과를 말하는 주장은 눌러 보면 되는 것이지 눈으로 볼 품질이 아니다(껍데기 버튼을 이 사유로 내보내는 길을 막는다).
+      if (listed && u.cannotBecause === 'visual-quality' && ACTION_RESULT.test(claim.statement || '')) {
+        out.outcome = OUTCOME.NO_TEST; out.measurableNotMeasured = true;
+        out.notes.push('잴 수 있는데 재지 않음: 이 주장은 "무엇을 하면 무엇이 된다"를 말한다. 그것은 눈으로 봐야 아는 품질이 아니라 법정이 PC 화면에서 눌러 보면 되는 것이다. 시나리오를 내야 한다');
+      } else if (listed) {
         out.toolLimit = u.cannotBecause;
         out.unverified.cannotBecause = u.cannotBecause; out.unverified.cannotBecauseText = CANNOT_BECAUSE[u.cannotBecause];
         out.notes.push('법정 도구 한계로 못 잰 것: ' + CANNOT_BECAUSE[u.cannotBecause]);

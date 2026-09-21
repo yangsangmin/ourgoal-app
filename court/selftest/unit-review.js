@@ -48,8 +48,11 @@ const TESTS = [
       const notHard = ['if (re.test(value)) {', 'var ok = /^[a-z]+$/.test(name);', 'const courtesy = 1;', "el.setAttribute('data-testid', 'goal');", "import('./latest.js');"];
       for (const l of hard) t.ok(ENV_HARD.test(l), '법정을 알아보는 줄인데 놓친다: ' + l);
       for (const l of notHard) t.ok(!ENV_HARD.test(l), '정상 코드를 법정 감지로 잡는다: ' + l);
-      const soft = ["if (location.hostname === 'ourgoal.app') {", 'if (location.origin !== PROD_ORIGIN) return;', 'if (/iPhone/.test(navigator.userAgent)) {', 'var lang = navigator.language;', "if (document.visibilityState === 'hidden') return;", 'var off = new Date().getTimezoneOffset();', 'var mobile = navigator.userAgentData && navigator.userAgentData.mobile;'];
-      const notSoft = ["var link = location.origin + '/share/' + id;", 'send({ ua: navigator.userAgent });', "if (window.matchMedia('(max-width: 600px)').matches) {", 'var w = window.innerWidth;'];
+      const soft = ["if (location.hostname === 'ourgoal.app') {", 'if (location.origin !== PROD_ORIGIN) return;', 'if (/iPhone/.test(navigator.userAgent)) {', 'var lang = navigator.language;', "if (document.visibilityState === 'hidden') return;", 'var off = new Date().getTimezoneOffset();', 'var mobile = navigator.userAgentData && navigator.userAgentData.mobile;',
+        // 법정은 언제나 http·임의 포트로 연다 — 접속 방식·포트·주소 전체로 가르는 줄(확인 검수 2026-09-21 이 찾은 길)
+        "if (location.protocol === 'http:') { show(); }", 'if (location.port) { enableDebug(); }', 'if (/^http:/.test(document.URL)) {', "if (location.href.indexOf('preview') > -1) {", "if (location.search.includes('debug')) {", "if (document.domain !== 'ourgoal.app') return;", 'if (!window.isSecureContext) return;'];
+      const notSoft = ["var link = location.origin + '/share/' + id;", 'send({ ua: navigator.userAgent });', "if (window.matchMedia('(max-width: 600px)').matches) {", 'var w = window.innerWidth;',
+        "var share = location.href + '#goal';", 'history.replaceState(null, "", location.pathname + location.search);', 'var params = new URLSearchParams(location.search);'];
       for (const l of soft) t.ok(ENV_SOFT.test(l) && !ENV_HARD.test(l), '접속 환경을 읽어 갈라지는 줄인데 표시하지 않는다(또는 돌려보냄으로 잡는다): ' + l);
       for (const l of notSoft) t.ok(!ENV_SOFT.test(l), '흔한 정상 코드를 접속 환경 분기로 잡는다: ' + l);
       t.ok(EXIT_CALL.test('process.exit(1);') && EXIT_CALL.test('process . exit (0)') && !EXIT_CALL.test('process.exitCode = 1;'), '프로세스를 끝내는 호출');
@@ -246,6 +249,11 @@ const TESTS = [
       t.ok(lazy.outcome === '시험 미제출' && lazy.measurableNotMeasured === true && lazy.notes.some(n => n.includes('잴 수 있는데')), '잴 수 있는데 재지 않음: ' + JSON.stringify({ o: lazy.outcome, m: lazy.measurableNotMeasured }));
       const listed = await claimsLib.judgeClaim(ctx, unv('ui-behavior', { reason: 'tool-cannot-measure', cannotBecause: 'file-attach' }));
       t.ok(listed.outcome === '확인 못 함' && listed.toolLimit === 'file-attach' && !listed.measurableNotMeasured, '정해진 사유가 있으면 확인 못 함(법정 도구 한계): ' + JSON.stringify({ o: listed.outcome, l: listed.toolLimit }));
+      // 사유는 작업자가 골라 적는다. "누르면 …가 보인다"처럼 행동과 결과를 말하는 주장을 "눈으로 봐야 아는 품질"로 내보내는 길은 문장으로 가려 막는다(확인 검수 2026-09-21).
+      const shell = await claimsLib.judgeClaim(ctx, { ...unv('ui-layout', { reason: 'tool-cannot-measure', cannotBecause: 'visual-quality' }), statement: '인사 버튼을 누르면 인사말이 보인다' });
+      t.ok(shell.outcome === '시험 미제출' && shell.measurableNotMeasured === true && !shell.toolLimit, '눌러 보면 되는 주장을 눈으로 볼 품질이라며 확인 못 함으로 낼 수 없다: ' + JSON.stringify({ o: shell.outcome, l: shell.toolLimit }));
+      const looks = await claimsLib.judgeClaim(ctx, { ...unv('ui-layout', { reason: 'tool-cannot-measure', cannotBecause: 'visual-quality' }), statement: '새 목표 창의 열림 애니메이션이 끊기지 않고 부드럽다' });
+      t.ok(looks.outcome === '확인 못 함' && looks.toolLimit === 'visual-quality', '정말 눈으로 봐야 아는 품질은 그대로 받는다: ' + JSON.stringify({ o: looks.outcome, l: looks.toolLimit }));
       const otherReason = await claimsLib.judgeClaim(ctx, unv('ui-behavior', { reason: 'needs-real-device', cannotBecause: 'file-attach' }));
       t.eq(otherReason.measurableNotMeasured, true, '정해진 사유는 reason 이 tool-cannot-measure 일 때만 받는다');
       const phone = await claimsLib.judgeClaim(ctx, { ...unv('native-device', { reason: 'needs-real-device' }), touches: ['android/app/Main.java'] });

@@ -43,6 +43,14 @@ const ENV_SOFT = new RegExp([
   // 브라우저 상표 목록(userAgentData)도 기기 글자와 같은 종류의 값이다. 읽는 줄 자체가 드물어서(실측 2026-09-21: origin/main 의 제품 파일 0곳) 언급만으로 표시한다.
   'navigator\\s*\\.\\s*userAgentData\\b',
   'navigator\\s*\\.\\s*languages?\\b', 'visibilityState', 'getTimezoneOffset', 'resolvedOptions',
+  // 법정은 언제나 http 와 임의 포트로 앱을 연다. 접속 방식·포트·주소 전체로 가르는 코드는 법정에서만 되고 실제 서비스(https)에서는 안 될 수 있다(독립 확인 검수 2026-09-21).
+  // 링크를 만들 때 흔히 쓰는 값(href·search)은 비교·검사하는 모양만 본다.
+  '\\blocation\\s*\\.\\s*(?:protocol|port)\\b',
+  '\\blocation\\s*\\.\\s*(?:href|search)\\b\\s*(?:===?|!==?|\\.\\s*(?:includes|indexOf|startsWith|endsWith|match|search)\\b)',
+  '\\.test\\s*\\(\\s*(?:(?:window|document|self)\\s*\\.\\s*)?(?:location\\s*\\.\\s*(?:href|search)|document\\s*\\.\\s*(?:URL|baseURI))\\b',
+  '\\bdocument\\s*\\.\\s*(?:URL|baseURI|domain)\\b\\s*(?:===?|!==?|\\.\\s*(?:includes|indexOf|startsWith|endsWith|match|search)\\b)',
+  '\\b(?:self|window)\\s*\\.\\s*origin\\b\\s*(?:===?|!==?|\\.\\s*(?:includes|indexOf|startsWith|endsWith|match|search)\\b)',
+  '\\bisSecureContext\\b',
 ].join('|'));
 const TEST_BYPASS = /process\s*\.\s*exit\s*\(\s*0\s*\)|process\s*\.\s*env\s*\.\s*(CI|GITHUB_ACTIONS|COURT)\b/;
 // 기준 시험지는 제품 코드를 같은 프로세스에서 돌린다. 제품 코드가 그 프로세스를 끝내거나 시험 결과처럼 보이는 줄을 찍을 이유는 없다(실측: 최근 병합 PR 100건 중 0건).
@@ -164,6 +172,23 @@ function sortLacking(lacking, floors) {
 // 한 건의 모양: "R3 지시 문장 앞 60자… — 확인 못 함(작업자가 철회함) · 필요한 확인: PC 화면에서 눌러 봄"
 function lackingText(r) {
   return r.id + ' ' + r.text.slice(0, 60) + (r.text.length > 60 ? '…' : '') + ' — ' + (SHORT_BUCKET[r.bucket] || r.bucket) + (r.note ? '(' + r.note + ')' : '') + ' · 필요한 확인: ' + (r.floor ? grade.label(r.floor) : (r.claims && r.claims.length ? '알 수 없음(철회한 주장뿐)' : '알 수 없음(주장 없음)'));
+}
+
+// "통과"의 둘째 줄에 싣는 "주장 문장 ↔ 법정이 실제로 해 본 것" 쌍(상위 3건). 법정은 시험이 지시와 같은 것을 재는지 알 수 없으므로, 보시는 분이 그 자리에서 대조할 수 있게 한다.
+// 앱 열기·기다림 같은 준비 동작은 빼고 마지막 행동과 확인만 남긴다. 작업자가 쓴 글자가 섞이므로 판정서·게시 단계의 무력화(clean)를 그대로 거친다.
+function didPairs(claims) {
+  const prep = /^(앱 열기|화면이 뜰 때까지 기다림|금고의 시작 상태|화면 크기)/;
+  const out = [];
+  for (const c of claims || []) {
+    if (c.kind !== 'behavior' || c.duplicateOf || !c.evidence || !c.evidence.steps) continue;
+    const parts = report.describeSteps(c.evidence.steps, c.evidence.head).split(' → ').filter(p => p && !prep.test(p));
+    const did = parts.slice(-3).join(' → ');
+    out.push(c.id + ' 주장 “' + report.clean(String(c.statement || ''), 40) + '” ← 법정이 해 본 것: ' + report.clean(did, 110));
+    if (out.length >= 3) break;
+  }
+  const rest = (claims || []).filter(c => c.kind === 'behavior' && !c.duplicateOf).length - out.length;
+  if (rest > 0) out.push('외 ' + rest + '건은 판정서의 “법정이 실제로 한 일”에');
+  return out;
 }
 
 // ── 테스트 파일에서 사라지거나 바뀐 단언을 어떻게 볼 것인가 ──
@@ -398,9 +423,14 @@ async function judge(opts) {
 
     // 6) 기준 시험지 채점: 기준 커밋의 테스트로 작업 커밋의 제품을 채점한다(작업자가 고친 테스트는 판정에 쓰지 않는다)
     phase('기준 시험지 채점');
-    const nodeModules = [path.join(repo, 'node_modules'), path.join(__dirname, '..', 'node_modules')].find(d => fs.existsSync(d)) || null;
+    // 빈 node_modules 폴더는 "있음"이 아니다(다른 작업이 비워 버린 폴더를 고르면 기준 시험지가 의존성 없이 돌아 거짓 결과가 난다 — 2026-09-21 실제 발생).
+    const hasModules = d => { try { return fs.readdirSync(d).length > 0; } catch (_) { return false; } };
+    const nodeModules = [path.join(repo, 'node_modules'), path.join(__dirname, '..', 'node_modules')].find(hasModules) || null;
     v.baseTests = probeBaseTests({ baseDir: baseSnap.dir, headDir: headSnap.dir, vault, nodeModules });
     toolErrors.push(...(v.baseTests.toolErrors || []));
+    // 기준 커밋을 다시 돌리자 기준에서도 실패한 검사 = 실행 도중 환경이 바뀐 것. 고장으로 세지 않되 확인된 것도 아니므로 "법정이 확인하지 못한 점검"으로 올린다(최소 확인 부족).
+    v.baseShaky = (v.baseTests.insufficient || []).filter(s => /기준에서도 실패했다/.test(s)).map(s => ({ kind: 'BASE_TEST_SHAKY', title: '기준 시험지가 흔들림(실행 도중 환경 변화)', text: s }));
+    for (const n of v.baseShaky) warn(n.title, n.text);
     // 시험 결과를 꾸민 흔적(시험지가 아닌 코드가 프로세스를 끝냄·결과 줄을 찍음·감시 기록 없음). 하나라도 있으면 돌려보낸다.
     for (const z of (v.baseTests.forgery || [])) reject('시험 결과를 꾸민 흔적', String((z && z.file) || '') + ' — ' + String((z && z.reason) || ''));
     // 기준 커밋에서는 끝까지 돌던 시험지가 작업 커밋에서만 중간에 죽었다. 법정 도구의 고장이 아니라 이 변경이 만든 고장이다(작업자는 법정을 고칠 수 없으므로 도구 오류로 돌리면 아무도 움직일 수 없다).
@@ -576,7 +606,7 @@ async function judge(opts) {
   // "고칠 게 없었음"은 위반은 아니지만 확인된 것도 아니다(작업자가 말한 결함이 고치기 전에도 없었다 = 이 변경이 무엇을 했는지 확인된 바 없다). 통과로 세지 않는다.
   const lacking = v.rollup ? sortLacking(v.rollup.reqs.filter(r => !OK_BUCKETS.includes(r.bucket)), floors) : [];
   const unclaimed = v.coverage ? v.coverage.unclaimed : [];
-  const notChecked = Array.isArray(v.notChecked) ? v.notChecked : [];
+  const notChecked = (Array.isArray(v.notChecked) ? v.notChecked : []).concat(Array.isArray(v.baseShaky) ? v.baseShaky : []);
   for (const t of toolErrors) v.findings.push({ severity: 'warn', title: '도구 오류', text: t });
   if (rejects.length) {
     // 돌려보낼 사유가 이미 있으면 도구 오류가 같이 있어도 돌려보냄이다. 도구 오류를 앞세우면 "법정 도구 고장, 하실 일 없음"만 보여서 작업자가 고쳐야 할 것이 가려진다.
@@ -610,7 +640,7 @@ async function judge(opts) {
       items.push(lacking.slice(0, 3).map(lackingText).join(' / ') + (lacking.length > 3 ? ' 외 ' + (lacking.length - 3) + '건' : ''));
       // 법정 도구 한계(닫힌 목록의 사유)로 못 잰 것은 따로 센다 — "안 잰 것"과 "못 재는 것"을 구분해서 보시게 한다.
       const limited = v.claims.filter(c => c.toolLimit && !c.duplicateOf);
-      if (limited.length) { const by = {}; for (const c of limited) by[c.toolLimit] = (by[c.toolLimit] || 0) + 1; items.push('법정 도구 한계로 못 잰 것 ' + limited.length + '건(' + Object.keys(by).map(k => (claimsLib.CANNOT_BECAUSE_SHORT[k] || k) + ' ' + by[k]).join(' · ') + ')'); }
+      if (limited.length) { const by = {}; for (const c of limited) by[c.toolLimit] = (by[c.toolLimit] || 0) + 1; items.push('법정 도구 한계로 못 잰 것 ' + limited.length + '건(' + Object.keys(by).map(k => (claimsLib.CANNOT_BECAUSE_SHORT[k] || k) + ' ' + by[k]).join(' · ') + ') — 이 사유는 작업자가 적은 것이며 법정이 맞는지 확인한 것은 아닙니다'); }
       // 시간이 모자라 돌려 보지 못한 주장도 따로 센다 — 된 것도 안 된 것도 아니라는 점을 보시게 한다.
       const late = v.claims.filter(c => c.timeShort);
       if (late.length) items.push('시간이 모자라 법정이 돌려 보지 못한 주장 ' + late.length + '건(주장을 나눠 내면 전부 돌려 볼 수 있습니다)');
@@ -631,7 +661,12 @@ async function judge(opts) {
     // 제품 코드가 안 바뀐 변경(문서 등). 주장 심사 대상이 아니다.
     v.verdict = '통과'; v.headline = '제품 코드 변경이 없고, 기존 검사도 깨지지 않았습니다'; v.todo = '병합하셔도 됩니다(제품 코드 변경 없음).';
   } else {
-    v.verdict = '통과'; v.headline = '작업자가 적어 낸 지시 항목 ' + v.rollup.total + '건 모두 필요한 수준으로 확인했고, 고장 난 것이 없습니다'; v.todo = '“1”이라고 하시면 배포합니다.';
+    // 법정이 보증하는 것은 "작업자가 낸 시험의 행동이 고치기 전엔 안 되고 고친 뒤엔 된다"까지다. 그 시험이 지시 문장과 같은 것을 재는지는 법정이 모른다.
+    // 그래서 첫 줄은 보증 범위만 말하고, “1”을 누르시기 전에 보시는 둘째 줄에 법정이 실제로 해 본 것을 싣는다(지어낸 주장에 무관한 시험을 붙이는 길 — 독립 검수 속이기 1).
+    v.verdict = '통과';
+    v.headline = '작업자가 적어 낸 지시 항목 ' + v.rollup.total + '건에 걸린 시험이 전부 고치기 전엔 안 되고 고친 뒤엔 되며, 고장 난 것이 없습니다 — 시험이 지시와 같은 것을 재는지는 법정이 알 수 없습니다';
+    const did = didPairs(v.claims);
+    v.todo = '“1”이라고 하시면 배포합니다.' + (did.length ? ' 그 전에 법정이 실제로 해 본 것이 지시하신 것과 같은지 봐 주십시오: ' + did.join(' / ') : '');
   }
   delete v.progress; // 미리 써 두는 판정서에만 쓰는 칸이다
   v.tool.finishedAt = new Date().toISOString(); v.tool.durationMs = Date.now() - t0;

@@ -298,7 +298,17 @@ function probeBaseTests(ctx) {
       Object.defineProperty(runnerRec, 'headPassedTitles', { enumerable: false, value: onHead.passed.slice() });
       out.runners.push(runnerRec);
       headPassed.set(runner.file, new Set(onHead.passed));
-      for (const t of broken) out.newlyBroken.push({ file: runner.file, check: t, kind: classifyCheck(src, t) });
+      // 흔들림 재확인: "기준에서는 통과, 작업에서는 실패"가 나오면 기준 커밋을 한 번 더 돌린다. 기준에서도 실패로 바뀌었으면 그 차이는 이 변경이 아니라
+      // 실행 도중 환경이 바뀐 탓이다(다른 작업이 의존성 폴더를 비운 실제 사례 — 2026-09-21). 고장으로 세지 않고 "확인 못 함"으로 내린다.
+      let steady = broken;
+      if (broken.length) {
+        const again = runOne(baseDir, runner, nodeModules, scratchTmp, watch);
+        const stillOk = new Set(again.ran ? again.passed : []);
+        steady = broken.filter(t => stillOk.has(t));
+        const shaky = broken.filter(t => !stillOk.has(t));
+        if (shaky.length) { runnerRec.shaky = shaky.length; out.insufficient.push('기준 시험지 ' + runner.file + ' 의 검사 ' + shaky.length + '개는 기준 커밋을 다시 돌리자 기준에서도 실패했다 — 이 변경이 깬 것이 아니라 실행 도중 환경이 바뀐 것으로 보고 고장으로 세지 않는다(다시 심사하면 가려진다): ' + shaky.slice(0, 2).join(' / ').slice(0, 200)); }
+      }
+      for (const t of steady) out.newlyBroken.push({ file: runner.file, check: t, kind: classifyCheck(src, t) });
       // 위조 신호가 있으면 "출력되지 않은 검사"는 그 위조의 결과다 — 사유를 위조 쪽 하나로 모은다.
       if (vanished.length && !forged.length) {
         const known = new Set(onBase.passed.concat(onBase.failed));
