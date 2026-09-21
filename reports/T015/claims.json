@@ -2,32 +2,61 @@
   "task": "T015",
   "requirementsSource": "docs/specs/REQ-T015-AI-CONSENT-LEGAL-PAGES.md",
   "requirements": [
-    { "id": "R1", "text": "AI 체크인 첫 사용 전 모달: 사용 AI 제공자명, 전송 데이터(목표 텍스트), 보관 기간, 동의/거부" },
-    { "id": "R2", "text": "/privacy: 수집 항목(이메일·목표 텍스트·기기), 목적, 보관, 제3자(AI 제공자·Supabase·PostHog), 삭제 방법" },
-    { "id": "R3", "text": "/support: 이메일·오픈채팅 링크·FAQ 5개" },
-    { "id": "R4", "text": "푸터·설정 화면에 링크" },
-    { "id": "R5", "text": "완료 기준: 3개 페이지 URL 200 응답, 모달 동작 스크린샷" }
+    {
+      "id": "R1",
+      "text": "AI 체크인 첫 사용 전 모달: 사용 AI 제공자명, 전송 데이터(목표 텍스트), 보관 기간, 동의/거부"
+    },
+    {
+      "id": "R2",
+      "text": "/privacy: 수집 항목(이메일·목표 텍스트·기기), 목적, 보관, 제3자(AI 제공자·Supabase·PostHog), 삭제 방법"
+    },
+    {
+      "id": "R3",
+      "text": "/support: 이메일·오픈채팅 링크·FAQ 5개"
+    },
+    {
+      "id": "R4",
+      "text": "푸터·설정 화면에 링크"
+    },
+    {
+      "id": "R5",
+      "text": "완료 기준: 3개 페이지 URL 200 응답, 모달 동작 스크린샷"
+    }
   ],
   "claims": [
     {
-      "id": "C1", "req": "R1", "kind": "behavior", "change": "new",
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
       "domain": "ui-behavior",
-      "statement": "처음 체크인을 저장하면 AI 제공자(Google Gemini)·전송 데이터·보관 안내가 담긴 동의 창이 뜨고, '동의하지 않음'을 누르면 창이 닫히며 설정에 '동의하지 않음'이 남는다",
-      "touches": ["index.html"],
+      "statement": "처음 체크인을 저장하면 AI 제공자(Google Gemini)·전송 데이터·보관 안내가 담긴 동의 창이 뜨고, '동의하지 않음'을 누르면 창이 닫히고 체크인 피드백 창이 AI 없이 이어진다",
+      "touches": [
+        "index.html"
+      ],
       "scenario": "scenarios/consent-decline.json"
     },
     {
-      "id": "C2", "req": "R1", "kind": "behavior", "change": "new",
+      "id": "C2",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
       "domain": "ui-behavior",
       "statement": "설정의 'AI 사용 동의 확인·변경'을 누르면 동의 창이 뜨고, '동의하고 사용'을 누르면 설정의 상태가 '동의함'으로 바뀐다",
-      "touches": ["index.html"],
+      "touches": [
+        "index.html"
+      ],
       "scenario": "scenarios/consent-settings-grant.json"
     },
     {
-      "id": "C3", "req": "R1", "kind": "unverified",
+      "id": "C3",
+      "req": "R1",
+      "kind": "unverified",
       "domain": "server-api",
       "statement": "동의 전·거부 상태에서는 목표·기록 텍스트가 AI 제공자로 가는 요청이 0건이고, 동의 뒤 체크인에서는 /api/feedback 요청이 1건 나간다",
-      "touches": ["index.html"],
+      "touches": [
+        "index.html"
+      ],
       "unverified": {
         "reason": "needs-live-server",
         "who": "병합·배포 뒤 운영 주소에 접속할 수 있는 사람이나 세션",
@@ -40,38 +69,74 @@
       }
     },
     {
-      "id": "C4", "req": "R2", "kind": "static",
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
       "domain": "config",
       "statement": "privacy.html 이 있고 제3자 표에 이용 통계 사업자(PostHog Inc.)가 적혀 있다",
-      "touches": ["privacy.html"],
-      "check": { "type": "codeContains", "file": "privacy.html", "text": "PostHog Inc." }
+      "touches": [
+        "privacy.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "privacy.html",
+        "text": "PostHog Inc."
+      }
     },
     {
-      "id": "C5", "req": "R2", "kind": "static",
+      "id": "C5",
+      "req": "R2",
+      "kind": "static",
       "domain": "config",
       "statement": "/privacy 주소가 privacy.html 로 이어지도록 vercel.json 재작성 규칙이 있다",
-      "touches": ["vercel.json"],
-      "check": { "type": "codeContains", "file": "vercel.json", "text": "\"destination\": \"/privacy.html\"" }
+      "touches": [
+        "vercel.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "vercel.json",
+        "text": "\"destination\": \"/privacy.html\""
+      }
     },
     {
-      "id": "C6", "req": "R3", "kind": "static",
+      "id": "C6",
+      "req": "R3",
+      "kind": "static",
       "domain": "config",
       "statement": "support.html 에 공식 지원 이메일 링크가 있다",
-      "touches": ["support.html"],
-      "check": { "type": "codeContains", "file": "support.html", "text": "mailto:ourgoal.support@gmail.com" }
+      "touches": [
+        "support.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "support.html",
+        "text": "mailto:ourgoal.support@gmail.com"
+      }
     },
     {
-      "id": "C7", "req": "R3", "kind": "static",
+      "id": "C7",
+      "req": "R3",
+      "kind": "static",
       "domain": "config",
       "statement": "/support 주소가 support.html 로 이어지도록 vercel.json 재작성 규칙이 있다",
-      "touches": ["vercel.json"],
-      "check": { "type": "codeContains", "file": "vercel.json", "text": "\"destination\": \"/support.html\"" }
+      "touches": [
+        "vercel.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "vercel.json",
+        "text": "\"destination\": \"/support.html\""
+      }
     },
     {
-      "id": "C8", "req": "R3", "kind": "unverified",
+      "id": "C8",
+      "req": "R3",
+      "kind": "unverified",
       "domain": "config",
       "statement": "카카오 오픈채팅 링크는 아직 없다 — 방 개설(로드맵 T007)이 상민님 카카오 계정 로그인이 필요해 미완이고, 지원 페이지는 '준비 중' 문구만 싣고 있다",
-      "touches": ["support.html"],
+      "touches": [
+        "support.html"
+      ],
       "unverified": {
         "reason": "tool-cannot-measure",
         "cannotBecause": "needs-login",
@@ -83,17 +148,26 @@
       }
     },
     {
-      "id": "C9", "req": "R4", "kind": "behavior", "change": "new",
+      "id": "C9",
+      "req": "R4",
+      "kind": "behavior",
+      "change": "new",
       "domain": "ui-behavior",
       "statement": "설정 화면의 푸터와 고객지원 블록에 개인정보처리방침(/privacy)·지원 센터(/support) 링크가 있다",
-      "touches": ["index.html"],
+      "touches": [
+        "index.html"
+      ],
       "scenario": "scenarios/footer-links.json"
     },
     {
-      "id": "C10", "req": "R5", "kind": "unverified",
+      "id": "C10",
+      "req": "R5",
+      "kind": "unverified",
       "domain": "server-api",
       "statement": "배포된 주소에서 /, /privacy, /support 세 URL 이 200 을 돌려준다 — 병합·배포 전이라 운영 주소로는 아직 재지 못했다(작업자 PC 시험 서버에서는 세 곳 모두 200)",
-      "touches": ["vercel.json"],
+      "touches": [
+        "vercel.json"
+      ],
       "unverified": {
         "reason": "needs-live-server",
         "who": "병합 뒤 운영 주소에 접속할 수 있는 사람이나 세션",
@@ -101,6 +175,21 @@
           "curl -s -o /dev/null -w \"%{http_code}\" https://<운영 주소>/privacy 를 /, /support 와 함께 실행한다",
           "세 줄이 모두 200 인지 본다"
         ]
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "서비스워커 캐시명을 새 이름으로 올려 이미 앱을 쓰던 기기가 옛 화면(링크·동의 창 없음)을 계속 보지 않고 새 화면을 받는다",
+      "touches": [
+        "sw.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "sw.js",
+        "text": "ourgoal-shell-v20260921-t015-ai-consent-legal"
       }
     }
   ]
