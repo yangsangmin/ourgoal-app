@@ -6645,15 +6645,20 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
 /* 3. [일정 탭] 월간 포토 캘린더 / 타임라인 / 뽀모도로 */
 .s-cal-modes-wrap {
   display: flex;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-surface, rgba(15, 23, 42, 0.94));
   padding: 4px;
   border-radius: 12px;
   margin-bottom: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   gap: 4px;
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 .s-cal-modes-wrap::-webkit-scrollbar {
   display: none;
@@ -6663,8 +6668,8 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   white-space: nowrap;
   padding: 8px 10px;
   border-radius: 8px;
-  border: none;
-  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
   font-size: 0.8125rem;
   font-weight: 600;
   color: #94A3B8;
@@ -6677,7 +6682,8 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   gap: 4px;
 }
 .s-cal-mode-btn.active {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.25);
   color: #F8FAFC;
   font-weight: 700;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -7047,17 +7053,22 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 6px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-surface, rgba(15, 23, 42, 0.94));
   padding: 6px;
   border-radius: 14px;
   margin-bottom: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 .s-rec-mode-btn {
   padding: 8px 4px;
   border-radius: 8px;
-  border: none;
-  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
   font-size: 0.78rem;
   font-weight: 600;
   color: #94A3B8;
@@ -7072,7 +7083,8 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   letter-spacing: -0.3px;
 }
 .s-rec-mode-btn.active {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.25);
   color: #F8FAFC;
   font-weight: 700;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -8724,7 +8736,7 @@ html[data-theme="urban-city"] .theme-card.active {
   min-width: max-content !important;
 }
 
-/* 5. 목표 탭 서브탭 및 소통 탭 가로스크롤 패딩 */
+/* 5. 목표 탭 서브탭 및 소통 탭 가로스크롤 패딩 및 페이드 마스크 */
 #goalsSubtabs, .feed-filter-bar, .comm-subtabs-wrap {
   overflow-x: auto !important;
   -webkit-overflow-scrolling: touch;
@@ -8733,6 +8745,10 @@ html[data-theme="urban-city"] .theme-card.active {
 }
 #goalsSubtabs::-webkit-scrollbar, .feed-filter-bar::-webkit-scrollbar {
   display: none;
+}
+.feed-filter-bar {
+  -webkit-mask-image: linear-gradient(to right, black 0%, black calc(100% - 28px), transparent 100%);
+  mask-image: linear-gradient(to right, black 0%, black calc(100% - 28px), transparent 100%);
 }
 
 /* 6. 상단바 버튼 및 인라인 뱃지 터치 타겟 확장 */
@@ -8811,6 +8827,12 @@ html[data-theme="urban-city"] .comm-subtabs.comm-subtabs-grid,
   overflow-x: visible !important;
   box-sizing: border-box !important;
   width: 100% !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 25 !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: var(--bg-surface, rgba(15, 23, 42, 0.94)) !important;
 }
 
 [data-theme="focus-sanctuary"] .comm-subtabs.comm-subtabs-grid .comm-subtab,
@@ -8837,6 +8859,16 @@ html[data-theme="urban-city"] .comm-subtabs.comm-subtabs-grid .comm-subtab,
   box-sizing: border-box !important;
   width: 100% !important;
   cursor: pointer !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #94A3B8 !important;
+}
+
+.comm-subtabs.comm-subtabs-grid .comm-subtab.active,
+.comm-subtabs-grid .comm-subtab.active {
+  background: rgba(16, 185, 129, 0.18) !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+  color: #10B981 !important;
 }
 
 @media (max-width: 375px) {
@@ -8872,6 +8904,12 @@ html[data-theme="urban-city"] #goalsSubtabs.goals-subtabs-grid,
   overflow-x: visible !important;
   box-sizing: border-box !important;
   width: 100% !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 30 !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: var(--bg-surface, rgba(15, 23, 42, 0.94)) !important;
 }
 
 [data-theme="focus-sanctuary"] #goalsSubtabs.goals-subtabs-grid .comm-subtab,
@@ -8899,6 +8937,33 @@ html[data-theme="urban-city"] #goalsSubtabs.goals-subtabs-grid .comm-subtab,
   width: 100% !important;
   cursor: pointer !important;
   text-align: center !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #94A3B8 !important;
+}
+
+#goalsSubtabs.goals-subtabs-grid .comm-subtab.active,
+.goals-subtabs-grid .comm-subtab.active {
+  background: rgba(16, 185, 129, 0.18) !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+  color: #10B981 !important;
+}
+
+html[data-theme="white"] #goalsSubtabs.goals-subtabs-grid,
+html[data-theme="white"] .comm-subtabs.comm-subtabs-grid {
+  background: rgba(248, 250, 252, 0.95) !important;
+}
+html[data-theme="white"] #goalsSubtabs.goals-subtabs-grid .comm-subtab,
+html[data-theme="white"] .comm-subtabs.comm-subtabs-grid .comm-subtab {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: #475569 !important;
+}
+html[data-theme="white"] #goalsSubtabs.goals-subtabs-grid .comm-subtab.active,
+html[data-theme="white"] .comm-subtabs.comm-subtabs-grid .comm-subtab.active {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  color: #059669 !important;
 }
 
 @media (max-width: 375px) {

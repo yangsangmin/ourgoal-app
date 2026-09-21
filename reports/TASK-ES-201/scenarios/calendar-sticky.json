@@ -1,0 +1,14 @@
+{
+  "id": "calendar-sticky",
+  "title": "일정 탭 상단 모드 바가 sticky 포지션으로 상단에 고정된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"calendar\"]" },
+    { "expect": "visible", "selector": ".s-cal-modes-wrap" },
+    { "expect": "style", "selector": ".s-cal-modes-wrap", "prop": "position", "equals": "sticky" },
+    { "capture": "calendar-modes-sticky" }
+  ]
+}

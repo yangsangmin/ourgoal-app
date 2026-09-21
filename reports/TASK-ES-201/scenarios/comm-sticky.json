@@ -1,0 +1,14 @@
+{
+  "id": "comm-sticky",
+  "title": "커뮤니티 탭 상단 서브탭이 sticky 포지션으로 상단에 고정된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"comm\"]" },
+    { "expect": "visible", "selector": "#screen-comm .comm-subtabs" },
+    { "expect": "style", "selector": "#screen-comm .comm-subtabs", "prop": "position", "equals": "sticky" },
+    { "capture": "comm-subtabs-sticky" }
+  ]
+}
