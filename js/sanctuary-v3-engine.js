@@ -61,7 +61,7 @@
 
     var activeGoal = goals.find(function(g) { return g.id === engine.activeGoalId; }) || goals[0];
 
-    // 1-1. 상단 목표 알약 셀렉터 (목표가 있을 때만 노출하여 빈 상태 시각적 혼란 방지)
+    // 1-1. 상단 목표 알약 셀렉터 (목표가 0건이어도 추가 버튼 보존)
     var pillsHtml = '';
     if (goals.length > 0) {
       pillsHtml = '<div class="s-goal-pills-wrap">' +
@@ -73,6 +73,10 @@
         }).join('') +
         '<button type="button" class="s-goal-pill add" id="sAddGoalBtn" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal(); else toast(\'목표 추가 창을 불러오는 중입니다\');">+ 새 목표</button>' +
       '</div>';
+    } else {
+      pillsHtml = '<div class="s-goal-pills-wrap empty">' +
+        '<button type="button" class="s-goal-pill add" id="sAddGoalBtn" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal(); else toast(\'목표 추가 창을 불러오는 중입니다\');">+ 새 목표 만들기</button>' +
+      '</div>';
     }
 
     // 1-2. 마운틴 트레일 카드 조형
@@ -83,7 +87,7 @@
           '<div style="font-size:3rem;margin-bottom:14px;">🏔️</div>' +
           '<h3 style="margin-bottom:8px;font-size:1.25rem;font-weight:800;color:var(--ink);">등록된 목표가 없습니다</h3>' +
           '<p style="font-size:0.9rem;margin-bottom:24px;color:var(--ink-soft);line-height:1.5;">나만의 첫 목표를 만들고 등반을 시작해보세요.</p>' +
-          '<button class="btn btn-primary" type="button" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal();" style="padding:10px 24px;font-size:0.95rem;font-weight:700;border-radius:12px;box-shadow:0 4px 12px rgba(225,29,72,0.25);">+ 새 목표 만들기</button>' +
+          '<button class="btn btn-empty-add-goal" type="button" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal();" style="padding:10px 24px;font-size:0.95rem;font-weight:700;border-radius:12px;background:var(--brand);color:#fff;border:none;box-shadow:0 4px 12px rgba(225,29,72,0.25);cursor:pointer;">+ 새 목표 만들기</button>' +
         '</div>' +
       '</div>';
     } else {
