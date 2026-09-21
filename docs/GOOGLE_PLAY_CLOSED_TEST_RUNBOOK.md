@@ -6,6 +6,31 @@
 
 ---
 
+## 📌 [0단계] 개발자 계정 등록 — `[손 필요]` (#T006, 2026-09-21 추가)
+
+결제와 신분 확인은 본인만 할 수 있어 자동화할 수 없다. 아래 순서 그대로 누르면 된다.
+
+1. [https://play.google.com/console/signup](https://play.google.com/console/signup) 접속 → 앱을 올릴 Google 계정으로 로그인.
+2. 계정 유형 **[개인]** 선택 → 개발자 이름 `아워골` (스토어에 그대로 보인다) → 연락처 이메일 `ourgoal.support@gmail.com`.
+3. 등록 수수료 **US$25 (1회)** 카드 결제.
+4. **신분 확인**: 신분증 사진 업로드 + 주소 확인. 승인까지 보통 1~3일 걸린다. 승인 전에는 앱 만들기가 막혀 있을 수 있다.
+5. **기기 확인**: 실제 Android 폰에 Play Console 앱을 설치해 로그인(신규 개인 계정 필수 절차).
+6. 승인 메일이 오면 [1단계]로 간다.
+
+### 서명키 보관 — 잃어버리면 앱을 갱신할 수 없다
+- 정본: `C:\dev\ourgoal-app\android-twa\ourgoal-release-key.keystore` (별칭 `ourgoal`).
+- 이 파일과 비밀번호를 **PC 밖 한 곳**(USB 또는 비밀번호 관리자)에 복사해 둔다.
+- 저장소에는 넣지 않는다. `.gitignore` 가 `*.keystore`·`*.aab`·`*.apk`·`android-twa/` 를 막는다.
+
+### 앱과 사이트 연결(assetlinks) 현재 값
+- 주소: `https://ourgoal-app.vercel.app/.well-known/assetlinks.json` (저장소의 `.well-known/assetlinks.json`)
+- 패키지명: `com.yangbis.ourgoal`
+- 업로드 키 지문(SHA256, `keytool -printcert -jarfile android-twa/app-release-bundle.aab` 실측 2026-09-21):
+  `64:C7:32:00:24:A4:43:89:67:4C:D9:05:97:5F:59:ED:08:9E:63:66:C9:A3:1A:70:CF:D3:6B:FC:B9:9C:04:BB`
+- 주의: 로컬의 `.vercelignore` 에 `.well-known` 이 들어 있다. GitHub 병합으로 나가는 배포에는 영향이 없지만, `vercel` 명령으로 직접 배포하면 이 파일이 빠진다.
+
+---
+
 ## 📌 [1단계] 앱 기본 정보 및 복사-붙여넣기 텍스트 팩
 
 Google Play Console 접속: [https://play.google.com/console](https://play.google.com/console)  
@@ -116,11 +141,22 @@ Google Play Console 접속: [https://play.google.com/console](https://play.googl
 5. 하단 **[다음]** ➔ 경고/오류 확인 후 **[버전 검토 및 출시]** ➔ **[비공개 테스트 트랙으로 출시 시작]** 클릭!
    *(구글 측 영업일 기준 약 1~3일 심사 후 승인)*
 
+### 3-A. AAB 업로드 직후 — Play 앱 서명 키 지문을 assetlinks 에 더한다 (#T006, 2026-09-21 추가)
+
+Play 는 올린 AAB 를 **Play 가 보관하는 앱 서명 키**로 다시 서명해서 테스터에게 내보낸다. 그래서 지금 assetlinks 에 있는 업로드 키 지문만으로는 스토어에서 받은 앱이 검증에 실패하고 **주소창이 보이는 채로** 뜬다. 업로드를 마친 날 아래를 한 번 한다.
+
+1. `[손 필요]` Play Console 좌측 메뉴 **[테스트 및 출시] ➔ [설정] ➔ [앱 서명]** (구 메뉴: [출시] ➔ [설정] ➔ [앱 무결성] ➔ [앱 서명]).
+2. **"앱 서명 키 인증서"** 칸의 **SHA-256 인증서 지문**을 복사한다("업로드 키 인증서" 칸이 아니다 — 그쪽은 이미 들어 있다).
+3. 복사한 지문을 세션에 그대로 붙여 주면, 세션이 `.well-known/assetlinks.json` 의 `sha256_cert_fingerprints` 배열에 **2번째 값으로 추가**(기존 값은 지우지 않는다)해 PR 을 낸다.
+4. 병합 뒤 확인: 테스터 폰에서 앱을 지웠다가 옵트인 링크로 다시 설치 → 실행했을 때 위쪽에 주소창이 없으면 끝이다. `[손 필요]` (진짜 폰에서만 확인된다)
+
 ---
 
 ## 📌 [4단계] 20인 14일 테스터 모집 및 운영 요령
 
 Google의 개인 개발자 계정 필수 조건: **"최소 20명의 테스터가 14일 이상 연속으로 비공개 테스트에 참여해야 프로덕션 승인 신청 가능"**
+
+> **인원 기준 확인 (#T006, 2026-09-21 추가)**: 위 "20명"은 이 런북을 쓸 때의 기준이다. Google 이 신규 개인 계정의 기준을 12명·14일로 낮췄다는 공지(2024-12)가 있었으나 이 세션은 콘솔에서 직접 확인하지 못했다. **정본은 Play Console 대시보드의 "프로덕션 액세스 신청" 카드에 찍히는 숫자**다. 로드맵 T006 의 목표 인원은 지인 16명이다 — 기준이 20명으로 찍혀 있으면 4명이 더 필요하다.
 
 ### 1. 테스터 등록 방법 (가장 쉬운 Google 그룹스 방식 추천)
 1. [Google 그룹스](https://groups.google.com)에서 `ourgoal-testers` 그룹을 1분 만에 생성.
