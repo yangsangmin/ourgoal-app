@@ -895,6 +895,32 @@ check('[검증 22/22] #TASK-ES-198: 캘린더 6대 결함 전수 일괄 정상�
   assert.ok(indexContent.includes('calDayBgBackToHubBtn'), 'openCalendarDayBgPickerModal 내 calDayBgBackToHubBtn 뒤로가기 링크 누락');
 });
 
+// ============================================================================
+// [검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증
+// ============================================================================
+check('[검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어포던스 4대 무결성 검증', () => {
+  const cssPath = path.join(__dirname, '..', 'ui.css');
+  const cssContent = fs.readFileSync(cssPath, 'utf8');
+  const sanctPath = path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js');
+  const sanctContent = fs.readFileSync(sanctPath, 'utf8');
+
+  // 1. 4대 탭 상단 네비게이션 Sticky 선언 확인
+  assert.ok(cssContent.includes('#goalsSubtabs.goals-subtabs-grid') && cssContent.includes('position: sticky !important;'), '목표 탭 서브탭 Sticky 선언 누락');
+  assert.ok(cssContent.includes('.s-cal-modes-wrap') && cssContent.includes('position: sticky;'), '일정 탭 모드 바 Sticky 선언 누락');
+  assert.ok(cssContent.includes('.s-rec-modes-wrap') && cssContent.includes('position: sticky;'), '기록 탭 모드 바 Sticky 선언 누락');
+  assert.ok(cssContent.includes('.comm-subtabs.comm-subtabs-grid') && cssContent.includes('position: sticky !important;'), '소통 탭 서브탭 Sticky 선언 누락');
+
+  // 2. 비활성 버튼 어포던스(배경 틴트 및 1px 테두리) 확인
+  assert.ok(cssContent.includes('.s-rec-mode-btn') && cssContent.includes('background: rgba(255, 255, 255, 0.05);'), '기록 탭 모드 버튼 어포던스 누락');
+  assert.ok(cssContent.includes('.s-cal-mode-btn') && cssContent.includes('background: rgba(255, 255, 255, 0.05);'), '일정 탭 모드 버튼 어포던스 누락');
+
+  // 3. 커뮤니티 카테고리 필터 페이드 마스크 확인
+  assert.ok(cssContent.includes('.feed-filter-bar') && cssContent.includes('mask-image: linear-gradient'), '피드 필터 바 페이드 마스크 누락');
+
+  // 4. 목표 0건 빈 상태에서도 상단 네비게이션 보존 확인
+  assert.ok(sanctContent.includes('s-goal-pills-wrap empty'), '목표 0건 빈 상태 네비게이션 보존 누락');
+});
+
 console.log('\n================================================================');
 console.log(`🎯 검증 결과: 총 ${totalChecks}개 검사 중 ${passedChecks}개 통과 (${failures}개 실패)`);
 console.log('================================================================');

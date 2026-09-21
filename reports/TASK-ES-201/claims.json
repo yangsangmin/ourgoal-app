@@ -1,0 +1,113 @@
+{
+  "task": "TASK-ES-201",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-201-ALL-TABS-UX-REMEDIATION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "목표·일정·기록·소통 4대 탭의 상단 네비게이션이 스크롤 시 사라지지 않고 상단에 Sticky로 고정되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "비활성 서브탭 및 모드 전환 칩이 투명한 평문 텍스트로 보이지 않고 터치 가능한 카드 형태로 보여야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "커뮤니티 카테고리 필터 칩 바가 375px 화면에서 우측 칩이 잘릴 때 스크롤 가능함을 직관적으로 알 수 있는 시각적 힌트를 제공해야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "등록된 목표가 0건인 상태에서도 상단 네비게이션 알약 바가 완전히 은닉되지 않고 보존되어야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 7,
+      "domain": "ui-layout",
+      "statement": "목표 탭 상단 서브탭 5종이 sticky 포지션으로 상단에 고정된다",
+      "touches": ["ui.css"],
+      "scenario": "scenarios/goals-sticky.json"
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 7,
+      "domain": "ui-layout",
+      "statement": "기록 탭 상단 6대 모드 칩이 sticky 포지션으로 상단에 고정된다",
+      "touches": ["ui.css"],
+      "scenario": "scenarios/records-sticky.json"
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 7,
+      "domain": "ui-layout",
+      "statement": "일정 탭 상단 모드 바가 sticky 포지션으로 상단에 고정된다",
+      "touches": ["ui.css"],
+      "scenario": "scenarios/calendar-sticky.json"
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 7,
+      "domain": "ui-layout",
+      "statement": "커뮤니티 탭 상단 서브탭이 sticky 포지션으로 상단에 고정된다",
+      "touches": ["ui.css"],
+      "scenario": "scenarios/comm-sticky.json"
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "unverified",
+      "domain": "ui-layout",
+      "statement": "비활성 서브탭 및 모드 전환 칩에 카드 배경 틴트와 1px 테두리가 적용되어 터치 어포던스를 제공한다",
+      "touches": ["ui.css"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "visual-quality",
+        "who": "실제 스마트폰 화면을 보는 사람",
+        "how": [
+          "목표 탭, 일정 탭, 기록 탭, 커뮤니티 탭을 차례로 연다",
+          "비활성 탭과 모드 버튼에 카드 배경 틴트와 1px 테두리가 선명히 식별되는지 확인한다"
+        ]
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R3",
+      "kind": "unverified",
+      "domain": "ui-layout",
+      "statement": "커뮤니티 카테고리 필터 바 우측에 그라데이션 페이드 마스크가 적용되어 가로 스크롤 가능함을 시각적으로 안내한다",
+      "touches": ["ui.css"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "visual-quality",
+        "who": "375px 모바일 뷰포트에서 화면을 보는 사람",
+        "how": [
+          "커뮤니티 탭 피드를 연다",
+          "필터 바 우측 끝에 페이드 마스크 그라데이션이 표시되어 잘린 칩들의 존재가 안내되는지 확인한다"
+        ]
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R4",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 6,
+      "domain": "ui-behavior",
+      "statement": "목표가 0건인 상태에서도 상단 새 목표 알약 버튼이 유지된다",
+      "touches": ["js/sanctuary-v3-engine.js"],
+      "scenario": "scenarios/empty-goals-nav.json"
+    }
+  ]
+}

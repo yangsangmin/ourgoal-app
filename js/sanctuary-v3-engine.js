@@ -61,7 +61,7 @@
 
     var activeGoal = goals.find(function(g) { return g.id === engine.activeGoalId; }) || goals[0];
 
-    // 1-1. 상단 목표 알약 셀렉터 (목표가 있을 때만 노출하여 빈 상태 시각적 혼란 방지)
+    // 1-1. 상단 목표 알약 셀렉터 (목표가 0건이어도 추가 버튼 보존)
     var pillsHtml = '';
     if (goals.length > 0) {
       pillsHtml = '<div class="s-goal-pills-wrap">' +
@@ -72,6 +72,10 @@
           '</button>';
         }).join('') +
         '<button type="button" class="s-goal-pill add" id="sAddGoalBtn" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal(); else toast(\'목표 추가 창을 불러오는 중입니다\');">+ 새 목표</button>' +
+      '</div>';
+    } else {
+      pillsHtml = '<div class="s-goal-pills-wrap empty">' +
+        '<button type="button" class="s-goal-pill add" id="sAddGoalBtn" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal(); else toast(\'목표 추가 창을 불러오는 중입니다\');">+ 새 목표 만들기</button>' +
       '</div>';
     }
 
