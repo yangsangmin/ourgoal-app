@@ -919,6 +919,16 @@ check('[검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어�
 
   // 4. 목표 0건 빈 상태에서도 상단 네비게이션 보존 확인
   assert.ok(sanctContent.includes('s-goal-pills-wrap empty'), '목표 0건 빈 상태 네비게이션 보존 누락');
+
+  // 5. [상민님 지시 반영] AI 목표 어시스턴트 상단 전진 배치 확인
+  const indexHtmlPath = path.join(__dirname, '..', 'index.html');
+  const indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
+  const agentCardIdx = indexHtml.indexOf('id="goalAgentCard"');
+  const goalHeadRowIdx = indexHtml.indexOf('class="goal-head-row"');
+  assert.ok(agentCardIdx !== -1 && goalHeadRowIdx !== -1 && agentCardIdx < goalHeadRowIdx, 'AI 목표 어시스턴트가 세부 마일스톤 목록 상단에 전진 배치되어야 함');
+
+  // 6. [상민님 지시 반영] 프롬프트 백과사전 아코디언 접기 확인
+  assert.ok(indexHtml.includes('btnTogglePromptAccordion') && indexHtml.includes('_promptEncyclopediaOpen = false;'), '프롬프트 백과사전 아코디언 접힘 구조 누락');
 });
 
 console.log('\n================================================================');

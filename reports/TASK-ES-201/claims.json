@@ -17,6 +17,14 @@
     {
       "id": "R4",
       "text": "등록된 목표가 0건인 상태에서도 상단 네비게이션 알약 바가 완전히 은닉되지 않고 보존되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "AI 목표 어시스턴트 카드가 세부 마일스톤 목록 상단(내 목표 바로 밑)에 전진 배치되어 목표를 보면서 글줄로 목표를 변경할 수 있어야 한다"
+    },
+    {
+      "id": "R6",
+      "text": "데이터분석 프롬프트 백과사전이 기본 접힘 아코디언으로 정돈되어 화면 공간을 절약하고 시각적 피로도를 방지해야 한다"
     }
   ],
   "claims": [
@@ -108,6 +116,40 @@
       "statement": "목표가 0건인 상태에서도 상단 새 목표 알약 버튼이 유지된다",
       "touches": ["js/sanctuary-v3-engine.js"],
       "scenario": "scenarios/empty-goals-nav.json"
+    },
+    {
+      "id": "C8",
+      "req": "R5",
+      "kind": "unverified",
+      "domain": "ui-layout",
+      "statement": "AI 목표 어시스턴트 카드가 내 목표 바로 아래이자 세부 마일스톤 목록 상단에 배치되어 목표 변경 시 시각적 연속성을 제공한다",
+      "touches": ["index.html"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "visual-quality",
+        "who": "개인 목표 탭을 사용하는 사람",
+        "how": [
+          "목표 탭에서 내 목표를 선택한다",
+          "내 목표 카드 바로 아래에 AI 목표 어시스턴트 카드가 배치되어 있는지 확인한다"
+        ]
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R6",
+      "kind": "unverified",
+      "domain": "ui-layout",
+      "statement": "데이터분석 프롬프트 백과사전이 기본 접힘 아코디언으로 표시되어 목표 상세 화면의 시각적 과밀을 방지한다",
+      "touches": ["index.html"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "visual-quality",
+        "who": "개인 목표 탭을 사용하는 사람",
+        "how": [
+          "목표 탭 하단의 데이터분석 프롬프트 백과사전이 기본 접힘 상태인지 확인한다",
+          "헤더 클릭 시 펼쳐지는지 확인한다"
+        ]
+      }
     }
   ]
 }

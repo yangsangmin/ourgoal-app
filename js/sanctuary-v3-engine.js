@@ -87,7 +87,7 @@
           '<div style="font-size:3rem;margin-bottom:14px;">🏔️</div>' +
           '<h3 style="margin-bottom:8px;font-size:1.25rem;font-weight:800;color:var(--ink);">등록된 목표가 없습니다</h3>' +
           '<p style="font-size:0.9rem;margin-bottom:24px;color:var(--ink-soft);line-height:1.5;">나만의 첫 목표를 만들고 등반을 시작해보세요.</p>' +
-          '<button class="btn btn-primary" type="button" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal();" style="padding:10px 24px;font-size:0.95rem;font-weight:700;border-radius:12px;box-shadow:0 4px 12px rgba(225,29,72,0.25);">+ 새 목표 만들기</button>' +
+          '<button class="btn btn-empty-add-goal" type="button" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal();" style="padding:10px 24px;font-size:0.95rem;font-weight:700;border-radius:12px;background:var(--brand);color:#fff;border:none;box-shadow:0 4px 12px rgba(225,29,72,0.25);cursor:pointer;">+ 새 목표 만들기</button>' +
         '</div>' +
       '</div>';
     } else {
