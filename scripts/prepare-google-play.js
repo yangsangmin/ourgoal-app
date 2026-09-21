@@ -47,13 +47,21 @@ check('.well-known/assetlinks.json 디지털 에셋 링크 검증', () => {
   }
 });
 
-check('Google Play 정책 필수: 개인정보처리방침 및 이용약관 파일 실재', () => {
+check('Google Play 정책 필수: 개인정보처리방침 및 이용약관 파일 및 HTML 웹페이지 실재', () => {
   if (!fs.existsSync(path.join(ROOT, 'docs', 'legal', 'privacy.md'))) throw new Error('privacy.md 없음');
   if (!fs.existsSync(path.join(ROOT, 'docs', 'legal', 'terms.md'))) throw new Error('terms.md 없음');
+  if (!fs.existsSync(path.join(ROOT, 'privacy.html'))) throw new Error('privacy.html 웹페이지 없음');
+  if (!fs.existsSync(path.join(ROOT, 'terms.html'))) throw new Error('terms.html 웹페이지 없음');
 });
 
-check('Google Play 정책 필수: 계정 삭제(회원 탈퇴) API/기능 구비', () => {
+check('Google Play 정책 필수: 계정 삭제(회원 탈퇴) API 및 웹 신청 페이지 구비', () => {
   if (!fs.existsSync(path.join(ROOT, 'api', 'withdraw.js'))) throw new Error('api/withdraw.js 없음');
+  if (!fs.existsSync(path.join(ROOT, 'delete-account.html'))) throw new Error('delete-account.html 웹페이지 없음');
+});
+
+check('Google Play 스토어 그래픽 필수 에셋 검증 (512x512 아이콘, 1024x500 그래픽)', () => {
+  if (!fs.existsSync(path.join(ROOT, 'icons', 'icon-512.png'))) throw new Error('icon-512.png 없음');
+  if (!fs.existsSync(path.join(ROOT, 'promo-assets', 'feature_graphic_1024x500.png'))) throw new Error('feature_graphic_1024x500.png 없음');
 });
 
 check('Google Play 14일 비공개 테스트 안내 가이드 문서 실재', () => {
