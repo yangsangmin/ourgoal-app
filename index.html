@@ -20786,16 +20786,16 @@ wirePromptEncyclopediaEvents(body);
 
     // [4단계 개편: 3대 핵심 요약 카드 및 엄지 스위처]
     var streakVal = (state && state.profile && state.profile.streak) || 3;
-    var trendPulseCards = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;">' +
-      '<div style="background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;">' +
+    var trendPulseCards = '<div class="rec-stats-summary-card" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;">' +
+      '<div class="rec-stats-summary-item" style="background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;">' +
         '<div style="font-size:0.7rem;color:var(--ink-faint);">총 몰입 시간</div>' +
         '<div style="font-size:0.875rem;font-weight:800;color:var(--brand);margin-top:2px;">' + fmtDuration(tData.totalMs) + '</div>' +
       '</div>' +
-      '<div style="background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;">' +
+      '<div class="rec-stats-summary-item" style="background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;">' +
         '<div style="font-size:0.7rem;color:var(--ink-faint);">포커스 스트릭</div>' +
         '<div style="font-size:0.875rem;font-weight:800;color:#f59e0b;margin-top:2px;">' + streakVal + '일 연속 🔥</div>' +
       '</div>' +
-      '<div style="background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;">' +
+      '<div class="rec-stats-summary-item" style="background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;">' +
         '<div style="font-size:0.7rem;color:var(--ink-faint);">총 실천 횟수</div>' +
         '<div style="font-size:0.875rem;font-weight:800;color:#38bdf8;margin-top:2px;">' + tData.totalCount + '회 완주</div>' +
       '</div>' +
