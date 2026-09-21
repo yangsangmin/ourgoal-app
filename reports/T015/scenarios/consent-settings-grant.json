@@ -1,12 +1,13 @@
 {
   "id": "t015-consent-settings-grant",
-  "title": "설정의 'AI 사용 동의 확인·변경'을 누르면 동의 창이 뜨고, 동의하고 사용을 누르면 상태가 '동의함'으로 바뀐다",
+  "title": "설정의 데이터·연동 그룹을 열고 'AI 사용 동의 확인·변경'을 누르면 동의 창이 뜨고, 동의하고 사용을 누르면 상태가 '동의함'으로 바뀐다",
   "steps": [
     { "do": "goto", "path": "/index.html" },
     { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
     { "do": "click", "selector": "#btnLandingPreviewDirect" },
     { "do": "waitFor", "selector": ".navbtn[data-tab=\"settings\"]" },
     { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "click", "selector": "#settingsGroupData > summary" },
     { "expect": "textContains", "selector": "#aiConsentStatus", "text": "아직 선택 안 함" },
     { "do": "click", "selector": "#aiConsentChangeBtn" },
     { "expect": "visible", "selector": "#aiConsentAgreeBtn" },
