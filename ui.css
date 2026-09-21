@@ -9242,5 +9242,211 @@ html[data-theme="urban-city"] .s-seg-pill {
   color: var(--brand, #6366f1);
 }
 
+/* ==========================================================================
+   #TASK-ES-202: 내 기록 피드 최신 3개 + 이전 기록 기간 탐색 & 5개 와이드 페이저
+   - 글자 잘림 방지 (Zero Clipping & 320px 대응)
+   - UI 시각적 피로 최소화 (Visual Calming & Clean Hierarchy)
+   - UX 극대화 (Frictionless Interaction & Thumb-Zone Pager)
+   ========================================================================== */
 
+.rec-feed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 16px 0 10px;
+  padding: 0 2px;
+}
+.rec-feed-title {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.rec-feed-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink-sub, var(--ink-faint));
+  background: var(--card-sub-bg, rgba(255, 255, 255, 0.06));
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.08));
+}
+
+.rec-past-archive-card {
+  margin-top: 20px;
+  border-radius: 14px;
+  background: var(--home-card-bg, var(--card-bg, rgba(255, 255, 255, 0.03)));
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.08));
+  padding: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.rec-past-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line, rgba(255, 255, 255, 0.06));
+}
+.rec-past-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rec-past-meta {
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+
+/* 가로 스와이프 가능한 기간 프리셋 칩 바 (320px 깨짐 방지) */
+.rec-period-chip-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px 1px 10px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.rec-period-chip-bar::-webkit-scrollbar {
+  display: none;
+}
+.rec-period-chip {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--bg-surface, var(--card-bg, rgba(255, 255, 255, 0.05)));
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.1));
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all .15s ease;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.rec-period-chip:hover {
+  background: var(--hover-bg, rgba(255, 255, 255, 0.08));
+}
+.rec-period-chip.active {
+  background: var(--brand-glow, rgba(99, 102, 241, 0.15)) !important;
+  border-color: var(--brand, #6366f1) !important;
+  color: var(--brand, #6366f1) !important;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(99, 102, 241, 0.15);
+}
+
+/* 커스텀 날짜 선택창 */
+.rec-custom-date-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--bg, rgba(0, 0, 0, 0.15));
+  border: 1px dashed var(--line, rgba(255, 255, 255, 0.12));
+}
+.rec-custom-date-box label {
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  font-weight: 600;
+}
+.rec-custom-date-box input[type="date"] {
+  font-size: 0.75rem;
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.15));
+  background: var(--card-bg, #1e293b);
+  color: var(--ink);
+  font-family: inherit;
+  min-width: 105px;
+}
+
+/* 현재 페이지 구간 뱃지 */
+.rec-paged-range-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: var(--card-sub-bg, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.08));
+  padding: 3px 9px;
+  border-radius: 10px;
+  margin: 4px 0 10px;
+}
+
+/* 모바일 와이드 엄지 페이저 (Thumb Pager) */
+.rec-past-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line, rgba(255, 255, 255, 0.08));
+}
+.rec-pager-btn {
+  min-height: 42px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.12));
+  background: var(--card-bg, rgba(255, 255, 255, 0.05));
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all .15s ease;
+  user-select: none;
+}
+.rec-pager-btn:active:not(:disabled) {
+  transform: scale(0.97);
+  background: var(--brand-glow, rgba(99, 102, 241, 0.1));
+}
+.rec-pager-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+.rec-pager-info {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1.35;
+  flex: 1;
+}
+.rec-pager-info span {
+  display: block;
+  font-size: 0.6875rem;
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+
+/* �� �׼� �� & 320px �ʼ��� ȭ�� �ϰ� ��Ÿ�� */
+.rec-quick-dock-bar { max-width: 100%; box-sizing: border-box; }
+.archive-ms-details summary::-webkit-details-marker { display: none; }
+@media (max-width: 340px) { .rec-pager-btn { padding: 6px 8px; font-size: 0.75rem; } .rec-pager-info { font-size: 0.72rem; } }
+
+
+/* ��� �� 320px ���� �����÷ο� ��� */
+#screen-records { overflow-x: hidden; max-width: 100%; }
+.rec-carousel-viewport { overflow: hidden !important; width: 100%; max-width: 100%; }
+#periodPresetRow { overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; scrollbar-width: none; flex-wrap: nowrap; }
+.date-range { display: flex; flex-wrap: wrap; gap: 6px; max-width: 100%; box-sizing: border-box; }
+.date-range .field { min-width: 0; flex: 1 1 110px; }
+.date-range input[type='date'] { max-width: 100%; box-sizing: border-box; font-size: 0.78rem; }
 
