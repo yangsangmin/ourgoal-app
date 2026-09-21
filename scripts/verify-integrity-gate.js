@@ -305,7 +305,7 @@ check('헌법 정본에 문제해결 8원칙 세부 기준(제2조 1~2항) 및 �
   assert.ok(rulesContent.includes('원칙 번호 임의 합체 전면 금지'), '제2조 5항 1호 누락');
   assert.ok(rulesContent.includes('원칙 ⑥ 절차 재검증 누락 영구 금지'), '제2조 5항 2호 누락');
   assert.ok(rulesContent.includes('1줄 bullet point 날림 축약 금지'), '제2조 5항 3호 누락');
-  assert.ok(rulesContent.includes('기계적 린터 강제 배선 및 물리적 차단'), '제2조 5항 4호 누락');
+  assert.ok(rulesContent.includes('기계적 린터 예비 검사 배선'), '제2조 5항 4호 누락');
 });
 
 check('신규 및 변경 대상 REQ/PLAN 문서의 8원칙 기계적 무결성(린터)이 100% 통과한다', () => {
@@ -477,7 +477,7 @@ check('헌법 정본에 원격 main PR 머지=실서버 배포 동일시(제9조
   const rulesContent = fs.readFileSync(rulesDoc, 'utf8');
   assert.ok(rulesContent.includes('원격 main PR 머지 = 실서버 프로덕션 배포 동일시 규정'), '제9조 2항 누락');
   assert.ok(rulesContent.includes('작업계획서 4단계 마감 상한선 엄수'), '제9조 3항 누락');
-  assert.ok(rulesContent.includes('모드 4-A [완곡한 요청 및 로컬 완결 4단계 모드]'), '제12조 모드 4-A 누락');
+  assert.ok(rulesContent.includes('모드 4-A [완곡한 요청 및 심사 청구 4단계 모드]'), '제12조 모드 4-A 누락');
   assert.ok(rulesContent.includes('모드 4-B [프로덕션 배포 모드]'), '제12조 모드 4-B 누락');
 });
 
@@ -515,7 +515,7 @@ check('헌법 정본에 제14조(외부연동 E2E 무결성·헌법 독점주의
   assert.ok(rulesContent.includes('제5항 [법체계 위계의 단일화 (조·항·호·목 원칙)]'), '제14조 5항 누락');
   assert.ok(rulesContent.includes('제6항 [헌법 독점주의 (사설 규칙 제정 전면 금지 / Constitutional Exclusivity)]'), '제14조 6항 누락');
   assert.ok(rulesContent.includes('제7항 [신규 규칙 제정의 헌법 편입 의무]'), '제14조 7항 누락');
-  assert.ok(rulesContent.includes('제8항 [규범 변경의 절대 승인선 엄수 및 기계적 무결성 게이트 강제]'), '제14조 8항 누락');
+  assert.ok(rulesContent.includes('제8항 [규범 변경의 절대 승인선 엄수 및 기계 집행의 법정·금고 소관]'), '제14조 8항 누락');
 });
 
 /* =========================================================================
@@ -607,10 +607,10 @@ check('헌법 정본에 시각 자가감사(제7조 8항), 시각 IA 명세(제2
   assert.ok(rulesContent.includes('제6항 [기획 단계 시각적 IA 및 시맨틱 통합 배선도 명세 의무'), '제2조 6항 누락');
   assert.ok(rulesContent.includes('제5항 [가짜 듀얼레이어 및 CSS 편의주의적 은폐 원천 금지 헌법'), '제3조 5항 누락');
   assert.ok(rulesContent.includes('위조 숫자 및 허상 지표 날조 금지 - Vanity Metrics Zero Tolerance'), '제4조 1항 1호 누락');
-  assert.ok(rulesContent.includes('제8항 [제6검증: 시각 및 공간 조형 무결성 검증 (Visual Self-Audit Mandate)]'), '제7조 8항 누락');
+  assert.ok(rulesContent.includes('제8항 [제6검증: 시각 및 공간 조형 무결성 검증 (Visual Integrity Standard)]'), '제7조 8항 누락');
   assert.ok(
     rulesContent.includes('제3항 [보고 서식의 팩트 중심 4-Block 규격화 및 감정적 미사여구 영구 금지]') ||
-    rulesContent.includes('제3항 [보고 서식의 실물 전수 검증 6-Block 규격화 및 표준 템플릿 헌법 내장 강제]'),
+    rulesContent.includes('제3항 [보고의 정본은 법정 판정서다]'),
     '제8조 3항 누락'
   );
 });
@@ -669,7 +669,7 @@ check('헌법 정본에 6대 신설/개정 조항(제2조 7항, 제3조 6항, �
   assert.ok(rulesContent.includes('9호 (도메인 철학 역행 및 상식적 개념 괴리 방치 금지 - Conceptual Integrity)'), '제4조 1항 9호 누락');
   assert.ok(rulesContent.includes('모바일 375px 4대 시각 물리 규격 강제'), '제7조 8항 모바일 4대 규격 누락');
   assert.ok(rulesContent.includes('제4항 [세션 착수 시 Step 0 최신 브랜치 동기화 및 다중 세션 정합성 검증 (Step 0 Pre-flight Sync)]'), '제11조 4항 누락');
-  assert.ok(rulesContent.includes('제9항 [헌법 개정 즉시 레거시 코드 소탕 및 게이트키퍼 동시 배선 의무 (Co-wiring Mandate)]'), '제14조 9항 누락');
+  assert.ok(rulesContent.includes('제9항 [헌법 개정 즉시 레거시 코드 소탕 및 새 규범 기계 집행의 금고 변경 절차]'), '제14조 9항 누락');
 });
 
 check('런칭 초기 광고 전면 배제 (Zero Ads Gate): 광고 모달/카운트다운 타이머 잔존 0건을 물리적으로 보증한다 (제4조 1항 8호, 제5조 1항 1호, 제14조 9항)', () => {

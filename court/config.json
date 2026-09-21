@@ -1,0 +1,42 @@
+{
+  "_설명": "법정 실행 설정. 금고(동결) 대상이다. 시나리오가 갈 수 있는 경로, 외부 통신 허용 호스트, 법정 서버가 서빙하지 않는 경로를 정한다. 앱을 여는 호스트 이름은 여기 두지 않는다(실행마다 법정이 새로 고른다 — lib/site-host.js). claimBudgetMs=주장 심사에 쓰는 시간의 상한(밀리초, 25분). 넘기면 남은 주장은 ‘확인 못 함(시간 부족)’으로 내리고 판정서는 반드시 남긴다. stubs=법정이 막는 외부 파일 가운데 고정 사본으로 대신 응답해 주는 것.",
+  "allowedPaths": [
+    "/",
+    "/index.html"
+  ],
+  "fixturesDir": "fixtures",
+  "allowHosts": [],
+  "denyServePrefixes": [
+    "/scratch/",
+    "/reports/",
+    "/docs/",
+    "/scripts/",
+    "/court/",
+    "/node_modules/",
+    "/.git/",
+    "/.github/",
+    "/.githooks/",
+    "/.claude/",
+    "/.codex/",
+    "/.agent/",
+    "/.agents/",
+    "/temp/",
+    "/android/"
+  ],
+  "productModuleDirs": [
+    "js"
+  ],
+  "bootWaitSelector": "#btnLandingPreviewDirect",
+  "claimBudgetMs": 1500000,
+  "remoteMain": "origin/main",
+  "stubs": [
+    {
+      "urlPattern": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js*",
+      "file": "vendor/supabase-js-2.115.0.umd.js",
+      "contentType": "application/javascript; charset=utf-8",
+      "sha256": "f387e5935730a6d9599a281986a176eafce5ebbe7514446222d21aa029e31dd5"
+    }
+  ],
+  "timezone": "Asia/Seoul",
+  "locale": "ko-KR"
+}

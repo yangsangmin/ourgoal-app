@@ -1,0 +1,15 @@
+{
+  "id": "std-layout-no-overflow",
+  "title": "375px 화면에서 홈으로 들어가도 가로로 넘치지 않는다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal" },
+    { "do": "setViewport", "width": 375, "height": 812 },
+    { "do": "wait", "ms": 500 },
+    { "expect": "noHorizontalOverflow" },
+    { "expect": "stillInApp" },
+    { "capture": "home-375" }
+  ]
+}
