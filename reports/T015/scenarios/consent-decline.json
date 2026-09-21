@@ -1,0 +1,21 @@
+{
+  "id": "t015-consent-decline",
+  "title": "처음 체크인을 저장하면 AI 사용 동의 창이 뜨고, 동의하지 않음을 누르면 창이 닫히고 설정에 '동의하지 않음'이 남는다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#captureInput" },
+    { "do": "click", "selector": "#captureInput" },
+    { "do": "type", "selector": "#captureInput", "text": "아침 러닝 10km 완료" },
+    { "do": "click", "selector": "#captureSave" },
+    { "expect": "visible", "selector": "#aiConsentAgreeBtn" },
+    { "expect": "textContains", "selector": "#modalSheet", "text": "Google (Gemini API)" },
+    { "expect": "textContains", "selector": "#modalSheet", "text": "전송되는 데이터" },
+    { "do": "click", "selector": "#aiConsentDeclineBtn" },
+    { "expect": "notVisible", "selector": "#aiConsentAgreeBtn" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "expect": "textContains", "selector": "#aiConsentStatus", "text": "동의하지 않음" },
+    { "capture": "after-decline" }
+  ]
+}

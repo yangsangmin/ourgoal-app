@@ -1,0 +1,15 @@
+{
+  "id": "t015-footer-links",
+  "title": "설정 화면의 푸터와 고객지원 블록에 개인정보처리방침·지원 센터 웹 페이지 링크가 있다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "expect": "attr", "selector": "#footPrivacyPageLink", "name": "href", "equals": "/privacy" },
+    { "expect": "attr", "selector": "#footSupportPageLink", "name": "href", "equals": "/support" },
+    { "expect": "attr", "selector": "#setPrivacyPageLink", "name": "href", "equals": "/privacy" },
+    { "expect": "attr", "selector": "#setSupportPageLink", "name": "href", "equals": "/support" }
+  ]
+}

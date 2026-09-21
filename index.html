@@ -910,6 +910,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       <div class="set-block">
         <h4>AI 피드백 (Google Gemini API)</h4>
+        <div class="field" id="aiConsentRow" style="margin-bottom:12px;">
+          <label>AI 사용 동의 <span id="aiConsentStatus" style="font-weight:700;">확인 전</span></label>
+          <button class="btn btn-ghost btn-sm btn-block" id="aiConsentChangeBtn" type="button">AI 사용 동의 확인·변경</button>
+          <p class="faint" style="font-size:.75rem;margin-top:6px;">동의하면 목표·기록 텍스트가 AI 제공자(Google)로 전송돼요. 동의하지 않아도 기록은 그대로 저장돼요.</p>
+        </div>
         <div class="format-toggle" id="aiProviderToggle">
           <div class="format-opt active" data-provider="gemini">Gemini (기본)</div>
         </div>
@@ -1027,6 +1032,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <button class="btn btn-ghost btn-sm" id="viewTermsBtn" type="button" style="flex:1;">서비스 이용약관</button>
           <button class="btn btn-ghost btn-sm" id="viewPrivacyBtn" type="button" style="flex:1;">개인정보처리방침</button>
         </div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <a class="btn btn-ghost btn-sm" id="setPrivacyPageLink" href="/privacy" target="_blank" rel="noopener" style="flex:1;text-align:center;">방침 전문 (웹)</a>
+          <a class="btn btn-ghost btn-sm" id="setSupportPageLink" href="/support" target="_blank" rel="noopener" style="flex:1;text-align:center;">지원 센터 (웹)</a>
+        </div>
       </div>
 
       <div class="set-block">
@@ -1046,6 +1055,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         </div>
         <div>문의 <a href="javascript:void(0)" id="footInquiryLink" role="button">1:1 문의 / 오류 제보</a> · 공식 지원 <a href="javascript:void(0)" id="footSupportEmailLink" role="button" style="color:var(--ink-soft);text-decoration:underline;" title="공식 지원 이메일 복사 및 문의하기">ourgoal.support@gmail.com</a></div>
         <div><a href="#" id="setTermsLink">이용약관</a> · <a href="#" id="setPrivacyLink">개인정보처리방침</a></div>
+        <div><a href="/privacy" id="footPrivacyPageLink" target="_blank" rel="noopener">개인정보처리방침 (웹)</a> · <a href="/support" id="footSupportPageLink" target="_blank" rel="noopener">지원 센터</a></div>
         <div>2026 OurGoal</div>
       </div>
     </section>
@@ -5153,6 +5163,76 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
   }
 
+  /* ============ AI 사용 동의 (#T015) — 동의 전에는 목표·기록 텍스트가 AI 제공자로 나가지 않는다 ============ */
+  var AI_CONSENT_KEY = 'ourgoal_ai_consent';
+  var AI_CONSENT_VERSION = 1; /* 제공자·전송 항목이 바뀌면 올려서 다시 받는다 */
+  function getAIConsent(){
+    try{
+      var o = JSON.parse(localStorage.getItem(AI_CONSENT_KEY) || 'null');
+      if(o && o.v === AI_CONSENT_VERSION && (o.choice === 'granted' || o.choice === 'declined')) return o.choice;
+    } catch(e){ /* 저장소 접근 실패 = 선택 없음 */ }
+    return null;
+  }
+  function aiConsentGranted(){ return getAIConsent() === 'granted'; }
+  function renderAIConsentStatus(){
+    var el = document.getElementById('aiConsentStatus');
+    if(!el) return;
+    var c = getAIConsent();
+    el.textContent = c === 'granted' ? '· 동의함' : (c === 'declined' ? '· 동의하지 않음' : '· 아직 선택 안 함');
+  }
+  function setAIConsent(choice){
+    try{ localStorage.setItem(AI_CONSENT_KEY, JSON.stringify({ v: AI_CONSENT_VERSION, choice: choice, at: new Date().toISOString() })); } catch(e){ /* 저장 실패해도 이번 선택은 호출부가 바로 쓴다 */ }
+    renderAIConsentStatus();
+  }
+  function showAIConsentModal(){
+    return new Promise(function(resolve){
+      var overlay = document.getElementById('modalOverlay');
+      if(!overlay){ resolve(false); return; }
+      var decided = false, mo = null;
+      function finish(choice){
+        if(decided) return;
+        decided = true;
+        if(mo) mo.disconnect();
+        if(choice) setAIConsent(choice);
+        resolve(choice === 'granted');
+      }
+      openModal(
+        '<h3 style="margin:0 0 10px;font-size:1.125rem;font-weight:800;color:var(--ink);">AI 피드백을 쓰기 전에 알려드려요</h3>' +
+        '<div id="aiConsentBody" style="max-height:52vh;overflow-y:auto;font-size:.8125rem;line-height:1.65;color:var(--ink-soft);">' +
+          '<p>체크인 피드백을 비롯한 AI 기능(목표 제안·오늘의 미션·사진 표 분석 등)을 쓰려면 아래 내용이 AI 제공자에게 전송돼요.</p>' +
+          '<p><b>AI 제공자</b><br>Google (Gemini API)</p>' +
+          '<p><b>전송되는 데이터</b><br>목표 제목·마일스톤·할 일, 방금 쓴 기록 텍스트, 최근 기록 일부, 다가오는 일정 제목, 내가 정한 피드백 말투(설정한 경우). 사진 표 분석은 고른 사진이 전송돼요.</p>' +
+          '<p><b>보관</b><br>아워골은 AI 요청 내용을 데이터베이스에 따로 저장하지 않아요. AI가 돌려준 피드백은 내 기록에 저장되고 탈퇴하면 함께 삭제돼요. Google 쪽 처리·보관은 Google 정책을 따라요.</p>' +
+          '<p><b>동의하지 않으면</b><br>기록은 그대로 저장되고, AI 대신 기기 안에서 만든 간단한 피드백이 나와요. 아무 텍스트도 전송되지 않아요.</p>' +
+          '<p class="faint" style="font-size:.75rem;">선택은 이 기기에 저장되며 [설정] → AI 피드백에서 언제든 바꿀 수 있어요. <a href="/privacy" target="_blank" rel="noopener" style="text-decoration:underline;">개인정보처리방침 보기</a></p>' +
+        '</div>' +
+        '<div class="modal-actions" style="margin-top:14px;display:flex;gap:8px;">' +
+          '<button class="btn btn-ghost" id="aiConsentDeclineBtn" type="button" style="flex:1;">동의하지 않음</button>' +
+          '<button class="btn btn-primary" id="aiConsentAgreeBtn" type="button" style="flex:1;">동의하고 사용</button>' +
+        '</div>',
+        function(sheet){
+          sheet.querySelector('#aiConsentAgreeBtn').addEventListener('click', function(){ finish('granted'); closeModal(); });
+          sheet.querySelector('#aiConsentDeclineBtn').addEventListener('click', function(){ finish('declined'); closeModal(); });
+        }
+      );
+      /* 바깥 탭·뒤로가기로 닫으면 이번만 AI 없이 진행하고 선택은 저장하지 않는다(다음에 다시 묻는다) */
+      if(typeof MutationObserver === 'function'){
+        mo = new MutationObserver(function(){ if(!overlay.classList.contains('active')) finish(null); });
+        mo.observe(overlay, { attributes:true, attributeFilter:['class'] });
+      }
+    });
+  }
+  function ensureAIConsent(){
+    var c = getAIConsent();
+    if(c) return Promise.resolve(c === 'granted');
+    return showAIConsentModal();
+  }
+  (function(){
+    var btn = document.getElementById('aiConsentChangeBtn');
+    if(btn) btn.addEventListener('click', function(){ showAIConsentModal(); });
+    renderAIConsentStatus();
+  })();
+
   /* ============ 이용약관 & 개인정보처리방침 모달 ============ */
   function showLegalModal(initialTab){
     var curTab = initialTab === 'privacy' ? 'privacy' : 'terms';
@@ -5167,6 +5247,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<p><b>제4조 (제3자 제공 및 위탁)</b><br>• 서비스는 이용자의 동의 없이 개인정보를 제3자에게 제공하지 않습니다.<br>• 인프라 위탁: Supabase Inc. (클라우드 DB), Vercel Inc. (호스팅 및 API)</p>' +
           '<p><b>제5조 (이용자의 권리와 행사)</b><br>• 이용자는 언제든지 [설정] 메뉴의 [회원 탈퇴]를 통해 계정 삭제 및 개인정보 파기를 직접 실행할 수 있습니다.</p>' +
           '<p><b>제6조 (개인정보 보호책임자)</b><br>• 성명: 아워골 운영팀 · 문의: ourgoal.support@gmail.com</p>' +
+          '<p><b>제7조 (AI 기능·이용 통계 고지)</b><br>• AI 기능(Google Gemini API): 이용자가 동의한 경우에만 목표·기록 텍스트가 Google 로 전송됩니다. 동의는 [설정] → AI 피드백에서 바꿀 수 있습니다.<br>• 이용 통계: PostHog Inc. 에 화면 이용 이벤트와 기기 정보가 전송됩니다.<br>• 전문: <a href="/privacy" target="_blank" rel="noopener" style="text-decoration:underline;">/privacy</a></p>' +
           '</div>';
       } else {
         return '<h4 style="margin:4px 0 6px;">아워골 서비스 이용약관</h4>' +
@@ -12236,6 +12317,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var newRec = state.profile.records[0];
       var fb = null;
       var targetGoal = goal || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
+      await ensureAIConsent(); /* #T015 첫 AI 체크인 전 동의 모달 — 거부해도 기록은 이미 저장됨 */
       renderFeedbackSlot('loading');
       renderRecordFeedbackSlot('loading');
       showCheckinFeedbackSheet(newRec, 'loading');
@@ -12539,6 +12621,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(!goal){
       goal = (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
     }
+    if(!aiConsentGranted()){ /* #T015 동의 전·거부 시 AI 제공자로 아무것도 보내지 않고 기기 안 피드백만 */
+      var noAiFb = localFeedback(goal, text, theme, getUpcomingSchedulesForAI(30));
+      noAiFb.feedbackMode = state.aiFeedbackMode || 'default';
+      return noAiFb;
+    }
     var provider = (state.profile.settings.aiProvider) || 'gemini';
     if(provider==='gemini' && state.profile.settings.geminiKey){
       var g = await requestGeminiFeedback(goal, text, theme);
@@ -12548,6 +12635,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
   async function requestServerAIFeedback(goal, text, theme){
     goal = goal || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
+    if(!aiConsentGranted()) return localFeedback(goal, text, theme, getUpcomingSchedulesForAI(30)); /* #T015 별칭 requestClaudeFeedback 으로 직접 불려도 동의 없이는 안 나간다 */
     if(!Array.isArray(goal.milestones)) goal.milestones = [];
     var settings = state.profile.settings;
     var custom = (settings.customFeedbackActive && settings.customFeedbackPrompt) ? settings.customFeedbackPrompt : '';
@@ -12591,6 +12679,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
   var requestClaudeFeedback = requestServerAIFeedback;
   async function requestGeminiFeedback(goal, text, theme){
+    if(!aiConsentGranted()) return null;
     var geminiPersona = !!(state.profile.settings.customFeedbackActive && state.profile.settings.customFeedbackPrompt);
     var mode = state.aiFeedbackMode || 'default';
     var recentRecords = getRecentCheckinsForAI(3);
@@ -12880,6 +12969,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     setTab(state.prevScreenTab || 'home');
   }
   async function generateCustomFeedbackPrompt(description){
+    if(!aiConsentGranted()) return null;
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 28000);
     try{
@@ -14687,6 +14777,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     };
   }
   async function generateGoalTemplate(description){
+    if(!aiConsentGranted()) return localGoalTemplate(description);
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 28000);
     var settings = (state.profile && state.profile.settings) || {};
@@ -14959,6 +15050,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
   }
   async function requestGoalAgentDiff(message){
+    if(!aiConsentGranted()) return { ops: [], reply: 'AI 사용 동의가 필요해요 · [설정] → AI 피드백에서 동의해 주세요' };
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 28000);
     var settings = (state.profile && state.profile.settings) || {};
@@ -16128,6 +16220,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     return '목표 착수 단계입니다(진행률 0%). 첫 번째 마일스톤인 "' + ms[0].title + '"부터 작은 행동으로 실행을 개시해보세요!';
   }
   async function generateGoalStatusSummary(goal){
+    if(!aiConsentGranted()) return localGoalStatusSummary(goal);
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 28000);
     try{
@@ -16182,6 +16275,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     return open ? '오늘은 "'+open.title+'" 마일스톤을 위해 작게 한 걸음 내딛어보세요.' : '오늘은 그동안의 기록을 돌아보며 다음 목표를 그려보세요.';
   }
   async function requestTodayMission(goal){
+    if(!aiConsentGranted()) return localTodayMission(goal);
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 28000);
     try{
@@ -16263,6 +16357,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     return next ? '다음은 "'+next.title+'" 마일스톤을 시작해볼까요?' : '모든 마일스톤을 마쳤어요! 목표 결과를 기록해보세요.';
   }
   async function requestNextActionSuggestion(goal, completedMs){
+    if(!aiConsentGranted()) return { suggestion: localNextActionSuggestion(goal, completedMs.id), fallback: true };
     var remaining = goal.milestones.filter(function(m){ return m.id!==completedMs.id; })
       .map(function(m){ return { title:m.title, status:m.status }; });
     var controller = new AbortController();
@@ -23444,6 +23539,7 @@ wirePromptEncyclopediaEvents(body);
             toast('오늘 무료 분석 횟수(10회)를 모두 사용하셨습니다. 내일 충전됩니다.');
             return;
           }
+          if(!aiConsentGranted()){ toast('사진 분석은 AI 사용 동의가 필요해요 · [설정] → AI 피드백에서 동의해 주세요'); return; }
 
           runBtn.disabled = true;
           loadingWrap.style.display = 'block';
@@ -25323,6 +25419,7 @@ wirePromptEncyclopediaEvents(body);
   }
 
   async function generatePeriodAIFeedback(startDate, endDate, filteredRecs){
+    if(!aiConsentGranted()) return generateLocalPeriodFeedback(startDate, endDate, filteredRecs);
     var settings = state.profile.settings || {};
     var themeCounts = {};
     filteredRecs.forEach(function(r){
