@@ -5735,7 +5735,10 @@ check('compliance: [#TASK-ES-140] 목표 탭 3계층(목표·마일스톤·태�
   const rangePill = formatSchedulePillHtml({ startDate: '2026-09-17', dueDate: '2026-09-24' }, 'ms', 'g1', 'm1');
   assert.ok(rangePill.includes('2026.9.17~2026.9.24') && rangePill.includes('schedule-pill-btn has-date'), '시작/종료일 다를 때 YYYY.M.D~YYYY.M.D 기간 출력');
 
-  const singlePill = formatSchedulePillHtml({ dueDate: '2026-09-20' }, 'task', 'g1', 'm1', 't1');
+  // 마감일을 고정 날짜로 두면 그날이 지난 뒤부터 'D-' 가 'D+' 로 바뀌어 이 검사가 제품과 무관하게 깨진다(2026-09-21 실제 발생). 오늘 기준 3일 뒤로 잡는다.
+  const soon = new Date(Date.now() + 3 * 86400000);
+  const soonYmd = soon.getFullYear() + '-' + String(soon.getMonth() + 1).padStart(2, '0') + '-' + String(soon.getDate()).padStart(2, '0');
+  const singlePill = formatSchedulePillHtml({ dueDate: soonYmd }, 'task', 'g1', 'm1', 't1');
   assert.ok(singlePill.includes('schedule-pill-btn has-date') && singlePill.includes('D-'), '단일 마감일 시 디데이 텍스트 출력');
 });
 
