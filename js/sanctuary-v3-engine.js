@@ -17,6 +17,10 @@
     calYear: null,
     calMonth: null,
     heatFilter: 'all',        // 'today' | 'week' | 'month' | 'year' | 'all'
+    feedPeriod: 'all',        // 'all' | 'week' | 'month' | 'last_month' | '30d' | 'custom'
+    feedPage: 1,
+    feedCustomStart: null,
+    feedCustomEnd: null,
     activeDmPeer: null,
     dmHistory: {}
   };
@@ -596,14 +600,30 @@
         feedItemsHtml = '<div style="text-align:center;padding:40px 20px;color:var(--ink-sub);">' +
           '등록된 기록이 없습니다.<br>오늘의 첫 체크인과 회고를 남겨보세요.' +
         '</div>';
+        contentHtml = '<div class="s-feed-container">' +
+          '<div class="s-feed-header">' +
+            '<h4>나의 체크인 & 회고 피드 (0건)</h4>' +
+            '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.openAddRecordModal) window.openAddRecordModal(); else if(document.getElementById(\'recAddBtn\')) document.getElementById(\'recAddBtn\').click();">+ 새 기록</button>' +
+          '</div>' +
+          feedItemsHtml +
+        '</div>';
       } else {
-        var sortedRecs = records.slice().reverse();
-        feedItemsHtml = sortedRecs.slice(0, 30).map(function(r) {
+        // 1. 최신순 정렬 (가장 최신에 쓴 글이 맨 위에 오도록 타임스탬프 내림차순 정렬)
+        var sortedRecs = records.slice().sort(function(a, b) {
+          var tA = new Date(a.startAt || a.created_at || a.start_at || 0).getTime();
+          var tB = new Date(b.startAt || b.created_at || b.start_at || 0).getTime();
+          return tB - tA;
+        });
+
+        // 2. 최근 3개만 먼저 보여줌
+        var top3Recs = sortedRecs.slice(0, 3);
+        var top3Html = top3Recs.map(function(r, idx) {
           var dateStr = (r.startAt || r.created_at || r.start_at || '').slice(0, 16).replace('T', ' ');
           var topicTag = r.topic ? '<span class="s-f-tag">#' + escapeHtml(r.topic) + '</span>' : '';
+          var isLatest = (idx === 0) ? '<span style="font-size:0.7rem;font-weight:700;color:var(--brand);background:var(--brand-glow, rgba(99,102,241,0.12));padding:1px 6px;border-radius:4px;margin-left:4px;">최신글</span>' : '';
           return '<div class="s-feed-item-card">' +
             '<div class="s-f-head">' +
-              '<span class="s-f-date">' + dateStr + '</span>' +
+              '<span class="s-f-date">' + dateStr + isLatest + '</span>' +
               '<span class="s-f-xp">+10 EXP</span>' +
             '</div>' +
             '<div class="s-f-content">' +
@@ -615,15 +635,157 @@
             '</div>' +
           '</div>';
         }).join('');
-      }
 
-      contentHtml = '<div class="s-feed-container">' +
-        '<div class="s-feed-header">' +
-          '<h4>나의 체크인 & 회고 피드 (' + records.length + '건)</h4>' +
-          '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.openAddRecordModal) window.openAddRecordModal(); else if(document.getElementById(\'recAddBtn\')) document.getElementById(\'recAddBtn\').click();">+ 새 기록</button>' +
-        '</div>' +
-        feedItemsHtml +
-      '</div>';
+        var pastSectionHtml = '';
+        var allPast = sortedRecs.slice(3);
+
+        if (allPast.length > 0) {
+          // 3. 기간 필터링
+          var pFilter = engine.feedPeriod || 'all';
+          var now = new Date();
+
+          var dayOfWeek = now.getDay() || 7;
+          var monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (dayOfWeek - 1), 0, 0, 0);
+          var sunday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + (7 - dayOfWeek), 23, 59, 59);
+
+          var monthStart = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0);
+          var monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+          var lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1, 0, 0, 0);
+          var lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+
+          var d30Start = new Date(now.getTime() - 30 * 86400000);
+          var d30End = new Date();
+
+          var cStartStr = engine.feedCustomStart || getTodayStr();
+          var cEndStr = engine.feedCustomEnd || getTodayStr();
+          var cStart = new Date(cStartStr + 'T00:00:00');
+          var cEnd = new Date(cEndStr + 'T23:59:59');
+
+          var filteredPast = allPast;
+          if (pFilter === 'week') {
+            filteredPast = allPast.filter(function(r) {
+              var t = new Date(r.startAt || r.created_at || r.start_at || 0).getTime();
+              return t >= monday.getTime() && t <= sunday.getTime();
+            });
+          } else if (pFilter === 'month') {
+            filteredPast = allPast.filter(function(r) {
+              var t = new Date(r.startAt || r.created_at || r.start_at || 0).getTime();
+              return t >= monthStart.getTime() && t <= monthEnd.getTime();
+            });
+          } else if (pFilter === 'last_month') {
+            filteredPast = allPast.filter(function(r) {
+              var t = new Date(r.startAt || r.created_at || r.start_at || 0).getTime();
+              return t >= lastMonthStart.getTime() && t <= lastMonthEnd.getTime();
+            });
+          } else if (pFilter === '30d') {
+            filteredPast = allPast.filter(function(r) {
+              var t = new Date(r.startAt || r.created_at || r.start_at || 0).getTime();
+              return t >= d30Start.getTime() && t <= d30End.getTime();
+            });
+          } else if (pFilter === 'custom') {
+            filteredPast = allPast.filter(function(r) {
+              var t = new Date(r.startAt || r.created_at || r.start_at || 0).getTime();
+              return t >= cStart.getTime() && t <= cEnd.getTime();
+            });
+          }
+
+          // 4. 최대 5개 피드 페이징
+          var PAGE_SIZE = 5;
+          var totalPast = filteredPast.length;
+          var totalPages = Math.max(1, Math.ceil(totalPast / PAGE_SIZE));
+          var currPage = Math.min(Math.max(1, engine.feedPage || 1), totalPages);
+          engine.feedPage = currPage;
+          var pageItems = filteredPast.slice((currPage - 1) * PAGE_SIZE, currPage * PAGE_SIZE);
+
+          var pastCardsHtml = '';
+          if (pageItems.length === 0) {
+            pastCardsHtml = '<div style="text-align:center;padding:20px;font-size:0.8125rem;color:var(--ink-faint);">' +
+              '선택한 기간에 작성된 이전 기록이 없습니다.<br>' +
+              '<button type="button" class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="window.OurgoalSanctuaryV3.setFeedPeriod(\'all\');">전체 보기</button>' +
+            '</div>';
+          } else {
+            var firstD = (pageItems[0].startAt || pageItems[0].created_at || pageItems[0].start_at || '').slice(0, 10);
+            var lastD = (pageItems[pageItems.length - 1].startAt || pageItems[pageItems.length - 1].created_at || pageItems[pageItems.length - 1].start_at || '').slice(0, 10);
+            var rangeBadge = '<div class="rec-paged-range-badge" style="margin:6px 0 10px;">📅 ' + (lastD === firstD ? firstD : (lastD + ' ~ ' + firstD)) + ' (' + pageItems.length + '건)</div>';
+
+            var cardsList = pageItems.map(function(r) {
+              var dateStr = (r.startAt || r.created_at || r.start_at || '').slice(0, 16).replace('T', ' ');
+              var topicTag = r.topic ? '<span class="s-f-tag">#' + escapeHtml(r.topic) + '</span>' : '';
+              return '<div class="s-feed-item-card">' +
+                '<div class="s-f-head">' +
+                  '<span class="s-f-date">' + dateStr + '</span>' +
+                  '<span class="s-f-xp">+10 EXP</span>' +
+                '</div>' +
+                '<div class="s-f-content">' +
+                  escapeHtml(r.text || r.content || '실천 완료') +
+                '</div>' +
+                '<div class="s-f-meta">' +
+                  topicTag +
+                  '<span class="s-f-goal">목표 연동</span>' +
+                '</div>' +
+              '</div>';
+            }).join('');
+
+            // 모바일 와이드 엄지 페이저
+            var pagerHtml = '<div class="rec-past-pager" style="margin-top:12px;padding-top:10px;">' +
+              '<button type="button" class="rec-pager-btn" ' + (currPage <= 1 ? 'disabled' : '') + ' onclick="window.OurgoalSanctuaryV3.setFeedPage(' + (currPage - 1) + ');">' +
+                '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>' +
+                '<span>이전 5개</span>' +
+              '</button>' +
+              '<div class="rec-pager-info">' +
+                '<b>' + currPage + ' / ' + totalPages + ' 페이지</b>' +
+                '<span>(이전 기록 총 ' + totalPast + '건)</span>' +
+              '</div>' +
+              '<button type="button" class="rec-pager-btn" ' + (currPage >= totalPages ? 'disabled' : '') + ' onclick="window.OurgoalSanctuaryV3.setFeedPage(' + (currPage + 1) + ');">' +
+                '<span>다음 5개</span>' +
+                '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+              '</button>' +
+            '</div>';
+
+            pastCardsHtml = rangeBadge + cardsList + pagerHtml;
+          }
+
+          var customDateBoxHtml = '';
+          if (pFilter === 'custom') {
+            customDateBoxHtml = '<div class="rec-custom-date-box" style="margin-bottom:10px;">' +
+              '<label>시작</label><input type="date" id="sFeedCustomStart" value="' + cStartStr + '">' +
+              '<span style="color:var(--ink-faint);">~</span>' +
+              '<label>종료</label><input type="date" id="sFeedCustomEnd" value="' + cEndStr + '">' +
+              '<button type="button" class="btn btn-primary btn-sm" style="padding:4px 10px;font-size:0.75rem;font-weight:700;" onclick="window.OurgoalSanctuaryV3.applyFeedCustomDate();">조회</button>' +
+            '</div>';
+          }
+
+          pastSectionHtml = '<div class="rec-past-archive-card" id="sFeedPastArchiveCard" style="margin-top:16px;">' +
+            '<div class="rec-past-header-row">' +
+              '<div class="rec-past-title"><span>📂 이전 피드 모아보기</span></div>' +
+              '<span class="rec-past-meta">총 ' + totalPast + '건</span>' +
+            '</div>' +
+            '<div class="rec-period-chip-bar">' +
+              '<button type="button" class="rec-period-chip ' + (pFilter === 'all' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setFeedPeriod(\'all\');">전체</button>' +
+              '<button type="button" class="rec-period-chip ' + (pFilter === 'week' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setFeedPeriod(\'week\');">이번 주</button>' +
+              '<button type="button" class="rec-period-chip ' + (pFilter === 'month' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setFeedPeriod(\'month\');">이번 달</button>' +
+              '<button type="button" class="rec-period-chip ' + (pFilter === 'last_month' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setFeedPeriod(\'last_month\');">지난 달</button>' +
+              '<button type="button" class="rec-period-chip ' + (pFilter === '30d' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setFeedPeriod(\'30d\');">최근 30일</button>' +
+              '<button type="button" class="rec-period-chip ' + (pFilter === 'custom' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setFeedPeriod(\'custom\');">📅 직접 설정</button>' +
+            '</div>' +
+            customDateBoxHtml +
+            pastCardsHtml +
+          '</div>';
+        } else {
+          pastSectionHtml = '<div style="font-size:0.78rem;color:var(--ink-faint);text-align:center;padding:12px 0;">✨ 모든 최신 기록을 확인했습니다.</div>';
+        }
+
+        contentHtml = '<div class="s-feed-container">' +
+          '<div class="s-feed-header">' +
+            '<h4>나의 체크인 & 회고 피드 (' + records.length + '건)</h4>' +
+            '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.openAddRecordModal) window.openAddRecordModal(); else if(document.getElementById(\'recAddBtn\')) document.getElementById(\'recAddBtn\').click();">+ 새 기록</button>' +
+          '</div>' +
+          '<div style="font-size:0.75rem;font-weight:700;color:var(--ink-soft);margin-bottom:8px;">✍️ 최근 실천 3개 (최신순)</div>' +
+          top3Html +
+          pastSectionHtml +
+        '</div>';
+      }
     } else if (engine.activeRecMode === 'stats') {
       contentHtml = '<div class="s-heatmap-card" style="margin-bottom:12px;">' +
         '<div class="s-heat-head">' +
@@ -1382,6 +1544,25 @@
           if (inp) inp.focus();
         }, 150);
       }
+    },
+    setFeedPeriod: function(p) {
+      engine.feedPeriod = p;
+      engine.feedPage = 1;
+      renderSanctuaryRecords();
+    },
+    setFeedPage: function(page) {
+      engine.feedPage = page;
+      renderSanctuaryRecords();
+      var c = document.getElementById('sFeedPastArchiveCard');
+      if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    },
+    applyFeedCustomDate: function() {
+      var s = document.getElementById('sFeedCustomStart');
+      var e = document.getElementById('sFeedCustomEnd');
+      if (s && s.value) engine.feedCustomStart = s.value;
+      if (e && e.value) engine.feedCustomEnd = e.value;
+      engine.feedPage = 1;
+      renderSanctuaryRecords();
     }
   };
 
