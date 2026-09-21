@@ -6655,7 +6655,7 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   -webkit-overflow-scrolling: touch;
   gap: 4px;
   position: sticky;
-  top: 0;
+  top: env(safe-area-inset-top, 0px);
   z-index: 25;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -7059,7 +7059,7 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   margin-bottom: 16px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   position: sticky;
-  top: 0;
+  top: env(safe-area-inset-top, 0px);
   z-index: 25;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -8709,8 +8709,9 @@ html[data-theme="urban-city"] .theme-card.active {
   }
 }
 
-/* 2. 전 탭 하단 안전 여백 확장 (바텀 네비 차폐 완전 해소) */
-.screens {
+/* 2. 전 탭 상하단 모바일 안전 여백 확장 (아이폰 노치/다이나믹 아일랜드 및 바텀 네비 차폐 완전 해소) */
+.screens, main.screens {
+  padding-top: calc(8px + env(safe-area-inset-top, 0px)) !important;
   padding-bottom: calc(var(--nav-h, 64px) + env(safe-area-inset-bottom, 0px) + 48px) !important;
 }
 #screen-home, #screen-goals, #screen-calendar, #screen-records, #screen-comm, #screen-settings {
@@ -8828,7 +8829,7 @@ html[data-theme="urban-city"] .comm-subtabs.comm-subtabs-grid,
   box-sizing: border-box !important;
   width: 100% !important;
   position: sticky !important;
-  top: 0 !important;
+  top: env(safe-area-inset-top, 0px) !important;
   z-index: 25 !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -8905,7 +8906,7 @@ html[data-theme="urban-city"] #goalsSubtabs.goals-subtabs-grid,
   box-sizing: border-box !important;
   width: 100% !important;
   position: sticky !important;
-  top: 0 !important;
+  top: env(safe-area-inset-top, 0px) !important;
   z-index: 30 !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -9436,13 +9437,13 @@ html[data-theme="urban-city"] .s-seg-pill {
   font-weight: 500;
 }
 
-/* �� �׼� �� & 320px �ʼ��� ȭ�� �ϰ� ��Ÿ�� */
+/* �� �׼� �� & 320px �ʼ��� ȭ�� �ϰ� ��Ÿ�� */
 .rec-quick-dock-bar { max-width: 100%; box-sizing: border-box; }
 .archive-ms-details summary::-webkit-details-marker { display: none; }
 @media (max-width: 340px) { .rec-pager-btn { padding: 6px 8px; font-size: 0.75rem; } .rec-pager-info { font-size: 0.72rem; } }
 
 
-/* ��� �� 320px ���� �����÷ο� ��� */
+/* ��� �� 320px ���� �����÷ο� ��� */
 #screen-records { overflow-x: hidden; max-width: 100%; }
 .rec-carousel-viewport { overflow: hidden !important; width: 100%; max-width: 100%; }
 #periodPresetRow { overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; scrollbar-width: none; flex-wrap: nowrap; }
