@@ -1,0 +1,148 @@
+#!/bin/sh
+# 법정(court) pre-push 훅 — 올리기 전 빠른 예비 점검(금고 + 부품 로드 탐침 + 기준 시험지). 화면 점검은 하지 않는다.
+# 왜 있는가: 돌려보낼 것이 뻔한 커밋(채점 기준을 같이 고침, 로드하자마자 죽는 부품, 있던 검사를 깨뜨림)을 GitHub 에 올리기 전에
+#           작업자 PC 에서 먼저 걸러 왕복을 줄인다.
+# 이것은 판정이 아니다. 판정은 GitHub 의 법정(court 검사)만 낸다(헌법 제7조 제10항 2호). 이 점검은 권고다.
+#           여기서 막히지 않았다는 사실("막을 이유 없음")은 어떤 말로 바꿔서도 보고에 옮겨 적을 수 없다. 옮겨 적을 수 있는 것은 막힌 것뿐이다.
+# 법정 종료코드별로 하는 일:
+#   0 · 3          그대로 올린다.
+#   1 (돌려보냄)   막는다. 다만 돌려보낸 이유가 "주장 없음" 하나뿐이면 경고만 하고 올린다 — 중간 저장·초안 PR 용 푸시를 막으면
+#                  점검을 통째로 건너뛰는 습관(--no-verify)이 생기고, 그러면 이 점검 전체가 죽는다. 주장 파일은 GitHub 의 법정이 요구한다.
+#   2 (심사 못 함) 막는다. 법정이 끝까지 돌고 "심사하지 못했다"고 답한 것이다(통과가 아니다).
+#   그 밖          법정이 도중에 죽은 것이다. "예비 점검을 끝내지 못했습니다(종료코드 N)"를 찍고 올린다.
+#                  점검하지 못한 것을 "막을 이유 없음"이라고 찍지 않는다. 판정은 어차피 GitHub 의 법정이 한다.
+#                  종료코드가 1 이어도 돌려보냄 판정서가 없으면(법정이 오류로 죽으면 Node 가 1 로 끝난다) 여기에 든다.
+# 올리는 커밋이 이미 origin/main 에 들어 있으면(기준 커밋 = 작업 커밋) 볼 변경이 없으므로 법정을 돌리지 않고 바로 올린다.
+# 법정에는 판정서를 쓸 임시 폴더를 따로 주고(--out), 훅이 끝나면 지운다(푸시할 때마다 임시 폴더가 쌓이지 않게).
+# git 이 표준입력으로 주는 줄: <로컬 ref> <로컬 sha> <원격 ref> <원격 sha>
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
+# 법정이 아직 없는 브랜치(법정 도입 전에 갈라진 작업 등)는 점검할 도구가 없으므로 그대로 통과시킨다.
+[ -f "$ROOT/court/judge.js" ] || exit 0
+
+if ! command -v node >/dev/null 2>&1; then
+  echo "✖ 법정 예비 점검을 돌릴 수 없습니다: node 를 찾지 못했습니다 (심사 못 함 — 통과가 아니므로 푸시를 막습니다)" >&2
+  exit 1
+fi
+
+# 기준 브랜치. court/config.json 의 remoteMain 과 같은 값이다.
+MAIN_REF="refs/remotes/origin/main"
+
+# 판정서(verdict.json)에서 돌려보낸 이유를 읽는다. 첫 줄 = 아래 셋 중 하나, 다음 줄들 = 이유 목록.
+#   only-no-claims  돌려보낸 이유가 "주장 없음" 하나뿐이고 법정 도구 오류도 없다
+#   rejected        그 밖의 돌려보냄
+#   unknown         돌려보냄 판정서가 아니다(판정서가 없거나, 법정이 시작할 때 미리 써 둔 것뿐이다 = 법정이 판정 전에 죽었다)
+READ_REJECTS='
+const fs = require("node:fs");
+let v = null;
+try { v = JSON.parse(fs.readFileSync(process.argv[1], "utf8")); } catch (_) { v = null; }
+const judged = !!v && v.interim !== true && v.verdict === "돌려보냄";
+const all = judged && Array.isArray(v.findings) ? v.findings.filter(f => f && typeof f === "object") : [];
+const rejects = all.filter(f => f.severity === "reject");
+const toolErrors = all.filter(f => f.title === "도구 오류");
+const only = rejects.length === 1 && rejects[0].title === "주장 없음" && toolErrors.length === 0;
+console.log(!judged ? "unknown" : (only ? "only-no-claims" : "rejected"));
+rejects.slice(0, 8).forEach((f, i) => console.log("  " + (i + 1) + ". " + String(f.title) + " — " + String(f.text).replace(/\s+/g, " ").slice(0, 220)));
+if (rejects.length > 8) console.log("  … 외 " + (rejects.length - 8) + "건");
+'
+
+TMPOUT=""
+cleanup() { [ -n "$TMPOUT" ] && rm -rf "$TMPOUT"; TMPOUT=""; }
+trap cleanup EXIT
+trap 'cleanup; exit 130' INT
+trap 'cleanup; exit 143' TERM
+
+SEEN=""
+BLOCKED=0
+while read -r LOCAL_REF LOCAL_SHA REMOTE_REF REMOTE_SHA || [ -n "$LOCAL_SHA" ]; do
+  [ -n "$LOCAL_SHA" ] || continue
+  # 삭제 푸시(로컬 sha 가 0000…)는 심사할 커밋이 없다.
+  case "$LOCAL_SHA" in *[!0]*) ;; *) LOCAL_SHA=""; continue ;; esac
+  # 커밋이 아닌 것을 가리키는 ref(예: 나무·파일에 붙인 태그)는 법정의 심사 대상이 아니다.
+  git -C "$ROOT" rev-parse --verify --quiet "$LOCAL_SHA^{commit}" >/dev/null 2>&1 || { LOCAL_SHA=""; continue; }
+  # 같은 커밋을 여러 ref 로 올릴 때 한 번만 본다.
+  case " $SEEN " in *" $LOCAL_SHA "*) LOCAL_SHA=""; continue ;; esac
+  SEEN="$SEEN $LOCAL_SHA"
+  SHORT="$(printf '%s' "$LOCAL_SHA" | cut -c1-7)"
+
+  # 기준 커밋 = 작업 커밋(이미 origin/main 에 들어 있는 커밋에 붙인 태그·브랜치)이면 볼 변경이 없다. 법정을 돌리지 않고 넘어간다.
+  BASE_SHA="$(git -C "$ROOT" merge-base "$MAIN_REF" "$LOCAL_SHA" 2>/dev/null)"
+  if [ -n "$BASE_SHA" ] && [ "$BASE_SHA" = "$LOCAL_SHA" ]; then
+    echo "법정 예비 점검: 생략 ($LOCAL_REF $SHORT) — 이 커밋은 이미 origin/main 에 들어 있어 볼 변경이 없습니다." >&2
+    LOCAL_SHA=""
+    continue
+  fi
+
+  TMPOUT="$(mktemp -d 2>/dev/null)" || TMPOUT=""
+  # 표준입력을 /dev/null 로 돌린다: 자식 프로세스가 남은 ref 줄을 먹어 버리면 뒤의 ref 가 점검 없이 올라간다.
+  if [ -n "$TMPOUT" ]; then
+    OUT="$(node "$ROOT/court/judge.js" --repo "$ROOT" --head "$LOCAL_SHA" --quick --out "$TMPOUT" </dev/null 2>&1)"
+    CODE=$?
+  else
+    OUT="$(node "$ROOT/court/judge.js" --repo "$ROOT" --head "$LOCAL_SHA" --quick </dev/null 2>&1)"
+    CODE=$?
+  fi
+
+  # 종료코드 1 이면 정말 돌려보냄인지, 이유가 무엇인지 판정서에서 읽는다.
+  #   종료코드 1 은 법정이 돌려보냈을 때도 나오지만, 법정이 오류로 죽었을 때도 나온다(Node 의 기본 종료코드). 돌려보냄 판정서가 없으면 죽은 것으로 본다.
+  #   임시 폴더를 못 만들어 판정서가 없을 때에는 법정이 찍은 "판정: 돌려보냄" 줄로 가린다(그때는 "주장 없음 하나뿐"이라고 보지 않는다).
+  KIND="unknown"
+  REASONS=""
+  if [ "$CODE" -eq 1 ]; then
+    if [ -n "$TMPOUT" ] && [ -f "$TMPOUT/verdict.json" ]; then
+      READ="$(node -e "$READ_REJECTS" "$TMPOUT/verdict.json" </dev/null 2>/dev/null)"
+      KIND="$(printf '%s\n' "$READ" | head -n 1)"
+      REASONS="$(printf '%s\n' "$READ" | tail -n +2)"
+    elif printf '%s\n' "$OUT" | grep -q '^판정: 돌려보냄'; then
+      KIND="rejected"
+    fi
+    case "$KIND" in only-no-claims|rejected) ;; *) CODE="1, 판정 없이 끝남" ;; esac
+  fi
+
+  case "$CODE" in
+    0|3)
+      echo "법정 예비 점검: 막을 이유 없음 ($LOCAL_REF $SHORT) — 이 문구는 판정이 아니며 보고에 옮겨 적을 수 없습니다. 판정은 GitHub 의 법정이 냅니다." >&2
+      ;;
+    1)
+      if [ "$KIND" = "only-no-claims" ]; then
+        {
+          echo "⚠ 법정 예비 점검: 주장 파일이 없습니다 ($LOCAL_REF $SHORT) — 올리기는 합니다."
+          echo "  제품 코드를 바꿨는데 reports/<작업번호>/claims.json 이 없습니다. 이대로 PR 을 심사받으면 GitHub 의 법정이 돌려보냅니다."
+          echo "  그 밖에 막을 이유는 없었습니다(금고·부품 로드·기준 시험지). 이 문구는 판정이 아니며 보고에 옮겨 적을 수 없습니다."
+        } >&2
+      else
+        BLOCKED=1
+        {
+          echo ""
+          echo "✖ 법정 예비 점검에서 막혔습니다 — 이 커밋은 GitHub 에 올려도 돌려보내집니다 ($LOCAL_REF $SHORT)"
+          # 판정서 머리의 네 줄(판정 · 상민님이 하실 일 · 지시 항목 분포 · 심사 대상)을 그대로 보여 준다.
+          # 출력의 1~4행이라고 가정하지 않고 "판정:" 줄을 닻으로 찾는다(그 위에 경고 줄이 끼어도 어긋나지 않게). 못 찾으면 앞의 네 줄을 보여 준다.
+          printf '%s\n' "$OUT" | grep -m 1 -A 3 '^판정: ' || printf '%s\n' "$OUT" | head -n 4
+          if [ -n "$REASONS" ]; then
+            echo "  돌려보낸 이유:"
+            printf '%s\n' "$REASONS"
+          fi
+          echo "  전체 판정서는 npm run court:quick -- --head $SHORT 로 다시 볼 수 있습니다(이 점검이 쓴 임시 판정서는 지웁니다)."
+          echo "  고친 뒤 다시 올리십시오. 법정·금고 파일을 고쳐서 통과시키는 것은 금지입니다(헌법 제7조 제10항 3호)."
+        } >&2
+      fi
+      ;;
+    2)
+      BLOCKED=1
+      {
+        echo ""
+        echo "✖ 법정 예비 점검을 끝내지 못했습니다 — 심사 못 함은 통과가 아니므로 올리지 않습니다 ($LOCAL_REF $SHORT)"
+        printf '%s\n' "$OUT" | grep -m 1 -A 3 '^판정: ' || printf '%s\n' "$OUT" | head -n 4
+        echo "  왜 심사하지 못했는지는 위 첫 줄에 있습니다. 법정·금고 파일을 고쳐서 통과시키는 것은 금지입니다(헌법 제7조 제10항 3호)."
+      } >&2
+      ;;
+    *)
+      # 법정이 도중에 죽었다(정해진 종료코드 0·1·2·3 이 아니거나, 1 인데 돌려보냄 판정서가 없다). 점검하지 못했으므로 "막을 이유 없음"이라고 하지 않는다. 권고 점검이라 푸시는 막지 않는다.
+      echo "⚠ 법정 예비 점검을 끝내지 못했습니다(종료코드 $CODE) — 판정은 GitHub 법정이 합니다 ($LOCAL_REF $SHORT). 점검하지 못한 채 올립니다." >&2
+      ;;
+  esac
+  cleanup
+  LOCAL_SHA=""
+done
+
+exit $BLOCKED

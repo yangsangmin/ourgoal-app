@@ -1,0 +1,13 @@
+{
+  "id": "std-enter-as-guest",
+  "title": "첫 화면에서 ‘로그인 없이 둘러보기’를 누르면 홈 화면으로 들어간다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "expect": "visible", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"home\"]", "className": "active" },
+    { "expect": "stillInApp" },
+    { "capture": "home" }
+  ]
+}

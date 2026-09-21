@@ -1,0 +1,589 @@
+{
+  "schema": "court-verdict/1",
+  "task": null,
+  "verdict": "돌려보냄",
+  "verdictId": "049D5156",
+  "headline": "되던 기능 4개가 고장 났습니다 (그 밖의 사유 1건)",
+  "todo": "없음. 작업자가 고쳐서 다시 심사받아야 합니다. 지금은 “1”을 눌러 배포할 상태가 아닙니다.",
+  "where": "local",
+  "whereText": "작업자 PC 에서 실행한 예비 점검",
+  "quick": false,
+  "base": {
+    "rev": null,
+    "sha": "15df64103fc7f32a23920cf640ddd76b0b879537"
+  },
+  "head": {
+    "rev": "1c61f5f",
+    "sha": "1c61f5f11bdaf00c3618c93e62a31455c5237c7f"
+  },
+  "baseSource": "merge-base",
+  "facts": {
+    "headRev": "1c61f5f11bdaf00c3618c93e62a31455c5237c7f",
+    "headSha": "1c61f5f11bdaf00c3618c93e62a31455c5237c7f",
+    "currentBranch": "main",
+    "dirtyTrackedFiles": 0,
+    "untrackedFiles": 120055,
+    "remoteMain": "origin/main",
+    "remoteMainSha": "15df64103fc7f32a23920cf640ddd76b0b879537",
+    "aheadOfRemoteMain": 2,
+    "behindRemoteMain": 0,
+    "onRemoteBranches": [],
+    "pushed": false
+  },
+  "findings": [
+    {
+      "severity": "warn",
+      "title": "자기가 낸 시험",
+      "text": "작업과 함께 새로 만든 검증 스크립트다. 자기가 낸 시험이므로 그 결과(예: \"N/N ALL PASS\")는 증거로 채택하지 않는다. [scripts/verify-master-integrity.js]"
+    },
+    {
+      "severity": "warn",
+      "title": "이 작업이 만든 검사 스크립트 1개",
+      "text": "그 출력은 증거로 인정하지 않는다: scripts/verify-master-integrity.js"
+    },
+    {
+      "severity": "reject",
+      "title": "주장 없음",
+      "text": "제품 코드 5개 파일을 바꿨는데 이번 변경에 reports/<작업번호>/claims.json 이 없다. 무엇을 했는지 주장하지 않으면 법정은 회귀만 볼 수 있을 뿐 \"됐다\"를 확인해 줄 수 없다."
+    },
+    {
+      "severity": "reject",
+      "title": "되던 부품이 고장 남",
+      "text": "js/reactions.js — ReferenceError: init is not defined → 이 모듈이 등록하던 전역(OurgoalReactions)이 앱에 없게 된다"
+    },
+    {
+      "severity": "reject",
+      "title": "되던 기능이 고장 남",
+      "text": "앱을 띄우기만 해도 새 오류가 난다: ReferenceError: init is not defined @ /js/reactions.js (기준 0회 → 작업 1회)"
+    },
+    {
+      "severity": "reject",
+      "title": "되던 기능이 고장 남",
+      "text": "표준 점검 \"새 목표 창을 어두운 배경을 눌러 닫으면 제자리에 머물고 종료 안내가 뜨지 않는다\" 이 작업 커밋에서 실패(단계 9): #toast.show → 관찰 1500ms 중 나타남(보이는 글자: [\"한 번 더 누르면 앱이 종료됩니다.\"], 1번째 확인)"
+    },
+    {
+      "severity": "reject",
+      "title": "되던 기능이 고장 남",
+      "text": "표준 점검 \"목표 탭에서 새 목표 창을 어두운 배경을 눌러 닫으면 목표 탭에 그대로 머문다(홈으로 튕기지 않는다)\" 이 작업 커밋에서 실패(단계 12): .navbtn[data-tab=\"goals\"] → class=\"navbtn\""
+    }
+  ],
+  "vault": {
+    "base": "15df64103fc7f32a23920cf640ddd76b0b879537",
+    "head": "1c61f5f11bdaf00c3618c93e62a31455c5237c7f",
+    "violations": [
+      {
+        "id": "SELF_GRADING_VERIFIER",
+        "severity": "info",
+        "files": [
+          "scripts/verify-master-integrity.js"
+        ],
+        "message": "작업과 함께 새로 만든 검증 스크립트다. 자기가 낸 시험이므로 그 결과(예: \"N/N ALL PASS\")는 증거로 채택하지 않는다."
+      }
+    ],
+    "blocked": false,
+    "needsDecision": false,
+    "inadmissibleVerifiers": [
+      "scripts/verify-master-integrity.js"
+    ],
+    "counts": {
+      "total": 7,
+      "frozen": 0,
+      "product": 5,
+      "appendOnly": 0,
+      "other": 2
+    },
+    "productChanged": [
+      "capacitor.config.json",
+      "index.html",
+      "js/reactions.js",
+      "js/theme-system.js",
+      "js/viral-sharing.js"
+    ],
+    "frozenChanged": []
+  },
+  "modules": {
+    "regressions": [
+      {
+        "file": "js/reactions.js",
+        "kind": "LOAD_THROWS",
+        "detail": "ReferenceError: init is not defined → 이 모듈이 등록하던 전역(OurgoalReactions)이 앱에 없게 된다"
+      }
+    ],
+    "insufficient": [
+      {
+        "file": "js/goal-templates-registry.js",
+        "note": "양쪽 모두 로드 실패(브라우저 전용 API 로 추정): ReferenceError: module is not defined"
+      }
+    ],
+    "fixed": [],
+    "counts": {
+      "head": 27,
+      "headOk": 25,
+      "base": 27,
+      "baseOk": 26
+    },
+    "readErrors": [],
+    "isolated": true
+  },
+  "boot": {
+    "regressions": [
+      {
+        "kind": "NEW_EXCEPTION",
+        "detail": "앱을 띄우기만 해도 새 오류가 난다: ReferenceError: init is not defined @ /js/reactions.js (기준 0회 → 작업 1회)"
+      },
+      {
+        "kind": "STD_SCENARIO_BROKE",
+        "detail": "표준 점검 \"새 목표 창을 어두운 배경을 눌러 닫으면 제자리에 머물고 종료 안내가 뜨지 않는다\" 이 작업 커밋에서 실패(단계 9): #toast.show → 관찰 1500ms 중 나타남(보이는 글자: [\"한 번 더 누르면 앱이 종료됩니다.\"], 1번째 확인)"
+      },
+      {
+        "kind": "STD_SCENARIO_BROKE",
+        "detail": "표준 점검 \"목표 탭에서 새 목표 창을 어두운 배경을 눌러 닫으면 목표 탭에 그대로 머문다(홈으로 튕기지 않는다)\" 이 작업 커밋에서 실패(단계 12): .navbtn[data-tab=\"goals\"] → class=\"navbtn\""
+      }
+    ],
+    "insufficient": [],
+    "toolErrors": [],
+    "boot": {
+      "base": {
+        "passed": true,
+        "exceptions": [],
+        "toolError": null
+      },
+      "head": {
+        "passed": true,
+        "exceptions": [
+          {
+            "text": "ReferenceError: init is not defined",
+            "url": "/js/reactions.js",
+            "line": 394
+          }
+        ],
+        "toolError": null,
+        "captures": [
+          {
+            "name": "boot",
+            "file": "court-boot--boot.png",
+            "sha256": "fd73bbb4fc1bb980b53fc33fec7444ee336be86e9d4592a4e22d63cb397d4217",
+            "bytes": 100362,
+            "afterStep": 4,
+            "at": "2026-09-20T23:18:44.245Z",
+            "caption": "한 행동: 없음(첫 화면) / 확인한 것: 확인한 것 없음"
+          }
+        ]
+      },
+      "chromeVersion": "Chrome/153.0.8010.48"
+    },
+    "std": [
+      {
+        "id": "std-enter-as-guest",
+        "title": "첫 화면에서 ‘로그인 없이 둘러보기’를 누르면 홈 화면으로 들어간다",
+        "steps": [
+          {
+            "do": "goto",
+            "path": "/index.html"
+          },
+          {
+            "do": "waitFor",
+            "selector": "#btnLandingPreviewDirect"
+          },
+          {
+            "do": "click",
+            "selector": "#btnLandingPreviewDirect"
+          },
+          {
+            "expect": "visible",
+            "selector": "#homeAddGoal",
+            "timeoutMs": 15000
+          },
+          {
+            "expect": "hasClass",
+            "selector": ".navbtn[data-tab=\"home\"]",
+            "className": "active"
+          },
+          {
+            "expect": "stillInApp"
+          },
+          {
+            "capture": "home"
+          }
+        ],
+        "base": {
+          "passed": true,
+          "failedStep": null,
+          "failKind": null
+        },
+        "head": {
+          "passed": true,
+          "failedStep": null,
+          "failKind": null,
+          "detail": "",
+          "captures": [
+            {
+              "name": "home",
+              "file": "std-enter-as-guest--home.png",
+              "sha256": "019f590fca25f05b372547453b02b9aa50c9cb9229011d96ea3a7474e4bb1a5d",
+              "bytes": 213372,
+              "afterStep": 7,
+              "at": "2026-09-20T23:18:50.177Z",
+              "caption": "한 행동: 클릭 button#btnLandingPreviewDirect \"로그인 없이 둘러보기\" 325x52px / 확인한 것: visible(#homeAddGoal) · hasClass(.navbtn[data-tab=\"home\"])[행동 전에도 참] · stillInApp"
+            }
+          ]
+        }
+      },
+      {
+        "id": "std-modal-back-close",
+        "title": "새 목표 창을 열고 뒤로가기를 누르면 창만 닫힌다",
+        "steps": [
+          {
+            "do": "goto",
+            "path": "/index.html"
+          },
+          {
+            "do": "waitFor",
+            "selector": "#btnLandingPreviewDirect"
+          },
+          {
+            "do": "click",
+            "selector": "#btnLandingPreviewDirect"
+          },
+          {
+            "do": "waitFor",
+            "selector": "#homeAddGoal"
+          },
+          {
+            "do": "click",
+            "selector": "#homeAddGoal"
+          },
+          {
+            "expect": "visible",
+            "selector": "#modalOverlay.active"
+          },
+          {
+            "do": "back"
+          },
+          {
+            "expect": "notVisible",
+            "selector": "#modalOverlay.active"
+          },
+          {
+            "expect": "stillInApp"
+          },
+          {
+            "expect": "visible",
+            "selector": "#homeAddGoal"
+          },
+          {
+            "capture": "after-back"
+          }
+        ],
+        "base": {
+          "passed": true,
+          "failedStep": null,
+          "failKind": null
+        },
+        "head": {
+          "passed": true,
+          "failedStep": null,
+          "failKind": null,
+          "detail": "",
+          "captures": [
+            {
+              "name": "after-back",
+              "file": "std-modal-back-close--after-back.png",
+              "sha256": "2236c27b5e0a4bf5947cb32eb17eb716796b945d67ee5dd247b734099c7abd8c",
+              "bytes": 190919,
+              "afterStep": 11,
+              "at": "2026-09-20T23:19:02.414Z",
+              "caption": "한 행동: 뒤로가기(히스토리 2 → 1) / 확인한 것: notVisible(#modalOverlay.active) · stillInApp · visible(#homeAddGoal)[행동 전에도 참]"
+            }
+          ]
+        }
+      },
+      {
+        "id": "std-modal-backdrop-close",
+        "title": "새 목표 창을 어두운 배경을 눌러 닫으면 제자리에 머물고 종료 안내가 뜨지 않는다",
+        "steps": [
+          {
+            "do": "goto",
+            "path": "/index.html"
+          },
+          {
+            "do": "waitFor",
+            "selector": "#btnLandingPreviewDirect"
+          },
+          {
+            "do": "click",
+            "selector": "#btnLandingPreviewDirect"
+          },
+          {
+            "do": "waitFor",
+            "selector": "#homeAddGoal"
+          },
+          {
+            "do": "click",
+            "selector": "#homeAddGoal"
+          },
+          {
+            "expect": "visible",
+            "selector": "#modalOverlay.active"
+          },
+          {
+            "do": "click",
+            "selector": "#modalOverlay",
+            "position": "top"
+          },
+          {
+            "expect": "notVisible",
+            "selector": "#modalOverlay.active"
+          },
+          {
+            "expect": "neverVisible",
+            "selector": "#toast.show",
+            "text": "종료",
+            "forMs": 1500
+          },
+          {
+            "expect": "hasClass",
+            "selector": ".navbtn[data-tab=\"home\"]",
+            "className": "active"
+          },
+          {
+            "capture": "after-close"
+          }
+        ],
+        "base": {
+          "passed": true,
+          "failedStep": null,
+          "failKind": null
+        },
+        "head": {
+          "passed": false,
+          "failedStep": 9,
+          "failKind": "expect",
+          "detail": "#toast.show → 관찰 1500ms 중 나타남(보이는 글자: [\"한 번 더 누르면 앱이 종료됩니다.\"], 1번째 확인)",
+          "captures": []
+        },
+        "stability": {
+          "base": [
+            "pass",
+            "pass",
+            "pass"
+          ],
+          "head": [
+            "fail@9",
+            "fail@9",
+            "fail@9"
+          ]
+        }
+      },
+      {
+        "id": "std-modal-close-stays-on-tab",
+        "title": "목표 탭에서 새 목표 창을 어두운 배경을 눌러 닫으면 목표 탭에 그대로 머문다(홈으로 튕기지 않는다)",
+        "steps": [
+          {
+            "do": "goto",
+            "path": "/index.html"
+          },
+          {
+            "do": "waitFor",
+            "selector": "#btnLandingPreviewDirect"
+          },
+          {
+            "do": "click",
+            "selector": "#btnLandingPreviewDirect"
+          },
+          {
+            "do": "waitFor",
+            "selector": "#homeAddGoal"
+          },
+          {
+            "do": "click",
+            "selector": ".navbtn[data-tab=\"goals\"]"
+          },
+          {
+            "expect": "hasClass",
+            "selector": ".navbtn[data-tab=\"goals\"]",
+            "className": "active"
+          },
+          {
+            "do": "click",
+            "selector": "#screen-goals button.btn-primary"
+          },
+          {
+            "expect": "visible",
+            "selector": "#modalOverlay.active"
+          },
+          {
+            "do": "click",
+            "selector": "#modalOverlay",
+            "position": "top"
+          },
+          {
+            "expect": "notVisible",
+            "selector": "#modalOverlay.active"
+          },
+          {
+            "do": "wait",
+            "ms": 800
+          },
+          {
+            "expect": "hasClass",
+            "selector": ".navbtn[data-tab=\"goals\"]",
+            "className": "active"
+          },
+          {
+            "expect": "notHasClass",
+            "selector": ".navbtn[data-tab=\"home\"]",
+            "className": "active"
+          },
+          {
+            "capture": "after-close"
+          }
+        ],
+        "base": {
+          "passed": true,
+          "failedStep": null,
+          "failKind": null
+        },
+        "head": {
+          "passed": false,
+          "failedStep": 12,
+          "failKind": "expect",
+          "detail": ".navbtn[data-tab=\"goals\"] → class=\"navbtn\"",
+          "captures": []
+        },
+        "stability": {
+          "base": [
+            "pass",
+            "pass",
+            "pass"
+          ],
+          "head": [
+            "fail@12",
+            "fail@12",
+            "fail@12"
+          ]
+        }
+      },
+      {
+        "id": "std-tab-switch",
+        "title": "아래 메뉴에서 기록 탭을 누르면 기록 탭으로 바뀌고, 홈을 누르면 홈으로 돌아온다",
+        "steps": [
+          {
+            "do": "goto",
+            "path": "/index.html"
+          },
+          {
+            "do": "waitFor",
+            "selector": "#btnLandingPreviewDirect"
+          },
+          {
+            "do": "click",
+            "selector": "#btnLandingPreviewDirect"
+          },
+          {
+            "do": "waitFor",
+            "selector": "#homeAddGoal"
+          },
+          {
+            "do": "click",
+            "selector": ".navbtn[data-tab=\"records\"]"
+          },
+          {
+            "expect": "hasClass",
+            "selector": ".navbtn[data-tab=\"records\"]",
+            "className": "active"
+          },
+          {
+            "expect": "notHasClass",
+            "selector": ".navbtn[data-tab=\"home\"]",
+            "className": "active"
+          },
+          {
+            "do": "click",
+            "selector": ".navbtn[data-tab=\"home\"]"
+          },
+          {
+            "expect": "hasClass",
+            "selector": ".navbtn[data-tab=\"home\"]",
+            "className": "active"
+          },
+          {
+            "expect": "visible",
+            "selector": "#homeAddGoal"
+          },
+          {
+            "capture": "back-home"
+          }
+        ],
+        "base": {
+          "passed": true,
+          "failedStep": null,
+          "failKind": null
+        },
+        "head": {
+          "passed": true,
+          "failedStep": null,
+          "failKind": null,
+          "detail": "",
+          "captures": [
+            {
+              "name": "back-home",
+              "file": "std-tab-switch--back-home.png",
+              "sha256": "ffec00ad4e28cd70de148b76d33165735c11000c29aa8328bbc6502464bd0fce",
+              "bytes": 208168,
+              "afterStep": 11,
+              "at": "2026-09-20T23:20:47.858Z",
+              "caption": "한 행동: 클릭 button \"홈\" 57x52px / 확인한 것: hasClass(.navbtn[data-tab=\"home\"]) · visible(#homeAddGoal)"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "claims": [],
+  "claimsFile": null,
+  "rollup": null,
+  "coverage": null,
+  "tool": {
+    "node": "v24.15.0",
+    "chromeVersion": "Chrome/153.0.8010.48",
+    "startedAt": "2026-09-20T23:18:07.314Z",
+    "finishedAt": "2026-09-20T23:20:48.074Z",
+    "durationMs": 160760
+  },
+  "baseTests": {
+    "ran": true,
+    "runners": [
+      {
+        "file": "scripts/smoke-test.js",
+        "isolated": true,
+        "base": {
+          "passed": 335,
+          "failed": 0
+        },
+        "head": {
+          "passed": 335,
+          "failed": 0
+        },
+        "vanished": 0
+      },
+      {
+        "file": "scripts/verify-integrity-gate.js",
+        "isolated": true,
+        "base": {
+          "passed": 37,
+          "failed": 0
+        },
+        "head": {
+          "passed": 37,
+          "failed": 0
+        },
+        "vanished": 0
+      }
+    ],
+    "newlyBroken": [],
+    "toolErrors": [],
+    "insufficient": []
+  },
+  "browserSkipped": null
+}

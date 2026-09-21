@@ -1,0 +1,13 @@
+{
+  "id": "empty-goals-nav",
+  "title": "목표가 0건인 상태에서도 상단 새 목표 알약 버튼이 유지된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "expect": "visible", "selector": "#sAddGoalBtn" },
+    { "capture": "empty-goals-nav-pill" }
+  ]
+}

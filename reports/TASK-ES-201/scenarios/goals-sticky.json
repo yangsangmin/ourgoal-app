@@ -1,0 +1,14 @@
+{
+  "id": "goals-sticky",
+  "title": "목표 탭 상단 서브탭 5종이 sticky 포지션으로 상단에 고정된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "expect": "visible", "selector": "#goalsSubtabs" },
+    { "expect": "style", "selector": "#goalsSubtabs", "prop": "position", "equals": "sticky" },
+    { "capture": "goals-tab-sticky" }
+  ]
+}

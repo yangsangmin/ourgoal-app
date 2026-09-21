@@ -1,0 +1,92 @@
+{
+  "잰시각": "2026-09-20T22:51:30.060Z",
+  "넣은순서": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal"
+    },
+    {
+      "do": "click",
+      "selector": "#homeAddGoal"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalOverlay.active"
+    },
+    {
+      "do": "click",
+      "selector": "#modalOverlay",
+      "position": "top"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#modalOverlay.active"
+    },
+    {
+      "expect": "neverVisible",
+      "selector": "#toast.show",
+      "text": "종료",
+      "forMs": 1500
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"home\"]",
+      "className": "active"
+    }
+  ],
+  "결과": [
+    {
+      "판": "① 고치기 전(15df641)",
+      "화면": "375x812",
+      "종료안내없이닫힘": true,
+      "실패단계": null,
+      "실패종류": null,
+      "관찰": null,
+      "앱을띄울때난오류": [],
+      "도구오류": null,
+      "크롬": "Chrome/153.0.8010.48"
+    },
+    {
+      "판": "② ES-199 작업 후(1c61f5f)",
+      "화면": "375x812",
+      "종료안내없이닫힘": false,
+      "실패단계": 7,
+      "실패종류": "expect",
+      "관찰": "#toast.show → 관찰 1500ms 중 나타남(보이는 글자: [\"한 번 더 누르면 앱이 종료됩니다.\"], 1번째 확인)",
+      "앱을띄울때난오류": [
+        "ReferenceError: init is not defined @ /js/reactions.js:394"
+      ],
+      "도구오류": null,
+      "크롬": "Chrome/153.0.8010.48"
+    },
+    {
+      "판": "① 고치기 전(15df641)",
+      "화면": "1280x800",
+      "종료안내없이닫힘": true,
+      "실패단계": null,
+      "실패종류": null,
+      "관찰": null,
+      "앱을띄울때난오류": [],
+      "도구오류": null,
+      "크롬": "Chrome/153.0.8010.48"
+    },
+    {
+      "판": "② ES-199 작업 후(1c61f5f)",
+      "화면": "1280x800",
+      "종료안내없이닫힘": false,
+      "실패단계": 7,
+      "실패종류": "expect",
+      "관찰": "#toast.show → 관찰 1500ms 중 나타남(보이는 글자: [\"한 번 더 누르면 앱이 종료됩니다.\"], 1번째 확인)",
+      "앱을띄울때난오류": [
+        "ReferenceError: init is not defined @ /js/reactions.js:394"
+      ],
+      "도구오류": null,
+      "크롬": "Chrome/153.0.8010.48"
+    }
+  ],
+  "README의설명과일치": true
+}

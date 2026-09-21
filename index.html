@@ -277,22 +277,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div id="sanctuaryGoalsView"></div>
       <div id="routineGoalsView" style="display:none;"></div>
       <div id="personalGoalsView">
-        <div class="goal-head-row" style="margin-top:10px;">
-          <div class="goal-head-l">
-            <div style="display:flex;align-items:center;gap:6px;"><h2 style="margin:0;font-size:1.15rem;">세부 마일스톤 & 할 일</h2></div>
-            <span class="privacy-badge" id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;">
-            <button class="btn btn-ghost btn-sm" id="btnGoalTemplateEncyclopedia" type="button" style="display:none;" aria-hidden="true">📖 템플릿백과사전</button>
-            <button class="btn btn-ghost btn-sm" id="btnShowPersonalGuideModal" type="button" style="font-size:.8125rem;padding:3px 9px;">활용가이드</button>
-            <button class="btn btn-primary btn-sm" id="btnPersonalAddGoalInline" type="button" style="font-size:.8125rem;padding:3px 9px;font-weight:700;">+ 새 목표</button>
-            <button class="edit-toggle off" id="goalEditToggle" type="button">편집</button>
-          </div>
-        </div>
-        <div id="goalsTemplateAccordionSlot" style="display:none;"></div>
-        <div class="goal-chip-row" id="goalChipRow" style="display:none;" aria-hidden="true"></div>
-        <div id="goalDetailBody"></div>
-        <div class="card agent-card" id="goalAgentCard" style="padding:12px 16px;margin-top:16px;">
+        <div class="card agent-card" id="goalAgentCard" style="padding:12px 16px;margin-top:6px;margin-bottom:14px;">
           <div class="agent-title-bar" id="btnToggleGoalAgent" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;">
             <div style="display:flex;align-items:center;gap:8px;">
               <span style="font-size:1.05rem;">✨</span>
@@ -309,6 +294,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             </div>
           </div>
         </div>
+        <div class="goal-head-row" style="margin-top:10px;">
+          <div class="goal-head-l">
+            <div style="display:flex;align-items:center;gap:6px;"><h2 style="margin:0;font-size:1.15rem;">세부 마일스톤 & 할 일</h2></div>
+            <span class="privacy-badge" id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <button class="btn btn-ghost btn-sm" id="btnGoalTemplateEncyclopedia" type="button" style="display:none;" aria-hidden="true">📖 템플릿백과사전</button>
+            <button class="btn btn-ghost btn-sm" id="btnShowPersonalGuideModal" type="button" style="font-size:.8125rem;padding:3px 9px;">활용가이드</button>
+            <button class="btn btn-primary btn-sm" id="btnPersonalAddGoalInline" type="button" style="font-size:.8125rem;padding:3px 9px;font-weight:700;">+ 새 목표</button>
+            <button class="edit-toggle off" id="goalEditToggle" type="button">편집</button>
+          </div>
+        </div>
+        <div id="goalsTemplateAccordionSlot" style="display:none;"></div>
+        <div class="goal-chip-row" id="goalChipRow" style="display:none;" aria-hidden="true"></div>
+        <div id="goalDetailBody"></div>
         <div id="personalGoalsEmptyGuideSlot"></div>
       </div>
       <div id="templateEncyclopediaView" style="display:none;"></div>
@@ -2730,6 +2730,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   
   /* ============ [78] 데이터분석 프롬프트 백과사전 (실사용 4종 + 아워골 맞춤 4종) ============ */
   var _promptTabState = 'real';
+  var _promptEncyclopediaOpen = false;
   function renderPromptEncyclopediaHtml(context){
     var goals = (state.profile && state.profile.goals) ? state.profile.goals.filter(function(g){ return !g.archivedAt; }) : [];
     var goalTitles = goals.map(function(g){ return g.title; }).join(', ') || '러닝 10km 완주, 자격증 취득';
@@ -2782,48 +2783,73 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     var activeList = _promptTabState === 'real' ? realPrompts : aiPrompts;
 
-    return '<div class="prompt-encyclopedia-card" style="margin-top:20px;padding:16px;background:var(--card2);border:1px solid var(--rule);border-radius:16px;">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px;">' +
+    var drawerHtml =
+      '<div id="promptEncyclopediaDrawer" style="' + (_promptEncyclopediaOpen ? 'margin-top:14px;display:block;' : 'display:none;') + '">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px;">' +
+          '<div style="font-size:.78125rem;font-weight:600;color:var(--ink-soft);">프롬프트 유형 선택</div>' +
+          '<div style="display:flex;gap:4px;background:var(--card);padding:2px;border-radius:8px;border:1px solid var(--rule);">' +
+            '<button type="button" class="btn-prompt-tab" data-ptab="real" style="padding:4px 10px;font-size:.75rem;border-radius:6px;border:none;cursor:pointer;' + (_promptTabState==='real'?'background:var(--brand);color:#fff;font-weight:700;':'background:transparent;color:var(--ink-soft);') + '">실사용 프롬프트</button>' +
+            '<button type="button" class="btn-prompt-tab" data-ptab="ai" style="padding:4px 10px;font-size:.75rem;border-radius:6px;border:none;cursor:pointer;' + (_promptTabState==='ai'?'background:var(--brand);color:#fff;font-weight:700;':'background:transparent;color:var(--ink-soft);') + '">아워골 AI 맞춤</button>' +
+          '</div>' +
+        '</div>' +
+        '<div style="padding:8px 12px;background:rgba(108,92,231,0.06);border-left:3px solid var(--brand);border-radius:6px;margin-bottom:12px;font-size:.78125rem;color:var(--ink-soft);">' +
+          '✨ <b>안내:</b> 프롬프트를 복사해서 외부 AI(ChatGPT, Claude, Gemini 등)에 붙여넣어 내 목표 데이터를 정밀 분석하세요!' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;gap:10px;">' +
+          activeList.map(function(item, idx){
+            return '<div style="background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:12px;">' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">' +
+                '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">' + escapeHtml(item.title) + '</span>' +
+                '<button type="button" class="btn btn-ghost btn-xs btn-copy-prompt" data-pcontent="'+escapeHtml(item.prompt)+'" style="font-size:.75rem;color:var(--brand);border-color:rgba(108,92,231,0.3);">📋 복사하기</button>' +
+              '</div>' +
+              '<div class="faint" style="font-size:.78125rem;margin-bottom:8px;">' + escapeHtml(item.desc) + '</div>' +
+              '<div style="background:var(--card2);padding:8px 10px;border-radius:8px;font-size:.75rem;color:var(--ink-soft);font-family:monospace;white-space:pre-wrap;max-height:80px;overflow-y:auto;border:1px dashed var(--rule);">' +
+                escapeHtml(item.prompt) +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+      '</div>';
+
+    return '<div class="prompt-encyclopedia-card" style="margin-top:20px;padding:14px 16px;background:var(--card2);border:1px solid var(--rule);border-radius:16px;">' +
+      '<div id="btnTogglePromptAccordion" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;">' +
         '<div style="display:flex;align-items:center;gap:8px;">' +
-          '<span style="font-size:1.3rem;">🧠</span>' +
-          '<span style="font-weight:700;font-size:1rem;color:var(--ink);">데이터분석 프롬프트 백과사전</span>' +
+          '<span style="font-size:1.2rem;">🧠</span>' +
+          '<span style="font-weight:700;font-size:.9375rem;color:var(--ink);">데이터분석 프롬프트 백과사전</span>' +
+          '<span class="faint" style="font-size:.75rem;">(외부 AI 분석 8종)</span>' +
         '</div>' +
-        '<div style="display:flex;gap:4px;background:var(--card);padding:2px;border-radius:8px;border:1px solid var(--rule);">' +
-          '<button type="button" class="btn-prompt-tab" data-ptab="real" style="padding:4px 10px;font-size:.75rem;border-radius:6px;border:none;cursor:pointer;' + (_promptTabState==='real'?'background:var(--brand);color:#fff;font-weight:700;':'background:transparent;color:var(--ink-soft);') + '">실사용 프롬프트</button>' +
-          '<button type="button" class="btn-prompt-tab" data-ptab="ai" style="padding:4px 10px;font-size:.75rem;border-radius:6px;border:none;cursor:pointer;' + (_promptTabState==='ai'?'background:var(--brand);color:#fff;font-weight:700;':'background:transparent;color:var(--ink-soft);') + '">아워골 AI 맞춤</button>' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<span style="font-size:.75rem;color:var(--brand);font-weight:600;">' + (_promptEncyclopediaOpen ? '접기' : '펼쳐보기') + '</span>' +
+          '<span id="promptAccordionChevron" style="font-size:.75rem;color:var(--ink-soft);transition:transform .2s ease;' + (_promptEncyclopediaOpen ? 'transform:rotate(180deg);' : '') + '">▼</span>' +
         '</div>' +
       '</div>' +
-      '<div style="padding:8px 12px;background:rgba(108,92,231,0.06);border-left:3px solid var(--brand);border-radius:6px;margin-bottom:12px;font-size:.78125rem;color:var(--ink-soft);">' +
-        '✨ <b>안내:</b> 프롬프트를 복사해서 외부 AI(ChatGPT, Claude, Gemini 등)에 붙여넣어 내 목표 데이터를 정밀 분석하세요!' +
-      '</div>' +
-      '<div style="display:flex;flex-direction:column;gap:10px;">' +
-        activeList.map(function(item, idx){
-          return '<div style="background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:12px;">' +
-            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">' +
-              '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">' + escapeHtml(item.title) + '</span>' +
-              '<button type="button" class="btn btn-ghost btn-xs btn-copy-prompt" data-pcontent="'+escapeHtml(item.prompt)+'" style="font-size:.75rem;color:var(--brand);border-color:rgba(108,92,231,0.3);">📋 복사하기</button>' +
-            '</div>' +
-            '<div class="faint" style="font-size:.78125rem;margin-bottom:8px;">' + escapeHtml(item.desc) + '</div>' +
-            '<div style="background:var(--card2);padding:8px 10px;border-radius:8px;font-size:.75rem;color:var(--ink-soft);font-family:monospace;white-space:pre-wrap;max-height:80px;overflow-y:auto;border:1px dashed var(--rule);">' +
-              escapeHtml(item.prompt) +
-            '</div>' +
-          '</div>';
-        }).join('') +
-      '</div>' +
+      drawerHtml +
     '</div>';
   }
 
   function wirePromptEncyclopediaEvents(root){
     if(!root) return;
+    var toggleBtn = root.querySelector('#btnTogglePromptAccordion');
+    if(toggleBtn){
+      toggleBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        _promptEncyclopediaOpen = !_promptEncyclopediaOpen;
+        renderGoalsScreen();
+        if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
+      });
+    }
     root.querySelectorAll('.btn-prompt-tab').forEach(function(btn){
-      btn.addEventListener('click', function(){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
         _promptTabState = btn.dataset.ptab;
+        _promptEncyclopediaOpen = true;
         renderGoalsScreen();
         if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
       });
     });
     root.querySelectorAll('.btn-copy-prompt').forEach(function(btn){
-      btn.addEventListener('click', function(){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
         var text = btn.dataset.pcontent;
         navigator.clipboard.writeText(text).then(function(){
           toast('프롬프트가 클립보드에 복사되었습니다! 외부 AI에 붙여넣어보세요 📋');

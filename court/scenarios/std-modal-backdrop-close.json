@@ -1,0 +1,17 @@
+{
+  "id": "std-modal-backdrop-close",
+  "title": "새 목표 창을 어두운 배경을 눌러 닫으면 제자리에 머물고 종료 안내가 뜨지 않는다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal" },
+    { "do": "click", "selector": "#homeAddGoal" },
+    { "expect": "visible", "selector": "#modalOverlay.active" },
+    { "do": "click", "selector": "#modalOverlay", "position": "top" },
+    { "expect": "notVisible", "selector": "#modalOverlay.active" },
+    { "expect": "neverVisible", "selector": "#toast.show", "text": "종료", "forMs": 1500 },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"home\"]", "className": "active" },
+    { "capture": "after-close" }
+  ]
+}
