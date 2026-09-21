@@ -21,6 +21,8 @@
     feedPage: 1,
     feedCustomStart: null,
     feedCustomEnd: null,
+    archivePeriod: 'all',
+    archivePage: 1,
     activeDmPeer: null,
     dmHistory: {}
   };
@@ -549,15 +551,39 @@
 
       var streakDays = (window.state && window.state.profile && window.state.profile.streak) || 3;
 
-      var cellsCount = (engine.heatFilter === 'today') ? 7 : ((engine.heatFilter === 'week') ? 14 : ((engine.heatFilter === 'month') ? 35 : 140));
+      var cellsCount = (engine.heatFilter === 'today') ? 7 : ((engine.heatFilter === 'week') ? 14 : ((engine.heatFilter === 'month') ? 28 : 140));
       var cellsHtml = Array.from({ length: cellsCount }, function(_, i) {
         var dayOffset = (cellsCount - 1) - i;
         var cellD = new Date(todayMs - dayOffset * 86400000);
         var cKey = cellD.getFullYear() + '-' + String(cellD.getMonth() + 1).padStart(2, '0') + '-' + String(cellD.getDate()).padStart(2, '0');
         var cnt = countByDay[cKey] || 0;
         var lvl = cnt === 0 ? 0 : (cnt === 1 ? 1 : (cnt === 2 ? 2 : (cnt <= 4 ? 3 : 4)));
-        return '<div class="s-heat-cell lvl-' + lvl + '" title="' + cKey + ' (' + cnt + '건 실천)" onclick="toast(\'' + cKey + ' 실천 기록: ' + cnt + '건\');"></div>';
+        var isSelected = (engine.selectedHeatDate === cKey) ? 'style="outline:2px solid var(--brand);outline-offset:1px;"' : '';
+        return '<div class="s-heat-cell lvl-' + lvl + '" ' + isSelected + ' title="' + cKey + ' (' + cnt + '건 실천)" onclick="window.OurgoalSanctuaryV3.selectHeatDay(\'' + cKey + '\');"></div>';
       }).join('');
+
+      var dayDetailHtml = '';
+      if (engine.selectedHeatDate) {
+        var selDate = engine.selectedHeatDate;
+        var dayRecs = records.filter(function(r) {
+          return (r.startAt || r.created_at || r.start_at || '').slice(0, 10) === selDate;
+        });
+        if (dayRecs.length === 0) {
+          dayDetailHtml = '<div class="s-heat-day-preview" style="margin-top:10px;padding:8px 12px;background:var(--card2);border:1px solid var(--line);border-radius:10px;font-size:0.78rem;color:var(--ink-sub);display:flex;align-items:center;justify-content:space-between;">' +
+            '<span>📅 <b>' + selDate + '</b>: 등록된 실천 기록이 없습니다.</span>' +
+            '<button type="button" class="btn btn-primary btn-sm" style="padding:2px 8px;font-size:0.75rem;" onclick="if(window.openAddRecordModal) window.openAddRecordModal();">+ 기록</button>' +
+          '</div>';
+        } else {
+          var firstRecText = escapeHtml(dayRecs[0].text || dayRecs[0].content || '실천 완료');
+          dayDetailHtml = '<div class="s-heat-day-preview" style="margin-top:10px;padding:10px 12px;background:var(--card2);border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
+            '<div style="min-width:0;flex:1;">' +
+              '<div style="font-weight:700;font-size:0.78rem;color:var(--brand);">📅 ' + selDate + ' 실천 (' + dayRecs.length + '건)</div>' +
+              '<div style="font-size:0.75rem;color:var(--ink-soft);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + firstRecText + '</div>' +
+            '</div>' +
+            '<button type="button" class="btn btn-ghost btn-sm" style="padding:3px 8px;font-size:0.75rem;white-space:nowrap;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'feed\');">피드 보기 ›</button>' +
+          '</div>';
+        }
+      }
 
       contentHtml = '<div class="s-heatmap-card">' +
         '<div class="s-heat-head">' +
@@ -573,14 +599,15 @@
         '<div class="s-segment-pills">' +
           '<button class="s-seg-pill ' + (engine.heatFilter === 'today' ? 'active' : '') + '" type="button" onclick="window.OurgoalSanctuaryV3.setHeatFilter(\'today\')">오늘</button>' +
           '<button class="s-seg-pill ' + (engine.heatFilter === 'week' ? 'active' : '') + '" type="button" onclick="window.OurgoalSanctuaryV3.setHeatFilter(\'week\')">이번 주</button>' +
-          '<button class="s-seg-pill ' + (engine.heatFilter === 'month' ? 'active' : '') + '" type="button" onclick="window.OurgoalSanctuaryV3.setHeatFilter(\'month\')">이번 달</button>' +
+          '<button class="s-seg-pill ' + (engine.heatFilter === 'month' ? 'active' : '') + '" type="button" onclick="window.OurgoalSanctuaryV3.setHeatFilter(\'month\')">최근 4주</button>' +
           '<button class="s-seg-pill ' + (engine.heatFilter === 'year' ? 'active' : '') + '" type="button" onclick="window.OurgoalSanctuaryV3.setHeatFilter(\'year\')">올해</button>' +
           '<button class="s-seg-pill ' + (engine.heatFilter === 'all' ? 'active' : '') + '" type="button" onclick="window.OurgoalSanctuaryV3.setHeatFilter(\'all\')">전체</button>' +
         '</div>' +
-        '<div class="s-annual-heatmap-matrix">' +
+        '<div class="s-annual-heatmap-matrix" style="max-height:160px;overflow-y:auto;-webkit-overflow-scrolling:touch;">' +
           cellsHtml +
         '</div>' +
-        '<div class="s-heat-legend">' +
+        dayDetailHtml +
+        '<div class="s-heat-legend" style="margin-top:10px;">' +
           '<span>적음</span>' +
           '<div class="s-heat-cell lvl-0"></div>' +
           '<div class="s-heat-cell lvl-1"></div>' +
@@ -589,7 +616,7 @@
           '<div class="s-heat-cell lvl-4"></div>' +
           '<span>많음 (에메랄드 글로우)</span>' +
         '</div>' +
-        '<div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end;">' +
+        '<div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end;">' +
           '<button class="btn btn-ghost btn-sm" type="button" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();">⏱️ 스톱워치 콕핏</button>' +
           '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.openAddRecordModal) window.openAddRecordModal(); else if(document.getElementById(\'recAddBtn\')) document.getElementById(\'recAddBtn\').click();">+ 새 기록 작성</button>' +
         '</div>' +
@@ -799,17 +826,128 @@
         '</p>' +
       '</div>';
     } else if (engine.activeRecMode === 'archive') {
-      contentHtml = '<div class="s-heatmap-card" style="margin-bottom:12px;">' +
-        '<div class="s-heat-head">' +
-          '<div class="s-heat-title-col">' +
-            '<span class="s-heat-badge">완료 및 보관 데이터</span>' +
-            '<h3>실천 및 목표 보관함</h3>' +
+      var allArchived = (window.state && window.state.profile && window.state.profile.goals || []).filter(function(g){ return g.archivedAt; })
+        .sort(function(a,b){ return new Date(b.archivedAt) - new Date(a.archivedAt); });
+
+      if (allArchived.length === 0) {
+        contentHtml = '<div class="s-heatmap-card" style="margin-bottom:12px;text-align:center;padding:36px 20px;">' +
+          '<div style="font-size:2rem;margin-bottom:8px;">📦</div>' +
+          '<h3 style="margin:0 0 6px;">보관된 목표가 없습니다</h3>' +
+          '<p style="font-size:0.875rem;color:var(--ink-sub);margin:0;">마감일이 지났거나 완료된 목표는 삭제 대신 보관함에 안전하게 기록됩니다.</p>' +
+        '</div>';
+      } else {
+        function sBuildGoalCard(g, isLatest) {
+          var pct = typeof window.goalAchievement === 'function' ? window.goalAchievement(g) : (g.progress || 0);
+          var days = Math.max(1, Math.round((new Date(g.archivedAt) - new Date(g.createdAt || Date.now())) / 86400000));
+          var latestBadge = isLatest ? '<span style="font-size:0.7rem;font-weight:700;color:var(--brand);background:var(--brand-glow, rgba(99,102,241,0.12));padding:1px 6px;border-radius:4px;margin-left:6px;">최신 보관</span>' : '';
+          var msHtml = '';
+          if (Array.isArray(g.milestones) && g.milestones.length > 0) {
+            var msList = g.milestones.map(function(m){
+              return '· ' + escapeHtml(m.title) + ' (' + (m.status === 'done' || m.done ? '완료' : '진행 중') + ')';
+            }).join('<br>');
+            msHtml = '<details class="archive-ms-details" style="margin-top:8px;border-top:1px dashed var(--line, rgba(255,255,255,0.08));padding-top:6px;">' +
+              '<summary style="font-size:0.75rem;color:var(--ink-soft);cursor:pointer;user-select:none;font-weight:600;">세부 마일스톤 (' + g.milestones.length + '개) 보기 ▾</summary>' +
+              '<div class="archive-ms" style="margin-top:6px;font-size:0.75rem;line-height:1.45;color:var(--ink-sub);">' + msList + '</div>' +
+            '</details>';
+          }
+
+          var archDate = (g.archivedAt || '').slice(0, 10);
+          return '<div class="archive-card s-feed-item-card" style="margin-bottom:10px;">' +
+            '<div class="archive-top" style="display:flex;align-items:center;justify-content:space-between;">' +
+              '<div><b>' + escapeHtml(g.title) + '</b>' + latestBadge + '</div>' +
+              '<span class="archive-pct" style="font-size:0.875rem;font-weight:800;color:var(--brand);">' + pct + '%</span>' +
+            '</div>' +
+            '<div class="archive-meta" style="font-size:0.75rem;color:var(--ink-faint);margin-top:4px;">' +
+              (g.topic ? ('#' + escapeHtml(g.topic) + ' · ') : '') + days + '일간 진행 · ' + archDate + ' 보관' +
+            '</div>' +
+            msHtml +
+            '<button class="btn btn-ghost btn-sm" type="button" style="width:100%;margin-top:10px;" onclick="if(window.restoreGoal){ var tg = (window.state.profile.goals||[]).find(function(x){return x.id===\'' + g.id + '\';}); if(tg) window.restoreGoal(tg); } else { toast(\'목표를 다시 진행함으로 복원했습니다.\'); }">다시 진행하기</button>' +
+          '</div>';
+        }
+
+        // 1. 최신 3개 전면 노출
+        var sTop3 = allArchived.slice(0, 3);
+        var sTop3Html = sTop3.map(function(g, idx){ return sBuildGoalCard(g, idx === 0); }).join('');
+
+        // 2. 4번째 이후 과거 완료 목표 모아보기
+        var sAllPast = allArchived.slice(3);
+        var sPastHtml = '';
+
+        if (sAllPast.length > 0) {
+          var pFilter = engine.archivePeriod || 'all';
+          var curYear = new Date().getFullYear();
+
+          var sFilteredPast = sAllPast;
+          if (pFilter === 'this_year') {
+            sFilteredPast = sAllPast.filter(function(g){ return new Date(g.archivedAt || 0).getFullYear() === curYear; });
+          } else if (pFilter === 'last_year') {
+            sFilteredPast = sAllPast.filter(function(g){ return new Date(g.archivedAt || 0).getFullYear() === (curYear - 1); });
+          } else if (pFilter === 'health') {
+            sFilteredPast = sAllPast.filter(function(g){ return g.topic === 'health' || g.topic === '운동/건강'; });
+          } else if (pFilter === 'study') {
+            sFilteredPast = sAllPast.filter(function(g){ return g.topic === 'study' || g.topic === '학습/성장'; });
+          }
+
+          var PAGE_SIZE = 5;
+          var totalPast = sFilteredPast.length;
+          var totalPages = Math.max(1, Math.ceil(totalPast / PAGE_SIZE));
+          var currPage = Math.min(Math.max(1, engine.archivePage || 1), totalPages);
+          engine.archivePage = currPage;
+          var pageItems = sFilteredPast.slice((currPage - 1) * PAGE_SIZE, currPage * PAGE_SIZE);
+
+          var pastCardsHtml = '';
+          if (pageItems.length === 0) {
+            pastCardsHtml = '<div style="text-align:center;padding:20px;font-size:0.8125rem;color:var(--ink-faint);">' +
+              '선택한 분류의 이전 보관 목표가 없습니다.<br>' +
+              '<button type="button" class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="window.OurgoalSanctuaryV3.setArchivePeriod(\'all\');">전체 보기</button>' +
+            '</div>';
+          } else {
+            var cardsList = pageItems.map(function(g){ return sBuildGoalCard(g, false); }).join('');
+            var pagerHtml = '<div class="rec-past-pager" style="margin-top:12px;padding-top:10px;">' +
+              '<button type="button" class="rec-pager-btn" ' + (currPage <= 1 ? 'disabled' : '') + ' onclick="window.OurgoalSanctuaryV3.setArchivePage(' + (currPage - 1) + ');">' +
+                '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>' +
+                '<span>이전 5개</span>' +
+              '</button>' +
+              '<div class="rec-pager-info">' +
+                '<b>' + currPage + ' / ' + totalPages + ' 페이지</b>' +
+                '<span>(이전 목표 총 ' + totalPast + '개)</span>' +
+              '</div>' +
+              '<button type="button" class="rec-pager-btn" ' + (currPage >= totalPages ? 'disabled' : '') + ' onclick="window.OurgoalSanctuaryV3.setArchivePage(' + (currPage + 1) + ');">' +
+                '<span>다음 5개</span>' +
+                '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+              '</button>' +
+            '</div>';
+            pastCardsHtml = cardsList + pagerHtml;
+          }
+
+          sPastHtml = '<div class="rec-past-archive-card" id="sArchivePastCard" style="margin-top:16px;">' +
+            '<div class="rec-past-header-row">' +
+              '<div class="rec-past-title"><span>📂 이전 완료 목표 모아보기</span></div>' +
+              '<span class="rec-past-meta">총 ' + totalPast + '개</span>' +
+            '</div>' +
+            '<div class="rec-period-chip-bar">' +
+              '<button type="button" class="rec-period-chip ' + (pFilter === 'all' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setArchivePeriod(\'all\');">전체</button>' +
+              '<button type="button" class="rec-period-chip ' + (pFilter === 'this_year' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setArchivePeriod(\'this_year\');">올해</button>' +
+              '<button type="button" class="rec-period-chip ' + (pFilter === 'last_year' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setArchivePeriod(\'last_year\');">작년</button>' +
+              '<button type="button" class="rec-period-chip ' + (pFilter === 'health' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setArchivePeriod(\'health\');">운동/건강</button>' +
+              '<button type="button" class="rec-period-chip ' + (pFilter === 'study' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setArchivePeriod(\'study\');">학습/성장</button>' +
+            '</div>' +
+            pastCardsHtml +
+          '</div>';
+        } else {
+          sPastHtml = '<div style="font-size:0.78rem;color:var(--ink-faint);text-align:center;padding:12px 0;">✨ 모든 보관 목표를 확인했습니다.</div>';
+        }
+
+        contentHtml = '<div class="s-feed-container">' +
+          '<div class="s-feed-header">' +
+            '<h4>실천 및 목표 보관함 (' + allArchived.length + '개)</h4>' +
+            '<button class="btn btn-ghost btn-sm" type="button" onclick="if(window.switchTab) window.switchTab(\'goals\'); else window.setTab(\'goals\');">목표 관리 바로가기 ›</button>' +
           '</div>' +
-        '</div>' +
-        '<p style="font-size:0.875rem;color:var(--ink-sub);margin:0 0 14px;line-height:1.5;">' +
-          '달성 완료된 과거 목표 및 보관된 기록 데이터가 아래 보관함 목록에 안전하게 보존되어 있습니다.' +
-        '</p>' +
-      '</div>';
+          '<div style="font-size:0.75rem;font-weight:700;color:var(--ink-soft);margin-bottom:8px;">✨ 최근 완료·보관 목표 (최신순 3개)</div>' +
+          sTop3Html +
+          sPastHtml +
+        '</div>';
+      }
     } else if (engine.activeRecMode === 'recap') {
       var streakVal = (window.state && window.state.profile && window.state.profile.streak) || 3;
       var totalMinutes = 0;
@@ -1037,6 +1175,9 @@
         window.renderCalDayDetail();
       }
     },
+    getActiveRecMode: function() {
+      return engine.activeRecMode;
+    },
     setRecMode: function(m) {
       engine.activeRecMode = m;
       if (m === 'stats' || m === 'archive' || m === 'feed') {
@@ -1048,8 +1189,12 @@
     },
     setHeatFilter: function(f) {
       engine.heatFilter = f;
-      var fNames = { today: '오늘', week: '이번 주', month: '이번 달', year: '올해', all: '전체' };
+      var fNames = { today: '오늘', week: '이번 주', month: '최근 4주', year: '올해', all: '전체' };
       toast('히트맵 기간: ' + (fNames[f] || f));
+      renderSanctuaryRecords();
+    },
+    selectHeatDay: function(dateKey) {
+      engine.selectedHeatDate = (engine.selectedHeatDate === dateKey ? null : dateKey);
       renderSanctuaryRecords();
     },
     shiftCal: function(dir) {
@@ -1563,6 +1708,17 @@
       if (e && e.value) engine.feedCustomEnd = e.value;
       engine.feedPage = 1;
       renderSanctuaryRecords();
+    },
+    setArchivePeriod: function(p) {
+      engine.archivePeriod = p;
+      engine.archivePage = 1;
+      renderSanctuaryRecords();
+    },
+    setArchivePage: function(page) {
+      engine.archivePage = page;
+      renderSanctuaryRecords();
+      var c = document.getElementById('sArchivePastCard');
+      if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
