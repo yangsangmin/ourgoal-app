@@ -1,0 +1,114 @@
+{
+  "task": "T019",
+  "requirementsSource": "docs/specs/REQ-T019-ACCOUNT-HARD-DELETE.md",
+  "requirements": [
+    { "id": "R1", "text": "설정 → 계정 삭제 → 확인 → Supabase RPC로 users·goals·checkins·messages 연쇄 삭제" },
+    { "id": "R2", "text": "삭제 후 로그아웃·로컬 스토리지 초기화" },
+    { "id": "R3", "text": "/privacy에 삭제 절차 명시" },
+    { "id": "R4", "text": "테스트 계정으로 삭제→DB row 0 확인" },
+    { "id": "R5", "text": "완료 기준: 삭제 후 DB 조회 0건 스크린샷" }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "설정의 회원 탈퇴 창에서 '30일 유예 없이 지금 즉시 영구 삭제'를 체크하면 버튼이 '즉시 영구 삭제'로 바뀌고, 누르면 확인 창을 거쳐 서버에 영구 삭제를 요청한다",
+      "touches": ["index.html"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "테스트 계정으로 로그인할 수 있는 사람이나 세션",
+        "how": [
+          "테스트 계정으로 로그인한다(실사용 계정으로 하지 않는다 — 되돌릴 수 없다)",
+          "설정 → 회원 탈퇴를 눌러 안내 창을 연다",
+          "동의 체크 뒤 '30일 유예 없이 지금 즉시 영구 삭제'를 체크하면 버튼 글자가 '즉시 영구 삭제'로 바뀌는지 본다",
+          "버튼을 누르면 브라우저 확인 창이 뜨고, 확인하면 /api/withdraw 로 mode=purge 요청이 나가는지 개발자 도구 네트워크 탭에서 본다"
+        ]
+      }
+    },
+    {
+      "id": "C2", "req": "R1", "kind": "unverified",
+      "domain": "server-api",
+      "statement": "/api/withdraw 의 purge 는 본인 소유의 users·goals·checkins·팀 메시지 3종(team_pings·team_ping_replies·team_comments)·feed_posts·push_subscriptions·content_reports 행과 로그인 계정을 지우고, 삭제 오류나 잔여 행이 있으면 ok:false 를 돌려준다. 새 RPC 가 아니라 기존 서비스롤 API 로 구현했다(세션은 SQL Editor 에서 DDL 을 실행할 수 없다)",
+      "touches": ["api/withdraw.js", "scripts/test-account-purge.js"],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "병합 뒤 운영 주소에 접속할 수 있는 사람이나 세션",
+        "how": [
+          "이 PR 을 병합하고 Vercel 배포가 끝나기를 기다린다",
+          "새 테스트 계정을 만들어 목표 1개와 체크인 1개를 만든다",
+          "그 계정의 토큰으로 POST /api/withdraw {mode:'purge', confirm:'PERMANENT_DELETE'} 를 보낸다",
+          "응답이 ok:true 이고 remainingTotal 이 0, authUserDeleted 가 true 인지 본다",
+          "같은 아이디·비밀번호로 다시 로그인이 실패하는지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C3", "req": "R2", "kind": "unverified",
+      "domain": "persistence",
+      "statement": "영구 삭제가 성공하면 자동으로 로그아웃되어 로그인 화면으로 돌아가고, 기기의 localStorage·sessionStorage 에서 ourgoal_ 로 시작하는 항목이 전부 지워진다. 서버가 ok 를 주지 않으면 로그아웃하지 않고 다시 시도할 수 있게 둔다",
+      "touches": ["index.html"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "테스트 계정으로 로그인할 수 있는 사람이나 세션",
+        "how": [
+          "테스트 계정으로 로그인해 즉시 영구 삭제를 끝까지 실행한다",
+          "로그인 화면으로 돌아왔는지 본다",
+          "개발자 도구 Application → Local Storage·Session Storage 에 ourgoal_ 로 시작하는 항목이 0개인지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C4", "req": "R3", "kind": "static",
+      "domain": "config",
+      "statement": "개인정보처리방침 문서 제4조에 계정 삭제 절차(즉시 영구 삭제·30일 유예·이메일 요청)를 적었다",
+      "touches": ["docs/legal/privacy.md"],
+      "check": { "type": "codeContains", "file": "docs/legal/privacy.md", "text": "**계정 삭제 절차**: 앱에서 [설정] → [회원 탈퇴]" }
+    },
+    {
+      "id": "C5", "req": "R3", "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "앱 안의 개인정보처리방침 창 제5조에도 같은 계정 삭제 절차가 보인다",
+      "touches": ["index.html"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "visual-quality",
+        "who": "앱을 열 수 있는 사람",
+        "how": [
+          "로그인 화면이나 설정에서 개인정보처리방침을 연다",
+          "제5조에 '계정 삭제 절차' 문단이 보이고 글자가 잘리지 않는지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C6", "req": "R4", "kind": "unverified",
+      "domain": "server-api",
+      "statement": "테스트 계정을 실제로 지운 뒤 DB 에 그 계정의 행이 0건인지는 아직 재지 못했다 — 고친 API 가 운영에 배포되어야 잴 수 있다",
+      "touches": ["api/withdraw.js"],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "병합 뒤 운영 주소에 접속할 수 있는 사람이나 세션",
+        "how": [
+          "C2 의 순서대로 테스트 계정을 만들고 지운다",
+          "응답의 remaining 이 모든 테이블에서 0 인지 본다",
+          "Supabase 대시보드 Table Editor 에서 users·goals·checkins 를 그 계정 id 로 걸러 0건인지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C7", "req": "R5", "kind": "unverified",
+      "domain": "server-api",
+      "statement": "삭제 후 DB 조회 0건 스크린샷은 아직 없다 — C6 을 잰 뒤에 남길 수 있다",
+      "touches": ["api/withdraw.js"],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "병합 뒤 운영 주소에 접속할 수 있는 사람이나 세션",
+        "how": [
+          "C6 을 마친 화면(응답의 remaining 0건, 또는 Table Editor 의 0건)을 캡처한다",
+          "캡처를 로드맵 T019 행의 검증결과에 붙인다"
+        ]
+      }
+    }
+  ]
+}
