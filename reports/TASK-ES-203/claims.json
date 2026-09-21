@@ -1,0 +1,167 @@
+{
+  "task": "TASK-ES-203",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-203-GOOGLE-PLAY-READINESS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "소셜 로그인 실패 시 '심사 준비 중' 팝업을 제거하고 '간편 로그인 안내'로 전면 대체해야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "안드로이드 기기 뒤로가기(popstate) 시 서브스크린이 닫히고 이전 화면으로 안전하게 복귀해야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "가상 키보드 돌출 시 피드 댓글 하단 80px 패딩 및 90px 스크롤 마진으로 입력창과 버튼 가림이 방지되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "잠금화면 모달 내 외부 APK 설치 유도 문구를 공식 안드로이드 잠금화면 권한 안내로 정화해야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "알림 차단 안내 시 브라우저 주소창 alert 대신 모바일 인앱 toast로 교체되어야 한다"
+    },
+    {
+      "id": "R6",
+      "text": "전역 런타임 크래시 방화벽(window.onerror)을 탑재하여 Robo-Test 멍키 테스트 크래시를 원천 차단해야 한다"
+    },
+    {
+      "id": "R7",
+      "text": "구글 플레이 정책 필수 웹페이지(개인정보방침, 이용약관, 계정삭제) 3종이 배포되어야 한다"
+    },
+    {
+      "id": "R8",
+      "text": "구글 플레이 7대 출시 규격 자동 검증기(prepare-google-play.js)가 완비되어야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "store-policy",
+      "statement": "소셜 로그인 오류 모달에 간편 로그인 안내 문구가 적용되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "간편 로그인 안내"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "navigation",
+      "statement": "전역 popstate 핸들러에 screen-feedbacksetup 서브스크린 닫기 로직이 결속되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "screen-feedbacksetup"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "피드 댓글 패널에 하단 80px 안전 마진 패딩이 배선되어 있다",
+      "touches": ["ui.css"],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 80px);"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "store-policy",
+      "statement": "잠금화면 모달에 APK 설치 대신 잠금화면 권한 안내 문구가 배선되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "🤖 안드로이드 잠금화면 권한 안내"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "store-policy",
+      "statement": "알림 권한 안내 시 브라우저 주소창 alert 대신 모바일 인앱 toast가 배선되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "스마트폰 [설정 > 애플리케이션 > 아워골 > 알림]에서 권한을 허용해주세요."
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R6",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "index.html 헤더에 window.onerror 기반 전역 런타임 크래시 방화벽이 탑재되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "[Ourgoal Crash Barrier]"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R7",
+      "kind": "static",
+      "domain": "store-policy",
+      "statement": "구글 플레이 개인정보처리방침 웹페이지 privacy.html이 존재한다",
+      "touches": ["privacy.html"],
+      "check": {
+        "type": "fileExists",
+        "file": "privacy.html"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R7",
+      "kind": "static",
+      "domain": "store-policy",
+      "statement": "UGC 제재 조항이 명시된 서비스 이용약관 웹페이지 terms.html이 존재한다",
+      "touches": ["terms.html"],
+      "check": {
+        "type": "fileExists",
+        "file": "terms.html"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R7",
+      "kind": "static",
+      "domain": "store-policy",
+      "statement": "구글 계정 삭제 정책을 충족하는 웹 신청 페이지 delete-account.html이 존재한다",
+      "touches": ["delete-account.html"],
+      "check": {
+        "type": "fileExists",
+        "file": "delete-account.html"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "구글 플레이 출시 및 비공개 테스트 자동 검증기 스크립트가 확장 구비되어 있다",
+      "touches": ["scripts/prepare-google-play.js"],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/prepare-google-play.js",
+        "text": "Google Play 정책 필수: 개인정보처리방침 및 이용약관 파일 및 HTML 웹페이지 실재"
+      }
+    }
+  ]
+}

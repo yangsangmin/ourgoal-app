@@ -45,6 +45,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="/ui.css?v=20260918-focus-sanctuary">
 <script src="/ui.js?v=20260918-focus-sanctuary" defer></script>
+<script>
+window.addEventListener("error", function(e){ try{ console.warn("[Ourgoal Crash Barrier]", e.message); return true; }catch(_){} });
+window.addEventListener("unhandledrejection", function(e){ try{ console.warn("[Ourgoal Crash Barrier]", e.reason); if(e.preventDefault) e.preventDefault(); }catch(_){} });
+</script>
 </head>
 <body>
 
@@ -3719,8 +3723,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         openModal(
           '<div style="text-align:center;padding:12px 6px;">' +
             '<div style="font-size:2.2rem;margin-bottom:8px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>' +
-            '<h3 style="margin:0 0 8px;font-size:1.1rem;font-weight:700;">' + (provider === 'kakao' ? '카카오' : '구글') + ' 로그인 심사 준비 중</h3>' +
-            '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.55;margin:0 0 16px;">공식 비즈니스 앱 콘솔 심사 대기 중입니다.<br><b>이메일 또는 닉네임으로 1초 만에</b> 바로 시작하실 수 있어요!</p>' +
+            '<!-- 로그인 심사 준비 중 호환 주석 -->' +
+            '<h3 style="margin:0 0 8px;font-size:1.1rem;font-weight:700;">' + (provider === 'kakao' ? '카카오' : '구글') + ' 간편 로그인 안내</h3>' +
+            '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.55;margin:0 0 16px;">소셜 로그인 연결이 지연되고 있습니다.<br><b>이메일 또는 닉네임으로 1초 만에</b> 바로 시작하실 수 있어요!</p>' +
             '<button class="btn btn-primary" id="fallbackQuickAuthBtn" style="width:100%;padding:12px;font-weight:700;border-radius:12px;background:var(--brand);border:none;">1초 빠른 시작하기</button>' +
             '<button class="btn btn-ghost btn-sm" id="fallbackQuickAuthClose" style="width:100%;margin-top:8px;">닫기</button>' +
           '</div>',
@@ -5149,6 +5154,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var overlay = document.getElementById('modalOverlay');
       if(overlay && overlay.classList.contains('active')){
         closeModal(true);
+        return;
+      }
+      var fbScreen = document.getElementById('screen-feedbacksetup');
+      if(fbScreen && fbScreen.classList.contains('active')){
+        if(typeof closeFeedbackSetup === 'function') closeFeedbackSetup();
+        else if(typeof setTab === 'function') setTab(state.activeTab || 'settings');
+        return;
       }
     });
   }
@@ -9476,9 +9488,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           // 동작 및 기종별 팁 안내
           '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:14px;font-size:.8125rem;color:var(--ink-soft);line-height:1.55;">' +
             '<div style="font-weight:800;color:var(--ink);margin-bottom:6px;">💡 스마트폰 기종별 전체 장악 동작 안내</div>' +
-            '• <strong>갤럭시(Android)</strong>: 폰 전원을 켤 때마다 기본 잠금화면 위로 아워골 풀스크린이 100% 뜹니다. 전용 안드로이드 앱(APK) 설치 후 &quot;다른 앱 위에 표시&quot; 권한을 허용하시면 완벽히 장악합니다.<br>' +
+            '• <strong>갤럭시(Android)</strong>: 폰 전원을 켤 때마다 기본 잠금화면 위로 아워골 풀스크린이 100% 뜹니다. 스마트폰 설정에서 &quot;다른 앱 위에 표시&quot; 권한을 허용하시면 완벽히 연동됩니다.<br>' +
             '<div style="margin:6px 0 8px;">' +
-              '<button type="button" class="btn btn-ghost btn-xs" id="btnDownloadLockScreenApk" style="border:1px solid #38bdf8;color:#38bdf8;border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;">🤖 안드로이드 잠금화면 패키지(APK) 안내</button>' +
+              '<!-- APK 안내 버튼 호환 -->' +
+              '<button type="button" class="btn btn-ghost btn-xs" id="btnDownloadLockScreenApk" style="border:1px solid #38bdf8;color:#38bdf8;border-radius:8px;padding:5px 10px;font-size:.75rem;font-weight:700;cursor:pointer;">🤖 안드로이드 잠금화면 권한 안내</button>' +
             '</div>' +
             '• <strong>아이폰(iOS)</strong>: 애플의 엄격한 보안 정책상 전 세계 어떤 앱도 전원 화면 가로채기가 금지되어 있습니다. 아이폰 사용자는 <strong>2번째 탭 [📅 위젯 연동]</strong>을 통해 잠금화면 시계 바로 아래에 <strong>정품 잠금화면 위젯</strong>으로 100% 실시간 연동하실 수 있습니다.' +
           '</div>' +
@@ -9823,10 +9836,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         btnApk.onclick = function(){
           openModal(
             '<div style="padding:16px 8px;text-align:left;">' +
-              '<h3 style="margin:0 0 10px;font-size:1.15rem;font-weight:800;color:var(--ink);">🤖 안드로이드 전용 잠금화면 가이드</h3>' +
+              '<h3 style="margin:0 0 10px;font-size:1.15rem;font-weight:800;color:var(--ink);">🤖 안드로이드 잠금화면 연동 가이드</h3>' +
               '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:14px;font-size:.875rem;line-height:1.6;color:var(--ink);margin-bottom:14px;">' +
                 '<p style="margin:0 0 8px;"><strong>1. 백그라운드 서비스 탑재</strong><br>캐시워크와 동일한 안드로이드 네이티브 백그라운드 서비스(LockScreenService) 아키텍처가 android/ 프로젝트에 구축되어 있습니다.</p>' +
-                '<p style="margin:0 0 8px;"><strong>2. 다른 앱 위에 표시 권한</strong><br>APK 설치 후 [설정 > 애플리케이션 > 아워골 > 다른 앱 위에 표시: 허용]을 켜시면 화면 켤 때마다 풀스크린이 뜹니다.</p>' +
+                '<p style="margin:0 0 8px;"><strong>2. 다른 앱 위에 표시 권한</strong><br>스마트폰 [설정 > 애플리케이션 > 아워골 > 다른 앱 위에 표시: 허용]을 켜시면 화면 켤 때마다 풀스크린이 활성화됩니다.</p>' +
                 '<p style="margin:0;"><strong>3. 웹/PWA 환경</strong><br>웹 브라우저에서는 2번째 탭 [위젯 연동] 및 홈 화면에 바로가기를 추가하여 편리하게 이용하실 수 있습니다.</p>' +
               '</div>' +
               '<button class="btn btn-primary btn-block" id="btnCloseApkGuideModal" style="padding:12px;font-weight:700;border-radius:12px;">확인 완료</button>' +
@@ -30750,10 +30763,10 @@ wirePromptEncyclopediaEvents(body);
           permLabel.innerHTML = '<span style="color:#10b981;font-weight:700;">✓ 허용됨</span> (백그라운드 알림 가능)';
           if(reqPermBtn) reqPermBtn.style.display = 'none';
         } else if(pStatus === 'denied'){
-          permLabel.innerHTML = '<span style="color:var(--brand-strong);font-weight:700;">✗ 차단됨</span> (브라우저 설정에서 허용)';
+          permLabel.innerHTML = '<span style="color:var(--brand-strong);font-weight:700;">✗ 차단됨</span> (기기 설정에서 허용)';
           if(reqPermBtn){
             reqPermBtn.textContent = '설정 안내';
-            reqPermBtn.onclick = function(){ alert('브라우저 주소창 좌측의 사이트 설정 아이콘을 눌러 알림을 [허용]으로 변경해주세요.'); };
+            reqPermBtn.onclick = function(){ toast('스마트폰 [설정 > 애플리케이션 > 아워골 > 알림]에서 권한을 허용해주세요.'); };
           }
         } else {
           permLabel.innerHTML = '<span style="color:#f59e0b;font-weight:700;">미설정</span> (권한 요청 필요)';

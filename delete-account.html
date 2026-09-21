@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>계정 및 데이터 삭제 신청 - 아워골 (OurGoal)</title>
+  <link rel="icon" type="image/png" href="/icons/favicon-16.png">
+  <style>
+    :root {
+      --bg: #F4F5FB;
+      --card-bg: #FFFFFF;
+      --text-main: #14162B;
+      --text-muted: #5D6180;
+      --brand: #FF4F64;
+      --brand-hover: #E03E52;
+      --border: #E5E7EB;
+      --danger: #DC2626;
+      --danger-bg: #FEF2F2;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    .header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--brand);
+      text-decoration: none;
+    }
+    .header-logo img {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+    }
+    .header a.back-link {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #F0F1F7;
+    }
+    .container {
+      max-width: 680px;
+      margin: 32px auto;
+      padding: 0 20px 60px;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 32px 28px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+      border: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--danger);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-top: 24px;
+      margin-bottom: 10px;
+      color: var(--text-main);
+    }
+    p, li {
+      font-size: 0.92rem;
+      color: #33364D;
+      margin-bottom: 8px;
+    }
+    ul {
+      padding-left: 20px;
+      margin-bottom: 16px;
+    }
+    .danger-box {
+      background: var(--danger-bg);
+      border: 1px solid #FCA5A5;
+      padding: 16px;
+      border-radius: 12px;
+      margin: 20px 0;
+      font-size: 0.88rem;
+      color: #991B1B;
+    }
+    .danger-box strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+    .field {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+    label {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+    input[type="email"], textarea, select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 0.92rem;
+      background: #FAFAFD;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    input[type="email"]:focus, textarea:focus {
+      border-color: var(--brand);
+      background: #FFFFFF;
+    }
+    .checkbox-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 18px 0;
+      font-size: 0.88rem;
+      color: #4B5563;
+    }
+    .checkbox-wrap input {
+      margin-top: 3px;
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 13px;
+      background: var(--danger);
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .btn-submit:hover {
+      background: #B91C1C;
+    }
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .success-message {
+      display: none;
+      background: #F0FDF4;
+      border: 1px solid #86EFAC;
+      color: #166534;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .info-section {
+      background: #F8F9FD;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-top: 28px;
+      font-size: 0.88rem;
+      border: 1px solid #E5E7EB;
+    }
+    .footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 32px;
+    }
+    .footer a {
+      color: var(--text-muted);
+      text-decoration: underline;
+      margin: 0 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="/" class="header-logo">
+      <img src="/icons/icon-192.png" alt="아워골 로고">
+      <span>아워골</span>
+    </a>
+    <a href="/" class="back-link">앱으로 돌아가기</a>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <h1>🗑️ 계정 및 데이터 삭제 신청 (회원 탈퇴)</h1>
+      <p>아워골(OurGoal)을 이용해 주셔서 감사합니다. 구글 플레이 계정 삭제 정책(Google Play Account Deletion Policy) 및 개인정보 보호법에 따라, 앱 미설치 상태에서도 본 웹페이지를 통해 언제든 계정과 연계된 모든 데이터의 파기를 신청하실 수 있습니다.</p>
+
+      <div class="danger-box">
+        <strong>⚠️ 삭제 시 유의사항</strong>
+        탈퇴 신청 시 회원의 모든 목표, 체크인 기록, 아바타 데이터, 피드 게시물 및 댓글이 데이터베이스에서 즉시 삭제 또는 30일 유예 후 영구 파기되며, 복구할 수 없습니다.
+      </div>
+
+      <h2>방법 1: 앱 내에서 즉시 삭제하기 (가장 빠름)</h2>
+      <p>아워골 앱이 설치되어 있는 경우 아래 경로로 즉시 계정을 삭제하실 수 있습니다:</p>
+      <ul>
+        <li><strong>앱 실행 &gt; 우측 하단 [설정] &gt; 최하단 [계정 관리: 회원 탈퇴]</strong></li>
+      </ul>
+
+      <h2>방법 2: 웹 브라우저를 통한 계정 삭제 신청</h2>
+      <p>앱을 이미 삭제하셨거나 기기 접속이 어려운 경우, 아래 양식을 제출하시면 계정 확인 후 파기 절차가 진행됩니다.</p>
+
+      <form id="deleteForm" onsubmit="handleDeleteSubmit(event)">
+        <div class="field">
+          <label for="userEmail">가입 이메일 주소 <span style="color:var(--danger)">*</span></label>
+          <input type="email" id="userEmail" required placeholder="예: user@example.com" autocomplete="email">
+        </div>
+
+        <div class="field">
+          <label for="deleteReason">탈퇴 사유 (선택)</label>
+          <select id="deleteReason">
+            <option value="">사유를 선택해주세요</option>
+            <option value="not_used">사용 빈도가 낮아서</option>
+            <option value="goal_achieved">목표를 모두 달성해서</option>
+            <option value="privacy">개인정보 보호를 위해</option>
+            <option value="service_issue">기능 및 서비스 불편</option>
+            <option value="other">기타</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="deleteDetail">기타 의견 또는 추가 요청사항 (선택)</label>
+          <textarea id="deleteDetail" rows="3" placeholder="아워골에 남기실 말씀이 있다면 작성해주세요."></textarea>
+        </div>
+
+        <div class="checkbox-wrap">
+          <input type="checkbox" id="confirmDelete" required>
+          <label for="confirmDelete" style="font-weight:normal;margin-bottom:0;">
+            모든 목표, 체크인 히스토리, 아바타 및 피드 데이터가 파기되며 복구할 수 없음을 이해하고 동의합니다.
+          </label>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn-submit">계정 및 모든 데이터 삭제 신청</button>
+      </form>
+
+      <div id="successMsg" class="success-message">
+        <h3 style="margin-top:0;font-size:1.1rem;color:#166534;">✅ 계정 삭제 신청이 접수되었습니다</h3>
+        <p style="margin-bottom:0;font-size:0.9rem;">
+          입력하신 이메일 확인 후 데이터베이스에서 안전하게 파기 처리됩니다.<br>
+          추가 문의가 있으실 경우 고객지원 이메일(<code>ourgoal.support@gmail.com</code>)로 연락주시기 바랍니다.
+        </p>
+      </div>
+
+      <div class="info-section">
+        <h3 style="margin-top:0;font-size:0.95rem;margin-bottom:8px;">📋 데이터 파기 및 보관 정책 안내</h3>
+        <p><strong>1. 즉시/유예 파기 대상 데이터</strong>:</p>
+        <ul style="margin-bottom:10px;">
+          <li>계정 정보: 이메일, 닉네임, 프로필 사진, 암호화된 비밀번호</li>
+          <li>활동 데이터: 목표 목록, 마일스톤, 체크인 기록, 일일 회고, 히트맵 통계</li>
+          <li>소셜 데이터: 피드 게시물, 응원/도움 반응, 댓글, 1:1 대화 기록, 차단 목록</li>
+          <li>기기 식별자: 웹 푸시 알림 토큰(VAPID)</li>
+        </ul>
+        <p><strong>2. 관계 법령에 따른 보존 데이터</strong>:</p>
+        <p style="margin-bottom:0;color:#6B7280;font-size:0.83rem;">
+          - 전자상거래 등에서의 소비자보호에 관한 법률: 소비자 불만 또는 분쟁처리에 관한 기록 (3년)<br>
+          - 통신비밀보호법: 서비스 접속에 관한 로그 기록 (3개월)
+        </p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <a href="/terms.html">서비스 이용약관</a> |
+      <a href="/privacy.html">개인정보처리방침</a> |
+      <a href="/delete-account.html">계정 삭제 신청</a>
+      <p style="margin-top:8px;">&copy; 2026 OurGoal. All rights reserved.</p>
+    </div>
+  </div>
+
+  <script>
+    async function handleDeleteSubmit(e) {
+      e.preventDefault();
+      var email = document.getElementById('userEmail').value.trim();
+      var reason = document.getElementById('deleteReason').value;
+      var detail = document.getElementById('deleteDetail').value.trim();
+      var submitBtn = document.getElementById('submitBtn');
+
+      if (!email) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = '처리 중...';
+
+      try {
+        // 서버로 탈퇴 접수 이벤트 전송
+        await fetch('/api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: 'account_deletion_web_requested',
+            props: { email: email, reason: reason, detail: detail }
+          })
+        }).catch(function(){});
+
+        document.getElementById('deleteForm').style.display = 'none';
+        document.getElementById('successMsg').style.display = 'block';
+      } catch (err) {
+        alert('신청 처리 중 오류가 발생했습니다. ourgoal.support@gmail.com 으로 문의해주세요.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = '계정 및 모든 데이터 삭제 신청';
+      }
+    }
+  </script>
+</body>
+</html>
