@@ -1,0 +1,116 @@
+{
+  "task": "T006",
+  "requirementsSource": "docs/specs/REQ-T006-PLAY-ASSETLINKS.md",
+  "requirements": [
+    { "id": "R1", "text": "Google Play 개발자 계정을 등록한다($25 결제·신분 확인)" },
+    { "id": "R2", "text": "웹앱을 Android 패키지(AAB)로 만들고 서명키를 보관한다" },
+    { "id": "R3", "text": "/.well-known/assetlinks.json 을 Vercel 에 배포한다(패키지명·SHA256)" },
+    { "id": "R4", "text": "Play Console 앱 생성 → 폐쇄 테스트 트랙 → AAB 업로드 → 테스터 이메일 리스트(지인 16명) → 옵트인 링크 확보" },
+    { "id": "R5", "text": "스토어 등록정보 임시 입력(이름·짧은 설명·아이콘·스크린샷 2장)" }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R3", "kind": "static",
+      "domain": "config",
+      "statement": "assetlinks.json 에 적힌 패키지명은 com.yangbis.ourgoal 이다",
+      "touches": [".well-known/assetlinks.json"],
+      "check": { "type": "jsonPath", "file": ".well-known/assetlinks.json", "path": "0.target.package_name", "equals": "com.yangbis.ourgoal" }
+    },
+    {
+      "id": "C2", "req": "R3", "kind": "static",
+      "domain": "config",
+      "statement": "assetlinks.json 에 적힌 인증서 지문은 AAB 에서 keytool 로 잰 업로드 키 지문 하나다",
+      "touches": [".well-known/assetlinks.json"],
+      "check": {
+        "type": "jsonPath", "file": ".well-known/assetlinks.json", "path": "0.target.sha256_cert_fingerprints",
+        "equals": ["64:C7:32:00:24:A4:43:89:67:4C:D9:05:97:5F:59:ED:08:9E:63:66:C9:A3:1A:70:CF:D3:6B:FC:B9:9C:04:BB"]
+      }
+    },
+    {
+      "id": "C3", "req": "R3", "kind": "unverified",
+      "domain": "server-api",
+      "statement": "운영 주소의 /.well-known/assetlinks.json 이 HTTP 200 으로 같은 내용을 내보낸다",
+      "touches": [".well-known/assetlinks.json"],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "병합 뒤 운영 주소에 접속할 수 있는 사람이나 세션",
+        "how": [
+          "이 PR 을 병합하고 Vercel 배포가 끝나기를 기다린다",
+          "https://ourgoal-app.vercel.app/.well-known/assetlinks.json 을 연다",
+          "HTTP 200 이고 package_name 과 지문이 저장소 파일과 같은지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C4", "req": "R2", "kind": "static",
+      "domain": "config",
+      "statement": "서명키 파일(*.keystore)이 저장소에 들어가지 않게 .gitignore 에 막는 규칙을 넣었다",
+      "touches": [".gitignore"],
+      "check": { "type": "codeContains", "file": ".gitignore", "text": "*.keystore" }
+    },
+    {
+      "id": "C5", "req": "R2", "kind": "unverified",
+      "domain": "native-device",
+      "statement": "09-17 에 만든 AAB 가 실제 안드로이드 폰에 설치되어 아워골 앱으로 실행된다",
+      "touches": ["docs/GOOGLE_PLAY_CLOSED_TEST_RUNBOOK.md"],
+      "unverified": {
+        "reason": "needs-real-device",
+        "who": "실제 안드로이드 폰을 가진 사람 [손 필요]",
+        "how": [
+          "폐쇄 테스트 옵트인 링크로 앱을 설치한다(또는 android-twa/app-release-signed.apk 를 폰에 직접 설치한다)",
+          "앱을 실행해 아워골 첫 화면이 뜨는지 본다",
+          "위쪽에 브라우저 주소창이 없는지 본다(스토어 설치본은 런북 3-A 단계를 마친 뒤에만 없어진다)"
+        ]
+      }
+    },
+    {
+      "id": "C6", "req": "R1", "kind": "unverified",
+      "domain": "store-policy",
+      "statement": "Google Play 개발자 계정 등록은 하지 못했다 — 결제와 신분 확인은 본인만 할 수 있다",
+      "touches": ["docs/GOOGLE_PLAY_CLOSED_TEST_RUNBOOK.md"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "payment-window",
+        "who": "상민님 [손 필요]",
+        "how": [
+          "런북 0단계 순서대로 play.google.com/console/signup 에서 개인 계정을 등록한다",
+          "US$25 를 결제하고 신분 확인을 제출한다",
+          "승인 메일이 오면 Play Console 에 로그인되는지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C7", "req": "R4", "kind": "unverified",
+      "domain": "store-policy",
+      "statement": "Play Console 앱 생성·폐쇄 테스트 트랙·AAB 업로드·테스터 16명 등록·옵트인 링크 확보는 하지 못했다 — 개발자 계정과 테스터 이메일이 있어야 한다",
+      "touches": ["docs/GOOGLE_PLAY_CLOSED_TEST_RUNBOOK.md"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "external-page",
+        "who": "상민님 [손 필요]",
+        "how": [
+          "런북 1~3단계 순서대로 앱을 만들고 AAB 를 폐쇄 테스트 트랙에 올린다",
+          "테스터 탭에 지인 16명의 Google 이메일(또는 Google 그룹)을 등록한다",
+          "심사 승인 뒤 테스터 탭에 웹 참여 링크가 보이는지 본다",
+          "런북 3-A 단계의 앱 서명 키 지문을 세션에 전달한다"
+        ]
+      }
+    },
+    {
+      "id": "C8", "req": "R5", "kind": "unverified",
+      "domain": "store-policy",
+      "statement": "스토어 등록정보는 Play Console 에 입력하지 못했다 — 붙여 넣을 글과 그림 파일 경로만 런북에 있다",
+      "touches": ["docs/GOOGLE_PLAY_CLOSED_TEST_RUNBOOK.md"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "external-page",
+        "who": "상민님 [손 필요]",
+        "how": [
+          "런북 1단계의 앱 이름·간단한 설명·자세한 설명을 기본 스토어 등록정보에 붙여 넣는다",
+          "아이콘과 스크린샷 파일을 런북에 적힌 경로에서 올린다",
+          "저장한 뒤 등록정보 화면에 오류 표시가 없는지 본다"
+        ]
+      }
+    }
+  ]
+}
