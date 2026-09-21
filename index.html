@@ -1319,6 +1319,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="js/native-platform.js?v=20260921-es204"></script>
+<script src="js/native-push.js?v=20260921-es204"></script>
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
 <script src="js/helpful-reason.js"></script>
@@ -10410,7 +10412,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var isStandalone = (typeof window !== 'undefined' && ((window.navigator && window.navigator.standalone) || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)));
     var dismissed = false;
     try { dismissed = (typeof localStorage !== 'undefined' && localStorage.getItem('ios_pwa_dismissed') === '1'); } catch(e){}
-    if(!isIos || isStandalone || dismissed){
+    var inNativeShell = !!(window.OurgoalNative && window.OurgoalNative.isNative()); // 앱 안에서는 "홈 화면에 추가" 안내가 무의미
+    if(!isIos || isStandalone || dismissed || inNativeShell){
       slot.innerHTML = '';
       return;
     }
@@ -31375,6 +31378,7 @@ wirePromptEncyclopediaEvents(body);
   }
   async function syncPushSubscription(){
     try{
+      if(window.OurgoalNative && window.OurgoalNative.isNative()) return; // 네이티브 셸 푸시는 OneSignal 경로(js/native-push.js)
       if(!('serviceWorker' in navigator) || !('PushManager' in window)) return;
       if(!('Notification' in window) || Notification.permission!=='granted') return;
       var reg = await navigator.serviceWorker.ready;
@@ -32074,7 +32078,7 @@ wirePromptEncyclopediaEvents(body);
   }
 
   /* ============ PWA: Service Worker 등록 및 자동 업데이트 감지 (#TASK-ES-118) ============ */
-  if('serviceWorker' in navigator){
+  if('serviceWorker' in navigator && !(window.OurgoalNative && window.OurgoalNative.isNative())){
     window.addEventListener('load', function(){
       navigator.serviceWorker.register('/sw.js').then(function(reg){
         reg.addEventListener('updatefound', function(){

@@ -1,0 +1,117 @@
+{
+  "task": "TASK-ES-204",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-204-CAPACITOR-IOS-SHELL.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "Capacitor iOS 프로젝트(ios/)가 저장소에 생성되어 있고 번들 ID 가 안드로이드와 같은 com.yangbis.ourgoal 이다"
+    },
+    {
+      "id": "R2",
+      "text": "네이티브 셸(앱) 안에서는 브라우저 전용 코드(홈 화면 추가 안내·서비스워커 등록·웹 푸시 구독)가 꺼지도록 Capacitor.isNativePlatform() 판별로 게이팅되어 있다"
+    },
+    {
+      "id": "R3",
+      "text": "푸시(OneSignal)와 홈 위젯(WidgetKit \"오늘 목표\") 스켈레톤이 저장소에 있다"
+    },
+    {
+      "id": "R4",
+      "text": "Xcode 로 실기기에서 앱이 실행된다(완료 기준: 실기기 실행 스크린샷)"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "iOS Xcode 프로젝트 파일에 번들 ID com.yangbis.ourgoal 이 적혀 있다",
+      "touches": ["ios/App/App.xcodeproj/project.pbxproj"],
+      "check": {
+        "type": "codeContains",
+        "file": "ios/App/App.xcodeproj/project.pbxproj",
+        "text": "PRODUCT_BUNDLE_IDENTIFIER = com.yangbis.ourgoal;"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 의 iOS 홈 화면 추가 배너 렌더러에 네이티브 셸 게이트 변수가 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "dismissed || inNativeShell"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 의 서비스워커 등록 조건에 네이티브 셸 게이트가 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "'serviceWorker' in navigator && !(window.OurgoalNative && window.OurgoalNative.isNative())"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "판별 모듈 js/native-platform.js 가 Capacitor.isNativePlatform 을 호출한다",
+      "touches": ["js/native-platform.js"],
+      "check": {
+        "type": "codeContains",
+        "file": "js/native-platform.js",
+        "text": "c.isNativePlatform()"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "OneSignal 푸시 스켈레톤 js/native-push.js 가 저장소에 있다",
+      "touches": ["js/native-push.js"],
+      "check": {
+        "type": "fileExists",
+        "file": "js/native-push.js"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "WidgetKit 오늘 목표 위젯 스켈레톤 Swift 파일이 저장소에 있다",
+      "touches": ["ios/App/OurgoalWidget/OurgoalWidget.swift"],
+      "check": {
+        "type": "fileExists",
+        "file": "ios/App/OurgoalWidget/OurgoalWidget.swift"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R4",
+      "kind": "unverified",
+      "domain": "native-device",
+      "statement": "Xcode 로 아이폰 실기기에서 앱이 실행된다",
+      "touches": ["ios/App/App.xcodeproj/project.pbxproj"],
+      "unverified": {
+        "reason": "needs-real-device",
+        "who": "상민님(맥북 에어 + 아이폰 + Apple 개발자 계정 서명이 있어야 한다 — 이 PC 는 Windows 라 세션이 할 수 없다)",
+        "how": [
+          "맥북 에어를 켜고 저장소 최신 브랜치를 받는다(npm ci → npx cap sync ios → npx cap open ios)",
+          "Xcode 에서 Signing & Capabilities 의 Team 을 선택하고 아이폰을 연결해 실행(▶)한다",
+          "앱 첫 화면이 뜬 상태의 스크린샷을 남긴다"
+        ]
+      }
+    }
+  ]
+}
