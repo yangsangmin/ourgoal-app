@@ -4,7 +4,7 @@
 // 일부러 만든 가짜를 법정에 넣어 가짜는 전부 걸러지고 정직한 작업은 통과하는지 단언한다. 법정이 거짓 합격을 내는 순간 이 시험이 먼저 깨져야 한다.
 //   node court/selftest/run.js [--unit-only] [--filter <이름 일부>] [--isolate] [--keep] [--verbose]
 //   --unit-only  브라우저가 필요 없는 단위 시험(+별표 대조)만
-//   --filter     사례 id·제목에 이 글자가 들어간 것만
+//   --filter     사례 id·제목에 이 글자가 들어간 것만(쉼표로 여러 개: --filter F29,H4)
 //   --isolate    묶어서 돌리는 주장 단위 가짜를 하나씩 따로 돌린다(느리지만 가짜끼리 서로 가려 주지 못한다)
 //   --keep       합성 저장소·판정서 폴더를 지우지 않는다(어긋난 사례를 들여다볼 때)
 // 종료코드: 0 전부 기대대로 · 1 하나라도 어긋남. 마지막 줄: "자가시험: 기대대로 N/N"
@@ -67,7 +67,8 @@ function removePrivateTmp() {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   keepTmp = args.keep;
-  const match = (id, title) => !args.filter || (id + ' ' + title).toLowerCase().includes(args.filter.toLowerCase());
+  const wanted = args.filter ? args.filter.toLowerCase().split(',').map(x => x.trim()).filter(Boolean) : [];
+  const match = (id, title) => !wanted.length || wanted.some(w => (id + ' ' + title).toLowerCase().includes(w));
   const tAll = Date.now();
   console.log('법정 자가시험 — 가짜는 전부 걸러지고 정직한 작업은 통과해야 한다 (node ' + process.version + ')');
 
@@ -80,8 +81,25 @@ async function main() {
     const outRoot = fs.mkdtempSync(path.join(PRIVATE_TMP, 'out-'));
     const labs = new Map();
     const labFor = variant => { const k = variant || 'standard'; if (!labs.has(k)) labs.set(k, createLab({ variant: k })); return labs.get(k); };
-    const ctxBase = { grade, exitOf: verdict => EXIT[verdict] };
-    const runJudge = async (lab, head, quick, tag) => judge({ repo: lab.dir, head, quick, out: path.join(outRoot, tag) });
+    // 사례가 환경변수를 주면(예: GITHUB_ACTIONS 만 켠 실행) 법정을 부르는 동안만 걸었다가 되돌린다.
+    const withEnv = async (env, fn) => {
+      const saved = {};
+      for (const [k, val] of Object.entries(env || {})) { saved[k] = process.env[k]; process.env[k] = val; }
+      try { return await fn(); } finally { for (const k of Object.keys(saved)) { if (saved[k] === undefined) delete process.env[k]; else process.env[k] = saved[k]; } }
+    };
+    const runJudge = async (lab, head, quick, tag, env) => withEnv(env, () => judge({ repo: lab.dir, head, quick, out: path.join(outRoot, tag) }));
+    // 법정을 자식 프로세스에서 돌린다(child.js). 전용 임시 폴더를 따로 주어, 그 실행이 남긴 것만 셀 수 있게 한다.
+    const runChild = (tag, cfg) => {
+      const tmp = fs.mkdtempSync(path.join(PRIVATE_TMP, 'child-'));
+      const out = path.join(outRoot, tag);
+      const r = spawnSync(process.execPath, [path.join(__dirname, 'child.js'), JSON.stringify({ ...cfg, out })], { encoding: 'utf8', timeout: 600000, maxBuffer: 64 * 1024 * 1024, env: { ...process.env, TMPDIR: tmp, TEMP: tmp, TMP: tmp } });
+      let result = null; try { result = JSON.parse(String(r.stdout || '').trim().split('\n').pop()); } catch (_) { result = null; }
+      let verdict = null; try { verdict = JSON.parse(fs.readFileSync(path.join(out, 'verdict.json'), 'utf8')); } catch (_) { verdict = null; }
+      let reportMd = null; try { reportMd = fs.readFileSync(path.join(out, 'REPORT.md'), 'utf8'); } catch (_) { reportMd = null; }
+      let left = []; try { left = fs.readdirSync(tmp); } catch (_) { left = []; }
+      return { status: r.status, signal: r.signal, stderr: String(r.stderr || ''), result, verdict, reportMd, left, out };
+    };
+    const ctxBase = { grade, report, exitOf: verdict => EXIT[verdict], labFor, runJudge, runChild, outRoot };
     const brief = v => v.verdict + (v.headline ? ' — ' + v.headline.slice(0, 70) : '');
 
     try {
@@ -94,9 +112,11 @@ async function main() {
         const t = collector(); const t0 = Date.now(); let note = '';
         try {
           const lab = labFor(c.lab);
+          // run 이 있는 사례는 법정을 스스로 부른다(같은 커밋을 두 번 심사하기·자식 프로세스에서 돌리기 등). 돌려준 글자는 결과 줄에 붙는다.
+          if (typeof c.run === 'function') { note = String((await c.run(t, { ...ctxBase, lab, id: c.id })) || ''); record(c.id, c.title, t.bad, Date.now() - t0, note); return; }
           const built = c.build(lab);
-          const v = await runJudge(lab, built.head, c.mode === 'quick', c.id);
-          const ctx = { ...ctxBase };
+          const v = await runJudge(lab, built.head, c.mode === 'quick', c.id, c.env);
+          const ctx = { ...ctxBase, lab, built };
           if (c.id === 'F24') { // 종료코드는 표만 믿지 않고 법정을 실제 명령으로도 돌려 본다
             const r = spawnSync(process.execPath, [path.join(__dirname, '..', 'judge.js'), '--repo', lab.dir, '--head', built.head, '--quick', '--out', path.join(outRoot, c.id + '-cli')], { encoding: 'utf8', timeout: 120000 });
             ctx.cliExit = r.status;
@@ -116,7 +136,8 @@ async function main() {
       const groups = args.isolate ? frags.map(f => ({ name: f.id, frags: [f] })) : [...new Set(frags.map(f => f.bundle))].map(b => ({ name: '묶음' + b, frags: frags.filter(f => f.bundle === b) }));
       for (const g of groups) {
         const t0 = Date.now(); let v = null, err = null;
-        const expectVerdict = g.frags.some(f => f.alone === '돌려보냄') ? '돌려보냄' : '확인 부족';
+        // 묶음의 판정은 조각들 가운데 가장 무거운 것이다(돌려보냄 > 확인 부족 > 통과). 조각 하나를 따로 돌리면 그 조각의 alone 그대로다.
+        const expectVerdict = ['돌려보냄', '확인 부족', '통과'].find(x => g.frags.some(f => f.alone === x)) || '확인 부족';
         try {
           const lab = labFor('standard');
           const tag = g.frags.map(f => f.id).join('-');

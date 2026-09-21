@@ -318,4 +318,7 @@ const APPENDIX_TEST = {
   },
 };
 
+// 검수 반영분(법정 속이기·헌법↔구현·정상 작업 오판)과 법정 댓글 이력의 단위 시험은 파일을 나눠 두었다.
+UNIT_TESTS.push(...require('./unit-review').TESTS, ...require('./unit-chat').TESTS);
+
 module.exports = { UNIT_TESTS, APPENDIX_TEST };

@@ -16,7 +16,7 @@ sanitizeGitEnv();
 
 // ───────────── 작은 앱(기준 커밋의 내용) ─────────────
 // 표식(LAB:…)은 가짜·정직 사례가 코드를 끼워 넣는 자리다. 표식이 HTML 주석·JS 블록 주석인 이유: 앱 동작에 영향을 주지 않기 위해서다.
-const MARK = { homeExtra: '<!-- LAB:HOME-EXTRA -->', initExtra: '/* LAB:INIT-EXTRA */', popstate: '/* LAB:POPSTATE */', cancelWire: '/* LAB:CANCEL-WIRE */' };
+const MARK = { homeExtra: '<!-- LAB:HOME-EXTRA -->', goalsExtra: '<!-- LAB:GOALS-EXTRA -->', scriptExtra: '<!-- LAB:SCRIPT-EXTRA -->', initExtra: '/* LAB:INIT-EXTRA */', popstate: '/* LAB:POPSTATE */', cancelWire: '/* LAB:CANCEL-WIRE */' };
 
 const INDEX_HTML = `<!doctype html>
 <html lang="ko">
@@ -60,7 +60,8 @@ const INDEX_HTML = `<!doctype html>
 </div>
 <div id="screen-goals" class="screen">
   <h1>목표</h1>
-  <button class="btn-primary" type="button">새 목표 만들기</button>
+  <button id="sAddGoalBtn" class="btn-primary" type="button">새 목표 만들기</button>
+  ${MARK.goalsExtra}
 </div>
 <div id="screen-records" class="screen">
   <h1>기록</h1>
@@ -80,6 +81,7 @@ const INDEX_HTML = `<!doctype html>
   <button class="navbtn" type="button" data-tab="records">기록</button>
 </nav>
 </div>
+${MARK.scriptExtra}
 <script src="js/mod.js"></script>
 <script src="js/extra.js"></script>
 <script src="js/app.js"></script>
@@ -106,7 +108,7 @@ const EXTRA_JS = `// 작은 앱의 두 번째 부품. 전역 LabExtra 를 등록
 // cancelWired=false 는 "진짜 결함이 있는 기준 커밋"(취소 버튼이 새 목표 창을 닫지 않는다)을 만든다 — 정직한 결함 수정(H2)의 출발점.
 function appJs(opts) {
   const cancelWired = !(opts && opts.cancelWired === false);
-  return `// 작은 앱 본체. 실제 앱과 같은 선택자 계약(#btnLandingPreviewDirect·#homeAddGoal·#screen-goals .btn-primary·#modalOverlay·.navbtn·#toast)만 흉내 낸다. 외부 통신 없음.
+  return `// 작은 앱 본체. 실제 앱과 같은 선택자 계약(#btnLandingPreviewDirect·#homeAddGoal·#sAddGoalBtn·#modalOverlay·.navbtn·#toast)만 흉내 낸다. 외부 통신 없음.
 (function () {
   'use strict';
   function $(id) { return document.getElementById(id); }
@@ -138,7 +140,7 @@ function appJs(opts) {
     if (!add) return; // 부품 로드 탐침(vm)에는 화면이 없다 — 거기서 죽으면 회귀 비교가 안 된다
     $('btnLandingPreviewDirect').addEventListener('click', function () { document.body.classList.add('entered'); }); // 실제 앱의 "로그인 없이 둘러보기"
     add.addEventListener('click', openModal);
-    document.querySelector('#screen-goals .btn-primary').addEventListener('click', openModal);
+    $('sAddGoalBtn').addEventListener('click', openModal); // 법정 표준 점검(std-modal-close-stays-on-tab)이 누르는 목표 탭의 주 버튼
     $('modalOverlay').addEventListener('click', function (e) { if (e.target === this) closeModal(); });
     ${cancelWired ? "$('ngCancelBtn').addEventListener('click', closeModal);" : MARK.cancelWire}
     window.addEventListener('popstate', onPopState);
@@ -176,25 +178,53 @@ ${SMOKE_CHECKS.greet}
 if (failures) process.exitCode = 1;
 `;
 
+// 변형 with-calc: 시험지가 제품 부품(js/calc.js)을 같은 프로세스에서 실제로 돌린다 — 실제 앱의 시험지와 같은 모양이다.
+// 여러 줄로 쓴 검사 2개(제품 함수를 돌리는 검사 · 글자가 있는지만 보는 검사)와, 실제 게이트처럼 검사 사이에 구획을 알리는 출력 줄이 있다.
+// 검사 제목 고치기·번호 표기·폐기 사유(retire)·제품이 시험을 죽이는 경우·시험 결과 꾸미기 사례의 출발점.
+const CALC_JS = `// 작은 앱의 계산 부품. 화면(전역 LabCalc)과 시험지(require) 양쪽에서 쓴다.
+(function (root) {
+  'use strict';
+  function add(a, b) { return a + b; }
+  root.LabCalc = { add: add };
+  if (typeof module !== 'undefined') module.exports = root.LabCalc;
+})(typeof window !== 'undefined' ? window : globalThis);
+`;
+const CALC_CHECKS = {
+  add: "check('[검증 1/2] 계산기 더하기', () => {\n  assert.strictEqual(calc.add(1, 2), 3);\n});",
+  pin: "check('[검증 2/2] 부품에 인사 함수 글자가 있다', () => {\n  assert.ok(/greet:\\s*greet/.test(mod));\n});",
+};
+const CALC_SECTION = "console.log('[구획] 계산 부품 검사');";
+const CALC_FOOTER = "console.log('[구획] 검사 끝');";
+const SMOKE_END = 'if (failures) process.exitCode = 1;';
+const SMOKE_TEST_CALC_JS = SMOKE_TEST_JS
+  .replace('let failures = 0;', () => "const calc = require('../js/calc.js');\nlet failures = 0;")
+  .replace(SMOKE_END, () => [CALC_SECTION, CALC_CHECKS.add, CALC_CHECKS.pin, CALC_FOOTER, SMOKE_END].join('\n'));
+
+// 변형 boot-error: 기준 커밋부터 "앱 주소가 든 오류"가 앱을 띄울 때마다 난다(없는 파일을 불러오려다 실패). 이번 변경이 만든 오류가 아니다.
+const PREEXISTING_BOOT_ERROR = '<script>import("/js/not-there.js");</script>';
+
 // "cleartext": true — 콜론 뒤 공백 1칸이 있는 원본. F19 가 이 공백만 지운다(값은 그대로 true).
 const CAPACITOR_JSON = '{\n  "appId": "lab.court.selftest",\n  "server": {\n    "cleartext": true\n  }\n}\n';
 const PACKAGE_JSON = JSON.stringify({ name: 'court-selftest-lab', private: true, version: '1.0.0', scripts: { test: 'node scripts/smoke-test.js' } }, null, 2) + '\n';
 // 합성 저장소 안의 court/config.json 은 "금고 경로에 있는 파일"일 뿐이다. 법정은 자기 옆의 config.json 을 읽지 이 파일을 읽지 않는다.
 const LAB_COURT_CONFIG = JSON.stringify({ _설명: '합성 저장소의 금고 자리 표시 파일(법정은 이 파일을 읽지 않는다)', allowedPaths: ['/', '/index.html'] }, null, 2) + '\n';
 
+const VARIANTS = ['standard', 'cancel-broken', 'with-calc', 'boot-error'];
 function baseFiles(variant) {
-  if (variant !== 'standard' && variant !== 'cancel-broken') throw new Error('모르는 실험실 변형: ' + variant);
-  return {
-    'index.html': INDEX_HTML,
+  if (!VARIANTS.includes(variant)) throw new Error('모르는 실험실 변형: ' + variant);
+  const files = {
+    'index.html': variant === 'boot-error' ? INDEX_HTML.replace(MARK.scriptExtra, () => PREEXISTING_BOOT_ERROR + '\n' + MARK.scriptExtra) : INDEX_HTML,
     'js/mod.js': MOD_JS,
     'js/extra.js': EXTRA_JS,
     'js/app.js': appJs({ cancelWired: variant !== 'cancel-broken' }),
-    'scripts/smoke-test.js': SMOKE_TEST_JS,
+    'scripts/smoke-test.js': variant === 'with-calc' ? SMOKE_TEST_CALC_JS : SMOKE_TEST_JS,
     'capacitor.config.json': CAPACITOR_JSON,
     'package.json': PACKAGE_JSON,
     'court/config.json': LAB_COURT_CONFIG,
     'README.md': '# 법정 자가시험용 합성 저장소\n\n이 저장소는 자가시험이 만들고 지운다.\n',
   };
+  if (variant === 'with-calc') files['js/calc.js'] = CALC_JS;
+  return files;
 }
 
 // ───────────── 합성 저장소 ─────────────
@@ -278,4 +308,4 @@ function replaceOnce(from, to) {
   };
 }
 
-module.exports = { createLab, baseFiles, insertAt, replaceOnce, MARK, SMOKE_CHECKS, sanitizeGitEnv, GIT_LOCATION_VARS };
+module.exports = { createLab, baseFiles, insertAt, replaceOnce, MARK, SMOKE_CHECKS, CALC_CHECKS, SMOKE_END, VARIANTS, sanitizeGitEnv, GIT_LOCATION_VARS };
