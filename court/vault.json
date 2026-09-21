@@ -1,5 +1,5 @@
 {
-  "_설명": "검증기 금고. frozen=채점 기준 그 자체(작업과 같은 변경 묶음에서 바뀌면 돌려보냄, 바꾸려면 금고만 담은 별도 PR + 상민님 결심). baseTests=테스트 파일(고칠 수는 있지만 법정은 항상 기준 커밋의 시험지로 작업 커밋의 제품을 채점한다 — 깨지는 기존 검사는 주장 파일의 retire 에 사유를 적어야 한다). 이 파일 자체도 금고 안에 있다.",
+  "_설명": "검증기 금고. frozen=채점 기준 그 자체(작업과 같은 변경 묶음에서 바뀌면 돌려보냄, 바꾸려면 금고만 담은 별도 PR + 상민님 결심). baseTests=테스트 파일(고칠 수는 있지만 법정은 항상 기준 커밋의 시험지로 작업 커밋의 제품을 채점한다 — 깨지는 기존 검사는 주장 파일의 retire 에 사유를 적어야 한다). neutral=배포되지 않는 문서·기록·보조 파일(주장 없이 바꿔도 된다). 분류는 뒤집혀 있다: frozen·baseTests·neutral 이 아닌 모든 변경은 제품으로 본다(주장 없이는 통과하지 못한다). 이 파일 자체도 금고 안에 있다.",
   "frozen": [
     "court/**",
     "AGENTS.md",
@@ -56,17 +56,36 @@
   ],
   "product": [
     "index.html",
+    "launch.html",
+    "widget.html",
+    "*.html",
     "ui.js",
     "ui.css",
     "sw.js",
     "manifest.json",
     "manifest.webmanifest",
+    "app-ads.txt",
     "js/**",
     "api/**",
     "css/**",
+    "icons/**",
     "android/**",
+    "sim/**",
     "capacitor.config.json",
     "docs/sql/**"
+  ],
+  "neutral": [
+    "docs/**",
+    "reports/**",
+    "scratch/**",
+    "temp/**",
+    "*.md",
+    ".gitignore",
+    ".codex/**",
+    ".claude/**",
+    ".agent/**",
+    ".agents/**",
+    ".task-links/**"
   ],
   "verifierLike": [
     "scripts/verify-*.js",

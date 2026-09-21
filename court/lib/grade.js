@@ -20,12 +20,18 @@ function isGrade(id) { return Object.prototype.hasOwnProperty.call(BY_ID, id); }
 function label(id) { return BY_ID[id] ? BY_ID[id].label : String(id); }
 function meets(achieved, required) { return rank(achieved) >= rank(required) && rank(required) >= 0; }
 function min(a, b) { return rank(a) <= rank(b) ? a : b; }
+function max(a, b) { return rank(a) >= rank(b) ? a : b; } // 모르는 등급(rank -1)은 아는 등급을 이기지 못한다
 
 function loadFloors(file) {
   const p = file || path.join(__dirname, '..', 'grade-floors.json');
   const j = JSON.parse(fs.readFileSync(p, 'utf8'));
   for (const [domain, d] of Object.entries(j.domains)) {
     if (!isGrade(d.floor)) throw new Error('grade-floors.json: ' + domain + ' 의 floor 가 등급이 아니다');
+  }
+  // 경로·낱말 하한도 같이 본다. 등급이 아닌 값이나 깨진 패턴은 "조용히 하한을 못 올리는 규칙"이 되므로 읽는 순간 멈춘다.
+  for (const rule of (j.pathFloors || []).concat(j.keywordFloors || [])) {
+    if (!isGrade(rule.floor)) throw new Error('grade-floors.json: 패턴 ' + rule.pattern + ' 의 floor 가 등급이 아니다');
+    try { new RegExp(rule.pattern); } catch (e) { throw new Error('grade-floors.json: 패턴을 읽을 수 없다 — ' + rule.pattern); }
   }
   return j;
 }
@@ -37,4 +43,4 @@ function floorFor(domain, floors) {
   return d ? d.floor : f.unknownDomainFloor;
 }
 
-module.exports = { GRADES, rank, isGrade, label, meets, min, loadFloors, floorFor };
+module.exports = { GRADES, rank, isGrade, label, meets, min, max, loadFloors, floorFor };

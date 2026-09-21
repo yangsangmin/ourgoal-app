@@ -73,7 +73,45 @@ function renderAppendix3(vault) {
     L.push('');
     L.push(...table(['순번', '경로'], v[key].map((p, i) => [String(i + 1), code(p)])));
   }
+  // 분류는 뒤집혀 있다: 아래 목록만 "주장 없이 바꿔도 되는 파일"이고, 여기에도 동결에도 없는 나머지 변경은 전부 제품으로 본다.
+  if (Array.isArray(v.neutral)) {
+    L.push('');
+    L.push('**주장 없이 바꿔도 되는 파일(배포 안 됨) — 이 목록·동결에 없는 나머지는 모두 제품**');
+    L.push('');
+    L.push(...table(['순번', '경로'], v.neutral.map((p, i) => [String(i + 1), code(p)])));
+  }
   return L.join('\n');
+}
+
+// [승인 근거 검사] 버전 대장(CONSTITUTION_VERSIONS.md)의 마지막 행 승인 근거 칸에 병합 기록(PR #숫자)이 있는가.
+// 승인 근거는 작업자가 쓸 수 없는 기록의 주소여야 한다 — 인용문만 있고 PR 번호가 없으면 효력이 없다(헌법 제14조 제8항 3호).
+function lastLedgerRow(src) {
+  const lines = src.split('\n');
+  let hi = -1;
+  for (let i = 0; i < lines.length; i++) { const t = lines[i].trim(); if (t.startsWith('|') && t.includes('승인 근거')) { hi = i; break; } }
+  if (hi < 0) return null;
+  const rows = [];
+  for (let i = hi + 1; i < lines.length; i++) {
+    const t = lines[i].trim();
+    if (!t.startsWith('|')) break;
+    if (/^\|[\s:|-]+\|?$/.test(t)) continue; // 구분선(:---)은 건너뛴다
+    rows.push(t);
+  }
+  return rows.length ? rows[rows.length - 1] : null;
+}
+
+function checkLedger(ledgerPath) {
+  let src;
+  try { src = fs.readFileSync(ledgerPath, 'utf8').replace(/\r\n/g, '\n'); }
+  catch (e) { return { ok: false, reason: '버전 대장을 읽을 수 없다: ' + e.message }; }
+  const row = lastLedgerRow(src);
+  if (!row) return { ok: false, reason: '버전 대장에서 승인 근거 표를 찾지 못했다' };
+  const cells = row.split(/(?<!\\)\|/).map(s => s.trim());
+  while (cells.length && cells[0] === '') cells.shift();
+  while (cells.length && cells[cells.length - 1] === '') cells.pop();
+  const basis = cells.length ? cells[cells.length - 1] : '';
+  if (!/PR\s*#\s*\d+/.test(basis)) return { ok: false, reason: '버전 대장 마지막 행의 승인 근거 칸에 병합 기록(PR #숫자)이 없다: ' + basis.slice(0, 100), cell: basis };
+  return { ok: true, cell: basis };
 }
 
 // 마커 사이 구간을 꺼낸다. 마커가 없거나 둘 이상이면 "대조했다"고 말할 수 없으므로 불일치로 돌려준다.
@@ -112,10 +150,14 @@ function check(constitutionPath, opts) {
     const d = firstDiff(expected[n], got.body);
     mismatches.push({ appendix: n, reason: '정본의 표와 JSON 에서 만든 표가 다르다', line: got.line + d.offset, expected: d.expected, actual: d.actual });
   }
+  // 버전 대장의 마지막 행 승인 근거 칸에 병합 기록(PR #숫자)이 있는가. 없으면 근거 없는 행이 main 에 들어온 것이므로 실패로 알린다.
+  const ledgerPath = o.ledger || path.join(path.dirname(path.resolve(constitutionPath)), 'CONSTITUTION_VERSIONS.md');
+  const led = checkLedger(ledgerPath);
+  if (!led.ok) mismatches.push({ appendix: 'ledger', reason: led.reason });
   return { ok: mismatches.length === 0, mismatches };
 }
 
-module.exports = { renderAppendix2, renderAppendix3, check, MARKERS };
+module.exports = { renderAppendix2, renderAppendix3, check, checkLedger, lastLedgerRow, MARKERS };
 
 if (require.main === module) {
   const [mode, arg] = process.argv.slice(2);

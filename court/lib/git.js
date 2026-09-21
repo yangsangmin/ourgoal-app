@@ -76,6 +76,43 @@ function changedFiles(repo, base, head) {
   return out;
 }
 
+// base..head 사이의 모든 커밋에서 pathspec 에 걸리는 파일이 어떤 판(blob)으로 있었는지 새 커밋부터 돌려준다.
+// 지금은 지워진 경로의 옛 판도 나온다(주장 파일을 다른 폴더로 옮기거나 지워서 이력을 감추는 길을 막는 데 쓴다).
+// 병합 커밋도 부모별로 펼쳐서 본다(-m). 이름 변경은 삭제+추가로 본다(--no-renames). 돌려주는 값: { ok, truncated, versions: [{ sha, path, blob|null(삭제), status }] }
+function pathHistory(repo, base, head, pathspec, maxCommits) {
+  const max = maxCommits || 400;
+  const r = tryGit(repo, ['log', '--format=%x01%H', '--raw', '--no-abbrev', '--no-renames', '-m', '-n', String(max + 1), base + '..' + head, '--', pathspec]);
+  if (!r.ok) return { ok: false, truncated: false, versions: [], error: r.out.slice(0, 200) };
+  const versions = [], commits = new Set();
+  let sha = null;
+  for (const line of r.out.split('\n')) {
+    if (line.charCodeAt(0) === 1) { sha = line.slice(1).trim(); commits.add(sha); continue; }
+    const m = /^:\d+ \d+ [0-9a-f]+ ([0-9a-f]+) ([A-Z])\d*\t(.+)$/.exec(line);
+    if (!m || !sha || commits.size > max) continue;
+    versions.push({ sha, path: m[3], blob: /^0+$/.test(m[1]) ? null : m[1], status: m[2] });
+  }
+  return { ok: true, truncated: commits.size > max, versions };
+}
+
+// 커밋 rev 의 dir 아래 파일들이 어떤 blob 인지(경로 → blob). 기준 커밋에 이미 있던 판과 이번 변경이 만든 판을 가르는 데 쓴다.
+function treeBlobs(repo, rev, dir) {
+  const out = new Map();
+  const r = tryGit(repo, ['ls-tree', '-r', '-z', rev, '--', dir]);
+  if (!r.ok) return out;
+  for (const rec of r.out.split('\0')) {
+    const m = /^\d+ blob ([0-9a-f]+)\t(.+)$/.exec(rec);
+    if (m) out.set(m[2], m[1]);
+  }
+  return out;
+}
+
+// blob 의 내용(글자). 없으면 null.
+function blobText(repo, blobSha) {
+  if (typeof blobSha !== 'string' || !/^[0-9a-f]{40,64}$/.test(blobSha)) return null;
+  const r = tryGit(repo, ['cat-file', 'blob', blobSha]);
+  return r.ok ? r.out : null;
+}
+
 // 한 파일의 base→head 통합 diff 원문(금고의 '단언 삭제' 판정에 쓴다)
 function fileDiff(repo, base, head, filePath) {
   const r = tryGit(repo, ['diff', '-U0', base, head, '--', filePath]);
@@ -112,4 +149,4 @@ function headFacts(repo, headRev, mainRemote) {
   return facts;
 }
 
-module.exports = { git, tryGit, revParse, refExists, mergeBase, snapshot, fileAt, changedFiles, fileDiff, headFacts };
+module.exports = { git, tryGit, revParse, refExists, mergeBase, snapshot, fileAt, changedFiles, fileDiff, headFacts, pathHistory, treeBlobs, blobText };

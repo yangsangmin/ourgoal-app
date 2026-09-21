@@ -5,6 +5,10 @@
 //  - 선택자는 보이는 요소 정확히 1개에만 걸려야 한다(아무 버튼이나 누르고 통과하는 길을 막는다).
 //  - 사전 상태 주입은 금고의 fixture 이름으로만, 이동은 허용 경로로만 한다(결과 화면을 연출하는 길을 막는다).
 //  - 행동 "전에도 이미 참"이던 확인은 공허 확인으로 표시한다(항상 참인 단언으로 통과하는 길을 막는다).
+// 정상 작업을 고장으로 읽지 않기 위한 기록도 남긴다(판단은 탐침·judge 가 한다):
+//  - 행동이 안 된 까닭(failReason): 대상이 없어진 것과 대상이 여러 개가 된 것은 다른 일이다.
+//  - 법정이 막은 외부 요청(blockedExternal), 주소를 고정 글자로 바꾼 오류 문구(실행마다·커밋마다 포트가 다르다).
+//  - 앱을 연 뒤 브라우저가 답하지 않으면(끝나지 않는 반복 등) 도구 오류가 아니라 그 단계의 실패("페이지가 응답하지 않음")로 적는다.
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
@@ -125,6 +129,63 @@ const H = '(function(){function qa(s){try{return Array.prototype.slice.call(docu
   'return {qa:qa,vis:vis,txt:txt};})()';
 const J = v => JSON.stringify(v);
 
+// 오류 문구 속의 앱 주소(실행마다 바뀌는 호스트 이름·포트)와 blob: 임시 주소를 고정 글자로 바꾼다.
+// 기준·작업 커밋은 포트가 다른 주소로 뜨므로, 그대로 두면 양쪽에 똑같이 있던 오류가 "새 오류"로 세어진다. 판정번호도 실행마다 달라진다.
+const SITE_TOKEN = '(앱주소)', BLOB_TOKEN = 'blob:(임시주소)';
+function scrubSiteText(text, siteUrl) {
+  let s = String(text === undefined || text === null ? '' : text).replace(/blob:[^\s'"`()<>]+/g, BLOB_TOKEN);
+  let host = null;
+  try { host = siteUrl ? new URL(siteUrl).host : null; } catch (_) { host = null; }
+  if (siteUrl) s = s.split(String(siteUrl).replace(/\/+$/, '')).join(SITE_TOKEN);
+  if (host) { s = s.split(host).join(SITE_TOKEN); const name = host.replace(/:\d+$/, ''); if (name) s = s.split(name).join(SITE_TOKEN); }
+  return s;
+}
+
+// 행동 대상을 못 잡은 까닭. 보이는 대상이 0개면 "없어졌다", 2개 이상이면 "법정이 하나를 고를 수 없다"(기능 고장과는 다른 일이다).
+function targetReason(r) { return r && r.n === 0 ? 'no-target' : (r && r.n > 1 ? 'ambiguous' : 'blocked'); }
+
+// 이 Chrome 이 원래 내놓는 상표 목록. 빈 페이지에서는 읽을 수 없어서(보안 컨텍스트가 아니다), 법정 주소의 "없는 경로"를 잠깐 쓰고 버리는 브라우저로 한 번 열어 읽고 프로세스 동안 기억한다.
+// 시나리오를 돌리는 브라우저로 읽지 않는 까닭: 방문 기록에 법정 주소의 페이지가 하나 끼면 "뒤로가기로 앱 밖으로 나갔는가"(stillInApp) 확인이 흐려진다. 제품 코드는 이 페이지에서 돌지 않는다(404 글자뿐이다).
+const BLANK_PATH = '/.court-blank';
+const META_EXPR = '(async function(){var d=navigator.userAgentData;if(!d)return null;var h={};try{h=await d.getHighEntropyValues(["platform","platformVersion","architecture","model","bitness","uaFullVersion","fullVersionList","wow64"]);}catch(e){}' +
+  'return JSON.stringify({brands:d.brands,platform:h.platform||d.platform,platformVersion:h.platformVersion,architecture:h.architecture,model:h.model,bitness:h.bitness,uaFullVersion:h.uaFullVersion,fullVersionList:h.fullVersionList,wow64:h.wow64});})()';
+let chromeMetaCache; // undefined = 아직 안 읽음 · null = 읽지 못함(그러면 일반 Chrome 모양으로 새로 만든다)
+async function readChromeMeta(siteUrl, cfg, chromePath) {
+  if (chromeMetaCache !== undefined) return chromeMetaCache;
+  chromeMetaCache = null;
+  let b = null;
+  try {
+    b = await launch({ allowHosts: cfg.allowHosts, chromePath, siteOrigin: siteUrl, locale: cfg.locale });
+    await b.page.send('Page.enable'); await b.page.send('Runtime.enable');
+    const loaded = new Promise(res => { b.page.on('Page.loadEventFired', () => res()); setTimeout(res, 5000); });
+    await b.page.send('Page.navigate', { url: siteUrl + BLANK_PATH });
+    await loaded;
+    const m = await b.page.send('Runtime.evaluate', { expression: META_EXPR, returnByValue: true, awaitPromise: true }, 5000);
+    chromeMetaCache = m && m.result && typeof m.result.value === 'string' ? JSON.parse(m.result.value) : null;
+  } catch (_) { chromeMetaCache = null; }
+  finally { if (b) { try { await b.close(); } catch (_) { /* 종료 실패는 무시 */ } } }
+  return chromeMetaCache;
+}
+
+// 법정 브라우저가 서버에 알리는 "브라우저 상표" 목록(Sec-CH-UA · navigator.userAgentData)을 일반 Chrome 모양으로 만든다.
+// 자동 브라우저는 이 목록에도 표식이 있다. UA 글자만 고치면 이쪽으로 알아볼 수 있으므로 같이 고친다.
+function plainChromeMetadata(ua, raw) {
+  const major = (/Chrome\/(\d+)/.exec(ua) || [])[1] || '0';
+  const full = (/Chrome\/([\d.]+)/.exec(ua) || [])[1] || major + '.0.0.0';
+  const r = raw && typeof raw === 'object' ? raw : {};
+  // 읽어 온 목록이 있으면 표식이 든 이름만 바꾸고, 없으면(구형 Chrome·조회 실패) 일반 Chrome 의 세 칸 모양으로 새로 만든다.
+  const fix = (list, ver, otherVer) => {
+    const out = (Array.isArray(list) ? list : []).filter(b => b && typeof b.brand === 'string').map(b => ({ brand: /headless/i.test(b.brand) ? 'Google Chrome' : b.brand, version: String(b.version || ver) }));
+    return out.length ? out : [{ brand: 'Not)A;Brand', version: otherVer }, { brand: 'Chromium', version: ver }, { brand: 'Google Chrome', version: ver }];
+  };
+  const platform = typeof r.platform === 'string' && r.platform ? r.platform : (/Windows/.test(ua) ? 'Windows' : (/Mac OS X/.test(ua) ? 'macOS' : 'Linux'));
+  return {
+    brands: fix(r.brands, major, '8'), fullVersionList: fix(r.fullVersionList, full, '8.0.0.0'), fullVersion: typeof r.uaFullVersion === 'string' && r.uaFullVersion ? r.uaFullVersion : full,
+    platform, platformVersion: typeof r.platformVersion === 'string' ? r.platformVersion : '', architecture: typeof r.architecture === 'string' ? r.architecture : '',
+    model: typeof r.model === 'string' ? r.model : '', mobile: false, bitness: typeof r.bitness === 'string' ? r.bitness : '', wow64: !!r.wow64,
+  };
+}
+
 function expectExpr(st) {
   const s = J(st.selector || '');
   switch (st.expect) {
@@ -158,7 +219,9 @@ async function runScenario(opts) {
     id: scenario && scenario.id, title: scenario && scenario.title, fingerprint: scenario && scenario.steps ? scenarioFingerprint(scenario) : null,
     siteRev: siteRev || null, passed: false, invalid: errors.length > 0, errors, weaknesses, hollow: isHollow(weaknesses),
     failedStep: null, failKind: null, // failKind: 'expect'(확인이 거짓) | 'action'(행동·이동·대기 단계가 안 됨) | 'tool'(도구 오류)
+    failReason: null, // 행동이 안 된 까닭(기계가 읽는 값): 'no-target'(보이는 대상 없음) | 'ambiguous'(보이는 대상 여러 개) | 'blocked'(가려짐·비활성·값 거부) | 'unresponsive'(페이지가 응답하지 않음) | 'no-load'(화면이 안 뜸)
     steps: [], bootExceptions: [], exceptions: [], consoleErrors: [], dialogs: [], captures: [], fixtures: [],
+    blockedExternal: [], // 법정이 막은 외부 요청 { url, type } — 새 외부 라이브러리 때문에 난 오류를 "고장"과 구분하는 데 쓴다(probes/boot.js)
     nonVacuousExpects: 0, vacuousExpects: 0,
     viewport: null, chromeVersion: null, startedAt: new Date().toISOString(), finishedAt: null, toolError: null,
   };
@@ -168,7 +231,7 @@ async function runScenario(opts) {
   result.viewport = vp;
   let browser = null;
   const deadline = Date.now() + SCENARIO_TIMEOUT_MS;
-  let firstActionSeen = false;
+  let firstActionSeen = false, pageOpened = false;
   try {
     browser = await launch({ viewport: vp, allowHosts: cfg.allowHosts, chromePath, siteOrigin: siteUrl, locale: cfg.locale });
     result.chromeVersion = browser.version;
@@ -180,16 +243,45 @@ async function runScenario(opts) {
       if (r.exceptionDetails) throw new Error('조회식 오류: ' + (r.exceptionDetails.text || ''));
       return r.result ? r.result.value : undefined;
     };
+    const scrub = t => scrubSiteText(t, siteUrl);
     page.on('Runtime.exceptionThrown', p => {
       const d = p.exceptionDetails || {};
-      const text = d.exception && d.exception.description ? d.exception.description.split('\n')[0] : (d.text || 'exception');
-      const rec = { text, url: relUrl(d.url), line: (d.lineNumber || 0) + 1 };
+      const text = scrub(d.exception && d.exception.description ? d.exception.description.split('\n')[0] : (d.text || 'exception'));
+      const rec = { text, url: scrub(relUrl(d.url)), line: (d.lineNumber || 0) + 1 };
       (firstActionSeen ? result.exceptions : result.bootExceptions).push(rec);
     });
-    page.on('Log.entryAdded', p => { const e = p.entry || {}; if (e.level === 'error') result.consoleErrors.push({ text: String(e.text || '').slice(0, 300), url: relUrl(e.url) }); });
+    page.on('Log.entryAdded', p => { const e = p.entry || {}; if (e.level === 'error') result.consoleErrors.push({ text: scrub(String(e.text || '')).slice(0, 300), url: scrub(relUrl(e.url)) }); });
+    // 법정은 외부 통신을 막고 돈다(lib/chrome.js). 막혀서 못 받은 외부 요청을 적어 둔다 — 앱 주소로 가는 요청과 대체 응답(stubs)으로 채워 준 요청은 여기 오지 않는다.
+    const sent = new Map();
+    page.on('Network.requestWillBeSent', p => { if (p && p.requestId && p.request) sent.set(p.requestId, { url: String(p.request.url || ''), type: p.type || null }); });
+    page.on('Network.loadingFailed', p => {
+      const q = p && sent.get(p.requestId);
+      if (!q || !/^https?:\/\//i.test(q.url) || q.url.startsWith(siteUrl) || !/ERR_NAME_NOT_RESOLVED/.test(String(p.errorText || ''))) return;
+      const url = q.url.split(/[?#]/)[0].slice(0, 300); // 물음표 뒤(열쇠·토큰이 실릴 수 있다)는 판정서에 싣지 않는다
+      if (!result.blockedExternal.some(x => x.url === url)) result.blockedExternal.push({ url, type: p.type || q.type || null });
+    });
     page.on('Page.javascriptDialogOpening', p => { result.dialogs.push({ type: p.type, message: String(p.message || '').slice(0, 200) }); page.send('Page.handleJavaScriptDialog', { accept: true }).catch(() => {}); });
     await page.send('Page.enable'); await page.send('Runtime.enable'); await page.send('Log.enable'); await page.send('Network.enable');
     await page.send('Network.setBypassServiceWorker', { bypass: true });
+    // 법정 브라우저의 지문을 지운다: UA 에서 Headless 표식을 없애고 navigator.webdriver 를 false 로 만든다.
+    // 제품 코드가 "지금 법정인가"를 UA·webdriver 로 알아채 분기하는 길을 좁힌다(제품 코드의 그런 분기는 judge.js 의 추가 줄 검사가 따로 돌려보낸다).
+    // 지문 원값은 우리가 감추기 전에 재서 result.env 에 담는다(보고용).
+    try {
+      const rawUA = await ev('navigator.userAgent'), rawWd = await ev('String(navigator.webdriver)');
+      result.env = { userAgentRaw: typeof rawUA === 'string' ? rawUA : null, webdriverRaw: rawWd, hadHeadless: typeof rawUA === 'string' && /headless/i.test(rawUA) };
+      let ua = typeof rawUA === 'string' ? rawUA : '';
+      ua = ua.replace(/HeadlessChrome/g, 'Chrome').replace(/\s*Headless\s*/gi, ' ').replace(/\s{2,}/g, ' ').trim();
+      result.env.userAgentServed = ua;
+      // 상표 목록(Sec-CH-UA · navigator.userAgentData)도 같이 고친다. UA 글자만 재정의하면 이 목록이 통째로 비어 버려서(실측) 그것이 또 표식이 된다.
+      const rawMeta = await readChromeMeta(siteUrl, cfg, chromePath);
+      result.env.brandsRaw = rawMeta && Array.isArray(rawMeta.brands) ? rawMeta.brands.map(b => b.brand) : null;
+      const meta = plainChromeMetadata(ua, rawMeta);
+      result.env.brandsServed = meta.brands.map(b => b.brand);
+      const override = { userAgent: ua, acceptLanguage: (cfg.locale || 'ko-KR') + ',ko' };
+      try { await page.send('Network.setUserAgentOverride', { ...override, userAgentMetadata: meta }); }
+      catch (_) { result.env.brandsServed = null; await page.send('Network.setUserAgentOverride', override); } // 상표 목록을 못 고치는 Chrome 이면 UA 글자만이라도 고친다
+    } catch (_) { /* UA 재정의 실패는 판정을 막지 않는다 */ }
+    try { await page.send('Page.addScriptToEvaluateOnNewDocument', { source: 'try{Object.defineProperty(Navigator.prototype,"webdriver",{get:function(){return false;},configurable:true});}catch(e){}' }); } catch (_) { /* webdriver 감추기 실패는 무시 */ }
     await page.send('Emulation.setDeviceMetricsOverride', { width: vp.width, height: vp.height, deviceScaleFactor: 2, mobile: true });
     // 로컬(Windows·KST)과 CI(ubuntu·UTC)에서 "오늘"과 글자 표기가 갈리지 않게 시간대·언어를 고정한다.
     try { await page.send('Emulation.setTimezoneOverride', { timezoneId: cfg.timezone || 'Asia/Seoul' }); } catch (_) { /* 구형 Chrome */ }
@@ -251,7 +343,7 @@ async function runScenario(opts) {
         const nx = scenario.steps[j], k = stepKind(nx);
         if (k === 'do' && ACTION_KINDS.includes(nx.do)) break;
         if (k === 'expect' && !WEAK_EXPECTS.includes(nx.expect)) {
-          let r = null; try { r = await evalOnce(nx); } catch (_) { r = null; }
+          let r = null; try { r = await evalOnce(nx); } catch (e) { if (e && e.cdpTimeout) throw e; r = null; }
           preTrue.set(j, !!(r && r.ok));
         }
       }
@@ -263,7 +355,7 @@ async function runScenario(opts) {
       const kind = stepKind(st);
       const rec = { i: i + 1, kind, name: st[kind], ok: false, detail: '' };
       result.steps.push(rec);
-      const fail = (failKind, detail) => { rec.detail = detail; result.failedStep = i + 1; result.failKind = failKind; };
+      const fail = (failKind, detail, reason) => { rec.detail = detail; result.failedStep = i + 1; result.failKind = failKind; result.failReason = reason || null; };
       if (Date.now() > deadline) { fail('tool', '시나리오 제한 시간 초과'); break; }
       if (kind === 'capture') {
         const shot = await page.send('Page.captureScreenshot', { format: 'png' });
@@ -297,26 +389,38 @@ async function runScenario(opts) {
         rec.ok = true; rec.detail = '금고 fixture: ' + st.fixture;
       } else if (st.do === 'goto') {
         const loaded = new Promise(res => { let done = false; page.on('Page.loadEventFired', () => { if (!done) { done = true; res(true); } }); setTimeout(() => { if (!done) { done = true; res(false); } }, 20000); });
+        pageOpened = true; // 여기부터 브라우저가 답하지 않으면 법정 도구가 아니라 연 페이지가 멈춘 것이다
         const nav = await page.send('Page.navigate', { url: siteUrl + st.path });
-        if (nav.errorText) { fail('action', '이동 실패: ' + nav.errorText); break; }
+        if (nav.errorText) { fail('action', '이동 실패: ' + scrub(nav.errorText), 'no-load'); break; }
         const ok = await loaded;
         await sleep(Number.isFinite(st.settleMs) ? Math.min(st.settleMs, 8000) : 1200);
         rec.ok = ok; rec.detail = st.path + (ok ? '' : ' (load 이벤트 20초 내 미발생)');
-        if (!ok) { result.failedStep = i + 1; result.failKind = 'action'; break; }
+        // 앱을 실제로 연 뒤 그 페이지가 보는 환경값을 한 번 잰다(보고용). 감춘 뒤의 값이므로 webdriver 는 false 여야 한다.
+        if (ok && result.env && result.env.hostname === undefined) {
+          try {
+            result.env.hostname = await ev('location.hostname');
+            result.env.webdriverSeen = await ev('String(navigator.webdriver)');
+            result.env.userAgentSeen = await ev('navigator.userAgent');
+            result.env.languages = await ev('JSON.stringify(navigator.languages||[])');
+            result.env.visibilityState = await ev('document.visibilityState');
+            result.env.brandsSeen = await ev('navigator.userAgentData?JSON.stringify(navigator.userAgentData.brands.map(function(b){return b.brand;})):null');
+          } catch (e) { if (e && e.cdpTimeout) throw e; /* 그 밖의 측정 실패는 판정을 막지 않는다 */ }
+        }
+        if (!ok) { result.failedStep = i + 1; result.failKind = 'action'; result.failReason = 'no-load'; break; }
       } else if (st.do === 'waitFor') {
         const r = await pollExpect({ expect: 'visible', selector: st.selector, timeoutMs: st.timeoutMs === undefined ? 15000 : st.timeoutMs });
         rec.ok = !!r.ok; rec.detail = st.selector + ' → ' + r.detail;
-        if (!rec.ok) { result.failedStep = i + 1; result.failKind = 'action'; break; }
+        if (!rec.ok) { result.failedStep = i + 1; result.failKind = 'action'; result.failReason = 'no-target'; break; }
       } else if (st.do === 'select' || st.do === 'fill') {
         // 선택 상자·날짜·시간·슬라이더는 마우스 좌표로 값을 고를 수 없다. 법정이 정해 둔 방식(값 지정 + input·change 알림)으로만 넣는다. 작업자가 코드를 끼워 넣을 자리는 없다.
         const s = J(st.selector);
-        const r = await ev(`(function(){var h=${H};var els=h.qa(${s}).filter(h.vis);if(els.length!==1)return {ok:false,why:els.length===0?"보이는 대상 없음":("모호한 선택자: 보이는 요소 "+els.length+"개")};var el=els[0];` +
+        const r = await ev(`(function(){var h=${H};var els=h.qa(${s}).filter(h.vis);if(els.length!==1)return {ok:false,n:els.length,why:els.length===0?"보이는 대상 없음":("모호한 선택자: 보이는 요소 "+els.length+"개")};var el=els[0];` +
           `if(el.disabled)return {ok:false,why:"비활성(disabled) 상태"};var tag=el.tagName.toLowerCase();` +
           (st.do === 'select'
             ? `if(tag!=="select")return {ok:false,why:"select 요소가 아니다("+tag+")"};var has=Array.prototype.some.call(el.options,function(o){return o.value===${J(st.value)};});if(!has)return {ok:false,why:"그 값의 선택지가 없다"};el.value=${J(st.value)};`
             : `if(tag!=="input"||["date","time","datetime-local","month","week","range","number","color"].indexOf(el.type)<0)return {ok:false,why:"fill 은 날짜·시간·슬라이더·숫자·색상 입력에만 쓴다("+tag+"/"+el.type+")"};var set=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value").set;set.call(el,${J(st.value)});if(el.value!==${J(st.value)}&&el.type!=="range"&&el.type!=="number")return {ok:false,why:"값이 받아들여지지 않았다(형식 확인): "+el.value};`) +
           `el.dispatchEvent(new Event("input",{bubbles:true}));el.dispatchEvent(new Event("change",{bubbles:true}));return {ok:true,who:tag+(el.id?"#"+el.id:""),now:el.value};})()`);
-        if (!r || !r.ok) { fail('action', st.selector + ' → ' + ((r && r.why) || '실패')); break; }
+        if (!r || !r.ok) { fail('action', st.selector + ' → ' + ((r && r.why) || '실패'), targetReason(r)); break; }
         await sleep(250);
         rec.ok = true; rec.detail = (st.do === 'select' ? '선택 ' : '값 입력 ') + r.who + ' = "' + r.now + '"'; lastActionDetail = rec.detail;
       } else if (st.do === 'click' || st.do === 'type' || st.do === 'check') {
@@ -325,8 +429,8 @@ async function runScenario(opts) {
           const cur = await ev(`(function(){var h=${H};var els=h.qa(${s}).filter(h.vis);return els.length===1?{ok:true,checked:!!els[0].checked}:{ok:false,n:els.length};})()`);
           if (cur && cur.ok && cur.checked === st.on) { rec.ok = true; rec.detail = '이미 ' + (st.on ? '체크됨' : '해제됨') + ' — 누르지 않음'; continue; }
         }
-        const pre = await ev(`(function(){var h=${H};var all=h.qa(${s});var els=all.filter(h.vis);if(els.length!==1)return {ok:false,why:els.length===0?("보이는 대상 없음(일치 "+all.length+"개)"):("모호한 선택자: 보이는 요소 "+els.length+"개에 걸린다 — 정확히 1개여야 한다")};els[0].scrollIntoView({block:"center",inline:"center",behavior:"instant"});return {ok:true};})()`);
-        if (!pre || !pre.ok) { fail('action', st.selector + ' → ' + ((pre && pre.why) || '대상 없음')); break; }
+        const pre = await ev(`(function(){var h=${H};var all=h.qa(${s});var els=all.filter(h.vis);if(els.length!==1)return {ok:false,n:els.length,why:els.length===0?("보이는 대상 없음(일치 "+all.length+"개)"):("모호한 선택자: 보이는 요소 "+els.length+"개에 걸린다 — 정확히 1개여야 한다")};els[0].scrollIntoView({block:"center",inline:"center",behavior:"instant"});return {ok:true};})()`);
+        if (!pre || !pre.ok) { fail('action', st.selector + ' → ' + ((pre && pre.why) || '대상 없음'), targetReason(pre)); break; }
         await sleep(80);
         const pos = POSITIONS[st.position] || POSITIONS.center;
         // 화면 전환 애니메이션 중에는 사람도 누를 수 없다. 누를 수 있게 될 때까지 잠깐(최대 2.5초) 기다렸다가, 그래도 가려져 있으면 실패로 본다.
@@ -336,7 +440,7 @@ async function runScenario(opts) {
           `who:el.tagName.toLowerCase()+(el.id?"#"+el.id:"")+" \\""+h.txt(el).slice(0,30)+"\\"",size:Math.round(b.width)+"x"+Math.round(b.height)};})()`;
         let hit = null;
         for (const until = Date.now() + 2500; ;) { hit = await ev(hitExpr); if ((hit && hit.ok) || Date.now() > until) break; await sleep(150); }
-        if (!hit || !hit.ok) { fail('action', st.selector + ' → 누를 수 없음: ' + ((hit && hit.why) || '')); break; }
+        if (!hit || !hit.ok) { fail('action', st.selector + ' → 누를 수 없음: ' + ((hit && hit.why) || ''), 'blocked'); break; }
         await page.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: hit.x, y: hit.y });
         await page.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: hit.x, y: hit.y, button: 'left', clickCount: 1 });
         await page.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: hit.x, y: hit.y, button: 'left', clickCount: 1 });
@@ -372,8 +476,16 @@ async function runScenario(opts) {
     }
     result.passed = result.failedStep === null && result.steps.length === scenario.steps.length && result.steps.every(s => s.ok);
   } catch (e) {
-    result.toolError = String((e && e.message) || e);
-    result.failKind = 'tool';
+    const at = result.steps.length;
+    if (e && e.cdpTimeout && pageOpened && at > 0) {
+      // 앱을 연 뒤에 브라우저가 답하지 않는 것은 그 페이지가 멈춘 것이다(끝나지 않는 반복 등). 법정 도구의 고장이 아니라 그 단계의 실패로 적는다.
+      const rec = result.steps[at - 1];
+      rec.ok = false; rec.detail = '페이지가 응답하지 않음 — ' + String(e.message || '');
+      result.failedStep = at; result.failKind = 'action'; result.failReason = 'unresponsive';
+    } else {
+      result.toolError = scrubSiteText(String((e && e.message) || e), siteUrl);
+      result.failKind = 'tool';
+    }
     result.passed = false;
   } finally {
     if (browser) { try { await browser.close(); } catch (_) { /* 종료 실패는 판정에 영향 없음 */ } }
@@ -384,4 +496,4 @@ async function runScenario(opts) {
   return result;
 }
 
-module.exports = { validateScenario, isHollow, runScenario, scenarioFingerprint, loadConfig, stepKind, DO_KINDS, EXPECT_KINDS, ACTION_KINDS, WEAK_EXPECTS };
+module.exports = { validateScenario, isHollow, runScenario, scenarioFingerprint, loadConfig, stepKind, scrubSiteText, plainChromeMetadata, SITE_TOKEN, BLOB_TOKEN, BLANK_PATH, DO_KINDS, EXPECT_KINDS, ACTION_KINDS, WEAK_EXPECTS };
