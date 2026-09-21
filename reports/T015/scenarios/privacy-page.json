@@ -1,0 +1,15 @@
+{
+  "id": "t015-privacy-page",
+  "title": "개인정보처리방침 페이지가 열려 제3자 표에 Google·Supabase·PostHog 가 보이고, '아워골 앱으로' 링크를 누르면 앱으로 돌아간다",
+  "steps": [
+    { "do": "goto", "path": "/privacy.html" },
+    { "do": "waitFor", "selector": "#third" },
+    { "expect": "textContains", "selector": "main", "text": "PostHog Inc." },
+    { "expect": "textContains", "selector": "main", "text": "Supabase Inc." },
+    { "expect": "textContains", "selector": "main", "text": "Google LLC" },
+    { "expect": "textContains", "selector": "#delete", "text": "회원 탈퇴" },
+    { "expect": "noHorizontalOverflow" },
+    { "do": "click", "selector": "nav.top a[href=\"/\"]" },
+    { "expect": "visible", "selector": "#btnLandingPreviewDirect" }
+  ]
+}
