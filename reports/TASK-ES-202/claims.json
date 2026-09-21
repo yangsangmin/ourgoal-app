@@ -1,0 +1,127 @@
+{
+  "task": "TASK-ES-202",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-202-RECORDS-FEED-UX.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "내 기록 피드에서 최신 3개 기록이 상단에 우선 노출되고, 나머지 피드는 기간 설정 및 5개 단위 페이징으로 탐색 가능해야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "기록 피드 상단 5단 도구 카드가 1줄 콤팩트 퀵 액션 독으로 압축되어 화면 첫 뷰포트에 내 실천 피드가 즉시 보여야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "보관함 화면에서 최근 완료 목표 3개가 전면 노출되고, 마일스톤이 접힘 아코디언으로 정돈되며, 이전 목표는 5개 단위로 페이징되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "365일 연간 히트맵이 기본 최근 4주(28일) 컴팩트 뷰로 제공되고 날짜 셀 클릭 시 일자별 실천 미니 요약 카드가 연동되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "성취 통계 화면 상단에 3대 핵심 요약 카드(시간, 스트릭, 횟수)와 엄지 스위처가 제공되어야 한다"
+    },
+    {
+      "id": "R6",
+      "text": "상단 성소 6대 버튼과 하단 3분할 세그먼트 간 양방향 동기화가 유지되고 320px 화면에서 가로스크롤 넘침이 없어야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "내 기록 피드 렌더러에 최신 3건 분기와 과거 5개 페이징 컨트롤 로직이 구현되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "rec-past-pager"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "기록 피드 상단에 1줄 콤팩트 퀵 액션 독 바가 배치되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "rec-quick-dock-bar"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "보관함 렌더러에 최신 완료 목표 3개 상단 노출 및 마일스톤 접기 아코디언이 구현되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "archive-ms-details"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "히트맵 엔진에 최근 4주 컴팩트 뷰와 일자별 실천 요약 팝업 카드 렌더러가 구현되어 있다",
+      "touches": ["js/sanctuary-v3-engine.js"],
+      "check": {
+        "type": "codeContains",
+        "file": "js/sanctuary-v3-engine.js",
+        "text": "selectHeatDay"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "성취 통계 화면 상단에 3대 핵심 요약 카드 및 엄지 스위처가 구현되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "rec-stats-summary-card"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R6",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "320px 초소형 모바일 화면에서 오버플로우 방어 flex-wrap 스타일이 구현되어 있다",
+      "touches": ["ui.css"],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "flex-wrap: wrap"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "unverified",
+      "domain": "ui-layout",
+      "statement": "실제 스마트폰에서 최신 피드 3개와 5개 페이징이 시각적으로 안도감을 주는지 체감 확인",
+      "touches": ["index.html"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "visual-quality",
+        "who": "실제 스마트폰 화면을 보는 사람",
+        "how": [
+          "기록 탭에 진입한다",
+          "최신 3개 기록이 먼저 보이고 아래 이전 기록 모아보기에서 5개 단위 페이징 버튼이 부드럽게 작동하는지 확인한다"
+        ]
+      }
+    }
+  ]
+}
