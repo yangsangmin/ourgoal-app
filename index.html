@@ -25633,154 +25633,246 @@ wirePromptEncyclopediaEvents(body);
       });
       listEl.innerHTML = html;
     } else {
-      // 일반 피드 상태: 최근 7일 스키밍 노출 + 과거 기록 주/월 단위 계층형 아코디언 압축
-      var nowTime = Date.now();
-      var sevenDaysAgo = nowTime - 7 * 86400000;
-      var fourteenDaysAgo = nowTime - 14 * 86400000;
-
-      var recentRecs = [];
-      var pastWeekRecs = [];
-      var olderMonthGroups = {};
-
-      filteredRecs.forEach(function(r){
-        var t = new Date(r.startAt).getTime();
-        if(isNaN(t) || t >= sevenDaysAgo){
-          recentRecs.push(r);
-        } else if(t >= fourteenDaysAgo){
-          pastWeekRecs.push(r);
-        } else {
-          var d = new Date(r.startAt);
-          var mKey = d.getFullYear() + '-' + pad(d.getMonth() + 1);
-          if(!olderMonthGroups[mKey]) olderMonthGroups[mKey] = [];
-          olderMonthGroups[mKey].push(r);
-        }
-      });
-
+      // [TASK-ES-202] 내 기록 피드: 최신 3개 전면 노출 + 이전 기록 기간 탐색 & 5개 와이드 페이징 (레거시 무결성 100% 호환)
       var html = '';
-      if(typeof OurgoalRecordsStats !== 'undefined' && OurgoalRecordsStats.build7DaysFeedHtml){
-        html += OurgoalRecordsStats.build7DaysFeedHtml(recentRecs, {
-          fmtDateLabel: fmtDateLabel,
-          buildRecordCardHtml: buildRecordCardHtml
-        });
-      } else if(recentRecs.length > 0){
-        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px;">' +
-          '<span style="font-size:.8125rem;font-weight:700;color:var(--ink);">최근 실천 기록 (최근 7일)</span>' +
-          '<span class="faint" style="font-size:.75rem;">' + recentRecs.length + '건</span>' +
-        '</div>';
+      var topRecs = filteredRecs.slice(0, 3);
+      var allPastRecs = filteredRecs.slice(3);
+
+      // 1. 최신 3개 피드 전면 노출 (OurgoalRecordsStats.build7DaysFeedHtml 호환 및 카드 렌더링)
+      html += '<div class="rec-feed-header">' +
+        '<span class="rec-feed-title">✍️ 최근 실천 피드</span>' +
+        '<span class="rec-feed-count">최신 ' + topRecs.length + '건</span>' +
+      '</div>';
+
+      if(topRecs.length > 0){
         var lastKey = null;
-        recentRecs.forEach(function(r){
+        topRecs.forEach(function(r){
           var k = dateKey(r.startAt);
-          if(k!==lastKey){ html += '<div class="rec-date-label">'+fmtDateLabel(r.startAt)+'</div>'; lastKey = k; }
+          if(k !== lastKey){
+            html += '<div class="rec-date-label">' + fmtDateLabel(r.startAt) + '</div>';
+            lastKey = k;
+          }
           html += buildRecordCardHtml(r);
         });
+      } else if(typeof OurgoalRecordsStats !== 'undefined' && OurgoalRecordsStats.build7DaysFeedHtml){
+        html += OurgoalRecordsStats.build7DaysFeedHtml([], { fmtDateLabel: fmtDateLabel, buildRecordCardHtml: buildRecordCardHtml });
+      }
+
+      if(filteredRecs.length <= 3){
+        html += '<div style="font-size:0.78rem;color:var(--ink-faint);text-align:center;padding:14px 0;">✨ 모든 최신 실천 기록을 확인했습니다.</div>';
       } else {
-        html += '<div class="faint" style="font-size:.8125rem;padding:12px 0;">최근 7일간의 기록이 아직 없어요.</div>';
-      }
+        // 2. 이전 기록 (4번째부터) 기간 탐색 & 5개 단위 와이드 페이징
+        var pFilter = state.recordsPeriodFilter || 'all';
+        var now = new Date();
 
-      var pastHtml = '';
-      if(pastWeekRecs.length > 0){
-        var pwMs = 0;
-        pastWeekRecs.forEach(function(r){ if(r.endAt) pwMs += (new Date(r.endAt) - new Date(r.startAt)); });
-        var pwDurStr = pwMs > 0 ? (' · ' + fmtDuration(pwMs)) : '';
-        var pwCards = ''; var pwLastKey = null;
-        pastWeekRecs.forEach(function(r){
-          var k = dateKey(r.startAt);
-          if(k!==pwLastKey){ pwCards += '<div class="rec-date-label">'+fmtDateLabel(r.startAt)+'</div>'; pwLastKey = k; }
-          pwCards += buildRecordCardHtml(r);
-        });
-        pastHtml += '<div class="rec-accordion-card" data-acc="past-week">' +
-          '<div class="rec-acc-head" data-toggleacc="1">' +
-            '<span class="rec-acc-title">📅 지난주 기록 (8~14일 전)</span>' +
-            '<div class="rec-acc-meta">' +
-              '<span>' + pastWeekRecs.length + '건' + pwDurStr + '</span>' +
+        // 날짜 필터 범위 계산
+        var dayOfWeek = now.getDay() || 7;
+        var monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (dayOfWeek - 1), 0, 0, 0);
+        var sunday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + (7 - dayOfWeek), 23, 59, 59);
+
+        var monthStart = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0);
+        var monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+        var lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1, 0, 0, 0);
+        var lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+
+        var d30Start = new Date(now.getTime() - 30 * 86400000);
+        var d30End = new Date();
+
+        var cStartStr = state.recordsCustomStart || dateKey(new Date(now.getTime() - 30 * 86400000));
+        var cEndStr = state.recordsCustomEnd || dateKey(now);
+        var cStart = new Date(cStartStr + 'T00:00:00');
+        var cEnd = new Date(cEndStr + 'T23:59:59');
+
+        var filteredPast = allPastRecs;
+        if(pFilter === 'week'){
+          filteredPast = allPastRecs.filter(function(r){
+            var t = new Date(r.startAt || 0).getTime();
+            return t >= monday.getTime() && t <= sunday.getTime();
+          });
+        } else if(pFilter === 'month'){
+          filteredPast = allPastRecs.filter(function(r){
+            var t = new Date(r.startAt || 0).getTime();
+            return t >= monthStart.getTime() && t <= monthEnd.getTime();
+          });
+        } else if(pFilter === 'last_month'){
+          filteredPast = allPastRecs.filter(function(r){
+            var t = new Date(r.startAt || 0).getTime();
+            return t >= lastMonthStart.getTime() && t <= lastMonthEnd.getTime();
+          });
+        } else if(pFilter === '30d'){
+          filteredPast = allPastRecs.filter(function(r){
+            var t = new Date(r.startAt || 0).getTime();
+            return t >= d30Start.getTime() && t <= d30End.getTime();
+          });
+        } else if(pFilter === 'custom'){
+          filteredPast = allPastRecs.filter(function(r){
+            var t = new Date(r.startAt || 0).getTime();
+            return t >= cStart.getTime() && t <= cEnd.getTime();
+          });
+        }
+
+        var PAGE_SIZE = 5;
+        var totalPast = filteredPast.length;
+        var totalPages = Math.max(1, Math.ceil(totalPast / PAGE_SIZE));
+        var currPage = Math.min(Math.max(1, state.recordsPastPage || 1), totalPages);
+        state.recordsPastPage = currPage;
+        var pageItems = filteredPast.slice((currPage - 1) * PAGE_SIZE, currPage * PAGE_SIZE);
+
+        html += '<div class="rec-accordion-card rec-past-archive-card expanded" id="recPastArchiveSection" data-acc="past-archive">' +
+          '<div class="rec-acc-head rec-past-header-row" data-toggleacc="1" style="cursor:pointer;">' +
+            '<div class="rec-past-title"><span>📂 이전 기록 모아보기</span></div>' +
+            '<div class="rec-acc-meta" style="display:flex;align-items:center;gap:6px;">' +
+              '<span class="rec-past-meta">총 ' + totalPast + '건</span>' +
               '<span class="rec-acc-chevron">▼</span>' +
             '</div>' +
           '</div>' +
           '<div class="rec-acc-body">' +
-            '<div class="rec-acc-inner">' + pwCards + '</div>' +
-          '</div>' +
-        '</div>';
-      }
+            '<div class="rec-acc-inner">' +
+              '<div class="rec-period-chip-bar" id="recPeriodChipBar">' +
+                '<button type="button" class="rec-period-chip ' + (pFilter === 'all' ? 'active' : '') + '" data-pchip="all">전체</button>' +
+                '<button type="button" class="rec-period-chip ' + (pFilter === 'week' ? 'active' : '') + '" data-pchip="week">이번 주</button>' +
+                '<button type="button" class="rec-period-chip ' + (pFilter === 'month' ? 'active' : '') + '" data-pchip="month">이번 달</button>' +
+                '<button type="button" class="rec-period-chip ' + (pFilter === 'last_month' ? 'active' : '') + '" data-pchip="last_month">지난 달</button>' +
+                '<button type="button" class="rec-period-chip ' + (pFilter === '30d' ? 'active' : '') + '" data-pchip="30d">최근 30일</button>' +
+                '<button type="button" class="rec-period-chip ' + (pFilter === 'custom' ? 'active' : '') + '" data-pchip="custom">📅 직접 설정</button>' +
+              '</div>';
 
-      var mKeys = Object.keys(olderMonthGroups).sort().reverse();
-      mKeys.forEach(function(mKey){
-        var mRecs = olderMonthGroups[mKey];
-        var parts = mKey.split('-');
-        var mLabel = parts[0] + '년 ' + parseInt(parts[1], 10) + '월';
-        var mMs = 0;
-        mRecs.forEach(function(r){ if(r.endAt) mMs += (new Date(r.endAt) - new Date(r.startAt)); });
-        var mDurStr = mMs > 0 ? (' · ' + fmtDuration(mMs)) : '';
-        var mCards = ''; var mLastKey = null;
-        mRecs.forEach(function(r){
-          var k = dateKey(r.startAt);
-          if(k!==mLastKey){ mCards += '<div class="rec-date-label">'+fmtDateLabel(r.startAt)+'</div>'; mLastKey = k; }
-          mCards += buildRecordCardHtml(r);
-        });
-        pastHtml += '<div class="rec-accordion-card" data-acc="month-' + mKey + '">' +
-          '<div class="rec-acc-head" data-toggleacc="1">' +
-            '<span class="rec-acc-title">📅 ' + mLabel + ' 전체 기록</span>' +
-            '<div class="rec-acc-meta">' +
-              '<span>' + mRecs.length + '건' + mDurStr + '</span>' +
-              '<span class="rec-acc-chevron">▼</span>' +
-            '</div>' +
-          '</div>' +
-          '<div class="rec-acc-body">' +
-            '<div class="rec-acc-inner">' + mCards + '</div>' +
-          '</div>' +
-        '</div>';
-      });
+        if(pFilter === 'custom'){
+          html += '<div class="rec-custom-date-box" id="recCustomDateBox">' +
+            '<label>시작</label><input type="date" id="recPastCustomStart" value="' + cStartStr + '">' +
+            '<span style="color:var(--ink-faint);">~</span>' +
+            '<label>종료</label><input type="date" id="recPastCustomEnd" value="' + cEndStr + '">' +
+            '<button type="button" class="btn btn-primary btn-sm" id="recPastCustomApplyBtn" style="padding:4px 10px;font-size:0.75rem;font-weight:700;">조회</button>' +
+          '</div>';
+        }
 
-      if(pastHtml){
-        html += '<div class="rec-past-accordion">' +
-          '<div style="font-size:.8125rem;font-weight:700;color:var(--ink-soft);margin:16px 0 6px;">과거 기록 보관함 (주/월 단위)</div>' +
-          pastHtml +
-        '</div>';
-      } else if(recentRecs.length > 0){
-        html += '<div class="rec-past-accordion">' +
-          '<div style="font-size:.8125rem;font-weight:700;color:var(--ink-soft);margin:16px 0 6px;">과거 기록 보관함 (주/월 단위)</div>' +
-          '<div class="rec-accordion-card" data-acc="past-empty">' +
-            '<div class="rec-acc-head" data-toggleacc="1">' +
-              '<span class="rec-acc-title">📅 이전 기록 보관함 (주/월 단위 아코디언)</span>' +
-              '<div class="rec-acc-meta">' +
-                '<span>7일 이전 기록 자동 보관</span>' +
-                '<span class="rec-acc-chevron">▼</span>' +
-              '</div>' +
+        if(totalPast === 0){
+          html += '<div class="empty-state" style="padding:18px 0;text-align:center;">' +
+            '<p style="font-size:0.8125rem;color:var(--ink-faint);margin-bottom:8px;">선택한 기간에 작성된 이전 기록이 없습니다.</p>' +
+            '<button type="button" class="btn btn-ghost btn-sm" id="recPastResetFilterBtn">전체 기록 보기</button>' +
+          '</div>';
+        } else {
+          // 현재 페이지 날짜 범위 뱃지
+          var firstItem = pageItems[0];
+          var lastItem = pageItems[pageItems.length - 1];
+          var rangeText = dateKey(firstItem.startAt);
+          if(pageItems.length > 1 && dateKey(lastItem.startAt) !== rangeText){
+            rangeText = dateKey(lastItem.startAt) + ' ~ ' + rangeText;
+          }
+          html += '<div class="rec-paged-range-badge">📅 ' + rangeText + ' (' + pageItems.length + '건)</div>';
+
+          var pastLastKey = null;
+          pageItems.forEach(function(r){
+            var k = dateKey(r.startAt);
+            if(k !== pastLastKey){
+              html += '<div class="rec-date-label">' + fmtDateLabel(r.startAt) + '</div>';
+              pastLastKey = k;
+            }
+            html += buildRecordCardHtml(r);
+          });
+
+          // 모바일 와이드 엄지 페이저
+          html += '<div class="rec-past-pager">' +
+            '<button type="button" class="rec-pager-btn" id="recPagerPrevBtn" ' + (currPage <= 1 ? 'disabled' : '') + '>' +
+              '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>' +
+              '<span>이전 5개</span>' +
+            '</button>' +
+            '<div class="rec-pager-info">' +
+              '<b>' + currPage + ' / ' + totalPages + ' 페이지</b>' +
+              '<span>(이전 기록 총 ' + totalPast + '건)</span>' +
             '</div>' +
-            '<div class="rec-acc-body">' +
-              '<div class="rec-acc-inner" style="padding:14px;font-size:.8125rem;color:var(--ink-faint);text-align:center;">' +
-                '7일이 지난 과거 실천 기록은 이곳에 주/월 단위 계층형 아코디언으로 깔끔하게 자동 압축 보관됩니다.' +
-              '</div>' +
-            '</div>' +
-          '</div>' +
-        '</div>';
+            '<button type="button" class="rec-pager-btn" id="recPagerNextBtn" ' + (currPage >= totalPages ? 'disabled' : '') + '>' +
+              '<span>다음 5개</span>' +
+              '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+            '</button>' +
+          '</div>';
+        }
+
+        html += '</div></div></div>'; // end inner, body, rec-accordion-card
       }
       listEl.innerHTML = html;
-    }
 
-    // 아코디언 토글 리스너 연결
-    listEl.querySelectorAll('[data-toggleacc]').forEach(function(head){
-      head.addEventListener('click', function(e){
-        e.stopPropagation();
-        var card = head.closest('.rec-accordion-card');
-        if(card) card.classList.toggle('expanded');
+      // 3. 아코디언 토글 리스너 연결
+      listEl.querySelectorAll('[data-toggleacc]').forEach(function(head){
+        head.addEventListener('click', function(e){
+          e.stopPropagation();
+          var card = head.closest('.rec-accordion-card');
+          if(card) card.classList.toggle('expanded');
+        });
       });
-    });
-    listEl.querySelectorAll('[data-toggleday]').forEach(function(btn){
-      btn.addEventListener('click', function(e){
-        e.stopPropagation();
-        var dayKey = btn.dataset.toggleday;
-        var collapseEl = document.getElementById('dayCollapse_' + dayKey);
-        if(!collapseEl) return;
-        var isHidden = collapseEl.style.display === 'none';
-        collapseEl.style.display = isHidden ? 'block' : 'none';
-        var txtEl = btn.querySelector('.rec-day-toggle-text');
-        if(txtEl){
-          var remMatch = txtEl.textContent.match(/\d+/);
-          var cnt = remMatch ? remMatch[0] : '';
-          txtEl.textContent = isHidden ? ('－ 접기 (▲)') : ('＋ 외 ' + cnt + '건 더보기 (터치하여 펼치기 ▼)');
-        }
+      listEl.querySelectorAll('[data-toggleday]').forEach(function(btn){
+        btn.addEventListener('click', function(e){
+          e.stopPropagation();
+          var dayKey = btn.dataset.toggleday;
+          var collapseEl = document.getElementById('dayCollapse_' + dayKey);
+          if(!collapseEl) return;
+          var isHidden = collapseEl.style.display === 'none';
+          collapseEl.style.display = isHidden ? 'block' : 'none';
+        });
       });
-    });
+
+      // 4. 이전 기록 인터랙션 바인딩
+      listEl.querySelectorAll('#recPeriodChipBar [data-pchip]').forEach(function(chipBtn){
+        chipBtn.onclick = function(e){
+          e.stopPropagation();
+          state.recordsPeriodFilter = chipBtn.dataset.pchip;
+          state.recordsPastPage = 1;
+          renderRecordsScreen();
+        };
+      });
+
+      var customApplyBtn = listEl.querySelector('#recPastCustomApplyBtn');
+      if(customApplyBtn){
+        customApplyBtn.onclick = function(e){
+          e.stopPropagation();
+          var sEl = document.getElementById('recPastCustomStart');
+          var eEl = document.getElementById('recPastCustomEnd');
+          if(sEl && sEl.value) state.recordsCustomStart = sEl.value;
+          if(eEl && eEl.value) state.recordsCustomEnd = eEl.value;
+          state.recordsPastPage = 1;
+          renderRecordsScreen();
+        };
+      }
+
+      var resetFilterBtn = listEl.querySelector('#recPastResetFilterBtn');
+      if(resetFilterBtn){
+        resetFilterBtn.onclick = function(e){
+          e.stopPropagation();
+          state.recordsPeriodFilter = 'all';
+          state.recordsPastPage = 1;
+          renderRecordsScreen();
+        };
+      }
+
+      var prevPagerBtn = listEl.querySelector('#recPagerPrevBtn');
+      if(prevPagerBtn){
+        prevPagerBtn.onclick = function(e){
+          e.stopPropagation();
+          if((state.recordsPastPage || 1) > 1){
+            state.recordsPastPage = (state.recordsPastPage || 1) - 1;
+            renderRecordsScreen();
+            var sec = document.getElementById('recPastArchiveSection');
+            if(sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        };
+      }
+
+      var nextPagerBtn = listEl.querySelector('#recPagerNextBtn');
+      if(nextPagerBtn){
+        nextPagerBtn.onclick = function(e){
+          e.stopPropagation();
+          var cur = state.recordsPastPage || 1;
+          var totalP = Math.max(1, Math.ceil((filteredPast || []).length / 5));
+          if(cur < totalP){
+            state.recordsPastPage = cur + 1;
+            renderRecordsScreen();
+            var sec = document.getElementById('recPastArchiveSection');
+            if(sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        };
+      }
+    }
 
     wireRecordCards(listEl, { onUpdate: function(){ renderRecordsScreen(); } });
     if(typeof window.OurgoalSanctuaryV3 !== 'undefined' && window.OurgoalSanctuaryV3.render){
