@@ -10309,3 +10309,29 @@ html[data-theme="urban-city"] .s-seg-pill {
 
 
 
+
+/* [#TASK-ES-235] 설정 탭 고급 설정 (외부 연동 & API) 기본 접힘 아코디언 */
+.advanced-settings-accordion {
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--card2);
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+}
+.advanced-settings-accordion summary {
+  transition: background-color 0.15s ease;
+}
+.advanced-settings-accordion summary:hover {
+  background-color: var(--surface-2);
+}
+.advanced-settings-body {
+  animation: fadein 0.2s ease;
+}
+@media (max-width: 375px) {
+  .advanced-settings-accordion summary {
+    padding: 10px 12px;
+  }
+  .advanced-settings-body {
+    padding: 8px 10px 12px;
+  }
+}

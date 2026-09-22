@@ -1,0 +1,102 @@
+{
+  "task": "TASK-ES-235",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-235-SETTINGS-ADVANCED-FOLD.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "설정 탭에 고급 설정 아코디언(#advancedSettingsAccordion)이 신설되고 기본 접힘 상태여야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "구글 캘린더, 노션, Gemini API 등 전문가용 필드가 고급 설정 아코디언 내부로 안전하게 격리되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "아코디언 토글 시 12ms 미세 햅틱 피드백이 연동되고 전역 토글 헬퍼가 제공되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "기존 연동 로직 및 DOM 식별자가 100% 보존되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "npm test 및 38개 헌법 게이트, Zero Dead-Click 검사가 100% ALL PASS여야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "index.html에 advancedSettingsAccordion 컴포넌트가 추가되고 기본 open 속성이 없다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"advancedSettingsAccordion\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "advancedSettingsAccordion 내부에 구글 캘린더, 노션, Gemini 설정 블록이 격리 수용된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "advanced-settings-body"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "window.toggleAdvancedSettings 전역 함수가 제공된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "window.toggleAdvancedSettings = toggleAdvancedSettings"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "기존 구글 캘린더와 노션의 핵심 DOM 식별자가 보존된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "gcalClientIdInput"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "e2e",
+      "domain": "safety",
+      "statement": "npm test 및 헌법 38개 검증 게이트와 Zero Dead-Click 검사가 100% 통과한다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "commandPasses",
+        "command": "npm test"
+      }
+    }
+  ]
+}
