@@ -3299,10 +3299,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       btn.addEventListener('click', function(e){
         e.preventDefault();
         wrap.querySelectorAll('[data-cunningtext]').forEach(function(b){
+          b.classList.remove('active-cunning');
           b.style.borderColor = 'rgba(49,130,246,0.22)';
           b.style.background = 'rgba(49,130,246,0.08)';
           b.style.fontWeight = '600';
         });
+        btn.classList.add('active-cunning');
         btn.style.borderColor = 'var(--brand, #3182f6)';
         btn.style.background = 'rgba(49,130,246,0.18)';
         btn.style.fontWeight = '700';
