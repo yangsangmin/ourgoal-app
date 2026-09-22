@@ -1,0 +1,102 @@
+{
+  "task": "TASK-ES-247",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-247-COMM-SUBTABS-GRID-RESPONSIVE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "소통탭 상단 6대 서브탭 버튼에 grid-template-columns: repeat(3, 1fr), gap: 6px, padding: 4px의 3열 균등 그리드가 적용되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "서브탭 버튼에 min-height: 38px, padding: 0 6px, font-size: 0.8125rem, white-space: nowrap의 최적화 스타일이 적용되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "모바일 반응형(480px, 375px)에서 글자 잘림 없는 단계별 폰트/패딩이 적용되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "활성 버튼(.active)에 1.5px 보더 및 명확한 배경 대비가 적용되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "npm test 및 38개 헌법 게이트, Zero Dead-Click 검사가 100% ALL PASS여야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내 .comm-subtabs-clean.comm-subtabs-grid에 repeat(3, 1fr)이 선언된다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "grid-template-columns: repeat(3, 1fr) !important;"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내 .comm-subtabs-clean.comm-subtabs-grid .comm-subtab에 min-height: 38px 및 font-size: 0.8125rem이 선언된다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "font-size: 0.8125rem !important;"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내 @media (max-width: 375px)에 .comm-subtabs-clean.comm-subtabs-grid 반응형 규칙이 선언된다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "font-size: 0.72rem !important;"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "활성 버튼에 border: 1.5px solid가 선언된다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "border: 1.5px solid rgba(16, 185, 129, 0.45) !important;"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "e2e",
+      "domain": "safety",
+      "statement": "npm test 및 헌법 38개 검증 게이트와 Zero Dead-Click 검사가 100% 통과한다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "commandPasses",
+        "command": "npm test"
+      }
+    }
+  ]
+}

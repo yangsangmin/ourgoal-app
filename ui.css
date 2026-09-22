@@ -10309,3 +10309,61 @@ html[data-theme="urban-city"] .s-seg-pill {
 
 
 
+
+
+/* #TASK-ES-247: 소통탭 상단 6대 서브탭 버튼 가로너비 균등 비율 및 글자 크기·패딩 반응형 최적화 */
+.comm-subtabs-clean.comm-subtabs-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 6px !important;
+  padding: 4px !important;
+  box-sizing: border-box !important;
+}
+
+.comm-subtabs-clean.comm-subtabs-grid .comm-subtab {
+  min-height: 38px !important;
+  padding: 0 6px !important;
+  font-size: 0.8125rem !important; /* 13px */
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  border-radius: 10px !important;
+  letter-spacing: -0.01em;
+}
+
+.comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active {
+  font-weight: 700 !important;
+  background: rgba(16, 185, 129, 0.18) !important;
+  border: 1.5px solid rgba(16, 185, 129, 0.45) !important;
+  color: #10B981 !important;
+}
+
+@media (max-width: 480px) {
+  .comm-subtabs-clean.comm-subtabs-grid {
+    gap: 5px !important;
+    padding: 4px !important;
+  }
+  .comm-subtabs-clean.comm-subtabs-grid .comm-subtab {
+    font-size: 0.775rem !important;
+    padding: 0 4px !important;
+    min-height: 38px !important;
+  }
+}
+
+@media (max-width: 375px) {
+  .comm-subtabs-clean.comm-subtabs-grid {
+    gap: 4px !important;
+    padding: 3px !important;
+  }
+  .comm-subtabs-clean.comm-subtabs-grid .comm-subtab {
+    font-size: 0.72rem !important;
+    padding: 0 3px !important;
+    min-height: 38px !important;
+  }
+}
