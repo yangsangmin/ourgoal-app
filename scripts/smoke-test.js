@@ -7460,6 +7460,22 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+check('[#TASK-ES-223] [생각 메모장 93번] 개발 디버그 버튼 프로덕션 완전 소거 및 로컬 조건부 격리 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 랜딩 및 로그인 화면 테스터 B 래퍼 display:none 기본 격리 확인
+  assert.ok(indexHtml.includes('id="landTesterBWrap" style="display:none;'), 'landTesterBWrap display:none 기본 탑재');
+  assert.ok(indexHtml.includes('id="authTesterBWrap" style="display:none;'), 'authTesterBWrap display:none 기본 탑재');
+
+  // 2. 프로덕션 소거 및 localhost / 127.0.0.1 / ?debug=true 조건부 격리 함수 확인
+  assert.ok(indexHtml.includes('function initDevDebugButtons()'), 'initDevDebugButtons 함수 구현 확인');
+  assert.ok(indexHtml.includes("location.hostname === 'localhost'"), 'localhost 감지 조건 확인');
+  assert.ok(indexHtml.includes("location.hostname === '127.0.0.1'"), '127.0.0.1 감지 조건 확인');
+  assert.ok(indexHtml.includes("location.search.indexOf('debug=true')"), '?debug=true 감지 조건 확인');
+  assert.ok(indexHtml.includes('lWrap.remove()'), '비개발 환경 프로덕션 DOM 소거(remove) 확인');
+  assert.ok(indexHtml.includes('aWrap.remove()'), '비개발 환경 프로덕션 DOM 소거(remove) 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
