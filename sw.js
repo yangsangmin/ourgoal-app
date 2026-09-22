@@ -1,6 +1,6 @@
 /* 아워골 최소 서비스워커: 홈 화면 설치 지원 + 오프라인 시 빈 화면 대신 안내 문구 노출 */
 'use strict';
-var CACHE_NAME = 'ourgoal-shell-v20260920-task-es198-cal-full-fix'; /* supersedes ourgoal-shell-v20260920-task-es197-cal-photo-diary-heatmap, ourgoal-shell-v20260920-task-es196-checkin-ai-feedback, ourgoal-shell-v20260920-supreme-constitution-upgrade, ourgoal-shell-v20260920-comprehensive-8remediation-complete, ourgoal-shell-v20260920-constitutional-integrity-and-zero-ads, ourgoal-shell-v20260919-comm-feed-social-bridge, ourgoal-shell-v20260919-team-invite-companions, ourgoal-shell-v20260919-goals-clean-simplify, ourgoal-shell-v20260919-uiux-expanded-20plus, ourgoal-shell-v20260919-uiux-comprehensive-remediation, ourgoal-shell-v20260919-constitutional-audit-integrity-remediation, ourgoal-shell-v20260918-sanctuary-comm-radar-restore, ourgoal-shell-v20260918-sanctuary-calendar-records-restore, ourgoal-shell-v20260918-es183-lockscreen-takeover, ourgoal-shell-v20260918-es182-lockscreen-live-sync, ourgoal-shell-v20260918-es181-lockscreen-hub, ourgoal-shell-v20260918-es180-notepad-batch-and-guide-renewal, ourgoal-shell-v20260918-es179-ititem-legal-safety, ourgoal-shell-v20260918-es175-lap-clock-lift, ourgoal-shell-v20260918-es175-guide, ourgoal-shell-v20260918-es173, ourgoal-shell-v20260917-es171, ourgoal-shell-v20260917-es170, ourgoal-shell-v20260917-es165-home-ui-renewal, ourgoal-shell-v20260917-es169, ourgoal-shell-v20260917-es168, ourgoal-shell-v20260917-es167, ourgoal-shell-v20260917-es166-v2, ourgoal-shell-v20260917-es166, ourgoal-shell-v20260917-es165, ourgoal-shell-v20260917-es164, ourgoal-shell-v20260917-es163, ourgoal-shell-v20260917-es162, ourgoal-shell-v20260917-es161, ourgoal-shell-v20260917-es160, ourgoal-shell-v20260917-es159, ourgoal-shell-v20260917-es158, ourgoal-shell-v20260917-es157, ourgoal-shell-v20260917-gcal-silent-sync, ourgoal-shell-v20260917-es155, ourgoal-shell-v20260917-es154, ourgoal-shell-v20260917-es153, ourgoal-shell-v20260917-recycle-bin, ourgoal-shell-v20260917-es145, ourgoal-shell-v20260917-es144, ourgoal-shell-v20260916-es131, ourgoal-shell-v20260916-es130, ourgoal-shell-v20260916-es129, ourgoal-shell-v20260916-es128-v3, ourgoal-shell-v20260916-es127, ourgoal-shell-v20260916-es126, ourgoal-shell-v20260916-es125 and ourgoal-shell-v20260916-es118 */
+var CACHE_NAME = 'ourgoal-shell-v20260922-t045-crm-journey-deeplink'; /* supersedes ourgoal-shell-v20260920-task-es198-cal-full-fix, ourgoal-shell-v20260920-task-es197-cal-photo-diary-heatmap, ourgoal-shell-v20260920-task-es196-checkin-ai-feedback, ourgoal-shell-v20260920-supreme-constitution-upgrade, ourgoal-shell-v20260920-comprehensive-8remediation-complete, ourgoal-shell-v20260920-constitutional-integrity-and-zero-ads, ourgoal-shell-v20260919-comm-feed-social-bridge, ourgoal-shell-v20260919-team-invite-companions, ourgoal-shell-v20260919-goals-clean-simplify, ourgoal-shell-v20260919-uiux-expanded-20plus, ourgoal-shell-v20260919-uiux-comprehensive-remediation, ourgoal-shell-v20260919-constitutional-audit-integrity-remediation, ourgoal-shell-v20260918-sanctuary-comm-radar-restore, ourgoal-shell-v20260918-sanctuary-calendar-records-restore, ourgoal-shell-v20260918-es183-lockscreen-takeover, ourgoal-shell-v20260918-es182-lockscreen-live-sync, ourgoal-shell-v20260918-es181-lockscreen-hub, ourgoal-shell-v20260918-es180-notepad-batch-and-guide-renewal, ourgoal-shell-v20260918-es179-ititem-legal-safety, ourgoal-shell-v20260918-es175-lap-clock-lift, ourgoal-shell-v20260918-es175-guide, ourgoal-shell-v20260918-es173, ourgoal-shell-v20260917-es171, ourgoal-shell-v20260917-es170, ourgoal-shell-v20260917-es165-home-ui-renewal, ourgoal-shell-v20260917-es169, ourgoal-shell-v20260917-es168, ourgoal-shell-v20260917-es167, ourgoal-shell-v20260917-es166-v2, ourgoal-shell-v20260917-es166, ourgoal-shell-v20260917-es165, ourgoal-shell-v20260917-es164, ourgoal-shell-v20260917-es163, ourgoal-shell-v20260917-es162, ourgoal-shell-v20260917-es161, ourgoal-shell-v20260917-es160, ourgoal-shell-v20260917-es159, ourgoal-shell-v20260917-es158, ourgoal-shell-v20260917-es157, ourgoal-shell-v20260917-gcal-silent-sync, ourgoal-shell-v20260917-es155, ourgoal-shell-v20260917-es154, ourgoal-shell-v20260917-es153, ourgoal-shell-v20260917-recycle-bin, ourgoal-shell-v20260917-es145, ourgoal-shell-v20260917-es144, ourgoal-shell-v20260916-es131, ourgoal-shell-v20260916-es130, ourgoal-shell-v20260916-es129, ourgoal-shell-v20260916-es128-v3, ourgoal-shell-v20260916-es127, ourgoal-shell-v20260916-es126, ourgoal-shell-v20260916-es125 and ourgoal-shell-v20260916-es118 */
 var APP_SHELL = ['/'];
 
 self.addEventListener('install', function(event){
@@ -39,18 +39,27 @@ self.addEventListener('push', function(event){
   try{ data = event.data ? event.data.json() : {}; } catch(e){ /* non-JSON payload, use defaults */ }
   var title = data.title || '아워골';
   var body = data.body || '지금 뭐 하고 있었어요?';
-  /* 알림 도착 계측(익명·실패 무시) — 탭을 모두 닫은 상태에서도 도착했다는 클라이언트 측 증거 */
+  /* [T045] 서버가 실어 보낸 딥링크/저니 태그를 그대로 넘긴다(이전엔 data:{url:'/'} 로 고정돼 있어 커스텀 url 이 전부 무시됐음) */
+  var meta = (data.data && typeof data.data === 'object') ? data.data : {};
+  var targetUrl = meta.url || data.url || '/';
+  var journey = meta.journey || null;
+  var step = meta.step || null;
+  /* 알림 도착 계측(익명·실패 무시) — 탭을 모두 닫은 상태에서도 도착했다는 클라이언트 측 증거. journey/step 은 비식별 태그(user_id 없음) */
+  var receivedProps = { channel: 'push' };
+  if(journey) receivedProps.journey = journey;
+  if(step) receivedProps.step = step;
   var received = fetch('/api/track', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: 'notification_received', props: { channel: 'push' } })
+    body: JSON.stringify({ name: 'notification_received', props: receivedProps })
   }).catch(function(){});
   event.waitUntil(Promise.all([
     self.registration.showNotification(title, {
       body: body,
-      icon: '/icons/icon-192.png',
-      badge: '/icons/icon-192.png',
-      data: { url: '/' }
+      icon: data.icon || '/icons/icon-192.png',
+      badge: data.badge || '/icons/icon-192.png',
+      tag: data.tag,
+      data: { url: targetUrl, journey: journey, step: step }
     }),
     received
   ]));
@@ -59,20 +68,24 @@ self.addEventListener('push', function(event){
 self.addEventListener('notificationclick', function(event){
   event.notification.close();
   var action = event.action;
+  var ndata = event.notification.data || {};
   var targetUrl = '/';
   if(action === 'action-checkin'){
     targetUrl = '/?action=checkin';
   } else if(action === 'action-calendar'){
     targetUrl = '/?tab=calendar';
-  } else if(event.notification.data && event.notification.data.url){
-    targetUrl = event.notification.data.url;
+  } else if(ndata.url){
+    targetUrl = ndata.url;
   }
 
-  /* 알림 클릭률 계측(익명·실패 무시) — 성장 백로그 P0 ③ */
+  /* 알림 클릭률 계측(익명·실패 무시) — 성장 백로그 P0 ③. journey/step 은 [T045] CRM 저니 귀속용 비식별 태그 */
+  var clickedProps = { channel: 'push', action: action || 'open' };
+  if(ndata.journey) clickedProps.journey = ndata.journey;
+  if(ndata.step) clickedProps.step = ndata.step;
   var tracked = fetch('/api/track', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: 'notification_clicked', props: { channel: 'push', action: action || 'open' } })
+    body: JSON.stringify({ name: 'notification_clicked', props: clickedProps })
   }).catch(function(){});
 
   var focused = self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(list){
