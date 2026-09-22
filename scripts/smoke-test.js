@@ -7944,6 +7944,23 @@ check('[#TASK-ES-242] 기록탭 대표 안내멘트(#recHeadlineSentence) 시인
   assert.ok(indexHtml.includes('매일의 작은 실천이'), '매일의 작은 실천이 카피 문구 확인');
 });
 
+check('[#TASK-ES-243] 소통탭 대표 안내멘트(#commHeadlineSentence) 시인성 개선 및 공간 효율적 간결 문구 재배치 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. #commHeadlineSentence 압축 스타일 선언 확인
+  assert.ok(cssContent.includes('#commHeadlineSentence'), '#commHeadlineSentence CSS 선언 확인');
+  assert.ok(cssContent.includes('margin: 4px 0 10px 0 !important;'), '#commHeadlineSentence margin: 4px 0 10px 0 선언 확인');
+  assert.ok(cssContent.includes('.toss-community-hero-card'), '.toss-community-hero-card 선언 확인');
+  assert.ok(cssContent.includes('margin-top: 6px !important;'), '.toss-community-hero-card margin-top: 6px 확인');
+
+  // 2. 모바일 480px 반응형 규칙 확인
+  assert.ok(cssContent.includes('margin: 4px 0 8px 0 !important;'), '#commHeadlineSentence 480px 반응형 마진 확인');
+
+  // 3. index.html 내 카피라이팅 확인
+  assert.ok(indexHtml.includes('혼자가 아니라 함께 달리고 있어요 🏃‍♀️'), '혼자가 아니라 함께 달리고 있어요 카피 문구 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
