@@ -1089,23 +1089,41 @@
     return peers;
   }
 
+  function toggleRadarCollapse() {
+    var slot = document.getElementById('sanctuaryCommView');
+    if (!slot) return;
+    if (typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+    slot.dataset.collapsed = slot.dataset.collapsed === 'true' ? 'false' : 'true';
+    renderSanctuaryComm();
+  }
+
   function renderSanctuaryComm() {
     var slot = document.getElementById('sanctuaryCommView');
     if (!slot) return;
 
     var peers = getRealRunningMates();
-    var countText = peers.length > 0 ? (peers.length + '명 함께하는 중') : '0명 (새 동반자 찾기)';
+    var countText = peers.length > 0 ? (peers.length + '명') : '0명';
     var countClass = peers.length > 0 ? 's-radar-count' : 's-radar-count s-radar-zero';
+    var isCollapsed = slot.dataset.collapsed === 'true';
 
-    var radarHtml = '<div class="s-peer-radar-card">' +
+    var radarHtml = '<div class="s-peer-radar-card ' + (isCollapsed ? 'collapsed' : 'slim-mode') + '" id="sPeerRadarCard">' +
       '<div class="s-radar-head">' +
         '<div class="s-radar-title">' +
           '<span class="s-live-dot"></span>' +
-          '<b>실시간 러닝메이트 레이더</b>' +
+          '<b>실시간 러닝메이트</b>' +
           '<span class="' + countClass + '">' + countText + '</span>' +
         '</div>' +
-        '<button class="btn btn-ghost btn-xs s-radar-refresh-btn" type="button" onclick="window.OurgoalSanctuaryV3.refreshRadar(this);">새로고침</button>' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<button class="btn btn-ghost btn-xs s-radar-refresh-btn" type="button" onclick="window.OurgoalSanctuaryV3.refreshRadar(this);">새로고침</button>' +
+          '<button class="btn btn-ghost btn-xs s-radar-toggle-btn" id="peerRadarToggleBtn" type="button" onclick="window.OurgoalSanctuaryV3.toggleRadarCollapse();" style="padding:2px 8px;font-size:0.75rem;">' + (isCollapsed ? '▼ 펼치기' : '▲ 접기') + '</button>' +
+        '</div>' +
       '</div>';
+
+    if (isCollapsed) {
+      radarHtml += '</div>';
+      slot.innerHTML = radarHtml;
+      return;
+    }
 
     if (peers.length > 0) {
       radarHtml += '<div class="s-radar-scroll">' +
@@ -1157,6 +1175,7 @@
   window.OurgoalSanctuaryV3 = {
     render: renderSanctuaryV3,
     renderRadar: renderSanctuaryComm,
+    toggleRadarCollapse: toggleRadarCollapse,
     setCalMode: function(m) {
       if (m === 'timer') {
         if (typeof window.switchTab === 'function') window.switchTab('records');
