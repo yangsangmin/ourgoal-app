@@ -20961,8 +20961,45 @@ wirePromptEncyclopediaEvents(body);
     '</div>';
   }
 
+  /* [#TASK-ES-229] 가상 목 그룹(MOCK_GROUPS) 판별 및 팀 생성 대형 히어로 카드 */
+  function isMockGroup(g){
+    if(!g) return false;
+    if(g.isMock !== undefined) return !!g.isMock;
+    var customGroups = (state && state.profile && state.profile.settings && state.profile.settings.customGroups) || [];
+    if(customGroups.some(function(cg){ return cg.id === g.id; })) return false;
+    return /^(g-workshop|g-travel|g-marathon-pair|g-marathon-small|g\d+)$/.test(g.id);
+  }
+  if(typeof window !== 'undefined'){ window.isMockGroup = isMockGroup; }
+
+  function renderTeamCreateHeroCardHtml(context){
+    var isGoals = context === 'goals';
+    var heroBtnHtml = isGoals ?
+      '<button class="btn btn-primary" id="btnHeroCreateTeamGoals" data-herocreateteam="goals" type="button" style="min-height:44px;padding:0 18px;font-weight:700;font-size:0.9375rem;border-radius:12px;display:inline-flex;align-items:center;gap:6px;"><span>+ 새 팀 개설하기</span></button>' :
+      '<button class="btn btn-primary" id="btnHeroCreateTeamComm" data-herocreateteam="comm" type="button" style="min-height:44px;padding:0 18px;font-weight:700;font-size:0.9375rem;border-radius:12px;display:inline-flex;align-items:center;gap:6px;"><span>+ 새 팀 개설하기</span></button>';
+
+    return '<div class="team-hero-card" id="' + (isGoals ? 'teamGoalsHeroCard' : 'commTeamHeroCard') + '" style="margin-bottom:14px;">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
+        '<span class="team-hero-badge">🔥 우리만의 팀 만들기</span>' +
+        '<span style="font-size:0.75rem;color:var(--ink-faint);font-weight:600;">3초 만에 빠른 개설</span>' +
+      '</div>' +
+      '<h3 class="team-hero-title">' +
+        '<span>' + (isGoals ? '함께 달릴 새 팀 목표 만들기' : '친구·동료와 함께할 새 팀 만들기') + '</span>' +
+      '</h3>' +
+      '<p class="team-hero-desc">' +
+        '직장 동료, 스터디, 운동 크루들과 함께 실천하고 응원할 팀을 자유롭게 개설해보세요!' +
+      '</p>' +
+      '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">' +
+        heroBtnHtml +
+        '<button class="btn btn-ghost btn-sm" data-tgtplquick="workshop" type="button" style="min-height:44px;padding:0 12px;font-size:0.8125rem;border-radius:12px;">🏢 워크숍 TF</button>' +
+        '<button class="btn btn-ghost btn-sm" data-tgtplquick="travel" type="button" style="min-height:44px;padding:0 12px;font-size:0.8125rem;border-radius:12px;">✈️ 단체여행</button>' +
+        '<button class="btn btn-ghost btn-sm" data-tgtplquick="fitness" type="button" style="min-height:44px;padding:0 12px;font-size:0.8125rem;border-radius:12px;">🏋️ 운동 크루</button>' +
+      '</div>' +
+    '</div>';
+  }
+
   function renderTeamGoalsEmptyGuideHtml(){
-    return '<div class="card" style="margin-bottom:14px;background:var(--surface-2);border:1px solid var(--rule);">' +
+    return renderTeamCreateHeroCardHtml('goals') +
+      '<div class="card" style="margin-bottom:14px;background:var(--surface-2);border:1px solid var(--rule);">' +
       '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">' +
         '<span style="font-size:1.6rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M6 3h12v6a6 6 0 0 1-12 0z"/><path d="M6 5H3v2a4 4 0 0 0 3 4"/><path d="M18 5h3v2a4 4 0 0 1-3 4"/></svg></span>' +
         '<div>' +
@@ -21230,6 +21267,23 @@ wirePromptEncyclopediaEvents(body);
   }
 
   function wireTeamGoalsGuideEvents(container){
+    var heroBtn = container.querySelector('#btnHeroCreateTeamGoals');
+    if(heroBtn){
+      heroBtn.onclick = function(){
+        triggerHapticFeedback(12);
+        closeModal();
+        promptNewGroup(null);
+      };
+    }
+    container.querySelectorAll('[data-tgtplquick]').forEach(function(btn){
+      btn.onclick = function(){
+        triggerHapticFeedback(12);
+        var tpl = btn.dataset.tgtplquick;
+        closeModal();
+        var preset = getTeamGoalTemplatePreset(tpl);
+        promptNewGroup(null, preset);
+      };
+    });
     var tabs = container.querySelectorAll('[data-tgexampletab]');
     tabs.forEach(function(btn){
       btn.addEventListener('click', function(){
@@ -21802,7 +21856,9 @@ wirePromptEncyclopediaEvents(body);
       activeFilter = 'all';
     }
 
+    var heroCardHtml = renderTeamCreateHeroCardHtml('goals');
     var headerAndFilterHtml =
+      heroCardHtml +
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px;">' +
         '<span style="font-weight:700;font-size:1.0625rem;color:var(--ink);">참여 중인 팀 목표</span>' +
         '<div style="display:flex;align-items:center;gap:6px;">' +
@@ -21825,7 +21881,7 @@ wirePromptEncyclopediaEvents(body);
       var canManage = canManageTeamGoals(g.id);
       var isOwner = groupState(g.id).myRole === 'owner';
       var gs = groupState(g.id);
-      var isPreviewGroup = g.id === 'g-workshop' || g.id === 'g-travel' || g.id === 'g0' || !!gs.isPreview;
+      var isPreviewGroup = isMockGroup(g) || g.id === 'g-workshop' || g.id === 'g-travel' || g.id === 'g0' || !!gs.isPreview;
       var roleLabel = roleLabels[gs.myRole || 'member'];
       var goals = g.teamGoals || [];
       var teamLeaderDeps = {
@@ -21849,9 +21905,12 @@ wirePromptEncyclopediaEvents(body);
         : '';
 
       var previewBadgeHtml = isPreviewGroup ?
-        '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:10px;padding:6px 10px;background:var(--gold-soft);border-radius:8px;">' +
-          '<span style="font-size:.8125rem;font-weight:700;color:var(--gold);">👀 체험용 예시 팀</span>' +
-          '<button class="btn btn-ghost btn-sm" data-tgleavepreview="'+g.id+'" type="button" style="font-size:.75rem;padding:2px 8px;color:var(--brand-strong);border-color:var(--red-line);background:var(--card);">체험 팀 나가기</button>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:10px;padding:8px 10px;background:var(--gold-soft);border:1px solid var(--gold-line);border-radius:10px;">' +
+          '<span style="font-size:.8125rem;font-weight:700;color:var(--gold);display:flex;align-items:center;gap:4px;">💡 이런 팀을 만들 수 있어요 (체험용 예시 팀)</span>' +
+          '<div style="display:flex;gap:4px;align-items:center;">' +
+            '<button class="btn btn-primary btn-sm" data-tplgroup-create="'+g.id+'" type="button" style="font-size:.75rem;padding:2px 8px;font-weight:700;">✨ 팀 개설</button>' +
+            '<button class="btn btn-ghost btn-sm" data-tgleavepreview="'+g.id+'" type="button" style="font-size:.75rem;padding:2px 8px;color:var(--brand-strong);border-color:var(--red-line);background:var(--card);">체험 팀 나가기</button>' +
+          '</div>' +
         '</div>' : '';
 
       var leaderCrownHtml = isOwner ?
@@ -22022,6 +22081,21 @@ wirePromptEncyclopediaEvents(body);
 
     view.innerHTML = headerAndFilterHtml + cardsHtml + (window.OurgoalGoalEditUX ? OurgoalGoalEditUX.renderTeamDoneInlineBtn(state) : "");
 
+    var heroGoalsBtn = view.querySelector('#btnHeroCreateTeamGoals');
+    if(heroGoalsBtn){
+      heroGoalsBtn.addEventListener('click', function(){
+        triggerHapticFeedback(12);
+        promptNewGroup(null);
+      });
+    }
+    view.querySelectorAll('[data-tgtplquick]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        triggerHapticFeedback(12);
+        var preset = getTeamGoalTemplatePreset(btn.dataset.tgtplquick);
+        promptNewGroup(null, preset);
+      });
+    });
+
     // Filter bar listener
     view.querySelectorAll('[data-tgfilter]').forEach(function(btn){
       btn.addEventListener('click', function(){
@@ -22135,6 +22209,7 @@ wirePromptEncyclopediaEvents(body);
 
     view.querySelectorAll('[data-tgleavepreview]').forEach(function(btn){
       btn.addEventListener('click', async function(){
+        triggerHapticFeedback(12);
         var gid = btn.dataset.tgleavepreview;
         var gs = groupState(gid);
         gs.joined = false;
@@ -22142,6 +22217,16 @@ wirePromptEncyclopediaEvents(body);
         await saveProfile();
         toast('체험 팀에서 나갔어요');
         renderTeamGoalsScreen();
+      });
+    });
+
+    view.querySelectorAll('[data-tplgroup-create]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        triggerHapticFeedback(12);
+        var gid = btn.dataset.tplgroupCreate;
+        var preset = getTeamGoalTemplatePreset(gid);
+        promptNewGroup(null, preset);
       });
     });
 
@@ -22470,8 +22555,18 @@ wirePromptEncyclopediaEvents(body);
   }
 
   function getTeamGoalTemplatePreset(tpl){
-    var gid = tpl === 'workshop' ? 'g-workshop' : (tpl === 'travel' ? 'g-travel' : 'g0');
-    var g = MOCK_GROUPS.find(function(x){ return x.id === gid; }) || MOCK_GROUPS[0];
+    var g = null;
+    if(typeof tpl === 'object' && tpl !== null){
+      g = tpl;
+    } else if(typeof tpl === 'string'){
+      var gid = (tpl === 'workshop' || tpl === 'g-workshop') ? 'g-workshop'
+              : (tpl === 'travel' || tpl === 'g-travel') ? 'g-travel'
+              : (tpl === 'fitness' || tpl === 'g0') ? 'g0'
+              : tpl;
+      g = (typeof MOCK_GROUPS !== 'undefined' ? MOCK_GROUPS : []).find(function(x){ return x.id === gid; });
+    }
+    if(!g && typeof MOCK_GROUPS !== 'undefined' && MOCK_GROUPS.length) g = MOCK_GROUPS[0];
+    if(!g) return { icon:'🔥', name:'새로운 우리 팀', desc:'', rule:'', max:'5', cadence:'주 3회', topic:'', teamGoals:[] };
     return {
       icon: g.icon,
       name: g.name,
@@ -28965,7 +29060,7 @@ wirePromptEncyclopediaEvents(body);
   }
 
   var MOCK_GROUPS = [
-    { id:'g-workshop', icon:'🏢', name:'2026 하반기 전략 워크숍 TF', topic:'career/기획·전략', region:'서울 강남구', members:6, maxMembers:10, roomType:'small', inviteCode:'WORK-TF10', ownerName:'상민', progress:65, cadence:'주 3회', endDate:daysFromNow(21),
+    { id:'g-workshop', isMock:true, icon:'🏢', name:'2026 하반기 전략 워크숍 TF', topic:'career/기획·전략', region:'서울 강남구', members:6, maxMembers:10, roomType:'small', inviteCode:'WORK-TF10', ownerName:'상민', progress:65, cadence:'주 3회', endDate:daysFromNow(21),
       desc:'회사 워크숍 장소·예산 확정부터 부서별 세션 발표, 팀빌딩 레크리에이션까지 성공적으로 완주해요', rule:'주 3회 담당 TF별 준비 체크리스트 및 마일스톤 인증',
       weeklyTarget:18, weeklyDone:12,
       roster:[{n:'상민',c:4},{n:'민혁',c:3},{n:'지우',c:3},{n:'태성',c:2}],
@@ -28989,7 +29084,7 @@ wirePromptEncyclopediaEvents(body);
           ] }
         ] }
       ] },
-    { id:'g-travel', icon:'✈️', name:'제주 3박4일 단체 힐링여행', topic:'hobby/여행·캠핑', region:'제주', members:4, maxMembers:6, roomType:'small', inviteCode:'TRIP-JEJU', ownerName:'유진', progress:70, cadence:'주 3회', endDate:daysFromNow(14),
+    { id:'g-travel', isMock:true, icon:'✈️', name:'제주 3박4일 단체 힐링여행', topic:'hobby/여행·캠핑', region:'제주', members:4, maxMembers:6, roomType:'small', inviteCode:'TRIP-JEJU', ownerName:'유진', progress:70, cadence:'주 3회', endDate:daysFromNow(14),
       desc:'낙오자 없이 전원 만족하는 제주 단체여행! 항공·숙소·맛집·드라이브 코스 완벽 준비', rule:'주 3회 여행 준비 미션(동선 투표, 렌터카 예약, 짐 챙기기) 인증',
       weeklyTarget:12, weeklyDone:8,
       roster:[{n:'유진',c:3},{n:'서연',c:3},{n:'현우',c:2}],
@@ -29013,7 +29108,7 @@ wirePromptEncyclopediaEvents(body);
           ] }
         ] }
       ] },
-    { id:'g-marathon-pair', icon:'🏃', name:'친구와 1:1 마라톤 완주방', topic:'health/러닝·마라톤', region:'온라인', members:1, maxMembers:2, roomType:'pair', inviteCode:'RUN-PAIR2', ownerName:'민혁', progress:50, cadence:'주 3회', endDate:daysFromNow(30),
+    { id:'g-marathon-pair', isMock:true, icon:'🏃', name:'친구와 1:1 마라톤 완주방', topic:'health/러닝·마라톤', region:'온라인', members:1, maxMembers:2, roomType:'pair', inviteCode:'RUN-PAIR2', ownerName:'민혁', progress:50, cadence:'주 3회', endDate:daysFromNow(30),
       desc:'친구와 둘이서 1:1로 서로의 페이스메이커가 되어 마라톤 풀코스/하프 완주를 달성해요', rule:'주 3회 러닝 거리·페이스 또는 완주 훈련 인증샷 업로드',
       weeklyTarget:6, weeklyDone:3,
       roster:[{n:'민혁',c:3}],
@@ -29027,7 +29122,7 @@ wirePromptEncyclopediaEvents(body);
           { id:'tgm-mp-1b', title:'2단계: 하프 마라톤 거리 완주', status:'todo' }
         ] }
       ] },
-    { id:'g-marathon-small', icon:'🏃', name:'5인 소그룹 마라톤 완주방', topic:'health/러닝·마라톤', region:'온라인', members:3, maxMembers:5, roomType:'small', inviteCode:'RUN-CREW5', ownerName:'지우', progress:60, cadence:'주 3회', endDate:daysFromNow(45),
+    { id:'g-marathon-small', isMock:true, icon:'🏃', name:'5인 소그룹 마라톤 완주방', topic:'health/러닝·마라톤', region:'온라인', members:3, maxMembers:5, roomType:'small', inviteCode:'RUN-CREW5', ownerName:'지우', progress:60, cadence:'주 3회', endDate:daysFromNow(45),
       desc:'5인 소그룹으로 뭉쳐 낙오자 없이 함께 달리는 마라톤 완주 크루', rule:'주 3회 5km 이상 러닝 기록 또는 완주 인증샷',
       weeklyTarget:15, weeklyDone:9,
       roster:[{n:'지우',c:4},{n:'태성',c:3},{n:'재훈',c:2}],
@@ -29041,7 +29136,7 @@ wirePromptEncyclopediaEvents(body);
           { id:'tgm-ms-1b', title:'2단계: 전원 15km LSD 훈련', status:'doing' }
         ] }
       ] },
-    { id:'g0', icon:'🏋️', name:'크로스핏 와드(WOD) 정복대', topic:'health/크로스핏·피트니스', region:'서울 마포구', members:89, maxMembers:100, roomType:'open', progress:74, cadence:'매일', endDate:daysFromNow(30),
+    { id:'g0', isMock:true, icon:'🏋️', name:'크로스핏 와드(WOD) 정복대', topic:'health/크로스핏·피트니스', region:'서울 마포구', members:89, maxMembers:100, roomType:'open', progress:74, cadence:'매일', endDate:daysFromNow(30),
       desc:'오늘의 WOD 기록과 운동 인증샷을 공유하며 한계 돌파!', rule:'오늘의 WOD 시간·무게 또는 체육관 인증샷 업로드',
       weeklyTarget:280, weeklyDone:205,
       roster:[{n:'민혁',c:21},{n:'지우',c:19},{n:'태성',c:16},{n:'수아',c:14},{n:'재훈',c:11}],
@@ -29058,7 +29153,7 @@ wirePromptEncyclopediaEvents(body);
           { id:'tgm-g0-1c', title:'3단계: 250회 완수 및 팀 정모', status:'todo' }
         ] }
       ] },
-    { id:'g1', icon:'💪', name:'벤치프레스 100kg 달성 팀', topic:'health/헬스·근력', region:'서울 강남구', members:128, progress:68, cadence:'주 3회', endDate:daysFromNow(24),
+    { id:'g1', isMock:true, icon:'💪', name:'벤치프레스 100kg 달성 팀', topic:'health/헬스·근력', region:'서울 강남구', members:128, progress:68, cadence:'주 3회', endDate:daysFromNow(24),
       desc:'같은 목표를 가진 사람들과 기록을 공유해요', rule:'운동한 날 무게·세트를 남기면 인증 완료',
       weeklyTarget:300, weeklyDone:214,
       roster:[{n:'민준',c:14},{n:'하늘',c:12},{n:'도윤',c:11},{n:'서아',c:9},{n:'지호',c:7}],
@@ -29073,19 +29168,19 @@ wirePromptEncyclopediaEvents(body);
           { id:'tgm-g1-1b', title:'하반월 150회 인증', status:'doing' }
         ] }
       ] },
-    { id:'g2', icon:'📚', name:'자격증 스터디', topic:'study/자격증·시험', region:'온라인', members:342, progress:45, cadence:'매일', endDate:daysFromNow(51),
+    { id:'g2', isMock:true, icon:'📚', name:'자격증 스터디', topic:'study/자격증·시험', region:'온라인', members:342, progress:45, cadence:'매일', endDate:daysFromNow(51),
       desc:'시험 준비, 서로 진도를 확인하며 함께 가요', rule:'그날 공부한 분량을 기록하면 인증 완료',
       weeklyTarget:800, weeklyDone:361,
       roster:[{n:'서연',c:21},{n:'유진',c:18},{n:'현우',c:15},{n:'민서',c:13},{n:'태호',c:10}],
       activity:['서연님이 기출 3회독을 마쳤어요','유진님이 오답노트 20문항을 올렸어요','민서님이 오늘도 인증했어요'],
       teamGoals:[] },
-    { id:'g3', icon:'🏘️', name:'동네 아침 루틴', topic:'mind/기상·수면', region:'서울 마포구', members:76, progress:82, cadence:'매일', endDate:daysFromNow(9),
+    { id:'g3', isMock:true, icon:'🏘️', name:'동네 아침 루틴', topic:'mind/기상·수면', region:'서울 마포구', members:76, progress:82, cadence:'매일', endDate:daysFromNow(9),
       desc:'우리 동네 사람들과 아침 습관 만들기', rule:'오전 8시 전에 기록을 남기면 인증 완료',
       weeklyTarget:180, weeklyDone:148,
       roster:[{n:'다현',c:19},{n:'준서',c:17},{n:'예린',c:16},{n:'상우',c:12},{n:'가은',c:8}],
       activity:['다현님이 19일 연속 아침 인증 중이에요','준서님이 새벽 러닝을 인증했어요','예린님이 응원을 3개 보냈어요'],
       teamGoals:[] },
-    { id:'g4', icon:'🏃', name:'첫 10km 완주 클럽', topic:'health/러닝·마라톤', region:'경기 성남시', members:205, progress:57, cadence:'주 3회', endDate:daysFromNow(38),
+    { id:'g4', isMock:true, icon:'🏃', name:'첫 10km 완주 클럽', topic:'health/러닝·마라톤', region:'경기 성남시', members:205, progress:57, cadence:'주 3회', endDate:daysFromNow(38),
       desc:'러닝 입문자끼리 페이스 공유하며 10km까지', rule:'러닝 거리·페이스를 남기면 인증 완료',
       weeklyTarget:400, weeklyDone:236,
       roster:[{n:'수민',c:16},{n:'재영',c:14},{n:'하은',c:11},{n:'정우',c:9},{n:'소라',c:6}],
@@ -29095,13 +29190,13 @@ wirePromptEncyclopediaEvents(body);
         { id:'v4-2', userName:'재영', userAvatar:'👟', time:'어제 19:30', photoUrl:'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=400&auto=format&fit=crop&q=80', note:'5km 페이스 4분 50초 갱신 성공!', cheers: 14 }
       ],
       teamGoals:[] },
-    { id:'g5', icon:'✍️', name:'매일 한 편 글쓰기', topic:'hobby/글쓰기', region:'온라인', members:97, progress:73, cadence:'매일', endDate:daysFromNow(16),
+    { id:'g5', isMock:true, icon:'✍️', name:'매일 한 편 글쓰기', topic:'hobby/글쓰기', region:'온라인', members:97, progress:73, cadence:'매일', endDate:daysFromNow(16),
       desc:'짧아도 좋으니 매일 한 편씩 쓰는 사람들', rule:'글 링크나 분량을 남기면 인증 완료',
       weeklyTarget:250, weeklyDone:191,
       roster:[{n:'윤아',c:22},{n:'세훈',c:18},{n:'미래',c:15},{n:'동현',c:10},{n:'채원',c:7}],
       activity:['윤아님이 22일 연속 글쓰기를 이어가고 있어요','세훈님이 에세이 1편을 올렸어요','미래님이 응원을 보냈어요'],
       teamGoals:[] },
-    { id:'g6', icon:'💰', name:'6개월 1000만원 모으기', topic:'career/절약·가계부', region:'온라인', members:412, progress:39, cadence:'주말', endDate:daysFromNow(74),
+    { id:'g6', isMock:true, icon:'💰', name:'6개월 1000만원 모으기', topic:'career/절약·가계부', region:'온라인', members:412, progress:39, cadence:'주말', endDate:daysFromNow(74),
       desc:'가계부 인증하며 목표 금액까지 함께', rule:'주간 지출 정리와 저축액을 남기면 인증 완료',
       weeklyTarget:600, weeklyDone:234,
       roster:[{n:'지훈',c:12},{n:'서영',c:11},{n:'민재',c:9},{n:'예나',c:8},{n:'우진',c:5}],
@@ -30929,7 +31024,68 @@ wirePromptEncyclopediaEvents(body);
       return (g.topic||'').split('/')[0] === filter;
     });
 
+    var realGroups = visibleGroups.filter(function(g){ return !isMockGroup(g); });
+    var mockGroups = visibleGroups.filter(function(g){ return isMockGroup(g); });
+    var isMockAccordionOpen = state.mockSectionOpen !== false;
+
+    var renderSingleGroupItem = function(g, isMock){
+      var gs = groupState(g.id);
+      var prog = typeof g.progress==='number' ? g.progress : 0;
+      var isOwner = gs.myRole === 'owner'; var checked = groupCheckedToday(g.id);
+      var ownerBadge = isOwner ? '<span style="font-size:.6875rem;font-weight:700;color:var(--sage);background:var(--sage-soft);border:1px solid var(--sage-soft);padding:1px 6px;border-radius:999px;margin-left:5px;vertical-align:middle;">팀장</span>' : '';
+      var mockBadge = isMock ? '<div style="margin-bottom:4px;"><span class="mock-group-badge">💡 이런 팀을 만들 수 있어요 (활용 예시)</span></div>' : '';
+
+      var actionButtons = isMock ?
+        '<div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">' +
+          '<button class="btn btn-primary btn-sm" data-tplgroup-create="'+g.id+'" type="button" style="min-height:38px;padding:4px 10px;font-size:.75rem;font-weight:700;border-radius:8px;">✨ 이 템플릿으로 팀 개설</button>' +
+          '<button class="btn btn-ghost btn-sm" data-join="'+g.id+'" type="button" style="min-height:38px;padding:4px 8px;font-size:.75rem;border-radius:8px;">'+(gs.joined?'체험중':'체험')+'</button>' +
+        '</div>' :
+        '<button class="join-btn'+(gs.joined?' joined':'')+'" data-join="'+g.id+'" type="button">'+(gs.joined?'참여중':'참여하기')+'</button>';
+
+      return '<div class="group-item" style="align-items:flex-start;cursor:pointer;' + (isMock ? 'background:var(--surface-2);border-color:var(--rule);' : '') + '" data-open-group="'+g.id+'">' +
+        '<div class="group-ico">'+g.icon+'</div>' +
+        '<div class="group-info">' +
+          mockBadge +
+          '<b>'+escapeHtml(g.name)+ownerBadge+(gs.joined&&checked?' ✅':'')+'</b>' +
+          '<div style="margin:3px 0 2px;display:flex;gap:4px;flex-wrap:wrap;">' + topicPill(g.topic) +
+            (g.maxMembers === 2 ? '<span class="topic-pill" style="background:var(--sage-soft);color:var(--sage);border-color:var(--sage-line);font-weight:700;">1:1 완주방</span>' : (g.maxMembers === 5 ? '<span class="topic-pill" style="background:var(--surface-2);color:var(--ink);border-color:var(--rule);font-weight:700;">5인 소그룹</span>' : '')) +
+            (g.region ? '<span class="topic-pill" style="background:var(--gold-soft);color:var(--gold);border-color:var(--gold-line);">'+(g.region==='온라인'?'온라인':''+escapeHtml(g.region))+'</span>' : '') +
+          '</div>' +
+          '<span>'+(g.members+(gs.joined?1:0))+(g.maxMembers ? '/'+g.maxMembers+'명' : '명')+' 참여 · '+g.cadence+' 인증 · '+dDay(g.endDate)+'</span>' +
+          '<div class="group-bar"><span style="width:'+prog+'%;"></span></div>' +
+          '<span class="faint" style="font-size:.7rem;">공동 달성률 '+prog+'%'+(gs.joined&&!checked?' · 오늘 인증 전이에요':'')+'</span>' +
+        '</div>' +
+        actionButtons +
+      '</div>';
+    };
+
+    var realGroupsHtml = realGroups.length ?
+      '<div style="font-size:.9375rem;font-weight:700;color:var(--ink);margin:14px 0 8px;display:flex;align-items:center;gap:6px;">' +
+        '<span>🔥 실시간 활동 중인 팀 (' + realGroups.length + ')</span>' +
+      '</div>' +
+      realGroups.map(function(g){ return renderSingleGroupItem(g, false); }).join('') :
+      '<div style="background:var(--surface-2);border-radius:14px;padding:14px;border:1px dashed var(--rule);margin:12px 0 16px;text-align:center;">' +
+        '<p style="margin:0 0 4px;font-weight:700;font-size:0.9375rem;color:var(--ink);">아직 개설된 실제 팀이 없어요</p>' +
+        '<p style="margin:0;font-size:0.8125rem;color:var(--ink-soft);">상단의 <b>[+ 새 팀 개설하기]</b>를 눌러 친구들과 첫 팀을 만들거나, 아래 예시 템플릿을 복사해 1초 만에 시작해보세요!</p>' +
+      '</div>';
+
+    var mockGroupsCardsHtml = mockGroups.map(function(g){ return renderSingleGroupItem(g, true); }).join('');
+    var mockAccordionHtml = mockGroups.length ?
+      '<div class="mock-section-accordion">' +
+        '<button class="mock-section-toggle-btn" id="btnToggleMockGroups" data-toggle-mock-section="comm" type="button">' +
+          '<div style="display:flex;align-items:center;gap:6px;">' +
+            '<span>💡 이런 팀을 만들 수 있어요 (활용 예시 템플릿)</span>' +
+            '<span class="mock-group-badge">' + mockGroups.length + '개</span>' +
+          '</div>' +
+          '<span style="font-size:.8125rem;color:var(--brand-strong);font-weight:700;">' + (isMockAccordionOpen ? '접기 ▲' : '둘러보기 ▼') + '</span>' +
+        '</button>' +
+        '<div id="commMockGroupsContainer" style="display:' + (isMockAccordionOpen ? 'block' : 'none') + ';margin-top:10px;">' +
+          mockGroupsCardsHtml +
+        '</div>' +
+      '</div>' : '';
+
     body.innerHTML =
+      renderTeamCreateHeroCardHtml('comm') +
       '<div class="card-title-row" style="margin-bottom:10px;">' +
         '<p class="faint" style="margin:0;">목표를 함께 달성하는 팀 공간</p>' +
         '<button class="btn btn-ghost btn-sm" id="commAddGroup" type="button">+ 팀 만들기</button>' +
@@ -30943,27 +31099,9 @@ wirePromptEncyclopediaEvents(body);
         }).join('') +
       '</div>' +
       collectiveGaugeHtml() +
-      (visibleGroups.length ? '' : '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div><p>이 카테고리에는 아직 팀이 없어요.<br>첫 팀을 만들어보세요.</p></div>') +
-      visibleGroups.map(function(g){
-        var gs = groupState(g.id);
-        var prog = typeof g.progress==='number' ? g.progress : 0;
-        var isOwner = gs.myRole === 'owner'; var checked = groupCheckedToday(g.id);
-        var ownerBadge = isOwner ? '<span style="font-size:.6875rem;font-weight:700;color:var(--sage);background:var(--sage-soft);border:1px solid var(--sage-soft);padding:1px 6px;border-radius:999px;margin-left:5px;vertical-align:middle;">팀장</span>' : '';
-        return '<div class="group-item" style="align-items:flex-start;cursor:pointer;" data-open-group="'+g.id+'">' +
-          '<div class="group-ico">'+g.icon+'</div>' +
-          '<div class="group-info"><b>'+escapeHtml(g.name)+ownerBadge+(gs.joined&&checked?' ✅':'')+'</b>' +
-            '<div style="margin:3px 0 2px;display:flex;gap:4px;flex-wrap:wrap;">' + topicPill(g.topic) +
-              (g.maxMembers === 2 ? '<span class="topic-pill" style="background:var(--sage-soft);color:var(--sage);border-color:var(--sage-line);font-weight:700;">1:1 완주방</span>' : (g.maxMembers === 5 ? '<span class="topic-pill" style="background:var(--surface-2);color:var(--ink);border-color:var(--rule);font-weight:700;">5인 소그룹</span>' : '')) +
-              (g.region ? '<span class="topic-pill" style="background:var(--gold-soft);color:var(--gold);border-color:var(--gold-line);">'+(g.region==='온라인'?'온라인':''+escapeHtml(g.region))+'</span>' : '') +
-            '</div>' +
-            '<span>'+(g.members+(gs.joined?1:0))+(g.maxMembers ? '/'+g.maxMembers+'명' : '명')+' 참여 · '+g.cadence+' 인증 · '+dDay(g.endDate)+'</span>' +
-            '<div class="group-bar"><span style="width:'+prog+'%;"></span></div>' +
-            '<span class="faint" style="font-size:.7rem;">공동 달성률 '+prog+'%'+(gs.joined&&!checked?' · 오늘 인증 전이에요':'')+'</span>' +
-          '</div>' +
-          '<button class="join-btn'+(gs.joined?' joined':'')+'" data-join="'+g.id+'" type="button">'+(gs.joined?'참여중':'참여하기')+'</button>' +
-        '</div>';
-      }).join('') +
-      '<p class="faint" style="margin-top:6px;">팀을 눌러 인증·랭킹·미션을 확인해보세요 · 참여 기록은 이 기기에 저장돼요</p>';
+      realGroupsHtml +
+      mockAccordionHtml +
+      '<p class="faint" style="margin-top:10px;">팀을 눌러 인증·랭킹·미션을 확인해보세요 · 참여 기록은 이 기기에 저장돼요</p>';
 
     body.querySelectorAll('[data-gfilter]').forEach(function(b){
       b.addEventListener('click', function(){
@@ -30988,7 +31126,37 @@ wirePromptEncyclopediaEvents(body);
         renderCommGroups(body);
       });
     });
-    document.getElementById('commAddGroup').addEventListener('click', function(){ promptNewGroup(body); });
+    var heroCommBtn = document.getElementById('btnHeroCreateTeamComm');
+    if(heroCommBtn){
+      heroCommBtn.addEventListener('click', function(){
+        triggerHapticFeedback(12);
+        promptNewGroup(body);
+      });
+    }
+    body.querySelectorAll('[data-tgtplquick]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        triggerHapticFeedback(12);
+        var preset = getTeamGoalTemplatePreset(btn.dataset.tgtplquick);
+        promptNewGroup(body, preset);
+      });
+    });
+    body.querySelectorAll('[data-tplgroup-create]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        triggerHapticFeedback(12);
+        var gid = btn.dataset.tplgroupCreate;
+        var preset = getTeamGoalTemplatePreset(gid);
+        promptNewGroup(body, preset);
+      });
+    });
+    body.querySelectorAll('[data-toggle-mock-section]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        triggerHapticFeedback(12);
+        state.mockSectionOpen = state.mockSectionOpen === false ? true : false;
+        renderCommGroups(body);
+      });
+    });
+    document.getElementById('commAddGroup').addEventListener('click', function(){ triggerHapticFeedback(12); promptNewGroup(body); });
   }
 
   function renderGroupDetail(body, g){

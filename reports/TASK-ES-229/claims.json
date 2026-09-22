@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-229",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-229-TEAM-MOCK-GROUPS-SEPARATION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "MOCK_GROUPS 가상 샘플 그룹에 isMock 플래그 및 [💡 이런 팀을 만들 수 있어요 (활용 예시)] 배지가 정의되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "소통 탭과 팀 목표 탭 최상단에 [🔥 우리만의 팀 만들기] 대형 히어로 카드(#btnHeroCreateTeamComm, #btnHeroCreateTeamGoals)가 배치되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "실 사용자가 개설하거나 참여한 팀이 최상단에 우선 렌더링되고 가상 예시 템플릿은 하단에 분리/아코디언으로 정돈되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "예시 팀 카드에서 [✨ 이 템플릿으로 팀 개설] 클릭 시 promptNewGroup 모달로 직통 연계되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "새 팀 생성 버튼 및 아코디언 토글 클릭 시 12ms 미세 햅틱 피드백이 배선되어야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 isMockGroup 판별 로직 및 활용 예시 템플릿 배지가 정의된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "isMockGroup"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 #btnHeroCreateTeamComm 또는 team-hero-card 요소가 정의되어 최상단 팀 만들기 CTA를 제공한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "btnHeroCreateTeamComm"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에서 실 사용자 팀과 예시 템플릿 그룹이 분리 렌더링된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "data-toggle-mock-section"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에서 예시 그룹의 data-tplgroup-create 클릭 시 템플릿 기반 팀 개설 모달로 연계된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "data-tplgroup-create"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css에 .team-hero-card 스타일이 정의되어 모바일 375px 히어로 카드 조형을 제공한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".team-hero-card"
+      }
+    }
+  ]
+}
