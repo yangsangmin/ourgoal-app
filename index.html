@@ -4332,6 +4332,87 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(el) el.addEventListener('click', function(){ startGoogleLogin(); });
   });
 
+  /* ============ [#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시 안전 백업 넛지 및 카카오 무손실 계정 통합 ============ */
+  function openGuestBackupNudgeModal(){
+    var html = 
+      '<div class="guest-backup-sheet" style="padding:16px 8px 8px;text-align:center;">' +
+        '<div style="font-size:2.8rem;margin-bottom:8px;line-height:1;">🎉</div>' +
+        '<h3 style="margin:0 0 8px;font-size:1.18rem;font-weight:800;color:var(--ink);letter-spacing:-0.02em;">벌써 소중한 3개의 실천이 쌓였어요!</h3>' +
+        '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.55;margin:0 0 16px;">' +
+          '브라우저를 닫거나 캐시가 삭제되어도 사라지지 않게<br>' +
+          '<b>카카오 계정에 평생 안전하게 보관</b>할까요?' +
+        '</p>' +
+        '<div style="background:var(--card-subtle, rgba(0,0,0,0.03));border:1px solid var(--rule, rgba(0,0,0,0.08));border-radius:14px;padding:12px 14px;margin-bottom:18px;text-align:left;">' +
+          '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.84rem;color:var(--ink);font-weight:600;">' +
+            '<span style="color:#10b981;font-size:1rem;">🔒</span>' +
+            '<span>평생 데이터 100% 무손실 보존 (기기 변경 안심)</span>' +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:8px;font-size:.84rem;color:var(--ink);font-weight:600;">' +
+            '<span style="color:var(--brand, #3b82f6);font-size:1rem;">⚡</span>' +
+            '<span>1초 만에 지금 작성한 목표·체크인 그대로 자동 연동</span>' +
+          '</div>' +
+        '</div>' +
+        '<button type="button" class="btn btn-kakao" id="btnGuestBackupKakao" style="width:100%;min-height:48px;font-size:.95rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;cursor:pointer;border:none;">' +
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.86 5.31 4.66 6.72L5.5 21.5c-.08.3.24.54.5.38l4.42-2.93c.52.05 1.05.08 1.58.08 5.52 0 10-3.58 10-8S17.52 3 12 3z"/></svg>' +
+          '<span>🔒 1초 만에 안전 보관하기 (카카오 연동)</span>' +
+        '</button>' +
+        '<button type="button" class="btn btn-ghost" id="btnGuestBackupLater" style="width:100%;min-height:44px;color:var(--ink-soft);font-weight:600;font-size:.85rem;margin-top:6px;cursor:pointer;">' +
+          '나중에 할게요' +
+        '</button>' +
+      '</div>';
+
+    openModal(html, function(sheet){
+      var btnKakao = sheet.querySelector('#btnGuestBackupKakao');
+      if(btnKakao){
+        btnKakao.onclick = function(){
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+          try {
+            if(state.profile){
+              localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile));
+            }
+          } catch(e){}
+          closeModal();
+          startOAuthLogin('kakao');
+        };
+      }
+      var btnLater = sheet.querySelector('#btnGuestBackupLater');
+      if(btnLater){
+        btnLater.onclick = function(){
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+          closeModal();
+          toast('안전 보관은 [설정 > 계정]에서 언제든 가능해요 😊');
+        };
+      }
+    });
+  }
+
+  function checkGuestBackupNudge(){
+    try {
+      var p = state.profile;
+      if(!p) return;
+      var u = state.user;
+      var isGuest = (!u || !u.id) && (p.isGuest || String(p.id || '').indexOf('guest') === 0 || !isValidRealUser(p.id));
+      if(!isGuest) return;
+      var recCount = (p.records && p.records.length) || 0;
+      if(recCount >= 3){
+        var alreadyNudged = false;
+        try {
+          alreadyNudged = !!sessionStorage.getItem('ourgoal_guest_backup_nudged');
+        } catch(e){}
+        if(!alreadyNudged){
+          try { sessionStorage.setItem('ourgoal_guest_backup_nudged', 'true'); } catch(e){}
+          setTimeout(function(){
+            openGuestBackupNudgeModal();
+          }, 400);
+        }
+      }
+    } catch(err){
+      console.warn('[checkGuestBackupNudge] exception:', err);
+    }
+  }
+  window.openGuestBackupNudgeModal = openGuestBackupNudgeModal;
+  window.checkGuestBackupNudge = checkGuestBackupNudge;
+
   /* ============ Goal category templates ============ */
   var GOAL_TEMPLATES = {
     study:    { label:'공부', icon:'📚', ms:['학습 계획 세우기','1회독 끝내기','기출문제 풀어보기','약점 보완하기','최종 점검'] },
@@ -10917,6 +10998,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(isFirst){
       triggerFirstCheerResponse(goal, text);
     }
+    // [#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시 안전 백업 넛지
+    try {
+      if(typeof checkGuestBackupNudge === 'function') checkGuestBackupNudge();
+    } catch(e){}
     return xpRes;
   }
 
@@ -12878,6 +12963,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(isFirst){
         triggerFirstCheerResponse(goal, text);
       }
+      // [#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시 안전 백업 넛지
+      try {
+        if(typeof checkGuestBackupNudge === 'function') checkGuestBackupNudge();
+      } catch(e){}
       var checkinToastMsg = freezeGranted
         ? '스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요'
         : (notionRec

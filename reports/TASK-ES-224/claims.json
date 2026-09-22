@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-224",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-224-GUEST-BACKUP-NUDGE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html에 게스트 실천 3회 달성 감지 트리거(checkGuestBackupNudge) 및 백업 넛지 바텀시트 모달(openGuestBackupNudgeModal)이 정의되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "백업 넛지 모달 내에 카카오 연동 버튼(id=\"btnGuestBackupKakao\")과 닫기 버튼(id=\"btnGuestBackupLater\")이 정의되고 12ms 햅틱이 배선되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "카카오 연동 버튼 클릭 시 현재 게스트 프로필이 ourgoal_guest_profile에 스냅샷 저장되고 startOAuthLogin(\"kakao\")가 호출되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "체크인 완료(saveQuickCheckin) 시점에 checkGuestBackupNudge가 연결되어 게스트 3회 달성 시 넛지가 가동되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "scripts/smoke-test.js에 TASK-ES-224 검증 케이스가 추가되어야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 checkGuestBackupNudge 및 openGuestBackupNudgeModal 함수가 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "function openGuestBackupNudgeModal"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 #btnGuestBackupKakao 및 #btnGuestBackupLater 버튼이 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"btnGuestBackupKakao\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 게스트 프로필 스냅샷 저장(ourgoal_guest_profile) 및 startOAuthLogin 호출이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "startOAuthLogin('kakao')"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 saveQuickCheckin 후 checkGuestBackupNudge 호출 배선이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "checkGuestBackupNudge()"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-224 게스트 3회 실천 백업 넛지 검증 케이스가 추가되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시 안전 백업 넛지 및 카카오 무손실 병합 무결성"
+      }
+    }
+  ]
+}
