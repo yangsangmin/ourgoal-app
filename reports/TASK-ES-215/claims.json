@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-215",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-215-RECORDS-TOSS-INNOVATION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "ui.css에 토스 기록 요약 원카드(.toss-record-hero-card) 및 피드 카드 스타일이 정의되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "index.html의 기록 탭(#screen-records)에 문장형 헤드라인(#recHeadlineSentence)과 원카드 슬롯이 배선되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "기록 세그먼트 전환 및 피드 액션 시 12ms 미세 햅틱 피드백(triggerHapticFeedback)이 배선되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "기존 38대 헌법 무결성 게이트 및 집중 타이머 그리드 규격이 100% 보존되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "777개 정적 버튼 Dead-Click 검사가 100% ALL PASS를 유지해야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css에 .toss-record-hero-card 클래스가 정의되어 토스식 기록 요약 원카드 조형을 제공한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".toss-record-hero-card"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 id=\"recHeadlineSentence\" 요소가 정의되어 기록 탭 문장형 헤드라인을 렌더링한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"recHeadlineSentence\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에서 기록 세그먼트 전환 시 triggerHapticFeedback(12) 햅틱 피드백이 배선된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "triggerHapticFeedback(12)"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 id=\"recSegmentBar\" 및 id=\"recViewFeed\" 슬롯이 유지되어 기록 탭 무결성을 준수한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"recSegmentBar\""
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 id=\"recSegFeedBtn\" 요소가 정의되어 내 기록 세그먼트 뷰를 호출한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"recSegFeedBtn\""
+      }
+    }
+  ]
+}

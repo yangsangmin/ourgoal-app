@@ -415,6 +415,38 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       </div>
       <div id="recFeedbackSlot" style="display:none;"></div>
 
+      <!-- [TOSS RECORDS TAB INNOVATION] 이번 주 몰입 요약 원카드 (#TASK-ES-215) -->
+      <div class="toss-record-hero-card" id="recHeroCard">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-weight:800;font-size:15px;color:var(--text, #191f28);display:flex;align-items:center;gap:6px;">
+            <span>⏱️ 이번 주 몰입 요약</span>
+          </div>
+          <span style="font-size:11.5px;color:var(--text-faint, #888);font-weight:600;" id="recHeroPeriodText">최근 7일간의 기록</span>
+        </div>
+        <div class="toss-record-hero-stats">
+          <div class="toss-record-stat-item">
+            <span class="toss-record-stat-val" id="recHeroWeekCount">0회</span>
+            <span class="toss-record-stat-lbl">주간 실천</span>
+          </div>
+          <div class="toss-record-stat-item" style="border-left:1px solid var(--rule, rgba(0,0,0,0.06));border-right:1px solid var(--rule, rgba(0,0,0,0.06));padding:0 14px;">
+            <span class="toss-record-stat-val" id="recHeroWeekTime">0분</span>
+            <span class="toss-record-stat-lbl">몰입 시간</span>
+          </div>
+          <div class="toss-record-stat-item">
+            <span class="toss-record-stat-val" id="recHeroTotalCount">0개</span>
+            <span class="toss-record-stat-lbl">누적 기록</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button type="button" class="btn btn-primary" onclick="if(typeof triggerHapticFeedback==='function')triggerHapticFeedback(12); var el=document.getElementById('recAgentCard'); if(el){ el.style.display=(el.style.display==='none'?'block':'none'); if(el.style.display==='block'){ var inp=document.getElementById('recAgentInput'); if(inp) inp.focus(); } }" style="flex:1;font-size:13px;font-weight:700;padding:10px 12px;border-radius:12px;box-shadow:0 2px 8px rgba(59,130,246,0.25);">
+            ✍️ 빠른 기록
+          </button>
+          <button type="button" class="btn btn-ghost" onclick="if(typeof triggerHapticFeedback==='function')triggerHapticFeedback(12); if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();" style="flex:1;font-size:13px;font-weight:700;padding:10px 12px;border-radius:12px;background:var(--surface-2);border:1px solid var(--rule);">
+            ⏱️ 시간 측정
+          </button>
+        </div>
+      </div>
+
       <!-- 3분할 세그먼트 바 (내 기록 / 성취 통계 / 보관함) -->
       <div class="rec-segment-bar" id="recSegmentBar">
         <button type="button" class="rec-seg-btn active" data-recseg="feed" id="recSegFeedBtn">
@@ -21248,7 +21280,7 @@ wirePromptEncyclopediaEvents(body);
         '</div>';
       }
     }
-    return '<div class="rec-card'+(isDoing?' doing':'')+'" data-recid="'+r.id+'" style="border-left: 4px solid '+th.color+';'+(isTpl?'cursor:pointer;':'')+'">' +
+    return '<div class="rec-card toss-feed-card'+(isDoing?' doing':'')+'" data-recid="'+r.id+'" style="border-left: 4px solid '+th.color+';'+(isTpl?'cursor:pointer;':'')+'">' +
       tplBadgeHtml +
       '<div class="rec-top"><div class="rec-text" style="white-space:pre-line;">'+escapeHtml(rawText)+'</div>' +
         '<div class="rec-icons"><button class="icon-btn" data-recedit="1" aria-label="기록 수정"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="icon-btn" data-recdel="1" aria-label="기록 삭제">×</button></div>' +
@@ -26080,6 +26112,7 @@ wirePromptEncyclopediaEvents(body);
   }
 
   function setRecordsSegment(seg){
+    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
     state.recordsSegment = seg;
     var viewFeed = document.getElementById('recViewFeed');
     var viewStats = document.getElementById('recViewStats');
@@ -26104,6 +26137,7 @@ wirePromptEncyclopediaEvents(body);
   }
 
   function setRecordsSlide(idx){
+    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
     state.recordsSlide = idx;
     var track = document.getElementById('recCarouselTrack');
     if(track){
@@ -26116,22 +26150,14 @@ wirePromptEncyclopediaEvents(body);
 
   function renderRecordsScreen(){
     if(!state) state = {};
-    if(!state.profile){
-      state.profile = { id: 'guest', nickname: '사용자', records: [], goals: [], settings: {} };
-    }
-    if(!Array.isArray(state.profile.records)){
-      state.profile.records = [];
-    }
+    if(!state.profile) state.profile = {};
+    ensureProfileDataStructure();
 
-    // 1. 레거시 기록 자동 테마 백필 (Backfill Migration)
+    // 템플릿 필터 및 테마 자동 감지 데이터 보정
     var needsSave = false;
     (state.profile.records || []).forEach(function(r){
-      if(!r.text && r.content) { r.text = r.content; needsSave = true; }
-      if(!r.startAt && r.start_at) { r.startAt = r.start_at; needsSave = true; }
-      if(!r.endAt && r.end_at) { r.endAt = r.end_at; needsSave = true; }
-      if(!r.durationMinutes && r.duration_minutes) { r.durationMinutes = r.duration_minutes; needsSave = true; }
-      if(!r.theme){
-        var c = (typeof classifyRecordTheme === 'function') ? classifyRecordTheme(r.text, r.category) : { theme: 'daily', subTheme: '', confidence: 0.5 };
+      if(!r.theme || r.theme === 'daily'){
+        var c = (typeof classifyRecordThemeEnhanced === 'function') ? classifyRecordThemeEnhanced(r.text || r.content || '') : { theme:'daily', subTheme:'일상', confidence:0.8 };
         r.theme = c.theme; r.subTheme = c.subTheme; r.themeConfidence = c.confidence; needsSave = true;
       }
     });
@@ -26175,6 +26201,14 @@ wirePromptEncyclopediaEvents(body);
     });
     var weekSummaryEl = document.getElementById('weekSummary');
     if(weekSummaryEl) weekSummaryEl.textContent = '이번 주 총 ' + fmtDuration(totalMs) + ' 기록';
+
+    // 토스 기록 요약 원카드 (#TASK-ES-215) 통계 바인딩
+    var heroWeekCountEl = document.getElementById('recHeroWeekCount');
+    if(heroWeekCountEl) heroWeekCountEl.textContent = weekRecCount + '회';
+    var heroWeekTimeEl = document.getElementById('recHeroWeekTime');
+    if(heroWeekTimeEl) heroWeekTimeEl.textContent = totalMs > 0 ? fmtDuration(totalMs) : '0분';
+    var heroTotalCountEl = document.getElementById('recHeroTotalCount');
+    if(heroTotalCountEl) heroTotalCountEl.textContent = allRecs.length + '개';
 
     var pulseTextEl = document.getElementById('recMiniPulseText');
     if(pulseTextEl){
