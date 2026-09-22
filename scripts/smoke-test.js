@@ -7460,6 +7460,25 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+
+check('[#TASK-ES-240] 일정탭 대표 안내멘트(#calHeadlineSentence) 시인성 개선 및 공간 효율적 간결 문구 재배치 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. #calHeadlineSentence 압축 스타일 선언 확인
+  assert.ok(cssContent.includes('#calHeadlineSentence'), '#calHeadlineSentence CSS 선언 확인');
+  assert.ok(cssContent.includes('margin: 4px 0 8px 0 !important;'), '#calHeadlineSentence margin: 4px 0 8px 0 선언 확인');
+  assert.ok(cssContent.includes('max-height: 32px;'), '.cal-sub-guide max-height 32px 선언 확인');
+
+  // 2. 모바일 480px 반응형 규칙 확인
+  assert.ok(cssContent.includes('margin: 4px 0 6px 0 !important;'), '#calHeadlineSentence 480px 반응형 마진 확인');
+
+  // 3. index.html 내 캘린더 안내 배너 닫기 버튼 햅틱 배선 확인
+  assert.ok(indexHtml.includes('id="calHeadlineSentence"'), 'calHeadlineSentence 슬롯 확인');
+  assert.ok(indexHtml.includes('btnHideCalDiaryGuide'), 'btnHideCalDiaryGuide 슬롯 확인');
+  assert.ok(indexHtml.includes('triggerHapticFeedback(10)'), 'btnHideCalDiaryGuide 닫기 햅틱 배선 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
