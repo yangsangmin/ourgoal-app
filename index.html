@@ -3134,7 +3134,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
 
       var likeBtnStyle = isLiked ?
-        'background:rgba(49,130,246,0.22) !important;color:#3182f6 !important;border:1.5px solid #3182f6 !important;font-weight:800 !important;' :
+        'background:rgba(49,130,246,0.16) !important;color:#3182f6 !important;border:1px solid rgba(49,130,246,0.45) !important;font-weight:700 !important;' :
         'background:var(--card2) !important;color:var(--ink-soft) !important;border:1px solid var(--rule) !important;';
 
       return '<div class="user-prompt-card" style="background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:10px;">' +
@@ -3148,8 +3148,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           escapeHtml(item.prompt) +
         '</div>' +
         '<div style="display:flex;align-items:center;justify-content:space-between;">' +
-          '<button type="button" class="btn btn-xs btn-like-prompt' + (isLiked ? ' liked' : '') + '" data-promptid="' + item.id + '" style="font-size:.78rem;padding:6px 14px;border-radius:20px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;' + likeBtnStyle + '">' +
-            '<span style="font-size:1rem;">' + (isLiked ? '👍' : '👍🏻') + '</span>' +
+          '<button type="button" class="btn btn-xs btn-like-prompt' + (isLiked ? ' liked' : '') + '" data-promptid="' + item.id + '" style="font-size:.72rem;padding:3px 9px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;min-height:24px;' + likeBtnStyle + '">' +
+            '<span style="font-size:.82rem;">' + (isLiked ? '👍' : '👍🏻') + '</span>' +
             '<span>도움돼요 <b style="' + (isLiked ? 'color:#3182f6;' : '') + '">(' + currentLikes + ')</b></span>' +
           '</button>' +
           (isUserCreated ? '<span class="faint" style="font-size:.6875rem;">유저 검증 팁</span>' : '<span class="faint" style="font-size:.6875rem;">아워골 공식 큐레이션</span>') +
