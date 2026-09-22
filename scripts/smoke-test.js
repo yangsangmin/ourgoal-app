@@ -7460,6 +7460,29 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+check('[#TASK-ES-230] 마니또(Manito) 매칭 즉시 원클릭 웰컴 응원 스탬프 발송 및 실시간 푸시 피드백 배선', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. MANITO_WELCOME_STAMPS 4종 정의 확인
+  assert.ok(indexHtml.includes('MANITO_WELCOME_STAMPS'), 'MANITO_WELCOME_STAMPS 정의 누락');
+  assert.ok(indexHtml.includes('불꽃응원') && indexHtml.includes('행운부적') && indexHtml.includes('따뜻한차') && indexHtml.includes('완주응원'), '4종 웰컴 스탬프 라벨 누락');
+
+  // 2. 웰컴 카드 컴포넌트 및 퀵 스탬프 버튼 배선 확인
+  assert.ok(indexHtml.includes('id="manitoWelcomeHeroCard"'), '#manitoWelcomeHeroCard 마크업 누락');
+  assert.ok(indexHtml.includes('data-mwelcome-stamp'), 'data-mwelcome-stamp 퀵 스탬프 속성 누락');
+  assert.ok(indexHtml.includes('sendManitoWelcomeStamp'), 'sendManitoWelcomeStamp 발송 엔진 누락');
+
+  // 3. 15ms 햅틱 및 토스트 문구 확인
+  assert.ok(indexHtml.includes('triggerHapticFeedback(15)'), '15ms 미세 햅틱 누락');
+  assert.ok(indexHtml.includes('나의 마니또에게 익명 응원이 전달되었습니다 🕊️'), '익명 응원 전달 토스트 문구 누락');
+
+  // 4. 1분 쿨타임 및 CSS 선언 확인
+  assert.ok(indexHtml.includes('MANITO_STAMP_COOLDOWN'), '1분 쿨타임 타이머 누락');
+  assert.ok(cssContent.includes('.manito-welcome-card'), '.manito-welcome-card CSS 선언 누락');
+  assert.ok(cssContent.includes('.manito-welcome-stamp-btn'), '.manito-welcome-stamp-btn CSS 선언 누락');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
