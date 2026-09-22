@@ -1,0 +1,102 @@
+{
+  "task": "TASK-ES-248",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-248-SETTINGS-PROFILE-CARD-VISIBILITY.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "설정탭 프로필 요약 카드에 58px 크기의 아바타 프레임 및 Lv.N 레벨 뱃지가 오버레이되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "계정 연동 상태에 따라 미니 아이콘(🟡 카카오 / 👤 게스트)이 선명하게 표출되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "카드 배경 및 외곽선에 미세 그림자(box-shadow)와 고대비 보더가 적용되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "아바타 관리 편집 버튼의 터치 영역(min-height: 36px) 및 시인성이 강화되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "npm test 및 38개 헌법 게이트, Zero Dead-Click 검사가 100% ALL PASS여야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "renderSettingsHeroCard 내에 58px 아바타 및 Lv. 뱃지 오버레이가 선언된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "toss-settings-avatar-wrap"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "settingsHeroStatusDesc 내에 카카오/게스트 연동 상태 아이콘이 바인딩된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "🟡 카카오 계정 연동"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내 .toss-settings-hero-card에 box-shadow 스타일이 선언된다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06)"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내 #btnSettingsQuickAvatar에 min-height: 36px 및 시인성 스타일이 선언된다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#btnSettingsQuickAvatar"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "e2e",
+      "domain": "safety",
+      "statement": "npm test 및 헌법 38개 검증 게이트와 Zero Dead-Click 검사가 100% 통과한다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "commandPasses",
+        "command": "npm test"
+      }
+    }
+  ]
+}
