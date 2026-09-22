@@ -1,0 +1,86 @@
+{
+  "task": "TASK-ES-209",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-209-GOALS-UX-PHASE1-CLEANUP.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "목표 탭 상단 AI 목표 어시스턴트 카드(#goalAgentCard)가 컴팩트 슬림 스타일로 리팩토링되어 수직 스크롤 공간이 절감되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "마일스톤 필터바(msFilterBar) 및 뷰 토글(msViewToggle)이 콤팩트 1열 구조(goals-filter-strip)로 정돈되고 모바일 가로 스크롤 방어가 적용되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "모바일 375px 뷰포트에서 마운틴 트레일 카드 및 상단 여백이 최적화되어 첫 마일스톤 도달 스크롤이 단축되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "기존 마일스톤 4대 뷰 모드(default, milestones_only, tasks_only, goals_only) 및 목표 생성 인라인 버튼이 100% 보존되어야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 및 ui.css에 goals-agent-slim 클래스가 적용되어 패딩과 마진이 슬림화되어 있다",
+      "touches": [
+        "index.html",
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".goals-agent-slim"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 및 ui.css에 goals-filter-strip 클래스가 적용되어 단일 1열 콤팩트 레이아웃이 구현되어 있다",
+      "touches": [
+        "index.html",
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".goals-filter-strip"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 모바일 480px 미디어 쿼리에 screen-goals mountain-trail-card 여백 단축 스타일이 선언되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#screen-goals .mountain-trail-card"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html의 msViewToggle 내에 4대 뷰 data-msview 및 goals_only가 유지되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "data-msview=\"goals_only\""
+      }
+    }
+  ]
+}
