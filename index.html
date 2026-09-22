@@ -18439,22 +18439,35 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
     }
 
-    /* 보기 모드: 마감·공개·카테고리를 한 줄 메타 스트립으로 (시인성) */
+    /* 보기 모드: 토스식 목표 히어로 진행 원카드 (.toss-goal-hero-card, .meta-strip) */
     var visNow = goal.visibility || 'private';
     var formattedGoalDue = goal.dueDate ? formatDateTimeBadge(goal.dueDate) : '';
-    var metaStrip = '<div class="meta-strip" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
-      (goal.dueDate
-        ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);font-weight:700;">'+formattedGoalDue+' · '+ddayText+'</span>'
-        : '<span class="dday-pill">마감일 없음</span>') +
-      (!goal.dueDate ? formatSchedulePillHtml(goal, 'goal', goal.id) : '') +
-      '<span class="dday-pill" id="goalsPrivacyBadge" style="cursor:pointer;" title="탭하여 공개 범위 순환 변경">'+(visNow==='private'?'🔒 ':(visNow==='team'||visNow==='followers'?'👥 ':'🌐 '))+((visNow==='team'||visNow==='followers')?'팀원 공개':VISIBILITY_LABELS[visNow])+' ▾</span>' +
-      (goal.topic ? topicPill(goal.topic) : '') +
-      '<span class="dday-pill" style="background:var(--sage-soft);color:var(--sage);">달성 '+goalAchievement(goal)+'%</span>' +
-      predictedPill +
-      (!state.goalEditMode ?
-        ('<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button" style="font-size:.75rem;padding:2px 8px;margin-left:auto;color:var(--ink-soft);border:1px solid var(--rule);">' +
-          (goal.result ? '📝 결과 수정' : '+ 최종 결과') +
-        '</button>') : '') +
+    var goalPct = goalAchievement(goal);
+    var metaStrip = '<div class="toss-goal-hero-card meta-strip">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;">' +
+        '<div style="display:flex;align-items:center;gap:8px;min-width:0;">' +
+          '<span style="font-size:1.2rem;">' + (goal.icon || '🎯') + '</span>' +
+          '<span style="font-size:1.05rem;font-weight:800;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(goal.title) + '</span>' +
+        '</div>' +
+        '<div style="font-size:1.25rem;font-weight:900;color:var(--accent);">' + goalPct + '%</div>' +
+      '</div>' +
+      '<div style="width:100%;height:8px;background:var(--rule);border-radius:4px;overflow:hidden;margin-bottom:12px;">' +
+        '<div style="width:'+goalPct+'%;height:100%;background:linear-gradient(90deg, #3182f6 0%, #60a5fa 100%);border-radius:4px;transition:width .3s ease;"></div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+        (goal.dueDate
+          ? '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);font-weight:700;">'+formattedGoalDue+' · '+ddayText+'</span>'
+          : '<span class="dday-pill">마감일 없음</span>') +
+        (!goal.dueDate ? formatSchedulePillHtml(goal, 'goal', goal.id) : '') +
+        '<span class="dday-pill" id="goalsPrivacyBadge" style="cursor:pointer;" title="탭하여 공개 범위 순환 변경">'+(visNow==='private'?'🔒 ':(visNow==='team'||visNow==='followers'?'👥 ':'🌐 '))+((visNow==='team'||visNow==='followers')?'팀원 공개':VISIBILITY_LABELS[visNow])+' ▾</span>' +
+        (goal.topic ? topicPill(goal.topic) : '') +
+        '<span class="dday-pill" style="background:var(--sage-soft);color:var(--sage);">달성 '+goalPct+'%</span>' +
+        predictedPill +
+        (!state.goalEditMode ?
+          ('<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button" style="font-size:.75rem;padding:2px 8px;margin-left:auto;color:var(--ink-soft);border:1px solid var(--rule);">' +
+            (goal.result ? '📝 결과 수정' : '+ 최종 결과') +
+          '</button>') : '') +
+      '</div>' +
     '</div>';
     var dueRow = '<div class="duedate-row"><span class="lbl">목표 마감일시 (년월일시분)</span>' +
       '<span style="display:flex;align-items:center;gap:6px;">' +
@@ -18979,6 +18992,7 @@ wirePromptEncyclopediaEvents(body);
         var order = ['todo','doing','done'];
         var wasDone = ms.status==='done';
         ms.status = order[(order.indexOf(ms.status)+1)%3];
+        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
         var cycleXpRes = (!wasDone && ms.status==='done') ? awardXP(XP_RULES.milestoneDone, '마일스톤 완료') : null;
         await saveProfile();
         renderGoalsScreen();
@@ -19104,10 +19118,12 @@ wirePromptEncyclopediaEvents(body);
         targetTask.done = !targetTask.done;
         var isNowDone = targetTask.done;
         if(isNowDone){
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
           triggerHaptic(15);
           awardXP(XP_RULES.taskDone || 5, '할 일 완료');
           toast('할 일을 완료했어요! 🎯');
         } else {
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
           triggerHaptic(10);
           toast('할 일을 미완료로 변경했어요');
         }
