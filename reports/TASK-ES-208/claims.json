@@ -1,0 +1,47 @@
+{
+  "task": "TASK-ES-208",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-208-TELEGRAM-SERVERLESS-WEBHOOK.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "Vercel Serverless 기반 24/7 Always-On 텔레그램 Webhook 엔드포인트(/api/telegram)가 vercel.json 및 api/track.js에 배선되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "텔레그램 Webhook 핸들러가 Gemini 3.1 Pro Thinking(2048) 심층 추론 및 Notion SSOT 원장 기록을 지원해야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "vercel.json에 /api/telegram rewrite가 등록되어 있고 api/track.js에 maxDuration 60이 설정되어 있다",
+      "touches": [
+        "vercel.json",
+        "api/track.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "vercel.json",
+        "text": "\"/api/telegram\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "api/track.js에 Gemini Pro Thinking 및 Notion SSOT DB 연동 파이프라인이 구현되어 있다",
+      "touches": [
+        "api/track.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "api/track.js",
+        "text": "TG_OMNI_THINKING_BUDGET"
+      }
+    }
+  ]
+}

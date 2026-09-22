@@ -612,6 +612,415 @@ async function handleInquiry(sb, body, req, res) {
   });
 }
 
+// =============================================================================
+// #TASK-ES-208: 24/7 Always-On 옴니채널 텔레그램 지휘 웹훅 (Vercel Serverless)
+// - 최고 지휘 참모 양비스(Antigravity Omni) 엔드포인트
+// - Pro Thinking (2048) 심층 추론 및 Flash 자동 폴백
+// - Notion SSOT (commandInbox DB 100턴 복원 & activityLog 실시간 영구 기록)
+// - 상민님(ALLOWED_CHAT_ID: 1260106462) 단독 보안 인가 방화벽
+// - 3900자 안전 청킹 분할 전송
+// =============================================================================
+
+var TG_OMNI_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
+var TG_OMNI_ALLOWED_CHAT_ID = 1260106462;
+var TG_OMNI_WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET || '';
+var TG_OMNI_GEMINI_KEY = process.env.GEMINI_API_KEY || '';
+var TG_OMNI_NOTION_TOKEN = process.env.NOTION_TOKEN || '';
+var TG_COMMAND_INBOX_DB = '7f4c892e-9934-4eeb-9576-5d31d39152b5';
+var TG_ACTIVITY_LOG_DB = 'ebe4de7d-deb7-4389-aa34-dc57221bba8f';
+var TG_OMNI_GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.1-pro-preview';
+var TG_OMNI_FALLBACK_MODEL = 'gemini-2.5-flash';
+var TG_OMNI_THINKING_BUDGET = parseInt(process.env.THINKING_BUDGET || '2048', 10);
+
+async function sendTelegramOmniMessage(chatId, text, replyToMessageId) {
+  if (!TG_OMNI_BOT_TOKEN || !chatId) return null;
+  var chunks = [];
+  var limit = 3900;
+  for (var i = 0; i < text.length; i += limit) {
+    chunks.push(text.slice(i, i + limit));
+  }
+  if (!chunks.length) chunks.push('');
+
+  var lastRes = null;
+  for (var idx = 0; idx < chunks.length; idx++) {
+    var payload = {
+      chat_id: chatId,
+      text: chunks[idx],
+      parse_mode: 'Markdown'
+    };
+    if (idx === 0 && replyToMessageId) {
+      payload.reply_to_message_id = replyToMessageId;
+    }
+    try {
+      var resp = await fetch('https://api.telegram.org/bot' + TG_OMNI_BOT_TOKEN + '/sendMessage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      var data = await resp.json();
+      if (!data.ok && data.description && data.description.indexOf('can\'t parse entities') !== -1) {
+        delete payload.parse_mode;
+        var retryResp = await fetch('https://api.telegram.org/bot' + TG_OMNI_BOT_TOKEN + '/sendMessage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        lastRes = await retryResp.json();
+      } else {
+        lastRes = data;
+      }
+    } catch (e) {
+      console.warn('[TelegramOmni] 발송 실패:', e.message);
+    }
+  }
+  return lastRes;
+}
+
+async function editTelegramOmniMessage(chatId, messageId, text) {
+  if (!TG_OMNI_BOT_TOKEN || !chatId || !messageId) return null;
+  var safeText = text.slice(0, 3900);
+  var payload = {
+    chat_id: chatId,
+    message_id: messageId,
+    text: safeText,
+    parse_mode: 'Markdown'
+  };
+  try {
+    var resp = await fetch('https://api.telegram.org/bot' + TG_OMNI_BOT_TOKEN + '/editMessageText', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    var data = await resp.json();
+    if (!data.ok && data.description && data.description.indexOf('can\'t parse entities') !== -1) {
+      delete payload.parse_mode;
+      var retryResp = await fetch('https://api.telegram.org/bot' + TG_OMNI_BOT_TOKEN + '/editMessageText', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return await retryResp.json();
+    }
+    return data;
+  } catch (e) {
+    console.warn('[TelegramOmni] 편집 실패:', e.message);
+    return null;
+  }
+}
+
+async function sendTelegramOmniChatAction(chatId, action) {
+  if (!TG_OMNI_BOT_TOKEN || !chatId) return;
+  try {
+    await fetch('https://api.telegram.org/bot' + TG_OMNI_BOT_TOKEN + '/sendChatAction', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, action: action || 'typing' })
+    });
+  } catch (e) {}
+}
+
+async function queryNotionOmniSession(notionToken, dbId, limit) {
+  if (!notionToken || !dbId) return [];
+  try {
+    var resp = await fetch('https://api.notion.com/v1/databases/' + dbId + '/query', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + notionToken,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        page_size: limit || 20,
+        sorts: [{ timestamp: 'created_time', direction: 'descending' }]
+      })
+    });
+    if (!resp.ok) return [];
+    var data = await resp.json();
+    var turns = [];
+    var pages = (data.results || []).reverse();
+    pages.forEach(function (page) {
+      var props = page.properties || {};
+      var userText = '';
+      var modelText = '';
+      if (props['입력'] && props['입력'].title && props['입력'].title[0]) {
+        userText = props['입력'].title.map(function (t) { return t.plain_text || ''; }).join('');
+      }
+      if (props['응답'] && props['응답'].rich_text && props['응답'].rich_text[0]) {
+        modelText = props['응답'].rich_text.map(function (t) { return t.plain_text || ''; }).join('');
+      }
+      if (userText) turns.push({ role: 'user', text: userText });
+      if (modelText) turns.push({ role: 'model', text: modelText });
+    });
+    return turns;
+  } catch (e) {
+    console.warn('[TelegramOmni] 노션 세션 조회 예외:', e.message);
+    return [];
+  }
+}
+
+async function recordTurnToNotionOmni(notionToken, dbId, userInput, modelResponse) {
+  if (!notionToken || !dbId) return null;
+  try {
+    var payload = {
+      parent: { database_id: dbId },
+      properties: {
+        '입력': {
+          title: [{ text: { content: (userInput || '').slice(0, 2000) } }]
+        },
+        '응답': {
+          rich_text: [{ text: { content: (modelResponse || '').slice(0, 2000) } }]
+        },
+        '대상': {
+          select: { name: 'Telegram-Omni' }
+        },
+        '처리상태': {
+          select: { name: '완료' }
+        },
+        '실행 ID': {
+          rich_text: [{ text: { content: 'vercel-' + Date.now() } }]
+        }
+      }
+    };
+    var resp = await fetch('https://api.notion.com/v1/pages', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + notionToken,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    return await resp.json();
+  } catch (e) {
+    console.warn('[TelegramOmni] 노션 턴 기록 예외:', e.message);
+    return null;
+  }
+}
+
+async function recordActivityLogOmni(notionToken, dbId, title, details) {
+  if (!notionToken || !dbId) return null;
+  try {
+    var payload = {
+      parent: { database_id: dbId },
+      properties: {
+        '이름': {
+          title: [{ text: { content: (title || '').slice(0, 2000) } }]
+        },
+        '내용': {
+          rich_text: [{ text: { content: (details || '').slice(0, 2000) } }]
+        }
+      }
+    };
+    var resp = await fetch('https://api.notion.com/v1/pages', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + notionToken,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    return await resp.json();
+  } catch (e) {
+    return null;
+  }
+}
+
+async function callGeminiOmni(apiKey, userMessage, pastTurns, modelName) {
+  if (!apiKey) {
+    throw new Error('GEMINI_API_KEY 환경변수가 설정되지 않았습니다.');
+  }
+  var targetModel = modelName || TG_OMNI_GEMINI_MODEL;
+  var isPro = targetModel.indexOf('pro') !== -1;
+
+  var contents = [];
+  (pastTurns || []).slice(-10).forEach(function (turn) {
+    contents.push({
+      role: turn.role === 'model' ? 'model' : 'user',
+      parts: [{ text: turn.text }]
+    });
+  });
+  contents.push({
+    role: 'user',
+    parts: [{ text: userMessage }]
+  });
+
+  var systemPrompt = [
+    '당신은 아워골(Ourgoal)과 양비스 관제센터의 최고 지휘 참모 "양비스(Antigravity Omni)"입니다.',
+    '상민님의 모바일 텔레그램 지시를 신속하고 엄정하게 수행하며 실시간 보고서를 작성합니다.',
+    '',
+    '## 핵심 행동 수칙',
+    '1. 상민님은 최고 결정권자이십니다.',
+    '2. 헌법과 지침을 철저히 준수하며 상태는 선언이 아니라 측정입니다. 못 쟀으면 "확인 못 함"이라고 보고합니다.',
+    '3. 모바일 화면에서 빠르게 핵심을 파악할 수 있도록 결론을 맨 앞에 제시하고, 불필요한 인사치레는 생략합니다.',
+    '4. 승인선(① 돈 ② 개인정보 ③ 기존 기능 삭제 ④ 되돌릴 수 없는 바깥 행위 ⑤ 규범 변경)에 해당하는 항목은 반드시 [결심 필요]로 보고합니다.',
+    '5. 현재 Vercel Serverless 무중단 24/7 Always-On 인프라에서 가동 중입니다.'
+  ].join('\n');
+
+  var requestBody = {
+    systemInstruction: {
+      parts: [{ text: systemPrompt }]
+    },
+    contents: contents,
+    generationConfig: {
+      temperature: 0.2,
+      maxOutputTokens: 8192
+    }
+  };
+
+  if (isPro) {
+    requestBody.generationConfig.thinking_config = {
+      thinking_budget: TG_OMNI_THINKING_BUDGET
+    };
+  }
+
+  var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + targetModel + ':generateContent?key=' + apiKey;
+
+  try {
+    var resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody)
+    });
+    if (!resp.ok) {
+      var errData = await resp.json().catch(function () { return {}; });
+      var status = resp.status;
+      if ((status === 429 || status === 503 || status === 500) && targetModel !== TG_OMNI_FALLBACK_MODEL) {
+        console.warn('[TelegramOmni] Gemini Pro 호출 실패(' + status + '), Flash 모델로 폴백합니다.');
+        return await callGeminiOmni(apiKey, userMessage, pastTurns, TG_OMNI_FALLBACK_MODEL);
+      }
+      throw new Error('Gemini API Error (' + status + '): ' + (errData.error?.message || resp.statusText));
+    }
+    var data = await resp.json();
+    var cand = data.candidates && data.candidates[0];
+    if (!cand || !cand.content || !cand.content.parts) {
+      throw new Error('Gemini로부터 유효한 응답을 받지 못했습니다.');
+    }
+    var answer = cand.content.parts.map(function (p) { return p.text || ''; }).join('').trim();
+    return { text: answer, model: targetModel };
+  } catch (err) {
+    if (targetModel !== TG_OMNI_FALLBACK_MODEL) {
+      console.warn('[TelegramOmni] Gemini 예외 발생, Flash 폴백 시도:', err.message);
+      return await callGeminiOmni(apiKey, userMessage, pastTurns, TG_OMNI_FALLBACK_MODEL);
+    }
+    throw err;
+  }
+}
+
+async function handleTelegramHealthCheck(req, res) {
+  res.status(200).json({
+    ok: true,
+    service: 'telegram-omni-webhook',
+    runtime: 'Vercel Serverless Function',
+    geminiConfigured: !!TG_OMNI_GEMINI_KEY,
+    notionConfigured: !!TG_OMNI_NOTION_TOKEN,
+    model: TG_OMNI_GEMINI_MODEL,
+    thinkingBudget: TG_OMNI_THINKING_BUDGET,
+    allowedChatId: TG_OMNI_ALLOWED_CHAT_ID,
+    timestamp: new Date().toISOString()
+  });
+}
+
+async function handleTelegramWebhook(body, req, res) {
+  if (TG_OMNI_WEBHOOK_SECRET) {
+    var secretHeader = req.headers['x-telegram-bot-api-secret-token'];
+    if (secretHeader !== TG_OMNI_WEBHOOK_SECRET) {
+      res.status(401).json({ error: 'Unauthorized webhook secret' });
+      return;
+    }
+  }
+
+  var msg = body.message || body.edited_message;
+  if (!msg || !msg.text) {
+    res.status(200).json({ ok: true, ignored: true });
+    return;
+  }
+
+  var chatId = msg.chat?.id;
+  var userId = msg.from?.id;
+  var userText = (msg.text || '').trim();
+
+  if (chatId !== TG_OMNI_ALLOWED_CHAT_ID && userId !== TG_OMNI_ALLOWED_CHAT_ID) {
+    console.warn('[TelegramWebhook] 미승인 접근 차단: chat=' + chatId + ', user=' + userId);
+    await sendTelegramOmniMessage(chatId, '⛔ **미승인 접근 차단**\n등록된 최고 결정권자(상민님)만 지휘 사령부를 이용하실 수 있습니다.');
+    res.status(200).json({ ok: true, blocked: true });
+    return;
+  }
+
+  var startTime = Date.now();
+
+  if (userText === '/start' || userText === '/help') {
+    var helpMsg = [
+      '☀️ **양비스 옴니채널 24/7 Always-On 사령부 (Vercel Cloud)**',
+      '',
+      '• **인프라**: Vercel Serverless Function (`/api/telegram` -> `api/track.js`)',
+      '• **두뇌 엔진**: `' + TG_OMNI_GEMINI_MODEL + '` (Thinking Budget: ' + TG_OMNI_THINKING_BUDGET + ')',
+      '• **중앙 원장**: Notion SSOT (`commandInbox` 100턴 복원 & `activityLog` 실시간 보존)',
+      '• **가용성**: 데스크탑 PC 전원 OFF 시에도 모바일/맥북에서 24/7 무중단 지휘 가능',
+      '',
+      '명령이나 질문을 편하게 말씀해 주시면 심층 추론 후 보고합니다.'
+    ].join('\n');
+    await sendTelegramOmniMessage(chatId, helpMsg, msg.message_id);
+    res.status(200).json({ ok: true, command: 'help' });
+    return;
+  }
+
+  if (userText === '/status') {
+    var statusMsg = [
+      '📊 **양비스 옴니채널 시스템 상태 진단**',
+      '',
+      '• **서버리스 런타임**: Vercel Node.js (`https://ourgoal.app/api/telegram`)',
+      '• **Gemini API 연동**: ' + (TG_OMNI_GEMINI_KEY ? '정상 연결 (키 등록됨)' : '⚠️ 키 누락'),
+      '• **Notion SSOT 연동**: ' + (TG_OMNI_NOTION_TOKEN ? '정상 연결 (DB ' + TG_COMMAND_INBOX_DB.slice(0, 8) + '...)' : '⚠️ 토큰 누락'),
+      '• **추론 모델**: `' + TG_OMNI_GEMINI_MODEL + '` (폴백: `' + TG_OMNI_FALLBACK_MODEL + '`)',
+      '• **인가 사용자**: 상민님 (`' + TG_OMNI_ALLOWED_CHAT_ID + '`)'
+    ].join('\n');
+    await sendTelegramOmniMessage(chatId, statusMsg, msg.message_id);
+    res.status(200).json({ ok: true, command: 'status' });
+    return;
+  }
+
+  await sendTelegramOmniChatAction(chatId, 'typing');
+  var ackText = '⚡ **지시 접수**: "' + userText.slice(0, 40) + (userText.length > 40 ? '...' : '') + '"\n🧠 양비스 심층 추론(Pro Thinking 2048) 및 노션 SSOT 분석 중...';
+  var ackRes = await sendTelegramOmniMessage(chatId, ackText, msg.message_id);
+  var ackMsgId = ackRes?.result?.message_id;
+
+  try {
+    var pastTurns = await queryNotionOmniSession(TG_OMNI_NOTION_TOKEN, TG_COMMAND_INBOX_DB, 20);
+    var geminiResult = await callGeminiOmni(TG_OMNI_GEMINI_KEY, userText, pastTurns, TG_OMNI_GEMINI_MODEL);
+    var duration = ((Date.now() - startTime) / 1000).toFixed(1);
+
+    var finalReport = [
+      '📋 **[양비스 심층 지휘 보고]** (' + duration + '초 · ' + geminiResult.model + ')',
+      '',
+      geminiResult.text
+    ].join('\n');
+
+    await recordTurnToNotionOmni(TG_OMNI_NOTION_TOKEN, TG_COMMAND_INBOX_DB, userText, geminiResult.text);
+    await recordActivityLogOmni(TG_OMNI_NOTION_TOKEN, TG_ACTIVITY_LOG_DB, 'Telegram: ' + userText.slice(0, 40), geminiResult.text.slice(0, 200));
+
+    if (ackMsgId && finalReport.length <= 3900) {
+      await editTelegramOmniMessage(chatId, ackMsgId, finalReport);
+    } else {
+      if (ackMsgId) {
+        await editTelegramOmniMessage(chatId, ackMsgId, '📋 **[양비스 심층 지휘 보고]** (' + duration + '초 소요)\n상세 보고서가 아래로 이어집니다.');
+      }
+      await sendTelegramOmniMessage(chatId, finalReport, msg.message_id);
+    }
+
+    res.status(200).json({ ok: true, durationMs: Date.now() - startTime, model: geminiResult.model });
+  } catch (err) {
+    console.warn('[TelegramWebhook] 처리 중 예외 발생:', err.message);
+    var errMsg = '❌ **[양비스 지휘 처리 실패]**\n• 사유: ' + (err.message || '알 수 없는 오류');
+    if (ackMsgId) {
+      await editTelegramOmniMessage(chatId, ackMsgId, errMsg);
+    } else {
+      await sendTelegramOmniMessage(chatId, errMsg, msg.message_id);
+    }
+    res.status(200).json({ ok: false, error: err.message });
+  }
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -623,6 +1032,10 @@ module.exports = async function handler(req, res) {
   }
 
   if (req.method === 'GET') {
+    var isUrlTelegramGet = req.url && req.url.indexOf('/telegram') !== -1;
+    if (isUrlTelegramGet) {
+      return handleTelegramHealthCheck(req, res);
+    }
     return handleShareOg(req, res);
   }
 
@@ -634,6 +1047,12 @@ module.exports = async function handler(req, res) {
   var body = req.body || {};
   if (typeof body === 'string') {
     try { body = JSON.parse(body); } catch (e) { body = {}; }
+  }
+
+  // #TASK-ES-208: 24/7 Always-On 옴니채널 텔레그램 지휘 웹훅 (Vercel Serverless)
+  var isUrlTelegram = req.url && req.url.indexOf('/telegram') !== -1;
+  if (isUrlTelegram || body.update_id || (body.message && body.message.chat)) {
+    return handleTelegramWebhook(body, req, res);
   }
 
   var sb = getSupabase();
@@ -685,3 +1104,5 @@ module.exports = async function handler(req, res) {
     res.status(500).json({ error: 'insert failed' }); /* DB 에러 원문은 노출하지 않음 */
   }
 };
+
+module.exports.config = { maxDuration: 60 };
