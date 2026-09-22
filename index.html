@@ -3611,8 +3611,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     var chips = [];
     if(goals.length > 0){
-      goals.slice(0, 4).forEach(function(g){
-        var snippet = g.title.slice(0, 15);
+      goals.slice(0, 2).forEach(function(g){
+        var snippet = g.title.slice(0, 14);
         var icon = g.icon || '🎯';
         chips.push({
           label: icon + ' ' + snippet,
@@ -3620,11 +3620,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         });
       });
     }
-    // 기본 영감 칩 폴백
-    if(chips.length < 3){
-      chips.push({ label: '👟 러닝/운동 실천', text: '👟 30분 유산소 운동 완주! 땀 흘리며 스트레스 해소 완료 🔥' });
-      chips.push({ label: '📖 독서/학습 몰입', text: '📖 핵심 내용 30분 집중 독서 & 마인드셋 정리 완료 ✨' });
-      chips.push({ label: '💻 코딩/업무 집중', text: '💻 핵심 태스크 1시간 딥워크 완수 & 커밋 완료 🚀' });
+    // 기본 영감 칩 폴백 (최대 2개 유지)
+    if(chips.length < 2){
+      var fallbacks = [
+        { label: '👟 러닝/운동 실천', text: '👟 30분 유산소 운동 완주! 땀 흘리며 스트레스 해소 완료 🔥' },
+        { label: '📖 독서/학습 몰입', text: '📖 핵심 내용 30분 집중 독서 & 마인드셋 정리 완료 ✨' }
+      ];
+      for(var fi = 0; fi < fallbacks.length && chips.length < 2; fi++){
+        chips.push(fallbacks[fi]);
+      }
     }
 
     wrap.innerHTML = 
@@ -3634,9 +3638,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '</span>' +
         '<span style="font-size:0.7rem;color:var(--ink-soft);font-weight:500;">(탭하면 가이드 예시 힌트 설정 ⚡)</span>' +
       '</div>' +
-      '<div class="cunning-chips-wrap" style="display:flex;gap:6px;flex-wrap:wrap;">' +
-      chips.map(function(c){
-        return '<button type="button" class="btn-quick-chip" data-cunningtext="'+escapeHtml(c.text)+'" style="font-size:0.75rem;padding:6px 12px;border-radius:18px;background:rgba(49,130,246,0.08);border:1px solid rgba(49,130,246,0.22);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-weight:600;transition:all .15s ease;">' +
+      '<div class="cunning-chips-wrap" style="display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;">' +
+      chips.slice(0, 2).map(function(c){
+        return '<button type="button" class="btn-quick-chip" data-cunningtext="'+escapeHtml(c.text)+'" style="font-size:0.75rem;padding:5px 12px;border-radius:18px;background:rgba(49,130,246,0.08);border:1px solid rgba(49,130,246,0.22);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-weight:600;white-space:nowrap;max-width:calc(50% - 4px);overflow:hidden;text-overflow:ellipsis;flex-shrink:0;transition:all .15s ease;">' +
           escapeHtml(c.label) +
         '</button>';
       }).join('') +
