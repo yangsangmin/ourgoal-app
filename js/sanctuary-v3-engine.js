@@ -416,7 +416,7 @@
           var kind = it.kind || 'custom';
           var goalId = it.goalId || '';
           var msId = it.msId || '';
-          return '<div class="s-cal-item ' + (isDone ? 'done' : '') + '" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,0.04);margin-bottom:8px;cursor:pointer;" onclick="window.OurgoalSanctuaryV3.openScheduleDetail(\'' + engine.selectedCalDate + '\', \'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\');">' +
+          return '<div class="s-cal-item ' + (isDone ? 'done' : '') + '" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--surface-2, rgba(255,255,255,0.04));border:1px solid var(--rule);margin-bottom:8px;cursor:pointer;" onclick="window.OurgoalSanctuaryV3.openScheduleDetail(\'' + engine.selectedCalDate + '\', \'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\');">' +
             '<button type="button" class="s-cal-check-btn" style="background:none;border:none;padding:4px;cursor:pointer;color:' + (isDone ? '#10b981' : 'var(--ink-sub)') + ';" onclick="event.stopPropagation(); window.OurgoalSanctuaryV3.toggleScheduleItem(\'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\', \'' + msId + '\');">' +
               (isDone ? '☑' : '☐') +
             '</button>' +
@@ -439,7 +439,7 @@
         '<div class="s-week-grid">' +
           weekRowsHtml +
         '</div>' +
-        '<div class="s-week-day-detail" style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);">' +
+        '<div class="s-week-day-detail" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--rule, rgba(255,255,255,0.08));">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
             '<h4 style="margin:0;font-size:0.9rem;color:var(--ink-soft);">' + engine.selectedCalDate + ' 상세 일정</h4>' +
             '<button class="btn btn-primary btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal(\'' + engine.selectedCalDate + '\');">+ 일정 추가</button>' +

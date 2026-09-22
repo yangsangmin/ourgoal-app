@@ -7675,8 +7675,9 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   background: rgba(255, 255, 255, 0.05);
 }
 .s-week-day-row.selected {
-  border-color: rgba(16, 185, 129, 0.4);
-  background: rgba(16, 185, 129, 0.08);
+  border-color: var(--brand, #10b981) !important;
+  border-left: 3px solid var(--brand, #10b981) !important;
+  background: var(--surface-2, rgba(16, 185, 129, 0.08)) !important;
 }
 .s-week-day-badge {
   min-width: 44px;
@@ -7990,11 +7991,13 @@ html[data-theme="white"] .s-cal-mode-btn {
   color: #475569 !important;
 }
 html[data-theme="white"] .s-cal-mode-btn.active {
-  background: rgba(5, 150, 105, 0.12) !important;
+  background: #059669 !important;
   border-color: #059669 !important;
-  color: #059669 !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
 }
 html[data-theme="white"] .s-month-cal-card,
+html[data-theme="white"] .s-week-cal-card,
 html[data-theme="white"] .s-timeline-card,
 html[data-theme="white"] .s-timer-card {
   background: #FFFFFF !important;
@@ -8317,6 +8320,7 @@ html[data-theme="black"] .s-cal-mode-btn.active {
   color: #34D399 !important;
 }
 html[data-theme="black"] .s-month-cal-card,
+html[data-theme="black"] .s-week-cal-card,
 html[data-theme="black"] .s-timeline-card,
 html[data-theme="black"] .s-timer-card {
   background: #0A0A0C !important;
@@ -10309,3 +10313,28 @@ html[data-theme="urban-city"] .s-seg-pill {
 
 
 
+
+
+/* #TASK-ES-241: 화이트 테마 주간 뷰 고대비 시인성 복원 */
+html[data-theme="white"] .s-week-day-row {
+  background: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+}
+html[data-theme="white"] .s-week-day-row:hover {
+  background: #F1F5F9 !important;
+}
+html[data-theme="white"] .s-week-day-row.selected {
+  background: rgba(5, 150, 105, 0.08) !important;
+  border-color: #059669 !important;
+  border-left: 3px solid #059669 !important;
+}
+html[data-theme="white"] .s-week-day-num {
+  color: #0F172A !important;
+}
+html[data-theme="white"] .s-cal-item {
+  background: #F8FAFC !important;
+  border: 1px solid #E2E8F0 !important;
+}
+html[data-theme="white"] .s-week-day-detail {
+  border-top-color: #E2E8F0 !important;
+}

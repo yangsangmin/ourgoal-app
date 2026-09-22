@@ -7460,6 +7460,24 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+
+check('[#TASK-ES-241] 일정탭 주간 뷰 전환 버튼 및 주간 캘린더 테마 고대비 시인성 개선 무결성', () => {
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const sanctContent = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+
+  // 1. 화이트 테마 .s-cal-mode-btn.active 솔리드 고대비 스타일 확인
+  assert.ok(cssContent.includes('html[data-theme="white"] .s-cal-mode-btn.active'), '화이트 테마 활성 버튼 규칙 확인');
+  assert.ok(cssContent.includes('background: #059669 !important;'), '화이트 테마 에메랄드 솔리드 배경 확인');
+  assert.ok(cssContent.includes('color: #FFFFFF !important;'), '화이트 테마 화이트 폰트 확인');
+
+  // 2. 주간 캘린더 카드 화이트 테마 오버라이드 확인
+  assert.ok(cssContent.includes('html[data-theme="white"] .s-week-cal-card'), '화이트 테마 s-week-cal-card 선언 확인');
+  assert.ok(cssContent.includes('border-left: 3px solid var(--brand, #10b981) !important;'), 's-week-day-row.selected 좌측 하이라이트 확인');
+
+  // 3. sanctuary-v3-engine.js 내 테마 변수 연동 확인
+  assert.ok(sanctContent.includes('var(--surface-2'), 's-cal-item 테마 변수 바인딩 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
