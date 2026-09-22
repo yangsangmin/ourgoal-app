@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-217",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-217-CHECKIN-PLACEHOLDER-CUNNING.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "applyQuickCunningText에서 inp.value 강제 주입을 제거하고 inp.placeholder에 예시 힌트를 설정해야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "커닝페이퍼 칩 클릭 시 활성 상태 피드백을 제공하고 캡션을 가이드 힌트로 안내해야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "체크인 저장 완료(captureSave) 시 플레이스홀더가 기본 문구로 원복되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "기존 38대 헌법 무결성 게이트 및 336개 단위 테스트가 100% ALL PASS를 유지해야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "781개 정적 버튼 Dead-Click 검사가 100% ALL PASS를 유지해야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 applyQuickCunningText 함수에서 inp.placeholder = '예: ' + text; 가 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "inp.placeholder = '예: ' + text;"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 renderQuickCheckinGuideChips 함수에서 '(탭하면 가이드 예시 힌트 설정 ⚡)' 캡션이 표기된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "(탭하면 가이드 예시 힌트 설정 ⚡)"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 captureSave 완료 후 t.placeholder = '예: 오늘 실천한 멋진 일을 한 줄로 적어보세요'; 로 기본 플레이스홀더가 원복된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "t.placeholder = '예: 오늘 실천한 멋진 일을 한 줄로 적어보세요';"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js 내에 [#TASK-ES-217] 무결성 검증 케이스가 정의되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-217 / 생각 메모장 88번]"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 quick-cunning-chip 요소에 active-cunning 클래스 토글 로직이 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "active-cunning"
+      }
+    }
+  ]
+}
