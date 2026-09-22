@@ -7460,6 +7460,29 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+check('[#TASK-ES-229] 팀 목표 및 소통 탭 내 가상 샘플 그룹(MOCK_GROUPS) 분리 및 [💡 활용 예시] 배지·새 팀 만들기 전면화', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. isMockGroup 판별 헬퍼 및 기본 MOCK_GROUPS isMock:true 배선 확인
+  assert.ok(indexHtml.includes('function isMockGroup('), 'isMockGroup 판별 함수 구비');
+  assert.ok(indexHtml.includes('isMock:true'), 'MOCK_GROUPS 항목에 isMock:true 플래그 설정');
+
+  // 2. 대형 히어로 카드 렌더러 및 최상단 버튼 배선 확인
+  assert.ok(indexHtml.includes('function renderTeamCreateHeroCardHtml('), 'renderTeamCreateHeroCardHtml 함수 구비');
+  assert.ok(indexHtml.includes('btnHeroCreateTeamComm'), '소통 탭 최상단 팀 생성 버튼 구비');
+  assert.ok(indexHtml.includes('btnHeroCreateTeamGoals'), '목표 탭 최상단 팀 생성 버튼 구비');
+
+  // 3. 예시 그룹 배지 및 아코디언 토글 배선 확인
+  assert.ok(indexHtml.includes('💡 이런 팀을 만들 수 있어요 (활용 예시)'), '활용 예시 템플릿 배지 텍스트 구비');
+  assert.ok(indexHtml.includes('data-toggle-mock-section'), '예시 그룹 아코디언 토글 속성 구비');
+  assert.ok(indexHtml.includes('data-tplgroup-create'), '예시 템플릿 기반 팀 개설 버튼 구비');
+
+  // 4. UI 스타일 클래스 선언 확인
+  assert.ok(cssContent.includes('.team-hero-card'), '.team-hero-card CSS 클래스 선언');
+  assert.ok(cssContent.includes('.mock-group-badge'), '.mock-group-badge CSS 클래스 선언');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
