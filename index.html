@@ -412,6 +412,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     <section class="screen" id="screen-records">
       <div class="toss-headline" id="recHeadlineSentence">매일의 작은 실천이 큰 성장을 만들어요 📈</div>
       <div id="sanctuaryRecordsView"></div>
+      <div id="recSamplePurgeBanner" style="display:none;"></div>
       <div class="screen-head" style="flex-wrap:wrap;gap:8px;margin-bottom:8px;">
         <div class="screen-head-l" style="flex-wrap:wrap;">
           <h2 class="s-title" style="font-size:1.15rem;margin:0;">기록/통계</h2>
@@ -28464,6 +28465,30 @@ wirePromptEncyclopediaEvents(body);
     });
   }
 
+  
+  // [TASK-ES-245] 샘플 데이터 1초 체험 후 원클릭 완전 삭제/정화 함수
+  window.purgeSampleRecordsOneClick = async function(){
+    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+    var curRecs = (state && state.profile && state.profile.records) || [];
+    var sampleRecs = curRecs.filter(function(r){ return r && r.isSample === true; });
+    var sampleCount = sampleRecs.length;
+    if(!sampleCount){
+      if(typeof toast === 'function') toast('정리할 샘플 데이터가 없습니다.');
+      return;
+    }
+
+    var confirmed = confirm('체험용 샘플 데이터 ' + sampleCount + '건만 말끔히 삭제할까요?\n(내가 직접 적은 기록은 100% 안전하게 유지됩니다)');
+    if(!confirmed) return;
+
+    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(15);
+    var keptRecs = curRecs.filter(function(r){ return !r || r.isSample !== true; });
+    state.profile.records = keptRecs;
+    if(typeof saveProfile === 'function') await saveProfile();
+    if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation();
+    renderRecordsScreen();
+    if(typeof toast === 'function') toast('체험용 샘플 데이터가 모두 정리되었습니다! ✨');
+  };
+
   function renderRecordsScreen(){
     if(!state) state = {};
     if(!state.profile) state.profile = {};
@@ -28481,6 +28506,30 @@ wirePromptEncyclopediaEvents(body);
     var allRecs = (state.profile.records || []).slice().sort(function(a,b){
       var tA = new Date(a.startAt || a.start_at || 0).getTime(); var tB = new Date(b.startAt || b.start_at || 0).getTime(); return tB - tA;
     });
+
+    
+    // [TASK-ES-245] 샘플 데이터 능동 감지 배너 렌더링
+    var curRecords = (state && state.profile && state.profile.records) || [];
+    var sampleCount = curRecords.filter(function(r){ return r && r.isSample === true; }).length;
+    var purgeBannerEl = document.getElementById('recSamplePurgeBanner');
+    if(purgeBannerEl){
+      if(sampleCount > 0){
+        purgeBannerEl.style.display = 'block';
+        purgeBannerEl.innerHTML = 
+          '<div class="rec-sample-purge-box" id="recSamplePurgeBox">' +
+            '<div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text, #191f28);min-width:0;flex:1;">' +
+              '<span style="font-size:16px;flex-shrink:0;">💡</span>' +
+              '<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">체험용 샘플 데이터 <b style="color:#ef4444;">' + sampleCount + '건</b> 적용 중</span>' +
+            '</div>' +
+            '<button type="button" class="btn btn-sm toss-haptic-tap" id="recSamplePurgeBtn" onclick="purgeSampleRecordsOneClick()" style="flex-shrink:0;background:#ef4444;color:#ffffff;border:none;border-radius:18px;font-size:12px;font-weight:700;padding:6px 12px;box-shadow:0 2px 6px rgba(239,68,68,0.3);cursor:pointer;min-height:36px;">' +
+              '🧹 1초 정리하기' +
+            '</button>' +
+          '</div>';
+      } else {
+        purgeBannerEl.style.display = 'none';
+        purgeBannerEl.innerHTML = '';
+      }
+    }
 
     var recHeadline = document.getElementById('recHeadlineSentence');
     if(recHeadline){
@@ -28697,7 +28746,7 @@ wirePromptEncyclopediaEvents(body);
 
     var listEl = document.getElementById('recordsList');
     if(!allRecs.length){
-      listEl.innerHTML = '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div><p>아직 기록이 없어요. 홈에서 자유롭게 적어보세요.</p>' +
+      listEl.innerHTML = '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div><p>이제 나만의 첫 실천을 기록해보세요! ✨</p>' +
         '<button class="btn btn-primary btn-sm" id="recAutoRestoreBtn" style="margin-top:12px;padding:8px 16px;border-radius:10px;font-weight:700;">🔄 이전 기록 전체 불러오기</button></div>';
       var restoreBtn = document.getElementById('recAutoRestoreBtn');
       if(restoreBtn){
