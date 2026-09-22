@@ -18366,7 +18366,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       return '<div class="comm-subtab'+((!state.goalsSubTab && s[0]==='personal') || state.goalsSubTab===s[0]?' active':'')+'" data-gsub="'+s[0]+'">'+s[1]+'</div>';
     }).join('');
     subtabs.querySelectorAll('[data-gsub]').forEach(function(t){
-      t.addEventListener('click', function(){ state.goalsSubTab = t.dataset.gsub; renderGoalsScreen(); });
+      t.addEventListener('click', function(){
+        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+        state.goalsSubTab = t.dataset.gsub;
+        renderGoalsScreen();
+      });
     });
     var rawGoals = state.profile.goals.filter(function(g){ return !g.archivedAt && !g.teamLinked; });
     var goals = sortGoalsByOrder(rawGoals, (state.profile.settings && state.profile.settings.goalOrder) || []);
