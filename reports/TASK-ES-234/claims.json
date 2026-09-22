@@ -1,0 +1,102 @@
+{
+  "task": "TASK-ES-234",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-234-IOS-PWA-GUIDE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "아이폰(iOS Safari) 접속 시 3단계 비주얼 PWA 홈 화면 추가 가이드 배너가 렌더링되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "iOS 16.4+ Web Push 알림 활성화 연계 안내 및 푸시 권한 요청 버튼이 제공되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "상세 인터랙티브 가이드 모달(openIosPwaInstallGuideModal)이 탑재되고 전역 노출되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "standalone 모드 구동 시 배너가 자동으로 완전 소거되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "npm test 및 38개 헌법 게이트, Zero Dead-Click 검사가 100% ALL PASS여야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "index.html에 iOS 사파리 3단계 비주얼 PWA 설치 가이드 배너 마크업이 렌더링된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "ios-pwa-steps"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "index.html에 iOS 16.4+ Web Push 알림 활성화 안내 및 권한 요청 로직이 배선된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "btnRequestIosPushPermission"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "index.html에 openIosPwaInstallGuideModal 함수가 탑재되고 window에 전역 노출된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "window.openIosPwaInstallGuideModal = openIosPwaInstallGuideModal"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "isStandalone 조건 검사를 통해 홈 화면 앱 실행 시 배너 슬롯이 빈 상태로 소거된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "if(!isIos || isStandalone || dismissed)"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "e2e",
+      "domain": "safety",
+      "statement": "npm test 및 헌법 38개 검증 게이트와 Zero Dead-Click 검사가 100% 통과한다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "commandPasses",
+        "command": "npm test"
+      }
+    }
+  ]
+}

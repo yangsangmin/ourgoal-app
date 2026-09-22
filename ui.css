@@ -10428,7 +10428,9 @@ color: var(--brand-strong, #6366f1);
   transform: scale(0.96);
   background: var(--surface-2);
 
-/* ================================================================
+/*
+
+=========================================================
    [#TASK-ES-231] 소통 탭 동반자(Companion) 초대 히어로 카드 & 실시간 검색 스타일
    ================================================================ */
 .companion-hero-card {
@@ -10543,4 +10545,27 @@ color: var(--brand-strong, #6366f1);
 
 .companion-search-result-card:hover {
   border-color: var(--brand, #6366f1);
+=======
+/* [#TASK-ES-234] iOS Safari PWA 설치 안내 및 실시간 알림 가이드 */
+.ios-pwa-banner {
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.ios-pwa-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.ios-pwa-step-card {
+  transition: transform 0.15s ease;
+}
+@media (max-width: 375px) {
+  .ios-pwa-banner {
+    padding: 12px 10px;
+  }
+  .ios-pwa-steps {
+    gap: 4px;
+  }
 }
