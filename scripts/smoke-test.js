@@ -7460,6 +7460,29 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+
+check('[#TASK-ES-233] 가입 첫날 신규 유저(기록 0~2개) \'3일 실천 완성 레이더 차트 미리보기\' 인포그래픽 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 미리보기 함수 및 6대 영역(체력, 지식, 마음, 관계, 커리어, 루틴) 확인
+  assert.ok(indexHtml.includes('function renderColdstartRadarPreviewSvg'), 'renderColdstartRadarPreviewSvg 함수 탑재');
+  assert.ok(indexHtml.includes('체력 🏃') && indexHtml.includes('지식 📚') && indexHtml.includes('마음 🧘'), '체력/지식/마음 3대 영역 라벨 확인');
+  assert.ok(indexHtml.includes('관계 🤝') && indexHtml.includes('커리어 💼') && indexHtml.includes('루틴 ⏰'), '관계/커리어/루틴 3대 영역 라벨 확인');
+
+  // 2. 콜드스타트 분기(allRecs.length < 3) 및 제목 확인
+  assert.ok(indexHtml.includes('allRecs.length < 3'), 'allRecs.length < 3 콜드스타트 분기 확인');
+  assert.ok(indexHtml.includes('3일 뒤 완성될 나의 6각 성장 차트'), '3일 뒤 완성될 나의 6각 성장 차트 제목 확인');
+  assert.ok(indexHtml.includes('비전 미리보기'), '비전 미리보기 뱃지 확인');
+
+  // 3. 기록 수에 따른 동적 안내 카피 및 실천 로드맵 진척도 확인
+  assert.ok(indexHtml.includes('첫 번째 꼭짓점이 빛나기 시작해요!'), '첫날 0개 안내 카피 확인');
+  assert.ok(indexHtml.includes('실천 로드맵:'), '실천 로드맵 라벨 확인');
+
+  // 4. SVG 그라데이션 및 노드 렌더링 확인
+  assert.ok(indexHtml.includes('id="coldstartRadarGrad"'), 'coldstartRadarGrad SVG 그라디언트 정의 확인');
+  assert.ok(indexHtml.includes('id="glowNode"'), 'glowNode SVG 필터 정의 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
