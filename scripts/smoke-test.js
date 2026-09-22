@@ -7460,6 +7460,20 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+check('[#TASK-ES-217 / 생각 메모장 88번] 오늘의 3초 체크인 목표 커닝페이퍼 칩 플레이스홀더 가이드화 및 지움 피로도 근절 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. applyQuickCunningText에서 inp.value = text 제거 및 placeholder 배선 확인
+  assert.ok(indexHtml.includes("inp.placeholder = '예: ' + text;"), 'applyQuickCunningText 내 inp.placeholder 배선 누락');
+  assert.ok(!indexHtml.includes("inp.value = text;\n    inp.dispatchEvent"), 'applyQuickCunningText 내 inp.value 강제 주입 잔존');
+
+  // 2. renderQuickCheckinGuideChips 내 가이드 안내 캡션 확인
+  assert.ok(indexHtml.includes('(탭하면 가이드 예시 힌트 설정 ⚡)'), 'renderQuickCheckinGuideChips 캡션 동기화 누락');
+
+  // 3. captureSave 완료 시 기본 플레이스홀더 원복 확인
+  assert.ok(indexHtml.includes("t.placeholder = '예: 오늘 실천한 멋진 일을 한 줄로 적어보세요';"), 'captureSave 내 placeholder 원복 누락');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
