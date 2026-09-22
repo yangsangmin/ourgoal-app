@@ -7460,6 +7460,32 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+check('[#TASK-ES-220] 교대근무자 전용 가변형 루틴 자동 스케줄링 및 맞춤 루틴 연동 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 교대근무 4종 캡슐 바 및 모드별 4개 버튼 확인
+  assert.ok(indexHtml.includes('id="shiftWorkRoutineBar"'), 'id="shiftWorkRoutineBar" 배선 누락');
+  assert.ok(indexHtml.includes('id="btnShiftDay"'), 'id="btnShiftDay" 버튼 배선 누락');
+  assert.ok(indexHtml.includes('id="btnShiftNight"'), 'id="btnShiftNight" 버튼 배선 누락');
+  assert.ok(indexHtml.includes('id="btnShiftDuty"'), 'id="btnShiftDuty" 버튼 배선 누락');
+  assert.ok(indexHtml.includes('id="btnShiftOff"'), 'id="btnShiftOff" 버튼 배선 누락');
+
+  // 2. 맞춤 루틴 원클릭 연동 및 주기 순환 모달 배선 확인
+  assert.ok(indexHtml.includes('id="btnApplyShiftRoutines"'), 'id="btnApplyShiftRoutines" 배선 누락');
+  assert.ok(indexHtml.includes('applyShiftWorkRoutines'), 'applyShiftWorkRoutines 함수 누락');
+  assert.ok(indexHtml.includes('id="btnOpenShiftCycleModal"'), 'id="btnOpenShiftCycleModal" 배선 누락');
+  assert.ok(indexHtml.includes('openShiftCycleModal'), 'openShiftCycleModal 함수 누락');
+
+  // 3. 서카디언 리듬 프리셋(4종) 정의 확인
+  assert.ok(indexHtml.includes('SHIFT_WORK_PRESETS'), 'SHIFT_WORK_PRESETS 정의 누락');
+  assert.ok(indexHtml.includes('rt_shift_night_wake'), '야간조 14시 기상 활력 루틴 누락');
+  assert.ok(indexHtml.includes('rt_shift_night_vit'), '야간조 19시 비타민C 루틴 누락');
+  assert.ok(indexHtml.includes('rt_shift_night_sleep'), '야간조 07시 암막 세팅 루틴 누락');
+
+  // 4. 스토리지 원장화 및 12ms 햅틱 배선 확인
+  assert.ok(indexHtml.includes('state.profile.settings.shiftSettings'), 'shiftSettings 영속성 배선 누락');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

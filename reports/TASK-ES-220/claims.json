@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-220",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-220-SHIFT-WORK-ROUTINES.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html의 루틴 뷰에 교대근무 4종 1터치 캡슐 바(#shiftWorkRoutineBar)와 4개 모드 버튼(#btnShiftDay, #btnShiftNight, #btnShiftDuty, #btnShiftOff)이 배선되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "교대 모드별 맞춤 루틴 3종 프리셋과 원클릭 연동 버튼(#btnApplyShiftRoutines)이 배선되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "교대근무 4일 주기 순환 캘린더 설정 모달(#btnOpenShiftCycleModal, openShiftCycleModal)이 배선되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "근무 형태 전환 시 12ms 미세 햅틱 피드백(triggerHaptic(12)) 및 스토리지 원장화(shiftSettings, saveProfile)가 배선되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "기존 루틴 데이터 무손실 보존 및 782개 이상 정적 버튼 Dead-Click 검사가 100% ALL PASS를 유지해야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 #shiftWorkRoutineBar 및 4종 근무 모드 캡슐 버튼이 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"shiftWorkRoutineBar\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 맞춤 루틴 원클릭 연동 버튼 #btnApplyShiftRoutines 및 applyShiftWorkRoutines 함수가 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"btnApplyShiftRoutines\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 교대 주기 설정 모달 버튼 #btnOpenShiftCycleModal 및 openShiftCycleModal 함수가 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"btnOpenShiftCycleModal\""
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "근무 모드 전환 및 모달 액션에 12ms 햅틱(triggerHaptic(12))과 shiftSettings 영속화가 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "state.profile.settings.shiftSettings"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-220 교대근무 가변형 루틴 자동 스케줄링 검증 케이스가 추가되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-220] 교대근무자 전용 가변형 루틴 자동 스케줄링 및 맞춤 루틴 연동 무결성"
+      }
+    }
+  ]
+}

@@ -17200,6 +17200,168 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.localGoalTemplate = localGoalTemplate;
   }
 
+  /* ============ [#TASK-ES-220] [생각 메모장 91번] 교대근무자 가변형 루틴 프리셋 & 자동 스케줄러 ============ */
+  var SHIFT_WORK_PRESETS = {
+    day: {
+      key: 'day',
+      label: '☀️ 주간조',
+      hours: '09:00~18:00',
+      badge: '주간 활력 케어',
+      healthTip: '기상 직후 미온수 500ml와 점심 식후 비타민C 복용으로 코르티솔 분비와 대사 리듬을 최적화하세요.',
+      routines: [
+        { id: 'rt_shift_day_wake', title: '🌅 모닝 활력: 기상 후 미온수 500ml & 스트레칭', time: '06:30', days: [1,2,3,4,5,6,7], notify: true, memo: '코르티솔 정상 분비 및 생체시계 활성화', completedDates: [] },
+        { id: 'rt_shift_day_vit', title: '💊 식후 영양: 점심 식후 비타민C & 오메가3 복용', time: '12:30', days: [1,2,3,4,5,6,7], notify: true, memo: '피로 개선 및 면역력 유지', completedDates: [] },
+        { id: 'rt_shift_day_sleep', title: '🌙 나이트 이완: 취침 30분 전 5분 침대 스트레칭 & 조명 낮추기', time: '22:30', days: [1,2,3,4,5,6,7], notify: true, memo: '부교감 신경 활성화 및 숙면 유도', completedDates: [] }
+      ]
+    },
+    night: {
+      key: 'night',
+      label: '🌙 야간조',
+      hours: '21:00~08:00',
+      badge: '서카디언 케어',
+      healthTip: '14시 기상 활력 루틴과 19시 식후 비타민C 복용, 아침 07시 퇴근 후 완전 암막 커튼으로 멜라토닌 분비를 유도하세요.',
+      routines: [
+        { id: 'rt_shift_night_wake', title: '⚡ 야간 기상 활력: 14시 기상 후 가벼운 워밍업 & 찬물 세안', time: '14:00', days: [1,2,3,4,5,6,7], notify: true, memo: '야간 근무 전 생체리듬 부스팅', completedDates: [] },
+        { id: 'rt_shift_night_vit', title: '💊 야간 식후 영양: 19시 저녁 식후 비타민C 복용', time: '19:00', days: [1,2,3,4,5,6,7], notify: true, memo: '야간 활성산소 억제 및 피로 회복 가이드 준수', completedDates: [] },
+        { id: 'rt_shift_night_sleep', title: '🛌 퇴근 후 숙면: 07시 퇴근 후 5분 침대 스트레칭 & 암막 세팅', time: '07:00', days: [1,2,3,4,5,6,7], notify: true, memo: '멜라토닌 분비 촉진을 위한 완전 암막 환경 조성', completedDates: [] }
+      ]
+    },
+    duty: {
+      key: 'duty',
+      label: '🔄 당직/비번',
+      hours: '24H 대기/회복',
+      badge: '생체 회복 케어',
+      healthTip: '불규칙 교대근무 피로 회복: 11시 수분·비타민B/C 충전과 16시 가벼운 산책으로 림프 순환을 돕고 23시 깊은 수면을 취하세요.',
+      routines: [
+        { id: 'rt_shift_duty_detox', title: '💧 피로 디톡스: 수분 섭취 및 피로회복 비타민B/C 섭취', time: '11:00', days: [1,2,3,4,5,6,7], notify: true, memo: '불규칙 교대근무 피로 누적 완화', completedDates: [] },
+        { id: 'rt_shift_duty_walk', title: '🚶 회복 산책: 16시 가벼운 20분 걷기 스트레칭', time: '16:00', days: [1,2,3,4,5,6,7], notify: true, memo: '경직된 근육 이완 및 림프 순환', completedDates: [] },
+        { id: 'rt_shift_duty_sleep', title: '🌙 온전한 회복: 23시 숙면 암막 환경 & 미온수 샤워', time: '23:00', days: [1,2,3,4,5,6,7], notify: true, memo: '수면 위상 동기화 및 뇌 피로 회복', completedDates: [] }
+      ]
+    },
+    off: {
+      key: 'off',
+      label: '🌿 휴무',
+      hours: '리셋/리프레시',
+      badge: '리셋 & 충전',
+      healthTip: '오전 09시 자연광을 쬐어 서카디언 리듬을 리셋하고, 오후 14시 취미 몰입으로 번아웃을 예방하세요.',
+      routines: [
+        { id: 'rt_shift_off_sun', title: '☀️ 햇살 충전: 09시 자연광 15분 산책 & 비타민D 합성', time: '09:00', days: [1,2,3,4,5,6,7], notify: true, memo: '생체시계 동기화 및 기분 전환', completedDates: [] },
+        { id: 'rt_shift_off_heal', title: '🌿 나만의 힐링: 14시 좋아하는 취미/휴식 1시간 몰입', time: '14:00', days: [1,2,3,4,5,6,7], notify: true, memo: '번아웃 방지 및 정서적 회복', completedDates: [] },
+        { id: 'rt_shift_off_sleep', title: '🌙 규칙 수면: 23시 스마트폰 멀리 두고 규칙 수면 유지', time: '23:00', days: [1,2,3,4,5,6,7], notify: true, memo: '다음 교대 주기를 위한 수면 리듬 수호', completedDates: [] }
+      ]
+    }
+  };
+
+  async function applyShiftWorkRoutines(mode){
+    if(typeof triggerHaptic === 'function') triggerHaptic(12);
+    var preset = SHIFT_WORK_PRESETS[mode] || SHIFT_WORK_PRESETS.day;
+    if(!state.profile.settings.routines) state.profile.settings.routines = [];
+    var currentRoutines = state.profile.settings.routines;
+
+    var addedCount = 0;
+    preset.routines.forEach(function(rTpl){
+      var exists = currentRoutines.some(function(r){ return r.title === rTpl.title; });
+      if(!exists){
+        currentRoutines.push({
+          id: 'rt_' + Date.now() + '_' + Math.random().toString(36).substring(2,7),
+          title: rTpl.title,
+          time: rTpl.time,
+          days: rTpl.days.slice(),
+          notify: rTpl.notify,
+          memo: rTpl.memo,
+          completedDates: []
+        });
+        addedCount++;
+      }
+    });
+
+    await saveProfile();
+    if(addedCount > 0){
+      toast(preset.label + ' 맞춤 루틴 ' + addedCount + '종이 내 루틴에 연동되었습니다! ✨');
+    } else {
+      toast('이미 ' + preset.label + ' 맞춤 루틴이 등록되어 있습니다. 👍');
+    }
+    renderRoutineGoalsScreen();
+  }
+
+  function openShiftCycleModal(){
+    if(typeof triggerHaptic === 'function') triggerHaptic(12);
+    var shiftSettings = (state.profile && state.profile.settings && state.profile.settings.shiftSettings) || {
+      currentShift: 'day',
+      cycle: ['day', 'night', 'duty', 'off'],
+      cycleStartDate: dateKey(new Date()),
+      autoCycleEnabled: false
+    };
+    var todayStr = dateKey(new Date());
+
+    var modalHtml = '' +
+      '<div class="modal-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">' +
+        '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<span style="font-size:1.2rem;">🔄</span>' +
+          '<h3 style="margin:0;font-size:1.1rem;font-weight:800;color:var(--ink);">교대근무 주기 순환(Auto Cycle) 설정</h3>' +
+        '</div>' +
+        '<button class="btn btn-ghost btn-xs" id="btnCloseShiftCycleModal" type="button" style="font-size:1.1rem;padding:2px 8px;line-height:1;">✕</button>' +
+      '</div>' +
+      '<p class="faint" style="font-size:.8125rem;line-height:1.45;margin-bottom:14px;">' +
+        '주-야-비-휴 4일 주기 또는 맞춤 교대 패턴을 등록하면 매일 날짜에 맞춰 오늘 근무 형태가 자동 계산됩니다.' +
+      '</p>' +
+      '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:12px 14px;margin-bottom:14px;">' +
+        '<label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-weight:700;font-size:.875rem;color:var(--ink);">' +
+          '<span>자동 교대 순환 활성화</span>' +
+          '<input type="checkbox" id="chkAutoCycleEnabled"' + (shiftSettings.autoCycleEnabled ? ' checked' : '') + ' style="width:18px;height:18px;accent-color:var(--brand);cursor:pointer;">' +
+        '</label>' +
+      '</div>' +
+      '<div style="margin-bottom:14px;">' +
+        '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">주기 시작 기준일</label>' +
+        '<input type="date" id="inCycleStartDate" value="' + (shiftSettings.cycleStartDate || todayStr) + '" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);font-weight:600;box-sizing:border-box;">' +
+      '</div>' +
+      '<div style="margin-bottom:16px;">' +
+        '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:6px;color:var(--ink);">순환 교대 패턴 (4일 주기)</label>' +
+        '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:10px;padding:10px 12px;font-size:.8125rem;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+          '<span style="padding:4px 8px;background:var(--card);border:1px solid var(--rule);border-radius:6px;font-weight:700;">1일: ☀️ 주간</span>' +
+          '<span>➔</span>' +
+          '<span style="padding:4px 8px;background:var(--card);border:1px solid var(--rule);border-radius:6px;font-weight:700;">2일: 🌙 야간</span>' +
+          '<span>➔</span>' +
+          '<span style="padding:4px 8px;background:var(--card);border:1px solid var(--rule);border-radius:6px;font-weight:700;">3일: 🔄 비번</span>' +
+          '<span>➔</span>' +
+          '<span style="padding:4px 8px;background:var(--card);border:1px solid var(--rule);border-radius:6px;font-weight:700;">4일: 🌿 휴무</span>' +
+        '</div>' +
+        '<div class="faint" style="font-size:.75rem;margin-top:4px;">* 기준일로부터 경과 일수에 따라 당일 모드가 자동 지정됩니다.</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;">' +
+        '<button class="btn btn-ghost btn-sm" id="btnCancelShiftCycle" type="button" style="flex:1;min-height:44px;font-weight:700;border-radius:10px;border:1px solid var(--rule);">취소</button>' +
+        '<button class="btn btn-primary btn-sm" id="btnSaveShiftCycle" type="button" style="flex:2;min-height:44px;font-weight:700;border-radius:10px;">저장 및 적용</button>' +
+      '</div>';
+
+    openModal(modalHtml, function(modalEl){
+      var btnClose = modalEl.querySelector('#btnCloseShiftCycleModal');
+      if(btnClose) btnClose.onclick = function(){ closeModal(); };
+      var btnCancel = modalEl.querySelector('#btnCancelShiftCycle');
+      if(btnCancel) btnCancel.onclick = function(){ closeModal(); };
+
+      var btnSave = modalEl.querySelector('#btnSaveShiftCycle');
+      if(btnSave){
+        btnSave.onclick = async function(){
+          if(typeof triggerHaptic === 'function') triggerHaptic(12);
+          var chk = modalEl.querySelector('#chkAutoCycleEnabled');
+          var inStart = modalEl.querySelector('#inCycleStartDate');
+          shiftSettings.autoCycleEnabled = !!(chk && chk.checked);
+          shiftSettings.cycleStartDate = (inStart && inStart.value) || todayStr;
+          shiftSettings.cycle = ['day', 'night', 'duty', 'off'];
+          state.profile.settings.shiftSettings = shiftSettings;
+          state.profile.shiftSettings = shiftSettings;
+          await saveProfile();
+          toast('교대근무 순환 주기가 설정되었습니다. 🔄');
+          closeModal();
+          renderRoutineGoalsScreen();
+        };
+      }
+    });
+  }
+  window.applyShiftWorkRoutines = applyShiftWorkRoutines;
+  window.openShiftCycleModal = openShiftCycleModal;
+  window.SHIFT_WORK_PRESETS = SHIFT_WORK_PRESETS;
+
   /* ============ [#TASK-ES-172] [27] 목표 탭: 데일리 루틴 서브탭 & 편집/상세 모달 ============ */
   function renderRoutineGoalsScreen(){
     var container = document.getElementById('routineGoalsView');
@@ -17215,10 +17377,38 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     if(typeof state.routineEditMode === 'undefined') state.routineEditMode = false;
 
+    // [#TASK-ES-220] 교대근무 설정 초기화 및 당일 근무 모드 계산
+    if(!state.profile.settings.shiftSettings){
+      state.profile.settings.shiftSettings = {
+        currentShift: 'day',
+        cycle: ['day', 'night', 'duty', 'off'],
+        cycleStartDate: dateKey(new Date()),
+        autoCycleEnabled: false
+      };
+    }
+    state.profile.shiftSettings = state.profile.settings.shiftSettings;
+    var shiftSettings = state.profile.settings.shiftSettings;
+
     var routines = state.profile.settings.routines;
     var now = new Date();
     var todayKey = dateKey(now);
     var dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
+
+    var calculatedShift = shiftSettings.currentShift || 'day';
+    if(shiftSettings.autoCycleEnabled && shiftSettings.cycleStartDate && Array.isArray(shiftSettings.cycle) && shiftSettings.cycle.length > 0){
+      try {
+        var sDate = new Date(shiftSettings.cycleStartDate + 'T00:00:00');
+        var tDate = new Date(todayKey + 'T00:00:00');
+        var diffTime = tDate.getTime() - sDate.getTime();
+        var diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        if(diffDays >= 0){
+          var cycleIdx = diffDays % shiftSettings.cycle.length;
+          calculatedShift = shiftSettings.cycle[cycleIdx] || calculatedShift;
+        }
+      } catch(e){}
+    }
+    var currentShiftMode = shiftSettings.currentShift || calculatedShift || 'day';
+    var activePreset = SHIFT_WORK_PRESETS[currentShiftMode] || SHIFT_WORK_PRESETS.day;
 
     var todayRoutines = routines.filter(function(r){
       return !r.days || r.days.indexOf(dayOfWeek) !== -1;
@@ -17244,6 +17434,50 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               (state.routineEditMode ? '완료' : '편집') +
             '</button>' +
             '<button class="btn btn-primary btn-sm" id="btnAddRoutineBtn" type="button" style="padding:6px 12px;font-size:.8125rem;font-weight:700;border-radius:10px;">+ 새 루틴</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="card" id="shiftWorkRoutineSection" style="margin-bottom:12px;background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:12px 14px;">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px;">' +
+            '<div style="display:flex;align-items:center;gap:6px;">' +
+              '<span style="font-size:1.05rem;">🩺</span>' +
+              '<span style="font-size:.875rem;font-weight:700;color:var(--ink);">교대근무 가변형 루틴 스케줄러</span>' +
+              '<span class="badge" style="font-size:.7rem;padding:2px 6px;border-radius:6px;background:rgba(99,102,241,0.12);color:var(--brand);font-weight:700;">서카디언 케어</span>' +
+            '</div>' +
+            '<button class="btn btn-ghost btn-xs" id="btnOpenShiftCycleModal" type="button" style="min-height:30px;padding:4px 8px;font-size:.75rem;font-weight:700;border-radius:8px;border:1px solid var(--rule);">' +
+              '⚙️ 교대주기 설정' +
+            '</button>' +
+          '</div>' +
+          '<div id="shiftWorkRoutineBar" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;">' +
+            '<button class="btn btn-ghost" id="btnShiftDay" data-shift="day" type="button" style="min-height:44px;padding:6px 2px;font-size:.8125rem;font-weight:700;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:' + (currentShiftMode === 'day' ? '2px solid var(--brand)' : '1px solid var(--rule)') + ';background:' + (currentShiftMode === 'day' ? 'rgba(99,102,241,0.12)' : 'var(--card)') + ';color:' + (currentShiftMode === 'day' ? 'var(--brand)' : 'var(--ink)') + ';">' +
+              '<span>☀️ 주간조</span>' +
+              '<span class="faint" style="font-size:.65rem;margin-top:2px;">09:00~18:00</span>' +
+            '</button>' +
+            '<button class="btn btn-ghost" id="btnShiftNight" data-shift="night" type="button" style="min-height:44px;padding:6px 2px;font-size:.8125rem;font-weight:700;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:' + (currentShiftMode === 'night' ? '2px solid var(--brand)' : '1px solid var(--rule)') + ';background:' + (currentShiftMode === 'night' ? 'rgba(99,102,241,0.12)' : 'var(--card)') + ';color:' + (currentShiftMode === 'night' ? 'var(--brand)' : 'var(--ink)') + ';">' +
+              '<span>🌙 야간조</span>' +
+              '<span class="faint" style="font-size:.65rem;margin-top:2px;">21:00~08:00</span>' +
+            '</button>' +
+            '<button class="btn btn-ghost" id="btnShiftDuty" data-shift="duty" type="button" style="min-height:44px;padding:6px 2px;font-size:.8125rem;font-weight:700;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:' + (currentShiftMode === 'duty' ? '2px solid var(--brand)' : '1px solid var(--rule)') + ';background:' + (currentShiftMode === 'duty' ? 'rgba(99,102,241,0.12)' : 'var(--card)') + ';color:' + (currentShiftMode === 'duty' ? 'var(--brand)' : 'var(--ink)') + ';">' +
+              '<span>🔄 당직/비번</span>' +
+              '<span class="faint" style="font-size:.65rem;margin-top:2px;">24H 대기/회복</span>' +
+            '</button>' +
+            '<button class="btn btn-ghost" id="btnShiftOff" data-shift="off" type="button" style="min-height:44px;padding:6px 2px;font-size:.8125rem;font-weight:700;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:' + (currentShiftMode === 'off' ? '2px solid var(--brand)' : '1px solid var(--rule)') + ';background:' + (currentShiftMode === 'off' ? 'rgba(99,102,241,0.12)' : 'var(--card)') + ';color:' + (currentShiftMode === 'off' ? 'var(--brand)' : 'var(--ink)') + ';">' +
+              '<span>🌿 휴무</span>' +
+              '<span class="faint" style="font-size:.65rem;margin-top:2px;">리셋/리프레시</span>' +
+            '</button>' +
+          '</div>' +
+          '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">' +
+            '<div style="flex:1;min-width:200px;">' +
+              '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
+                '<span>현재 근무 모드: <b style="color:var(--brand);">' + activePreset.label + '</b></span>' +
+                (shiftSettings.autoCycleEnabled ? '<span class="badge" style="font-size:.68rem;padding:2px 5px;background:rgba(34,197,94,0.15);color:#16a34a;border-radius:4px;">자동순환 중</span>' : '') +
+              '</div>' +
+              '<div class="faint" style="font-size:.75rem;margin-top:3px;line-height:1.4;">' +
+                '💡 ' + activePreset.healthTip +
+              '</div>' +
+            '</div>' +
+            '<button class="btn btn-primary btn-sm" id="btnApplyShiftRoutines" type="button" style="min-height:36px;padding:6px 12px;font-size:.8125rem;font-weight:700;border-radius:8px;flex-shrink:0;">' +
+              '⚡ ' + activePreset.label + ' 맞춤 루틴 연동' +
+            '</button>' +
           '</div>' +
         '</div>' +
         '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:14px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">' +
@@ -17412,6 +17646,79 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(addBtn){
       addBtn.onclick = function(){
         openAddRoutineModal();
+      };
+    }
+
+    // [#TASK-ES-220] 교대근무 4종 캡슐 버튼 및 액션 이벤트 배선
+    var shiftDayBtn = container.querySelector('#btnShiftDay');
+    if(shiftDayBtn){
+      shiftDayBtn.onclick = async function(e){
+        e.stopPropagation();
+        if(typeof triggerHaptic === 'function') triggerHaptic(12);
+        shiftSettings.currentShift = 'day';
+        state.profile.settings.shiftSettings = shiftSettings;
+        state.profile.shiftSettings = shiftSettings;
+        await saveProfile();
+        toast('☀️ 주간조 모드로 변경되었습니다.');
+        renderRoutineGoalsScreen();
+      };
+    }
+
+    var shiftNightBtn = container.querySelector('#btnShiftNight');
+    if(shiftNightBtn){
+      shiftNightBtn.onclick = async function(e){
+        e.stopPropagation();
+        if(typeof triggerHaptic === 'function') triggerHaptic(12);
+        shiftSettings.currentShift = 'night';
+        state.profile.settings.shiftSettings = shiftSettings;
+        state.profile.shiftSettings = shiftSettings;
+        await saveProfile();
+        toast('🌙 야간조 모드로 변경되었습니다. (서카디언 리듬 적용)');
+        renderRoutineGoalsScreen();
+      };
+    }
+
+    var shiftDutyBtn = container.querySelector('#btnShiftDuty');
+    if(shiftDutyBtn){
+      shiftDutyBtn.onclick = async function(e){
+        e.stopPropagation();
+        if(typeof triggerHaptic === 'function') triggerHaptic(12);
+        shiftSettings.currentShift = 'duty';
+        state.profile.settings.shiftSettings = shiftSettings;
+        state.profile.shiftSettings = shiftSettings;
+        await saveProfile();
+        toast('🔄 당직/비번 모드로 변경되었습니다.');
+        renderRoutineGoalsScreen();
+      };
+    }
+
+    var shiftOffBtn = container.querySelector('#btnShiftOff');
+    if(shiftOffBtn){
+      shiftOffBtn.onclick = async function(e){
+        e.stopPropagation();
+        if(typeof triggerHaptic === 'function') triggerHaptic(12);
+        shiftSettings.currentShift = 'off';
+        state.profile.settings.shiftSettings = shiftSettings;
+        state.profile.shiftSettings = shiftSettings;
+        await saveProfile();
+        toast('🌿 휴무 모드로 변경되었습니다.');
+        renderRoutineGoalsScreen();
+      };
+    }
+
+    var btnApplyShift = container.querySelector('#btnApplyShiftRoutines');
+    if(btnApplyShift){
+      btnApplyShift.onclick = async function(e){
+        e.stopPropagation();
+        await applyShiftWorkRoutines(currentShiftMode);
+      };
+    }
+
+    var btnCycleModal = container.querySelector('#btnOpenShiftCycleModal');
+    if(btnCycleModal){
+      btnCycleModal.onclick = function(e){
+        e.stopPropagation();
+        openShiftCycleModal();
       };
     }
   }
