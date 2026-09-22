@@ -18949,23 +18949,56 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
   };
 
-  async function applyShiftWorkRoutines(mode){
+  async function applyShiftWorkRoutines(mode, isReplace){
     if(typeof triggerHaptic === 'function') triggerHaptic(12);
     var preset = SHIFT_WORK_PRESETS[mode] || SHIFT_WORK_PRESETS.day;
     if(!state.profile.settings.routines) state.profile.settings.routines = [];
     var currentRoutines = state.profile.settings.routines;
+
+    // 전체 교대근무 프리셋 루틴 타이틀 수집 (이전 교대 루틴 스마트 클린 교체용)
+    var allShiftTitles = [];
+    Object.keys(SHIFT_WORK_PRESETS).forEach(function(k){
+      SHIFT_WORK_PRESETS[k].routines.forEach(function(r){
+        if(allShiftTitles.indexOf(r.title) === -1) allShiftTitles.push(r.title);
+      });
+    });
+
+    if(isReplace){
+      // 기존에 등록되었던 이전 교대 루틴만 정확히 선별하여 제거 (사용자 개인 루틴은 무손실 보존)
+      state.profile.settings.routines = currentRoutines.filter(function(r){
+        var isShift = r.isShiftRoutine === true ||
+                      (r.id && r.id.indexOf('rt_shift_') !== -1) ||
+                      allShiftTitles.indexOf(r.title) !== -1;
+        return !isShift;
+      });
+      currentRoutines = state.profile.settings.routines;
+    }
+
+    // 근무 설정 업데이트
+    if(!state.profile.settings.shiftSettings){
+      state.profile.settings.shiftSettings = {
+        currentShift: mode,
+        cycle: ['day', 'night', 'duty', 'off'],
+        cycleStartDate: dateKey(new Date()),
+        autoCycleEnabled: false
+      };
+    } else {
+      state.profile.settings.shiftSettings.currentShift = mode;
+    }
+    state.profile.shiftSettings = state.profile.settings.shiftSettings;
 
     var addedCount = 0;
     preset.routines.forEach(function(rTpl){
       var exists = currentRoutines.some(function(r){ return r.title === rTpl.title; });
       if(!exists){
         currentRoutines.push({
-          id: 'rt_' + Date.now() + '_' + Math.random().toString(36).substring(2,7),
+          id: 'rt_shift_' + mode + '_' + Date.now() + '_' + Math.random().toString(36).substring(2,7),
           title: rTpl.title,
           time: rTpl.time,
           days: rTpl.days.slice(),
           notify: rTpl.notify,
           memo: rTpl.memo,
+          isShiftRoutine: true,
           completedDates: []
         });
         addedCount++;
@@ -18973,12 +19006,138 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
 
     await saveProfile();
-    if(addedCount > 0){
+    if(isReplace){
+      toast('⚡ ' + preset.label + ' 맞춤 루틴 3종으로 1초 교체 적용되었습니다! ✨');
+    } else if(addedCount > 0){
       toast(preset.label + ' 맞춤 루틴 ' + addedCount + '종이 내 루틴에 연동되었습니다! ✨');
     } else {
       toast('이미 ' + preset.label + ' 맞춤 루틴이 등록되어 있습니다. 👍');
     }
     renderRoutineGoalsScreen();
+  }
+
+  function openShiftWorkCustomModal(initialMode){
+    if(typeof triggerHaptic === 'function') triggerHaptic(12);
+    var shiftSettings = (state.profile && state.profile.settings && state.profile.settings.shiftSettings) || {
+      currentShift: 'day',
+      cycle: ['day', 'night', 'duty', 'off'],
+      cycleStartDate: dateKey(new Date()),
+      autoCycleEnabled: false
+    };
+    var selectedMode = initialMode || shiftSettings.currentShift || 'day';
+
+    function renderModalContent(container){
+      var preset = SHIFT_WORK_PRESETS[selectedMode] || SHIFT_WORK_PRESETS.day;
+      var modes = [
+        { key: 'day', label: '☀️ 주간조', time: '09:00~18:00' },
+        { key: 'night', label: '🌙 야간조', time: '21:00~08:00' },
+        { key: 'duty', label: '🔄 당직·비번', time: '24H 순환' },
+        { key: 'off', label: '🌿 휴무', time: '리셋/충전' }
+      ];
+
+      var modalInnerHtml = '' +
+        '<div class="modal-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">' +
+          '<div style="display:flex;align-items:center;gap:6px;">' +
+            '<span style="font-size:1.2rem;">🔄</span>' +
+            '<h3 style="margin:0;font-size:1.05rem;font-weight:800;color:var(--ink);">교대근무 맞춤 루틴 원클릭 세팅</h3>' +
+          '</div>' +
+          '<button class="btn btn-ghost btn-xs" id="btnCloseShiftCustomModal" type="button" style="font-size:1.1rem;padding:2px 8px;line-height:1;">✕</button>' +
+        '</div>' +
+        '<p class="faint" style="font-size:.8125rem;line-height:1.45;margin-bottom:12px;">' +
+          '2교대/3교대 근무 패턴에 맞춰 서카디언 생체리듬 3대 루틴을 1초 만에 최적화하고 교체합니다.' +
+        '</p>' +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;">' +
+          modes.map(function(m){
+            var isSel = (m.key === selectedMode);
+            return '<button type="button" class="btn btn-ghost btn-shift-select" data-mode="' + m.key + '" style="min-height:50px;padding:6px 2px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:' + (isSel ? '2px solid var(--brand)' : '1px solid var(--rule)') + ';background:' + (isSel ? 'rgba(99,102,241,0.12)' : 'var(--card2)') + ';color:' + (isSel ? 'var(--brand)' : 'var(--ink)') + ';font-weight:700;transition:all 0.15s;">' +
+              '<span style="font-size:.8125rem;">' + m.label + '</span>' +
+              '<span class="faint" style="font-size:.65rem;margin-top:2px;">' + m.time + '</span>' +
+            '</button>';
+          }).join('') +
+        '</div>' +
+        '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:14px;">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+            '<div style="font-size:.875rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
+              '<span>' + preset.label + ' 케어</span>' +
+              '<span class="badge" style="font-size:.68rem;padding:2px 6px;border-radius:6px;background:rgba(99,102,241,0.12);color:var(--brand);font-weight:700;">' + preset.badge + '</span>' +
+            '</div>' +
+            '<span class="faint" style="font-size:.75rem;">' + preset.hours + '</span>' +
+          '</div>' +
+          '<div style="background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:8px 10px;font-size:.78125rem;color:var(--ink-soft);line-height:1.45;margin-bottom:10px;">' +
+            '💡 ' + preset.healthTip +
+          '</div>' +
+          '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">추천 서카디언 루틴 (3종)</div>' +
+          '<div style="display:flex;flex-direction:column;gap:6px;">' +
+            preset.routines.map(function(r){
+              return '<div style="background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:8px;">' +
+                '<span style="font-size:.75rem;font-weight:700;color:var(--brand);background:rgba(99,102,241,0.1);padding:2px 6px;border-radius:6px;flex-shrink:0;">⏰ ' + r.time + '</span>' +
+                '<div style="flex:1;min-width:0;">' +
+                  '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(r.title) + '</div>' +
+                  '<div class="faint" style="font-size:.7rem;margin-top:1px;">💬 ' + escapeHtml(r.memo) + '</div>' +
+                '</div>' +
+              '</div>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;">' +
+          '<button class="btn btn-primary" id="btnShiftModalReplace" type="button" style="width:100%;min-height:44px;font-size:.875rem;font-weight:700;border-radius:10px;box-shadow:0 2px 8px rgba(99,102,241,0.25);">' +
+            '⚡ 오늘 근무 루틴으로 1초 교체 적용' +
+          '</button>' +
+          '<div style="display:flex;gap:6px;">' +
+            '<button class="btn btn-ghost btn-sm" id="btnShiftModalAppend" type="button" style="flex:1;min-height:38px;font-size:.8125rem;font-weight:600;border-radius:10px;border:1px solid var(--rule);">' +
+              '➕ 기존 루틴에 추가' +
+            '</button>' +
+            '<button class="btn btn-ghost btn-sm" id="btnShiftModalCycleLink" type="button" style="flex:1;min-height:38px;font-size:.8125rem;font-weight:600;border-radius:10px;border:1px solid var(--rule);">' +
+              '⚙️ 주기 자동 순환' +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="faint" style="font-size:.71875rem;text-align:center;line-height:1.4;">' +
+          '* [1초 교체 적용] 시 이전 교대 루틴을 깔끔하게 대체하여 목록이 과도하게 쌓이지 않습니다.' +
+        '</div>';
+
+      container.innerHTML = modalInnerHtml;
+
+      var btnClose = container.querySelector('#btnCloseShiftCustomModal');
+      if(btnClose) btnClose.onclick = function(){ closeModal(); };
+
+      container.querySelectorAll('.btn-shift-select').forEach(function(b){
+        b.onclick = function(){
+          if(typeof triggerHaptic === 'function') triggerHaptic(10);
+          selectedMode = b.getAttribute('data-mode');
+          renderModalContent(container);
+        };
+      });
+
+      var btnReplace = container.querySelector('#btnShiftModalReplace');
+      if(btnReplace){
+        btnReplace.onclick = async function(){
+          await applyShiftWorkRoutines(selectedMode, true);
+          closeModal();
+        };
+      }
+
+      var btnAppend = container.querySelector('#btnShiftModalAppend');
+      if(btnAppend){
+        btnAppend.onclick = async function(){
+          await applyShiftWorkRoutines(selectedMode, false);
+          closeModal();
+        };
+      }
+
+      var btnCycleLink = container.querySelector('#btnShiftModalCycleLink');
+      if(btnCycleLink){
+        btnCycleLink.onclick = function(){
+          closeModal();
+          setTimeout(function(){ openShiftCycleModal(); }, 100);
+        };
+      }
+    }
+
+    openModal('<div id="shiftWorkCustomModalContent"></div>', function(modalEl){
+      var contentEl = modalEl.querySelector('#shiftWorkCustomModalContent');
+      if(contentEl) renderModalContent(contentEl);
+    });
   }
 
   function openShiftCycleModal(){
@@ -19056,6 +19215,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
   }
   window.applyShiftWorkRoutines = applyShiftWorkRoutines;
+  window.openShiftWorkCustomModal = openShiftWorkCustomModal;
   window.openShiftCycleModal = openShiftCycleModal;
   window.SHIFT_WORK_PRESETS = SHIFT_WORK_PRESETS;
 
@@ -19126,7 +19286,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             '<h3 style="margin:0;font-size:1.15rem;font-weight:700;color:var(--ink);">📅 나의 데일리 루틴</h3>' +
             '<p class="faint" style="margin:2px 0 0;font-size:.8125rem;">루틴을 터치하면 상세/편집이 가능하며, 당일 루틴 완수 시 <b>+10 EXP</b> 획득!</p>' +
           '</div>' +
-          '<div style="display:flex;align-items:center;gap:6px;">' +
+          '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+            '<button class="btn btn-ghost btn-sm" id="btnOpenShiftRoutineModal" type="button" style="padding:6px 10px;font-size:.8125rem;font-weight:700;border:1px solid rgba(99,102,241,0.3);border-radius:10px;color:var(--brand);background:rgba(99,102,241,0.06);display:flex;align-items:center;gap:4px;">' +
+              '🔄 교대 맞춤 루틴' +
+            '</button>' +
             '<button class="btn btn-ghost btn-sm" id="btnToggleRoutineEdit" type="button" style="padding:6px 12px;font-size:.8125rem;font-weight:700;border:1px solid var(--rule);border-radius:10px;color:' + (state.routineEditMode ? 'var(--brand)' : 'var(--ink)') + ';">' +
               (state.routineEditMode ? '완료' : '편집') +
             '</button>' +
@@ -19403,11 +19566,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       };
     }
 
+    var btnOpenShiftModal = container.querySelector('#btnOpenShiftRoutineModal');
+    if(btnOpenShiftModal){
+      btnOpenShiftModal.onclick = function(e){
+        e.stopPropagation();
+        openShiftWorkCustomModal(currentShiftMode);
+      };
+    }
+
     var btnApplyShift = container.querySelector('#btnApplyShiftRoutines');
     if(btnApplyShift){
-      btnApplyShift.onclick = async function(e){
+      btnApplyShift.onclick = function(e){
         e.stopPropagation();
-        await applyShiftWorkRoutines(currentShiftMode);
+        openShiftWorkCustomModal(currentShiftMode);
       };
     }
 

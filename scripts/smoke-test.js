@@ -7520,6 +7520,13 @@ check('[#TASK-ES-220] 교대근무자 전용 가변형 루틴 자동 스케줄�
 
   // 4. 스토리지 원장화 및 12ms 햅틱 배선 확인
   assert.ok(indexHtml.includes('state.profile.settings.shiftSettings'), 'shiftSettings 영속성 배선 누락');
+
+  // 5. 2차 고도화: 헤더 맞춤 루틴 진입 버튼 및 원클릭 1초 교체 모달 배선 확인
+  assert.ok(indexHtml.includes('id="btnOpenShiftRoutineModal"'), 'id="btnOpenShiftRoutineModal" 헤더 버튼 누락');
+  assert.ok(indexHtml.includes('openShiftWorkCustomModal'), 'openShiftWorkCustomModal 함수 누락');
+  assert.ok(indexHtml.includes('id="btnShiftModalReplace"'), 'btnShiftModalReplace 1초 교체 적용 버튼 누락');
+  assert.ok(indexHtml.includes('id="btnShiftModalAppend"'), 'btnShiftModalAppend 루틴 추가 버튼 누락');
+  assert.ok(indexHtml.includes('isReplace'), 'applyShiftWorkRoutines isReplace 매개변수 누락');
 });
 
 check('[#TASK-ES-222] 카카오톡 인앱 브라우저 감지 및 Safari/Chrome 탈출 가이드 무결성', () => {
