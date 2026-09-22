@@ -7460,6 +7460,27 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+check('[#TASK-ES-226] [생각 메모장 96번] 체크인 완료 즉시 [📢 피드에도 자랑하기 (+5 EXP)] 1-클릭 고속 발행 파이프라인 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. #btnCheckinInstantShareFeed 및 #chkCheckinShareGoalTitle 마크업 존재 확인
+  assert.ok(indexHtml.includes('id="btnCheckinInstantShareFeed"'), '#btnCheckinInstantShareFeed 버튼 누락');
+  assert.ok(indexHtml.includes('id="chkCheckinShareGoalTitle"'), '#chkCheckinShareGoalTitle 체크박스 누락');
+
+  // 2. awardXP(5, '체크인 피드 자랑') 및 FEED_POSTS_CACHE unshift 연동 확인
+  assert.ok(indexHtml.includes("awardXP(5, '체크인 피드 자랑')"), 'awardXP(5) 연동 누락');
+  assert.ok(indexHtml.includes('myFeedPosts.unshift(post)'), 'myFeedPosts.unshift 연동 누락');
+  assert.ok(indexHtml.includes('FEED_POSTS_CACHE.unshift(post)'), 'FEED_POSTS_CACHE.unshift 연동 누락');
+
+  // 3. 토스트 및 햅틱 확인
+  assert.ok(indexHtml.includes('동반자 피드에 자랑 완료! 경험치 +5 EXP 획득 🎉'), '자랑 완료 토스트 문구 누락');
+  assert.ok(indexHtml.includes('triggerHapticFeedback(15)'), '15ms 햅틱 피드백 누락');
+
+  // 4. instantShareCheckinToFeed 함수 및 전역 노출 확인
+  assert.ok(indexHtml.includes('function instantShareCheckinToFeed'), 'instantShareCheckinToFeed 함수 선언 누락');
+  assert.ok(indexHtml.includes('window.instantShareCheckinToFeed = instantShareCheckinToFeed'), 'window.instantShareCheckinToFeed 노출 누락');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

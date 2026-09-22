@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-226",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-226-CHECKIN-SHARE-FEED.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html에 체크인 피드 즉시 자랑 1클릭 버튼(id=\"btnCheckinInstantShareFeed\") 및 목표명 공개 토글(id=\"chkCheckinShareGoalTitle\")이 배치되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "피드 즉시 자랑 클릭 시 15ms 햅틱 피드백과 함께 awardXP(5) 경험치 가산이 실행되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "피드 즉시 자랑 클릭 시 FEED_POSTS_CACHE 및 myFeedPosts에 포스트가 즉시 등록되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "피드 즉시 자랑 완료 시 토스트 안내와 폭죽 및 소통 탭 실시간 연동이 가동되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "scripts/smoke-test.js에 TASK-ES-226 검증 케이스가 추가되어야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 #btnCheckinInstantShareFeed 및 #chkCheckinShareGoalTitle 마크업이 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"btnCheckinInstantShareFeed\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 피드 즉시 자랑 경험치 +5 EXP 가산 로직이 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "awardXP(5"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 FEED_POSTS_CACHE 및 myFeedPosts 원장 즉시 등록이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "myFeedPosts.unshift(post)"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 피드 자랑 완료 토스트 메시지가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "동반자 피드에 자랑 완료! 경험치 +5 EXP 획득 🎉"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-226 검증 케이스가 추가되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-226] [생각 메모장 96번] 체크인 완료 즉시 [📢 피드에도 자랑하기 (+5 EXP)] 1-클릭 고속 발행 파이프라인 무결성"
+      }
+    }
+  ]
+}
