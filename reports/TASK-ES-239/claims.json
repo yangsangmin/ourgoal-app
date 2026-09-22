@@ -1,0 +1,102 @@
+{
+  "task": "TASK-ES-239",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-239-GOALS-HIERARCHY-ACCORDION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "마일스톤 헤더에 [▼ / ▲] 접기 토글과 함께 (완료 N/전체 N) 미니 진행 뱃지 및 인라인 진행률 바가 배치되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "완료된 세부 할 일(done)은 기본적으로 1줄 접이식 [✓ 완료된 할 일 N개 보기]로 압축되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "마일스톤과 세부 할 일 항목 간 인덴트 및 세로 가이드 라인(border-left)이 적용되어 계층 시인성이 개선되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "목표 리스트 상단에 [모두 접기 / 모두 펼치기] 토글 버튼이 배치되고 12ms 햅틱이 연동되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "npm test 및 38개 헌법 게이트, Zero Dead-Click 검사가 100% ALL PASS여야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "index.html 내 마일스톤 헤더에 [data-mstoggle] 토글 및 완료 카운트 뱃지와 미니 진행 바가 렌더링된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "ms-mini-progress-bar"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "index.html 내 완료된 할 일을 접이식으로 그룹화하는 [data-toggledonetasks] 및 완료된 할 일 N개 보기 바가 구현된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "data-toggledonetasks"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내 .task-list에 border-left 세로 가이드 라인 및 들여쓰기 스타일이 선언된다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "border-left: 2px solid var(--rule);"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "index.html 내 msCollapseAllBtn이 모두 접기/모두 펼치기 라벨로 렌더링되고 클릭 시 햅틱 피드백을 호출한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "모두 접기"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "e2e",
+      "domain": "safety",
+      "statement": "npm test 및 헌법 38개 검증 게이트와 Zero Dead-Click 검사가 100% 통과한다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "commandPasses",
+        "command": "npm test"
+      }
+    }
+  ]
+}

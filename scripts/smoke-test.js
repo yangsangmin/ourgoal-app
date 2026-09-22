@@ -7877,6 +7877,22 @@ check('[#TASK-ES-238] 목표탭 대표 안내멘트(#goalsHeadlineSentence) 시�
   assert.ok(indexHtml.includes('정상까지 <b>'), '정상까지 남은 퀘스트 수 헤드라인 문구 확인');
 });
 
+check('[#TASK-ES-239] 목표탭 마일스톤·세부 할일 다건 등록 시 계층형 시인성 개선 및 접이식 관리 편의성 극대화 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. .task-list 세로 가이드 라인 및 접이식 컴포넌트 CSS 확인
+  assert.ok(cssContent.includes('border-left: 2px solid var(--rule) !important;'), '.task-list 세로 가이드 라인 CSS 선언 확인');
+  assert.ok(cssContent.includes('.done-tasks-toggle-bar'), '.done-tasks-toggle-bar CSS 선언 확인');
+  assert.ok(cssContent.includes('.ms-mini-progress-bar'), '.ms-mini-progress-bar CSS 선언 확인');
+
+  // 2. index.html 내 마일스톤 아코디언 진행 바 및 완료 할 일 접기 바 확인
+  assert.ok(indexHtml.includes('ms-mini-progress-bar'), '마일스톤 미니 진행 바 렌더링 확인');
+  assert.ok(indexHtml.includes('done-tasks-toggle-bar'), '완료된 할 일 접기 바 렌더링 확인');
+  assert.ok(indexHtml.includes('data-toggledonetasks='), '완료된 할 일 토글 데이터 속성 확인');
+  assert.ok(indexHtml.includes('모두 접기'), '상단 컨트롤 바 모두 접기 라벨 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

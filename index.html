@@ -20613,7 +20613,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">' +
             densityBtnHtml +
             '<button class="btn btn-ghost btn-sm" id="msCollapseAllBtn" type="button" style="font-size:.75rem;padding:3px 8px;">' +
-              (allCollapsed ? '전체 펼치기' : '전체 접기') +
+              (allCollapsed ? '모두 펼치기' : '모두 접기') +
             '</button>' +
           '</div>' +
         '</div>' +
@@ -20710,7 +20710,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var totalTasks = (m.tasks||[]).length;
       var doneTasks = (m.tasks||[]).filter(function(t){ return t.done; }).length;
 
-      var taskRows = (gView === 'milestones_only') ? [] : (m.tasks||[]).map(function(t){
+      function renderSingleTaskRow(t){
         var tSel = !!state.taskSel[t.id];
         var tAttHtml = (t.attachments && t.attachments.length) ? ('<span class="faint" style="font-size:.7rem;" title="참고자료 '+t.attachments.length+'건">📎'+t.attachments.length+'</span>') : '';
         var taskDueHtml = state.goalEditMode ?
@@ -20731,11 +20731,41 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             (state.goalEditMode ? '<button class="icon-btn" data-deltask="1" aria-label="삭제" style="padding:1px 4px;font-size:.8rem;">×</button>' : '') +
           '</div>' +
         '</div>';
-      }).join('');
+      }
+
+      var taskRows = '';
+      if(gView !== 'milestones_only'){
+        var allMTasks = m.tasks || [];
+        var activeMTasks = allMTasks.filter(function(t){ return !t.done; });
+        var doneMTasks = allMTasks.filter(function(t){ return t.done; });
+        var activeTaskHtml = activeMTasks.map(renderSingleTaskRow).join('');
+        var doneTaskHtml = doneMTasks.map(renderSingleTaskRow).join('');
+
+        if(state.goalEditMode || doneMTasks.length === 0){
+          taskRows = activeTaskHtml + doneTaskHtml;
+        } else {
+          var isDoneExpanded = !!(state.expandedDoneTasks && state.expandedDoneTasks[m.id]);
+          var doneToggleBar = '<div class="done-tasks-toggle-bar" data-toggledonetasks="'+m.id+'">' +
+            '<span>✓ 완료된 할 일 ' + doneMTasks.length + '개 ' + (isDoneExpanded ? '접기' : '보기') + '</span>' +
+            '<span style="font-size:.6875rem;">' + (isDoneExpanded ? '▲' : '▼') + '</span>' +
+          '</div>';
+          taskRows = activeTaskHtml + doneToggleBar + (isDoneExpanded ? '<div class="done-tasks-list">' + doneTaskHtml + '</div>' : '');
+        }
+      }
 
       var mSel = !!state.msSel[m.id];
       var ddayBadge = m.dueDate ? ('<span class="dday-mini" style="font-size:.6875rem;padding:1px 5px;">'+dDay(m.dueDate)+'</span>') : '';
-      var progBadge = totalTasks > 0 ? ('<span class="faint" style="font-size:.6875rem;background:var(--card2);padding:1px 5px;border-radius:5px;">'+doneTasks+'/'+totalTasks+'</span>') : '';
+      var msPct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+      var progBadge = totalTasks > 0 ? (
+        '<span class="faint" style="font-size:.6875rem;background:var(--card2);padding:1px 6px;border-radius:5px;display:inline-flex;align-items:center;gap:3px;white-space:nowrap;">' +
+          (msPct===100 ? '✓ ' : '') + '완료 ' + doneTasks + '/' + totalTasks +
+        '</span>'
+      ) : '';
+      var msProgressBar = totalTasks > 0 ? (
+        '<div class="ms-mini-progress-bar">' +
+          '<div style="width:' + msPct + '%;height:100%;background:' + (msPct===100 ? 'var(--green, #10b981)' : 'var(--brand)') + ';transition:width .2s ease;"></div>' +
+        '</div>'
+      ) : '';
       var curPrio = m.priority || 'med';
       var prioLabel = curPrio === 'high' ? '높음' : (curPrio === 'low' ? '낮음' : '보통');
       var prioTagHtml = '<span class="ms-priority-tag ms-priority-' + curPrio + '" data-cyclepriority="' + m.id + '" title="우선순위 변경 (클릭)">' + prioLabel + '</span>';
@@ -20753,7 +20783,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             '<div class="ms-main-left">' +
               (state.goalEditMode ? '<div class="sel-check'+(mSel?' on':'')+'" data-selms="'+m.id+'">'+(mSel?'✓':'')+'</div>' : '') +
               (state.goalEditMode ? '<div class="drag-handle" title="드래그해서 순서 변경"><span></span><span></span><span></span></div>' : '') +
-              (totalTasks > 0 ? '<button class="icon-btn" data-mstoggle="'+m.id+'" type="button" title="'+(isCollapsed?'하위 할 일 펼치기':'하위 할 일 접기')+'" style="padding:2px 5px;font-size:.75rem;color:var(--ink-soft);flex:0 0 auto;">'+(isCollapsed ? '▶' : '▼')+'</button>' : '') +
+              (totalTasks > 0 ? '<button class="icon-btn" data-mstoggle="'+m.id+'" type="button" title="'+(isCollapsed?'하위 할 일 펼치기':'하위 할 일 접기')+'" style="padding:2px 5px;font-size:.75rem;color:var(--ink-soft);flex:0 0 auto;">'+(isCollapsed ? '▼' : '▲')+'</button>' : '') +
               '<div class="ms-status '+m.status+'" data-cyclestatus="1">'+statusIcon+'</div>' +
               '<input class="'+titleClass+'" data-msinput="1" value="'+escapeHtml(m.title)+'" '+(state.goalEditMode?'':'readonly')+'>' +
             '</div>' +
@@ -20762,6 +20792,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               ddayBadge +
             '</div>' +
           '</div>' +
+          msProgressBar +
           '<div class="ms-sub-meta-line">' +
             '<div class="ms-sub-meta-left">' +
               prioTagHtml +
@@ -20780,8 +20811,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             '</div>' +
           '</div>' +
         '</div>' +
-        '<div class="task-list" style="margin-left:26px;'+(isCollapsed?'display:none;':'')+'">'+taskRows+'</div>' +
-        (state.goalEditMode && !isCollapsed ? '<div class="task-add" data-addtask="1" style="margin-left:26px;font-size:.75rem;">+ 할 일 추가</div>' : '') +
+        '<div class="task-list" style="margin-left:18px;'+(isCollapsed?'display:none;':'')+'">'+taskRows+'</div>' +
+        (state.goalEditMode && !isCollapsed ? '<div class="task-add" data-addtask="1" style="margin-left:18px;font-size:.75rem;">+ 할 일 추가</div>' : '') +
       '</div>';
     }).join('');
 
@@ -20913,6 +20944,7 @@ wirePromptEncyclopediaEvents(body);
     var collapseAllBtn = document.getElementById('msCollapseAllBtn');
     if(collapseAllBtn){
       collapseAllBtn.addEventListener('click', function(){
+        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
         if(allCollapsed){
           state.collapsedMilestones = {};
         } else {
@@ -20921,6 +20953,18 @@ wirePromptEncyclopediaEvents(body);
         renderGoalsScreen();
       });
     }
+
+    /* [#TASK-ES-239] 완료된 할 일 접기/펼치기 토글 배선 */
+    body.querySelectorAll('[data-toggledonetasks]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        if(!state.expandedDoneTasks) state.expandedDoneTasks = {};
+        var mid = btn.dataset.toggledonetasks;
+        state.expandedDoneTasks[mid] = !state.expandedDoneTasks[mid];
+        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(10);
+        renderGoalsScreen();
+      });
+    });
 
     var densityToggleBtn = document.getElementById('msDensityToggleBtn');
     if(densityToggleBtn){
@@ -21035,6 +21079,7 @@ wirePromptEncyclopediaEvents(body);
         toggleBtn.addEventListener('click', function(e){
           e.stopPropagation();
           state.collapsedMilestones[msid] = !state.collapsedMilestones[msid];
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(10);
           renderGoalsScreen();
         });
       }
