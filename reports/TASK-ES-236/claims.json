@@ -1,0 +1,102 @@
+{
+  "task": "TASK-ES-236",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-236-AI-GOAL-PREVIEW-STAGE-SELECT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "AI 목표 어시스턴트에 목표 제안 플랜 확인 및 단계 선택 프리뷰 시트가 제공되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "목표 제목 인라인 편집 및 실천 주기 선택 칩이 지원되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "제안된 각 단계(마일스톤)별 선택 체크박스 및 인라인 명칭 수정이 지원되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "선택 및 검증된 데이터만 최종 저장되고 4대 뷰에 동시 전파되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "npm test 및 38개 헌법 게이트, Zero Dead-Click 검사가 100% ALL PASS여야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "index.html에 제안된 목표 플랜 확인 프리뷰 시트 마크업이 배선된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "제안된 목표 플랜 확인"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "목표 제목 인라인 입력창(#gaGoalTitleInput) 및 실천 주기 칩이 배선된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "gaGoalTitleInput"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "마일스톤 단계별 체크박스(ga-ms-check) 및 인라인 수정이 지원된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "ga-ms-check"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "이 플랜으로 내 목표 만들기 클릭 시 선택된 단계만 저장되고 4대 뷰로 전파된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "이 플랜으로 내 목표 만들기"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "e2e",
+      "domain": "safety",
+      "statement": "npm test 및 헌법 38개 검증 게이트와 Zero Dead-Click 검사가 100% 통과한다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "commandPasses",
+        "command": "npm test"
+      }
+    }
+  ]
+}

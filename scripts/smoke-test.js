@@ -7460,6 +7460,26 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+check('[#TASK-ES-236] AI 목표 어시스턴트 제안된 목표 플랜 확인 및 단계 선택 프리뷰 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 제안된 목표 플랜 확인 프리뷰 시트 탑재 확인
+  assert.ok(indexHtml.includes('제안된 목표 플랜 확인'), '제안된 목표 플랜 확인 타이틀 탑재');
+  assert.ok(indexHtml.includes('gaGoalTitleInput'), 'gaGoalTitleInput 인라인 제목 수정창 탑재');
+  assert.ok(indexHtml.includes('gaFreqChips'), 'gaFreqChips 실천 주기 선택 슬롯 탑재');
+
+  // 2. 단계 체크박스 및 명칭 수정 인라인 폼 확인
+  assert.ok(indexHtml.includes('ga-ms-check'), 'ga-ms-check 단계 선택 체크박스 탑재');
+  assert.ok(indexHtml.includes('ga-ms-title-inp'), 'ga-ms-title-inp 단계 인라인 수정 입력창 탑재');
+  assert.ok(indexHtml.includes('이 플랜으로 내 목표 만들기'), '이 플랜으로 내 목표 만들기 액션 버튼 텍스트 확인');
+
+  // 3. CSS 클래스 선언 확인
+  assert.ok(cssContent.includes('.ga-plan-preview-sheet'), '.ga-plan-preview-sheet 선언 확인');
+  assert.ok(cssContent.includes('.goal-freq-chip'), '.goal-freq-chip 선언 확인');
+  assert.ok(cssContent.includes('.ga-ms-card'), '.ga-ms-card 선언 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
