@@ -7858,6 +7858,25 @@ check('[#TASK-ES-237] 목표탭 상단 5개 서브탭 버튼 중앙 정렬 및 �
   assert.ok(indexHtml.includes("triggerHapticFeedback(12);\n        state.goalsSubTab = t.dataset.gsub;"), '서브탭 클릭 12ms 햅틱 배선 확인');
 });
 
+check('[#TASK-ES-238] 목표탭 대표 안내멘트(#goalsHeadlineSentence) 시인성 개선 및 공간 효율적 간결 문구 재배치 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. #goalsHeadlineSentence 압축 스타일 선언 확인
+  assert.ok(cssContent.includes('#goalsHeadlineSentence'), '#goalsHeadlineSentence CSS 선언 확인');
+  assert.ok(cssContent.includes('margin: 4px 0 10px 0 !important;'), '#goalsHeadlineSentence margin: 4px 0 10px 0 선언 확인');
+  assert.ok(cssContent.includes('font-size: 1.05rem !important;'), '#goalsHeadlineSentence font-size: 1.05rem 선언 확인');
+  assert.ok(cssContent.includes('line-height: 1.35 !important;'), '#goalsHeadlineSentence line-height: 1.35 선언 확인');
+
+  // 2. 모바일 480px 반응형 규칙 확인
+  assert.ok(cssContent.includes('margin: 4px 0 8px 0 !important;'), '#goalsHeadlineSentence 480px 반응형 마진 확인');
+
+  // 3. index.html 내 목표탭 헤드라인 슬롯 및 동적 텍스트 렌더링 배선 확인
+  assert.ok(indexHtml.includes('id="goalsHeadlineSentence"'), 'index.html 내 goalsHeadlineSentence 슬롯 확인');
+  assert.ok(indexHtml.includes("var headlineEl = document.getElementById('goalsHeadlineSentence');"), 'renderGoalsScreen 내 headlineEl 렌더러 바인딩 확인');
+  assert.ok(indexHtml.includes('정상까지 <b>'), '정상까지 남은 퀘스트 수 헤드라인 문구 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
