@@ -1,0 +1,65 @@
+{
+  "task": "TASK-ES-203",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-203-MULTI-ACCOUNT-AND-DEVICE-COURT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "법정 시나리오에서 2개 계정(ourgoaltest, 테스터 B)의 듀얼 브라우저 상호작용을 무인으로 기동하고 교차 단언할 수 있어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "듀얼 브라우저 다중 계정 상호작용 검증 시 법정이 L4(진짜 계정끼리 주고받아 봄) 등급을 정식 자동 판정해야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "모바일 하드웨어 뒤로가기 및 가상 키보드 뷰포트 축소 이벤트를 에뮬레이션하여 L5(진짜 폰에서 해 봄) 등급을 자동 판정해야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "court/lib/scenario.js에 spawnPeer와 actor 분기가 탑재되어 2개 세션이 격리 실행된다",
+      "touches": [
+        "court/lib/scenario.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "court/lib/scenario.js",
+        "text": "spawnPeer"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "court/claims.js의 MEASURABLE_TOP 상한선이 L5로 확장되고 멀티액터 판정 분기가 구현되어 있다",
+      "touches": [
+        "court/claims.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "court/claims.js",
+        "text": "MEASURABLE_TOP = 'L5'"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "court/lib/scenario.js에 hardwareBack 및 virtualKeyboard 제어 로직이 구현되어 있다",
+      "touches": [
+        "court/lib/scenario.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "court/lib/scenario.js",
+        "text": "hardwareBack"
+      }
+    }
+  ]
+}

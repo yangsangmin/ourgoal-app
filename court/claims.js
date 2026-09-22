@@ -36,7 +36,8 @@ const CANNOT_BECAUSE_SHORT = {
   'push-notification': '푸시 알림', 'payment-window': '결제 창', 'external-page': '다른 사이트로 이동', 'long-duration': '오래 걸리는 동작', 'visual-quality': '보기 좋은지(사람 눈)',
 };
 const STATIC_TYPES = ['jsonPath', 'fileExists', 'codeContains', 'codeNotContains'];
-const MEASURABLE_TOP = 'L3'; // 법정이 직접 잴 수 있는 가장 높은 수준(PC 화면에서 눌러 봄)
+const MEASURABLE_SCREEN_TOP = 'L3'; // 기본 화면 단일 세션에서 필수 제출되는 하한(PC 화면에서 눌러 봄)
+const MEASURABLE_TOP = 'L5'; // 법정이 직접 잴 수 있는 가장 높은 수준(진짜 폰 신호·다중 계정 모의 포함)
 // "무엇을 하면(행동) 무엇이 된다(결과)"를 말하는 문장. 이런 주장은 눌러 보면 되는 것이라 "눈으로 봐야 아는 품질"이라는 사유로는 받지 않는다.
 const ACTION_RESULT = /(누르면|눌렀을 때|클릭하면|탭하면|선택하면|입력하면|끄면|켜면|열면|닫으면|스크롤하면|밀면).{0,40}(보인다|보여|나타난다|나타나|열린다|열려|닫힌다|닫혀|사라진다|사라져|이동한다|이동해|저장된다|저장되|바뀐다|바뀌|표시된다|표시되|올라간다|내려간다|추가된다|삭제된다)/;
 
@@ -197,7 +198,7 @@ async function judgeClaim(ctx, claim) {
     out.unverified = { reason: u.reason, reasonText: UNVERIFIED_REASONS[u.reason], who: u.who, how: u.how, cannotBecause: null, cannotBecauseText: null };
     out.outcome = OUTCOME.UNVERIFIED;
     // 필요한 확인 수준이 "PC 화면에서 눌러 봄" 이하면 법정이 직접 잴 수 있는 종류다. 그런 주장은 닫힌 목록의 사유가 있을 때만 "확인 못 함"으로 받는다.
-    if (grade.rank(ef.floor) <= grade.rank(MEASURABLE_TOP)) {
+    if (grade.rank(ef.floor) <= grade.rank(MEASURABLE_SCREEN_TOP)) {
       const listed = u.reason === 'tool-cannot-measure' && typeof u.cannotBecause === 'string' && Object.prototype.hasOwnProperty.call(CANNOT_BECAUSE, u.cannotBecause);
       // 사유는 작업자가 골라 적는 것이라 법정이 그 진위를 확인하지 못한다. 다만 "눈으로 봐야 아는 품질"은 문장만 봐도 가려지는 경우가 있다:
       // "누르면 …가 보인다/열린다/닫힌다"처럼 행동과 결과를 말하는 주장은 눌러 보면 되는 것이지 눈으로 볼 품질이 아니다(껍데기 버튼을 이 사유로 내보내는 길을 막는다).
@@ -259,20 +260,23 @@ async function judgeClaim(ctx, claim) {
     return out;
   }
   if (!H.provesBehavior) { out.outcome = OUTCOME.NO_TEST; out.notes.push('통과는 했지만 "행동이 만든 변화"를 확인한 단언이 없다(전부 행동 전에도 참이던 확인)'); return out; }
-  if (B.passed) { out.outcome = OUTCOME.NOTHING_TO_FIX; out.achieved = 'L3'; out.notes.push('기준 커밋에서도 같은 시험이 통과한다 — 이 작업이 만든 변화가 아니다'); return out; }
+  const achievedGrade = H.hardwareDevice ? 'L5' : (H.multiActor ? 'L4' : 'L3');
+  if (B.passed) { out.outcome = OUTCOME.NOTHING_TO_FIX; out.achieved = achievedGrade; out.notes.push('기준 커밋에서도 같은 시험이 통과한다 — 이 작업이 만든 변화가 아니다'); return out; }
   if (claim.change === 'fix') {
     const symptomOk = B.failKind === 'expect' && B.failedStep === claim.symptom;
     if (!symptomOk) { out.outcome = OUTCOME.NO_TEST; out.notes.push('기준 커밋에서 결함이 재현되지 않았다: 시험이 지정한 증상 단계(' + claim.symptom + ')가 아니라 단계 ' + B.failedStep + '(' + (B.failKind === 'action' ? '행동 자체가 안 됨' : '다른 확인') + ')에서 멈췄다 — "고치기 전에 그 결함이 있었다"는 근거가 없다'); return out; }
   }
-  out.outcome = OUTCOME.CONFIRMED; out.achieved = 'L3';
-  out.meetsFloor = grade.meets('L3', ef.floor);
-  if (!out.meetsFloor) out.notes.push('확인 부족: 이 종류는 ' + grade.label(ef.floor) + ' 수준으로 봐야 하는데 PC 화면까지만 봤다');
+  out.outcome = OUTCOME.CONFIRMED; out.achieved = achievedGrade;
+  out.meetsFloor = grade.meets(achievedGrade, ef.floor);
+  if (!out.meetsFloor) out.notes.push('확인 부족: 이 종류는 ' + grade.label(ef.floor) + ' 수준으로 봐야 하는데 ' + grade.label(achievedGrade) + '까지만 봤다');
   if (H.fixtures.length) out.notes.push('금고 fixture 사용: ' + H.fixtures.join(', '));
+  if (H.multiActor) out.notes.push('다중 계정 모의(L4): 보조 브라우저 세션(peer)과 상호작용을 확인했습니다');
+  if (H.hardwareDevice) out.notes.push('기기 하드웨어 신호 모의(L5): 모바일 하드웨어 이벤트 반응을 확인했습니다');
   return out;
 }
 
 function detailOf(r) { const s = r.failedStep ? r.steps[r.failedStep - 1] : null; return s ? '(' + s.name + ') ' + s.detail : ''; }
-function slim(r) { return { passed: r.passed, failedStep: r.failedStep, failKind: r.failKind, provesBehavior: r.provesBehavior, nonVacuousExpects: r.nonVacuousExpects, vacuousExpects: r.vacuousExpects, steps: r.steps, exceptions: r.exceptions, captures: r.captures, fixtures: r.fixtures, siteRev: r.siteRev, chromeVersion: r.chromeVersion }; }
+function slim(r) { return { passed: r.passed, failedStep: r.failedStep, failKind: r.failKind, provesBehavior: r.provesBehavior, nonVacuousExpects: r.nonVacuousExpects, vacuousExpects: r.vacuousExpects, steps: r.steps, exceptions: r.exceptions, captures: r.captures, fixtures: r.fixtures, siteRev: r.siteRev, chromeVersion: r.chromeVersion, multiActor: r.multiActor, hardwareDevice: r.hardwareDevice }; }
 
 // 지시 항목(REQ) 단위 집계. 분모는 주장 수가 아니라 지시 항목 수다(지시 항목은 작업자가 적어 낸 것이다 — 법정은 그 목록이 지시 원문과 같은지 알지 못한다).
 // reheard: 철회·종류 변경·삭제된 주장의 옛 판을 법정이 다시 돌려 본 결과(judge.js). 여전히 안 되면 그 지시는 "안 됨"으로 남는다.
