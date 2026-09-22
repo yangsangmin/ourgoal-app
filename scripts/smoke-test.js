@@ -7460,6 +7460,26 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+check('[#TASK-ES-234] 아이폰(iOS Safari) 접속 시 홈 화면에 추가(PWA) 3단계 가이드 및 푸시 알림 연계 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 배너 3단계 비주얼 카드 및 클래스 선언 확인
+  assert.ok(indexHtml.includes('ios-pwa-steps'), 'ios-pwa-steps 3단계 그리드 배선 확인');
+  assert.ok(indexHtml.includes('ios-pwa-step-card'), 'ios-pwa-step-card 카드 컴포넌트 배선 확인');
+  assert.ok(cssContent.includes('.ios-pwa-steps'), 'ui.css 내 .ios-pwa-steps 선언 확인');
+
+  // 2. 상세 모달 및 전역 노출 확인
+  assert.ok(indexHtml.includes('function openIosPwaInstallGuideModal'), 'openIosPwaInstallGuideModal 함수 선언 확인');
+  assert.ok(indexHtml.includes('window.openIosPwaInstallGuideModal = openIosPwaInstallGuideModal'), 'openIosPwaInstallGuideModal 전역 노출 확인');
+  assert.ok(indexHtml.includes('btnOpenIosPwaGuideModal'), 'btnOpenIosPwaGuideModal 버튼 배선 확인');
+
+  // 3. 푸시 알림 연계 및 권한 요청 배선 확인
+  assert.ok(indexHtml.includes('btnRequestIosPushPermission'), 'btnRequestIosPushPermission 푸시 권한 요청 버튼 확인');
+  assert.ok(indexHtml.includes('Notification.requestPermission'), 'Notification.requestPermission Web Push API 호출 확인');
+  assert.ok(indexHtml.includes('if(!isIos || isStandalone || dismissed)'), 'standalone 및 제외 환경 자동 소거 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
