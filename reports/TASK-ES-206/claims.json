@@ -1,0 +1,25 @@
+{
+  "task": "TASK-ES-206",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-206-DECISION-VISIBILITY-AUTO-ASSIGN.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "최고 헌법 정본(docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md)에 결심권자 즉시 가시성 보장 헌법(제6조 제3항)이 명문화되어야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "infra",
+      "statement": "docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md 내에 제6조 제3항 결심권자 즉시 가시성 보장 헌법이 수록되어 있다",
+      "touches": ["docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md"],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md",
+        "text": "결심권자 즉시 가시성 보장 헌법"
+      }
+    }
+  ]
+}

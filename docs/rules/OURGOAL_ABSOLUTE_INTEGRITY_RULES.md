@@ -227,6 +227,11 @@
 ### 제2항 [에픽 브랜치 격리 금지 및 일일 초안 PR 심사]
 장기간 머지되지 않는 거대 에픽 브랜치를 금지하며, 피처 플래그 비활성화 상태로 1티켓 단위로 매일 초안 PR 을 올려 심사받는다. 로컬 main 은 `git pull --ff-only` 로만 움직인다.
 
+### 제3항 [결심권자 즉시 가시성 보장 헌법 (Mobile Decision Visibility Mandate)]
+1. 모든 PR 생성 시, AI 에이전트 및 작업자는 최고 결정권자이신 상민님(`yangsangmin`)을 공식 Reviewer(검토자) 및 Assignee(담당자)로 필수 지정(`gh pr create --reviewer yangsangmin --assignee yangsangmin`)해야 한다.
+2. 상민님이 이동 중 스마트폰(모바일 GitHub 앱) 환경에서 검토 목록(Review requests)이나 병합 목록(Assigned)을 열었을 때 결심 대상 PR이 100% 즉시 노출되어야 하며, 메타데이터 누락으로 인한 결심 단절 및 배포 지연 마찰을 원천 금지한다.
+3. PR을 생성한 직후에는 반드시 `gh pr view <PR번호> --json reviewRequests,assignees`를 조회하여 상민님 배정 상태를 기계적으로 검증해야 하며, 누락이 확인되면 즉시 `gh pr edit <PR번호> --add-reviewer yangsangmin --add-assignee yangsangmin`을 실행하여 상민님의 스마트폰에 검토 요청 알림이 울리기 전까지 보고를 완료할 수 없다.
+
 ---
 
 ## 제7조 (7대 무결성 전수 검증 및 스크립트 헌법)
