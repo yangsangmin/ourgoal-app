@@ -4833,3 +4833,49 @@
 - **발생한 문제 및 해결**: 시험용 워크트리에 의존성 폴더가 없어 index.html 을 건드리는 시험 커밋이 커밋 훅(스모크)에서 막힘 → 스모크가 필요 없는 다른 제품 파일(widget.html)로 같은 검증을 했다. 윈도우 자격 증명 관리자에 gh 로그아웃 뒤에도 상민님 계정 토큰 항목이 남아 있어 직접 지웠다.
 - **검증 결과**(GitHub 기록에서 읽은 것): 법정 실가동 — #352 court 검사 통과(발급 주체 app 15368), 법정 계정 댓글에 굵은 네 줄·판정번호 1257FAF1·"이 PR 돌려보냄 누적 0회" 게시, chat.js 조회 일치. 2단 검증 4종 — ① 채점 기준 파일을 바꾼 PR(#353, AI 계정 작성): 검사는 전부 통과인데 병합은 BLOCKED(상민님 승인 필요), 법정 판정은 "확인 부족 — 채점 기준(금고) 변경 — 상민님 결심 필요" ② 주장 없는 제품 변경(#355): 법정이 돌려보냄(실패), AI 계정 토큰으로 이름이 court 인 가짜 성공 표시를 찍어도 BLOCKED 그대로 ③ 일반 문서 PR(#354, AI 계정): 승인 없이 병합 가능 상태(CLEAN) ④ AI 계정이 올린 브랜치 3개 모두 Vercel 미리보기 생성. 계정 제거 뒤: gh 계정 목록 ourgoaltest 하나, git 접속 계정 ourgoaltest, 상민님 계정으로 전환 시도 실패, AI 계정의 브랜치 보호 조회 404. 확인 못 한 것: 상민님 폰에서의 승인 흐름(이 PR 의 승인이 첫 실사용이다), PC 크롬의 GitHub 로그아웃(상민님 [손 필요]).
 ---
+
+## [2026-09-22 17:15] [#TASK-ES-209] 목표 탭 Phase 1: 10대 분산 컨트롤 슬림화·모바일 375px 스크롤 단축 및 마일스톤 집중 뷰 최적화
+- **목표**: 상민님 직접 지시(2026-09-22 "아워골 목표탭의 ui / ux를 개선해야해. 외부 컨설턴트로서 현 상태 평가 및 개선사항 보고서를 작성해" ➔ 4대 옵션 컨설팅 보고서 제시 ➔ "1" ➔ "진행해" ➔ "계속진행" ➔ "진행")에 따라, 상단 영역에 난립하던 12개 이상의 제어 버튼과 토글을 콤팩트 1열 구조로 통합하고, AI 목표 어시스턴트 카드 및 마운틴 트레일 카드의 상하 패딩/마진을 최적화하여 375px 모바일 뷰포트에서 마일스톤 실천 액션 도달 스크롤 길이를 50% 이상 단축(세로 약 80px 절감).
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: `#TASK-ES-209` 티켓 정식 등록.
+  - `docs/specs/REQ-TASK-ES-209-GOALS-UX-PHASE1-CLEANUP.md`: 문제해결 8원칙 1단계 요구명세서 작성 (8원칙 기계적 무결성 린터 100% 통과).
+  - `docs/specs/PLAN-TASK-ES-209-GOALS-UX-PHASE1-CLEANUP.md`: 문제해결 8원칙 2단계 세부 작업계획서 작성 (8원칙 기계적 무결성 린터 100% 통과).
+  - `reports/TASK-ES-209/claims.json`: 법정(court) 심사용 4대 검증 청구서 작성.
+  - `ui.css`: `.goals-agent-slim`, `.goals-filter-strip`, `@media (max-width: 480px)` 규칙을 신설하여 `#screen-goals` 하위 여백 최적화 및 모바일 가로 스크롤 방어 배선.
+  - `index.html`: `#goalAgentCard` 및 `msFilterBar` 렌더러에 슬림 클래스 및 1열 플렉스 정돈 적용. 기존 4대 뷰(`default`, `milestones_only`, `tasks_only`, `goals_only`), 4대 필터(`all`, `doing`, `todo`, `done`), 목표 추가 버튼(`btnPersonalAddGoalInline`), 편집 모드 토글 등 100% 보존.
+- **발생한 문제 및 해결**:
+  - 샌드박스 보안 환경에서 `git status` 실행 시 `~/.gitconfig` 접근 권한 오류가 발생할 수 있음을 확인하고, `GIT_CONFIG_GLOBAL=/dev/null` 환경 변수를 결합하여 무결성 게이트 및 스모크 테스트가 안정적으로 100% 패스하도록 조치.
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - `npm test`: 스모크 335개 전수 통과 (0개 실패).
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS (REQ/PLAN 8원칙 기계적 린터 100% 통과).
+  - `scripts/verify-all-clicks.js`: 767개 정적 버튼 및 링크 전수 Zero Dead-Click PASS.
+- **확인 못 한 것**: GitHub PR 생성 및 CI court 심사 (원격 push 지시 시 수행 예정).
+- **진행 단계**: [2단계: 내부 시뮬레이션 상태 - 단위/스모크/무결성 테스트 통과, 로컬 커밋 완료]
+---
+
+## [2026-09-22 21:35] [#TASK-ES-210] 아워골 전 6대 탭 토스(Toss)식 UI/UX 전면 혁신 종합 팩
+- **목표**: 상민님 직접 지시(2026-09-22 "토스 ui/ux 관리 총책임자로서 개선점을 찾아봐... 모든 탭의 개선점 파악하고... 표형태로 보고해" ➔ "한꺼번에 모두 진행할거야" ➔ "A로 진행")에 따라, 6대 탭(`screen-home`, `screen-goals`, `screen-calendar`, `screen-records`, `screen-comm`, `screen-settings`)에 문장형 헤드라인, 1화면 1목적 엄지 중심 원카드 구조, 단일 퀘스트 보드 일체화, 12ms 미세 햅틱 피드백을 적용하여 시각적 인지 부하를 대폭 해소하고 최상의 모바일 인터랙션을 구축.
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: `#TASK-ES-210` 티켓 등록.
+  - `docs/specs/REQ-TASK-ES-210-ALL-TABS-TOSS-INNOVATION.md`: 문제해결 8원칙 1단계 요구명세서 작성 (8원칙 기계적 무결성 린터 100% 통과).
+  - `docs/specs/PLAN-TASK-ES-210-ALL-TABS-TOSS-INNOVATION.md`: 문제해결 8원칙 2단계 세부 작업계획서 작성 (8원칙 기계적 무결성 린터 100% 통과).
+  - `reports/TASK-ES-210/claims.json`: 법정(court) 심사용 5대 검증 청구서 작성.
+  - `ui.css`: 토스 디자인 시스템 토큰 클래스(`.toss-headline`, `.toss-card`, `.toss-quest-board`, `.toss-settings-group`, `.toss-settings-row`, `.toss-haptic-tap`, 미디어 쿼리 480px) 추가.
+  - `index.html`:
+    - 전역 햅틱 피드백 함수 `function triggerHapticFeedback(pattern)` 선언 및 `window.triggerHapticFeedback` 배선 (`triggerHaptic` 연동).
+    - `#screen-home`: 문장형 헤드라인 `#homeHeadlineSentence` 마크업 및 `renderHome()` 내 동적 실천 횟수/동기부여 문구 연동.
+    - `#screen-goals`: 문장형 헤드라인 `#goalsHeadlineSentence` 추가 및 `renderGoalsScreen()` 내 잔여 퀘스트/달성 축하 문구 연동, 산악 트레일과 목표 뷰를 감싸는 일체형 `.toss-quest-board` 컨테이너 배선.
+    - `#screen-calendar`: 문장형 헤드라인 `#calHeadlineSentence` 마크업.
+    - `#screen-records`: 문장형 헤드라인 `#recHeadlineSentence` 마크업 및 `renderRecordsScreen()` 내 총 기록 수 동적 연동.
+    - `#screen-comm`: 문장형 헤드라인 `#commHeadlineSentence` 마크업.
+    - `#screen-settings`: 문장형 헤드라인 `#settingsHeadlineSentence` 마크업 및 4대 설정 아코디언 그룹에 `.toss-settings-group` 클래스 연계.
+- **발생한 문제 및 해결**:
+  - 기존 38대 헌법 방화벽 셀렉터(`#sanctuaryGoalsView`, `#personalGoalsView`, `#commBody` 등)를 온전히 보존하기 위해 하위 DOM 구조를 파괴하지 않고 부모 래퍼(`.toss-quest-board`) 및 전역 스타일 상속 기법을 채택하여 100% 무결성 유지.
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - `npm test`: 스모크 335개 전수 통과 (0개 실패).
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS (REQ/PLAN 8원칙 기계적 린터 100% 통과).
+  - `scripts/verify-all-clicks.js`: 767개 정적 버튼 및 링크 전수 Zero Dead-Click PASS.
+  - `reports/TASK-ES-210/claims.json`: C1~C5 5대 청구 항목 코드 정합성 검증 완료.
+- **확인 못 한 것**: GitHub PR 생성 및 CI court 심사 (원격 push 지시 시 수행 예정).
+- **진행 단계**: [2단계: 내부 시뮬레이션 상태 - 단위/스모크/무결성 테스트 통과, 로컬 커밋 준비]
+---
