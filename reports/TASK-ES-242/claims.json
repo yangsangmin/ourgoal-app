@@ -1,0 +1,102 @@
+{
+  "task": "TASK-ES-242",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-242-RECORDS-HEADLINE-VISIBILITY.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "기록탭 대표 안내멘트(#recHeadlineSentence)에 margin: 4px 0 10px 0, font-size: 1.05rem, line-height: 1.35의 세로 공간 압축 스타일이 적용되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "이번 주 몰입 요약 원카드(.toss-record-hero-card)의 상단 마진이 6px로 조율되어 매끄러운 비주얼 플로우가 조성되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "480px 이하 모바일 화면에서 margin: 4px 0 8px 0, font-size: 1rem의 반응형 최적화가 적용되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "기본 안내멘트 카피가 매일의 작은 실천이 큰 성장을 만들어요 문장으로 정돈되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "npm test 및 38개 헌법 게이트, Zero Dead-Click 검사가 100% ALL PASS여야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내 #recHeadlineSentence에 margin: 4px 0 10px 0 및 font-size: 1.05rem이 선언된다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "margin: 4px 0 10px 0 !important;"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내 .toss-record-hero-card에 margin-top: 6px이 선언된다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "margin-top: 6px !important;"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내 @media (max-width: 480px)에 #recHeadlineSentence 반응형 규칙이 선언된다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "margin: 4px 0 8px 0 !important;"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "index.html 내 recHeadlineSentence에 매일의 작은 실천이 문구가 바인딩된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "매일의 작은 실천이"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "e2e",
+      "domain": "safety",
+      "statement": "npm test 및 헌법 38개 검증 게이트와 Zero Dead-Click 검사가 100% 통과한다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "commandPasses",
+        "command": "npm test"
+      }
+    }
+  ]
+}
