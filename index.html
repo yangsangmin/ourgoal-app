@@ -3495,8 +3495,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* ============ Landing ============ */
-  /* ============ #TASK-ES-116: 카카오톡 인앱 브라우저 외부 탈출 & 로그인 안내 ============ */
+  /* ============ [#TASK-ES-222] [생각 메모장 92번] 카카오톡 인앱 브라우저 감지 및 Android Chrome 자동 탈출 & iOS Safari 플로팅 가이드 배너 ============ */
   function escapeKakaoInAppBrowser(){
+    if(typeof triggerHaptic === 'function') triggerHaptic(12);
     var u = window.location.href;
     var isAndroid = /Android/i.test(navigator.userAgent);
     if(isAndroid){
@@ -3504,43 +3505,108 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       window.location.href = 'intent://' + clean + '#Intent;scheme=https;package=com.android.chrome;end';
       return;
     }
-    try { if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(u); } catch(e){}
+    try {
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(u);
+      }
+    } catch(e){}
     openModal(
-      '<div style="text-align:center;padding:16px 8px;">' +
-        '<div style="font-size:2.2rem;margin-bottom:10px;">🌐</div>' +
-        '<h3 style="margin:0 0 8px;font-size:1.15rem;font-weight:700;">Safari(사파리)로 열기</h3>' +
+      '<div style="text-align:center;padding:18px 12px;">' +
+        '<div style="font-size:2.4rem;margin-bottom:12px;">🧭</div>' +
+        '<h3 style="margin:0 0 8px;font-size:1.15rem;font-weight:800;color:var(--ink);">Safari(사파리)로 열기</h3>' +
         '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.6;margin:0 0 16px;">' +
           '카카오톡 앱에서는 카카오 자동 로그인이 지연될 수 있어요.<br>' +
-          '화면 우측 상단 <b>[⋮]</b> 또는 하단 <b>[공유/메뉴]</b>를 누른 후<br>' +
-          '<b>[다른 브라우저로 열기]</b> 또는 <b>[Safari로 열기]</b>를 선택해주세요!<br>' +
-          '<span style="font-size:.78rem;color:var(--brand);margin-top:6px;display:block;">(아워골 접속 주소가 클립보드에 복사되었습니다)</span>' +
+          '화면 우측 하단 <b>[···]</b> 또는 상단 <b>[⋮]</b>을 누른 후<br>' +
+          '<b style="color:var(--brand);">[Safari로 열기]</b> 또는 <b>[다른 브라우저로 열기]</b>를 선택해주세요!<br>' +
+          '<span style="font-size:.78rem;color:var(--brand);margin-top:8px;display:block;font-weight:600;">✨ 아워골 접속 주소가 클립보드에 복사되었습니다.</span>' +
         '</p>' +
-        '<button class="btn btn-primary" id="btnCopyInAppUrlAgain" style="width:100%;margin-bottom:8px;padding:12px;font-weight:700;border-radius:12px;background:var(--brand);border:none;">주소 다시 복사하기</button>' +
-        '<button class="btn btn-ghost btn-sm" id="btnCloseInAppModal" style="width:100%;">닫기</button>' +
+        '<button class="btn btn-primary" id="btnCopyInAppUrlAgain" type="button" style="width:100%;min-height:44px;margin-bottom:8px;padding:12px;font-weight:700;border-radius:12px;background:var(--brand);border:none;">주소 다시 복사하기</button>' +
+        '<button class="btn btn-ghost btn-sm" id="btnCloseInAppModal" type="button" style="width:100%;min-height:40px;">닫기</button>' +
       '</div>',
       function(sheet){
         var cBtn = sheet.querySelector('#btnCloseInAppModal');
-        if(cBtn) cBtn.onclick = closeModal;
+        if(cBtn) cBtn.onclick = function(){ if(typeof triggerHaptic === 'function') triggerHaptic(12); closeModal(); };
         var cpBtn = sheet.querySelector('#btnCopyInAppUrlAgain');
         if(cpBtn) cpBtn.onclick = function(){
-          try { navigator.clipboard.writeText(u); toast('주소가 복사되었습니다. Safari 주소창에 붙여넣어주세요!'); } catch(e){}
+          if(typeof triggerHaptic === 'function') triggerHaptic(12);
+          try {
+            navigator.clipboard.writeText(u);
+            toast('주소가 복사되었습니다. Safari 주소창에 붙여넣어주세요!');
+          } catch(e){
+            toast('주소: ' + u);
+          }
         };
       }
     );
   }
-  if(typeof navigator !== 'undefined' && /KAKAOTALK/i.test(navigator.userAgent)){
-    var kBar = document.getElementById('inAppBrowserNotice');
-    if(!kBar && document.body){
+
+  function checkKakaoInAppBrowser(){
+    if(typeof navigator === 'undefined' || !navigator.userAgent) return;
+    var isKakao = /KAKAOTALK/i.test(navigator.userAgent);
+    if(!isKakao) return;
+
+    var isAndroid = /Android/i.test(navigator.userAgent);
+    var currentUrl = window.location.href;
+
+    // 1. 안드로이드 (Android): intent:// scheme 호출로 1초 만에 Chrome으로 자동 탈출
+    if(isAndroid){
+      var cleanUrl = currentUrl.replace(/^https?:\/\//i, '');
+      window.location.href = 'intent://' + cleanUrl + '#Intent;scheme=https;package=com.android.chrome;end';
+      return;
+    }
+
+    // 2. 아이폰 (iOS) 및 기타 웹뷰: 세션 내 닫기 여부 확인
+    try {
+      if(sessionStorage.getItem('ourgoal_hide_kakao_escape') === '1') return;
+    } catch(e){}
+
+    // 이미 배너가 있으면 중복 생성 방지
+    if(document.getElementById('inAppBrowserNotice')) return;
+
+    function insertBanner(){
+      if(!document.body || document.getElementById('inAppBrowserNotice')) return;
       var nDiv = document.createElement('div');
-      nDiv.id = 'inAppBrowserNotice';
-      nDiv.style.cssText = 'background:var(--kakao,#FEE500);color:var(--kakao-ink,#3A1D1D);padding:10px 12px;font-size:0.8rem;text-align:center;font-weight:600;z-index:99999;position:relative;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;';
-      nDiv.innerHTML = '<span>⚡ 카카오톡에서는 <b>외부 브라우저</b>로 접속 시 3초 로그인이 가장 원활해요!</span>' +
-        '<button type="button" id="btnEscapeInAppNotice" style="background:#3A1D1D;color:#fff;border:none;padding:4px 10px;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;">Chrome/Safari로 열기</button>';
+      nDiv.id = 'inAppBrowserNotice'; /* id="inAppBrowserNotice" */
+      nDiv.style.cssText = 'background:#10b981;background:linear-gradient(135deg, #059669 0%, #10b981 100%);color:#ffffff;padding:10px 14px;font-size:0.8125rem;text-align:center;font-weight:600;z-index:99999;position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;box-shadow:0 4px 12px rgba(16,185,129,0.25);border-bottom:1px solid rgba(255,255,255,0.2);';
+      nDiv.innerHTML = '' +
+        '<div style="display:flex;align-items:center;gap:6px;flex:1;text-align:left;min-width:0;">' +
+          '<span style="font-size:1.1rem;flex-shrink:0;">⚡</span>' +
+          '<span style="font-size:.78125rem;line-height:1.35;word-break:keep-all;">더 편리한 사용을 위해 우측 하단 <b>[···]</b> 누르고 <b>[Safari로 열기]</b>를 눌러주세요!</span>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">' +
+          '<button type="button" id="btnEscapeInAppNotice" style="background:#ffffff;color:#065f46;border:none;padding:6px 10px;min-height:34px;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.1);">' +
+            'Safari 열기 안내' +
+          '</button>' +
+          '<button type="button" id="btnCloseInAppBanner" style="background:rgba(255,255,255,0.2);color:#ffffff;border:none;width:28px;height:28px;border-radius:50%;font-size:0.875rem;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;" title="닫기">' +
+            '✕' +
+          '</button>' +
+        '</div>';
+
       document.body.insertBefore(nDiv, document.body.firstChild);
+
       var escBtn = nDiv.querySelector('#btnEscapeInAppNotice');
-      if(escBtn) escBtn.addEventListener('click', escapeKakaoInAppBrowser);
+      if(escBtn) escBtn.addEventListener('click', function(){
+        if(typeof triggerHaptic === 'function') triggerHaptic(12);
+        escapeKakaoInAppBrowser();
+      });
+
+      var closeBtn = nDiv.querySelector('#btnCloseInAppBanner');
+      if(closeBtn) closeBtn.addEventListener('click', function(){
+        if(typeof triggerHaptic === 'function') triggerHaptic(12);
+        try { sessionStorage.setItem('ourgoal_hide_kakao_escape', '1'); } catch(e){}
+        nDiv.remove();
+      });
+    }
+
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', insertBanner);
+    } else {
+      insertBanner();
     }
   }
+  checkKakaoInAppBrowser();
+  window.checkKakaoInAppBrowser = checkKakaoInAppBrowser;
+  window.escapeKakaoInAppBrowser = escapeKakaoInAppBrowser;
 
   var landNickQuickLink = document.getElementById('landNickQuickLink');
   if(landNickQuickLink){

@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-222",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-222-KAKAOTALK-INAPP-ESCAPE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html에 카카오톡 인앱 브라우저 감지 및 안드로이드 intent 자동 탈출 로직이 배선되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "index.html에 iOS 카카오톡 탈출용 고시인성 플로팅 배너(#inAppBrowserNotice)와 닫기 버튼(#btnCloseInAppBanner)이 배선되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "탈출 배너 클릭 시 Safari 열기 가이드 모달(#btnCloseInAppModal, #btnCopyInAppUrlAgain) 및 12ms 햅틱이 배선되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "배너 닫기 시 sessionStorage에 저장되어 동일 세션 내 재노출이 방지되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "scripts/smoke-test.js에 TASK-ES-222 검증 케이스가 추가되어야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 KAKAOTALK UA 감지 및 intent:// scheme 안드로이드 자동 탈출 코드가 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "#Intent;scheme=https;package=com.android.chrome;end"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 #inAppBrowserNotice 배너와 #btnCloseInAppBanner 닫기 버튼이 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"btnCloseInAppBanner\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 #btnEscapeInAppNotice 및 escapeKakaoInAppBrowser 모달 배선이 연결되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"btnEscapeInAppNotice\""
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 sessionStorage 기반 ourgoal_hide_kakao_escape 세션 보관 코드가 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "ourgoal_hide_kakao_escape"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-222 카카오톡 인앱 브라우저 감지 및 탈출 배너 검증 케이스가 추가되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-222] 카카오톡 인앱 브라우저 감지 및 Safari/Chrome 탈출 가이드 무결성"
+      }
+    }
+  ]
+}
