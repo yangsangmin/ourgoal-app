@@ -1685,7 +1685,7 @@
         window.state.commSubTab = 'companion';
         if (typeof renderCommScreen === 'function') renderCommScreen();
         setTimeout(function() {
-          var inp = document.getElementById('companionSearchInput');
+          var inp = document.getElementById('companionNicknameSearchInput') || document.getElementById('companionSearchInput');
           if (inp) inp.focus();
         }, 150);
       }

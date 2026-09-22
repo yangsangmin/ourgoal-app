@@ -10427,4 +10427,120 @@ color: var(--brand-strong, #6366f1);
 .manito-welcome-stamp-btn:active {
   transform: scale(0.96);
   background: var(--surface-2);
+
+/* ================================================================
+   [#TASK-ES-231] 소통 탭 동반자(Companion) 초대 히어로 카드 & 실시간 검색 스타일
+   ================================================================ */
+.companion-hero-card {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(168, 85, 247, 0.12) 50%, rgba(236, 72, 153, 0.08) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .companion-hero-card,
+[data-theme="black"] .companion-hero-card,
+[data-theme="focus-sanctuary"] .companion-hero-card {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.18) 0%, rgba(168, 85, 247, 0.16) 50%, rgba(236, 72, 153, 0.1) 100%) !important;
+  border-color: rgba(168, 85, 247, 0.35) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+.companion-hero-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.companion-hero-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--ink, #1e293b);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.companion-hero-desc {
+  font-size: 0.8125rem;
+  color: var(--ink-soft, #64748b);
+  line-height: 1.45;
+  margin-bottom: 14px;
+}
+
+.btn-companion-invite {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  touch-action: manipulation;
+}
+
+.btn-companion-invite:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.2);
+}
+
+.companion-search-wrap {
+  margin-bottom: 16px;
+}
+
+.companion-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-2, #f1f5f9);
+  border: 1.5px solid var(--rule, #e2e8f0);
+  border-radius: 12px;
+  padding: 4px 6px 4px 12px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.companion-search-box:focus-within {
+  border-color: var(--brand, #6366f1);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.companion-search-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 38px;
+  border: none;
+  background: transparent;
+  color: var(--ink, #1e293b);
+  font-size: 0.875rem;
+  outline: none;
+}
+
+.companion-search-result-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--card, #ffffff);
+  border: 1px solid var(--rule, #e2e8f0);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  transition: border-color 0.15s ease;
+}
+
+.companion-search-result-card:hover {
+  border-color: var(--brand, #6366f1);
 }

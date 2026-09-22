@@ -7712,6 +7712,30 @@ check('[#TASK-ES-230] 마니또(Manito) 매칭 즉시 원클릭 웰컴 응원 �
   assert.ok(cssContent.includes('.manito-welcome-stamp-btn'), '.manito-welcome-stamp-btn CSS 선언 누락');
 });
 
+check('[#TASK-ES-231] 소통 탭 내 [🔗 내 전용 동반자 초대 링크 복사] 및 [가입자 닉네임 검색] 상단 신설 무결성', () => {
+  const commJsContent = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 초대 히어로 카드 및 버튼 배선 확인
+  assert.ok(cssContent.includes('.companion-hero-card'), '.companion-hero-card 스타일 선언 확인');
+  assert.ok(cssContent.includes('.btn-companion-invite'), '.btn-companion-invite 스타일 선언 확인');
+  assert.ok(commJsContent.includes('btnCopyCompanionInviteLink'), 'btnCopyCompanionInviteLink ID 배선 확인');
+
+  // 2. Web Share API 및 클립보드 fallback과 15ms 미세 햅틱 확인
+  assert.ok(commJsContent.includes('triggerHapticFeedback(15)'), '초대 링크 복사 시 15ms 햅틱 배선 확인');
+  assert.ok(commJsContent.includes('navigator.share'), 'Web Share API 배선 확인');
+  assert.ok(commJsContent.includes('navigator.clipboard.writeText'), '클립보드 복사 배선 확인');
+
+  // 3. 0.2초(200ms) 디바운스 실시간 가입자 닉네임 검색 확인
+  assert.ok(commJsContent.includes('companionNicknameSearchInput'), 'companionNicknameSearchInput ID 배선 확인');
+  assert.ok(commJsContent.includes('setTimeout(function(){\n          doSearch();\n        }, 200);') || commJsContent.includes('setTimeout(function(){ doSearch(); }, 200)') || commJsContent.includes('200);'), '200ms 디바운스 배선 확인');
+
+  // 4. 동반자 신청 버튼(data-request-companion) 및 12ms 햅틱 확인
+  assert.ok(commJsContent.includes('data-request-companion'), 'data-request-companion 속성 배선 확인');
+  assert.ok(commJsContent.includes('triggerHapticFeedback(12)'), '동반자 신청 시 12ms 햅틱 배선 확인');
+  assert.ok(commJsContent.includes('님에게 동반자 신청을 보냈어요! 🤝'), '동반자 신청 피드백 토스트 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
