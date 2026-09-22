@@ -1,0 +1,93 @@
+{
+  "task": "TASK-ES-204",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-204-AVATAR-RANK-EVOLUTION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "새싹·울창한 숲·포세이돈·제우스·코스믹 우주 5대 상징 랭크와 1레벨 단위(I~V단계)로 잎사귀·줄기·꽃망울·삼지창·벼락·성운이 점진적으로 웅장하게 성장하는 25단계 벡터 SVG 엔진이 구현되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "1레벨 단위로 레벨업할 때마다 서브티어(I~V) 로마숫자 및 진화 단계 명칭이 실시간 계산되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "홈 탭 상단바 우측 아바타 및 메인 레벨 영역에 25단계 랭크 프레임과 서브티어 뱃지가 실시간 렌더링되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "사용자의 커스텀 아바타 사진 및 320종 페르소나 설정이 100% 무손실 보존되고 아바타 모달 직통 연결 및 제로 데드클릭이 유지되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "PWA 서비스워커 캐시명이 최신 버전으로 갱신되어 새로고침 시 즉각 반영되어야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "js/avatar-system.js 내에 5대 테마 25단계 정밀 벡터 SVG 렌더러(getRankWingsSvg)가 구현되어 있다",
+      "touches": ["js/avatar-system.js"],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "getRankWingsSvg"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "business-logic",
+      "statement": "js/avatar-system.js 내에 1레벨 단위 5단계 서브티어(I~V) 및 진화 명칭 계산 함수(getRankThemeInfo)가 구현되어 있다",
+      "touches": ["js/avatar-system.js"],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "subStep"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "index.html 내 상단바(updateTopBar)와 메인 레벨 영역(levelBadgeHtml)에 renderAvatarHtml이 배선되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "OurgoalAvatar.renderAvatarHtml"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css에 랭크 오라 레이어 및 테마별 호버/펄스 애니메이션이 선언되어 있다",
+      "touches": ["ui.css"],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "avatar-rank-aura-wrap"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "infra",
+      "statement": "sw.js의 CACHE_NAME이 task-es204 최신 버전으로 갱신되어 있다",
+      "touches": ["sw.js"],
+      "check": {
+        "type": "codeContains",
+        "file": "sw.js",
+        "text": "task-es204"
+      }
+    }
+  ]
+}

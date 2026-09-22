@@ -1843,6 +1843,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     } catch(e){}
   }
   window.triggerAvatarCelebrationPopup = triggerAvatarCelebrationPopup;
+  window.xpForLevel = xpForLevel;
+  window.levelForXP = levelForXP;
+  window.levelProgress = levelProgress;
 
   function awardXP(amount, reason){
     if(!state.profile.settings.xp) state.profile.settings.xp = { total:0, log:[] };
@@ -1874,6 +1877,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var today = dateKey(nowISO());
       hasCheckedInToday = state.profile.records.some(function(r){ return dateKey(r.startAt) === today; });
     }
+    var rankInfo = (window.OurgoalAvatar && window.OurgoalAvatar.getRankThemeInfo) ?
+      window.OurgoalAvatar.getRankThemeInfo(p.level) :
+      { stepTitle: 'Lv.' + p.level, stepFullName: 'Lv.' + p.level, mainColor: 'var(--brand)', badgeGradient: 'var(--brand)', stepInfo: { name: '' } };
+
     var avatarHtml = (window.OurgoalAvatar && window.OurgoalAvatar.renderAvatarHtml) ?
       window.OurgoalAvatar.renderAvatarHtml(p.level, state.profile, { size: 54, showGreeting: !hasCheckedInToday && !state.hasSeenAvatarGreeting }) :
       '<div class="avatar-placeholder" style="width:54px;height:54px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🤖</div>';
@@ -1881,15 +1888,24 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var hasCustomAvatar = hasUserCustomizedAvatar(state.profile);
     var btnAvatarStyle = hasCustomAvatar ? 'display:none;' : '';
 
-    return '<div class="level-badge" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;width:100%;box-sizing:border-box;">' +
-      '<div class="level-badge-avatar-wrap" style="display:flex;align-items:center;gap:8px;cursor:pointer;" title="내 아바타 바꾸기">' +
+    return '<div class="level-badge" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;width:100%;box-sizing:border-box;">' +
+      '<div class="level-badge-avatar-wrap" style="display:flex;align-items:center;gap:10px;cursor:pointer;" title="내 아바타 관리 (클릭하여 변경)">' +
         avatarHtml +
-        '<button type="button" class="btn btn-ghost btn-sm" id="btnOpenAvatarModal" style="font-size:.75rem;padding:2px 7px;border-color:var(--rule);color:var(--ink-soft);white-space:nowrap;' + btnAvatarStyle + '">내 아바타 바꾸기</button>' +
+        '<div class="level-rank-info-col" style="display:flex;flex-direction:column;gap:1px;min-width:0;">' +
+          '<div class="level-rank-title" style="font-weight:800;font-size:.825rem;color:var(--ink);display:flex;align-items:center;gap:4px;white-space:nowrap;">' +
+            '<span>' + rankInfo.stepTitle + '</span>' +
+            (rankInfo.stepInfo && rankInfo.stepInfo.name ? '<span class="level-rank-subname" style="font-size:.7rem;font-weight:600;color:' + rankInfo.mainColor + ';">' + rankInfo.stepInfo.name + '</span>' : '') +
+          '</div>' +
+          '<button type="button" class="btn btn-ghost btn-xs" id="btnOpenAvatarModal" style="font-size:.6875rem;padding:1px 6px;border-color:var(--rule);color:var(--ink-soft);white-space:nowrap;width:fit-content;' + btnAvatarStyle + '">내 아바타 바꾸기</button>' +
+        '</div>' +
       '</div>' +
-      '<div class="level-bar-wrap" style="flex:1;min-width:70px;margin:0 8px;">' +
-        '<div class="mini-bar"><span style="width:'+Math.max(0,Math.min(100,p.pct))+'%;background:var(--violet);"></span></div>' +
+      '<div class="level-bar-wrap" style="flex:1;min-width:70px;margin:0 4px;display:flex;flex-direction:column;gap:3px;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;font-size:.7rem;color:var(--ink-soft);">' +
+          '<span style="font-weight:700;color:' + rankInfo.mainColor + ';">Lv.' + p.level + '</span>' +
+          '<span class="level-xp-txt">' + p.into + ' / ' + p.span + ' XP</span>' +
+        '</div>' +
+        '<div class="mini-bar"><span style="width:'+Math.max(0,Math.min(100,p.pct))+'%;background:' + rankInfo.badgeGradient + ';"></span></div>' +
       '</div>' +
-      '<span class="level-xp-txt" style="font-size:.75rem;color:var(--ink-soft);white-space:nowrap;margin-left:auto;">'+p.into+' / '+p.span+' XP</span>' +
     '</div>';
   }
   function renderLevelBadge(){
@@ -1929,6 +1945,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       };
     }
   }
+  if(typeof window !== 'undefined'){ window.renderLevelBadge = renderLevelBadge; }
   /* ============ [#TASK-ES-150] 아바타 레벨업 대형 팝업 & 성장 성향 키워드 ============ */
   function filterHarmfulWords(text){
     if(!text) return { clean: '', hasHarmful: false };
@@ -6244,13 +6261,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var p = state.profile;
       var sancAv = document.getElementById('sanctuaryAvatarBadge');
       if(sancAv && p){
-        var customUrl = (p.settings && p.settings.avatarType === 'custom' && p.settings.customAvatarUrl) || p.avatarUrl;
-        if(customUrl){
-          sancAv.innerHTML = '<img src="'+customUrl+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
-        } else if(window.OurgoalAvatar && window.OurgoalAvatar.renderAvatarHtml){
+        if(window.OurgoalAvatar && window.OurgoalAvatar.renderAvatarHtml){
           var xpTotal = (p.settings && p.settings.xp && p.settings.xp.total) || 0;
           var pLvl = levelProgress(xpTotal);
-          sancAv.innerHTML = window.OurgoalAvatar.renderAvatarHtml(pLvl.level, p, { size: 40 });
+          sancAv.innerHTML = window.OurgoalAvatar.renderAvatarHtml(pLvl.level, p, { size: 36, compact: true });
+        } else {
+          var customUrl = (p.settings && p.settings.avatarType === 'custom' && p.settings.customAvatarUrl) || p.avatarUrl;
+          if(customUrl){
+            sancAv.innerHTML = '<img src="'+customUrl+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+          }
         }
       }
     } catch(e){}
@@ -6258,12 +6277,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     document.getElementById('topUserName').textContent = p.displayName;
     renderProBadge();
     var av = document.getElementById('topAvatar');
-    var customUrl = (p.settings && p.settings.avatarType === 'custom' && p.settings.customAvatarUrl) || p.avatarUrl;
-    if(customUrl){
-      av.innerHTML = '<img src="'+customUrl+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
-      av.style.padding = '0'; av.style.overflow = 'hidden';
-    } else {
-      av.textContent = p.displayName.slice(0,1);
+    if(av && p){
+      if(window.OurgoalAvatar && window.OurgoalAvatar.renderAvatarHtml){
+        var xpTotal = (p.settings && p.settings.xp && p.settings.xp.total) || 0;
+        var pLvl = levelProgress(xpTotal);
+        av.innerHTML = window.OurgoalAvatar.renderAvatarHtml(pLvl.level, p, { size: 40, compact: true });
+        av.style.padding = '0'; av.style.overflow = 'visible'; av.style.background = 'transparent';
+      } else {
+        var customUrl = (p.settings && p.settings.avatarType === 'custom' && p.settings.customAvatarUrl) || p.avatarUrl;
+        if(customUrl){
+          av.innerHTML = '<img src="'+customUrl+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+          av.style.padding = '0'; av.style.overflow = 'hidden';
+        } else {
+          av.textContent = p.displayName.slice(0,1);
+        }
+      }
     }
     updateTopNotifBadge();
 
@@ -6290,6 +6318,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       };
     }
   }
+  if(typeof window !== 'undefined'){ window.updateTopBar = updateTopBar; }
 
   /* [#TASK-ES-168] 상단바 알림 배지 실시간 동기화 */
   function updateTopNotifBadge(){
