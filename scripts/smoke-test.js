@@ -7522,6 +7522,27 @@ check('[#TASK-ES-220] 교대근무자 전용 가변형 루틴 자동 스케줄�
   assert.ok(indexHtml.includes('state.profile.settings.shiftSettings'), 'shiftSettings 영속성 배선 누락');
 });
 
+check('[#TASK-ES-222] 카카오톡 인앱 브라우저 감지 및 Safari/Chrome 탈출 가이드 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. KAKAOTALK UA 감지 및 안드로이드 intent 자동 탈출 배선 확인
+  assert.ok(indexHtml.includes('/KAKAOTALK/i.test(navigator.userAgent)'), 'KAKAOTALK UA 감지 정규식 누락');
+  assert.ok(indexHtml.includes('#Intent;scheme=https;package=com.android.chrome;end'), 'Chrome intent:// 자동 탈출 scheme 누락');
+
+  // 2. iOS 에메랄드 플로팅 배너 및 닫기 버튼 배선 확인
+  assert.ok(indexHtml.includes('id="inAppBrowserNotice"'), 'inAppBrowserNotice 배너 엘리먼트 누락');
+  assert.ok(indexHtml.includes('id="btnEscapeInAppNotice"'), 'btnEscapeInAppNotice 버튼 누락');
+  assert.ok(indexHtml.includes('id="btnCloseInAppBanner"'), 'btnCloseInAppBanner 버튼 누락');
+
+  // 3. Safari 열기 가이드 모달 및 12ms 햅틱 배선 확인
+  assert.ok(indexHtml.includes('id="btnCopyInAppUrlAgain"'), 'btnCopyInAppUrlAgain 버튼 누락');
+  assert.ok(indexHtml.includes('id="btnCloseInAppModal"'), 'btnCloseInAppModal 버튼 누락');
+  assert.ok(indexHtml.includes('triggerHaptic(12)'), '12ms 햅틱 피드백 누락');
+
+  // 4. 세션 스토리지 기반 재노출 방지 배선 확인
+  assert.ok(indexHtml.includes('ourgoal_hide_kakao_escape'), 'sessionStorage ourgoal_hide_kakao_escape 누락');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
