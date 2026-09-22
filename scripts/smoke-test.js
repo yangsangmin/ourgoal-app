@@ -7460,6 +7460,24 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+check('[#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시 안전 백업 넛지 및 카카오 무손실 병합 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 게스트 3회 실천 백업 넛지 바텀시트 및 트리거 함수 정의 확인
+  assert.ok(indexHtml.includes('function openGuestBackupNudgeModal()'), 'openGuestBackupNudgeModal 함수 구현 확인');
+  assert.ok(indexHtml.includes('function checkGuestBackupNudge()'), 'checkGuestBackupNudge 함수 구현 확인');
+  assert.ok(indexHtml.includes('recCount >= 3'), '기록 3회 이상 감지 조건 확인');
+
+  // 2. 카카오 1클릭 보관 및 나중에 할게요 버튼 배선 확인
+  assert.ok(indexHtml.includes('id="btnGuestBackupKakao"'), 'btnGuestBackupKakao 버튼 ID 선언 확인');
+  assert.ok(indexHtml.includes('id="btnGuestBackupLater"'), 'btnGuestBackupLater 버튼 ID 선언 확인');
+  assert.ok(indexHtml.includes("startOAuthLogin('kakao')"), '카카오 OAuth 연동 호출 확인');
+  assert.ok(indexHtml.includes("localStorage.setItem('ourgoal_guest_profile'"), '게스트 프로필 스냅샷 영속화 확인');
+
+  // 3. 체크인 완료 시점 트리거 배선 확인
+  assert.ok(indexHtml.includes('checkGuestBackupNudge()'), '체크인 완료 시 checkGuestBackupNudge 호출 배선 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
