@@ -277,17 +277,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div id="sanctuaryGoalsView"></div>
       <div id="routineGoalsView" style="display:none;"></div>
       <div id="personalGoalsView">
-        <div class="card agent-card" id="goalAgentCard" style="padding:12px 16px;margin-top:6px;margin-bottom:14px;">
+        <div class="card agent-card goals-agent-slim" id="goalAgentCard" style="padding:8px 14px;margin-top:4px;margin-bottom:8px;border-radius:12px;">
           <div class="agent-title-bar" id="btnToggleGoalAgent" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <span style="font-size:1.05rem;">✨</span>
-              <span class="agent-title" style="margin:0;font-size:.9rem;font-weight:700;color:var(--ink);">AI 목표 어시스턴트</span>
-              <span class="faint" style="font-size:.78rem;">(말로 마일스톤·할 일 추가)</span>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:.95rem;">✨</span>
+              <span class="agent-title" style="margin:0;font-size:.85rem;font-weight:700;color:var(--ink);">AI 목표 어시스턴트</span>
+              <span class="faint" style="font-size:.75rem;">(말로 마일스톤·할 일 추가)</span>
             </div>
-            <span id="goalAgentChevron" style="font-size:.75rem;color:var(--ink-soft);transition:transform .2s ease;">▼</span>
+            <span id="goalAgentChevron" style="font-size:.72rem;color:var(--ink-soft);transition:transform .2s ease;">▼</span>
           </div>
-          <div id="goalAgentDrawer" style="display:none;margin-top:12px;padding-top:10px;border-top:1px dashed var(--rule);">
-            <div class="agent-sub" style="margin-bottom:8px;font-size:.78rem;">말로 목표와 할 일을 추가·변경·삭제할 수 있어요</div>
+          <div id="goalAgentDrawer" style="display:none;margin-top:8px;padding-top:8px;border-top:1px dashed var(--rule);">
+            <div class="agent-sub" style="margin-bottom:6px;font-size:.75rem;">말로 목표와 할 일을 추가·변경·삭제할 수 있어요</div>
             <div class="dm-input-row">
               <input id="goalAgentInput" type="text" placeholder="예: 다음 주까지 5km 러닝 마일스톤 추가해줘">
               <button class="btn btn-primary btn-sm" id="goalAgentSendBtn" type="button">보내기</button>
@@ -17948,28 +17948,28 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     var gView = state.goalViewMode || 'default';
     var msFilterBar = totalMs > 0 ?
-      '<div class="ms-filter-bar" style="display:flex;flex-direction:column;gap:6px;margin:6px 0;">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;">' +
-          '<div class="format-toggle" id="msFilterToggle" style="max-width:280px;">' +
+      '<div class="ms-filter-bar goals-filter-strip" style="display:flex;flex-direction:column;gap:5px;margin:4px 0 8px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;">' +
+          '<div class="format-toggle seg-compact" id="msFilterToggle" style="flex:1;max-width:280px;min-width:200px;">' +
             '<div class="format-opt'+(state.msFilter==='all'?' active':'')+'" data-msfilter="all">전체 ('+totalMs+')</div>' +
             '<div class="format-opt'+(state.msFilter==='doing'?' active':'')+'" data-msfilter="doing">진행 ('+doingCount+')</div>' +
             '<div class="format-opt'+(state.msFilter==='todo'?' active':'')+'" data-msfilter="todo">대기 ('+todoCount+')</div>' +
             '<div class="format-opt'+(state.msFilter==='done'?' active':'')+'" data-msfilter="done">완료 ('+doneCount+')</div>' +
           '</div>' +
-          '<div style="display:flex;align-items:center;gap:4px;">' +
+          '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">' +
             densityBtnHtml +
             '<button class="btn btn-ghost btn-sm" id="msCollapseAllBtn" type="button" style="font-size:.75rem;padding:3px 8px;">' +
               (allCollapsed ? '전체 펼치기' : '전체 접기') +
             '</button>' +
           '</div>' +
         '</div>' +
-        '<div id="msViewToggle" style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;">' +
-          '<div class="format-toggle" style="flex:1;max-width:280px;">' +
+        '<div id="msViewToggle" style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;">' +
+          '<div class="format-toggle seg-compact" style="flex:1;max-width:280px;min-width:200px;">' +
             '<div class="format-opt'+(gView==='default'?' active':'')+'" data-msview="default">기본 뷰</div>' +
             '<div class="format-opt'+(gView==='milestones_only'?' active':'')+'" data-msview="milestones_only">마일스톤만</div>' +
             '<div class="format-opt'+(gView==='tasks_only'?' active':'')+'" data-msview="tasks_only">할일만</div>' +
           '</div>' +
-          '<div class="format-toggle goals-only-wrap">' +
+          '<div class="format-toggle seg-compact goals-only-wrap" style="flex-shrink:0;">' +
             '<div class="format-opt'+(gView==='goals_only'?' active':'')+'" data-msview="goals_only" style="font-weight:700;">🎯 목표별 요약</div>' +
           '</div>' +
         '</div>' +
