@@ -7843,6 +7843,21 @@ check('[#TASK-ES-236] AI 목표 어시스턴트 제안된 목표 플랜 확인 �
   assert.ok(cssContent.includes('.ga-ms-card'), '.ga-ms-card 선언 확인');
 });
 
+check('[#TASK-ES-237] 목표탭 상단 5개 서브탭 버튼 중앙 정렬 및 시인성·터치 가독성 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 그리드 중앙 정렬 선언 확인
+  assert.ok(cssContent.includes('justify-content: center !important;'), 'goals-subtabs-grid justify-content: center 선언 확인');
+  assert.ok(cssContent.includes('align-items: center !important;'), 'goals-subtabs-grid align-items: center 선언 확인');
+
+  // 2. 활성 탭 입체 그림자 스타일 확인
+  assert.ok(cssContent.includes('box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;'), 'active 서브탭 box-shadow 선언 확인');
+
+  // 3. 서브탭 클릭 시 12ms 미세 햅틱 배선 확인
+  assert.ok(indexHtml.includes("triggerHapticFeedback(12);\n        state.goalsSubTab = t.dataset.gsub;"), '서브탭 클릭 12ms 햅틱 배선 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
