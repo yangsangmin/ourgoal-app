@@ -10030,9 +10030,58 @@ html[data-theme="urban-city"] .s-seg-pill {
   display: inline-flex !important;
 }
 
-/* 커닝페이퍼 영역 영구 배제 (AI 모드 단독 집중) */
+/* [#TASK-ES-217 / 생각 메모장 88번] 목표 맞춤 커닝페이퍼 칩 바 */
 .quick-checkin-chips {
-  display: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  margin: 6px 0 10px 0 !important;
+  width: 100% !important;
+}
+.cunning-chips-wrap {
+  display: flex !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+}
+.quick-checkin-chips .btn-quick-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  padding: 6px 12px !important;
+  border-radius: 18px !important;
+  background: rgba(49, 130, 246, 0.08) !important;
+  border: 1px solid rgba(49, 130, 246, 0.22) !important;
+  color: var(--ink, #1e293b) !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  min-height: 32px !important;
+}
+.quick-checkin-chips .btn-quick-chip:hover {
+  background: rgba(49, 130, 246, 0.14) !important;
+  border-color: rgba(49, 130, 246, 0.4) !important;
+}
+.quick-checkin-chips .btn-quick-chip.active-cunning {
+  background: rgba(49, 130, 246, 0.22) !important;
+  border-color: var(--brand, #3182f6) !important;
+  color: var(--brand, #3182f6) !important;
+  font-weight: 700 !important;
+}
+html[data-theme="white"] .quick-checkin-chips .btn-quick-chip {
+  background: rgba(49, 130, 246, 0.06) !important;
+  border: 1px solid rgba(49, 130, 246, 0.2) !important;
+  color: #1e293b !important;
+}
+html[data-theme="white"] .quick-checkin-chips .btn-quick-chip.active-cunning {
+  background: rgba(49, 130, 246, 0.15) !important;
+  border-color: #2563eb !important;
+  color: #1d4ed8 !important;
+}
+html[data-theme="black"] .quick-checkin-chips .btn-quick-chip,
+html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
+  color: #f1f5f9 !important;
 }
 
 #screen-feedbacksetup.active {
