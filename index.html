@@ -640,6 +640,39 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     <section class="screen" id="screen-comm">
       <div class="toss-headline" id="commHeadlineSentence">비슷한 목표를 가진 <b>동류들</b>과 함께해요 🤝</div>
       <div id="sanctuaryCommView"></div>
+
+      <!-- [TOSS COMMUNITY TAB INNOVATION] 동류 소통 요약 원카드 (#TASK-ES-216) -->
+      <div class="toss-community-hero-card" id="commHeroCard">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-weight:800;font-size:15px;color:var(--text, #191f28);display:flex;align-items:center;gap:6px;">
+            <span>🤝 동류 소통 현황</span>
+          </div>
+          <span style="font-size:11.5px;color:var(--text-faint, #888);font-weight:600;" id="commHeroStatusText">실시간 함께 달리는 중</span>
+        </div>
+        <div class="toss-community-hero-stats">
+          <div class="toss-community-stat-item">
+            <span class="toss-community-stat-val" id="commHeroGroupCount">0개</span>
+            <span class="toss-community-stat-lbl">참여 팀</span>
+          </div>
+          <div class="toss-community-stat-item" style="border-left:1px solid var(--rule, rgba(0,0,0,0.06));border-right:1px solid var(--rule, rgba(0,0,0,0.06));padding:0 14px;">
+            <span class="toss-community-stat-val" id="commHeroCompanionCount">0명</span>
+            <span class="toss-community-stat-lbl">맺은 동반자</span>
+          </div>
+          <div class="toss-community-stat-item">
+            <span class="toss-community-stat-val" id="commHeroCheerCount">0개</span>
+            <span class="toss-community-stat-lbl">받은 응원</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button type="button" class="btn btn-primary" onclick="if(typeof triggerHapticFeedback==='function')triggerHapticFeedback(12); if(window.openShareToFeedModal) window.openShareToFeedModal(); else if(typeof openShareToFeedModal === 'function') openShareToFeedModal();" style="flex:1;font-size:13px;font-weight:700;padding:10px 12px;border-radius:12px;box-shadow:0 2px 8px rgba(59,130,246,0.25);">
+            ✍️ 새 글 나누기
+          </button>
+          <button type="button" class="btn btn-ghost" onclick="if(typeof triggerHapticFeedback==='function')triggerHapticFeedback(12); state.commSubTab='group'; renderCommScreen();" style="flex:1;font-size:13px;font-weight:700;padding:10px 12px;border-radius:12px;background:var(--surface-2);border:1px solid var(--rule);">
+            👥 팀 둘러보기
+          </button>
+        </div>
+      </div>
+
       <div class="screen-head">
         <div style="display:flex;align-items:center;gap:6px;"><h2 class="s-title" style="margin:0;">소통</h2></div>
         <button class="btn btn-primary btn-sm" id="btnCommPostFeed" type="button" onclick="if(window.openShareToFeedModal) window.openShareToFeedModal(); else if(typeof openShareToFeedModal === 'function') openShareToFeedModal();"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>게시하기</span></button>
@@ -27848,6 +27881,14 @@ wirePromptEncyclopediaEvents(body);
   }
 
   function renderCommScreen(){
+    // 토스 동류 소통 요약 원카드 (#TASK-ES-216) 통계 바인딩
+    var heroGrpEl = document.getElementById('commHeroGroupCount');
+    if(heroGrpEl) heroGrpEl.textContent = ((state.profile && state.profile.groups) ? state.profile.groups.length : 0) + '개';
+    var heroCompEl = document.getElementById('commHeroCompanionCount');
+    if(heroCompEl) heroCompEl.textContent = ((state.profile && state.profile.companions) ? state.profile.companions.length : 0) + '명';
+    var heroCheerEl = document.getElementById('commHeroCheerCount');
+    if(heroCheerEl) heroCheerEl.textContent = ((state.profile && state.profile.cheersReceived) ? state.profile.cheersReceived : 0) + '개';
+
     var body = document.getElementById('commBody');
     var subtabsList = [
       { key: 'feed', label: '피드', icon: '📰' },
@@ -27866,6 +27907,7 @@ wirePromptEncyclopediaEvents(body);
     body.innerHTML = subtabHtml + '<div id="commSubBody"></div>';
     body.querySelectorAll('[data-sub]').forEach(function(t){
       t.addEventListener('click', function(){
+        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
         if(t.dataset.sub==='dm' && window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.updateDmUnreadBadge) window.OurgoalTeamInviteComm.updateDmUnreadBadge(false);
         state.commSubTab = t.dataset.sub;
         state.activeGroupId = null;
