@@ -1,0 +1,104 @@
+{
+  "task": "TASK-ES-212",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-212-GOALS-TOSS-INNOVATION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "ui.css에 토스 목표 히어로 진행 원카드(.toss-goal-hero-card) 및 퀘스트 보드(.toss-quest-board) 스타일이 정의되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "index.html의 목표 탭(#screen-goals)에 문장형 헤드라인(#goalsHeadlineSentence)과 목표 히어로 카드 슬롯이 연계되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "마일스톤 또는 할 일 완료 체크 시 12ms 미세 햅틱 피드백(triggerHapticFeedback)이 배선되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "서브탭 5열 그리드 규격(.goals-subtabs-grid) 및 38대 헌법 무결성 게이트가 100% 보존되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "777개 정적 버튼 Dead-Click 검사가 100% ALL PASS를 유지해야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css에 .toss-goal-hero-card 클래스가 정의되어 토스식 목표 진행률 원카드 조형을 제공한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".toss-goal-hero-card"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css에 .toss-quest-board 클래스가 정의되어 토스식 단일 퀘스트 보드 조형을 제공한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".toss-quest-board"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 id=\"goalsHeadlineSentence\" 요소가 정의되어 목표 탭 문장형 헤드라인을 렌더링한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"goalsHeadlineSentence\""
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에서 마일스톤 또는 할 일 완료 체크 시 triggerHapticFeedback(12) 햅틱 피드백이 배선된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "triggerHapticFeedback(12)"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html과 ui.css에 goals-subtabs-grid 및 5열 그리드가 유지되어 서브탭 규격을 준수한다",
+      "touches": [
+        "index.html",
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "grid-template-columns: repeat(5, 1fr)"
+      }
+    }
+  ]
+}
