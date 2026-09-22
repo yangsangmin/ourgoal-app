@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-227",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-227-STT-PERMISSION-MODAL.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html에 마이크 권한 거부 상태 안내 모달 함수(openMicPermissionGuideModal)가 정의되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "모달 내에 iOS Safari 및 Android Chrome 브라우저별 탭 스위처(id=\"btnTabIosSafari\", id=\"btnTabAndroidChrome\")가 배치되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "모달 내에 1터치 재시도 버튼(id=\"btnRetryMicPermission\") 및 텍스트 폴백 버튼(id=\"btnFallbackToText\")이 배선되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "setupVoiceCheckin 및 openVoiceTableModal 내의 권한 에러 핸들러에 openMicPermissionGuideModal이 직결되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "scripts/smoke-test.js에 TASK-ES-227 검증 케이스가 추가되어야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 openMicPermissionGuideModal 함수가 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "function openMicPermissionGuideModal"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 iOS Safari 및 Android Chrome 탭 스위처가 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"btnTabIosSafari\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 재시도 및 텍스트 입력 전환 버튼이 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"btnRetryMicPermission\""
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "setupVoiceCheckin 내에 openMicPermissionGuideModal 호출이 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "openMicPermissionGuideModal("
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-227 검증 케이스가 추가되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-227] [생각 메모장 97번] 음성 마이크(STT) 클릭 시 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 무결성"
+      }
+    }
+  ]
+}
