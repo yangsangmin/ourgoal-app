@@ -12680,24 +12680,210 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
   }
 
+  /* ============ 🎙️ 마이크 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 (#TASK-ES-227) ============ */
+  function openMicPermissionGuideModal(context){
+    var existing = document.getElementById('micPermissionGuideModal');
+    if(existing) existing.remove();
+
+    var isIos = /iphone|ipad|ipod|macintosh/i.test(navigator.userAgent) && (navigator.maxTouchPoints > 1 || /iphone|ipad|ipod/i.test(navigator.userAgent));
+    var activeTab = isIos ? 'ios' : 'android';
+
+    var modal = document.createElement('div');
+    modal.id = 'micPermissionGuideModal';
+    modal.className = 'mic-perm-backdrop';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', '마이크 권한 1초 허용 가이드');
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px);';
+
+    function renderGuideContent(){
+      var iosActive = activeTab === 'ios';
+      return '<div class="card mic-perm-card" style="width:100%;max-width:390px;background:var(--card);border:1px solid var(--rule);border-radius:20px;padding:20px;box-shadow:0 20px 40px rgba(0,0,0,0.3);position:relative;display:flex;flex-direction:column;gap:14px;box-sizing:border-box;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;">' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#f43f5e,#e11d48);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;">🎙️</div>' +
+            '<div>' +
+              '<h3 style="margin:0;font-size:1.05rem;font-weight:800;color:var(--ink);">마이크 권한 허용 가이드</h3>' +
+              '<p style="margin:2px 0 0;font-size:0.75rem;color:var(--ink-soft);">브라우저 설정에서 마이크를 켜주세요</p>' +
+            '</div>' +
+          '</div>' +
+          '<button type="button" id="btnCloseMicGuide" class="btn btn-ghost btn-sm" style="min-width:36px;min-height:36px;padding:0;display:flex;align-items:center;justify-content:center;font-size:1.25rem;border-radius:50%;color:var(--ink-soft);" aria-label="닫기">×</button>' +
+        '</div>' +
+
+        '<div class="mic-perm-tab-bar" style="display:flex;gap:6px;background:var(--card2);padding:4px;border-radius:12px;border:1px solid var(--rule);">' +
+          '<button type="button" id="btnTabIosSafari" class="btn btn-sm ' + (iosActive ? 'btn-primary' : 'btn-ghost') + '" style="flex:1;min-height:38px;font-size:0.8125rem;font-weight:700;border-radius:9px;padding:4px 8px;display:flex;align-items:center;justify-content:center;gap:4px;">' +
+            '<span>🍎 iOS Safari</span>' +
+          '</button>' +
+          '<button type="button" id="btnTabAndroidChrome" class="btn btn-sm ' + (!iosActive ? 'btn-primary' : 'btn-ghost') + '" style="flex:1;min-height:38px;font-size:0.8125rem;font-weight:700;border-radius:9px;padding:4px 8px;display:flex;align-items:center;justify-content:center;gap:4px;">' +
+            '<span>🤖 Android Chrome</span>' +
+          '</button>' +
+        '</div>' +
+
+        '<div id="micGuideStepWrap" style="background:var(--card2);border-radius:14px;padding:14px;border:1px solid var(--rule);display:flex;flex-direction:column;gap:10px;">' +
+          (iosActive ? 
+            ('<div style="display:flex;align-items:flex-start;gap:10px;">' +
+              '<div style="width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;flex-shrink:0;">1</div>' +
+              '<div style="font-size:0.84rem;color:var(--ink);line-height:1.4;">Safari 주소창 좌측 <b>[가 / aA]</b> 또는 <b>[설정]</b> 아이콘을 터치하세요.</div>' +
+            '</div>' +
+            '<div style="display:flex;align-items:flex-start;gap:10px;">' +
+              '<div style="width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;flex-shrink:0;">2</div>' +
+              '<div style="font-size:0.84rem;color:var(--ink);line-height:1.4;">나타난 메뉴에서 <b>[웹사이트 설정]</b>을 선택하세요.</div>' +
+            '</div>' +
+            '<div style="display:flex;align-items:flex-start;gap:10px;">' +
+              '<div style="width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;flex-shrink:0;">3</div>' +
+              '<div style="font-size:0.84rem;color:var(--ink);line-height:1.4;">마이크 항목을 <b>[허용]</b>으로 변경한 뒤 창을 닫아주세요.</div>' +
+            '</div>') :
+            ('<div style="display:flex;align-items:flex-start;gap:10px;">' +
+              '<div style="width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;flex-shrink:0;">1</div>' +
+              '<div style="font-size:0.84rem;color:var(--ink);line-height:1.4;">Chrome 주소창 좌측 <b>[자물쇠 🔒 / 튠 아이콘]</b>을 터치하세요.</div>' +
+            '</div>' +
+            '<div style="display:flex;align-items:flex-start;gap:10px;">' +
+              '<div style="width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;flex-shrink:0;">2</div>' +
+              '<div style="font-size:0.84rem;color:var(--ink);line-height:1.4;"><b>[권한]</b> 메뉴로 진입하세요.</div>' +
+            '</div>' +
+            '<div style="display:flex;align-items:flex-start;gap:10px;">' +
+              '<div style="width:24px;height:24px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;flex-shrink:0;">3</div>' +
+              '<div style="font-size:0.84rem;color:var(--ink);line-height:1.4;">마이크 스위치를 <b>[켜기 (허용)]</b>로 변경해주세요.</div>' +
+            '</div>')
+          ) +
+          '<div style="margin-top:4px;padding:8px 10px;background:rgba(245,158,11,0.08);border-radius:8px;border:1px solid rgba(245,158,11,0.25);font-size:0.75rem;color:var(--ink-soft);line-height:1.35;">' +
+            '💡 <b>인앱 브라우저(카카오톡/인스타 등) 알림:</b><br>음성 기능이 제한될 수 있습니다. 우측 상단 메뉴에서 <b>[다른 브라우저로 열기]</b>를 선택하시면 원활히 작동합니다.' +
+          '</div>' +
+        '</div>' +
+
+        '<div style="display:flex;flex-direction:column;gap:8px;">' +
+          '<button type="button" id="btnRetryMicPermission" class="btn btn-primary" style="width:100%;min-height:44px;font-size:0.875rem;font-weight:700;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:6px;">' +
+            '<span>🎙️ 권한 다시 확인 & 음성 시작</span>' +
+          '</button>' +
+          '<button type="button" id="btnFallbackToText" class="btn btn-ghost" style="width:100%;min-height:44px;font-size:0.84rem;font-weight:600;border-radius:12px;border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;gap:6px;">' +
+            '<span>⌨️ 텍스트로 바로 입력하기</span>' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+    }
+
+    modal.innerHTML = renderGuideContent();
+    document.body.appendChild(modal);
+    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(15);
+    else if(typeof triggerHaptic === 'function') triggerHaptic(15);
+
+    function wireModalEvents(){
+      var btnClose = modal.querySelector('#btnCloseMicGuide');
+      if(btnClose){
+        btnClose.onclick = function(){
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+          modal.remove();
+        };
+      }
+
+      var btnIos = modal.querySelector('#btnTabIosSafari');
+      var btnAndroid = modal.querySelector('#btnTabAndroidChrome');
+      if(btnIos && btnAndroid){
+        btnIos.onclick = function(){
+          if(activeTab === 'ios') return;
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+          activeTab = 'ios';
+          modal.innerHTML = renderGuideContent();
+          wireModalEvents();
+        };
+        btnAndroid.onclick = function(){
+          if(activeTab === 'android') return;
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+          activeTab = 'android';
+          modal.innerHTML = renderGuideContent();
+          wireModalEvents();
+        };
+      }
+
+      var btnRetry = modal.querySelector('#btnRetryMicPermission');
+      if(btnRetry){
+        btnRetry.onclick = async function(){
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(15);
+          btnRetry.disabled = true;
+          btnRetry.textContent = '권한 확인 중…';
+          try {
+            if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+              var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+              stream.getTracks().forEach(function(t){ t.stop(); });
+              modal.remove();
+              toast('마이크 권한이 정상 허용되었습니다! 🎉');
+              var micBtn = document.getElementById('micBtn');
+              if(micBtn) micBtn.click();
+              return;
+            }
+          } catch(err){
+            console.warn('getUserMedia retry failed:', err);
+          }
+          btnRetry.disabled = false;
+          btnRetry.textContent = '🎙️ 권한 다시 확인 & 음성 시작';
+          toast('아직 권한이 허용되지 않았습니다. 브라우저 설정을 확인해주세요.');
+        };
+      }
+
+      var btnText = modal.querySelector('#btnFallbackToText');
+      if(btnText){
+        btnText.onclick = function(){
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+          modal.remove();
+          var ta = document.getElementById('captureInput');
+          if(ta){
+            ta.focus();
+            ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        };
+      }
+    }
+
+    wireModalEvents();
+    modal.addEventListener('click', function(e){
+      if(e.target === modal) modal.remove();
+    });
+  }
+  window.openMicPermissionGuideModal = openMicPermissionGuideModal;
+
   /* ============ 음성 체크인 (Web Speech API) ============ */
   (function setupVoiceCheckin(){
     var micBtn = document.getElementById('micBtn');
+    if(!micBtn) return;
     var micStatus = document.getElementById('micStatus');
     var SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if(!SpeechRecognitionCtor){ micBtn.style.display = 'none'; return; }
+    if(!SpeechRecognitionCtor){
+      // [#TASK-ES-227] STT 미지원 브라우저/인앱 웹뷰 스마트 폴백
+      micBtn.addEventListener('click', function(){
+        toast('이 브라우저는 음성 인식을 지원하지 않습니다. 텍스트로 바로 입력해보세요.');
+        var ta = document.getElementById('captureInput');
+        if(ta) ta.focus();
+        if(typeof openMicPermissionGuideModal === 'function') openMicPermissionGuideModal('unsupported');
+      });
+      return;
+    }
     var recognition = new SpeechRecognitionCtor();
     recognition.lang = 'ko-KR';
     recognition.interimResults = true;
     recognition.continuous = false;
     var listening = false;
     var baseText = '';
-    micBtn.addEventListener('click', function(){
+    micBtn.addEventListener('click', async function(){
       if(listening){ recognition.stop(); return; }
       var ta = document.getElementById('captureInput');
-      baseText = ta.value;
+      baseText = ta ? ta.value : '';
       if(baseText && !/\s$/.test(baseText)) baseText += ' ';
-      try{ recognition.start(); } catch(e){}
+
+      // 권한 자가진단
+      try {
+        if(navigator.permissions && navigator.permissions.query){
+          var pStatus = await navigator.permissions.query({ name: 'microphone' });
+          if(pStatus && pStatus.state === 'denied'){
+            if(typeof openMicPermissionGuideModal === 'function') openMicPermissionGuideModal('checkin');
+            return;
+          }
+        }
+      } catch(permErr){}
+
+      try{ recognition.start(); } catch(e){
+        console.warn('SpeechRecognition start failed:', e);
+        if(typeof openMicPermissionGuideModal === 'function') openMicPermissionGuideModal('checkin');
+      }
     });
     recognition.addEventListener('start', function(){
       listening = true;
@@ -12713,12 +12899,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       listening = false;
       micBtn.classList.remove('listening');
       if(micStatus) micStatus.hidden = true;
-      if(e.error==='not-allowed' || e.error==='service-not-allowed') toast('마이크 사용 권한이 필요해요');
+      if(e.error==='not-allowed' || e.error==='service-not-allowed'){
+        toast('마이크 사용 권한이 필요해요');
+        if(typeof openMicPermissionGuideModal === 'function') openMicPermissionGuideModal('checkin');
+      }
     });
     recognition.addEventListener('result', function(e){
       var transcript = '';
       for(var i=0;i<e.results.length;i++) transcript += e.results[i][0].transcript;
-      document.getElementById('captureInput').value = baseText + transcript;
+      var ta = document.getElementById('captureInput');
+      if(ta) ta.value = baseText + transcript;
     });
   })();
 
@@ -25563,6 +25753,9 @@ wirePromptEncyclopediaEvents(body);
         console.warn('Speech recognition error:', event.error);
         statusText.textContent = '음성 인식 대기 중 (' + event.error + ')';
         stopRecognition();
+        if(event.error === 'not-allowed' || event.error === 'service-not-allowed'){
+          if(typeof openMicPermissionGuideModal === 'function') openMicPermissionGuideModal('table');
+        }
       };
 
       recognition.onend = function(){

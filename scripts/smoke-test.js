@@ -7620,6 +7620,31 @@ check('[#TASK-ES-226] [생각 메모장 96번] 체크인 완료 즉시 [📢 피
   assert.ok(indexHtml.includes('window.instantShareCheckinToFeed = instantShareCheckinToFeed'), 'window.instantShareCheckinToFeed 노출 누락');
 });
 
+check('[#TASK-ES-227] [생각 메모장 97번] 음성 마이크(STT) 클릭 시 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. openMicPermissionGuideModal 함수 및 전역 노출 확인
+  assert.ok(indexHtml.includes('function openMicPermissionGuideModal'), 'openMicPermissionGuideModal 함수 선언 누락');
+  assert.ok(indexHtml.includes('window.openMicPermissionGuideModal = openMicPermissionGuideModal'), 'window.openMicPermissionGuideModal 노출 누락');
+
+  // 2. iOS/Android 탭 스위처 및 3컷 가이드 마크업 확인
+  assert.ok(indexHtml.includes('id="btnTabIosSafari"'), '#btnTabIosSafari 탭 버튼 누락');
+  assert.ok(indexHtml.includes('id="btnTabAndroidChrome"'), '#btnTabAndroidChrome 탭 버튼 누락');
+
+  // 3. 1터치 재시도, 텍스트 폴백, 닫기 버튼 마크업 확인
+  assert.ok(indexHtml.includes('id="btnRetryMicPermission"'), '#btnRetryMicPermission 버튼 누락');
+  assert.ok(indexHtml.includes('id="btnFallbackToText"'), '#btnFallbackToText 버튼 누락');
+  assert.ok(indexHtml.includes('id="btnCloseMicGuide"'), '#btnCloseMicGuide 버튼 누락');
+
+  // 4. setupVoiceCheckin 및 openVoiceTableModal 권한 에러 배선 확인
+  assert.ok(indexHtml.includes("openMicPermissionGuideModal('checkin')"), "checkin 권한 에러 배선 누락");
+  assert.ok(indexHtml.includes("openMicPermissionGuideModal('table')"), "table 권한 에러 배선 누락");
+
+  // 5. 12ms/15ms 햅틱 피드백 확인
+  assert.ok(indexHtml.includes('triggerHapticFeedback(15)'), '15ms 햅틱 누락');
+  assert.ok(indexHtml.includes('triggerHapticFeedback(12)'), '12ms 햅틱 누락');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
