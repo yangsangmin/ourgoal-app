@@ -1,0 +1,93 @@
+{
+  "task": "TASK-ES-207",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-207-MINIMAL-CUTE-RANK-OBJECTS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "새싹·울창한 숲·마린 바다·썬더 스파크·코스믹 우주 5대 상징 랭크와 1레벨 단위 25단계 모던 미니멀 감성 헤드피스 벡터 SVG 엔진이 구현되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "1레벨 단위 서브티어(I~V) 및 20대 후반 여성 감성에 부합하는 감성 진화 단계 명칭 데이터가 정렬되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "홈 탭 상단바 및 메인 레벨 영역에 25단계 미니멀 랭크 오브제와 프레임이 실시간 렌더링되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "ui.css에 번쩍거리는 하드 펄스 대신 20대 후반 여성 감성의 모던 미니멀 softFloat 플로팅 모션이 배선되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "sw.js의 CACHE_NAME이 task-es207 최신 버전으로 갱신되어 새로고침 시 즉각 반영되어야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "js/avatar-system.js 내에 5대 테마 25단계 모던 미니멀 감성 헤드 오브제 벡터 SVG 렌더러(getRankWingsSvg)가 구현되어 있다",
+      "touches": ["js/avatar-system.js"],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "getRankWingsSvg"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "business-logic",
+      "statement": "js/avatar-system.js 내에 20대 후반 여성 감성 25단계 서브티어 명칭 데이터(아기 떡잎, 올리브 잎가지 등)가 선언되어 있다",
+      "touches": ["js/avatar-system.js"],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "아기 떡잎"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "index.html 내 상단바(updateTopBar)와 메인 레벨 영역(levelBadgeHtml)에 renderAvatarHtml이 배선되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "OurgoalAvatar.renderAvatarHtml"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css에 과격한 펄스를 대체하는 모던 미니멀 softFloat 애니메이션이 선언되어 있다",
+      "touches": ["ui.css"],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "softFloat"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "infra",
+      "statement": "sw.js의 CACHE_NAME이 task-es207 최신 버전으로 갱신되어 있다",
+      "touches": ["sw.js"],
+      "check": {
+        "type": "codeContains",
+        "file": "sw.js",
+        "text": "task-es207"
+      }
+    }
+  ]
+}
