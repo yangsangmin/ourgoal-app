@@ -7645,6 +7645,27 @@ check('[#TASK-ES-227] [생각 메모장 97번] 음성 마이크(STT) 클릭 시 
   assert.ok(indexHtml.includes('triggerHapticFeedback(12)'), '12ms 햅틱 누락');
 });
 
+check('[#TASK-ES-228] [생각 메모장 98번] 홈 탭 \'오늘 달성 레이스\' 가짜 시뮬레이션 제거 및 \'함께 달리는 동류 N명\' 실데이터 배선 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. #userCrewHeadline 및 #btnGoLiveFeed 마크업 존재 확인
+  assert.ok(indexHtml.includes('id="userCrewHeadline"'), '#userCrewHeadline 마크업 누락');
+  assert.ok(indexHtml.includes('id="btnGoLiveFeed"'), '#btnGoLiveFeed 버튼 누락');
+
+  // 2. renderCrewPacingWidget 함수 및 실 사용자 집계(activeUserMap) 확인
+  assert.ok(indexHtml.includes('function renderCrewPacingWidget'), 'renderCrewPacingWidget 함수 누락');
+  assert.ok(indexHtml.includes('activeUserMap'), 'activeUserMap 실 사용자 집계 누락');
+
+  // 3. ui.css 내 은폐 해제 및 블록 렌더링 확인
+  assert.ok(!cssContent.includes('.crew-pacing-widget{display:none!important;}'), 'crew-pacing-widget 은폐 잔재');
+  assert.ok(cssContent.includes('.crew-pacing-widget{display:block;'), 'crew-pacing-widget display:block 선언 누락');
+
+  // 4. 응원 보내기 및 피드 이동 핸들러 확인
+  assert.ok(indexHtml.includes('function nudgeCrewMates'), 'nudgeCrewMates 함수 누락');
+  assert.ok(indexHtml.includes('오늘 함께 달리는 동반자들에게 뜨거운 응원을 보냈어요! 📣'), '응원 토스트 문구 누락');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
