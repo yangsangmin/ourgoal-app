@@ -7641,10 +7641,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
 
     if(isNowDone){
+      if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
       triggerHaptic(15);
       awardXP(XP_RULES.taskDone || 5, '일정 완료');
       toast('일정을 완료했어요! 🎯');
     } else {
+      if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
       triggerHaptic(10);
       toast('일정을 미완료로 변경했어요');
     }
@@ -8723,41 +8725,44 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var evs = (itemsByDate || calendarItemsByDate())[sel] || [];
     var wrap = document.getElementById('calDayDetail');
     wrap.innerHTML =
-      '<div class="card-title-row" style="margin:16px 0 8px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;">' +
-        '<div style="display:flex;align-items:center;gap:6px;white-space:nowrap;">' +
-          '<h3 style="margin:0;font-size:.9375rem;white-space:nowrap;">'+sel+'</h3>' +
-          '<span class="faint dday-faint" style="font-weight:700;white-space:nowrap;">'+(dDay(sel)||'')+'</span>' +
-        '</div>' +
-        '<div style="display:none;align-items:center;gap:6px;flex-wrap:wrap;">' +
-          '<button class="btn btn-secondary btn-sm cal-day-bg-btn" id="calPickDayBgBtn" type="button" style="font-size:.8125rem;padding:3px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">🖼️ 배경사진' + (((state.profile && state.profile.calendarDayBackgrounds && state.profile.calendarDayBackgrounds[sel])) ? ' (설정됨)' : '') + '</button>' +
-          '<button class="btn btn-ghost btn-sm" id="calOpenHubBtn" type="button" style="font-size:.8125rem;padding:3px 8px;color:var(--ink);border-color:var(--rule);white-space:nowrap;">해당일자 관리</button>' +
-          '<button class="btn btn-primary btn-sm" id="calAddManualBtn" type="button" style="font-size:.8125rem;padding:3px 8px;white-space:nowrap;">+ 일정 추가</button>' +
-        '</div>' +
-      '</div>' +
-      (evs.length ? '<div class="ms-list">'+evs.map(function(e, evIdx){
-        var timeLabel = (e.date && e.date.indexOf('T') !== -1) ? ('<span class="dday-mini" style="background:var(--surface-2);color:var(--ink);margin-left:4px;">'+e.date.split('T')[1].slice(0,5)+'</span>') : '';
-        var attChips = (e.attachments && e.attachments.length) ? ('<div style="margin-top:4px;">'+renderAttachmentChipsHtml(e.attachments, e.kind, e.msId||e.goalId||e.schedId, e.goalId)+'</div>') : '';
-        var mRec = (e.title || '').match(/#record[=:](\w+)/);
-        var targetRecId = e.recordId || (mRec ? mRec[1] : null);
-        var tplLinkChip = targetRecId ? ('<button class="dday-pill" data-calviewrec="'+targetRecId+'" type="button" style="cursor:pointer;background:var(--surface-2);color:var(--ink);border:1px solid var(--rule);font-size:.8125rem;padding:2px 6px;margin-left:4px;">기록 보기</button>') : '';
-        return '<div class="ms-row" '+(e.goalId?'data-calgoto="'+e.goalId+'"':'')+(targetRecId?' data-calrecid="'+targetRecId+'" style="cursor:pointer;"':'')+'>' +
-          '<div class="ms-main" style="align-items:flex-start;">' +
-            '<div class="sched-check'+(e.done?' done':'')+'" data-detailtogglesched="'+e.kind+':'+(e.schedId||e.goalId||e.gcalId||'')+':'+(e.msId||'')+':'+(e.taskId||'')+'" style="cursor:pointer;flex:0 0 auto;margin-top:2px;" title="'+(e.done?'미완료로 변경':'완료로 변경')+'">'+(e.done?'✓':'')+'</div>' +
-            '<div style="flex:1;min-width:0;">' +
-              '<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">' +
-                '<span class="ms-title'+(e.done?' done-text':'')+'">'+escapeHtml(e.title)+'</span>' +
-                timeLabel +
-                tplLinkChip +
-              '</div>' +
-              '<div class="faint" style="font-size:.8125rem;margin-top:2px;">'+escapeHtml(e.goalTitle||'일반 일정')+'</div>' +
-              attChips +
-            '</div>' +
-            '<button class="icon-btn" data-caledit="'+e.kind+'" data-schedid="'+(e.schedId||e.gcalId||'')+'" data-calgid="'+(e.goalId||'')+'" data-calmid="'+(e.msId||'')+'" data-caltid="'+(e.taskId||'')+'" type="button" aria-label="일정 편집" title="수동 편집" style="font-size:.8125rem;padding:2px 4px;margin-right:2px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>' +
-            (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsync="'+e.kind+'" data-calsyncgid="'+(e.goalId||'')+'" data-calsyncmid="'+(e.msId||'')+'" data-calsynctid="'+(e.taskId||'')+'" data-calsyncsched="'+(e.schedId||'')+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' : '') +
+      '<div class="toss-calendar-hero-card">' +
+        '<div class="card-title-row" style="margin-bottom:12px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;">' +
+          '<div style="display:flex;align-items:center;gap:8px;white-space:nowrap;">' +
+            '<span style="font-size:1.2rem;">📅</span>' +
+            '<h3 style="margin:0;font-size:1.05rem;font-weight:800;color:var(--ink);white-space:nowrap;">'+sel+'</h3>' +
+            '<span class="dday-pill" style="background:var(--red-soft);color:var(--brand-strong);font-weight:700;white-space:nowrap;">'+(dDay(sel)||'오늘')+'</span>' +
           '</div>' +
-        '</div>';
-      }).join('')+'</div>'
-      : '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></div><p>이 날은 예정된 일정이 없어요.</p><button class="btn btn-ghost btn-sm" id="calEmptyAddBtn" type="button" style="margin-top:8px;font-size:.8125rem;">+ 이 날짜에 일정 추가</button></div>');
+          '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+            '<button class="btn btn-secondary btn-sm cal-day-bg-btn" id="calPickDayBgBtn" type="button" style="font-size:.78rem;padding:3px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">🖼️ 배경' + (((state.profile && state.profile.calendarDayBackgrounds && state.profile.calendarDayBackgrounds[sel])) ? ' (설정됨)' : '') + '</button>' +
+            '<button class="btn btn-ghost btn-sm" id="calOpenHubBtn" type="button" style="font-size:.78rem;padding:3px 8px;color:var(--ink);border-color:var(--rule);white-space:nowrap;">일정 관리</button>' +
+            '<button class="btn btn-primary btn-sm" id="calAddManualBtn" type="button" style="font-size:.78rem;padding:3px 9px;font-weight:700;white-space:nowrap;">+ 일정 추가</button>' +
+          '</div>' +
+        '</div>' +
+        (evs.length ? '<div class="ms-list" style="display:flex;flex-direction:column;gap:6px;">'+evs.map(function(e, evIdx){
+          var timeLabel = (e.date && e.date.indexOf('T') !== -1) ? ('<span class="dday-mini" style="background:var(--surface-2);color:var(--ink);margin-left:4px;">'+e.date.split('T')[1].slice(0,5)+'</span>') : '';
+          var attChips = (e.attachments && e.attachments.length) ? ('<div style="margin-top:4px;">'+renderAttachmentChipsHtml(e.attachments, e.kind, e.msId||e.goalId||e.schedId, e.goalId)+'</div>') : '';
+          var mRec = (e.title || '').match(/#record[=:](\w+)/);
+          var targetRecId = e.recordId || (mRec ? mRec[1] : null);
+          var tplLinkChip = targetRecId ? ('<button class="dday-pill" data-calviewrec="'+targetRecId+'" type="button" style="cursor:pointer;background:var(--surface-2);color:var(--ink);border:1px solid var(--rule);font-size:.8125rem;padding:2px 6px;margin-left:4px;">기록 보기</button>') : '';
+          return '<div class="ms-row toss-timeline-card" style="padding:10px 12px;border-radius:14px;background:var(--card);border:1px solid var(--rule);margin-bottom:0;" '+(e.goalId?'data-calgoto="'+e.goalId+'"':'')+(targetRecId?' data-calrecid="'+targetRecId+'" style="cursor:pointer;"':'')+'>' +
+            '<div class="ms-main" style="align-items:flex-start;gap:8px;">' +
+              '<div class="sched-check'+(e.done?' done':'')+'" data-detailtogglesched="'+e.kind+':'+(e.schedId||e.goalId||e.gcalId||'')+':'+(e.msId||'')+':'+(e.taskId||'')+'" style="cursor:pointer;flex:0 0 auto;margin-top:2px;width:22px;height:22px;border-radius:7px;" title="'+(e.done?'미완료로 변경':'완료로 변경')+'">'+(e.done?'✓':'')+'</div>' +
+              '<div style="flex:1;min-width:0;">' +
+                '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+                  '<span class="ms-title'+(e.done?' done-text':'')+'" style="font-size:.9rem;font-weight:700;">'+escapeHtml(e.title)+'</span>' +
+                  timeLabel +
+                  tplLinkChip +
+                '</div>' +
+                '<div class="faint" style="font-size:.78rem;margin-top:2px;">'+escapeHtml(e.goalTitle||'일반 일정')+'</div>' +
+                attChips +
+              '</div>' +
+              '<button class="icon-btn" data-caledit="'+e.kind+'" data-schedid="'+(e.schedId||e.gcalId||'')+'" data-calgid="'+(e.goalId||'')+'" data-calmid="'+(e.msId||'')+'" data-caltid="'+(e.taskId||'')+'" type="button" aria-label="일정 편집" title="수동 편집" style="font-size:.8125rem;padding:2px 4px;margin-right:2px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>' +
+              (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsync="'+e.kind+'" data-calsyncgid="'+(e.goalId||'')+'" data-calsyncmid="'+(e.msId||'')+'" data-calsynctid="'+(e.taskId||'')+'" data-calsyncsched="'+(e.schedId||'')+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' : '') +
+            '</div>' +
+          '</div>';
+        }).join('')+'</div>'
+        : '<div class="empty-state" style="padding:20px 10px;text-align:center;"><div class="e-icon" style="font-size:2rem;margin-bottom:6px;">⏰</div><p style="margin:0 0 10px;font-size:.875rem;color:var(--ink-soft);">이 날은 예정된 일정이 없어요.</p><button class="btn btn-ghost btn-sm" id="calEmptyAddBtn" type="button" style="font-size:.8125rem;padding:4px 10px;">+ 이 날짜에 일정 추가</button></div>') +
+      '</div>';
     var detailBgBtn = wrap.querySelector('#calPickDayBgBtn');
     if(detailBgBtn){
       detailBgBtn.addEventListener('click', function(){

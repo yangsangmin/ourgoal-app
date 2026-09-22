@@ -10061,4 +10061,65 @@ html[data-theme="urban-city"] .s-seg-pill {
   transform: scale(0.9);
 }
 
+/* ==========================================================================
+   TOSS CALENDAR TAB INNOVATION (#TASK-ES-214)
+   - 토스식 일정 타임라인 원카드 (.toss-calendar-hero-card)
+   - 세부 일정 카드 및 42~44px 엄지 최적화 터치 타깃 (.toss-timeline-card)
+   ========================================================================== */
+.toss-calendar-hero-card {
+  background: var(--card, #ffffff);
+  border-radius: 20px !important;
+  padding: 16px 14px !important;
+  margin-top: 14px !important;
+  margin-bottom: 12px !important;
+  border: 1px solid var(--rule, rgba(0, 0, 0, 0.06)) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.035) !important;
+  box-sizing: border-box;
+}
+
+[data-theme="dark"] .toss-calendar-hero-card,
+[data-theme="black"] .toss-calendar-hero-card,
+[data-theme="focus-sanctuary"] .toss-calendar-hero-card {
+  background: linear-gradient(180deg, #1C2026 0%, #16181D 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.toss-timeline-card {
+  border-radius: 14px !important;
+  border: 1px solid var(--rule, rgba(0, 0, 0, 0.06)) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.toss-timeline-card:active {
+  transform: scale(0.992);
+}
+
+#calDayDetail .timetable-chip,
+#calGrid .timetable-chip {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  border-radius: 12px !important;
+  padding: 8px 12px !important;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#calDayDetail .sched-check,
+#calGrid .sched-check {
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 7px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+#calDayDetail .sched-check:active,
+#calGrid .sched-check:active {
+  transform: scale(0.9);
+}
+
+
 
