@@ -180,25 +180,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       <!-- ② 답하기 -->
       <div id="homeGrassSummaryCard"></div>
-      <div class="capture-card card" id="captureCardBox">
-        <div class="capture-title" style="display:flex;align-items:center;gap:6px;"><span class="sanctuary-title-text" style="font-size:1.25rem;">오늘의 3초 체크인</span><span class="sr-only" style="display:none;">>오늘 기록하기<</span></div>
-        <div class="capture-sub">오늘 실천한 멋진 일을 한 줄로 톡 적어보세요! AI가 갓생 기록으로 완성해드려요 ✨</div>
-        <div id="captureThemeQuickBar" class="theme-quick-bar" aria-label="테마 즐겨찾기"></div>
-        <div class="theme-guide-microcopy" style="font-size:0.75rem;color:var(--ink-faint);margin:2px 0 6px 2px;line-height:1.4;">(테마 : ai 분석 및 DB시각화에 활용됨)</div>
-        <div class="quick-checkin-chips" style="display:flex;gap:6px;margin:4px 0 8px;flex-wrap:wrap;">
-          <details class="cunning-paper-details" style="width:100%;">
-            <summary style="cursor:pointer;font-size:.78rem;color:var(--brand);font-weight:700;display:flex;align-items:center;gap:4px;user-select:none;list-style:none;padding:2px 0;">
-              <span>💡 내 목표 맞춤 커닝페이퍼 (추천 예시)</span>
-              <span class="faint" style="font-size:.6875rem;font-weight:400;color:var(--ink-soft);">(탭하여 펼치기 ▾)</span>
-            </summary>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;padding:6px;background:rgba(255,255,255,0.02);border-radius:12px;border:1px dashed var(--rule);">
-              <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='';inp.placeholder='예: 👟 5km 러닝 28분 완주, 마지막 1km 스퍼트 성공!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">👟 5km 러닝</button>
-              <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='';inp.placeholder='예: 📖 독서 30분 인간관계론 완독 & 핵심 메모!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">📖 독서 30분</button>
-              <button type="button" class="btn-quick-chip" onclick="var inp=document.getElementById('captureInput');if(inp){inp.value='';inp.placeholder='예: 💻 핵심 알고리즘 1시간 몰입 코딩 완료!';inp.focus();}" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;">&lt;/&gt; 코딩 1시간</button>
-            </div>
-          </details>
+      <div class="capture-card card toss-checkin-clean-box" id="captureCardBox">
+        <div class="capture-title" style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span class="sanctuary-title-text" style="font-size:1.15rem;font-weight:700;">오늘의 3초 체크인</span>
+            <span class="sr-only" style="display:none;">>오늘 기록하기<</span>
+          </div>
+          <span style="font-size:0.75rem;color:var(--ink-faint);font-weight:600;">군더더기 없는 즉시 기록</span>
         </div>
-        <div class="capture-ta-wrap">
+        <div class="capture-sub" style="margin-bottom:8px;font-size:0.8125rem;color:var(--ink-soft);">오늘 실천한 멋진 일을 한 줄로 톡 적어보세요! AI가 갓생 기록으로 완성해드려요 ✨</div>
+        <div class="capture-ta-wrap" style="position:relative;">
           <textarea id="captureInput" placeholder="예: 오늘 실천한 멋진 일을 한 줄로 적어보세요"></textarea>
           <button class="mic-btn" id="micBtn" type="button" aria-label="음성으로 입력하기" title="음성으로 입력하기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4"/><path d="M8 23h8"/></svg></button>
         </div>
@@ -207,22 +198,55 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <span id="captureCharCount" class="capture-char-count">0자</span>
         </div>
         <div id="capturePhotoPreview" style="display:none;"></div>
-        <div id="checkinFeedbackTierBar" class="feedback-tier-bar" style="display:flex;align-items:center;gap:6px;margin:8px 0 10px;padding:4px 6px;background:var(--card2);border-radius:10px;font-size:0.75rem;">
-          <span style="color:var(--ink-faint);font-weight:600;font-size:0.72rem;padding-left:4px;">AI 모드:</span>
-          <button type="button" class="tier-btn active" data-fbtier="default" style="flex:1;padding:4px 6px;border-radius:6px;border:none;background:var(--accent);color:#fff;font-weight:700;font-size:0.75rem;cursor:pointer;">기본</button>
-          <button type="button" class="tier-btn" data-fbtier="medium" style="flex:1;padding:4px 6px;border-radius:6px;border:none;background:transparent;color:var(--ink-soft);font-weight:600;font-size:0.75rem;cursor:pointer;">중간</button>
-          <button type="button" class="tier-btn" data-fbtier="macro" style="flex:1;padding:4px 6px;border-radius:6px;border:none;background:transparent;color:var(--ink-soft);font-weight:600;font-size:0.75rem;cursor:pointer;">정밀</button>
-        </div>
-        <div class="capture-row" id="captureRowAnchor">
+        <div class="capture-row" id="captureRowAnchor" style="display:flex;align-items:center;gap:6px;margin-top:8px;">
           <input type="file" id="capturePhotoInput" accept="image/*" style="display:none;">
           <button class="btn btn-ghost btn-sm" id="capturePhotoBtn" type="button" aria-label="사진 첨부"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>사진</span></button>
           <button class="btn btn-ghost btn-sm" id="importExternalBtn" type="button" aria-label="외부 기록 불러오기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span>불러오기</span></button>
-          <button class="btn btn-primary btn-sm" id="captureSave" type="button" style="flex:1;min-width:96px;">기록 완료 ✨ (+10P)</button>
+          <button class="btn btn-primary btn-sm toss-checkin-save-btn" id="captureSave" type="button" style="flex:1;min-width:110px;padding:9px 14px;font-weight:800;border-radius:12px;">기록 완료 ✨ (+10P)</button>
         </div>
+        <details class="checkin-more-options" open style="margin-top:10px;padding-top:8px;border-top:1px dashed var(--rule);width:100%;">
+          <summary style="cursor:pointer;font-size:0.78rem;color:var(--brand);font-weight:700;user-select:none;list-style:none;display:flex;align-items:center;justify-content:space-between;padding:4px 0;">
+            <span style="display:flex;align-items:center;gap:5px;">🤖 <b>AI 피드백 모드 설정</b></span>
+            <span class="options-toggle-hint" style="font-size:0.7rem;color:var(--ink-soft);font-weight:500;">접기 ▴</span>
+          </summary>
+
+          <!-- 커닝페이퍼 영역 영구 배제 (하위 호환성 슬롯 보존) -->
+          <div class="quick-checkin-chips" style="display:none !important;" aria-hidden="true"><!-- 내 목표 맞춤 커닝페이퍼 data-cunningtext="" --></div>
+
+          <!-- AI 피드백 모드 설정 섹션 -->
+          <div class="ai-mode-setting-card" style="margin:10px 0 12px;padding:12px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid var(--rule);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <span style="font-size:0.78rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:4px;">
+                🤖 <b>AI 피드백 모드 선택</b>
+              </span>
+              <span id="activeAiModeTag" style="font-size:0.68rem;padding:2px 8px;border-radius:12px;background:rgba(49,130,246,0.15);color:var(--accent);font-weight:700;">기본 모드</span>
+            </div>
+            <div id="checkinFeedbackTierBar" class="feedback-tier-bar" style="display:flex;align-items:center;gap:6px;padding:4px;background:var(--card2);border-radius:10px;">
+              <button type="button" class="tier-btn active" data-fbtier="default">⚡ 기본 (3문장)</button>
+              <button type="button" class="tier-btn" data-fbtier="medium">🔍 중간 (궤적분석)</button>
+              <button type="button" class="tier-btn" data-fbtier="macro">🎯 정밀 (일정추천)</button>
+            </div>
+            <div id="checkinAiModeDesc" class="ai-mode-desc-card">
+              <div style="font-weight:700;color:var(--accent);margin-bottom:2px;" id="aiModeDescTitle">⚡ 기본 피드백 모드</div>
+              <div style="color:var(--ink-soft);font-size:0.72rem;line-height:1.4;" id="aiModeDescBody">오늘 실천 팩트 + 최근 연계 + 내일 1가지 행동을 간결한 3문장으로 코칭합니다.</div>
+            </div>
+            <div onclick="if(typeof openFeedbackSetup==='function'){openFeedbackSetup();}else if(document.getElementById('customFeedbackBtn')){document.getElementById('customFeedbackBtn').click();}" style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;cursor:pointer;transition:all 0.15s ease;">
+              <div style="display:flex;align-items:center;gap:6px;font-size:0.75rem;">
+                <span>🎭</span>
+                <span style="font-weight:700;color:var(--ink);">나만의 AI 말투 &amp; 피드백 설정</span>
+                <span id="customFeedbackStatus" style="font-size:0.7rem;color:var(--brand);font-weight:700;"></span>
+              </div>
+              <button class="btn btn-ghost btn-sm" id="customFeedbackBtn" type="button" onclick="event.stopPropagation(); if(typeof openFeedbackSetup==='function'){openFeedbackSetup();}" style="padding:5px 12px;font-size:0.75rem;font-weight:700;border-radius:8px;border:1px solid var(--rule);cursor:pointer;background:rgba(255,255,255,0.04);">설정하기 ›</button>
+            </div>
+          </div>
+
+          <!-- 테마 즐겨찾기 바 -->
+          <div id="captureThemeQuickBar" class="theme-quick-bar" aria-label="테마 즐겨찾기" style="margin-top:6px;"></div>
+          <div class="theme-guide-microcopy" style="font-size:0.72rem;color:var(--ink-faint);margin:2px 0 4px 2px;line-height:1.4;">(테마 : ai 분석 및 DB시각화에 활용됨)</div>
+        </details>
       </div>
 
       <!-- ③ 피드백 (AI 피드백 카드는 저장 직후 이 자리에 삽입) -->
-      <button class="btn btn-ghost btn-sm" id="customFeedbackBtn" type="button" style="width:100%;margin:0 0 12px;">맞춤 피드백 설정<span id="customFeedbackStatus"></span></button>
 
       <!-- ④ 내 위치 -->
       <div id="dailyQuestBarWrap" class="daily-quest-bar-wrap" style="display:none;"></div>
@@ -3119,6 +3143,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   
   /* ============ [81] 오늘의 3초 체크인 내 목표 기반 추천 및 커닝페이퍼형 가이드 ============ */
+  function applyQuickCunningText(text){
+    if(!text) return;
+    var inp = document.getElementById('captureInput');
+    if(!inp) return;
+    inp.value = text;
+    inp.dispatchEvent(new Event('input', { bubbles: true }));
+    inp.focus();
+    if(typeof inp.setSelectionRange === 'function'){
+      inp.setSelectionRange(text.length, text.length);
+    }
+    if(typeof triggerHaptic === 'function') triggerHaptic(15);
+    if(typeof toast === 'function') toast('💡 커닝페이퍼가 입력창에 채워졌습니다 ✨');
+  }
+  window.applyQuickCunningText = applyQuickCunningText;
+
   function renderQuickCheckinGuideChips(){
     var wrap = document.querySelector('.quick-checkin-chips');
     if(!wrap) return;
@@ -3142,34 +3181,25 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       chips.push({ label: '💻 코딩/업무 집중', text: '💻 핵심 태스크 1시간 딥워크 완수 & 커밋 완료 🚀' });
     }
 
-    wrap.innerHTML = '<details class="cunning-paper-details" style="width:100%;margin-bottom:6px;">' +
-      '<summary style="cursor:pointer;font-size:.78rem;color:var(--brand);font-weight:700;display:flex;align-items:center;gap:4px;user-select:none;list-style:none;padding:2px 0;">' +
-        '<span>💡 내 목표 맞춤 커닝페이퍼 (추천 예시)</span>' +
-        '<span class="faint" style="font-size:.6875rem;font-weight:400;color:var(--ink-soft);">(탭하여 펼치기 ▾)</span>' +
-      '</summary>' +
-      '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;padding:6px;background:rgba(255,255,255,0.02);border-radius:12px;border:1px dashed var(--rule);">' +
+    wrap.innerHTML = 
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+        '<span style="font-size:0.78rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:4px;">' +
+          '💡 <b>내 목표 맞춤 커닝페이퍼</b>' +
+        '</span>' +
+        '<span style="font-size:0.7rem;color:var(--ink-soft);font-weight:500;">(탭하면 자동 입력 ⚡)</span>' +
+      '</div>' +
+      '<div class="cunning-chips-wrap" style="display:flex;gap:6px;flex-wrap:wrap;">' +
       chips.map(function(c){
-        return '<button type="button" class="btn-quick-chip" data-cunningtext="'+escapeHtml(c.text)+'" style="font-size:0.75rem;padding:5px 10px;border-radius:20px;background:rgba(108,92,231,0.08);border:1px solid rgba(108,92,231,0.25);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all .15s ease;">' +
+        return '<button type="button" class="btn-quick-chip" data-cunningtext="'+escapeHtml(c.text)+'" style="font-size:0.75rem;padding:6px 12px;border-radius:18px;background:rgba(49,130,246,0.08);border:1px solid rgba(49,130,246,0.22);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-weight:600;transition:all .15s ease;">' +
           escapeHtml(c.label) +
         '</button>';
       }).join('') +
-      '</div></details>';
+      '</div>';
 
     wrap.querySelectorAll('[data-cunningtext]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var inp = document.getElementById('captureInput');
-        if(inp){
-          // 사용자가 지우고 쓰는 번거로움을 0으로 만들기 위해 값을 강제 주입하지 않고 빈 상태를 유지하며 placeholder에 예시 힌트 설정
-          if(!inp.value || inp.value.trim().length === 0){
-            inp.value = '';
-            inp.placeholder = '예: ' + (btn.dataset.cunningtext || '');
-          } else {
-            inp.placeholder = '예: ' + (btn.dataset.cunningtext || '');
-          }
-          inp.focus();
-          triggerHaptic(10);
-          toast('예시 힌트가 적용되었습니다. 지울 필요 없이 바로 적어보세요 ✨');
-        }
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        applyQuickCunningText(btn.dataset.cunningtext);
       });
     });
   }
@@ -10549,12 +10579,25 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     renderCrewPacingWidget();
     renderIosPwaBanner();
     var homeHeadline = document.getElementById('homeHeadlineSentence');
+    var rawGoals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
+    var goalOrder = (state.profile.settings && state.profile.settings.goalOrder) || [];
+    var goals = sortGoalsByOrder(rawGoals, goalOrder);
+
     if(homeHeadline){
+      var nick = (state.profile && state.profile.nickname) || '상민';
       var todayCheckins = (state.profile.records || []).filter(function(r){ return r.date === dateKey(); });
-      if(todayCheckins.length > 0){
-        homeHeadline.innerHTML = '오늘 멋진 실천을 <b>' + todayCheckins.length + '회</b> 기록하셨어요 ✨';
+      if(!goals.length){
+        homeHeadline.innerHTML = escapeHtml(nick) + '님, 가슴 뛰는 <b>첫 번째 목표</b>를 시작해볼까요? 🌱';
       } else {
-        homeHeadline.innerHTML = '오늘 하루를 완성할 <b>갓생 목표</b>가 기다려요 ✨';
+        var firstG = goals[0];
+        var firstGPct = (typeof goalProgress === 'function') ? goalProgress(firstG) : 0;
+        if(firstGPct >= 100){
+          homeHeadline.innerHTML = escapeHtml(nick) + '님, 오늘 1순위 목표를 <b>멋지게 완주</b>하셨어요! 🏆';
+        } else if(todayCheckins.length > 0){
+          homeHeadline.innerHTML = escapeHtml(nick) + '님, 오늘 멋진 실천을 <b>' + todayCheckins.length + '회</b> 기록하셨어요 🔥';
+        } else {
+          homeHeadline.innerHTML = escapeHtml(nick) + '님, 오늘 저녁 <b>' + escapeHtml(firstG.title) + '</b>이 기다려요 ✨';
+        }
       }
     }
     var streak = computeStreakDays();
@@ -10566,33 +10609,30 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(freezeEl) freezeEl.innerHTML = (sf && sf.available>0) ? '<span class="freeze-pill" title="하루를 놓쳐도 스트릭이 끊기지 않게 지켜줘요">🧊'+sf.available+'</span>' : '';
     if(typeof OurgoalStreaks !== 'undefined'){ OurgoalStreaks.renderHome({ state: state, BADGES: BADGES, badgeContext: badgeContext, computeStreakDays: computeStreakDays, saveProfile: saveProfile, escapeHtml: escapeHtml, dateKey: dateKey }); } // #TASK-ES-019 출석·스트릭·배지
     var wrap = document.getElementById('homeGoalList');
-    var rawGoals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
-    var goalOrder = (state.profile.settings && state.profile.settings.goalOrder) || [];
-    var goals = sortGoalsByOrder(rawGoals, goalOrder);
     if(!goals.length){
-      wrap.innerHTML = '<div class="empty-goal-starter card" style="text-align:center;padding:22px 18px;background:var(--surface-2);border:1px dashed var(--red-line);border-radius:16px;">' +
-        '<div style="font-size:2rem;margin-bottom:6px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 14 3 21l7-2"/><path d="M14 4c3-1 6 0 6 0s1 3 0 6c-1 3-8 9-8 9l-3-3s6-7 5-12z"/><circle cx="15" cy="9" r="1.5"/></svg></div>' +
-        '<h4 style="font-size:1.0625rem;font-weight:700;color:var(--ink);margin:0 0 4px;">아직 목표가 없으신가요?</h4>' +
-        '<p class="muted" style="font-size:0.82rem;margin:0 0 14px;">고민할 필요 없이 가장 인기 있는 갓생 목표를 1초 만에 시작해보세요!</p>' +
+      wrap.innerHTML = '<div class="empty-goal-starter card toss-card toss-home-starter-card" style="text-align:center;padding:22px 18px;border-radius:20px;">' +
+        '<div style="margin-bottom:8px;"><span class="toss-focus-badge" style="background:rgba(20,184,166,0.15);color:#14b8a6;border-color:rgba(20,184,166,0.3);font-size:0.75rem;">🌱 1초 만에 시작하기</span></div>' +
+        '<h4 style="font-size:1.0625rem;font-weight:700;color:var(--ink);margin:0 0 4px;">아직 등록된 목표가 없어요</h4>' +
+        '<p class="muted" style="font-size:0.82rem;margin:0 0 14px;">고민할 필요 없이 1터치로 첫 갓생 목표를 시작해보세요!</p>' +
         '<div class="starter-goals-grid" style="display:flex;flex-direction:column;gap:8px;">' +
-          '<button type="button" class="btn btn-ghost btn-sm starter-goal-btn" data-starter="workout" style="justify-content:flex-start;padding:10px 14px;border-radius:12px;font-size:0.84rem;text-align:left;">' +
-            '<span style="font-size:1.2rem;margin-right:6px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21v-5a6 6 0 0 1 6-6h1a4 4 0 0 0 4-4V3"/><path d="M2 16h4"/><path d="M17 3h3v4"/></svg></span>' +
-            '<div><b>주 3회 헬스 & 기초체력 기르기</b><br><span style="font-size:0.72rem;color:var(--ink-faint);">스트레칭 · 30분 운동 · 단백질 섭취</span></div>' +
+          '<button type="button" class="btn btn-ghost btn-sm starter-goal-btn" data-starter="workout" style="justify-content:space-between;padding:10px 14px;border-radius:12px;font-size:0.84rem;text-align:left;border:1px solid var(--rule);">' +
+            '<div style="display:flex;align-items:center;gap:8px;"><span style="font-size:1.2rem;">👟</span><div><b>주 3회 헬스 & 기초체력</b><br><span style="font-size:0.72rem;color:var(--ink-faint);">스트레칭 · 30분 운동 · 단백질 섭취</span></div></div>' +
+            '<span style="font-size:0.72rem;font-weight:700;color:var(--brand);background:rgba(49,130,246,0.1);padding:2px 8px;border-radius:10px;">시작 +</span>' +
           '</button>' +
-          '<button type="button" class="btn btn-ghost btn-sm starter-goal-btn" data-starter="running" style="justify-content:flex-start;padding:10px 14px;border-radius:12px;font-size:0.84rem;text-align:left;">' +
-            '<span style="font-size:1.2rem;margin-right:6px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="15" cy="4" r="1.8"/><path d="m5 21 4-6 3 2 2-5-3-2-4 3"/><path d="m13 12 3 2 2 7"/><path d="M11 9l4-2 3 3 3-1"/></svg></span>' +
-            '<div><b>매일 3km 러닝 & 심폐지구력</b><br><span style="font-size:0.72rem;color:var(--ink-faint);">가벼운 조깅 · 3km 완주 · 수분 보충</span></div>' +
+          '<button type="button" class="btn btn-ghost btn-sm starter-goal-btn" data-starter="running" style="justify-content:space-between;padding:10px 14px;border-radius:12px;font-size:0.84rem;text-align:left;border:1px solid var(--rule);">' +
+            '<div style="display:flex;align-items:center;gap:8px;"><span style="font-size:1.2rem;">🏃</span><div><b>매일 3km 러닝 & 심폐지구력</b><br><span style="font-size:0.72rem;color:var(--ink-faint);">가벼운 조깅 · 3km 완주 · 수분 보충</span></div></div>' +
+            '<span style="font-size:0.72rem;font-weight:700;color:var(--brand);background:rgba(49,130,246,0.1);padding:2px 8px;border-radius:10px;">시작 +</span>' +
           '</button>' +
-          '<button type="button" class="btn btn-ghost btn-sm starter-goal-btn" data-starter="study" style="justify-content:flex-start;padding:10px 14px;border-radius:12px;font-size:0.84rem;text-align:left;">' +
-            '<span style="font-size:1.2rem;margin-right:6px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14"/><path d="M4 19a2 2 0 0 0 2 2h14"/><path d="M8 3v18"/></svg></span>' +
-            '<div><b>매일 1시간 몰입 & 자격증 합격</b><br><span style="font-size:0.72rem;color:var(--ink-faint);">개념 1단원 · 기출문제 풀이 · 오답 복습</span></div>' +
+          '<button type="button" class="btn btn-ghost btn-sm starter-goal-btn" data-starter="study" style="justify-content:space-between;padding:10px 14px;border-radius:12px;font-size:0.84rem;text-align:left;border:1px solid var(--rule);">' +
+            '<div style="display:flex;align-items:center;gap:8px;"><span style="font-size:1.2rem;">💻</span><div><b>매일 1시간 몰입 & 기출 복습</b><br><span style="font-size:0.72rem;color:var(--ink-faint);">개념 정리 · 문제 풀이 · 오답 복습</span></div></div>' +
+            '<span style="font-size:0.72rem;font-weight:700;color:var(--brand);background:rgba(49,130,246,0.1);padding:2px 8px;border-radius:10px;">시작 +</span>' +
           '</button>' +
-          '<button type="button" class="btn btn-ghost btn-sm starter-goal-btn" data-starter="reading" style="justify-content:flex-start;padding:10px 14px;border-radius:12px;font-size:0.84rem;text-align:left;">' +
-            '<span style="font-size:1.2rem;margin-right:6px;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg></span>' +
-            '<div><b>하루 15분 독서 & 지적 성장</b><br><span style="font-size:0.72rem;color:var(--ink-faint);">책 15분 읽기 · 인상 깊은 한 줄 메모</span></div>' +
+          '<button type="button" class="btn btn-ghost btn-sm starter-goal-btn" data-starter="reading" style="justify-content:space-between;padding:10px 14px;border-radius:12px;font-size:0.84rem;text-align:left;border:1px solid var(--rule);">' +
+            '<div style="display:flex;align-items:center;gap:8px;"><span style="font-size:1.2rem;">📖</span><div><b>하루 15분 독서 & 지적 성장</b><br><span style="font-size:0.72rem;color:var(--ink-faint);">책 15분 읽기 · 인상 깊은 한 줄 메모</span></div></div>' +
+            '<span style="font-size:0.72rem;font-weight:700;color:var(--brand);background:rgba(49,130,246,0.1);padding:2px 8px;border-radius:10px;">시작 +</span>' +
           '</button>' +
         '</div>' +
-        '<button class="btn btn-primary btn-sm" id="emptyAddCustomGoalBtn" type="button" style="width:100%;margin-top:14px;padding:11px 16px;border-radius:12px;font-weight:700;">+ 내가 직접 새 목표 만들기</button>' +
+        '<button class="btn btn-primary btn-sm" id="emptyAddCustomGoalBtn" type="button" style="width:100%;margin-top:14px;padding:11px 16px;border-radius:14px;font-weight:800;background:linear-gradient(135deg, #10B981 0%, #059669 100%);border:none;box-shadow:0 4px 12px rgba(16,185,129,0.3);">+ 내가 직접 새 목표 만들기</button>' +
       '</div>';
 
       wrap.querySelectorAll('.starter-goal-btn').forEach(function(btn){
@@ -10602,7 +10642,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           state.profile.goals.push(newG);
           state.activeGoalId = newG.id;
           await saveProfile();
-          renderAll();
+          if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation();
+          else renderAll();
           triggerHaptic(25);
           burstConfetti(window.innerWidth/2, window.innerHeight/3, 20);
           toast('첫 갓생 목표가 시작되었어요! 오늘 1줄 기록을 남겨보세요.');
@@ -10629,8 +10670,42 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         ? '<span class="focus-goal-pill" style="font-size:.6875rem;padding:2px 6px;border-radius:10px;background:var(--accent-soft, #FFF1F2);color:var(--accent, var(--brand));font-weight:700;">대표</span>'
         : '';
       var focusBtn = (gIdx === 0)
-        ? '<button class="btn-focus-pilot" data-focusgoal="'+g.id+'" type="button" title="1순위 대표 목표 초집중 시작" style="display:inline-flex;align-items:center;gap:3px;font-size:.6875rem;padding:2px 7px;border-radius:8px;background:var(--brand);color:#fff;border:none;font-weight:700;cursor:pointer;margin-left:4px;box-shadow:0 2px 5px var(--violet-line);">초집중</button>'
+        ? '<button class="btn-focus-pilot toss-haptic-tap" data-focusgoal="'+g.id+'" type="button" title="1순위 대표 목표 초집중 시작" style="display:inline-flex;align-items:center;gap:3px;font-size:.6875rem;padding:2px 7px;border-radius:8px;background:var(--brand);color:#fff;border:none;font-weight:700;cursor:pointer;margin-left:4px;box-shadow:0 2px 5px var(--violet-line);">초집중</button>'
         : '';
+
+      if(gIdx === 0){
+        var isGoalDone = (pct >= 100);
+        return '<div class="goal-card toss-home-focus-card" data-goalid="'+g.id+'" draggable="true">' +
+          '<div class="toss-focus-badge"><span class="toss-ping-dot" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#10B981;margin-right:2px;"></span> 오늘의 1순위 집중</div>' +
+          '<div class="goal-card-top toss-focus-title-row">' +
+            '<div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">' +
+              (goals.length > 1 ? '<span class="goal-drag-handle" data-draggoal="'+g.id+'" title="드래그하여 순서 변경" aria-label="드래그하여 순서 변경" style="cursor:grab;padding:2px 4px;color:var(--muted);font-size:.875rem;user-select:none;line-height:1;">⠿</span>' : '') +
+              '<h3 class="toss-focus-title" style="margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+escapeHtml(g.title)+'</h3>' +
+              leadBadge +
+            '</div>' +
+            '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">' +
+              (goals.length > 1 ? '<button class="icon-btn order-shift-btn" data-shiftgoal="'+g.id+'" data-dir="-1" type="button" aria-label="위로 이동" title="위로 이동" style="padding:2px 4px;font-size:.6875rem;background:none;border:none;color:var(--muted);cursor:pointer;">▲</button><button class="icon-btn order-shift-btn" data-shiftgoal="'+g.id+'" data-dir="1" type="button" aria-label="아래로 이동" title="아래로 이동" style="padding:2px 4px;font-size:.6875rem;background:none;border:none;color:var(--muted);cursor:pointer;">▼</button>' : '') +
+              dd +
+              (calendarAvailable(GOOGLE_OAUTH_CLIENT_ID, state.profile.settings) ? '<button class="icon-btn" data-calsyncgoal="'+g.id+'" type="button" aria-label="일정 반영" title="구글 캘린더에 일정 반영"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' : '') +
+            '</div>' +
+          '</div>' +
+          (g.topic ? '<div style="margin:2px 0 6px;">'+topicPill(g.topic)+'</div>' : '') +
+          '<div class="toss-focus-progress-wrap">' +
+            '<div class="toss-focus-progress-labels">' +
+              '<span>진척률 (' + counts.done + '/' + counts.total + ' 완료)</span>' +
+              '<span style="color:#10B981;font-weight:700;">' + Math.round(pct) + '%</span>' +
+            '</div>' +
+            '<div class="toss-focus-progress-bar">' +
+              '<div class="toss-focus-progress-fill" style="width:' + Math.min(100, Math.max(0, pct)) + '%;"></div>' +
+            '</div>' +
+          '</div>' +
+          '<button class="btn-focus-pilot toss-focus-complete-btn ' + (isGoalDone ? 'is-done' : '') + '" data-focusgoal="'+g.id+'" type="button" title="1순위 대표 목표 초집중 시작">' +
+            '<span>' + (isGoalDone ? '오늘 목표 완주됨 🏆' : '오늘 실천 완료 ✓') + '</span>' +
+          '</button>' +
+          '<div style="text-align:right;margin-top:6px;"><a class="goal-detail-link" data-detail="'+g.id+'" style="font-size:0.75rem;cursor:pointer;">세부 마일스톤 보기 ›</a></div>' +
+        '</div>';
+      }
+
       return '<div class="goal-card" data-goalid="'+g.id+'" draggable="true">' +
         '<div class="goal-card-top">' +
           '<div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">' +
@@ -12256,6 +12331,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var badgeEl = document.getElementById('streakBadge');
       if(badgeEl) badgeEl.innerHTML = streak > 0 ? streakBadgeHtml(streak) : '';
 
+      try {
+        if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation();
+        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+      } catch(propErr) { console.warn('[captureSave] full view propagation error:', propErr); }
+
       // 오프라인 상태일 경우 오프라인 동기화 큐에 보관 (가상유저 요청 P5)
       if(typeof navigator !== 'undefined' && !navigator.onLine){
         OfflineSyncManager.enqueue({ type: 'record', data: state.profile.records[0] });
@@ -12478,29 +12558,75 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function initFeedbackTierBar(){
     var bar = document.getElementById('checkinFeedbackTierBar');
     if(!bar) return;
-    state.aiFeedbackMode = state.aiFeedbackMode || 'default';
+
+    var savedTier = null;
+    try {
+      savedTier = localStorage.getItem('ourgoal_ai_feedback_mode');
+    } catch(e){}
+    if(!savedTier && state.profile && state.profile.settings && state.profile.settings.aiFeedbackMode){
+      savedTier = state.profile.settings.aiFeedbackMode;
+    }
+    state.aiFeedbackMode = savedTier || state.aiFeedbackMode || 'default';
+
     var btns = bar.querySelectorAll('.tier-btn');
+    var descTitle = document.getElementById('aiModeDescTitle');
+    var descBody = document.getElementById('aiModeDescBody');
+    var modeTag = document.getElementById('activeAiModeTag');
+
+    var modeInfo = {
+      default: {
+        title: '⚡ 기본 피드백 모드',
+        tag: '기본 모드',
+        body: '오늘 실천 팩트 + 최근 연계 + 내일 1가지 행동을 간결한 3문장으로 코칭합니다.'
+      },
+      medium: {
+        title: '🔍 중간 피드백 모드 (궤적 분석)',
+        tag: '중간 모드',
+        body: '최근 3~5일간의 실천 궤적을 비교 분석하고, 루틴 마찰점을 찾아 극복 전략을 피드백합니다.'
+      },
+      macro: {
+        title: '🎯 정밀 피드백 모드 (일정 추천)',
+        tag: '정밀 모드',
+        body: 'D-Day 목표 사각지대를 정밀 진단하고, 캘린더에 바로 등록할 수 있는 추천 일정을 제시합니다.'
+      }
+    };
+
     function updateTierUI(selectedTier){
       btns.forEach(function(b){
         var isMatch = b.dataset.fbtier === selectedTier;
         b.classList.toggle('active', isMatch);
         if(isMatch){
-          b.style.background = 'var(--accent)';
+          b.style.background = 'var(--accent, #3182f6)';
           b.style.color = '#fff';
           b.style.fontWeight = '700';
+          b.style.boxShadow = '0 2px 8px rgba(49,130,246,0.35)';
         } else {
           b.style.background = 'transparent';
           b.style.color = 'var(--ink-soft)';
           b.style.fontWeight = '600';
+          b.style.boxShadow = 'none';
         }
       });
+      var cur = modeInfo[selectedTier] || modeInfo.default;
+      if(descTitle) descTitle.textContent = cur.title;
+      if(descBody) descBody.textContent = cur.body;
+      if(modeTag) modeTag.textContent = cur.tag;
     }
     updateTierUI(state.aiFeedbackMode);
+
     btns.forEach(function(b){
       b.onclick = function(e){
         e.preventDefault();
         var tier = b.dataset.fbtier || 'default';
         state.aiFeedbackMode = tier;
+        try {
+          localStorage.setItem('ourgoal_ai_feedback_mode', tier);
+          if(state.profile && state.profile.settings){
+            state.profile.settings.aiFeedbackMode = tier;
+            if(typeof saveProfile === 'function') saveProfile();
+          }
+        } catch(err){}
+
         updateTierUI(tier);
         if(typeof triggerHaptic === 'function') triggerHaptic(15);
         if(tier === 'default'){
@@ -12916,20 +13042,72 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(a) a.textContent = suffix;
     if(b) b.textContent = suffix;
   }
-  function openFeedbackSetup(){
-    state.prevScreenTab = state.activeTab;
-    screens.forEach(function(s){ s.classList.toggle('active', s.id==='screen-feedbacksetup'); });
-    document.querySelector('.bottomnav').style.display = 'none';
-    window.scrollTo({top:0, behavior:'auto'});
+  function getSavedFeedbackPresets(){
+    if(!state.profile) state.profile = {};
+    if(!state.profile.settings) state.profile.settings = {};
     var s = state.profile.settings;
-    state.fbSetup = { step: s.customFeedbackPrompt ? 'status' : 'chat', desc:'', draft:'', generated:'' };
+    if(!Array.isArray(s.savedFeedbackPresets)){
+      var uid = state.profile.uid || (state.user && state.user.uid) || 'guest';
+      try {
+        var raw = localStorage.getItem('ourgoal_saved_fb_presets_' + uid);
+        if(raw){
+          var parsed = JSON.parse(raw);
+          if(Array.isArray(parsed)) s.savedFeedbackPresets = parsed;
+        }
+      } catch(e){}
+      if(!Array.isArray(s.savedFeedbackPresets)) s.savedFeedbackPresets = [];
+    }
+    // Auto-seed existing customFeedbackPrompt if presets are empty to prevent volatility
+    if(s.savedFeedbackPresets.length === 0 && s.customFeedbackPrompt && s.customFeedbackPrompt.trim()){
+      s.savedFeedbackPresets.push({
+        id: 'fb_preset_' + Date.now(),
+        title: '나만의 맞춤 피드백',
+        prompt: s.customFeedbackPrompt.trim(),
+        createdAt: new Date().toISOString()
+      });
+      persistFeedbackPresets(s.savedFeedbackPresets);
+    }
+    return s.savedFeedbackPresets;
+  }
+  async function persistFeedbackPresets(presets){
+    if(!state.profile) state.profile = {};
+    if(!state.profile.settings) state.profile.settings = {};
+    state.profile.settings.savedFeedbackPresets = presets;
+    var uid = state.profile.uid || (state.user && state.user.uid) || 'guest';
+    try {
+      localStorage.setItem('ourgoal_saved_fb_presets_' + uid, JSON.stringify(presets));
+    } catch(e){}
+    try {
+      if(typeof saveLocalSettings === 'function') saveLocalSettings();
+    } catch(e){}
+    await saveProfile();
+  }
+
+  function openFeedbackSetup(){
+    state.prevScreenTab = state.activeTab || 'home';
+    if(!state.profile) state.profile = {};
+    if(!state.profile.settings) state.profile.settings = {};
+    screens.forEach(function(s){ s.classList.toggle('active', s.id==='screen-feedbacksetup'); });
+    var bnav = document.querySelector('.bottomnav');
+    if(bnav) bnav.style.display = 'none';
+    window.scrollTo({top:0, behavior:'auto'});
+    state.fbSetup = { step: 'status', desc:'', draft:'', draftTitle:'', generated:'', editingPresetId: null };
     renderFeedbackSetup();
   }
+  window.openFeedbackSetup = openFeedbackSetup;
   function closeFeedbackSetup(){
-    document.querySelector('.bottomnav').style.display = '';
+    if(state.fbSetup && state.fbSetup.step && state.fbSetup.step !== 'status'){
+      state.fbSetup.step = 'status';
+      state.fbSetup.editingPresetId = null;
+      renderFeedbackSetup();
+      return;
+    }
+    var bnav = document.querySelector('.bottomnav');
+    if(bnav) bnav.style.display = '';
     state.fbSetup = null;
     setTab(state.prevScreenTab || 'home');
   }
+  window.closeFeedbackSetup = closeFeedbackSetup;
   async function generateCustomFeedbackPrompt(description){
     var controller = new AbortController();
     var timer = setTimeout(function(){ controller.abort(); }, 28000);
@@ -12958,62 +13136,402 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var body = document.getElementById('fbSetupBody');
     var st = state.fbSetup;
     if(!body || !st) return;
-    var settings = state.profile.settings;
+    var settings = (state.profile && state.profile.settings) ? state.profile.settings : (state.profile ? (state.profile.settings = {}) : {});
+    var presets = getSavedFeedbackPresets();
+    var maxPresets = 10;
 
-    if(st.step==='status'){
-      body.innerHTML =
-        fbBotBubbleHtml(
-          '<div class="toggle-row" style="margin:0;">' +
-            '<div class="t" style="font-weight:700;">맞춤 피드백 봇 사용</div>' +
-            '<div class="switch'+(settings.customFeedbackActive?' on':'')+'" id="fbActiveSwitch"></div>' +
+    // STEP: STATUS (MAIN DASHBOARD: ACTIVE FEEDBACK + STORAGE + CREATE OPTIONS)
+    if(st.step === 'status'){
+      var hasActivePrompt = !!(settings.customFeedbackPrompt && settings.customFeedbackPrompt.trim());
+      var isActiveOn = hasActivePrompt && !!settings.customFeedbackActive;
+      
+      var isCurrentInPresets = presets.some(function(p){
+        return p.prompt && settings.customFeedbackPrompt && p.prompt.trim() === settings.customFeedbackPrompt.trim();
+      });
+
+      // 1. ACTIVE FEEDBACK CARD
+      var statusBadgeHtml = isActiveOn
+        ? '<span style="background:#10b981;color:#fff;font-size:0.75rem;font-weight:700;padding:2px 8px;border-radius:9999px;">● 사용 중 (ON)</span>'
+        : (hasActivePrompt
+          ? '<span style="background:var(--card2);border:1px solid var(--rule);color:var(--ink-soft);font-size:0.75rem;font-weight:600;padding:2px 8px;border-radius:9999px;">○ 일시 정지 (OFF)</span>'
+          : '<span style="background:var(--card2);border:1px solid var(--rule);color:var(--ink-soft);font-size:0.75rem;font-weight:600;padding:2px 8px;border-radius:9999px;">기본 피드백 모드</span>');
+
+      var activeCardHtml =
+        '<div class="card" style="margin-bottom:14px;border:1px solid ' + (isActiveOn ? 'var(--brand)' : 'var(--rule)') + ';box-shadow:' + (isActiveOn ? '0 4px 14px rgba(var(--brand-rgb, 79, 70, 229), 0.12)' : 'none') + ';">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;">' +
+            '<div style="display:flex;align-items:center;gap:6px;font-weight:700;font-size:0.95rem;color:var(--ink);">' +
+              '<span>🤖</span> <span>현재 사용 중인 피드백</span>' +
+            '</div>' +
+            '<div style="display:flex;align-items:center;gap:8px;">' +
+              statusBadgeHtml +
+              '<div class="switch' + (settings.customFeedbackActive ? ' on' : '') + '" id="fbActiveSwitch" title="맞춤 피드백 봇 켜기/끄기"></div>' +
+            '</div>' +
           '</div>' +
-          '<p class="faint" style="margin:10px 0 0;line-height:1.6;white-space:pre-wrap;">'+escapeHtml(settings.customFeedbackPrompt)+'</p>'
-        ) +
-        '<div style="display:flex;gap:8px;margin-top:14px;">' +
-          '<button class="btn btn-ghost" id="fbStatusEditBtn" type="button" style="flex:1;">프롬프트 수정</button>' +
-          '<button class="btn btn-ghost" id="fbStatusRestartBtn" type="button" style="flex:1;">새로 만들기</button>' +
+          (hasActivePrompt
+            ? '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:10px;padding:12px;font-size:0.875rem;line-height:1.6;white-space:pre-wrap;color:var(--ink);max-height:160px;overflow-y:auto;">' + escapeHtml(settings.customFeedbackPrompt) + '</div>' +
+              '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">' +
+                (!isCurrentInPresets && presets.length < maxPresets
+                  ? '<button class="btn btn-ghost btn-sm" id="fbStatusSaveToRepoBtn" type="button" style="font-weight:700;color:var(--brand);border:1px solid var(--brand);"><svg class="i" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:3px;vertical-align:-2px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>내 저장소에 보관</button>'
+                  : '') +
+                '<button class="btn btn-ghost btn-sm" id="fbStatusEditBtn" type="button" style="flex:1;min-width:100px;">✏️ 프롬프트 수정</button>' +
+                '<button class="btn btn-ghost btn-sm" id="fbStatusResetBtn" type="button" style="color:var(--ink-soft);font-size:0.75rem;">기본 피드백으로 초기화</button>' +
+              '</div>'
+            : '<div style="background:var(--card2);border:1px dashed var(--rule);border-radius:10px;padding:14px;text-align:center;font-size:0.85rem;color:var(--ink-soft);">' +
+                '현재 적용된 맞춤 피드백이 없습니다.<br>아래 보관함에서 피드백을 적용하거나 새 피드백을 만들어보세요.' +
+              '</div>'
+          ) +
         '</div>';
-      document.getElementById('fbActiveSwitch').addEventListener('click', async function(){
-        settings.customFeedbackActive = !settings.customFeedbackActive;
-        await saveProfile();
+
+      // 2. PRESETS STORAGE CARD (MAX 10)
+      var presetsListHtml = '';
+      if(presets.length === 0){
+        presetsListHtml =
+          '<div style="background:var(--card2);border:1px dashed var(--rule);border-radius:10px;padding:18px;text-align:center;color:var(--ink-soft);font-size:0.85rem;margin-top:10px;">' +
+            '보관된 나만의 피드백이 없습니다.<br>아래에서 첫 번째 피드백을 저장해보세요! (최대 10개)' +
+          '</div>';
+      } else {
+        presetsListHtml = '<div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">';
+        presets.forEach(function(preset, idx){
+          var isThisActive = isActiveOn && (settings.customFeedbackPrompt === preset.prompt);
+          var dateStr = '';
+          if(preset.createdAt){
+            try {
+              var d = new Date(preset.createdAt);
+              dateStr = d.getFullYear() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + String(d.getDate()).padStart(2,'0');
+            } catch(e){}
+          }
+          presetsListHtml +=
+            '<div class="card" style="padding:12px 14px;margin:0;background:' + (isThisActive ? 'rgba(var(--brand-rgb, 79, 70, 229), 0.04)' : 'var(--card2)') + ';border:1px solid ' + (isThisActive ? 'var(--brand)' : 'var(--rule)') + ';border-radius:12px;">' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
+                '<div style="display:flex;align-items:center;gap:6px;min-width:0;">' +
+                  '<span style="font-weight:700;font-size:0.92rem;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(preset.title || ('피드백 #' + (idx + 1))) + '</span>' +
+                  (isThisActive ? '<span style="background:var(--brand);color:#fff;font-size:0.68rem;font-weight:700;padding:2px 6px;border-radius:9999px;flex-shrink:0;">적용 중</span>' : '') +
+                '</div>' +
+                (dateStr ? '<span style="font-size:0.7rem;color:var(--ink-soft);flex-shrink:0;">' + dateStr + '</span>' : '') +
+              '</div>' +
+              '<div style="font-size:0.8rem;line-height:1.5;color:var(--ink-soft);margin:8px 0;background:rgba(0,0,0,0.06);padding:8px 10px;border-radius:8px;white-space:pre-wrap;max-height:72px;overflow-y:auto;">' +
+                escapeHtml(preset.prompt) +
+              '</div>' +
+              '<div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-top:8px;">' +
+                (isThisActive
+                  ? '<button class="btn btn-ghost btn-xs fb-preset-unapply" data-id="' + preset.id + '" type="button" style="font-size:0.75rem;padding:4px 9px;">적용 해제</button>'
+                  : '<button class="btn btn-primary btn-xs fb-preset-apply" data-id="' + preset.id + '" type="button" style="font-size:0.75rem;padding:4px 10px;background:var(--brand);color:#fff;font-weight:700;">이 피드백 적용</button>'
+                ) +
+                '<button class="btn btn-ghost btn-xs fb-preset-edit" data-id="' + preset.id + '" type="button" style="font-size:0.75rem;padding:4px 9px;">수정</button>' +
+                '<button class="btn btn-ghost btn-xs fb-preset-delete" data-id="' + preset.id + '" type="button" style="font-size:0.75rem;padding:4px 9px;color:#ef4444;">삭제</button>' +
+              '</div>' +
+            '</div>';
+        });
+        presetsListHtml += '</div>';
+      }
+
+      var repoCardHtml =
+        '<div class="card" style="margin-bottom:14px;border:1px solid var(--rule);">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
+            '<div style="display:flex;align-items:center;gap:6px;font-weight:700;font-size:0.95rem;color:var(--ink);">' +
+              '<span>📁</span> <span>내 피드백 설정 저장소</span>' +
+            '</div>' +
+            '<span class="badge" style="font-weight:700;background:var(--card2);border:1px solid var(--rule);padding:2px 8px;border-radius:9999px;font-size:0.75rem;color:' + (presets.length >= maxPresets ? '#ef4444' : 'var(--ink)') + ';">' +
+              presets.length + ' / ' + maxPresets + '개' +
+            '</span>' +
+          '</div>' +
+          '<p class="faint" style="margin:6px 0 0;font-size:0.78rem;line-height:1.45;">' +
+            '자주 쓰는 맞춤 말투를 최대 10개까지 저장하고 원클릭으로 바꿔가며 쓸 수 있어요.' +
+          '</p>' +
+          presetsListHtml +
+        '</div>';
+
+      // 3. CREATE NEW SECTION
+      var isFull = (presets.length >= maxPresets);
+      var createCardHtml =
+        '<div class="card" style="border:1px solid var(--rule);">' +
+          '<div style="display:flex;align-items:center;gap:6px;font-weight:700;font-size:0.95rem;color:var(--ink);margin-bottom:8px;">' +
+            '<span>✨</span> <span>새 피드백 추가</span>' +
+          '</div>' +
+          (isFull
+            ? '<div style="padding:10px 12px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:10px;font-size:0.8rem;color:var(--ink);line-height:1.5;">' +
+                '⚠️ <b>저장소 한도 도달 (' + maxPresets + '/' + maxPresets + '개)</b><br>새로운 피드백을 추가하려면 저장소에서 사용하지 않는 피드백을 먼저 삭제해주세요.' +
+              '</div>'
+            : '<div style="display:flex;gap:8px;margin-top:8px;">' +
+                '<button class="btn btn-ghost" id="fbNewManualBtn" type="button" style="flex:1;padding:9px 12px;font-size:0.85rem;font-weight:600;">✍️ 직접 수동 작성</button>' +
+                '<button class="btn btn-primary" id="fbNewChatBtn" type="button" style="flex:1;padding:9px 12px;font-size:0.85rem;font-weight:700;background:var(--brand);color:#fff;">🤖 AI 대화로 생성</button>' +
+              '</div>'
+          ) +
+        '</div>';
+
+      body.innerHTML = activeCardHtml + repoCardHtml + createCardHtml;
+
+      // Event handlers for status view
+      var switchEl = document.getElementById('fbActiveSwitch');
+      if(switchEl){
+        switchEl.addEventListener('click', async function(){
+          if(!settings.customFeedbackPrompt && !settings.customFeedbackActive){
+            if(presets.length > 0){
+              settings.customFeedbackPrompt = presets[0].prompt;
+              settings.customFeedbackActive = true;
+              await saveProfile();
+              refreshCustomFeedbackButtons();
+              toast('‘' + (presets[0].title || '맞춤 피드백') + '’ 봇을 켰어요');
+              renderFeedbackSetup();
+              return;
+            } else {
+              toast('먼저 맞춤 피드백을 작성하거나 생성해주세요');
+              return;
+            }
+          }
+          settings.customFeedbackActive = !settings.customFeedbackActive;
+          await saveProfile();
+          refreshCustomFeedbackButtons();
+          toast(settings.customFeedbackActive ? '맞춤 피드백 봇을 켰어요' : '기본 피드백으로 되돌렸어요 · 지침은 보관되어 있어요');
+          renderFeedbackSetup();
+        });
+      }
+
+      var saveToRepoBtn = document.getElementById('fbStatusSaveToRepoBtn');
+      if(saveToRepoBtn){
+        saveToRepoBtn.addEventListener('click', function(){
+          if(presets.length >= maxPresets){
+            toast('저장소는 최대 ' + maxPresets + '개까지만 보관할 수 있어요. 기존 피드백을 삭제해주세요.');
+            return;
+          }
+          st.editingPresetId = null;
+          st.draftTitle = '나만의 맞춤 피드백';
+          st.draft = settings.customFeedbackPrompt || '';
+          st.autoApply = true;
+          st.step = 'manual';
+          renderFeedbackSetup();
+        });
+      }
+
+      var editBtn = document.getElementById('fbStatusEditBtn');
+      if(editBtn){
+        editBtn.addEventListener('click', function(){
+          var matching = presets.find(function(p){ return p.prompt === settings.customFeedbackPrompt; });
+          st.editingPresetId = matching ? matching.id : null;
+          st.draftTitle = matching ? matching.title : '나만의 맞춤 피드백';
+          st.draft = settings.customFeedbackPrompt || '';
+          st.autoApply = true;
+          st.step = 'manual';
+          renderFeedbackSetup();
+        });
+      }
+
+      var resetBtn = document.getElementById('fbStatusResetBtn');
+      if(resetBtn){
+        resetBtn.addEventListener('click', async function(){
+          settings.customFeedbackActive = false;
+          await saveProfile();
+          refreshCustomFeedbackButtons();
+          toast('기본 피드백 모드로 설정되었어요');
+          renderFeedbackSetup();
+        });
+      }
+
+      // Preset list handlers (apply, unapply, edit, delete)
+      body.querySelectorAll('.fb-preset-apply').forEach(function(btn){
+        btn.addEventListener('click', async function(){
+          var pid = btn.getAttribute('data-id');
+          var target = presets.find(function(p){ return p.id === pid; });
+          if(!target) return;
+          settings.customFeedbackPrompt = target.prompt;
+          settings.customFeedbackActive = true;
+          await saveProfile();
+          refreshCustomFeedbackButtons();
+          toast('‘' + (target.title || '선택한 피드백') + '’ 피드백이 적용되었어요 🚀');
+          renderFeedbackSetup();
+        });
+      });
+
+      body.querySelectorAll('.fb-preset-unapply').forEach(function(btn){
+        btn.addEventListener('click', async function(){
+          settings.customFeedbackActive = false;
+          await saveProfile();
+          refreshCustomFeedbackButtons();
+          toast('맞춤 피드백 적용을 해제하고 기본 모드로 전환했어요');
+          renderFeedbackSetup();
+        });
+      });
+
+      body.querySelectorAll('.fb-preset-edit').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var pid = btn.getAttribute('data-id');
+          var target = presets.find(function(p){ return p.id === pid; });
+          if(!target) return;
+          st.editingPresetId = target.id;
+          st.draftTitle = target.title || '';
+          st.draft = target.prompt || '';
+          st.autoApply = (settings.customFeedbackPrompt === target.prompt && settings.customFeedbackActive);
+          st.step = 'manual';
+          renderFeedbackSetup();
+        });
+      });
+
+      body.querySelectorAll('.fb-preset-delete').forEach(function(btn){
+        btn.addEventListener('click', async function(){
+          var pid = btn.getAttribute('data-id');
+          var target = presets.find(function(p){ return p.id === pid; });
+          if(!target) return;
+          if(!confirm('‘' + (target.title || '이 피드백') + '’ 설정을 보관함에서 삭제하시겠습니까?')) return;
+          var newPresets = presets.filter(function(p){ return p.id !== pid; });
+          if(settings.customFeedbackPrompt === target.prompt){
+            settings.customFeedbackActive = false;
+            settings.customFeedbackPrompt = '';
+          }
+          await persistFeedbackPresets(newPresets);
+          refreshCustomFeedbackButtons();
+          toast('피드백이 삭제되었습니다');
+          renderFeedbackSetup();
+        });
+      });
+
+      var newManualBtn = document.getElementById('fbNewManualBtn');
+      if(newManualBtn){
+        newManualBtn.addEventListener('click', function(){
+          if(presets.length >= maxPresets){
+            toast('저장소는 최대 ' + maxPresets + '개까지만 보관할 수 있어요. 기존 피드백을 삭제해주세요.');
+            return;
+          }
+          st.editingPresetId = null;
+          st.draftTitle = '';
+          st.draft = '';
+          st.autoApply = true;
+          st.step = 'manual';
+          renderFeedbackSetup();
+        });
+      }
+
+      var newChatBtn = document.getElementById('fbNewChatBtn');
+      if(newChatBtn){
+        newChatBtn.addEventListener('click', function(){
+          if(presets.length >= maxPresets){
+            toast('저장소는 최대 ' + maxPresets + '개까지만 보관할 수 있어요. 기존 피드백을 삭제해주세요.');
+            return;
+          }
+          st.desc = '';
+          st.generated = '';
+          st.step = 'chat';
+          renderFeedbackSetup();
+        });
+      }
+
+      return;
+    }
+
+    // STEP: MANUAL (DIRECT WRITE OR EDIT PRESET)
+    if(st.step === 'manual'){
+      var isEditing = !!st.editingPresetId;
+      body.innerHTML =
+        '<div style="margin-bottom:12px;display:flex;align-items:center;gap:8px;">' +
+          '<button class="btn btn-ghost btn-xs" id="fbManualBackBtn" type="button" style="padding:4px 8px;">‹ 저장소 목록으로</button>' +
+          '<span style="font-weight:700;font-size:0.95rem;color:var(--ink);">' + (isEditing ? '✏️ 피드백 설정 수정' : '✍️ 새 피드백 직접 작성') + '</span>' +
+        '</div>' +
+        '<div class="card">' +
+          '<label style="display:block;font-size:0.8rem;font-weight:700;color:var(--ink);margin-bottom:6px;">피드백 이름 (최대 25자)</label>' +
+          '<input id="fbPresetTitleInput" maxlength="25" placeholder="예: 엄격한 팩폭 코치, 다정한 러닝메이트" value="' + escapeHtml(st.draftTitle || '') + '" style="width:100%;margin-bottom:12px;padding:10px;border-radius:8px;border:1px solid var(--rule);background:var(--card2);color:var(--ink);box-sizing:border-box;">' +
+          '<label style="display:block;font-size:0.8rem;font-weight:700;color:var(--ink);margin-bottom:6px;">피드백 지침 (프롬프트)</label>' +
+          '<p class="faint" style="margin:0 0 8px;font-size:0.78rem;line-height:1.4;">피드백 봇에게 내릴 지침을 적어주세요. 톤, 말투, 강조할 점, 비판/칭찬 기준 등을 자유롭게 써주시면 돼요.</p>' +
+          '<textarea id="fbManualInput" maxlength="2000" placeholder="예: 핑계는 일절 듣지 말고 냉철하게 현실을 자각시켜줘. 단, 비판 뒤에는 오늘 당장 실천할 수 있는 1가지 구체적 행동 방안을 반드시 덧붙여줘." style="width:100%;min-height:200px;padding:10px;border-radius:8px;border:1px solid var(--rule);background:var(--card2);color:var(--ink);box-sizing:border-box;">' + escapeHtml(st.draft || '') + '</textarea>' +
+          '<p class="faint" id="fbManualCounter" style="text-align:right;margin:4px 2px 0;font-size:.6875rem;">0/2000자</p>' +
+          '<label style="display:flex;align-items:center;gap:8px;margin-top:12px;cursor:pointer;font-size:0.85rem;color:var(--ink);">' +
+            '<input type="checkbox" id="fbAutoApplyCheck" ' + (st.autoApply !== false ? 'checked' : '') + '> 저장 즉시 활성화하여 사용' +
+          '</label>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;margin-top:12px;">' +
+          '<button class="btn btn-ghost" id="fbManualCancelBtn" type="button" style="flex:1;">취소</button>' +
+          '<button class="btn btn-primary" id="fbManualSaveBtn" type="button" style="flex:1;background:var(--brand);color:#fff;font-weight:700;">' + (isEditing ? '수정 완료' : '저장소에 보관') + '</button>' +
+        '</div>';
+
+      var titleInput = document.getElementById('fbPresetTitleInput');
+      var manualInput = document.getElementById('fbManualInput');
+      var mCounter = document.getElementById('fbManualCounter');
+      function updateMCounter(){ mCounter.textContent = manualInput.value.length + '/2000자'; }
+      updateMCounter();
+      manualInput.addEventListener('input', updateMCounter);
+
+      function backToStatus(){
+        st.step = 'status';
+        st.editingPresetId = null;
+        st.draftTitle = '';
+        st.draft = '';
         renderFeedbackSetup();
+      }
+      document.getElementById('fbManualBackBtn').addEventListener('click', backToStatus);
+      document.getElementById('fbManualCancelBtn').addEventListener('click', backToStatus);
+
+      document.getElementById('fbManualSaveBtn').addEventListener('click', async function(){
+        var promptVal = manualInput.value.trim();
+        if(!promptVal){ toast('지침 내용을 입력해주세요'); return; }
+        var titleVal = (titleInput.value || '').trim() || (isEditing ? '나만의 맞춤 피드백' : ('피드백 #' + (presets.length + 1)));
+        var autoApply = document.getElementById('fbAutoApplyCheck').checked;
+
+        if(isEditing){
+          var target = presets.find(function(p){ return p.id === st.editingPresetId; });
+          if(target){
+            var oldPrompt = target.prompt;
+            target.title = titleVal;
+            target.prompt = promptVal;
+            target.updatedAt = new Date().toISOString();
+            if(autoApply || (settings.customFeedbackPrompt === oldPrompt && settings.customFeedbackActive)){
+              settings.customFeedbackPrompt = promptVal;
+              settings.customFeedbackActive = true;
+            }
+          }
+          await persistFeedbackPresets(presets);
+          toast('피드백 설정이 수정되었어요 ✨');
+        } else {
+          if(presets.length >= maxPresets){
+            toast('저장소는 최대 ' + maxPresets + '개까지만 보관할 수 있어요. 기존 피드백을 삭제해주세요.');
+            return;
+          }
+          presets.push({
+            id: 'fb_preset_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+            title: titleVal,
+            prompt: promptVal,
+            createdAt: new Date().toISOString()
+          });
+          if(autoApply){
+            settings.customFeedbackPrompt = promptVal;
+            settings.customFeedbackActive = true;
+          }
+          await persistFeedbackPresets(presets);
+          toast('새 피드백이 저장소에 보관되었어요 🎉');
+        }
         refreshCustomFeedbackButtons();
-        toast(settings.customFeedbackActive ? '맞춤 피드백 봇을 켰어요' : '기본 피드백으로 되돌렸어요 · 지침은 지워지지 않았어요');
-      });
-      document.getElementById('fbStatusEditBtn').addEventListener('click', function(){
-        st.draft = settings.customFeedbackPrompt;
-        st.step = 'manual';
-        renderFeedbackSetup();
-      });
-      document.getElementById('fbStatusRestartBtn').addEventListener('click', function(){
-        st.step = 'chat'; st.desc=''; st.generated='';
-        renderFeedbackSetup();
+        backToStatus();
       });
       return;
     }
 
-    if(st.step==='chat'){
+    // STEP: CHAT (PROMPT GENERATOR INTERACTION)
+    if(st.step === 'chat'){
       body.innerHTML =
+        '<div style="margin-bottom:12px;display:flex;align-items:center;gap:8px;">' +
+          '<button class="btn btn-ghost btn-xs" id="fbChatBackBtn" type="button" style="padding:4px 8px;">‹ 저장소 목록으로</button>' +
+          '<span style="font-weight:700;font-size:0.95rem;color:var(--ink);">🤖 AI 대화로 피드백 봇 만들기</span>' +
+        '</div>' +
         fbBotBubbleHtml(
-          '<p style="margin:0;font-size:.9375rem;line-height:1.65;">안녕하세요 아워골 피드백 봇입니다. 어떤 목표를 향해가시는지와 어떤 피드백을 원하는지 알려주시면 원하시는 피드백 봇이 되어드릴게요.<br><br>원하는 바가 명확하시다면 <b>\'수동 설정하기\'</b>를 통해 직접 프롬프트를 입력하시면 됩니다.</p>'
+          '<p style="margin:0;font-size:.9375rem;line-height:1.65;">안녕하세요 아워골 피드백 봇입니다. 어떤 목표를 향해가시는지와 어떤 피드백을 원하는지 알려주시면 원하시는 피드백 봇 프롬프트를 자동으로 설계해드릴게요.<br><br>생성된 피드백은 <b>내 저장소(최대 10개)</b>에 보관되어 언제든 다시 사용할 수 있어요.</p>'
         ) +
-        '<textarea id="fbDescInput" maxlength="300" placeholder="예: 여행 유튜브 채널 10만 구독자가 목표예요. 행동에 대한 질책뿐 아니라 보완할 세부 대책도 전문적으로 짚어주는 피드백 봇이 필요해요." style="width:100%;min-height:120px;margin-top:14px;">'+escapeHtml(st.desc)+'</textarea>' +
+        '<textarea id="fbDescInput" maxlength="300" placeholder="예: 여행 유튜브 채널 10만 구독자가 목표예요. 행동에 대한 질책뿐 아니라 보완할 세부 대책도 전문적으로 짚어주는 날카로운 피드백 봇이 필요해요." style="width:100%;min-height:120px;margin-top:14px;padding:10px;border-radius:8px;border:1px solid var(--rule);background:var(--card2);color:var(--ink);box-sizing:border-box;">' + escapeHtml(st.desc || '') + '</textarea>' +
         '<p class="faint" id="fbDescCounter" style="text-align:right;margin:4px 2px 0;font-size:.6875rem;"></p>' +
         '<div style="display:flex;gap:8px;margin-top:10px;">' +
-          '<button class="btn btn-ghost" id="fbManualBtn" type="button" style="flex:1;">수동 설정하기</button>' +
-          '<button class="btn btn-primary" id="fbGenerateBtn" type="button" style="flex:1;">봇 만들기</button>' +
+          '<button class="btn btn-ghost" id="fbChatCancelBtn" type="button" style="flex:1;">취소</button>' +
+          '<button class="btn btn-primary" id="fbGenerateBtn" type="button" style="flex:1;background:var(--brand);color:#fff;font-weight:700;">봇 프롬프트 생성하기</button>' +
         '</div>';
+
       var descInput = document.getElementById('fbDescInput');
       var counter = document.getElementById('fbDescCounter');
-      function updateCounter(){ counter.textContent = descInput.value.length+'/300자'; }
+      function updateCounter(){ counter.textContent = descInput.value.length + '/300자'; }
       updateCounter();
       descInput.addEventListener('input', updateCounter);
-      document.getElementById('fbManualBtn').addEventListener('click', function(){
-        st.desc = descInput.value;
-        st.draft = settings.customFeedbackPrompt || '';
-        st.step = 'manual';
+
+      function backToStatus(){
+        st.step = 'status';
         renderFeedbackSetup();
-      });
+      }
+      document.getElementById('fbChatBackBtn').addEventListener('click', backToStatus);
+      document.getElementById('fbChatCancelBtn').addEventListener('click', backToStatus);
+
       document.getElementById('fbGenerateBtn').addEventListener('click', async function(){
         var desc = descInput.value.trim();
         if(!desc){ toast('먼저 원하시는 내용을 적어주세요'); return; }
@@ -13022,7 +13540,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         renderFeedbackSetup();
         var generated = await generateCustomFeedbackPrompt(desc);
         if(!generated){
-          toast('지금은 봇을 만들지 못했어요 · 다시 시도하거나 수동 설정을 이용해주세요');
+          toast('지금은 봇을 만들지 못했어요 · 다시 시도하거나 직접 수동 작성을 이용해주세요');
           st.step = 'chat';
           renderFeedbackSetup();
           return;
@@ -13034,71 +13552,65 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       return;
     }
 
-    if(st.step==='loading'){
+    // STEP: LOADING
+    if(st.step === 'loading'){
       body.innerHTML = fbBotBubbleHtml('<p class="faint" style="margin:0;">맞춤 피드백 봇을 만들고 검증하는 중… 🛠️<br>완결된 지침인지 한 번 더 확인하고 있어요, 잠시만요.</p>');
       return;
     }
 
-    if(st.step==='review'){
+    // STEP: REVIEW
+    if(st.step === 'review'){
       body.innerHTML =
-        fbBotBubbleHtml('<p style="margin:0;font-size:.9375rem;line-height:1.65;">사용자 맞춤 프롬프트가 추천되었습니다. 이대로 설정할까요?</p>') +
+        fbBotBubbleHtml('<p style="margin:0;font-size:.9375rem;line-height:1.65;">사용자 맞춤 프롬프트가 추천되었습니다. 이대로 저장소에 보관할까요?</p>') +
         '<div class="card" style="margin-top:12px;background:var(--surface-2);border:1px solid var(--rule);">' +
-          '<p style="margin:0;font-size:.875rem;line-height:1.7;white-space:pre-wrap;">'+escapeHtml(st.generated)+'</p>' +
+          '<label style="display:block;font-size:0.8rem;font-weight:700;color:var(--ink);margin-bottom:6px;">저장할 피드백 이름</label>' +
+          '<input id="fbReviewTitleInput" maxlength="25" value="AI 맞춤 피드백" placeholder="예: AI 추천 피드백" style="width:100%;margin-bottom:12px;padding:8px 10px;border-radius:8px;border:1px solid var(--rule);background:var(--card);color:var(--ink);box-sizing:border-box;">' +
+          '<label style="display:block;font-size:0.8rem;font-weight:700;color:var(--ink);margin-bottom:6px;">생성된 프롬프트 지침</label>' +
+          '<p style="margin:0;font-size:.875rem;line-height:1.7;white-space:pre-wrap;background:var(--card);padding:10px;border-radius:8px;border:1px solid var(--rule);">' + escapeHtml(st.generated) + '</p>' +
+          '<label style="display:flex;align-items:center;gap:8px;margin-top:12px;cursor:pointer;font-size:0.85rem;color:var(--ink);">' +
+            '<input type="checkbox" id="fbReviewAutoApply" checked> 저장 즉시 활성화하여 사용' +
+          '</label>' +
         '</div>' +
         '<div style="display:flex;gap:8px;margin-top:14px;">' +
-          '<button class="btn btn-ghost" id="fbBackBtn" type="button" style="flex:1;">뒤로</button>' +
-          '<button class="btn btn-ghost" id="fbEditBtn" type="button" style="flex:1;">수정</button>' +
-          '<button class="btn btn-primary" id="fbApproveBtn" type="button" style="flex:1;">승인</button>' +
+          '<button class="btn btn-ghost" id="fbBackBtn" type="button" style="flex:1;">다시 만들기</button>' +
+          '<button class="btn btn-ghost" id="fbEditBtn" type="button" style="flex:1;">직접 수정</button>' +
+          '<button class="btn btn-primary" id="fbApproveBtn" type="button" style="flex:1;background:var(--brand);color:#fff;font-weight:700;">저장소에 보관</button>' +
         '</div>';
+
       document.getElementById('fbBackBtn').addEventListener('click', function(){
         st.step = 'chat';
         renderFeedbackSetup();
       });
       document.getElementById('fbEditBtn').addEventListener('click', function(){
+        st.editingPresetId = null;
+        st.draftTitle = (document.getElementById('fbReviewTitleInput').value || '').trim() || 'AI 맞춤 피드백';
         st.draft = st.generated;
+        st.autoApply = document.getElementById('fbReviewAutoApply').checked;
         st.step = 'manual';
         renderFeedbackSetup();
       });
       document.getElementById('fbApproveBtn').addEventListener('click', async function(){
-        settings.customFeedbackPrompt = st.generated;
-        settings.customFeedbackActive = true;
-        await saveProfile();
-        toast('맞춤 피드백 봇이 활성화됐어요 🎉');
-        refreshCustomFeedbackButtons();
-        st.step = 'status';
-        renderFeedbackSetup();
-      });
-      return;
-    }
+        if(presets.length >= maxPresets){
+          toast('저장소는 최대 ' + maxPresets + '개까지만 보관할 수 있어요. 기존 피드백을 삭제해주세요.');
+          return;
+        }
+        var titleVal = (document.getElementById('fbReviewTitleInput').value || '').trim() || 'AI 맞춤 피드백';
+        var autoApply = document.getElementById('fbReviewAutoApply').checked;
 
-    if(st.step==='manual'){
-      body.innerHTML =
-        '<div class="card">' +
-          '<p class="faint" style="margin:0 0 10px;">피드백 봇에게 내릴 지침을 직접 적어주세요. 톤, 강조할 점, 판단 기준 등을 자유롭게 써주시면 돼요.</p>' +
-          '<textarea id="fbManualInput" maxlength="2000" style="width:100%;min-height:220px;">'+escapeHtml(st.draft||'')+'</textarea>' +
-          '<p class="faint" id="fbManualCounter" style="text-align:right;margin:4px 2px 0;font-size:.6875rem;"></p>' +
-        '</div>' +
-        '<div style="display:flex;gap:8px;margin-top:10px;">' +
-          '<button class="btn btn-ghost" id="fbManualCancelBtn" type="button" style="flex:1;">취소</button>' +
-          '<button class="btn btn-primary" id="fbManualSaveBtn" type="button" style="flex:1;">저장하고 적용</button>' +
-        '</div>';
-      var manualInput = document.getElementById('fbManualInput');
-      var mCounter = document.getElementById('fbManualCounter');
-      function updateMCounter(){ mCounter.textContent = manualInput.value.length+'/2000자'; }
-      updateMCounter();
-      manualInput.addEventListener('input', updateMCounter);
-      document.getElementById('fbManualCancelBtn').addEventListener('click', function(){
-        st.step = settings.customFeedbackPrompt ? 'status' : 'chat';
-        renderFeedbackSetup();
-      });
-      document.getElementById('fbManualSaveBtn').addEventListener('click', async function(){
-        var val = manualInput.value.trim();
-        if(!val){ toast('지침 내용을 입력해주세요'); return; }
-        settings.customFeedbackPrompt = val;
-        settings.customFeedbackActive = true;
-        await saveProfile();
-        toast('맞춤 피드백 봇이 저장됐어요');
+        presets.push({
+          id: 'fb_preset_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+          title: titleVal,
+          prompt: st.generated,
+          createdAt: new Date().toISOString()
+        });
+
+        if(autoApply){
+          settings.customFeedbackPrompt = st.generated;
+          settings.customFeedbackActive = true;
+        }
+        await persistFeedbackPresets(presets);
         refreshCustomFeedbackButtons();
+        toast('맞춤 피드백이 저장소에 보관되었어요 🎉');
         st.step = 'status';
         renderFeedbackSetup();
       });
