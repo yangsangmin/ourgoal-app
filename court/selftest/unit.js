@@ -164,6 +164,35 @@ const UNIT_TESTS = [
       t.ok(scenarioLib.isHollow(weak(make([base[0], base[1], { expect: 'noExceptions' }, { expect: 'stillInApp' }, { expect: 'exists', selector: '#b' }]))), '약한 확인만 있는 시나리오가 공허로 안 잡힌다(W2)');
       t.ok(scenarioLib.isHollow(weak(make([base[0], { expect: 'visible', selector: '#b' }, base[1], { expect: 'noExceptions' }]))), '마지막 행동 뒤 확인 없는 시나리오가 공허로 안 잡힌다(W1)');
       t.ok(!scenarioLib.isHollow(weak(make(base))), '정상 시나리오가 공허로 잡힌다');
+      // 다중 계정(L4) 및 기기 모의(L5) 어휘 검증
+      const multiActorValid = make([
+        base[0],
+        { do: 'spawnPeer', path: '/index.html' },
+        { do: 'click', actor: 'peer', selector: '#a' },
+        { expect: 'visible', actor: 'peer', selector: '#b' },
+        { do: 'closePeer' },
+        { expect: 'visible', selector: '#b' }
+      ]);
+      t.eq(errs(multiActorValid).length, 0, '정상 다중 계정 시나리오가 무효: ' + JSON.stringify(errs(multiActorValid)));
+      t.ok(!scenarioLib.isHollow(weak(multiActorValid)), '정상 다중 계정 시나리오가 공허로 잡힌다');
+
+      const deviceValid = make([
+        base[0],
+        { do: 'virtualKeyboard', visible: true, height: 280 },
+        { expect: 'visible', selector: '#b' },
+        { do: 'hardwareBack' },
+        { expect: 'notVisible', selector: '#b' }
+      ]);
+      t.eq(errs(deviceValid).length, 0, '정상 기기 모의 시나리오가 무효: ' + JSON.stringify(errs(deviceValid)));
+      t.ok(!scenarioLib.isHollow(weak(deviceValid)), '정상 기기 모의 시나리오가 공허로 잡힌다');
+
+      // 무효 사례 검증: spawnPeer 전에 peer actor 지정, 두 번 spawnPeer, 닫을 peer 없는 closePeer, 잘못된 actor, 잘못된 virtualKeyboard
+      t.ok(errs(make([base[0], { do: 'click', actor: 'peer', selector: '#a' }, base[2]])).length > 0, 'spawnPeer 전 peer actor 지정');
+      t.ok(errs(make([base[0], { do: 'spawnPeer' }, { do: 'spawnPeer' }, base[2]])).length > 0, 'spawnPeer 중복 생성');
+      t.ok(errs(make([base[0], { do: 'closePeer' }, base[2]])).length > 0, '닫을 peer 없는 closePeer');
+      t.ok(errs(make([base[0], { do: 'click', actor: 'other', selector: '#a' }, base[2]])).length > 0, '잘못된 actor');
+      t.ok(errs(make([base[0], { do: 'virtualKeyboard', visible: 'yes' }, base[2]])).length > 0, 'virtualKeyboard.visible 타입 오류');
+      t.ok(errs(make([base[0], { do: 'virtualKeyboard', visible: true, height: 50 }, base[2]])).length > 0, 'virtualKeyboard.height 범위 미달');
       // 법정 자신의 표준 점검도 같은 어휘 검사를 통과해야 한다.
       for (const n of fs.readdirSync(path.join(COURT, 'scenarios')).filter(x => /^std-.*\.json$/.test(x))) {
         const r = scenarioLib.validateScenario(JSON.parse(fs.readFileSync(path.join(COURT, 'scenarios', n), 'utf8')), cfg);
@@ -215,9 +244,11 @@ const UNIT_TESTS = [
     id: 'U-grade', title: '확인 수준 비교(meets): 모르는 등급은 어느 쪽에 와도 충족이 아니다',
     run(t) {
       t.eq(grade.meets('L3', 'L3'), true, 'L3 ≥ L3'); t.eq(grade.meets('L5', 'L4'), true, 'L5 ≥ L4'); t.eq(grade.meets('L1', 'L1'), true, 'L1 ≥ L1');
-      t.eq(grade.meets('L1', 'L3'), false, 'L1 < L3'); t.eq(grade.meets('L3', 'L4'), false, 'L3 < L4'); t.eq(grade.meets('L0', 'L1'), false, 'L0 < L1');
+      t.eq(grade.meets('L4', 'L4'), true, 'L4 ≥ L4'); t.eq(grade.meets('L5', 'L5'), true, 'L5 ≥ L5');
+      t.eq(grade.meets('L3', 'L4'), false, 'L3 < L4'); t.eq(grade.meets('L4', 'L5'), false, 'L4 < L5');
+      t.eq(grade.meets('L1', 'L3'), false, 'L1 < L3'); t.eq(grade.meets('L0', 'L1'), false, 'L0 < L1');
       t.eq(grade.meets('L3', 'L9'), false, '모르는 하한'); t.eq(grade.meets('L9', 'L0'), false, '모르는 달성 등급'); t.eq(grade.meets(undefined, undefined), false, '둘 다 없음'); t.eq(grade.meets('L5', ''), false, '빈 하한');
-      t.eq(grade.label('L4'), '진짜 계정끼리 주고받아 봄', 'L4 이름'); t.eq(grade.label('L3'), 'PC 화면에서 눌러 봄', 'L3 이름');
+      t.eq(grade.label('L5'), '진짜 폰에서 해 봄', 'L5 이름'); t.eq(grade.label('L4'), '진짜 계정끼리 주고받아 봄', 'L4 이름'); t.eq(grade.label('L3'), 'PC 화면에서 눌러 봄', 'L3 이름');
       t.ok(grade.GRADES.every((g, i) => g.rank === i && g.id === 'L' + i), '등급 표 순서');
     },
   },

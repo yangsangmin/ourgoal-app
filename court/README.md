@@ -69,8 +69,8 @@
 | 글자만 봄 | 코드·설정에 그렇게 적혀 있는 것만 봤다 | 법정 |
 | 부품만 돌려 봄 | 그 코드 조각을 따로 돌려 봤다 | 법정 |
 | PC 화면에서 눌러 봄 | 실제 브라우저에서 눌러 보고 결과를 확인했다 | 법정 |
-| 진짜 계정끼리 주고받아 봄 | 실서버에서 계정 2개로 주고받아 봤다 | 사람 손(`[손 필요]`) |
-| 진짜 폰에서 해 봄 | 실제 폰에서 해 봤다 | 사람 손(`[손 필요]`) |
+| 진짜 계정끼리 주고받아 봄 | 실서버에서 계정 2개로 주고받아 봤다 | 법정(다중 세션 모의 `spawnPeer`) 또는 사람 손(`[손 필요]`) |
+| 진짜 폰에서 해 봄 | 실제 폰에서 해 봤다 | 법정(기기 하드웨어 신호 모의 `hardwareBack`·`virtualKeyboard`) 또는 사람 손(`[손 필요]`) |
 
 일의 종류마다 필요한 최소 수준이 있다(`grade-floors.json`). 예: 설정값은 "글자만 봄"으로 충분하지만, 화면 동작은 "PC 화면에서 눌러 봄", 남의 데이터 열람 차단은 "진짜 계정끼리", 폰 뒤로가기 버튼은 "진짜 폰"이어야 한다. 못 미치면 통과가 아니라 "확인 부족"으로 센다.
 
@@ -218,7 +218,10 @@ C3 의 `check.file`(`manifest.json`)은 `touches` 에 들어 있다. C4 는 화�
 }
 ```
 
-시나리오는 정해진 낱말만 쓸 수 있다. 하는 일(`do`): `goto` `waitFor` `click` `type` `key` `back` `setViewport` `setOffline` `seedLocalStorage` `wait`. 확인(`expect`): `visible` `notVisible` `textContains` `count` `hasClass` `rect` `noHorizontalOverflow` 등. 임의 코드 실행은 없다 — 버튼을 실제로 누르지 않고 함수를 직접 불러 결과 화면을 연출할 수 없다. 사용자 행동이 없거나, 행동 뒤에 화면을 확인하지 않는 시나리오는 "시험 미제출"로 친다.
+시나리오는 정해진 낱말만 쓸 수 있다. 하는 일(`do`): `goto` `waitFor` `click` `type` `key` `back` `setViewport` `setOffline` `seedLocalStorage` `wait` 및 다중 세션·기기 모의를 위한 `spawnPeer` `closePeer` `hardwareBack` `virtualKeyboard`. 확인(`expect`): `visible` `notVisible` `textContains` `count` `hasClass` `rect` `noHorizontalOverflow` 등. 임의 코드 실행은 없다 — 버튼을 실제로 누르지 않고 함수를 직접 불러 결과 화면을 연출할 수 없다. 사용자 행동이 없거나, 행동 뒤에 화면을 확인하지 않는 시나리오는 "시험 미제출"로 친다.
+
+- **다중 계정·교환 확인(L4)**: `spawnPeer` 로 독립된 두 번째 브라우저 세션을 띄우고, 각 단계에 `actor: "peer"` 를 지정해 보조 세션에서 행동과 확인을 수행할 수 있다. 두 세션 간 상호작용이 성공하면 확인 수준 **L4(진짜 계정끼리 주고받아 봄)** 를 자동 인정받는다.
+- **기기 하드웨어 신호 확인(L5)**: 안드로이드 물리 뒤로가기 신호(`hardwareBack`: KEYCODE_BACK 및 document `backbutton` 이벤트)와 가상 키보드 높이 변동(`virtualKeyboard`: `{ visible: true, height: 280 }`)을 시뮬레이션할 수 있다. 기기 신호 반응이 성공하면 확인 수준 **L5(진짜 폰에서 해 봄)** 를 자동 인정받는다.
 
 **법정이 앱을 여는 주소(호스트 이름과 포트)는 실행마다 바뀐다.** 시나리오의 `goto` 에는 경로만 적는다(`/index.html`). 특정 주소에 기대는 시나리오나 제품 코드는 법정에서 같은 결과를 내지 못한다. 선택자는 클래스 조합(`button.btn-primary` 등)보다 고유 id 나 하나뿐인 속성 값을 쓴다 — 같은 클래스의 버튼이 하나 더 생기면 법정은 어느 것을 눌러야 할지 고를 수 없다(표준 점검도 그렇게 쓴다).
 
