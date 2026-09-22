@@ -250,15 +250,26 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       <!-- ④ 내 위치 -->
       <div id="dailyQuestBarWrap" class="daily-quest-bar-wrap" style="display:none;"></div>
-      <div id="crewPacingWidget" class="crew-pacing-widget card">
-        <div class="crew-head">
-          <div class="crew-head-l"><span class="crew-badge" id="userCrewBadge"></span><span class="crew-title">오늘 달성 레이스</span></div>
-          <span class="crew-score" id="userCrewScore"></span>
+      <div id="crewPacingWidget" class="crew-pacing-widget card" style="margin-top:14px;margin-bottom:14px;padding:16px 18px;border-radius:18px;background:var(--card);border:1px solid var(--rule);">
+        <div class="crew-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div class="crew-head-l" style="display:flex;align-items:center;gap:8px;">
+            <span class="crew-badge" id="userCrewBadge" style="background:rgba(239,68,68,0.1);color:#ef4444;font-size:0.75rem;font-weight:700;padding:2px 8px;border-radius:10px;">🔥 실시간 동류 레이스</span>
+            <span class="crew-title" id="userCrewTitle" style="font-weight:800;font-size:0.9375rem;color:var(--ink);">오늘 달성 레이스</span>
+          </div>
+          <span class="crew-score" id="userCrewScore" style="font-weight:700;color:var(--brand);font-size:0.8125rem;"></span>
         </div>
-        <div class="crew-track"><div id="userCrewProgressBar" class="crew-fill"></div></div>
-        <div class="crew-foot">
-          <span>같은 목표를 가진 크루와 함께 달려요</span>
-          <button type="button" class="btn btn-ghost btn-sm" id="btnNudgeCrewMates" onclick="nudgeCrewMates()">응원 보내기</button>
+        <div class="crew-headline-row" id="userCrewHeadline" style="font-size:0.875rem;font-weight:700;color:var(--ink);margin:6px 0 4px;">
+          오늘 함께 달리는 동반자 집계 중… 🔥
+        </div>
+        <div class="crew-track" style="width:100%;height:8px;background:var(--surface-2);border-radius:999px;overflow:hidden;margin:8px 0 10px;">
+          <div id="userCrewProgressBar" class="crew-fill" style="width:0%;height:100%;background:linear-gradient(90deg,#f43f5e,#fb7185);border-radius:999px;transition:width .4s ease;"></div>
+        </div>
+        <div class="crew-foot" style="display:flex;align-items:center;justify-content:space-between;font-size:0.78125rem;color:var(--ink-soft);flex-wrap:wrap;gap:8px;">
+          <span id="userCrewSubtext">오늘 실천을 완료한 동반자들과 함께 완주해보세요</span>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <button type="button" class="btn btn-ghost btn-sm" id="btnGoLiveFeed" style="font-size:0.75rem;padding:4px 10px;border-radius:10px;font-weight:700;border:1px solid var(--rule);min-height:36px;">실시간 피드 ➔</button>
+            <button type="button" class="btn btn-primary btn-sm" id="btnNudgeCrewMates" onclick="nudgeCrewMates()" style="font-size:0.75rem;padding:4px 10px;border-radius:10px;font-weight:700;min-height:36px;">응원 보내기</button>
+          </div>
         </div>
       </div>
       
@@ -10531,22 +10542,118 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
   }
 
-  /* ============ Social Crew Pacing ============ */
+  /* ============ Social Crew Pacing (#TASK-ES-228) ============ */
   function renderCrewPacingWidget(){
     var w = document.getElementById('crewPacingWidget');
-    if(w) w.style.display = 'none';
+    if(!w) return;
+    w.style.display = 'block';
+
+    var nick = (state.profile && (state.profile.nickname || state.profile.displayName)) || '상민';
+    var today = typeof dateKey === 'function' ? dateKey() : (new Date()).toISOString().slice(0, 10);
+
+    // 1. 내가 오늘 체크인했는지 여부
+    var myRecords = (state.profile && state.profile.records) || [];
+    var myCheckedToday = myRecords.some(function(r){
+      var rDate = r.date || (r.startAt ? (typeof dateKey === 'function' ? dateKey(r.startAt) : r.startAt.slice(0, 10)) : null);
+      return rDate === today;
+    });
+
+    // 2. 실데이터: 오늘 체크인/피드 발행한 실 사용자(Unique User ID) 집계
+    var activeUserMap = {};
+    if(myCheckedToday && state.profile && state.profile.id){
+      activeUserMap[state.profile.id] = true;
+    }
+
+    if(typeof FEED_POSTS_CACHE !== 'undefined' && Array.isArray(FEED_POSTS_CACHE)){
+      FEED_POSTS_CACHE.forEach(function(post){
+        if(!post) return;
+        var pDate = post.created_at ? (typeof dateKey === 'function' ? dateKey(post.created_at) : post.created_at.slice(0, 10)) : null;
+        if(pDate === today && post.user_id){
+          activeUserMap[post.user_id] = true;
+        }
+      });
+    }
+
+    var activeCount = Object.keys(activeUserMap).length;
+
+    var headlineEl = document.getElementById('userCrewHeadline');
+    var scoreEl = document.getElementById('userCrewScore');
+    var progressEl = document.getElementById('userCrewProgressBar');
+    var subtextEl = document.getElementById('userCrewSubtext');
+
+    if(headlineEl){
+      if(activeCount === 0){
+        headlineEl.innerHTML = '오늘 <b>' + escapeHtml(nick) + '</b>님이 첫 번째 주자로 완주해보세요! 🏃';
+      } else {
+        headlineEl.innerHTML = '오늘 <b>' + escapeHtml(nick) + '</b>님과 함께 달리는 동반자 <b>' + activeCount + '명</b> 🔥';
+      }
+    }
+
+    if(scoreEl){
+      scoreEl.textContent = activeCount > 0 ? (activeCount + '명 완주 진행 중') : '출발 대기';
+    }
+
+    if(progressEl){
+      var pct = activeCount === 0 ? (myCheckedToday ? 20 : 5) : Math.min(100, Math.max(15, activeCount * 20));
+      progressEl.style.width = pct + '%';
+    }
+
+    if(subtextEl){
+      if(myCheckedToday){
+        subtextEl.textContent = '오늘 체크인 완주! 동반자들의 피드를 응원해보세요 ✨';
+      } else {
+        subtextEl.textContent = '오늘의 3초 체크인을 남기면 함께 달리는 크루에 합류합니다 🚀';
+      }
+    }
+
+    var btnFeed = document.getElementById('btnGoLiveFeed');
+    if(btnFeed){
+      btnFeed.onclick = function(){
+        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+        state.commSubTab = 'feed';
+        if(typeof setTab === 'function') setTab('comm');
+        else if(typeof switchTab === 'function') switchTab('comm');
+        if(typeof renderCommScreen === 'function') renderCommScreen();
+      };
+    }
+
+    // 피드 캐시 비어있으면 비동기 자동 로드 후 갱신
+    if(typeof ensureFeedPostsLoaded === 'function' && !FEED_POSTS_CACHE){
+      ensureFeedPostsLoaded().then(function(){
+        var reUsers = {};
+        if(myCheckedToday && state.profile && state.profile.id) reUsers[state.profile.id] = true;
+        if(Array.isArray(FEED_POSTS_CACHE)){
+          FEED_POSTS_CACHE.forEach(function(post){
+            if(!post) return;
+            var pDate = post.created_at ? (typeof dateKey === 'function' ? dateKey(post.created_at) : post.created_at.slice(0, 10)) : null;
+            if(pDate === today && post.user_id) reUsers[post.user_id] = true;
+          });
+        }
+        var reCount = Object.keys(reUsers).length;
+        if(headlineEl){
+          if(reCount === 0){
+            headlineEl.innerHTML = '오늘 <b>' + escapeHtml(nick) + '</b>님이 첫 번째 주자로 완주해보세요! 🏃';
+          } else {
+            headlineEl.innerHTML = '오늘 <b>' + escapeHtml(nick) + '</b>님과 함께 달리는 동반자 <b>' + reCount + '명</b> 🔥';
+          }
+        }
+        if(scoreEl) scoreEl.textContent = reCount > 0 ? (reCount + '명 완주 진행 중') : '출발 대기';
+        if(progressEl){
+          var rePct = reCount === 0 ? (myCheckedToday ? 20 : 5) : Math.min(100, Math.max(15, reCount * 20));
+          progressEl.style.width = rePct + '%';
+        }
+      }).catch(function(){});
+    }
   }
 
   function nudgeCrewMates(){
-    triggerHaptic(40);
-    toast('크루원들에게 응원을 보냈어요');
+    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(15);
+    else if(typeof triggerHaptic === 'function') triggerHaptic(15);
+    burstConfetti(window.innerWidth / 2, window.innerHeight / 2, 16);
+    toast('오늘 함께 달리는 동반자들에게 뜨거운 응원을 보냈어요! 📣');
     if(window._recordHesitation) window._recordHesitation('nudgeCrewMates');
-    var bar = document.getElementById('userCrewProgressBar');
-    if(bar) {
-      bar.style.width = '0%';
-      setTimeout(function(){ bar.style.width = '0%'; }, 1800);
-    }
   }
+  window.renderCrewPacingWidget = renderCrewPacingWidget;
   window.nudgeCrewMates = nudgeCrewMates;
 
   /* ============ UX Telemetry (Hesitation & Rage Tap) ============ */

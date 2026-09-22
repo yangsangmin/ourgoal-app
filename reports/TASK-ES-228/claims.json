@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-228",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-228-HOME-RACE-REAL-DATA.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html에 오늘 함께 달리는 동반자 실데이터 헤드라인 요소(id=\"userCrewHeadline\")가 배치되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "index.html에 소통 탭 실시간 피드 바로가기 버튼(id=\"btnGoLiveFeed\")이 배선되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "renderCrewPacingWidget 함수 내에 가짜 시뮬레이션 대신 실 사용자 집계(activeUserMap) 로직이 구현되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "ui.css에서 crew-pacing-widget의 display:none!important 은폐가 해제되어 정상 렌더링되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "scripts/smoke-test.js에 TASK-ES-228 검증 케이스가 추가되어야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 #userCrewHeadline 마크업이 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"userCrewHeadline\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 #btnGoLiveFeed 버튼이 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"btnGoLiveFeed\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html의 renderCrewPacingWidget에 실 사용자 집계 activeUserMap 로직이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "activeUserMap"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css에 .crew-pacing-widget display:none!important 은폐가 제거되었다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "ui.css",
+        "text": ".crew-pacing-widget{display:none!important;}"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-228 검증 케이스가 추가되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-228] [생각 메모장 98번] 홈 탭 '오늘 달성 레이스' 가짜 시뮬레이션 제거 및 '함께 달리는 동류 N명' 실데이터 배선 무결성"
+      }
+    }
+  ]
+}
