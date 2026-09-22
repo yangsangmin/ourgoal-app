@@ -1,0 +1,102 @@
+{
+  "task": "TASK-ES-246",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-246-COMM-PEER-RADAR-SLIM-FOLD.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "소통탭 러닝메이트 레이더가 가로 1줄 56px 내외의 콤팩트 스토리 스트립 형태로 슬림화되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "레이더 헤더 우측에 접기/펼치기 토글 버튼(#peerRadarToggleBtn)이 배선되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "OurgoalSanctuaryV3.toggleRadarCollapse 함수가 구현되어 12ms 햅틱과 함께 접힘 상태가 전환되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "아바타 클릭 시 1:1 DM 및 프로필 인터랙션(openPeerInteraction)이 100% 보존되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "npm test 및 38개 헌법 게이트, Zero Dead-Click 검사가 100% ALL PASS여야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내 .s-peer-radar-card 슬림화 및 .s-r-goal 숨김 규칙이 선언된다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".s-r-goal"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "js/sanctuary-v3-engine.js 내 #peerRadarToggleBtn이 선언된다",
+      "touches": [
+        "js/sanctuary-v3-engine.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/sanctuary-v3-engine.js",
+        "text": "peerRadarToggleBtn"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "OurgoalSanctuaryV3.toggleRadarCollapse 함수가 노출된다",
+      "touches": [
+        "js/sanctuary-v3-engine.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/sanctuary-v3-engine.js",
+        "text": "toggleRadarCollapse"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "openPeerInteraction 핸들러가 아바타 아이템에 정상 바인딩된다",
+      "touches": [
+        "js/sanctuary-v3-engine.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/sanctuary-v3-engine.js",
+        "text": "openPeerInteraction"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "e2e",
+      "domain": "safety",
+      "statement": "npm test 및 헌법 38개 검증 게이트와 Zero Dead-Click 검사가 100% 통과한다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "commandPasses",
+        "command": "npm test"
+      }
+    }
+  ]
+}

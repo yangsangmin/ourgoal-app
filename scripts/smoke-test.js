@@ -7460,6 +7460,24 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+
+check('[#TASK-ES-246] 소통탭 실시간 러닝메이트 레이더 영역 슬림화 및 접이식 콤팩트 카드 전환 무결성', () => {
+  const v3Engine = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 접기/펼치기 토글 버튼 및 함수 확인
+  assert.ok(v3Engine.includes('peerRadarToggleBtn'), 'peerRadarToggleBtn 토글 버튼 선언 확인');
+  assert.ok(v3Engine.includes('toggleRadarCollapse'), 'toggleRadarCollapse 함수 구현 확인');
+  assert.ok(v3Engine.includes('toggleRadarCollapse: toggleRadarCollapse'), 'OurgoalSanctuaryV3.toggleRadarCollapse 공개 노출 확인');
+
+  // 2. 슬림 모드 및 목표 텍스트 숨김 CSS 확인
+  assert.ok(cssContent.includes('.s-r-goal'), '.s-r-goal CSS 선언 확인');
+  assert.ok(cssContent.includes('display: none !important;'), '.s-r-goal display: none 슬림화 규칙 확인');
+
+  // 3. 피어 인터랙션 보존 확인
+  assert.ok(v3Engine.includes('openPeerInteraction'), 'openPeerInteraction 핸들러 보존 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
