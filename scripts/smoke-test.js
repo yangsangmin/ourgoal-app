@@ -7460,6 +7460,24 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+
+check('[#TASK-ES-245] 기록탭 샘플 데이터 1초 체험 후 원클릭 완전 삭제/초기화 기능 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. #recSamplePurgeBanner 슬롯 확인
+  assert.ok(indexHtml.includes('id="recSamplePurgeBanner"'), '#recSamplePurgeBanner 슬롯 선언 확인');
+  assert.ok(cssContent.includes('.rec-sample-purge-box'), '.rec-sample-purge-box CSS 선언 확인');
+
+  // 2. purgeSampleRecordsOneClick 함수 및 샘플 선별 필터링 확인
+  assert.ok(indexHtml.includes('window.purgeSampleRecordsOneClick'), 'purgeSampleRecordsOneClick 전역 배선 확인');
+  assert.ok(indexHtml.includes('r.isSample === true'), 'isSample === true 능동 감지 로직 확인');
+  assert.ok(indexHtml.includes('r.isSample !== true'), '사용자 기록 무손실 보존 필터링 확인');
+
+  // 3. 정화 후 온보딩 빈 상태 문구 확인
+  assert.ok(indexHtml.includes('이제 나만의 첫 실천을 기록해보세요! ✨'), '온보딩 격려 문구 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

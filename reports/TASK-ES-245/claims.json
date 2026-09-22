@@ -1,0 +1,102 @@
+{
+  "task": "TASK-ES-245",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-245-RECORDS-SAMPLE-DATA-PURGE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "기록탭 상단에 샘플 데이터 능동 감지 슬롯(#recSamplePurgeBanner)이 배치되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "state.profile.records 내 isSample === true 항목이 1건 이상일 때 1초 정리하기 배너가 표출되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "원클릭 정화 함수(purgeSampleRecordsOneClick)가 안전 확인 후 샘플만 정확히 삭제하고 실제 기록은 보존해야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "정화 후 스토리지 동기화, 4대 뷰 전파 및 토스트 안내가 실행되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "npm test 및 38개 헌법 게이트, Zero Dead-Click 검사가 100% ALL PASS여야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "index.html 내 #recSamplePurgeBanner 슬롯이 존재한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"recSamplePurgeBanner\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "renderRecordsScreen 내에 sampleCount 실시간 감지 및 배너 바인딩 로직이 존재한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "r.isSample === true"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "window.purgeSampleRecordsOneClick 함수가 배선되어 샘플 데이터만 선별 제거한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "window.purgeSampleRecordsOneClick"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내 .rec-sample-purge-box 스타일이 선언된다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".rec-sample-purge-box"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "e2e",
+      "domain": "safety",
+      "statement": "npm test 및 헌법 38개 검증 게이트와 Zero Dead-Click 검사가 100% 통과한다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "commandPasses",
+        "command": "npm test"
+      }
+    }
+  ]
+}
