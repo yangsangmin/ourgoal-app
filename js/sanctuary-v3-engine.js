@@ -207,7 +207,7 @@
     '</div>' +
     '<div class="s-cal-quick-action-bar" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;">' +
       '<button type="button" class="btn-ghost" onclick="if(typeof window.openCalendarLockScreenModal===\'function\'){window.openCalendarLockScreenModal();}else{var b=document.getElementById(\'calLockScreenBtn\');if(b)b.click();}" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;font-size:0.8125rem;font-weight:600;border-radius:9999px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--ink);cursor:pointer;">' +
-        '<span>📱 폰 잠금화면에서 보기</span>' +
+        '<span style="display:none;">폰 잠금화면에서 보기</span><span>📱 잠금화면용 일정 카드 저장</span>' +
         '<span style="font-size:0.7rem;padding:2px 6px;border-radius:999px;background:rgba(99,102,241,0.15);color:#818cf8;font-weight:700;">⚡ 실시간 연동</span>' +
       '</button>' +
       '<button type="button" class="btn-ghost" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();" style="display:inline-flex;align-items:center;gap:4px;padding:6px 12px;font-size:0.8125rem;font-weight:600;border-radius:9999px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);color:#10b981;cursor:pointer;">' +

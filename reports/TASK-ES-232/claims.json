@@ -1,0 +1,102 @@
+{
+  "task": "TASK-ES-232",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-232-LOCKSCREEN-SCHEDULE-CARD.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "일정 탭 내 잠금화면 버튼 명칭이 [📱 잠금화면용 일정 카드 저장]으로 정직화되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "모달 내에 '오늘의 핵심 일정과 목표를 휴대폰 배경화면 비율(9:16) 이미지로 갤러리에 저장해요' 서브 안내가 표기되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "1080x1920 해상도의 9:16 일정 카드 이미지 다운로드 버튼(#btnDownloadLockscreenCard)이 배선되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "카드 다운로드 시 15ms 미세 햅틱 피드백과 성공 토스트 피드백이 제공되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "npm test 및 38개 헌법 게이트, Zero Dead-Click 검사가 100% ALL PASS여야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "index.html에 [📱 잠금화면용 일정 카드 저장] 정직화 버튼 라벨이 표기된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "잠금화면용 일정 카드 저장"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "openLockScreenHubModal 모달에 9:16 배경화면 저장 서브 안내 문구가 표기된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "오늘의 핵심 일정과 목표를 휴대폰 배경화면 비율(9:16) 이미지로 갤러리에 저장해요"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "index.html에 #btnDownloadLockscreenCard 버튼과 1080x1920 캔버스 다운로드 로직이 배선된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "btnDownloadLockscreenCard"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "카드 저장 시 triggerHapticFeedback(15) 및 갤러리 저장 성공 토스트가 호출된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "잠금화면용 일정 카드가 갤러리에 저장되었어요! 📱"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "e2e",
+      "domain": "safety",
+      "statement": "npm test 및 헌법 38개 검증 게이트와 Zero Dead-Click 검사가 100% 통과한다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "commandPasses",
+        "command": "npm test"
+      }
+    }
+  ]
+}

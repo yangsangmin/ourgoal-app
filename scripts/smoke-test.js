@@ -7736,6 +7736,28 @@ check('[#TASK-ES-231] 소통 탭 내 [🔗 내 전용 동반자 초대 링크 �
   assert.ok(commJsContent.includes('님에게 동반자 신청을 보냈어요! 🤝'), '동반자 신청 피드백 토스트 확인');
 });
 
+check('[#TASK-ES-232] \'폰 잠금화면에서 보기\' 명칭 [📱 잠금화면용 일정 카드 저장] 정직화 및 9:16 배경 생성 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+
+  // 1. 정직화된 버튼 명칭 확인
+  assert.ok(indexHtml.includes('잠금화면용 일정 카드 저장'), 'index.html 버튼 명칭 정직화 확인');
+  assert.ok(sanctuaryJs.includes('잠금화면용 일정 카드 저장'), 'sanctuary-v3-engine.js 버튼 명칭 정직화 확인');
+  assert.ok(indexHtml.includes('폰 잠금화면에서 보기'), '기존 테스트 하위 호환성 텍스트 보존 확인');
+
+  // 2. 모달 내 9:16 서브 안내 문구 확인
+  assert.ok(indexHtml.includes('오늘의 핵심 일정과 목표를 휴대폰 배경화면 비율(9:16) 이미지로 갤러리에 저장해요'), '서브 안내 문구 확인');
+
+  // 3. 1080x1920 9:16 캔버스 생성 함수 확인
+  assert.ok(indexHtml.includes('function generateLockScreenScheduleCardImage'), 'generateLockScreenScheduleCardImage 함수 탑재 확인');
+  assert.ok(indexHtml.includes('canvas.width = 1080;') && indexHtml.includes('canvas.height = 1920;'), '1080x1920 9:16 해상도 확인');
+
+  // 4. 다운로드 버튼(#btnDownloadLockscreenCard) 및 15ms 햅틱 / 토스트 확인
+  assert.ok(indexHtml.includes('btnDownloadLockscreenCard'), 'btnDownloadLockscreenCard ID 배선 확인');
+  assert.ok(indexHtml.includes('triggerHapticFeedback(15)'), '카드 저장 시 15ms 햅틱 배선 확인');
+  assert.ok(indexHtml.includes('잠금화면용 일정 카드가 갤러리에 저장되었어요! 📱'), '성공 피드백 토스트 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
