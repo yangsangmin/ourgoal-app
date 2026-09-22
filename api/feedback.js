@@ -198,6 +198,22 @@ module.exports = async function handler(req, res) {
             })
           });
 
+          if (geminiRes.status === 429) {
+            console.warn('[Gemini 429 Rate Limit] Engaging exponential backoff...');
+            await new Promise(function(r){ setTimeout(r, 1000); });
+            geminiRes = await fetch(endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                  temperature: 0.2,
+                  responseMimeType: 'application/json'
+                }
+              })
+            });
+          }
+
           if (geminiRes.ok) {
             var geminiData = await geminiRes.json();
             var rawText = ((geminiData.candidates || [])[0] || {}).content && geminiData.candidates[0].content.parts

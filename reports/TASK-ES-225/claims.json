@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-225",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-225-GEMINI-QUOTA-BACKOFF.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html에 Gemini API 분당 쿼터 관리 및 지수 백오프 서킷 브레이커(GeminiQuotaDispatcher)가 정의되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "GeminiQuotaDispatcher에 429 감지 시 지수 백오프(Exponential Backoff: 1s, 2s, 4s) 자동 재시도 로직이 구현되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "GeminiQuotaDispatcher에 30종 이상의 상황별 맞춤 프리미엄 로컬 피드백 풀(PREMIUM_FEEDBACK_CATALOG)이 정의되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "429 쿼터 초과 또는 재시도 실패 시 0.3초 내에 고품질 프리미엄 피드백으로 즉각 폴백하고 안내 토스트를 표출해야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "scripts/smoke-test.js에 TASK-ES-225 429 쿼터 방어 및 백오프 무결성 검증 케이스가 추가되어야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 GeminiQuotaDispatcher 객체가 선언되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "var GeminiQuotaDispatcher"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 429 감지 및 지수 백오프 재시도 로직이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "backoffDelays"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 30종 상황별 맞춤 프리미엄 피드백 풀이 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "PREMIUM_FEEDBACK_CATALOG"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 429 폴백 안내 토스트 및 0.3초 무중단 렌더링이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "AI 응답량이 많아 고품질 추천 엔진으로 즉시 보답해 드렸습니다"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-225 검증 케이스가 추가되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-225] [생각 메모장 95번] 동시 접속 급증 대비 Gemini API 분당 쿼터(Rate Limit 429) 방어 및 백오프 큐 무결성"
+      }
+    }
+  ]
+}

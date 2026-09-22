@@ -7460,6 +7460,28 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+check('[#TASK-ES-225] [생각 메모장 95번] 동시 접속 급증 대비 Gemini API 분당 쿼터(Rate Limit 429) 방어 및 백오프 큐 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const apiFeedback = fs.readFileSync(path.join(__dirname, '..', 'api', 'feedback.js'), 'utf8');
+
+  // 1. GeminiQuotaDispatcher 및 지수 백오프 큐 선언 확인
+  assert.ok(indexHtml.includes('var GeminiQuotaDispatcher'), 'GeminiQuotaDispatcher 선언 확인');
+  assert.ok(indexHtml.includes('backoffDelays: [1000, 2000, 4000]'), '1s, 2s, 4s 지수 백오프 딜레이 정의 확인');
+  assert.ok(indexHtml.includes('simulate429: function()'), '429 시뮬레이터 제공 확인');
+
+  // 2. 30종 이상 상황별 프리미엄 로컬 피드백 카탈로그 확인
+  assert.ok(indexHtml.includes('var PREMIUM_FEEDBACK_CATALOG'), 'PREMIUM_FEEDBACK_CATALOG 선언 확인');
+  assert.ok(indexHtml.includes('study: ['), '학습 카테고리 피드백 풀 확인');
+  assert.ok(indexHtml.includes('workout: ['), '운동 카테고리 피드백 풀 확인');
+  assert.ok(indexHtml.includes('business: ['), '업무/비즈니스 피드백 풀 확인');
+  assert.ok(indexHtml.includes('mind: ['), '마음챙김 피드백 풀 확인');
+  assert.ok(indexHtml.includes('daily: ['), '일상 루틴 피드백 풀 확인');
+
+  // 3. 안내 토스트 및 서버 안전망 확인
+  assert.ok(indexHtml.includes('AI 응답량이 많아 고품질 추천 엔진으로 즉시 보답해 드렸습니다 ✨'), '429 폴백 안내 토스트 확인');
+  assert.ok(apiFeedback.includes('geminiRes.status === 429'), '서버 feedback.js 429 감지 및 백오프 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
