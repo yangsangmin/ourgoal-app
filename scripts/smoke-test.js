@@ -7548,6 +7548,10 @@ check('[#TASK-ES-222] 카카오톡 인앱 브라우저 감지 및 Safari/Chrome 
 
   // 4. 세션 스토리지 기반 재노출 방지 배선 확인
   assert.ok(indexHtml.includes('ourgoal_hide_kakao_escape'), 'sessionStorage ourgoal_hide_kakao_escape 누락');
+
+  // 5. 2차 고도화: 상시 플로팅 배너 및 테스팅 ?kakao=1 지원 확인
+  assert.ok(indexHtml.includes('position:fixed;top:0;left:50%'), '플로팅 배너 position:fixed 중앙 정렬 누락');
+  assert.ok(indexHtml.includes('kakao|inapp|debug_inapp'), '테스트 파라미터 감지 누락');
 });
 
 check('[#TASK-ES-223] [생각 메모장 93번] 개발 디버그 버튼 프로덕션 완전 소거 및 로컬 조건부 격리 무결성', () => {

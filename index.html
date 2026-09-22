@@ -3888,17 +3888,29 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
     } catch(e){}
     openModal(
-      '<div style="text-align:center;padding:18px 12px;">' +
-        '<div style="font-size:2.4rem;margin-bottom:12px;">🧭</div>' +
-        '<h3 style="margin:0 0 8px;font-size:1.15rem;font-weight:800;color:var(--ink);">Safari(사파리)로 열기</h3>' +
-        '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.6;margin:0 0 16px;">' +
-          '카카오톡 앱에서는 카카오 자동 로그인이 지연될 수 있어요.<br>' +
+      '<div style="text-align:center;padding:18px 14px;">' +
+        '<div style="font-size:2.4rem;margin-bottom:10px;">🧭</div>' +
+        '<h3 style="margin:0 0 8px;font-size:1.15rem;font-weight:800;color:var(--ink);">Safari(사파리)로 열기 안내</h3>' +
+        '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.55;margin:0 0 16px;">' +
+          '카카오톡 앱에서는 카카오 자동 로그인 세션이 끊길 수 있어요.<br>' +
           '화면 우측 하단 <b>[···]</b> 또는 상단 <b>[⋮]</b>을 누른 후<br>' +
-          '<b style="color:var(--brand);">[Safari로 열기]</b> 또는 <b>[다른 브라우저로 열기]</b>를 선택해주세요!<br>' +
-          '<span style="font-size:.78rem;color:var(--brand);margin-top:8px;display:block;font-weight:600;">✨ 아워골 접속 주소가 클립보드에 복사되었습니다.</span>' +
+          '<b style="color:var(--brand);">[Safari로 열기]</b> 또는 <b>[다른 브라우저로 열기]</b>를 선택해주세요!' +
         '</p>' +
+        '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:14px;text-align:left;display:flex;flex-direction:column;gap:8px;">' +
+          '<div style="display:flex;align-items:center;gap:8px;font-size:.8125rem;font-weight:700;color:var(--ink);">' +
+            '<span style="background:var(--brand);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;">1</span>' +
+            '<span>화면 우측 하단 <b>[···]</b> (또는 상단 <b>[⋮]</b>) 터치</span>' +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:8px;font-size:.8125rem;font-weight:700;color:var(--ink);">' +
+            '<span style="background:var(--brand);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;">2</span>' +
+            '<span><b>[Safari로 열기]</b> 선택 후 간편 로그인 및 홈 화면 추가</span>' +
+          '</div>' +
+        '</div>' +
+        '<div style="background:rgba(99,102,241,0.08);border:1px solid var(--brand-line, rgba(99,102,241,0.25));border-radius:10px;padding:10px;font-size:.78125rem;color:var(--brand);font-weight:600;margin-bottom:14px;">' +
+          '✨ 아워골 접속 주소가 클립보드에 자동 복사되었습니다.' +
+        '</div>' +
         '<button class="btn btn-primary" id="btnCopyInAppUrlAgain" type="button" style="width:100%;min-height:44px;margin-bottom:8px;padding:12px;font-weight:700;border-radius:12px;background:var(--brand);border:none;">주소 다시 복사하기</button>' +
-        '<button class="btn btn-ghost btn-sm" id="btnCloseInAppModal" type="button" style="width:100%;min-height:40px;">닫기</button>' +
+        '<button class="btn btn-ghost btn-sm" id="btnCloseInAppModal" type="button" style="width:100%;min-height:40px;font-weight:600;border-radius:10px;border:1px solid var(--rule);">닫기</button>' +
       '</div>',
       function(sheet){
         var cBtn = sheet.querySelector('#btnCloseInAppModal');
@@ -3908,7 +3920,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           if(typeof triggerHaptic === 'function') triggerHaptic(12);
           try {
             navigator.clipboard.writeText(u);
-            toast('주소가 복사되었습니다. Safari 주소창에 붙여넣어주세요!');
+            toast('주소가 복사되었습니다. Safari 주소창에 붙여넣어주세요! ✨');
           } catch(e){
             toast('주소: ' + u);
           }
@@ -3917,24 +3929,23 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     );
   }
 
-  function checkKakaoInAppBrowser(){
+  function checkKakaoInAppBrowser(force){
     if(typeof navigator === 'undefined' || !navigator.userAgent) return;
-    var isKakao = /KAKAOTALK/i.test(navigator.userAgent);
+    var isKakao = !!force || /KAKAOTALK/i.test(navigator.userAgent) || /[?&](kakao|inapp|debug_inapp)=1/i.test(window.location.search);
     if(!isKakao) return;
 
     var isAndroid = /Android/i.test(navigator.userAgent);
     var currentUrl = window.location.href;
 
     // 1. 안드로이드 (Android): intent:// scheme 호출로 1초 만에 Chrome으로 자동 탈출
-    if(isAndroid){
+    if(isAndroid && !force){
       var cleanUrl = currentUrl.replace(/^https?:\/\//i, '');
       window.location.href = 'intent://' + cleanUrl + '#Intent;scheme=https;package=com.android.chrome;end';
-      return;
     }
 
-    // 2. 아이폰 (iOS) 및 기타 웹뷰: 세션 내 닫기 여부 확인
+    // 2. 아이폰 (iOS) 및 기타 웹뷰: 세션 내 닫기 여부 확인 (force 모드 제외)
     try {
-      if(sessionStorage.getItem('ourgoal_hide_kakao_escape') === '1') return;
+      if(!force && sessionStorage.getItem('ourgoal_hide_kakao_escape') === '1') return;
     } catch(e){}
 
     // 이미 배너가 있으면 중복 생성 방지
@@ -3944,15 +3955,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(!document.body || document.getElementById('inAppBrowserNotice')) return;
       var nDiv = document.createElement('div');
       nDiv.id = 'inAppBrowserNotice'; /* id="inAppBrowserNotice" */
-      nDiv.style.cssText = 'background:#10b981;background:linear-gradient(135deg, #059669 0%, #10b981 100%);color:#ffffff;padding:10px 14px;font-size:0.8125rem;text-align:center;font-weight:600;z-index:99999;position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;box-shadow:0 4px 12px rgba(16,185,129,0.25);border-bottom:1px solid rgba(255,255,255,0.2);';
+      nDiv.style.cssText = 'position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;z-index:100000;background:#10b981;background:linear-gradient(135deg, #059669 0%, #10b981 100%);color:#ffffff;padding:10px 14px;font-size:0.8125rem;text-align:center;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:8px;box-shadow:0 4px 14px rgba(16,185,129,0.35);border-bottom:1px solid rgba(255,255,255,0.25);box-sizing:border-box;backdrop-filter:blur(8px);';
       nDiv.innerHTML = '' +
-        '<div style="display:flex;align-items:center;gap:6px;flex:1;text-align:left;min-width:0;">' +
-          '<span style="font-size:1.1rem;flex-shrink:0;">⚡</span>' +
-          '<span style="font-size:.78125rem;line-height:1.35;word-break:keep-all;">더 편리한 사용을 위해 우측 하단 <b>[···]</b> 누르고 <b>[Safari로 열기]</b>를 눌러주세요!</span>' +
+        '<div style="display:flex;align-items:center;gap:8px;flex:1;text-align:left;min-width:0;">' +
+          '<span style="font-size:1.15rem;flex-shrink:0;">⚡</span>' +
+          '<span style="font-size:.78125rem;line-height:1.4;word-break:keep-all;">' +
+            (isAndroid ? '쾌적한 아워골 이용을 위해 <b>Chrome 브라우저</b>로 이동을 권장합니다!' : '더 편리한 사용을 위해 우측 하단 <b>[···]</b> 누르고 <b>[Safari로 열기]</b>를 눌러주세요!') +
+          '</span>' +
         '</div>' +
         '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">' +
-          '<button type="button" id="btnEscapeInAppNotice" style="background:#ffffff;color:#065f46;border:none;padding:6px 10px;min-height:34px;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.1);">' +
-            'Safari 열기 안내' +
+          '<button type="button" id="btnEscapeInAppNotice" style="background:#ffffff;color:#065f46;border:none;padding:6px 12px;min-height:34px;border-radius:8px;font-size:0.75rem;font-weight:800;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.12);">' +
+            (isAndroid ? 'Chrome 열기' : 'Safari 열기 안내') +
           '</button>' +
           '<button type="button" id="btnCloseInAppBanner" style="background:rgba(255,255,255,0.2);color:#ffffff;border:none;width:28px;height:28px;border-radius:50%;font-size:0.875rem;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;" title="닫기">' +
             '✕' +
