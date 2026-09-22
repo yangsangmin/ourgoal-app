@@ -7928,6 +7928,22 @@ check('[#TASK-ES-241] 일정탭 주간 뷰 전환 버튼 및 주간 캘린더 �
   assert.ok(sanctContent.includes('var(--surface-2'), 's-cal-item 테마 변수 바인딩 확인');
 });
 
+check('[#TASK-ES-242] 기록탭 대표 안내멘트(#recHeadlineSentence) 시인성 개선 및 공간 효율적 간결 문구 재배치 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. #recHeadlineSentence 압축 스타일 선언 확인
+  assert.ok(cssContent.includes('#recHeadlineSentence'), '#recHeadlineSentence CSS 선언 확인');
+  assert.ok(cssContent.includes('margin: 4px 0 10px 0 !important;'), '#recHeadlineSentence margin: 4px 0 10px 0 선언 확인');
+  assert.ok(cssContent.includes('margin-top: 6px !important;'), '.toss-record-hero-card margin-top: 6px 확인');
+
+  // 2. 모바일 480px 반응형 규칙 확인
+  assert.ok(cssContent.includes('margin: 4px 0 8px 0 !important;'), '#recHeadlineSentence 480px 반응형 마진 확인');
+
+  // 3. index.html 내 카피라이팅 확인
+  assert.ok(indexHtml.includes('매일의 작은 실천이'), '매일의 작은 실천이 카피 문구 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
