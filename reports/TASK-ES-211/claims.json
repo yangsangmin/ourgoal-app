@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-211",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-211-HOME-TOSS-INNOVATION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "ui.css에 토스 홈 1순위 대표 목표 원카드 조형(.toss-home-focus-card) 및 체크인 클린 박스(.toss-checkin-clean-box) 스타일이 정의되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "index.html의 홈 탭(#screen-home)에 대화체 문장형 헤드라인(#homeHeadlineSentence)과 오늘의 원카드 영역이 시맨틱하게 배선되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "체크인 완료(captureSave) 및 퀘스트 완료 시 12ms 미세 햅틱 피드백(triggerHapticFeedback) 및 4대 뷰 동시 전파(dispatchFullViewPropagation)가 배선되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "아워골 평가하기 배너(#homeEvalBanner)가 하단 서머리 푸터로 안전하게 정돈되어 렌더링되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "기존 38대 헌법 무결성 게이트 및 767개 정적 버튼 Dead-Click 검사가 100% ALL PASS를 유지해야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css에 .toss-home-focus-card 클래스가 정의되어 1순위 대표 목표 원카드 조형을 제공한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".toss-home-focus-card"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css에 .toss-checkin-clean-box 클래스가 정의되어 군더더기 없는 3초 체크인 레이아웃을 제공한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".toss-checkin-clean-box"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 id=\"homeHeadlineSentence\" 요소가 정의되어 문장형 헤드라인을 렌더링한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"homeHeadlineSentence\""
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 id=\"homeEvalBanner\" 요소가 정의되어 하단 서머리 푸터로 안전하게 렌더링된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"homeEvalBanner\""
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 dispatchFullViewPropagation 호출이 배선되어 체크인 후 4대 뷰 동시 전파를 보증한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "dispatchFullViewPropagation"
+      }
+    }
+  ]
+}

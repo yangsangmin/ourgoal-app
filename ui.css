@@ -5234,8 +5234,6 @@ body {
 #btnCustomHomeLayout,
 #screen-home .home-head-row span,
 .theme-guide-microcopy,
-#checkinFeedbackTierBar,
-#customFeedbackBtn,
 #homeEvalBanner,
 #offlineNoticeBanner {
   display: none !important;
@@ -5504,10 +5502,6 @@ body {
 [data-theme="black"] #todayMissionCard,
 [data-theme="white"] #todayMissionCard,
 [data-theme="urban-city"] #todayMissionCard,
-[data-theme="focus-sanctuary"] #checkinFeedbackTierBar,
-[data-theme="black"] #checkinFeedbackTierBar,
-[data-theme="white"] #checkinFeedbackTierBar,
-[data-theme="urban-city"] #checkinFeedbackTierBar,
 [data-theme="focus-sanctuary"] .theme-guide-microcopy,
 [data-theme="black"] .theme-guide-microcopy,
 [data-theme="white"] .theme-guide-microcopy,
@@ -5516,10 +5510,6 @@ body {
 [data-theme="black"] #captureLiveMeta,
 [data-theme="white"] #captureLiveMeta,
 [data-theme="urban-city"] #captureLiveMeta,
-[data-theme="focus-sanctuary"] #customFeedbackBtn,
-[data-theme="black"] #customFeedbackBtn,
-[data-theme="white"] #customFeedbackBtn,
-[data-theme="urban-city"] #customFeedbackBtn,
 [data-theme="focus-sanctuary"] #crewPacingWidget,
 [data-theme="black"] #crewPacingWidget,
 [data-theme="white"] #crewPacingWidget,
@@ -9718,3 +9708,293 @@ html[data-theme="urban-city"] .s-seg-pill {
     margin-bottom: 12px;
   }
 }
+
+/* ==========================================================================
+   #TASK-ES-211: 홈 탭(screen-home) 토스(Toss)식 UI/UX 전면 혁신
+   - 엄지 영역(Thumb-Zone) 초집중 플렉스 오더 위계 재편
+   - 오늘의 원카드 (.toss-home-focus-card, .toss-focus-badge, .toss-focus-complete-btn)
+   - 군더더기 없는 3초 체크인 (.toss-checkin-clean-box, .toss-checkin-save-btn)
+   - 스타터 웰컴 원카드 (.toss-home-starter-card, .toss-starter-chip)
+   - 하단 서머리 푸터 (.toss-home-footer-summary)
+   ========================================================================== */
+
+#screen-home.active {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+#screen-home:not(.active) {
+  display: none !important;
+}
+
+#screen-home .sanctuary-top-bar { order: 1; }
+#screen-home .home-head-row { order: 2; }
+#screen-home #homeHeadlineSentence { order: 3; }
+#screen-home .home-recent-title { order: 4; margin: 4px 0 8px; }
+#screen-home #homePositionStrip { order: 5; }
+#screen-home #homeGoalList { order: 6; margin-bottom: 12px; }
+#screen-home #captureCardBox { order: 7; margin-bottom: 12px; }
+#screen-home #levelBadgeRow { order: 8; }
+#screen-home #todayGlancePill { order: 9; }
+#screen-home #a11yLiveAnnouncer { order: 10; }
+#screen-home #offlineNoticeBanner { order: 11; }
+#screen-home #notifyBannerSlot { order: 12; }
+#screen-home #socialNotifySlot { order: 13; }
+#screen-home #iosPwaSlot { order: 14; }
+#screen-home #todayMissionCard { order: 20; }
+#screen-home #homeGrassSummaryCard { order: 21; }
+#screen-home #customFeedbackBtn { order: 22; }
+#screen-home #dailyQuestBarWrap { order: 23; }
+#screen-home #crewPacingWidget { order: 24; margin-bottom: 14px; }
+#screen-home .home-actions { order: 30; margin-top: 6px; margin-bottom: 10px; }
+#screen-home #homeEvalBanner { order: 31; margin-top: 6px !important; margin-bottom: 24px !important; }
+
+/* 토스 홈 오늘의 원카드 (Today Focus Card) */
+.toss-home-focus-card {
+  background: var(--card, #ffffff);
+  border-radius: 20px !important;
+  padding: 18px 18px 16px 18px !important;
+  margin-bottom: 14px !important;
+  border: 1.5px solid rgba(16, 185, 129, 0.35) !important;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+[data-theme="dark"] .toss-home-focus-card,
+[data-theme="black"] .toss-home-focus-card,
+[data-theme="focus-sanctuary"] .toss-home-focus-card {
+  background: linear-gradient(180deg, #1C2026 0%, #16181D 100%) !important;
+  border: 1px solid rgba(16, 185, 129, 0.4) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), 0 0 15px rgba(16, 185, 129, 0.15) !important;
+}
+
+.toss-home-focus-card:active {
+  transform: scale(0.995);
+}
+
+.toss-focus-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  margin-bottom: 8px;
+}
+
+.toss-focus-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.toss-focus-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--ink, #191f28);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.toss-focus-sub {
+  font-size: 0.78125rem;
+  color: var(--ink-soft, #8b95a1);
+  margin-top: 2px;
+}
+
+.toss-focus-progress-wrap {
+  margin: 12px 0 14px;
+}
+
+.toss-focus-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ink-soft, #8b95a1);
+  margin-bottom: 4px;
+}
+
+.toss-focus-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .toss-focus-progress-bar,
+[data-theme="black"] .toss-focus-progress-bar,
+[data-theme="focus-sanctuary"] .toss-focus-progress-bar {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.toss-focus-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toss-focus-complete-btn {
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: 14px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+  transition: all 0.15s ease;
+}
+
+.toss-focus-complete-btn:active {
+  transform: scale(0.98);
+}
+
+.toss-focus-complete-btn.is-done {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #10B981 !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  box-shadow: none !important;
+}
+
+/* 3초 체크인 클린 박스 */
+.toss-checkin-clean-box {
+  border-radius: 20px !important;
+  padding: 16px !important;
+  background: var(--card, #ffffff) !important;
+  border: 1px solid var(--rule, rgba(0, 0, 0, 0.08)) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
+}
+
+[data-theme="dark"] .toss-checkin-clean-box,
+[data-theme="black"] .toss-checkin-clean-box,
+[data-theme="focus-sanctuary"] .toss-checkin-clean-box {
+  background: #1A1C21 !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+
+.toss-checkin-save-btn {
+  background: linear-gradient(135deg, #3182f6 0%, #1b64da 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(49, 130, 246, 0.35) !important;
+}
+
+/* 스타터 웰컴 원카드 */
+.toss-home-starter-card {
+  border-radius: 20px !important;
+  padding: 18px 16px !important;
+  background: var(--card, #ffffff) !important;
+  border: 1.5px dashed rgba(16, 185, 129, 0.4) !important;
+  box-sizing: border-box;
+}
+
+[data-theme="dark"] .toss-home-starter-card,
+[data-theme="black"] .toss-home-starter-card,
+[data-theme="focus-sanctuary"] .toss-home-starter-card {
+  background: linear-gradient(180deg, #1C2026 0%, #16181D 100%) !important;
+}
+
+/* AI 피드백 모드 바 및 커닝페이퍼 가시성 및 토스 스타일 보장 */
+#checkinFeedbackTierBar {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.05) !important;
+  padding: 4px !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.08)) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+#checkinFeedbackTierBar .tier-btn {
+  flex: 1;
+  padding: 6px 4px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background: transparent;
+  color: var(--ink-soft);
+  text-align: center;
+  white-space: nowrap;
+}
+
+#checkinFeedbackTierBar .tier-btn.active {
+  background: var(--accent, #3182f6) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(49, 130, 246, 0.35) !important;
+}
+
+.ai-mode-desc-card {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(49, 130, 246, 0.06);
+  border: 1px solid rgba(49, 130, 246, 0.15);
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--ink);
+  transition: all 0.2s ease;
+}
+
+.btn-quick-chip {
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 18px;
+  background: rgba(49, 130, 246, 0.08);
+  border: 1px solid rgba(49, 130, 246, 0.2);
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.btn-quick-chip:hover {
+  background: rgba(49, 130, 246, 0.14);
+}
+
+.btn-quick-chip:active {
+  transform: scale(0.95);
+  background: rgba(49, 130, 246, 0.22);
+}
+
+#screen-home #customFeedbackBtn {
+  display: inline-flex !important;
+}
+
+/* 커닝페이퍼 영역 영구 배제 (AI 모드 단독 집중) */
+.quick-checkin-chips {
+  display: none !important;
+}
+
+#screen-feedbacksetup.active {
+  display: block !important;
+  min-height: 80vh;
+}
+
