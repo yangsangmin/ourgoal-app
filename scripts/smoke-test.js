@@ -7800,6 +7800,29 @@ check('[#TASK-ES-234] 아이폰(iOS Safari) 접속 시 홈 화면에 추가(PWA)
   assert.ok(indexHtml.includes('if(!isIos || isStandalone || dismissed)'), 'standalone 및 제외 환경 자동 소거 확인');
 });
 
+check('[#TASK-ES-235] 설정 탭 내 전문가용 외부 연동(구글캘린더 OAuth, 노션 API, Gemini API) [고급 설정] 기본 접힘 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 고급 설정 아코디언 탑재 및 기본 접힘(open 부재) 검증
+  assert.ok(indexHtml.includes('id="advancedSettingsAccordion"'), 'advancedSettingsAccordion 아코디언 컴포넌트 탑재');
+  assert.ok(!indexHtml.includes('id="advancedSettingsAccordion" open'), 'advancedSettingsAccordion 기본 open 속성 부재(접힘) 확인');
+  assert.ok(indexHtml.includes('advanced-settings-body'), 'advanced-settings-body 컨테이너 탑재');
+
+  // 2. 외부 연동 및 전문가용 DOM 요소가 정상 격리 수용되었는지 확인
+  assert.ok(indexHtml.includes('id="gcalClientIdInput"'), 'gcalClientIdInput 보존 확인');
+  assert.ok(indexHtml.includes('id="notionSwitch"'), 'notionSwitch 보존 확인');
+  assert.ok(indexHtml.includes('id="geminiKeyInput"'), 'geminiKeyInput 보존 확인');
+
+  // 3. 햅틱 및 전역 토글 헬퍼 확인
+  assert.ok(indexHtml.includes('window.toggleAdvancedSettings = toggleAdvancedSettings'), 'toggleAdvancedSettings 전역 노출 확인');
+  assert.ok(indexHtml.includes('advAccordion._hapticBound'), '아코디언 토글 햅틱 바인딩 확인');
+
+  // 4. CSS 반응형 및 트랜지션 선언 확인
+  assert.ok(cssContent.includes('.advanced-settings-accordion'), 'ui.css 내 .advanced-settings-accordion 스타일 선언');
+  assert.ok(cssContent.includes('.advanced-settings-body'), 'ui.css 내 .advanced-settings-body 스타일 선언');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

@@ -998,15 +998,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         </div>
       </details>
 
-      <!-- [그룹 4] 💾 데이터 & 외부 연동 / 고객지원 -->
+      <!-- [그룹 4] 💾 데이터 백업 & 고급 설정 / 고객지원 (#TASK-ES-235) -->
       <details class="settings-group-accordion toss-settings-group" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
         <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
           <div style="display:flex;flex-direction:column;gap:3px;">
             <div style="display:flex;align-items:center;gap:8px;">
               <span style="font-size:1.15rem;">💾</span>
-              <span>데이터 & 외부 연동 / 고객지원</span>
+              <span>데이터 백업 & 고급 설정 / 고객지원</span>
             </div>
-            <span class="faint" style="font-size:.75rem;font-weight:400;margin-left:26px;">데이터 백업/복원, 노션 연동, 1:1 고객지원 및 FAQ</span>
+            <span class="faint" style="font-size:.75rem;font-weight:400;margin-left:26px;">데이터 백업/복원, 1:1 고객지원 및 외부 연동 고급 설정</span>
           </div>
           <span class="faint" style="font-size:.78125rem;">접기/펼치기 ▾</span>
         </summary>
@@ -1018,142 +1018,159 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             <button class="btn btn-ghost btn-sm btn-block" id="btnOpenTrashModal" type="button" style="display:flex;align-items:center;justify-content:center;gap:6px;">🗑️ 휴지통 (0개 보관 중)</button>
           </div>
 
-      <!-- 📅 구글 캘린더 연동 (Req 3 & 4) -->
-      <div class="set-block">
-        <h4>구글 캘린더 연동</h4>
-        <div id="gcalStatusBox"></div>
-        <div id="gcalQuickConnectRow" style="margin-top:10px;">
-          <button class="btn btn-primary btn-sm btn-block" id="gcalQuickConnectBtn" type="button">구글 계정으로 연동하기</button>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:8px;">
-          <a href="https://calendar.google.com" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:6px 8px;">구글 캘린더 바로가기 ↗</a>
-          <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:6px 8px;">GCP OAuth 콘솔 ↗</a>
-        </div>
-        <div id="gcalSyncRow" style="display:none;margin-top:10px;gap:8px;flex-direction:column;">
-          <div style="display:flex;gap:6px;">
-            <button class="btn btn-ghost btn-sm" id="gcalSyncNowBtn" type="button" style="flex:1;">지금 동기화</button>
-            <button class="btn btn-ghost btn-sm" id="gcalDisconnectBtn" type="button" style="color:var(--brand-strong);flex:0 0 auto;">연동 해제</button>
-          </div>
-          <div class="toggle-row" style="margin-top:6px;">
-            <div class="t">목표·일정 변경 시 자동 동기화</div>
-            <div class="switch" id="gcalAutoSyncSwitch"></div>
-          </div>
-          <button class="btn btn-ghost btn-sm btn-block" id="gcalImportBtn" type="button">내 일정 불러와서 목표에 반영</button>
-          <button class="btn btn-ghost btn-sm btn-block" id="gcalExportBtn" type="button">내 목표를 캘린더에 반영</button>
-        </div>
-        <details style="margin-top:12px;">
-          <summary style="font-size:.8125rem;color:var(--ink-soft);cursor:pointer;">고급: 직접 OAuth 클라이언트 ID 설정</summary>
-          <div class="field" style="margin-top:8px;">
-            <input id="gcalClientIdInput" type="text" placeholder="xxxxxxxx.apps.googleusercontent.com" autocomplete="off">
-          </div>
-          <p class="faint" style="font-size:.7rem;">Google Cloud Console에서 발급한 OAuth 클라이언트 ID를 직접 등록할 수 있습니다.</p>
-        </details>
-      </div>
-
-      <div class="set-block">
-        <h4>AI 피드백 (Google Gemini API)</h4>
-        <div class="format-toggle" id="aiProviderToggle">
-          <div class="format-opt active" data-provider="gemini">Gemini (기본)</div>
-        </div>
-        <div id="geminiKeyBlock" style="margin-top:12px;">
-          <div class="field"><label>Gemini API 키 (선택사항)</label><input id="geminiKeyInput" type="password" placeholder="미입력 시 서버 공용 Gemini 3.1 자동 연결" autocomplete="off"></div>
-          <div class="field"><label>모델 (기본: gemini-3.1-flash-lite)</label><input id="geminiModelInput" type="text" placeholder="gemini-3.1-flash-lite"></div>
-          <p class="faint">Google AI Studio에서 발급한 개인 키를 붙여넣으면 브라우저에서 구글로 직접 고속 호출해요. 미입력 시 서버 공용 Gemini 3.1 Flash Lite가 자동 동작해요.</p>
-          <div style="margin-top:8px;">
-            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="btn btn-ghost btn-sm btn-block" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:7px 10px;color:var(--ink);">Google AI Studio API 키 발급 페이지 바로가기 ↗</a>
-          </div>
-        </div>
-        <p class="ai-note" style="margin-top:12px;">홈에서 기록을 저장하면 바로 피드백을 시도해요. 실패하면 간이 판단으로 대신해요.</p>
-        <div class="toggle-row" style="margin-top:12px;">
-          <div class="t">기록 보고 목표 진행 상황 자동 업데이트 제안</div>
-          <div class="switch" id="autoUpdateSwitch"></div>
-        </div>
-        <p class="faint" style="margin-top:6px;">켜두면 기록이 마일스톤·할 일 완료를 암시할 때 AI가 알아채서 반영해도 될지 물어봐요. 승인만 하면 직접 고치지 않아도 돼요.</p>
-        <button class="btn btn-ghost btn-sm" id="settingsCustomFeedbackBtn" type="button" style="width:100%;margin-top:12px;">맞춤 피드백 봇 설정하기<span id="settingsCustomFeedbackStatus"></span></button>
-      </div>
-
-      <div class="set-block">
-        <h4>가상 페르소나 & 커뮤니티</h4>
-        <div class="toggle-row">
-          <div class="t">가상 페르소나 응원 수신 (초기 활성화)</div>
-          <div class="switch" id="virtualCheerSwitch"></div>
-        </div>
-        <p class="faint" style="margin-top:6px;">초기 활동이 외롭지 않도록 20대 가상 유저 페르소나가 첫 체크인을 응원하고 피드에 함께 참여해요. 언제든지 끌 수 있어요.</p>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px dashed var(--rule);">
-          <div>
-            <div style="font-size:.875rem;font-weight:700;">차단한 사용자 관리</div>
-            <p class="faint" id="blockedCountDesc" style="margin:2px 0 0;">차단된 사용자의 글/댓글은 피드에서 숨겨집니다.</p>
-          </div>
-          <button class="btn btn-ghost btn-sm" id="manageBlockedBtn" type="button" style="padding:6px 12px;font-size:.8125rem;">목록 보기</button>
-        </div>
-      </div>
-
-      <div class="set-block">
-        <h4>외부 연동</h4>
-        <div class="toggle-row">
-          <div class="t">Notion 자동 동기화</div>
-          <div class="switch" id="notionSwitch"></div>
-        </div>
-        <div id="notionUrlBlock" style="display:none;margin-top:12px;">
-          <div class="field"><label>Notion Webhook URL (선택)</label><input id="notionWebhookInput" type="text" placeholder="https://..." autocomplete="off"></div>
-          <div class="field" style="margin-top:8px;"><label>Notion API Key (Integration Secret)</label><input id="notionApiKeyInput" type="password" placeholder="secret_..." autocomplete="off"></div>
-          <div class="field" style="margin-top:8px;"><label>Notion Database ID</label><input id="notionDbIdInput" type="text" placeholder="32자리 데이터베이스 ID 또는 URL" autocomplete="off"></div>
-          <div class="toggle-row" style="margin-top:10px;">
-            <div class="t">맞춤 템플릿 저장 시 노션 DB로 자동 전송</div>
-            <div class="switch" id="notionAutoPushSwitch"></div>
-          </div>
-          <p class="faint" style="margin-top:6px;">API Key와 Database ID를 등록하면 전문 템플릿 표 기록이 노션 데이터베이스의 실제 표 페이지로 자동 전송됩니다.</p>
-          <div class="notion-guide-box" id="notionInlineGuideBox" style="margin-top:10px;padding:10px 12px;background:var(--bg-subtle, rgba(99,102,241,0.05));border:1px solid rgba(99,102,241,0.15);border-radius:10px;font-size:.8125rem;">
-            <div style="font-weight:700;color:var(--brand);margin-bottom:6px;display:flex;align-items:center;gap:4px;">
-              <span>💡</span><span>노션 4단계 초간편 연동 가이드</span>
+          <!-- 💾 저장공간 및 데이터 관리 (Req 10) -->
+          <div class="set-block">
+            <h4>저장공간 및 캐시 관리</h4>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--card2);border-radius:12px;margin-bottom:12px;">
+              <div>
+                <b style="font-size:.875rem;">임시 캐시 및 데이터</b>
+                <div class="faint" id="cacheSizeText" style="font-size:.8125rem;">14.2 MB 사용 중</div>
+              </div>
+              <button class="btn btn-ghost btn-sm" id="clearCacheBtn" type="button" style="font-size:.8125rem;">캐시 비우기</button>
             </div>
-            <ol style="margin:0;padding-left:18px;line-height:1.6;color:var(--ink-soft);font-size:.78125rem;">
-              <li><a href="https://www.notion.so/profile/integrations" target="_blank" rel="noopener" style="color:var(--brand);font-weight:600;">노션 내 통합(Integrations) ↗</a>에서 <b>[새 통합 만들기]</b> 클릭</li>
-              <li>발급된 <b>내부 통합 시크릿(secret_...)</b>을 위 API Key에 붙여넣기</li>
-              <li>연동할 노션 DB 페이지 우측 상단 <b>··· ➔ [연결(Connections)]</b>에서 방금 만든 통합 추가</li>
-              <li>노션 DB 페이지의 웹 주소(전체 URL)를 복사해 위 Database ID에 붙여넣기 (자동 정규화)</li>
-            </ol>
+            <div class="field" style="margin-bottom:10px;">
+              <label>기록 내보내기 형식</label>
+              <div class="format-toggle" id="formatToggle">
+                <div class="format-opt" data-fmt="csv">CSV</div>
+                <div class="format-opt" data-fmt="json">JSON</div>
+              </div>
+            </div>
+            <div class="data-btn-row">
+              <button class="btn btn-ghost" id="settingsExportCheckins" type="button">체크인 전체 내보내기</button>
+              <button class="btn btn-ghost" id="settingsExportAll" type="button">전체 백업</button>
+              <button class="btn btn-ghost" id="settingsImportAll" type="button">가져오기</button>
+            </div>
+            <p class="faint" style="font-size:.8125rem;margin:6px 0 0;">체크인 전체 내보내기: 위에서 고른 형식(CSV/JSON)으로 체크인 기록 전체를 내려받아요 · 전체 백업: 목표·설정까지 포함한 복원용 JSON</p>
+            <input type="file" id="importFile" accept="application/json" style="display:none;">
+            <p class="danger-note">데이터는 이 기기(이 대화)에만 저장됩니다</p>
           </div>
-          <button class="btn btn-ghost btn-sm" id="notionTestBtn" type="button" style="margin-top:8px;">테스트 전송</button>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:10px;">
-          <a href="https://www.notion.so" id="notionDirectOpenLink" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:6px 8px;">Notion 바로 열기 ↗</a>
-          <a href="https://www.notion.so/profile/integrations" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:6px 8px;">Notion API/웹훅 연동 관리 ↗</a>
-        </div>
-      </div>
 
-      <div class="set-block">
-        <h4>잇템 관리 및 통계</h4>
-        <div id="itemStatsList"></div>
-        <p class="faint">내가 등록한 잇템 현황과 안전한 추천 가이드예요</p>
-      </div>
+          <div class="set-block">
+            <h4>가상 페르소나 & 커뮤니티</h4>
+            <div class="toggle-row">
+              <div class="t">가상 페르소나 응원 수신 (초기 활성화)</div>
+              <div class="switch" id="virtualCheerSwitch"></div>
+            </div>
+            <p class="faint" style="margin-top:6px;">초기 활동이 외롭지 않도록 20대 가상 유저 페르소나가 첫 체크인을 응원하고 피드에 함께 참여해요. 언제든지 끌 수 있어요.</p>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px dashed var(--rule);">
+              <div>
+                <div style="font-size:.875rem;font-weight:700;">차단한 사용자 관리</div>
+                <p class="faint" id="blockedCountDesc" style="margin:2px 0 0;">차단된 사용자의 글/댓글은 피드에서 숨겨집니다.</p>
+              </div>
+              <button class="btn btn-ghost btn-sm" id="manageBlockedBtn" type="button" style="padding:6px 12px;font-size:.8125rem;">목록 보기</button>
+            </div>
+          </div>
 
-      <!-- 💾 저장공간 및 데이터 관리 (Req 10) -->
-      <div class="set-block">
-        <h4>저장공간 및 캐시 관리</h4>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--card2);border-radius:12px;margin-bottom:12px;">
-          <div>
-            <b style="font-size:.875rem;">임시 캐시 및 데이터</b>
-            <div class="faint" id="cacheSizeText" style="font-size:.8125rem;">14.2 MB 사용 중</div>
+          <div class="set-block">
+            <h4>잇템 관리 및 통계</h4>
+            <div id="itemStatsList"></div>
+            <p class="faint">내가 등록한 잇템 현황과 안전한 추천 가이드예요</p>
           </div>
-          <button class="btn btn-ghost btn-sm" id="clearCacheBtn" type="button" style="font-size:.8125rem;">캐시 비우기</button>
-        </div>
-        <div class="field" style="margin-bottom:10px;">
-          <label>기록 내보내기 형식</label>
-          <div class="format-toggle" id="formatToggle">
-            <div class="format-opt" data-fmt="csv">CSV</div>
-            <div class="format-opt" data-fmt="json">JSON</div>
-          </div>
-        </div>
-        <div class="data-btn-row">
-          <button class="btn btn-ghost" id="settingsExportCheckins" type="button">체크인 전체 내보내기</button>
-          <button class="btn btn-ghost" id="settingsExportAll" type="button">전체 백업</button>
-          <button class="btn btn-ghost" id="settingsImportAll" type="button">가져오기</button>
-        </div>
-        <p class="faint" style="font-size:.8125rem;margin:6px 0 0;">체크인 전체 내보내기: 위에서 고른 형식(CSV/JSON)으로 체크인 기록 전체를 내려받아요 · 전체 백업: 목표·설정까지 포함한 복원용 JSON</p>
-        <input type="file" id="importFile" accept="application/json" style="display:none;">
-        <p class="danger-note">데이터는 이 기기(이 대화)에만 저장됩니다</p>
-      </div>
+
+          <!-- ⚙️ [고급 설정 (외부 연동 & API 관리)] 기본 접힘 아코디언 (#TASK-ES-235) -->
+          <details class="advanced-settings-accordion" id="advancedSettingsAccordion" style="margin-top:14px;border:1px solid var(--rule);border-radius:14px;background:var(--card2);overflow:hidden;">
+            <summary id="advancedSettingsSummary" style="padding:12px 14px;font-size:.9rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card);list-style:none;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:1.15rem;">⚙️</span>
+                <div>
+                  <div style="font-weight:700;color:var(--ink);font-size:.9rem;">고급 설정 (외부 연동 &amp; API 관리)</div>
+                  <div class="faint" style="font-size:.75rem;font-weight:400;">구글 캘린더 OAuth, 노션 DB 연동 토큰, Gemini API 키</div>
+                </div>
+              </div>
+              <span class="faint" style="font-size:.78125rem;">접기/펼치기 ▾</span>
+            </summary>
+            <div class="advanced-settings-body" style="padding:10px 12px 14px;">
+              <!-- 📅 구글 캘린더 연동 (Req 3 & 4) -->
+              <div class="set-block" style="margin-top:4px;">
+                <h4>구글 캘린더 연동</h4>
+                <div id="gcalStatusBox"></div>
+                <div id="gcalQuickConnectRow" style="margin-top:10px;">
+                  <button class="btn btn-primary btn-sm btn-block" id="gcalQuickConnectBtn" type="button">구글 계정으로 연동하기</button>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:8px;">
+                  <a href="https://calendar.google.com" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:6px 8px;">구글 캘린더 바로가기 ↗</a>
+                  <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:6px 8px;">GCP OAuth 콘솔 ↗</a>
+                </div>
+                <div id="gcalSyncRow" style="display:none;margin-top:10px;gap:8px;flex-direction:column;">
+                  <div style="display:flex;gap:6px;">
+                    <button class="btn btn-ghost btn-sm" id="gcalSyncNowBtn" type="button" style="flex:1;">지금 동기화</button>
+                    <button class="btn btn-ghost btn-sm" id="gcalDisconnectBtn" type="button" style="color:var(--brand-strong);flex:0 0 auto;">연동 해제</button>
+                  </div>
+                  <div class="toggle-row" style="margin-top:6px;">
+                    <div class="t">목표·일정 변경 시 자동 동기화</div>
+                    <div class="switch" id="gcalAutoSyncSwitch"></div>
+                  </div>
+                  <button class="btn btn-ghost btn-sm btn-block" id="gcalImportBtn" type="button">내 일정 불러와서 목표에 반영</button>
+                  <button class="btn btn-ghost btn-sm btn-block" id="gcalExportBtn" type="button">내 목표를 캘린더에 반영</button>
+                </div>
+                <details style="margin-top:12px;">
+                  <summary style="font-size:.8125rem;color:var(--ink-soft);cursor:pointer;">고급: 직접 OAuth 클라이언트 ID 설정</summary>
+                  <div class="field" style="margin-top:8px;">
+                    <input id="gcalClientIdInput" type="text" placeholder="xxxxxxxx.apps.googleusercontent.com" autocomplete="off">
+                  </div>
+                  <p class="faint" style="font-size:.7rem;">Google Cloud Console에서 발급한 OAuth 클라이언트 ID를 직접 등록할 수 있습니다.</p>
+                </details>
+              </div>
+
+              <!-- AI 피드백 (Google Gemini API) -->
+              <div class="set-block" style="margin-top:14px;">
+                <h4>AI 피드백 (Google Gemini API)</h4>
+                <div class="format-toggle" id="aiProviderToggle">
+                  <div class="format-opt active" data-provider="gemini">Gemini (기본)</div>
+                </div>
+                <div id="geminiKeyBlock" style="margin-top:12px;">
+                  <div class="field"><label>Gemini API 키 (선택사항)</label><input id="geminiKeyInput" type="password" placeholder="미입력 시 서버 공용 Gemini 3.1 자동 연결" autocomplete="off"></div>
+                  <div class="field"><label>모델 (기본: gemini-3.1-flash-lite)</label><input id="geminiModelInput" type="text" placeholder="gemini-3.1-flash-lite"></div>
+                  <p class="faint">Google AI Studio에서 발급한 개인 키를 붙여넣으면 브라우저에서 구글로 직접 고속 호출해요. 미입력 시 서버 공용 Gemini 3.1 Flash Lite가 자동 동작해요.</p>
+                  <div style="margin-top:8px;">
+                    <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="btn btn-ghost btn-sm btn-block" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:7px 10px;color:var(--ink);">Google AI Studio API 키 발급 페이지 바로가기 ↗</a>
+                  </div>
+                </div>
+                <p class="ai-note" style="margin-top:12px;">홈에서 기록을 저장하면 바로 피드백을 시도해요. 실패하면 간이 판단으로 대신해요.</p>
+                <div class="toggle-row" style="margin-top:12px;">
+                  <div class="t">기록 보고 목표 진행 상황 자동 업데이트 제안</div>
+                  <div class="switch" id="autoUpdateSwitch"></div>
+                </div>
+                <p class="faint" style="margin-top:6px;">켜두면 기록이 마일스톤·할 일 완료를 암시할 때 AI가 알아채서 반영해도 될지 물어봐요. 승인만 하면 직접 고치지 않아도 돼요.</p>
+                <button class="btn btn-ghost btn-sm" id="settingsCustomFeedbackBtn" type="button" style="width:100%;margin-top:12px;">맞춤 피드백 봇 설정하기<span id="settingsCustomFeedbackStatus"></span></button>
+              </div>
+
+              <!-- 외부 연동 (Notion 자동 동기화) -->
+              <div class="set-block" style="margin-top:14px;">
+                <h4>외부 연동</h4>
+                <div class="toggle-row">
+                  <div class="t">Notion 자동 동기화</div>
+                  <div class="switch" id="notionSwitch"></div>
+                </div>
+                <div id="notionUrlBlock" style="display:none;margin-top:12px;">
+                  <div class="field"><label>Notion Webhook URL (선택)</label><input id="notionWebhookInput" type="text" placeholder="https://..." autocomplete="off"></div>
+                  <div class="field" style="margin-top:8px;"><label>Notion API Key (Integration Secret)</label><input id="notionApiKeyInput" type="password" placeholder="secret_..." autocomplete="off"></div>
+                  <div class="field" style="margin-top:8px;"><label>Notion Database ID</label><input id="notionDbIdInput" type="text" placeholder="32자리 데이터베이스 ID 또는 URL" autocomplete="off"></div>
+                  <div class="toggle-row" style="margin-top:10px;">
+                    <div class="t">맞춤 템플릿 저장 시 노션 DB로 자동 전송</div>
+                    <div class="switch" id="notionAutoPushSwitch"></div>
+                  </div>
+                  <p class="faint" style="margin-top:6px;">API Key와 Database ID를 등록하면 전문 템플릿 표 기록이 노션 데이터베이스의 실제 표 페이지로 자동 전송됩니다.</p>
+                  <div class="notion-guide-box" id="notionInlineGuideBox" style="margin-top:10px;padding:10px 12px;background:var(--bg-subtle, rgba(99,102,241,0.05));border:1px solid rgba(99,102,241,0.15);border-radius:10px;font-size:.8125rem;">
+                    <div style="font-weight:700;color:var(--brand);margin-bottom:6px;display:flex;align-items:center;gap:4px;">
+                      <span>💡</span><span>노션 4단계 초간편 연동 가이드</span>
+                    </div>
+                    <ol style="margin:0;padding-left:18px;line-height:1.6;color:var(--ink-soft);font-size:.78125rem;">
+                      <li><a href="https://www.notion.so/profile/integrations" target="_blank" rel="noopener" style="color:var(--brand);font-weight:600;">노션 내 통합(Integrations) ↗</a>에서 <b>[새 통합 만들기]</b> 클릭</li>
+                      <li>발급된 <b>내부 통합 시크릿(secret_...)</b>을 위 API Key에 붙여넣기</li>
+                      <li>연동할 노션 DB 페이지 우측 상단 <b>··· ➔ [연결(Connections)]</b>에서 방금 만든 통합 추가</li>
+                      <li>노션 DB 페이지의 웹 주소(전체 URL)를 복사해 위 Database ID에 붙여넣기 (자동 정규화)</li>
+                    </ol>
+                  </div>
+                  <button class="btn btn-ghost btn-sm" id="notionTestBtn" type="button" style="margin-top:8px;">테스트 전송</button>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:10px;">
+                  <a href="https://www.notion.so" id="notionDirectOpenLink" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:6px 8px;">Notion 바로 열기 ↗</a>
+                  <a href="https://www.notion.so/profile/integrations" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="flex:1;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;font-size:.8125rem;padding:6px 8px;">Notion API/웹훅 연동 관리 ↗</a>
+                </div>
+              </div>
+            </div>
+          </details>
 
       <!-- 💳 크레딧 (#TASK-ES-015) — 서버 설정 enabled 일 때만 js/credits.js 가 채운다. 아니면 비어 있고 보이지 않는다 -->
       <div class="set-block" id="settingsCreditsBlock" style="display:none;"></div>
@@ -33289,6 +33306,16 @@ wirePromptEncyclopediaEvents(body);
   });
 
   /* ============ RENDER: SETTINGS ============ */
+  /* ============ [#TASK-ES-235] 고급 설정 (외부 연동 & API) 토글 헬퍼 ============ */
+  function toggleAdvancedSettings(open){
+    var adv = document.getElementById('advancedSettingsAccordion');
+    if(adv){
+      adv.open = (open !== undefined) ? !!open : !adv.open;
+      if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+    }
+  }
+  window.toggleAdvancedSettings = toggleAdvancedSettings;
+
   function renderSettingsScreen(){
     if(typeof triggerHapticFeedback === 'function'){
       triggerHapticFeedback(12);
@@ -34111,6 +34138,14 @@ wirePromptEncyclopediaEvents(body);
     if(inqBtn) inqBtn.onclick = openCustomerInquiryModal;
     var faqBtn = document.getElementById('faqAccordionBtn');
     if(faqBtn) faqBtn.onclick = openFaqModal;
+
+    var advAccordion = document.getElementById('advancedSettingsAccordion');
+    if(advAccordion && !advAccordion._hapticBound){
+      advAccordion._hapticBound = true;
+      advAccordion.addEventListener('toggle', function(){
+        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+      });
+    }
   }
   document.getElementById('addTimeBtn').addEventListener('click', async function(){
     state.profile.settings.checkinTimes.push('12:00');
