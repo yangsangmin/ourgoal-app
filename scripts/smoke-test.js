@@ -8012,6 +8012,18 @@ check('[#TASK-ES-246] 소통탭 실시간 러닝메이트 레이더 영역 슬�
   assert.ok(v3Engine.includes('openPeerInteraction'), 'openPeerInteraction 핸들러 보존 확인');
 });
 
+check('[#TASK-ES-247] 소통탭 상단 6대 서브탭 버튼 가로너비 균등 비율 및 글자 크기·패딩 반응형 최적화 무결성', () => {
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 3열 균등 그리드 및 기본 버튼 스타일 확인
+  assert.ok(cssContent.includes('grid-template-columns: repeat(3, 1fr) !important;'), 'repeat(3, 1fr) 3열 균등 배분 확인');
+  assert.ok(cssContent.includes('font-size: 0.8125rem !important;'), '기본 13px(0.8125rem) 폰트 크기 확인');
+  assert.ok(cssContent.includes('border: 1.5px solid rgba(16, 185, 129, 0.45) !important;'), '활성 상태 보더 하이라이트 확인');
+
+  // 2. 375px 모바일 반응형 규칙 확인
+  assert.ok(cssContent.includes('font-size: 0.72rem !important;'), '375px 반응형 폰트 축소 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
