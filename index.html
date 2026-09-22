@@ -14582,6 +14582,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '</div>' +
           nextActionHtml +
           calBtnHtml +
+          '<div class="checkin-ai-instant-share-box" style="margin-top:12px;padding:12px;background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(5,150,105,0.04));border:1px solid rgba(16,185,129,0.25);border-radius:12px;">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+              '<span style="font-size:0.8125rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:5px;">' +
+                '<span>📢 동반자 피드 1-클릭 자랑</span>' +
+                '<span class="tag" style="background:#10b981;color:#fff;font-size:0.6875rem;padding:1px 6px;border-radius:6px;font-weight:700;">+5 EXP</span>' +
+              '</span>' +
+              '<label style="display:flex;align-items:center;gap:4px;font-size:0.75rem;color:var(--ink-soft);cursor:pointer;">' +
+                '<input type="checkbox" id="chkCheckinShareGoalTitle" checked style="accent-color:#10b981;cursor:pointer;" />' +
+                '<span>목표명 공개</span>' +
+              '</label>' +
+            '</div>' +
+            '<button type="button" class="btn btn-primary" id="btnCheckinInstantShareFeed" style="width:100%;min-height:44px;background:linear-gradient(135deg,#10b981,#059669);border:none;color:#fff;font-weight:700;font-size:0.875rem;border-radius:10px;box-shadow:0 3px 10px rgba(16,185,129,0.25);display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;">' +
+              '<span>📢 피드에도 자랑하고 +5 EXP 받기</span>' +
+            '</button>' +
+          '</div>' +
           '<div class="checkin-ai-footer-actions">' +
             '<button type="button" class="btn btn-ghost" id="btnCheckinAiGoRecords" style="flex:1;min-height:40px;font-size:0.8125rem;">기록 탭에서 확인</button>' +
             '<button type="button" class="btn btn-ghost" id="btnCheckinAiShareFeed" style="flex:1;min-height:40px;font-size:0.8125rem;">피드에 공유하기</button>' +
@@ -14595,6 +14610,35 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     // wire listeners
     var closeBtn = existingBackdrop.querySelector('#btnCheckinAiClose');
     if(closeBtn) closeBtn.addEventListener('click', closeCheckinFeedbackSheet);
+
+    var btnInstantShare = existingBackdrop.querySelector('#btnCheckinInstantShareFeed');
+    var chkGoalTitle = existingBackdrop.querySelector('#chkCheckinShareGoalTitle');
+    if(btnInstantShare){
+      btnInstantShare.addEventListener('click', async function(){
+        try {
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(15);
+          else if(typeof triggerHaptic === 'function') triggerHaptic(15);
+          btnInstantShare.disabled = true;
+          btnInstantShare.textContent = '피드에 발행 중…';
+          var includeGoal = chkGoalTitle ? chkGoalTitle.checked : true;
+          await instantShareCheckinToFeed(rec, fb, { includeGoal: includeGoal });
+          btnInstantShare.textContent = '✓ 피드 자랑 완료 (+5 EXP)';
+          btnInstantShare.style.opacity = '0.8';
+          setTimeout(function(){
+            closeCheckinFeedbackSheet();
+            state.commSubTab = 'feed';
+            if(typeof setTab === 'function') setTab('comm');
+            else if(typeof switchTab === 'function') switchTab('comm');
+            if(typeof renderCommScreen === 'function') renderCommScreen();
+          }, 900);
+        } catch(err){
+          console.error('Instant share failed:', err);
+          toast('피드 공유 중 문제가 발생했습니다.');
+          btnInstantShare.disabled = false;
+          btnInstantShare.textContent = '📢 피드에도 자랑하고 +5 EXP 받기';
+        }
+      });
+    }
 
     var btnApplyNext = existingBackdrop.querySelector('#btnCheckinAiApplyNext');
     if(btnApplyNext && nextAction){
@@ -14676,6 +14720,88 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       setTimeout(function(){ existingBackdrop.remove(); }, 200);
     }
   }
+
+  async function instantShareCheckinToFeed(rec, fb, opt){
+    opt = opt || {};
+    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(15);
+    else if(typeof triggerHaptic === 'function') triggerHaptic(15);
+
+    var userGoals = (state.profile.goals || []).filter(function(g){ return !g.archivedAt; });
+    var targetGoal = (state.lastCapture && state.lastCapture.goal) || (rec && rec.goalId && userGoals.find(function(g){ return g.id === rec.goalId; })) || (userGoals.length ? userGoals[0] : null);
+    var includeGoal = opt.includeGoal !== undefined ? opt.includeGoal : true;
+    var goalTitle = (includeGoal && targetGoal) ? targetGoal.title : null;
+    var goalPct = (includeGoal && targetGoal && typeof goalProgress === 'function') ? goalProgress(targetGoal) : null;
+
+    var curRecord = rec || (state.lastCapture && state.lastCapture.record) || (state.profile.records && state.profile.records[0]) || null;
+    var rText = (curRecord && (curRecord.text || curRecord.title)) ? (curRecord.text || curRecord.title).replace(/\r\n/g, ' ').trim() : '';
+    var curPhoto = (curRecord && curRecord.photo) || null;
+    var curFb = fb || (curRecord && curRecord.feedback) || null;
+
+    var defaultCaption = '';
+    if(rText){
+      var snippet = rText.slice(0, 45);
+      defaultCaption = '오늘 실천 완료! "' + snippet + (rText.length > 45 ? '…' : '') + '" 꾸준히 나아갑니다 🔥';
+    } else if(goalTitle){
+      defaultCaption = '"' + goalTitle + '" 목표를 향해 집중하고 있습니다. 함께 달려요! 💪';
+    } else {
+      defaultCaption = '오늘도 목표를 향해 한 걸음 내딛습니다. 모두 파이팅해요! ✨';
+    }
+
+    var selectedCat = (targetGoal && targetGoal.category) || 'study';
+    var postId = 'post_' + newId();
+    var post = {
+      id: postId,
+      user_id: state.profile.id,
+      display_name: state.profile.displayName,
+      avatar_url: state.profile.avatarUrl || null,
+      goal_title: goalTitle,
+      caption: defaultCaption,
+      cheers_count: 0,
+      created_at: nowISO(),
+      extra: {
+        category: selectedCat,
+        includeRecord: !!curRecord,
+        recordText: rText || null,
+        photo: curPhoto,
+        includeFeedback: !!curFb,
+        feedback: curFb ? (typeof curFb === 'string' ? { comment: curFb, verdict: 'PASS', source: 'ai_coach' } : { verdict: curFb.verdict || 'PASS', comment: curFb.comment || curFb.fact_insight || curFb.text || '', source: curFb.source || 'ai_coach' }) : null,
+        includeGoal: !!goalTitle,
+        goalPct: goalPct,
+        milestones: (targetGoal && targetGoal.milestones) ? targetGoal.milestones.filter(function(m){ return m.status === 'done' || m.status === 'doing'; }).map(function(m){ return { title: m.title, status: m.status }; }) : [],
+        comments: []
+      }
+    };
+
+    try {
+      if(typeof sb !== 'undefined' && sb && sb.from){
+        await sb.from('feed_posts').insert(post);
+      }
+    } catch(e){
+      console.warn('Supabase post insert failed, saving locally:', e);
+    }
+
+    if(!state.profile.settings.myFeedPosts) state.profile.settings.myFeedPosts = [];
+    state.profile.settings.myFeedPosts.unshift(post);
+
+    awardXP(5, '체크인 피드 자랑');
+    await saveProfile();
+
+    if(typeof FEED_POSTS_CACHE === 'undefined' || !FEED_POSTS_CACHE) FEED_POSTS_CACHE = [];
+    FEED_POSTS_CACHE.unshift(post);
+
+    burstConfetti(window.innerWidth / 2, window.innerHeight / 2, 16);
+    toast('동반자 피드에 자랑 완료! 경험치 +5 EXP 획득 🎉');
+
+    if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation();
+
+    if(state.profile.settings.virtualCheerEnabled !== false && typeof addSimulatedCheerAndReplyToPost === 'function'){
+      setTimeout(function(){
+        addSimulatedCheerAndReplyToPost(postId, goalTitle, defaultCaption);
+      }, 2400);
+    }
+    return post;
+  }
+  window.instantShareCheckinToFeed = instantShareCheckinToFeed;
 
   function renderRecordFeedbackSlot(fb){
     var el = document.getElementById('recFeedbackSlot');
