@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-230",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-230-MANITO-WELCOME-STAMP.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "마니또 화면 상단에 매칭 동반자 익명 프로필과 4종 웰컴 스탬프 퀵 버튼이 포함된 웰컴 카드가 렌더링되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "4종 웰컴 스탬프(불꽃응원, 행운부적, 따뜻한차, 완주응원) 팔레트가 정의되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "스탬프 클릭 시 15ms 미세 햅틱 피드백(triggerHapticFeedback(15))이 배선되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "스탬프 발송 시 '나의 마니또에게 익명 응원이 전달되었습니다 🕊️' 토스트 피드백이 표시되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "동일 상대에 대해 1분간 스탬프 도배 방지 쿨타임이 동작해야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 #manitoWelcomeHeroCard 요소가 정의되어 매칭 웰컴 카드를 렌더링한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "manitoWelcomeHeroCard"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 MANITO_WELCOME_STAMPS 4종 스탬프 팔레트가 정의된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "MANITO_WELCOME_STAMPS"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에서 마니또 스탬프 클릭 시 triggerHapticFeedback(15) 햅틱 피드백이 호출된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "triggerHapticFeedback(15)"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에서 스탬프 발송 시 '나의 마니또에게 익명 응원이 전달되었습니다 🕊️' 토스트가 호출된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "나의 마니또에게 익명 응원이 전달되었습니다 🕊️"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css에 .manito-welcome-card 클래스가 선언되어 모바일 웰컴 카드 스타일을 제공한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".manito-welcome-card"
+      }
+    }
+  ]
+}

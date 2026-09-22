@@ -31826,12 +31826,75 @@ wirePromptEncyclopediaEvents(body);
   var MANITO_ADJ = ['새벽의','조용한','끈질긴','달리는','반짝이는','묵묵한','씩씩한','느긋한','집중하는','유쾌한'];
   var MANITO_NOUN = { health:'러너', study:'공부벌레', career:'빌더', hobby:'창작자', mind:'명상가', relation:'이웃' };
   var MANITO_EMOJI = { health:'🏃', study:'📖', career:'🚀', hobby:'🎨', mind:'🌙', relation:'🏡' };
-  var MANITO_STAMPS = [
-    { id:'fire', icon:'🔥', label:'힘내요', msg:'오늘도 불태우는 중이네요, 힘내요!' },
-    { id:'clap', icon:'👏', label:'멋져요', msg:'꾸준함이 진짜 멋져요.' },
-    { id:'seed', icon:'', label:'자라요', msg:'작게라도 매일 쌓이는 게 보여요.' },
-    { id:'luck', icon:'🍀', label:'행운을', msg:'내일도 잘 될 거예요, 행운을 보내요.' }
+  /* [#TASK-ES-230] 마니또 4종 웰컴 스탬프 팔레트 */
+  var MANITO_WELCOME_STAMPS = [
+    { id:'fire', icon:'🔥', label:'불꽃응원', msg:'오늘도 불태우는 중이네요, 끝까지 함께 달려요! 🔥' },
+    { id:'luck', icon:'🍀', label:'행운부적', msg:'내일도 모든 일이 술술 풀릴 거예요, 행운을 가득 보내요! 🍀' },
+    { id:'tea', icon:'☕', label:'따뜻한차', msg:'지친 하루 따뜻한 차 한 잔 마시고 힘내세요! ☕' },
+    { id:'crown', icon:'👑', label:'완주응원', msg:'우리의 목표를 끝까지 완주할 당신을 응원해요! 👑' }
   ];
+  if(typeof window !== 'undefined'){ window.MANITO_WELCOME_STAMPS = MANITO_WELCOME_STAMPS; }
+
+  var MANITO_STAMPS = [
+    { id:'fire', icon:'🔥', label:'불꽃응원', msg:'오늘도 불태우는 중이네요, 끝까지 함께 달려요! 🔥' },
+    { id:'luck', icon:'🍀', label:'행운부적', msg:'내일도 모든 일이 술술 풀릴 거예요, 행운을 가득 보내요! 🍀' },
+    { id:'tea', icon:'☕', label:'따뜻한차', msg:'지친 하루 따뜻한 차 한 잔 마시고 힘내세요! ☕' },
+    { id:'crown', icon:'👑', label:'완주응원', msg:'우리의 목표를 끝까지 완주할 당신을 응원해요! 👑' },
+    { id:'clap', icon:'👏', label:'멋져요', msg:'꾸준함이 진짜 멋져요.' },
+    { id:'seed', icon:'🌱', label:'자라요', msg:'작게라도 매일 쌓이는 게 보여요.' }
+  ];
+
+  /* 마니또 1분 쿨타임 및 원클릭 웰컴 스탬프 발송 엔진 */
+  if(typeof window !== 'undefined' && !window.MANITO_STAMP_COOLDOWN){ window.MANITO_STAMP_COOLDOWN = {}; }
+  async function sendManitoWelcomeStamp(pid, sid, btnElement, bodyContainer){
+    var now = Date.now();
+    var lastSent = (window.MANITO_STAMP_COOLDOWN && window.MANITO_STAMP_COOLDOWN[pid]) || 0;
+    if(now - lastSent < 60000){
+      var remainSec = Math.ceil((60000 - (now - lastSent)) / 1000);
+      toast('잠시만요! ' + remainSec + '초 후에 다시 보낼 수 있어요 ⏳');
+      return;
+    }
+
+    triggerHapticFeedback(15);
+    if(btnElement){
+      var r = btnElement.getBoundingClientRect();
+      burstConfetti(r.left + r.width/2, r.top + r.height/2);
+    } else {
+      burstConfetti(window.innerWidth/2, window.innerHeight/3);
+    }
+
+    var ms = manitoState();
+    var today = dateKey(nowISO());
+    ms.sent.push({ to:pid, stamp:sid, date:today, at:nowISO() });
+    window.MANITO_STAMP_COOLDOWN[pid] = now;
+    await saveProfile();
+
+    var myGoal = (state.profile && state.profile.goals) ? state.profile.goals.filter(function(g){ return !g.archivedAt; })[0] : null;
+    var stampObj = MANITO_WELCOME_STAMPS.find(function(s){ return s.id===sid; }) || MANITO_STAMPS.find(function(s){ return s.id===sid; }) || { id:'fire', icon:'🔥', label:'불꽃응원', msg:'응원을 보냅니다' };
+
+    var cheerPing = {
+      id: 'mn_c_' + newId(),
+      group_id: 'manito',
+      sender_id: state.profile.id,
+      sender_name: ms.anonName || '비밀 수호천사',
+      sender_avatar: '🕊️',
+      receiver_id: pid,
+      target_type: 'manito_cheer',
+      target_id: sid,
+      target_title: stampObj.label,
+      ping_type: 'welcome_cheer',
+      message: myGoal ? ('"' + myGoal.title + '" ' + stampObj.msg) : stampObj.msg,
+      status: 'sent',
+      hidden: false,
+      created_at: nowISO()
+    };
+    sb.from('team_pings').insert(cheerPing).then(function(res){
+      if(res.error) console.warn('[ManitoCheer] Supabase insert warn:', res.error.message);
+    });
+
+    toast('나의 마니또에게 익명 응원이 전달되었습니다 🕊️');
+    if(bodyContainer) renderCommManito(bodyContainer);
+  }
   function hashStr(s){ var h=0; for(var i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))|0; } return Math.abs(h); }
   function manitoState(){
     var s = state.profile.settings;
@@ -32114,7 +32177,31 @@ wirePromptEncyclopediaEvents(body);
     var inbox = manitoInbox();
     var totalSent = ms.sent.length;
 
+    var firstPartner = partners.length ? partners[0] : null;
+    var welcomeHeroCardHtml = firstPartner ?
+      '<div class="manito-welcome-card" id="manitoWelcomeHeroCard">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
+          '<span class="manito-welcome-badge">🎁 마니또 매칭 완료</span>' +
+          '<span style="font-size:0.75rem;color:var(--ink-faint);font-weight:600;">1초 원클릭 응원</span>' +
+        '</div>' +
+        '<h3 class="manito-welcome-title">' +
+          '<span>' + firstPartner.emoji + ' ' + escapeHtml(firstPartner.name) + '님에게 웰컴 응원 보내기</span>' +
+        '</h3>' +
+        '<p class="manito-welcome-desc">' +
+          '목표: "<b>' + escapeHtml(firstPartner.goalTitle) + '</b>"<br>' +
+          '비밀 친구에게 따뜻한 웰컴 스탬프를 눌러 첫 응원을 선물해보세요!' +
+        '</p>' +
+        '<div class="manito-welcome-grid">' +
+          MANITO_WELCOME_STAMPS.map(function(st){
+            return '<button class="manito-welcome-stamp-btn" data-mwelcome-stamp="' + st.id + '" data-mwelcome-to="' + firstPartner.id + '" type="button">' +
+              '<span>' + st.icon + ' ' + st.label + '</span>' +
+            '</button>';
+          }).join('') +
+        '</div>' +
+      '</div>' : '';
+
     body.innerHTML =
+      welcomeHeroCardHtml +
       '<div class="manito-hero">' +
         '<div class="faint" style="font-size:.8125rem;letter-spacing:0;">MY MANITO</div>' +
         '<h3>'+escapeHtml(ms.anonName)+'</h3>' +
@@ -32158,7 +32245,7 @@ wirePromptEncyclopediaEvents(body);
           '<div class="manito-rec"><span class="d">어제</span><span>'+escapeHtml(p.logs[1])+'</span></div>' +
           '<div class="manito-rec"><span class="d">2일전</span><span>'+escapeHtml(p.logs[2])+'</span></div>' +
           '<div class="stamp-row">' +
-            MANITO_STAMPS.map(function(st){
+            MANITO_WELCOME_STAMPS.map(function(st){
               var on = sent.indexOf(st.id)!==-1;
               return '<button class="stamp'+(on?' sent':'')+'" data-stamp="'+st.id+'" data-to="'+p.id+'" type="button">'+st.icon+' '+st.label+'</button>';
             }).join('') +
@@ -32184,46 +32271,18 @@ wirePromptEncyclopediaEvents(body);
         '</div>' +
       '</div>';
 
+    body.querySelectorAll('[data-mwelcome-stamp]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var pid = btn.dataset.mwelcomeTo;
+        var sid = btn.dataset.mwelcomeStamp;
+        sendManitoWelcomeStamp(pid, sid, btn, body);
+      });
+    });
+
     body.querySelectorAll('[data-stamp]').forEach(function(btn){
-      btn.addEventListener('click', async function(){
+      btn.addEventListener('click', function(){
         var pid = btn.dataset.to, sid = btn.dataset.stamp;
-        var already = ms.sent.find(function(x){ return x.to===pid && x.stamp===sid && x.date===today; });
-        if(already){ toast('오늘 이미 보낸 스탬프예요'); return; }
-        ms.sent.push({ to:pid, stamp:sid, date:today, at:nowISO() });
-        if(navigator.vibrate) navigator.vibrate([10,30,10]);
-        var r = btn.getBoundingClientRect();
-        burstConfetti(r.left + r.width/2, r.top + r.height/2);
-        await saveProfile();
-
-        // Supabase team_pings 실시간 익명 응원 연동 (#TASK-ES-133)
-        var myGoal = (state.profile && state.profile.goals) ? state.profile.goals.filter(function(g){ return !g.archivedAt; })[0] : null;
-        var stampObj = MANITO_STAMPS.find(function(s){ return s.id===sid; }) || { id: 'heart', icon: '❤️', label: '응원', msg: '응원을 보냅니다' };
-        var cheerPing = {
-          id: 'mn_c_' + newId(),
-          group_id: 'manito',
-          sender_id: state.profile.id,
-          sender_name: ms.anonName || '익명 동료',
-          sender_avatar: '🎁',
-          receiver_id: pid,
-          target_type: 'manito_cheer',
-          target_id: sid,
-          target_title: stampObj.label,
-          ping_type: 'cheer',
-          message: myGoal ? ('"' + myGoal.title + '" ' + stampObj.msg) : stampObj.msg,
-          status: 'sent',
-          hidden: false,
-          created_at: nowISO()
-        };
-        sb.from('team_pings').insert(cheerPing).then(function(res){
-          if(res.error) console.warn('[ManitoCheer] Supabase insert warn:', res.error.message);
-        });
-
-        var st = manitoStreak();
-        var mutual = manitoMutualCount(pid);
-        toast(mutual===3 && ms.allowDm ? 'DM이 열렸어요!' :
-          (mutual===3 ? '응원 3회 달성 · 내 DM 허용을 켜면 열려요' :
-          (st>1 ? '응원 보냈어요 · '+st+'일 연속 🔥' : '응원을 보냈어요 💌')));
-        renderCommManito(body);
+        sendManitoWelcomeStamp(pid, sid, btn, body);
       });
     });
     body.querySelectorAll('[data-mndm]').forEach(function(btn){
