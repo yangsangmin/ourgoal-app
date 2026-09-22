@@ -687,6 +687,39 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div class="toss-headline" id="settingsHeadlineSentence">내 계정과 앱 환경을 <b>편안하게 설정</b>해요 ⚙️</div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><h2 class="s-title" style="margin:0;">설정</h2></div>
 
+      <!-- [토스 설정 프로필 & 상태 요약 원카드] #TASK-ES-218 -->
+      <div class="toss-settings-hero-card" id="settingsHeroCard">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div id="settingsHeroAvatarSlot"></div>
+            <div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span id="settingsHeroNickname" style="font-size:1.05rem;font-weight:800;color:var(--ink);">사용자</span>
+                <span class="tmpl-badge" id="settingsHeroRank" style="font-size:0.75rem;padding:2px 8px;border-radius:6px;background:rgba(59,130,246,0.1);color:var(--primary);font-weight:700;">성장 러너</span>
+              </div>
+              <div class="faint" id="settingsHeroStatusDesc" style="font-size:0.8125rem;margin-top:2px;">모든 데이터가 안전하게 보관되고 있어요</div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" id="btnSettingsQuickAvatar" onclick="if(window.OurgoalAvatar &amp;&amp; window.OurgoalAvatar.openAvatarModal){ window.OurgoalAvatar.openAvatarModal({ profile: state.profile, state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal }); } else { var b=document.getElementById('btnOpenAvatarModal'); if(b) b.click(); }" style="min-height:36px;padding:6px 12px;font-size:0.8rem;border-radius:10px;">아바타 관리</button>
+        </div>
+        <div class="toss-settings-hero-stats">
+          <div class="toss-settings-stat-item">
+            <span class="toss-settings-stat-val" id="settingsHeroGoalsCount">0</span>
+            <span class="toss-settings-stat-lbl">진행 목표</span>
+          </div>
+          <div style="width:1px;height:24px;background:var(--rule, rgba(0,0,0,0.08));"></div>
+          <div class="toss-settings-stat-item">
+            <span class="toss-settings-stat-val" id="settingsHeroRecordsCount">0</span>
+            <span class="toss-settings-stat-lbl">누적 기록</span>
+          </div>
+          <div style="width:1px;height:24px;background:var(--rule, rgba(0,0,0,0.08));"></div>
+          <div class="toss-settings-stat-item">
+            <span class="toss-settings-stat-val" id="settingsHeroStreakCount">0일</span>
+            <span class="toss-settings-stat-lbl">연속 달성</span>
+          </div>
+        </div>
+      </div>
+
       <!-- [그룹 1] 👤 계정 & 프로필 -->
       <details class="settings-group-accordion toss-settings-group" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
         <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
@@ -31073,8 +31106,65 @@ wirePromptEncyclopediaEvents(body);
     }
   });
 
+  /* ============ RENDER: SETTINGS HERO CARD (#TASK-ES-218) ============ */
+  function renderSettingsHeroCard(){
+    var card = document.getElementById('settingsHeroCard');
+    if(!card) return;
+    var p = state.profile;
+    var nickEl = document.getElementById('settingsHeroNickname');
+    if(nickEl) nickEl.textContent = p.displayName || '사용자';
+    var rankEl = document.getElementById('settingsHeroRank');
+    if(rankEl){
+      var activeG = (p.goals || []).filter(function(g){ return !g.archivedAt; }).length;
+      var rText = activeG >= 5 ? '열정 마스터' : (activeG >= 1 ? '성장 러너' : '새싹 러너');
+      rankEl.textContent = rText;
+    }
+    var avatarSlot = document.getElementById('settingsHeroAvatarSlot');
+    if(avatarSlot && typeof avatarHtml === 'function'){
+      avatarSlot.innerHTML = avatarHtml(44);
+    }
+    var goalsEl = document.getElementById('settingsHeroGoalsCount');
+    if(goalsEl){
+      var activeGoals = (p.goals || []).filter(function(g){ return !g.archivedAt; });
+      goalsEl.textContent = activeGoals.length;
+    }
+    var recordsEl = document.getElementById('settingsHeroRecordsCount');
+    if(recordsEl){
+      recordsEl.textContent = (p.records || []).length;
+    }
+    var streakEl = document.getElementById('settingsHeroStreakCount');
+    if(streakEl){
+      streakEl.textContent = (typeof computeStreakDays === 'function' ? computeStreakDays() : 0) + '일';
+    }
+    var btnQuickAv = document.getElementById('btnSettingsQuickAvatar');
+    if(btnQuickAv){
+      btnQuickAv.onclick = function(){
+        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+        if(window.OurgoalAvatar && window.OurgoalAvatar.openAvatarModal){
+          window.OurgoalAvatar.openAvatarModal({ profile: state.profile, state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal });
+        } else {
+          var b = document.getElementById('btnOpenAvatarModal');
+          if(b) b.click();
+        }
+      };
+    }
+  }
+
+  // 설정 아코디언 인터랙션 12ms 햅틱 배선 (#TASK-ES-218)
+  document.addEventListener('click', function(e){
+    if(e.target && e.target.closest && e.target.closest('.toss-settings-group summary')){
+      if(typeof triggerHapticFeedback === 'function'){
+        triggerHapticFeedback(12);
+      }
+    }
+  });
+
   /* ============ RENDER: SETTINGS ============ */
   function renderSettingsScreen(){
+    if(typeof triggerHapticFeedback === 'function'){
+      triggerHapticFeedback(12);
+    }
+    renderSettingsHeroCard();
     refreshCustomFeedbackButtons();
     renderProfileCard();
     if(typeof OurgoalCredits !== 'undefined'){ OurgoalCredits.renderSettingsSection(document.getElementById('settingsCreditsBlock')).then(function(){ if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.renderAdOptIn(document.getElementById('settingsCreditsBlock')); }); } // KF-2 #TASK-ES-017: 선택형 "광고 보고 크레딧 받기"
