@@ -1,0 +1,14 @@
+{
+  "id": "fix-checkin-autogrow",
+  "title": "체크인 입력창에 긴 기록을 적으면 입력창 높이가 내용에 맞춰 늘어난다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "expect": "visible", "selector": "#captureInput", "timeoutMs": 15000 },
+    { "do": "click", "selector": "#captureInput" },
+    { "do": "type", "selector": "#captureInput", "text": "오늘은 아침 일찍 일어나서 러닝을 30분 하고, 출근길에 책을 한 챕터 읽었고, 점심시간에는 짧게 산책을 했고, 저녁에는 프로젝트 회고를 정리하면서 내일 할 일을 미리 적어봤다. 하루가 꽤 알차게 지나간 느낌이라 기록도 길게 남겨본다." },
+    { "expect": "rect", "selector": "#captureInput", "minHeight": 130 },
+    { "capture": "checkin-grown" }
+  ]
+}
