@@ -374,10 +374,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <button class="icon-btn icon-btn-lg" id="calNextBtn" type="button" aria-label="다음"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
       </div>
       <div class="cal-quick-bar" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0 10px;padding:0 2px;">
-        <button type="button" class="btn-ghost" id="calLockScreenBtn" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;font-size:.8125rem;font-weight:600;border-radius:9999px;background:var(--bg-card);border:1px solid var(--border-color);color:var(--ink);cursor:pointer;transition:all .15s ease;">
+        <button type="button" class="btn-ghost" id="calLockScreenBtn" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;min-height:44px;font-size:.8125rem;font-weight:600;border-radius:9999px;background:var(--bg-card);border:1px solid var(--border-color);color:var(--ink);cursor:pointer;transition:all .15s ease;">
           <span style="font-size:1rem;">📱</span>
-          <span>폰 잠금화면에서 보기</span>
-          <span style="font-size:.7rem;padding:2px 6px;border-radius:999px;background:rgba(99,102,241,0.12);color:var(--primary);font-weight:700;">⚡ 실시간 라이브 연동</span>
+          <span style="display:none;">폰 잠금화면에서 보기</span>
+          <span>[📱 잠금화면용 일정 카드 저장]</span>
+          <span style="font-size:.7rem;padding:2px 6px;border-radius:999px;background:rgba(99,102,241,0.12);color:var(--primary);font-weight:700;">9:16 배경 생성</span>
         </button>
       </div>
       <div id="calGrid" style="display:none;"></div>
@@ -9481,6 +9482,231 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     } catch(e){}
   }
 
+  
+  /* =========================================================================
+     [#TASK-ES-232] 9:16 스마트폰 잠금화면용 일정 카드 고해상도 Canvas 생성 엔진
+     - 해상도: 1080 x 1920 (정확한 9:16 배경화면 규격)
+     - 상단 날짜, 아바타, 연속 실천 스트릭
+     - 오늘의 일정 타임테이블 목록
+     - 핵심 목표 TOP 3 및 D-Day
+     - 격려 문구 및 아워골 워터마크
+  ========================================================================= */
+  async function generateLockScreenScheduleCardImage(records, goals, options){
+    options = options || {};
+    var theme = options.theme || (state && state.theme === 'white' ? 'light' : 'dark');
+    var isDark = (theme !== 'light');
+
+    var canvas = document.createElement('canvas');
+    canvas.width = 1080;
+    canvas.height = 1920;
+    var ctx = canvas.getContext('2d');
+    if(!ctx) return canvas;
+
+    var now = new Date();
+    var y = now.getFullYear();
+    var m = now.getMonth();
+    var d = now.getDate();
+    var todayStr = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    var dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+    var fullDateStr = y + '년 ' + (m + 1) + '월 ' + d + '일 ' + dayNames[now.getDay()];
+
+    // 팔레트
+    var cBg = isDark ? '#0A0C10' : '#F8FAFC';
+    var cCard = isDark ? '#141721' : '#FFFFFF';
+    var cCardBorder = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+    var cTextMain = isDark ? '#FFFFFF' : '#0F172A';
+    var cTextSub = isDark ? '#94A3B8' : '#64748B';
+    var cTextMuted = isDark ? '#475569' : '#94A3B8';
+    var cAccent = '#6366F1';
+    var cAccentGlow = isDark ? 'rgba(99, 102, 241, 0.22)' : 'rgba(99, 102, 241, 0.1)';
+
+    // 1. 전체 배경 드로잉
+    ctx.fillStyle = cBg;
+    ctx.fillRect(0, 0, 1080, 1920);
+
+    // 상단 앰비언트 그라데이션 글로우
+    var bgGrad = ctx.createRadialGradient(540, 220, 20, 540, 220, 480);
+    bgGrad.addColorStop(0, cAccentGlow);
+    bgGrad.addColorStop(1, 'transparent');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, 1080, 600);
+
+    // 2. 상단 노치 세이프존 & 브랜드 헤더
+    ctx.save();
+    ctx.font = '800 24px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = cAccent;
+    ctx.textAlign = 'center';
+    ctx.fillText('OURGOAL · DAILY LOCKSCREEN', 540, 140);
+    ctx.restore();
+
+    // 3. 날짜 헤더 & 서브 스트릭
+    ctx.save();
+    ctx.font = '900 52px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = cTextMain;
+    ctx.textAlign = 'center';
+    ctx.fillText(fullDateStr, 540, 230);
+
+    var streakDays = (typeof computeStreakDays === 'function') ? computeStreakDays() : 1;
+    var avatarChar = (state && state.profile && state.profile.avatar) || '🌱';
+    ctx.font = '700 26px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = '#38BDF8';
+    ctx.fillText(avatarChar + ' 연속 ' + streakDays + '일째 실천 중 🔥', 540, 285);
+    ctx.restore();
+
+    // 4. 오늘의 타임테이블 카드 (y: 340, w: 960, h: 680)
+    var c1X = 60, c1Y = 340, c1W = 960, c1H = 680;
+    lsDrawRoundRect(ctx, c1X, c1Y, c1W, c1H, 28, cCard, cCardBorder);
+
+    ctx.save();
+    ctx.font = '800 32px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = cTextMain;
+    ctx.textAlign = 'left';
+    ctx.fillText('📅 오늘의 타임테이블', c1X + 44, c1Y + 68);
+
+    ctx.font = '500 22px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = cTextSub;
+    ctx.fillText('시간대별 실천 계획과 주요 일정입니다', c1X + 44, c1Y + 106);
+
+    ctx.strokeStyle = cCardBorder;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(c1X + 44, c1Y + 130);
+    ctx.lineTo(c1X + c1W - 44, c1Y + 130);
+    ctx.stroke();
+    ctx.restore();
+
+    var todaySchedules = [];
+    if(Array.isArray(records)){
+      records.forEach(function(r){
+        if(!r) return;
+        var rDate = (r.startAt || r.date || '').slice(0, 10);
+        if(rDate === todayStr && r.text){
+          var tStr = (r.startAt && r.startAt.includes('T')) ? r.startAt.slice(11, 16) : '오늘';
+          todaySchedules.push({ time: tStr, text: r.text });
+        }
+      });
+    }
+
+    var schedStartY = c1Y + 195;
+    var maxSched = 4;
+    if(todaySchedules.length > 0){
+      todaySchedules.slice(0, maxSched).forEach(function(item, idx){
+        var itemY = schedStartY + (idx * 105);
+        lsDrawRoundRect(ctx, c1X + 44, itemY - 36, 120, 56, 14, cAccentGlow, 'transparent');
+
+        ctx.save();
+        ctx.font = '800 26px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = cAccent;
+        ctx.textAlign = 'center';
+        ctx.fillText(item.time, c1X + 104, itemY + 2);
+
+        ctx.font = '700 28px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = cTextMain;
+        ctx.textAlign = 'left';
+        var txt = item.text;
+        if(txt.length > 22) txt = txt.slice(0, 22) + '…';
+        ctx.fillText(txt, c1X + 190, itemY + 3);
+        ctx.restore();
+      });
+    } else {
+      ctx.save();
+      ctx.font = '700 30px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+      ctx.fillStyle = cTextSub;
+      ctx.textAlign = 'center';
+      ctx.fillText('✨ 오늘 등록된 일정이 없습니다', c1X + (c1W / 2), c1Y + 340);
+      ctx.font = '500 24px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+      ctx.fillStyle = cTextMuted;
+      ctx.fillText('가볍고 상쾌한 마음으로 하루를 시작해보세요!', c1X + (c1W / 2), c1Y + 395);
+      ctx.restore();
+    }
+
+    // 5. 핵심 목표 TOP 3 카드 (y: 1060, w: 960, h: 660)
+    var c2X = 60, c2Y = 1060, c2W = 960, c2H = 660;
+    lsDrawRoundRect(ctx, c2X, c2Y, c2W, c2H, 28, cCard, cCardBorder);
+
+    ctx.save();
+    ctx.font = '800 32px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = cTextMain;
+    ctx.textAlign = 'left';
+    ctx.fillText('🎯 핵심 실천 목표 TOP 3', c2X + 44, c2Y + 68);
+
+    ctx.font = '500 22px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = cTextSub;
+    ctx.fillText('매일의 작은 발걸음이 위대한 성취가 됩니다', c2X + 44, c2Y + 106);
+
+    ctx.strokeStyle = cCardBorder;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(c2X + 44, c2Y + 130);
+    ctx.lineTo(c2X + c2W - 44, c2Y + 130);
+    ctx.stroke();
+    ctx.restore();
+
+    var activeGoals = [];
+    if(Array.isArray(goals)){
+      goals.forEach(function(g){
+        if(!g || !g.title) return;
+        var ddayStr = '';
+        if(g.targetDate){
+          var tTime = new Date(g.targetDate).getTime();
+          var nTime = new Date(todayStr).getTime();
+          var diff = Math.ceil((tTime - nTime) / (1000 * 60 * 60 * 24));
+          if(diff >= 0) ddayStr = 'D-' + diff;
+          else ddayStr = 'D+' + Math.abs(diff);
+        }
+        activeGoals.push({ title: g.title, dday: ddayStr });
+      });
+    }
+
+    var goalStartY = c2Y + 195;
+    if(activeGoals.length > 0){
+      activeGoals.slice(0, 3).forEach(function(gItem, idx){
+        var itemY = goalStartY + (idx * 115);
+        var badgeBg = isDark ? 'rgba(56, 189, 248, 0.16)' : 'rgba(2, 132, 199, 0.12)';
+        var badgeColor = isDark ? '#38BDF8' : '#0284C7';
+        lsDrawRoundRect(ctx, c2X + 44, itemY - 36, 120, 56, 14, badgeBg, 'transparent');
+
+        ctx.save();
+        ctx.font = '800 26px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = badgeColor;
+        ctx.textAlign = 'center';
+        ctx.fillText(gItem.dday || '목표', c2X + 104, itemY + 2);
+
+        ctx.font = '700 28px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+        ctx.fillStyle = cTextMain;
+        ctx.textAlign = 'left';
+        var gTxt = gItem.title;
+        if(gTxt.length > 20) gTxt = gTxt.slice(0, 20) + '…';
+        ctx.fillText(gTxt, c2X + 190, itemY + 3);
+        ctx.restore();
+      });
+    } else {
+      ctx.save();
+      ctx.font = '700 30px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+      ctx.fillStyle = cTextSub;
+      ctx.textAlign = 'center';
+      ctx.fillText('🎯 등록된 핵심 목표가 없습니다', c2X + (c2W / 2), c2Y + 330);
+      ctx.font = '500 24px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+      ctx.fillStyle = cTextMuted;
+      ctx.fillText('목표 탭에서 나만의 새로운 목표를 추가해보세요!', c2X + (c2W / 2), c2Y + 385);
+      ctx.restore();
+    }
+
+    // 6. 하단 격려 문구 & 워터마크 (y: 1760 ~ 1860)
+    ctx.save();
+    ctx.font = '700 26px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = cTextSub;
+    ctx.textAlign = 'center';
+    ctx.fillText('오늘도 나만의 목표를 향해 한 걸음 나아가세요! 🔥', 540, 1780);
+
+    ctx.font = '600 20px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
+    ctx.fillStyle = cTextMuted;
+    ctx.fillText('OURGOAL · 매일 성장하는 나만의 습관 파트너', 540, 1835);
+    ctx.restore();
+
+    return canvas;
+  }
+
   /* =========================================================================
      [#TASK-ES-181 & #TASK-ES-182] 폰 잠금화면에서 바로 보기 통합 허브 모달
   ========================================================================= */
@@ -9521,13 +9747,24 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '<div class="lockscreen-hub-container" style="max-height:85vh;overflow-y:auto;padding-bottom:16px;">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
           '<h3 style="margin:0;font-size:1.15rem;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
-            '<span>📱</span> 폰 잠금화면에서 바로 보기' +
+            '<span>📱</span> 잠금화면용 일정 카드 저장' +
           '</h3>' +
           '<button type="button" class="btn-ghost" onclick="closeModal()" style="border:none;background:transparent;font-size:1.25rem;cursor:pointer;color:var(--ink-soft);padding:4px 8px;" aria-label="닫기">✕</button>' +
         '</div>' +
         '<p style="margin:0 0 14px;font-size:.84rem;color:var(--ink-soft);line-height:1.45;">' +
-          '앱에 들어오지 않아도 폰을 켤 때마다 내 목표와 일정을 실시간으로 확인하는 <strong>스마트 잠금화면 허브</strong>입니다.' +
+          '오늘의 핵심 일정과 목표를 휴대폰 배경화면 비율(9:16) 이미지로 갤러리에 저장해요.' +
         '</p>' +
+        '<div style="background:var(--surface-2);border-radius:14px;padding:14px;border:1px solid var(--border-color);margin-bottom:14px;">' +
+          '<div style="font-size:.875rem;font-weight:800;color:var(--ink);margin-bottom:4px;display:flex;align-items:center;gap:6px;">' +
+            '<span>🖼️</span> 9:16 고해상도 잠금화면 카드 (1080×1920)' +
+          '</div>' +
+          '<div style="font-size:.78rem;color:var(--ink-soft);line-height:1.45;margin-bottom:10px;">' +
+            '오늘 하루 일정과 핵심 목표 TOP 3가 담긴 휴대폰 맞춤 배경화면 카드를 갤러리에 즉시 저장합니다.' +
+          '</div>' +
+          '<button type="button" class="btn btn-primary btn-block" id="btnDownloadLockscreenCard" style="font-size:.9rem;font-weight:700;padding:12px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;">' +
+            '<span>📱 잠금화면용 일정 카드 갤러리에 저장</span>' +
+          '</button>' +
+        '</div>' +
 
         '<div class="ls-seg-bar" style="display:flex;background:var(--surface-2);padding:4px;border-radius:12px;gap:4px;margin-bottom:16px;">' +
           '<button type="button" class="ls-tab-btn active" data-tab="live" style="flex:1;border:none;background:var(--bg-card);color:var(--ink);padding:8px 4px;font-size:.78rem;font-weight:700;border-radius:8px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.08);transition:all .15s ease;">⚡ 실시간 라이브</button>' +
@@ -9735,6 +9972,41 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '</div>';
 
     openModal(html, function(sheet){
+      // 0. [#TASK-ES-232] 잠금화면용 일정 카드 다운로드 배선
+      var btnDownloadCard = sheet.querySelector('#btnDownloadLockscreenCard');
+      if(btnDownloadCard){
+        btnDownloadCard.onclick = async function(){
+          if(typeof triggerHapticFeedback === 'function'){
+            triggerHapticFeedback(15);
+          }
+          btnDownloadCard.disabled = true;
+          var origHtml = btnDownloadCard.innerHTML;
+          btnDownloadCard.innerHTML = '<span>⏳ 카드 이미지 생성 중...</span>';
+          try {
+            var cCanvas = await generateLockScreenScheduleCardImage(
+              state.records || [],
+              state.goals || [],
+              { theme: (state.theme === 'white' ? 'light' : 'dark') }
+            );
+            var dlLink = document.createElement('a');
+            var dNow = new Date();
+            var dStr = dNow.getFullYear() + '-' + String(dNow.getMonth()+1).padStart(2,'0') + '-' + String(dNow.getDate()).padStart(2,'0');
+            dlLink.download = 'ourgoal-schedule-card-' + dStr + '.png';
+            dlLink.href = cCanvas.toDataURL('image/png');
+            document.body.appendChild(dlLink);
+            dlLink.click();
+            document.body.removeChild(dlLink);
+            toast('잠금화면용 일정 카드가 갤러리에 저장되었어요! 📱');
+          } catch(err){
+            console.error('[잠금화면 카드 다운로드 실패]:', err);
+            toast('카드 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+          } finally {
+            btnDownloadCard.disabled = false;
+            btnDownloadCard.innerHTML = origHtml;
+          }
+        };
+      }
+
       // 1. 3단 탭 전환 바인딩
       sheet.querySelectorAll('.ls-tab-btn').forEach(function(btn){
         btn.onclick = function(){
