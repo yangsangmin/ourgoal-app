@@ -7460,6 +7460,24 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+
+check('[#TASK-ES-244] 설정탭 대표 안내멘트(#settingsHeadlineSentence) 시인성 개선 및 공간 효율적 간결 문구 재배치 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. #settingsHeadlineSentence 압축 스타일 선언 확인
+  assert.ok(cssContent.includes('#settingsHeadlineSentence'), '#settingsHeadlineSentence CSS 선언 확인');
+  assert.ok(cssContent.includes('margin: 4px 0 10px 0 !important;'), '#settingsHeadlineSentence margin: 4px 0 10px 0 선언 확인');
+  assert.ok(cssContent.includes('.toss-settings-hero-card'), '.toss-settings-hero-card 선언 확인');
+  assert.ok(cssContent.includes('margin-top: 6px !important;'), '.toss-settings-hero-card margin-top: 6px 확인');
+
+  // 2. 모바일 480px 반응형 규칙 확인
+  assert.ok(cssContent.includes('margin: 4px 0 8px 0 !important;'), '#settingsHeadlineSentence 480px 반응형 마진 확인');
+
+  // 3. index.html 내 카피라이팅 확인
+  assert.ok(indexHtml.includes('나에게 딱 맞게 아워골을 가꿔보세요 ⚙️'), '나에게 딱 맞게 아워골을 가꿔보세요 카피 문구 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
