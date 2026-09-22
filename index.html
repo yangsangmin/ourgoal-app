@@ -9140,6 +9140,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           closeBtn._bound = true;
           closeBtn.onclick = function(e){
             e.stopPropagation();
+            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(10);
             diaryGuide.style.display = 'none';
             try { localStorage.setItem('ourgoal_hide_diary_guide', 'true'); } catch(err){}
           };
