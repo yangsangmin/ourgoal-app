@@ -3134,8 +3134,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
 
       var likeBtnStyle = isLiked ?
-        'background:rgba(49,130,246,0.12);color:var(--accent);border-color:rgba(49,130,246,0.3);font-weight:700;' :
-        'background:transparent;color:var(--ink-soft);border-color:var(--rule);';
+        'background:rgba(49,130,246,0.18);color:var(--brand, #3182f6);border:1px solid var(--brand, #3182f6);font-weight:700;' :
+        'background:var(--card2);color:var(--ink-soft);border:1px solid var(--rule);';
 
       return '<div class="user-prompt-card" style="background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:10px;">' +
         metaHeader +
@@ -3148,9 +3148,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           escapeHtml(item.prompt) +
         '</div>' +
         '<div style="display:flex;align-items:center;justify-content:space-between;">' +
-          '<button type="button" class="btn btn-xs btn-like-prompt' + (isLiked ? ' liked' : '') + '" data-promptid="' + item.id + '" style="font-size:.75rem;padding:4px 10px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;' + likeBtnStyle + '">' +
+          '<button type="button" class="btn btn-xs btn-like-prompt' + (isLiked ? ' liked' : '') + '" data-promptid="' + item.id + '" style="font-size:.75rem;padding:5px 12px;border-radius:18px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s ease;' + likeBtnStyle + '">' +
             '<span>' + (isLiked ? '👍' : '👍🏻') + '</span>' +
-            '<span>도움돼요 (' + currentLikes + ')</span>' +
+            '<span>도움돼요 <b>(' + currentLikes + ')</b></span>' +
           '</button>' +
           (isUserCreated ? '<span class="faint" style="font-size:.6875rem;">유저 검증 팁</span>' : '<span class="faint" style="font-size:.6875rem;">아워골 공식 큐레이션</span>') +
         '</div>' +
@@ -3202,12 +3202,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     var drawerHtml =
       '<div id="promptEncyclopediaDrawer" style="' + (_promptEncyclopediaOpen ? 'margin-top:14px;display:block;' : 'display:none;') + '">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px;">' +
-          '<div style="display:flex;gap:4px;background:var(--card);padding:2px;border-radius:8px;border:1px solid var(--rule);">' +
-            '<button type="button" class="btn-prompt-tab" data-ptab="real" style="padding:4px 10px;font-size:.75rem;border-radius:6px;border:none;cursor:pointer;' + (_promptTabState==='real'?'background:var(--brand);color:#fff;font-weight:700;':'background:transparent;color:var(--ink-soft);') + '">실사용 프롬프트 (' + (userList.length + realPrompts.length) + ')</button>' +
-            '<button type="button" class="btn-prompt-tab" data-ptab="ai" style="padding:4px 10px;font-size:.75rem;border-radius:6px;border:none;cursor:pointer;' + (_promptTabState==='ai'?'background:var(--brand);color:#fff;font-weight:700;':'background:transparent;color:var(--ink-soft);') + '">아워골 AI 맞춤 (' + aiPrompts.length + ')</button>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;">' +
+          '<div style="display:flex;gap:4px;background:var(--card);padding:3px;border-radius:10px;border:1px solid var(--rule);flex:1;min-width:0;">' +
+            '<button type="button" class="btn-prompt-tab" data-ptab="real" style="flex:1;text-align:center;padding:6px 6px;font-size:.75rem;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;' + (_promptTabState==='real'?'background:var(--brand);color:#fff;font-weight:700;':'background:transparent;color:var(--ink-soft);') + '">실사용 (' + (userList.length + realPrompts.length) + ')</button>' +
+            '<button type="button" class="btn-prompt-tab" data-ptab="ai" style="flex:1;text-align:center;padding:6px 6px;font-size:.75rem;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;' + (_promptTabState==='ai'?'background:var(--brand);color:#fff;font-weight:700;':'background:transparent;color:var(--ink-soft);') + '">AI 맞춤 (' + aiPrompts.length + ')</button>' +
           '</div>' +
-          '<button type="button" class="btn btn-primary btn-sm" id="btnAddUserPrompt" style="font-size:.78rem;font-weight:700;padding:4px 10px;display:inline-flex;align-items:center;gap:4px;">' +
+          '<button type="button" class="btn btn-primary btn-sm" id="btnAddUserPrompt" style="flex-shrink:0;font-size:.75rem;font-weight:700;padding:6px 12px;border-radius:10px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">' +
             '<span>➕</span> 나만의 프롬프트 올리기' +
           '</button>' +
         '</div>' +
@@ -3218,14 +3218,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '</div>';
 
     return '<div class="prompt-encyclopedia-card" style="margin-top:20px;padding:14px 16px;background:var(--card2);border:1px solid var(--rule);border-radius:16px;">' +
-      '<div id="btnTogglePromptAccordion" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;">' +
-        '<div style="display:flex;align-items:center;gap:8px;">' +
-          '<span style="font-size:1.2rem;">🧠</span>' +
-          '<span style="font-weight:700;font-size:.9375rem;color:var(--ink);">데이터분석 프롬프트 백과사전</span>' +
-          '<span class="faint" style="font-size:.75rem;">(외부 AI 분석 · 유저 피드)</span>' +
+      '<div id="btnTogglePromptAccordion" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;gap:8px;">' +
+        '<div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;">' +
+          '<span style="font-size:1.2rem;flex-shrink:0;">🧠</span>' +
+          '<div style="display:flex;flex-direction:column;min-width:0;">' +
+            '<span style="font-weight:700;font-size:.9rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">데이터분석 프롬프트 백과사전</span>' +
+            '<span class="faint" style="font-size:.72rem;">(외부 AI 분석 · 유저 피드)</span>' +
+          '</div>' +
         '</div>' +
-        '<div style="display:flex;align-items:center;gap:6px;">' +
-          '<span style="font-size:.75rem;color:var(--brand);font-weight:600;">' + (_promptEncyclopediaOpen ? '접기' : '펼쳐보기') + '</span>' +
+        '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">' +
+          '<button type="button" class="btn btn-primary btn-xs" id="btnHeaderAddUserPrompt" style="font-size:.72rem;font-weight:700;padding:4px 9px;border-radius:8px;display:inline-flex;align-items:center;gap:3px;white-space:nowrap;">' +
+            '<span>➕</span> 올리기' +
+          '</button>' +
+          '<span style="font-size:.75rem;color:var(--brand);font-weight:600;padding-left:2px;white-space:nowrap;">' + (_promptEncyclopediaOpen ? '접기' : '펼쳐보기') + '</span>' +
           '<span id="promptAccordionChevron" style="font-size:.75rem;color:var(--ink-soft);transition:transform .2s ease;' + (_promptEncyclopediaOpen ? 'transform:rotate(180deg);' : '') + '">▼</span>' +
         '</div>' +
       '</div>' +
@@ -3243,6 +3248,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         _promptEncyclopediaOpen = !_promptEncyclopediaOpen;
         renderGoalsScreen();
         if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
+      });
+    }
+
+    var headerAddBtn = root.querySelector('#btnHeaderAddUserPrompt');
+    if(headerAddBtn){
+      headerAddBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+        _promptEncyclopediaOpen = true;
+        openAddUserPromptModal();
       });
     }
 
