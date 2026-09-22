@@ -1,0 +1,11 @@
+{
+  "id": "fix-landing-cta-order",
+  "title": "첫 화면 가입 영역에서 카카오 가입 버튼이 둘러보기 버튼보다 먼저(위에) 온다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": ".land-cta" },
+    { "do": "click", "selector": "#landAnonymityBadge" },
+    { "expect": "visible", "selector": ".land-cta > .oauth-row:first-child" },
+    { "capture": "landing-order" }
+  ]
+}
