@@ -166,6 +166,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <span style="font-size:.6875rem;color:var(--ink-faint);line-height:1;">필요없는 창 지우기</span>
         </div>
       </div>
+      <div class="toss-headline" id="homeHeadlineSentence">오늘 하루를 완성할 <b>갓생 목표</b>가 기다려요 ✨</div>
       <div id="levelBadgeRow"></div>
       <div id="todayGlancePill" class="today-glance-pill" role="button" tabindex="0" aria-label="오늘 요약" style="display:none;"></div>
       <div id="a11yLiveAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
@@ -274,42 +275,45 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     <!-- GOALS -->
     <section class="screen" id="screen-goals">
       <div class="comm-subtabs comm-subtabs-clean goals-subtabs-grid" id="goalsSubtabs" style="margin-bottom:14px;"></div>
-      <div id="sanctuaryGoalsView"></div>
-      <div id="routineGoalsView" style="display:none;"></div>
-      <div id="personalGoalsView">
-        <div class="card agent-card" id="goalAgentCard" style="padding:12px 16px;margin-top:6px;margin-bottom:14px;">
-          <div class="agent-title-bar" id="btnToggleGoalAgent" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <span style="font-size:1.05rem;">✨</span>
-              <span class="agent-title" style="margin:0;font-size:.9rem;font-weight:700;color:var(--ink);">AI 목표 어시스턴트</span>
-              <span class="faint" style="font-size:.78rem;">(말로 마일스톤·할 일 추가)</span>
+      <div class="toss-headline" id="goalsHeadlineSentence">정상을 향해 힘차게 나아가고 있어요 🏔️</div>
+      <div class="toss-quest-board">
+        <div id="sanctuaryGoalsView"></div>
+        <div id="routineGoalsView" style="display:none;"></div>
+        <div id="personalGoalsView">
+          <div class="card agent-card goals-agent-slim" id="goalAgentCard" style="padding:8px 14px;margin-top:4px;margin-bottom:8px;border-radius:12px;">
+            <div class="agent-title-bar" id="btnToggleGoalAgent" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span style="font-size:.95rem;">✨</span>
+                <span class="agent-title" style="margin:0;font-size:.85rem;font-weight:700;color:var(--ink);">AI 목표 어시스턴트</span>
+                <span class="faint" style="font-size:.75rem;">(말로 마일스톤·할 일 추가)</span>
+              </div>
+              <span id="goalAgentChevron" style="font-size:.72rem;color:var(--ink-soft);transition:transform .2s ease;">▼</span>
             </div>
-            <span id="goalAgentChevron" style="font-size:.75rem;color:var(--ink-soft);transition:transform .2s ease;">▼</span>
-          </div>
-          <div id="goalAgentDrawer" style="display:none;margin-top:12px;padding-top:10px;border-top:1px dashed var(--rule);">
-            <div class="agent-sub" style="margin-bottom:8px;font-size:.78rem;">말로 목표와 할 일을 추가·변경·삭제할 수 있어요</div>
-            <div class="dm-input-row">
-              <input id="goalAgentInput" type="text" placeholder="예: 다음 주까지 5km 러닝 마일스톤 추가해줘">
-              <button class="btn btn-primary btn-sm" id="goalAgentSendBtn" type="button">보내기</button>
+            <div id="goalAgentDrawer" style="display:none;margin-top:8px;padding-top:8px;border-top:1px dashed var(--rule);">
+              <div class="agent-sub" style="margin-bottom:6px;font-size:.75rem;">말로 목표와 할 일을 추가·변경·삭제할 수 있어요</div>
+              <div class="dm-input-row">
+                <input id="goalAgentInput" type="text" placeholder="예: 다음 주까지 5km 러닝 마일스톤 추가해줘">
+                <button class="btn btn-primary btn-sm" id="goalAgentSendBtn" type="button">보내기</button>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="goal-head-row" style="margin-top:10px;">
-          <div class="goal-head-l">
-            <div style="display:flex;align-items:center;gap:6px;"><h2 style="margin:0;font-size:1.15rem;">세부 마일스톤 & 할 일</h2></div>
-            <span class="privacy-badge" id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
+          <div class="goal-head-row" style="margin-top:10px;">
+            <div class="goal-head-l">
+              <div style="display:flex;align-items:center;gap:6px;"><h2 style="margin:0;font-size:1.15rem;">세부 마일스톤 & 할 일</h2></div>
+              <span class="privacy-badge" id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <button class="btn btn-ghost btn-sm" id="btnGoalTemplateEncyclopedia" type="button" style="display:none;" aria-hidden="true">📖 템플릿백과사전</button>
+              <button class="btn btn-ghost btn-sm" id="btnShowPersonalGuideModal" type="button" style="font-size:.8125rem;padding:3px 9px;">활용가이드</button>
+              <button class="btn btn-primary btn-sm" id="btnPersonalAddGoalInline" type="button" style="font-size:.8125rem;padding:3px 9px;font-weight:700;">+ 새 목표</button>
+              <button class="edit-toggle off" id="goalEditToggle" type="button">편집</button>
+            </div>
           </div>
-          <div style="display:flex;align-items:center;gap:6px;">
-            <button class="btn btn-ghost btn-sm" id="btnGoalTemplateEncyclopedia" type="button" style="display:none;" aria-hidden="true">📖 템플릿백과사전</button>
-            <button class="btn btn-ghost btn-sm" id="btnShowPersonalGuideModal" type="button" style="font-size:.8125rem;padding:3px 9px;">활용가이드</button>
-            <button class="btn btn-primary btn-sm" id="btnPersonalAddGoalInline" type="button" style="font-size:.8125rem;padding:3px 9px;font-weight:700;">+ 새 목표</button>
-            <button class="edit-toggle off" id="goalEditToggle" type="button">편집</button>
-          </div>
+          <div id="goalsTemplateAccordionSlot" style="display:none;"></div>
+          <div class="goal-chip-row" id="goalChipRow" style="display:none;" aria-hidden="true"></div>
+          <div id="goalDetailBody"></div>
+          <div id="personalGoalsEmptyGuideSlot"></div>
         </div>
-        <div id="goalsTemplateAccordionSlot" style="display:none;"></div>
-        <div class="goal-chip-row" id="goalChipRow" style="display:none;" aria-hidden="true"></div>
-        <div id="goalDetailBody"></div>
-        <div id="personalGoalsEmptyGuideSlot"></div>
       </div>
       <div id="templateEncyclopediaView" style="display:none;"></div>
       <div id="teamLinkedGoalsView" style="display:none;"></div>
@@ -319,6 +323,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     <!-- CALENDAR -->
     <section class="screen" id="screen-calendar" data-cal-mode="month">
+      <div class="toss-headline" id="calHeadlineSentence">이번 달 나의 성장을 <b>한눈에 확인</b>해요 📅</div>
       <div class="screen-head">
         <div class="screen-head-l">
           <h2 class="s-title">일정</h2>
@@ -369,6 +374,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     <!-- RECORDS -->
     <section class="screen" id="screen-records">
+      <div class="toss-headline" id="recHeadlineSentence">이번 주 꾸준한 <b>몰입</b>이 쌓여가고 있어요 📈</div>
       <div id="sanctuaryRecordsView"></div>
       <div class="screen-head" style="flex-wrap:wrap;gap:8px;margin-bottom:8px;">
         <div class="screen-head-l" style="flex-wrap:wrap;">
@@ -576,6 +582,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     <!-- COMM -->
     <section class="screen" id="screen-comm">
+      <div class="toss-headline" id="commHeadlineSentence">비슷한 목표를 가진 <b>동류들</b>과 함께해요 🤝</div>
       <div id="sanctuaryCommView"></div>
       <div class="screen-head">
         <div style="display:flex;align-items:center;gap:6px;"><h2 class="s-title" style="margin:0;">소통</h2></div>
@@ -588,10 +595,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     <!-- SETTINGS -->
     <section class="screen" id="screen-settings">
       <p class="s-eyebrow">설정</p>
+      <div class="toss-headline" id="settingsHeadlineSentence">내 계정과 앱 환경을 <b>편안하게 설정</b>해요 ⚙️</div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><h2 class="s-title" style="margin:0;">설정</h2></div>
 
       <!-- [그룹 1] 👤 계정 & 프로필 -->
-      <details class="settings-group-accordion" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
+      <details class="settings-group-accordion toss-settings-group" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
         <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
           <div style="display:flex;flex-direction:column;gap:3px;">
             <div style="display:flex;align-items:center;gap:8px;">
@@ -674,7 +682,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       </details>
 
       <!-- [그룹 2] 🔔 알림 제어 센터 -->
-      <details class="settings-group-accordion" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
+      <details class="settings-group-accordion toss-settings-group" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
         <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
           <div style="display:flex;flex-direction:column;gap:3px;">
             <div style="display:flex;align-items:center;gap:8px;">
@@ -762,7 +770,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       </details>
 
       <!-- [그룹 3] 🎨 화면 & 홈 구성 -->
-      <details class="settings-group-accordion" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
+      <details class="settings-group-accordion toss-settings-group" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
         <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
           <div style="display:flex;flex-direction:column;gap:3px;">
             <div style="display:flex;align-items:center;gap:8px;">
@@ -857,7 +865,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       </details>
 
       <!-- [그룹 4] 💾 데이터 & 외부 연동 / 고객지원 -->
-      <details class="settings-group-accordion" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
+      <details class="settings-group-accordion toss-settings-group" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
         <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
           <div style="display:flex;flex-direction:column;gap:3px;">
             <div style="display:flex;align-items:center;gap:8px;">
@@ -1674,6 +1682,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }catch(e){}
     return false;
   }
+
+  function triggerHapticFeedback(pattern){
+    return triggerHaptic(pattern || 12);
+  }
+  window.triggerHapticFeedback = triggerHapticFeedback;
 
   function reorderMilestones(goal, fromIdx, toIdx){
     if(!goal || !goal.milestones || !Array.isArray(goal.milestones)) return [];
@@ -10535,6 +10548,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     initFeedbackTierBar();
     renderCrewPacingWidget();
     renderIosPwaBanner();
+    var homeHeadline = document.getElementById('homeHeadlineSentence');
+    if(homeHeadline){
+      var todayCheckins = (state.profile.records || []).filter(function(r){ return r.date === dateKey(); });
+      if(todayCheckins.length > 0){
+        homeHeadline.innerHTML = '오늘 멋진 실천을 <b>' + todayCheckins.length + '회</b> 기록하셨어요 ✨';
+      } else {
+        homeHeadline.innerHTML = '오늘 하루를 완성할 <b>갓생 목표</b>가 기다려요 ✨';
+      }
+    }
     var streak = computeStreakDays();
     updateAppBadge(streak);
     var badgeEl = document.getElementById('streakBadge');
@@ -17737,6 +17759,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       state.activeGoalId = goals.length ? goals[0].id : null;
     }
 
+    var headlineEl = document.getElementById('goalsHeadlineSentence');
+    if(headlineEl){
+      if(goals.length === 0){
+        headlineEl.innerHTML = '새로운 목표를 세우고 첫 발걸음을 딛어보세요 🌱';
+      } else {
+        var activeGoal = goals.find(function(g){ return g.id === state.activeGoalId; }) || goals[0];
+        var remainingMs = (activeGoal && activeGoal.milestones) ? activeGoal.milestones.filter(function(m){ return m.status !== 'done'; }).length : 0;
+        if(remainingMs > 0){
+          headlineEl.innerHTML = '정상까지 <b>' + remainingMs + '개</b>의 퀘스트가 남았어요 🏔️';
+        } else {
+          headlineEl.innerHTML = '목표를 멋지게 달성하셨어요! 축하드려요 🎉';
+        }
+      }
+    }
+
     var isPersonal = (!state.goalsSubTab || state.goalsSubTab==='personal');
     var sv = document.getElementById('sanctuaryGoalsView');
     if(sv) sv.style.display = isPersonal ? '' : 'none';
@@ -17948,28 +17985,28 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     var gView = state.goalViewMode || 'default';
     var msFilterBar = totalMs > 0 ?
-      '<div class="ms-filter-bar" style="display:flex;flex-direction:column;gap:6px;margin:6px 0;">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;">' +
-          '<div class="format-toggle" id="msFilterToggle" style="max-width:280px;">' +
+      '<div class="ms-filter-bar goals-filter-strip" style="display:flex;flex-direction:column;gap:5px;margin:4px 0 8px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;">' +
+          '<div class="format-toggle seg-compact" id="msFilterToggle" style="flex:1;max-width:280px;min-width:200px;">' +
             '<div class="format-opt'+(state.msFilter==='all'?' active':'')+'" data-msfilter="all">전체 ('+totalMs+')</div>' +
             '<div class="format-opt'+(state.msFilter==='doing'?' active':'')+'" data-msfilter="doing">진행 ('+doingCount+')</div>' +
             '<div class="format-opt'+(state.msFilter==='todo'?' active':'')+'" data-msfilter="todo">대기 ('+todoCount+')</div>' +
             '<div class="format-opt'+(state.msFilter==='done'?' active':'')+'" data-msfilter="done">완료 ('+doneCount+')</div>' +
           '</div>' +
-          '<div style="display:flex;align-items:center;gap:4px;">' +
+          '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">' +
             densityBtnHtml +
             '<button class="btn btn-ghost btn-sm" id="msCollapseAllBtn" type="button" style="font-size:.75rem;padding:3px 8px;">' +
               (allCollapsed ? '전체 펼치기' : '전체 접기') +
             '</button>' +
           '</div>' +
         '</div>' +
-        '<div id="msViewToggle" style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;">' +
-          '<div class="format-toggle" style="flex:1;max-width:280px;">' +
+        '<div id="msViewToggle" style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;">' +
+          '<div class="format-toggle seg-compact" style="flex:1;max-width:280px;min-width:200px;">' +
             '<div class="format-opt'+(gView==='default'?' active':'')+'" data-msview="default">기본 뷰</div>' +
             '<div class="format-opt'+(gView==='milestones_only'?' active':'')+'" data-msview="milestones_only">마일스톤만</div>' +
             '<div class="format-opt'+(gView==='tasks_only'?' active':'')+'" data-msview="tasks_only">할일만</div>' +
           '</div>' +
-          '<div class="format-toggle goals-only-wrap">' +
+          '<div class="format-toggle seg-compact goals-only-wrap" style="flex-shrink:0;">' +
             '<div class="format-opt'+(gView==='goals_only'?' active':'')+'" data-msview="goals_only" style="font-weight:700;">🎯 목표별 요약</div>' +
           '</div>' +
         '</div>' +
@@ -25569,6 +25606,16 @@ wirePromptEncyclopediaEvents(body);
     var allRecs = (state.profile.records || []).slice().sort(function(a,b){
       var tA = new Date(a.startAt || a.start_at || 0).getTime(); var tB = new Date(b.startAt || b.start_at || 0).getTime(); return tB - tA;
     });
+
+    var recHeadline = document.getElementById('recHeadlineSentence');
+    if(recHeadline){
+      var totalRecs = (state.profile.records || []).length;
+      if(totalRecs > 0){
+        recHeadline.innerHTML = '총 <b>' + totalRecs + '개</b>의 소중한 성장이 기록되었어요 📈';
+      } else {
+        recHeadline.innerHTML = '이번 주 꾸준한 <b>몰입</b>이 쌓여가고 있어요 📈';
+      }
+    }
 
     // 실시간 AI 피드백 슬롯 동기화 (Req 1)
     if(state.lastCapture && state.lastCapture.feedback){

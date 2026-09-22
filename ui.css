@@ -9525,4 +9525,196 @@ html[data-theme="urban-city"] .s-seg-pill {
   filter: drop-shadow(0 2px 4px rgba(251, 191, 36, 0.35)) !important;
 }
 
+/* =============================================================================
+ * #TASK-ES-209: 목표 탭 Phase 1 컨트롤 슬림화 및 모바일 375px 스크롤 최적화
+ * ============================================================================= */
+.goals-agent-slim {
+  padding: 8px 14px !important;
+  margin-top: 4px !important;
+  margin-bottom: 8px !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--rule) !important;
+  background: var(--card) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.goals-agent-slim .agent-title {
+  font-size: 0.85rem !important;
+}
 
+.goals-filter-strip {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  margin: 6px 0 !important;
+  padding: 0 !important;
+}
+
+.goals-filter-strip .format-toggle {
+  margin: 0 !important;
+}
+
+.goals-filter-strip .format-opt {
+  font-size: 0.75rem !important;
+  padding: 4px 8px !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 480px) {
+  #screen-goals .mountain-trail-card {
+    padding: 14px 12px !important;
+    margin-bottom: 12px !important;
+    border-radius: 16px !important;
+  }
+  #screen-goals .mountain-head {
+    margin-bottom: 12px !important;
+  }
+  #screen-goals .trail-node {
+    padding: 8px 10px !important;
+    gap: 10px !important;
+  }
+  #screen-goals .goal-head-row {
+    margin-top: 6px !important;
+    margin-bottom: 6px !important;
+  }
+  #screen-goals .meta-strip {
+    margin-bottom: 6px !important;
+  }
+}
+
+/* ==========================================================================
+   #TASK-ES-210: 아워골 전 6대 탭 토스(Toss)식 UI/UX 전면 혁신 종합 팩
+   - 문장형 헤드라인 (.toss-headline)
+   - 1화면 1목적 둥근 원카드 (.toss-card)
+   - 단일 퀘스트 보드 일체화 (.toss-quest-board)
+   - 설정 탭 둥근 카드 그루핑 (.toss-settings-group, .toss-settings-row)
+   ========================================================================== */
+
+.toss-headline {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.42;
+  color: var(--ink, #191f28);
+  margin: 10px 0 14px 0;
+  letter-spacing: -0.025em;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.toss-headline b {
+  color: var(--brand, #3182f6);
+  font-weight: 800;
+}
+
+.toss-headline-sub {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink-soft, #8b95a1);
+  letter-spacing: -0.01em;
+}
+
+.toss-card {
+  background: var(--card, #ffffff);
+  border-radius: 20px;
+  padding: 18px 16px;
+  margin-bottom: 14px;
+  border: 1px solid var(--rule, rgba(0, 0, 0, 0.06));
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.035);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  box-sizing: border-box;
+}
+
+.toss-card:active {
+  transform: scale(0.992);
+}
+
+.toss-quest-board {
+  background: var(--card, #ffffff);
+  border-radius: 20px;
+  padding: 16px 14px;
+  margin-bottom: 14px;
+  border: 1px solid var(--rule, rgba(0, 0, 0, 0.06));
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  box-sizing: border-box;
+}
+
+.toss-quest-board .mountain-trail-card {
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin-bottom: 10px !important;
+}
+
+.toss-settings-group {
+  background: var(--card, #ffffff);
+  border-radius: 18px;
+  padding: 4px 0;
+  margin-bottom: 14px;
+  border: 1px solid var(--rule, rgba(0, 0, 0, 0.05));
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.025);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.toss-settings-header {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--ink-soft, #8b95a1);
+  padding: 10px 16px 4px;
+  letter-spacing: -0.01em;
+}
+
+.toss-settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--rule-light, rgba(0, 0, 0, 0.04));
+  cursor: pointer;
+  transition: background 0.12s ease;
+  text-decoration: none;
+  color: inherit;
+  box-sizing: border-box;
+}
+
+.toss-settings-row:last-child {
+  border-bottom: none;
+}
+
+.toss-settings-row:active {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.toss-settings-label {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--ink, #191f28);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toss-settings-chevron {
+  color: var(--ink-faint, #b0b8c1);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* 햅틱 인터랙션 피드백 효과 */
+.toss-haptic-tap:active {
+  transform: scale(0.97);
+}
+
+@media (max-width: 480px) {
+  .toss-headline {
+    font-size: 1.15rem;
+    margin: 8px 0 12px 0;
+  }
+  .toss-card, .toss-quest-board {
+    padding: 16px 14px;
+    border-radius: 18px;
+    margin-bottom: 12px;
+  }
+}
