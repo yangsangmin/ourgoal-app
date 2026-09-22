@@ -7474,6 +7474,28 @@ check('[#TASK-ES-217 / 생각 메모장 88번] 오늘의 3초 체크인 목표 �
   assert.ok(indexHtml.includes("t.placeholder = '예: 오늘 실천한 멋진 일을 한 줄로 적어보세요';"), 'captureSave 내 placeholder 원복 누락');
 });
 
+check('[#TASK-ES-219 / 생각 메모장 89번] 데이터분석 프롬프트 백과사전 실사용 유저 등록·피드 게시 및 도움돼요 상호작용 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 프롬프트 백과사전 헤더 내 [➕ 나만의 프롬프트 올리기] 버튼 배선 확인
+  assert.ok(indexHtml.includes('id="btnAddUserPrompt"'), 'btnAddUserPrompt 버튼 누락');
+
+  // 2. 나만의 프롬프트 등록 모달(openAddUserPromptModal) 함수 배선 확인
+  assert.ok(indexHtml.includes('function openAddUserPromptModal()'), 'openAddUserPromptModal 함수 누락');
+  assert.ok(indexHtml.includes('id="newUserPromptTitle"'), 'newUserPromptTitle 인풋 누락');
+  assert.ok(indexHtml.includes('id="newUserPromptContent"'), 'newUserPromptContent 텍스트에어리어 누락');
+
+  // 3. 유저 등록 글 0건일 때 엠티 스테이트 안내 및 첫 프롬프트 공유 버튼 배선 확인
+  assert.ok(indexHtml.includes('아직 등록된 사용자 프롬프트가 없습니다.'), '엠티 스테이트 안내 문구 누락');
+  assert.ok(indexHtml.includes('id="btnEmptyAddPrompt"'), 'btnEmptyAddPrompt 첫 프롬프트 공유 버튼 누락');
+
+  // 4. [👍 도움돼요] 1인 1표 토글 및 [📋 복사하기] 이벤트 배선 확인
+  assert.ok(indexHtml.includes('.btn-like-prompt'), 'btn-like-prompt 이벤트 리스너 누락');
+  assert.ok(indexHtml.includes('getLikedPromptIds()'), 'getLikedPromptIds 헬퍼 누락');
+  assert.ok(indexHtml.includes('getUserPrompts()'), 'getUserPrompts 헬퍼 누락');
+  assert.ok(indexHtml.includes('.btn-copy-prompt'), 'btn-copy-prompt 이벤트 리스너 누락');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
