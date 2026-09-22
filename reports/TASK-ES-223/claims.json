@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-223",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-223-PURGE-DEV-DEBUG-BUTTONS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html에 랜딩 화면 디버그 버튼 래퍼(#landTesterBWrap)와 로그인 화면 디버그 버튼 래퍼(#authTesterBWrap)가 정의되고 초기 display:none 처리되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "index.html에 개발/디버그 환경 판별 및 프로덕션 DOM 소거 함수(initDevDebugButtons)가 배선되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "localhost, 127.0.0.1, ?debug=true 환경 판별 조건문이 구현되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "기존 #TASK-ES-169 단언문과의 호환성(id=\"landTesterBBtn\", id=\"authTesterBBtn\")이 100% 보존되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "scripts/smoke-test.js에 TASK-ES-223 검증 케이스가 추가되어야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 #landTesterBWrap 및 #authTesterBWrap 래퍼가 display:none 기본값으로 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"landTesterBWrap\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 initDevDebugButtons 함수가 배선되어 개발 환경 외에는 디버그 DOM을 완전히 소거한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "function initDevDebugButtons"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 localhost 및 debug=true 환경 조건부 판별 코드가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "location.search.indexOf('debug=true')"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 기존 호환성을 위한 id=\"landTesterBBtn\" 및 id=\"authTesterBBtn\"이 안전하게 보존되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"authTesterBWrap\""
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-223 디버그 버튼 프로덕션 소거 검증 케이스가 추가되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-223] [생각 메모장 93번] 개발 디버그 버튼 프로덕션 완전 소거 및 로컬 조건부 격리 무결성"
+      }
+    }
+  ]
+}
