@@ -398,7 +398,7 @@ module.exports = async function handler(req, res) {
   }
 };
 
-// 스모크 테스트(scripts/crm-journey-smoke.js)가 실DB 없이 순수 함수만 검증할 수 있도록 노출한다. 런타임 동작에는 영향 없음.
+// 스모크 테스트(scripts/test-crm-journeys.js)가 실DB 없이 순수 함수만 검증할 수 있도록 노출한다. 런타임 동작에는 영향 없음.
 module.exports.__test = {
   dateKeyInTz: dateKeyInTz,
   daysBetweenKeys: daysBetweenKeys,

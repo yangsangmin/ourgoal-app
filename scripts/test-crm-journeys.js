@@ -3,7 +3,7 @@
  * [T045] CRM 캘린더(온보딩·스트릭유지·윈백 저니) 드라이런 스모크 테스트.
  * 실DB 없이 api/push-dispatch.js 의 순수 함수(__test 익스포트)만으로
  * 경과일 판정·빈도상한 로직이 브리프대로 동작하는지 검증한다.
- * 실행: node scripts/crm-journey-smoke.js
+ * 실행: node scripts/test-crm-journeys.js
  */
 'use strict';
 const assert = require('assert');

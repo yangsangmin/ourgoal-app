@@ -1,0 +1,93 @@
+{
+  "task": "T045",
+  "requirementsSource": "docs/growth/ourgoal-daily-roadmap.md",
+  "requirements": [
+    { "id": "R1", "text": "온보딩 저니: D0 첫 체크인 축하 / D1 응원 도착 / D3 목표 진척 / D7 스트릭 뱃지" },
+    { "id": "R2", "text": "스트릭 유지 저니: 당일 미체크인 20시 \"오늘 안 하면 n일 스트릭 끊겨요(프리즈 1회 남음)\"" },
+    { "id": "R3", "text": "윈백 저니: 비활성 D3 리마인더 / D7 가치 재진술 / D14 인센티브" },
+    { "id": "R4", "text": "빈도 상한: 비트랜잭션 3회/24h, 행동형 2회·4시간 간격을 Supabase 함수로 강제" },
+    { "id": "R5", "text": "각 메시지 클릭 이벤트" }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "unverified",
+      "domain": "server-api",
+      "statement": "push-dispatch.js 가 매분 실행 시 각 구독자의 첫 체크인 시각 기준 경과일을 계산해 D0/D1/D3/D7 온보딩 알림을 1회씩 발송한다",
+      "touches": ["api/push-dispatch.js", "docs/sql/2026-09-22-crm-journeys.sql"],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "Supabase SQL Editor 접근 권한과 Vercel 프로덕션 배포를 볼 수 있고, 실제 웹푸시 구독을 만들 수 있는 사람",
+        "how": [
+          "docs/sql/2026-09-22-crm-journeys.sql 을 Supabase SQL Editor에서 1회 실행(push_subscriptions에 crm_onboarding_sent 등 컬럼 추가)",
+          "main 병합 후 Vercel 프로덕션에 api/push-dispatch.js 배포 확인",
+          "실제 사용자가 앱에서 웹푸시 구독을 켜고 체크인 1회 기록(D0 시점)",
+          "1일·3일·7일 경과 후 브라우저에 온보딩 알림이 도착하는지 실측, Supabase에서 push_subscriptions.crm_onboarding_sent 배열에 d0/d1/d3/d7 이 쌓이는지, events 테이블에 name=notification_sent · props.journey=onboarding 로그가 남는지 확인"
+        ]
+      }
+    },
+    {
+      "id": "C2", "req": "R2", "kind": "unverified",
+      "domain": "server-api",
+      "statement": "당일 미체크인 상태에서 20시(±4분)에 현재 스트릭 일수를 담은 경고 알림이 1일 1회 발송된다",
+      "touches": ["api/push-dispatch.js", "docs/sql/2026-09-22-crm-journeys.sql"],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "Supabase SQL Editor 접근 권한과 실제 웹푸시 구독을 가진 사람",
+        "how": [
+          "SQL 마이그레이션 실행 + 배포 확인(C1과 동일)",
+          "며칠 연속 체크인한 계정으로 어느 날 20시까지 체크인을 하지 않고 대기",
+          "20:00~20:04 사이 '오늘 안 하면 N일 스트릭 끊겨요' 알림 도착 실측, push_subscriptions.crm_streak_last_warned 가 그 날짜로 갱신되는지 확인",
+          "같은 날 두 번째 20시 실행에서 중복 발송되지 않는지 확인"
+        ]
+      }
+    },
+    {
+      "id": "C3", "req": "R3", "kind": "unverified",
+      "domain": "server-api",
+      "statement": "마지막 체크인 이후 비활성 경과일이 3/7/14일에 도달하면 윈백 알림이 각각 1회 발송되고, 3일 내 재체크인하면 다음 비활성 사이클을 위해 초기화된다",
+      "touches": ["api/push-dispatch.js", "docs/sql/2026-09-22-crm-journeys.sql"],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "Supabase SQL Editor 접근 권한과 실제 웹푸시 구독을 가진 사람(3일 이상 관찰 필요)",
+        "how": [
+          "SQL 마이그레이션 실행 + 배포 확인(C1과 동일)",
+          "체크인 이력이 있는 계정이 3일간 체크인을 멈춘 뒤 윈백 D3 알림 도착 실측",
+          "그 뒤 재체크인하면 push_subscriptions.crm_winback_sent 가 초기화되는지, 다시 비활성 3일이면 D3 알림이 재발송되는지 확인",
+          "7일·14일까지 관찰 지속 시 D7/D14 알림 및 events.notification_sent(props.journey=winback) 로그 확인"
+        ]
+      }
+    },
+    {
+      "id": "C4", "req": "R4", "kind": "unverified",
+      "domain": "server-api",
+      "statement": "비트랜잭션(온보딩D3/D7·윈백) 알림은 사용자당 24시간 내 합산 3회, 행동형(온보딩D0/D1·스트릭경고) 알림은 24시간 내 2회 및 최소 4시간 간격을 넘지 않는다 — 브리프의 'Supabase 함수' 대신 push-dispatch.js 디스패처가 push_subscriptions.crm_notif_log 를 근거로 판정하도록 구현했다(이유: events 테이블은 user_id 를 저장하지 않는 기존 설계라 판정 로그를 service_role 전용 push_subscriptions 쪽에 둠, PLAN 은 docs/sql/2026-09-22-crm-journeys.sql 상단 주석 참조)",
+      "touches": ["api/push-dispatch.js"],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "Supabase SQL Editor 접근 권한과 실제 웹푸시 구독(여러 개 가능)을 가진 사람",
+        "how": [
+          "SQL 마이그레이션 실행 + 배포 확인(C1과 동일)",
+          "온보딩·윈백·스트릭 조건이 동시에 겹치도록 계정 상태를 맞춘 뒤 24시간 내 실제 발송 건수가 상한(비트랜잭션 3·행동형 2)을 넘지 않는지 push_subscriptions.crm_notif_log 로 확인",
+          "행동형 알림 발송 후 4시간 이내 다른 행동형 조건이 겹쳐도 재발송되지 않는지 확인",
+          "순수 로직(경과일 계산·상한 판정)은 scripts/crm-journey-smoke.js 드라이런으로 이번 세션에서 11건 확인했으나 자체 작성 시험이라 법정 증거로 채택되지 않음 — 이 항목은 실서버 기준"
+        ]
+      }
+    },
+    {
+      "id": "C5", "req": "R5", "kind": "unverified",
+      "domain": "server-api",
+      "statement": "CRM 저니 알림을 클릭하면 sw.js 가 알림에 실린 journey/step 태그를 그대로 담아 notification_clicked 이벤트를 기록한다(기존엔 data:{url:'/'} 로 고정돼 커스텀 딥링크·태그가 전부 무시되던 버그를 같이 고침)",
+      "touches": ["sw.js", "api/push-dispatch.js"],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "실제 웹푸시 구독을 가진 사람(법정은 외부 통신을 막아 실제 푸시를 받을 수 없다)",
+        "how": [
+          "SQL 마이그레이션 실행 + 배포 확인(C1과 동일)",
+          "CRM 저니 알림(온보딩/스트릭/윈백 아무거나) 수신 후 알림을 클릭",
+          "지정된 딥링크(온보딩은 '/', 스트릭·윈백은 '/?action=checkin')로 이동하는지 확인",
+          "Supabase events 테이블에 name=notification_clicked · props.journey/props.step 이 채워진 행이 남는지 확인"
+        ]
+      }
+    }
+  ]
+}
