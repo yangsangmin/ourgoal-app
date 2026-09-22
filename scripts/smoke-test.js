@@ -7460,6 +7460,26 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
   assert.ok(indexHtml.includes('var leftPx = w * 17;'), '히트맵 월 라벨 leftPx = w * 17 배선 확인');
 });
 
+check('[#TASK-ES-248] 설정탭 상단 프로필 요약 카드 시인성 강화 및 계정·아바타 정보 가독성 전면 개선 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 아바타 58px 래퍼 및 레벨 뱃지 오버레이 배선 확인
+  assert.ok(indexHtml.includes('toss-settings-avatar-wrap'), 'index.html 내 toss-settings-avatar-wrap 선언 누락');
+  assert.ok(indexHtml.includes('toss-settings-level-badge'), 'index.html 내 toss-settings-level-badge 선언 누락');
+  assert.ok(indexHtml.includes('avatarHtml(58)'), 'index.html 내 avatarHtml(58) 호출 누락');
+
+  // 2. 계정 상태 미니 아이콘(🟡/👤) 배선 확인
+  assert.ok(indexHtml.includes('🟡 카카오 계정 연동'), 'index.html 내 🟡 카카오 계정 연동 누락');
+  assert.ok(indexHtml.includes('👤 게스트 체험 모드'), 'index.html 내 👤 게스트 체험 모드 누락');
+
+  // 3. CSS 카드 그림자 및 아바타/뱃지/버튼 스타일 선언 확인
+  assert.ok(cssContent.includes('box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06)'), 'ui.css 내 카드 box-shadow 스타일 누락');
+  assert.ok(cssContent.includes('.toss-settings-avatar-wrap'), 'ui.css 내 .toss-settings-avatar-wrap 스타일 누락');
+  assert.ok(cssContent.includes('.toss-settings-level-badge'), 'ui.css 내 .toss-settings-level-badge 스타일 누락');
+  assert.ok(cssContent.includes('#btnSettingsQuickAvatar'), 'ui.css 내 #btnSettingsQuickAvatar 스타일 누락');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

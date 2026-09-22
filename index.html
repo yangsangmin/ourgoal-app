@@ -694,13 +694,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             <div id="settingsHeroAvatarSlot"></div>
             <div>
               <div style="display:flex;align-items:center;gap:6px;">
-                <span id="settingsHeroNickname" style="font-size:1.05rem;font-weight:800;color:var(--ink);">사용자</span>
+                <span id="settingsHeroNickname" style="font-size:1.15rem;font-weight:800;color:var(--ink);">사용자</span>
                 <span class="tmpl-badge" id="settingsHeroRank" style="font-size:0.75rem;padding:2px 8px;border-radius:6px;background:rgba(59,130,246,0.1);color:var(--primary);font-weight:700;">성장 러너</span>
               </div>
               <div class="faint" id="settingsHeroStatusDesc" style="font-size:0.8125rem;margin-top:2px;">모든 데이터가 안전하게 보관되고 있어요</div>
             </div>
           </div>
-          <button type="button" class="btn btn-ghost btn-sm" id="btnSettingsQuickAvatar" onclick="if(window.OurgoalAvatar &amp;&amp; window.OurgoalAvatar.openAvatarModal){ window.OurgoalAvatar.openAvatarModal({ profile: state.profile, state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal }); } else { var b=document.getElementById('btnOpenAvatarModal'); if(b) b.click(); }" style="min-height:36px;padding:6px 12px;font-size:0.8rem;border-radius:10px;">아바타 관리</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="btnSettingsQuickAvatar" onclick="if(window.OurgoalAvatar &amp;&amp; window.OurgoalAvatar.openAvatarModal){ window.OurgoalAvatar.openAvatarModal({ profile: state.profile, state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal }); } else { var b=document.getElementById('btnOpenAvatarModal'); if(b) b.click(); }" style="min-height:36px;padding:6px 12px;font-size:0.8125rem;font-weight:600;border-radius:12px;">아바타 관리</button>
         </div>
         <div class="toss-settings-hero-stats">
           <div class="toss-settings-stat-item">
@@ -31106,11 +31106,12 @@ wirePromptEncyclopediaEvents(body);
     }
   });
 
-  /* ============ RENDER: SETTINGS HERO CARD (#TASK-ES-218) ============ */
+  /* ============ RENDER: SETTINGS HERO CARD (#TASK-ES-218, #TASK-ES-248) ============ */
   function renderSettingsHeroCard(){
     var card = document.getElementById('settingsHeroCard');
     if(!card) return;
-    var p = state.profile;
+    var p = state.profile || {};
+    var u = state.user || {};
     var nickEl = document.getElementById('settingsHeroNickname');
     if(nickEl) nickEl.textContent = p.displayName || '사용자';
     var rankEl = document.getElementById('settingsHeroRank');
@@ -31119,9 +31120,30 @@ wirePromptEncyclopediaEvents(body);
       var rText = activeG >= 5 ? '열정 마스터' : (activeG >= 1 ? '성장 러너' : '새싹 러너');
       rankEl.textContent = rText;
     }
+    // #TASK-ES-248: 58px 대형 아바타 링 및 Lv.N 뱃지 오버레이
     var avatarSlot = document.getElementById('settingsHeroAvatarSlot');
     if(avatarSlot && typeof avatarHtml === 'function'){
-      avatarSlot.innerHTML = avatarHtml(44);
+      var xpTotal = (p.settings && p.settings.xp && p.settings.xp.total) || 0;
+      var curLv = (typeof levelForXP === 'function') ? levelForXP(xpTotal) : 1;
+      avatarSlot.innerHTML =
+        '<div class="toss-settings-avatar-wrap">' +
+          avatarHtml(58) +
+          '<span class="toss-settings-level-badge">Lv.' + curLv + '</span>' +
+        '</div>';
+    }
+    // #TASK-ES-248: 계정 연동 상태(카카오 / 구글 / 회원 / 게스트) 아이콘 표출
+    var statusEl = document.getElementById('settingsHeroStatusDesc');
+    if(statusEl){
+      var isGuest = (!u || !u.id) && (String(p.id || '').indexOf('guest') === 0);
+      if(p.provider === 'kakao' || (u.app_metadata && u.app_metadata.provider === 'kakao')){
+        statusEl.innerHTML = '<span style="color:#eab308;font-weight:600;">🟡 카카오 계정 연동</span> · 안전 보관 중';
+      } else if(p.provider === 'google' || (u.app_metadata && u.app_metadata.provider === 'google')){
+        statusEl.innerHTML = '<span style="color:#3b82f6;font-weight:600;">🔵 구글 계정 연동</span> · 안전 보관 중';
+      } else if(!isGuest && (p.id || u.id)){
+        statusEl.innerHTML = '<span style="color:#10b981;font-weight:600;">🟢 회원 계정 연동</span> · 안전 보관 중';
+      } else {
+        statusEl.innerHTML = '<span style="color:var(--ink-soft);font-weight:600;">👤 게스트 체험 모드</span> · 로컬 안전 보관';
+      }
     }
     var goalsEl = document.getElementById('settingsHeroGoalsCount');
     if(goalsEl){
