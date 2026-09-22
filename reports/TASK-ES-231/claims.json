@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-231",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-231-COMPANION-INVITE-SEARCH.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "소통 탭 동반자 서브탭 상단에 영롱한 초대 히어로 카드와 [🔗 내 전용 동반자 초대 링크 복사] 버튼이 배치되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "초대 링크 복사 시 Web Share API 및 클립보드 3중 폴백과 15ms 미세 햅틱 피드백이 배선되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "실시간 가입자 닉네임 검색 바(#companionNicknameSearchInput)에 0.2초(200ms) 디바운스 실시간 검색이 배선되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "검색 결과 카드에 [🤝 동반자 신청] 버튼이 배치되고 클릭 시 12ms 햅틱 및 동반자 신청 영속화가 이루어져야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "모바일 375px 터치 타깃이 완비되고 npm test 및 38개 헌법 게이트, Zero Dead-Click이 100% ALL PASS여야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css에 .companion-hero-card 클래스가 정의되고 team-invite-comm.js에 #btnCopyCompanionInviteLink가 배선된다",
+      "touches": [
+        "ui.css",
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-invite-comm.js",
+        "text": "btnCopyCompanionInviteLink"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "team-invite-comm.js에 navigator.share 및 클립보드 복사 로직과 15ms 햅틱이 구현된다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-invite-comm.js",
+        "text": "triggerHapticFeedback(15)"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "team-invite-comm.js에 #companionNicknameSearchInput 요소와 200ms 디바운스 검색 리스너가 배선된다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-invite-comm.js",
+        "text": "companionNicknameSearchInput"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "검색 결과 카드에 data-request-companion 속성의 동반자 신청 버튼과 12ms 햅틱이 배선된다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-invite-comm.js",
+        "text": "data-request-companion"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "e2e",
+      "domain": "safety",
+      "statement": "npm test 및 헌법 38개 검증 게이트와 Zero Dead-Click 검사가 100% 통과한다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "commandPasses",
+        "command": "npm test"
+      }
+    }
+  ]
+}

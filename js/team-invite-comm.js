@@ -2375,7 +2375,7 @@
               '</div>' +
               (isAdded ?
                 '<span class="faint" style="font-size:.75rem;padding:4px 8px;background:var(--surface-2);border-radius:6px;flex-shrink:0;">✓ 이미 동반자</span>' :
-                '<button class="btn btn-primary btn-xs" data-addcomp="' + esc(u.id) + '" type="button" style="font-size:.75rem;padding:4px 10px;border-radius:8px;font-weight:700;position:relative;z-index:2;cursor:pointer;touch-action:manipulation;white-space:nowrap;flex-shrink:0;">+ 추가</button>'
+                '<button class="btn btn-primary btn-xs" data-addcomp="' + esc(u.id) + '" data-request-companion="' + esc(u.id) + '" type="button" style="font-size:.75rem;padding:6px 12px;min-height:36px;border-radius:8px;font-weight:700;position:relative;z-index:2;cursor:pointer;touch-action:manipulation;white-space:nowrap;flex-shrink:0;">🤝 동반자 신청</button>'
               ) +
             '</div>';
           }).join('') +
@@ -2422,21 +2422,27 @@
       }).join('');
     }
 
-    body.innerHTML = '<div class="card" style="margin-bottom:14px;padding:12px 14px;background:var(--surface-2);border:1px solid var(--rule);border-radius:14px;">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-          '<div style="font-weight:700;font-size:.9375rem;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
-            '<span>🤝</span><span>나의 목표 동반자</span>' +
+    body.innerHTML = '<div class="companion-hero-card">' +
+        '<div class="companion-hero-header">' +
+          '<div class="companion-hero-title">' +
+            '<span>🤝</span><span>목표 동반자와 함께 달리기</span>' +
           '</div>' +
-          '<span class="dday-pill" style="font-weight:700;">' + companions.length + '명</span>' +
+          '<span class="dday-pill" style="font-weight:700;background:rgba(99,102,241,0.15);color:var(--brand-strong);">' + companions.length + '명 함께함</span>' +
         '</div>' +
-        '<div class="faint" style="font-size:.75rem;">실제 가입된 사용자와 동반자를 맺고 서로의 목표를 응원하세요!</div>' +
+        '<div class="companion-hero-desc">' +
+          '서로의 목표를 실시간으로 확인하고 1터치 응원과 DM을 나누세요.<br>친구를 초대해 나의 러닝메이트로 등록해보세요!' +
+        '</div>' +
+        '<button type="button" class="btn-companion-invite" id="btnCopyCompanionInviteLink">' +
+          '<span>🔗 내 전용 동반자 초대 링크 복사</span>' +
+        '</button>' +
       '</div>' +
 
-      '<div style="margin-bottom:14px;">' +
-        '<div style="display:flex;gap:6px;">' +
-          '<input type="text" id="companionSearchInput" placeholder="실제 사용자 닉네임 검색" value="' + esc(state._companionSearchKeyword || '') + '" style="flex:1;border:1px solid var(--rule);border-radius:10px;padding:8px 12px;font-size:.875rem;background:var(--surface-2);color:var(--ink);">' +
-          '<button class="btn btn-primary btn-sm" id="companionSearchBtn" type="button" style="font-weight:700;padding:0 14px;border-radius:10px;">검색</button>' +
-          (searchKeyword ? '<button class="btn btn-ghost btn-sm" id="companionSearchResetBtn" type="button" style="padding:0 8px;border-radius:10px;">초기화</button>' : '') +
+      '<div class="companion-search-wrap" style="margin-bottom:14px;">' +
+        '<div class="companion-search-box" style="display:flex;gap:6px;background:var(--surface-2);border:1px solid var(--rule);border-radius:12px;padding:4px 6px 4px 12px;align-items:center;">' +
+          '<span style="font-size:1rem;">🔍</span>' +
+          '<input type="text" id="companionNicknameSearchInput" class="companion-search-input" placeholder="실시간 가입자 닉네임 검색 (0.2초 자동 탐색)" value="' + esc(state._companionSearchKeyword || '') + '" style="flex:1;border:none;background:transparent;padding:8px 6px;font-size:.875rem;color:var(--ink);outline:none;" autocomplete="off">' +
+          '<button class="btn btn-primary btn-sm" id="companionSearchBtn" type="button" style="font-weight:700;padding:6px 14px;border-radius:10px;white-space:nowrap;">검색</button>' +
+          (searchKeyword ? '<button class="btn btn-ghost btn-sm" id="companionSearchResetBtn" type="button" style="padding:6px 8px;border-radius:10px;white-space:nowrap;">초기화</button>' : '') +
         '</div>' +
         searchResultsHtml +
       '</div>' +
@@ -2449,9 +2455,76 @@
         listHtml +
       '</div>';
 
-    var sInput = body.querySelector('#companionSearchInput');
+    var sInput = body.querySelector('#companionNicknameSearchInput') || body.querySelector('#companionSearchInput');
     var sBtn = body.querySelector('#companionSearchBtn');
     var sResetBtn = body.querySelector('#companionSearchResetBtn');
+    var btnCopy = body.querySelector('#btnCopyCompanionInviteLink');
+
+    if(btnCopy){
+      btnCopy.addEventListener('click', async function(e){
+        if(e){ e.preventDefault(); e.stopPropagation(); }
+        if(typeof triggerHapticFeedback === 'function'){
+          triggerHapticFeedback(15);
+        }
+        var myName = (state.profile && (state.profile.displayName || state.profile.name || state.profile.nickname)) || 'mate';
+        var inviteUrl = 'https://ourgoal-app.vercel.app?ref=' + encodeURIComponent(myName);
+
+        var copyFallback = function(text){
+          var copied = false;
+          try {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            copied = document.execCommand('copy');
+            document.body.removeChild(ta);
+          } catch(e){
+            console.warn('[초대 링크 복사 fallback 오류]:', e);
+          }
+          return copied;
+        };
+
+        var didShare = false;
+        if(navigator.share){
+          try {
+            await navigator.share({
+              title: '아워골 목표 동반자 초대',
+              text: myName + '님과 함께 매일 실천하는 목표 동반자가 되어주세요! 🤝',
+              url: inviteUrl
+            });
+            didShare = true;
+            showToast('초대 링크를 전송했어요! 💌');
+          } catch(sErr){
+            if(sErr && sErr.name === 'AbortError'){
+              return;
+            }
+          }
+        }
+
+        if(!didShare){
+          var clipOk = false;
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            try {
+              await navigator.clipboard.writeText(inviteUrl);
+              clipOk = true;
+            } catch(cErr){
+              clipOk = copyFallback(inviteUrl);
+            }
+          } else {
+            clipOk = copyFallback(inviteUrl);
+          }
+
+          if(clipOk){
+            showToast('초대 링크가 복사되었어요! 친구에게 공유해보세요 💌');
+          } else {
+            showToast('초대 링크: ' + inviteUrl);
+          }
+        }
+      });
+    }
 
     var doSearch = async function(){
       if(!sInput) return;
@@ -2541,8 +2614,30 @@
       renderCommCompanions(body);
     };
 
-    if(sBtn) sBtn.addEventListener('click', doSearch);
-    if(sInput) sInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') doSearch(); });
+    var debounceTimer = null;
+    if(sInput){
+      sInput.addEventListener('input', function(){
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function(){
+          doSearch();
+        }, 200);
+      });
+      sInput.addEventListener('keydown', function(e){
+        if(e.key === 'Enter'){
+          clearTimeout(debounceTimer);
+          doSearch();
+        }
+      });
+    }
+    if(sBtn){
+      sBtn.addEventListener('click', function(){
+        clearTimeout(debounceTimer);
+        if(typeof triggerHapticFeedback === 'function'){
+          triggerHapticFeedback(12);
+        }
+        doSearch();
+      });
+    }
     if(sResetBtn){
       sResetBtn.addEventListener('click', function(){
         state._companionSearchKeyword = '';
@@ -2564,18 +2659,21 @@
       });
     });
 
-    body.querySelectorAll('[data-addcomp]').forEach(function(btn){
+    body.querySelectorAll('[data-request-companion], [data-addcomp]').forEach(function(btn){
       btn.addEventListener('click', async function(e){
         if(e){
           e.stopPropagation();
           e.preventDefault();
+        }
+        if(typeof triggerHapticFeedback === 'function'){
+          triggerHapticFeedback(12);
         }
         var isGuest = !state.profile || !state.profile.id || String(state.profile.id).indexOf('guest') === 0;
         if(isGuest){
           showGuestSoftAuthGate('동반자 추가');
           return;
         }
-        var uid = String(btn.dataset.addcomp || '').trim();
+        var uid = String(btn.dataset.requestCompanion || btn.dataset.addcomp || '').trim();
         var target = null;
         if(state._companionSearchResults && Array.isArray(state._companionSearchResults)){
           target = state._companionSearchResults.find(function(x){
@@ -2630,7 +2728,7 @@
             console.warn('[동반자] persistCompanions 오류(무시):', pErr);
           }
 
-          showToast((target.nickname || target.name) + '님을 동반자로 추가했어요! 🎉');
+          showToast((target.nickname || target.name) + '님에게 동반자 신청을 보냈어요! 🤝');
           renderCommCompanions(body);
         } else {
           var exIdx = comps.findIndex(function(x){ return String(x.id || '').trim().toLowerCase() === String(target.id || '').trim().toLowerCase(); });
