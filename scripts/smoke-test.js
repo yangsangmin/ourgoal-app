@@ -7675,6 +7675,14 @@ check('[#TASK-ES-228] [생각 메모장 98번] 홈 탭 \'오늘 달성 레이스
   // 4. 응원 보내기 및 피드 이동 핸들러 확인
   assert.ok(indexHtml.includes('function nudgeCrewMates'), 'nudgeCrewMates 함수 누락');
   assert.ok(indexHtml.includes('오늘 함께 달리는 동반자들에게 뜨거운 응원을 보냈어요! 📣'), '응원 토스트 문구 누락');
+
+  // 5. [2차 작업 고도화] 콜드스타트(0~1명) 완충 온보딩 카드 및 1등 체크인 원터치 배선 확인
+  assert.ok(indexHtml.includes('id="userCrewColdStartBox"'), '#userCrewColdStartBox 마크업 누락');
+  assert.ok(indexHtml.includes('id="btnCrewStartCheckin"'), '#btnCrewStartCheckin 버튼 누락');
+  assert.ok(indexHtml.includes('오늘의 1호 완주자가 되어보세요! 🏃'), '콜드스타트 1호 완주자 안내 문구 누락');
+  assert.ok(indexHtml.includes('function focusHomeCheckinInput'), 'focusHomeCheckinInput 함수 누락');
+  assert.ok(cssContent.includes('.crew-coldstart-box'), '.crew-coldstart-box CSS 선언 누락');
+  assert.ok(cssContent.includes('#btnCrewStartCheckin'), '#btnCrewStartCheckin CSS 선언 누락');
 });
 
 check('[#TASK-ES-229] 팀 목표 및 소통 탭 내 가상 샘플 그룹(MOCK_GROUPS) 분리 및 [💡 활용 예시] 배지·새 팀 만들기 전면화', () => {

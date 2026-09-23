@@ -34,7 +34,6 @@
   --kakao:#FEE500; --kakao-ink:#191919;
   color-scheme:dark;
 }
-}
 
 /* 다크 공통 값 */
 [data-theme="black"],[data-theme="dark"],[data-theme="dark-space"],[data-theme="glowing-space"],[data-theme="deep-sea"],[data-theme="sunset-beach"],[data-theme="urban-city"]{
@@ -5522,10 +5521,6 @@ body {
 [data-theme="black"] #captureLiveMeta,
 [data-theme="white"] #captureLiveMeta,
 [data-theme="urban-city"] #captureLiveMeta,
-[data-theme="focus-sanctuary"] #crewPacingWidget,
-[data-theme="black"] #crewPacingWidget,
-[data-theme="white"] #crewPacingWidget,
-[data-theme="urban-city"] #crewPacingWidget,
 [data-theme="focus-sanctuary"] .home-actions,
 [data-theme="black"] .home-actions,
 [data-theme="white"] .home-actions,
@@ -11103,5 +11098,47 @@ html[data-theme="white"] .s-week-day-detail {
 }
 .user-prompt-card:hover {
   border-color: rgba(49, 130, 246, 0.3) !important;
+}
+
+/* ============ Social Crew Pacing Cold-Start Onboarding (#TASK-ES-228) ============ */
+.crew-coldstart-box {
+  display: flex;
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: rgba(16, 185, 129, 0.06);
+  border: 1px dashed rgba(16, 185, 129, 0.32);
+  border-radius: 14px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+[data-theme="black"] .crew-coldstart-box,
+[data-theme="dark"] .crew-coldstart-box {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+#btnCrewStartCheckin {
+  flex-shrink: 0;
+  background: #10b981;
+  color: #ffffff !important;
+  font-size: 0.78125rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+#btnCrewStartCheckin:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+#btnCrewStartCheckin:active {
+  transform: scale(0.97);
 }
 
