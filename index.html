@@ -13885,7 +13885,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       renderFeedbackSlot('loading');
       renderRecordFeedbackSlot('loading');
       showCheckinFeedbackSheet(newRec, 'loading');
-      fb = await requestAIFeedback(targetGoal, text, newRec ? newRec.theme : null);
+      try {
+        fb = await requestAIFeedback(targetGoal, text, newRec ? newRec.theme : null);
+      } catch(aiErr){
+        console.warn('AI feedback request failed, using instant celebration:', aiErr);
+      }
+      if(!fb){
+        fb = {
+          verdict: '실천 완료',
+          fact_insight: '오늘의 멋진 실천을 성공적으로 기록하셨습니다! 꾸준한 실천이 큰 성장을 만듭니다.',
+          next_action: '내일도 같은 시간에 목표를 이어가보세요!'
+        };
+      }
       if(newRec && fb){
         newRec.feedback = fb;
         await saveProfile();
@@ -15383,10 +15394,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   function showCheckinFeedbackSheet(rec, fb){
+    try {
+      var prevPop = document.getElementById('avatarCelebrationToast');
+      if(prevPop) prevPop.remove();
+    } catch(e){}
     var existingBackdrop = document.getElementById('checkinAiSheetBackdrop');
     if(!fb){
-      if(existingBackdrop) existingBackdrop.remove();
-      return;
+      fb = {
+        verdict: '실천 완료',
+        fact_insight: '오늘의 멋진 실천을 성공적으로 기록하셨습니다! 꾸준한 실천이 큰 성장을 만듭니다.',
+        next_action: '내일도 같은 시간에 목표를 이어가보세요!'
+      };
     }
     if(!existingBackdrop){
       existingBackdrop = document.createElement('div');
@@ -15613,6 +15631,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       existingBackdrop.classList.add('closing');
       setTimeout(function(){ existingBackdrop.remove(); }, 200);
     }
+  }
+  if(typeof window !== 'undefined'){
+    window.showCheckinFeedbackSheet = showCheckinFeedbackSheet;
+    window.closeCheckinFeedbackSheet = closeCheckinFeedbackSheet;
   }
 
   async function instantShareCheckinToFeed(rec, fb, opt){
