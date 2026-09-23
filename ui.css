@@ -10869,27 +10869,69 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
   gap: 4px;
 }
 
+html[data-theme="focus-sanctuary"] .ms-row .task-list {
+  border-left-color: rgba(16, 185, 129, 0.4) !important;
+  background: rgba(255, 255, 255, 0.015);
+  border-radius: 0 8px 8px 0;
+}
+
+html[data-theme="white"] .ms-row .task-list {
+  border-left-color: rgba(16, 185, 129, 0.45) !important;
+  background: rgba(0, 0, 0, 0.015);
+  border-radius: 0 8px 8px 0;
+}
+
+.ms-header-clickable {
+  cursor: pointer;
+  user-select: none;
+  border-radius: 10px;
+  transition: background 0.15s ease;
+}
+
+.ms-header-clickable:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+html[data-theme="white"] .ms-header-clickable:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.ms-row input[data-msinput][readonly] {
+  pointer-events: none;
+  cursor: pointer;
+}
+
 .done-tasks-toggle-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 10px;
-  margin-top: 4px;
+  padding: 6px 12px;
+  margin-top: 6px;
   margin-bottom: 4px;
-  background: var(--surface-2);
-  border: 1px dashed var(--rule);
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px dashed rgba(16, 185, 129, 0.35);
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.75rem;
-  color: var(--ink-soft);
-  font-weight: 600;
+  color: var(--brand, #10b981);
+  font-weight: 700;
   user-select: none;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
+html[data-theme="white"] .done-tasks-toggle-bar {
+  background: rgba(16, 185, 129, 0.07);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #047857;
+}
+
 .done-tasks-toggle-bar:hover {
-  background: var(--card2);
+  background: rgba(16, 185, 129, 0.15);
   border-color: var(--brand);
+}
+
+.done-tasks-toggle-bar:active {
+  transform: scale(0.99);
 }
 
 .ms-mini-progress-bar {

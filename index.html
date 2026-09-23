@@ -21681,7 +21681,18 @@ wirePromptEncyclopediaEvents(body);
         toggleBtn.addEventListener('click', function(e){
           e.stopPropagation();
           state.collapsedMilestones[msid] = !state.collapsedMilestones[msid];
-          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(10);
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+          renderGoalsScreen();
+        });
+      }
+
+      var gridRow = row.querySelector('.ms-grid-row');
+      if(gridRow && !state.goalEditMode && (ms.tasks && ms.tasks.length > 0)){
+        gridRow.classList.add('ms-header-clickable');
+        gridRow.addEventListener('click', function(e){
+          if(e.target.closest('[data-cyclestatus], [data-cyclepriority], [data-addattms], [data-msresult], [data-calsyncms], .att-add-btn, .sel-check, a, button')) return;
+          state.collapsedMilestones[msid] = !state.collapsedMilestones[msid];
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
           renderGoalsScreen();
         });
       }
