@@ -11445,3 +11445,71 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
   transform: scale(0.97);
 }
 
+/* ============ [#TASK-ES-249] 상황별 다이나믹 아바타 리액션 도감 & VIP 패스 ============ */
+.dynamic-avatar-album-modal {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dynamic-vip-banner {
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.08);
+}
+
+.dynamic-avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+}
+
+.dynamic-avatar-card {
+  border-radius: 14px;
+  background: var(--card, #ffffff);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dynamic-avatar-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.dynamic-avatar-card.equipped {
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.25) !important;
+}
+
+[data-theme="dark"] .dynamic-avatar-card,
+[data-theme="black"] .dynamic-avatar-card {
+  background: var(--surface-2, #1e293b);
+  border-color: var(--line, rgba(255, 255, 255, 0.1));
+}
+
+[data-theme="dark"] .dynamic-vip-banner,
+[data-theme="black"] .dynamic-vip-banner {
+  background: rgba(245, 158, 11, 0.12) !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
+}
+
+.dynamic-avatar-bubble-chip {
+  line-height: 1.2;
+}
+
+#btnOpenDynamicAlbum {
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+#btnOpenDynamicAlbum:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+#btnOpenDynamicAlbum:active {
+  transform: scale(0.97);
+}
+
+@media (max-width: 480px) {
+  .dynamic-avatar-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

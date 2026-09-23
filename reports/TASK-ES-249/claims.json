@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-249",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-249-DYNAMIC-AVATAR-REACTION-ALBUM.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "체크인 회차(1·2·3회차), 세부할일 완료, 마일스톤 돌파 등 5대 상황별 다이나믹 프리셋(DYNAMIC_SITUATIONS)이 정의되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "상황별 시각 소품 및 말풍선이 결합된 SVG 아바타 생성 엔진(getDynamicAvatarSvg)이 구현되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "5대 상황별 아바타 도감 팝업(openDynamicAlbumModal) 및 VIP 멤버십 패스 상태(getVipPassInfo)가 구현되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "설정탭 프로필 요약 카드에 아바타 도감 진입 버튼(btnOpenDynamicAlbum) 및 핸들러가 배선되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "scripts/smoke-test.js에 TASK-ES-249 검증 케이스가 탑재되고 38개 헌법 게이트 및 Zero Dead-Click이 100% ALL PASS여야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/avatar-system.js에 DYNAMIC_SITUATIONS 상수 딕셔너리가 선언된다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "var DYNAMIC_SITUATIONS = {"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/avatar-system.js에 getDynamicAvatarSvg 함수가 구현된다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "function getDynamicAvatarSvg("
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/avatar-system.js에 openDynamicAlbumModal 함수가 구현된다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "function openDynamicAlbumModal("
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 btnOpenDynamicAlbum 버튼이 배선된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"btnOpenDynamicAlbum\""
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-249 검증 케이스가 탑재되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-249] 상황별 다이나믹 아바타 생성 및 VIP 수익화 모델 (도감·리액션·패스) 무결성"
+      }
+    }
+  ]
+}

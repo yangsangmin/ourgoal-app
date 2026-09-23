@@ -719,7 +719,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               <div class="faint" id="settingsHeroStatusDesc" style="font-size:0.8125rem;font-weight:600;margin-top:4px;display:flex;align-items:center;gap:4px;">모든 데이터가 안전하게 보관되고 있어요</div>
             </div>
           </div>
-          <button type="button" class="btn btn-ghost btn-sm" id="btnSettingsQuickAvatar" onclick="if(window.OurgoalAvatar &amp;&amp; window.OurgoalAvatar.openAvatarModal){ window.OurgoalAvatar.openAvatarModal({ profile: state.profile, state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal }); } else { var b=document.getElementById('btnOpenAvatarModal'); if(b) b.click(); }" style="min-height:38px;padding:7px 14px;font-size:0.8125rem;font-weight:700;border-radius:12px;flex-shrink:0;">✏️ 프로필 편집</button>
+          <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+            <button type="button" class="btn btn-ghost btn-sm" id="btnSettingsQuickAvatar" onclick="if(window.OurgoalAvatar &amp;&amp; window.OurgoalAvatar.openAvatarModal){ window.OurgoalAvatar.openAvatarModal({ profile: state.profile, state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal }); } else { var b=document.getElementById('btnOpenAvatarModal'); if(b) b.click(); }" style="min-height:34px;padding:5px 12px;font-size:0.75rem;font-weight:700;border-radius:10px;">✏️ 프로필 편집</button>
+            <button type="button" class="btn btn-primary btn-sm" id="btnOpenDynamicAlbum" onclick="if(window.OurgoalAvatar &amp;&amp; window.OurgoalAvatar.openDynamicAlbumModal){ window.OurgoalAvatar.openDynamicAlbumModal({ profile: state.profile, state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal, renderHome: renderHome, renderSettingsScreen: renderSettingsScreen }); } else { toast('아바타 도감을 불러오는 중입니다.'); }" style="min-height:34px;padding:5px 12px;font-size:0.75rem;font-weight:700;border-radius:10px;background:linear-gradient(135deg,#6366F1,#8B5CF6);color:#fff;border:none;">📖 아바타 도감</button>
+          </div>
         </div>
         <div class="toss-settings-hero-stats">
           <div class="toss-settings-stat-item">
@@ -2044,16 +2047,25 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function levelBadgeHtml(xp){
     var p = levelProgress(xp);
     var hasCheckedInToday = false;
+    var todayCheckinCount = 0;
     if(state.profile && state.profile.records){
       var today = dateKey(nowISO());
-      hasCheckedInToday = state.profile.records.some(function(r){ return dateKey(r.startAt) === today; });
+      todayCheckinCount = state.profile.records.filter(function(r){ return dateKey(r.startAt) === today; }).length;
+      hasCheckedInToday = todayCheckinCount > 0;
     }
+    var currentSitKey = 'checkin_1';
+    if(todayCheckinCount >= 3) currentSitKey = 'checkin_3';
+    else if(todayCheckinCount === 2) currentSitKey = 'checkin_2';
+    else if(todayCheckinCount === 1) currentSitKey = 'checkin_1';
+    else currentSitKey = (state.profile && state.profile.settings && state.profile.settings.equippedSituationKey) || 'checkin_1';
+    var sitData = (window.OurgoalAvatar && window.OurgoalAvatar.DYNAMIC_SITUATIONS) ? window.OurgoalAvatar.DYNAMIC_SITUATIONS[currentSitKey] : null;
+
     var rankInfo = (window.OurgoalAvatar && window.OurgoalAvatar.getRankThemeInfo) ?
       window.OurgoalAvatar.getRankThemeInfo(p.level) :
       { stepTitle: 'Lv.' + p.level, stepFullName: 'Lv.' + p.level, mainColor: 'var(--brand)', badgeGradient: 'var(--brand)', stepInfo: { name: '' } };
 
     var avatarHtml = (window.OurgoalAvatar && window.OurgoalAvatar.renderAvatarHtml) ?
-      window.OurgoalAvatar.renderAvatarHtml(p.level, state.profile, { size: 54, showGreeting: !hasCheckedInToday && !state.hasSeenAvatarGreeting }) :
+      window.OurgoalAvatar.renderAvatarHtml(p.level, state.profile, { size: 54, showGreeting: !hasCheckedInToday && !state.hasSeenAvatarGreeting, situationKey: currentSitKey }) :
       '<div class="avatar-placeholder" style="width:54px;height:54px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🤖</div>';
 
     var hasCustomAvatar = hasUserCustomizedAvatar(state.profile);
@@ -2067,6 +2079,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             '<span>' + rankInfo.stepTitle + '</span>' +
             (rankInfo.stepInfo && rankInfo.stepInfo.name ? '<span class="level-rank-subname" style="font-size:.7rem;font-weight:600;color:' + rankInfo.mainColor + ';">' + rankInfo.stepInfo.name + '</span>' : '') +
           '</div>' +
+          (sitData ? '<div class="dynamic-avatar-bubble-chip" style="font-size:.6875rem;font-weight:700;color:var(--ink-soft);display:flex;align-items:center;gap:4px;margin-top:1px;" title="' + sitData.title + '"><span style="font-size:10px;">' + sitData.icon + '</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:130px;">' + sitData.greeting + '</span></div>' : '') +
           '<button type="button" class="btn btn-ghost btn-xs" id="btnOpenAvatarModal" style="font-size:.6875rem;padding:1px 6px;border-color:var(--rule);color:var(--ink-soft);white-space:nowrap;width:fit-content;' + btnAvatarStyle + '">내 아바타 바꾸기</button>' +
         '</div>' +
       '</div>' +
@@ -19049,12 +19062,22 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function celebrateMilestoneDone(goal, ms){
     if(navigator.vibrate) navigator.vibrate([12,40,24]);
     burstConfetti(window.innerWidth/2, window.innerHeight/3);
+    var avatarSvg = (window.OurgoalAvatar && window.OurgoalAvatar.getDynamicAvatarSvg) ?
+      window.OurgoalAvatar.getDynamicAvatarSvg('milestone_break', (state.profile && state.profile.settings && state.profile.settings.customAvatarUrl) || (state.profile && state.profile.level) || 1, { size: 84 }) :
+      '';
+    var greetingTxt = (window.OurgoalAvatar && window.OurgoalAvatar.DYNAMIC_SITUATIONS) ?
+      window.OurgoalAvatar.DYNAMIC_SITUATIONS.milestone_break.greeting :
+      '대박! 마일스톤 정복을 축하해! 🏆';
     openModal(
-      '<h3>마일스톤 완료!</h3>' +
-      '<p class="muted" style="margin:-8px 0 14px;"><b style="color:var(--ink);">'+escapeHtml(ms.title)+'</b></p>' +
-      '<p class="faint" id="naText" style="margin:0 0 16px;">다음 행동을 생각하는 중...</p>' +
-      '<div id="naNotice" style="display:none;font-size:12px;color:var(--ink-soft);margin:-10px 0 14px;line-height:1.4;">⚡ 오프라인 상태 또는 아워골 서버 문제로 기본 안내가 생성되었습니다</div>' +
-      '<div class="modal-actions"><button class="btn btn-primary" id="naOk" type="button">확인</button></div>',
+      '<div style="text-align:center;padding:8px 0;">' +
+        (avatarSvg ? '<div style="display:flex;justify-content:center;margin-bottom:12px;">' + avatarSvg + '</div>' : '') +
+        '<h3 style="margin:0 0 6px;font-size:1.1875rem;font-weight:900;color:var(--ink);">마일스톤 돌파 달성! 🏆</h3>' +
+        '<div style="font-size:0.875rem;font-weight:700;color:var(--primary);margin-bottom:10px;">' + greetingTxt + '</div>' +
+        '<p class="muted" style="margin:0 0 14px;font-size:0.9375rem;"><b style="color:var(--ink);">' + escapeHtml(ms.title) + '</b></p>' +
+        '<p class="faint" id="naText" style="margin:0 0 16px;">다음 행동을 생각하는 중...</p>' +
+        '<div id="naNotice" style="display:none;font-size:12px;color:var(--ink-soft);margin:-10px 0 14px;line-height:1.4;">⚡ 오프라인 상태 또는 아워골 서버 문제로 기본 안내가 생성되었습니다</div>' +
+        '<div class="modal-actions"><button class="btn btn-primary" id="naOk" type="button" style="min-height:38px;">확인</button></div>' +
+      '</div>',
       function(sheet){
         sheet.querySelector('#naOk').addEventListener('click', closeModal);
         requestNextActionSuggestion(goal, ms).then(function(res){
@@ -34221,6 +34244,26 @@ wirePromptEncyclopediaEvents(body);
         } else {
           var b = document.getElementById('btnOpenAvatarModal');
           if(b) b.click();
+        }
+      };
+    }
+    var btnOpenDynamic = document.getElementById('btnOpenDynamicAlbum');
+    if(btnOpenDynamic){
+      btnOpenDynamic.onclick = function(){
+        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+        if(window.OurgoalAvatar && window.OurgoalAvatar.openDynamicAlbumModal){
+          window.OurgoalAvatar.openDynamicAlbumModal({
+            profile: state.profile,
+            state: state,
+            saveProfile: saveProfile,
+            toast: toast,
+            openModal: openModal,
+            closeModal: closeModal,
+            renderHome: renderHome,
+            renderSettingsScreen: renderSettingsScreen
+          });
+        } else {
+          toast('아바타 도감을 불러오는 중입니다.');
         }
       };
     }
