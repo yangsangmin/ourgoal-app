@@ -11181,6 +11181,7 @@ html[data-theme="black"] .s-cal-item {
 /* #TASK-ES-245: 기록탭 샘플 데이터 1초 체험 후 원클릭 완전 삭제/초기화 기능 */
 #recSamplePurgeBanner {
   margin: 4px 0 10px 0;
+  transition: all 0.2s ease-in-out;
 }
 .rec-sample-purge-box {
   display: flex;
@@ -11192,12 +11193,26 @@ html[data-theme="black"] .s-cal-item {
   border-radius: 14px;
   padding: 10px 14px;
   box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.06);
+  color: var(--ink) !important;
 }
 [data-theme="dark"] .rec-sample-purge-box,
 [data-theme="black"] .rec-sample-purge-box,
 [data-theme="focus-sanctuary"] .rec-sample-purge-box {
   background: rgba(239, 68, 68, 0.12);
   border-color: rgba(239, 68, 68, 0.35);
+}
+[data-theme="dark"] .rec-sample-purge-box span,
+[data-theme="black"] .rec-sample-purge-box span,
+[data-theme="focus-sanctuary"] .rec-sample-purge-box span {
+  color: #F8FAFC !important;
+}
+html[data-theme="white"] .rec-sample-purge-box {
+  background: #FFF1F2 !important;
+  border-color: #FDA4AF !important;
+}
+html[data-theme="white"] .rec-sample-purge-box span {
+  color: #1E293B !important;
 }
 
 /* #TASK-ES-246: 소통탭 실시간 러닝메이트 레이더 영역 슬림화 및 접이식 콤팩트 카드 */

@@ -417,8 +417,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     <!-- RECORDS -->
     <section class="screen" id="screen-records">
       <div class="toss-headline" id="recHeadlineSentence">매일의 작은 실천이 <b>큰 성장</b>을 만들어요 📈</div>
-      <div id="sanctuaryRecordsView"></div>
       <div id="recSamplePurgeBanner" style="display:none;"></div>
+      <div id="sanctuaryRecordsView"></div>
       <div class="screen-head" style="flex-wrap:wrap;gap:8px;margin-bottom:8px;">
         <div class="screen-head-l" style="flex-wrap:wrap;">
           <h2 class="s-title" style="font-size:1.15rem;margin:0;">기록/통계</h2>
@@ -29080,7 +29080,7 @@ wirePromptEncyclopediaEvents(body);
   // [TASK-ES-245] 샘플 데이터 1초 체험 후 원클릭 완전 삭제/정화 함수
   window.purgeSampleRecordsOneClick = async function(){
     if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-    var curRecs = (state && state.profile && state.profile.records) || [];
+    var curRecs = (state && state.profile && state.profile.records) || (state && state.records) || [];
     var sampleRecs = curRecs.filter(function(r){ return r && r.isSample === true; });
     var sampleCount = sampleRecs.length;
     if(!sampleCount){
@@ -29093,17 +29093,24 @@ wirePromptEncyclopediaEvents(body);
 
     if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(15);
     var keptRecs = curRecs.filter(function(r){ return !r || r.isSample !== true; });
-    state.profile.records = keptRecs;
+    if(state && state.profile) state.profile.records = keptRecs;
+    if(state) state.records = keptRecs;
     if(typeof saveProfile === 'function') await saveProfile();
     if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation();
     renderRecordsScreen();
+    if(window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render) window.OurgoalSanctuaryV3.render('records');
     if(typeof toast === 'function') toast('체험용 샘플 데이터가 모두 정리되었습니다! ✨');
   };
 
   function renderRecordsScreen(){
     if(!state) state = {};
-    if(!state.profile) state.profile = {};
-    ensureProfileDataStructure();
+    if(typeof ensureProfileDataStructure === 'function'){
+      ensureProfileDataStructure();
+    } else {
+      if(!state.profile.records || !Array.isArray(state.profile.records)) state.profile.records = [];
+      if(!state.profile.goals || !Array.isArray(state.profile.goals)) state.profile.goals = [];
+      if(!state.profile.settings || typeof state.profile.settings !== 'object') state.profile.settings = {};
+    }
 
     // 템플릿 필터 및 테마 자동 감지 데이터 보정
     var needsSave = false;
@@ -29120,7 +29127,7 @@ wirePromptEncyclopediaEvents(body);
 
     
     // [TASK-ES-245] 샘플 데이터 능동 감지 배너 렌더링
-    var curRecords = (state && state.profile && state.profile.records) || [];
+    var curRecords = (state && state.profile && state.profile.records) || (state && state.records) || [];
     var sampleCount = curRecords.filter(function(r){ return r && r.isSample === true; }).length;
     var purgeBannerEl = document.getElementById('recSamplePurgeBanner');
     if(purgeBannerEl){
@@ -29128,7 +29135,7 @@ wirePromptEncyclopediaEvents(body);
         purgeBannerEl.style.display = 'block';
         purgeBannerEl.innerHTML = 
           '<div class="rec-sample-purge-box" id="recSamplePurgeBox">' +
-            '<div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text, #191f28);min-width:0;flex:1;">' +
+            '<div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink);min-width:0;flex:1;">' +
               '<span style="font-size:16px;flex-shrink:0;">💡</span>' +
               '<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">체험용 샘플 데이터 <b style="color:#ef4444;">' + sampleCount + '건</b> 적용 중</span>' +
             '</div>' +
