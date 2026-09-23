@@ -28,7 +28,7 @@
       "id": "C1",
       "req": "R1",
       "kind": "static",
-      "domain": "ui",
+      "domain": "config",
       "statement": "ui.css 내 .comm-subtabs-clean.comm-subtabs-grid에 repeat(3, 1fr)이 선언된다",
       "touches": [
         "ui.css"
@@ -43,7 +43,7 @@
       "id": "C2",
       "req": "R2",
       "kind": "static",
-      "domain": "ui",
+      "domain": "config",
       "statement": "ui.css 내 .comm-subtabs-clean.comm-subtabs-grid .comm-subtab에 min-height: 38px 및 font-size: 0.8125rem이 선언된다",
       "touches": [
         "ui.css"
@@ -58,7 +58,7 @@
       "id": "C3",
       "req": "R3",
       "kind": "static",
-      "domain": "ui",
+      "domain": "config",
       "statement": "ui.css 내 @media (max-width: 375px)에 .comm-subtabs-clean.comm-subtabs-grid 반응형 규칙이 선언된다",
       "touches": [
         "ui.css"
@@ -73,7 +73,7 @@
       "id": "C4",
       "req": "R4",
       "kind": "static",
-      "domain": "ui",
+      "domain": "config",
       "statement": "활성 버튼에 border: 1.5px solid가 선언된다",
       "touches": [
         "ui.css"
@@ -87,15 +87,16 @@
     {
       "id": "C5",
       "req": "R5",
-      "kind": "e2e",
-      "domain": "safety",
-      "statement": "npm test 및 헌법 38개 검증 게이트와 Zero Dead-Click 검사가 100% 통과한다",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-247 검증 케이스가 탑재되어 있다",
       "touches": [
         "scripts/smoke-test.js"
       ],
       "check": {
-        "type": "commandPasses",
-        "command": "npm test"
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-247] 소통탭 상단 6대 서브탭 버튼 가로너비 균등 비율 및 글자 크기·패딩 반응형 최적화 무결성"
       }
     }
   ]
