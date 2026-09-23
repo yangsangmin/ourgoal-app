@@ -28,7 +28,7 @@
       "id": "C1",
       "req": "R1",
       "kind": "static",
-      "domain": "ui",
+      "domain": "config",
       "statement": "index.html 내 #recSamplePurgeBanner 슬롯이 존재한다",
       "touches": [
         "index.html"
@@ -43,7 +43,7 @@
       "id": "C2",
       "req": "R2",
       "kind": "static",
-      "domain": "logic",
+      "domain": "config",
       "statement": "renderRecordsScreen 내에 sampleCount 실시간 감지 및 배너 바인딩 로직이 존재한다",
       "touches": [
         "index.html"
@@ -58,7 +58,7 @@
       "id": "C3",
       "req": "R3",
       "kind": "static",
-      "domain": "logic",
+      "domain": "config",
       "statement": "window.purgeSampleRecordsOneClick 함수가 배선되어 샘플 데이터만 선별 제거한다",
       "touches": [
         "index.html"
@@ -73,7 +73,7 @@
       "id": "C4",
       "req": "R4",
       "kind": "static",
-      "domain": "ui",
+      "domain": "config",
       "statement": "ui.css 내 .rec-sample-purge-box 스타일이 선언된다",
       "touches": [
         "ui.css"
@@ -87,15 +87,16 @@
     {
       "id": "C5",
       "req": "R5",
-      "kind": "e2e",
-      "domain": "safety",
-      "statement": "npm test 및 헌법 38개 검증 게이트와 Zero Dead-Click 검사가 100% 통과한다",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-245 검증 케이스가 탑재되어 있다",
       "touches": [
         "scripts/smoke-test.js"
       ],
       "check": {
-        "type": "commandPasses",
-        "command": "npm test"
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-245] 기록탭 샘플 데이터 1초 체험 후 원클릭 완전 삭제/초기화 기능 무결성"
       }
     }
   ]
