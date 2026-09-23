@@ -6679,11 +6679,11 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   gap: 4px;
 }
 .s-cal-mode-btn.active {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.25);
-  color: #F8FAFC;
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  background: var(--brand, #10B981) !important;
+  border-color: var(--brand, #10B981) !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
 .s-month-cal-card, .s-week-cal-card, .s-timeline-card, .s-timer-card {
@@ -7674,8 +7674,8 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   gap: 12px;
   padding: 8px 12px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: var(--surface-2, rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.04));
   cursor: pointer;
   transition: all 0.15s;
 }
@@ -7698,15 +7698,15 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
 .s-week-day-name {
   font-size: 0.72rem;
   font-weight: 700;
-  color: #64748B;
+  color: var(--ink-soft, #64748B);
 }
 .s-week-day-num {
   font-size: 0.95rem;
   font-weight: 800;
-  color: #F8FAFC;
+  color: var(--ink, #F8FAFC);
 }
 .s-week-day-badge.today .s-week-day-num {
-  color: #10B981;
+  color: var(--brand, #10B981) !important;
 }
 .s-week-day-content {
   flex: 1;
@@ -8323,9 +8323,11 @@ html[data-theme="black"] .s-cal-mode-btn {
   color: #A1A1AA !important;
 }
 html[data-theme="black"] .s-cal-mode-btn.active {
-  background: rgba(16, 185, 129, 0.2) !important;
+  background: #10B981 !important;
   border-color: #10B981 !important;
-  color: #34D399 !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
 }
 html[data-theme="black"] .s-month-cal-card,
 html[data-theme="black"] .s-week-cal-card,
@@ -8576,11 +8578,14 @@ html[data-theme="urban-city"] .s-cal-mode-btn {
   color: #94A3B8 !important;
 }
 html[data-theme="urban-city"] .s-cal-mode-btn.active {
-  background: rgba(56, 189, 248, 0.2) !important;
-  border-color: #38BDF8 !important;
-  color: #38BDF8 !important;
+  background: #0284C7 !important;
+  border-color: #0284C7 !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35) !important;
 }
 html[data-theme="urban-city"] .s-month-cal-card,
+html[data-theme="urban-city"] .s-week-cal-card,
 html[data-theme="urban-city"] .s-timeline-card,
 html[data-theme="urban-city"] .s-timer-card {
   background: #131B2E !important;
@@ -11006,7 +11011,7 @@ html[data-theme="white"] #calHeadlineSentence b {
   white-space: normal;
 }
 
-/* #TASK-ES-241: 화이트 테마 주간 뷰 고대비 시인성 복원 */
+/* #TASK-ES-241: 4대 테마 주간 뷰 고대비 시인성 복원 */
 html[data-theme="white"] .s-week-day-row {
   background: #F8FAFC !important;
   border: 1px solid #E2E8F0 !important;
@@ -11019,8 +11024,15 @@ html[data-theme="white"] .s-week-day-row.selected {
   border-color: #059669 !important;
   border-left: 3px solid #059669 !important;
 }
+html[data-theme="white"] .s-week-day-name {
+  color: #64748B !important;
+}
 html[data-theme="white"] .s-week-day-num {
   color: #0F172A !important;
+}
+html[data-theme="white"] .s-week-count-chip {
+  background: #E2E8F0 !important;
+  color: #475569 !important;
 }
 html[data-theme="white"] .s-cal-item {
   background: #F8FAFC !important;
@@ -11028,6 +11040,59 @@ html[data-theme="white"] .s-cal-item {
 }
 html[data-theme="white"] .s-week-day-detail {
   border-top-color: #E2E8F0 !important;
+}
+
+/* 도심 테마 주간 뷰 고대비 복원 */
+html[data-theme="urban-city"] .s-week-day-row {
+  background: rgba(19, 27, 46, 0.8) !important;
+  border: 1px solid rgba(56, 189, 248, 0.18) !important;
+}
+html[data-theme="urban-city"] .s-week-day-row:hover {
+  background: rgba(30, 41, 59, 0.9) !important;
+}
+html[data-theme="urban-city"] .s-week-day-row.selected {
+  background: rgba(2, 132, 199, 0.18) !important;
+  border-color: #0284C7 !important;
+  border-left: 3px solid #0284C7 !important;
+}
+html[data-theme="urban-city"] .s-week-day-name {
+  color: #94A3B8 !important;
+}
+html[data-theme="urban-city"] .s-week-day-num {
+  color: #F8FAFC !important;
+}
+html[data-theme="urban-city"] .s-week-count-chip {
+  background: rgba(56, 189, 248, 0.15) !important;
+  color: #38BDF8 !important;
+}
+html[data-theme="urban-city"] .s-cal-item {
+  background: rgba(19, 27, 46, 0.8) !important;
+  border: 1px solid rgba(56, 189, 248, 0.22) !important;
+}
+
+/* 블랙 테마 주간 뷰 고대비 복원 */
+html[data-theme="black"] .s-week-day-row {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+html[data-theme="black"] .s-week-day-row:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+html[data-theme="black"] .s-week-day-row.selected {
+  background: rgba(16, 185, 129, 0.15) !important;
+  border-color: #10B981 !important;
+  border-left: 3px solid #10B981 !important;
+}
+html[data-theme="black"] .s-week-day-num {
+  color: #F8FAFC !important;
+}
+html[data-theme="black"] .s-week-count-chip {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #A1A1AA !important;
+}
+html[data-theme="black"] .s-cal-item {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 
 /* #TASK-ES-245: 기록탭 샘플 데이터 1초 체험 후 원클릭 완전 삭제/초기화 기능 */
