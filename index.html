@@ -269,6 +269,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             <button type="button" class="btn btn-primary btn-sm" id="btnNudgeCrewMates" onclick="nudgeCrewMates()" style="font-size:0.75rem;padding:4px 10px;border-radius:10px;font-weight:700;min-height:36px;">응원 보내기</button>
           </div>
         </div>
+        <!-- 콜드스타트(0~1명) 완충 온보딩 카드 슬롯 (#TASK-ES-228) -->
+        <div id="userCrewColdStartBox" class="crew-coldstart-box" style="display:none;margin-top:12px;padding:12px 14px;background:rgba(16,185,129,0.06);border:1px dashed rgba(16,185,129,0.32);border-radius:14px;align-items:center;justify-content:space-between;gap:10px;">
+          <div style="display:flex;align-items:center;gap:10px;font-size:0.8125rem;color:var(--ink-soft);line-height:1.45;">
+            <span id="userCrewColdStartIcon" style="font-size:1.25rem;flex-shrink:0;">🌱</span>
+            <span id="userCrewColdStartDesc">오늘 첫 번째로 체크인하고 동반자들의 듬직한 페이스메이커가 되어보세요!</span>
+          </div>
+          <button type="button" class="btn btn-sm" id="btnCrewStartCheckin" onclick="focusHomeCheckinInput()" style="flex-shrink:0;background:#10b981;color:#ffffff;font-size:0.78125rem;font-weight:700;padding:5px 12px;border-radius:10px;border:none;min-height:34px;cursor:pointer;">1등 체크인 ✏️</button>
+        </div>
       </div>
       
 
@@ -11534,6 +11542,144 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* ============ Social Crew Pacing (#TASK-ES-228) ============ */
+  function applyCrewPacingUI(activeCount, myCheckedToday, nick){
+    var headlineEl = document.getElementById('userCrewHeadline');
+    var badgeEl = document.getElementById('userCrewBadge');
+    var scoreEl = document.getElementById('userCrewScore');
+    var progressEl = document.getElementById('userCrewProgressBar');
+    var subtextEl = document.getElementById('userCrewSubtext');
+    var coldStartBox = document.getElementById('userCrewColdStartBox');
+    var coldStartIcon = document.getElementById('userCrewColdStartIcon');
+    var coldStartDesc = document.getElementById('userCrewColdStartDesc');
+    var btnCheckin = document.getElementById('btnCrewStartCheckin');
+
+    if(activeCount === 0){
+      if(headlineEl) headlineEl.innerHTML = '오늘의 1호 완주자가 되어보세요! 🏃';
+      if(badgeEl){
+        badgeEl.textContent = '🌱 오늘의 첫 레이스';
+        badgeEl.style.background = 'rgba(16, 185, 129, 0.12)';
+        badgeEl.style.color = '#10b981';
+      }
+      if(scoreEl){
+        scoreEl.textContent = '1호 주자 대기 중 🏁';
+        scoreEl.style.color = '#10b981';
+      }
+      if(progressEl){
+        progressEl.style.width = '8%';
+        progressEl.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
+      }
+      if(subtextEl){
+        subtextEl.textContent = '아직 오늘 출발선을 통과한 동반자가 없어요. 지금 3초 체크인을 남겨보세요!';
+      }
+      if(coldStartBox){
+        coldStartBox.style.display = 'flex';
+        coldStartBox.style.background = 'rgba(16, 185, 129, 0.06)';
+        coldStartBox.style.borderColor = 'rgba(16, 185, 129, 0.32)';
+      }
+      if(coldStartIcon) coldStartIcon.textContent = '🌱';
+      if(coldStartDesc) coldStartDesc.textContent = '오늘 첫 번째로 실천을 완료하고 러너들의 듬직한 페이스메이커가 되어보세요!';
+      if(btnCheckin){
+        btnCheckin.style.display = 'inline-flex';
+        btnCheckin.textContent = '1등 체크인 ✏️';
+        btnCheckin.style.background = '#10b981';
+        btnCheckin.onclick = focusHomeCheckinInput;
+      }
+    } else if(activeCount === 1 && myCheckedToday){
+      if(headlineEl) headlineEl.innerHTML = '오늘 <b>' + escapeHtml(nick) + '</b>님이 영광의 <b>1호 완주자</b>입니다! 🥇';
+      if(badgeEl){
+        badgeEl.textContent = '🥇 오늘의 1호 완주!';
+        badgeEl.style.background = 'rgba(245, 158, 11, 0.14)';
+        badgeEl.style.color = '#f59e0b';
+      }
+      if(scoreEl){
+        scoreEl.textContent = '1호 완주 달성 🎉';
+        scoreEl.style.color = '#f59e0b';
+      }
+      if(progressEl){
+        progressEl.style.width = '100%';
+        progressEl.style.background = 'linear-gradient(90deg, #f59e0b, #fbbf24)';
+      }
+      if(subtextEl){
+        subtextEl.textContent = '오늘의 첫 번째 완주를 멋지게 해내셨어요! 곧 이어 달릴 동반자들을 기다리고 있어요 👏';
+      }
+      if(coldStartBox){
+        coldStartBox.style.display = 'flex';
+        coldStartBox.style.background = 'rgba(245, 158, 11, 0.08)';
+        coldStartBox.style.borderColor = 'rgba(245, 158, 11, 0.35)';
+      }
+      if(coldStartIcon) coldStartIcon.textContent = '🥇';
+      if(coldStartDesc) coldStartDesc.textContent = '멋진 선두 주자! 곧 다른 러너들이 ' + escapeHtml(nick) + '님의 뒤를 이어 합류할 예정이에요.';
+      if(btnCheckin){
+        btnCheckin.style.display = 'inline-flex';
+        btnCheckin.textContent = '피드 확인 ➔';
+        btnCheckin.style.background = '#f59e0b';
+        btnCheckin.onclick = function(){
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+          state.commSubTab = 'feed';
+          if(typeof setTab === 'function') setTab('comm');
+          else if(typeof switchTab === 'function') switchTab('comm');
+          if(typeof renderCommScreen === 'function') renderCommScreen();
+        };
+      }
+    } else if(activeCount === 1 && !myCheckedToday){
+      if(headlineEl) headlineEl.innerHTML = '오늘 벌써 <b>1명</b>의 동반자가 달리고 있어요! 🏃';
+      if(badgeEl){
+        badgeEl.textContent = '🔥 실시간 동류 레이스';
+        badgeEl.style.background = 'rgba(239, 68, 68, 0.1)';
+        badgeEl.style.color = '#ef4444';
+      }
+      if(scoreEl){
+        scoreEl.textContent = '1명 완주 진행 중';
+        scoreEl.style.color = 'var(--brand)';
+      }
+      if(progressEl){
+        progressEl.style.width = '25%';
+        progressEl.style.background = 'linear-gradient(90deg, #f43f5e, #fb7185)';
+      }
+      if(subtextEl){
+        subtextEl.textContent = '오늘의 3초 체크인을 남기면 2번째 주자로 합류합니다 🚀';
+      }
+      if(coldStartBox){
+        coldStartBox.style.display = 'flex';
+        coldStartBox.style.background = 'rgba(16, 185, 129, 0.06)';
+        coldStartBox.style.borderColor = 'rgba(16, 185, 129, 0.32)';
+      }
+      if(coldStartIcon) coldStartIcon.textContent = '🏃';
+      if(coldStartDesc) coldStartDesc.textContent = '오늘 1호 러너가 이미 출발했어요! 지금 체크인하고 2호 주자로 합류하세요.';
+      if(btnCheckin){
+        btnCheckin.style.display = 'inline-flex';
+        btnCheckin.textContent = '함께 달리기 ✏️';
+        btnCheckin.style.background = '#10b981';
+        btnCheckin.onclick = focusHomeCheckinInput;
+      }
+    } else {
+      if(badgeEl){
+        badgeEl.textContent = '🔥 실시간 동류 레이스';
+        badgeEl.style.background = 'rgba(239, 68, 68, 0.1)';
+        badgeEl.style.color = '#ef4444';
+      }
+      if(scoreEl){
+        scoreEl.textContent = activeCount + '명 완주 진행 중';
+        scoreEl.style.color = 'var(--brand)';
+      }
+      if(progressEl){
+        var pct = Math.min(100, Math.max(20, activeCount * 18));
+        progressEl.style.width = pct + '%';
+        progressEl.style.background = 'linear-gradient(90deg, #f43f5e, #fb7185)';
+      }
+      if(coldStartBox){
+        coldStartBox.style.display = 'none';
+      }
+      if(myCheckedToday){
+        if(headlineEl) headlineEl.innerHTML = '오늘 <b>' + escapeHtml(nick) + '</b>님과 함께 달리는 동반자 <b>' + activeCount + '명</b> 🔥';
+        if(subtextEl) subtextEl.textContent = '오늘 체크인 완주! 동반자들의 피드를 응원해보세요 ✨';
+      } else {
+        if(headlineEl) headlineEl.innerHTML = '오늘 벌써 <b>' + activeCount + '명</b>의 동반자가 달리고 있어요! 🏃';
+        if(subtextEl) subtextEl.textContent = '오늘의 3초 체크인을 남기면 함께 달리는 크루에 합류합니다 🚀';
+      }
+    }
+  }
+
   function renderCrewPacingWidget(){
     var w = document.getElementById('crewPacingWidget');
     if(!w) return;
@@ -11566,36 +11712,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
 
     var activeCount = Object.keys(activeUserMap).length;
-
-    var headlineEl = document.getElementById('userCrewHeadline');
-    var scoreEl = document.getElementById('userCrewScore');
-    var progressEl = document.getElementById('userCrewProgressBar');
-    var subtextEl = document.getElementById('userCrewSubtext');
-
-    if(headlineEl){
-      if(activeCount === 0){
-        headlineEl.innerHTML = '오늘 <b>' + escapeHtml(nick) + '</b>님이 첫 번째 주자로 완주해보세요! 🏃';
-      } else {
-        headlineEl.innerHTML = '오늘 <b>' + escapeHtml(nick) + '</b>님과 함께 달리는 동반자 <b>' + activeCount + '명</b> 🔥';
-      }
-    }
-
-    if(scoreEl){
-      scoreEl.textContent = activeCount > 0 ? (activeCount + '명 완주 진행 중') : '출발 대기';
-    }
-
-    if(progressEl){
-      var pct = activeCount === 0 ? (myCheckedToday ? 20 : 5) : Math.min(100, Math.max(15, activeCount * 20));
-      progressEl.style.width = pct + '%';
-    }
-
-    if(subtextEl){
-      if(myCheckedToday){
-        subtextEl.textContent = '오늘 체크인 완주! 동반자들의 피드를 응원해보세요 ✨';
-      } else {
-        subtextEl.textContent = '오늘의 3초 체크인을 남기면 함께 달리는 크루에 합류합니다 🚀';
-      }
-    }
+    applyCrewPacingUI(activeCount, myCheckedToday, nick);
 
     var btnFeed = document.getElementById('btnGoLiveFeed');
     if(btnFeed){
@@ -11621,20 +11738,28 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           });
         }
         var reCount = Object.keys(reUsers).length;
-        if(headlineEl){
-          if(reCount === 0){
-            headlineEl.innerHTML = '오늘 <b>' + escapeHtml(nick) + '</b>님이 첫 번째 주자로 완주해보세요! 🏃';
-          } else {
-            headlineEl.innerHTML = '오늘 <b>' + escapeHtml(nick) + '</b>님과 함께 달리는 동반자 <b>' + reCount + '명</b> 🔥';
-          }
-        }
-        if(scoreEl) scoreEl.textContent = reCount > 0 ? (reCount + '명 완주 진행 중') : '출발 대기';
-        if(progressEl){
-          var rePct = reCount === 0 ? (myCheckedToday ? 20 : 5) : Math.min(100, Math.max(15, reCount * 20));
-          progressEl.style.width = rePct + '%';
-        }
+        applyCrewPacingUI(reCount, myCheckedToday, nick);
       }).catch(function(){});
     }
+  }
+
+  function focusHomeCheckinInput(){
+    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+    else if(typeof triggerHaptic === 'function') triggerHaptic(12);
+    var box = document.getElementById('captureCardBox');
+    var inp = document.getElementById('captureInput');
+    if(box){
+      box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    if(inp){
+      setTimeout(function(){
+        try {
+          inp.focus();
+        } catch(e){}
+      }, 300);
+    }
+    toast('오늘의 1호 완주자로 등록할 준비가 되었습니다! ✍️');
+    if(window._recordHesitation) window._recordHesitation('crewStartCheckin');
   }
 
   function nudgeCrewMates(){
@@ -11645,6 +11770,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(window._recordHesitation) window._recordHesitation('nudgeCrewMates');
   }
   window.renderCrewPacingWidget = renderCrewPacingWidget;
+  window.applyCrewPacingUI = applyCrewPacingUI;
+  window.focusHomeCheckinInput = focusHomeCheckinInput;
   window.nudgeCrewMates = nudgeCrewMates;
 
   /* ============ UX Telemetry (Hesitation & Rage Tap) ============ */

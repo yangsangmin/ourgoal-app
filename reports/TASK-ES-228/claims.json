@@ -20,7 +20,11 @@
     },
     {
       "id": "R5",
-      "text": "scripts/smoke-test.js에 TASK-ES-228 검증 케이스가 추가되어야 한다"
+      "text": "실 체크인 0명 시 '오늘의 1호 완주자가 되어보세요! 🏃' 따뜻한 온보딩 카드(#userCrewColdStartBox) 및 1등 체크인 원터치 버튼(#btnCrewStartCheckin)이 배치되어야 한다"
+    },
+    {
+      "id": "R6",
+      "text": "scripts/smoke-test.js에 TASK-ES-228 2차 고도화 검증 케이스가 추가되어야 한다"
     }
   ],
   "claims": [
@@ -58,7 +62,7 @@
       "id": "C3",
       "req": "R3",
       "kind": "static",
-      "domain": "config",
+      "domain": "logic",
       "statement": "index.html의 renderCrewPacingWidget에 실 사용자 집계 activeUserMap 로직이 구현되어 있다",
       "touches": [
         "index.html"
@@ -89,6 +93,36 @@
       "req": "R5",
       "kind": "static",
       "domain": "config",
+      "statement": "index.html에 콜드스타트 완충 온보딩 카드 #userCrewColdStartBox 및 1등 체크인 #btnCrewStartCheckin 마크업이 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"userCrewColdStartBox\""
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "index.html에 오늘의 1호 완주자 문구 및 focusHomeCheckinInput 함수가 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "오늘의 1호 완주자가 되어보세요! 🏃"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
       "statement": "scripts/smoke-test.js에 TASK-ES-228 검증 케이스가 추가되어 있다",
       "touches": [
         "scripts/smoke-test.js"
@@ -96,7 +130,7 @@
       "check": {
         "type": "codeContains",
         "file": "scripts/smoke-test.js",
-        "text": "[#TASK-ES-228] [생각 메모장 98번] 홈 탭 '오늘 달성 레이스' 가짜 시뮬레이션 제거 및 '함께 달리는 동류 N명' 실데이터 배선 무결성"
+        "text": "[#TASK-ES-228] [생각 메모장 98번]"
       }
     }
   ]
