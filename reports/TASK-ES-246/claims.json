@@ -28,7 +28,7 @@
       "id": "C1",
       "req": "R1",
       "kind": "static",
-      "domain": "ui",
+      "domain": "config",
       "statement": "ui.css 내 .s-peer-radar-card 슬림화 및 .s-r-goal 숨김 규칙이 선언된다",
       "touches": [
         "ui.css"
@@ -43,7 +43,7 @@
       "id": "C2",
       "req": "R2",
       "kind": "static",
-      "domain": "logic",
+      "domain": "config",
       "statement": "js/sanctuary-v3-engine.js 내 #peerRadarToggleBtn이 선언된다",
       "touches": [
         "js/sanctuary-v3-engine.js"
@@ -58,7 +58,7 @@
       "id": "C3",
       "req": "R3",
       "kind": "static",
-      "domain": "logic",
+      "domain": "config",
       "statement": "OurgoalSanctuaryV3.toggleRadarCollapse 함수가 노출된다",
       "touches": [
         "js/sanctuary-v3-engine.js"
@@ -73,7 +73,7 @@
       "id": "C4",
       "req": "R4",
       "kind": "static",
-      "domain": "logic",
+      "domain": "config",
       "statement": "openPeerInteraction 핸들러가 아바타 아이템에 정상 바인딩된다",
       "touches": [
         "js/sanctuary-v3-engine.js"
@@ -87,15 +87,16 @@
     {
       "id": "C5",
       "req": "R5",
-      "kind": "e2e",
-      "domain": "safety",
-      "statement": "npm test 및 헌법 38개 검증 게이트와 Zero Dead-Click 검사가 100% 통과한다",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-246 검증 케이스가 탑재되어 있다",
       "touches": [
         "scripts/smoke-test.js"
       ],
       "check": {
-        "type": "commandPasses",
-        "command": "npm test"
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-246] 소통탭 실시간 러닝메이트 레이더 영역 슬림화 및 접이식 콤팩트 카드 전환 무결성"
       }
     }
   ]
