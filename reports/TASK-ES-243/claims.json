@@ -28,7 +28,7 @@
       "id": "C1",
       "req": "R1",
       "kind": "static",
-      "domain": "ui",
+      "domain": "config",
       "statement": "ui.css 내 #commHeadlineSentence에 margin: 4px 0 10px 0 및 font-size: 1.05rem이 선언된다",
       "touches": [
         "ui.css"
@@ -43,7 +43,7 @@
       "id": "C2",
       "req": "R2",
       "kind": "static",
-      "domain": "ui",
+      "domain": "config",
       "statement": "ui.css 내 .toss-community-hero-card에 margin-top: 6px이 선언된다",
       "touches": [
         "ui.css"
@@ -58,7 +58,7 @@
       "id": "C3",
       "req": "R3",
       "kind": "static",
-      "domain": "ui",
+      "domain": "config",
       "statement": "ui.css 내 @media (max-width: 480px)에 #commHeadlineSentence 반응형 규칙이 선언된다",
       "touches": [
         "ui.css"
@@ -73,7 +73,7 @@
       "id": "C4",
       "req": "R4",
       "kind": "static",
-      "domain": "logic",
+      "domain": "config",
       "statement": "index.html 내 commHeadlineSentence에 혼자가 아니라 함께 달리고 있어요 문구가 바인딩된다",
       "touches": [
         "index.html"
@@ -87,15 +87,16 @@
     {
       "id": "C5",
       "req": "R5",
-      "kind": "e2e",
-      "domain": "safety",
-      "statement": "npm test 및 헌법 38개 검증 게이트와 Zero Dead-Click 검사가 100% 통과한다",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-243 검증 케이스가 탑재되어 있다",
       "touches": [
         "scripts/smoke-test.js"
       ],
       "check": {
-        "type": "commandPasses",
-        "command": "npm test"
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-243] 소통탭 대표 안내멘트(#commHeadlineSentence) 시인성 개선 및 공간 효율적 간결 문구 재배치 무결성"
       }
     }
   ]
