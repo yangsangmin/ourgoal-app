@@ -12,15 +12,15 @@
     },
     {
       "id": "R3",
-      "text": "5대 상황별 아바타 도감 팝업(openDynamicAlbumModal) 및 VIP 멤버십 패스 상태(getVipPassInfo)가 구현되어야 한다"
+      "text": "5대 상황별 아바타 도감 팝업(openDynamicAlbumModal)이 100% 무료 순수 기능으로 구현되어야 한다"
     },
     {
       "id": "R4",
-      "text": "설정탭 프로필 요약 카드에 아바타 도감 진입 버튼(btnOpenDynamicAlbum) 및 핸들러가 배선되어야 한다"
+      "text": "설정탭 프로필 요약 카드에 아바타 도감 진입 버튼(btnOpenDynamicAlbum)이 배선되고 아바타 생성횟수(최초 3회) 소진 안내 문구가 정상화되어야 한다"
     },
     {
       "id": "R5",
-      "text": "scripts/smoke-test.js에 TASK-ES-249 검증 케이스가 탑재되고 38개 헌법 게이트 및 Zero Dead-Click이 100% ALL PASS여야 한다"
+      "text": "ui.css 스타일 정의, docs/rules/TICKETS.md 정식 등록, scripts/smoke-test.js 검증 케이스가 탑재되고 38개 헌법 게이트 및 Zero Dead-Click이 100% ALL PASS여야 한다"
     }
   ],
   "claims": [
@@ -59,7 +59,7 @@
       "req": "R3",
       "kind": "static",
       "domain": "config",
-      "statement": "js/avatar-system.js에 openDynamicAlbumModal 함수가 구현된다",
+      "statement": "js/avatar-system.js에 100% 무료 openDynamicAlbumModal 함수가 구현된다",
       "touches": [
         "js/avatar-system.js"
       ],
@@ -74,9 +74,10 @@
       "req": "R4",
       "kind": "static",
       "domain": "config",
-      "statement": "index.html에 btnOpenDynamicAlbum 버튼이 배선된다",
+      "statement": "index.html에 btnOpenDynamicAlbum 버튼이 배선되고 js/avatar-system.js의 아바타 생성횟수 10회 하드코딩이 제거된다",
       "touches": [
-        "index.html"
+        "index.html",
+        "js/avatar-system.js"
       ],
       "check": {
         "type": "codeContains",
@@ -89,6 +90,36 @@
       "req": "R5",
       "kind": "static",
       "domain": "config",
+      "statement": "ui.css에 .dynamic-avatar-grid 스타일이 정의된다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".dynamic-avatar-grid {"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/rules/TICKETS.md에 #TASK-ES-249 티켓이 공식 등재된다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-249 |"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
       "statement": "scripts/smoke-test.js에 TASK-ES-249 검증 케이스가 탑재되어 있다",
       "touches": [
         "scripts/smoke-test.js"
@@ -96,7 +127,7 @@
       "check": {
         "type": "codeContains",
         "file": "scripts/smoke-test.js",
-        "text": "[#TASK-ES-249] 상황별 다이나믹 아바타 생성 및 VIP 수익화 모델 (도감·리액션·패스) 무결성"
+        "text": "[#TASK-ES-249] 상황별 다이나믹 아바타 리액션 도감 100% 무료 기능 및 생성횟수 3회 문구 정상화"
       }
     }
   ]

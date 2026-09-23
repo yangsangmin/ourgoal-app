@@ -8069,9 +8069,10 @@ check('[#TASK-ES-248] 설정탭 상단 프로필 요약 카드 시인성 강화 
   assert.ok(cssContent.includes('#btnSettingsQuickAvatar'), 'ui.css 내 #btnSettingsQuickAvatar 스타일 누락');
 });
 
-check('[#TASK-ES-249] 상황별 다이나믹 아바타 생성 및 VIP 수익화 모델 (도감·리액션·패스) 무결성', () => {
+check('[#TASK-ES-249] 상황별 다이나믹 아바타 리액션 도감 100% 무료 기능 및 생성횟수 3회 문구 정상화', () => {
   const avatarSystemPath = path.join(__dirname, '..', 'js', 'avatar-system.js');
   const avatarModule = require(avatarSystemPath);
+  const avatarSrc = fs.readFileSync(avatarSystemPath, 'utf8');
   const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
@@ -8090,20 +8091,25 @@ check('[#TASK-ES-249] 상황별 다이나믹 아바타 생성 및 VIP 수익화 
   const svgMilestone = avatarModule.getDynamicAvatarSvg('milestone_break', 1, { size: 64 });
   assert.ok(svgMilestone.includes('dyn-prop-milestone'), '마일스톤 황금 트로피 소품 누락');
 
-  // 3. 도감 데이터 및 VIP 패스 시스템 검증
+  // 3. 100% 순수 무료 도감 및 VIP 소거 검증
   assert.strictEqual(typeof avatarModule.getDynamicAlbum, 'function', 'getDynamicAlbum 함수 누락');
   const album = avatarModule.getDynamicAlbum({});
   assert.strictEqual(album.length, 5, '5대 상황 도감 앨범 자동 초기화 실패');
-  const vipInfo = avatarModule.getVipPassInfo({});
-  assert.ok(vipInfo && typeof vipInfo.remainingDynamicCrafts === 'number', 'VIP 잔여 생성권 정보 조회 실패');
+  assert.strictEqual(typeof avatarModule.getVipPassInfo, 'undefined', 'VIP 함수 잔존 결함');
+  assert.strictEqual(typeof avatarModule.claimFreeVipPass, 'undefined', 'VIP 패스 함수 잔존 결함');
+  assert.ok(!avatarSrc.includes('dynamic-vip-'), 'VIP UI 클래스 잔존 결함');
 
-  // 4. index.html 배선 (도감 진입 버튼, 홈 화면 회차별 반응 칩, 마일스톤 축하) 검증
+  // 4. 아바타 제작 횟수(최초 3회) 소진 안내 문구 정상화 검증
+  assert.ok(!/btnRunCraft\.title\s*=\s*['"][^'"]*10회/.test(avatarSrc), '10회 하드코딩 title 제거 확인');
+  assert.ok(!avatarSrc.includes('아바타 제작 가능 횟수(최대 10회'), '10회 하드코딩 toast 제거 확인');
+
+  // 5. index.html 배선 (도감 진입 버튼, 홈 화면 회차별 반응 칩, 마일스톤 축하) 검증
   assert.ok(indexHtml.includes('id="btnOpenDynamicAlbum"'), '설정 탭 프로필 카드 내 btnOpenDynamicAlbum 버튼 누락');
   assert.ok(indexHtml.includes('btnOpenDynamic.onclick'), 'renderSettingsScreen 내 btnOpenDynamicAlbum 클릭 핸들러 누락');
   assert.ok(indexHtml.includes('dynamic-avatar-bubble-chip'), '홈 화면 레벨 뱃지 내 상황별 말풍선 칩 누락');
   assert.ok(indexHtml.includes('milestone_break'), 'celebrateMilestoneDone 내 마일스톤 아바타 연동 누락');
 
-  // 5. ui.css 도감 및 카드 스타일 검증
+  // 6. ui.css 도감 및 카드 스타일 검증
   assert.ok(cssContent.includes('.dynamic-avatar-grid'), 'ui.css 내 .dynamic-avatar-grid 스타일 누락');
   assert.ok(cssContent.includes('.dynamic-avatar-card'), 'ui.css 내 .dynamic-avatar-card 스타일 누락');
   assert.ok(cssContent.includes('#btnOpenDynamicAlbum'), 'ui.css 내 #btnOpenDynamicAlbum 스타일 누락');

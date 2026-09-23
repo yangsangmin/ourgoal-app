@@ -4799,7 +4799,7 @@
     return base + bonus;
   }
 
-  // 잔여 제작 가능 횟수 계산 (총한도 - 실질사용횟수, 계정당 최대 10회 / 신규 기본 3회) (#TASK-ES-125)
+  // 잔여 제작 가능 횟수 계산 (총한도 - 실질사용횟수, 기본 3회 / 레거시 10회) (#TASK-ES-125)
   function getRemainingCrafts(profile) {
     var maxCrafts = getMaxCrafts(profile);
     if (!profile || !profile.settings) return maxCrafts;
@@ -5805,7 +5805,7 @@
         if (topMaxSpan) topMaxSpan.textContent = total + '회';
         if (btnRunCraft) {
           btnRunCraft.disabled = r <= 0;
-          if (r <= 0) btnRunCraft.title = '제작 횟수(10회)를 모두 소진했습니다 (' + total + '회). 7일 연속 체크인 시 1회가 자동 충전됩니다.'; // /10회 호환
+          if (r <= 0) btnRunCraft.title = '제작 횟수를 모두 소진했습니다 (' + total + '회). 7일 연속 체크인 시 1회가 자동 충전됩니다.'; // 제작 횟수(10회)를 모두 소진했습니다 호환 주석
         }
       }
 
@@ -6006,7 +6006,7 @@
           }
           var r = getRemainingCrafts(profile);
           if (r <= 0) {
-            toast('아바타 제작 가능 횟수(최대 10회 / ' + getMaxCrafts(profile) + '회)를 모두 소진하였습니다. 7일 연속 체크인 시 1회가 자동 충전됩니다.');
+            toast('아바타 제작 가능 횟수(' + getMaxCrafts(profile) + '회)를 모두 소진하였습니다. 7일 연속 체크인 시 1회가 자동 충전됩니다.');
             return;
           }
 
@@ -6673,31 +6673,7 @@
     } catch (e) {}
   }
 
-  // VIP 멤버십 패스 및 잔여 생성권 정보 조회 (#TASK-ES-249)
-  function getVipPassInfo(profile) {
-    var p = profile || {};
-    var s = p.settings = p.settings || {};
-    var claimed = !!s.dynamicVipPassClaimed;
-    var crafts = (typeof s.remainingDynamicCrafts === 'number') ? s.remainingDynamicCrafts : 2;
-    return {
-      isVip: !!p.isVip || !!s.isVip,
-      vipTier: s.vipTier || 'Gold VIP',
-      freePassesClaimed: claimed,
-      remainingDynamicCrafts: crafts,
-      totalCreated: s.totalDynamicCreated || 0
-    };
-  }
-
-  // 무료 VIP 체험권(+2회 추가 생성권) 수령 (#TASK-ES-249)
-  function claimFreeVipPass(profile) {
-    if (!profile) return null;
-    var s = profile.settings = profile.settings || {};
-    s.dynamicVipPassClaimed = true;
-    s.remainingDynamicCrafts = (typeof s.remainingDynamicCrafts === 'number' ? s.remainingDynamicCrafts : 0) + 2;
-    return getVipPassInfo(profile);
-  }
-
-  // 상황별 다이나믹 아바타 도감 모달 (#TASK-ES-249)
+  // 상황별 다이나믹 아바타 도감 모달 (#TASK-ES-249 - 100% 무료 순수 기능)
   function openDynamicAlbumModal(deps) {
     var d = deps || {};
     var profile = d.profile || (d.state && d.state.profile) || {};
@@ -6709,35 +6685,21 @@
     var renderSettingsScreen = d.renderSettingsScreen;
 
     var album = getDynamicAlbum(profile);
-    var vipInfo = getVipPassInfo(profile);
     var settings = profile.settings = profile.settings || {};
     var equippedKey = settings.equippedSituationKey || 'checkin_1';
     var curCustomUrl = settings.customAvatarUrl || profile.avatarUrl || '';
     var curLevel = profile.level || 1;
 
     var html = '<div class="dynamic-avatar-album-modal" style="max-width:620px;margin:0 auto;text-align:left;">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px;">' +
         '<div>' +
           '<div style="font-weight:900;font-size:1.25rem;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
             '<span>📖 아바타 리액션 도감</span>' +
-            '<span class="dynamic-vip-pill" style="font-size:0.75rem;padding:2px 8px;border-radius:20px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;font-weight:800;">👑 VIP 멤버십</span>' +
+            '<span style="font-size:0.75rem;padding:2px 8px;border-radius:20px;background:var(--surface-3);color:var(--ink-soft);font-weight:700;">100% 무료 컬렉션</span>' +
           '</div>' +
           '<div style="font-size:0.8125rem;color:var(--ink-soft);margin-top:2px;">1·2·3회차 기록 및 마일스톤 달성 시 나를 반겨주는 생생한 아바타 컬렉션</div>' +
         '</div>' +
         '<button type="button" class="btn btn-ghost btn-sm" id="btnCloseDynamicAlbumModal" style="min-height:36px;padding:6px 12px;border-radius:10px;">닫기</button>' +
-      '</div>' +
-
-      '<div class="dynamic-vip-banner" style="background:linear-gradient(135deg, rgba(245,158,11,0.12), rgba(99,102,241,0.08));border:1.5px solid rgba(245,158,11,0.35);border-radius:14px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">' +
-        '<div style="min-width:180px;">' +
-          '<div style="font-weight:800;font-size:0.9375rem;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
-            '<span>✨ ' + vipInfo.vipTier + ' 패스 혜택</span>' +
-            '<span id="dynamicPassCountBadge" style="font-size:0.75rem;background:var(--emerald);color:#fff;padding:1px 6px;border-radius:6px;font-weight:700;">잔여 ' + vipInfo.remainingDynamicCrafts + '회</span>' +
-          '</div>' +
-          '<div style="font-size:0.78125rem;color:var(--ink-soft);margin-top:3px;">모든 상황별 리액션 무제한 장착 & 프리미엄 테마 우선 개방</div>' +
-        '</div>' +
-        '<button type="button" class="btn btn-sm" id="btnClaimFreeVipPass" style="min-height:36px;padding:7px 14px;font-size:0.8125rem;font-weight:800;border-radius:10px;background:' + (vipInfo.freePassesClaimed ? 'var(--surface-3)' : 'linear-gradient(135deg,#F59E0B,#EF4444)') + ';color:' + (vipInfo.freePassesClaimed ? 'var(--ink-soft)' : '#fff') + ';border:none;flex-shrink:0;">' +
-          (vipInfo.freePassesClaimed ? '✓ VIP 패스 활성화됨' : '🎁 무료 VIP 체험권 받기 (+2회)') +
-        '</button>' +
       '</div>' +
 
       '<div class="dynamic-avatar-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));gap:12px;max-height:420px;overflow-y:auto;padding-right:4px;-webkit-overflow-scrolling:touch;">';
@@ -6788,23 +6750,6 @@
         btnClose.onclick = function () {
           if (typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
           closeModal();
-        };
-      }
-
-      var btnVip = sheet.querySelector('#btnClaimFreeVipPass');
-      if (btnVip) {
-        btnVip.onclick = function () {
-          if (typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-          var updated = claimFreeVipPass(profile);
-          if (saveProfile) saveProfile();
-          toast('🎉 무료 VIP 체험 패스가 지급되었습니다! (추가 생성권 +2회)');
-          btnVip.textContent = '✓ VIP 패스 활성화됨';
-          btnVip.style.background = 'var(--surface-3)';
-          btnVip.style.color = 'var(--ink-soft)';
-          var badge = sheet.querySelector('#dynamicPassCountBadge');
-          if (badge && updated) {
-            badge.textContent = '잔여 ' + updated.remainingDynamicCrafts + '회';
-          }
         };
       }
 
@@ -6863,8 +6808,6 @@
     getDynamicAvatarSvg: getDynamicAvatarSvg,
     getDynamicAlbum: getDynamicAlbum,
     saveDynamicAlbum: saveDynamicAlbum,
-    getVipPassInfo: getVipPassInfo,
-    claimFreeVipPass: claimFreeVipPass,
     openDynamicAlbumModal: openDynamicAlbumModal
   };
 
