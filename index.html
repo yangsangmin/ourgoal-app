@@ -4446,23 +4446,31 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   function checkGuestBackupNudge(){
+    var force = arguments[0];
     try {
       var p = state.profile;
       if(!p) return;
       var u = state.user;
-      var isGuest = (!u || !u.id) && (p.isGuest || String(p.id || '').indexOf('guest') === 0 || !isValidRealUser(p.id));
-      if(!isGuest) return;
+      var pid = String(p.id || '');
+      var isGuest = (!u || !u.id) && (
+        p.isGuest === true ||
+        pid.indexOf('guest') === 0 ||
+        (typeof isValidRealUser === 'function' ? !isValidRealUser(pid) : !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(pid))
+      );
+      if(!isGuest && !force) return;
       var recCount = (p.records && p.records.length) || 0;
-      if(recCount >= 3){
+      if(recCount >= 3 || force){
         var alreadyNudged = false;
-        try {
-          alreadyNudged = !!sessionStorage.getItem('ourgoal_guest_backup_nudged');
-        } catch(e){}
+        if(!force){
+          try {
+            alreadyNudged = !!sessionStorage.getItem('ourgoal_guest_backup_nudged');
+          } catch(e){}
+        }
         if(!alreadyNudged){
           try { sessionStorage.setItem('ourgoal_guest_backup_nudged', 'true'); } catch(e){}
           setTimeout(function(){
             openGuestBackupNudgeModal();
-          }, 400);
+          }, 350);
         }
       }
     } catch(err){
@@ -4471,6 +4479,159 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
   window.openGuestBackupNudgeModal = openGuestBackupNudgeModal;
   window.checkGuestBackupNudge = checkGuestBackupNudge;
+
+  /* ============ [#TASK-ES-224] [생각 메모장 94번] 카카오/소셜/일반 로그인 시 게스트 데이터 100% 무손실 비파괴 합집합(Union Merge) 이관 ============ */
+  async function migrateGuestDataToUser(targetUserId, targetProfile){
+    if(!targetUserId || !targetProfile) return false;
+    var rawGuest = null;
+    try {
+      rawGuest = localStorage.getItem('ourgoal_guest_profile');
+    } catch(e){}
+    if(!rawGuest) return false;
+
+    var gData = null;
+    try {
+      gData = JSON.parse(rawGuest);
+    } catch(e){ return false; }
+
+    if(!gData || gData.id === targetUserId) return false;
+
+    var hasGuestData = (Array.isArray(gData.goals) && gData.goals.length > 0) ||
+                       (Array.isArray(gData.records) && gData.records.length > 0) ||
+                       (gData.settings && (gData.settings.customAvatarUrl || gData.settings.avatarType === 'custom' || (Array.isArray(gData.settings.savedAvatars) && gData.settings.savedAvatars.length > 0))) ||
+                       (gData.avatarUrl && gData.avatarUrl.indexOf('data:image') === 0);
+
+    if(!hasGuestData) return false;
+
+    var guestMigrated = false;
+
+    // 1. 설정 및 아바타 병합
+    targetProfile.settings = targetProfile.settings || {};
+    if(state.profile) state.profile.settings = state.profile.settings || targetProfile.settings;
+    if(gData.settings){
+      var guestSaved = Array.isArray(gData.settings.savedAvatars) ? gData.settings.savedAvatars : [];
+      if(guestSaved.length > 0){
+        var socialSaved = targetProfile.settings.savedAvatars || [];
+        if(!socialSaved || socialSaved.length === 0){
+          if(gData.settings.savedAvatars) state.profile.settings.savedAvatars = gData.settings.savedAvatars;
+        } else {
+          var sMap = {};
+          socialSaved.forEach(function(a){ if(a && (a.id || a.url)) sMap[a.id || a.url] = true; });
+          guestSaved.forEach(function(ga){
+            if(ga && (ga.id || ga.url) && !sMap[ga.id || ga.url]){
+              socialSaved.push(ga);
+              sMap[ga.id || ga.url] = true;
+            }
+          });
+          if(socialSaved.length > 10) socialSaved = socialSaved.slice(0, 10);
+          targetProfile.settings.savedAvatars = socialSaved;
+        }
+        guestMigrated = true;
+      }
+      if(gData.settings.customAvatarUrl && (!targetProfile.settings.customAvatarUrl || targetProfile.settings.avatarType !== 'custom')){
+        state.profile.settings.avatarType = gData.settings.avatarType;
+        state.profile.settings.customAvatarUrl = gData.settings.customAvatarUrl;
+        targetProfile.settings.avatarType = gData.settings.avatarType || 'custom';
+        targetProfile.settings.customAvatarUrl = gData.settings.customAvatarUrl;
+        if(gData.settings.avatarThemeId) targetProfile.settings.avatarThemeId = gData.settings.avatarThemeId;
+        if(gData.settings.avatarCraftCount) targetProfile.settings.avatarCraftCount = gData.settings.avatarCraftCount;
+        state.profile.avatarUrl = gData.settings.customAvatarUrl;
+        targetProfile.avatarUrl = gData.settings.customAvatarUrl;
+        guestMigrated = true;
+      }
+    } else if(gData.avatarUrl && !targetProfile.avatarUrl){
+      state.profile.avatarUrl = gData.avatarUrl;
+      targetProfile.avatarUrl = gData.avatarUrl;
+      guestMigrated = true;
+    }
+
+    // 2. 목표 비파괴 합집합(Union Merge) 이관
+    if(Array.isArray(gData.goals) && gData.goals.length > 0){
+      targetProfile.goals = targetProfile.goals || [];
+      var existingGoalIds = new Set(targetProfile.goals.map(function(eg){ return eg.id; }));
+      var goalsToMerge = [];
+      gData.goals.forEach(function(g){
+        if(!existingGoalIds.has(g.id)){
+          var cloned = JSON.parse(JSON.stringify(g));
+          cloned.user_id = targetUserId;
+          targetProfile.goals.push(cloned);
+          goalsToMerge.push(cloned);
+          guestMigrated = true;
+        }
+      });
+
+      if(goalsToMerge.length > 0 && window.sb && typeof isValidRealUser === 'function' && isValidRealUser(targetUserId)){
+        try {
+          var goalsPayload = goalsToMerge.map(function(g){
+            return {
+              id: g.id,
+              user_id: targetUserId,
+              title: g.title,
+              category: g.category || null,
+              due_date: g.dueDate || null,
+              visibility: g.visibility || 'private',
+              topic: g.topic || null,
+              archived_at: g.archivedAt || null,
+              result: g.result || null,
+              milestones: g.milestones || []
+            };
+          });
+          await sb.from('goals').upsert(goalsPayload);
+        } catch(sbGErr){ console.warn('[migrateGuest] goals upsert fallback:', sbGErr); }
+      }
+    }
+
+    // 3. 기록 비파괴 합집합(Union Merge) 이관
+    if(Array.isArray(gData.records) && gData.records.length > 0){
+      targetProfile.records = targetProfile.records || [];
+      var existingRecIds = new Set(targetProfile.records.map(function(er){ return er.id; }));
+      var recsToMerge = [];
+      gData.records.forEach(function(r){
+        if(!existingRecIds.has(r.id)){
+          var clonedR = JSON.parse(JSON.stringify(r));
+          clonedR.user_id = targetUserId;
+          targetProfile.records.push(clonedR);
+          recsToMerge.push(clonedR);
+          guestMigrated = true;
+        }
+      });
+
+      if(recsToMerge.length > 0 && window.sb && typeof isValidRealUser === 'function' && isValidRealUser(targetUserId)){
+        try {
+          var recsPayload = recsToMerge.map(function(r){
+            return {
+              id: r.id,
+              user_id: targetUserId,
+              type: r.type || 'note',
+              text: r.text || r.content || '',
+              start_at: r.startAt || r.start_at || new Date().toISOString(),
+              end_at: r.endAt || r.end_at || r.startAt || new Date().toISOString(),
+              category: r.category || null,
+              theme: r.theme || 'daily',
+              sub_theme: r.subTheme || null
+            };
+          });
+          await sb.from('checkins').upsert(recsPayload);
+        } catch(sbRErr){ console.warn('[migrateGuest] checkins upsert fallback:', sbRErr); }
+      }
+    }
+
+    // 4. 로컬 스토리지 삼중 백업 갱신
+    try {
+      if(targetProfile.goals) localStorage.setItem('ourgoal_goals_backup_' + targetUserId, JSON.stringify(targetProfile.goals));
+      if(targetProfile.records) localStorage.setItem('ourgoal_records_backup_' + targetUserId, JSON.stringify(targetProfile.records));
+      if(targetProfile.settings) localStorage.setItem('ourgoal_settings_' + targetUserId, JSON.stringify(targetProfile.settings));
+    } catch(bkErr){}
+
+    if(guestMigrated){
+      if(typeof saveProfile === 'function') await saveProfile();
+      try { localStorage.removeItem('ourgoal_guest_profile'); } catch(e){}
+      toast('게스트 모드에서 작성한 목표와 실천 기록이 안전하게 연동되었어요! 🎉');
+    }
+
+    return guestMigrated;
+  }
+  window.migrateGuestDataToUser = migrateGuestDataToUser;
 
   /* ============ Goal category templates ============ */
   var GOAL_TEMPLATES = {
@@ -4705,6 +4866,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     } catch(e){}
 
     state.profile = await loadProfile(res.data.user.id, u);
+    try {
+      if(typeof migrateGuestDataToUser === 'function'){
+        await migrateGuestDataToUser(res.data.user.id, state.profile);
+      }
+    } catch(mErr){ console.warn('[loginSubmit] migrateGuestDataToUser error:', mErr); }
 
     // 4. 회원 탈퇴 30일 유예(소프트 삭제) 복구 체크
     var cancelled = await checkPendingDeletionRestore();
@@ -34923,6 +35089,9 @@ wirePromptEncyclopediaEvents(body);
         window.OurgoalSanctuaryV3.render(state.activeTab);
       }
     } catch(e){ console.warn('[FullViewPropagation] SanctuaryV3 render error:', e); }
+    try {
+      if(typeof checkGuestBackupNudge === 'function') checkGuestBackupNudge();
+    } catch(nudgeErr){}
   }
   if(typeof window !== 'undefined'){
     window.dispatchFullViewPropagation = dispatchFullViewPropagation;
@@ -34964,57 +35133,10 @@ wirePromptEncyclopediaEvents(body);
       if(!state.profile){
         state.profile = defaultProfile(session.user.id, userEmail, newExtra.display_name || userEmail.split('@')[0]);
       }
-      // 게스트 세션 데이터 새 소셜 계정으로 자동 마이그레이션 (#TASK-ES-043)
+      // 게스트 세션 데이터 새 소셜 계정으로 자동 마이그레이션 (#TASK-ES-043, #TASK-ES-224)
       try {
-        var rawGuest = localStorage.getItem('ourgoal_guest_profile');
-        if(rawGuest && session && session.user){
-          var gData = JSON.parse(rawGuest);
-          var hasGuestData = (gData.goals && gData.goals.length > 0) || (gData.records && gData.records.length > 0) || (gData.settings && (gData.settings.customAvatarUrl || gData.settings.avatarType === 'custom')) || (gData.avatarUrl && gData.avatarUrl.indexOf('data:image') === 0);
-          if(gData && gData.id !== session.user.id && hasGuestData){
-            var newUid = session.user.id; var guestMigrated = false;
-            if(state.profile && gData.settings){
-              state.profile.settings = state.profile.settings || {};
-              var guestSaved = Array.isArray(gData.settings.savedAvatars) ? gData.settings.savedAvatars : [];
-              if(guestSaved.length > 0){
-                var socialSaved = state.profile.settings.savedAvatars;
-                if(!socialSaved || socialSaved.length === 0){
-                  if(gData.settings.savedAvatars) state.profile.settings.savedAvatars = gData.settings.savedAvatars;
-                } else {
-                  var sMap = {};
-                  socialSaved.forEach(function(a){ if(a && (a.id || a.url)) sMap[a.id || a.url] = true; });
-                  guestSaved.forEach(function(ga){
-                    if(ga && (ga.id || ga.url) && !sMap[ga.id || ga.url]){
-                      socialSaved.push(ga);
-                      sMap[ga.id || ga.url] = true;
-                    }
-                  });
-                  if(socialSaved.length > 10) socialSaved = socialSaved.slice(0, 10);
-                  state.profile.settings.savedAvatars = socialSaved;
-                }
-                guestMigrated = true;
-              }
-              if(gData.settings.customAvatarUrl && (!state.profile.settings.customAvatarUrl || state.profile.settings.avatarType !== 'custom')){
-                state.profile.settings.avatarType = gData.settings.avatarType || 'custom';
-                state.profile.settings.customAvatarUrl = gData.settings.customAvatarUrl;
-                if(gData.settings.avatarThemeId) state.profile.settings.avatarThemeId = gData.settings.avatarThemeId;
-                if(gData.settings.avatarCraftCount) state.profile.settings.avatarCraftCount = gData.settings.avatarCraftCount;
-                state.profile.avatarUrl = gData.settings.customAvatarUrl;
-                guestMigrated = true;
-              }
-            } else if(state.profile && gData.avatarUrl && !state.profile.avatarUrl){ state.profile.avatarUrl = gData.avatarUrl; guestMigrated = true; }
-            if(gData.goals && gData.goals.length > 0){
-              var goalsPayload = gData.goals.map(function(g){ return { id: g.id, user_id: newUid, title: g.title, category: g.category||null, due_date: g.dueDate||null, visibility: g.visibility||'private', topic: g.topic||null, archived_at: g.archivedAt||null, result: g.result||null, milestones: g.milestones||[] }; });
-              await sb.from('goals').upsert(goalsPayload);
-              if(state.profile) state.profile.goals = (state.profile.goals || []).concat(gData.goals.filter(function(g){ return !(state.profile.goals || []).some(function(eg){ return eg.id === g.id; }); })); guestMigrated = true;
-            }
-            if(gData.records && gData.records.length > 0){
-              var recsPayload = gData.records.map(function(r){ return { id: r.id, user_id: newUid, type: r.type||'note', text: r.text, start_at: r.startAt, end_at: r.endAt||r.startAt, category: r.category||null, theme: r.theme||'daily', sub_theme: r.subTheme||null }; });
-              await sb.from('checkins').upsert(recsPayload);
-              if(state.profile) state.profile.records = (state.profile.records || []).concat(gData.records.filter(function(r){ return !(state.profile.records || []).some(function(er){ return er.id === r.id; }); })); guestMigrated = true;
-            }
-            if(guestMigrated && typeof saveProfile === 'function'){ await saveProfile(); }
-            localStorage.removeItem('ourgoal_guest_profile'); toast('게스트 모드에서 작성한 아바타와 데이터가 안전하게 연동되었어요! 🎉');
-          }
+        if(typeof migrateGuestDataToUser === 'function' && session && session.user){
+          await migrateGuestDataToUser(session.user.id, state.profile);
         }
       } catch(mErr){ console.warn('게스트 데이터 병합 예외 (무시):', mErr); }
       var ls = document.getElementById('landingScreen');
@@ -35109,6 +35231,12 @@ wirePromptEncyclopediaEvents(body);
         if(typeof saveGoogleToken === 'function') saveGoogleToken(state.googleToken);
         try { sessionStorage.setItem('ourgoal_google_token', extraOpt.accessToken); } catch(e){}
       }
+      // 3.5. 게스트 세션 데이터 새 계정으로 자동 마이그레이션 (#TASK-ES-224)
+      try {
+        if(typeof migrateGuestDataToUser === 'function'){
+          await migrateGuestDataToUser(targetUserId, p);
+        }
+      } catch(mErr){ console.warn('[loginWithDirectIdentifier] migrateGuestDataToUser error:', mErr); }
       // 4. 로컬 세션 보존 (재접속 시 자동 로그인)
       try {
         localStorage.setItem('ourgoal_guest_profile', JSON.stringify(p));
