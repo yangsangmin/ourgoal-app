@@ -9739,17 +9739,15 @@ html[data-theme="urban-city"] .s-seg-pill {
     margin: 4px 0 8px 0 !important;
     font-size: 1rem !important;
     line-height: 1.32 !important;
-
-#calHeadlineSentence {
+  }
+  #calHeadlineSentence {
     margin: 4px 0 6px 0 !important;
     font-size: 1rem !important;
     line-height: 1.28 !important;
-
-#recHeadlineSentence {
-
-#commHeadlineSentence {
-
-#settingsHeadlineSentence {
+  }
+  #recHeadlineSentence,
+  #commHeadlineSentence,
+  #settingsHeadlineSentence {
     margin: 4px 0 8px 0 !important;
     font-size: 1rem !important;
     line-height: 1.32 !important;
@@ -10360,19 +10358,24 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
 }
 
 /* ==========================================================================
-   TOSS SETTINGS TAB INNOVATION (#TASK-ES-218)
+   TOSS SETTINGS TAB INNOVATION (#TASK-ES-218, #TASK-ES-248)
    - 토스식 프로필 및 앱 상태 요약 원카드 (.toss-settings-hero-card)
+   - 글래스모피즘 테두리, 64px 아바타 링, 입체감 및 시인성 강화
    - 42~44px 엄지 최적화 터치 타깃
    ========================================================================== */
 .toss-settings-hero-card {
-  background: var(--card, #ffffff);
+  position: relative;
+  background: linear-gradient(145deg, var(--card, #ffffff) 0%, var(--card2, #f8fafc) 100%);
   border-radius: 20px !important;
-  padding: 18px 16px !important;
+  padding: 20px 18px !important;
   margin-top: 6px !important;
   margin-bottom: 16px !important;
-  border: 1px solid var(--rule, rgba(0, 0, 0, 0.06)) !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06) !important;
+  border: 1.5px solid var(--rule, rgba(0, 0, 0, 0.08)) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   box-sizing: border-box;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 /* #TASK-ES-248: 설정탭 프로필 요약 카드 시인성 및 아바타/레벨 뱃지 강화 */
@@ -10382,48 +10385,82 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  width: 64px;
+  height: 64px;
 }
 
 .toss-settings-avatar-wrap .profile-avatar {
-  border: 2.5px solid var(--primary, #3b82f6) !important;
-  box-shadow: 0 0 12px rgba(59, 130, 246, 0.28) !important;
+  width: 64px !important;
+  height: 64px !important;
+  border: 3px solid var(--primary, #3b82f6) !important;
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.32), 0 2px 8px rgba(0, 0, 0, 0.08) !important;
   border-radius: 50% !important;
 }
 
 .toss-settings-level-badge {
   position: absolute;
-  bottom: -4px;
-  right: -6px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  bottom: -3px;
+  right: -5px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: #ffffff;
-  font-size: 0.6875rem;
-  font-weight: 800;
-  padding: 1px 6px;
-  border-radius: 10px;
-  border: 1.5px solid var(--card, #ffffff);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  line-height: 1.2;
+  font-size: 0.75rem;
+  font-weight: 900;
+  padding: 2px 7px;
+  border-radius: 12px;
+  border: 2px solid var(--card, #ffffff);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  line-height: 1.15;
   white-space: nowrap;
 }
 
 #btnSettingsQuickAvatar {
-  min-height: 36px !important;
-  padding: 6px 12px !important;
+  min-height: 38px !important;
+  padding: 7px 14px !important;
   font-size: 0.8125rem !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   border-radius: 12px !important;
-  background: var(--surface-2, rgba(0, 0, 0, 0.04)) !important;
-  border: 1px solid var(--rule, rgba(0, 0, 0, 0.08)) !important;
+  background: var(--surface-2, rgba(0, 0, 0, 0.05)) !important;
+  border: 1.5px solid var(--rule, rgba(0, 0, 0, 0.12)) !important;
   color: var(--ink, #1f2937) !important;
   cursor: pointer;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
   transition: all 0.15s ease-in-out;
+}
+
+#btnSettingsQuickAvatar:hover {
+  background: var(--surface-3, rgba(0, 0, 0, 0.08)) !important;
+  border-color: var(--primary, #3b82f6) !important;
+  color: var(--primary, #3b82f6) !important;
+}
+
+#btnSettingsQuickAvatar:active {
+  transform: scale(0.96);
 }
 
 [data-theme="dark"] .toss-settings-hero-card,
 [data-theme="black"] .toss-settings-hero-card,
 [data-theme="focus-sanctuary"] .toss-settings-hero-card {
   background: linear-gradient(180deg, #1C2026 0%, #16181D 100%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+}
+
+[data-theme="dark"] #btnSettingsQuickAvatar,
+[data-theme="black"] #btnSettingsQuickAvatar,
+[data-theme="focus-sanctuary"] #btnSettingsQuickAvatar {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .toss-settings-level-badge,
+[data-theme="black"] .toss-settings-level-badge,
+[data-theme="focus-sanctuary"] .toss-settings-level-badge {
+  border-color: #16181D !important;
 }
 
 .toss-settings-hero-stats {
@@ -10431,10 +10468,11 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
   align-items: center;
   justify-content: space-around;
   gap: 12px;
-  margin-top: 12px;
+  margin-top: 14px;
   padding: 12px 8px;
   background: var(--surface-2, rgba(0, 0, 0, 0.03));
   border-radius: 14px;
+  border: 1px solid var(--rule, rgba(0, 0, 0, 0.05));
 }
 
 .toss-settings-stat-item {
@@ -10472,17 +10510,6 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
 }
 .team-hero-badge {
-
-/* [#TASK-ES-230] 마니또 매칭 웰컴 응원 카드 및 4종 스탬프 팔레트 */
-.manito-welcome-card {
-  background: linear-gradient(135deg, rgba(238, 242, 255, 0.9) 0%, rgba(254, 243, 199, 0.7) 100%), var(--card);
-  border: 1.5px solid var(--violet-line, rgba(99, 102, 241, 0.25));
-  border-radius: 18px;
-  padding: 16px;
-  margin-bottom: 14px;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.06);
-}
-.manito-welcome-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -10498,25 +10525,11 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
   font-weight: 800;
   color: var(--ink);
   margin: 6px 0 4px;
-
-color: var(--brand-strong, #6366f1);
-  background: rgba(99, 102, 241, 0.1);
-  padding: 2px 8px;
-  border-radius: 999px;
-  margin-bottom: 6px;
-}
-.manito-welcome-title {
-  font-size: 1.0625rem;
-  font-weight: 800;
-  color: var(--ink);
-  margin: 0 0 4px;
   display: flex;
   align-items: center;
   gap: 6px;
 }
 .team-hero-desc {
-
-.manito-welcome-desc {
   font-size: 0.8125rem;
   color: var(--ink-soft);
   margin: 0 0 12px;
@@ -10553,7 +10566,44 @@ color: var(--brand-strong, #6366f1);
   color: var(--ink);
   cursor: pointer;
   min-height: 44px;
+}
 
+/* [#TASK-ES-230] 마니또 매칭 웰컴 응원 카드 및 4종 스탬프 팔레트 */
+.manito-welcome-card {
+  background: linear-gradient(135deg, rgba(238, 242, 255, 0.9) 0%, rgba(254, 243, 199, 0.7) 100%), var(--card);
+  border: 1.5px solid var(--violet-line, rgba(99, 102, 241, 0.25));
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.06);
+}
+.manito-welcome-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--brand-strong, #6366f1);
+  background: rgba(99, 102, 241, 0.1);
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+}
+.manito-welcome-title {
+  font-size: 1.0625rem;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.manito-welcome-desc {
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
 .manito-welcome-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -10579,6 +10629,7 @@ color: var(--brand-strong, #6366f1);
 .manito-welcome-stamp-btn:active {
   transform: scale(0.96);
   background: var(--surface-2);
+}
 
 /*
 
@@ -10698,7 +10749,8 @@ color: var(--brand-strong, #6366f1);
 
 .companion-search-result-card:hover {
   border-color: var(--brand, #6366f1);
-=======
+}
+
 /* [#TASK-ES-234] iOS Safari PWA 설치 안내 및 실시간 알림 가이드 */
 .ios-pwa-banner {
   background: var(--surface-2);
@@ -10720,7 +10772,9 @@ color: var(--brand-strong, #6366f1);
   }
   .ios-pwa-steps {
     gap: 4px;
-=======
+  }
+}
+
 /* [#TASK-ES-235] 설정 탭 고급 설정 (외부 연동 & API) 기본 접힘 아코디언 */
 .advanced-settings-accordion {
   border: 1px solid var(--rule);
@@ -10745,7 +10799,8 @@ color: var(--brand-strong, #6366f1);
   .advanced-settings-body {
     padding: 8px 10px 12px;
   }
-=======
+}
+
 /* [#TASK-ES-236] AI 목표 플랜 확인 및 단계 선택 프리뷰 바텀시트 */
 .ga-plan-preview-sheet {
   padding: 4px 0 12px;
@@ -10781,7 +10836,7 @@ color: var(--brand-strong, #6366f1);
   background: var(--primary);
   color: #fff;
   border-color: var(--primary);
-=======
+}
 
 /* #TASK-ES-239: 목표탭 마일스톤·세부 할일 계층형 시인성 개선 및 접이식 관리 */
 .ms-row .task-list {
@@ -10823,22 +10878,28 @@ color: var(--brand-strong, #6366f1);
   border-radius: 2px;
   overflow: hidden;
   margin-top: 4px;
-=======
+}
 
 /* #TASK-ES-240: 일정탭 대표 안내멘트 시인성 개선 및 공간 효율적 간결 문구 재배치 */
 #calHeadlineSentence {
   margin: 4px 0 8px 0 !important;
   padding: 0 !important;
   line-height: 1.3 !important;
-=======
+}
 
 /* #TASK-ES-242: 기록탭 대표 안내멘트 시인성 개선 및 공간 효율적 간결 문구 재배치 */
 #recHeadlineSentence {
-=======
+  margin: 4px 0 8px 0 !important;
+  padding: 0 !important;
+  line-height: 1.3 !important;
+}
 
 /* #TASK-ES-243: 소통탭 대표 안내멘트 시인성 개선 및 공간 효율적 간결 문구 재배치 */
 #commHeadlineSentence {
-=======
+  margin: 4px 0 8px 0 !important;
+  padding: 0 !important;
+  line-height: 1.3 !important;
+}
 
 /* #TASK-ES-244: 설정탭 대표 안내멘트 시인성 개선 및 공간 효율적 간결 문구 재배치 */
 #settingsHeadlineSentence {
@@ -10851,7 +10912,7 @@ color: var(--brand-strong, #6366f1);
   letter-spacing: -0.02em;
   word-break: keep-all;
   white-space: normal;
-
+}
 
 /* #TASK-ES-241: 화이트 테마 주간 뷰 고대비 시인성 복원 */
 html[data-theme="white"] .s-week-day-row {
@@ -10875,9 +10936,7 @@ html[data-theme="white"] .s-cal-item {
 }
 html[data-theme="white"] .s-week-day-detail {
   border-top-color: #E2E8F0 !important;
-
-=======
-=======
+}
 
 /* #TASK-ES-245: 기록탭 샘플 데이터 1초 체험 후 원클릭 완전 삭제/초기화 기능 */
 #recSamplePurgeBanner {
@@ -10899,7 +10958,7 @@ html[data-theme="white"] .s-week-day-detail {
 [data-theme="focus-sanctuary"] .rec-sample-purge-box {
   background: rgba(239, 68, 68, 0.12);
   border-color: rgba(239, 68, 68, 0.35);
-=======
+}
 
 /* #TASK-ES-246: 소통탭 실시간 러닝메이트 레이더 영역 슬림화 및 접이식 콤팩트 카드 */
 .s-peer-radar-card {
@@ -10947,7 +11006,8 @@ html[data-theme="white"] .s-week-day-detail {
   }
   .s-radar-scroll {
     gap: 8px !important;
-=======
+  }
+}
 
 /* #TASK-ES-247: 소통탭 상단 6대 서브탭 버튼 가로너비 균등 비율 및 글자 크기·패딩 반응형 최적화 */
 .comm-subtabs-clean.comm-subtabs-grid {
