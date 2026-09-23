@@ -401,7 +401,7 @@
           '</div>' +
           '<div class="s-week-day-content">' +
             '<div style="flex:1;min-width:0;">' + evSummary + '</div>' +
-            '<span style="font-size:0.75rem;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,0.06);color:var(--ink-soft);font-weight:600;">' + dayEvs.length + '건</span>' +
+            '<span class="s-week-count-chip" style="font-size:0.75rem;padding:2px 8px;border-radius:6px;background:var(--surface-2, rgba(255,255,255,0.06));color:var(--ink-soft);font-weight:600;">' + dayEvs.length + '건</span>' +
           '</div>' +
         '</div>';
       }).join('');
