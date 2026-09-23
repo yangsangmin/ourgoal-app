@@ -29,6 +29,7 @@
 
   function isFocusSanctuary() {
     var th = document.documentElement.getAttribute('data-theme') || 'focus-sanctuary';
+    if (th === 'dark') th = 'focus-sanctuary';
     return ['focus-sanctuary', 'black', 'white', 'urban-city'].indexOf(th) !== -1;
   }
 
