@@ -7731,7 +7731,7 @@ check('[#TASK-ES-230] 마니또(Manito) 매칭 즉시 원클릭 웰컴 응원 �
   assert.ok(cssContent.includes('.manito-welcome-stamp-btn'), '.manito-welcome-stamp-btn CSS 선언 누락');
 });
 
-check('[#TASK-ES-231] [생각 메모장 101번] 소통 탭 내 [🔗 내 전용 동반자 초대 링크 복사] 및 [가입자 닉네임 검색] 상단 신설 무결성', () => {
+check('[#TASK-ES-231] 소통 탭 내 [🔗 내 전용 동반자 초대 링크 복사] 및 [가입자 닉네임 검색] 상단 신설 무결성', () => {
   const commJsContent = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
   const indexHtmlContent = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
