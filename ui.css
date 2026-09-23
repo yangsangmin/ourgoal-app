@@ -11278,6 +11278,8 @@ html[data-theme="white"] .rec-sample-purge-box span {
 }
 
 /* #TASK-ES-247: 소통탭 상단 6대 서브탭 버튼 가로너비 균등 비율 및 글자 크기·패딩 반응형 최적화 */
+html[data-theme] .comm-subtabs-clean.comm-subtabs-grid,
+[data-theme] .comm-subtabs-clean.comm-subtabs-grid,
 .comm-subtabs-clean.comm-subtabs-grid {
   display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
@@ -11286,6 +11288,8 @@ html[data-theme="white"] .rec-sample-purge-box span {
   box-sizing: border-box !important;
 }
 
+html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab,
+[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab,
 .comm-subtabs-clean.comm-subtabs-grid .comm-subtab {
   min-height: 38px !important;
   padding: 0 6px !important;
@@ -11303,6 +11307,8 @@ html[data-theme="white"] .rec-sample-purge-box span {
   letter-spacing: -0.01em;
 }
 
+html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
+[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
 .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active {
   font-weight: 700 !important;
   background: rgba(16, 185, 129, 0.18) !important;
@@ -11311,10 +11317,14 @@ html[data-theme="white"] .rec-sample-purge-box span {
 }
 
 @media (max-width: 480px) {
+  html[data-theme] .comm-subtabs-clean.comm-subtabs-grid,
+  [data-theme] .comm-subtabs-clean.comm-subtabs-grid,
   .comm-subtabs-clean.comm-subtabs-grid {
     gap: 5px !important;
     padding: 4px !important;
   }
+  html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab,
+  [data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab,
   .comm-subtabs-clean.comm-subtabs-grid .comm-subtab {
     font-size: 0.775rem !important;
     padding: 0 4px !important;
@@ -11323,13 +11333,33 @@ html[data-theme="white"] .rec-sample-purge-box span {
 }
 
 @media (max-width: 375px) {
+  html[data-theme] .comm-subtabs-clean.comm-subtabs-grid,
+  [data-theme] .comm-subtabs-clean.comm-subtabs-grid,
   .comm-subtabs-clean.comm-subtabs-grid {
     gap: 4px !important;
     padding: 3px !important;
   }
+  html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab,
+  [data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab,
   .comm-subtabs-clean.comm-subtabs-grid .comm-subtab {
     font-size: 0.72rem !important;
     padding: 0 3px !important;
+    min-height: 38px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  html[data-theme] .comm-subtabs-clean.comm-subtabs-grid,
+  [data-theme] .comm-subtabs-clean.comm-subtabs-grid,
+  .comm-subtabs-clean.comm-subtabs-grid {
+    gap: 3px !important;
+    padding: 2px !important;
+  }
+  html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab,
+  [data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab,
+  .comm-subtabs-clean.comm-subtabs-grid .comm-subtab {
+    font-size: 0.69rem !important;
+    padding: 0 2px !important;
     min-height: 38px !important;
   }
 }
