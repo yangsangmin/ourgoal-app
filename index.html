@@ -30827,7 +30827,12 @@ wirePromptEncyclopediaEvents(body);
         var bHtml = (s.key === 'dm') ? '<span id="dmSubtabBadge" style="display:'+(hasBadge?'inline-block':'none')+';width:6px;height:6px;border-radius:50%;background:#ef4444;margin-left:4px;vertical-align:middle;"></span>' : '';
         return '<div class="comm-subtab'+(state.commSubTab===s.key?' active':'')+'" data-sub="'+s.key+'">'+s.icon+' '+s.label+bHtml+'</div>';
       }).join('') + '</div>';
-    body.innerHTML = subtabHtml + '<div id="commSubBody"></div>';
+    body.innerHTML = subtabHtml +
+      '<div id="commTopCompanionBar"></div>' +
+      '<div id="commSubBody"></div>';
+    if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.renderCommTopInviteSearch){
+      window.OurgoalTeamInviteComm.renderCommTopInviteSearch(document.getElementById('commTopCompanionBar'));
+    }
     body.querySelectorAll('[data-sub]').forEach(function(t){
       t.addEventListener('click', function(){
         if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);

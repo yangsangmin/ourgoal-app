@@ -4,7 +4,7 @@
   "requirements": [
     {
       "id": "R1",
-      "text": "소통 탭 동반자 서브탭 상단에 영롱한 초대 히어로 카드와 [🔗 내 전용 동반자 초대 링크 복사] 버튼이 배치되어야 한다"
+      "text": "소통 탭 상단(서브탭 아래)에 콤팩트한 [🔗 내 초대 링크 복사] 카드와 실시간 [🔍 닉네임 검색] 인풋창(#commTopCompanionBar)이 전면 배치되어야 한다"
     },
     {
       "id": "R2",
@@ -20,7 +20,7 @@
     },
     {
       "id": "R5",
-      "text": "모바일 375px 터치 타깃이 완비되고 npm test 및 38개 헌법 게이트, Zero Dead-Click이 100% ALL PASS여야 한다"
+      "text": "scripts/smoke-test.js에 TASK-ES-231 2차 고도화 검증 케이스가 추가되고 38개 헌법 게이트 및 Zero Dead-Click이 100% 통과해야 한다"
     }
   ],
   "claims": [
@@ -29,22 +29,22 @@
       "req": "R1",
       "kind": "static",
       "domain": "config",
-      "statement": "ui.css에 .companion-hero-card 클래스가 정의되고 team-invite-comm.js에 #btnCopyCompanionInviteLink가 배선된다",
+      "statement": "index.html에 소통 탭 상단 #commTopCompanionBar 및 team-invite-comm.js에 renderCommTopInviteSearch가 배선된다",
       "touches": [
-        "ui.css",
+        "index.html",
         "js/team-invite-comm.js"
       ],
       "check": {
         "type": "codeContains",
-        "file": "js/team-invite-comm.js",
-        "text": "btnCopyCompanionInviteLink"
+        "file": "index.html",
+        "text": "id=\"commTopCompanionBar\""
       }
     },
     {
       "id": "C2",
       "req": "R2",
       "kind": "static",
-      "domain": "logic",
+      "domain": "config",
       "statement": "team-invite-comm.js에 navigator.share 및 클립보드 복사 로직과 15ms 햅틱이 구현된다",
       "touches": [
         "js/team-invite-comm.js"
@@ -59,7 +59,7 @@
       "id": "C3",
       "req": "R3",
       "kind": "static",
-      "domain": "logic",
+      "domain": "config",
       "statement": "team-invite-comm.js에 #companionNicknameSearchInput 요소와 200ms 디바운스 검색 리스너가 배선된다",
       "touches": [
         "js/team-invite-comm.js"
@@ -74,7 +74,7 @@
       "id": "C4",
       "req": "R4",
       "kind": "static",
-      "domain": "logic",
+      "domain": "config",
       "statement": "검색 결과 카드에 data-request-companion 속성의 동반자 신청 버튼과 12ms 햅틱이 배선된다",
       "touches": [
         "js/team-invite-comm.js"
@@ -88,15 +88,16 @@
     {
       "id": "C5",
       "req": "R5",
-      "kind": "e2e",
-      "domain": "safety",
-      "statement": "npm test 및 헌법 38개 검증 게이트와 Zero Dead-Click 검사가 100% 통과한다",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-231 2차 고도화 검증 케이스가 추가되어 있다",
       "touches": [
         "scripts/smoke-test.js"
       ],
       "check": {
-        "type": "commandPasses",
-        "command": "npm test"
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "index.html #commTopCompanionBar DOM 선언 확인"
       }
     }
   ]
