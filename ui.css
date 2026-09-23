@@ -349,9 +349,18 @@ button:active,.goal-chip:active,.dock-action-btn:active{transform:scale(.97);tra
 @keyframes sheetup{from{transform:translateY(24px);opacity:0;}to{transform:none;opacity:1;}}
 .modal-sheet h3{font-size:1.25rem;font-weight:700;margin:0 0 16px;letter-spacing:-.02em;}
 .modal-actions{display:flex;gap:8px;margin-top:20px;}
-.modal-actions .btn{flex:1;min-height:52px;font-size:1rem;}
-.toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(8px);background:#2B3138;color:#fff;padding:12px 18px;border-radius:12px;font-size:.875rem;font-weight:500;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s var(--ease);box-shadow:var(--shadow-float);white-space:normal;max-width:calc(100vw - 40px);width:max-content;text-align:center;line-height:1.4;}
+.toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(8px);background:#2B3138;color:#fff;padding:12px 18px;border-radius:12px;font-size:.875rem;font-weight:500;z-index:100005;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s var(--ease);box-shadow:var(--shadow-float);white-space:normal;max-width:calc(100vw - 40px);width:max-content;text-align:center;line-height:1.4;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+body:has(#checkinAiSheetBackdrop) .toast,
+body:has(.checkin-ai-backdrop) .toast {
+  top: calc(16px + env(safe-area-inset-top,0px));
+  bottom: auto;
+  transform: translateX(-50%) translateY(-8px);
+}
+body:has(#checkinAiSheetBackdrop) .toast.show,
+body:has(.checkin-ai-backdrop) .toast.show {
+  transform: translateX(-50%) translateY(0);
+}
 .notify-banner{background:var(--ink);color:var(--bg);border-radius:var(--radius-lg);padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;animation:fadein .2s ease;box-shadow:none;}
 .notify-banner .nb-txt{flex:1;font-size:.875rem;line-height:1.45;}
 .notify-banner .nb-txt b{display:block;font-size:.9375rem;margin-bottom:2px;font-weight:700;}
@@ -9005,7 +9014,7 @@ html[data-theme="urban-city"] .s-seg-pill {
   background: rgba(15, 23, 42, 0.65);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  z-index: 999;
+  z-index: 100000;
   display: flex;
   align-items: flex-end;
   justify-content: center;
