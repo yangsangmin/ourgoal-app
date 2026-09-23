@@ -4069,11 +4069,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ [#TASK-ES-223] [생각 메모장 93번] 개발 디버그 버튼 프로덕션 완전 소거 및 로컬/디버그 격리 ============ */
   function initDevDebugButtons(){
-    var isDev = (typeof location !== 'undefined') && (
-      location.hostname === 'localhost' ||
-      location.hostname === '127.0.0.1' ||
-      (location.search && location.search.indexOf('debug=true') !== -1)
-    );
+    var forceDebug = typeof arguments[0] === 'boolean' ? arguments[0] : false;
+    var isExplicitDebug = (typeof location !== 'undefined') && (location.search && location.search.indexOf('debug=true') !== -1);
+    var isLocal = (typeof location !== 'undefined') && (location.hostname === 'localhost' || location.hostname === '127.0.0.1');
+    var isDev = forceDebug || (isLocal && isExplicitDebug) || isExplicitDebug;
     var lWrap = document.getElementById('landTesterBWrap');
     var aWrap = document.getElementById('authTesterBWrap');
     if(isDev){
