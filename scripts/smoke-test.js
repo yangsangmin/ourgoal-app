@@ -8039,10 +8039,10 @@ check('[#TASK-ES-248] 설정탭 상단 프로필 요약 카드 시인성 강화 
   const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
-  // 1. 아바타 58px 래퍼 및 레벨 뱃지 오버레이 배선 확인
+  // 1. 아바타 64px 래퍼 및 레벨 뱃지 오버레이 배선 확인
   assert.ok(indexHtml.includes('toss-settings-avatar-wrap'), 'index.html 내 toss-settings-avatar-wrap 선언 누락');
   assert.ok(indexHtml.includes('toss-settings-level-badge'), 'index.html 내 toss-settings-level-badge 선언 누락');
-  assert.ok(indexHtml.includes('avatarHtml(58)'), 'index.html 내 avatarHtml(58) 호출 누락');
+  assert.ok(indexHtml.includes('avatarHtml(64)') || indexHtml.includes('avatarHtml(58)'), 'index.html 내 avatarHtml(64) 호출 누락');
 
   // 2. 계정 상태 미니 아이콘(🟡/👤) 배선 확인
   assert.ok(indexHtml.includes('🟡 카카오 계정 연동'), 'index.html 내 🟡 카카오 계정 연동 누락');

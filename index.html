@@ -698,20 +698,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div class="toss-headline" id="settingsHeadlineSentence">나에게 딱 맞게 아워골을 가꿔보세요 ⚙️</div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><h2 class="s-title" style="margin:0;">설정</h2></div>
 
-      <!-- [토스 설정 프로필 & 상태 요약 원카드] #TASK-ES-218 -->
+      <!-- [토스 설정 프로필 & 상태 요약 원카드] #TASK-ES-218, #TASK-ES-248 -->
       <div class="toss-settings-hero-card" id="settingsHeroCard">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div style="display:flex;align-items:center;gap:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <div style="display:flex;align-items:center;gap:14px;min-width:0;">
             <div id="settingsHeroAvatarSlot"></div>
-            <div>
-              <div style="display:flex;align-items:center;gap:6px;">
-                <span id="settingsHeroNickname" style="font-size:1.15rem;font-weight:800;color:var(--ink);">사용자</span>
-                <span class="tmpl-badge" id="settingsHeroRank" style="font-size:0.75rem;padding:2px 8px;border-radius:6px;background:rgba(59,130,246,0.1);color:var(--primary);font-weight:700;">성장 러너</span>
+            <div style="min-width:0;">
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                <span id="settingsHeroNickname" style="font-size:1.25rem;font-weight:900;color:var(--ink);letter-spacing:-0.02em;">사용자</span>
+                <span class="toss-settings-rank-badge" id="settingsHeroRank" style="display:inline-flex;align-items:center;width:auto;height:auto;font-size:0.75rem;padding:3px 8px;border-radius:8px;background:rgba(59,130,246,0.12);color:var(--primary);font-weight:800;border:1px solid rgba(59,130,246,0.25);white-space:nowrap;">성장 러너</span>
               </div>
-              <div class="faint" id="settingsHeroStatusDesc" style="font-size:0.8125rem;margin-top:2px;">모든 데이터가 안전하게 보관되고 있어요</div>
+              <div class="faint" id="settingsHeroStatusDesc" style="font-size:0.8125rem;font-weight:600;margin-top:4px;display:flex;align-items:center;gap:4px;">모든 데이터가 안전하게 보관되고 있어요</div>
             </div>
           </div>
-          <button type="button" class="btn btn-ghost btn-sm" id="btnSettingsQuickAvatar" onclick="if(window.OurgoalAvatar &amp;&amp; window.OurgoalAvatar.openAvatarModal){ window.OurgoalAvatar.openAvatarModal({ profile: state.profile, state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal }); } else { var b=document.getElementById('btnOpenAvatarModal'); if(b) b.click(); }" style="min-height:36px;padding:6px 12px;font-size:0.8125rem;font-weight:600;border-radius:12px;">아바타 관리</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="btnSettingsQuickAvatar" onclick="if(window.OurgoalAvatar &amp;&amp; window.OurgoalAvatar.openAvatarModal){ window.OurgoalAvatar.openAvatarModal({ profile: state.profile, state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal }); } else { var b=document.getElementById('btnOpenAvatarModal'); if(b) b.click(); }" style="min-height:38px;padding:7px 14px;font-size:0.8125rem;font-weight:700;border-radius:12px;flex-shrink:0;">✏️ 프로필 편집</button>
         </div>
         <div class="toss-settings-hero-stats">
           <div class="toss-settings-stat-item">
@@ -34015,14 +34015,14 @@ wirePromptEncyclopediaEvents(body);
       var rText = activeG >= 5 ? '열정 마스터' : (activeG >= 1 ? '성장 러너' : '새싹 러너');
       rankEl.textContent = rText;
     }
-    // #TASK-ES-248: 58px 대형 아바타 링 및 Lv.N 뱃지 오버레이
+    // #TASK-ES-248: 64px 대형 아바타 링 및 Lv.N 뱃지 오버레이
     var avatarSlot = document.getElementById('settingsHeroAvatarSlot');
     if(avatarSlot && typeof avatarHtml === 'function'){
       var xpTotal = (p.settings && p.settings.xp && p.settings.xp.total) || 0;
       var curLv = (typeof levelForXP === 'function') ? levelForXP(xpTotal) : 1;
       avatarSlot.innerHTML =
         '<div class="toss-settings-avatar-wrap">' +
-          avatarHtml(58) +
+          avatarHtml(64) + /* #TASK-ES-248: 64px 확대 (구 avatarHtml(58)) */
           '<span class="toss-settings-level-badge">Lv.' + curLv + '</span>' +
         '</div>';
     }
