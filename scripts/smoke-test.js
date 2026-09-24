@@ -8275,6 +8275,24 @@ check('compliance: [#TASK-ES-254] 백그라운드·앱종료·미확인 전역 �
   assert.ok(indexHtml.includes("testNotifyBtn"), '테스트 알림 발송 버튼 존재');
 });
 
+/* ============ [#TASK-ES-255] 목표 탭 현상태 분석 AI 조언 문구/상태 안내 및 재분석 방지 ============ */
+check('compliance: [#TASK-ES-255] 목표 탭 현상태 분석 AI 조언 문구 단일화 및 뱃지 상태 정상화 & 재분석 방지', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 문구 단일화 및 레거시 제거 검증
+  assert.ok(indexHtml.includes('현상태 분석 AI 조언'), '헤더 "현상태 분석 AI 조언" 명시 확인');
+  assert.ok(indexHtml.includes('탭하여 현상태 분석 AI 조언 보기'), '스니펫 플레이스홀더 문구 단일화 확인');
+  assert.ok(!indexHtml.includes('탭하여 AI 종합현황 보기'), '레거시 "탭하여 AI 종합현황 보기" 완전 제거');
+
+  // 2. 날짜 변경으로 인한 강제 stale 대신 해시/캐시 기준 검증
+  assert.ok(indexHtml.includes('goalStatusStale = !hasValidCache || goalStatusCache.hash !== goalStatusHash;'), 'goalStatusStale 산출 시 hasValidCache 및 해시 불일치 기준 적용');
+
+  // 3. 멱등성 및 window 노출 확인
+  assert.ok(indexHtml.includes('existing && existing.text && existing.hash === hash'), '동일 해시 캐시 존재 시 재분석 차단 가드 확인');
+  assert.ok(indexHtml.includes('window.computeGoalStatusHash = computeGoalStatusHash;'), 'computeGoalStatusHash 노출 확인');
+  assert.ok(indexHtml.includes('window.refreshGoalStatusSummary = refreshGoalStatusSummary;'), 'refreshGoalStatusSummary 노출 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

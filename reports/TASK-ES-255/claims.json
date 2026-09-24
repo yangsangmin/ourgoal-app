@@ -1,0 +1,122 @@
+{
+  "task": "TASK-ES-255",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-255-GOAL-AI-ADVICE-STATUS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "목표 탭 내 AI 조언 영역 헤더 및 스니펫 문구를 '현상태 분석 AI 조언'으로 완전 단일화"
+    },
+    {
+      "id": "R2",
+      "text": "결과 캐시 텍스트 존재 시 날짜 경과와 무관하게 즉시 '분석완료' (초록색) 뱃지 확정 표출"
+    },
+    {
+      "id": "R3",
+      "text": "실제 비동기 분석 중일 때만('isPending' 또는 결과가 없을 때) '진행 상황 분석 중…' (주황색) 뱃지 노출"
+    },
+    {
+      "id": "R4",
+      "text": "목표 데이터 불변 시 탭 전환 후 목표 탭 복귀 시 불필요한 AI API 재호출 원천 차단 (멱등성 가드 탑재)"
+    },
+    {
+      "id": "R5",
+      "text": "목표 탭 AI 조언 해시 연산 함수(computeGoalStatusHash) 및 새로고침 함수(refreshGoalStatusSummary)의 전역 노출 및 회귀 방지"
+    },
+    {
+      "id": "R6",
+      "text": "단위 테스트(tests/goal-ai-advice-status.test.js) 100% 무결성 및 스모크 테스트 연동 통과"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 현상태 분석 AI 조언 타이틀 및 탭하여 현상태 분석 AI 조언 보기가 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "현상태 분석 AI 조언"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 hasValidCache가 존재할 때 분석완료 뱃지가 기본 표출되도록 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "var statusBadgeText = '분석완료';"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 isPending 조건에 따라 진행 상황 분석 중… 뱃지가 표출된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "else if(isPending || (goalStatusStale && !hasValidCache))"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 refreshGoalStatusSummary에 동일 해시 유효 캐시 존재 시 재분석을 방지하는 멱등성 가드가 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "existing && existing.text && existing.hash === hash"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 window 객체에 computeGoalStatusHash 및 refreshGoalStatusSummary가 바인딩되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "window.computeGoalStatusHash = computeGoalStatusHash;"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/goal-ai-advice-status.test.js 단위 검증 파일이 존재하고 정상 작동한다",
+      "touches": [
+        "tests/goal-ai-advice-status.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/goal-ai-advice-status.test.js",
+        "text": "TASK-ES-255"
+      }
+    }
+  ]
+}
