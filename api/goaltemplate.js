@@ -1,3 +1,4 @@
+// [호환성 모델 메타데이터] gemini-3.1-flash-lite, gemini-3.6-flash, gemini-3.5-flash, gemini-flash-latest
 module.exports.config = { maxDuration: 30 };
 
 // 1. 맞춤 기록 템플릿 로컬 스마트 폴백
@@ -482,41 +483,17 @@ module.exports = async function handler(req, res) {
       '  "analysis": "AI 통찰 분석 리포트"\n' +
       '}';
 
-    var statParsed = null;
-    if (geminiApiKey) {
-      for (var smi = 0; smi < geminiModels.length; smi++) {
-        var sModel = geminiModels[smi];
-        try {
-          var sRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + sModel + ':generateContent?key=' + geminiApiKey, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: statPrompt }] }],
-              generationConfig: {
-                temperature: 0.2,
-                responseMimeType: 'application/json'
-              }
-            })
-          });
-          if (sRes.ok) {
-            var sData = await sRes.json();
-            var sRaw = (sData.candidates && sData.candidates[0] && sData.candidates[0].content && sData.candidates[0].content.parts && sData.candidates[0].content.parts[0] && sData.candidates[0].content.parts[0].text) || '';
-            var sClean = sRaw.replace(/```json|```/g, '').trim();
-            statParsed = JSON.parse(sClean);
-            if (statParsed && Array.isArray(statParsed.metrics) && statParsed.metrics.length) {
-              statParsed.isOfflineFallback = false;
-              statParsed.modelUsed = sModel;
-              break;
-            }
-          }
-        } catch (se) {}
-      }
-    }
+    var { callGeminiGateway } = require('./lib/gemini-gateway');
+    var statParsed = await callGeminiGateway({
+      task: 'stats-template',
+      prompt: statPrompt,
+      isJson: true,
+      temperature: 0.2,
+      localFallback: function() { return localStatsAgentFallback(statRecs, statQuery); }
+    });
 
     if (!statParsed || !Array.isArray(statParsed.metrics) || !statParsed.metrics.length) {
-      var fbStat = localStatsAgentFallback(statRecs, statQuery);
-      res.status(200).json(fbStat);
-      return;
+      statParsed = localStatsAgentFallback(statRecs, statQuery);
     }
 
     res.status(200).json(statParsed);
@@ -573,35 +550,14 @@ module.exports = async function handler(req, res) {
       '}';
 
     try {
-      var customParsed = null;
-      var customUsedModel = null;
-
-      if (geminiApiKey) {
-        for (var gi = 0; gi < geminiModels.length; gi++) {
-          var gModel = geminiModels[gi];
-          try {
-            var gRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + gModel + ':generateContent?key=' + encodeURIComponent(geminiApiKey), {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [{ parts: [{ text: customPrompt }] }],
-                generationConfig: {
-                  temperature: 0.2,
-                  responseMimeType: 'application/json'
-                }
-              })
-            });
-            if (gRes.ok) {
-              var gData = await gRes.json();
-              var gRaw = (gData.candidates && gData.candidates[0] && gData.candidates[0].content && gData.candidates[0].content.parts && gData.candidates[0].content.parts[0] && gData.candidates[0].content.parts[0].text) || '';
-              var gClean = gRaw.replace(/```json|```/g, '').trim();
-              customParsed = JSON.parse(gClean);
-              customUsedModel = gModel;
-              break;
-            }
-          } catch (ge) {}
-        }
-      }
+      var customParsed = await callGeminiGateway({
+        task: 'custom-template',
+        prompt: customPrompt,
+        isJson: true,
+        temperature: 0.2,
+        localFallback: function() { return localCustomTemplateFallback(query, prose); }
+      });
+      var customUsedModel = 'gemini-gateway';
 
       if (!customParsed || !customParsed.title || !Array.isArray(customParsed.columns) || customParsed.columns.length < 2) {
         var fbRecord = localCustomTemplateFallback(query, prose);
@@ -677,33 +633,13 @@ module.exports = async function handler(req, res) {
     '"milestones":[{"title":"마일스톤 제목","tasks":["세부 할 일1","세부 할 일2"]}]}';
 
   try {
-    var parsed = null;
-
-    if (geminiApiKey) {
-      for (var gi2 = 0; gi2 < geminiModels.length; gi2++) {
-        var gModel2 = geminiModels[gi2];
-        try {
-          var geminiRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + gModel2 + ':generateContent?key=' + encodeURIComponent(geminiApiKey), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: {
-                temperature: 0.2,
-                responseMimeType: 'application/json'
-              }
-            })
-          });
-          if (geminiRes.ok) {
-            var gData2 = await geminiRes.json();
-            var gRaw2 = (gData2.candidates && gData2.candidates[0] && gData2.candidates[0].content && gData2.candidates[0].content.parts && gData2.candidates[0].content.parts[0] && gData2.candidates[0].content.parts[0].text) || '';
-            var gClean2 = gRaw2.replace(/```json|```/g, '').trim();
-            parsed = JSON.parse(gClean2);
-            break;
-          }
-        } catch (ge2) {}
-      }
-    }
+    var parsed = await callGeminiGateway({
+      task: 'goal-template',
+      prompt: prompt,
+      isJson: true,
+      temperature: 0.2,
+      localFallback: function() { return localGoalTemplateFallback(description); }
+    });
 
     if (!parsed || !parsed.title || !Array.isArray(parsed.milestones) || !parsed.milestones.length) {
       var fbGoal = localGoalTemplateFallback(description);

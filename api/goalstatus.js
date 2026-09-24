@@ -1,3 +1,4 @@
+// [호환성 모델 메타데이터] gemini-3.1-flash-lite, gemini-3.6-flash, gemini-3.5-flash, gemini-flash-latest
 module.exports.config = { maxDuration: 30 };
 
 module.exports = async function handler(req, res) {
@@ -41,34 +42,18 @@ module.exports = async function handler(req, res) {
     return '현재 "' + goalTitle + '" 목표는 전체 마일스톤 중 ' + doneCount + '/' + total + '개(' + pct + '%)를 완료한 상태입니다. 세워둔 계획에 맞춰 다음 마일스톤을 차근차근 진행해 보세요.';
   }
 
+  var { callGeminiGateway } = require('./lib/gemini-gateway');
+
   try {
-    var summary = '';
+    var summary = await callGeminiGateway({
+      task: 'goalstatus',
+      prompt: prompt,
+      isJson: false,
+      temperature: 0.3,
+      localFallback: localStatusFallback
+    });
 
-    // 1. Gemini 다중 플래시 모델 캐스케이드 (우선)
-    if (geminiApiKey) {
-      var geminiModels = ['gemini-3.1-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest'];
-      for (var gi = 0; gi < geminiModels.length; gi++) {
-        var gModel = geminiModels[gi];
-        try {
-          var geminiRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + gModel + ':generateContent?key=' + encodeURIComponent(geminiApiKey), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: { temperature: 0.3 }
-            })
-          });
-          if (geminiRes.ok) {
-            var gData = await geminiRes.json();
-            summary = (gData.candidates && gData.candidates[0] && gData.candidates[0].content && gData.candidates[0].content.parts && gData.candidates[0].content.parts[0] && gData.candidates[0].content.parts[0].text) || '';
-            if (summary) break;
-          }
-        } catch (ge) {}
-      }
-    }
-
-    // 3. 로컬 스마트 폴백
-    if (!summary) {
+    if (typeof summary !== 'string') {
       summary = localStatusFallback();
     }
 

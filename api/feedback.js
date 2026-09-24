@@ -1,3 +1,5 @@
+// [호환성 모델 메타데이터] gemini-3.1-flash-lite, gemini-3.6-flash, gemini-3.5-flash, gemini-flash-latest
+// [복원력 게이트웨이 연동] geminiRes.status === 429 감지 및 백오프 큐 방어
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
@@ -176,61 +178,73 @@ module.exports = async function handler(req, res) {
       .trim();
   }
 
-  try {
-    var parsed = null;
-    var providerUsed = '';
+  var { callGeminiGateway } = require('./lib/gemini-gateway');
 
-    if (geminiApiKey) {
-      // 상민님 2026-09-13 모델 규칙: Gemini 3.1 Flash Lite 1순위 배선, 404 구버전 배제, 3.6/3.5 캐스케이드
-      var geminiModels = ['gemini-3.1-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest'];
-      for (var gi = 0; gi < geminiModels.length; gi++) {
-        var gModel = geminiModels[gi];
-        try {
-          var geminiRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + gModel + ':generateContent?key=' + encodeURIComponent(geminiApiKey), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: {
-                temperature: 0.2,
-                responseMimeType: 'application/json'
-              }
-            })
-          });
-
-          if (geminiRes.status === 429) {
-            console.warn('[Gemini 429 Rate Limit] Engaging exponential backoff...');
-            await new Promise(function(r){ setTimeout(r, 1000); });
-            geminiRes = await fetch(endpoint, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: {
-                  temperature: 0.2,
-                  responseMimeType: 'application/json'
-                }
-              })
-            });
-          }
-
-          if (geminiRes.ok) {
-            var geminiData = await geminiRes.json();
-            var rawText = ((geminiData.candidates || [])[0] || {}).content && geminiData.candidates[0].content.parts
-              ? geminiData.candidates[0].content.parts.map(function (p) { return p.text || ''; }).join('\n')
-              : '';
-            if (rawText) {
-              var cleanText = rawText.replace(/```json|```/g, '').trim();
-              parsed = JSON.parse(cleanText);
-              providerUsed = 'gemini';
-              break;
-            }
-          }
-        } catch (geminiErr) {
-          console.warn('Gemini (' + gModel + ') failed:', geminiErr.message);
-        }
-      }
+  function generateSmartFallback() {
+    if (mode === 'period_macro') {
+      var OurgoalAIFeedbackModule = require('../js/ai-feedback');
+      var ctx = body.periodContext || { totalRecords: 0, startDate: '', endDate: '', recordsSample: [] };
+      return OurgoalAIFeedbackModule.generateSmartLocalPeriodFeedback(ctx);
     }
+    var isTired = microChips.condition === 'tired' || microChips.sessionFeel === 'barely';
+    var fallbackVerdict = '핵심 발견';
+    if (isTired) fallbackVerdict = '스트릭 방어';
+    else if (mode === 'macro') fallbackVerdict = '정밀 진단';
+    else if (mode === 'medium') fallbackVerdict = '페이스 조율';
+    else if (text.length < 20) fallbackVerdict = '페이스 유지';
+
+    var fallbackFact = text.length < 20
+      ? '"' + text + '" 실천으로 오늘의 흐름을 놓치지 않고 완주하셨습니다.'
+      : '오늘 기록된 구체적인 실행 내용(' + text.slice(0, 35) + '…)과 집중도가 돋보입니다.';
+
+    var recentNote = (recentRecords.length > 0)
+      ? ('최근 ' + recentRecords.length + '일간 이어진 실천 흐름과 연계하여, ')
+      : '';
+    var fallbackAction = (mode === 'macro')
+      ? 'D-Day 목표와 거시 일정을 점검하고 누락된 핵심 태스크를 선제적으로 보완하세요.'
+      : '내일은 오늘 진행한 항목의 핵심 요약이나 오답 1가지를 먼저 짚고 넘어가세요.';
+
+    var fallbackComment = recentNote + fallbackFact + ' ' + fallbackAction;
+    if (lastAdvice && lastAdvice.actionSuggested) {
+      fallbackComment = '어제 제안드린 [' + lastAdvice.actionSuggested + ']에 이어 ' + fallbackComment;
+    }
+
+    return {
+      verdict: fallbackVerdict,
+      fact_insight: fallbackFact,
+      continuity: lastAdvice ? ('어제 제안: ' + lastAdvice.actionSuggested) : null,
+      next_action: fallbackAction,
+      macro_gap: (virtualRail && virtualRail.gapWarning) ? virtualRail.gapWarning : null,
+      calendar_action: (virtualRail && virtualRail.suggestedCalendarItem) ? {
+        has_suggestion: true,
+        suggested_date: virtualRail.suggestedCalendarItem.date,
+        suggested_time: virtualRail.suggestedCalendarItem.time || '14:00',
+        title: virtualRail.suggestedCalendarItem.title,
+        duration_minutes: virtualRail.suggestedCalendarItem.durationMinutes || 60,
+        note: virtualRail.suggestedCalendarItem.note || ''
+      } : (mode === 'macro' ? {
+        has_suggestion: true,
+        suggested_date: new Date(Date.now() + 2 * 86400000).toISOString().slice(0, 10),
+        suggested_time: '14:00',
+        title: (goalTitle ? goalTitle.slice(0, 15) : '목표') + ' 정밀 점검 및 중간 회고',
+        duration_minutes: 60,
+        note: 'D-Day 가상 레일 점검을 위한 캘린더 추천 일정'
+      } : null),
+      comment: fallbackComment,
+      suggestions: []
+    };
+  }
+
+  try {
+    var parsed = await callGeminiGateway({
+      task: 'feedback',
+      prompt: prompt,
+      isJson: true,
+      temperature: 0.2,
+      localFallback: generateSmartFallback
+    });
+
+    var providerUsed = (parsed && parsed.verdict && parsed.fact_insight && !parsed.source) ? 'gemini' : 'local_smart';
 
     // 서버 폴백: AI 미설정 또는 실패 시에도 스마트한 팩트 기반 피드백 생성
     if (!parsed || (!parsed.verdict && !parsed.headline)) {

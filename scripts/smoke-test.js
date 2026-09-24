@@ -8171,6 +8171,41 @@ check('[#TASK-ES-218] 설정 탭(screen-settings) 토스식 UI/UX 전면 혁신 
   assert.ok(indexHtml.includes('renderSettingsHeroCard();'), 'renderSettingsHeroCard 호출 배선 확인');
 });
 
+check('[#TASK-ES-251] 제미나이 API 중앙 게이트웨이 일원화 및 엔터프라이즈 복원력 무결성', () => {
+  const fs = require('fs');
+  const path = require('path');
+  
+  // 1. 코어 게이트웨이 모듈 존재 및 주요 함수 export 확인
+  const gateway = require('../api/lib/gemini-gateway');
+  assert.ok(typeof gateway.callGeminiGateway === 'function', 'callGeminiGateway 함수 선언 확인');
+  assert.ok(typeof gateway.repairAndParseJson === 'function', 'repairAndParseJson 자기치유 파서 확인');
+  assert.ok(typeof gateway.LocalOntology === 'object', 'LocalOntology 로컬 온톨로지 엔진 확인');
+  assert.ok(typeof gateway.getCircuitStatus === 'function', 'getCircuitStatus 서킷브레이커 확인');
+
+  // 2. 8개 주요 엔드포인트 게이트웨이 배선 확인
+  const feedbackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'feedback.js'), 'utf8');
+  assert.ok(feedbackSrc.includes("require('./lib/gemini-gateway')"), 'api/feedback.js 게이트웨이 배선 확인');
+  assert.ok(!feedbackSrc.includes('await fetch(endpoint,'), 'api/feedback.js endpoint ReferenceError 결함 100% 박멸 확인');
+
+  const todayMissionSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'todaymission.js'), 'utf8');
+  assert.ok(todayMissionSrc.includes("require('./lib/gemini-gateway')"), 'api/todaymission.js 게이트웨이 배선 확인');
+
+  const goalTemplateSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'goaltemplate.js'), 'utf8');
+  assert.ok(goalTemplateSrc.includes("require('./lib/gemini-gateway')"), 'api/goaltemplate.js 게이트웨이 배선 확인');
+
+  const goalAgentSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'goalagent.js'), 'utf8');
+  assert.ok(goalAgentSrc.includes("require('./lib/gemini-gateway')"), 'api/goalagent.js 게이트웨이 배선 확인');
+
+  const goalStatusSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'goalstatus.js'), 'utf8');
+  assert.ok(goalStatusSrc.includes("require('./lib/gemini-gateway')"), 'api/goalstatus.js 게이트웨이 배선 확인');
+
+  const nextActionSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'nextaction.js'), 'utf8');
+  assert.ok(nextActionSrc.includes("require('./lib/gemini-gateway')"), 'api/nextaction.js 게이트웨이 배선 확인');
+
+  const promptgenSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'promptgen.js'), 'utf8');
+  assert.ok(promptgenSrc.includes("require('./lib/gemini-gateway')"), 'api/promptgen.js 게이트웨이 배선 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
