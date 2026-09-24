@@ -7128,9 +7128,18 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
 }
 .s-segment-pills {
   display: flex;
-  gap: 6px;
-  margin-bottom: 16px;
+  gap: 4px;
+  margin-bottom: 12px;
   overflow-x: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+.s-segment-pills .s-seg-pill {
+  flex: 1;
+  text-align: center;
+  padding: 6px 2px !important;
+  font-size: 0.72rem;
+  min-width: 0;
 }
 .s-seg-pill {
   padding: 5px 12px;
@@ -7321,6 +7330,13 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   gap: 6px;
   font-size: 0.88rem;
   color: #F8FAFC;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  flex-shrink: 0;
+}
+.s-radar-title b {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
 }
 .s-live-dot {
   width: 8px;
@@ -7599,6 +7615,23 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
 [data-theme="urban-city"] .cal-quick-bar,
 [data-theme="urban-city"] .cal-sub-guide {
   display: block !important;
+}
+
+/* [#TASK-ES-250] 성소 기록탭 족보 꼬임 해소: sanctuaryRecordsView 활성화 시 중복 헤더 및 중복 세그먼트바 정리 */
+[data-theme="focus-sanctuary"] #screen-records > .screen-head,
+[data-theme="black"] #screen-records > .screen-head,
+[data-theme="white"] #screen-records > .screen-head,
+[data-theme="urban-city"] #screen-records > .screen-head,
+[data-theme="focus-sanctuary"] #recSegmentBar,
+[data-theme="black"] #recSegmentBar,
+[data-theme="white"] #recSegmentBar,
+[data-theme="urban-city"] #recSegmentBar {
+  display: none !important;
+}
+
+.toast.show {
+  pointer-events: auto !important;
+  cursor: pointer;
 }
 
 /* [#TASK-CALENDAR-TAB-PERFECT-RESTORATION] 성소 캘린더 모드별(월간/주간/타임라인/타이머) 하단 슬롯 조건부 가시성 제어 */
@@ -8862,8 +8895,8 @@ html[data-theme="urban-city"] .comm-subtabs.comm-subtabs-grid .comm-subtab,
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-height: 40px !important;
-  padding: 6px 4px !important;
+  min-height: 38px !important;
+  padding: 5px 3px !important;
   font-size: 11px !important;
   font-weight: 700 !important;
   letter-spacing: -0.2px !important;
@@ -8893,8 +8926,8 @@ html[data-theme="urban-city"] .comm-subtabs.comm-subtabs-grid .comm-subtab,
   .comm-subtabs.comm-subtabs-grid .comm-subtab,
   .comm-subtabs-grid .comm-subtab {
     font-size: 10.5px !important;
-    padding: 6px 2px !important;
-    min-height: 40px !important;
+    padding: 5px 2px !important;
+    min-height: 38px !important;
   }
 }
 
@@ -8941,9 +8974,9 @@ html[data-theme="urban-city"] #goalsSubtabs.goals-subtabs-grid .comm-subtab,
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-height: 44px !important;
-  padding: 6px 2px !important;
-  font-size: 12px !important;
+  min-height: 38px !important;
+  padding: 5px 2px !important;
+  font-size: 11.5px !important;
   font-weight: 700 !important;
   letter-spacing: -0.2px !important;
   white-space: nowrap !important;
@@ -8993,14 +9026,14 @@ html[data-theme="white"] .comm-subtabs.comm-subtabs-grid .comm-subtab.active {
   }
   #goalsSubtabs.goals-subtabs-grid .comm-subtab,
   .goals-subtabs-grid .comm-subtab {
-    font-size: 12px !important;
-    padding: 6px 1px !important;
-    min-height: 44px !important;
+    font-size: 11px !important;
+    padding: 5px 1px !important;
+    min-height: 38px !important;
     letter-spacing: -0.3px !important;
   }
   #goalsHeadlineSentence {
     display: block !important;
-    margin: 4px 0 6px 0 !important;
+    margin: 6px 0 8px 0 !important;
     font-size: 0.98rem !important;
     line-height: 1.3 !important;
     word-break: keep-all;
@@ -10322,10 +10355,10 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
    ========================================================================== */
 .toss-record-hero-card {
   background: var(--card, #ffffff);
-  border-radius: 20px !important;
-  padding: 18px 16px !important;
-  margin-top: 6px !important;
-  margin-bottom: 14px !important;
+  border-radius: 16px !important;
+  padding: 10px 14px !important;
+  margin-top: 4px !important;
+  margin-bottom: 8px !important;
   border: 1px solid var(--rule, rgba(0, 0, 0, 0.06)) !important;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.035) !important;
   box-sizing: border-box;
@@ -10343,10 +10376,10 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
   align-items: center;
   justify-content: space-around;
   gap: 12px;
-  margin-top: 12px;
-  padding: 12px 8px;
+  margin-top: 8px !important;
+  padding: 8px 6px !important;
   background: var(--surface-2, rgba(0, 0, 0, 0.03));
-  border-radius: 14px;
+  border-radius: 10px !important;
 }
 
 .toss-record-stat-item {
@@ -10387,10 +10420,10 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
    ========================================================================== */
 .toss-community-hero-card {
   background: var(--card, #ffffff);
-  border-radius: 20px !important;
-  padding: 18px 16px !important;
-  margin-top: 6px !important;
-  margin-bottom: 14px !important;
+  border-radius: 16px !important;
+  padding: 10px 14px !important;
+  margin-top: 4px !important;
+  margin-bottom: 8px !important;
   border: 1px solid var(--rule, rgba(0, 0, 0, 0.06)) !important;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.035) !important;
   box-sizing: border-box;
@@ -10408,10 +10441,10 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
   align-items: center;
   justify-content: space-around;
   gap: 12px;
-  margin-top: 12px;
-  padding: 12px 8px;
+  margin-top: 8px !important;
+  padding: 8px 6px !important;
   background: var(--surface-2, rgba(0, 0, 0, 0.03));
-  border-radius: 14px;
+  border-radius: 10px !important;
 }
 
 .toss-community-stat-item {

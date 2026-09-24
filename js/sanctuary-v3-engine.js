@@ -81,9 +81,7 @@
         '<button type="button" class="s-goal-pill add" id="sAddGoalBtn" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal(); else toast(\'목표 추가 창을 불러오는 중입니다\');">+ 새 목표</button>' +
       '</div>';
     } else {
-      pillsHtml = '<div class="s-goal-pills-wrap empty">' +
-        '<button type="button" class="s-goal-pill add" id="sAddGoalBtn" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal(); else toast(\'목표 추가 창을 불러오는 중입니다\');">+ 새 목표 만들기</button>' +
-      '</div>';
+      pillsHtml = '<div class="s-goal-pills-wrap empty" style="display:none;"></div>';
     }
 
     // 1-2. 마운틴 트레일 카드 조형
@@ -94,7 +92,7 @@
           '<div style="font-size:3rem;margin-bottom:14px;">🏔️</div>' +
           '<h3 style="margin-bottom:8px;font-size:1.25rem;font-weight:800;color:var(--ink);">등록된 목표가 없습니다</h3>' +
           '<p style="font-size:0.9rem;margin-bottom:24px;color:var(--ink-soft);line-height:1.5;">나만의 첫 목표를 만들고 등반을 시작해보세요.</p>' +
-          '<button class="btn btn-empty-add-goal" type="button" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal();" style="padding:10px 24px;font-size:0.95rem;font-weight:700;border-radius:12px;background:var(--brand);color:#fff;border:none;box-shadow:0 4px 12px rgba(225,29,72,0.25);cursor:pointer;">+ 새 목표 만들기</button>' +
+          '<button class="btn btn-primary btn-empty-add-goal" id="sAddGoalBtn" type="button" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal();" style="padding:10px 24px;font-size:0.95rem;font-weight:700;border-radius:12px;background:var(--brand);color:#fff;border:none;box-shadow:0 4px 12px rgba(225,29,72,0.25);cursor:pointer;">+ 새 목표 만들기</button>' +
         '</div>' +
       '</div>';
     } else {
@@ -206,12 +204,12 @@
       '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'week' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'week\')">📆 주간</button>' +
       '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'timeline' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'timeline\')">⏱️ 일간 타임라인</button>' +
     '</div>' +
-    '<div class="s-cal-quick-action-bar" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;">' +
-      '<button type="button" class="btn-ghost" onclick="if(typeof window.openCalendarLockScreenModal===\'function\'){window.openCalendarLockScreenModal();}else{var b=document.getElementById(\'calLockScreenBtn\');if(b)b.click();}" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;font-size:0.8125rem;font-weight:600;border-radius:9999px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--ink);cursor:pointer;">' +
-        '<span style="display:none;">폰 잠금화면에서 보기</span><span>📱 잠금화면용 일정 카드 저장</span>' +
-        '<span style="font-size:0.7rem;padding:2px 6px;border-radius:999px;background:rgba(99,102,241,0.15);color:#818cf8;font-weight:700;">⚡ 실시간 연동</span>' +
+    '<div class="s-cal-quick-action-bar" style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:12px;">' +
+      '<button type="button" class="btn-ghost" onclick="if(typeof window.openCalendarLockScreenModal===\'function\'){window.openCalendarLockScreenModal();}else{var b=document.getElementById(\'calLockScreenBtn\');if(b)b.click();}" style="display:inline-flex;align-items:center;gap:4px;padding:5px 8px;font-size:0.75rem;font-weight:600;border-radius:9999px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--ink);cursor:pointer;white-space:nowrap;word-break:keep-all;flex-shrink:0;">' +
+        '<span style="display:none;">폰 잠금화면에서 보기</span><span style="white-space:nowrap;word-break:keep-all;font-size:0.75rem;">📱 잠금화면용 일정 카드 저장</span>' +
+        '<span style="font-size:0.68rem;padding:2px 5px;border-radius:999px;background:rgba(99,102,241,0.15);color:#818cf8;font-weight:700;white-space:nowrap;">⚡ 실시간 연동</span>' +
       '</button>' +
-      '<button type="button" class="btn-ghost" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();" style="display:inline-flex;align-items:center;gap:4px;padding:6px 12px;font-size:0.8125rem;font-weight:600;border-radius:9999px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);color:#10b981;cursor:pointer;">' +
+      '<button type="button" class="btn-ghost" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();" style="display:inline-flex;align-items:center;gap:4px;padding:5px 10px;font-size:0.75rem;font-weight:600;border-radius:9999px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);color:#10b981;cursor:pointer;white-space:nowrap;flex-shrink:0;">' +
         '<span>+ 새 일정</span>' +
       '</button>' +
     '</div>';
