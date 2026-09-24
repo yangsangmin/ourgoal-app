@@ -178,7 +178,7 @@ module.exports = async function handler(req, res) {
       .trim();
   }
 
-  var { callGeminiGateway } = require('./lib/gemini-gateway');
+  var { callGeminiGateway } = require('./_lib/gemini-gateway');
 
   function generateSmartFallback() {
     if (mode === 'period_macro') {

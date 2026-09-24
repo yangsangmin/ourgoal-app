@@ -4,7 +4,7 @@
   "requirements": [
     {
       "id": "R1",
-      "text": "api/lib/gemini-gateway.js 코어 게이트웨이 모듈을 신설하고 서킷브레이커, 멀티키 로테이션, 타임아웃, SHA-256 캐시, 자기치유 파서를 통합해야 한다"
+      "text": "api/_lib/gemini-gateway.js 코어 게이트웨이 모듈을 신설하고 서킷브레이커, 멀티키 로테이션, 타임아웃, SHA-256 캐시, 자기치유 파서를 통합해야 한다"
     },
     {
       "id": "R2",
@@ -29,13 +29,13 @@
       "req": "R1",
       "kind": "static",
       "domain": "config",
-      "statement": "api/lib/gemini-gateway.js에 callGeminiGateway 및 repairAndParseJson 모듈이 구현되어 있다",
+      "statement": "api/_lib/gemini-gateway.js에 callGeminiGateway 및 repairAndParseJson 모듈이 구현되어 있다",
       "touches": [
-        "api/lib/gemini-gateway.js"
+        "api/_lib/gemini-gateway.js"
       ],
       "check": {
         "type": "codeContains",
-        "file": "api/lib/gemini-gateway.js",
+        "file": "api/_lib/gemini-gateway.js",
         "text": "async function callGeminiGateway"
       }
     },
@@ -51,7 +51,7 @@
       "check": {
         "type": "codeContains",
         "file": "api/feedback.js",
-        "text": "require('./lib/gemini-gateway')"
+        "text": "require('./_lib/gemini-gateway')"
       }
     },
     {
@@ -66,7 +66,7 @@
       "check": {
         "type": "codeContains",
         "file": "api/goaltemplate.js",
-        "text": "require('./lib/gemini-gateway')"
+        "text": "require('./_lib/gemini-gateway')"
       }
     },
     {

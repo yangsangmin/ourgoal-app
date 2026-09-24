@@ -483,7 +483,7 @@ module.exports = async function handler(req, res) {
       '  "analysis": "AI 통찰 분석 리포트"\n' +
       '}';
 
-    var { callGeminiGateway } = require('./lib/gemini-gateway');
+    var { callGeminiGateway } = require('./_lib/gemini-gateway');
     var statParsed = await callGeminiGateway({
       task: 'stats-template',
       prompt: statPrompt,

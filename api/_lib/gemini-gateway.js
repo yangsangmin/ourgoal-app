@@ -1,4 +1,4 @@
-// api/lib/gemini-gateway.js
+// api/_lib/gemini-gateway.js
 // #TASK-ES-251: 제미나이 API 엔터프라이즈 복원력 중앙 게이트웨이
 // - Multi-Key 풀링 및 429 쿨다운 로테이터
 // - 3-State Serverless Circuit Breaker (CLOSED / OPEN / HALF-OPEN)

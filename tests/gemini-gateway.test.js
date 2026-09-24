@@ -2,7 +2,7 @@
 // #TASK-ES-251: 제미나이 게이트웨이 복원력 및 내결함성 단위 테스트 슈트
 
 var assert = require('assert');
-var gateway = require('../api/lib/gemini-gateway');
+var gateway = require('../api/_lib/gemini-gateway');
 
 async function runTests() {
   // Test 1: JSON 자기치유 파서 검증

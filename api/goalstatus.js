@@ -42,7 +42,7 @@ module.exports = async function handler(req, res) {
     return '현재 "' + goalTitle + '" 목표는 전체 마일스톤 중 ' + doneCount + '/' + total + '개(' + pct + '%)를 완료한 상태입니다. 세워둔 계획에 맞춰 다음 마일스톤을 차근차근 진행해 보세요.';
   }
 
-  var { callGeminiGateway } = require('./lib/gemini-gateway');
+  var { callGeminiGateway } = require('./_lib/gemini-gateway');
 
   try {
     var summary = await callGeminiGateway({

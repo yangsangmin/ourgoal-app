@@ -955,7 +955,7 @@ module.exports = async function handler(req, res) {
     '관련 유튜브 검색 링크(예: "https://www.youtube.com/results?search_query=...")를 attachments에 포함하고, ' +
     'reply는 반드시 "[키워드] 유튜브링크를 찾아왔습니다. 첨부할까요?" 형태로 명확히 응답하세요.';
 
-  var { callGeminiGateway } = require('./lib/gemini-gateway');
+  var { callGeminiGateway } = require('./_lib/gemini-gateway');
 
   try {
     var parsed = await callGeminiGateway({

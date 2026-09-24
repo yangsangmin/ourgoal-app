@@ -38,7 +38,7 @@ module.exports = async function handler(req, res) {
     return next ? '멋져요! 다음으로 "' + next.title + '" 마일스톤을 시작해볼까요?' : '축하합니다! 모든 마일스톤을 마쳤으니 목표 최종 결과를 기록해보세요.';
   }
 
-  var { callGeminiGateway } = require('./lib/gemini-gateway');
+  var { callGeminiGateway } = require('./_lib/gemini-gateway');
 
   try {
     var suggestion = await callGeminiGateway({

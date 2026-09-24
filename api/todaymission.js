@@ -36,7 +36,7 @@ module.exports = async function handler(req, res) {
     return open ? '오늘은 "' + open.title + '" 마일스톤을 위해 15분만 집중해볼까요?' : '오늘은 지금까지의 성장을 돌아보며 휴식을 취해보세요.';
   }
 
-  var { callGeminiGateway } = require('./lib/gemini-gateway');
+  var { callGeminiGateway } = require('./_lib/gemini-gateway');
 
   try {
     var missionText = await callGeminiGateway({

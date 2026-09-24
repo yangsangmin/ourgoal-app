@@ -202,7 +202,7 @@ module.exports = async function handler(req, res) {
     '}\n' +
     'Respond ONLY with valid JSON. Do not include markdown fences, backticks, or extra commentary.';
 
-  var { repairAndParseJson, OFFICIAL_MODELS } = require('./lib/gemini-gateway');
+  var { repairAndParseJson, OFFICIAL_MODELS } = require('./_lib/gemini-gateway');
   var modelsToTry = OFFICIAL_MODELS;
   for (var m = 0; m < modelsToTry.length; m++) {
     var modelName = modelsToTry[m];

@@ -40,7 +40,7 @@ module.exports = async function handler(req, res) {
     '- 출력 형식은 지시하지 말고 톤·관점·판단 기준만 정의할 것\n\n' +
     '점검을 마친 최종 지침 본문만 출력하세요. 따옴표, 설명, 마크다운 없이 지침 문장만 작성하세요.';
 
-  var { callGeminiGateway } = require('./lib/gemini-gateway');
+  var { callGeminiGateway } = require('./_lib/gemini-gateway');
 
   function localPromptFallback() {
     return '사용자의 지침: "' + description + '". 이 관점을 충실히 반영하여 사용자의 실천 기록을 따뜻하면서도 실천적인 피드백으로 코칭하세요.';
