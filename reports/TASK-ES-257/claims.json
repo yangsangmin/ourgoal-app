@@ -1,0 +1,118 @@
+{
+  "task": "TASK-ES-257",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-257-STOPWATCH-TABLE-HINT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "스톱워치 위젯 내에 시간 기입(분:초 또는 초) 안내문구 및 전용 ID 'swInjectHint' 표출"
+    },
+    {
+      "id": "R2",
+      "text": "맞춤 템플릿 표 셀 렌더러(renderRowsHtml) 내 시간 관련 열 판별 및 placeholder에 ' (분:초 또는 초)' 스마트 분기 탑재"
+    },
+    {
+      "id": "R3",
+      "text": "셀 미선택 상태에서 '표에 시간 기입' 클릭 시 안내 토스트 멘트 일원화"
+    },
+    {
+      "id": "R4",
+      "text": "스톱워치 위젯 렌더러(renderStopwatchWidgetHtml)의 window 전역 노출"
+    },
+    {
+      "id": "R5",
+      "text": "신규 독립 단위 테스트 tests/stopwatch-table-hint.test.js 및 smoke-test.js 100% 통과"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 swInjectHint ID 속성 및 스톱워치 시간기입 안내문구가 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"swInjectHint\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨 (분:초 또는 초 기입) 안내문구가 포함되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨 (분:초 또는 초 기입)"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 시간 관련 열 판별 정규식이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "isTimeCol = /(시간|타임|휴식|초|time|duration|sec|min)/i.test"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 시간 관련 열 placeholder 분기 처리가 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "colName + ' (분:초 또는 초)'"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 window 객체에 renderStopwatchWidgetHtml이 바인딩되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/stopwatch-table-hint.test.js 단위 검증 파일이 존재하고 정상 작동한다",
+      "touches": [
+        "tests/stopwatch-table-hint.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/stopwatch-table-hint.test.js",
+        "text": "TASK-ES-257"
+      }
+    }
+  ]
+}

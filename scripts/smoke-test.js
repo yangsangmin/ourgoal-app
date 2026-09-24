@@ -8311,6 +8311,23 @@ check('compliance: [#TASK-ES-256] 팀목표 200% 활용 가이드 안내문구 �
   assert.ok(indexHtml.includes('window.renderTeamGoalsScreen = renderTeamGoalsScreen;'), 'renderTeamGoalsScreen window 노출 검증');
 });
 
+/* ============ [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 검증 ============ */
+check('compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 스톱워치 위젯 안내문구 원문 및 속성 검증
+  assert.ok(indexHtml.includes('id="swInjectHint"'), 'swInjectHint 안내 ID 속성 검증');
+  assert.ok(indexHtml.includes('넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨 (분:초 또는 초 기입)'), '스톱워치 시간기입(분:초 또는 초) 안내문구 검증');
+  assert.ok(indexHtml.includes("toast('넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨')"), '미선택 셀 클릭 시 안내 토스트 멘트 일원화 검증');
+
+  // 2. 표 셀 시간 컬럼 placeholder 분기 검증
+  assert.ok(indexHtml.includes('isTimeCol = /(시간|타임|휴식|초|time|duration|sec|min)/i.test'), '시간 열 판별 정규식 탑재 검증');
+  assert.ok(indexHtml.includes("colName + ' (분:초 또는 초)'"), '시간 열 placeholder 스마트 분기 검증');
+
+  // 3. window 바인딩 검증
+  assert.ok(indexHtml.includes('window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;'), 'renderStopwatchWidgetHtml window 노출 검증');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
