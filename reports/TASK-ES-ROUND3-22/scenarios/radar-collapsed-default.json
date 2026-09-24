@@ -1,0 +1,14 @@
+{
+  "id": "radar-collapsed-default",
+  "title": "소통 탭 실시간 러닝메이트 레이더 카드가 기본 접힘 상태로 시작된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"comm\"]" },
+    { "expect": "visible", "selector": "#sPeerRadarCard" },
+    { "expect": "hasClass", "selector": "#sPeerRadarCard", "className": "collapsed" },
+    { "capture": "radar-collapsed-default" }
+  ]
+}

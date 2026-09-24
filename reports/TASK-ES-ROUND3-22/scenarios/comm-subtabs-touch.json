@@ -1,0 +1,14 @@
+{
+  "id": "comm-subtabs-touch",
+  "title": "소통 탭 상단 서브탭 6종이 모바일 터치 타겟 42px 이상을 만족한다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"comm\"]" },
+    { "expect": "visible", "selector": ".comm-subtabs-clean.comm-subtabs-grid .comm-subtab" },
+    { "expect": "rect", "selector": ".comm-subtabs-clean.comm-subtabs-grid .comm-subtab", "minHeight": 42 },
+    { "capture": "comm-subtabs-minheight" }
+  ]
+}
