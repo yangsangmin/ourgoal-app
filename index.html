@@ -26643,11 +26643,14 @@ wirePromptEncyclopediaEvents(body);
           '<button class="btn btn-ghost btn-sm" id="swInjectBtn" type="button" style="color:var(--ink);border-color:var(--rule);font-weight:700;" title="현재 측정 시간을 표의 시간 열에 기입">표에 시간 기입</button>' +
         '</div>' +
       '</div>' +
-      '<div class="sw-inject-hint" style="margin-top:5px;font-size:0.75rem;color:var(--ink-faint);line-height:1.4;">' +
-        '💡 넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨' +
+      '<div class="sw-inject-hint" id="swInjectHint" style="margin-top:5px;font-size:0.75rem;color:var(--ink-faint);line-height:1.4;">' +
+        '💡 넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨 (분:초 또는 초 기입)' +
       '</div>' +
       '<div id="swLapsList" style="display:none;margin-top:6px;font-size:.8125rem;color:var(--ink-soft);max-height:54px;overflow-y:auto;padding-top:4px;border-top:1px dashed var(--rule);"></div>' +
     '</div>';
+  }
+  if (typeof window !== 'undefined') {
+    window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;
   }
 
   /* ============ 🔄 Notion 데이터베이스 실시간 자동 푸시 (Notion Direct Push) ============ */
@@ -28290,7 +28293,8 @@ wirePromptEncyclopediaEvents(body);
         var tds = cList.map(function(colName, cIdx){
           var val = row[cIdx] !== undefined ? row[cIdx] : '';
           var isFirst = (cIdx === 0);
-          var ph = isFirst ? (rIdx + 1) : colName;
+          var isTimeCol = /(시간|타임|휴식|초|time|duration|sec|min)/i.test(String(colName || ''));
+          var ph = isFirst ? (rIdx + 1) : (isTimeCol ? colName + ' (분:초 또는 초)' : colName);
           return '<td style="'+(isFirst?'width:44px;text-align:center;':'')+'">' +
             '<input type="text" class="pro-tpl-cell-input" data-row="'+rIdx+'" data-col="'+cIdx+'" value="'+escapeHtml(String(val))+'" placeholder="'+escapeHtml(String(ph))+'">' +
           '</td>';
