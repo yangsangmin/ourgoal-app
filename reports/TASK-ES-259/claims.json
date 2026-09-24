@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-259",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-259-GOALS-SCHEDULE-SYNC.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "목표 카드 metaStrip 내 일정 버튼(formatSchedulePillHtml) 및 구글 달력 버튼(data-calsyncgoal) 배선"
+    },
+    {
+      "id": "R2",
+      "text": "세부할일 행(renderSingleTaskRow) 내 일정 버튼을 달력 버튼(data-calsynctask) 바로 왼쪽에 배치"
+    },
+    {
+      "id": "R3",
+      "text": "formatSchedulePillHtml 내 기간 일정(복수일자) 포맷팅을 (년).(월).(일).~(년).(월).(일). 규격으로 구현"
+    },
+    {
+      "id": "R4",
+      "text": "quickSyncToCalendar 함수 내 일정 미설정 시 안내 토스트 표출 및 openScheduleSetupModal 자동 팝업"
+    },
+    {
+      "id": "R5",
+      "text": "신규 독립 단위 테스트 tests/goals-schedule-sync.test.js 및 smoke-test.js 100% 통과"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 목표 카드 metaStrip 일정 버튼 및 data-calsyncgoal 달력 버튼이 배치되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "data-calsyncgoal=\"'+goal.id+'\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 세부할일 행에서 formatSchedulePillHtml이 data-calsynctask 바로 왼쪽에 배치되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "formatSchedulePillHtml(t, 'task', goal.id, m.id, t.id)"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 formatSchedulePillHtml에서 기간 텍스트가 (년).(월).(일).~(년).(월).(일). 형태로 조합된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "var sText = sParts[0] + '.' + parseInt(sParts[1], 10) + '.' + parseInt(sParts[2], 10) + '.';"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 quickSyncToCalendar에서 날짜가 없을 때 안내 토스트와 함께 openScheduleSetupModal을 호출한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "openScheduleSetupModal(kind, goalId, msId, taskId);"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/goals-schedule-sync.test.js 단위 검증 파일이 존재하고 정상 작동한다",
+      "touches": [
+        "tests/goals-schedule-sync.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/goals-schedule-sync.test.js",
+        "text": "TASK-ES-259"
+      }
+    }
+  ]
+}

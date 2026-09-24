@@ -8356,6 +8356,29 @@ check('compliance: [#TASK-ES-258] 팀목표 시인성 개선, 아코디언 및 �
   assert.ok(indexHtml.includes('OurgoalTeamVisibilityLevels.bindEvents(view)'), 'bindEvents 위임 배선 검증');
 });
 
+/* ============ [#TASK-ES-259] 목표탭 구글 캘린더 일정 설정 버튼 및 디데이(기간) 표시 연동 검증 ============ */
+check('compliance: [#TASK-ES-259] 목표탭 구글 캘린더 일정 설정 버튼 및 디데이(기간) 표시 연동 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 목표 카드 metaStrip 내 일정 버튼 및 구글 달력 버튼 배선 검증
+  assert.ok(indexHtml.includes("formatSchedulePillHtml(goal, 'goal', goal.id) +"), '목표 카드에 formatSchedulePillHtml 상시 렌더링 검증');
+  assert.ok(indexHtml.includes('data-calsyncgoal="\'+goal.id+\'"'), '목표 카드에 data-calsyncgoal 달력 버튼 배치 검증');
+  assert.ok(indexHtml.includes("body.querySelectorAll('[data-calsyncgoal]')"), 'goalDetailBody 내 data-calsyncgoal 이벤트 리스너 검증');
+
+  // 2. 세부할일 행(renderSingleTaskRow) 내 formatSchedulePillHtml 및 data-calsynctask 나란히 배치 검증
+  assert.ok(indexHtml.includes("formatSchedulePillHtml(t, 'task', goal.id, m.id, t.id) +"), '세부할일 행에 formatSchedulePillHtml 배치 검증');
+  assert.ok(indexHtml.includes("data-calsynctask=\"'+t.id+'\""), '세부할일 행에 data-calsynctask 달력 버튼 배치 검증');
+
+  // 3. quickSyncToCalendar 날짜 미설정 시 일정설정 모달 자동 팝업 검증
+  assert.ok(indexHtml.includes("toast('먼저 일정을 설정해주세요 🗓️')"), '일정 미설정 시 안내 토스트 표출 검증');
+  assert.ok(indexHtml.includes('openScheduleSetupModal(kind, goalId, msId, taskId)'), '일정 미설정 시 openScheduleSetupModal 자동 호출 검증');
+
+  // 4. ui.css 모바일 375px 및 터치 타깃 접근성 검증
+  assert.ok(uiCss.includes('.schedule-pill-btn::after'), 'schedule-pill-btn::after 히트박스 정의 (터치 44px 보장)');
+  assert.ok(uiCss.includes('max-width: 170px'), '모바일 가로 넘침 방지 max-width 정의 검증');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
