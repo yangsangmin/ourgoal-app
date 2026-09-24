@@ -8115,6 +8115,38 @@ check('[#TASK-ES-249] 상황별 다이나믹 아바타 리액션 도감 100% 무
   assert.ok(cssContent.includes('#btnOpenDynamicAlbum'), 'ui.css 내 #btnOpenDynamicAlbum 스타일 누락');
 });
 
+check('[#TASK-ES-250] 소통탭 8중 레이어 다이어트 및 모바일 375px 타이포그래피·조형 전면 정상화', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const sanctEngine = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
+
+  // 1. 소통탭 동일 기능 버튼 중복 제거 (#commHeroCard 내 새 글 나누기 / 팀 둘러보기 제거 확인)
+  assert.ok(!/#commHeroCard[\s\S]*?✍️ 새 글 나누기/.test(indexHtml), 'commHeroCard 내 중복 새 글 나누기 버튼 제거 확인');
+
+  // 2. 소통탭 초대바 조건부 노출 (피드 탭에서 commTopCompanionBar 은폐로 피드 직통 노출)
+  assert.ok(indexHtml.includes("state.commSubTab === 'companion' ? 'block' : 'none'"), 'commTopCompanionBar 피드 탭 은폐 및 동반자 탭 조건부 노출 확인');
+
+  // 3. 러닝메이트 타이틀 줄바꿈 및 글자 쪼개짐 방지 (white-space: nowrap !important)
+  assert.ok(cssContent.includes('.s-radar-title') && cssContent.includes('white-space: nowrap !important;'), 's-radar-title nowrap 스타일 확인');
+  assert.ok(cssContent.includes('.s-radar-title b') && cssContent.includes('white-space: nowrap !important;'), 's-radar-title b nowrap 스타일 확인');
+
+  // 4. 캘린더 잠금화면 액션 버튼 줄바꿈 방지 배선 확인
+  assert.ok(sanctEngine.includes('📱 잠금화면용 일정 카드 저장') && sanctEngine.includes('white-space:nowrap;word-break:keep-all;'), '캘린더 잠금화면 액션 버튼 nowrap 스타일 확인');
+
+  // 5. 목표 0건 시 중복 점선 + 새 목표 만들기 버튼 단일화 확인
+  assert.ok(sanctEngine.includes("pillsHtml = '<div class=\"s-goal-pills-wrap empty\" style=\"display:none;\"></div>';"), '목표 0건 시 중복 알약 버튼 배제 확인');
+
+  // 6. 기록탭 히트맵 기간 알약 반응형 flex:1 및 너비 초과 잘림 방지 확인
+  assert.ok(cssContent.includes('.s-segment-pills .s-seg-pill') && cssContent.includes('flex: 1;'), 's-segment-pills flex:1 반응형 균등 분배 확인');
+
+  // 7. 서브탭 38px 황금비 터치 타깃 및 여백 정상화 확인
+  assert.ok(cssContent.includes('.goals-subtabs-grid .comm-subtab') && cssContent.includes('min-height: 38px !important;'), '목표 서브탭 38px 정상화 확인');
+
+  // 8. 게스트 모드 토스트 즉시 닫기 인터랙션 및 포인터 이벤트 확인
+  assert.ok(indexHtml.includes("el.onclick = function(){ el.classList.remove('show'); };"), '토스트 원클릭 즉시 닫기 핸들러 확인');
+  assert.ok(cssContent.includes('.toast.show') && cssContent.includes('pointer-events: auto !important;'), '토스트 활성 시 pointer-events 활성화 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

@@ -1,0 +1,104 @@
+{
+  "task": "TASK-ES-250",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-250-UX-NORMALIZATION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "소통탭 8중 레이어를 다이어트하고 피드 진입 시 피드가 최상단에 직통 노출되어야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "소통탭 내 중복 [✍️ 새 글 나누기] 버튼 및 목표탭 빈 상태 이중 [+ 새 목표 만들기] 버튼이 단일화되어야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "모바일 375px 환경에서 러닝메이트 타이틀, 캘린더 잠금화면 저장 버튼, 히트맵 기간 알약 글자 쪼개짐 및 잘림이 100% 근절되어야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "상단 서브탭 버튼군이 기계적 44px 블록화에서 벗어나 38px 황금비 터치 타깃과 자연스러운 여백을 회복해야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "npm test 및 38개 헌법 게이트, Zero Dead-Click 검사가 100% ALL PASS여야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 commTopCompanionBar가 동반자 탭 조건부 노출로 배선된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "state.commSubTab === 'companion' ? 'block' : 'none'"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html commHeroCard 내 중복 새 글 나누기 버튼이 배제된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "toss-community-hero-card"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내 s-radar-title에 nowrap이 선언되고 sanctuary-v3-engine.js 내 잠금화면 버튼에 nowrap이 선언된다",
+      "touches": [
+        "ui.css",
+        "js/sanctuary-v3-engine.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".s-radar-title b"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내 목표 및 소통 서브탭 버튼 규격이 min-height: 38px로 정상화된다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".goals-subtabs-grid .comm-subtab"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-250 전용 검증 스펙이 완비된다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-250] 소통탭 8중 레이어 다이어트 및 모바일 375px 타이포그래피·조형 전면 정상화"
+      }
+    }
+  ]
+}
