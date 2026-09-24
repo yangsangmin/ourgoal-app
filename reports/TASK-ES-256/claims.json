@@ -1,0 +1,118 @@
+{
+  "task": "TASK-ES-256",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-256-TEAM-GOAL-GUIDE-HINT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "팀목표 200% 활용 가이드 헤더 우측에 '* 팀 목표를 생성하면 사라짐' 안내문구 표출"
+    },
+    {
+      "id": "R2",
+      "text": "안내문구에 3포인트 축소 폰트 사이즈(0.8125rem / 13px) 및 은은한 컬러(var(--ink-faint)) 적용"
+    },
+    {
+      "id": "R3",
+      "text": "안내문구에 고유 식별자 'teamGoalGuideVanishHint' 및 'guide-vanish-hint' 클래스 탑재"
+    },
+    {
+      "id": "R4",
+      "text": "팀 목표 빈 화면 가이드 렌더러(renderTeamGoalsEmptyGuideHtml) 및 팀 목표 화면 렌더러(renderTeamGoalsScreen)의 window 전역 노출"
+    },
+    {
+      "id": "R5",
+      "text": "신규 독립 단위 테스트 tests/team-goal-guide-hint.test.js 및 smoke-test.js 연동 100% 통과"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 * 팀 목표를 생성하면 사라짐 안내문구가 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "* 팀 목표를 생성하면 사라짐"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 안내문구에 3포인트 축소 폰트 크기(0.8125rem) 및 ink-faint 토큰이 적용되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "font-size:0.8125rem;color:var(--ink-faint)"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 안내문구에 id=\"teamGoalGuideVanishHint\" 및 class=\"guide-vanish-hint\"가 부여되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"teamGoalGuideVanishHint\""
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 window 객체에 renderTeamGoalsEmptyGuideHtml이 바인딩되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "window.renderTeamGoalsEmptyGuideHtml = renderTeamGoalsEmptyGuideHtml;"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 window 객체에 renderTeamGoalsScreen이 바인딩되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "window.renderTeamGoalsScreen = renderTeamGoalsScreen;"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/team-goal-guide-hint.test.js 단위 검증 파일이 존재하고 정상 작동한다",
+      "touches": [
+        "tests/team-goal-guide-hint.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/team-goal-guide-hint.test.js",
+        "text": "TASK-ES-256"
+      }
+    }
+  ]
+}

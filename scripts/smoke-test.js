@@ -8293,6 +8293,24 @@ check('compliance: [#TASK-ES-255] 목표 탭 현상태 분석 AI 조언 문구 �
   assert.ok(indexHtml.includes('window.refreshGoalStatusSummary = refreshGoalStatusSummary;'), 'refreshGoalStatusSummary 노출 확인');
 });
 
+/* ============ [#TASK-ES-256] 팀목표 200% 활용 가이드 안내문구 ('* 팀 목표를 생성하면 사라짐') 및 조건부 소멸 검증 ============ */
+check('compliance: [#TASK-ES-256] 팀목표 200% 활용 가이드 안내문구 및 조건부 소멸 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 안내문구 텍스트 및 클래스/ID 속성 검증
+  assert.ok(indexHtml.includes('* 팀 목표를 생성하면 사라짐'), '안내문구 "* 팀 목표를 생성하면 사라짐" 원문 검증');
+  assert.ok(indexHtml.includes('id="teamGoalGuideVanishHint"'), '안내문구 전용 ID 속성 검증');
+  assert.ok(indexHtml.includes('class="guide-vanish-hint"'), '안내문구 전용 클래스 검증');
+
+  // 2. 폰트 크기 및 색상 스타일 검증
+  assert.ok(indexHtml.includes('font-size:0.8125rem'), '3포인트 축소 폰트 크기(0.8125rem) 스타일 검증');
+  assert.ok(indexHtml.includes('color:var(--ink-faint)'), '은은한 안내 톤(var(--ink-faint)) 검증');
+
+  // 3. window 전역 바인딩 검증
+  assert.ok(indexHtml.includes('window.renderTeamGoalsEmptyGuideHtml = renderTeamGoalsEmptyGuideHtml;'), 'renderTeamGoalsEmptyGuideHtml window 노출 검증');
+  assert.ok(indexHtml.includes('window.renderTeamGoalsScreen = renderTeamGoalsScreen;'), 'renderTeamGoalsScreen window 노출 검증');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
