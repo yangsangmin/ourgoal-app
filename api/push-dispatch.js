@@ -34,15 +34,14 @@ function sameToken(a, b) {
 //  (1) Vercel env CRON_SECRET — 수동 점검(GitHub Actions workflow_dispatch)용
 //  (2) Supabase Vault 토큰(public.push_dispatch_token(), docs/sql/2026-09-08-push-cron.sql) —
 //      pg_cron 발송 트리거용. 토큰은 DB 안에서 생성돼 사람·코드·저장소 어디에도 옮겨 적히지 않는다.
-// CRON_SECRET 이 비어 있으면 종전처럼 인증을 요구하지 않는다.
+// #TASK-ES-252: CRON_SECRET 이나 DB 토큰이 없거나 불일치 시 절대 통과시키지 않는다 (Fail-Closed).
 var cachedDbToken = null;
 async function isAuthorized(req, sb) {
   var cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret) return true;
   var authHeader = req.headers['authorization'] || '';
   var token = authHeader.indexOf('Bearer ') === 0 ? authHeader.slice(7) : '';
   if (!token) return false;
-  if (sameToken(token, cronSecret)) return true;
+  if (cronSecret && sameToken(token, cronSecret)) return true;
   if (cachedDbToken && sameToken(token, cachedDbToken)) return true;
   try {
     var rpc = await sb.rpc('push_dispatch_token');
@@ -52,6 +51,14 @@ async function isAuthorized(req, sb) {
 }
 
 module.exports = async function handler(req, res) {
+  // #TASK-ES-252: 호출자 인증 우선 검사 (인증 토큰 부재 시 즉시 401 Fail-Closed 차단)
+  var authHeader = (req && req.headers && (req.headers.authorization || req.headers.Authorization)) || '';
+  var token = authHeader.indexOf('Bearer ') === 0 ? authHeader.slice(7) : '';
+  if (!token) {
+    res.status(401).json({ error: 'unauthorized: missing bearer token' });
+    return;
+  }
+
   var supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   var vapidPublic = process.env.VAPID_PUBLIC_KEY;
   var vapidPrivate = process.env.VAPID_PRIVATE_KEY;
@@ -61,6 +68,12 @@ module.exports = async function handler(req, res) {
   }
 
   var sb = createClient(process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL, supabaseKey);
+
+  // #TASK-ES-252: 모든 발송 분기(인스턴트 및 정기 크론) 진입 전 엄격한 토큰 유효성 검증 강제
+  if (!(await isAuthorized(req, sb))) {
+    res.status(401).json({ error: 'unauthorized' });
+    return;
+  }
 
   // [#TASK-ES-168] 특정 대상 유저 1:1 DM 및 전역 알림 즉시 푸시 발송 분기
   if (req.method === 'POST' && req.body && req.body.targetUserId) {
@@ -108,10 +121,6 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  if (!(await isAuthorized(req, sb))) {
-    res.status(401).json({ error: 'unauthorized' });
-    return;
-  }
   webpush.setVapidDetails(
     'mailto:' + (process.env.VAPID_CONTACT_EMAIL || 'admin@ourgoal.app'),
     vapidPublic,

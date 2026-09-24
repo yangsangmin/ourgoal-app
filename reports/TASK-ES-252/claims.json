@@ -1,0 +1,156 @@
+{
+  "task": "TASK-ES-252",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-252-SECURITY-HARDENING.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "api/track.js 무인증 IDOR 차단 및 JWT Bearer 인증 강제 (sync_records, sync_companions 타인 데이터 접근 차단)"
+    },
+    {
+      "id": "R2",
+      "text": "api/push-subscribe.js 캘린더 iCal 피드 무인증 유출 차단 (HMAC 서명 토큰 검증 및 서명 발급)"
+    },
+    {
+      "id": "R3",
+      "text": "api/push-subscribe.js 푸시 구독 변조 방어 (호출자 소유권 교차 검증)"
+    },
+    {
+      "id": "R4",
+      "text": "api/push-dispatch.js Fail-Closed 전환 (시크릿 누락 시 무조건 401 차단 및 익명 즉각 푸시 방어)"
+    },
+    {
+      "id": "R5",
+      "text": "api/vision-table.js 서버 API Key 대리 남용 차단 (notion_push 시 클라이언트 키 필수화)"
+    },
+    {
+      "id": "R6",
+      "text": "index.html 클라이언트 토큰 연동 및 보안 가시성 (Bearer 토큰 전송, HMAC 캘린더 토큰 연동)"
+    },
+    {
+      "id": "R7",
+      "text": "침투 및 방어 단위 테스트와 회귀 스모크 테스트 무결성"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "api/track.js에 authenticateCaller 헬퍼 및 호출자 검증 로직이 구현되어 있다",
+      "touches": [
+        "api/track.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "api/track.js",
+        "text": "async function authenticateCaller"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "api/push-subscribe.js에 signCalendarUid HMAC 서명 및 verifyCalendarToken 검증 함수가 구현되어 있다",
+      "touches": [
+        "api/push-subscribe.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "api/push-subscribe.js",
+        "text": "function signCalendarUid"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "api/push-subscribe.js에 토큰 제공 시 소유자 교차 검증 로직이 구현되어 있다",
+      "touches": [
+        "api/push-subscribe.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "api/push-subscribe.js",
+        "text": "Token user does not match target userId"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "api/push-dispatch.js에 토큰 누락 시 401 Fail-Closed 차단 로직이 구현되어 있다",
+      "touches": [
+        "api/push-dispatch.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "api/push-dispatch.js",
+        "text": "unauthorized: missing bearer token"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "api/vision-table.js에 apiKey 부재 시 노션 프록시 차단 로직이 구현되어 있다",
+      "touches": [
+        "api/vision-table.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "api/vision-table.js",
+        "text": "Notion API Key(Integration Secret)가 필요합니다."
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html에 getSupabaseAuthToken 헬퍼가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "getSupabaseAuthToken"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/security-audit.test.js에 침투 및 방어 단위 테스트가 구현되어 있다",
+      "touches": [
+        "tests/security-audit.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/security-audit.test.js",
+        "text": "runSecurityTests"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-252 검증 케이스가 추가되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-252] 사용자 계정 및 데이터 관리·보관 5계층 보안 방어선 무결성"
+      }
+    }
+  ]
+}

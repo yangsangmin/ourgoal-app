@@ -1,6 +1,29 @@
 var { createClient } = require('@supabase/supabase-js');
+var crypto = require('crypto');
 
 var DEFAULT_SUPABASE_URL = 'https://dvqosviqbciohcywkzbq.supabase.co';
+var CALENDAR_SECRET = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.CRON_SECRET || 'ourgoal_calendar_sign_key_2026';
+
+function signCalendarUid(uid) {
+  return crypto.createHmac('sha256', CALENDAR_SECRET).update(String(uid)).digest('hex').slice(0, 16);
+}
+
+function verifyCalendarToken(token) {
+  if (!token) return { valid: false, isDemo: false, uid: null };
+  if (token === 'demo') return { valid: true, isDemo: true, uid: null };
+  if (token.indexOf('.') !== -1) {
+    var parts = token.split('.');
+    var uid = parts[0];
+    var sig = parts[1] || '';
+    var expectedSig = signCalendarUid(uid);
+    var bufA = Buffer.from(sig);
+    var bufB = Buffer.from(expectedSig);
+    if (bufA.length > 0 && bufA.length === bufB.length && crypto.timingSafeEqual(bufA, bufB)) {
+      return { valid: true, isDemo: false, uid: uid };
+    }
+  }
+  return { valid: false, isDemo: false, uid: null };
+}
 
 function getSupabase() {
   var url = process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
@@ -15,7 +38,32 @@ module.exports = async function handler(req, res) {
     var parsedUrl = null;
     try { parsedUrl = new URL(req.url, 'http://localhost'); } catch (e) {}
     var qToken = (req.query && req.query.token) || (parsedUrl && parsedUrl.searchParams.get('token')) || '';
-    var isCalendarReq = Boolean(qToken) || (req.url && req.url.indexOf('/calendar') !== -1) || (req.headers && req.headers['accept'] && req.headers['accept'].indexOf('text/calendar') !== -1);
+    var qAction = (req.query && req.query.action) || (parsedUrl && parsedUrl.searchParams.get('action')) || '';
+    var isCalendarReq = Boolean(qToken) || (req.url && req.url.indexOf('/calendar') !== -1) || (req.headers && req.headers['accept'] && req.headers['accept'].indexOf('text/calendar') !== -1) || qAction === 'calendar_token';
+
+    // #TASK-ES-252: 캘린더 전용 HMAC 서명 토큰 발급 엔드포인트
+    if (qAction === 'calendar_token') {
+      var authHeader = (req.headers && (req.headers.authorization || req.headers.Authorization)) || '';
+      var authToken = authHeader.replace(/^Bearer\s+/i, '').trim();
+      var sbAuth = getSupabase();
+      if (!authToken || !sbAuth) {
+        res.status(401).json({ error: 'Missing or invalid authorization token' });
+        return;
+      }
+      try {
+        var { data: uData, error: uErr } = await sbAuth.auth.getUser(authToken);
+        if (uErr || !uData || !uData.user) {
+          res.status(401).json({ error: 'Invalid or expired token' });
+          return;
+        }
+        var signedTok = uData.user.id + '.' + signCalendarUid(uData.user.id);
+        res.status(200).json({ ok: true, token: signedTok });
+        return;
+      } catch (err) {
+        res.status(500).json({ error: err.message || 'Token generation error' });
+        return;
+      }
+    }
 
     if (!isCalendarReq) {
       var key = process.env.VAPID_PUBLIC_KEY;
@@ -46,6 +94,20 @@ module.exports = async function handler(req, res) {
       res.status(400).json({ error: 'userId and subscription are required' });
       return;
     }
+
+    // #TASK-ES-252: 토큰 제공 시 소유자 교차 검증
+    var authHeader = (req.headers && (req.headers.authorization || req.headers.Authorization)) || '';
+    var authToken = authHeader.replace(/^Bearer\s+/i, '').trim();
+    if (authToken && sb) {
+      try {
+        var { data: uData } = await sb.auth.getUser(authToken);
+        if (uData && uData.user && uData.user.id !== userId) {
+          res.status(403).json({ error: 'Forbidden: Token user does not match target userId' });
+          return;
+        }
+      } catch (e) {}
+    }
+
     try {
       var { error } = await sb.from('push_subscriptions').upsert({
         endpoint: subscription.endpoint,
@@ -71,6 +133,23 @@ module.exports = async function handler(req, res) {
       res.status(400).json({ error: 'endpoint is required' });
       return;
     }
+
+    // #TASK-ES-252: 토큰 제공 시 소유자 교차 검증
+    var authHeader = (req.headers && (req.headers.authorization || req.headers.Authorization)) || '';
+    var authToken = authHeader.replace(/^Bearer\s+/i, '').trim();
+    if (authToken && sb) {
+      try {
+        var { data: uData } = await sb.auth.getUser(authToken);
+        if (uData && uData.user) {
+          var { data: subData } = await sb.from('push_subscriptions').select('user_id').eq('endpoint', endpoint).limit(1);
+          if (subData && subData.length > 0 && subData[0].user_id !== uData.user.id) {
+            res.status(403).json({ error: 'Forbidden: Cannot delete push subscription belonging to another user' });
+            return;
+          }
+        }
+      } catch (e) {}
+    }
+
     try {
       var delRes = await sb.from('push_subscriptions').delete().eq('endpoint', endpoint);
       if (delRes.error) throw delRes.error;
@@ -88,12 +167,20 @@ module.exports = async function handler(req, res) {
     var isCalendarReq = Boolean(qToken) || (req.url && req.url.indexOf('/calendar') !== -1) || (req.headers && req.headers['accept'] && req.headers['accept'].indexOf('text/calendar') !== -1);
 
     if (isCalendarReq) {
+      var calAuth = verifyCalendarToken(qToken);
+      if (!calAuth.valid) {
+        res.status(403).json({
+          error: 'Forbidden: Invalid or forged calendar subscription token. Please refresh your calendar link in Settings.'
+        });
+        return;
+      }
+
       try {
         var goals = [];
         var checkins = [];
-        if (sb && qToken && qToken !== 'demo') {
-          var goalsRes = await sb.from('goals').select('*').eq('user_id', qToken);
-          var checkinsRes = await sb.from('checkins').select('*').eq('user_id', qToken).order('start_at', { ascending: false }).limit(200);
+        if (sb && !calAuth.isDemo && calAuth.uid) {
+          var goalsRes = await sb.from('goals').select('*').eq('user_id', calAuth.uid);
+          var checkinsRes = await sb.from('checkins').select('*').eq('user_id', calAuth.uid).order('start_at', { ascending: false }).limit(200);
           goals = goalsRes.data || [];
           checkins = checkinsRes.data || [];
         }
