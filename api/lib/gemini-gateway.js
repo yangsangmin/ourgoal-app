@@ -420,21 +420,27 @@ async function callGeminiGateway(options) {
   }
 }
 
-module.exports = {
-  callGeminiGateway: callGeminiGateway,
-  repairAndParseJson: repairAndParseJson,
-  LocalOntology: LocalOntology,
-  getCircuitStatus: getCircuitStatus,
-  recordCircuitSuccess: recordCircuitSuccess,
-  recordCircuitFailure: recordCircuitFailure,
-  markKeyRateLimited: markKeyRateLimited,
-  OFFICIAL_MODELS: OFFICIAL_MODELS,
-  _resetStateForTests: function() {
-    keyCooldownMap.clear();
-    circuitState.state = 'CLOSED';
-    circuitState.consecutiveFailures = 0;
-    circuitState.lastFailureTime = 0;
-    responseCache.clear();
-    inFlightPromises.clear();
+function handler(req, res) {
+  if (res && typeof res.status === 'function') {
+    return res.status(200).json({ ok: true, service: 'gemini-gateway', status: 'healthy' });
   }
+}
+
+handler.callGeminiGateway = callGeminiGateway;
+handler.repairAndParseJson = repairAndParseJson;
+handler.LocalOntology = LocalOntology;
+handler.getCircuitStatus = getCircuitStatus;
+handler.recordCircuitSuccess = recordCircuitSuccess;
+handler.recordCircuitFailure = recordCircuitFailure;
+handler.markKeyRateLimited = markKeyRateLimited;
+handler.OFFICIAL_MODELS = OFFICIAL_MODELS;
+handler._resetStateForTests = function() {
+  keyCooldownMap.clear();
+  circuitState.state = 'CLOSED';
+  circuitState.consecutiveFailures = 0;
+  circuitState.lastFailureTime = 0;
+  responseCache.clear();
+  inFlightPromises.clear();
 };
+
+module.exports = handler;

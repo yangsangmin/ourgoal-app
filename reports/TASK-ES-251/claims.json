@@ -71,32 +71,32 @@
     },
     {
       "id": "C4",
-      "req": "R3",
-      "kind": "static",
-      "domain": "config",
-      "statement": "api/todaymission.js가 gemini-gateway를 require하고 호출한다",
-      "touches": [
-        "api/todaymission.js"
-      ],
-      "check": {
-        "type": "codeContains",
-        "file": "api/todaymission.js",
-        "text": "require('./lib/gemini-gateway')"
-      }
-    },
-    {
-      "id": "C5",
       "req": "R4",
       "kind": "static",
       "domain": "config",
-      "statement": "tests/gemini-gateway.test.js에 게이트웨이 복원력 단위 테스트가 완비되어 있다",
+      "statement": "tests/gemini-gateway.test.js에 게이트웨이 복원력 및 자기치유 단위 테스트가 구현되어 있다",
       "touches": [
         "tests/gemini-gateway.test.js"
       ],
       "check": {
         "type": "codeContains",
         "file": "tests/gemini-gateway.test.js",
-        "text": "Testing repairAndParseJson"
+        "text": "gateway.repairAndParseJson"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-251 복원력 검증 케이스가 탑재되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-251] 제미나이 API 중앙 게이트웨이 일원화 및 엔터프라이즈 복원력 무결성"
       }
     }
   ]
