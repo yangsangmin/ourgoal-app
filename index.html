@@ -19236,8 +19236,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     } catch(e){ clearTimeout(timer); return localGoalStatusSummary(goal); }
   }
   function refreshGoalStatusSummary(goal, hash){
+    if(!goal || !goal.id) return;
     if(!state.goalStatusPending) state.goalStatusPending = {};
     if(state.goalStatusPending[goal.id]) return;
+    var summaries = (state.profile && state.profile.settings && state.profile.settings.goalStatusSummaries) || {};
+    var existing = summaries[goal.id];
+    if(existing && existing.text && existing.hash === hash) return;
     state.goalStatusPending[goal.id] = true;
     generateGoalStatusSummary(goal).then(async function(text){
       delete state.goalStatusPending[goal.id];
@@ -19258,6 +19262,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         }
         if(snip){
           snip.textContent = text.slice(0, 38) + (text.length > 38 ? '…' : '');
+        }
+      }
+    }).catch(function(){
+      delete state.goalStatusPending[goal.id];
+      if(state.activeGoalId===goal.id && state.activeTab==='goals' && !state.goalEditMode){
+        var badge = document.getElementById('goalStatusBadge');
+        var curSummaries = (state.profile && state.profile.settings && state.profile.settings.goalStatusSummaries) || {};
+        var c = curSummaries[goal.id];
+        if(badge && c && c.text){
+          badge.textContent = '분석완료';
+          badge.style.background = 'rgba(16,185,129,.15)';
+          badge.style.color = '#10b981';
+          badge.style.borderColor = 'rgba(16,185,129,.3)';
         }
       }
     });
@@ -19643,6 +19660,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.applyScheduleUpdate = applyScheduleUpdate;
     window.localGoalStatusSummary = localGoalStatusSummary;
     window.localGoalTemplate = localGoalTemplate;
+    window.computeGoalStatusHash = computeGoalStatusHash;
+    window.refreshGoalStatusSummary = refreshGoalStatusSummary;
   }
 
   /* ============ [#TASK-ES-220] [생각 메모장 91번] 교대근무자 가변형 루틴 프리셋 & 자동 스케줄러 ============ */
@@ -21767,15 +21786,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(!state.profile.settings.goalStatusSummaries) state.profile.settings.goalStatusSummaries = {};
     var goalStatusCache = state.profile.settings.goalStatusSummaries[goal.id];
     var todayKST = getKSTDateKey(nowISO());
-    var goalStatusStale = !goalStatusCache || goalStatusCache.hash !== goalStatusHash || (goalStatusCache.dateKey && goalStatusCache.dateKey !== todayKST);
+    var isPending = !!(state.goalStatusPending && state.goalStatusPending[goal.id]);
+    var hasValidCache = !!(goalStatusCache && goalStatusCache.text);
+    var isDateStale = !!(goalStatusCache && (goalStatusCache.dateKey && goalStatusCache.dateKey !== todayKST));
+    var goalStatusStale = !hasValidCache || goalStatusCache.hash !== goalStatusHash;
     var isStatusExpanded = !!state.goalStatusExpanded;
-    var statusText = goalStatusCache ? escapeHtml(goalStatusCache.text) : (goal.milestones.length ? '기록을 쌓으면 AI가 목표·마일스톤·할 일을 종합해 지금 상태를 요약해드려요.' : '마일스톤을 추가하면 AI가 진행 상황을 요약해드려요.');
+    var statusText = hasValidCache ? escapeHtml(goalStatusCache.text) : (goal.milestones.length ? '기록을 쌓으면 AI가 목표·마일스톤·할 일을 종합해 지금 상태를 요약해드려요.' : '마일스톤을 추가하면 AI가 진행 상황을 요약해드려요.');
 
     var statusBadgeText = '분석완료';
     var statusBadgeBg = 'rgba(16,185,129,.15)';
     var statusBadgeColor = '#10b981';
     var statusBadgeBorder = 'rgba(16,185,129,.3)';
-    var statusSnippet = (goalStatusCache && goalStatusCache.text) ? (escapeHtml(goalStatusCache.text).slice(0, 38) + (goalStatusCache.text.length > 38 ? '…' : '')) : '탭하여 AI 종합현황 보기';
+    var statusSnippet = hasValidCache ? (escapeHtml(goalStatusCache.text).slice(0, 38) + (goalStatusCache.text.length > 38 ? '…' : '')) : '탭하여 현상태 분석 AI 조언 보기';
 
     if(!goal.milestones.length){
       statusBadgeText = '마일스톤 필요';
@@ -21783,12 +21805,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       statusBadgeColor = 'var(--ink-faint)';
       statusBadgeBorder = 'rgba(148,163,184,.25)';
       statusSnippet = '마일스톤을 추가하면 분석을 시작해요';
-    } else if(goalStatusStale){
+    } else if(isPending || (goalStatusStale && !hasValidCache)){
       statusBadgeText = '진행 상황 분석 중…';
       statusBadgeBg = 'rgba(245,158,11,.15)';
       statusBadgeColor = '#f59e0b';
       statusBadgeBorder = 'rgba(245,158,11,.3)';
-      if(!goalStatusCache || !goalStatusCache.text){
+      if(!hasValidCache){
         statusSnippet = '목표·마일스톤 진행상황을 분석하고 있어요';
       }
     }
