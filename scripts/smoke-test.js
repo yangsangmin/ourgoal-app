@@ -7869,7 +7869,7 @@ check('[#TASK-ES-236] AI 목표 어시스턴트 제안된 목표 플랜 확인 �
 });
 
 check('[#TASK-ES-237] 목표탭 상단 5개 서브탭 버튼 중앙 정렬 및 시인성·터치 가독성 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8').replace(/\r\n/g, '\n');
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 그리드 중앙 정렬 선언 확인
@@ -8224,6 +8224,32 @@ check('[#TASK-ES-252] 사용자 계정 및 데이터 관리·보관 5계층 보�
   const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   assert.ok(indexHtml.includes('getSupabaseAuthToken'), 'index.html getSupabaseAuthToken 헬퍼 확인');
   assert.ok(indexHtml.includes('fetchSignedCalendarToken'), 'index.html fetchSignedCalendarToken 확인');
+});
+
+check('[#TASK-ES-253] 일정 체크 토글 및 목표 양방향 연동 UI/UX 완결 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 일정 추가/수정 모달 목표 세부할일 선택 UI/UX 탑재
+  assert.ok(indexHtml.includes('id="calEditLinkedSubtaskField"'), 'calEditLinkedSubtaskField 컨테이너 탑재');
+  assert.ok(indexHtml.includes('id="calEditLinkedSubtask"'), 'calEditLinkedSubtask 셀렉터 탑재');
+  assert.ok(indexHtml.includes('buildSubtaskOptions('), 'buildSubtaskOptions 함수 탑재');
+  assert.ok(indexHtml.includes('linkedTaskId: linkedTaskId || null'), 'linkedTaskId 저장 확인');
+  assert.ok(indexHtml.includes('linkedMsId: linkedMsId || null'), 'linkedMsId 저장 확인');
+
+  // 2. toggleScheduleDone 양방향 연동 및 진행률 갱신
+  assert.ok(indexHtml.includes("awardXP(10, '일정 및 목표 달성')"), '일정 완료 시 +10 EXP 지급 확인');
+  assert.ok(indexHtml.includes("triggerHapticFeedback(12)"), '12ms 햅틱 피드백 탑재 확인');
+  assert.ok(indexHtml.includes("allTasksDone ? 'done' :"), '세부할일 완료 시 마일스톤 자동 완료 로직 확인');
+
+  // 3. 4대 뷰 무조건 원자적 동시 전파
+  assert.ok(indexHtml.includes("if(typeof renderGoalsScreen === 'function') renderGoalsScreen();"), 'renderGoalsScreen 무조건 호출 확인');
+  assert.ok(indexHtml.includes("if(typeof renderHome === 'function') renderHome();"), 'renderHome 호출 확인');
+  assert.ok(indexHtml.includes("if(typeof renderRecordsScreen === 'function') renderRecordsScreen();"), 'renderRecordsScreen 호출 확인');
+
+  // 4. 시각 뱃지 스타일 및 표출 확인
+  assert.ok(uiCss.includes('.sched-goal-badge'), 'ui.css 내 .sched-goal-badge 스타일 선언 확인');
+  assert.ok(indexHtml.includes('span class="sched-goal-badge"'), '캘린더 화면 내 목표 연동 배지 렌더링 확인');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
