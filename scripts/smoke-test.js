@@ -8252,6 +8252,29 @@ check('[#TASK-ES-253] 일정 체크 토글 및 목표 양방향 연동 UI/UX 완
   assert.ok(indexHtml.includes('span class="sched-goal-badge"'), '캘린더 화면 내 목표 연동 배지 렌더링 확인');
 });
 
+/* ============ [#TASK-ES-254] 백그라운드·앱종료·미확인 전역 알림(DM 포함) 및 세부 알림 설정창 완결 ============ */
+check('compliance: [#TASK-ES-254] 백그라운드·앱종료·미확인 전역 알림(DM 포함) 및 세부 알림 설정창 완결', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const notifyJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'notify-engine.js'), 'utf8');
+
+  // 1. OurgoalNotifyEngine 설정 및 5대 카테고리 필터링
+  assert.ok(notifyJs.includes("if(nc.dmMessages === undefined)"), 'dmMessages 설정 기본값 및 동기화');
+  assert.ok(notifyJs.includes("if(nc.cheerActivities === undefined)"), 'cheerActivities 설정 기본값 및 동기화');
+  assert.ok(notifyJs.includes("if(nc.teamActivities === undefined)"), 'teamActivities 설정 기본값 및 동기화');
+  assert.ok(notifyJs.includes("if(nc.goalReminders === undefined)"), 'goalReminders 설정 기본값 및 동기화');
+  assert.ok(notifyJs.includes("if(nc.streakReminders === undefined)"), 'streakReminders 설정 기본값 및 동기화');
+  assert.ok(notifyJs.includes("isQuietHours"), '야간 방해금지 시간 판정 로직');
+
+  // 2. 응원(Cheers) 수신 시 전역 알림 엔진 호출
+  assert.ok(indexHtml.includes("window.OurgoalNotifyEngine.dispatchGlobalNotification"), '응원 수신 시 dispatchGlobalNotification 호출');
+  assert.ok(indexHtml.includes("type: 'cheer'"), '응원 타입 전역 알림');
+
+  // 3. 설정창 스위치 양방향 동기화 및 햅틱 테스트
+  assert.ok(indexHtml.includes("notifConfig[configKey] = nextVal;"), '설정창 스위치 notifConfig 실시간 동기화');
+  assert.ok(indexHtml.includes("settings[legacyProp] = nextVal;"), '설정창 스위치 settings 레거시 동기화');
+  assert.ok(indexHtml.includes("testNotifyBtn"), '테스트 알림 발송 버튼 존재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

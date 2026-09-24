@@ -7277,7 +7277,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           var timeStr = item.createdAt ? (typeof fmtTime === 'function' ? fmtTime(item.createdAt) : new Date(item.createdAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})) : '최근';
 
           return '<div class="notif-center-item" data-notifidx="' + idx + '" data-targettab="' + (item.targetTab || 'home') + '" data-targetdmid="' + (item.targetDmId || '') + '" style="cursor:pointer;padding:12px;border-radius:12px;' + borderStyle + 'display:flex;align-items:flex-start;gap:10px;transition:background 0.15s ease;">' +
-            '<div style="font-size:1.4rem;line-height:1;flex-shrink:0;margin-top:2px;">' + (item.type === 'dm' ? '💬' : (item.type === 'team' ? '👥' : (item.type === 'goal' ? '🎯' : '🔔'))) + '</div>' +
+            '<div style="font-size:1.4rem;line-height:1;flex-shrink:0;margin-top:2px;">' + (item.type === 'dm' ? '💬' : (item.type === 'team' ? '👥' : (item.type === 'cheer' ? '🔥' : (item.type === 'goal' ? '🎯' : '🔔')))) + '</div>' +
             '<div style="flex:1;min-width:0;">' +
               '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">' +
                 '<b style="font-size:.875rem;color:var(--ink);">' + escapeHtml(item.title) + dot + '</b>' +
@@ -14492,8 +14492,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function scheduleCheerDelivery(cheer){
     // 신규 온보딩 체감: 4초 뒤 도착하여 유저에게 환영 메시지 전달
     setTimeout(function(){
-      toast('' + (cheer.message || (cheer.personaName + '님이 첫 체크인을 응원합니다!')), 5000);
-      if('Notification' in window && Notification.permission==='granted'){
+      var msg = cheer.message || (cheer.personaName + '님이 첫 체크인을 응원합니다!');
+      toast('🔥 ' + msg, 5000);
+      if(window.OurgoalNotifyEngine && typeof window.OurgoalNotifyEngine.dispatchGlobalNotification === 'function'){
+        window.OurgoalNotifyEngine.dispatchGlobalNotification({
+          type: 'cheer',
+          title: '🔥 ' + (cheer.personaName ? cheer.personaName + '님의 응원' : '동류의 응원'),
+          body: msg,
+          senderName: cheer.personaName || '동류 러너',
+          targetTab: 'comm',
+          icon: '🔥'
+        });
+      } else if('Notification' in window && Notification.permission==='granted'){
         new Notification('아워골 · ' + cheer.personaName + '님의 응원', { body: cheer.message });
       }
     }, 4000);
@@ -35091,35 +35101,26 @@ wirePromptEncyclopediaEvents(body);
         await saveProfile();
       };
     }
-    var wireNotifSwitch = function(id, prop, label){
+    var wireNotifSwitch = function(id, configKey, legacyProp, label){
       var el = document.getElementById(id);
       if(!el) return;
-      if(id === 'notifDmSwitch'){
-        var dmVal = notifConfig.dmMessages !== false;
-        el.className = 'switch' + (dmVal ? ' on' : '');
-        a11ySwitch(el, dmVal, label);
-        el.onclick = async function(){
-          notifConfig.dmMessages = !dmVal;
-          await saveProfile();
-          renderSettingsScreen();
-          toast(notifConfig.dmMessages ? '1:1 DM 알림을 켰어요' : '1:1 DM 알림을 껐어요');
-        };
-        return;
-      }
-      var val = settings[prop] !== false;
-      el.className = 'switch' + (val ? ' on' : '');
-      a11ySwitch(el, val, label);
+      var currentVal = (notifConfig[configKey] !== false) && (settings[legacyProp] !== false);
+      el.className = 'switch' + (currentVal ? ' on' : '');
+      a11ySwitch(el, currentVal, label);
       el.onclick = async function(){
-        settings[prop] = !val;
+        var nextVal = !currentVal;
+        notifConfig[configKey] = nextVal;
+        settings[legacyProp] = nextVal;
         await saveProfile();
         renderSettingsScreen();
+        toast(label + (nextVal ? '을(를) 켰어요' : '을(를) 껐어요'));
       };
     };
-    wireNotifSwitch('notifDmSwitch', 'notifDm', '1:1 DM 및 메시지 수신 알림');
-    wireNotifSwitch('notifTeamSwitch', 'notifTeamVerify', '팀원 일일 인증 알림');
-    wireNotifSwitch('notifCheersSwitch', 'notifCheers', '응원 및 댓글 알림');
-    wireNotifSwitch('notifDdaySwitch', 'notifDday', '마감 D-day 임박 알림');
-    wireNotifSwitch('notifStreakSwitch', 'notifStreak', '일일 스트릭 유지 리마인더');
+    wireNotifSwitch('notifDmSwitch', 'dmMessages', 'notifDm', '1:1 DM 및 메시지 수신 알림');
+    wireNotifSwitch('notifTeamSwitch', 'teamActivities', 'notifTeamVerify', '팀원 일일 인증 알림');
+    wireNotifSwitch('notifCheersSwitch', 'cheerActivities', 'notifCheers', '응원 및 댓글 알림');
+    wireNotifSwitch('notifDdaySwitch', 'goalReminders', 'notifDday', '마감 D-day 임박 알림');
+    wireNotifSwitch('notifStreakSwitch', 'streakReminders', 'notifStreak', '일일 스트릭 유지 리마인더');
     // 🎨 화면 스타일 (Req 10 - 8대 테마)
     var curTheme = (settings && settings.theme) || localStorage.getItem('ourgoal_current_theme') || 'focus-sanctuary';
     if(curTheme === 'dark') curTheme = 'black';
@@ -35487,6 +35488,7 @@ wirePromptEncyclopediaEvents(body);
     if(state.profile.settings.notify) syncPushSubscription();
   });
   document.getElementById('testNotifyBtn').addEventListener('click', function(){
+    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
     if(window.OurgoalNotifyEngine){
       window.OurgoalNotifyEngine.dispatchGlobalNotification({
         type: 'system',
