@@ -25,7 +25,7 @@
       ctx.resume().catch(function(){});
     }
   }
-  if(typeof window !== 'undefined'){
+  if(typeof window !== 'undefined' && typeof window.addEventListener === 'function'){
     ['click', 'touchstart', 'keydown'].forEach(function(evt){
       window.addEventListener(evt, unlockAudioContext, { once: true, passive: true });
     });
@@ -73,16 +73,28 @@
     var state = global.state || {};
     var settings = (state.profile && state.profile.settings) || {};
     if(!settings.notifications){
-      settings.notifications = {
-        feedbackMode: 'all',
-        privacyLevel: 'detail',
-        dmMessages: true,
-        teamActivities: true,
-        goalReminders: true,
-        bgEnabled: true
-      };
+      settings.notifications = {};
     }
-    return settings.notifications;
+    var nc = settings.notifications;
+    if(nc.feedbackMode === undefined) nc.feedbackMode = 'all';
+    if(nc.privacyLevel === undefined) nc.privacyLevel = 'detail';
+    if(nc.bgEnabled === undefined) nc.bgEnabled = true;
+
+    // 레거시 settings.* 플래그와 notifications.* 플래그 양방향 정합성 보장
+    if(nc.dmMessages === undefined) nc.dmMessages = (settings.notifDm !== undefined ? settings.notifDm : true);
+    if(nc.teamActivities === undefined) nc.teamActivities = (settings.notifTeamVerify !== undefined ? settings.notifTeamVerify : true);
+    if(nc.cheerActivities === undefined) nc.cheerActivities = (settings.notifCheers !== undefined ? settings.notifCheers : true);
+    if(nc.goalReminders === undefined) nc.goalReminders = (settings.notifDday !== undefined ? settings.notifDday : true);
+    if(nc.streakReminders === undefined) nc.streakReminders = (settings.notifStreak !== undefined ? settings.notifStreak : true);
+
+    // 반대 방향 동기화
+    settings.notifDm = nc.dmMessages;
+    settings.notifTeamVerify = nc.teamActivities;
+    settings.notifCheers = nc.cheerActivities;
+    settings.notifDday = nc.goalReminders;
+    settings.notifStreak = nc.streakReminders;
+
+    return nc;
   }
 
   function showFloatingBanner(opts){
@@ -95,7 +107,7 @@
       document.body.appendChild(banner);
     }
 
-    var icon = opts.icon || (opts.type === 'dm' ? '💬' : (opts.type === 'team' ? '👥' : (opts.type === 'goal' ? '🎯' : '🔔')));
+    var icon = opts.icon || (opts.type === 'dm' ? '💬' : (opts.type === 'team' ? '👥' : (opts.type === 'cheer' ? '🔥' : (opts.type === 'goal' ? '🎯' : '🔔'))));
     var title = opts.title || '아워골 알림';
     var body = opts.body || '';
 
@@ -144,24 +156,53 @@
     opts = opts || {};
     var config = getNotifConfig();
 
+    // 1. 유형별 수신 On/Off 필터링
     if(opts.type === 'dm' && config.dmMessages === false) return false;
     if(opts.type === 'team' && config.teamActivities === false) return false;
-    if(opts.type === 'goal' && config.goalReminders === false) return false;
+    if(opts.type === 'cheer' && config.cheerActivities === false) return false;
+    if((opts.type === 'goal' || opts.type === 'calendar') && config.goalReminders === false) return false;
+    if(opts.type === 'streak' && config.streakReminders === false) return false;
 
+    // 2. 야간 방해금지 시간 판정
+    var state = global.state || {};
+    var settings = (state.profile && state.profile.settings) || {};
+    var isQuietHours = false;
+    if(settings.quietHoursEnabled && settings.quietHoursStart && settings.quietHoursEnd){
+      try {
+        var now = new Date();
+        var curMin = now.getHours() * 60 + now.getMinutes();
+        var pStart = settings.quietHoursStart.split(':').map(Number);
+        var pEnd = settings.quietHoursEnd.split(':').map(Number);
+        var startMin = pStart[0] * 60 + (pStart[1] || 0);
+        var endMin = pEnd[0] * 60 + (pEnd[1] || 0);
+        if(startMin <= endMin){
+          isQuietHours = (curMin >= startMin && curMin < endMin);
+        } else {
+          isQuietHours = (curMin >= startMin || curMin < endMin);
+        }
+      } catch(e){}
+    }
+
+    // 3. 프라이버시 수준(상세 vs 간략형 보안 마스킹) 분기
     var displayTitle = opts.title || '아워골 알림';
     var displayBody = opts.body || '';
     if(config.privacyLevel === 'summary'){
       if(opts.type === 'dm'){
         displayBody = (opts.senderName ? opts.senderName + '님의 ' : '') + '새로운 1:1 메시지가 도착했습니다.';
+      } else if(opts.type === 'cheer'){
+        displayBody = (opts.senderName ? opts.senderName + '님이 ' : '') + '새로운 응원을 보냈습니다.';
       } else if(opts.type === 'team'){
-        displayBody = '새로운 팀 목표 소식이 도착했습니다.';
+        displayBody = '새로운 팀 목표 활동 소식이 도착했습니다.';
+      } else if(opts.type === 'goal' || opts.type === 'calendar'){
+        displayBody = '목표 및 일정 마감 리마인더가 도착했습니다.';
+      } else if(opts.type === 'streak'){
+        displayBody = '오늘의 스트릭 실천 리마인더가 도착했습니다.';
       } else {
-        displayBody = '새로운 알림이 도착했습니다.';
+        displayBody = '새로운 아워골 알림이 도착했습니다.';
       }
     }
 
-    var state = global.state || {};
-    var settings = (state.profile && state.profile.settings) || {};
+    // 4. 미확인 알림 큐 적재 (방해금지여도 큐에는 무손실 보존)
     if(!settings.unreadNotifications) settings.unreadNotifications = [];
     settings.unreadNotifications.push({
       id: 'notif_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
@@ -180,7 +221,8 @@
       global.saveLocalSettings(state.profile.id, settings);
     }
 
-    var mode = config.feedbackMode || 'all';
+    // 5. 피드백 재생 (야간 방해금지 시간대에는 무음 강제)
+    var mode = isQuietHours ? 'silent' : (config.feedbackMode || 'all');
     if(mode === 'all' || mode === 'sound'){
       playNotificationSound();
     }
@@ -188,6 +230,7 @@
       vibrate([100, 50, 100]);
     }
 
+    // 6. 포그라운드 플로팅 배너 표출
     showFloatingBanner({
       type: opts.type,
       title: displayTitle,
@@ -197,13 +240,13 @@
       targetDmId: opts.targetDmId
     });
 
-    // 상단바 알림 배지 실시간 동기화 호출
+    // 7. 상단바 알림 배지 실시간 동기화 호출
     if(typeof global.updateTopNotifBadge === 'function'){
       try { global.updateTopNotifBadge(); } catch(e){}
     }
 
     var isBackground = (typeof document !== 'undefined') && document.hidden;
-    if(isBackground && config.bgEnabled !== false && typeof window !== 'undefined'){
+    if(isBackground && config.bgEnabled !== false && !isQuietHours && typeof window !== 'undefined'){
       var notifOpts = {
         body: displayBody,
         icon: opts.iconUrl || '/icons/icon-192.png',
