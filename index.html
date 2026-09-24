@@ -24029,13 +24029,18 @@ wirePromptEncyclopediaEvents(body);
         });
 
         tgEl.querySelectorAll('[data-tgfoldlist]').forEach(function(btn){
-          btn.addEventListener('click', function(){
+          btn.addEventListener('click', async function(){
             var id = btn.dataset.tgfoldlist;
             var list = tgEl.querySelector('[data-tgmslist="'+id+'"]');
             if(!list) return;
             var isHidden = list.style.display === 'none';
             list.style.display = isHidden ? 'block' : 'none';
             btn.textContent = isHidden ? '마일스톤 접기 ▲' : '마일스톤 펼치기 ▼';
+            var p = (state && state.profile) || {};
+            p.settings = p.settings || {};
+            p.settings.unfoldMsList = p.settings.unfoldMsList || {};
+            p.settings.unfoldMsList[id] = isHidden;
+            if(typeof saveProfile === 'function') await saveProfile();
           });
         });
         tgEl.querySelectorAll('[data-tgtoggletasks]').forEach(function(btn){
