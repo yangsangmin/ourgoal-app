@@ -8204,13 +8204,30 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
     (state.profile.settings.customSchedules || []).forEach(function(cs){
       var gTitle = cs.note || '일반 일정';
+      var effGoalId = cs.linkedGoalId || (cs.linkedLevel === 'goal' ? cs.linkedId : null);
+      var effMsId = cs.linkedMsId || (cs.linkedLevel === 'ms' ? cs.linkedId : null);
+      var effTaskId = cs.linkedTaskId || (cs.linkedLevel === 'task' ? cs.linkedId : null);
+      if(!effGoalId && (effTaskId || effMsId)){
+        (state.profile.goals || []).forEach(function(g){
+          (g.milestones || []).forEach(function(m){
+            if(effMsId && String(m.id) === String(effMsId)) effGoalId = g.id;
+            (m.tasks || []).forEach(function(t){
+              if(effTaskId && String(t.id) === String(effTaskId)){
+                effGoalId = g.id;
+                if(!effMsId) effMsId = m.id;
+              }
+            });
+          });
+        });
+      }
       if(cs.linkedGoalTitle) gTitle = cs.linkedGoalTitle;
-      else if(cs.linkedGoalId){
-        var linkedG = (state.profile.goals || []).find(function(g){ return g.id === cs.linkedGoalId; });
+      else if(effGoalId){
+        var linkedG = (state.profile.goals || []).find(function(g){ return String(g.id) === String(effGoalId); });
         if(linkedG) gTitle = linkedG.title;
       }
-      if(cs.date) push(cs.date, {
-        date:cs.date,
+      var schedDate = cs.date || cs.dueDate || cs.startDate;
+      if(schedDate) push(schedDate, {
+        date:schedDate,
         title:cs.title,
         kind:'custom',
         schedId:cs.id,
@@ -8221,10 +8238,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         linkUrl:cs.linkUrl||null,
         isTemplateRecord:!!cs.isTemplateRecord,
         templateTitle:cs.templateTitle||null,
-        linkedGoalId:cs.linkedGoalId||null,
-        linkedGoalTitle:cs.linkedGoalTitle||null,
-        linkedMsId:cs.linkedMsId||null,
-        linkedTaskId:cs.linkedTaskId||null
+        linkedGoalId:effGoalId || null,
+        linkedGoalTitle:cs.linkedGoalTitle || (gTitle !== '일반 일정' ? gTitle : null),
+        linkedMsId:effMsId || null,
+        linkedTaskId:effTaskId || null,
+        linkedId:cs.linkedId || null,
+        linkedLevel:cs.linkedLevel || null,
+        goalId:effGoalId || null,
+        msId:effMsId || null,
+        taskId:effTaskId || null
       });
     });
     // 🗓️ 구글 캘린더 상호 연동 일정 (배지 없이 일반 일정과 동일하게 달력에 통합 표시)
@@ -8382,7 +8404,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       photoBadge +
       shown.map(function(e){
         var pillKind = e.isTemplateRecord ? ' tpl' : (e.kind==='team_goal'?' team':(e.kind==='ms'?' ms':(e.kind==='custom'?' custom':'')));
-        return '<div class="cal-pill'+pillKind+(e.done?' done':'')+'">'+escapeHtml(e.title)+'</div>';
+        var goalPrefix = (e.linkedGoalId || e.linkedGoalTitle) ? '🎯 ' : '';
+        return '<div class="cal-pill'+pillKind+(e.done?' done':'')+'">'+goalPrefix+escapeHtml(e.title)+'</div>';
       }).join('') +
       (more>0 ? '<div class="cal-more">+'+more+'</div>' : '') +
       photoTag +
@@ -8398,59 +8421,125 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     renderCalendarScreen();
   }
 
-  /* ============ [#TASK-ES-151] 일정 체크 완료 토글 및 목표 양방향 동기화 ============ */
+  /* ============ [#TASK-ES-151 & #TASK-ES-253] 일정 체크 완료 토글 및 목표 양방향 동기화 ============ */
   async function toggleScheduleDone(schedId, kind, goalId, msId, taskId){
     var isNowDone = false;
+    var wasLinked = false;
     if(kind === 'custom' && schedId){
       var csList = state.profile.settings.customSchedules || [];
-      var sched = csList.find(function(c){ return String(c.id) === String(schedId); });
+      var sched = csList.find(function(c){
+        return String(c.id) === String(schedId) || String(c.linkedId) === String(schedId) || c.id === ('sched_' + schedId);
+      });
       if(!sched) return;
       sched.done = !sched.done;
       isNowDone = sched.done;
 
-      // 목표/마일스톤/할 일과 양방향 연동 동기화
-      if(sched.linkedTaskId || sched.linkedGoalId){
+      // 연계된 목표/마일스톤/세부할일 식별
+      var effGoalId = sched.linkedGoalId || goalId || (sched.linkedLevel === 'goal' ? sched.linkedId : null);
+      var effMsId = sched.linkedMsId || msId || (sched.linkedLevel === 'ms' ? sched.linkedId : null);
+      var effTaskId = sched.linkedTaskId || taskId || (sched.linkedLevel === 'task' ? sched.linkedId : null);
+
+      if(!effGoalId && (effTaskId || effMsId)){
         (state.profile.goals || []).forEach(function(g){
-          if(sched.linkedGoalId && String(g.id) !== String(sched.linkedGoalId)) return;
           (g.milestones || []).forEach(function(m){
-            if(sched.linkedMsId && String(m.id) !== String(sched.linkedMsId)) return;
+            if(effMsId && String(m.id) === String(effMsId)) effGoalId = g.id;
             (m.tasks || []).forEach(function(t){
-              if((sched.linkedTaskId && String(t.id) === String(sched.linkedTaskId)) || (!sched.linkedTaskId && t.title === sched.title)){
+              if(effTaskId && String(t.id) === String(effTaskId)){
+                effGoalId = g.id;
+                if(!effMsId) effMsId = m.id;
+              }
+            });
+          });
+        });
+      }
+
+      if(!effTaskId && !effMsId && effGoalId){
+        (state.profile.goals || []).forEach(function(g){
+          if(String(g.id) !== String(effGoalId)) return;
+          (g.milestones || []).forEach(function(m){
+            if(m.title === sched.title) effMsId = m.id;
+            (m.tasks || []).forEach(function(t){
+              if(t.title === sched.title){
+                effTaskId = t.id;
+                effMsId = m.id;
+              }
+            });
+          });
+        });
+      }
+
+      // 목표/마일스톤/할 일과 양방향 연동 동기화
+      if(sched.linkedTaskId || sched.linkedGoalId || effTaskId || effMsId || effGoalId){
+        wasLinked = true;
+        (state.profile.goals || []).forEach(function(g){
+          if(effGoalId && String(g.id) !== String(effGoalId)) return;
+          (g.milestones || []).forEach(function(m){
+            if(effMsId && String(m.id) !== String(effMsId)) return;
+            (m.tasks || []).forEach(function(t){
+              if((effTaskId && String(t.id) === String(effTaskId)) || (!effTaskId && !effMsId && t.title === sched.title)){
                 t.done = isNowDone;
               }
             });
-            if(sched.linkedMsId && String(m.id) === String(sched.linkedMsId) && (!m.tasks || !m.tasks.length)){
+            if(m.tasks && m.tasks.length){
+              var allTasksDone = m.tasks.every(function(tk){ return !!tk.done; });
+              m.status = allTasksDone ? 'done' : (m.status === 'done' ? 'todo' : m.status);
+            } else if((effMsId && String(m.id) === String(effMsId)) || (!effTaskId && m.title === sched.title)){
               m.status = isNowDone ? 'done' : 'todo';
             }
           });
         });
+
+        // 동일 목표/할일에 연계된 다른 customSchedules 항목 동기화
+        (state.profile.settings.customSchedules || []).forEach(function(otherCs){
+          if(String(otherCs.id) === String(sched.id)) return;
+          if(effTaskId && (String(otherCs.linkedTaskId) === String(effTaskId) || String(otherCs.linkedId) === String(effTaskId))){
+            otherCs.done = isNowDone;
+          } else if(effMsId && (String(otherCs.linkedMsId) === String(effMsId) || String(otherCs.linkedId) === String(effMsId))){
+            otherCs.done = isNowDone;
+          }
+        });
       }
-    } else if(kind === 'task' && goalId && taskId){
-      var g = (state.profile.goals || []).find(function(x){ return String(x.id) === String(goalId); });
+    } else if(kind === 'task' && (goalId || schedId) && (taskId || msId)){
+      var effGoalId = goalId;
+      var effTaskId = taskId || schedId;
+      var effMsId = msId;
+      var g = (state.profile.goals || []).find(function(x){ return String(x.id) === String(effGoalId); });
       if(g && g.milestones){
         g.milestones.forEach(function(m){
+          if(effMsId && String(m.id) !== String(effMsId)) return;
           (m.tasks || []).forEach(function(t){
-            if(String(t.id) === String(taskId)){
+            if(String(t.id) === String(effTaskId)){
               t.done = !t.done;
               isNowDone = t.done;
+              wasLinked = true;
               (state.profile.settings.customSchedules || []).forEach(function(cs){
-                if(String(cs.linkedTaskId) === String(taskId) || (String(cs.linkedGoalId) === String(goalId) && cs.title === t.title)){
+                if(String(cs.linkedTaskId) === String(effTaskId) || String(cs.linkedId) === String(effTaskId) || (String(cs.linkedGoalId) === String(effGoalId) && cs.title === t.title)){
                   cs.done = isNowDone;
                 }
               });
             }
           });
+          if(m.tasks && m.tasks.length){
+            var allTasksDone = m.tasks.every(function(tk){ return !!tk.done; });
+            m.status = allTasksDone ? 'done' : (m.status === 'done' ? 'todo' : m.status);
+          }
         });
       }
-    } else if(kind === 'ms' && goalId && msId){
-      var g = (state.profile.goals || []).find(function(x){ return String(x.id) === String(goalId); });
+    } else if(kind === 'ms' && (goalId || schedId) && (msId || schedId)){
+      var effGoalId = goalId;
+      var effMsId = msId || schedId;
+      var g = (state.profile.goals || []).find(function(x){ return String(x.id) === String(effGoalId); });
       if(g && g.milestones){
-        var m = g.milestones.find(function(x){ return String(x.id) === String(msId); });
+        var m = g.milestones.find(function(x){ return String(x.id) === String(effMsId); });
         if(m){
           m.status = (m.status === 'done') ? 'todo' : 'done';
           isNowDone = (m.status === 'done');
+          wasLinked = true;
+          (m.tasks || []).forEach(function(t){ t.done = isNowDone; });
           (state.profile.settings.customSchedules || []).forEach(function(cs){
-            if(String(cs.linkedMsId) === String(msId)){ cs.done = isNowDone; }
+            if(String(cs.linkedMsId) === String(effMsId) || String(cs.linkedId) === String(effMsId) || (String(cs.linkedGoalId) === String(effGoalId) && cs.title === m.title)){
+              cs.done = isNowDone;
+            }
           });
         }
       }
@@ -8459,9 +8548,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(g){
         var allDone = g.milestones && g.milestones.length && g.milestones.every(function(m){ return m.status === 'done'; });
         isNowDone = !allDone;
+        wasLinked = true;
         (g.milestones || []).forEach(function(m){
           m.status = isNowDone ? 'done' : 'todo';
           (m.tasks || []).forEach(function(t){ t.done = isNowDone; });
+        });
+        (state.profile.settings.customSchedules || []).forEach(function(cs){
+          if(String(cs.linkedGoalId) === String(g.id) || String(cs.linkedId) === String(g.id)){
+            cs.done = isNowDone;
+          }
         });
       }
     } else if(kind === 'gcal' && (schedId || goalId)){
@@ -8508,8 +8603,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(isNowDone){
       if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
       triggerHaptic(15);
-      awardXP(XP_RULES.taskDone || 5, '일정 완료');
-      toast('일정을 완료했어요! 🎯');
+      awardXP(10, '일정 및 목표 달성');
+      toast(wasLinked ? '일정 및 연계 목표를 달성했어요! 🎯 (+10 EXP)' : '일정을 완료했어요! 🎯 (+10 EXP)');
     } else {
       if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
       triggerHaptic(10);
@@ -8519,10 +8614,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     saveLocalSettings(state.profile.id, state.profile.settings);
     await saveProfile();
     renderCalendarScreen();
+    if(typeof renderGoalsScreen === 'function') renderGoalsScreen();
     if(typeof renderHome === 'function') renderHome();
     if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
     if(typeof renderStatsScreen === 'function') renderStatsScreen();
-    if(state.activeTab === 'goals' && typeof renderGoalsScreen === 'function') renderGoalsScreen();
   }
 
   /* ============ [#TASK-ES-153 & #TASK-ES-155] 캘린더 일자별 배경 사진 지정 모달 ============ */
@@ -8933,7 +9028,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   if(typeof window !== 'undefined'){
     window.openCalendarDayEditHubModal = openCalendarDayEditHubModal;
   }
-  /* ============ 캘린더 수동 일정 편집 모달 (Req 2) ============ */
+  /* ============ 캘린더 수동 일정 편집 모달 (Req 2 & #TASK-ES-253) ============ */
   function openCalendarManualEditModal(selectedDate, eventItem, kind, draft){
     var isNew = !eventItem;
     var selDate = selectedDate || state.calSelectedDate || isoDate(new Date());
@@ -8942,12 +9037,47 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var curDate = draft ? draft.date : (eventItem && eventItem.dueDate ? toDateTimeLocalValue(eventItem.dueDate) : (eventItem && eventItem.date ? toDateTimeLocalValue(eventItem.date) : defaultDateVal));
     var curNote = draft ? draft.note : (eventItem ? (eventItem.note || '') : '');
     var curDone = draft ? !!draft.done : (eventItem ? (eventItem.done || eventItem.status==='done') : false);
-    var curLinkedGoalId = draft ? draft.linkedGoalId : (eventItem ? (eventItem.linkedGoalId || (kind==='goal'?eventItem.id:(kind==='ms'||kind==='task'?eventItem.goalId:null))) : null);
+    var curLinkedGoalId = draft ? draft.linkedGoalId : (eventItem ? (eventItem.linkedGoalId || (eventItem.linkedLevel==='goal'?eventItem.linkedId:(kind==='goal'?eventItem.id:(kind==='ms'||kind==='task'?eventItem.goalId:null)))) : null);
+    var curLinkedMsId = draft ? draft.linkedMsId : (eventItem ? (eventItem.linkedMsId || (eventItem.linkedLevel==='ms'?eventItem.linkedId:(kind==='ms'?eventItem.id:null))) : null);
+    var curLinkedTaskId = draft ? draft.linkedTaskId : (eventItem ? (eventItem.linkedTaskId || (eventItem.linkedLevel==='task'?eventItem.linkedId:(kind==='task'?eventItem.id:null))) : null);
     var curAttachments = draft ? [].concat(draft.attachments || []) : ((eventItem && eventItem.attachments) ? [].concat(eventItem.attachments) : []);
+
+    var goalsList = (state.profile && state.profile.goals) || [];
+    if(!curLinkedGoalId && (curLinkedMsId || curLinkedTaskId)){
+      goalsList.forEach(function(g){
+        (g.milestones || []).forEach(function(m){
+          if(curLinkedMsId && String(m.id) === String(curLinkedMsId)) curLinkedGoalId = g.id;
+          (m.tasks || []).forEach(function(t){
+            if(curLinkedTaskId && String(t.id) === String(curLinkedTaskId)){
+              curLinkedGoalId = g.id;
+              if(!curLinkedMsId) curLinkedMsId = m.id;
+            }
+          });
+        });
+      });
+    }
+
+    function buildSubtaskOptions(gId, selMsId, selTaskId){
+      var opts = '<option value="">-- 목표 전체 연계 (마일스톤/할일 미지정) --</option>';
+      if(!gId) return opts;
+      var g = (goalsList || []).find(function(x){ return String(x.id) === String(gId); });
+      if(!g || !g.milestones || !g.milestones.length) return opts;
+      g.milestones.forEach(function(m){
+        var mVal = 'ms:' + m.id;
+        var isMSel = (!selTaskId && selMsId && String(selMsId) === String(m.id)) ? ' selected' : '';
+        opts += '<option value="' + mVal + '"' + isMSel + '>🏁 [마일스톤] ' + escapeHtml(m.title) + '</option>';
+        (m.tasks || []).forEach(function(t){
+          var tVal = 'task:' + m.id + ':' + t.id;
+          var isTSel = (selTaskId && String(selTaskId) === String(t.id)) ? ' selected' : '';
+          opts += '<option value="' + tVal + '"' + isTSel + '>&nbsp;&nbsp;└ 📌 [할일] ' + escapeHtml(t.title) + '</option>';
+        });
+      });
+      return opts;
+    }
+
     // [#TASK-ES-180], [65] 일정 사전 알림 설정 (기본 10분 전)
     var curNotifyEnabled = draft ? !!draft.notifyEnabled : (eventItem ? !!eventItem.notifyEnabled : false);
     var curNotifyMinutes = draft ? (typeof draft.notifyMinutes === 'number' ? draft.notifyMinutes : 10) : (eventItem && typeof eventItem.notifyMinutes === 'number' ? eventItem.notifyMinutes : 10);
-    var goalsList = (state.profile && state.profile.goals) || [];
     var goalSelectOptions = '<option value="">-- 목표 미연계 (일반 일정) --</option>' +
       goalsList.map(function(g){
         var isSel = (curLinkedGoalId === g.id) ? ' selected' : '';
@@ -8971,6 +9101,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '<label>연계할 목표 (선택)</label>' +
         '<select id="calEditLinkedGoal" style="width:100%;">' +
           goalSelectOptions +
+        '</select>' +
+      '</div>' +
+      '<div class="field" id="calEditLinkedSubtaskField" style="display:' + (curLinkedGoalId ? 'block' : 'none') + ';margin-top:8px;">' +
+        '<label style="display:flex;align-items:center;justify-content:space-between;">' +
+          '<span>연계할 마일스톤 / 세부할일</span>' +
+          '<span style="font-size:0.75rem;color:var(--brand);font-weight:600;">실시간 자동 체크 연동 ⚡</span>' +
+        '</label>' +
+        '<select id="calEditLinkedSubtask" style="width:100%;">' +
+          buildSubtaskOptions(curLinkedGoalId, curLinkedMsId, curLinkedTaskId) +
         '</select>' +
       '</div>' +
       '<div class="field">' +
@@ -9011,6 +9150,59 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             openCalendarDayEditHubModal(selDate);
           };
         }
+        var goalSel = sheet.querySelector('#calEditLinkedGoal');
+        var subtaskField = sheet.querySelector('#calEditLinkedSubtaskField');
+        var subtaskSel = sheet.querySelector('#calEditLinkedSubtask');
+        var titleInp = sheet.querySelector('#calEditTitle');
+
+        if(goalSel){
+          goalSel.onchange = function(){
+            var gid = goalSel.value;
+            if(gid){
+              if(subtaskField) subtaskField.style.display = 'block';
+              if(subtaskSel) subtaskSel.innerHTML = buildSubtaskOptions(gid, null, null);
+            } else {
+              if(subtaskField) subtaskField.style.display = 'none';
+              if(subtaskSel) subtaskSel.innerHTML = '<option value="">-- 목표 전체 연계 (마일스톤/할일 미지정) --</option>';
+            }
+          };
+        }
+
+        if(subtaskSel){
+          subtaskSel.onchange = function(){
+            var val = subtaskSel.value;
+            if(val && titleInp && (!titleInp.value.trim() || titleInp.dataset.autofilled === '1')){
+              var gid = goalSel ? goalSel.value : null;
+              var g = (goalsList || []).find(function(x){ return String(x.id) === String(gid); });
+              if(g){
+                if(val.startsWith('task:')){
+                  var parts = val.split(':');
+                  var m = (g.milestones || []).find(function(x){ return String(x.id) === String(parts[1]); });
+                  if(m){
+                    var t = (m.tasks || []).find(function(x){ return String(x.id) === String(parts[2]); });
+                    if(t){
+                      titleInp.value = t.title;
+                      titleInp.dataset.autofilled = '1';
+                    }
+                  }
+                } else if(val.startsWith('ms:')){
+                  var parts = val.split(':');
+                  var m = (g.milestones || []).find(function(x){ return String(x.id) === String(parts[1]); });
+                  if(m){
+                    titleInp.value = m.title;
+                    titleInp.dataset.autofilled = '1';
+                  }
+                }
+              }
+            }
+          };
+        }
+        if(titleInp){
+          titleInp.oninput = function(){
+            delete titleInp.dataset.autofilled;
+          };
+        }
+
         var doneSw = sheet.querySelector('#calEditDoneSwitch');
         var isDone = curDone;
         if(doneSw){
@@ -9036,8 +9228,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           var wireAtts = function(){
             window.OurgoalCalendarAttachment.wireEditModalAttachments(sheet, function(){
               var curG = sheet.querySelector('#calEditLinkedGoal') ? sheet.querySelector('#calEditLinkedGoal').value : curLinkedGoalId;
+              var curSub = sheet.querySelector('#calEditLinkedSubtask') ? sheet.querySelector('#calEditLinkedSubtask').value : '';
+              var curM = null;
+              var curT = null;
+              if(curSub.startsWith('task:')){
+                var p = curSub.split(':');
+                curM = p[1]; curT = p[2];
+              } else if(curSub.startsWith('ms:')){
+                curM = curSub.split(':')[1];
+              }
               var nMin = parseInt((sheet.querySelector('#calEditNotifyOffset') || {}).value, 10);
-              return { title: (sheet.querySelector('#calEditTitle').value || '').trim(), date: sheet.querySelector('#calEditDate').value, note: (sheet.querySelector('#calEditNote').value || '').trim(), done: isDone, linkedGoalId: curG, attachments: curAttachments, notifyEnabled: isNotifyOn, notifyMinutes: isNaN(nMin) ? 10 : nMin };
+              return { title: (sheet.querySelector('#calEditTitle').value || '').trim(), date: sheet.querySelector('#calEditDate').value, note: (sheet.querySelector('#calEditNote').value || '').trim(), done: isDone, linkedGoalId: curG, linkedMsId: curM, linkedTaskId: curT, attachments: curAttachments, notifyEnabled: isNotifyOn, notifyMinutes: isNaN(nMin) ? 10 : nMin };
             }, function(updatedAtts, ctx){
               /* 참고자료 첨부/조회 모달이 단일 #modalSheet를 재사용해 이 화면을 덮어쓰므로,
                  패치가 아니라 입력값(ctx)을 보존한 채로 이 모달을 다시 완전히 열어야 한다. */
@@ -9049,6 +9250,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                   note: ctx && ctx.note !== undefined ? ctx.note : curNote,
                   done: ctx && ctx.done !== undefined ? ctx.done : isDone,
                   linkedGoalId: ctx && ctx.linkedGoalId !== undefined ? ctx.linkedGoalId : curLinkedGoalId,
+                  linkedMsId: ctx && ctx.linkedMsId !== undefined ? ctx.linkedMsId : curLinkedMsId,
+                  linkedTaskId: ctx && ctx.linkedTaskId !== undefined ? ctx.linkedTaskId : curLinkedTaskId,
                   attachments: updatedAtts,
                   notifyEnabled: ctx && ctx.notifyEnabled !== undefined ? ctx.notifyEnabled : isNotifyOn,
                   notifyMinutes: ctx && ctx.notifyMinutes !== undefined ? ctx.notifyMinutes : curNotifyMinutes
@@ -9068,6 +9271,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               eventItem.dueDate = null;
               await saveProfile();
               renderCalendarScreen();
+              if(typeof renderGoalsScreen === 'function') renderGoalsScreen();
               if(typeof renderHome === 'function') renderHome();
               if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
               if(typeof renderStatsScreen === 'function') renderStatsScreen();
@@ -9075,6 +9279,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               eventItem.dueDate = null;
               await saveProfile();
               renderCalendarScreen();
+              if(typeof renderGoalsScreen === 'function') renderGoalsScreen();
               if(typeof renderHome === 'function') renderHome();
               if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
               if(typeof renderStatsScreen === 'function') renderStatsScreen();
@@ -9083,6 +9288,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               try { localStorage.setItem('ourgoal_gcal_events', JSON.stringify(state.gcalEventsCache)); } catch(e){}
               toast('구글 일정을 캘린더에서 제거했어요');
               renderCalendarScreen();
+              if(typeof renderGoalsScreen === 'function') renderGoalsScreen();
               if(typeof renderHome === 'function') renderHome();
               if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
               if(typeof renderStatsScreen === 'function') renderStatsScreen();
@@ -9097,16 +9303,68 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           var goalSelEl = sheet.querySelector('#calEditLinkedGoal');
           var linkedGoalId = goalSelEl ? goalSelEl.value : null;
           var linkedGoalTitle = null;
+          var linkedMsId = null;
+          var linkedTaskId = null;
+          var linkedTaskTitle = null;
+          var linkedLevel = null;
+          var linkedId = null;
+
           if(linkedGoalId){
-            var matchedGoal = (state.profile.goals || []).find(function(g){ return g.id === linkedGoalId; });
-            if(matchedGoal) linkedGoalTitle = matchedGoal.title;
+            var matchedGoal = (state.profile.goals || []).find(function(g){ return String(g.id) === String(linkedGoalId); });
+            if(matchedGoal){
+              linkedGoalTitle = matchedGoal.title;
+              linkedLevel = 'goal';
+              linkedId = linkedGoalId;
+              var subtaskSelEl = sheet.querySelector('#calEditLinkedSubtask');
+              var subVal = subtaskSelEl ? subtaskSelEl.value : '';
+              if(subVal && subVal.startsWith('task:')){
+                var parts = subVal.split(':');
+                linkedMsId = parts[1];
+                linkedTaskId = parts[2];
+                linkedLevel = 'task';
+                linkedId = linkedTaskId;
+                var foundMs = (matchedGoal.milestones || []).find(function(m){ return String(m.id) === String(linkedMsId); });
+                if(foundMs){
+                  var foundTask = (foundMs.tasks || []).find(function(t){ return String(t.id) === String(linkedTaskId); });
+                  if(foundTask) linkedTaskTitle = foundTask.title;
+                }
+              } else if(subVal && subVal.startsWith('ms:')){
+                var parts = subVal.split(':');
+                linkedMsId = parts[1];
+                linkedLevel = 'ms';
+                linkedId = linkedMsId;
+              }
+            }
           }
+
           if(!title){ toast('일정 제목을 입력해주세요'); return; }
           if(!dtVal){ toast('날짜를 입력해주세요'); return; }
           var notifyOffsetEl = sheet.querySelector('#calEditNotifyOffset');
           var notifyMinutesVal = notifyOffsetEl ? parseInt(notifyOffsetEl.value, 10) : 10;
           if(isNaN(notifyMinutesVal)) notifyMinutesVal = 10;
           if(!state.profile.settings.customSchedules) state.profile.settings.customSchedules = [];
+
+          // 연계된 목표/마일스톤/할일 상태 동기화
+          if(linkedGoalId && (linkedTaskId || linkedMsId)){
+            (state.profile.goals || []).forEach(function(g){
+              if(String(g.id) !== String(linkedGoalId)) return;
+              (g.milestones || []).forEach(function(m){
+                if(linkedMsId && String(m.id) !== String(linkedMsId)) return;
+                (m.tasks || []).forEach(function(t){
+                  if(linkedTaskId && String(t.id) === String(linkedTaskId)){
+                    t.done = isDone;
+                  }
+                });
+                if(m.tasks && m.tasks.length){
+                  var allTkDone = m.tasks.every(function(tk){ return !!tk.done; });
+                  m.status = allTkDone ? 'done' : (m.status === 'done' ? 'todo' : m.status);
+                } else if(linkedMsId && String(m.id) === String(linkedMsId)){
+                  m.status = isDone ? 'done' : 'todo';
+                }
+              });
+            });
+          }
+
           if(isNew){
             state.profile.settings.customSchedules.push({
               id: uid('sched'),
@@ -9118,6 +9376,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               notifyMinutes: notifyMinutesVal,
               linkedGoalId: linkedGoalId || null,
               linkedGoalTitle: linkedGoalTitle || null,
+              linkedMsId: linkedMsId || null,
+              linkedTaskId: linkedTaskId || null,
+              linkedTaskTitle: linkedTaskTitle || null,
+              linkedLevel: linkedLevel || null,
+              linkedId: linkedId || null,
               attachments: curAttachments,
               createdAt: nowISO()
             });
@@ -9133,6 +9396,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                 eventItem.notifyMinutes = notifyMinutesVal;
                 eventItem.linkedGoalId = linkedGoalId || null;
                 eventItem.linkedGoalTitle = linkedGoalTitle || null;
+                eventItem.linkedMsId = linkedMsId || null;
+                eventItem.linkedTaskId = linkedTaskId || null;
+                eventItem.linkedTaskTitle = linkedTaskTitle || null;
+                eventItem.linkedLevel = linkedLevel || null;
+                eventItem.linkedId = linkedId || null;
                 eventItem.attachments = curAttachments;
               }
               var targetSchedId = (eventItem && typeof eventItem === 'object') ? (eventItem.id || eventItem.schedId) : eventItem;
@@ -9148,6 +9416,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                 rawSched.notifyMinutes = notifyMinutesVal;
                 rawSched.linkedGoalId = linkedGoalId || null;
                 rawSched.linkedGoalTitle = linkedGoalTitle || null;
+                rawSched.linkedMsId = linkedMsId || null;
+                rawSched.linkedTaskId = linkedTaskId || null;
+                rawSched.linkedTaskTitle = linkedTaskTitle || null;
+                rawSched.linkedLevel = linkedLevel || null;
+                rawSched.linkedId = linkedId || null;
                 rawSched.attachments = curAttachments;
               }
             } else if(kind==='gcal'){
@@ -9193,6 +9466,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           saveLocalSettings(state.profile.id, state.profile.settings);
           await saveProfile();
           renderCalendarScreen();
+          if(typeof renderGoalsScreen === 'function') renderGoalsScreen();
           if(typeof renderHome === 'function') renderHome();
           if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
           if(typeof renderStatsScreen === 'function') renderStatsScreen();
@@ -9610,12 +9884,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           var mRec = (e.title || '').match(/#record[=:](\w+)/);
           var targetRecId = e.recordId || (mRec ? mRec[1] : null);
           var tplLinkChip = targetRecId ? ('<button class="dday-pill" data-calviewrec="'+targetRecId+'" type="button" style="cursor:pointer;background:var(--surface-2);color:var(--ink);border:1px solid var(--rule);font-size:.8125rem;padding:2px 6px;margin-left:4px;">기록 보기</button>') : '';
+          var goalBadge = (e.linkedGoalTitle || (e.goalTitle && e.goalTitle !== '일반 일정' && e.goalTitle !== '구글 캘린더')) ? ('<span class="sched-goal-badge" style="font-size:.72rem;padding:1px 6px;">🎯 '+escapeHtml(e.linkedGoalTitle || e.goalTitle)+'</span>') : '';
           return '<div class="ms-row toss-timeline-card" style="padding:10px 12px;border-radius:14px;background:var(--card);border:1px solid var(--rule);margin-bottom:0;" '+(e.goalId?'data-calgoto="'+e.goalId+'"':'')+(targetRecId?' data-calrecid="'+targetRecId+'" style="cursor:pointer;"':'')+'>' +
             '<div class="ms-main" style="align-items:flex-start;gap:8px;">' +
               '<div class="sched-check'+(e.done?' done':'')+'" data-detailtogglesched="'+e.kind+':'+(e.schedId||e.goalId||e.gcalId||'')+':'+(e.msId||'')+':'+(e.taskId||'')+'" style="cursor:pointer;flex:0 0 auto;margin-top:2px;width:22px;height:22px;border-radius:7px;" title="'+(e.done?'미완료로 변경':'완료로 변경')+'">'+(e.done?'✓':'')+'</div>' +
               '<div style="flex:1;min-width:0;">' +
                 '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
                   '<span class="ms-title'+(e.done?' done-text':'')+'" style="font-size:.9rem;font-weight:700;">'+escapeHtml(e.title)+'</span>' +
+                  goalBadge +
                   timeLabel +
                   tplLinkChip +
                 '</div>' +
@@ -19331,16 +19607,25 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         id: 'sched_' + targetId,
         linkedId: targetId,
         linkedLevel: level,
+        linkedGoalId: gid,
+        linkedGoalTitle: goal.title,
+        linkedMsId: (level === 'ms' || level === 'task') ? msId : null,
+        linkedTaskId: (level === 'task') ? tid : null,
+        linkedTaskTitle: (level === 'task') ? targetTitle : null,
         title: targetTitle,
         startDate: startISO || endISO,
         dueDate: endISO,
+        date: endISO,
         category: goal.topic || '일정',
         createdAt: new Date().toISOString()
       });
     }
     await saveProfile();
     renderGoalsScreen();
-    if(state.activeTab === 'calendar') renderCalendarScreen();
+    renderCalendarScreen();
+    if(typeof renderHome === 'function') renderHome();
+    if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
+    if(typeof renderStatsScreen === 'function') renderStatsScreen();
   }
   if(typeof window !== 'undefined'){
     window.formatSchedulePillHtml = formatSchedulePillHtml;
@@ -21897,7 +22182,7 @@ wirePromptEncyclopediaEvents(body);
 
     wireAttachmentChipClicks(body);
 
-    /* [#TASK-ES-151] 개인 목표 태스크 완료 토글 및 캘린더 일정 양방향 동기화 */
+    /* [#TASK-ES-151 & #TASK-ES-253] 개인 목표 태스크 완료 토글 및 캘린더 일정 양방향 동기화 */
     body.querySelectorAll('[data-taskcheck]').forEach(function(chk){
       chk.addEventListener('click', async function(ev){
         ev.stopPropagation();
@@ -21906,36 +22191,50 @@ wirePromptEncyclopediaEvents(body);
         var tid = rowEl.dataset.taskid;
         var mid = rowEl.dataset.msid;
         var targetTask = null;
+        var targetMilestone = null;
         var targetGoal = goal;
         (goal.milestones || []).forEach(function(m){
           if(!mid || m.id === mid){
             (m.tasks || []).forEach(function(t){
-              if(t.id === tid){ targetTask = t; }
+              if(t.id === tid){
+                targetTask = t;
+                targetMilestone = m;
+              }
             });
           }
         });
         if(!targetTask) return;
         targetTask.done = !targetTask.done;
         var isNowDone = targetTask.done;
+
+        // 마일스톤 상태 자동 전진/후퇴
+        if(targetMilestone && targetMilestone.tasks && targetMilestone.tasks.length){
+          var allTasksDone = targetMilestone.tasks.every(function(tk){ return !!tk.done; });
+          targetMilestone.status = allTasksDone ? 'done' : (targetMilestone.status === 'done' ? 'todo' : targetMilestone.status);
+        }
+
         if(isNowDone){
           if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
           triggerHaptic(15);
-          awardXP(XP_RULES.taskDone || 5, '할 일 완료');
-          toast('할 일을 완료했어요! 🎯');
+          awardXP(10, '할 일 및 연계 일정 완료');
+          toast('할 일 및 연계 일정을 완료했어요! 🎯 (+10 EXP)');
         } else {
           if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
           triggerHaptic(10);
           toast('할 일을 미완료로 변경했어요');
         }
         (state.profile.settings.customSchedules || []).forEach(function(cs){
-          if(cs.linkedTaskId === targetTask.id || (cs.linkedGoalId === targetGoal.id && cs.title === targetTask.title)){
+          if(cs.linkedTaskId === targetTask.id || cs.linkedId === targetTask.id || (cs.linkedGoalId === targetGoal.id && cs.title === targetTask.title)){
             cs.done = isNowDone;
           }
         });
         saveLocalSettings(state.profile.id, state.profile.settings);
         await saveProfile();
         renderGoalsScreen();
-        if(state.activeTab === 'calendar') renderCalendarScreen();
+        renderCalendarScreen();
+        if(typeof renderHome === 'function') renderHome();
+        if(typeof renderRecordsScreen === 'function') renderRecordsScreen();
+        if(typeof renderStatsScreen === 'function') renderStatsScreen();
       });
     });
 

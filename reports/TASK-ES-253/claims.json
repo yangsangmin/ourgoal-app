@@ -1,0 +1,171 @@
+{
+  "task": "TASK-ES-253",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-253-SCHEDULE-GOAL-SYNC.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "일정 추가/수정 모달 내 목표 하위 마일스톤 및 세부할일 동적 선택 UI/UX 탑재"
+    },
+    {
+      "id": "R2",
+      "text": "일정 데이터 저장 시 linkedGoalId, linkedGoalTitle, linkedMsId, linkedTaskId, linkedTaskTitle 외래키 영속화"
+    },
+    {
+      "id": "R3",
+      "text": "toggleScheduleDone 일정 완료 토글 시 연계된 목표의 세부할일(t.done) 및 마일스톤(m.status) 실시간 동기화"
+    },
+    {
+      "id": "R4",
+      "text": "일정 완료 시 12ms 햅틱(triggerHapticFeedback(12)) 및 +10 EXP 지급(awardXP(10, ...))"
+    },
+    {
+      "id": "R5",
+      "text": "일정 토글 시 헌법 제15조 제6항 4대 뷰(renderCalendarScreen, renderGoalsScreen, renderHome, renderRecordsScreen) 무조건 원자적 동시 전파"
+    },
+    {
+      "id": "R6",
+      "text": "목표 탭 세부할일 체크([data-taskcheck]) 시 연계된 캘린더 일정(customSchedules) 역방향 동기화 및 4대 뷰 전파"
+    },
+    {
+      "id": "R7",
+      "text": "캘린더 뷰 내 목표 연계 일정 🎯 [목표명] 뱃지 표출 및 단위/스모크 테스트 100% 무결성"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 일정 모달에 calEditLinkedSubtaskField 및 calEditLinkedSubtask 동적 셀렉터가 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"calEditLinkedSubtaskField\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 일정 저장 시 linkedTaskId 외래키 필드가 정규화되어 영속화된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "linkedTaskId: linkedTaskId || null"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 toggleScheduleDone에 세부할일 완료 시 마일스톤 자동 상태 전진 로직이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "allTasksDone ? 'done' :"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 일정 완료 시 +10 EXP 지급 로직이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "awardXP(10, '일정 및 목표 달성')"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 toggleScheduleDone에서 renderGoalsScreen이 무조건 호출되어 4대 뷰 원자적 전파가 보장된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "if(typeof renderGoalsScreen === 'function') renderGoalsScreen();"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 renderGoalsScreen [data-taskcheck]에서 연계된 customSchedules 일정 상태를 역방향 동기화한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "cs.linkedTaskId === targetTask.id || cs.linkedId === targetTask.id"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 목표 연동 일정 시각 뱃지(.sched-goal-badge) 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".sched-goal-badge"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/schedule-goal-sync.test.js에 양방향 동기화 및 4대 뷰 전파 단위 테스트가 완비되어 있다",
+      "touches": [
+        "tests/schedule-goal-sync.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/schedule-goal-sync.test.js",
+        "text": "simulateToggleSchedule"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js에 TASK-ES-253 검증 케이스가 탑재되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-253] 일정 체크 토글 및 목표 양방향 연동 UI/UX 완결 무결성"
+      }
+    }
+  ]
+}
