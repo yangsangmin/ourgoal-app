@@ -1,0 +1,14 @@
+{
+  "id": "goals-subtabs-touch",
+  "title": "목표 탭 상단 서브탭 5종이 모바일 터치 타겟 44px 이상을 만족한다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "expect": "visible", "selector": "#goalsSubtabs .comm-subtab" },
+    { "expect": "rect", "selector": "#goalsSubtabs .comm-subtab", "minHeight": 44 },
+    { "capture": "goals-subtabs-minheight" }
+  ]
+}

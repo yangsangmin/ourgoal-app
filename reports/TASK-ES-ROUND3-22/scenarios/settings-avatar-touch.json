@@ -1,0 +1,14 @@
+{
+  "id": "settings-avatar-touch",
+  "title": "설정 탭 빠른 아바타 설정 버튼이 모바일 터치 타겟 44px 이상을 만족한다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "expect": "visible", "selector": "#btnSettingsQuickAvatar" },
+    { "expect": "rect", "selector": "#btnSettingsQuickAvatar", "minHeight": 44 },
+    { "capture": "settings-avatar-minheight" }
+  ]
+}

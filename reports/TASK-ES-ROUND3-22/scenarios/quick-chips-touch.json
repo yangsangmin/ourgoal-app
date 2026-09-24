@@ -1,0 +1,13 @@
+{
+  "id": "quick-chips-touch",
+  "title": "홈 탭 3초 체크인 가이드 칩이 최소 36px 이상의 터치 타겟을 만족한다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal" },
+    { "expect": "visible", "selector": ".cunning-chips-wrap .btn-quick-chip" },
+    { "expect": "rect", "selector": ".cunning-chips-wrap .btn-quick-chip", "minHeight": 36 },
+    { "capture": "quick-chips-minheight" }
+  ]
+}

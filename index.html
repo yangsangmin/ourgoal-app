@@ -3647,8 +3647,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     var chips = [];
     if(goals.length > 0){
-      goals.slice(0, 2).forEach(function(g){
-        var snippet = g.title.slice(0, 14);
+      goals.slice(0, 5).forEach(function(g){
+        var snippet = g.title.slice(0, 18);
         var icon = g.icon || '🎯';
         chips.push({
           label: icon + ' ' + snippet,
@@ -3656,7 +3656,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         });
       });
     }
-    // 기본 영감 칩 폴백 (최대 2개 유지)
+    // 기본 영감 칩 폴백 (최소 2개 유지)
     if(chips.length < 2){
       var fallbacks = [
         { label: '👟 러닝/운동 실천', text: '👟 30분 유산소 운동 완주! 땀 흘리며 스트레스 해소 완료 🔥' },
@@ -3674,9 +3674,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '</span>' +
         '<span style="font-size:0.7rem;color:var(--ink-soft);font-weight:500;">(탭하면 가이드 예시 힌트 설정 ⚡)</span>' +
       '</div>' +
-      '<div class="cunning-chips-wrap" style="display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;">' +
-      chips.slice(0, 2).map(function(c){
-        return '<button type="button" class="btn-quick-chip" data-cunningtext="'+escapeHtml(c.text)+'" style="font-size:0.75rem;padding:5px 12px;border-radius:18px;background:rgba(49,130,246,0.08);border:1px solid rgba(49,130,246,0.22);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-weight:600;white-space:nowrap;max-width:calc(50% - 4px);overflow:hidden;text-overflow:ellipsis;flex-shrink:0;transition:all .15s ease;">' +
+      '<div class="cunning-chips-wrap" style="display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;scrollbar-width:none;">' +
+      chips.map(function(c){
+        return '<button type="button" class="btn-quick-chip" data-cunningtext="'+escapeHtml(c.text)+'" style="font-size:0.78rem;padding:6px 14px;min-height:36px;border-radius:18px;background:rgba(49,130,246,0.08);border:1px solid rgba(49,130,246,0.22);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-weight:600;white-space:nowrap;flex-shrink:0;transition:all .15s ease;">' +
           escapeHtml(c.label) +
         '</button>';
       }).join('') +
@@ -3976,7 +3976,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(!document.body || document.getElementById('inAppBrowserNotice')) return;
       var nDiv = document.createElement('div');
       nDiv.id = 'inAppBrowserNotice'; /* id="inAppBrowserNotice" */
-      nDiv.style.cssText = 'position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;z-index:100000;background:#10b981;background:linear-gradient(135deg, #059669 0%, #10b981 100%);color:#ffffff;padding:10px 14px;font-size:0.8125rem;text-align:center;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:8px;box-shadow:0 4px 14px rgba(16,185,129,0.35);border-bottom:1px solid rgba(255,255,255,0.25);box-sizing:border-box;backdrop-filter:blur(8px);';
+      nDiv.style.cssText = 'position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;z-index:999999;background:#10b981;background:linear-gradient(135deg, #059669 0%, #10b981 100%);color:#ffffff;padding:max(10px, env(safe-area-inset-top, 0px)) 14px 10px 14px;font-size:0.8125rem;text-align:center;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:8px;box-shadow:0 4px 14px rgba(16,185,129,0.35);border-bottom:1px solid rgba(255,255,255,0.25);box-sizing:border-box;backdrop-filter:blur(8px);';
       nDiv.innerHTML = '' +
         '<div style="display:flex;align-items:center;gap:8px;flex:1;text-align:left;min-width:0;">' +
           '<span style="font-size:1.15rem;flex-shrink:0;">⚡</span>' +
@@ -4043,6 +4043,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     landGuestBtn.addEventListener('click', function(){
       var guestId = 'guest-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
       state.profile = defaultProfile(guestId, guestId, '게스트');
+      state.profile.isGuest = true;
       try { localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile)); } catch(e){}
       document.getElementById('landingScreen').style.display = 'none';
       document.getElementById('authScreen').style.display = 'none';
@@ -29127,6 +29128,13 @@ wirePromptEncyclopediaEvents(body);
 
   function renderRecordsScreen(){
     if(!state) state = {};
+    if(!state.profile){
+      if(typeof defaultProfile === 'function'){
+        state.profile = defaultProfile('guest', 'guest', '게스트');
+      } else {
+        state.profile = { id: 'guest', username: 'guest', displayName: '게스트', records: [], goals: [], settings: {} };
+      }
+    }
     if(typeof ensureProfileDataStructure === 'function'){
       ensureProfileDataStructure();
     } else {

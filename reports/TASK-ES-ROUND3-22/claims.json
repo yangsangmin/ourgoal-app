@@ -1,0 +1,94 @@
+{
+  "task": "TASK-ES-ROUND3-22",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-ROUND3-22-MOBILE-INTEGRITY.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "홈 탭 3초 체크인 가이드 칩이 최소 36px 이상의 터치 타겟을 확보해야 한다"
+    },
+    {
+      "id": "R2",
+      "text": "목표 탭 상단 서브탭 5종이 모바일 터치 타겟 44px 이상을 확보해야 한다"
+    },
+    {
+      "id": "R3",
+      "text": "설정 탭 빠른 아바타 설정 버튼이 모바일 터치 타겟 44px 이상을 확보해야 한다"
+    },
+    {
+      "id": "R4",
+      "text": "소통 탭 실시간 러닝메이트 레이더 카드가 기본 접힘 상태로 시작되어야 한다"
+    },
+    {
+      "id": "R5",
+      "text": "소통 탭 상단 서브탭 6종이 모바일 터치 타겟 42px 이상을 확보해야 한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 6,
+      "domain": "ui-layout",
+      "statement": "홈 탭 3초 체크인 가이드 칩이 최소 36px 이상의 터치 타겟을 만족한다",
+      "touches": [
+        "index.html",
+        "ui.css"
+      ],
+      "scenario": "scenarios/quick-chips-touch.json"
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 7,
+      "domain": "ui-layout",
+      "statement": "목표 탭 상단 서브탭 5종이 모바일 터치 타겟 44px 이상을 만족한다",
+      "touches": [
+        "ui.css"
+      ],
+      "scenario": "scenarios/goals-subtabs-touch.json"
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 7,
+      "domain": "ui-layout",
+      "statement": "설정 탭 빠른 아바타 설정 버튼이 모바일 터치 타겟 44px 이상을 만족한다",
+      "touches": [
+        "ui.css"
+      ],
+      "scenario": "scenarios/settings-avatar-touch.json"
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 7,
+      "domain": "ui-behavior",
+      "statement": "소통 탭 실시간 러닝메이트 레이더 카드가 기본 접힘 상태로 시작된다",
+      "touches": [
+        "js/sanctuary-v3-engine.js"
+      ],
+      "scenario": "scenarios/radar-collapsed-default.json"
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 7,
+      "domain": "ui-layout",
+      "statement": "소통 탭 상단 서브탭 6종이 모바일 터치 타겟 42px 이상을 만족한다",
+      "touches": [
+        "ui.css"
+      ],
+      "scenario": "scenarios/comm-subtabs-touch.json"
+    }
+  ]
+}

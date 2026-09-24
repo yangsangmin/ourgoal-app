@@ -1094,13 +1094,24 @@
     var slot = document.getElementById('sanctuaryCommView');
     if (!slot) return;
     if (typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-    slot.dataset.collapsed = slot.dataset.collapsed === 'true' ? 'false' : 'true';
+    var nextState = slot.dataset.collapsed === 'true' ? 'false' : 'true';
+    slot.dataset.collapsed = nextState;
+    try { localStorage.setItem('ourgoal_radar_collapsed', nextState); } catch(e){}
     renderSanctuaryComm();
   }
 
   function renderSanctuaryComm() {
     var slot = document.getElementById('sanctuaryCommView');
     if (!slot) return;
+
+    if (!slot.dataset.collapsed) {
+      try {
+        var saved = localStorage.getItem('ourgoal_radar_collapsed');
+        slot.dataset.collapsed = (saved !== null) ? saved : 'true';
+      } catch(e){
+        slot.dataset.collapsed = 'true';
+      }
+    }
 
     var peers = getRealRunningMates();
     var countText = peers.length > 0 ? (peers.length + '명') : '0명';
