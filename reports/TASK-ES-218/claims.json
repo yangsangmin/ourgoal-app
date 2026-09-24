@@ -4,23 +4,23 @@
   "requirements": [
     {
       "id": "R1",
-      "text": "ui.css에 토스 설정 요약 원카드(.toss-settings-hero-card) 스타일이 정의되어야 한다"
+      "text": "설정 탭 상단 프로필 요약 카드가 토스식 3단 조형(헤더 정보, 2열 균등 액션 버튼, 3대 스탯 바)으로 고도화되어야 한다"
     },
     {
       "id": "R2",
-      "text": "index.html의 설정 탭(#screen-settings)에 문장형 헤드라인(#settingsHeadlineSentence)과 원카드 슬롯이 배선되어야 한다"
+      "text": "모바일 375px 환경에서 계정 연동 및 데이터 보관 상태 문구의 글자 쪼개짐과 줄바꿈이 100% 근절되어야 한다"
     },
     {
       "id": "R3",
-      "text": "설정 아코디언 조작 및 옵션 변경 시 12ms 미세 햅틱 피드백(triggerHapticFeedback)이 배선되어야 한다"
+      "text": "설정 탭 5대 아코디언 summary 및 버튼 터치 시 12ms 미세 햅틱 피드백이 확실하게 배선되어야 한다"
     },
     {
       "id": "R4",
-      "text": "기존 38대 헌법 무결성 게이트 및 5대 설정 아코디언 규격이 100% 보존되어야 한다"
+      "text": "프로필 편집 및 아바타 도감 액션 버튼이 2열 균등 그리드로 40px 터치 타깃을 확보해야 한다"
     },
     {
       "id": "R5",
-      "text": "781개 정적 버튼 Dead-Click 검사가 100% ALL PASS를 유지해야 한다"
+      "text": "npm test 368개 단위 검사, 38개 헌법 게이트, Zero Dead-Click 전수 검사가 100% ALL PASS여야 한다"
     }
   ],
   "claims": [
@@ -29,14 +29,14 @@
       "req": "R1",
       "kind": "static",
       "domain": "config",
-      "statement": "ui.css에 .toss-settings-hero-card 클래스가 정의되어 토스식 설정 요약 원카드 조형을 제공한다",
+      "statement": "index.html 내 settingsHeroCard가 toss-settings-hero-top, toss-settings-hero-actions, toss-settings-hero-stats 3단 조형으로 정돈된다",
       "touches": [
-        "ui.css"
+        "index.html"
       ],
       "check": {
         "type": "codeContains",
-        "file": "ui.css",
-        "text": ".toss-settings-hero-card"
+        "file": "index.html",
+        "text": "class=\"toss-settings-hero-top\""
       }
     },
     {
@@ -44,14 +44,14 @@
       "req": "R2",
       "kind": "static",
       "domain": "config",
-      "statement": "index.html에 id=\"settingsHeadlineSentence\" 요소가 정의되어 설정 탭 문장형 헤드라인을 렌더링한다",
+      "statement": "ui.css 내 toss-settings-status-desc 및 settingsHeroStatusDesc에 white-space: nowrap !important; word-break: keep-all !important;가 적용된다",
       "touches": [
-        "index.html"
+        "ui.css"
       ],
       "check": {
         "type": "codeContains",
-        "file": "index.html",
-        "text": "id=\"settingsHeadlineSentence\""
+        "file": "ui.css",
+        "text": "toss-settings-status-desc"
       }
     },
     {
@@ -59,14 +59,14 @@
       "req": "R3",
       "kind": "static",
       "domain": "config",
-      "statement": "index.html에서 설정 아코디언 클릭 시 triggerHapticFeedback(12) 햅틱 피드백이 배선된다",
+      "statement": "index.html 내 toss-settings-group summary 클릭 시 triggerHapticFeedback(12) 햅틱이 배선된다",
       "touches": [
         "index.html"
       ],
       "check": {
         "type": "codeContains",
         "file": "index.html",
-        "text": "triggerHapticFeedback(12)"
+        "text": ".closest('.toss-settings-group summary')"
       }
     },
     {
@@ -74,14 +74,14 @@
       "req": "R4",
       "kind": "static",
       "domain": "config",
-      "statement": "index.html에 .toss-settings-group 요소가 유지되어 5대 설정 그룹 무결성을 준수한다",
+      "statement": "ui.css 내 toss-settings-hero-actions가 grid-template-columns: 1fr 1fr;로 2열 균등 배치된다",
       "touches": [
-        "index.html"
+        "ui.css"
       ],
       "check": {
         "type": "codeContains",
-        "file": "index.html",
-        "text": "toss-settings-group"
+        "file": "ui.css",
+        "text": "grid-template-columns: 1fr 1fr;"
       }
     },
     {
@@ -89,14 +89,14 @@
       "req": "R5",
       "kind": "static",
       "domain": "config",
-      "statement": "index.html에 id=\"settingsHeroCard\" 요소가 정의되어 프로필 및 앱 상태를 요약한다",
+      "statement": "scripts/smoke-test.js 내 [#TASK-ES-218] 설정 탭 토스식 UI/UX 전면 혁신 검증이 완비된다",
       "touches": [
-        "index.html"
+        "scripts/smoke-test.js"
       ],
       "check": {
         "type": "codeContains",
-        "file": "index.html",
-        "text": "id=\"settingsHeroCard\""
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-218] 설정 탭(screen-settings) 토스식 UI/UX 전면 혁신 및 모바일 375px 조형 무결성"
       }
     }
   ]

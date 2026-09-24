@@ -8147,6 +8147,30 @@ check('[#TASK-ES-250] 소통탭 8중 레이어 다이어트 및 모바일 375px 
   assert.ok(cssContent.includes('.toast.show') && cssContent.includes('pointer-events: auto !important;'), '토스트 활성 시 pointer-events 활성화 확인');
 });
 
+check('[#TASK-ES-218] 설정 탭(screen-settings) 토스식 UI/UX 전면 혁신 및 모바일 375px 조형 무결성', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 프로필 요약 카드 토스식 3단 조형 (.toss-settings-hero-top, .toss-settings-hero-actions, .toss-settings-hero-stats) 확인
+  assert.ok(indexHtml.includes('class="toss-settings-hero-top"'), 'toss-settings-hero-top 슬롯 확인');
+  assert.ok(indexHtml.includes('class="toss-settings-hero-actions"'), 'toss-settings-hero-actions 슬롯 확인');
+  assert.ok(indexHtml.includes('class="toss-settings-hero-stats"'), 'toss-settings-hero-stats 슬롯 확인');
+
+  // 2. 액션 버튼 2열 균등 그리드(1fr 1fr) 및 40px 터치 타깃 확인
+  assert.ok(cssContent.includes('.toss-settings-hero-actions') && cssContent.includes('grid-template-columns: 1fr 1fr;'), 'toss-settings-hero-actions 1fr 1fr 그리드 확인');
+  assert.ok(cssContent.includes('.toss-settings-hero-actions button') && cssContent.includes('min-height: 40px !important;'), 'toss-settings-hero-actions 버튼 40px 타깃 확인');
+
+  // 3. 모바일 375px 계정 상태 텍스트 쪼개짐 100% 박멸 (nowrap, keep-all) 확인
+  assert.ok(cssContent.includes('.toss-settings-status-desc') && cssContent.includes('white-space: nowrap !important;'), 'toss-settings-status-desc nowrap 확인');
+  assert.ok(cssContent.includes('word-break: keep-all !important;'), 'toss-settings-status-desc keep-all 확인');
+
+  // 4. 설정 아코디언 summary 클릭 시 12ms 미세 햅틱 배선 확인
+  assert.ok(indexHtml.includes(".closest('.toss-settings-group summary')") && indexHtml.includes('triggerHapticFeedback(12)'), '설정 아코디언 12ms 햅틱 배선 확인');
+
+  // 5. 설정 탭 진입 시 renderSettingsHeroCard() 동적 갱신 바인딩 확인
+  assert.ok(indexHtml.includes('renderSettingsHeroCard();'), 'renderSettingsHeroCard 호출 배선 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

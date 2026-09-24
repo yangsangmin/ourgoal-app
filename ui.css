@@ -10481,22 +10481,98 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
 /* ==========================================================================
    TOSS SETTINGS TAB INNOVATION (#TASK-ES-218, #TASK-ES-248)
    - 토스식 프로필 및 앱 상태 요약 원카드 (.toss-settings-hero-card)
-   - 글래스모피즘 테두리, 64px 아바타 링, 입체감 및 시인성 강화
-   - 42~44px 엄지 최적화 터치 타깃
+   - 모바일 375px 가로 텍스트 쪼개짐 100% 박멸 & 버튼 2열 균등 그리드
+   - 40~44px 엄지 최적화 터치 타깃 및 12ms 햅틱 반응성
    ========================================================================== */
 .toss-settings-hero-card {
   position: relative;
   background: linear-gradient(145deg, var(--card, #ffffff) 0%, var(--card2, #f8fafc) 100%);
   border-radius: 20px !important;
-  padding: 20px 18px !important;
+  padding: 16px 14px !important;
   margin-top: 6px !important;
-  margin-bottom: 16px !important;
+  margin-bottom: 14px !important;
   border: 1.5px solid var(--rule, rgba(0, 0, 0, 0.08)) !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-sizing: border-box;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.toss-settings-hero-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.toss-settings-hero-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.toss-settings-hero-user-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+#settingsHeroNickname {
+  font-size: 1.25rem !important;
+  font-weight: 900 !important;
+  color: var(--ink) !important;
+  letter-spacing: -0.02em !important;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 140px;
+}
+
+.toss-settings-status-desc,
+#settingsHeroStatusDesc {
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  color: var(--ink-soft) !important;
+  margin-top: 2px !important;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.toss-settings-hero-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.toss-settings-hero-actions button {
+  min-height: 40px !important;
+  padding: 8px 10px !important;
+  font-size: 0.8125rem !important;
+  font-weight: 700 !important;
+  border-radius: 12px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.toss-settings-hero-actions button:active {
+  transform: scale(0.97);
 }
 
 /* #TASK-ES-248: 설정탭 프로필 요약 카드 시인성 및 아바타/레벨 뱃지 강화 */
@@ -10535,21 +10611,10 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
 }
 
 #btnSettingsQuickAvatar {
-  min-height: 44px !important;
-  padding: 8px 14px !important;
-  font-size: 0.8125rem !important;
-  font-weight: 700 !important;
-  border-radius: 12px !important;
   background: var(--surface-2, rgba(0, 0, 0, 0.05)) !important;
   border: 1.5px solid var(--rule, rgba(0, 0, 0, 0.12)) !important;
   color: var(--ink, #1f2937) !important;
   cursor: pointer;
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
-  transition: all 0.15s ease-in-out;
 }
 
 #btnSettingsQuickAvatar:hover {
@@ -10558,8 +10623,11 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
   color: var(--primary, #3b82f6) !important;
 }
 
-#btnSettingsQuickAvatar:active {
-  transform: scale(0.96);
+#btnOpenDynamicAlbum {
+  background: linear-gradient(135deg, #6366F1, #8B5CF6) !important;
+  color: #ffffff !important;
+  border: none !important;
+  cursor: pointer;
 }
 
 [data-theme="dark"] .toss-settings-hero-card,
@@ -10588,9 +10656,9 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  gap: 12px;
-  margin-top: 14px;
-  padding: 12px 8px;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 10px 8px;
   background: var(--surface-2, rgba(0, 0, 0, 0.03));
   border-radius: 14px;
   border: 1px solid var(--rule, rgba(0, 0, 0, 0.05));
@@ -10613,6 +10681,46 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-faint, #888888);
+}
+
+/* 설정 아코디언 토스식 모바일 최적화 */
+.settings-group-accordion.toss-settings-group {
+  margin-bottom: 12px !important;
+  border: 1px solid var(--rule, rgba(0, 0, 0, 0.08)) !important;
+  border-radius: 16px !important;
+  background: var(--card) !important;
+  overflow: hidden !important;
+  transition: box-shadow 0.2s ease;
+}
+
+.settings-group-accordion.toss-settings-group summary {
+  padding: 13px 15px !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  user-select: none !important;
+  background: var(--card2) !important;
+  list-style: none !important;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.settings-group-accordion.toss-settings-group summary::-webkit-details-marker {
+  display: none !important;
+}
+
+.settings-group-accordion.toss-settings-group summary:active {
+  transform: scale(0.99);
+}
+
+.toss-settings-group .profile-card {
+  padding: 14px 12px !important;
+  border-radius: 14px !important;
+  margin-bottom: 12px !important;
+  border: 1px solid var(--rule, rgba(0, 0, 0, 0.06)) !important;
 }
 
 
