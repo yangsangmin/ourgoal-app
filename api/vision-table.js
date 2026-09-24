@@ -71,10 +71,10 @@ module.exports = async function handler(req, res) {
 
   var body = req.body || {};
 
-  // 🔄 Notion Database Direct Push Action
+  // 🔄 Notion Database Direct Push Action (#TASK-ES-252: 서버 키 오픈 프록시 남용 방지)
   if (body.action === 'notion_push' || (req.query && req.query.action === 'notion_push')) {
-    var apiKey = (body.apiKey || process.env.NOTION_API_KEY || '').trim();
-    var databaseId = (body.databaseId || process.env.NOTION_DATABASE_ID || '').trim().replace(/-/g, '');
+    var apiKey = (body.apiKey || '').trim();
+    var databaseId = (body.databaseId || '').trim().replace(/-/g, '');
     if (!apiKey) {
       res.status(400).json({ error: 'Notion API Key(Integration Secret)가 필요합니다.' });
       return;

@@ -1524,6 +1524,23 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
   } catch(e){}
 
+  /* #TASK-ES-252: 보안 토큰 추출 헬퍼 (5계층 방어선 인증 연동) */
+  async function getSupabaseAuthToken() {
+    try {
+      if (_pendingAuthSession && _pendingAuthSession.access_token) {
+        return _pendingAuthSession.access_token;
+      }
+      if (sb && sb.auth && typeof sb.auth.getSession === 'function') {
+        var s = await sb.auth.getSession();
+        if (s && s.data && s.data.session && s.data.session.access_token) {
+          return s.data.session.access_token;
+        }
+      }
+    } catch(e) {}
+    return null;
+  }
+  if(typeof window !== 'undefined'){ window.getSupabaseAuthToken = getSupabaseAuthToken; }
+
   /* 앱 레벨 Google OAuth 클라이언트 ID(공개 식별자, 시크릿 아님). GCP 콘솔에서 이 앱을 등록한 뒤 값을 채우면
      사용자가 자기 ID를 넣을 필요가 없어진다. 비어 있으면 설정의 사용자 ID로 폴백한다 — 거시 재조정안 A2 */
   var GOOGLE_OAUTH_CLIENT_ID = '441950547594-brg1nvritlb3hlucoktq11ga6vtn943a.apps.googleusercontent.com';
@@ -2685,20 +2702,26 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             if(sCand && syncCandIds.indexOf(sCand) === -1) syncCandIds.push(sCand);
           }
         }
-        var sRes = await fetch('/api/track', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'sync_records', userId: userId, username: safeUsername, displayName: finalDisplayName, backupIds: syncCandIds })
-        });
-        if(sRes.ok){
-          var sData = await sRes.json();
-          if(sData && sData.records && sData.records.length > 0){
-            records = sData.records;
-            try { localStorage.setItem('ourgoal_records_backup_' + userId, JSON.stringify(records)); } catch(e){}
-            if(sData.user){
-              if(!finalBio && sData.user.bio) finalBio = sData.user.bio;
-              if((!finalInterests || finalInterests.length === 0) && sData.user.interests) finalInterests = sData.user.interests;
-              if(!finalRegion && sData.user.region) finalRegion = sData.user.region;
+        var sToken = await getSupabaseAuthToken();
+        if (sToken) {
+          var sRes = await fetch('/api/track', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + sToken
+            },
+            body: JSON.stringify({ action: 'sync_records', userId: userId, username: safeUsername, displayName: finalDisplayName, backupIds: syncCandIds })
+          });
+          if(sRes.ok){
+            var sData = await sRes.json();
+            if(sData && sData.records && sData.records.length > 0){
+              records = sData.records;
+              try { localStorage.setItem('ourgoal_records_backup_' + userId, JSON.stringify(records)); } catch(e){}
+              if(sData.user){
+                if(!finalBio && sData.user.bio) finalBio = sData.user.bio;
+                if((!finalInterests || finalInterests.length === 0) && sData.user.interests) finalInterests = sData.user.interests;
+                if(!finalRegion && sData.user.region) finalRegion = sData.user.region;
+              }
             }
           }
         }
@@ -3814,9 +3837,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     } catch(e){}
 
     try {
+      var sToken = await getSupabaseAuthToken();
+      if (!sToken) return false;
       var resp = await fetch('/api/track', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + sToken
+        },
         body: JSON.stringify({
           action: 'sync_records',
           userId: uid,
@@ -11076,9 +11104,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         }
       });
 
-      // 4. 위젯 연동 탭: WebCal 복사
+      // 4. 위젯 연동 탭: WebCal 복사 (#TASK-ES-252: HMAC 서명 토큰 자동 주입)
       var btnCopy = sheet.querySelector('#btnCopyLsWebCal');
       var webCalInput = sheet.querySelector('#lsWebCalInput');
+      if(webCalInput && typeof fetchSignedCalendarToken === 'function'){
+        fetchSignedCalendarToken().then(function(signedTok){
+          if(signedTok && signedTok !== 'demo'){
+            webCalInput.value = buildWebCalUrl(signedTok, window.location.origin);
+          }
+        });
+      }
       if(btnCopy && webCalInput){
         btnCopy.onclick = function(){
           var val = webCalInput.value;
@@ -30198,11 +30233,33 @@ wirePromptEncyclopediaEvents(body);
   }
 
   /* ============ RFC 5545 표준 iCalendar (.ics) 생성 순수 함수 (TASK-BG-11) ============ */
-  /* ============ 캘린더 실시간 구독 URL 생성기 (WebCal Feed) ============ */
-  function buildWebCalUrl(userId, origin){
+  /* ============ 캘린더 실시간 구독 URL 생성기 (WebCal Feed & #TASK-ES-252 HMAC 서명) ============ */
+  var _cachedSignedCalendarToken = null;
+  async function fetchSignedCalendarToken() {
+    if (_cachedSignedCalendarToken) return _cachedSignedCalendarToken;
+    try {
+      var sTok = await getSupabaseAuthToken();
+      if (!sTok) return 'demo';
+      var res = await fetch('/api/calendar?action=calendar_token', {
+        headers: { 'Authorization': 'Bearer ' + sTok }
+      });
+      if (res.ok) {
+        var data = await res.json();
+        if (data && data.token) {
+          _cachedSignedCalendarToken = data.token;
+          return data.token;
+        }
+      }
+    } catch(e) {}
+    return 'demo';
+  }
+
+  function buildWebCalUrl(userIdOrToken, origin){
     origin = origin || (typeof window !== 'undefined' && window.location && window.location.origin ? window.location.origin : 'https://ourgoal-app.vercel.app');
     var base = origin.replace(/^https?:\/\//, '');
-    return 'webcal://' + base + '/api/calendar?token=' + encodeURIComponent(userId || 'demo');
+    var cached = (typeof _cachedSignedCalendarToken !== 'undefined') ? _cachedSignedCalendarToken : null;
+    var tok = userIdOrToken || cached || 'demo';
+    return 'webcal://' + base + '/api/calendar?token=' + encodeURIComponent(tok);
   }
 
   function buildICS(records, goals){
@@ -30355,6 +30412,12 @@ wirePromptEncyclopediaEvents(body);
         var webcalBtn = sheet.querySelector('#btnCopyWebCalUrl');
         var calUrl = buildWebCalUrl((state.profile && state.profile.id) || 'demo');
         if(webcalInput) webcalInput.value = calUrl;
+        fetchSignedCalendarToken().then(function(signedTok){
+          if(signedTok && signedTok !== 'demo'){
+            calUrl = buildWebCalUrl(signedTok);
+            if(webcalInput) webcalInput.value = calUrl;
+          }
+        });
         if(webcalBtn){
           webcalBtn.addEventListener('click', function(){
             if(navigator.clipboard && navigator.clipboard.writeText){
@@ -34212,13 +34275,13 @@ wirePromptEncyclopediaEvents(body);
     if(statusEl){
       var isGuest = (!u || !u.id) && (String(p.id || '').indexOf('guest') === 0);
       if(p.provider === 'kakao' || (u.app_metadata && u.app_metadata.provider === 'kakao')){
-        statusEl.innerHTML = '<span style="color:#eab308;font-weight:600;white-space:nowrap;">🟡 카카오 계정 연동</span> <span style="white-space:nowrap;">· 안전 보관 중</span>';
+        statusEl.innerHTML = '<span style="color:#eab308;font-weight:600;white-space:nowrap;">🟡 카카오 계정 연동</span> <span style="white-space:nowrap;">· 5계층 보안 방어선 보호 중</span>';
       } else if(p.provider === 'google' || (u.app_metadata && u.app_metadata.provider === 'google')){
-        statusEl.innerHTML = '<span style="color:#3b82f6;font-weight:600;white-space:nowrap;">🔵 구글 계정 연동</span> <span style="white-space:nowrap;">· 안전 보관 중</span>';
+        statusEl.innerHTML = '<span style="color:#3b82f6;font-weight:600;white-space:nowrap;">🔵 구글 계정 연동</span> <span style="white-space:nowrap;">· 5계층 보안 방어선 보호 중</span>';
       } else if(!isGuest && (p.id || u.id)){
-        statusEl.innerHTML = '<span style="color:#10b981;font-weight:600;white-space:nowrap;">🟢 회원 계정 연동</span> <span style="white-space:nowrap;">· 안전 보관 중</span>';
+        statusEl.innerHTML = '<span style="color:#10b981;font-weight:600;white-space:nowrap;">🟢 회원 계정 연동</span> <span style="white-space:nowrap;">· 5계층 보안 방어선 보호 중</span>';
       } else {
-        statusEl.innerHTML = '<span style="color:var(--ink-soft);font-weight:600;white-space:nowrap;">👤 게스트 체험 모드</span> <span style="white-space:nowrap;">· 로컬 안전 보관</span>';
+        statusEl.innerHTML = '<span style="color:var(--ink-soft);font-weight:600;white-space:nowrap;">👤 게스트 체험 모드</span> <span style="white-space:nowrap;">· 로컬 샌드박스 안전 보관</span>';
       }
     }
     var goalsEl = document.getElementById('settingsHeroGoalsCount');

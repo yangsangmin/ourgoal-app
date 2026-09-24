@@ -21,7 +21,30 @@ function getSupabase() {
   return createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
 }
 
-async function handleSyncRecords(sb, body, res) {
+// ========================================================
+// #TASK-ES-252: 보안 방어선 계층 1 — 호출자 인증 및 소유권 검증 헬퍼
+// ========================================================
+async function authenticateCaller(sb, req) {
+  var authHeader = (req && req.headers && (req.headers.authorization || req.headers.Authorization)) || '';
+  var token = authHeader.replace(/^Bearer\s+/i, '').trim();
+  if (!token) {
+    return { ok: false, error: 'Missing bearer authorization token', status: 401 };
+  }
+  if (!sb) {
+    return { ok: false, error: 'SUPABASE_SERVICE_ROLE_KEY is not configured', status: 500 };
+  }
+  try {
+    var { data, error } = await sb.auth.getUser(token);
+    if (error || !data || !data.user) {
+      return { ok: false, error: 'Invalid or expired authentication token', status: 401 };
+    }
+    return { ok: true, user: data.user, uid: data.user.id };
+  } catch (e) {
+    return { ok: false, error: e.message || 'Auth verification error', status: 500 };
+  }
+}
+
+async function handleSyncRecords(sb, body, res, req) {
   var userId = String(body.userId || '').trim();
   var username = String(body.username || '').trim();
   var displayName = String(body.displayName || body.nickname || '').trim();
@@ -30,90 +53,54 @@ async function handleSyncRecords(sb, body, res) {
   var recordsToSave = Array.isArray(body.recordsToSave) ? body.recordsToSave : null;
   var profileToSave = (body.profileToSave && typeof body.profileToSave === 'object') ? body.profileToSave : null;
 
-  var candidateIds = [];
-  if (userId) candidateIds.push(userId);
-  backupIds.forEach(function(id) {
-    if (id && candidateIds.indexOf(id) === -1) candidateIds.push(id);
-  });
+  // #TASK-ES-252: 보안 강화 — 사용자 데이터 조회/동기화 시 본인 인증 필수
+  var authRes = await authenticateCaller(sb, req);
+  if (!authRes.ok) {
+    return res.status(authRes.status || 401).json({
+      ok: false,
+      error: authRes.error || 'Unauthorized: Token required to sync user records'
+    });
+  }
+
+  var authUid = authRes.uid;
+
+  // IDOR 방어: 클라이언트가 전달한 userId가 인증된 사용자 UID와 불일치 시 차단
+  if (userId && userId !== authUid) {
+    return res.status(403).json({
+      ok: false,
+      error: 'Forbidden: You cannot access or modify another user\'s records'
+    });
+  }
+
+  // targetUid는 엄격히 인증된 사용자 UID로 고정
+  var targetUid = authUid;
 
   try {
     var matchedUser = null;
-    var targetUid = userId || (candidateIds.length ? candidateIds[0] : null);
+    try {
+      var uRes = await sb.from('users').select('*').eq('id', targetUid);
+      if (uRes.data && uRes.data.length > 0) {
+        matchedUser = uRes.data[0];
+      }
+    } catch (e) {}
 
-    // 1. users 테이블에서 candidateIds 또는 username / displayName 기반 매칭
-    if (candidateIds.length) {
-      try {
-        var uRes = await sb.from('users').select('*').in('id', candidateIds);
-        if (uRes.data && uRes.data.length > 0) {
-          matchedUser = uRes.data[0];
-          targetUid = matchedUser.id;
-        }
-      } catch (e) {}
-    }
-
-    if (!matchedUser && (username || displayName || nickname)) {
-      try {
-        var searchName = displayName || nickname || username;
-        var uNameRes = await sb.from('users').select('*')
-          .or('username.ilike.%' + searchName + '%,display_name.ilike.%' + searchName + '%')
-          .limit(5);
-        if (uNameRes.data && uNameRes.data.length > 0) {
-          matchedUser = uNameRes.data[0];
-          targetUid = matchedUser.id;
-        }
-      } catch (e) {}
-    }
-
-    // 2. 만약 users 테이블에 없더라도 candidateIds 중 UUID 형식이 있다면 우선 채택
-    if (!targetUid || targetUid.indexOf('u_') === 0) {
-      var uuidCandidate = candidateIds.find(function(id) {
-        return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-      });
-      if (uuidCandidate) targetUid = uuidCandidate;
-    }
-
-    // 3. checkins 테이블 조회 (candidateIds 전체 스캔 + targetUid 스캔)
-    var allIdsToSearch = [];
-    if (targetUid) allIdsToSearch.push(targetUid);
-    candidateIds.forEach(function(id) {
-      if (id && allIdsToSearch.indexOf(id) === -1) allIdsToSearch.push(id);
-    });
-
+    // checkins 테이블 조회 (오직 인증된 본인 UID로만 격리 조회)
     var fetchedRecords = [];
-    if (allIdsToSearch.length) {
-      try {
-        var recRes = await sb.from('checkins').select('*').in('user_id', allIdsToSearch).order('start_at', { ascending: false });
-        if (recRes.data && recRes.data.length > 0) {
-          fetchedRecords = recRes.data;
-        }
-      } catch (e) {}
-    }
+    try {
+      var recRes = await sb.from('checkins').select('*').eq('user_id', targetUid).order('start_at', { ascending: false });
+      if (recRes.data && recRes.data.length > 0) {
+        fetchedRecords = recRes.data;
+      }
+    } catch (e) {}
 
-    // 만약 특정 candidateIds로 기록이 0건인데, candidateIds 내 단일 항목별로 순차 재시도
-    if (fetchedRecords.length === 0 && candidateIds.length) {
-      try {
-        for (var i = 0; i < candidateIds.length; i++) {
-          var cid = candidateIds[i];
-          var singleRecRes = await sb.from('checkins').select('*').eq('user_id', cid).order('start_at', { ascending: false });
-          if (singleRecRes.data && singleRecRes.data.length > 0) {
-            fetchedRecords = singleRecRes.data;
-            targetUid = cid;
-            break;
-          }
-        }
-      } catch (e) {}
-    }
-
-    // 4. goals 테이블 조회
+    // goals 테이블 조회 (오직 인증된 본인 UID로만 격리 조회)
     var fetchedGoals = [];
-    if (targetUid) {
-      try {
-        var gRes = await sb.from('goals').select('*').eq('user_id', targetUid).order('created_at', { ascending: true });
-        if (gRes.data && gRes.data.length > 0) {
-          fetchedGoals = gRes.data;
-        }
-      } catch (e) {}
-    }
+    try {
+      var gRes = await sb.from('goals').select('*').eq('user_id', targetUid).order('created_at', { ascending: true });
+      if (gRes.data && gRes.data.length > 0) {
+        fetchedGoals = gRes.data;
+      }
+    } catch (e) {}
 
     // 5. 저장 요청(recordsToSave / profileToSave)이 있는 경우 백엔드에서 안전하게 upsert
     if (recordsToSave && recordsToSave.length && targetUid) {
@@ -324,11 +311,28 @@ async function handleSearchUsers(sb, body, res) {
   }
 }
 
-// #TASK-ES-129: 동반자 데이터 영구 영속화 및 복원 (Service Role Key 기반 서버리스 파이프라인)
-async function handleSyncCompanions(sb, body, res) {
+// #TASK-ES-129 & #TASK-ES-252: 동반자 데이터 영구 영속화 및 복원 (인증 및 소유권 검증 필수)
+async function handleSyncCompanions(sb, body, res, req) {
   var userId = String(body.userId || '').trim();
   if (!userId) {
     return res.status(400).json({ ok: false, error: 'userId is required', companions: [] });
+  }
+
+  // #TASK-ES-252: 본인 토큰 인증 필수
+  var authRes = await authenticateCaller(sb, req);
+  if (!authRes.ok) {
+    return res.status(authRes.status || 401).json({
+      ok: false,
+      error: authRes.error || 'Unauthorized: Token required to sync companions',
+      companions: []
+    });
+  }
+  if (authRes.uid !== userId) {
+    return res.status(403).json({
+      ok: false,
+      error: 'Forbidden: You cannot access or modify another user\'s companions',
+      companions: []
+    });
   }
 
   var companionsToSave = Array.isArray(body.companions) ? body.companions : null;
@@ -1064,24 +1068,24 @@ module.exports = async function handler(req, res) {
     return handleInquiry(sb, body, req, res);
   }
 
+  // #TASK-ES-036 & #TASK-ES-252: RLS 차단 우회 데이터 동기화 및 복구 처리 (보안 인증 필수)
+  if (body.action === 'sync_records' || body.backupIds) {
+    return handleSyncRecords(sb, body, res, req);
+  }
+
+  // #TASK-ES-129 & #TASK-ES-252: 동반자 데이터 영구 영속화 및 복원 (보안 인증 필수)
+  if (body.action === 'sync_companions') {
+    return handleSyncCompanions(sb, body, res, req);
+  }
+
   if (!sb) {
     res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY is not configured' });
     return;
   }
 
-  // #TASK-ES-036: RLS 차단 우회 데이터 동기화 및 복구 처리
-  if (body.action === 'sync_records' || body.backupIds) {
-    return handleSyncRecords(sb, body, res);
-  }
-
   // #TASK-ES-124: RLS 차단 및 세션 만료 무관 실제 회원 닉네임 검색
   if (body.action === 'search_users') {
     return handleSearchUsers(sb, body, res);
-  }
-
-  // #TASK-ES-129: 동반자 데이터 영구 영속화 및 복원
-  if (body.action === 'sync_companions') {
-    return handleSyncCompanions(sb, body, res);
   }
 
 

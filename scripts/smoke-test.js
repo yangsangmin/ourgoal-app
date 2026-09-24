@@ -8206,6 +8206,26 @@ check('[#TASK-ES-251] 제미나이 API 중앙 게이트웨이 일원화 및 엔�
   assert.ok(promptgenSrc.includes("require('./_lib/gemini-gateway')"), 'api/promptgen.js 게이트웨이 배선 확인');
 });
 
+check('[#TASK-ES-252] 사용자 계정 및 데이터 관리·보관 5계층 보안 방어선 무결성', () => {
+  const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+  assert.ok(trackSrc.includes('authenticateCaller'), 'api/track.js authenticateCaller 헬퍼 배선 확인');
+  assert.ok(trackSrc.includes('Forbidden: You cannot access or modify another user'), 'api/track.js IDOR 방어선 확인');
+
+  const pushSubSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'push-subscribe.js'), 'utf8');
+  assert.ok(pushSubSrc.includes('signCalendarUid'), 'api/push-subscribe.js signCalendarUid HMAC 서명 배선 확인');
+  assert.ok(pushSubSrc.includes('verifyCalendarToken'), 'api/push-subscribe.js verifyCalendarToken 검증 배선 확인');
+
+  const pushDispatchSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'push-dispatch.js'), 'utf8');
+  assert.ok(pushDispatchSrc.includes('unauthorized: missing bearer token'), 'api/push-dispatch.js fail-closed 보안 확인');
+
+  const visionTableSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'vision-table.js'), 'utf8');
+  assert.ok(!visionTableSrc.includes('body.apiKey || process.env.NOTION_API_KEY'), 'api/vision-table.js 서버 키 오픈프록시 차단 확인');
+
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.ok(indexHtml.includes('getSupabaseAuthToken'), 'index.html getSupabaseAuthToken 헬퍼 확인');
+  assert.ok(indexHtml.includes('fetchSignedCalendarToken'), 'index.html fetchSignedCalendarToken 확인');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
