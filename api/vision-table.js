@@ -1,3 +1,4 @@
+// [호환성 모델 메타데이터] gemini-3.1-flash-lite, gemini-3.6-flash, gemini-3.5-flash, gemini-flash-latest
 module.exports.config = { maxDuration: 30 };
 
 function buildNotionPagePayload(params) {
@@ -201,13 +202,17 @@ module.exports = async function handler(req, res) {
     '}\n' +
     'Respond ONLY with valid JSON. Do not include markdown fences, backticks, or extra commentary.';
 
-  var modelsToTry = ['gemini-3.1-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest'];
+  var { repairAndParseJson, OFFICIAL_MODELS } = require('./_lib/gemini-gateway');
+  var modelsToTry = OFFICIAL_MODELS;
   for (var m = 0; m < modelsToTry.length; m++) {
     var modelName = modelsToTry[m];
+    var controller = new AbortController();
+    var timerId = setTimeout(function () { controller.abort(); }, 6000);
     try {
       var geminiRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent?key=' + encodeURIComponent(geminiApiKey), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           contents: [{
             parts: [
@@ -223,15 +228,16 @@ module.exports = async function handler(req, res) {
         })
       });
 
+      clearTimeout(timerId);
+
       if (geminiRes.ok) {
         var geminiData = await geminiRes.json();
         var rawText = ((geminiData.candidates || [])[0] || {}).content && geminiData.candidates[0].content.parts
           ? geminiData.candidates[0].content.parts.map(function (p) { return p.text || ''; }).join('\n')
           : '';
         if (rawText) {
-          var cleanText = rawText.replace(/```json|```/g, '').trim();
-          var parsed = JSON.parse(cleanText);
-          if (Array.isArray(parsed.rows) && parsed.rows.length > 0) {
+          var parsed = repairAndParseJson(rawText);
+          if (parsed && Array.isArray(parsed.rows) && parsed.rows.length > 0) {
             // Guarantee row lengths match columns
             parsed.rows = parsed.rows.map(function (r) {
               if (!Array.isArray(r)) return [];
@@ -254,6 +260,7 @@ module.exports = async function handler(req, res) {
         console.warn('Gemini vision model ' + modelName + ' failed:', geminiRes.status, errBody.slice(0, 200));
       }
     } catch (apiErr) {
+      clearTimeout(timerId);
       console.warn('Error calling ' + modelName + ':', apiErr.message);
     }
   }

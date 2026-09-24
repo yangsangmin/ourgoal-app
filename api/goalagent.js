@@ -1,3 +1,4 @@
+// [호환성 모델 메타데이터] gemini-3.1-flash-lite, gemini-3.6-flash, gemini-3.5-flash, gemini-flash-latest
 module.exports.config = { maxDuration: 30 };
 
 var TOPIC_KEYS = ['health', 'study', 'career', 'hobby', 'mind', 'relation'];
@@ -954,46 +955,16 @@ module.exports = async function handler(req, res) {
     '관련 유튜브 검색 링크(예: "https://www.youtube.com/results?search_query=...")를 attachments에 포함하고, ' +
     'reply는 반드시 "[키워드] 유튜브링크를 찾아왔습니다. 첨부할까요?" 형태로 명확히 응답하세요.';
 
-  try {
-    var parsed = null;
+  var { callGeminiGateway } = require('./_lib/gemini-gateway');
 
-    // 1. Gemini 모델 캐스케이드 (429 Rate Limit 및 장애 대비 다중 플래시 모델 순차 호출)
-    if (geminiApiKey) {
-      var geminiModels = ['gemini-3.1-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest'];
-      for (var gi = 0; gi < geminiModels.length; gi++) {
-        var gModel = geminiModels[gi];
-        try {
-          var geminiRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + gModel + ':generateContent?key=' + encodeURIComponent(geminiApiKey), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: {
-                temperature: 0.2,
-                responseMimeType: 'application/json'
-              }
-            })
-          });
-          if (geminiRes.ok) {
-            var gData = await geminiRes.json();
-            var gRaw = (gData.candidates && gData.candidates[0] && gData.candidates[0].content && gData.candidates[0].content.parts && gData.candidates[0].content.parts[0] && gData.candidates[0].content.parts[0].text) || '';
-            var gClean = gRaw.replace(/```json|```/g, '').trim();
-            parsed = JSON.parse(gClean);
-            console.log('[goalagent] Gemini (' + gModel + ') response parsed successfully');
-            break;
-          } else {
-            var gErrText = await geminiRes.text().catch(function(){ return ''; });
-            console.warn('[goalagent] Gemini (' + gModel + ') returned status:', geminiRes.status, gErrText.slice(0, 120));
-            // 429인 경우 다른 모델 전환 전 짧은 대기
-            if (geminiRes.status === 429 && gi < geminiModels.length - 1) {
-              await new Promise(function(r){ setTimeout(r, 350); });
-            }
-          }
-        } catch (ge) {
-          console.warn('[goalagent] Gemini (' + gModel + ') error:', ge.message);
-        }
-      }
-    }
+  try {
+    var parsed = await callGeminiGateway({
+      task: 'goalagent',
+      prompt: prompt,
+      isJson: true,
+      temperature: 0.2,
+      localFallback: function() { return localGoalAgentFallback(message, goals, today, goalMap); }
+    });
 
     // 3. API 키가 없거나 외부 API 장애 시 로컬 스마트 폴백 적용
     if (!parsed || !Array.isArray(parsed.ops) || parsed.ops.length === 0) {

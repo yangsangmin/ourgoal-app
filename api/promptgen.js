@@ -1,3 +1,4 @@
+// [호환성 모델 메타데이터] gemini-3.1-flash-lite, gemini-3.6-flash, gemini-3.5-flash, gemini-flash-latest
 module.exports.config = { maxDuration: 30 };
 
 module.exports = async function handler(req, res) {
@@ -39,42 +40,28 @@ module.exports = async function handler(req, res) {
     '- 출력 형식은 지시하지 말고 톤·관점·판단 기준만 정의할 것\n\n' +
     '점검을 마친 최종 지침 본문만 출력하세요. 따옴표, 설명, 마크다운 없이 지침 문장만 작성하세요.';
 
+  var { callGeminiGateway } = require('./_lib/gemini-gateway');
+
+  function localPromptFallback() {
+    return '사용자의 지침: "' + description + '". 이 관점을 충실히 반영하여 사용자의 실천 기록을 따뜻하면서도 실천적인 피드백으로 코칭하세요.';
+  }
+
   try {
-    var text = '';
+    var text = await callGeminiGateway({
+      task: 'promptgen',
+      prompt: draftPrompt,
+      isJson: false,
+      temperature: 0.3,
+      localFallback: localPromptFallback
+    });
 
-    // 1. Google Gemini 초가성비 모델 캐스케이드 (Gemini 3.1 Flash Lite 1순위)
-    if (geminiApiKey) {
-      var geminiModels = ['gemini-3.1-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest'];
-      for (var gi = 0; gi < geminiModels.length; gi++) {
-        var gModel = geminiModels[gi];
-        try {
-          var geminiRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + gModel + ':generateContent?key=' + encodeURIComponent(geminiApiKey), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: draftPrompt }] }],
-              generationConfig: { temperature: 0.3 }
-            })
-          });
-          if (geminiRes.ok) {
-            var gData = await geminiRes.json();
-            text = (gData.candidates && gData.candidates[0] && gData.candidates[0].content && gData.candidates[0].content.parts && gData.candidates[0].content.parts[0] && gData.candidates[0].content.parts[0].text) || '';
-            if (text) break;
-          }
-        } catch (ge) {}
-      }
-    }
-
-    // 2. 스마트 로컬 폴백
-    if (!text) {
-      text = '사용자의 지침: "' + description + '". 이 관점을 충실히 반영하여 사용자의 실천 기록을 따뜻하면서도 실천적인 피드백으로 코칭하세요.';
+    if (typeof text !== 'string') {
+      text = localPromptFallback();
     }
 
     res.status(200).json({ prompt: text.trim().slice(0, 2000) });
   } catch (e) {
-    res.status(200).json({
-      prompt: '사용자의 지침: "' + description + '". 이 관점을 충실히 반영하여 사용자의 실천 기록을 따뜻하면서도 실천적인 피드백으로 코칭하세요.'
-    });
+    res.status(200).json({ prompt: localPromptFallback() });
   }
 };
 

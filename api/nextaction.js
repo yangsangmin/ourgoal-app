@@ -1,3 +1,4 @@
+// [호환성 모델 메타데이터] gemini-3.1-flash-lite, gemini-3.6-flash, gemini-3.5-flash, gemini-flash-latest
 module.exports.config = { maxDuration: 30 };
 
 module.exports = async function handler(req, res) {
@@ -37,34 +38,18 @@ module.exports = async function handler(req, res) {
     return next ? '멋져요! 다음으로 "' + next.title + '" 마일스톤을 시작해볼까요?' : '축하합니다! 모든 마일스톤을 마쳤으니 목표 최종 결과를 기록해보세요.';
   }
 
+  var { callGeminiGateway } = require('./_lib/gemini-gateway');
+
   try {
-    var suggestion = '';
+    var suggestion = await callGeminiGateway({
+      task: 'nextaction',
+      prompt: prompt,
+      isJson: false,
+      temperature: 0.3,
+      localFallback: localActionFallback
+    });
 
-    // 1. Gemini 다중 플래시 모델 캐스케이드 (우선)
-    if (geminiApiKey) {
-      var geminiModels = ['gemini-3.1-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-flash-latest'];
-      for (var gi = 0; gi < geminiModels.length; gi++) {
-        var gModel = geminiModels[gi];
-        try {
-          var geminiRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + gModel + ':generateContent?key=' + encodeURIComponent(geminiApiKey), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: { temperature: 0.3 }
-            })
-          });
-          if (geminiRes.ok) {
-            var gData = await geminiRes.json();
-            suggestion = (gData.candidates && gData.candidates[0] && gData.candidates[0].content && gData.candidates[0].content.parts && gData.candidates[0].content.parts[0] && gData.candidates[0].content.parts[0].text) || '';
-            if (suggestion) break;
-          }
-        } catch (ge) {}
-      }
-    }
-
-    // 3. 로컬 스마트 폴백
-    if (!suggestion) {
+    if (typeof suggestion !== 'string') {
       suggestion = localActionFallback();
     }
 
