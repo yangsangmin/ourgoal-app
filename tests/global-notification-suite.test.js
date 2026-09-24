@@ -2,6 +2,7 @@
  * [TASK-ES-254] 백그라운드·앱종료·미확인 전역 알림(DM 포함) 전수 구현 및 세부 알림 설정창 구축 단위 검증
  */
 const assert = require('assert');
+const SUITE_TASK = 'TASK-ES-254';
 
 // 가상 전역 브라우저 환경 모킹
 global.window = global;
