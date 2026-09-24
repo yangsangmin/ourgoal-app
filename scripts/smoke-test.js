@@ -8328,6 +8328,34 @@ check('compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입
   assert.ok(indexHtml.includes('window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;'), 'renderStopwatchWidgetHtml window 노출 검증');
 });
 
+/* ============ [#TASK-ES-258] 팀목표 시인성 개선, 아코디언 및 통합/목표별 수준관리 분리 검증 ============ */
+check('compliance: [#TASK-ES-258] 팀목표 시인성 개선, 아코디언 및 통합/목표별 수준관리 분리 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const teamVis = require('../js/team-visibility-levels.js');
+
+  // 1. 단일 대표 목표 및 칩 스위처 렌더링 검증
+  const mockGroup = {
+    id: 'team_g1',
+    name: '테스트 팀',
+    teamGoals: [
+      { id: 'tg_a', title: '대표 목표', milestones: [{ id: 'm1', status: 'doing', tasks: [] }] },
+      { id: 'tg_b', title: '보조 목표', milestones: [{ id: 'm2', status: 'todo', tasks: [] }] }
+    ]
+  };
+  const mockState = { profile: { settings: { unfoldMsList: {}, foldLevelSection: {} } } };
+  const cardHtml = teamVis.renderTeamCardContent(mockGroup, true, mockState);
+
+  assert.ok(cardHtml.includes('class="tg-goal-switcher"'), '복수 목표 시 상단 칩 스위처 렌더링 검증');
+  assert.ok(cardHtml.includes('class="tg-compact-goal-card"'), '대표 1개 목표 카드 렌더링 검증');
+  assert.ok(cardHtml.includes('class="tg-accordion-section"'), '수준별 목표 아코디언 섹션 검증');
+  assert.ok(cardHtml.includes('class="tg-level-dual-tabs"'), '듀얼 탭 세그먼트 스위처 검증');
+
+  // 2. data-tgfoldlist unfoldMsList 영구 저장 배선 검증
+  assert.ok(indexHtml.includes('p.settings.unfoldMsList[id] = isHidden;'), 'index.html 내 data-tgfoldlist 상태 영구 저장 배선 검증');
+  assert.ok(indexHtml.includes('OurgoalTeamVisibilityLevels.renderTeamCardContent(g, canManage, state)'), 'renderTeamGoalsScreen에서 renderTeamCardContent 위임 배선 검증');
+  assert.ok(indexHtml.includes('OurgoalTeamVisibilityLevels.bindEvents(view)'), 'bindEvents 위임 배선 검증');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

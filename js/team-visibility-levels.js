@@ -590,7 +590,7 @@
     // 3.3 수준별 목표 관리 섹션 (2계층 아코디언 & 듀얼 모드 스위처)
     state.teamLevelMode = state.teamLevelMode || {};
     var curMode = state.teamLevelMode[g.id] || 'goal';
-    var p = getProfile();
+    var p = (state && state.profile) || getProfile();
     p.settings = p.settings || {};
     p.settings.foldLevelSection = p.settings.foldLevelSection || {};
     var isLevelFolded = p.settings.foldLevelSection[g.id] !== false;
@@ -779,6 +779,38 @@
         box.style.display = isHidden ? 'block' : 'none';
         var arr = btn.querySelector('.c-arrow');
         if(arr) arr.textContent = isHidden ? '▲' : '▾';
+      });
+    });
+
+    // 마일스톤 접기/펼치기 아코디언 토글
+    view.querySelectorAll('[data-tgfoldlist]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var id = btn.dataset.tgfoldlist;
+        var list = view.querySelector('[data-tgmslist="' + id + '"]');
+        if(!list) return;
+        var isHidden = list.style.display === 'none';
+        list.style.display = isHidden ? 'block' : 'none';
+        btn.textContent = isHidden ? '마일스톤 접기 ▲' : '마일스톤 펼치기 ▼';
+        var p = getProfile();
+        p.settings = p.settings || {};
+        p.settings.unfoldMsList = p.settings.unfoldMsList || {};
+        p.settings.unfoldMsList[id] = isHidden;
+        triggerHaptic(10);
+        await saveProfile();
+      });
+    });
+
+    // 세부 할 일 접기/펼치기 토글
+    view.querySelectorAll('[data-tgtoggletasks]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var key = btn.dataset.tgtoggletasks;
+        var box = view.querySelector('[data-tgtaskbox="' + key + '"]');
+        if(!box) return;
+        var isHidden = box.style.display === 'none' || !box.style.display;
+        box.style.display = isHidden ? 'block' : 'none';
+        var arr = btn.querySelector('.t-arrow');
+        if(arr) arr.textContent = isHidden ? '▲' : '▼';
+        triggerHaptic(5);
       });
     });
   }

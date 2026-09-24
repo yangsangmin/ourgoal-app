@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-258",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-258-TEAM-GOALS-LEVEL-MANAGEMENT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "복수 목표 시 상단 칩 스위처(tg-goal-switcher) 및 대표 1개 목표 카드(tg-compact-goal-card) 선별 렌더링"
+    },
+    {
+      "id": "R2",
+      "text": "마일스톤 접힘/펼침 상태(unfoldMsList)의 프로필 설정 영구 원장 저장 배선"
+    },
+    {
+      "id": "R3",
+      "text": "팀 수준별 목표 관리 2계층 아코디언(tg-accordion-section) 및 기본 접힘(foldLevelSection) 렌더링"
+    },
+    {
+      "id": "R4",
+      "text": "팀 통합 수준관리 vs 목표별 수준관리 듀얼 탭 스위처(tg-level-dual-tabs) 및 복사 엔진(copyTeamLevelsToGoal) 탑재"
+    },
+    {
+      "id": "R5",
+      "text": "신규 독립 단위 테스트 tests/team-level-management.test.js 및 smoke-test.js 100% 통과"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 OurgoalTeamVisibilityLevels.renderTeamCardContent 위임 렌더링이 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "OurgoalTeamVisibilityLevels.renderTeamCardContent(g, canManage, state)"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 data-tgfoldlist 클릭 시 unfoldMsList 영구 저장 배선이 결속되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "p.settings.unfoldMsList[id] = isHidden;"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/team-visibility-levels.js 내에 수준별 목표 관리 아코디언 섹션 렌더링 로직이 구현되어 있다",
+      "touches": [
+        "js/team-visibility-levels.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-visibility-levels.js",
+        "text": "class=\"tg-accordion-section\""
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/team-visibility-levels.js 내에 팀 통합 수준을 목표별 수준으로 복사하는 copyTeamLevelsToGoal 함수가 구현 및 노출되어 있다",
+      "touches": [
+        "js/team-visibility-levels.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-visibility-levels.js",
+        "text": "copyTeamLevelsToGoal: copyTeamLevelsToGoal"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/team-level-management.test.js 단위 검증 파일이 존재하고 정상 작동한다",
+      "touches": [
+        "tests/team-level-management.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/team-level-management.test.js",
+        "text": "TASK-ES-258"
+      }
+    }
+  ]
+}
