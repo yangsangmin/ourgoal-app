@@ -22634,7 +22634,7 @@ wirePromptEncyclopediaEvents(body);
         '<div>' +
           '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
             '<h3 style="margin:0;font-size:1.0625rem;color:var(--ink);">팀 목표 200% 활용 가이드</h3>' +
-            '<span class="guide-vanish-hint" style="font-size:0.8125rem;color:var(--ink-faint);font-weight:400;">* 팀 목표를 생성하면 사라짐</span>' +
+            '<span class="guide-vanish-hint" id="teamGoalGuideVanishHint" style="font-size:0.8125rem;color:var(--ink-faint);font-weight:400;">* 팀 목표를 생성하면 사라짐</span>' +
           '</div>' +
           '<p class="faint" style="margin:2px 0 0;font-size:.8125rem;">혼자 하면 작심삼일, 팀 크루들과 함께 공동 목표와 수준별 목표를 달성해보세요!</p>' +
         '</div>' +
@@ -22893,6 +22893,9 @@ wirePromptEncyclopediaEvents(body);
         '</div>' +
       '</div>' +
     '</div>';
+  }
+  if (typeof window !== 'undefined') {
+    window.renderTeamGoalsEmptyGuideHtml = renderTeamGoalsEmptyGuideHtml;
   }
 
   function wireTeamGoalsGuideEvents(container){
@@ -24181,6 +24184,9 @@ wirePromptEncyclopediaEvents(body);
         });
       });
     });
+  }
+  if (typeof window !== 'undefined') {
+    window.renderTeamGoalsScreen = renderTeamGoalsScreen;
   }
 
   function getTeamGoalTemplatePreset(tpl){
