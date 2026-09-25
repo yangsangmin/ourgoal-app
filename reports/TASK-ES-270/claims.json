@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-270",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-270-ROUTINE-TAB-SCHEDULER.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "목표 탭 상단 서브탭 목록(subtabsList)에서 ['routine', '루틴']이 ['personal', '개인']의 왼쪽(첫 번째)에 배치되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 #routineGoalsView에 #routineDayFilterBar 및 요일별 칩 필터(routine-day-chip)가 구현되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내에 교대근무 4종 캡슐 버튼(#btnShiftDay, #btnShiftNight, #btnShiftDuty, #btnShiftOff) 클릭 시 applyShiftWorkRoutines 1초 치환 배선이 구현되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "index.html 내에 당일 루틴 전수 완주 시 awardXP(10, '일일 루틴 전수 완수 (+10 EXP)') 지급 배선이 존재한다."
+    },
+    {
+      "id": "R5",
+      "text": "ui.css 내에 .routine-day-bar 및 .routine-day-chip 스타일이 구현되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 subtabsList에서 ['routine', '루틴']이 ['personal', '개인'] 앞에 위치한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "['routine', '루틴']"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 #routineGoalsView에 #routineDayFilterBar 및 요일별 칩 필터가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"routineDayFilterBar\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 교대근무 4종 캡슐 버튼 클릭 시 applyShiftWorkRoutines 1초 치환 배선이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "applyShiftWorkRoutines('day', true)"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 당일 루틴 전수 완주 시 awardXP 10 지급 배선이 존재한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "awardXP(10, '일일 루틴 전수 완수 (+10 EXP)')"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 .routine-day-bar 및 .routine-day-chip 스타일이 구현되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".routine-day-chip"
+      }
+    }
+  ]
+}
