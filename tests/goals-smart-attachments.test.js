@@ -5,6 +5,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const TEST_SUITE_NAME = 'goals-smart-attachments';
 
 console.log('--- [TEST] #TASK-ES-274 목표탭 참고자료 첨부 UI/UX 검증 시작 ---');
 
