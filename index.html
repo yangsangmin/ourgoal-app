@@ -20290,6 +20290,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var currentShiftMode = shiftSettings.currentShift || calculatedShift || 'day';
     var activePreset = SHIFT_WORK_PRESETS[currentShiftMode] || SHIFT_WORK_PRESETS.day;
 
+    if(typeof state.routineFilterDay === 'undefined') state.routineFilterDay = 'today';
+    var filterDay = state.routineFilterDay;
+
     var todayRoutines = routines.filter(function(r){
       return !r.days || r.days.indexOf(dayOfWeek) !== -1;
     });
@@ -20301,6 +20304,26 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var totalToday = todayRoutines.length;
     var allDone = (totalToday > 0 && completedCount === totalToday);
     var dayLabels = ['월', '화', '수', '목', '금', '토', '일'];
+
+    // [#TASK-ES-270] 요일별(오늘/월~일/전체) 필터링 대상 루틴
+    var displayedRoutines = routines.filter(function(r){
+      if(filterDay === 'all') return true;
+      if(filterDay === 'today') return !r.days || r.days.indexOf(dayOfWeek) !== -1;
+      var dNum = parseInt(filterDay, 10);
+      return !r.days || r.days.indexOf(dNum) !== -1;
+    });
+
+    var filterChips = [
+      { key: 'today', label: '오늘' },
+      { key: '1', label: '월' },
+      { key: '2', label: '화' },
+      { key: '3', label: '수' },
+      { key: '4', label: '목' },
+      { key: '5', label: '금' },
+      { key: '6', label: '토' },
+      { key: '7', label: '일' },
+      { key: 'all', label: '전체' }
+    ];
 
     var html = '' +
       '<div style="margin-bottom:14px;">' +
@@ -20376,10 +20399,26 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             (totalToday ? Math.round((completedCount / totalToday) * 100) : 0) + '%' +
           '</div>' +
         '</div>' +
+        '<div id="routineDayFilterBar" class="routine-day-bar" style="display:flex;align-items:center;gap:6px;overflow-x:auto;padding:2px 0 8px;margin-bottom:10px;-webkit-overflow-scrolling:touch;">' +
+          filterChips.map(function(fc){
+            var isSel = (filterDay === fc.key);
+            var isTodayChip = (fc.key === 'today');
+            var chipText = isTodayChip ? '⭐ 오늘' : (fc.key === 'all' ? '전체' : fc.label);
+            return '<button type="button" class="btn btn-ghost routine-day-chip' + (isSel ? ' active' : '') + '" data-rday="' + fc.key + '" style="min-height:36px;padding:6px 14px;font-size:.8125rem;font-weight:700;border-radius:20px;white-space:nowrap;flex-shrink:0;transition:all 0.15s;' +
+              (isSel ? 'background:var(--brand);color:#fff;border:1px solid var(--brand);box-shadow:0 2px 6px rgba(99,102,241,0.25);' : 'background:var(--card2);color:var(--ink);border:1px solid var(--rule);') + '">' +
+              chipText +
+            '</button>';
+          }).join('') +
+        '</div>' +
       '</div>' +
       '<div class="routine-list" style="display:flex;flex-direction:column;gap:8px;">' +
-        (todayRoutines.length === 0 ? '<div class="faint" style="text-align:center;padding:30px 0;">오늘 예정된 루틴이 없습니다. 새 루틴을 추가해보세요!</div>' : '') +
-        todayRoutines.map(function(r, idx){
+        (displayedRoutines.length === 0 ? 
+          '<div class="faint" style="text-align:center;padding:30px 0;">' +
+            (filterDay === 'today' ? '오늘 예정된 루틴이 없습니다. 새 루틴을 추가해보세요!' :
+            (filterDay === 'all' ? '등록된 루틴이 없습니다. 새 루틴을 추가해보세요!' :
+            dayLabels[parseInt(filterDay, 10) - 1] + '요일에 예정된 루틴이 없습니다.')) +
+          '</div>' : '') +
+        displayedRoutines.map(function(r, idx){
           var isDone = r.completedDates && r.completedDates.indexOf(todayKey) !== -1;
           var borderStyle = state.routineEditMode ? '1.5px dashed var(--brand)' : (isDone ? '1px solid var(--brand-line)' : '1px solid var(--rule)');
           return '<div class="routine-card" data-rtid="' + r.id + '" style="background:var(--card);border:' + borderStyle + ';border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;transition:all 0.2s;cursor:pointer;">' +
@@ -20525,6 +20564,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       };
     });
 
+    // [#TASK-ES-270] 요일 필터 칩 클릭 이벤트 배선
+    container.querySelectorAll('.routine-day-chip').forEach(function(chip){
+      chip.onclick = function(e){
+        e.stopPropagation();
+        if(typeof triggerHaptic === 'function') triggerHaptic(12);
+        state.routineFilterDay = chip.getAttribute('data-rday');
+        renderRoutineGoalsScreen();
+      };
+    });
+
     var addBtn = container.querySelector('#btnAddRoutineBtn');
     if(addBtn){
       addBtn.onclick = function(){
@@ -20532,18 +20581,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       };
     }
 
-    // [#TASK-ES-220] 교대근무 4종 캡슐 버튼 및 액션 이벤트 배선
+    // [#TASK-ES-270] 교대근무 4종 캡슐 버튼 1초 안전 비파괴 치환 배선
     var shiftDayBtn = container.querySelector('#btnShiftDay');
     if(shiftDayBtn){
       shiftDayBtn.onclick = async function(e){
         e.stopPropagation();
         if(typeof triggerHaptic === 'function') triggerHaptic(12);
-        shiftSettings.currentShift = 'day';
-        state.profile.settings.shiftSettings = shiftSettings;
-        state.profile.shiftSettings = shiftSettings;
-        await saveProfile();
-        toast('☀️ 주간조 모드로 변경되었습니다.');
-        renderRoutineGoalsScreen();
+        await applyShiftWorkRoutines('day', true);
       };
     }
 
@@ -20552,12 +20596,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       shiftNightBtn.onclick = async function(e){
         e.stopPropagation();
         if(typeof triggerHaptic === 'function') triggerHaptic(12);
-        shiftSettings.currentShift = 'night';
-        state.profile.settings.shiftSettings = shiftSettings;
-        state.profile.shiftSettings = shiftSettings;
-        await saveProfile();
-        toast('🌙 야간조 모드로 변경되었습니다. (서카디언 리듬 적용)');
-        renderRoutineGoalsScreen();
+        await applyShiftWorkRoutines('night', true);
       };
     }
 
@@ -20566,12 +20605,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       shiftDutyBtn.onclick = async function(e){
         e.stopPropagation();
         if(typeof triggerHaptic === 'function') triggerHaptic(12);
-        shiftSettings.currentShift = 'duty';
-        state.profile.settings.shiftSettings = shiftSettings;
-        state.profile.shiftSettings = shiftSettings;
-        await saveProfile();
-        toast('🔄 당직/비번 모드로 변경되었습니다.');
-        renderRoutineGoalsScreen();
+        await applyShiftWorkRoutines('duty', true);
       };
     }
 
@@ -20580,12 +20614,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       shiftOffBtn.onclick = async function(e){
         e.stopPropagation();
         if(typeof triggerHaptic === 'function') triggerHaptic(12);
-        shiftSettings.currentShift = 'off';
-        state.profile.settings.shiftSettings = shiftSettings;
-        state.profile.shiftSettings = shiftSettings;
-        await saveProfile();
-        toast('🌿 휴무 모드로 변경되었습니다.');
-        renderRoutineGoalsScreen();
+        await applyShiftWorkRoutines('off', true);
       };
     }
 
@@ -21563,8 +21592,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(!subtabs) return;
     /* 하위 호환성 헌법 단정화 선언: ['teamLinked','팀 연계'], ['templateEncyclopedia','📖 템플릿'] */
     var subtabsList = [
-      ['personal', '개인'],
       ['routine', '루틴'],
+      ['personal', '개인'],
       ['teamLinked', '팀연계'],
       ['team', '팀목표'],
       ['templateEncyclopedia', '템플릿']

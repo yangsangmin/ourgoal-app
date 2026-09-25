@@ -8623,6 +8623,38 @@ check('compliance: [#TASK-ES-269] 기간 설정(목표·팀·기록 분석) 맞�
   assert.ok(uiCss.includes('.avatar-period-guide'), '.avatar-period-guide 스타일 선언');
 });
 
+/* ============ [#TASK-ES-270] 목표탭 상단 '루틴' 탭(요일별 반복 설정·자동 알림·EXP 10) 신설 및 스케줄러 고도화 ============ */
+check('[#TASK-ES-270] 목표탭 상단 루틴 탭(개인 왼쪽 배치·요일별 칩 필터·교대근무 1초 치환·EXP 10) 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 목표 탭 상단 서브탭 '개인' 왼쪽에 '루틴' 배치
+  const routineIdx = indexHtml.indexOf("['routine', '루틴']");
+  const personalIdx = indexHtml.indexOf("['personal', '개인']");
+  assert.ok(routineIdx !== -1 && personalIdx !== -1, '서브탭 목록 내 루틴 및 개인 존재');
+  assert.ok(routineIdx < personalIdx, "목표 탭 상단 서브탭에서 '루틴'이 '개인'의 왼쪽(첫 번째)에 배치");
+
+  // 2. #routineDayFilterBar 및 요일 칩 마크업, 상태 배선
+  assert.ok(indexHtml.includes('id="routineDayFilterBar"'), 'routineDayFilterBar 컨테이너 존재');
+  assert.ok(indexHtml.includes('routine-day-chip'), 'routine-day-chip 클래스 존재');
+  assert.ok(indexHtml.includes('state.routineFilterDay'), 'state.routineFilterDay 상태 필터링 배선');
+  assert.ok(indexHtml.includes('displayedRoutines'), 'displayedRoutines 동적 렌더링 배열');
+
+  // 3. 교대근무 4종 캡슐 버튼에 applyShiftWorkRoutines 1초 치환 배선
+  assert.ok(indexHtml.includes("applyShiftWorkRoutines('day', true)"), '주간조 1초 치환');
+  assert.ok(indexHtml.includes("applyShiftWorkRoutines('night', true)"), '야간조 1초 치환');
+  assert.ok(indexHtml.includes("applyShiftWorkRoutines('duty', true)"), '당직/비번 1초 치환');
+  assert.ok(indexHtml.includes("applyShiftWorkRoutines('off', true)"), '휴무 1초 치환');
+
+  // 4. 당일 루틴 전수 완주 시 +10 EXP 지급 배선
+  assert.ok(indexHtml.includes("awardXP(10, '일일 루틴 전수 완수 (+10 EXP)')"), '전수 완주 시 10 EXP 지급');
+  assert.ok(indexHtml.includes("routineLastExpAwardDate"), '당일 1회 한정 중복 지급 방지');
+
+  // 5. ui.css 스타일
+  assert.ok(uiCss.includes('.routine-day-bar'), '.routine-day-bar 스타일 존재');
+  assert.ok(uiCss.includes('.routine-day-chip'), '.routine-day-chip 스타일 존재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

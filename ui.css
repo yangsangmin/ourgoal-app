@@ -11778,4 +11778,47 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
   }
 }
 
+/* [#TASK-ES-270] 목표 탭 상단 루틴 탭 및 요일별 칩 필터 바 스타일 */
+.routine-day-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px 0 10px;
+  margin-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.routine-day-bar::-webkit-scrollbar {
+  display: none;
+}
+.routine-day-chip {
+  min-height: 38px;
+  padding: 6px 14px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.routine-day-chip:hover {
+  filter: brightness(1.05);
+}
+.routine-day-chip.active {
+  background: var(--brand) !important;
+  color: #fff !important;
+  border-color: var(--brand) !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+@media (max-width: 480px) {
+  .routine-day-chip {
+    padding: 6px 11px;
+    font-size: 0.78125rem;
+  }
+}
+
+
 
