@@ -18161,6 +18161,22 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     '</div>';
   }
 
+  /* [#TASK-ES-274] 인라인 목표/마일스톤/할일용 시각적 미니 칩 렌더러 */
+  function renderInlineAttachmentChips(attachments, targetKind, targetId, parentId){
+    if(!attachments || !attachments.length) return '';
+    return '<span class="att-chips-inline" style="display:inline-flex;flex-wrap:wrap;gap:4px;vertical-align:middle;">' +
+      attachments.map(function(att, idx){
+        var icon = att.type === 'video' ? '🎥' : (att.type === 'image' ? '🖼️' : (att.type === 'text' ? '📝' : '🔗'));
+        var typeClass = 'type-' + (att.type || 'link');
+        var safeTitle = escapeHtml(att.title || '참고자료');
+        return '<span class="att-chip att-chip-mini ' + typeClass + '" data-openatt="'+idx+'" data-attkind="'+targetKind+'" data-attid="'+targetId+'" data-attpid="'+(parentId||'')+'" title="'+safeTitle+' (클릭하여 열기)" role="button" tabindex="0">' +
+          '<span class="att-chip-mini-icon">' + icon + '</span>' +
+          '<span class="att-chip-mini-text">' + safeTitle + '</span>' +
+        '</span>';
+      }).join('') +
+    '</span>';
+  }
+
   function openAttachmentViewer(att, onEdit, onDelete){
     var contentHtml = '';
     if(att.type === 'video'){
@@ -18498,6 +18514,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.openAddAttachmentModal = openAddAttachmentModal;
     window.openAttachmentViewer = openAttachmentViewer;
     window.renderAttachmentChipsHtml = renderAttachmentChipsHtml;
+    window.renderInlineAttachmentChips = renderInlineAttachmentChips;
   }
 
   function wireAttachmentChipClicks(container){
@@ -18505,6 +18522,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     container.querySelectorAll('.att-chip[data-openatt]').forEach(function(chip){
       chip.addEventListener('click', function(e){
         e.stopPropagation();
+        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
         var idx = parseInt(chip.dataset.openatt, 10);
         var kind = chip.dataset.attkind;
         var id = chip.dataset.attid;
@@ -21971,7 +21989,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       function renderSingleTaskRow(t){
         var tSel = !!state.taskSel[t.id];
-        var tAttHtml = (t.attachments && t.attachments.length) ? ('<span class="faint" style="font-size:.7rem;" title="참고자료 '+t.attachments.length+'건">📎'+t.attachments.length+'</span>') : '';
+        var tAttHtml = renderInlineAttachmentChips(t.attachments, 'task', t.id, m.id);
         var taskDueHtml = state.goalEditMode ?
           ('<input type="datetime-local" data-taskdate="1" value="'+toDateTimeLocalValue(t.dueDate)+'" style="font-size:.7rem;padding:1px 3px;max-width:130px;">' + (t.dueDate ? ddayMini(t.dueDate) : '')) : '';
         var tResHtml = t.result ? ('<button data-taskresult="1" type="button" style="border:none;background:none;padding:0;">'+resultBadgeHtml(t.result)+'</button>') : (state.goalEditMode ? '<button data-taskresult="1" type="button" style="border:none;background:none;padding:0;font-size:.7rem;color:var(--ink-faint);">+결과</button>' : '');
@@ -21983,6 +22001,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<div class="task-meta-inline">' +
             taskDueHtml +
             tAttHtml +
+            '<button class="att-add-btn compact-att-btn" data-addatttask="'+t.id+'" data-msid="'+m.id+'" type="button" title="참고자료 첨부">+참고</button>' +
             formatSchedulePillHtml(t, 'task', goal.id, m.id, t.id) +
             '<button class="icon-btn" data-calsynctask="'+t.id+'" data-msid="'+m.id+'" type="button" aria-label="일정 반영" title="구글 캘린더 반영" style="padding:1px 3px;font-size:.75rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' +
             tResHtml +
@@ -22032,7 +22051,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       var msDueHtml = state.goalEditMode ?
         ('<div class="ms-date" style="display:inline-flex;align-items:center;gap:4px;"><input type="datetime-local" data-msdate="1" value="'+toDateTimeLocalValue(m.dueDate)+'" style="font-size:.75rem;padding:2px 4px;max-width:140px;">' + (m.dueDate ? ddayMini(m.dueDate) : '') + '</div>') : '';
-      var attSnippet = (m.attachments && m.attachments.length) ? ('<span class="faint" style="font-size:.72rem;">📎' + m.attachments.length + '</span>') : '';
+      var attSnippet = renderInlineAttachmentChips(m.attachments, 'ms', m.id);
 
       return '<div class="ms-row'+(m.status==='doing'?' doing':'')+(mSel?' selected':'')+'" data-msid="'+m.id+'" '+(state.goalEditMode?'draggable="true"':'')+'>' +
         '<div class="ms-grid-row">' +
@@ -22359,7 +22378,11 @@ wirePromptEncyclopediaEvents(body);
       if(addAttMsBtn){
         addAttMsBtn.addEventListener('click', function(e){
           e.stopPropagation();
-          openAddAttachmentModal(ms, function(){ renderGoalsScreen(); });
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+          openAddAttachmentModal(ms, async function(){
+            await saveProfile();
+            renderGoalsScreen();
+          });
         });
       }
 
@@ -22465,7 +22488,11 @@ wirePromptEncyclopediaEvents(body);
         if(addAttTaskBtn){
           addAttTaskBtn.addEventListener('click', function(e){
             e.stopPropagation();
-            openAddAttachmentModal(task, function(){ renderGoalsScreen(); });
+            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+            openAddAttachmentModal(task, async function(){
+              await saveProfile();
+              renderGoalsScreen();
+            });
           });
         }
 

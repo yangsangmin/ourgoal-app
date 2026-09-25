@@ -11989,6 +11989,89 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
   }
 }
 
+/* ==========================================================================
+   #TASK-ES-274 목표탭 참고자료 첨부 및 인라인 칩 반응형 고도화
+   ========================================================================== */
+.att-chips-inline {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  vertical-align: middle;
+}
 
+.att-chip-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--surface-2, rgba(255, 255, 255, 0.06));
+  color: var(--ink, #f8fafc);
+  transition: all 0.15s ease;
+  user-select: none;
+}
 
+.att-chip-mini:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
 
+.att-chip-mini:active {
+  transform: scale(0.96);
+}
+
+.att-chip-mini.type-video {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.28);
+  color: #f87171;
+}
+
+.att-chip-mini.type-image {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.28);
+  color: #34d399;
+}
+
+.att-chip-mini.type-text {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.28);
+  color: #fbbf24;
+}
+
+.att-chip-mini.type-link {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.28);
+  color: #60a5fa;
+}
+
+.att-chip-mini-icon {
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.att-chip-mini-text {
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.compact-att-btn {
+  padding: 1px 5px !important;
+  font-size: 0.625rem !important;
+  min-height: 18px !important;
+  line-height: 1.2 !important;
+  border-radius: 4px !important;
+}
+
+@media (max-width: 480px) {
+  .att-chip-mini-text {
+    max-width: 60px;
+  }
+}
