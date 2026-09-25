@@ -8536,6 +8536,29 @@ check('compliance: [#TASK-ES-266] 전 탭 ‘이 페이지 활용법’ 우측 �
   assert.ok(uiCss.includes('#topUserName') && (uiCss.includes('text-overflow:ellipsis') || uiCss.includes('text-overflow: ellipsis')), '#topUserName 말줄임 가드 검증');
 });
 
+/* ============ [#TASK-ES-267] 아바타 10개 관리 및 레벨업 팝업/공유/저장/프롬프트 성향 설정 검증 ============ */
+check('compliance: [#TASK-ES-267] 아바타 10개 관리 및 레벨업 팝업/공유/저장/프롬프트 성향 설정 검증', () => {
+  const avatarSystemSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 10개 독립 슬롯 인벤토리 렌더러 검증
+  assert.ok(avatarSystemSrc.includes('MAX_SLOTS = 10'), '10개 고정 슬롯 MAX_SLOTS 정의 검증');
+  assert.ok(avatarSystemSrc.includes('empty-avatar-slot') && avatarSystemSrc.includes('avatar-10slots-carousel'), '빈 슬롯 및 10슬롯 캐러셀 컨테이너 검증');
+
+  // 2. addSavedAvatar growthPrompt 보존 및 성향 프롬프트 폼 검증
+  assert.ok(avatarSystemSrc.includes('growthPrompt: item.growthPrompt'), 'addSavedAvatar 내 growthPrompt 보존 검증');
+  assert.ok(avatarSystemSrc.includes('avatarModalGrowthPromptInput'), '아바타 모달 내 성장 성향 프롬프트 인풋 검증');
+
+  // 3. index.html 레벨업 대형 팝업 3대 액션 및 성장 성향 뱃지 검증
+  assert.ok(indexHtml.includes('avatarLevelUpModal') && indexHtml.includes('avatarLevelUpImgContainer'), '레벨업 대형 팝업 컨테이너 검증');
+  assert.ok(indexHtml.includes('btnShareLevelUp') && indexHtml.includes('btnSaveLevelUpImage') && indexHtml.includes('btnConfirmLevelUpClose'), '레벨업 3대 액션 버튼 검증');
+  assert.ok(indexHtml.includes('성장 성향:') && indexHtml.includes('filterHarmfulWords'), '레벨업 모달 성장 성향 뱃지 및 유해단어 필터링 검증');
+
+  // 4. ui.css 모바일 375px 캐러셀 스타일 검증
+  assert.ok(uiCss.includes('.avatar-10slots-carousel') && uiCss.includes('.empty-avatar-slot'), 'ui.css 10슬롯 캐러셀 스타일 검증');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
