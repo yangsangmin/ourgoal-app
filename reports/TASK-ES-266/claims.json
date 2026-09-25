@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-266",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-266-TOP-PAGE-GUIDE-REPOSITION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내에 topbar-right 영역에서 #topHomeGuideBtn이 유저 프로필(#topUserChip) 바로 왼쪽에 배치"
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내에 #topHomeGuideBtn의 버튼 텍스트가 지시 원문 그대로 💡 이 페이지 활용법으로 구현"
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내에 setTab 함수에서 탭 전환 시 #topHomeGuideBtn의 title 및 aria-label이 동적으로 동기화"
+    },
+    {
+      "id": "R4",
+      "text": "ui.css 내에 .topbar-guide-btn 및 #topUserName 모바일 375px 말줄임 스타일 구현"
+    },
+    {
+      "id": "R5",
+      "text": "tests/top-page-guide-reposition.test.js에 탑바 배치 순서 및 버튼 텍스트 단위 검증 완비"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 topbar-right 영역에서 #topHomeGuideBtn이 #topUserChip 바로 왼쪽에 배치되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "class=\"btn btn-ghost btn-xs topbar-action-btn topbar-guide-btn\" id=\"topHomeGuideBtn\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 #topHomeGuideBtn의 버튼 텍스트가 지시 원문 그대로 💡 이 페이지 활용법으로 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "💡 이 페이지 활용법"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 setTab 함수에서 탭 전환 시 #topHomeGuideBtn의 title 및 aria-label이 동적으로 동기화된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "topGuideBtn.title = '이 페이지 활용법 (' + guideLabel + ')';"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 .topbar-guide-btn 및 #topUserName 모바일 375px 말줄임 스타일이 구현되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#topUserName{max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;vertical-align:middle;}"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/top-page-guide-reposition.test.js에 탑바 배치 순서 및 버튼 텍스트 단위 검증이 완비되어 있다",
+      "touches": [
+        "tests/top-page-guide-reposition.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/top-page-guide-reposition.test.js",
+        "text": "assert.ok(idxNotif < idxGuide, '알림 벨(#topNotifBtn)이 가이드 버튼(#topHomeGuideBtn)보다 왼쪽에 위치해야 합니다.');"
+      }
+    }
+  ]
+}
