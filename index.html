@@ -1609,8 +1609,31 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var kst = new Date(d.getTime() + (9 * 3600000));
     return kst.getUTCFullYear() + '-' + pad(kst.getUTCMonth() + 1) + '-' + pad(kst.getUTCDate());
   }
+  /* ============ [#TASK-ES-264] 표준 시간대(한국 KST 00:00, 타 국가는 해당 국가 표준시 00:00) 기준 날짜 키 ============ */
+  function getEffectiveStandardDateKey(iso, tz){
+    var d = iso ? new Date(iso) : new Date();
+    if(isNaN(d.getTime())) d = new Date();
+    var targetTz = tz;
+    if(!targetTz && typeof state !== 'undefined' && state && state.profile && state.profile.settings && state.profile.settings.timezone){
+      targetTz = state.profile.settings.timezone;
+    }
+    if(!targetTz && typeof Intl !== 'undefined' && Intl.DateTimeFormat){
+      try { targetTz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e){}
+    }
+    if(targetTz){
+      try {
+        var fmt = new Intl.DateTimeFormat('en-CA', { timeZone: targetTz, year: 'numeric', month: '2-digit', day: '2-digit' });
+        var parts = fmt.format(d);
+        if(parts && parts.length === 10) return parts;
+      } catch(e){}
+    }
+    return getKSTDateKey(d.toISOString());
+  }
   function dateKey(iso){ var d=new Date(iso); if(!iso || isNaN(d.getTime())) d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
-  if(typeof window !== 'undefined'){ window.getKSTDateKey = getKSTDateKey; }
+  if(typeof window !== 'undefined'){
+    window.getKSTDateKey = getKSTDateKey;
+    window.getEffectiveStandardDateKey = getEffectiveStandardDateKey;
+  }
   /* ============ 계측(익명 이벤트) — 성장 백로그 P0 ①온보딩 퍼널 ②유입 채널 ③알림 클릭률 ============
      원칙: user_id는 저장하지 않고 기기별 익명 sid만 사용(개인정보 최소화). 계측 실패는 UX에 절대 영향을 주지 않는다. */
   function parseAttribution(search){
@@ -19247,13 +19270,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(state.goalStatusPending[goal.id]) return;
     var summaries = (state.profile && state.profile.settings && state.profile.settings.goalStatusSummaries) || {};
     var existing = summaries[goal.id];
-    if(existing && existing.text && existing.hash === hash) return;
+    var todayKey = typeof getEffectiveStandardDateKey === 'function' ? getEffectiveStandardDateKey(nowISO()) : getKSTDateKey(nowISO());
+    if(existing && existing.text && existing.hash === hash && (!existing.dateKey || existing.dateKey === todayKey)) return;
     state.goalStatusPending[goal.id] = true;
     generateGoalStatusSummary(goal).then(async function(text){
       delete state.goalStatusPending[goal.id];
       if(!text) return;
       if(!state.profile.settings.goalStatusSummaries) state.profile.settings.goalStatusSummaries = {};
-      state.profile.settings.goalStatusSummaries[goal.id] = { text: text, hash: hash, dateKey: getKSTDateKey(nowISO()), updatedAt: nowISO() };
+      state.profile.settings.goalStatusSummaries[goal.id] = { text: text, hash: hash, dateKey: getKSTDateKey(nowISO()), standardDateKey: todayKey, updatedAt: nowISO() };
       await saveProfile();
       if(state.activeGoalId===goal.id && state.activeTab==='goals' && !state.goalEditMode){
         var el = document.getElementById('goalStatusText');
@@ -19312,17 +19336,30 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       return text;
     } catch(e){ clearTimeout(timer); return localTodayMission(goal); }
   }
+  /* ============ [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 ============ */
+  function computeTodayMissionHash(g){
+    var baseHash = typeof computeGoalStatusHash === 'function' ? computeGoalStatusHash(g) : String(g.title||'');
+    var recs = (state.profile && state.profile.records) || [];
+    var lastRec = recs.find(function(r){ return r.goalId === g.id || r.category === g.category; });
+    var recPart = lastRec ? (lastRec.id + ':' + (lastRec.startAt || lastRec.date || '')) : '';
+    return baseHash + (recPart ? (':' + recPart) : '');
+  }
+  if(typeof window !== 'undefined'){
+    window.computeTodayMissionHash = computeTodayMissionHash;
+  }
   function renderTodayMissionCard(){
     var el = document.getElementById('todayMissionCard');
     if(!el || !state.profile) return;
     var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });
     if(!goals.length){ el.innerHTML = ''; return; }
-    var today = dateKey(nowISO());
+    var today = typeof getEffectiveStandardDateKey === 'function' ? getEffectiveStandardDateKey(nowISO()) : dateKey(nowISO());
     var missions = state.profile.settings.todayMissions || {};
 
     function missionRowHtml(g){
       var m = missions[g.id];
-      var text = (m && m.date===today) ? m.text : '생각하는 중...';
+      var gHash = computeTodayMissionHash(g);
+      var isCacheValid = !!(m && m.text && m.date === today && (!m.hash || m.hash === gHash));
+      var text = isCacheValid ? m.text : '생각하는 중...';
       return '<div class="mission-row"><span class="m-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg></span><span><span class="m-goal">'+escapeHtml(g.title)+'</span> · <span class="m-text">'+escapeHtml(text)+'</span></span></div>';
     }
 
@@ -19358,14 +19395,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
     goals.forEach(function(g){
       var m = missions[g.id];
-      if(m && m.date===today) return;
+      var gHash = computeTodayMissionHash(g);
+      var isCacheValid = !!(m && m.text && m.date === today && (!m.hash || m.hash === gHash));
+      if(isCacheValid){
+        if(m && !m.hash){ m.hash = gHash; }
+        return;
+      }
       if(!state.todayMissionPending) state.todayMissionPending = {};
       if(state.todayMissionPending[g.id]) return;
       state.todayMissionPending[g.id] = true;
       requestTodayMission(g).then(async function(text){
         delete state.todayMissionPending[g.id];
         if(!state.profile.settings.todayMissions) state.profile.settings.todayMissions = {};
-        state.profile.settings.todayMissions[g.id] = { date: today, text: text };
+        state.profile.settings.todayMissions[g.id] = { date: today, text: text, hash: gHash, updatedAt: nowISO() };
         await saveProfile();
         if(state.activeTab==='home') renderTodayMissionCard();
       });
@@ -21794,8 +21836,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     var goalStatusHash = computeGoalStatusHash(goal);
     if(!state.profile.settings.goalStatusSummaries) state.profile.settings.goalStatusSummaries = {};
-    var goalStatusCache = state.profile.settings.goalStatusSummaries[goal.id];
     var todayKST = getKSTDateKey(nowISO());
+    var todayEffective = typeof getEffectiveStandardDateKey === 'function' ? getEffectiveStandardDateKey(nowISO()) : todayKST;
     var isPending = !!(state.goalStatusPending && state.goalStatusPending[goal.id]);
     var hasValidCache = !!(goalStatusCache && goalStatusCache.text);
     var isDateStale = !!(goalStatusCache && (goalStatusCache.dateKey && goalStatusCache.dateKey !== todayKST));
@@ -22030,7 +22072,7 @@ wirePromptEncyclopediaEvents(body);
       openResultModal('goal', goal, function(){ renderAll(); });
     });
 
-    if(!state.goalEditMode && goalStatusStale && goal.milestones.length) refreshGoalStatusSummary(goal, goalStatusHash);
+    if(!state.goalEditMode && (goalStatusStale || isDateStale) && goal.milestones.length) refreshGoalStatusSummary(goal, goalStatusHash);
 
     var expBtn = document.getElementById('goalExportBtn');
     if(expBtn) expBtn.addEventListener('click', function(){ exportGoalSnapshot('one', goal); });
@@ -35815,10 +35857,46 @@ wirePromptEncyclopediaEvents(body);
     window.dispatchFullViewPropagation = dispatchFullViewPropagation;
   }
 
+  /* ============ [#TASK-ES-264] 자정(00:00 KST / 현지 표준시) 날짜 변경 감지 및 자동 동기화 워처 ============ */
+  var _lastObservedDateKey = null;
+  function checkAndHandleDateRollover(){
+    if(!state || !state.profile) return false;
+    var curDateKey = typeof getEffectiveStandardDateKey === 'function' ? getEffectiveStandardDateKey(nowISO()) : dateKey(nowISO());
+    if(!_lastObservedDateKey){
+      _lastObservedDateKey = curDateKey;
+      return false;
+    }
+    if(_lastObservedDateKey !== curDateKey){
+      console.log('[DateRollover] 자정 경과 날짜 변동 감지:', _lastObservedDateKey, '->', curDateKey);
+      _lastObservedDateKey = curDateKey;
+      if(typeof renderTodayMissionCard === 'function') renderTodayMissionCard();
+      if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation(['home', 'records', 'calendar']);
+      return true;
+    }
+    return false;
+  }
+  function setupDateRolloverWatcher(){
+    _lastObservedDateKey = typeof getEffectiveStandardDateKey === 'function' ? getEffectiveStandardDateKey(nowISO()) : dateKey(nowISO());
+    if(typeof document !== 'undefined'){
+      document.addEventListener('visibilitychange', function(){
+        if(document.visibilityState === 'visible') checkAndHandleDateRollover();
+      });
+    }
+    if(typeof window !== 'undefined'){
+      window.addEventListener('focus', checkAndHandleDateRollover);
+      if(!window._dateRolloverInterval){
+        window._dateRolloverInterval = setInterval(checkAndHandleDateRollover, 60000);
+      }
+      window.checkAndHandleDateRollover = checkAndHandleDateRollover;
+      window.setupDateRolloverWatcher = setupDateRolloverWatcher;
+    }
+  }
+
   /* ============ Render all ============ */
   function renderAll(){
     updateTopBar();
     document.getElementById('homeGreeting').textContent = state.profile.displayName + '님, 안녕하세요';
+    if(typeof setupDateRolloverWatcher === 'function') setupDateRolloverWatcher();
     renderHome();
     renderGoalsScreen();
     renderCalendarScreen();
