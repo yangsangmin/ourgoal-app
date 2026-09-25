@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-262",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-262-TODAY-CARD-GUIDE-TEXT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "오늘의 미션 추천카드 내 '오늘의 카드' 옆에 '뭘 할지 모르겠을 때 도움돼요(내 목표기반)' 안내멘트 배치"
+    },
+    {
+      "id": "R2",
+      "text": "안내멘트에 고유 클래스 .today-card-guide-hint 부여"
+    },
+    {
+      "id": "R3",
+      "text": "ui.css 내 .today-card-guide-hint에 1pt 축소 폰트(0.6875rem) 및 스타일 정의"
+    },
+    {
+      "id": "R4",
+      "text": "ui.css 내 375px 모바일 반응형 미디어 쿼리 방어"
+    },
+    {
+      "id": "R5",
+      "text": "tests/today-mission-card-guide.test.js 및 smoke-test.js 검증 100% 통과"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 오늘의 미션 카드 헤더에 '뭘 할지 모르겠을 때 도움돼요(내 목표기반)' 안내멘트가 존재한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "뭘 할지 모르겠을 때 도움돼요(내 목표기반)"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 오늘의 미션 카드 헤더에 today-card-guide-hint 클래스가 적용되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "class=\"today-card-guide-hint\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내 .today-card-guide-hint에 1pt 축소 폰트 크기(0.6875rem)가 지정되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "font-size: 0.6875rem;"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내 375px 모바일 미디어 쿼리에 .today-card-guide-hint 반응형 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".today-card-guide-hint {"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/today-mission-card-guide.test.js 단위 검증 파일이 존재하고 정상 작동한다",
+      "touches": [
+        "tests/today-mission-card-guide.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/today-mission-card-guide.test.js",
+        "text": "TASK-ES-262"
+      }
+    }
+  ]
+}
