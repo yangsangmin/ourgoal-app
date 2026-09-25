@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-273",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-273-TAB-GUIDES-SHOWCASE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "6대 탭(홈, 목표, 일정, 기록, 소통, 설정) 최신 기능 가이드가 js/tab-guides.js에 반영되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "각 탭별 실제 우수 사용사례 쇼케이스 조형(tab-guide-showcase-card)이 구현되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "renderTabContentHtml 함수가 쇼케이스 카드와 기능 안내를 통합 렌더링한다."
+    },
+    {
+      "id": "R4",
+      "text": "ui.css에 tab-guide-showcase-card 및 375px 모바일 반응형 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "헌법 제17조에 따라 가이드 텍스트에서 잔디 단어가 배제되고 히트맵으로 통일되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/tab-guides.js 내에 6대 탭별 우수 사용사례 쇼케이스 객체(TAB_SHOWCASES)가 구현되어 있다",
+      "touches": [
+        "js/tab-guides.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tab-guides.js",
+        "text": "TAB_SHOWCASES"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/tab-guides.js 내에 실제 우수 사용사례 카드 클래스(tab-guide-showcase-card)가 구현되어 있다",
+      "touches": [
+        "js/tab-guides.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tab-guides.js",
+        "text": "tab-guide-showcase-card"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/tab-guides.js 내 renderBestPracticeShowcaseHtml 함수가 구현되어 있다",
+      "touches": [
+        "js/tab-guides.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tab-guides.js",
+        "text": "renderBestPracticeShowcaseHtml"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 tab-guide-showcase-card 스타일 규칙이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".tab-guide-showcase-card"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/tab-guides.js 내에 헌법 제17조 용어 정합성을 준수하여 히트맵 콕핏 안내가 구현되어 있다",
+      "touches": [
+        "js/tab-guides.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tab-guides.js",
+        "text": "히트맵 콕핏"
+      }
+    }
+  ]
+}
