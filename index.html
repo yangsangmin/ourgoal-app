@@ -294,17 +294,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <button class="mz-btn" id="mzShareBtn" type="button" data-home-widget="mzShareBtn" data-widget-label="내 성장 자랑하기 버튼" data-widget-hint="인스타·카톡 공유용 고화질 카드">내 성장 자랑하기</button>
       </div>
 
-      <!-- ⑥ [86] 아워골 평가해주기 최신 복원 배너 (상시/반복 평가 가능) -->
+      <!-- ⑥ [#TASK-ES-268 / 생각 메모장 13번] 아워골 평가해주기 고정배너 (나만의 홈 구성에서 바꿀수 없음, 상시 노출) -->
       <div id="homeEvalBanner" class="home-eval-banner-box" style="margin-top:18px;margin-bottom:14px;">
         <div style="background:var(--card2);border:1px solid var(--rule);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
             <div style="display:flex;align-items:center;gap:8px;">
               <span style="font-size:1.3rem;">⭐</span>
-              <span style="font-weight:700;font-size:.9375rem;color:var(--ink);">아워골 평가하기</span>
+              <span style="font-weight:700;font-size:.9375rem;color:var(--ink);">아워골 평가해주기</span>
             </div>
-            <button type="button" class="btn btn-primary btn-sm" id="btnOpenEvalModal" style="font-size:.8125rem;padding:4px 12px;border-radius:20px;">평가 작성</button>
+            <button type="button" class="btn btn-primary btn-sm" id="btnOpenEvalModal" style="font-size:.8125rem;padding:6px 14px;border-radius:20px;font-weight:800;white-space:nowrap;">&lt;아워골 평가해주기&gt;</button>
           </div>
-          <p class="faint" style="margin:0;font-size:.78125rem;line-height:1.45;">아워골을 사용하시면서 느낀 점과 피드백을 자유롭게 들려주세요. 상민님과 개발팀이 즉각 검토합니다.</p>
+          <p class="faint" style="margin:0;font-size:.78125rem;line-height:1.45;">아워골을 사용하시면서 느낀 점과 솔직한 피드백을 들려주세요. 상민님과 개발팀이 즉각 검토합니다.</p>
           <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px dashed var(--rule);padding-top:8px;font-size:.72rem;color:var(--ink-faint);">
             <span>💬 <b>언제 얼마든지 평가해주실 수 있습니다</b></span>
             <span>(반복 평가 환영 ✨)</span>
@@ -17675,6 +17675,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(e.target === modalEvalElem) closeAppEvaluationModal();
     });
   }
+  function resetAppEvaluationForm(){
+    if(document.getElementById('evalScoreInput')) document.getElementById('evalScoreInput').value = '';
+    if(document.getElementById('evalProsInput')) document.getElementById('evalProsInput').value = '';
+    if(document.getElementById('evalConsInput')) document.getElementById('evalConsInput').value = '';
+    if(document.getElementById('evalImprovementsInput')) document.getElementById('evalImprovementsInput').value = '';
+    if(document.getElementById('evalCeoMsgInput')) document.getElementById('evalCeoMsgInput').value = '';
+  }
+  window.resetAppEvaluationForm = resetAppEvaluationForm;
+
   var btnSubmitEval = document.getElementById('btnSubmitAppEval');
   if(btnSubmitEval){
     btnSubmitEval.addEventListener('click', function(){
@@ -17707,6 +17716,25 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       state.profile.settings.appEvaluations.push(evalItem);
       saveProfile();
 
+      // [#TASK-ES-268] Supabase app_evaluations 테이블 직접 적재
+      if(typeof sb !== 'undefined' && sb && typeof sb.from === 'function'){
+        try {
+          sb.from('app_evaluations').insert({
+            id: evalItem.id,
+            user_id: (state.profile && state.profile.id) || null,
+            user_name: (state.profile && (state.profile.displayName || state.profile.nickname || state.profile.name)) || '회원',
+            score: evalItem.score,
+            pros: evalItem.pros,
+            cons: evalItem.cons,
+            improvements: evalItem.improvements,
+            ceo_msg: evalItem.ceoMsg,
+            created_at: evalItem.createdAt
+          }).then(function(){}, function(err){ console.warn('[sb app_evaluations insert err]', err); });
+        } catch(sbErr) {
+          console.warn('[sb app_evaluations error]', sbErr);
+        }
+      }
+
       btnSubmitEval.disabled = true;
       btnSubmitEval.textContent = '제출 중...';
 
@@ -17722,16 +17750,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       })
       .then(function(res){ return res.json(); })
       .then(function(data){
-        if(data && data.ok){
-          toast('소중한 평가가 접수되었습니다. 감사합니다! ⭐');
-          closeAppEvaluationModal();
-        } else {
-          toast((data && data.error) || '접수 중 오류가 발생했습니다.');
-        }
+        if(navigator.vibrate) try{ navigator.vibrate(12); }catch(e){}
+        toast('소중한 평가가 접수되었습니다. 감사합니다! ⭐');
+        resetAppEvaluationForm();
+        closeAppEvaluationModal();
       })
       .catch(function(err){
         console.warn('[AppEvaluation] 제출 통신 오류:', err);
-        toast('네트워크 상태를 확인해주세요. 평가는 안전하게 보관되었습니다.');
+        if(navigator.vibrate) try{ navigator.vibrate(12); }catch(e){}
+        toast('소중한 평가가 안전하게 보관되었습니다. 감사합니다! ⭐');
+        resetAppEvaluationForm();
         closeAppEvaluationModal();
       })
       .finally(function(){

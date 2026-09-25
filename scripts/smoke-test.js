@@ -8559,6 +8559,36 @@ check('compliance: [#TASK-ES-267] 아바타 10개 관리 및 레벨업 팝업/�
   assert.ok(uiCss.includes('.avatar-10slots-carousel') && uiCss.includes('.empty-avatar-slot'), 'ui.css 10슬롯 캐러셀 스타일 검증');
 });
 
+/* ============ [#TASK-ES-268] 홈탭 최하단 <아워골 평가해주기> 고정배너 및 90% 팝업 평가폼 검증 ============ */
+check('compliance: [#TASK-ES-268] 홈탭 최하단 <아워골 평가해주기> 고정배너 및 90% 팝업 평가폼 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 홈탭 최하단 고정 배너 및 <아워골 평가해주기> 버튼 존재 검증
+  assert.ok(indexHtml.includes('id="homeEvalBanner"'), 'homeEvalBanner 요소 검증');
+  assert.ok(indexHtml.includes('id="btnOpenEvalModal"'), 'btnOpenEvalModal 버튼 검증');
+  assert.ok(indexHtml.includes('&lt;아워골 평가해주기&gt;'), '<아워골 평가해주기> 버튼 문구 검증');
+
+  // 2. 90% 크기 평가 모달 및 5대 입력 폼 존재 검증
+  assert.ok(indexHtml.includes('id="appEvaluationModal"'), 'appEvaluationModal 모달 검증');
+  assert.ok(indexHtml.includes('id="evalScoreInput"'), '100점 만점 종합 점수 인풋 검증');
+  assert.ok(indexHtml.includes('id="evalProsInput"'), '장점 입력칸 검증');
+  assert.ok(indexHtml.includes('id="evalConsInput"'), '단점 입력칸 검증');
+  assert.ok(indexHtml.includes('id="evalImprovementsInput"'), '추가 및 개선요청 입력칸 검증');
+  assert.ok(indexHtml.includes('id="evalCeoMsgInput"'), '대표에게 하고싶은 말 입력칸 검증');
+
+  // 3. 대표에게 하고싶은 말 플레이스홀더 문구 검증
+  assert.ok(indexHtml.includes('placeholder="진짜 맘대로 써주셔도 됩니다. 신고안합니다"'), '대표에게 하고싶은 말 플레이스홀더 검증');
+
+  // 4. Supabase app_evaluations 직접 적재 및 폼 리셋 검증
+  assert.ok(indexHtml.includes("sb.from('app_evaluations').insert"), 'Supabase app_evaluations 직접 적재 검증');
+  assert.ok(indexHtml.includes('resetAppEvaluationForm'), '평가 제출 폼 초기화 함수 검증');
+
+  // 5. ui.css 내 90vw / 90vh 규격 검증
+  assert.ok(uiCss.includes('width: 90vw;'), 'ui.css width: 90vw 규격 검증');
+  assert.ok(uiCss.includes('height: 90vh;'), 'ui.css height: 90vh 규격 검증');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
