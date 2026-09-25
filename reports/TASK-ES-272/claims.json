@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-272",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-272-AVATAR-RANK-BACKGROUND.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "5대 테마(새싹, 숲, 포세이돈, 제우스, 코스믹) 25단계 테마 정보 및 getRankThemeInfo 함수가 구현되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "getRankWingsSvg 함수가 아바타 이미지 창 좌우 양옆(Flanks)을 감싸는 백그라운드 날개·오라 SVG를 반환한다."
+    },
+    {
+      "id": "R3",
+      "text": "아바타 본체(avatar-inner-box, z-index: 2)와 백그라운드 레이어(rank-bg-svg-layer, z-index: 1)가 물리적으로 분리되어 비가림성을 보장한다."
+    },
+    {
+      "id": "R4",
+      "text": "renderAvatarHtml 함수가 avatar-rank-aura-wrap 컨테이너로 백그라운드 SVG와 아바타 본체를 결합하여 렌더링한다."
+    },
+    {
+      "id": "R5",
+      "text": "ui.css에 avatar-rank-side-wings 및 테마별 5종 날개/오라 애니메이션 스타일이 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/avatar-system.js 내에 5대 테마 25단계 상징 백그라운드 날개 정의(rank-wings-sprout 등)가 구현되어 있다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "rank-wings-sprout"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/avatar-system.js 내 getRankWingsSvg 함수가 아바타 창 좌우 양옆 백그라운드 윙(avatar-rank-side-wings)을 생성한다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "avatar-rank-side-wings"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/avatar-system.js 내 백그라운드 레이어가 z-index:1로 아바타 본체 뒤에 배치되어 비가림성을 보장한다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "z-index:1"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/avatar-system.js 내 renderAvatarHtml이 avatar-rank-aura-wrap 컨테이너로 백그라운드와 아바타를 결합한다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "avatar-rank-aura-wrap"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 avatar-rank-side-wings 스타일 규칙이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".avatar-rank-side-wings"
+      }
+    }
+  ]
+}

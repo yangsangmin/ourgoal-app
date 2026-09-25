@@ -8702,6 +8702,45 @@ check('compliance: [#TASK-ES-271] 계정 탈퇴 시 법적책임·데이터 분�
   assert.ok(uiCss.includes('-webkit-overflow-scrolling: touch;'), '터치 스크롤 지원');
 });
 
+/* ============ [#TASK-ES-272] 아바타 레벨별 상징 백그라운드 이미지 결합 및 비가림성 보장 ============ */
+check('compliance: [#TASK-ES-272] 아바타 레벨별 상징 백그라운드 이미지 결합 및 비가림성 보장 무결성 검증', () => {
+  const avatarCode = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const avatarApi = require('../js/avatar-system.js');
+
+  // 1. 5대 테마 (새싹, 숲, 포세이돈, 제우스, 코스믹) 25단계 테마 매핑
+  const sprout = avatarApi.getRankThemeInfo(1);
+  const forest = avatarApi.getRankThemeInfo(6);
+  const poseidon = avatarApi.getRankThemeInfo(11);
+  const zeus = avatarApi.getRankThemeInfo(16);
+  const cosmic = avatarApi.getRankThemeInfo(21);
+  assert.strictEqual(sprout.id, 'sprout');
+  assert.strictEqual(forest.id, 'forest');
+  assert.strictEqual(poseidon.id, 'poseidon');
+  assert.strictEqual(zeus.id, 'zeus');
+  assert.strictEqual(cosmic.id, 'cosmic');
+
+  // 2. 비가림성(Zero Occlusion) 보장 z-index 및 좌우 날개 분리
+  assert.ok(avatarCode.includes('avatar-rank-side-wings'), 'avatar-rank-side-wings 존재');
+  assert.ok(avatarCode.includes('z-index:1'), 'svg layer z-index:1');
+  assert.ok(avatarCode.includes('z-index:2'), 'inner frame z-index:2');
+
+  // 3. getRankWingsSvg() 및 renderAvatarHtml() 동작 검증
+  const wingsSvg = avatarApi.getRankWingsSvg(1, 54);
+  assert.ok(wingsSvg.includes('avatar-rank-side-wings'), '날개 SVG 구조 포함');
+  const rendered = avatarApi.renderAvatarHtml(1, { settings: { avatarType: 'robot' } }, { size: 54 });
+  assert.ok(rendered.includes('avatar-rank-aura-wrap'), '렌더링 래퍼 포함');
+  assert.ok(rendered.includes('avatar-rank-side-wings'), '렌더링 날개 포함');
+
+  // 4. ui.css 반응형 및 테마별 스타일
+  assert.ok(uiCss.includes('.avatar-rank-side-wings'), '.avatar-rank-side-wings 스타일 존재');
+  assert.ok(uiCss.includes('.rank-wings-sprout'), '.rank-wings-sprout 스타일 존재');
+  assert.ok(uiCss.includes('.rank-wings-forest'), '.rank-wings-forest 스타일 존재');
+  assert.ok(uiCss.includes('.rank-wings-poseidon'), '.rank-wings-poseidon 스타일 존재');
+  assert.ok(uiCss.includes('.rank-wings-zeus'), '.rank-wings-zeus 스타일 존재');
+  assert.ok(uiCss.includes('.rank-wings-cosmic'), '.rank-wings-cosmic 스타일 존재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
