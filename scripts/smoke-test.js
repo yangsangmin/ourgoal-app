@@ -8589,6 +8589,40 @@ check('compliance: [#TASK-ES-268] 홈탭 최하단 <아워골 평가해주기> �
   assert.ok(uiCss.includes('height: 90vh;'), 'ui.css height: 90vh 규격 검증');
 });
 
+/* ============ [#TASK-ES-269] 기간 설정(목표·팀·기록 분석) 맞춤형 아바타 생성 결합 및 설정창 확대 검증 ============ */
+check('compliance: [#TASK-ES-269] 기간 설정(목표·팀·기록 분석) 맞춤형 아바타 생성 결합 및 설정창 확대 검증', () => {
+  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 아바타 설정 모달 창 시원한 크기 확대 (620px / 94vh / 640px)
+  assert.ok(avatarSrc.includes('max-width:620px'), '모달 내부 래퍼 max-width 620px 확대');
+  assert.ok(avatarSrc.includes("sheet.style.maxHeight = '94vh'"), '모달 시트 maxHeight 94vh 확대');
+  assert.ok(avatarSrc.includes("sheet.style.maxWidth = '640px'"), '모달 시트 maxWidth 640px 확대');
+
+  // 2. 사진 버튼군 바로 밑 '아바타 생성 기준 기간 정하기' 버튼 및 직접 기간 선택 칸
+  const uploadBtnIdx = avatarSrc.indexOf('id="btnUploadAvatarPhoto"');
+  const craftBtnIdx = avatarSrc.indexOf('id="btnRunCraftAvatar"');
+  const periodSecIdx = avatarSrc.indexOf('id="avatarPeriodSection"');
+  assert.ok(periodSecIdx > uploadBtnIdx && periodSecIdx > craftBtnIdx, '사진 버튼군 바로 밑에 기간 설정 섹션 배치');
+  assert.ok(avatarSrc.includes('id="btnSetAvatarPeriod"'), '아바타 생성 기준 기간 정하기 버튼 존재');
+  assert.ok(avatarSrc.includes('id="avatarPeriodInputs"'), '직접 기간 설정 칸 컨테이너 존재');
+  assert.ok(avatarSrc.includes('id="avatarPeriodStartInput"') && avatarSrc.includes('id="avatarPeriodEndInput"'), '시작일 및 종료일 date 인풋 존재');
+  assert.ok(avatarSrc.includes('avatar-period-chip'), '퀵 프리셋 칩(1주/1개월/3개월/전체) 존재');
+
+  // 3. 지시 원문 정확한 2줄 안내멘트
+  assert.ok(avatarSrc.includes('설정한 기간의 내 목표, 팀, 기록들을 분석하여'), '1번째 줄 안내멘트 일치');
+  assert.ok(avatarSrc.includes('그에 맞는mbti와 좌우명을 가진 아바타를 생성합니다.'), '2번째 줄 안내멘트 일치');
+
+  // 4. 기간 내 데이터 분석 함수 collectPeriodPersonaSummary 및 fetchAvatarPersona 배선
+  assert.ok(avatarSrc.includes('function collectPeriodPersonaSummary(profile, mockGroups, startDate, endDate)'), '기간 분석 함수 존재');
+  assert.ok(avatarSrc.includes('function fetchAvatarPersona(summaryText)'), '페르소나 API 호출 함수 존재');
+  assert.ok(avatarSrc.includes('onAvatarCraftCompleted(finalUrl, persona)'), '페르소나 결과 결합 존재');
+
+  // 5. ui.css 모바일 375px 반응형 스타일
+  assert.ok(uiCss.includes('.avatar-period-chip'), '.avatar-period-chip 스타일 선언');
+  assert.ok(uiCss.includes('.avatar-period-guide'), '.avatar-period-guide 스타일 선언');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
