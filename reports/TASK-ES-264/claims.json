@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-264",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-264-AI-CONDITIONAL-CALL-OPTIMIZATION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "한국시간 KST 00:00 및 해외 표준시 기준 getEffectiveStandardDateKey 함수 구현 및 전역 바인딩"
+    },
+    {
+      "id": "R2",
+      "text": "오늘의 미션 해시 기반 computeTodayMissionHash 구현 및 목표/기록 변동 추적"
+    },
+    {
+      "id": "R3",
+      "text": "renderTodayMissionCard 내 조건부 호출 최적화 (무변동 시 API 재호출 100% 억제)"
+    },
+    {
+      "id": "R4",
+      "text": "자정 롤오버 및 탭 복귀 시 checkAndHandleDateRollover 및 setupDateRolloverWatcher 구현"
+    },
+    {
+      "id": "R5",
+      "text": "tests/ai-conditional-call-optimization.test.js 및 smoke-test.js 검증 100% 완비"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 getEffectiveStandardDateKey 함수가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "function getEffectiveStandardDateKey(iso, tz)"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 computeTodayMissionHash 함수가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "function computeTodayMissionHash(g)"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "renderTodayMissionCard 내에 목표/기록 변동 여부 및 날짜 캐시 유효성 검사 가드가 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "var isCacheValid = !!(m && m.text && m.date === today && (!m.hash || m.hash === gHash));"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 checkAndHandleDateRollover 함수가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "function checkAndHandleDateRollover()"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "test",
+      "statement": "tests/ai-conditional-call-optimization.test.js에 조건부 호출 및 롤오버 단위 검증이 완비되어 있다",
+      "touches": [
+        "tests/ai-conditional-call-optimization.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/ai-conditional-call-optimization.test.js",
+        "text": "function simulateMissionEvaluation(goal, records, missionsCache, todayDateKey, apiCallTracker)"
+      }
+    }
+  ]
+}

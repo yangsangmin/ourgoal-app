@@ -8468,6 +8468,26 @@ check('compliance: [#TASK-ES-263] 나만의 홈 구성 연동 전수조사 및 �
   assert.ok(customJs.includes("CORE_IDS = ['levelBadgeRow', 'captureCardBox'"), 'CORE_IDS 상단 고정 영구 보존 검증');
 });
 
+/* ============ [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 (API 낭비 방지) 검증 ============ */
+check('compliance: [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 (API 낭비 방지) 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+
+  // 1. 표준 시간대 날짜 키 및 window 전역 노출 검증
+  assert.ok(indexHtml.includes('function getEffectiveStandardDateKey'), 'getEffectiveStandardDateKey 함수 정의 검증');
+  assert.ok(indexHtml.includes('window.getEffectiveStandardDateKey = getEffectiveStandardDateKey;'), 'getEffectiveStandardDateKey 전역 노출 검증');
+
+  // 2. 오늘의 미션 해시 기반 캐시 및 무변경 시 재호출 억제 검증
+  assert.ok(indexHtml.includes('function computeTodayMissionHash'), 'computeTodayMissionHash 함수 정의 검증');
+  assert.ok(indexHtml.includes('m.hash === gHash'), '목표/기록 변동 시 조건부 호출 및 캐시 억제 가드 검증');
+
+  // 3. 자정(00:00 KST / 현지 표준시) 날짜 변경 감지 및 자동 동기화 워처 검증
+  assert.ok(indexHtml.includes('checkAndHandleDateRollover'), 'checkAndHandleDateRollover 함수 탑재 검증');
+  assert.ok(indexHtml.includes('setupDateRolloverWatcher'), 'setupDateRolloverWatcher 함수 탑재 검증');
+
+  // 4. 목표 현상태 분석 AI 조언 날짜 변동 연동 검증
+  assert.ok(indexHtml.includes('(!existing.dateKey || existing.dateKey === todayKey)'), 'refreshGoalStatusSummary 날짜 변동 시 재분석 허용 검증');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
