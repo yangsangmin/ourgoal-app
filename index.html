@@ -2208,7 +2208,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var themeInfo = (window.OurgoalAvatar && window.OurgoalAvatar.getRankThemeInfo) ? window.OurgoalAvatar.getRankThemeInfo(curLv) : { title: 'Lv.' + curLv + ' 달성', badgeGradient: 'linear-gradient(135deg,#6366f1,#a855f7)', icon: '⭐', glow: 'rgba(99,102,241,0.5)' };
 
     var badgeEl = document.getElementById('avatarLevelUpBadge');
-    if(badgeEl) badgeEl.innerHTML = '<span class="badge" style="background:' + themeInfo.badgeGradient + ';color:#fff;font-size:.9rem;padding:4px 14px;border-radius:12px;font-weight:800;display:inline-flex;align-items:center;gap:6px;box-shadow:0 0 10px ' + themeInfo.glow + ';">' + themeInfo.icon + ' ' + themeInfo.title + ' (Lv.' + curLv + ')</span>';
+    var curPrompt = (state.profile && state.profile.settings && state.profile.settings.avatarGrowthPrompt) || '더 강하게';
+    if(badgeEl) {
+      badgeEl.innerHTML = '<span class="badge" style="background:' + themeInfo.badgeGradient + ';color:#fff;font-size:.9rem;padding:4px 14px;border-radius:12px;font-weight:800;display:inline-flex;align-items:center;gap:6px;box-shadow:0 0 10px ' + themeInfo.glow + ';">' + themeInfo.icon + ' ' + themeInfo.title + ' (Lv.' + curLv + ')</span>' +
+        '<div style="margin-top:6px;font-size:0.8125rem;font-weight:800;color:var(--violet);background:rgba(139,92,246,0.12);padding:3px 10px;border-radius:8px;border:1px solid rgba(139,92,246,0.3);display:inline-block;">✨ 성장 성향: "' + curPrompt + '" 반영 진화</div>';
+    }
 
     var imgContainer = document.getElementById('avatarLevelUpImgContainer');
     if(imgContainer){
@@ -2266,6 +2270,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
       if(!state.profile.settings) state.profile.settings = {};
       state.profile.settings.avatarGrowthPrompt = res.clean;
+      if(Array.isArray(state.profile.settings.savedAvatars)){
+        var curUrl = state.profile.settings.customAvatarUrl || '';
+        for(var si = 0; si < state.profile.settings.savedAvatars.length; si++){
+          if(state.profile.settings.savedAvatars[si].url === curUrl){
+            state.profile.settings.savedAvatars[si].growthPrompt = res.clean;
+            break;
+          }
+        }
+      }
       saveProfile();
       toast('아바타 성장 성향이 저장되었습니다 ✨');
     });

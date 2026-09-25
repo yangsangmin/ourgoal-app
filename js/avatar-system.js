@@ -4900,6 +4900,7 @@
       themeId: item.themeId || 1,
       themeName: item.themeName || getThemeById(item.themeId || 1).name,
       themeIcon: item.themeIcon || getThemeById(item.themeId || 1).icon,
+      growthPrompt: item.growthPrompt || (profile.settings && profile.settings.avatarGrowthPrompt) || '더 강하게',
       mbti: item.mbti || null,
       motto: item.motto || null,
       periodStart: item.periodStart || null,
@@ -5028,34 +5029,45 @@
   }
 
   function renderSavedAvatarsDeckHtml(savedList, activeUrl, selectedUrl) {
-    if (!savedList || savedList.length === 0) {
-      return '<div style="text-align:center;padding:14px 10px;background:var(--surface-3, #F1F5F9);border-radius:12px;color:var(--ink-soft, #64748B);font-size:0.8125rem;line-height:1.45;">' +
-        '🎨 아직 보관된 아바타가 없습니다.<br>아래에서 사진을 선택하고 나만의 첫 3등신 만화 아바타를 제작해보세요!' +
-      '</div>';
+    var list = savedList || [];
+    var MAX_SLOTS = 10;
+    var cardsHtml = '';
+
+    for (var slotIdx = 0; slotIdx < MAX_SLOTS; slotIdx++) {
+      var slotNum = slotIdx + 1;
+      var item = list[slotIdx] || null;
+
+      if (item) {
+        var isWearing = (item.url === activeUrl);
+        var isSelected = (item.url === selectedUrl);
+        var borderColor = isSelected ? 'var(--emerald, #10B981)' : (isWearing ? '#3B82F6' : 'var(--border-soft, #E2E8F0)');
+        var borderWeight = (isSelected || isWearing) ? '2.5px' : '1px';
+        var bgShadow = isSelected ? 'box-shadow:0 0 0 3px rgba(16,185,129,0.22);' : (isWearing ? 'box-shadow:0 0 0 2px rgba(59,130,246,0.2);' : '');
+        var promptText = item.growthPrompt || '더 강하게';
+
+        cardsHtml += '<div class="saved-avatar-card" data-ava-id="' + item.id + '" data-slot-num="' + slotNum + '" style="flex:0 0 88px;position:relative;background:var(--surface-1, #FFFFFF);border:' + borderWeight + ' solid ' + borderColor + ';' + bgShadow + 'border-radius:14px;padding:6px 4px;cursor:pointer;text-align:center;transition:all .15s ease;">' +
+          '<div style="position:absolute;top:-7px;left:6px;background:var(--surface-3, #E2E8F0);color:var(--ink, #1E293B);font-size:9px;font-weight:900;padding:1px 5px;border-radius:6px;z-index:2;border:1px solid var(--border-soft,#cbd5e1);">슬롯 ' + slotNum + '</div>' +
+          (isWearing ? '<div style="position:absolute;top:-7px;right:6px;background:#3B82F6;color:#fff;font-size:9px;font-weight:900;padding:1px 6px;border-radius:10px;white-space:nowrap;z-index:2;">착용 중</div>' : '') +
+          (!isWearing ? '<button type="button" class="btn-del-saved-avatar" data-ava-id="' + item.id + '" title="슬롯 ' + slotNum + ' 아바타 삭제" style="position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;border:none;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;padding:0;">×</button>' : '') +
+          '<div style="width:72px;height:72px;border-radius:10px;overflow:hidden;margin:10px auto 0;background:#f8fafc;display:flex;align-items:center;justify-content:center;">' +
+            '<img src="' + item.url + '" alt="' + (item.themeName || '아바타') + '" style="width:100%;height:100%;object-fit:cover;">' +
+          '</div>' +
+          '<div style="font-size:10px;font-weight:800;color:var(--ink, #0F172A);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + item.themeName + '">' +
+            (item.themeIcon || '🎨') + ' ' + (item.themeName || '아바타') +
+          '</div>' +
+          '<div class="slot-growth-badge" style="font-size:9px;font-weight:700;color:var(--violet, #8B5CF6);background:rgba(139,92,246,0.1);padding:1px 4px;border-radius:4px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="성향: ' + promptText + '">✨ ' + promptText + '</div>' +
+        '</div>';
+      } else {
+        cardsHtml += '<div class="empty-avatar-slot" data-slot-num="' + slotNum + '" style="flex:0 0 88px;min-height:130px;border:1.5px dashed var(--border-soft, #cbd5e1);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:var(--surface-2, #f8fafc);color:var(--ink-soft, #64748b);gap:4px;padding:6px;transition:all .15s ease;" title="슬롯 ' + slotNum + ' (새 아바타 제작 가능)">' +
+          '<span style="font-size:1.4rem;line-height:1;">➕</span>' +
+          '<span style="font-size:10px;font-weight:800;color:var(--ink, #1E293B);">슬롯 ' + slotNum + '</span>' +
+          '<span style="font-size:9px;color:var(--ink-faint, #94a3b8);">비어 있음</span>' +
+        '</div>';
+      }
     }
 
-    var cards = savedList.map(function (item) {
-      var isWearing = (item.url === activeUrl);
-      var isSelected = (item.url === selectedUrl);
-      var borderColor = isSelected ? 'var(--emerald, #10B981)' : (isWearing ? '#3B82F6' : 'var(--border-soft, #E2E8F0)');
-      var borderWeight = (isSelected || isWearing) ? '2.5px' : '1px';
-      var bgShadow = isSelected ? 'box-shadow:0 0 0 3px rgba(16,185,129,0.22);' : (isWearing ? 'box-shadow:0 0 0 2px rgba(59,130,246,0.2);' : '');
-
-      return '<div class="saved-avatar-card" data-ava-id="' + item.id + '" style="flex:0 0 84px;position:relative;background:var(--surface-1, #FFFFFF);border:' + borderWeight + ' solid ' + borderColor + ';' + bgShadow + 'border-radius:14px;padding:6px 4px 6px 4px;cursor:pointer;text-align:center;transition:all .15s ease;">' +
-        (isWearing ? '<div style="position:absolute;top:-7px;left:50%;transform:translateX(-50%);background:#3B82F6;color:#fff;font-size:9px;font-weight:900;padding:1px 6px;border-radius:10px;white-space:nowrap;z-index:2;">착용 중</div>' : '') +
-        (!isWearing ? '<button type="button" class="btn-del-saved-avatar" data-ava-id="' + item.id + '" title="보관함에서 삭제" style="position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;border:none;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;padding:0;">×</button>' : '') +
-        '<div style="width:72px;height:72px;border-radius:10px;overflow:hidden;margin:0 auto;background:#f8fafc;display:flex;align-items:center;justify-content:center;">' +
-          '<img src="' + item.url + '" alt="' + (item.themeName || '아바타') + '" style="width:100%;height:100%;object-fit:cover;">' +
-        '</div>' +
-        '<div style="font-size:10px;font-weight:800;color:var(--ink, #0F172A);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + item.themeName + '">' +
-          (item.themeIcon || '🎨') + ' ' + (item.themeName || '아바타') +
-        '</div>' +
-        (item.mbti ? '<div style="font-size:9px;font-weight:700;color:var(--emerald, #10B981);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + (item.motto || '') + '">' + item.mbti + (item.motto ? ' · ' + item.motto : '') + '</div>' : '') +
-      '</div>';
-    }).join('');
-
-    return '<div style="display:flex;gap:8px;overflow-x:auto;padding:8px 4px 6px 4px;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;">' +
-      cards +
+    return '<div class="avatar-10slots-carousel" style="display:flex;gap:8px;overflow-x:auto;padding:12px 4px 8px 4px;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;">' +
+      cardsHtml +
     '</div>';
   }
 
@@ -5690,14 +5702,34 @@
           '</div>' +
         '</div>' +
 
-        // 내 아바타 서랍 (누적 보관함) 섹션 (#TASK-ES-119)
+        // 아바타 10개 관리 인벤토리 (누적 보관함) 섹션 (#TASK-ES-119, #TASK-ES-267)
         '<div style="margin-top:14px;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:14px;padding:12px 14px;">' +
           '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-            '<div style="font-weight:900;font-size:.875rem;color:var(--ink);">🎨 내 아바타 서랍 <span id="savedAvatarsCountSpan" style="font-size:.75rem;color:var(--ink-soft);font-weight:700;">(' + savedList.length + '/10개)</span></div>' +
+            '<div style="font-weight:900;font-size:.875rem;color:var(--ink);">🎨 아바타 10개 관리 인벤토리 <span id="savedAvatarsCountSpan" style="font-size:.75rem;color:var(--ink-soft);font-weight:700;">(' + savedList.length + '/10개)</span></div>' +
             '<div style="font-size:.75rem;color:var(--emerald);font-weight:800;">언제든 0회 차감 변경</div>' +
           '</div>' +
           '<div id="savedAvatarsDeckSlot">' +
             renderSavedAvatarsDeckHtml(savedList, curCustomUrl, curCustomUrl) +
+          '</div>' +
+
+          // 성장 성향(프롬프트) 설정 폼 (#TASK-ES-267)
+          '<div style="margin-top:12px;background:var(--surface-1);border:1px solid var(--border-soft);border-radius:12px;padding:10px 12px;">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">' +
+              '<div style="font-weight:800;font-size:.8125rem;color:var(--ink);">✨ 아바타 성장 성향 (스타일 키워드)</div>' +
+              '<div style="font-size:.7rem;color:var(--violet);font-weight:700;">레벨업 진화 시 반영</div>' +
+            '</div>' +
+            '<div style="font-size:.72rem;color:var(--ink-soft);margin-bottom:6px;">아바타가 성장할 때 스타일 변화를 설정할 수 있어요 (*유해·범죄 단어 불가)</div>' +
+            '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;" id="avatarModalGrowthChips">' +
+              '<button type="button" class="btn btn-ghost btn-xs avatar-growth-chip" data-chip="더 강하게" style="font-size:11px;padding:2px 8px;border-radius:10px;border:1px solid var(--border-soft);background:var(--surface-2);color:var(--ink);cursor:pointer;">💪 더 강하게</button>' +
+              '<button type="button" class="btn btn-ghost btn-xs avatar-growth-chip" data-chip="잘생기게" style="font-size:11px;padding:2px 8px;border-radius:10px;border:1px solid var(--border-soft);background:var(--surface-2);color:var(--ink);cursor:pointer;">✨ 잘생기게</button>' +
+              '<button type="button" class="btn btn-ghost btn-xs avatar-growth-chip" data-chip="이쁘게" style="font-size:11px;padding:2px 8px;border-radius:10px;border:1px solid var(--border-soft);background:var(--surface-2);color:var(--ink);cursor:pointer;">🌸 이쁘게</button>' +
+              '<button type="button" class="btn btn-ghost btn-xs avatar-growth-chip" data-chip="지적으로" style="font-size:11px;padding:2px 8px;border-radius:10px;border:1px solid var(--border-soft);background:var(--surface-2);color:var(--ink);cursor:pointer;">🧠 지적으로</button>' +
+              '<button type="button" class="btn btn-ghost btn-xs avatar-growth-chip" data-chip="든든하게" style="font-size:11px;padding:2px 8px;border-radius:10px;border:1px solid var(--border-soft);background:var(--surface-2);color:var(--ink);cursor:pointer;">🛡️ 든든하게</button>' +
+            '</div>' +
+            '<div style="display:flex;gap:6px;">' +
+              '<input type="text" id="avatarModalGrowthPromptInput" placeholder="예: 더 강하게, 카리스마 넘치게" value="' + (profile.settings && profile.settings.avatarGrowthPrompt ? profile.settings.avatarGrowthPrompt : '더 강하게') + '" style="flex:1;font-size:.8125rem;padding:5px 8px;border-radius:8px;border:1px solid var(--border-soft);background:var(--surface-2);color:var(--ink);">' +
+              '<button type="button" class="btn btn-secondary btn-sm" id="btnSaveModalGrowthPrompt" style="white-space:nowrap;font-size:.75rem;padding:4px 10px;">성향 반영</button>' +
+            '</div>' +
           '</div>' +
         '</div>' +
       '</div>' +
@@ -5836,9 +5868,11 @@
         }
       }
 
-      // [#TASK-ES-119] 내 아바타 서랍 카드 클릭 및 삭제 이벤트 바인딩
+      // [#TASK-ES-119, #TASK-ES-267] 아바타 10개 관리 인벤토리 슬롯 클릭 및 삭제 이벤트 바인딩
       function bindSavedDeckEvents() {
         var cards = sheet.querySelectorAll('.saved-avatar-card');
+        var promptInp = sheet.querySelector('#avatarModalGrowthPromptInput');
+
         cards.forEach(function (card) {
           card.onclick = function (e) {
             if (e.target.closest('.btn-del-saved-avatar')) return;
@@ -5852,17 +5886,39 @@
               newCustomUrl = item.url;
               chosenTheme = getThemeById(item.themeId);
               currentPersona = item.mbti ? { mbti: item.mbti, motto: item.motto } : null;
+              if (promptInp) {
+                promptInp.value = item.growthPrompt || (profile.settings && profile.settings.avatarGrowthPrompt) || '더 강하게';
+              }
               previewBox.innerHTML = '<img src="' + newCustomUrl + '" style="width:100%;height:100%;object-fit:cover;">';
               if (metaText) {
                 metaText.innerHTML = '<div style="font-weight:800;font-size:1rem;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:6px;">' +
                   '<span>' + (item.themeIcon || chosenTheme.icon) + '</span>' +
                   '<span>' + (item.themeName || chosenTheme.name) + '</span>' +
                 '</div>' +
-                '<div style="font-size:.78125rem;color:var(--emerald);font-weight:700;margin-top:3px;">🎨 서랍에서 아바타가 선택되었습니다!</div>' +
+                '<div style="font-size:.78125rem;color:var(--emerald);font-weight:700;margin-top:3px;">🎨 슬롯 ' + (card.getAttribute('data-slot-num') || '') + ' 아바타가 선택되었습니다!</div>' +
                 '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">하단 [아바타 적용하기]를 누르면 즉시 착용됩니다. (차감 0회)</div>' +
-                (currentPersona ? '<div style="font-size:.8125rem;color:var(--ink);font-weight:800;margin-top:6px;">🧬 ' + currentPersona.mbti + ' · "' + currentPersona.motto + '"</div>' : '');
+                (item.growthPrompt ? '<div style="font-size:.78125rem;color:var(--violet);font-weight:800;margin-top:4px;">✨ 성장 성향: "' + item.growthPrompt + '"</div>' : '') +
+                (currentPersona ? '<div style="font-size:.8125rem;color:var(--ink);font-weight:800;margin-top:4px;">🧬 ' + currentPersona.mbti + ' · "' + currentPersona.motto + '"</div>' : '');
               }
               refreshSavedAvatarsDeck();
+            }
+          };
+        });
+
+        // 빈 슬롯 클릭 시 제작 영역으로 안내
+        var emptySlots = sheet.querySelectorAll('.empty-avatar-slot');
+        emptySlots.forEach(function (slot) {
+          slot.onclick = function () {
+            var slotNum = slot.getAttribute('data-slot-num');
+            var r = getRemainingCrafts(profile);
+            if (r <= 0) {
+              toast('제작 횟수를 모두 소진했습니다. 7일 연속 체크인 시 1회가 자동 충전됩니다.');
+              return;
+            }
+            var uploadArea = sheet.querySelector('#secCustomAvatar') || sheet.querySelector('#avatarPhotoInput');
+            if (uploadArea) {
+              uploadArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              toast('슬롯 ' + slotNum + '에 새 아바타를 제작해보세요! 사진을 업로드해주세요 📸');
             }
           };
         });
@@ -5872,7 +5928,7 @@
           btn.onclick = function (e) {
             e.stopPropagation();
             var avaId = btn.getAttribute('data-ava-id');
-            if (confirm('이 아바타를 서랍에서 삭제하시겠습니까?')) {
+            if (confirm('이 아바타를 슬롯에서 삭제하시겠습니까?')) {
               var ok = removeSavedAvatar(profile, avaId);
               if (ok) {
                 if (deps.state && deps.state.profile) {
@@ -5880,7 +5936,7 @@
                   deps.state.profile.settings.savedAvatars = profile.settings.savedAvatars;
                 }
                 saveProfile();
-                toast('아바타가 서랍에서 삭제되었습니다.');
+                toast('아바타가 슬롯에서 삭제되었습니다.');
                 var list = getSavedAvatars(profile);
                 var isCurrentUrlAlive = list.some(function (a) { return a.url === newCustomUrl; });
                 if (!isCurrentUrlAlive) {
@@ -5898,6 +5954,48 @@
             }
           };
         });
+
+        // 성장 성향 퀵 칩 및 저장 바인딩
+        var growthChips = sheet.querySelectorAll('.avatar-growth-chip');
+        growthChips.forEach(function (ch) {
+          ch.onclick = function () {
+            var val = ch.getAttribute('data-chip');
+            if (promptInp && val) {
+              promptInp.value = val;
+              applyGrowthPrompt(val);
+            }
+          };
+        });
+
+        var btnSaveGrowth = sheet.querySelector('#btnSaveModalGrowthPrompt');
+        if (btnSaveGrowth) {
+          btnSaveGrowth.onclick = function () {
+            if (promptInp) {
+              applyGrowthPrompt(promptInp.value);
+            }
+          };
+        }
+
+        function applyGrowthPrompt(rawText) {
+          var harmfulRegex = /씨발|시발|병신|개새|지랄|존나|썅|꺼져|죽어|자살|섹스|야동|보지|자지|바보|멍청이/gi;
+          var cleanText = rawText ? rawText.replace(harmfulRegex, '***').trim() : '더 강하게';
+          if (harmfulRegex.test(rawText)) {
+            toast('부적절한 단어가 포함되어 정화되었습니다.');
+            if (promptInp) promptInp.value = cleanText;
+          }
+          profile.settings = profile.settings || {};
+          profile.settings.avatarGrowthPrompt = cleanText;
+          var curList = getSavedAvatars(profile);
+          for (var i = 0; i < curList.length; i++) {
+            if (curList[i].url === newCustomUrl) {
+              curList[i].growthPrompt = cleanText;
+              break;
+            }
+          }
+          if (saveProfile) saveProfile();
+          toast('아바타 성장 성향이 반영되었습니다! ✨');
+          refreshSavedAvatarsDeck();
+        }
       }
 
       // [#TASK-ES-119] 신규 아바타 제작 완료 시 자동 보관함 인입 & UI 갱신 공통 함수
