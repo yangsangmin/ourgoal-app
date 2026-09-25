@@ -15,9 +15,9 @@
     { id: 'captureCardBox',       label: '오늘 기록하기',            hint: '1줄 체크인 입력창 (상단 고정)', fixed: true },
     { id: 'todayGlancePill',      label: '오늘 몰입 요약',          hint: '오늘 상태 한 줄' },
     { id: 'todayMissionCard',     label: '오늘의 카드',             hint: '뭘 할지 모르겠을 때 도움돼요(내 목표기반)' },
-    { id: 'dailyQuestBarWrap',    label: '오늘의 3대 퀘스트',       hint: '체크인·할일·몰입 퀘스트 및 EXP 보상 카드' },
-    { id: 'customFeedbackBtn',    label: '맞춤 피드백 설정 버튼',   hint: 'AI 피드백 말투 설정 버튼' },
     { id: 'homeGrassSummaryCard', label: '최근 히트맵 요약',        hint: '최근 2주간의 기록 한눈에' },
+    { id: 'customFeedbackBtn',    label: '맞춤 피드백 설정 버튼',   hint: 'AI 피드백 말투 설정 버튼' },
+    { id: 'dailyQuestBarWrap',    label: '오늘의 3대 퀘스트',       hint: '체크인·할일·몰입 퀘스트 및 EXP 보상 카드' },
     { id: 'homeChallengeRoomBtn', label: '내 성장 확인하기 버튼',   hint: '기록 탭으로 바로 이동하는 버튼' },
     { id: 'mzShareBtn',           label: '내 성장 자랑하기 버튼',   hint: '인스타·카톡 공유용 고화질 카드' }
   ];
@@ -26,6 +26,47 @@
   /* 절대 숨길 수 없는 것 — 코드로 보호한다 (REQ-P1, REQ-TASK-ES-173) */
   var CORE_IDS = ['levelBadgeRow', 'captureCardBox', 'captureInput', 'captureSave', 'homeGoalList', 'streakBadge', 'homeAddGoal', 'homeEvalBanner',
                   'screen-home', 'screen-records', 'screen-comm', 'screen-goals', 'screen-calendar'];
+
+  /*
+   * [자동 연동 시스템 (#TASK-ES-263)]
+   * 홈 화면 DOM의 선언적 [data-home-widget] 요소들을 자동 스캔하여
+   * 향후 기능이 추가/수정/삭제되어도 나만의 홈 구성에 100% 자동 연동되도록 동적 레지스트리를 구축한다.
+   */
+  function discoverWidgets(){
+    if(typeof document === 'undefined' || !document.querySelectorAll) return WHITELIST.slice();
+    var discovered = [];
+    var seen = {};
+
+    var domWidgets = document.querySelectorAll('[data-home-widget]');
+    if(domWidgets && domWidgets.length > 0){
+      Array.prototype.forEach.call(domWidgets, function(el){
+        var id = el.getAttribute('data-home-widget') || el.id;
+        if(!id || seen[id]) return;
+        seen[id] = true;
+        var label = el.getAttribute('data-widget-label') || el.title || id;
+        var hint = el.getAttribute('data-widget-hint') || '';
+        var fixed = el.getAttribute('data-widget-fixed') === 'true' || CORE_IDS.indexOf(id) >= 0;
+        discovered.push({ id: id, label: label, hint: hint, fixed: fixed });
+      });
+    }
+
+    WHITELIST.forEach(function(w){
+      if(!seen[w.id]){
+        seen[w.id] = true;
+        discovered.push(w);
+      }
+    });
+
+    return discovered;
+  }
+
+  function getEffectiveWhitelist(){
+    if(typeof document !== 'undefined' && document.querySelectorAll){
+      var list = discoverWidgets();
+      if(list && list.length > 0) return list;
+    }
+    return WHITELIST;
+  }
 
   /* 기존 '포커스 미니멀' 모드 CSS가 숨기던 항목 — 저장값이 없을 때 이관 기준 (REQ-D3) */
   var MINIMAL_HIDDEN = ['homeGrassSummaryCard', 'customFeedbackBtn', 'homeChallengeRoomBtn'];
@@ -41,10 +82,12 @@
   function normalize(layout){
     var src = (layout && Array.isArray(layout.hidden)) ? layout.hidden : [];
     var out = [];
+    var effList = getEffectiveWhitelist();
+    var effIds = effList.map(function(w){ return w.id; });
     src.forEach(function(id){
-      if(WHITELIST_IDS.indexOf(id) < 0) return;
+      if(effIds.indexOf(id) < 0) return;
       if(CORE_IDS.indexOf(id) >= 0) return;
-      var wItem = WHITELIST.find(function(w){ return w.id === id; });
+      var wItem = effList.find(function(w){ return w.id === id; });
       if(wItem && wItem.fixed) return;
       if(out.indexOf(id) < 0) out.push(id);
     });
@@ -71,7 +114,9 @@
   function apply(settings){
     if(typeof document === 'undefined') return [];
     var hidden = effectiveHidden(settings);
-    WHITELIST_IDS.forEach(function(id){
+    var effList = getEffectiveWhitelist();
+    var effIds = effList.map(function(w){ return w.id; });
+    effIds.forEach(function(id){
       if(CORE_IDS.indexOf(id) >= 0) return; // 코어 및 고정 요소는 DOM display 숨김 배제
       var el = document.getElementById(id);
       if(!el) return;
@@ -120,9 +165,10 @@
         '<div class="switch' + (on ? ' on' : '') + '" role="switch" tabindex="0" aria-checked="' + on + '" aria-label="' + esc(w.label) + '" data-kf1-id="' + w.id + '"></div>' +
         '</div>';
     }
+    var effectiveList = getEffectiveWhitelist();
     var html = '<h3 style="margin:0 0 4px;">앱을 내맘대로!</h3>' +
       '<p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 12px;">홈에 보일 것만 남기세요. 아바타·오늘 기록하기·내 목표·기록·소통은 항상 보여요.</p>' +
-      '<div id="kf1LayoutList">' + WHITELIST.map(rowHtml).join('') + '</div>' +
+      '<div id="kf1LayoutList">' + effectiveList.map(rowHtml).join('') + '</div>' +
       '<div style="display:flex;gap:8px;margin-top:14px;">' +
         '<button class="btn btn-ghost btn-sm" type="button" id="kf1ResetBtn" style="flex:1;">기본으로 되돌리기</button>' +
         '<button class="btn btn-primary btn-sm" type="button" id="kf1DoneBtn" style="flex:1;">완료</button>' +
@@ -181,6 +227,8 @@
     normalize: normalize,
     effectiveHidden: effectiveHidden,
     apply: apply,
-    open: open
+    open: open,
+    discoverWidgets: discoverWidgets,
+    getEffectiveWhitelist: getEffectiveWhitelist
   };
 })(typeof window !== 'undefined' ? window : this);

@@ -167,8 +167,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         </div>
       </div>
       <div class="toss-headline" id="homeHeadlineSentence">오늘 하루를 완성할 <b>갓생 목표</b>가 기다려요 ✨</div>
-      <div id="levelBadgeRow"></div>
-      <div id="todayGlancePill" class="today-glance-pill" role="button" tabindex="0" aria-label="오늘 요약" style="display:none;"></div>
+      <div id="levelBadgeRow" data-home-widget="levelBadgeRow" data-widget-label="아바타 & 레벨 배지" data-widget-hint="내 아바타, 레벨, 경험치 바 (상단 고정)" data-widget-fixed="true"></div>
+      <div id="todayGlancePill" class="today-glance-pill" role="button" tabindex="0" aria-label="오늘 요약" style="display:none;" data-home-widget="todayGlancePill" data-widget-label="오늘 몰입 요약" data-widget-hint="오늘 상태 한 줄"></div>
       <div id="a11yLiveAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
       <div id="offlineNoticeBanner" class="offline-banner" style="display:none;"><b>오프라인 모드</b> 작성한 기록은 기기에 보관되고, 연결되면 자동으로 동기화돼요.</div>
       <div id="notifyBannerSlot"></div>
@@ -176,11 +176,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div id="iosPwaSlot"></div>
 
       <!-- ① 오늘의 질문 -->
-      <div id="todayMissionCard"></div>
+      <div id="todayMissionCard" data-home-widget="todayMissionCard" data-widget-label="오늘의 카드" data-widget-hint="뭘 할지 모르겠을 때 도움돼요(내 목표기반)"></div>
 
       <!-- ② 답하기 -->
-      <div id="homeGrassSummaryCard"></div>
-      <div class="capture-card card toss-checkin-clean-box" id="captureCardBox">
+      <div id="homeGrassSummaryCard" data-home-widget="homeGrassSummaryCard" data-widget-label="최근 히트맵 요약" data-widget-hint="최근 2주간의 기록 한눈에"></div>
+      <div class="capture-card card toss-checkin-clean-box" id="captureCardBox" data-home-widget="captureCardBox" data-widget-label="오늘의 3초 체크인 (오늘 기록하기)" data-widget-hint="1줄 체크인 입력창 (상단 고정)" data-widget-fixed="true">
         <div class="capture-title" style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
           <div style="display:flex;align-items:center;gap:6px;">
             <span class="sanctuary-title-text" style="font-size:1.15rem;font-weight:700;">오늘의 3초 체크인</span>
@@ -234,7 +234,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                 <span style="font-weight:700;color:var(--ink);">나만의 AI 말투 &amp; 피드백 설정</span>
                 <span id="customFeedbackStatus" style="font-size:0.7rem;color:var(--brand);font-weight:700;"></span>
               </div>
-              <button class="btn btn-ghost btn-sm" id="customFeedbackBtn" type="button" onclick="event.stopPropagation(); if(typeof openFeedbackSetup==='function'){openFeedbackSetup();}" style="padding:5px 12px;font-size:0.75rem;font-weight:700;border-radius:8px;border:1px solid var(--rule);cursor:pointer;background:rgba(255,255,255,0.04);">설정하기 ›</button>
+              <button class="btn btn-ghost btn-sm" id="customFeedbackBtn" type="button" onclick="event.stopPropagation(); if(typeof openFeedbackSetup==='function'){openFeedbackSetup();}" style="padding:5px 12px;font-size:0.75rem;font-weight:700;border-radius:8px;border:1px solid var(--rule);cursor:pointer;background:rgba(255,255,255,0.04);" data-home-widget="customFeedbackBtn" data-widget-label="맞춤 피드백 설정 버튼" data-widget-hint="AI 피드백 말투 설정 버튼">설정하기 ›</button>
             </div>
           </div>
 
@@ -247,8 +247,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <!-- ③ 피드백 (AI 피드백 카드는 저장 직후 이 자리에 삽입) -->
 
       <!-- ④ 내 위치 -->
-      <div id="dailyQuestBarWrap" class="daily-quest-bar-wrap" style="display:none;"></div>
-      <div id="crewPacingWidget" class="crew-pacing-widget card" style="margin-top:14px;margin-bottom:14px;padding:16px 18px;border-radius:18px;background:var(--card);border:1px solid var(--rule);">
+      <div id="dailyQuestBarWrap" class="daily-quest-bar-wrap" style="display:none;" data-home-widget="dailyQuestBarWrap" data-widget-label="오늘의 3대 퀘스트" data-widget-hint="체크인·할일·몰입 퀘스트 및 EXP 보상 카드"></div>
+      <div id="crewPacingWidget" class="crew-pacing-widget card" style="margin-top:14px;margin-bottom:14px;padding:16px 18px;border-radius:18px;background:var(--card);border:1px solid var(--rule);" data-home-widget="crewPacingWidget" data-widget-label="실시간 동류 레이스" data-widget-hint="오늘 달성 레이스 및 페이스메이커 위젯">
         <div class="crew-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
           <div class="crew-head-l" style="display:flex;align-items:center;gap:8px;">
             <span class="crew-badge" id="userCrewBadge" style="background:rgba(239,68,68,0.1);color:#ef4444;font-size:0.75rem;font-weight:700;padding:2px 8px;border-radius:10px;">🔥 실시간 동류 레이스</span>
@@ -290,8 +290,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       <!-- ⑤ 기록됨 · 나누기 -->
       <div class="home-actions">
-        <button class="btn btn-secondary" id="homeChallengeRoomBtn" type="button">내 성장 확인하기</button>
-        <button class="mz-btn" id="mzShareBtn" type="button">내 성장 자랑하기</button>
+        <button class="btn btn-secondary" id="homeChallengeRoomBtn" type="button" data-home-widget="homeChallengeRoomBtn" data-widget-label="내 성장 확인하기 버튼" data-widget-hint="기록 탭으로 바로 이동하는 버튼">내 성장 확인하기</button>
+        <button class="mz-btn" id="mzShareBtn" type="button" data-home-widget="mzShareBtn" data-widget-label="내 성장 자랑하기 버튼" data-widget-hint="인스타·카톡 공유용 고화질 카드">내 성장 자랑하기</button>
       </div>
 
       <!-- ⑥ [86] 아워골 평가해주기 최신 복원 배너 (상시/반복 평가 가능) -->
