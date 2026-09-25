@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-265",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-265-GCAL-LOGIN-RECONNECT-FIX.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "api/track.js 내에 settingsToSave 수신 및 settings_ledger 원장 저장/복원 로직 구현"
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내에 requestGoogleToken의 무인 Silent Refresh(opts.silent) 및 hint 옵션 구현"
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내에 isGoogleCalendarConnected의 다중 로컬 키 및 직전 세션 자가 치유 로직 구현"
+    },
+    {
+      "id": "R4",
+      "text": "index.html 내에 migrateGuestDataToUser의 게스트 구글 캘린더 연동 및 토큰 무손실 이관 구현"
+    },
+    {
+      "id": "R5",
+      "text": "tests/gcal-login-reconnect-fix.test.js에 구글 캘린더 연동 영속성 및 Silent Refresh 단위 검증 완비"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "api/track.js 내에 settingsToSave 수신 및 settings_ledger 원장 저장 로직이 구현되어 있다",
+      "touches": [
+        "api/track.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "api/track.js",
+        "text": "name: 'settings_ledger',"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 requestGoogleToken에 무인 Silent Refresh(opts.silent) 및 hint 옵션이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "if(opts.silent) reqOpts.prompt = '';"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 isGoogleCalendarConnected에 다중 로컬 키 및 직전 세션 자가 치유 로직이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "var lastEmail = localStorage.getItem('ourgoal_gcal_email_last');"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 migrateGuestDataToUser에 게스트 구글 캘린더 연동 및 토큰 무손실 이관 로직이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "localStorage.setItem('ourgoal_gcal_token_v1_' + targetUserId, gTok);"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "test",
+      "statement": "tests/gcal-login-reconnect-fix.test.js에 구글 캘린더 연동 영속성 및 Silent Refresh 단위 검증이 완비되어 있다",
+      "touches": [
+        "tests/gcal-login-reconnect-fix.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/gcal-login-reconnect-fix.test.js",
+        "text": "[TEST] gcal-login-reconnect-fix.test.js: ALL ASSERTIONS PASSED (100% SUCCESS)"
+      }
+    }
+  ]
+}

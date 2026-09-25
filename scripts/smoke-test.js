@@ -8488,6 +8488,27 @@ check('compliance: [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 �
   assert.ok(indexHtml.includes('(!existing.dateKey || existing.dateKey === todayKey)'), 'refreshGoalStatusSummary 날짜 변동 시 재분석 허용 검증');
 });
 
+/* ============ [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연동 원인 규명 및 해결 검증 ============ */
+check('compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연동 원인 규명 및 해결 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const trackJs = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
+
+  // 1. Silent Refresh 및 window 전역 노출 검증
+  assert.ok(indexHtml.includes('window.isGoogleCalendarConnected = isGoogleCalendarConnected;'), 'isGoogleCalendarConnected 전역 노출 검증');
+  assert.ok(indexHtml.includes('window.requestGoogleToken = requestGoogleToken;'), 'requestGoogleToken 전역 노출 검증');
+  assert.ok(indexHtml.includes('window.getGoogleAccessToken = getGoogleAccessToken;'), 'getGoogleAccessToken 전역 노출 검증');
+  assert.ok(indexHtml.includes('ourgoal_gcal_email_last'), 'ourgoal_gcal_email_last 이메일 힌트 영속화 검증');
+
+  // 2. loadLocalSettings 이전 세션 구글 캘린더 연동 상속 자가 치유 검증
+  assert.ok(indexHtml.includes('candObj.googleCalendarConnected') && indexHtml.includes('ourgoal_settings_guest'), 'loadLocalSettings 이전 세션 캘린더 연동 상속 검증');
+
+  // 3. migrateGuestDataToUser 게스트 구글 캘린더 및 토큰 이관 검증
+  assert.ok(indexHtml.includes('targetProfile.settings.googleCalendarConnected = true;') && indexHtml.includes('ourgoal_gcal_token_v1_guest'), 'migrateGuestDataToUser 구글 캘린더 및 토큰 이관 검증');
+
+  // 4. api/track.js 계정 서버 원장 영속화 검증
+  assert.ok(trackJs.includes('settingsToSave') && trackJs.includes('settings_ledger'), 'api/track.js settings_ledger 영속화 원장 검증');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

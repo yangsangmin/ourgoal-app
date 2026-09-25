@@ -52,6 +52,7 @@ async function handleSyncRecords(sb, body, res, req) {
   var backupIds = Array.isArray(body.backupIds) ? body.backupIds.map(String).map(function(s){ return s.trim(); }).filter(Boolean) : [];
   var recordsToSave = Array.isArray(body.recordsToSave) ? body.recordsToSave : null;
   var profileToSave = (body.profileToSave && typeof body.profileToSave === 'object') ? body.profileToSave : null;
+  var settingsToSave = (body.settingsToSave && typeof body.settingsToSave === 'object') ? body.settingsToSave : null;
 
   // #TASK-ES-252: 보안 강화 — 사용자 데이터 조회/동기화 시 본인 인증 필수
   var authRes = await authenticateCaller(sb, req);
@@ -142,11 +143,42 @@ async function handleSyncRecords(sb, body, res, req) {
       } catch (e) {}
     }
 
+    // [#TASK-ES-265] 설정(구글 캘린더 연동 등) 영구 원장 영속화 및 자동 복원
+    if (settingsToSave && targetUid) {
+      try {
+        await sb.from('events').insert({
+          sid: null,
+          name: 'settings_ledger',
+          props: {
+            userId: targetUid,
+            settings: settingsToSave,
+            updatedAt: new Date().toISOString()
+          }
+        });
+      } catch (e) {
+        console.warn('[sync_records] settings_ledger write error:', e.message);
+      }
+    }
+
+    var fetchedSettings = null;
+    try {
+      var setRes = await sb.from('events')
+        .select('props')
+        .eq('name', 'settings_ledger')
+        .filter('props->>userId', 'eq', targetUid)
+        .order('id', { ascending: false })
+        .limit(1);
+      if (setRes.data && setRes.data.length > 0 && setRes.data[0].props && setRes.data[0].props.settings) {
+        fetchedSettings = setRes.data[0].props.settings;
+      }
+    } catch (e) {}
+
     res.status(200).json({
       ok: true,
       targetUserId: targetUid,
       matchedUser: matchedUser,
       user: matchedUser,
+      settings: fetchedSettings,
       savedAvatars: (matchedUser && matchedUser.saved_avatars) || [],
       recordsCount: fetchedRecords.length,
       records: fetchedRecords.map(function(r) {
