@@ -8428,6 +8428,24 @@ check('compliance: [#TASK-ES-261] 목표탭 ‘목표만’ 버튼 이격 배치
   assert.ok(uiCss.includes('#msViewToggle .format-opt'), '모바일 msViewToggle 반응형 패딩 정의 검증');
 });
 
+/* ============ [#TASK-ES-262] 오늘의 미션 추천카드 내 안내멘트 생성 (‘뭘 할지 모르겠을 때 도움돼요’) 검증 ============ */
+check('compliance: [#TASK-ES-262] 오늘의 미션 추천카드 내 안내멘트 생성 (‘뭘 할지 모르겠을 때 도움돼요’) 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 헤더 마크업 및 안내멘트 텍스트 검증
+  assert.ok(indexHtml.includes('class="today-card-guide-hint"'), 'today-card-guide-hint 클래스 마크업 검증');
+  assert.ok(indexHtml.includes('뭘 할지 모르겠을 때 도움돼요(내 목표기반)'), '원문 안내멘트 텍스트 검증');
+
+  // 2. CSS 스타일 및 1pt 축소 폰트 규격 검증
+  assert.ok(uiCss.includes('.today-card-guide-hint'), 'ui.css .today-card-guide-hint 스타일 정의 검증');
+  assert.ok(uiCss.includes('0.6875rem'), '1pt 축소 폰트 크기(0.6875rem) 정의 검증');
+  assert.ok(uiCss.includes('@media (max-width: 375px)'), '375px 모바일 반응형 미디어 쿼리 검증');
+
+  // 3. 비즈니스 로직 보존 검증
+  assert.ok(indexHtml.includes('renderTodayMissionCard'), 'renderTodayMissionCard 함수 보존 검증');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
