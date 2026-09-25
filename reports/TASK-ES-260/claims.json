@@ -1,0 +1,118 @@
+{
+  "task": "TASK-ES-260",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-260-RECORDS-TAB-RENAME.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "하단 내비게이션 바 records 버튼에 '기록/통계' 텍스트 및 aria-label='기록/통계' 배선"
+    },
+    {
+      "id": "R2",
+      "text": "기록 화면(#screen-records) 상단 헤더 타이틀이 '기록/통계'로 표기"
+    },
+    {
+      "id": "R3",
+      "text": "가이드 허브 모달 및 공개 범위 설정 모달 내 records 탭명이 '기록/통계'로 4위 1체 동기화"
+    },
+    {
+      "id": "R4",
+      "text": "ui.css 내 navbtn에 white-space:nowrap 및 375px 모바일 미디어 쿼리 방어"
+    },
+    {
+      "id": "R5",
+      "text": "단위 테스트 tests/records-tab-rename.test.js 및 smoke-test.js 100% 통과"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 하단 내비게이션 records 버튼에 aria-label='기록/통계' 및 '기록/통계' 텍스트가 존재한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "data-tab=\"records\" type=\"button\" aria-label=\"기록/통계\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 screen-records 상단 헤더 타이틀이 기록/통계로 표기되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<h2 class=\"s-title\" style=\"font-size:1.15rem;margin:0;\">기록/통계</h2>"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 tabGuideHubModal에 records 탭 라벨이 '기록/통계'로 지정되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "{ key: 'records', label: '기록/통계', icon: '📝' }"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 openPrivacyPickerModal에서 records tabName이 '기록/통계'로 지정되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "tabKey==='records' ? '기록/통계' : '통계'"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내 navbtn에 white-space:nowrap 및 375px 모바일 반응형 미디어 쿼리가 적용되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "white-space:nowrap;"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/records-tab-rename.test.js 단위 검증 파일이 존재하고 정상 작동한다",
+      "touches": [
+        "tests/records-tab-rename.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/records-tab-rename.test.js",
+        "text": "TASK-ES-260"
+      }
+    }
+  ]
+}

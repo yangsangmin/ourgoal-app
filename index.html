@@ -1235,7 +1235,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg>
         일정
       </button>
-      <button class="navbtn" data-tab="records" type="button">
+      <button class="navbtn" data-tab="records" type="button" aria-label="기록/통계">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>
         기록/통계
       </button>
@@ -5317,7 +5317,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       { key: 'home', label: '홈', icon: '🏠' },
       { key: 'goals', label: '목표', icon: '🎯' },
       { key: 'calendar', label: '일정', icon: '📅' },
-      { key: 'records', label: '기록', icon: '📝' },
+      { key: 'records', label: '기록/통계', icon: '📝' },
       { key: 'social', label: '소통', icon: '💬' }
     ];
 
@@ -5939,7 +5939,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
   }
   function openPrivacyPickerModal(tabKey){
-    var tabName = tabKey==='goals' ? '목표' : (tabKey==='calendar' ? '일정' : (tabKey==='records' ? '기록' : '통계'));
+    var tabName = tabKey==='goals' ? '목표' : (tabKey==='calendar' ? '일정' : (tabKey==='records' ? '기록/통계' : '통계'));
     var s = state.profile.settings;
     if(!s.privacy) s.privacy = { goals:'private', calendar:'private', records:'private', stats:'private' };
     var cur = s.privacy[tabKey] || 'private';
