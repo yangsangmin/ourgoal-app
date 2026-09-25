@@ -8446,6 +8446,28 @@ check('compliance: [#TASK-ES-262] 오늘의 미션 추천카드 내 안내멘트
   assert.ok(indexHtml.includes('renderTodayMissionCard'), 'renderTodayMissionCard 함수 보존 검증');
 });
 
+/* ============ [#TASK-ES-263] 나만의 홈 구성 연동 전수조사 및 자동 연동 시스템화 검증 ============ */
+check('compliance: [#TASK-ES-263] 나만의 홈 구성 연동 전수조사 및 자동 연동 시스템화 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const customJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'customize.js'), 'utf8');
+
+  // 1. 선언적 data-home-widget 속성 마크업 부여 검증 (전수조사 정합화)
+  assert.ok(indexHtml.includes('data-home-widget="crewPacingWidget"'), 'crewPacingWidget 선언적 속성 검증');
+  assert.ok(indexHtml.includes('data-widget-label="실시간 동류 레이스"'), 'crewPacingWidget 라벨 검증');
+  assert.ok(indexHtml.includes('data-home-widget="levelBadgeRow"') && indexHtml.includes('data-widget-fixed="true"'), 'levelBadgeRow 상단 고정 속성 검증');
+  assert.ok(indexHtml.includes('data-home-widget="captureCardBox"') && indexHtml.includes('data-widget-fixed="true"'), 'captureCardBox 상단 고정 속성 검증');
+  assert.ok(indexHtml.includes('data-home-widget="todayMissionCard"'), 'todayMissionCard 선언적 속성 검증');
+
+  // 2. js/customize.js 내 자동 탐색 및 레지스트리 엔진 검증
+  assert.ok(customJs.includes('function discoverWidgets'), 'discoverWidgets 함수 탑재 검증');
+  assert.ok(customJs.includes('function getEffectiveWhitelist'), 'getEffectiveWhitelist 함수 탑재 검증');
+  assert.ok(customJs.includes('discoverWidgets: discoverWidgets'), 'discoverWidgets export 검증');
+  assert.ok(customJs.includes('getEffectiveWhitelist: getEffectiveWhitelist'), 'getEffectiveWhitelist export 검증');
+
+  // 3. 상단 고정 원칙(fixed: true, CORE_IDS) 보존 검증
+  assert.ok(customJs.includes("CORE_IDS = ['levelBadgeRow', 'captureCardBox'"), 'CORE_IDS 상단 고정 영구 보존 검증');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
