@@ -5219,13 +5219,17 @@
     var c2 = theme.subColor;
     var cAcc = theme.accentColor || '#FFFFFF';
 
-    // 20대 후반 여성 감성 미니멀 헤드 오브제 전용 컴팩트 패딩: 좌우 번잡함 0px, 머리 위 정중앙 배치
-    var padX = compact ? Math.round(s * 0.12) : Math.round(s * 0.16);
-    var padY = compact ? Math.round(s * 0.28) : Math.round(s * 0.34);
+    // 오버워치·롤 랭크 스타일 좌우 상징 백그라운드 윙 결합 (아바타 본체는 완벽히 비움)
+    var padX = compact ? Math.round(s * 0.24) : Math.round(s * 0.30);
+    var padY = compact ? Math.round(s * 0.26) : Math.round(s * 0.32);
     var totalW = s + padX * 2;
     var totalH = s + padY * 2;
     var cx = totalW / 2;
-    var bT = padY; // 아바타 박스 상단선
+    var cy = totalH / 2;
+    var bL = padX;         // 아바타 왼쪽 경계
+    var bR = padX + s;     // 아바타 오른쪽 경계
+    var bT = padY;         // 아바타 상단 경계
+    var bB = padY + s;     // 아바타 하단 경계
 
     var gradId = 'rg_' + tid + '_' + step + '_' + Math.round(s);
     var defsContent = '' +
@@ -5239,16 +5243,16 @@
           '<stop offset="100%" stop-color="#F59E0B" />' +
         '</linearGradient>' +
         '<filter id="' + gradId + '_glow" x="-20%" y="-20%" width="140%" height="140%">' +
-          '<feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-color="' + c1 + '" flood-opacity="0.35" />' +
+          '<feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="' + c1 + '" flood-opacity="0.4" />' +
         '</filter>' +
       '</defs>';
 
+    // 1. 머리 위 헤드 오브제 (Top Emblem)
     var growthContent = '';
 
     if (tid === 'sprout') {
       // 🌱 새싹: 아기 떡잎 -> 쌍떡잎과 이슬 -> 세잎 클로버 핀 -> 미니 덩굴 화관 -> 파스텔 데이지 티아라
       if (step === 1) {
-        // I. 아기 떡잎: 머리 위 정중앙 앙증맞은 연둣빛 떡잎 한 쌍
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<path d="M ' + cx + ' ' + (bT + 1) + ' Q ' + cx + ' ' + (bT - 4) + ' ' + cx + ' ' + (bT - 6) + '" stroke="#059669" stroke-width="2" stroke-linecap="round" fill="none" />' +
           '<path d="M ' + cx + ' ' + (bT - 5) + ' C ' + (cx - 4) + ' ' + (bT - 6) + ', ' + (cx - 9) + ' ' + (bT - 11) + ', ' + (cx - 5) + ' ' + (bT - 13) + ' C ' + (cx - 1) + ' ' + (bT - 13) + ', ' + cx + ' ' + (bT - 9) + ', ' + cx + ' ' + (bT - 5) + ' Z" fill="#34D399" stroke="#059669" stroke-width="0.8" />' +
@@ -5256,7 +5260,6 @@
           '<circle cx="' + (cx + 4) + '" cy="' + (bT - 11) + '" r="1.4" fill="#FFFFFF" opacity="0.9" />' +
         '</g>';
       } else if (step === 2) {
-        // II. 쌍떡잎과 아침이슬: 도톰한 잎사귀 + 영롱한 펄 이슬 2방울
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<path d="M ' + cx + ' ' + (bT + 1) + ' Q ' + cx + ' ' + (bT - 5) + ' ' + cx + ' ' + (bT - 8) + '" stroke="#047857" stroke-width="2.2" stroke-linecap="round" fill="none" />' +
           '<ellipse cx="' + (cx - 6) + '" cy="' + (bT - 9) + '" rx="5.5" ry="3.5" transform="rotate(-25 ' + (cx - 6) + ' ' + (bT - 9) + ')" fill="#34D399" stroke="#047857" stroke-width="0.8" />' +
@@ -5265,7 +5268,6 @@
           '<circle cx="' + (cx + 6) + '" cy="' + (bT - 10) + '" r="1.3" fill="#ECFDF5" />' +
         '</g>';
       } else if (step === 3) {
-        // III. 세잎 클로버 핀: 동글동글 사랑스러운 파스텔 클로버 헤어핀
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<path d="M ' + cx + ' ' + (bT + 1) + ' L ' + cx + ' ' + (bT - 5) + '" stroke="#047857" stroke-width="2" stroke-linecap="round" />' +
           '<circle cx="' + cx + '" cy="' + (bT - 11) + '" r="3.6" fill="#10B981" stroke="#047857" stroke-width="0.8" />' +
@@ -5274,7 +5276,6 @@
           '<circle cx="' + cx + '" cy="' + (bT - 8.5) + '" r="1.6" fill="#FFFFFF" />' +
         '</g>';
       } else if (step === 4) {
-        // IV. 미니 덩굴 화관: 아바타 머리 위를 아치형으로 부드럽게 감싸는 미니 리스
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<path d="M ' + (cx - 13) + ' ' + (bT + 1) + ' Q ' + cx + ' ' + (bT - 9) + ' ' + (cx + 13) + ' ' + (bT + 1) + '" stroke="#059669" stroke-width="2" fill="none" stroke-linecap="round" />' +
           '<ellipse cx="' + (cx - 8) + '" cy="' + (bT - 6) + '" rx="3" ry="2" fill="#34D399" transform="rotate(-30 ' + (cx - 8) + ' ' + (bT - 6) + ')" />' +
@@ -5283,7 +5284,6 @@
           '<circle cx="' + cx + '" cy="' + (bT - 8.5) + '" r="1" fill="#FEF08A" />' +
         '</g>';
       } else {
-        // V. 파스텔 데이지 티아라: 화이트 & 파스텔 옐로우의 사랑스러운 데이지 꽃관
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<path d="M ' + (cx - 14) + ' ' + (bT + 1) + ' Q ' + cx + ' ' + (bT - 7) + ' ' + (cx + 14) + ' ' + (bT + 1) + '" stroke="#10B981" stroke-width="2" fill="none" stroke-linecap="round" />' +
           '<circle cx="' + cx + '" cy="' + (bT - 13) + '" r="2.2" fill="#FFFFFF" />' +
@@ -5297,9 +5297,8 @@
         '</g>';
       }
     } else if (tid === 'forest') {
-      // 🌲 울창한 숲: 올리브 가지 핀 -> 황금 도토리 핀 -> 월계수 미니 화관 -> 싱그러운 열매 링 -> 포레스트 에메랄드 크라운
+      // 🌲 울창한 숲
       if (step === 1) {
-        // I. 올리브 가지 핀: 단정하게 꽂힌 미니멀 올리브 잎가지
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<path d="M ' + (cx - 7) + ' ' + (bT + 1) + ' Q ' + cx + ' ' + (bT - 6) + ' ' + (cx + 8) + ' ' + (bT - 9) + '" stroke="#78350F" stroke-width="1.8" stroke-linecap="round" fill="none" />' +
           '<ellipse cx="' + (cx - 2) + '" cy="' + (bT - 5) + '" rx="3.5" ry="2" transform="rotate(-30 ' + (cx - 2) + ' ' + (bT - 5) + ')" fill="#059669" stroke="#047857" stroke-width="0.6" />' +
@@ -5307,7 +5306,6 @@
           '<circle cx="' + (cx + 8) + '" cy="' + (bT - 10) + '" r="1.8" fill="#A7F3D0" />' +
         '</g>';
       } else if (step === 2) {
-        // II. 황금 도토리 핀: 귀여운 황금빛 도토리와 작은 잎사귀
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<path d="M ' + cx + ' ' + (bT + 1) + ' L ' + cx + ' ' + (bT - 5) + '" stroke="#78350F" stroke-width="1.8" stroke-linecap="round" />' +
           '<ellipse cx="' + cx + '" cy="' + (bT - 10) + '" rx="4" ry="4.5" fill="#D97706" stroke="#B45309" stroke-width="0.7" />' +
@@ -5316,7 +5314,6 @@
           '<ellipse cx="' + (cx + 5) + '" cy="' + (bT - 8) + '" rx="3.2" ry="1.8" transform="rotate(35 ' + (cx + 5) + ' ' + (bT - 8) + ')" fill="#10B981" />' +
         '</g>';
       } else if (step === 3) {
-        // III. 월계수 미니 화관: 머리 위에 정갈하게 얹히는 라운드 월계수
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<path d="M ' + (cx - 13) + ' ' + (bT + 1) + ' Q ' + cx + ' ' + (bT - 10) + ' ' + (cx + 13) + ' ' + (bT + 1) + '" stroke="#047857" stroke-width="1.8" fill="none" stroke-linecap="round" />' +
           '<ellipse cx="' + (cx - 9) + '" cy="' + (bT - 6) + '" rx="3.5" ry="2" transform="rotate(-40 ' + (cx - 9) + ' ' + (bT - 6) + ')" fill="#10B981" />' +
@@ -5326,7 +5323,6 @@
           '<circle cx="' + cx + '" cy="' + (bT - 9) + '" r="1.8" fill="#FDE047" />' +
         '</g>';
       } else if (step === 4) {
-        // IV. 싱그러운 열매 링: 에메랄드 잎사귀와 빨간 베리 열매
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<circle cx="' + cx + '" cy="' + (bT - 7) + '" r="7.5" fill="none" stroke="#059669" stroke-width="1.8" />' +
           '<circle cx="' + (cx - 5) + '" cy="' + (bT - 8) + '" r="2.2" fill="#EF4444" stroke="#B91C1C" stroke-width="0.6" />' +
@@ -5335,7 +5331,6 @@
           '<ellipse cx="' + (cx - 2) + '" cy="' + (bT - 13) + '" rx="3" ry="1.8" transform="rotate(-20 ' + (cx - 2) + ' ' + (bT - 13) + ')" fill="#34D399" />' +
         '</g>';
       } else {
-        // V. 포레스트 에메랄드 크라운: 3봉우리 리프 크라운과 영롱한 보석
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<polygon points="' + (cx - 12) + ',' + (bT) + ' ' + (cx - 7) + ',' + (bT - 11) + ' ' + (cx - 3) + ',' + (bT - 4) + ' ' + cx + ',' + (bT - 14) + ' ' + (cx + 3) + ',' + (bT - 4) + ' ' + (cx + 7) + ',' + (bT - 11) + ' ' + (cx + 12) + ',' + (bT) + '" fill="url(#' + gradId + '_gold)" stroke="#B45309" stroke-width="0.8" />' +
           '<circle cx="' + cx + '" cy="' + (bT - 8) + '" r="2.4" fill="#10B981" stroke="#FFFFFF" stroke-width="0.8" />' +
@@ -5344,9 +5339,8 @@
         '</g>';
       }
     } else if (tid === 'poseidon') {
-      // 🌊 마린 바다: 청량 에어 버블 -> 파스텔 조개와 진주 -> 몽글 파도 리본 -> 아쿠아 마린 드롭 -> 사파이어 오션 티아라
+      // 🌊 마린 바다
       if (step === 1) {
-        // I. 청량 에어 버블: 머리 위에 퐁퐁 떠오르는 3개의 투명한 방울들
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<circle cx="' + (cx - 6) + '" cy="' + (bT - 6) + '" r="3.6" fill="#BAE6FD" stroke="#38BDF8" stroke-width="1" opacity="0.9" />' +
           '<circle cx="' + (cx - 7.5) + '" cy="' + (bT - 7.5) + '" r="1" fill="#FFFFFF" />' +
@@ -5355,7 +5349,6 @@
           '<circle cx="' + (cx - 1) + '" cy="' + (bT - 14) + '" r="2" fill="#BAE6FD" stroke="#38BDF8" stroke-width="0.8" />' +
         '</g>';
       } else if (step === 2) {
-        // II. 파스텔 조개와 아기 진주: 둥글고 귀여운 조개와 빛나는 진주
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<path d="M ' + (cx - 9) + ' ' + (bT + 1) + ' C ' + (cx - 10) + ' ' + (bT - 9) + ', ' + (cx + 10) + ' ' + (bT - 9) + ', ' + (cx + 9) + ' ' + (bT + 1) + ' Z" fill="#BAE6FD" stroke="#0284C7" stroke-width="1" />' +
           '<path d="M ' + cx + ' ' + (bT + 1) + ' L ' + (cx - 5) + ' ' + (bT - 7) + ' M ' + cx + ' ' + (bT + 1) + ' L ' + cx + ' ' + (bT - 8) + ' M ' + cx + ' ' + (bT + 1) + ' L ' + (cx + 5) + ' ' + (bT - 7) + '" stroke="#38BDF8" stroke-width="0.9" />' +
@@ -5363,7 +5356,6 @@
           '<circle cx="' + (cx - 0.7) + '" cy="' + (bT - 1.8) + '" r="0.8" fill="#F0F9FF" />' +
         '</g>';
       } else if (step === 3) {
-        // III. 몽글몽글 파도 리본: 부드러운 곡선미의 파스텔 바다 리본
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<path d="M ' + (cx - 12) + ' ' + (bT - 4) + ' Q ' + (cx - 6) + ' ' + (bT - 11) + ' ' + cx + ' ' + (bT - 6) + ' Q ' + (cx + 6) + ' ' + (bT - 11) + ' ' + (cx + 12) + ' ' + (bT - 4) + '" stroke="#0284C7" stroke-width="2.2" fill="none" stroke-linecap="round" />' +
           '<circle cx="' + (cx - 11) + '" cy="' + (bT - 3) + '" r="2" fill="#38BDF8" />' +
@@ -5372,7 +5364,6 @@
           '<circle cx="' + cx + '" cy="' + (bT - 6) + '" r="1.2" fill="#FFFFFF" />' +
         '</g>';
       } else if (step === 4) {
-        // IV. 아쿠아 마린 드롭: 눈물방울형 아쿠아마린 젬 헤드피스
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<path d="M ' + (cx - 12) + ' ' + (bT + 1) + ' Q ' + cx + ' ' + (bT - 6) + ' ' + (cx + 12) + ' ' + (bT + 1) + '" stroke="#38BDF8" stroke-width="1.8" fill="none" stroke-linecap="round" />' +
           '<path d="M ' + cx + ' ' + (bT - 14) + ' C ' + (cx - 5) + ' ' + (bT - 7) + ', ' + (cx - 5) + ' ' + (bT - 3) + ', ' + cx + ' ' + (bT - 3) + ' C ' + (cx + 5) + ' ' + (bT - 3) + ', ' + (cx + 5) + ' ' + (bT - 7) + ', ' + cx + ' ' + (bT - 14) + ' Z" fill="#0284C7" stroke="#BAE6FD" stroke-width="1" />' +
@@ -5381,7 +5372,6 @@
           '<circle cx="' + (cx + 10) + '" cy="' + (bT - 1) + '" r="1.8" fill="#BAE6FD" />' +
         '</g>';
       } else {
-        // V. 사파이어 오션 티아라: 잔잔한 물결 위의 사파이어 미니 티아라
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<path d="M ' + (cx - 13) + ' ' + (bT + 1) + ' Q ' + cx + ' ' + (bT - 7) + ' ' + (cx + 13) + ' ' + (bT + 1) + '" stroke="#0284C7" stroke-width="2" fill="none" stroke-linecap="round" />' +
           '<polygon points="' + (cx - 10) + ',' + (bT - 1) + ' ' + (cx - 5) + ',' + (bT - 9) + ' ' + (cx - 2) + ',' + (bT - 4) + ' ' + cx + ',' + (bT - 13) + ' ' + (cx + 2) + ',' + (bT - 4) + ' ' + (cx + 5) + ',' + (bT - 9) + ' ' + (cx + 10) + ',' + (bT - 1) + '" fill="#BAE6FD" stroke="#0284C7" stroke-width="0.9" />' +
@@ -5392,15 +5382,13 @@
         '</g>';
       }
     } else if (tid === 'zeus') {
-      // ⚡ 썬더 스파크: 쁘띠 썬더 핀 -> 솜사탕 아기 구름과 번개 -> 별빛 번개 엠블럼 -> 샴페인 골드 스파크 링 -> 골든 스타 크라운
+      // ⚡ 썬더 스파크
       if (step === 1) {
-        // I. 쁘띠 썬더 핀: 끝이 둥글려진 앙증맞은 버터옐로우 미니 번개 헤어핀
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<polygon points="' + (cx + 1) + ',' + (bT - 12) + ' ' + (cx - 4) + ',' + (bT - 6) + ' ' + cx + ',' + (bT - 6) + ' ' + (cx - 2) + ',' + (bT) + ' ' + (cx + 5) + ',' + (bT - 7) + ' ' + (cx + 1) + ',' + (bT - 7) + '" fill="#FBBF24" stroke="#D97706" stroke-width="0.8" />' +
           '<circle cx="' + (cx + 4) + '" cy="' + (bT - 9) + '" r="1.2" fill="#FFFFFF" />' +
         '</g>';
       } else if (step === 2) {
-        // II. 솜사탕 아기 구름과 번개: 몽실몽실 아기 구름 아래 꼬마 번개
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<circle cx="' + (cx - 4) + '" cy="' + (bT - 8) + '" r="4.2" fill="#FFFFFF" stroke="#FDE68A" stroke-width="1" />' +
           '<circle cx="' + (cx + 3) + '" cy="' + (bT - 9) + '" r="4.8" fill="#FFFFFF" stroke="#FDE68A" stroke-width="1" />' +
@@ -5408,7 +5396,6 @@
           '<polygon points="' + cx + ',' + (bT - 5) + ' ' + (cx - 2.5) + ',' + (bT - 1) + ' ' + cx + ',' + (bT - 1) + ' ' + (cx - 1.5) + ',' + (bT + 3) + ' ' + (cx + 2.5) + ',' + (bT - 2) + ' ' + (cx + 0.5) + ',' + (bT - 2) + '" fill="#F59E0B" />' +
         '</g>';
       } else if (step === 3) {
-        // III. 별빛 번개 엠블럼: 반짝이는 미니 스타와 조화로운 스파크
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<polygon points="' + cx + ',' + (bT - 14) + ' ' + (cx + 2.5) + ',' + (bT - 8) + ' ' + (cx + 8) + ',' + (bT - 6) + ' ' + (cx + 2.5) + ',' + (bT - 4) + ' ' + cx + ',' + (bT + 2) + ' ' + (cx - 2.5) + ',' + (bT - 4) + ' ' + (cx - 8) + ',' + (bT - 6) + ' ' + (cx - 2.5) + ',' + (bT - 8) + '" fill="#FBBF24" stroke="#D97706" stroke-width="0.8" />' +
           '<circle cx="' + cx + '" cy="' + (bT - 6) + '" r="2.2" fill="#FFFFFF" />' +
@@ -5416,7 +5403,6 @@
           '<circle cx="' + (cx + 6) + '" cy="' + (bT - 9) + '" r="1.2" fill="#FEF08A" />' +
         '</g>';
       } else if (step === 4) {
-        // IV. 샴페인 골드 스파크 링: 머리 위를 비추는 골든 라이트 헤일로
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<ellipse cx="' + cx + '" cy="' + (bT - 6) + '" rx="11" ry="3.5" fill="none" stroke="#F59E0B" stroke-width="1.8" />' +
           '<circle cx="' + cx + '" cy="' + (bT - 10) + '" r="2" fill="#FEF08A" stroke="#F59E0B" stroke-width="0.7" />' +
@@ -5424,7 +5410,6 @@
           '<circle cx="' + (cx + 9) + '" cy="' + (bT - 6) + '" r="1.4" fill="#FFFFFF" />' +
         '</g>';
       } else {
-        // V. 골든 스타 크라운: 별과 번개 모티브가 장식된 세련된 황금빛 미니 크라운
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<polygon points="' + (cx - 12) + ',' + (bT) + ' ' + (cx - 8) + ',' + (bT - 11) + ' ' + (cx - 3) + ',' + (bT - 5) + ' ' + cx + ',' + (bT - 13) + ' ' + (cx + 3) + ',' + (bT - 5) + ' ' + (cx + 8) + ',' + (bT - 11) + ' ' + (cx + 12) + ',' + (bT) + '" fill="url(#' + gradId + '_gold)" stroke="#B45309" stroke-width="0.8" />' +
           '<circle cx="' + cx + '" cy="' + (bT - 13) + '" r="1.8" fill="#FFFFFF" />' +
@@ -5434,23 +5419,20 @@
         '</g>';
       }
     } else if (tid === 'cosmic') {
-      // 🌌 코스믹 우주: 토성 미니 링 -> 핑크 아기 유성 -> 은하수 미니 별자리 -> 오로라 성운 엠블럼 -> 코스믹 인피니티 헤일로
+      // 🌌 코스믹 우주
       if (step === 1) {
-        // I. 파스텔 토성 미니 링: 라벤더빛 꼬마 행성과 부드러운 궤도 링
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<ellipse cx="' + cx + '" cy="' + (bT - 7) + '" rx="8.5" ry="3" fill="none" stroke="#C084FC" stroke-width="1.6" transform="rotate(-15 ' + cx + ' ' + (bT - 7) + ')" />' +
           '<circle cx="' + cx + '" cy="' + (bT - 7) + '" r="4.2" fill="#8B5CF6" stroke="#DDD6FE" stroke-width="0.8" />' +
           '<circle cx="' + (cx - 1.2) + '" cy="' + (bT - 8.2) + '" r="1.2" fill="#FFFFFF" />' +
         '</g>';
       } else if (step === 2) {
-        // II. 핑크빛 아기 유성: 은은한 꼬리의 귀여운 별똥별 핀
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<path d="M ' + (cx - 10) + ' ' + (bT - 12) + ' Q ' + (cx - 4) + ' ' + (bT - 8) + ' ' + (cx + 5) + ' ' + (bT - 4) + '" stroke="#C084FC" stroke-width="2.2" stroke-linecap="round" fill="none" />' +
           '<path d="M ' + (cx - 8) + ' ' + (bT - 14) + ' Q ' + (cx - 2) + ' ' + (bT - 10) + ' ' + (cx + 5) + ' ' + (bT - 5) + '" stroke="#F472B6" stroke-width="1.4" stroke-linecap="round" fill="none" />' +
           '<polygon points="' + (cx + 6) + ',' + (bT - 7) + ' ' + (cx + 7.5) + ',' + (bT - 4) + ' ' + (cx + 10.5) + ',' + (bT - 3) + ' ' + (cx + 8) + ',' + (bT - 1) + ' ' + (cx + 9) + ',' + (bT + 2) + ' ' + (cx + 6) + ',' + (bT) + ' ' + (cx + 3) + ',' + (bT + 2) + ' ' + (cx + 4) + ',' + (bT - 1) + ' ' + (cx + 1.5) + ',' + (bT - 3) + ' ' + (cx + 4.5) + ',' + (bT - 4) + '" fill="#FEF08A" stroke="#F59E0B" stroke-width="0.6" />' +
         '</g>';
       } else if (step === 3) {
-        // III. 은하수 미니 별자리: 3개의 꼬마 별이 은은한 선으로 이어진 별자리 피스
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<path d="M ' + (cx - 9) + ' ' + (bT - 5) + ' L ' + (cx - 1) + ' ' + (bT - 10) + ' L ' + (cx + 8) + ' ' + (bT - 6) + '" stroke="#DDD6FE" stroke-width="1.2" stroke-dasharray="2,2" fill="none" />' +
           '<circle cx="' + (cx - 9) + '" cy="' + (bT - 5) + '" r="2.2" fill="#8B5CF6" stroke="#FFFFFF" stroke-width="0.8" />' +
@@ -5459,14 +5441,12 @@
           '<circle cx="' + (cx - 1) + '" cy="' + (bT - 10) + '" r="1" fill="#FFFFFF" />' +
         '</g>';
       } else if (step === 4) {
-        // IV. 오로라 성운 엠블럼: 몽환적인 파스텔 오로라 성운 & 반짝이
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<ellipse cx="' + cx + '" cy="' + (bT - 7) + '" rx="10.5" ry="5.5" fill="#8B5CF6" opacity="0.4" />' +
           '<ellipse cx="' + cx + '" cy="' + (bT - 7) + '" rx="7" ry="4" fill="#C084FC" opacity="0.6" />' +
           '<polygon points="' + cx + ',' + (bT - 12) + ' ' + (cx + 2) + ',' + (bT - 8) + ' ' + (cx + 6) + ',' + (bT - 7) + ' ' + (cx + 2) + ',' + (bT - 6) + ' ' + cx + ',' + (bT - 2) + ' ' + (cx - 2) + ',' + (bT - 6) + ' ' + (cx - 6) + ',' + (bT - 7) + ' ' + (cx - 2) + ',' + (bT - 8) + '" fill="#FFFFFF" />' +
         '</g>';
       } else {
-        // V. 코스믹 인피니티 헤일로: 영롱한 인피니티 링 & 다이아몬드 스타
         growthContent = '<g filter="url(#' + gradId + '_glow)">' +
           '<ellipse cx="' + (cx - 5.5) + '" cy="' + (bT - 7) + '" rx="5.5" ry="3.5" fill="none" stroke="#C084FC" stroke-width="1.8" />' +
           '<ellipse cx="' + (cx + 5.5) + '" cy="' + (bT - 7) + '" rx="5.5" ry="3.5" fill="none" stroke="#C084FC" stroke-width="1.8" />' +
@@ -5476,8 +5456,95 @@
       }
     }
 
+    // 2. 아바타 창 옆으로 레벨별 상징 백그라운드 날개/오라 (Flanks & Side Wings)
+    // 원칙: 아바타 이미지 영역 [bL, bR] x [bT, bB]는 절대 가리지 않음 (x < bL 또는 x > bR)
+    var sideWingsContent = '';
+    var wingScale = Math.min(1.4, Math.max(0.7, s / 44));
+    var midY = bT + s * 0.52; // 아바타 세로 중심부
+
+    if (tid === 'sprout') {
+      // 🌱 새싹 5단계: 귀여운 아기 떡잎 -> 쌍떡잎 날개 -> 덩굴 클로버 -> 잎사귀 날개 -> 만개한 꽃잎 윙
+      var spW = Math.round(7 * wingScale);
+      var spH = Math.round(11 * wingScale);
+      var spDepth = Math.round(step * 1.5 * wingScale);
+
+      sideWingsContent = '<g class="avatar-rank-side-wings rank-wings-sprout" filter="url(#' + gradId + '_glow)">' +
+        // 좌측 새싹 날개
+        '<path d="M ' + (bL + 1) + ' ' + (midY + 4) + ' C ' + (bL - spW - spDepth) + ' ' + (midY + 2) + ', ' + (bL - spW - spDepth - 2) + ' ' + (midY - spH) + ', ' + (bL - 2) + ' ' + (midY - 6) + ' Z" fill="#34D399" stroke="#059669" stroke-width="0.8" opacity="0.9" />' +
+        (step >= 2 ? '<circle cx="' + (bL - spW) + '" cy="' + (midY - 4) + '" r="' + (1.2 * wingScale) + '" fill="#FFFFFF" />' : '') +
+        (step >= 3 ? '<path d="M ' + (bL + 1) + ' ' + (midY + 10) + ' C ' + (bL - spW * 0.8) + ' ' + (midY + 12) + ', ' + (bL - spW * 0.9) + ' ' + (midY + 2) + ', ' + (bL) + ' ' + (midY + 4) + ' Z" fill="#10B981" />' : '') +
+        // 우측 새싹 날개 (완벽 대칭)
+        '<path d="M ' + (bR - 1) + ' ' + (midY + 4) + ' C ' + (bR + spW + spDepth) + ' ' + (midY + 2) + ', ' + (bR + spW + spDepth + 2) + ' ' + (midY - spH) + ', ' + (bR + 2) + ' ' + (midY - 6) + ' Z" fill="#34D399" stroke="#059669" stroke-width="0.8" opacity="0.9" />' +
+        (step >= 2 ? '<circle cx="' + (bR + spW) + '" cy="' + (midY - 4) + '" r="' + (1.2 * wingScale) + '" fill="#FFFFFF" />' : '') +
+        (step >= 3 ? '<path d="M ' + (bR - 1) + ' ' + (midY + 10) + ' C ' + (bR + spW * 0.8) + ' ' + (midY + 12) + ', ' + (bR + spW * 0.9) + ' ' + (midY + 2) + ', ' + (bR) + ' ' + (midY + 4) + ' Z" fill="#10B981" />' : '') +
+      '</g>';
+    } else if (tid === 'forest') {
+      // 🌲 숲 5단계: 올리브 잎가지 날개 -> 에메랄드 숲의 수호 날개
+      var foW = Math.round(9 * wingScale);
+      var foH = Math.round(14 * wingScale);
+      var foSpread = Math.round(step * 1.8 * wingScale);
+
+      sideWingsContent = '<g class="avatar-rank-side-wings rank-wings-forest" filter="url(#' + gradId + '_glow)">' +
+        // 좌측 숲 날개
+        '<path d="M ' + (bL + 1) + ' ' + (midY + 6) + ' Q ' + (bL - foW - foSpread) + ' ' + (midY) + ' ' + (bL - 3) + ' ' + (midY - foH) + ' Q ' + (bL - foW * 0.5) + ' ' + (midY - 4) + ' ' + (bL + 1) + ' ' + (midY + 6) + '" fill="#059669" stroke="#047857" stroke-width="0.9" />' +
+        '<circle cx="' + (bL - foW * 0.7) + '" cy="' + (midY - 3) + '" r="' + (1.4 * wingScale) + '" fill="#A7F3D0" />' +
+        (step >= 3 ? '<path d="M ' + (bL + 1) + ' ' + (midY + 12) + ' Q ' + (bL - foW) + ' ' + (midY + 8) + ' ' + (bL - 1) + ' ' + (midY + 2) + '" fill="#10B981" />' : '') +
+        // 우측 숲 날개
+        '<path d="M ' + (bR - 1) + ' ' + (midY + 6) + ' Q ' + (bR + foW + foSpread) + ' ' + (midY) + ' ' + (bR + 3) + ' ' + (midY - foH) + ' Q ' + (bR + foW * 0.5) + ' ' + (midY - 4) + ' ' + (bR - 1) + ' ' + (midY + 6) + '" fill="#059669" stroke="#047857" stroke-width="0.9" />' +
+        '<circle cx="' + (bR + foW * 0.7) + '" cy="' + (midY - 3) + '" r="' + (1.4 * wingScale) + '" fill="#A7F3D0" />' +
+        (step >= 3 ? '<path d="M ' + (bR - 1) + ' ' + (midY + 12) + ' Q ' + (bR + foW) + ' ' + (midY + 8) + ' ' + (bR + 1) + ' ' + (midY + 2) + '" fill="#10B981" />' : '') +
+      '</g>';
+    } else if (tid === 'poseidon') {
+      // 🌊 포세이돈 5단계: 청량 파도 윙 -> 사파이어 오션 날개
+      var poW = Math.round(10 * wingScale);
+      var poH = Math.round(15 * wingScale);
+      var poWave = Math.round(step * 2 * wingScale);
+
+      sideWingsContent = '<g class="avatar-rank-side-wings rank-wings-poseidon" filter="url(#' + gradId + '_glow)">' +
+        // 좌측 파도 날개
+        '<path d="M ' + (bL + 1) + ' ' + (midY + 8) + ' C ' + (bL - poW - poWave) + ' ' + (midY + 4) + ', ' + (bL - poW - 4) + ' ' + (midY - poH) + ', ' + (bL - 2) + ' ' + (midY - 6) + ' Q ' + (bL - poW * 0.6) + ' ' + (midY + 2) + ' ' + (bL + 1) + ' ' + (midY + 8) + '" fill="#38BDF8" stroke="#0284C7" stroke-width="1" />' +
+        '<circle cx="' + (bL - poW * 0.8) + '" cy="' + (midY - 1) + '" r="' + (1.5 * wingScale) + '" fill="#E0F2FE" />' +
+        (step >= 3 ? '<circle cx="' + (bL - poW * 0.4) + '" cy="' + (midY - 8) + '" r="' + (1.2 * wingScale) + '" fill="#FFFFFF" />' : '') +
+        // 우측 파도 날개
+        '<path d="M ' + (bR - 1) + ' ' + (midY + 8) + ' C ' + (bR + poW + poWave) + ' ' + (midY + 4) + ', ' + (bR + poW + 4) + ' ' + (midY - poH) + ', ' + (bR + 2) + ' ' + (midY - 6) + ' Q ' + (bR + poW * 0.6) + ' ' + (midY + 2) + ' ' + (bR - 1) + ' ' + (midY + 8) + '" fill="#38BDF8" stroke="#0284C7" stroke-width="1" />' +
+        '<circle cx="' + (bR + poW * 0.8) + '" cy="' + (midY - 1) + '" r="' + (1.5 * wingScale) + '" fill="#E0F2FE" />' +
+        (step >= 3 ? '<circle cx="' + (bR + poW * 0.4) + '" cy="' + (midY - 8) + '" r="' + (1.2 * wingScale) + '" fill="#FFFFFF" />' : '') +
+      '</g>';
+    } else if (tid === 'zeus') {
+      // ⚡ 제우스 5단계: 황금 번개 스파크 윙 -> 골든 썬더 볼트 백그라운드
+      var zeW = Math.round(11 * wingScale);
+      var zeH = Math.round(16 * wingScale);
+      var zeSpark = Math.round(step * 2.2 * wingScale);
+
+      sideWingsContent = '<g class="avatar-rank-side-wings rank-wings-zeus" filter="url(#' + gradId + '_glow)">' +
+        // 좌측 번개 날개
+        '<polygon points="' + (bL + 1) + ',' + (midY - 2) + ' ' + (bL - zeW * 0.6) + ',' + (midY - zeH * 0.6) + ' ' + (bL - zeW * 0.3) + ',' + (midY - zeH * 0.2) + ' ' + (bL - zeW - zeSpark) + ',' + (midY + 2) + ' ' + (bL - zeW * 0.4) + ',' + (midY + 5) + ' ' + (bL + 1) + ',' + (midY + 9) + '" fill="#FBBF24" stroke="#D97706" stroke-width="0.8" />' +
+        '<circle cx="' + (bL - zeW * 0.7) + '" cy="' + (midY) + '" r="' + (1.5 * wingScale) + '" fill="#FFFFFF" />' +
+        // 우측 번개 날개
+        '<polygon points="' + (bR - 1) + ',' + (midY - 2) + ' ' + (bR + zeW * 0.6) + ',' + (midY - zeH * 0.6) + ' ' + (bR + zeW * 0.3) + ',' + (midY - zeH * 0.2) + ' ' + (bR + zeW + zeSpark) + ',' + (midY + 2) + ' ' + (bR + zeW * 0.4) + ',' + (midY + 5) + ' ' + (bR - 1) + ',' + (midY + 9) + '" fill="#FBBF24" stroke="#D97706" stroke-width="0.8" />' +
+        '<circle cx="' + (bR + zeW * 0.7) + '" cy="' + (midY) + '" r="' + (1.5 * wingScale) + '" fill="#FFFFFF" />' +
+      '</g>';
+    } else {
+      // 🌌 코스믹 우주 5단계: 은하수 궤도 링 & 신비로운 오로라 성운 윙
+      var coW = Math.round(12 * wingScale);
+      var coH = Math.round(16 * wingScale);
+      var coOrbit = Math.round(step * 2.5 * wingScale);
+
+      sideWingsContent = '<g class="avatar-rank-side-wings rank-wings-cosmic" filter="url(#' + gradId + '_glow)">' +
+        // 좌측 코스믹 성운 윙
+        '<ellipse cx="' + (bL - coW * 0.6) + '" cy="' + (midY + 2) + '" rx="' + (coW * 0.7 + coOrbit * 0.3) + '" ry="' + (coH * 0.5) + '" fill="#C084FC" opacity="0.8" transform="rotate(-20 ' + (bL - coW * 0.6) + ' ' + (midY + 2) + ')" />' +
+        '<circle cx="' + (bL - coW * 0.7) + '" cy="' + (midY - 2) + '" r="' + (1.8 * wingScale) + '" fill="#FFFFFF" />' +
+        '<circle cx="' + (bL - coW * 0.4) + '" cy="' + (midY + 6) + '" r="' + (1.2 * wingScale) + '" fill="#EDE9FE" />' +
+        // 우측 코스믹 성운 윙
+        '<ellipse cx="' + (bR + coW * 0.6) + '" cy="' + (midY + 2) + '" rx="' + (coW * 0.7 + coOrbit * 0.3) + '" ry="' + (coH * 0.5) + '" fill="#C084FC" opacity="0.8" transform="rotate(20 ' + (bR + coW * 0.6) + ' ' + (midY + 2) + ')" />' +
+        '<circle cx="' + (bR + coW * 0.7) + '" cy="' + (midY - 2) + '" r="' + (1.8 * wingScale) + '" fill="#FFFFFF" />' +
+        '<circle cx="' + (bR + coW * 0.4) + '" cy="' + (midY + 6) + '" r="' + (1.2 * wingScale) + '" fill="#EDE9FE" />' +
+      '</g>';
+    }
+
     return '<svg class="rank-bg-svg-layer rank-theme-' + tid + ' rank-step-' + step + '" width="' + totalW + '" height="' + totalH + '" viewBox="0 0 ' + totalW + ' ' + totalH + '" style="position:absolute;left:-' + padX + 'px;top:-' + padY + 'px;pointer-events:none;z-index:1;overflow:visible;">' +
       defsContent +
+      sideWingsContent +
       growthContent +
     '</svg>';
   }
