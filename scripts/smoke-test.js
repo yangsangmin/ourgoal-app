@@ -8404,6 +8404,30 @@ check('compliance: [#TASK-ES-260] 기록탭 명칭 \'기록/통계\'로 변경 2
   assert.ok(indexHtml.includes("if(tab==='records') renderRecordsScreen();"), 'records 탭 화면 전환 라우터 유지');
 });
 
+/* ============ [#TASK-ES-261] 목표탭 ‘목표만’ 버튼 이격 배치 및 하위 마일스톤형 확인 UI 검증 ============ */
+check('compliance: [#TASK-ES-261] 목표탭 ‘목표만’ 버튼 이격 배치 및 하위 마일스톤형 확인 UI 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 목표 뷰 토글 옵션 텍스트 단정화 검증 ('기본', '마일스톤', '할일', '🎯 목표만')
+  assert.ok(indexHtml.includes('>기본</div>'), '뷰 토글 기본 옵션 텍스트 검증');
+  assert.ok(indexHtml.includes('>마일스톤</div>'), '뷰 토글 마일스톤 옵션 텍스트 검증');
+  assert.ok(indexHtml.includes('>할일</div>'), '뷰 토글 할일 옵션 텍스트 검증');
+  assert.ok(indexHtml.includes('data-msview="goals_only"') && indexHtml.includes('목표만</div>'), '목표만 토글 옵션 탑재 검증');
+
+  // 2. 우측 이격 마진 4px 규격 검증 (상단 상세-전체접기 간격 4px 일치)
+  assert.ok(indexHtml.includes('class="format-toggle seg-compact goals-only-wrap" style="flex-shrink:0;margin-left:4px;"'), 'HTML 인라인 4px 이격 마진 검증');
+  assert.ok(uiCss.includes('.goals-only-wrap') && uiCss.includes('margin-left: 4px;'), 'CSS .goals-only-wrap 4px 마진 규격 검증');
+
+  // 3. 하위 마일스톤형 카드 UI 렌더링 검증
+  assert.ok(indexHtml.includes('goal-sub-milestones-container'), '하위 마일스톤 컨테이너 클래스 검증');
+  assert.ok(indexHtml.includes('goal-sub-milestone-item'), '마일스톤형 카드 아이템 클래스 검증');
+  assert.ok(uiCss.includes('.goal-sub-milestone-item'), 'CSS .goal-sub-milestone-item 스타일 검증');
+
+  // 4. 모바일 375px 반응형 정의 검증
+  assert.ok(uiCss.includes('#msViewToggle .format-opt'), '모바일 msViewToggle 반응형 패딩 정의 검증');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
