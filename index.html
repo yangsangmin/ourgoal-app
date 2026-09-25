@@ -1989,6 +1989,31 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     try{
       var raw = localStorage.getItem('ourgoal_settings_'+userId);
       var s = raw ? Object.assign(defaultSettings(), JSON.parse(raw)) : defaultSettings();
+      // [자가 치유 #TASK-ES-265] 새 사용자 ID에 구글 캘린더 설정이 아직 없다면 이전 세션(guest/last)에서 안전 복원
+      if(!s.googleCalendarConnected){
+        try {
+          var candKeys = ['ourgoal_settings_guest'];
+          var curUid = localStorage.getItem('ourgoal_current_user');
+          if(curUid && curUid !== userId) candKeys.push('ourgoal_settings_' + curUid);
+          for(var ci = 0; ci < candKeys.length; ci++){
+            var candRaw = localStorage.getItem(candKeys[ci]);
+            if(candRaw){
+              var candObj = JSON.parse(candRaw);
+              if(candObj && candObj.googleCalendarConnected){
+                s.googleCalendarConnected = true;
+                if(candObj.googleCalendarEmail && !s.googleCalendarEmail) s.googleCalendarEmail = candObj.googleCalendarEmail;
+                if(candObj.gcalClientId && !s.gcalClientId) s.gcalClientId = candObj.gcalClientId;
+                if(candObj.gcalSync && (!s.gcalSync || Object.keys(s.gcalSync.goals||{}).length === 0)) s.gcalSync = candObj.gcalSync;
+                break;
+              }
+            }
+          }
+          if(!s.googleCalendarConnected && localStorage.getItem('ourgoal_gcal_email_last')){
+            s.googleCalendarConnected = true;
+            s.googleCalendarEmail = localStorage.getItem('ourgoal_gcal_email_last');
+          }
+        } catch(candErr){}
+      }
       if(!s.privacy) s.privacy = { goals:"private", calendar:"private", records:"private", stats:"private" };
       if(!s.customSchedules) s.customSchedules = [];
       applyAppSettings(s);
@@ -3874,7 +3899,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           username: uname,
           displayName: dname || (state.profile && (state.profile.nickname || state.profile.displayName)) || '상민',
           nickname: (state.profile && (state.profile.nickname || state.profile.displayName)) || dname || '상민',
-          backupIds: candidateIds
+          backupIds: candidateIds,
+          settingsToSave: (state.profile && state.profile.settings && state.profile.settings.googleCalendarConnected) ? {
+            googleCalendarConnected: true,
+            googleCalendarEmail: state.profile.settings.googleCalendarEmail || '',
+            gcalClientId: state.profile.settings.gcalClientId || ''
+          } : null
         })
       });
       if(!resp.ok) return false;
@@ -3882,6 +3912,23 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(!data || !data.ok) return false;
 
       var updated = false;
+
+      // [#TASK-ES-265] 서버 원장에서 구글 캘린더 연동 설정 복원
+      if(data.settings && data.settings.googleCalendarConnected){
+        state.profile.settings = state.profile.settings || {};
+        if(!state.profile.settings.googleCalendarConnected){
+          state.profile.settings.googleCalendarConnected = true;
+          if(data.settings.googleCalendarEmail && !state.profile.settings.googleCalendarEmail){
+            state.profile.settings.googleCalendarEmail = data.settings.googleCalendarEmail;
+            try { localStorage.setItem('ourgoal_gcal_email_last', data.settings.googleCalendarEmail); } catch(e){}
+          }
+          if(data.settings.gcalClientId && !state.profile.settings.gcalClientId){
+            state.profile.settings.gcalClientId = data.settings.gcalClientId;
+          }
+          saveLocalSettings(uid, state.profile.settings);
+          updated = true;
+        }
+      }
 
       if(data.records && data.records.length > 0){
         var curCount = (state.profile.records || []).length;
@@ -3925,6 +3972,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         } catch(e){}
         if(state.activeTab === 'records') renderRecordsScreen();
         else if(state.activeTab === 'home') renderHomeScreen();
+        else if(state.activeTab === 'calendar') renderCalendarScreen();
         else if(state.activeTab === 'settings') renderSettingsScreen();
       }
       return updated;
@@ -4207,12 +4255,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           accessToken: accessToken,
           expiresAt: Date.now() + 3500 * 1000
         };
-        if(typeof saveGoogleToken === 'function') saveGoogleToken(state.googleToken);
+        if(typeof saveGoogleToken === 'function') saveGoogleToken(state.googleToken, email);
         try { sessionStorage.setItem('ourgoal_google_token', accessToken); } catch(e){}
       }
       if(!state.profile.settings) state.profile.settings = {};
       state.profile.settings.googleCalendarEmail = email;
       state.profile.settings.googleCalendarConnected = true;
+      try { localStorage.setItem('ourgoal_gcal_email_last', email); } catch(e){}
       if(picture && !state.profile.avatarUrl) state.profile.avatarUrl = picture;
       await saveProfile();
       toast('Google 계정 및 캘린더가 안전하게 연동되었습니다!');
@@ -4246,7 +4295,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         if(gBtn) gBtn.onclick = async function(){
           closeModal();
           try { localStorage.setItem('ourgoal_last_auth_provider', 'google'); } catch(e){}
-          await loginWithDirectIdentifier(email, { displayName: name, avatarUrl: picture, provider: 'google', accessToken: accessToken });
+          await loginWithDirectIdentifier(email, { displayName: name, avatarUrl: picture, provider: 'google', accessToken: accessToken, email: email });
         };
         var kBtn = sheet.querySelector('#conflictKakaoLoginBtn');
         if(kBtn) kBtn.onclick = function(){
@@ -4562,7 +4611,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     var hasGuestData = (Array.isArray(gData.goals) && gData.goals.length > 0) ||
                        (Array.isArray(gData.records) && gData.records.length > 0) ||
-                       (gData.settings && (gData.settings.customAvatarUrl || gData.settings.avatarType === 'custom' || (Array.isArray(gData.settings.savedAvatars) && gData.settings.savedAvatars.length > 0))) ||
+                       (gData.settings && (gData.settings.customAvatarUrl || gData.settings.avatarType === 'custom' || (Array.isArray(gData.settings.savedAvatars) && gData.settings.savedAvatars.length > 0) || gData.settings.googleCalendarConnected)) ||
                        (gData.avatarUrl && gData.avatarUrl.indexOf('data:image') === 0);
 
     if(!hasGuestData) return false;
@@ -4573,6 +4622,39 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     targetProfile.settings = targetProfile.settings || {};
     if(state.profile) state.profile.settings = state.profile.settings || targetProfile.settings;
     if(gData.settings){
+      // [#TASK-ES-265] 구글 캘린더 연동 정보 및 토큰 완전 이관
+      if(gData.settings.googleCalendarConnected){
+        targetProfile.settings.googleCalendarConnected = true;
+        if(state.profile && state.profile.settings) state.profile.settings.googleCalendarConnected = true;
+        if(gData.settings.googleCalendarEmail){
+          targetProfile.settings.googleCalendarEmail = gData.settings.googleCalendarEmail;
+          if(state.profile && state.profile.settings) state.profile.settings.googleCalendarEmail = gData.settings.googleCalendarEmail;
+          try { localStorage.setItem('ourgoal_gcal_email_last', gData.settings.googleCalendarEmail); } catch(e){}
+        }
+        if(gData.settings.gcalClientId){
+          targetProfile.settings.gcalClientId = gData.settings.gcalClientId;
+          if(state.profile && state.profile.settings) state.profile.settings.gcalClientId = gData.settings.gcalClientId;
+        }
+        if(gData.settings.gcalSync){
+          targetProfile.settings.gcalSync = Object.assign(targetProfile.settings.gcalSync || {}, gData.settings.gcalSync);
+          if(state.profile && state.profile.settings) state.profile.settings.gcalSync = targetProfile.settings.gcalSync;
+        }
+        if(Array.isArray(gData.settings.customSchedules) && gData.settings.customSchedules.length){
+          targetProfile.settings.customSchedules = targetProfile.settings.customSchedules || [];
+          var csMap = {};
+          targetProfile.settings.customSchedules.forEach(function(cs){ if(cs && cs.id) csMap[cs.id] = true; });
+          gData.settings.customSchedules.forEach(function(cs){ if(cs && cs.id && !csMap[cs.id]) targetProfile.settings.customSchedules.push(cs); });
+          if(state.profile && state.profile.settings) state.profile.settings.customSchedules = targetProfile.settings.customSchedules;
+        }
+        try {
+          var gTok = localStorage.getItem('ourgoal_gcal_token_v1_guest') || localStorage.getItem('ourgoal_gcal_token_v1_last');
+          if(gTok){
+            localStorage.setItem('ourgoal_gcal_token_v1_' + targetUserId, gTok);
+            localStorage.setItem('ourgoal_gcal_token_v1_last', gTok);
+          }
+        } catch(tErr){}
+        guestMigrated = true;
+      }
       var guestSaved = Array.isArray(gData.settings.savedAvatars) ? gData.settings.savedAvatars : [];
       if(guestSaved.length > 0){
         var socialSaved = targetProfile.settings.savedAvatars || [];
@@ -7736,6 +7818,29 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function isGoogleCalendarConnected(){
     var s = (state.profile && state.profile.settings) || {};
     if(s.googleCalendarConnected) return true;
+    var uid = (state.profile && state.profile.id) || 'guest';
+    try {
+      var rawSet = localStorage.getItem('ourgoal_settings_' + uid) || localStorage.getItem('ourgoal_settings_guest');
+      if(rawSet){
+        var ps = JSON.parse(rawSet);
+        if(ps && ps.googleCalendarConnected){
+          if(state.profile && state.profile.settings){
+            state.profile.settings.googleCalendarConnected = true;
+            if(ps.googleCalendarEmail && !state.profile.settings.googleCalendarEmail) state.profile.settings.googleCalendarEmail = ps.googleCalendarEmail;
+          }
+          return true;
+        }
+      }
+      var lastEmail = localStorage.getItem('ourgoal_gcal_email_last');
+      var lastTok = localStorage.getItem('ourgoal_gcal_token_v1_' + uid) || localStorage.getItem('ourgoal_gcal_token_v1_last');
+      if(lastEmail || lastTok){
+        if(state.profile && state.profile.settings){
+          state.profile.settings.googleCalendarConnected = true;
+          if(lastEmail && !state.profile.settings.googleCalendarEmail) state.profile.settings.googleCalendarEmail = lastEmail;
+        }
+        return true;
+      }
+    } catch(e){}
     if(!state.googleToken && typeof restoreGoogleToken === 'function') restoreGoogleToken();
     if(state.googleToken && state.googleToken.expiresAt > Date.now()) return true;
     return false;
@@ -7754,6 +7859,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         }
       } catch(e){}
       if(!state.profile.settings.googleCalendarEmail) state.profile.settings.googleCalendarEmail = '연동 완료';
+      if(state.profile.settings.googleCalendarEmail && state.profile.settings.googleCalendarEmail !== '연동 완료'){
+        try { localStorage.setItem('ourgoal_gcal_email_last', state.profile.settings.googleCalendarEmail); } catch(e){}
+      }
+      if(typeof saveGoogleToken === 'function') saveGoogleToken(state.googleToken, state.profile.settings.googleCalendarEmail);
       await saveProfile();
       toast('구글 캘린더가 연동되었습니다 · 상호 동기화 중…');
       try { await syncAllToGoogleCalendar(); } catch(e){}
@@ -7910,12 +8019,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
   }
   function saveGoogleToken(tokenObj){
+    var optEmail = arguments[1];
     if(!tokenObj || !tokenObj.accessToken) return;
     try {
       var uid = (state.profile && state.profile.id) || 'guest';
-      var payload = JSON.stringify({ accessToken: tokenObj.accessToken, expiresAt: tokenObj.expiresAt || (Date.now() + 3300000) });
+      var emailVal = optEmail || (state.profile && state.profile.settings && state.profile.settings.googleCalendarEmail) || localStorage.getItem('ourgoal_gcal_email_last') || '';
+      var payload = JSON.stringify({
+        accessToken: tokenObj.accessToken,
+        expiresAt: tokenObj.expiresAt || (Date.now() + 3300000),
+        email: emailVal,
+        updatedAt: Date.now()
+      });
       localStorage.setItem('ourgoal_gcal_token_v1_' + uid, payload);
       localStorage.setItem('ourgoal_gcal_token_v1_last', payload);
+      if(emailVal && emailVal.indexOf('@') !== -1) localStorage.setItem('ourgoal_gcal_email_last', emailVal);
       sessionStorage.setItem('ourgoal_google_token', tokenObj.accessToken);
     } catch(e){}
   }
@@ -7924,11 +8041,25 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(state.googleToken && state.googleToken.expiresAt > Date.now()) return state.googleToken;
       var uid = (state.profile && state.profile.id) || 'guest';
       var raw = localStorage.getItem('ourgoal_gcal_token_v1_' + uid) || localStorage.getItem('ourgoal_gcal_token_v1_last');
+      if(!raw){
+        for(var ki = 0; ki < localStorage.length; ki++){
+          var lk = localStorage.key(ki);
+          if(lk && lk.indexOf('ourgoal_gcal_token_v1_') === 0){
+            raw = localStorage.getItem(lk);
+            if(raw) break;
+          }
+        }
+      }
       if(!raw) return null;
       var parsed = JSON.parse(raw);
-      if(parsed && parsed.accessToken && parsed.expiresAt > Date.now()){
-        state.googleToken = parsed;
-        return parsed;
+      if(parsed && parsed.accessToken){
+        if(parsed.expiresAt > Date.now()){
+          state.googleToken = parsed;
+          return parsed;
+        } else {
+          parsed.isExpired = true;
+          state._lastExpiredGoogleToken = parsed;
+        }
       }
     } catch(e){}
     return null;
@@ -7936,6 +8067,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   if(typeof window !== 'undefined'){
     window.saveGoogleToken = saveGoogleToken;
     window.restoreGoogleToken = restoreGoogleToken;
+    window.isGoogleCalendarConnected = isGoogleCalendarConnected;
+    window.requestGoogleToken = requestGoogleToken;
+    window.getGoogleAccessToken = getGoogleAccessToken;
   }
   function ensureGoogleTokenClient(){
     var clientId = effectiveGcalClientId();
@@ -7951,30 +8085,57 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
     return googleTokenClient;
   }
-  function requestGoogleToken(){
+  function requestGoogleToken(options){
+    var opts = options || {};
     return new Promise(function(resolve, reject){
       var client = ensureGoogleTokenClient();
-      if(!client){ reject(new Error('no client')); return; }
+      if(!client){
+        if(opts.silent) resolve(null);
+        else reject(new Error('no client'));
+        return;
+      }
       client.callback = function(resp){
-        if(!resp || resp.error){ reject(new Error(resp && resp.error || '인증 실패')); return; }
+        if(!resp || resp.error){
+          if(opts.silent){
+            resolve(null);
+            return;
+          }
+          reject(new Error(resp && resp.error || '인증 실패'));
+          return;
+        }
         state.googleToken = { accessToken: resp.access_token, expiresAt: Date.now() + ((resp.expires_in||3300)*1000) };
-        saveGoogleToken(state.googleToken);
+        var gEmail = (state.profile && state.profile.settings && state.profile.settings.googleCalendarEmail) || localStorage.getItem('ourgoal_gcal_email_last') || '';
+        saveGoogleToken(state.googleToken, gEmail);
         resolve(resp.access_token);
       };
       var hasSavedToken = !!restoreGoogleToken();
       var isConnected = isGoogleCalendarConnected();
       var reqOpts = { prompt: (state.googleToken || hasSavedToken || isConnected) ? '' : 'consent' };
-      var gEmail = (state.profile && state.profile.settings && state.profile.settings.googleCalendarEmail) || '';
+      if(opts.silent) reqOpts.prompt = '';
+      var gEmail = (state.profile && state.profile.settings && state.profile.settings.googleCalendarEmail) || localStorage.getItem('ourgoal_gcal_email_last') || '';
       if(gEmail && gEmail.indexOf('@') !== -1) reqOpts.hint = gEmail;
       try{ client.requestAccessToken(reqOpts); }
-      catch(e){ reject(e); }
+      catch(e){
+        if(opts.silent) resolve(null);
+        else reject(e);
+      }
     });
   }
   async function getGoogleAccessToken(interactive){
     if(!state.googleToken) restoreGoogleToken();
     if(state.googleToken && state.googleToken.expiresAt > Date.now()+30000) return state.googleToken.accessToken;
-    if(!interactive) return null;
-    return requestGoogleToken();
+    var isConn = isGoogleCalendarConnected();
+    if(!interactive){
+      // [#TASK-ES-265] 백그라운드 호출 시 연동 계정이면 무인 Silent Refresh 시도
+      if(isConn){
+        try {
+          var silentTok = await requestGoogleToken({ silent: true });
+          if(silentTok) return silentTok;
+        } catch(e){}
+      }
+      if(!interactive) return null;
+    }
+    return requestGoogleToken({ silent: false });
   }
   async function openGcalImportModal(){
     var token;
@@ -9697,10 +9858,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             if(evs && evs.length && state.activeTab==='calendar') renderCalendarScreen();
           }).catch(function(){});
         }
-      } else if(!state.gcalEventsCache || !state.gcalEventsCache.length){
-        var savedEvents = null;
-        try { savedEvents = JSON.parse(localStorage.getItem('ourgoal_gcal_events') || '[]'); } catch(e){}
-        if(!savedEvents || !savedEvents.length){
+      } else {
+        if(!state._lastGcalFetch || (Date.now() - state._lastGcalFetch > 60000)){
+          state._lastGcalFetch = Date.now();
           getGoogleAccessToken(false).then(function(tok){
             if(tok) return fetchGoogleCalendarEvents(tok);
           }).then(function(evs){
@@ -36024,8 +36184,13 @@ wirePromptEncyclopediaEvents(body);
       state.profile = p;
       if(extraOpt && extraOpt.accessToken){
         state.googleToken = { accessToken: extraOpt.accessToken, expiresAt: Date.now() + 3500 * 1000 };
-        if(typeof saveGoogleToken === 'function') saveGoogleToken(state.googleToken);
+        var gEmailToSet = (extraOpt && extraOpt.email) || (targetUsername && targetUsername.indexOf('@') !== -1 ? targetUsername : '');
+        if(typeof saveGoogleToken === 'function') saveGoogleToken(state.googleToken, gEmailToSet);
         try { sessionStorage.setItem('ourgoal_google_token', extraOpt.accessToken); } catch(e){}
+        if(p.settings){
+          p.settings.googleCalendarConnected = true;
+          if(gEmailToSet) p.settings.googleCalendarEmail = gEmailToSet;
+        }
       }
       // 3.5. 게스트 세션 데이터 새 계정으로 자동 마이그레이션 (#TASK-ES-224)
       try {
