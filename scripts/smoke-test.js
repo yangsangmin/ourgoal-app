@@ -8741,6 +8741,45 @@ check('compliance: [#TASK-ES-272] 아바타 레벨별 상징 백그라운드 이
   assert.ok(uiCss.includes('.rank-wings-cosmic'), '.rank-wings-cosmic 스타일 존재');
 });
 
+/* ============ [#TASK-ES-273] 각 탭 활용법 내용 최신화 및 실제 우수 사용사례 이미지/카드 첨부 ============ */
+check('compliance: [#TASK-ES-273] 각 탭 활용법 내용 최신화 및 실제 우수 사용사례 이미지/카드 첨부 무결성 검증', () => {
+  const guideCode = fs.readFileSync(path.join(__dirname, '..', 'js', 'tab-guides.js'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const guidesApi = require('../js/tab-guides.js');
+
+  // 1. 코드 정적 단언 및 헌법 제17조 '잔디' 배제
+  assert.ok(guideCode.includes('tab-guide-showcase-card'), 'tab-guide-showcase-card 클래스 존재');
+  assert.ok(guideCode.includes('TAB_SHOWCASES'), 'TAB_SHOWCASES 객체 존재');
+  assert.ok(!guideCode.includes('잔디'), '헌법 제17조 위반: 잔디 단어 배제');
+  assert.ok(guideCode.includes('히트맵'), '히트맵 용어 사용');
+
+  // 2. 6대 탭 우수사례 쇼케이스 탑재
+  ['home', 'goals', 'calendar', 'records', 'comm', 'settings'].forEach(key => {
+    const sc = guidesApi.TAB_SHOWCASES[key];
+    assert.ok(sc && sc.persona && sc.persona.name, '쇼케이스 페르소나 탑재: ' + key);
+    assert.ok(sc.tagline, '쇼케이스 태그라인 탑재: ' + key);
+    assert.ok(sc.previewHtml, '쇼케이스 프리뷰 탑재: ' + key);
+    assert.ok(sc.story, '쇼케이스 스토리 탑재: ' + key);
+    const rendered = guidesApi.renderTabContentHtml(key);
+    assert.ok(rendered.includes('tab-guide-showcase-card'), '렌더링에 쇼케이스 카드 포함: ' + key);
+  });
+
+  // 3. 최신 고도화 기능 명세 포함
+  const goalsHtml = guidesApi.renderTabContentHtml('goals');
+  assert.ok(goalsHtml.includes('루틴'), '목표 탭 최신 루틴 반영');
+  assert.ok(goalsHtml.includes('구글 캘린더'), '목표 탭 구글 캘린더 반영');
+
+  const calHtml = guidesApi.renderTabContentHtml('calendar');
+  assert.ok(calHtml.includes('사진형 일기'), '일정 탭 사진형 일기 반영');
+
+  const recHtml = guidesApi.renderTabContentHtml('records');
+  assert.ok(recHtml.includes('3×2'), '기록 탭 3×2 콕핏 반영');
+
+  // 4. ui.css 스타일
+  assert.ok(uiCss.includes('.tab-guide-showcase-card'), '.tab-guide-showcase-card 스타일 존재');
+  assert.ok(uiCss.includes('.showcase-mini-preview'), '.showcase-mini-preview 스타일 존재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
