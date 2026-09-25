@@ -8379,6 +8379,31 @@ check('compliance: [#TASK-ES-259] 목표탭 구글 캘린더 일정 설정 버�
   assert.ok(uiCss.includes('max-width: 170px'), '모바일 가로 넘침 방지 max-width 정의 검증');
 });
 
+/* ============ [#TASK-ES-260] 기록탭 명칭 '기록/통계'로 변경 2차 초정밀 완결 검증 ============ */
+check('compliance: [#TASK-ES-260] 기록탭 명칭 \'기록/통계\'로 변경 2차 초정밀 완결 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 하단 내비게이션 바 data-tab="records" 버튼 검증 (텍스트 및 aria-label)
+  assert.ok(indexHtml.includes('data-tab="records"'), '하단 내비게이션에 data-tab="records" 존재');
+  assert.ok(indexHtml.includes('aria-label="기록/통계"'), 'navbtn data-tab="records"에 aria-label="기록/통계" 존재');
+  assert.ok(/<button[^>]*class="navbtn"[^>]*data-tab="records"[^>]*>[\s\S]*?기록\/통계[\s\S]*?<\/button>/.test(indexHtml), '하단 네비게이션 버튼 텍스트 기록/통계 검증');
+
+  // 2. 기록 화면(#screen-records) 상단 헤더 타이틀 검증
+  assert.ok(indexHtml.includes('<h2 class="s-title" style="font-size:1.15rem;margin:0;">기록/통계</h2>'), 'screen-records 상단 헤더 타이틀 기록/통계 검증');
+
+  // 3. 가이드 허브 모달 및 공개 범위 설정 모달 연동 검증
+  assert.ok(indexHtml.includes("{ key: 'records', label: '기록/통계', icon: '📝' }"), '가이드 허브 모달 records 탭 라벨 기록/통계 검증');
+  assert.ok(indexHtml.includes("tabKey==='records' ? '기록/통계' : '통계'"), '공개 범위 설정 모달 records 탭명 기록/통계 검증');
+
+  // 4. ui.css 모바일 375px 및 텍스트 줄바꿈 방어 검증
+  assert.ok(uiCss.includes('white-space:nowrap'), 'navbtn white-space:nowrap 속성 검증');
+  assert.ok(uiCss.includes('@media (max-width: 375px){.navbtn{') || uiCss.includes('@media (max-width:375px)'), '375px 모바일 미디어 쿼리 방어 검증');
+
+  // 5. 비즈니스 로직 및 라우팅 하위 호환성 유지 검증
+  assert.ok(indexHtml.includes("if(tab==='records') renderRecordsScreen();"), 'records 탭 화면 전환 라우터 유지');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

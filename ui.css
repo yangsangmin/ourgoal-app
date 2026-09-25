@@ -199,7 +199,8 @@ main.screens{flex:1;padding:4px 20px calc(var(--nav-h) + 24px + env(safe-area-in
 /* 바텀 내비 — 풀폭 플랫 바 */
 .bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;pointer-events:none;padding:0;}
 .bottomnav-inner{pointer-events:auto;max-width:var(--maxw);width:100%;background:var(--bottomnav-bg);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:flex;padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px));border-radius:0;border-top:1px solid var(--rule);box-shadow:0 -4px 16px rgba(0,0,0,.04);}
-.navbtn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink-faint);font-size:.6875rem;font-weight:500;padding:6px 0 4px;min-height:48px;border-radius:8px;transition:color .15s;position:relative;letter-spacing:0;}
+.navbtn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink-faint);font-size:.6875rem;font-weight:500;padding:6px 0 4px;min-height:48px;border-radius:8px;transition:color .15s;position:relative;letter-spacing:-0.2px;white-space:nowrap;}
+@media (max-width: 375px){.navbtn{font-size:.625rem;letter-spacing:-0.4px;padding:6px 1px 4px;}}
 .navbtn svg{width:24px;height:24px;stroke-width:1.75;transition:transform .15s var(--ease);}
 .navbtn.active{color:var(--ink);font-weight:600;}
 .navbtn.active svg{stroke-width:2.2;}
