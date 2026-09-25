@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-269",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-269-AVATAR-PERIOD-ANALYSIS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/avatar-system.js 내에 사진 선택 버튼군 바로 밑에 '아바타 생성 기준 기간 정하기' 버튼(#btnSetAvatarPeriod) 및 기간 입력 컨테이너(#avatarPeriodInputs)가 배치되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "js/avatar-system.js 내에 사용자가 직접 기간을 정할 수 있는 시작일/종료일 인풋(#avatarPeriodStartInput, #avatarPeriodEndInput) 및 퀵 프리셋 칩 4종(.avatar-period-chip)이 구현되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "js/avatar-system.js 내에 '설정한 기간의 내 목표, 팀, 기록들을 분석하여'와 '그에 맞는mbti와 좌우명을 가진 아바타를 생성합니다.' 2줄 안내멘트가 구현되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "js/avatar-system.js 내에 아바타 설정 모달 창 내부 래퍼(max-width:620px) 및 시트(sheet.style.maxHeight = '94vh', sheet.style.maxWidth = '640px') 확장이 구현되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "ui.css 내에 .avatar-period-chip 칩 스타일 및 모바일 375px 반응형 스타일이 구현되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/avatar-system.js 내에 사진 선택 버튼군 바로 밑에 '아바타 생성 기준 기간 정하기' 버튼(#btnSetAvatarPeriod) 및 기간 입력 컨테이너(#avatarPeriodInputs)가 배치되어 있다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "id=\"btnSetAvatarPeriod\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/avatar-system.js 내에 사용자가 직접 기간을 정할 수 있는 시작일/종료일 인풋(#avatarPeriodStartInput, #avatarPeriodEndInput) 및 퀵 프리셋 칩 4종(.avatar-period-chip)이 구현되어 있다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "avatar-period-chip"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/avatar-system.js 내에 '설정한 기간의 내 목표, 팀, 기록들을 분석하여'와 '그에 맞는mbti와 좌우명을 가진 아바타를 생성합니다.' 2줄 안내멘트가 구현되어 있다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "그에 맞는mbti와 좌우명을 가진 아바타를 생성합니다."
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/avatar-system.js 내에 아바타 설정 모달 창 내부 래퍼(max-width:620px) 및 시트(sheet.style.maxHeight = '94vh', sheet.style.maxWidth = '640px') 확장이 구현되어 있다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "sheet.style.maxHeight = '94vh'"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 .avatar-period-chip 칩 스타일 및 모바일 375px 반응형 스타일이 구현되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".avatar-period-chip"
+      }
+    }
+  ]
+}

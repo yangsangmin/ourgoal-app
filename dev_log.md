@@ -4879,3 +4879,28 @@
 - **확인 못 한 것**: GitHub PR 생성 및 CI court 심사 (원격 push 지시 시 수행 예정).
 - **진행 단계**: [2단계: 내부 시뮬레이션 상태 - 단위/스모크/무결성 테스트 통과, 로컬 커밋 준비]
 ---
+
+## [2026-09-25 20:16] [#TASK-ES-269] 기간 설정(목표·팀·기록 분석) 맞춤형 아바타 생성 결합 및 설정창 확대
+- **목표**: 상민님 직접 지시(노션 생각 메모장 [15]번: "내가설정한 기간에 맞춰서 그에 맞는(목표, 팀, 기록) 아바타를 만들어주는 기능이 지금 아바타생성 기능과 결합되어야 해. 사진선택하고 나면 사진선택하기랑 내사진으로 아바타제작이 뜨는데, 그 밑으로 ‘아바타 생성 기준 기간 정하기’ 버튼을 만들고 사용자가 직접 기간을 정할 수 있는 칸을 만들어. 아래에 작게 ‘설정한 기간의 내 목표, 팀, 기록들을 분석하여 그에 맞는mbti와 좌우명을 가진 아바타를 생성합니다.’ 안내멘트를 2줄로 넣어. 아바타 설정 창을 그에 맞게 더 키워")에 따라 사진 버튼군 바로 밑에 기간 설정 버튼 및 직접 기간 선택 폼(및 1주/1개월/3개월/전체 퀵 칩)을 배치하고, 2줄 안내멘트 배치, 목표·팀·기록 기간 실측 분석 기반 MBTI/좌우명 맞춤 아바타 생성 결합, 아바타 모달 창 확대(max-width 620px, sheet 94vh / 640px) 및 모바일 375px 반응형을 100% 완결.
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: `#TASK-ES-269` 티켓 진행중 등록.
+  - `docs/specs/REQ-TASK-ES-269-AVATAR-PERIOD-ANALYSIS.md`: 8원칙 완비 요구명세서 작성.
+  - `docs/specs/PLAN-TASK-ES-269-AVATAR-PERIOD-ANALYSIS.md`: 8원칙 완비 세부 계획서 작성.
+  - `js/avatar-system.js`:
+    - 모달 내부 래퍼 `max-width: 620px` 확장 및 `openModal` 콜백 내 `sheet.style.maxHeight = '94vh'`, `sheet.style.maxWidth = '640px'` 적용.
+    - 사진 선택 버튼군 바로 밑으로 `avatarPeriodSection` 이동 배치.
+    - 퀵 프리셋 칩 4종(`avatar-period-chip`, 최근 1주, 최근 1개월, 최근 3개월, 전체) 및 직접 기간 입력칸(`avatarPeriodStartInput`, `avatarPeriodEndInput`) 배선.
+    - 원문 2줄 안내멘트(`설정한 기간의 내 목표, 팀, 기록들을 분석하여`<br>`그에 맞는mbti와 좌우명을 가진 아바타를 생성합니다.`) 정합화.
+    - `collectPeriodPersonaSummary` 및 `fetchAvatarPersona` 기반 기간 내 목표/기록/팀 활동 분석 결합 및 기본 페르소나 자가 치유 폴백 유지.
+  - `ui.css`: `.avatar-period-chip` 및 `@media (max-width: 480px)` 반응형 스타일 추가.
+  - `tests/avatar-period-analysis.test.js`: 기간 분석 및 UI/스타일 5대 영역 단위 테스트 작성 및 통과.
+  - `scripts/smoke-test.js`: `#TASK-ES-269` 단언 추가 (387개 ALL PASS).
+  - `reports/TASK-ES-269/claims.json`: 법정(court) 심사용 5대 청구서 작성 및 검증.
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - 단위 테스트: `tests/avatar-period-analysis.test.js` 5대 항목 ALL PASS.
+  - 스모크 테스트: `node scripts/smoke-test.js` 387개 전수 통과 (0개 실패).
+  - 헌법 게이트: `node scripts/verify-integrity-gate.js` 38개 검사 ALL PASS.
+  - 법정 청구서: `reports/TASK-ES-269/claims.json` 5대 클레임 로컬 검증 통과.
+- **진행 단계**: [3단계: 초안 PR 제출 및 법정 판정 청구 준비]
+---
+

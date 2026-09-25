@@ -5582,7 +5582,7 @@
       return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     };
 
-    var html = '<div class="modal-sheet-inner" style="max-width:560px;margin:0 auto;text-align:left;">' +
+    var html = '<div class="modal-sheet-inner" style="max-width:620px;/* max-width:560px */margin:0 auto;text-align:left;">' +
       '<div class="modal-header-custom" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">' +
         '<div style="font-weight:900;font-size:1.1875rem;color:var(--ink);">아바타 설정</div>' +
         '<div style="font-size:0.8125rem;color:var(--ink-soft);font-weight:700;">' +
@@ -5656,25 +5656,33 @@
             '</button>' +
           '</div>' +
 
-          // 상시 7일 연속 체크인 충전 안내 배너 (#TASK-ES-125)
-          '<div id="avatarStreakRechargeBanner" style="margin-top:10px;background:linear-gradient(135deg, rgba(245,158,11,0.12), rgba(239,68,68,0.08));border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:8px 12px;font-size:0.75rem;color:#B45309;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;">' +
-            '<span>🔥</span><span>7일 연속 체크인 시 아바타 제작권 1회 자동 충전!</span>' +
-          '</div>' +
-
-          // [TASK-ES-122] 아바타 생성 기준 기간 설정 섹션
+          // [TASK-ES-269] 아바타 생성 기준 기간 설정 섹션 (사진 선택군 바로 밑 배치)
           '<div id="avatarPeriodSection" style="margin-top:12px;text-align:left;">' +
             '<button type="button" class="btn btn-ghost btn-sm" id="btnSetAvatarPeriod" style="font-size:.8125rem;width:100%;">' +
               '📅 아바타 생성 기준 기간 정하기 <span id="avatarPeriodSummarySpan" style="font-weight:700;color:var(--emerald);"></span>' +
             '</button>' +
             '<div id="avatarPeriodInputs" style="display:none;margin-top:8px;background:var(--surface-3, #F1F5F9);border:1px solid var(--border-soft);border-radius:12px;padding:12px;">' +
+              '<div style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap;" id="avatarPeriodQuickChips">' +
+                '<button type="button" class="btn btn-ghost btn-xs avatar-period-chip" data-days="7" style="font-size:11px;padding:3px 8px;border-radius:8px;border:1px solid var(--border-soft);background:var(--surface-1,#fff);color:var(--ink);cursor:pointer;">최근 1주</button>' +
+                '<button type="button" class="btn btn-ghost btn-xs avatar-period-chip active" data-days="30" style="font-size:11px;padding:3px 8px;border-radius:8px;border:1px solid var(--emerald);background:var(--emerald-surface,#ECFDF5);color:var(--emerald);cursor:pointer;font-weight:800;">최근 1개월</button>' +
+                '<button type="button" class="btn btn-ghost btn-xs avatar-period-chip" data-days="90" style="font-size:11px;padding:3px 8px;border-radius:8px;border:1px solid var(--border-soft);background:var(--surface-1,#fff);color:var(--ink);cursor:pointer;">최근 3개월</button>' +
+                '<button type="button" class="btn btn-ghost btn-xs avatar-period-chip" data-days="all" style="font-size:11px;padding:3px 8px;border-radius:8px;border:1px solid var(--border-soft);background:var(--surface-1,#fff);color:var(--ink);cursor:pointer;">전체</button>' +
+              '</div>' +
               '<div style="display:flex;align-items:center;gap:8px;">' +
-                '<input type="date" id="avatarPeriodStartInput" value="' + toDateInputValue(defaultPeriodStart) + '" style="flex:1;min-width:0;padding:6px 8px;border-radius:8px;border:1px solid var(--border-soft);background:var(--surface-1,#fff);color:var(--ink);">' +
+                '<input type="date" id="avatarPeriodStartInput" value="' + toDateInputValue(defaultPeriodStart) + '" style="flex:1;min-width:0;padding:6px 8px;border-radius:8px;border:1px solid var(--border-soft);background:var(--surface-1,#fff);color:var(--ink);font-size:.8125rem;">' +
                 '<span style="color:var(--ink-soft);">~</span>' +
-                '<input type="date" id="avatarPeriodEndInput" value="' + toDateInputValue(defaultPeriodEnd) + '" style="flex:1;min-width:0;padding:6px 8px;border-radius:8px;border:1px solid var(--border-soft);background:var(--surface-1,#fff);color:var(--ink);">' +
+                '<input type="date" id="avatarPeriodEndInput" value="' + toDateInputValue(defaultPeriodEnd) + '" style="flex:1;min-width:0;padding:6px 8px;border-radius:8px;border:1px solid var(--border-soft);background:var(--surface-1,#fff);color:var(--ink);font-size:.8125rem;">' +
               '</div>' +
               '<div id="avatarPeriodErrorText" style="display:none;color:#EF4444;font-size:.75rem;margin-top:6px;font-weight:700;">종료일은 시작일보다 빠를 수 없어요.</div>' +
-              '<div style="font-size:.75rem;color:var(--ink-soft);line-height:1.5;margin-top:10px;">설정한 기간의 내 목표, 팀, 기록들을 분석하여<br>그에 맞는 MBTI와 좌우명을 가진 아바타를 생성합니다.</div>' +
+              '<div class="avatar-period-guide" style="font-size:.75rem;color:var(--ink-soft);line-height:1.5;margin-top:10px;text-align:center;">' +
+                '설정한 기간의 내 목표, 팀, 기록들을 분석하여<br>그에 맞는mbti와 좌우명을 가진 아바타를 생성합니다.<!-- 그에 맞는 MBTI와 좌우명을 가진 아바타를 생성합니다. -->' +
+              '</div>' +
             '</div>' +
+          '</div>' +
+
+          // 상시 7일 연속 체크인 충전 안내 배너 (#TASK-ES-125)
+          '<div id="avatarStreakRechargeBanner" style="margin-top:10px;background:linear-gradient(135deg, rgba(245,158,11,0.12), rgba(239,68,68,0.08));border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:8px 12px;font-size:0.75rem;color:#B45309;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;">' +
+            '<span>🔥</span><span>7일 연속 체크인 시 아바타 제작권 1회 자동 충전!</span>' +
           '</div>' +
         '</div>' +
 
@@ -5742,6 +5750,10 @@
     '</div>';
 
     openModal(html, function (sheet) {
+      if (sheet) {
+        sheet.style.maxHeight = '94vh';
+        sheet.style.maxWidth = '640px';
+      }
       var selectedType = curType;
       var newCustomUrl = curCustomUrl;
       var lastUploadedImg = null;
@@ -5783,7 +5795,7 @@
 
       if (btnCancel) btnCancel.onclick = closeModal;
 
-      // [TASK-ES-122] 아바타 생성 기준 기간 정하기
+      // [TASK-ES-122, TASK-ES-269] 아바타 생성 기준 기간 정하기 & 퀵 프리셋 칩 바인딩
       function updatePeriodSummaryLabel() {
         if (!periodSummarySpan) return;
         periodSummarySpan.textContent = '· ' + toDateInputValue(periodStart).slice(5) + ' ~ ' + toDateInputValue(periodEnd).slice(5);
@@ -5811,6 +5823,42 @@
       }
       if (periodStartInput) periodStartInput.onchange = handlePeriodInputChange;
       if (periodEndInput) periodEndInput.onchange = handlePeriodInputChange;
+
+      var periodChips = sheet.querySelectorAll('.avatar-period-chip');
+      periodChips.forEach(function (chip) {
+        chip.onclick = function () {
+          periodChips.forEach(function (c) {
+            c.classList.remove('active');
+            c.style.border = '1px solid var(--border-soft)';
+            c.style.background = 'var(--surface-1,#fff)';
+            c.style.color = 'var(--ink)';
+            c.style.fontWeight = 'normal';
+          });
+          chip.classList.add('active');
+          chip.style.border = '1px solid var(--emerald)';
+          chip.style.background = 'var(--emerald-surface,#ECFDF5)';
+          chip.style.color = 'var(--emerald)';
+          chip.style.fontWeight = '800';
+
+          var days = chip.getAttribute('data-days');
+          var now = new Date();
+          var endD = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+          var startD;
+          if (days === '7') {
+            startD = new Date(endD.getTime() - 6 * 24 * 60 * 60 * 1000);
+          } else if (days === '30') {
+            startD = new Date(endD.getTime() - 29 * 24 * 60 * 60 * 1000);
+          } else if (days === '90') {
+            startD = new Date(endD.getTime() - 89 * 24 * 60 * 60 * 1000);
+          } else {
+            // 전체 (1년)
+            startD = new Date(endD.getTime() - 365 * 24 * 60 * 60 * 1000);
+          }
+          if (periodStartInput) periodStartInput.value = toDateInputValue(startD);
+          if (periodEndInput) periodEndInput.value = toDateInputValue(endD);
+          handlePeriodInputChange();
+        };
+      });
 
       // 탭 토글
       if (typeToggle) {
