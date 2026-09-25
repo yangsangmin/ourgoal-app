@@ -8655,6 +8655,53 @@ check('[#TASK-ES-270] 목표탭 상단 루틴 탭(개인 왼쪽 배치·요일�
   assert.ok(uiCss.includes('.routine-day-chip'), '.routine-day-chip 스타일 존재');
 });
 
+/* ============ [#TASK-ES-271] 계정 탈퇴 시 법적책임·데이터 분실 사전 안내 팝업 및 4위 1체 배선 ============ */
+check('compliance: [#TASK-ES-271] 계정 탈퇴 시 법적책임·데이터 분실 사전 안내 팝업 및 4위 1체 배선 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 설정 탭 내 회원 탈퇴 버튼 및 클릭 리스너
+  assert.ok(indexHtml.includes('id="withdrawBtn"'), 'withdrawBtn 존재');
+  assert.ok(indexHtml.includes("document.getElementById('withdrawBtn').addEventListener('click', openWithdrawModal);"), 'openWithdrawModal 리스너 배선');
+
+  // 2. 모달 컨테이너 및 헤더
+  assert.ok(indexHtml.includes('id="withdrawModal"'), 'withdrawModal 컨테이너 ID 존재');
+  assert.ok(indexHtml.includes('회원 탈퇴 및 법적책임·데이터 분실 사전 안내'), '모달 타이틀 문구');
+
+  // 3. 데이터 분실 4대 영역 정밀 고지
+  assert.ok(indexHtml.includes('1. 소중한 목표 및 기록 분실 안내 (개인 자산 4대 영역 고지)'), '데이터 분실 4대 영역 섹션 헤더');
+  assert.ok(indexHtml.includes('목표 및 마일스톤'), '분실 항목: 목표 및 마일스톤');
+  assert.ok(indexHtml.includes('인생 실천 기록 및 타임라인'), '분실 항목: 인생 실천 기록 및 타임라인');
+  assert.ok(indexHtml.includes('아바타 인벤토리 및 성장 자산'), '분실 항목: 아바타 인벤토리 및 성장 자산');
+  assert.ok(indexHtml.includes('소통 및 커뮤니티 데이터'), '분실 항목: 소통 및 커뮤니티 데이터');
+
+  // 4. 30일 안전 유예 및 원클릭 복구
+  assert.ok(indexHtml.includes('2. 30일 탈퇴 유예 안전망 및 원클릭 복구'), '30일 탈퇴 유예 섹션');
+  assert.ok(indexHtml.includes('30일간 안전 유예 기간'), '30일 안전 유예 기간 안내');
+  assert.ok(indexHtml.includes('원클릭으로 모든 데이터가 100% 무손실 복구'), '원클릭 100% 무손실 복구 안내');
+
+  // 5. 법적 책임 및 보존 3대 법령
+  assert.ok(indexHtml.includes('3. 법적 책임 및 관계 법령에 따른 정보 보존 고지'), '법적 책임 고지 섹션');
+  assert.ok(indexHtml.includes('개인정보보호법 제21조'), '개인정보보호법 제21조 명시');
+  assert.ok(indexHtml.includes('전자상거래 등에서의 소비자보호에 관한 법률 제6조'), '전자상거래법 제6조 명시');
+  assert.ok(indexHtml.includes('통신비밀보호법 제15조의2'), '통신비밀보호법 제15조의2 명시');
+  assert.ok(indexHtml.includes('부정 이용 및 분쟁 방지'), '부정 이용 방지 고지');
+
+  // 6. 4위 1체 배선 (체크박스, 취소, 확정 버튼)
+  assert.ok(indexHtml.includes('id="withdrawAgreeCheck"'), 'withdrawAgreeCheck 체크박스');
+  assert.ok(indexHtml.includes('id="withdrawCancelBtn"'), 'withdrawCancelBtn 취소 버튼');
+  assert.ok(indexHtml.includes('id="withdrawConfirmBtn"'), 'withdrawConfirmBtn 확정 버튼');
+  assert.ok(indexHtml.includes('confirmBtn.disabled = !this.checked;'), '체크박스-확정버튼 상태 연동');
+  assert.ok(indexHtml.includes('closeBtn.onclick = closeWithdrawModal;'), '닫기 버튼 핸들러');
+  assert.ok(indexHtml.includes('cancelBtn.onclick = closeWithdrawModal;'), '취소 버튼 핸들러');
+  assert.ok(indexHtml.includes('confirmBtn.onclick = submitWithdrawAccount;'), '확정 버튼 핸들러');
+
+  // 7. ui.css 모달 반응형 스타일
+  assert.ok(uiCss.includes('.withdraw-modal-container'), '.withdraw-modal-container 스타일');
+  assert.ok(uiCss.includes('max-height: 80vh;'), '80vh 스크롤 높이');
+  assert.ok(uiCss.includes('-webkit-overflow-scrolling: touch;'), '터치 스크롤 지원');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
