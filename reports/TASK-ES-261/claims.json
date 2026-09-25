@@ -1,0 +1,118 @@
+{
+  "task": "TASK-ES-261",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-261-GOALS-ONLY-BUTTON-LAYOUT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "목표 뷰 토글 옵션 텍스트 단정화 ('기본', '마일스톤', '할일' 세그먼트 및 우측 분리된 '목표만' 버튼)"
+    },
+    {
+      "id": "R2",
+      "text": "'목표만' 버튼의 우측 이격 마진 규격 4px 적용 (상단 상세-전체접기 간격 4px 일치)"
+    },
+    {
+      "id": "R3",
+      "text": "'목표만' 선택 시 각 목표 카드 아래에 하위 마일스톤형 카드 UI 렌더링"
+    },
+    {
+      "id": "R4",
+      "text": "ui.css 내 .goals-only-wrap 및 .goal-sub-milestone-item, 375px 모바일 반응형 스타일 탑재"
+    },
+    {
+      "id": "R5",
+      "text": "tests/goals-only-view.test.js 및 smoke-test.js 검증 100% 통과"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 msViewToggle에 '기본', '마일스톤', '할일', '🎯 목표만' 텍스트가 존재한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<div class=\"format-opt'+(gView==='default'?' active':'')+'\" data-msview=\"default\">기본</div>"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 msViewToggle의 gap: 4px 및 goals-only-wrap의 margin-left: 4px가 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "class=\"format-toggle seg-compact goals-only-wrap\" style=\"flex-shrink:0;margin-left:4px;\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내 .goals-only-wrap에 margin-left: 4px 규격이 지정되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "margin-left: 4px;"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 goals_only 렌더러에 goal-sub-milestone-item 및 상태 배지 렌더링이 포함되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "class=\"goal-sub-milestone-item\""
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내 .goal-sub-milestone-item 및 375px 모바일 미디어 쿼리가 적용되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".goal-sub-milestone-item {"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/goals-only-view.test.js 단위 검증 파일이 존재하고 정상 작동한다",
+      "touches": [
+        "tests/goals-only-view.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/goals-only-view.test.js",
+        "text": "TASK-ES-261"
+      }
+    }
+  ]
+}

@@ -3442,14 +3442,31 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
 }
 
 /* ========================================================
-   [#TASK-ES-147] 목표 탭 '목표만' 이격 배치 및 카드 뷰
+   [#TASK-ES-261] 목표 탭 '목표만' 버튼 이격 배치 (4px 규격) 및 하위 마일스톤형 카드
    ======================================================== */
 .goals-only-wrap {
-  margin-left: 14px;
+  margin-left: 4px; /* 상단 상세와 전체접기 간격(gap: 4px)과 동일 규격 */
 }
 .goal-milestone-overview-card:hover {
   border-color: var(--accent) !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.goal-sub-milestone-item {
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.goal-sub-milestone-item:hover {
+  background: var(--bg-hover, rgba(0,0,0,0.04));
+  border-color: var(--ink-faint);
+}
+@media (max-width: 375px) {
+  #msViewToggle .format-opt {
+    padding: 4px 6px;
+    font-size: 0.72rem;
+    letter-spacing: -0.3px;
+  }
+  .goals-only-wrap {
+    margin-left: 4px;
+  }
 }
 
 /* ========================================================
