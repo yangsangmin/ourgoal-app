@@ -5161,7 +5161,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '<div id="withdrawModal" class="withdraw-modal-container">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">' +
           '<h3 style="margin:0;font-size:1.15rem;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
-            '<span>⚠️</span> 회원 탈퇴 안내' +
+            '<span>⚠️</span> 회원 탈퇴 및 법적책임·데이터 분실 사전 안내' +
           '</h3>' +
           '<button type="button" id="withdrawCloseBtn" class="btn-close" style="background:none;border:none;font-size:1.25rem;cursor:pointer;color:var(--ink-soft);padding:4px;" aria-label="닫기">×</button>' +
         '</div>' +
@@ -5170,15 +5170,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '계정 탈퇴 신청 전, 아래의 <b>데이터 영구 파기 및 법적 보존 고지사항</b>을 반드시 확인해 주시기 바랍니다.' +
         '</div>' +
 
-        '<!-- 1. 데이터 분실 안내 -->' +
+        '<!-- 1. 데이터 분실 4대 영역 안내 -->' +
         '<div class="withdraw-box withdraw-box-danger">' +
-          '<div class="withdraw-box-title"><span>🗑️</span> 1. 소중한 목표 및 기록 분실 안내</div>' +
+          '<div class="withdraw-box-title"><span>🗑️</span> 1. 소중한 목표 및 기록 분실 안내 (개인 자산 4대 영역 고지)</div>' +
           '<div class="withdraw-box-desc">' +
             '탈퇴 유예 기간(30일)이 경과하면 아래의 모든 사용자 자산이 영구히 소각되며 다시는 복구할 수 없습니다.' +
             '<ul>' +
-              '<li><b>목표 및 마일스톤</b>: 유저가 수립한 모든 개인/팀 목표, 하위 태스크 및 진행 상태 전체</li>' +
-              '<li><b>인생 실천 기록</b>: 매일 남기신 체크인, 회고록, 첨부 링크 및 누적 히트맵 데이터</li>' +
-              '<li><b>아바타 및 통계 자산</b>: 성장시킨 아바타 레벨, 잇템 보관함, 배지, 차트 통계 내역</li>' +
+              '<li><b>목표 및 마일스톤</b>: 유저가 수립한 모든 개인/팀 목표, 하위 세부 할일, 루틴 설정 및 완료 진행 상태 전체</li>' +
+              '<li><b>인생 실천 기록 및 타임라인</b>: 매일 남기신 3초 체크인, 일일 회고록, 뽀모도로 타이머 누적 시간, 첨부 링크, 누적 히트맵 데이터</li>' +
+              '<li><b>아바타 인벤토리 및 성장 자산</b>: 320종 맞춤 아바타, 10개 커스텀 슬롯, 성장 레벨/경험치(EXP), 도감 수집률, 획득 배지 전체</li>' +
+              '<li><b>소통 및 커뮤니티 데이터</b>: 피드 인증 게시글, 응원/스탬프 내역, 마니또 매칭 및 1:1 대화록 전체</li>' +
             '</ul>' +
           '</div>' +
         '</div>' +
@@ -5191,7 +5192,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             '<ul>' +
               '<li>탈퇴 신청 즉시 계정은 비활성화 상태로 전환되어 안전하게 보관됩니다.</li>' +
               '<li><b>30일 이내에 기존 계정으로 재로그인</b>하시면 별도 서류 없이 <b>원클릭으로 모든 데이터가 100% 무손실 복구</b>됩니다.</li>' +
-              '<li>신청 후 30일이 지나면 백업을 포함한 모든 개인 데이터가 완전 자동 파기됩니다.</li>' +
+              '<li>신청 후 30일이 지나면 백업을 포함한 모든 개인 데이터가 완전 자동 영구 파기됩니다.</li>' +
             '</ul>' +
           '</div>' +
         '</div>' +
@@ -5202,9 +5203,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<div class="withdraw-box-desc">' +
             '개인정보보호법에 의거하여 회원 탈퇴 시 개인정보는 원칙적으로 지체 없이 영구 파기됩니다. 단, 전자상거래법 및 통신비밀보호법 등 관계 법령에 따라 아래 정보는 법정 기간 동안 분리 보관 후 파기됩니다.' +
             '<ul>' +
-              '<li><b>전자상거래 등에서의 소비자보호에 관한 법률</b>: 계약 또는 청약철회 기록(5년), 대금결제/재화공급 기록(5년), 소비자 불만·분쟁처리 기록(3년)</li>' +
-              '<li><b>통신비밀보호법</b>: 로그인 기록 및 서비스 접속 로그, IP 주소(3개월)</li>' +
-              '<li>부정 이용 방지 및 불법 행위 추적을 위한 최소 식별값은 법령 허용 한도 내에서 안전하게 격리 보관됩니다.</li>' +
+              '<li><b>개인정보보호법 제21조</b>: 회원 탈퇴 및 보유 기간 경과 시 개인정보 영구 파기 의무 준수 (30일 유예 후 자동 파기)</li>' +
+              '<li><b>전자상거래 등에서의 소비자보호에 관한 법률 제6조</b>: 계약 또는 청약철회 기록(5년), 대금결제/재화공급 기록(5년), 소비자 불만·분쟁처리 기록(3년)</li>' +
+              '<li><b>통신비밀보호법 제15조의2</b>: 로그인 기록 및 서비스 접속 로그, IP 주소(3개월)</li>' +
+              '<li><b>부정 이용 및 분쟁 방지</b>: 악의적 탈퇴·재가입 반복 방지 및 부정이용 방지를 위해 탈퇴 시점의 암호화된 식별값(해시)을 별도 격리 보관</li>' +
             '</ul>' +
           '</div>' +
         '</div>' +

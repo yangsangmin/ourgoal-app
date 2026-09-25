@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-271",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-271-ACCOUNT-WITHDRAWAL-MODAL.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "설정 탭 내 회원 탈퇴 버튼(#withdrawBtn) 클릭 시 전용 안내 팝업창(#withdrawModal) 및 openWithdrawModal()이 배선되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "탈퇴 팝업 내 소중한 개인 자산 및 데이터 분실 4대 영역(목표, 기록, 아바타, 소통)이 정밀 고지되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "탈퇴 팝업 내 30일 안전 유예 및 재로그인 시 1-클릭 100% 무손실 복구 안내가 구현되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "탈퇴 팝업 내 법적 책임 및 보존 고지 3대 법령(개인정보보호법 제21조, 전자상거래법 제6조, 통신비밀보호법 제15조의2)이 명시되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "동의 체크박스(#withdrawAgreeCheck), 취소/닫기(#withdrawCancelBtn, #withdrawCloseBtn), 최종 탈퇴(#withdrawConfirmBtn) 4위 1체 배선 및 ui.css 반응형 스타일이 구현되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 회원 탈퇴 전용 모달 컨테이너(#withdrawModal)가 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"withdrawModal\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 탈퇴 팝업에 데이터 분실 4대 영역(목표, 기록, 아바타, 소통)이 정밀 고지되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "소통 및 커뮤니티 데이터"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 탈퇴 팝업에 30일 안전 유예 및 1-클릭 100% 무손실 복구 안내가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "원클릭으로 모든 데이터가 100% 무손실 복구"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 탈퇴 팝업에 법적 책임 및 보존 고지 3대 법령(개인정보보호법 제21조 등)이 명시되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "개인정보보호법 제21조"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 동의 체크박스 상태에 따라 탈퇴 확정 버튼 활성화가 제어되는 4위 1체 배선이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "confirmBtn.disabled = !this.checked;"
+      }
+    }
+  ]
+}
