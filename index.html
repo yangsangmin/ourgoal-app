@@ -138,7 +138,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <div id="appShell">
   <div class="topbar">
     <div class="brand">아워골</div>
-    <div class="topbar-right"><div class="topbar-actions" id="topbarActions"><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide(window.state && window.state.activeTab || 'home');" style="font-size:11px;padding:3px 7px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);color:var(--primary);font-weight:700;cursor:pointer;white-space:nowrap;" title="이 페이지 활용법 보기" aria-label="이 페이지 활용법 보기">💡 활용법</button><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeLayoutBtn" style="display:none;font-size:11px;padding:3px 7px;border-radius:12px;border:1px solid var(--rule);color:var(--ink-soft);font-weight:600;cursor:pointer;white-space:nowrap;" title="나만의 홈 구성 (필요없는 창 지우기)" aria-label="나만의 홈 구성">⚙️ 홈구성</button></div><button type="button" class="topbar-notif-btn" id="topNotifBtn" title="알림 센터 열기" aria-label="알림 센터" onclick="if(window.openNotificationCenterModal) window.openNotificationCenterModal();"><span class="notif-bell-icon">🔔</span><span class="topbar-notif-badge" id="topNotifBadge" style="display:none;">0</span></button><button class="user-chip" id="topUserChip" type="button" aria-label="내 프로필"><span id="topUserName"></span><div class="avatar" id="topAvatar" style="width:46px;height:46px;"></div></button></div>
+    <div class="topbar-right"><div class="topbar-actions" id="topbarActions" style="display:none;"><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeLayoutBtn" style="display:none;font-size:11px;padding:3px 7px;border-radius:12px;border:1px solid var(--rule);color:var(--ink-soft);font-weight:600;cursor:pointer;white-space:nowrap;" title="나만의 홈 구성 (필요없는 창 지우기)" aria-label="나만의 홈 구성">⚙️ 홈구성</button></div><button type="button" class="topbar-notif-btn" id="topNotifBtn" title="알림 센터 열기" aria-label="알림 센터" onclick="if(window.openNotificationCenterModal) window.openNotificationCenterModal();"><span class="notif-bell-icon">🔔</span><span class="topbar-notif-badge" id="topNotifBadge" style="display:none;">0</span></button><button type="button" class="btn btn-ghost btn-xs topbar-action-btn topbar-guide-btn" id="topHomeGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide(window.state && window.state.activeTab || 'home');" style="font-size:11px;padding:3px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);background:rgba(99,102,241,0.08);color:var(--primary);font-weight:700;cursor:pointer;white-space:nowrap;" title="이 페이지 활용법" aria-label="이 페이지 활용법">💡 이 페이지 활용법</button><button class="user-chip" id="topUserChip" type="button" aria-label="내 프로필"><span id="topUserName"></span><div class="avatar" id="topAvatar" style="width:46px;height:46px;"></div></button></div>
   </div>
   <div class="ptr-indicator" id="ptrIndicator" aria-hidden="true"><span class="spinner"></span></div>
   <div id="levelUpBannerSlot"></div>
@@ -6092,6 +6092,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(tab==='settings') renderSettingsScreen();
       updatePrivacyBadges(); if(window.OurgoalGoalEditUX) OurgoalGoalEditUX.handleTabChange(tab, state);
       if(window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render) window.OurgoalSanctuaryV3.render(tab);
+      var topGuideBtn = document.getElementById('topHomeGuideBtn');
+      if(topGuideBtn){
+        var guideTabLabels = { home: '홈', goals: '목표', calendar: '일정', records: '기록/통계', comm: '소통', settings: '설정' };
+        var guideLabel = guideTabLabels[tab] || '홈';
+        topGuideBtn.title = '이 페이지 활용법 (' + guideLabel + ')';
+        topGuideBtn.setAttribute('aria-label', '이 페이지 활용법 (' + guideLabel + ')');
+      }
     }
     if(typeof document !== 'undefined' && typeof document.startViewTransition === 'function'){
       document.startViewTransition(updateTabDOM);

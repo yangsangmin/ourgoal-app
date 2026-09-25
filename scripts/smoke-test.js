@@ -8509,6 +8509,33 @@ check('compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연�
   assert.ok(trackJs.includes('settingsToSave') && trackJs.includes('settings_ledger'), 'api/track.js settings_ledger 영속화 원장 검증');
 });
 
+/* ============ [#TASK-ES-266] 전 탭 ‘이 페이지 활용법’ 우측 최상단 이름 왼쪽 배치 검증 ============ */
+check('compliance: [#TASK-ES-266] 전 탭 ‘이 페이지 활용법’ 우측 최상단 이름 왼쪽 배치 및 동적 동기화 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. #topHomeGuideBtn 요소 및 지시 원문 텍스트 검증
+  assert.ok(indexHtml.includes('id="topHomeGuideBtn"'), '#topHomeGuideBtn 존재 검증');
+  assert.ok(indexHtml.includes('💡 이 페이지 활용법'), '버튼 텍스트 💡 이 페이지 활용법 일치 검증');
+
+  // 2. topbar-right 내 순서: 알림 -> 가이드 버튼 -> 유저 이름/아바타 (이름 표시 바로 왼쪽)
+  const topbarRightStart = indexHtml.indexOf('<div class="topbar-right">');
+  assert.ok(topbarRightStart !== -1, '.topbar-right 존재 검증');
+  const topbarRightHtml = indexHtml.substring(topbarRightStart, topbarRightStart + 2000);
+  const idxNotif = topbarRightHtml.indexOf('id="topNotifBtn"');
+  const idxGuide = topbarRightHtml.indexOf('id="topHomeGuideBtn"');
+  const idxUser = topbarRightHtml.indexOf('id="topUserChip"');
+  assert.ok(idxNotif !== -1 && idxGuide !== -1 && idxUser !== -1, '상단바 3대 요소 존재 검증');
+  assert.ok(idxNotif < idxGuide && idxGuide < idxUser, '물리적 순서 알림 -> 가이드 -> 이름 검증');
+
+  // 3. setTab 함수 내 탭별 타이틀 동적 동기화 검증
+  assert.ok(indexHtml.includes('guideTabLabels') && indexHtml.includes("topGuideBtn.title = '이 페이지 활용법 (' + guideLabel + ')'"), 'setTab 동적 타이틀 동기화 로직 검증');
+
+  // 4. ui.css 모바일 375px 대응 스타일 검증
+  assert.ok(uiCss.includes('.topbar-guide-btn'), 'ui.css .topbar-guide-btn 정의 검증');
+  assert.ok(uiCss.includes('#topUserName') && (uiCss.includes('text-overflow:ellipsis') || uiCss.includes('text-overflow: ellipsis')), '#topUserName 말줄임 가드 검증');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
