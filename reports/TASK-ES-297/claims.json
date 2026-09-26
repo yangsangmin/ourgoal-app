@@ -1,0 +1,85 @@
+{
+  "task": "TASK-ES-297",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-297-TIME-RECORD-MODAL-COMPACT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/components.js에 handle기록스톱워치_Item47Action 직통 핸들러 및 toggleTimeRecordModalCompact 함수가 정의되어 있고 window 및 module.exports에 노출되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html에 og-task-47-container 마크업, timeRecordModalDesc 및 og-task-47-action-btn 버튼이 탑재되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "ui.css에 og-task-47-container, timeRecordModalDesc 및 time-record-modal-compact 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "tests/time-record-modal-compact.test.js 및 scripts/smoke-test.js에 시간기록 모달창 세부설명 간소화 및 창 크기 축소 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle기록스톱워치_Item47Action 직통 핸들러 및 og_task-47_cache 저장이 정의되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle기록스톱워치_Item47Action"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 og-task-47-container 및 timeRecordModalDesc 마크업이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "timeRecordModalDesc"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 og-task-47-container 및 time-record-modal-compact 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "time-record-modal-compact"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/time-record-modal-compact.test.js 및 scripts/smoke-test.js 내에 시간기록 모달창 세부설명 간소화 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/time-record-modal-compact.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/time-record-modal-compact.test.js",
+        "text": "time-record-modal-compact"
+      }
+    }
+  ]
+}

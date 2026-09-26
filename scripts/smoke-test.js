@@ -9344,6 +9344,32 @@ check('TASK-ES-296: 팀 연계 개인목표 우수 사용사례 예시 카드 4�
   assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
 });
 
+/* ============ [TASK-ES-297] 시간기록 모달창 세부설명 간소화('시간별로 세부 내용을 작성할 수 있어요') 및 창 크기 축소 ============ */
+check('TASK-ES-297: 시간기록 모달창 세부설명 간소화 및 창 크기 축소 4위 1체 배선 검증', () => {
+  const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. js/components.js 정의 및 export 검증
+  assert.ok(compJs.includes('async function handle기록스톱워치_Item47Action('), 'handle기록스톱워치_Item47Action 함수 정의');
+  assert.ok(compJs.includes('handle기록스톱워치_Item47Action = handle기록스톱워치_Item47Action'), 'handle기록스톱워치_Item47Action 노출');
+  assert.ok(compJs.includes('toggleTimeRecordModalCompact'), 'toggleTimeRecordModalCompact 함수 정의');
+  assert.ok(compJs.includes('og_task-47_cache'), 'og_task-47_cache 원자적 영속화 키 정의');
+
+  // 2. index.html 컨테이너 및 액션 버튼 검증
+  assert.ok(indexHtml.includes('id="og-task-47-container"'), 'index.html #og-task-47-container 마크업 탑재');
+  assert.ok(indexHtml.includes('id="og-task-47-action-btn"'), 'index.html #og-task-47-action-btn 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('id="timeRecordModalDesc"'), 'index.html #timeRecordModalDesc 마크업 탑재');
+  assert.ok(indexHtml.includes('handle기록스톱워치_Item47Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
+
+  // 3. ui.css 스타일 및 반응형 검증
+  assert.ok(uiCss.includes('#og-task-47-container'), 'ui.css #og-task-47-container 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-47-action-btn'), 'ui.css #og-task-47-action-btn 스타일 정의');
+  assert.ok(uiCss.includes('.time-record-modal-compact'), 'ui.css .time-record-modal-compact 스타일 정의');
+  assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');
+  assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
