@@ -1690,6 +1690,109 @@
     }
   }
 
+  async function handle소통_Item51Action(event) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+
+    var win = typeof window !== 'undefined' ? window : global;
+    var actionBtn = (event && event.currentTarget) || (typeof document !== 'undefined' ? document.getElementById('og-task-51-action-btn') : null);
+    if (actionBtn) {
+      if (actionBtn.disabled) return;
+      actionBtn.disabled = true;
+    }
+
+    // 1. 12ms 햅틱 피드백
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      // 2. 비즈니스 로직 및 영구 원장 트랜잭션 (피드 게시 모달 내 미리보기 및 사전 렌더링 확인)
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      var syncPayload = {
+        ticket: '51',
+        updated_at: new Date().toISOString(),
+        feed_preview_active: true,
+        event_type: 'feed_post_preview_modal',
+        state: 'completed'
+      };
+
+      // DOM 내 미리보기 실행/토글
+      if (typeof win.toggleFeedPostPreview === 'function') {
+        win.toggleFeedPostPreview();
+      } else if (typeof document !== 'undefined') {
+        var previewSlot = document.getElementById('sharePreviewSlot');
+        if (previewSlot) {
+          previewSlot.style.display = previewSlot.style.display === 'none' ? 'block' : 'none';
+        }
+      }
+
+      // Supabase 저장 또는 로컬 캐시 원자적 갱신
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-51',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {
+          if (locStorage && typeof locStorage.setItem === 'function') {
+            locStorage.setItem('og_task-51_cache', JSON.stringify(syncPayload));
+          }
+        }
+      } else if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-51_cache', JSON.stringify(syncPayload));
+      }
+
+      // 3. 완료 시각 피드백 토스트
+      var toastFn = (typeof win.showToast === 'function') ? win.showToast : ((typeof win.toast === 'function') ? win.toast : null);
+      if (toastFn) {
+        toastFn('피드 게시 모달 내 미리보기 버튼 및 피드 렌더링 사전 확인 기능이 완벽히 동기화되었습니다.', { type: 'success', duration: 2000 });
+      }
+
+      // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+      if (typeof win.renderFeedScreen === 'function') win.renderFeedScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-AUTO-51] 실행 실패:', err);
+      var errToast = (typeof win.showToast === 'function') ? win.showToast : ((typeof win.toast === 'function') ? win.toast : null);
+      if (errToast) {
+        errToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
+  var handle팀목표_Item51Action = handle소통_Item51Action;
+
+  function openFeedPostPreviewModal(caption, goalTitle) {
+    var win = typeof window !== 'undefined' ? window : global;
+    if (typeof win.toggleFeedPostPreview === 'function') {
+      return win.toggleFeedPostPreview(caption, goalTitle);
+    }
+    return handle소통_Item51Action();
+  }
+
+  function toggleFeedPostPreview(caption, goalTitle) {
+    var win = typeof window !== 'undefined' ? window : global;
+    if (typeof win.toggleFeedPostPreview === 'function') {
+      return win.toggleFeedPostPreview(caption, goalTitle);
+    }
+    return handle소통_Item51Action();
+  }
+
   function collapseAllSettingsSections() {
     if (typeof document !== 'undefined') {
       var accordions = document.querySelectorAll('.settings-group-accordion, .toss-settings-group details, #advancedSettingsAccordion');
@@ -1739,6 +1842,10 @@
     window.handle아바타_Item48Action = handle아바타_Item48Action;
     window.handle팀목표_Item49Action = handle팀목표_Item49Action;
     window.handle전체공통_Item50Action = handle전체공통_Item50Action;
+    window.handle소통_Item51Action = handle소통_Item51Action;
+    window.handle팀목표_Item51Action = handle팀목표_Item51Action;
+    window.openFeedPostPreviewModal = openFeedPostPreviewModal;
+    window.toggleFeedPostPreview = toggleFeedPostPreview;
     window.collapseAllSettingsSections = collapseAllSettingsSections;
     window.toggleSettingsSectionCollapse = toggleSettingsSectionCollapse;
     window.sendTeamGoalComment = sendTeamGoalComment;
@@ -1769,6 +1876,10 @@
     module.exports.handle아바타_Item48Action = handle아바타_Item48Action;
     module.exports.handle팀목표_Item49Action = handle팀목표_Item49Action;
     module.exports.handle전체공통_Item50Action = handle전체공통_Item50Action;
+    module.exports.handle소통_Item51Action = handle소통_Item51Action;
+    module.exports.handle팀목표_Item51Action = handle팀목표_Item51Action;
+    module.exports.openFeedPostPreviewModal = openFeedPostPreviewModal;
+    module.exports.toggleFeedPostPreview = toggleFeedPostPreview;
     module.exports.collapseAllSettingsSections = collapseAllSettingsSections;
     module.exports.toggleSettingsSectionCollapse = toggleSettingsSectionCollapse;
     module.exports.sendTeamGoalComment = sendTeamGoalComment;

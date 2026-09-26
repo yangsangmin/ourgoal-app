@@ -550,6 +550,26 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           </div>
         </div>
       </section>
+      <!-- 🌟 [TASK-ES-301 / 노션 51] 피드 게시 모달 내 '미리보기' 버튼 추가 및 피드 렌더링 사전 확인 기능 구현 -->
+      <section class="og-feature-card" id="og-task-51-container" data-ticket="51">
+        <div class="og-feature-header">
+          <h3 class="og-feature-title">피드 게시 미리보기 허브</h3>
+          <span class="og-status-badge" id="og-task-51-container-badge">정상 연동</span>
+        </div>
+        <div class="og-feature-body">
+          <p class="og-feature-desc" id="feedSharePreviewDesc">피드 게시 모달에서 실제 피드 노출 형태의 사전 미리보기를 제공하여 안심하고 소통할 수 있습니다.</p>
+          <div class="og-action-row">
+            <button type="button" 
+                    class="og-primary-btn" 
+                    id="og-task-51-action-btn" 
+                    aria-label="피드 게시 모달 내 미리보기 버튼 추가 및 피드 렌더링 사전 확인 실행"
+                    onclick="handle소통_Item51Action(event)"
+                    data-action="task-51">
+              <span class="og-btn-text">👁️ 피드 게시 미리보기 동기화</span>
+            </button>
+          </div>
+        </div>
+      </section>
       <div id="todayGlancePill" class="today-glance-pill" role="button" tabindex="0" aria-label="오늘 요약" style="display:none;" data-home-widget="todayGlancePill" data-widget-label="오늘 몰입 요약" data-widget-hint="오늘 상태 한 줄"></div>
       <div id="a11yLiveAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
       <div id="offlineNoticeBanner" class="offline-banner" style="display:none;"><b>오프라인 모드</b> 작성한 기록은 기기에 보관되고, 연결되면 자동으로 동기화돼요.</div>
@@ -17300,12 +17320,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         };
       }
 
-      // 미리보기 버튼 핸들러 (#TASK-ES-174)
+      // 미리보기 버튼 핸들러 (#TASK-ES-174, #TASK-ES-301)
       var prevBtn = sheet.querySelector('#sharePreviewBtn');
       var prevSlot = sheet.querySelector('#sharePreviewSlot');
       var prevBody = sheet.querySelector('#sharePreviewCardBody');
       if(prevBtn && prevSlot && prevBody){
         prevBtn.onclick = function(){
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+          else if(typeof triggerHaptic === 'function') triggerHaptic(12);
           var isShown = prevSlot.style.display !== 'none';
           if(isShown){
             prevSlot.style.display = 'none';
@@ -17601,6 +17623,48 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
   }
   window.openShareToFeedModal = openShareToFeedModal;
+
+  /* ==========================================================================
+     [#TASK-ES-301] 피드 게시 모달 내 '미리보기' 토글 직통 헬퍼
+     ========================================================================== */
+  function toggleFeedPostPreview(customCaption, customGoalTitle){
+    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+    else if(typeof triggerHaptic === 'function') triggerHaptic(12);
+    var prevSlot = document.getElementById('sharePreviewSlot');
+    var prevBtn = document.getElementById('sharePreviewBtn');
+    var prevBody = document.getElementById('sharePreviewCardBody');
+    if(!prevSlot || !prevBody) return false;
+    var isShown = prevSlot.style.display !== 'none';
+    if(isShown){
+      prevSlot.style.display = 'none';
+      if(prevBtn) prevBtn.textContent = '👁️ 미리보기';
+      return false;
+    }
+    var caption = customCaption || (document.getElementById('shareCaptionInput') ? document.getElementById('shareCaptionInput').value.trim() : '') || '갓생 목표를 향해 한 걸음 더 나아가는 중!';
+    var goalTitle = customGoalTitle || '';
+    var p = (state && state.profile) || { displayName: '사용자' };
+    prevBody.innerHTML = 
+      '<div class="feed-card" style="box-shadow:none;border:1px solid var(--rule);padding:12px;border-radius:12px;background:var(--card);">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+            (typeof avatarHtml === 'function' ? avatarHtml(36) : '👤') +
+            '<div>' +
+              '<div style="font-weight:800;font-size:.875rem;color:var(--ink);">' + escapeHtml(p.displayName) + '</div>' +
+              '<div class="faint" style="font-size:.72rem;">방금 전 · <span class="tag" style="font-size:.65rem;padding:1px 5px;">공부·수험</span></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        (goalTitle ? '<div style="font-weight:800;font-size:.9rem;color:var(--primary);margin-bottom:4px;">🎯 ' + escapeHtml(goalTitle) + '</div>' : '') +
+        '<p style="font-size:.84rem;color:var(--ink);margin:6px 0;line-height:1.45;white-space:pre-wrap;">' + escapeHtml(caption) + '</p>' +
+        '<div style="display:flex;gap:12px;margin-top:8px;padding-top:6px;border-top:1px solid var(--rule);font-size:.75rem;color:var(--ink-soft);">' +
+          '<span>❤️ 응원 0</span><span>💬 댓글 0</span>' +
+        '</div>' +
+      '</div>';
+    prevSlot.style.display = 'block';
+    if(prevBtn) prevBtn.textContent = '✕ 미리보기 닫기';
+    return true;
+  }
+  window.toggleFeedPostPreview = toggleFeedPostPreview;
 
   /* ============ 외부 데이터 불러오기 (mock) ============ */
   document.getElementById('importExternalBtn').addEventListener('click', function(){

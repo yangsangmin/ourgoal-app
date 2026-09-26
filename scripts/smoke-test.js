@@ -9457,6 +9457,36 @@ check('TASK-ES-300: 설정창 진입 시 모든 설정 섹션 기본 접힘 4위
   assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
 });
 
+/* ============ [TASK-ES-301] 피드 게시 모달 내 '미리보기' 버튼 추가 및 피드 렌더링 사전 확인 기능 구현 ============ */
+check('TASK-ES-301: 피드 게시 모달 내 미리보기 버튼 및 피드 렌더링 사전 확인 4위 1체 배선 검증', () => {
+  const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. js/components.js 정의 및 export 검증
+  assert.ok(compJs.includes('async function handle소통_Item51Action('), 'handle소통_Item51Action 함수 정의');
+  assert.ok(compJs.includes('handle소통_Item51Action = handle소통_Item51Action'), 'handle소통_Item51Action 노출');
+  assert.ok(compJs.includes('openFeedPostPreviewModal'), 'openFeedPostPreviewModal 함수 정의');
+  assert.ok(compJs.includes('toggleFeedPostPreview'), 'toggleFeedPostPreview 함수 정의');
+  assert.ok(compJs.includes('og_task-51_cache'), 'og_task-51_cache 원자적 영속화 키 정의');
+
+  // 2. index.html 컨테이너, 액션 버튼 및 피드 미리보기 슬롯 검증
+  assert.ok(indexHtml.includes('id="og-task-51-container"'), 'index.html #og-task-51-container 마크업 탑재');
+  assert.ok(indexHtml.includes('id="og-task-51-action-btn"'), 'index.html #og-task-51-action-btn 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('handle소통_Item51Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
+  assert.ok(indexHtml.includes('id="sharePreviewBtn"'), 'index.html 피드 게시 모달 내 sharePreviewBtn 탑재');
+  assert.ok(indexHtml.includes('id="sharePreviewSlot"'), 'index.html 피드 게시 모달 내 sharePreviewSlot 탑재');
+  assert.ok(indexHtml.includes('window.toggleFeedPostPreview = toggleFeedPostPreview'), 'index.html window.toggleFeedPostPreview 노출');
+
+  // 3. ui.css 스타일 및 반응형 검증
+  assert.ok(uiCss.includes('#og-task-51-container'), 'ui.css #og-task-51-container 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-51-action-btn'), 'ui.css #og-task-51-action-btn 스타일 정의');
+  assert.ok(uiCss.includes('#sharePreviewSlot'), 'ui.css #sharePreviewSlot 스타일 정의');
+  assert.ok(uiCss.includes('#sharePreviewBtn'), 'ui.css #sharePreviewBtn 스타일 정의');
+  assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');
+  assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

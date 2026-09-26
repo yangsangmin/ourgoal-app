@@ -13748,6 +13748,78 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
   }
 }
 
+/* =========================================================================
+   [#TASK-ES-301 / 노션 51] 피드 게시 모달 내 '미리보기' 버튼 추가 및 피드 렌더링 사전 확인 기능 구현
+   ========================================================================= */
+#og-task-51-container {
+  margin: 12px 0;
+  padding: 14px 16px;
+  background: var(--surface-color, var(--card-bg, #ffffff));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+#og-task-51-action-btn {
+  min-width: 44px;
+  min-height: 44px; /* 헌법 제7조 제8항 최소 터치 타겟 44px */
+  padding: 8px 16px;
+  background: var(--primary, var(--brand, #3b82f6));
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px; /* 폰트 최소 12px 고대비 */
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, transform 0.1s ease;
+  box-sizing: border-box;
+}
+
+#og-task-51-action-btn:active {
+  transform: scale(0.97);
+  background: var(--primary-hover, #2563eb);
+}
+
+#sharePreviewSlot {
+  box-sizing: border-box;
+  width: 100%;
+  animation: fadeInPreview 0.2s ease-in-out;
+}
+
+@keyframes fadeInPreview {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#sharePreviewBtn {
+  min-height: 44px;
+  box-sizing: border-box;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+#sharePreviewBtn:hover {
+  filter: brightness(1.05);
+}
+
+#sharePreviewBtn:active {
+  transform: scale(0.98);
+}
+
+@media (max-width: 375px) {
+  #og-task-51-container {
+    padding: 10px 12px;
+    margin-bottom: 6px;
+  }
+  #og-task-51-action-btn {
+    width: 100%;
+  }
+}
+
 
 
 
