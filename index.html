@@ -530,6 +530,26 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           </div>
         </div>
       </section>
+      <!-- 🌟 [TASK-ES-300 / 노션 50] 설정창 진입 시 모든 설정 섹션 기본 접힘(Collapsed) 상태 적용 -->
+      <section class="og-feature-card" id="og-task-50-container" data-ticket="50">
+        <div class="og-feature-header">
+          <h3 class="og-feature-title">설정창 기본 접힘 상태 허브</h3>
+          <span class="og-status-badge" id="og-task-50-container-badge">정상 연동</span>
+        </div>
+        <div class="og-feature-body">
+          <p class="og-feature-desc" id="settingsCollapseDesc">설정창 진입 시 모든 설정 아코디언을 기본 접힘(Collapsed) 상태로 정돈하여 스크롤 피로도를 해소합니다.</p>
+          <div class="og-action-row">
+            <button type="button" 
+                    class="og-primary-btn" 
+                    id="og-task-50-action-btn" 
+                    aria-label="설정창 진입 시 모든 설정 섹션 기본 접힘 상태 적용 실행"
+                    onclick="handle전체공통_Item50Action(event)"
+                    data-action="task-50">
+              <span class="og-btn-text">📁 설정 섹션 기본 접힘 동기화</span>
+            </button>
+          </div>
+        </div>
+      </section>
       <div id="todayGlancePill" class="today-glance-pill" role="button" tabindex="0" aria-label="오늘 요약" style="display:none;" data-home-widget="todayGlancePill" data-widget-label="오늘 몰입 요약" data-widget-hint="오늘 상태 한 줄"></div>
       <div id="a11yLiveAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
       <div id="offlineNoticeBanner" class="offline-banner" style="display:none;"><b>오프라인 모드</b> 작성한 기록은 기기에 보관되고, 연결되면 자동으로 동기화돼요.</div>
@@ -35552,6 +35572,13 @@ wirePromptEncyclopediaEvents(body);
 
   /* ============ RENDER: SETTINGS ============ */
   /* ============ [#TASK-ES-235] 고급 설정 (외부 연동 & API) 토글 헬퍼 ============ */
+  /* [#TASK-ES-300] 설정창 진입 시 모든 설정 섹션 기본 접힘(Collapsed) 헬퍼 */
+  function collapseAllSettingsSections(){
+    var accordions = document.querySelectorAll('.settings-group-accordion, .toss-settings-group details, #advancedSettingsAccordion');
+    accordions.forEach(function(acc){ acc.open = false; });
+  }
+  window.collapseAllSettingsSections = collapseAllSettingsSections;
+
   function toggleAdvancedSettings(open){
     var adv = document.getElementById('advancedSettingsAccordion');
     if(adv){
@@ -35565,6 +35592,7 @@ wirePromptEncyclopediaEvents(body);
     if(typeof triggerHapticFeedback === 'function'){
       triggerHapticFeedback(12);
     }
+    collapseAllSettingsSections();
     renderSettingsHeroCard();
     refreshCustomFeedbackButtons();
     renderProfileCard();

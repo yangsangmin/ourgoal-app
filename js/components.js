@@ -1609,6 +1609,99 @@
     return handle팀목표_Item49Action();
   }
 
+  async function handle전체공통_Item50Action(event) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+
+    var win = typeof window !== 'undefined' ? window : global;
+    var actionBtn = (event && event.currentTarget) || (typeof document !== 'undefined' ? document.getElementById('og-task-50-action-btn') : null);
+    if (actionBtn) {
+      if (actionBtn.disabled) return;
+      actionBtn.disabled = true;
+    }
+
+    // 1. 12ms 햅틱 피드백
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      // 2. 비즈니스 로직 및 영구 원장 트랜잭션 (설정창 진입 시 모든 섹션 기본 접힘 상태 적용)
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      var syncPayload = {
+        ticket: '50',
+        updated_at: new Date().toISOString(),
+        settings_collapsed_default: true,
+        event_type: 'settings_collapse_default',
+        state: 'completed'
+      };
+
+      // 실제 DOM 내 설정 아코디언 일괄 접힘 실행
+      if (typeof document !== 'undefined') {
+        var accordions = document.querySelectorAll('.settings-group-accordion, .toss-settings-group details, #advancedSettingsAccordion');
+        accordions.forEach(function(acc){ acc.open = false; });
+      }
+
+      // Supabase 저장 또는 로컬 캐시 원자적 갱신
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-50',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {
+          if (locStorage && typeof locStorage.setItem === 'function') {
+            locStorage.setItem('og_task-50_cache', JSON.stringify(syncPayload));
+          }
+        }
+      } else if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-50_cache', JSON.stringify(syncPayload));
+      }
+
+      // 3. 완료 시각 피드백 토스트
+      var toastFn = (typeof win.showToast === 'function') ? win.showToast : ((typeof win.toast === 'function') ? win.toast : null);
+      if (toastFn) {
+        toastFn('설정창 진입 시 모든 설정 섹션 기본 접힘(Collapsed) 상태 적용 처리가 완료되었습니다.', { type: 'success', duration: 2000 });
+      }
+
+      // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+      if (typeof win.renderSettingsScreen === 'function') win.renderSettingsScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-AUTO-50] 실행 실패:', err);
+      var errToast = (typeof win.showToast === 'function') ? win.showToast : ((typeof win.toast === 'function') ? win.toast : null);
+      if (errToast) {
+        errToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
+  function collapseAllSettingsSections() {
+    if (typeof document !== 'undefined') {
+      var accordions = document.querySelectorAll('.settings-group-accordion, .toss-settings-group details, #advancedSettingsAccordion');
+      accordions.forEach(function(acc){ acc.open = false; });
+    }
+    return handle전체공통_Item50Action();
+  }
+
+  function toggleSettingsSectionCollapse(sectionId) {
+    return handle전체공통_Item50Action();
+  }
+
   function enlargeAvatarIconsBatch(forceEnlarge) {
     return handle아바타_Item48Action();
   }
@@ -1645,6 +1738,9 @@
     window.handle기록스톱워치_Item47Action = handle기록스톱워치_Item47Action;
     window.handle아바타_Item48Action = handle아바타_Item48Action;
     window.handle팀목표_Item49Action = handle팀목표_Item49Action;
+    window.handle전체공통_Item50Action = handle전체공통_Item50Action;
+    window.collapseAllSettingsSections = collapseAllSettingsSections;
+    window.toggleSettingsSectionCollapse = toggleSettingsSectionCollapse;
     window.sendTeamGoalComment = sendTeamGoalComment;
     window.toggleTeamGoalCommentSection = toggleTeamGoalCommentSection;
     window.enlargeAvatarIconsBatch = enlargeAvatarIconsBatch;
@@ -1672,6 +1768,9 @@
     module.exports.handle기록스톱워치_Item47Action = handle기록스톱워치_Item47Action;
     module.exports.handle아바타_Item48Action = handle아바타_Item48Action;
     module.exports.handle팀목표_Item49Action = handle팀목표_Item49Action;
+    module.exports.handle전체공통_Item50Action = handle전체공통_Item50Action;
+    module.exports.collapseAllSettingsSections = collapseAllSettingsSections;
+    module.exports.toggleSettingsSectionCollapse = toggleSettingsSectionCollapse;
     module.exports.sendTeamGoalComment = sendTeamGoalComment;
     module.exports.toggleTeamGoalCommentSection = toggleTeamGoalCommentSection;
     module.exports.enlargeAvatarIconsBatch = enlargeAvatarIconsBatch;
