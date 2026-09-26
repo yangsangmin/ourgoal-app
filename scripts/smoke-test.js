@@ -9042,6 +9042,29 @@ check('compliance: [#TASK-ES-284] 오늘의 퀘스트 미션 변경 (\'핵심 �
   assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
 });
 
+/* ============ [#TASK-ES-285] 홈 목표현황판 불필요 지표(진행중 목표·평균달성률·병행분야) 삭제 및 인터페이스 최적화 ============ */
+check('compliance: [#TASK-ES-285] 홈 목표현황판 불필요 지표(진행중 목표·평균달성률·병행분야) 삭제 및 인터페이스 최적화', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. js/components.js handle홈탭_Item34Action 정의 검증
+  assert.ok(compJs.includes('async function handle홈탭_Item34Action('), 'handle홈탭_Item34Action 함수 정의');
+  assert.ok(compJs.includes('handle홈탭_Item34Action = handle홈탭_Item34Action'), 'handle홈탭_Item34Action 노출');
+  assert.ok(compJs.includes('og_task-34_cache'), 'og_task-34_cache 원자적 영속화 키 정의');
+
+  // 2. index.html 컨테이너 및 액션 버튼 검증
+  assert.ok(indexHtml.includes('id="og-task-34-container"'), 'index.html #og-task-34-container 마크업 탑재');
+  assert.ok(indexHtml.includes('id="og-task-34-action-btn"'), 'index.html #og-task-34-action-btn 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('handle홈탭_Item34Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
+
+  // 3. ui.css 스타일 및 반응형 검증
+  assert.ok(uiCss.includes('#og-task-34-container'), 'ui.css #og-task-34-container 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-34-action-btn'), 'ui.css #og-task-34-action-btn 스타일 정의');
+  assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');
+  assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
