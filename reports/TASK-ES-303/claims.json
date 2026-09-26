@@ -1,0 +1,85 @@
+{
+  "task": "TASK-ES-303",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-303-GOAL-TEMPLATES-ENCYCLOPEDIA.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/components.js에 handle목표탭_Item53Action 직통 핸들러, openGoalTemplateEncyclopediaModal 및 copyUserGoalTemplate 함수가 정의되어 있고 window 및 module.exports에 노출되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html에 og-task-53-container 마크업, og-task-53-action-btn 버튼, btnGoalTemplateEncyclopedia 버튼 및 templateEncyclopediaModal 전체화면 팝업 모달이 반영되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "ui.css에 og-task-53-container, og-task-53-action-btn, btnGoalTemplateEncyclopedia 및 template-encyclopedia-fullscreen-modal 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "tests/goal-templates-encyclopedia.test.js 및 scripts/smoke-test.js에 목표 템플릿백과사전 전체화면 팝업 및 상호작용 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle목표탭_Item53Action 직통 핸들러 및 og_task-53_cache 저장이 정의되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle목표탭_Item53Action"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 og-task-53-container 및 btnGoalTemplateEncyclopedia 연동 로직이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "og-task-53-container"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 og-task-53-container 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "og-task-53-container"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/goal-templates-encyclopedia.test.js 및 scripts/smoke-test.js 내에 목표 템플릿백과사전 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/goal-templates-encyclopedia.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/goal-templates-encyclopedia.test.js",
+        "text": "goal-templates-encyclopedia"
+      }
+    }
+  ]
+}

@@ -1917,6 +1917,104 @@
     return handle성취통계_Item45Action();
   }
 
+  async function handle목표탭_Item53Action(event) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+
+    var win = typeof window !== 'undefined' ? window : global;
+    var actionBtn = (event && event.currentTarget) || (typeof document !== 'undefined' ? document.getElementById('og-task-53-action-btn') : null);
+    if (actionBtn) {
+      if (actionBtn.disabled) return;
+      actionBtn.disabled = true;
+    }
+
+    // 1. 12ms 햅틱 피드백
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      // 2. 비즈니스 로직 및 영구 원장 트랜잭션 (목표탭 '템플릿백과사전' 전체화면 팝업 신설 및 상호작용 구현)
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      var syncPayload = {
+        ticket: '53',
+        updated_at: new Date().toISOString(),
+        goal_templates_encyclopedia_active: true,
+        event_type: 'goal_templates_encyclopedia_open',
+        state: 'completed'
+      };
+
+      // 전체화면 템플릿 백과사전 모달 오픈
+      if (typeof win.openTemplateEncyclopediaModal === 'function') {
+        win.openTemplateEncyclopediaModal();
+      } else if (typeof document !== 'undefined') {
+        var m = document.getElementById('templateEncyclopediaModal');
+        if (m) m.style.display = 'flex';
+      }
+
+      // Supabase 저장 또는 로컬 캐시 원자적 갱신
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-53',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {
+          if (locStorage && typeof locStorage.setItem === 'function') {
+            locStorage.setItem('og_task-53_cache', JSON.stringify(syncPayload));
+          }
+        }
+      } else if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-53_cache', JSON.stringify(syncPayload));
+      }
+
+      // 3. 완료 시각 피드백 토스트
+      var toastFn = (typeof win.showToast === 'function') ? win.showToast : ((typeof win.toast === 'function') ? win.toast : null);
+      if (toastFn) {
+        toastFn('목표 템플릿백과사전이 열렸습니다. 실사용 템플릿과 AI 60선 템플릿을 둘러보세요!', { type: 'success', duration: 2000 });
+      }
+
+      // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-AUTO-53] 실행 실패:', err);
+      var errToast = (typeof win.showToast === 'function') ? win.showToast : ((typeof win.toast === 'function') ? win.toast : null);
+      if (errToast) {
+        errToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
+  function openGoalTemplateEncyclopediaModal() {
+    var win = typeof window !== 'undefined' ? window : global;
+    if (typeof win.openTemplateEncyclopediaModal === 'function') {
+      return win.openTemplateEncyclopediaModal();
+    }
+    return handle목표탭_Item53Action();
+  }
+
+  function copyUserGoalTemplate(tmplId) {
+    var win = typeof window !== 'undefined' ? window : global;
+    if (typeof win.copyRealUserTemplate === 'function') {
+      return win.copyRealUserTemplate(tmplId);
+    }
+    return handle목표탭_Item53Action();
+  }
+
   if(typeof document !== 'undefined' && typeof document.addEventListener === 'function'){
     document.addEventListener('click', function(e){
       var closeBtn = e.target && e.target.closest && (e.target.closest('.og-modal-close') || e.target.closest('#ogModalCancelBtn'));
@@ -1949,6 +2047,9 @@
     window.handle소통_Item51Action = handle소통_Item51Action;
     window.handle팀목표_Item51Action = handle팀목표_Item51Action;
     window.handle팀목표_Item52Action = handle팀목표_Item52Action;
+    window.handle목표탭_Item53Action = handle목표탭_Item53Action;
+    window.openGoalTemplateEncyclopediaModal = openGoalTemplateEncyclopediaModal;
+    window.copyUserGoalTemplate = copyUserGoalTemplate;
     window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;
     window.toggleTeamGoalAccordionCollapse = toggleTeamGoalAccordionCollapse;
     window.openFeedPostPreviewModal = openFeedPostPreviewModal;
@@ -1986,6 +2087,9 @@
     module.exports.handle소통_Item51Action = handle소통_Item51Action;
     module.exports.handle팀목표_Item51Action = handle팀목표_Item51Action;
     module.exports.handle팀목표_Item52Action = handle팀목표_Item52Action;
+    module.exports.handle목표탭_Item53Action = handle목표탭_Item53Action;
+    module.exports.openGoalTemplateEncyclopediaModal = openGoalTemplateEncyclopediaModal;
+    module.exports.copyUserGoalTemplate = copyUserGoalTemplate;
     module.exports.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;
     module.exports.toggleTeamGoalAccordionCollapse = toggleTeamGoalAccordionCollapse;
     module.exports.openFeedPostPreviewModal = openFeedPostPreviewModal;

@@ -590,6 +590,26 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           </div>
         </div>
       </section>
+      <!-- 🌟 [TASK-ES-303 / 노션 53] 목표탭 '템플릿백과사전' 전체화면 팝업(실사용 유저 템플릿 사전 복사 & 아워골 AI 템플릿) 신설 및 상호작용 구현 -->
+      <section class="og-feature-card" id="og-task-53-container" data-ticket="53">
+        <div class="og-feature-header">
+          <h3 class="og-feature-title">목표 템플릿백과사전 허브</h3>
+          <span class="og-status-badge" id="og-task-53-container-badge">정상 연동</span>
+        </div>
+        <div class="og-feature-body">
+          <p class="og-feature-desc" id="goalTemplateEncyclopediaDesc">목표 탭 '나만 보기' 옆 '템플릿백과사전' 전체화면 팝업을 통해 실사용 템플릿 복제·응원 및 아워골 AI 60선 템플릿을 자유롭게 탐색합니다.</p>
+          <div class="og-action-row">
+            <button type="button" 
+                    class="og-primary-btn" 
+                    id="og-task-53-action-btn" 
+                    aria-label="목표탭 템플릿백과사전 전체화면 팝업 신설 및 상호작용 실행"
+                    onclick="handle목표탭_Item53Action(event)"
+                    data-action="task-53">
+              <span class="og-btn-text">📖 템플릿백과사전 열기</span>
+            </button>
+          </div>
+        </div>
+      </section>
       <div id="todayGlancePill" class="today-glance-pill" role="button" tabindex="0" aria-label="오늘 요약" style="display:none;" data-home-widget="todayGlancePill" data-widget-label="오늘 몰입 요약" data-widget-hint="오늘 상태 한 줄"></div>
       <div id="a11yLiveAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
       <div id="offlineNoticeBanner" class="offline-banner" style="display:none;"><b>오프라인 모드</b> 작성한 기록은 기기에 보관되고, 연결되면 자동으로 동기화돼요.</div>
@@ -761,12 +781,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             </div>
           </div>
           <div class="goal-head-row" style="margin-top:10px;">
-            <div class="goal-head-l">
+            <div class="goal-head-l" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
               <div style="display:flex;align-items:center;gap:6px;"><h2 style="margin:0;font-size:1.15rem;">세부 마일스톤 & 할 일</h2></div>
               <span class="privacy-badge" id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
+              <button class="btn btn-ghost btn-sm" id="btnGoalTemplateEncyclopedia" type="button" style="font-size:.8125rem;padding:3px 9px;font-weight:700;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--rule);border-radius:8px;background:var(--card2);cursor:pointer;" aria-label="템플릿백과사전" onclick="if(typeof openGoalTemplateEncyclopediaModal==='function'){openGoalTemplateEncyclopediaModal();}else if(typeof openTemplateEncyclopediaModal==='function'){openTemplateEncyclopediaModal();}">📖 템플릿백과사전</button>
             </div>
             <div style="display:flex;align-items:center;gap:6px;">
-              <button class="btn btn-ghost btn-sm" id="btnGoalTemplateEncyclopedia" type="button" style="display:none;" aria-hidden="true">📖 템플릿백과사전</button>
               <button class="btn btn-ghost btn-sm" id="btnShowPersonalGuideModal" type="button" style="font-size:.8125rem;padding:3px 9px;">활용가이드</button>
               <button class="btn btn-primary btn-sm" id="btnPersonalAddGoalInline" type="button" style="font-size:.8125rem;padding:3px 9px;font-weight:700;">+ 새 목표</button>
               <button class="edit-toggle off" id="goalEditToggle" type="button">편집</button>
@@ -1761,18 +1781,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 </div>
 <div class="toast" id="toast"></div>
 
-<!-- #TASK-ES-174: 목표 템플릿 백과사전 전체화면 팝업 모달 -->
-<div id="templateEncyclopediaModal" class="eval-modal-backdrop" style="display:none;z-index:100005;" role="dialog" aria-modal="true" aria-labelledby="tplEncyclopediaTitle">
-  <div class="eval-modal-sheet" style="max-width:720px;height:90vh;max-height:90vh;">
-    <div class="eval-modal-header" style="padding:14px 18px;">
+<!-- #TASK-ES-174 / #TASK-ES-303: 목표 템플릿 백과사전 전체화면 팝업 모달 -->
+<div id="templateEncyclopediaModal" class="eval-modal-backdrop template-encyclopedia-fullscreen-modal" style="display:none;z-index:100005;" role="dialog" aria-modal="true" aria-labelledby="tplEncyclopediaTitle">
+  <div class="eval-modal-sheet eval-modal-sheet-fullscreen template-encyclopedia-fullscreen-sheet" style="max-width:880px;width:95vw;height:92vh;max-height:94vh;display:flex;flex-direction:column;border-radius:16px;">
+    <div class="eval-modal-header" style="padding:14px 18px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:center;gap:8px;">
         <span style="font-size:1.3rem;">📖</span>
         <div>
           <h3 id="tplEncyclopediaTitle" style="margin:0;font-size:1.05rem;color:var(--ink);font-weight:800;">목표 템플릿 백과사전</h3>
-          <div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">실사용 템플릿과 AI 추천 템플릿을 둘러보고 내 목표로 즉시 복사하세요</div>
+          <div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;">실사용 유저 템플릿과 AI 추천 템플릿을 둘러보고 내 목표로 즉시 복사하세요</div>
         </div>
       </div>
-      <button type="button" class="eval-modal-close" id="btnTplEncyclopediaClose" aria-label="닫기">&times;</button>
+      <button type="button" class="eval-modal-close" id="btnTplEncyclopediaClose" aria-label="닫기" onclick="if(typeof closeTemplateEncyclopediaModal==='function')closeTemplateEncyclopediaModal();">&times;</button>
     </div>
     
     <!-- 2개 탭 전환 세그먼트 -->
@@ -18056,42 +18076,149 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
   window.copyRealUserTemplate = copyRealUserTemplate;
 
+  function getUserSharedTemplates(){
+    try {
+      var raw = localStorage.getItem('ourgoal_user_shared_templates');
+      return raw ? JSON.parse(raw) : [];
+    } catch(e){ return []; }
+  }
+  function saveUserSharedTemplates(list){
+    try {
+      localStorage.setItem('ourgoal_user_shared_templates', JSON.stringify(list));
+    } catch(e){}
+  }
+
+  function shareMyActiveGoalAsTemplate(){
+    var goals = (state && state.profile && state.profile.goals) || [];
+    if(!goals || !goals.length){
+      if(typeof toast === 'function') toast('공유할 수 있는 등록된 목표가 없습니다. 먼저 목표를 생성해주세요!');
+      return;
+    }
+    var activeGoal = goals.find(function(g){ return g.id === state.activeGoalId; }) || goals[0];
+    var authorName = (state.profile && (state.profile.nickname || state.profile.name)) || '아워골 크루';
+    
+    var shared = getUserSharedTemplates();
+    var already = shared.find(function(s){ return s.originalGoalId === activeGoal.id; });
+    if(already){
+      if(typeof toast === 'function') toast('이미 실사용 템플릿 사전에 공유된 목표입니다! 🎉');
+      return;
+    }
+
+    var newTpl = {
+      id: 'usr_tpl_' + Date.now(),
+      originalGoalId: activeGoal.id,
+      title: activeGoal.title || '나만의 실천 목표',
+      author: authorName,
+      authorBadge: '인증 크루',
+      badge: activeGoal.category || '실전 루틴',
+      weeks: 8,
+      category: activeGoal.category || 'personal',
+      desc: (activeGoal.title || '목표') + '를 직접 실천하고 검증한 실 유저 공유 템플릿입니다.',
+      likes: 1,
+      copies: 0,
+      ms: (activeGoal.milestones || []).map(function(m){
+        return {
+          title: m.title || '마일스톤',
+          tasks: (m.tasks || []).map(function(tk){ return typeof tk === 'string' ? tk : (tk.title || '할 일'); })
+        };
+      })
+    };
+    shared.unshift(newTpl);
+    saveUserSharedTemplates(shared);
+    if(typeof toast === 'function') toast('내 목표를 실사용 템플릿 사전에 성공적으로 공유했어요! 🎉');
+    renderRealUserTemplatesList();
+  }
+  window.shareMyActiveGoalAsTemplate = shareMyActiveGoalAsTemplate;
+
   function renderRealUserTemplatesList(){
     var container = document.getElementById('tplRealUserContent');
     if(!container) return;
 
-    var mockRealUserTemplates = [
-      { id: 'ru_marathon_full', title: '🏃 100일 하프마라톤 완주 템플릿', author: '러너상민', copies: 142, category: '운동/러닝', desc: '초보자도 부상 없이 21km 완주할 수 있는 주차별 마일스톤 가이드', msCount: 4 },
-      { id: 'ru_coding_boot', title: '💻 60일 알고리즘 & 토이프로젝트 정복', author: '코딩마스터', copies: 98, category: '개발/커리어', desc: '자료구조부터 실전 웹서비스 배포까지 완성하는 개발자 목표 템플릿', msCount: 5 },
-      { id: 'ru_miracle_morning', title: '🌅 미라클 모닝 30일 루틴 챌린지', author: '아침형인간', copies: 215, category: '생활/루틴', desc: '오전 6시 기상, 명상 10분, 독서 20분으로 하루를 2배 길게 쓰는 템플릿', msCount: 3 },
-      { id: 'ru_money_saving', title: '💰 6개월 1,000만원 모으기 가계부 팩', author: '절약왕', copies: 176, category: '재테크', desc: '불필요한 지출 통제 및 선저축 습관을 기르는 실천형 재테크 로드맵', msCount: 4 }
+    var sharedTemplates = getUserSharedTemplates();
+    var baseTemplates = Array.isArray(REAL_USER_TEMPLATES) && REAL_USER_TEMPLATES.length ? REAL_USER_TEMPLATES : [
+      { id: 'ru_marathon_full', title: '🏃 100일 하프마라톤 완주 템플릿', author: '러너상민', authorBadge: '완주자', copies: 142, category: '운동/러닝', desc: '초보자도 부상 없이 21km 완주할 수 있는 주차별 마일스톤 가이드', ms: [{title:'1단계: 5km 러닝', tasks:['주 3회 3km','러닝화 구매']}], likes: 88 },
+      { id: 'ru_coding_boot', title: '💻 60일 알고리즘 & 토이프로젝트 정복', author: '코딩마스터', authorBadge: '시니어', copies: 98, category: '개발/커리어', desc: '자료구조부터 실전 웹서비스 배포까지 완성하는 개발자 목표 템플릿', ms: [{title:'1단계: 알고리즘 100제', tasks:['하루 1문제 풀이']}], likes: 54 },
+      { id: 'ru_miracle_morning', title: '🌅 미라클 모닝 30일 루틴 챌린지', author: '아침형인간', authorBadge: '50일 완주', copies: 215, category: '생활/루틴', desc: '오전 6시 기상, 명상 10분, 독서 20분으로 하루를 2배 길게 쓰는 템플릿', ms: [{title:'1단계: 기상 습관', tasks:['6시 알람 기상']}], likes: 112 },
+      { id: 'ru_money_saving', title: '💰 6개월 1,000만원 모으기 가계부 팩', author: '절약왕', authorBadge: '자산가', copies: 176, category: '재테크', desc: '불필요한 지출 통제 및 선저축 습관을 기르는 실천형 재테크 로드맵', ms: [{title:'1단계: 소비 통제', tasks:['가계부 매일 기록']}], likes: 93 }
     ];
 
+    var allTemplates = sharedTemplates.concat(baseTemplates);
+    var likedMap = getLikedTemplateMap();
+
     container.innerHTML = '<div style="margin-bottom:12px;">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-        '<div style="font-weight:700;font-size:.9375rem;color:var(--ink);">👥 실 유저 공유 템플릿 둘러보기</div>' +
-        '<span class="faint" style="font-size:.75rem;">실제 완수자들의 검증된 템플릿</span>' +
+      '<div style="background:var(--surface-2);border:1px solid var(--rule);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">' +
+        '<div>' +
+          '<div style="font-weight:800;font-size:.9375rem;color:var(--ink);">👥 실 유저 공유 템플릿 둘러보기</div>' +
+          '<div class="faint" style="font-size:.78125rem;margin-top:2px;">실제 완수자들이 검증한 목표를 내 목표함에 즉시 복제하고 응원하세요.</div>' +
+        '</div>' +
+        '<button type="button" id="btnShareMyGoalToTpl" class="btn btn-ghost btn-sm" style="font-size:.8125rem;font-weight:700;padding:6px 12px;border:1px solid var(--brand);color:var(--brand);border-radius:8px;background:var(--card);">' +
+          '➕ 내 목표 공유하기' +
+        '</button>' +
       '</div>' +
-      '<div style="display:flex;flex-direction:column;gap:10px;">' +
-        mockRealUserTemplates.map(function(t){
-          return '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:14px;padding:12px 14px;">' +
-            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">' +
-              '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">' + escapeHtml(t.title) + '</span>' +
-              '<span class="tag on" style="font-size:.6875rem;padding:2px 6px;background:var(--brand);color:#fff;">' + escapeHtml(t.category) + '</span>' +
+      '<div style="display:flex;flex-direction:column;gap:12px;">' +
+        allTemplates.map(function(t){
+          var isLiked = !!likedMap[t.id];
+          var likeCount = (t.likes || 0);
+          var totalTasks = (t.ms || []).reduce(function(a, m){ return a + (m.tasks || []).length; }, 0);
+          var msCount = (t.ms || []).length;
+          return '<div class="real-tpl-card" style="background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.02);">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
+              '<div style="display:flex;align-items:center;gap:6px;min-width:0;">' +
+                '<span class="tag on" style="font-size:.6875rem;padding:2px 8px;background:var(--brand);color:#fff;border-radius:4px;font-weight:700;">' + escapeHtml(t.badge || t.category || '공유템플릿') + '</span>' +
+                '<b style="font-weight:800;font-size:.9375rem;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(t.title) + '</b>' +
+              '</div>' +
+              '<span class="faint" style="font-size:.75rem;white-space:nowrap;">' + (t.weeks ? t.weeks + '주 완주' : '실천형') + '</span>' +
             '</div>' +
-            '<div class="faint" style="font-size:.78125rem;margin-bottom:6px;">' + escapeHtml(t.desc) + '</div>' +
-            '<div style="display:flex;align-items:center;justify-content:space-between;border-top:1px dashed var(--rule);padding-top:8px;font-size:.75rem;color:var(--ink-soft);">' +
-              '<span>작성자: <b>' + escapeHtml(t.author) + '</b> · 복제 <b>' + t.copies + '회</b></span>' +
-              '<button type="button" class="btn btn-primary btn-xs btn-auto-import-tpl" data-tplid="'+t.id+'" data-tpltit="'+escapeHtml(t.title)+'" data-tplcat="'+escapeHtml(t.category)+'" style="font-size:.75rem;padding:3px 10px;border-radius:6px;">⚡ 1초 자동이식</button>' +
+            '<div class="faint" style="font-size:.8125rem;margin-bottom:8px;line-height:1.45;color:var(--ink-soft);">' + escapeHtml(t.desc || '') + '</div>' +
+            '<div style="font-size:.75rem;color:var(--ink-soft);margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+              '<span>🎯 마일스톤 <b>' + msCount + '단계</b></span>' +
+              '<span>· 세부 할 일 <b>' + totalTasks + '개</b></span>' +
+              (t.kpi ? '<span>· 🏆 ' + escapeHtml(t.kpi) + '</span>' : '') +
+            '</div>' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;border-top:1px dashed var(--rule);padding-top:10px;font-size:.78125rem;color:var(--ink-soft);gap:8px;flex-wrap:wrap;">' +
+              '<div>' +
+                '작성자: <b>' + escapeHtml(t.author || '익명크루') + '</b>' +
+                (t.authorBadge ? ' <span style="font-size:.6875rem;padding:1px 5px;background:var(--surface-2);border-radius:4px;color:var(--ink-soft);">' + escapeHtml(t.authorBadge) + '</span>' : '') +
+                ' · 복제 <b>' + (t.copies || 0) + '회</b>' +
+              '</div>' +
+              '<div style="display:flex;align-items:center;gap:6px;margin-left:auto;">' +
+                '<button type="button" class="btn btn-ghost btn-xs btn-cheer-tpl" data-cheerid="'+t.id+'" style="font-size:.75rem;padding:4px 8px;border:1px solid '+(isLiked?'#ef4444':'var(--rule)')+';border-radius:6px;color:'+(isLiked?'#ef4444':'var(--ink-soft)')+';background:'+(isLiked?'rgba(239,68,68,0.06)':'transparent')+';">' +
+                  (isLiked ? '❤️' : '🤍') + ' 응원 ' + likeCount +
+                '</button>' +
+                '<button type="button" class="btn btn-primary btn-xs btn-copy-real-tpl btn-auto-import-tpl" data-copyid="'+t.id+'" data-tplid="'+t.id+'" data-tpltit="'+escapeHtml(t.title)+'" data-tplcat="'+escapeHtml(t.category)+'" style="font-size:.78125rem;font-weight:700;padding:5px 12px;border-radius:6px;">' +
+                  '📥 내 목표로 복사' +
+                '</button>' +
+              '</div>' +
             '</div>' +
           '</div>';
         }).join('') +
       '</div>' +
     '</div>';
 
-    container.querySelectorAll('.btn-auto-import-tpl').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        importTemplateInstantly(btn.dataset.tplid, btn.dataset.tpltit, btn.dataset.tplcat);
+    var btnShare = container.querySelector('#btnShareMyGoalToTpl');
+    if(btnShare){
+      btnShare.addEventListener('click', shareMyActiveGoalAsTemplate);
+    }
+
+    container.querySelectorAll('.btn-cheer-tpl').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        cheerRealUserTemplate(btn.dataset.cheerid);
+      });
+    });
+
+    container.querySelectorAll('.btn-copy-real-tpl').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var tmplId = btn.dataset.copyid;
+        var found = allTemplates.find(function(x){ return x.id === tmplId; });
+        if(found){
+          if(!REAL_USER_TEMPLATES.find(function(x){ return x.id === tmplId; })){
+            REAL_USER_TEMPLATES.push(found);
+          }
+          found.copies = (found.copies || 0) + 1;
+        }
+        copyRealUserTemplate(tmplId);
       });
     });
   }
@@ -18190,15 +18317,30 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
   }
 
-  // 목표탭 상단 템플릿백과사전 버튼 바인딩 (#TASK-ES-187: 서브탭 전환 연동)
+  // ESC 키 닫기 이벤트 리스너 보장
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' || e.keyCode === 27){
+      var m = document.getElementById('templateEncyclopediaModal');
+      if(m && m.style.display !== 'none'){
+        closeTemplateEncyclopediaModal();
+      }
+    }
+  });
+
+  // 목표탭 상단 템플릿백과사전 버튼 바인딩 (#TASK-ES-187 / #TASK-ES-303: 서브탭 전환 및 전체화면 팝업 오픈)
   var btnHeaderTplEncycl = document.getElementById('btnGoalTemplateEncyclopedia');
   if(btnHeaderTplEncycl){
     btnHeaderTplEncycl.addEventListener('click', function(e){
       e.stopPropagation();
       state.goalsSubTab = 'templateEncyclopedia';
-      renderGoalsScreen();
+      openTemplateEncyclopediaModal();
     });
   }
+
+  // 전역 함수 노출
+  window.openGoalTemplateEncyclopediaModal = openTemplateEncyclopediaModal;
+  window.closeGoalTemplateEncyclopediaModal = closeTemplateEncyclopediaModal;
+  window.copyUserGoalTemplate = copyRealUserTemplate;
 
   /* ============ [#TASK-ES-146] 아워골 평가해주기 90% 팝업 ============ */
   function openAppEvaluationModal(){
