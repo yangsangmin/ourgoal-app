@@ -13260,6 +13260,80 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
   }
 }
 
+/* 🌟 [TASK-ES-293 / 노션 43] 성취통계 측정지표 다중선택 필터링 스타일 */
+#og-task-43-container {
+  display: block;
+  background: var(--surface-1, #1e293b);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#og-task-43-action-btn {
+  min-width: 44px;
+  min-height: 44px; /* 헌법 제7조 제8항 최소 터치 타겟 44px */
+  padding: 8px 16px;
+  background: var(--primary, var(--brand, #3b82f6));
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px; /* 폰트 최소 12px 고대비 */
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, transform 0.1s ease;
+  box-sizing: border-box;
+}
+
+#og-task-43-action-btn:active {
+  transform: scale(0.97);
+  background: var(--primary-hover, #2563eb);
+}
+
+.metric-multiselect-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.metric-multiselect-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--surface-2, rgba(255, 255, 255, 0.08));
+  color: var(--ink-secondary, #94a3b8);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.15));
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.metric-multiselect-chip.active {
+  background: var(--primary-subtle, rgba(59, 130, 246, 0.2));
+  color: var(--primary-text, #60a5fa);
+  border-color: var(--primary, #3b82f6);
+  font-weight: 700;
+}
+
+@media (max-width: 375px) {
+  #og-task-43-container {
+    padding: 10px 12px;
+    margin-bottom: 6px; /* 모바일 여백 압축 */
+  }
+  #og-task-43-action-btn {
+    width: 100%; /* 한 손 조작 편의 극대화 */
+  }
+}
+
+
 
 
 
