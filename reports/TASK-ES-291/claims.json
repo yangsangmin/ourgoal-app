@@ -1,0 +1,104 @@
+{
+  "task": "TASK-ES-291",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-291-AVATAR-LEVELUP-DIALOGUE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/components.js에 handle아바타_Item41Action 직통 핸들러가 정의되어 있고 window 및 module.exports에 노출되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "js/avatar-system.js에 triggerAvatarLevelUpDialogue 헬퍼 함수가 정의되어 있고 대사 멘트가 등록되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html에 og-task-41-container 마크업 및 og-task-41-action-btn 버튼이 탑재되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "ui.css에 og-task-41-container, og-task-41-action-btn 및 avatar-levelup-dialogue-bubble 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/avatar-levelup-dialogue.test.js 및 scripts/smoke-test.js에 아바타 레벨업 멘트 단위 테스트 및 스모크 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle아바타_Item41Action 직통 핸들러 및 og_task-41_cache 저장이 정의되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle아바타_Item41Action"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/avatar-system.js 내에 triggerAvatarLevelUpDialogue 및 지정 대사 멘트가 정의되어 있다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "진짜 잘했다! 내자신! 내 뒤의 배경좀 바꿔줘라 지겹다!"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 og-task-41-container 및 og-task-41-action-btn 마크업이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "og-task-41-container"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 og-task-41-container 및 avatar-levelup-dialogue-bubble 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "og-task-41-container"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/avatar-levelup-dialogue.test.js 및 scripts/smoke-test.js 내에 아바타 레벨업 연출 멘트 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/avatar-levelup-dialogue.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/avatar-levelup-dialogue.test.js",
+        "text": "avatar-levelup-dialogue"
+      }
+    }
+  ]
+}

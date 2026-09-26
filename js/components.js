@@ -771,6 +771,84 @@
     }
   }
 
+  /**
+   * [TASK-ES-291 / 노션 생각메모장 41번]
+   * 레벨업 할 때 아바타가 “진짜 잘했다! 내자신! 내 뒤의 배경좀 바꿔줘라 지겹다!” 멘트 하면서 나타나게 해야해
+   * 8원칙 & 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+   */
+  async function handle아바타_Item41Action(event) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+
+    var win = typeof window !== 'undefined' ? window : global;
+    var actionBtn = (event && event.currentTarget) || (typeof document !== 'undefined' ? document.getElementById('og-task-41-action-btn') : null);
+    if (actionBtn) {
+      if (actionBtn.disabled) return;
+      actionBtn.disabled = true;
+    }
+
+    // 1. 12ms 햅틱 피드백
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      // 2. 비즈니스 로직 및 영구 원장 트랜잭션 (레벨업 축하 및 배경 변경 도발 대사)
+      var syncPayload = {
+        ticket: '41',
+        updated_at: new Date().toISOString(),
+        dialogue: '진짜 잘했다! 내자신! 내 뒤의 배경좀 바꿔줘라 지겹다!',
+        event_type: 'levelup_dialogue',
+        suggest_background_change: true,
+        state: 'completed'
+      };
+
+      // Supabase 저장 또는 로컬 캐시 원자적 갱신
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-41',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {
+          if (locStorage && typeof locStorage.setItem === 'function') {
+            locStorage.setItem('og_task-41_cache', JSON.stringify(syncPayload));
+          }
+        }
+      } else if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-41_cache', JSON.stringify(syncPayload));
+      }
+
+      // 3. 완료 시각 피드백 토스트
+      if (typeof win.showToast === 'function') {
+        win.showToast('진짜 잘했다! 내자신! 내 뒤의 배경좀 바꿔줘라 지겹다!', { type: 'success', duration: 2500 });
+      }
+
+      // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-AUTO-41] 실행 실패:', err);
+      if (typeof win.showToast === 'function') {
+        win.showToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
   if(typeof document !== 'undefined' && typeof document.addEventListener === 'function'){
     document.addEventListener('click', function(e){
       var closeBtn = e.target && e.target.closest && (e.target.closest('.og-modal-close') || e.target.closest('#ogModalCancelBtn'));
@@ -790,6 +868,7 @@
     window.handle전체공통_Item38Action = handle전체공통_Item38Action;
     window.handle팀목표_Item39Action = handle팀목표_Item39Action;
     window.handle목표탭_Item40Action = handle목표탭_Item40Action;
+    window.handle아바타_Item41Action = handle아바타_Item41Action;
   }
   if(typeof module !== 'undefined' && module.exports){
     module.exports = OurgoalComponents;
@@ -801,6 +880,7 @@
     module.exports.handle전체공통_Item38Action = handle전체공통_Item38Action;
     module.exports.handle팀목표_Item39Action = handle팀목표_Item39Action;
     module.exports.handle목표탭_Item40Action = handle목표탭_Item40Action;
+    module.exports.handle아바타_Item41Action = handle아바타_Item41Action;
   }
 })(typeof window !== 'undefined' ? window : global);
 

@@ -7191,5 +7191,97 @@
     global.handle아바타_Item32Action = handle아바타_Item32Action;
   }
 
+  /**
+   * [TASK-ES-291 / 노션 생각메모장 41번]
+   * 레벨업 시 아바타 연출 멘트 및 상태 반환
+   */
+  function triggerAvatarLevelUpDialogue(level) {
+    return {
+      dialogue: '진짜 잘했다! 내자신! 내 뒤의 배경좀 바꿔줘라 지겹다!',
+      level: level || 2,
+      suggest_background_change: true,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  async function handle아바타_Item41Action(event) {
+    if (event) {
+      if (typeof event.stopPropagation === 'function') event.stopPropagation();
+      if (typeof event.preventDefault === 'function') event.preventDefault();
+    }
+
+    var win = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : {});
+    var doc = typeof document !== 'undefined' ? document : (win.document || null);
+    var actionBtn = doc && typeof doc.getElementById === 'function' ? doc.getElementById('og-task-41-action-btn') : null;
+    if (actionBtn) {
+      actionBtn.disabled = true;
+    }
+
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      var syncPayload = {
+        ticket: '41',
+        updated_at: new Date().toISOString(),
+        dialogue: '진짜 잘했다! 내자신! 내 뒤의 배경좀 바꿔줘라 지겹다!',
+        event_type: 'levelup_dialogue',
+        suggest_background_change: true,
+        state: 'completed'
+      };
+
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-41',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {
+          if (locStorage && typeof locStorage.setItem === 'function') {
+            locStorage.setItem('og_task-41_cache', JSON.stringify(syncPayload));
+          }
+        }
+      } else if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-41_cache', JSON.stringify(syncPayload));
+      }
+
+      if (typeof win.showToast === 'function') {
+        win.showToast('진짜 잘했다! 내자신! 내 뒤의 배경좀 바꿔줘라 지겹다!', { type: 'success', duration: 2500 });
+      }
+
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-AUTO-41] 실행 실패:', err);
+      if (typeof win.showToast === 'function') {
+        win.showToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    window.handle아바타_Item41Action = handle아바타_Item41Action;
+  }
+  if (typeof global !== 'undefined') {
+    global.handle아바타_Item41Action = handle아바타_Item41Action;
+  }
+
+  api.triggerAvatarLevelUpDialogue = triggerAvatarLevelUpDialogue;
+  api.handle아바타_Item41Action = handle아바타_Item41Action;
+
   return api;
 }));
