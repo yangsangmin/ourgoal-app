@@ -8780,6 +8780,31 @@ check('compliance: [#TASK-ES-273] 각 탭 활용법 내용 최신화 및 실제 
   assert.ok(uiCss.includes('.showcase-mini-preview'), '.showcase-mini-preview 스타일 존재');
 });
 
+/* ============ [#TASK-ES-274] 목표탭 참고자료 첨부 효과적·효율적 UI/UX 고도화 및 실제 UI 검증 ============ */
+check('compliance: [#TASK-ES-274] 목표탭 참고자료 첨부 효과적·효율적 UI/UX 고도화 및 실제 UI 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. renderInlineAttachmentChips 함수 및 window 전역 노출 검증
+  assert.ok(indexHtml.includes('function renderInlineAttachmentChips('), 'renderInlineAttachmentChips 함수 정의');
+  assert.ok(indexHtml.includes('window.renderInlineAttachmentChips = renderInlineAttachmentChips;'), 'window.renderInlineAttachmentChips 바인딩');
+
+  // 2. 세부 할 일 행에 참고자료 첨부 버튼 및 칩 렌더러 연동 검증
+  assert.ok(indexHtml.includes('var tAttHtml = renderInlineAttachmentChips('), '세부 할 일 행에 renderInlineAttachmentChips 적용');
+  assert.ok(indexHtml.includes('data-addatttask="'), '세부 할 일 행에 data-addatttask 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('class="att-add-btn compact-att-btn"'), '세부 할 일 행에 compact-att-btn 클래스 탑재');
+
+  // 3. 마일스톤 행에 renderInlineAttachmentChips 연동 검증
+  assert.ok(indexHtml.includes('var attSnippet = renderInlineAttachmentChips('), '마일스톤 행에 renderInlineAttachmentChips 적용');
+  assert.ok(indexHtml.includes('data-addattms="'), '마일스톤 행에 data-addattms 버튼 탑재');
+
+  // 4. ui.css 스타일 검증
+  assert.ok(uiCss.includes('.att-chips-inline'), 'ui.css .att-chips-inline 스타일 정의');
+  assert.ok(uiCss.includes('.att-chip-mini'), 'ui.css .att-chip-mini 스타일 정의');
+  assert.ok(uiCss.includes('.compact-att-btn'), 'ui.css .compact-att-btn 스타일 정의');
+  assert.ok(uiCss.includes('.att-chip-mini.type-video'), 'ui.css 비디오 칩 스타일 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

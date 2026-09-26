@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-274",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-274-GOALS-SMART-ATTACHMENTS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html에 renderInlineAttachmentChips 함수가 정의되어 있고 window에 노출되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "세부 할 일 행에 data-addatttask 참고자료 첨부 버튼이 마크업으로 탑재되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "마일스톤 및 세부 할 일 행에서 renderInlineAttachmentChips를 호출하여 시각적 미니 칩을 표출한다."
+    },
+    {
+      "id": "R4",
+      "text": "ui.css에 att-chip-mini 및 compact-att-btn 반응형 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/goals-smart-attachments.test.js에 목표탭 참고자료 첨부 단위 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 renderInlineAttachmentChips 함수가 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "renderInlineAttachmentChips"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 세부 할 일 행에 data-addatttask 버튼이 마크업으로 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "data-addatttask"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 세부 할 일 행에 compact-att-btn 클래스가 적용되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "compact-att-btn"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 att-chip-mini 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "att-chip-mini"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/goals-smart-attachments.test.js 내에 단위 테스트가 정의되어 있다",
+      "touches": [
+        "tests/goals-smart-attachments.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/goals-smart-attachments.test.js",
+        "text": "goals-smart-attachments"
+      }
+    }
+  ]
+}
