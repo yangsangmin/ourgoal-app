@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-277",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-277-COMM-FEED-CLEANUP.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/team-invite-comm.js에 handle팀목표_Item25Action 직통 핸들러가 정의되어 있고 window에 노출되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "js/team-invite-comm.js에 og_task-25_cache 로컬 캐시 원자적 갱신 및 4대 뷰 동시 전파가 구현되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 소통 화면에 og-task-25-container 및 og-task-25-action-btn 마크업이 탑재되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "ui.css에 og-task-25-action-btn 모바일 44px 및 반응형 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/comm-feed-cleanup.test.js에 소통창 화면정리 단위 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/team-invite-comm.js 내에 handle팀목표_Item25Action 직통 핸들러가 정의되어 있다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-invite-comm.js",
+        "text": "handle팀목표_Item25Action"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/team-invite-comm.js 내에 og_task-25_cache 로컬 캐시 저장이 구현되어 있다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-invite-comm.js",
+        "text": "og_task-25_cache"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 og-task-25-container 마크업이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "og-task-25-container"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 og-task-25-action-btn 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "og-task-25-action-btn"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/comm-feed-cleanup.test.js 내에 단위 테스트가 정의되어 있다",
+      "touches": [
+        "tests/comm-feed-cleanup.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/comm-feed-cleanup.test.js",
+        "text": "comm-feed-cleanup"
+      }
+    }
+  ]
+}
