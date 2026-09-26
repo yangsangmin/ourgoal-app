@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-275",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-275-COMPONENT-MODULARIZATION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/components.js에 task23ModularComponent 컴포넌트 렌더러가 정의되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "js/components.js에 handle전체공통_Item23Action 직통 핸들러가 정의되어 있고 window에 노출되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 설정 화면에 og-task-23-container 및 og-task-23-action-btn 마크업이 탑재되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "ui.css에 og-task-23-action-btn 모바일 44px 및 반응형 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/component-modularization.test.js에 컴포넌트 모듈화 단위 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 task23ModularComponent 컴포넌트 렌더러가 정의되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "task23ModularComponent"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle전체공통_Item23Action 직통 핸들러가 정의되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle전체공통_Item23Action"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 og-task-23-container 마크업이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "og-task-23-container"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 og-task-23-action-btn 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "og-task-23-action-btn"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/component-modularization.test.js 내에 단위 테스트가 정의되어 있다",
+      "touches": [
+        "tests/component-modularization.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/component-modularization.test.js",
+        "text": "component-modularization"
+      }
+    }
+  ]
+}
