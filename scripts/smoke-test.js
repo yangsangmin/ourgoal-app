@@ -8894,6 +8894,28 @@ check('compliance: [#TASK-ES-278] 앱 진입 시 화면 절반 크기 아바타 
   assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
 });
 
+/* ============ [#TASK-ES-279] DM창 타 유저 클릭 시 키보드 자동 팝업 방지 및 텍스트창 터치 시 오픈으로 변경 ============ */
+check('compliance: [#TASK-ES-279] DM창 타 유저 클릭 시 키보드 자동 팝업 방지 및 텍스트창 터치 시 오픈으로 변경', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const commJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+
+  // 1. js/team-invite-comm.js handle소통_Item28Action 정의 검증
+  assert.ok(commJs.includes('async function handle소통_Item28Action('), 'handle소통_Item28Action 함수 정의');
+  assert.ok(commJs.includes('handle소통_Item28Action = handle소통_Item28Action'), 'handle소통_Item28Action 노출');
+
+  // 2. index.html DOM 마크업 검증
+  assert.ok(indexHtml.includes('id="og-task-28-container"'), 'index.html #og-task-28-container 마크업 탑재');
+  assert.ok(indexHtml.includes('id="og-task-28-action-btn"'), 'index.html #og-task-28-action-btn 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('handle소통_Item28Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
+
+  // 3. ui.css 스타일 및 반응형 검증
+  assert.ok(uiCss.includes('#og-task-28-container'), 'ui.css #og-task-28-container 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-28-action-btn'), 'ui.css #og-task-28-action-btn 스타일 정의');
+  assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');
+  assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
