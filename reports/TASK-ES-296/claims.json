@@ -1,0 +1,85 @@
+{
+  "task": "TASK-ES-296",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-296-TEAM-LINKED-GOALS-EXAMPLE-CARD.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/components.js에 handle팀목표_Item46Action 직통 핸들러 및 toggleTeamLinkedGoalExample 함수가 정의되어 있고 window 및 module.exports에 노출되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html에 og-task-46-container 마크업, teamLinkedGoalsExampleCard 및 og-task-46-action-btn 버튼이 탑재되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "ui.css에 og-task-46-container, teamLinkedGoalsExampleCard 및 og-task-46-action-btn 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "tests/team-linked-goals-example-card.test.js 및 scripts/smoke-test.js에 팀 연계 개인목표 우수 사용사례 예시 카드 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle팀목표_Item46Action 직통 핸들러 및 og_task-46_cache 저장이 정의되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle팀목표_Item46Action"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 og-task-46-container 및 teamLinkedGoalsExampleCard 마크업이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "teamLinkedGoalsExampleCard"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 og-task-46-container 및 teamLinkedGoalsExampleCard 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "teamLinkedGoalsExampleCard"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/team-linked-goals-example-card.test.js 및 scripts/smoke-test.js 내에 팀 연계 개인목표 우수 사용사례 예시 카드 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/team-linked-goals-example-card.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/team-linked-goals-example-card.test.js",
+        "text": "team-linked-goals-example-card"
+      }
+    }
+  ]
+}
