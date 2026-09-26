@@ -9065,6 +9065,31 @@ check('compliance: [#TASK-ES-285] 홈 목표현황판 불필요 지표(진행중
   assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
 });
 
+/* ============ [#TASK-ES-286] 갓생 스토리카드 다각화(1:1·3:4·9:16 비율 및 항목 선택) 및 피드 즉시 게시 기능 구현 ============ */
+check('compliance: [#TASK-ES-286] 갓생 스토리카드 다각화(1:1·3:4·9:16 비율 및 항목 선택) 및 피드 즉시 게시 기능 구현', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+  const recJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'records-stats.js'), 'utf8');
+
+  // 1. js/components.js 및 js/records-stats.js handle기록스톱워치_Item35Action 정의 검증
+  assert.ok(compJs.includes('async function handle기록스톱워치_Item35Action('), 'handle기록스톱워치_Item35Action 함수 정의');
+  assert.ok(compJs.includes('handle기록스톱워치_Item35Action = handle기록스톱워치_Item35Action'), 'handle기록스톱워치_Item35Action 노출');
+  assert.ok(compJs.includes('og_task-35_cache'), 'og_task-35_cache 원자적 영속화 키 정의');
+  assert.ok(recJs.includes('handle기록스톱워치_Item35Action'), 'records-stats.js 내 handle기록스톱워치_Item35Action 노출');
+
+  // 2. index.html 컨테이너 및 액션 버튼 검증
+  assert.ok(indexHtml.includes('id="og-task-35-container"'), 'index.html #og-task-35-container 마크업 탑재');
+  assert.ok(indexHtml.includes('id="og-task-35-action-btn"'), 'index.html #og-task-35-action-btn 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('handle기록스톱워치_Item35Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
+
+  // 3. ui.css 스타일 및 반응형 검증
+  assert.ok(uiCss.includes('#og-task-35-container'), 'ui.css #og-task-35-container 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-35-action-btn'), 'ui.css #og-task-35-action-btn 스타일 정의');
+  assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');
+  assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
