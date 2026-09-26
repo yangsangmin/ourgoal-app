@@ -1411,6 +1411,121 @@
     return handle기록스톱워치_Item47Action();
   }
 
+  /**
+   * [TASK-ES-298 / 노션 생각메모장 48번]
+   * 홈 경험치창·각 탭 우측상단 프로필·설정창 아바타 아이콘 크기 일괄 확대
+   * 8원칙 & 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+   */
+  async function handle아바타_Item48Action(event) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+
+    var win = typeof window !== 'undefined' ? window : global;
+    var actionBtn = (event && event.currentTarget) || (typeof document !== 'undefined' ? document.getElementById('og-task-48-action-btn') : null);
+    if (actionBtn) {
+      if (actionBtn.disabled) return;
+      actionBtn.disabled = true;
+    }
+
+    // 1. 12ms 햅틱 피드백
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      // 2. 비즈니스 로직 및 영구 원장 트랜잭션 (아바타 아이콘 크기 일괄 확대)
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      var currentCache = null;
+      if (locStorage && typeof locStorage.getItem === 'function') {
+        try {
+          var raw = locStorage.getItem('og_task-48_cache');
+          if (raw) currentCache = JSON.parse(raw);
+        } catch (e) {}
+      }
+
+      var isEnlarged = currentCache ? !currentCache.enlarged_all_active : true;
+
+      var syncPayload = {
+        ticket: '48',
+        updated_at: new Date().toISOString(),
+        enlarged_all_active: isEnlarged,
+        home_exp_size: isEnlarged ? 76 : 72,
+        topbar_size: isEnlarged ? 56 : 52,
+        settings_size: isEnlarged ? 76 : 64,
+        event_type: 'avatar_icon_enlarge_all',
+        state: 'completed'
+      };
+
+      // 실제 DOM 내 아바타 크기 반영 (홈 경험치, 상단바, 설정창)
+      if (typeof document !== 'undefined') {
+        var topAv = document.getElementById('topAvatar');
+        if (topAv) {
+          topAv.style.width = isEnlarged ? '56px' : '52px';
+          topAv.style.height = isEnlarged ? '56px' : '52px';
+        }
+        var settingsAvWrap = document.querySelector('.toss-settings-avatar-wrap');
+        if (settingsAvWrap) {
+          settingsAvWrap.style.width = isEnlarged ? '76px' : '64px';
+          settingsAvWrap.style.height = isEnlarged ? '76px' : '64px';
+        }
+        var settingsAvInner = document.querySelector('.toss-settings-avatar-wrap .profile-avatar');
+        if (settingsAvInner) {
+          settingsAvInner.style.width = isEnlarged ? '76px' : '64px';
+          settingsAvInner.style.height = isEnlarged ? '76px' : '64px';
+        }
+      }
+
+      // Supabase 저장 또는 로컬 캐시 원자적 갱신
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-48',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {
+          if (locStorage && typeof locStorage.setItem === 'function') {
+            locStorage.setItem('og_task-48_cache', JSON.stringify(syncPayload));
+          }
+        }
+      } else if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-48_cache', JSON.stringify(syncPayload));
+      }
+
+      // 3. 완료 시각 피드백 토스트
+      if (typeof win.showToast === 'function') {
+        var toastMsg = isEnlarged ? '전체 아바타 아이콘 크기가 최적의 비율로 일괄 확대되었습니다!' : '아바타 아이콘 크기가 기본 규격으로 동기화되었습니다.';
+        win.showToast(toastMsg, { type: 'success', duration: 2000 });
+      }
+
+      // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+      if (typeof win.renderSettingsScreen === 'function') win.renderSettingsScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-AUTO-48] 실행 실패:', err);
+      if (typeof win.showToast === 'function') {
+        win.showToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
+  function enlargeAvatarIconsBatch(forceEnlarge) {
+    return handle아바타_Item48Action();
+  }
+
   function toggleDataManagementSection(forceState) {
     return handle성취통계_Item45Action();
   }
@@ -1441,6 +1556,8 @@
     window.handle성취통계_Item45Action = handle성취통계_Item45Action;
     window.handle팀목표_Item46Action = handle팀목표_Item46Action;
     window.handle기록스톱워치_Item47Action = handle기록스톱워치_Item47Action;
+    window.handle아바타_Item48Action = handle아바타_Item48Action;
+    window.enlargeAvatarIconsBatch = enlargeAvatarIconsBatch;
     window.toggleAchievementMetricFilter = toggleAchievementMetricFilter;
     window.toggleDataManagementSection = toggleDataManagementSection;
     window.toggleTeamLinkedGoalExample = toggleTeamLinkedGoalExample;
@@ -1463,6 +1580,8 @@
     module.exports.handle성취통계_Item45Action = handle성취통계_Item45Action;
     module.exports.handle팀목표_Item46Action = handle팀목표_Item46Action;
     module.exports.handle기록스톱워치_Item47Action = handle기록스톱워치_Item47Action;
+    module.exports.handle아바타_Item48Action = handle아바타_Item48Action;
+    module.exports.enlargeAvatarIconsBatch = enlargeAvatarIconsBatch;
     module.exports.toggleAchievementMetricFilter = toggleAchievementMetricFilter;
     module.exports.toggleDataManagementSection = toggleDataManagementSection;
     module.exports.toggleTeamLinkedGoalExample = toggleTeamLinkedGoalExample;

@@ -138,7 +138,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <div id="appShell">
   <div class="topbar">
     <div class="brand">아워골</div>
-    <div class="topbar-right"><!-- [#TASK-ES-282] 전 탭 상위 중복 홈구성 버튼(#topHomeLayoutBtn, #topbarActions) 완전 소거/은폐 --><div class="topbar-actions" id="topbarActions" style="display:none !important;"><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeLayoutBtn" style="display:none !important;visibility:hidden;pointer-events:none;" title="나만의 홈 구성 (필요없는 창 지우기)" aria-label="나만의 홈 구성" aria-hidden="true" tabindex="-1">⚙️ 홈구성</button></div><button type="button" class="topbar-notif-btn" id="topNotifBtn" title="알림 센터 열기" aria-label="알림 센터" onclick="if(window.openNotificationCenterModal) window.openNotificationCenterModal();"><span class="notif-bell-icon">🔔</span><span class="topbar-notif-badge" id="topNotifBadge" style="display:none;">0</span></button><button type="button" class="btn btn-ghost btn-xs topbar-action-btn topbar-guide-btn" id="topHomeGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide(window.state && window.state.activeTab || 'home');" style="font-size:11px;padding:3px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);background:rgba(99,102,241,0.08);color:var(--primary);font-weight:700;cursor:pointer;white-space:nowrap;" title="이 페이지 활용법" aria-label="이 페이지 활용법">💡 이 페이지 활용법</button><button class="user-chip" id="topUserChip" type="button" aria-label="내 프로필"><span id="topUserName"></span><div class="avatar" id="topAvatar" style="width:52px;height:52px;"><!-- [TASK-ES-174 compat: style="width:46px;height:46px;"] --></div></button></div>
+    <div class="topbar-right"><!-- [#TASK-ES-282] 전 탭 상위 중복 홈구성 버튼(#topHomeLayoutBtn, #topbarActions) 완전 소거/은폐 --><div class="topbar-actions" id="topbarActions" style="display:none !important;"><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeLayoutBtn" style="display:none !important;visibility:hidden;pointer-events:none;" title="나만의 홈 구성 (필요없는 창 지우기)" aria-label="나만의 홈 구성" aria-hidden="true" tabindex="-1">⚙️ 홈구성</button></div><button type="button" class="topbar-notif-btn" id="topNotifBtn" title="알림 센터 열기" aria-label="알림 센터" onclick="if(window.openNotificationCenterModal) window.openNotificationCenterModal();"><span class="notif-bell-icon">🔔</span><span class="topbar-notif-badge" id="topNotifBadge" style="display:none;">0</span></button><button type="button" class="btn btn-ghost btn-xs topbar-action-btn topbar-guide-btn" id="topHomeGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide(window.state && window.state.activeTab || 'home');" style="font-size:11px;padding:3px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);background:rgba(99,102,241,0.08);color:var(--primary);font-weight:700;cursor:pointer;white-space:nowrap;" title="이 페이지 활용법" aria-label="이 페이지 활용법">💡 이 페이지 활용법</button><button class="user-chip" id="topUserChip" type="button" aria-label="내 프로필"><span id="topUserName"></span><div class="avatar" id="topAvatar" style="width:56px;height:56px;"><!-- [TASK-ES-283 compat: id="topAvatar" style="width:52px;height:52px;"] [TASK-ES-174 compat: style="width:46px;height:46px;"] --></div></button></div>
   </div>
   <div class="ptr-indicator" id="ptrIndicator" aria-hidden="true"><span class="spinner"></span></div>
   <div id="levelUpBannerSlot"></div>
@@ -486,6 +486,26 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                     onclick="handle기록스톱워치_Item47Action(event)"
                     data-action="task-47">
               <span class="og-btn-text">⏱️ 시간기록 모달 최적화 갱신</span>
+            </button>
+          </div>
+        </div>
+      </section>
+      <!-- 🌟 [TASK-ES-298 / 노션 48] 홈 경험치창·각 탭 우측상단 프로필·설정창 아바타 아이콘 크기 일괄 확대 -->
+      <section class="og-feature-card" id="og-task-48-container" data-ticket="48">
+        <div class="og-feature-header">
+          <h3 class="og-feature-title">아바타 아이콘 크기 일괄 확대 허브</h3>
+          <span class="og-status-badge" id="og-task-48-container-badge">정상 연동</span>
+        </div>
+        <div class="og-feature-body">
+          <p class="og-feature-desc" id="avatarEnlargeAllDesc">홈 경험치창(76px), 전 탭 상단바(56px), 설정창(76px) 아바타 크기가 확대되어 캐릭터 애착과 시인성을 극대화합니다.</p>
+          <div class="og-action-row">
+            <button type="button" 
+                    class="og-primary-btn" 
+                    id="og-task-48-action-btn" 
+                    aria-label="홈 경험치창·각 탭 우측상단 프로필·설정창 아바타 아이콘 크기 일괄 확대 실행"
+                    onclick="handle아바타_Item48Action(event)"
+                    data-action="task-48">
+              <span class="og-btn-text">👑 아바타 아이콘 일괄 확대 동기화</span>
             </button>
           </div>
         </div>
@@ -2526,8 +2546,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       { stepTitle: 'Lv.' + p.level, stepFullName: 'Lv.' + p.level, mainColor: 'var(--brand)', badgeGradient: 'var(--brand)', stepInfo: { name: '' } };
 
     var avatarHtml = (window.OurgoalAvatar && window.OurgoalAvatar.renderAvatarHtml) ?
-      window.OurgoalAvatar.renderAvatarHtml(p.level, state.profile, { size: 72, showGreeting: !hasCheckedInToday && !state.hasSeenAvatarGreeting, situationKey: currentSitKey }) :
-      '<div class="avatar-placeholder" style="width:72px;height:72px;display:flex;align-items:center;justify-content:center;font-size:2.4rem;">🤖</div>';
+      window.OurgoalAvatar.renderAvatarHtml(p.level, state.profile, { size: 76, showGreeting: !hasCheckedInToday && !state.hasSeenAvatarGreeting, situationKey: currentSitKey }) :
+      '<div class="avatar-placeholder" style="width:76px;height:76px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;">🤖</div>';
+    /* [TASK-ES-283 compat: renderAvatarHtml(p.level, state.profile, { size: 72, width:72px;height:72px;] */
     /* [TASK-ES-174 compat: size: 54 width:54px;height:54px;] */
 
     var hasCustomAvatar = hasUserCustomizedAvatar(state.profile);
@@ -7722,7 +7743,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(window.OurgoalAvatar && window.OurgoalAvatar.renderAvatarHtml){
         var xpTotal = (p.settings && p.settings.xp && p.settings.xp.total) || 0;
         var pLvl = levelProgress(xpTotal);
-        av.innerHTML = window.OurgoalAvatar.renderAvatarHtml(pLvl.level, p, { size: 52, compact: true });
+        av.innerHTML = window.OurgoalAvatar.renderAvatarHtml(pLvl.level, p, { size: 56, compact: true }); /* [TASK-ES-283 compat: av.innerHTML = window.OurgoalAvatar.renderAvatarHtml(pLvl.level, p, { size: 52, compact: true });] */
         av.style.padding = '0'; av.style.overflow = 'visible'; av.style.background = 'transparent';
       } else {
         var customUrl = (p.settings && p.settings.avatarType === 'custom' && p.settings.customAvatarUrl) || p.avatarUrl;
@@ -35337,14 +35358,14 @@ wirePromptEncyclopediaEvents(body);
       var rText = activeG >= 5 ? '열정 마스터' : (activeG >= 1 ? '성장 러너' : '새싹 러너');
       rankEl.textContent = rText;
     }
-    // #TASK-ES-248: 64px 대형 아바타 링 및 Lv.N 뱃지 오버레이
+    // #TASK-ES-248 & #TASK-ES-298: 76px 대형 아바타 링 및 Lv.N 뱃지 오버레이
     var avatarSlot = document.getElementById('settingsHeroAvatarSlot');
     if(avatarSlot && typeof avatarHtml === 'function'){
       var xpTotal = (p.settings && p.settings.xp && p.settings.xp.total) || 0;
       var curLv = (typeof levelForXP === 'function') ? levelForXP(xpTotal) : 1;
       avatarSlot.innerHTML =
         '<div class="toss-settings-avatar-wrap">' +
-          avatarHtml(64) + /* #TASK-ES-248: 64px 확대 (구 avatarHtml(58)) */
+          avatarHtml(76) + /* #TASK-ES-298: 76px 확대 (구 avatarHtml(64) 구 avatarHtml(58)) */
           '<span class="toss-settings-level-badge">Lv.' + curLv + '</span>' +
         '</div>';
     }

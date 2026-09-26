@@ -10674,20 +10674,20 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
   transform: scale(0.97);
 }
 
-/* #TASK-ES-248: 설정탭 프로필 요약 카드 시인성 및 아바타/레벨 뱃지 강화 */
+/* #TASK-ES-248 & #TASK-ES-298: 설정탭 프로필 요약 카드 시인성 및 아바타/레벨 뱃지 강화 (76px 일괄 확대) */
 .toss-settings-avatar-wrap {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 64px;
-  height: 64px;
+  width: 76px;
+  height: 76px;
 }
 
 .toss-settings-avatar-wrap .profile-avatar {
-  width: 64px !important;
-  height: 64px !important;
+  width: 76px !important;
+  height: 76px !important;
   border: 3px solid var(--primary, #3b82f6) !important;
   box-shadow: 0 0 16px rgba(59, 130, 246, 0.32), 0 2px 8px rgba(0, 0, 0, 0.08) !important;
   border-radius: 50% !important;
@@ -13552,6 +13552,61 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
   }
   #og-task-47-action-btn {
     width: 100%; /* 한 손 조작 편의 극대화 */
+  }
+}
+
+/* ==========================================================================
+   #TASK-ES-298: 홈 경험치창·각 탭 우측상단 프로필·설정창 아바타 아이콘 크기 일괄 확대
+   ========================================================================== */
+#og-task-48-container {
+  display: block;
+  background: var(--surface-1, #1e293b);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#avatarEnlargeAllDesc {
+  font-size: 13px;
+  color: var(--text-muted, #94a3b8);
+  margin-top: 4px;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+#og-task-48-action-btn {
+  min-width: 44px;
+  min-height: 44px; /* 헌법 제7조 제8항 최소 터치 타겟 44px */
+  padding: 8px 16px;
+  background: var(--primary, var(--brand, #3b82f6));
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px; /* 폰트 최소 12px 고대비 */
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, transform 0.1s ease;
+  box-sizing: border-box;
+}
+
+#og-task-48-action-btn:active {
+  transform: scale(0.97);
+  background: var(--primary-hover, #2563eb);
+}
+
+@media (max-width: 375px) {
+  #og-task-48-container {
+    padding: 10px 12px;
+    margin-bottom: 6px;
+  }
+  #og-task-48-action-btn {
+    width: 100%;
   }
 }
 
