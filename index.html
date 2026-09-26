@@ -582,6 +582,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       <!-- [VIEW 2: STATS] 성취 통계 뷰 (4단 메트릭 캐러셀 + 기간별 AI) -->
       <div class="rec-view" id="recViewStats" style="display:none;">
+        <!-- 📈 [TASK-ES-276 / 노션 24] 측정지표 분석할 항목별 차등 지정 및 정밀화·고도화 -->
+        <div id="og-task-24-container" class="og-metrics-card">
+          <div class="og-metrics-header">
+            <span class="og-metrics-icon">📈</span>
+            <h4 class="og-metrics-title">측정지표 항목별 차등 분석 허브</h4>
+          </div>
+          <p class="og-metrics-desc">실천 항목별 특성에 맞춰 측정지표를 차등 지정하고 정밀화·고도화하여 4대 뷰에 원자적으로 동기화합니다.</p>
+          <div class="og-metrics-action-row">
+            <button type="button" id="og-task-24-action-btn" class="og-metrics-btn" onclick="handle기록스톱워치_Item24Action(event)">
+              ⚡ 측정지표 차등 분석 동기화 실행
+            </button>
+          </div>
+        </div>
+
         <div id="universalStatsDashboardBox" style="margin-bottom:12px;"></div>
         <div class="rec-carousel-container">
           <!-- 4분할 알약 탭 (캐러셀 맹지 차단) -->
@@ -1507,7 +1521,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
-  <script src="js/components.js?v=20260917-es162"></script><script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script><script src="js/notify-engine.js?v=20260917-es152"></script><script src="js/sanctuary-v3-engine.js?v=20260918-v3"></script>
+  <script src="js/components.js?v=20260917-es162"></script><script src="js/records-stats.js?v=20260926-es276"></script><script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script><script src="js/notify-engine.js?v=20260917-es152"></script><script src="js/sanctuary-v3-engine.js?v=20260918-v3"></script>
 <script>
 (function(){
   "use strict";
