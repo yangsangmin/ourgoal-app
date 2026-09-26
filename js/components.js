@@ -1793,6 +1793,110 @@
     return handle소통_Item51Action();
   }
 
+  async function handle팀목표_Item52Action(event) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+
+    var win = typeof window !== 'undefined' ? window : global;
+    var actionBtn = (event && event.currentTarget) || (typeof document !== 'undefined' ? document.getElementById('og-task-52-action-btn') : null);
+    if (actionBtn) {
+      if (actionBtn.disabled) return;
+      actionBtn.disabled = true;
+    }
+
+    // 1. 12ms 햅틱 피드백
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      // 2. 비즈니스 로직 및 영구 원장 트랜잭션 (팀 목표 탭 최초 진입 시 접을 수 있는 모든 아코디언 요소 기본 접힘 처리)
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      var syncPayload = {
+        ticket: '52',
+        updated_at: new Date().toISOString(),
+        team_goals_collapsed_default: true,
+        event_type: 'team_goals_collapse_default',
+        state: 'completed'
+      };
+
+      // 실제 DOM 내 팀 목표 아코디언 일괄 접힘 실행
+      if (typeof win.collapseAllTeamGoalAccordions === 'function') {
+        win.collapseAllTeamGoalAccordions();
+      } else if (typeof document !== 'undefined') {
+        document.querySelectorAll('.ms-list, [data-tgmslist]').forEach(function(el){ el.style.display = 'none'; });
+        document.querySelectorAll('.tg-subtask-box, [data-tgtaskbox]').forEach(function(el){ el.style.display = 'none'; });
+        document.querySelectorAll('.tg-ms-comments-content, .tg-goal-comments-content, [data-tgmscommentsbox], [data-tggoalcommentsbox]').forEach(function(el){ el.style.display = 'none'; });
+        document.querySelectorAll('.tg-accordion-body, [data-tglevelbody]').forEach(function(el){ el.style.display = 'none'; });
+        document.querySelectorAll('.tg-lg-row-body, [data-tglgbody]').forEach(function(el){ el.style.display = 'none'; });
+      }
+
+      // Supabase 저장 또는 로컬 캐시 원자적 갱신
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-52',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {
+          if (locStorage && typeof locStorage.setItem === 'function') {
+            locStorage.setItem('og_task-52_cache', JSON.stringify(syncPayload));
+          }
+        }
+      } else if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-52_cache', JSON.stringify(syncPayload));
+      }
+
+      // 3. 완료 시각 피드백 토스트
+      var toastFn = (typeof win.showToast === 'function') ? win.showToast : ((typeof win.toast === 'function') ? win.toast : null);
+      if (toastFn) {
+        toastFn('팀 목표 탭 최초 진입 시 접을 수 있는 모든 아코디언 요소 기본 접힘 처리가 완료되었습니다.', { type: 'success', duration: 2000 });
+      }
+
+      // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+      if (typeof win.renderTeamGoalsScreen === 'function') win.renderTeamGoalsScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-AUTO-52] 실행 실패:', err);
+      var errToast = (typeof win.showToast === 'function') ? win.showToast : ((typeof win.toast === 'function') ? win.toast : null);
+      if (errToast) {
+        errToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
+  function collapseAllTeamGoalAccordions() {
+    var win = typeof window !== 'undefined' ? window : global;
+    if (typeof win.collapseAllTeamGoalAccordions === 'function') {
+      win.collapseAllTeamGoalAccordions();
+    } else if (typeof document !== 'undefined') {
+      document.querySelectorAll('.ms-list, [data-tgmslist]').forEach(function(el){ el.style.display = 'none'; });
+      document.querySelectorAll('.tg-subtask-box, [data-tgtaskbox]').forEach(function(el){ el.style.display = 'none'; });
+      document.querySelectorAll('.tg-ms-comments-content, .tg-goal-comments-content, [data-tgmscommentsbox], [data-tggoalcommentsbox]').forEach(function(el){ el.style.display = 'none'; });
+      document.querySelectorAll('.tg-accordion-body, [data-tglevelbody]').forEach(function(el){ el.style.display = 'none'; });
+      document.querySelectorAll('.tg-lg-row-body, [data-tglgbody]').forEach(function(el){ el.style.display = 'none'; });
+    }
+    return handle팀목표_Item52Action();
+  }
+
+  function toggleTeamGoalAccordionCollapse(targetId) {
+    return handle팀목표_Item52Action();
+  }
+
   function collapseAllSettingsSections() {
     if (typeof document !== 'undefined') {
       var accordions = document.querySelectorAll('.settings-group-accordion, .toss-settings-group details, #advancedSettingsAccordion');
@@ -1844,6 +1948,9 @@
     window.handle전체공통_Item50Action = handle전체공통_Item50Action;
     window.handle소통_Item51Action = handle소통_Item51Action;
     window.handle팀목표_Item51Action = handle팀목표_Item51Action;
+    window.handle팀목표_Item52Action = handle팀목표_Item52Action;
+    window.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;
+    window.toggleTeamGoalAccordionCollapse = toggleTeamGoalAccordionCollapse;
     window.openFeedPostPreviewModal = openFeedPostPreviewModal;
     window.toggleFeedPostPreview = toggleFeedPostPreview;
     window.collapseAllSettingsSections = collapseAllSettingsSections;
@@ -1878,6 +1985,9 @@
     module.exports.handle전체공통_Item50Action = handle전체공통_Item50Action;
     module.exports.handle소통_Item51Action = handle소통_Item51Action;
     module.exports.handle팀목표_Item51Action = handle팀목표_Item51Action;
+    module.exports.handle팀목표_Item52Action = handle팀목표_Item52Action;
+    module.exports.collapseAllTeamGoalAccordions = collapseAllTeamGoalAccordions;
+    module.exports.toggleTeamGoalAccordionCollapse = toggleTeamGoalAccordionCollapse;
     module.exports.openFeedPostPreviewModal = openFeedPostPreviewModal;
     module.exports.toggleFeedPostPreview = toggleFeedPostPreview;
     module.exports.collapseAllSettingsSections = collapseAllSettingsSections;

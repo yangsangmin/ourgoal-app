@@ -13820,6 +13820,61 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
   }
 }
 
+/* =========================================================================
+   [#TASK-ES-302 / 노션 52] 팀 목표 탭 최초 진입 시 접을 수 있는 모든 아코디언 요소 기본 접힘 처리
+   ========================================================================= */
+#og-task-52-container {
+  margin: 12px 0;
+  padding: 14px 16px;
+  background: var(--surface-color, var(--card-bg, #ffffff));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+#teamGoalsCollapseDesc {
+  font-size: 13px;
+  color: var(--text-muted, #94a3b8);
+  margin-top: 4px;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+#og-task-52-action-btn {
+  min-width: 44px;
+  min-height: 44px; /* 헌법 제7조 제8항 최소 터치 타겟 44px */
+  padding: 8px 16px;
+  background: var(--primary, var(--brand, #3b82f6));
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px; /* 폰트 최소 12px 고대비 */
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, transform 0.1s ease;
+  box-sizing: border-box;
+}
+
+#og-task-52-action-btn:active {
+  transform: scale(0.97);
+  background: var(--primary-hover, #2563eb);
+}
+
+@media (max-width: 375px) {
+  #og-task-52-container {
+    padding: 10px 12px;
+    margin-bottom: 6px;
+  }
+  #og-task-52-action-btn {
+    width: 100%;
+  }
+}
+
 
 
 
