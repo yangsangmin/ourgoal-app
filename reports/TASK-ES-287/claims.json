@@ -1,0 +1,104 @@
+{
+  "task": "TASK-ES-287",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-287-REMOVE-AI-COMPANIONS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/components.js 및 js/team-invite-comm.js에 handle팀목표_Item37Action 직통 핸들러가 정의되어 있고 window에 노출되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "js/components.js에 og_task-37_cache 로컬 캐시 원자적 갱신, 12ms 햅틱, 4대 뷰 동시 전파가 구현되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html에 og-task-37-container 마크업 및 og-task-37-action-btn 버튼이 탑재되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "ui.css에 og-task-37-action-btn 모바일 44px 및 반응형 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/remove-ai-companions.test.js에 동반자 탭 내 AI 동반자 전면 제거 단위 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 및 js/team-invite-comm.js 내에 handle팀목표_Item37Action 직통 핸들러가 정의되어 있다",
+      "touches": [
+        "js/components.js",
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle팀목표_Item37Action"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 og_task-37_cache 로컬스토리지 저장이 구현되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "og_task-37_cache"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 og-task-37-container 마크업이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "og-task-37-container"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 og-task-37-action-btn 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "og-task-37-action-btn"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/remove-ai-companions.test.js 내에 단위 테스트가 정의되어 있다",
+      "touches": [
+        "tests/remove-ai-companions.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/remove-ai-companions.test.js",
+        "text": "remove-ai-companions"
+      }
+    }
+  ]
+}
