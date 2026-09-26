@@ -8872,6 +8872,28 @@ check('compliance: [#TASK-ES-277] 소통창 화면정리 (피드·소통 UI 시�
   assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
 });
 
+/* ============ [#TASK-ES-278] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 구현 ============ */
+check('compliance: [#TASK-ES-278] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 구현', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const avatarSystemJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+
+  // 1. js/avatar-system.js handle아바타_Item26Action 정의 검증
+  assert.ok(avatarSystemJs.includes('async function handle아바타_Item26Action('), 'handle아바타_Item26Action 함수 정의');
+  assert.ok(avatarSystemJs.includes('handle아바타_Item26Action: handle아바타_Item26Action'), 'handle아바타_Item26Action 노출');
+
+  // 2. index.html DOM 마크업 검증
+  assert.ok(indexHtml.includes('id="og-task-26-container"'), 'index.html #og-task-26-container 마크업 탑재');
+  assert.ok(indexHtml.includes('id="og-task-26-action-btn"'), 'index.html #og-task-26-action-btn 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('handle아바타_Item26Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
+
+  // 3. ui.css 스타일 및 반응형 검증
+  assert.ok(uiCss.includes('#og-task-26-container'), 'ui.css #og-task-26-container 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-26-action-btn'), 'ui.css #og-task-26-action-btn 스타일 정의');
+  assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');
+  assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
