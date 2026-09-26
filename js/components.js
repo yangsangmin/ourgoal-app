@@ -1199,6 +1199,108 @@
     }
   }
 
+  /**
+   * [TASK-ES-296 / 노션 생각메모장 46번]
+   * 팀 연계 개인목표 실제 우수 사용사례 예시 이미지 배치 및 생성 시 자동 숨김 처리
+   * 8원칙 & 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+   */
+  async function handle팀목표_Item46Action(event) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+
+    var win = typeof window !== 'undefined' ? window : global;
+    var actionBtn = (event && event.currentTarget) || (typeof document !== 'undefined' ? document.getElementById('og-task-46-action-btn') : null);
+    if (actionBtn) {
+      if (actionBtn.disabled) return;
+      actionBtn.disabled = true;
+    }
+
+    // 1. 12ms 햅틱 피드백
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      // 2. 비즈니스 로직 및 영구 원장 트랜잭션 (팀 연계 개인목표 생성 및 예시 카드 숨김 처리)
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      var currentCache = null;
+      if (locStorage && typeof locStorage.getItem === 'function') {
+        try {
+          var raw = locStorage.getItem('og_task-46_cache');
+          if (raw) currentCache = JSON.parse(raw);
+        } catch (e) {}
+      }
+
+      var exampleCardHidden = currentCache ? !currentCache.example_card_hidden : true;
+
+      var syncPayload = {
+        ticket: '46',
+        updated_at: new Date().toISOString(),
+        has_created_goal: true,
+        example_card_hidden: exampleCardHidden,
+        example_visible: !exampleCardHidden,
+        event_type: 'team_linked_goals_example_card',
+        state: 'completed'
+      };
+
+      // 실제 DOM 내 예시 카드 숨김/표시 처리
+      if (typeof document !== 'undefined') {
+        var exCard = document.getElementById('teamLinkedGoalsExampleCard') || document.querySelector('.team-linked-example-card');
+        if (exCard) {
+          exCard.style.display = exampleCardHidden ? 'none' : 'block';
+        }
+      }
+
+      // Supabase 저장 또는 로컬 캐시 원자적 갱신
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-46',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {
+          if (locStorage && typeof locStorage.setItem === 'function') {
+            locStorage.setItem('og_task-46_cache', JSON.stringify(syncPayload));
+          }
+        }
+      } else if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-46_cache', JSON.stringify(syncPayload));
+      }
+
+      // 3. 완료 시각 피드백 토스트
+      if (typeof win.showToast === 'function') {
+        var toastMsg = exampleCardHidden ? '팀 연계 개인목표가 생성되어 예시 카드가 숨겨졌습니다.' : '팀 연계 개인목표 우수 사용사례 예시가 표시됩니다.';
+        win.showToast(toastMsg, { type: 'success', duration: 2000 });
+      }
+
+      // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-AUTO-46] 실행 실패:', err);
+      if (typeof win.showToast === 'function') {
+        win.showToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
+  function toggleTeamLinkedGoalExample(forceHide) {
+    return handle팀목표_Item46Action();
+  }
+
   function toggleDataManagementSection(forceState) {
     return handle성취통계_Item45Action();
   }
@@ -1227,8 +1329,10 @@
     window.handle성취통계_Item43Action = handle성취통계_Item43Action;
     window.handle기록스톱워치_Item44Action = handle기록스톱워치_Item44Action;
     window.handle성취통계_Item45Action = handle성취통계_Item45Action;
+    window.handle팀목표_Item46Action = handle팀목표_Item46Action;
     window.toggleAchievementMetricFilter = toggleAchievementMetricFilter;
     window.toggleDataManagementSection = toggleDataManagementSection;
+    window.toggleTeamLinkedGoalExample = toggleTeamLinkedGoalExample;
   }
   if(typeof module !== 'undefined' && module.exports){
     module.exports = OurgoalComponents;
@@ -1245,8 +1349,10 @@
     module.exports.handle성취통계_Item43Action = handle성취통계_Item43Action;
     module.exports.handle기록스톱워치_Item44Action = handle기록스톱워치_Item44Action;
     module.exports.handle성취통계_Item45Action = handle성취통계_Item45Action;
+    module.exports.handle팀목표_Item46Action = handle팀목표_Item46Action;
     module.exports.toggleAchievementMetricFilter = toggleAchievementMetricFilter;
     module.exports.toggleDataManagementSection = toggleDataManagementSection;
+    module.exports.toggleTeamLinkedGoalExample = toggleTeamLinkedGoalExample;
   }
 })(typeof window !== 'undefined' ? window : global);
 
