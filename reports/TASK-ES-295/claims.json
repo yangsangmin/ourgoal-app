@@ -1,0 +1,85 @@
+{
+  "task": "TASK-ES-295",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-295-ACHIEVEMENT-COLLAPSE-TOGGLE-FIX.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/components.js에 handle성취통계_Item45Action 직통 핸들러 및 toggleDataManagementSection 함수가 정의되어 있고 window 및 module.exports에 노출되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html에 og-task-45-container 마크업 및 og-task-45-action-btn 버튼이 탑재되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "ui.css에 og-task-45-container 및 og-task-45-action-btn 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "tests/achievement-collapse-toggle.test.js 및 scripts/smoke-test.js에 성취통계 데이터 관리 접기토글 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle성취통계_Item45Action 직통 핸들러 및 og_task-45_cache 저장이 정의되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle성취통계_Item45Action"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 og-task-45-container 및 og-task-45-action-btn 마크업이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "og-task-45-container"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 og-task-45-container 및 og-task-45-action-btn 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "og-task-45-container"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/achievement-collapse-toggle.test.js 및 scripts/smoke-test.js 내에 성취통계 데이터 관리 접기토글 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/achievement-collapse-toggle.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/achievement-collapse-toggle.test.js",
+        "text": "achievement-collapse-toggle"
+      }
+    }
+  ]
+}
