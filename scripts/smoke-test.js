@@ -8989,6 +8989,33 @@ check('compliance: [#TASK-ES-282] 전 탭 상위 중복 \'홈구성\' 버튼 제
   assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
 });
 
+/* ============ [#TASK-ES-283] 홈 및 전 탭 우측 상단 아바타 아이콘 크기 확대 ============ */
+check('compliance: [#TASK-ES-283] 홈 및 전 탭 우측 상단 아바타 아이콘 크기 확대 (애정도·시인성 강화)', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const avatarJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+
+  // 1. js/avatar-system.js handle아바타_Item32Action 정의 검증
+  assert.ok(avatarJs.includes('async function handle아바타_Item32Action('), 'handle아바타_Item32Action 함수 정의');
+  assert.ok(avatarJs.includes('handle아바타_Item32Action = handle아바타_Item32Action'), 'handle아바타_Item32Action 노출');
+  assert.ok(avatarJs.includes('og_task-32_cache'), 'og_task-32_cache 원자적 영속화 키 정의');
+
+  // 2. index.html 아바타 확대 및 본문 DOM 마크업 검증
+  assert.ok(indexHtml.includes('renderAvatarHtml(p.level, state.profile, { size: 72,'), 'levelBadgeHtml 내 아바타 사이즈 72px 확대');
+  assert.ok(indexHtml.includes('width:72px;height:72px;'), 'levelBadgeHtml placeholder 72px 확대');
+  assert.ok(indexHtml.includes('av.innerHTML = window.OurgoalAvatar.renderAvatarHtml(pLvl.level, p, { size: 52, compact: true });'), 'updateTopAvatar 내 아바타 사이즈 52px 확대');
+  assert.ok(indexHtml.includes('id="topAvatar" style="width:52px;height:52px;"'), 'topAvatar 컨테이너 52px 지정');
+  assert.ok(indexHtml.includes('id="og-task-32-container"'), 'index.html #og-task-32-container 마크업 탑재');
+  assert.ok(indexHtml.includes('id="og-task-32-action-btn"'), 'index.html #og-task-32-action-btn 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('handle아바타_Item32Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
+
+  // 3. ui.css 스타일 및 반응형 검증
+  assert.ok(uiCss.includes('#og-task-32-container'), 'ui.css #og-task-32-container 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-32-action-btn'), 'ui.css #og-task-32-action-btn 스타일 정의');
+  assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');
+  assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
