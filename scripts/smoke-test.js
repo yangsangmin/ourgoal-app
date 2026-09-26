@@ -9294,6 +9294,30 @@ check('TASK-ES-294: 스톱워치 실시간 구간별 활동기록 팝업·상세
   assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
 });
 
+/* ============ [TASK-ES-295] 성취통계 데이터 관리 옆 접기토글 작동 안함 오류 수정 ============ */
+check('TASK-ES-295: 성취통계 데이터 관리 옆 접기토글 4위 1체 배선 검증', () => {
+  const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. js/components.js 정의 및 export 검증
+  assert.ok(compJs.includes('async function handle성취통계_Item45Action('), 'handle성취통계_Item45Action 함수 정의');
+  assert.ok(compJs.includes('handle성취통계_Item45Action = handle성취통계_Item45Action'), 'handle성취통계_Item45Action 노출');
+  assert.ok(compJs.includes('toggleDataManagementSection'), 'toggleDataManagementSection 함수 정의');
+  assert.ok(compJs.includes('og_task-45_cache'), 'og_task-45_cache 원자적 영속화 키 정의');
+
+  // 2. index.html 컨테이너 및 액션 버튼 검증
+  assert.ok(indexHtml.includes('id="og-task-45-container"'), 'index.html #og-task-45-container 마크업 탑재');
+  assert.ok(indexHtml.includes('id="og-task-45-action-btn"'), 'index.html #og-task-45-action-btn 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('handle성취통계_Item45Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
+
+  // 3. ui.css 스타일 및 반응형 검증
+  assert.ok(uiCss.includes('#og-task-45-container'), 'ui.css #og-task-45-container 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-45-action-btn'), 'ui.css #og-task-45-action-btn 스타일 정의');
+  assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');
+  assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

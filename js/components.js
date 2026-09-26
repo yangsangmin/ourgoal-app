@@ -1097,6 +1097,112 @@
     }
   }
 
+  /**
+   * [TASK-ES-295 / 노션 생각메모장 45번]
+   * 성취통계 데이터 관리 옆 접기토글 작동 안함 오류 수정
+   * 8원칙 & 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+   */
+  async function handle성취통계_Item45Action(event) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+
+    var win = typeof window !== 'undefined' ? window : global;
+    var actionBtn = (event && event.currentTarget) || (typeof document !== 'undefined' ? document.getElementById('og-task-45-action-btn') : null);
+    if (actionBtn) {
+      if (actionBtn.disabled) return;
+      actionBtn.disabled = true;
+    }
+
+    // 1. 12ms 햅틱 피드백
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      // 2. 비즈니스 로직 및 영구 원장 트랜잭션 (데이터 관리 접기토글 상태 토글 및 갱신)
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      var currentCache = null;
+      if (locStorage && typeof locStorage.getItem === 'function') {
+        try {
+          var raw = locStorage.getItem('og_task-45_cache');
+          if (raw) currentCache = JSON.parse(raw);
+        } catch (e) {}
+      }
+
+      var isCollapsed = currentCache ? !currentCache.is_collapsed : true;
+
+      var syncPayload = {
+        ticket: '45',
+        updated_at: new Date().toISOString(),
+        is_collapsed: isCollapsed,
+        collapse_toggle_active: true,
+        data_management_visible: !isCollapsed,
+        event_type: 'achievement_collapse_toggle_fix',
+        state: 'completed'
+      };
+
+      // 실제 DOM 내 데이터 관리 섹션 토글 처리 연동
+      if (typeof document !== 'undefined') {
+        var dataMgmtSec = document.getElementById('dataManagementSection') || document.querySelector('.data-management-section') || document.getElementById('achievementDataMgmtSection');
+        if (dataMgmtSec) {
+          dataMgmtSec.style.display = isCollapsed ? 'none' : 'block';
+        }
+        var toggleIcon = document.getElementById('dataMgmtToggleIcon') || document.querySelector('.data-mgmt-toggle-icon');
+        if (toggleIcon) {
+          toggleIcon.textContent = isCollapsed ? '▶' : '▼';
+        }
+      }
+
+      // Supabase 저장 또는 로컬 캐시 원자적 갱신
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-45',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {
+          if (locStorage && typeof locStorage.setItem === 'function') {
+            locStorage.setItem('og_task-45_cache', JSON.stringify(syncPayload));
+          }
+        }
+      } else if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-45_cache', JSON.stringify(syncPayload));
+      }
+
+      // 3. 완료 시각 피드백 토스트
+      if (typeof win.showToast === 'function') {
+        var toastMsg = isCollapsed ? '데이터 관리 섹션이 접혔습니다.' : '데이터 관리 섹션이 펼쳐졌습니다.';
+        win.showToast(toastMsg, { type: 'success', duration: 2000 });
+      }
+
+      // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-AUTO-45] 실행 실패:', err);
+      if (typeof win.showToast === 'function') {
+        win.showToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
+  function toggleDataManagementSection(forceState) {
+    return handle성취통계_Item45Action();
+  }
+
   if(typeof document !== 'undefined' && typeof document.addEventListener === 'function'){
     document.addEventListener('click', function(e){
       var closeBtn = e.target && e.target.closest && (e.target.closest('.og-modal-close') || e.target.closest('#ogModalCancelBtn'));
@@ -1120,7 +1226,9 @@
     window.handle아바타_Item42Action = handle아바타_Item42Action;
     window.handle성취통계_Item43Action = handle성취통계_Item43Action;
     window.handle기록스톱워치_Item44Action = handle기록스톱워치_Item44Action;
+    window.handle성취통계_Item45Action = handle성취통계_Item45Action;
     window.toggleAchievementMetricFilter = toggleAchievementMetricFilter;
+    window.toggleDataManagementSection = toggleDataManagementSection;
   }
   if(typeof module !== 'undefined' && module.exports){
     module.exports = OurgoalComponents;
@@ -1136,7 +1244,9 @@
     module.exports.handle아바타_Item42Action = handle아바타_Item42Action;
     module.exports.handle성취통계_Item43Action = handle성취통계_Item43Action;
     module.exports.handle기록스톱워치_Item44Action = handle기록스톱워치_Item44Action;
+    module.exports.handle성취통계_Item45Action = handle성취통계_Item45Action;
     module.exports.toggleAchievementMetricFilter = toggleAchievementMetricFilter;
+    module.exports.toggleDataManagementSection = toggleDataManagementSection;
   }
 })(typeof window !== 'undefined' ? window : global);
 
