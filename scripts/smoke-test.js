@@ -9165,6 +9165,33 @@ check('TASK-ES-289: 마니또 AI 동반자 1명 제한 및 실 유저 20명 초�
   assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
 });
 
+/* ============ [TASK-ES-290] 일정 배경사진 최대 2장 업로드 및 2장 등록 시 상하 반반 분할 레이아웃 적용 ============ */
+check('TASK-ES-290: 일정 배경사진 최대 2장 및 상하 반반 분할 레이아웃 4위 1체 배선 검증', () => {
+  const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+  const goalRegistryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'goal-templates-registry.js'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. js/components.js 및 js/goal-templates-registry.js 정의 검증
+  assert.ok(compJs.includes('async function handle목표탭_Item40Action('), 'handle목표탭_Item40Action 함수 정의');
+  assert.ok(compJs.includes('handle목표탭_Item40Action = handle목표탭_Item40Action'), 'handle목표탭_Item40Action 노출');
+  assert.ok(compJs.includes('og_task-40_cache'), 'og_task-40_cache 원자적 영속화 키 정의');
+  assert.ok(goalRegistryJs.includes('formatScheduleBackgroundLayout'), 'goal-templates-registry.js 내 formatScheduleBackgroundLayout 노출');
+
+  // 2. index.html 컨테이너 및 액션 버튼 검증
+  assert.ok(indexHtml.includes('id="og-task-40-container"'), 'index.html #og-task-40-container 마크업 탑재');
+  assert.ok(indexHtml.includes('id="og-task-40-action-btn"'), 'index.html #og-task-40-action-btn 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('handle목표탭_Item40Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
+
+  // 3. ui.css 스타일 및 반응형 검증
+  assert.ok(uiCss.includes('#og-task-40-container'), 'ui.css #og-task-40-container 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-40-action-btn'), 'ui.css #og-task-40-action-btn 스타일 정의');
+  assert.ok(uiCss.includes('.schedule-bg-split-container'), 'ui.css .schedule-bg-split-container 스타일 정의');
+  assert.ok(uiCss.includes('.schedule-bg-split-item'), 'ui.css .schedule-bg-split-item 스타일 정의');
+  assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');
+  assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

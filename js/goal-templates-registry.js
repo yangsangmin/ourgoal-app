@@ -2796,8 +2796,20 @@ function findExpertTemplate(text) {
   return null;
 }
 
+function formatScheduleBackgroundLayout(images) {
+  if (!images || !Array.isArray(images) || images.length === 0) {
+    return { count: 0, layout: 'none', images: [] };
+  }
+  var validImages = images.slice(0, 2);
+  if (validImages.length === 1) {
+    return { count: 1, layout: 'single_full', images: validImages };
+  }
+  return { count: 2, layout: 'split_50_50', images: validImages };
+}
+
 module.exports = {
   findExpertTemplate: findExpertTemplate,
   TEMPLATE_MAP: TEMPLATE_MAP,
-  MATCH_RULES: MATCH_RULES
+  MATCH_RULES: MATCH_RULES,
+  formatScheduleBackgroundLayout: formatScheduleBackgroundLayout
 };
