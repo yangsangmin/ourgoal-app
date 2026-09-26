@@ -12310,5 +12310,84 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
   }
 }
 
+/* =========================================================================
+   [#TASK-ES-278 / 노션 26] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 구현 UI/UX 및 375px 모바일 반응형
+   ========================================================================= */
+#og-task-26-container {
+  margin: 10px 0 14px 0;
+  padding: 14px 16px;
+  background: var(--surface-color, var(--card-bg, #ffffff));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.og-avatar-welcome-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.og-avatar-welcome-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.og-avatar-welcome-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main, var(--ink, #111827));
+}
+
+.og-avatar-welcome-desc {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-sub, var(--ink-soft, #4b5563));
+}
+
+.og-avatar-welcome-action-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+#og-task-26-action-btn {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  background: var(--primary-color, var(--brand, #3b82f6));
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, transform 0.1s ease;
+  box-sizing: border-box;
+}
+
+#og-task-26-action-btn:active {
+  transform: scale(0.97);
+  background: var(--primary-hover, #2563eb);
+}
+
+@media (max-width: 375px) {
+  #og-task-26-container {
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  #og-task-26-action-btn {
+    width: 100%;
+  }
+}
+
+
 
 
