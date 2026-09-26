@@ -7283,5 +7283,97 @@
   api.triggerAvatarLevelUpDialogue = triggerAvatarLevelUpDialogue;
   api.handle아바타_Item41Action = handle아바타_Item41Action;
 
+  /**
+   * [TASK-ES-292 / 노션 생각메모장 42번]
+   * 경험치 획득 시 아바타 축하 팝업 연출("잘했다! 내 자신!") 구현
+   */
+  function triggerExpCelebrationPopup(expGained) {
+    return {
+      dialogue: '잘했다! 내 자신!',
+      exp_gained: expGained || 10,
+      celebration_active: true,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  async function handle아바타_Item42Action(event) {
+    if (event) {
+      if (typeof event.stopPropagation === 'function') event.stopPropagation();
+      if (typeof event.preventDefault === 'function') event.preventDefault();
+    }
+
+    var win = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : {});
+    var doc = typeof document !== 'undefined' ? document : (win.document || null);
+    var actionBtn = doc && typeof doc.getElementById === 'function' ? doc.getElementById('og-task-42-action-btn') : null;
+    if (actionBtn) {
+      actionBtn.disabled = true;
+    }
+
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      var syncPayload = {
+        ticket: '42',
+        updated_at: new Date().toISOString(),
+        dialogue: '잘했다! 내 자신!',
+        event_type: 'exp_celebration',
+        celebration_active: true,
+        state: 'completed'
+      };
+
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-42',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {
+          if (locStorage && typeof locStorage.setItem === 'function') {
+            locStorage.setItem('og_task-42_cache', JSON.stringify(syncPayload));
+          }
+        }
+      } else if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-42_cache', JSON.stringify(syncPayload));
+      }
+
+      if (typeof win.showToast === 'function') {
+        win.showToast('잘했다! 내 자신!', { type: 'success', duration: 2500 });
+      }
+
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-AUTO-42] 실행 실패:', err);
+      if (typeof win.showToast === 'function') {
+        win.showToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    window.handle아바타_Item42Action = handle아바타_Item42Action;
+  }
+  if (typeof global !== 'undefined') {
+    global.handle아바타_Item42Action = handle아바타_Item42Action;
+  }
+
+  api.triggerExpCelebrationPopup = triggerExpCelebrationPopup;
+  api.handle아바타_Item42Action = handle아바타_Item42Action;
+
   return api;
 }));
