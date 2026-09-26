@@ -9115,6 +9115,31 @@ check('compliance: [#TASK-ES-287] 동반자 탭 내 AI 동반자 전면 제거 (
   assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
 });
 
+/* ============ [TASK-ES-288] 설정창 전면 개편 (기능 그룹화 및 인터페이스 간소화·압축) ============ */
+check('TASK-ES-288: 설정창 전면 개편 4위 1체 배선 및 모바일 375px 규격 검증', () => {
+  const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+  const custJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'customize.js'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. js/components.js 및 js/customize.js handle전체공통_Item38Action 정의 검증
+  assert.ok(compJs.includes('async function handle전체공통_Item38Action('), 'handle전체공통_Item38Action 함수 정의');
+  assert.ok(compJs.includes('handle전체공통_Item38Action = handle전체공통_Item38Action'), 'handle전체공통_Item38Action 노출');
+  assert.ok(compJs.includes('og_task-38_cache'), 'og_task-38_cache 원자적 영속화 키 정의');
+  assert.ok(custJs.includes('handle전체공통_Item38Action'), 'customize.js 내 handle전체공통_Item38Action 노출');
+
+  // 2. index.html 컨테이너 및 액션 버튼 검증
+  assert.ok(indexHtml.includes('id="og-task-38-container"'), 'index.html #og-task-38-container 마크업 탑재');
+  assert.ok(indexHtml.includes('id="og-task-38-action-btn"'), 'index.html #og-task-38-action-btn 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('handle전체공통_Item38Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
+
+  // 3. ui.css 스타일 및 반응형 검증
+  assert.ok(uiCss.includes('#og-task-38-container'), 'ui.css #og-task-38-container 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-38-action-btn'), 'ui.css #og-task-38-action-btn 스타일 정의');
+  assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');
+  assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
