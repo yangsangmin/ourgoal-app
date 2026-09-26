@@ -1,0 +1,85 @@
+{
+  "task": "TASK-ES-302",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-302-TEAM-GOALS-COLLAPSE-DEFAULT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/components.js에 handle팀목표_Item52Action 직통 핸들러 및 collapseAllTeamGoalAccordions 함수가 정의되어 있고 window 및 module.exports에 노출되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html에 og-task-52-container 마크업, og-task-52-action-btn 버튼 및 renderTeamGoalsScreen 내 collapseAllTeamGoalAccordions 호출이 반영되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "ui.css에 og-task-52-container 및 og-task-52-action-btn 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "tests/team-goals-collapse-default.test.js 및 scripts/smoke-test.js에 팀 목표 기본 접힘 상태 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle팀목표_Item52Action 직통 핸들러 및 og_task-52_cache 저장이 정의되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle팀목표_Item52Action"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 og-task-52-container 및 collapseAllTeamGoalAccordions 호출 로직이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "og-task-52-container"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 og-task-52-container 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "og-task-52-container"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/team-goals-collapse-default.test.js 및 scripts/smoke-test.js 내에 팀 목표 기본 접힘 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/team-goals-collapse-default.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/team-goals-collapse-default.test.js",
+        "text": "team-goals-collapse-default"
+      }
+    }
+  ]
+}
