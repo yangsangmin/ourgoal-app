@@ -8850,6 +8850,28 @@ check('compliance: [#TASK-ES-276] 측정지표 분석할 항목별 차등 지정
   assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
 });
 
+/* ============ [#TASK-ES-277] 소통창 화면정리 (피드·소통 UI 시인성 및 피로도 개선) ============ */
+check('compliance: [#TASK-ES-277] 소통창 화면정리 (피드·소통 UI 시인성 및 피로도 개선)', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const teamInviteCommJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+
+  // 1. js/team-invite-comm.js handle팀목표_Item25Action 정의 검증
+  assert.ok(teamInviteCommJs.includes('async function handle팀목표_Item25Action('), 'handle팀목표_Item25Action 함수 정의');
+  assert.ok(teamInviteCommJs.includes('handle팀목표_Item25Action = handle팀목표_Item25Action;'), 'handle팀목표_Item25Action 바인딩');
+
+  // 2. index.html DOM 마크업 검증
+  assert.ok(indexHtml.includes('id="og-task-25-container"'), 'index.html #og-task-25-container 마크업 탑재');
+  assert.ok(indexHtml.includes('id="og-task-25-action-btn"'), 'index.html #og-task-25-action-btn 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('handle팀목표_Item25Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
+
+  // 3. ui.css 스타일 및 반응형 검증
+  assert.ok(uiCss.includes('#og-task-25-container'), 'ui.css #og-task-25-container 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-25-action-btn'), 'ui.css #og-task-25-action-btn 스타일 정의');
+  assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');
+  assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
