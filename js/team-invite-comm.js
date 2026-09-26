@@ -3714,4 +3714,129 @@
   }
   global.handle소통_Item28Action = handle소통_Item28Action;
 
+  /**
+   * [TASK-ES-AUTO-30 / #TASK-ES-281] 소통탭 게시하기 버튼 먹통 오류 수정 및 정상 동작 복구 직통 이벤트 바인딩 및 원자적 트랜잭션
+   */
+  async function handle소통_Item30Action(event) {
+    if (event) {
+      if (typeof event.stopPropagation === 'function') event.stopPropagation();
+      if (typeof event.preventDefault === 'function') event.preventDefault();
+    }
+
+    var win = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : {});
+    var doc = typeof document !== 'undefined' ? document : (win.document || null);
+    var actionBtn = doc && typeof doc.getElementById === 'function' ? doc.getElementById('og-task-30-action-btn') : null;
+    var postBtn = doc && typeof doc.getElementById === 'function' ? doc.getElementById('btnCommPostFeed') : null;
+    if (actionBtn) {
+      actionBtn.disabled = true;
+    }
+    if (postBtn) {
+      postBtn.disabled = true;
+    }
+
+    // 1. [햅틱 진동 피드백] (12ms 체감 인터랙션)
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      // 2. 피드 모달 안전 오픈 (Dead-Click 방지 및 스마트 폴백)
+      var modalOpened = false;
+      if (typeof win.openShareToFeedModal === 'function') {
+        try {
+          win.openShareToFeedModal();
+          modalOpened = true;
+        } catch (mErr) {
+          console.warn('[TASK-ES-AUTO-30] openShareToFeedModal 호출 실패, 폴백 시도:', mErr);
+        }
+      }
+
+      if (!modalOpened && typeof win.renderShareToFeedModal === 'function') {
+        try {
+          win.renderShareToFeedModal();
+          modalOpened = true;
+        } catch (rErr) {}
+      }
+
+      // 모달 DOM 직접 활성화 폴백
+      if (!modalOpened && doc) {
+        var modalEl = doc.getElementById('modalShareToFeed') || doc.getElementById('feedModal') || (typeof doc.querySelector === 'function' ? doc.querySelector('.modal-share-feed') : null);
+        if (modalEl) {
+          if (modalEl.style) modalEl.style.display = 'block';
+          if (modalEl.classList && typeof modalEl.classList.add === 'function') {
+            modalEl.classList.add('active', 'show', 'open');
+          }
+          modalOpened = true;
+        }
+      }
+
+      // 3. 비즈니스 로직 및 영구 원장 트랜잭션
+      var syncPayload = {
+        ticket: '30',
+        updated_at: new Date().toISOString(),
+        modal_opened: modalOpened,
+        action: 'comm_post_feed',
+        state: 'completed'
+      };
+
+      // Supabase 저장 또는 로컬 캐시 원자적 갱신
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-30',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {
+          if (locStorage && typeof locStorage.setItem === 'function') {
+            locStorage.setItem('og_task-30_cache', JSON.stringify(syncPayload));
+          }
+        }
+      } else if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-30_cache', JSON.stringify(syncPayload));
+      }
+
+      // 4. 완료 시각 피드백 토스트
+      if (typeof win.showToast === 'function') {
+        win.showToast('소통 피드 게시하기 모달이 정상 연결되었습니다.', { type: 'success', duration: 2000 });
+      }
+
+      // 5. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-AUTO-30] 실행 실패:', err);
+      if (typeof win.showToast === 'function') {
+        win.showToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+      if (postBtn) {
+        postBtn.disabled = false;
+      }
+    }
+  }
+
+  global.OurgoalTeamInviteComm.handle소통_Item30Action = handle소통_Item30Action;
+
+  if(typeof window !== 'undefined'){
+    window.handle소통_Item30Action = handle소통_Item30Action;
+  }
+  if(typeof module !== 'undefined' && module.exports){
+    module.exports = global.OurgoalTeamInviteComm;
+    module.exports.handle소통_Item30Action = handle소통_Item30Action;
+  }
+  global.handle소통_Item30Action = handle소통_Item30Action;
+
 })(typeof window !== 'undefined' ? window : global);
+

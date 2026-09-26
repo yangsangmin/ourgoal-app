@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-281",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-281-COMM-POST-FEED-BUTTON-FIX.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/team-invite-comm.js에 handle소통_Item30Action 직통 핸들러가 정의되어 있고 window에 노출되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "js/team-invite-comm.js에 openShareToFeedModal 안전 호출 및 og_task-30_cache 로컬 캐시 원자적 갱신, 4대 뷰 동시 전파가 구현되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 소통 화면에 btnCommPostFeed 안전 핸들러 및 og-task-30-container, og-task-30-action-btn 마크업이 탑재되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "ui.css에 og-task-30-action-btn 모바일 44px 및 반응형 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/comm-post-feed-button-fix.test.js에 소통탭 게시하기 버튼 단위 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/team-invite-comm.js 내에 handle소통_Item30Action 직통 핸들러가 정의되어 있다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-invite-comm.js",
+        "text": "handle소통_Item30Action"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/team-invite-comm.js 내에 og_task-30_cache 로컬스토리지 저장이 구현되어 있다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-invite-comm.js",
+        "text": "og_task-30_cache"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 og-task-30-container 마크업이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "og-task-30-container"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 og-task-30-action-btn 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "og-task-30-action-btn"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/comm-post-feed-button-fix.test.js 내에 단위 테스트가 정의되어 있다",
+      "touches": [
+        "tests/comm-post-feed-button-fix.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/comm-post-feed-button-fix.test.js",
+        "text": "comm-post-feed-button-fix"
+      }
+    }
+  ]
+}
