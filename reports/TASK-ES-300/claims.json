@@ -1,0 +1,85 @@
+{
+  "task": "TASK-ES-300",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-300-SETTINGS-COLLAPSE-DEFAULT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/components.js에 handle전체공통_Item50Action 직통 핸들러 및 collapseAllSettingsSections 함수가 정의되어 있고 window 및 module.exports에 노출되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html에 og-task-50-container 마크업, og-task-50-action-btn 버튼, settings-group-accordion 기본 접힘 및 renderSettingsScreen 내 collapseAllSettingsSections 호출이 반영되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "ui.css에 og-task-50-container, og-task-50-action-btn 및 settings-group-accordion 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "tests/settings-collapse-default.test.js 및 scripts/smoke-test.js에 설정창 기본 접힘 상태 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle전체공통_Item50Action 직통 핸들러 및 og_task-50_cache 저장이 정의되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle전체공통_Item50Action"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 og-task-50-container 및 collapseAllSettingsSections 호출 로직이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "og-task-50-container"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 og-task-50-container 및 settings-group-accordion 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "og-task-50-container"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/settings-collapse-default.test.js 및 scripts/smoke-test.js 내에 설정창 기본 접힘 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/settings-collapse-default.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/settings-collapse-default.test.js",
+        "text": "settings-collapse-default"
+      }
+    }
+  ]
+}

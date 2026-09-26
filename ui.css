@@ -13685,6 +13685,70 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
   }
 }
 
+/* ==========================================================================
+   🌟 [TASK-ES-300 / 노션 50] 설정창 진입 시 모든 설정 섹션 기본 접힘(Collapsed) 상태 적용
+   ========================================================================== */
+#og-task-50-container {
+  display: block;
+  background: var(--surface-1, #1e293b);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#settingsCollapseDesc {
+  font-size: 13px;
+  color: var(--text-muted, #94a3b8);
+  margin-top: 4px;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+#og-task-50-action-btn {
+  min-width: 44px;
+  min-height: 44px; /* 헌법 제7조 제8항 최소 터치 타겟 44px */
+  padding: 8px 16px;
+  background: var(--primary, var(--brand, #3b82f6));
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px; /* 폰트 최소 12px 고대비 */
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, transform 0.1s ease;
+  box-sizing: border-box;
+}
+
+#og-task-50-action-btn:active {
+  transform: scale(0.97);
+  background: var(--primary-hover, #2563eb);
+}
+
+.settings-group-accordion {
+  transition: all 0.2s ease;
+}
+
+.settings-group-accordion:not([open]) summary {
+  opacity: 0.95;
+}
+
+@media (max-width: 375px) {
+  #og-task-50-container {
+    padding: 10px 12px;
+    margin-bottom: 6px;
+  }
+  #og-task-50-action-btn {
+    width: 100%;
+  }
+}
+
+
 
 
 
