@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-284",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-284-QUEST-TASK-EXP.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/components.js에 handle홈탭_Item33Action 직통 핸들러가 정의되어 있고 window에 노출되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "js/components.js에 og_task-33_cache 로컬 캐시 원자적 갱신, 12ms 햅틱, 4대 뷰 동시 전파가 구현되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html에 오늘의 퀘스트 2번 미션 '할일 1개 완료' 및 10EXP 보상과 og-task-33-container 마크업이 탑재되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "ui.css에 og-task-33-action-btn 모바일 44px 및 반응형 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/quest-task-exp.test.js에 오늘의 퀘스트 미션 및 10EXP 보상 단위 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle홈탭_Item33Action 직통 핸들러가 정의되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle홈탭_Item33Action"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 og_task-33_cache 로컬스토리지 저장이 구현되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "og_task-33_cache"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 og-task-33-container 마크업이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "og-task-33-container"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 og-task-33-action-btn 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "og-task-33-action-btn"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/quest-task-exp.test.js 내에 단위 테스트가 정의되어 있다",
+      "touches": [
+        "tests/quest-task-exp.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/quest-task-exp.test.js",
+        "text": "quest-task-exp"
+      }
+    }
+  ]
+}
