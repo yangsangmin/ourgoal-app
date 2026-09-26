@@ -9016,6 +9016,32 @@ check('compliance: [#TASK-ES-283] 홈 및 전 탭 우측 상단 아바타 아이
   assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
 });
 
+/* ============ [#TASK-ES-284] 오늘의 퀘스트 미션 변경 ('핵심 마일스톤 1개' -> '할일 1개' 실행 및 10EXP 보상 조정) ============ */
+check('compliance: [#TASK-ES-284] 오늘의 퀘스트 미션 변경 (\'핵심 마일스톤 1개\' -> \'할일 1개\' 실행 및 10EXP 보상 조정)', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. js/components.js handle홈탭_Item33Action 정의 검증
+  assert.ok(compJs.includes('async function handle홈탭_Item33Action('), 'handle홈탭_Item33Action 함수 정의');
+  assert.ok(compJs.includes('handle홈탭_Item33Action = handle홈탭_Item33Action'), 'handle홈탭_Item33Action 노출');
+  assert.ok(compJs.includes('og_task-33_cache'), 'og_task-33_cache 원자적 영속화 키 정의');
+
+  // 2. index.html 오늘의 퀘스트 2번 미션 및 10EXP 보상 검증
+  assert.ok(indexHtml.includes('할일 1개 완료'), 'index.html 퀘스트 2번 할일 1개 완료 텍스트 정의');
+  assert.ok(indexHtml.includes('+10 EXP'), 'index.html 퀘스트 2번 +10 EXP 보상 정의');
+  assert.ok(indexHtml.includes('awardXP(10, \'데일리 퀘스트: 할일 1개 완료 (+10 EXP)\')'), 'awardXP 10 EXP 적립 로직 탑재');
+  assert.ok(indexHtml.includes('id="og-task-33-container"'), 'index.html #og-task-33-container 마크업 탑재');
+  assert.ok(indexHtml.includes('id="og-task-33-action-btn"'), 'index.html #og-task-33-action-btn 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('handle홈탭_Item33Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
+
+  // 3. ui.css 스타일 및 반응형 검증
+  assert.ok(uiCss.includes('#og-task-33-container'), 'ui.css #og-task-33-container 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-33-action-btn'), 'ui.css #og-task-33-action-btn 스타일 정의');
+  assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');
+  assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
