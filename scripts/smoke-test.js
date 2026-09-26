@@ -9544,6 +9544,32 @@ check('TASK-ES-303: 목표탭 템플릿백과사전 전체화면 팝업 및 상�
   assert.ok(uiCss.includes('template-encyclopedia-fullscreen-modal'), 'ui.css 전체화면 모달 스타일 정의');
 });
 
+/* ============ [TASK-ES-304] 홈화면 상단 누적 배선용 테스트 카드(og-task-*) 23종 일괄 화면 은폐 ============ */
+check('TASK-ES-304: 홈화면 상단 누적 배선용 테스트 카드 23종 일괄 화면 은폐 및 홈화면 기능 최상단 복원 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. index.html 비노출 슬롯 및 홈화면 핵심 위젯 존재 검증
+  assert.ok(indexHtml.includes('id="ogTaskWireSlot"'), 'index.html #ogTaskWireSlot 마크업 탑재');
+  assert.ok(indexHtml.includes('<div id="ogTaskWireSlot" style="display:none;" aria-hidden="true">'), 'index.html #ogTaskWireSlot display:none 은폐');
+  assert.ok(indexHtml.includes('id="levelBadgeRow"'), 'index.html #levelBadgeRow 보존');
+  assert.ok(indexHtml.includes('id="todayMissionCard"'), 'index.html #todayMissionCard 보존');
+  assert.ok(indexHtml.includes('id="homeGrassSummaryCard"'), 'index.html #homeGrassSummaryCard 보존');
+  assert.ok(indexHtml.includes('id="captureCardBox"'), 'index.html #captureCardBox 보존');
+
+  // 2. 23종 배선 컨테이너 및 액션 버튼 무결성 보존 검증
+  const taskNumbers = [26, 31, 32, 33, 34, 35, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53];
+  for (const num of taskNumbers) {
+    assert.ok(indexHtml.includes(`id="og-task-${num}-container"`), `#og-task-${num}-container 마크업 보존`);
+    assert.ok(indexHtml.includes(`id="og-task-${num}-action-btn"`), `#og-task-${num}-action-btn 마크업 보존`);
+  }
+
+  // 3. ui.css 전역 은폐 규칙 검증
+  assert.ok(uiCss.includes('#ogTaskWireSlot'), 'ui.css #ogTaskWireSlot 스타일 정의');
+  assert.ok(uiCss.includes('.og-feature-card'), 'ui.css .og-feature-card 은폐 스타일 정의');
+  assert.ok(uiCss.includes('display: none !important;'), 'ui.css display: none !important 규칙 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
