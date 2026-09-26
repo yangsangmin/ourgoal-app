@@ -9370,6 +9370,35 @@ check('TASK-ES-297: 시간기록 모달창 세부설명 간소화 및 창 크기
   assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
 });
 
+/* ============ [TASK-ES-298] 홈 경험치창·각 탭 우측상단 프로필·설정창 아바타 아이콘 크기 일괄 확대 ============ */
+check('TASK-ES-298: 아바타 아이콘 크기 일괄 확대 4위 1체 배선 검증', () => {
+  const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. js/components.js 정의 및 export 검증
+  assert.ok(compJs.includes('async function handle아바타_Item48Action('), 'handle아바타_Item48Action 함수 정의');
+  assert.ok(compJs.includes('handle아바타_Item48Action = handle아바타_Item48Action'), 'handle아바타_Item48Action 노출');
+  assert.ok(compJs.includes('enlargeAvatarIconsBatch'), 'enlargeAvatarIconsBatch 함수 정의');
+  assert.ok(compJs.includes('og_task-48_cache'), 'og_task-48_cache 원자적 영속화 키 정의');
+
+  // 2. index.html 컨테이너 및 액션 버튼 검증
+  assert.ok(indexHtml.includes('id="og-task-48-container"'), 'index.html #og-task-48-container 마크업 탑재');
+  assert.ok(indexHtml.includes('id="og-task-48-action-btn"'), 'index.html #og-task-48-action-btn 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('handle아바타_Item48Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
+  assert.ok(indexHtml.includes('size: 76') && indexHtml.includes('width:76px;height:76px;'), 'index.html levelBadgeHtml 76px 아바타 확대');
+  assert.ok(indexHtml.includes('id="topAvatar" style="width:56px;height:56px;"'), 'index.html topAvatar 56px 확대');
+  assert.ok(indexHtml.includes('avatarHtml(76)'), 'index.html 설정창 아바타 76px 확대');
+
+  // 3. ui.css 스타일 및 반응형 검증
+  assert.ok(uiCss.includes('#og-task-48-container'), 'ui.css #og-task-48-container 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-48-action-btn'), 'ui.css #og-task-48-action-btn 스타일 정의');
+  assert.ok(uiCss.includes('.toss-settings-avatar-wrap'), 'ui.css .toss-settings-avatar-wrap 스타일 정의');
+  assert.ok(uiCss.includes('width: 76px;'), 'ui.css 설정 아바타 랩 76px 정의');
+  assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');
+  assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
