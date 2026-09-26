@@ -1,0 +1,104 @@
+{
+  "task": "TASK-ES-293",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-293-ACHIEVEMENT-METRIC-MULTISELECT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/components.js에 handle성취통계_Item43Action 직통 핸들러가 정의되어 있고 window 및 module.exports에 노출되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "js/components.js에 toggleAchievementMetricFilter 헬퍼 함수가 정의되어 있고 다중선택 필터링 로직이 구현되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html에 og-task-43-container 마크업 및 og-task-43-action-btn 버튼이 탑재되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "ui.css에 og-task-43-container, og-task-43-action-btn 및 metric-multiselect-chip 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/achievement-metric-multiselect.test.js 및 scripts/smoke-test.js에 성취통계 측정지표 다중선택 단위 테스트 및 스모크 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle성취통계_Item43Action 직통 핸들러 및 og_task-43_cache 저장이 정의되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle성취통계_Item43Action"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 toggleAchievementMetricFilter 헬퍼 함수가 정의되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "toggleAchievementMetricFilter"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 og-task-43-container 및 og-task-43-action-btn 마크업이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "og-task-43-container"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 og-task-43-container 및 metric-multiselect-chip 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "og-task-43-container"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/achievement-metric-multiselect.test.js 및 scripts/smoke-test.js 내에 성취통계 측정지표 다중선택 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/achievement-metric-multiselect.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/achievement-metric-multiselect.test.js",
+        "text": "achievement-metric-multiselect"
+      }
+    }
+  ]
+}
