@@ -394,7 +394,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div class="cal-sub-guide" id="calSubGuideBanner">
         <span class="cal-sub-guide-icon">🖼️</span>
         <span>일정을 사진배경으로 채워서 나만의 사진일기장을 만들어봐요</span>
-        <button type="button" class="btn-ghost" id="btnHideCalDiaryGuide" style="margin-left:auto;border:none;background:transparent;cursor:pointer;font-size:.875rem;color:var(--ink-soft);padding:2px 6px;" title="안내창 영구 닫기" aria-label="안내창 영구 닫기">✕</button>
+        <button type="button" class="btn-ghost btn-cal-diary-close" id="btnHideCalDiaryGuide" style="margin-left:auto;border:none;background:transparent;cursor:pointer;font-size:1.1rem;color:var(--ink-soft);padding:8px 12px;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;" title="안내창 영구 닫기" aria-label="안내창 영구 닫기" onclick="if(window.handle일정_Item29Action) handle일정_Item29Action(event);">✕</button>
+      </div>
+      <!-- 🖼️ [TASK-ES-280 / 노션 29] 일정 사진 일기장 안내창 우측 상단 닫기(X) 버튼 추가 및 영구 숨김 처리 -->
+      <div id="og-task-29-container" class="og-diary-guide-card">
+        <div class="og-diary-guide-header">
+          <span class="og-diary-guide-icon">🖼️</span>
+          <h4 class="og-diary-guide-title">사진 일기장 안내 제어 허브</h4>
+        </div>
+        <p class="og-diary-guide-desc">일정 탭 상단 사진 일기장 안내창을 영구 숨김 처리하고 깔끔한 캘린더 화면 공간을 확보합니다.</p>
+        <div class="og-diary-guide-action-row">
+          <button type="button" id="og-task-29-action-btn" class="og-diary-guide-btn" onclick="handle일정_Item29Action(event)">
+            ✕ 사진 일기장 안내창 영구 닫기
+          </button>
+        </div>
       </div>
       <div id="calGoogleBanner" style="display:none;"></div>
       <div class="cal-nav-row" style="display:none;">

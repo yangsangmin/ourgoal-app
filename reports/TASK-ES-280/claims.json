@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-280",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-280-CALENDAR-PHOTO-DIARY-DISMISS-GUIDE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/calendar-attachment.js에 handle일정_Item29Action 직통 핸들러가 정의되어 있고 window에 노출되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "js/calendar-attachment.js에 ourgoal_hide_diary_guide 및 og_task-29_cache 로컬 캐시 원자적 갱신 및 4대 뷰 동시 전파가 구현되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 일정 화면에 og-task-29-container 및 og-task-29-action-btn 마크업이 탑재되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "ui.css에 og-task-29-action-btn 모바일 44px 및 반응형 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/calendar-photo-diary-dismiss-guide.test.js에 사진 일기장 안내창 닫기 단위 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/calendar-attachment.js 내에 handle일정_Item29Action 직통 핸들러가 정의되어 있다",
+      "touches": [
+        "js/calendar-attachment.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/calendar-attachment.js",
+        "text": "handle일정_Item29Action"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/calendar-attachment.js 내에 ourgoal_hide_diary_guide 로컬스토리지 저장이 구현되어 있다",
+      "touches": [
+        "js/calendar-attachment.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/calendar-attachment.js",
+        "text": "ourgoal_hide_diary_guide"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 og-task-29-container 마크업이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "og-task-29-container"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 og-task-29-action-btn 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "og-task-29-action-btn"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/calendar-photo-diary-dismiss-guide.test.js 내에 단위 테스트가 정의되어 있다",
+      "touches": [
+        "tests/calendar-photo-diary-dismiss-guide.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/calendar-photo-diary-dismiss-guide.test.js",
+        "text": "calendar-photo-diary-dismiss-guide"
+      }
+    }
+  ]
+}

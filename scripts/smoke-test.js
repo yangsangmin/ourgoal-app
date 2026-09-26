@@ -8916,6 +8916,29 @@ check('compliance: [#TASK-ES-279] DM창 타 유저 클릭 시 키보드 자동 �
   assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
 });
 
+/* ============ [#TASK-ES-280] 일정 사진 일기장 안내창 우측 상단 닫기(X) 버튼 추가 및 영구 숨김 처리 ============ */
+check('compliance: [#TASK-ES-280] 일정 사진 일기장 안내창 우측 상단 닫기(X) 버튼 추가 및 영구 숨김 처리', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const calAttachmentJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'calendar-attachment.js'), 'utf8');
+
+  // 1. js/calendar-attachment.js handle일정_Item29Action 정의 검증
+  assert.ok(calAttachmentJs.includes('async function handle일정_Item29Action('), 'handle일정_Item29Action 함수 정의');
+  assert.ok(calAttachmentJs.includes('handle일정_Item29Action = handle일정_Item29Action'), 'handle일정_Item29Action 노출');
+
+  // 2. index.html DOM 마크업 검증
+  assert.ok(indexHtml.includes('id="og-task-29-container"'), 'index.html #og-task-29-container 마크업 탑재');
+  assert.ok(indexHtml.includes('id="og-task-29-action-btn"'), 'index.html #og-task-29-action-btn 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('handle일정_Item29Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
+  assert.ok(indexHtml.includes('id="btnHideCalDiaryGuide"'), 'index.html #btnHideCalDiaryGuide 닫기 버튼 탑재');
+
+  // 3. ui.css 스타일 및 반응형 검증
+  assert.ok(uiCss.includes('#og-task-29-container'), 'ui.css #og-task-29-container 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-29-action-btn'), 'ui.css #og-task-29-action-btn 스타일 정의');
+  assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');
+  assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
