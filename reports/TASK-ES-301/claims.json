@@ -1,0 +1,85 @@
+{
+  "task": "TASK-ES-301",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-301-FEED-POST-PREVIEW-MODAL.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/components.js에 handle소통_Item51Action 직통 핸들러 및 toggleFeedPostPreview 함수가 정의되어 있고 window 및 module.exports에 노출되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html에 og-task-51-container 마크업, og-task-51-action-btn 버튼, 피드 게시 모달 내 sharePreviewBtn 및 sharePreviewSlot이 반영되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "ui.css에 og-task-51-container, og-task-51-action-btn, sharePreviewSlot, sharePreviewBtn 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "tests/feed-post-preview-modal.test.js 및 scripts/smoke-test.js에 피드 게시 모달 내 미리보기 기능 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle소통_Item51Action 직통 핸들러 및 og_task-51_cache 저장이 정의되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle소통_Item51Action"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 og-task-51-container 및 sharePreviewSlot 마크업이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "og-task-51-container"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 og-task-51-container 및 sharePreviewSlot 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "og-task-51-container"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/feed-post-preview-modal.test.js 및 scripts/smoke-test.js 내에 피드 미리보기 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/feed-post-preview-modal.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/feed-post-preview-modal.test.js",
+        "text": "feed-post-preview-modal"
+      }
+    }
+  ]
+}
