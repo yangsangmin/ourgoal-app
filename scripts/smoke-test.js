@@ -8963,6 +8963,32 @@ check('compliance: [#TASK-ES-281] 소통탭 게시하기 버튼 먹통 오류 �
   assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
 });
 
+/* ============ [#TASK-ES-282] 전 탭 상위 중복 '홈구성' 버튼 제거 및 '나만의 홈 구성' 단일화 ============ */
+check('compliance: [#TASK-ES-282] 전 탭 상위 중복 \'홈구성\' 버튼 제거 및 \'나만의 홈 구성\' 단일화', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const customJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'customize.js'), 'utf8');
+
+  // 1. js/customize.js handle홈_Item31Action 정의 검증
+  assert.ok(customJs.includes('async function handle홈_Item31Action('), 'handle홈_Item31Action 함수 정의');
+  assert.ok(customJs.includes('handle홈_Item31Action = handle홈_Item31Action'), 'handle홈_Item31Action 노출');
+
+  // 2. index.html 상위 버튼 소거 및 본문 DOM 마크업 검증
+  assert.ok(indexHtml.includes('id="topHomeLayoutBtn"') && indexHtml.includes('display:none !important'), '상위 탑바 topHomeLayoutBtn 전 탭 완전 은폐 및 소거');
+  assert.ok(indexHtml.includes('id="btnCustomHomeLayout"'), 'index.html #btnCustomHomeLayout 단일 정통 버튼 탑재');
+  assert.ok(indexHtml.includes('handle홈_Item31Action'), 'index.html #btnCustomHomeLayout에 handle홈_Item31Action 연동');
+  assert.ok(indexHtml.includes('id="og-task-31-container"'), 'index.html #og-task-31-container 마크업 탑재');
+  assert.ok(indexHtml.includes('id="og-task-31-action-btn"'), 'index.html #og-task-31-action-btn 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('handle홈_Item31Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
+
+  // 3. ui.css 스타일 및 반응형 검증
+  assert.ok(uiCss.includes('#topHomeLayoutBtn'), 'ui.css #topHomeLayoutBtn 소거 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-31-container'), 'ui.css #og-task-31-container 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-31-action-btn'), 'ui.css #og-task-31-action-btn 스타일 정의');
+  assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');
+  assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

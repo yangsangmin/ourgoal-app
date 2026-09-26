@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-282",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-282-REMOVE-DUPLICATE-HOME-LAYOUT-BUTTON.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/customize.js에 handle홈_Item31Action 직통 핸들러가 정의되어 있고 window에 노출되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "js/customize.js에 openHomeCustomizer 안전 호출 및 og_task-31_cache 로컬 캐시 원자적 갱신, 4대 뷰 동시 전파가 구현되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 상위 탑바의 topHomeLayoutBtn이 완전 소거/은폐되고, 본문 btnCustomHomeLayout 및 og-task-31-container 마크업이 탑재되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "ui.css에 topHomeLayoutBtn 소거 스타일과 og-task-31-action-btn 모바일 44px 및 반응형 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/remove-duplicate-home-layout-button.test.js에 전 탭 상위 중복 홈구성 버튼 제거 단위 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/customize.js 내에 handle홈_Item31Action 직통 핸들러가 정의되어 있다",
+      "touches": [
+        "js/customize.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/customize.js",
+        "text": "handle홈_Item31Action"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/customize.js 내에 og_task-31_cache 로컬스토리지 저장이 구현되어 있다",
+      "touches": [
+        "js/customize.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/customize.js",
+        "text": "og_task-31_cache"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 og-task-31-container 마크업이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "og-task-31-container"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 og-task-31-action-btn 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "og-task-31-action-btn"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/remove-duplicate-home-layout-button.test.js 내에 단위 테스트가 정의되어 있다",
+      "touches": [
+        "tests/remove-duplicate-home-layout-button.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/remove-duplicate-home-layout-button.test.js",
+        "text": "remove-duplicate-home-layout-button"
+      }
+    }
+  ]
+}
