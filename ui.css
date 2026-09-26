@@ -13610,6 +13610,82 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
   }
 }
 
+/* ==========================================================================
+   🌟 [TASK-ES-299 / 노션 49] 팀 목표 댓글 작성 및 전송 기능 먹통 오류 수정
+   ========================================================================== */
+#og-task-49-container {
+  display: block;
+  background: var(--surface-1, #1e293b);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#teamGoalCommentDesc {
+  font-size: 13px;
+  color: var(--text-muted, #94a3b8);
+  margin-top: 4px;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+#og-task-49-action-btn {
+  min-width: 44px;
+  min-height: 44px; /* 헌법 제7조 제8항 최소 터치 타겟 44px */
+  padding: 8px 16px;
+  background: var(--primary, var(--brand, #3b82f6));
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px; /* 폰트 최소 12px 고대비 */
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, transform 0.1s ease;
+  box-sizing: border-box;
+}
+
+#og-task-49-action-btn:active {
+  transform: scale(0.97);
+  background: var(--primary-hover, #2563eb);
+}
+
+.team-comments-block {
+  box-sizing: border-box;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.team-comments-block .dm-input-row {
+  margin-top: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.team-comments-block [data-cmtsend] {
+  min-height: 44px; /* 헌법 터치 타겟 규격 */
+  box-sizing: border-box;
+}
+
+@media (max-width: 375px) {
+  #og-task-49-container {
+    padding: 10px 12px;
+    margin-bottom: 6px;
+  }
+  #og-task-49-action-btn {
+    width: 100%;
+  }
+  .team-comments-block {
+    overflow-x: hidden;
+  }
+}
+
+
 
 
 

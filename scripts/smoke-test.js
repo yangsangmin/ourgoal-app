@@ -9399,6 +9399,36 @@ check('TASK-ES-298: 아바타 아이콘 크기 일괄 확대 4위 1체 배선 �
   assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
 });
 
+/* ============ [TASK-ES-299] 팀 목표 댓글 작성 및 전송 기능 먹통 오류 수정 ============ */
+check('TASK-ES-299: 팀 목표 댓글 작성 및 전송 기능 4위 1체 배선 검증', () => {
+  const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. js/components.js 정의 및 export 검증
+  assert.ok(compJs.includes('async function handle팀목표_Item49Action('), 'handle팀목표_Item49Action 함수 정의');
+  assert.ok(compJs.includes('handle팀목표_Item49Action = handle팀목표_Item49Action'), 'handle팀목표_Item49Action 노출');
+  assert.ok(compJs.includes('sendTeamGoalComment'), 'sendTeamGoalComment 함수 정의');
+  assert.ok(compJs.includes('og_task-49_cache'), 'og_task-49_cache 원자적 영속화 키 정의');
+
+  // 2. index.html 컨테이너, 액션 버튼 및 댓글 전송 직통 헬퍼 검증
+  assert.ok(indexHtml.includes('id="og-task-49-container"'), 'index.html #og-task-49-container 마크업 탑재');
+  assert.ok(indexHtml.includes('id="og-task-49-action-btn"'), 'index.html #og-task-49-action-btn 버튼 마크업 탑재');
+  assert.ok(indexHtml.includes('handle팀목표_Item49Action(event)'), 'index.html 액션 버튼 onclick 핸들러 탑재');
+  assert.ok(indexHtml.includes('window.sendTeamGoalComment = async function'), 'index.html window.sendTeamGoalComment 직통 헬퍼 탑재');
+  assert.ok(indexHtml.includes('data-cmtsend="\' + targetId + \'" data-gid="\' + gid + \'"') || indexHtml.includes('data-cmtsend="\'+targetId+\'" data-gid="\'+gid+\'"'), 'index.html teamCommentsBlockHtml 버튼에 data-gid 속성 탑재');
+  assert.ok(indexHtml.includes('state.profile.settings.localTeamComments[gid]'), 'index.html 로컬 영속화 보존');
+  assert.ok(indexHtml.includes("input.value = '';"), 'index.html 댓글 입력창 초기화 보존');
+  assert.ok(indexHtml.includes('state.lastOpenCommentKey'), 'index.html 댓글창 오픈 상태 유지 보존');
+
+  // 3. ui.css 스타일 및 반응형 검증
+  assert.ok(uiCss.includes('#og-task-49-container'), 'ui.css #og-task-49-container 스타일 정의');
+  assert.ok(uiCss.includes('#og-task-49-action-btn'), 'ui.css #og-task-49-action-btn 스타일 정의');
+  assert.ok(uiCss.includes('.team-comments-block'), 'ui.css .team-comments-block 스타일 정의');
+  assert.ok(uiCss.includes('min-width: 44px;'), 'ui.css 버튼 최소 터치 폭 44px 정의');
+  assert.ok(uiCss.includes('min-height: 44px;'), 'ui.css 버튼 최소 터치 높이 44px 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
