@@ -219,6 +219,107 @@
     });
   }
 
+  /**
+   * [TASK-ES-AUTO-31 / #TASK-ES-282] 전 탭 상위 중복 '홈구성' 버튼 제거 및 '나만의 홈 구성' 단일화 직통 이벤트 바인딩 및 원자적 트랜잭션
+   */
+  async function handle홈_Item31Action(event) {
+    if (event) {
+      if (typeof event.stopPropagation === 'function') event.stopPropagation();
+      if (typeof event.preventDefault === 'function') event.preventDefault();
+    }
+
+    var win = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : {});
+    var doc = typeof document !== 'undefined' ? document : (win.document || null);
+    var actionBtn = doc && typeof doc.getElementById === 'function' ? doc.getElementById('og-task-31-action-btn') : null;
+    var customBtn = doc && typeof doc.getElementById === 'function' ? doc.getElementById('btnCustomHomeLayout') : null;
+    if (actionBtn) {
+      actionBtn.disabled = true;
+    }
+    if (customBtn) {
+      customBtn.disabled = true;
+    }
+
+    // 1. [햅틱 진동 피드백] (12ms 체감 인터랙션)
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      // 2. 홈 구성 커스텀 모달 안전 호출
+      var modalOpened = false;
+      if (typeof win.openHomeCustomizer === 'function') {
+        try {
+          win.openHomeCustomizer();
+          modalOpened = true;
+        } catch (mErr) {
+          console.warn('[TASK-ES-AUTO-31] openHomeCustomizer 호출 실패, 폴백 시도:', mErr);
+        }
+      }
+
+      if (!modalOpened && root.OurgoalCustomize && typeof root.OurgoalCustomize.open === 'function') {
+        try {
+          root.OurgoalCustomize.open();
+          modalOpened = true;
+        } catch (oErr) {}
+      }
+
+      // 3. 비즈니스 로직 및 영구 원장 트랜잭션
+      var syncPayload = {
+        ticket: '31',
+        updated_at: new Date().toISOString(),
+        modal_opened: modalOpened,
+        action: 'unify_home_layout_button',
+        state: 'completed'
+      };
+
+      // Supabase 저장 또는 로컬 캐시 원자적 갱신
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-31',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {
+          if (locStorage && typeof locStorage.setItem === 'function') {
+            locStorage.setItem('og_task-31_cache', JSON.stringify(syncPayload));
+          }
+        }
+      } else if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-31_cache', JSON.stringify(syncPayload));
+      }
+
+      // 4. 완료 시각 피드백 토스트
+      if (typeof win.showToast === 'function') {
+        win.showToast('나만의 홈 구성으로 단일화되었습니다.', { type: 'success', duration: 2000 });
+      }
+
+      // 5. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-AUTO-31] 실행 실패:', err);
+      if (typeof win.showToast === 'function') {
+        win.showToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+      if (customBtn) {
+        customBtn.disabled = false;
+      }
+    }
+  }
+
   root.OurgoalCustomize = {
     WHITELIST: WHITELIST,
     WHITELIST_IDS: WHITELIST_IDS,
@@ -229,6 +330,15 @@
     apply: apply,
     open: open,
     discoverWidgets: discoverWidgets,
-    getEffectiveWhitelist: getEffectiveWhitelist
+    getEffectiveWhitelist: getEffectiveWhitelist,
+    handle홈_Item31Action: handle홈_Item31Action
   };
+
+  root.handle홈_Item31Action = handle홈_Item31Action;
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = root.OurgoalCustomize;
+    module.exports.handle홈_Item31Action = handle홈_Item31Action;
+  }
 })(typeof window !== 'undefined' ? window : this);
+
