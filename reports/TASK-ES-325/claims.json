@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-325",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-325-PROFILE-INTERESTS-FIX.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "ui.css 내 .cat-sub-grid, .cat-sub 44px, .pv-selected-tray, .pv-major-anchor-bar 스타일이 탑재되어 모바일 터치타겟과 조형을 완성한다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 openProfileEditor 모달에 인-플레이스 토글, 상단 요약 트레이, 대분류 앵커, 목표 스마트 연동 배너가 탑재된다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내 loadProfile 및 세션 동기화에서 Array.isArray 정밀 검사를 통해 0개 빈 배열 관심사가 안전하게 보존되고 캐시 좀비 부활이 차단된다."
+    },
+    {
+      "id": "R4",
+      "text": "js/components.js 내에 handle프로필_Item74Action 직통 핸들러가 구현되어 12ms 햅틱, 캐시 영속화, 4대 뷰 원자적 전파를 수행한다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/profile-interests-fix.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-325 검증 테스트가 정의되어 전수 통과한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내 .cat-sub-grid 및 .cat-sub 44px 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".cat-sub-grid{display:flex;flex-wrap:wrap;gap:8px 6px;margin-bottom:14px;}"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 상단 요약 트레이 및 대분류 앵커 바 마크업이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"pvSelectedTray\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 loadProfile에서 Array.isArray 정밀 검사로 0개 빈 배열을 정상 보존한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "var finalInterests = Array.isArray(urow.interests) ? urow.interests : ((localCachedProf && Array.isArray(localCachedProf.interests)) ? localCachedProf.interests : []);"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle프로필_Item74Action 직통 핸들러가 구현되어 4위 1체 배선된다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle프로필_Item74Action"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "scripts/smoke-test.js 내에 #TASK-ES-325 검증 테스트가 탑재되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "compliance: [#TASK-ES-325] [74] 프로필 편집 관심 카테고리(Interests) 선택 및 저장 작동 안함 오류 수정 및 아워골 본질 기반 UX 혁신 무결성 검증"
+      }
+    }
+  ]
+}

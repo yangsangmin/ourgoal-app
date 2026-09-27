@@ -10023,6 +10023,37 @@ check('compliance: [#TASK-ES-322] [71] 2단계 인증(2FA) 실질적 보안 작�
   assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'two-factor-auth.test.js')), '단위 테스트 파일 tests/two-factor-auth.test.js 존재');
 });
 
+check('compliance: [#TASK-ES-325] [74] 프로필 편집 관심 카테고리(Interests) 선택 및 저장 작동 안함 오류 수정 및 아워골 본질 기반 UX 혁신 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. ui.css 모바일 44px 터치타겟 및 신규 컴포넌트 스타일 검증
+  assert.ok(uiCss.includes('.cat-sub-grid{display:flex;flex-wrap:wrap;gap:8px 6px;margin-bottom:14px;}'), 'ui.css .cat-sub-grid 스타일 탑재');
+  assert.ok(uiCss.includes('.cat-sub{background:var(--surface-2);border-color:transparent;min-height:44px;'), 'ui.css .cat-sub 최소 높이 44px 헌법 규격 준수');
+  assert.ok(uiCss.includes('.pv-selected-tray{'), 'ui.css .pv-selected-tray 스타일 탑재');
+  assert.ok(uiCss.includes('.pv-selected-chip{'), 'ui.css .pv-selected-chip 스타일 탑재');
+  assert.ok(uiCss.includes('.pv-major-anchor-bar{'), 'ui.css .pv-major-anchor-bar 스타일 탑재');
+
+  // 2. index.html 인-플레이스 토글, 상단 요약 트레이, 대분류 앵커, 목표 스마트 연동 마크업 및 로직 검증
+  assert.ok(indexHtml.includes('id="pvSmartGoalSyncContainer"'), 'index.html pvSmartGoalSyncContainer 마크업 탑재');
+  assert.ok(indexHtml.includes('id="pvSelectedTray"'), 'index.html pvSelectedTray 마크업 탑재');
+  assert.ok(indexHtml.includes('id="pvMajorAnchorBar"'), 'index.html pvMajorAnchorBar 마크업 탑재');
+  assert.ok(indexHtml.includes('id="pvValuePreview"'), 'index.html pvValuePreview 마크업 탑재');
+  assert.ok(indexHtml.includes('function updateSelectedTray()'), 'index.html updateSelectedTray 함수 탑재');
+  assert.ok(indexHtml.includes('function syncInterestsDraftToProfile()'), 'index.html syncInterestsDraftToProfile 함수 탑재');
+
+  // 3. 영속성 및 캐시 좀비 부활 차단 검증
+  assert.ok(indexHtml.includes('var finalInterests = Array.isArray(urow.interests) ? urow.interests : ((localCachedProf && Array.isArray(localCachedProf.interests)) ? localCachedProf.interests : []);'), 'index.html loadProfile 0개 빈 배열 보존 로직 탑재');
+
+  // 4. components.js handle프로필_Item74Action 직통 핸들러 및 캐시 확인
+  assert.ok(jsComp.includes('handle프로필_Item74Action'), 'components.js handle프로필_Item74Action 탑재');
+  assert.ok(jsComp.includes('og_task-74_cache'), 'components.js og_task-74_cache 캐시 탑재');
+  assert.ok(jsComp.includes('interests_in_place_toggle_wired: true'), 'components.js interests_in_place_toggle_wired 플래그 탑재');
+  assert.ok(jsComp.includes('touch_target_44px_enforced: true'), 'components.js touch_target_44px_enforced 플래그 탑재');
+  assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'profile-interests-fix.test.js')), '단위 테스트 파일 tests/profile-interests-fix.test.js 존재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

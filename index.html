@@ -3246,7 +3246,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var finalDisplayName = urow.display_name || (localCachedProf && localCachedProf.displayName) || defaultDisplayName;
     var finalBio = urow.bio || (localCachedProf && localCachedProf.bio) || '';
     var finalAvatarUrl = urow.avatar_url || (localCachedProf && localCachedProf.avatarUrl) || '';
-    var finalInterests = (urow.interests && urow.interests.length) ? urow.interests : ((localCachedProf && localCachedProf.interests) || []);
+    var finalInterests = Array.isArray(urow.interests) ? urow.interests : ((localCachedProf && Array.isArray(localCachedProf.interests)) ? localCachedProf.interests : []);
     var finalRegion = urow.region || (localCachedProf && localCachedProf.region) || '';
     var finalRegionPublic = (typeof urow.region_public !== 'undefined') ? !!urow.region_public : (localCachedProf ? !!localCachedProf.regionPublic : false);
     var finalItItems = (localCachedProf && localCachedProf.itItems) || [];
@@ -3345,7 +3345,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               try { localStorage.setItem('ourgoal_records_backup_' + userId, JSON.stringify(records)); } catch(e){}
               if(sData.user){
                 if(!finalBio && sData.user.bio) finalBio = sData.user.bio;
-                if((!finalInterests || finalInterests.length === 0) && sData.user.interests) finalInterests = sData.user.interests;
+                if(!Array.isArray(finalInterests) && sData.user.interests) finalInterests = sData.user.interests;
                 if(!finalRegion && sData.user.region) finalRegion = sData.user.region;
               }
             }
@@ -4747,7 +4747,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var u = data.user || data.matchedUser;
       if(u){
         if(!state.profile.bio && u.bio){ state.profile.bio = u.bio; updated = true; }
-        if((!state.profile.interests || state.profile.interests.length === 0) && u.interests && u.interests.length){
+        if(!Array.isArray(state.profile.interests) && u.interests && u.interests.length){
           state.profile.interests = u.interests;
           updated = true;
         }
@@ -7847,12 +7847,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '<div class="switch'+(draft.regionPublic?' on':'')+'" id="pvRegionPublic"></div>' +
       '</div>' +
       '<div class="field" style="margin-top:14px;"><label>관심 카테고리 (최대 8개 선택)</label></div>' +
+      '<div id="pvSmartGoalSyncContainer"></div>' +
+      '<div class="pv-selected-tray" id="pvSelectedTray"></div>' +
+      '<div class="pv-major-anchor-bar" id="pvMajorAnchorBar"></div>' +
       '<div id="pvInterests"></div>' +
-      '<p class="faint" id="pvCount" style="margin:8px 0 0;font-size:.8125rem;font-weight:600;color:var(--brand);"></p>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin:8px 0 0;flex-wrap:wrap;gap:4px;">' +
+        '<span class="faint" id="pvCount" style="font-size:.8125rem;font-weight:700;color:var(--brand);"></span>' +
+        '<div class="pv-value-preview" id="pvValuePreview"></div>' +
+      '</div>' +
       '<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--rule);">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
           '<label style="margin:0;font-weight:700;">내 잇템 등록 (추천 아이템 & 장비)</label>' +
-          '<button class="btn btn-ghost btn-sm" id="pvAddItItem" type="button" style="padding:3px 8px;font-size:.8125rem;">+ 잇템 추가</button>' +
+          '<button class="btn btn-ghost btn-sm" id="pvAddItItem" type="button" style="padding:4px 10px;font-size:.8125rem;min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;">+ 잇템 추가</button>' +
         '</div>' +
         '<p class="faint" style="margin:0 0 10px;font-size:.8125rem;">내가 애용하는 운동 장비·꿀템 사진과 구매 링크를 등록해보세요.</p>' +
         '<div id="pvInlineItItemForm" style="display:none;background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:12px;">' +
@@ -7883,35 +7889,182 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           if(bioInput) draft.bio = bioInput.value.trim();
         }
 
+        function syncInterestsDraftToProfile(){
+          if(state.profile){
+            state.profile.interests = draft.interests.slice();
+            var uidVal = state.profile.id || 'guest';
+            try {
+              localStorage.setItem('ourgoal_profile_backup_' + uidVal, JSON.stringify({
+                displayName: state.profile.displayName, bio: state.profile.bio || '', avatarUrl: state.profile.avatarUrl || '',
+                interests: state.profile.interests, region: state.profile.region || '', regionPublic: state.profile.regionPublic, itItems: state.profile.itItems || []
+              }));
+              localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile));
+            } catch(e){}
+          }
+        }
+
+        function updateSelectedTray(){
+          var tray = sheet.querySelector('#pvSelectedTray');
+          var countEl = sheet.querySelector('#pvCount');
+          var previewEl = sheet.querySelector('#pvValuePreview');
+          if(countEl) countEl.textContent = draft.interests.length + '개 선택됨 · 최대 8개';
+          if(previewEl){
+            previewEl.textContent = draft.interests.length > 0 
+              ? '🚀 맞춤 팀 & 목표 퀘스트 활성화 (' + draft.interests.length + '개 적용)'
+              : '💡 관심사 선택 시 맞춤 팀과 추천 목표를 먼저 보여드려요';
+          }
+          if(!tray) return;
+          if(!draft.interests.length){
+            tray.innerHTML = '<span class="faint" style="font-size:.78125rem;">📌 관심 카테고리를 선택하면 여기에 핀 고정돼요 (최대 8개)</span>';
+            return;
+          }
+          tray.innerHTML = draft.interests.map(function(k){
+            var parts = k.split('/');
+            var label = parts[1] || k;
+            var icon = TOPICS[parts[0]] ? TOPICS[parts[0]].icon : '🎯';
+            return '<span class="pv-selected-chip">' +
+              '<span>' + icon + ' ' + escapeHtml(label) + '</span>' +
+              '<button type="button" class="del-btn" data-del-int="' + escapeHtml(k) + '" title="제거" aria-label="' + escapeHtml(label) + ' 제거">×</button>' +
+            '</span>';
+          }).join('');
+          tray.querySelectorAll('[data-del-int]').forEach(function(delBtn){
+            delBtn.addEventListener('click', function(e){
+              e.stopPropagation();
+              var k = delBtn.dataset.delInt;
+              var idx = draft.interests.indexOf(k);
+              if(idx !== -1){
+                draft.interests.splice(idx, 1);
+                var el = sheet.querySelector('#pvInterests');
+                if(el){
+                  var escapedKey = (window.CSS && CSS.escape) ? CSS.escape(k) : k.replace(/["\\]/g, '\\$&');
+                  var targetSub = el.querySelector('[data-int="' + escapedKey + '"]');
+                  if(targetSub) targetSub.classList.remove('active');
+                }
+                if(window.navigator && window.navigator.vibrate) try{ window.navigator.vibrate(12); }catch(err){}
+                syncInterestsDraftToProfile();
+                updateSelectedTray();
+              }
+            });
+          });
+        }
+
         function paintInterests(){
           var el = sheet.querySelector('#pvInterests');
           if(!el) return;
+
+          // 1. 목표 기반 1초 관심사 추천 배너 렌더링
+          var syncContainer = sheet.querySelector('#pvSmartGoalSyncContainer');
+          if(syncContainer){
+            var activeGoalTopics = (state.profile && state.profile.goals ? state.profile.goals : [])
+              .filter(function(g){ return !g.archivedAt && g.topic; })
+              .map(function(g){ return g.topic; });
+            var suggestedTopics = [];
+            activeGoalTopics.forEach(function(t){
+              if(t && suggestedTopics.indexOf(t) === -1 && draft.interests.indexOf(t) === -1){
+                suggestedTopics.push(t);
+              }
+            });
+            if(suggestedTopics.length > 0){
+              var sugLabels = suggestedTopics.slice(0, 3).map(function(t){
+                var p = t.split('/');
+                return (TOPICS[p[0]] ? TOPICS[p[0]].icon : '') + (p[1] || t);
+              }).join(', ');
+              syncContainer.innerHTML = '<div class="pv-smart-sync-card" id="pvSmartGoalSyncCard">' +
+                '<div style="flex:1;min-width:0;">' +
+                  '<div style="font-size:.78125rem;font-weight:700;color:var(--brand-strong);">💡 진행 중인 목표 기반 관심사 제안</div>' +
+                  '<div class="faint" style="font-size:.71875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(sugLabels) + '</div>' +
+                '</div>' +
+                '<button type="button" class="btn btn-primary btn-sm" id="btnApplyGoalInterests" style="font-size:.75rem;padding:4px 10px;min-height:36px;border-radius:8px;font-weight:700;flex-shrink:0;">+ 1초에 담기</button>' +
+              '</div>';
+              var applyBtn = syncContainer.querySelector('#btnApplyGoalInterests');
+              if(applyBtn){
+                applyBtn.addEventListener('click', function(){
+                  var addedCount = 0;
+                  suggestedTopics.forEach(function(t){
+                    if(draft.interests.length < 8 && draft.interests.indexOf(t) === -1){
+                      draft.interests.push(t);
+                      var escapedKey = (window.CSS && CSS.escape) ? CSS.escape(t) : t.replace(/["\\]/g, '\\$&');
+                      var b = el.querySelector('[data-int="' + escapedKey + '"]');
+                      if(b) b.classList.add('active');
+                      addedCount++;
+                    }
+                  });
+                  if(addedCount > 0){
+                    if(window.navigator && window.navigator.vibrate) try{ window.navigator.vibrate(12); }catch(e){}
+                    syncInterestsDraftToProfile();
+                    updateSelectedTray();
+                    toast('목표 기반 관심사 ' + addedCount + '개를 추가했어요 ✨');
+                    syncContainer.innerHTML = '';
+                  } else {
+                    toast('관심 카테고리는 8개까지 고를 수 있어요');
+                  }
+                });
+              }
+            } else {
+              syncContainer.innerHTML = '';
+            }
+          }
+
+          // 2. 6대 대분류 퀵 앵커 네비게이션 렌더링
+          var anchorBar = sheet.querySelector('#pvMajorAnchorBar');
+          if(anchorBar){
+            anchorBar.innerHTML = Object.keys(TOPICS).map(function(k){
+              var t = TOPICS[k];
+              return '<button type="button" class="pv-major-anchor-btn" data-anchor-major="' + k + '">' + t.icon + ' ' + escapeHtml(t.label) + '</button>';
+            }).join('');
+            anchorBar.querySelectorAll('[data-anchor-major]').forEach(function(ab){
+              ab.addEventListener('click', function(){
+                anchorBar.querySelectorAll('.pv-major-anchor-btn').forEach(function(x){ x.classList.remove('active'); });
+                ab.classList.add('active');
+                var targetSec = el.querySelector('#pvSec_' + ab.dataset.anchorMajor);
+                if(targetSec){
+                  try { targetSec.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch(e){}
+                }
+              });
+            });
+          }
+
+          // 3. 관심 카테고리 칩 그리드 초기 1회 렌더링
           el.innerHTML = Object.keys(TOPICS).map(function(k){
             var t = TOPICS[k];
-            return '<div style="margin-bottom:10px;">' +
-              '<div class="faint" style="font-size:.8125rem;margin-bottom:4px;">'+t.icon+' '+t.label+'</div>' +
+            return '<div id="pvSec_' + k + '" style="margin-bottom:12px;">' +
+              '<div class="faint" style="font-size:.8125rem;margin-bottom:6px;font-weight:700;display:flex;align-items:center;gap:4px;">' +
+                '<span>' + t.icon + '</span><span>' + escapeHtml(t.label) + '</span>' +
+              '</div>' +
               '<div class="cat-sub-grid">' +
                 t.subs.map(function(s){
-                  var key = k+'/'+s;
-                  var on = draft.interests.indexOf(key)!==-1;
-                  return '<button class="cat-sub'+(on?' active':'')+'" data-int="'+escapeHtml(key)+'" type="button">'+escapeHtml(s)+'</button>';
+                  var key = k + '/' + s;
+                  var on = draft.interests.indexOf(key) !== -1;
+                  return '<button class="cat-sub' + (on ? ' active' : '') + '" data-int="' + escapeHtml(key) + '" type="button">' + escapeHtml(s) + '</button>';
                 }).join('') +
               '</div>' +
             '</div>';
           }).join('');
-          el.querySelectorAll('[data-int]').forEach(function(b){
-            b.addEventListener('click', function(){
-              var key = b.dataset.int;
-              var i = draft.interests.indexOf(key);
-              if(i===-1){
-                if(draft.interests.length>=8){ toast('관심 카테고리는 8개까지 고를 수 있어요'); return; }
-                draft.interests.push(key);
-              } else { draft.interests.splice(i,1); }
-              paintInterests();
-            });
+
+          // 4. 인-플레이스 토글 이벤트 위임 (DOM 파괴 금지, 스크롤 완전 고정, 12ms 햅틱)
+          el.addEventListener('click', function(ev){
+            var b = ev.target.closest('[data-int]');
+            if(!b) return;
+            var key = b.dataset.int;
+            var idx = draft.interests.indexOf(key);
+            if(idx === -1){
+              if(draft.interests.length >= 8){
+                toast('관심 카테고리는 8개까지 고를 수 있어요');
+                return;
+              }
+              draft.interests.push(key);
+              b.classList.add('active');
+            } else {
+              draft.interests.splice(idx, 1);
+              b.classList.remove('active');
+            }
+            if(window.navigator && window.navigator.vibrate) try{ window.navigator.vibrate(12); }catch(e){}
+            syncInterestsDraftToProfile();
+            updateSelectedTray();
           });
-          var countEl = sheet.querySelector('#pvCount');
-          if(countEl) countEl.textContent = draft.interests.length+'개 선택됨 · 최대 8개';
+
+          // 5. 초기 상단 트레이 및 카운트 동기화
+          updateSelectedTray();
         }
         paintInterests();
 
@@ -8061,7 +8214,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           p.displayName = draft.name;
           p.bio = draft.bio;
           p.avatarUrl = draft.avatarUrl;
-          p.interests = draft.interests;
+          p.interests = Array.isArray(draft.interests) ? draft.interests.slice() : [];
           p.region = regionRef.value || '';
           p.regionPublic = draft.regionPublic;
           p.itItems = draft.itItems;
@@ -8078,6 +8231,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           await saveProfile();
           closeModal();
           renderAll();
+          if(typeof renderProfileCard === 'function') renderProfileCard();
+          if(typeof renderSettingsScreen === 'function') renderSettingsScreen();
+          if(typeof renderHome === 'function') renderHome();
           updateTopBar();
           toast('프로필을 저장했어요 ✨');
         });
@@ -38247,7 +38403,7 @@ wirePromptEncyclopediaEvents(body);
             }
             if(profBackup){
               if(profBackup.bio) gp.bio = profBackup.bio;
-              if(profBackup.interests && profBackup.interests.length) gp.interests = profBackup.interests;
+              if(Array.isArray(profBackup.interests)) gp.interests = profBackup.interests;
               if(profBackup.region) gp.region = profBackup.region;
               if(typeof profBackup.regionPublic !== 'undefined') gp.regionPublic = profBackup.regionPublic;
               if(profBackup.itItems && profBackup.itItems.length) gp.itItems = profBackup.itItems;
