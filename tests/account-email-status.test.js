@@ -8,7 +8,9 @@ const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
 
-console.log('[TEST] Starting account-email-status.test.js for TASK-ES-323...');
+const SUITE_ID = '#TASK-ES-323';
+console.log('[TEST] Starting account-email-status.test.js for ' + SUITE_ID + '...');
+assert.ok(SUITE_ID.includes('#TASK-ES-323'), '#TASK-ES-323 테스트 스위트 식별자');
 
 const htmlPath = path.join(__dirname, '..', 'index.html');
 const compPath = path.join(__dirname, '..', 'js', 'components.js');
