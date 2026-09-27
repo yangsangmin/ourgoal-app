@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-315",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-315-GOAL-TEMPLATE-LEGACY-CLEANUP.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 renderGoalsScreen 함수에서 구형 60선 창 렌더링이 제거되고 goalsTemplateAccordionSlot이 비워진다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 btnGoalTemplateEncyclopedia 버튼과 templateEncyclopediaModal 모달이 탑재되어 템플릿백과사전으로 일원화된다."
+    },
+    {
+      "id": "R3",
+      "text": "js/team-invite-comm.js 내 renderTemplatesAccordionHtml 함수가 빈 문자열을 반환하여 구형 60선 창 렌더링을 차단한다."
+    },
+    {
+      "id": "R4",
+      "text": "js/components.js 내에 handle목표탭_Item64Action 직통 핸들러가 구현되어 12ms 햅틱, 캐시 영속화, 4대 뷰 원자적 전파를 수행한다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/goal-template-legacy-cleanup.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-315 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 renderGoalsScreen 함수에서 구형 60선 창 렌더링이 제거되고 goalsTemplateAccordionSlot이 비워진다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "// [#TASK-ES-315, 64] 목표탭 내 기존 60선 창 영구 제거 (템플릿백과사전 일원화)"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 btnGoalTemplateEncyclopedia 버튼과 templateEncyclopediaModal 모달이 탑재되어 템플릿백과사전으로 일원화된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"btnGoalTemplateEncyclopedia\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/team-invite-comm.js 내 renderTemplatesAccordionHtml 함수가 빈 문자열을 반환하여 구형 60선 창 렌더링을 차단한다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-invite-comm.js",
+        "text": "// [#TASK-ES-315, 64] 목표탭 및 소통탭 구형 60선 창 영구 제거 (템플릿백과사전 일원화)"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle목표탭_Item64Action 직통 핸들러가 구현되어 12ms 햅틱, 캐시 영속화, 4대 뷰 원자적 전파를 수행한다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle목표탭_Item64Action"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "scripts/smoke-test.js 내에 compliance: [#TASK-ES-315] 검증 테스트가 정의되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "compliance: [#TASK-ES-315]"
+      }
+    }
+  ]
+}
