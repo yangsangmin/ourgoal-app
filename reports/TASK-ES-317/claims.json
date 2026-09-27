@@ -1,0 +1,156 @@
+{
+  "task": "TASK-ES-317",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-317-APP-EVALUATION-NOTICE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 appEvaluationModal 하단에 evalModalAlwaysNotice 요소가 구비되어 '언제 얼마든지 평가해주실 수 있습니다' 문구가 표출된다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 appEvaluationModal 본문 서두에 '언제 얼마든지 평가해주실 수 있습니다' 문구가 포함되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내 홈탭 고정 배너에 homeEvalBannerAlwaysNotice 요소가 구비되어 상시 평가 환영 문구가 표출된다."
+    },
+    {
+      "id": "R4",
+      "text": "index.html 내 평가 제출 완료 시 토스트 알림으로 언제 얼마든지 다시 평가해주실 수 있습니다 문구가 출력된다."
+    },
+    {
+      "id": "R5",
+      "text": "js/components.js 내에 handle홈탭_Item66Action 직통 핸들러가 구현되어 12ms 햅틱, 캐시 영속화, 4대 뷰 원자적 전파를 수행한다."
+    },
+    {
+      "id": "R6",
+      "text": "tests/app-evaluation-notice.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-317 검증 테스트가 정의되어 있다."
+    },
+    {
+      "id": "R7",
+      "text": "docs/rules/TICKETS.md에 #TASK-ES-317이 승인 티켓으로 등록되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 appEvaluationModal에 id=\"evalModalAlwaysNotice\" 안내 요소가 구비되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"evalModalAlwaysNotice\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 appEvaluationModal 본문 서두에 언제 얼마든지 평가해주실 수 있습니다가 포함되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "여러분의 솔직한 피드백이 아워골을 더 훌륭하게 만듭니다. 가감 없이 자유롭게 적어주세요! <b>언제 얼마든지 평가해주실 수 있습니다.</b>"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 홈탭 고정 배너에 id=\"homeEvalBannerAlwaysNotice\" 요소가 구비되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"homeEvalBannerAlwaysNotice\""
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 평가 제출 성공 토스트에 언제 얼마든지 다시 평가해주실 수 있습니다 문구가 포함되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "toast('소중한 평가가 접수되었습니다. 언제 얼마든지 다시 평가해주실 수 있습니다! ⭐');"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle홈탭_Item66Action 직통 핸들러가 구현되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "async function handle홈탭_Item66Action"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 og_task-66_cache 로컬 캐시 영속화 로직이 구현되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "og_task-66_cache"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R6",
+      "kind": "static",
+      "domain": "code",
+      "statement": "scripts/smoke-test.js 내에 #TASK-ES-317 단언문 블록이 구현되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-317]"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R7",
+      "kind": "static",
+      "domain": "code",
+      "statement": "docs/rules/TICKETS.md 내에 #TASK-ES-317 승인 티켓이 등록되어 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "#TASK-ES-317"
+      }
+    }
+  ]
+}

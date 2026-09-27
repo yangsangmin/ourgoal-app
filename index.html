@@ -750,9 +750,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             <button type="button" class="btn btn-primary btn-sm" id="btnOpenEvalModal" style="font-size:.8125rem;padding:6px 14px;border-radius:20px;font-weight:800;white-space:nowrap;">&lt;아워골 평가해주기&gt;</button>
           </div>
           <p class="faint" style="margin:0;font-size:.78125rem;line-height:1.45;">아워골을 사용하시면서 느낀 점과 솔직한 피드백을 들려주세요. 상민님과 개발팀이 즉각 검토합니다.</p>
-          <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px dashed var(--rule);padding-top:8px;font-size:.72rem;color:var(--ink-faint);">
+          <div id="homeEvalBannerAlwaysNotice" style="display:flex;align-items:center;justify-content:space-between;border-top:1px dashed var(--rule);padding-top:8px;font-size:.72rem;color:var(--ink-faint);">
             <span>💬 <b>언제 얼마든지 평가해주실 수 있습니다</b></span>
-            <span>(반복 평가 환영 ✨)</span>
+            <span>(1회성이 아닌 상시 반복 평가 환영 ✨)</span>
           </div>
         </div>
       </div>
@@ -1840,7 +1840,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     </div>
     <div class="eval-modal-body">
       <p style="font-size:.8125rem;color:var(--ink-soft);margin:0 0 6px;line-height:1.5;">
-        여러분의 솔직한 피드백이 아워골을 더 훌륭하게 만듭니다. 가감 없이 자유롭게 적어주세요!
+        여러분의 솔직한 피드백이 아워골을 더 훌륭하게 만듭니다. 가감 없이 자유롭게 적어주세요! <b>언제 얼마든지 평가해주실 수 있습니다.</b>
       </p>
       
       <div class="eval-field-group">
@@ -1873,9 +1873,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       <div style="margin-top:8px;">
         <button type="button" class="btn btn-primary" id="btnSubmitAppEval" style="width:100%;padding:12px 0;font-size:.95rem;font-weight:800;">평가 제출하기</button>
-        <!-- [#TASK-ES-180], [66] 상시 평가 가능 안내 문구 -->
-        <p class="eval-footer-note" style="text-align:center;font-size:.75rem;margin:8px 0 0;color:var(--ink-soft);line-height:1.4;">
-          💡 언제 얼마든지 평가해주실 수 있습니다 (의견이 생길 때마다 여러 번 자유롭게 남겨주세요)
+        <!-- [#TASK-ES-180], [#TASK-ES-317 / 생각 메모장 66번] 상시 평가 가능 안내 문구 (1회성 오해 해소) -->
+        <p class="eval-footer-note" id="evalModalAlwaysNotice" style="text-align:center;font-size:.78125rem;margin:10px 0 0;color:var(--ink-soft);line-height:1.45;background:var(--surface-2);padding:8px 12px;border-radius:10px;border:1px dashed var(--rule);">
+          💡 <b>언제 얼마든지 평가해주실 수 있습니다</b><br>
+          <span style="font-size:.72rem;color:var(--ink-faint);">(한 번 평가하면 끝이 아니며, 의견이나 건의사항이 생길 때마다 언제든 다시 남기실 수 있습니다)</span>
         </p>
       </div>
     </div>
@@ -18696,14 +18697,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       .then(function(res){ return res.json(); })
       .then(function(data){
         if(navigator.vibrate) try{ navigator.vibrate(12); }catch(e){}
-        toast('소중한 평가가 접수되었습니다. 감사합니다! ⭐');
+        toast('소중한 평가가 접수되었습니다. 언제 얼마든지 다시 평가해주실 수 있습니다! ⭐');
         resetAppEvaluationForm();
         closeAppEvaluationModal();
       })
       .catch(function(err){
         console.warn('[AppEvaluation] 제출 통신 오류:', err);
         if(navigator.vibrate) try{ navigator.vibrate(12); }catch(e){}
-        toast('소중한 평가가 안전하게 보관되었습니다. 감사합니다! ⭐');
+        toast('소중한 평가가 안전하게 보관되었습니다. 언제 얼마든지 다시 평가해주실 수 있습니다! ⭐');
         resetAppEvaluationForm();
         closeAppEvaluationModal();
       })
