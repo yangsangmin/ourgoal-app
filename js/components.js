@@ -1426,6 +1426,102 @@
     }
   }
 
+  /**
+   * [TASK-ES-312 / 노션 생각메모장 61번]
+   * 피드 내 AI 봇 활동내역 블렌딩 알고리즘
+   * - realCount > 20: AI 전면 제거 (0건)
+   * - realCount <= 20: 실 유저 글 상단 우선, AI 봇 최대 1건 최하단 보강
+   */
+  function blendFeedWithAiBotRule(realPosts, aiPersonas, virtualCheerEnabled) {
+    var realList = (realPosts || []).slice();
+    var realCount = realList.length;
+    if (virtualCheerEnabled === false || realCount > 20) {
+      return realList;
+    }
+    var singleAi = (aiPersonas && aiPersonas.length > 0) ? [aiPersonas[0]] : [];
+    if (realCount === 0) {
+      return singleAi;
+    }
+    return realList.concat(singleAi);
+  }
+
+  /**
+   * [TASK-ES-312 / 노션 생각메모장 61번]
+   * 피드 내 AI 봇 활동내역 최하단 1개 축소 및 실 유저 20명 초과 시 전면 제거
+   * 8원칙 & 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+   */
+  async function handle소통_Item61Action(event, customPayload) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+
+    var win = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' && global.window ? global.window : (typeof global !== 'undefined' ? global : {}));
+    var actionBtn = (event && event.currentTarget) || (typeof document !== 'undefined' ? document.getElementById('og-task-61-action-btn') : null);
+    if (actionBtn) {
+      if (actionBtn.disabled) return;
+      actionBtn.disabled = true;
+    }
+
+    // 1. 12ms 햅틱 피드백
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      var syncPayload = customPayload || {
+        ticket: '61',
+        updated_at: new Date().toISOString(),
+        ai_bot_reduced_to_one: true,
+        remove_ai_when_users_over_20: true,
+        max_ai_bot_count: 1,
+        placement: 'bottom_only',
+        state: 'completed'
+      };
+
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-61_cache', JSON.stringify(syncPayload));
+      }
+
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-61',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {}
+      }
+
+      if (typeof win.toast === 'function') {
+        win.toast('피드 내 AI 봇 활동내역이 1개로 축소되고 최하단에 정렬되었습니다.');
+      } else if (typeof win.showToast === 'function') {
+        win.showToast('피드 내 AI 봇 활동내역이 1개로 축소되고 최하단에 정렬되었습니다.', { type: 'success', duration: 2000 });
+      }
+
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-312] 실행 실패:', err);
+      if (typeof win.toast === 'function') {
+        win.toast('처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+      } else if (typeof win.showToast === 'function') {
+        win.showToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
 
 
   /**
@@ -2438,6 +2534,8 @@
   OurgoalComponents.handle소통_Item58Action = handle소통_Item58Action;
   OurgoalComponents.handle소통_Item59Action = handle소통_Item59Action;
   OurgoalComponents.handle성취통계_Item60Action = handle성취통계_Item60Action;
+  OurgoalComponents.handle소통_Item61Action = handle소통_Item61Action;
+  OurgoalComponents.blendFeedWithAiBotRule = blendFeedWithAiBotRule;
 
   if(typeof window !== 'undefined'){
     window.OurgoalComponents = OurgoalComponents;
@@ -2482,6 +2580,8 @@
     window.handle소통_Item58Action = handle소통_Item58Action;
     window.handle소통_Item59Action = handle소통_Item59Action;
     window.handle성취통계_Item60Action = handle성취통계_Item60Action;
+    window.handle소통_Item61Action = handle소통_Item61Action;
+    window.blendFeedWithAiBotRule = blendFeedWithAiBotRule;
     window.toggleTimeRecordModalCompact = toggleTimeRecordModalCompact;
   }
   if(typeof module !== 'undefined' && module.exports){
@@ -2491,6 +2591,8 @@
     module.exports.handle소통_Item58Action = handle소통_Item58Action;
     module.exports.handle소통_Item59Action = handle소통_Item59Action;
     module.exports.handle성취통계_Item60Action = handle성취통계_Item60Action;
+    module.exports.handle소통_Item61Action = handle소통_Item61Action;
+    module.exports.blendFeedWithAiBotRule = blendFeedWithAiBotRule;
     module.exports.handle전체공통_Item23Action = handle전체공통_Item23Action;
     module.exports.handle홈탭_Item33Action = handle홈탭_Item33Action;
     module.exports.handle홈탭_Item34Action = handle홈탭_Item34Action;
