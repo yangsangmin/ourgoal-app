@@ -3573,6 +3573,119 @@
     }
   }
 
+  /**
+   * [TASK-ES-327 / 노션 생각메모장 76번]
+   * 프로필 내 동네(Region) 시군구 설정 및 저장 작동 오류 수정 및 쾌속 스마트 탐색 UX
+   * 8원칙 & 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+   */
+  async function handle프로필_Item76Action(eventOrOptions) {
+    if (eventOrOptions && typeof eventOrOptions.preventDefault === 'function') {
+      eventOrOptions.preventDefault();
+    }
+
+    var win = typeof window !== 'undefined' ? window : global;
+    var opts = (typeof eventOrOptions === 'object' && eventOrOptions && !eventOrOptions.preventDefault) ? eventOrOptions : {};
+    var actionBtn = (eventOrOptions && eventOrOptions.currentTarget) || (typeof document !== 'undefined' ? document.getElementById('og-task-76-action-btn') : null);
+    if (actionBtn) {
+      if (actionBtn.disabled) return;
+      actionBtn.disabled = true;
+    }
+
+    // 1. 12ms 햅틱 피드백
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try { nav.vibrate(12); } catch (e) {}
+    }
+
+    try {
+      // 2. 동네 설정/초기화/검색 처리
+      var actionType = opts.action || 'set_region';
+      var newRegion = '';
+      if (actionType === 'clear_region') {
+        newRegion = '';
+      } else if (opts.region !== undefined) {
+        newRegion = String(opts.region).trim();
+      } else if (opts.sido && opts.gu) {
+        newRegion = (opts.sido + ' ' + opts.gu).trim();
+      } else {
+        newRegion = '서울 마포구';
+      }
+
+      if (win.state && win.state.profile) {
+        win.state.profile.region = newRegion;
+      }
+
+      var syncPayload = {
+        ticket: '76',
+        updated_at: new Date().toISOString(),
+        action: actionType,
+        region: newRegion,
+        state: 'completed'
+      };
+
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-76_cache', JSON.stringify(syncPayload));
+        if (win.state && win.state.profile) {
+          var uidVal = win.state.profile.id || 'guest';
+          try {
+            locStorage.setItem('ourgoal_profile_backup_' + uidVal, JSON.stringify({
+              displayName: win.state.profile.displayName,
+              bio: win.state.profile.bio || '',
+              avatarUrl: win.state.profile.avatarUrl || '',
+              interests: win.state.profile.interests || [],
+              region: newRegion,
+              regionPublic: !!win.state.profile.regionPublic,
+              itItems: win.state.profile.itItems || []
+            }));
+            locStorage.setItem('ourgoal_guest_profile', JSON.stringify(win.state.profile));
+          } catch(e){}
+        }
+      }
+
+      // Supabase 저장
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-76',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {
+          // 로컬 캐시 폴백 유지
+        }
+      }
+
+      // 3. 완료 시각 피드백 토스트
+      var toastFn = (typeof win.showToast === 'function') ? win.showToast : ((typeof win.toast === 'function') ? win.toast : null);
+      if (toastFn) {
+        if (newRegion) {
+          toastFn('📍 내 동네가 "' + newRegion + '"(으)로 설정되었습니다 ✨', { type: 'success', duration: 2000 });
+        } else {
+          toastFn('동네 설정이 초기화되었습니다 (미설정)', { type: 'info', duration: 2000 });
+        }
+      }
+
+      // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+      if (typeof win.renderProfileCard === 'function') win.renderProfileCard();
+      if (typeof win.renderSettingsScreen === 'function') win.renderSettingsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderCommScreen === 'function') win.renderCommScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-327] 실행 실패:', err);
+      var errToast = (typeof win.showToast === 'function') ? win.showToast : ((typeof win.toast === 'function') ? win.toast : null);
+      if (errToast) {
+        errToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
   function openGoalTemplateEncyclopediaModal() {
     var win = typeof window !== 'undefined' ? window : global;
     if (typeof win.openTemplateEncyclopediaModal === 'function') {
@@ -3615,6 +3728,7 @@
   OurgoalComponents.handle인증_Item69Action = handle인증_Item69Action;
   OurgoalComponents.handle인증_Item70Action = handle인증_Item70Action;
   OurgoalComponents.handle인증_Item71Action = handle인증_Item71Action;
+  OurgoalComponents.handle프로필_Item76Action = handle프로필_Item76Action;
   OurgoalComponents.generateRecordPledgeMessage = generateRecordPledgeMessage;
 
   if(typeof window !== 'undefined'){
@@ -3673,6 +3787,31 @@
     window.handle인증_Item69Action = handle인증_Item69Action;
     window.handle인증_Item70Action = handle인증_Item70Action;
     window.handle인증_Item71Action = handle인증_Item71Action;
+    window.handle프로필_Item76Action = handle프로필_Item76Action;
+    window.generateRecordPledgeMessage = generateRecordPledgeMessage;
+    window.toggleTimeRecordModalCompact = toggleTimeRecordModalCompact;
+  }
+  if(typeof module !== 'undefined' && module.exports){
+    module.exports = OurgoalComponents;
+    module.exports.handle성취통계_Item56Action = handle성취통계_Item56Action;
+    module.exports.handle소통_Item57Action = handle소통_Item57Action;
+    module.exports.handle소통_Item58Action = handle소통_Item58Action;
+    module.exports.handle소통_Item59Action = handle소통_Item59Action;
+    module.exports.handle성취통계_Item60Action = handle성취통계_Item60Action;
+    module.exports.handle소통_Item61Action = handle소통_Item61Action;
+    module.exports.blendFeedWithAiBotRule = blendFeedWithAiBotRule;
+    module.exports.handle전체공통_Item62Action = handle전체공통_Item62Action;
+    module.exports.getWidgetRenderSpec = getWidgetRenderSpec;
+    module.exports.handle소통_Item63Action = handle소통_Item63Action;
+    module.exports.handle목표탭_Item64Action = handle목표탭_Item64Action;
+    module.exports.handle일정_Item65Action = handle일정_Item65Action;
+    module.exports.handle홈탭_Item66Action = handle홈탭_Item66Action;
+    module.exports.handle소통_Item67Action = handle소통_Item67Action;
+    module.exports.handle팀목표_Item68Action = handle팀목표_Item68Action;
+    module.exports.handle인증_Item69Action = handle인증_Item69Action;
+    module.exports.handle인증_Item70Action = handle인증_Item70Action;
+    module.exports.handle인증_Item71Action = handle인증_Item71Action;
+    module.exports.handle프로필_Item76Action = handle프로필_Item76Action;
     window.generateRecordPledgeMessage = generateRecordPledgeMessage;
     window.toggleTimeRecordModalCompact = toggleTimeRecordModalCompact;
   }

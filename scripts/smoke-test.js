@@ -7100,6 +7100,9 @@ check('compliance: [#TASK-ES-184] 아워골 생각 메모장 18대 잔여 대기
 
   // [76] 프로필 내 동네(Region) 시군구 설정 및 저장
   assert.ok(html.includes("wireRegionPicker(sheet, 'pvRegion', regionRef);"), "[76] 동네 선택기 배선 존재");
+  assert.ok(html.includes("pv-region-summary-bar"), "[76] 동네 상단 실시간 요약 바 클래스 존재");
+  assert.ok(html.includes("pv-region-clear-btn"), "[76] 동네 ✕ 초기화 버튼 클래스 존재");
+  assert.ok(html.includes("pv-region-search-input"), "[76] 동네 1초 스마트 검색창 클래스 존재");
 
   // [79] 설정 테마 4종(성소·블랙·화이트·도심) 압축 및 시인성 개선
   assert.ok(html.includes("id: 'focus-sanctuary', name: '성소 (Sanctuary)'"), '[79] 성소 테마 존재');
