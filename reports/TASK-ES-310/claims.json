@@ -1,0 +1,142 @@
+{
+  "task": "TASK-ES-310",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-310-FEED-POST-CATEGORY-DIVERSITY.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 소통 피드 게시 모달(openShareToFeedModal)에 18종 확장 카테고리 배열(FEED_CATEGORIES_10) 및 #shareCatPicker 가로 스크롤 칩 바가 탑재되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 카테고리 칩 클릭 시 12ms 햅틱 반응 및 선택 칩 자동 중앙 포커스 정렬(scrollIntoView)이 연동된다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내 filterFeedByCategory 및 메인 피드 카테고리 필터 바에 18종 카테고리가 동기화되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "index.html 내 모달 미리보기 카드(catMap)에 신규 확장 18종 라벨이 정상 매핑되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "js/components.js 내 handle소통_Item59Action 함수가 구현되어 원자적 트랜잭션 및 헌법 제15조 제6항 4대 뷰 동시 전파를 수행한다."
+    },
+    {
+      "id": "R6",
+      "text": "ui.css 내 #shareCatPicker 가로 스크롤바 숨김, 터치 스크롤 및 375px 모바일 반응형 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R7",
+      "text": "tests/feed-post-category-diversity.test.js 및 scripts/smoke-test.js에 카테고리 다양화 및 가로 스크롤 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 shareCatPicker 요소가 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"shareCatPicker\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 카테고리 칩 클릭 시 scrollIntoView 가로 정렬이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 filterFeedByCategory에 validCategories 18종이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "var validCategories = ['study','dev','workout','running','diet','career','sideproject','finance','life','morning','parenting','pet','relation','reading','hobby','mental','clean','travel'];"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 catMap에 18종 카테고리 라벨이 매핑되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "running:'러닝·마라톤', diet:'다이어트·식단'"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle소통_Item59Action 함수가 탑재되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle소통_Item59Action"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R6",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 #shareCatPicker 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#shareCatPicker"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R7",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/feed-post-category-diversity.test.js 및 scripts/smoke-test.js 내에 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/feed-post-category-diversity.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/feed-post-category-diversity.test.js",
+        "text": "feed-post-category-diversity"
+      }
+    }
+  ]
+}

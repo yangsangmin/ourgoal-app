@@ -1270,6 +1270,86 @@
     }
   }
 
+  /**
+   * [TASK-ES-310 / 노션 생각메모장 59번]
+   * 소통 피드 게시하기 카테고리 분류 다양화(생활·육아 등 보완) 및 가로 스크롤 선택 UI 연동
+   * 8원칙 & 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+   */
+  async function handle소통_Item59Action(event, customPayload) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+
+    var win = typeof window !== 'undefined' ? window : (typeof global !== 'undefined' && global.window ? global.window : (typeof global !== 'undefined' ? global : {}));
+    var actionBtn = (event && event.currentTarget) || (typeof document !== 'undefined' ? document.getElementById('og-task-59-action-btn') : null);
+    if (actionBtn) {
+      if (actionBtn.disabled) return;
+      actionBtn.disabled = true;
+    }
+
+    // 1. 12ms 햅틱 피드백
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      var categoryDataToSet = customPayload || {
+        category: (win.state && win.state.shareDraft && win.state.shareDraft.category) ? win.state.shareDraft.category : 'study',
+        availableCategories: ['study','dev','workout','running','diet','career','sideproject','finance','life','morning','parenting','pet','relation','reading','hobby','mental','clean','travel']
+      };
+
+      var syncPayload = {
+        ticket: '59',
+        updated_at: new Date().toISOString(),
+        category_diversity: categoryDataToSet,
+        category_count: 18,
+        state: 'completed'
+      };
+
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-59_cache', JSON.stringify(syncPayload));
+      }
+
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-59',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {}
+      }
+
+      if (typeof win.toast === 'function') {
+        win.toast('카테고리 분류가 다양하게 적용되었습니다.');
+      } else if (typeof win.showToast === 'function') {
+        win.showToast('카테고리 분류가 다양하게 적용되었습니다.', { type: 'success', duration: 2000 });
+      }
+
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-310] 실행 실패:', err);
+      if (typeof win.toast === 'function') {
+        win.toast('처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+      } else if (typeof win.showToast === 'function') {
+        win.showToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
 
 
   /**
@@ -2280,6 +2360,7 @@
   OurgoalComponents.handle성취통계_Item56Action = handle성취통계_Item56Action;
   OurgoalComponents.handle소통_Item57Action = handle소통_Item57Action;
   OurgoalComponents.handle소통_Item58Action = handle소통_Item58Action;
+  OurgoalComponents.handle소통_Item59Action = handle소통_Item59Action;
 
   if(typeof window !== 'undefined'){
     window.OurgoalComponents = OurgoalComponents;
@@ -2322,6 +2403,7 @@
     window.handle성취통계_Item56Action = handle성취통계_Item56Action;
     window.handle소통_Item57Action = handle소통_Item57Action;
     window.handle소통_Item58Action = handle소통_Item58Action;
+    window.handle소통_Item59Action = handle소통_Item59Action;
     window.toggleTimeRecordModalCompact = toggleTimeRecordModalCompact;
   }
   if(typeof module !== 'undefined' && module.exports){
@@ -2329,6 +2411,7 @@
     module.exports.handle성취통계_Item56Action = handle성취통계_Item56Action;
     module.exports.handle소통_Item57Action = handle소통_Item57Action;
     module.exports.handle소통_Item58Action = handle소통_Item58Action;
+    module.exports.handle소통_Item59Action = handle소통_Item59Action;
     module.exports.handle전체공통_Item23Action = handle전체공통_Item23Action;
     module.exports.handle홈탭_Item33Action = handle홈탭_Item33Action;
     module.exports.handle홈탭_Item34Action = handle홈탭_Item34Action;

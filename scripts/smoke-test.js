@@ -9718,6 +9718,32 @@ check('TASK-ES-309: 소통 피드 게시하기 내 사진(이미지) 첨부 드�
   assert.ok(uiCss.includes('.share-photo-remove-btn'), 'ui.css .share-photo-remove-btn 스타일 정의');
 });
 
+check('compliance: [#TASK-ES-310] [59] 소통 피드 게시하기 카테고리 분류 다양화 및 가로 스크롤 선택 UI 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. 카테고리 18종 및 가로 스크롤 UI 검증
+  const cats = ['study', 'dev', 'workout', 'running', 'diet', 'career', 'sideproject', 'finance', 'life', 'morning', 'parenting', 'pet', 'relation', 'reading', 'hobby', 'mental', 'clean', 'travel'];
+  cats.forEach(c => {
+    assert.ok(indexHtml.includes("'" + c + "'") || indexHtml.includes('"' + c + '"'), 'index.html 카테고리 [' + c + '] 탑재');
+  });
+
+  assert.ok(indexHtml.includes('FEED_CATEGORIES_10 = ['), 'index.html FEED_CATEGORIES_10 하위 호환 배열 탑재');
+  assert.ok(indexHtml.includes('id="shareCatPicker"'), 'index.html #shareCatPicker 선택 컨테이너 탑재');
+  assert.ok(indexHtml.includes('data-shcat='), 'index.html data-shcat 속성 탑재');
+  assert.ok(indexHtml.includes('overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;white-space:nowrap;'), 'index.html 모달 가로 스크롤 스타일 탑재');
+  assert.ok(indexHtml.includes('overflow-x:auto;padding-bottom:8px;margin-bottom:12px;-webkit-overflow-scrolling:touch;white-space:nowrap;'), 'index.html 메인 피드 가로 스크롤 스타일 탑재');
+
+  // 2. components.js 연동 검증
+  assert.ok(jsComp.includes('handle소통_Item59Action'), 'components.js handle소통_Item59Action 탑재');
+  assert.ok(jsComp.includes('og_task-59_cache'), 'components.js og_task-59_cache 캐시 탑재');
+
+  // 3. ui.css 스타일 정의 검증
+  assert.ok(uiCss.includes('#shareCatPicker'), 'ui.css #shareCatPicker 스타일 정의');
+  assert.ok(uiCss.includes('#shareCatPicker::-webkit-scrollbar'), 'ui.css 웹킷 스크롤바 숨김 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
