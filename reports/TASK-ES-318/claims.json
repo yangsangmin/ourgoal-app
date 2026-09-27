@@ -1,0 +1,171 @@
+{
+  "task": "TASK-ES-318",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-318-DM-DELIVERY-READ-RECEIPT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/team-invite-comm.js 내에 renderSingleDmMsg 함수가 구현되어 카카오톡 방식 노란색 1 뱃지와 전송 시각을 표출한다."
+    },
+    {
+      "id": "R2",
+      "text": "js/team-invite-comm.js 내에 formatDmDetailTime 상세 시각 포맷터가 구현되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "js/team-invite-comm.js 내에 toggleDmMsgDetail 및 dm-msg-detail-box 요소가 구비되어 상세 타임스탬프를 표출한다."
+    },
+    {
+      "id": "R4",
+      "text": "js/team-invite-comm.js 내에 markDmThreadAsRead 읽음 동기화 함수가 구현되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "js/components.js 내에 handle소통_Item67Action 직통 핸들러가 구현되어 12ms 햅틱, 캐시 영속화, 4대 뷰 원자적 전파를 수행한다."
+    },
+    {
+      "id": "R6",
+      "text": "tests/dm-delivery-read-receipt.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-318 검증 테스트가 정의되어 있다."
+    },
+    {
+      "id": "R7",
+      "text": "docs/rules/TICKETS.md에 #TASK-ES-318이 승인 티켓으로 등록되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/team-invite-comm.js 내에 dm-unread-badge 및 카카오톡 스타일 노란색 1 (#eab308) 뱃지가 표출된다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-invite-comm.js",
+        "text": "dm-unread-badge"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/team-invite-comm.js 내에 formatDmDetailTime 상세 시각 포맷터가 구현되어 있다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-invite-comm.js",
+        "text": "function formatDmDetailTime"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/team-invite-comm.js 내에 dm-msg-detail-box 상세 타임스탬프 요소가 구비되어 있다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-invite-comm.js",
+        "text": "dm-msg-detail-box"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/team-invite-comm.js 내에 markDmThreadAsRead 읽음 동기화 함수가 구현되어 있다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-invite-comm.js",
+        "text": "async function markDmThreadAsRead"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle소통_Item67Action 직통 핸들러가 구현되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "async function handle소통_Item67Action"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 og_task-67_cache 로컬 캐시 영속화 로직이 구현되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "og_task-67_cache"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R6",
+      "kind": "static",
+      "domain": "code",
+      "statement": "scripts/smoke-test.js 내에 #TASK-ES-318 단언문 블록이 구현되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-318]"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R7",
+      "kind": "static",
+      "domain": "code",
+      "statement": "docs/rules/TICKETS.md 내에 #TASK-ES-318 승인 티켓이 등록되어 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "#TASK-ES-318"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R6",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/dm-delivery-read-receipt.test.js 내에 #TASK-ES-318 단위 테스트가 구현되어 있다",
+      "touches": [
+        "tests/dm-delivery-read-receipt.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/dm-delivery-read-receipt.test.js",
+        "text": "#TASK-ES-318"
+      }
+    }
+  ]
+}

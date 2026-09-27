@@ -9891,6 +9891,23 @@ check('compliance: [#TASK-ES-317] [66] 아워골 평가해주기 창 밑 상시 
   assert.ok(jsComp.includes('recurring_evaluation_guaranteed: true'), 'components.js recurring_evaluation_guaranteed 플래그 탑재');
 });
 
+check('compliance: [#TASK-ES-318] [67] DM 전송 상태·읽음 확인(카카오톡 방식 노란색 1) 및 전송·도착·읽음 시각 상세 표시 무결성 검증', () => {
+  const commJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. 카카오톡 스타일 미확인 뱃지 및 상세 시각 표시 요소 확인
+  assert.ok(commJs.includes('dm-unread-badge') && commJs.includes('#eab308'), 'DM 카톡 스타일 노란색 1 안읽음 뱃지 표출');
+  assert.ok(commJs.includes('formatDmDetailTime'), 'formatDmDetailTime 상세 시각 포맷터 탑재');
+  assert.ok(commJs.includes('toggleDmMsgDetail'), 'toggleDmMsgDetail 상세 정보 토글러 탑재');
+  assert.ok(commJs.includes('dm-msg-detail-box'), 'dm-msg-detail-box 상세 타임스탬프 박스 탑재');
+  assert.ok(commJs.includes('markDmThreadAsRead'), 'markDmThreadAsRead 읽음 동기화 함수 탑재');
+
+  // 2. components.js handle소통_Item67Action 직통 핸들러 및 캐시 확인
+  assert.ok(jsComp.includes('handle소통_Item67Action'), 'components.js handle소통_Item67Action 탑재');
+  assert.ok(jsComp.includes('og_task-67_cache'), 'components.js og_task-67_cache 캐시 탑재');
+  assert.ok(jsComp.includes('kakaotalk_style_badge_enabled: true'), 'components.js kakaotalk_style_badge_enabled 플래그 탑재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
