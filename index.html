@@ -2421,21 +2421,29 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function filterFeedByCategory(items, categoryKey){
     if(!categoryKey || categoryKey === 'all') return (items || []).slice();
     var key = String(categoryKey).toLowerCase();
-    var validCategories = ['study','dev','workout','career','hobby','life','parenting','finance','mental','reading'];
+    var validCategories = ['study','dev','workout','running','diet','career','sideproject','finance','life','morning','parenting','pet','relation','reading','hobby','mental','clean','travel'];
     if(validCategories.indexOf(key) === -1) return (items || []).slice();
     return (items || []).filter(function(item){
       if(item.category && String(item.category).toLowerCase() === key) return true;
       var text = ((item.goal || '') + ' ' + (item.action || '') + ' ' + (item.category || '')).toLowerCase();
       if(key === 'study') return /토익|공부|시험|자격증|수험|독서실|회독|강의|leet|cpa|노무사|간호|국시|기출/.test(text);
       if(key === 'dev') return /개발|코딩|깃허브|알고리즘|오픈소스|백준|디자인|ui|ux|saas|프론트|백엔드/.test(text);
-      if(key === 'workout') return /운동|헬스|러닝|체력|바디프로필|웨이트|필라테스|테니스|수영|인터벌/.test(text);
-      if(key === 'career') return /취업|인턴|이직|창업|매출|사업|마케터|세일즈|영업|스타트업|hr/.test(text);
-      if(key === 'hobby') return /음악|그림|공연|웹툰|댄스|사진|자작곡|뮤지컬|베이커리|로스팅/.test(text);
-      if(key === 'life') return /생활|습관|기상|미라클모닝|청소|정리|식단|건강관리|루틴|수면/.test(text);
-      if(key === 'parenting') return /육아|가족|아이|자녀|놀이|등하원|이유식|부모|가정/.test(text);
+      if(key === 'workout') return /운동|헬스|러닝|체력|바디프로필|웨이트|필라테스|테니스|수영|인터벌|근력/.test(text);
+      if(key === 'running') return /러닝|달리기|마라톤|조깅|페이스트레이닝|10k|하프마라톤|풀코스/.test(text);
+      if(key === 'diet') return /식단|다이어트|칼로리|단백질|클린식단|간헐적단식|체중|샐러드/.test(text);
+      if(key === 'career') return /취업|인턴|이직|창업|매출|사업|마케터|세일즈|영업|스타트업|hr|포트폴리오|이력서|면접|직무|승진/.test(text);
+      if(key === 'sideproject') return /사이드프로젝트|창업|사업|매출|수익화|bm|출시|런칭|고객/.test(text);
       if(key === 'finance') return /재테크|투자|주식|저축|가계부|부동산|예금|펀드|소비|자산/.test(text);
-      if(key === 'mental') return /멘탈|마인드|명상|일기|감사|회고|스트레스|휴식|힐링|마음/.test(text);
+      if(key === 'life') return /생활|습관|루틴|일상|규칙|절제|라이프|하루/.test(text);
+      if(key === 'morning') return /기상|모닝루틴|미라클모닝|새벽기상|기상인증|아침시간|수면패턴/.test(text);
+      if(key === 'parenting') return /육아|자녀|아이|등하원|이유식|부모|가정|어린이집|유치원/.test(text);
+      if(key === 'pet') return /반려동물|강아지|고양이|산책|반려견|반려묘|펫/.test(text);
+      if(key === 'relation') return /관계|인간관계|가족|친구|연애|결혼|소통|대화|부부/.test(text);
       if(key === 'reading') return /독서|책|서평|인문|독서모임|완독|필사|리딩/.test(text);
+      if(key === 'hobby') return /음악|그림|공연|웹툰|댄스|사진|자작곡|뮤지컬|베이커리|로스팅|공예/.test(text);
+      if(key === 'mental') return /멘탈|마인드|명상|일기|감사|회고|스트레스|휴식|힐링|마음/.test(text);
+      if(key === 'clean') return /정리|청소|미니멀|비우기|청결|방청소|분리수거/.test(text);
+      if(key === 'travel') return /여행|아웃도어|등산|캠핑|트레킹|나들이|휴가/.test(text);
       return false;
     });
   }
@@ -17161,16 +17169,24 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
 
     var FEED_CATEGORIES_10 = [
-      {k:'study', l:'공부·수험'},
-      {k:'dev', l:'개발·기획'},
-      {k:'workout', l:'운동·건강'},
-      {k:'career', l:'커리어·취업'},
-      {k:'hobby', l:'취미·창작'},
-      {k:'life', l:'생활·습관'},
-      {k:'parenting', l:'육아·가족'},
-      {k:'finance', l:'재테크·투자'},
-      {k:'mental', l:'멘탈·마인드'},
-      {k:'reading', l:'독서·인문'}
+      {k:'study', l:'공부·수험', icon:'📚'},
+      {k:'dev', l:'개발·기획', icon:'💻'},
+      {k:'workout', l:'운동·헬스', icon:'💪'},
+      {k:'running', l:'러닝·마라톤', icon:'🏃'},
+      {k:'diet', l:'다이어트·식단', icon:'🥗'},
+      {k:'career', l:'커리어·취업', icon:'💼'},
+      {k:'sideproject', l:'창업·사이드', icon:'🚀'},
+      {k:'finance', l:'재테크·투자', icon:'💰'},
+      {k:'life', l:'생활·루틴', icon:'☀️'},
+      {k:'morning', l:'기상·모닝루틴', icon:'⏰'},
+      {k:'parenting', l:'육아·가족', icon:'👶'},
+      {k:'pet', l:'반려동물', icon:'🐾'},
+      {k:'relation', l:'관계·소통', icon:'🤝'},
+      {k:'reading', l:'독서·인문', icon:'📖'},
+      {k:'hobby', l:'취미·창작', icon:'🎨'},
+      {k:'mental', l:'멘탈·마인드', icon:'🧘'},
+      {k:'clean', l:'정리·미니멀', icon:'🧹'},
+      {k:'travel', l:'여행·아웃도어', icon:'✈️'}
     ];
     var customUploadedPhoto = null;
 
@@ -17354,7 +17370,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '</label>' +
           '<div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;white-space:nowrap;" id="shareCatPicker">' +
             FEED_CATEGORIES_10.map(function(c){
-              return '<button type="button" class="feed-filter-chip'+(selectedCat===c.k?' active':'')+'" data-shcat="'+c.k+'" style="font-size:.8125rem;padding:6px 11px;flex:0 0 auto;">'+c.l+'</button>';
+              var chipLabel = (c.icon ? c.icon + ' ' : '') + c.l;
+              return '<button type="button" class="feed-filter-chip'+(selectedCat===c.k?' active':'')+'" data-shcat="'+c.k+'" style="font-size:.8125rem;padding:6px 11px;flex:0 0 auto;">'+chipLabel+'</button>';
             }).join('') +
           '</div>' +
         '</div>' +
@@ -17471,8 +17488,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           var goalTitle = curGoal ? curGoal.title : '';
           var p = state.profile;
           var catMap = {
-            study:'공부·수험', dev:'개발·기획', workout:'운동·건강', career:'커리어·취업', hobby:'취미·창작',
-            life:'생활·습관', parenting:'육아·가족', finance:'재테크·투자', mental:'멘탈·마인드', reading:'독서·인문'
+            study:'공부·수험', dev:'개발·기획', workout:'운동·헬스', running:'러닝·마라톤', diet:'다이어트·식단',
+            career:'커리어·취업', sideproject:'창업·사이드', finance:'재테크·투자', life:'생활·루틴', morning:'기상·모닝루틴',
+            parenting:'육아·가족', pet:'반려동물', relation:'관계·소통', reading:'독서·인문', hobby:'취미·창작',
+            mental:'멘탈·마인드', clean:'정리·미니멀', travel:'여행·아웃도어'
           };
           var catLabel = catMap[selectedCat] || '공부·수험';
           var previewPhoto = customUploadedPhoto || (curRecord && curPhoto ? curPhoto : null);
@@ -17711,12 +17730,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         });
       }
 
-      // Category chip change
+      // Category chip change ([#TASK-ES-310], [59])
       sheet.querySelectorAll('[data-shcat]').forEach(function(btn){
-        btn.addEventListener('click', function(){
+        btn.addEventListener('click', function(e){
+          e.stopPropagation();
+          if(typeof triggerHaptic === 'function') triggerHaptic(12);
+          else if(navigator && typeof navigator.vibrate === 'function') try { navigator.vibrate(12); } catch(err){}
           selectedCat = btn.dataset.shcat;
-          sheet.querySelectorAll('[data-shcat]').forEach(function(b){ b.classList.remove('active'); });
-          btn.classList.add('active');
+          sheet.querySelectorAll('[data-shcat]').forEach(function(b){ b.classList.toggle('active', b === btn); });
+          try {
+            btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+          } catch(se){}
         });
       });
 
@@ -33951,16 +33975,24 @@ wirePromptEncyclopediaEvents(body);
 
     var categories = [
       { key: 'all', label: '전체' },
-      { key: 'study', label: '공부·수험' },
-      { key: 'dev', label: '개발·기획' },
-      { key: 'workout', label: '운동·건강' },
-      { key: 'career', label: '커리어·취업' },
-      { key: 'hobby', label: '취미·창작' },
-      { key: 'life', label: '생활·습관' },
-      { key: 'parenting', label: '육아·가족' },
-      { key: 'finance', label: '재테크·투자' },
-      { key: 'mental', label: '멘탈·마인드' },
-      { key: 'reading', label: '독서·인문' }
+      { key: 'study', label: '📚 공부·수험' },
+      { key: 'dev', label: '💻 개발·기획' },
+      { key: 'workout', label: '💪 운동·헬스' },
+      { key: 'running', label: '🏃 러닝·마라톤' },
+      { key: 'diet', label: '🥗 다이어트·식단' },
+      { key: 'career', label: '💼 커리어·취업' },
+      { key: 'sideproject', label: '🚀 창업·사이드' },
+      { key: 'finance', label: '💰 재테크·투자' },
+      { key: 'life', label: '☀️ 생활·루틴' },
+      { key: 'morning', label: '⏰ 기상·모닝루틴' },
+      { key: 'parenting', label: '👶 육아·가족' },
+      { key: 'pet', label: '🐾 반려동물' },
+      { key: 'relation', label: '🤝 관계·소통' },
+      { key: 'reading', label: '📖 독서·인문' },
+      { key: 'hobby', label: '🎨 취미·창작' },
+      { key: 'mental', label: '🧘 멘탈·마인드' },
+      { key: 'clean', label: '🧹 정리·미니멀' },
+      { key: 'travel', label: '✈️ 여행·아웃도어' }
     ];
     var curCat = state.feedCategory || 'all';
     var catChipsHtml = '<div class="feed-filter-bar" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;-webkit-overflow-scrolling:touch;white-space:nowrap;">'

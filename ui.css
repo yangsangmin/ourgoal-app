@@ -14298,3 +14298,35 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
     height: 28px !important;
   }
 }
+
+/* ============ [#TASK-ES-310] 소통 피드 게시하기 카테고리 가로 스크롤 및 375px 반응형 ============ */
+#shareCatPicker {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+#shareCatPicker::-webkit-scrollbar {
+  display: none !important;
+}
+
+#shareCatPicker .feed-filter-chip {
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+  min-height: 38px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  cursor: pointer !important;
+}
+
+@media (max-width: 375px) {
+  #shareCatPicker {
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+  }
+  #shareCatPicker .feed-filter-chip {
+    font-size: 0.78rem !important;
+    padding: 6px 10px !important;
+    min-height: 40px !important;
+  }
+}
