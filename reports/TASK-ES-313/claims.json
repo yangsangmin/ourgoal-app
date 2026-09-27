@@ -1,0 +1,104 @@
+{
+  "task": "TASK-ES-313",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-313-DESKTOP-WIDGET-SUITE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "widget.html 내에 3종(calendar, goals, records) × 3구성(compact, standard, detail) 총 9개 위젯 렌더링 로직이 구현되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "manifest.json 내에 일정, 목표, 기록 3종 PWA 바탕화면 바로가기 shortcuts가 등록되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내에 openWidgetSettingsModal 함수 및 실시간 위젯 미리보기 iframe이 배선되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "js/components.js 내에 handle전체공통_Item62Action 직통 핸들러 및 getWidgetRenderSpec 함수가 탑재되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/desktop-widget-suite.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-313 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "widget.html 내에 3종 × 3구성 총 9개 위젯 렌더링 로직이 구현되어 있다",
+      "touches": [
+        "widget.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "widget.html",
+        "text": "type === 'calendar'"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "manifest.json 내에 일정, 목표, 기록 3종 PWA 바탕화면 바로가기 shortcuts가 등록되어 있다",
+      "touches": [
+        "manifest.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "manifest.json",
+        "text": "/#calendar"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 openWidgetSettingsModal 함수 및 실시간 위젯 미리보기 iframe이 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "openWidgetSettingsModal"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle전체공통_Item62Action 직통 핸들러 및 getWidgetRenderSpec 함수가 탑재되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle전체공통_Item62Action"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/desktop-widget-suite.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-313 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/desktop-widget-suite.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/desktop-widget-suite.test.js",
+        "text": "desktop-widget-suite"
+      }
+    }
+  ]
+}

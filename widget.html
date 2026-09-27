@@ -9,8 +9,8 @@
   <style>
     :root {
       --bg: #0F172A;
-      --card: rgba(30, 41, 59, 0.85);
-      --card-border: rgba(255, 255, 255, 0.1);
+      --card: rgba(30, 41, 59, 0.88);
+      --card-border: rgba(255, 255, 255, 0.12);
       --text: #F8FAFC;
       --text-soft: #94A3B8;
       --brand: #6366F1;
@@ -22,7 +22,7 @@
     @media (prefers-color-scheme: light) {
       :root {
         --bg: #F1F5F9;
-        --card: rgba(255, 255, 255, 0.9);
+        --card: rgba(255, 255, 255, 0.94);
         --card-border: rgba(0, 0, 0, 0.08);
         --text: #0F172A;
         --text-soft: #64748B;
@@ -56,6 +56,7 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      transition: all 0.2s ease;
     }
     .widget-header {
       display: flex;
@@ -86,6 +87,7 @@
       border-radius: 6px;
       background: var(--brand-glow);
       color: var(--brand);
+      white-space: nowrap;
     }
     .btn-open-app {
       display: flex;
@@ -104,12 +106,17 @@
       border: none;
       cursor: pointer;
       box-shadow: 0 4px 14px var(--brand-glow);
+      transition: background 0.15s ease, transform 0.1s ease;
     }
     .btn-open-app:active { transform: scale(0.98); }
+    
     /* 위젯 크기별 클래스 */
-    .widget-compact { min-height: 120px; }
+    .widget-compact { min-height: 120px; padding: 12px; }
+    .widget-compact .widget-header { margin-bottom: 8px; padding-bottom: 6px; }
+    .widget-compact .btn-open-app { margin-top: 8px; padding: 6px 10px; font-size: 0.75rem; border-radius: 8px; }
     .widget-standard { min-height: 190px; }
-    .widget-detail { min-height: 290px; }
+    .widget-detail { min-height: 310px; }
+    
     .item-row {
       display: flex;
       align-items: center;
@@ -118,11 +125,27 @@
       border-radius: 8px;
       background: rgba(255,255,255,0.04);
       margin-bottom: 6px;
+      border: 1px solid rgba(255,255,255,0.03);
     }
     .item-title { flex: 1; min-width: 0; font-size: 0.8125rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .item-sub { font-size: 0.7rem; color: var(--text-soft); }
     .progress-bar-wrap { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 4px; }
-    .progress-bar-fill { height: 100%; background: var(--brand); border-radius: 3px; }
+    .progress-bar-fill { height: 100%; background: var(--brand); border-radius: 3px; transition: width 0.3s ease; }
+    .widget-stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .widget-stat-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .widget-stat-val { font-size: 1.1rem; font-weight: 800; color: var(--brand); }
+    .widget-stat-lbl { font-size: 0.6875rem; color: var(--text-soft); margin-top: 2px; }
   </style>
 </head>
 <body>
@@ -163,13 +186,21 @@
       var content = document.getElementById('widgetContent');
       var openApp = document.getElementById('btnOpenApp');
 
+      // 햅틱 유틸
+      function triggerHaptic(ms){
+        if(typeof navigator !== 'undefined' && navigator.vibrate){
+          try { navigator.vibrate(ms || 12); } catch(e){}
+        }
+      }
+
       // 실시간 시계
       function updateClock(){
         var now = new Date();
         var h = String(now.getHours()).padStart(2, '0');
         var m = String(now.getMinutes()).padStart(2, '0');
         var dStr = (now.getMonth() + 1) + '월 ' + now.getDate() + '일';
-        document.getElementById('widgetClock').textContent = dStr + ' ' + h + ':' + m;
+        var clockEl = document.getElementById('widgetClock');
+        if(clockEl) clockEl.textContent = dStr + ' ' + h + ':' + m;
       }
       updateClock();
       setInterval(updateClock, 1000);
@@ -199,144 +230,197 @@
 
         // 위젯 유형별 렌더링
         if(type === 'calendar'){
-        badge.textContent = '📅 일정 위젯';
-        openApp.href = '/#calendar';
+          badge.textContent = '📅 일정 위젯';
+          openApp.href = '/#calendar';
 
-        var todayStr = new Date().toISOString().slice(0, 10);
-        var todayScheds = schedules.filter(function(s){
-          return s && s.date && s.date.slice(0, 10) === todayStr;
-        });
+          var todayStr = new Date().toISOString().slice(0, 10);
+          var todayScheds = schedules.filter(function(s){
+            return s && s.date && s.date.slice(0, 10) === todayStr;
+          });
 
-        if(size === 'compact'){
-          var next = todayScheds[0];
-          content.innerHTML = next ? (
-            '<div style="padding:6px 0;">' +
-              '<div style="font-size:0.75rem;color:var(--text-soft);margin-bottom:4px;">오늘의 다음 일정</div>' +
-              '<div style="font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:4px;">' + (next.done ? '✅ ' : '⏳ ') + (next.title || '일정') + '</div>' +
-              '<div style="font-size:0.75rem;color:var(--brand);font-weight:700;">' + (next.date.split('T')[1] || '하루 종일') + (next.note ? ' · ' + next.note : '') + '</div>' +
-            '</div>'
-          ) : (
-            '<div style="text-align:center;padding:12px 0;">' +
-              '<div style="font-size:1rem;font-weight:700;">오늘 예정된 일정이 없어요 🎉</div>' +
-              '<div style="font-size:0.75rem;color:var(--text-soft);margin-top:2px;">여유롭고 알찬 하루 보내세요!</div>' +
-            '</div>'
-          );
-        } else if(size === 'standard'){
-          content.innerHTML = '<div style="font-size:0.8125rem;font-weight:700;margin-bottom:8px;color:var(--text-soft);">오늘의 일정 (' + todayScheds.length + '건)</div>' +
-            (todayScheds.length > 0 ? todayScheds.slice(0, 3).map(function(s){
-              return '<div class="item-row">' +
-                '<span style="font-size:0.9rem;">' + (s.done ? '✅' : '⏳') + '</span>' +
-                '<div class="item-title">' + (s.title || '일정') + '</div>' +
-                '<span class="item-sub">' + (s.date.split('T')[1] || '종일') + '</span>' +
-              '</div>';
-            }).join('') : '<div style="text-align:center;padding:16px 0;font-size:0.8125rem;color:var(--text-soft);">오늘 등록된 일정이 없습니다.<br>원터치로 일정을 등록해보세요!</div>');
-        } else {
-          // detail (4x2)
-          content.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
-              '<b style="font-size:0.875rem;">오늘의 24시간 타임라인</b>' +
-              '<span class="item-sub">총 ' + todayScheds.length + '개 일정</span>' +
-            '</div>' +
-            '<div style="display:flex;flex-direction:column;gap:6px;max-height:190px;overflow-y:auto;">' +
-              (todayScheds.length > 0 ? todayScheds.map(function(s){
-                return '<div class="item-row">' +
-                  '<span style="font-size:0.9rem;">' + (s.done ? '✅' : '🔔') + '</span>' +
-                  '<div style="flex:1;min-width:0;">' +
-                    '<div class="item-title">' + (s.title || '일정') + '</div>' +
-                    '<div class="item-sub">' + (s.date.replace('T', ' ') || '') + (s.note ? ' · ' + s.note : '') + '</div>' +
-                  '</div>' +
-                  '<span class="widget-pill">' + (s.done ? '완료' : '예정') + '</span>' +
-                '</div>';
-              }).join('') : '<div style="text-align:center;padding:32px 0;color:var(--text-soft);font-size:0.8125rem;">등록된 일정이 없습니다.</div>') +
-            '</div>';
-        }
-
-      } else if(type === 'goals'){
-        badge.textContent = '🎯 목표 위젯';
-        openApp.href = '/#goals';
-
-        var activeGoals = goals.filter(function(g){ return !g.archivedAt; });
-        var topGoal = activeGoals[0];
-
-        if(size === 'compact'){
-          content.innerHTML = topGoal ? (
-            '<div style="padding:6px 0;">' +
-              '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
-                '<span style="font-size:0.75rem;color:var(--text-soft);">최우선 목표</span>' +
-                '<span class="widget-pill">진행 중</span>' +
+          if(size === 'compact'){
+            var next = todayScheds[0];
+            content.innerHTML = next ? (
+              '<div style="padding:4px 0;" onclick="(' + triggerHaptic + ')(12);">' +
+                '<div style="font-size:0.75rem;color:var(--text-soft);margin-bottom:4px;">오늘의 다음 일정</div>' +
+                '<div style="font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (next.done ? '✅ ' : '⏳ ') + (next.title || '일정') + '</div>' +
+                '<div style="font-size:0.75rem;color:var(--brand);font-weight:700;">' + (next.date.split('T')[1] || '하루 종일') + (next.note ? ' · ' + next.note : '') + '</div>' +
+              '</div>'
+            ) : (
+              '<div style="text-align:center;padding:10px 0;">' +
+                '<div style="font-size:0.95rem;font-weight:700;">오늘 예정된 일정 없음 🎉</div>' +
+                '<div style="font-size:0.75rem;color:var(--text-soft);margin-top:2px;">여유롭고 알찬 하루 되세요!</div>' +
+              '</div>'
+            );
+          } else if(size === 'standard'){
+            content.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+                '<span style="font-size:0.8125rem;font-weight:700;color:var(--text-soft);">오늘의 일정 (' + todayScheds.length + '건)</span>' +
+                '<a href="/#calendar" style="font-size:0.7rem;color:var(--brand);text-decoration:none;font-weight:600;">+ 일정 추가</a>' +
               '</div>' +
-              '<div style="font-size:1rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (topGoal.title || '목표') + '</div>' +
-              '<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:65%;"></div></div>' +
-            '</div>'
-          ) : (
-            '<div style="text-align:center;padding:12px 0;">등록된 목표가 없습니다. 목표를 세워보세요!</div>'
-          );
-        } else if(size === 'standard'){
-          content.innerHTML = '<div style="font-size:0.8125rem;font-weight:700;margin-bottom:8px;color:var(--text-soft);">핵심 실천 목표 (' + activeGoals.length + '개)</div>' +
-            (activeGoals.length > 0 ? activeGoals.slice(0, 3).map(function(g){
-              return '<div class="item-row">' +
-                '<span style="font-size:1rem;">🎯</span>' +
-                '<div style="flex:1;min-width:0;">' +
-                  '<div class="item-title">' + (g.title || '목표') + '</div>' +
-                  '<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:50%;"></div></div>' +
+              (todayScheds.length > 0 ? todayScheds.slice(0, 3).map(function(s){
+                return '<div class="item-row">' +
+                  '<span style="font-size:0.9rem;">' + (s.done ? '✅' : '⏳') + '</span>' +
+                  '<div class="item-title">' + (s.title || '일정') + '</div>' +
+                  '<span class="item-sub">' + (s.date.split('T')[1] || '종일') + '</span>' +
+                '</div>';
+              }).join('') : '<div style="text-align:center;padding:16px 0;font-size:0.8125rem;color:var(--text-soft);">오늘 등록된 일정이 없습니다.<br>원터치로 일정을 등록해보세요!</div>');
+          } else {
+            // detail (대형)
+            var doneCount = todayScheds.filter(function(s){ return s.done; }).length;
+            content.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+                '<b style="font-size:0.875rem;">오늘의 24시간 타임라인</b>' +
+                '<span class="item-sub">완료 ' + doneCount + ' / 총 ' + todayScheds.length + '건</span>' +
+              '</div>' +
+              '<div style="display:flex;flex-direction:column;gap:6px;max-height:190px;overflow-y:auto;">' +
+                (todayScheds.length > 0 ? todayScheds.map(function(s){
+                  return '<div class="item-row">' +
+                    '<span style="font-size:0.9rem;">' + (s.done ? '✅' : '🔔') + '</span>' +
+                    '<div style="flex:1;min-width:0;">' +
+                      '<div class="item-title">' + (s.title || '일정') + '</div>' +
+                      '<div class="item-sub">' + (s.date.replace('T', ' ') || '') + (s.note ? ' · ' + s.note : '') + '</div>' +
+                    '</div>' +
+                    '<span class="widget-pill">' + (s.done ? '완료' : '예정') + '</span>' +
+                  '</div>';
+                }).join('') : '<div style="text-align:center;padding:32px 0;color:var(--text-soft);font-size:0.8125rem;">등록된 일정이 없습니다.<br>타임라인에 일정을 채워보세요!</div>') +
+              '</div>';
+          }
+
+        } else if(type === 'goals'){
+          badge.textContent = '🎯 목표 위젯';
+          openApp.href = '/#goals';
+
+          var activeGoals = goals.filter(function(g){ return !g.archivedAt; });
+          var topGoal = activeGoals[0];
+
+          // 진척도 계산 헬퍼
+          function getGoalProgress(g){
+            if(!g) return 0;
+            if(typeof g.progress === 'number') return Math.min(100, Math.max(0, Math.round(g.progress)));
+            var ms = g.milestones || [];
+            if(ms.length === 0) return 0;
+            var doneMs = ms.filter(function(m){ return m.done || m.completed; }).length;
+            return Math.min(100, Math.round((doneMs / ms.length) * 100));
+          }
+
+          if(size === 'compact'){
+            var prog = getGoalProgress(topGoal);
+            content.innerHTML = topGoal ? (
+              '<div style="padding:4px 0;" onclick="(' + triggerHaptic + ')(12);">' +
+                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+                  '<span style="font-size:0.75rem;color:var(--text-soft);">최우선 목표</span>' +
+                  '<span class="widget-pill">' + prog + '% 달성</span>' +
                 '</div>' +
-              '</div>';
-            }).join('') : '<div style="text-align:center;padding:16px 0;color:var(--text-soft);">등록된 목표가 없습니다.</div>');
-        } else {
-          // detail
-          content.innerHTML = '<div style="font-size:0.875rem;font-weight:800;margin-bottom:8px;">🎯 3계층 목표 & 마일스톤 현황</div>' +
-            '<div style="display:flex;flex-direction:column;gap:8px;max-height:190px;overflow-y:auto;">' +
-              (activeGoals.length > 0 ? activeGoals.map(function(g){
-                var msLen = (g.milestones || []).length;
-                return '<div style="background:rgba(255,255,255,0.04);padding:8px 10px;border-radius:10px;border:1px solid var(--card-border);">' +
-                  '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
-                    '<b style="font-size:0.8125rem;">' + (g.title || '목표') + '</b>' +
-                    '<span class="item-sub">마일스톤 ' + msLen + '개</span>' +
-                  '</div>' +
-                  '<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:60%;"></div></div>' +
-                '</div>';
-              }).join('') : '<div style="text-align:center;padding:32px 0;color:var(--text-soft);">등록된 목표가 없습니다.</div>') +
-            '</div>';
-        }
-
-      } else {
-        // records
-        badge.textContent = '📝 기록 위젯';
-        openApp.href = '/#records';
-
-        if(size === 'compact'){
-          content.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;">' +
-            '<div>' +
-              '<div style="font-size:0.75rem;color:var(--text-soft);">오늘의 실천</div>' +
-              '<div style="font-size:1.1rem;font-weight:800;color:var(--brand);">원터치 빠른 기록</div>' +
-            '</div>' +
-            '<span style="font-size:2rem;">⏱️</span>' +
-          '</div>';
-        } else if(size === 'standard'){
-          var recent = records[0];
-          content.innerHTML = '<div style="font-size:0.8125rem;font-weight:700;margin-bottom:8px;color:var(--text-soft);">최근 실천 기록 & 스톱워치</div>' +
-            '<div style="background:rgba(255,255,255,0.04);padding:10px;border-radius:12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">' +
-              '<div>' +
-                '<div style="font-size:0.75rem;color:var(--text-soft);">' + (recent ? (recent.date || '최근') : '오늘') + '</div>' +
-                '<div style="font-size:0.875rem;font-weight:700;">' + (recent ? (recent.title || recent.text || '실천 완료') : '첫 실천을 기록해보세요!') + '</div>' +
+                '<div style="font-size:1rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;">' + (topGoal.title || '목표') + '</div>' +
+                '<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:' + prog + '%;"></div></div>' +
+              '</div>'
+            ) : (
+              '<div style="text-align:center;padding:12px 0;font-size:0.8125rem;color:var(--text-soft);">등록된 목표가 없습니다.<br>목표를 세워보세요!</div>'
+            );
+          } else if(size === 'standard'){
+            content.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+                '<span style="font-size:0.8125rem;font-weight:700;color:var(--text-soft);">핵심 실천 목표 (' + activeGoals.length + '개)</span>' +
+                '<a href="/#goals" style="font-size:0.7rem;color:var(--brand);text-decoration:none;font-weight:600;">+ 새 목표</a>' +
               '</div>' +
-              '<span class="widget-pill">기록됨</span>' +
-            '</div>';
-        } else {
-          // detail
-          content.innerHTML = '<div style="font-size:0.875rem;font-weight:800;margin-bottom:8px;">📈 최근 실천 히트맵 & 기록 요약</div>' +
-            '<div style="display:flex;flex-direction:column;gap:6px;max-height:190px;overflow-y:auto;">' +
-              (records.length > 0 ? records.slice(0, 4).map(function(r){
-                return '<div class="item-row">' +
-                  '<span style="font-size:1rem;">📝</span>' +
-                  '<div class="item-title">' + (r.title || r.text || '실천 기록') + '</div>' +
-                  '<span class="item-sub">' + (r.date || '') + '</span>' +
+              (activeGoals.length > 0 ? activeGoals.slice(0, 3).map(function(g){
+                var p = getGoalProgress(g);
+                return '<div class="item-row" style="flex-direction:column;align-items:stretch;gap:4px;">' +
+                  '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+                    '<div class="item-title">🎯 ' + (g.title || '목표') + '</div>' +
+                    '<span style="font-size:0.7rem;font-weight:700;color:var(--brand);">' + p + '%</span>' +
+                  '</div>' +
+                  '<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:' + p + '%;"></div></div>' +
                 '</div>';
-              }).join('') : '<div style="text-align:center;padding:32px 0;color:var(--text-soft);">아직 기록된 실천이 없습니다.</div>') +
+              }).join('') : '<div style="text-align:center;padding:16px 0;color:var(--text-soft);font-size:0.8125rem;">등록된 목표가 없습니다.<br>첫 목표를 작성해보세요!</div>');
+          } else {
+            // detail (대형)
+            content.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+                '<b style="font-size:0.875rem;">🎯 3계층 목표 & 마일스톤 현황</b>' +
+                '<span class="item-sub">활성 목표 ' + activeGoals.length + '개</span>' +
+              '</div>' +
+              '<div style="display:flex;flex-direction:column;gap:8px;max-height:190px;overflow-y:auto;">' +
+                (activeGoals.length > 0 ? activeGoals.map(function(g){
+                  var ms = g.milestones || [];
+                  var doneMs = ms.filter(function(m){ return m.done || m.completed; }).length;
+                  var p = getGoalProgress(g);
+                  return '<div style="background:rgba(255,255,255,0.04);padding:8px 10px;border-radius:10px;border:1px solid var(--card-border);">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+                      '<b style="font-size:0.8125rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (g.title || '목표') + '</b>' +
+                      '<span class="item-sub">마일스톤 ' + doneMs + '/' + ms.length + ' (' + p + '%)</span>' +
+                    '</div>' +
+                    '<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:' + p + '%;"></div></div>' +
+                  '</div>';
+                }).join('') : '<div style="text-align:center;padding:32px 0;color:var(--text-soft);font-size:0.8125rem;">등록된 목표가 없습니다.<br>목표를 세우고 마일스톤을 실천해보세요!</div>') +
+              '</div>';
+          }
+
+        } else {
+          // records (기록 위젯)
+          badge.textContent = '⏱️ 기록 위젯';
+          openApp.href = '/#records';
+
+          if(size === 'compact'){
+            var latest = records[0];
+            content.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;" onclick="(' + triggerHaptic + ')(12);">' +
+              '<div style="flex:1;min-width:0;padding-right:8px;">' +
+                '<div style="font-size:0.75rem;color:var(--text-soft);margin-bottom:2px;">오늘의 실천 기록</div>' +
+                '<div style="font-size:1rem;font-weight:800;color:var(--brand);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (latest ? (latest.title || latest.text || '최근 실천') : '원터치 빠른 기록') + '</div>' +
+                '<div style="font-size:0.7rem;color:var(--text-soft);margin-top:2px;">총 ' + records.length + '회 기록됨</div>' +
+              '</div>' +
+              '<span style="font-size:2rem;">⏱️</span>' +
             '</div>';
+          } else if(size === 'standard'){
+            var recentRecords = records.slice(0, 3);
+            content.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+                '<span style="font-size:0.8125rem;font-weight:700;color:var(--text-soft);">최근 실천 기록 (' + records.length + '건)</span>' +
+                '<a href="/#records" style="font-size:0.7rem;color:var(--brand);text-decoration:none;font-weight:600;">+ 바로 기록</a>' +
+              '</div>' +
+              (recentRecords.length > 0 ? recentRecords.map(function(r){
+                return '<div class="item-row">' +
+                  '<span style="font-size:0.9rem;">📝</span>' +
+                  '<div class="item-title">' + (r.title || r.text || '실천 완료') + '</div>' +
+                  '<span class="item-sub">' + (r.date || r.time || '오늘') + '</span>' +
+                '</div>';
+              }).join('') : '<div style="text-align:center;padding:16px 0;font-size:0.8125rem;color:var(--text-soft);">아직 기록된 실천이 없습니다.<br>스톱워치로 몰입을 시작해보세요!</div>');
+          } else {
+            // detail (대형)
+            content.innerHTML = '<div class="widget-stat-grid">' +
+                '<div class="widget-stat-card">' +
+                  '<div class="widget-stat-val">' + records.length + '회</div>' +
+                  '<div class="widget-stat-lbl">누적 실천 기록</div>' +
+                '</div>' +
+                '<div class="widget-stat-card">' +
+                  '<div class="widget-stat-val">' + (records[0] ? (records[0].date || '오늘') : '-') + '</div>' +
+                  '<div class="widget-stat-lbl">최근 실천 날짜</div>' +
+                '</div>' +
+              '</div>' +
+              '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+                '<b style="font-size:0.8125rem;">최근 실천 타임로그</b>' +
+                '<a href="/#records" style="font-size:0.7rem;color:var(--brand);text-decoration:none;font-weight:600;">+ 스톱워치 기록</a>' +
+              '</div>' +
+              '<div style="display:flex;flex-direction:column;gap:6px;max-height:140px;overflow-y:auto;">' +
+                (records.length > 0 ? records.slice(0, 4).map(function(r){
+                  return '<div class="item-row">' +
+                    '<span style="font-size:0.9rem;">⏱️</span>' +
+                    '<div class="item-title">' + (r.title || r.text || '실천 기록') + '</div>' +
+                    '<span class="item-sub">' + (r.date || '') + '</span>' +
+                  '</div>';
+                }).join('') : '<div style="text-align:center;padding:24px 0;color:var(--text-soft);font-size:0.8125rem;">아직 기록된 실천이 없습니다.</div>') +
+              '</div>';
+          }
         }
       }
-    }
-    renderWidget();
+
+      renderWidget();
+
+      // 스토리지 변경 및 윈도우 포커스 시 위젯 자동 실시간 새로고침
+      window.addEventListener('storage', renderWidget);
+      window.addEventListener('focus', renderWidget);
+      if(typeof BroadcastChannel !== 'undefined'){
+        try {
+          var bc = new BroadcastChannel('ourgoal_sync_channel');
+          bc.onmessage = function(){ renderWidget(); };
+        } catch(e){}
+      }
     })();
   </script>
 </body>

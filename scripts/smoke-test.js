@@ -9784,6 +9784,28 @@ check('compliance: [#TASK-ES-312] [61] 피드 내 AI 봇 활동내역 최하단 
   assert.ok(jsComp.includes('remove_ai_when_users_over_20: true'), 'components.js remove_ai_when_users_over_20 플래그 탑재');
 });
 
+check('compliance: [#TASK-ES-313] [62] 기기 바탕화면용 위젯 기능(일정·목표·기록 3종 × 3가지 구성) 개발 완결 무결성 검증', () => {
+  const widgetHtml = fs.readFileSync(path.join(__dirname, '..', 'widget.html'), 'utf8');
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const manifestJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'manifest.json'), 'utf8'));
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. widget.html 3종 × 3구성 9개 조합 렌더링 무결성
+  assert.ok(widgetHtml.includes("type === 'calendar'") && widgetHtml.includes("type === 'goals'") && widgetHtml.includes("records"), 'widget.html 위젯 3종 분기 탑재');
+  assert.ok(widgetHtml.includes("size === 'compact'") && widgetHtml.includes("size === 'standard'") && widgetHtml.includes("detail"), 'widget.html 위젯 3구성 분기 탑재');
+  assert.ok(widgetHtml.includes('오늘의 다음 일정') && widgetHtml.includes('최우선 목표') && widgetHtml.includes('오늘의 실천 기록'), 'widget.html 컴팩트 3종 특화 렌더링 탑재');
+
+  // 2. manifest.json 숏컷 및 index.html 모달 연동
+  assert.ok(Array.isArray(manifestJson.shortcuts) && manifestJson.shortcuts.length >= 3, 'manifest.json 3종 숏컷 등록');
+  assert.ok(indexHtml.includes('openWidgetSettingsModal') && indexHtml.includes('widgetPreviewIframe'), 'index.html 위젯 설정 & 미리보기 모달 탑재');
+
+  // 3. components.js 직통 액션 핸들러 및 렌더링 스펙 함수 검증
+  assert.ok(jsComp.includes('handle전체공통_Item62Action'), 'components.js handle전체공통_Item62Action 탑재');
+  assert.ok(jsComp.includes('getWidgetRenderSpec'), 'components.js getWidgetRenderSpec 탑재');
+  assert.ok(jsComp.includes('og_task-62_cache'), 'components.js og_task-62_cache 캐시 탑재');
+  assert.ok(jsComp.includes('widget_suite_enabled: true'), 'components.js widget_suite_enabled 플래그 탑재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
