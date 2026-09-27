@@ -6908,8 +6908,11 @@ check('compliance: [#TASK-ES-180] 아워골 생각 메모장 9대 대기 과제(
   assert.ok(componentsJs.includes('handle팀목표_Item68Action'), 'js/components.js 내 handle팀목표_Item68Action 직통 핸들러 탑재');
   assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'team-creation-clean.test.js')), '단위 테스트 파일 tests/team-creation-clean.test.js 존재');
 
-  // [69] 카카오 로그인 동명이인 중복 닉네임 방지 태그 부여 검증
+  // [69] 카카오 로그인 동명이인 중복 닉네임 방지 태그 부여 및 분리 렌더러 검증
   assert.ok(indexHtml.includes('resolveUniqueDisplayName'), '동명이인 고유 식별자 태그 부여 함수 탑재');
+  assert.ok(indexHtml.includes('formatDisplayNameWithTag'), '닉네임·태그 분리 시인성 렌더러 함수 탑재');
+  assert.ok(componentsJs.includes('handle인증_Item69Action'), 'js/components.js 내 handle인증_Item69Action 직통 핸들러 탑재');
+  assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'unique-display-name.test.js')), '단위 테스트 파일 tests/unique-display-name.test.js 존재');
 
   // [추가 과제] 6대 탭 TAB_GUIDE_DATA 최신 혁신 기능 전면 반영 검증
   assert.ok(indexHtml.includes('오늘의 성장 루틴 & 위젯'), '홈 탭 가이드 최신화 확인');
@@ -9938,6 +9941,31 @@ check('compliance: [#TASK-ES-319] [68] 팀 만들기 불필요 제약(정원 제
   assert.ok(jsComp.includes('og_task-68_cache'), 'components.js og_task-68_cache 캐시 탑재');
   assert.ok(jsComp.includes('team_constraints_removed: true'), 'components.js team_constraints_removed 플래그 탑재');
   assert.ok(jsComp.includes('max_members_unlimited: true'), 'components.js max_members_unlimited 플래그 탑재');
+});
+
+check('compliance: [#TASK-ES-320] [69] 카카오 로그인 동명이인 가입/중복 닉네임 방지 고유 태그 부여 및 동반자 핀포인트 매칭 완결 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+  const commJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+
+  // 1. 고유 태그 부여 및 충돌 방지 5회 루프 검증
+  assert.ok(indexHtml.includes('resolveUniqueDisplayName'), 'index.html resolveUniqueDisplayName 함수 탑재');
+  assert.ok(indexHtml.includes('for(var attempt = 0; attempt < 5; attempt++)'), 'index.html 고유 태그 충돌 방지 5회 탐색 루프 구비');
+
+  // 2. 닉네임-태그 분리 렌더러 검증
+  assert.ok(indexHtml.includes('function formatDisplayNameWithTag('), 'index.html formatDisplayNameWithTag 분리 렌더러 함수 구비');
+  assert.ok(indexHtml.includes('display-name-tag'), 'index.html 태그 전용 스타일 클래스 구비');
+
+  // 3. 동반자 검색 결과 카드 4대 앵커 및 핀포인트 태그 정렬 검증
+  assert.ok(commJs.includes('formatDisplayNameWithTag'), 'team-invite-comm.js formatDisplayNameWithTag 적용');
+  assert.ok(commJs.includes('tagMatch[0].toLowerCase()'), 'team-invite-comm.js 고유 태그(#1234) 핀포인트 검색 최우선 매칭 정렬 구비');
+  assert.ok(commJs.includes('🔥 Lv.'), 'team-invite-comm.js 검색 카드 4대 앵커(레벨/스트릭) 구비');
+
+  // 4. components.js handle인증_Item69Action 직통 핸들러 및 캐시 확인
+  assert.ok(jsComp.includes('handle인증_Item69Action'), 'components.js handle인증_Item69Action 탑재');
+  assert.ok(jsComp.includes('og_task-69_cache'), 'components.js og_task-69_cache 캐시 탑재');
+  assert.ok(jsComp.includes('unique_display_name_guaranteed: true'), 'components.js unique_display_name_guaranteed 플래그 탑재');
+  assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'unique-display-name.test.js')), '단위 테스트 파일 tests/unique-display-name.test.js 존재');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
