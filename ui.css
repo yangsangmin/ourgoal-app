@@ -14330,3 +14330,203 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
     min-height: 40px !important;
   }
 }
+
+/* ============ [#TASK-ES-327] 프로필 내 동네(Region) 시군구 설정 및 쾌속 스마트 탐색 UX ============ */
+.pv-region-picker-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.pv-region-summary-bar {
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.pv-region-summary-text {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pv-region-summary-text b {
+  color: var(--brand-strong, #6366f1);
+}
+
+.pv-region-clear-btn {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.pv-region-clear-btn:active {
+  transform: scale(0.95);
+  background: #fca5a5;
+}
+
+.pv-region-search-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.pv-region-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1.5px solid var(--rule, #e2e8f0);
+  background: var(--input-bg, #ffffff);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.84375rem;
+  color: var(--ink);
+  min-height: 44px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.pv-region-search-input:focus {
+  border-color: var(--brand, #6366f1);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.pv-region-search-results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 8px;
+  background: var(--card2, #f8fafc);
+  border: 1px solid var(--rule, #e2e8f0);
+  border-radius: 10px;
+  max-height: 130px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.pv-search-chip {
+  padding: 8px 12px !important;
+  font-size: 0.8125rem !important;
+  min-height: 44px !important;
+  border-radius: 8px !important;
+  background: var(--card, #ffffff) !important;
+  border: 1px solid var(--rule, #cbd5e1) !important;
+  color: var(--ink) !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.15s ease !important;
+}
+
+.pv-search-chip:active, .pv-search-chip:hover {
+  border-color: var(--brand, #6366f1) !important;
+  background: rgba(99, 102, 241, 0.08) !important;
+  color: var(--brand-strong, #6366f1) !important;
+}
+
+.pv-region-sido-row {
+  display: flex !important;
+  gap: 6px !important;
+  overflow-x: auto !important;
+  padding-bottom: 4px !important;
+  scrollbar-width: thin !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+.pv-region-sido-row .cat-major {
+  min-height: 44px !important;
+  padding: 8px 14px !important;
+  font-size: 0.8125rem !important;
+  flex-shrink: 0 !important;
+  border-radius: 8px !important;
+}
+
+.pv-region-gu-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)) !important;
+  gap: 6px !important;
+  max-height: 180px !important;
+  overflow-y: auto !important;
+  padding: 2px !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+.pv-region-gu-grid .cat-sub {
+  min-height: 44px !important;
+  padding: 8px 6px !important;
+  font-size: 0.8125rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+}
+
+.pv-region-gu-grid .cat-sub.active {
+  background: var(--brand, #6366f1) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35) !important;
+}
+
+/* [75] 로컬 동반자 혜택 카드와 공명 */
+.pv-region-card {
+  padding: 12px 14px;
+  background: var(--card2, #f8fafc);
+  border-radius: 12px;
+  border: 1px solid var(--rule, #e2e8f0);
+}
+
+.pv-region-badge {
+  font-size: 0.72rem;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.pv-region-badge.on {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+}
+
+.pv-region-badge.off {
+  background: rgba(100, 116, 139, 0.12);
+  color: #64748b;
+}
+
+.pv-region-benefit-card {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: rgba(99, 102, 241, 0.06);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 10px;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+

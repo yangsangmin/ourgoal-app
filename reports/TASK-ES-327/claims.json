@@ -1,0 +1,219 @@
+{
+  "task": "TASK-ES-327",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-327-PROFILE-REGION-PICKER-FIX.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 프로필 수정 모달에 동네 상단 실시간 요약 바 pvRegionSummaryBar가 구현되어 선택된 지역을 즉시 표시함을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 프로필 수정 모달에 pvRegionClearBtn 초기화 버튼이 구현되어 언제든 미설정으로 복구할 수 있음을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내 프로필 수정 모달에 pvRegionSearchInput 1초 스마트 검색창과 pvRegionSearchResults가 구현되어 전국 시군구를 즉시 검색할 수 있음을 보장한다."
+    },
+    {
+      "id": "R4",
+      "text": "index.html 내 wireRegionPicker가 regionRef.value 기반 시/도 탭 및 구 칩을 자동 활성화(Auto-Activation)함을 보장한다."
+    },
+    {
+      "id": "R5",
+      "text": "index.html 내 기존 필수 시그니처 wireRegionPicker(sheet, 'pvRegion', regionRef); 가 100% 보존됨을 보장한다."
+    },
+    {
+      "id": "R6",
+      "text": "js/components.js 내에 직통 핸들러 handle프로필_Item76Action이 구현되어 12ms 햅틱 반응, og_task-76_cache 로컬 캐시 영속화, 4대 뷰 원자적 전파를 보장한다."
+    },
+    {
+      "id": "R7",
+      "text": "tests/profile-region-picker.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-327 검증 테스트가 정의되어 무결점을 전수 입증한다."
+    },
+    {
+      "id": "R8",
+      "text": "docs/rules/TICKETS.md에 #TASK-ES-327이 승인 티켓으로 등록되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 pvRegionSummaryBar 요약 바가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "pvRegionSummaryBar"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 pvRegionClearBtn 초기화 버튼이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "pvRegionClearBtn"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 pvRegionSearchInput 스마트 검색창이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "pvRegionSearchInput"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 pvRegionSearchResults 검색 결과 슬롯이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "pvRegionSearchResults"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 wireRegionPicker에 기존 저장값 기반 자동 활성화 로직이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "initSido"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 wireRegionPicker(sheet, 'pvRegion', regionRef); 필수 시그니처가 보존되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "wireRegionPicker(sheet, 'pvRegion', regionRef);"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 handle프로필_Item76Action 직통 핸들러가 구현되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle프로필_Item76Action"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 og_task-76_cache 로컬 캐시 키가 저장된다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "og_task-76_cache"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "단위 테스트 파일 tests/profile-region-picker.test.js가 존재한다",
+      "touches": [
+        "tests/profile-region-picker.test.js"
+      ],
+      "check": {
+        "type": "fileExists",
+        "file": "tests/profile-region-picker.test.js"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/profile-region-picker.test.js 내에 [TASK-ES-327] 단위 테스트가 구현되어 있다",
+      "touches": [
+        "tests/profile-region-picker.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/profile-region-picker.test.js",
+        "text": "[TASK-ES-327]"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js 내에 [76] 동네 선택기 배선 존재 단언문이 구현되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[76] 동네 선택기 배선 존재"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/rules/TICKETS.md 내에 #TASK-ES-327 승인 티켓이 등록되어 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "#TASK-ES-327"
+      }
+    }
+  ]
+}

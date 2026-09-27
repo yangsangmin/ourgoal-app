@@ -7842,9 +7842,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '<div class="field"><label>내 소개 (최대 80자)</label><input id="pvBio" type="text" value="'+escapeHtml(draft.bio)+'" maxlength="80" placeholder="예: 3개월 뒤 하프마라톤 도전 중 · 매일 기록해요"></div>' +
       '<div class="field"><label>내 동네 (시/도 · 시군구)</label></div>' +
       regionPickerHtml('pvRegion', draft.region) +
-      '<div class="toggle-row" style="margin-top:10px;">' +
-        '<div class="t">프로필에 지역 공개<div class="faint" style="font-size:.8125rem;">공개하면 같은 동네 사람·오프라인 팀 추천에 노출돼요</div></div>' +
-        '<div class="switch'+(draft.regionPublic?' on':'')+'" id="pvRegionPublic"></div>' +
+      '<div class="pv-region-card" style="margin-top:10px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
+          '<div style="flex:1;min-width:0;">' +
+            '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+              '<span style="font-weight:700;font-size:.875rem;color:var(--ink);">프로필에 동네 공개</span>' +
+              '<span id="pvRegionPublicBadge" class="pv-region-badge '+(draft.regionPublic?'on':'off')+'">'+(draft.regionPublic?'🛡️ 안심 공개 중 (시군구만 노출)':'🔒 완전 비공개 (추천 제외)')+'</span>' +
+            '</div>' +
+            '<div class="faint" style="font-size:.78125rem;margin-top:3px;line-height:1.4;">상세 주소 없이 시/도 및 시군구만 안전하게 노출되어 오프라인 팀·동반자 추천에 활용됩니다.</div>' +
+          '</div>' +
+          '<div class="switch'+(draft.regionPublic?' on':'')+'" id="pvRegionPublic" role="switch" aria-checked="'+(draft.regionPublic?'true':'false')+'" aria-label="프로필 동네 공개 토글" style="cursor:pointer;flex-shrink:0;"></div>' +
+        '</div>' +
+        '<div id="pvRegionBenefitCard" class="pv-region-benefit-card" style="display:'+(draft.regionPublic?'block':'none')+';">' +
+          '<span style="color:var(--brand-strong);font-weight:700;">✨ 로컬 동반자 연결:</span> ' +
+          '<span id="pvRegionBenefitText">'+(draft.region ? '📍 <b>'+escapeHtml(draft.region)+'</b>에서 목표를 달성 중인 동반자들과 안전하게 연결돼요.' : '동네(시군구)를 선택하시면 같은 지역 동반자와의 오프라인 모임에 우선 추천돼요.')+'</span>' +
+        '</div>' +
       '</div>' +
       '<div class="field" style="margin-top:14px;"><label>관심 카테고리 (최대 8개 선택)</label></div>' +
       '<div id="pvInterests"></div>' +
@@ -8007,14 +8019,102 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
         // 지역 및 공개 토글
         var regionRef = { value: draft.region };
+
+        function updateRegionBenefitText(){
+          var benefitText = sheet.querySelector('#pvRegionBenefitText');
+          if(benefitText){
+            var curReg = (regionRef && regionRef.value) ? regionRef.value.trim() : (draft.region || '');
+            if(curReg){
+              benefitText.innerHTML = '📍 <b>' + escapeHtml(curReg) + '</b>에서 목표를 달성 중인 동반자들과 안전하게 연결돼요.';
+            } else {
+              benefitText.textContent = '동네(시군구)를 선택하시면 같은 지역 동반자와의 오프라인 모임에 우선 추천돼요.';
+            }
+          }
+        }
+
+        function syncRegionDraftToProfile(){
+          if(state.profile){
+            state.profile.regionPublic = !!draft.regionPublic;
+            state.profile.region = (regionRef && regionRef.value) ? regionRef.value.trim() : '';
+            var uidVal = state.profile.id || 'guest';
+            try {
+              localStorage.setItem('ourgoal_profile_backup_' + uidVal, JSON.stringify({
+                displayName: state.profile.displayName, bio: state.profile.bio || '', avatarUrl: state.profile.avatarUrl || '',
+                interests: state.profile.interests || [], region: state.profile.region || '', regionPublic: state.profile.regionPublic, itItems: state.profile.itItems || []
+              }));
+              localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile));
+            } catch(e){}
+          }
+        }
+
+        function updateRegionPublicUI(){
+          var regionSw = sheet.querySelector('#pvRegionPublic');
+          var badge = sheet.querySelector('#pvRegionPublicBadge');
+          var benefitCard = sheet.querySelector('#pvRegionBenefitCard');
+          if(regionSw){
+            regionSw.className = 'switch' + (draft.regionPublic ? ' on' : '');
+            regionSw.setAttribute('aria-checked', draft.regionPublic ? 'true' : 'false');
+          }
+          if(badge){
+            badge.className = 'pv-region-badge ' + (draft.regionPublic ? 'on' : 'off');
+            badge.textContent = draft.regionPublic ? '🛡️ 안심 공개 중 (시군구만 노출)' : '🔒 완전 비공개 (추천 제외)';
+          }
+          if(benefitCard){
+            benefitCard.style.display = draft.regionPublic ? 'block' : 'none';
+          }
+          updateRegionBenefitText();
+        }
+
         wireRegionPicker(sheet, 'pvRegion', regionRef);
+
+        sheet.addEventListener('regionchange', function(e){
+          draft.region = (e.detail && typeof e.detail.region === 'string') ? e.detail.region : (regionRef.value || '');
+          updateRegionBenefitText();
+          syncRegionDraftToProfile();
+        });
+
+        var pvGuGrid = sheet.querySelector('#pvRegionGu');
+        if(pvGuGrid){
+          pvGuGrid.addEventListener('click', function(e){
+            var b = e.target.closest('[data-gu]');
+            if(b){
+              draft.region = regionRef.value;
+              updateRegionBenefitText();
+              syncRegionDraftToProfile();
+            }
+          });
+        }
+
+        var pvRegionClearBtn = sheet.querySelector('#pvRegionClearBtn');
+        if(pvRegionClearBtn){
+          pvRegionClearBtn.addEventListener('click', function(){
+            draft.region = '';
+            updateRegionBenefitText();
+            syncRegionDraftToProfile();
+          });
+        }
 
         var regionSw = sheet.querySelector('#pvRegionPublic');
         if(regionSw){
           regionSw.addEventListener('click', function(){
+            if(window.navigator && window.navigator.vibrate) try{ window.navigator.vibrate(12); }catch(e){}
+
+            // 1. 만약 켜려고 하는데 동네가 아직 선택되지 않은 경우 스마트 넛지
+            if(!draft.regionPublic && (!regionRef.value || !regionRef.value.trim())){
+              toast('먼저 활동하시는 내 동네(시군구)를 선택해주세요 ✨');
+              var sidoRow = sheet.querySelector('#pvRegionSido');
+              if(sidoRow){
+                sidoRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                sidoRow.classList.add('pulse-highlight');
+                setTimeout(function(){ sidoRow.classList.remove('pulse-highlight'); }, 1200);
+              }
+              return;
+            }
+
             draft.regionPublic = !draft.regionPublic;
-            regionSw.className = 'switch' + (draft.regionPublic ? ' on' : '');
-            toast(draft.regionPublic ? '지역 공개 설정됨' : '지역 비공개 설정됨');
+            updateRegionPublicUI();
+            syncRegionDraftToProfile();
+            toast(draft.regionPublic ? '지역 공개로 설정되었습니다 🛡️' : '지역 비공개로 설정되었습니다 🔒');
           });
         }
 
@@ -8061,9 +8161,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           p.displayName = draft.name;
           p.bio = draft.bio;
           p.avatarUrl = draft.avatarUrl;
-          p.interests = draft.interests;
-          p.region = regionRef.value || '';
-          p.regionPublic = draft.regionPublic;
+          p.interests = Array.isArray(draft.interests) ? draft.interests.slice() : [];
+          p.region = (regionRef && regionRef.value) ? regionRef.value.trim() : '';
+          p.regionPublic = !!draft.regionPublic;
           p.itItems = draft.itItems;
 
           var uidVal = p.id || 'guest';
@@ -8078,6 +8178,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           await saveProfile();
           closeModal();
           renderAll();
+          if(typeof renderProfileCard === 'function') renderProfileCard();
+          if(typeof renderSettingsScreen === 'function') renderSettingsScreen();
+          if(typeof renderHome === 'function') renderHome();
+          if(typeof renderCommScreen === 'function') renderCommScreen();
           updateTopBar();
           toast('프로필을 저장했어요 ✨');
         });
@@ -33173,39 +33277,244 @@ wirePromptEncyclopediaEvents(body);
     '제주': ['제주시','서귀포시']
   };
   function regionPickerHtml(idPrefix, selected){
-    var parts = (selected||'').split(' ');
-    var curSido = REGIONS[parts[0]] ? parts[0] : '서울';
-    return '<div class="cat-major-row" id="'+idPrefix+'Sido">' +
-        Object.keys(REGIONS).map(function(k){
-          return '<button class="cat-major'+(k===curSido?' active':'')+'" data-sido="'+k+'" type="button">'+k+'</button>';
-        }).join('') +
-      '</div>' +
-      '<div class="cat-sub-grid" id="'+idPrefix+'Gu"></div>';
+    var parts = (selected||'').trim().split(/\s+/);
+    var curSido = (parts[0] && REGIONS[parts[0]]) ? parts[0] : (selected ? '' : '서울');
+    var hasSelected = !!(selected && selected.trim());
+    var summaryBarId = (idPrefix === 'pvRegion') ? 'pvRegionSummaryBar' : (idPrefix + 'SummaryBar');
+    var clearBtnId = (idPrefix === 'pvRegion') ? 'pvRegionClearBtn' : (idPrefix + 'ClearBtn');
+    var searchInputId = (idPrefix === 'pvRegion') ? 'pvRegionSearchInput' : (idPrefix + 'SearchInput');
+    var searchResultsId = (idPrefix === 'pvRegion') ? 'pvRegionSearchResults' : (idPrefix + 'SearchResults');
+    return '<div class="pv-region-picker-box" id="'+idPrefix+'Box">' +
+        '<div class="pv-region-summary-bar" id="'+summaryBarId+'">' +
+          '<div class="pv-region-summary-text" id="'+idPrefix+'SummaryText">' +
+            (hasSelected ? '📍 현재 동네: <b>' + escapeHtml(selected.trim()) + '</b>' : '📍 아직 설정된 동네가 없어요 (아래에서 선택)') +
+          '</div>' +
+          '<button class="pv-region-clear-btn" id="'+clearBtnId+'" data-action="clear-region" type="button" style="display:'+(hasSelected ? 'inline-flex' : 'none')+';">✕ 초기화</button>' +
+        '</div>' +
+        '<div class="pv-region-search-wrap">' +
+          '<input type="text" class="pv-region-search-input" id="'+searchInputId+'" placeholder="🔍 시/군/구 빠른 검색 (예: 마포, 분당, 해운대, 유성)" autocomplete="off">' +
+          '<div class="pv-region-search-results" id="'+searchResultsId+'" style="display:none;"></div>' +
+        '</div>' +
+        '<div class="cat-major-row pv-region-sido-row" id="'+idPrefix+'Sido">' +
+          Object.keys(REGIONS).map(function(k){
+            var isActive = (k === curSido);
+            return '<button class="cat-major'+(isActive?' active':'')+'" data-sido="'+k+'" type="button">'+k+'</button>';
+          }).join('') +
+        '</div>' +
+        '<div class="cat-sub-grid pv-region-gu-grid" id="'+idPrefix+'Gu"></div>' +
+      '</div>';
   }
-  function wireRegionPicker(root, idPrefix, ref){
-    var sidoRow = root.querySelector('#'+idPrefix+'Sido');
-    var guGrid = root.querySelector('#'+idPrefix+'Gu');
+  function wireRegionPicker(root, idPrefix, ref, onChange){
+    var box = root.querySelector('#'+idPrefix+'Box') || root;
+    var sidoRow = root.querySelector('#'+idPrefix+'Sido') || root.querySelector('#pvRegionSido');
+    var guGrid = root.querySelector('#'+idPrefix+'Gu') || root.querySelector('#pvRegionGu');
+    var summaryText = root.querySelector('#'+idPrefix+'SummaryText') || root.querySelector('#pvRegionSummaryText');
+    var summaryBar = root.querySelector('#'+idPrefix+'SummaryBar') || root.querySelector('#pvRegionSummaryBar');
+    var clearBtn = root.querySelector('#'+idPrefix+'ClearBtn') || root.querySelector('#pvRegionClearBtn') || root.querySelector('.pv-region-clear-btn');
+    var searchInput = root.querySelector('#'+idPrefix+'SearchInput') || root.querySelector('#pvRegionSearchInput');
+    var searchResults = root.querySelector('#'+idPrefix+'SearchResults') || root.querySelector('#pvRegionSearchResults');
+
+    function updateSummary(){
+      var curVal = (ref && ref.value) ? ref.value.trim() : '';
+      if(summaryText){
+        if(curVal){
+          summaryText.innerHTML = '📍 현재 동네: <b>' + escapeHtml(curVal) + '</b>';
+        } else {
+          summaryText.textContent = '📍 아직 설정된 동네가 없어요 (아래에서 선택)';
+        }
+      }
+      if(clearBtn){
+        clearBtn.style.display = curVal ? 'inline-flex' : 'none';
+      }
+      // [75] 로컬 동반자 혜택 프리뷰 연동
+      var benefitText = root.querySelector('#pvRegionBenefitText');
+      if(benefitText){
+        if(curVal){
+          benefitText.innerHTML = '📍 <b>' + escapeHtml(curVal) + '</b>에서 목표를 달성 중인 동반자들과 안전하게 연결돼요.';
+        } else {
+          benefitText.textContent = '동네(시군구)를 선택하시면 같은 지역 동반자와의 오프라인 모임에 우선 추천돼요.';
+        }
+      }
+    }
+
+    function triggerHapticFeedback(){
+      if(typeof triggerHaptic === 'function'){
+        triggerHaptic(12);
+      } else if(window.navigator && window.navigator.vibrate){
+        try{ window.navigator.vibrate(12); }catch(e){}
+      }
+    }
+
+    function notifyChange(newVal){
+      if(typeof onChange === 'function') onChange(newVal);
+      try {
+        var ev = new CustomEvent('regionchange', { bubbles: true, detail: { region: newVal } });
+        (root.querySelector('#'+idPrefix+'Box') || root).dispatchEvent(ev);
+      } catch(e){}
+    }
+
     function paintGu(sido){
+      if(!guGrid) return;
+      if(!sido || !REGIONS[sido]){
+        guGrid.innerHTML = '';
+        return;
+      }
       guGrid.innerHTML = REGIONS[sido].map(function(g){
-        var on = ref.value === (sido+' '+g);
+        var curVal = (ref && ref.value) ? ref.value.trim() : '';
+        var on = curVal === (sido + ' ' + g);
         return '<button class="cat-sub'+(on?' active':'')+'" data-gu="'+escapeHtml(g)+'" type="button">'+escapeHtml(g)+'</button>';
       }).join('');
+
       guGrid.querySelectorAll('[data-gu]').forEach(function(b){
         b.addEventListener('click', function(){
-          ref.value = sido+' '+b.dataset.gu;
+          triggerHapticFeedback();
+          ref.value = sido + ' ' + b.dataset.gu;
           paintGu(sido);
+          updateSummary();
+          notifyChange(ref.value);
+          if(typeof toast === 'function') toast('📍 ' + ref.value + ' (으)로 설정되었어요 ✨');
         });
       });
     }
-    sidoRow.querySelectorAll('[data-sido]').forEach(function(b){
-      b.addEventListener('click', function(){
-        sidoRow.querySelectorAll('[data-sido]').forEach(function(x){ x.classList.remove('active'); });
-        b.classList.add('active');
-        paintGu(b.dataset.sido);
+
+    // 시/도 탭 클릭
+    if(sidoRow){
+      sidoRow.querySelectorAll('[data-sido]').forEach(function(b){
+        b.addEventListener('click', function(){
+          triggerHapticFeedback();
+          sidoRow.querySelectorAll('[data-sido]').forEach(function(x){ x.classList.remove('active'); });
+          b.classList.add('active');
+          paintGu(b.dataset.sido);
+        });
+      });
+    }
+
+    // ✕ 초기화 버튼
+    if(clearBtn){
+      clearBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        triggerHapticFeedback();
+        ref.value = '';
+        if(sidoRow){
+          sidoRow.querySelectorAll('[data-sido]').forEach(function(x){ x.classList.remove('active'); });
+        }
+        if(guGrid){
+          guGrid.querySelectorAll('[data-gu]').forEach(function(x){ x.classList.remove('active'); });
+        }
+        updateSummary();
+        notifyChange('');
+        if(typeof toast === 'function') toast('동네 설정이 초기화되었습니다 (미설정)');
+      });
+    }
+
+    // 1초 스마트 검색 (전국 시군구 인덱스 및 주요 생활권 별칭 지원)
+    var allRegionsFlat = [];
+    Object.keys(REGIONS).forEach(function(sd){
+      REGIONS[sd].forEach(function(gu){
+        allRegionsFlat.push({ sido: sd, gu: gu, full: sd + ' ' + gu, searchKeywords: [sd, gu, sd + ' ' + gu] });
       });
     });
-    var init = (ref.value||'').split(' ')[0];
-    paintGu(REGIONS[init] ? init : '서울');
+
+    // 수도권 및 대도시 주요 세부 생활권/구 별칭 매핑 (검색 편의성 극대화)
+    var POPULAR_DISTRICT_ALIASES = [
+      { sido: '경기', gu: '성남시', alias: '분당' },
+      { sido: '경기', gu: '성남시', alias: '판교' },
+      { sido: '경기', gu: '고양시', alias: '일산' },
+      { sido: '경기', gu: '용인시', alias: '수지' },
+      { sido: '경기', gu: '용인시', alias: '기흥' },
+      { sido: '경기', gu: '수원시', alias: '영통' },
+      { sido: '경기', gu: '수원시', alias: '광교' },
+      { sido: '경기', gu: '화성시', alias: '동탄' },
+      { sido: '인천', gu: '연수구', alias: '송도' },
+      { sido: '인천', gu: '서구', alias: '청라' }
+    ];
+    POPULAR_DISTRICT_ALIASES.forEach(function(item){
+      allRegionsFlat.push({
+        sido: item.sido,
+        gu: item.gu,
+        full: item.sido + ' ' + item.gu,
+        displayLabel: '📍 ' + item.sido + ' ' + item.gu + ' (' + item.alias + ')',
+        searchKeywords: [item.alias, item.sido, item.gu, item.sido + ' ' + item.alias]
+      });
+    });
+
+    if(searchInput && searchResults){
+      searchInput.addEventListener('input', function(){
+        var q = (searchInput.value || '').trim();
+        if(q.length < 2){
+          searchResults.style.display = 'none';
+          searchResults.innerHTML = '';
+          return;
+        }
+        var matched = allRegionsFlat.filter(function(item){
+          return (item.searchKeywords || []).some(function(kw){ return kw.indexOf(q) !== -1; }) ||
+                 item.full.indexOf(q) !== -1 ||
+                 item.gu.indexOf(q) !== -1;
+        }).slice(0, 10);
+
+        if(matched.length === 0){
+          searchResults.innerHTML = '<div style="font-size:0.75rem;color:var(--ink-faint);padding:6px 8px;width:100%;">검색 결과가 없습니다.</div>';
+          searchResults.style.display = 'flex';
+          return;
+        }
+
+        searchResults.innerHTML = matched.map(function(item){
+          var lbl = item.displayLabel || ('📍 ' + item.full);
+          return '<button class="cat-sub pv-search-chip" data-sido="'+escapeHtml(item.sido)+'" data-gu="'+escapeHtml(item.gu)+'" type="button">'+escapeHtml(lbl)+'</button>';
+        }).join('');
+        searchResults.style.display = 'flex';
+
+        searchResults.querySelectorAll('.pv-search-chip').forEach(function(chip){
+          chip.addEventListener('click', function(){
+            triggerHapticFeedback();
+            var targetSido = chip.dataset.sido;
+            var targetGu = chip.dataset.gu;
+            ref.value = targetSido + ' ' + targetGu;
+            if(sidoRow){
+              sidoRow.querySelectorAll('[data-sido]').forEach(function(x){
+                if(x.dataset.sido === targetSido){
+                  x.classList.add('active');
+                  try { x.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); }catch(e){}
+                } else {
+                  x.classList.remove('active');
+                }
+              });
+            }
+            paintGu(targetSido);
+            updateSummary();
+            notifyChange(ref.value);
+            searchInput.value = '';
+            searchResults.style.display = 'none';
+            if(typeof toast === 'function') toast('📍 ' + ref.value + ' (으)로 설정되었어요 ✨');
+          });
+        });
+      });
+    }
+
+    // 초기 활성화 복원
+    var curVal = (ref && ref.value) ? ref.value.trim() : '';
+    if(curVal){
+      var parts = curVal.split(/\s+/);
+      var initSido = parts[0];
+      if(REGIONS[initSido]){
+        if(sidoRow){
+          sidoRow.querySelectorAll('[data-sido]').forEach(function(x){
+            if(x.dataset.sido === initSido){
+              x.classList.add('active');
+              try { x.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' }); }catch(e){}
+            } else {
+              x.classList.remove('active');
+            }
+          });
+        }
+        paintGu(initSido);
+      } else {
+        paintGu('서울');
+      }
+    } else {
+      paintGu('서울');
+    }
+    updateSummary();
   }
 
   /* 사용자 추가 중범위 카테고리
