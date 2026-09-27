@@ -7118,7 +7118,10 @@ check('compliance: [#TASK-ES-184] 아워골 생각 메모장 18대 잔여 대기
   assert.ok(html.includes('id="btnOpenEvalModal"'), '[86] 평가 작성 버튼 존재');
 
   // [그룹 4: 목표 탭 & 템플릿 / 프롬프트 백과사전]
-  // [77] 목표 탭 '현 상태로 데이터 받기' 최하단 재배치
+  // [77] 목표 탭 '현 상태로 데이터 받기' 최하단 재배치 및 AI 데이터분석 허브 고도화 (#TASK-ES-328)
+  assert.ok(html.includes('goalAnalysisHubSlot'), '[77] 데이터분석 허브 슬롯 존재');
+  assert.ok(html.includes('goalExportCopyBtn'), '[77] 데이터분석 허브 배선 존재');
+  assert.ok(html.includes('AI 분석용 목표 데이터 내보내기'), '[77] AI 데이터분석 허브 타이틀 존재');
   assert.ok(html.includes("renderPromptEncyclopediaHtml('goals')"), '[77] 목표 탭 최하단 슬롯 연결 존재');
 
   // [78] 목표 데이터받기·기록 내보내기 하단 '데이터분석 프롬프트 백과사전' 신설

@@ -2593,6 +2593,94 @@
   }
 
   /**
+   * [TASK-ES-328 / 노션 생각메모장 77번]
+   * 목표탭 '현 상태로 데이터 받기' 최하단 재배치 및 AI 데이터분석 허브 고도화 직통 핸들러
+   * 목표 탭 독립 전용 슬롯(#goalAnalysisHubSlot) 재배치, 1초 텍스트 복사, 3버튼 체계, 4대 뷰 원자적 전파
+   * 8원칙 & 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+   */
+  async function handle목표탭_Item77Action(event, customPayload) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+
+    var win = (typeof global !== 'undefined' && global.window) ? global.window : (typeof window !== 'undefined' ? window : {});
+    var actionBtn = (event && event.currentTarget) || (typeof document !== 'undefined' ? document.getElementById('og-task-77-action-btn') : null);
+    if (actionBtn) {
+      if (actionBtn.disabled) return;
+      actionBtn.disabled = true;
+    }
+
+    // 1. 12ms 햅틱 피드백
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      var defaultPayload = {
+        ticket: '77',
+        task_id: 'TASK-ES-328',
+        updated_at: new Date().toISOString(),
+        goal_export_hub_relocated: true,
+        goal_analysis_hub_slot_enabled: true,
+        clipboard_copy_supported: true,
+        prompt_encyclopedia_nudged: true,
+        placement: 'goals_tab_bottom_slot',
+        state: 'completed'
+      };
+      var syncPayload = Object.assign({}, defaultPayload, customPayload || {});
+
+      // 상태 및 설정 영속화
+      if (win.state && win.state.profile) {
+        if (!win.state.profile.settings) win.state.profile.settings = {};
+        win.state.profile.settings.task77GoalExportHubActive = true;
+      }
+
+      // 로컬 스토리지 캐시 영속화 (og_task-77_cache)
+      try {
+        var storage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+        if (storage && typeof storage.setItem === 'function') {
+          storage.setItem('og_task-77_cache', JSON.stringify(syncPayload));
+        }
+      } catch (e) {
+        console.warn('[TASK-ES-328] 로컬 캐시 저장 생략:', e);
+      }
+
+      // 4대 뷰 원자적 갱신
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+      if (typeof win.renderSettingsScreen === 'function') win.renderSettingsScreen();
+      if (typeof win.renderAll === 'function') win.renderAll();
+
+      if (!syncPayload.silent) {
+        var msg = '🤖 목표 데이터분석 허브가 최신 상태로 동기화되었습니다 ✨';
+        if (typeof win.toast === 'function') {
+          win.toast(msg);
+        } else if (typeof win.showToast === 'function') {
+          win.showToast(msg, { type: 'success', duration: 2000 });
+        }
+      }
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-328] 실행 실패:', err);
+      if (typeof win.toast === 'function') {
+        win.toast('처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+      } else if (typeof win.showToast === 'function') {
+        win.showToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
+  /**
    * [TASK-ES-294 / 노션 생각메모장 44번]
    * 스톱워치 실시간 구간별 활동기록 팝업·상세 연동 및 초기화 2중 확인 안전장치 구축
    * 8원칙 & 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
@@ -3615,6 +3703,7 @@
   OurgoalComponents.handle인증_Item69Action = handle인증_Item69Action;
   OurgoalComponents.handle인증_Item70Action = handle인증_Item70Action;
   OurgoalComponents.handle인증_Item71Action = handle인증_Item71Action;
+  OurgoalComponents.handle목표탭_Item77Action = handle목표탭_Item77Action;
   OurgoalComponents.generateRecordPledgeMessage = generateRecordPledgeMessage;
 
   if(typeof window !== 'undefined'){
@@ -3673,6 +3762,7 @@
     window.handle인증_Item69Action = handle인증_Item69Action;
     window.handle인증_Item70Action = handle인증_Item70Action;
     window.handle인증_Item71Action = handle인증_Item71Action;
+    window.handle목표탭_Item77Action = handle목표탭_Item77Action;
     window.generateRecordPledgeMessage = generateRecordPledgeMessage;
     window.toggleTimeRecordModalCompact = toggleTimeRecordModalCompact;
   }
@@ -3696,6 +3786,7 @@
     module.exports.handle인증_Item69Action = handle인증_Item69Action;
     module.exports.handle인증_Item70Action = handle인증_Item70Action;
     module.exports.handle인증_Item71Action = handle인증_Item71Action;
+    module.exports.handle목표탭_Item77Action = handle목표탭_Item77Action;
     module.exports.generateRecordPledgeMessage = generateRecordPledgeMessage;
     module.exports.handle전체공통_Item23Action = handle전체공통_Item23Action;
     module.exports.handle홈탭_Item33Action = handle홈탭_Item33Action;

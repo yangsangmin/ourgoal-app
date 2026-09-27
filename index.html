@@ -799,6 +799,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <div class="goal-chip-row" id="goalChipRow" style="display:none;" aria-hidden="true"></div>
           <div id="goalDetailBody"></div>
           <div id="personalGoalsEmptyGuideSlot"></div>
+          <div id="goalAnalysisHubSlot" class="goal-analysis-hub-slot"></div>
         </div>
       </div>
       <div id="templateEncyclopediaView" style="display:none;"></div>
@@ -23077,8 +23078,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       emptyGuideSlot.innerHTML = (goals.length === 0) ? renderPersonalGoalsEmptyGuideHtml() : '';
     }
 
+    var analysisHubSlot = document.getElementById('goalAnalysisHubSlot');
     if(!goal){
       body.innerHTML = '<div class="empty-state"><div class="e-icon"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div><p>목표를 만들면 여기에 마일스톤이 보여요.</p></div>';
+      if(analysisHubSlot){ analysisHubSlot.innerHTML = ''; analysisHubSlot.style.display = 'none'; }
       return;
     }
     if(!state.msSel) state.msSel = {};
@@ -23401,6 +23404,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     var goalStatusHash = computeGoalStatusHash(goal);
     if(!state.profile.settings.goalStatusSummaries) state.profile.settings.goalStatusSummaries = {};
+    var goalStatusCache = state.profile.settings.goalStatusSummaries[goal.id];
     var todayKST = getKSTDateKey(nowISO());
     var todayEffective = typeof getEffectiveStandardDateKey === 'function' ? getEffectiveStandardDateKey(nowISO()) : todayKST;
     var isPending = !!(state.goalStatusPending && state.goalStatusPending[goal.id]);
@@ -23445,13 +23449,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '</div>' +
     '</div>';
 
-    var exportCardHtml = '<div class="export-card" style="margin-top:16px;margin-bottom:14px;">' +
-      '<div class="ico"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><rect x="4" y="7" width="16" height="12" rx="3"/><circle cx="9" cy="13" r="1.2" fill="currentColor"/><circle cx="15" cy="13" r="1.2" fill="currentColor"/><path d="M2 12h2M20 12h2"/></svg></div>' +
-      '<div class="txt"><b>현 상태로 데이터 받기</b><span>목표·마일스톤·할 일·결과·체크인을 AI 분석용으로 내보내요</span></div>' +
-      '<button class="btn btn-ghost btn-sm" id="goalExportBtn" type="button" style="margin-left:auto;">이 목표</button>' +
-      '<button class="btn btn-ghost btn-sm" id="goalExportAllBtn" type="button" style="margin-left:6px;">전체</button>' +
-    '</div>';
-
     var selCount = Object.keys(state.msSel).length + Object.keys(state.taskSel).length;
     var selBar = state.goalEditMode ?
       '<div class="sel-bar">' +
@@ -23460,6 +23457,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '<button class="btn btn-ghost" id="selAllBtn" type="button" style="background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25);">'+(selCount ? '해제' : '전체 선택')+'</button>' +
         '<button class="btn btn-danger" id="selDeleteAllBtn" type="button">전체 삭제</button>' +
       '</div>' : '';
+    var exportCardHtml = '';
 
     body.innerHTML =
       (state.goalEditMode ? (window.OurgoalGoalEditUX?OurgoalGoalEditUX.renderTitleRow(state,goal):'') + dueRow + visRow : metaStrip) +
@@ -23468,12 +23466,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '<div class="ms-list">'+msHtml+'</div>' +
       (goal.milestones.length===0 ? '<div class="empty-state"><div class="e-icon">🧭</div><p>마일스톤을 추가해서 목표를 잘게 나눠보세요.</p></div>' : '') +
       (state.goalEditMode ? '<div class="add-ms-btn" id="addMsBtn">+ 마일스톤 추가</div>' + (window.OurgoalGoalEditUX?OurgoalGoalEditUX.renderDoneInlineBtn(state,goal):'') + '<div class="drag-hint">탭해서 바로 수정 · 화살표로 순서 변경 · 왼쪽 체크로 선택 삭제</div>' : '') +
-      selBar +
-      exportCardHtml +
-      renderPromptEncyclopediaHtml('goals');
+      selBar + exportCardHtml;
 
     // wire events
-wirePromptEncyclopediaEvents(body);
     var dueInput = document.getElementById('goalDueInput');
     if(dueInput) dueInput.addEventListener('change', async function(){ goal.dueDate = dueInput.value || null; await saveProfile(); renderGoalsScreen(); });
 
@@ -23638,11 +23633,6 @@ wirePromptEncyclopediaEvents(body);
     });
 
     if(!state.goalEditMode && (goalStatusStale || isDateStale) && goal.milestones.length) refreshGoalStatusSummary(goal, goalStatusHash);
-
-    var expBtn = document.getElementById('goalExportBtn');
-    if(expBtn) expBtn.addEventListener('click', function(){ exportGoalSnapshot('one', goal); });
-    var expAllBtn = document.getElementById('goalExportAllBtn');
-    if(expAllBtn) expAllBtn.addEventListener('click', function(){ exportGoalSnapshot('all'); });
 
     var archiveBtn = document.getElementById('goalArchiveBtn');
     if(archiveBtn) archiveBtn.addEventListener('click', async function(){
@@ -23919,7 +23909,83 @@ wirePromptEncyclopediaEvents(body);
       goal.milestones.push({ id: uid('ms'), title:'새 마일스톤', status:'todo', dueDate:null, tasks:[] });
       await saveProfile(); renderGoalsScreen();
     });
-    if(window.OurgoalGoalEditUX) OurgoalGoalEditUX.wirePersonalGoalEdit({ state:state, goal:goal, body:body, saveProfile:saveProfile, toast:toast, renderGoalsScreen:renderGoalsScreen, renderAll:renderAll }); }
+    if(window.OurgoalGoalEditUX) OurgoalGoalEditUX.wirePersonalGoalEdit({ state:state, goal:goal, body:body, saveProfile:saveProfile, toast:toast, renderGoalsScreen:renderGoalsScreen, renderAll:renderAll });
+
+    // [#TASK-ES-328, 77] 목표 탭 최하단 AI 데이터분석 허브 렌더링
+    var analysisHub = document.getElementById('goalAnalysisHubSlot');
+    if(analysisHub){
+      analysisHub.style.display = state.goalEditMode ? 'none' : 'block';
+      if(!state.goalEditMode){
+        analysisHub.innerHTML =
+          '<div class="export-card goal-export-card" style="margin-top:16px;margin-bottom:14px;">' +
+            '<div class="ico"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><rect x="4" y="7" width="16" height="12" rx="3"/><circle cx="9" cy="13" r="1.2" fill="currentColor"/><circle cx="15" cy="13" r="1.2" fill="currentColor"/><path d="M2 12h2M20 12h2"/></svg></div>' +
+            '<div class="txt"><b>🤖 AI 분석용 목표 데이터 내보내기</b><span>목표·마일스톤·체크인을 AI 분석용(ChatGPT/Claude)으로 내보내거나 복사해요</span></div>' +
+            '<div class="export-actions" style="display:flex;align-items:center;gap:6px;margin-left:auto;flex-wrap:wrap;">' +
+              '<button class="btn btn-ghost btn-sm" id="goalExportCopyBtn" type="button" title="마크다운 텍스트를 클립보드에 복사">📋 복사</button>' +
+              '<button class="btn btn-ghost btn-sm" id="goalExportBtn" type="button" title="현재 목표 데이터 다운로드">🎯 이 목표</button>' +
+              '<button class="btn btn-ghost btn-sm" id="goalExportAllBtn" type="button" title="전체 목표 데이터 다운로드">📦 전체</button>' +
+            '</div>' +
+          '</div>' +
+          (typeof renderPromptEncyclopediaHtml === 'function' ? renderPromptEncyclopediaHtml('goals') : '');
+
+        if(typeof wirePromptEncyclopediaEvents === 'function') wirePromptEncyclopediaEvents(analysisHub);
+
+        var copyBtn = document.getElementById('goalExportCopyBtn');
+        if(copyBtn){
+          copyBtn.addEventListener('click', async function(){
+            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+            try {
+              var snapshot = buildGoalSnapshot(goal ? [goal] : (state.profile.goals || []));
+              var text = typeof goalSnapshotSummary === 'function' ? goalSnapshotSummary(snapshot) : JSON.stringify(snapshot, null, 2);
+              var copied = false;
+              if(navigator.clipboard && navigator.clipboard.writeText){
+                try {
+                  await navigator.clipboard.writeText(text);
+                  copied = true;
+                } catch(clipErr){
+                  copied = false;
+                }
+              }
+              if(!copied){
+                var ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                try { document.execCommand('copy'); copied = true; } catch(e2){}
+                document.body.removeChild(ta);
+              }
+              toast('📋 AI 분석용 목표 데이터를 복사했어요! (아래 프롬프트 백과사전도 확인해보세요 ✨)');
+            } catch(e) {
+              toast('데이터 복사 중 오류가 발생했습니다');
+            }
+          });
+        }
+
+        var expBtn = document.getElementById('goalExportBtn');
+        if(expBtn){
+          expBtn.addEventListener('click', function(){
+            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+            exportGoalSnapshot('one', goal);
+            toast('🎯 목표 데이터를 다운로드했어요! (아래 프롬프트 백과사전도 확인해보세요 ✨)');
+          });
+        }
+
+        var expAllBtn = document.getElementById('goalExportAllBtn');
+        if(expAllBtn){
+          expAllBtn.addEventListener('click', function(){
+            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+            exportGoalSnapshot('all');
+            toast('📦 전체 목표 데이터를 다운로드했어요! (아래 프롬프트 백과사전도 확인해보세요 ✨)');
+          });
+        }
+      } else {
+        analysisHub.innerHTML = '';
+      }
+    }
+  }
 
   /* ============ RENDER: 팀 목표 (팀장·매니저만 추가/수정/삭제, 팀원은 보기만) ============ */
   function canManageTeamGoals(gid){
