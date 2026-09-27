@@ -1,0 +1,85 @@
+{
+  "task": "TASK-ES-311",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-311-STATS-SHELL-BUTTON-REMOVAL.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/universal-stats.js 내에 미작동 껍데기 버튼(uLinkGoalBtn, uRegCalendarBtn)이 영구 삭제되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내에 미작동 껍데기 버튼(uLinkGoalBtn, uRegCalendarBtn)이 존재하지 않는다."
+    },
+    {
+      "id": "R3",
+      "text": "js/components.js에 handle성취통계_Item60Action 직통 핸들러가 정의되어 있고 window 및 module.exports에 노출되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "tests/achievement-stats-shell-button-removal.test.js 및 scripts/smoke-test.js에 성취통계 껍데기 버튼 영구 삭제 및 Zero Dead Click 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/universal-stats.js 내에 uLinkGoalBtn 및 uRegCalendarBtn이 존재하지 않는다",
+      "touches": [
+        "js/universal-stats.js"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "js/universal-stats.js",
+        "text": "uLinkGoalBtn"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 uLinkGoalBtn이 존재하지 않는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "uLinkGoalBtn"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle성취통계_Item60Action 직통 핸들러 및 og_task-60_cache 저장이 정의되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle성취통계_Item60Action"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/achievement-stats-shell-button-removal.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-311 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/achievement-stats-shell-button-removal.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/achievement-stats-shell-button-removal.test.js",
+        "text": "achievement-stats-shell-button-removal"
+      }
+    }
+  ]
+}
