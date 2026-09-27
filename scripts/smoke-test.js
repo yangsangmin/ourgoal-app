@@ -9823,6 +9823,25 @@ check('compliance: [#TASK-ES-314] [63] 피드 게시 시 실천기록 최신순 
   assert.ok(jsComp.includes('record_customized_feedback_and_pledge: true'), 'components.js record_customized_feedback_and_pledge 플래그 탑재');
 });
 
+check('compliance: [#TASK-ES-315] [64] 기존 \'AI 추천 목표템플릿 예시 60선\' 창 영구 제거 (목표탭·소통탭 템플릿백과사전 일원화) 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const teamInviteJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. 목표탭 & 소통탭 구형 60선 창 영구 제거 및 무해화
+  assert.ok(indexHtml.includes('id="goalsTemplateAccordionSlot" style="display:none;"'), 'goalsTemplateAccordionSlot 슬롯 비노출 보존 확인');
+  assert.ok(indexHtml.includes('id="btnGoalTemplateEncyclopedia"'), '목표 탭 내 템플릿백과사전 버튼 탑재 확인');
+  assert.ok(indexHtml.includes('id="templateEncyclopediaModal"'), '템플릿백과사전 전체화면 팝업 모달 마크업 탑재 확인');
+  assert.ok(indexHtml.includes('(#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화)'), 'index.html 내 templatesHtml 무해화 확인');
+  assert.ok(teamInviteJs.includes('// [#TASK-ES-315, 64] 목표탭 및 소통탭 구형 60선 창 영구 제거 (템플릿백과사전 일원화)'), 'team-invite-comm.js 내 60선 아코디언 무해화 확인');
+
+  // 2. components.js 직통 액션 핸들러 및 캐시 검증
+  assert.ok(jsComp.includes('handle목표탭_Item64Action'), 'components.js handle목표탭_Item64Action 탑재');
+  assert.ok(jsComp.includes('og_task-64_cache'), 'components.js og_task-64_cache 캐시 탑재');
+  assert.ok(jsComp.includes('legacy_60_templates_removed: true'), 'components.js legacy_60_templates_removed 플래그 탑재');
+  assert.ok(jsComp.includes('encyclopedia_unified: true'), 'components.js encyclopedia_unified 플래그 탑재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
