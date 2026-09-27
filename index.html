@@ -27916,11 +27916,33 @@ wirePromptEncyclopediaEvents(body);
       '<div class="sw-inject-hint" id="swInjectHint" style="margin-top:5px;font-size:0.75rem;color:var(--ink-faint);line-height:1.4;">' +
         '💡 넣을 칸 누르고 ‘표에시간기입’ 누르면 바로입력됨 (분:초 또는 초 기입)' +
       '</div>' +
-      '<div id="swLapsList" style="display:none;margin-top:6px;font-size:.8125rem;color:var(--ink-soft);max-height:54px;overflow-y:auto;padding-top:4px;border-top:1px dashed var(--rule);"></div>' +
+      '<div id="swLapsList" class="sw-laps-container" style="display:none;"></div>' +
     '</div>';
+  }
+  function renderLapRowsHtml(laps){
+    if(!laps || !laps.length) return '';
+    return laps.map(function(lp, idx){
+      var isObj = lp && typeof lp === 'object';
+      var lapNum = isObj && lp.num !== undefined ? lp.num : (laps.length - idx);
+      var lapTime = isObj ? (lp.time || '00:00.0') : String(lp);
+      var lapMemo = isObj ? (lp.memo || '') : '';
+      var safeTime = escapeHtml(lapTime);
+      var safeMemo = escapeHtml(lapMemo);
+      return '<div class="sw-lap-row" data-lap-idx="' + idx + '" data-lap-num="' + lapNum + '">' +
+        '<div class="sw-lap-meta">' +
+          '<span class="sw-lap-badge">랩 ' + lapNum + '</span>' +
+          '<span class="sw-lap-time">' + safeTime + '</span>' +
+        '</div>' +
+        '<div class="sw-lap-memo-wrap">' +
+          '<input type="text" class="sw-lap-memo-input" data-lap-idx="' + idx + '" placeholder="구간 활동 내용 (예: 세트 ' + lapNum + ', 웜업)" value="' + safeMemo + '" aria-label="랩 ' + lapNum + ' 메모">' +
+          '<button type="button" class="btn btn-ghost btn-xs sw-lap-inject-btn" data-lap-idx="' + idx + '" title="이 구간 기록을 표에 기입">기입</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
   }
   if (typeof window !== 'undefined') {
     window.renderStopwatchWidgetHtml = renderStopwatchWidgetHtml;
+    window.renderLapRowsHtml = renderLapRowsHtml;
   }
 
   /* ============ 🔄 Notion 데이터베이스 실시간 자동 푸시 (Notion Direct Push) ============ */
@@ -30035,18 +30057,110 @@ wirePromptEncyclopediaEvents(body);
         };
       }
 
+      function renderLapsUI(){
+        if(!swLapsList) return;
+        if(!swLaps || swLaps.length === 0){
+          swLapsList.style.display = 'none';
+          swLapsList.innerHTML = '';
+          return;
+        }
+        swLapsList.style.display = 'flex';
+        swLapsList.innerHTML = renderLapRowsHtml(swLaps);
+
+        swLapsList.querySelectorAll('.sw-lap-memo-input').forEach(function(inp){
+          inp.oninput = function(e){
+            var idx = parseInt(e.target.dataset.lapIdx, 10);
+            if(swLaps[idx]){
+              swLaps[idx].memo = e.target.value;
+            }
+          };
+        });
+
+        swLapsList.querySelectorAll('.sw-lap-inject-btn').forEach(function(btn){
+          btn.onclick = function(e){
+            var idx = parseInt(e.target.dataset.lapIdx, 10);
+            var lap = swLaps[idx];
+            if(lap){
+              injectLapIntoTable(lap);
+            }
+          };
+        });
+      }
+
+      function injectLapIntoTable(lap){
+        if(!lap) return;
+        var targetInp = null;
+        if(lastFocusedCell && document.body.contains(lastFocusedCell)){
+          targetInp = lastFocusedCell;
+        } else {
+          var timeColIdx = -1;
+          columns.forEach(function(c, i){
+            if(timeColIdx === -1 && /(?:시간|페이스|time|타임|소요)/i.test(c)){
+              timeColIdx = i;
+            }
+          });
+          if(timeColIdx === -1 && columns.length > 1) timeColIdx = columns.length - 1;
+
+          if(timeColIdx !== -1){
+            var inps = sheet.querySelectorAll('.pro-tpl-cell-input[data-col="'+timeColIdx+'"]');
+            for(var j=0; j<inps.length; j++){
+              if(!inps[j].value.trim()){
+                targetInp = inps[j];
+                break;
+              }
+            }
+            if(!targetInp && inps.length) targetInp = inps[inps.length - 1];
+          }
+        }
+
+        if(!targetInp){
+          toast('넣을 칸 누르고 ‘기입’ 누르면 바로입력됨');
+          return;
+        }
+
+        var timeVal = (lap.rawMs !== undefined) ? formatStopwatchTime(lap.rawMs, false) : (lap.time || '');
+        targetInp.value = timeVal;
+        targetInp.classList.add('cell-highlight-flash');
+        setTimeout(function(){ targetInp.classList.remove('cell-highlight-flash'); }, 1400);
+
+        var rowIdx = targetInp.getAttribute('data-row');
+        if(rowIdx !== null && lap.memo && lap.memo.trim()){
+          var itemColIdx = -1;
+          columns.forEach(function(c, i){
+            if(itemColIdx === -1 && /(?:항목|종목|메모|내용|활동|운동)/i.test(c)){
+              itemColIdx = i;
+            }
+          });
+          if(itemColIdx !== -1){
+            var memoInp = sheet.querySelector('.pro-tpl-cell-input[data-row="'+rowIdx+'"][data-col="'+itemColIdx+'"]');
+            if(memoInp && !memoInp.value.trim()){
+              memoInp.value = lap.memo.trim();
+              memoInp.classList.add('cell-highlight-flash');
+              setTimeout(function(){ memoInp.classList.remove('cell-highlight-flash'); }, 1400);
+            }
+          }
+        }
+
+        syncCurrentRowsFromDOM();
+        updateAnalyticsBanner();
+        toast('랩 ' + lap.num + ' (' + timeVal + ')을 표에 기입했습니다!');
+      }
+
       if(swLapBtn){
         swLapBtn.onclick = function(){
           var curMs = swMode === 'stopwatch' ? swElapsedMs : Math.max(0, swTargetMs - swElapsedMs);
           var lapStr = formatStopwatchTime(curMs, true);
-          swLaps.unshift(lapStr);
-          if(swLapsList){
-            swLapsList.style.display = 'block';
-            swLapsList.innerHTML = swLaps.slice(0, 5).map(function(lp, idx){
-              return '<span style="display:inline-block;margin-right:8px;">랩 ' + (swLaps.length - idx) + ': <b>' + lp + '</b></span>';
-            }).join('');
-          }
-          toast('랩 타임 ' + lapStr + ' 기록!');
+          var lapNum = swLaps.length + 1;
+          var lapItem = {
+            id: 'lap_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+            num: lapNum,
+            time: lapStr,
+            rawMs: curMs,
+            memo: ''
+          };
+          swLaps.unshift(lapItem);
+          renderLapsUI();
+          toast('랩 ' + lapNum + ' (' + lapStr + ') 기록!');
         };
       }
 

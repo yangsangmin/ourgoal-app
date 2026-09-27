@@ -1,0 +1,85 @@
+{
+  "task": "TASK-ES-306",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-306-STOPWATCH-LAP-INPUTS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 renderStopwatchWidgetHtml에 sw-laps-container 탑재 및 renderLapRowsHtml, injectLapIntoTable 함수가 정의되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 스톱워치 랩 등록 시 sw-lap-row, sw-lap-badge, sw-lap-time, sw-lap-memo-input, sw-lap-inject-btn 구조로 동적 렌더링되고 표 기입이 배선되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "ui.css 내 .sw-laps-container, .sw-lap-row, .sw-lap-badge, .sw-lap-time, .sw-lap-memo-input, .sw-lap-inject-btn 스타일 및 모바일 반응형이 정의되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "tests/stopwatch-lap-inputs.test.js 및 scripts/smoke-test.js에 스톱워치 구간기록 인풋 기능 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 sw-laps-container 및 renderLapRowsHtml 함수가 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "renderLapRowsHtml"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 sw-lap-memo-input 및 injectLapIntoTable 배선이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "injectLapIntoTable"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 .sw-laps-container 및 .sw-lap-memo-input 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".sw-lap-memo-input"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/stopwatch-lap-inputs.test.js 및 scripts/smoke-test.js 내에 스톱워치 구간기록 인풋 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/stopwatch-lap-inputs.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/stopwatch-lap-inputs.test.js",
+        "text": "stopwatch-lap-inputs"
+      }
+    }
+  ]
+}
