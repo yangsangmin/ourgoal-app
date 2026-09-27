@@ -1036,6 +1036,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <div class="txt"><b>기록 내보내기</b><span>날짜별 기록을 파일로 받아요</span></div>
           <button class="btn btn-ghost btn-sm" id="exportRecordsBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg><span>받기</span></button>
         </div>
+        <!-- [TASK-ES-329 / 노션 78] 기록 내보내기 하단 데이터분석 프롬프트 백과사전 슬롯 -->
+        <div id="recordPromptEncyclopediaSlot" class="record-prompt-encyclopedia-slot" style="margin-top:14px;margin-bottom:20px;"></div>
       </div>
 
       <!-- [VIEW 2: STATS] 성취 통계 뷰 (4단 메트릭 캐러셀 + 기간별 AI) -->
@@ -3929,10 +3931,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   function renderPromptEncyclopediaHtml(context){
+    context = context || 'goals';
+    var isRecords = (context === 'records');
     var goals = (state.profile && state.profile.goals) ? state.profile.goals.filter(function(g){ return !g.archivedAt; }) : [];
     var goalTitles = goals.map(function(g){ return g.title; }).join(', ') || '러닝 10km 완주, 자격증 취득';
+    var userName = (state.profile && state.profile.displayName) || '달성가';
+    var interestsStr = (((state.profile && state.profile.interests) || []).join(', ') || '운동, 자기계발');
 
-    var realPrompts = [
+    // [목표 특화 실사용 프리셋 4종]
+    var goalRealPrompts = [
       {
         id: 'preset_real_0',
         baseLikes: 14,
@@ -3963,20 +3970,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
     ];
 
-    var aiPrompts = [
+    // [목표 특화 아워골 AI 프리셋 4종]
+    var goalAiPrompts = [
       {
         id: 'preset_ai_0',
         baseLikes: 25,
         title: '🤖 아워골 AI 목표 요약 및 넥스트 마일스톤 제안',
         desc: '내 실제 등록 목표에 최적화된 다음 단계 추천 마일스톤입니다.',
-        prompt: '아워골 유저 [' + ((state.profile && state.profile.displayName) || '유저') + ']님의 현재 목표: [' + goalTitles + ']. 각 목표별로 현재 수준에서 난이도를 1단계 높여 성취감을 극대화할 수 있는 차기 마일스톤 2개씩을 추천해주세요.'
+        prompt: '아워골 유저 [' + userName + ']님의 현재 목표: [' + goalTitles + ']. 각 목표별로 현재 수준에서 난이도를 1단계 높여 성취감을 극대화할 수 있는 차기 마일스톤 2개씩을 추천해주세요.'
       },
       {
         id: 'preset_ai_1',
         baseLikes: 17,
         title: '💡 관심 카테고리 맞춤형 습관 루틴 팩',
         desc: '프로필 관심사 기반으로 100일 챌린지 루틴을 설계합니다.',
-        prompt: '나의 관심 분야는 [' + (((state.profile && state.profile.interests) || []).join(', ') || '운동, 자기계발') + ']입니다. 아워골 앱에서 매일 3초 체크인으로 실천할 수 있는 100일 습관 루틴 5가지를 구체적인 실행 지침과 함께 알려주세요.'
+        prompt: '나의 관심 분야는 [' + interestsStr + ']입니다. 아워골 앱에서 매일 3초 체크인으로 실천할 수 있는 100일 습관 루틴 5가지를 구체적인 실행 지침과 함께 알려주세요.'
       },
       {
         id: 'preset_ai_2',
@@ -3993,6 +4001,73 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         prompt: '내가 [' + goalTitles + '] 목표를 끈기 있게 완수했다고 가정하고, 인스타그램이나 커뮤니티에 동료들과 공유할 300자 내외의 솔직하고 감동적인 완주 회고 소감을 작성해주세요.'
       }
     ];
+
+    // [기록 특화 실사용 프리셋 4종]
+    var recRealPrompts = [
+      {
+        id: 'preset_rec_real_0',
+        baseLikes: 19,
+        title: '📊 일일/주간 활동 밀도 및 몰입도 분석',
+        desc: '시간대별·요일별 몰입도 추세를 분석하고 가장 생산성이 높은 황금 시간대를 도출합니다.',
+        prompt: '다음은 나의 아워골 체크인 실천 기록 데이터입니다:\n[나의 실천 기록 데이터]\n이 기록들을 바탕으로 (1) 가장 몰입도가 높았던 요일 및 시간대, (2) 집중력이 분산된 비효율 시간대, (3) 다음 주 집중력 극대화를 위한 타임블록 제안을 작성해주세요.'
+      },
+      {
+        id: 'preset_rec_real_1',
+        baseLikes: 24,
+        title: '⏱️ 시간대별 활동 병목 진단 및 시간 누수 탐색',
+        desc: '실행 계획 대비 소요 시간이 과도하게 길어지거나 루틴이 지연되는 원인을 분석합니다.',
+        prompt: '나의 아워골 실천 기록을 분석하여, (1) 예상보다 오래 걸려 병목이 발생한 활동 3가지, (2) 시간 누수를 줄이기 위한 실천 팁, (3) 15분 단위 압축 실행 가이드를 제시해주세요.'
+      },
+      {
+        id: 'preset_rec_real_2',
+        baseLikes: 16,
+        title: '🏃 테마별 실천 밸런스 및 상관관계 분석',
+        desc: '운동, 공부, 사업, 멘탈, 일상 등 테마별 비중 균형을 평가하고 보완점을 도출합니다.',
+        prompt: '나의 테마별 기록 데이터를 바탕으로, 일/성장/휴식의 라이프 밸런스 점수를 100점 만점으로 매겨주고 부족한 영역을 보강할 데일리 루틴 2가지를 추천해주세요.'
+      },
+      {
+        id: 'preset_rec_real_3',
+        baseLikes: 27,
+        title: '🧠 번아웃 조기 감지 및 멘탈 회복 전략',
+        desc: '기록 작성 간격과 기록 메모 내용을 분석해 피로도를 점검하고 번아웃을 예방합니다.',
+        prompt: '최근 기록된 실천 강도와 메모 내용의 뉘앙스를 심리학적 관점에서 검토하여, (1) 현재 에너지 레벨(충만/보통/위험), (2) 번아웃 방지를 위한 마이크로 휴식법, (3) 멘탈 충전용 주말 액션을 알려주세요.'
+      }
+    ];
+
+    // [기록 특화 아워골 AI 프리셋 4종]
+    var recAiPrompts = [
+      {
+        id: 'preset_rec_ai_0',
+        baseLikes: 30,
+        title: '🤖 아워골 AI 기록 기반 1주 실행 점검표',
+        desc: '내 실제 체크인 데이터를 기반으로 이번 주 달성 성과를 요약하고 등급을 판정합니다.',
+        prompt: '아워골 유저 [' + userName + ']님의 이번 주 체크인 기록을 종합 평가해주세요. 이번 주의 실천을 A~F 등급으로 채점하고 가장 칭찬할 만한 점과 보완점 1가지를 명쾌하게 짚어주세요.'
+      },
+      {
+        id: 'preset_rec_ai_1',
+        baseLikes: 22,
+        title: '🎯 집중시간 증대 타임블록 플래너',
+        desc: '실천 기록의 평균 소요시간을 분석하여 하루 2시간의 딥워크(Deep Work) 블록을 설계합니다.',
+        prompt: '내 누적 기록 패턴에 맞춰, 오전/오후/저녁 중 가장 방해받지 않고 몰입할 수 있는 2시간 집중 타임블록과 방해요소 차단 규칙 3가지를 설계해주세요.'
+      },
+      {
+        id: 'preset_rec_ai_2',
+        baseLikes: 28,
+        title: '📈 실천 누적치 기반 성장 궤적 리포트',
+        desc: '총 기록 건수와 누적 실천 시간을 기반으로 지난주 대비 성장률을 시각적으로 정리합니다.',
+        prompt: '나의 아워골 누적 실천 데이터를 바탕으로, 내가 어떤 분야에서 얼마나 성장하고 있는지 객관적 지표와 격려의 메시지를 담아 1페이지 분량의 성장 보고서를 작성해주세요.'
+      },
+      {
+        id: 'preset_rec_ai_3',
+        baseLikes: 35,
+        title: '💬 이번 주 갓생 다이어리 3줄 요약',
+        desc: '실천 기록들을 감성적이고 솔직한 3줄 일기로 요약하여 피드/SNS 공유용으로 생성합니다.',
+        prompt: '나의 이번 주 체크인 기록들을 바탕으로, 인스타그램이나 아워골 소통 피드에 바로 공유할 수 있는 감동적이고 위트 있는 \'갓생러의 3줄 다이어리\'를 작성해주세요.'
+      }
+    ];
+
+    var realPrompts = isRecords ? recRealPrompts : goalRealPrompts;
+    var aiPrompts = isRecords ? recAiPrompts : goalAiPrompts;
 
     var userList = getUserPrompts();
     var likedIds = getLikedPromptIds();
@@ -4024,15 +4099,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         metaHeader +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;gap:8px;">' +
           '<span style="font-weight:700;font-size:.875rem;color:var(--ink);line-height:1.3;">' + escapeHtml(item.title) + '</span>' +
-          '<button type="button" class="btn btn-ghost btn-xs btn-copy-prompt" data-pcontent="' + escapeHtml(item.prompt) + '" style="font-size:.75rem;color:var(--brand);border-color:rgba(108,92,231,0.3);white-space:nowrap;flex-shrink:0;">📋 복사하기</button>' +
+          '<button type="button" class="btn btn-ghost btn-xs btn-copy-prompt" data-pcontent="' + escapeHtml(item.prompt) + '" style="font-size:.78125rem;color:var(--brand);border-color:rgba(108,92,231,0.35);white-space:nowrap;flex-shrink:0;min-height:36px;padding:4px 10px;font-weight:700;border-radius:8px;">📋 복사하기</button>' +
         '</div>' +
         '<div class="faint" style="font-size:.78125rem;margin-bottom:8px;">' + escapeHtml(item.desc) + '</div>' +
         '<div style="background:var(--card2);padding:8px 10px;border-radius:8px;font-size:.75rem;color:var(--ink-soft);font-family:monospace;white-space:pre-wrap;max-height:80px;overflow-y:auto;border:1px dashed var(--rule);margin-bottom:8px;">' +
           escapeHtml(item.prompt) +
         '</div>' +
         '<div style="display:flex;align-items:center;justify-content:space-between;">' +
-          '<button type="button" class="btn btn-xs btn-like-prompt' + (isLiked ? ' liked' : '') + '" data-promptid="' + item.id + '" style="font-size:.72rem;padding:3px 9px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;min-height:24px;' + likeBtnStyle + '">' +
-            '<span style="font-size:.82rem;">' + (isLiked ? '👍' : '👍🏻') + '</span>' +
+          '<button type="button" class="btn btn-xs btn-like-prompt' + (isLiked ? ' liked' : '') + '" data-promptid="' + item.id + '" style="font-size:.75rem;padding:4px 10px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;min-height:34px;' + likeBtnStyle + '">' +
+            '<span style="font-size:.85rem;">' + (isLiked ? '👍' : '👍🏻') + '</span>' +
             '<span>도움돼요 <b style="' + (isLiked ? 'color:#3182f6;' : '') + '">(' + currentLikes + ')</b></span>' +
           '</button>' +
           (isUserCreated ? '<span class="faint" style="font-size:.6875rem;">유저 검증 팁</span>' : '<span class="faint" style="font-size:.6875rem;">아워골 공식 큐레이션</span>') +
@@ -4049,7 +4124,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             '<div style="font-size:1.3rem;margin-bottom:4px;">💡</div>' +
             '<div style="font-size:.84rem;font-weight:700;color:var(--ink);margin-bottom:4px;">아직 등록된 사용자 프롬프트가 없습니다.</div>' +
             '<div class="faint" style="font-size:.75rem;margin-bottom:10px;">내가 검증한 효과적인 데이터분석 프롬프트를 첫 번째로 공유해 보세요!</div>' +
-            '<button type="button" class="btn btn-primary btn-xs" id="btnEmptyAddPrompt" style="font-size:.75rem;padding:4px 12px;font-weight:700;">➕ 첫 프롬프트 공유하기</button>' +
+            '<button type="button" class="btn btn-primary btn-xs" id="btnEmptyAddPrompt" style="font-size:.75rem;padding:6px 14px;font-weight:700;min-height:36px;border-radius:8px;">➕ 첫 프롬프트 공유하기</button>' +
           '</div>';
       } else {
         userCardsHtml = userList.map(function(item){ return renderPromptCard(item, true); }).join('');
@@ -4067,7 +4142,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '</div>' +
         '<div style="margin-top:14px;">' +
           '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-            '<span style="font-size:.8125rem;font-weight:700;color:var(--ink);">⭐ 아워골 큐레이션 실사용 프리셋</span>' +
+            '<span style="font-size:.8125rem;font-weight:700;color:var(--ink);">⭐ 아워골 ' + (isRecords ? '기록' : '목표') + ' 실사용 큐레이션</span>' +
             '<span class="faint" style="font-size:.72rem;">공식 추천 4종</span>' +
           '</div>' +
           presetCardsHtml +
@@ -4076,44 +4151,56 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       contentListHtml =
         '<div style="margin-bottom:12px;">' +
           '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-            '<span style="font-size:.8125rem;font-weight:700;color:var(--ink);">🤖 아워골 AI 목표 맞춤 프롬프트</span>' +
+            '<span style="font-size:.8125rem;font-weight:700;color:var(--ink);">🤖 아워골 AI ' + (isRecords ? '기록 맞춤' : '목표 맞춤') + ' 프롬프트</span>' +
             '<span class="faint" style="font-size:.72rem;">4종</span>' +
           '</div>' +
           aiPrompts.map(function(item){ return renderPromptCard(item, false); }).join('') +
         '</div>';
     }
 
+    var heroBannerHtml =
+      '<div class="prompt-hero-banner" style="margin-bottom:12px;padding:10px 12px;background:rgba(49,130,246,0.08);border-left:4px solid #3182f6;border-radius:10px;display:flex;align-items:flex-start;gap:10px;">' +
+        '<span style="font-size:1.25rem;flex-shrink:0;line-height:1.2;">📢</span>' +
+        '<div style="font-size:.8125rem;color:var(--ink);line-height:1.45;">' +
+          '<div style="font-size:.84rem;color:#3182f6;font-weight:800;margin-bottom:2px;">프롬프트를 복사해서 외부 AI를 활용하세요!</div>' +
+          '<div class="faint" style="font-size:.75rem;color:var(--ink-soft);">' +
+            (isRecords ? '위에서 내 기록 데이터를 복사한 후, ' : '위에서 목표 데이터를 복사한 후, ') +
+            '아래 프롬프트와 함께 외부 AI(ChatGPT, Claude, Gemini)에 붙여넣으면 1초 만에 개인 맞춤형 심층 분석을 받을 수 있어요 ✨' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
     var drawerHtml =
       '<div id="promptEncyclopediaDrawer" style="' + (_promptEncyclopediaOpen ? 'margin-top:14px;display:block;' : 'display:none;') + '">' +
+        heroBannerHtml +
         '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;">' +
           '<div style="display:flex;gap:4px;background:var(--card);padding:3px;border-radius:10px;border:1px solid var(--rule);flex:1;min-width:0;">' +
-            '<button type="button" class="btn-prompt-tab" data-ptab="real" style="flex:1;text-align:center;padding:6px 6px;font-size:.75rem;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;' + (_promptTabState==='real'?'background:var(--brand);color:#fff;font-weight:700;':'background:transparent;color:var(--ink-soft);') + '">실사용 (' + (userList.length + realPrompts.length) + ')</button>' +
-            '<button type="button" class="btn-prompt-tab" data-ptab="ai" style="flex:1;text-align:center;padding:6px 6px;font-size:.75rem;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;' + (_promptTabState==='ai'?'background:var(--brand);color:#fff;font-weight:700;':'background:transparent;color:var(--ink-soft);') + '">AI 맞춤 (' + aiPrompts.length + ')</button>' +
+            '<button type="button" class="btn-prompt-tab" data-ptab="real" style="flex:1;text-align:center;padding:8px 6px;min-height:44px;display:flex;align-items:center;justify-content:center;font-size:.78125rem;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;' + (_promptTabState==='real'?'background:var(--brand);color:#fff;font-weight:700;':'background:transparent;color:var(--ink-soft);') + '">👥 실사용 (' + (userList.length + realPrompts.length) + ')</button>' +
+            '<button type="button" class="btn-prompt-tab" data-ptab="ai" style="flex:1;text-align:center;padding:8px 6px;min-height:44px;display:flex;align-items:center;justify-content:center;font-size:.78125rem;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;' + (_promptTabState==='ai'?'background:var(--brand);color:#fff;font-weight:700;':'background:transparent;color:var(--ink-soft);') + '">🤖 AI 맞춤 (' + aiPrompts.length + ')</button>' +
           '</div>' +
-          '<button type="button" class="btn btn-primary btn-sm" id="btnAddUserPrompt" style="flex-shrink:0;font-size:.75rem;font-weight:700;padding:6px 12px;border-radius:10px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">' +
+          '<button type="button" class="btn btn-primary btn-sm" id="btnAddUserPrompt" style="flex-shrink:0;font-size:.78125rem;font-weight:700;padding:6px 12px;min-height:44px;border-radius:10px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">' +
             '<span>➕</span> 나만의 프롬프트 올리기' +
           '</button>' +
-        '</div>' +
-        '<div style="padding:8px 12px;background:rgba(108,92,231,0.06);border-left:3px solid var(--brand);border-radius:6px;margin-bottom:12px;font-size:.78125rem;color:var(--ink-soft);">' +
-          '✨ <b>안내:</b> 프롬프트를 복사해서 외부 AI(ChatGPT, Claude, Gemini 등)에 붙여넣어 내 목표 데이터를 정밀 분석하세요! 도움이 된 프롬프트에는 <b>도움돼요 👍</b>를 눌러주세요.' +
         '</div>' +
         contentListHtml +
       '</div>';
 
-    return '<div class="prompt-encyclopedia-card" style="margin-top:20px;padding:14px 16px;background:var(--card2);border:1px solid var(--rule);border-radius:16px;">' +
-      '<div id="btnTogglePromptAccordion" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;gap:8px;">' +
+    var cardSubtext = isRecords ? '(기록 데이터 분석 · 외부 AI)' : '(목표 데이터 분석 · 외부 AI)';
+
+    return '<div class="prompt-encyclopedia-card" style="margin-top:16px;padding:14px 16px;background:var(--card2);border:1px solid var(--rule);border-radius:16px;">' +
+      '<div id="btnTogglePromptAccordion" class="btn-toggle-prompt-accordion" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;gap:8px;min-height:44px;">' +
         '<div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;">' +
-          '<span style="font-size:1.2rem;flex-shrink:0;">🧠</span>' +
+          '<span style="font-size:1.25rem;flex-shrink:0;">🧠</span>' +
           '<div style="display:flex;flex-direction:column;min-width:0;">' +
-            '<span style="font-weight:700;font-size:.9rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">데이터분석 프롬프트 백과사전</span>' +
-            '<span class="faint" style="font-size:.72rem;">(외부 AI 분석 · 유저 피드)</span>' +
+            '<span style="font-weight:800;font-size:.92rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">데이터분석 프롬프트 백과사전</span>' +
+            '<span class="faint" style="font-size:.72rem;">' + cardSubtext + '</span>' +
           '</div>' +
         '</div>' +
         '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">' +
-          '<button type="button" class="btn btn-primary btn-xs" id="btnHeaderAddUserPrompt" style="font-size:.72rem;font-weight:700;padding:4px 9px;border-radius:8px;display:inline-flex;align-items:center;gap:3px;white-space:nowrap;">' +
+          '<button type="button" class="btn btn-primary btn-xs" id="btnHeaderAddUserPrompt" style="font-size:.72rem;font-weight:700;padding:4px 9px;border-radius:8px;display:inline-flex;align-items:center;gap:3px;white-space:nowrap;min-height:32px;">' +
             '<span>➕</span> 올리기' +
           '</button>' +
-          '<span style="font-size:.75rem;color:var(--brand);font-weight:600;padding-left:2px;white-space:nowrap;">' + (_promptEncyclopediaOpen ? '접기' : '펼쳐보기') + '</span>' +
+          '<span style="font-size:.75rem;color:var(--brand);font-weight:700;padding-left:2px;white-space:nowrap;">' + (_promptEncyclopediaOpen ? '접기' : '펼쳐보기') + '</span>' +
           '<span id="promptAccordionChevron" style="font-size:.75rem;color:var(--ink-soft);transition:transform .2s ease;' + (_promptEncyclopediaOpen ? 'transform:rotate(180deg);' : '') + '">▼</span>' +
         '</div>' +
       '</div>' +
@@ -4172,15 +4259,40 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
 
     root.querySelectorAll('.btn-copy-prompt').forEach(function(btn){
-      btn.addEventListener('click', function(e){
+      btn.addEventListener('click', async function(e){
         e.stopPropagation();
         if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
         var text = btn.dataset.pcontent;
-        navigator.clipboard.writeText(text).then(function(){
-          toast('프롬프트가 클립보드에 복사되었습니다! 외부 AI에 붙여넣어보세요 📋');
-        }).catch(function(){
+        var copied = false;
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          try {
+            await navigator.clipboard.writeText(text);
+            copied = true;
+          } catch(err){
+            copied = false;
+          }
+        }
+        if(!copied){
+          try {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            ta.style.top = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            copied = document.execCommand('copy');
+            document.body.removeChild(ta);
+          } catch(fallbackErr){
+            copied = false;
+          }
+        }
+        if(copied){
+          toast('📋 프롬프트가 복사되었습니다! 외부 AI(ChatGPT/Claude)에 붙여넣어보세요 ✨');
+        } else {
           toast('프롬프트 복사에 실패했습니다.');
-        });
+        }
       });
     });
 
@@ -4203,7 +4315,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           } else {
             var presetMap = {
               'preset_real_0': 14, 'preset_real_1': 21, 'preset_real_2': 18, 'preset_real_3': 9,
-              'preset_ai_0': 25, 'preset_ai_1': 17, 'preset_ai_2': 19, 'preset_ai_3': 32
+              'preset_ai_0': 25, 'preset_ai_1': 17, 'preset_ai_2': 19, 'preset_ai_3': 32,
+              'preset_rec_real_0': 19, 'preset_rec_real_1': 24, 'preset_rec_real_2': 16, 'preset_rec_real_3': 27,
+              'preset_rec_ai_0': 30, 'preset_rec_ai_1': 22, 'preset_rec_ai_2': 28, 'preset_rec_ai_3': 35
             };
             currentLikes = presetMap[pid] || 0;
           }
@@ -31799,6 +31913,18 @@ wirePromptEncyclopediaEvents(body);
         else if(typeof openCustomTemplateModal === 'function') openCustomTemplateModal();
       };
     }
+
+    // [TASK-ES-329, 78] 기록 내보내기 하단 데이터분석 프롬프트 백과사전 슬롯 갱신 도우미
+    function updateRecordPromptSlot(){
+      var recSlot = document.getElementById('recordPromptEncyclopediaSlot');
+      if(recSlot && typeof renderPromptEncyclopediaHtml === 'function'){
+        recSlot.innerHTML = renderPromptEncyclopediaHtml('records');
+        if(typeof wirePromptEncyclopediaEvents === 'function'){
+          wirePromptEncyclopediaEvents(recSlot);
+        }
+      }
+    }
+    updateRecordPromptSlot();
 
     var listEl = document.getElementById('recordsList');
     if(!allRecs.length){

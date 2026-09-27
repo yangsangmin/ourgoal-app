@@ -7121,10 +7121,13 @@ check('compliance: [#TASK-ES-184] 아워골 생각 메모장 18대 잔여 대기
   // [77] 목표 탭 '현 상태로 데이터 받기' 최하단 재배치
   assert.ok(html.includes("renderPromptEncyclopediaHtml('goals')"), '[77] 목표 탭 최하단 슬롯 연결 존재');
 
-  // [78] 목표 데이터받기·기록 내보내기 하단 '데이터분석 프롬프트 백과사전' 신설
+  // [78] 목표 데이터받기·기록 내보내기 하단 '데이터분석 프롬프트 백과사전' 신설 (#TASK-ES-329)
   assert.ok(html.includes('function renderPromptEncyclopediaHtml('), '[78] 프롬프트 백과사전 렌더러 존재');
   assert.ok(html.includes('데이터분석 프롬프트 백과사전'), '[78] 프롬프트 백과사전 타이틀 존재');
   assert.ok(html.includes('btn-copy-prompt'), '[78] 프롬프트 원클릭 복사 버튼 클래스 존재');
+  assert.ok(html.includes('recordPromptEncyclopediaSlot'), '[78] 프롬프트 백과사전 기록 슬롯 존재');
+  assert.ok(html.includes('프롬프트를 복사해서 외부 AI를 활용하세요!'), '[78] 프롬프트 백과사전 안내 배너 문구 존재');
+  assert.ok(html.includes('preset_rec_real_0'), '[78] 프롬프트 백과사전 기록 실사용 프리셋 존재');
 
   // [80] 템플릿백과사전 1초 자동이식 선택 연동 및 로드맵-목표상태 동기화
   assert.ok(html.includes('function importTemplateInstantly('), '[80] 1초 자동이식 함수 존재');
