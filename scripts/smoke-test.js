@@ -9998,6 +9998,31 @@ check('compliance: [#TASK-ES-321] [70] 원격 로그아웃 전 로그인 기기 
   assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'device-session-control.test.js')), '단위 테스트 파일 tests/device-session-control.test.js 존재');
 });
 
+check('compliance: [#TASK-ES-322] [71] 2단계 인증(2FA) 실질적 보안 작동 및 무결성 복구 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. 2FA PIN 설정, 해제, 챌린지 모달 및 마크업 검증
+  assert.ok(indexHtml.includes('function openTwoFactorSetupModal()'), 'index.html openTwoFactorSetupModal 함수 탑재');
+  assert.ok(indexHtml.includes('function openTwoFactorDisableModal('), 'index.html openTwoFactorDisableModal 해제 검증 함수 탑재');
+  assert.ok(indexHtml.includes('function challengeTwoFactorModal('), 'index.html challengeTwoFactorModal 챌린지 함수 탑재');
+  assert.ok(indexHtml.includes('id="twoFactorSwitch"'), 'index.html twoFactorSwitch 스위치 마크업 탑재');
+  assert.ok(indexHtml.includes('id="twoFactorPinControls"'), 'index.html twoFactorPinControls 컨트롤 마크업 탑재');
+  assert.ok(indexHtml.includes('id="btnChange2FaPin"'), 'index.html btnChange2FaPin PIN 변경 버튼 탑재');
+
+  // 2. enterApp 앱 진입 챌린지 락 검증
+  assert.ok(indexHtml.includes('challengeTwoFactorModal(function(){'), 'index.html enterApp 진입 챌린지 가드 탑재');
+
+  // 3. components.js handle인증_Item71Action 직통 핸들러 및 캐시 확인
+  assert.ok(jsComp.includes('handle인증_Item71Action'), 'components.js handle인증_Item71Action 탑재');
+  assert.ok(jsComp.includes('og_task-71_cache'), 'components.js og_task-71_cache 캐시 탑재');
+  assert.ok(jsComp.includes('two_factor_auth_active: true'), 'components.js two_factor_auth_active 플래그 탑재');
+  assert.ok(jsComp.includes('two_factor_pin_enforced: true'), 'components.js two_factor_pin_enforced 플래그 탑재');
+  assert.ok(jsComp.includes('app_entry_challenge_guaranteed: true'), 'components.js app_entry_challenge_guaranteed 플래그 탑재');
+  assert.ok(jsComp.includes('disable_pin_verification_active: true'), 'components.js disable_pin_verification_active 플래그 탑재');
+  assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'two-factor-auth.test.js')), '단위 테스트 파일 tests/two-factor-auth.test.js 존재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

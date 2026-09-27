@@ -1,0 +1,234 @@
+{
+  "task": "TASK-ES-322",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-322-TWO-FACTOR-AUTH.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 openTwoFactorSetupModal 함수가 4자리 보안 PIN 번호 입력 및 확인을 강제하고 저장 시 2FA를 활성화함을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 openTwoFactorDisableModal 함수가 2FA 해제 시 기존 설정된 4자리 보안 PIN 일치 여부를 검증하고 일치할 경우에만 해제함을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내 설정 화면에 2FA 활성 상태에서 4자리 보안 PIN을 언제든 재설정할 수 있는 btnChange2FaPin 버튼 및 twoFactorPinControls가 제공됨을 보장한다."
+    },
+    {
+      "id": "R4",
+      "text": "index.html 내 enterApp 진입 시 2FA 활성 계정에 대해 세션 미인증 상태일 때 challengeTwoFactorModal 챌린지를 강제하여 앱 진입을 차단함을 보장한다."
+    },
+    {
+      "id": "R5",
+      "text": "index.html 내 challengeTwoFactorModal 모달에서 올바른 4자리 PIN 입력 시 ourgoal_2fa_verified 세션 스토리지를 기록하고 앱 잠금을 해제함을 보장한다."
+    },
+    {
+      "id": "R6",
+      "text": "js/components.js 내에 직통 핸들러 handle인증_Item71Action이 구현되어 12ms 햅틱 반응, og_task-71_cache 로컬 캐시 영속화, 4대 뷰 원자적 전파를 보장한다."
+    },
+    {
+      "id": "R7",
+      "text": "tests/two-factor-auth.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-322 검증 테스트가 정의되어 무결점을 전수 입증한다."
+    },
+    {
+      "id": "R8",
+      "text": "docs/rules/TICKETS.md에 #TASK-ES-322가 승인 티켓으로 등록되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 openTwoFactorSetupModal 함수가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "openTwoFactorSetupModal"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 openTwoFactorDisableModal 해제 검증 함수가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "openTwoFactorDisableModal"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 twoFactorSwitch 스위치 마크업이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "twoFactorSwitch"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 twoFactorPinControls PIN 관리 컨트롤이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "twoFactorPinControls"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 btnChange2FaPin PIN 변경 버튼이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "btnChange2FaPin"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 enterApp 진입 시 challengeTwoFactorModal 가드가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "challengeTwoFactorModal(function(){"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 challengeTwoFactorModal 함수가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "challengeTwoFactorModal"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 handle인증_Item71Action 직통 핸들러가 구현되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle인증_Item71Action"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 og_task-71_cache 로컬 캐시 키가 저장된다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "og_task-71_cache"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "단위 테스트 파일 tests/two-factor-auth.test.js가 존재한다",
+      "touches": [
+        "tests/two-factor-auth.test.js"
+      ],
+      "check": {
+        "type": "fileExists",
+        "file": "tests/two-factor-auth.test.js"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/two-factor-auth.test.js 내에 #TASK-ES-322 단위 테스트가 구현되어 있다",
+      "touches": [
+        "tests/two-factor-auth.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/two-factor-auth.test.js",
+        "text": "#TASK-ES-322"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js 내에 #TASK-ES-322 단언문 블록이 구현되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-322]"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/rules/TICKETS.md 내에 #TASK-ES-322 승인 티켓이 등록되어 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "#TASK-ES-322"
+      }
+    }
+  ]
+}

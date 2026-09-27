@@ -1318,6 +1318,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <div class="t">2단계 인증 (2FA) 보안 로그인</div>
           <div class="switch" id="twoFactorSwitch"></div>
         </div>
+        <div id="twoFactorPinControls" style="display:none;margin-top:6px;padding:8px 12px;background:var(--card2);border-radius:10px;justify-content:space-between;align-items:center;">
+          <span class="faint" style="font-size:.78rem;">🔐 보안 PIN 4자리 활성화됨</span>
+          <button class="btn btn-ghost btn-sm" id="btnChange2FaPin" type="button" style="font-size:.75rem;padding:3px 8px;">PIN 변경</button>
+        </div>
         <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--rule);">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
             <div style="font-size:.875rem;font-weight:700;">활성 로그인 기기 및 세션</div>
@@ -3628,7 +3632,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function openTwoFactorSetupModal(){
     var settings = (state.profile && state.profile.settings) || {};
     var currentPin = settings.twoFactorPin || '';
-    var isEnabled = !!settings.twoFactorAuth;
+    var isEnabled = !!(settings.twoFactorAuth && settings.twoFactorPin);
 
     openModal(
       '<h3>🔐 2단계 인증 (2FA) 보안 설정</h3>' +
@@ -3646,7 +3650,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '</div>' +
       '<div class="modal-actions">' +
         '<button class="btn btn-ghost" id="btnCancel2Fa" type="button">취소</button>' +
-        '<button class="btn btn-primary" id="btnSave2Fa" type="button">' + (isEnabled ? 'PIN 변경 및 유지' : '2단계 인증 활성화') + '</button>' +
+        '<button class="btn btn-primary" id="btnSave2Fa" type="button">' + (isEnabled ? 'PIN 변경 저장' : '2단계 인증 활성화') + '</button>' +
       '</div>',
       function(sheet){
         sheet.querySelector('#btnCancel2Fa').addEventListener('click', closeModal);
@@ -3654,13 +3658,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           var pin1 = sheet.querySelector('#twoFaPinInput').value.trim();
           var pin2 = sheet.querySelector('#twoFaPinConfirm').value.trim();
           if(!/^[0-9]{4}$/.test(pin1)){
+            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
             toast('PIN 번호는 숫자 4자리로 입력해주세요.');
             return;
           }
           if(pin1 !== pin2){
+            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
             toast('PIN 번호가 일치하지 않습니다.');
             return;
           }
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
           if(!state.profile.settings) state.profile.settings = {};
           state.profile.settings.twoFactorAuth = true;
           state.profile.settings.twoFactorPin = pin1;
@@ -3669,6 +3676,49 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           closeModal();
           renderSettingsScreen();
           toast('2단계 인증(2FA) 보안이 설정되었습니다. 🔐');
+        });
+      }
+    );
+  }
+
+  function openTwoFactorDisableModal(onSuccess){
+    var settings = (state.profile && state.profile.settings) || {};
+    var existingPin = settings.twoFactorPin || '';
+
+    openModal(
+      '<h3>🔐 2단계 인증 해제 확인</h3>' +
+      '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">2단계 인증을 해제하려면 현재 설정된 4자리 보안 PIN 번호를 입력해주세요.</p>' +
+      '<div class="field">' +
+        '<label>현재 보안 PIN 번호</label>' +
+        '<input type="password" id="disable2FaPinInput" maxlength="4" placeholder="••••" pattern="[0-9]*" inputmode="numeric" autofocus style="letter-spacing:8px;font-size:1.4rem;text-align:center;font-weight:700;">' +
+      '</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn btn-ghost" id="btnCancelDisable2Fa" type="button">취소</button>' +
+        '<button class="btn btn-primary" id="btnConfirmDisable2Fa" type="button" style="background:var(--red);border-color:var(--red);color:#fff;font-weight:700;">인증 해제</button>' +
+      '</div>',
+      function(sheet){
+        var pinInp = sheet.querySelector('#disable2FaPinInput');
+        sheet.querySelector('#btnCancelDisable2Fa').addEventListener('click', closeModal);
+        sheet.querySelector('#btnConfirmDisable2Fa').addEventListener('click', async function(){
+          var entered = pinInp ? pinInp.value.trim() : '';
+          if(existingPin && entered !== existingPin){
+            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+            toast('보안 PIN 번호가 일치하지 않습니다.');
+            if(pinInp){
+              pinInp.value = '';
+              pinInp.focus();
+            }
+            return;
+          }
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+          settings.twoFactorAuth = false;
+          settings.twoFactorPin = '';
+          sessionStorage.removeItem('ourgoal_2fa_verified');
+          await saveProfile();
+          closeModal();
+          renderSettingsScreen();
+          toast('2단계 인증이 안전하게 해제되었습니다.');
+          if(onSuccess) onSuccess();
         });
       }
     );
@@ -3691,25 +3741,61 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '<div class="field">' +
         '<input type="password" id="challenge2FaPin" maxlength="4" placeholder="••••" pattern="[0-9]*" inputmode="numeric" autofocus style="letter-spacing:10px;font-size:1.6rem;text-align:center;font-weight:700;margin:10px 0;">' +
       '</div>' +
-      '<div class="modal-actions">' +
-        '<button class="btn btn-primary btn-block" id="btnVerify2FaChallenge" type="button">인증 및 잠금해제</button>' +
+      '<div class="modal-actions" style="display:flex;gap:8px;">' +
+        '<button class="btn btn-ghost" id="btn2FaLogout" type="button" style="flex:1;">로그아웃</button>' +
+        '<button class="btn btn-primary" id="btnVerify2FaChallenge" type="button" style="flex:2;font-weight:700;">인증 및 잠금해제</button>' +
       '</div>',
       function(sheet){
-        sheet.querySelector('#btnVerify2FaChallenge').addEventListener('click', function(){
-          var entered = sheet.querySelector('#challenge2FaPin').value.trim();
+        var pinInput = sheet.querySelector('#challenge2FaPin');
+        var verifyBtn = sheet.querySelector('#btnVerify2FaChallenge');
+        var logoutBtn = sheet.querySelector('#btn2FaLogout');
+
+        if(logoutBtn){
+          logoutBtn.addEventListener('click', function(){
+            closeModal();
+            performLogout();
+          });
+        }
+
+        function doVerify(){
+          var entered = pinInput ? pinInput.value.trim() : '';
           if(entered === settings.twoFactorPin){
+            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
             sessionStorage.setItem('ourgoal_2fa_verified', 'true');
             closeModal();
             toast('2단계 보안 인증이 완료되었습니다. 환영합니다! ✨');
             if(onSuccess) onSuccess();
           } else {
+            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
             toast('보안 PIN 번호가 올바르지 않습니다.');
-            sheet.querySelector('#challenge2FaPin').value = '';
-            sheet.querySelector('#challenge2FaPin').focus();
+            if(pinInput){
+              pinInput.value = '';
+              pinInput.focus();
+            }
           }
-        });
+        }
+
+        if(verifyBtn){
+          verifyBtn.addEventListener('click', doVerify);
+        }
+        if(pinInput){
+          pinInput.addEventListener('keydown', function(e){
+            if(e.key === 'Enter') doVerify();
+          });
+          pinInput.addEventListener('input', function(){
+            if(pinInput.value.length === 4){
+              setTimeout(doVerify, 150);
+            }
+          });
+        }
       }
     );
+  }
+
+  if(typeof window !== 'undefined'){
+    window.openTwoFactorSetupModal = openTwoFactorSetupModal;
+    window.openTwoFactorDisableModal = openTwoFactorDisableModal;
+    window.challengeTwoFactorModal = challengeTwoFactorModal;
   }
 
   
@@ -6257,6 +6343,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ Enter app ============ */
   async function enterApp(){
+    var settings = (state.profile && state.profile.settings) || {};
+    if(settings.twoFactorAuth && settings.twoFactorPin && sessionStorage.getItem('ourgoal_2fa_verified') !== 'true'){
+      if(typeof challengeTwoFactorModal === 'function'){
+        challengeTwoFactorModal(function(){
+          enterApp();
+        });
+        return;
+      }
+    }
     if(typeof restoreGoogleToken === 'function') restoreGoogleToken();
     document.getElementById('authScreen').style.display = 'none';
     var shell = document.getElementById('appShell');
@@ -36861,15 +36956,28 @@ wirePromptEncyclopediaEvents(body);
       }
     }
     var twoFaSw = document.getElementById('twoFactorSwitch');
+    var pinCtrl = document.getElementById('twoFactorPinControls');
+    var btnChangePin = document.getElementById('btnChange2FaPin');
     if(twoFaSw){
-      var twoFaOn = !!settings.twoFactorAuth;
+      var twoFaOn = !!(settings.twoFactorAuth && settings.twoFactorPin);
       twoFaSw.className = 'switch' + (twoFaOn ? ' on' : '');
       a11ySwitch(twoFaSw, twoFaOn, '2단계 인증 (2FA) 보안 로그인');
-      twoFaSw.onclick = async function(){
-        settings.twoFactorAuth = !twoFaOn;
-        await saveProfile();
-        renderSettingsScreen();
-        toast(settings.twoFactorAuth ? '2단계 인증(2FA)이 설정되었습니다' : '2단계 인증이 해제되었습니다');
+      if(pinCtrl){
+        pinCtrl.style.display = twoFaOn ? 'flex' : 'none';
+      }
+      twoFaSw.onclick = function(){
+        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+        if(!twoFaOn){
+          if(typeof openTwoFactorSetupModal === 'function') openTwoFactorSetupModal();
+        } else {
+          if(typeof openTwoFactorDisableModal === 'function') openTwoFactorDisableModal();
+        }
+      };
+    }
+    if(btnChangePin){
+      btnChangePin.onclick = function(){
+        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+        if(typeof openTwoFactorSetupModal === 'function') openTwoFactorSetupModal();
       };
     }
     var logoutOtherBtn = document.getElementById('logoutOtherDevicesBtn');
