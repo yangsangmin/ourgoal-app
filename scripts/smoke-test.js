@@ -9631,6 +9631,38 @@ check('TASK-ES-306: 스톱워치 구간기록별 텍스트 입력창 UI 정돈 �
   assert.ok(uiCss.includes('.sw-lap-meta'), 'ui.css .sw-lap-meta 스타일 정의');
 });
 
+/* ============ [TASK-ES-307] 노션 [56] 성취통계 다중 선택된 측정지표 데이터 그래프 동시 렌더링 연동 ============ */
+check('TASK-ES-307: 성취통계 다중 선택된 측정지표 데이터 그래프 동시 렌더링 연동 (칩 바, 다중 SVG 라인, 요약 배지) 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const jsStats = fs.readFileSync(path.join(__dirname, '..', 'js', 'records-stats.js'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. index.html 다중 지표 엔진 및 UI 검증
+  assert.ok(indexHtml.includes('TREND_METRICS'), 'index.html TREND_METRICS 탑재');
+  assert.ok(indexHtml.includes('renderMultiMetricSvg'), 'index.html renderMultiMetricSvg 함수 탑재');
+  assert.ok(indexHtml.includes('trend-metrics-selector-row'), 'index.html trend-metrics-selector-row 마크업 탑재');
+  assert.ok(indexHtml.includes('trend-metric-chip'), 'index.html trend-metric-chip 마크업 탑재');
+  assert.ok(indexHtml.includes('data-trendmetric'), 'index.html data-trendmetric 속성 탑재');
+  assert.ok(indexHtml.includes('trend-legend-row'), 'index.html trend-legend-row 마크업 탑재');
+  assert.ok(indexHtml.includes('trend-multi-svg'), 'index.html trend-multi-svg 클래스 탑재');
+  assert.ok(indexHtml.includes('trend-summary-badges-row'), 'index.html trend-summary-badges-row 마크업 탑재');
+  assert.ok(indexHtml.includes('trend-summary-badge'), 'index.html trend-summary-badge 마크업 탑재');
+
+  // 2. js/records-stats.js 다중 지표 데이터셋 산출 검증
+  assert.ok(jsStats.includes('durationMinutes = Math.round(it.totalMs / 60000)'), 'records-stats durationMinutes 산출');
+  assert.ok(jsStats.includes('availableMetrics'), 'records-stats availableMetrics 반환');
+
+  // 3. js/components.js 연동 검증
+  assert.ok(jsComp.includes('handle성취통계_Item56Action'), 'components.js handle성취통계_Item56Action 탑재');
+
+  // 4. ui.css 스타일 정의 검증
+  assert.ok(uiCss.includes('.trend-metrics-selector-row'), 'ui.css .trend-metrics-selector-row 스타일 정의');
+  assert.ok(uiCss.includes('.trend-metric-chip'), 'ui.css .trend-metric-chip 스타일 정의');
+  assert.ok(uiCss.includes('.trend-legend-row'), 'ui.css .trend-legend-row 스타일 정의');
+  assert.ok(uiCss.includes('.trend-multi-svg'), 'ui.css .trend-multi-svg 스타일 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

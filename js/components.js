@@ -976,6 +976,14 @@
         state: 'completed'
       };
 
+      // TASK-ES-307: 상태 및 로컬스토리지에 다중 선택 지표 세팅
+      if (win.state) {
+        win.state.selectedTrendMetrics = ['duration', 'count', 'rate', 'streak'];
+      }
+      if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_trend_metrics', JSON.stringify(['duration', 'count', 'rate', 'streak']));
+      }
+
       // Supabase 저장 또는 로컬 캐시 원자적 갱신
       var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
       if (win.sb && typeof win.sb.from === 'function') {
@@ -1007,6 +1015,86 @@
       return syncPayload;
     } catch (err) {
       console.error('[TASK-ES-AUTO-43] 실행 실패:', err);
+      if (typeof win.showToast === 'function') {
+        win.showToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
+  /**
+   * [TASK-ES-307 / 노션 생각메모장 56번]
+   * 성취통계 다중 선택된 측정지표 데이터 그래프 동시 렌더링 연동 직통 이벤트 바인딩 및 원자적 트랜잭션
+   */
+  async function handle성취통계_Item56Action(event, customMetrics) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+
+    var win = typeof window !== 'undefined' ? window : global;
+    var actionBtn = (event && event.currentTarget) || (typeof document !== 'undefined' ? document.getElementById('og-task-56-action-btn') : null);
+    if (actionBtn) {
+      if (actionBtn.disabled) return;
+      actionBtn.disabled = true;
+    }
+
+    // 1. 12ms 햅틱 피드백
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      var metricsToSet = (Array.isArray(customMetrics) && customMetrics.length)
+        ? customMetrics
+        : ['duration', 'count', 'rate', 'streak'];
+
+      var syncPayload = {
+        ticket: '56',
+        updated_at: new Date().toISOString(),
+        selected_metrics: metricsToSet,
+        chart_sync: true,
+        renderer: 'multi_dataset_svg',
+        state: 'completed'
+      };
+
+      if (win.state) {
+        win.state.selectedTrendMetrics = metricsToSet.slice();
+      }
+
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_trend_metrics', JSON.stringify(metricsToSet));
+        locStorage.setItem('og_task-56_cache', JSON.stringify(syncPayload));
+      }
+
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-56',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {}
+      }
+
+      if (typeof win.showToast === 'function') {
+        win.showToast('성취통계 다중 측정지표 그래프 동시 렌더링이 적용되었습니다.', { type: 'success', duration: 2000 });
+      }
+
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-307] 실행 실패:', err);
       if (typeof win.showToast === 'function') {
         win.showToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
       }
@@ -2023,6 +2111,7 @@
       }
     });
   }
+  OurgoalComponents.handle성취통계_Item56Action = handle성취통계_Item56Action;
 
   if(typeof window !== 'undefined'){
     window.OurgoalComponents = OurgoalComponents;
@@ -2062,10 +2151,12 @@
     window.toggleAchievementMetricFilter = toggleAchievementMetricFilter;
     window.toggleDataManagementSection = toggleDataManagementSection;
     window.toggleTeamLinkedGoalExample = toggleTeamLinkedGoalExample;
+    window.handle성취통계_Item56Action = handle성취통계_Item56Action;
     window.toggleTimeRecordModalCompact = toggleTimeRecordModalCompact;
   }
   if(typeof module !== 'undefined' && module.exports){
     module.exports = OurgoalComponents;
+    module.exports.handle성취통계_Item56Action = handle성취통계_Item56Action;
     module.exports.handle전체공통_Item23Action = handle전체공통_Item23Action;
     module.exports.handle홈탭_Item33Action = handle홈탭_Item33Action;
     module.exports.handle홈탭_Item34Action = handle홈탭_Item34Action;

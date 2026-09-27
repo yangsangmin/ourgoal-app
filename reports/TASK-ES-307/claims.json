@@ -1,0 +1,104 @@
+{
+  "task": "TASK-ES-307",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-307-ACHIEVEMENT-GRAPH-MULTISET.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 성취통계 추이 차트에 TREND_METRICS 맵, renderMultiMetricSvg 함수, .trend-metrics-selector-row 지표 선택 칩 바가 탑재되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 선택된 복수 측정지표들이 SVG 다중 라인 및 요약 배지(trend-summary-badge)에 동시 바인딩되어 렌더링된다."
+    },
+    {
+      "id": "R3",
+      "text": "js/records-stats.js 내 computeTrendData에서 durationMinutes, count, rate, streak 다중 지표 데이터셋이 연산 및 반환된다."
+    },
+    {
+      "id": "R4",
+      "text": "ui.css 내 .trend-metrics-selector-row, .trend-metric-chip, .trend-legend-row, .trend-multi-svg 스타일 및 375px 반응형이 정의되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/achievement-graph-multiset.test.js 및 scripts/smoke-test.js에 다중 지표 동시 렌더링 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 TREND_METRICS 및 renderMultiMetricSvg 함수가 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "renderMultiMetricSvg"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 trend-metric-chip 및 trend-summary-badge 요소가 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "trend-metric-chip"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/records-stats.js 내 computeTrendData에서 availableMetrics 및 durationMinutes가 산출된다",
+      "touches": [
+        "js/records-stats.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/records-stats.js",
+        "text": "availableMetrics"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 .trend-metrics-selector-row 및 .trend-multi-svg 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".trend-multi-svg"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/achievement-graph-multiset.test.js 및 scripts/smoke-test.js 내에 다중 지표 그래프 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/achievement-graph-multiset.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/achievement-graph-multiset.test.js",
+        "text": "achievement-graph-multiset"
+      }
+    }
+  ]
+}
