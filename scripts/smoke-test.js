@@ -9869,6 +9869,28 @@ check('compliance: [#TASK-ES-316] [65] 일정 편집 내 사전 알림 설정(�
   assert.ok(jsComp.includes('schedule_notification_configured: true'), 'components.js schedule_notification_configured 플래그 탑재');
 });
 
+check('compliance: [#TASK-ES-317] [66] 아워골 평가해주기 창 밑 상시 평가 안내 문구 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. 모달 하단 상시 평가 안내 문구 확인
+  assert.ok(indexHtml.includes('id="evalModalAlwaysNotice"'), 'evalModalAlwaysNotice 요소 존재');
+  assert.ok(indexHtml.includes('언제 얼마든지 평가해주실 수 있습니다'), '언제 얼마든지 평가해주실 수 있습니다 문구 포함');
+  assert.ok(indexHtml.includes('한 번 평가하면 끝이 아니며'), '1회성 오해 해소 상세 문구 포함');
+
+  // 2. 홈탭 고정 배너 상시 평가 환영 캡션 확인
+  assert.ok(indexHtml.includes('id="homeEvalBannerAlwaysNotice"'), 'homeEvalBannerAlwaysNotice 요소 존재');
+  assert.ok(indexHtml.includes('상시 반복 평가 환영'), '상시 반복 평가 환영 문구 포함');
+
+  // 3. 평가 제출 후 피드백 토스트 문구 확인
+  assert.ok(indexHtml.includes('소중한 평가가 접수되었습니다. 언제 얼마든지 다시 평가해주실 수 있습니다!'), '제출 완료 토스트 재평가 안내 포함');
+
+  // 4. components.js handle홈탭_Item66Action 직통 핸들러 및 캐시 확인
+  assert.ok(jsComp.includes('handle홈탭_Item66Action'), 'components.js handle홈탭_Item66Action 탑재');
+  assert.ok(jsComp.includes('og_task-66_cache'), 'components.js og_task-66_cache 캐시 탑재');
+  assert.ok(jsComp.includes('recurring_evaluation_guaranteed: true'), 'components.js recurring_evaluation_guaranteed 플래그 탑재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
