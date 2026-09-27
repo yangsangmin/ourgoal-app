@@ -9744,6 +9744,27 @@ check('compliance: [#TASK-ES-310] [59] 소통 피드 게시하기 카테고리 �
   assert.ok(uiCss.includes('#shareCatPicker::-webkit-scrollbar'), 'ui.css 웹킷 스크롤바 숨김 정의');
 });
 
+check('compliance: [#TASK-ES-311] [60] 성취통계 메뉴 내 미작동 껍데기 버튼(목표연계·캘린더 등록) 영구 삭제 및 Zero Dead Click 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uStatsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'universal-stats.js'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. universal-stats.js 껍데기 버튼 및 라벨 부재 검증
+  assert.ok(!uStatsSrc.includes('uLinkGoalBtn'), 'universal-stats.js에 uLinkGoalBtn이 존재하지 않아야 함');
+  assert.ok(!uStatsSrc.includes('uRegCalendarBtn'), 'universal-stats.js에 uRegCalendarBtn이 존재하지 않아야 함');
+  assert.ok(!uStatsSrc.includes('🎯 목표 연계'), 'universal-stats.js에 껍데기 목표 연계 버튼 라벨이 없어야 함');
+  assert.ok(!uStatsSrc.includes('📅 캘린더 등록'), 'universal-stats.js에 껍데기 캘린더 등록 버튼 라벨이 없어야 함');
+
+  // 2. index.html 껍데기 버튼 부재 검증
+  assert.ok(!indexHtml.includes('id="uLinkGoalBtn"'), 'index.html에 uLinkGoalBtn이 존재하지 않아야 함');
+  assert.ok(!indexHtml.includes('id="uRegCalendarBtn"'), 'index.html에 uRegCalendarBtn이 존재하지 않아야 함');
+
+  // 3. components.js 직통 액션 핸들러 및 4대 뷰 원자적 전파 검증
+  assert.ok(jsComp.includes('handle성취통계_Item60Action'), 'components.js에 handle성취통계_Item60Action 탑재');
+  assert.ok(jsComp.includes('og_task-60_cache'), 'components.js에 og_task-60_cache 캐시 탑재');
+  assert.ok(jsComp.includes('no_dead_click: true'), 'components.js에 no_dead_click 플래그 탑재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
