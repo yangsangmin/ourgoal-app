@@ -285,6 +285,14 @@ button:active,.goal-chip:active,.dock-action-btn:active{transform:scale(.97);tra
 .feed-quick-chip{flex:0 0 auto;padding:0 12px;min-height:30px;display:inline-flex;align-items:center;border-radius:999px;font-size:.8125rem;font-weight:500;background:var(--surface-2);border:none;color:var(--ink-soft);transition:all .14s;}
 .feed-quick-chip:hover{background:var(--surface-3);color:var(--ink);transform:translateY(-1px);}
 .meta-strip{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px;}
+/* [#TASK-ES-326] 프로필 편집 동네 공개 카드 및 안심 배지 */
+.pv-region-card{margin-top:12px;padding:12px;background:var(--surface-2);border:1px solid var(--rule);border-radius:12px;transition:border-color .2s ease;}
+.pv-region-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;font-size:.6875rem;font-weight:700;transition:all .2s ease;}
+.pv-region-badge.on{background:rgba(16,185,129,.15);color:var(--green,#10b981);border:1px solid rgba(16,185,129,.3);}
+.pv-region-badge.off{background:var(--surface-3);color:var(--ink-faint);border:1px solid var(--rule);}
+.pv-region-benefit-card{margin-top:10px;padding:9px 12px;background:rgba(108,92,231,.08);border:1px solid rgba(108,92,231,.25);border-radius:10px;font-size:.78125rem;line-height:1.45;color:var(--ink-soft);animation:pvRegionPop .18s ease-out;}
+@keyframes pvRegionPop{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+.pulse-highlight{outline:2px solid var(--brand);box-shadow:0 0 10px rgba(108,92,231,.4);transition:all .3s ease;}
 /* 세그먼트 컨트롤 */
 .comm-subtabs,.format-toggle,.adaptive-mode-bar,.auth-tabs,.pro-sw-modes{display:flex;gap:3px;background:var(--surface-2);border-radius:12px;padding:4px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none;border:1px solid var(--rule-soft);}
 .comm-subtabs::-webkit-scrollbar{display:none;}
