@@ -17208,6 +17208,40 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         fbOptsHtml += '<option value="'+idx+'"'+isSel+'>' + tagLabel + ' ' + escapeHtml(previewStr) + '</option>';
       });
 
+      // [TASK-ES-308] 1. 공유할 목표 선택형 칩 바
+      var goalChipsHtml = '<div class="feed-target-chips-bar feed-target-goal-chips" id="shareGoalChipsRow" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:6px;-webkit-overflow-scrolling:touch;white-space:nowrap;">' +
+        '<button type="button" class="feed-target-chip' + (!curGoal ? ' active' : '') + '" data-targetgoal="__none__" style="flex:0 0 auto;">📌 미설정</button>' +
+        userGoals.map(function(g){
+          var p = goalProgress(g);
+          var isSel = (curGoal && curGoal.id === g.id) ? ' active' : '';
+          return '<button type="button" class="feed-target-chip' + isSel + '" data-targetgoal="' + g.id + '" style="flex:0 0 auto;">🎯 ' + escapeHtml(g.title) + ' (' + p + '%)</button>';
+        }).join('') +
+      '</div>';
+
+      // [TASK-ES-308] 2. 연동할 실천 기록 선택형 칩 바
+      var recChipsHtml = '<div class="feed-target-chips-bar feed-target-record-chips" id="shareRecordChipsRow" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:6px;-webkit-overflow-scrolling:touch;white-space:nowrap;">' +
+        '<button type="button" class="feed-target-chip' + (!curRecord ? ' active' : '') + '" data-targetrec="__none__" style="flex:0 0 auto;">⏱️ 기록 미연동</button>' +
+        userRecords.map(function(r, idx){
+          var isSel = (curRecord && (curRecord.id === r.id || curRecord.startAt === r.startAt)) ? ' active' : '';
+          var snippet = (r.title || r.text || '').replace(/\r\n/g, ' ').slice(0, 16);
+          if((r.title || r.text || '').length > 16) snippet += '…';
+          var hasPhoto = r.photo ? ' 📸' : '';
+          var dateLabel = r.date || (r.startAt ? dateKey(r.startAt).slice(5) : '기록');
+          return '<button type="button" class="feed-target-chip' + isSel + '" data-targetrec="' + idx + '" style="flex:0 0 auto;">⏱️ [' + dateLabel + '] ' + escapeHtml(snippet) + hasPhoto + '</button>';
+        }).join('') +
+      '</div>';
+
+      // [TASK-ES-308] 3. AI 코칭 피드백 선택형 칩 바
+      var fbChipsHtml = '<div class="feed-target-chips-bar feed-target-feedback-chips" id="shareFeedbackChipsRow" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:6px;-webkit-overflow-scrolling:touch;white-space:nowrap;">' +
+        '<button type="button" class="feed-target-chip' + (!curFeedback ? ' active' : '') + '" data-targetfb="__none__" style="flex:0 0 auto;">✨ 피드백 미포함</button>' +
+        availableFeedbacks.map(function(fb, idx){
+          var isSel = (curFeedback && (curFeedback === fb.raw || (curFeedback.comment && curFeedback.comment === fb.text))) ? ' active' : '';
+          var previewStr = fb.text.replace(/\r\n/g, ' ').slice(0, 14) + (fb.text.length > 14 ? '…' : '');
+          var tagIcon = fb.source === 'goal' ? '🎯' : '📝';
+          return '<button type="button" class="feed-target-chip' + isSel + '" data-targetfb="' + idx + '" style="flex:0 0 auto;">' + tagIcon + ' ' + escapeHtml(previewStr) + '</button>';
+        }).join('') +
+      '</div>';
+
       var msRows = '';
       if(curGoal && curGoal.milestones && curGoal.milestones.length){
         msRows = curGoal.milestones.map(function(m){
@@ -17233,21 +17267,23 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       return '<h3>피드에 내 목표 / 기록 게시하기</h3>' +
         '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">내 목표와 실천 기록, AI 코칭 피드백을 선택하여 동료들과 따뜻하게 공유해보세요.</p>' +
-        '<div style="margin-bottom:12px;">' +
+        '<div style="margin-bottom:12px;" id="shareGoalPickerWrap">' +
           '<label style="font-size:.8125rem;font-weight:700;display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;color:var(--ink);">' +
             '<span>🎯 공유할 목표 선택 (내 목표 중 선택)</span>' +
-            (userGoals.length ? '<span class="faint" style="font-size:.72rem;font-weight:500;">총 '+userGoals.length+'개</span>' : '') +
+            '<span class="faint" style="font-size:.72rem;font-weight:500;">터치하여 즉시 선택</span>' +
           '</label>' +
-          '<select id="shareGoalSelect" style="width:100%;border:1px solid var(--rule);border-radius:12px;padding:9px 12px;font-size:.875rem;background:var(--card2);color:var(--ink);font-weight:700;">' +
+          goalChipsHtml +
+          '<select id="shareGoalSelect" style="width:100%;border:1px solid var(--rule);border-radius:12px;padding:8px 12px;font-size:.84rem;background:var(--card2);color:var(--ink);font-weight:600;">' +
             goalOptsHtml +
           '</select>' +
         '</div>' +
-        '<div style="margin-bottom:12px;">' +
+        '<div style="margin-bottom:12px;" id="shareRecordPickerWrap">' +
           '<label style="font-size:.8125rem;font-weight:700;display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;color:var(--ink);">' +
             '<span>⏱️ 연동할 실천 기록 (선택)</span>' +
-            '<span class="faint" style="font-size:.72rem;font-weight:500;">내 기록에서 선택</span>' +
+            '<span class="faint" style="font-size:.72rem;font-weight:500;">터치하여 즉시 선택</span>' +
           '</label>' +
-          '<select id="shareRecordSelect" style="width:100%;border:1px solid var(--rule);border-radius:12px;padding:9px 12px;font-size:.875rem;background:var(--card2);color:var(--ink);">' +
+          recChipsHtml +
+          '<select id="shareRecordSelect" style="width:100%;border:1px solid var(--rule);border-radius:12px;padding:8px 12px;font-size:.84rem;background:var(--card2);color:var(--ink);">' +
             recOptsHtml +
           '</select>' +
         '</div>' +
@@ -17265,9 +17301,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '<div style="margin-bottom:12px;" id="shareFeedbackSection">' +
           '<label style="font-size:.8125rem;font-weight:700;display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;color:var(--ink);">' +
             '<span>✨ AI 코칭 피드백 선택 (선택)</span>' +
-            '<span class="faint" style="font-size:.72rem;font-weight:500;">받았던 조언 공유</span>' +
+            '<span class="faint" style="font-size:.72rem;font-weight:500;">터치하여 즉시 선택</span>' +
           '</label>' +
-          '<select id="shareFeedbackSelect" style="width:100%;border:1px solid var(--rule);border-radius:12px;padding:9px 12px;font-size:.875rem;background:var(--card2);color:var(--ink);">' +
+          fbChipsHtml +
+          '<select id="shareFeedbackSelect" style="width:100%;border:1px solid var(--rule);border-radius:12px;padding:8px 12px;font-size:.84rem;background:var(--card2);color:var(--ink);">' +
             fbOptsHtml +
           '</select>' +
           '<div id="shareFeedbackPreviewBox" style="margin-top:8px;background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(139,92,246,0.08));border:1px solid rgba(99,102,241,0.25);border-radius:12px;padding:10px 12px;display:'+(curFeedback ? 'block' : 'none')+';">' +
@@ -17435,6 +17472,52 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         };
       }
 
+      // [TASK-ES-308] 🎯 공유 대상 칩 클릭 핸들러 (목표·기록·AI피드백)
+      sheet.querySelectorAll('[data-targetgoal]').forEach(function(btn){
+        btn.onclick = function(e){
+          e.stopPropagation();
+          if(typeof triggerHaptic === 'function') triggerHaptic(12);
+          else if(navigator && typeof navigator.vibrate === 'function') try { navigator.vibrate(12); } catch(err){}
+          var gId = btn.dataset.targetgoal;
+          sheet.querySelectorAll('[data-targetgoal]').forEach(function(b){ b.classList.toggle('active', b === btn); });
+          var gSel = sheet.querySelector('#shareGoalSelect');
+          if(gSel && gSel.value !== gId){
+            gSel.value = gId;
+            gSel.dispatchEvent(new Event('change'));
+          }
+        };
+      });
+
+      sheet.querySelectorAll('[data-targetrec]').forEach(function(btn){
+        btn.onclick = function(e){
+          e.stopPropagation();
+          if(typeof triggerHaptic === 'function') triggerHaptic(12);
+          else if(navigator && typeof navigator.vibrate === 'function') try { navigator.vibrate(12); } catch(err){}
+          var rIdx = btn.dataset.targetrec;
+          sheet.querySelectorAll('[data-targetrec]').forEach(function(b){ b.classList.toggle('active', b === btn); });
+          var rSel = sheet.querySelector('#shareRecordSelect');
+          if(rSel && rSel.value !== rIdx){
+            rSel.value = rIdx;
+            rSel.dispatchEvent(new Event('change'));
+          }
+        };
+      });
+
+      sheet.querySelectorAll('[data-targetfb]').forEach(function(btn){
+        btn.onclick = function(e){
+          e.stopPropagation();
+          if(typeof triggerHaptic === 'function') triggerHaptic(12);
+          else if(navigator && typeof navigator.vibrate === 'function') try { navigator.vibrate(12); } catch(err){}
+          var fbIdx = btn.dataset.targetfb;
+          sheet.querySelectorAll('[data-targetfb]').forEach(function(b){ b.classList.toggle('active', b === btn); });
+          var fSel = sheet.querySelector('#shareFeedbackSelect');
+          if(fSel && fSel.value !== fbIdx){
+            fSel.value = fbIdx;
+            fSel.dispatchEvent(new Event('change'));
+          }
+        };
+      });
+
       // Goal selection change
       var goalSelect = sheet.querySelector('#shareGoalSelect');
       var msSection = sheet.querySelector('#shareMsSection');
@@ -17460,6 +17543,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(goalSelect){
         goalSelect.addEventListener('change', function(){
           var val = goalSelect.value;
+          // [TASK-ES-308] 칩 동기화
+          sheet.querySelectorAll('[data-targetgoal]').forEach(function(b){ b.classList.toggle('active', b.dataset.targetgoal === val); });
           curGoal = userGoals.find(function(g){ return g.id === val; }) || null;
           if(curGoal && curGoal.milestones && curGoal.milestones.length){
             msSection.style.display = 'block';
@@ -17493,6 +17578,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(recSelect){
         recSelect.addEventListener('change', function(){
           var val = recSelect.value;
+          // [TASK-ES-308] 칩 동기화
+          sheet.querySelectorAll('[data-targetrec]').forEach(function(b){ b.classList.toggle('active', b.dataset.targetrec === val); });
           var captionInput = sheet.querySelector('#shareCaptionInput');
           if(val === '__none__'){
             curRecord = null;
@@ -17524,6 +17611,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                 var fbIndex = availableFeedbacks.findIndex(function(f){ return f.raw === curRecord.feedback; });
                 if(fbIndex !== -1 && fbSelect){
                   fbSelect.value = fbIndex;
+                  sheet.querySelectorAll('[data-targetfb]').forEach(function(b){ b.classList.toggle('active', b.dataset.targetfb === String(fbIndex)); });
                 }
                 if(fbBox && fbTxt){
                   fbBox.style.display = 'block';
@@ -17532,6 +17620,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                 if(chkFeedback) chkFeedback.checked = true;
               } else if(fbSelect && availableFeedbacks.length > 0 && fbSelect.value === '__none__'){
                 fbSelect.value = '0';
+                sheet.querySelectorAll('[data-targetfb]').forEach(function(b){ b.classList.toggle('active', b.dataset.targetfb === '0'); });
                 curFeedback = availableFeedbacks[0].raw;
                 if(fbBox && fbTxt){
                   fbBox.style.display = 'block';
@@ -17548,6 +17637,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(fbSelect){
         fbSelect.addEventListener('change', function(){
           var val = fbSelect.value;
+          // [TASK-ES-308] 칩 동기화
+          sheet.querySelectorAll('[data-targetfb]').forEach(function(b){ b.classList.toggle('active', b.dataset.targetfb === val); });
           if(val === '__none__'){
             curFeedback = null;
             if(fbBox) fbBox.style.display = 'none';
