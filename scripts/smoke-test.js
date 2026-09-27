@@ -6864,6 +6864,7 @@ check('compliance: [#TASK-ES-180] 아워골 생각 메모장 9대 대기 과제(
   const manifestJson = fs.readFileSync(path.join(__dirname, '..', 'manifest.json'), 'utf8');
   const widgetHtml = fs.readFileSync(path.join(__dirname, '..', 'widget.html'), 'utf8');
   const commJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
+  const componentsJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
   // [61] 피드 내 AI 봇 축소 및 20명 초과 시 제거 검증
@@ -6902,6 +6903,10 @@ check('compliance: [#TASK-ES-180] 아워골 생각 메모장 9대 대기 과제(
   assert.ok(!indexHtml.includes('<select id="grpWeeks">'), '팀 만들기 모달 챌린지 기간 선택란 영구 삭제');
   assert.ok(!indexHtml.includes('<input id="grpRule"'), '팀 만들기 모달 인증 규칙 입력란 영구 삭제');
   assert.ok(!indexHtml.includes('<select id="grpMode">'), '팀 만들기 모달 진행 방식 선택란 영구 삭제');
+  assert.ok(indexHtml.includes('정원·인증 주기·기간 제약 없는 자유로운 팀이에요'), '팀 만들기 모달 자유 팀 안내 문구 구비');
+  assert.ok(indexHtml.includes('maxMembers: 999999'), '팀 생성 시 무제한(999999) 기본값 자동 주입');
+  assert.ok(componentsJs.includes('handle팀목표_Item68Action'), 'js/components.js 내 handle팀목표_Item68Action 직통 핸들러 탑재');
+  assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'team-creation-clean.test.js')), '단위 테스트 파일 tests/team-creation-clean.test.js 존재');
 
   // [69] 카카오 로그인 동명이인 중복 닉네임 방지 태그 부여 검증
   assert.ok(indexHtml.includes('resolveUniqueDisplayName'), '동명이인 고유 식별자 태그 부여 함수 탑재');
@@ -9906,6 +9911,33 @@ check('compliance: [#TASK-ES-318] [67] DM 전송 상태·읽음 확인(카카오
   assert.ok(jsComp.includes('handle소통_Item67Action'), 'components.js handle소통_Item67Action 탑재');
   assert.ok(jsComp.includes('og_task-67_cache'), 'components.js og_task-67_cache 캐시 탑재');
   assert.ok(jsComp.includes('kakaotalk_style_badge_enabled: true'), 'components.js kakaotalk_style_badge_enabled 플래그 탑재');
+});
+
+check('compliance: [#TASK-ES-319] [68] 팀 만들기 불필요 제약(정원 제한·인증 주기·챌린지 기간·인증 규칙·진행방식) 전면 삭제 및 무해화 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. 5대 제약 입력 필드 영구 삭제 확인
+  assert.ok(!indexHtml.includes('<select id="grpMaxMembers">'), '팀 만들기 모달 정원 제한 선택란 부재');
+  assert.ok(!indexHtml.includes('<select id="grpCadence">'), '팀 만들기 모달 인증 주기 선택란 부재');
+  assert.ok(!indexHtml.includes('<select id="grpWeeks">'), '팀 만들기 모달 챌린지 기간 선택란 부재');
+  assert.ok(!indexHtml.includes('<input id="grpRule"'), '팀 만들기 모달 인증 규칙 입력란 부재');
+  assert.ok(!indexHtml.includes('<select id="grpMode">'), '팀 만들기 모달 진행 방식 선택란 부재');
+
+  // 2. 모달 내 자유 팀 안내 문구 구비 확인
+  assert.ok(indexHtml.includes('정원·인증 주기·기간 제약 없는 자유로운 팀이에요'), '팀 만들기 모달 자유 팀 안내 문구 탑재');
+
+  // 3. 팀 생성 시 5대 제약 무해화 기본값 확인
+  assert.ok(indexHtml.includes('maxMembers: 999999'), '팀 정원 무제한(999999) 기본값 자동 주입');
+  assert.ok(indexHtml.includes("cadence: '자유'"), '자율 인증 주기 기본값 주입');
+  assert.ok(indexHtml.includes('endDate: null'), '챌린지 기간 제약 없는 상시 지속형(null) 기본값 주입');
+  assert.ok(indexHtml.includes("mode: 'open'"), '누구나 열린 팀 모드 기본값 주입');
+
+  // 4. components.js handle팀목표_Item68Action 직통 핸들러 및 캐시 확인
+  assert.ok(jsComp.includes('handle팀목표_Item68Action'), 'components.js handle팀목표_Item68Action 탑재');
+  assert.ok(jsComp.includes('og_task-68_cache'), 'components.js og_task-68_cache 캐시 탑재');
+  assert.ok(jsComp.includes('team_constraints_removed: true'), 'components.js team_constraints_removed 플래그 탑재');
+  assert.ok(jsComp.includes('max_members_unlimited: true'), 'components.js max_members_unlimited 플래그 탑재');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');
