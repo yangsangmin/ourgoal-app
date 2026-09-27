@@ -35059,7 +35059,8 @@ wirePromptEncyclopediaEvents(body);
     var myGoals = state.profile.goals;
     openModal(
       '<h3>새 팀 · 함께 목표 달성하기</h3>' +
-      '<p class="muted" style="margin:-8px 0 12px;">함께 목표를 실천하고 서로 응원할 팀을 만들어보세요.</p>' +
+      '<p class="muted" style="margin:-8px 0 6px;">함께 목표를 실천하고 서로 응원할 팀을 만들어보세요.</p>' +
+      '<div style="font-size:.8125rem;color:var(--brand);margin-bottom:12px;font-weight:600;display:flex;align-items:center;gap:4px;">✨ 정원·인증 주기·기간 제약 없는 자유로운 팀이에요</div>' +
       '<div style="margin-bottom:12px;">' +
         '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);margin-bottom:6px;">1초 추천 팀 템플릿</div>' +
         '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
@@ -35126,10 +35127,10 @@ wirePromptEncyclopediaEvents(body);
             toast('팀 이름을 입력해주세요.');
             return;
           }
-          var weeks = 4;
-          var cadence = '자유';
-          var maxMembers = 50;
-          var perWeek = 3;
+          // #TASK-ES-319 팀 만들기 5대 제약(정원·주기·기간·규칙·진행방식) 전면 제거 기본값
+          var weeks = 0; // 기간 제약 없음 (상시 지속형)
+          var cadence = '자유'; // 인증 주기 제약 없음
+          var maxMembers = 999999; // 정원 제약 없음 (무제한)
           var goalSel = sheet.querySelector('#grpGoal');
           var linked = goalSel && goalSel.value ? myGoals.find(function(g){ return g.id===goalSel.value; }) : null;
           var gid = newId();
@@ -35141,16 +35142,17 @@ wirePromptEncyclopediaEvents(body);
             topic: gTopicRef.value || 'health/러닝·마라톤',
             region: '온라인',
             members: 1,
-            maxMembers: maxMembers,
+            maxMembers: 999999,
             roomType: 'open',
+            mode: 'open',
             inviteCode: inviteCode,
             ownerName: state.profile.displayName,
             progress: 0,
-            cadence: cadence,
-            endDate: daysFromNow(weeks*7),
+            cadence: '자유',
+            endDate: null,
             desc: (sheet.querySelector('#grpDesc') ? sheet.querySelector('#grpDesc').value.trim() : '') || (linked ? '"'+linked.title+'" 목표를 함께 달성해요' : '함께 목표를 완주하는 열린 팀이에요'),
-            rule: '오늘 한 일을 자유롭게 기록하고 소통해요',
-            weeklyTarget: perWeek * maxMembers,
+            rule: '자유 실천 (누구나 부담 없이 자유롭게 실천하고 소통해요)',
+            weeklyTarget: 999999,
             weeklyDone: 0,
             roster: [{ n: state.profile.displayName, c: 0, me: true }],
             activity: [state.profile.displayName + '님이 방을 개설했어요! 친구를 초대해보세요.'],

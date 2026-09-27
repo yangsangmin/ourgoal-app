@@ -1,0 +1,166 @@
+{
+  "task": "TASK-ES-319",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-319-TEAM-CREATION-CLEAN.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 팀 만들기 모달에서 5대 불필요 제약 필드(정원 제한 grpMaxMembers, 인증 주기 grpCadence, 챌린지 기간 grpWeeks, 인증 규칙 grpRule, 진행 방식 grpMode)가 폼 UI에 존재하지 않는다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 promptNewGroup 팀 개설 모달 상단에 정원·인증 주기·기간 제약 없는 자유로운 팀이에요 직관적인 안내 문구를 제공한다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내 팀 생성 로직에서 5대 제약이 전면 무해화된 기본값(maxMembers: 999999, cadence: 자유, endDate: null, rule: 자유 실천, mode: open)이 자동 주입된다."
+    },
+    {
+      "id": "R4",
+      "text": "js/components.js 내에 handle팀목표_Item68Action 직통 핸들러가 구현되어 12ms 햅틱, 캐시 영속화, 4대 뷰 원자적 전파를 보장한다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/team-creation-clean.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-319 검증 테스트가 정의되어 있다."
+    },
+    {
+      "id": "R6",
+      "text": "docs/rules/TICKETS.md에 #TASK-ES-319가 승인 티켓으로 등록되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 팀 만들기 5대 제약 선택란/입력란이 존재하지 않는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "<select id=\"grpMaxMembers\">"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 promptNewGroup 모달 상단에 자유 팀 안내 문구가 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "정원·인증 주기·기간 제약 없는 자유로운 팀이에요"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 무제한 정원(maxMembers: 999999) 및 자율 주기/기간 기본값이 주입된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "maxMembers: 999999"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 handle팀목표_Item68Action 직통 핸들러가 구현되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle팀목표_Item68Action"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 og_task-68_cache 로컬 캐시 키가 저장된다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "og_task-68_cache"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "단위 테스트 파일 tests/team-creation-clean.test.js가 존재한다",
+      "touches": [
+        "tests/team-creation-clean.test.js"
+      ],
+      "check": {
+        "type": "fileExists",
+        "file": "tests/team-creation-clean.test.js"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/team-creation-clean.test.js 내에 #TASK-ES-319 단위 테스트가 구현되어 있다",
+      "touches": [
+        "tests/team-creation-clean.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/team-creation-clean.test.js",
+        "text": "#TASK-ES-319"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js 내에 #TASK-ES-319 단언문 블록이 구현되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-319]"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/rules/TICKETS.md 내에 #TASK-ES-319 승인 티켓이 등록되어 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "#TASK-ES-319"
+      }
+    }
+  ]
+}
