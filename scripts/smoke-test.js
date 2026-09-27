@@ -9765,6 +9765,25 @@ check('compliance: [#TASK-ES-311] [60] 성취통계 메뉴 내 미작동 껍데�
   assert.ok(jsComp.includes('no_dead_click: true'), 'components.js에 no_dead_click 플래그 탑재');
 });
 
+check('compliance: [#TASK-ES-312] [61] 피드 내 AI 봇 활동내역 최하단 1개 축소 및 실 유저 20명 초과 시 전면 제거 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. index.html 피드 및 사진인증 내 AI 봇 제어 로직 검증
+  assert.ok(indexHtml.includes('!virtualCheerEnabled || realCount > 20'), 'index.html 실 유저 20명 초과 시 AI 전면 제거 분기 탑재');
+  assert.ok(indexHtml.includes('singleAiGuide'), 'index.html singleAiGuide 1개 축소 탑재');
+  assert.ok(indexHtml.includes('singleAiPhoto'), 'index.html singleAiPhoto 1개 축소 탑재');
+  assert.ok(indexHtml.includes('realPhotoItems.concat(singleAiPhoto)'), 'index.html 사진인증 AI 가이드 최하단 결합 탑재');
+  assert.ok(indexHtml.includes('curRealCount > 20'), 'index.html 실 유저 20명 초과 시 AI 댓글 전면 제거 분기 탑재');
+
+  // 2. components.js 직통 액션 핸들러 및 블렌딩 함수 검증
+  assert.ok(jsComp.includes('handle소통_Item61Action'), 'components.js handle소통_Item61Action 탑재');
+  assert.ok(jsComp.includes('blendFeedWithAiBotRule'), 'components.js blendFeedWithAiBotRule 탑재');
+  assert.ok(jsComp.includes('og_task-61_cache'), 'components.js og_task-61_cache 캐시 탑재');
+  assert.ok(jsComp.includes('ai_bot_reduced_to_one: true'), 'components.js ai_bot_reduced_to_one 플래그 탑재');
+  assert.ok(jsComp.includes('remove_ai_when_users_over_20: true'), 'components.js remove_ai_when_users_over_20 플래그 탑재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

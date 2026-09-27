@@ -33747,7 +33747,13 @@ wirePromptEncyclopediaEvents(body);
         state.profile.settings.feedComments[postId] = [];
       }
     }
-    return state.profile.settings.feedComments[postId];
+    var comments = state.profile.settings.feedComments[postId] || [];
+    // [#TASK-ES-312, 61] 실 유저 20명 초과 시 AI 댓글 전면 제거 (0건)
+    var curRealCount = (FEED_POSTS_CACHE || []).length;
+    if(curRealCount > 20){
+      return comments.filter(function(c){ return !c.is_ai; });
+    }
+    return comments;
   }
 
   function setFeedComments(postId, list){
@@ -34073,10 +34079,12 @@ wirePromptEncyclopediaEvents(body);
       blendedItems = blendedItems.filter(function(it){ return it.me || it.isMe; });
     } else if(feedType === 'photo'){
       var realPhotoItems = blendedItems.filter(function(it){ return !!it.photo && !it.is_ai; });
-      if(realPhotoItems.length >= 3){
+      // [#TASK-ES-312, 61] 실 유저 20명 초과 시 AI 사진인증 0건 전면 제거, 20명 이하 시 최대 1건만 최하단 보강
+      if(!virtualCheerEnabled || realCount > 20){
         blendedItems = realPhotoItems;
       } else {
-        blendedItems = realPhotoItems.concat(AI_PHOTO_VERIFICATIONS);
+        var singleAiPhoto = (AI_PHOTO_VERIFICATIONS && AI_PHOTO_VERIFICATIONS.length > 0) ? [AI_PHOTO_VERIFICATIONS[0]] : [];
+        blendedItems = realPhotoItems.concat(singleAiPhoto);
       }
     }
 

@@ -1,0 +1,104 @@
+{
+  "task": "TASK-ES-312",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-312-FEED-AI-BOT-REDUCTION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내에 실 유저 20명 초과 시 AI 봇 전면 제거 및 AI 가이드 1개(singleAiGuide) 축소 로직이 탑재되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 사진인증 피드(feedType === 'photo')에서 AI 사진인증이 최대 1개(singleAiPhoto)로 제한되고 실 유저 20명 초과 시 전면 제거된다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내 피드 댓글(getFeedComments)에서 실 유저 20명 초과 시 AI 댓글이 전면 제거된다."
+    },
+    {
+      "id": "R4",
+      "text": "js/components.js 내에 handle소통_Item61Action 및 blendFeedWithAiBotRule 함수가 탑재되어 4대 뷰 원자적 전파 및 블렌딩 규칙을 수행한다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/feed-ai-bot-reduction.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-312 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 singleAiGuide 1개 축소 로직이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "singleAiGuide"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 singleAiPhoto 1개 축소 로직이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "singleAiPhoto"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 실 유저 20명 초과 시 AI 댓글 필터링이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "curRealCount > 20"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle소통_Item61Action 직통 핸들러 및 blendFeedWithAiBotRule이 탑재되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle소통_Item61Action"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/feed-ai-bot-reduction.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-312 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/feed-ai-bot-reduction.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/feed-ai-bot-reduction.test.js",
+        "text": "feed-ai-bot-reduction"
+      }
+    }
+  ]
+}
