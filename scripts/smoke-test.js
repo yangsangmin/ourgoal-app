@@ -9570,6 +9570,40 @@ check('TASK-ES-304: 홈화면 상단 누적 배선용 테스트 카드 23종 일
   assert.ok(uiCss.includes('display: none !important;'), 'ui.css display: none !important 규칙 정의');
 });
 
+/* ============ [TASK-ES-305] 노션 [54] 루틴 상세 모달 및 편집 기능 (목표탭 벤치마킹) ============ */
+check('TASK-ES-305: 루틴 상세 모달 및 편집 기능 구현 (목표탭 벤치마킹 & 루틴 카드 클릭 시 바로 진입) 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. openRoutineDetailModal 모달 및 목표탭 벤치마킹 마크업 검증
+  assert.ok(indexHtml.includes('function openRoutineDetailModal(routineId)'), 'openRoutineDetailModal 함수 탑재');
+  assert.ok(indexHtml.includes('class="routine-detail-modal-box"'), 'routine-detail-modal-box 마크업');
+  assert.ok(indexHtml.includes('id="detailRtCategoryPicker"'), '#detailRtCategoryPicker 카테고리 칩 선택기');
+  assert.ok(indexHtml.includes('id="inDetailRtTitle"'), '#inDetailRtTitle 루틴 제목 인풋');
+  assert.ok(indexHtml.includes('id="inDetailRtLinkedGoalId"'), '#inDetailRtLinkedGoalId 상위 연결 목표 선택 셀렉트');
+  assert.ok(indexHtml.includes('id="inDetailRtTime"'), '#inDetailRtTime 알림/실천 시간 인풋');
+  assert.ok(indexHtml.includes('id="inDetailRtNotify"'), '#inDetailRtNotify 알림 수신 체크박스');
+  assert.ok(indexHtml.includes('id="detailRoutineDaysPicker"'), '#detailRoutineDaysPicker 반복 요일 칩');
+  assert.ok(indexHtml.includes('id="inDetailRtMemo"'), '#inDetailRtMemo 실천 팁 및 상세 메모');
+  assert.ok(indexHtml.includes('id="btnSaveDetailRoutine"'), '#btnSaveDetailRoutine 저장 버튼');
+  assert.ok(indexHtml.includes('id="btnDeleteDetailRoutine"'), '#btnDeleteDetailRoutine 삭제 버튼');
+
+  // 2. 루틴 카드 직통 오픈 배선 및 카드 내 카테고리/목표 뱃지 검증
+  assert.ok(indexHtml.includes('openRoutineDetailModal(rId)'), '루틴 카드 클릭 시 openRoutineDetailModal 직통 진입');
+  assert.ok(indexHtml.includes('routine-cat-badge'), '루틴 카드 내 카테고리 배지 클래스');
+  assert.ok(indexHtml.includes('routine-linked-goal-badge'), '루틴 카드 내 연결 목표 배지 클래스');
+
+  // 3. openAddRoutineModal 내 카테고리 및 상위 목표 연계 검증
+  assert.ok(indexHtml.includes('id="addRtCategoryPicker"'), '#addRtCategoryPicker 추가 모달 카테고리 칩');
+  assert.ok(indexHtml.includes('id="inAddRtLinkedGoalId"'), '#inAddRtLinkedGoalId 추가 모달 상위 목표 셀렉트');
+
+  // 4. ui.css 스타일 정의 검증
+  assert.ok(uiCss.includes('.routine-detail-modal-box'), 'ui.css .routine-detail-modal-box 스타일');
+  assert.ok(uiCss.includes('.routine-cat-chip'), 'ui.css .routine-cat-chip 스타일');
+  assert.ok(uiCss.includes('.routine-cat-badge'), 'ui.css .routine-cat-badge 스타일');
+  assert.ok(uiCss.includes('.routine-linked-goal-badge'), 'ui.css .routine-linked-goal-badge 스타일');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

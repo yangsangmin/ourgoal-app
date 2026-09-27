@@ -1,0 +1,85 @@
+{
+  "task": "TASK-ES-305",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-305-ROUTINE-DETAIL-MODAL.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 openRoutineDetailModal 함수에 목표탭 벤치마킹 스타일(#detailRtCategoryPicker, #inDetailRtTitle, #inDetailRtLinkedGoalId, #inDetailRtTime, #inDetailRtNotify, #detailRoutineDaysPicker, #inDetailRtMemo, #btnSaveDetailRoutine)이 정의되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 루틴 카드 클릭 시 openRoutineDetailModal(rId) 직통 오픈 배선 및 카드 내 routine-cat-badge, routine-linked-goal-badge 마크업이 반영되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "ui.css 내 .routine-detail-modal-box, .routine-cat-chip, .routine-cat-badge, .routine-linked-goal-badge 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "tests/routine-detail-modal.test.js 및 scripts/smoke-test.js에 루틴 상세 모달 및 편집 기능 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 detailRtCategoryPicker 및 inDetailRtLinkedGoalId 모달 마크업이 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "detailRtCategoryPicker"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 routine-linked-goal-badge 및 openRoutineDetailModal 배선이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "routine-linked-goal-badge"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 .routine-detail-modal-box 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".routine-detail-modal-box"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/routine-detail-modal.test.js 및 scripts/smoke-test.js 내에 루틴 상세 모달 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/routine-detail-modal.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/routine-detail-modal.test.js",
+        "text": "routine-detail-modal"
+      }
+    }
+  ]
+}

@@ -21137,6 +21137,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         displayedRoutines.map(function(r, idx){
           var isDone = r.completedDates && r.completedDates.indexOf(todayKey) !== -1;
           var borderStyle = state.routineEditMode ? '1.5px dashed var(--brand)' : (isDone ? '1px solid var(--brand-line)' : '1px solid var(--rule)');
+          var linkedGoal = r.linkedGoalId && state.profile && state.profile.goals ? state.profile.goals.find(function(g){ return g.id === r.linkedGoalId; }) : null;
           return '<div class="routine-card" data-rtid="' + r.id + '" style="background:var(--card);border:' + borderStyle + ';border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;transition:all 0.2s;cursor:pointer;">' +
             (state.routineEditMode ? 
               '<div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">' +
@@ -21151,10 +21152,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             '<div style="flex:1;min-width:0;" data-rtopen="' + r.id + '">' +
               '<div style="font-size:.9375rem;font-weight:700;color:var(--ink);text-decoration:' + (isDone ? 'line-through' : 'none') + ';opacity:' + (isDone ? '0.7' : '1') + ';display:flex;align-items:center;gap:6px;">' +
                 '<span>' + escapeHtml(r.title) + '</span>' +
-                (!state.routineEditMode ? '<span style="font-size:.75rem;color:var(--ink-soft);opacity:0.6;">✏️</span>' : '') +
+                (!state.routineEditMode ? '<span style="font-size:.75rem;color:var(--ink-soft);opacity:0.6;" title="클릭하여 상세/편집">✏️</span>' : '') +
               '</div>' +
               (r.memo ? '<div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">💬 ' + escapeHtml(r.memo) + '</div>' : '') +
               '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap;">' +
+                (r.category ? '<span class="routine-cat-badge" style="font-size:.71875rem;font-weight:700;padding:2px 6px;border-radius:6px;background:rgba(99,102,241,0.12);color:var(--brand);">' + escapeHtml(r.category) + '</span>' : '') +
+                (linkedGoal ? '<span class="routine-linked-goal-badge" style="font-size:.71875rem;padding:2px 6px;border-radius:6px;background:var(--card2);border:1px solid var(--rule);color:var(--ink-soft);">🎯 ' + escapeHtml(linkedGoal.title) + '</span>' : '') +
                 (r.time ? '<span style="font-size:.75rem;color:var(--ink-soft);background:var(--card2);padding:2px 6px;border-radius:6px;border:1px solid var(--rule);">⏰ ' + r.time + '</span>' : '') +
                 '<span style="font-size:.75rem;color:var(--ink-soft);">' +
                   (r.days || [1,2,3,4,5,6,7]).map(function(d){ return dayLabels[d-1]; }).join(',') +
@@ -21360,7 +21363,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /**
-   * 루틴 상세 확인 및 편집 모달
+   * 루틴 상세 확인 및 편집 모달 (목표탭 벤치마킹 #TASK-ES-305)
    */
   function openRoutineDetailModal(routineId){
     var routines = (state.profile && state.profile.settings && state.profile.settings.routines) || [];
@@ -21370,59 +21373,99 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var selectedDays = (target.days && target.days.slice()) || [1,2,3,4,5,6,7];
     var compCount = (target.completedDates && target.completedDates.length) || 0;
     var isDoneToday = target.completedDates && target.completedDates.indexOf(dateKey(new Date())) !== -1;
+    var currentCat = target.category || '🌱 생활·습관';
+    var routineCategories = ['🏃 운동·건강', '📚 공부·성장', '💼 커리어·업무', '🧘 마음·멘탈', '🌱 생활·습관'];
+    var activeGoals = (state.profile && state.profile.goals) ? state.profile.goals.filter(function(g){ return !g.archivedAt; }) : [];
 
     var modalHtml = '' +
-      '<div class="modal-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">' +
-        '<h3 style="margin:0;font-size:1.1rem;font-weight:800;color:var(--ink);">📋 루틴 상세 & 편집</h3>' +
-        '<span class="badge" style="font-size:.75rem;padding:3px 8px;border-radius:8px;background:' + (isDoneToday ? 'rgba(34,197,94,0.15)' : 'rgba(99,102,241,0.12)') + ';color:' + (isDoneToday ? '#16a34a' : 'var(--brand)') + ';font-weight:700;">' +
-          (isDoneToday ? '✓ 오늘 완수됨' : '진행 대기 중') +
-        '</span>' +
-      '</div>' +
-      '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;">' +
-        '<div>' +
-          '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);">누적 실천 성취</div>' +
-          '<div class="faint" style="font-size:.75rem;">설정 이후 꾸준히 실천한 총 완수 일수</div>' +
+      '<div class="routine-detail-modal-box" style="padding:2px 0;">' +
+        '<div class="modal-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<span style="font-size:1.25rem;">🎯</span>' +
+            '<h3 style="margin:0;font-size:1.1rem;font-weight:800;color:var(--ink);">루틴 상세 & 편집 (목표 벤치마킹)</h3>' +
+          '</div>' +
+          '<span class="badge" style="font-size:.75rem;padding:3px 8px;border-radius:8px;background:' + (isDoneToday ? 'rgba(34,197,94,0.15)' : 'rgba(99,102,241,0.12)') + ';color:' + (isDoneToday ? '#16a34a' : 'var(--brand)') + ';font-weight:700;">' +
+            (isDoneToday ? '✓ 오늘 완수됨' : '진행 대기 중') +
+          '</span>' +
         '</div>' +
-        '<div style="font-size:1.15rem;font-weight:800;color:var(--brand);font-family:monospace;">총 ' + compCount + '일</div>' +
-      '</div>' +
-      '<div style="margin-bottom:12px;">' +
-        '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">루틴 이름</label>' +
-        '<input type="text" id="inDetailRtTitle" value="' + escapeHtml(target.title) + '" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);box-sizing:border-box;font-weight:600;">' +
-      '</div>' +
-      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">' +
-        '<div>' +
-          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">알림/실천 시간</label>' +
-          '<input type="time" id="inDetailRtTime" value="' + (target.time || '08:00') + '" style="width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);box-sizing:border-box;">' +
+        '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;">' +
+          '<div>' +
+            '<div style="font-size:.8125rem;font-weight:700;color:var(--ink);">누적 실천 성취</div>' +
+            '<div class="faint" style="font-size:.75rem;">설정 이후 꾸준히 실천한 총 완수 일수</div>' +
+          '</div>' +
+          '<div style="font-size:1.15rem;font-weight:800;color:var(--brand);font-family:monospace;">총 ' + compCount + '일</div>' +
         '</div>' +
-        '<div>' +
-          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">알림 수신</label>' +
-          '<label style="display:flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid var(--rule);border-radius:10px;background:var(--surface-2);cursor:pointer;font-size:.8125rem;color:var(--ink);">' +
-            '<input type="checkbox" id="inDetailRtNotify" ' + (target.notify !== false ? 'checked' : '') + '> <span>🔔 푸시 알림</span>' +
-          '</label>' +
+        '<div style="margin-bottom:12px;">' +
+          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:6px;color:var(--ink);">루틴 카테고리 (목표 연계)</label>' +
+          '<div id="detailRtCategoryPicker" style="display:flex;flex-wrap:wrap;gap:6px;">' +
+            routineCategories.map(function(cat){
+              var isCatSel = (cat === currentCat);
+              return '<button type="button" class="btn btn-sm btn-ghost routine-cat-chip' + (isCatSel ? ' active' : '') + '" data-cat="' + cat + '" style="padding:5px 10px;font-size:.78125rem;font-weight:700;border-radius:8px;border:1px solid ' + (isCatSel ? 'var(--brand)' : 'var(--rule)') + ';background:' + (isCatSel ? 'var(--brand)' : 'var(--surface-2)') + ';color:' + (isCatSel ? '#fff' : 'var(--ink)') + ';">' + cat + '</button>';
+            }).join('') +
+          '</div>' +
         '</div>' +
-      '</div>' +
-      '<div style="margin-bottom:12px;">' +
-        '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:6px;color:var(--ink);">반복 요일</label>' +
-        '<div style="display:flex;gap:4px;" id="detailRoutineDaysPicker">' +
-          ['월','화','수','목','금','토','일'].map(function(d, i){
-            var isDayActive = selectedDays.indexOf(i+1) !== -1;
-            return '<button type="button" class="btn btn-sm btn-ghost r-detail-day-btn" data-day="' + (i+1) + '" style="flex:1;padding:6px 0;font-size:.8125rem;font-weight:700;border:1px solid ' + (isDayActive ? 'var(--brand)' : 'var(--rule)') + ';background:' + (isDayActive ? 'var(--brand)' : 'transparent') + ';color:' + (isDayActive ? '#fff' : 'var(--ink)') + ';border-radius:8px;">' + d + '</button>';
-          }).join('') +
+        '<div style="margin-bottom:12px;">' +
+          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">루틴 이름</label>' +
+          '<input type="text" id="inDetailRtTitle" value="' + escapeHtml(target.title) + '" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);box-sizing:border-box;font-weight:600;" placeholder="실천할 루틴 이름을 입력하세요">' +
         '</div>' +
-      '</div>' +
-      '<div style="margin-bottom:16px;">' +
-        '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">실천 팁 & 상세 메모 (선택)</label>' +
-        '<textarea id="inDetailRtMemo" placeholder="예: 미온수 500ml 준비, 가벼운 목/허리 스트레칭 5분" style="width:100%;box-sizing:border-box;min-height:65px;padding:8px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);resize:vertical;">' + escapeHtml(target.memo || '') + '</textarea>' +
-      '</div>' +
-      '<div class="modal-actions" style="display:flex;gap:8px;align-items:center;">' +
-        '<button class="btn btn-ghost" id="btnDeleteDetailRoutine" type="button" style="color:#ef4444;font-weight:700;">삭제</button>' +
-        '<div style="flex:1;"></div>' +
-        '<button class="btn btn-ghost" id="btnCancelDetailRoutine" type="button">취소</button>' +
-        '<button class="btn btn-primary" id="btnSaveDetailRoutine" type="button" style="font-weight:700;padding:8px 18px;">저장하기</button>' +
+        '<div style="margin-bottom:12px;">' +
+          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">연결 상위 목표 (선택)</label>' +
+          '<select id="inDetailRtLinkedGoalId" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);box-sizing:border-box;font-size:.84375rem;">' +
+            '<option value="">선택 안 함 (독립 루틴)</option>' +
+            activeGoals.map(function(g){
+              var isGoalSel = (g.id === target.linkedGoalId);
+              return '<option value="' + g.id + '"' + (isGoalSel ? ' selected' : '') + '>🎯 ' + escapeHtml(g.title) + '</option>';
+            }).join('') +
+          '</select>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">' +
+          '<div>' +
+            '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">알림/실천 시간</label>' +
+            '<input type="time" id="inDetailRtTime" value="' + (target.time || '08:00') + '" style="width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);box-sizing:border-box;">' +
+          '</div>' +
+          '<div>' +
+            '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">알림 수신</label>' +
+            '<label style="display:flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid var(--rule);border-radius:10px;background:var(--surface-2);cursor:pointer;font-size:.8125rem;color:var(--ink);">' +
+              '<input type="checkbox" id="inDetailRtNotify" ' + (target.notify !== false ? 'checked' : '') + '> <span>🔔 푸시 알림</span>' +
+            '</label>' +
+          '</div>' +
+        '</div>' +
+        '<div style="margin-bottom:12px;">' +
+          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:6px;color:var(--ink);">반복 요일</label>' +
+          '<div style="display:flex;gap:4px;" id="detailRoutineDaysPicker">' +
+            ['월','화','수','목','금','토','일'].map(function(d, i){
+              var isDayActive = selectedDays.indexOf(i+1) !== -1;
+              return '<button type="button" class="btn btn-sm btn-ghost r-detail-day-btn" data-day="' + (i+1) + '" style="flex:1;padding:6px 0;font-size:.8125rem;font-weight:700;border:1px solid ' + (isDayActive ? 'var(--brand)' : 'var(--rule)') + ';background:' + (isDayActive ? 'var(--brand)' : 'transparent') + ';color:' + (isDayActive ? '#fff' : 'var(--ink)') + ';border-radius:8px;">' + d + '</button>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+        '<div style="margin-bottom:16px;">' +
+          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">실천 팁 & 상세 메모 (선택)</label>' +
+          '<textarea id="inDetailRtMemo" placeholder="예: 미온수 500ml 준비, 가벼운 목/허리 스트레칭 5분" style="width:100%;box-sizing:border-box;min-height:65px;padding:8px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);resize:vertical;">' + escapeHtml(target.memo || '') + '</textarea>' +
+        '</div>' +
+        '<div class="modal-actions" style="display:flex;gap:8px;align-items:center;">' +
+          '<button class="btn btn-ghost" id="btnDeleteDetailRoutine" type="button" style="color:#ef4444;font-weight:700;">삭제</button>' +
+          '<div style="flex:1;"></div>' +
+          '<button class="btn btn-ghost" id="btnCancelDetailRoutine" type="button">취소</button>' +
+          '<button class="btn btn-primary" id="btnSaveDetailRoutine" type="button" style="font-weight:700;padding:8px 18px;">저장하기</button>' +
+        '</div>' +
       '</div>';
 
     openModal(modalHtml, function(sheet){
       sheet.querySelector('#btnCancelDetailRoutine').onclick = closeModal;
+
+      // 카테고리 칩 선택 이벤트
+      sheet.querySelectorAll('.routine-cat-chip').forEach(function(chip){
+        chip.onclick = function(){
+          currentCat = chip.getAttribute('data-cat');
+          sheet.querySelectorAll('.routine-cat-chip').forEach(function(c){
+            var isThis = (c.getAttribute('data-cat') === currentCat);
+            c.style.background = isThis ? 'var(--brand)' : 'var(--surface-2)';
+            c.style.color = isThis ? '#fff' : 'var(--ink)';
+            c.style.borderColor = isThis ? 'var(--brand)' : 'var(--rule)';
+          });
+        };
+      });
 
       sheet.querySelectorAll('.r-detail-day-btn').forEach(function(btn){
         btn.onclick = function(){
@@ -21452,16 +21495,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         closeModal();
         toast('루틴이 삭제되었습니다.');
         renderRoutineGoalsScreen();
+        if(typeof renderAll === 'function') renderAll();
       };
 
       sheet.querySelector('#btnSaveDetailRoutine').onclick = async function(){
         var newTitle = sheet.querySelector('#inDetailRtTitle').value.trim();
         if(!newTitle){ toast('루틴 이름을 입력해주세요.'); return; }
+        var newLinkedGoalId = sheet.querySelector('#inDetailRtLinkedGoalId').value || null;
         var newTime = sheet.querySelector('#inDetailRtTime').value;
         var newNotify = sheet.querySelector('#inDetailRtNotify').checked;
         var newMemo = sheet.querySelector('#inDetailRtMemo').value.trim();
 
         target.title = newTitle;
+        target.category = currentCat;
+        target.linkedGoalId = newLinkedGoalId;
         target.time = newTime;
         target.days = selectedDays;
         target.notify = newNotify;
@@ -21469,9 +21516,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
         await saveProfile();
         closeModal();
-        triggerHaptic(20);
-        toast('루틴 설정이 수정되었습니다! ✨');
+        if(typeof triggerHaptic === 'function') triggerHaptic(12);
+        toast('루틴 설정이 저장되었습니다! ✨');
         renderRoutineGoalsScreen();
+        if(typeof renderAll === 'function') renderAll();
       };
     });
   }
@@ -21481,32 +21529,82 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   function openAddRoutineModal(){
+    var routineCategories = ['🏃 운동·건강', '📚 공부·성장', '💼 커리어·업무', '🧘 마음·멘탈', '🌱 생활·습관'];
+    var activeGoals = (state.profile && state.profile.goals) ? state.profile.goals.filter(function(g){ return !g.archivedAt; }) : [];
+    var currentCat = '🌱 생활·습관';
+
     var modalHtml = '' +
-      '<h3>새 데일리 루틴 추가</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">매일 또는 특정 요일에 반복할 나만의 습관/루틴을 설정하세요.</p>' +
-      '<div style="margin-bottom:12px;">' +
-        '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">루틴 이름</label>' +
-        '<input type="text" id="inRoutineTitle" placeholder="예: 📚 아침 독서 20분, 💧 물 2L 마시기" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);box-sizing:border-box;">' +
-      '</div>' +
-      '<div style="margin-bottom:12px;">' +
-        '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">알림/실천 시간</label>' +
-        '<input type="time" id="inRoutineTime" value="08:00" style="width:100%;padding:8px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);box-sizing:border-box;">' +
-      '</div>' +
-      '<div style="margin-bottom:14px;">' +
-        '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:6px;color:var(--ink);">반복 요일</label>' +
-        '<div style="display:flex;gap:4px;" id="routineDaysPicker">' +
-          ['월','화','수','목','금','토','일'].map(function(d, i){
-            return '<button type="button" class="btn btn-sm btn-ghost r-day-btn active" data-day="' + (i+1) + '" style="flex:1;padding:6px 0;font-size:.8125rem;font-weight:700;border:1px solid var(--brand);background:var(--brand);color:#fff;border-radius:8px;">' + d + '</button>';
-          }).join('') +
+      '<div class="routine-detail-modal-box" style="padding:2px 0;">' +
+        '<div class="modal-head" style="margin-bottom:12px;">' +
+          '<h3 style="margin:0;font-size:1.1rem;font-weight:800;color:var(--ink);">🎯 새 데일리 루틴 추가</h3>' +
+          '<p class="faint" style="margin:4px 0 0;font-size:.8125rem;">매일 또는 특정 요일에 반복할 나만의 습관/루틴을 설정하세요.</p>' +
         '</div>' +
-      '</div>' +
-      '<div class="modal-actions" style="display:flex;gap:8px;">' +
-        '<button class="btn btn-ghost" id="btnCancelAddRoutine" type="button" style="flex:1;">취소</button>' +
-        '<button class="btn btn-primary" id="btnSaveAddRoutine" type="button" style="flex:1;font-weight:700;">루틴 등록</button>' +
+        '<div style="margin-bottom:12px;">' +
+          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:6px;color:var(--ink);">루틴 카테고리 (목표 연계)</label>' +
+          '<div id="addRtCategoryPicker" style="display:flex;flex-wrap:wrap;gap:6px;">' +
+            routineCategories.map(function(cat){
+              var isCatSel = (cat === currentCat);
+              return '<button type="button" class="btn btn-sm btn-ghost add-routine-cat-chip' + (isCatSel ? ' active' : '') + '" data-cat="' + cat + '" style="padding:5px 10px;font-size:.78125rem;font-weight:700;border-radius:8px;border:1px solid ' + (isCatSel ? 'var(--brand)' : 'var(--rule)') + ';background:' + (isCatSel ? 'var(--brand)' : 'var(--surface-2)') + ';color:' + (isCatSel ? '#fff' : 'var(--ink)') + ';">' + cat + '</button>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+        '<div style="margin-bottom:12px;">' +
+          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">루틴 이름</label>' +
+          '<input type="text" id="inRoutineTitle" placeholder="예: 📚 아침 독서 20분, 💧 물 2L 마시기" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);box-sizing:border-box;font-weight:600;">' +
+        '</div>' +
+        '<div style="margin-bottom:12px;">' +
+          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">연결 상위 목표 (선택)</label>' +
+          '<select id="inAddRtLinkedGoalId" style="width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);box-sizing:border-box;font-size:.84375rem;">' +
+            '<option value="">선택 안 함 (독립 루틴)</option>' +
+            activeGoals.map(function(g){
+              return '<option value="' + g.id + '">🎯 ' + escapeHtml(g.title) + '</option>';
+            }).join('') +
+          '</select>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">' +
+          '<div>' +
+            '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">알림/실천 시간</label>' +
+            '<input type="time" id="inRoutineTime" value="08:00" style="width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);box-sizing:border-box;">' +
+          '</div>' +
+          '<div>' +
+            '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">알림 수신</label>' +
+            '<label style="display:flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid var(--rule);border-radius:10px;background:var(--surface-2);cursor:pointer;font-size:.8125rem;color:var(--ink);">' +
+              '<input type="checkbox" id="inAddRtNotify" checked> <span>🔔 푸시 알림</span>' +
+            '</label>' +
+          '</div>' +
+        '</div>' +
+        '<div style="margin-bottom:14px;">' +
+          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:6px;color:var(--ink);">반복 요일</label>' +
+          '<div style="display:flex;gap:4px;" id="routineDaysPicker">' +
+            ['월','화','수','목','금','토','일'].map(function(d, i){
+              return '<button type="button" class="btn btn-sm btn-ghost r-day-btn active" data-day="' + (i+1) + '" style="flex:1;padding:6px 0;font-size:.8125rem;font-weight:700;border:1px solid var(--brand);background:var(--brand);color:#fff;border-radius:8px;">' + d + '</button>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+        '<div style="margin-bottom:16px;">' +
+          '<label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">실천 팁 & 상세 메모 (선택)</label>' +
+          '<textarea id="inAddRtMemo" placeholder="예: 미온수 500ml 준비, 가벼운 목/허리 스트레칭 5분" style="width:100%;box-sizing:border-box;min-height:60px;padding:8px 12px;border-radius:10px;border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);resize:vertical;"></textarea>' +
+        '</div>' +
+        '<div class="modal-actions" style="display:flex;gap:8px;">' +
+          '<button class="btn btn-ghost" id="btnCancelAddRoutine" type="button" style="flex:1;">취소</button>' +
+          '<button class="btn btn-primary" id="btnSaveAddRoutine" type="button" style="flex:1;font-weight:700;">루틴 등록</button>' +
+        '</div>' +
       '</div>';
 
     openModal(modalHtml, function(sheet){
       sheet.querySelector('#btnCancelAddRoutine').onclick = closeModal;
+
+      sheet.querySelectorAll('.add-routine-cat-chip').forEach(function(chip){
+        chip.onclick = function(){
+          currentCat = chip.getAttribute('data-cat');
+          sheet.querySelectorAll('.add-routine-cat-chip').forEach(function(c){
+            var isThis = (c.getAttribute('data-cat') === currentCat);
+            c.style.background = isThis ? 'var(--brand)' : 'var(--surface-2)';
+            c.style.color = isThis ? '#fff' : 'var(--ink)';
+            c.style.borderColor = isThis ? 'var(--brand)' : 'var(--rule)';
+          });
+        };
+      });
 
       var selectedDays = [1,2,3,4,5,6,7];
       sheet.querySelectorAll('.r-day-btn').forEach(function(btn){
@@ -21533,23 +21631,30 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       sheet.querySelector('#btnSaveAddRoutine').onclick = async function(){
         var title = sheet.querySelector('#inRoutineTitle').value.trim();
         if(!title){ toast('루틴 이름을 입력해주세요.'); return; }
+        var linkedGoalId = sheet.querySelector('#inAddRtLinkedGoalId').value || null;
         var time = sheet.querySelector('#inRoutineTime').value;
+        var notify = sheet.querySelector('#inAddRtNotify').checked;
+        var memo = sheet.querySelector('#inAddRtMemo').value.trim();
 
         if(!state.profile.settings.routines) state.profile.settings.routines = [];
         var newRt = {
           id: 'rt_' + Date.now(),
           title: title,
+          category: currentCat,
+          linkedGoalId: linkedGoalId,
           time: time,
           days: selectedDays,
-          notify: true,
+          notify: notify,
+          memo: memo,
           completedDates: []
         };
         state.profile.settings.routines.push(newRt);
         await saveProfile();
         closeModal();
-        triggerHaptic(20);
+        if(typeof triggerHaptic === 'function') triggerHaptic(12);
         toast('새 루틴이 등록되었습니다! ⏰');
         renderRoutineGoalsScreen();
+        if(typeof renderAll === 'function') renderAll();
       };
     });
   }
