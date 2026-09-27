@@ -9842,6 +9842,33 @@ check('compliance: [#TASK-ES-315] [64] 기존 \'AI 추천 목표템플릿 예시
   assert.ok(jsComp.includes('encyclopedia_unified: true'), 'components.js encyclopedia_unified 플래그 탑재');
 });
 
+check('compliance: [#TASK-ES-316] [65] 일정 편집 내 사전 알림 설정(울릴 시간 N분 전 지정) 기능 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const notifyEngineJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'notify-engine.js'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. openCalendarManualEditModal 내 사전 알림 토글 및 울릴 시간 선택/커스텀 입력 요소 확인
+  assert.ok(indexHtml.includes('id="calEditNotifySwitch"'), 'calEditNotifySwitch 토글 스위치 존재');
+  assert.ok(indexHtml.includes('id="calEditNotifyTimeField"'), 'calEditNotifyTimeField 필드 존재');
+  assert.ok(indexHtml.includes('id="calEditNotifyOffset"'), 'calEditNotifyOffset 셀렉트 존재');
+  assert.ok(indexHtml.includes('id="calEditNotifyCustomWrap"'), 'calEditNotifyCustomWrap 커스텀 영역 존재');
+  assert.ok(indexHtml.includes('id="calEditNotifyCustomMin"'), 'calEditNotifyCustomMin 커스텀 분 입력 인풋 존재');
+
+  // 2. 캘린더 일정 목록 내 시각화 알림 배지 표출 확인
+  assert.ok(indexHtml.includes('class="sched-notify-badge"'), 'sched-notify-badge 뱃지 마크업 존재');
+  assert.ok(indexHtml.includes('startScheduleReminderPoller'), 'startScheduleReminderPoller 타이머 루프 확인');
+
+  // 3. notify-engine.js checkScheduleReminders 실시간 사전 알림 엔진 확인
+  assert.ok(notifyEngineJs.includes('function checkScheduleReminders()'), 'checkScheduleReminders 함수 정의 확인');
+  assert.ok(notifyEngineJs.includes('checkScheduleReminders: checkScheduleReminders'), 'OurgoalNotifyEngine에 checkScheduleReminders 등록 확인');
+  assert.ok(notifyEngineJs.includes('ourgoal_notified_scheds'), 'ourgoal_notified_scheds 중복 방지 캐시 사용 확인');
+
+  // 4. components.js handle일정_Item65Action 직통 핸들러 및 캐시 확인
+  assert.ok(jsComp.includes('handle일정_Item65Action'), 'components.js handle일정_Item65Action 탑재');
+  assert.ok(jsComp.includes('og_task-65_cache'), 'components.js og_task-65_cache 캐시 탑재');
+  assert.ok(jsComp.includes('schedule_notification_configured: true'), 'components.js schedule_notification_configured 플래그 탑재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

@@ -335,6 +335,84 @@
     return true;
   }
 
+  /* [#TASK-ES-316], [65] 일정 사전 알림(울릴 시간 N분 전 지정) 실시간 체크 엔진 */
+  function checkScheduleReminders(){
+    var state = global.state || {};
+    var settings = (state.profile && state.profile.settings) || {};
+    var config = getNotifConfig();
+    if(config.goalReminders === false) return [];
+
+    var now = new Date();
+    var nowMs = now.getTime();
+    var notifiedCache = {};
+    try {
+      if(typeof localStorage !== 'undefined'){
+        notifiedCache = JSON.parse(localStorage.getItem('ourgoal_notified_scheds') || '{}');
+      }
+    } catch(e){}
+
+    var schedules = [];
+    if(typeof global.calendarItemsByDate === 'function'){
+      var map = global.calendarItemsByDate();
+      var todayKey = now.toISOString().slice(0, 10);
+      var tomorrow = new Date(nowMs + 86400000);
+      var tomorrowKey = tomorrow.toISOString().slice(0, 10);
+      schedules = (map[todayKey] || []).concat(map[tomorrowKey] || []);
+    } else if(settings.customSchedules && Array.isArray(settings.customSchedules)){
+      schedules = settings.customSchedules;
+    }
+
+    var fired = [];
+    var updated = false;
+
+    schedules.forEach(function(item){
+      if(!item || !item.notifyEnabled || item.done) return;
+      var dateStr = item.date || item.dueDate;
+      if(!dateStr) return;
+      var schedTime = new Date(dateStr).getTime();
+      if(isNaN(schedTime)) return;
+
+      var notifyMin = (typeof item.notifyMinutes === 'number') ? item.notifyMinutes : 10;
+      var notifyTargetMs = schedTime - (notifyMin * 60 * 1000);
+
+      // 이미 지난 일정(2시간 이상 경과)은 알림 대상에서 제외
+      if(nowMs - schedTime > 2 * 3600 * 1000) return;
+
+      var schedId = item.schedId || item.id || (item.title + '_' + dateStr);
+      var cacheKey = schedId + '_' + notifyMin;
+
+      // 지금이 알림 예정 시간(30초 사전 여유) 이후이고 아직 발송하지 않은 경우 (15분 유예 범위 내)
+      var isDue = (nowMs >= notifyTargetMs - 30000) && (nowMs - notifyTargetMs <= 15 * 60 * 1000);
+      if(isDue && !notifiedCache[cacheKey]){
+        notifiedCache[cacheKey] = now.toISOString();
+        updated = true;
+
+        var timingText = (notifyMin === 0) ? '정시' : (notifyMin + '분 전');
+        var notifData = {
+          type: 'calendar',
+          title: '⏰ 일정 사전 알림 (' + timingText + ')',
+          body: '[' + (item.title || '일정') + '] 일정이 곧 시작됩니다.',
+          targetTab: 'calendar',
+          icon: '⏰'
+        };
+        if (Engine.dispatchGlobalNotification) {
+          Engine.dispatchGlobalNotification(notifData);
+        } else {
+          dispatchGlobalNotification(notifData);
+        }
+        fired.push({ schedId: schedId, title: item.title, notifyMinutes: notifyMin });
+      }
+    });
+
+    if(updated && typeof localStorage !== 'undefined'){
+      try {
+        localStorage.setItem('ourgoal_notified_scheds', JSON.stringify(notifiedCache));
+      } catch(e){}
+    }
+
+    return fired;
+  }
+
   function escHtml(s){
     if(s == null) return '';
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -347,6 +425,7 @@
     getNotifConfig: getNotifConfig,
     showFloatingBanner: showFloatingBanner,
     dispatchGlobalNotification: dispatchGlobalNotification,
+    checkScheduleReminders: checkScheduleReminders,
     requestPermission: requestPermission,
     getPermissionStatus: getPermissionStatus,
     getUnreadNotifications: getUnreadNotifications,

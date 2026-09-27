@@ -1,0 +1,136 @@
+{
+  "task": "TASK-ES-316",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-316-SCHEDULE-REMINDER-PRE-NOTIF.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 openCalendarManualEditModal에 사전 알림 토글 스위치 및 울릴 시간 N분 전 선택·커스텀 분 입력 UI가 구비되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 캘린더 일정 목록(허브 모달 및 일간 상세)에 사전 알림 뱃지가 표출된다."
+    },
+    {
+      "id": "R3",
+      "text": "js/notify-engine.js 내에 checkScheduleReminders 실시간 사전 알림 체크 엔진이 구현되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "js/components.js 내에 handle일정_Item65Action 직통 핸들러가 구현되어 12ms 햅틱, 캐시 영속화, 4대 뷰 원자적 전파를 수행한다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/schedule-notification-setting.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-316 검증 테스트가 정의되어 있다."
+    },
+    {
+      "id": "R6",
+      "text": "docs/rules/TICKETS.md에 #TASK-ES-316이 승인 티켓으로 등록되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 openCalendarManualEditModal에 커스텀 분 입력 UI id=\"calEditNotifyCustomMin\"이 구비되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"calEditNotifyCustomMin\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 캘린더 일정 목록에 class=\"sched-notify-badge\" 뱃지가 표출된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "class=\"sched-notify-badge\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/notify-engine.js 내에 checkScheduleReminders 실시간 사전 알림 체크 엔진이 구현되어 있다",
+      "touches": [
+        "js/notify-engine.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/notify-engine.js",
+        "text": "checkScheduleReminders"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle일정_Item65Action 직통 핸들러가 구현되어 12ms 햅틱, 캐시 영속화, 4대 뷰 원자적 전파를 수행한다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle일정_Item65Action"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "scripts/smoke-test.js 내에 compliance: [#TASK-ES-316] 검증 테스트가 정의되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "compliance: [#TASK-ES-316]"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/schedule-notification-setting.test.js 단위 테스트 파일이 존재한다",
+      "touches": [
+        "tests/schedule-notification-setting.test.js"
+      ],
+      "check": {
+        "type": "fileExists",
+        "file": "tests/schedule-notification-setting.test.js"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R6",
+      "kind": "static",
+      "domain": "code",
+      "statement": "docs/rules/TICKETS.md에 #TASK-ES-316이 승인 티켓으로 등록되어 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-316"
+      }
+    }
+  ]
+}

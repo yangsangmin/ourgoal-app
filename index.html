@@ -7915,6 +7915,26 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.updateTopNotifBadge = updateTopNotifBadge;
   }
 
+  /* [#TASK-ES-316], [65] 일정 사전 알림 스마트 체커 루프 (1분 주기 및 앱 진입 시) */
+  function startScheduleReminderPoller(){
+    if(window._schedReminderPoller) return;
+    function runCheck(){
+      if(window.OurgoalNotifyEngine && typeof window.OurgoalNotifyEngine.checkScheduleReminders === 'function'){
+        try { window.OurgoalNotifyEngine.checkScheduleReminders(); } catch(e){}
+      }
+    }
+    setTimeout(runCheck, 3000);
+    window._schedReminderPoller = setInterval(runCheck, 60000);
+  }
+  if(typeof window !== 'undefined'){
+    window.startScheduleReminderPoller = startScheduleReminderPoller;
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', startScheduleReminderPoller);
+    } else {
+      startScheduleReminderPoller();
+    }
+  }
+
   /* [#TASK-ES-168] 알림 센터 모달 열기 */
   function openNotificationCenterModal(){
     var list = [];
@@ -8944,11 +8964,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       (map[dayKey] = map[dayKey] || []).push(item);
     }
     state.profile.goals.filter(function(g){ return !g.archivedAt; }).forEach(function(g){
-      if(g.dueDate) push(g.dueDate, { date:g.dueDate, title:g.title, kind:'goal', goalId:g.id, msId:null, done:false, goalTitle:g.title, attachments:g.attachments||[] });
+      if(g.dueDate) push(g.dueDate, { date:g.dueDate, title:g.title, kind:'goal', goalId:g.id, msId:null, done:false, goalTitle:g.title, attachments:g.attachments||[], notifyEnabled:!!g.notifyEnabled, notifyMinutes:(typeof g.notifyMinutes==='number'?g.notifyMinutes:10) });
       (g.milestones||[]).forEach(function(m){
-        if(m.dueDate) push(m.dueDate, { date:m.dueDate, title:m.title, kind:'ms', goalId:g.id, msId:m.id, done:m.status==='done', goalTitle:g.title, attachments:m.attachments||[] });
+        if(m.dueDate) push(m.dueDate, { date:m.dueDate, title:m.title, kind:'ms', goalId:g.id, msId:m.id, done:m.status==='done', goalTitle:g.title, attachments:m.attachments||[], notifyEnabled:!!m.notifyEnabled, notifyMinutes:(typeof m.notifyMinutes==='number'?m.notifyMinutes:10) });
         (m.tasks||[]).forEach(function(t){
-          if(t.dueDate) push(t.dueDate, { date:t.dueDate, title:t.title, kind:'task', goalId:g.id, msId:m.id, taskId:t.id, done:!!t.done, goalTitle:m.title, attachments:t.attachments||[] });
+          if(t.dueDate) push(t.dueDate, { date:t.dueDate, title:t.title, kind:'task', goalId:g.id, msId:m.id, taskId:t.id, done:!!t.done, goalTitle:m.title, attachments:t.attachments||[], notifyEnabled:!!t.notifyEnabled, notifyMinutes:(typeof t.notifyMinutes==='number'?t.notifyMinutes:10) });
         });
       });
     });
@@ -8982,6 +9002,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         kind:'custom',
         schedId:cs.id,
         done:!!cs.done,
+        notifyEnabled:!!cs.notifyEnabled,
+        notifyMinutes:(typeof cs.notifyMinutes==='number'?cs.notifyMinutes:10),
         goalTitle:gTitle,
         attachments:cs.attachments||[],
         recordId:cs.recordId||null,
@@ -9023,6 +9045,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             schedId: ge.id,
             gcalId: ge.id,
             done: isGeDone,
+            notifyEnabled: !!ge.notifyEnabled,
+            notifyMinutes: (typeof ge.notifyMinutes === 'number' ? ge.notifyMinutes : 10),
             goalTitle: ge.goalTitle || '구글 캘린더',
             htmlLink: ge.htmlLink || 'https://calendar.google.com'
           });
@@ -9609,6 +9633,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '<div style="display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto;margin-bottom:14px;">' +
       evs.map(function(e, idx){
         var timeLabel = (e.date && e.date.indexOf('T') !== -1) ? ('<span class="dday-mini" style="background:var(--surface-2);color:var(--ink);margin-left:4px;">'+e.date.split('T')[1].slice(0,5)+'</span>') : '';
+        var notifyBadge = e.notifyEnabled ? ('<span class="sched-notify-badge" style="font-size:.72rem;padding:1px 6px;border-radius:6px;background:rgba(16,185,129,0.12);color:var(--primary,#10b981);font-weight:700;display:inline-flex;align-items:center;gap:2px;white-space:nowrap;">⏰ ' + (e.notifyMinutes === 0 ? '정시 알림' : (e.notifyMinutes || 10) + '분 전') + '</span>') : '';
         var mRec = (e.title || '').match(/#record[=:](\w+)/);
         var targetRecId = e.recordId || (mRec ? mRec[1] : null);
         var tplBtn = targetRecId ? ('<button class="btn btn-ghost btn-sm" data-hubrec="'+targetRecId+'" type="button" style="font-size:.8125rem;padding:2px 6px;color:var(--ink);border-color:var(--rule);">기록 보기</button>') : '';
@@ -9623,6 +9648,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                 '<span class="sched-title'+(isDone?' done-text':'')+'">'+escapeHtml(e.title)+'</span>' +
                 goalBadge +
                 timeLabel +
+                notifyBadge +
               '</div>' +
               '<div class="faint" style="font-size:.8125rem;margin-top:2px;">'+escapeHtml(e.goalTitle||'일반 일정')+'</div>' +
               (window.OurgoalCalendarAttachment ? window.OurgoalCalendarAttachment.renderHubEventChipsHtml(e) : '') +
@@ -9880,8 +9906,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<option value="15"' + (curNotifyMinutes===15 ? ' selected' : '') + '>15분 전</option>' +
           '<option value="30"' + (curNotifyMinutes===30 ? ' selected' : '') + '>30분 전</option>' +
           '<option value="60"' + (curNotifyMinutes===60 ? ' selected' : '') + '>1시간 전</option>' +
+          '<option value="120"' + (curNotifyMinutes===120 ? ' selected' : '') + '>2시간 전</option>' +
           '<option value="1440"' + (curNotifyMinutes===1440 ? ' selected' : '') + '>1일 전</option>' +
+          '<option value="custom"' + (([0,5,10,15,30,60,120,1440].indexOf(curNotifyMinutes)===-1) ? ' selected' : '') + '>직접 입력 (분 단위)</option>' +
         '</select>' +
+        '<div id="calEditNotifyCustomWrap" style="display:' + (([0,5,10,15,30,60,120,1440].indexOf(curNotifyMinutes)===-1) ? 'flex' : 'none') + ';align-items:center;gap:6px;margin-top:6px;">' +
+          '<input type="number" id="calEditNotifyCustomMin" min="1" max="10080" value="' + curNotifyMinutes + '" placeholder="예: 20" style="flex:1;">' +
+          '<span style="font-size:0.875rem;color:var(--ink);font-weight:600;white-space:nowrap;">분 전 알림</span>' +
+        '</div>' +
       '</div>' +
       (!isNew ?
         ('<div class="toggle-row" style="margin-top:12px;">' +
@@ -9971,6 +10003,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             if(notifyField) notifyField.style.display = isNotifyOn ? 'block' : 'none';
           };
         }
+        var notifyOffsetEl = sheet.querySelector('#calEditNotifyOffset');
+        var customWrap = sheet.querySelector('#calEditNotifyCustomWrap');
+        var customMinInp = sheet.querySelector('#calEditNotifyCustomMin');
+        if(notifyOffsetEl && customWrap){
+          notifyOffsetEl.onchange = function(){
+            var isCustom = (notifyOffsetEl.value === 'custom');
+            customWrap.style.display = isCustom ? 'flex' : 'none';
+            if(isCustom && customMinInp){
+              customMinInp.focus();
+            }
+          };
+        }
         sheet.querySelector('#calEditCancelBtn').onclick = function(){
           openCalendarDayEditHubModal(selDate);
         };
@@ -9987,8 +10031,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               } else if(curSub.startsWith('ms:')){
                 curM = curSub.split(':')[1];
               }
-              var nMin = parseInt((sheet.querySelector('#calEditNotifyOffset') || {}).value, 10);
-              return { title: (sheet.querySelector('#calEditTitle').value || '').trim(), date: sheet.querySelector('#calEditDate').value, note: (sheet.querySelector('#calEditNote').value || '').trim(), done: isDone, linkedGoalId: curG, linkedMsId: curM, linkedTaskId: curT, attachments: curAttachments, notifyEnabled: isNotifyOn, notifyMinutes: isNaN(nMin) ? 10 : nMin };
+              var nMin = 10;
+              if(notifyOffsetEl){
+                if(notifyOffsetEl.value === 'custom'){
+                  var cVal = parseInt(customMinInp ? customMinInp.value : '10', 10);
+                  nMin = isNaN(cVal) || cVal < 0 ? 10 : cVal;
+                } else {
+                  var sVal = parseInt(notifyOffsetEl.value, 10);
+                  nMin = isNaN(sVal) ? 10 : sVal;
+                }
+              }
+              return { title: (sheet.querySelector('#calEditTitle').value || '').trim(), date: sheet.querySelector('#calEditDate').value, note: (sheet.querySelector('#calEditNote').value || '').trim(), done: isDone, linkedGoalId: curG, linkedMsId: curM, linkedTaskId: curT, attachments: curAttachments, notifyEnabled: isNotifyOn, notifyMinutes: nMin };
             }, function(updatedAtts, ctx){
               /* 참고자료 첨부/조회 모달이 단일 #modalSheet를 재사용해 이 화면을 덮어쓰므로,
                  패치가 아니라 입력값(ctx)을 보존한 채로 이 모달을 다시 완전히 열어야 한다. */
@@ -10090,8 +10143,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           if(!title){ toast('일정 제목을 입력해주세요'); return; }
           if(!dtVal){ toast('날짜를 입력해주세요'); return; }
           var notifyOffsetEl = sheet.querySelector('#calEditNotifyOffset');
-          var notifyMinutesVal = notifyOffsetEl ? parseInt(notifyOffsetEl.value, 10) : 10;
-          if(isNaN(notifyMinutesVal)) notifyMinutesVal = 10;
+          var notifyMinutesVal = 10;
+          if(notifyOffsetEl){
+            if(notifyOffsetEl.value === 'custom'){
+              var customMinInp = sheet.querySelector('#calEditNotifyCustomMin');
+              var cVal = parseInt(customMinInp ? customMinInp.value : '10', 10);
+              notifyMinutesVal = isNaN(cVal) || cVal < 0 ? 10 : cVal;
+            } else {
+              var sVal = parseInt(notifyOffsetEl.value, 10);
+              notifyMinutesVal = isNaN(sVal) ? 10 : sVal;
+            }
+          }
           if(!state.profile.settings.customSchedules) state.profile.settings.customSchedules = [];
 
           // 연계된 목표/마일스톤/할일 상태 동기화
@@ -10629,6 +10691,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '</div>' +
         (evs.length ? '<div class="ms-list" style="display:flex;flex-direction:column;gap:6px;">'+evs.map(function(e, evIdx){
           var timeLabel = (e.date && e.date.indexOf('T') !== -1) ? ('<span class="dday-mini" style="background:var(--surface-2);color:var(--ink);margin-left:4px;">'+e.date.split('T')[1].slice(0,5)+'</span>') : '';
+          var notifyBadge = e.notifyEnabled ? ('<span class="sched-notify-badge" style="font-size:.72rem;padding:1px 6px;border-radius:6px;background:rgba(16,185,129,0.12);color:var(--primary,#10b981);font-weight:700;display:inline-flex;align-items:center;gap:2px;white-space:nowrap;">⏰ ' + (e.notifyMinutes === 0 ? '정시 알림' : (e.notifyMinutes || 10) + '분 전') + '</span>') : '';
           var attChips = (e.attachments && e.attachments.length) ? ('<div style="margin-top:4px;">'+renderAttachmentChipsHtml(e.attachments, e.kind, e.msId||e.goalId||e.schedId, e.goalId)+'</div>') : '';
           var mRec = (e.title || '').match(/#record[=:](\w+)/);
           var targetRecId = e.recordId || (mRec ? mRec[1] : null);
@@ -10642,6 +10705,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                   '<span class="ms-title'+(e.done?' done-text':'')+'" style="font-size:.9rem;font-weight:700;">'+escapeHtml(e.title)+'</span>' +
                   goalBadge +
                   timeLabel +
+                  notifyBadge +
                   tplLinkChip +
                 '</div>' +
                 '<div class="faint" style="font-size:.78rem;margin-top:2px;">'+escapeHtml(e.goalTitle||'일반 일정')+'</div>' +
