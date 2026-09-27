@@ -1178,6 +1178,26 @@
     } catch(e){}
   }
 
+  async function markDmThreadAsRead(myId, peerId){
+    markDmRoomRead(myId, peerId);
+    if(!global.sb || !myId || !peerId || String(myId).indexOf('guest') === 0) return;
+    try {
+      var threadId = getDmThreadId(myId, peerId);
+      var nowIso = new Date().toISOString();
+      await global.sb.from('team_ping_replies')
+        .update({
+          is_read: true,
+          status: 'read',
+          read_at: nowIso
+        })
+        .eq('ping_id', threadId)
+        .eq('receiver_id', myId)
+        .neq('status', 'read');
+    } catch(err){
+      console.warn('[DM] markDmThreadAsRead 서버 업데이트 오류(무시):', err);
+    }
+  }
+
   function updateDmUnreadBadge(hasUnread){
     _hasUnreadDm = !!hasUnread;
     try {
@@ -1540,29 +1560,81 @@
     }
   }
 
+  function formatDmDetailTime(isoOrDate){
+    if(!isoOrDate) return '확인 불가';
+    try {
+      var d = new Date(isoOrDate);
+      if(isNaN(d.getTime())) return String(isoOrDate);
+      var year = d.getFullYear();
+      var month = d.getMonth() + 1;
+      var date = d.getDate();
+      var h = d.getHours();
+      var m = d.getMinutes();
+      var s = d.getSeconds();
+      var ampm = h >= 12 ? '오후' : '오전';
+      var h12 = h % 12;
+      if(h12 === 0) h12 = 12;
+      return year + '.' + (month < 10 ? '0' : '') + month + '.' + (date < 10 ? '0' : '') + date + ' ' + ampm + ' ' + h12 + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+    } catch(e){
+      return '방금';
+    }
+  }
+
+  function toggleDmMsgDetail(detailId){
+    if(typeof document === 'undefined') return;
+    var el = document.getElementById(detailId);
+    if(!el) return;
+    el.style.display = (el.style.display === 'none' || !el.style.display) ? 'block' : 'none';
+  }
+  if(typeof window !== 'undefined'){
+    window.toggleDmMsgDetail = toggleDmMsgDetail;
+  }
+
   function renderSingleDmMsg(m){
     var isMe = (m.from === 'me');
-    var timeStr = formatDmTime(m.createdAt || m.time);
-    var unreadBadge = (!m.read && isMe) ? '<span class="dm-unread-badge" style="color:#eab308;font-size:0.6875rem;font-weight:800;line-height:1;margin-bottom:2px;">1</span>' : '';
-    var timeSpan = '<span class="dm-msg-time" style="font-size:0.6875rem;color:var(--ink-faint);line-height:1;white-space:nowrap;">' + esc(timeStr) + '</span>';
+    var sentAt = m.sentAt || m.createdAt || m.time;
+    var deliveredAt = m.deliveredAt || sentAt;
+    var readAt = m.readAt || (m.read ? deliveredAt : null);
+    var timeStr = formatDmTime(sentAt);
+
+    var sentTimeDetail = formatDmDetailTime(sentAt);
+    var deliveredTimeDetail = formatDmDetailTime(deliveredAt);
+    var readTimeDetail = m.read ? formatDmDetailTime(readAt) : '상대방 미확인 (안읽음 1)';
+
+    var unreadBadge = (!m.read && isMe) ? '<span class="dm-unread-badge" style="color:#eab308;font-size:0.6875rem;font-weight:800;line-height:1;margin-bottom:2px;" title="카카오톡 방식 미확인(1)">1</span>' : '';
+    var statusLabel = isMe ? (m.read ? '<span class="dm-read-label" style="font-size:0.625rem;color:var(--ink-faint);line-height:1;margin-bottom:2px;">읽음</span>' : '') : '';
+    var timeSpan = '<span class="dm-msg-time" style="font-size:0.6875rem;color:var(--ink-faint);line-height:1;white-space:nowrap;" title="전송: ' + esc(sentTimeDetail) + '">' + esc(timeStr) + '</span>';
+
+    var detailId = 'dm_detail_' + (m.id || ('m_' + Math.random().toString(36).slice(2, 7)));
 
     if(isMe){
-      return '<div class="dm-row me" style="display:flex;justify-content:flex-end;align-items:flex-end;gap:5px;margin:4px 0;">' +
-        '<div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-end;gap:2px;">' +
-          unreadBadge +
-          timeSpan +
+      return '<div class="dm-row me" style="display:flex;flex-direction:column;align-items:flex-end;margin:6px 0;">' +
+        '<div style="display:flex;justify-content:flex-end;align-items:flex-end;gap:5px;">' +
+          '<div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-end;gap:2px;">' +
+            unreadBadge +
+            statusLabel +
+            timeSpan +
+          '</div>' +
+          '<div class="dm-msg me" onclick="window.toggleDmMsgDetail && window.toggleDmMsgDetail(\'' + detailId + '\')" style="cursor:pointer;max-width:72%;padding:9px 13px;border-radius:14px 14px 2px 14px;background:var(--brand-strong);color:#fff;font-size:0.875rem;line-height:1.45;word-break:break-word;box-shadow:0 1px 2px rgba(0,0,0,0.06);">' +
+            esc(m.text) +
+          '</div>' +
         '</div>' +
-        '<div class="dm-msg me" style="max-width:72%;padding:9px 13px;border-radius:14px 14px 2px 14px;background:var(--brand-strong);color:#fff;font-size:0.875rem;line-height:1.45;word-break:break-word;box-shadow:0 1px 2px rgba(0,0,0,0.06);">' +
-          esc(m.text) +
+        '<div id="' + detailId + '" class="dm-msg-detail-box" style="display:none;margin-top:3px;font-size:0.6875rem;color:var(--ink-soft);background:var(--surface-2);padding:4px 8px;border-radius:6px;border:1px solid var(--rule);">' +
+          '<span>전송 ' + esc(sentTimeDetail) + ' · 도착 ' + esc(deliveredTimeDetail) + ' · ' + (m.read ? ('읽음 ' + esc(readTimeDetail)) : '<b style="color:#eab308;">미확인 (1)</b>') + '</span>' +
         '</div>' +
       '</div>';
     } else {
-      return '<div class="dm-row them" style="display:flex;justify-content:flex-start;align-items:flex-end;gap:5px;margin:4px 0;">' +
-        '<div class="dm-msg them" style="max-width:72%;padding:9px 13px;border-radius:14px 14px 14px 2px;background:var(--surface-2);color:var(--ink);border:1px solid var(--rule);font-size:0.875rem;line-height:1.45;word-break:break-word;box-shadow:0 1px 2px rgba(0,0,0,0.03);">' +
-          esc(m.text) +
+      return '<div class="dm-row them" style="display:flex;flex-direction:column;align-items:flex-start;margin:6px 0;">' +
+        '<div style="display:flex;justify-content:flex-start;align-items:flex-end;gap:5px;">' +
+          '<div class="dm-msg them" onclick="window.toggleDmMsgDetail && window.toggleDmMsgDetail(\'' + detailId + '\')" style="cursor:pointer;max-width:72%;padding:9px 13px;border-radius:14px 14px 14px 2px;background:var(--surface-2);color:var(--ink);border:1px solid var(--rule);font-size:0.875rem;line-height:1.45;word-break:break-word;box-shadow:0 1px 2px rgba(0,0,0,0.03);">' +
+            esc(m.text) +
+          '</div>' +
+          '<div style="display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:2px;">' +
+            timeSpan +
+          '</div>' +
         '</div>' +
-        '<div style="display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:2px;">' +
-          timeSpan +
+        '<div id="' + detailId + '" class="dm-msg-detail-box" style="display:none;margin-top:3px;font-size:0.6875rem;color:var(--ink-soft);background:var(--surface-2);padding:4px 8px;border-radius:6px;border:1px solid var(--rule);">' +
+          '<span>수신/도착 ' + esc(deliveredTimeDetail) + ' · 전송 ' + esc(sentTimeDetail) + '</span>' +
         '</div>' +
       '</div>';
     }
@@ -1580,13 +1652,22 @@
         var myId = (global.state && global.state.user && global.state.user.id) || (global.state && global.state.profile && global.state.profile.id);
         person._thread = res.data.map(function(r){
           var isMe = (r.sender_id === myId);
+          var isRead = isMe ? (r.is_read === true || r.status === 'read') : true;
+          var sentAt = r.sent_at || r.created_at || new Date().toISOString();
+          var deliveredAt = r.delivered_at || sentAt;
+          var readAt = isRead ? (r.read_at || deliveredAt) : null;
+          var status = isRead ? 'read' : (r.delivered_at ? 'delivered' : 'sent');
           return {
             id: r.id,
             from: (isMe ? 'me' : 'them'),
             text: r.message,
             time: r.created_at,
             createdAt: r.created_at,
-            read: isMe ? (r.is_read === true || r.status === 'read') : true
+            sentAt: sentAt,
+            deliveredAt: deliveredAt,
+            readAt: readAt,
+            status: status,
+            read: isRead
           };
         });
       }
@@ -1772,7 +1853,20 @@
         var nowIso = new Date().toISOString();
 
         // 1. Optimistic UI 반영 (카카오톡 방식 노란색 1 및 전송 시각)
-        var newMeMsg = { id: replyId, from: 'me', text: text, time: nowIso, createdAt: nowIso, read: false };
+        var sentAt = nowIso;
+        var deliveredAt = new Date(Date.now() + 150).toISOString();
+        var newMeMsg = {
+          id: replyId,
+          from: 'me',
+          text: text,
+          time: nowIso,
+          createdAt: nowIso,
+          sentAt: sentAt,
+          deliveredAt: deliveredAt,
+          readAt: null,
+          status: 'delivered',
+          read: false
+        };
         person._thread.push(newMeMsg);
         _lastDmMessageMap[person.id] = { text: text, time: nowIso, from: 'me' };
         markDmRoomRead(myId, person.id);
@@ -1809,7 +1903,7 @@
               status: 'active'
             });
 
-            // 1:1 메시지 레코드 저장
+            // 1:1 메시지 레코드 저장 (카카오톡 방식 전송/도착 상태 영속화)
             await global.sb.from('team_ping_replies').insert({
               id: replyId,
               ping_id: threadId,
@@ -1820,7 +1914,10 @@
               sender_avatar: myAvatar,
               receiver_id: person.id,
               message: text,
-              created_at: new Date().toISOString()
+              status: 'delivered',
+              sent_at: sentAt,
+              delivered_at: deliveredAt,
+              created_at: nowIso
             });
 
             // [#TASK-ES-168] 상대방에게 Web Push 즉시 비동기 발송 (백그라운드/앱종료 수신 보장)
@@ -3539,6 +3636,9 @@
     showGuestSoftAuthGate: showGuestSoftAuthGate,
     persistCompanions: persistCompanions,
     markDmRoomRead: markDmRoomRead,
+    markDmThreadAsRead: markDmThreadAsRead,
+    formatDmDetailTime: formatDmDetailTime,
+    renderSingleDmMsg: renderSingleDmMsg,
     getDmReadMap: getDmReadMap,
     _lastDmMessageMap: _lastDmMessageMap,
     _unreadPeerMap: _unreadPeerMap,
