@@ -9663,6 +9663,32 @@ check('TASK-ES-307: 성취통계 다중 선택된 측정지표 데이터 그래�
   assert.ok(uiCss.includes('.trend-multi-svg'), 'ui.css .trend-multi-svg 스타일 정의');
 });
 
+/* ============ [TASK-ES-308] 노션 [57] 소통탭 게시 시 공유 대상(목표·기록·AI피드백) 선택형 UI 구현 및 다짐 작성 유지 ============ */
+check('TASK-ES-308: 소통탭 게시 시 공유 대상(목표·기록·AI피드백) 선택형 UI 및 다짐 작성 유지 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. index.html 선택형 칩 바 마크업 및 유지된 다짐 입력창 검증
+  assert.ok(indexHtml.includes('feed-target-chips-bar'), 'index.html feed-target-chips-bar 탑재');
+  assert.ok(indexHtml.includes('feed-target-goal-chips'), 'index.html feed-target-goal-chips 탑재');
+  assert.ok(indexHtml.includes('feed-target-record-chips'), 'index.html feed-target-record-chips 탑재');
+  assert.ok(indexHtml.includes('feed-target-feedback-chips'), 'index.html feed-target-feedback-chips 탑재');
+  assert.ok(indexHtml.includes('feed-target-chip'), 'index.html feed-target-chip 클래스 탑재');
+  assert.ok(indexHtml.includes('data-targetgoal'), 'index.html data-targetgoal 속성 탑재');
+  assert.ok(indexHtml.includes('data-targetrec'), 'index.html data-targetrec 속성 탑재');
+  assert.ok(indexHtml.includes('data-targetfb'), 'index.html data-targetfb 속성 탑재');
+  assert.ok(indexHtml.includes('shareCaptionInput'), 'index.html shareCaptionInput 다짐 입력창 보존');
+
+  // 2. js/components.js 연동 검증
+  assert.ok(jsComp.includes('handle소통_Item57Action'), 'components.js handle소통_Item57Action 탑재');
+  assert.ok(jsComp.includes('og_task-57_cache'), 'components.js og_task-57_cache 캐시 탑재');
+
+  // 3. ui.css 스타일 정의 검증
+  assert.ok(uiCss.includes('.feed-target-chips-bar'), 'ui.css .feed-target-chips-bar 스타일 정의');
+  assert.ok(uiCss.includes('.feed-target-chip'), 'ui.css .feed-target-chip 스타일 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

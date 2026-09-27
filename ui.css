@@ -14167,17 +14167,64 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
   }
 }
 
+/* ==========================================================================
+   TASK-ES-308: 소통탭 게시 시 공유 대상(목표·기록·AI피드백) 선택형 UI 스타일
+   ========================================================================== */
+.feed-target-chips-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px 2px 8px 2px;
+  margin-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
 
+.feed-target-chips-bar::-webkit-scrollbar {
+  display: none;
+}
 
+.feed-target-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.15));
+  background: var(--card2, rgba(255, 255, 255, 0.05));
+  color: var(--ink, #ffffff);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  min-height: 32px;
+}
 
+.feed-target-chip:hover {
+  border-color: var(--primary, #6366f1);
+  color: var(--primary, #6366f1);
+}
 
+.feed-target-chip.active {
+  background: var(--primary, #6366f1);
+  color: #ffffff;
+  border-color: var(--primary, #6366f1);
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.25);
+}
 
-
-
-
-
-
-
-
-
+@media (max-width: 375px) {
+  .feed-target-chips-bar {
+    gap: 4px;
+    padding: 2px 1px 6px 1px;
+    margin-bottom: 6px;
+  }
+  .feed-target-chip {
+    padding: 5px 10px !important;
+    font-size: 0.74rem !important;
+    min-height: 30px !important;
+  }
+}
 

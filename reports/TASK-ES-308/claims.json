@@ -1,0 +1,123 @@
+{
+  "task": "TASK-ES-308",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-308-FEED-POST-SELECTABLE-TARGETS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 피드 게시 모달(openShareToFeedModal)에 내 목표(goalChipsHtml), 기록(recChipsHtml), 피드백(fbChipsHtml) 선택형 칩 바가 탑재되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 칩 바에서 목표/기록/피드백 선택 시 12ms 햅틱 반응 및 기존 select 요소와 양방향 동기화된다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내 '나누고 싶은 한마디 / 다짐'(textarea#shareCaptionInput) 입력창이 기존 스펙대로 온전히 유지된다."
+    },
+    {
+      "id": "R4",
+      "text": "js/components.js 내 handle소통_Item57Action 핸들러가 구현되어 원자적 트랜잭션 및 헌법 제15조 제6항 4대 뷰 동시 전파를 수행한다."
+    },
+    {
+      "id": "R5",
+      "text": "ui.css 내 .feed-target-chips-bar, .feed-target-chip 및 375px 모바일 반응형 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R6",
+      "text": "tests/feed-post-selectable-targets.test.js 및 scripts/smoke-test.js에 선택형 칩 UI 및 다짐 작성 유지 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 feed-target-chips-bar 마크업이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "feed-target-chips-bar"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 data-targetgoal 및 data-targetrec 칩 속성이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "data-targetgoal"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 shareCaptionInput 다짐 입력창이 보존되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "shareCaptionInput"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle소통_Item57Action 함수가 탑재되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle소통_Item57Action"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 .feed-target-chips-bar 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".feed-target-chips-bar"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R6",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/feed-post-selectable-targets.test.js 및 scripts/smoke-test.js 내에 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/feed-post-selectable-targets.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/feed-post-selectable-targets.test.js",
+        "text": "feed-post-selectable-targets"
+      }
+    }
+  ]
+}
