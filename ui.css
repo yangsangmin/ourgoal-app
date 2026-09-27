@@ -14228,3 +14228,73 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
   }
 }
 
+/* ==========================================================================
+   TASK-ES-309: 소통 피드 게시하기 내 실천 사진 첨부 드롭존 및 프리뷰 카드 스타일
+   ========================================================================== */
+.share-photo-uploader-box {
+  width: 100%;
+}
+
+.share-photo-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px dashed var(--rule, rgba(255, 255, 255, 0.2));
+  border-radius: 12px;
+  padding: 16px 12px;
+  background: var(--card2, rgba(255, 255, 255, 0.04));
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.share-photo-dropzone:hover,
+.share-photo-dropzone.drag-over {
+  border-color: var(--primary, #6366f1);
+  background: rgba(99, 102, 241, 0.06);
+}
+
+.share-photo-preview-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 12px;
+  background: var(--card2, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.15));
+  padding: 12px;
+  position: relative;
+}
+
+.share-photo-remove-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(15, 23, 42, 0.75);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  backdrop-filter: blur(4px);
+}
+
+.share-photo-remove-btn:hover {
+  background: rgba(239, 68, 68, 0.85);
+}
+
+@media (max-width: 375px) {
+  .share-photo-dropzone {
+    padding: 12px 8px !important;
+  }
+  .share-photo-remove-btn {
+    width: 28px !important;
+    height: 28px !important;
+  }
+}

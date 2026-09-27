@@ -1,0 +1,142 @@
+{
+  "task": "TASK-ES-309",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-309-FEED-POST-PHOTO-UPLOAD.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 소통 피드 게시 모달(openShareToFeedModal)에 사진 첨부 드롭존(.share-photo-dropzone) 및 프리뷰 카드(.share-photo-preview-card)가 탑재되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 사진 선택, 드래그앤드롭 및 촬영 시 800px 압축(compressImage) 및 12ms 햅틱 반응이 연동된다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내 사진 삭제(#btnShareRemovePhoto) 및 사진 변경(#btnShareChangePhoto) 상호작용이 구현되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "index.html 내 피드 게시 확정 시 생성되는 게시물 객체(post)의 최상위 photo 및 extra.photo에 첨부된 사진이 영속화된다."
+    },
+    {
+      "id": "R5",
+      "text": "js/components.js 내 handle소통_Item58Action 함수가 구현되어 원자적 트랜잭션 및 헌법 제15조 제6항 4대 뷰 동시 전파를 수행한다."
+    },
+    {
+      "id": "R6",
+      "text": "ui.css 내 .share-photo-uploader-box, .share-photo-dropzone, .share-photo-preview-card, .share-photo-remove-btn 스타일 및 375px 모바일 반응형이 정의되어 있다."
+    },
+    {
+      "id": "R7",
+      "text": "tests/feed-post-photo-upload.test.js 및 scripts/smoke-test.js에 사진 첨부 드롭존 및 피드 연동 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 share-photo-uploader-box 및 share-photo-dropzone 요소가 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "share-photo-uploader-box"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 sharePhotoDropzone 드롭존이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "sharePhotoDropzone"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 btnShareRemovePhoto 삭제 버튼이 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "btnShareRemovePhoto"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내에 피드 게시물 최상위 photo 필드 할당이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "photo: finalPhoto,"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle소통_Item58Action 함수가 탑재되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle소통_Item58Action"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R6",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ui.css 내에 .share-photo-dropzone 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".share-photo-dropzone"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R7",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/feed-post-photo-upload.test.js 및 scripts/smoke-test.js 내에 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/feed-post-photo-upload.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/feed-post-photo-upload.test.js",
+        "text": "feed-post-photo-upload"
+      }
+    }
+  ]
+}

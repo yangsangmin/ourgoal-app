@@ -9689,6 +9689,35 @@ check('TASK-ES-308: 소통탭 게시 시 공유 대상(목표·기록·AI피드�
   assert.ok(uiCss.includes('.feed-target-chip'), 'ui.css .feed-target-chip 스타일 정의');
 });
 
+/* ============ [TASK-ES-309] 노션 [58] 소통 피드 게시하기 내 사진(이미지) 첨부 기능 추가 ============ */
+check('TASK-ES-309: 소통 피드 게시하기 내 사진(이미지) 첨부 드롭존, 프리뷰 카드 및 피드 연동 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. index.html 사진 첨부 드롭존 & 프리뷰 마크업 및 게시물 연동 검증
+  assert.ok(indexHtml.includes('share-photo-uploader-box'), 'index.html share-photo-uploader-box 탑재');
+  assert.ok(indexHtml.includes('sharePhotoDropzone'), 'index.html sharePhotoDropzone 탑재');
+  assert.ok(indexHtml.includes('share-photo-dropzone'), 'index.html share-photo-dropzone 클래스 탑재');
+  assert.ok(indexHtml.includes('shareDirectPhotoInput'), 'index.html shareDirectPhotoInput 파일 인풋 탑재');
+  assert.ok(indexHtml.includes('shareDirectPhotoPreviewWrap'), 'index.html shareDirectPhotoPreviewWrap 탑재');
+  assert.ok(indexHtml.includes('share-photo-preview-card'), 'index.html share-photo-preview-card 탑재');
+  assert.ok(indexHtml.includes('shareDirectPhotoPreviewImg'), 'index.html shareDirectPhotoPreviewImg 탑재');
+  assert.ok(indexHtml.includes('btnShareRemovePhoto'), 'index.html btnShareRemovePhoto 삭제 버튼 탑재');
+  assert.ok(indexHtml.includes('share-photo-remove-btn'), 'index.html share-photo-remove-btn 클래스 탑재');
+  assert.ok(indexHtml.includes('photo: finalPhoto,'), 'index.html 게시물 최상위 photo 필드 할당 탑재');
+
+  // 2. js/components.js 연동 검증
+  assert.ok(jsComp.includes('handle소통_Item58Action'), 'components.js handle소통_Item58Action 탑재');
+  assert.ok(jsComp.includes('og_task-58_cache'), 'components.js og_task-58_cache 캐시 탑재');
+
+  // 3. ui.css 스타일 정의 검증
+  assert.ok(uiCss.includes('.share-photo-uploader-box'), 'ui.css .share-photo-uploader-box 스타일 정의');
+  assert.ok(uiCss.includes('.share-photo-dropzone'), 'ui.css .share-photo-dropzone 스타일 정의');
+  assert.ok(uiCss.includes('.share-photo-preview-card'), 'ui.css .share-photo-preview-card 스타일 정의');
+  assert.ok(uiCss.includes('.share-photo-remove-btn'), 'ui.css .share-photo-remove-btn 스타일 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
