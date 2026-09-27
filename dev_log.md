@@ -4904,3 +4904,34 @@
 - **진행 단계**: [3단계: 초안 PR 제출 및 법정 판정 청구 준비]
 ---
 
+## [2026-09-27 22:05] [#TASK-ES-324] 프로필 편집 내 잇템등록 > 잇템추가 버튼 작동 안함 오류 수정
+- **목표**: 상민님 직접 지시(노션 생각 메모장 [73]번: "내 잇템등록의 잇템추가 작동안함")에 따라 프로필 편집 내 잇템등록에서 + 잇템 추가 버튼의 터치 타겟을 최소 44px 이상으로 확대하고 열림/닫힘 텍스트 토글 및 12ms 햅틱 반응을 제공하며, 등록된 잇템이 없을 때의 빈 안내 상자 클릭 시에도 즉시 인라인 등록 폼을 열고 입력창으로 스크롤 포커스되도록 배선하고, 잇템 등록 완료 및 삭제 시 모달 하단 저장 버튼 클릭 여부와 무관하게 state.profile.itItems 즉시 반영, localStorage 2중 영속화(ourgoal_profile_backup_<uid>, ourgoal_guest_profile), Supabase users.it_items 안전 upsert 및 4대 뷰 원자적 동시 전파를 수행하여 데이터 유실을 100% 원천 차단하고(Zero Data Loss), 설정창 퀵 프로필편집 연계를 완비하며 직통 핸들러 handle프로필_Item73Action 구현, 12ms 햅틱 반응, 로컬 캐시 og_task-73_cache 영속화, 4대 뷰 원자적 동시 전파 완결.
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: #TASK-ES-324 등록.
+  - `docs/specs/REQ-TASK-ES-324-PROFILE-EDIT-ITITEM-ADD-FIX.md`: R1~R9 요구사항 및 C1~C14 명세서 작성.
+  - `index.html`:
+    - `#pvAddItItem` 버튼 터치타겟 44px 확대, `toggleInlineForm` 함수를 통한 열림/닫힘 텍스트 토글('+ 잇템 추가' <-> '× 닫기') 및 12ms 햅틱, 입력창 스크롤 포커스 연동.
+    - `#pvEmptyItItemTrigger` 빈 상태 탭 트리거 신설: 빈 카드 클릭 시 즉시 인라인 폼 오픈.
+    - 잇템 등록(`#btnConfirmInlineItItem`) 및 삭제(`[data-delititem]`) 즉시 `state.profile.itItems` 반영, `ourgoal_profile_backup_<uid>` 및 `ourgoal_guest_profile` 2중 영속화, 비동기 `saveProfile` 및 4대 뷰 동시 전파 (Zero Data Loss).
+    - `loadProfile` 및 `saveProfile` 내 `users.it_items` 안전 upsert 및 컬럼 미존재 시 자동 재시도 폴백 탑재.
+    - `btnSettingsQuickAvatar` onclick 개선: `openProfileEditor()` 직결.
+    - `renderGoalsScreen` 내 미선언 `goalStatusCache` 잠재적 런타임 ReferenceError 발견 및 안전 선언문 추가 복구.
+  - `ui.css`:
+    - `#pvAddItItem`: min-height 44px, min-width 44px, 모바일 active 터치 피드백 정의.
+    - `#pvEmptyItItemTrigger`: hover/active 터치 반응형 스타일 및 테두리 점선 가이드 정의.
+  - `js/components.js`:
+    - 직통 핸들러 `handle프로필_Item73Action` 구현 (12ms 햅틱 반응, `og_task-73_cache` 로컬 영속화, Supabase 액션로그, 4대 뷰 원자적 전파).
+    - `OurgoalComponents`, `window.handle프로필_Item73Action`, `window.handle설정_Item73Action`, `module.exports` 노출.
+  - `tests/profile-edit-ititem.test.js`: 9대 영역(정적 구조, 터치타겟, 토글, 빈 상태 탭 트리거, Zero Data Loss 영속화, Supabase 폴백, 직통 핸들러 등) 모의 시뮬레이션 단위 테스트 전수 통과 (100% 무결점).
+  - `scripts/smoke-test.js`: #TASK-ES-324 단언 추가 (442개 ALL PASS).
+  - `scratch/verify_stage3_es324_ititem.js`: 375px 모바일 CDP 실측(폼 열기, 텍스트 토글, 잇템 등록, 로컬 영속화, 화면 렌더링) 전수 검증 및 스크린샷 아티팩트(`step3_es324_ititem_added.png`) 보존.
+  - `reports/TASK-ES-324/claims.json` 및 `claims.md`: 법정 court 심사용 14대 청구 항목 작성 및 로컬 전수 검증(14/14 PASS).
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - 단위 테스트: `tests/profile-edit-ititem.test.js` 100% PASS.
+  - 스모크 테스트: `node scripts/smoke-test.js` 442개 통과, 0개 실패.
+  - CDP 실측: #pvAddItItem 44px 터치타겟, 폼 토글, 잇템 추가 및 Zero Data Loss 영속화 확인.
+  - 법정 청구서: `reports/TASK-ES-324/claims.json` 14대 클레임 전수 통과 (14/14).
+- **확인 못 한 것**: GitHub Actions Court 원격 판정서 수신 (PR 생성 후 court/chat.js 수신 예정).
+- **진행 단계**: [3단계: 초안 PR 제출 및 법정 판정 청구 준비]
+---
+

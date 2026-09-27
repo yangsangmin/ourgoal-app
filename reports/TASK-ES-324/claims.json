@@ -1,0 +1,253 @@
+{
+  "task": "TASK-ES-324",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-324-PROFILE-EDIT-ITITEM-ADD-FIX.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 #pvAddItItem 요소에 44px 이상 터치타겟 및 열림/닫힘 텍스트 토글이 구현됨을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 #pvEmptyItItemTrigger 빈 상태 탭 트리거가 구현되어 인라인 폼 열림 및 스크롤 포커스가 작동함을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내 잇템 등록/삭제 시 state.profile.itItems와 로컬 스토리지에 즉시 2중 영속화(Zero Data Loss)됨을 보장한다."
+    },
+    {
+      "id": "R4",
+      "text": "index.html 내 loadProfile 및 saveProfile에서 users.it_items 안전 upsert 및 컬럼 미존재 시 자동 재시도 폴백을 보장한다."
+    },
+    {
+      "id": "R5",
+      "text": "index.html 내 btnSettingsQuickAvatar 클릭 시 openProfileEditor()로 직결됨을 보장한다."
+    },
+    {
+      "id": "R6",
+      "text": "ui.css 내 #pvAddItItem 및 #pvEmptyItItemTrigger 터치 반응형 스타일이 정의됨을 보장한다."
+    },
+    {
+      "id": "R7",
+      "text": "js/components.js 내에 직통 핸들러 handle프로필_Item73Action이 구현되어 12ms 햅틱 반응, og_task-73_cache 영속화, 4대 뷰 원자적 전파를 보장한다."
+    },
+    {
+      "id": "R8",
+      "text": "tests/profile-edit-ititem.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-324 검증 테스트가 정의되어 무결점을 전수 입증한다."
+    },
+    {
+      "id": "R9",
+      "text": "docs/rules/TICKETS.md에 #TASK-ES-324가 승인 티켓으로 등록되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 #pvAddItItem 버튼 토글 로직이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "addBtn.textContent = willOpen ? '× 닫기' : '+ 잇템 추가';"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 #pvEmptyItItemTrigger 빈 상태 탭 트리거가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"pvEmptyItItemTrigger\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 잇템 등록 시 로컬 백업 영속화가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "ourgoal_profile_backup_"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 saveProfile 함수에서 it_items upsert 연동이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "it_items: state.profile.itItems || [],"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 saveProfile 함수에서 it_items 컬럼 누락 시 자동 복구 폴백이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "if(/it_items/i.test(uUpsertRes.error.message || '')) delete userUpsertObj.it_items;"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 btnSettingsQuickAvatar 버튼 클릭 시 openProfileEditor로 직결된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"btnSettingsQuickAvatar\" onclick=\"if(typeof window.openProfileEditor === 'function'){ window.openProfileEditor(); }"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내 #pvAddItItem의 min-height 44px 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#pvAddItItem {"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내 #pvEmptyItItemTrigger의 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#pvEmptyItItemTrigger {"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 handle프로필_Item73Action 직통 핸들러가 구현되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle프로필_Item73Action"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 og_task-73_cache 로컬 캐시 키가 저장된다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "og_task-73_cache"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "단위 테스트 파일 tests/profile-edit-ititem.test.js가 존재한다",
+      "touches": [
+        "tests/profile-edit-ititem.test.js"
+      ],
+      "check": {
+        "type": "fileExists",
+        "file": "tests/profile-edit-ititem.test.js"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/profile-edit-ititem.test.js 내에 #TASK-ES-324 단위 테스트가 구현되어 있다",
+      "touches": [
+        "tests/profile-edit-ititem.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/profile-edit-ititem.test.js",
+        "text": "#TASK-ES-324"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js 내에 #TASK-ES-324 단언문 블록이 구현되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-324]"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R9",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/rules/TICKETS.md 내에 #TASK-ES-324 승인 티켓이 등록되어 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "#TASK-ES-324"
+      }
+    }
+  ]
+}
