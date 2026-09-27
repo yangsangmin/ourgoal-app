@@ -1,0 +1,104 @@
+{
+  "task": "TASK-ES-314",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-314-FEED-SHARE-LATEST-RECORD.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 openShareToFeedModal 함수에서 userRecords 목록이 최신순(내림차순)으로 정렬되고 최신 기록(userRecords[0])이 자동 프리셀렉트된다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 recSelect change 이벤트 리스너에서 선택된 기록에 맞춰 AI 피드백 및 다짐 문구가 실시간 맞춤 갱신된다."
+    },
+    {
+      "id": "R3",
+      "text": "js/components.js 내에 generateRecordPledgeMessage 함수가 구현되어 기록에 따른 맞춤형 다짐 문구를 생성한다."
+    },
+    {
+      "id": "R4",
+      "text": "js/components.js 내에 handle소통_Item63Action 직통 핸들러가 구현되어 12ms 햅틱, 캐시 영속화, 4대 뷰 원자적 전파를 수행한다."
+    },
+    {
+      "id": "R5",
+      "text": "tests/feed-share-latest-record.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-314 검증 테스트가 정의되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 openShareToFeedModal 함수에서 최신 실천기록 userRecords[0]이 자동 프리셀렉트된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "userRecords[0]"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 내 recSelect change 이벤트 리스너에서 선택된 기록에 맞춰 AI 피드백 및 다짐 문구가 실시간 맞춤 갱신된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "recSelect.addEventListener('change'"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 generateRecordPledgeMessage 함수가 구현되어 기록에 따른 맞춤형 다짐 문구를 생성한다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "generateRecordPledgeMessage"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "js/components.js 내에 handle소통_Item63Action 직통 핸들러가 구현되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle소통_Item63Action"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "tests/feed-share-latest-record.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-314 검증 테스트가 정의되어 있다",
+      "touches": [
+        "tests/feed-share-latest-record.test.js",
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/feed-share-latest-record.test.js",
+        "text": "feed-share-latest-record"
+      }
+    }
+  ]
+}

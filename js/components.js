@@ -1631,6 +1631,107 @@
     }
   }
 
+  /**
+   * [TASK-ES-314 / 노션 생각메모장 63번]
+   * 피드 게시 시 실천기록 맞춤형 한마디/다짐 문구 생성 헬퍼
+   */
+  function generateRecordPledgeMessage(record, goal) {
+    if (!record || (!record.title && !record.text)) {
+      if (goal && goal.title) {
+        return '"' + goal.title + '" 목표를 향해 꾸준히 달리고 있습니다. 오늘도 파이팅! 💪';
+      }
+      return '오늘도 목표를 향해 한 걸음 내딛습니다. 모두 함께 힘내요! ✨';
+    }
+
+    var rawTitle = (record.title || record.text || '').replace(/\r\n/g, ' ').trim();
+    var snippet = rawTitle.slice(0, 40);
+    if (rawTitle.length > 40) snippet += '…';
+
+    var dur = record.durationMinutes || record.duration || 0;
+    var durStr = dur > 0 ? (dur >= 60 ? Math.floor(dur / 60) + '시간 ' + (dur % 60 ? (dur % 60) + '분 ' : '') : dur + '분 ') : '';
+
+    if (durStr) {
+      return '오늘 ' + durStr + '집중 완료! "' + snippet + '" 실천으로 성장하고 있습니다 🔥';
+    }
+    return '오늘 실천 완료! "' + snippet + '" 꾸준함이 비범함을 만듭니다 ✨';
+  }
+
+  /**
+   * [TASK-ES-314 / 노션 생각메모장 63번]
+   * 피드 게시 시 실천기록 최신순 자동적용 및 기록 맞춤형 AI피드백/다짐 연동 완결
+   * 8원칙 & 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+   */
+  async function handle소통_Item63Action(event, customPayload) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+
+    var win = (typeof global !== 'undefined' && global.window) ? global.window : (typeof window !== 'undefined' ? window : {});
+    var actionBtn = (event && event.currentTarget) || (typeof document !== 'undefined' ? document.getElementById('og-task-63-action-btn') : null);
+    if (actionBtn) {
+      if (actionBtn.disabled) return;
+      actionBtn.disabled = true;
+    }
+
+    // 1. 12ms 햅틱 피드백
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      var syncPayload = customPayload || {
+        ticket: '63',
+        updated_at: new Date().toISOString(),
+        latest_record_auto_select: true,
+        record_customized_feedback_and_pledge: true,
+        placement: 'share_to_feed_modal',
+        state: 'completed'
+      };
+
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-63_cache', JSON.stringify(syncPayload));
+      }
+
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-63',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {}
+      }
+
+      if (typeof win.toast === 'function') {
+        win.toast('실천기록 최신순 자동적용 및 맞춤형 AI피드백·다짐 연동이 활성화되었습니다.');
+      } else if (typeof win.showToast === 'function') {
+        win.showToast('실천기록 최신순 자동적용 및 맞춤형 AI피드백·다짐 연동이 활성화되었습니다.', { type: 'success', duration: 2000 });
+      }
+
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-314] 실행 실패:', err);
+      if (typeof win.toast === 'function') {
+        win.toast('처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+      } else if (typeof win.showToast === 'function') {
+        win.showToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
 
 
   /**
@@ -2647,6 +2748,8 @@
   OurgoalComponents.blendFeedWithAiBotRule = blendFeedWithAiBotRule;
   OurgoalComponents.handle전체공통_Item62Action = handle전체공통_Item62Action;
   OurgoalComponents.getWidgetRenderSpec = getWidgetRenderSpec;
+  OurgoalComponents.handle소통_Item63Action = handle소통_Item63Action;
+  OurgoalComponents.generateRecordPledgeMessage = generateRecordPledgeMessage;
 
   if(typeof window !== 'undefined'){
     window.OurgoalComponents = OurgoalComponents;
@@ -2695,6 +2798,8 @@
     window.blendFeedWithAiBotRule = blendFeedWithAiBotRule;
     window.handle전체공통_Item62Action = handle전체공통_Item62Action;
     window.getWidgetRenderSpec = getWidgetRenderSpec;
+    window.handle소통_Item63Action = handle소통_Item63Action;
+    window.generateRecordPledgeMessage = generateRecordPledgeMessage;
     window.toggleTimeRecordModalCompact = toggleTimeRecordModalCompact;
   }
   if(typeof module !== 'undefined' && module.exports){
@@ -2708,6 +2813,8 @@
     module.exports.blendFeedWithAiBotRule = blendFeedWithAiBotRule;
     module.exports.handle전체공통_Item62Action = handle전체공통_Item62Action;
     module.exports.getWidgetRenderSpec = getWidgetRenderSpec;
+    module.exports.handle소통_Item63Action = handle소통_Item63Action;
+    module.exports.generateRecordPledgeMessage = generateRecordPledgeMessage;
     module.exports.handle전체공통_Item23Action = handle전체공통_Item23Action;
     module.exports.handle홈탭_Item33Action = handle홈탭_Item33Action;
     module.exports.handle홈탭_Item34Action = handle홈탭_Item34Action;

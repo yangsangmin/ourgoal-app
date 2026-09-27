@@ -17120,7 +17120,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function openShareToFeedModal(){ window.openShareToFeedModal = openShareToFeedModal;
     var cap = state.lastCapture;
     var userGoals = (state.profile.goals || []).filter(function(g){ return !g.archivedAt; });
-    var userRecords = (state.profile.records || []).slice().reverse().slice(0, 20);
+    // [#TASK-ES-314], [63] 실천기록 시간순 내림차순(최신순) 엄격 정렬 보장
+    var userRecords = (state.profile.records || []).slice().sort(function(a, b){
+      var tA = new Date(a.date || a.startAt || a.createdAt || 0).getTime() || 0;
+      var tB = new Date(b.date || b.startAt || b.createdAt || 0).getTime() || 0;
+      return tB - tA;
+    }).slice(0, 30);
 
     var curGoal = (cap && cap.goal) || (userGoals.length ? userGoals[0] : null);
     // [#TASK-ES-180], [63] 실천기록 최신순 자동적용: 최신 기록을 기본값으로 자동 프리셀렉트
@@ -17272,7 +17277,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
 
       var defaultCaption = '';
-      if(curRecord && (curRecord.title || curRecord.text)){
+      if(typeof generateRecordPledgeMessage === 'function'){
+        defaultCaption = generateRecordPledgeMessage(curRecord, curGoal);
+      } else if(curRecord && (curRecord.title || curRecord.text)){
         var snippet = (curRecord.title || curRecord.text).replace(/\r\n/g, ' ').slice(0, 45);
         defaultCaption = '오늘 실천 완료! "' + snippet + ((curRecord.title || curRecord.text).length > 45 ? '…' : '') + '" 꾸준히 나아갑니다 🔥';
       } else if(curGoal){
@@ -17669,15 +17676,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               curPhoto = curRecord.photo || null;
               rowIncPhoto.style.display = curPhoto ? 'flex' : 'none';
 
-              // [#TASK-ES-191] 입력창 지움 피로도 근절: value 강제 주입 제거 및 placeholder 힌트화
+              // [#TASK-ES-314], [63] 1) 기록 맞춤형 나누고싶은 한마디/다짐 플레이스홀더 및 힌트 실시간 생성
               if(captionInput){
-                var rText = (curRecord.title || curRecord.text || '').replace(/\r\n/g, ' ').trim();
-                var snippet = rText.slice(0, 45);
+                var pledgeMsg = (typeof generateRecordPledgeMessage === 'function')
+                  ? generateRecordPledgeMessage(curRecord, curGoal)
+                  : ('오늘 실천 완료! "' + ((curRecord.title || curRecord.text || '').slice(0, 40)) + '" 꾸준히 나아갑니다 🔥');
                 captionInput.value = '';
-                captionInput.placeholder = '예: 오늘 실천 완료! "' + snippet + (rText.length > 45 ? '…' : '') + '" 꾸준히 나아갑니다 🔥';
+                captionInput.placeholder = '예: ' + pledgeMsg;
               }
 
-              // [#TASK-ES-180], [63] 2) 기록 맞춤형 AI 피드백 실시간 자동 연동
+              // [#TASK-ES-314], [63] 2) 기록 맞춤형 AI 피드백 실시간 자동 연동
               if(curRecord.feedback){
                 curFeedback = curRecord.feedback;
                 var fbIndex = availableFeedbacks.findIndex(function(f){ return f.raw === curRecord.feedback; });
@@ -17690,13 +17698,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                   fbTxt.textContent = typeof curFeedback === 'string' ? curFeedback : (curFeedback.comment || curFeedback.verdict || '');
                 }
                 if(chkFeedback) chkFeedback.checked = true;
-              } else if(fbSelect && availableFeedbacks.length > 0 && fbSelect.value === '__none__'){
-                fbSelect.value = '0';
-                sheet.querySelectorAll('[data-targetfb]').forEach(function(b){ b.classList.toggle('active', b.dataset.targetfb === '0'); });
-                curFeedback = availableFeedbacks[0].raw;
+              } else if(fbSelect && availableFeedbacks.length > 0){
+                // 기록 직접 피드백 부재 시 키워드 연관 조언 또는 최신 조언 자동 매칭
+                var matchedFbIdx = availableFeedbacks.findIndex(function(f){
+                  var rTitle = (curRecord.title || curRecord.text || '').slice(0, 8);
+                  return rTitle && f.text && f.text.includes(rTitle);
+                });
+                if(matchedFbIdx === -1) matchedFbIdx = 0;
+                fbSelect.value = String(matchedFbIdx);
+                sheet.querySelectorAll('[data-targetfb]').forEach(function(b){ b.classList.toggle('active', b.dataset.targetfb === String(matchedFbIdx)); });
+                curFeedback = availableFeedbacks[matchedFbIdx].raw;
                 if(fbBox && fbTxt){
                   fbBox.style.display = 'block';
-                  fbTxt.textContent = availableFeedbacks[0].text;
+                  fbTxt.textContent = availableFeedbacks[matchedFbIdx].text;
                 }
                 if(chkFeedback) chkFeedback.checked = true;
               }

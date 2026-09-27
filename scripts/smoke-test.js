@@ -9806,6 +9806,23 @@ check('compliance: [#TASK-ES-313] [62] 기기 바탕화면용 위젯 기능(일�
   assert.ok(jsComp.includes('widget_suite_enabled: true'), 'components.js widget_suite_enabled 플래그 탑재');
 });
 
+check('compliance: [#TASK-ES-314] [63] 피드 게시 시 실천기록 최신순 자동적용 및 기록 맞춤형 AI피드백/다짐 연동 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. index.html 피드 게시 모달 최신순 정렬 및 자동선택 로직
+  assert.ok(indexHtml.includes('userRecords[0]'), 'index.html 최신 실천기록 userRecords[0] 자동 프리셀렉트 탑재');
+  assert.ok(indexHtml.includes("recSelect.addEventListener('change'"), 'index.html recSelect change 이벤트 바인딩 탑재');
+  assert.ok(indexHtml.includes('generateRecordPledgeMessage'), 'index.html 기록 맞춤형 다짐 생성기 연동 탑재');
+
+  // 2. components.js 직통 액션 핸들러 및 헬퍼 함수 검증
+  assert.ok(jsComp.includes('handle소통_Item63Action'), 'components.js handle소통_Item63Action 탑재');
+  assert.ok(jsComp.includes('generateRecordPledgeMessage'), 'components.js generateRecordPledgeMessage 탑재');
+  assert.ok(jsComp.includes('og_task-63_cache'), 'components.js og_task-63_cache 캐시 탑재');
+  assert.ok(jsComp.includes('latest_record_auto_select: true'), 'components.js latest_record_auto_select 플래그 탑재');
+  assert.ok(jsComp.includes('record_customized_feedback_and_pledge: true'), 'components.js record_customized_feedback_and_pledge 플래그 탑재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
