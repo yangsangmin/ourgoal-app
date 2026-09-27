@@ -1,0 +1,219 @@
+{
+  "task": "TASK-ES-328",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-328-GOAL-EXPORT-HUB.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 personalGoalsView 최하단에 전용 독립 컨테이너 goalAnalysisHubSlot이 구현되어 마일스톤 목록과 분리됨을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 목표 데이터 분석 카드에 AI 분석용 목표 데이터 내보내기 명칭과 설명 문구가 렌더링됨을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내 목표 데이터 분석 카드에 모바일 1초 텍스트 복사 버튼 goalExportCopyBtn이 구현되어 클립보드에 마크다운 스냅샷을 즉시 복사함을 보장한다."
+    },
+    {
+      "id": "R4",
+      "text": "index.html 내 기존 goalExportBtn 및 goalExportAllBtn 다운로드 버튼이 보존되고 12ms 햅틱 반응이 연동됨을 보장한다."
+    },
+    {
+      "id": "R5",
+      "text": "index.html 내 마일스톤 편집 모드 진입 시 goalAnalysisHubSlot이 자동으로 은폐되어 편집 집중도를 보장함을 보장한다."
+    },
+    {
+      "id": "R6",
+      "text": "js/components.js 내에 직통 핸들러 handle목표탭_Item77Action이 구현되어 12ms 햅틱 반응, og_task-77_cache 로컬 캐시 영속화, 4대 뷰 원자적 전파를 보장한다."
+    },
+    {
+      "id": "R7",
+      "text": "tests/goal-export-hub.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-328 검증 테스트가 정의되어 무결점을 전수 입증한다."
+    },
+    {
+      "id": "R8",
+      "text": "docs/rules/TICKETS.md에 #TASK-ES-328이 승인 티켓으로 등록되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 goalAnalysisHubSlot 독립 슬롯이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "goalAnalysisHubSlot"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 AI 분석용 목표 데이터 내보내기 명칭이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "AI 분석용 목표 데이터 내보내기"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 goalExportCopyBtn 텍스트 복사 버튼이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "goalExportCopyBtn"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 goalExportBtn 다운로드 버튼이 보존되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "goalExportBtn"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 goalExportAllBtn 전체 다운로드 버튼이 보존되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "goalExportAllBtn"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 편집 모드 시 goalAnalysisHubSlot 은폐 로직이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "analysisHub.style.display"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 handle목표탭_Item77Action 직통 핸들러가 구현되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle목표탭_Item77Action"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 og_task-77_cache 로컬 캐시 키가 저장된다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "og_task-77_cache"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "단위 테스트 파일 tests/goal-export-hub.test.js가 존재한다",
+      "touches": [
+        "tests/goal-export-hub.test.js"
+      ],
+      "check": {
+        "type": "fileExists",
+        "file": "tests/goal-export-hub.test.js"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/goal-export-hub.test.js 내에 [TASK-ES-328] 단위 테스트가 구현되어 있다",
+      "touches": [
+        "tests/goal-export-hub.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/goal-export-hub.test.js",
+        "text": "[TASK-ES-328]"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js 내에 [77] 데이터분석 허브 배선 존재 단언문이 구현되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[77] 데이터분석 허브 배선 존재"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/rules/TICKETS.md 내에 #TASK-ES-328 승인 티켓이 등록되어 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "#TASK-ES-328"
+      }
+    }
+  ]
+}
