@@ -9604,6 +9604,33 @@ check('TASK-ES-305: 루틴 상세 모달 및 편집 기능 구현 (목표탭 벤
   assert.ok(uiCss.includes('.routine-linked-goal-badge'), 'ui.css .routine-linked-goal-badge 스타일');
 });
 
+/* ============ [TASK-ES-306] 노션 [55] 스톱워치 구간기록별 텍스트 입력창 UI 정돈 및 시인성 개선 ============ */
+check('TASK-ES-306: 스톱워치 구간기록별 텍스트 입력창 UI 정돈 및 시인성 개선 (랩 컨테이너, 텍스트 인풋, 즉시 기입 배선) 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. HTML 마크업 및 필수 클래스/함수 존재 검증
+  assert.ok(indexHtml.includes('renderStopwatchWidgetHtml'), 'renderStopwatchWidgetHtml 함수 탑재');
+  assert.ok(indexHtml.includes('renderLapRowsHtml'), 'renderLapRowsHtml 함수 탑재');
+  assert.ok(indexHtml.includes('sw-laps-container'), 'sw-laps-container 클래스 탑재');
+  assert.ok(indexHtml.includes('sw-lap-row'), 'sw-lap-row 클래스 탑재');
+  assert.ok(indexHtml.includes('sw-lap-badge'), 'sw-lap-badge 클래스 탑재');
+  assert.ok(indexHtml.includes('sw-lap-time'), 'sw-lap-time 클래스 탑재');
+  assert.ok(indexHtml.includes('sw-lap-memo-input'), 'sw-lap-memo-input 클래스 탑재');
+  assert.ok(indexHtml.includes('sw-lap-inject-btn'), 'sw-lap-inject-btn 클래스 탑재');
+  assert.ok(indexHtml.includes('injectLapIntoTable'), 'injectLapIntoTable 함수 탑재');
+
+  // 2. ui.css 스타일 정의 검증
+  assert.ok(uiCss.includes('.sw-laps-container'), 'ui.css .sw-laps-container 스타일 정의');
+  assert.ok(uiCss.includes('.sw-lap-row'), 'ui.css .sw-lap-row 스타일 정의');
+  assert.ok(uiCss.includes('.sw-lap-badge'), 'ui.css .sw-lap-badge 스타일 정의');
+  assert.ok(uiCss.includes('.sw-lap-time'), 'ui.css .sw-lap-time 스타일 정의');
+  assert.ok(uiCss.includes('.sw-lap-memo-input'), 'ui.css .sw-lap-memo-input 스타일 정의');
+  assert.ok(uiCss.includes('.sw-lap-inject-btn'), 'ui.css .sw-lap-inject-btn 스타일 정의');
+  assert.ok(uiCss.includes('.sw-lap-memo-wrap'), 'ui.css .sw-lap-memo-wrap 스타일 정의');
+  assert.ok(uiCss.includes('.sw-lap-meta'), 'ui.css .sw-lap-meta 스타일 정의');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
