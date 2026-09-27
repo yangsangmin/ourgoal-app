@@ -1,0 +1,215 @@
+{
+  "task": "TASK-ES-320",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-320-UNIQUE-DISPLAY-NAME.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 resolveUniqueDisplayName 함수가 카카오 로그인 가입 시 중복 닉네임을 감지하고, 최대 5회 충돌 방지 탐색 루프를 통해 고유 태그(#\\d{4})를 자동 부여함을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 formatDisplayNameWithTag 분리 렌더러가 탑재되어 기본 닉네임과 식별 태그를 시인성 높은 규격으로 분리 렌더링한다."
+    },
+    {
+      "id": "R3",
+      "text": "js/team-invite-comm.js 내 동반자 실시간 닉네임 검색에서 고유 식별 태그(#\\d{4}) 핀포인트 입력 시 매칭된 사용자를 최우선으로 정렬한다."
+    },
+    {
+      "id": "R4",
+      "text": "js/team-invite-comm.js 내 동반자 검색 결과 카드에 고유 태그, 아바타, 테마 칩, 실천 레벨/스트릭 배지, 한 줄 다짐 등 4대 앵커 배지를 제공한다."
+    },
+    {
+      "id": "R5",
+      "text": "js/components.js 내에 직통 핸들러 handle인증_Item69Action이 구현되어 12ms 햅틱 반응, og_task-69_cache 로컬 캐시 영속화, 4대 뷰 원자적 전파를 보장한다."
+    },
+    {
+      "id": "R6",
+      "text": "tests/unique-display-name.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-320 검증 테스트가 정의되어 무결점을 전수 입증한다."
+    },
+    {
+      "id": "R7",
+      "text": "docs/rules/TICKETS.md에 #TASK-ES-320이 승인 티켓으로 등록되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 resolveUniqueDisplayName 함수가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "resolveUniqueDisplayName"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 태그 충돌 방지 5회 루프가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "attempt < 5; attempt++"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 formatDisplayNameWithTag 분리 렌더러 함수가 탑재되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "formatDisplayNameWithTag"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 display-name-tag 분리 시인성 클래스가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "display-name-tag"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/team-invite-comm.js 내에 고유 태그 핀포인트 최우선 매칭 정렬이 구현되어 있다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-invite-comm.js",
+        "text": "tagMatch[0].toLowerCase()"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/team-invite-comm.js 내에 formatDisplayNameWithTag 및 4대 앵커가 연동되어 있다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-invite-comm.js",
+        "text": "formatDisplayNameWithTag"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 handle인증_Item69Action 직통 핸들러가 구현되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle인증_Item69Action"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 og_task-69_cache 로컬 캐시 키가 저장된다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "og_task-69_cache"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "단위 테스트 파일 tests/unique-display-name.test.js가 존재한다",
+      "touches": [
+        "tests/unique-display-name.test.js"
+      ],
+      "check": {
+        "type": "fileExists",
+        "file": "tests/unique-display-name.test.js"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/unique-display-name.test.js 내에 #TASK-ES-320 단위 테스트가 구현되어 있다",
+      "touches": [
+        "tests/unique-display-name.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/unique-display-name.test.js",
+        "text": "#TASK-ES-320"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js 내에 #TASK-ES-320 단언문 블록이 구현되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-320]"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/rules/TICKETS.md 내에 #TASK-ES-320 승인 티켓이 등록되어 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "#TASK-ES-320"
+      }
+    }
+  ]
+}

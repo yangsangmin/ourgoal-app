@@ -335,7 +335,10 @@
                   safeAvatarHtml(u.avatar, 34) +
                 '</div>' +
                 '<div style="min-width:0;flex:1;">' +
-                  '<div style="font-weight:700;font-size:.8125rem;color:var(--ink);">' + esc(u.nickname || u.name) + '</div>' +
+                  '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
+                    '<div style="font-weight:700;font-size:.8125rem;color:var(--ink);">' + (typeof formatDisplayNameWithTag === 'function' ? formatDisplayNameWithTag(u.nickname || u.name) : esc(u.nickname || u.name)) + '</div>' +
+                    '<span class="dday-pill" style="font-size:.625rem;background:var(--surface-2);color:var(--brand-strong);">' + esc(u.theme || '실천') + '</span>' +
+                  '</div>' +
                   '<div class="faint" style="font-size:.72rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(u.intro || '아워골 회원') + '</div>' +
                 '</div>' +
               '</div>' +
@@ -2526,10 +2529,11 @@
               '</div>' +
               '<div style="flex:1;min-width:0;">' +
                 '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
-                  '<div style="font-weight:700;font-size:.875rem;color:var(--ink);">' + esc(u.nickname) + '</div>' +
-                  '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--ink-soft);">실 사용자</span>' +
+                  '<div style="font-weight:700;font-size:.875rem;color:var(--ink);">' + (typeof formatDisplayNameWithTag === 'function' ? formatDisplayNameWithTag(u.nickname || u.name) : esc(u.nickname || u.name)) + '</div>' +
+                  '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--brand-strong);border:1px solid rgba(108,92,231,0.2);">' + esc(u.theme || '실천') + '</span>' +
+                  '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--ink-soft);">🔥 Lv.' + (u.level || 1) + ' · ' + (u.streak || 1) + '일 연속</span>' +
                 '</div>' +
-                '<div class="faint" style="font-size:.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(u.intro) + '</div>' +
+                '<div class="faint" style="font-size:.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(u.intro || '함께 실천하는 아워골 동반자') + '</div>' +
               '</div>' +
               (isAdded ?
                 '<span class="faint" style="font-size:.75rem;padding:4px 8px;background:var(--surface-2);border-radius:6px;flex-shrink:0;">✓ 이미 동반자</span>' :
@@ -2647,6 +2651,19 @@
           }
         } catch(rpcErr){
           console.warn('[동반자 상단] Supabase RPC 검색 오류:', rpcErr);
+        }
+      }
+
+      // [#TASK-ES-320] 고유 태그(#1234) 핀포인트 검색 최우선 매칭 정렬
+      if(matched.length > 1 && q.indexOf('#') !== -1){
+        var tagMatch = q.match(/#\d{4}/);
+        if(tagMatch){
+          var targetTag = tagMatch[0].toLowerCase();
+          matched.sort(function(a, b){
+            var aHas = String(a.nickname || a.name || '').toLowerCase().indexOf(targetTag) !== -1 ? 1 : 0;
+            var bHas = String(b.nickname || b.name || '').toLowerCase().indexOf(targetTag) !== -1 ? 1 : 0;
+            return bHas - aHas;
+          });
         }
       }
 

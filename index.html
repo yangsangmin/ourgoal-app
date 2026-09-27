@@ -3067,7 +3067,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7, calView: 'month', calDate: isoDate(new Date()), calSelectedDate: isoDate(new Date()), selectedRecordTheme: 'all', recordsSegment: 'feed', recordsSlide: 0 };
   if(typeof window !== 'undefined'){ window.state = state; }
 
-  // [#TASK-ES-180], [69] 카카오 로그인 일원화 동명이인 가입/중복 닉네임 방지 고유 태그 부여
+  // [#TASK-ES-320], [69] 카카오 로그인 일원화 동명이인 가입/중복 닉네임 방지 고유 태그 부여
   async function resolveUniqueDisplayName(baseName, userId){
     var cleaned = (baseName || '회원').trim();
     if(!cleaned) cleaned = '회원';
@@ -3078,8 +3078,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         if(dupCheck && dupCheck.data && dupCheck.data.length > 0){
           var isMeOnly = (dupCheck.data.length === 1 && dupCheck.data[0].id === userId);
           if(!isMeOnly){
-            var tag = '#' + Math.floor(1000 + Math.random() * 9000);
-            return cleaned + tag;
+            // 4자리 고유 식별 태그 충돌 방지 탐색 (최대 5회 시도)
+            for(var attempt = 0; attempt < 5; attempt++){
+              var tag = '#' + Math.floor(1000 + Math.random() * 9000);
+              var candidate = cleaned + tag;
+              var candCheck = await sb.from('users').select('id').eq('display_name', candidate).limit(1);
+              if(!candCheck || !candCheck.data || candCheck.data.length === 0){
+                return candidate;
+              }
+            }
+            return cleaned + '#' + Math.floor(1000 + Math.random() * 9000);
           }
         }
       }
@@ -3087,6 +3095,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     return cleaned;
   }
   if(typeof window !== 'undefined'){ window.resolveUniqueDisplayName = resolveUniqueDisplayName; }
+
+  // 닉네임과 고유 태그 분리 렌더러 (거부감 없는 자연스러운 시인성 보장)
+  function formatDisplayNameWithTag(name){
+    if(!name) return '';
+    var str = String(name);
+    var m = str.match(/^(.*)(#\d{4})$/);
+    if(m){
+      var base = (typeof escapeHtml === 'function' ? escapeHtml(m[1]) : m[1]);
+      var tag = (typeof escapeHtml === 'function' ? escapeHtml(m[2]) : m[2]);
+      return '<span class="display-name-base">' + base + '</span><span class="display-name-tag" style="color:var(--muted, #8e8e93);font-size:0.8em;margin-left:3px;font-weight:400;">' + tag + '</span>';
+    }
+    return '<span class="display-name-base">' + (typeof escapeHtml === 'function' ? escapeHtml(str) : str) + '</span>';
+  }
+  if(typeof window !== 'undefined'){ window.formatDisplayNameWithTag = formatDisplayNameWithTag; }
 
   async function ensureUserRow(userId, username, displayName, extra){
     var found = null;
