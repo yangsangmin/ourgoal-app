@@ -10023,6 +10023,34 @@ check('compliance: [#TASK-ES-322] [71] 2단계 인증(2FA) 실질적 보안 작�
   assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'two-factor-auth.test.js')), '단위 테스트 파일 tests/two-factor-auth.test.js 존재');
 });
 
+check('compliance: [#TASK-ES-326] [75] 프로필 지역공개 토글 스위치 설정 및 저장 작동 안함 오류 수정 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. UI 및 마크업 검증
+  assert.ok(uiCss.includes('.pv-region-card'), 'ui.css pv-region-card 스타일 탑재');
+  assert.ok(uiCss.includes('.pv-region-badge'), 'ui.css pv-region-badge 스타일 탑재');
+  assert.ok(uiCss.includes('.pv-region-benefit-card'), 'ui.css pv-region-benefit-card 스타일 탑재');
+  assert.ok(indexHtml.includes('id="pvRegionPublicBadge"'), 'index.html pvRegionPublicBadge 요소 탑재');
+  assert.ok(indexHtml.includes('id="pvRegionBenefitCard"'), 'index.html pvRegionBenefitCard 요소 탑재');
+  assert.ok(indexHtml.includes('id="pvRegionBenefitText"'), 'index.html pvRegionBenefitText 요소 탑재');
+
+  // 2. 스마트 넛지 및 동기화 로직 검증
+  assert.ok(indexHtml.includes('updateRegionPublicUI'), 'index.html updateRegionPublicUI 함수 탑재');
+  assert.ok(indexHtml.includes('updateRegionBenefitText'), 'index.html updateRegionBenefitText 함수 탑재');
+  assert.ok(indexHtml.includes('syncRegionDraftToProfile'), 'index.html syncRegionDraftToProfile 함수 탑재');
+  assert.ok(indexHtml.includes("wireRegionPicker(sheet, 'pvRegion', regionRef);"), 'wireRegionPicker 연동');
+  assert.ok(indexHtml.includes("sheet.querySelector('#pvRegionGu')"), 'pvRegionGu 위임 연동');
+
+  // 3. components.js handle프로필_Item75Action 직통 핸들러 및 캐시 확인
+  assert.ok(jsComp.includes('handle프로필_Item75Action'), 'components.js handle프로필_Item75Action 탑재');
+  assert.ok(jsComp.includes('og_task-75_cache'), 'components.js og_task-75_cache 캐시 탑재');
+  assert.ok(jsComp.includes('region_public_enforced: true'), 'components.js region_public_enforced 플래그 탑재');
+  assert.ok(jsComp.includes('privacy_boundary_guaranteed: true'), 'components.js privacy_boundary_guaranteed 플래그 탑재');
+  assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'profile-region-public.test.js')), '단위 테스트 파일 tests/profile-region-public.test.js 존재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {
