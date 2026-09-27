@@ -22648,10 +22648,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(state.goalsSubTab==='team'){ renderTeamGoalsScreen(); return; }
     if(state.goalsSubTab==='teamLinked'){ if(window.OurgoalTeamLinkedGoals) window.OurgoalTeamLinkedGoals.renderTeamLinkedGoalsScreen(); return; }
     if(state.goalsSubTab==='templateEncyclopedia'){ renderTemplateEncyclopediaScreen(); return; }
+    // [#TASK-ES-315, 64] 목표탭 내 기존 60선 창 영구 제거 (템플릿백과사전 일원화)
     var tplSlot = document.getElementById('goalsTemplateAccordionSlot');
-    if(tplSlot && window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.renderTemplatesAccordionHtml){
-      tplSlot.innerHTML = window.OurgoalTeamInviteComm.renderTemplatesAccordionHtml();
-      window.OurgoalTeamInviteComm.wireTemplatesAccordionEvents(tplSlot, function(){ renderGoalsScreen(); });
+    if(tplSlot){
+      tplSlot.innerHTML = '';
+      tplSlot.style.display = 'none';
     }
     var chipRow = document.getElementById('goalChipRow');
     if(state.goalEditMode){
@@ -33580,14 +33581,16 @@ wirePromptEncyclopediaEvents(body);
     document.getElementById('toFeedLink').addEventListener('click', function(){ state.commSubTab='feed'; renderCommScreen(); });
   }
 
-  /* ============ 크리에이터 템플릿 ============ */
+  /* ============ 크리에이터 템플릿 (#TASK-ES-315, 64: 구형 창 영구 제거 및 무해화) ============ */
   function templatesHtml(){
+    // [#TASK-ES-315, 64] 소통탭 내 구형 60선 창 영구 제거 (템플릿백과사전 일원화)
+    if(!window.__FORCE_LEGACY_TEMPLATES_CARD) return '';
     if(window.OurgoalTemplateCredit){ setTimeout(function(){ window.OurgoalTemplateCredit.fillCounts(document.getElementById('commSubBody')); }, 0); }
     if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.renderTemplatesAccordionHtml){
       return window.OurgoalTeamInviteComm.renderTemplatesAccordionHtml();
     }
     var isExpanded = (state.templatesExpanded === true);
-    return '<div class="card" style="margin-bottom:12px;padding:10px 14px;background:var(--surface-2);border:1px solid var(--rule);border-radius:14px;">' +
+    return '<div class="card" style="margin-bottom:12px;padding:10px 14px;background:var(--surface-2);border:1px solid var(--rule);border-radius:14px;display:none;">' +
       '<div style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;" id="toggleTemplatesBtn">' +
         '<div style="display:flex;align-items:center;gap:8px;"><span style="font-size:1.15rem;">📋</span><b style="font-size:.875rem;">아워골 추천 템플릿 3종</b></div>' +
         '<button type="button" class="btn btn-ghost btn-xs" id="toggleTemplatesBtnInner" aria-expanded="' + isExpanded + '" style="font-size:.75rem;padding:2px 8px;border:1px solid var(--rule);color:var(--brand-strong);cursor:pointer;">' + (isExpanded ? '접기 ▲' : '둘러보기 ▼') + '</button>' +

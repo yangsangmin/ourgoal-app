@@ -903,6 +903,9 @@
   }
 
   function renderTemplatesAccordionHtml(){
+    // [#TASK-ES-315, 64] 목표탭 및 소통탭 구형 60선 창 영구 제거 (템플릿백과사전 일원화)
+    // 구형 60선 창이 더 이상 목표탭/소통탭에 노출되지 않도록 빈 문자열 반환
+    if(!global.__FORCE_LEGACY_TPL_ACCORDION) return '';
     var isExpanded = (global.state && global.state.templatesExpanded === true);
     var curCat = (global.state && global.state.templatesSelectedCategory) || 'all';
 

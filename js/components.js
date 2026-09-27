@@ -1734,6 +1734,116 @@
 
 
 
+
+  /**
+   * [TASK-ES-315 / 노션 생각메모장 64번]
+   * 기존 'AI 추천 목표템플릿 예시 60선' 창 영구 제거 (목표탭·소통탭 템플릿백과사전 일원화) 직통 핸들러
+   * 8원칙 & 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+   */
+  async function handle목표탭_Item64Action(event, customPayload) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+
+    var win = (typeof global !== 'undefined' && global.window) ? global.window : (typeof window !== 'undefined' ? window : {});
+    var actionBtn = (event && event.currentTarget) || (typeof document !== 'undefined' ? document.getElementById('og-task-64-action-btn') : null);
+    if (actionBtn) {
+      if (actionBtn.disabled) return;
+      actionBtn.disabled = true;
+    }
+
+    // 1. 12ms 햅틱 피드백
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      var defaultPayload = {
+        ticket: '64',
+        task_id: 'TASK-ES-315',
+        updated_at: new Date().toISOString(),
+        legacy_60_templates_removed: true,
+        encyclopedia_unified: true,
+        placement: 'goals_and_comm_tab',
+        state: 'completed'
+      };
+      var syncPayload = Object.assign({}, defaultPayload, customPayload || {});
+
+      // 상태 및 설정 영속화
+      if (win.state && win.state.profile) {
+        if (!win.state.profile.settings) win.state.profile.settings = {};
+        win.state.profile.settings.task64LegacyTemplatesCleaned = true;
+      }
+
+      // 목표탭 내 구형 슬롯 완전히 비우기 및 display:none 보장
+      if (typeof document !== 'undefined') {
+        var tplSlot = document.getElementById('goalsTemplateAccordionSlot');
+        if (tplSlot) {
+          tplSlot.innerHTML = '';
+          tplSlot.style.display = 'none';
+        }
+      }
+
+      // 템플릿백과사전 열기 옵션이 있을 경우 모달 오픈
+      if (syncPayload.openEncyclopedia) {
+        if (typeof win.openGoalTemplateEncyclopediaModal === 'function') {
+          win.openGoalTemplateEncyclopediaModal();
+        } else if (typeof win.openTemplateEncyclopediaModal === 'function') {
+          win.openTemplateEncyclopediaModal();
+        } else if (typeof document !== 'undefined') {
+          var m = document.getElementById('templateEncyclopediaModal');
+          if (m) m.style.display = 'flex';
+        }
+      }
+
+      var locStorage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+      if (locStorage && typeof locStorage.setItem === 'function') {
+        locStorage.setItem('og_task-64_cache', JSON.stringify(syncPayload));
+      }
+
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          await win.sb.from('user_interactions').upsert({
+            interaction_key: 'task-64',
+            metadata: syncPayload
+          });
+        } catch (sbErr) {}
+      }
+
+      if (syncPayload.showToast) {
+        if (typeof win.toast === 'function') {
+          win.toast('기존 60선 창이 정리되고 템플릿백과사전으로 일원화되었습니다.');
+        } else if (typeof win.showToast === 'function') {
+          win.showToast('기존 60선 창이 정리되고 템플릿백과사전으로 일원화되었습니다.', { type: 'success', duration: 2000 });
+        }
+      }
+
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
+      if (typeof win.renderCommScreen === 'function') win.renderCommScreen();
+      if (typeof win.renderAll === 'function') win.renderAll();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-315] 실행 실패:', err);
+      if (typeof win.toast === 'function') {
+        win.toast('처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+      } else if (typeof win.showToast === 'function') {
+        win.showToast('처리 중 오류가 발생했습니다. 다시 시도해주세요.', { type: 'error' });
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
   /**
    * [TASK-ES-294 / 노션 생각메모장 44번]
    * 스톱워치 실시간 구간별 활동기록 팝업·상세 연동 및 초기화 2중 확인 안전장치 구축
@@ -2749,6 +2859,7 @@
   OurgoalComponents.handle전체공통_Item62Action = handle전체공통_Item62Action;
   OurgoalComponents.getWidgetRenderSpec = getWidgetRenderSpec;
   OurgoalComponents.handle소통_Item63Action = handle소통_Item63Action;
+  OurgoalComponents.handle목표탭_Item64Action = handle목표탭_Item64Action;
   OurgoalComponents.generateRecordPledgeMessage = generateRecordPledgeMessage;
 
   if(typeof window !== 'undefined'){
@@ -2799,6 +2910,7 @@
     window.handle전체공통_Item62Action = handle전체공통_Item62Action;
     window.getWidgetRenderSpec = getWidgetRenderSpec;
     window.handle소통_Item63Action = handle소통_Item63Action;
+    window.handle목표탭_Item64Action = handle목표탭_Item64Action;
     window.generateRecordPledgeMessage = generateRecordPledgeMessage;
     window.toggleTimeRecordModalCompact = toggleTimeRecordModalCompact;
   }
@@ -2814,6 +2926,7 @@
     module.exports.handle전체공통_Item62Action = handle전체공통_Item62Action;
     module.exports.getWidgetRenderSpec = getWidgetRenderSpec;
     module.exports.handle소통_Item63Action = handle소통_Item63Action;
+    module.exports.handle목표탭_Item64Action = handle목표탭_Item64Action;
     module.exports.generateRecordPledgeMessage = generateRecordPledgeMessage;
     module.exports.handle전체공통_Item23Action = handle전체공통_Item23Action;
     module.exports.handle홈탭_Item33Action = handle홈탭_Item33Action;
