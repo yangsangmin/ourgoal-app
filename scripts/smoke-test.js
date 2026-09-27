@@ -10023,6 +10023,38 @@ check('compliance: [#TASK-ES-322] [71] 2단계 인증(2FA) 실질적 보안 작�
   assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'two-factor-auth.test.js')), '단위 테스트 파일 tests/two-factor-auth.test.js 존재');
 });
 
+check('compliance: [#TASK-ES-323] [72] 설정 계정 및 보안 로그인 상태 시 이메일 게스트모드 오표기 오류 수정 및 단일 정본 연동 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. 단일 정본 유틸 getAccountStatusInfo 및 전역 노출 검증
+  assert.ok(indexHtml.includes('function getAccountStatusInfo('), 'index.html getAccountStatusInfo 함수 구비');
+  assert.ok(indexHtml.includes('window.getAccountStatusInfo = getAccountStatusInfo;'), 'index.html window.getAccountStatusInfo 전역 노출 구비');
+
+  // 2. 세션 및 로그인 파이프라인 state.user 영속화 검증
+  assert.ok(indexHtml.includes('state.user = session.user;'), 'index.html restoreSessionAndEnter 내 state.user 바인딩');
+  assert.ok(indexHtml.includes('state.user = res.data.user;'), 'index.html loginSubmit/signUp 내 state.user 바인딩');
+  assert.ok(indexHtml.includes('state.user = null;'), 'index.html performLogout 내 state.user 초기화');
+
+  // 3. loadProfile 정규화 email, provider 반환 검증
+  assert.ok(indexHtml.includes('email: profEmail'), 'index.html loadProfile 내 email 필드 정규화 반환');
+  assert.ok(indexHtml.includes('provider: profProvider'), 'index.html loadProfile 내 provider 필드 정규화 반환');
+
+  // 4. renderSettingsScreen 및 renderSettingsHeroCard 단일 정본 연동 검증
+  assert.ok(indexHtml.includes('var accInfo = getAccountStatusInfo(p, u);'), 'index.html renderSettingsScreen 내 getAccountStatusInfo 연동');
+  assert.ok(indexHtml.includes('emailEl.textContent = accInfo.displayEmail;'), 'index.html setAccountEmail에 displayEmail 반영');
+  assert.ok(indexHtml.includes('chgPassBtn.textContent = accInfo.passwordButtonText;'), 'index.html btnChangePassModal에 passwordButtonText 반영');
+
+  // 5. components.js handle인증_Item72Action 직통 핸들러 및 캐시 확인
+  assert.ok(jsComp.includes('handle인증_Item72Action'), 'components.js handle인증_Item72Action 탑재');
+  assert.ok(jsComp.includes('og_task-72_cache'), 'components.js og_task-72_cache 캐시 탑재');
+  assert.ok(jsComp.includes('account_email_display_fixed: true'), 'components.js account_email_display_fixed 플래그 탑재');
+  assert.ok(jsComp.includes('guest_mode_mislabel_resolved: true'), 'components.js guest_mode_mislabel_resolved 플래그 탑재');
+  assert.ok(jsComp.includes('oauth_email_sync_active: true'), 'components.js oauth_email_sync_active 플래그 탑재');
+  assert.ok(jsComp.includes('password_button_state_synced: true'), 'components.js password_button_state_synced 플래그 탑재');
+  assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'account-email-status.test.js')), '단위 테스트 파일 tests/account-email-status.test.js 존재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

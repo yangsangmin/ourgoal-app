@@ -2048,10 +2048,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(sb && sb.auth){
       sb.auth.onAuthStateChange(function(event, session){
         if((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && session.user){
+          if(typeof state !== 'undefined') state.user = session.user;
           _pendingAuthSession = session;
           if(typeof restoreSessionAndEnter === 'function' && (!state.profile || state.profile.id !== session.user.id)){
             restoreSessionAndEnter(session);
           }
+        } else if(event === 'SIGNED_OUT'){
+          if(typeof state !== 'undefined') state.user = null;
         }
       });
     }
@@ -3057,8 +3060,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   function defaultProfile(id, username, displayName){
+    var profEmail = '';
+    if(username && username.indexOf('@') !== -1) profEmail = username;
+    if(typeof state !== 'undefined' && state && state.user && state.user.email) profEmail = state.user.email;
+    var profProvider = '';
+    if(typeof state !== 'undefined' && state && state.user && state.user.app_metadata && state.user.app_metadata.provider){
+      profProvider = state.user.app_metadata.provider;
+    }
     return {
       id: id, username: username, displayName: displayName,
+      email: profEmail, provider: profProvider,
       bio: '', avatarUrl: '', interests: [], region: '', regionPublic: false,
       schemaVersion: 1, createdAt: nowISO(),
       goals: [],
@@ -3068,7 +3079,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     };
   } window.defaultProfile = defaultProfile;
 
-  var state = { profile: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7, calView: 'month', calDate: isoDate(new Date()), calSelectedDate: isoDate(new Date()), selectedRecordTheme: 'all', recordsSegment: 'feed', recordsSlide: 0 };
+  var state = { profile: null, user: null, activeTab: 'home', activeGoalId: null, goalEditMode: false, notifyTimer: null, notifiedSlots: {}, commSubTab: 'feed', goalsSubTab: 'personal', dmActiveId: null, activeGroupId: null, groupFilter: 'all', manitoDm: null, msSel: {}, taskSel: {}, shareComposer: null, googleToken: null, fbSetup: null, prevScreenTab: 'home', reportPeriod: 7, calView: 'month', calDate: isoDate(new Date()), calSelectedDate: isoDate(new Date()), selectedRecordTheme: 'all', recordsSegment: 'feed', recordsSlide: 0 };
   if(typeof window !== 'undefined'){ window.state = state; }
 
   // [#TASK-ES-320], [69] 카카오 로그인 일원화 동명이인 가입/중복 닉네임 방지 고유 태그 부여
@@ -3389,8 +3400,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       localCalDayBg = localCachedProf.calendarDayBackgrounds;
     }
 
+    var profEmail = '';
+    if(username && username.indexOf('@') !== -1) profEmail = username;
+    if(newUserExtra && newUserExtra.email) profEmail = newUserExtra.email;
+    if(!profEmail && typeof state !== 'undefined' && state && state.user && state.user.email) profEmail = state.user.email;
+
+    var profProvider = provider || (newUserExtra && newUserExtra.provider) || '';
+    if(!profProvider && typeof state !== 'undefined' && state && state.user && state.user.app_metadata && state.user.app_metadata.provider){
+      profProvider = state.user.app_metadata.provider;
+    }
+
     return {
       id: userId, username: safeUsername, displayName: finalDisplayName,
+      email: profEmail, provider: profProvider,
       bio: finalBio, avatarUrl: finalAvatarUrl, interests: finalInterests,
       region: finalRegion, regionPublic: finalRegionPublic, itItems: finalItItems,
       goals: goals, records: records, settings: settings,
@@ -5657,6 +5679,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       localStorage.removeItem('ourgoal_current_user');
     } catch(e){}
     state.profile = null;
+    state.user = null;
     var shell = document.getElementById('appShell');
     if(shell) shell.classList.remove('active');
     var authScreen = document.getElementById('authScreen');
@@ -5725,7 +5748,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     await ensureUserRow(res.data.user.id, u, name);
     track('signup', Object.assign({ method: 'email' }, getAttribution())); /* 즉시 세션 경로는 loadProfile을 거치지 않으므로 여기서 기록 */
     track('signup_completed', Object.assign({ source: 'email', day_index: 0 }, getAttribution()));
+    state.user = res.data.user;
     state.profile = defaultProfile(res.data.user.id, u, name);
+    if(state.profile){
+      state.profile.email = u;
+      state.profile.provider = 'email';
+    }
     await saveProfile();
     document.getElementById('authScreen').style.display = 'none';
     startOnboarding();
@@ -5811,7 +5839,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       localStorage.setItem('ourgoal_last_auth_provider', 'email');
     } catch(e){}
 
-    state.profile = await loadProfile(res.data.user.id, u);
+    state.user = res.data.user;
+    state.profile = await loadProfile(res.data.user.id, u, { email: u, provider: 'email' }, 'email');
+    if(state.profile){
+      state.profile.email = u;
+      state.profile.provider = 'email';
+    }
     try {
       if(typeof migrateGuestDataToUser === 'function'){
         await migrateGuestDataToUser(res.data.user.id, state.profile);
@@ -36646,7 +36679,85 @@ wirePromptEncyclopediaEvents(body);
     }
   });
 
-  /* ============ RENDER: SETTINGS HERO CARD (#TASK-ES-218, #TASK-ES-248) ============ */
+  /* ============ [#TASK-ES-323], [72] 로그인 계정 및 연동 상태 단일 정본 판별기 ============ */
+  function getAccountStatusInfo(p, u){
+    p = p || (typeof state !== 'undefined' ? state.profile : null) || {};
+    u = u || (typeof state !== 'undefined' ? state.user : null) || {};
+
+    var pid = String((p && p.id) || (u && u.id) || '');
+    var isGuest = (!u || !u.id) && (!pid || pid.indexOf('guest') === 0 || pid === 'local');
+
+    var provider = (p && p.provider) || (u && u.app_metadata && u.app_metadata.provider) || '';
+    var userEmail = (u && u.email) || (p && p.email) || (p && p.username && p.username.indexOf('@') !== -1 ? p.username : '');
+
+    var isKakao = provider === 'kakao' || (userEmail && userEmail.indexOf('@kakao.local') !== -1);
+    var isGoogle = provider === 'google' || (userEmail && userEmail.indexOf('@google.local') !== -1);
+
+    var isEmailUser = !isGuest && !isKakao && !isGoogle && !!userEmail && userEmail.indexOf('@') !== -1;
+    var isOAuthUser = isKakao || isGoogle;
+
+    var label = '';
+    var badgeHtml = '';
+    var badgeText = '';
+
+    if(isGuest){
+      label = '게스트 체험 모드 (로컬 안전 보관)';
+      badgeText = '게스트 모드';
+      badgeHtml = '<span style="color:var(--ink-soft);font-weight:600;white-space:nowrap;">👤 게스트 체험 모드</span> <span style="white-space:nowrap;">· 로컬 샌드박스 안전 보관</span>';
+    } else if(isKakao){
+      badgeText = '카카오 연동';
+      if(userEmail && userEmail.indexOf('@kakao.local') === -1){
+        label = userEmail;
+      } else {
+        var kakaoNick = (p && (p.displayName || p.nickname)) || (u && u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name || u.user_metadata.nickname)) || '카카오 회원';
+        label = '카카오 계정 연동됨 (' + kakaoNick + ')';
+      }
+      badgeHtml = '<span style="color:#eab308;font-weight:600;white-space:nowrap;">🟡 카카오 계정 연동</span> <span style="white-space:nowrap;">· 5계층 보안 방어선 보호 중</span>';
+    } else if(isGoogle){
+      badgeText = '구글 연동';
+      if(userEmail && userEmail.indexOf('@google.local') === -1){
+        label = userEmail;
+      } else {
+        var googleName = (p && p.displayName) || '구글 회원';
+        label = '구글 계정 연동됨 (' + googleName + ')';
+      }
+      badgeHtml = '<span style="color:#3b82f6;font-weight:600;white-space:nowrap;">🔵 구글 계정 연동</span> <span style="white-space:nowrap;">· 5계층 보안 방어선 보호 중</span>';
+    } else if(isEmailUser){
+      badgeText = '이메일 회원';
+      label = userEmail;
+      badgeHtml = '<span style="color:#10b981;font-weight:600;white-space:nowrap;">🟢 회원 계정 연동</span> <span style="white-space:nowrap;">· 5계층 보안 방어선 보호 중</span>';
+    } else if(pid){
+      badgeText = '회원 계정';
+      label = userEmail || (((p && p.displayName) || '회원') + ' 계정 연동됨');
+      badgeHtml = '<span style="color:#10b981;font-weight:600;white-space:nowrap;">🟢 회원 계정 연동</span> <span style="white-space:nowrap;">· 5계층 보안 방어선 보호 중</span>';
+    } else {
+      label = '게스트 체험 모드 (로컬 안전 보관)';
+      badgeText = '게스트 모드';
+      badgeHtml = '<span style="color:var(--ink-soft);font-weight:600;white-space:nowrap;">👤 게스트 체험 모드</span> <span style="white-space:nowrap;">· 로컬 샌드박스 안전 보관</span>';
+    }
+
+    var normProvider = isGuest ? 'guest' : (isKakao ? 'kakao' : (isGoogle ? 'google' : (isEmailUser ? 'email' : (provider || 'member'))));
+    var passwordButtonText = isGuest ? '🔒 간편 회원가입 / 계정 연동' : (isOAuthUser ? '비밀번호 등록/설정 (소셜 연동)' : '비밀번호 변경');
+
+    return {
+      isGuest: isGuest,
+      isOAuthUser: isOAuthUser,
+      isSocial: isOAuthUser,
+      isKakao: isKakao,
+      isGoogle: isGoogle,
+      isEmailUser: isEmailUser,
+      provider: normProvider,
+      userEmail: userEmail,
+      displayEmail: label,
+      label: label,
+      badgeText: badgeText,
+      badgeHtml: badgeHtml,
+      passwordButtonText: passwordButtonText
+    };
+  }
+  if(typeof window !== 'undefined'){ window.getAccountStatusInfo = getAccountStatusInfo; }
+
+  /* ============ RENDER: SETTINGS HERO CARD (#TASK-ES-218, #TASK-ES-248, #TASK-ES-323) ============ */
   function renderSettingsHeroCard(){
     var card = document.getElementById('settingsHeroCard');
     if(!card) return;
@@ -36671,19 +36782,11 @@ wirePromptEncyclopediaEvents(body);
           '<span class="toss-settings-level-badge">Lv.' + curLv + '</span>' +
         '</div>';
     }
-    // #TASK-ES-248: 계정 연동 상태(카카오 / 구글 / 회원 / 게스트) 아이콘 표출
+    // #TASK-ES-248 & #TASK-ES-323: 계정 연동 상태(카카오 / 구글 / 회원 / 게스트) 아이콘 표출
     var statusEl = document.getElementById('settingsHeroStatusDesc');
     if(statusEl){
-      var isGuest = (!u || !u.id) && (String(p.id || '').indexOf('guest') === 0);
-      if(p.provider === 'kakao' || (u.app_metadata && u.app_metadata.provider === 'kakao')){
-        statusEl.innerHTML = '<span style="color:#eab308;font-weight:600;white-space:nowrap;">🟡 카카오 계정 연동</span> <span style="white-space:nowrap;">· 5계층 보안 방어선 보호 중</span>';
-      } else if(p.provider === 'google' || (u.app_metadata && u.app_metadata.provider === 'google')){
-        statusEl.innerHTML = '<span style="color:#3b82f6;font-weight:600;white-space:nowrap;">🔵 구글 계정 연동</span> <span style="white-space:nowrap;">· 5계층 보안 방어선 보호 중</span>';
-      } else if(!isGuest && (p.id || u.id)){
-        statusEl.innerHTML = '<span style="color:#10b981;font-weight:600;white-space:nowrap;">🟢 회원 계정 연동</span> <span style="white-space:nowrap;">· 5계층 보안 방어선 보호 중</span>';
-      } else {
-        statusEl.innerHTML = '<span style="color:var(--ink-soft);font-weight:600;white-space:nowrap;">👤 게스트 체험 모드</span> <span style="white-space:nowrap;">· 로컬 샌드박스 안전 보관</span>';
-      }
+      var accInfo = getAccountStatusInfo(p, u);
+      statusEl.innerHTML = accInfo.badgeHtml;
     }
     var goalsEl = document.getElementById('settingsHeroGoalsCount');
     if(goalsEl){
@@ -36919,37 +37022,23 @@ wirePromptEncyclopediaEvents(body);
         renderSettingsScreen();
       };
     }
-    // 🔐 계정 및 보안 (Req 10 - #TASK-ES-043 개인 이메일 노출 제거)
+    // 🔐 계정 및 보안 (Req 10 - [#TASK-ES-323], [72] 로그인 상태 시 이메일 게스트모드 오표기 오류 수정)
     var emailEl = document.getElementById('setAccountEmail');
+    var p = state.profile || {};
+    var u = state.user || {};
+    var accInfo = getAccountStatusInfo(p, u);
     if(emailEl){
-      var p = state.profile || {};
-      var u = state.user || {};
-      var isGuest = (!u || !u.id) && (String(p.id || '').indexOf('guest') === 0);
-      var userEmail = (u && u.email) || p.email;
-      if(userEmail && userEmail.indexOf('@kakao.local') === -1 && userEmail.indexOf('@google.local') === -1){
-        emailEl.textContent = userEmail;
-      } else if(p.provider === 'kakao' || (u.app_metadata && u.app_metadata.provider === 'kakao')){
-        emailEl.textContent = '카카오 계정 연동됨 (' + (p.displayName || p.nickname || '로그인 완료') + ')';
-      } else if(p.provider === 'google' || (u.app_metadata && u.app_metadata.provider === 'google')){
-        emailEl.textContent = '구글 계정 연동됨 (' + (p.displayName || '로그인 완료') + ')';
-      } else if(!isGuest && (p.id || u.id)){
-        emailEl.textContent = (p.displayName || '회원') + ' 계정 연동됨';
-      } else {
-        emailEl.textContent = '게스트 체험 모드 (로컬 안전 보관)';
-      }
+      emailEl.textContent = accInfo.displayEmail;
     }
     var chgPassBtn = document.getElementById('btnChangePassModal');
     if(chgPassBtn){
-      var isOAuthUser = (state.profile && (state.profile.provider === 'kakao' || state.profile.provider === 'google')) ||
-                        (state.user && state.user.app_metadata && (state.user.app_metadata.provider === 'kakao' || state.user.app_metadata.provider === 'google'));
-      if(isGuest){
-        chgPassBtn.textContent = '🔒 간편 회원가입 / 계정 연동';
+      chgPassBtn.textContent = accInfo.passwordButtonText;
+      if(accInfo.isGuest){
         chgPassBtn.onclick = function(){
           if(typeof openAuthModal === 'function') openAuthModal();
           else toast('소셜 로그인으로 내 소중한 데이터를 안전하게 보관하세요');
         };
       } else {
-        chgPassBtn.textContent = isOAuthUser ? '비밀번호 등록/설정 (소셜 연동)' : '비밀번호 변경';
         chgPassBtn.onclick = function(){
           openChangePasswordModal();
         };
@@ -37884,14 +37973,17 @@ wirePromptEncyclopediaEvents(body);
     if(_isEnteringApp) return true;
     _isEnteringApp = true;
     try {
+      state.user = session.user; // [#TASK-ES-323] 세션 유저 객체 전역 영속화
       var um = session.user.user_metadata || {};
-      var newExtra = {};
+      var prov = (session.user.app_metadata && session.user.app_metadata.provider) || 'email';
+      var newExtra = { provider: prov };
       if(um.avatar_url || um.picture) newExtra.avatar_url = um.avatar_url || um.picture;
       if(um.full_name || um.name || um.nickname) newExtra.display_name = um.full_name || um.name || um.nickname;
+      if(session.user.email || um.email) newExtra.email = session.user.email || um.email;
       var userEmail = session.user.email || um.email || (newExtra.display_name ? (newExtra.display_name + '@kakao.local') : (session.user.id.slice(0, 8) + '@kakao.local'));
       setDeviceLoginTime(Date.now());
       try {
-        state.profile = await loadProfile(session.user.id, userEmail, newExtra, (session.user.app_metadata && session.user.app_metadata.provider) || null);
+        state.profile = await loadProfile(session.user.id, userEmail, newExtra, prov);
       } catch(lpErr){
         console.warn('loadProfile 지연 또는 일시 오류, defaultProfile로 진입 보장:', lpErr);
         if(!state.profile){
@@ -37900,6 +37992,10 @@ wirePromptEncyclopediaEvents(body);
       }
       if(!state.profile){
         state.profile = defaultProfile(session.user.id, userEmail, newExtra.display_name || userEmail.split('@')[0]);
+      }
+      if(state.profile){
+        if(!state.profile.email && userEmail) state.profile.email = userEmail;
+        if(!state.profile.provider && prov) state.profile.provider = prov;
       }
       // 게스트 세션 데이터 새 소셜 계정으로 자동 마이그레이션 (#TASK-ES-043, #TASK-ES-224)
       try {
@@ -38131,9 +38227,12 @@ wirePromptEncyclopediaEvents(body);
           return;
         }
         if((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session && session.user){
+          state.user = session.user;
           if(!state.profile || state.profile.id !== session.user.id){
             await restoreSessionAndEnter(session);
           }
+        } else if(event === 'SIGNED_OUT'){
+          state.user = null;
         }
       });
     } catch(e){}
@@ -38455,6 +38554,8 @@ wirePromptEncyclopediaEvents(body);
   window.openMzShareCardModal = openMzShareCardModal;
   window.renderGoalsScreen = renderGoalsScreen;
   window.renderCalendarScreen = renderCalendarScreen;
+  window.renderSettingsScreen = renderSettingsScreen;
+  window.renderSettingsHeroCard = renderSettingsHeroCard;
   window.setTab = setTab;
   window.MOCK_GROUPS = MOCK_GROUPS;
   window.groupState = groupState;

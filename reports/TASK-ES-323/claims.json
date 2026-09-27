@@ -1,0 +1,249 @@
+{
+  "task": "TASK-ES-323",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-323-ACCOUNT-EMAIL-STATUS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 getAccountStatusInfo(p, u) 함수가 정의되고 window.getAccountStatusInfo로 전역 노출됨을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 세션 복원 및 로그인/회원가입/로그아웃 파이프라인에서 state.user가 일관되게 영속화 및 초기화됨을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내 loadProfile 함수가 반환하는 프로필 객체에 email 및 provider 필드가 누락 없이 정규화 주입됨을 보장한다."
+    },
+    {
+      "id": "R4",
+      "text": "index.html 내 renderSettingsScreen 함수에서 getAccountStatusInfo를 호출하여 setAccountEmail에 accInfo.displayEmail, btnChangePassModal에 accInfo.passwordButtonText를 반영함을 보장한다."
+    },
+    {
+      "id": "R5",
+      "text": "index.html 내 renderSettingsHeroCard 함수에서 getAccountStatusInfo를 호출하여 settingsHeroStatusDesc에 accInfo.badgeHtml을 반영함을 보장한다."
+    },
+    {
+      "id": "R6",
+      "text": "js/components.js 내에 직통 핸들러 handle인증_Item72Action이 구현되어 12ms 햅틱 반응, og_task-72_cache 로컬 캐시 영속화, 4대 뷰 원자적 전파를 보장한다."
+    },
+    {
+      "id": "R7",
+      "text": "tests/account-email-status.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-323 검증 테스트가 정의되어 무결점을 전수 입증한다."
+    },
+    {
+      "id": "R8",
+      "text": "docs/rules/TICKETS.md에 #TASK-ES-323가 승인 티켓으로 등록되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 getAccountStatusInfo 함수가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "function getAccountStatusInfo(p, u)"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 window.getAccountStatusInfo 전역 노출이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "window.getAccountStatusInfo = getAccountStatusInfo"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 restoreSessionAndEnter 함수에 state.user 영속화가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "state.user = session.user;"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 loadProfile 반환 객체에 email 정규화 주입이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "email: profEmail"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 loadProfile 반환 객체에 provider 정규화 주입이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "provider: profProvider"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 renderSettingsScreen에서 getAccountStatusInfo를 호출하여 setAccountEmail에 displayEmail을 할당한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "emailEl.textContent = accInfo.displayEmail;"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 renderSettingsScreen에서 btnChangePassModal에 passwordButtonText를 할당한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "chgPassBtn.textContent = accInfo.passwordButtonText;"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 renderSettingsHeroCard에서 settingsHeroStatusDesc에 badgeHtml을 할당한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "statusEl.innerHTML = accInfo.badgeHtml;"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 handle인증_Item72Action 직통 핸들러가 구현되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle인증_Item72Action"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 og_task-72_cache 로컬 캐시 키가 저장된다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "og_task-72_cache"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "단위 테스트 파일 tests/account-email-status.test.js가 존재한다",
+      "touches": [
+        "tests/account-email-status.test.js"
+      ],
+      "check": {
+        "type": "fileExists",
+        "file": "tests/account-email-status.test.js"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/account-email-status.test.js 내에 #TASK-ES-323 단위 테스트가 구현되어 있다",
+      "touches": [
+        "tests/account-email-status.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/account-email-status.test.js",
+        "text": "#TASK-ES-323"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js 내에 #TASK-ES-323 단언문 블록이 구현되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[#TASK-ES-323]"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/rules/TICKETS.md 내에 #TASK-ES-323 승인 티켓이 등록되어 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "#TASK-ES-323"
+      }
+    }
+  ]
+}

@@ -4904,3 +4904,27 @@
 - **진행 단계**: [3단계: 초안 PR 제출 및 법정 판정 청구 준비]
 ---
 
+## [2026-09-27 21:05] [#TASK-ES-323] 설정 계정 및 보안 로그인 상태 시 이메일 게스트모드 오표기 오류 수정
+- **목표**: 상민님 직접 지시(노션 생각 메모장 [72]번: "설정의 계정 및 보안에서 로그인 상태인데 로그인 계정 이메일에 게스트모드(로그인 후 계정 연동)이라고 잘못 표시됨")에 따라 로그인 상태(이메일 회원, 구글 연동, 카카오 연동)임에도 설정 화면의 '로그인 계정 상태' 및 비밀번호 변경 버튼이 게스트 모드로 잘못 표기되는 결함을 근절하고, 단일 정본 판별 유틸 `getAccountStatusInfo(p, u)` 구축 및 세션 파이프라인 전체 `state.user` 영속화, 직통 핸들러 `handle인증_Item72Action` 구현(12ms 햅틱, 로컬 캐시 `og_task-72_cache`, Supabase upsert, 4대 뷰 원자적 전파)을 완결.
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: `#TASK-ES-323` 등록.
+  - `index.html`:
+    - `getAccountStatusInfo(p, u)` 단일 정본 유틸 구현 및 `window.getAccountStatusInfo` 전역 노출.
+    - `restoreSessionAndEnter`, `boot`, `signUp`, `loginSubmit`, `onAuthStateChange` 내 `state.user` 영속화 및 `loadProfile` 반환 객체에 `email: profEmail`, `provider: profProvider` 정규화 주입.
+    - `renderSettingsScreen`: `emailEl.textContent = accInfo.displayEmail`, `chgPassBtn.textContent = accInfo.passwordButtonText` 적용.
+    - `renderSettingsHeroCard`: `statusEl.innerHTML = accInfo.badgeHtml` 연동.
+    - `window.renderSettingsScreen = renderSettingsScreen;`, `window.renderSettingsHeroCard = renderSettingsHeroCard;` 전역 노출.
+  - `js/components.js`:
+    - 직통 핸들러 `handle인증_Item72Action` 구현 (12ms 햅틱 피드백, `og_task-72_cache` 영속화, Supabase upsert, 4대 뷰 원자적 전파).
+    - `OurgoalComponents`, `window`, `module.exports`에 `handle인증_Item72Action` 노출.
+  - `tests/account-email-status.test.js`: 정적 구조 및 5대 계정 시나리오(카카오, 구글, 이메일, UUID, 순수 게스트) 단위 테스트 작성 및 전수 통과.
+  - `scripts/smoke-test.js`: `#TASK-ES-323` 단언 추가 (441개 ALL PASS).
+  - `scratch/verify_task72_cdp.js`: CDP 실측 3대 모드(게스트, 이메일 로그인, 카카오 연동) 스크린샷 캡처 및 아티팩트 보존.
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - 단위 테스트: `tests/account-email-status.test.js` 전수 통과.
+  - 스모크 테스트: `node scripts/smoke-test.js` 441개 통과, 0개 실패.
+  - CDP 실측: 게스트/이메일회원/카카오연동 각 상태별 UI 텍스트 및 히어로 뱃지 100% 정상 판별 확인.
+- **확인 못 한 것**: GitHub Actions Court 원격 판정서 수신 (PR 생성 후 court/chat.js 수신 예정).
+- **진행 단계**: [3단계: 초안 PR 제출 및 법정 판정 청구 준비]
+---
+
