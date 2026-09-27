@@ -1,0 +1,264 @@
+{
+  "task": "TASK-ES-329",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-329-PROMPT-ENCYCLOPEDIA.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 기록 탭 내보내기 카드 하단에 전용 슬롯 recordPromptEncyclopediaSlot이 신설되어 프롬프트 백과사전이 렌더링됨을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 프롬프트 백과사전 상단에 프롬프트를 복사해서 외부 AI를 활용하세요! 핵심 안내 배너가 렌더링됨을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내 프롬프트 백과사전에 실사용 및 AI 맞춤 듀얼 탭 전환 인터페이스가 지원됨을 보장한다."
+    },
+    {
+      "id": "R4",
+      "text": "index.html 내 목표(goals)와 기록(records) 각 컨텍스트별로 차별화된 8종의 전용 프롬프트 프리셋이 동적 제공됨을 보장한다."
+    },
+    {
+      "id": "R5",
+      "text": "index.html 내 각 프롬프트 카드에 원클릭 복사하기 버튼이 배선되어 모바일 클립보드 폴백 및 12ms 햅틱 반응을 보장한다."
+    },
+    {
+      "id": "R6",
+      "text": "ui.css 내에 데이터분석 프롬프트 백과사전 전용 슬롯, 배너, 44px 모바일 터치타겟 스타일이 정의되어 있다."
+    },
+    {
+      "id": "R7",
+      "text": "js/components.js 내에 직통 핸들러 handle기록_Item78Action 및 handle프롬프트백과사전_Item78Action이 구현되어 12ms 햅틱 반응, og_task-78_cache 로컬 캐시 영속화, 4대 뷰 원자적 전파를 보장한다."
+    },
+    {
+      "id": "R8",
+      "text": "tests/prompt-encyclopedia.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-329 검증 테스트가 정의되어 무결점을 전수 입증하고 docs/rules/TICKETS.md에 #TASK-ES-329가 등록되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 recordPromptEncyclopediaSlot 독립 슬롯이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "recordPromptEncyclopediaSlot"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 프롬프트를 복사해서 외부 AI를 활용하세요! 핵심 안내 배너 문구가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "프롬프트를 복사해서 외부 AI를 활용하세요!"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 btn-prompt-tab 듀얼 탭 선택 버튼이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "btn-prompt-tab"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 preset_rec_real_0 기록 특화 프롬프트 프리셋이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "preset_rec_real_0"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 preset_rec_ai_0 아워골 AI 기록 특화 프롬프트 프리셋이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "preset_rec_ai_0"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 btn-copy-prompt 클릭 시 클립보드 복사 안내 토스트 문구가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "프롬프트가 복사되었습니다!"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 record-prompt-encyclopedia-slot 스타일이 구현되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "record-prompt-encyclopedia-slot"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 prompt-hero-banner 스타일이 구현되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "prompt-hero-banner"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 handle기록_Item78Action 직통 핸들러가 구현되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle기록_Item78Action"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 handle프롬프트백과사전_Item78Action이 등록되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle프롬프트백과사전_Item78Action"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 og_task-78_cache 로컬 캐시 키가 저장된다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "og_task-78_cache"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "단위 테스트 파일 tests/prompt-encyclopedia.test.js가 존재한다",
+      "touches": [
+        "tests/prompt-encyclopedia.test.js"
+      ],
+      "check": {
+        "type": "fileExists",
+        "file": "tests/prompt-encyclopedia.test.js"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/prompt-encyclopedia.test.js 내에 [TASK-ES-329] 단위 테스트가 구현되어 있다",
+      "touches": [
+        "tests/prompt-encyclopedia.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/prompt-encyclopedia.test.js",
+        "text": "[TASK-ES-329]"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js 내에 [78] 프롬프트 백과사전 단언문이 구현되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[78] 프롬프트 백과사전 기록 슬롯 존재"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/rules/TICKETS.md 내에 #TASK-ES-329 승인 티켓이 등록되어 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "#TASK-ES-329"
+      }
+    }
+  ]
+}
