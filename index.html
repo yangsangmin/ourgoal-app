@@ -25825,6 +25825,72 @@ wirePromptEncyclopediaEvents(body);
     });
   }
 
+  /* ============ TASK-ES-307: 측정지표 다중 선택 및 동시 렌더링 엔진 ============ */
+  var TREND_METRICS = {
+    duration: { key: 'duration', label: '몰입시간', unit: '분', color: '#3b82f6', getter: function(it){ return it.durationMinutes != null ? it.durationMinutes : Math.round((it.totalMs||0)/60000); } },
+    count:    { key: 'count',    label: '실천횟수', unit: '회', color: '#10b981', getter: function(it){ return it.count || 0; } },
+    rate:     { key: 'rate',     label: '달성률',   unit: '%',  color: '#8b5cf6', getter: function(it){ return it.rate != null ? it.rate : Math.min(100, Math.round(((it.totalMs||0)/(60*60000))*100)); } },
+    streak:   { key: 'streak',   label: '스트릭',   unit: '일', color: '#f59e0b', getter: function(it){ return it.streak || 0; } }
+  };
+  window.TREND_METRICS = TREND_METRICS;
+
+  function renderMultiMetricSvg(items, activeMetrics, activeIdx, metricsMap){
+    if(!items || !items.length || !activeMetrics || !activeMetrics.length) return '';
+    var mDefMap = metricsMap || TREND_METRICS;
+    var w = 320;
+    var h = 76;
+    var padX = 18;
+    var padY = 10;
+    var innerW = w - padX * 2;
+    var innerH = h - padY * 2;
+    var n = items.length;
+    var stepX = n > 1 ? innerW / (n - 1) : innerW / 2;
+
+    var svgLines = '';
+    var svgPoints = '';
+
+    // 활성 인덱스 수직 점선 하이라이트
+    var highlightLine = '';
+    if(typeof activeIdx === 'number' && activeIdx >= 0 && activeIdx < n){
+      var actX = padX + (n > 1 ? activeIdx * stepX : innerW / 2);
+      highlightLine = '<line x1="' + actX.toFixed(1) + '" y1="' + padY + '" x2="' + actX.toFixed(1) + '" y2="' + (h - padY) + '" stroke="var(--ink-faint, rgba(255,255,255,0.3))" stroke-dasharray="2,2" stroke-width="1.2" opacity="0.8"/>';
+    }
+
+    activeMetrics.forEach(function(mKey){
+      var m = mDefMap[mKey];
+      if(!m) return;
+      var vals = items.map(function(it){ return m.getter(it); });
+      var maxVal = Math.max.apply(null, vals.concat([1]));
+
+      var pts = vals.map(function(val, idx){
+        var x = padX + (n > 1 ? idx * stepX : innerW / 2);
+        var ratio = maxVal > 0 ? (val / maxVal) : 0;
+        var y = (h - padY) - (ratio * innerH);
+        return { x: x, y: y, val: val, idx: idx };
+      });
+
+      var dStr = '';
+      pts.forEach(function(p, i){
+        dStr += (i === 0 ? 'M ' : ' L ') + p.x.toFixed(1) + ' ' + p.y.toFixed(1);
+      });
+
+      svgLines += '<path d="' + dStr + '" fill="none" stroke="' + m.color + '" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9" />';
+
+      pts.forEach(function(p){
+        var isAct = (p.idx === activeIdx);
+        var r = isAct ? 4.2 : 2.6;
+        svgPoints += '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + r + '" fill="' + (isAct ? '#ffffff' : m.color) + '" stroke="' + m.color + '" stroke-width="' + (isAct ? '2.5' : '1.2') + '"/>';
+      });
+    });
+
+    return '<svg class="trend-multi-svg" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none" style="width:100%;height:' + h + 'px;display:block;margin:4px 0 6px;overflow:visible;">' +
+      highlightLine +
+      svgLines +
+      svgPoints +
+    '</svg>';
+  }
+  window.renderMultiMetricSvg = renderMultiMetricSvg;
+
   function renderWeekChart(recs){
     var container = document.getElementById('chartContainer');
     if(!container) return;
@@ -25832,6 +25898,24 @@ wirePromptEncyclopediaEvents(body);
     var tData = (typeof OurgoalRecordsStats !== 'undefined')
       ? OurgoalRecordsStats.computeTrendData(recs, periodKey)
       : { items: [], totalMs: 0, totalCount: 0, title: '실천 추이' };
+
+    // state.selectedTrendMetrics 복원 및 기본값
+    if(!Array.isArray(state.selectedTrendMetrics) || !state.selectedTrendMetrics.length){
+      try {
+        var saved = localStorage.getItem('og_trend_metrics');
+        if(saved){
+          var parsed = JSON.parse(saved);
+          if(Array.isArray(parsed) && parsed.length) state.selectedTrendMetrics = parsed;
+        }
+      } catch(e){}
+    }
+    if(!Array.isArray(state.selectedTrendMetrics) || !state.selectedTrendMetrics.length){
+      state.selectedTrendMetrics = ['duration', 'count'];
+    }
+    // 유효한 키만 필터링
+    var activeMetrics = state.selectedTrendMetrics.filter(function(k){ return !!TREND_METRICS[k]; });
+    if(!activeMetrics.length) activeMetrics = ['duration'];
+    state.selectedTrendMetrics = activeMetrics;
 
     var activeIdx = (typeof state.trendActiveIdx === 'number' && state.trendActiveIdx >= 0 && state.trendActiveIdx < tData.items.length)
       ? state.trendActiveIdx
@@ -25846,6 +25930,30 @@ wirePromptEncyclopediaEvents(body);
       }).join('') +
     '</div>';
 
+    var metricsSelectorHtml = '<div class="trend-metrics-selector-row" style="display:flex;align-items:center;gap:6px;margin:8px 0 6px;flex-wrap:wrap;">' +
+      '<span style="font-size:0.75rem;font-weight:700;color:var(--ink-soft);margin-right:2px;">측정지표:</span>' +
+      Object.keys(TREND_METRICS).map(function(k){
+        var m = TREND_METRICS[k];
+        var isSel = activeMetrics.indexOf(k) !== -1;
+        return '<button type="button" class="trend-metric-chip' + (isSel ? ' active' : '') + '" data-trendmetric="' + k + '" style="display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:14px;font-size:0.75rem;border:1px solid ' + (isSel ? m.color : 'var(--line)') + ';background:' + (isSel ? (m.color + '22') : 'var(--card2)') + ';color:' + (isSel ? m.color : 'var(--ink-faint)') + ';font-weight:' + (isSel ? '700' : '500') + ';cursor:pointer;min-height:30px;transition:all .15s ease;">' +
+          '<span class="metric-color-dot" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:' + m.color + ';opacity:' + (isSel ? '1' : '0.4') + ';"></span>' +
+          m.label +
+        '</button>';
+      }).join('') +
+    '</div>';
+
+    var legendHtml = '<div class="trend-legend-row" style="display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:0.72rem;color:var(--ink-faint);flex-wrap:wrap;">' +
+      activeMetrics.map(function(k){
+        var m = TREND_METRICS[k];
+        return '<span class="trend-legend-item" style="display:inline-flex;align-items:center;gap:4px;">' +
+          '<span style="display:inline-block;width:9px;height:3px;border-radius:2px;background:' + m.color + ';"></span>' +
+          '<span style="font-weight:600;color:' + m.color + ';">' + m.label + ' (' + m.unit + ')</span>' +
+        '</span>';
+      }).join('') +
+    '</div>';
+
+    var multiSvgHtml = renderMultiMetricSvg(tData.items, activeMetrics, activeIdx, TREND_METRICS);
+
     var bars = tData.items.map(function(item, i){
       var h = Math.max(4, Math.round((item.totalMs / maxMs) * 60));
       var isAct = (i === activeIdx);
@@ -25856,13 +25964,25 @@ wirePromptEncyclopediaEvents(body);
     }).join('');
 
     var activeItem = tData.items[activeIdx] || { label:'-', count:0, totalMs:0, records:[] };
+
+    var summaryMetricsBadges = activeMetrics.map(function(k){
+      var m = TREND_METRICS[k];
+      var rawVal = m.getter(activeItem);
+      var displayVal = (k === 'duration') ? fmtDuration(activeItem.totalMs) : (rawVal + m.unit);
+      return '<span class="trend-summary-badge" style="display:inline-flex;align-items:center;gap:3px;font-size:0.75rem;padding:2px 7px;border-radius:6px;background:' + m.color + '18;color:' + m.color + ';font-weight:700;border:1px solid ' + m.color + '33;">' +
+        '<span style="width:6px;height:6px;border-radius:50%;background:' + m.color + ';"></span>' +
+        m.label + ' ' + displayVal +
+      '</span>';
+    }).join(' ');
+
     var summaryBoxHtml = '';
     if(activeItem.count > 0){
-      var itemDurStr = fmtDuration(activeItem.totalMs);
       summaryBoxHtml = '<div class="trend-detail-summary" id="trendDetailSummary" data-trendpop="1">' +
-        '<div class="trend-summary-head">' +
+        '<div class="trend-summary-head" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">' +
           '<span class="trend-summary-title">📅 ' + escapeHtml(activeItem.label) + (activeItem.subLabel ? (' ('+escapeHtml(activeItem.subLabel)+')') : '') + ' 실천 요약</span>' +
-          '<span class="trend-summary-metric">' + itemDurStr + ' (' + activeItem.count + '회)</span>' +
+        '</div>' +
+        '<div class="trend-summary-badges-row" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin:6px 0 4px;">' +
+          summaryMetricsBadges +
         '</div>' +
         '<div class="faint" style="font-size:.78rem;margin-top:2px;">' +
           activeItem.records.slice(0, 2).map(function(r){ return '· ' + escapeHtml(r.text); }).join(' ') +
@@ -25875,6 +25995,9 @@ wirePromptEncyclopediaEvents(body);
         '<div class="trend-summary-head">' +
           '<span class="trend-summary-title">📅 ' + escapeHtml(activeItem.label) + (activeItem.subLabel ? (' ('+escapeHtml(activeItem.subLabel)+')') : '') + '</span>' +
           '<span class="faint" style="font-size:.78rem;">실천 기록 없음</span>' +
+        '</div>' +
+        '<div class="trend-summary-badges-row" style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin:6px 0 4px;">' +
+          summaryMetricsBadges +
         '</div>' +
         '<div class="faint" style="font-size:.75rem;margin-top:4px;">이 기간에는 아직 기록된 활동이 없어요.</div>' +
       '</div>';
@@ -25911,10 +26034,13 @@ wirePromptEncyclopediaEvents(body);
       '<div class="chart-card">' +
         trendPulseCards +
         segHtml +
-        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+        metricsSelectorHtml +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0 4px;">' +
           '<div class="ct-label" style="margin:0;">' + tData.title + '</div>' +
           '<span class="faint" style="font-size:.75rem;">총 ' + fmtDuration(tData.totalMs) + ' (' + tData.totalCount + '건)</span>' +
         '</div>' +
+        legendHtml +
+        multiSvgHtml +
         '<div class="chart-bars">' + bars + '</div>' +
         summaryBoxHtml +
         thumbSwitcherHtml +
@@ -25924,6 +26050,30 @@ wirePromptEncyclopediaEvents(body);
       btn.onclick = function(){
         state.trendPeriod = btn.dataset.trendseg;
         state.trendActiveIdx = null;
+        renderWeekChart(recs);
+      };
+    });
+    container.querySelectorAll('[data-trendmetric]').forEach(function(chip){
+      chip.onclick = function(e){
+        e.stopPropagation();
+        var mKey = chip.dataset.trendmetric;
+        var cur = (state.selectedTrendMetrics || []).slice();
+        var idx = cur.indexOf(mKey);
+        if(idx !== -1){
+          if(cur.length > 1){
+            cur.splice(idx, 1);
+          } else if(typeof toast === 'function'){
+            toast('최소 하나의 측정지표는 선택되어야 합니다.');
+            return;
+          }
+        } else {
+          cur.push(mKey);
+        }
+        state.selectedTrendMetrics = cur;
+        try {
+          localStorage.setItem('og_trend_metrics', JSON.stringify(cur));
+        } catch(e){}
+        if(navigator && typeof navigator.vibrate === 'function') try { navigator.vibrate(12); } catch(e){}
         renderWeekChart(recs);
       };
     });

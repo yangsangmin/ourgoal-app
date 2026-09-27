@@ -14077,6 +14077,97 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
   }
 }
 
+/* ==========================================================================
+   TASK-ES-307: 성취통계 다중 선택된 측정지표 데이터 그래프 동시 렌더링 스타일
+   ========================================================================== */
+.trend-metrics-selector-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 6px;
+  flex-wrap: wrap;
+}
+
+.trend-metric-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 14px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  min-height: 32px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.trend-metric-chip:hover {
+  filter: brightness(1.1);
+}
+
+.trend-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  font-size: 0.72rem;
+  color: var(--ink-faint, rgba(255, 255, 255, 0.6));
+  flex-wrap: wrap;
+}
+
+.trend-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.trend-multi-svg {
+  width: 100%;
+  height: 76px;
+  display: block;
+  margin: 4px 0 6px;
+  overflow: visible;
+}
+
+.trend-summary-badges-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin: 6px 0 4px;
+}
+
+.trend-summary-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.75rem;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+@media (max-width: 375px) {
+  .trend-metrics-selector-row {
+    gap: 4px;
+    margin: 6px 0 4px;
+  }
+  .trend-metric-chip {
+    padding: 3px 7px !important;
+    font-size: 0.7rem !important;
+    min-height: 28px !important;
+  }
+  .trend-legend-row {
+    gap: 6px !important;
+    font-size: 0.68rem !important;
+  }
+  .trend-summary-badge {
+    font-size: 0.7rem !important;
+    padding: 1px 5px !important;
+  }
+}
+
+
 
 
 

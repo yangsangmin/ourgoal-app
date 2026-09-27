@@ -329,6 +329,25 @@
       });
     });
 
+    // TASK-ES-307: 다중 선택 측정지표(몰입시간, 실천횟수, 달성률, 스트릭) 데이터 세트 연산 바인딩
+    var runningStreak = 0;
+    items.forEach(function(it){
+      it.durationMinutes = Math.round(it.totalMs / 60000);
+      it.rate = Math.min(100, Math.round((it.totalMs / (60 * 60000)) * 100));
+      if (it.count > 0 || it.totalMs > 0) {
+        runningStreak++;
+      } else {
+        runningStreak = 0;
+      }
+      it.streak = runningStreak;
+      it.metrics = {
+        duration: it.durationMinutes,
+        count: it.count,
+        rate: it.rate,
+        streak: it.streak
+      };
+    });
+
     var totalPeriodMs = items.reduce(function(acc, x){ return acc + x.totalMs; }, 0);
     var totalPeriodCount = items.reduce(function(acc, x){ return acc + x.count; }, 0);
     var avgMs = items.length ? Math.round(totalPeriodMs / items.length) : 0;
@@ -340,7 +359,13 @@
       totalMs: totalPeriodMs,
       totalCount: totalPeriodCount,
       avgMs: avgMs,
-      items: items
+      items: items,
+      availableMetrics: [
+        { key: 'duration', label: '몰입시간', unit: '분', color: '#3b82f6' },
+        { key: 'count', label: '실천횟수', unit: '회', color: '#10b981' },
+        { key: 'rate', label: '달성률', unit: '%', color: '#8b5cf6' },
+        { key: 'streak', label: '스트릭', unit: '일', color: '#f59e0b' }
+      ]
     };
   }
 
