@@ -1,0 +1,56 @@
+{
+  "task": "TASK-T014",
+  "requirementsSource": "docs/specs/REQ-T014-FEEDBACK-SLA.md",
+  "requirements": [
+    { "id": "R1", "text": "피드백 원장의 속성이 9개에서 17개로 늘고, 기존 속성은 하나도 사라지지 않는다(운영 접수를 깨지 않는다)" },
+    { "id": "R2", "text": "도구가 add·triage·resolve·replied·check 다섯 명령을 제공한다" },
+    { "id": "R3", "text": "허용 목록에 없는 옵션명(예: --severity 치명)은 전송 전에 거부되고 종료코드 2 로 끝난다" },
+    { "id": "R4", "text": "수정 기록이 0건일 때 리드타임을 0 이 아니라 null(측정불가)로 낸다" },
+    { "id": "R5", "text": "check 가 12시간 넘게 분류되지 않은 신고를 따로 센다" },
+    { "id": "R6", "text": "채팅으로 온 신고는 신고자의 실명·연락처가 아니라 닉네임만 받는다" },
+    { "id": "R7", "text": "심각도 기준·24시간 절차·에스컬레이션·답장 문안이 든 런북이 있다" },
+    { "id": "R8", "text": "점검 행을 add → triage(상) → resolve 하면 SLA 판정이 진행중에서 준수로 바뀌고 리드타임(시간)이 숫자로 되읽힌다" }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "unverified", "domain": "server-api",
+      "statement": "노션 원장에 새 속성 8개가 추가되고 기존 속성 9개는 그대로다",
+      "touches": ["scripts/feedback-sla.js"],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "노션 원장에 접근할 수 있는 상민님 또는 세션(법정은 외부 서비스에 접속할 수 없다)",
+        "how": [
+          "노션 「아워골 고객 문의 및 오류 제보 원장」 데이터베이스의 속성 목록을 연다",
+          "기존 9개 속성이 이름·유형 그대로 있는지 본다(사라진 것 0)",
+          "새 8개(심각도·재현성·접수 경로·수정 배포일시·수정 링크·신고자 답장·리드타임(시간)·SLA 판정)가 있는지 본다"
+        ]
+      }
+    },
+    { "id": "C2a", "req": "R2", "kind": "static", "domain": "logic", "statement": "도구가 add 명령을 처리한다", "touches": ["scripts/feedback-sla.js"], "check": { "type": "codeContains", "file": "scripts/feedback-sla.js", "text": "cmd === 'add'" } },
+    { "id": "C2b", "req": "R2", "kind": "static", "domain": "logic", "statement": "도구가 triage 명령을 처리한다", "touches": ["scripts/feedback-sla.js"], "check": { "type": "codeContains", "file": "scripts/feedback-sla.js", "text": "cmd === 'triage'" } },
+    { "id": "C2c", "req": "R2", "kind": "static", "domain": "logic", "statement": "도구가 resolve 명령을 처리한다", "touches": ["scripts/feedback-sla.js"], "check": { "type": "codeContains", "file": "scripts/feedback-sla.js", "text": "cmd === 'resolve'" } },
+    { "id": "C2d", "req": "R2", "kind": "static", "domain": "logic", "statement": "도구가 replied 명령을 처리한다", "touches": ["scripts/feedback-sla.js"], "check": { "type": "codeContains", "file": "scripts/feedback-sla.js", "text": "cmd === 'replied'" } },
+    { "id": "C2e", "req": "R2", "kind": "static", "domain": "logic", "statement": "도구가 check 명령을 처리한다", "touches": ["scripts/feedback-sla.js"], "check": { "type": "codeContains", "file": "scripts/feedback-sla.js", "text": "cmd === 'check'" } },
+    { "id": "C3a", "req": "R3", "kind": "static", "domain": "logic", "statement": "옵션 값이 허용 목록에 없으면 오류를 던진다", "touches": ["scripts/feedback-sla.js"], "check": { "type": "codeContains", "file": "scripts/feedback-sla.js", "text": "에 없는 옵션" } },
+    { "id": "C3b", "req": "R3", "kind": "static", "domain": "logic", "statement": "오류로 끝나면 종료코드를 2 로 설정한다", "touches": ["scripts/feedback-sla.js"], "check": { "type": "codeContains", "file": "scripts/feedback-sla.js", "text": "process.exitCode = 2" } },
+    { "id": "C4", "req": "R4", "kind": "static", "domain": "logic", "statement": "리드타임 값이 없으면 중앙값을 null 로 낸다", "touches": ["scripts/feedback-sla.js"], "check": { "type": "codeContains", "file": "scripts/feedback-sla.js", "text": "const median = leads.length ?" } },
+    { "id": "C5", "req": "R5", "kind": "static", "domain": "logic", "statement": "12시간을 넘긴 미분류 신고 수를 따로 센다", "touches": ["scripts/feedback-sla.js"], "check": { "type": "codeContains", "file": "scripts/feedback-sla.js", "text": "untriagedStale" } },
+    { "id": "C6", "req": "R6", "kind": "static", "domain": "logic", "statement": "채팅 신고 입력의 신고자 칸은 작성자 닉네임뿐이다", "touches": ["scripts/feedback-sla.js"], "check": { "type": "codeContains", "file": "scripts/feedback-sla.js", "text": "'작성자 닉네임'" } },
+    { "id": "C7", "req": "R7", "kind": "static", "domain": "config", "statement": "피드백 SLA 런북 문서가 저장소에 있다", "touches": ["docs/growth/feedback-sla-runbook.md"], "check": { "type": "fileExists", "file": "docs/growth/feedback-sla-runbook.md" } },
+    {
+      "id": "C8", "req": "R8", "kind": "unverified", "domain": "server-api",
+      "statement": "점검 행이 add → triage → resolve 뒤 노션 수식으로 준수·리드타임을 되읽힌다",
+      "touches": ["scripts/feedback-sla.js"],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "노션 토큰(NOTION_TOKEN)이 있는 상민님 또는 세션(법정은 외부 서비스에 접속할 수 없다)",
+        "how": [
+          "node scripts/feedback-sla.js add --type 버그 --channel 기타 --nick 점검 --content \"[SLA 가동 점검] 실제 신고 아님\" 로 점검 행을 만든다",
+          "node scripts/feedback-sla.js triage <위에서 나온 pageId> --severity 상 로 분류한다",
+          "node scripts/feedback-sla.js resolve <pageId> --link <이 PR 주소> 로 수정을 기록한다",
+          "노션에서 그 행의 SLA 판정이 진행중 → 준수로 바뀌었는지, 리드타임(시간)이 숫자인지 본다"
+        ]
+      }
+    }
+  ]
+}
