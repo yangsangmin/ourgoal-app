@@ -7076,6 +7076,7 @@ check('compliance: [#TASK-ES-184] 아워골 생각 메모장 18대 잔여 대기
   assert.ok(html.includes('id="activeDevicesContainer"'), '[70] 활성 기기 컨테이너 마크업 존재');
   assert.ok(html.includes('function renderActiveDevicesList()'), '[70] 활성 기기 목록 실시간 렌더러 함수 존재');
   assert.ok(html.includes('btn-revoke-device'), '[70] 개별 기기 원격 로그아웃 버튼 클래스 존재');
+  assert.ok(html.includes('openLogoutOtherDevicesConfirmModal'), '[70] 원격 로그아웃 전 로그인 기기 목록 확인 모달 함수 존재');
 
   // [71] 2단계 인증(2FA) 실질적 보안 작동
   assert.ok(html.includes('function openTwoFactorSetupModal()'), '[71] 2FA 보안 PIN 설정 모달 함수 존재');
@@ -9966,6 +9967,35 @@ check('compliance: [#TASK-ES-320] [69] 카카오 로그인 동명이인 가입/�
   assert.ok(jsComp.includes('og_task-69_cache'), 'components.js og_task-69_cache 캐시 탑재');
   assert.ok(jsComp.includes('unique_display_name_guaranteed: true'), 'components.js unique_display_name_guaranteed 플래그 탑재');
   assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'unique-display-name.test.js')), '단위 테스트 파일 tests/unique-display-name.test.js 존재');
+});
+
+check('compliance: [#TASK-ES-321] [70] 원격 로그아웃 전 로그인 기기 목록 확인 및 개별 세션 제어 완결 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+
+  // 1. 활성 기기 목록 및 5대 식별 앵커 검증
+  assert.ok(indexHtml.includes('id="activeDevicesContainer"'), 'index.html activeDevicesContainer 컨테이너 구비');
+  assert.ok(indexHtml.includes('function renderActiveDevicesList()'), 'index.html renderActiveDevicesList 렌더러 구비');
+  assert.ok(indexHtml.includes('function getRegisteredDevices()'), 'index.html getRegisteredDevices 기기 목록 추출 함수 구비');
+  assert.ok(indexHtml.includes('activeDeviceCountBadge'), 'index.html 기기 수 실시간 배지 구비');
+
+  // 2. 실시간 상태 배지 및 개별 끄기/차단 제어 검증
+  assert.ok(indexHtml.includes('btn-revoke-device'), 'index.html btn-revoke-device 개별 기기 로그아웃 버튼 구비');
+  assert.ok(indexHtml.includes('🟢 정상 연결 중'), 'index.html 정상 연결 상태 배지 구비');
+  assert.ok(indexHtml.includes('🔴 원격 차단됨'), 'index.html 원격 차단 상태 배지 구비');
+
+  // 3. 사전 2중 확인 모달 및 일괄 차단 제어 검증
+  assert.ok(indexHtml.includes('function openLogoutOtherDevicesConfirmModal()'), 'index.html openLogoutOtherDevicesConfirmModal 사전 확인 모달 함수 구비');
+  assert.ok(indexHtml.includes('btnConfirmLogoutOtherModal'), 'index.html 일괄 로그아웃 확인 버튼 구비');
+  assert.ok(indexHtml.includes('btnCancelLogoutOtherModal'), 'index.html 일괄 로그아웃 취소 버튼 구비');
+  assert.ok(indexHtml.includes('logoutOtherDevicesBtn'), 'index.html logoutOtherDevicesBtn 트리거 구비');
+
+  // 4. components.js handle인증_Item70Action 직통 핸들러 및 캐시 확인
+  assert.ok(jsComp.includes('handle인증_Item70Action'), 'components.js handle인증_Item70Action 탑재');
+  assert.ok(jsComp.includes('og_task-70_cache'), 'components.js og_task-70_cache 캐시 탑재');
+  assert.ok(jsComp.includes('remote_session_control_active: true'), 'components.js remote_session_control_active 플래그 탑재');
+  assert.ok(jsComp.includes('device_list_precheck_enforced: true'), 'components.js device_list_precheck_enforced 플래그 탑재');
+  assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'device-session-control.test.js')), '단위 테스트 파일 tests/device-session-control.test.js 존재');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

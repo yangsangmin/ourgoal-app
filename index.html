@@ -3409,9 +3409,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     if(!Array.isArray(raw) || raw.length === 0){
       raw = [
-        { id: myDevId, name: os + ' ' + browser, platform: os, isCurrent: true, lastActive: Date.now(), ipHint: '한국 (현재 위치)' },
-        { id: 'dev_mobile_pwa', name: '스마트폰 (모바일 PWA 앱)', platform: 'Mobile', isCurrent: false, lastActive: Date.now() - 3600000 * 2, ipHint: '한국 (모바일 네트워크)' },
-        { id: 'dev_tablet_tab', name: '태블릿 / iPad Web', platform: 'Tablet', isCurrent: false, lastActive: Date.now() - 3600000 * 26, ipHint: '한국 (사무실)' }
+        { id: myDevId, name: os + ' ' + browser, platform: os, isCurrent: true, firstLogin: Date.now() - 3600000 * 5, lastActive: Date.now(), ipHint: '대한민국 서울 (현재 위치)', revoked: false },
+        { id: 'dev_mobile_pwa', name: '스마트폰 (모바일 PWA 앱)', platform: 'Mobile', isCurrent: false, firstLogin: Date.now() - 3600000 * 24 * 2, lastActive: Date.now() - 3600000 * 2, ipHint: '대한민국 (모바일 LTE/5G)', revoked: false },
+        { id: 'dev_tablet_tab', name: '태블릿 / iPad Web', platform: 'Tablet', isCurrent: false, firstLogin: Date.now() - 3600000 * 24 * 5, lastActive: Date.now() - 3600000 * 26, ipHint: '대한민국 경기 (Wi-Fi 사무실)', revoked: false }
       ];
       try { localStorage.setItem('ourgoal_registered_devices_' + uidVal, JSON.stringify(raw)); } catch(e){}
     } else {
@@ -3426,7 +3426,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         }
       });
       if(!hasMine){
-        raw.unshift({ id: myDevId, name: os + ' ' + browser, platform: os, isCurrent: true, lastActive: Date.now(), ipHint: '한국 (현재 위치)' });
+        raw.unshift({ id: myDevId, name: os + ' ' + browser, platform: os, isCurrent: true, firstLogin: Date.now(), lastActive: Date.now(), ipHint: '대한민국 서울 (현재 위치)', revoked: false });
       }
     }
     return raw;
@@ -3437,40 +3437,64 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var badge = document.getElementById('activeDeviceCountBadge');
     if(!container) return;
     var devices = getRegisteredDevices();
-    if(badge) badge.textContent = devices.length + '대 기기 연결됨';
+    var activeCount = devices.filter(function(d){ return !d.revoked; }).length;
+    var revokedCount = devices.filter(function(d){ return !!d.revoked; }).length;
+    if(badge){
+      badge.innerHTML = '<span style="color:var(--brand);font-weight:700;">' + activeCount + '대 활성 연결</span>' +
+        (revokedCount > 0 ? ' <span class="faint" style="font-size:.72rem;">(' + revokedCount + '대 차단됨)</span>' : '');
+    }
 
-    container.innerHTML = devices.map(function(d, idx){
+    container.innerHTML = devices.map(function(d){
       var isRevoked = !!d.revoked;
-      var timeAgo = d.isCurrent ? '지금 접속 중' : (isRevoked ? '원격 로그아웃됨' : (Math.round((Date.now() - d.lastActive) / 3600000) + '시간 전 활동'));
-      return '<div class="active-device-card" style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--card2);border-radius:10px;border:1px solid '+(d.isCurrent ? 'var(--accent)' : 'var(--rule)')+';font-size:.8125rem;">' +
-        '<div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;">' +
-          '<span style="font-size:1.2rem;">' + (d.platform==='Mobile'?'📱':(d.platform==='Tablet'?'📟':'💻')) + '</span>' +
+      var timeAgo = d.isCurrent ? '지금 접속 중' : (isRevoked ? (d.revokedAt ? '원격 차단됨 (' + new Date(d.revokedAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) + ')' : '원격 로그아웃됨') : (Math.round((Date.now() - d.lastActive) / 3600000) + '시간 전 활동'));
+      var statusBadge = d.isCurrent
+        ? '<span class="dday-pill" style="font-size:.65rem;background:rgba(99,102,241,0.15);color:var(--brand-strong);border:1px solid rgba(99,102,241,0.3);font-weight:700;">🟢 현재 기기</span>'
+        : (isRevoked
+            ? '<span class="dday-pill" style="font-size:.65rem;background:rgba(235,87,87,0.15);color:var(--red);border:1px solid rgba(235,87,87,0.3);font-weight:700;">🔴 원격 차단됨</span>'
+            : '<span class="dday-pill" style="font-size:.65rem;background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3);font-weight:700;">🟢 정상 연결 중</span>');
+
+      var cardStyle = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:12px;font-size:.8125rem;transition:all .2s ease;' +
+        (d.isCurrent
+          ? 'background:var(--card2);border:1.5px solid var(--brand);'
+          : (isRevoked
+              ? 'background:var(--surface-2);border:1px dashed var(--rule);opacity:.6;'
+              : 'background:var(--card);border:1px solid var(--rule);'));
+
+      return '<div class="active-device-card" id="deviceCard_' + escapeHtml(d.id) + '" style="' + cardStyle + '">' +
+        '<div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">' +
+          '<span style="font-size:1.3rem;">' + (d.platform==='Mobile'?'📱':(d.platform==='Tablet'?'📟':'💻')) + '</span>' +
           '<div style="min-width:0;flex:1;">' +
-            '<div style="display:flex;align-items:center;gap:6px;">' +
+            '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
               '<span style="font-weight:700;color:var(--ink);">' + escapeHtml(d.name) + '</span>' +
-              (d.isCurrent ? '<span class="tag on" style="font-size:.65rem;padding:1px 5px;background:var(--brand);color:#fff;border-radius:4px;">현재 기기</span>' : '') +
-              (isRevoked ? '<span class="tag" style="font-size:.65rem;padding:1px 5px;background:rgba(235,87,87,0.15);color:var(--red);border-radius:4px;">로그아웃됨</span>' : '') +
+              statusBadge +
             '</div>' +
             '<div class="faint" style="font-size:.72rem;margin-top:2px;">' + escapeHtml(d.ipHint || '대한민국') + ' · ' + timeAgo + '</div>' +
           '</div>' +
         '</div>' +
         '<div>' +
           (d.isCurrent
-            ? '<span class="faint" style="font-size:.72rem;color:var(--brand);font-weight:600;">(본 기기)</span>'
+            ? '<span class="faint" style="font-size:.72rem;color:var(--brand);font-weight:700;">(보호됨)</span>'
             : (isRevoked
-                ? '<button class="btn btn-ghost btn-xs" type="button" disabled style="font-size:.72rem;opacity:.5;">완료됨</button>'
-                : '<button class="btn btn-ghost btn-xs btn-revoke-device" data-devid="'+d.id+'" type="button" style="font-size:.72rem;color:var(--red);border-color:rgba(235,87,87,0.3);">로그아웃</button>')) +
+                ? '<button class="btn btn-ghost btn-xs" type="button" disabled style="font-size:.72rem;opacity:.5;border-color:var(--rule);">차단 완료</button>'
+                : '<button class="btn btn-ghost btn-xs btn-revoke-device" data-devid="' + escapeHtml(d.id) + '" data-devname="' + escapeHtml(d.name) + '" type="button" style="font-size:.72rem;color:var(--red);border-color:rgba(235,87,87,0.3);font-weight:700;">원격 로그아웃</button>')) +
         '</div>' +
       '</div>';
     }).join('');
 
     container.querySelectorAll('.btn-revoke-device').forEach(function(btn){
       btn.addEventListener('click', async function(){
+        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
         var devId = btn.dataset.devid;
-        if(!confirm('해당 기기에서 아워골 세션을 원격 로그아웃하시겠습니까?')) return;
+        var devName = btn.dataset.devname || '기기';
+        if(!confirm('\'' + devName + '\' 기기에서 아워골 세션을 원격 로그아웃하시겠습니까?\n해당 기기의 접근이 즉시 차단됩니다.')) return;
         var uidVal = (state.profile && state.profile.id) || 'guest';
         var list = getRegisteredDevices();
-        list.forEach(function(x){ if(x.id === devId) x.revoked = true; });
+        list.forEach(function(x){
+          if(x.id === devId){
+            x.revoked = true;
+            x.revokedAt = Date.now();
+          }
+        });
         try { localStorage.setItem('ourgoal_registered_devices_' + uidVal, JSON.stringify(list)); } catch(e){}
         try {
           if(window.sb && sb.channel){
@@ -3479,10 +3503,126 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           }
         } catch(e){}
         renderActiveDevicesList();
-        toast('선택한 기기를 원격 로그아웃했습니다.');
+        toast('‘' + devName + '’ 기기를 원격 로그아웃(세션 차단)했습니다.');
       });
     });
   }
+
+  /* ============ [70] 다른 모든 기기 원격 로그아웃 전 로그인 기기 목록 확인 모달 ============ */
+  function openLogoutOtherDevicesConfirmModal(){
+    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+    var devices = getRegisteredDevices();
+    var otherDevices = devices.filter(function(d){ return !d.isCurrent && !d.revoked; });
+
+    if(otherDevices.length === 0){
+      toast('현재 본 기기 외에 활성화된 다른 로그인 기기가 없습니다.');
+      return;
+    }
+
+    var listHtml = otherDevices.map(function(d){
+      var timeAgo = Math.round((Date.now() - d.lastActive) / 3600000) + '시간 전 활동';
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface-2);border-radius:10px;margin-bottom:6px;border:1px solid var(--rule);">' +
+        '<div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">' +
+          '<span style="font-size:1.3rem;">' + (d.platform==='Mobile'?'📱':(d.platform==='Tablet'?'📟':'💻')) + '</span>' +
+          '<div style="min-width:0;flex:1;">' +
+            '<div style="font-weight:700;color:var(--ink);font-size:.84rem;">' + escapeHtml(d.name) + '</div>' +
+            '<div class="faint" style="font-size:.72rem;margin-top:2px;">' + escapeHtml(d.ipHint || '대한민국') + ' · ' + timeAgo + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<span class="dday-pill" style="font-size:.65rem;background:rgba(235,87,87,0.12);color:var(--red);font-weight:700;flex-shrink:0;">차단 예정</span>' +
+      '</div>';
+    }).join('');
+
+    var modalHtml = 
+      '<h3>📱 다른 모든 기기 원격 로그아웃 확인</h3>' +
+      '<p class="faint" style="margin:-6px 0 12px;font-size:.8125rem;">현재 사용 중인 본 기기를 제외한 아래 <strong>' + otherDevices.length + '대</strong>의 모든 기기에서 즉시 세션이 종료됩니다.</p>' +
+      '<div style="max-height:220px;overflow-y:auto;margin-bottom:14px;padding-right:2px;">' +
+        listHtml +
+      '</div>' +
+      '<div style="padding:10px 12px;background:rgba(235,87,87,0.06);border:1px dashed rgba(235,87,87,0.3);border-radius:10px;margin-bottom:14px;font-size:.78rem;color:var(--ink-soft);line-height:1.45;">' +
+        '⚠️ 원격 로그아웃을 진행하면 해당 기기에서 열려있는 아워골 앱 세션이 실시간으로 차단되며, 다시 이용하려면 비밀번호나 소셜 인증을 거쳐야 합니다.' +
+      '</div>' +
+      '<div class="modal-actions">' +
+        '<button class="btn btn-ghost" id="btnCancelLogoutOtherModal" type="button">취소</button>' +
+        '<button class="btn btn-primary" id="btnConfirmLogoutOtherModal" type="button" style="background:var(--red);border-color:var(--red);color:#fff;font-weight:700;">' + otherDevices.length + '대 기기 즉시 일괄 로그아웃</button>' +
+      '</div>';
+
+    openModal(modalHtml, function(sheet){
+      var btnCancel = sheet.querySelector('#btnCancelLogoutOtherModal');
+      var btnConfirm = sheet.querySelector('#btnConfirmLogoutOtherModal');
+      if(btnCancel){
+        btnCancel.addEventListener('click', function(){ closeModal(); });
+      }
+      if(btnConfirm){
+        btnConfirm.addEventListener('click', async function(){
+          btnConfirm.disabled = true;
+          btnConfirm.textContent = '원격 로그아웃 처리 중…';
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+
+          var myDevId = getDeviceId();
+          var nowTs = Date.now();
+          var uidVal = (state.profile && state.profile.id) || 'guest';
+
+          // 1. 등록 기기 목록 전체에서 타 기기 전원 revoked = true 처리
+          var list = getRegisteredDevices();
+          var revokedCnt = 0;
+          list.forEach(function(x){
+            if(x.id !== myDevId){
+              x.revoked = true;
+              x.revokedAt = nowTs;
+              revokedCnt++;
+            }
+          });
+          try { localStorage.setItem('ourgoal_registered_devices_' + uidVal, JSON.stringify(list)); } catch(e){}
+
+          // 2. Supabase Auth others 세션 무효화
+          try { await sb.auth.signOut({ scope: 'others' }); } catch(e){ console.warn('signOut others warning:', e); }
+
+          // 3. Auth 메타데이터 갱신
+          try {
+            await sb.auth.updateUser({
+              data: {
+                remote_logout_at: nowTs,
+                remote_logout_device_id: myDevId
+              }
+            });
+          } catch(e){ console.warn('updateUser metadata warning:', e); }
+
+          // 4. 프로필 설정 저장 및 현재 기기 로그인 시간 갱신
+          if(state.profile && state.profile.settings){
+            state.profile.settings.remoteLogoutTimestamp = nowTs;
+            state.profile.settings.remoteLogoutDeviceId = myDevId;
+            setDeviceLoginTime(nowTs);
+            try { await saveProfile(); } catch(e){}
+          }
+
+          // 5. 활성 접속 기기에 실시간 브로드캐스트 전송
+          try {
+            if(USER_SESSION_CHANNEL){
+              await USER_SESSION_CHANNEL.send({
+                type: 'broadcast',
+                event: 'remote_logout',
+                payload: {
+                  keptDeviceId: myDevId,
+                  timestamp: nowTs,
+                  userId: (state.profile && state.profile.id) || ''
+                }
+              });
+            }
+          } catch(e){}
+
+          // 6. 로컬스토리지 스토리지 이벤트 전송
+          try { localStorage.setItem('ourgoal_remote_logout_trigger', nowTs + '_' + myDevId); } catch(e){}
+
+          // 7. 실시간 화면 갱신 (끄면 꺼지는 시각적 피드백 보장!)
+          closeModal();
+          renderActiveDevicesList();
+          toast('다른 ' + revokedCnt + '대 기기에서 안전하게 원격 로그아웃되었습니다.');
+        });
+      }
+    });
+  }
+  if(typeof window !== 'undefined'){ window.openLogoutOtherDevicesConfirmModal = openLogoutOtherDevicesConfirmModal; }
 
   /* ============ [71] 2단계 인증(2FA) 보안 PIN 설정 및 세션 진입 챌린지 ============ */
   function openTwoFactorSetupModal(){
@@ -36734,54 +36874,10 @@ wirePromptEncyclopediaEvents(body);
     }
     var logoutOtherBtn = document.getElementById('logoutOtherDevicesBtn');
     if(logoutOtherBtn){
-      logoutOtherBtn.onclick = async function(){
-        if(!confirm('현재 사용 중인 이 기기를 제외한 다른 모든 기기(컴퓨터, 태블릿 등)에서 원격 로그아웃하시겠습니까?')) return;
-        toast('다른 기기 원격 로그아웃 처리 중…');
-        var myDevId = getDeviceId();
-        var nowTs = Date.now();
-        // 1. Supabase Auth others 세션 무효화
-        try{
-          await sb.auth.signOut({ scope: 'others' });
-        }catch(e){
-          console.warn('signOut others warning:', e);
+      logoutOtherBtn.onclick = function(){
+        if(typeof openLogoutOtherDevicesConfirmModal === 'function'){
+          openLogoutOtherDevicesConfirmModal();
         }
-        // 2. Auth 메타데이터 갱신
-        try{
-          await sb.auth.updateUser({
-            data: {
-              remote_logout_at: nowTs,
-              remote_logout_device_id: myDevId
-            }
-          });
-        }catch(e){
-          console.warn('updateUser metadata warning:', e);
-        }
-        // 3. 프로필 설정 저장 및 현재 기기 로그인 시간 갱신
-        state.profile.settings.remoteLogoutTimestamp = nowTs;
-        state.profile.settings.remoteLogoutDeviceId = myDevId;
-        setDeviceLoginTime(nowTs);
-        await saveProfile();
-        // 4. 활성 접속 기기(태블릿, PC 등)에 실시간 브로드캐스트 전송
-        try{
-          if(USER_SESSION_CHANNEL){
-            await USER_SESSION_CHANNEL.send({
-              type: 'broadcast',
-              event: 'remote_logout',
-              payload: {
-                keptDeviceId: myDevId,
-                timestamp: nowTs,
-                userId: state.profile.id
-              }
-            });
-          }
-        }catch(e){
-          console.warn('Realtime broadcast warning:', e);
-        }
-        // 5. 로컬스토리지 스토리지 이벤트 전송 (동일 브라우저 타 탭)
-        try{
-          localStorage.setItem('ourgoal_remote_logout_trigger', nowTs + '_' + myDevId);
-        }catch(e){}
-        toast('다른 모든 기기(태블릿, 컴퓨터 등)에서 안전하게 원격 로그아웃되었습니다.');
       };
     }
     // 체크인 시간 설정
