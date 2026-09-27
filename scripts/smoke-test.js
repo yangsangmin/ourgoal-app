@@ -10023,6 +10023,43 @@ check('compliance: [#TASK-ES-322] [71] 2단계 인증(2FA) 실질적 보안 작�
   assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'two-factor-auth.test.js')), '단위 테스트 파일 tests/two-factor-auth.test.js 존재');
 });
 
+/* ============ [#TASK-ES-324] [73] 프로필 편집 내 잇템등록 > 잇템추가 버튼 작동 안함 오류 수정 무결성 검증 ============ */
+check('compliance: [#TASK-ES-324] [73] 프로필 편집 내 잇템등록 > 잇템추가 버튼 작동 안함 오류 수정 무결성 검증', () => {
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
+  const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
+
+  // 1. pvAddItItem 버튼 터치타겟 44px 및 ui.css 스타일 탑재
+  assert.ok(indexHtml.includes('id="pvAddItItem"'), 'index.html 내 pvAddItItem 버튼 탑재');
+  assert.ok(indexHtml.includes('min-height:44px'), 'index.html 내 pvAddItItem min-height 44px 보장');
+  assert.ok(uiCss.includes('#pvAddItItem'), 'ui.css 내 #pvAddItItem 44px 스타일 정의');
+
+  // 2. 빈 상태 잇템 안내 상자 클릭 트리거 배선
+  assert.ok(indexHtml.includes('id="pvEmptyItItemTrigger"'), 'index.html 내 pvEmptyItItemTrigger 요소 탑재');
+  assert.ok(indexHtml.includes('toggleInlineForm(true)'), '빈 상태 클릭 시 toggleInlineForm(true) 폼 열림 연동');
+
+  // 3. 잇템 추가/삭제 즉시 Zero Data Loss 로컬 스토리지 및 상태 영속화
+  assert.ok(indexHtml.includes('state.profile.itItems = draft.itItems.slice();'), 'itItems 추가 시 state.profile.itItems 즉시 동기화');
+  assert.ok(indexHtml.includes('ourgoal_profile_backup_'), 'itItems 추가/삭제 시 ourgoal_profile_backup_ 즉시 저장');
+  assert.ok(indexHtml.includes('ourgoal_guest_profile'), 'itItems 추가/삭제 시 ourgoal_guest_profile 즉시 저장');
+
+  // 4. Supabase it_items 컬럼 안전 upsert 및 loadProfile 복원
+  assert.ok(indexHtml.includes('it_items: state.profile.itItems || []'), 'saveProfile 내 userUpsertObj it_items 포함');
+  assert.ok(indexHtml.includes('/it_items/i.test(uUpsertRes.error.message'), 'it_items 컬럼 미존재 시 자동 안전 폴백');
+  assert.ok(indexHtml.includes('urow.it_items && Array.isArray(urow.it_items)'), 'loadProfile 내 urow.it_items 안전 복원');
+
+  // 5. 설정창 퀵 프로필 편집 브릿지
+  assert.ok(indexHtml.includes("onclick=\"if(typeof window.openProfileEditor === 'function'){ window.openProfileEditor(); }"), 'btnSettingsQuickAvatar 프로필 편집기 1순위 직결');
+
+  // 6. 직통 액션 핸들러 및 캐시 플래그
+  assert.ok(jsComp.includes('handle프로필_Item73Action'), 'components.js handle프로필_Item73Action 핸들러 탑재');
+  assert.ok(jsComp.includes('og_task-73_cache'), 'components.js og_task-73_cache 로컬 캐시 탑재');
+  assert.ok(jsComp.includes('ititem_add_button_fixed: true'), 'components.js ititem_add_button_fixed 플래그 탑재');
+  assert.ok(jsComp.includes('empty_ititem_tap_wired: true'), 'components.js empty_ititem_tap_wired 플래그 탑재');
+  assert.ok(jsComp.includes('zero_data_loss_persisted: true'), 'components.js zero_data_loss_persisted 플래그 탑재');
+  assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'profile-edit-ititem.test.js')), '단위 테스트 파일 tests/profile-edit-ititem.test.js 존재');
+});
+
 console.log(passed + '개 통과, ' + failures + '개 실패');
 
 if (failures > 0) {

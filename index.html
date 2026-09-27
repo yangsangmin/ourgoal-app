@@ -1225,7 +1225,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           </div>
         </div>
         <div class="toss-settings-hero-actions">
-          <button type="button" class="btn btn-ghost btn-sm" id="btnSettingsQuickAvatar" onclick="if(window.OurgoalAvatar &amp;&amp; window.OurgoalAvatar.openAvatarModal){ window.OurgoalAvatar.openAvatarModal({ profile: state.profile, state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal }); } else { var b=document.getElementById('btnOpenAvatarModal'); if(b) b.click(); }">✏️ 프로필 편집</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="btnSettingsQuickAvatar" onclick="if(typeof window.openProfileEditor === 'function'){ window.openProfileEditor(); } else if(window.OurgoalAvatar &amp;&amp; window.OurgoalAvatar.openAvatarModal){ window.OurgoalAvatar.openAvatarModal({ profile: state.profile, state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal }); } else { var b=document.getElementById('btnOpenAvatarModal'); if(b) b.click(); }">✏️ 프로필 편집</button>
           <button type="button" class="btn btn-primary btn-sm" id="btnOpenDynamicAlbum" onclick="if(window.OurgoalAvatar &amp;&amp; window.OurgoalAvatar.openDynamicAlbumModal){ window.OurgoalAvatar.openDynamicAlbumModal({ profile: state.profile, state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal, renderHome: renderHome, renderSettingsScreen: renderSettingsScreen }); } else { toast('아바타 도감을 불러오는 중입니다.'); }">📖 아바타 도감</button>
         </div>
         <div class="toss-settings-hero-stats">
@@ -3249,7 +3249,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var finalInterests = (urow.interests && urow.interests.length) ? urow.interests : ((localCachedProf && localCachedProf.interests) || []);
     var finalRegion = urow.region || (localCachedProf && localCachedProf.region) || '';
     var finalRegionPublic = (typeof urow.region_public !== 'undefined') ? !!urow.region_public : (localCachedProf ? !!localCachedProf.regionPublic : false);
-    var finalItItems = (localCachedProf && localCachedProf.itItems) || [];
+    var finalItItems = (urow.it_items && Array.isArray(urow.it_items) && urow.it_items.length) ? urow.it_items : ((localCachedProf && localCachedProf.itItems) || []);
 
     if(finalBio || finalInterests.length || finalRegion || finalItItems.length){
       try {
@@ -4582,11 +4582,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         bio: state.profile.bio || null, avatar_url: state.profile.avatarUrl || null,
         interests: state.profile.interests || [],
         region: state.profile.region || null, region_public: !!state.profile.regionPublic,
+        it_items: state.profile.itItems || [],
         saved_avatars: savedAvatarsPayload
       };
       var uUpsertRes = await sb.from('users').upsert(userUpsertObj);
-      if(uUpsertRes && uUpsertRes.error && /saved_avatars/i.test(uUpsertRes.error.message || '')){
-        delete userUpsertObj.saved_avatars;
+      if(uUpsertRes && uUpsertRes.error && (/it_items/i.test(uUpsertRes.error.message || '') || /saved_avatars/i.test(uUpsertRes.error.message || ''))){
+        if(/it_items/i.test(uUpsertRes.error.message || '')) delete userUpsertObj.it_items;
+        if(/saved_avatars/i.test(uUpsertRes.error.message || '')) delete userUpsertObj.saved_avatars;
         await sb.from('users').upsert(userUpsertObj);
       }
       if(savedAvatarsPayload.length){
@@ -7852,7 +7854,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--rule);">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
           '<label style="margin:0;font-weight:700;">내 잇템 등록 (추천 아이템 & 장비)</label>' +
-          '<button class="btn btn-ghost btn-sm" id="pvAddItItem" type="button" style="padding:3px 8px;font-size:.8125rem;">+ 잇템 추가</button>' +
+          '<button class="btn btn-ghost btn-sm" id="pvAddItItem" type="button" style="padding:6px 12px;font-size:.8125rem;min-height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;border:1px solid var(--rule);border-radius:8px;cursor:pointer;">+ 잇템 추가</button>' +
         '</div>' +
         '<p class="faint" style="margin:0 0 10px;font-size:.8125rem;">내가 애용하는 운동 장비·꿀템 사진과 구매 링크를 등록해보세요.</p>' +
         '<div id="pvInlineItItemForm" style="display:none;background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:12px;">' +
@@ -7864,12 +7866,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             '<input type="checkbox" id="itIsAffiliateCheck" style="width:16px;height:16px;cursor:pointer;">' +
             '<label for="itIsAffiliateCheck" style="font-size:.78125rem;cursor:pointer;margin:0;color:var(--brand);font-weight:600;">쿠팡 파트너스 등 수수료를 제공받는 제휴 링크입니다</label>' +
           '</div>' +
-          '<div style="margin-top:8px;padding:8px 10px;background:rgba(108,92,231,0.06);border:1px solid rgba(108,92,231,0.2);border-radius:8px;font-size:.75rem;line-height:1.45;color:var(--ink-soft);">' +
+          '<div style="margin-top:8px;padding-8px 10px;background:rgba(108,92,231,0.06);border:1px solid rgba(108,92,231,0.2);border-radius:8px;font-size:.75rem;line-height:1.45;color:var(--ink-soft);">' +
             '<span style="color:var(--brand-strong);font-weight:700;">⚠️ 잇템 등록 안내:</span> 제휴 링크인 경우 추천평에 [파트너스 활동의 일환으로 수수료를 제공받을 수 있음] 문구가 자동 반영됩니다.' +
           '</div>' +
           '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px;">' +
-            '<button class="btn btn-ghost btn-sm" id="btnCancelInlineItItem" type="button">접기</button>' +
-            '<button class="btn btn-primary btn-sm" id="btnConfirmInlineItItem" type="button">잇템 등록 완료</button>' +
+            '<button class="btn btn-ghost btn-sm" id="btnCancelInlineItItem" type="button" style="min-height:36px;">접기</button>' +
+            '<button class="btn btn-primary btn-sm" id="btnConfirmInlineItItem" type="button" style="min-height:36px;font-weight:700;">잇템 등록 완료</button>' +
           '</div>' +
         '</div>' +
         '<div id="pvItItemsContainer"></div>' +
@@ -7919,7 +7921,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           var box = sheet.querySelector('#pvItItemsContainer');
           if(!box) return;
           if(!draft.itItems.length){
-            box.innerHTML = '<p class="faint" style="margin:4px 0 8px;font-size:.8125rem;text-align:center;padding:12px;background:var(--card2);border-radius:10px;">등록된 잇템이 없어요. [+ 잇템 추가]를 눌러 등록해보세요!</p>';
+            box.innerHTML = '<div id="pvEmptyItItemTrigger" role="button" tabindex="0" style="margin:4px 0 8px;font-size:.8125rem;text-align:center;padding:14px;background:var(--card2);border:1px dashed var(--rule);border-radius:10px;cursor:pointer;color:var(--brand);font-weight:600;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:54px;justify-content:center;">' +
+              '<span>👟 등록된 잇템이 없어요</span>' +
+              '<span style="font-size:.75rem;color:var(--brand);text-decoration:underline;">[+ 잇템 추가]를 눌러 장비·꿀템을 등록해보세요!</span>' +
+            '</div>';
+            var emptyTrigger = box.querySelector('#pvEmptyItItemTrigger');
+            if(emptyTrigger){
+              emptyTrigger.addEventListener('click', function(){
+                if(window.navigator && window.navigator.vibrate) try{ window.navigator.vibrate(12); }catch(e){}
+                toggleInlineForm(true);
+              });
+            }
             return;
           }
           box.innerHTML = draft.itItems.map(function(it, idx){
@@ -7935,7 +7947,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
                   (it.buyUrl ? '<a href="'+escapeHtml(it.buyUrl)+'" target="_blank" rel="noopener noreferrer nofollow" style="font-size:.8125rem;color:var(--brand);text-decoration:underline;word-break:break-all;display:block;margin-top:2px;">'+escapeHtml(it.buyUrl)+' ↗</a>' : '') +
                   (it.desc ? '<div class="faint" style="font-size:.8125rem;margin-top:2px;">'+escapeHtml(it.desc)+'</div>' : '') +
                 '</div>' +
-                '<button class="icon-btn" data-delititem="'+idx+'" type="button" aria-label="잇템 삭제" style="padding:4px 8px;font-size:1.1rem;cursor:pointer;">×</button>' +
+                '<button class="icon-btn" data-delititem="'+idx+'" type="button" aria-label="잇템 삭제" style="padding:6px 10px;font-size:1.2rem;cursor:pointer;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;">×</button>' +
               '</div>' +
               '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:6px;border-top:1px dashed var(--rule);font-size:.6875rem;color:var(--ink-faint);">' +
                 '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">※ 아워골은 상품 판매 당사자가 아닙니다.</span>' +
@@ -7945,10 +7957,26 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           }).join('');
 
           box.querySelectorAll('[data-delititem]').forEach(function(b){
-            b.addEventListener('click', function(){
+            b.addEventListener('click', async function(){
+              if(window.navigator && window.navigator.vibrate) try{ window.navigator.vibrate(12); }catch(e){}
               var idx = parseInt(b.dataset.delititem, 10);
               draft.itItems.splice(idx, 1);
+              if(state.profile){
+                state.profile.itItems = draft.itItems.slice();
+                var uidVal = state.profile.id || 'guest';
+                try {
+                  localStorage.setItem('ourgoal_profile_backup_' + uidVal, JSON.stringify({
+                    displayName: state.profile.displayName, bio: state.profile.bio || '', avatarUrl: state.profile.avatarUrl || '',
+                    interests: state.profile.interests || [], region: state.profile.region || '', regionPublic: state.profile.regionPublic, itItems: state.profile.itItems
+                  }));
+                  localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile));
+                } catch(e){}
+              }
               paintItItems();
+              try {
+                await saveProfile();
+                if(typeof renderSettingsScreen === 'function') renderSettingsScreen();
+              } catch(e){}
               toast('잇템이 삭제되었습니다.');
             });
           });
@@ -7958,23 +7986,38 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         // 잇템 추가 토글
         var addBtn = sheet.querySelector('#pvAddItItem');
         var inlineForm = sheet.querySelector('#pvInlineItItemForm');
-        if(addBtn && inlineForm){
-          addBtn.addEventListener('click', function(){
-            inlineForm.style.display = (inlineForm.style.display === 'none') ? 'block' : 'none';
-            if(inlineForm.style.display === 'block'){
-              sheet.querySelector('#itNameInput').focus();
+        function toggleInlineForm(forceOpen){
+          if(!inlineForm) return;
+          var willOpen = (typeof forceOpen === 'boolean') ? forceOpen : (inlineForm.style.display === 'none');
+          inlineForm.style.display = willOpen ? 'block' : 'none';
+          if(addBtn){
+            addBtn.textContent = willOpen ? '× 닫기' : '+ 잇템 추가';
+            addBtn.style.color = willOpen ? 'var(--red, #ef4444)' : '';
+          }
+          if(willOpen){
+            var nameInp = sheet.querySelector('#itNameInput');
+            if(nameInp){
+              nameInp.focus();
+              try { inlineForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch(e){}
             }
+          }
+        }
+        if(addBtn && inlineForm){
+          addBtn.addEventListener('click', function(ev){
+            if(ev) ev.preventDefault();
+            if(window.navigator && window.navigator.vibrate) try{ window.navigator.vibrate(12); }catch(e){}
+            toggleInlineForm();
           });
         }
         var btnCancelInline = sheet.querySelector('#btnCancelInlineItItem');
         if(btnCancelInline){
           btnCancelInline.addEventListener('click', function(){
-            inlineForm.style.display = 'none';
+            toggleInlineForm(false);
           });
         }
         var btnConfirmInline = sheet.querySelector('#btnConfirmInlineItItem');
         if(btnConfirmInline){
-          btnConfirmInline.addEventListener('click', function(){
+          btnConfirmInline.addEventListener('click', async function(){
             var nameVal = (sheet.querySelector('#itNameInput').value || '').trim();
             if(!nameVal){
               toast('잇템 이름을 입력해주세요.');
@@ -7985,22 +8028,49 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             var descVal = (sheet.querySelector('#itDescInput').value || '').trim();
             var isAffVal = !!sheet.querySelector('#itIsAffiliateCheck').checked;
 
-            draft.itItems.push({
+            var newItem = {
               id: 'it_' + Date.now(),
               name: nameVal,
               buyUrl: buyUrlVal,
               desc: descVal,
               isAffiliate: isAffVal,
               createdAt: new Date().toISOString()
-            });
+            };
+
+            draft.itItems.push(newItem);
+
+            // Zero Data Loss: state.profile 및 로컬 캐시에 즉시 원자적 동기화
+            if(state.profile){
+              state.profile.itItems = draft.itItems.slice();
+              var uidVal = state.profile.id || 'guest';
+              try {
+                localStorage.setItem('ourgoal_profile_backup_' + uidVal, JSON.stringify({
+                  displayName: state.profile.displayName, bio: state.profile.bio || '', avatarUrl: state.profile.avatarUrl || '',
+                  interests: state.profile.interests || [], region: state.profile.region || '', regionPublic: state.profile.regionPublic, itItems: state.profile.itItems
+                }));
+                localStorage.setItem('ourgoal_guest_profile', JSON.stringify(state.profile));
+              } catch(e){}
+            }
 
             sheet.querySelector('#itNameInput').value = '';
             sheet.querySelector('#itBuyUrlInput').value = '';
             sheet.querySelector('#itDescInput').value = '';
             sheet.querySelector('#itIsAffiliateCheck').checked = false;
-            inlineForm.style.display = 'none';
+            toggleInlineForm(false);
             paintItItems();
-            if(typeof openProfileEditor === "function" && false){ openProfileEditor(draft); }
+
+            // 12ms 햅틱 반응
+            if(window.navigator && window.navigator.vibrate) try{ window.navigator.vibrate(12); }catch(e){}
+
+            // 비동기 saveProfile 및 뷰 원자적 전파 (사용자가 하단 저장을 누르지 않아도 보존)
+            try {
+              await saveProfile();
+              if(typeof renderSettingsScreen === 'function') renderSettingsScreen();
+              if(typeof renderHome === 'function') renderHome();
+            } catch(spErr){
+              console.warn('[itItem] saveProfile sync:', spErr);
+            }
+
             toast('"' + nameVal + '" 잇템을 추가했어요 ✨');
           });
         }
@@ -23401,6 +23471,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     var goalStatusHash = computeGoalStatusHash(goal);
     if(!state.profile.settings.goalStatusSummaries) state.profile.settings.goalStatusSummaries = {};
+    var goalStatusCache = state.profile.settings.goalStatusSummaries[goal.id];
     var todayKST = getKSTDateKey(nowISO());
     var todayEffective = typeof getEffectiveStandardDateKey === 'function' ? getEffectiveStandardDateKey(nowISO()) : todayKST;
     var isPending = !!(state.goalStatusPending && state.goalStatusPending[goal.id]);
