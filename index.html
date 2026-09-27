@@ -17318,20 +17318,31 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '</div>' +
         '</div>' +
         (msRows ? '<div style="margin-bottom:12px;" id="shareMsSection"><label style="font-size:.8125rem;font-weight:700;display:block;margin-bottom:4px;color:var(--ink);">함께 보여줄 마일스톤 (선택)</label><div class="ms-list" id="shareMsListSlot">'+msRows+'</div></div>' : '<div id="shareMsSection" style="display:none;"><div class="ms-list" id="shareMsListSlot"></div></div>') +
-        // 직접 사진 첨부 섹션 ([#TASK-ES-177], [58])
-        '<div style="margin-bottom:12px;">' +
-          '<label style="font-size:.8125rem;font-weight:700;display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;color:var(--ink);">' +
+        // 직접 실천 사진 첨부 섹션 ([#TASK-ES-309], [58])
+        '<div style="margin-bottom:14px;" class="share-photo-uploader-box">' +
+          '<label style="font-size:.8125rem;font-weight:700;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;color:var(--ink);">' +
             '<span>📸 실천 사진 첨부 (선택)</span>' +
-            '<span class="faint" style="font-size:.72rem;font-weight:500;">카메라 / 앨범 직접 업로드</span>' +
+            '<span class="faint" style="font-size:.72rem;font-weight:500;">카메라 촬영 / 앨범 / 드래그</span>' +
           '</label>' +
-          '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">' +
-            '<input type="file" id="shareDirectPhotoInput" accept="image/*" style="display:none;" />' +
-            '<button type="button" class="btn btn-ghost btn-sm" id="btnSharePickPhoto" style="border:1px solid var(--rule);padding:7px 12px;font-size:.8125rem;display:flex;align-items:center;gap:6px;font-weight:700;border-radius:10px;">' +
-              '📷 <span>사진 선택 / 촬영</span>' +
+          '<input type="file" id="shareDirectPhotoInput" accept="image/*" style="display:none;" />' +
+          '<!-- 사진 미첨부 시 드롭존 -->' +
+          '<div id="sharePhotoDropzone" class="share-photo-dropzone" style="display:'+(customUploadedPhoto ? 'none' : 'flex')+';">' +
+            '<div style="font-size:1.6rem;margin-bottom:4px;">📷</div>' +
+            '<div style="font-size:.84rem;font-weight:700;color:var(--ink);margin-bottom:2px;">실천 인증 사진을 등록해보세요</div>' +
+            '<div class="faint" style="font-size:.72rem;">터치하여 사진 선택 또는 여기에 드래그</div>' +
+            '<button type="button" class="btn btn-ghost btn-sm" id="btnSharePickPhoto" style="margin-top:8px;border:1px solid var(--rule);padding:5px 12px;font-size:.78rem;font-weight:700;border-radius:8px;">' +
+              '사진 선택 / 촬영' +
             '</button>' +
-            '<div id="shareDirectPhotoPreviewWrap" style="display:none;position:relative;align-items:center;">' +
-              '<img id="shareDirectPhotoPreviewImg" src="" style="height:54px;width:54px;border-radius:10px;object-fit:cover;border:1px solid var(--rule);" />' +
-              '<button type="button" id="btnShareRemovePhoto" style="position:absolute;top:-6px;right:-6px;background:rgba(0,0,0,0.65);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;">×</button>' +
+          '</div>' +
+          '<!-- 사진 첨부 완료 시 프리뷰 카드 -->' +
+          '<div id="shareDirectPhotoPreviewWrap" class="share-photo-preview-card" style="display:'+(customUploadedPhoto ? 'flex' : 'none')+';">' +
+            '<div style="position:relative;width:100%;max-width:280px;margin:0 auto;text-align:center;">' +
+              '<img id="shareDirectPhotoPreviewImg" src="'+(customUploadedPhoto || '')+'" style="width:100%;max-height:180px;object-fit:cover;border-radius:12px;border:1px solid var(--rule);box-shadow:var(--shadow-sm);" />' +
+              '<button type="button" id="btnShareRemovePhoto" class="share-photo-remove-btn" title="사진 삭제">✕</button>' +
+              '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;padding:0 4px;">' +
+                '<span class="tag on" style="font-size:.72rem;padding:2px 8px;">📸 실천 인증 사진 첨부됨</span>' +
+                '<button type="button" id="btnShareChangePhoto" class="btn btn-ghost btn-sm" style="font-size:.72rem;padding:2px 8px;border:1px solid var(--rule);">사진 변경</button>' +
+              '</div>' +
             '</div>' +
           '</div>' +
         '</div>' +
@@ -17370,33 +17381,75 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     openModal(renderModalHtml(), function(sheet){
       sheet.querySelector('#shareCancelBtn').addEventListener('click', closeModal);
 
-      // 직접 사진 첨부 핸들러 ([#TASK-ES-177], [58])
+      // 직접 사진 첨부 및 드롭존 핸들러 ([#TASK-ES-309], [58])
       var btnPickPhoto = sheet.querySelector('#btnSharePickPhoto');
+      var photoDropzone = sheet.querySelector('#sharePhotoDropzone');
       var photoInput = sheet.querySelector('#shareDirectPhotoInput');
       var photoPreviewWrap = sheet.querySelector('#shareDirectPhotoPreviewWrap');
       var photoPreviewImg = sheet.querySelector('#shareDirectPhotoPreviewImg');
       var btnRemovePhoto = sheet.querySelector('#btnShareRemovePhoto');
+      var btnChangePhoto = sheet.querySelector('#btnShareChangePhoto');
 
-      if(btnPickPhoto && photoInput){
-        btnPickPhoto.onclick = function(){
-          photoInput.click();
+      function handlePhotoFile(file){
+        if(!file) return;
+        if(typeof triggerHaptic === 'function') triggerHaptic(12);
+        else if(navigator && typeof navigator.vibrate === 'function') try { navigator.vibrate(12); } catch(e){}
+        compressImage(file, 800, 0.82, function(dataUrl){
+          customUploadedPhoto = dataUrl;
+          if(photoPreviewImg) photoPreviewImg.src = dataUrl;
+          if(photoDropzone) photoDropzone.style.display = 'none';
+          if(photoPreviewWrap) photoPreviewWrap.style.display = 'flex';
+          toast('실천 인증 사진이 첨부되었어요! 📸');
+        });
+      }
+
+      if(photoDropzone && photoInput){
+        photoDropzone.onclick = function(e){
+          if(e.target === btnPickPhoto || photoDropzone.contains(e.target)){
+            photoInput.click();
+          }
         };
-        photoInput.onchange = function(e){
-          var file = e.target.files && e.target.files[0];
-          if(!file) return;
-          compressImage(file, 800, 0.82, function(dataUrl){
-            customUploadedPhoto = dataUrl;
-            if(photoPreviewImg) photoPreviewImg.src = dataUrl;
-            if(photoPreviewWrap) photoPreviewWrap.style.display = 'flex';
-            toast('인증 사진이 성공적으로 첨부되었어요! 📸');
-          });
+        photoDropzone.ondragover = function(e){
+          e.preventDefault();
+          photoDropzone.classList.add('drag-over');
+        };
+        photoDropzone.ondragleave = function(e){
+          e.preventDefault();
+          photoDropzone.classList.remove('drag-over');
+        };
+        photoDropzone.ondrop = function(e){
+          e.preventDefault();
+          photoDropzone.classList.remove('drag-over');
+          if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]){
+            handlePhotoFile(e.dataTransfer.files[0]);
+          }
         };
       }
+
+      if(photoInput){
+        photoInput.onchange = function(e){
+          var file = e.target.files && e.target.files[0];
+          handlePhotoFile(file);
+        };
+      }
+
+      if(btnChangePhoto && photoInput){
+        btnChangePhoto.onclick = function(e){
+          e.stopPropagation();
+          photoInput.click();
+        };
+      }
+
       if(btnRemovePhoto){
-        btnRemovePhoto.onclick = function(){
+        btnRemovePhoto.onclick = function(e){
+          e.stopPropagation();
+          if(typeof triggerHaptic === 'function') triggerHaptic(12);
+          else if(navigator && typeof navigator.vibrate === 'function') try { navigator.vibrate(12); } catch(err){}
           customUploadedPhoto = null;
           if(photoInput) photoInput.value = '';
           if(photoPreviewWrap) photoPreviewWrap.style.display = 'none';
+          if(photoDropzone) photoDropzone.style.display = 'flex';
+          toast('첨부된 사진을 삭제했어요');
         };
       }
 
@@ -17709,6 +17762,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           caption: caption,
           cheers_count: 0,
           created_at: nowISO(),
+          photo: finalPhoto,
           extra: {
             category: selectedCat,
             includeRecord: (incRecord && curRecord) ? true : false,
