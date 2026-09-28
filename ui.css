@@ -6982,8 +6982,8 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   grid-template-columns: repeat(7, 1fr);
   gap: 3px;
 }
-.s-cal-day-cell {
-  min-height: 76px;
+;
+  max-height: 56px;
   min-width: 0;
   width: 100%;
   box-sizing: border-box;
@@ -10136,13 +10136,14 @@ html[data-theme="white"] #goalsHeadlineSentence b {
 }
 
 #screen-home .sanctuary-top-bar { order: 1; }
-#screen-home .home-head-row { order: 2; }
-#screen-home #homeHeadlineSentence { order: 3; }
-#screen-home .home-recent-title { order: 4; margin: 4px 0 8px; }
-#screen-home #homePositionStrip { order: 5; }
-#screen-home #homeGoalList { order: 6; margin-bottom: 12px; }
-#screen-home #captureCardBox { order: 7; margin-bottom: 12px; }
-#screen-home #levelBadgeRow { order: 8; }
+#screen-home #sanctuaryHomeSlot { order: 2; margin-top: 10px; }
+#screen-home .home-head-row { order: 3; margin-top: 14px; }
+#screen-home #homeHeadlineSentence { order: 4; }
+#screen-home .home-recent-title { order: 5; margin: 4px 0 8px; }
+#screen-home #homePositionStrip { order: 6; }
+#screen-home #homeGoalList { order: 7; margin-bottom: 12px; }
+#screen-home #captureCardBox { order: 8; margin-bottom: 12px; }
+#screen-home #levelBadgeRow { order: 9; }
 #screen-home #todayGlancePill { order: 9; }
 #screen-home #a11yLiveAnnouncer { order: 10; }
 #screen-home #offlineNoticeBanner { order: 11; }
@@ -14461,4 +14462,410 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
     padding: 6px 10px !important;
     min-height: 40px !important;
   }
+}
+
+
+/* =========================================================================
+ * [#TASK-ES-331] 전 탭 UI/UX 전면개편 프로덕션 정본 스타일 (74개 전수 항목)
+ * ========================================================================= */
+
+/* 4대 테마 변수 통일 */
+:root, html[data-theme="focus-sanctuary"] {
+  --s-bg: #0B0F17;
+  --s-card: #131A26;
+  --s-card2: #1A2332;
+  --s-surface: #1E293B;
+  --s-surface2: #243044;
+  --s-rule: #2D3B4F;
+  --s-ink: #F1F5F9;
+  --s-ink-soft: #94A3B8;
+  --s-ink-faint: #64748B;
+  --s-brand: #10B981;
+  --s-brand-soft: rgba(16, 185, 129, 0.15);
+  --s-accent: #3B82F6;
+  --s-gold: #F59E0B;
+  --s-danger: #EF4444;
+  --s-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+html[data-theme="black"] {
+  --s-bg: #000000;
+  --s-card: #0A0A0A;
+  --s-card2: #141414;
+  --s-surface: #1A1A1A;
+  --s-surface2: #222222;
+  --s-rule: #2A2A2A;
+  --s-ink: #FFFFFF;
+  --s-ink-soft: #A3A3A3;
+  --s-ink-faint: #737373;
+  --s-brand: #10B981;
+  --s-brand-soft: rgba(16, 185, 129, 0.2);
+  --s-accent: #38BDF8;
+  --s-gold: #FBBF24;
+  --s-danger: #F87171;
+  --s-shadow: 0 8px 24px rgba(0,0,0,0.8);
+}
+
+html[data-theme="white"] {
+  --s-bg: #F8FAFC;
+  --s-card: #FFFFFF;
+  --s-card2: #F1F5F9;
+  --s-surface: #E2E8F0;
+  --s-surface2: #CBD5E1;
+  --s-rule: #E2E8F0;
+  --s-ink: #0F172A;
+  --s-ink-soft: #475569;
+  --s-ink-faint: #94A3B8;
+  --s-brand: #059669;
+  --s-brand-soft: rgba(5, 150, 105, 0.12);
+  --s-accent: #2563EB;
+  --s-gold: #D97706;
+  --s-danger: #DC2626;
+  --s-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+html[data-theme="urban-city"] {
+  --s-bg: #0B0F19;
+  --s-card: #111827;
+  --s-card2: #1F2937;
+  --s-surface: #283548;
+  --s-surface2: #374151;
+  --s-rule: #1E293B;
+  --s-ink: #F9FAFB;
+  --s-ink-soft: #9CA3AF;
+  --s-ink-faint: #6B7280;
+  --s-brand: #0EA5E9;
+  --s-brand-soft: rgba(14, 165, 233, 0.15);
+  --s-accent: #818CF8;
+  --s-gold: #F59E0B;
+  --s-danger: #F43F5E;
+  --s-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+/* 포커스 성소 공통 모던 글래스모피즘 카드 */
+.blueprint-card {
+  background: var(--card, #131A26);
+  border: 1px solid var(--rule, #2D3B4F);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  backdrop-filter: blur(8px);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.blueprint-card:active {
+  transform: scale(0.995);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.card-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--ink, #F1F5F9);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 홈 탭 3초 체크인 원카드 (.home-hero-card) */
+.home-hero-card {
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.08) 0%, rgba(19, 26, 38, 0.95) 100%);
+  border: 1.5px solid rgba(16, 185, 129, 0.35);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 10px 28px rgba(16, 185, 129, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.home-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(16, 185, 129, 0.18);
+  color: var(--brand, #10B981);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.home-hero-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--ink, #F1F5F9);
+  margin-bottom: 4px;
+  line-height: 1.35;
+}
+
+.home-hero-sub {
+  font-size: 0.8rem;
+  color: var(--ink-soft, #94A3B8);
+  margin-bottom: 12px;
+}
+
+.home-hero-prog-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.home-hero-prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10B981, #059669);
+  border-radius: 999px;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.home-hero-checkin-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 13px;
+  padding: 13px 18px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.home-hero-checkin-btn:active {
+  transform: scale(0.975);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+/* 7열 5행 완전 월달력 그리드 */
+.full-month-calendar {
+  margin-top: 6px;
+}
+
+.cal-weekday-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 4px;
+}
+
+.cal-weekday {
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--ink-faint, #64748B);
+  padding: 2px 0;
+}
+
+.cal-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.month-day-cell {
+  min-height: 48px;
+  max-height: 56px;
+  background: var(--surface, #1E293B);
+  border: 1px solid var(--rule, #2D3B4F);
+  border-radius: 9px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  position: relative;
+}
+
+.month-day-cell:active {
+  transform: scale(0.96);
+}
+
+.month-day-cell.other-month {
+  opacity: 0.35;
+  background: transparent;
+  border-color: transparent;
+}
+
+.month-day-cell.today {
+  border: 1.5px solid var(--brand, #10B981);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.month-day-cell.selected {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: var(--brand, #10B981);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+.day-num {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--ink, #F1F5F9);
+  line-height: 1;
+}
+
+.day-badge-dot {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.dot-check {
+  font-size: 0.65rem;
+  color: var(--brand, #10B981);
+  font-weight: 900;
+}
+
+.photo-thumb-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: linear-gradient(135deg, #10B981, #3B82F6);
+  display: inline-block;
+}
+
+/* 서브탭 칩 세그먼트 */
+.subtabs-segment-bar {
+  display: flex;
+  background: var(--card, #131A26);
+  border: 1px solid var(--rule, #2D3B4F);
+  border-radius: 12px;
+  padding: 3px;
+  margin-bottom: 12px;
+  gap: 4px;
+}
+
+.subtab-segment-btn {
+  flex: 1;
+  text-align: center;
+  padding: 7px 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ink-soft, #94A3B8);
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.subtab-segment-btn.active {
+  background: var(--brand, #10B981);
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* 카테고리 칩 스트립 */
+.category-scroll-strip {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: none;
+  margin-bottom: 10px;
+}
+
+.category-scroll-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.category-chip {
+  background: var(--card, #131A26);
+  border: 1px solid var(--rule, #2D3B4F);
+  color: var(--ink-soft, #94A3B8);
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.category-chip.active {
+  background: var(--brand, #10B981);
+  color: #FFFFFF;
+  border-color: var(--brand, #10B981);
+}
+
+/* 소통 탭 구형 허브 박스 시인성 강화 오버라이드 */
+.comm-hub-slim-box {
+  background: var(--card, #131A26) !important;
+  border: 1px solid var(--rule, #2D3B4F) !important;
+  border-radius: 14px !important;
+  padding: 10px 14px !important;
+  margin-bottom: 8px !important;
+  color: var(--ink, #F1F5F9) !important;
+}
+
+.comm-hub-slim-box h3,
+.comm-hub-slim-box p,
+.comm-hub-slim-box div {
+  color: var(--ink, #F1F5F9) !important;
+}
+
+.comm-hub-slim-box p {
+  color: var(--ink-soft, #94A3B8) !important;
+  font-size: 0.78rem !important;
+}
+
+/* 4대 테마 설정 그리드 */
+.theme-grid-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.theme-grid-chip {
+  background: var(--surface, #1E293B);
+  border: 1.5px solid var(--rule, #2D3B4F);
+  border-radius: 11px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.theme-grid-chip.active {
+  border-color: var(--brand, #10B981);
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.theme-color-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  flex-shrink: 0;
+}
+
+/* 12ms 햅틱 시각 피드백 클래스 */
+.haptic-pulse {
+  animation: hapticPulse 0.12s ease-out;
+}
+
+@keyframes hapticPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.96); }
+  100% { transform: scale(1); }
 }

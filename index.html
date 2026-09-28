@@ -43,7 +43,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="/ui.css?v=20260918-focus-sanctuary">
+<link rel="stylesheet" href="/ui.css?v=20260928-prod-renewal-final">
 <script src="/ui.js?v=20260918-focus-sanctuary" defer></script>
 </head>
 <body>
@@ -159,6 +159,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           </div>
         </div>
       </div>
+      <div id="sanctuaryHomeSlot"></div>
       <div class="home-head-row" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><h2 class="home-greet" id="homeGreeting" style="margin:0;">안녕하세요</h2></div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
@@ -612,7 +613,46 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           </div>
         </div>
       </section>
-      </div><!-- end of #ogTaskWireSlot -->
+      <!-- 💬 [TASK-ES-277 / 노션 25] 소통창 화면정리 (피드·소통 UI 시인성 및 피로도 개선) -->
+      <div id="og-task-25-container" class="og-comm-cleanup-card">
+        <div class="og-comm-cleanup-header">
+          <span class="og-comm-cleanup-icon">💬</span>
+          <h4 class="og-comm-cleanup-title">소통창 화면정리 허브</h4>
+        </div>
+        <p class="og-comm-cleanup-desc">피드 및 동류 소통 UI 시인성을 강화하고 조작 피로도를 줄여 쾌적한 소통 환경을 동기화합니다.</p>
+        <div class="og-comm-cleanup-action-row">
+          <button type="button" id="og-task-25-action-btn" class="og-comm-cleanup-btn" onclick="handle팀목표_Item25Action(event)">
+            ⚡ 소통창 화면정리 동기화 실행
+          </button>
+        </div>
+      </div>
+<!-- 📱 [TASK-ES-279 / 노션 28] DM창 타 유저 클릭 시 키보드 자동 팝업 방지 및 텍스트창 터치 시 오픈으로 변경 -->
+      <div id="og-task-28-container" class="og-dm-autofocus-card">
+        <div class="og-dm-autofocus-header">
+          <span class="og-dm-autofocus-icon">📱</span>
+          <h4 class="og-dm-autofocus-title">DM 키보드 시야 보호 허브</h4>
+        </div>
+        <p class="og-dm-autofocus-desc">타 유저 클릭 시 가상 키보드가 시야를 가리지 않도록 방지하고, 텍스트창 터치 시에만 오픈하도록 설정합니다.</p>
+        <div class="og-dm-autofocus-action-row">
+          <button type="button" id="og-task-28-action-btn" class="og-dm-autofocus-btn" onclick="handle소통_Item28Action(event)">
+            🔒 DM 키보드 자동 팝업 방지 적용
+          </button>
+        </div>
+      </div>
+<!-- 📝 [TASK-ES-281 / 노션 30] 소통탭 게시하기 버튼 먹통 오류 수정 및 정상 동작 복구 -->
+      <div id="og-task-30-container" class="og-comm-post-card">
+        <div class="og-comm-post-header">
+          <span class="og-comm-post-icon">📝</span>
+          <h4 class="og-comm-post-title">소통 피드 게시하기 허브</h4>
+        </div>
+        <p class="og-comm-post-desc">피드 공유 및 실천 인증 작성 모달을 즉시 열어 동료들과 오늘의 성장을 나눕니다.</p>
+        <div class="og-comm-post-action-row">
+          <button type="button" id="og-task-30-action-btn" class="og-comm-post-btn" onclick="handle소통_Item30Action(event)">
+            🚀 소통 피드 게시하기
+          </button>
+        </div>
+      </div>
+</div><!-- end of #ogTaskWireSlot -->
       <div id="todayGlancePill" class="today-glance-pill" role="button" tabindex="0" aria-label="오늘 요약" style="display:none;" data-home-widget="todayGlancePill" data-widget-label="오늘 몰입 요약" data-widget-hint="오늘 상태 한 줄"></div>
       <div id="a11yLiveAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
       <div id="offlineNoticeBanner" class="offline-banner" style="display:none;"><b>오프라인 모드</b> 작성한 기록은 기기에 보관되고, 연결되면 자동으로 동기화돼요.</div>
@@ -1160,47 +1200,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <div style="display:flex;align-items:center;gap:6px;"><h2 class="s-title" style="margin:0;">소통</h2></div>
         <button class="btn btn-primary btn-sm" id="btnCommPostFeed" type="button" onclick="if(window.handle소통_Item30Action) { handle소통_Item30Action(event); } else if(window.openShareToFeedModal) { window.openShareToFeedModal(); } else if(typeof openShareToFeedModal === 'function') { openShareToFeedModal(); }"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>게시하기</span></button>
       </div>
-      <!-- 💬 [TASK-ES-277 / 노션 25] 소통창 화면정리 (피드·소통 UI 시인성 및 피로도 개선) -->
-      <div id="og-task-25-container" class="og-comm-cleanup-card">
-        <div class="og-comm-cleanup-header">
-          <span class="og-comm-cleanup-icon">💬</span>
-          <h4 class="og-comm-cleanup-title">소통창 화면정리 허브</h4>
-        </div>
-        <p class="og-comm-cleanup-desc">피드 및 동류 소통 UI 시인성을 강화하고 조작 피로도를 줄여 쾌적한 소통 환경을 동기화합니다.</p>
-        <div class="og-comm-cleanup-action-row">
-          <button type="button" id="og-task-25-action-btn" class="og-comm-cleanup-btn" onclick="handle팀목표_Item25Action(event)">
-            ⚡ 소통창 화면정리 동기화 실행
-          </button>
-        </div>
-      </div>
+      
 
-      <!-- 📱 [TASK-ES-279 / 노션 28] DM창 타 유저 클릭 시 키보드 자동 팝업 방지 및 텍스트창 터치 시 오픈으로 변경 -->
-      <div id="og-task-28-container" class="og-dm-autofocus-card">
-        <div class="og-dm-autofocus-header">
-          <span class="og-dm-autofocus-icon">📱</span>
-          <h4 class="og-dm-autofocus-title">DM 키보드 시야 보호 허브</h4>
-        </div>
-        <p class="og-dm-autofocus-desc">타 유저 클릭 시 가상 키보드가 시야를 가리지 않도록 방지하고, 텍스트창 터치 시에만 오픈하도록 설정합니다.</p>
-        <div class="og-dm-autofocus-action-row">
-          <button type="button" id="og-task-28-action-btn" class="og-dm-autofocus-btn" onclick="handle소통_Item28Action(event)">
-            🔒 DM 키보드 자동 팝업 방지 적용
-          </button>
-        </div>
-      </div>
+      
 
-      <!-- 📝 [TASK-ES-281 / 노션 30] 소통탭 게시하기 버튼 먹통 오류 수정 및 정상 동작 복구 -->
-      <div id="og-task-30-container" class="og-comm-post-card">
-        <div class="og-comm-post-header">
-          <span class="og-comm-post-icon">📝</span>
-          <h4 class="og-comm-post-title">소통 피드 게시하기 허브</h4>
-        </div>
-        <p class="og-comm-post-desc">피드 공유 및 실천 인증 작성 모달을 즉시 열어 동료들과 오늘의 성장을 나눕니다.</p>
-        <div class="og-comm-post-action-row">
-          <button type="button" id="og-task-30-action-btn" class="og-comm-post-btn" onclick="handle소통_Item30Action(event)">
-            🚀 소통 피드 게시하기
-          </button>
-        </div>
-      </div>
+      
 
       <div id="commBody"></div>
           
@@ -1245,6 +1249,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           </div>
         </div>
       </div>
+      <div id="sanctuarySettingsSlot"></div>
 
       <!-- [그룹 1] 👤 계정 & 프로필 -->
       <details class="settings-group-accordion toss-settings-group" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
@@ -2026,7 +2031,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
-  <script src="js/components.js?v=20260917-es162"></script><script src="js/records-stats.js?v=20260926-es276"></script><script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script><script src="js/notify-engine.js?v=20260917-es152"></script><script src="js/sanctuary-v3-engine.js?v=20260918-v3"></script>
+  <script src="js/components.js?v=20260917-es162"></script><script src="js/records-stats.js?v=20260926-es276"></script><script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script><script src="js/notify-engine.js?v=20260917-es152"></script><script src="js/sanctuary-v3-engine.js?v=20260928-prod-renewal-final"></script>
 <script>
 (function(){
   "use strict";
@@ -20707,6 +20712,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       delete state.goalStatusPending[goal.id];
       if(!text) return;
       if(!state.profile.settings.goalStatusSummaries) state.profile.settings.goalStatusSummaries = {};
+    var goalStatusCache = state.profile.settings.goalStatusSummaries[goal.id];
       state.profile.settings.goalStatusSummaries[goal.id] = { text: text, hash: hash, dateKey: getKSTDateKey(nowISO()), standardDateKey: todayKey, updatedAt: nowISO() };
       await saveProfile();
       if(state.activeGoalId===goal.id && state.activeTab==='goals' && !state.goalEditMode){
@@ -23402,6 +23408,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     var goalStatusHash = computeGoalStatusHash(goal);
     if(!state.profile.settings.goalStatusSummaries) state.profile.settings.goalStatusSummaries = {};
+    var goalStatusCache = state.profile.settings.goalStatusSummaries[goal.id];
     var todayKST = getKSTDateKey(nowISO());
     var todayEffective = typeof getEffectiveStandardDateKey === 'function' ? getEffectiveStandardDateKey(nowISO()) : todayKST;
     var isPending = !!(state.goalStatusPending && state.goalStatusPending[goal.id]);

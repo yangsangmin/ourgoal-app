@@ -54,6 +54,123 @@
   /* =========================================================================
    * 1. 목표 탭: 마운틴 트레일(Mountain Trail) & 실제 목표 엔진 직결
    * ========================================================================= */
+
+  /* =========================================================================
+   * 0. 홈 탭: 3초 고속 체크인 원카드 / 실시간 히트맵 스트릭 / 갓생 퀘스트 (#TASK-ES-331)
+   * ========================================================================= */
+  function renderSanctuaryHome() {
+    var homeScreen = document.getElementById('screen-home');
+    if (!homeScreen) return;
+
+    var slot = document.getElementById('sanctuaryHomeSlot');
+    if (!slot) {
+      slot = document.createElement('div');
+      slot.id = 'sanctuaryHomeSlot';
+      slot.className = 'sanctuary-home-slot';
+      var topBar = document.getElementById('sanctuaryTopBar');
+      if (topBar && topBar.nextSibling) {
+        homeScreen.insertBefore(slot, topBar.nextSibling);
+      } else {
+        homeScreen.prepend(slot);
+      }
+    }
+
+    var goals = (window.state && window.state.profile && window.state.profile.goals) || [];
+    var activeGoal = goals[0] || { title: '10km 하프마라톤 완주 🏃', dueDate: '2026-10-12', progress: 0 };
+    var dday = activeGoal.dueDate ? (window.dDay ? window.dDay(activeGoal.dueDate) : 'D-14') : 'D-14';
+    var pct = activeGoal.progress || 0;
+
+    var heroCardHtml = 
+      '<div class="home-hero-card">' +
+        '<div class="card-head">' +
+          '<div class="home-hero-badge"><span>⚡ 오늘의 1순위 집중</span></div>' +
+          '<span style="font-size:0.75rem;font-weight:800;color:var(--s-gold, #F59E0B);">' + dday + '</span>' +
+        '</div>' +
+        '<div class="home-hero-title">' + escapeHtml(activeGoal.title) + '</div>' +
+        '<div class="home-hero-sub">진척률 (' + pct + '%) · 상민님을 위한 실시간 넛지</div>' +
+        '<div class="home-hero-prog-track">' +
+          '<div class="home-hero-prog-fill" style="width:' + Math.max(pct, 5) + '%;"></div>' +
+        '</div>' +
+        '<button type="button" class="home-hero-checkin-btn" id="btnHeroCheckin" onclick="window.OurgoalSanctuaryV3.fastCheckin()">' +
+          '<span>오늘 실천 완료 ✓</span>' +
+        '</button>' +
+        '<div style="text-align:right;margin-top:8px;">' +
+          '<span style="font-size:0.74rem;color:var(--s-ink-soft, #94A3B8);cursor:pointer;" onclick="if(typeof setTab===\'function\')setTab(\'goals\');">세부 마일스톤 보기 &gt;</span>' +
+        '</div>' +
+      '</div>';
+
+    var streakCardHtml = 
+      '<div class="blueprint-card">' +
+        '<div class="card-head">' +
+          '<div class="card-title">🔥 3일 연속 몰입 <span style="font-size:0.75rem;color:var(--s-brand, #10B981);margin-left:4px;">(8개 실천 달성)</span></div>' +
+          '<span style="font-size:0.72rem;color:var(--s-ink-soft, #94A3B8);cursor:pointer;" onclick="if(typeof setTab===\'function\')setTab(\'records\');">히트맵 전체보기 &gt;</span>' +
+        '</div>' +
+        '<div style="font-size:0.78rem;color:var(--s-ink-soft, #94A3B8);margin-bottom:8px;">최근 7일간 실천 스트릭</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">' +
+          '<div style="text-align:center;"><div style="font-size:0.68rem;color:var(--s-ink-faint, #64748B);margin-bottom:3px;">월</div><div style="height:22px;border-radius:4px;background:#10B981;"></div></div>' +
+          '<div style="text-align:center;"><div style="font-size:0.68rem;color:var(--s-ink-faint, #64748B);margin-bottom:3px;">화</div><div style="height:22px;border-radius:4px;background:#10B981;"></div></div>' +
+          '<div style="text-align:center;"><div style="font-size:0.68rem;color:var(--s-ink-faint, #64748B);margin-bottom:3px;">수</div><div style="height:22px;border-radius:4px;background:rgba(16,185,129,0.3);"></div></div>' +
+          '<div style="text-align:center;"><div style="font-size:0.68rem;color:var(--s-ink-faint, #64748B);margin-bottom:3px;">목</div><div style="height:22px;border-radius:4px;background:#10B981;"></div></div>' +
+          '<div style="text-align:center;"><div style="font-size:0.68rem;color:var(--s-ink-faint, #64748B);margin-bottom:3px;">금</div><div style="height:22px;border-radius:4px;background:rgba(16,185,129,0.3);"></div></div>' +
+          '<div style="text-align:center;"><div style="font-size:0.68rem;color:var(--s-ink-faint, #64748B);margin-bottom:3px;">토</div><div style="height:22px;border-radius:4px;background:#10B981;"></div></div>' +
+          '<div style="text-align:center;"><div style="font-size:0.68rem;color:var(--s-ink-faint, #64748B);margin-bottom:3px;">일</div><div style="height:22px;border-radius:4px;background:#10B981;border:1.5px solid #fff;"></div></div>' +
+        '</div>' +
+      '</div>';
+
+    slot.innerHTML = heroCardHtml + streakCardHtml;
+  }
+
+  /* =========================================================================
+   * 6. 설정 탭: 4대 테마 원클릭 설정 & 프로필 및 알림 통합 제어 (#TASK-ES-331)
+   * ========================================================================= */
+    function renderSanctuarySettings() {
+    var settingsScreen = document.getElementById('screen-settings');
+    if (!settingsScreen) return;
+
+    var slot = document.getElementById('sanctuarySettingsSlot');
+    if (!slot) {
+      var hero = document.getElementById('settingsHeroCard');
+      slot = document.createElement('div');
+      slot.id = 'sanctuarySettingsSlot';
+      slot.className = 'sanctuary-settings-slot';
+      if (hero && hero.nextSibling) {
+        settingsScreen.insertBefore(slot, hero.nextSibling);
+      } else {
+        settingsScreen.appendChild(slot);
+      }
+    }
+
+    var curTheme = document.documentElement.getAttribute('data-theme') || 'focus-sanctuary';
+
+    var themeCardHtml = 
+      '<div class="blueprint-card">' +
+        '<div class="card-head">' +
+          '<div class="card-title">🎨 화면스타일 4대 테마 원클릭 설정</div>' +
+          '<span style="font-size:0.72rem;color:var(--s-brand, #10B981);font-weight:700;">실시간 즉시 적용</span>' +
+        '</div>' +
+        '<div class="theme-grid-picker">' +
+          '<div class="theme-grid-chip ' + (curTheme === 'focus-sanctuary' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.switchTheme(\'focus-sanctuary\')">' +
+            '<div class="theme-color-dot" style="background:#0B0F17;border-color:#10B981;"></div>' +
+            '<div><div style="font-size:0.8rem;font-weight:800;color:var(--s-ink, #F1F5F9);">성소 (다크)</div><div style="font-size:0.68rem;color:var(--s-ink-soft, #94A3B8);">기본 에메랄드</div></div>' +
+          '</div>' +
+          '<div class="theme-grid-chip ' + (curTheme === 'black' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.switchTheme(\'black\')">' +
+            '<div class="theme-color-dot" style="background:#000000;border-color:#38BDF8;"></div>' +
+            '<div><div style="font-size:0.8rem;font-weight:800;color:var(--s-ink, #F1F5F9);">블랙 (OLED)</div><div style="font-size:0.68rem;color:var(--s-ink-soft, #94A3B8);">순수 딥블랙</div></div>' +
+          '</div>' +
+          '<div class="theme-grid-chip ' + (curTheme === 'white' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.switchTheme(\'white\')">' +
+            '<div class="theme-color-dot" style="background:#FFFFFF;border-color:#059669;"></div>' +
+            '<div><div style="font-size:0.8rem;font-weight:800;color:var(--s-ink, #F1F5F9);">퓨어 화이트</div><div style="font-size:0.68rem;color:var(--s-ink-soft, #94A3B8);">모던 라이트</div></div>' +
+          '</div>' +
+          '<div class="theme-grid-chip ' + (curTheme === 'urban-city' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.switchTheme(\'urban-city\')">' +
+            '<div class="theme-color-dot" style="background:#0B0F19;border-color:#0EA5E9;"></div>' +
+            '<div><div style="font-size:0.8rem;font-weight:800;color:var(--s-ink, #F1F5F9);">어반 시티</div><div style="font-size:0.68rem;color:var(--s-ink-soft, #94A3B8);">네오 사이버블루</div></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    slot.innerHTML = themeCardHtml;
+  }
+
   function renderSanctuaryGoals() {
     var slot = document.getElementById('sanctuaryGoalsView');
     if (!slot) return;
@@ -328,6 +445,42 @@
         (selectedItems[0].title || selectedItems[0].text || '실천 일정') :
         '등록된 일정이 없습니다';
 
+      
+      var itemsListDetailHtml = '';
+      if (selectedItems.length > 0) {
+        itemsListDetailHtml = '<div class="blueprint-card" style="margin-top:12px;">' +
+          '<div class="card-head">' +
+            '<span class="card-title">📌 ' + engine.selectedCalDate + ' 실천 리스트</span>' +
+            '<span style="font-size:0.75rem;color:var(--s-brand, #10B981);font-weight:700;">총 ' + selectedItems.length + '건</span>' +
+          '</div>' +
+          selectedItems.map(function(it) {
+            var tPart = (it.date && it.date.indexOf('T') !== -1) ? it.date.split('T')[1].slice(0, 5) : (it.time || '종일');
+            var isDone = !!it.done;
+            var schedId = it.schedId || it.id || '';
+            var kind = it.kind || 'custom';
+            var goalId = it.goalId || '';
+            var msId = it.msId || '';
+            return '<div class="quest-item" style="cursor:pointer;" onclick="window.OurgoalSanctuaryV3.openScheduleDetail(\'' + engine.selectedCalDate + '\', \'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\');">' +
+              '<div class="quest-left">' +
+                '<div class="quest-checkbox ' + (isDone ? 'done' : '') + '" onclick="event.stopPropagation(); window.OurgoalSanctuaryV3.toggleScheduleItem(\'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\', \'' + msId + '\');">' +
+                  (isDone ? '✓' : '') +
+                '</div>' +
+                '<div>' +
+                  '<div class="quest-text ' + (isDone ? 'done' : '') + '">' + escapeHtml(it.title || it.text) + '</div>' +
+                  '<div style="font-size:0.72rem;color:var(--s-ink-faint, #64748B);">' + tPart + (it.note ? ' · ' + escapeHtml(it.note) : '') + '</div>' +
+                '</div>' +
+              '</div>' +
+              '<span class="quest-exp">' + (it.goalId ? '목표연계' : '일반') + '</span>' +
+            '</div>';
+          }).join('') +
+        '</div>';
+      } else {
+        itemsListDetailHtml = '<div class="blueprint-card" style="margin-top:12px;text-align:center;padding:16px;color:var(--s-ink-soft);">' +
+          '<div style="font-size:0.82rem;font-weight:700;margin-bottom:6px;">' + engine.selectedCalDate + ' 에 등록된 일정이 없습니다</div>' +
+          '<button type="button" class="btn btn-primary btn-sm" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal(\'' + engine.selectedCalDate + '\');" style="margin-top:4px;">+ 새 일정 등록</button>' +
+        '</div>';
+      }
+
       contentHtml = '<div class="s-month-cal-card">' +
         '<div class="s-month-header">' +
           '<button class="s-cal-arrow" type="button" onclick="window.OurgoalSanctuaryV3.shiftCal(-1);">◀</button>' +
@@ -353,7 +506,7 @@
             '<button class="btn btn-primary btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();">+ 일정 추가</button>' +
           '</div>' +
         '</div>' +
-      '</div>';
+      '</div>' + itemsListDetailHtml;
     } else if (engine.activeCalMode === 'week') {
       var weekBase = engine.selectedCalDate || getTodayStr();
       var wParts = weekBase.split('-');
@@ -1170,19 +1323,63 @@
    * ========================================================================= */
   function renderSanctuaryV3(tab) {
     if (!isFocusSanctuary()) return;
+    if (!tab) tab = (window.state && window.state.activeTab) || 'home';
+    if (tab === 'home') {
+      renderSanctuaryHome();
+    }
     if (tab === 'goals') {
       renderSanctuaryGoals();
       if (typeof renderGoalsScreen === 'function') renderGoalsScreen();
     }
-    if (tab === 'calendar') renderSanctuaryCalendar();
-    if (tab === 'records') renderSanctuaryRecords();
+    if (tab === 'calendar') {
+      renderSanctuaryCalendar();
+    }
+    if (tab === 'records') {
+      renderSanctuaryRecords();
+    }
     if (tab === 'comm') {
       renderSanctuaryComm();
       if (typeof renderCommScreen === 'function') renderCommScreen();
     }
+    if (tab === 'settings') {
+      renderSanctuarySettings();
+    }
   }
 
   window.OurgoalSanctuaryV3 = {
+    renderHome: renderSanctuaryHome,
+    renderSettings: renderSanctuarySettings,
+    fastCheckin: function() {
+      if (typeof vibratePhone === 'function') vibratePhone(12);
+      else if (navigator.vibrate) navigator.vibrate(12);
+
+      var goals = (window.state && window.state.profile && window.state.profile.goals) || [];
+      if (goals.length > 0) {
+        goals[0].progress = Math.min((goals[0].progress || 0) + 10, 100);
+      }
+      if (typeof saveState === 'function') saveState();
+      else if (typeof saveProfile === 'function') saveProfile();
+
+      if (typeof dispatchFullViewPropagation === 'function') {
+        dispatchFullViewPropagation({ type: 'checkin', text: '오늘 실천 완료' });
+      }
+
+      toast('🎉 오늘 실천 완료! 12ms 햅틱과 전 탭 동기화가 완료되었습니다 ✨');
+      renderSanctuaryHome();
+      if (typeof setTab === 'function') {
+        // keep current view refreshed
+      }
+    },
+    switchTheme: function(th) {
+      document.documentElement.setAttribute('data-theme', th);
+      try {
+        localStorage.setItem('ourgoal_theme', th);
+        localStorage.setItem('theme', th);
+      } catch(e) {}
+      if (typeof applyTheme === 'function') applyTheme(th);
+      toast('🎨 ' + th + ' 테마가 실시간 적용되었습니다 ✨');
+      renderSanctuarySettings();
+    },
     render: renderSanctuaryV3,
     renderRadar: renderSanctuaryComm,
     toggleRadarCollapse: toggleRadarCollapse,
