@@ -2593,6 +2593,115 @@
   }
 
   /**
+   * [TASK-ES-330 / 노션 생각메모장 79번]
+   * 설정 화면&홈 구성 화면스타일 테마 4종(focus-sanctuary, black, white, urban-city) 압축 및 시인성·동일 작동 전면 개선
+   * 8원칙 & 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
+   */
+  async function handle설정_Item79Action(event, customPayload) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+
+    var win = (typeof global !== 'undefined' && global.window) ? global.window : (typeof window !== 'undefined' ? window : {});
+    var actionBtn = (event && event.currentTarget) || (typeof document !== 'undefined' ? document.getElementById('og-task-79-action-btn') : null);
+    if (actionBtn) {
+      if (actionBtn.disabled) return;
+      actionBtn.disabled = true;
+    }
+
+    // 1. 12ms 햅틱 피드백
+    var nav = win.navigator || (typeof navigator !== 'undefined' ? navigator : null);
+    if (nav && typeof nav.vibrate === 'function') {
+      try {
+        nav.vibrate(12);
+      } catch (e) {}
+    }
+
+    try {
+      var requestedTheme = (customPayload && customPayload.theme) || (event && event.currentTarget && event.currentTarget.dataset && event.currentTarget.dataset.themeid) || 'focus-sanctuary';
+      if (requestedTheme === 'dark') requestedTheme = 'black';
+      if (requestedTheme === 'light' || requestedTheme === 'system') requestedTheme = 'white';
+      if (['focus-sanctuary', 'black', 'white', 'urban-city'].indexOf(requestedTheme) === -1) {
+        requestedTheme = 'focus-sanctuary';
+      }
+
+      var nowIso = new Date().toISOString();
+      var defaultPayload = {
+        ticket: '79',
+        task_id: 'TASK-ES-330',
+        updated_at: nowIso,
+        theme: requestedTheme,
+        themes_v4_supported: ['focus-sanctuary', 'black', 'white', 'urban-city'],
+        contrast_boost_active: true,
+        high_visibility_active: true,
+        state: 'completed'
+      };
+      var syncPayload = Object.assign({}, defaultPayload, customPayload || {});
+
+      // 상태 및 설정 영속화
+      if (win.state && win.state.profile) {
+        if (!win.state.profile.settings) win.state.profile.settings = {};
+        win.state.profile.settings.theme = requestedTheme;
+      }
+
+      // 로컬 스토리지 캐시 영속화 (og_task-79_cache 및 ourgoal_current_theme)
+      try {
+        var storage = win.localStorage || (typeof localStorage !== 'undefined' ? localStorage : null);
+        if (storage && typeof storage.setItem === 'function') {
+          storage.setItem('og_task-79_cache', JSON.stringify(syncPayload));
+          storage.setItem('ourgoal_current_theme', requestedTheme);
+        }
+      } catch (e) {
+        console.warn('[TASK-ES-330] 로컬 캐시 저장 생략:', e);
+      }
+
+      // 테마 직접 전파
+      if (typeof win.applyTheme === 'function') {
+        win.applyTheme(requestedTheme);
+      } else if (typeof document !== 'undefined' && document.documentElement) {
+        document.documentElement.setAttribute('data-theme', requestedTheme);
+      }
+
+      // Supabase user_action_logs 비동기 적재 시도
+      if (win.sb && typeof win.sb.from === 'function') {
+        try {
+          var userId = (win.state && win.state.profile && win.state.profile.id) || null;
+          win.sb.from('user_action_logs').insert({
+            user_id: userId,
+            action_type: 'settings_theme_switch_v4',
+            payload: syncPayload,
+            created_at: nowIso
+          }).then(function(){}).catch(function(){});
+        } catch (e) {}
+      }
+
+      // 4대 뷰 원자적 동시 전파
+      if (typeof win.renderSettingsScreen === 'function') win.renderSettingsScreen();
+      if (typeof win.renderHome === 'function') win.renderHome();
+      if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
+      if (typeof win.renderCommScreen === 'function') win.renderCommScreen();
+      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderAll === 'function') win.renderAll();
+
+      return syncPayload;
+    } catch (err) {
+      console.error('[TASK-ES-330] 실행 실패:', err);
+      if (typeof win.toast === 'function') {
+        win.toast('테마 적용 중 오류가 발생했습니다.');
+      }
+      throw err;
+    } finally {
+      if (actionBtn) {
+        actionBtn.disabled = false;
+      }
+    }
+  }
+
+  async function handle테마_Item79Action(event, customPayload) {
+    return handle설정_Item79Action(event, customPayload);
+  }
+
+  /**
    * [TASK-ES-294 / 노션 생각메모장 44번]
    * 스톱워치 실시간 구간별 활동기록 팝업·상세 연동 및 초기화 2중 확인 안전장치 구축
    * 8원칙 & 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
@@ -3615,6 +3724,8 @@
   OurgoalComponents.handle인증_Item69Action = handle인증_Item69Action;
   OurgoalComponents.handle인증_Item70Action = handle인증_Item70Action;
   OurgoalComponents.handle인증_Item71Action = handle인증_Item71Action;
+  OurgoalComponents.handle설정_Item79Action = handle설정_Item79Action;
+  OurgoalComponents.handle테마_Item79Action = handle테마_Item79Action;
   OurgoalComponents.generateRecordPledgeMessage = generateRecordPledgeMessage;
 
   if(typeof window !== 'undefined'){
@@ -3673,6 +3784,8 @@
     window.handle인증_Item69Action = handle인증_Item69Action;
     window.handle인증_Item70Action = handle인증_Item70Action;
     window.handle인증_Item71Action = handle인증_Item71Action;
+    window.handle설정_Item79Action = handle설정_Item79Action;
+    window.handle테마_Item79Action = handle테마_Item79Action;
     window.generateRecordPledgeMessage = generateRecordPledgeMessage;
     window.toggleTimeRecordModalCompact = toggleTimeRecordModalCompact;
   }
@@ -3696,6 +3809,8 @@
     module.exports.handle인증_Item69Action = handle인증_Item69Action;
     module.exports.handle인증_Item70Action = handle인증_Item70Action;
     module.exports.handle인증_Item71Action = handle인증_Item71Action;
+    module.exports.handle설정_Item79Action = handle설정_Item79Action;
+    module.exports.handle테마_Item79Action = handle테마_Item79Action;
     module.exports.generateRecordPledgeMessage = generateRecordPledgeMessage;
     module.exports.handle전체공통_Item23Action = handle전체공통_Item23Action;
     module.exports.handle홈탭_Item33Action = handle홈탭_Item33Action;

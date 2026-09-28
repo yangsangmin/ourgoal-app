@@ -2347,6 +2347,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(themeId === 'light' || themeId === 'system') themeId = 'white';
     if(['focus-sanctuary', 'black', 'white', 'urban-city'].indexOf(themeId) === -1) themeId = 'focus-sanctuary';
     document.documentElement.setAttribute('data-theme', themeId);
+    try{ if(typeof triggerHaptic === 'function') triggerHaptic(12); } catch(e){}
     var found = THEMES.find(function(t){ return t.id === themeId; });
     if(found && found.metaColor){
       var meta = document.querySelector('meta[name="theme-color"]');
@@ -37199,7 +37200,7 @@ wirePromptEncyclopediaEvents(body);
       themeGrid.innerHTML = THEMES.map(function(t){
         var isActive = (t.id === curTheme);
         return '<div class="theme-card' + (isActive ? ' active' : '') + '" data-themeid="' + t.id + '">' +
-          '<div class="theme-dot" style="background:' + t.preview + '"></div>' +
+          '<div class="theme-dot theme-swatch" style="background:' + t.preview + '"></div>' +
           '<div class="theme-info">' +
             '<div class="theme-name">' + t.name + (isActive ? ' <span class="theme-check"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></span>' : '') + '</div>' +
             '<div class="theme-desc">' + t.desc + '</div>' +

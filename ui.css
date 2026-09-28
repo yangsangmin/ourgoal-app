@@ -871,7 +871,8 @@ body[data-ux-mode="analyst"] #homeGrassSummaryCard{display:block!important;}
 .theme-card{background:var(--card);border:1px solid var(--rule);border-radius:var(--radius);padding:12px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:border-color .15s,background .15s;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;}
 .theme-card:hover{transform:none;border-color:var(--ink-disabled);box-shadow:none;}
 .theme-card.active{border-color:var(--ink);background:var(--card);box-shadow:inset 0 0 0 1px var(--ink);}
-.theme-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);}
+.theme-dot, .theme-swatch{width:26px;height:26px;border-radius:50%;flex-shrink:0;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.25),0 2px 8px rgba(0,0,0,.3);border:1px solid var(--rule, rgba(255,255,255,.15));}
+html[data-theme="white"] .theme-dot, html[data-theme="white"] .theme-swatch{box-shadow:inset 0 0 0 1px rgba(0,0,0,.15),0 2px 6px rgba(0,0,0,.08);}
 .theme-info{flex:1;min-width:0;}
 .theme-name{font-size:.875rem;font-weight:600;color:var(--ink);display:flex;align-items:center;justify-content:space-between;line-height:1.2;}
 .theme-check{color:var(--ink);font-size:.75rem;font-weight:700;}
@@ -5056,8 +5057,11 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   --sanctuary-radius: 20px;
 }
 
-/* 2. 전 화면 다크 글래스모피즘 기조 적용 */
-[data-theme="focus-sanctuary"] {
+/* 2. 전 화면 4대 공식 테마 1급 디자인 토큰 변수 시스템 (#TASK-ES-330) */
+/* 2-1. 포커스 성소 (Focus Sanctuary - 아워골 시그니처) */
+html[data-theme="focus-sanctuary"],
+[data-theme="focus-sanctuary"],
+html[data-theme="focus-sanctuary"] {
   --bg: #0B0F17;
   --paper: #0B0F17;
   --card: rgba(255, 255, 255, 0.04);
@@ -5083,6 +5087,102 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   --input-bg: rgba(255, 255, 255, 0.05);
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   --shadow-float: 0 10px 30px rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+
+/* 2-2. 블랙 (True OLED Black - 딥블랙 & 배터리 절약) */
+html[data-theme="black"],
+[data-theme="black"],
+html[data-theme="black"] {
+  --bg: #000000;
+  --paper: #000000;
+  --card: #0A0A0C;
+  --surface: #0A0A0C;
+  --card2: #121216;
+  --surface-2: #121216;
+  --surface-3: #18181E;
+  --ink: #FFFFFF;
+  --ink-soft: #D4D4D8;
+  --ink-faint: #A1A1AA;
+  --ink-disabled: #52525B;
+  --rule: rgba(255, 255, 255, 0.14);
+  --line: rgba(255, 255, 255, 0.14);
+  --rule-soft: rgba(255, 255, 255, 0.08);
+  --card-border: 1px solid rgba(255, 255, 255, 0.14);
+  --card-backdrop: blur(16px);
+  --brand: #10B981;
+  --brand-strong: #059669;
+  --brand-soft: rgba(16, 185, 129, 0.18);
+  --brand-line: rgba(16, 185, 129, 0.40);
+  --topbar-bg: rgba(0, 0, 0, 0.92);
+  --bottomnav-bg: rgba(14, 14, 18, 0.96);
+  --input-bg: #121216;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  --shadow-float: 0 10px 30px rgba(0, 0, 0, 0.9);
+  color-scheme: dark;
+}
+
+/* 2-3. 화이트 (Pure Minimal White - 눈부심 없는 고대비 순백) */
+html[data-theme="white"],
+[data-theme="white"],
+html[data-theme="white"] {
+  --bg: #F8FAFC;
+  --paper: #FFFFFF;
+  --card: #FFFFFF;
+  --surface: #FFFFFF;
+  --card2: #F1F5F9;
+  --surface-2: #F1F5F9;
+  --surface-3: #E2E8F0;
+  --ink: #0F172A;
+  --ink-soft: #334155;
+  --ink-faint: #64748B;
+  --ink-disabled: #94A3B8;
+  --rule: #E2E8F0;
+  --line: #E2E8F0;
+  --rule-soft: #F1F5F9;
+  --card-border: 1px solid #CBD5E1;
+  --card-backdrop: blur(16px);
+  --brand: #059669;
+  --brand-strong: #047857;
+  --brand-soft: rgba(5, 150, 105, 0.12);
+  --brand-line: rgba(5, 150, 105, 0.35);
+  --topbar-bg: rgba(255, 255, 255, 0.92);
+  --bottomnav-bg: rgba(255, 255, 255, 0.96);
+  --input-bg: #F8FAFC;
+  --shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+  --shadow-float: 0 10px 30px rgba(15, 23, 42, 0.12);
+  color-scheme: light;
+}
+
+/* 2-4. 깔끔한 도심 (Urban Slate Navy - 현대 도시의 지적 루틴) */
+html[data-theme="urban-city"],
+[data-theme="urban-city"],
+html[data-theme="urban-city"] {
+  --bg: #0B0F19;
+  --paper: #0B0F19;
+  --card: #131B2E;
+  --surface: #131B2E;
+  --card2: #1B2640;
+  --surface-2: #1B2640;
+  --surface-3: #233152;
+  --ink: #F8FAFC;
+  --ink-soft: #CBD5E1;
+  --ink-faint: #94A3B8;
+  --ink-disabled: #475569;
+  --rule: rgba(255, 255, 255, 0.10);
+  --line: rgba(255, 255, 255, 0.10);
+  --rule-soft: rgba(255, 255, 255, 0.05);
+  --card-border: 1px solid rgba(255, 255, 255, 0.12);
+  --card-backdrop: blur(16px);
+  --brand: #0EA5E9;
+  --brand-strong: #0284C7;
+  --brand-soft: rgba(14, 165, 233, 0.15);
+  --brand-line: rgba(14, 165, 233, 0.35);
+  --topbar-bg: rgba(11, 15, 25, 0.88);
+  --bottomnav-bg: rgba(19, 27, 46, 0.94);
+  --input-bg: #1B2640;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.55);
+  --shadow-float: 0 10px 30px rgba(0, 0, 0, 0.65);
   color-scheme: dark;
 }
 
@@ -5336,12 +5436,12 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
    🌟 9:16 모바일 네이티브 뷰포트 및 노이즈 배너 정돈
    ========================================================================== */
 html {
-  background: #05070B !important;
+  background: var(--bg, #0B0F17) !important;
 }
 
 body {
-  background: #05070B !important;
-  color: #F8FAFC !important;
+  background: var(--bg, #0B0F17) !important;
+  color: var(--ink, #F8FAFC) !important;
   display: flex !important;
   justify-content: center !important;
   align-items: flex-start !important;
@@ -5353,11 +5453,29 @@ body {
   max-width: 440px !important;
   margin: 0 auto !important;
   min-height: 100vh !important;
-  background: #0B0F17 !important;
+  background: var(--bg, #0B0F17) !important;
   position: relative !important;
-  box-shadow: 0 0 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(16, 185, 129, 0.08) !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.06) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.4), 0 0 30px var(--brand-soft, rgba(16, 185, 129, 0.08)) !important;
+  border-left: 1px solid var(--rule, rgba(255, 255, 255, 0.06)) !important;
+  border-right: 1px solid var(--rule, rgba(255, 255, 255, 0.06)) !important;
+}
+
+html[data-theme="white"] body,
+html[data-theme="white"] #appShell {
+  background: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+html[data-theme="black"] body,
+html[data-theme="black"] #appShell {
+  background: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+html[data-theme="urban-city"] body,
+html[data-theme="urban-city"] #appShell {
+  background: #0B0F19 !important;
+  color: #F8FAFC !important;
 }
 
 /* 6대 노이즈 배너 시각적 정리 (기능과 이벤트는 100% 보존) */
@@ -10174,11 +10292,25 @@ html[data-theme="white"] #goalsHeadlineSentence b {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
 }
 
-[data-theme="dark"] .toss-checkin-clean-box,
-[data-theme="black"] .toss-checkin-clean-box,
 [data-theme="focus-sanctuary"] .toss-checkin-clean-box {
-  background: #1A1C21 !important;
-  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  background: rgba(18, 24, 38, 0.70) !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+}
+
+[data-theme="black"] .toss-checkin-clean-box {
+  background: #0A0A0C !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+
+[data-theme="white"] .toss-checkin-clean-box {
+  background: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06) !important;
+}
+
+[data-theme="urban-city"] .toss-checkin-clean-box {
+  background: #131B2E !important;
+  border: 1px solid rgba(56, 189, 248, 0.20) !important;
 }
 
 .toss-checkin-save-btn {
