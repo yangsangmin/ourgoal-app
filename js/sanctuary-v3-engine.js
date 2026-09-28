@@ -82,42 +82,42 @@
 
     var heroCardHtml = 
       '<div class="home-hero-card">' +
-        '<div class="card-head">' +
-          '<div class="home-hero-badge"><span>⚡ 오늘의 1순위 집중</span></div>' +
-          '<span style="font-size:0.75rem;font-weight:800;color:var(--s-gold, #F59E0B);">' + dday + '</span>' +
+        '<div class="card-head" style="margin-bottom:8px;">' +
+          '<div style="display:flex;align-items:center;gap:6px;">' +
+            '<div class="home-hero-badge"><span>⚡ 오늘의 1순위 집중</span></div>' +
+            '<span style="font-size:0.75rem;font-weight:800;color:var(--s-gold, #F59E0B);">' + dday + '</span>' +
+          '</div>' +
+          '<div style="display:flex;align-items:center;gap:4px;cursor:pointer;" onclick="if(typeof setTab===\'function\')setTab(\'records\');">' +
+            '<span style="font-size:0.75rem;font-weight:800;color:var(--s-brand, #10B981);">🔥 3일 연속</span>' +
+            '<span style="font-size:0.7rem;color:var(--s-ink-soft, #94A3B8);">&gt;</span>' +
+          '</div>' +
         '</div>' +
         '<div class="home-hero-title">' + escapeHtml(activeGoal.title) + '</div>' +
-        '<div class="home-hero-sub">진척률 (' + pct + '%) · 상민님을 위한 실시간 넛지</div>' +
-        '<div class="home-hero-prog-track">' +
+        '<div class="home-hero-sub" style="display:flex;justify-content:space-between;margin-bottom:6px;">' +
+          '<span>진척률 (' + pct + '%)</span>' +
+          '<span style="color:var(--s-ink-soft, #94A3B8);cursor:pointer;" onclick="if(typeof setTab===\'function\')setTab(\'goals\');">세부 마일스톤 &gt;</span>' +
+        '</div>' +
+        '<div class="home-hero-prog-track" style="margin-bottom:12px;">' +
           '<div class="home-hero-prog-fill" style="width:' + Math.max(pct, 5) + '%;"></div>' +
         '</div>' +
         '<button type="button" class="home-hero-checkin-btn" id="btnHeroCheckin" onclick="window.OurgoalSanctuaryV3.fastCheckin()">' +
           '<span>오늘 실천 완료 ✓</span>' +
         '</button>' +
-        '<div style="text-align:right;margin-top:8px;">' +
-          '<span style="font-size:0.74rem;color:var(--s-ink-soft, #94A3B8);cursor:pointer;" onclick="if(typeof setTab===\'function\')setTab(\'goals\');">세부 마일스톤 보기 &gt;</span>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);">' +
+          '<span style="font-size:0.72rem;color:var(--s-ink-soft, #94A3B8);">최근 7일 실천 스트릭</span>' +
+          '<div style="display:flex;gap:4px;align-items:center;" onclick="if(typeof setTab===\'function\')setTab(\'records\');" role="button" tabindex="0" title="히트맵 전체보기">' +
+            '<span title="월 (완료)" style="width:14px;height:14px;border-radius:4px;background:#10B981;display:inline-block;"></span>' +
+            '<span title="화 (완료)" style="width:14px;height:14px;border-radius:4px;background:#10B981;display:inline-block;"></span>' +
+            '<span title="수" style="width:14px;height:14px;border-radius:4px;background:rgba(16,185,129,0.25);display:inline-block;"></span>' +
+            '<span title="목 (완료)" style="width:14px;height:14px;border-radius:4px;background:#10B981;display:inline-block;"></span>' +
+            '<span title="금" style="width:14px;height:14px;border-radius:4px;background:rgba(16,185,129,0.25);display:inline-block;"></span>' +
+            '<span title="토 (완료)" style="width:14px;height:14px;border-radius:4px;background:#10B981;display:inline-block;"></span>' +
+            '<span title="일 (오늘)" style="width:14px;height:14px;border-radius:4px;background:#10B981;border:1.5px solid #fff;display:inline-block;"></span>' +
+          '</div>' +
         '</div>' +
       '</div>';
 
-    var streakCardHtml = 
-      '<div class="blueprint-card">' +
-        '<div class="card-head">' +
-          '<div class="card-title">🔥 3일 연속 몰입 <span style="font-size:0.75rem;color:var(--s-brand, #10B981);margin-left:4px;">(8개 실천 달성)</span></div>' +
-          '<span style="font-size:0.72rem;color:var(--s-ink-soft, #94A3B8);cursor:pointer;" onclick="if(typeof setTab===\'function\')setTab(\'records\');">히트맵 전체보기 &gt;</span>' +
-        '</div>' +
-        '<div style="font-size:0.78rem;color:var(--s-ink-soft, #94A3B8);margin-bottom:8px;">최근 7일간 실천 스트릭</div>' +
-        '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">' +
-          '<div style="text-align:center;"><div style="font-size:0.68rem;color:var(--s-ink-faint, #64748B);margin-bottom:3px;">월</div><div style="height:22px;border-radius:4px;background:#10B981;"></div></div>' +
-          '<div style="text-align:center;"><div style="font-size:0.68rem;color:var(--s-ink-faint, #64748B);margin-bottom:3px;">화</div><div style="height:22px;border-radius:4px;background:#10B981;"></div></div>' +
-          '<div style="text-align:center;"><div style="font-size:0.68rem;color:var(--s-ink-faint, #64748B);margin-bottom:3px;">수</div><div style="height:22px;border-radius:4px;background:rgba(16,185,129,0.3);"></div></div>' +
-          '<div style="text-align:center;"><div style="font-size:0.68rem;color:var(--s-ink-faint, #64748B);margin-bottom:3px;">목</div><div style="height:22px;border-radius:4px;background:#10B981;"></div></div>' +
-          '<div style="text-align:center;"><div style="font-size:0.68rem;color:var(--s-ink-faint, #64748B);margin-bottom:3px;">금</div><div style="height:22px;border-radius:4px;background:rgba(16,185,129,0.3);"></div></div>' +
-          '<div style="text-align:center;"><div style="font-size:0.68rem;color:var(--s-ink-faint, #64748B);margin-bottom:3px;">토</div><div style="height:22px;border-radius:4px;background:#10B981;"></div></div>' +
-          '<div style="text-align:center;"><div style="font-size:0.68rem;color:var(--s-ink-faint, #64748B);margin-bottom:3px;">일</div><div style="height:22px;border-radius:4px;background:#10B981;border:1.5px solid #fff;"></div></div>' +
-        '</div>' +
-      '</div>';
-
-    slot.innerHTML = heroCardHtml + streakCardHtml;
+    slot.innerHTML = heroCardHtml;
   }
 
   /* =========================================================================
@@ -316,19 +316,20 @@
       calScreen.setAttribute('data-cal-mode', engine.activeCalMode || 'month');
     }
 
-    var modeNav = '<div class="s-cal-modes-wrap" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;">' +
-      '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'month' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'month\')">📅 월간</button>' +
-      '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'week' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'week\')">📆 주간</button>' +
-      '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'timeline' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'timeline\')">⏱️ 일간 타임라인</button>' +
-    '</div>' +
-    '<div class="s-cal-quick-action-bar" style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:12px;">' +
-      '<button type="button" class="btn-ghost" onclick="if(typeof window.openCalendarLockScreenModal===\'function\'){window.openCalendarLockScreenModal();}else{var b=document.getElementById(\'calLockScreenBtn\');if(b)b.click();}" style="display:inline-flex;align-items:center;gap:4px;padding:5px 8px;font-size:0.75rem;font-weight:600;border-radius:9999px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--ink);cursor:pointer;white-space:nowrap;word-break:keep-all;flex-shrink:0;">' +
-        '<span style="display:none;">폰 잠금화면에서 보기</span><span style="white-space:nowrap;word-break:keep-all;font-size:0.75rem;">📱 잠금화면용 일정 카드 저장</span>' +
-        '<span style="font-size:0.68rem;padding:2px 5px;border-radius:999px;background:rgba(99,102,241,0.15);color:#818cf8;font-weight:700;white-space:nowrap;">⚡ 실시간 연동</span>' +
-      '</button>' +
-      '<button type="button" class="btn-ghost" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();" style="display:inline-flex;align-items:center;gap:4px;padding:5px 10px;font-size:0.75rem;font-weight:600;border-radius:9999px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);color:#10b981;cursor:pointer;white-space:nowrap;flex-shrink:0;">' +
-        '<span>+ 새 일정</span>' +
-      '</button>' +
+    var modeNav = '<div class="s-cal-modes-wrap" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;flex-wrap:wrap;">' +
+      '<div style="display:inline-flex;background:var(--card, #131A26);padding:3px;border-radius:10px;border:1px solid var(--rule, #2D3B4F);">' +
+        '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'month' ? 'active' : '') + '" style="padding:5px 12px;font-size:0.75rem;border:none;border-radius:8px;background:' + (engine.activeCalMode === 'month' ? 'var(--brand,#10B981)' : 'transparent') + ';color:' + (engine.activeCalMode === 'month' ? '#fff' : 'var(--s-ink-soft,#94A3B8)') + ';font-weight:700;cursor:pointer;" onclick="window.OurgoalSanctuaryV3.setCalMode(\'month\')">월간</button>' +
+        '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'week' ? 'active' : '') + '" style="padding:5px 12px;font-size:0.75rem;border:none;border-radius:8px;background:' + (engine.activeCalMode === 'week' ? 'var(--brand,#10B981)' : 'transparent') + ';color:' + (engine.activeCalMode === 'week' ? '#fff' : 'var(--s-ink-soft,#94A3B8)') + ';font-weight:700;cursor:pointer;" onclick="window.OurgoalSanctuaryV3.setCalMode(\'week\')">주간</button>' +
+        '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'timeline' ? 'active' : '') + '" style="padding:5px 12px;font-size:0.75rem;border:none;border-radius:8px;background:' + (engine.activeCalMode === 'timeline' ? 'var(--brand,#10B981)' : 'transparent') + ';color:' + (engine.activeCalMode === 'timeline' ? '#fff' : 'var(--s-ink-soft,#94A3B8)') + ';font-weight:700;cursor:pointer;" onclick="window.OurgoalSanctuaryV3.setCalMode(\'timeline\')">타임라인</button>' +
+      '</div>' +
+      '<div class="s-cal-quick-action-bar" style="display:flex;align-items:center;gap:6px;">' +
+        '<button type="button" class="btn-ghost" onclick="if(typeof window.openCalendarLockScreenModal===\'function\'){window.openCalendarLockScreenModal();}else{var b=document.getElementById(\'calLockScreenBtn\');if(b)b.click();}" style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;font-size:0.74rem;font-weight:600;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--ink);cursor:pointer;white-space:nowrap;word-break:keep-all;">' +
+          '<span style="display:none;">폰 잠금화면에서 보기</span><span style="white-space:nowrap;word-break:keep-all;font-size:0.74rem;">📱 잠금화면용 일정 카드 저장</span>' +
+        '</button>' +
+        '<button type="button" class="btn btn-primary btn-sm" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();" style="padding:5px 10px;font-size:0.75rem;font-weight:700;border-radius:8px;background:var(--brand,#10B981);color:#fff;border:none;cursor:pointer;white-space:nowrap;">' +
+          '<span>+ 새 일정</span>' +
+        '</button>' +
+      '</div>' +
     '</div>';
 
     var contentHtml = '';
@@ -448,11 +449,7 @@
       
       var itemsListDetailHtml = '';
       if (selectedItems.length > 0) {
-        itemsListDetailHtml = '<div class="blueprint-card" style="margin-top:12px;">' +
-          '<div class="card-head">' +
-            '<span class="card-title">📌 ' + engine.selectedCalDate + ' 실천 리스트</span>' +
-            '<span style="font-size:0.75rem;color:var(--s-brand, #10B981);font-weight:700;">총 ' + selectedItems.length + '건</span>' +
-          '</div>' +
+        itemsListDetailHtml = '<div class="s-cal-day-items-list" style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);">' +
           selectedItems.map(function(it) {
             var tPart = (it.date && it.date.indexOf('T') !== -1) ? it.date.split('T')[1].slice(0, 5) : (it.time || '종일');
             var isDone = !!it.done;
@@ -460,24 +457,23 @@
             var kind = it.kind || 'custom';
             var goalId = it.goalId || '';
             var msId = it.msId || '';
-            return '<div class="quest-item" style="cursor:pointer;" onclick="window.OurgoalSanctuaryV3.openScheduleDetail(\'' + engine.selectedCalDate + '\', \'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\');">' +
+            return '<div class="quest-item" style="cursor:pointer;margin-bottom:6px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);" onclick="window.OurgoalSanctuaryV3.openScheduleDetail(\'' + engine.selectedCalDate + '\', \'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\');">' +
               '<div class="quest-left">' +
                 '<div class="quest-checkbox ' + (isDone ? 'done' : '') + '" onclick="event.stopPropagation(); window.OurgoalSanctuaryV3.toggleScheduleItem(\'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\', \'' + msId + '\');">' +
                   (isDone ? '✓' : '') +
                 '</div>' +
                 '<div>' +
-                  '<div class="quest-text ' + (isDone ? 'done' : '') + '">' + escapeHtml(it.title || it.text) + '</div>' +
-                  '<div style="font-size:0.72rem;color:var(--s-ink-faint, #64748B);">' + tPart + (it.note ? ' · ' + escapeHtml(it.note) : '') + '</div>' +
+                  '<div class="quest-text ' + (isDone ? 'done' : '') + '" style="font-size:0.85rem;">' + escapeHtml(it.title || it.text) + '</div>' +
+                  '<div style="font-size:0.7rem;color:var(--s-ink-faint, #64748B);">' + tPart + (it.note ? ' · ' + escapeHtml(it.note) : '') + '</div>' +
                 '</div>' +
               '</div>' +
-              '<span class="quest-exp">' + (it.goalId ? '목표연계' : '일반') + '</span>' +
+              '<span class="quest-exp" style="font-size:0.68rem;">' + (it.goalId ? '목표연계' : '일반') + '</span>' +
             '</div>';
           }).join('') +
         '</div>';
       } else {
-        itemsListDetailHtml = '<div class="blueprint-card" style="margin-top:12px;text-align:center;padding:16px;color:var(--s-ink-soft);">' +
-          '<div style="font-size:0.82rem;font-weight:700;margin-bottom:6px;">' + engine.selectedCalDate + ' 에 등록된 일정이 없습니다</div>' +
-          '<button type="button" class="btn btn-primary btn-sm" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal(\'' + engine.selectedCalDate + '\');" style="margin-top:4px;">+ 새 일정 등록</button>' +
+        itemsListDetailHtml = '<div style="margin-top:10px;padding:12px;text-align:center;font-size:0.78rem;color:var(--s-ink-soft);border-top:1px solid rgba(255,255,255,0.06);">' +
+          engine.selectedCalDate + ' 에 등록된 일정이 없습니다.' +
         '</div>';
       }
 
@@ -495,18 +491,19 @@
           emptyCellsHtml +
           daysHtml +
         '</div>' +
-        '<div class="s-cal-selected-bar">' +
+        '<div class="s-cal-selected-bar" style="margin-top:12px;padding-top:10px;">' +
           '<div class="s-cal-sel-info">' +
             '<span class="s-cal-sel-date">' + engine.selectedCalDate + ' · 일정 ' + selectedItems.length + '건</span>' +
             '<span class="s-cal-sel-task">' + escapeHtml(selItemTitle) + '</span>' +
           '</div>' +
-          '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
-            '<button class="btn btn-ghost btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openBgPickerModal();" title="배경사진 선택">🖼️ 사진</button>' +
-            '<button class="btn btn-ghost btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openDayHubModal();" title="일자 관리 종합 허브">📅 허브</button>' +
-            '<button class="btn btn-primary btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();">+ 일정 추가</button>' +
+          '<div style="display:flex;gap:5px;flex-wrap:wrap;">' +
+            '<button class="btn btn-ghost btn-xs" type="button" onclick="window.OurgoalSanctuaryV3.openBgPickerModal();" style="padding:3px 7px;font-size:0.72rem;" title="배경사진 선택">🖼️ 사진</button>' +
+            '<button class="btn btn-ghost btn-xs" type="button" onclick="window.OurgoalSanctuaryV3.openDayHubModal();" style="padding:3px 7px;font-size:0.72rem;" title="일자 관리 종합 허브">📅 허브</button>' +
+            '<button class="btn btn-primary btn-xs" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();" style="padding:3px 9px;font-size:0.72rem;">+ 일정 추가</button>' +
           '</div>' +
         '</div>' +
-      '</div>' + itemsListDetailHtml;
+        itemsListDetailHtml +
+      '</div>';
     } else if (engine.activeCalMode === 'week') {
       var weekBase = engine.selectedCalDate || getTodayStr();
       var wParts = weekBase.split('-');
@@ -666,13 +663,13 @@
     var slot = document.getElementById('sanctuaryRecordsView');
     if (!slot) return;
 
-    var modeNav = '<div class="s-rec-modes-wrap" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;">' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'heatmap' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'heatmap\')">🟩 365일 히트맵</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'feed' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'feed\')">✍️ 내 기록 피드</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'timer' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'timer\')">🧘 집중 타이머</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'stats' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'stats\')">📊 성취 통계</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'archive' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'archive\')">📦 보관함</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'recap' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'recap\')">📸 위클리 리캡</button>' +
+    var modeNav = '<div class="s-rec-modes-wrap" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;scrollbar-width:none;-webkit-overflow-scrolling:touch;">' +
+      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'heatmap' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'heatmap\')">🟩 365일 히트맵</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'feed' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'feed\')">✍️ 내 피드</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'timer' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'timer\')">🧘 집중 타이머</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'stats' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'stats\')">📊 성취 통계</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'archive' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'archive\')">📦 보관함</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'recap' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'recap\')">📸 위클리 리캡</button>' +
     '</div>';
 
     var records = (window.state && window.state.profile && window.state.profile.records) || [];
@@ -1266,19 +1263,18 @@
 
     var peers = getRealRunningMates();
     var countText = peers.length > 0 ? (peers.length + '명') : '0명';
-    var countClass = peers.length > 0 ? 's-radar-count' : 's-radar-count s-radar-zero';
     var isCollapsed = slot.dataset.collapsed === 'true';
 
-    var radarHtml = '<div class="s-peer-radar-card ' + (isCollapsed ? 'collapsed' : 'slim-mode') + '" id="sPeerRadarCard">' +
-      '<div class="s-radar-head">' +
-        '<div class="s-radar-title">' +
-          '<span class="s-live-dot"></span>' +
-          '<b>실시간 러닝메이트</b>' +
-          '<span class="' + countClass + '">' + countText + '</span>' +
+    var radarHtml = '<div class="s-peer-radar-card ' + (isCollapsed ? 'collapsed' : 'slim-mode') + '" id="sPeerRadarCard" style="margin-bottom:8px;padding:8px 12px;border-radius:12px;">' +
+      '<div class="s-radar-head" style="margin:0;display:flex;align-items:center;justify-content:space-between;">' +
+        '<div class="s-radar-title" style="display:flex;align-items:center;gap:6px;font-size:0.8rem;">' +
+          '<span class="s-live-dot" style="width:8px;height:8px;"></span>' +
+          '<span>함께 달리는 러닝메이트</span>' +
+          '<span style="font-size:0.75rem;font-weight:800;color:var(--s-brand, #10B981);">' + countText + '</span>' +
         '</div>' +
         '<div style="display:flex;align-items:center;gap:6px;">' +
-          '<button class="btn btn-ghost btn-xs s-radar-refresh-btn" type="button" onclick="window.OurgoalSanctuaryV3.refreshRadar(this);">새로고침</button>' +
-          '<button class="btn btn-ghost btn-xs s-radar-toggle-btn" id="peerRadarToggleBtn" type="button" onclick="window.OurgoalSanctuaryV3.toggleRadarCollapse();" style="padding:2px 8px;font-size:0.75rem;">' + (isCollapsed ? '▼ 펼치기' : '▲ 접기') + '</button>' +
+          '<button class="btn btn-ghost btn-xs s-radar-refresh-btn" type="button" onclick="window.OurgoalSanctuaryV3.refreshRadar(this);" style="padding:2px 6px;font-size:0.7rem;">새로고침</button>' +
+          '<button class="btn btn-ghost btn-xs s-radar-toggle-btn" id="peerRadarToggleBtn" type="button" onclick="window.OurgoalSanctuaryV3.toggleRadarCollapse();" style="padding:2px 6px;font-size:0.7rem;">' + (isCollapsed ? '펼치기 ▾' : '접기 ▴') + '</button>' +
         '</div>' +
       '</div>';
 
@@ -1289,7 +1285,7 @@
     }
 
     if (peers.length > 0) {
-      radarHtml += '<div class="s-radar-scroll">' +
+      radarHtml += '<div class="s-radar-scroll" style="margin-top:8px;">' +
         peers.map(function(p) {
           return '<div class="s-radar-item" data-peerid="' + escapeHtml(p.id) + '" role="button" tabindex="0" onclick="window.OurgoalSanctuaryV3.openPeerInteraction(\'' + escapeHtml(p.id) + '\');">' +
             '<div class="s-r-avatar-ring">' +
@@ -1302,19 +1298,13 @@
         }).join('') +
       '</div>';
     } else {
-      radarHtml += '<div class="s-radar-empty-card" style="padding:8px 12px;margin-top:6px;border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
-        '<div class="s-r-empty-info" style="display:flex;align-items:center;gap:8px;">' +
-          '<span style="font-size:1.1rem;">🤝</span>' +
-          '<div style="font-size:.78rem;">' +
-            '<b style="color:var(--ink);">함께 달릴 동반자를 찾아보세요</b>' +
-          '</div>' +
-        '</div>' +
-        '<button class="btn btn-primary btn-xs" id="sRadarEmptyBtn" type="button" onclick="window.OurgoalSanctuaryV3.gotoCompanions();" style="padding:4px 10px;font-size:.75rem;white-space:nowrap;">+ 동반자 찾기</button>' +
+      radarHtml += '<div class="s-radar-empty-card" style="padding:8px 12px;margin-top:6px;border-radius:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
+        '<span style="font-size:.76rem;color:var(--ink-soft);">함께 달릴 동반자를 찾아보세요 🤝</span>' +
+        '<button class="btn btn-primary btn-xs" id="sRadarEmptyBtn" type="button" onclick="window.OurgoalSanctuaryV3.gotoCompanions();" style="padding:3px 8px;font-size:.72rem;">+ 동반자 찾기</button>' +
       '</div>';
     }
 
     radarHtml += '</div>';
-
     slot.innerHTML = radarHtml;
   }
 
