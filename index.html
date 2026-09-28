@@ -775,8 +775,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       <!-- ⑤ 기록됨 · 나누기 -->
       <div class="home-actions">
-        <button class="btn btn-secondary" id="homeChallengeRoomBtn" type="button" data-home-widget="homeChallengeRoomBtn" data-widget-label="내 성장 확인하기 버튼" data-widget-hint="기록 탭으로 바로 이동하는 버튼">내 성장 확인하기</button>
-        <button class="mz-btn" id="mzShareBtn" type="button" data-home-widget="mzShareBtn" data-widget-label="내 성장 자랑하기 버튼" data-widget-hint="인스타·카톡 공유용 고화질 카드">내 성장 자랑하기</button>
+        <button class="btn btn-secondary" id="homeChallengeRoomBtn" type="button" title="누르면: 기록 탭으로 이동해 365일 연간 히트맵과 분석 통계를 확인합니다" data-home-widget="homeChallengeRoomBtn" data-widget-label="내 성장 확인하기 버튼" data-widget-hint="기록 탭으로 바로 이동하는 버튼">내 성장 확인하기</button>
+        <button class="mz-btn" id="mzShareBtn" type="button" title="누르면: 인스타·카톡 공유용 고화질 성취 카드를 즉시 생성합니다" data-home-widget="mzShareBtn" data-widget-label="내 성장 자랑하기 버튼" data-widget-hint="인스타·카톡 공유용 고화질 카드">내 성장 자랑하기</button>
       </div>
 
       <!-- ⑥ [#TASK-ES-268 / 생각 메모장 13번] 아워골 평가해주기 고정배너 (나만의 홈 구성에서 바꿀수 없음, 상시 노출) -->
@@ -827,12 +827,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             <div class="goal-head-l" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
               <div style="display:flex;align-items:center;gap:6px;"><h2 style="margin:0;font-size:1.15rem;">세부 마일스톤 & 할 일</h2></div>
               <span class="privacy-badge" id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
-              <button class="btn btn-ghost btn-sm" id="btnGoalTemplateEncyclopedia" type="button" style="font-size:.8125rem;padding:3px 9px;font-weight:700;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--rule);border-radius:8px;background:var(--card2);cursor:pointer;" aria-label="템플릿백과사전" onclick="if(typeof openGoalTemplateEncyclopediaModal==='function'){openGoalTemplateEncyclopediaModal();}else if(typeof openTemplateEncyclopediaModal==='function'){openTemplateEncyclopediaModal();}">📖 템플릿백과사전</button>
+              <button class="btn btn-ghost btn-sm" id="btnGoalTemplateEncyclopedia" type="button" title="누르면: 검증된 합격·운동·학습 로드맵 템플릿을 1초 만에 불러옵니다" style="font-size:.8125rem;padding:3px 9px;font-weight:700;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--rule);border-radius:8px;background:var(--card2);cursor:pointer;" aria-label="템플릿백과사전" onclick="if(typeof openGoalTemplateEncyclopediaModal==='function'){openGoalTemplateEncyclopediaModal();}else if(typeof openTemplateEncyclopediaModal==='function'){openTemplateEncyclopediaModal();}">📖 템플릿백과사전</button>
             </div>
             <div style="display:flex;align-items:center;gap:6px;">
-              <button class="btn btn-ghost btn-sm" id="btnShowPersonalGuideModal" type="button" style="font-size:.8125rem;padding:3px 9px;">활용가이드</button>
-              <button class="btn btn-primary btn-sm" id="btnPersonalAddGoalInline" type="button" style="font-size:.8125rem;padding:3px 9px;font-weight:700;">+ 새 목표</button>
-              <button class="edit-toggle off" id="goalEditToggle" type="button">편집</button>
+              <button class="btn btn-ghost btn-sm" id="btnShowPersonalGuideModal" type="button" title="누르면: 목표를 쪼개고 달성하는 방법 가이드를 확인합니다" style="font-size:.8125rem;padding:3px 9px;">활용가이드</button>
+              <button class="btn btn-primary btn-sm" id="btnPersonalAddGoalInline" type="button" title="누르면: 새로운 목표를 등록하고 마일스톤을 자동 생성합니다" style="font-size:.8125rem;padding:3px 9px;font-weight:700;">+ 새 목표</button>
+              <button class="edit-toggle off" id="goalEditToggle" type="button" title="누르면: 목표 및 마일스톤 순서를 편집하거나 삭제합니다">편집</button>
             </div>
           </div>
           <div id="goalsTemplateAccordionSlot" style="display:none;"></div>
@@ -1198,7 +1198,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       <div class="screen-head">
         <div style="display:flex;align-items:center;gap:6px;"><h2 class="s-title" style="margin:0;">소통</h2></div>
-        <button class="btn btn-primary btn-sm" id="btnCommPostFeed" type="button" onclick="if(window.handle소통_Item30Action) { handle소통_Item30Action(event); } else if(window.openShareToFeedModal) { window.openShareToFeedModal(); } else if(typeof openShareToFeedModal === 'function') { openShareToFeedModal(); }"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>게시하기</span></button>
+        <button class="btn btn-primary btn-sm" id="btnCommPostFeed" type="button" title="누르면: 나의 오늘 실천을 동료들에게 공유하고 실시간 응원을 받습니다" onclick="if(window.handle소통_Item30Action) { handle소통_Item30Action(event); } else if(window.openShareToFeedModal) { window.openShareToFeedModal(); } else if(typeof openShareToFeedModal === 'function') { openShareToFeedModal(); }"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>게시하기</span></button>
       </div>
       
 

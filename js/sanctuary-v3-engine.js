@@ -101,10 +101,13 @@
           '<div class="home-hero-prog-fill" style="width:' + Math.max(pct, 5) + '%;"></div>' +
         '</div>' +
         '<button type="button" class="home-hero-checkin-btn" id="btnHeroCheckin" onclick="window.OurgoalSanctuaryV3.fastCheckin()">' +
-          '<span>오늘 실천 완료 ✓</span>' +
+          '<div style="font-size:0.95rem;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;">' +
+            '<span>오늘 실천 완료 ✓</span>' +
+          '</div>' +
+          '<div style="font-size:0.68rem;opacity:0.85;font-weight:500;margin-top:2px;">누르면: 오늘 실천이 완료되고 연속 스트릭 불꽃이 점화돼요 🔥</div>' +
         '</button>' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);">' +
-          '<span style="font-size:0.72rem;color:var(--s-ink-soft, #94A3B8);">최근 7일 실천 스트릭</span>' +
+          '<span style="font-size:0.72rem;color:var(--s-ink-soft, #94A3B8);">최근 7일 실천 스트릭 (누르면: 365일 히트맵)</span>' +
           '<div style="display:flex;gap:4px;align-items:center;" onclick="if(typeof setTab===\'function\')setTab(\'records\');" role="button" tabindex="0" title="히트맵 전체보기">' +
             '<span title="월 (완료)" style="width:14px;height:14px;border-radius:4px;background:#10B981;display:inline-block;"></span>' +
             '<span title="화 (완료)" style="width:14px;height:14px;border-radius:4px;background:#10B981;display:inline-block;"></span>' +
@@ -149,21 +152,21 @@
           '<span style="font-size:0.72rem;color:var(--s-brand, #10B981);font-weight:700;">실시간 즉시 적용</span>' +
         '</div>' +
         '<div class="theme-grid-picker">' +
-          '<div class="theme-grid-chip ' + (curTheme === 'focus-sanctuary' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.switchTheme(\'focus-sanctuary\')">' +
+          '<div class="theme-grid-chip ' + (curTheme === 'focus-sanctuary' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.switchTheme(\'focus-sanctuary\')" title="눈이 편안한 에메랄드 다크 테마로 0.01초 만에 전환돼요">' +
             '<div class="theme-color-dot" style="background:#0B0F17;border-color:#10B981;"></div>' +
-            '<div><div style="font-size:0.8rem;font-weight:800;color:var(--s-ink, #F1F5F9);">성소 (다크)</div><div style="font-size:0.68rem;color:var(--s-ink-soft, #94A3B8);">기본 에메랄드</div></div>' +
+            '<div><div style="font-size:0.8rem;font-weight:800;color:var(--s-ink, #F1F5F9);">성소 (다크)</div><div style="font-size:0.68rem;color:var(--s-ink-soft, #94A3B8);">눈 편한 에메랄드</div></div>' +
           '</div>' +
-          '<div class="theme-grid-chip ' + (curTheme === 'black' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.switchTheme(\'black\')">' +
+          '<div class="theme-grid-chip ' + (curTheme === 'black' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.switchTheme(\'black\')" title="배터리를 절약하는 OLED 딥블랙 테마로 0.01초 만에 전환돼요">' +
             '<div class="theme-color-dot" style="background:#000000;border-color:#38BDF8;"></div>' +
-            '<div><div style="font-size:0.8rem;font-weight:800;color:var(--s-ink, #F1F5F9);">블랙 (OLED)</div><div style="font-size:0.68rem;color:var(--s-ink-soft, #94A3B8);">순수 딥블랙</div></div>' +
+            '<div><div style="font-size:0.8rem;font-weight:800;color:var(--s-ink, #F1F5F9);">블랙 (OLED)</div><div style="font-size:0.68rem;color:var(--s-ink-soft, #94A3B8);">배터리 절약 블랙</div></div>' +
           '</div>' +
-          '<div class="theme-grid-chip ' + (curTheme === 'white' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.switchTheme(\'white\')">' +
+          '<div class="theme-grid-chip ' + (curTheme === 'white' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.switchTheme(\'white\')" title="산뜻하고 선명한 낮 시간용 퓨어 화이트 테마로 0.01초 만에 전환돼요">' +
             '<div class="theme-color-dot" style="background:#FFFFFF;border-color:#059669;"></div>' +
-            '<div><div style="font-size:0.8rem;font-weight:800;color:var(--s-ink, #F1F5F9);">퓨어 화이트</div><div style="font-size:0.68rem;color:var(--s-ink-soft, #94A3B8);">모던 라이트</div></div>' +
+            '<div><div style="font-size:0.8rem;font-weight:800;color:var(--s-ink, #F1F5F9);">퓨어 화이트</div><div style="font-size:0.68rem;color:var(--s-ink-soft, #94A3B8);">선명한 모던라이트</div></div>' +
           '</div>' +
-          '<div class="theme-grid-chip ' + (curTheme === 'urban-city' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.switchTheme(\'urban-city\')">' +
+          '<div class="theme-grid-chip ' + (curTheme === 'urban-city' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.switchTheme(\'urban-city\')" title="집중력을 극대화하는 네오 사이버블루 테마로 0.01초 만에 전환돼요">' +
             '<div class="theme-color-dot" style="background:#0B0F19;border-color:#0EA5E9;"></div>' +
-            '<div><div style="font-size:0.8rem;font-weight:800;color:var(--s-ink, #F1F5F9);">어반 시티</div><div style="font-size:0.68rem;color:var(--s-ink-soft, #94A3B8);">네오 사이버블루</div></div>' +
+            '<div><div style="font-size:0.8rem;font-weight:800;color:var(--s-ink, #F1F5F9);">어반 시티</div><div style="font-size:0.68rem;color:var(--s-ink-soft, #94A3B8);">집중 네오블루</div></div>' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -323,10 +326,10 @@
         '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'timeline' ? 'active' : '') + '" style="padding:5px 12px;font-size:0.75rem;border:none;border-radius:8px;background:' + (engine.activeCalMode === 'timeline' ? 'var(--brand,#10B981)' : 'transparent') + ';color:' + (engine.activeCalMode === 'timeline' ? '#fff' : 'var(--s-ink-soft,#94A3B8)') + ';font-weight:700;cursor:pointer;" onclick="window.OurgoalSanctuaryV3.setCalMode(\'timeline\')">타임라인</button>' +
       '</div>' +
       '<div class="s-cal-quick-action-bar" style="display:flex;align-items:center;gap:6px;">' +
-        '<button type="button" class="btn-ghost" onclick="if(typeof window.openCalendarLockScreenModal===\'function\'){window.openCalendarLockScreenModal();}else{var b=document.getElementById(\'calLockScreenBtn\');if(b)b.click();}" style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;font-size:0.74rem;font-weight:600;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--ink);cursor:pointer;white-space:nowrap;word-break:keep-all;">' +
+        '<button type="button" class="btn-ghost" title="누르면: 폰 잠금화면용 9:16 일정 카드가 사진첩에 저장됩니다" onclick="if(typeof window.openCalendarLockScreenModal===\'function\'){window.openCalendarLockScreenModal();}else{var b=document.getElementById(\'calLockScreenBtn\');if(b)b.click();}" style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;font-size:0.74rem;font-weight:600;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--ink);cursor:pointer;white-space:nowrap;word-break:keep-all;">' +
           '<span style="display:none;">폰 잠금화면에서 보기</span><span style="white-space:nowrap;word-break:keep-all;font-size:0.74rem;">📱 잠금화면용 일정 카드 저장</span>' +
         '</button>' +
-        '<button type="button" class="btn btn-primary btn-sm" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();" style="padding:5px 10px;font-size:0.75rem;font-weight:700;border-radius:8px;background:var(--brand,#10B981);color:#fff;border:none;cursor:pointer;white-space:nowrap;">' +
+        '<button type="button" class="btn btn-primary btn-sm" title="누르면: 원하는 날짜에 실천할 목표와 시간을 등록합니다" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();" style="padding:5px 10px;font-size:0.75rem;font-weight:700;border-radius:8px;background:var(--brand,#10B981);color:#fff;border:none;cursor:pointer;white-space:nowrap;">' +
           '<span>+ 새 일정</span>' +
         '</button>' +
       '</div>' +
@@ -494,12 +497,12 @@
         '<div class="s-cal-selected-bar" style="margin-top:12px;padding-top:10px;">' +
           '<div class="s-cal-sel-info">' +
             '<span class="s-cal-sel-date">' + engine.selectedCalDate + ' · 일정 ' + selectedItems.length + '건</span>' +
-            '<span class="s-cal-sel-task">' + escapeHtml(selItemTitle) + '</span>' +
+            '<span class="s-cal-sel-task">' + (selectedItems.length > 0 ? '실천 일정 목록' : '등록된 일정 없음') + '</span>' +
           '</div>' +
           '<div style="display:flex;gap:5px;flex-wrap:wrap;">' +
-            '<button class="btn btn-ghost btn-xs" type="button" onclick="window.OurgoalSanctuaryV3.openBgPickerModal();" style="padding:3px 7px;font-size:0.72rem;" title="배경사진 선택">🖼️ 사진</button>' +
-            '<button class="btn btn-ghost btn-xs" type="button" onclick="window.OurgoalSanctuaryV3.openDayHubModal();" style="padding:3px 7px;font-size:0.72rem;" title="일자 관리 종합 허브">📅 허브</button>' +
-            '<button class="btn btn-primary btn-xs" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();" style="padding:3px 9px;font-size:0.72rem;">+ 일정 추가</button>' +
+            '<button class="btn btn-ghost btn-xs" type="button" onclick="window.OurgoalSanctuaryV3.openBgPickerModal();" style="padding:3px 7px;font-size:0.72rem;" title="누르면: 이 날짜에 실천한 인증 사진을 달력 배경으로 등록합니다">🖼️ 사진</button>' +
+            '<button class="btn btn-ghost btn-xs" type="button" onclick="window.OurgoalSanctuaryV3.openDayHubModal();" style="padding:3px 7px;font-size:0.72rem;" title="누르면: 이 날짜의 타임라인, 메모, 할 일을 한 번에 관리합니다">📅 허브</button>' +
+            '<button class="btn btn-primary btn-xs" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();" style="padding:3px 9px;font-size:0.72rem;" title="누르면: 이 날짜에 새로운 실천 일정을 등록합니다">+ 일정 추가</button>' +
           '</div>' +
         '</div>' +
         itemsListDetailHtml +
@@ -766,8 +769,8 @@
           '<span>많음 (에메랄드 글로우)</span>' +
         '</div>' +
         '<div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end;">' +
-          '<button class="btn btn-ghost btn-sm" type="button" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();">⏱️ 스톱워치 콕핏</button>' +
-          '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.openAddRecordModal) window.openAddRecordModal(); else if(document.getElementById(\'recAddBtn\')) document.getElementById(\'recAddBtn\').click();">+ 새 기록 작성</button>' +
+          '<button class="btn btn-ghost btn-sm" type="button" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();" title="누르면: 전체화면 스톱워치로 지금부터 몰입 시간을 초 단위 측정해요">⏱️ 스톱워치 콕핏</button>' +
+          '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.openAddRecordModal) window.openAddRecordModal(); else if(document.getElementById(\'recAddBtn\')) document.getElementById(\'recAddBtn\').click();" title="누르면: 오늘 실천한 내용과 사진을 남겨 타임라인에 저장합니다">+ 새 기록 작성</button>' +
         '</div>' +
       '</div>';
     } else if (engine.activeRecMode === 'feed') {
@@ -1273,8 +1276,8 @@
           '<span style="font-size:0.75rem;font-weight:800;color:var(--s-brand, #10B981);">' + countText + '</span>' +
         '</div>' +
         '<div style="display:flex;align-items:center;gap:6px;">' +
-          '<button class="btn btn-ghost btn-xs s-radar-refresh-btn" type="button" onclick="window.OurgoalSanctuaryV3.refreshRadar(this);" style="padding:2px 6px;font-size:0.7rem;">새로고침</button>' +
-          '<button class="btn btn-ghost btn-xs s-radar-toggle-btn" id="peerRadarToggleBtn" type="button" onclick="window.OurgoalSanctuaryV3.toggleRadarCollapse();" style="padding:2px 6px;font-size:0.7rem;">' + (isCollapsed ? '펼치기 ▾' : '접기 ▴') + '</button>' +
+          '<button class="btn btn-ghost btn-xs s-radar-refresh-btn" type="button" title="누르면: 실시간 접속 중인 러닝메이트 현황을 새로고침합니다" onclick="window.OurgoalSanctuaryV3.refreshRadar(this);" style="padding:2px 6px;font-size:0.7rem;">새로고침</button>' +
+          '<button class="btn btn-ghost btn-xs s-radar-toggle-btn" id="peerRadarToggleBtn" type="button" title="누르면: 러닝메이트 목록을 펼치거나 접습니다" onclick="window.OurgoalSanctuaryV3.toggleRadarCollapse();" style="padding:2px 6px;font-size:0.7rem;">' + (isCollapsed ? '펼치기 ▾' : '접기 ▴') + '</button>' +
         '</div>' +
       '</div>';
 
@@ -1300,7 +1303,7 @@
     } else {
       radarHtml += '<div class="s-radar-empty-card" style="padding:8px 12px;margin-top:6px;border-radius:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
         '<span style="font-size:.76rem;color:var(--ink-soft);">함께 달릴 동반자를 찾아보세요 🤝</span>' +
-        '<button class="btn btn-primary btn-xs" id="sRadarEmptyBtn" type="button" onclick="window.OurgoalSanctuaryV3.gotoCompanions();" style="padding:3px 8px;font-size:.72rem;">+ 동반자 찾기</button>' +
+        '<button class="btn btn-primary btn-xs" id="sRadarEmptyBtn" type="button" title="누르면: 나와 같은 목표를 향해 달리는 동반자를 찾아 1:1 매칭합니다" onclick="window.OurgoalSanctuaryV3.gotoCompanions();" style="padding:3px 8px;font-size:.72rem;">+ 동반자 찾기</button>' +
       '</div>';
     }
 

@@ -15025,3 +15025,40 @@ html[data-theme="urban-city"] {
 .theme-grid-chip div div:last-child {
   display: none !important;
 }
+
+
+/* =========================================================================
+ * 6대 전 탭 중복 전면 소탕 및 목적·기대 효과 직관화 (#TASK-ES-331)
+ * ========================================================================= */
+
+/* 1. 홈 탭: 상단 몰입 카드와 중복되는 대표 목표의 하단 복제 카드 소탕 */
+#homeGoalList > .toss-home-focus-card {
+  display: none !important;
+}
+
+/* 2. 일정 탭: 달력 카드 내부 인라인 리스트와 중복되는 바깥 calDayDetail 카드 소탕 */
+#screen-calendar #calDayDetail {
+  display: none !important;
+}
+
+/* 3. 기록 탭: 히트맵 액션과 중복되는 중간 요약 카드의 복제 버튼 영역 정돈 */
+#recHeroCard > div:last-child {
+  display: none !important;
+}
+
+/* 4. 소통 탭: 0건 요약 박스를 숨겨 동료들의 실시간 피드를 최상단 전진 배치 */
+#commHeroCard {
+  display: none !important;
+}
+
+/* 5. 목표 탭: 상단 등반 로드맵과 중복되는 하단 toss-goal-hero-card 중복 헤더 카드 평탄화 */
+#goalDetailBody > .toss-goal-hero-card {
+  display: none !important;
+}
+
+/* 6. 일정 탭: 달력 선택 바 텍스트 간결화 */
+.s-cal-sel-task {
+  font-size: 0.76rem !important;
+  color: var(--s-ink-soft, #94A3B8) !important;
+  font-weight: 600 !important;
+}
