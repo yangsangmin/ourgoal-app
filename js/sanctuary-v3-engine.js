@@ -63,65 +63,10 @@
     if (!homeScreen) return;
 
     var slot = document.getElementById('sanctuaryHomeSlot');
-    if (!slot) {
-      slot = document.createElement('div');
-      slot.id = 'sanctuaryHomeSlot';
-      slot.className = 'sanctuary-home-slot';
-      var topBar = document.getElementById('sanctuaryTopBar');
-      if (topBar && topBar.nextSibling) {
-        homeScreen.insertBefore(slot, topBar.nextSibling);
-      } else {
-        homeScreen.prepend(slot);
-      }
+    if (slot) {
+      slot.innerHTML = '';
+      slot.style.display = 'none';
     }
-
-    var goals = (window.state && window.state.profile && window.state.profile.goals) || [];
-    var activeGoal = goals[0] || { title: '10km 하프마라톤 완주 🏃', dueDate: '2026-10-12', progress: 0 };
-    var dday = activeGoal.dueDate ? (window.dDay ? window.dDay(activeGoal.dueDate) : 'D-14') : 'D-14';
-    var pct = (typeof window.goalProgress === 'function') ? Math.round(window.goalProgress(activeGoal)) : (activeGoal.progress || 0);
-    var isGoalDone = (pct >= 100);
-
-    var heroCardHtml = 
-      '<div class="home-hero-card">' +
-        '<div class="card-head" style="margin-bottom:8px;">' +
-          '<div style="display:flex;align-items:center;gap:6px;">' +
-            '<div class="home-hero-badge"><span>⚡ 오늘의 1순위 집중</span></div>' +
-            '<span style="font-size:0.75rem;font-weight:800;color:var(--s-gold, #F59E0B);">' + dday + '</span>' +
-          '</div>' +
-          '<div style="display:flex;align-items:center;gap:4px;cursor:pointer;" onclick="if(typeof setTab===\'function\')setTab(\'records\');">' +
-            '<span style="font-size:0.75rem;font-weight:800;color:var(--s-brand, #10B981);">🔥 3일 연속</span>' +
-            '<span style="font-size:0.7rem;color:var(--s-ink-soft, #94A3B8);">&gt;</span>' +
-          '</div>' +
-        '</div>' +
-        '<div class="home-hero-title">' + escapeHtml(activeGoal.title) + '</div>' +
-        '<div class="home-hero-sub" style="display:flex;justify-content:space-between;margin-bottom:6px;">' +
-          '<span>진척률 (' + pct + '%)</span>' +
-          '<span style="color:var(--s-ink-soft, #94A3B8);cursor:pointer;" onclick="if(typeof setTab===\'function\')setTab(\'goals\');">세부 마일스톤 &gt;</span>' +
-        '</div>' +
-        '<div class="home-hero-prog-track" style="margin-bottom:12px;">' +
-          '<div class="home-hero-prog-fill" style="width:' + Math.min(100, Math.max(pct, 5)) + '%;"></div>' +
-        '</div>' +
-        '<button type="button" class="home-hero-checkin-btn ' + (isGoalDone ? 'is-done' : '') + '" id="btnHeroCheckin" onclick="window.OurgoalSanctuaryV3.fastCheckin()">' +
-          '<div style="font-size:0.95rem;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;">' +
-            '<span>' + (isGoalDone ? '오늘 1순위 목표 완주됨 🏆' : '오늘 실천 완료 ✓') + '</span>' +
-          '</div>' +
-          '<div style="font-size:0.68rem;opacity:0.85;font-weight:500;margin-top:2px;">' + (isGoalDone ? '멋진 하루 완주! 연속 스트릭 불꽃이 밝게 타고 있어요 🔥' : '누르면: 오늘 실천이 완료되고 연속 스트릭 불꽃이 점화돼요 🔥') + '</div>' +
-        '</button>' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);">' +
-          '<span style="font-size:0.72rem;color:var(--s-ink-soft, #94A3B8);">최근 7일 실천 스트릭 (누르면: 365일 히트맵)</span>' +
-          '<div style="display:flex;gap:4px;align-items:center;" onclick="if(typeof setTab===\'function\')setTab(\'records\');" role="button" tabindex="0" title="히트맵 전체보기">' +
-            '<span title="월 (완료)" style="width:14px;height:14px;border-radius:4px;background:#10B981;display:inline-block;"></span>' +
-            '<span title="화 (완료)" style="width:14px;height:14px;border-radius:4px;background:#10B981;display:inline-block;"></span>' +
-            '<span title="수" style="width:14px;height:14px;border-radius:4px;background:rgba(16,185,129,0.25);display:inline-block;"></span>' +
-            '<span title="목 (완료)" style="width:14px;height:14px;border-radius:4px;background:#10B981;display:inline-block;"></span>' +
-            '<span title="금" style="width:14px;height:14px;border-radius:4px;background:rgba(16,185,129,0.25);display:inline-block;"></span>' +
-            '<span title="토 (완료)" style="width:14px;height:14px;border-radius:4px;background:#10B981;display:inline-block;"></span>' +
-            '<span title="일 (오늘)" style="width:14px;height:14px;border-radius:4px;background:#10B981;border:1.5px solid #fff;display:inline-block;"></span>' +
-          '</div>' +
-        '</div>' +
-      '</div>';
-
-    slot.innerHTML = heroCardHtml;
   }
 
   /* =========================================================================
