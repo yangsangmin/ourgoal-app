@@ -10017,27 +10017,85 @@ html[data-theme="white"] #goalsHeadlineSentence b {
   display: none !important;
 }
 
+/* ═══════════════════════════════════════════════════════
+   🎯 HOME TAB: 3-TIER COCKPIT LAYOUT (마스터플랜 v2)
+   Tier 1: 아바타 탑바 + 인사말 (order 1-2)
+   Tier 2: 1순위 집중 히어로 카드 (order 3)
+   Tier 3: 서브 퀘스트 가로 칩 (order 4-5)
+   Below Fold: 보조 위젯 (order 6+)
+   ═══════════════════════════════════════════════════════ */
+
+/* --- Tier 1: 아바타 탑바 + 인사말 (첫 ~90px) --- */
 #screen-home .sanctuary-top-bar { order: 1; }
-#screen-home .home-head-row { order: 2; }
-#screen-home #homeHeadlineSentence { order: 3; }
-#screen-home .home-recent-title { order: 4; margin: 4px 0 8px; }
-#screen-home #homePositionStrip { order: 5; }
-#screen-home #homeGoalList { order: 6; margin-bottom: 12px; }
-#screen-home #captureCardBox { order: 7; margin-bottom: 12px; }
-#screen-home #levelBadgeRow { order: 8; }
-#screen-home #todayGlancePill { order: 9; }
+#screen-home .home-head-row { order: 2; margin: 4px 0 2px; }
+
+/* --- Tier 2: 1순위 집중 히어로 (order 3, ~280px) --- */
+#screen-home #sanctuaryHomeSlot { order: 3; margin-top: 4px; }
+
+/* --- Tier 3: 서브 퀘스트 목표 리스트 (order 4-5) --- */
+#screen-home .home-recent-title { order: 4; margin: 8px 0 4px; font-size: 0.875rem; }
+#screen-home #homeGoalList { order: 5; margin-bottom: 8px; }
+
+/* --- 14일 미니 히트맵 (order 6) --- */
+#screen-home #homeGrassSummaryCard { order: 6; margin-bottom: 8px; }
+
+/* --- 레벨·글랜스 (order 7-8) --- */
+#screen-home #levelBadgeRow { order: 7; }
+#screen-home #todayGlancePill { order: 8; }
+
+/* --- 3초 체크인 (order 9 — 접힘 상태로 보존) --- */
+#screen-home #captureCardBox { order: 9; margin-bottom: 12px; }
+
+/* --- 보조 위젯 (order 10+) --- */
 #screen-home #a11yLiveAnnouncer { order: 10; }
 #screen-home #offlineNoticeBanner { order: 11; }
 #screen-home #notifyBannerSlot { order: 12; }
 #screen-home #socialNotifySlot { order: 13; }
 #screen-home #iosPwaSlot { order: 14; }
+#screen-home #homeHeadlineSentence { order: 15; }
+#screen-home #homePositionStrip { order: 16; }
 #screen-home #todayMissionCard { order: 20; }
-#screen-home #homeGrassSummaryCard { order: 21; }
 #screen-home #customFeedbackBtn { order: 22; }
+
+/* --- 하단 압축 영역: 퀘스트바·레이스·평가 --- */
 #screen-home #dailyQuestBarWrap { order: 23; }
 #screen-home #crewPacingWidget { order: 24; margin-bottom: 14px; }
 #screen-home .home-actions { order: 30; margin-top: 6px; margin-bottom: 10px; }
 #screen-home #homeEvalBanner { order: 31; margin-top: 6px !important; margin-bottom: 24px !important; }
+
+/* ═══════════════════════════════════════════════════════
+   🎨 TOSS-STYLE MICRO-INTERACTIONS
+   ═══════════════════════════════════════════════════════ */
+
+/* 모든 인터랙티브 요소: 터치 축소 피드백 */
+#screen-home button:active,
+#screen-home [data-detail]:active,
+#screen-home .goal-card:active {
+  transform: scale(0.97);
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* 카드 보더 제거 → 서피스 색차 분리 (TDS 표준) */
+#screen-home .toss-home-focus-card {
+  border: none !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
+  border-radius: 18px !important;
+}
+
+/* 히어로 CTA 버튼: 코랄 핑크 그라디언트 (높은 탭 어포던스) */
+#screen-home .toss-focus-complete-btn {
+  background: linear-gradient(135deg, #FF6B6B 0%, #EE5A24 100%) !important;
+  border-radius: 14px !important;
+  padding: 13px 16px !important;
+  font-size: 0.9375rem !important;
+  box-shadow: 0 4px 14px rgba(238, 90, 36, 0.3) !important;
+}
+
+#screen-home .toss-focus-complete-btn.is-done {
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: #10B981 !important;
+  box-shadow: none !important;
+}
 
 /* 토스 홈 오늘의 원카드 (Today Focus Card) */
 .toss-home-focus-card {
