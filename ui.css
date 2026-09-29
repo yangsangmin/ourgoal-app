@@ -10075,26 +10075,134 @@ html[data-theme="white"] #goalsHeadlineSentence b {
   transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* 카드 보더 제거 → 서피스 색차 분리 (TDS 표준) */
 #screen-home .toss-home-focus-card {
   border: none !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
   border-radius: 18px !important;
 }
 
-/* 히어로 CTA 버튼: 코랄 핑크 그라디언트 (높은 탭 어포던스) */
-#screen-home .toss-focus-complete-btn {
-  background: linear-gradient(135deg, #FF6B6B 0%, #EE5A24 100%) !important;
-  border-radius: 14px !important;
-  padding: 13px 16px !important;
-  font-size: 0.9375rem !important;
-  box-shadow: 0 4px 14px rgba(238, 90, 36, 0.3) !important;
+/* ═══════════════════════════════════════════════════════
+   🏠 H2: 인사말에서 목표 이름 중복 제거 — 헤드라인 압축
+   히어로 카드가 1순위 목표를 전담하므로, 헤드라인 문구를
+   더 작게 처리하여 시각 무게를 줄인다
+   ═══════════════════════════════════════════════════════ */
+#screen-home #homeHeadlineSentence {
+  font-size: 0.8125rem !important;
+  line-height: 1.35 !important;
+  margin: 2px 0 4px !important;
+  color: var(--ink-soft) !important;
+  font-weight: 500 !important;
 }
 
-#screen-home .toss-focus-complete-btn.is-done {
-  background: rgba(16, 185, 129, 0.12) !important;
-  color: #10B981 !important;
-  box-shadow: none !important;
+/* ═══════════════════════════════════════════════════════
+   🏠 H4: 3초 체크인 박스 기본 접기
+   헤로 CTA에 체크인이 통합되었으므로, 텍스트 입력 체크인은
+   접어둔다. 버튼은 DOM에 유지 (Zero Dead-Click 준수).
+   captureCardBox 자체를 삭제하면 안 됨 (data-widget-fixed).
+   ═══════════════════════════════════════════════════════ */
+#screen-home #captureCardBox {
+  max-height: 56px;
+  overflow: hidden;
+  transition: max-height 0.3s var(--ease, ease);
+  opacity: 0.7;
+}
+#screen-home #captureCardBox:focus-within,
+#screen-home #captureCardBox.expanded {
+  max-height: 600px;
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════════
+   🏠 H5: 스트릭 5중 표시 → 2곳만 (탑바 + 히트맵)
+   .home-recent-title 안의 #streakBadge, #todayGlancePill의
+   스트릭 아이콘, 히어로 내부 스트릭 등 3곳을 시각적으로 숨김
+   ═══════════════════════════════════════════════════════ */
+#screen-home .home-recent-title #streakBadge {
+  display: none !important;
+}
+#screen-home #todayGlancePill [id="glanceStreak"] {
+  display: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   🏠 H6: 인사말 행 압축 (120px → ~44px)
+   ═══════════════════════════════════════════════════════ */
+#screen-home .home-head-row {
+  margin: 2px 0 0 !important;
+  gap: 4px !important;
+}
+#screen-home .home-head-row .home-greet {
+  font-size: 0.9375rem !important;
+  font-weight: 600 !important;
+}
+#screen-home .home-head-row .btn-sm {
+  font-size: 0.6875rem !important;
+  padding: 2px 7px !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   🏠 보조 위젯 시각 정리
+   ═══════════════════════════════════════════════════════ */
+
+/* 동류 레이스 위젯: 컴팩트 모드 */
+#screen-home #crewPacingWidget {
+  padding: 12px 14px !important;
+  border-radius: 14px !important;
+}
+#screen-home #crewPacingWidget .crew-headline-row {
+  font-size: 0.8125rem !important;
+}
+
+/* 평가 배너: 슬림 */
+#screen-home #homeEvalBanner {
+  margin-top: 4px !important;
+  margin-bottom: 16px !important;
+}
+#screen-home #homeEvalBanner > div {
+  padding: 10px 14px !important;
+  border-radius: 14px !important;
+}
+
+/* 서브 목표 카드: 더 컴팩트 */
+#screen-home #homeGoalList .goal-card:not(.toss-home-focus-card) {
+  padding: 10px 14px !important;
+  border-radius: 14px !important;
+  margin-bottom: 6px !important;
+}
+#screen-home #homeGoalList .goal-card:not(.toss-home-focus-card) h4 {
+  font-size: 0.875rem !important;
+}
+#screen-home #homeGoalList .goal-card:not(.toss-home-focus-card) .goal-body {
+  gap: 8px !important;
+}
+#screen-home #homeGoalList .goal-card:not(.toss-home-focus-card) .gauge svg {
+  width: 44px !important;
+  height: 44px !important;
+}
+
+/* 섹션 제목 "오늘의 갓생 퀘스트" 슬림화 */
+#screen-home .home-recent-title h3 {
+  font-size: 0.8125rem !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+}
+
+/* 14일 히트맵 카드 슬림화 */
+#screen-home #homeGrassSummaryCard {
+  padding: 10px 14px !important;
+  border-radius: 14px !important;
+}
+
+/* 오늘의 미션 카드 슬림화 */
+#screen-home #todayMissionCard {
+  margin: 4px 0 !important;
+}
+
+/* 글랜스 필 슬림화 */
+#screen-home #todayGlancePill {
+  font-size: 0.75rem !important;
+  padding: 6px 10px !important;
+  margin: 4px 0 !important;
 }
 
 /* 토스 홈 오늘의 원카드 (Today Focus Card) */
@@ -10221,6 +10329,14 @@ html[data-theme="white"] #goalsHeadlineSentence b {
   color: #10B981 !important;
   border: 1px solid rgba(16, 185, 129, 0.3) !important;
   box-shadow: none !important;
+}
+
+/* 🏠 H7: 홈 탭 히어로 CTA — 코랄 핑크 그라디언트 (높은 탭 어포던스) */
+#screen-home .toss-focus-complete-btn:not(.is-done) {
+  background: linear-gradient(135deg, #FF6B6B 0%, #EE5A24 100%) !important;
+  box-shadow: 0 4px 14px rgba(238, 90, 36, 0.3) !important;
+  padding: 13px 16px !important;
+  font-size: 0.9375rem !important;
 }
 
 /* 3초 체크인 클린 박스 */
