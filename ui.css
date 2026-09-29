@@ -10095,21 +10095,22 @@ html[data-theme="white"] #goalsHeadlineSentence b {
 }
 
 /* ═══════════════════════════════════════════════════════
-   🏠 H4: 3초 체크인 박스 기본 접기
-   헤로 CTA에 체크인이 통합되었으므로, 텍스트 입력 체크인은
-   접어둔다. 버튼은 DOM에 유지 (Zero Dead-Click 준수).
-   captureCardBox 자체를 삭제하면 안 됨 (data-widget-fixed).
+   🏠 H4: 3초 체크인 박스 — 보이되 컴팩트하게
+   히어로 CTA와 역할이 다름 (텍스트 기록용).
+   삭제/숨김 금지 (data-widget-fixed).
+   패딩·마진만 줄여서 공간 효율화.
    ═══════════════════════════════════════════════════════ */
 #screen-home #captureCardBox {
-  max-height: 56px;
-  overflow: hidden;
-  transition: max-height 0.3s var(--ease, ease);
-  opacity: 0.7;
+  margin-top: 4px !important;
+  margin-bottom: 8px !important;
 }
-#screen-home #captureCardBox:focus-within,
-#screen-home #captureCardBox.expanded {
-  max-height: 600px;
-  opacity: 1;
+#screen-home #captureCardBox .toss-checkin-clean-box {
+  padding: 12px 14px !important;
+  border-radius: 14px !important;
+}
+#screen-home #captureCardBox textarea {
+  min-height: 36px !important;
+  font-size: 0.8125rem !important;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -10144,13 +10145,46 @@ html[data-theme="white"] #goalsHeadlineSentence b {
    🏠 보조 위젯 시각 정리
    ═══════════════════════════════════════════════════════ */
 
-/* 동류 레이스 위젯: 컴팩트 모드 */
+/* 동류 레이스 위젯: 사용자 입장 슬림 모드 */
 #screen-home #crewPacingWidget {
-  padding: 12px 14px !important;
+  padding: 10px 14px !important;
   border-radius: 14px !important;
 }
-#screen-home #crewPacingWidget .crew-headline-row {
+/* 뱃지+제목 행: 한 줄로 압축 */
+#screen-home #crewPacingWidget .crew-head {
+  margin-bottom: 4px !important;
+}
+#screen-home #crewPacingWidget .crew-badge {
+  font-size: 0.6875rem !important;
+  padding: 1px 6px !important;
+}
+#screen-home #crewPacingWidget .crew-title {
   font-size: 0.8125rem !important;
+}
+/* 헤드라인: 더 작게 */
+#screen-home #crewPacingWidget .crew-headline-row {
+  font-size: 0.75rem !important;
+  margin: 2px 0 !important;
+  color: var(--ink-soft) !important;
+  font-weight: 500 !important;
+}
+/* 하단 서브텍스트: 장문 설명 숨김 (처음 보는 사용자에게 불필요) */
+#screen-home #crewPacingWidget .crew-foot > span:first-child {
+  display: none !important;
+}
+/* 버튼: 더 작게 */
+#screen-home #crewPacingWidget .crew-foot .btn-sm {
+  font-size: 0.6875rem !important;
+  padding: 3px 8px !important;
+  min-height: 30px !important;
+}
+/* 콜드스타트 온보딩 텍스트: 설명 압축 */
+#screen-home #crewPacingWidget .crew-coldstart-box {
+  padding: 8px 10px !important;
+  font-size: 0.75rem !important;
+}
+#screen-home #crewPacingWidget .crew-coldstart-box > div:first-child {
+  font-size: 0.75rem !important;
 }
 
 /* 평가 배너: 슬림 */
@@ -10180,6 +10214,32 @@ html[data-theme="white"] #goalsHeadlineSentence b {
   height: 44px !important;
 }
 
+/* 예시 목표 카드 (처음 사용자): 더 컴팩트하게 */
+#screen-home .toss-home-starter-card {
+  padding: 16px 14px !important;
+}
+#screen-home .toss-home-starter-card h4 {
+  font-size: 0.9375rem !important;
+}
+#screen-home .toss-home-starter-card p {
+  font-size: 0.75rem !important;
+  margin-bottom: 10px !important;
+}
+#screen-home .starter-goals-grid {
+  gap: 5px !important;
+}
+#screen-home .starter-goal-btn {
+  padding: 7px 12px !important;
+  font-size: 0.78rem !important;
+}
+#screen-home .starter-goal-btn span[style*="font-size:1.2rem"] {
+  font-size: 1rem !important;
+}
+#screen-home #emptyAddCustomGoalBtn {
+  padding: 9px 14px !important;
+  font-size: 0.8125rem !important;
+  margin-top: 10px !important;
+}
 /* 섹션 제목 "오늘의 갓생 퀘스트" 슬림화 */
 #screen-home .home-recent-title h3 {
   font-size: 0.8125rem !important;
