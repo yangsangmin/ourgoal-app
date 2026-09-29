@@ -78,7 +78,8 @@
     var goals = (window.state && window.state.profile && window.state.profile.goals) || [];
     var activeGoal = goals[0] || { title: '10km 하프마라톤 완주 🏃', dueDate: '2026-10-12', progress: 0 };
     var dday = activeGoal.dueDate ? (window.dDay ? window.dDay(activeGoal.dueDate) : 'D-14') : 'D-14';
-    var pct = activeGoal.progress || 0;
+    var pct = (typeof window.goalProgress === 'function') ? Math.round(window.goalProgress(activeGoal)) : (activeGoal.progress || 0);
+    var isGoalDone = (pct >= 100);
 
     var heroCardHtml = 
       '<div class="home-hero-card">' +
@@ -98,13 +99,13 @@
           '<span style="color:var(--s-ink-soft, #94A3B8);cursor:pointer;" onclick="if(typeof setTab===\'function\')setTab(\'goals\');">세부 마일스톤 &gt;</span>' +
         '</div>' +
         '<div class="home-hero-prog-track" style="margin-bottom:12px;">' +
-          '<div class="home-hero-prog-fill" style="width:' + Math.max(pct, 5) + '%;"></div>' +
+          '<div class="home-hero-prog-fill" style="width:' + Math.min(100, Math.max(pct, 5)) + '%;"></div>' +
         '</div>' +
-        '<button type="button" class="home-hero-checkin-btn" id="btnHeroCheckin" onclick="window.OurgoalSanctuaryV3.fastCheckin()">' +
+        '<button type="button" class="home-hero-checkin-btn ' + (isGoalDone ? 'is-done' : '') + '" id="btnHeroCheckin" onclick="window.OurgoalSanctuaryV3.fastCheckin()">' +
           '<div style="font-size:0.95rem;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;">' +
-            '<span>오늘 실천 완료 ✓</span>' +
+            '<span>' + (isGoalDone ? '오늘 1순위 목표 완주됨 🏆' : '오늘 실천 완료 ✓') + '</span>' +
           '</div>' +
-          '<div style="font-size:0.68rem;opacity:0.85;font-weight:500;margin-top:2px;">누르면: 오늘 실천이 완료되고 연속 스트릭 불꽃이 점화돼요 🔥</div>' +
+          '<div style="font-size:0.68rem;opacity:0.85;font-weight:500;margin-top:2px;">' + (isGoalDone ? '멋진 하루 완주! 연속 스트릭 불꽃이 밝게 타고 있어요 🔥' : '누르면: 오늘 실천이 완료되고 연속 스트릭 불꽃이 점화돼요 🔥') + '</div>' +
         '</button>' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);">' +
           '<span style="font-size:0.72rem;color:var(--s-ink-soft, #94A3B8);">최근 7일 실천 스트릭 (누르면: 365일 히트맵)</span>' +
@@ -1347,18 +1348,31 @@
       else if (navigator.vibrate) navigator.vibrate(12);
 
       var goals = (window.state && window.state.profile && window.state.profile.goals) || [];
+      var activeG = goals[0] || { id: 'g_default', title: '1순위 실천' };
       if (goals.length > 0) {
         goals[0].progress = Math.min((goals[0].progress || 0) + 10, 100);
+      }
+      var today = (typeof dateKey === 'function') ? dateKey() : (new Date().toISOString().slice(0,10));
+      if (window.state && window.state.profile) {
+        if (!Array.isArray(window.state.profile.records)) window.state.profile.records = [];
+        window.state.profile.records.push({
+          id: 'rec_' + Date.now(),
+          goalId: activeG.id,
+          text: activeG.title + ' 실천 완료',
+          date: today,
+          createdAt: new Date().toISOString()
+        });
       }
       if (typeof saveState === 'function') saveState();
       else if (typeof saveProfile === 'function') saveProfile();
 
       if (typeof dispatchFullViewPropagation === 'function') {
-        dispatchFullViewPropagation({ type: 'checkin', text: '오늘 실천 완료' });
+        dispatchFullViewPropagation({ type: 'checkin', text: activeG.title + ' 실천 완료' });
       }
 
       toast('🎉 오늘 실천 완료! 12ms 햅틱과 전 탭 동기화가 완료되었습니다 ✨');
       renderSanctuaryHome();
+      if (typeof renderHome === 'function') renderHome();
       if (typeof setTab === 'function') {
         // keep current view refreshed
       }
