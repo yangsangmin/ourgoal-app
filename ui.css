@@ -14558,3 +14558,180 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
     min-height: 40px !important;
   }
 }
+
+/* ==========================================================================
+   🔍 전수조사 CSS 축소 일괄 적용 (마스터플랜 v2 Phase 2)
+   - 6대 탭 시인성 개선
+   - 버튼 삭제 0건 (헌법 준수)
+   - 터치 피드백 + 카드 보더 제거 전역화
+   ========================================================================== */
+
+/* ═══════════════════════════════════════════════════════
+   🌐 전역: 모든 탭 공통 터치 피드백 + 카드 정돈
+   ═══════════════════════════════════════════════════════ */
+
+/* 모든 탭: 인터랙티브 요소 터치 축소 */
+.screen button:active,
+.screen [data-detail]:active,
+.screen .goal-card:active,
+.screen .card:active {
+  transform: scale(0.97);
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* 모든 탭: 토스형 헤드라인 슬림화 */
+.screen .toss-headline {
+  font-size: 0.8125rem !important;
+  color: var(--ink-soft) !important;
+  font-weight: 500 !important;
+  margin: 2px 0 6px !important;
+  line-height: 1.35 !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   🎯 목표 탭 (#screen-goals) 축소
+   ═══════════════════════════════════════════════════════ */
+
+/* G3: AI 어시스턴트 카드 슬림화 */
+#screen-goals #goalAgentCard {
+  padding: 6px 12px !important;
+  margin-bottom: 4px !important;
+}
+#screen-goals #goalAgentCard .agent-title {
+  font-size: 0.78rem !important;
+}
+#screen-goals #goalAgentCard .faint {
+  font-size: 0.68rem !important;
+}
+
+/* G4: 헤더 행 컴팩트 */
+#screen-goals .goal-head-row {
+  margin-top: 6px !important;
+  gap: 4px !important;
+}
+#screen-goals .goal-head-row h2 {
+  font-size: 0.9375rem !important;
+}
+/* G5: 공개뱃지 축소 */
+#screen-goals #goalsPrivacyBadge {
+  font-size: 0.625rem !important;
+  padding: 1px 5px !important;
+}
+/* G6: 백과사전·가이드 버튼 축소 */
+#screen-goals #btnGoalTemplateEncyclopedia,
+#screen-goals #btnShowPersonalGuideModal {
+  font-size: 0.6875rem !important;
+  padding: 2px 7px !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   📅 캘린더 탭 (#screen-calendar) 축소
+   ═══════════════════════════════════════════════════════ */
+
+/* C6: AI 일정 카드 슬림화 */
+#screen-calendar .agent-card {
+  padding: 6px 12px !important;
+  margin-bottom: 4px !important;
+}
+#screen-calendar .agent-card .agent-title {
+  font-size: 0.78rem !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   📊 기록 탭 (#screen-records) 축소
+   ═══════════════════════════════════════════════════════ */
+
+/* R1: 히어로 카드 컴팩트 */
+#screen-records [class*="hero-card"],
+#screen-records #recHeroCard {
+  padding: 10px 14px !important;
+  border-radius: 14px !important;
+}
+
+/* R2: 퀵독 바 슬림 */
+#screen-records #recQuickDockBar {
+  gap: 4px !important;
+}
+#screen-records #recQuickDockBar .btn-sm {
+  font-size: 0.6875rem !important;
+  padding: 3px 8px !important;
+  min-height: 30px !important;
+}
+
+/* R5: AI 코칭 카드 축소 */
+#screen-records #periodAiCard {
+  padding: 8px 12px !important;
+  border-radius: 12px !important;
+}
+#screen-records #periodAiCard .agent-title,
+#screen-records #periodAiCard h4 {
+  font-size: 0.8125rem !important;
+}
+
+/* R6-R7: 검색·필터 기본 컴팩트 */
+#screen-records #recThemeFilters {
+  gap: 4px !important;
+  margin: 4px 0 !important;
+}
+#screen-records #recSearchInput {
+  font-size: 0.8125rem !important;
+  padding: 6px 10px !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   💬 소통 탭 (#screen-comm) 축소
+   ═══════════════════════════════════════════════════════ */
+
+/* S1: 히어로 카드 슬림화 (180px → ~80px) */
+#screen-comm #commHeroCard,
+#screen-comm [class*="hero-card"] {
+  padding: 8px 14px !important;
+  border-radius: 14px !important;
+}
+#screen-comm #commHeroCard h3,
+#screen-comm [class*="hero-card"] h3 {
+  font-size: 0.875rem !important;
+  margin: 0 0 4px !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ⚙️ 설정 탭 (#screen-settings) 축소
+   ═══════════════════════════════════════════════════════ */
+
+/* T5: 프로필 히어로 카드 컴팩트 */
+#screen-settings [class*="hero-card"],
+#screen-settings #settingsHeroCard {
+  padding: 10px 14px !important;
+  border-radius: 14px !important;
+}
+
+/* T1: 아코디언 그룹 시각 정돈 (3단→시각적 2단) */
+#screen-settings details summary {
+  font-size: 0.8125rem !important;
+  padding: 8px 12px !important;
+}
+#screen-settings details details summary {
+  font-size: 0.75rem !important;
+  padding: 6px 10px !important;
+}
+
+/* T6: 토글 스위치 행 컴팩트 */
+#screen-settings .setting-row,
+#screen-settings .toggle-row {
+  padding: 6px 0 !important;
+  min-height: 36px !important;
+}
+#screen-settings .setting-row label,
+#screen-settings .toggle-row label {
+  font-size: 0.8125rem !important;
+}
+
+/* T7: 위험 영역(로그아웃·초기화·탈퇴) 시각 분리 */
+#screen-settings [id*="logout"],
+#screen-settings [id*="reset"],
+#screen-settings [id*="delete"],
+#screen-settings [id*="withdraw"] {
+  border-top: 2px solid rgba(239, 68, 68, 0.3) !important;
+  margin-top: 8px !important;
+  padding-top: 8px !important;
+}
