@@ -14774,3 +14774,18 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
   padding: 0 !important;
   border: none !important;
 }
+
+/* ═══════════════════════════════════════════════════════
+   🔴 결심 #5: 3대 퀘스트바 제거
+   퀘스트① "한 줄 기록"이 히어로 CTA와 100% 중복.
+   커스터마이저에서 켜도 혼란만 발생하므로 완전 숨김.
+   버튼은 DOM 보존 (Zero Dead-Click).
+   ═══════════════════════════════════════════════════════ */
+#dailyQuestBarWrap {
+  position: absolute !important;
+  left: -9999px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
