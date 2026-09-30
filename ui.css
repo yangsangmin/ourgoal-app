@@ -14735,3 +14735,42 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
   margin-top: 8px !important;
   padding-top: 8px !important;
 }
+
+/* ═══════════════════════════════════════════════════════
+   🔴 결심 #2: 개발 전용 카드 일반 사용자 숨김
+   og-task-*-container 는 TASK 기능 검증용 허브 카드.
+   프로덕션 사용자에게 불필요. ogTaskWireSlot 밖의 것만 숨김.
+   버튼은 DOM에 보존 (접근성 오프스크린 처리).
+   ═══════════════════════════════════════════════════════ */
+[id^="og-task-"][id$="-container"]:not(#ogTaskWireSlot [id^="og-task-"]) {
+  position: absolute !important;
+  left: -9999px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   🔴 결심 #4: 시간 기록 진입점 단일 FAB화
+   #btnOpenTimeTracker → 우하단 미니 FAB 스타일
+   퀵독 바의 타이머 바로가기는 시각 약화
+   ═══════════════════════════════════════════════════════ */
+#screen-records #btnOpenTimeTracker {
+  position: fixed !important;
+  bottom: 80px !important;
+  right: 16px !important;
+  z-index: 100 !important;
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #FF6B6B 0%, #EE5A24 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 14px rgba(238, 90, 36, 0.4) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.25rem !important;
+  padding: 0 !important;
+  border: none !important;
+}
