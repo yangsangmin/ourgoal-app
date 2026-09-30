@@ -10145,46 +10145,40 @@ html[data-theme="white"] #goalsHeadlineSentence b {
    🏠 보조 위젯 시각 정리
    ═══════════════════════════════════════════════════════ */
 
-/* 동류 레이스 위젯: 사용자 입장 슬림 모드 */
+/* 동류 레이스 → "함께 달리기" 1줄 축소 모드
+   160px 위젯 → ~40px 한 줄 문구.
+   버튼은 DOM에 유지 (Zero Dead-Click).
+   팀 기능 활성화 시 .expanded 클래스로 복원 가능. */
 #screen-home #crewPacingWidget {
-  padding: 10px 14px !important;
-  border-radius: 14px !important;
+  padding: 8px 14px !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  max-height: 42px !important;
+  transition: max-height 0.3s ease !important;
 }
-/* 뱃지+제목 행: 한 줄로 압축 */
+#screen-home #crewPacingWidget.expanded {
+  max-height: 300px !important;
+}
+/* 뱃지 행: 숨김 (1줄 모드에서는 헤드라인만 보임) */
 #screen-home #crewPacingWidget .crew-head {
-  margin-bottom: 4px !important;
-}
-#screen-home #crewPacingWidget .crew-badge {
-  font-size: 0.6875rem !important;
-  padding: 1px 6px !important;
-}
-#screen-home #crewPacingWidget .crew-title {
-  font-size: 0.8125rem !important;
-}
-/* 헤드라인: 더 작게 */
-#screen-home #crewPacingWidget .crew-headline-row {
-  font-size: 0.75rem !important;
-  margin: 2px 0 !important;
-  color: var(--ink-soft) !important;
-  font-weight: 500 !important;
-}
-/* 하단 서브텍스트: 장문 설명 숨김 (처음 보는 사용자에게 불필요) */
-#screen-home #crewPacingWidget .crew-foot > span:first-child {
   display: none !important;
 }
-/* 버튼: 더 작게 */
-#screen-home #crewPacingWidget .crew-foot .btn-sm {
-  font-size: 0.6875rem !important;
-  padding: 3px 8px !important;
-  min-height: 30px !important;
+/* 헤드라인: 이게 유일한 가시 요소 */
+#screen-home #crewPacingWidget .crew-headline-row {
+  font-size: 0.78rem !important;
+  margin: 0 !important;
+  color: var(--ink-soft) !important;
+  font-weight: 500 !important;
+  text-align: center !important;
 }
-/* 콜드스타트 온보딩 텍스트: 설명 압축 */
+/* 프로그레스 바·하단·콜드스타트: 접힘 (max-height로 숨김) */
+#screen-home #crewPacingWidget .crew-track,
+#screen-home #crewPacingWidget .crew-foot,
 #screen-home #crewPacingWidget .crew-coldstart-box {
-  padding: 8px 10px !important;
-  font-size: 0.75rem !important;
-}
-#screen-home #crewPacingWidget .crew-coldstart-box > div:first-child {
-  font-size: 0.75rem !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  left: -9999px !important;
 }
 
 /* 평가 배너: 슬림 */
