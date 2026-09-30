@@ -1,0 +1,156 @@
+{
+  "task": "TASK-ES-331",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-331-UI-VISIBILITY.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "ui.css 내 #screen-home 위젯들의 CSS order 재배치 및 시인성 개선 (H1~H8)이 적용되어 있다."
+    },
+    {
+      "id": "R2",
+      "text": "ui.css 내 스트릭 5중 표시를 2곳(탑바+히트맵)으로 축소하는 CSS가 적용되어 있다."
+    },
+    {
+      "id": "R3",
+      "text": "ui.css 내 동류 레이스 위젯(#crewPacingWidget)이 1줄 40px 모드로 축소되어 있다."
+    },
+    {
+      "id": "R4",
+      "text": "ui.css 내 6대 탭 전역 터치 피드백(scale 0.97)과 헤드라인 슬림화가 적용되어 있다."
+    },
+    {
+      "id": "R5",
+      "text": "ui.css 내 개발 전용 카드(og-task-*-container)가 오프스크린 처리되어 있다."
+    },
+    {
+      "id": "R6",
+      "text": "ui.css 내 #btnOpenTimeTracker가 우하단 FAB 스타일로 변환되어 있다."
+    },
+    {
+      "id": "R7",
+      "text": "ui.css 내 #dailyQuestBarWrap이 오프스크린 처리되어 있다."
+    },
+    {
+      "id": "R8",
+      "text": "npm test (smoke 440 + gate 38 + Zero Dead-Click 890) 전수 통과한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 #screen-home #sanctuaryHomeSlot 의 CSS order 재배치가 적용되어 있다",
+      "touches": ["ui.css"],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#screen-home #sanctuaryHomeSlot { order: 3"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 홈 탭 히어로 CTA 코랄 핑크 그라디언트가 적용되어 있다",
+      "touches": ["ui.css"],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "toss-focus-complete-btn:not(.is-done)"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 .home-recent-title #streakBadge 숨김이 적용되어 있다",
+      "touches": ["ui.css"],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".home-recent-title #streakBadge"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 crewPacingWidget max-height 42px 축소가 적용되어 있다",
+      "touches": ["ui.css"],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "max-height: 42px"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 전역 터치 피드백 scale(0.97)이 적용되어 있다",
+      "touches": ["ui.css"],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".screen button:active"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 og-task-*-container 오프스크린 처리가 적용되어 있다",
+      "touches": ["ui.css"],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "[id^=\"og-task-\"][id$=\"-container\"]"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 #btnOpenTimeTracker FAB 스타일이 적용되어 있다",
+      "touches": ["ui.css"],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#screen-records #btnOpenTimeTracker"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 #dailyQuestBarWrap 오프스크린 처리가 적용되어 있다",
+      "touches": ["ui.css"],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#dailyQuestBarWrap"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js 스모크 테스트 파일이 존재한다",
+      "touches": ["scripts/smoke-test.js"],
+      "check": {
+        "type": "fileExists",
+        "file": "scripts/smoke-test.js"
+      }
+    }
+  ]
+}
