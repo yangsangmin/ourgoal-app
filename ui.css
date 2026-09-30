@@ -10017,27 +10017,247 @@ html[data-theme="white"] #goalsHeadlineSentence b {
   display: none !important;
 }
 
+/* ═══════════════════════════════════════════════════════
+   🎯 HOME TAB: 3-TIER COCKPIT LAYOUT (마스터플랜 v2)
+   Tier 1: 아바타 탑바 + 인사말 (order 1-2)
+   Tier 2: 1순위 집중 히어로 카드 (order 3)
+   Tier 3: 서브 퀘스트 가로 칩 (order 4-5)
+   Below Fold: 보조 위젯 (order 6+)
+   ═══════════════════════════════════════════════════════ */
+
+/* --- Tier 1: 아바타 탑바 + 인사말 (첫 ~90px) --- */
 #screen-home .sanctuary-top-bar { order: 1; }
-#screen-home .home-head-row { order: 2; }
-#screen-home #homeHeadlineSentence { order: 3; }
-#screen-home .home-recent-title { order: 4; margin: 4px 0 8px; }
-#screen-home #homePositionStrip { order: 5; }
-#screen-home #homeGoalList { order: 6; margin-bottom: 12px; }
-#screen-home #captureCardBox { order: 7; margin-bottom: 12px; }
-#screen-home #levelBadgeRow { order: 8; }
-#screen-home #todayGlancePill { order: 9; }
+#screen-home .home-head-row { order: 2; margin: 4px 0 2px; }
+
+/* --- Tier 2: 1순위 집중 히어로 (order 3, ~280px) --- */
+#screen-home #sanctuaryHomeSlot { order: 3; margin-top: 4px; }
+
+/* --- Tier 3: 서브 퀘스트 목표 리스트 (order 4-5) --- */
+#screen-home .home-recent-title { order: 4; margin: 8px 0 4px; font-size: 0.875rem; }
+#screen-home #homeGoalList { order: 5; margin-bottom: 8px; }
+
+/* --- 14일 미니 히트맵 (order 6) --- */
+#screen-home #homeGrassSummaryCard { order: 6; margin-bottom: 8px; }
+
+/* --- 레벨·글랜스 (order 7-8) --- */
+#screen-home #levelBadgeRow { order: 7; }
+#screen-home #todayGlancePill { order: 8; }
+
+/* --- 3초 체크인 (order 9 — 접힘 상태로 보존) --- */
+#screen-home #captureCardBox { order: 9; margin-bottom: 12px; }
+
+/* --- 보조 위젯 (order 10+) --- */
 #screen-home #a11yLiveAnnouncer { order: 10; }
 #screen-home #offlineNoticeBanner { order: 11; }
 #screen-home #notifyBannerSlot { order: 12; }
 #screen-home #socialNotifySlot { order: 13; }
 #screen-home #iosPwaSlot { order: 14; }
+#screen-home #homeHeadlineSentence { order: 15; }
+#screen-home #homePositionStrip { order: 16; }
 #screen-home #todayMissionCard { order: 20; }
-#screen-home #homeGrassSummaryCard { order: 21; }
 #screen-home #customFeedbackBtn { order: 22; }
+
+/* --- 하단 압축 영역: 퀘스트바·레이스·평가 --- */
 #screen-home #dailyQuestBarWrap { order: 23; }
 #screen-home #crewPacingWidget { order: 24; margin-bottom: 14px; }
 #screen-home .home-actions { order: 30; margin-top: 6px; margin-bottom: 10px; }
 #screen-home #homeEvalBanner { order: 31; margin-top: 6px !important; margin-bottom: 24px !important; }
+
+/* ═══════════════════════════════════════════════════════
+   🎨 TOSS-STYLE MICRO-INTERACTIONS
+   ═══════════════════════════════════════════════════════ */
+
+/* 모든 인터랙티브 요소: 터치 축소 피드백 */
+#screen-home button:active,
+#screen-home [data-detail]:active,
+#screen-home .goal-card:active {
+  transform: scale(0.97);
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1);
+}
+
+#screen-home .toss-home-focus-card {
+  border: none !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
+  border-radius: 18px !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   🏠 H2: 인사말에서 목표 이름 중복 제거 — 헤드라인 압축
+   히어로 카드가 1순위 목표를 전담하므로, 헤드라인 문구를
+   더 작게 처리하여 시각 무게를 줄인다
+   ═══════════════════════════════════════════════════════ */
+#screen-home #homeHeadlineSentence {
+  font-size: 0.8125rem !important;
+  line-height: 1.35 !important;
+  margin: 2px 0 4px !important;
+  color: var(--ink-soft) !important;
+  font-weight: 500 !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   🏠 H4: 3초 체크인 박스 — 보이되 컴팩트하게
+   히어로 CTA와 역할이 다름 (텍스트 기록용).
+   삭제/숨김 금지 (data-widget-fixed).
+   패딩·마진만 줄여서 공간 효율화.
+   ═══════════════════════════════════════════════════════ */
+#screen-home #captureCardBox {
+  margin-top: 4px !important;
+  margin-bottom: 8px !important;
+}
+#screen-home #captureCardBox .toss-checkin-clean-box {
+  padding: 12px 14px !important;
+  border-radius: 14px !important;
+}
+#screen-home #captureCardBox textarea {
+  min-height: 36px !important;
+  font-size: 0.8125rem !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   🏠 H5: 스트릭 5중 표시 → 2곳만 (탑바 + 히트맵)
+   .home-recent-title 안의 #streakBadge, #todayGlancePill의
+   스트릭 아이콘, 히어로 내부 스트릭 등 3곳을 시각적으로 숨김
+   ═══════════════════════════════════════════════════════ */
+#screen-home .home-recent-title #streakBadge {
+  display: none !important;
+}
+#screen-home #todayGlancePill [id="glanceStreak"] {
+  display: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   🏠 H6: 인사말 행 압축 (120px → ~44px)
+   ═══════════════════════════════════════════════════════ */
+#screen-home .home-head-row {
+  margin: 2px 0 0 !important;
+  gap: 4px !important;
+}
+#screen-home .home-head-row .home-greet {
+  font-size: 0.9375rem !important;
+  font-weight: 600 !important;
+}
+#screen-home .home-head-row .btn-sm {
+  font-size: 0.6875rem !important;
+  padding: 2px 7px !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   🏠 보조 위젯 시각 정리
+   ═══════════════════════════════════════════════════════ */
+
+/* 동류 레이스 → "함께 달리기" 1줄 축소 모드
+   160px 위젯 → ~40px 한 줄 문구.
+   버튼은 DOM에 유지 (Zero Dead-Click).
+   팀 기능 활성화 시 .expanded 클래스로 복원 가능. */
+#screen-home #crewPacingWidget {
+  padding: 8px 14px !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  max-height: 42px !important;
+  transition: max-height 0.3s ease !important;
+}
+#screen-home #crewPacingWidget.expanded {
+  max-height: 300px !important;
+}
+/* 뱃지 행: 숨김 (1줄 모드에서는 헤드라인만 보임) */
+#screen-home #crewPacingWidget .crew-head {
+  display: none !important;
+}
+/* 헤드라인: 이게 유일한 가시 요소 */
+#screen-home #crewPacingWidget .crew-headline-row {
+  font-size: 0.78rem !important;
+  margin: 0 !important;
+  color: var(--ink-soft) !important;
+  font-weight: 500 !important;
+  text-align: center !important;
+}
+/* 프로그레스 바·하단·콜드스타트: 접힘 (max-height로 숨김) */
+#screen-home #crewPacingWidget .crew-track,
+#screen-home #crewPacingWidget .crew-foot,
+#screen-home #crewPacingWidget .crew-coldstart-box {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  left: -9999px !important;
+}
+
+/* 평가 배너: 슬림 */
+#screen-home #homeEvalBanner {
+  margin-top: 4px !important;
+  margin-bottom: 16px !important;
+}
+#screen-home #homeEvalBanner > div {
+  padding: 10px 14px !important;
+  border-radius: 14px !important;
+}
+
+/* 서브 목표 카드: 더 컴팩트 */
+#screen-home #homeGoalList .goal-card:not(.toss-home-focus-card) {
+  padding: 10px 14px !important;
+  border-radius: 14px !important;
+  margin-bottom: 6px !important;
+}
+#screen-home #homeGoalList .goal-card:not(.toss-home-focus-card) h4 {
+  font-size: 0.875rem !important;
+}
+#screen-home #homeGoalList .goal-card:not(.toss-home-focus-card) .goal-body {
+  gap: 8px !important;
+}
+#screen-home #homeGoalList .goal-card:not(.toss-home-focus-card) .gauge svg {
+  width: 44px !important;
+  height: 44px !important;
+}
+
+/* 예시 목표 카드 (처음 사용자): 더 컴팩트하게 */
+#screen-home .toss-home-starter-card {
+  padding: 16px 14px !important;
+}
+#screen-home .toss-home-starter-card h4 {
+  font-size: 0.9375rem !important;
+}
+#screen-home .toss-home-starter-card p {
+  font-size: 0.75rem !important;
+  margin-bottom: 10px !important;
+}
+#screen-home .starter-goals-grid {
+  gap: 5px !important;
+}
+#screen-home .starter-goal-btn {
+  padding: 7px 12px !important;
+  font-size: 0.78rem !important;
+}
+#screen-home .starter-goal-btn span[style*="font-size:1.2rem"] {
+  font-size: 1rem !important;
+}
+#screen-home #emptyAddCustomGoalBtn {
+  padding: 9px 14px !important;
+  font-size: 0.8125rem !important;
+  margin-top: 10px !important;
+}
+/* 섹션 제목 "오늘의 갓생 퀘스트" 슬림화 */
+#screen-home .home-recent-title h3 {
+  font-size: 0.8125rem !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+}
+
+/* 14일 히트맵 카드 슬림화 */
+#screen-home #homeGrassSummaryCard {
+  padding: 10px 14px !important;
+  border-radius: 14px !important;
+}
+
+/* 오늘의 미션 카드 슬림화 */
+#screen-home #todayMissionCard {
+  margin: 4px 0 !important;
+}
+
+/* 글랜스 필 슬림화 */
+#screen-home #todayGlancePill {
+  font-size: 0.75rem !important;
+  padding: 6px 10px !important;
+  margin: 4px 0 !important;
+}
 
 /* 토스 홈 오늘의 원카드 (Today Focus Card) */
 .toss-home-focus-card {
@@ -10163,6 +10383,14 @@ html[data-theme="white"] #goalsHeadlineSentence b {
   color: #10B981 !important;
   border: 1px solid rgba(16, 185, 129, 0.3) !important;
   box-shadow: none !important;
+}
+
+/* 🏠 H7: 홈 탭 히어로 CTA — 코랄 핑크 그라디언트 (높은 탭 어포던스) */
+#screen-home .toss-focus-complete-btn:not(.is-done) {
+  background: linear-gradient(135deg, #FF6B6B 0%, #EE5A24 100%) !important;
+  box-shadow: 0 4px 14px rgba(238, 90, 36, 0.3) !important;
+  padding: 13px 16px !important;
+  font-size: 0.9375rem !important;
 }
 
 /* 3초 체크인 클린 박스 */
@@ -14329,4 +14557,181 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
     padding: 6px 10px !important;
     min-height: 40px !important;
   }
+}
+
+/* ==========================================================================
+   🔍 전수조사 CSS 축소 일괄 적용 (마스터플랜 v2 Phase 2)
+   - 6대 탭 시인성 개선
+   - 버튼 삭제 0건 (헌법 준수)
+   - 터치 피드백 + 카드 보더 제거 전역화
+   ========================================================================== */
+
+/* ═══════════════════════════════════════════════════════
+   🌐 전역: 모든 탭 공통 터치 피드백 + 카드 정돈
+   ═══════════════════════════════════════════════════════ */
+
+/* 모든 탭: 인터랙티브 요소 터치 축소 */
+.screen button:active,
+.screen [data-detail]:active,
+.screen .goal-card:active,
+.screen .card:active {
+  transform: scale(0.97);
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* 모든 탭: 토스형 헤드라인 슬림화 */
+.screen .toss-headline {
+  font-size: 0.8125rem !important;
+  color: var(--ink-soft) !important;
+  font-weight: 500 !important;
+  margin: 2px 0 6px !important;
+  line-height: 1.35 !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   🎯 목표 탭 (#screen-goals) 축소
+   ═══════════════════════════════════════════════════════ */
+
+/* G3: AI 어시스턴트 카드 슬림화 */
+#screen-goals #goalAgentCard {
+  padding: 6px 12px !important;
+  margin-bottom: 4px !important;
+}
+#screen-goals #goalAgentCard .agent-title {
+  font-size: 0.78rem !important;
+}
+#screen-goals #goalAgentCard .faint {
+  font-size: 0.68rem !important;
+}
+
+/* G4: 헤더 행 컴팩트 */
+#screen-goals .goal-head-row {
+  margin-top: 6px !important;
+  gap: 4px !important;
+}
+#screen-goals .goal-head-row h2 {
+  font-size: 0.9375rem !important;
+}
+/* G5: 공개뱃지 축소 */
+#screen-goals #goalsPrivacyBadge {
+  font-size: 0.625rem !important;
+  padding: 1px 5px !important;
+}
+/* G6: 백과사전·가이드 버튼 축소 */
+#screen-goals #btnGoalTemplateEncyclopedia,
+#screen-goals #btnShowPersonalGuideModal {
+  font-size: 0.6875rem !important;
+  padding: 2px 7px !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   📅 캘린더 탭 (#screen-calendar) 축소
+   ═══════════════════════════════════════════════════════ */
+
+/* C6: AI 일정 카드 슬림화 */
+#screen-calendar .agent-card {
+  padding: 6px 12px !important;
+  margin-bottom: 4px !important;
+}
+#screen-calendar .agent-card .agent-title {
+  font-size: 0.78rem !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   📊 기록 탭 (#screen-records) 축소
+   ═══════════════════════════════════════════════════════ */
+
+/* R1: 히어로 카드 컴팩트 */
+#screen-records [class*="hero-card"],
+#screen-records #recHeroCard {
+  padding: 10px 14px !important;
+  border-radius: 14px !important;
+}
+
+/* R2: 퀵독 바 슬림 */
+#screen-records #recQuickDockBar {
+  gap: 4px !important;
+}
+#screen-records #recQuickDockBar .btn-sm {
+  font-size: 0.6875rem !important;
+  padding: 3px 8px !important;
+  min-height: 30px !important;
+}
+
+/* R5: AI 코칭 카드 축소 */
+#screen-records #periodAiCard {
+  padding: 8px 12px !important;
+  border-radius: 12px !important;
+}
+#screen-records #periodAiCard .agent-title,
+#screen-records #periodAiCard h4 {
+  font-size: 0.8125rem !important;
+}
+
+/* R6-R7: 검색·필터 기본 컴팩트 */
+#screen-records #recThemeFilters {
+  gap: 4px !important;
+  margin: 4px 0 !important;
+}
+#screen-records #recSearchInput {
+  font-size: 0.8125rem !important;
+  padding: 6px 10px !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   💬 소통 탭 (#screen-comm) 축소
+   ═══════════════════════════════════════════════════════ */
+
+/* S1: 히어로 카드 슬림화 (180px → ~80px) */
+#screen-comm #commHeroCard,
+#screen-comm [class*="hero-card"] {
+  padding: 8px 14px !important;
+  border-radius: 14px !important;
+}
+#screen-comm #commHeroCard h3,
+#screen-comm [class*="hero-card"] h3 {
+  font-size: 0.875rem !important;
+  margin: 0 0 4px !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ⚙️ 설정 탭 (#screen-settings) 축소
+   ═══════════════════════════════════════════════════════ */
+
+/* T5: 프로필 히어로 카드 컴팩트 */
+#screen-settings [class*="hero-card"],
+#screen-settings #settingsHeroCard {
+  padding: 10px 14px !important;
+  border-radius: 14px !important;
+}
+
+/* T1: 아코디언 그룹 시각 정돈 (3단→시각적 2단) */
+#screen-settings details summary {
+  font-size: 0.8125rem !important;
+  padding: 8px 12px !important;
+}
+#screen-settings details details summary {
+  font-size: 0.75rem !important;
+  padding: 6px 10px !important;
+}
+
+/* T6: 토글 스위치 행 컴팩트 */
+#screen-settings .setting-row,
+#screen-settings .toggle-row {
+  padding: 6px 0 !important;
+  min-height: 36px !important;
+}
+#screen-settings .setting-row label,
+#screen-settings .toggle-row label {
+  font-size: 0.8125rem !important;
+}
+
+/* T7: 위험 영역(로그아웃·초기화·탈퇴) 시각 분리 */
+#screen-settings [id*="logout"],
+#screen-settings [id*="reset"],
+#screen-settings [id*="delete"],
+#screen-settings [id*="withdraw"] {
+  border-top: 2px solid rgba(239, 68, 68, 0.3) !important;
+  margin-top: 8px !important;
+  padding-top: 8px !important;
 }
