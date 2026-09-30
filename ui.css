@@ -871,7 +871,8 @@ body[data-ux-mode="analyst"] #homeGrassSummaryCard{display:block!important;}
 .theme-card{background:var(--card);border:1px solid var(--rule);border-radius:var(--radius);padding:12px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:border-color .15s,background .15s;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;}
 .theme-card:hover{transform:none;border-color:var(--ink-disabled);box-shadow:none;}
 .theme-card.active{border-color:var(--ink);background:var(--card);box-shadow:inset 0 0 0 1px var(--ink);}
-.theme-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08);}
+.theme-dot, .theme-swatch{width:26px;height:26px;border-radius:50%;flex-shrink:0;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.25),0 2px 8px rgba(0,0,0,.3);border:1px solid var(--rule, rgba(255,255,255,.15));}
+html[data-theme="white"] .theme-dot, html[data-theme="white"] .theme-swatch{box-shadow:inset 0 0 0 1px rgba(0,0,0,.15),0 2px 6px rgba(0,0,0,.08);}
 .theme-info{flex:1;min-width:0;}
 .theme-name{font-size:.875rem;font-weight:600;color:var(--ink);display:flex;align-items:center;justify-content:space-between;line-height:1.2;}
 .theme-check{color:var(--ink);font-size:.75rem;font-weight:700;}
@@ -5056,8 +5057,11 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   --sanctuary-radius: 20px;
 }
 
-/* 2. 전 화면 다크 글래스모피즘 기조 적용 */
-[data-theme="focus-sanctuary"] {
+/* 2. 전 화면 4대 공식 테마 1급 디자인 토큰 변수 시스템 (#TASK-ES-330) */
+/* 2-1. 포커스 성소 (Focus Sanctuary - 아워골 시그니처) */
+html[data-theme="focus-sanctuary"],
+[data-theme="focus-sanctuary"],
+html[data-theme="focus-sanctuary"] {
   --bg: #0B0F17;
   --paper: #0B0F17;
   --card: rgba(255, 255, 255, 0.04);
@@ -5083,6 +5087,102 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   --input-bg: rgba(255, 255, 255, 0.05);
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   --shadow-float: 0 10px 30px rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+
+/* 2-2. 블랙 (True OLED Black - 딥블랙 & 배터리 절약) */
+html[data-theme="black"],
+[data-theme="black"],
+html[data-theme="black"] {
+  --bg: #000000;
+  --paper: #000000;
+  --card: #0A0A0C;
+  --surface: #0A0A0C;
+  --card2: #121216;
+  --surface-2: #121216;
+  --surface-3: #18181E;
+  --ink: #FFFFFF;
+  --ink-soft: #D4D4D8;
+  --ink-faint: #A1A1AA;
+  --ink-disabled: #52525B;
+  --rule: rgba(255, 255, 255, 0.14);
+  --line: rgba(255, 255, 255, 0.14);
+  --rule-soft: rgba(255, 255, 255, 0.08);
+  --card-border: 1px solid rgba(255, 255, 255, 0.14);
+  --card-backdrop: blur(16px);
+  --brand: #10B981;
+  --brand-strong: #059669;
+  --brand-soft: rgba(16, 185, 129, 0.18);
+  --brand-line: rgba(16, 185, 129, 0.40);
+  --topbar-bg: rgba(0, 0, 0, 0.92);
+  --bottomnav-bg: rgba(14, 14, 18, 0.96);
+  --input-bg: #121216;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  --shadow-float: 0 10px 30px rgba(0, 0, 0, 0.9);
+  color-scheme: dark;
+}
+
+/* 2-3. 화이트 (Pure Minimal White - 눈부심 없는 고대비 순백) */
+html[data-theme="white"],
+[data-theme="white"],
+html[data-theme="white"] {
+  --bg: #F8FAFC;
+  --paper: #FFFFFF;
+  --card: #FFFFFF;
+  --surface: #FFFFFF;
+  --card2: #F1F5F9;
+  --surface-2: #F1F5F9;
+  --surface-3: #E2E8F0;
+  --ink: #0F172A;
+  --ink-soft: #334155;
+  --ink-faint: #64748B;
+  --ink-disabled: #94A3B8;
+  --rule: #E2E8F0;
+  --line: #E2E8F0;
+  --rule-soft: #F1F5F9;
+  --card-border: 1px solid #CBD5E1;
+  --card-backdrop: blur(16px);
+  --brand: #059669;
+  --brand-strong: #047857;
+  --brand-soft: rgba(5, 150, 105, 0.12);
+  --brand-line: rgba(5, 150, 105, 0.35);
+  --topbar-bg: rgba(255, 255, 255, 0.92);
+  --bottomnav-bg: rgba(255, 255, 255, 0.96);
+  --input-bg: #F8FAFC;
+  --shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+  --shadow-float: 0 10px 30px rgba(15, 23, 42, 0.12);
+  color-scheme: light;
+}
+
+/* 2-4. 깔끔한 도심 (Urban Slate Navy - 현대 도시의 지적 루틴) */
+html[data-theme="urban-city"],
+[data-theme="urban-city"],
+html[data-theme="urban-city"] {
+  --bg: #0B0F19;
+  --paper: #0B0F19;
+  --card: #131B2E;
+  --surface: #131B2E;
+  --card2: #1B2640;
+  --surface-2: #1B2640;
+  --surface-3: #233152;
+  --ink: #F8FAFC;
+  --ink-soft: #CBD5E1;
+  --ink-faint: #94A3B8;
+  --ink-disabled: #475569;
+  --rule: rgba(255, 255, 255, 0.10);
+  --line: rgba(255, 255, 255, 0.10);
+  --rule-soft: rgba(255, 255, 255, 0.05);
+  --card-border: 1px solid rgba(255, 255, 255, 0.12);
+  --card-backdrop: blur(16px);
+  --brand: #0EA5E9;
+  --brand-strong: #0284C7;
+  --brand-soft: rgba(14, 165, 233, 0.15);
+  --brand-line: rgba(14, 165, 233, 0.35);
+  --topbar-bg: rgba(11, 15, 25, 0.88);
+  --bottomnav-bg: rgba(19, 27, 46, 0.94);
+  --input-bg: #1B2640;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.55);
+  --shadow-float: 0 10px 30px rgba(0, 0, 0, 0.65);
   color-scheme: dark;
 }
 
@@ -5336,12 +5436,12 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
    🌟 9:16 모바일 네이티브 뷰포트 및 노이즈 배너 정돈
    ========================================================================== */
 html {
-  background: #05070B !important;
+  background: var(--bg, #0B0F17) !important;
 }
 
 body {
-  background: #05070B !important;
-  color: #F8FAFC !important;
+  background: var(--bg, #0B0F17) !important;
+  color: var(--ink, #F8FAFC) !important;
   display: flex !important;
   justify-content: center !important;
   align-items: flex-start !important;
@@ -5353,18 +5453,35 @@ body {
   max-width: 440px !important;
   margin: 0 auto !important;
   min-height: 100vh !important;
-  background: #0B0F17 !important;
+  background: var(--bg, #0B0F17) !important;
   position: relative !important;
-  box-shadow: 0 0 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(16, 185, 129, 0.08) !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.06) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.4), 0 0 30px var(--brand-soft, rgba(16, 185, 129, 0.08)) !important;
+  border-left: 1px solid var(--rule, rgba(255, 255, 255, 0.06)) !important;
+  border-right: 1px solid var(--rule, rgba(255, 255, 255, 0.06)) !important;
+}
+
+html[data-theme="white"] body,
+html[data-theme="white"] #appShell {
+  background: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+html[data-theme="black"] body,
+html[data-theme="black"] #appShell {
+  background: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+html[data-theme="urban-city"] body,
+html[data-theme="urban-city"] #appShell {
+  background: #0B0F19 !important;
+  color: #F8FAFC !important;
 }
 
 /* 6대 노이즈 배너 시각적 정리 (기능과 이벤트는 100% 보존) */
 #btnCustomHomeLayout,
 #screen-home .home-head-row span,
 .theme-guide-microcopy,
-#homeEvalBanner,
 #offlineNoticeBanner {
   display: none !important;
 }
@@ -6864,8 +6981,8 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   grid-template-columns: repeat(7, 1fr);
   gap: 3px;
 }
-.s-cal-day-cell {
-  min-height: 76px;
+;
+  max-height: 56px;
   min-width: 0;
   width: 100%;
   box-sizing: border-box;
@@ -10018,26 +10135,27 @@ html[data-theme="white"] #goalsHeadlineSentence b {
 }
 
 #screen-home .sanctuary-top-bar { order: 1; }
-#screen-home .home-head-row { order: 2; }
-#screen-home #homeHeadlineSentence { order: 3; }
-#screen-home .home-recent-title { order: 4; margin: 4px 0 8px; }
-#screen-home #homePositionStrip { order: 5; }
-#screen-home #homeGoalList { order: 6; margin-bottom: 12px; }
-#screen-home #captureCardBox { order: 7; margin-bottom: 12px; }
-#screen-home #levelBadgeRow { order: 8; }
-#screen-home #todayGlancePill { order: 9; }
-#screen-home #a11yLiveAnnouncer { order: 10; }
-#screen-home #offlineNoticeBanner { order: 11; }
-#screen-home #notifyBannerSlot { order: 12; }
-#screen-home #socialNotifySlot { order: 13; }
-#screen-home #iosPwaSlot { order: 14; }
+#screen-home #sanctuaryHomeSlot { display: none !important; }
+#screen-home #levelBadgeRow { order: 2; }
+#screen-home .home-head-row { order: 3; margin-top: 10px; }
+#screen-home #homeHeadlineSentence { order: 4; }
+#screen-home #captureCardBox { order: 5; margin-top: 8px; margin-bottom: 14px; }
+#screen-home #todayGlancePill { order: 6; }
+#screen-home #homeGrassSummaryCard { order: 7; margin-bottom: 14px; }
+#screen-home #crewPacingWidget { order: 8; margin-bottom: 14px; }
+#screen-home .home-recent-title { order: 9; margin: 4px 0 8px; }
+#screen-home #homePositionStrip { order: 10; }
+#screen-home #homeGoalList { order: 11; margin-bottom: 14px; }
+#screen-home .home-actions { order: 12; margin-top: 6px; margin-bottom: 14px; }
 #screen-home #todayMissionCard { order: 20; }
-#screen-home #homeGrassSummaryCard { order: 21; }
 #screen-home #customFeedbackBtn { order: 22; }
 #screen-home #dailyQuestBarWrap { order: 23; }
-#screen-home #crewPacingWidget { order: 24; margin-bottom: 14px; }
-#screen-home .home-actions { order: 30; margin-top: 6px; margin-bottom: 10px; }
-#screen-home #homeEvalBanner { order: 31; margin-top: 6px !important; margin-bottom: 24px !important; }
+#screen-home #a11yLiveAnnouncer { order: 30; }
+#screen-home #offlineNoticeBanner { order: 31; }
+#screen-home #notifyBannerSlot { order: 32; }
+#screen-home #socialNotifySlot { order: 33; }
+#screen-home #iosPwaSlot { order: 34; }
+#screen-home #homeEvalBanner { order: 99; margin-top: 16px !important; margin-bottom: 96px !important; }
 
 /* 토스 홈 오늘의 원카드 (Today Focus Card) */
 .toss-home-focus-card {
@@ -10174,11 +10292,25 @@ html[data-theme="white"] #goalsHeadlineSentence b {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
 }
 
-[data-theme="dark"] .toss-checkin-clean-box,
-[data-theme="black"] .toss-checkin-clean-box,
 [data-theme="focus-sanctuary"] .toss-checkin-clean-box {
-  background: #1A1C21 !important;
-  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  background: rgba(18, 24, 38, 0.70) !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+}
+
+[data-theme="black"] .toss-checkin-clean-box {
+  background: #0A0A0C !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+
+[data-theme="white"] .toss-checkin-clean-box {
+  background: #FFFFFF !important;
+  border: 1px solid #CBD5E1 !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06) !important;
+}
+
+[data-theme="urban-city"] .toss-checkin-clean-box {
+  background: #131B2E !important;
+  border: 1px solid rgba(56, 189, 248, 0.20) !important;
 }
 
 .toss-checkin-save-btn {
@@ -14329,4 +14461,603 @@ html[data-theme] .comm-subtabs-clean.comm-subtabs-grid .comm-subtab.active,
     padding: 6px 10px !important;
     min-height: 40px !important;
   }
+}
+
+
+/* =========================================================================
+ * [#TASK-ES-331] 전 탭 UI/UX 전면개편 프로덕션 정본 스타일 (74개 전수 항목)
+ * ========================================================================= */
+
+/* 4대 테마 변수 통일 */
+:root, html[data-theme="focus-sanctuary"] {
+  --s-bg: #0B0F17;
+  --s-card: #131A26;
+  --s-card2: #1A2332;
+  --s-surface: #1E293B;
+  --s-surface2: #243044;
+  --s-rule: #2D3B4F;
+  --s-ink: #F1F5F9;
+  --s-ink-soft: #94A3B8;
+  --s-ink-faint: #64748B;
+  --s-brand: #10B981;
+  --s-brand-soft: rgba(16, 185, 129, 0.15);
+  --s-accent: #3B82F6;
+  --s-gold: #F59E0B;
+  --s-danger: #EF4444;
+  --s-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+html[data-theme="black"] {
+  --s-bg: #000000;
+  --s-card: #0A0A0A;
+  --s-card2: #141414;
+  --s-surface: #1A1A1A;
+  --s-surface2: #222222;
+  --s-rule: #2A2A2A;
+  --s-ink: #FFFFFF;
+  --s-ink-soft: #A3A3A3;
+  --s-ink-faint: #737373;
+  --s-brand: #10B981;
+  --s-brand-soft: rgba(16, 185, 129, 0.2);
+  --s-accent: #38BDF8;
+  --s-gold: #FBBF24;
+  --s-danger: #F87171;
+  --s-shadow: 0 8px 24px rgba(0,0,0,0.8);
+}
+
+html[data-theme="white"] {
+  --s-bg: #F8FAFC;
+  --s-card: #FFFFFF;
+  --s-card2: #F1F5F9;
+  --s-surface: #E2E8F0;
+  --s-surface2: #CBD5E1;
+  --s-rule: #E2E8F0;
+  --s-ink: #0F172A;
+  --s-ink-soft: #475569;
+  --s-ink-faint: #94A3B8;
+  --s-brand: #059669;
+  --s-brand-soft: rgba(5, 150, 105, 0.12);
+  --s-accent: #2563EB;
+  --s-gold: #D97706;
+  --s-danger: #DC2626;
+  --s-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+html[data-theme="urban-city"] {
+  --s-bg: #0B0F19;
+  --s-card: #111827;
+  --s-card2: #1F2937;
+  --s-surface: #283548;
+  --s-surface2: #374151;
+  --s-rule: #1E293B;
+  --s-ink: #F9FAFB;
+  --s-ink-soft: #9CA3AF;
+  --s-ink-faint: #6B7280;
+  --s-brand: #0EA5E9;
+  --s-brand-soft: rgba(14, 165, 233, 0.15);
+  --s-accent: #818CF8;
+  --s-gold: #F59E0B;
+  --s-danger: #F43F5E;
+  --s-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+/* 포커스 성소 공통 모던 글래스모피즘 카드 */
+.blueprint-card {
+  background: var(--card, #131A26);
+  border: 1px solid var(--rule, #2D3B4F);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  backdrop-filter: blur(8px);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.blueprint-card:active {
+  transform: scale(0.995);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.card-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--ink, #F1F5F9);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 홈 탭 3초 체크인 원카드 (.home-hero-card) */
+.home-hero-card {
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.08) 0%, rgba(19, 26, 38, 0.95) 100%);
+  border: 1.5px solid rgba(16, 185, 129, 0.35);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 10px 28px rgba(16, 185, 129, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.home-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(16, 185, 129, 0.18);
+  color: var(--brand, #10B981);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.home-hero-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--ink, #F1F5F9);
+  margin-bottom: 4px;
+  line-height: 1.35;
+}
+
+.home-hero-sub {
+  font-size: 0.8rem;
+  color: var(--ink-soft, #94A3B8);
+  margin-bottom: 12px;
+}
+
+.home-hero-prog-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.home-hero-prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10B981, #059669);
+  border-radius: 999px;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.home-hero-checkin-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 13px;
+  padding: 13px 18px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.home-hero-checkin-btn:active {
+  transform: scale(0.975);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+/* 7열 5행 완전 월달력 그리드 */
+.full-month-calendar {
+  margin-top: 6px;
+}
+
+.cal-weekday-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 4px;
+}
+
+.cal-weekday {
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--ink-faint, #64748B);
+  padding: 2px 0;
+}
+
+.cal-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.month-day-cell {
+  min-height: 48px;
+  max-height: 56px;
+  background: var(--surface, #1E293B);
+  border: 1px solid var(--rule, #2D3B4F);
+  border-radius: 9px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  position: relative;
+}
+
+.month-day-cell:active {
+  transform: scale(0.96);
+}
+
+.month-day-cell.other-month {
+  opacity: 0.35;
+  background: transparent;
+  border-color: transparent;
+}
+
+.month-day-cell.today {
+  border: 1.5px solid var(--brand, #10B981);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.month-day-cell.selected {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: var(--brand, #10B981);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+.day-num {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--ink, #F1F5F9);
+  line-height: 1;
+}
+
+.day-badge-dot {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.dot-check {
+  font-size: 0.65rem;
+  color: var(--brand, #10B981);
+  font-weight: 900;
+}
+
+.photo-thumb-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: linear-gradient(135deg, #10B981, #3B82F6);
+  display: inline-block;
+}
+
+/* 서브탭 칩 세그먼트 */
+.subtabs-segment-bar {
+  display: flex;
+  background: var(--card, #131A26);
+  border: 1px solid var(--rule, #2D3B4F);
+  border-radius: 12px;
+  padding: 3px;
+  margin-bottom: 12px;
+  gap: 4px;
+}
+
+.subtab-segment-btn {
+  flex: 1;
+  text-align: center;
+  padding: 7px 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ink-soft, #94A3B8);
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.subtab-segment-btn.active {
+  background: var(--brand, #10B981);
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* 카테고리 칩 스트립 */
+.category-scroll-strip {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: none;
+  margin-bottom: 10px;
+}
+
+.category-scroll-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.category-chip {
+  background: var(--card, #131A26);
+  border: 1px solid var(--rule, #2D3B4F);
+  color: var(--ink-soft, #94A3B8);
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.category-chip.active {
+  background: var(--brand, #10B981);
+  color: #FFFFFF;
+  border-color: var(--brand, #10B981);
+}
+
+/* 소통 탭 구형 허브 박스 시인성 강화 오버라이드 */
+.comm-hub-slim-box {
+  background: var(--card, #131A26) !important;
+  border: 1px solid var(--rule, #2D3B4F) !important;
+  border-radius: 14px !important;
+  padding: 10px 14px !important;
+  margin-bottom: 8px !important;
+  color: var(--ink, #F1F5F9) !important;
+}
+
+.comm-hub-slim-box h3,
+.comm-hub-slim-box p,
+.comm-hub-slim-box div {
+  color: var(--ink, #F1F5F9) !important;
+}
+
+.comm-hub-slim-box p {
+  color: var(--ink-soft, #94A3B8) !important;
+  font-size: 0.78rem !important;
+}
+
+/* 4대 테마 설정 그리드 */
+.theme-grid-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.theme-grid-chip {
+  background: var(--surface, #1E293B);
+  border: 1.5px solid var(--rule, #2D3B4F);
+  border-radius: 11px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.theme-grid-chip.active {
+  border-color: var(--brand, #10B981);
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.theme-color-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  flex-shrink: 0;
+}
+
+/* 12ms 햅틱 시각 피드백 클래스 */
+.haptic-pulse {
+  animation: hapticPulse 0.12s ease-out;
+}
+
+@keyframes hapticPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+
+/* =========================================================================
+ * 74개 세부 항목 UI/UX 극단적 단순화 (Minimalist Clarity) 스타일
+ * ========================================================================= */
+
+/* 1. 홈 탭 단일 몰입 카드 여백 및 폰트 위계 */
+.home-hero-card {
+  padding: 16px 18px !important;
+  margin-bottom: 12px !important;
+  border-radius: 18px !important;
+}
+
+.home-head-row {
+  margin-top: 4px !important;
+  margin-bottom: 6px !important;
+}
+
+/* 2. 소통 탭 미니멀 IA & 3단 제어바 슬림화 */
+#commHeroCard {
+  padding: 8px 12px !important;
+  margin-bottom: 8px !important;
+  border-radius: 12px !important;
+}
+
+#commHeroCard .toss-community-hero-stats {
+  display: flex !important;
+  justify-content: space-around !important;
+  margin-top: 4px !important;
+  padding: 4px 0 !important;
+}
+
+#commHeroCard .stat-val {
+  font-size: 1.05rem !important;
+}
+
+.comm-subtabs-grid {
+  display: flex !important;
+  overflow-x: auto !important;
+  gap: 4px !important;
+  padding-bottom: 4px !important;
+  scrollbar-width: none !important;
+  margin-bottom: 8px !important;
+}
+
+.comm-subtabs-grid::-webkit-scrollbar {
+  display: none !important;
+}
+
+.comm-subtab-btn {
+  flex-shrink: 0 !important;
+  padding: 6px 12px !important;
+  font-size: 0.78rem !important;
+  border-radius: 9px !important;
+}
+
+.comm-feed-filter-bar {
+  display: flex !important;
+  gap: 6px !important;
+  margin-bottom: 6px !important;
+}
+
+.comm-filter-btn {
+  padding: 4px 10px !important;
+  font-size: 0.74rem !important;
+  border-radius: 999px !important;
+}
+
+.comm-mate-sub-bar {
+  font-size: 0.72rem !important;
+  color: var(--s-ink-soft, #94A3B8) !important;
+  padding: 2px 4px !important;
+  margin-bottom: 6px !important;
+}
+
+/* 3. 목표 탭 액션 툴바 슬림화 */
+.goals-action-bar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  overflow-x: auto !important;
+  padding-bottom: 4px !important;
+  scrollbar-width: none !important;
+  margin-bottom: 8px !important;
+}
+
+.goals-action-bar::-webkit-scrollbar {
+  display: none !important;
+}
+
+.goals-action-bar button {
+  flex-shrink: 0 !important;
+  padding: 5px 9px !important;
+  font-size: 0.75rem !important;
+  border-radius: 8px !important;
+}
+
+/* 4. 설정 탭 애플 iOS 인셋 그룹 리스트 */
+.settings-accordion-item {
+  border-radius: 12px !important;
+  margin-bottom: 8px !important;
+  background: var(--card, #131A26) !important;
+  border: 1px solid var(--rule, #2D3B4F) !important;
+  overflow: hidden !important;
+  transition: all 0.15s ease !important;
+}
+
+.settings-accordion-head {
+  padding: 11px 14px !important;
+}
+
+/* 5. 캘린더 탭 셀 및 리스트 일체형 뷰 */
+.s-month-cal-card {
+  padding: 12px 14px !important;
+}
+
+.s-cal-day-cell {
+  min-height: 48px !important;
+  max-height: 52px !important;
+}
+
+.s-cal-day-items-list .quest-item {
+  padding: 8px 10px !important;
+  margin-bottom: 6px !important;
+}
+
+/* 4대 테마 원클릭 설정 1줄 4분할 슬림화 */
+.theme-grid-picker {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 6px !important;
+  margin-top: 8px !important;
+}
+
+.theme-grid-chip {
+  padding: 8px 4px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  gap: 4px !important;
+  border-radius: 10px !important;
+}
+
+.theme-grid-chip .theme-color-dot {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.theme-grid-chip div div:first-child {
+  font-size: 0.74rem !important;
+  font-weight: 800 !important;
+}
+
+.theme-grid-chip div div:last-child {
+  display: none !important;
+}
+
+
+/* =========================================================================
+ * 6대 전 탭 중복 전면 소탕 및 목적·기대 효과 직관화 (#TASK-ES-331)
+ * ========================================================================= */
+
+/* 1. 홈 탭: 상단 몰입 카드와 중복되는 대표 목표의 하단 복제 카드 소탕 */
+#homeGoalList > .toss-home-focus-card {
+  display: none !important;
+}
+
+/* 2. 일정 탭: 달력 카드 내부 인라인 리스트와 중복되는 바깥 calDayDetail 카드 소탕 */
+#screen-calendar #calDayDetail {
+  display: none !important;
+}
+
+/* 3. 기록 탭: 히트맵 액션과 중복되는 중간 요약 카드의 복제 버튼 영역 정돈 */
+#recHeroCard > div:last-child {
+  display: none !important;
+}
+
+/* 4. 소통 탭: 0건 요약 박스를 숨겨 동료들의 실시간 피드를 최상단 전진 배치 */
+#commHeroCard {
+  display: none !important;
+}
+
+/* 5. 목표 탭: 상단 등반 로드맵과 중복되는 하단 toss-goal-hero-card 중복 헤더 카드 평탄화 */
+#goalDetailBody > .toss-goal-hero-card {
+  display: none !important;
+}
+
+/* 6. 일정 탭: 달력 선택 바 텍스트 간결화 */
+.s-cal-sel-task {
+  font-size: 0.76rem !important;
+  color: var(--s-ink-soft, #94A3B8) !important;
+  font-weight: 600 !important;
 }

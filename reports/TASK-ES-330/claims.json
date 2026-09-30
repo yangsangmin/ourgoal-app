@@ -1,0 +1,264 @@
+{
+  "task": "TASK-ES-330",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-330-THEMES-V4.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "ui.css 내에 4대 테마(focus-sanctuary, black, white, urban-city)별 1급 전역 디자인 토큰 변수 시스템이 완전하게 정의됨을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "ui.css 내에 화이트(white) 테마 적용 시 체크인 입력창 및 주요 카드에서 White-on-White 결함 없이 고대비 폰트와 경계선이 렌더링됨을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "ui.css 내에 블랙(black) 테마 적용 시 OLED 딥블랙 배경 및 Black-on-Black 결함 없이 선명한 고대비가 렌더링됨을 보장한다."
+    },
+    {
+      "id": "R4",
+      "text": "ui.css 내에 도심(urban-city) 테마 적용 시 슬레이트 쿨 네이비와 네온 시안 포인트가 일관되게 전파됨을 보장한다."
+    },
+    {
+      "id": "R5",
+      "text": "index.html 내에 4대 테마(성소, 블랙, 화이트, 깔끔한 도심) 정의 및 설정 탭 테마 그리드 프리뷰 스와치가 렌더링됨을 보장한다."
+    },
+    {
+      "id": "R6",
+      "text": "index.html 내에 테마 전환 시 12ms 햅틱 반응 및 meta theme-color 모바일 상단바 실시간 동기화가 지원됨을 보장한다."
+    },
+    {
+      "id": "R7",
+      "text": "js/components.js 내에 직통 핸들러 handle설정_Item79Action 및 handle테마_Item79Action이 구현되어 12ms 햅틱 반응, og_task-79_cache 로컬 캐시 영속화, 4대 뷰 원자적 전파를 보장한다."
+    },
+    {
+      "id": "R8",
+      "text": "tests/theme-system-v4.test.js 및 scripts/smoke-test.js 내에 #TASK-ES-330 검증 테스트가 정의되어 무결점을 전수 입증하고 docs/rules/TICKETS.md에 #TASK-ES-330이 등록되어 있다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 THEMES 배열에 focus-sanctuary, black, white, urban-city 4대 테마가 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "urban-city"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 theme-swatch 미니 프리뷰 스와치 렌더링 클래스가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "theme-swatch"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 applyTheme 함수에 12ms 햅틱 피드백 triggerHaptic(12)가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "triggerHaptic(12)"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R6",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내 applyTheme 함수에 meta theme-color 실시간 갱신 로직이 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "ourgoal_current_theme"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 html[data-theme=\"white\"] 1급 디자인 토큰 변수 블록이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "html[data-theme=\"white\"] {"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 html[data-theme=\"black\"] 1급 디자인 토큰 변수 블록이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "html[data-theme=\"black\"] {"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 html[data-theme=\"urban-city\"] 1급 디자인 토큰 변수 블록이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "html[data-theme=\"urban-city\"] {"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 html[data-theme=\"white\"] 환경의 #captureInput 고대비 텍스트 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "html[data-theme=\"white\"] #captureInput"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 handle설정_Item79Action 직통 핸들러가 구현되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle설정_Item79Action"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 handle테마_Item79Action이 등록되어 있다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "handle테마_Item79Action"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "js/components.js 내에 og_task-79_cache 로컬 캐시 키가 저장된다",
+      "touches": [
+        "js/components.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/components.js",
+        "text": "og_task-79_cache"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "단위 테스트 파일 tests/theme-system-v4.test.js가 존재한다",
+      "touches": [
+        "tests/theme-system-v4.test.js"
+      ],
+      "check": {
+        "type": "fileExists",
+        "file": "tests/theme-system-v4.test.js"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests/theme-system-v4.test.js 내에 [TASK-ES-330] 단위 테스트가 구현되어 있다",
+      "touches": [
+        "tests/theme-system-v4.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/theme-system-v4.test.js",
+        "text": "[TASK-ES-330]"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "scripts/smoke-test.js 내에 [79] 4대 테마 전역 변수 시스템 단언문이 구현되어 있다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/smoke-test.js",
+        "text": "[79] 4대 테마 1급 변수 시스템 존재"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/rules/TICKETS.md 내에 #TASK-ES-330 승인 티켓이 등록되어 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "#TASK-ES-330"
+      }
+    }
+  ]
+}

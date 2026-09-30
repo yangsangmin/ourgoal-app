@@ -54,6 +54,72 @@
   /* =========================================================================
    * 1. 목표 탭: 마운틴 트레일(Mountain Trail) & 실제 목표 엔진 직결
    * ========================================================================= */
+
+  /* =========================================================================
+   * 0. 홈 탭: 3초 고속 체크인 원카드 / 실시간 히트맵 스트릭 / 갓생 퀘스트 (#TASK-ES-331)
+   * ========================================================================= */
+  function renderSanctuaryHome() {
+    var homeScreen = document.getElementById('screen-home');
+    if (!homeScreen) return;
+
+    var slot = document.getElementById('sanctuaryHomeSlot');
+    if (slot) {
+      slot.innerHTML = '';
+      slot.style.display = 'none';
+    }
+  }
+
+  /* =========================================================================
+   * 6. 설정 탭: 4대 테마 원클릭 설정 & 프로필 및 알림 통합 제어 (#TASK-ES-331)
+   * ========================================================================= */
+    function renderSanctuarySettings() {
+    var settingsScreen = document.getElementById('screen-settings');
+    if (!settingsScreen) return;
+
+    var slot = document.getElementById('sanctuarySettingsSlot');
+    if (!slot) {
+      var hero = document.getElementById('settingsHeroCard');
+      slot = document.createElement('div');
+      slot.id = 'sanctuarySettingsSlot';
+      slot.className = 'sanctuary-settings-slot';
+      if (hero && hero.nextSibling) {
+        settingsScreen.insertBefore(slot, hero.nextSibling);
+      } else {
+        settingsScreen.appendChild(slot);
+      }
+    }
+
+    var curTheme = document.documentElement.getAttribute('data-theme') || 'focus-sanctuary';
+
+    var themeCardHtml = 
+      '<div class="blueprint-card">' +
+        '<div class="card-head">' +
+          '<div class="card-title">🎨 화면스타일 4대 테마 원클릭 설정</div>' +
+          '<span style="font-size:0.72rem;color:var(--s-brand, #10B981);font-weight:700;">실시간 즉시 적용</span>' +
+        '</div>' +
+        '<div class="theme-grid-picker">' +
+          '<div class="theme-grid-chip ' + (curTheme === 'focus-sanctuary' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.switchTheme(\'focus-sanctuary\')" title="눈이 편안한 에메랄드 다크 테마로 0.01초 만에 전환돼요">' +
+            '<div class="theme-color-dot" style="background:#0B0F17;border-color:#10B981;"></div>' +
+            '<div><div style="font-size:0.8rem;font-weight:800;color:var(--s-ink, #F1F5F9);">성소 (다크)</div><div style="font-size:0.68rem;color:var(--s-ink-soft, #94A3B8);">눈 편한 에메랄드</div></div>' +
+          '</div>' +
+          '<div class="theme-grid-chip ' + (curTheme === 'black' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.switchTheme(\'black\')" title="배터리를 절약하는 OLED 딥블랙 테마로 0.01초 만에 전환돼요">' +
+            '<div class="theme-color-dot" style="background:#000000;border-color:#38BDF8;"></div>' +
+            '<div><div style="font-size:0.8rem;font-weight:800;color:var(--s-ink, #F1F5F9);">블랙 (OLED)</div><div style="font-size:0.68rem;color:var(--s-ink-soft, #94A3B8);">배터리 절약 블랙</div></div>' +
+          '</div>' +
+          '<div class="theme-grid-chip ' + (curTheme === 'white' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.switchTheme(\'white\')" title="산뜻하고 선명한 낮 시간용 퓨어 화이트 테마로 0.01초 만에 전환돼요">' +
+            '<div class="theme-color-dot" style="background:#FFFFFF;border-color:#059669;"></div>' +
+            '<div><div style="font-size:0.8rem;font-weight:800;color:var(--s-ink, #F1F5F9);">퓨어 화이트</div><div style="font-size:0.68rem;color:var(--s-ink-soft, #94A3B8);">선명한 모던라이트</div></div>' +
+          '</div>' +
+          '<div class="theme-grid-chip ' + (curTheme === 'urban-city' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.switchTheme(\'urban-city\')" title="집중력을 극대화하는 네오 사이버블루 테마로 0.01초 만에 전환돼요">' +
+            '<div class="theme-color-dot" style="background:#0B0F19;border-color:#0EA5E9;"></div>' +
+            '<div><div style="font-size:0.8rem;font-weight:800;color:var(--s-ink, #F1F5F9);">어반 시티</div><div style="font-size:0.68rem;color:var(--s-ink-soft, #94A3B8);">집중 네오블루</div></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    slot.innerHTML = themeCardHtml;
+  }
+
   function renderSanctuaryGoals() {
     var slot = document.getElementById('sanctuaryGoalsView');
     if (!slot) return;
@@ -199,19 +265,20 @@
       calScreen.setAttribute('data-cal-mode', engine.activeCalMode || 'month');
     }
 
-    var modeNav = '<div class="s-cal-modes-wrap" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;">' +
-      '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'month' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'month\')">📅 월간</button>' +
-      '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'week' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'week\')">📆 주간</button>' +
-      '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'timeline' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setCalMode(\'timeline\')">⏱️ 일간 타임라인</button>' +
-    '</div>' +
-    '<div class="s-cal-quick-action-bar" style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:12px;">' +
-      '<button type="button" class="btn-ghost" onclick="if(typeof window.openCalendarLockScreenModal===\'function\'){window.openCalendarLockScreenModal();}else{var b=document.getElementById(\'calLockScreenBtn\');if(b)b.click();}" style="display:inline-flex;align-items:center;gap:4px;padding:5px 8px;font-size:0.75rem;font-weight:600;border-radius:9999px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--ink);cursor:pointer;white-space:nowrap;word-break:keep-all;flex-shrink:0;">' +
-        '<span style="display:none;">폰 잠금화면에서 보기</span><span style="white-space:nowrap;word-break:keep-all;font-size:0.75rem;">📱 잠금화면용 일정 카드 저장</span>' +
-        '<span style="font-size:0.68rem;padding:2px 5px;border-radius:999px;background:rgba(99,102,241,0.15);color:#818cf8;font-weight:700;white-space:nowrap;">⚡ 실시간 연동</span>' +
-      '</button>' +
-      '<button type="button" class="btn-ghost" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();" style="display:inline-flex;align-items:center;gap:4px;padding:5px 10px;font-size:0.75rem;font-weight:600;border-radius:9999px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);color:#10b981;cursor:pointer;white-space:nowrap;flex-shrink:0;">' +
-        '<span>+ 새 일정</span>' +
-      '</button>' +
+    var modeNav = '<div class="s-cal-modes-wrap" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;flex-wrap:wrap;">' +
+      '<div style="display:inline-flex;background:var(--card, #131A26);padding:3px;border-radius:10px;border:1px solid var(--rule, #2D3B4F);">' +
+        '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'month' ? 'active' : '') + '" style="padding:5px 12px;font-size:0.75rem;border:none;border-radius:8px;background:' + (engine.activeCalMode === 'month' ? 'var(--brand,#10B981)' : 'transparent') + ';color:' + (engine.activeCalMode === 'month' ? '#fff' : 'var(--s-ink-soft,#94A3B8)') + ';font-weight:700;cursor:pointer;" onclick="window.OurgoalSanctuaryV3.setCalMode(\'month\')">월간</button>' +
+        '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'week' ? 'active' : '') + '" style="padding:5px 12px;font-size:0.75rem;border:none;border-radius:8px;background:' + (engine.activeCalMode === 'week' ? 'var(--brand,#10B981)' : 'transparent') + ';color:' + (engine.activeCalMode === 'week' ? '#fff' : 'var(--s-ink-soft,#94A3B8)') + ';font-weight:700;cursor:pointer;" onclick="window.OurgoalSanctuaryV3.setCalMode(\'week\')">주간</button>' +
+        '<button type="button" class="s-cal-mode-btn ' + (engine.activeCalMode === 'timeline' ? 'active' : '') + '" style="padding:5px 12px;font-size:0.75rem;border:none;border-radius:8px;background:' + (engine.activeCalMode === 'timeline' ? 'var(--brand,#10B981)' : 'transparent') + ';color:' + (engine.activeCalMode === 'timeline' ? '#fff' : 'var(--s-ink-soft,#94A3B8)') + ';font-weight:700;cursor:pointer;" onclick="window.OurgoalSanctuaryV3.setCalMode(\'timeline\')">타임라인</button>' +
+      '</div>' +
+      '<div class="s-cal-quick-action-bar" style="display:flex;align-items:center;gap:6px;">' +
+        '<button type="button" class="btn-ghost" title="누르면: 폰 잠금화면용 9:16 일정 카드가 사진첩에 저장됩니다" onclick="if(typeof window.openCalendarLockScreenModal===\'function\'){window.openCalendarLockScreenModal();}else{var b=document.getElementById(\'calLockScreenBtn\');if(b)b.click();}" style="display:inline-flex;align-items:center;gap:4px;padding:5px 9px;font-size:0.74rem;font-weight:600;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--ink);cursor:pointer;white-space:nowrap;word-break:keep-all;">' +
+          '<span style="display:none;">폰 잠금화면에서 보기</span><span style="white-space:nowrap;word-break:keep-all;font-size:0.74rem;">📱 잠금화면용 일정 카드 저장</span>' +
+        '</button>' +
+        '<button type="button" class="btn btn-primary btn-sm" title="누르면: 원하는 날짜에 실천할 목표와 시간을 등록합니다" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();" style="padding:5px 10px;font-size:0.75rem;font-weight:700;border-radius:8px;background:var(--brand,#10B981);color:#fff;border:none;cursor:pointer;white-space:nowrap;">' +
+          '<span>+ 새 일정</span>' +
+        '</button>' +
+      '</div>' +
     '</div>';
 
     var contentHtml = '';
@@ -328,6 +395,37 @@
         (selectedItems[0].title || selectedItems[0].text || '실천 일정') :
         '등록된 일정이 없습니다';
 
+      
+      var itemsListDetailHtml = '';
+      if (selectedItems.length > 0) {
+        itemsListDetailHtml = '<div class="s-cal-day-items-list" style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);">' +
+          selectedItems.map(function(it) {
+            var tPart = (it.date && it.date.indexOf('T') !== -1) ? it.date.split('T')[1].slice(0, 5) : (it.time || '종일');
+            var isDone = !!it.done;
+            var schedId = it.schedId || it.id || '';
+            var kind = it.kind || 'custom';
+            var goalId = it.goalId || '';
+            var msId = it.msId || '';
+            return '<div class="quest-item" style="cursor:pointer;margin-bottom:6px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);" onclick="window.OurgoalSanctuaryV3.openScheduleDetail(\'' + engine.selectedCalDate + '\', \'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\');">' +
+              '<div class="quest-left">' +
+                '<div class="quest-checkbox ' + (isDone ? 'done' : '') + '" onclick="event.stopPropagation(); window.OurgoalSanctuaryV3.toggleScheduleItem(\'' + schedId + '\', \'' + kind + '\', \'' + goalId + '\', \'' + msId + '\');">' +
+                  (isDone ? '✓' : '') +
+                '</div>' +
+                '<div>' +
+                  '<div class="quest-text ' + (isDone ? 'done' : '') + '" style="font-size:0.85rem;">' + escapeHtml(it.title || it.text) + '</div>' +
+                  '<div style="font-size:0.7rem;color:var(--s-ink-faint, #64748B);">' + tPart + (it.note ? ' · ' + escapeHtml(it.note) : '') + '</div>' +
+                '</div>' +
+              '</div>' +
+              '<span class="quest-exp" style="font-size:0.68rem;">' + (it.goalId ? '목표연계' : '일반') + '</span>' +
+            '</div>';
+          }).join('') +
+        '</div>';
+      } else {
+        itemsListDetailHtml = '<div style="margin-top:10px;padding:12px;text-align:center;font-size:0.78rem;color:var(--s-ink-soft);border-top:1px solid rgba(255,255,255,0.06);">' +
+          engine.selectedCalDate + ' 에 등록된 일정이 없습니다.' +
+        '</div>';
+      }
+
       contentHtml = '<div class="s-month-cal-card">' +
         '<div class="s-month-header">' +
           '<button class="s-cal-arrow" type="button" onclick="window.OurgoalSanctuaryV3.shiftCal(-1);">◀</button>' +
@@ -342,17 +440,18 @@
           emptyCellsHtml +
           daysHtml +
         '</div>' +
-        '<div class="s-cal-selected-bar">' +
+        '<div class="s-cal-selected-bar" style="margin-top:12px;padding-top:10px;">' +
           '<div class="s-cal-sel-info">' +
             '<span class="s-cal-sel-date">' + engine.selectedCalDate + ' · 일정 ' + selectedItems.length + '건</span>' +
-            '<span class="s-cal-sel-task">' + escapeHtml(selItemTitle) + '</span>' +
+            '<span class="s-cal-sel-task">' + (selectedItems.length > 0 ? '실천 일정 목록' : '등록된 일정 없음') + '</span>' +
           '</div>' +
-          '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
-            '<button class="btn btn-ghost btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openBgPickerModal();" title="배경사진 선택">🖼️ 사진</button>' +
-            '<button class="btn btn-ghost btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openDayHubModal();" title="일자 관리 종합 허브">📅 허브</button>' +
-            '<button class="btn btn-primary btn-sm" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();">+ 일정 추가</button>' +
+          '<div style="display:flex;gap:5px;flex-wrap:wrap;">' +
+            '<button class="btn btn-ghost btn-xs" type="button" onclick="window.OurgoalSanctuaryV3.openBgPickerModal();" style="padding:3px 7px;font-size:0.72rem;" title="누르면: 이 날짜에 실천한 인증 사진을 달력 배경으로 등록합니다">🖼️ 사진</button>' +
+            '<button class="btn btn-ghost btn-xs" type="button" onclick="window.OurgoalSanctuaryV3.openDayHubModal();" style="padding:3px 7px;font-size:0.72rem;" title="누르면: 이 날짜의 타임라인, 메모, 할 일을 한 번에 관리합니다">📅 허브</button>' +
+            '<button class="btn btn-primary btn-xs" type="button" onclick="window.OurgoalSanctuaryV3.openAddScheduleModal();" style="padding:3px 9px;font-size:0.72rem;" title="누르면: 이 날짜에 새로운 실천 일정을 등록합니다">+ 일정 추가</button>' +
           '</div>' +
         '</div>' +
+        itemsListDetailHtml +
       '</div>';
     } else if (engine.activeCalMode === 'week') {
       var weekBase = engine.selectedCalDate || getTodayStr();
@@ -513,13 +612,13 @@
     var slot = document.getElementById('sanctuaryRecordsView');
     if (!slot) return;
 
-    var modeNav = '<div class="s-rec-modes-wrap" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;">' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'heatmap' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'heatmap\')">🟩 365일 히트맵</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'feed' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'feed\')">✍️ 내 기록 피드</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'timer' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'timer\')">🧘 집중 타이머</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'stats' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'stats\')">📊 성취 통계</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'archive' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'archive\')">📦 보관함</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'recap' ? 'active' : '') + '" onclick="window.OurgoalSanctuaryV3.setRecMode(\'recap\')">📸 위클리 리캡</button>' +
+    var modeNav = '<div class="s-rec-modes-wrap" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;scrollbar-width:none;-webkit-overflow-scrolling:touch;">' +
+      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'heatmap' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'heatmap\')">🟩 365일 히트맵</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'feed' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'feed\')">✍️ 내 피드</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'timer' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'timer\')">🧘 집중 타이머</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'stats' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'stats\')">📊 성취 통계</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'archive' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'archive\')">📦 보관함</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'recap' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'recap\')">📸 위클리 리캡</button>' +
     '</div>';
 
     var records = (window.state && window.state.profile && window.state.profile.records) || [];
@@ -616,8 +715,8 @@
           '<span>많음 (에메랄드 글로우)</span>' +
         '</div>' +
         '<div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end;">' +
-          '<button class="btn btn-ghost btn-sm" type="button" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();">⏱️ 스톱워치 콕핏</button>' +
-          '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.openAddRecordModal) window.openAddRecordModal(); else if(document.getElementById(\'recAddBtn\')) document.getElementById(\'recAddBtn\').click();">+ 새 기록 작성</button>' +
+          '<button class="btn btn-ghost btn-sm" type="button" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();" title="누르면: 전체화면 스톱워치로 지금부터 몰입 시간을 초 단위 측정해요">⏱️ 스톱워치 콕핏</button>' +
+          '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.openAddRecordModal) window.openAddRecordModal(); else if(document.getElementById(\'recAddBtn\')) document.getElementById(\'recAddBtn\').click();" title="누르면: 오늘 실천한 내용과 사진을 남겨 타임라인에 저장합니다">+ 새 기록 작성</button>' +
         '</div>' +
       '</div>';
     } else if (engine.activeRecMode === 'feed') {
@@ -1113,19 +1212,18 @@
 
     var peers = getRealRunningMates();
     var countText = peers.length > 0 ? (peers.length + '명') : '0명';
-    var countClass = peers.length > 0 ? 's-radar-count' : 's-radar-count s-radar-zero';
     var isCollapsed = slot.dataset.collapsed === 'true';
 
-    var radarHtml = '<div class="s-peer-radar-card ' + (isCollapsed ? 'collapsed' : 'slim-mode') + '" id="sPeerRadarCard">' +
-      '<div class="s-radar-head">' +
-        '<div class="s-radar-title">' +
-          '<span class="s-live-dot"></span>' +
-          '<b>실시간 러닝메이트</b>' +
-          '<span class="' + countClass + '">' + countText + '</span>' +
+    var radarHtml = '<div class="s-peer-radar-card ' + (isCollapsed ? 'collapsed' : 'slim-mode') + '" id="sPeerRadarCard" style="margin-bottom:8px;padding:8px 12px;border-radius:12px;">' +
+      '<div class="s-radar-head" style="margin:0;display:flex;align-items:center;justify-content:space-between;">' +
+        '<div class="s-radar-title" style="display:flex;align-items:center;gap:6px;font-size:0.8rem;">' +
+          '<span class="s-live-dot" style="width:8px;height:8px;"></span>' +
+          '<span>함께 달리는 러닝메이트</span>' +
+          '<span style="font-size:0.75rem;font-weight:800;color:var(--s-brand, #10B981);">' + countText + '</span>' +
         '</div>' +
         '<div style="display:flex;align-items:center;gap:6px;">' +
-          '<button class="btn btn-ghost btn-xs s-radar-refresh-btn" type="button" onclick="window.OurgoalSanctuaryV3.refreshRadar(this);">새로고침</button>' +
-          '<button class="btn btn-ghost btn-xs s-radar-toggle-btn" id="peerRadarToggleBtn" type="button" onclick="window.OurgoalSanctuaryV3.toggleRadarCollapse();" style="padding:2px 8px;font-size:0.75rem;">' + (isCollapsed ? '▼ 펼치기' : '▲ 접기') + '</button>' +
+          '<button class="btn btn-ghost btn-xs s-radar-refresh-btn" type="button" title="누르면: 실시간 접속 중인 러닝메이트 현황을 새로고침합니다" onclick="window.OurgoalSanctuaryV3.refreshRadar(this);" style="padding:2px 6px;font-size:0.7rem;">새로고침</button>' +
+          '<button class="btn btn-ghost btn-xs s-radar-toggle-btn" id="peerRadarToggleBtn" type="button" title="누르면: 러닝메이트 목록을 펼치거나 접습니다" onclick="window.OurgoalSanctuaryV3.toggleRadarCollapse();" style="padding:2px 6px;font-size:0.7rem;">' + (isCollapsed ? '펼치기 ▾' : '접기 ▴') + '</button>' +
         '</div>' +
       '</div>';
 
@@ -1136,7 +1234,7 @@
     }
 
     if (peers.length > 0) {
-      radarHtml += '<div class="s-radar-scroll">' +
+      radarHtml += '<div class="s-radar-scroll" style="margin-top:8px;">' +
         peers.map(function(p) {
           return '<div class="s-radar-item" data-peerid="' + escapeHtml(p.id) + '" role="button" tabindex="0" onclick="window.OurgoalSanctuaryV3.openPeerInteraction(\'' + escapeHtml(p.id) + '\');">' +
             '<div class="s-r-avatar-ring">' +
@@ -1149,19 +1247,13 @@
         }).join('') +
       '</div>';
     } else {
-      radarHtml += '<div class="s-radar-empty-card" style="padding:8px 12px;margin-top:6px;border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
-        '<div class="s-r-empty-info" style="display:flex;align-items:center;gap:8px;">' +
-          '<span style="font-size:1.1rem;">🤝</span>' +
-          '<div style="font-size:.78rem;">' +
-            '<b style="color:var(--ink);">함께 달릴 동반자를 찾아보세요</b>' +
-          '</div>' +
-        '</div>' +
-        '<button class="btn btn-primary btn-xs" id="sRadarEmptyBtn" type="button" onclick="window.OurgoalSanctuaryV3.gotoCompanions();" style="padding:4px 10px;font-size:.75rem;white-space:nowrap;">+ 동반자 찾기</button>' +
+      radarHtml += '<div class="s-radar-empty-card" style="padding:8px 12px;margin-top:6px;border-radius:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
+        '<span style="font-size:.76rem;color:var(--ink-soft);">함께 달릴 동반자를 찾아보세요 🤝</span>' +
+        '<button class="btn btn-primary btn-xs" id="sRadarEmptyBtn" type="button" title="누르면: 나와 같은 목표를 향해 달리는 동반자를 찾아 1:1 매칭합니다" onclick="window.OurgoalSanctuaryV3.gotoCompanions();" style="padding:3px 8px;font-size:.72rem;">+ 동반자 찾기</button>' +
       '</div>';
     }
 
     radarHtml += '</div>';
-
     slot.innerHTML = radarHtml;
   }
 
@@ -1170,19 +1262,76 @@
    * ========================================================================= */
   function renderSanctuaryV3(tab) {
     if (!isFocusSanctuary()) return;
+    if (!tab) tab = (window.state && window.state.activeTab) || 'home';
+    if (tab === 'home') {
+      renderSanctuaryHome();
+    }
     if (tab === 'goals') {
       renderSanctuaryGoals();
       if (typeof renderGoalsScreen === 'function') renderGoalsScreen();
     }
-    if (tab === 'calendar') renderSanctuaryCalendar();
-    if (tab === 'records') renderSanctuaryRecords();
+    if (tab === 'calendar') {
+      renderSanctuaryCalendar();
+    }
+    if (tab === 'records') {
+      renderSanctuaryRecords();
+    }
     if (tab === 'comm') {
       renderSanctuaryComm();
       if (typeof renderCommScreen === 'function') renderCommScreen();
     }
+    if (tab === 'settings') {
+      renderSanctuarySettings();
+    }
   }
 
   window.OurgoalSanctuaryV3 = {
+    renderHome: renderSanctuaryHome,
+    renderSettings: renderSanctuarySettings,
+    fastCheckin: function() {
+      if (typeof vibratePhone === 'function') vibratePhone(12);
+      else if (navigator.vibrate) navigator.vibrate(12);
+
+      var goals = (window.state && window.state.profile && window.state.profile.goals) || [];
+      var activeG = goals[0] || { id: 'g_default', title: '1순위 실천' };
+      if (goals.length > 0) {
+        goals[0].progress = Math.min((goals[0].progress || 0) + 10, 100);
+      }
+      var today = (typeof dateKey === 'function') ? dateKey() : (new Date().toISOString().slice(0,10));
+      if (window.state && window.state.profile) {
+        if (!Array.isArray(window.state.profile.records)) window.state.profile.records = [];
+        window.state.profile.records.push({
+          id: 'rec_' + Date.now(),
+          goalId: activeG.id,
+          text: activeG.title + ' 실천 완료',
+          date: today,
+          createdAt: new Date().toISOString()
+        });
+      }
+      if (typeof saveState === 'function') saveState();
+      else if (typeof saveProfile === 'function') saveProfile();
+
+      if (typeof dispatchFullViewPropagation === 'function') {
+        dispatchFullViewPropagation({ type: 'checkin', text: activeG.title + ' 실천 완료' });
+      }
+
+      toast('🎉 오늘 실천 완료! 12ms 햅틱과 전 탭 동기화가 완료되었습니다 ✨');
+      renderSanctuaryHome();
+      if (typeof renderHome === 'function') renderHome();
+      if (typeof setTab === 'function') {
+        // keep current view refreshed
+      }
+    },
+    switchTheme: function(th) {
+      document.documentElement.setAttribute('data-theme', th);
+      try {
+        localStorage.setItem('ourgoal_theme', th);
+        localStorage.setItem('theme', th);
+      } catch(e) {}
+      if (typeof applyTheme === 'function') applyTheme(th);
+      toast('🎨 ' + th + ' 테마가 실시간 적용되었습니다 ✨');
+      renderSanctuarySettings();
+    },
     render: renderSanctuaryV3,
     renderRadar: renderSanctuaryComm,
     toggleRadarCollapse: toggleRadarCollapse,

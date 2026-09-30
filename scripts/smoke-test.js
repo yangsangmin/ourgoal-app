@@ -7070,6 +7070,7 @@ check('compliance: [#TASK-SANCTUARY-COMM-RADAR-REAL-INTEGRITY] 소통 탭 실시
 
 check('compliance: [#TASK-ES-184] 아워골 생각 메모장 18대 잔여 대기 과제([70]~[87]) 전수 구현 및 개정 헌법(v2026.09.18) 6대 무결성 검증', () => {
   const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const css = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // [그룹 1: 계정 & 보안]
   // [70] 원격 로그아웃 전 로그인 기기 목록 확인 및 개별 세션 제어 기능
@@ -7101,11 +7102,14 @@ check('compliance: [#TASK-ES-184] 아워골 생각 메모장 18대 잔여 대기
   // [76] 프로필 내 동네(Region) 시군구 설정 및 저장
   assert.ok(html.includes("wireRegionPicker(sheet, 'pvRegion', regionRef);"), "[76] 동네 선택기 배선 존재");
 
-  // [79] 설정 테마 4종(성소·블랙·화이트·도심) 압축 및 시인성 개선
+  // [79] 설정 테마 4종(성소·블랙·화이트·도심) 압축 및 시인성 개선 (#TASK-ES-330)
   assert.ok(html.includes("id: 'focus-sanctuary', name: '성소 (Sanctuary)'"), '[79] 성소 테마 존재');
   assert.ok(html.includes("id: 'black', name: '블랙 (Black)'"), '[79] 블랙 테마 존재');
   assert.ok(html.includes("id: 'white', name: '화이트 (White)'"), '[79] 화이트 테마 존재');
   assert.ok(html.includes("id: 'urban-city', name: '도심 (City)'"), '[79] 도심 테마 존재');
+  assert.ok(css.includes('html[data-theme="white"] {'), '[79] 4대 테마 1급 변수 시스템 존재');
+  assert.ok(css.includes('html[data-theme="black"] {'), '[79] 블랙 테마 1급 변수 시스템 존재');
+  assert.ok(css.includes('html[data-theme="urban-city"] {'), '[79] 도심 테마 1급 변수 시스템 존재');
 
   // [그룹 3: 홈 탭 & 체크인 / 평가하기]
   // [81] 오늘의 3초 체크인 내 목표 기반 추천 및 커닝페이퍼형 가이드
