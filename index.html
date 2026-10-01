@@ -3190,7 +3190,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var urow = ures.row || {};
     var goalsRes = await sb.from('goals').select('*').eq('user_id', userId).order('created_at', {ascending:true});
     var recsRes = await sb.from('checkins').select('*').eq('user_id', userId).order('start_at', {ascending:false});
-    var goals = (goalsRes.data||[]).map(function(g){
+    var goals = (goalsRes.data||[]).filter(function(g){ return !g.deleted_at; }).map(function(g){
       if(g.visibility === 'followers') g.visibility = 'team';
       return {
         id:g.id, title:g.title, category:g.category, dueDate:g.due_date, createdAt:g.created_at,
@@ -3223,7 +3223,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       try { localStorage.setItem('ourgoal_goals_backup_' + userId, JSON.stringify(goals)); } catch(e){}
     }
 
-    var records = (recsRes.data||[]).map(function(r){
+    var records = (recsRes.data||[]).filter(function(r){ return !r.deleted_at; }).map(function(r){
       return {
         id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at,
         category: r.category || null,
@@ -8432,7 +8432,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       state.profile.goals = (state.profile.goals || []).filter(function(g){ return g.id !== entityId; });
       if(state.activeGoalId === entityId) state.activeGoalId = null;
       var goal = { id: entityId };
-      try { await sb.from('goals').delete().eq('id', goal.id).eq('user_id', state.profile.id); } catch(e){}
+      try { await sb.from('goals').update({ deleted_at: new Date().toISOString() }).eq('id', goal.id).eq('user_id', state.profile.id); } catch(e){}
     } else if(entityType === 'schedule'){
       state.profile.settings = state.profile.settings || {};
       state.profile.settings.customSchedules = (state.profile.settings.customSchedules || []).filter(function(c){ return c.id !== entityId; });
@@ -8444,7 +8444,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         });
       }
       var id = entityId;
-      try { await sb.from('checkins').delete().eq('id', id).eq('user_id', state.profile.id); } catch(e){}
+      try { await sb.from('checkins').update({ deleted_at: new Date().toISOString() }).eq('id', id).eq('user_id', state.profile.id); } catch(e){}
     } else if(entityType === 'gcal'){
       if(Array.isArray(state.gcalEventsCache)){
         state.gcalEventsCache = state.gcalEventsCache.filter(function(e){ return e.id !== entityId; });
@@ -8474,10 +8474,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var payload = item.payload;
 
     if(item.entityType === 'goal'){
+      payload.deleted_at = null;
       state.profile.goals = state.profile.goals || [];
       if(!state.profile.goals.some(function(g){ return g.id === payload.id; })){
         state.profile.goals.push(payload);
       }
+      try { await sb.from('goals').update({ deleted_at: null }).eq('id', payload.id).eq('user_id', state.profile.id); } catch(e){}
     } else if(item.entityType === 'schedule'){
       state.profile.settings = state.profile.settings || {};
       state.profile.settings.customSchedules = state.profile.settings.customSchedules || [];
@@ -8495,10 +8497,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         syncAllToGoogleCalendar(false).catch(function(){});
       }
     } else if(item.entityType === 'record'){
+      payload.deleted_at = null;
       state.profile.records = state.profile.records || [];
       if(!state.profile.records.some(function(r){ return r.id === payload.id; })){
         state.profile.records.unshift(payload);
       }
+      try { await sb.from('checkins').update({ deleted_at: null }).eq('id', payload.id).eq('user_id', state.profile.id); } catch(e){}
     } else if(item.entityType === 'gcal'){
       state.gcalEventsCache = state.gcalEventsCache || [];
       if(!state.gcalEventsCache.some(function(e){ return e.id === payload.id; })){
