@@ -1,0 +1,13 @@
+{
+  "id": "home-dock",
+  "title": "게스트 진입 시 홈 탭 메가블록과 소블록 컨테이너가 정상적으로 마운트되어 표시된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#screen-home" },
+    { "expect": "visible", "selector": "#screen-home" },
+    { "expect": "visible", "selector": "#homeGrassSummaryCard" },
+    { "capture": "home-dock-mounted" }
+  ]
+}
