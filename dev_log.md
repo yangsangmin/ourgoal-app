@@ -5120,5 +5120,26 @@
 - **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #598 원격 main 머지 및 실서버 배포)]
 ---
 
+## [2026-10-02 08:42] [#TASK-UIUX-PHASE0-DESIGN-TOKENS] UI/UX 틀 개편 Phase 0 기반 디자인 시스템 & 토큰 아키텍처 완결
+- **목표**: 상민님 지시("전체적인 UI/UX 틀부터 고치고 싶다")에 따라 수립된 8대 실행 단계 중 Phase 0(기반 디자인 시스템 & 토큰 아키텍처) 완결. 4대 테마 전용 1급 CSS 변수 단일화, 7~70세 폰트 스케일, 44px 터치타겟, 12ms 햅틱 유틸, 스켈레톤 로딩, Z-Index 계층, 둥근 모서리 일원화, 3대 금지어 정화 완결.
+- **수정/실행 내역**:
+  - `ui.css`:
+    - `:root` 내 `--touch-min: 44px;`, 폰트 스케일(`--font-xs`~`2xl`), Z-Index 계층(`--z-canvas`~`toast`) 토큰 정의.
+    - `.touch-target-44`, `.text-scale-*`, `.skeleton-pulse`, `.btn-touch-active` 유틸리티 클래스 구축.
+  - `ui.js`:
+    - 전역 12ms 촉각 햅틱 유틸리티 `window.triggerHaptic` 배선 및 터치 타겟 결속.
+  - `docs/rules/TICKETS.md`: `#TASK-UIUX-PHASE0-DESIGN-TOKENS` 등록 및 완료 처리.
+  - `docs/specs/`: `REQ-TASK-UIUX-PHASE0-DESIGN-TOKENS.md`, `PLAN-TASK-UIUX-PHASE0-DESIGN-TOKENS.md` 문제해결 8원칙 완비.
+  - GitHub Actions Court 심사 청구(PR #612) 및 `origin/main` 스쿼시 머지 완료 (`d08637f`).
+- **검증 결과**:
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `scripts/verify-all-clicks.js`: 893개 버튼 전수 Zero Dead-Click PASS.
+  - `scripts/test-shipyard-modular.js`: 5/5 전수 ALL PASS.
+  - GitHub Court 심사: `success(통과 또는 확인 부족)` 판정 획득 (판정번호 `150EAEB4`).
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #612 원격 main 머지 및 실서버 배포)]
+---
+
+
 
 
