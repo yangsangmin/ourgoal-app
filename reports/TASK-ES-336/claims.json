@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-336",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-336-WEEKLY-RECAP-CARD.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "기록 화면 헤더 영역에 위클리 리캡 모달을 열 수 있는 버튼(btnOpenWeeklyRecap)이 존재함을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "사진·몰입시간·글자수 우선순위에 따른 순수 팩트 기반 베스트 모먼트 자동 큐레이션 알고리즘(findBestMoment)이 존재함을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "위클리 리캡 모달이 실천 횟수, 총 몰입 시간, 연속 스트릭 3대 팩트 지표를 렌더링함을 보장한다."
+    },
+    {
+      "id": "R4",
+      "text": "위클리 리캡 모달에 0.5초 원터치 닫기 버튼(btnRecapFeedGo)이 배선되어 있음을 보장한다."
+    },
+    {
+      "id": "R5",
+      "text": "기존 캔버스 기반 위클리 리캡 이미지 생성 및 공유 로직(generateWeeklyRecapImage, openLegacyRecapCanvasModal)이 100% 무손실 보존됨을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "records",
+      "statement": "index.html 내에 btnOpenWeeklyRecap 버튼 요소가 존재한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"btnOpenWeeklyRecap\""
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "records",
+      "statement": "index.html 내에 팩트 기반 findBestMoment 큐레이션 함수가 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "function findBestMoment(records, now)"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "records",
+      "statement": "index.html 내에 openWeeklyRecapModal 함수가 3대 팩트 지표를 포함하여 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "🐾 이번 주 나의 실천 리캡"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "records",
+      "statement": "index.html 내에 0.5초 원터치 닫기 버튼 btnRecapFeedGo가 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"btnRecapFeedGo\""
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "records",
+      "statement": "index.html 내에 캔버스 이미지 생성 함수 generateWeeklyRecapImage가 보존되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "window.generateWeeklyRecapImage = generateWeeklyRecapImage;"
+      }
+    }
+  ]
+}
