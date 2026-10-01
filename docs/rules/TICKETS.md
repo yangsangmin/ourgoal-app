@@ -13,7 +13,9 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 
 ## 승인 티켓 (구현 가능)
 
-- #TASK-CHORE-CONSTITUTION-MASTERPLAN-AND-REDTEAM | INFRA/RULES | 아워골 최고 헌법 개정: 기획정본 정독 의무(제2조 9항), 레드팀 서브에이전트 2차 검증 및 100자 요약 의무(제2조 10항), 단일 표준 보고 양식 공식 등재(제8조 3항 1호) | 상민님 직접 지시 (2026-10-01 "병합까지 진행해") | 진행중
+- #TASK-CHORE-STAGE-TRANSITION-AND-MASTERPLAN-SYNC | INFRA/RULES | 아워골 최고 헌법 개정: 머지 완료 시 4단계 표기 영구 금지 및 5·6단계 승격 강제(제8조 2항 및 3항 1호) + 기획정본 제9장(온보딩 규격)·제10장(5대 설계공식) 재편 정합 및 docs/rules 저장소 복제본 공식화(제2조 9항) | 상민님 직접 지시 (2026-10-02 "승인함") | 진행중
+
+- #TASK-CHORE-CONSTITUTION-MASTERPLAN-AND-REDTEAM | INFRA/RULES | 아워골 최고 헌법 개정: 기획정본 정독 의무(제2조 9항), 레드팀 서브에이전트 2차 검증 및 100자 요약 의무(제2조 10항), 단일 표준 보고 양식 공식 등재(제8조 3항 1호) | 상민님 직접 지시 (2026-10-01 "병합까지 진행해") | 완료 (PR #596 머지 완료)
 
 - #TASK-ES-330 | E1/E2/UX | [79] 설정 > 화면&홈 구성 화면스타일 테마 4종(성소·블랙·화이트·도심) 압축 및 전 테마 시인성·동일 작동 전면 개선 (설정창 화면&홈 구성 내 화면 스타일 테마를 성소, 블랙, 화이트, 깔끔한 도심 4대 테마로 완전 일원화하고, ui.css에 4대 테마 전용 1급 CSS 변수 시스템(Design Token Architecture: --bg, --card, --surface, --ink, --rule, --brand 등)을 전면 구축하여 White 테마의 체크인 입력창/버튼 White-on-White 결함과 Black 테마의 Black-on-Black 및 비순수 OLED 결함을 원천 소탕하며, 테마별 미니 뷰포트 프리뷰 칩 및 12ms 햅틱 반응, meta theme-color 모바일 상단바 실시간 연동, 고대비 모드 완벽 공존, 직통 핸들러 handle설정_Item79Action 및 handle테마_Item79Action 구현, 로컬 캐시 영속화, 4대 뷰 원자적 동시 전파 완결) | 상민님 직접 지시 (2026-09-28 "진행" — 노션 생각 메모장 [79]번) | 완료 (PR #585 법정 심사 success)
 
