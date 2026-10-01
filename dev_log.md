@@ -5101,5 +5101,24 @@
 - **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #609 원격 main 머지 및 실서버 배포)]
 ---
 
+## [2026-10-02 08:20] [#TASK-ES-337] 직관적 온보딩 16종 동물 및 4대 탭 무블러 라이브 프리뷰 융합 완결
+- **목표**: 상민님 직접 지시("융합해")에 따라, 16종 MBTI 동물 4대 기질 선택 및 닉네임, 첫 1호 목표 칩 프리셋 선택과 기존 320종 아바타 인프라를 완전 융합하고, 4대 탭 무블러(Zero Blur) 플로팅 라이브 투어를 구현하여 최신 모듈러 베이스 동기화 및 프로덕션 배포 완결.
+- **수정/실행 내역**:
+  - `index.html`:
+    - `startOnboarding()` 현대화: 4대 기질 16종 대표 동물 4-card 그리드 UI, 닉네임 입력창, 1호 목표 3대 칩(`🏃 매일 30분 걷기`, `📚 하루 15분 독서`, `💧 아침 물 한잔`) 선택 기능 이식.
+    - `completeOnboarding()` 고도화: `state.profile.avatar` 문자열 정규화로 `[object Object]` 결함 차단, `guardianAnimal` 메타데이터 영속화, `awardXP(10, ...)` 실지급 배선.
+    - `startFirstLoginGuide()` 고도화: 4대 탭 무블러(Zero Blur) 플로팅 투어 카드(`#miniGuideOverlay`) 탑재, 투명 클릭실드(`pointer-events: auto; background: transparent;`) 적용.
+  - 최신 `origin/main`(`7f45424`, 조선소 전 탭 모듈화 완결 본) 머지 동기화 및 24개 모듈과의 완전 융화 검증.
+  - `docs/rules/TICKETS.md`: `#TASK-ES-337` 승인 대장 등록 및 완료 처리.
+  - GitHub Actions Court 심사 청구(PR #598) 및 `origin/main` 스쿼시 머지 완료 (`61d9b0e`).
+- **검증 결과**:
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `scripts/verify-all-clicks.js`: 893개 버튼 전수 Zero Dead-Click PASS.
+  - `scripts/test-shipyard-modular.js`: 5/5 전수 ALL PASS.
+  - GitHub Court 심사: `success(통과 또는 확인 부족)` 판정 획득 (판정번호 `09E206A4`).
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #598 원격 main 머지 및 실서버 배포)]
+---
+
 
 
