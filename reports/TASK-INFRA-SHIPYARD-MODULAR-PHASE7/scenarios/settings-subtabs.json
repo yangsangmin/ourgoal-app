@@ -1,0 +1,14 @@
+{
+  "id": "settings-subtabs",
+  "title": "설정 탭 진입 시 프로필 카드 및 설정 히어로 영역이 정상 렌더링된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "waitFor", "selector": "#profileCard" },
+    { "expect": "visible", "selector": "#profileCard" },
+    { "capture": "settings-profile-card-rendered" }
+  ]
+}

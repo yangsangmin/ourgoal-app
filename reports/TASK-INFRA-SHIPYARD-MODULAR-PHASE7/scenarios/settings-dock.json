@@ -1,0 +1,15 @@
+{
+  "id": "settings-dock",
+  "title": "게스트 진입 후 설정 탭을 누르면 설정 메가블록 화면이 정상 표시된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "waitFor", "selector": "#screen-settings" },
+    { "expect": "visible", "selector": "#screen-settings" },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"settings\"]", "className": "active" },
+    { "capture": "settings-dock-mounted" }
+  ]
+}
