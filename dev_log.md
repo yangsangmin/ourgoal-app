@@ -4901,6 +4901,24 @@
   - 스모크 테스트: `node scripts/smoke-test.js` 387개 전수 통과 (0개 실패).
   - 헌법 게이트: `node scripts/verify-integrity-gate.js` 38개 검사 ALL PASS.
   - 법정 청구서: `reports/TASK-ES-269/claims.json` 5대 클레임 로컬 검증 통과.
-- **진행 단계**: [3단계: 초안 PR 제출 및 법정 판정 청구 준비]
+## [2026-10-02 02:40] [#TASK-CHORE-SHIPYARD-MODULAR-CONSTITUTION] 최고 헌법 제3조 제9항 조선소 블록 건조 규범 신설 및 구 족쇄 폐기 개정
+- **목표**: 상민님 승인(2026-10-02 "이 최종 헌법 수정안을 승인한다")에 따라, 38,000줄 거대 모놀리스의 위험을 영구 해소하기 위한 [조선소 블록형 모듈화 및 진화형 아키텍처 규범](제3조 제9항)을 헌법 정본에 공식 신설하고, `smoke-test.js` 내 TECH-RULE-01(2만 줄 하한선) 등 낡은 족쇄를 폐기하며 관련 5대 조항을 정합 개정함.
+- **수정/실행 내역**:
+  - `docs/rules/archive/OURGOAL_ABSOLUTE_INTEGRITY_RULES_v2026.10.02_STAGE_TRANSITION.md`: 개정 직전 헌법 정본 비파괴 백업.
+  - `docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md`:
+    - 헌법 버전 갱신: `2026.10.02-SUPREME-15-ARTICLES-SHIPYARD-MODULAR-ARCHITECTURE`.
+    - 총괄 목차 제3조 요약 갱신.
+    - 제1조 제2항, 제4조 제1항 제7호, 제4조 제2항 제1호, 제5조 제3항 제1호(구 족쇄 공식 폐기), 제7조 제7항 제1호, 제15조 제6항 제3호 정합 개정.
+    - 제3조 제9항 [조선소 블록형 모듈화 및 진화형 아키텍처 규범] 신설.
+  - `docs/rules/CONSTITUTION_VERSIONS.md`: 버전 대장에 신규 헌법 버전 등재.
+  - `AGENTS.md` (루트 및 사용자 홈): 헌법 정본 미러 동기화.
+  - `docs/specs/REQ-SHIPYARD-MODULAR-CONSTITUTION.md`: 문제해결 8원칙 1회차 요구명세서 작성.
+  - `docs/specs/PLAN-SHIPYARD-MODULAR-CONSTITUTION.md`: 문제해결 8원칙 2회차 작업계획서 작성 (8원칙 린터 통과).
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `node court/vault-check.js . origin/main HEAD`: 금고 단독 변경 규약 준수 확인 (VAULT_MIXED 제로).
+  - Tri-Sync 검증: Notion-Obsidian-Command Center 100% 동기화 (오차 0건).
+- **진행 단계**: [4단계: 심사 청구 상태 - 초안 PR 생성 및 법정 심사 대기]
 ---
 
