@@ -1503,8 +1503,8 @@ check('compliance: 최초 로그인 시 모든 공개 범위(헤더 배지, 설�
   // 2. 설정 셀렉트 옵션 비공개 pre-selected 확인
   assert.ok(html.includes('<option value="private" selected>나만 보기 (비공개)</option>'), '설정 탭 비공개 pre-selected 존재');
 
-  // 3. 목표 생성 모달 공개 범위 셀렉트 private pre-selected 확인
-  assert.ok(html.includes('<option value="private" selected>나만 보기</option>'), '목표 모달 비공개 pre-selected 존재');
+  // 3. 목표 생성 모달 공개 범위 셀렉트 theme pre-selected 확인 (#TASK-ES-333: 같은 테마 공개 기본값 및 1초 되돌리기)
+  assert.ok(html.includes('<option value="theme" selected>🏷️ 같은 테마 공개 (기본)</option>'), '목표 모달 같은 테마 공개 pre-selected 존재');
 
   // 4. 온보딩 및 AI 목표 생성 시 visibility: 'private' 확인
   assert.ok(html.includes("visibility:'private'"), '온보딩 목표 비공개 설정');
