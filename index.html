@@ -2426,7 +2426,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
   /* ============ 8대 화면 스타일 (테마) 정의 ============ */
   var THEMES = [
-    { id: 'focus-sanctuary', name: '성소 (Sanctuary)', desc: '오로라 에메랄드 다크 테마', preview: '#0B0F17', metaColor: '#0B0F17' },
+    { id: 'focus-sanctuary', name: '성소 (Sanctuary)', label: '포커스 (Focus)', desc: '오로라 에메랄드 다크 테마', preview: '#0B0F17', metaColor: '#0B0F17' },
     { id: 'black', name: '블랙 (Black)', desc: '선명한 딥 블랙 OLED 다크 테마', preview: '#000000', metaColor: '#000000' },
     { id: 'white', name: '화이트 (White)', desc: '화사하고 깔끔한 순백 라이트 테마', preview: '#FFFFFF', metaColor: '#FFFFFF' },
     { id: 'urban-city', name: '도심 (City)', desc: '세련된 모던 슬레이트 네이비 테마', preview: '#0B0F19', metaColor: '#0B0F19' }
@@ -4669,6 +4669,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     updateAppBadge(computeStreakDays()); /* 기록이 바뀌는 모든 경로(홈 체크인·기록 모달·온보딩)가 여기를 지나므로 배지는 여기서 갱신 */
     var uidVal = state.profile.id;
     try{
+      if(state.profile.guardianAnimal && state.profile.settings){
+        state.profile.settings.guardianAnimal = state.profile.guardianAnimal;
+        if(!Array.isArray(state.profile.settings.savedAvatars)) state.profile.settings.savedAvatars = [];
+        var existsGa = state.profile.settings.savedAvatars.some(function(a){ return a.id === 'guardian_' + (state.profile.guardianAnimal && state.profile.guardianAnimal.mbti); });
+        if(!existsGa){
+          state.profile.settings.savedAvatars.unshift({
+            id: 'guardian_' + state.profile.guardianAnimal.mbti,
+            name: state.profile.guardianAnimal.name,
+            emoji: state.profile.guardianAnimal.emoji,
+            mbti: state.profile.guardianAnimal.mbti,
+            cat: '수호동물',
+            createdAt: (typeof nowISO === 'function' ? nowISO() : new Date().toISOString())
+          });
+        }
+      }
       var savedAvatarsPayload = (state.profile.settings && Array.isArray(state.profile.settings.savedAvatars)) ? state.profile.settings.savedAvatars : [];
       var trashPayload = Array.isArray(state.profile.trash) ? state.profile.trash : [];
       if(trashPayload.length){
@@ -6574,218 +6589,225 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     else if(granted) toast('스트릭 프리즈를 1개 획득했어요! 하루를 놓쳐도 연속 기록이 지켜져요');
   }
 
-  /* ============ Onboarding (first-time, after signup) ============ */
+  /* ============ Onboarding (first-time, after signup) — 16종 동물 아바타 & 직관적 안착 융합 ============ */
+  var ONBOARDING_AVATARS = [
+    // 🧠 분석형 (4종)
+    { mbti: 'INTJ', name: '전략가 부엉이', group: '분석형', emoji: '🦉', desc: '깊은 지혜와 치밀한 설계' },
+    { mbti: 'INTP', name: '사색가 고양이', group: '분석형', emoji: '🐱', desc: '끝없는 호기심의 탐구자' },
+    { mbti: 'ENTJ', name: '통솔자 불사조', group: '분석형', emoji: '🦅', desc: '목표를 향해 비상하는 리더' },
+    { mbti: 'ENTP', name: '발명가 여우', group: '분석형', emoji: '🦊', desc: '창의적 번뜩임의 달인' },
+    // 🌿 외교형 (4종)
+    { mbti: 'INFJ', name: '통찰가 사슴', group: '외교형', emoji: '🦌', desc: '맑은 눈망울의 예언자' },
+    { mbti: 'INFP', name: '치유자 수달', group: '외교형', emoji: '🦦', desc: '따뜻한 마음의 수호자' },
+    { mbti: 'ENFJ', name: '지도자 돌고래', group: '외교형', emoji: '🐬', desc: '모두를 이끄는 긍정 에너지' },
+    { mbti: 'ENFP', name: '활동가 강아지', group: '외교형', emoji: '🐶', desc: '행복을 전파하는 비타민' },
+    // 🛡️ 관리형 (4종)
+    { mbti: 'ISTJ', name: '원칙주의 거북', group: '관리형', emoji: '🐢', desc: '꾸준함과 신뢰의 상징' },
+    { mbti: 'ISFJ', name: '수호자 반달곰', group: '관리형', emoji: '🐻', desc: '묵묵히 지켜주는 버팀목' },
+    { mbti: 'ESTJ', name: '관리자 사자', group: '관리형', emoji: '🦁', desc: '당당한 카리스마의 기둥' },
+    { mbti: 'ESFJ', name: '배려자 코끼리', group: '관리형', emoji: '🐘', desc: '모두를 감싸는 다정함' },
+    // ⚡ 탐험형 (4종)
+    { mbti: 'ISTP', name: '장인 호랑이', group: '탐험형', emoji: '🐯', desc: '과묵하지만 날카로운 해결사' },
+    { mbti: 'ISFP', name: '예술가 카멜레온', group: '탐험형', emoji: '🦎', desc: '자유로운 감성과 색채' },
+    { mbti: 'ESTP', name: '도전자 치타', group: '탐험형', emoji: '🐆', desc: '거침없는 행동파 러너' },
+    { mbti: 'ESFP', name: '연예인 원숭이', group: '탐험형', emoji: '🐵', desc: '언제나 유쾌한 분위기 메이커' }
+  ];
+
   function startOnboarding(){
-    var ob = { category: null, title: '', dueDate: '', presetTopic: '' };
+    var selectedGroup = '분석형';
+    var selectedAvatar = ONBOARDING_AVATARS[0]; // 기본 부엉이
     showObStep1();
 
     function showObStep1(){
       track('onboarding_step_viewed', { step: 1, source: 'onboarding', goal_type: null, day_index: dayIndexSinceSignup() });
-      var presetsHtml = '<div style="margin-bottom:16px;">' +
-        '<p class="faint" style="margin:0 0 8px;font-weight:700;">1초 만에 시작하는 추천 목표</p>' +
-        '<div style="display:flex;flex-direction:column;gap:6px;">' +
-          ONBOARDING_PRESETS.map(function(p, idx){
-            return '<button class="btn-preset-goal" data-presetidx="'+idx+'" type="button">' +
-              '<span>'+escapeHtml(p.label)+'</span>' +
-              '<span style="color:var(--ink);font-size:.8125rem;">선택 &gt;</span>' +
-            '</button>';
+
+      function renderAvatarGrid(group, activeAvatar){
+        var list = ONBOARDING_AVATARS.filter(function(a){ return a.group === group; });
+        return '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">' +
+          list.map(function(av){
+            var isSel = (activeAvatar && activeAvatar.mbti === av.mbti);
+            var borderStyle = isSel ? 'border-color:var(--brand);background:rgba(16,185,129,0.12);' : 'border-color:var(--rule);background:var(--card);';
+            return '<div class="ob-avatar-card" data-mbti="'+av.mbti+'" style="border:1.5px solid;border-radius:14px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .2s;'+borderStyle+'">' +
+              '<div style="font-size:26px;margin-bottom:2px;">'+av.emoji+'</div>' +
+              '<div style="font-size:11px;font-weight:800;color:var(--brand);margin-bottom:2px;">'+av.mbti+'</div>' +
+              '<div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px;">'+escapeHtml(av.name)+'</div>' +
+              '<div style="font-size:10px;color:var(--ink-faint);line-height:1.3;">'+escapeHtml(av.desc)+'</div>' +
+            '</div>';
           }).join('') +
-        '</div>' +
-      '</div>' +
-      '<p class="faint" style="margin:0 0 8px;font-weight:700;">또는 직접 분야 선택</p>';
-
-      openModal(
-        '<p class="ob-step-label">1 / 4 · 환영해요</p>' +
-        '<h3>'+escapeHtml(state.profile.displayName)+'님, 반가워요</h3>' +
-        '<p class="muted" style="margin:-8px 0 16px;">인기 목표를 1초 만에 선택하거나, 원하는 분야를 골라주세요.</p>' +
-        presetsHtml +
-        '<div class="cat-grid" id="obCatGrid">' +
-          Object.keys(GOAL_TEMPLATES).map(function(k){
-            var t = GOAL_TEMPLATES[k];
-            return '<div class="cat-chip" data-cat="'+k+'"><span class="ico">'+t.icon+'</span><span class="lbl">'+t.label+'</span></div>';
-          }).join('') +
-        '</div>' +
-        '<div class="modal-actions"><button class="btn btn-primary btn-block" id="obNext1" type="button" disabled>다음</button></div>' +
-        '<button class="land-login-link" id="obSkip" type="button" style="width:100%;background:none;margin-top:12px;">다른 사람들의 목표 먼저 볼래요 · <b>나중에 설정하기</b></button>',
-        function(sheet){
-          sheet.querySelectorAll('.btn-preset-goal').forEach(function(btn){
-            btn.addEventListener('click', function(){
-              var p = ONBOARDING_PRESETS[+btn.dataset.presetidx];
-              if(!p) return;
-              ob.category = p.category;
-              ob.title = p.title;
-              ob.presetTopic = p.topic || '';
-              showObStep3();
-            });
-          });
-          sheet.querySelectorAll('.cat-chip').forEach(function(chip){
-            chip.addEventListener('click', function(){
-              sheet.querySelectorAll('.cat-chip').forEach(function(c){ c.classList.remove('active'); });
-              chip.classList.add('active');
-              ob.category = chip.dataset.cat;
-              ob.presetTopic = '';
-              sheet.querySelector('#obNext1').disabled = false;
-            });
-          });
-          sheet.querySelector('#obNext1').addEventListener('click', showObStep2);
-          sheet.querySelector('#obSkip').addEventListener('click', async function(){
-            closeModal();
-            state.commSubTab = 'feed';
-            enterApp();
-            setTab('comm');
-            toast('마음에 드는 목표를 찾으면 바로 복사할 수 있어요');
-            await maybeShowFirstLoginGuide();
-          });
-        }
-      );
-    }
-
-    function showObStep2(){
-      track('onboarding_step_viewed', { step: 2, source: 'onboarding', goal_type: ob.category, day_index: dayIndexSinceSignup() });
-      var t = GOAL_TEMPLATES[ob.category] || GOAL_TEMPLATES.etc;
-      openModal(
-        '<p class="ob-step-label">2 / 4 · 목표 정하기</p>' +
-        '<h3>'+t.icon+' '+t.label+' 목표를 적어주세요</h3>' +
-        '<div class="field"><label>최종 목표</label><input id="obTitle" type="text" placeholder="예: 3개월 안에 벤치프레스 100kg" value="'+escapeHtml(ob.title)+'"></div>' +
-        '<div class="field"><label>목표 마감일 (선택)</label><input id="obDue" type="date" value="'+ob.dueDate+'"><p class="faint" id="obDday" style="margin:6px 0 0;">'+(ob.dueDate ? '오늘 기준 <b style="color:var(--brand-strong);">'+dDay(ob.dueDate)+'</b>' : '')+'</p></div>' +
-        '<div class="modal-actions"><button class="btn btn-ghost" id="obBack2" type="button">이전</button><button class="btn btn-primary" id="obNext2" type="button">다음</button></div>' +
-        '<button class="land-login-link" id="obSkip2" type="button" style="width:100%;background:none;margin-top:12px;">다른 사람들의 목표 먼저 볼래요 · <b>나중에 설정하기</b></button>',
-        function(sheet){
-          var obDue = sheet.querySelector('#obDue');
-          var obDdayEl = sheet.querySelector('#obDday');
-          obDue.addEventListener('change', function(){
-            obDdayEl.innerHTML = obDue.value ? '오늘 기준 <b style="color:var(--brand-strong);">'+dDay(obDue.value)+'</b>' : '';
-          });
-          sheet.querySelector('#obBack2').addEventListener('click', showObStep1);
-          sheet.querySelector('#obSkip2').addEventListener('click', async function(){
-            closeModal();
-            state.commSubTab = 'feed';
-            enterApp();
-            setTab('comm');
-            toast('마음에 드는 목표를 찾으면 바로 복사할 수 있어요');
-            await maybeShowFirstLoginGuide();
-          });
-          sheet.querySelector('#obNext2').addEventListener('click', function(){
-            var title = sheet.querySelector('#obTitle').value.trim();
-            if(!title) return;
-            ob.title = title;
-            ob.dueDate = sheet.querySelector('#obDue').value;
-            showObStep3();
-          });
-        }
-      );
-    }
-
-    function showObStep3(){
-      track('onboarding_step_viewed', { step: 3, source: 'onboarding', goal_type: ob.category, day_index: dayIndexSinceSignup() });
-      var t = GOAL_TEMPLATES[ob.category] || GOAL_TEMPLATES.etc;
-      var preview = (t.ms && t.ms.length)
-        ? t.ms.map(function(m){ return '<div class="tp-item">'+escapeHtml(m)+'</div>'; }).join('')
-        : '<div class="tp-item">마일스톤은 목표 화면에서 직접 추가해요</div>';
-      openModal(
-        '<p class="ob-step-label">3 / 4 · 마일스톤 미리보기</p>' +
-        '<h3>이렇게 시작할게요</h3>' +
-        '<p class="muted" style="margin:-8px 0 12px;"><b style="color:var(--ink);">'+escapeHtml(ob.title)+'</b></p>' +
-        '<div class="tmpl-preview">'+preview+'</div>' +
-        '<div class="field" style="margin-top:14px;"><label>관심 카테고리 (나중에 프로필에서 더 고를 수 있어요)</label></div>' +
-        categoryPickerHtml('obTopic', ob.presetTopic || '') +
-        '<p class="faint" style="margin:10px 0 0;">만든 뒤에 목표 화면에서 자유롭게 고칠 수 있어요.</p>' +
-        '<div class="modal-actions"><button class="btn btn-ghost" id="obBack3" type="button">이전</button><button class="btn btn-primary" id="obFinish" type="button">목표 만들고 시작하기</button></div>' +
-        '<button class="land-login-link" id="obSkip3" type="button" style="width:100%;background:none;margin-top:12px;">다른 사람들의 목표 먼저 볼래요 · <b>나중에 설정하기</b></button>',
-        function(sheet){
-          var obTopicRef = { value: ob.presetTopic || '' };
-          wireCategoryPicker(sheet, 'obTopic', obTopicRef);
-          sheet.querySelector('#obBack3').addEventListener('click', function(){
-            if(ob.presetTopic) showObStep1();
-            else showObStep2();
-          });
-          sheet.querySelector('#obSkip3').addEventListener('click', async function(){
-            closeModal();
-            state.commSubTab = 'feed';
-            enterApp();
-            setTab('comm');
-            toast('마음에 드는 목표를 찾으면 바로 복사할 수 있어요');
-            await maybeShowFirstLoginGuide();
-          });
-          sheet.querySelector('#obFinish').addEventListener('click', async function(){
-            if(obTopicRef.value && (state.profile.interests||[]).indexOf(obTopicRef.value)===-1){
-              state.profile.interests = (state.profile.interests||[]).concat([obTopicRef.value]);
-            }
-            var goal = { id: newId(), title: ob.title, dueDate: ob.dueDate||null, category: ob.category, topic: obTopicRef.value, createdAt: nowISO(), visibility:'private', archivedAt:null, result:null, milestones: templateMilestones(ob.category) };
-            state.profile.goals.push(goal);
-            state.activeGoalId = goal.id;
-            trackGoalCreated(goal, 'onboarding');
-            await saveProfile();
-            showObStep4(goal);
-          });
-        }
-      );
-    }
-
-    async function finishOnboarding(msg, firstTheme){
-      closeModal();
-      enterApp();
-      if(firstTheme && THEME_CONFIG && THEME_CONFIG[firstTheme]){
-        var tc = THEME_CONFIG[firstTheme];
-        toast('첫 기록 완료! ['+tc.emoji+' '+tc.label+'] 테마 분류 & 웰컴 프리즈 1개가 지급되었어요 🧊');
-      } else {
-        toast(msg);
+        '</div>';
       }
-      var alreadySeenGuide = state.profile.settings.hasSeenGuide;
-      await maybeShowFirstLoginGuide();
-      if(alreadySeenGuide) showCommTourModal();
-    }
-    function showObStep4(goal){
-      track('onboarding_step_viewed', { step: 4, source: 'onboarding', goal_type: goal && goal.category, day_index: dayIndexSinceSignup() });
-      var quickChips = QUICK_ACTIONS_BY_CAT[goal.category] || QUICK_ACTIONS_BY_CAT.etc;
-      var quickChipsHtml = '<div style="margin:8px 0 14px;display:flex;flex-wrap:wrap;gap:6px;">' +
-        quickChips.map(function(c){
-          return '<button class="ob-quick-action-chip" type="button" data-chip="'+escapeHtml(c)+'">'+escapeHtml(c)+'</button>';
+
+      var groups = ['분석형', '외교형', '관리형', '탐험형'];
+      var groupIcons = { '분석형':'🧠', '외교형':'🌿', '관리형':'🛡️', '탐험형':'⚡' };
+      var groupsHtml = '<div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;">' +
+        groups.map(function(grp){
+          var isAct = (grp === selectedGroup);
+          var chipStyle = isAct ? 'background:var(--brand);color:#fff;font-weight:700;border-color:var(--brand);' : 'background:var(--card);color:var(--ink-faint);border-color:var(--rule);';
+          return '<button type="button" class="ob-grp-chip" data-grp="'+grp+'" style="border:1px solid;border-radius:12px;padding:6px 12px;font-size:12px;cursor:pointer;white-space:nowrap;transition:all .2s;'+chipStyle+'">' +
+            groupIcons[grp] + ' ' + grp +
+          '</button>';
         }).join('') +
       '</div>';
 
-      var html =
-        '<p class="ob-step-label">4 / 4 · 첫 기록</p>' +
-        '<h3>지금 뭘 하고 있었나요?</h3>' +
-        '<p class="muted" style="margin:-8px 0 14px;">한 줄이면 충분해요. 「'+escapeHtml(goal.title)+'」의 첫 기록이 돼요.</p>' +
-        '<textarea id="obFirstNote" maxlength="300" placeholder="예: 헬스장 등록하고 왔다" style="width:100%;min-height:88px;"></textarea>' +
-        quickChipsHtml +
-        '<div class="modal-actions"><button class="btn btn-primary btn-block" id="obFirstSave" type="button" disabled>기록하고 시작하기</button></div>' +
-        '<button class="land-login-link" id="obFirstSkip" type="button" style="width:100%;background:none;margin-top:12px;">나중에 적을게요</button>';
-      var busy = false;
-      var skip = function(){ if(busy) return; busy = true; finishOnboarding('목표를 만들었어요 — 시작해봐요!'); };
+      var html = 
+        '<p class="ob-step-label">1 / 2 · 수호동물 선택</p>' +
+        '<h3 style="font-size:1.15rem;font-weight:800;margin-bottom:6px;line-height:1.3;">나를 지켜줄 수호 동물을<br>선택해 주세요!</h3>' +
+        '<p class="muted" style="margin:0 0 14px;font-size:.85rem;line-height:1.4;">MBTI(본인성향)에 맞는 동물을 선택하세요! 추후 언제든지 변경할 수 있습니다</p>' +
+        groupsHtml +
+        '<div id="obAvatarGridSlot">' + renderAvatarGrid(selectedGroup, selectedAvatar) + '</div>' +
+        '<div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);border-radius:10px;padding:8px 12px;font-size:11px;color:var(--ink-soft);display:flex;align-items:center;gap:6px;margin-bottom:14px;">' +
+          '<span>✨</span><span>추후 <b>내 실제 사진 기반 AI 아바타</b>로도 언제든 진화할 수 있습니다!</span>' +
+        '</div>' +
+        '<div class="modal-actions"><button class="btn btn-primary btn-block" id="obNext1" type="button">수호동물 확정하고 다음으로 ➔</button></div>' +
+        '<button class="land-login-link" id="obSkip1" type="button" style="width:100%;background:none;margin-top:10px;">기본 아바타로 바로 시작하기</button>';
+
       openModal(html, function(sheet){
-        var ta = sheet.querySelector('#obFirstNote');
-        var saveBtn = sheet.querySelector('#obFirstSave');
-        ta.addEventListener('input', function(){ saveBtn.disabled = !ta.value.trim(); });
-        sheet.querySelectorAll('.ob-quick-action-chip').forEach(function(chip){
+        function wireCards(){
+          sheet.querySelectorAll('.ob-avatar-card').forEach(function(card){
+            card.addEventListener('click', function(){
+              var m = card.dataset.mbti;
+              var found = ONBOARDING_AVATARS.find(function(a){ return a.mbti === m; });
+              if(found) selectedAvatar = found;
+              sheet.querySelector('#obAvatarGridSlot').innerHTML = renderAvatarGrid(selectedGroup, selectedAvatar);
+              wireCards();
+            });
+          });
+        }
+        wireCards();
+
+        sheet.querySelectorAll('.ob-grp-chip').forEach(function(chip){
           chip.addEventListener('click', function(){
-            // [#TASK-ES-191] 입력창 지움 피로도 근절: value 강제 주입 제거 및 placeholder 힌트화
-            ta.value = '';
-            ta.placeholder = '예: ' + chip.dataset.chip;
-            ta.dataset.preset = chip.dataset.chip;
-            saveBtn.disabled = false;
-            ta.focus();
+            selectedGroup = chip.dataset.grp;
+            sheet.querySelectorAll('.ob-grp-chip').forEach(function(c){
+              var isA = (c.dataset.grp === selectedGroup);
+              c.style.background = isA ? 'var(--brand)' : 'var(--card)';
+              c.style.color = isA ? '#fff' : 'var(--ink-faint)';
+              c.style.borderColor = isA ? 'var(--brand)' : 'var(--rule)';
+              c.style.fontWeight = isA ? '700' : '400';
+            });
+            sheet.querySelector('#obAvatarGridSlot').innerHTML = renderAvatarGrid(selectedGroup, selectedAvatar);
+            wireCards();
           });
         });
-        saveBtn.addEventListener('click', async function(){
-          var text = ta.value.trim() || ta.dataset.preset || (ta.placeholder ? ta.placeholder.replace(/^예:\s*/, '') : '');
-          if(!text || busy) return;
-          busy = true; saveBtn.disabled = true;
-          var xpRes = null;
-          try{ xpRes = await saveQuickCheckin(text, goal, 'onboarding'); }
-          catch(e){ console.warn('first checkin failed:', e); } /* 저장이 실패해도 반드시 홈으로 진입(불변식 1) */
-          var firstRec = state.profile.records && state.profile.records[0];
-          var firstTheme = firstRec ? firstRec.theme : null;
-          await finishOnboarding(xpRes ? '첫 기록까지 남겼어요 — 시작해봐요!' : '목표를 만들었어요 — 시작해봐요!', firstTheme);
-          if(xpRes && xpRes.leveledUp) showLevelUpBanner(levelForXP(xpRes.total));
+
+        sheet.querySelector('#obNext1').addEventListener('click', showObStep2);
+        sheet.querySelector('#obSkip1').addEventListener('click', async function(){
+          await completeOnboarding(state.profile.displayName || '러너', ONBOARDING_AVATARS[0]);
         });
-        sheet.querySelector('#obFirstSkip').addEventListener('click', skip);
-        setTimeout(function(){ try{ ta.focus(); }catch(e){} }, 50);
       });
-      /* openModal이 onMount 뒤에 overlay.onclick을 덮어쓰므로 여기서 재지정: 배경 탭도 반드시 enterApp 경로로 */
-      var overlay = document.getElementById('modalOverlay');
-      overlay.onclick = function(e){ if(e.target === overlay) skip(); };
+    }
+
+    function showObStep2(){
+      track('onboarding_step_viewed', { step: 2, source: 'onboarding', goal_type: null, day_index: dayIndexSinceSignup() });
+
+      var defaultName = state.profile.displayName || '새싹러너';
+      var chosenPreset = { title: '매일 30분 걷기', category: 'health' };
+
+      var html =
+        '<p class="ob-step-label">2 / 2 · 닉네임 & 1호 목표</p>' +
+        '<h3 style="font-size:1.15rem;font-weight:800;margin-bottom:6px;">아워골에서 사용할 닉네임을 정해주세요</h3>' +
+        '<p class="muted" style="margin:0 0 16px;font-size:.85rem;">동류 러너들에게 불릴 이름입니다. 언제든 프로필에서 바꿀 수 있어요.</p>' +
+        '<div style="background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:14px;">' +
+          '<div style="font-size:36px;width:52px;height:52px;border-radius:14px;background:rgba(16,185,129,0.15);display:flex;align-items:center;justify-content:center;">'+selectedAvatar.emoji+'</div>' +
+          '<div>' +
+            '<div style="font-size:11px;font-weight:800;color:var(--brand);">'+selectedAvatar.mbti+' · '+selectedAvatar.group+'</div>' +
+            '<div style="font-size:14px;font-weight:700;color:var(--ink);">'+escapeHtml(selectedAvatar.name)+'</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="field" style="margin-bottom:14px;">' +
+          '<label style="font-size:12px;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:6px;">닉네임</label>' +
+          '<input type="text" id="obNickInput" maxlength="20" placeholder="닉네임을 입력하세요" value="'+escapeHtml(defaultName)+'" style="width:100%;height:44px;background:var(--input-bg);border:1px solid var(--rule);border-radius:10px;padding:0 12px;color:var(--ink);font-size:14px;">' +
+        '</div>' +
+        '<div class="field" style="margin-bottom:16px;">' +
+          '<label style="font-size:12px;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:6px;">첫 시작 1호 목표 (선택, 나중에 변경 가능)</label>' +
+          '<div style="display:flex;flex-wrap:wrap;gap:6px;" id="obPresetChips">' +
+            '<button type="button" class="ob-preset-chip active" data-title="매일 30분 걷기" data-cat="health" style="font-size:12px;padding:6px 12px;border-radius:20px;border:1px solid var(--brand);background:var(--brand);color:#fff;cursor:pointer;">🏃 매일 30분 걷기</button>' +
+            '<button type="button" class="ob-preset-chip" data-title="하루 15분 독서하기" data-cat="study" style="font-size:12px;padding:6px 12px;border-radius:20px;border:1px solid var(--rule);background:var(--card);color:var(--ink-faint);cursor:pointer;">📚 하루 15분 독서</button>' +
+            '<button type="button" class="ob-preset-chip" data-title="아침 물 한잔 마시기" data-cat="daily" style="font-size:12px;padding:6px 12px;border-radius:20px;border:1px solid var(--rule);background:var(--card);color:var(--ink-faint);cursor:pointer;">💧 아침 물 한잔</button>' +
+            '<button type="button" class="ob-preset-chip" data-title="" data-cat="" style="font-size:12px;padding:6px 12px;border-radius:20px;border:1px solid var(--rule);background:var(--card);color:var(--ink-faint);cursor:pointer;">나중에 정할게요</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="modal-actions" style="display:flex;gap:8px;">' +
+          '<button class="btn btn-ghost" id="obBack2" type="button" style="flex:1;">이전</button>' +
+          '<button class="btn btn-primary" id="obFinish2" type="button" style="flex:2;">아워골 시작하기 (+10 EXP) 🚀</button>' +
+        '</div>';
+
+      openModal(html, function(sheet){
+        sheet.querySelectorAll('.ob-preset-chip').forEach(function(chip){
+          chip.addEventListener('click', function(){
+            sheet.querySelectorAll('.ob-preset-chip').forEach(function(c){
+              c.classList.remove('active');
+              c.style.background = 'var(--card)';
+              c.style.color = 'var(--ink-faint)';
+              c.style.borderColor = 'var(--rule)';
+            });
+            chip.classList.add('active');
+            chip.style.background = 'var(--brand)';
+            chip.style.color = '#fff';
+            chip.style.borderColor = 'var(--brand)';
+            var title = chip.dataset.title;
+            var cat = chip.dataset.cat;
+            if(title){
+              chosenPreset = { title: title, category: cat };
+            } else {
+              chosenPreset = null;
+            }
+          });
+        });
+
+        sheet.querySelector('#obBack2').addEventListener('click', showObStep1);
+        sheet.querySelector('#obFinish2').addEventListener('click', async function(){
+          var nickInput = sheet.querySelector('#obNickInput');
+          var name = (nickInput && nickInput.value.trim()) || defaultName;
+          await completeOnboarding(name, selectedAvatar, chosenPreset);
+        });
+      });
+    }
+
+    async function completeOnboarding(displayName, avatarObj, chosenGoalPreset){
+      closeModal();
+      state.profile.displayName = displayName;
+      // 1. 아바타 데이터 무결성 보장: 전역 avatar는 문자열(이모지)로 저장하여 [object Object] 결함 원천 차단
+      state.profile.avatar = avatarObj.emoji;
+      state.profile.mbti = avatarObj.mbti;
+      state.profile.guardianAnimal = {
+        emoji: avatarObj.emoji,
+        name: avatarObj.name,
+        mbti: avatarObj.mbti,
+        group: avatarObj.group
+      };
+      state.profile.avatarUrl = '';
+      state.profile._isNewSignup = false;
+      state.profile.settings.hasSeenGuide = false;
+
+      // 2. 1호 목표 칩 선택 시 목표 목록에 추가
+      if(chosenGoalPreset && chosenGoalPreset.title){
+        var newGoal = {
+          id: (typeof uid === 'function' ? uid('goal') : ('g_' + Date.now())),
+          title: chosenGoalPreset.title,
+          category: chosenGoalPreset.category || 'health',
+          createdAt: (typeof nowISO === 'function' ? nowISO() : new Date().toISOString()),
+          dueDate: null,
+          milestones: [
+            { id: (typeof uid === 'function' ? uid('ms') : ('m_1_' + Date.now())), title: '첫 발걸음 실천하기', status: 'todo' },
+            { id: (typeof uid === 'function' ? uid('ms') : ('m_2_' + Date.now())), title: '꾸준히 이어가기', status: 'todo' }
+          ]
+        };
+        state.profile.goals = state.profile.goals || [];
+        state.profile.goals.unshift(newGoal);
+      }
+
+      await saveProfile();
+      enterApp();
+
+      // 3. 실제 경험치 지급 (+10 EXP) 및 레벨업 피드백
+      if(typeof awardXP === 'function'){
+        try { awardXP(10, '온보딩 수호동물 안착 축하'); } catch(e){}
+      }
+
+      toast('🎉 반가워요 ' + displayName + '님! 수호동물 ' + avatarObj.name + '와(과) 함께 시작합니다 (+10 EXP)');
+      track('onboarding_completed', { source: 'onboarding_fusion', mbti: avatarObj.mbti, day_index: 0 });
+      await maybeShowFirstLoginGuide();
     }
   }
 
@@ -6809,109 +6831,215 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     );
   }
 
-  /* ============ 최초 로그인 활용가이드 (온보딩 흐름 완료 직후 1회) ============ */
+  /* ============ 최초 로그인 활용가이드 — 4대 탭 무블러(Zero Blur) 투명 라이브 프리뷰 융합 ============ */
   async function maybeShowFirstLoginGuide(){
-    if(state.profile.settings.hasSeenGuide) return;
-    state.profile.settings.hasSeenGuide = true;
-    await saveProfile();
+    if(state.profile && state.profile.settings && state.profile.settings.hasSeenGuide) return;
+    if(state.profile && state.profile.settings) {
+      state.profile.settings.hasSeenGuide = true;
+      await saveProfile();
+    }
     startFirstLoginGuide();
   }
 
-  function startFirstLoginGuide(){
-    showGuideStep1();
+  function startFirstLoginGuide(forceDetailed){
+    // [옵션 1] 6페이지 상세 기능 안내 모달 (기존 아워골 핵심 기능 설명 자산 보존)
+    function showDetailedFeatureGuide(){
+      showGuideStep1();
 
-    function showGuideStep1(){
-      openModal(
-        '<p class="ob-step-label">1 / 6 · 환영 & 완전 무료</p>' +
-        '<h3 style="font-size:1.125rem;margin-bottom:6px;">안녕하세요 '+escapeHtml(state.profile.displayName)+'님, 아워골에 오신 것을 환영합니다!</h3>' +
-        '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">모든 목표와 성장의 가능성을 비용 부담 없이 100% 자유롭게 누려보세요.</p>' +
-        '<div class="mission-card" style="border-left-color:var(--sage);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20"/></svg></div><div><b>100% 완전 무료화 & 페이월 제거</b><span>유료 결제나 제한 없이 무제한 목표 등록, AI 코칭, 30일 심층 분석 리포트까지 모든 기능을 완전 무료로 이용할 수 있어요</span></div></div>' +
-        '<div class="mission-card" style="border-left-color:var(--ink);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div><div><b>오직 목표 달성에만 집중하는 앱</b><span>과도한 유료 결제 팝업이나 강제 광고가 없어 내 루틴과 성장에 온전히 몰입할 수 있어요</span></div></div>' +
-        '<div class="modal-actions"><button class="btn btn-primary btn-block" id="guideNext1" type="button">다음</button></div>' +
-        '<button class="land-login-link" id="guideSkip1" type="button" style="width:100%;background:none;margin-top:12px;">나중에 볼게요 (건너뛰기)</button>',
-        function(sheet){
-          sheet.querySelector('#guideNext1').addEventListener('click', showGuideStep2);
-          sheet.querySelector('#guideSkip1').addEventListener('click', function(){ closeModal(); showCommTourModal(); });
-        }
-      );
+      function showGuideStep1(){
+        openModal(
+          '<p class="ob-step-label">1 / 6 · 환영 & 완전 무료</p>' +
+          '<h3 style="font-size:1.125rem;margin-bottom:6px;">안녕하세요 '+escapeHtml((state.profile && state.profile.displayName)||'러너')+'님, 아워골에 오신 것을 환영합니다!</h3>' +
+          '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">모든 목표와 성장의 가능성을 비용 부담 없이 100% 자유롭게 누려보세요.</p>' +
+          '<div class="mission-card" style="border-left-color:var(--sage);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20"/></svg></div><div><b>100% 완전 무료화 & 페이월 제거</b><span>유료 결제나 제한 없이 무제한 목표 등록, AI 코칭, 30일 심층 분석 리포트까지 모든 기능을 완전 무료로 이용할 수 있어요</span></div></div>' +
+          '<div class="mission-card" style="border-left-color:var(--ink);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div><div><b>오직 목표 달성에만 집중하는 앱</b><span>과도한 유료 결제 팝업이나 강제 광고가 없어 내 루틴과 성장에 온전히 몰입할 수 있어요</span></div></div>' +
+          '<div class="modal-actions"><button class="btn btn-primary btn-block" id="guideNext1" type="button">다음</button></div>' +
+          '<button class="land-login-link" id="guideSkip1" type="button" style="width:100%;background:none;margin-top:12px;">나중에 볼게요 (건너뛰기)</button>',
+          function(sheet){
+            sheet.querySelector('#guideNext1').addEventListener('click', showGuideStep2);
+            sheet.querySelector('#guideSkip1').addEventListener('click', function(){ closeModal(); showCommTourModal(); });
+          }
+        );
+      }
+
+      function showGuideStep2(){
+        openModal(
+          '<p class="ob-step-label">2 / 6 · 지능형 AI 코칭</p>' +
+          '<h3 style="font-size:1.125rem;margin-bottom:6px;">목표와 향후 30일 일정을 읽는 AI 코치</h3>' +
+          '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">단순한 응원을 넘어, 내 일정과 마감일까지 똑똑하게 챙겨드려요.</p>' +
+          '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></div><div><b>다가오는 30일 일정 지능형 연계</b><span>체크인을 남기면 기록에 대한 피드백뿐만 아니라 향후 1달간의 일정을 종합 검토하여, 놓치기 쉬운 마감일이나 계획을 똑똑하게 조언해줘요 (불필요한 참견은 배제)</span></div></div>' +
+          '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01M15 9h.01"/></svg></div><div><b>나만의 피드백 페르소나</b><span>따뜻한 칭찬봇부터 팩트 폭격 코치까지 원하는 성격과 말투로 자유롭게 피드백을 맞춤 설정할 수 있어요</span></div></div>' +
+          '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack2" type="button">이전</button><button class="btn btn-primary" id="guideNext2" type="button">다음</button></div>',
+          function(sheet){
+            sheet.querySelector('#guideBack2').addEventListener('click', showGuideStep1);
+            sheet.querySelector('#guideNext2').addEventListener('click', showGuideStep3);
+          }
+        );
+      }
+
+      function showGuideStep3(){
+        openModal(
+          '<p class="ob-step-label">3 / 6 · 구글 캘린더 상호 연동</p>' +
+          '<h3 style="font-size:1.125rem;margin-bottom:6px;">아워골과 구글 캘린더의 완벽한 하나됨</h3>' +
+          '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">우리 앱과 구글 캘린더가 서로의 일정을 실시간으로 공유해요.</p>' +
+          '<div class="mission-card" style="border-left-color:var(--ink);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></div><div><b>양방향 상호 동기화 (단일 캘린더)</b><span>아워골 마일스톤이 구글 캘린더로 가고, 구글 캘린더의 모든 일정도 아워골 일정 탭에서 배지 구분 없이 깔끔하게 함께 확인할 수 있어요</span></div></div>' +
+          '<div class="mission-card" style="border-left-color:var(--sage);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></div><div><b>원클릭 빠른 연결</b><span>설정에서 구글 계정을 한 번만 연결하면 모든 마일스톤과 약속 일정이 자동으로 안전하게 동기화돼요</span></div></div>' +
+          '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack3" type="button">이전</button><button class="btn btn-primary" id="guideNext3" type="button">다음</button></div>',
+          function(sheet){
+            sheet.querySelector('#guideBack3').addEventListener('click', showGuideStep2);
+            sheet.querySelector('#guideNext3').addEventListener('click', showGuideStep4);
+          }
+        );
+      }
+
+      function showGuideStep4(){
+        openModal(
+          '<p class="ob-step-label">4 / 6 · 전문 템플릿 3대 혁신</p>' +
+          '<h3 style="font-size:1.125rem;margin-bottom:6px;">차트 · 인앱 스톱워치 · 노션 연동</h3>' +
+          '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">생산성과 성장을 극대화하는 3가지 전문 도구를 제공해요.</p>' +
+          '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div><div><b>비주얼 성장 차트</b><span>운동 총 볼륨(kg), 공부 시간, 비즈니스 성과 지표를 멋진 그래프로 한눈에 시각화해줘요</span></div></div>' +
+          '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2"/><path d="M9 2h6"/></svg></div><div><b>인앱 스톱워치 & 1초 루틴</b><span>기록 작성 중 타이머로 실시간 몰입 시간을 측정하고 표에 즉시 반영할 수 있어요</span></div></div>' +
+          '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div><div><b>노션(Notion) 다이렉트 전송</b><span>기록된 전문 표 데이터를 원클릭으로 내 노션 페이지에 구조화된 표로 자동 전송해요</span></div></div>' +
+          '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack4" type="button">이전</button><button class="btn btn-primary" id="guideNext4" type="button">다음</button></div>',
+          function(sheet){
+            sheet.querySelector('#guideBack4').addEventListener('click', showGuideStep3);
+            sheet.querySelector('#guideNext4').addEventListener('click', showGuideStep5);
+          }
+        );
+      }
+
+      function showGuideStep5(){
+        openModal(
+          '<p class="ob-step-label">5 / 6 · 팀 수준별 목표 & 모임장</p>' +
+          '<h3 style="font-size:1.125rem;margin-bottom:6px;">팀 수준별 목표 & 모임장 왕관 시스템</h3>' +
+          '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">팀원들의 실력에 맞춘 조별 목표와 쾌적한 필터링을 지원해요.</p>' +
+          '<div class="mission-card" style="border-left-color:var(--gold);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div><div><b>수준별 맞춤 조/그룹 목표 관리</b><span>배드민턴 A·B·C·D·E조, 스터디 초·중·고급 등 팀원 수준에 맞춰 조별 목표·마일스톤·세부 할일을 체계적으로 관리해요</span></div></div>' +
+          '<div class="mission-card" style="border-left-color:var(--sage);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18"/><path d="m4 8 4 5 4-7 4 7 4-5-1 10H5z"/></svg></div><div><b>모임장 왕관 배지 & 상단 팀 필터</b><span>모임장에게는 👑 왕관과 초록색 모임장 배지가 부여되며, 가입 팀이 많아도 상단 필터 칩으로 스크롤 압박 없이 편하게 탐색해요</span></div></div>' +
+          '<div class="mission-card" style="border-left-color:var(--ink);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2"/><path d="M9 11h6M9 15h6"/></svg></div><div><b>컴팩트 요약 & 자세히보기</b><span>카드에서는 목표(N)·마일스톤(N)·할일(N) 개수와 진행률로 깔끔하게 보고, 자세히보기로 세부 할 일을 손쉽게 체크해요</span></div></div>' +
+          '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack5" type="button">이전</button><button class="btn btn-primary" id="guideNext5" type="button">다음</button></div>',
+          function(sheet){
+            sheet.querySelector('#guideBack5').addEventListener('click', showGuideStep4);
+            sheet.querySelector('#guideNext5').addEventListener('click', showGuideStep6);
+          }
+        );
+      }
+
+      function showGuideStep6(){
+        openModal(
+          '<p class="ob-step-label">6 / 6 · 음성 기록 & 안심 보안</p>' +
+          '<h3 style="font-size:1.125rem;margin-bottom:6px;">말 한마디로 기록 & 안심 보안</h3>' +
+          '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">언제 어디서나 편리하게, 데이터는 안전하게 보관하세요.</p>' +
+          '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4"/></svg></div><div><b>10초 AI 음성 체크인</b><span>마이크 버튼을 누르고 말하면 운동 종목, 세트, 공부 시간 등을 AI가 표 속성에 맞춤으로 쏙쏙 자동 입력해줘요</span></div></div>' +
+          '<div class="mission-card"><div class="mi">🕶️</div><div><b>동류 발견 안심 보안</b><span>기본은 같은 목표를 가진 사람에게만 제목·진행률·한 줄 요약이 보이고, 언제든 나만 보기로 바꿀 수 있어요</span></div></div>' +
+          '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack6" type="button">이전</button><button class="btn btn-primary" id="guideFinish6" type="button">아워골 시작하기</button></div>',
+          function(sheet){
+            sheet.querySelector('#guideBack6').addEventListener('click', showGuideStep5);
+            sheet.querySelector('#guideFinish6').addEventListener('click', function(){ closeModal(); showCommTourModal(); });
+          }
+        );
+      }
     }
 
-    function showGuideStep2(){
-      openModal(
-        '<p class="ob-step-label">2 / 6 · 지능형 AI 코칭</p>' +
-        '<h3 style="font-size:1.125rem;margin-bottom:6px;">목표와 향후 30일 일정을 읽는 AI 코치</h3>' +
-        '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">단순한 응원을 넘어, 내 일정과 마감일까지 똑똑하게 챙겨드려요.</p>' +
-        '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></div><div><b>다가오는 30일 일정 지능형 연계</b><span>체크인을 남기면 기록에 대한 피드백뿐만 아니라 향후 1달간의 일정을 종합 검토하여, 놓치기 쉬운 마감일이나 계획을 똑똑하게 조언해줘요 (불필요한 참견은 배제)</span></div></div>' +
-        '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01M15 9h.01"/></svg></div><div><b>나만의 피드백 페르소나</b><span>따뜻한 칭찬봇부터 팩트 폭격 코치까지 원하는 성격과 말투로 자유롭게 피드백을 맞춤 설정할 수 있어요</span></div></div>' +
-        '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack2" type="button">이전</button><button class="btn btn-primary" id="guideNext2" type="button">다음</button></div>',
-        function(sheet){
-          sheet.querySelector('#guideBack2').addEventListener('click', showGuideStep1);
-          sheet.querySelector('#guideNext2').addEventListener('click', showGuideStep3);
-        }
-      );
+    if(forceDetailed){
+      showDetailedFeatureGuide();
+      return;
     }
 
-    function showGuideStep3(){
-      openModal(
-        '<p class="ob-step-label">3 / 6 · 구글 캘린더 상호 연동</p>' +
-        '<h3 style="font-size:1.125rem;margin-bottom:6px;">아워골과 구글 캘린더의 완벽한 하나됨</h3>' +
-        '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">우리 앱과 구글 캘린더가 서로의 일정을 실시간으로 공유해요.</p>' +
-        '<div class="mission-card" style="border-left-color:var(--ink);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></div><div><b>양방향 상호 동기화 (단일 캘린더)</b><span>아워골 마일스톤이 구글 캘린더로 가고, 구글 캘린더의 모든 일정도 아워골 일정 탭에서 배지 구분 없이 깔끔하게 함께 확인할 수 있어요</span></div></div>' +
-        '<div class="mission-card" style="border-left-color:var(--sage);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></div><div><b>원클릭 빠른 연결</b><span>설정에서 구글 계정을 한 번만 연결하면 모든 마일스톤과 약속 일정이 자동으로 안전하게 동기화돼요</span></div></div>' +
-        '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack3" type="button">이전</button><button class="btn btn-primary" id="guideNext3" type="button">다음</button></div>',
-        function(sheet){
-          sheet.querySelector('#guideBack3').addEventListener('click', showGuideStep2);
-          sheet.querySelector('#guideNext3').addEventListener('click', showGuideStep4);
-        }
-      );
+    // [옵션 2] 기본: 4대 탭 무블러(Zero Blur) 투명 라이브 프리뷰 가이드 (상민님 검증 UX 융합)
+    var guideSteps = [
+      {
+        tab: 'home',
+        badge: '1 / 4 · 🏠 홈 화면',
+        title: '오늘의 실천과 3초 체크인',
+        desc: '오늘의 일정, 목표, 실천 히트맵을 한눈에 조망하고 3초 만에 오늘의 발자국을 기록하는 메인 화면입니다.'
+      },
+      {
+        tab: 'goals',
+        badge: '2 / 4 · 🎯 목표 탭',
+        title: '마일스톤과 루틴 설계',
+        desc: '목표-마일스톤-할 일 3단 분해, 교대근무 맞춤 가변 루틴, 템플릿 백과사전으로 나만의 로드맵을 만듭니다.'
+      },
+      {
+        tab: 'records',
+        badge: '3 / 4 · 📝 기록 탭',
+        title: '팩트 기반 성장과 사진형 일기',
+        desc: '내가 쌓아온 시간과 실천 팩트, 위클리 리캡과 달력 사진형 일기로 나의 꾸준함을 회고하고 증명합니다.'
+      },
+      {
+        tab: 'comm',
+        badge: '4 / 4 · 💬 소통 탭',
+        title: '무공해 4종 반응과 동류 연대',
+        desc: '자랑과 비교 대신, 응원해요·도움돼요·별로에요·조언해요 4종 반응으로 비슷한 목표의 동류 러너들과 함께 달립니다.'
+      }
+    ];
+
+    var curStepIdx = 0;
+    var overlay = document.getElementById('miniGuideOverlay');
+    if(!overlay){
+      overlay = document.createElement('div');
+      overlay.id = 'miniGuideOverlay';
+      overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;pointer-events:auto;background:transparent;display:flex;flex-direction:column;justify-content:flex-end;padding:16px 16px max(74px, env(safe-area-inset-bottom, 24px) + 50px);';
+      document.body.appendChild(overlay);
     }
 
-    function showGuideStep4(){
-      openModal(
-        '<p class="ob-step-label">4 / 6 · 전문 템플릿 3대 혁신</p>' +
-        '<h3 style="font-size:1.125rem;margin-bottom:6px;">차트 · 인앱 스톱워치 · 노션 연동</h3>' +
-        '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">생산성과 성장을 극대화하는 3가지 전문 도구를 제공해요.</p>' +
-        '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div><div><b>비주얼 성장 차트</b><span>운동 총 볼륨(kg), 공부 시간, 비즈니스 성과 지표를 멋진 그래프로 한눈에 시각화해줘요</span></div></div>' +
-        '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2"/><path d="M9 2h6"/></svg></div><div><b>인앱 스톱워치 & 1초 루틴</b><span>기록 작성 중 타이머로 실시간 몰입 시간을 측정하고 표에 즉시 반영할 수 있어요</span></div></div>' +
-        '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div><div><b>노션(Notion) 다이렉트 전송</b><span>기록된 전문 표 데이터를 원클릭으로 내 노션 페이지에 구조화된 표로 자동 전송해요</span></div></div>' +
-        '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack4" type="button">이전</button><button class="btn btn-primary" id="guideNext4" type="button">다음</button></div>',
-        function(sheet){
-          sheet.querySelector('#guideBack4').addEventListener('click', showGuideStep3);
-          sheet.querySelector('#guideNext4').addEventListener('click', showGuideStep5);
+    function renderGuideStep(){
+      var step = guideSteps[curStepIdx];
+      // 1. 뒤 화면 실제 전환 (배경 라이브 프리뷰)
+      if(typeof setTab === 'function'){
+        try { setTab(step.tab); } catch(e){}
+      }
+
+      var isLast = (curStepIdx === guideSteps.length - 1);
+      overlay.innerHTML = 
+        '<div style="background:rgba(15,23,42,0.96);border:1.5px solid var(--brand);border-radius:18px;padding:16px 18px;box-shadow:0 12px 36px rgba(0,0,0,0.85);pointer-events:auto;max-width:420px;margin:0 auto;width:100%;animation:fadein .2s ease;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+            '<span style="font-size:11px;font-weight:800;background:var(--brand);color:#fff;padding:2px 8px;border-radius:6px;">' + step.badge + '</span>' +
+            '<button type="button" id="btnMiniGuideClose" style="background:none;border:none;color:var(--ink-faint);font-size:16px;cursor:pointer;padding:4px;">✕</button>' +
+          '</div>' +
+          '<h4 style="margin:0 0 6px;font-size:15px;font-weight:800;color:var(--ink);">' + step.title + '</h4>' +
+          '<p style="margin:0 0 14px;font-size:12.5px;color:var(--ink-soft);line-height:1.45;">' + step.desc + '</p>' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+            '<button type="button" id="btnMiniGuideDetail" style="background:none;border:none;color:var(--brand-faint);font-size:12px;text-decoration:underline;cursor:pointer;">상세 혜택 안내</button>' +
+            '<div style="display:flex;gap:8px;align-items:center;">' +
+              '<button type="button" id="btnMiniGuideSkip" style="background:none;border:none;color:var(--ink-faint);font-size:12px;cursor:pointer;">건너뛰기</button>' +
+              '<button type="button" id="btnMiniGuideNext" class="btn btn-primary" style="padding:6px 16px;font-size:12px;border-radius:8px;">' + (isLast ? '시작하기 🚀' : '다음 ➔') + '</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      overlay.querySelector('#btnMiniGuideClose').onclick = finishGuide;
+      overlay.querySelector('#btnMiniGuideSkip').onclick = finishGuide;
+      var detailBtn = overlay.querySelector('#btnMiniGuideDetail');
+      if(detailBtn){
+        detailBtn.onclick = function(){
+          finishGuide();
+          showDetailedFeatureGuide();
+        };
+      }
+      overlay.querySelector('#btnMiniGuideNext').onclick = function(){
+        if(isLast){
+          finishGuide();
+        } else {
+          curStepIdx++;
+          renderGuideStep();
         }
-      );
+      };
     }
 
-    function showGuideStep5(){
-      openModal(
-        '<p class="ob-step-label">5 / 6 · 팀 수준별 목표 & 팀장</p>' +
-        '<h3 style="font-size:1.125rem;margin-bottom:6px;">팀 수준별 목표 & 팀장 왕관 시스템</h3>' +
-        '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">팀원들의 실력에 맞춘 조별 목표와 쾌적한 필터링을 지원해요.</p>' +
-        '<div class="mission-card" style="border-left-color:var(--gold);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg></div><div><b>수준별 맞춤 조/그룹 목표 관리</b><span>배드민턴 A·B·C·D·E조, 스터디 초·중·고급 등 팀원 수준에 맞춰 조별 목표·마일스톤·세부 할일을 체계적으로 관리해요</span></div></div>' +
-        '<div class="mission-card" style="border-left-color:var(--sage);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18"/><path d="m4 8 4 5 4-7 4 7 4-5-1 10H5z"/></svg></div><div><b>팀장 왕관 배지 & 상단 팀 필터</b><span>팀장에게는 👑 왕관과 초록색 팀장 배지가 부여되며, 가입 팀이 많아도 상단 필터 칩으로 스크롤 압박 없이 편하게 탐색해요</span></div></div>' +
-        '<div class="mission-card" style="border-left-color:var(--ink);"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2"/><path d="M9 11h6M9 15h6"/></svg></div><div><b>컴팩트 요약 & 자세히보기</b><span>카드에서는 목표(N)·마일스톤(N)·할일(N) 개수와 진행률로 깔끔하게 보고, 자세히보기로 세부 할 일을 손쉽게 체크해요</span></div></div>' +
-        '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack5" type="button">이전</button><button class="btn btn-primary" id="guideNext5" type="button">다음</button></div>',
-        function(sheet){
-          sheet.querySelector('#guideBack5').addEventListener('click', showGuideStep4);
-          sheet.querySelector('#guideNext5').addEventListener('click', showGuideStep6);
-        }
-      );
+    function finishGuide(){
+      if(overlay && overlay.parentNode){
+        overlay.parentNode.removeChild(overlay);
+      }
+      if(typeof setTab === 'function'){
+        try { setTab('home'); } catch(e){}
+      }
+      toast('🧭 기본 가이드 완료! 이제 첫 목표를 시작해보세요');
+      if(typeof showCommTourModal === 'function'){
+        setTimeout(showCommTourModal, 400);
+      }
     }
 
-    function showGuideStep6(){
-      openModal(
-        '<p class="ob-step-label">6 / 6 · 음성 기록 & 안심 보안</p>' +
-        '<h3 style="font-size:1.125rem;margin-bottom:6px;">말 한마디로 기록 & 안심 보안</h3>' +
-        '<p class="muted" style="margin:0 0 14px;font-size:.875rem;line-height:1.5;">언제 어디서나 편리하게, 데이터는 안전하게 보관하세요.</p>' +
-        '<div class="mission-card"><div class="mi"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4"/></svg></div><div><b>10초 AI 음성 체크인</b><span>마이크 버튼을 누르고 말하면 운동 종목, 세트, 공부 시간 등을 AI가 표 속성에 맞춤으로 쏙쏙 자동 입력해줘요</span></div></div>' +
-        '<div class="mission-card"><div class="mi">🕶️</div><div><b>동류 발견 안심 보안</b><span>기본은 같은 목표를 가진 사람에게만 제목·진행률·한 줄 요약이 보이고, 언제든 나만 보기로 바꿀 수 있어요</span></div></div>' +
-        '<div class="modal-actions"><button class="btn btn-ghost" id="guideBack6" type="button">이전</button><button class="btn btn-primary" id="guideFinish6" type="button">아워골 시작하기</button></div>',
-        function(sheet){
-          sheet.querySelector('#guideBack6').addEventListener('click', showGuideStep5);
-          sheet.querySelector('#guideFinish6').addEventListener('click', function(){ closeModal(); showCommTourModal(); });
-        }
-      );
-    }
+    renderGuideStep();
   }
   window.startFirstLoginGuide = startFirstLoginGuide;
 
@@ -11909,8 +12037,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     ctx.textAlign = 'center';
     ctx.fillText(fullDateStr, 540, 230);
 
-    var streakDays = (typeof computeStreakDays === 'function') ? computeStreakDays() : 1;
-    var avatarChar = (state && state.profile && state.profile.avatar) || '🌱';
+    var rawAv = (state && state.profile && state.profile.avatar);
+    var avatarChar = (typeof rawAv === 'object' && rawAv ? rawAv.emoji : rawAv) || '🌱';
     ctx.font = '700 26px -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif';
     ctx.fillStyle = '#38BDF8';
     ctx.fillText(avatarChar + ' 연속 ' + streakDays + '일째 실천 중 🔥', 540, 285);
@@ -31871,7 +31999,7 @@ wirePromptEncyclopediaEvents(body);
       };
     }
 
-    // [TASK-ES-061] 성취 통계 및 유니버설 온톨로지 콕핏 활용법 가이드 모달 바인딩
+    // [TASK-ES-061] 성취 통계 및 유니버설 온톨로지 대시보드 활용법 가이드 모달 바인딩
     var guideBtn = document.getElementById('recAnalyticsGuideBtn');
     if(guideBtn){
       guideBtn.onclick = function(){
@@ -35480,7 +35608,7 @@ wirePromptEncyclopediaEvents(body);
         var newVf = {
           id: uid('vf'),
           userName: state.profile.displayName,
-          userAvatar: state.profile.avatar || '👤',
+          userAvatar: (typeof state.profile.avatar === 'object' && state.profile.avatar ? state.profile.avatar.emoji : state.profile.avatar) || '👤',
           time: '방금 전',
           photoUrl: draftPhotoUrl || '',
           note: memo || (g.name + ' 오늘 인증 완료! 🔥'),
@@ -37442,7 +37570,7 @@ wirePromptEncyclopediaEvents(body);
         return '<div class="theme-card' + (isActive ? ' active' : '') + '" data-themeid="' + t.id + '">' +
           '<div class="theme-dot theme-swatch" style="background:' + t.preview + '"></div>' +
           '<div class="theme-info">' +
-            '<div class="theme-name">' + t.name + (isActive ? ' <span class="theme-check"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></span>' : '') + '</div>' +
+            '<div class="theme-name">' + (t.label || t.name) + (isActive ? ' <span class="theme-check"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></span>' : '') + '</div>' +
             '<div class="theme-desc">' + t.desc + '</div>' +
           '</div>' +
         '</div>';
