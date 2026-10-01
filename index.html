@@ -923,6 +923,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <span class="privacy-badge" id="recPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm" id="btnOpenWeeklyRecap" type="button" onclick="if(typeof openWeeklyRecapModal==='function')openWeeklyRecapModal();" style="font-size:12px;font-weight:700;padding:6px 10px;border-radius:10px;display:inline-flex;align-items:center;gap:4px;" title="이번 주 나의 실천 리캡 요약 카드를 확인합니다">🐾 이번 주 리캡</button>
           <button class="btn btn-primary btn-sm" id="btnOpenTimeTracker" type="button" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();" style="display:none !important;" title="전체화면 스톱워치/타이머로 지금부터 시간을 측정하고 기록합니다">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
             <span>⏱️ 지금부터 시간기록</span>
@@ -6942,6 +6943,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(tab==='goals') renderGoalsScreen();
       if(tab==='calendar') renderCalendarScreen();
       if(tab==='records') renderRecordsScreen();
+      if(tab==='records' && typeof location !== 'undefined'){
+        try {
+          var recapParam = new URLSearchParams(window.location.search).get('recap');
+          if(recapParam === 'weekly' || (location.hash && location.hash.indexOf('recap=weekly') !== -1)){
+            setTimeout(function(){ if(typeof openWeeklyRecapModal==='function') openWeeklyRecapModal(); }, 350);
+          }
+        } catch(e){}
+      }
       if(tab==='comm') renderCommScreen();
       if(tab==='settings') renderSettingsScreen();
       updatePrivacyBadges(); if(window.OurgoalGoalEditUX) OurgoalGoalEditUX.handleTabChange(tab, state);
@@ -32062,6 +32071,8 @@ wirePromptEncyclopediaEvents(body);
   if(typeof window !== 'undefined'){
     window.renderRecordsScreen = renderRecordsScreen;
     window.openWeeklyRecapModal = openWeeklyRecapModal;
+    window.openLegacyRecapCanvasModal = openLegacyRecapCanvasModal;
+    window.findBestMoment = findBestMoment;
     window.generateWeeklyRecapImage = generateWeeklyRecapImage;
     window.weeklyRecapStats = weeklyRecapStats;
   }
@@ -32175,10 +32186,141 @@ wirePromptEncyclopediaEvents(body);
     drawShareWatermark(ctx, dims, state.profile.id, '#fff');
     return canvas;
   }
+
+  /* [#TASK-ES-336] 팩트 기반 최근 7일 베스트 실천 1선 자동 추출 알고리즘 (사진 > 몰입시간 > 글자수) */
+  function findBestMoment(records, now){
+    now = now || new Date();
+    var weekAgo = new Date(now.getTime() - 7*86400000);
+    var weekRecs = (records || []).filter(function(r){
+      if(!r) return false;
+      var start = new Date(r.startAt || r.date || r.createdAt);
+      return !isNaN(start.getTime()) && start >= weekAgo && start <= now;
+    });
+    if(!weekRecs.length) return null;
+    return weekRecs.slice().sort(function(a, b){
+      var aPhoto = a.photo ? 1 : 0;
+      var bPhoto = b.photo ? 1 : 0;
+      if(bPhoto !== aPhoto) return bPhoto - aPhoto;
+
+      var aDur = (a.endAt && a.startAt) ? (new Date(a.endAt) - new Date(a.startAt)) : 0;
+      var bDur = (b.endAt && b.startAt) ? (new Date(b.endAt) - new Date(b.startAt)) : 0;
+      if(bDur !== aDur) return bDur - aDur;
+
+      var aLen = (a.text || a.note || '').length;
+      var bLen = (b.text || b.note || '').length;
+      return bLen - aLen;
+    })[0];
+  }
+
+  /* [#TASK-ES-336] 초경량 위클리 리캡 3초 요약 카드 모달 */
   async function openWeeklyRecapModal(){
     var allRecs = (state && state.profile && state.profile.records) || [];
     var stats = weeklyRecapStats(allRecs);
-    var streakDays = computeStreakDays();
+    var streakDays = typeof computeStreakDays === 'function' ? computeStreakDays() : 0;
+    var bestMoment = findBestMoment(allRecs);
+
+    var bestMomentHtml = '';
+    if(bestMoment){
+      var bPhotoHtml = bestMoment.photo
+        ? '<div style="margin-right:12px;flex:0 0 56px;height:56px;border-radius:10px;overflow:hidden;border:1px solid var(--rule);flex-shrink:0;"><img src="' + escapeHtml(bestMoment.photo) + '" style="width:100%;height:100%;object-fit:cover;" alt="베스트 실천 사진"></div>'
+        : '<div style="margin-right:12px;flex:0 0 48px;height:48px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;">🌟</div>';
+      var bTitle = escapeHtml(bestMoment.text || bestMoment.note || '소중한 실천 기록');
+      var bDur = (bestMoment.endAt && bestMoment.startAt) ? (new Date(bestMoment.endAt) - new Date(bestMoment.startAt)) : 0;
+      var bMeta = (bDur > 0 ? (fmtDuration(bDur) + ' 몰입 · ') : '') + (bestMoment.category && typeof TOPICS !== 'undefined' && TOPICS[bestMoment.category] ? (TOPICS[bestMoment.category].label + ' · ') : '') + (bestMoment.startAt ? dateKey(bestMoment.startAt).slice(5) : '이번 주');
+
+      bestMomentHtml =
+        '<div id="recapBestMomentCard" style="background:var(--card2);border:1px solid var(--rule);border-radius:14px;padding:12px;margin-bottom:14px;text-align:left;cursor:pointer;transition:border-color .15s;" title="클릭하여 상세 기록 보기">' +
+          '<div style="font-size:.75rem;font-weight:700;color:var(--brand);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">' +
+            '<span>🌟 이번 주 가장 빛난 실천</span>' +
+            '<span style="font-size:.6875rem;font-weight:normal;color:var(--ink-faint);">상세보기 &gt;</span>' +
+          '</div>' +
+          '<div style="display:flex;align-items:center;">' +
+            bPhotoHtml +
+            '<div style="flex:1;min-width:0;">' +
+              '<div style="font-size:.875rem;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + bTitle + '</div>' +
+              '<div style="font-size:.75rem;color:var(--ink-faint);margin-top:2px;">' + bMeta + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+    } else {
+      bestMomentHtml =
+        '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:14px;padding:16px;margin-bottom:14px;text-align:center;">' +
+          '<div style="font-size:1.5rem;margin-bottom:6px;">🌱</div>' +
+          '<div style="font-size:.8125rem;color:var(--ink-faint);">이번 주 기록이 아직 없어요 · 첫 발자국을 남겨보세요</div>' +
+        '</div>';
+    }
+
+    var modalHtml =
+      '<div style="text-align:center;position:relative;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+          '<div style="font-size:1rem;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
+            '<span>🐾 이번 주 나의 실천 리캡</span>' +
+          '</div>' +
+          '<button type="button" class="icon-btn" id="btnRecapTopClose" aria-label="닫기" style="font-size:1.2rem;line-height:1;padding:4px 8px;cursor:pointer;">×</button>' +
+        '</div>' +
+        '<p style="text-align:left;margin:0 0 14px;font-size:.8125rem;color:var(--ink-faint);line-height:1.4;">' +
+          '한 주 동안 차분히 쌓아올린 발자국이에요. 내가 나를 위해 쓴 시간들을 돌아보세요.' +
+        '</p>' +
+
+        '<!-- 3대 팩트 지표 카드 -->' +
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">' +
+          '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:10px 4px;text-align:center;">' +
+            '<div style="font-size:1.15rem;font-weight:900;color:var(--brand);">' + (stats.count || 0) + '회</div>' +
+            '<div style="font-size:.6875rem;color:var(--ink-faint);margin-top:2px;">주간 실천</div>' +
+          '</div>' +
+          '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:10px 4px;text-align:center;">' +
+            '<div style="font-size:1.15rem;font-weight:900;color:#FF9F1C;">' + fmtDuration(stats.totalMs || 0) + '</div>' +
+            '<div style="font-size:.6875rem;color:var(--ink-faint);margin-top:2px;">몰입 시간</div>' +
+          '</div>' +
+          '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:10px 4px;text-align:center;">' +
+            '<div style="font-size:1.15rem;font-weight:900;color:#10b981;">' + (streakDays || 0) + '일</div>' +
+            '<div style="font-size:.6875rem;color:var(--ink-faint);margin-top:2px;">연속 스트릭</div>' +
+          '</div>' +
+        '</div>' +
+
+        bestMomentHtml +
+
+        '<!-- 하단 액션 -->' +
+        '<div style="display:flex;gap:8px;">' +
+          '<button type="button" class="btn btn-primary" id="btnRecapFeedGo" style="flex:1;font-weight:700;padding:10px 14px;border-radius:12px;">' +
+            '기록 피드 보러가기' +
+          '</button>' +
+          '<button type="button" class="btn btn-ghost" id="btnRecapOpenCanvas" style="font-size:.8125rem;padding:10px 12px;border-radius:12px;border:1px solid var(--rule);color:var(--ink-soft);">' +
+            '🎨 카드 공유' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+
+    openModal(modalHtml, function(sheet){
+      var closeTop = sheet.querySelector('#btnRecapTopClose');
+      if(closeTop) closeTop.onclick = function(){ closeModal(); };
+
+      var feedGo = sheet.querySelector('#btnRecapFeedGo');
+      if(feedGo) feedGo.onclick = function(){ closeModal(); };
+
+      var bestCard = sheet.querySelector('#recapBestMomentCard');
+      if(bestCard && bestMoment){
+        bestCard.onclick = function(){
+          closeModal();
+          if(typeof openRecordModal === 'function') openRecordModal(bestMoment);
+        };
+      }
+
+      var canvasBtn = sheet.querySelector('#btnRecapOpenCanvas');
+      if(canvasBtn){
+        canvasBtn.onclick = function(){
+          closeModal();
+          openLegacyRecapCanvasModal();
+        };
+      }
+    });
+  }
+
+  /* 기존 스포티파이 랩드 스타일 공유 캔버스 생성 모달 보존 */
+  async function openLegacyRecapCanvasModal(){
+    var allRecs = (state && state.profile && state.profile.records) || [];
+    var stats = weeklyRecapStats(allRecs);
+    var streakDays = typeof computeStreakDays === 'function' ? computeStreakDays() : 0;
     if(!stats.count){ toast('이번 주 기록이 아직 없어요 · 먼저 기록을 남겨보세요'); return; }
 
     var currentOptions = {
