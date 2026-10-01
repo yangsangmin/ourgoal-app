@@ -1876,9 +1876,9 @@ check('compliance: 기존 계정 목표 보존, saveProfile 비파괴성 및 최
   // 4. boot 진입 시 기존 목표 보유자는 절대 온보딩으로 빠지지 않음
   assert.ok(html.includes('state.profile._isNewSignup && (!state.profile.goals || state.profile.goals.length === 0)'), 'boot 시 목표 보유자 온보딩 진입 차단');
 
-  // 5. 사용자의 명시적 목표 및 기록 삭제 시 개별 ID 기준 삭제 수행
-  assert.ok(html.includes("await sb.from('goals').delete().eq('id', goal.id).eq('user_id', state.profile.id);"), '목표 개별 명시적 삭제 로직 구비');
-  assert.ok(html.includes("await sb.from('checkins').delete().eq('id', id).eq('user_id', state.profile.id);"), '기록 개별 명시적 삭제 로직 구비');
+  // 5. 사용자의 명시적 목표 및 기록 삭제 시 개별 ID 기준 소프트 삭제(deleted_at) 수행 (#TASK-ES-334)
+  assert.ok(html.includes("await sb.from('goals').update({ deleted_at: new Date().toISOString() }).eq('id', goal.id).eq('user_id', state.profile.id);"), '목표 개별 명시적 소프트 삭제 로직 구비');
+  assert.ok(html.includes("await sb.from('checkins').update({ deleted_at: new Date().toISOString() }).eq('id', id).eq('user_id', state.profile.id);"), '기록 개별 명시적 소프트 삭제 로직 구비');
 });
 
 check('localGoalAgentFallback: 25년5월17일생 아기 만 3살까지 건강 육아 요청 시 영유아 검진 일정 및 2028-05-17 마감일 생성 검증', () => {

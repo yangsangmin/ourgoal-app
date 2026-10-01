@@ -1,0 +1,129 @@
+{
+  "task": "TASK-ES-334",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-334-SOFT-DELETE-BACKUP-SQL.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "docs/sql/goals-checkins-softdelete.sql에 deleted_at 컬럼 및 인덱스 DDL이 정의되어 있음을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "docs/sql/daily-backup.sql에 일일 백업 스냅샷 테이블 및 백업 함수 DDL이 정의되어 있음을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내 moveToTrash 함수에서 목표 삭제 시 하드 삭제 대신 deleted_at 소프트 삭제가 배선됨을 보장한다."
+    },
+    {
+      "id": "R4",
+      "text": "index.html 내 moveToTrash 함수에서 실천기록 삭제 시 하드 삭제 대신 deleted_at 소프트 삭제가 배선됨을 보장한다."
+    },
+    {
+      "id": "R5",
+      "text": "index.html 내 restoreFromTrash 함수에서 목표 및 실천기록 복원 시 deleted_at: null 원격 복원 배선이 연동됨을 보장한다."
+    },
+    {
+      "id": "R6",
+      "text": "index.html 내 syncWithSupabase 함수에서 소프트 삭제된 목표가 활성 목록에 유입되지 않도록 안전 필터링됨을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/sql/goals-checkins-softdelete.sql에 goals 테이블 deleted_at 컬럼 DDL이 존재한다",
+      "touches": [
+        "docs/sql/goals-checkins-softdelete.sql"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/sql/goals-checkins-softdelete.sql",
+        "text": "ALTER TABLE public.goals ADD COLUMN deleted_at TIMESTAMPTZ"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/sql/daily-backup.sql에 execute_daily_backup_snapshot 백업 함수 DDL이 존재한다",
+      "touches": [
+        "docs/sql/daily-backup.sql"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/sql/daily-backup.sql",
+        "text": "CREATE OR REPLACE FUNCTION public.execute_daily_backup_snapshot()"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "goals",
+      "statement": "index.html 내 moveToTrash에서 goals 테이블에 대한 deleted_at 소프트삭제 코드가 존재한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "sb.from('goals').update({ deleted_at: new Date().toISOString() })"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "records",
+      "statement": "index.html 내 moveToTrash에서 checkins 테이블에 대한 deleted_at 소프트삭제 코드가 존재한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "sb.from('checkins').update({ deleted_at: new Date().toISOString() })"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "goals",
+      "statement": "index.html 내 restoreFromTrash에서 deleted_at: null 복원 코드가 존재한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "sb.from('goals').update({ deleted_at: null })"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R6",
+      "kind": "static",
+      "domain": "goals",
+      "statement": "index.html 내 syncWithSupabase에서 deleted_at 필터링 코드가 존재한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "return !g.deleted_at;"
+      }
+    }
+  ],
+  "retire": [
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: 기존 계정 목표 보존, saveProfile 비파괴성 및 최초로그인 온보딩 오작동 원천 차단",
+      "reason": "상민님 확정 결심 8호(삭제 보호: 소프트삭제 + 백업 SQL)에 따라, 사용자가 목표 및 기록을 삭제할 때 서버 원본을 하드 삭제(.delete())하던 기존 취약점을 보완하여 deleted_at 타임스탬프를 부여하는 소프트 삭제(.update({ deleted_at: ... }))로 승화했습니다. 이에 따라 단언문 검사 대상을 .delete()에서 소프트 삭제 .update({ deleted_at: ... })로 개정했습니다."
+    }
+  ]
+}
