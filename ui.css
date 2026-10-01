@@ -32,6 +32,10 @@
   --paper-soft-shadow:0 4px 14px rgba(0,0,0,.4);
   --nav-h:60px; --topbar-h:56px;
   --kakao:#FEE500; --kakao-ink:#191919;
+  /* [Phase 0] 디자인 토큰 확장: 터치 타겟, 폰트 스케일, Z-Index 계층 */
+  --touch-min:44px;
+  --font-xs:12px; --font-sm:14px; --font-md:16px; --font-lg:17px; --font-xl:20px; --font-2xl:24px;
+  --z-canvas:0; --z-card:10; --z-floating:20; --z-nav:50; --z-header:60; --z-sheet:100; --z-modal:150; --z-toast:200;
   color-scheme:dark;
 }
 
@@ -124,6 +128,58 @@
 [data-high-contrast="true"]{ --ink-soft:#2B3440; --ink-faint:#5A6470; --rule:#B8C0C8; }
 [data-theme="black"][data-high-contrast="true"],[data-theme="dark"][data-high-contrast="true"]{ --bg:#000; --paper:#000; --card:#0E0E10; --card2:#1C1C20; --ink:#FFF; --ink-soft:#E0E3E7; --ink-faint:#B4BAC2; --rule:rgba(255,255,255,.32); }
 @media (prefers-contrast: more){ :root{ --ink-faint:#6B7480; --brand-strong:#C92A3F; } }
+
+/* ==========================================================================
+   [Phase 0] 기반 디자인 시스템 & 토큰 아키텍처 (#TASK-UIUX-PHASE0-DESIGN-TOKENS)
+   ========================================================================== */
+.touch-target-44 {
+  min-width: var(--touch-min, 44px);
+  min-height: var(--touch-min, 44px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 7세~70세 폰트 스케일 유틸 */
+.text-scale-xs { font-size: var(--font-xs); }
+.text-scale-sm { font-size: var(--font-sm); }
+.text-scale-md { font-size: var(--font-md); }
+.text-scale-lg { font-size: var(--font-lg); font-weight: 600; }
+.text-scale-xl { font-size: var(--font-xl); font-weight: 700; }
+.text-scale-2xl { font-size: var(--font-2xl); font-weight: 700; }
+
+/* 시머링 스켈레톤 로딩 UI */
+@keyframes skeletonPulse {
+  0% { opacity: 0.45; }
+  50% { opacity: 0.85; }
+  100% { opacity: 0.45; }
+}
+.skeleton-pulse {
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+  background: var(--surface-2, rgba(255,255,255,0.08));
+  border-radius: var(--radius-sm, 10px);
+}
+.skeleton-card {
+  min-height: 80px;
+  width: 100%;
+  border-radius: var(--radius, 16px);
+}
+.skeleton-text {
+  height: 16px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+.skeleton-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+/* 터치 손맛 액티브 스케일 피드백 */
+.btn-touch-active:active, .tab-btn:active, .action-chip:active {
+  transform: scale(0.97);
+  transition: transform 80ms ease;
+}
 
 /* ---------- 2. 리셋·베이스 ---------- */
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}

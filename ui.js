@@ -87,9 +87,13 @@
     swiping = false; dx = 0;
   }, { passive: true });
 
-  /* 6) 주 버튼 눌림 햅틱 */
+  /* 6) 주 버튼 눌림 햅틱 & [Phase 0] 터치 타겟 햅틱 연동 */
   d.addEventListener('pointerdown', function (e) {
-    var b = e.target.closest && e.target.closest('.btn-primary, .mz-btn, .switch, .goal-chip, .comm-subtab, .format-opt');
-    if (b) vibrate(6);
+    var b = e.target.closest && e.target.closest('.btn-primary, .mz-btn, .switch, .goal-chip, .comm-subtab, .format-opt, .touch-target-44, .btn-touch-active, .action-chip');
+    if (b) vibrate(12);
   }, { passive: true });
+
+  /* [Phase 0] 전역 12ms 햅틱 촉각 손맛 유틸리티 */
+  window.triggerHaptic = function (ms) { vibrate(ms || 12); };
 })();
+
