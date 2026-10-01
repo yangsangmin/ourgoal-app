@@ -13,7 +13,9 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 
 ## 승인 티켓 (구현 가능)
 
-- #TASK-INFRA-SHIPYARD-MODULAR-PHASE7 | INFRA | [조선소 블록 건조 7단계] 설정 탭(Settings Mega-Block) 1차 분리 건조(js/tabs/settings/) — 설정 메가블록 허브(index.js) 및 소블록 3종(sub-profile.js, sub-security.js, sub-appearance.js) 외판 분리·수밀 격벽 도킹 | 상민님 직접 지시 (2026-10-02 "진행") | 진행중
+- #TASK-INFRA-SHIPYARD-MODULAR-FINALE | INFRA | [조선소 블록 건조 완결] 6대 핵심 탭(홈·목표·일정·기록·소통·설정) 전원 메가블록/소블록 외판 분리 건조 및 통합 도크 테스트(test-shipyard-modular.js) 무결성 통과, 헌법 제3조 제9항 세포분열 800줄 이하 전수 충족 대장 공식 등재 | 상민님 직접 지시 (2026-10-02 "진행") | 진행중
+
+- #TASK-INFRA-SHIPYARD-MODULAR-PHASE7 | INFRA | [조선소 블록 건조 7단계] 설정 탭(Settings Mega-Block) 1차 분리 건조(js/tabs/settings/) — 설정 메가블록 허브(index.js) 및 소블록 3종(sub-profile.js, sub-security.js, sub-appearance.js) 외판 분리·수밀 격벽 도킹 | 상민님 직접 지시 (2026-10-02 "진행") | 완료 (PR #608 머지 완료)
 
 - #TASK-INFRA-SHIPYARD-MODULAR-PHASE6 | INFRA | [조선소 블록 건조 6단계] 소통 커뮤니티 탭(Community Mega-Block) 1차 분리 건조(js/tabs/comm/) — 커뮤니티 메가블록 허브(index.js) 및 소블록 3종(sub-feed.js, sub-companions.js, sub-crew.js) 외판 분리·수밀 격벽 도킹 | 상민님 직접 지시 (2026-10-02 "진행") | 완료 (PR #607 머지 완료)
 
@@ -29,7 +31,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 
 - #TASK-CHORE-SHIPYARD-MODULAR-CONSTITUTION | INFRA/RULES | 아워골 최고 헌법 제3조 제9항 조선소 블록 건조 규범 신설 및 구 족쇄 폐기 개정 버전 대장 정합 등재 | 상민님 직접 지시 (2026-10-02 "헌법개정승인") | 완료 (PR #599 머지 완료)
 
-- #TASK-CHORE-STAGE-TRANSITION-AND-MASTERPLAN-SYNC | INFRA/RULES | 아워골 최고 헌법 개정: 머지 완료 시 4단계 표기 영구 금지 및 5·6단계 승격 강제(제8조 2항 및 3항 1호) + 기획정본 제9장(온보딩 규격)·제10장(5대 설계공식) 재편 정합 및 docs/rules 저장소 복제본 공식화(제2조 9항) | 상민님 직접 지시 (2026-10-02 "승인함") | 진행중
+- #TASK-CHORE-STAGE-TRANSITION-AND-MASTERPLAN-SYNC | INFRA/RULES | 아워골 최고 헌법 개정: 머지 완료 시 4단계 표기 영구 금지 및 5·6단계 승격 강제(제8조 2항 및 3항 1호) + 기획정본 제9장(온보딩 규격)·제10장(5대 설계공식) 재편 정합 및 docs/rules 저장소 복제본 공식화(제2조 9항) | 상민님 직접 지시 (2026-10-02 "승인함") | 완료 (PR #597 머지 완료)
 
 - #TASK-CHORE-CONSTITUTION-MASTERPLAN-AND-REDTEAM | INFRA/RULES | 아워골 최고 헌법 개정: 기획정본 정독 의무(제2조 9항), 레드팀 서브에이전트 2차 검증 및 100자 요약 의무(제2조 10항), 단일 표준 보고 양식 공식 등재(제8조 3항 1호) | 상민님 직접 지시 (2026-10-01 "병합까지 진행해") | 완료 (PR #596 머지 완료)
 
