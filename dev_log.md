@@ -4954,3 +4954,25 @@
   - npm test: 440개 테스트 전수 통과 (0개 실패).
 - **진행 단계**: [4단계: 심사 청구 상태 - 초안 PR 생성 및 법정 심사 청구]
 ---
+
+## [2026-10-02 04:15] [#TASK-INFRA-SHIPYARD-MODULAR-PHASE2] 조선소 블록 건조 2단계 (홈 탭 메가블록 및 소블록 외판 분리 도킹)
+- **목표**: 홈 탭(Home Mega-Block)의 1차 외판 분리 건조(`js/tabs/home/`) — 홈 메가블록 허브(`index.js`) 및 소블록 3종(`sub-heatmap.js`, `sub-today.js`, `sub-quest.js`) 외판 분리·수밀 격벽 도킹.
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: `#TASK-INFRA-SHIPYARD-MODULAR-PHASE2` 티켓 등록.
+  - `docs/specs/REQ-TASK-INFRA-SHIPYARD-MODULAR-PHASE2.md`: 문제해결 8원칙 1회차 요구사항 정의서 작성.
+  - `docs/specs/PLAN-TASK-INFRA-SHIPYARD-MODULAR-PHASE2.md`: 문제해결 8원칙 2회차 상세 계획서 작성.
+  - `js/tabs/home/sub-heatmap.js`: 상단 히트맵 요약 스트릭 및 배지 담당 소블록 신설.
+  - `js/tabs/home/sub-today.js`: 오늘의 미션 카드 및 1초 콕핏 빠른 체크인 칩 담당 소블록 신설.
+  - `js/tabs/home/sub-quest.js`: 데일리 퀘스트 및 레벨/EXP 배지 담당 소블록 신설.
+  - `js/tabs/home/index.js`: 홈 메가블록 오케스트레이터 허브 신설 (소블록 자동 등록, 수밀 격벽 try/catch 에러 방어).
+  - `scripts/test-home-blocks.js`: 홈 블록 5대 영역 단위 테스트 작성 및 전수 통과.
+  - `index.html`: 홈 블록 스크립트 4종 로드 태그 배치, `initShipyardRegistry()` 내 홈 메가블록 초기화 배선.
+  - `reports/TASK-INFRA-SHIPYARD-MODULAR-PHASE2/claims.json`: 법정(court) 심사용 청구서 및 시나리오 2종 완비.
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - `scripts/test-home-blocks.js`: 5/5 전수 ALL PASS.
+  - `scripts/test-core-modules.js`: 5/5 전수 ALL PASS.
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-all-clicks.js`: 891개 버튼 전수 Zero Dead-Click PASS.
+- **진행 단계**: [4단계: 심사 청구 상태 - 초안 PR 생성 및 법정 심사 대기]
+---

@@ -2021,6 +2021,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/core/event-bus.js"></script>
 <script src="js/core/registry.js"></script>
 <script src="js/core/store.js"></script>
+<!-- OurGoal Shipyard Architecture: Home Mega-Block & Sub-Blocks (홈 메가블록 및 소블록 외판) -->
+<script src="js/tabs/home/sub-heatmap.js"></script>
+<script src="js/tabs/home/sub-today.js"></script>
+<script src="js/tabs/home/sub-quest.js"></script>
+<script src="js/tabs/home/index.js"></script>
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
 <script src="js/helpful-reason.js"></script>
@@ -6940,11 +6945,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ 조선소 블록 레지스트리 6대 메가블록 초기화 (헌법 제3조 제9항) ============ */
   function initShipyardRegistry(){
     if(!window.OurgoalRegistry) return;
-    window.OurgoalRegistry.registerMegaBlock('home', {
-      name: '홈 탭',
-      containerId: 'screen-home',
-      mount: function(el, s, ev){ if(typeof renderHome === 'function') renderHome(); }
-    });
+    if(window.OurgoalHomeMegaBlock && typeof window.OurgoalHomeMegaBlock.init === 'function'){
+      window.OurgoalHomeMegaBlock.init();
+    } else {
+      window.OurgoalRegistry.registerMegaBlock('home', {
+        name: '홈 탭',
+        containerId: 'screen-home',
+        mount: function(el, s, ev){ if(typeof renderHome === 'function') renderHome(); }
+      });
+    }
     window.OurgoalRegistry.registerMegaBlock('goals', {
       name: '목표 탭',
       containerId: 'screen-goals',
