@@ -1,0 +1,56 @@
+{
+  "task": "TASK-INFRA-SHIPYARD-MODULAR-PHASE4",
+  "requirementsSource": "docs/specs/REQ-TASK-INFRA-SHIPYARD-MODULAR-PHASE4.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "기록 탭(Records Mega-Block)의 1차 외판 분리 건조(js/tabs/records/index.js) 및 OurgoalRegistry 도킹"
+    },
+    {
+      "id": "R2",
+      "text": "기록 핵심 3대 소블록(sub-timeline.js, sub-timer.js, sub-retrospect.js) 구축 및 수밀 격벽(Watertight Boundary) 탑재"
+    },
+    {
+      "id": "R3",
+      "text": "기록 소블록과 OurgoalEvents 및 OurgoalStore 간의 양방향 반응형 배선 연결"
+    },
+    {
+      "id": "R4",
+      "text": "기록 화면 렌더링 무결성 및 기존 유저 데이터·인터랙션 100% 무손실 보존"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "navigation",
+      "statement": "게스트 진입 후 기록 탭을 누르면 기록 메가블록 화면이 정상 표시된다",
+      "touches": [
+        "index.html",
+        "js/tabs/records/index.js",
+        "js/tabs/records/sub-timeline.js",
+        "js/tabs/records/sub-timer.js",
+        "js/tabs/records/sub-retrospect.js"
+      ],
+      "scenario": "scenarios/records-dock.json"
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "navigation",
+      "statement": "기록 탭 진입 시 헤드라인 및 체크인 피드 슬롯이 정상 렌더링된다",
+      "touches": [
+        "index.html",
+        "js/tabs/records/index.js",
+        "js/tabs/records/sub-timeline.js",
+        "js/tabs/records/sub-timer.js",
+        "js/tabs/records/sub-retrospect.js"
+      ],
+      "scenario": "scenarios/records-subtabs.json"
+    }
+  ]
+}

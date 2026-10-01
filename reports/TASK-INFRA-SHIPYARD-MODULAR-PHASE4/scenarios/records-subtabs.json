@@ -1,0 +1,14 @@
+{
+  "id": "records-subtabs",
+  "title": "기록 탭 진입 시 헤드라인 및 체크인 피드 슬롯이 정상 렌더링된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "do": "waitFor", "selector": "#recHeadlineSentence" },
+    { "expect": "visible", "selector": "#recHeadlineSentence" },
+    { "capture": "records-headline-rendered" }
+  ]
+}

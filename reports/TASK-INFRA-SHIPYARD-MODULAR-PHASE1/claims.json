@@ -1,0 +1,54 @@
+{
+  "task": "TASK-INFRA-SHIPYARD-MODULAR-PHASE1",
+  "requirementsSource": "docs/specs/REQ-TASK-INFRA-SHIPYARD-MODULAR-PHASE1.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "공통 기관실/배관망 js/core/ 3대 모듈(event-bus, registry, store) 구축 및 index.html 상단 스크립트 로드"
+    },
+    {
+      "id": "R2",
+      "text": "OurgoalRegistry를 통해 6대 메가블록이 안전한 수밀 격벽(Watertight Boundary)으로 도킹되고 탭 전환 시 마운트 실행"
+    },
+    {
+      "id": "R3",
+      "text": "4대 뷰 동시 전파 시 OurgoalEvents.emit('view:sync') 이벤트 버스 연계 배선"
+    },
+    {
+      "id": "R4",
+      "text": "기존 전역 상태 및 로컬스토리지 100% 무손실 보존 및 코어 모듈 단위 테스트 전수 통과"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "navigation",
+      "statement": "하단 네비게이션에서 설정 탭을 누르면 설정 화면이 정상적으로 열린다",
+      "touches": [
+        "index.html",
+        "js/core/event-bus.js",
+        "js/core/registry.js",
+        "js/core/store.js"
+      ],
+      "scenario": "reports/TASK-INFRA-SHIPYARD-MODULAR-PHASE1/scenarios/tab-navigation.json"
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "navigation",
+      "statement": "하단 네비게이션에서 목표 탭을 누르면 목표 화면이 정상적으로 열린다",
+      "touches": [
+        "index.html",
+        "js/core/event-bus.js",
+        "js/core/registry.js",
+        "js/core/store.js"
+      ],
+      "scenario": "reports/TASK-INFRA-SHIPYARD-MODULAR-PHASE1/scenarios/goals-dock.json"
+    }
+  ]
+}

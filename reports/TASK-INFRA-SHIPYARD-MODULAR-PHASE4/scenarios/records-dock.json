@@ -1,0 +1,15 @@
+{
+  "id": "records-dock",
+  "title": "게스트 진입 후 기록 탭을 누르면 기록 메가블록 화면이 정상 표시된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "do": "waitFor", "selector": "#screen-records" },
+    { "expect": "visible", "selector": "#screen-records" },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"records\"]", "className": "active" },
+    { "capture": "records-dock-mounted" }
+  ]
+}

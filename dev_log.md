@@ -4919,6 +4919,187 @@
   - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
   - `node court/vault-check.js . origin/main HEAD`: 금고 단독 변경 규약 준수 확인 (VAULT_MIXED 제로).
   - Tri-Sync 검증: Notion-Obsidian-Command Center 100% 동기화 (오차 0건).
+- **진행 단계**: [6단계: 실운영 최종 확인 완료 - PR #599 원격 main 병합 완료]
+---
+
+## [2026-10-02 02:50] [#TASK-INFRA-SHIPYARD-MODULAR-PHASE1] 조선소 블록 건조 1단계 (공통 기관실·배관망 및 도크 레지스트리 구축)
+- **목표**: 상민님 직접 지시(2026-10-02 "이제 진짜 모듈화 진행해야지?")에 따라, 헌법 제3조 제9항(조선소 블록형 모듈화 규범)을 실제 소프트웨어 제품 아키텍처로 구현하기 위한 1단계 공정(공통 기관실 및 배관망 `js/core/` 3대 모듈: 이벤트 버스, 레지스트리, 스토어)을 구축하고 `index.html` 도크에 최초 결합.
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: `#TASK-INFRA-SHIPYARD-MODULAR-PHASE1` 티켓 등록.
+  - `docs/specs/REQ-TASK-INFRA-SHIPYARD-MODULAR-PHASE1.md`: 문제해결 8원칙 1회차 요구명세서 작성 (린터 통과).
+  - `docs/specs/PLAN-TASK-INFRA-SHIPYARD-MODULAR-PHASE1.md`: 문제해결 8원칙 2회차 작업계획서 작성 (린터 통과).
+  - `js/core/event-bus.js`: 경량 반응형 이벤트 버스(`OurgoalEvents`) 신설 (Pub/Sub, 재귀 방어 가드 탑재).
+  - `js/core/registry.js`: 6대 메가블록 & 28대 소블록 조선소 도크 레지스트리(`OurgoalRegistry`) 신설 (수밀 격벽 Watertight Boundary 에러 핸들링 탑재).
+  - `js/core/store.js`: 무손실 상태 관리 래퍼(`OurgoalStore`) 신설 (기존 `window.state` 및 `localStorage` 100% 무손실 동기화).
+  - `tests/core-modules.test.js`: 코어 3대 모듈 단위 테스트 작성 및 전수 통과.
+  - `index.html`: 상단에 코어 3모듈 로드 배선, `initShipyardRegistry()`를 통해 6대 메가블록 도킹 등록, `setTab()`에서 레지스트리 마운트 위임 및 `tab:changed` 이벤트 발행, `dispatchFullViewPropagation()`에 `OurgoalEvents.emit('view:sync')` 배선.
+  - `reports/TASK-INFRA-SHIPYARD-MODULAR-PHASE1/claims.json`: 법정(court) 심사용 청구서 및 시나리오 2종 완비.
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - `tests/core-modules.test.js`: 5대 코어 테스트 전수 ALL PASS.
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-all-clicks.js`: 891개 버튼 전수 Zero Dead-Click PASS.
 - **진행 단계**: [4단계: 심사 청구 상태 - 초안 PR 생성 및 법정 심사 대기]
 ---
+
+
+## [2026-10-02 03:00] [#TASK-CHORE-SHIPYARD-MODULAR-CONSTITUTION] 헌법 버전 대장 PR #599 병합 기록 등재
+- **목표**: PR #599(커밋 ab0ce88) 병합 완료에 따라, docs/rules/CONSTITUTION_VERSIONS.md 버전 대장 마지막 행의 승인 근거 칸에 머지된 PR 번호(PR #599 병합 기록)를 정합 등재하여 법정 appendix 대조 자가시험(A-appendix) 무결성 복구.
+- **수정/실행 내역**:
+  - docs/rules/CONSTITUTION_VERSIONS.md: line 23 승인 근거를 PR #599 병합 기록 (병합 커밋 ab0ce88 · 2026-10-02 02:41 KST)로 정합 등재.
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - node court/appendix.js --check docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md: { ok: true, mismatches: [] } 통과.
+  - node court/selftest/run.js --unit-only: 32/32 자가시험 ALL PASS.
+  - scripts/verify-integrity-gate.js: 38개 무결성 게이트 전수 ALL PASS.
+  - npm test: 440개 테스트 전수 통과 (0개 실패).
+- **진행 단계**: [4단계: 심사 청구 상태 - 초안 PR 생성 및 법정 심사 청구]
+---
+
+## [2026-10-02 04:15] [#TASK-INFRA-SHIPYARD-MODULAR-PHASE2] 조선소 블록 건조 2단계 (홈 탭 메가블록 및 소블록 외판 분리 도킹)
+- **목표**: 홈 탭(Home Mega-Block)의 1차 외판 분리 건조(`js/tabs/home/`) — 홈 메가블록 허브(`index.js`) 및 소블록 3종(`sub-heatmap.js`, `sub-today.js`, `sub-quest.js`) 외판 분리·수밀 격벽 도킹.
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: `#TASK-INFRA-SHIPYARD-MODULAR-PHASE2` 티켓 등록.
+  - `docs/specs/REQ-TASK-INFRA-SHIPYARD-MODULAR-PHASE2.md`: 문제해결 8원칙 1회차 요구사항 정의서 작성.
+  - `docs/specs/PLAN-TASK-INFRA-SHIPYARD-MODULAR-PHASE2.md`: 문제해결 8원칙 2회차 상세 계획서 작성.
+  - `js/tabs/home/sub-heatmap.js`: 상단 히트맵 요약 스트릭 및 배지 담당 소블록 신설.
+  - `js/tabs/home/sub-today.js`: 오늘의 미션 카드 및 1초 콕핏 빠른 체크인 칩 담당 소블록 신설.
+  - `js/tabs/home/sub-quest.js`: 데일리 퀘스트 및 레벨/EXP 배지 담당 소블록 신설.
+  - `js/tabs/home/index.js`: 홈 메가블록 오케스트레이터 허브 신설 (소블록 자동 등록, 수밀 격벽 try/catch 에러 방어).
+  - `scripts/test-home-blocks.js`: 홈 블록 5대 영역 단위 테스트 작성 및 전수 통과.
+  - `index.html`: 홈 블록 스크립트 4종 로드 태그 배치, `initShipyardRegistry()` 내 홈 메가블록 초기화 배선.
+  - `reports/TASK-INFRA-SHIPYARD-MODULAR-PHASE2/claims.json`: 법정(court) 심사용 청구서 및 시나리오 2종 완비.
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - `scripts/test-home-blocks.js`: 5/5 전수 ALL PASS.
+  - `scripts/test-core-modules.js`: 5/5 전수 ALL PASS.
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-all-clicks.js`: 891개 버튼 전수 Zero Dead-Click PASS.
+- **진행 단계**: [4단계: 심사 청구 상태 - 초안 PR 생성 및 법정 심사 대기]
+---
+
+## [2026-10-02 05:05] [#TASK-INFRA-SHIPYARD-MODULAR-PHASE3] 조선소 블록 건조 3단계 (목표 탭 메가블록 및 소블록 외판 분리 도킹)
+- **목표**: 목표 탭(Goals Mega-Block)의 1차 외판 분리 건조(`js/tabs/goals/`) — 목표 메가블록 허브(`index.js`) 및 소블록 3종(`sub-personal.js`, `sub-routine.js`, `sub-team.js`) 외판 분리·수밀 격벽 도킹.
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: `#TASK-INFRA-SHIPYARD-MODULAR-PHASE3` 티켓 등록.
+  - `docs/specs/REQ-TASK-INFRA-SHIPYARD-MODULAR-PHASE3.md`: 문제해결 8원칙 1회차 요구사항 정의서 작성.
+  - `docs/specs/PLAN-TASK-INFRA-SHIPYARD-MODULAR-PHASE3.md`: 문제해결 8원칙 2회차 상세 계획서 작성.
+  - `js/tabs/goals/sub-personal.js`: 개인 목표 카드 및 마일스톤 렌더링 소블록 신설.
+  - `js/tabs/goals/sub-routine.js`: 루틴/습관 목표 콕핏 렌더링 소블록 신설.
+  - `js/tabs/goals/sub-team.js`: 팀 목표 및 연동 목표 렌더링 소블록 신설.
+  - `js/tabs/goals/index.js`: 목표 메가블록 오케스트레이터 허브 신설 (소블록 자동 등록, 수밀 격벽 try/catch 에러 방어).
+  - `scripts/test-goals-blocks.js`: 목표 블록 5대 영역 단위 테스트 작성 및 전수 통과.
+  - `index.html`: 목표 블록 스크립트 4종 로드 태그 배치, `initShipyardRegistry()` 내 목표 메가블록 초기화 배선.
+  - `reports/TASK-INFRA-SHIPYARD-MODULAR-PHASE3/claims.json`: 법정(court) 심사용 청구서 및 시나리오 2종(`goals-dock.json`, `goals-subtabs.json`) 완비.
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - `scripts/test-goals-blocks.js`: 5/5 전수 ALL PASS.
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-all-clicks.js`: 892개 버튼 전수 Zero Dead-Click PASS.
+- **진행 단계**: [4단계: 심사 청구 상태 - 초안 PR 생성 및 법정 심사 대기]
+---
+
+## [2026-10-02 05:25] [#TASK-INFRA-SHIPYARD-MODULAR-PHASE4] 조선소 블록 건조 4단계 (기록 탭 메가블록 및 소블록 외판 분리 도킹)
+- **목표**: 기록 탭(Records Mega-Block)의 1차 외판 분리 건조(`js/tabs/records/`) — 기록 메가블록 허브(`index.js`) 및 소블록 3종(`sub-timeline.js`, `sub-timer.js`, `sub-retrospect.js`) 외판 분리·수밀 격벽 도킹.
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: `#TASK-INFRA-SHIPYARD-MODULAR-PHASE4` 티켓 등록.
+  - `docs/specs/REQ-TASK-INFRA-SHIPYARD-MODULAR-PHASE4.md`: 문제해결 8원칙 1회차 요구사항 정의서 작성.
+  - `docs/specs/PLAN-TASK-INFRA-SHIPYARD-MODULAR-PHASE4.md`: 문제해결 8원칙 2회차 상세 계획서 작성.
+  - `js/tabs/records/sub-timeline.js`: 체크인 타임라인 목록 및 필터링 소블록 신설.
+  - `js/tabs/records/sub-timer.js`: 집중 타이머 및 스톱워치 렌더링 소블록 신설.
+  - `js/tabs/records/sub-retrospect.js`: 5단위 회고 및 AI 피드백 렌더링 소블록 신설.
+  - `js/tabs/records/index.js`: 기록 메가블록 오케스트레이터 허브 신설 (소블록 자동 등록, 수밀 격벽 try/catch 에러 방어).
+  - `scripts/test-records-blocks.js`: 기록 블록 5대 영역 단위 테스트 작성 및 전수 통과.
+  - `index.html`: 기록 블록 스크립트 4종 로드 태그 배치, `initShipyardRegistry()` 내 기록 메가블록 초기화 배선.
+  - `reports/TASK-INFRA-SHIPYARD-MODULAR-PHASE4/claims.json`: 법정(court) 심사용 청구서 및 시나리오 2종(`records-dock.json`, `records-subtabs.json`) 완비.
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - `scripts/test-records-blocks.js`: 5/5 전수 ALL PASS.
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-all-clicks.js`: 892개 버튼 전수 Zero Dead-Click PASS.
+- **진행 단계**: [4단계: 심사 청구 상태 - 초안 PR 생성 및 법정 심사 대기]
+---
+
+## [2026-10-02 05:30] [#TASK-INFRA-SHIPYARD-MODULAR-PHASE5] 조선소 블록 건조 5단계 (일정 캘린더 탭 메가블록 및 소블록 외판 분리 도킹)
+- **목표**: 일정 캘린더 탭(Calendar Mega-Block)의 1차 외판 분리 건조(`js/tabs/calendar/`) — 캘린더 메가블록 허브(`index.js`) 및 소블록 3종(`sub-month-view.js`, `sub-day-detail.js`, `sub-photo-diary.js`) 외판 분리·수밀 격벽 도킹.
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: `#TASK-INFRA-SHIPYARD-MODULAR-PHASE5` 티켓 등록.
+  - `docs/specs/REQ-TASK-INFRA-SHIPYARD-MODULAR-PHASE5.md`: 문제해결 8원칙 1회차 요구사항 정의서 작성.
+  - `docs/specs/PLAN-TASK-INFRA-SHIPYARD-MODULAR-PHASE5.md`: 문제해결 8원칙 2회차 상세 계획서 작성.
+  - `js/tabs/calendar/sub-month-view.js`: 월간 달력 그리드 및 날짜 선택 소블록 신설.
+  - `js/tabs/calendar/sub-day-detail.js`: 일자별 체크인 및 목표 실천 타임라인 소블록 신설.
+  - `js/tabs/calendar/sub-photo-diary.js`: 사진형 일기 썸네일 및 뷰어 소블록 신설.
+  - `js/tabs/calendar/index.js`: 캘린더 메가블록 오케스트레이터 허브 신설 (소블록 자동 등록, 수밀 격벽 try/catch 에러 방어).
+  - `scripts/test-calendar-blocks.js`: 캘린더 블록 5대 영역 단위 테스트 작성 및 전수 통과.
+  - `index.html`: 캘린더 블록 스크립트 4종 로드 태그 배치, `initShipyardRegistry()` 내 캘린더 메가블록 초기화 배선.
+  - `reports/TASK-INFRA-SHIPYARD-MODULAR-PHASE5/claims.json`: 법정(court) 심사용 청구서 및 시나리오 2종(`calendar-dock.json`, `calendar-subtabs.json`) 완비.
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - `scripts/test-calendar-blocks.js`: 5/5 전수 ALL PASS.
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-all-clicks.js`: 892개 버튼 전수 Zero Dead-Click PASS.
+- **진행 단계**: [4단계: 심사 청구 상태 - 초안 PR 생성 및 법정 심사 대기]
+---
+
+## [2026-10-02 05:36] [#TASK-INFRA-SHIPYARD-MODULAR-PHASE6] 조선소 블록 건조 6단계 (소통 커뮤니티 탭 메가블록 및 소블록 외판 분리 도킹)
+- **목표**: 소통 커뮤니티 탭(Community Mega-Block)의 1차 외판 분리 건조(`js/tabs/comm/`) — 커뮤니티 메가블록 허브(`index.js`) 및 소블록 3종(`sub-feed.js`, `sub-companions.js`, `sub-crew.js`) 외판 분리·수밀 격벽 도킹.
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: `#TASK-INFRA-SHIPYARD-MODULAR-PHASE6` 티켓 등록 및 Phase 5 완료 처리.
+  - `docs/specs/REQ-TASK-INFRA-SHIPYARD-MODULAR-PHASE6.md`: 문제해결 8원칙 1회차 요구사항 정의서 작성.
+  - `docs/specs/PLAN-TASK-INFRA-SHIPYARD-MODULAR-PHASE6.md`: 문제해결 8원칙 2회차 상세 계획서 작성.
+  - `js/tabs/comm/sub-feed.js`: 피드 목록 렌더링 및 응원/반응 상호작용 소블록 신설.
+  - `js/tabs/comm/sub-companions.js`: 러닝메이트 동반자 및 DM 소블록 신설.
+  - `js/tabs/comm/sub-crew.js`: 크루 팀 및 마니또/공유 소블록 신설.
+  - `js/tabs/comm/index.js`: 커뮤니티 메가블록 오케스트레이터 허브 신설 (소블록 자동 등록, 수밀 격벽 try/catch 에러 방어).
+  - `scripts/test-comm-blocks.js`: 커뮤니티 블록 5대 영역 단위 테스트 작성 및 전수 통과.
+  - `index.html`: 커뮤니티 블록 스크립트 4종 로드 태그 배치, `initShipyardRegistry()` 내 커뮤니티 메가블록 초기화 배선.
+  - `reports/TASK-INFRA-SHIPYARD-MODULAR-PHASE6/claims.json`: 법정(court) 심사용 청구서 및 시나리오 2종(`comm-dock.json`, `comm-subtabs.json`) 완비.
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - `scripts/test-comm-blocks.js`: 5/5 전수 ALL PASS.
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-all-clicks.js`: 892개 버튼 전수 Zero Dead-Click PASS.
+- **진행 단계**: [4단계: 심사 청구 상태 - 초안 PR 생성 및 법정 심사 대기]
+---
+
+## [2026-10-02 05:55] [#TASK-INFRA-SHIPYARD-MODULAR-PHASE7] 조선소 블록 건조 7단계 (설정 탭 메가블록 및 소블록 외판 분리 도킹 — 전 탭 모듈화 완결)
+- **목표**: 설정 탭(Settings Mega-Block)의 1차 외판 분리 건조(`js/tabs/settings/`) — 설정 메가블록 허브(`index.js`) 및 소블록 3종(`sub-profile.js`, `sub-security.js`, `sub-appearance.js`) 외판 분리·수밀 격벽 도킹 및 아워골 6대 핵심 탭 전수 조선소 모듈화 완결.
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: `#TASK-INFRA-SHIPYARD-MODULAR-PHASE7` 티켓 등록 및 Phase 6 완료 처리.
+  - `docs/specs/REQ-TASK-INFRA-SHIPYARD-MODULAR-PHASE7.md`: 문제해결 8원칙 1회차 요구사항 정의서 작성.
+  - `docs/specs/PLAN-TASK-INFRA-SHIPYARD-MODULAR-PHASE7.md`: 문제해결 8원칙 2회차 상세 계획서 작성.
+  - `js/tabs/settings/sub-profile.js`: 프로필 카드 렌더링 및 아바타 320종 보관함 연동 소블록 신설.
+  - `js/tabs/settings/sub-security.js`: 계정 보안, 2FA, 기기 세션 제어 소블록 신설.
+  - `js/tabs/settings/sub-appearance.js`: 화면 테마 4종, 알림/위젯, 프라이버시 설정 소블록 신설.
+  - `js/tabs/settings/index.js`: 설정 메가블록 오케스트레이터 허브 신설 (소블록 자동 등록, 수밀 격벽 try/catch 에러 방어).
+  - `scripts/test-settings-blocks.js`: 설정 블록 5대 영역 단위 테스트 작성 및 전수 통과.
+  - `index.html`: 설정 블록 스크립트 4종 로드 태그 배치, `initShipyardRegistry()` 내 설정 메가블록 초기화 배선 (6대 메가블록 전수 도킹 완결).
+  - `reports/TASK-INFRA-SHIPYARD-MODULAR-PHASE7/claims.json`: 법정(court) 심사용 청구서 및 시나리오 2종(`settings-dock.json`, `settings-subtabs.json`) 완비.
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - `scripts/test-settings-blocks.js`: 5/5 전수 ALL PASS.
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-all-clicks.js`: 892개 버튼 전수 Zero Dead-Click PASS.
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #608 원격 main 머지 완료)]
+---
+
+## [2026-10-02 06:15] [#TASK-INFRA-SHIPYARD-MODULAR-FINALE] 조선소 블록 건조 완결 (전 탭 모듈화 도크 통합 종합 검증 및 대장 정합)
+- **목표**: 6대 핵심 탭(홈·목표·일정·기록·소통·설정) 및 공통 기관실 전원 모듈화 완결 통합 검증 러너(`scripts/test-shipyard-modular.js`) 구축, `package.json` 테스트 파이프라인 결합, 헌법 제3조 제9항 800줄 이하 전수 충족 대장 공식 등재.
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: `#TASK-INFRA-SHIPYARD-MODULAR-FINALE` 및 Phase 7 머지 완료 상태 갱신.
+  - `docs/specs/REQ-TASK-INFRA-SHIPYARD-MODULAR-FINALE.md`: 문제해결 8원칙 요구사항 정의서 작성.
+  - `docs/specs/PLAN-TASK-INFRA-SHIPYARD-MODULAR-FINALE.md`: 문제해결 8원칙 작업계획서 작성.
+  - `scripts/test-shipyard-modular.js`: 마스터 모듈러 통합 테스트 스위트 신설 (24개 전 모듈 800줄 이하 검증, 6대 메가블록 도킹, 이벤트 버스 크로스 방송, 수밀 격벽 장애 격리 검증).
+  - `package.json`: `npm test` 스크립트에 `test-shipyard-modular.js` 영구 편입.
+  - `reports/TASK-INFRA-SHIPYARD-MODULAR-FINALE/`: 법정 심사용 청구서(`claims.json`) 및 시나리오(`shipyard-all-tabs.json`) 완비.
+  - GitHub Actions Court 심사 청구(PR #609) 및 `origin/main` 스쿼시 머지 완료 (`4d0027b`).
+- **검증 결과**:
+  - `scripts/test-shipyard-modular.js`: 5/5 전수 ALL PASS.
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-all-clicks.js`: 892개 버튼 전수 Zero Dead-Click PASS.
+  - GitHub Court 심사: `success(통과 또는 확인 부족)` 판정 획득.
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #609 원격 main 머지 및 실서버 배포)]
+---
+
+
 

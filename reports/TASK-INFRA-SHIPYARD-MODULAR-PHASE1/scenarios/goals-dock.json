@@ -1,0 +1,14 @@
+{
+  "id": "goals-dock",
+  "title": "하단 네비게이션에서 목표 탭을 누르면 목표 화면이 정상적으로 열린다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "expect": "visible", "selector": "#screen-goals" },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"goals\"]", "className": "active" },
+    { "capture": "goals-tab-active" }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "task": "TASK-INFRA-SHIPYARD-MODULAR-FINALE",
+  "requirementsSource": "docs/specs/REQ-TASK-INFRA-SHIPYARD-MODULAR-FINALE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "6대 핵심 탭(홈·목표·일정·기록·소통·설정) 전원 메가블록 및 18대 소블록 외판 분리 건조 대장 완결"
+    },
+    {
+      "id": "R2",
+      "text": "마스터 조선소 모듈러 통합 검증 러너(test-shipyard-modular.js) 탑재 및 전수 패스"
+    },
+    {
+      "id": "R3",
+      "text": "헌법 제3조 제9항 세포 분열 원칙(모듈 파일 800줄 이하) 24개 전 파일 100% 충족"
+    },
+    {
+      "id": "R4",
+      "text": "4대 뷰 동시 전파 및 수밀 격벽(Watertight Boundary) 이벤트 버스 무결성 유지"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "navigation",
+      "statement": "게스트 진입 후 6대 핵심 탭을 순회하면 모든 메가블록 및 도크 화면이 정상 렌더링된다",
+      "touches": [
+        "scripts/test-shipyard-modular.js",
+        "package.json",
+        "docs/rules/TICKETS.md"
+      ],
+      "scenario": "scenarios/shipyard-all-tabs.json"
+    }
+  ]
+}

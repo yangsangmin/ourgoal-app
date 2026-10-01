@@ -652,6 +652,26 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           </button>
         </div>
       </div>
+      <!-- 🚢 [TASK-INFRA-SHIPYARD-MODULAR-PHASE1 / E1] 조선소 모듈화 1단계 배선 (E1 체크인 루프 및 배관망 결합) -->
+      <section class="og-feature-card" id="og-task-shipyard-p1-container" data-ticket="shipyard-p1">
+        <div class="og-feature-header">
+          <h3 class="og-feature-title">조선소 모듈화 1단계 E1 배선 허브</h3>
+          <span class="og-status-badge" id="og-task-shipyard-p1-container-badge">정상 연동</span>
+        </div>
+        <div class="og-feature-body">
+          <p class="og-feature-desc" id="shipyardPhase1Desc">조선소 메가블록 및 코어 배관망(OurgoalEvents, OurgoalStore, OurgoalRegistry)과 E1 체크인 루프를 4위 1체로 직결 배선합니다.</p>
+          <div class="og-action-row">
+            <button type="button" 
+                    class="og-primary-btn" 
+                    id="og-task-shipyard-p1-action-btn" 
+                    aria-label="조선소 모듈화 1단계 E1 체크인 루프 배선 실행"
+                    onclick="handle조선소_ItemP1Action(event)"
+                    data-action="task-shipyard-p1">
+              <span class="og-btn-text">🚢 조선소 1단계 E1 배선 동기화</span>
+            </button>
+          </div>
+        </div>
+      </section>
 </div><!-- end of #ogTaskWireSlot -->
       <div id="todayGlancePill" class="today-glance-pill" role="button" tabindex="0" aria-label="오늘 요약" style="display:none;" data-home-widget="todayGlancePill" data-widget-label="오늘 몰입 요약" data-widget-hint="오늘 상태 한 줄"></div>
       <div id="a11yLiveAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
@@ -2017,6 +2037,40 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<!-- OurGoal Shipyard Architecture Core Modules (기관실 및 배관망) -->
+<script src="js/core/event-bus.js"></script>
+<script src="js/core/registry.js"></script>
+<script src="js/core/store.js"></script>
+<!-- OurGoal Shipyard Architecture: Home Mega-Block & Sub-Blocks (홈 메가블록 및 소블록 외판) -->
+<script src="js/tabs/home/sub-heatmap.js"></script>
+<script src="js/tabs/home/sub-today.js"></script>
+<script src="js/tabs/home/sub-quest.js"></script>
+<script src="js/tabs/home/index.js"></script>
+<!-- OurGoal Shipyard Architecture: Goals Mega-Block & Sub-Blocks (목표 메가블록 및 소블록 외판) -->
+<script src="js/tabs/goals/sub-personal.js"></script>
+<script src="js/tabs/goals/sub-routine.js"></script>
+<script src="js/tabs/goals/sub-team.js"></script>
+<script src="js/tabs/goals/index.js"></script>
+<!-- OurGoal Shipyard Architecture: Records Mega-Block & Sub-Blocks (기록 메가블록 및 소블록 외판) -->
+<script src="js/tabs/records/sub-timeline.js"></script>
+<script src="js/tabs/records/sub-timer.js"></script>
+<script src="js/tabs/records/sub-retrospect.js"></script>
+<script src="js/tabs/records/index.js"></script>
+<!-- OurGoal Shipyard Architecture: Calendar Mega-Block & Sub-Blocks (일정 캘린더 메가블록 및 소블록 외판) -->
+<script src="js/tabs/calendar/sub-month-view.js"></script>
+<script src="js/tabs/calendar/sub-day-detail.js"></script>
+<script src="js/tabs/calendar/sub-photo-diary.js"></script>
+<script src="js/tabs/calendar/index.js"></script>
+<!-- OurGoal Shipyard Architecture: Community Mega-Block & Sub-Blocks (소통 커뮤니티 메가블록 및 소블록 외판) -->
+<script src="js/tabs/comm/sub-feed.js"></script>
+<script src="js/tabs/comm/sub-companions.js"></script>
+<script src="js/tabs/comm/sub-crew.js"></script>
+<script src="js/tabs/comm/index.js"></script>
+<!-- OurGoal Shipyard Architecture: Settings Mega-Block & Sub-Blocks (설정 메가블록 및 소블록 외판) -->
+<script src="js/tabs/settings/sub-profile.js"></script>
+<script src="js/tabs/settings/sub-security.js"></script>
+<script src="js/tabs/settings/sub-appearance.js"></script>
+<script src="js/tabs/settings/index.js"></script>
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
 <script src="js/helpful-reason.js"></script>
@@ -7061,16 +7115,157 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     );
   }
 
+  /* ============ 조선소 블록 레지스트리 6대 메가블록 초기화 (헌법 제3조 제9항) ============ */
+  function initShipyardRegistry(){
+    if(!window.OurgoalRegistry) return;
+    if(window.OurgoalHomeMegaBlock && typeof window.OurgoalHomeMegaBlock.init === 'function'){
+      window.OurgoalHomeMegaBlock.init();
+    } else {
+      window.OurgoalRegistry.registerMegaBlock('home', {
+        name: '홈 탭',
+        containerId: 'screen-home',
+        mount: function(el, s, ev){ if(typeof renderHome === 'function') renderHome(); }
+      });
+    }
+    if(window.OurgoalGoalsMegaBlock && typeof window.OurgoalGoalsMegaBlock.init === 'function'){
+      window.OurgoalGoalsMegaBlock.init();
+    } else {
+      window.OurgoalRegistry.registerMegaBlock('goals', {
+        name: '목표 탭',
+        containerId: 'screen-goals',
+        mount: function(el, s, ev){ if(typeof renderGoalsScreen === 'function') renderGoalsScreen(); }
+      });
+    }
+    if(window.OurgoalCalendarMegaBlock && typeof window.OurgoalCalendarMegaBlock.init === 'function'){
+      window.OurgoalCalendarMegaBlock.init();
+    } else {
+      window.OurgoalRegistry.registerMegaBlock('calendar', {
+        name: '일정 캘린더 탭',
+        containerId: 'screen-calendar',
+        mount: function(el, s, ev){ if(typeof renderCalendarScreen === 'function') renderCalendarScreen(); }
+      });
+    }
+    if(window.OurgoalRecordsMegaBlock && typeof window.OurgoalRecordsMegaBlock.init === 'function'){
+      window.OurgoalRecordsMegaBlock.init();
+    } else {
+      window.OurgoalRegistry.registerMegaBlock('records', {
+        name: '기록/회고 탭',
+        containerId: 'screen-records',
+        mount: function(el, s, ev){ if(typeof renderRecordsScreen === 'function') renderRecordsScreen(); }
+      });
+    }
+    if(window.OurgoalCommMegaBlock && typeof window.OurgoalCommMegaBlock.init === 'function'){
+      window.OurgoalCommMegaBlock.init();
+    } else {
+      window.OurgoalRegistry.registerMegaBlock('comm', {
+        name: '동류 소통 탭',
+        containerId: 'screen-comm',
+        mount: function(el, s, ev){ if(typeof renderCommScreen === 'function') renderCommScreen(); }
+      });
+    }
+    if(window.OurgoalSettingsMegaBlock && typeof window.OurgoalSettingsMegaBlock.init === 'function'){
+      window.OurgoalSettingsMegaBlock.init();
+    } else {
+      window.OurgoalRegistry.registerMegaBlock('settings', {
+        name: '설정 탭',
+        containerId: 'screen-settings',
+        mount: function(el, s, ev){ if(typeof renderSettingsScreen === 'function') renderSettingsScreen(); }
+      });
+    }
+    window.OurgoalRegistry.markReady();
+  }
+  try { initShipyardRegistry(); } catch(e){ console.warn('[ShipyardRegistry] Init error:', e); }
+
+  /* ============ 조선소 모듈화 1단계 E1 체크인 루프 4위 1체 직통 핸들러 ============ */
+  async function handle조선소_ItemP1Action(event){
+    if(event){
+      if(typeof event.preventDefault === 'function') event.preventDefault();
+      if(typeof event.stopPropagation === 'function') event.stopPropagation();
+    }
+    var triggerBtn = document.getElementById('og-task-shipyard-p1-action-btn');
+    if(triggerBtn) triggerBtn.disabled = true;
+
+    // 1. [사용자 피드백]: 12ms 햅틱 진동
+    if(typeof triggerHapticFeedback === 'function'){
+      triggerHapticFeedback(12);
+    } else if(typeof triggerHaptic === 'function'){
+      triggerHaptic(12);
+    }
+
+    try {
+      // 2. [실제 비즈니스 로직]: 전역 상태(OurgoalStore) 및 이벤트 버스(OurgoalEvents) E1 체크인 양방향 동기화
+      var currentRecords = (state && state.profile && state.profile.records) ? state.profile.records : [];
+      var currentGoals = (state && state.profile && state.profile.goals) ? state.profile.goals : [];
+
+      if(window.OurgoalStore && typeof window.OurgoalStore.setState === 'function'){
+        window.OurgoalStore.setState({
+          'profile.records': currentRecords,
+          'profile.goals': currentGoals
+        });
+      }
+
+      if(window.OurgoalEvents && typeof window.OurgoalEvents.emit === 'function'){
+        window.OurgoalEvents.emit('checkin:created', {
+          source: 'shipyard:p1:wire',
+          recordCount: currentRecords.length,
+          timestamp: Date.now()
+        });
+        window.OurgoalEvents.emit('view:sync', { views: ['home', 'records', 'stats', 'calendar'], state: state });
+      }
+
+      if(typeof dispatchFullViewPropagation === 'function'){
+        dispatchFullViewPropagation(['home', 'records', 'calendar']);
+      }
+
+      // 로컬 스토리지 상태 보존
+      if(typeof localStorage !== 'undefined'){
+        localStorage.setItem('og_shipyard_phase1_status', JSON.stringify({
+          status: 'wired',
+          axis: 'E1',
+          updatedAt: new Date().toISOString()
+        }));
+      }
+
+      // 3. [사용자 피드백]: 배지 갱신 및 토스트 알림
+      var badge = document.getElementById('og-task-shipyard-p1-container-badge');
+      if(badge){
+        badge.textContent = '배선 완결';
+        badge.style.color = 'var(--brand)';
+      }
+
+      if(typeof toast === 'function'){
+        toast('조선소 모듈화 1단계 E1 체크인 배선이 완결되었습니다 🚢');
+      }
+    } catch(err){
+      console.warn('[handle조선소_ItemP1Action] error:', err);
+      if(typeof toast === 'function') toast('조선소 1단계 배선 동기화 중 오류가 발생했습니다.');
+    } finally {
+      if(triggerBtn) triggerBtn.disabled = false;
+    }
+  }
+  if(typeof window !== 'undefined'){
+    window.handle조선소_ItemP1Action = handle조선소_ItemP1Action;
+  }
+
   function setTab(tab){
     function updateTabDOM(){
       state.activeTab = tab;
       navButtons.forEach(function(b){ b.classList.toggle('active', b.dataset.tab===tab); });
       screens.forEach(function(s){ s.classList.toggle('active', s.id==='screen-'+tab); });
       window.scrollTo({top:0, behavior:'auto'});
-      if(tab==='home') renderHome();
-      if(tab==='goals') renderGoalsScreen();
-      if(tab==='calendar') renderCalendarScreen();
-      if(tab==='records') renderRecordsScreen();
+      if(window.OurgoalRegistry && window.OurgoalRegistry.isReady()){
+        window.OurgoalRegistry.mount(tab, document.getElementById('screen-' + tab), state);
+      } else {
+        if(tab==='home') renderHome();
+        if(tab==='goals') renderGoalsScreen();
+        if(tab==='calendar') renderCalendarScreen();
+        if(tab==='records') renderRecordsScreen();
+        if(tab==='comm') renderCommScreen();
+        if(tab==='settings') renderSettingsScreen();
+      }
+      if(window.OurgoalEvents && typeof window.OurgoalEvents.emit === 'function'){
+        window.OurgoalEvents.emit('tab:changed', { tab: tab });
+      }
       if(tab==='records' && typeof location !== 'undefined'){
         try {
           var recapParam = new URLSearchParams(window.location.search).get('recap');
@@ -7079,8 +7274,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           }
         } catch(e){}
       }
-      if(tab==='comm') renderCommScreen();
-      if(tab==='settings') renderSettingsScreen();
       updatePrivacyBadges(); if(window.OurgoalGoalEditUX) OurgoalGoalEditUX.handleTabChange(tab, state);
       if(window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render) window.OurgoalSanctuaryV3.render(tab);
       var topGuideBtn = document.getElementById('topHomeGuideBtn');
@@ -13027,6 +13220,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
     await saveProfile();
     try{ updateAppBadge(computeStreakDays()); }catch(e){}
+    try{
+      if(window.OurgoalEvents && typeof window.OurgoalEvents.emit === 'function'){
+        window.OurgoalEvents.emit('checkin:created', state.profile.records[0]);
+        window.OurgoalEvents.emit('record:saved', state.profile.records[0]);
+      }
+      if(window.OurgoalStore && typeof window.OurgoalStore.set === 'function'){
+        window.OurgoalStore.set('profile.records', state.profile.records);
+      }
+    }catch(evErr){ console.warn('[saveQuickCheckin] OurgoalEvents error:', evErr); }
     try{ if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation(); }catch(propErr){ console.warn('[saveQuickCheckin] propagation warning:', propErr); }
 
     // 👥 참여 중인 팀 단체방 자동 인증 브릿지 (#TASK-CHECKIN-TEAM-CERTIFICATION)
@@ -14447,6 +14649,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           }
 
           await saveProfile();
+          try {
+            if(window.OurgoalEvents && typeof window.OurgoalEvents.emit === 'function'){
+              window.OurgoalEvents.emit('checkin:created', newRecord);
+              window.OurgoalEvents.emit('record:saved', newRecord);
+            }
+            if(window.OurgoalStore && typeof window.OurgoalStore.set === 'function'){
+              window.OurgoalStore.set('profile.records', state.profile.records);
+            }
+          } catch(evErr){ console.warn('[focusCheckin] OurgoalEvents error:', evErr); }
           closeModal();
           triggerHaptic([30, 40, 60]);
           burstConfetti(window.innerWidth/2, window.innerHeight/3, 50);
@@ -15584,6 +15795,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var freezeGranted = maybeGrantStreakFreeze();
       maybeGrantAvatarCraftBonus();
       await saveProfile();
+      try {
+        if(window.OurgoalEvents && typeof window.OurgoalEvents.emit === 'function'){
+          window.OurgoalEvents.emit('checkin:created', state.profile.records[0]);
+          window.OurgoalEvents.emit('record:saved', state.profile.records[0]);
+        }
+        if(window.OurgoalStore && typeof window.OurgoalStore.set === 'function'){
+          window.OurgoalStore.set('profile.records', state.profile.records);
+        }
+      } catch(evErr){ console.warn('[captureSave] OurgoalEvents error:', evErr); }
 
       // 홈 화면 히트맵 및 스트릭 즉시 반영 (#TASK-ES-043)
       renderHomeGrassSummary();
@@ -37973,6 +38193,19 @@ wirePromptEncyclopediaEvents(body);
     try {
       if(typeof checkGuestBackupNudge === 'function') checkGuestBackupNudge();
     } catch(nudgeErr){}
+    try {
+      if(window.OurgoalStore && typeof window.OurgoalStore.setState === 'function'){
+        window.OurgoalStore.setState({
+          'profile.records': state.profile.records || [],
+          'profile.goals': state.profile.goals || []
+        }, { silent: true });
+      }
+    } catch(storeErr){ console.warn('[FullViewPropagation] OurgoalStore error:', storeErr); }
+    try {
+      if(window.OurgoalEvents && typeof window.OurgoalEvents.emit === 'function'){
+        window.OurgoalEvents.emit('view:sync', { views: views, state: state });
+      }
+    } catch(evErr){ console.warn('[FullViewPropagation] OurgoalEvents error:', evErr); }
   }
   if(typeof window !== 'undefined'){
     window.dispatchFullViewPropagation = dispatchFullViewPropagation;
