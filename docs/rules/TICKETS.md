@@ -13,7 +13,9 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 
 ## 승인 티켓 (구현 가능)
 
-- #TASK-INFRA-SHIPYARD-MODULAR-PHASE6 | INFRA | [조선소 블록 건조 6단계] 소통 커뮤니티 탭(Community Mega-Block) 1차 분리 건조(js/tabs/comm/) — 커뮤니티 메가블록 허브(index.js) 및 소블록 3종(sub-feed.js, sub-companions.js, sub-crew.js) 외판 분리·수밀 격벽 도킹 | 상민님 직접 지시 (2026-10-02 "진행") | 진행중
+- #TASK-INFRA-SHIPYARD-MODULAR-PHASE7 | INFRA | [조선소 블록 건조 7단계] 설정 탭(Settings Mega-Block) 1차 분리 건조(js/tabs/settings/) — 설정 메가블록 허브(index.js) 및 소블록 3종(sub-profile.js, sub-security.js, sub-appearance.js) 외판 분리·수밀 격벽 도킹 | 상민님 직접 지시 (2026-10-02 "진행") | 진행중
+
+- #TASK-INFRA-SHIPYARD-MODULAR-PHASE6 | INFRA | [조선소 블록 건조 6단계] 소통 커뮤니티 탭(Community Mega-Block) 1차 분리 건조(js/tabs/comm/) — 커뮤니티 메가블록 허브(index.js) 및 소블록 3종(sub-feed.js, sub-companions.js, sub-crew.js) 외판 분리·수밀 격벽 도킹 | 상민님 직접 지시 (2026-10-02 "진행") | 완료 (PR #607 머지 완료)
 
 - #TASK-INFRA-SHIPYARD-MODULAR-PHASE5 | INFRA | [조선소 블록 건조 5단계] 일정 캘린더 탭(Calendar Mega-Block) 1차 분리 건조(js/tabs/calendar/) — 캘린더 메가블록 허브(index.js) 및 소블록 3종(sub-month-view.js, sub-day-detail.js, sub-photo-diary.js) 외판 분리·수밀 격벽 도킹 | 상민님 직접 지시 (2026-10-02 "진행") | 완료 (PR #606 머지 완료)
 
