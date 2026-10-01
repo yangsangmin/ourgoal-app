@@ -4919,6 +4919,26 @@
   - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
   - `node court/vault-check.js . origin/main HEAD`: 금고 단독 변경 규약 준수 확인 (VAULT_MIXED 제로).
   - Tri-Sync 검증: Notion-Obsidian-Command Center 100% 동기화 (오차 0건).
+- **진행 단계**: [6단계: 실운영 최종 확인 완료 - PR #599 원격 main 병합 완료]
+---
+
+## [2026-10-02 02:50] [#TASK-INFRA-SHIPYARD-MODULAR-PHASE1] 조선소 블록 건조 1단계 (공통 기관실·배관망 및 도크 레지스트리 구축)
+- **목표**: 상민님 직접 지시(2026-10-02 "이제 진짜 모듈화 진행해야지?")에 따라, 헌법 제3조 제9항(조선소 블록형 모듈화 규범)을 실제 소프트웨어 제품 아키텍처로 구현하기 위한 1단계 공정(공통 기관실 및 배관망 `js/core/` 3대 모듈: 이벤트 버스, 레지스트리, 스토어)을 구축하고 `index.html` 도크에 최초 결합.
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: `#TASK-INFRA-SHIPYARD-MODULAR-PHASE1` 티켓 등록.
+  - `docs/specs/REQ-TASK-INFRA-SHIPYARD-MODULAR-PHASE1.md`: 문제해결 8원칙 1회차 요구명세서 작성 (린터 통과).
+  - `docs/specs/PLAN-TASK-INFRA-SHIPYARD-MODULAR-PHASE1.md`: 문제해결 8원칙 2회차 작업계획서 작성 (린터 통과).
+  - `js/core/event-bus.js`: 경량 반응형 이벤트 버스(`OurgoalEvents`) 신설 (Pub/Sub, 재귀 방어 가드 탑재).
+  - `js/core/registry.js`: 6대 메가블록 & 28대 소블록 조선소 도크 레지스트리(`OurgoalRegistry`) 신설 (수밀 격벽 Watertight Boundary 에러 핸들링 탑재).
+  - `js/core/store.js`: 무손실 상태 관리 래퍼(`OurgoalStore`) 신설 (기존 `window.state` 및 `localStorage` 100% 무손실 동기화).
+  - `tests/core-modules.test.js`: 코어 3대 모듈 단위 테스트 작성 및 전수 통과.
+  - `index.html`: 상단에 코어 3모듈 로드 배선, `initShipyardRegistry()`를 통해 6대 메가블록 도킹 등록, `setTab()`에서 레지스트리 마운트 위임 및 `tab:changed` 이벤트 발행, `dispatchFullViewPropagation()`에 `OurgoalEvents.emit('view:sync')` 배선.
+  - `reports/TASK-INFRA-SHIPYARD-MODULAR-PHASE1/claims.json`: 법정(court) 심사용 청구서 및 시나리오 2종 완비.
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - `tests/core-modules.test.js`: 5대 코어 테스트 전수 ALL PASS.
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-all-clicks.js`: 891개 버튼 전수 Zero Dead-Click PASS.
 - **진행 단계**: [4단계: 심사 청구 상태 - 초안 PR 생성 및 법정 심사 대기]
 ---
 

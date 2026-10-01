@@ -13,6 +13,8 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 
 ## 승인 티켓 (구현 가능)
 
+- #TASK-INFRA-SHIPYARD-MODULAR-PHASE1 | INFRA | [조선소 블록 건조 1단계] 공통 기관실/배관망(js/core/) 및 레지스트리 구축 & smoke-test 구 족쇄(TECH-RULE-01 2만줄 하한선) 제거 및 1차 블록 분리 도크 준비 | 상민님 직접 지시 (2026-10-02 "이제 진짜 모듈화 진행해야지?") | 진행중
+
 - #TASK-CHORE-SHIPYARD-MODULAR-CONSTITUTION | INFRA/RULES | 아워골 최고 헌법 제3조 제9항 조선소 블록 건조 규범 신설 및 구 족쇄 폐기 개정 버전 대장 정합 등재 | 상민님 직접 지시 (2026-10-02 "헌법개정승인") | 완료 (PR #599 머지 완료)
 
 - #TASK-CHORE-STAGE-TRANSITION-AND-MASTERPLAN-SYNC | INFRA/RULES | 아워골 최고 헌법 개정: 머지 완료 시 4단계 표기 영구 금지 및 5·6단계 승격 강제(제8조 2항 및 3항 1호) + 기획정본 제9장(온보딩 규격)·제10장(5대 설계공식) 재편 정합 및 docs/rules 저장소 복제본 공식화(제2조 9항) | 상민님 직접 지시 (2026-10-02 "승인함") | 진행중

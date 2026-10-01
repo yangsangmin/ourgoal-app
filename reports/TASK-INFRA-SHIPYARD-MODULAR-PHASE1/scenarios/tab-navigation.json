@@ -1,0 +1,14 @@
+{
+  "id": "tab-navigation",
+  "title": "하단 네비게이션에서 설정 탭을 누르면 설정 화면이 정상적으로 열린다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "expect": "visible", "selector": "#screen-settings" },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"settings\"]", "className": "active" },
+    { "capture": "settings-tab-active" }
+  ]
+}
