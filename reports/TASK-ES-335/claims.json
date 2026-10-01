@@ -1,0 +1,103 @@
+{
+  "task": "TASK-ES-335",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-335-REVIEW-PUSH-DISPATCH.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "api/push-dispatch.js 내에 타임존 기반 일요일 및 월말일 판별 로직이 구현되어 있음을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "api/push-dispatch.js 내에 회고 알림 시각 계산(최후 시각 또는 20:00 폴백) 로직이 구현되어 있음을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "api/push-dispatch.js 내에 주간 회고 메시지('아워골 주간 회고') 템플릿이 존재함을 보장한다."
+    },
+    {
+      "id": "R4",
+      "text": "api/push-dispatch.js 내에 월간 회고 메시지('아워골 월간 회고') 템플릿이 존재함을 보장한다."
+    },
+    {
+      "id": "R5",
+      "text": "api/push-dispatch.js 내에 회고 알림 슬롯 중복 방지('_review_') 키 배선이 존재함을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "records",
+      "statement": "api/push-dispatch.js 내에 타임존 기반 일요일 및 월말일 판별 코드가 존재한다",
+      "touches": [
+        "api/push-dispatch.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "api/push-dispatch.js",
+        "text": "var isSunday = (parts.weekday === 'Sun');"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "records",
+      "statement": "api/push-dispatch.js 내에 회고 알림 시각 계산(최후 시각 또는 20:00 폴백) 코드가 존재한다",
+      "touches": [
+        "api/push-dispatch.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "api/push-dispatch.js",
+        "text": "var reviewTargetTime = '20:00';"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "records",
+      "statement": "api/push-dispatch.js 내에 주간 회고 메시지 템플릿 코드가 존재한다",
+      "touches": [
+        "api/push-dispatch.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "api/push-dispatch.js",
+        "text": "title: '아워골 주간 회고'"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "records",
+      "statement": "api/push-dispatch.js 내에 월간 회고 메시지 템플릿 코드가 존재한다",
+      "touches": [
+        "api/push-dispatch.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "api/push-dispatch.js",
+        "text": "title: '아워골 월간 회고'"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "records",
+      "statement": "api/push-dispatch.js 내에 회고 알림 슬롯 중복 방지 키 배선 코드가 존재한다",
+      "touches": [
+        "api/push-dispatch.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "api/push-dispatch.js",
+        "text": "var reviewSlotKey = now.dateStr + '_review_' + reviewType;"
+      }
+    }
+  ]
+}

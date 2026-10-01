@@ -13,15 +13,27 @@ function minutesSinceMidnight(hhmm) {
   return (+parts[0] || 0) * 60 + (+parts[1] || 0);
 }
 
-// timezone별 오늘 날짜(YYYY-MM-DD)와 현재 시각(HH:mm)을 구한다.
+// timezone별 오늘 날짜(YYYY-MM-DD), 현재 시각(HH:mm), 요일, 월말일 여부를 구한다.
 function localNow(timezone) {
-  var fmt = new Intl.DateTimeFormat('en-CA', {
+  var d = new Date();
+  var fmt = new Intl.DateTimeFormat('en-US', {
     timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', hour12: false
+    hour: '2-digit', minute: '2-digit', hour12: false, weekday: 'short'
   });
   var parts = {};
-  fmt.formatToParts(new Date()).forEach(function (p) { parts[p.type] = p.value; });
-  return { dateStr: parts.year + '-' + parts.month + '-' + parts.day, hh: parts.hour, mm: parts.minute };
+  fmt.formatToParts(d).forEach(function (p) { parts[p.type] = p.value; });
+  var dateStr = parts.year + '-' + parts.month + '-' + parts.day;
+  var isSunday = (parts.weekday === 'Sun');
+  var lastDayOfMonth = new Date(+parts.year, +parts.month, 0).getDate();
+  var isMonthEnd = (+parts.day === lastDayOfMonth);
+  return {
+    dateStr: dateStr,
+    hh: parts.hour,
+    mm: parts.minute,
+    dayOfWeek: parts.weekday,
+    isSunday: isSunday,
+    isMonthEnd: isMonthEnd
+  };
 }
 
 function sameToken(a, b) {
@@ -137,7 +149,6 @@ module.exports = async function handler(req, res) {
     for (var i = 0; i < rows.length; i++) {
       var row = rows[i];
       var checkinTimes = Array.isArray(row.checkin_times) ? row.checkin_times : [];
-      if (!checkinTimes.length) continue;
 
       var tz = row.timezone || 'Asia/Seoul';
       var now;
@@ -151,6 +162,81 @@ module.exports = async function handler(req, res) {
         if (isQuiet) continue;
       }
 
+      var sentSlots = Array.isArray(row.sent_slots) ? row.sent_slots : [];
+
+      // [#TASK-ES-335] 주간(일요일)/월간(말일) 회고 알림 발송 갈래
+      var isReviewDay = !!(now.isSunday || now.isMonthEnd);
+      if (isReviewDay) {
+        // 회고 알림 시각: 사용자의 체크인 시각 중 가장 늦은 시각, 없으면 '20:00' 폴백 (결심 7호 안 A)
+        var reviewTargetTime = '20:00';
+        if (checkinTimes.length > 0) {
+          var maxMin = -1;
+          for (var ct = 0; ct < checkinTimes.length; ct++) {
+            var m = minutesSinceMidnight(checkinTimes[ct]);
+            if (m > maxMin) {
+              maxMin = m;
+              reviewTargetTime = checkinTimes[ct];
+            }
+          }
+        }
+
+        var reviewLateMin = nowMin - minutesSinceMidnight(reviewTargetTime);
+        if (reviewLateMin >= 0 && reviewLateMin <= MATCH_TOLERANCE_MIN) {
+          // 월말 우선 (일요일과 월말 동시 도래 시 월간 회고로 단일화하여 연속 알림 방지)
+          var reviewType = now.isMonthEnd ? 'monthly' : 'weekly';
+          var reviewSlotKey = now.dateStr + '_review_' + reviewType;
+
+          if (sentSlots.indexOf(reviewSlotKey) === -1) {
+            var reviewPayload = reviewType === 'monthly'
+              ? {
+                  title: '아워골 월간 회고',
+                  body: '이번 달의 꾸준함, 멋진 결실을 확인해보세요 🌟',
+                  icon: '/icons/icon-192.png',
+                  badge: '/icons/badge-72.png',
+                  url: '/#records',
+                  tag: 'monthly-review-' + now.dateStr
+                }
+              : {
+                  title: '아워골 주간 회고',
+                  body: '이번 주 한 걸음, 발자국을 돌아보세요 🐾',
+                  icon: '/icons/icon-192.png',
+                  badge: '/icons/badge-72.png',
+                  url: '/#records',
+                  tag: 'weekly-review-' + now.dateStr
+                };
+
+            try {
+              await webpush.sendNotification(
+                { endpoint: row.endpoint, keys: { p256dh: row.p256dh, auth: row.auth } },
+                JSON.stringify(reviewPayload)
+              );
+              result.sent++;
+              var nextReviewSlots = sentSlots.concat([reviewSlotKey]).slice(-SENT_SLOTS_KEEP);
+              await sb.from('push_subscriptions').update({ sent_slots: nextReviewSlots }).eq('endpoint', row.endpoint);
+              try {
+                await sb.from('events').insert({
+                  sid: null,
+                  name: 'review_notification_sent',
+                  props: { channel: 'push', type: reviewType, date: now.dateStr }
+                });
+              } catch (evErr) { /* ignore */ }
+            } catch (sendErr) {
+              var statusCode = sendErr && sendErr.statusCode;
+              if (statusCode === 404 || statusCode === 410) {
+                await sb.from('push_subscriptions').delete().eq('endpoint', row.endpoint);
+                result.removed++;
+              } else {
+                result.errors++;
+              }
+            }
+          }
+          // 회고 알림 대상 시각인 경우 동일 시각 체크인 알림 중복 발송을 방지하고 다음 구독으로 이동
+          continue;
+        }
+      }
+
+      if (!checkinTimes.length) continue;
+
       var matchedTime = null;
       for (var t = 0; t < checkinTimes.length; t++) {
         var lateMin = nowMin - minutesSinceMidnight(checkinTimes[t]);
@@ -162,7 +248,6 @@ module.exports = async function handler(req, res) {
       if (!matchedTime) continue;
 
       var slotKey = now.dateStr + '_' + matchedTime;
-      var sentSlots = Array.isArray(row.sent_slots) ? row.sent_slots : [];
       if (sentSlots.indexOf(slotKey) !== -1) continue;
 
       try {
@@ -190,3 +275,6 @@ module.exports = async function handler(req, res) {
     res.status(500).json({ error: e.message || 'unknown error' });
   }
 };
+
+module.exports.localNow = localNow;
+module.exports.minutesSinceMidnight = minutesSinceMidnight;
