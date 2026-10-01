@@ -13,7 +13,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 
 ## 승인 티켓 (구현 가능)
 
-- #TASK-INFRA-SHIPYARD-MODULAR-FINALE | INFRA | [조선소 블록 건조 완결] 6대 핵심 탭(홈·목표·일정·기록·소통·설정) 전원 메가블록/소블록 외판 분리 건조 및 통합 도크 테스트(test-shipyard-modular.js) 무결성 통과, 헌법 제3조 제9항 세포분열 800줄 이하 전수 충족 대장 공식 등재 | 상민님 직접 지시 (2026-10-02 "진행") | 진행중
+- #TASK-INFRA-SHIPYARD-MODULAR-FINALE | INFRA | [조선소 블록 건조 완결] 6대 핵심 탭(홈·목표·일정·기록·소통·설정) 전원 메가블록/소블록 외판 분리 건조 및 통합 도크 테스트(test-shipyard-modular.js) 무결성 통과, 헌법 제3조 제9항 세포분열 800줄 이하 전수 충족 대장 공식 등재 | 상민님 직접 지시 (2026-10-02 "진행") | 완료 (PR #609 머지 완료)
 
 - #TASK-INFRA-SHIPYARD-MODULAR-PHASE7 | INFRA | [조선소 블록 건조 7단계] 설정 탭(Settings Mega-Block) 1차 분리 건조(js/tabs/settings/) — 설정 메가블록 허브(index.js) 및 소블록 3종(sub-profile.js, sub-security.js, sub-appearance.js) 외판 분리·수밀 격벽 도킹 | 상민님 직접 지시 (2026-10-02 "진행") | 완료 (PR #608 머지 완료)
 

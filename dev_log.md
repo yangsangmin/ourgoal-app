@@ -5079,7 +5079,27 @@
   - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
   - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
   - `scripts/verify-all-clicks.js`: 892개 버튼 전수 Zero Dead-Click PASS.
-- **진행 단계**: [4단계: 심사 청구 상태 - 초안 PR 생성 및 법정 심사 대기]
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #608 원격 main 머지 완료)]
 ---
+
+## [2026-10-02 06:15] [#TASK-INFRA-SHIPYARD-MODULAR-FINALE] 조선소 블록 건조 완결 (전 탭 모듈화 도크 통합 종합 검증 및 대장 정합)
+- **목표**: 6대 핵심 탭(홈·목표·일정·기록·소통·설정) 및 공통 기관실 전원 모듈화 완결 통합 검증 러너(`scripts/test-shipyard-modular.js`) 구축, `package.json` 테스트 파이프라인 결합, 헌법 제3조 제9항 800줄 이하 전수 충족 대장 공식 등재.
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: `#TASK-INFRA-SHIPYARD-MODULAR-FINALE` 및 Phase 7 머지 완료 상태 갱신.
+  - `docs/specs/REQ-TASK-INFRA-SHIPYARD-MODULAR-FINALE.md`: 문제해결 8원칙 요구사항 정의서 작성.
+  - `docs/specs/PLAN-TASK-INFRA-SHIPYARD-MODULAR-FINALE.md`: 문제해결 8원칙 작업계획서 작성.
+  - `scripts/test-shipyard-modular.js`: 마스터 모듈러 통합 테스트 스위트 신설 (24개 전 모듈 800줄 이하 검증, 6대 메가블록 도킹, 이벤트 버스 크로스 방송, 수밀 격벽 장애 격리 검증).
+  - `package.json`: `npm test` 스크립트에 `test-shipyard-modular.js` 영구 편입.
+  - `reports/TASK-INFRA-SHIPYARD-MODULAR-FINALE/`: 법정 심사용 청구서(`claims.json`) 및 시나리오(`shipyard-all-tabs.json`) 완비.
+  - GitHub Actions Court 심사 청구(PR #609) 및 `origin/main` 스쿼시 머지 완료 (`4d0027b`).
+- **검증 결과**:
+  - `scripts/test-shipyard-modular.js`: 5/5 전수 ALL PASS.
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-all-clicks.js`: 892개 버튼 전수 Zero Dead-Click PASS.
+  - GitHub Court 심사: `success(통과 또는 확인 부족)` 판정 획득.
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #609 원격 main 머지 및 실서버 배포)]
+---
+
 
 
