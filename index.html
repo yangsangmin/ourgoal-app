@@ -2046,6 +2046,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/home/sub-today.js"></script>
 <script src="js/tabs/home/sub-quest.js"></script>
 <script src="js/tabs/home/index.js"></script>
+<!-- OurGoal Shipyard Architecture: Goals Mega-Block & Sub-Blocks (목표 메가블록 및 소블록 외판) -->
+<script src="js/tabs/goals/sub-personal.js"></script>
+<script src="js/tabs/goals/sub-routine.js"></script>
+<script src="js/tabs/goals/sub-team.js"></script>
+<script src="js/tabs/goals/index.js"></script>
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
 <script src="js/helpful-reason.js"></script>
@@ -6974,11 +6979,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         mount: function(el, s, ev){ if(typeof renderHome === 'function') renderHome(); }
       });
     }
-    window.OurgoalRegistry.registerMegaBlock('goals', {
-      name: '목표 탭',
-      containerId: 'screen-goals',
-      mount: function(el, s, ev){ if(typeof renderGoalsScreen === 'function') renderGoalsScreen(); }
-    });
+    if(window.OurgoalGoalsMegaBlock && typeof window.OurgoalGoalsMegaBlock.init === 'function'){
+      window.OurgoalGoalsMegaBlock.init();
+    } else {
+      window.OurgoalRegistry.registerMegaBlock('goals', {
+        name: '목표 탭',
+        containerId: 'screen-goals',
+        mount: function(el, s, ev){ if(typeof renderGoalsScreen === 'function') renderGoalsScreen(); }
+      });
+    }
     window.OurgoalRegistry.registerMegaBlock('calendar', {
       name: '일정 캘린더 탭',
       containerId: 'screen-calendar',
