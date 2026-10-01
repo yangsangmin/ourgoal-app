@@ -2051,6 +2051,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/goals/sub-routine.js"></script>
 <script src="js/tabs/goals/sub-team.js"></script>
 <script src="js/tabs/goals/index.js"></script>
+<!-- OurGoal Shipyard Architecture: Records Mega-Block & Sub-Blocks (기록 메가블록 및 소블록 외판) -->
+<script src="js/tabs/records/sub-timeline.js"></script>
+<script src="js/tabs/records/sub-timer.js"></script>
+<script src="js/tabs/records/sub-retrospect.js"></script>
+<script src="js/tabs/records/index.js"></script>
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
 <script src="js/helpful-reason.js"></script>
@@ -6993,11 +6998,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       containerId: 'screen-calendar',
       mount: function(el, s, ev){ if(typeof renderCalendarScreen === 'function') renderCalendarScreen(); }
     });
-    window.OurgoalRegistry.registerMegaBlock('records', {
-      name: '기록/회고 탭',
-      containerId: 'screen-records',
-      mount: function(el, s, ev){ if(typeof renderRecordsScreen === 'function') renderRecordsScreen(); }
-    });
+    if(window.OurgoalRecordsMegaBlock && typeof window.OurgoalRecordsMegaBlock.init === 'function'){
+      window.OurgoalRecordsMegaBlock.init();
+    } else {
+      window.OurgoalRegistry.registerMegaBlock('records', {
+        name: '기록/회고 탭',
+        containerId: 'screen-records',
+        mount: function(el, s, ev){ if(typeof renderRecordsScreen === 'function') renderRecordsScreen(); }
+      });
+    }
     window.OurgoalRegistry.registerMegaBlock('comm', {
       name: '동류 소통 탭',
       containerId: 'screen-comm',
