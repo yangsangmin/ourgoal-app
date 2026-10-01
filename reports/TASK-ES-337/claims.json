@@ -1,0 +1,59 @@
+{
+  "task": "TASK-ES-337",
+  "requirementsSource": "docs/specs/REQ-TASK-ONBOARDING-30S.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "온보딩 프로토타입의 16종 동물 및 4대 기질 선택과 기존 아워골 앱의 320종 아바타·계정 인프라를 융합한다"
+    },
+    {
+      "id": "R2",
+      "text": "30초 초저문턱 등 불필요한 표현을 배제하고 정확한 안내 문구('MBTI(본인성향)에 맞는 동물을 선택하세요! 추후 언제든지 변경할 수 있습니다')를 적용한다"
+    },
+    {
+      "id": "R3",
+      "text": "성소 및 콕핏 표현을 사용자 노출 텍스트에서 배제하고, 미니가이드 4대 탭 설명 시 뒤 화면이 보이도록 블러를 전면 배제한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "onboarding",
+      "statement": "index.html에 16종 MBTI 동물 및 4대 기질 온보딩 데이터와 아바타 융합 파이프라인이 구현되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "ONBOARDING_AVATARS"
+      }
+    },
+    {
+      "id": "R2-C1",
+      "req": "R2",
+      "kind": "static",
+      "domain": "onboarding",
+      "statement": "온보딩 안내 문구에 'MBTI(본인성향)에 맞는 동물을 선택하세요! 추후 언제든지 변경할 수 있습니다'가 적용되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "MBTI(본인성향)에 맞는 동물을 선택하세요! 추후 언제든지 변경할 수 있습니다"
+      }
+    },
+    {
+      "id": "R3-C1",
+      "req": "R3",
+      "kind": "static",
+      "domain": "onboarding",
+      "statement": "미니가이드가 4대 탭 무블러(Zero Blur) 플로팅 투어와 라이브 프리뷰로 구현되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "miniGuideOverlay"
+      }
+    }
+  ]
+}
