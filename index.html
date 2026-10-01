@@ -2056,6 +2056,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/records/sub-timer.js"></script>
 <script src="js/tabs/records/sub-retrospect.js"></script>
 <script src="js/tabs/records/index.js"></script>
+<!-- OurGoal Shipyard Architecture: Calendar Mega-Block & Sub-Blocks (일정 캘린더 메가블록 및 소블록 외판) -->
+<script src="js/tabs/calendar/sub-month-view.js"></script>
+<script src="js/tabs/calendar/sub-day-detail.js"></script>
+<script src="js/tabs/calendar/sub-photo-diary.js"></script>
+<script src="js/tabs/calendar/index.js"></script>
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
 <script src="js/helpful-reason.js"></script>
@@ -6993,11 +6998,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         mount: function(el, s, ev){ if(typeof renderGoalsScreen === 'function') renderGoalsScreen(); }
       });
     }
-    window.OurgoalRegistry.registerMegaBlock('calendar', {
-      name: '일정 캘린더 탭',
-      containerId: 'screen-calendar',
-      mount: function(el, s, ev){ if(typeof renderCalendarScreen === 'function') renderCalendarScreen(); }
-    });
+    if(window.OurgoalCalendarMegaBlock && typeof window.OurgoalCalendarMegaBlock.init === 'function'){
+      window.OurgoalCalendarMegaBlock.init();
+    } else {
+      window.OurgoalRegistry.registerMegaBlock('calendar', {
+        name: '일정 캘린더 탭',
+        containerId: 'screen-calendar',
+        mount: function(el, s, ev){ if(typeof renderCalendarScreen === 'function') renderCalendarScreen(); }
+      });
+    }
     if(window.OurgoalRecordsMegaBlock && typeof window.OurgoalRecordsMegaBlock.init === 'function'){
       window.OurgoalRecordsMegaBlock.init();
     } else {
