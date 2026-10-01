@@ -4922,3 +4922,15 @@
 - **진행 단계**: [4단계: 심사 청구 상태 - 초안 PR 생성 및 법정 심사 대기]
 ---
 
+
+## [2026-10-02 03:00] [#TASK-CHORE-SHIPYARD-MODULAR-CONSTITUTION] 헌법 버전 대장 PR #599 병합 기록 등재
+- **목표**: PR #599(커밋 ab0ce88) 병합 완료에 따라, docs/rules/CONSTITUTION_VERSIONS.md 버전 대장 마지막 행의 승인 근거 칸에 머지된 PR 번호(PR #599 병합 기록)를 정합 등재하여 법정 appendix 대조 자가시험(A-appendix) 무결성 복구.
+- **수정/실행 내역**:
+  - docs/rules/CONSTITUTION_VERSIONS.md: line 23 승인 근거를 PR #599 병합 기록 (병합 커밋 ab0ce88 · 2026-10-02 02:41 KST)로 정합 등재.
+- **검증 결과**(작업자 PC 예비 검사 — 법정 판정이 아니다):
+  - node court/appendix.js --check docs/rules/OURGOAL_ABSOLUTE_INTEGRITY_RULES.md: { ok: true, mismatches: [] } 통과.
+  - node court/selftest/run.js --unit-only: 32/32 자가시험 ALL PASS.
+  - scripts/verify-integrity-gate.js: 38개 무결성 게이트 전수 ALL PASS.
+  - npm test: 440개 테스트 전수 통과 (0개 실패).
+- **진행 단계**: [4단계: 심사 청구 상태 - 초안 PR 생성 및 법정 심사 청구]
+---
