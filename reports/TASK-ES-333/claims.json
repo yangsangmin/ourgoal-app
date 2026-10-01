@@ -1,0 +1,129 @@
+{
+  "task": "TASK-ES-333",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-333-THEME-VISIBILITY-DEFAULT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "VISIBILITY_LABELS 객체에 theme: '같은 테마 공개'가 정의되어 공개 범위 옵션이 신설됨을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "목표 생성 모달(#mGoalVis)에서 기본 선택지가 theme(같은 테마 공개)로 설정됨을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "목표 생성 후 showUndoPrivacyToast가 호출되어 1초 되돌리기(#btnUndoThemePrivacy)가 배선됨을 보장한다."
+    },
+    {
+      "id": "R4",
+      "text": "목표 화면의 #goalsPrivacyBadge 뱃지에서 theme 공개 범위 아이콘(🏷️) 및 순환 변경이 지원됨을 보장한다."
+    },
+    {
+      "id": "R5",
+      "text": "1초 되돌리기 클릭 시 목표의 visibility가 private으로 변경되고 영구 저장됨을 보장한다."
+    },
+    {
+      "id": "R6",
+      "text": "소통 피드에서 타인 글에 대한 세부 회고가 마스킹되고 4대 핵심 실천 지표만 정갈하게 노출됨을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "goals",
+      "statement": "index.html 내에 VISIBILITY_LABELS에 theme:'같은 테마 공개'가 존재한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "theme:'같은 테마 공개'"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "goals",
+      "statement": "index.html 내에 mGoalVis의 기본 선택지가 theme로 설정되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<option value=\"theme\" selected>🏷️ 같은 테마 공개 (기본)</option>"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "goals",
+      "statement": "index.html 내에 showUndoPrivacyToast 함수가 정의되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "function showUndoPrivacyToast(goalId)"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "goals",
+      "statement": "index.html 내에 goalsPrivacyBadge에 theme 공개 범위가 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "visNow==='theme'?'🏷️ '"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "goals",
+      "statement": "index.html 내에 1초 되돌리기 버튼 btnUndoThemePrivacy가 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"btnUndoThemePrivacy\""
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R6",
+      "kind": "static",
+      "domain": "feed",
+      "statement": "index.html 내에 소통 피드에서 타인 글에 대한 세부 회고 마스킹 로직이 존재한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "it.recordText && isMe"
+      }
+    }
+  ],
+  "retire": [
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: 최초 로그인 시 모든 공개 범위(헤더 배지, 설정 셀렉트, 목표/기록 기본값)가 비공개로 설정되어 있다",
+      "reason": "상민님 확정 결정 4호(목표 등록 시 기본 공개 범위: '같은 테마 공개(소통 피드 노출)'로 변경 & 1초 되돌리기 제공)에 따라, 기존의 목표 생성 모달 기본 선택지가 '나만 보기(private)'에서 '같은 테마 공개(theme)'로 변경되었습니다. 이에 따라 목표 모달의 private pre-selected 단언을 theme pre-selected 단언으로 개정했습니다."
+    }
+  ]
+}

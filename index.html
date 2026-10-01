@@ -2320,6 +2320,37 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     window.showToast = toast;
   }
 
+  /* #TASK-ES-333: 같은 테마 공개 안내 및 1초 되돌리기(나만 보기로 변경) 토스트 배선 */
+  function showUndoPrivacyToast(goalId){
+    var el = document.getElementById('toast');
+    if(!el) return;
+    el.innerHTML = '<span style="vertical-align:middle;">🏷️ 같은 테마 러너에게만 공유돼요</span> ' +
+      '<button id="btnUndoThemePrivacy" type="button" style="background:#fff;color:#1e293b;border:none;border-radius:6px;padding:3px 9px;font-size:12px;font-weight:700;margin-left:8px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.2);">🔒 나만 보기로 변경</button>';
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    var btn = el.querySelector('#btnUndoThemePrivacy');
+    if(btn){
+      btn.onclick = async function(e){
+        e.stopPropagation();
+        var target = (state.profile && state.profile.goals || []).find(function(g){ return g.id === goalId; });
+        if(target){
+          target.visibility = 'private';
+          await saveProfile();
+          if(typeof dispatchFullViewPropagation === 'function'){
+            dispatchFullViewPropagation('goal_update', { goalId: goalId });
+          } else {
+            renderAll();
+          }
+        }
+        toast('🔒 나만 보기로 변경되었어요');
+      };
+    }
+    toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 5000);
+  }
+  if(typeof window !== 'undefined'){
+    window.showUndoPrivacyToast = showUndoPrivacyToast;
+  }
+
   /* ============ Storage (Supabase: goals & checkins; localStorage: settings) ============ */
   function defaultSettings(){
     return {
@@ -19129,9 +19160,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '<div style="height:14px;"></div>' +
       '<div class="field"><label>목표 마감일 (선택)</label><input id="mGoalDue" type="date"><p class="faint" id="mGoalDday" style="margin:6px 0 0;"></p></div>' +
       '<div class="field"><label>공개 범위</label><select id="mGoalVis">' +
-        '<option value="public">전체 공개</option>' +
-        '<option value="private" selected>나만 보기</option>' +
-      '</select><p class="faint" style="margin:4px 0 0;">기본은 같은 목표를 가진 사람에게 보여요</p></div>' +
+        '<option value="theme" selected>🏷️ 같은 테마 공개 (기본)</option>' +
+        '<option value="public">🌐 전체 공개</option>' +
+        '<option value="team">👥 팀원 공개</option>' +
+        '<option value="private">🔒 나만 보기</option>' +
+      '</select><p class="faint" style="margin:4px 0 0;">기본은 같은 목표 테마를 가진 동류 러너에게만 보여요</p></div>' +
       '<div class="modal-actions"><button class="btn btn-ghost" id="mCancel" type="button">취소</button><button class="btn btn-primary" id="mSave" type="button">만들기</button></div>',
       function(sheet){
         sheet.querySelector('#ngBackToAi').addEventListener('click', function(){ showNewGoalChatStep(''); });
@@ -19177,7 +19210,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             return;
           }
           var due = sheet.querySelector('#mGoalDue').value;
-          var newGoal = { id: newId(), title: title, dueDate: due||null, category: chosenCat, topic: topicRef.value, createdAt: nowISO(), visibility: (sheet.querySelector('#mGoalVis') && sheet.querySelector('#mGoalVis').value) || 'private', archivedAt: null, result: null, milestones: templateMilestones(chosenCat) };
+          var newGoal = { id: newId(), title: title, dueDate: due||null, category: chosenCat, topic: topicRef.value, createdAt: nowISO(), visibility: (sheet.querySelector('#mGoalVis') && sheet.querySelector('#mGoalVis').value) || 'theme', archivedAt: null, result: null, milestones: templateMilestones(chosenCat) };
           state.profile.goals.push(newGoal);
           state.activeGoalId = newGoal.id;
           trackGoalCreated(newGoal, 'manual');
@@ -19191,7 +19224,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           if(window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render) {
             window.OurgoalSanctuaryV3.render('goals');
           }
-          toast('목표를 만들었어요');
+          if(newGoal.visibility === 'theme'){
+            showUndoPrivacyToast(newGoal.id);
+          } else {
+            toast('목표를 만들었어요');
+          }
         });
       }
     );
@@ -23039,7 +23076,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
         formatSchedulePillHtml(goal, 'goal', goal.id) +
         '<button class="icon-btn" data-calsyncgoal="'+goal.id+'" type="button" aria-label="일정 반영" title="구글 캘린더 반영" style="padding:2px 4px;font-size:.75rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg></button>' +
-        '<span class="dday-pill" id="goalsPrivacyBadge" style="cursor:pointer;" title="탭하여 공개 범위 순환 변경">'+(visNow==='private'?'🔒 ':(visNow==='team'||visNow==='followers'?'👥 ':'🌐 '))+((visNow==='team'||visNow==='followers')?'팀원 공개':VISIBILITY_LABELS[visNow])+' ▾</span>' +
+        '<span class="dday-pill" id="goalsPrivacyBadge" style="cursor:pointer;" title="탭하여 공개 범위 순환 변경">'+(visNow==='theme'?'🏷️ ':(visNow==='private'?'🔒 ':(visNow==='team'||visNow==='followers'?'👥 ':'🌐 ')))+((visNow==='team'||visNow==='followers')?'팀원 공개':(VISIBILITY_LABELS[visNow]||'같은 테마 공개'))+' ▾</span>' +
         (goal.topic ? topicPill(goal.topic) : '') +
         '<span class="dday-pill" style="background:var(--sage-soft);color:var(--sage);">달성 '+goalPct+'%</span>' +
         predictedPill +
@@ -23068,7 +23105,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             return '<option value="'+k+'"'+(k===vis?' selected':'')+'>'+VISIBILITY_LABELS[k]+'</option>';
           }).join('') +
         '</select>' :
-        '<span class="faint">'+(vis==='private'?'🔒 ':(vis==='team'||vis==='followers'?'👥 ':'🌐 '))+(VISIBILITY_LABELS[vis]||'팀원 공개')+'</span>') +
+        '<span class="faint">'+(vis==='theme'?'🏷️ ':(vis==='private'?'🔒 ':(vis==='team'||vis==='followers'?'👥 ':'🌐 ')))+(VISIBILITY_LABELS[vis]||'같은 테마 공개')+'</span>') +
       '</div>';
 
     function ddayMini(dateStr){
@@ -23405,6 +23442,9 @@ wirePromptEncyclopediaEvents(body);
         var next = 'private';
         var nextLbl = '나만 보기';
         if(cur === 'private'){
+          next = 'theme';
+          nextLbl = '같은 테마 공개';
+        } else if(cur === 'theme'){
           next = 'team';
           nextLbl = '팀원 공개';
         } else if(cur === 'team' || cur === 'followers'){
@@ -33003,7 +33043,7 @@ wirePromptEncyclopediaEvents(body);
 
   /* #TASK-ES-179: 가짜 잇템 통계 목데이터 완전 제거 (헌법 제4조 준수) */
 
-  var VISIBILITY_LABELS = { public:'전체 공개', team:'팀원 공개', private:'나만 보기' };
+  var VISIBILITY_LABELS = { public:'전체 공개', theme:'같은 테마 공개', team:'팀원 공개', private:'나만 보기' };
 
   /* ============ 카테고리 (대범위 · 중범위) ============ */
   var TOPICS = {
@@ -34296,13 +34336,13 @@ wirePromptEncyclopediaEvents(body);
           '<div class="feed-avatar'+(isMe?' me':'')+'" data-feedprof="'+it.id+'" style="cursor:pointer;" title="프로필 보기">'+escapeHtml(it.avatar)+'</div>' +
           '<div class="feed-body">' +
             '<div class="feed-head">' +
-              '<span class="feed-name" data-feedprof="'+it.id+'" style="cursor:pointer;" title="프로필 보기">'+escapeHtml(it.name)+aiTagHtml+(it.vis==='followers'?' 👥':'')+'</span>' +
+              '<span class="feed-name" data-feedprof="'+it.id+'" style="cursor:pointer;" title="프로필 보기">'+escapeHtml(it.name)+aiTagHtml+(it.vis==='theme'?' 🏷️':(it.vis==='followers'?' 👥':''))+'</span>' +
               (it.goal ? '<span class="feed-goal">'+escapeHtml(it.goal)+' · '+it.pct+'%</span>' : '') +
             '</div>' +
             '<div class="feed-action">'+escapeHtml(it.action)+'</div>' +
-            (it.recordText ? '<div class="faint" style="font-size:.8125rem;background:var(--card2);border-radius:12px;padding:8px 10px;margin-top:8px;">'+escapeHtml(it.recordText)+'</div>' : '') +
+            ((it.recordText && isMe) ? '<div class="faint" style="font-size:.8125rem;background:var(--card2);border-radius:12px;padding:8px 10px;margin-top:8px;">'+escapeHtml(it.recordText)+'</div>' : '') +
             (it.photo ? '<div style="position:relative;display:inline-block;margin-top:8px;"><img src="'+it.photo+'" class="checkin-photo-thumb" data-feedphoto="'+it.id+'" style="max-height:140px;max-width:200px;border-radius:10px;border:1px solid var(--rule);cursor:pointer;object-fit:cover;" />' + (it.is_ai ? '<span style="position:absolute;top:6px;left:6px;background:rgba(15,23,42,0.8);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;box-shadow:0 1px 4px rgba(0,0,0,0.3);">🤖 AI 인증</span>' : '') + '</div>' : '') +
-            (it.feedback ? '<div class="fb-card '+verdictClass(it.feedback.verdict)+'" style="margin:8px 0 0;padding:10px 12px;box-shadow:none;">' +
+            ((it.feedback && isMe) ? '<div class="fb-card '+verdictClass(it.feedback.verdict)+'" style="margin:8px 0 0;padding:10px 12px;box-shadow:none;">' +
               '<div class="fb-verdict" style="font-size:.8125rem;">'+escapeHtml(it.feedback.verdict)+'</div>' +
               '<div class="fb-row" style="font-size:.8125rem;margin-top:2px;">'+escapeHtml(it.feedback.comment)+'</div>' +
             '</div>' : '') +
