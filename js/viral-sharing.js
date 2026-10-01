@@ -89,10 +89,6 @@
     var allPosts = myLocalPosts.concat(cached);
     var post = allPosts.find(function(p){ return p && (p.id === feedId || String(p.id) === String(feedId)); });
 
-    if(!post && typeof global.SIM_PERSONAS !== 'undefined'){
-      post = global.SIM_PERSONAS.find(function(p){ return p && p.id === feedId; });
-    }
-
     var authorName = post ? (post.display_name || post.name || '동료') : ((meta && meta.author) || '아워골 러너');
     var goalTitle = post ? (post.goal_title || post.goal || '목표 실천') : ((meta && meta.title) || '꾸준한 목표 실천');
     var caption = post ? (post.caption || post.action || '오늘도 한 걸음 내딛었습니다!') : ((meta && meta.desc) || '오늘의 실천 기록');

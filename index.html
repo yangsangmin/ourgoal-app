@@ -2324,7 +2324,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function defaultSettings(){
     return {
       checkinTimes: ["10:00","15:00","21:00"], notify:false, exportFormat:"csv", aiProvider:"gemini", geminiKey:"", geminiModel:"gemini-3.1-flash-lite",
-      notionSync:false, notionWebhookUrl:"", notionApiKey:"", notionDatabaseId:"", notionAutoPush:false, autoUpdateSuggest:true, virtualCheerEnabled:true,
+      notionSync:false, notionWebhookUrl:"", notionApiKey:"", notionDatabaseId:"", notionAutoPush:false, autoUpdateSuggest:true, virtualCheerEnabled:false,
       gcalClientId:"", gcalSync:{ goals:{}, ms:{}, imported:{} },
       googleCalendarConnected:false, googleCalendarEmail:"", gcalAutoSync:true,
       privacy: { goals:"private", calendar:"private", records:"private", stats:"private" },
@@ -3160,6 +3160,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var goalsRes = await sb.from('goals').select('*').eq('user_id', userId).order('created_at', {ascending:true});
     var recsRes = await sb.from('checkins').select('*').eq('user_id', userId).order('start_at', {ascending:false});
     var goals = (goalsRes.data||[]).map(function(g){
+      if(g.visibility === 'followers') g.visibility = 'team';
       return {
         id:g.id, title:g.title, category:g.category, dueDate:g.due_date, createdAt:g.created_at,
         visibility: g.visibility||'private', topic: g.topic||'', archivedAt: g.archived_at||null,
@@ -3170,6 +3171,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var localCachedGoals = [];
     try {
       localCachedGoals = JSON.parse(localStorage.getItem('ourgoal_goals_backup_' + userId) || '[]');
+      if(localCachedGoals && localCachedGoals.length > 0){
+        localCachedGoals.forEach(function(g){
+          if(g && g.visibility === 'followers') g.visibility = 'team';
+        });
+      }
     } catch(e){}
     if((!goals || goals.length === 0) && localCachedGoals && localCachedGoals.length > 0){
       goals = localCachedGoals;
@@ -15489,57 +15495,22 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
   });
 
-  /* ============ 신규 유저 온보딩: 가상 페르소나 3분 내 맞춤 응원 (TASK-OG-002) ============ */
+  /* ============ 신규 유저 온보딩: 가상 페르소나 3분 내 맞춤 응원 (TASK-OG-002, TASK-ES-332) ============ */
   function triggerFirstCheerResponse(goal, checkinText){
-    if(state.profile.settings.virtualCheerEnabled === false) return;
+    // [TASK-ES-332] 헌법 제4조 제1항 1호/7호 및 결심 490108 준수: 가짜 봇 응원 전면 차단
+    if(!state.profile || !state.profile.settings || state.profile.settings.virtualCheerEnabled === false) return;
     var isLocalDev = (typeof window !== 'undefined' && window.location && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'));
     if(!isLocalDev){
-      var matched = (typeof SIM_PERSONAS !== 'undefined' && SIM_PERSONAS[0]) || { name:'김도윤', avatar:'도', goal:'목표' };
-      var gTitle = (goal ? goal.title : '').toLowerCase();
-      if(typeof SIM_PERSONAS !== 'undefined'){
-        if(gTitle.indexOf('코딩')!==-1 || gTitle.indexOf('개발')!==-1) matched = SIM_PERSONAS[1];
-        else if(gTitle.indexOf('창업')!==-1 || gTitle.indexOf('사업')!==-1) matched = SIM_PERSONAS[2];
-        else if(gTitle.indexOf('운동')!==-1 || gTitle.indexOf('헬스')!==-1) matched = SIM_PERSONAS[3];
-      }
+      var matched = (typeof SIM_PERSONAS !== 'undefined' && SIM_PERSONAS[0]);
+      if(!matched) return;
       var cheerObj = {
         personaName: matched.name,
         avatar: matched.avatar,
-        message: matched.name + '님이 첫 체크인을 격려합니다: "저도 [' + (matched.goal || '목표') + '] 도전 중인데, 함께 꾸준히 완주해봐요! 진심으로 응원합니다 🔥"'
+        message: matched.name + '님이 첫 체크인을 격려합니다'
       };
       scheduleCheerDelivery(cheerObj);
       return;
     }
-    var payload = {
-      userGoal: goal ? goal.title : '',
-      userCheckin: checkinText || ''
-    };
-    fetch('http://localhost:7777/api/sim/first-cheer', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    }).then(function(res){
-      if(!res.ok) throw new Error('sim server offline');
-      return res.json();
-    }).then(function(data){
-      if(data && data.cheers && data.cheers.length > 0){
-        scheduleCheerDelivery(data.cheers[0]);
-      }
-    }).catch(function(){
-      // 커맨드센터 서버 미실행 시 로컬 페르소나 매칭 폴백
-      var matched = (typeof SIM_PERSONAS !== 'undefined' && SIM_PERSONAS[0]) || { name:'김도윤', avatar:'도', goal:'목표' };
-      var gTitle = (goal ? goal.title : '').toLowerCase();
-      if(typeof SIM_PERSONAS !== 'undefined'){
-        if(gTitle.indexOf('코딩')!==-1 || gTitle.indexOf('개발')!==-1) matched = SIM_PERSONAS[1];
-        else if(gTitle.indexOf('창업')!==-1 || gTitle.indexOf('사업')!==-1) matched = SIM_PERSONAS[2];
-        else if(gTitle.indexOf('운동')!==-1 || gTitle.indexOf('헬스')!==-1) matched = SIM_PERSONAS[3];
-      }
-      var cheerObj = {
-        personaName: matched.name,
-        avatar: matched.avatar,
-        message: matched.name + '님이 첫 체크인을 격려합니다: "저도 [' + (matched.goal || '목표') + '] 도전 중인데, 함께 꾸준히 완주해봐요! 진심으로 응원합니다 🔥"'
-      };
-      scheduleCheerDelivery(cheerObj);
-    });
   }
 
   function scheduleCheerDelivery(cheer){
@@ -17376,49 +17347,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
   /* ============ 목표 & 기록 선택 피드 공유 모달 (전면 고도화) ============ */
   function addSimulatedCheerAndReplyToPost(postId, goalTitle, caption){
-    var personas = (typeof SIM_PERSONAS !== 'undefined' && SIM_PERSONAS.length) ? SIM_PERSONAS : [];
-    if(!personas.length) return;
-    var persona = personas[Math.floor(Math.random() * Math.min(12, personas.length))];
-    
-    // 1. 응원 리액션 자동 반영
-    var reactions = state.profile.settings.feedReactions || {};
-    reactions[postId + ':fire'] = true;
-    
-    // 2. 맥락 맞춤형 따뜻한 피어 응원 댓글
-    var userName = (state.profile && state.profile.displayName) || '회원';
-    var replies = [
-      userName + '님 멋진 실천이네요! 끝까지 완주할 수 있도록 함께 응원하겠습니다 🔥',
-      '와, 꾸준한 실천 정말 대단하십니다! 저도 자극받아 오늘 할 일 집중해서 끝내야겠어요 ✨',
-      '오늘 하루도 멋지게 해내셨네요! 작은 실천이 모여 큰 결실을 맺을 거예요 💪',
-      '함께 목표를 향해 달려가는 동료가 있어서 큰 힘이 됩니다. 내일도 파이팅해요! 👏',
-      '포기하지 않고 달리는 모습에 깊은 영감을 받았습니다. 항상 응원할게요! 😊'
-    ];
-    var replyText = replies[Math.floor(Math.random() * replies.length)];
-    
-    var comments = getFeedComments(postId);
-    comments.push({
-      id: 'fc_' + newId(),
-      userId: persona.id,
-      name: persona.name,
-      avatar: persona.avatar,
-      text: replyText,
-      time: '방금',
-      isMe: false,
-      is_ai: true,
-      createdAt: nowISO()
-    });
-    setFeedComments(postId, comments);
-    saveProfile();
-    
-    var post = (FEED_POSTS_CACHE || []).find(function(p){ return p.id === postId; });
-    if(post){ post.cheers_count = (post.cheers_count || 0) + 1; }
-    track('cheer_received', { source: 'feed', goal_type: null, day_index: dayIndexSinceSignup(), post_id: postId });
-
-    toast('' + persona.name + '님이 내 게시물에 응원 댓글을 남겼어요!');
-    if(state.activeTab === 'comm' && state.commSubTab === 'feed'){
-      var subBody = document.getElementById('commSubBody');
-      if(subBody) renderCommFeed(subBody);
-    }
+    // [TASK-ES-332] 헌법 제4조 제1항 1호/7호 및 결심 490108 준수: 가짜 봇 응원/답글 전면 차단
+    return;
   }
 
   function openShareToFeedModal(){ window.openShareToFeedModal = openShareToFeedModal;
@@ -19200,7 +19130,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '<div class="field"><label>목표 마감일 (선택)</label><input id="mGoalDue" type="date"><p class="faint" id="mGoalDday" style="margin:6px 0 0;"></p></div>' +
       '<div class="field"><label>공개 범위</label><select id="mGoalVis">' +
         '<option value="public">전체 공개</option>' +
-        '<option value="followers">팔로워만</option>' +
         '<option value="private" selected>나만 보기</option>' +
       '</select><p class="faint" style="margin:4px 0 0;">기본은 같은 목표를 가진 사람에게 보여요</p></div>' +
       '<div class="modal-actions"><button class="btn btn-ghost" id="mCancel" type="button">취소</button><button class="btn btn-primary" id="mSave" type="button">만들기</button></div>',
@@ -23139,7 +23068,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             return '<option value="'+k+'"'+(k===vis?' selected':'')+'>'+VISIBILITY_LABELS[k]+'</option>';
           }).join('') +
         '</select>' :
-        '<span class="faint">'+(vis==='private'?'🔒 ':(vis==='followers'?'👥 ':'🌐 '))+VISIBILITY_LABELS[vis]+'</span>') +
+        '<span class="faint">'+(vis==='private'?'🔒 ':(vis==='team'||vis==='followers'?'👥 ':'🌐 '))+(VISIBILITY_LABELS[vis]||'팀원 공개')+'</span>') +
       '</div>';
 
     function ddayMini(dateStr){
@@ -32881,48 +32810,8 @@ wirePromptEncyclopediaEvents(body);
   /* ============ 200인 가상 페르소나 자율 활동 데이터 (20대~50대 남녀 각 100인씩 총 200인) ============ */
   var AI_DISCLOSURE_NOTICE = '이는 ai봇 생성물입니다 앱 런칭 초기에 앱 활용을 보여드리기 위함이고 곧 실제 사용자의 제작물로 가득 찰 것입니다';
 
-  var SIM_PERSONAS = [
-    { id:'sim_p01', name:'김도윤', avatar:'도', gender:'남', age:24, job:'취준생 (공기업 지망)', goal:'하반기 공기업 서류 통과 & 토익 900점', pct:65, action:'아침 07:30 도서관 출석 완료. [토익 기출 10회독] 풀고 오답 정리 시작합니다.', time:'25분 전', cheers:12, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p02', name:'박준서', avatar:'준', gender:'남', age:26, job:'프론트엔드 주니어 개발자', goal:'오픈소스 기여 & 알고리즘 골드 달성', pct:42, action:'점심시간 30분 짬내서 백준 골드 DP 문제 하나 풀었습니다. 코드 리뷰 환영!', time:'1시간 전', cheers:18, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p03', name:'이현우', avatar:'현', gender:'남', age:29, job:'스타트업 창업가', goal:'시드 투자 유치 & MVP 론칭', pct:78, action:'저녁 회의 전 핵심 유저 인터뷰 3건 정리 완료. 다음 마일스톤 돌입합니다.', time:'2시간 전', cheers:24, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p04', name:'최민재', avatar:'민', gender:'남', age:25, job:'체육교육과 4학년', goal:'임용고시 1차 합격 & 실기 체력 만점', pct:55, action:'오전 웨이트 트레이닝 + 1000m 인터벌 훈련 완료. 오후엔 교육학 기본서 회독!', time:'3시간 전', cheers:15, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p05', name:'정우진', avatar:'우', gender:'남', age:27, job:'건축사사무소 인턴', goal:'건축기사 실기 합격 & 신진 공모전 출품', pct:60, action:'퇴근 후 도면 디테일 스터디 2시간 진행했습니다. 차근차근 완성해 나가는 중.', time:'4시간 전', cheers:11, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p06', name:'강동현', avatar:'동', gender:'남', age:28, job:'회계법인 2년차', goal:'미국 CPA 시험 전과목 패스 & 재무분석', pct:70, action:'야근 마치고 밤 11시 데스크 체크인. FAR 과목 20문제 오답 정리하고 잡니다.', time:'5시간 전', cheers:22, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p07', name:'조승우', avatar:'승', gender:'남', age:23, job:'의대 본과 2학년', goal:'본과 전공의 시험 상위 15% & SCI 논문', pct:50, action:'순환기내과 블록 강의 복습 끝. 오늘 하루 순공 8시간 채우고 잠자리에 듭니다.', time:'6시간 전', cheers:31, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p08', name:'윤태양', avatar:'태', gender:'남', age:21, job:'경영학과 2학년', goal:'빅데이터 분석기사 취득 & 퀀트 포트폴리오', pct:35, action:'방학 동안 파이썬 판다스로 재무제표 크롤링 코드 완성. 다음은 머신러닝 모델!', time:'7시간 전', cheers:8, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p09', name:'임서진', avatar:'서', gender:'남', age:26, job:'음악 프로듀서 지망생', goal:'싱글 음원 정식 발매 & 믹싱·마스터링', pct:58, action:'홈스튜디오에서 보컬 믹싱 밸런스 잡는 중. 이번 주 안에 마스터링 넘깁니다.', time:'8시간 전', cheers:19, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p10', name:'한지훈', avatar:'지', gender:'남', age:24, job:'경찰공무원 준비생', goal:'순경 공채 필기 합격 & 체력 45점 이상', pct:62, action:'오전 형사소송법 모의고사 90점 돌파! 오후엔 체력학원에서 악력 연습 예정.', time:'9시간 전', cheers:27, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p11', name:'오상혁', avatar:'상', gender:'남', age:27, job:'글로벌 물류사 사원', goal:'물류관리사 취득 & 비즈니스 영어 완성', pct:45, action:'출근길 지하철에서 비즈니스 이메일 패턴 5문장 암기. 매일 10분 쌓기 실천 중.', time:'10시간 전', cheers:13, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p12', name:'배성민', avatar:'성', gender:'남', age:25, job:'바리스타 & 로스터', goal:'SCA 디플로마 취득 & 로스터리 창업', pct:52, action:'에티오피아 예가체프 커핑 노트 작성 및 추출 프로파일링 3회차 완료!', time:'11시간 전', cheers:16, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p13', name:'신재원', avatar:'재', gender:'남', age:22, job:'컴퓨터공학과 3학년', goal:'정보처리기사 실기 & CS 코어 스터디', pct:48, action:'운영체제 페이징 알고리즘 노션에 정리하고 동기들과 스터디 진행했습니다.', time:'12시간 전', cheers:14, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p14', name:'권태준', avatar:'태', gender:'남', age:28, job:'제약회사 영업사원', goal:'MR 인증 시험 합격 & 3분기 실적 달성', pct:80, action:'거래처 외근 마치고 데일리 영업 일지 작성 완료. 오늘의 목표 마일스톤 달성!', time:'13시간 전', cheers:20, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p15', name:'황민우', avatar:'민', gender:'남', age:26, job:'모션그래퍼 프리랜서', goal:'3D 블렌더 모션그래픽 쇼릴 완성', pct:64, action:'3D 렌더링 걸어두고 키프레임 타이밍 조절 중. 이번 영상 색감 마음에 드네요.', time:'14시간 전', cheers:17, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p16', name:'송건우', avatar:'건', gender:'남', age:29, job:'호텔 조리사 (양식 파트)', goal:'조리기능장 취득 & 시그니처 코스 개발', pct:57, action:'브레이크 타임에 수비드 비프 스테이크 소스 배합 비율 테스트 2차 완료.', time:'15시간 전', cheers:25, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p17', name:'안준혁', avatar:'준', gender:'남', age:23, job:'산업디자인과 4학년', goal:'레드닷 디자인 어워드 컨셉 출품', pct:73, action:'3D 모델링 렌더링 샷 최종 셀렉 완료. 패널 레이아웃 작업 들어갑니다.', time:'16시간 전', cheers:21, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p18', name:'홍기범', avatar:'기', gender:'남', age:25, job:'공인노무사 1차 준비생', goal:'노동법 & 민법 기본강의 완강', pct:38, action:'민법 판례 30개 정리. 생소한 용어가 많지만 키워드 위주로 머리에 넣는 중.', time:'17시간 전', cheers:10, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p19', name:'유승민', avatar:'승', gender:'남', age:27, job:'데이터 엔지니어 주니어', goal:'AWS 솔루션스 아키텍트 & 카프카 구축', pct:66, action:'퇴근 후 카프카-스파크 스트리밍 샌드박스 실습 완료. 마일스톤 하나 체크!', time:'18시간 전', cheers:23, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p20', name:'문도현', avatar:'도', gender:'남', age:24, job:'환경공학과 4학년', goal:'수질환경기사 취득 & 공기업 인턴', pct:54, action:'수질오염방지기술 계산 공식 10개 완벽 암기. 계산기 두드리는 속도 업!', time:'19시간 전', cheers:12, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p21', name:'김서연', avatar:'서', gender:'여', age:23, job:'간호학과 4학년', goal:'간호사 국가고시 모의고사 250점 달성', pct:71, action:'성인간호학 순환기계 파트 오답노트 완료. 모의고사 점수가 조금씩 오르네요!', time:'30분 전', cheers:29, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p22', name:'이지민', avatar:'지', gender:'여', age:26, job:'스타트업 UI/UX 디자이너', goal:'B2B SaaS 디자인 시스템 구축', pct:61, action:'피그마 배리언츠 컴포넌트 40개 정리 완료. 다크모드 대응 컬러 토큰 정의 중.', time:'1시간 전', cheers:34, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p23', name:'박하은', avatar:'하', gender:'여', age:25, job:'외국계 브랜드 마케터', goal:'SQLD 자격증 & 구글 애널리틱스 전문가', pct:53, action:'SQL 서브쿼리와 윈도우 함수 실습 완료. 데이터 뽑아서 마케팅 지표 분석 중!', time:'2시간 전', cheers:19, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p24', name:'최수빈', avatar:'수', gender:'여', age:27, job:'초등학교 3년차 교사', goal:'교육대학원 석사 논문 계획서 완성', pct:40, action:'퇴근 후 도서관에서 초등 독서교육 관련 선행 연구 5편 분석 및 요약 완료.', time:'3시간 전', cheers:15, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p25', name:'정예린', avatar:'예', gender:'여', age:22, job:'시각디자인과 3학년', goal:'졸업전시 브랜드 아이덴티티 메인 컨셉 확정', pct:50, action:'졸전 아이덴티티 무드보드 완성! 지도교수님 피드백 반영해서 폰트 다듬기.', time:'4시간 전', cheers:22, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p26', name:'강다은', avatar:'다', gender:'여', age:28, job:'HR 스타트업 인사담당자', goal:'공인노무사 2차 인사노무관리론 서술 대비', pct:67, action:'퇴근 후 독서실 3시간 몰입. 인사관리론 핵심 목차 암기 및 키워드 백지 복습.', time:'5시간 전', cheers:18, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p27', name:'조유나', avatar:'유', gender:'여', age:24, job:'패션 MD 주니어', goal:'패션 트렌드 리포트 발간 & 일본어 JLPT N1', pct:48, action:'주간 베스트 상품 판매 데이터 피벗 돌리고 가을 시즌 기획전 초안 제출 완료.', time:'6시간 전', cheers:17, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p28', name:'윤채원', avatar:'채', gender:'여', age:26, job:'약학대학원 석사과정', goal:'약제학 SCI급 논문 초안 작성 & 영어 발표', pct:59, action:'세포 독성 실험 2차 데이터 수집 완료. 그래프 정리하고 교수님 미팅 준비.', time:'7시간 전', cheers:33, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p29', name:'임지아', avatar:'지', gender:'여', age:21, job:'신문방송학과 2학년', goal:'대학생 광고공모전 기획서 대상 & 영상 제작', pct:63, action:'공모전 팀원들과 줌 회의 2시간. 메인 카피와 스토리보드 최종 픽스했습니다!', time:'8시간 전', cheers:26, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p30', name:'한소희', avatar:'소', gender:'여', age:27, job:'필라테스 강사', goal:'재활 필라테스 국제 자격증 취득', pct:75, action:'해부학 근육 기시/정지 암기 복습 끝. 회원님들 체형 평가 시트 업데이트!', time:'9시간 전', cheers:28, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p31', name:'오서연', avatar:'서', gender:'여', age:29, job:'금융 공기업 재직자', goal:'FRM Part 1 리스크관리 자격증 합격', pct:44, action:'점심시간 40분 활용해서 파생상품 챕터 문제풀이. 자투리 시간 쪼개기 성공.', time:'10시간 전', cheers:14, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p32', name:'신은서', avatar:'은', gender:'여', age:25, job:'제과제빵 파티시에', goal:'프랑스 제과 과정 준비 & 가을 신메뉴 개발', pct:68, action:'가을 시즌 몽블랑 타르트 배합 테스트 4차. 밤 페이스트 풍미가 아주 잘 나왔어요.', time:'11시간 전', cheers:35, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p33', name:'유아린', avatar:'아', gender:'여', age:27, job:'웹툰 보조 작가', goal:'개인 오리지널 웹툰 기획서 완성 & 공모전 출품', pct:41, action:'1화 콘티 60컷 스케치 완료! 밤샘 작업 들어가기 전에 산책하고 리프레시.', time:'12시간 전', cheers:21, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p34', name:'권나연', avatar:'나', gender:'여', age:23, job:'불어불문학과 4학년', goal:'DELF B2 자격증 취득 & 프랑스 교환학생', pct:58, action:'작문 섹션 에세이 2편 첨삭 받고 구술 면접 시뮬레이션 녹음해보기 완료.', time:'13시간 전', cheers:12, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p35', name:'황서현', avatar:'서', gender:'여', age:26, job:'유튜브 크리에이터', goal:'구독자 5만 달성 & 주 2회 정기 업로드', pct:82, action:'이번 주 브이로그 컷편집 및 자막 작업 100% 완료! 내일 저녁 7시 예약 업로드.', time:'14시간 전', cheers:38, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p36', name:'송지우', avatar:'지', gender:'여', age:24, job:'로스쿨 준비생', goal:'LEET 추리논증 30개 이상 득점 & 학점 4.2', pct:56, action:'추리논증 기출 1세트 타임어택 풀이 완료. 오답 논리적 오류 분석 중입니다.', time:'15시간 전', cheers:20, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p37', name:'안수민', avatar:'수', gender:'여', age:28, job:'마케팅 4년차 대리', goal:'사내 승진 시험 & 데이터 마케팅 세미나', pct:64, action:'주간 KPI 대시보드 리포트 보고 완료. 마케팅 성과 115% 초과 달성 축하!', time:'16시간 전', cheers:19, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p38', name:'백다인', avatar:'다', gender:'여', age:22, job:'심리학과 3학년', goal:'청소년상담사 3급 취득 & 임상실습', pct:47, action:'발달심리학 중간고사 요약 노트 15페이지 완성. 도서관에서 열공 중입니다.', time:'17시간 전', cheers:16, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p39', name:'노유진', avatar:'유', gender:'여', age:27, job:'게임 원화가', goal:'다크 판타지 캐릭터 원화 포트폴리오', pct:70, action:'메인 보스 캐릭터 채색 80% 진행. 금속 질감 라이팅 디테일 파는 중입니다.', time:'18시간 전', cheers:30, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE },
-    { id:'sim_p40', name:'문소은', avatar:'소', gender:'여', age:25, job:'조경설계사무소 주니어', goal:'조경기사 취득 & 옥상정원 설계 공모전', pct:51, action:'옥상정원 식재 계획도 수종 선정 완료. CAD 도면 컬러링 작업 들어갑니다.', time:'19시간 전', cheers:15, is_ai:true, ai_notice:AI_DISCLOSURE_NOTICE }
-  ];
+  // [TASK-ES-332] 헌법 제4조 제1항 1호/7호 및 결심 490108 준수: 가상 페르소나 40명 전면 삭제 (0건화)
+  var SIM_PERSONAS = [];
   var MOCK_PEOPLE = SIM_PERSONAS;
   function daysFromNow(n){
     var d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+n);
@@ -33114,7 +33003,7 @@ wirePromptEncyclopediaEvents(body);
 
   /* #TASK-ES-179: 가짜 잇템 통계 목데이터 완전 제거 (헌법 제4조 준수) */
 
-  var VISIBILITY_LABELS = { public:'전체 공개', followers:'팔로워만', private:'나만 보기' };
+  var VISIBILITY_LABELS = { public:'전체 공개', team:'팀원 공개', private:'나만 보기' };
 
   /* ============ 카테고리 (대범위 · 중범위) ============ */
   var TOPICS = {
@@ -34131,41 +34020,7 @@ wirePromptEncyclopediaEvents(body);
     var subBody = document.getElementById('commSubBody');
     if(subBody && state.activeTab === 'comm' && state.commSubTab === 'feed') renderCommFeed(subBody);
 
-    // AI 페르소나의 맞춤형 즉각 답글 상호작용 (실사용자 게시물에는 가짜 답글 배제)
-    var targetPersona = (SIM_PERSONAS || []).find(function(p){ return p.id === postId; });
-    if(targetPersona && state.profile.settings.virtualCheerEnabled !== false){
-      setTimeout(function(){
-        var uName = state.profile.displayName || '회원';
-        var pName = targetPersona.name;
-        var pJob = targetPersona.job || '';
-        var responses = [
-          '@' + uName + '님, 따뜻한 응원 정말 감사합니다! 덕분에 오늘 남은 목표도 끝까지 집중해서 완주할게요! 💪🔥',
-          '@' + uName + '님 댓글 보고 큰 힘 얻어갑니다! 우리 서로 자극받으면서 함께 멋지게 달려봐요 ✨',
-          '@' + uName + '님 감사해요! ' + (pJob ? pJob + ' 하면서 가끔 지칠 때도 있는데 이렇게 응원해주시니 든든하네요 😊' : '항상 좋은 자극이 됩니다! 👏'),
-          '@' + uName + '님도 오늘 하루 목표 꼭 이루시길 진심으로 응원합니다! 항상 파이팅입니다 🏃‍♂️'
-        ];
-        var chosenRep = responses[Math.floor(Math.random() * responses.length)];
-        var curList = getFeedComments(postId);
-        curList.push({
-          id: 'fc_rep_' + newId(),
-          userId: targetPersona.id,
-          name: targetPersona.name,
-          avatar: targetPersona.avatar,
-          text: chosenRep,
-          time: '방금',
-          isMe: false,
-          is_ai: true,
-          createdAt: nowISO()
-        });
-        setFeedComments(postId, curList);
-        saveProfile();
-        toast('' + targetPersona.name + '님이 내 댓글에 답글을 남겼어요!');
-        if(state.activeTab === 'comm' && state.commSubTab === 'feed'){
-          var currentSub = document.getElementById('commSubBody');
-          if(currentSub) renderCommFeed(currentSub);
-        }
-      }, 1600);
-    }
+    // [TASK-ES-332] 가짜 봇 즉각 답글 상호작용 완전 제거
   }
 
   async function toggleFeedReaction(postId, rType, btn){
@@ -34282,7 +34137,7 @@ wirePromptEncyclopediaEvents(body);
     var blockedList = (state.profile && state.profile.settings && state.profile.settings.blockedUsers) || [];
     realCombined = filterBlockedPosts(realCombined, blockedList);
 
-    // Dynamic Blended Feed ([#TASK-ES-180], [61])
+    // Dynamic Blended Feed ([#TASK-ES-180], [61], [#TASK-ES-332])
     // 실 유저 20명 초과 시 AI 전면 제거, 20명 이하 시 실제 유저 우선 & AI 봇 1개만 최하단에 보강
     var realCount = realCombined.length;
     var blendedItems = [];
@@ -34291,11 +34146,7 @@ wirePromptEncyclopediaEvents(body);
       blendedItems = realCombined;
     } else {
       var singleAiGuide = (typeof SIM_PERSONAS !== 'undefined' && SIM_PERSONAS.length > 0) ? [SIM_PERSONAS[0]] : [];
-      if(realCount === 0){
-        blendedItems = singleAiGuide;
-      } else {
-        blendedItems = realCombined.concat(singleAiGuide);
-      }
+      blendedItems = realCombined; // [TASK-ES-332] 가짜 봇 주입 배제 (blendedItems = singleAiGuide 배제)
     }
 
     var stageLabel = !virtualCheerEnabled ? ' · 실시간 활동 피드' :
@@ -38243,11 +38094,19 @@ wirePromptEncyclopediaEvents(body);
             try { goalBackup = JSON.parse(localStorage.getItem('ourgoal_goals_backup_' + gp.id) || 'null'); } catch(e){}
             if(Array.isArray(goalBackup)){ gp.goals = goalBackup; gpUpdated = true; }
           }
+          if(Array.isArray(gp.goals)){
+            gp.goals.forEach(function(g){
+              if(g && g.visibility === 'followers'){ g.visibility = 'team'; gpUpdated = true; }
+            });
+          }
           if(Array.isArray(gp.records)){
             gp.records.forEach(function(r){
               if(!r.text && r.content) r.text = r.content;
               if(!r.startAt && r.start_at) r.startAt = r.start_at;
             });
+          }
+          if(gpUpdated){
+            try { localStorage.setItem('ourgoal_guest_profile', JSON.stringify(gp)); } catch(e){}
           }
           state.profile = gp;
           document.getElementById('landingScreen').style.display = 'none';

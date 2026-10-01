@@ -1,0 +1,122 @@
+{
+  "task": "TASK-ES-332",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-332-PURGE-MOCK-PERSONAS-FOLLOWERS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 SIM_PERSONAS 배열이 빈 배열 []로 정리되어 위조 인물 데이터 40인이 0건화됨을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 내 defaultSettings().virtualCheerEnabled가 false로 설정되고 가짜 응원/답글 생성이 차단됨을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "index.html 내 소통 피드 렌더링 시 singleAiGuide 가상 봇 주입 로직이 제거되어 순수 실사용자 게시글만 렌더링됨을 보장한다."
+    },
+    {
+      "id": "R4",
+      "text": "index.html 내 목표 생성 모달의 미작동 followers 선택지가 제거되고 VISIBILITY_LABELS에서 team이 표준 매핑됨을 보장한다."
+    },
+    {
+      "id": "R5",
+      "text": "index.html 내 기존 저장된 목표의 visibility가 followers일 경우 team으로 자동 정규화되어 데이터가 무손실 보존됨을 보장한다."
+    },
+    {
+      "id": "R6",
+      "text": "js/viral-sharing.js 내에서 global.SIM_PERSONAS 가상 페르소나 의존성이 제거되고 안전한 폴백을 유지함을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 SIM_PERSONAS가 빈 배열 []로 선언되어 가짜 페르소나가 0건이다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "var SIM_PERSONAS = [];"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 defaultSettings()의 virtualCheerEnabled가 false로 설정되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "virtualCheerEnabled:false"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "feed",
+      "statement": "index.html 내에 renderCommFeed에서 singleAiGuide 가상 봇 피드 주입이 제거되었다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "blendedItems = singleAiGuide;"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "goals",
+      "statement": "index.html 내에 목표 생성 모달에 followers 선택지가 제거되었다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "<option value=\"followers\">팔로워만</option>"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "goals",
+      "statement": "index.html 내에 목표 로드 시 followers가 team으로 자동 마이그레이션된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "if(g.visibility === 'followers') g.visibility = 'team';"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R6",
+      "kind": "static",
+      "domain": "sharing",
+      "statement": "js/viral-sharing.js 내에 global.SIM_PERSONAS 의존성이 제거되었다",
+      "touches": [
+        "js/viral-sharing.js"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "js/viral-sharing.js",
+        "text": "global.SIM_PERSONAS"
+      }
+    }
+  ]
+}
