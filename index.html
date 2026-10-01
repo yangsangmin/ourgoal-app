@@ -2061,6 +2061,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/calendar/sub-day-detail.js"></script>
 <script src="js/tabs/calendar/sub-photo-diary.js"></script>
 <script src="js/tabs/calendar/index.js"></script>
+<!-- OurGoal Shipyard Architecture: Community Mega-Block & Sub-Blocks (소통 커뮤니티 메가블록 및 소블록 외판) -->
+<script src="js/tabs/comm/sub-feed.js"></script>
+<script src="js/tabs/comm/sub-companions.js"></script>
+<script src="js/tabs/comm/sub-crew.js"></script>
+<script src="js/tabs/comm/index.js"></script>
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
 <script src="js/helpful-reason.js"></script>
@@ -7016,11 +7021,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         mount: function(el, s, ev){ if(typeof renderRecordsScreen === 'function') renderRecordsScreen(); }
       });
     }
-    window.OurgoalRegistry.registerMegaBlock('comm', {
-      name: '동류 소통 탭',
-      containerId: 'screen-comm',
-      mount: function(el, s, ev){ if(typeof renderCommScreen === 'function') renderCommScreen(); }
-    });
+    if(window.OurgoalCommMegaBlock && typeof window.OurgoalCommMegaBlock.init === 'function'){
+      window.OurgoalCommMegaBlock.init();
+    } else {
+      window.OurgoalRegistry.registerMegaBlock('comm', {
+        name: '동류 소통 탭',
+        containerId: 'screen-comm',
+        mount: function(el, s, ev){ if(typeof renderCommScreen === 'function') renderCommScreen(); }
+      });
+    }
     window.OurgoalRegistry.registerMegaBlock('settings', {
       name: '설정 탭',
       containerId: 'screen-settings',
