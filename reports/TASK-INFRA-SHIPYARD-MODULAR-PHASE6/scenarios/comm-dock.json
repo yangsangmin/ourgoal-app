@@ -1,0 +1,15 @@
+{
+  "id": "comm-dock",
+  "title": "게스트 진입 후 소통 탭을 누르면 커뮤니티 메가블록 화면이 정상 표시된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"comm\"]" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"comm\"]" },
+    { "do": "waitFor", "selector": "#screen-comm" },
+    { "expect": "visible", "selector": "#screen-comm" },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"comm\"]", "className": "active" },
+    { "capture": "comm-dock-mounted" }
+  ]
+}
