@@ -1,12 +1,12 @@
 {
   "id": "home-heatmap",
-  "title": "게스트 진입 시 상단 히트맵 요약 및 레벨 배지 소블록이 정상 렌더링된다",
+  "title": "게스트 진입 시 상단 히트맵 요약 및 홈 목표 목록 소블록이 정상 렌더링된다",
   "steps": [
     { "do": "goto", "path": "/index.html" },
     { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
     { "do": "click", "selector": "#btnLandingPreviewDirect" },
-    { "do": "waitFor", "selector": "#levelBadgeRow" },
-    { "expect": "visible", "selector": "#levelBadgeRow" },
-    { "capture": "home-level-badge" }
+    { "do": "waitFor", "selector": "#homeGoalList" },
+    { "expect": "visible", "selector": "#homeGoalList" },
+    { "capture": "home-goal-list" }
   ]
 }
