@@ -1,0 +1,65 @@
+{
+  "task": "TASK-UIUX-PHASE0-DESIGN-TOKENS",
+  "requirementsSource": "docs/specs/REQ-TASK-UIUX-PHASE0-DESIGN-TOKENS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "ui.css 내에 4대 테마 전용 1급 CSS 변수 시스템과 터치 타겟 44px 및 폰트 스케일이 단일화되어 있음을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "ui.css 내에 시머링 스켈레톤 로딩 애니메이션 및 터치 손맛 액티브 스케일 피드백이 구현되어 있음을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "ui.js 내에 12ms 촉각 햅틱 손맛 유틸리티가 전역 배선되어 있음을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 --touch-min:44px 및 폰트 스케일 변수가 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "--touch-min:44px"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 skeleton-pulse 시머링 로딩 애니메이션이 구현되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "skeletonPulse"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.js 내에 window.triggerHaptic 함수가 전역 배선되어 있다",
+      "touches": [
+        "ui.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.js",
+        "text": "window.triggerHaptic"
+      }
+    }
+  ]
+}
