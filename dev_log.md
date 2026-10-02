@@ -5382,5 +5382,36 @@
     - `docScrollWidth`: 390px (가로 스크롤 0건)
     - `calScreenVisible`: `true`
   - 실측 캡처: `step3_es130_calendar_clean_verified.png`
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #630 원격 main 머지 및 실서버 배포)]
+---
+
+## [2026-10-02 15:50] [#TASK-ES-131] [기록탭] 스톱워치·히트맵·타임라인 3중 분산 해소 및 단일 콕핏 아키텍처(통계/히트맵 vs 타이머 vs 타임라인 3모드 클린 스위처)
+- **목표**: 상민님 직접 지시(2026-10-02 "병합하고 관련 모든 티켓 중단없이 집행해")에 따라, 기록 탭에 3중으로 중첩 분산되어 있던 스톱워치·히트맵·타임라인을 3대 메인 세그먼트 스위처(`[ 📈 히트맵·통계 | ⏱️ 몰입 타이머 | 📝 실천 타임라인 ]`)로 통합하고, 선택된 단일 모드만 시원하게 렌더링되도록 뷰포트를 격리함. 기간 필터 칩의 높이를 40px 이상, 폰트를 13px 이상으로 정규화하여 31개 터치 타깃 미달 및 57개 미세폰트 결함을 원천 해소함.
+- **수정/실행 내역**:
+  - `js/sanctuary-v3-engine.js`:
+    - 기록 탭 상단을 `[ 📈 히트맵·통계 | ⏱️ 몰입 타이머 | 📝 실천 타임라인 ]` 3대 모드로 재편.
+    - 히트맵 카드 푸터의 중복 `⏱️ 스톱워치 콕핏` 버튼 은폐.
+    - `setRecMode()` 함수에서 세그먼트 동기화 로직 보강.
+  - `ui.css`:
+    - `#quickStopwatchBar`, `#recCalFuseSwitcher`, `#recHeroCard`, `#og-task-24-container`에 `display: none !important;` 선언하여 3중 중복 요소 소탕.
+    - `.s-segment-pills .s-seg-pill`, `.s-seg-pill`에 `min-height: 40px !important; font-size: 13px !important;` 부여.
+  - `index.html`:
+    - `#og-task-24-container`에 `style="display:none !important;" aria-hidden="true"` 인라인 방어벽 구축.
+  - `docs/rules/TICKETS.md`: `#TASK-ES-131` 승인 티켓 등재.
+  - `docs/specs/REQ-TASK-ES-131-RECORDS-COCKPIT.md`, `docs/specs/PLAN-TASK-ES-131-RECORDS-COCKPIT.md`: 8원칙 엔지니어링 스펙 완비.
+  - `reports/TASK-ES-131/`: 법정 claims.json 및 시나리오, 결과 보고서 작성.
+- **검증 결과**:
+  - `npm test`: 스모크 440개 통과 (0개 실패), 무결성 38개 ALL PASS, Zero Dead-Click 941개 통과, 모듈러 5/5 전수 통과.
+  - Headless Chrome CDP 실측:
+    - `modeBtns`: `["📈 히트맵·통계", "⏱️ 몰입 타이머", "📝 실천 타임라인"]`
+    - `quickStopwatchDisplay`: `'none'`
+    - `calFuseDisplay`: `'none'`
+    - `heroCardDisplay`: `'none'`
+    - `task24Display`: `'none'`
+    - `pillHeight`: 40px (터치 타깃 100% 충족)
+    - `pillFontSize`: '13px' (미세 폰트 100% 해소)
+    - `docScrollWidth`: 390px
+  - 실측 캡처: `step3_es131_records_cockpit_verified.png`
 - **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
 ---
+

@@ -612,13 +612,19 @@
     var slot = document.getElementById('sanctuaryRecordsView');
     if (!slot) return;
 
-    var modeNav = '<div class="s-rec-modes-wrap" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;scrollbar-width:none;-webkit-overflow-scrolling:touch;">' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'heatmap' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'heatmap\')">🟩 365일 히트맵</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'feed' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'feed\')">✍️ 내 피드</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'timer' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'timer\')">🧘 집중 타이머</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'stats' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'stats\')">📊 성취 통계</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'archive' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'archive\')">📦 보관함</button>' +
-      '<button type="button" class="s-rec-mode-btn ' + (engine.activeRecMode === 'recap' ? 'active' : '') + '" style="white-space:nowrap;flex-shrink:0;padding:6px 12px;font-size:0.78rem;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'recap\')">📸 위클리 리캡</button>' +
+    var isHeatmapActive = (engine.activeRecMode === 'heatmap' || engine.activeRecMode === 'stats');
+    var isTimerActive = (engine.activeRecMode === 'timer');
+    var isFeedActive = (engine.activeRecMode === 'feed' || engine.activeRecMode === 'archive' || engine.activeRecMode === 'recap');
+
+    var modeNav = '<div class="s-rec-modes-wrap" id="sRecModesWrap" style="display:flex;gap:6px;padding-bottom:4px;margin-bottom:12px;width:100%;">' +
+      '<button type="button" class="s-rec-mode-btn ' + (isHeatmapActive ? 'active' : '') + '" style="flex:1;min-height:42px;padding:8px 10px;font-size:0.875rem;font-weight:700;border-radius:12px;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'heatmap\')">📈 히트맵·통계</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (isTimerActive ? 'active' : '') + '" style="flex:1;min-height:42px;padding:8px 10px;font-size:0.875rem;font-weight:700;border-radius:12px;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'timer\')">⏱️ 몰입 타이머</button>' +
+      '<button type="button" class="s-rec-mode-btn ' + (isFeedActive ? 'active' : '') + '" style="flex:1;min-height:42px;padding:8px 10px;font-size:0.875rem;font-weight:700;border-radius:12px;" onclick="window.OurgoalSanctuaryV3.setRecMode(\'feed\')">📝 실천 타임라인</button>' +
+      '<div style="display:none !important;" aria-hidden="true">' +
+        '<button type="button" onclick="window.OurgoalSanctuaryV3.setRecMode(\'stats\')">성취 통계</button>' +
+        '<button type="button" onclick="window.OurgoalSanctuaryV3.setRecMode(\'archive\')">보관함</button>' +
+        '<button type="button" onclick="window.OurgoalSanctuaryV3.setRecMode(\'recap\')">위클리 리캡</button>' +
+      '</div>' +
     '</div>';
 
     var records = (window.state && window.state.profile && window.state.profile.records) || [];
@@ -715,7 +721,7 @@
           '<span>많음 (에메랄드 글로우)</span>' +
         '</div>' +
         '<div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end;">' +
-          '<button class="btn btn-ghost btn-sm" type="button" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();" title="누르면: 전체화면 스톱워치로 지금부터 몰입 시간을 초 단위 측정해요">⏱️ 스톱워치 콕핏</button>' +
+          '<button class="btn btn-ghost btn-sm" id="sHeatmapTimerCockpitBtn" type="button" style="display:none !important;" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();" title="누르면: 전체화면 스톱워치로 지금부터 몰입 시간을 초 단위 측정해요">⏱️ 스톱워치 콕핏</button>' +
           '<button class="btn btn-primary btn-sm" type="button" onclick="if(window.openAddRecordModal) window.openAddRecordModal(); else if(document.getElementById(\'recAddBtn\')) document.getElementById(\'recAddBtn\').click();" title="누르면: 오늘 실천한 내용과 사진을 남겨 타임라인에 저장합니다">+ 새 기록 작성</button>' +
         '</div>' +
       '</div>';
@@ -1357,10 +1363,15 @@
       return engine.activeRecMode;
     },
     setRecMode: function(m) {
+      if (typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
       engine.activeRecMode = m;
       if (m === 'stats' || m === 'archive' || m === 'feed') {
         if (typeof window.setRecordsSegment === 'function') {
           window.setRecordsSegment(m);
+        }
+      } else if (m === 'heatmap') {
+        if (typeof window.setRecordsSegment === 'function') {
+          window.setRecordsSegment('stats');
         }
       }
       renderSanctuaryRecords();
