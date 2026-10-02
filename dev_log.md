@@ -5298,5 +5298,27 @@
 - **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #625 원격 main 머지 및 실서버 배포)]
 ---
 
+## [2026-10-02 14:10] [#TASK-ES-127] [글로벌/셸] 하단 탭바 중앙 FAB(+ 빠른 체크인) 시인성 복원 및 뷰포트 하단 84px 안전 여백 일괄 보정
+- **목표**: 상민님 직접 지시(2026-10-02 "진행")에 따라, 모듈화 이후 전 탭 실측에서 파악된 셸 레벨 결함(4대 테마 내 FAB display: none 은폐, 저대비 투명 그라디언트, 24px 하단 여백으로 인한 75px 탭바 최하단 요소 가림)을 근본적으로 해결하고 1티켓 1PR 심사 청구.
+- **수정/실행 내역**:
+  - `ui.css`:
+    - `.navbtn-fab`: 브랜드 에메랄드 그라디언트(`linear-gradient(135deg, #10B981 0%, #059669 100%)`), 2px 화이트 테두리, 입체 섀도우, 16px 상단 돌출 플로팅 복원 및 375px 반응형 44px 스케일링.
+    - 4대 테마(`focus-sanctuary`, `black`, `white`, `urban-city`)에서 `display: none !important` 제거 및 테마별 최적화 액센트 적용.
+    - `.screen, #screen-*`: 하단 여백 `padding-bottom: max(96px, calc(var(--nav-h, 64px) + env(safe-area-inset-bottom, 24px) + 32px)) !important` 일괄 적용하여 탭바 가림 0건 달성.
+  - `index.html`: `#bottomNavFab` 클릭 시 타 탭에서도 홈 화면 전환(`setTab('home')`) 후 `#captureInput` 포커스 배선.
+  - `docs/rules/TICKETS.md`: `#TASK-ES-127` 승인 티켓 등재.
+  - `docs/specs/REQ-TASK-ES-127-FAB-CLEARANCE.md`, `docs/specs/PLAN-TASK-ES-127-FAB-CLEARANCE.md`: 8원칙 엔지니어링 스펙 완비.
+  - `reports/TASK-ES-127/claims.json`, `reports/TASK-ES-127/TASK-ES-127.md`, `reports/TASK-ES-127/pr-body.md`: 법정 심사용 주장 및 결과 보고서 완비.
+- **검증 결과**:
+  - `npm test`: 스모크 440개 통과 (0개 실패), 무결성 38개 ALL PASS, Zero Dead-Click 941개 통과, 조선소 모듈 5/5 ALL PASS.
+  - Headless Chrome CDP 실측:
+    - FAB 크기: 48px × 48px, 가시성: `visible: true` (4/4 테마 전부 통과).
+    - 6대 전 탭 하단 패딩: `home: 96px`, `goals: 96px`, `calendar: 96px`, `records: 96px`, `comm: 96px`, `settings: 96px` (요구치 84px 초과 달성).
+    - FAB 클릭 인터랙션: 타 탭에서 클릭 시 즉시 `screen-home` 전환 및 `captureInput` 포커스 완료.
+  - 실측 캡처: `step3_es127_fab_verified.png`
+- **진행 단계**: [4단계: 심사 청구 (초안 PR 생성 및 GitHub Court 법정 심사 청구)]
+---
+
+
 
 
