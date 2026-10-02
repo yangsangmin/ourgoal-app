@@ -1,0 +1,77 @@
+{
+  "task": "TASK-ES-132",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-132-HOME-CLEAN.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "홈 헤드라인 문장에 word-break: keep-all; line-height: 1.38; 및 display: block;이 적용되어 자연스러운 2줄 이내 브리핑 렌더링이 확립됨을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "153px 거대 평가 배너(#homeEvalBanner)가 인라인 시각적 소거(display: none !important;)되어 홈 하단 공간이 확보됨을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "컨디션 듀얼 슬라이더의 터치 영역이 44px 이상으로 확보되고 썸(thumb)이 26px로 확대되어 모바일 터치 조작성이 고도화됨을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내에 toss-headline display block 및 word-break keep-all 스타일이 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "display: block;\n  word-break: keep-all;"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내에 homeEvalBanner 은폐 스타일 코드가 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#screen-home #homeEvalBanner,\n#homeEvalBanner,\n.home-eval-banner-box {\n  display: none !important;"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내에 dimension-range-input 터치 높이 44px 및 썸 확대 스타일이 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "height: 44px !important;\n  min-height: 44px !important;"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui",
+      "statement": "게스트 진입 후 홈 탭에서 헤드라인과 슬라이더가 정상 표시되고 거대 평가 배너가 은폐된다",
+      "touches": [
+        "ui.css"
+      ],
+      "scenario": "scenarios/home-clean-verified.json"
+    }
+  ]
+}
