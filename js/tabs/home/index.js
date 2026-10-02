@@ -58,7 +58,7 @@
     },
 
     /**
-     * 홈 메가블록 마운트 오케스트레이션 (수밀 격벽 보장)
+     * 홈 메가블록 마운트 오케스트레이션 (수밀 격벽 및 이중 렌더링 방어)
      * @param {HTMLElement} container
      * @param {Object} state
      * @param {Object} events
@@ -69,6 +69,7 @@
 
       // 1. 하위 소블록 순차 수밀 마운트
       var blockIds = Object.keys(this.subBlocks);
+      var mountedCount = 0;
       for (var i = 0; i < blockIds.length; i++) {
         var bId = blockIds[i];
         var block = this.subBlocks[bId];
@@ -78,6 +79,7 @@
               ? document.getElementById(block.containerId)
               : null;
             block.mount(subContainer, s, ev);
+            mountedCount++;
           }
         } catch (subErr) {
           console.warn('[OurgoalHomeMegaBlock] Sub-block mount error in "' + bId + '":', subErr);
@@ -87,16 +89,32 @@
         }
       }
 
-      // 2. 전체 홈 조율 및 폴백 렌더러 안전 호출 (무손실 점진 전환)
-      try {
-        if (typeof global.renderHome === 'function') {
-          global.renderHome();
+      // 2. 이중 렌더링 중복 방어 및 수밀 조율 (무손실 점진 전환 폴백)
+      if (mountedCount === 0) {
+        // 소블록이 없거나 마운트에 실패한 경우: 전체 홈 레거시 렌더러 안전 폴백 호출
+        try {
+          if (typeof global.renderHome === 'function') {
+            global.renderHome();
+          }
+          if (typeof global.initHomeCockpit === 'function') {
+            global.initHomeCockpit();
+          }
+        } catch (renderErr) {
+          console.warn('[OurgoalHomeMegaBlock] renderHome fallback warning:', renderErr);
         }
-        if (typeof global.initHomeCockpit === 'function') {
-          global.initHomeCockpit();
+      } else {
+        // 소블록들이 정상 마운트된 경우: 개별 컨테이너와 중복되는 전체 재렌더링 충돌 차단
+        // 소블록 외 잔여 전역 UI(목표 목록 등)가 아직 채워지지 않은 경우에만 1회 보완
+        try {
+          var goalListEl = typeof document !== 'undefined' ? document.getElementById('homeGoalList') : null;
+          if (goalListEl && (!goalListEl.innerHTML || goalListEl.children.length === 0)) {
+            if (typeof global.renderHome === 'function') {
+              global.renderHome();
+            }
+          }
+        } catch (coordErr) {
+          console.warn('[OurgoalHomeMegaBlock] Coordinated render warning:', coordErr);
         }
-      } catch (renderErr) {
-        console.warn('[OurgoalHomeMegaBlock] renderHome fallback warning:', renderErr);
       }
 
       // 3. 마운트 완료 이벤트 발행

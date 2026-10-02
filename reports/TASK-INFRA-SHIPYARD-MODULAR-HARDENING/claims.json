@@ -1,0 +1,30 @@
+{
+  "task": "TASK-INFRA-SHIPYARD-MODULAR-HARDENING",
+  "requirementsSource": "docs/specs/REQ-TASK-INFRA-SHIPYARD-MODULAR-HARDENING.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 내 검증 마크업 오염(og-task-shipyard-p1-container) 완전 소탕 및 6대 메가블록 수밀 가드 탑재를 통한 이중 렌더링 방어 및 정상 렌더링 보존"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "navigation",
+      "statement": "게스트 진입 후 6대 핵심 탭을 순회하면 검증 마크업 오염 없이 모든 메가블록 및 도크 화면이 정상 렌더링된다",
+      "touches": [
+        "index.html",
+        "js/tabs/home/index.js",
+        "js/tabs/goals/index.js",
+        "js/tabs/calendar/index.js",
+        "js/tabs/records/index.js",
+        "js/tabs/comm/index.js",
+        "js/tabs/settings/index.js"
+      ],
+      "scenario": "scenarios/modular-hardening.json"
+    }
+  ]
+}
