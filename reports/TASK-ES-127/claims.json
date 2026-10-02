@@ -38,17 +38,15 @@
     {
       "id": "C2",
       "req": "R2",
-      "kind": "static",
-      "domain": "ui",
-      "statement": "ui.css 내에 4대 테마 하단 내비게이션 바 돌출 (+) FAB 시인성 복원 코드가 존재한다",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "navigation",
+      "statement": "게스트 진입 후 하단 탭바 중앙의 돌출 빠른 체크인 FAB(#bottomNavFab)이 정상 가시화되고 탭 전환 및 상호작용이 온전히 수행된다",
       "touches": [
-        "ui.css"
+        "ui.css",
+        "index.html"
       ],
-      "check": {
-        "type": "codeContains",
-        "file": "ui.css",
-        "text": "[data-theme=\"urban-city\"] #bottomNavFab"
-      }
+      "scenario": "scenarios/fab-clearance-verified.json"
     },
     {
       "id": "C3",

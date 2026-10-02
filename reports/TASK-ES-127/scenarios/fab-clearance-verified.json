@@ -1,0 +1,16 @@
+{
+  "id": "fab-clearance-verified",
+  "title": "게스트 진입 후 하단 탭바 중앙의 돌출 빠른 체크인 FAB(#bottomNavFab)이 정상 가시화되고 탭 전환 및 상호작용이 온전히 수행된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#bottomNavFab" },
+    { "expect": "visible", "selector": "#bottomNavFab" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "expect": "visible", "selector": "#bottomNavFab" },
+    { "do": "click", "selector": "#bottomNavFab" },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"home\"]", "className": "active" },
+    { "capture": "fab-clearance-verified" }
+  ]
+}
