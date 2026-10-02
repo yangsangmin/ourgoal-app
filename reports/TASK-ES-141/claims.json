@@ -1,0 +1,65 @@
+{
+  "task": "TASK-ES-141",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-141-GUEST-MIGRATION-COMM-CENTER-PWA.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "migrateGuestDataToUser 호출 시 state.profile이 초기화되지 않은 상태에서도 널포인터 예외 없이 게스트 모드에서 작성된 목표, 기록, 아바타 서랍, 구글 캘린더 연동 정보가 정회원 계정으로 100% 안전하게 합집합 병합되어야 한다."
+    },
+    {
+      "id": "R2",
+      "text": "소통 탭 상단 대표 안내 문구(#commHeadlineSentence) 및 무공해 응원 독(#commFloatingReactionDock)이 모바일 390px 뷰포트 기준 좌우 1:1 대칭 정중앙에 가운데 정렬되어야 한다."
+    },
+    {
+      "id": "R3",
+      "text": "홈 화면 추가 3초 가이드 모달(modalPwaInstallGuide)이 iOS 사파리 및 안드로이드 크롬 플랫폼별로 정확하게 3단계 카드뉴스를 렌더링하고, 온보딩 완료 시 로컬 플래그가 정상 기록되어야 한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "data-integrity",
+      "statement": "index.html 내에 migrateGuestDataToUser 널포인터 방어 및 savedAvatars 무손실 승계 로직이 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "targetProfile.settings.savedAvatars = gData.settings.savedAvatars.slice(0, 10);"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 내에 소통 탭 상단 대표 안내 문구(#commHeadlineSentence) 정중앙 가운데 정렬 스타일이 적용되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#commHeadlineSentence {"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-ux",
+      "statement": "index.html 내에 PWA 3초 설치 안내 모달(openPwaInstallGuideModal) 및 OS 전환 스위처가 구현되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "openPwaInstallGuideModal"
+      }
+    }
+  ]
+}
