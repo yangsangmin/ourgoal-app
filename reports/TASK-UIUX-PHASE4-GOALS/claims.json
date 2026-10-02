@@ -1,0 +1,65 @@
+{
+  "task": "TASK-UIUX-PHASE4-GOALS",
+  "requirementsSource": "docs/specs/REQ-TASK-UIUX-PHASE4-GOALS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "목표 탭 상단 고정 Sticky 횡스크롤 탭바 및 5대 서브탭 네비게이션이 구현되어 있음을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "공준 2 인지 순행 원칙의 1줄 목표 추가 상자 및 스마트 추천 태그 칩이 배선되어 있음을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "목표 카드 시각적 위계화, 상세 슬라이드 드로어 및 40px 통계 기간 버튼이 구현되어 있음을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 goals-sticky-subnav 및 goals-subtab-chip 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "goals-sticky-subnav"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 goal-fast-add-box 및 smart-tag-chip 클래스가 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "goal-fast-add-box"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 goal-detail-drawer 및 goals-stat-period-btn 클래스가 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "goal-detail-drawer"
+      }
+    }
+  ]
+}
