@@ -1451,6 +1451,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         </div>
       </div>
 
+      <!-- [#UIUX-62] [PWA-INSTALL] 크롬/사파리 홈화면 추가(PWA) 직관적 카드뉴스 인앱 안내 -->
+      <div class="card" style="padding:14px;border-radius:16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div>
+          <div style="font-weight:700;font-size:0.95rem;color:var(--ink);">📱 홈화면 바로가기(PWA)</div>
+          <div style="font-size:0.78rem;color:var(--ink-soft);margin-top:2px;">앱스토어 설치 없이 스마트폰 첫 화면에 추가</div>
+        </div>
+        <button id="btnPwaInstallGuide" class="btn-deadclick-safe" type="button" style="min-height:38px;padding:8px 14px;border-radius:12px;background:var(--brand,#3182f6);color:#ffffff;border:none;font-size:0.82rem;font-weight:700;" onclick="openPwaInstallGuideModal()">설치 안내</button>
+      </div>
+
       <!-- [그룹 1] 👤 계정 & 프로필 -->
       <details class="settings-group-accordion toss-settings-group" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
         <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
@@ -1992,6 +2001,68 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   <div class="modal-sheet" id="modalSheet"></div>
 </div>
 <div class="toast" id="toast"></div>
+
+<!-- [#UIUX-62] [PWA-INSTALL] 크롬/사파리 홈화면 추가(PWA) 3단계 카드뉴스 인앱 안내 모달 바텀시트 -->
+<div id="modalPwaInstallGuide" class="modal-overlay" style="display:none;z-index:100010;align-items:flex-end;">
+  <div class="bottomsheet-content pwa-guide-sheet" style="width:100%;max-width:480px;margin:0 auto;box-sizing:border-box;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:1.3rem;">📱</span>
+        <div>
+          <h3 style="margin:0;font-size:1.05rem;font-weight:800;color:var(--ink);">스마트폰 홈화면에 추가</h3>
+          <div style="font-size:0.75rem;color:var(--ink-soft);margin-top:2px;">앱처럼 홈화면에 아이콘을 띄워 1초 만에 바로 진입하세요</div>
+        </div>
+      </div>
+      <button id="btnClosePwaGuide" type="button" class="btn-deadclick-safe" style="background:transparent;border:none;color:var(--ink-soft);font-size:1.4rem;cursor:pointer;padding:4px 8px;" onclick="closePwaInstallGuideModal()">&times;</button>
+    </div>
+
+    <!-- OS 전환 탭 -->
+    <div class="pwa-os-switcher">
+      <button id="btnPwaOsIos" class="btn-pwa-os-tab active" type="button" onclick="switchPwaOsTab('ios')">🍎 Apple iOS (Safari)</button>
+      <button id="btnPwaOsAndroid" class="btn-pwa-os-tab" type="button" onclick="switchPwaOsTab('android')">🤖 Android (Chrome)</button>
+    </div>
+
+    <!-- iOS 3단계 카드뉴스 -->
+    <div id="pwaGuideIosSteps" class="pwa-step-grid" style="display:grid;">
+      <div class="pwa-step-card">
+        <span class="pwa-step-badge">1</span>
+        <span class="pwa-step-icon">📤</span>
+        <span class="pwa-step-desc">하단 브라우저 바의 <b>'공유'</b> 버튼 탭</span>
+      </div>
+      <div class="pwa-step-card">
+        <span class="pwa-step-badge">2</span>
+        <span class="pwa-step-icon">➕</span>
+        <span class="pwa-step-desc">메뉴에서 <b>'홈 화면에 추가'</b> 선택</span>
+      </div>
+      <div class="pwa-step-card">
+        <span class="pwa-step-badge">3</span>
+        <span class="pwa-step-icon">✨</span>
+        <span class="pwa-step-desc">우측 상단 <b>'추가'</b> 누르면 완료!</span>
+      </div>
+    </div>
+
+    <!-- Android 3단계 카드뉴스 -->
+    <div id="pwaGuideAndroidSteps" class="pwa-step-grid" style="display:none;">
+      <div class="pwa-step-card">
+        <span class="pwa-step-badge">1</span>
+        <span class="pwa-step-icon">⋮</span>
+        <span class="pwa-step-desc">우측 상단 <b>'점 3개'</b> 메뉴 탭</span>
+      </div>
+      <div class="pwa-step-card">
+        <span class="pwa-step-badge">2</span>
+        <span class="pwa-step-icon">📲</span>
+        <span class="pwa-step-desc"><b>'앱 설치'</b> 또는 <b>'홈화면 추가'</b></span>
+      </div>
+      <div class="pwa-step-card">
+        <span class="pwa-step-badge">3</span>
+        <span class="pwa-step-icon">🚀</span>
+        <span class="pwa-step-desc">팝업에서 <b>'설치'</b> 누르면 완료!</span>
+      </div>
+    </div>
+
+    <button id="btnConfirmPwaInstall" class="btn-inapp-dm-start btn-deadclick-safe" type="button" style="width:100%;margin-top:6px;" onclick="confirmPwaInstall()">확인했습니다! 홈화면에서 만나요 ✨</button>
+  </div>
+</div>
 
 <!-- #TASK-ES-174 / #TASK-ES-303: 목표 템플릿 백과사전 전체화면 팝업 모달 -->
 <div id="templateEncyclopediaModal" class="eval-modal-backdrop template-encyclopedia-fullscreen-modal" style="display:none;z-index:100005;" role="dialog" aria-modal="true" aria-labelledby="tplEncyclopediaTitle">
@@ -24073,8 +24144,81 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
   window.selectThemeSwatch = selectThemeSwatch;
 
+  /* ==========================================================================
+     [UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝
+     과업: #UIUX-57 ~ #UIUX-64
+     ========================================================================== */
 
+  // 1. [#UIUX-57] [KEYBOARD-SHIELD] 가상 키보드 가림 방화벽
+  function initKeyboardShield(){
+    if(!window.visualViewport) return;
+    function handleViewportChange(){
+      var activeEl = document.activeElement;
+      if(activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')){
+        var offset = window.innerHeight - window.visualViewport.height;
+        if(offset > 120){
+          activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          document.body.classList.add('keyboard-shield-active');
+        } else {
+          document.body.classList.remove('keyboard-shield-active');
+        }
+      } else {
+        document.body.classList.remove('keyboard-shield-active');
+      }
+    }
+    window.visualViewport.addEventListener('resize', handleViewportChange);
+    window.visualViewport.addEventListener('scroll', handleViewportChange);
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initKeyboardShield);
+  } else {
+    initKeyboardShield();
+  }
 
+  // 2. [#UIUX-62] [PWA-INSTALL] 크롬/사파리 홈화면 추가 3단계 카드뉴스 인앱 안내 모달
+  function openPwaInstallGuideModal(){
+    triggerHapticFeedback(12);
+    var modal = document.getElementById('modalPwaInstallGuide');
+    if(modal) modal.style.display = 'flex';
+  }
+  window.openPwaInstallGuideModal = openPwaInstallGuideModal;
+
+  function closePwaInstallGuideModal(){
+    triggerHapticFeedback(12);
+    var modal = document.getElementById('modalPwaInstallGuide');
+    if(modal) modal.style.display = 'none';
+  }
+  window.closePwaInstallGuideModal = closePwaInstallGuideModal;
+
+  function switchPwaOsTab(os){
+    triggerHapticFeedback(12);
+    var btnIos = document.getElementById('btnPwaOsIos');
+    var btnAndroid = document.getElementById('btnPwaOsAndroid');
+    var iosSteps = document.getElementById('pwaGuideIosSteps');
+    var androidSteps = document.getElementById('pwaGuideAndroidSteps');
+    if(os === 'ios'){
+      if(btnIos) btnIos.classList.add('active');
+      if(btnAndroid) btnAndroid.classList.remove('active');
+      if(iosSteps) iosSteps.style.display = 'grid';
+      if(androidSteps) androidSteps.style.display = 'none';
+    } else {
+      if(btnIos) btnIos.classList.remove('active');
+      if(btnAndroid) btnAndroid.classList.add('active');
+      if(iosSteps) iosSteps.style.display = 'none';
+      if(androidSteps) androidSteps.style.display = 'grid';
+    }
+  }
+  window.switchPwaOsTab = switchPwaOsTab;
+
+  function confirmPwaInstall(){
+    triggerHapticFeedback(12);
+    closePwaInstallGuideModal();
+    try {
+      localStorage.setItem('ourgoal_pwa_guide_viewed', 'true');
+    } catch(e){}
+    if(typeof toast === 'function') toast('언제든 홈화면 아이콘으로 빠르게 접속하세요 📱✨');
+  }
+  window.confirmPwaInstall = confirmPwaInstall;
   /* ============ RENDER: GOALS ============ */
   function renderGoalsScreen(){
     // [#UIUX-33] 5대 서브탭 Sticky 네비게이션 동기화

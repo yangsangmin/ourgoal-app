@@ -16180,6 +16180,155 @@ html[data-theme="urban-city"] {
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
+/* ==========================================================================
+   [UI/UX 프레임워크 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝 (#TASK-UIUX-PHASE7-HARDWARE-HARDENING)
+   과업: #UIUX-57 ~ #UIUX-64
+   ========================================================================== */
 
+/* 1. [#UIUX-57] [KEYBOARD-SHIELD] 가상 키보드 가림 방화벽 */
+.keyboard-shield-lift {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), padding-bottom 0.25s ease !important;
+}
+.keyboard-shield-active {
+  padding-bottom: 240px !important;
+}
 
+/* 2. [#UIUX-58] [BOUNCE-TUNE] iOS Safari 바운스 스크롤 고정 & 풀투리프레시 제어 */
+html, body {
+  overscroll-behavior-y: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+.tab-content, .screen, .modal-scroll-body, .bottomsheet-content {
+  overscroll-behavior-y: contain !important;
+}
 
+/* 3. [#UIUX-59] [ACTIVE-STATE] 모든 클릭/터치 요소 :active 시각 스케일 손맛 피드백 */
+.touch-active-scale,
+button:not(:disabled):active,
+.btn:not(:disabled):active,
+.clickable:active,
+.card-clickable:active {
+  transform: scale(0.97) !important;
+  transition: transform 0.1s ease !important;
+  touch-action: manipulation !important;
+}
+
+/* 4. [#UIUX-60] [DATA-FEEDBACK] 원격 동기화 & 마이크로 토스트 규격화 */
+.toast-micro-feedback {
+  position: fixed !important;
+  bottom: 84px !important;
+  left: 50% !important;
+  transform: translateX(-50%) translateY(20px) !important;
+  background: rgba(15, 23, 42, 0.92) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  color: #ffffff !important;
+  padding: 10px 18px !important;
+  border-radius: 20px !important;
+  font-size: 0.84rem !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  z-index: 9999 !important;
+  opacity: 0 !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  pointer-events: none !important;
+}
+.toast-micro-feedback.show {
+  transform: translateX(-50%) translateY(0) !important;
+  opacity: 1 !important;
+}
+
+/* 5. [#UIUX-61] [FONT-SCALING] 모바일 OS 시스템 폰트 확대(130%) 대응 */
+.font-scale-safe {
+  min-height: fit-content !important;
+  overflow-wrap: break-word !important;
+  word-break: keep-all !important;
+  flex-shrink: 0 !important;
+}
+
+/* 6. [#UIUX-62] [PWA-INSTALL] 크롬/사파리 홈화면 추가 3단계 카드뉴스 인앱 안내 모달 */
+.pwa-guide-sheet {
+  background: var(--card, #1e293b) !important;
+  border-radius: 24px 24px 0 0 !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.1)) !important;
+  border-bottom: none !important;
+  padding: 20px 16px 28px !important;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+.pwa-os-switcher {
+  display: flex !important;
+  gap: 8px !important;
+  margin-bottom: 16px !important;
+}
+.btn-pwa-os-tab {
+  flex: 1 !important;
+  min-height: 40px !important;
+  border-radius: 12px !important;
+  background: var(--card, rgba(255, 255, 255, 0.05)) !important;
+  border: 1.5px solid var(--rule, rgba(255, 255, 255, 0.1)) !important;
+  color: var(--ink-soft, #94a3b8) !important;
+  font-size: 0.84rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+.btn-pwa-os-tab.active {
+  background: rgba(49, 130, 246, 0.15) !important;
+  border-color: var(--brand, #3182f6) !important;
+  color: var(--brand, #3182f6) !important;
+}
+.pwa-step-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 8px !important;
+  margin-bottom: 20px !important;
+}
+.pwa-step-card {
+  background: var(--surface-2, rgba(255, 255, 255, 0.04)) !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.08)) !important;
+  border-radius: 14px !important;
+  padding: 12px 8px !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+.pwa-step-badge {
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  background: var(--brand, #3182f6) !important;
+  color: #ffffff !important;
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.pwa-step-icon {
+  font-size: 1.5rem !important;
+  margin: 4px 0 !important;
+}
+.pwa-step-desc {
+  font-size: 0.74rem !important;
+  color: var(--ink, #ffffff) !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+  word-break: keep-all !important;
+}
+
+/* 7. [#UIUX-63] [DARK-SMOOTH] 다크 ↔ 라이트 테마 전환 200ms 눈부심 완화 트랜지션 */
+.theme-smooth-transition,
+html, body,
+.screen, .header, .tab-bar, .card, .bottomsheet {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
+}
+
+/* 8. [#UIUX-64] [ZERO-DEADCLICK] 전역 937+개 버튼 회귀 방화벽 보완 클래스 */
+.btn-deadclick-safe {
+  cursor: pointer !important;
+  user-select: none !important;
+  touch-action: manipulation !important;
+}
