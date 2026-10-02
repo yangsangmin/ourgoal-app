@@ -10731,50 +10731,51 @@ html[data-theme="focus-sanctuary"] .quick-checkin-chips .btn-quick-chip {
    - 토스식 동류 소통 요약 원카드 (.toss-community-hero-card)
    - 토스형 소통 카드 (.toss-comm-card) 및 42~44px 엄지 최적화 터치 타깃
    ========================================================================== */
+/* ============ [#TASK-ES-129] 소통 탭 동류 소통 요약 원카드 콤팩트 인라인화 ============ */
 .toss-community-hero-card {
   background: var(--card, #ffffff);
-  border-radius: 16px !important;
-  padding: 10px 14px !important;
-  margin-top: 4px !important;
+  border-radius: 12px !important;
+  padding: 8px 12px !important;
+  margin-top: 2px !important;
   margin-bottom: 8px !important;
   border: 1px solid var(--rule, rgba(0, 0, 0, 0.06)) !important;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.035) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
   box-sizing: border-box;
 }
 
 [data-theme="dark"] .toss-community-hero-card,
 [data-theme="black"] .toss-community-hero-card,
-[data-theme="focus-sanctuary"] .toss-community-hero-card {
-  background: linear-gradient(180deg, #1C2026 0%, #16181D 100%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+[data-theme="focus-sanctuary"] .toss-community-hero-card,
+html[data-theme="urban-city"] .toss-community-hero-card {
+  background: var(--card, rgba(255, 255, 255, 0.04)) !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.08)) !important;
 }
 
 .toss-community-hero-stats {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  gap: 12px;
-  margin-top: 8px !important;
-  padding: 8px 6px !important;
+  gap: 8px !important;
+  margin-top: 4px !important;
+  padding: 4px 6px !important;
   background: var(--surface-2, rgba(0, 0, 0, 0.03));
-  border-radius: 10px !important;
+  border-radius: 8px !important;
 }
 
 .toss-community-stat-item {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
+  align-items: baseline !important;
+  gap: 4px !important;
 }
 
 .toss-community-stat-val {
-  font-size: 1.15rem;
+  font-size: 0.95rem !important;
   font-weight: 800;
   color: var(--primary, #3b82f6);
 }
 
 .toss-community-stat-lbl {
-  font-size: 0.75rem;
+  font-size: 0.72rem !important;
   font-weight: 600;
   color: var(--text-faint, #888888);
 }
@@ -15952,12 +15953,17 @@ html[data-theme="urban-city"] {
    [PHASE 6] #TASK-UIUX-PHASE6-COMM-SETTINGS: 소통 무공해 연대 & 설정 1초 보안 제어 8대 과업
    ========================================================================== */
 
-/* 1. [#UIUX-49] [COMM-3X2-HUB] 소통 탭 3×2 그리드 허브 */
+/* 1. [#UIUX-49] [COMM-3X2-HUB] 소통 탭 3×2 그리드 허브 (TASK-ES-129: 중복 렌더링 해체 및 완전 은폐) */
+#commHubGrid,
 .comm-hub-grid {
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 8px !important;
-  margin-bottom: 14px !important;
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
 }
 .comm-hub-card {
   background: var(--card, rgba(255, 255, 255, 0.05)) !important;

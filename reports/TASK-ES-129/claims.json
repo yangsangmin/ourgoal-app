@@ -1,0 +1,63 @@
+{
+  "task": "TASK-ES-129",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-129-COMM-DIET.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "소통 탭 내 불필요한 3버튼 중복 그리드(#commHubGrid)가 은폐(display: none)되고 단일 서브탭 바가 노출됨을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "소통 탭 진입 시 요약 원카드 및 여백이 슬림화되어 피드 콘텐츠에 빠르게 접근할 수 있음을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "소통 탭 진입 후 3버튼 중복 카드가 은폐되고 서브탭 바가 정상 표시되어 소통 콘텐츠가 온전히 가시화됨을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내에 소통 탭 3버튼 허브 그리드(#commHubGrid) 완전 은폐 코드가 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#commHubGrid,\n.comm-hub-grid {\n  display: none !important;"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "index.html 내에 #commHubGrid 요소에 인라인 은폐 및 aria-hidden 속성이 지정되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"commHubGrid\" style=\"display:none !important;\" aria-hidden=\"true\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui",
+      "statement": "소통 탭 진입 시 3버튼 중복 카드가 은폐되고 6대 서브탭 바가 즉각 노출되어 피드 콘텐츠에 빠르게 접근할 수 있다",
+      "touches": [
+        "ui.css",
+        "index.html"
+      ],
+      "scenario": "scenarios/comm-diet-verified.json"
+    }
+  ]
+}
