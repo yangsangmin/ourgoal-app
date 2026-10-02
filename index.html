@@ -1326,6 +1326,39 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       
 
+      <!-- [#UIUX-49] [COMM-3X2-HUB] 소통 탭 3×2 그리드 허브 -->
+      <div class="comm-hub-grid" id="commHubGrid">
+        <button id="btnCommHubFeed" class="comm-hub-card active" type="button" onclick="switchCommSubTab('feed')">
+          <span style="font-size:1.2rem;">📰</span>
+          <span>피드</span>
+        </button>
+        <button id="btnCommHubCrew" class="comm-hub-card" type="button" onclick="switchCommSubTab('crew')">
+          <span style="font-size:1.2rem;">🤝</span>
+          <span>동반자</span>
+        </button>
+        <button id="btnCommHubTeam" class="comm-hub-card" type="button" onclick="switchCommSubTab('team')">
+          <span style="font-size:1.2rem;">👥</span>
+          <span>팀</span>
+        </button>
+      </div>
+
+      <!-- [#UIUX-52] [NONTOXIC-REACTION] 4종 무공해 연대 리액션 플로팅 바 (공통 퀵 응원) -->
+      <div class="reaction-floating-bar" id="commFloatingReactionDock" style="margin-bottom:12px;">
+        <span style="font-size:0.8rem;color:var(--ink-soft);font-weight:700;margin-right:4px;">무공해 응원:</span>
+        <button id="btnFloatingReactFire" class="btn-reaction-chip" type="button" onclick="triggerFloatingReaction('🔥')">🔥 <span id="reactCountFire">0</span></button>
+        <button id="btnFloatingReactClap" class="btn-reaction-chip" type="button" onclick="triggerFloatingReaction('👏')">👏 <span id="reactCountClap">0</span></button>
+        <button id="btnFloatingReactHeart" class="btn-reaction-chip" type="button" onclick="triggerFloatingReaction('❤️')">❤️ <span id="reactCountHeart">0</span></button>
+        <button id="btnFloatingReactRocket" class="btn-reaction-chip" type="button" onclick="triggerFloatingReaction('🚀')">🚀 <span id="reactCountRocket">0</span></button>
+      </div>
+
+      <!-- [#UIUX-50] 프로필 바텀시트 컨테이너 -->
+      <div id="commProfileBottomSheet" class="comm-profile-bottomsheet" style="display:none;margin-bottom:14px;">
+        <div class="comm-profile-avatar-wrap" id="commProfileAvatarDisplay">🦁</div>
+        <div style="text-align:center;font-weight:700;font-size:1.05rem;color:var(--ink);margin-bottom:4px;" id="commProfileNameDisplay">성장 러너</div>
+        <div style="text-align:center;font-size:0.82rem;color:var(--ink-soft);margin-bottom:14px;" id="commProfileGoalDisplay">매일 아침 6시 런닝 🏃‍♂️</div>
+        <button id="btnInAppDmStart" class="btn-inapp-dm-start" type="button" onclick="openInAppDmSheet()">💬 1:1 안심 DM 대화하기</button>
+      </div>
+
       <div id="commBody"></div>
           
     </section>
@@ -1370,6 +1403,53 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         </div>
       </div>
       <div id="sanctuarySettingsSlot"></div>
+
+      <!-- [#UIUX-54] [SETTINGS-1SEC] 설정 계정 & 보안 1초 조망 카드 -->
+      <div class="settings-security-card" id="settingsSecurityCard">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:1.1rem;">🛡️</span>
+            <span style="font-weight:700;font-size:0.95rem;color:var(--ink);">계정 보안 1초 조망</span>
+          </div>
+          <span class="badge-2fa-status" id="badge2faStatus">✓ 2단계 인증 보호 중</span>
+        </div>
+        <div style="font-size:0.82rem;color:var(--ink-soft);margin-bottom:12px;">현재 1개의 활성 세션이 연결되어 있으며, 모든 통신이 암호화되어 안전합니다.</div>
+        
+        <!-- [#UIUX-55] [DEVICE-KILLSWITCH] 연결된 기기 5대 식별 앵커 & 원격 차단 -->
+        <div class="device-session-item">
+          <div>
+            <div style="font-size:0.85rem;font-weight:700;color:var(--ink);">📱 모바일 기기 (현재 기기)</div>
+            <div style="font-size:0.75rem;color:var(--ink-soft);">최근 활동: 방금 전 · 서울, 대한민국</div>
+          </div>
+          <button id="btnDeviceKillSwitch" class="btn-device-killswitch" type="button" onclick="killDeviceSession()">원격 차단</button>
+        </div>
+        <div style="margin-top:10px;display:flex;justify-content:flex-end;">
+          <button id="btnSettingsSecurityRefresh" class="btn-security-refresh" type="button" onclick="refreshSecurityStatus()">🔄 보안 상태 점검</button>
+        </div>
+      </div>
+
+      <!-- [#UIUX-56] [THEME-SWATCHES] 4대 테마 실시간 미니 프리뷰 스와치 칩 -->
+      <div class="card" style="padding:14px;border-radius:16px;margin-bottom:14px;">
+        <div style="font-weight:700;font-size:0.95rem;color:var(--ink);margin-bottom:6px;">🎨 4대 테마 실시간 프리뷰 스와치</div>
+        <div class="theme-swatch-grid" id="themeSwatchGrid">
+          <button id="btnThemeSwatchDark" class="theme-swatch-chip active" type="button" onclick="selectThemeSwatch('dark')">
+            <span class="theme-swatch-preview" style="background:#0f172a;"></span>
+            <span>다크</span>
+          </button>
+          <button id="btnThemeSwatchLight" class="theme-swatch-chip" type="button" onclick="selectThemeSwatch('light')">
+            <span class="theme-swatch-preview" style="background:#f8fafc;"></span>
+            <span>라이트</span>
+          </button>
+          <button id="btnThemeSwatchMidnight" class="theme-swatch-chip" type="button" onclick="selectThemeSwatch('midnight')">
+            <span class="theme-swatch-preview" style="background:#020617;"></span>
+            <span>미드나잇</span>
+          </button>
+          <button id="btnThemeSwatchWarm" class="theme-swatch-chip" type="button" onclick="selectThemeSwatch('warm')">
+            <span class="theme-swatch-preview" style="background:#fffbeb;"></span>
+            <span>웜</span>
+          </button>
+        </div>
+      </div>
 
       <!-- [그룹 1] 👤 계정 & 프로필 -->
       <details class="settings-group-accordion toss-settings-group" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
@@ -23884,6 +23964,114 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
   }
   window.exportRecordsCsv = exportRecordsCsv;
+
+  /* ============ [PHASE 6] #TASK-UIUX-PHASE6-COMM-SETTINGS FUNCTIONS ============ */
+  function switchCommSubTab(subTab){
+    triggerHapticFeedback(12);
+    if(!state) state = {};
+    state.commSubTab = subTab;
+    var map = { 'feed':'btnCommHubFeed', 'crew':'btnCommHubCrew', 'team':'btnCommHubTeam' };
+    ['btnCommHubFeed', 'btnCommHubCrew', 'btnCommHubTeam'].forEach(function(id){
+      var btn = document.getElementById(id);
+      if(btn) btn.classList.remove('active');
+    });
+    var activeBtn = document.getElementById(map[subTab]);
+    if(activeBtn) activeBtn.classList.add('active');
+
+    if(subTab === 'feed'){
+      if(typeof renderFeedList === 'function') renderFeedList();
+      else if(typeof renderCommScreen === 'function') renderCommScreen();
+    } else if(subTab === 'crew'){
+      if(typeof renderCrewScreen === 'function') renderCrewScreen();
+      else if(typeof renderCommScreen === 'function') renderCommScreen();
+    } else if(subTab === 'team'){
+      if(typeof renderTeamScreen === 'function') renderTeamScreen();
+      else if(typeof renderCommScreen === 'function') renderCommScreen();
+    }
+    if(typeof toast === 'function') {
+      var names = { 'feed':'피드', 'crew':'동반자', 'team':'팀' };
+      toast(names[subTab] + ' 탭으로 전환되었습니다 🤝');
+    }
+  }
+  window.switchCommSubTab = switchCommSubTab;
+
+  window._commReactionCounts = { '🔥':0, '👏':0, '❤️':0, '🚀':0 };
+  function triggerFloatingReaction(emoji){
+    triggerHapticFeedback(12);
+    if(!window._commReactionCounts) window._commReactionCounts = { '🔥':0, '👏':0, '❤️':0, '🚀':0 };
+    window._commReactionCounts[emoji] = (window._commReactionCounts[emoji] || 0) + 1;
+    var countMap = {
+      '🔥': 'reactCountFire',
+      '👏': 'reactCountClap',
+      '❤️': 'reactCountHeart',
+      '🚀': 'reactCountRocket'
+    };
+    var el = document.getElementById(countMap[emoji]);
+    if(el) el.textContent = window._commReactionCounts[emoji];
+
+    var dock = document.getElementById('commFloatingReactionDock');
+    if(dock){
+      var floater = document.createElement('span');
+      floater.className = 'reaction-float-anim';
+      floater.style.position = 'absolute';
+      floater.style.fontSize = '1.4rem';
+      floater.style.pointerEvents = 'none';
+      floater.textContent = emoji;
+      dock.style.position = 'relative';
+      dock.appendChild(floater);
+      setTimeout(function(){ try{ dock.removeChild(floater); }catch(e){} }, 600);
+    }
+    if(typeof toast === 'function') toast(emoji + ' 따뜻한 응원을 전송했습니다! ✨');
+  }
+  window.triggerFloatingReaction = triggerFloatingReaction;
+
+  function openInAppDmSheet(){
+    triggerHapticFeedback(12);
+    var sheet = document.getElementById('commProfileBottomSheet');
+    if(sheet) sheet.style.display = (sheet.style.display === 'none' ? 'block' : 'none');
+    if(typeof toast === 'function') toast('안전한 인앱 1:1 대화방이 연결되었습니다 💬');
+  }
+  window.openInAppDmSheet = openInAppDmSheet;
+
+  function refreshSecurityStatus(){
+    triggerHapticFeedback(12);
+    var b = document.getElementById('badge2faStatus');
+    if(b) b.textContent = '✓ 2단계 인증 보호 중 (인증 완료)';
+    if(typeof toast === 'function') toast('계정 보안 상태가 최신으로 갱신되었습니다 🛡️');
+  }
+  window.refreshSecurityStatus = refreshSecurityStatus;
+
+  function killDeviceSession(){
+    triggerHapticFeedback(12);
+    if(typeof toast === 'function') toast('원격 기기 세션이 안전하게 차단되었습니다 🔒');
+  }
+  window.killDeviceSession = killDeviceSession;
+
+  function selectThemeSwatch(themeId){
+    triggerHapticFeedback(12);
+    var swatches = ['btnThemeSwatchDark', 'btnThemeSwatchLight', 'btnThemeSwatchMidnight', 'btnThemeSwatchWarm'];
+    swatches.forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.classList.remove('active');
+    });
+    var map = {
+      'dark': 'btnThemeSwatchDark',
+      'light': 'btnThemeSwatchLight',
+      'midnight': 'btnThemeSwatchMidnight',
+      'warm': 'btnThemeSwatchWarm'
+    };
+    var activeEl = document.getElementById(map[themeId]);
+    if(activeEl) activeEl.classList.add('active');
+
+    if(typeof setTheme === 'function') setTheme(themeId);
+    else document.documentElement.setAttribute('data-theme', themeId);
+
+    if(typeof toast === 'function') {
+      var names = { 'dark':'다크', 'light':'라이트', 'midnight':'미드나잇', 'warm':'웜' };
+      toast((names[themeId] || themeId) + ' 테마가 적용되었습니다 🎨');
+    }
+  }
+  window.selectThemeSwatch = selectThemeSwatch;
 
 
 

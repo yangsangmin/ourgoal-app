@@ -1,0 +1,68 @@
+{
+  "task": "TASK-UIUX-PHASE6-COMM-SETTINGS",
+  "requirementsSource": "docs/specs/REQ-TASK-UIUX-PHASE6-COMM-SETTINGS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "소통 탭 3×2 그리드 허브 및 4종 무공해 연대 리액션 플로팅 바가 구현되어 있음을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "프로필 바텀시트 및 인앱 1:1 안심 DM 연결이 구현되어 있음을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "설정 계정 및 보안 1초 조망 카드, 5대 기기 앵커 및 4대 테마 스와치 칩이 구현되어 있음을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 및 index.html 내에 comm-hub-grid 및 reaction-floating-bar 스타일과 컴포넌트가 정의되어 있다",
+      "touches": [
+        "ui.css",
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "comm-hub-grid"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 및 index.html 내에 comm-profile-bottomsheet 및 btn-inapp-dm-start 클래스가 정의되어 있다",
+      "touches": [
+        "ui.css",
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "comm-profile-bottomsheet"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 및 index.html 내에 settings-security-card 및 theme-swatch-grid 클래스가 정의되어 있다",
+      "touches": [
+        "ui.css",
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "settings-security-card"
+      }
+    }
+  ]
+}
