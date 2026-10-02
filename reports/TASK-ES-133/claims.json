@@ -1,0 +1,63 @@
+{
+  "task": "TASK-ES-133",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-133-SETTINGS-IA.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "설정 탭 상단에 3대 조망 카드(프로필 요약, 화면스타일 4대 테마, 계정 보안 1초 조망)가 메인 대시보드로 정돈됨을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "설정 탭 내 중복 레거시 테마 스와치(#legacyThemeSwatchCard) 및 개발자 전용 허브(#og-task-23-container)가 은폐됨을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "하위 세부 설정 아코디언이 토스식 둥근 카드로 정규화되고 기본 접힘 상태가 유지됨을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내에 legacyThemeSwatchCard 및 og-task-23-container 은폐 코드가 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#legacyThemeSwatchCard,\n#screen-settings #legacyThemeSwatchCard {\n  display: none !important;"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내에 설정 그룹 아코디언 토스식 둥근 카드 조형 코드가 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".settings-group-accordion.toss-settings-group {\n  border: 1.5px solid var(--rule"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui",
+      "statement": "게스트 진입 후 설정 탭 이동 시 상단 3대 조망 카드가 정상 표시되고 중복 위젯이 은폐된다",
+      "touches": [
+        "index.html",
+        "ui.css"
+      ],
+      "scenario": "scenarios/settings-ia-verified.json"
+    }
+  ]
+}
