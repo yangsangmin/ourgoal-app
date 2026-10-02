@@ -62,7 +62,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     </div>
   </div>
   <div class="land-cta">
-    <button class="btn btn-block" id="btnLandingPreviewDirect" onclick="document.getElementById('landGuestBtn').click();" type="button" style="background:linear-gradient(135deg,#10B981,#059669);color:#fff;font-weight:700;padding:14px 16px;border-radius:14px;margin-bottom:12px;font-size:0.95rem;box-shadow:0 6px 20px rgba(16,185,129,0.38);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;"><span>로그인 없이 둘러보기</span></button>
+    <button class="btn btn-block" id="btnLandingPreviewDirect" onclick="if(typeof triggerHapticFeedback==='function')triggerHapticFeedback(12); document.getElementById('landGuestBtn').click();" type="button" style="background:linear-gradient(135deg,#10B981,#059669);color:#fff;font-weight:700;padding:14px 16px;border-radius:14px;margin-bottom:12px;font-size:0.95rem;box-shadow:0 6px 20px rgba(16,185,129,0.38);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;touch-action:manipulation;"><span>로그인 없이 둘러보기</span></button>
     <div class="oauth-row">
       <button class="btn btn-block btn-kakao" id="landKakaoBtn" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.86 5.31 4.66 6.72L5.5 21.5c-.08.3.24.54.5.38l4.42-2.93c.52.05 1.05.08 1.58.08 5.52 0 10-3.58 10-8S17.52 3 12 3z"/></svg><span>카카오로 3초 만에 시작하기</span></button>
       <button class="btn btn-block btn-google" id="landGoogleBtn" type="button" style="display:none;" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/></svg><span>Google로 계속하기</span></button>
@@ -1432,7 +1432,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <div style="font-weight:700;font-size:0.95rem;color:var(--ink);">📱 홈화면 바로가기(PWA)</div>
           <div style="font-size:0.78rem;color:var(--ink-soft);margin-top:2px;">앱스토어 설치 없이 스마트폰 첫 화면에 추가</div>
         </div>
-        <button id="btnPwaInstallGuide" class="btn-deadclick-safe" type="button" style="min-height:38px;padding:8px 14px;border-radius:12px;background:var(--brand,#3182f6);color:#ffffff;border:none;font-size:0.82rem;font-weight:700;" onclick="openPwaInstallGuideModal()">설치 안내</button>
+        <button id="btnPwaInstallGuide" class="btn-deadclick-safe pwa-guide-action-btn" type="button" onclick="openPwaInstallGuideModal()">설치 안내</button>
       </div>
 
       <!-- [그룹 1] 👤 계정 & 프로필 -->
@@ -1997,7 +1997,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <div style="font-size:0.75rem;color:var(--ink-soft);margin-top:2px;">앱처럼 홈화면에 아이콘을 띄워 1초 만에 바로 진입하세요</div>
         </div>
       </div>
-      <button id="btnClosePwaGuide" type="button" class="btn-deadclick-safe" style="background:transparent;border:none;color:var(--ink-soft);font-size:1.4rem;cursor:pointer;padding:4px 8px;" onclick="closePwaInstallGuideModal()">&times;</button>
+      <button id="btnClosePwaGuide" type="button" class="btn-deadclick-safe" style="background:transparent;border:none;color:var(--ink-soft);font-size:1.4rem;cursor:pointer;padding:6px 12px;min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;touch-action:manipulation;" onclick="closePwaInstallGuideModal()">&times;</button>
     </div>
 
     <!-- OS 전환 탭 -->
@@ -2044,7 +2044,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       </div>
     </div>
 
-    <button id="btnConfirmPwaInstall" class="btn-inapp-dm-start btn-deadclick-safe" type="button" style="width:100%;margin-top:6px;" onclick="confirmPwaInstall()">확인했습니다! 홈화면에서 만나요 ✨</button>
+    <button id="btnConfirmPwaInstall" class="btn-inapp-dm-start btn-deadclick-safe pwa-guide-action-btn" type="button" style="width:100%;margin-top:6px;min-height:44px;" onclick="confirmPwaInstall()">확인했습니다! 홈화면에서 만나요 ✨</button>
   </div>
 </div>
 
@@ -24108,9 +24108,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   // 2. [#UIUX-62] [PWA-INSTALL] 크롬/사파리 홈화면 추가 3단계 카드뉴스 인앱 안내 모달
   function openPwaInstallGuideModal(){
-    triggerHapticFeedback(12);
+    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
     var modal = document.getElementById('modalPwaInstallGuide');
-    if(modal) modal.style.display = 'flex';
+    if(modal) {
+      modal.style.display = 'flex';
+      // [#TASK-ES-138] 기기 UserAgent 분석 기반 OS 플랫폼 자동 스위칭 (iOS vs Android)
+      var ua = (typeof navigator !== 'undefined' && navigator.userAgent) ? navigator.userAgent : '';
+      var isAndroid = /Android/i.test(ua);
+      switchPwaOsTab(isAndroid ? 'android' : 'ios');
+    }
   }
   window.openPwaInstallGuideModal = openPwaInstallGuideModal;
 
