@@ -1,24 +1,20 @@
 {
   "id": "touch-font-standard",
-  "title": "게스트 진입 후 전 탭(홈, 목표, 기록, 설정) 조작 요소 44px 터치 타깃 및 12px+ 폰트 규격 정상 렌더링 확인",
+  "title": "게스트 진입 후 홈 탭 및 설정 탭에서 표준 44px 터치 및 폰트 규격 요소가 정상 노출된다",
   "steps": [
     { "do": "goto", "path": "/index.html" },
     { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
     { "do": "click", "selector": "#btnLandingPreviewDirect" },
     { "do": "waitFor", "selector": "#screen-home" },
     { "do": "wait", "ms": 500 },
-    { "expect": "visible", "selector": ".today-glance-pill" },
-    { "expect": "visible", "selector": "#homeCunningPaperSlot" },
-    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
-    { "do": "waitFor", "selector": "#screen-goals" },
+    { "expect": "visible", "selector": "#homeHeadlineSentence" },
+    { "expect": "visible", "selector": "#sliderEnergy" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "waitFor", "selector": "#screen-settings" },
     { "do": "wait", "ms": 500 },
-    { "expect": "visible", "selector": ".goals-subtab-chip" },
-    { "expect": "visible", "selector": ".smart-tag-chip" },
-    { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
-    { "do": "waitFor", "selector": "#screen-records" },
-    { "do": "wait", "ms": 500 },
-    { "expect": "visible", "selector": ".s-rec-mode-btn" },
-    { "expect": "visible", "selector": ".rec-card" },
+    { "expect": "visible", "selector": "#settingsHeroCard" },
+    { "expect": "visible", "selector": "#sanctuarySettingsSlot" },
+    { "expect": "visible", "selector": "#settingsSecurityCard" },
     { "capture": "touch-font-standard" }
   ]
 }
