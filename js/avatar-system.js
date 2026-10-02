@@ -5201,7 +5201,7 @@
     theme.roman = ['I', 'II', 'III', 'IV', 'V'][subStep - 1];
     theme.stepInfo = (theme.subSteps && theme.subSteps[subStep - 1]) || { step: subStep, roman: theme.roman, name: theme.name + ' ' + theme.roman, desc: theme.desc };
     theme.stepTitle = theme.name + ' ' + theme.roman;
-    theme.stepFullName = theme.icon + ' ' + theme.name + ' ' + theme.roman + ' (' + theme.stepInfo.name + ')';
+    theme.stepFullName = (theme.id === 'sprout' ? '' : (theme.icon + ' ')) + theme.name + ' ' + theme.roman + ' (' + theme.stepInfo.name + ')';
     theme.evolutionDesc = theme.stepInfo.desc;
     theme.nextTier = (theme.themeId < 5) ? RANK_THEMES_5[theme.themeId] : null;
     theme.nextLv = (subStep < 5) ? lv + 1 : ((theme.themeId < 5) ? RANK_THEMES_5[theme.themeId].minLv : null);
@@ -5251,51 +5251,8 @@
     var growthContent = '';
 
     if (tid === 'sprout') {
-      // 🌱 새싹: 아기 떡잎 -> 쌍떡잎과 이슬 -> 세잎 클로버 핀 -> 미니 덩굴 화관 -> 파스텔 데이지 티아라
-      if (step === 1) {
-        growthContent = '<g filter="url(#' + gradId + '_glow)">' +
-          '<path d="M ' + cx + ' ' + (bT + 1) + ' Q ' + cx + ' ' + (bT - 4) + ' ' + cx + ' ' + (bT - 6) + '" stroke="#059669" stroke-width="2" stroke-linecap="round" fill="none" />' +
-          '<path d="M ' + cx + ' ' + (bT - 5) + ' C ' + (cx - 4) + ' ' + (bT - 6) + ', ' + (cx - 9) + ' ' + (bT - 11) + ', ' + (cx - 5) + ' ' + (bT - 13) + ' C ' + (cx - 1) + ' ' + (bT - 13) + ', ' + cx + ' ' + (bT - 9) + ', ' + cx + ' ' + (bT - 5) + ' Z" fill="#34D399" stroke="#059669" stroke-width="0.8" />' +
-          '<path d="M ' + cx + ' ' + (bT - 5) + ' C ' + (cx + 4) + ' ' + (bT - 6) + ', ' + (cx + 9) + ' ' + (bT - 10) + ', ' + (cx + 5) + ' ' + (bT - 13) + ' C ' + (cx + 1) + ' ' + (bT - 13) + ', ' + cx + ' ' + (bT - 9) + ', ' + cx + ' ' + (bT - 5) + ' Z" fill="#10B981" stroke="#047857" stroke-width="0.8" />' +
-          '<circle cx="' + (cx + 4) + '" cy="' + (bT - 11) + '" r="1.4" fill="#FFFFFF" opacity="0.9" />' +
-        '</g>';
-      } else if (step === 2) {
-        growthContent = '<g filter="url(#' + gradId + '_glow)">' +
-          '<path d="M ' + cx + ' ' + (bT + 1) + ' Q ' + cx + ' ' + (bT - 5) + ' ' + cx + ' ' + (bT - 8) + '" stroke="#047857" stroke-width="2.2" stroke-linecap="round" fill="none" />' +
-          '<ellipse cx="' + (cx - 6) + '" cy="' + (bT - 9) + '" rx="5.5" ry="3.5" transform="rotate(-25 ' + (cx - 6) + ' ' + (bT - 9) + ')" fill="#34D399" stroke="#047857" stroke-width="0.8" />' +
-          '<ellipse cx="' + (cx + 6) + '" cy="' + (bT - 9) + '" rx="5.5" ry="3.5" transform="rotate(25 ' + (cx + 6) + ' ' + (bT - 9) + ')" fill="#10B981" stroke="#047857" stroke-width="0.8" />' +
-          '<circle cx="' + (cx - 5) + '" cy="' + (bT - 10) + '" r="1.6" fill="#FFFFFF" />' +
-          '<circle cx="' + (cx + 6) + '" cy="' + (bT - 10) + '" r="1.3" fill="#ECFDF5" />' +
-        '</g>';
-      } else if (step === 3) {
-        growthContent = '<g filter="url(#' + gradId + '_glow)">' +
-          '<path d="M ' + cx + ' ' + (bT + 1) + ' L ' + cx + ' ' + (bT - 5) + '" stroke="#047857" stroke-width="2" stroke-linecap="round" />' +
-          '<circle cx="' + cx + '" cy="' + (bT - 11) + '" r="3.6" fill="#10B981" stroke="#047857" stroke-width="0.8" />' +
-          '<circle cx="' + (cx - 4.2) + '" cy="' + (bT - 7.5) + '" r="3.4" fill="#34D399" stroke="#047857" stroke-width="0.8" />' +
-          '<circle cx="' + (cx + 4.2) + '" cy="' + (bT - 7.5) + '" r="3.4" fill="#34D399" stroke="#047857" stroke-width="0.8" />' +
-          '<circle cx="' + cx + '" cy="' + (bT - 8.5) + '" r="1.6" fill="#FFFFFF" />' +
-        '</g>';
-      } else if (step === 4) {
-        growthContent = '<g filter="url(#' + gradId + '_glow)">' +
-          '<path d="M ' + (cx - 13) + ' ' + (bT + 1) + ' Q ' + cx + ' ' + (bT - 9) + ' ' + (cx + 13) + ' ' + (bT + 1) + '" stroke="#059669" stroke-width="2" fill="none" stroke-linecap="round" />' +
-          '<ellipse cx="' + (cx - 8) + '" cy="' + (bT - 6) + '" rx="3" ry="2" fill="#34D399" transform="rotate(-30 ' + (cx - 8) + ' ' + (bT - 6) + ')" />' +
-          '<ellipse cx="' + (cx + 8) + '" cy="' + (bT - 6) + '" rx="3" ry="2" fill="#34D399" transform="rotate(30 ' + (cx + 8) + ' ' + (bT - 6) + ')" />' +
-          '<circle cx="' + cx + '" cy="' + (bT - 8.5) + '" r="2.8" fill="#F472B6" stroke="#FFFFFF" stroke-width="0.9" />' +
-          '<circle cx="' + cx + '" cy="' + (bT - 8.5) + '" r="1" fill="#FEF08A" />' +
-        '</g>';
-      } else {
-        growthContent = '<g filter="url(#' + gradId + '_glow)">' +
-          '<path d="M ' + (cx - 14) + ' ' + (bT + 1) + ' Q ' + cx + ' ' + (bT - 7) + ' ' + (cx + 14) + ' ' + (bT + 1) + '" stroke="#10B981" stroke-width="2" fill="none" stroke-linecap="round" />' +
-          '<circle cx="' + cx + '" cy="' + (bT - 13) + '" r="2.2" fill="#FFFFFF" />' +
-          '<circle cx="' + (cx - 4) + '" cy="' + (bT - 11.5) + '" r="2.2" fill="#FFFFFF" />' +
-          '<circle cx="' + (cx + 4) + '" cy="' + (bT - 11.5) + '" r="2.2" fill="#FFFFFF" />' +
-          '<circle cx="' + (cx - 2.5) + '" cy="' + (bT - 7.5) + '" r="2.2" fill="#FFFFFF" />' +
-          '<circle cx="' + (cx + 2.5) + '" cy="' + (bT - 7.5) + '" r="2.2" fill="#FFFFFF" />' +
-          '<circle cx="' + cx + '" cy="' + (bT - 10) + '" r="2.6" fill="#FBBF24" stroke="#F59E0B" stroke-width="0.6" />' +
-          '<circle cx="' + (cx - 10) + '" cy="' + (bT - 3) + '" r="2" fill="#A7F3D0" />' +
-          '<circle cx="' + (cx + 10) + '" cy="' + (bT - 3) + '" r="2" fill="#A7F3D0" />' +
-        '</g>';
-      }
+      // 새싹 오버레이 제거 (아바타 본래 조형 보존)
+      growthContent = '';
     } else if (tid === 'forest') {
       // 🌲 울창한 숲
       if (step === 1) {
@@ -5555,8 +5512,14 @@
     var size = opts.size || 38;
     var compact = (opts.compact === true);
     var settings = (profile && profile.settings) || {};
-    var avatarType = settings.avatarType || 'robot';
-    var customUrl = (settings.customAvatarUrl) || (profile && profile.avatarUrl) || '';
+    var customUrl = (settings.customAvatarUrl) || (profile && profile.avatarUrl) || (profile && profile.avatarImage) || '';
+    var userAvatar = (profile && profile.avatar) || (settings && settings.equippedAvatar) || (profile && profile.avatarIcon) || '';
+    if (typeof userAvatar === 'object' && userAvatar !== null) {
+      userAvatar = userAvatar.emoji || userAvatar.icon || '';
+    }
+    if (!userAvatar && !customUrl) {
+      userAvatar = '🦁'; // 기본 웰컴 페르소나
+    }
     var withRankBg = (opts.withRankBg !== false);
     var rankTheme = getRankThemeInfo(level);
 
@@ -5564,15 +5527,24 @@
     var borderW = compact ? '2px' : '2.5px';
     var boxRadius = compact ? '10px' : '14px';
 
-    if (avatarType === 'custom' && customUrl && customUrl.length > 5) {
+    // 🌟 레벨 뱃지: 새싹(🌱) 침범 방지 & 순수 레벨 표기
+    var pillContent = 'Lv.' + level;
+    if (rankTheme.id !== 'sprout' && rankTheme.icon) {
+      pillContent = rankTheme.icon + ' ' + rankTheme.roman;
+    }
+
+    if (customUrl && customUrl.length > 5) {
       innerFrameHtml = '<div class="custom-avatar-frame avatar-inner-box" style="width:' + size + 'px;height:' + size + 'px;border-radius:' + boxRadius + ';overflow:hidden;border:' + borderW + ' solid ' + rankTheme.mainColor + ';position:relative;background:#fff;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 0 10px ' + rankTheme.glow + ';box-sizing:border-box;">' +
         '<img src="' + customUrl + '" alt="아바타" style="width:100%;height:100%;object-fit:cover;display:block;">' +
-        '<span class="avatar-lv-pill" style="position:absolute;bottom:0;right:0;background:' + rankTheme.badgeGradient + ';color:#fff;font-size:' + (compact ? '8px' : '9.5px') + ';padding:0 ' + (compact ? '3px' : '5px') + ';border-radius:4px 0 0 0;font-weight:800;letter-spacing:-0.2px;line-height:1.2;box-shadow:0 -1px 3px rgba(0,0,0,0.3);">' + rankTheme.icon + ' ' + rankTheme.roman + '</span>' +
+      '</div>';
+    } else if (userAvatar && userAvatar !== 'robot') {
+      var emojiSize = Math.round(size * 0.52);
+      innerFrameHtml = '<div class="persona-avatar-frame avatar-inner-box" style="width:' + size + 'px;height:' + size + 'px;border-radius:' + boxRadius + ';overflow:hidden;background:var(--surface-2, #1e293b);border:' + borderW + ' solid ' + rankTheme.mainColor + ';display:flex;align-items:center;justify-content:center;position:relative;z-index:2;box-shadow:0 0 10px ' + rankTheme.glow + ';box-sizing:border-box;user-select:none;">' +
+        '<span style="font-size:' + emojiSize + 'px;line-height:1;display:inline-block;transform:translateY(1px);">' + userAvatar + '</span>' +
       '</div>';
     } else {
       innerFrameHtml = '<div class="robot-avatar-frame avatar-inner-box" style="width:' + size + 'px;height:' + size + 'px;border-radius:' + boxRadius + ';overflow:hidden;background:var(--surface-2);border:' + borderW + ' solid ' + rankTheme.mainColor + ';display:flex;align-items:center;justify-content:center;position:relative;z-index:2;box-shadow:0 0 10px ' + rankTheme.glow + ';box-sizing:border-box;">' +
         getRobotAvatarSvg(level, size) +
-        '<span class="avatar-lv-pill" style="position:absolute;bottom:0;right:0;background:' + rankTheme.badgeGradient + ';color:#fff;font-size:' + (compact ? '8px' : '9.5px') + ';padding:0 ' + (compact ? '3px' : '5px') + ';border-radius:4px 0 0 0;font-weight:800;letter-spacing:-0.2px;line-height:1.2;box-shadow:0 -1px 3px rgba(0,0,0,0.3);">' + rankTheme.icon + ' ' + rankTheme.roman + '</span>' +
       '</div>';
     }
 
