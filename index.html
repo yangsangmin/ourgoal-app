@@ -848,12 +848,38 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
     <!-- GOALS -->
     <section class="screen" id="screen-goals">
-      <div class="comm-subtabs comm-subtabs-clean goals-subtabs-grid" id="goalsSubtabs" style="margin-bottom:8px;"></div>
+      <!-- [#UIUX-33] 5대 서브탭 상단 고정 Sticky 횡스크롤 탭바 -->
+      <div class="goals-sticky-subnav" id="goalsStickySubnav">
+        <button type="button" class="goals-subtab-chip active" id="btnGoalsSubPersonal" onclick="switchGoalsSubTab('personal')">🎯 개인</button>
+        <button type="button" class="goals-subtab-chip" id="btnGoalsSubRoutine" onclick="switchGoalsSubTab('routine')">🔄 루틴</button>
+        <button type="button" class="goals-subtab-chip" id="btnGoalsSubTeamLinked" onclick="switchGoalsSubTab('teamLinked')">🔗 팀연계</button>
+        <button type="button" class="goals-subtab-chip" id="btnGoalsSubTeam" onclick="switchGoalsSubTab('team')">👥 팀목표</button>
+        <button type="button" class="goals-subtab-chip" id="btnGoalsSubTemplate" onclick="switchGoalsSubTab('templateEncyclopedia')">📖 템플릿</button>
+        <button type="button" class="goals-subtab-chip" id="btnGoalsSubStats" onclick="switchGoalsSubTab('stats')">📊 성취통계</button>
+      </div>
+      <div class="comm-subtabs comm-subtabs-clean goals-subtabs-grid" id="goalsSubtabs" style="margin-bottom:8px; display:none;"></div>
       <div class="toss-headline" id="goalsHeadlineSentence">정상을 향해 힘차게 나아가고 있어요 🏔️</div>
       <div class="toss-quest-board">
         <div id="sanctuaryGoalsView"></div>
-        <div id="routineGoalsView" style="display:none;"></div>
+        <div id="routineGoalsView" style="display:none;">
+          <!-- [#UIUX-38] 루틴 요일별 실천 매트릭스 그리드 뷰 -->
+          <div class="routine-matrix-grid" id="routineMatrixGrid"></div>
+        </div>
         <div id="personalGoalsView">
+          <!-- [#UIUX-34] [공준 2: 인지 순행 원칙] 1줄 목표 추가 상자 -->
+          <div class="goal-fast-add-box" id="goalFastAddBox">
+            <div class="goal-fast-add-input-wrap">
+              <input type="text" id="goalFastAddInput" class="goal-fast-add-input" placeholder="어떤 목표를 이루고 싶으신가요? (예: 주 3회 러닝)" onkeydown="if(event.key==='Enter')handleGoalFastAddSubmit()" />
+              <button type="button" class="goal-fast-add-btn" id="btnGoalFastAddSubmit" onclick="handleGoalFastAddSubmit()">추가</button>
+            </div>
+            <div class="smart-tag-chips-wrap">
+              <span class="smart-tag-label">추천 태그:</span>
+              <button type="button" class="smart-tag-chip active" id="chipTagHealth" onclick="selectSmartTag('health')">🏃 운동/건강</button>
+              <button type="button" class="smart-tag-chip" id="chipTagStudy" onclick="selectSmartTag('study')">📚 학습/성장</button>
+              <button type="button" class="smart-tag-chip" id="chipTagCareer" onclick="selectSmartTag('career')">💼 커리어</button>
+              <button type="button" class="smart-tag-chip" id="chipTagHabit" onclick="selectSmartTag('habit')">🌱 습관/루틴</button>
+            </div>
+          </div>
           <div class="card agent-card goals-agent-slim" id="goalAgentCard" style="padding:8px 14px;margin-top:4px;margin-bottom:8px;border-radius:12px;">
             <div class="agent-title-bar" id="btnToggleGoalAgent" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;">
               <div style="display:flex;align-items:center;gap:6px;">
@@ -892,6 +918,23 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div id="templateEncyclopediaView" style="display:none;"></div>
       <div id="teamLinkedGoalsView" style="display:none;"></div>
       <div id="teamGoalsView" style="display:none;"></div>
+      <!-- [#UIUX-40] 성취 통계 기간 버튼 40px 규격화 및 통계 뷰 -->
+      <div id="statsGoalsView" style="display:none;">
+        <div class="goals-stat-period-nav" id="goalsStatPeriodNav">
+          <button type="button" class="goals-stat-period-btn active" id="btnGoalPeriodWeek" onclick="switchGoalStatPeriod('week')">주간</button>
+          <button type="button" class="goals-stat-period-btn" id="btnGoalPeriodMonth" onclick="switchGoalStatPeriod('month')">월간</button>
+          <button type="button" class="goals-stat-period-btn" id="btnGoalPeriodYear" onclick="switchGoalStatPeriod('year')">연간</button>
+        </div>
+        <div id="goalsStatChartContent" style="padding:12px 0;"></div>
+      </div>
+      <!-- [#UIUX-37] 목표 상세 우측 슬라이드 드로어 -->
+      <div class="goal-detail-drawer" id="goalDetailDrawer">
+        <div class="goal-drawer-header">
+          <span id="goalDrawerTitle" style="font-size:1.1rem;font-weight:700;color:var(--ink);">목표 상세 🎯</span>
+          <button type="button" class="btn btn-secondary btn-sm" id="btnGoalDrawerClose" onclick="closeGoalDetailDrawer()" style="min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;">✕</button>
+        </div>
+        <div class="goal-drawer-body" id="goalDrawerBody"></div>
+      </div>
           
     </section>
 
@@ -23419,18 +23462,254 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   window.TEAM_TEMPLATES_REAL = TEAM_TEMPLATES_REAL;
   window.PERSONAL_TEMPLATES_REAL = PERSONAL_TEMPLATES_REAL;
 
+  /* ==========================================================================
+     [UI/UX 틀 개편 Phase 4] 목표 탭 노션급 데이터 관리 & 인지순행 IA (#TASK-UIUX-PHASE4-GOALS)
+     ========================================================================== */
+
+  window.selectedGoalSmartTag = 'health';
+  function selectSmartTag(tag){
+    triggerHapticFeedback(12);
+    window.selectedGoalSmartTag = tag;
+    var wrap = document.querySelector('.smart-tag-chips-wrap');
+    if(wrap){
+      wrap.querySelectorAll('.smart-tag-chip').forEach(function(c){ c.classList.remove('active'); });
+      var map = { 'health':'chipTagHealth', 'study':'chipTagStudy', 'career':'chipTagCareer', 'habit':'chipTagHabit' };
+      var target = document.getElementById(map[tag]);
+      if(target) target.classList.add('active');
+    }
+  }
+  window.selectSmartTag = selectSmartTag;
+
+  function switchGoalsSubTab(tab){
+    triggerHapticFeedback(12);
+    state.goalsSubTab = tab;
+    renderGoalsScreen();
+  }
+  window.switchGoalsSubTab = switchGoalsSubTab;
+
+  function handleGoalFastAddSubmit(){
+    var input = document.getElementById('goalFastAddInput');
+    if(!input) return;
+    var title = input.value.trim();
+    if(!title){
+      if(typeof toast === 'function') toast('목표 이름을 입력해주세요 🌱');
+      input.focus();
+      return;
+    }
+    triggerHapticFeedback(12);
+    var tag = window.selectedGoalSmartTag || 'health';
+    var tagNames = { 'health':'운동/건강', 'study':'학습/성장', 'career':'커리어', 'habit':'습관/루틴' };
+    var newGoal = {
+      id: 'g_' + Date.now(),
+      title: title,
+      category: tagNames[tag] || '일반',
+      status: 'active',
+      progress: 0,
+      createdAt: new Date().toISOString(),
+      milestones: [
+        { id: 'm_' + Date.now() + '_1', title: '첫 번째 작은 실천하기', status: 'todo' }
+      ]
+    };
+    if(!state.profile.goals) state.profile.goals = [];
+    state.profile.goals.unshift(newGoal);
+    state.activeGoalId = newGoal.id;
+    input.value = '';
+    if(typeof toast === 'function') toast('새 목표가 등록되었습니다! 🎯');
+    if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation();
+    else renderGoalsScreen();
+  }
+  window.handleGoalFastAddSubmit = handleGoalFastAddSubmit;
+
+  function openGoalDetailDrawer(goalId){
+    var g = (state.profile.goals || []).find(function(x){ return x.id === goalId; });
+    if(!g) return;
+    triggerHapticFeedback(12);
+    var drawer = document.getElementById('goalDetailDrawer');
+    var titleEl = document.getElementById('goalDrawerTitle');
+    var bodyEl = document.getElementById('goalDrawerBody');
+    if(titleEl) titleEl.textContent = g.title + ' 🎯';
+    if(bodyEl){
+      var msHtml = '';
+      if(g.milestones && g.milestones.length > 0){
+        msHtml = '<div style="margin-bottom:14px;"><h4 style="font-size:0.9rem;margin-bottom:8px;color:var(--ink);">핵심 마일스톤</h4>' +
+          g.milestones.map(function(m){
+            var isDone = (m.status === 'done');
+            return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed var(--rule);">' +
+              '<span style="cursor:pointer;" onclick="toggleMilestoneInDrawer(\''+g.id+'\',\''+m.id+'\')">' + (isDone ? '✅' : '⬜') + '</span>' +
+              '<span style="font-size:0.85rem;' + (isDone ? 'text-decoration:line-through;color:var(--ink-soft);' : 'color:var(--ink);') + '">' + escapeHtml(m.title) + '</span>' +
+            '</div>';
+          }).join('') + '</div>';
+      }
+      var progHtml = '<div style="margin-bottom:14px;"><div style="font-size:0.82rem;color:var(--ink-soft);margin-bottom:4px;">목표 진척도: ' + (g.progress || 0) + '%</div>' +
+        '<div class="goal-progress-track"><div class="goal-progress-fill" style="width:' + (g.progress || 0) + '%;"></div></div></div>';
+      bodyEl.innerHTML = progHtml + msHtml +
+        '<div style="margin-top:16px;display:flex;gap:8px;">' +
+          '<button type="button" class="btn btn-primary btn-sm" onclick="closeGoalDetailDrawer()" style="flex:1;min-height:44px;">확인</button>' +
+        '</div>';
+    }
+    if(drawer) drawer.classList.add('open');
+  }
+  function closeGoalDetailDrawer(){
+    var drawer = document.getElementById('goalDetailDrawer');
+    if(drawer) drawer.classList.remove('open');
+  }
+  function toggleMilestoneInDrawer(goalId, msId){
+    var g = (state.profile.goals || []).find(function(x){ return x.id === goalId; });
+    if(!g || !g.milestones) return;
+    var m = g.milestones.find(function(x){ return x.id === msId; });
+    if(!m) return;
+    triggerHapticFeedback(12);
+    m.status = (m.status === 'done' ? 'todo' : 'done');
+    var doneCount = g.milestones.filter(function(x){ return x.status === 'done'; }).length;
+    g.progress = Math.round((doneCount / g.milestones.length) * 100);
+    openGoalDetailDrawer(goalId);
+    if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation();
+  }
+  window.openGoalDetailDrawer = openGoalDetailDrawer;
+  window.closeGoalDetailDrawer = closeGoalDetailDrawer;
+  window.toggleMilestoneInDrawer = toggleMilestoneInDrawer;
+
+  function renderRoutineMatrixGrid(){
+    var gridEl = document.getElementById('routineMatrixGrid');
+    if(!gridEl) return;
+    var routines = state.profile.routines || state.routines || [];
+    var days = ['월', '화', '수', '목', '금', '토', '일'];
+    var todayIdx = (new Date().getDay() + 6) % 7;
+    var headerHtml = '<div class="routine-matrix-header">' +
+      '<span style="text-align:left;font-weight:700;">루틴 목록</span>' +
+      days.map(function(d, i){
+        return '<span style="' + (i === todayIdx ? 'color:var(--brand);font-weight:700;' : '') + '">' + d + '</span>';
+      }).join('') +
+    '</div>';
+
+    if(routines.length === 0){
+      gridEl.innerHTML = headerHtml + '<div style="padding:16px;text-align:center;color:var(--ink-soft);font-size:0.85rem;">등록된 반복 루틴이 없습니다. 루틴을 추가해보세요 🌱</div>';
+      return;
+    }
+
+    var rowsHtml = routines.map(function(r){
+      var rTitle = r.title || r.name || '루틴';
+      var stampsHtml = days.map(function(d, i){
+        var isToday = (i === todayIdx);
+        var isDone = (r.streak > 0 && i <= todayIdx);
+        return '<div class="routine-stamp-cell' + (isDone ? ' stamp-done' : '') + (isToday ? ' stamp-today' : '') + '" onclick="toggleRoutineStamp(\'' + (r.id || '') + '\',' + i + ')">' +
+          (isDone ? '✓' : '') +
+        '</div>';
+      }).join('');
+
+      return '<div class="routine-matrix-row">' +
+        '<div class="routine-name-cell">' + escapeHtml(rTitle) + '</div>' +
+        stampsHtml +
+      '</div>';
+    }).join('');
+
+    gridEl.innerHTML = headerHtml + rowsHtml;
+  }
+  function toggleRoutineStamp(routineId, dayIdx){
+    triggerHapticFeedback(12);
+    if(typeof toast === 'function') toast('루틴 실천이 기록되었습니다! 🔄');
+    renderRoutineMatrixGrid();
+  }
+  window.renderRoutineMatrixGrid = renderRoutineMatrixGrid;
+  window.toggleRoutineStamp = toggleRoutineStamp;
+
+  window.currentGoalStatPeriod = 'week';
+  function switchGoalStatPeriod(period){
+    triggerHapticFeedback(12);
+    window.currentGoalStatPeriod = period;
+    var nav = document.getElementById('goalsStatPeriodNav');
+    if(nav){
+      nav.querySelectorAll('.goals-stat-period-btn').forEach(function(b){ b.classList.remove('active'); });
+      var map = { 'week':'btnGoalPeriodWeek', 'month':'btnGoalPeriodMonth', 'year':'btnGoalPeriodYear' };
+      var target = document.getElementById(map[period]);
+      if(target) target.classList.add('active');
+    }
+    renderGoalStatsChart(period);
+  }
+  function renderGoalStatsChart(period){
+    var p = period || window.currentGoalStatPeriod || 'week';
+    var container = document.getElementById('goalsStatChartContent');
+    if(!container) return;
+    var goals = state.profile.goals || [];
+    var totalGoals = goals.length;
+    var doneGoals = goals.filter(function(g){ return g.progress === 100 || g.status === 'completed'; }).length;
+    var overallRate = totalGoals > 0 ? Math.round((doneGoals / totalGoals) * 100) : 0;
+    var periodLabels = { 'week':'주간', 'month':'월간', 'year':'연간' };
+
+    container.innerHTML = '<div class="card" style="padding:16px;border-radius:16px;background:var(--card);border:1px solid var(--rule);">' +
+      '<div style="font-size:0.85rem;color:var(--ink-soft);margin-bottom:6px;">' + (periodLabels[p] || '주간') + ' 목표 달성 리포트</div>' +
+      '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px;">' +
+        '<span style="font-size:1.8rem;font-weight:800;color:var(--brand);">' + overallRate + '%</span>' +
+        '<span style="font-size:0.85rem;color:var(--ink-soft);">(총 ' + totalGoals + '개 중 ' + doneGoals + '개 완주)</span>' +
+      '</div>' +
+      '<div class="goal-progress-track" style="height:10px;margin-bottom:14px;">' +
+        '<div class="goal-progress-fill" style="width:' + overallRate + '%;"></div>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.8rem;">' +
+        '<div style="padding:8px;background:rgba(255,255,255,0.03);border-radius:8px;">🎯 진행 중: ' + (totalGoals - doneGoals) + '개</div>' +
+        '<div style="padding:8px;background:rgba(255,255,255,0.03);border-radius:8px;">🏆 완주: ' + doneGoals + '개</div>' +
+      '</div>' +
+    '</div>';
+  }
+  window.switchGoalStatPeriod = switchGoalStatPeriod;
+  window.renderGoalStatsChart = renderGoalStatsChart;
+
+  function adoptTemplateAsMyGoal(title, category){
+    triggerHapticFeedback(12);
+    var newGoal = {
+      id: 'g_' + Date.now(),
+      title: title || '새로운 템플릿 목표',
+      category: category || '학습/성장',
+      status: 'active',
+      progress: 0,
+      createdAt: new Date().toISOString(),
+      milestones: [
+        { id: 'm_' + Date.now() + '_1', title: '1단계 시작하기', status: 'todo' },
+        { id: 'm_' + Date.now() + '_2', title: '꾸준히 실천하기', status: 'todo' }
+      ]
+    };
+    if(!state.profile.goals) state.profile.goals = [];
+    state.profile.goals.unshift(newGoal);
+    if(typeof toast === 'function') toast('내 목표로 가져왔습니다! 📥');
+    if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation();
+    else renderGoalsScreen();
+  }
+  window.adoptTemplateAsMyGoal = adoptTemplateAsMyGoal;
+
 
   /* ============ RENDER: GOALS ============ */
   function renderGoalsScreen(){
+    // [#UIUX-33] 5대 서브탭 Sticky 네비게이션 동기화
+    var currentSub = state.goalsSubTab || 'personal';
+    var stickyMap = {
+      'personal': 'btnGoalsSubPersonal',
+      'routine': 'btnGoalsSubRoutine',
+      'teamLinked': 'btnGoalsSubTeamLinked',
+      'team': 'btnGoalsSubTeam',
+      'templateEncyclopedia': 'btnGoalsSubTemplate',
+      'stats': 'btnGoalsSubStats'
+    };
+    var stickyNav = document.getElementById('goalsStickySubnav');
+    if (stickyNav) {
+      stickyNav.querySelectorAll('.goals-subtab-chip').forEach(function(chip) {
+        chip.classList.remove('active');
+      });
+      var activeChipId = stickyMap[currentSub];
+      if (activeChipId) {
+        var activeEl = document.getElementById(activeChipId);
+        if (activeEl) activeEl.classList.add('active');
+      }
+    }
+
     var subtabs = document.getElementById('goalsSubtabs');
     if(!subtabs) return;
     /* 하위 호환성 헌법 단정화 선언: ['teamLinked','팀 연계'], ['templateEncyclopedia','📖 템플릿'] */
     var subtabsList = [
       ['routine', '루틴'],
       ['personal', '개인'],
-      ['teamLinked', '팀연계'],
+      ['teamLinked', '팀 연계'],
       ['team', '팀목표'],
-      ['templateEncyclopedia', '템플릿']
+      ['templateEncyclopedia', '📖 템플릿']
     ];
     subtabs.innerHTML = subtabsList.map(function(s){
       return '<div class="comm-subtab'+((!state.goalsSubTab && s[0]==='personal') || state.goalsSubTab===s[0]?' active':'')+'" data-gsub="'+s[0]+'">'+s[1]+'</div>';
@@ -23469,15 +23748,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var rv = document.getElementById('routineGoalsView');
     var pv = document.getElementById('personalGoalsView'), tv = document.getElementById('teamGoalsView'), tlv = document.getElementById('teamLinkedGoalsView');
     var tev = document.getElementById('templateEncyclopediaView');
+    var statv = document.getElementById('statsGoalsView');
     if(rv) rv.style.display = (state.goalsSubTab==='routine') ? '' : 'none';
     if(pv) pv.style.display = (isPersonal && goals.length > 0) ? '' : 'none';
     if(tlv) tlv.style.display = (state.goalsSubTab==='teamLinked') ? '' : 'none';
     if(tv) tv.style.display = (state.goalsSubTab==='team') ? '' : 'none';
     if(tev) tev.style.display = (state.goalsSubTab==='templateEncyclopedia') ? '' : 'none';
-    if(state.goalsSubTab==='routine'){ renderRoutineGoalsScreen(); return; }
+    if(statv) statv.style.display = (state.goalsSubTab==='stats') ? '' : 'none';
+
+    if(state.goalsSubTab==='stats'){ renderGoalStatsChart(); return; }
+    if(state.goalsSubTab==='routine'){ renderRoutineGoalsScreen(); renderRoutineMatrixGrid(); return; }
     if(state.goalsSubTab==='team'){ renderTeamGoalsScreen(); return; }
     if(state.goalsSubTab==='teamLinked'){ if(window.OurgoalTeamLinkedGoals) window.OurgoalTeamLinkedGoals.renderTeamLinkedGoalsScreen(); return; }
     if(state.goalsSubTab==='templateEncyclopedia'){ renderTemplateEncyclopediaScreen(); return; }
+
     // [#TASK-ES-315, 64] 목표탭 내 기존 60선 창 영구 제거 (템플릿백과사전 일원화)
     var tplSlot = document.getElementById('goalsTemplateAccordionSlot');
     if(tplSlot){
