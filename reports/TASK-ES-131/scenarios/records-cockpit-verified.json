@@ -1,0 +1,17 @@
+{
+  "id": "records-cockpit-verified",
+  "title": "게스트 진입 후 기록 탭(#screen-records) 이동 시 3대 클린 스위처가 정상 표시되고 중복 스톱워치 및 토글이 은폐된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "do": "waitFor", "selector": "#screen-records" },
+    { "do": "wait", "ms": 500 },
+    { "expect": "notVisible", "selector": "#quickStopwatchBar" },
+    { "expect": "notVisible", "selector": "#recCalFuseSwitcher" },
+    { "expect": "visible", "selector": ".s-rec-modes-wrap" },
+    { "capture": "records-cockpit-verified" }
+  ]
+}

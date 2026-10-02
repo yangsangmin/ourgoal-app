@@ -16357,3 +16357,41 @@ html, body,
   user-select: none !important;
   touch-action: manipulation !important;
 }
+
+/* [#TASK-ES-131] 기록 탭 스톱워치·히트맵·타임라인 3중 분산 해소 및 단일 콕핏 아키텍처 */
+#screen-records #quickStopwatchBar,
+#screen-records #recCalFuseSwitcher,
+#screen-records #recHeroCard,
+#screen-records #og-task-24-container,
+#sHeatmapTimerCockpitBtn {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+/* 기간 필터 칩 40px+ 높이 및 13px+ 폰트 규격화 (31개 터치타깃 및 57개 미세폰트 원천 해소) */
+.s-segment-pills {
+  display: flex !important;
+  gap: 8px !important;
+  margin: 12px 0 !important;
+  flex-wrap: nowrap !important;
+}
+
+.s-segment-pills .s-seg-pill,
+.s-seg-pill {
+  min-height: 40px !important;
+  height: 40px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  padding: 8px 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 10px !important;
+  box-sizing: border-box !important;
+}
