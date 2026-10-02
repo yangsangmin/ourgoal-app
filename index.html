@@ -9358,7 +9358,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         }
       }
       var lastEmail = localStorage.getItem('ourgoal_gcal_email_last');
-      var lastTok = localStorage.getItem('ourgoal_gcal_token_v1_' + uid) || localStorage.getItem('ourgoal_gcal_token_v1_last');
+      var lastTok = localStorage.getItem('ourgoal_gcal_token_v1_' + uid) || localStorage.getItem('ourgoal_gcal_token_v1_last') || localStorage.getItem('ourgoal_google_token');
       if(lastEmail || lastTok){
         if(state.profile && state.profile.settings){
           state.profile.settings.googleCalendarConnected = true;
@@ -9368,7 +9368,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
     } catch(e){}
     if(!state.googleToken && typeof restoreGoogleToken === 'function') restoreGoogleToken();
-    if(state.googleToken && state.googleToken.expiresAt > Date.now()) return true;
+    if(state.googleToken) {
+      if(state.profile && state.profile.settings) state.profile.settings.googleCalendarConnected = true;
+      return true;
+    }
     return false;
   }
   async function tryConnectGoogleCalendar(){
@@ -9576,19 +9579,22 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           }
         }
       }
-      if(!raw) return null;
+      if(!raw) return state.googleToken || null;
       var parsed = JSON.parse(raw);
       if(parsed && parsed.accessToken){
-        if(parsed.expiresAt > Date.now()){
-          state.googleToken = parsed;
-          return parsed;
-        } else {
+        state.googleToken = parsed;
+        if(parsed.expiresAt <= Date.now()){
           parsed.isExpired = true;
           state._lastExpiredGoogleToken = parsed;
         }
+        if(parsed.email && state.profile && state.profile.settings){
+          state.profile.settings.googleCalendarConnected = true;
+          if(!state.profile.settings.googleCalendarEmail) state.profile.settings.googleCalendarEmail = parsed.email;
+        }
+        return parsed;
       }
     } catch(e){}
-    return null;
+    return state.googleToken || null;
   }
   if(typeof window !== 'undefined'){
     window.saveGoogleToken = saveGoogleToken;
@@ -39500,6 +39506,12 @@ wirePromptEncyclopediaEvents(body);
         if(p.settings){
           p.settings.googleCalendarConnected = true;
           if(gEmailToSet) p.settings.googleCalendarEmail = gEmailToSet;
+        }
+      } else if(typeof restoreGoogleToken === 'function') {
+        var restoredTok = restoreGoogleToken();
+        if(restoredTok && p.settings){
+          p.settings.googleCalendarConnected = true;
+          if(restoredTok.email && !p.settings.googleCalendarEmail) p.settings.googleCalendarEmail = restoredTok.email;
         }
       }
       // 3.5. 게스트 세션 데이터 새 계정으로 자동 마이그레이션 (#TASK-ES-224)

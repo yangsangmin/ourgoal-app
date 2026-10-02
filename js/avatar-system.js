@@ -5536,18 +5536,15 @@
     if (customUrl && customUrl.length > 5) {
       innerFrameHtml = '<div class="custom-avatar-frame avatar-inner-box" style="width:' + size + 'px;height:' + size + 'px;border-radius:' + boxRadius + ';overflow:hidden;border:' + borderW + ' solid ' + rankTheme.mainColor + ';position:relative;background:#fff;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 0 10px ' + rankTheme.glow + ';box-sizing:border-box;">' +
         '<img src="' + customUrl + '" alt="아바타" style="width:100%;height:100%;object-fit:cover;display:block;">' +
-        '<span class="avatar-lv-pill" style="position:absolute;bottom:0;right:0;background:' + rankTheme.badgeGradient + ';color:#fff;font-size:' + (compact ? '8px' : '9.5px') + ';padding:0 ' + (compact ? '3px' : '5px') + ';border-radius:4px 0 0 0;font-weight:800;letter-spacing:-0.2px;line-height:1.2;box-shadow:0 -1px 3px rgba(0,0,0,0.3);">' + pillContent + '</span>' +
       '</div>';
     } else if (userAvatar && userAvatar !== 'robot') {
       var emojiSize = Math.round(size * 0.52);
       innerFrameHtml = '<div class="persona-avatar-frame avatar-inner-box" style="width:' + size + 'px;height:' + size + 'px;border-radius:' + boxRadius + ';overflow:hidden;background:var(--surface-2, #1e293b);border:' + borderW + ' solid ' + rankTheme.mainColor + ';display:flex;align-items:center;justify-content:center;position:relative;z-index:2;box-shadow:0 0 10px ' + rankTheme.glow + ';box-sizing:border-box;user-select:none;">' +
         '<span style="font-size:' + emojiSize + 'px;line-height:1;display:inline-block;transform:translateY(1px);">' + userAvatar + '</span>' +
-        '<span class="avatar-lv-pill" style="position:absolute;bottom:0;right:0;background:' + rankTheme.badgeGradient + ';color:#fff;font-size:' + (compact ? '8px' : '9.5px') + ';padding:0 ' + (compact ? '3px' : '5px') + ';border-radius:4px 0 0 0;font-weight:800;letter-spacing:-0.2px;line-height:1.2;box-shadow:0 -1px 3px rgba(0,0,0,0.3);">' + pillContent + '</span>' +
       '</div>';
     } else {
       innerFrameHtml = '<div class="robot-avatar-frame avatar-inner-box" style="width:' + size + 'px;height:' + size + 'px;border-radius:' + boxRadius + ';overflow:hidden;background:var(--surface-2);border:' + borderW + ' solid ' + rankTheme.mainColor + ';display:flex;align-items:center;justify-content:center;position:relative;z-index:2;box-shadow:0 0 10px ' + rankTheme.glow + ';box-sizing:border-box;">' +
         getRobotAvatarSvg(level, size) +
-        '<span class="avatar-lv-pill" style="position:absolute;bottom:0;right:0;background:' + rankTheme.badgeGradient + ';color:#fff;font-size:' + (compact ? '8px' : '9.5px') + ';padding:0 ' + (compact ? '3px' : '5px') + ';border-radius:4px 0 0 0;font-weight:800;letter-spacing:-0.2px;line-height:1.2;box-shadow:0 -1px 3px rgba(0,0,0,0.3);">' + pillContent + '</span>' +
       '</div>';
     }
 
