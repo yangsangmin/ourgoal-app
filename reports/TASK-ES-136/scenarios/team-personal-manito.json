@@ -1,0 +1,19 @@
+{
+  "id": "team-personal-manito",
+  "title": "게스트 진입 후 목표 탭의 팀 서브탭에서 팀 연계 개인목표 퀵 액션 바가 노출되고 직통 버튼이 가시화된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#screen-home" },
+    { "do": "wait", "ms": 500 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "do": "waitFor", "selector": "#screen-goals" },
+    { "do": "wait", "ms": 500 },
+    { "do": "click", "selector": "#btnGoalsSubTeam" },
+    { "do": "waitFor", "selector": "#teamLinkedGoalQuickBar" },
+    { "expect": "visible", "selector": "#teamLinkedGoalQuickBar" },
+    { "expect": "visible", "selector": "#btnQuickCreateTeamLinkedGoal" },
+    { "capture": "team-personal-manito" }
+  ]
+}
