@@ -1,0 +1,104 @@
+{
+  "task": "TASK-ES-140",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-140-UIUX-ALL-REMAINING.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "아바타 창 내부의 레벨 뱃지를 완전 제거하여 캐릭터/아바타가 가려지지 않고 온전히 보이도록 한다."
+    },
+    {
+      "id": "R2",
+      "text": "목표 탭 상단 배너의 양 끝 짤림 및 스크롤 시 텍스트 비침을 방지하고 상하 스크롤을 복원한다."
+    },
+    {
+      "id": "R3",
+      "text": "개인목표창의 상하 여백과 틈 공백을 50% 슬림화한다."
+    },
+    {
+      "id": "R4",
+      "text": "일정 탭 월간달력 7열 그리드의 짤림을 복구하고 구글 캘린더 세션을 영구 비휘발화한다."
+    },
+    {
+      "id": "R5",
+      "text": "기록/통계 탭의 상하 스크롤 락을 해제하고, 소통 탭 피드 카드 고대비 시인성 강화 및 상단 배너를 화면 정중앙에 가운데 정렬한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 내에 아바타 레벨 뱃지 은폐 방화벽이 규정되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".avatar-lv-pill"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 내에 목표 탭 상단 배너 양 끝 짤림 방지 및 불투명 배경이 적용되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".goals-sticky-subnav"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 내에 개인목표창 슬림화 스타일이 적용되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".toss-quest-board"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 및 index.html 내에 캘린더 7열 minmax 그리드 및 구글 세션 복원 로직이 배선되어 있다",
+      "touches": [
+        "ui.css",
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "repeat(7, minmax(0, 1fr))"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 내에 소통 탭 상단 배너 정중앙 가운데 정렬 및 기록 스크롤 락 해제 스타일이 적용되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#commFloatingReactionDock"
+      }
+    }
+  ]
+}
