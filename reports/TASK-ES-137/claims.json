@@ -1,0 +1,63 @@
+{
+  "task": "TASK-ES-137",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-137-RADAR-PREVIEW-WEEKLY-RECAP.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "신규 유저(0~2건) 진입 시 3일 뒤 완성될 나의 6각 성장 차트 인포그래픽 미리보기가 전면에 노출되고 44px 규격의 직통 실천 기록 버튼이 배치됨을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "위클리 리캡 액션 버튼이 44px 모바일 터치 규격 및 manipulation 터치 액션을 준수하고 원클릭 모달 오픈 및 소통 피드 공유 파이프라인이 확립됨을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "게스트 진입 후 기록 탭에서 3일 실천 레이더 차트 미리보기 카드와 위클리 리캡 버튼이 정상 노출되고 390px 모바일 뷰포트 너비 안정성이 준수됨을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 내에 3일 실천 레이더 차트 직통 기록 버튼 스타일이 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".btn-coldstart-record"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 내에 위클리 리캡 액션 버튼 44px 터치 규격 스타일이 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".weekly-recap-action-btn"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "게스트 진입 후 기록 탭에서 3일 실천 레이더 차트 미리보기와 위클리 리캡 버튼이 가시화된다",
+      "touches": [
+        "index.html",
+        "ui.css"
+      ],
+      "scenario": "scenarios/radar-preview-weekly-recap.json"
+    }
+  ]
+}
