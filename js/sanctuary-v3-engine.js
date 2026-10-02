@@ -153,6 +153,52 @@
     // 1-2. 마운틴 트레일 카드 조형
     var trailHtml = '';
     if (!activeGoal) {
+      var templateHeroHtml = '<div class="card goal-template-hero-card" id="goalTemplateHeroCard" style="margin-top:16px;text-align:left;background:var(--card);border:1.5px solid var(--brand-line, var(--rule));border-radius:16px;padding:16px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<span style="font-size:1.3rem;">📖</span>' +
+            '<h3 style="margin:0;font-size:1.05rem;font-weight:800;color:var(--ink);">추천 목표 템플릿 백과사전</h3>' +
+          '</div>' +
+          '<span class="dday-pill" style="background:var(--brand-soft);color:var(--brand-strong);font-weight:700;font-size:12px;">1초 자동 이식</span>' +
+        '</div>' +
+        '<p class="faint" style="font-size:13px;line-height:1.4;margin:0 0 12px;color:var(--ink-soft);">' +
+          '무엇부터 시작할지 고민되시나요? 검증된 인기 로드맵을 1클릭으로 바로 내 목표에 담아보세요!' +
+        '</p>' +
+        '<div class="template-quick-adopt-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">' +
+          '<div class="template-quick-card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;">' +
+            '<div style="display:flex;align-items:center;gap:8px;min-width:0;">' +
+              '<span style="font-size:1.15rem;">🏃</span>' +
+              '<div style="min-width:0;">' +
+                '<div style="font-size:13.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">10km 마라톤 완주 로드맵</div>' +
+                '<div class="faint" style="font-size:12px;color:var(--ink-soft);">운동/건강 · 4단계 마일스톤</div>' +
+              '</div>' +
+            '</div>' +
+            '<button type="button" class="btn btn-primary btn-sm btn-quick-adopt-goal" onclick="adoptTemplateAsMyGoal(\'10km 마라톤 완주 로드맵\', \'운동/건강\')" style="min-height:44px;padding:0 12px;font-size:12.5px;font-weight:700;border-radius:8px;flex-shrink:0;">+ 담기</button>' +
+          '</div>' +
+          '<div class="template-quick-card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;">' +
+            '<div style="display:flex;align-items:center;gap:8px;min-width:0;">' +
+              '<span style="font-size:1.15rem;">📚</span>' +
+              '<div style="min-width:0;">' +
+                '<div style="font-size:13.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">정보처리기사 실기 합격</div>' +
+                '<div class="faint" style="font-size:12px;color:var(--ink-soft);">학습/성장 · 4단계 마일스톤</div>' +
+              '</div>' +
+            '</div>' +
+            '<button type="button" class="btn btn-primary btn-sm btn-quick-adopt-goal" onclick="adoptTemplateAsMyGoal(\'정보처리기사 실기 합격\', \'학습/성장\')" style="min-height:44px;padding:0 12px;font-size:12.5px;font-weight:700;border-radius:8px;flex-shrink:0;">+ 담기</button>' +
+          '</div>' +
+          '<div class="template-quick-card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;">' +
+            '<div style="display:flex;align-items:center;gap:8px;min-width:0;">' +
+              '<span style="font-size:1.15rem;">🌱</span>' +
+              '<div style="min-width:0;">' +
+                '<div style="font-size:13.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">미라클 모닝 30일 루틴</div>' +
+                '<div class="faint" style="font-size:12px;color:var(--ink-soft);">습관/루틴 · 3단계 마일스톤</div>' +
+              '</div>' +
+            '</div>' +
+            '<button type="button" class="btn btn-primary btn-sm btn-quick-adopt-goal" onclick="adoptTemplateAsMyGoal(\'미라클 모닝 30일 루틴\', \'습관/루틴\')" style="min-height:44px;padding:0 12px;font-size:12.5px;font-weight:700;border-radius:8px;flex-shrink:0;">+ 담기</button>' +
+          '</div>' +
+        '</div>' +
+        '<button type="button" class="btn btn-ghost" id="btnOpenFullTemplateEncyclopedia" onclick="switchGoalsSubTab(\'templateEncyclopedia\')" style="width:100%;min-height:44px;font-size:13px;font-weight:700;border:1px solid var(--rule);border-radius:10px;background:var(--card2);">📖 템플릿 백과사전 전체 둘러보기 (60선)</button>' +
+      '</div>';
+
       trailHtml = '<div class="mountain-trail-card empty-card" style="margin:16px 0;border-radius:20px;border:1px dashed var(--rule);background:var(--card);">' +
         '<div style="text-align:center;padding:50px 24px;color:var(--ink-sub);">' +
           '<div style="font-size:3rem;margin-bottom:14px;">🏔️</div>' +
@@ -160,7 +206,7 @@
           '<p style="font-size:0.9rem;margin-bottom:24px;color:var(--ink-soft);line-height:1.5;">나만의 첫 목표를 만들고 등반을 시작해보세요.</p>' +
           '<button class="btn btn-primary btn-empty-add-goal" id="sAddGoalBtn" type="button" onclick="if(window.promptNewGoal) window.promptNewGoal(); else if(typeof promptNewGoal === \'function\') promptNewGoal();" style="padding:10px 24px;font-size:0.95rem;font-weight:700;border-radius:12px;background:var(--brand);color:#fff;border:none;box-shadow:0 4px 12px rgba(225,29,72,0.25);cursor:pointer;">+ 새 목표 만들기</button>' +
         '</div>' +
-      '</div>';
+      '</div>' + templateHeroHtml;
     } else {
       var msList = activeGoal.milestones || [];
       var totalMs = msList.length;

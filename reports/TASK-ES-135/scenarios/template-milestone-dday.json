@@ -1,0 +1,17 @@
+{
+  "id": "template-milestone-dday",
+  "title": "게스트 진입 후 목표 탭에서 추천 템플릿 백과사전 카드가 노출되고 빠른 담기 버튼이 가시화된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#screen-home" },
+    { "do": "wait", "ms": 500 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "do": "waitFor", "selector": "#screen-goals" },
+    { "do": "wait", "ms": 500 },
+    { "expect": "visible", "selector": "#goalTemplateHeroCard" },
+    { "expect": "visible", "selector": ".btn-quick-adopt-goal" },
+    { "capture": "template-milestone-dday" }
+  ]
+}

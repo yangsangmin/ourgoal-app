@@ -1,0 +1,63 @@
+{
+  "task": "TASK-ES-135",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-135-TEMPLATE-MILESTONE-DDAY.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "목표 탭 빈 화면 및 상단에 추천 목표 템플릿 백과사전 카드가 배치되고 1클릭 자동 이식 연동이 확립됨을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "마일스톤 헤더에 D-day 뱃지가 계산되어 표출되고 일정 설정 버튼을 통해 캘린더와 1초 동기화됨을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "게스트 진입 후 목표 탭에서 추천 템플릿 카드가 정상 노출되고 44px 터치 규격 및 모바일 뷰포트 너비 안정성이 준수됨을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 내에 템플릿 백과사전 히어로 카드 스타일이 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".goal-template-hero-card"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 내에 마일스톤 D-day 뱃지 및 일정 설정 버튼 스타일이 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".milestone-dday-badge"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "게스트 진입 후 목표 탭에서 추천 템플릿 백과사전 카드가 노출되고 빠른 담기 버튼이 가시화된다",
+      "touches": [
+        "index.html",
+        "js/sanctuary-v3-engine.js"
+      ],
+      "scenario": "scenarios/template-milestone-dday.json"
+    }
+  ]
+}
