@@ -5568,3 +5568,37 @@
   - 실측 캡처: `step3_es136_team_manito_verified.png`
 - **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
 ---
+
+## [2026-10-02 18:00] #TASK-ES-137: 신규 유저 3일 실천 레이더 차트 미리보기 & 위클리 리캡 카드 원클릭 생성/공유 UX 복원
+- **과제 티켓**: `#TASK-ES-137` (노션 DB [137], 정체 [103], #TASK-ES-336 결합)
+- **목표**:
+  - 신규 유저(기록 0~2건) 진입 시 3일 뒤 완성될 나의 6각 성장 차트 인포그래픽 미리보기를 피드 상단 및 밸런스 슬라이드에 전면 노출.
+  - 레이더 차트 카드 내 44px 모바일 터치 규격의 직통 실천 기록 버튼(`#btnColdstartCreateRecord`) 배치 및 실천 기록 모달/체크인 연결.
+  - 위클리 리캡 액션 버튼(`#btnOpenWeeklyRecap`, `#weeklyRecapBtn`) 44px 모바일 터치 규격 확립 및 1줄 콤팩트 독 바(`#recQuickDockBar`) 배치.
+  - 위클리 리캡 모달 내 소통 피드 직통 전환(`#btnRecapFeedGo`) 및 캔버스 공유(`#btnRecapOpenCanvas`) 44px 터치 규격화.
+- **수정/구현 내역**:
+  - `ui.css`:
+    - `.btn-coldstart-record`: min-height 44px, touch-action manipulation, font-weight 700, 브랜드 배경색.
+    - `.weekly-recap-action-btn`: min-height 44px, touch-action manipulation, font-weight 700.
+  - `index.html`:
+    - `recQuickDockBar`: `#btnOpenWeeklyRecap` 배치 및 44px 터치 버튼 배선.
+    - `recViewFeed`: 최상단 슬롯 `#recFeedColdstartRadarSlot` 신설.
+    - `renderLifeBalanceWheel`: 기록 0~2건일 때 피드 최상단 및 밸런스 슬라이드에 `#coldstartRadarPreviewCard` 동시 렌더링, `#btnColdstartCreateRecord` 클릭 시 실천 기록 모달/체크인 직결.
+    - `openWeeklyRecapModal`: 리캡 생성 카드에서 `#btnRecapFeedGo` (min-height: 44px) 및 `#btnRecapOpenCanvas` (min-height: 44px) 배선 완결.
+  - `docs/rules/TICKETS.md`: `#TASK-ES-136` 완료 및 `#TASK-ES-137` 승인 티켓 등재.
+  - `docs/specs/REQ-TASK-ES-137-RADAR-PREVIEW-WEEKLY-RECAP.md`, `docs/specs/PLAN-TASK-ES-137-RADAR-PREVIEW-WEEKLY-RECAP.md`: 8원칙 엔지니어링 스펙 완비.
+  - `reports/TASK-ES-137/`: claims.json, scenarios, pr-body, markdown report 완비.
+- **검증 결과**:
+  - `npm test`: 스모크 440개 통과 (0 failed), 무결성 38개 ALL PASS, Zero Dead-Click 948개 전원 통과, 조선소 모듈러 5/5 전수 통과.
+  - Headless Chrome CDP 390px 실측:
+    - `radarCardFound`: true (356px x 466.78px 정상 노출)
+    - `coldstartBtnRect`: 322px x 44px (>= 44px 모바일 터치 규격 100% 준수)
+    - `topRecapBtnRect`: 111.88px x 44px (>= 44px 모바일 터치 규격 100% 준수)
+    - `modalOpened`: true (위클리 리캡 바텀시트 모달 정상 오픈)
+    - `feedBtnRect`: 245.92px x 44px (>= 44px 모바일 터치 규격 100% 준수)
+    - `canvasBtnRect`: 94.08px x 44px (>= 44px 모바일 터치 규격 100% 준수)
+    - `docScrollWidth`: 390px (가로 스크롤 누수 제로).
+  - 실측 캡처: `step3_es137_radar_recap_verified.png`
+- **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
+---
+

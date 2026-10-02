@@ -1,0 +1,19 @@
+{
+  "id": "radar-preview-weekly-recap",
+  "title": "게스트 진입 후 기록 탭에서 3일 실천 레이더 차트 미리보기와 위클리 리캡 버튼이 가시화된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#screen-home" },
+    { "do": "wait", "ms": 500 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "do": "waitFor", "selector": "#screen-records" },
+    { "do": "wait", "ms": 500 },
+    { "do": "waitFor", "selector": "#coldstartRadarPreviewCard" },
+    { "expect": "visible", "selector": "#coldstartRadarPreviewCard" },
+    { "expect": "visible", "selector": "#btnColdstartCreateRecord" },
+    { "expect": "visible", "selector": "#btnOpenWeeklyRecap" },
+    { "capture": "radar-preview-weekly-recap" }
+  ]
+}

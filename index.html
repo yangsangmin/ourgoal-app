@@ -986,7 +986,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <span class="privacy-badge" id="recPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-          <button class="btn btn-outline btn-sm" id="btnOpenWeeklyRecap" type="button" onclick="if(typeof openWeeklyRecapModal==='function')openWeeklyRecapModal();" style="font-size:12px;font-weight:700;padding:6px 10px;border-radius:10px;display:inline-flex;align-items:center;gap:4px;" title="이번 주 나의 실천 리캡 요약 카드를 확인합니다">🐾 이번 주 리캡</button>
           <button class="btn btn-primary btn-sm" id="btnOpenTimeTracker" type="button" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();" style="display:none !important;" title="전체화면 스톱워치/타이머로 지금부터 시간을 측정하고 기록합니다">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
             <span>⏱️ 지금부터 시간기록</span>
@@ -1066,11 +1065,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div class="rec-view" id="recViewFeed">
         <!-- [2단계 개편: 1줄 콤팩트 퀵 액션 독] -->
         <div class="rec-quick-dock-bar" id="recQuickDockBar" style="display:flex;align-items:center;gap:6px;overflow-x:auto;padding:2px 2px 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-bottom:4px;">
+          <button type="button" class="btn btn-outline btn-sm weekly-recap-action-btn" id="btnOpenWeeklyRecap" onclick="if(typeof openWeeklyRecapModal==='function')openWeeklyRecapModal();" title="이번 주 나의 실천 리캡 요약 카드를 확인합니다" style="border-radius:20px;font-size:0.75rem;padding:5px 12px;white-space:nowrap;background:var(--card2);border:1px solid var(--line);font-weight:700;">🐾 이번 주 리캡</button>
           <button type="button" class="btn btn-ghost btn-sm" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();" style="border-radius:20px;font-size:0.75rem;padding:5px 12px;white-space:nowrap;background:var(--card2);border:1px solid var(--line);font-weight:600;">⏱️ 시간기록</button>
           <button type="button" class="btn btn-ghost btn-sm" onclick="var el=document.getElementById('recAgentCard'); if(el){ el.style.display=(el.style.display==='none'?'block':'none'); if(el.style.display==='block'){ var inp=document.getElementById('recAgentInput'); if(inp) inp.focus(); } }" style="border-radius:20px;font-size:0.75rem;padding:5px 12px;white-space:nowrap;background:var(--card2);border:1px solid var(--line);font-weight:600;">✍️ 빠른 기록</button>
           <button type="button" class="btn btn-ghost btn-sm" onclick="var el=document.getElementById('recProTemplateCard'); if(el) el.style.display=(el.style.display==='none'?'block':'none');" style="border-radius:20px;font-size:0.75rem;padding:5px 12px;white-space:nowrap;background:var(--card2);border:1px solid var(--line);font-weight:600;">📋 템플릿</button>
           <button type="button" class="btn btn-ghost btn-sm" onclick="var el=document.getElementById('recUniversalTopBanner'); if(el){ el.style.display=(el.style.display==='none'?'block':'none'); el.open=true; }" style="border-radius:20px;font-size:0.75rem;padding:5px 12px;white-space:nowrap;background:var(--card2);border:1px solid var(--line);font-weight:600;">📥 데이터/샘플</button>
         </div>
+
+        <!-- [TASK-ES-137] 신규 유저 3일 실천 레이더 차트 전면 프리뷰 슬롯 -->
+        <div id="recFeedColdstartRadarSlot" style="margin-bottom:12px;"></div>
 
         <!-- [지금부터 시간기록] 컴팩트 액션 카드 (#TASK-ES-172, [47]) -->
         <div class="card" id="recTimeTrackerActionCard" style="display:none;background:linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(59,130,246,0.12) 100%);border:1px solid rgba(16,185,129,0.3);border-radius:10px;padding:8px 12px;margin-bottom:8px;cursor:pointer;" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();">
@@ -1222,7 +1225,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <!-- 공통 위클리 리캡 카드 (주간추이/밸런스/히트맵/AI리포트 하단 상시 노출) -->
         <div class="card list-card" style="margin-top:10px;margin-bottom:14px;" id="commonWeeklyRecapCard">
           <div><b class="list-card-title">이번 주 위클리 리캡</b><div class="faint">이번 주 기록을 카드 한 장으로 모아봐요</div></div>
-          <button class="btn btn-ghost btn-sm" id="weeklyRecapBtn" type="button">만들기</button>
+          <button class="btn btn-ghost btn-sm weekly-recap-action-btn" id="weeklyRecapBtn" type="button">만들기</button>
         </div>
 
         <div class="card" id="periodAiCard">
@@ -28358,10 +28361,10 @@ wirePromptEncyclopediaEvents(body);
 
   function renderLifeBalanceWheel(allRecs){
     var box = document.getElementById('lifeBalanceBox');
-    if(!box) return;
+    var feedSlot = document.getElementById('recFeedColdstartRadarSlot');
     allRecs = allRecs || [];
 
-    // [TASK-ES-233] 콜드스타트 (기록 0~2개): 3일 실천 완성 레이더 차트 미리보기 인포그래픽 노출
+    // [TASK-ES-137] 콜드스타트 (기록 0~2개): 피드 상단 및 밸런스 슬라이드에 3일 실천 완성 레이더 차트 미리보기 인포그래픽 노출
     if(allRecs.length < 3){
       var count = allRecs.length;
       var guideText = count === 0
@@ -28371,8 +28374,8 @@ wirePromptEncyclopediaEvents(body);
           : '거의 다 왔어요! 2회 실천 달성! 1회만 더 기록하면 나만의 6각 성장 차트가 완전 개통됩니다. (+1 실천 시 66% 달성)');
       var pct = Math.round((count / 3) * 100);
 
-      box.innerHTML =
-        '<div class="balance-card coldstart-radar-preview-card" style="padding:16px;background:var(--card);border:1px solid var(--rule);border-radius:18px;margin-bottom:12px;position:relative;overflow:hidden;">' +
+      var cardHtml =
+        '<div class="balance-card coldstart-radar-preview-card" id="coldstartRadarPreviewCard" style="padding:16px;background:var(--card);border:1px solid var(--rule);border-radius:18px;margin-bottom:12px;position:relative;overflow:hidden;">' +
           '<div class="balance-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
             '<div style="font-weight:800;font-size:.9375rem;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
               '<span>💡</span><span>3일 뒤 완성될 나의 6각 성장 차트</span>' +
@@ -28383,12 +28386,55 @@ wirePromptEncyclopediaEvents(body);
           '<div class="coldstart-radar-svg-wrap" style="text-align:center;padding:4px 0;">' +
             renderColdstartRadarPreviewSvg(count) +
           '</div>' +
-          '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding:10px 12px;background:var(--surface-2);border-radius:12px;font-size:.75rem;">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;margin-bottom:12px;padding:10px 12px;background:var(--surface-2);border-radius:12px;font-size:.75rem;">' +
             '<span style="color:var(--ink);font-weight:700;">실천 로드맵: <b>' + count + ' / 3회 달성</b></span>' +
             '<span style="color:var(--brand-strong);font-weight:800;">' + pct + '% 진행 중</span>' +
           '</div>' +
+          '<button class="btn-coldstart-record" id="btnColdstartCreateRecord" type="button">' +
+            '✍️ 오늘 첫 실천 기록하기 (+10 EXP)' +
+          '</button>' +
         '</div>';
+
+      if(feedSlot){
+        feedSlot.innerHTML = cardHtml;
+        feedSlot.style.display = 'block';
+        var feedBtn = feedSlot.querySelector('#btnColdstartCreateRecord');
+        if(feedBtn){
+          feedBtn.addEventListener('click', function(){
+            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+            if(typeof openRecordModal === 'function'){
+              openRecordModal();
+            } else if(typeof switchTab === 'function'){
+              switchTab('home');
+              var inp = document.getElementById('checkinInput');
+              if(inp){ inp.focus(); inp.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+            }
+          });
+        }
+      }
+
+      if(box){
+        box.innerHTML = cardHtml.replace('id="coldstartRadarPreviewCard"', 'id="coldstartRadarPreviewCardInBox"').replace('id="btnColdstartCreateRecord"', 'id="btnColdstartCreateRecordInBox"');
+        var boxBtn = box.querySelector('#btnColdstartCreateRecordInBox');
+        if(boxBtn){
+          boxBtn.addEventListener('click', function(){
+            if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+            if(typeof openRecordModal === 'function'){
+              openRecordModal();
+            } else if(typeof switchTab === 'function'){
+              switchTab('home');
+              var inp = document.getElementById('checkinInput');
+              if(inp){ inp.focus(); inp.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+            }
+          });
+        }
+      }
       return;
+    } else {
+      if(feedSlot){
+        feedSlot.innerHTML = '';
+        feedSlot.style.display = 'none';
+      }
     }
     var wheelData = (typeof OurgoalRecordsStats !== 'undefined')
       ? OurgoalRecordsStats.renderLifeBalancePieSvg(allRecs, RECORD_THEMES)
@@ -33097,6 +33143,13 @@ wirePromptEncyclopediaEvents(body);
     document.querySelectorAll('#recCarouselPills [data-recslide]').forEach(function(btn){
       btn.onclick = function(){ setRecordsSlide(parseInt(btn.dataset.recslide, 10)); };
     });
+    var curSlide = (state && typeof state.recordsSlide === 'number') ? state.recordsSlide : 0;
+    if(allRecs.length < 3 && (!state.recordsSlideInit || state.recordsSlide === 0)){
+      curSlide = 1;
+      state.recordsSlide = 1;
+      state.recordsSlideInit = true;
+    }
+    setRecordsSlide(curSlide);
 
     // 캐러셀 스와이프 제스처 지원 (모바일 PWA 터치 최적화)
     var vport = document.getElementById('recCarouselViewport');
@@ -33683,10 +33736,10 @@ wirePromptEncyclopediaEvents(body);
 
         '<!-- 하단 액션 -->' +
         '<div style="display:flex;gap:8px;">' +
-          '<button type="button" class="btn btn-primary" id="btnRecapFeedGo" style="flex:1;font-weight:700;padding:10px 14px;border-radius:12px;">' +
+          '<button type="button" class="btn btn-primary" id="btnRecapFeedGo" style="flex:1;font-weight:700;padding:10px 14px;border-radius:12px;min-height:44px;touch-action:manipulation;display:inline-flex;align-items:center;justify-content:center;">' +
             '기록 피드 보러가기' +
           '</button>' +
-          '<button type="button" class="btn btn-ghost" id="btnRecapOpenCanvas" style="font-size:.8125rem;padding:10px 12px;border-radius:12px;border:1px solid var(--rule);color:var(--ink-soft);">' +
+          '<button type="button" class="btn btn-ghost" id="btnRecapOpenCanvas" style="font-size:.8125rem;padding:10px 12px;border-radius:12px;border:1px solid var(--rule);color:var(--ink-soft);min-height:44px;touch-action:manipulation;display:inline-flex;align-items:center;justify-content:center;">' +
             '🎨 카드 공유' +
           '</button>' +
         '</div>' +
@@ -33697,7 +33750,17 @@ wirePromptEncyclopediaEvents(body);
       if(closeTop) closeTop.onclick = function(){ closeModal(); };
 
       var feedGo = sheet.querySelector('#btnRecapFeedGo');
-      if(feedGo) feedGo.onclick = function(){ closeModal(); };
+      if(feedGo){
+        feedGo.onclick = function(){
+          if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+          closeModal();
+          if(typeof setRecordsSegment === 'function'){
+            setRecordsSegment('feed');
+          } else if(typeof switchTab === 'function'){
+            switchTab('records');
+          }
+        };
+      }
 
       var bestCard = sheet.querySelector('#recapBestMomentCard');
       if(bestCard && bestMoment){
