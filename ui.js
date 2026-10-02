@@ -95,5 +95,43 @@
 
   /* [Phase 0] 전역 12ms 햅틱 촉각 손맛 유틸리티 */
   window.triggerHaptic = function (ms) { vibrate(ms || 12); };
+
+  /* 7) [Phase 1: #UIUX-15] 네트워크 상태 인디케이터 */
+  function initNetworkWatcher() {
+    function updateNet(online) {
+      var banner = d.getElementById('networkStatusBanner');
+      var msg = d.getElementById('networkStatusMsg');
+      if (!banner) return;
+      if (!online) {
+        banner.className = 'network-status-banner';
+        if (msg) msg.textContent = '📡 오프라인 모드 — 데이터가 기기에 안전하게 보관됩니다';
+        banner.style.display = 'flex';
+      } else {
+        banner.className = 'network-status-banner online-recovered';
+        if (msg) msg.textContent = '⚡ 인터넷이 연결되었습니다 (원격 동기화 완료)';
+        banner.style.display = 'flex';
+        setTimeout(function () {
+          if (banner.classList.contains('online-recovered')) banner.style.display = 'none';
+        }, 2200);
+      }
+    }
+    window.addEventListener('offline', function () { updateNet(false); });
+    window.addEventListener('online', function () { updateNet(true); });
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      updateNet(false);
+    }
+  }
+  if (d.readyState === 'loading') {
+    d.addEventListener('DOMContentLoaded', initNetworkWatcher);
+  } else {
+    initNetworkWatcher();
+  }
+
+  /* 8) [Phase 1: #UIUX-16] 중첩 아코디언 모션 부드러운 높이 토글 헬퍼 */
+  window.toggleSmoothAccordion = function (wrapEl) {
+    if (!wrapEl) return;
+    vibrate(10);
+    wrapEl.classList.toggle('open');
+  };
 })();
 
