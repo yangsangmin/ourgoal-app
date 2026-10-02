@@ -1,0 +1,68 @@
+{
+  "task": "TASK-UIUX-PHASE7-HARDWARE-HARDENING",
+  "requirementsSource": "docs/specs/REQ-TASK-UIUX-PHASE7-HARDWARE-HARDENING.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "모바일 가상 키보드 가림 방화벽(keyboard shield) 및 터치 활성 상태(:active scale) 스타일이 구현되어 있음을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "iOS 바운스 억제(overscroll-behavior) 및 테마 전환 200ms 트랜지션이 구현되어 있음을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "크롬/사파리 홈화면 추가(PWA) 3단계 카드뉴스 인앱 안내 모달 바텀시트가 구현되어 있음을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 및 index.html 내에 keyboard-shield 및 touch-active-scale 스타일과 컴포넌트가 정의되어 있다",
+      "touches": [
+        "ui.css",
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "keyboard-shield"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 및 index.html 내에 overscroll-behavior 및 theme-smooth-transition 클래스가 정의되어 있다",
+      "touches": [
+        "ui.css",
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "theme-smooth-transition"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 및 index.html 내에 modalPwaInstallGuide 및 pwa-step-card 마크업과 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css",
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "modalPwaInstallGuide"
+      }
+    }
+  ]
+}
