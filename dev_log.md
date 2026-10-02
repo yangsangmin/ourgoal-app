@@ -5286,4 +5286,17 @@
 - **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #623 원격 main 머지 및 실서버 배포)]
 ---
 
+## [2026-10-02 13:25] [#TASK-INFRA-SHIPYARD-MODULAR-HARDENING] 조선소 블록 모듈화 하드닝 (검증 마크업 소탕 및 이중 렌더링 방어)
+- **목표**: 상민님 지시("진행")에 따라 최고 헌법 제4조 제1항 제10호(운영 화면 내 검증 마크업 오염 금지)를 위반하던 index.html 내 배선 확인용 카드 UI(og-task-shipyard-p1-container) 및 핸들러(handle조선소_ItemP1Action) 90줄을 완전 소탕하고, 6대 메가블록(home, goals, calendar, records, comm, settings)에 mountedCount 기반 수밀 가드를 탑재하여 이중 렌더링 병목 차단.
+- **수정/실행 내역**:
+  - `index.html`: 더미 카드 및 핸들러 삭제 (-88줄 순감소).
+  - `js/tabs/*/index.js`: 6대 메가블록 수밀 가드 탑재 (소블록 마운트 성공 시 레거시 전체 렌더러 중복 호출 방어).
+  - `reports/TASK-INFRA-SHIPYARD-MODULAR-HARDENING/`: 법정 claims.json 및 시나리오 작성.
+  - `docs/rules/TICKETS.md`: `#TASK-INFRA-SHIPYARD-MODULAR-HARDENING` 등재.
+- **검증 결과**:
+  - `npm test`: 스모크 440개 통과, 무결성 38개 ALL PASS, 941개 전수 버튼 Zero Dead-Click 통과, 모듈러 5/5 통과.
+- **진행 단계**: [4단계: 심사 청구 (초안 PR 제출 및 법정 심사 대기)]
+---
+
+
 

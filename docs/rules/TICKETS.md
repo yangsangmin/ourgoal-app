@@ -13,6 +13,8 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 
 ## 승인 티켓 (구현 가능)
 
+- #TASK-INFRA-SHIPYARD-MODULAR-HARDENING | INFRA | [조선소 블록 모듈화 하드닝] index.html 내 검증 마크업 오염(og-task-shipyard-p1-container) 소탕(헌법 제4조 제1항 제10호 준수) 및 6대 메가블록 이중 렌더링 방어 수밀 가드 탑재 무결성 완결 | 상민님 직접 지시 (2026-10-02 "진행") | 4단계(심사 청구)
+
 - #TASK-UIUX-FRAMEWORK-SYNC | INFRA/RULES | [UI/UX 틀 개편 완결 대장 등재] 아워골 UI/UX 프레임워크 8대 실행 단계(전수 64대 과업, Phase 0~7) 전원 법정 심사 success 및 GitHub main 머지 완료 공식 등재 & 942개 버튼 Zero Dead-Click 영구 무결성 대장 동기화 | 상민님 직접 지시 (2026-10-02 "진행. 세션 작업 지침과 계획서에 따라 스모크/무결성 테스트를 완료하고, PR을 생성하여 GitHub 법정 심사를 청구하라. 멈추지 마라.") | 완료 (PR #623 머지 완료)
 
 - #TASK-UIUX-PHASE7-HARDWARE-HARDENING | INFRA/UX | [UI/UX 틀 개편 Phase 7] 모바일 하드웨어 인터랙션 & 사용성 하드닝 8대 과업 (모바일 가상 키보드 팝업 시 입력창 가림 방지 방화벽 visualViewport 연동, iOS Safari 바운스 스크롤 고정 & overscroll-behavior-y contain 제어, 모든 클릭 요소 터치 시 즉각적인 :active 시각 피드백 transform scale 0.97, 원격 Supabase 동기화/오프라인 저장 토스트 통일, 모바일 OS 시스템 폰트 확대 130% 가변 플렉스박스 대응, 크롬/사파리 홈화면 추가 PWA 카드뉴스 인앱 안내 모달 바텀시트, 다크 ↔ 라이트 테마 전환 200ms 눈부심 완화 트랜지션, 전역 Zero Dead Click 영구 유지 회귀 방화벽) | 상민님 직접 지시 (2026-10-02 "진행. PR #621을 GitHub main에 병합하고, 이어서 다음 모듈화 단계(조선소 블록 건조 7단계)를 중단 없이 계속 진행하라. 모든 탭이 완결될 때까지 멈추지 마라.") | 완료 (PR #622 머지 완료)
