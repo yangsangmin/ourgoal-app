@@ -5143,3 +5143,32 @@
 
 
 
+
+## [2026-10-02 09:09] [#TASK-UIUX-PHASE1-GLOBAL-SHELL] UI/UX 틀 개편 Phase 1 글로벌 셸 & 모바일 네비게이션 프레임워크 완결
+- **목표**: 상민님 지시("진행. 세션 작업 지침과 계획서에 따라 스모크/무결성 테스트를 완료하고, PR을 생성하여 GitHub 법정 심사를 청구하라. 멈추지 마라.")에 따라 UI/UX 마스터 로드맵 Phase 1 글로벌 셸 & 모바일 네비게이션 8대 과업 완결. 375~430px 반응형 뷰포트 고정 및 가로 스크롤 방지, Safe-Area 자동 보정, 글래스모피즘 블러 탭바 & 활성 탭 인디케이터, 탭 전환 미세 페이드 뷰 트랜지션, 탭별 독립 스크롤 메모리 복원, 52px 초슬림 헤더 & 프로필 퀵독, 오프라인/온라인 상태 인디케이터, 중첩 아코디언 모션 부드러운 높이 애니메이션 완결.
+- **수정/실행 내역**:
+  - `ui.css`:
+    - `--topbar-h: 52px;` 및 `.topbar` 52px 초슬림 고정, Safe-Area 상/하/좌/우 마진 자동 보정.
+    - `#appShell` 100dvh 밀착, `max-width: var(--maxw);` 480px 모바일 뷰포트 고정 및 가로 스크롤 차단(`overflow-x: hidden`).
+    - `.bottomnav-inner` 블러 글래스모피즘(`backdrop-filter: blur(16px);`) 및 `.navbtn.active` 20px 상단 액센트 인디케이터 바/1.06배 스케일업.
+    - `.screen` 140ms 미세 페이드 교차 뷰 트랜지션 (`opacity 0.4 -> 1`).
+    - `.network-status-banner` 상단 오프라인/온라인 슬림 상태 인디케이터 배지 스타일.
+    - `.accordion-smooth-wrap` CSS 그리드(`0fr -> 1fr`) 기반 부드러운 높이 애니메이션 클래스.
+  - `index.html`:
+    - `#networkStatusBanner` 슬림 인디케이터 배지 마크업 삽입.
+    - `setTab(tab)` 내 `window._tabScrollMemory` 연동으로 탭별 독립 스크롤 위치 저장 및 복원.
+    - `navButtons` 및 `topUserChip` 클릭 시 `window.triggerHaptic(12)` 촉각 손맛 연동.
+  - `ui.js`:
+    - `initNetworkWatcher()` 온라인/오프라인 이벤트 자동 감지 및 인디케이터 제어 엔진 배선.
+    - `window.toggleSmoothAccordion()` 전역 유틸리티 배선.
+  - `docs/rules/TICKETS.md`: `#TASK-UIUX-PHASE1-GLOBAL-SHELL` 등록 및 완료 처리.
+  - `docs/specs/REQ-TASK-UIUX-PHASE1-GLOBAL-SHELL.md`, `reports/TASK-UIUX-PHASE1-GLOBAL-SHELL/claims.json` 법정 심사 청구용 스펙 완비.
+  - GitHub Actions Court 심사 청구(PR #614) 및 `origin/main` 스쿼시 머지 완료 (`ab47301`).
+- **검증 결과**:
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `scripts/verify-all-clicks.js`: 893개 버튼 전수 Zero Dead-Click PASS.
+  - `scripts/test-shipyard-modular.js`: 5/5 전수 ALL PASS.
+  - GitHub Court 심사: `success(통과 또는 확인 부족)` 판정 획득 (판정번호 `097F1D07`).
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #614 원격 main 머지 및 실서버 배포)]
+---
