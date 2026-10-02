@@ -1,0 +1,65 @@
+{
+  "task": "TASK-UIUX-PHASE2-BOTTOMSHEET",
+  "requirementsSource": "docs/specs/REQ-TASK-UIUX-PHASE2-BOTTOMSHEET.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "공간적 영속성 바텀시트 엔진(배경 30% 보존 딤 오버레이, 24px 라운드, 최대 82vh) 및 44px 닫기 버튼 어포던스가 구현되어 있음을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "바텀시트 스와이프 다운(Swipe Down) 터치 드래그 닫기 제스처와 물리 스프링 모션(240ms)이 구현되어 있음을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "구형 중앙 팝업/얼럿/컨펌을 바텀시트 규격으로 흡수하는 openBottomSheetAlert 및 openBottomSheetConfirm 유틸리티가 배선되어 있음을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 modal-sheet-close 및 max-height:82vh 공간 영속성 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "modal-sheet-close"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.js 내에 바텀시트 스와이프 다운 닫기 제스처가 배선되어 있다",
+      "touches": [
+        "ui.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.js",
+        "text": "isSheetSwiping"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 openBottomSheetAlert 및 openBottomSheetConfirm 함수가 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "openBottomSheetAlert"
+      }
+    }
+  ]
+}
