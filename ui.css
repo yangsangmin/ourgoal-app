@@ -6309,32 +6309,50 @@ html[data-theme="urban-city"] #appShell {
 }
 
 .navbtn-fab {
-  width: 52px !important;
-  height: 52px !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
   border-radius: 50% !important;
-  background: linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05)) !important;
-  border: 1.5px solid rgba(255,255,255,0.2) !important;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
   color: #FFFFFF !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   transform: translateY(-16px) !important;
-  box-shadow: 0 10px 24px rgba(0,0,0,0.6), 0 0 16px rgba(16,185,129,0.3) !important;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5), 0 2px 8px rgba(0, 0, 0, 0.35) !important;
   cursor: pointer !important;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease !important;
   flex-shrink: 0 !important;
+  z-index: 100 !important;
 }
 
 .navbtn-fab:hover {
-  transform: translateY(-20px) scale(1.08) !important;
-  border-color: #10B981 !important;
-  box-shadow: 0 14px 30px rgba(0,0,0,0.7), 0 0 24px rgba(16,185,129,0.5) !important;
+  transform: translateY(-20px) scale(1.06) !important;
+  border-color: #A7F3D0 !important;
+  box-shadow: 0 12px 30px rgba(16, 185, 129, 0.65), 0 0 20px rgba(16, 185, 129, 0.4) !important;
+}
+
+.navbtn-fab:active {
+  transform: translateY(-13px) scale(0.95) !important;
 }
 
 .navbtn-fab svg {
   stroke: #FFFFFF !important;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)) !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)) !important;
 }
+
+@media (max-width: 375px) {
+  .navbtn-fab {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    transform: translateY(-14px) !important;
+  }
+}
+
 
 /* 🚀 HIGH-SPECIFICITY OVERRIDES FOR UNIFIED THEMES V2 */
 html[data-theme="focus-sanctuary"] .topbar,
@@ -8081,17 +8099,36 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   display: none !important;
 }
 
-/* 하단 내비게이션 바: 중앙 돌출 (+) 버튼 배제 및 5대 탭 균등 배치 */
+/* 하단 내비게이션 바: 중앙 돌출 (+) FAB 시인성 복원 및 4대 테마 조화 */
 [data-theme="focus-sanctuary"] #bottomNavFab,
-[data-theme="focus-sanctuary"] .navbtn-fab,
+[data-theme="focus-sanctuary"] .navbtn-fab {
+  display: flex !important;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5), 0 4px 12px rgba(0, 0, 0, 0.6) !important;
+}
 [data-theme="black"] #bottomNavFab,
-[data-theme="black"] .navbtn-fab,
+[data-theme="black"] .navbtn-fab {
+  display: flex !important;
+  background: linear-gradient(135deg, #10B981 0%, #047857 100%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.6), 0 4px 16px rgba(0, 0, 0, 0.9) !important;
+}
 [data-theme="white"] #bottomNavFab,
-[data-theme="white"] .navbtn-fab,
+[data-theme="white"] .navbtn-fab {
+  display: flex !important;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
+  border: 2px solid #FFFFFF !important;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4), 0 4px 12px rgba(15, 23, 42, 0.15) !important;
+}
 [data-theme="urban-city"] #bottomNavFab,
 [data-theme="urban-city"] .navbtn-fab {
-  display: none !important;
+  display: flex !important;
+  background: linear-gradient(135deg, #38BDF8 0%, #0284C7 100%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 8px 24px rgba(56, 189, 248, 0.55), 0 4px 12px rgba(11, 15, 25, 0.7) !important;
 }
+
 
 /* 소통 탭: 피드/DM/동반자/마니또 공통 성소 글래스모피즘 스타일링 및 게시하기 버튼 보존 */
 [data-theme="focus-sanctuary"] #commBody,
@@ -9063,8 +9100,9 @@ html[data-theme="urban-city"] .theme-card.active {
   padding-top: calc(8px + env(safe-area-inset-top, 0px)) !important;
   padding-bottom: calc(var(--nav-h, 64px) + env(safe-area-inset-bottom, 0px) + 48px) !important;
 }
+.screen,
 #screen-home, #screen-goals, #screen-calendar, #screen-records, #screen-comm, #screen-settings {
-  padding-bottom: 24px !important;
+  padding-bottom: max(96px, calc(var(--nav-h, 64px) + env(safe-area-inset-bottom, 24px) + 32px)) !important;
 }
 
 /* 3. 한글 타이포그래피 단어 단위 줄바꿈 전역 보정 (1글자 개행 전수 방지) */
