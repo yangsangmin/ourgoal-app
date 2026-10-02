@@ -1,0 +1,63 @@
+{
+  "task": "TASK-ES-138",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-138-PWA-GUEST-FRICTIONLESS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "설정 탭 내 PWA 홈화면 추가 안내 액션 버튼이 44px 모바일 터치 규격 및 manipulation 터치 액션을 준수함을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "PWA 가이드 모달 내 OS 탭 전환 버튼이 44px 터치 높이를 만족하고 기기 UserAgent 기반 자동 분기 파이프라인이 확립됨을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "설정 탭에서 44px PWA 홈화면 추가 3초 가이드 배너를 확인하고 설치 안내 모달을 연다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 내에 PWA 홈화면 추가 액션 버튼 44px 터치 규격 스타일이 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".pwa-guide-action-btn"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 내에 PWA OS 전환 탭 버튼 44px 터치 규격 스타일이 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".btn-pwa-os-tab"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "설정 탭에서 44px PWA 홈화면 추가 3초 가이드 배너를 확인하고 설치 안내 모달을 연다",
+      "touches": [
+        "index.html",
+        "ui.css"
+      ],
+      "scenario": "scenarios/pwa-guest-frictionless.json"
+    }
+  ]
+}

@@ -5599,6 +5599,41 @@
     - `canvasBtnRect`: 94.08px x 44px (>= 44px 모바일 터치 규격 100% 준수)
     - `docScrollWidth`: 390px (가로 스크롤 누수 제로).
   - 실측 캡처: `step3_es137_radar_recap_verified.png`
+- **진행 단계**: 완료 (PR #638 머지 9cf15e0)
+---
+
+## [2026-10-02 18:15] #TASK-ES-138: 아이폰 iOS Safari 및 안드로이드 홈화면 추가 3초 가이드 고도화 & 게스트 모드 진입 시 마찰 제로화
+- **과제 티켓**: `#TASK-ES-138` (노션 DB [138], 정체 [104], #TASK-ES-249 결합)
+- **목표**:
+  - 모바일 웹 접속 유저의 홈화면 추가(PWA) 접근성 및 재방문율 극대화.
+  - 설정 탭 PWA 안내 버튼(`#btnPwaInstallGuide`) 및 모달 내 조작 버튼들 44px 모바일 터치 규격 확립.
+  - 기기 UserAgent 분석 기반 iOS Safari vs Android Chrome 3초 카드뉴스 자동 스위칭.
+  - 랜딩 화면 게스트 둘러보기 버튼 12ms 햅틱 및 0초 무마찰 진입 확립.
+- **수정/구현 내역**:
+  - `ui.css`:
+    - `.pwa-guide-action-btn`: min-height 44px, touch-action manipulation, font-weight 700, 브랜드 배경.
+    - `.btn-pwa-os-tab`: min-height 44px, touch-action manipulation, font-weight 700.
+    - `.btn-inapp-dm-start`: min-height 44px, touch-action manipulation.
+  - `index.html`:
+    - `#btnPwaInstallGuide`: `.pwa-guide-action-btn` 적용으로 38px -> 44px 터치 높이 확보.
+    - `openPwaInstallGuideModal`: `navigator.userAgent` 분석 기반 iOS vs Android OS 플랫폼 3초 카드뉴스 자동 스위칭 탑재.
+    - PWA 안내 모달 내 `#btnClosePwaGuide` 및 `#btnConfirmPwaInstall` 44px 터치 규격 완결.
+    - 랜딩 화면 `#btnLandingPreviewDirect`: 12ms 햅틱 피드백 및 터치 매니퓰레이션 적용.
+  - `docs/rules/TICKETS.md`: `#TASK-ES-137` 완료 및 `#TASK-ES-138` 승인 티켓 등재.
+  - `docs/specs/REQ-TASK-ES-138-PWA-GUEST-FRICTIONLESS.md`, `docs/specs/PLAN-TASK-ES-138-PWA-GUEST-FRICTIONLESS.md`: 8원칙 엔지니어링 스펙 완비.
+  - `reports/TASK-ES-138/`: claims.json, scenarios, pr-body, markdown report 완비.
+- **검증 결과**:
+  - `npm test`: 스모크 440개 통과 (0 failed), 무결성 38개 ALL PASS, Zero Dead-Click 948개 전원 통과, 조선소 모듈러 5/5 전수 통과.
+  - Headless Chrome CDP 390px 실측:
+    - `guideBtnFound`: true (82.89px x 44px >= 44px 터치 규격 준수)
+    - `modalVisible`: true (PWA 안내 카드뉴스 모달 정상 오픈)
+    - `iosBtnRect`: 174px x 44px (>= 44px 터치 규격 준수)
+    - `androidBtnRect`: 174px x 44px (>= 44px 터치 규격 준수)
+    - `confirmBtnRect`: 356px x 44px (>= 44px 터치 규격 준수)
+    - `closeBtnRect`: 44px x 44px (>= 44px 터치 규격 준수)
+    - `docScrollWidth`: 390px (가로 스크롤 누수 제로).
+  - 실측 캡처: `step3_es138_pwa_guest_verified.png`
 - **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
 ---
+
 
