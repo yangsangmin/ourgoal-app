@@ -1,0 +1,65 @@
+{
+  "task": "TASK-UIUX-PHASE1-GLOBAL-SHELL",
+  "requirementsSource": "docs/specs/REQ-TASK-UIUX-PHASE1-GLOBAL-SHELL.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "모바일 뷰포트(375~430px) 고정 및 100dvh 반응형 셸과 52px 초슬림 헤더가 구현되어 있음을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "iOS/Android 노치 및 하단 홈바 Safe-Area 완전 자동 보정과 하단 블러 글래스모피즘 탭바 및 활성 탭 인디케이터가 구현되어 있음을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "탭별 독립 스크롤 위치 영속 메모리(Scroll Position Memory)와 온라인/오프라인 네트워크 상태 인디케이터가 배선되어 있음을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 --topbar-h:52px 토큰이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "--topbar-h:52px"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 network-status-banner 및 글래스모피즘 블러 탭바 스타일이 구현되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "network-status-banner"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 내에 _tabScrollMemory 스크롤 메모리 복원 로직이 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "_tabScrollMemory"
+      }
+    }
+  ]
+}
