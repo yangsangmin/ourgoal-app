@@ -1,0 +1,63 @@
+{
+  "task": "TASK-ES-134",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-134-TOUCH-FONT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "전 탭 공통 인터랙티브 컨트롤(.btn, .chip, .navbtn, .s-seg-pill, .subtab, .mode-chip, .time-chip, .filter-chip 등)에 min-height: 44px 규격 일괄 적용 및 모바일 터치 피로도 제로화를 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "12px 미만 극소 폰트(.faint, .meta, .sub-text, 뱃지 등)를 최소 12.5px~13px로 일괄 스케일업 및 line-height 1.4 표준화를 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "모바일 터치 딜레이 제거(touch-action: manipulation) 및 가로 스크롤 누수(docScrollWidth <= 390px) 원천 차단을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내에 인터랙티브 요소 44px 터치 타깃 규격화 코드가 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "/* 1. 모바일 터치 타깃 44px 전역 규격화 */"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내에 극소 폰트 12.5px~13px 표준화 코드가 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "/* 2. 전 탭 극소 폰트(< 12px) 12.5px ~ 13px 일괄 가독선 표준화 */"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui",
+      "statement": "게스트 진입 후 전 탭(홈, 목표, 기록) 이동 시 버튼 및 텍스트가 정상 렌더링되고 가로 누수가 차단된다",
+      "touches": [
+        "index.html",
+        "ui.css"
+      ],
+      "scenario": "scenarios/touch-font-standard.json"
+    }
+  ]
+}
