@@ -5499,6 +5499,37 @@
 - **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
 ---
 
+## [2026-10-02 17:07] #TASK-ES-135: 템플릿 백과사전 원클릭 둘러보기/이식 연동 및 마일스톤 D-day 직통 캘린더 연계 UX 완결
+- **과제 티켓**: `#TASK-ES-135` (노션 DB [135])
+- **목표**:
+  - 목표 탭 빈 화면에서 검증된 60대 목표 템플릿의 원클릭 퀵 이식 카드(`#goalTemplateHeroCard`) 전면 노출 및 1초 자동 이식 연동.
+  - 마일스톤 헤더에 `m.dueDate` 기준 D-day 뱃지(`ddayBadge`) 동적 계산 복원 및 일정 버튼 `📅 일정 설정` / `📅 D-day` 어포던스 강화.
+  - 템플릿 이식 및 마일스톤 일정 설정 시 인앱 캘린더(`customSchedules`) 1초 직통 동기화 및 4대 뷰 원자적 전파.
+- **수정/구현 내역**:
+  - `index.html`:
+    - `renderPersonalGoalsEmptyGuideHtml`: 추천 템플릿 히어로 카드(`#goalTemplateHeroCard`) 및 3대 인기 템플릿 퀵 담기 버튼(`.btn-quick-adopt-goal`), 전체 둘러보기 버튼(`#btnOpenFullTemplateEncyclopedia`) 탑재.
+    - `adoptTemplateAsMyGoal`: 마일스톤 2단계 및 시작일/마감일 자동 배정, `customSchedules` 캘린더 원장 동기화, `dispatchFullViewPropagation` 4대 뷰 원자적 전파.
+    - 마일스톤 행 렌더링: `ddayBadge` 동적 계산 로직 복원 및 표출.
+    - `formatSchedulePillHtml`: 캘린더 아이콘 `📅` 및 상태별 직관적 텍스트 라벨 부여.
+  - `js/sanctuary-v3-engine.js`:
+    - `sanctuaryGoalsView`의 empty state(`!activeGoal`) 시 `#goalTemplateHeroCard` 즉시 렌더링 연계.
+  - `ui.css`:
+    - `.goal-template-hero-card`, `.template-quick-card`, `.btn-quick-adopt-goal`, `.milestone-dday-badge`, `.schedule-pill-btn` 44px 터치 규격 및 시각 디자인 토큰 안착.
+  - `docs/rules/TICKETS.md`: `#TASK-ES-134` 완료 및 `#TASK-ES-135` 승인 티켓 등재.
+  - `docs/specs/REQ-TASK-ES-135-TEMPLATE-MILESTONE-DDAY.md`, `docs/specs/PLAN-TASK-ES-135-TEMPLATE-MILESTONE-DDAY.md`: 8원칙 엔지니어링 스펙 완비.
+  - `reports/TASK-ES-135/`: claims.json, scenarios, pr-body, markdown report 완비.
+- **검증 결과**:
+  - `npm test`: 스모크 440개 통과 (0 failed), 무결성 38개 ALL PASS, Zero Dead-Click 945개 전원 통과, 조선소 모듈러 5/5 전수 통과.
+  - Headless Chrome CDP 390px 실측:
+    - `heroCardVisible`: true (가로 326px, 세로 392.6px 정상 노출)
+    - `adoptBtnsCount`: 6개 퀵 담기 버튼 정상 배선
+    - `+ 담기` 클릭 후: `totalGoals: 1`, `goalTitle: '10km 마라톤 완주 로드맵'`, `ddayBadges: ['D-14', 'D-30']`, `firstSchedPillText: '📅 D-30'` 즉각 반영 확인.
+    - `docScrollWidth`: 390px (가로 스크롤 누수 제로).
+  - 실측 캡처: `step3_es135_template_dday_verified.png`
+- **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
+---
+
+
 
 
 

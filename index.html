@@ -21537,7 +21537,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     );
   }
 
-  /* ============ 목표 탭 3계층 일정설정 / 디데이·기간 표시 및 캘린더 연동 (#TASK-ES-259, 메모장 03항) ============ */
+  /* ============ 목표 탭 3계층 일정설정 / 디데이·기간 표시 및 캘린더 연동 (#TASK-ES-259, 메모장 03항, #TASK-ES-135) ============ */
   function formatSchedulePillHtml(item, level, goalId, msId, taskId){
     var sDate = (item && item.startDate) ? String(item.startDate).slice(0, 10) : '';
     var dDate = (item && item.dueDate) ? String(item.dueDate).slice(0, 10) : '';
@@ -21545,7 +21545,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var mid = msId || '';
     var tid = taskId || '';
     if(!sDate && !dDate){
-      return '<button type="button" class="schedule-pill-btn empty" data-setschedule="1" data-schedlevel="'+level+'" data-schedgid="'+gid+'" data-schedmsid="'+mid+'" data-schedtid="'+tid+'" title="일정 설정">일정설정</button>';
+      return '<button type="button" class="schedule-pill-btn empty" data-setschedule="1" data-schedlevel="'+level+'" data-schedgid="'+gid+'" data-schedmsid="'+mid+'" data-schedtid="'+tid+'" title="일정 설정">📅 일정 설정</button>';
     }
     if(sDate && dDate && sDate !== dDate){
       var sParts = sDate.split('-');
@@ -21553,11 +21553,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var sText = sParts[0] + '.' + parseInt(sParts[1], 10) + '.' + parseInt(sParts[2], 10) + '.';
       var dText = dParts[0] + '.' + parseInt(dParts[1], 10) + '.' + parseInt(dParts[2], 10) + '.';
       var rangeText = sText + '~' + dText;
-      return '<button type="button" class="schedule-pill-btn has-date" data-setschedule="1" data-schedlevel="'+level+'" data-schedgid="'+gid+'" data-schedmsid="'+mid+'" data-schedtid="'+tid+'" title="일정 기간: '+rangeText+' (클릭하여 수정)">'+rangeText+'</button>';
+      return '<button type="button" class="schedule-pill-btn has-date" data-setschedule="1" data-schedlevel="'+level+'" data-schedgid="'+gid+'" data-schedmsid="'+mid+'" data-schedtid="'+tid+'" title="일정 기간: '+rangeText+' (클릭하여 수정)">📅 '+rangeText+'</button>';
     }
     var singleDate = dDate || sDate;
     var dText = dDay(singleDate);
-    return '<button type="button" class="schedule-pill-btn has-date" data-setschedule="1" data-schedlevel="'+level+'" data-schedgid="'+gid+'" data-schedmsid="'+mid+'" data-schedtid="'+tid+'" title="마감일 '+singleDate+' (클릭하여 수정)">'+dText+'</button>';
+    return '<button type="button" class="schedule-pill-btn has-date" data-setschedule="1" data-schedlevel="'+level+'" data-schedgid="'+gid+'" data-schedmsid="'+mid+'" data-schedtid="'+tid+'" title="마감일 '+singleDate+' (클릭하여 수정)">📅 '+dText+'</button>';
   }
 
   function openScheduleSetupModal(levelOrOpts, maybeGid, maybeMsId, maybeTid){
@@ -23741,6 +23741,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   function adoptTemplateAsMyGoal(title, category){
     triggerHapticFeedback(12);
+    var now = new Date();
+    var d14 = new Date(now.getTime() + 14 * 86400000).toISOString().slice(0, 10);
+    var d30 = new Date(now.getTime() + 30 * 86400000).toISOString().slice(0, 10);
     var newGoal = {
       id: 'g_' + Date.now(),
       title: title || '새로운 템플릿 목표',
@@ -23748,14 +23751,31 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       status: 'active',
       progress: 0,
       createdAt: new Date().toISOString(),
+      dueDate: d30,
       milestones: [
-        { id: 'm_' + Date.now() + '_1', title: '1단계 시작하기', status: 'todo' },
-        { id: 'm_' + Date.now() + '_2', title: '꾸준히 실천하기', status: 'todo' }
+        { id: 'm_' + Date.now() + '_1', title: '1단계 시작하기 (기초 세팅)', status: 'doing', dueDate: d14 },
+        { id: 'm_' + Date.now() + '_2', title: '2단계 꾸준히 실천하기 (습관화)', status: 'todo', dueDate: d30 }
       ]
     };
     if(!state.profile.goals) state.profile.goals = [];
     state.profile.goals.unshift(newGoal);
-    if(typeof toast === 'function') toast('내 목표로 가져왔습니다! 📥');
+    state.activeGoalId = newGoal.id;
+    if(!state.profile.settings) state.profile.settings = {};
+    if(!Array.isArray(state.profile.settings.customSchedules)) state.profile.settings.customSchedules = [];
+    state.profile.settings.customSchedules.push({
+      id: 'sched_' + newGoal.milestones[0].id,
+      linkedId: newGoal.milestones[0].id,
+      linkedLevel: 'ms',
+      linkedGoalId: newGoal.id,
+      linkedGoalTitle: newGoal.title,
+      title: newGoal.milestones[0].title,
+      dueDate: d14,
+      date: d14,
+      category: newGoal.category,
+      createdAt: new Date().toISOString()
+    });
+    if(typeof toast === 'function') toast('⚡ \'' + newGoal.title + '\' 템플릿이 내 목표에 1초 만에 담겼습니다! 🎉');
+    if(typeof saveProfile === 'function') saveProfile();
     if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation();
     else renderGoalsScreen();
   }
@@ -24578,7 +24598,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
 
       var mSel = !!state.msSel[m.id];
-      var ddayBadge = '';
+      var ddayBadge = m.dueDate ? ('<span class="dday-pill milestone-dday-badge" style="font-size:12px;margin-left:4px;background:var(--brand-soft);color:var(--brand-strong);font-weight:700;padding:2px 8px;border-radius:6px;">' + dDay(m.dueDate) + '</span>') : '';
       var msPct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
       var progBadge = totalTasks > 0 ? (
         '<span class="faint" style="font-size:.6875rem;background:var(--card2);padding:1px 6px;border-radius:5px;display:inline-flex;align-items:center;gap:3px;white-space:nowrap;">' +
@@ -25425,9 +25445,55 @@ wirePromptEncyclopediaEvents(body);
   }
 
   
-  /* ============ 개인 목표 200% 활용 가이드 (#TASK-ES-044) ============ */
+  /* ============ 개인 목표 200% 활용 가이드 & 템플릿 백과사전 (#TASK-ES-135) ============ */
   function renderPersonalGoalsEmptyGuideHtml(){
-    return '<div class="card" id="personalGoalsEmptyGuideCard" style="margin-top:14px;background:var(--surface-2);border:1px solid var(--rule);">' +
+    var templateHeroHtml = '<div class="card goal-template-hero-card" id="goalTemplateHeroCard" style="margin-top:14px;margin-bottom:14px;background:var(--card);border:1.5px solid var(--brand-line, var(--rule));border-radius:16px;padding:16px;">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+        '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<span style="font-size:1.3rem;">📖</span>' +
+          '<h3 style="margin:0;font-size:1.05rem;font-weight:800;color:var(--ink);">추천 목표 템플릿 백과사전</h3>' +
+        '</div>' +
+        '<span class="dday-pill" style="background:var(--brand-soft);color:var(--brand-strong);font-weight:700;font-size:12px;">1초 자동 이식</span>' +
+      '</div>' +
+      '<p class="faint" style="font-size:13px;line-height:1.4;margin:0 0 12px;color:var(--ink-soft);">' +
+        '무엇부터 시작할지 고민되시나요? 검증된 인기 로드맵을 1클릭으로 바로 내 목표에 담아보세요!' +
+      '</p>' +
+      '<div class="template-quick-adopt-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">' +
+        '<div class="template-quick-card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;">' +
+          '<div style="display:flex;align-items:center;gap:8px;min-width:0;">' +
+            '<span style="font-size:1.15rem;">🏃</span>' +
+            '<div style="min-width:0;">' +
+              '<div style="font-size:13.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">10km 마라톤 완주 로드맵</div>' +
+              '<div class="faint" style="font-size:12px;color:var(--ink-soft);">운동/건강 · 4단계 마일스톤</div>' +
+            '</div>' +
+          '</div>' +
+          '<button type="button" class="btn btn-primary btn-sm btn-quick-adopt-goal" onclick="adoptTemplateAsMyGoal(\'10km 마라톤 완주 로드맵\', \'운동/건강\')" style="min-height:44px;padding:0 12px;font-size:12.5px;font-weight:700;border-radius:8px;flex-shrink:0;">+ 담기</button>' +
+        '</div>' +
+        '<div class="template-quick-card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;">' +
+          '<div style="display:flex;align-items:center;gap:8px;min-width:0;">' +
+            '<span style="font-size:1.15rem;">📚</span>' +
+            '<div style="min-width:0;">' +
+              '<div style="font-size:13.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">정보처리기사 실기 합격</div>' +
+              '<div class="faint" style="font-size:12px;color:var(--ink-soft);">학습/성장 · 4단계 마일스톤</div>' +
+            '</div>' +
+          '</div>' +
+          '<button type="button" class="btn btn-primary btn-sm btn-quick-adopt-goal" onclick="adoptTemplateAsMyGoal(\'정보처리기사 실기 합격\', \'학습/성장\')" style="min-height:44px;padding:0 12px;font-size:12.5px;font-weight:700;border-radius:8px;flex-shrink:0;">+ 담기</button>' +
+        '</div>' +
+        '<div class="template-quick-card" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;">' +
+          '<div style="display:flex;align-items:center;gap:8px;min-width:0;">' +
+            '<span style="font-size:1.15rem;">🌱</span>' +
+            '<div style="min-width:0;">' +
+              '<div style="font-size:13.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">미라클 모닝 30일 루틴</div>' +
+              '<div class="faint" style="font-size:12px;color:var(--ink-soft);">습관/루틴 · 3단계 마일스톤</div>' +
+            '</div>' +
+          '</div>' +
+          '<button type="button" class="btn btn-primary btn-sm btn-quick-adopt-goal" onclick="adoptTemplateAsMyGoal(\'미라클 모닝 30일 루틴\', \'습관/루틴\')" style="min-height:44px;padding:0 12px;font-size:12.5px;font-weight:700;border-radius:8px;flex-shrink:0;">+ 담기</button>' +
+        '</div>' +
+      '</div>' +
+      '<button type="button" class="btn btn-ghost" id="btnOpenFullTemplateEncyclopedia" onclick="switchGoalsSubTab(\'templateEncyclopedia\')" style="width:100%;min-height:44px;font-size:13px;font-weight:700;border:1px solid var(--rule);border-radius:10px;background:var(--card2);">📖 템플릿 백과사전 전체 둘러보기 (60선)</button>' +
+    '</div>';
+
+    return templateHeroHtml + '<div class="card" id="personalGoalsEmptyGuideCard" style="margin-top:14px;background:var(--surface-2);border:1px solid var(--rule);">' +
       '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">' +
         '<span style="font-size:1.6rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></span>' +
         '<div>' +
