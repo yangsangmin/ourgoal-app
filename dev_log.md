@@ -5172,3 +5172,27 @@
   - GitHub Court 심사: `success(통과 또는 확인 부족)` 판정 획득 (판정번호 `097F1D07`).
 - **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #614 원격 main 머지 및 실서버 배포)]
 ---
+
+## [2026-10-02 09:18] [#TASK-UIUX-PHASE2-BOTTOMSHEET] UI/UX 틀 개편 Phase 2 공간적 영속성 & 단일 바텀시트 엔진 완결
+- **목표**: 상민님 지시("진행. 세션 작업 지침과 계획서에 따라 스모크/무결성 테스트를 완료하고, PR을 생성하여 GitHub 법정 심사를 청구하라. 멈추지 마라.")에 따라 UI/UX 마스터 로드맵 Phase 2 공간적 영속성 & 단일 바텀시트 엔진 8대 과업 완결. 뒤 화면 30% 보존 공간 영속성 시트 모듈(`backdrop-filter: blur(8px)`, `max-height: 82vh`, 24px 상단 라운드), 7세 장난감 뚜껑 닫듯 쉬운 스와이프 다운 터치 드래그 닫기 제스처(`touchmove`/`touchend`), 70세 어르신 인지 배려 44×44px 큼직한 `✕` 닫기 버튼 어포던스 및 12ms 햅틱 결속, 구형 중앙 팝업/얼럿 바텀시트 전수 흡수(`openBottomSheetAlert`, `openBottomSheetConfirm`), 240ms 물리 스프링 모션, 다중 적재 방화벽, Android 뒤로가기 `popstate` 연동 완결.
+- **수정/실행 내역**:
+  - `ui.css`:
+    - `.modal-sheet-backdrop`, `.modal-sheet-dialog`, `.modal-sheet-handle`, `.modal-sheet-close` 클래스 정의.
+    - 배경 30% 보존(`max-height: 82vh`), 상단 24px 라운드, `backdrop-filter: blur(8px)`.
+    - 44×44px 고대비 닫기 버튼 어포던스 및 240ms 큐빅 베지에 물리 스프링 애니메이션 완비.
+  - `ui.js`:
+    - `setupSheetGestures(dialog, onDismiss)` 스와이프 다운 터치 드래그 닫기 제스처 엔진 탑재 (`sheet.scrollTop === 0`일 때만 안전 드래그 인터셉트).
+    - `openBottomSheetModal(contentHtml, options)` 공간 영속성 단일 바텀시트 엔진 구축 (다중 적재 방화벽, 44px 닫기 버튼 자동 주입, `popstate` 연동, 12ms 햅틱 결속).
+    - `openBottomSheetAlert(title, message, btnText)` 및 `openBottomSheetConfirm(title, message, options)` 구형 얼럿/컨펌 전수 흡수 인터페이스 배선.
+  - `docs/rules/TICKETS.md`: `#TASK-UIUX-PHASE2-BOTTOMSHEET` 상태 `완료 (PR #616 머지 완료)`로 갱신.
+  - `docs/specs/REQ-TASK-UIUX-PHASE2-BOTTOMSHEET.md`, `reports/TASK-UIUX-PHASE2-BOTTOMSHEET/claims.json` 법정 심사 청구용 스펙 완비.
+  - GitHub Actions Court 심사 청구(PR #616) 및 `origin/main` 스쿼시 머지 완료 (`a86d365`).
+- **검증 결과**:
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `scripts/verify-all-clicks.js`: 897개 버튼 전수 Zero Dead-Click PASS.
+  - `scripts/test-shipyard-modular.js`: 5/5 전수 ALL PASS.
+  - GitHub Court 심사: `success(통과 또는 확인 부족)` 판정 획득 (판정번호 `7CB487B7`).
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #616 원격 main 머지 및 실서버 배포)]
+---
+
