@@ -4688,10 +4688,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
           if(!state.profile.goals) state.profile.goals = [];
           state.profile.goals.unshift(newGoal);
+          awardXP(15, '팀 연계 개인목표 생성 (+15 EXP)');
           await saveProfile();
           closeModal();
           renderAll();
-          toast('🎯 [' + teamName + '] 연계 개인목표가 생성되었습니다! ✨');
+          burstConfetti(window.innerWidth / 2, window.innerHeight / 3);
+          toast('🎯 [' + teamName + '] 연계 개인목표가 생성되었습니다! ✨ (+15 EXP)');
         });
       }
     );
@@ -25000,7 +25002,13 @@ wirePromptEncyclopediaEvents(body);
         renderGoalsScreen();
         renderLevelBadge();
         if(cycleXpRes && cycleXpRes.leveledUp) showLevelUpBanner(levelForXP(cycleXpRes.total));
-        if(!wasDone && ms.status==='done') celebrateMilestoneDone(goal, ms);
+        if(!wasDone && ms.status==='done'){
+          celebrateMilestoneDone(goal, ms);
+          if(goal.teamLinkId){
+            awardXP(10, '팀 연계 마일스톤 완수 (+10 EXP)');
+            toast('🎯 [' + (goal.teamLinkName || '팀') + '] 연계 마일스톤 완수! 팀 기여도와 개인 경험치 동시 획득! (+10 EXP) ✨');
+          }
+        }
       });
 
       var titleInput = row.querySelector('[data-msinput]');
@@ -25571,6 +25579,18 @@ wirePromptEncyclopediaEvents(body);
 
   function renderTeamGoalsEmptyGuideHtml(){
     return renderTeamCreateHeroCardHtml('goals') +
+      '<div class="team-quick-action-bar" id="teamLinkedGoalQuickBar">' +
+        '<div style="display:flex;align-items:center;gap:8px;min-width:0;">' +
+          '<span style="font-size:1.25rem;">💡</span>' +
+          '<div style="min-width:0;">' +
+            '<div style="font-weight:700;font-size:0.875rem;color:var(--ink);">팀 목표와 나를 잇는 실천</div>' +
+            '<div class="faint" style="font-size:0.75rem;">팀 연계 개인목표를 만들고 함께 완주해요 (+15 EXP)</div>' +
+          '</div>' +
+        '</div>' +
+        '<button class="team-personal-goal-quick-btn" id="btnQuickCreateTeamLinkedGoal" type="button">' +
+          '+ 개인목표 만들기' +
+        '</button>' +
+      '</div>' +
       '<div class="card" style="margin-bottom:14px;background:var(--surface-2);border:1px solid var(--rule);">' +
       '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">' +
         '<span style="font-size:1.6rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M6 3h12v6a6 6 0 0 1-12 0z"/><path d="M6 5H3v2a4 4 0 0 0 3 4"/><path d="M18 5h3v2a4 4 0 0 1-3 4"/></svg></span>' +
@@ -25849,6 +25869,15 @@ wirePromptEncyclopediaEvents(body);
         closeModal();
         promptNewGroup(null);
       };
+    }
+    var emptyQuickBtn = container.querySelector('#btnQuickCreateTeamLinkedGoal') || container.querySelector('#btnQuickCreateTeamLinkedGoalEmpty');
+    if(emptyQuickBtn){
+      emptyQuickBtn.addEventListener('click', function(){
+        triggerHapticFeedback(12);
+        closeModal();
+        var sampleTeam = (typeof MOCK_GROUPS !== 'undefined' && MOCK_GROUPS.length) ? MOCK_GROUPS[0] : { id: 'g-workshop', name: '2026 하반기 전략 워크숍 TF' };
+        openTeamLinkedPersonalGoalModal(sampleTeam.id, sampleTeam.name);
+      });
     }
     container.querySelectorAll('[data-tgtplquick]').forEach(function(btn){
       btn.onclick = function(){
@@ -26483,6 +26512,18 @@ wirePromptEncyclopediaEvents(body);
           (canManageAny ? '<button class="edit-toggle '+(state.teamGoalEditMode?'on':'off')+'" id="teamGoalEditToggle" type="button" style="font-size:.8125rem;padding:3px 10px;">'+(state.teamGoalEditMode?'✓ 편집 완료':'편집')+'</button>' : '') +
         '</div>' +
       '</div>' +
+      '<div class="team-quick-action-bar" id="teamLinkedGoalQuickBar">' +
+        '<div style="display:flex;align-items:center;gap:8px;min-width:0;">' +
+          '<span style="font-size:1.25rem;">💡</span>' +
+          '<div style="min-width:0;">' +
+            '<div style="font-weight:700;font-size:0.875rem;color:var(--ink);">팀 목표와 나를 잇는 실천</div>' +
+            '<div class="faint" style="font-size:0.75rem;">팀 연계 개인목표를 만들고 함께 완주해요 (+15 EXP)</div>' +
+          '</div>' +
+        '</div>' +
+        '<button class="team-personal-goal-quick-btn" id="btnQuickCreateTeamLinkedGoal" type="button">' +
+          '+ 개인목표 만들기' +
+        '</button>' +
+      '</div>' +
       '<div class="goal-chip-row" id="tgFilterChipRow" style="margin-bottom:12px;">' +
         '<button class="goal-chip'+(activeFilter==='all'?' active':'')+'" data-tgfilter="all" type="button">전체 보기 ('+myTeams.length+')</button>' +
         myTeams.map(function(tg){
@@ -26499,6 +26540,8 @@ wirePromptEncyclopediaEvents(body);
       var isOwner = groupState(g.id).myRole === 'owner';
       var gs = groupState(g.id);
       var isPreviewGroup = isMockGroup(g) || g.id === 'g-workshop' || g.id === 'g-travel' || g.id === 'g0' || !!gs.isPreview;
+      var isMockTeam = isPreviewGroup || (g.isMock || (typeof g.id === 'string' && g.id.indexOf('g-') === 0));
+      var mockTeamBadgeHtml = isMockTeam ? '<span class="badge-mock-team">[예시 팀]</span>' : '';
       var roleLabel = roleLabels[gs.myRole || 'member'];
       var goals = g.teamGoals || [];
       var teamLeaderDeps = {
@@ -26683,10 +26726,10 @@ wirePromptEncyclopediaEvents(body);
           '<div class="card-title-row" style="align-items:flex-start;margin-bottom:10px;">' +
             '<div style="flex:1;min-width:0;">' +
               leaderCrownHtml +
-              '<h3 style="margin:0;font-size:1.1rem;letter-spacing:-.01em;">'+g.icon+' '+escapeHtml(g.name)+'</h3>' +
+              '<h3 style="margin:0;font-size:1.1rem;letter-spacing:-.01em;display:flex;align-items:center;flex-wrap:wrap;gap:4px;">'+g.icon+' '+escapeHtml(g.name)+mockTeamBadgeHtml+'</h3>' +
             '</div>' +
             '<div style="display:flex;align-items:center;gap:5px;flex:0 0 auto;flex-wrap:wrap;">' +
-              '<button class="btn btn-ghost btn-sm btn-team-personal-goal" data-teamid="'+g.id+'" data-teamname="'+escapeHtml(g.name)+'" type="button" style="font-size:.75rem;padding:2px 7px;border-color:var(--gold);color:var(--gold);font-weight:700;">🎯 팀 연계 개인목표</button>' +
+              '<button class="btn btn-ghost btn-sm btn-team-personal-goal team-personal-goal-pill-btn" data-teamid="'+g.id+'" data-teamname="'+escapeHtml(g.name)+'" type="button">🎯 팀 연계 개인목표</button>' +
               (canManage ? '<button class="btn btn-ghost btn-sm" data-inviteteam="'+g.id+'" data-teamname="'+escapeHtml(g.name)+'" type="button" style="font-size:.75rem;padding:2px 7px;border-color:var(--brand);color:var(--brand-strong);font-weight:700;">👥 팀원 초대</button>' : '') + '<button class="btn btn-ghost btn-sm" data-teamchat="'+g.id+'" type="button" style="font-size:.75rem;padding:2px 7px;border-color:var(--rule);color:var(--ink);font-weight:700;">💬 팀 대화</button><span class="dday-pill">'+roleLabel+'</span></div>' +
           '</div>' +
           (window.OurgoalTeamVisibilityLevels ? OurgoalTeamVisibilityLevels.renderTeamCardContent(g, canManage, state) : (
@@ -26717,6 +26760,20 @@ wirePromptEncyclopediaEvents(body);
         promptNewGroup(null, preset);
       });
     });
+
+    var quickCreateBtn = view.querySelector('#btnQuickCreateTeamLinkedGoal');
+    if(quickCreateBtn){
+      quickCreateBtn.addEventListener('click', function(){
+        triggerHapticFeedback(12);
+        var targetTeam = (activeFilter && activeFilter !== 'all') ? myTeams.find(function(t){ return t.id === activeFilter; }) : myTeams[0];
+        if(targetTeam){
+          openTeamLinkedPersonalGoalModal(targetTeam.id, targetTeam.name);
+        } else {
+          var sample = (typeof MOCK_GROUPS !== 'undefined' && MOCK_GROUPS.length) ? MOCK_GROUPS[0] : { id: 'g-workshop', name: '2026 하반기 전략 워크숍 TF' };
+          openTeamLinkedPersonalGoalModal(sample.id, sample.name);
+        }
+      });
+    }
 
     // Filter bar listener
     view.querySelectorAll('[data-tgfilter]').forEach(function(btn){

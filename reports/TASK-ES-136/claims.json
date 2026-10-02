@@ -1,0 +1,63 @@
+{
+  "task": "TASK-ES-136",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-136-TEAM-PERSONAL-MANITO-STAMP.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "팀 목표 탭 상단에 직통 퀵 액션 바 및 44px 규격의 팀 연계 개인목표 버튼이 배치되고 가상 팀에 예시 팀 뱃지가 부여됨을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "팀 연계 개인목표 생성 시 15 EXP 보상이 즉각 지급되고 마니또 매칭 화면에서 44px 웰컴 스탬프 원클릭 피드백이 확립됨을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "게스트 진입 후 목표 탭의 팀 서브탭에서 팀 연계 개인목표 퀵 액션 바가 정상 노출되고 44px 터치 규격 및 모바일 뷰포트 너비 안정성이 준수됨을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 내에 팀 연계 개인목표 알약 버튼 스타일이 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".team-personal-goal-pill-btn"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 내에 예시 팀 구분 뱃지 스타일이 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".badge-mock-team"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "게스트 진입 후 목표 탭의 팀 서브탭에서 팀 연계 개인목표 퀵 액션 바가 노출되고 직통 버튼이 가시화된다",
+      "touches": [
+        "index.html",
+        "ui.css"
+      ],
+      "scenario": "scenarios/team-personal-manito.json"
+    }
+  ]
+}

@@ -5529,7 +5529,42 @@
 - **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
 ---
 
-
-
-
-
+## [2026-10-02 17:30] #TASK-ES-136: 팀 연계 개인목표 생성 의도 직통화 및 마니또 원클릭 웰컴 스탬프 & 실시간 피드백 배선
+- **과제 티켓**: `#TASK-ES-136` (노션 DB [136], 정체 [82], [99], [100] 결합)
+- **목표**:
+  - 팀 목표 탭 상단에 직통 퀵 액션 바(`#teamLinkedGoalQuickBar`) 및 직통 버튼(`#btnQuickCreateTeamLinkedGoal`) 배치.
+  - 가상 팀 데이터에 `[예시 팀]` 시각적 뱃지(`.badge-mock-team`)를 명확히 부여하여 신규 유저 혼선 방지.
+  - 팀 카드 헤더 내 '팀 연계 개인목표' 버튼을 44px 모바일 터치 규격(`.team-personal-goal-pill-btn`)으로 강화.
+  - 팀 연계 개인목표 생성 모달(`openTeamLinkedPersonalGoalModal`)에서 목표 생성 시 개인 경험치(+15 EXP) 보상 및 컨페티/토스트 즉각 피드백 연계.
+  - 팀 연계 마일스톤 완수 시 보너스 경험치(+10 EXP) 지급 연계.
+  - 마니또 매칭 완료 상단 웰컴 카드(`#manitoWelcomeHeroCard`) 내 4종 원클릭 웰컴 응원 스탬프(`.manito-welcome-stamp-btn`) 44px 터치 무결성 및 1초 실시간 피드백 검증.
+- **수정/구현 내역**:
+  - `ui.css`:
+    - `.team-quick-action-bar`: 팀 상단 직통 퀵 액션 바 조형 (패딩 12px 14px, 반경 14px, 배경 카드2).
+    - `.team-personal-goal-quick-btn`: 44px 최소 높이의 상단 직통 버튼 (min-height: 44px, touch-action: manipulation).
+    - `.team-personal-goal-pill-btn`: 팀 카드 헤더 내 44px 터치 규격 알약 버튼.
+    - `.badge-mock-team`: 가상 예시 팀 명시 뱃지 (골드 폰트, 라운드 태그).
+  - `index.html`:
+    - `renderTeamGoalsScreen()`: 상단 `#teamLinkedGoalQuickBar` 및 `#btnQuickCreateTeamLinkedGoal` 렌더링.
+    - 팀 카드 헤더: 가상 팀 식별(`g.isMock || g.id.startsWith('g-')`) 시 `.badge-mock-team` (`[예시 팀]`) 태그 부여 및 `.team-personal-goal-pill-btn` 적용.
+    - `renderTeamGoalsEmptyGuideHtml()`: 빈 화면 가이드 내 `#teamLinkedGoalQuickBarEmpty` 및 `#btnQuickCreateTeamLinkedGoalEmpty` 동시 탑재.
+    - `wireTeamGoalsGuideEvents()`: 빈 화면 가이드 버튼 클릭 리스너 연결.
+    - `openTeamLinkedPersonalGoalModal()`: 목표 생성 시 `awardXP(15, '팀 연계 개인목표 생성 (+15 EXP)')` + 축하 컨페티 + 토스트 배선.
+    - 마일스톤 토글 핸들러: `goal.teamLinkId` 존재 시 마일스톤 완수 보너스 `awardXP(10, '팀 연계 마일스톤 완수 (+10 EXP)')` 배선.
+  - `docs/rules/TICKETS.md`: `#TASK-ES-135` 완료 및 `#TASK-ES-136` 승인 티켓 등재.
+  - `docs/specs/REQ-TASK-ES-136-TEAM-PERSONAL-MANITO-STAMP.md`, `docs/specs/PLAN-TASK-ES-136-TEAM-PERSONAL-MANITO-STAMP.md`: 8원칙 엔지니어링 스펙 완비.
+  - `reports/TASK-ES-136/`: claims.json, scenarios, pr-body, markdown report 완비.
+- **검증 결과**:
+  - `npm test`: 스모크 440개 통과 (0 failed), 무결성 38개 ALL PASS, Zero Dead-Click 947개 전원 통과, 조선소 모듈러 5/5 전수 통과.
+  - Headless Chrome CDP 390px 실측:
+    - `quickBarVisible`: true (356px x 84px 정상 노출)
+    - `quickBtnVisible`: true (95.75px x 46px >= 44px 터치 규격 준수)
+    - `mockBadgesCount`: 1 (`[예시 팀]` 정상 렌더링)
+    - `personalGoalBtnsCount`: 1 (134.08px x 44px >= 44px 터치 규격 준수)
+    - `modalOpened`: true, `linkedGoalCreated`: true, `currentExp`: 55 (+15 EXP 즉각 수령 확인)
+    - `welcomeHeroCardVisible`: true (마니또 웰컴 카드 정상 노출)
+    - `stampBtnsCount`: 4 (4종 웰컴 스탬프 버튼 157px x 44px >= 44px 모바일 규격 100% 준수)
+    - `docScrollWidth`: 390px (가로 스크롤 누수 제로).
+  - 실측 캡처: `step3_es136_team_manito_verified.png`
+- **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
+---
