@@ -174,12 +174,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       </div>
       <div class="toss-headline" id="homeHeadlineSentence">오늘 하루를 완성할 <b>갓생 목표</b>가 기다려요 ✨</div>
       <div id="levelBadgeRow" data-home-widget="levelBadgeRow" data-widget-label="아바타 & 레벨 배지" data-widget-hint="내 아바타, 레벨, 경험치 바 (상단 고정)" data-widget-fixed="true"></div>
-      <!-- 🌟 [#UIUX-32] 어제/오늘/내일 1초 전환 날짜 네비게이터 칩 -->
-      <div class="home-date-nav" id="homeDateNav">
-        <button type="button" class="home-date-chip" id="btnHomeDateYesterday" data-date-offset="-1" onclick="if(window.switchHomeDate) window.switchHomeDate(-1);">◀ 어제</button>
-        <button type="button" class="home-date-chip active" id="btnHomeDateToday" data-date-offset="0" onclick="if(window.switchHomeDate) window.switchHomeDate(0);">🌟 오늘</button>
-        <button type="button" class="home-date-chip" id="btnHomeDateTomorrow" data-date-offset="1" onclick="if(window.switchHomeDate) window.switchHomeDate(1);">내일 ▶</button>
-      </div>
       <!-- 📦 [TASK-ES-304] 배선/검증 전용 슬롯 (화면 비침범 은폐) -->
       <div id="ogTaskWireSlot" style="display:none;" aria-hidden="true">
       <!-- 🧑‍🚀 [TASK-ES-278 / 노션 26] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 구현 -->
@@ -676,7 +670,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div id="todayMissionCard" data-home-widget="todayMissionCard" data-widget-label="오늘의 카드" data-widget-hint="뭘 할지 모르겠을 때 도움돼요(내 목표기반)"></div>
 
       <!-- ② 답하기 -->
-      <div id="homeGrassSummaryCard" data-home-widget="homeGrassSummaryCard" data-widget-label="최근 히트맵 요약" data-widget-hint="최근 2주간의 기록 한눈에"></div>
+      <div id="homeGrassSummaryCard" style="display:none !important;" data-home-widget="homeGrassSummaryCard" data-widget-label="최근 히트맵 요약" data-widget-hint="최근 2주간의 기록 한눈에"></div>
       <div class="capture-card card toss-checkin-clean-box" id="captureCardBox" data-home-widget="captureCardBox" data-widget-label="오늘의 3초 체크인 (오늘 기록하기)" data-widget-hint="1줄 체크인 입력창 (상단 고정)" data-widget-fixed="true">
         <div class="capture-title" style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
           <div style="display:flex;align-items:center;gap:6px;">
@@ -686,7 +680,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <span style="font-size:0.75rem;color:var(--ink-faint);font-weight:600;">군더더기 없는 즉시 기록</span>
         </div>
         <div class="capture-sub" style="margin-bottom:8px;font-size:0.8125rem;color:var(--ink-soft);">오늘 실천한 멋진 일을 한 줄로 톡 적어보세요! AI가 갓생 기록으로 완성해드려요 ✨</div>
-        <div class="quick-checkin-chips" id="quickCheckinChips"></div>
+        <div class="quick-checkin-chips" id="quickCheckinChips" style="display:none !important;"></div>
         <div class="capture-ta-wrap" style="position:relative;">
           <textarea id="captureInput" placeholder="예: 오늘 실천한 멋진 일을 한 줄로 적어보세요"></textarea>
           <button class="mic-btn" id="micBtn" type="button" aria-label="음성으로 입력하기" title="음성으로 입력하기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v4"/><path d="M8 23h8"/></svg></button>
@@ -762,34 +756,34 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       <!-- ④ 내 위치 -->
       <div id="dailyQuestBarWrap" class="daily-quest-bar-wrap" style="display:none;" data-home-widget="dailyQuestBarWrap" data-widget-label="오늘의 3대 퀘스트" data-widget-hint="체크인·할일·몰입 퀘스트 및 EXP 보상 카드"></div>
-      <div id="crewPacingWidget" class="crew-pacing-widget card" style="margin-top:14px;margin-bottom:14px;padding:16px 18px;border-radius:18px;background:var(--card);border:1px solid var(--rule);" data-home-widget="crewPacingWidget" data-widget-label="실시간 동류 레이스" data-widget-hint="오늘 달성 레이스 및 페이스메이커 위젯">
-        <div class="crew-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <div id="crewPacingWidget" class="crew-pacing-widget card" style="margin-top:12px;margin-bottom:12px;padding:14px 16px;border-radius:16px;background:var(--card);border:1px solid var(--rule);box-shadow:0 2px 10px rgba(0,0,0,0.03);" data-home-widget="crewPacingWidget" data-widget-label="실시간 동류 레이스" data-widget-hint="러닝메이트 완주 현황 및 페이스메이커 위젯">
+        <div class="crew-head" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
           <div class="crew-head-l" style="display:flex;align-items:center;gap:8px;">
-            <span class="crew-badge" id="userCrewBadge" style="background:rgba(239,68,68,0.1);color:#ef4444;font-size:0.75rem;font-weight:700;padding:2px 8px;border-radius:10px;">🔥 실시간 동류 레이스</span>
-            <span class="crew-title" id="userCrewTitle" style="font-weight:800;font-size:0.9375rem;color:var(--ink);">오늘 달성 레이스</span>
+            <span class="crew-badge" id="userCrewBadge" style="background:rgba(16,185,129,0.1);color:#10b981;font-size:0.75rem;font-weight:700;padding:3px 9px;border-radius:8px;border:1px solid rgba(16,185,129,0.2);">🟢 LIVE · 러닝메이트</span>
+            <span class="crew-title" id="userCrewTitle" style="font-weight:700;font-size:0.9rem;color:var(--ink);">페이스메이커 라이브</span>
           </div>
           <span class="crew-score" id="userCrewScore" style="font-weight:700;color:var(--brand);font-size:0.8125rem;"></span>
         </div>
-        <div class="crew-headline-row" id="userCrewHeadline" style="font-size:0.875rem;font-weight:700;color:var(--ink);margin:6px 0 4px;">
-          오늘 함께 달리는 동반자 집계 중… 🔥
+        <div class="crew-headline-row" id="userCrewHeadline" style="font-size:0.84rem;font-weight:600;color:var(--ink);margin:4px 0;">
+          함께 페이스를 맞추는 동반자 집계 중… ⚡
         </div>
-        <div class="crew-track" style="width:100%;height:8px;background:var(--surface-2);border-radius:999px;overflow:hidden;margin:8px 0 10px;">
-          <div id="userCrewProgressBar" class="crew-fill" style="width:0%;height:100%;background:linear-gradient(90deg,#f43f5e,#fb7185);border-radius:999px;transition:width .4s ease;"></div>
+        <div class="crew-track" style="width:100%;height:6px;background:var(--surface-2);border-radius:999px;overflow:hidden;margin:6px 0 8px;">
+          <div id="userCrewProgressBar" class="crew-fill" style="width:0%;height:100%;background:linear-gradient(90deg, #10B981, #06B6D4);border-radius:999px;transition:width .4s ease;"></div>
         </div>
         <div class="crew-foot" style="display:flex;align-items:center;justify-content:space-between;font-size:0.78125rem;color:var(--ink-soft);flex-wrap:wrap;gap:8px;">
-          <span id="userCrewSubtext">오늘 실천을 완료한 동반자들과 함께 완주해보세요</span>
+          <span id="userCrewSubtext">오늘 실천을 완료한 동반자들과 함께 페이스를 이어가세요</span>
           <div style="display:flex;gap:6px;align-items:center;">
-            <button type="button" class="btn btn-ghost btn-sm" id="btnGoLiveFeed" style="font-size:0.75rem;padding:4px 10px;border-radius:10px;font-weight:700;border:1px solid var(--rule);min-height:36px;">실시간 피드 ➔</button>
-            <button type="button" class="btn btn-primary btn-sm" id="btnNudgeCrewMates" onclick="nudgeCrewMates()" style="font-size:0.75rem;padding:4px 10px;border-radius:10px;font-weight:700;min-height:36px;">응원 보내기</button>
+            <button type="button" class="btn btn-ghost btn-sm" id="btnGoLiveFeed" style="font-size:0.75rem;padding:4px 10px;border-radius:10px;font-weight:600;border:1px solid var(--rule);min-height:36px;">동반자 피드 ➔</button>
+            <button type="button" class="btn btn-primary btn-sm" id="btnNudgeCrewMates" onclick="nudgeCrewMates()" style="font-size:0.75rem;padding:4px 10px;border-radius:10px;font-weight:600;min-height:36px;">응원 보내기</button>
           </div>
         </div>
         <!-- 콜드스타트(0~1명) 완충 온보딩 카드 슬롯 (#TASK-ES-228) -->
-        <div id="userCrewColdStartBox" class="crew-coldstart-box" style="display:none;margin-top:12px;padding:12px 14px;background:rgba(16,185,129,0.06);border:1px dashed rgba(16,185,129,0.32);border-radius:14px;align-items:center;justify-content:space-between;gap:10px;">
-          <div style="display:flex;align-items:center;gap:10px;font-size:0.8125rem;color:var(--ink-soft);line-height:1.45;">
-            <span id="userCrewColdStartIcon" style="font-size:1.25rem;flex-shrink:0;">🌱</span>
+        <div id="userCrewColdStartBox" class="crew-coldstart-box" style="display:none;margin-top:10px;padding:10px 12px;background:rgba(16,185,129,0.05);border:1px dashed rgba(16,185,129,0.25);border-radius:12px;align-items:center;justify-content:space-between;gap:10px;">
+          <div style="display:flex;align-items:center;gap:8px;font-size:0.8125rem;color:var(--ink-soft);line-height:1.4;">
+            <span id="userCrewColdStartIcon" style="font-size:1.1rem;flex-shrink:0;">⚡</span>
             <span id="userCrewColdStartDesc">오늘 첫 번째로 체크인하고 동반자들의 듬직한 페이스메이커가 되어보세요!</span>
           </div>
-          <button type="button" class="btn btn-sm" id="btnCrewStartCheckin" onclick="focusHomeCheckinInput()" style="flex-shrink:0;background:#10b981;color:#ffffff;font-size:0.78125rem;font-weight:700;padding:5px 12px;border-radius:10px;border:none;min-height:34px;cursor:pointer;">1등 체크인 ✏️</button>
+          <button type="button" class="btn btn-sm" id="btnCrewStartCheckin" onclick="focusHomeCheckinInput()" style="flex-shrink:0;background:#10b981;color:#ffffff;font-size:0.75rem;font-weight:700;padding:5px 12px;border-radius:8px;border:none;min-height:34px;cursor:pointer;">오늘 체크인 ✏️</button>
         </div>
       </div>
       
@@ -1957,9 +1951,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <button class="navbtn" data-tab="goals" type="button">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
         목표
-      </button>
-      <button class="navbtn-fab" id="bottomNavFab" type="button" aria-label="빠른 체크인" onclick="if(typeof setTab==='function')setTab('home');setTimeout(function(){var inp=document.getElementById('captureInput');if(inp){inp.focus();inp.scrollIntoView({behavior:'smooth',block:'center'});}},80);">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
       </button>
       <button class="navbtn" data-tab="calendar" type="button">
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 9.7h17"/><path d="M8 3.2v3.6M16 3.2v3.6"/></svg>
@@ -4912,7 +4903,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function renderQuickCheckinGuideChips(){
     var wrap = document.querySelector('.quick-checkin-chips');
     if(!wrap) return;
-    var goals = (state.profile && state.profile.goals) ? state.profile.goals.filter(function(g){ return !g.archivedAt; }) : [];
+    wrap.innerHTML = '';
+    wrap.style.display = 'none';
+    return;
 
     var chips = [];
     if(goals.length > 0){
@@ -13641,48 +13634,48 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(activeCount === 0){
       if(headlineEl) headlineEl.innerHTML = '오늘의 1호 완주자가 되어보세요! 🏃';
       if(badgeEl){
-        badgeEl.textContent = '🌱 오늘의 첫 레이스';
+        badgeEl.textContent = '⚡ 첫 완주 페이스';
         badgeEl.style.background = 'rgba(16, 185, 129, 0.12)';
         badgeEl.style.color = '#10b981';
       }
       if(scoreEl){
-        scoreEl.textContent = '1호 주자 대기 중 🏁';
+        scoreEl.textContent = '1호 페이스메이커 대기 중';
         scoreEl.style.color = '#10b981';
       }
       if(progressEl){
         progressEl.style.width = '8%';
-        progressEl.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
+        progressEl.style.background = 'linear-gradient(90deg, #10b981, #06b6d4)';
       }
       if(subtextEl){
         subtextEl.textContent = '아직 오늘 출발선을 통과한 동반자가 없어요. 지금 3초 체크인을 남겨보세요!';
       }
       if(coldStartBox){
         coldStartBox.style.display = 'flex';
-        coldStartBox.style.background = 'rgba(16, 185, 129, 0.06)';
-        coldStartBox.style.borderColor = 'rgba(16, 185, 129, 0.32)';
+        coldStartBox.style.background = 'rgba(16, 185, 129, 0.05)';
+        coldStartBox.style.borderColor = 'rgba(16, 185, 129, 0.25)';
       }
-      if(coldStartIcon) coldStartIcon.textContent = '🌱';
+      if(coldStartIcon) coldStartIcon.textContent = '⚡';
       if(coldStartDesc) coldStartDesc.textContent = '오늘 첫 번째로 실천을 완료하고 러너들의 듬직한 페이스메이커가 되어보세요!';
       if(btnCheckin){
         btnCheckin.style.display = 'inline-flex';
-        btnCheckin.textContent = '1등 체크인 ✏️';
+        btnCheckin.textContent = '오늘 체크인 ✏️';
         btnCheckin.style.background = '#10b981';
         btnCheckin.onclick = focusHomeCheckinInput;
       }
     } else if(activeCount === 1 && myCheckedToday){
-      if(headlineEl) headlineEl.innerHTML = '오늘 <b>' + escapeHtml(nick) + '</b>님이 영광의 <b>1호 완주자</b>입니다! 🥇';
+      if(headlineEl) headlineEl.innerHTML = '오늘 <b>' + escapeHtml(nick) + '</b>님이 영광의 <b>첫 완주 페이스메이커</b>입니다 👏';
       if(badgeEl){
-        badgeEl.textContent = '🥇 오늘의 1호 완주!';
+        badgeEl.textContent = '🏆 오늘의 첫 완주';
         badgeEl.style.background = 'rgba(245, 158, 11, 0.14)';
         badgeEl.style.color = '#f59e0b';
       }
       if(scoreEl){
-        scoreEl.textContent = '1호 완주 달성 🎉';
+        scoreEl.textContent = '완주 달성 🎉';
         scoreEl.style.color = '#f59e0b';
       }
       if(progressEl){
         progressEl.style.width = '100%';
-        progressEl.style.background = 'linear-gradient(90deg, #f59e0b, #fbbf24)';
+        progressEl.style.background = 'linear-gradient(90deg, #10b981, #06b6d4)';
       }
       if(subtextEl){
         subtextEl.textContent = '오늘의 첫 번째 완주를 멋지게 해내셨어요! 곧 이어 달릴 동반자들을 기다리고 있어요 👏';
@@ -13692,12 +13685,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         coldStartBox.style.background = 'rgba(245, 158, 11, 0.08)';
         coldStartBox.style.borderColor = 'rgba(245, 158, 11, 0.35)';
       }
-      if(coldStartIcon) coldStartIcon.textContent = '🥇';
-      if(coldStartDesc) coldStartDesc.textContent = '멋진 선두 주자! 곧 다른 러너들이 ' + escapeHtml(nick) + '님의 뒤를 이어 합류할 예정이에요.';
+      if(coldStartIcon) coldStartIcon.textContent = '🏆';
+      if(coldStartDesc) coldStartDesc.textContent = '멋진 선두 주자! 곧 다른 동반자들이 ' + escapeHtml(nick) + '님의 뒤를 이어 합류할 예정이에요.';
       if(btnCheckin){
         btnCheckin.style.display = 'inline-flex';
-        btnCheckin.textContent = '피드 확인 ➔';
-        btnCheckin.style.background = '#f59e0b';
+        btnCheckin.textContent = '동반자 피드 ➔';
+        btnCheckin.style.background = '#10b981';
         btnCheckin.onclick = function(){
           if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
           state.commSubTab = 'feed';
@@ -13707,41 +13700,41 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         };
       }
     } else if(activeCount === 1 && !myCheckedToday){
-      if(headlineEl) headlineEl.innerHTML = '오늘 벌써 <b>1명</b>의 동반자가 달리고 있어요! 🏃';
+      if(headlineEl) headlineEl.innerHTML = '오늘 벌써 <b>1명</b>의 동반자가 완주 페이스를 기록했어요 🏃';
       if(badgeEl){
-        badgeEl.textContent = '🔥 실시간 동류 레이스';
-        badgeEl.style.background = 'rgba(239, 68, 68, 0.1)';
-        badgeEl.style.color = '#ef4444';
+        badgeEl.textContent = '🟢 LIVE · 러닝메이트';
+        badgeEl.style.background = 'rgba(16, 185, 129, 0.12)';
+        badgeEl.style.color = '#10b981';
       }
       if(scoreEl){
-        scoreEl.textContent = '1명 완주 진행 중';
+        scoreEl.textContent = '1명 완주 페이스 기록';
         scoreEl.style.color = 'var(--brand)';
       }
       if(progressEl){
         progressEl.style.width = '25%';
-        progressEl.style.background = 'linear-gradient(90deg, #f43f5e, #fb7185)';
+        progressEl.style.background = 'linear-gradient(90deg, #10b981, #06b6d4)';
       }
       if(subtextEl){
-        subtextEl.textContent = '오늘의 3초 체크인을 남기면 2번째 주자로 합류합니다 🚀';
+        subtextEl.textContent = '오늘의 3초 체크인을 남기면 함께 달리는 동반자로 합류합니다 ⚡';
       }
       if(coldStartBox){
         coldStartBox.style.display = 'flex';
-        coldStartBox.style.background = 'rgba(16, 185, 129, 0.06)';
-        coldStartBox.style.borderColor = 'rgba(16, 185, 129, 0.32)';
+        coldStartBox.style.background = 'rgba(16, 185, 129, 0.05)';
+        coldStartBox.style.borderColor = 'rgba(16, 185, 129, 0.25)';
       }
       if(coldStartIcon) coldStartIcon.textContent = '🏃';
-      if(coldStartDesc) coldStartDesc.textContent = '오늘 1호 러너가 이미 출발했어요! 지금 체크인하고 2호 주자로 합류하세요.';
+      if(coldStartDesc) coldStartDesc.textContent = '오늘 첫 러너가 이미 출발했어요! 지금 체크인하고 2호 주자로 합류하세요.';
       if(btnCheckin){
         btnCheckin.style.display = 'inline-flex';
-        btnCheckin.textContent = '함께 달리기 ✏️';
+        btnCheckin.textContent = '함께 체크인 ✏️';
         btnCheckin.style.background = '#10b981';
         btnCheckin.onclick = focusHomeCheckinInput;
       }
     } else {
       if(badgeEl){
-        badgeEl.textContent = '🔥 실시간 동류 레이스';
-        badgeEl.style.background = 'rgba(239, 68, 68, 0.1)';
-        badgeEl.style.color = '#ef4444';
+        badgeEl.textContent = '🟢 LIVE · 러닝메이트';
+        badgeEl.style.background = 'rgba(16, 185, 129, 0.12)';
+        badgeEl.style.color = '#10b981';
       }
       if(scoreEl){
         scoreEl.textContent = activeCount + '명 완주 진행 중';
@@ -13750,17 +13743,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(progressEl){
         var pct = Math.min(100, Math.max(20, activeCount * 18));
         progressEl.style.width = pct + '%';
-        progressEl.style.background = 'linear-gradient(90deg, #f43f5e, #fb7185)';
+        progressEl.style.background = 'linear-gradient(90deg, #10b981, #06b6d4)';
       }
       if(coldStartBox){
         coldStartBox.style.display = 'none';
       }
       if(myCheckedToday){
-        if(headlineEl) headlineEl.innerHTML = '오늘 <b>' + escapeHtml(nick) + '</b>님과 함께 달리는 동반자 <b>' + activeCount + '명</b> 🔥';
+        if(headlineEl) headlineEl.innerHTML = '오늘 <b>' + escapeHtml(nick) + '</b>님과 함께 페이스를 맞추는 동반자 <b>' + activeCount + '명</b> ⚡';
         if(subtextEl) subtextEl.textContent = '오늘 체크인 완주! 동반자들의 피드를 응원해보세요 ✨';
       } else {
-        if(headlineEl) headlineEl.innerHTML = '오늘 벌써 <b>' + activeCount + '명</b>의 동반자가 달리고 있어요! 🏃';
-        if(subtextEl) subtextEl.textContent = '오늘의 3초 체크인을 남기면 함께 달리는 크루에 합류합니다 🚀';
+        if(headlineEl) headlineEl.innerHTML = '오늘 벌써 <b>' + activeCount + '명</b>의 동반자가 달리고 있어요 🏃';
+        if(subtextEl) subtextEl.textContent = '오늘의 3초 체크인을 남기면 함께 달리는 크루에 합류합니다 ⚡';
       }
     }
   }
@@ -14305,8 +14298,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function renderHomeGrassSummary(){
     var card = document.getElementById('homeGrassSummaryCard');
     if(!card) return;
-    var stats = calculateWeeklyFocusStats(state.profile.records);
-    var streak = computeStreakDays();
+    card.style.display = 'none';
+    card.innerHTML = '';
+    return;
     
     var now = new Date();
     var recDates = {};

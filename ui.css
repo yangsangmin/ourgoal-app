@@ -6309,10 +6309,11 @@ html[data-theme="urban-city"] #appShell {
 }
 
 .navbtn-fab {
-  width: 48px !important;
-  height: 48px !important;
-  min-width: 48px !important;
-  min-height: 48px !important;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
   border-radius: 50% !important;
   background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
   border: 2px solid rgba(255, 255, 255, 0.4) !important;
@@ -15271,28 +15272,29 @@ html[data-theme="urban-city"] {
 .checkin-dimension-sliders {
   display: flex !important;
   flex-direction: column !important;
-  gap: 10px !important;
-  margin: 10px 0 12px 0 !important;
-  padding: 12px 14px !important;
+  gap: 3px !important;
+  margin: 3px 0 5px 0 !important;
+  padding: 5px 8px !important;
   background: var(--card2, rgba(255, 255, 255, 0.03)) !important;
   border: 1px solid var(--rule, rgba(255, 255, 255, 0.08)) !important;
-  border-radius: 14px !important;
+  border-radius: 8px !important;
 }
 .dimension-slider-row {
   display: flex !important;
   flex-direction: column !important;
-  gap: 4px !important;
+  gap: 1px !important;
 }
 .dimension-slider-header {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  font-size: 0.76rem !important;
+  font-size: 0.7rem !important;
   font-weight: 700 !important;
   color: var(--ink, #f1f5f9) !important;
+  line-height: 1.1 !important;
 }
 .dimension-slider-val {
-  font-size: 0.76rem !important;
+  font-size: 0.7rem !important;
   font-weight: 800 !important;
   color: var(--brand, #3182f6) !important;
 }
@@ -15300,8 +15302,8 @@ html[data-theme="urban-city"] {
   -webkit-appearance: none !important;
   appearance: none !important;
   width: 100% !important;
-  height: 44px !important;
-  min-height: 44px !important;
+  height: 18px !important;
+  min-height: 18px !important;
   background: transparent !important;
   outline: none !important;
   margin: 0 !important;
@@ -15311,36 +15313,36 @@ html[data-theme="urban-city"] {
 }
 .dimension-range-input::-webkit-slider-runnable-track {
   width: 100% !important;
-  height: 8px !important;
-  border-radius: 4px !important;
+  height: 4px !important;
+  border-radius: 2px !important;
   background: rgba(255, 255, 255, 0.15) !important;
 }
 .dimension-range-input::-moz-range-track {
   width: 100% !important;
-  height: 8px !important;
-  border-radius: 4px !important;
+  height: 4px !important;
+  border-radius: 2px !important;
   background: rgba(255, 255, 255, 0.15) !important;
 }
 .dimension-range-input::-webkit-slider-thumb {
   -webkit-appearance: none !important;
   appearance: none !important;
-  width: 26px !important;
-  height: 26px !important;
+  width: 14px !important;
+  height: 14px !important;
   border-radius: 50% !important;
   background: var(--brand, #3182f6) !important;
-  border: 2px solid #ffffff !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
+  border: 1.5px solid #ffffff !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35) !important;
   cursor: pointer !important;
-  margin-top: -9px !important;
+  margin-top: -5px !important;
   transition: transform 0.12s ease !important;
 }
 .dimension-range-input::-moz-range-thumb {
-  width: 26px !important;
-  height: 26px !important;
+  width: 14px !important;
+  height: 14px !important;
   border-radius: 50% !important;
   background: var(--brand, #3182f6) !important;
-  border: 2px solid #ffffff !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
+  border: 1.5px solid #ffffff !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35) !important;
   cursor: pointer !important;
   transition: transform 0.12s ease !important;
 }
@@ -15350,6 +15352,11 @@ html[data-theme="urban-city"] {
 .dimension-range-input::-moz-range-thumb:active {
   transform: scale(1.22) !important;
 }
+
+/* 🌟 [#TASK-ES-139] 홈 탭 불필요 요소 완전 은폐 및 화면 공간 확보 */
+#homeGrassSummaryCard { display: none !important; }
+.quick-checkin-chips { display: none !important; }
+.home-date-nav { display: none !important; }
 
 /* 5. [#UIUX-29] [공준 5: 촉각적 손맛] 실천 저장 즉시 0.5초 축하 연출 */
 @keyframes celebrationPulse05 {

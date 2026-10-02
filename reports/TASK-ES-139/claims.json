@@ -1,0 +1,106 @@
+{
+  "task": "TASK-ES-139",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-139-HOME-TAB-CLEAN-OVERHAUL.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "하단 네비게이션 탭바에서 중간 FAB(+) 버튼을 제거하고 6개 탭(홈, 목표, 일정, 기록, 소통, 설정)을 균등 배치한다."
+    },
+    {
+      "id": "R2",
+      "text": "홈 탭에서 어제/오늘/내일 날짜 전환 버튼(homeDateNav), 커닝페이퍼 칩(quickCheckinChips), 히트맵 요약 카드(homeGrassSummaryCard)를 제거하여 체크인 콕핏 수직 공간을 확보한다."
+    },
+    {
+      "id": "R3",
+      "text": "홈 탭 아바타 창에서 유저 페르소나 아바타를 정상 표출하고 아바타 창 및 레벨 뱃지 내 새싹(🌱) 오버레이를 완전 제거한다."
+    },
+    {
+      "id": "R4",
+      "text": "신체 컨디션 및 에너지 조절 슬라이더 컨테이너 크기를 50% 슬림화하고 요소 간 간격을 축소한다."
+    },
+    {
+      "id": "R5",
+      "text": "홈 탭 레이스 창을 유치한 디자인에서 현대적이고 세련된 '⚡ 페이스메이커 라이브' 위젯으로 전면 개편한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 내에 하단 네비게이션 FAB 은폐 및 6대 탭 균등 배치가 규정되어 있다",
+      "touches": [
+        "ui.css",
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".navbtn-fab"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 및 index.html 내에 홈 탭 불필요 요소(히트맵 카드, 커닝페이퍼 칩, 날짜 네비) 완전 은폐 방화벽이 존재한다",
+      "touches": [
+        "ui.css",
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#homeGrassSummaryCard { display: none !important; }"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "js/avatar-system.js 내에서 sprout 테마 새싹(🌱) 오버레이가 완전 차단되고 유저 페르소나가 정상 표출된다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "growthContent = '';"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "static",
+      "domain": "ui-layout",
+      "statement": "ui.css 내에 컨디션/에너지 슬라이더 50% 슬림화 스타일이 적용되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": ".checkin-dimension-sliders"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R5",
+      "kind": "behavior",
+      "change": "modify",
+      "domain": "ui-behavior",
+      "statement": "홈 탭에서 페이스메이커 라이브 모던 위젯이 렌더링되고 정상 작동한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "페이스메이커 라이브"
+      }
+    }
+  ]
+}
