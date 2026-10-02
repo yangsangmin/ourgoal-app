@@ -13,7 +13,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 
 ## 승인 티켓 (구현 가능)
 
-- #TASK-INFRA-SHIPYARD-MODULAR-HARDENING | INFRA | [조선소 블록 모듈화 하드닝] index.html 내 검증 마크업 오염(og-task-shipyard-p1-container) 소탕(헌법 제4조 제1항 제10호 준수) 및 6대 메가블록 이중 렌더링 방어 수밀 가드 탑재 무결성 완결 | 상민님 직접 지시 (2026-10-02 "진행") | 4단계(심사 청구)
+- #TASK-INFRA-SHIPYARD-MODULAR-HARDENING | INFRA | [조선소 블록 모듈화 하드닝] index.html 내 검증 마크업 오염(og-task-shipyard-p1-container) 소탕(헌법 제4조 제1항 제10호 준수) 및 6대 메가블록 이중 렌더링 방어 수밀 가드 탑재 무결성 완결 | 상민님 직접 지시 (2026-10-02 "진행" -> "병합") | 완료 (PR #625 머지 완료)
 
 - #TASK-UIUX-FRAMEWORK-SYNC | INFRA/RULES | [UI/UX 틀 개편 완결 대장 등재] 아워골 UI/UX 프레임워크 8대 실행 단계(전수 64대 과업, Phase 0~7) 전원 법정 심사 success 및 GitHub main 머지 완료 공식 등재 & 942개 버튼 Zero Dead-Click 영구 무결성 대장 동기화 | 상민님 직접 지시 (2026-10-02 "진행. 세션 작업 지침과 계획서에 따라 스모크/무결성 테스트를 완료하고, PR을 생성하여 GitHub 법정 심사를 청구하라. 멈추지 마라.") | 완료 (PR #623 머지 완료)
 
