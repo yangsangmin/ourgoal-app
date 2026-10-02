@@ -16433,3 +16433,52 @@ html, body,
   border-radius: 10px !important;
   box-sizing: border-box !important;
 }
+
+/* ==========================================================================
+   #TASK-ES-133: 설정 탭 미니멀 IA 및 3대 조망 카드 중심 개편
+   - 상단 중복 타이틀(.s-eyebrow, .s-title) 소거
+   - 중복 레거시 테마 스와치(#legacyThemeSwatchCard) 은폐
+   - 개발자 전용 컴포넌트 모듈화 허브(#og-task-23-container) 은폐
+   - 설정 4대 아코디언 토스식 둥근 카드 조형 및 터치 44px+ 정규화
+   ========================================================================== */
+#screen-settings .s-eyebrow,
+#screen-settings .s-title {
+  display: none !important;
+}
+
+#legacyThemeSwatchCard,
+#screen-settings #legacyThemeSwatchCard {
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+#og-task-23-container,
+#screen-settings #og-task-23-container {
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.settings-group-accordion.toss-settings-group {
+  border: 1.5px solid var(--rule, rgba(255, 255, 255, 0.08)) !important;
+  border-radius: 18px !important;
+  background: var(--card, rgba(255, 255, 255, 0.04)) !important;
+  margin-bottom: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+.settings-group-accordion.toss-settings-group summary {
+  min-height: 48px !important;
+  padding: 14px 16px !important;
+  cursor: pointer !important;
+  user-select: none !important;
+}
+

@@ -5437,8 +5437,37 @@
     - `evalBanner.display`: 'none', `height`: 0px (153px 거대 배너 완전 소거)
     - `sliderEnergy.height`: 44px, `sliderFocus.height`: 44px (터치 타깃 100% 충족)
     - `docScrollWidth`: 390px
-  - 실측 캡처: `step3_es132_home_clean_verified.png`
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #632 원격 main 머지 및 실서버 배포)]
+---
+
+## 2026-10-02: #TASK-ES-133 [설정탭] 6대 대형 아코디언 비대화 압축 및 계정/보안/테마 3대 핵심 카드 중심 미니멀 IA 개편 & 불필요 개발자 필드 은폐
+- **작업자**: antigravity-session-75840bfe
+- **작업 브랜치**: `feat/2026-10-02-task-es-133-settings-ia`
+- **수정/실행 내역**:
+  - `index.html`:
+    - 레거시 테마 스와치 카드에 `#legacyThemeSwatchCard` 식별자 부여.
+  - `ui.css`:
+    - `#screen-settings .s-eyebrow, #screen-settings .s-title`: `display: none !important;` 선언으로 상단 중복 헤더 소거.
+    - `#legacyThemeSwatchCard`: `display: none !important;`로 중복 테마 스와치 소거.
+    - `#og-task-23-container`: `display: none !important;`로 개발자 전용 모듈화 허브 은폐.
+    - `.settings-group-accordion.toss-settings-group`: 18px 둥근 모서리 및 48px summary 터치 타깃 스타일링.
+  - `docs/rules/TICKETS.md`: `#TASK-ES-133` 승인 티켓 등재.
+  - `docs/specs/REQ-TASK-ES-133-SETTINGS-IA.md`, `docs/specs/PLAN-TASK-ES-133-SETTINGS-IA.md`: 8원칙 엔지니어링 스펙 완비.
+  - `reports/TASK-ES-133/`: 법정 claims.json 및 시나리오, 결과 보고서 작성.
+- **검증 결과**:
+  - `npm test`: 스모크 440개 통과 (0개 실패), 무결성 38개 ALL PASS, Zero Dead-Click 941개 통과, 모듈러 5/5 전수 통과.
+  - Headless Chrome CDP 390px 실측:
+    - `heroCardVisible`: true (프로필 요약 조망 카드 정상 노출)
+    - `sanctuarySlotVisible`: true (4대 테마 조망 카드 정상 노출)
+    - `securityCardVisible`: true (계정 보안 1초 조망 카드 정상 노출)
+    - `legacySwatchDisplay`: 'none'
+    - `ogTask23Display`: 'none'
+    - `advAccordionOpen`: false
+    - `allGroupAccordionsClosed`: true (4대 아코디언 기본 접힘)
+    - `docScrollWidth`: 390px
+  - 실측 캡처: `step3_es133_settings_ia_verified.png`
 - **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
 ---
+
 
 
