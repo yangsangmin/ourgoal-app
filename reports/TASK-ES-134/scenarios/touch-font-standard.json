@@ -1,0 +1,20 @@
+{
+  "id": "touch-font-standard",
+  "title": "게스트 진입 후 홈 탭 및 설정 탭에서 표준 44px 터치 및 폰트 규격 요소가 정상 노출된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#screen-home" },
+    { "do": "wait", "ms": 500 },
+    { "expect": "visible", "selector": "#homeHeadlineSentence" },
+    { "expect": "visible", "selector": "#sliderEnergy" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "waitFor", "selector": "#screen-settings" },
+    { "do": "wait", "ms": 500 },
+    { "expect": "visible", "selector": "#settingsHeroCard" },
+    { "expect": "visible", "selector": "#sanctuarySettingsSlot" },
+    { "expect": "visible", "selector": "#settingsSecurityCard" },
+    { "capture": "touch-font-standard" }
+  ]
+}

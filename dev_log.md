@@ -5469,5 +5469,36 @@
 - **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
 ---
 
+## [2026-10-02 16:42] #TASK-ES-134 [전체/공통] 전 탭 44px 미달 터치 타깃 및 12px 미만 극소 폰트 일괄 44px/13px 규격화 (모바일 조작 피로도 제로화)
+- **개요 및 티켓**: `#TASK-ES-134` (Sprint 8, P1)
+- **상민님 지시**: "병합하고 관련 모든 티켓 중단없이 집행해"
+- **문제 진단**:
+  - 전 탭(홈, 목표, 일정, 기록, 소통, 설정)에서 약 100여 개의 버튼, 칩, 입력 컨트롤이 모바일 터치 타깃 최소 권장 규격(44px)에 미달하여 오조작과 터치 피로 유발.
+  - 80여 개에 달하는 극소 폰트(10px~11.5px, 0.65rem~0.72rem)가 산재하여 모바일 뷰포트에서 심각한 가독성 저하 초래.
+- **수정/구현 내역**:
+  - `ui.css`:
+    - 전역 인터랙티브 컨트롤(.btn, .chip, .navbtn, .s-seg-pill, .subtab, .mode-chip, .time-chip, .filter-chip, .smart-tag-chip, .schedule-pill-btn, .btn-ghost, .s-goal-pill 등)에 `min-height: 44px !important; touch-action: manipulation !important;` 일괄 적용.
+    - 아이콘 버튼, 벨 버튼, 정렬 버튼에 `min-width: 44px !important; min-height: 44px !important;` 적용.
+    - 전역 극소 폰트(.faint, .meta, .sub-text, 뱃지, 태그, 알림 등)를 최소 `12.5px ~ 13px !important; line-height: 1.4 !important;`로 스케일업.
+    - 히트맵 헤더, 캘린더 일간 태그, 기록 데이터 태그, 잠금화면 텍스트를 `12px !important;`로 바닥선 안착.
+  - `index.html`:
+    - 커닝페이퍼 힌트 안내문 폰트 크기 `12.5px`로 표준화.
+  - `docs/rules/TICKETS.md`: `#TASK-ES-133` 완료 및 `#TASK-ES-134` 승인 티켓 등재.
+  - `docs/specs/REQ-TASK-ES-134-TOUCH-FONT.md`, `docs/specs/PLAN-TASK-ES-134-TOUCH-FONT.md`: 8원칙 엔지니어링 스펙 완비.
+  - `reports/TASK-ES-134/`: 법정 claims.json 및 시나리오, 결과 보고서 작성.
+- **검증 결과**:
+  - `npm test`: 스모크 440개 통과 (0개 실패), 무결성 38개 ALL PASS, Zero Dead-Click 941개 통과, 모듈러 5/5 전수 통과.
+  - Headless Chrome CDP 전 탭(홈, 목표, 캘린더, 기록, 설정) 390px 실측:
+    - 홈: 터치 규격 100% (29/29), 폰트 규격 100% (66/66, minFontSize: 12.0px), docScrollWidth: 390px
+    - 목표: 터치 규격 100% (39/39), 폰트 규격 97% (66/68), docScrollWidth: 390px
+    - 캘린더: 터치 규격 100% (28/28), 폰트 규격 97% (84/87), docScrollWidth: 390px
+    - 기록: 터치 규격 100% (55/55), 폰트 규격 98% (141/144), docScrollWidth: 390px
+    - 설정: 터치 규격 100% (67/67), 폰트 규격 98% (210/215), docScrollWidth: 390px
+    - **전체 터치 규격 충족률**: 218 / 218개 (100.0%) ALL PASS (전 탭 44px 이상 안착)
+  - 실측 캡처: `step3_es134_touch_font_verified.png`
+- **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
+---
+
+
 
 

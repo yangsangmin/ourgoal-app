@@ -16482,3 +16482,193 @@ html, body,
   user-select: none !important;
 }
 
+/* ==========================================================================
+   #TASK-ES-134: 전 탭 44px 미달 터치 타깃 및 12px 미만 극소 폰트 일괄 44px/13px 규격화
+   - WCAG AAA 및 모바일 터치 권장 규격 44px (min-height: 44px, min-width: 44px) 전역 안착
+   - 터치 딜레이 완전 제거: touch-action: manipulation
+   - 12px 미만 극소 폰트 일괄 12.5px~13px 최소 가독선 표준화 및 line-height 1.4 보정
+   - 모바일 뷰포트 너비 안정성(docScrollWidth <= 390px) 및 제로 텍스트 클리핑
+   ========================================================================== */
+
+/* 1. 모바일 터치 타깃 44px 전역 규격화 */
+.btn,
+.btn-sm,
+.btn-unblock,
+.cal-nav-row .btn,
+.sel-bar .btn,
+.notify-banner button,
+.goal-chip,
+.cat-major,
+.theme-filter-chip,
+.feed-filter-chip,
+.cat-sub,
+.ob-quick-action-chip,
+.quick-prose-chip,
+.feed-quick-chip,
+.comm-subtab,
+.format-opt,
+.mode-chip,
+.auth-tab,
+.pro-sw-mode-chip,
+.s-seg-pill,
+.s-segment-pills .s-seg-pill,
+.subtab,
+.edit-toggle,
+.today-glance-pill,
+.pill-react,
+.feed-react-btn,
+.feed-comm-toggle,
+.att-chip,
+.att-add-btn,
+.goal-chip-nav-btn,
+.ms-priority-tag,
+.duedate-row input[type=date],
+.duedate-row select,
+.sw-lap-memo-input,
+.home-date-chip,
+.btn-quick-chip,
+.quick-checkin-chips .btn-quick-chip,
+.tier-btn,
+.btn-focus-pilot,
+.toss-focus-complete-btn,
+.rec-period-chip,
+.btn-device-killswitch,
+.btn-security-refresh,
+.btn-deadclick-safe,
+.notify-mode-btn,
+.s-cal-mode-btn,
+.s-rec-mode-btn,
+.rec-pager-btn,
+.btn-rec-export-csv,
+button.dday-pill,
+#calGcalMiniBadge,
+#btnSettingsQuickAvatar,
+#btnOpenDynamicAlbum,
+.smart-tag-chip,
+.schedule-pill-btn,
+.btn-ghost,
+.btn-ghost.btn-xs,
+.s-goal-pill,
+#sAddGoalBtn,
+#screen-goals button {
+  min-height: 44px !important;
+  box-sizing: border-box !important;
+  touch-action: manipulation !important;
+}
+
+.s-segment-pills .s-seg-pill,
+.s-seg-pill,
+.s-cal-mode-btn,
+.s-rec-mode-btn,
+.rec-pager-btn,
+.btn-rec-export-csv,
+.s-goal-pill,
+#sAddGoalBtn {
+  height: 44px !important;
+}
+
+.icon-btn,
+.topbar-notif-btn,
+.mic-btn,
+.sanctuary-bell-btn,
+.order-shift-btn {
+  min-width: 44px !important;
+  min-height: 44px !important;
+  touch-action: manipulation !important;
+}
+
+/* 2. 전 탭 극소 폰트(< 12px) 12.5px ~ 13px 일괄 가독선 표준화 */
+.faint,
+.meta,
+.sub-text,
+.text-muted,
+.card-sub,
+.item-sub,
+.trend-summary-hint,
+.btn-focus-pilot,
+.order-shift-btn {
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+}
+
+.dday-pill,
+.dday-mini,
+.streak-pill,
+.freeze-pill,
+.topic-pill,
+.privacy-badge,
+.pro-badge,
+.market-badge,
+.pro-tpl-badge,
+.notion-push-status-pill,
+.rec-dur,
+.tag,
+.ms-priority-tag,
+.feed-c-badge,
+.feed-ai-tag,
+.pro-trend-growth-badge,
+.pw-discount,
+.crew-badge,
+.avatar-lv-pill,
+.focus-goal-pill,
+.s-heat-badge,
+.options-toggle-hint,
+.options-toggle-btn,
+#activeAiModeTag,
+#aiModeDescBody,
+#homeQuickGuideRow span,
+.home-quick-guide-row span,
+.quick-guide-title span,
+#homeCunningPaperSlot span,
+.sanctuary-theme-card div,
+.sanctuary-theme-card span,
+.lockscreen-save-banner span,
+#lockscreenSaveBanner span,
+.m-badge,
+.trail-done-badge,
+.minibar-status-tag,
+.schedule-pill-btn,
+.att-add-btn,
+.btn-ghost.btn-xs,
+#screen-settings .sanctuary-theme-card div,
+#screen-settings .sanctuary-theme-card span,
+small {
+  font-size: 12.5px !important;
+  line-height: 1.4 !important;
+}
+
+/* 캘린더 히트맵 헤더, 캘린더 일간 태그, 기록 데이터 태그 폰트 규격화 */
+.s-heatmap-header span,
+.heatmap-day,
+.s-heatmap-legend,
+.s-heatmap-legend span,
+.rec-stat-chip,
+.rec-data-tag,
+.stat-chip,
+.s-day-today-tag,
+#recordsList .rec-card span,
+.rec-card span,
+#lsSimMonthGridWrap span,
+.home-heatmap-4w-grid span,
+.s-cal-cell span,
+.cal-cell span,
+.s-day-cell span,
+#screen-calendar span,
+#screen-calendar .s-day-all-day,
+.rec-past-meta,
+.rec-acc-chevron,
+.rec-paged-range-badge,
+#screen-records .s-heatmap-legend span {
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+/* 인풋 플레이스홀더 폰트 표준화 */
+::placeholder {
+  font-size: 13px !important;
+}
+
+
+
+
+
