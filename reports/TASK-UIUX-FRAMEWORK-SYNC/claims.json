@@ -1,0 +1,27 @@
+{
+  "task": "TASK-UIUX-FRAMEWORK-SYNC",
+  "requirementsSource": "docs/specs/REQ-TASK-UIUX-FRAMEWORK-SYNC.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "아워골 UI/UX 프레임워크 8대 실행 단계(전수 64대 과업, Phase 0~7) 전원 머지 완료 및 Zero Dead-Click 무결성 대장 공식 등재를 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "docs/rules/TICKETS.md 내에 TASK-UIUX-PHASE7-HARDWARE-HARDENING 완료 상태 및 64대 과업 완결 대장 등재가 반영되어 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "TASK-UIUX-FRAMEWORK-SYNC"
+      }
+    }
+  ]
+}
