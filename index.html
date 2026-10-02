@@ -140,6 +140,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     <div class="brand">아워골</div>
     <div class="topbar-right"><!-- [#TASK-ES-282] 전 탭 상위 중복 홈구성 버튼(#topHomeLayoutBtn, #topbarActions) 완전 소거/은폐 --><div class="topbar-actions" id="topbarActions" style="display:none !important;"><button type="button" class="btn btn-ghost btn-xs topbar-action-btn" id="topHomeLayoutBtn" style="display:none !important;visibility:hidden;pointer-events:none;" title="나만의 홈 구성 (필요없는 창 지우기)" aria-label="나만의 홈 구성" aria-hidden="true" tabindex="-1">⚙️ 홈구성</button></div><button type="button" class="topbar-notif-btn" id="topNotifBtn" title="알림 센터 열기" aria-label="알림 센터" onclick="if(window.openNotificationCenterModal) window.openNotificationCenterModal();"><span class="notif-bell-icon">🔔</span><span class="topbar-notif-badge" id="topNotifBadge" style="display:none;">0</span></button><button type="button" class="btn btn-ghost btn-xs topbar-action-btn topbar-guide-btn" id="topHomeGuideBtn" onclick="if(window.showTabUsageGuide) showTabUsageGuide(window.state && window.state.activeTab || 'home');" style="font-size:11px;padding:3px 8px;border-radius:12px;border:1px solid rgba(99,102,241,0.4);background:rgba(99,102,241,0.08);color:var(--primary);font-weight:700;cursor:pointer;white-space:nowrap;" title="이 페이지 활용법" aria-label="이 페이지 활용법">💡 이 페이지 활용법</button><button class="user-chip" id="topUserChip" type="button" aria-label="내 프로필"><span id="topUserName"></span><div class="avatar" id="topAvatar" style="width:56px;height:56px;"><!-- [TASK-ES-283 compat: id="topAvatar" style="width:52px;height:52px;"] [TASK-ES-174 compat: style="width:46px;height:46px;"] --></div></button></div>
   </div>
+  <!-- [#UIUX-15] 상단 네트워크 오프라인/온라인 상태 인디케이터 배지 -->
+  <div id="networkStatusBanner" class="network-status-banner" style="display:none;" role="status" aria-live="polite">
+    <span class="net-icon">📡</span>
+    <span class="net-msg" id="networkStatusMsg">오프라인 모드 — 데이터가 기기에 안전하게 보관됩니다</span>
+  </div>
   <div class="ptr-indicator" id="ptrIndicator" aria-hidden="true"><span class="spinner"></span></div>
   <div id="levelUpBannerSlot"></div>
 
@@ -7248,11 +7253,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   function setTab(tab){
+    // [#UIUX-13] 탭별 독립 스크롤 위치 영속 메모리 저장
+    window._tabScrollMemory = window._tabScrollMemory || {};
+    if(state && state.activeTab){
+      window._tabScrollMemory[state.activeTab] = window.scrollY || document.documentElement.scrollTop || 0;
+    }
+
     function updateTabDOM(){
       state.activeTab = tab;
       navButtons.forEach(function(b){ b.classList.toggle('active', b.dataset.tab===tab); });
       screens.forEach(function(s){ s.classList.toggle('active', s.id==='screen-'+tab); });
-      window.scrollTo({top:0, behavior:'auto'});
+
+      // [#UIUX-13] 탭별 독립 스크롤 위치 복원 (처음 가는 탭은 맨 위 0, 보던 탭은 직전 위치 복원)
+      var targetScrollY = (window._tabScrollMemory && typeof window._tabScrollMemory[tab] === 'number') ? window._tabScrollMemory[tab] : 0;
+      window.scrollTo({top: targetScrollY, behavior:'auto'});
+
       if(window.OurgoalRegistry && window.OurgoalRegistry.isReady()){
         window.OurgoalRegistry.mount(tab, document.getElementById('screen-' + tab), state);
       } else {
@@ -7290,7 +7305,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       updateTabDOM();
     }
   }
-  navButtons.forEach(function(b){ b.addEventListener('click', function(){ setTab(b.dataset.tab); }); });
+  navButtons.forEach(function(b){
+    b.addEventListener('click', function(){
+      if(typeof window.triggerHaptic === 'function') window.triggerHaptic(12);
+      setTab(b.dataset.tab);
+    });
+  });
   function switchTab(tab){ return setTab(tab); }
   if(typeof window !== 'undefined'){ window.setTab = setTab; window.switchTab = setTab; }
 
@@ -8507,6 +8527,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       chip.setAttribute('title', '내 아바타 바꾸기');
       chip.onclick = function(e){
         e.preventDefault();
+        if(typeof window.triggerHaptic === 'function') window.triggerHaptic(12);
         var btn = document.getElementById('btnOpenAvatarModal');
         if(btn) btn.click();
         else if(window.OurgoalAvatar && window.OurgoalAvatar.openAvatarModal){
