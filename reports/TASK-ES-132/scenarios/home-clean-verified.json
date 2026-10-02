@@ -1,0 +1,16 @@
+{
+  "id": "home-clean-verified",
+  "title": "게스트 진입 후 홈 탭(#screen-home)에서 헤드라인과 슬라이더가 정상 표시되고 거대 평가 배너(#homeEvalBanner)가 은폐된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#screen-home" },
+    { "do": "wait", "ms": 500 },
+    { "expect": "visible", "selector": "#homeHeadlineSentence" },
+    { "expect": "notVisible", "selector": "#homeEvalBanner" },
+    { "expect": "visible", "selector": "#sliderEnergy" },
+    { "expect": "visible", "selector": "#sliderFocus" },
+    { "capture": "home-clean-verified" }
+  ]
+}

@@ -9993,16 +9993,17 @@ html[data-theme="urban-city"] .s-seg-pill {
 .toss-headline {
   font-size: 1.25rem;
   font-weight: 700;
-  line-height: 1.42;
+  line-height: 1.38;
   color: var(--ink, #191f28);
   margin: 10px 0 14px 0;
   letter-spacing: -0.025em;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
+  display: block;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .toss-headline b {
+  display: inline;
   color: var(--brand, #3182f6);
   font-weight: 800;
 }
@@ -10217,7 +10218,17 @@ html[data-theme="white"] #goalsHeadlineSentence b {
 #screen-home #notifyBannerSlot { order: 32; }
 #screen-home #socialNotifySlot { order: 33; }
 #screen-home #iosPwaSlot { order: 34; }
-#screen-home #homeEvalBanner { order: 99; margin-top: 16px !important; margin-bottom: 96px !important; }
+#screen-home #homeEvalBanner,
+#homeEvalBanner,
+.home-eval-banner-box {
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
 
 /* 토스 홈 오늘의 원카드 (Today Focus Card) */
 .toss-home-focus-card {
@@ -15289,28 +15300,55 @@ html[data-theme="urban-city"] {
   -webkit-appearance: none !important;
   appearance: none !important;
   width: 100% !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  background: transparent !important;
+  outline: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  touch-action: manipulation !important;
+}
+.dimension-range-input::-webkit-slider-runnable-track {
+  width: 100% !important;
   height: 8px !important;
   border-radius: 4px !important;
-  background: rgba(255, 255, 255, 0.1) !important;
-  outline: none !important;
-  margin: 6px 0 !important;
-  cursor: pointer !important;
-  touch-action: pan-y !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+.dimension-range-input::-moz-range-track {
+  width: 100% !important;
+  height: 8px !important;
+  border-radius: 4px !important;
+  background: rgba(255, 255, 255, 0.15) !important;
 }
 .dimension-range-input::-webkit-slider-thumb {
   -webkit-appearance: none !important;
   appearance: none !important;
-  width: 22px !important;
-  height: 22px !important;
+  width: 26px !important;
+  height: 26px !important;
   border-radius: 50% !important;
   background: var(--brand, #3182f6) !important;
   border: 2px solid #ffffff !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
+  cursor: pointer !important;
+  margin-top: -9px !important;
+  transition: transform 0.12s ease !important;
+}
+.dimension-range-input::-moz-range-thumb {
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 50% !important;
+  background: var(--brand, #3182f6) !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
   cursor: pointer !important;
   transition: transform 0.12s ease !important;
 }
 .dimension-range-input::-webkit-slider-thumb:active {
-  transform: scale(1.18) !important;
+  transform: scale(1.22) !important;
+}
+.dimension-range-input::-moz-range-thumb:active {
+  transform: scale(1.22) !important;
 }
 
 /* 5. [#UIUX-29] [공준 5: 촉각적 손맛] 실천 저장 즉시 0.5초 축하 연출 */

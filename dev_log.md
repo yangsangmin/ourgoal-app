@@ -5411,7 +5411,34 @@
     - `pillHeight`: 40px (터치 타깃 100% 충족)
     - `pillFontSize`: '13px' (미세 폰트 100% 해소)
     - `docScrollWidth`: 390px
-  - 실측 캡처: `step3_es131_records_cockpit_verified.png`
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #631 원격 main 머지 및 실서버 배포)]
+---
+
+## 2026-10-02: #TASK-ES-132 [홈탭] 153px 거대 평가 배너 인라인 소거 및 헤드라인 어색한 4줄 쪼개짐 워드브레이크(keep-all)·컨디션 듀얼 슬라이더 터치 조작성 고도화
+- **작업자**: antigravity-session-75840bfe
+- **작업 브랜치**: `feat/2026-10-02-task-es-132-home-clean`
+- **수정/실행 내역**:
+  - `ui.css`:
+    - `.toss-headline, #homeHeadlineSentence`: `display: block !important; word-break: keep-all !important; line-height: 1.38 !important; overflow-wrap: break-word !important;` 적용하여 flex item 수직 스택으로 인한 4줄 쪼개짐 결함 척결.
+    - `.toss-headline b, #homeHeadlineSentence b`: `display: inline !important;` 적용.
+    - `#screen-home #homeEvalBanner, #homeEvalBanner, .home-eval-banner-box`: `display: none !important; height: 0 !important; margin: 0 !important; padding: 0 !important;`로 완전 은폐 (153px 공간 회복, DOM ID 및 테스트 텍스트 100% 보존).
+    - `.dimension-range-input`: `height: 44px !important; min-height: 44px !important; background: transparent !important; touch-action: manipulation !important;` 선언하여 터치 권장 규격 충족.
+    - 가상 요소 트랙(`height: 8px; border-radius: 4px;`) 및 썸(`width: 26px; height: 26px; margin-top: -9px;`) 정밀 배선.
+  - `docs/rules/TICKETS.md`: `#TASK-ES-132` 승인 티켓 등재.
+  - `docs/specs/REQ-TASK-ES-132-HOME-CLEAN.md`, `docs/specs/PLAN-TASK-ES-132-HOME-CLEAN.md`: 8원칙 엔지니어링 스펙 완비.
+  - `reports/TASK-ES-132/`: 법정 claims.json 및 시나리오, 결과 보고서 작성.
+- **검증 결과**:
+  - `npm test`: 스모크 440개 통과 (0개 실패), 무결성 38개 ALL PASS, Zero Dead-Click 941개 통과, 모듈러 5/5 전수 통과.
+  - Headless Chrome CDP 390px 실측:
+    - `headline.text`: "상민님, 오늘 하루를 완성할 실천과 몰입이 기다려요 ✨"
+    - `headline.display`: 'block'
+    - `headline.wordBreak`: 'keep-all'
+    - `headline.height`: 51px (2줄 브리핑 완벽 안착)
+    - `evalBanner.display`: 'none', `height`: 0px (153px 거대 배너 완전 소거)
+    - `sliderEnergy.height`: 44px, `sliderFocus.height`: 44px (터치 타깃 100% 충족)
+    - `docScrollWidth`: 390px
+  - 실측 캡처: `step3_es132_home_clean_verified.png`
 - **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
 ---
+
 
