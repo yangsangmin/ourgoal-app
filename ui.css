@@ -15721,4 +15721,235 @@ html[data-theme="urban-city"] {
   font-weight: 700 !important;
 }
 
+/* ==========================================================================
+   [PHASE 5] #TASK-UIUX-PHASE5-RECORDS-CALENDAR: 기록 회고 피로 해소 & 캘린더 공간 융합 8대 과업
+   ========================================================================== */
+
+/* 1. [#UIUX-41] [RECENT3-PAGING] 최신 3건 피드 카드 & 과거 기록 아카이빙 */
+.rec-recent3-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  margin-bottom: 16px !important;
+}
+.rec-recent3-card {
+  background: var(--card, rgba(255, 255, 255, 0.05)) !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.08)) !important;
+  border-radius: 16px !important;
+  padding: 14px 16px !important;
+  transition: transform 0.15s ease, border-color 0.15s ease !important;
+}
+.rec-recent3-card:hover {
+  border-color: var(--brand, #3182f6) !important;
+  transform: translateY(-1px) !important;
+}
+.rec-archive-wrapper {
+  margin-top: 14px !important;
+}
+.btn-rec-archive-toggle {
+  width: 100% !important;
+  min-height: 44px !important;
+  padding: 10px 16px !important;
+  border-radius: 12px !important;
+  background: var(--card, rgba(255, 255, 255, 0.04)) !important;
+  border: 1px dashed var(--rule, rgba(255, 255, 255, 0.15)) !important;
+  color: var(--ink-soft, #94a3b8) !important;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  transition: all 0.15s ease !important;
+}
+.btn-rec-archive-toggle:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: var(--ink, #ffffff) !important;
+}
+
+/* 2. [#UIUX-42] [CALENDAR-MERGE] 캘린더 ↔ 기록 타임라인 1초 공간 융합 스위처 */
+.rec-cal-fuse-switcher {
+  display: inline-flex !important;
+  background: var(--card, rgba(255, 255, 255, 0.06)) !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.1)) !important;
+  border-radius: 20px !important;
+  padding: 3px !important;
+  gap: 4px !important;
+  margin-bottom: 12px !important;
+}
+.rec-fuse-chip {
+  min-height: 32px !important;
+  padding: 4px 14px !important;
+  border-radius: 16px !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--ink-soft, #94a3b8) !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  transition: all 0.15s ease !important;
+}
+.rec-fuse-chip:hover {
+  color: var(--ink, #ffffff) !important;
+}
+.rec-fuse-chip.active {
+  background: var(--brand, #3182f6) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 6px rgba(49, 130, 246, 0.35) !important;
+}
+
+/* 3. [#UIUX-43] [CAL-CELL-EXPAND] 캘린더 셀 76px 와이드 확장 & 썸네일 가독성 */
+.cal-wide-cell-76 {
+  min-height: 76px !important;
+  padding: 6px 4px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+}
+.cal-streak-marker {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+  background: var(--brand, #3182f6) !important;
+  color: #ffffff !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+}
+
+/* 4. [#UIUX-44] [DIARY-SLOT] 사진형 일기 2장 분할 썸네일 & 인라인 프리뷰 */
+.cal-diary-split-thumb {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 2px !important;
+  width: 100% !important;
+  height: 28px !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+  margin-top: 2px !important;
+}
+.cal-diary-split-thumb img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+.cal-diary-preview-dialog {
+  border-radius: 16px !important;
+  padding: 16px !important;
+  background: var(--surface, #1e293b) !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.1)) !important;
+}
+
+/* 5. [#UIUX-45] [CHART-SIMPLIFY] 8대 영역 라이프 밸런스 휠 & 콤팩트 카드 */
+.life-balance-compact-card {
+  background: var(--card, rgba(255, 255, 255, 0.05)) !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.08)) !important;
+  border-radius: 16px !important;
+  padding: 16px !important;
+  margin-bottom: 14px !important;
+}
+.balance-wheel-svg {
+  width: 100% !important;
+  max-width: 220px !important;
+  height: auto !important;
+  margin: 0 auto !important;
+  display: block !important;
+}
+
+/* 6. [#UIUX-46] [TIMER-INSPECTION] 초정밀 스톱워치 퀵 측정 바 */
+.quick-stopwatch-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 10px 14px !important;
+  background: linear-gradient(135deg, rgba(49, 130, 246, 0.12) 0%, rgba(16, 185, 129, 0.1) 100%) !important;
+  border: 1px solid rgba(49, 130, 246, 0.25) !important;
+  border-radius: 14px !important;
+  margin-bottom: 12px !important;
+  gap: 10px !important;
+}
+.quick-stopwatch-time {
+  font-family: 'SF Pro Display', -apple-system, monospace !important;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  color: var(--brand, #3182f6) !important;
+  letter-spacing: 0.5px !important;
+}
+.btn-quick-stopwatch {
+  min-height: 36px !important;
+  padding: 6px 12px !important;
+  border-radius: 10px !important;
+  border: none !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  transition: all 0.15s ease !important;
+}
+.btn-quick-stopwatch.start {
+  background: var(--brand, #3182f6) !important;
+  color: #ffffff !important;
+}
+.btn-quick-stopwatch.save {
+  background: var(--accent, #10b981) !important;
+  color: #ffffff !important;
+}
+
+/* 7. [#UIUX-47] [5UNIT-RECAP] 5단위(오늘·주·월·년·기간) 회고 아코디언 */
+.five-unit-recap-box {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  margin-bottom: 14px !important;
+}
+.recap-accordion-item {
+  background: var(--card, rgba(255, 255, 255, 0.04)) !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.08)) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+.recap-accordion-header {
+  min-height: 44px !important;
+  padding: 10px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  cursor: pointer !important;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  color: var(--ink, #ffffff) !important;
+}
+
+/* 8. [#UIUX-48] [DATA-SAFETY] 기록 데이터 1초 CSV 다운로드 & 무손실 안전핀 */
+.btn-rec-export-csv {
+  min-height: 40px !important;
+  padding: 8px 14px !important;
+  border-radius: 10px !important;
+  background: var(--card, rgba(255, 255, 255, 0.05)) !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.1)) !important;
+  color: var(--ink-soft, #94a3b8) !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  transition: all 0.15s ease !important;
+}
+.btn-rec-export-csv:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: var(--ink, #ffffff) !important;
+}
+
+
 
