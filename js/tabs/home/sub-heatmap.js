@@ -31,7 +31,7 @@
      */
     render: function(state) {
       try {
-        // 기존 인라인 렌더러가 존재하면 안전하게 위임 실행
+        // 기존 렌더러가 존재하면 안전하게 위임 실행
         if (typeof global.renderHomeGrassSummary === 'function') {
           global.renderHomeGrassSummary();
         }

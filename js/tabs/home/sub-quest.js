@@ -37,6 +37,9 @@
         if (typeof global.initFeedbackTierBar === 'function') {
           global.initFeedbackTierBar();
         }
+        if (typeof global.renderDailyQuestBar === 'function') {
+          global.renderDailyQuestBar();
+        }
       } catch (err) {
         console.warn('[OurgoalHomeQuest] Render warning:', err);
       }

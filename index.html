@@ -174,6 +174,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       </div>
       <div class="toss-headline" id="homeHeadlineSentence">오늘 하루를 완성할 <b>갓생 목표</b>가 기다려요 ✨</div>
       <div id="levelBadgeRow" data-home-widget="levelBadgeRow" data-widget-label="아바타 & 레벨 배지" data-widget-hint="내 아바타, 레벨, 경험치 바 (상단 고정)" data-widget-fixed="true"></div>
+      <!-- 🌟 [#UIUX-32] 어제/오늘/내일 1초 전환 날짜 네비게이터 칩 -->
+      <div class="home-date-nav" id="homeDateNav">
+        <button type="button" class="home-date-chip" id="btnHomeDateYesterday" data-date-offset="-1" onclick="if(window.switchHomeDate) window.switchHomeDate(-1);">◀ 어제</button>
+        <button type="button" class="home-date-chip active" id="btnHomeDateToday" data-date-offset="0" onclick="if(window.switchHomeDate) window.switchHomeDate(0);">🌟 오늘</button>
+        <button type="button" class="home-date-chip" id="btnHomeDateTomorrow" data-date-offset="1" onclick="if(window.switchHomeDate) window.switchHomeDate(1);">내일 ▶</button>
+      </div>
       <!-- 📦 [TASK-ES-304] 배선/검증 전용 슬롯 (화면 비침범 은폐) -->
       <div id="ogTaskWireSlot" style="display:none;" aria-hidden="true">
       <!-- 🧑‍🚀 [TASK-ES-278 / 노션 26] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 구현 -->
@@ -709,6 +715,23 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <span id="captureCharCount" class="capture-char-count">0자</span>
         </div>
         <div id="capturePhotoPreview" style="display:none;"></div>
+        <!-- 🌟 [#UIUX-28] [공준 3: 차원 엄격 분리] 신체 컨디션과 정신 몰입도 독립 2줄 슬라이더 -->
+        <div class="checkin-dimension-sliders" id="checkinDimensionSliders">
+          <div class="dimension-slider-row">
+            <div class="dimension-slider-header">
+              <span>⚡ <b>신체 컨디션 (에너지)</b></span>
+              <span class="dimension-slider-val" id="valEnergy">80%</span>
+            </div>
+            <input type="range" min="10" max="100" value="80" step="5" class="dimension-range-input" id="sliderEnergy" aria-label="신체 컨디션 에너지 슬라이더">
+          </div>
+          <div class="dimension-slider-row">
+            <div class="dimension-slider-header">
+              <span>🧠 <b>정신 몰입도 (집중도)</b></span>
+              <span class="dimension-slider-val" id="valFocus">80%</span>
+            </div>
+            <input type="range" min="10" max="100" value="80" step="5" class="dimension-range-input" id="sliderFocus" aria-label="정신 몰입도 집중도 슬라이더">
+          </div>
+        </div>
         <div class="capture-row" id="captureRowAnchor" style="display:flex;align-items:center;gap:6px;margin-top:8px;">
           <input type="file" id="capturePhotoInput" accept="image/*" style="display:none;">
           <button class="btn btn-ghost btn-sm" id="capturePhotoBtn" type="button" aria-label="사진 첨부"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>사진</span></button>
@@ -4604,6 +4627,79 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(typeof toast === 'function') toast('💡 예시 가이드가 입력창 힌트로 설정되었습니다 ✨');
   }
   window.applyQuickCunningText = applyQuickCunningText;
+
+  /* ============ [#TASK-UIUX-PHASE3-HOME-COCKPIT] 홈 1초 조망 ↔ 무저항 체크인 콕핏 8대 과업 ============ */
+  window._homeDateOffset = 0;
+  function switchHomeDate(offset){
+    window._homeDateOffset = offset;
+    if(typeof triggerHaptic === 'function') triggerHaptic(12);
+    var chips = document.querySelectorAll('.home-date-chip');
+    chips.forEach(function(c){
+      var o = parseInt(c.getAttribute('data-date-offset'), 10);
+      if(o === offset){
+        c.classList.add('active');
+      } else {
+        c.classList.remove('active');
+      }
+    });
+    var headline = document.getElementById('homeHeadlineSentence');
+    if(headline){
+      if(offset === -1){
+        headline.innerHTML = '어제 실천 기록을 <b>돌아보고 점검</b>해요 📅';
+      } else if(offset === 1){
+        headline.innerHTML = '내일의 도전을 <b>미리 계획하고 준비</b>해요 🚀';
+      } else {
+        headline.innerHTML = '오늘 하루를 완성할 <b>갓생 목표</b>가 기다려요 ✨';
+      }
+    }
+  }
+  window.switchHomeDate = switchHomeDate;
+
+  function initDimensionSliders(){
+    var slEnergy = document.getElementById('sliderEnergy');
+    var valEnergy = document.getElementById('valEnergy');
+    if(slEnergy && valEnergy && !slEnergy._bound){
+      slEnergy._bound = true;
+      slEnergy.addEventListener('input', function(){
+        valEnergy.textContent = slEnergy.value + '%';
+        if(typeof triggerHaptic === 'function') triggerHaptic(8);
+      });
+    }
+    var slFocus = document.getElementById('sliderFocus');
+    var valFocus = document.getElementById('valFocus');
+    if(slFocus && valFocus && !slFocus._bound){
+      slFocus._bound = true;
+      slFocus.addEventListener('input', function(){
+        valFocus.textContent = slFocus.value + '%';
+        if(typeof triggerHaptic === 'function') triggerHaptic(8);
+      });
+    }
+  }
+  window.initDimensionSliders = initDimensionSliders;
+
+  function initHomeCockpit(){
+    initDimensionSliders();
+    var inp = document.getElementById('captureInput');
+    if(inp && !inp.value){
+      inp.value = ''; // [공준 1: 무예단 원칙] 깨끗한 빈칸 보장
+    }
+    var btnY = document.getElementById('btnHomeDateYesterday');
+    if(btnY && !btnY._bound){
+      btnY._bound = true;
+      btnY.addEventListener('click', function(){ switchHomeDate(-1); });
+    }
+    var btnT = document.getElementById('btnHomeDateToday');
+    if(btnT && !btnT._bound){
+      btnT._bound = true;
+      btnT.addEventListener('click', function(){ switchHomeDate(0); });
+    }
+    var btnM = document.getElementById('btnHomeDateTomorrow');
+    if(btnM && !btnM._bound){
+      btnM._bound = true;
+      btnM.addEventListener('click', function(){ switchHomeDate(1); });
+    }
+  }
+  window.initHomeCockpit = initHomeCockpit;
 
   function renderQuickCheckinGuideChips(){
     var wrap = document.querySelector('.quick-checkin-chips');
@@ -13864,6 +13960,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ RENDER: HOME ============ */
   function renderHome(){
+    if(typeof initHomeCockpit === 'function') initHomeCockpit();
     renderQuickCheckinGuideChips();
     refreshCustomFeedbackButtons();
     renderLevelBadge();
@@ -14072,45 +14169,48 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* ============ 최근 히트맵 요약 카드 (가상유저 요청 P7/P9) ============ */
-  /* ============ 최근 히트맵 요약 카드 (가상유저 요청 P7/P9) ============ */
   function renderHomeGrassSummary(){
     var card = document.getElementById('homeGrassSummaryCard');
     if(!card) return;
     var stats = calculateWeeklyFocusStats(state.profile.records);
     var streak = computeStreakDays();
     
-    var dotsHtml = '';
     var now = new Date();
     var recDates = {};
     var dayNames = ['일', '월', '화', '수', '목', '금', '토'];
     (state.profile.records || []).forEach(function(r){
       if(r && r.startAt) recDates[dateKey(r.startAt)] = (recDates[dateKey(r.startAt)] || 0) + 1;
     });
-    for(var i=13; i>=0; i--){
+
+    // [#UIUX-30] 홈 히트맵 14px 스케일업 & 4주(28일) 콤팩트 뷰
+    var cellsHtml = '';
+    for(var i=27; i>=0; i--){
       var d = new Date(now.getTime() - i * 86400000);
       var dk = dateKey(d);
       var cnt = recDates[dk] || 0;
       var isToday = (i === 0);
-      var dayNum = d.getDate();
       var dayName = dayNames[d.getDay()];
-      var isWeekend = (d.getDay() === 0 || d.getDay() === 6);
-      var bg = isToday ? 'linear-gradient(180deg, #F59E0B, #D97706)' : (cnt >= 2 ? 'linear-gradient(180deg, #10B981, #059669)' : (cnt > 0 ? 'rgba(16,185,129,0.55)' : 'rgba(255,255,255,0.06)'));
-      var shadow = isToday ? 'box-shadow:0 0 10px rgba(245,158,11,0.6);' : (cnt > 0 ? 'box-shadow:0 0 8px rgba(16,185,129,0.4);' : '');
-      var border = isToday ? 'border:2px solid #F59E0B;' : 'border:1px solid rgba(255,255,255,0.08);';
-      var dayColor = isToday ? '#F59E0B;font-weight:800;' : (isWeekend ? 'var(--ink-soft);' : 'var(--ink-faint);');
-      dotsHtml += '<div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;min-width:0;">'
-        + '<span style="font-size:0.6rem;color:' + dayColor + '">' + (isToday ? '오늘' : dayName) + '</span>'
-        + '<span title="' + dk + ' (' + dayName + '): ' + cnt + '회" style="display:inline-block;width:100%;max-width:20px;height:34px;border-radius:8px;background:' + bg + ';' + shadow + border + 'transition:all 0.2s ease;"></span>'
-        + '<span style="font-size:0.65rem;color:' + (isToday ? '#F59E0B;font-weight:800;' : 'var(--ink-faint);') + '">' + dayNum + '</span>'
-        + '</div>';
+      var bg = isToday ? 'linear-gradient(180deg, #F59E0B, #D97706)' : (cnt >= 2 ? 'linear-gradient(180deg, #10B981, #059669)' : (cnt > 0 ? 'rgba(16,185,129,0.65)' : 'rgba(255,255,255,0.06)'));
+      var shadow = isToday ? 'box-shadow:0 0 8px rgba(245,158,11,0.7);' : (cnt > 0 ? 'box-shadow:0 0 6px rgba(16,185,129,0.35);' : '');
+      var border = isToday ? 'border:1.5px solid #F59E0B;' : 'border:1px solid rgba(255,255,255,0.08);';
+      var todayCls = isToday ? ' heatmap-cell-today' : '';
+      cellsHtml += '<span class="heatmap-cell-14' + todayCls + '" title="' + dk + ' (' + dayName + '): ' + cnt + '회" style="background:' + bg + ';' + shadow + border + '"></span>';
     }
 
-    card.innerHTML = '<div class="card" style="margin-top:14px;padding:14px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;backdrop-filter:blur(16px);">'
+    var dayHeadersHtml = dayNames.map(function(dn, idx){
+      var isWknd = (idx === 0 || idx === 6);
+      return '<span style="font-size:0.62rem;color:' + (isWknd ? 'var(--ink-soft)' : 'var(--ink-faint)') + ';font-weight:700;">' + dn + '</span>';
+    }).join('');
+
+    card.innerHTML = '<div class="card home-cockpit-card" style="margin-top:14px;padding:14px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;backdrop-filter:blur(16px);">'
       + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;flex-wrap:nowrap;">'
-      + '  <div style="display:flex;align-items:center;gap:4px;white-space:nowrap;flex-shrink:0;"><span style="font-size:1rem;">🔥</span><span style="font-size:0.88rem;font-weight:700;color:var(--ink);white-space:nowrap;">14일 활동 기록</span><span style="font-size:0.75rem;color:var(--ink-faint);white-space:nowrap;">(최근 히트맵)</span></div>'
+      + '  <div style="display:flex;align-items:center;gap:4px;white-space:nowrap;flex-shrink:0;"><span style="font-size:1rem;">🔥</span><span style="font-size:0.88rem;font-weight:700;color:var(--ink);white-space:nowrap;">4주 활동 기록</span><span style="font-size:0.75rem;color:var(--ink-faint);white-space:nowrap;">(최근 히트맵)</span></div>'
       + '  <span style="font-size:0.75rem;color:var(--brand);font-weight:700;background:rgba(16,185,129,0.12);padding:3px 8px;border-radius:12px;border:1px solid rgba(16,185,129,0.25);white-space:nowrap;flex-shrink:0;">' + (streak > 0 ? ('' + streak + '일 연속 몰입 중 🔥') : '첫 기록 남기기 ✨') + '</span>'
       + '</div>'
-      + '<div style="display:flex;gap:4px;align-items:flex-end;margin-bottom:12px;justify-content:space-between;">' + dotsHtml + '</div>'
+      + '<div class="home-heatmap-4w-container" style="margin-bottom:12px;">'
+      + '  <div class="home-heatmap-4w-grid" style="margin-bottom:4px;">' + dayHeadersHtml + '</div>'
+      + '  <div class="home-heatmap-4w-grid">' + cellsHtml + '</div>'
+      + '</div>'
       + '<div style="display:flex;gap:12px;font-size:0.76rem;color:var(--ink-sub);justify-content:space-between;border-top:1px solid rgba(255,255,255,0.06);padding-top:8px;">'
       + '  <div>최근 7일 체크인: <b style="color:var(--ink);">' + stats.totalSessions + '회</b></div>'
       + '  <div>집중 일수: <b style="color:var(--ink);">' + stats.activeDays + '일</b></div>'
@@ -14238,16 +14338,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       + '  <div class="daily-quest-fill" style="width:' + pct + '%;"></div>'
       + '</div>'
       + '<div style="display:flex;flex-direction:column;gap:6px;margin-top:12px;">'
-      + '  <div class="daily-quest-item' + (q1Done ? ' done' : '') + '" id="questItemCheckin" style="cursor:pointer;">'
-      + '    <div style="display:flex;align-items:center;gap:8px;"><span>' + (q1Done ? '✅' : '⭕') + '</span><span style="font-weight:700;font-size:.82rem;">오늘 한 줄 체크인 남기기</span></div>'
+      + '  <div class="daily-quest-item' + (q1Done ? ' done' : '') + '" id="questItemCheckin" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:4px 0;">'
+      + '    <div style="display:flex;align-items:center;gap:10px;"><span class="quest-checkbox-44' + (q1Done ? ' checked' : '') + '">' + (q1Done ? '✅' : '⭕') + '</span><span class="' + (q1Done ? 'quest-done-strikethrough' : '') + '" style="font-weight:700;font-size:.82rem;">오늘 한 줄 체크인 남기기</span></div>'
       + '    <span style="font-size:.72rem;font-weight:800;color:' + (q1Done ? '#22c55e' : 'var(--ink-faint)') + ';">+30 EXP' + (q1Done ? ' 완료' : '') + '</span>'
       + '  </div>'
-      + '  <div class="daily-quest-item' + (q2Done ? ' done' : '') + '" id="questItemMilestone" style="cursor:pointer;">'
-      + '    <div style="display:flex;align-items:center;gap:8px;"><span>' + (q2Done ? '✅' : '⭕') + '</span><span style="font-weight:700;font-size:.82rem;">할일 1개 완료</span></div>'
+      + '  <div class="daily-quest-item' + (q2Done ? ' done' : '') + '" id="questItemMilestone" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:4px 0;">'
+      + '    <div style="display:flex;align-items:center;gap:10px;"><span class="quest-checkbox-44' + (q2Done ? ' checked' : '') + '">' + (q2Done ? '✅' : '⭕') + '</span><span class="' + (q2Done ? 'quest-done-strikethrough' : '') + '" style="font-weight:700;font-size:.82rem;">할일 1개 완료</span></div>'
       + '    <span style="font-size:.72rem;font-weight:800;color:' + (q2Done ? '#22c55e' : 'var(--ink-faint)') + ';">+10 EXP' + (q2Done ? ' 완료' : '') + '</span>'
       + '  </div>'
-      + '  <div class="daily-quest-item' + (q3Done ? ' done' : '') + '" id="questItemTracker" style="cursor:pointer;">'
-      + '    <div style="display:flex;align-items:center;gap:8px;"><span>' + (q3Done ? '✅' : '⭕') + '</span><span style="font-weight:700;font-size:.82rem;">25분 집중 시간기록 완주</span></div>'
+      + '  <div class="daily-quest-item' + (q3Done ? ' done' : '') + '" id="questItemTracker" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:4px 0;">'
+      + '    <div style="display:flex;align-items:center;gap:10px;"><span class="quest-checkbox-44' + (q3Done ? ' checked' : '') + '">' + (q3Done ? '✅' : '⭕') + '</span><span class="' + (q3Done ? 'quest-done-strikethrough' : '') + '" style="font-weight:700;font-size:.82rem;">25분 집중 시간기록 완주</span></div>'
       + '    <span style="font-size:.72rem;font-weight:800;color:' + (q3Done ? '#22c55e' : 'var(--ink-faint)') + ';">+50 EXP' + (q3Done ? ' 완료' : '') + '</span>'
       + '  </div>'
       + '</div>';
@@ -15837,6 +15937,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         ? convertTextToNotionDbRecord(text, 'note', { title: text }, goal)
         : null;
       var recPhoto = pendingCapturePhoto || null;
+      var slEnergy = document.getElementById('sliderEnergy');
+      var slFocus = document.getElementById('sliderFocus');
+      var recEnergy = slEnergy ? parseInt(slEnergy.value, 10) : 80;
+      var recFocus = slFocus ? parseInt(slFocus.value, 10) : 80;
       state.profile.records.unshift({
         id: newId(),
         type: 'note',
@@ -15852,10 +15956,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         themeConfidence: selectedCaptureTheme ? 1.0 : 0.5,
         themeMetadata: themePayload.themeMetadata,
         notionDb: notionRec ? notionRec.notionSchema : null,
-        structured: notionRec || null
+        structured: notionRec || null,
+        energy: recEnergy,
+        focus: recFocus
       });
       t.value = '';
       t.placeholder = '예: 오늘 실천한 멋진 일을 한 줄로 적어보세요';
+      if(slEnergy) { slEnergy.value = 80; var ve = document.getElementById('valEnergy'); if(ve) ve.textContent = '80%'; }
+      if(slFocus) { slFocus.value = 80; var vf = document.getElementById('valFocus'); if(vf) vf.textContent = '80%'; }
       var activeChips = document.querySelectorAll('.quick-checkin-chips .btn-quick-chip');
       if(activeChips && activeChips.length){
         activeChips.forEach(function(b){
@@ -15919,7 +16027,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         : (notionRec
             ? '오늘의 실천이 안전하게 기록되었어요 (' + notionRec.status + (notionRec.metric ? ' · ' + notionRec.metric : '') + ')'
             : (recPhoto ? '사진과 함께 안전하게 기록했어요' : '오늘의 실천이 안전하게 기록되었어요'));
-      toast(checkinToastMsg);
+      var cardBox = document.getElementById('captureCardBox');
+      if(cardBox){
+        cardBox.classList.remove('celebration-pulse-05s');
+        void cardBox.offsetWidth;
+        cardBox.classList.add('celebration-pulse-05s');
+        setTimeout(function(){ if(cardBox) cardBox.classList.remove('celebration-pulse-05s'); }, 500);
+      }
+      toast(checkinToastMsg + ' ✨ (+10 EXP)');
       triggerHaptic(12);
       var btnRect = saveBtn.getBoundingClientRect();
       burstConfetti(btnRect.left+btnRect.width/2, btnRect.top, 8);

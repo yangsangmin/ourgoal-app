@@ -1,0 +1,65 @@
+{
+  "task": "TASK-UIUX-PHASE3-HOME-COCKPIT",
+  "requirementsSource": "docs/specs/REQ-TASK-UIUX-PHASE3-HOME-COCKPIT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "무스크롤 1초 원스크린 조망 콕핏 레이아웃, 4주 콤팩트 히트맵(14px 스케일업) 및 어제/오늘/내일 날짜 네비게이터 칩이 구현되어 있음을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "공준 1 무예단 원칙의 체크인 입력창 빈칸 대기 및 공준 3 차원 분리의 신체 컨디션과 정신 몰입도 독립 2줄 슬라이더가 구현되어 있음을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "공준 5 촉각적 손맛의 실천 저장 즉시 0.5초 축하 연출과 당일 퀘스트 44px 대형 체크박스 및 취소선 모션이 배선되어 있음을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 home-date-nav 및 heatmap-cell-14 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "home-date-nav"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 checkin-dimension-sliders 및 sliderEnergy 독립 슬라이더 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "checkin-dimension-sliders"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 quest-checkbox-44 및 quest-done-strikethrough 클래스가 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "quest-checkbox-44"
+      }
+    }
+  ]
+}

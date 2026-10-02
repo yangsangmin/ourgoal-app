@@ -15129,3 +15129,191 @@ html[data-theme="urban-city"] {
   color: var(--s-ink-soft, #94A3B8) !important;
   font-weight: 600 !important;
 }
+
+/* ==========================================================================
+   #TASK-UIUX-PHASE3-HOME-COCKPIT: 홈 1초 조망 ↔ 무저항 체크인 콕핏 8대 과업
+   ========================================================================== */
+
+/* 1. [#UIUX-32] 어제/오늘/내일 1초 전환 날짜 네비게이터 칩 */
+.home-date-nav {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  margin: 4px 0 12px 0 !important;
+  width: 100% !important;
+}
+.home-date-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 6px 14px !important;
+  min-height: 36px !important;
+  border-radius: 18px !important;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  background: var(--card2, rgba(255, 255, 255, 0.04)) !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.08)) !important;
+  color: var(--ink-soft, #94a3b8) !important;
+  cursor: pointer !important;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  user-select: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+.home-date-chip:active {
+  transform: scale(0.96) !important;
+}
+.home-date-chip.active {
+  background: rgba(49, 130, 246, 0.15) !important;
+  border-color: var(--brand, #3182f6) !important;
+  color: var(--brand, #3182f6) !important;
+  font-weight: 800 !important;
+}
+
+/* 2. [#UIUX-30] 홈 히트맵 14px 스케일업 & 4주 콤팩트 뷰 */
+.home-heatmap-4w-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+.home-heatmap-4w-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 5px !important;
+  justify-items: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+.heatmap-cell-14 {
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  min-height: 14px !important;
+  border-radius: 4px !important;
+  display: inline-block !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+  box-sizing: border-box !important;
+}
+.heatmap-cell-14:hover,
+.heatmap-cell-14:active {
+  transform: scale(1.25) !important;
+}
+.heatmap-cell-today {
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.7) !important;
+  border: 1.5px solid #f59e0b !important;
+}
+
+/* 3. [#UIUX-31] 당일 퀘스트 44px 대형 체크박스 & 취소선 모션 */
+.quest-checkbox-44 {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 12px !important;
+  cursor: pointer !important;
+  background: var(--card2, rgba(255, 255, 255, 0.04)) !important;
+  border: 1.5px solid var(--rule, rgba(255, 255, 255, 0.12)) !important;
+  color: var(--ink, #f1f5f9) !important;
+  font-size: 1.15rem !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  user-select: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+.quest-checkbox-44:active {
+  transform: scale(0.92) !important;
+}
+.quest-checkbox-44.checked {
+  background: rgba(34, 197, 94, 0.18) !important;
+  border-color: #22c55e !important;
+  color: #22c55e !important;
+}
+.quest-done-strikethrough {
+  text-decoration: line-through !important;
+  opacity: 0.65 !important;
+  transition: all 0.25s ease !important;
+}
+
+/* 4. [#UIUX-28] [공준 3: 차원 엄격 분리] 신체 컨디션과 정신 몰입도 독립 2줄 슬라이더 */
+.checkin-dimension-sliders {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  margin: 10px 0 12px 0 !important;
+  padding: 12px 14px !important;
+  background: var(--card2, rgba(255, 255, 255, 0.03)) !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.08)) !important;
+  border-radius: 14px !important;
+}
+.dimension-slider-row {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+.dimension-slider-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  font-size: 0.76rem !important;
+  font-weight: 700 !important;
+  color: var(--ink, #f1f5f9) !important;
+}
+.dimension-slider-val {
+  font-size: 0.76rem !important;
+  font-weight: 800 !important;
+  color: var(--brand, #3182f6) !important;
+}
+.dimension-range-input {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  width: 100% !important;
+  height: 8px !important;
+  border-radius: 4px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  outline: none !important;
+  margin: 6px 0 !important;
+  cursor: pointer !important;
+  touch-action: pan-y !important;
+}
+.dimension-range-input::-webkit-slider-thumb {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  background: var(--brand, #3182f6) !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+  cursor: pointer !important;
+  transition: transform 0.12s ease !important;
+}
+.dimension-range-input::-webkit-slider-thumb:active {
+  transform: scale(1.18) !important;
+}
+
+/* 5. [#UIUX-29] [공준 5: 촉각적 손맛] 실천 저장 즉시 0.5초 축하 연출 */
+@keyframes celebrationPulse05 {
+  0% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.03); filter: brightness(1.2); box-shadow: 0 0 20px rgba(49, 130, 246, 0.5); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+.celebration-pulse-05s {
+  animation: celebrationPulse05 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* 6. [#UIUX-25] 무스크롤 1초 원스크린 조망 콕핏 레이아웃 (Glance & Expand) */
+.home-cockpit-card {
+  padding: 14px 16px !important;
+  border-radius: 20px !important;
+  background: var(--card, rgba(255, 255, 255, 0.04)) !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.08)) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+  margin-bottom: 12px !important;
+  box-sizing: border-box !important;
+}
+
