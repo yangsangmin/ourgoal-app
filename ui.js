@@ -133,5 +133,51 @@
     vibrate(10);
     wrapEl.classList.toggle('open');
   };
+
+  /* 9) [Phase 2: #UIUX-18] 바텀시트 스와이프 다운 닫기 제스처 */
+  var sheetTouchStartY = null, sheetTouchCurrentY = null, sheetEl = null, isSheetSwiping = false;
+  d.addEventListener('touchstart', function (e) {
+    var overlay = d.getElementById('modalOverlay');
+    if (!overlay || !overlay.classList.contains('active')) return;
+    var sheet = e.target.closest && e.target.closest('.modal-sheet');
+    if (!sheet) return;
+    if (sheet.scrollTop > 0) return;
+    if (e.target.closest('button, input, textarea, select, a')) return;
+
+    sheetEl = sheet;
+    sheetTouchStartY = e.touches[0].clientY;
+    sheetTouchCurrentY = sheetTouchStartY;
+    isSheetSwiping = false;
+  }, { passive: true });
+
+  d.addEventListener('touchmove', function (e) {
+    if (!sheetEl || sheetTouchStartY === null) return;
+    sheetTouchCurrentY = e.touches[0].clientY;
+    var dy = sheetTouchCurrentY - sheetTouchStartY;
+    if (dy > 8) {
+      isSheetSwiping = true;
+      sheetEl.style.transform = 'translateY(' + Math.max(0, dy) + 'px)';
+      sheetEl.style.transition = 'none';
+    }
+  }, { passive: true });
+
+  d.addEventListener('touchend', function () {
+    if (!sheetEl || sheetTouchStartY === null) return;
+    var dy = (sheetTouchCurrentY || 0) - sheetTouchStartY;
+    var target = sheetEl;
+    sheetEl = null; sheetTouchStartY = null; sheetTouchCurrentY = null;
+    if (isSheetSwiping && dy > 70) {
+      vibrate(12);
+      target.style.transition = 'transform .2s cubic-bezier(0.16, 1, 0.3, 1)';
+      target.style.transform = 'translateY(100%)';
+      setTimeout(function () {
+        if (typeof window.closeModal === 'function') window.closeModal();
+      }, 180);
+    } else {
+      target.style.transition = 'transform .2s cubic-bezier(0.16, 1, 0.3, 1)';
+      target.style.transform = '';
+    }
+    isSheetSwiping = false;
+  }, { passive: true });
 })();
 

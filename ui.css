@@ -418,14 +418,16 @@ button:active,.goal-chip:active,.dock-action-btn:active{transform:scale(.97);tra
 .progress-ring{--pr:0;width:56px;height:56px;border-radius:50%;background:conic-gradient(var(--brand) calc(var(--pr) * 1%),var(--surface-3) 0);display:grid;place-items:center;}
 .progress-ring::after{content:attr(data-pct);width:44px;height:44px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:.75rem;font-weight:700;}
 
-/* ---------- 7. 바텀시트·토스트·배너·FAB ---------- */
-.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);z-index:100;display:none;align-items:flex-end;justify-content:center;animation:fadein .16s ease;}
+/* ---------- 7. 공간적 영속성 바텀시트 엔진 ---------- */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:var(--z-sheet, 100);display:none;align-items:flex-end;justify-content:center;animation:fadein .18s ease;touch-action:none;}
 .modal-overlay.active{display:flex;}
-.modal-sheet{width:100%;max-width:var(--maxw);background:var(--card);border-radius:var(--radius-xl) var(--radius-xl) 0 0;padding:8px 20px calc(20px + env(safe-area-inset-bottom));box-shadow:var(--shadow-sheet);border-top:1px solid rgba(255,255,255,.15);animation:sheetup .26s var(--ease);max-height:90vh;overflow-y:auto;overscroll-behavior:contain;}
-.modal-sheet::before{content:"";display:block;width:36px;height:4px;border-radius:999px;background:var(--surface-3);margin:6px auto 16px;}
-@keyframes sheetup{from{transform:translateY(24px);opacity:0;}to{transform:none;opacity:1;}}
-.modal-sheet h3{font-size:1.25rem;font-weight:700;margin:0 0 16px;letter-spacing:-.02em;}
-.modal-actions{display:flex;gap:8px;margin-top:20px;}
+.modal-sheet{position:relative;width:100%;max-width:var(--maxw);background:var(--card);border-radius:24px 24px 0 0;padding:10px 20px calc(24px + env(safe-area-inset-bottom, 0px));box-shadow:0 -12px 36px rgba(0,0,0,.45);border-top:1px solid var(--rule);border-left:1px solid var(--rule);border-right:1px solid var(--rule);animation:sheetup .24s cubic-bezier(0.16, 1, 0.3, 1);max-height:82vh;overflow-y:auto;overscroll-behavior:contain;will-change:transform;}
+.modal-sheet::before{content:"";display:block;width:40px;height:4.5px;border-radius:999px;background:var(--surface-3);margin:4px auto 14px;cursor:grab;}
+.modal-sheet-close{position:absolute;top:10px;right:12px;width:44px;height:44px;min-width:44px;min-height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:1.35rem;font-weight:700;cursor:pointer;background:var(--card2);border:1px solid var(--rule);z-index:10;transition:all .15s ease;-webkit-tap-highlight-color:transparent;}
+.modal-sheet-close:active{transform:scale(0.92);background:var(--surface-2);}
+@keyframes sheetup{from{transform:translateY(100%);opacity:.6;}to{transform:none;opacity:1;}}
+.modal-sheet h3{font-size:1.2rem;font-weight:700;margin:0 0 16px;letter-spacing:-.02em;color:var(--ink);padding-right:48px;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
 .toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(8px);background:#2B3138;color:#fff;padding:12px 18px;border-radius:12px;font-size:.875rem;font-weight:500;z-index:100005;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s var(--ease);box-shadow:var(--shadow-float);white-space:normal;max-width:calc(100vw - 40px);width:max-content;text-align:center;line-height:1.4;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 body:has(#checkinAiSheetBackdrop) .toast,
