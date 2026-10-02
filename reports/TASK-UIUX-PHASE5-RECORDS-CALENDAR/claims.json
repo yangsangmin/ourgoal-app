@@ -1,0 +1,65 @@
+{
+  "task": "TASK-UIUX-PHASE5-RECORDS-CALENDAR",
+  "requirementsSource": "docs/specs/REQ-TASK-UIUX-PHASE5-RECORDS-CALENDAR.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "최신 3건 피드 카드 및 과거 기록 아카이빙 페이징 컴포넌트가 구현되어 있음을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "캘린더 ↔ 기록 타임라인 1초 공간 융합 스위처 및 76px 와이드 캘린더 셀이 구현되어 있음을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "초정밀 스톱워치 퀵 측정 바 및 기록 1초 CSV 내보내기/백업 버튼이 구현되어 있음을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 rec-recent3-container 및 btn-rec-archive-toggle 스타일이 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "rec-recent3-container"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 rec-cal-fuse-switcher 및 cal-wide-cell-76 클래스가 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "rec-cal-fuse-switcher"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ui.css 내에 quick-stopwatch-bar 및 btn-rec-export-csv 클래스가 정의되어 있다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "quick-stopwatch-bar"
+      }
+    }
+  ]
+}

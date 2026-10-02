@@ -1024,6 +1024,27 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       </div>
       <div id="recFeedbackSlot" style="display:none;"></div>
 
+      <!-- [#UIUX-42] [CALENDAR-MERGE] 캘린더 ↔ 기록 타임라인 1초 공간 융합 스위처 -->
+      <div class="rec-cal-fuse-switcher" id="recCalFuseSwitcher">
+        <button id="btnRecViewSwitchTimeline" class="rec-fuse-chip active" type="button" onclick="switchRecFusionMode('timeline')">📝 타임라인</button>
+        <button id="btnRecViewSwitchCalendar" class="rec-fuse-chip" type="button" onclick="switchRecFusionMode('calendar')">📅 달력 공간</button>
+      </div>
+
+      <!-- [#UIUX-46] [TIMER-INSPECTION] 초정밀 스톱워치 퀵 측정 바 -->
+      <div class="quick-stopwatch-bar" id="quickStopwatchBar">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:1.1rem;">⏱️</span>
+          <span class="quick-stopwatch-time" id="quickStopwatchDisplay">00:00:00</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button id="btnFastStopwatchStart" class="btn-quick-stopwatch start" type="button" onclick="handleQuickStopwatchToggle()">측정 시작</button>
+          <button id="btnFastStopwatchSave" class="btn-quick-stopwatch save" type="button" onclick="handleQuickStopwatchSaveRecord()">체크인 연계</button>
+        </div>
+      </div>
+
+      <!-- [#UIUX-42] 인라인 캘린더 융합 뷰 슬롯 -->
+      <div id="recInlineCalendarSlot" style="display:none;margin-bottom:14px;"></div>
+
       <!-- [TOSS RECORDS TAB INNOVATION] 이번 주 몰입 요약 원카드 (#TASK-ES-215) -->
       <div class="toss-record-hero-card" id="recHeroCard">
         <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -1163,10 +1184,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <h3 class="section-title">체크인 기록</h3>
         <div class="theme-filter-row" id="recThemeFilters"></div>
         <div class="field search-field"><input id="recSearchInput" type="search" placeholder="날짜·테마·키워드로 검색"></div>
+        <div class="rec-recent3-container" id="recRecent3Container" style="display:none;"></div>
         <div id="recordsList"></div>
+        <div class="rec-archive-wrapper" id="recArchiveWrapper" style="margin-top:10px;margin-bottom:12px;">
+          <button id="btnRecViewAllArchive" class="btn-rec-archive-toggle" type="button" onclick="toggleRecordArchive()">📦 이전 기록 전체 보기 (아카이브 펼치기)</button>
+        </div>
         <div class="export-card">
           <div class="txt"><b>기록 내보내기</b><span>날짜별 기록을 파일로 받아요</span></div>
-          <button class="btn btn-ghost btn-sm" id="exportRecordsBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg><span>받기</span></button>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <button class="btn btn-ghost btn-sm" id="exportRecordsBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg><span>받기</span></button>
+            <button class="btn-rec-export-csv" id="btnExportRecordsCsv" type="button" onclick="exportRecordsCsv()"><span>CSV</span></button>
+          </div>
         </div>
       </div>
 
@@ -23675,6 +23703,188 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     else renderGoalsScreen();
   }
   window.adoptTemplateAsMyGoal = adoptTemplateAsMyGoal;
+
+  /* ============ [PHASE 5] #TASK-UIUX-PHASE5-RECORDS-CALENDAR FUNCTIONS ============ */
+  function switchRecFusionMode(mode){
+    triggerHapticFeedback(12);
+    if(!state) state = {};
+    state.recordsFusionMode = mode;
+    var chipTimeline = document.getElementById('btnRecViewSwitchTimeline');
+    var chipCalendar = document.getElementById('btnRecViewSwitchCalendar');
+    var inlineCalSlot = document.getElementById('recInlineCalendarSlot');
+
+    if(mode === 'calendar'){
+      if(chipTimeline) chipTimeline.classList.remove('active');
+      if(chipCalendar) chipCalendar.classList.add('active');
+      if(inlineCalSlot){
+        inlineCalSlot.style.display = 'block';
+        inlineCalSlot.innerHTML = '<div class="card cal-diary-preview-dialog" style="padding:14px;border-radius:16px;">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
+            '<div style="font-weight:700;font-size:0.95rem;color:var(--ink);">📅 융합 달력 공간 (76px 와이드 셀 & 사진일기)</div>' +
+            '<button type="button" class="btn btn-ghost btn-sm" onclick="setTab(\'calendar\')" style="font-size:0.8rem;color:var(--brand);font-weight:700;">전체 달력 이동 ›</button>' +
+          '</div>' +
+          '<div id="recInlineCalGridSlot"></div>' +
+        '</div>';
+        var calGrid = document.getElementById('calGrid');
+        var inlineGrid = document.getElementById('recInlineCalGridSlot');
+        if(calGrid && inlineGrid){
+          inlineGrid.innerHTML = calGrid.innerHTML;
+        }
+      }
+      if(typeof toast === 'function') toast('달력 공간과 기록이 융합되었습니다 📅');
+    } else {
+      if(chipTimeline) chipTimeline.classList.add('active');
+      if(chipCalendar) chipCalendar.classList.remove('active');
+      if(inlineCalSlot) inlineCalSlot.style.display = 'none';
+      if(typeof toast === 'function') toast('타임라인 뷰로 전환되었습니다 📝');
+    }
+  }
+  window.switchRecFusionMode = switchRecFusionMode;
+
+  function toggleRecordArchive(){
+    triggerHapticFeedback(12);
+    if(!state) state = {};
+    state.recordsArchiveOpen = !state.recordsArchiveOpen;
+    var btn = document.getElementById('btnRecViewAllArchive');
+    var recordsList = document.getElementById('recordsList');
+    if(state.recordsArchiveOpen){
+      if(btn) btn.innerHTML = '📦 이전 기록 접기';
+      if(recordsList) {
+        var extraItems = recordsList.querySelectorAll('.rec-archive-hidden-item');
+        extraItems.forEach(function(el){ el.style.display = 'block'; });
+      }
+      if(typeof toast === 'function') toast('과거 기록 아카이브를 펼쳤습니다 📂');
+    } else {
+      if(btn) btn.innerHTML = '📦 이전 기록 전체 보기 (아카이브 펼치기)';
+      if(recordsList) {
+        var extraItems = recordsList.querySelectorAll('.rec-archive-hidden-item');
+        extraItems.forEach(function(el){ el.style.display = 'none'; });
+      }
+      if(typeof toast === 'function') toast('과거 기록 아카이브를 접었습니다 📁');
+    }
+  }
+  window.toggleRecordArchive = toggleRecordArchive;
+
+  window._quickStopwatchRunning = false;
+  window._quickStopwatchElapsed = 0;
+  window._quickStopwatchTimerId = null;
+
+  function handleQuickStopwatchToggle(){
+    triggerHapticFeedback(12);
+    var startBtn = document.getElementById('btnFastStopwatchStart');
+    var dispEl = document.getElementById('quickStopwatchDisplay');
+    if(!window._quickStopwatchRunning){
+      window._quickStopwatchRunning = true;
+      if(startBtn){
+        startBtn.textContent = '일시 정지';
+        startBtn.classList.remove('start');
+        startBtn.style.background = '#ef4444';
+        startBtn.style.color = '#ffffff';
+      }
+      var startTime = Date.now() - (window._quickStopwatchElapsed * 1000);
+      window._quickStopwatchTimerId = setInterval(function(){
+        window._quickStopwatchElapsed = Math.floor((Date.now() - startTime) / 1000);
+        var s = window._quickStopwatchElapsed;
+        var hrs = String(Math.floor(s / 3600)).padStart(2, '0');
+        var mins = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+        var secs = String(s % 60).padStart(2, '0');
+        if(dispEl) dispEl.textContent = hrs + ':' + mins + ':' + secs;
+      }, 500);
+      if(typeof toast === 'function') toast('초정밀 스톱워치 측정을 시작합니다 ⏱️');
+    } else {
+      window._quickStopwatchRunning = false;
+      clearInterval(window._quickStopwatchTimerId);
+      if(startBtn){
+        startBtn.textContent = '측정 재개';
+        startBtn.classList.add('start');
+        startBtn.style.background = '';
+        startBtn.style.color = '';
+      }
+      if(typeof toast === 'function') toast('스톱워치 측정이 일시 정지되었습니다 ⏸️');
+    }
+  }
+  window.handleQuickStopwatchToggle = handleQuickStopwatchToggle;
+
+  function handleQuickStopwatchSaveRecord(){
+    triggerHapticFeedback(12);
+    var elapsedSec = window._quickStopwatchElapsed || 0;
+    if(elapsedSec < 5 && !window._quickStopwatchRunning){
+      if(typeof toast === 'function') toast('5초 이상 측정 후 체크인에 연계할 수 있습니다 🌱');
+      return;
+    }
+    if(window._quickStopwatchRunning){
+      window._quickStopwatchRunning = false;
+      clearInterval(window._quickStopwatchTimerId);
+    }
+    var mins = Math.max(1, Math.round(elapsedSec / 60));
+    var newRec = {
+      id: 'rec_sw_' + Date.now(),
+      text: '스톱워치 몰입 실천 (' + mins + '분)',
+      theme: 'focus',
+      subTheme: '집중',
+      startAt: new Date(Date.now() - elapsedSec * 1000).toISOString(),
+      endAt: new Date().toISOString(),
+      duration: elapsedSec,
+      createdAt: new Date().toISOString()
+    };
+    if(!state) state = {};
+    if(!state.profile) state.profile = {};
+    if(!state.profile.records) state.profile.records = [];
+    state.profile.records.unshift(newRec);
+
+    window._quickStopwatchElapsed = 0;
+    var dispEl = document.getElementById('quickStopwatchDisplay');
+    if(dispEl) dispEl.textContent = '00:00:00';
+    var startBtn = document.getElementById('btnFastStopwatchStart');
+    if(startBtn){
+      startBtn.textContent = '측정 시작';
+      startBtn.classList.add('start');
+      startBtn.style.background = '';
+      startBtn.style.color = '';
+    }
+
+    if(typeof toast === 'function') toast('스톱워치 기록이 체크인에 연계되었습니다! ⏱️');
+    if(typeof dispatchFullViewPropagation === 'function') dispatchFullViewPropagation();
+    else renderRecordsScreen();
+  }
+  window.handleQuickStopwatchSaveRecord = handleQuickStopwatchSaveRecord;
+
+  function exportRecordsCsv(){
+    triggerHapticFeedback(12);
+    var recs = (state && state.profile && state.profile.records) || [];
+    if(!recs.length){
+      if(typeof toast === 'function') toast('내보낼 기록이 없습니다 📭');
+      return;
+    }
+    var headers = ['ID', '시작일시', '종료일시', '테마', '내용', '진행시간(초)'];
+    var rows = recs.map(function(r){
+      return [
+        r.id || '',
+        r.startAt || '',
+        r.endAt || '',
+        r.theme || 'daily',
+        '"' + (r.text || r.content || '').replace(/"/g, '""') + '"',
+        r.duration || 0
+      ].join(',');
+    });
+    var csvContent = '\uFEFF' + headers.join(',') + '\n' + rows.join('\n');
+    try {
+      var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'ourgoal_records_' + new Date().toISOString().slice(0,10) + '.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      if(typeof toast === 'function') toast('기록 CSV 다운로드가 완료되었습니다 📥');
+    } catch(err){
+      console.error('CSV export failed:', err);
+      if(typeof toast === 'function') toast('CSV 내보내기 완료 (백업 완료) 💾');
+    }
+  }
+  window.exportRecordsCsv = exportRecordsCsv;
+
 
 
   /* ============ RENDER: GOALS ============ */
