@@ -25579,7 +25579,7 @@ wirePromptEncyclopediaEvents(body);
 
   function renderTeamGoalsEmptyGuideHtml(){
     return renderTeamCreateHeroCardHtml('goals') +
-      '<div class="team-quick-action-bar" id="teamLinkedGoalQuickBarEmpty">' +
+      '<div class="team-quick-action-bar" id="teamLinkedGoalQuickBar">' +
         '<div style="display:flex;align-items:center;gap:8px;min-width:0;">' +
           '<span style="font-size:1.25rem;">💡</span>' +
           '<div style="min-width:0;">' +
@@ -25587,7 +25587,7 @@ wirePromptEncyclopediaEvents(body);
             '<div class="faint" style="font-size:0.75rem;">팀 연계 개인목표를 만들고 함께 완주해요 (+15 EXP)</div>' +
           '</div>' +
         '</div>' +
-        '<button class="team-personal-goal-quick-btn" id="btnQuickCreateTeamLinkedGoalEmpty" type="button">' +
+        '<button class="team-personal-goal-quick-btn" id="btnQuickCreateTeamLinkedGoal" type="button">' +
           '+ 개인목표 만들기' +
         '</button>' +
       '</div>' +
@@ -25870,7 +25870,7 @@ wirePromptEncyclopediaEvents(body);
         promptNewGroup(null);
       };
     }
-    var emptyQuickBtn = container.querySelector('#btnQuickCreateTeamLinkedGoalEmpty');
+    var emptyQuickBtn = container.querySelector('#btnQuickCreateTeamLinkedGoal') || container.querySelector('#btnQuickCreateTeamLinkedGoalEmpty');
     if(emptyQuickBtn){
       emptyQuickBtn.addEventListener('click', function(){
         triggerHapticFeedback(12);
