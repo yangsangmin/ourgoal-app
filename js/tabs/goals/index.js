@@ -58,7 +58,7 @@
     },
 
     /**
-     * 목표 메가블록 마운트 오케스트레이션 (수밀 격벽 보장)
+     * 목표 메가블록 마운트 오케스트레이션 (수밀 격벽 및 이중 렌더링 방어)
      * @param {HTMLElement} container
      * @param {Object} state
      * @param {Object} events
@@ -69,6 +69,7 @@
 
       // 1. 하위 소블록 순차 수밀 마운트
       var blockIds = Object.keys(this.subBlocks);
+      var mountedCount = 0;
       for (var i = 0; i < blockIds.length; i++) {
         var bId = blockIds[i];
         var block = this.subBlocks[bId];
@@ -78,6 +79,7 @@
               ? document.getElementById(block.containerId)
               : null;
             block.mount(subContainer, s, ev);
+            mountedCount++;
           }
         } catch (subErr) {
           console.warn('[OurgoalGoalsMegaBlock] Sub-block mount error in "' + bId + '":', subErr);
@@ -87,13 +89,16 @@
         }
       }
 
-      // 2. 전체 목표 화면 조율 및 폴백 렌더러 안전 호출 (무손실 점진 전환)
-      try {
-        if (typeof global.renderGoalsScreen === 'function') {
-          global.renderGoalsScreen();
+      // 2. 이중 렌더링 중복 방어 및 수밀 조율 (무손실 점진 전환 폴백)
+      if (mountedCount === 0) {
+        // 소블록이 없거나 마운트에 실패한 경우: 전체 목표 화면 레거시 렌더러 안전 폴백 호출
+        try {
+          if (typeof global.renderGoalsScreen === 'function') {
+            global.renderGoalsScreen();
+          }
+        } catch (renderErr) {
+          console.warn('[OurgoalGoalsMegaBlock] renderGoalsScreen fallback warning:', renderErr);
         }
-      } catch (renderErr) {
-        console.warn('[OurgoalGoalsMegaBlock] renderGoalsScreen fallback warning:', renderErr);
       }
 
       // 3. 마운트 완료 이벤트 발행
