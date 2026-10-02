@@ -15951,5 +15951,235 @@ html[data-theme="urban-city"] {
   color: var(--ink, #ffffff) !important;
 }
 
+/* ==========================================================================
+   [PHASE 6] #TASK-UIUX-PHASE6-COMM-SETTINGS: 소통 무공해 연대 & 설정 1초 보안 제어 8대 과업
+   ========================================================================== */
+
+/* 1. [#UIUX-49] [COMM-3X2-HUB] 소통 탭 3×2 그리드 허브 */
+.comm-hub-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 8px !important;
+  margin-bottom: 14px !important;
+}
+.comm-hub-card {
+  background: var(--card, rgba(255, 255, 255, 0.05)) !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.08)) !important;
+  border-radius: 14px !important;
+  padding: 10px 8px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 4px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  color: var(--ink-soft, #94a3b8) !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+}
+.comm-hub-card:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: var(--ink, #ffffff) !important;
+}
+.comm-hub-card.active {
+  background: rgba(49, 130, 246, 0.15) !important;
+  border-color: var(--brand, #3182f6) !important;
+  color: var(--brand, #3182f6) !important;
+  font-weight: 700 !important;
+}
+
+/* 2. [#UIUX-50] [FEED-AVATAR-SHEET] 피드 작성자 아바타 터치 시 프로필 바텀시트 */
+.comm-profile-bottomsheet {
+  background: var(--surface, #1e293b) !important;
+  border-radius: 20px 20px 0 0 !important;
+  padding: 20px 16px !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.1)) !important;
+}
+.comm-profile-avatar-wrap {
+  width: 64px !important;
+  height: 64px !important;
+  border-radius: 50% !important;
+  background: var(--card, rgba(255, 255, 255, 0.1)) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 2rem !important;
+  margin: 0 auto 12px !important;
+  border: 2px solid var(--brand, #3182f6) !important;
+}
+
+/* 3. [#UIUX-51] [INAPP-SAFE-DM] 프로필 시트 내 인앱 1:1 안심 DM 연결 */
+.btn-inapp-dm-start {
+  width: 100% !important;
+  min-height: 44px !important;
+  padding: 10px 16px !important;
+  border-radius: 12px !important;
+  background: var(--brand, #3182f6) !important;
+  color: #ffffff !important;
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  transition: all 0.15s ease !important;
+}
+
+/* 4. [#UIUX-52] [NONTOXIC-REACTION] 4종 무공해 연대 리액션 플로팅 바 */
+.reaction-floating-bar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin-top: 10px !important;
+  padding: 6px 8px !important;
+  background: var(--card, rgba(255, 255, 255, 0.04)) !important;
+  border-radius: 20px !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.08)) !important;
+  width: fit-content !important;
+}
+.btn-reaction-chip {
+  min-height: 32px !important;
+  padding: 4px 10px !important;
+  border-radius: 14px !important;
+  background: transparent !important;
+  border: none !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  color: var(--ink-soft, #94a3b8) !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  transition: transform 0.15s ease !important;
+}
+.btn-reaction-chip:active {
+  transform: scale(1.15) !important;
+}
+.reaction-float-anim {
+  animation: floatUpFade 0.6s ease-out forwards !important;
+}
+@keyframes floatUpFade {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-30px) scale(1.4); opacity: 0; }
+}
+
+/* 5. [#UIUX-53] [PEER-SEARCH-ANCHOR] 동반자 검색 핀포인트 4대 식별 앵커 */
+.peer-search-anchor-box {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  margin: 10px 0 !important;
+}
+.peer-anchor-tag {
+  font-size: 0.78rem !important;
+  padding: 4px 10px !important;
+  border-radius: 12px !important;
+  background: var(--card, rgba(255, 255, 255, 0.06)) !important;
+  color: var(--ink-soft, #94a3b8) !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.08)) !important;
+}
+
+/* 6. [#UIUX-54] [SETTINGS-1SEC] 설정 계정 & 보안 1초 조망 카드 */
+.settings-security-card {
+  background: var(--card, rgba(255, 255, 255, 0.05)) !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.08)) !important;
+  border-radius: 16px !important;
+  padding: 16px !important;
+  margin-bottom: 14px !important;
+}
+.badge-2fa-status {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  padding: 3px 8px !important;
+  border-radius: 8px !important;
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #10b981 !important;
+}
+.btn-security-refresh {
+  min-height: 36px !important;
+  padding: 6px 12px !important;
+  border-radius: 10px !important;
+  background: var(--card, rgba(255, 255, 255, 0.06)) !important;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.1)) !important;
+  color: var(--ink, #ffffff) !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+/* 7. [#UIUX-55] [DEVICE-KILLSWITCH] 연결된 기기 5대 식별 앵커 & 원격 차단 */
+.device-session-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 10px 0 !important;
+  border-bottom: 1px dashed var(--rule, rgba(255, 255, 255, 0.08)) !important;
+}
+.btn-device-killswitch {
+  min-height: 32px !important;
+  padding: 4px 10px !important;
+  border-radius: 8px !important;
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #ef4444 !important;
+  border: 1px solid rgba(239, 68, 68, 0.25) !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+.btn-device-killswitch:hover {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+/* 8. [#UIUX-56] [THEME-SWATCHES] 4대 테마 실시간 미니 프리뷰 스와치 칩 */
+.theme-swatch-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 8px !important;
+  margin: 12px 0 !important;
+}
+.theme-swatch-chip {
+  min-height: 64px !important;
+  padding: 8px 6px !important;
+  border-radius: 14px !important;
+  background: var(--card, rgba(255, 255, 255, 0.05)) !important;
+  border: 2px solid var(--rule, rgba(255, 255, 255, 0.1)) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  color: var(--ink-soft, #94a3b8) !important;
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+}
+.theme-swatch-chip:hover {
+  border-color: var(--brand, #3182f6) !important;
+}
+.theme-swatch-chip.active {
+  border-color: var(--brand, #3182f6) !important;
+  color: var(--brand, #3182f6) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(49, 130, 246, 0.3) !important;
+}
+.theme-swatch-preview {
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+
 
 
