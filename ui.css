@@ -6755,6 +6755,8 @@ html[data-theme="focus-sanctuary"] .timer-glow-ring {
   display: flex;
   gap: 8px;
   overflow-x: auto;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 4px 2px 14px;
   scrollbar-width: none;
 }
@@ -9104,6 +9106,11 @@ html[data-theme="urban-city"] .theme-card.active {
 #screen-home, #screen-goals, #screen-calendar, #screen-records, #screen-comm, #screen-settings {
   padding-bottom: max(96px, calc(var(--nav-h, 64px) + env(safe-area-inset-bottom, 24px) + 32px)) !important;
 }
+#screen-goals {
+  overflow-x: hidden !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
 
 /* 3. 한글 타이포그래피 단어 단위 줄바꿈 전역 보정 (1글자 개행 전수 방지) */
 .sanctuary-app-title, .home-greet, .capture-title, .capture-sub,
@@ -9274,90 +9281,39 @@ html[data-theme="urban-city"] .comm-subtabs.comm-subtabs-grid .comm-subtab,
 }
 
 /* ============ [#TASK-ES-195] 목표 탭 서브탭 5종 5열 그리드 조형 정돈 ============ */
-[data-theme="focus-sanctuary"] #goalsSubtabs.goals-subtabs-grid,
-[data-theme="black"] #goalsSubtabs.goals-subtabs-grid,
-[data-theme="white"] #goalsSubtabs.goals-subtabs-grid,
-[data-theme="urban-city"] #goalsSubtabs.goals-subtabs-grid,
-html[data-theme="focus-sanctuary"] #goalsSubtabs.goals-subtabs-grid,
-html[data-theme="black"] #goalsSubtabs.goals-subtabs-grid,
-html[data-theme="white"] #goalsSubtabs.goals-subtabs-grid,
-html[data-theme="urban-city"] #goalsSubtabs.goals-subtabs-grid,
-#goalsSubtabs.goals-subtabs-grid,
 .goals-subtabs-grid {
-  display: grid !important;
   grid-template-columns: repeat(5, 1fr) !important;
   justify-content: center !important;
   align-items: center !important;
-  gap: 4px !important;
-  padding: 4px !important;
-  margin-bottom: 12px !important;
-  overflow-x: visible !important;
-  box-sizing: border-box !important;
-  width: 100% !important;
-  position: sticky !important;
-  top: env(safe-area-inset-top, 0px) !important;
-  z-index: 30 !important;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background: var(--bg-surface, rgba(15, 23, 42, 0.94)) !important;
 }
-
-[data-theme="focus-sanctuary"] #goalsSubtabs.goals-subtabs-grid .comm-subtab,
-[data-theme="black"] #goalsSubtabs.goals-subtabs-grid .comm-subtab,
-[data-theme="white"] #goalsSubtabs.goals-subtabs-grid .comm-subtab,
-[data-theme="urban-city"] #goalsSubtabs.goals-subtabs-grid .comm-subtab,
-html[data-theme="focus-sanctuary"] #goalsSubtabs.goals-subtabs-grid .comm-subtab,
-html[data-theme="black"] #goalsSubtabs.goals-subtabs-grid .comm-subtab,
-html[data-theme="white"] #goalsSubtabs.goals-subtabs-grid .comm-subtab,
-html[data-theme="urban-city"] #goalsSubtabs.goals-subtabs-grid .comm-subtab,
-#goalsSubtabs.goals-subtabs-grid .comm-subtab,
-.goals-subtabs-grid .comm-subtab {
-  flex: none !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-height: 38px !important;
-  padding: 5px 2px !important;
-  font-size: 11.5px !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.2px !important;
-  white-space: nowrap !important;
-  border-radius: 9px !important;
-  box-sizing: border-box !important;
-  width: 100% !important;
-  cursor: pointer !important;
-  text-align: center !important;
-  background: rgba(255, 255, 255, 0.05) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  color: #94A3B8 !important;
-  transition: all 0.15s ease !important;
-}
-
-#goalsSubtabs.goals-subtabs-grid .comm-subtab.active,
 .goals-subtabs-grid .comm-subtab.active {
-  background: rgba(16, 185, 129, 0.22) !important;
-  border: 1px solid rgba(16, 185, 129, 0.5) !important;
-  color: #34D399 !important;
-  font-weight: 800 !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
 }
 
+/* ============ [#TASK-ES-128] 구형 서브탭 그리드 영구 은폐 및 스티키 서브탭 단일화 ============ */
+#goalsSubtabs,
+#goalsSubtabs.goals-subtabs-grid,
+.goals-subtabs-grid,
+[data-theme="focus-sanctuary"] #goalsSubtabs,
+[data-theme="black"] #goalsSubtabs,
+[data-theme="white"] #goalsSubtabs,
+[data-theme="urban-city"] #goalsSubtabs,
+html[data-theme="focus-sanctuary"] #goalsSubtabs,
+html[data-theme="black"] #goalsSubtabs,
+html[data-theme="white"] #goalsSubtabs,
+html[data-theme="urban-city"] #goalsSubtabs,
+html[data-theme="focus-sanctuary"] #goalsSubtabs.goals-subtabs-grid,
+html[data-theme="black"] #goalsSubtabs.goals-subtabs-grid,
 html[data-theme="white"] #goalsSubtabs.goals-subtabs-grid,
-html[data-theme="white"] .comm-subtabs.comm-subtabs-grid {
-  background: rgba(248, 250, 252, 0.95) !important;
-}
-html[data-theme="white"] #goalsSubtabs.goals-subtabs-grid .comm-subtab,
-html[data-theme="white"] .comm-subtabs.comm-subtabs-grid .comm-subtab {
-  background: rgba(0, 0, 0, 0.04) !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  color: #475569 !important;
-}
-html[data-theme="white"] #goalsSubtabs.goals-subtabs-grid .comm-subtab.active,
-html[data-theme="white"] .comm-subtabs.comm-subtabs-grid .comm-subtab.active {
-  background: rgba(16, 185, 129, 0.15) !important;
-  border: 1px solid rgba(16, 185, 129, 0.45) !important;
-  color: #047857 !important;
-  font-weight: 800 !important;
+html[data-theme="urban-city"] #goalsSubtabs.goals-subtabs-grid {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
 }
 
 @media (max-width: 375px) {
@@ -15366,7 +15322,7 @@ html[data-theme="urban-city"] {
   z-index: 30 !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
-  background: var(--bg-surface-glass, rgba(20, 24, 33, 0.92)) !important;
+  background: var(--bg-surface-glass, rgba(20, 24, 33, 0.98)) !important;
   border-bottom: 1px solid var(--rule, rgba(255, 255, 255, 0.08)) !important;
   padding: 8px 12px !important;
   margin: 0 -16px 12px -16px !important;
@@ -15376,6 +15332,8 @@ html[data-theme="urban-city"] {
   white-space: nowrap !important;
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
+  max-width: 100vw !important;
+  box-sizing: border-box !important;
 }
 .goals-sticky-subnav::-webkit-scrollbar {
   display: none !important;
@@ -15605,7 +15563,7 @@ html[data-theme="urban-city"] {
 .goal-detail-drawer {
   position: fixed !important;
   top: 0 !important;
-  right: -100% !important;
+  right: 0 !important;
   width: min(85vw, 420px) !important;
   height: 100% !important;
   background: var(--bg-surface-glass, rgba(17, 24, 39, 0.96)) !important;
@@ -15613,13 +15571,14 @@ html[data-theme="urban-city"] {
   -webkit-backdrop-filter: blur(20px) !important;
   box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5) !important;
   z-index: 150 !important;
-  transition: right 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  display: flex !important;
+  display: none !important;
   flex-direction: column !important;
   border-left: 1px solid var(--rule, rgba(255, 255, 255, 0.1)) !important;
+  max-width: 100vw !important;
 }
 .goal-detail-drawer.open {
-  right: 0 !important;
+  display: flex !important;
+  transform: translateX(0) !important;
 }
 .goal-drawer-header {
   padding: 16px 20px !important;

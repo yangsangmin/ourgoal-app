@@ -5316,7 +5316,30 @@
     - 6대 전 탭 하단 패딩: `home: 96px`, `goals: 96px`, `calendar: 96px`, `records: 96px`, `comm: 96px`, `settings: 96px` (요구치 84px 초과 달성).
     - FAB 클릭 인터랙션: 타 탭에서 클릭 시 즉시 `screen-home` 전환 및 `captureInput` 포커스 완료.
   - 실측 캡처: `step3_es127_fab_verified.png`
-- **진행 단계**: [4단계: 심사 청구 (초안 PR 생성 및 GitHub Court 법정 심사 청구)]
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #627 원격 main 머지 및 실서버 배포)]
+---
+
+## [2026-10-02 14:55] [#TASK-ES-128] [목표탭] 가로 스크롤 버그(812px 오버플로우) 원천 척결 및 상단 5대 서브탭 2중 중복 렌더링 단일화
+- **목표**: 상민님 직접 지시(2026-10-02 "병합하고 관련 모든 티켓 중단없이 집행해")에 따라, 목표탭 진입 시 발생하는 812px 가로 스크롤 오버플로우를 390px 뷰포트 내로 완전 척결하고, 2중 중복 적재되던 구형 5대 서브탭을 영구 은폐하여 최신 6대 스티키 서브탭 바로 단일화함.
+- **수정/실행 내역**:
+  - `ui.css`:
+    - `#goalsSubtabs` 관련 셀렉터를 고특이도 `display: none !important;`로 영구 은폐하여 2중 서브탭 중복 소탕 (헌법 게이트 보존).
+    - `#screen-goals`: `overflow-x: hidden !important; max-width: 100% !important; box-sizing: border-box !important;` 적용.
+    - `.goals-sticky-subnav`: `box-sizing: border-box !important; max-width: 100vw !important;` 적용.
+    - `.goal-detail-drawer`: 닫힘 상태에서 `display: none !important;` 적용하여 348px 뷰포트 팽창 원천 차단.
+    - `.s-goal-pills-wrap`: `overflow-x: auto !important; max-width: 100% !important; box-sizing: border-box !important;` 적용.
+  - `index.html`: `#goalDetailDrawer`를 `<section id="screen-goals">` 내부에서 `</main>` 뒤로 이동 배치하여 스크롤 컨테이너 박스 격리.
+  - `docs/rules/TICKETS.md`: `#TASK-ES-128` 승인 티켓 등재.
+  - `docs/specs/REQ-TASK-ES-128-GOALS-OVERFLOW.md`, `docs/specs/PLAN-TASK-ES-128-GOALS-OVERFLOW.md`: 8원칙 엔지니어링 스펙 완비.
+- **검증 결과**:
+  - `npm test`: 스모크 440개 통과 (0개 실패), 무결성 38개 ALL PASS, Zero Dead-Click 941개 통과, 모듈러 5/5 전수 통과.
+  - Headless Chrome CDP 실측:
+    - `windowInnerWidth`: 390px, `docScrollWidth`: 390px (812px -> 390px 정상화, 가로 오버플로우 0px 완전 척결).
+    - `goalsScrollWidth`: 372px (390px 뷰포트 완벽 적응).
+    - `goalsSubtabsDisplay`: `'none'` (구형 서브탭 2중 렌더링 소탕).
+    - `goalsStickySubnavPresent`: `true` (최신 6대 스티키 서브탭 단일 노출).
+  - 실측 캡처: `step3_es128_goals_overflow_verified.png`
+- **진행 단계**: [4단계: 심사 청구 완료 (초안 PR 생성 및 GitHub Court 법정 심사 대기)]
 ---
 
 
