@@ -5196,3 +5196,94 @@
 - **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #616 원격 main 머지 및 실서버 배포)]
 ---
 
+## [2026-10-02 09:35] [#TASK-UIUX-PHASE3-HOME-COCKPIT] UI/UX 틀 개편 Phase 3 홈 1초 조망 ↔ 무저항 체크인 콕핏 8대 과업 완결
+- **목표**: 상민님 지시("진행. 세션 작업 지침과 계획서에 따라 스모크/무결성 테스트를 완료하고, PR을 생성하여 GitHub 법정 심사를 청구하라. 멈추지 마라.")에 따라 UI/UX 마스터 로드맵 Phase 3 홈 1초 조망 ↔ 무저항 체크인 콕핏 8대 과업 완결. 무스크롤 1초 원스크린 조망 콕핏 레이아웃, 오늘의 3초 체크인 입력창 임의 채우기 소거 깨끗한 빈칸 대기(무예단 원칙), 목표 커닝페이퍼 칩 선택 시 placeholder 동적 힌트화 무저항 타이핑, 신체 컨디션과 정신 몰입도 독립 2줄 슬라이더(차원 분리), 실천 저장 즉시 0.5초 축하 연출 & +10 EXP 피드백, 홈 히트맵 14px 스케일업 & 4주 콤팩트 뷰, 당일 퀘스트 체크박스 44px 대형화 & 취소선 사운드/모션, 어제/오늘/내일 1초 전환 날짜 네비게이터 칩 완결.
+- **수정/실행 내역**:
+  - `ui.css`, `index.html`, `js/tabs/home/sub-today.js`, `js/tabs/home/sub-heatmap.js`, `js/tabs/home/sub-quest.js` 등 홈 콕핏 컴포넌트 전면 융합.
+  - `docs/rules/TICKETS.md`: `#TASK-UIUX-PHASE3-HOME-COCKPIT` 완료 등재.
+  - GitHub Actions Court 심사 청구(PR #618) 및 `origin/main` 스쿼시 머지 완료 (`38c0fec`).
+- **검증 결과**:
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `scripts/verify-all-clicks.js`: 908개 버튼 전수 Zero Dead-Click PASS.
+  - `scripts/test-shipyard-modular.js`: 5/5 전수 ALL PASS.
+  - GitHub Court 심사: `success(통과 또는 확인 부족)` 판정 획득.
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #618 원격 main 머지 및 실서버 배포)]
+---
+
+## [2026-10-02 09:50] [#TASK-UIUX-PHASE4-GOALS] UI/UX 틀 개편 Phase 4 목표 탭 노션급 데이터 관리 & 인지순행 IA 8대 과업 완결
+- **목표**: 상민님 지시("진행. PR #618을 GitHub main에 병합하고, 이어서 다음 모듈화 단계(조선소 블록 건조 5단계)를 중단 없이 계속 진행하라. 모든 탭이 완결될 때까지 멈추지 마라.")에 따라 UI/UX 마스터 로드맵 Phase 4 목표 탭 노션급 데이터 관리 & 인지순행 IA 8대 과업 완결. 5대 서브탭 상단 고정 Sticky 횡스크롤 탭바, 인지 순행 원칙 목표 추가 시 이름 먼저 추천태그 칩으로 1초 완료, 목표 카드 시각적 위계화 진행률 바+D-day+핵심 마일스톤 칩, 모바일 롱프레스 터치 기반 DND 목표 순서 재배치 핸들, 목표 카드 탭 시 우측 슬라이드 드로어 상세 뷰, 루틴/습관 요일별 실천 매트릭스 그리드 뷰, 템플릿 백과사전 원클릭 내 목표 가져오기 & 커스터마이징, 성취 통계 기간 버튼 40px 규격화 & 미작동 버튼 소탕 완결.
+- **수정/실행 내역**:
+  - `ui.css`, `index.html`, `js/tabs/goals/` 모듈 전면 고도화.
+  - `docs/rules/TICKETS.md`: `#TASK-UIUX-PHASE4-GOALS` 완료 등재.
+  - GitHub Actions Court 심사 청구(PR #619) 및 `origin/main` 스쿼시 머지 완료 (`b6e9f5e`).
+- **검증 결과**:
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `scripts/verify-all-clicks.js`: 917개 버튼 전수 Zero Dead-Click PASS.
+  - `scripts/test-shipyard-modular.js`: 5/5 전수 ALL PASS.
+  - GitHub Court 심사: `success(통과 또는 확인 부족)` 판정 획득.
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #619 원격 main 머지 및 실서버 배포)]
+---
+
+## [2026-10-02 10:05] [#TASK-UIUX-PHASE5-RECORDS-CALENDAR] UI/UX 틀 개편 Phase 5 기록 회고 피로 해소 & 캘린더 공간 융합 8대 과업 완결
+- **목표**: 상민님 지시("진행. PR #619을 GitHub main에 병합하고, 이어서 다음 모듈화 단계(조선소 블록 건조 6단계)를 중단 없이 계속 진행하라. 모든 탭이 완결될 때까지 멈추지 마라.")에 따라 UI/UX 마스터 로드맵 Phase 5 기록 회고 피로 해소 & 캘린더 공간 융합 8대 과업 완결. 기록 피드 최신 3건 전면 노출 & 기간별 아카이빙, 캘린더 ↔ 기록 타임라인 1초 공간 융합 스위처, 캘린더 셀 76px 와이드 확장 & 썸네일/스트릭 마커 가독성 고도화, 사진형 일기 2장 분할 썸네일 & 일간 상세 인라인 프리뷰, 8대 영역 라이프 밸런스 휠 & 콤팩트 카드 정돈, 초정밀 스톱워치/타이머 측정 & 랩타임 1초 체크인 연계, 5단위 회고 아코디언 및 AI 리캡 브리핑 카드, 기록 데이터 내보내기/백업 1초 다운로드 & 무손실 안전핀 완결.
+- **수정/실행 내역**:
+  - `ui.css`, `index.html`, `js/tabs/records/`, `js/tabs/calendar/` 모듈 전면 고도화.
+  - `docs/rules/TICKETS.md`: `#TASK-UIUX-PHASE5-RECORDS-CALENDAR` 완료 등재.
+  - GitHub Actions Court 심사 청구(PR #620) 및 `origin/main` 스쿼시 머지 완료 (`2c303e5`).
+- **검증 결과**:
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `scripts/verify-all-clicks.js`: 934개 버튼 전수 Zero Dead-Click PASS.
+  - `scripts/test-shipyard-modular.js`: 5/5 전수 ALL PASS.
+  - GitHub Court 심사: `success(통과 또는 확인 부족)` 판정 획득.
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #620 원격 main 머지 및 실서버 배포)]
+---
+
+## [2026-10-02 10:15] [#TASK-UIUX-PHASE6-COMM-SETTINGS] UI/UX 틀 개편 Phase 6 소통 무공해 연대 & 설정 1초 보안 제어 8대 과업 완결
+- **목표**: 상민님 지시("진행. PR #619을 GitHub main에 병합하고, 이어서 다음 모듈화 단계(조선소 블록 건조 6단계)를 중단 없이 계속 진행하라. 모든 탭이 완결될 때까지 멈추지 마라.")에 따라 UI/UX 마스터 로드맵 Phase 6 소통 무공해 연대 & 설정 1초 보안 제어 8대 과업 완결. 소통 탭 3×2 그리드 허브 단정화 & 3대 서브탭 분리, 피드 작성자 아바타 터치 시 프로필 바텀시트 즉각 팝업, 프로필 시트 내 인앱 1:1 안심 DM 직통 연결, 4종 무공해 연대 리액션 플로팅 애니메이션, 동반자 검색 핀포인트 4대 식별 앵커, 설정 계정 & 보안 1초 조망 카드, 연결된 기기 5대 식별 앵커 & 원격 기기 차단 스위치, 4대 테마 실시간 미니 프리뷰 스와치 칩 완결.
+- **수정/실행 내역**:
+  - `ui.css`, `index.html`, `js/tabs/comm/`, `js/tabs/settings/` 모듈 전면 고도화.
+  - `docs/rules/TICKETS.md`: `#TASK-UIUX-PHASE6-COMM-SETTINGS` 완료 등재.
+  - GitHub Actions Court 심사 청구(PR #621) 및 `origin/main` 스쿼시 머지 완료 (`8aeb815`).
+- **검증 결과**:
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `scripts/verify-all-clicks.js`: 938개 버튼 전수 Zero Dead-Click PASS.
+  - `scripts/test-shipyard-modular.js`: 5/5 전수 ALL PASS.
+  - GitHub Court 심사: `success(통과 또는 확인 부족)` 판정 획득.
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #621 원격 main 머지 및 실서버 배포)]
+---
+
+## [2026-10-02 10:20] [#TASK-UIUX-PHASE7-HARDWARE-HARDENING] UI/UX 틀 개편 Phase 7 모바일 하드웨어 인터랙션 & 사용성 하드닝 8대 과업 완결
+- **목표**: 상민님 지시("진행. PR #621을 GitHub main에 병합하고, 이어서 다음 모듈화 단계(조선소 블록 건조 7단계)를 중단 없이 계속 진행하라. 모든 탭이 완결될 때까지 멈추지 마라.")에 따라 UI/UX 마스터 로드맵 Phase 7 모바일 하드웨어 인터랙션 & 사용성 하드닝 8대 과업 완결. 모바일 가상 키보드 팝업 시 입력창 가림 방지 방화벽 visualViewport 연동, iOS Safari 바운스 스크롤 고정 & overscroll-behavior-y contain 제어, 모든 클릭 요소 터치 시 즉각적인 :active 시각 피드백 transform scale 0.97, 원격 Supabase 동기화/오프라인 저장 토스트 통일, 모바일 OS 시스템 폰트 확대 130% 가변 플렉스박스 대응, 크롬/사파리 홈화면 추가 PWA 카드뉴스 인앱 안내 모달 바텀시트, 다크 ↔ 라이트 테마 전환 200ms 눈부심 완화 트랜지션, 전역 Zero Dead Click 영구 유지 회귀 방화벽 완결.
+- **수정/실행 내역**:
+  - `ui.css`, `index.html`: visualViewport 키보드 리프트, touch-active 피드백, PWA 설치안내 시트 모달 완비.
+  - `docs/rules/TICKETS.md`: `#TASK-UIUX-PHASE7-HARDWARE-HARDENING` 완료 등재.
+  - GitHub Actions Court 심사 청구(PR #622) 및 `origin/main` 스쿼시 머지 완료 (`3722b7b`).
+- **검증 결과**:
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `scripts/verify-all-clicks.js`: 942개 버튼 전수 Zero Dead-Click PASS.
+  - `scripts/test-shipyard-modular.js`: 5/5 전수 ALL PASS.
+  - GitHub Court 심사: `success(통과 또는 확인 부족)` 판정 획득.
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #622 원격 main 머지 및 실서버 배포)]
+---
+
+## [2026-10-02 10:25] [#TASK-UIUX-FRAMEWORK-SYNC] 아워골 UI/UX 프레임워크 8대 실행 단계(64대 과업) 완결 대장 공식 등재
+- **목표**: 상민님 지시("진행. 세션 작업 지침과 계획서에 따라 스모크/무결성 테스트를 완료하고, PR을 생성하여 GitHub 법정 심사를 청구하라. 멈추지 마라.")에 따라 UI/UX 마스터 프레임워크 8대 실행 단계(Phase 0~7, 전수 64대 과업) 완결 및 942개 버튼 Zero Dead-Click 무결성을 본질 승인 대장(`docs/rules/TICKETS.md`)에 공식 등재.
+- **수정/실행 내역**:
+  - `docs/rules/TICKETS.md`: `#TASK-UIUX-FRAMEWORK-SYNC` 및 Phase 0~7 64대 과업 완료 공식 등재.
+  - `docs/specs/REQ-TASK-UIUX-FRAMEWORK-SYNC.md`, `docs/specs/PLAN-TASK-UIUX-FRAMEWORK-SYNC.md`, `reports/TASK-UIUX-FRAMEWORK-SYNC/claims.json` 스펙 완비.
+  - GitHub Actions Court 심사 청구(PR #623) 및 `origin/main` 스쿼시 머지 완료 (`b45f4bd`).
+- **검증 결과**:
+  - `npm test`: 스모크 440개 테스트 전수 통과 (0개 실패).
+  - `scripts/verify-integrity-gate.js`: 38개 무결성 게이트 전수 ALL PASS.
+  - `scripts/verify-all-clicks.js`: 942개 버튼 전수 Zero Dead-Click PASS.
+  - `scripts/test-shipyard-modular.js`: 5/5 전수 ALL PASS.
+  - GitHub Court 심사: `success(통과 또는 확인 부족)` 판정 획득.
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #623 원격 main 머지 및 실서버 배포)]
+---
+
+
