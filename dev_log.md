@@ -5360,10 +5360,27 @@
     - `commBodyRelativeTop`: 213px (기존 ~340px에서 127px 대폭 다이어트 달성).
     - `commReactionDockDisplay`: `'flex'` (무공해 응원 정상 작동).
   - 실측 캡처: `step3_es129_comm_diet_verified.png`
-- **진행 단계**: [4단계: 심사 청구 완료 (초안 PR 생성 및 GitHub Court 법정 심사 대기)]
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #629 원격 main 머지 및 실서버 배포)]
+## [2026-10-02 15:35] [#TASK-ES-130] [일정탭] '사진 일기장 제어 허브' 내부 가이드 소탕 및 텍스트 겹침·이중 버튼 단일화
+- **목표**: 상민님 직접 지시(2026-10-02 "병합하고 관련 모든 티켓 중단없이 집행해")에 따라, 일정 탭 진입 시 시각적 노이즈를 유발하던 사진 일기장 제어 허브 카드(#og-task-29-container)와 상단 안내 배너(#calSubGuideBanner)를 완전 은폐하고, 잠금화면 카드 버튼의 텍스트 표기를 단일화하여 캘린더 화면 공간을 온전히 확보하고 본질에 집중하도록 개선함.
+- **수정/실행 내역**:
+  - `ui.css`:
+    - `#screen-calendar #og-task-29-container, #screen-calendar #calSubGuideBanner, #screen-calendar .cal-sub-guide, #screen-calendar .og-diary-guide-card` 최고 특이도로 `display: none !important;` 영구 완전 은폐 선언.
+    - 기존 ID 및 스타일 선언 보존하여 하위 호환성 및 스모크 테스트 무결성 보증.
+  - `index.html`:
+    - `#og-task-29-container` 및 `#calSubGuideBanner`에 `style="display:none !important;" aria-hidden="true"` 인라인 방어벽 구축.
+    - `renderCalendar()` 함수 내에서 `diaryGuide.style.display = 'none'`을 보장하도록 가이드 강제 표시 방지.
+    - `#calLockScreenBtn`의 중복 대괄호 및 아이콘 표기 정돈.
+  - `docs/rules/TICKETS.md`: `#TASK-ES-130` 승인 티켓 등재.
+  - `docs/specs/REQ-TASK-ES-130-CALENDAR-CLEAN.md`, `docs/specs/PLAN-TASK-ES-130-CALENDAR-CLEAN.md`: 8원칙 엔지니어링 스펙 완비.
+  - `reports/TASK-ES-130/`: 법정 claims.json 및 시나리오, 결과 보고서 작성.
+- **검증 결과**:
+  - `npm test`: 스모크 440개 통과 (0개 실패), 무결성 38개 ALL PASS, Zero Dead-Click 941개 통과, 모듈러 5/5 전수 통과.
+  - Headless Chrome CDP 실측:
+    - `guideContainerDisplay`: `'none'`
+    - `subGuideBannerDisplay`: `'none'`
+    - `docScrollWidth`: 390px (가로 스크롤 0건)
+    - `calScreenVisible`: `true`
+  - 실측 캡처: `step3_es130_calendar_clean_verified.png`
+- **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
 ---
-
-
-
-
-
