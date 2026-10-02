@@ -1,0 +1,82 @@
+{
+  "task": "TASK-ES-128",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-128-GOALS-OVERFLOW.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "목표 탭 진입 시 375px 모바일 뷰포트에서 가로 스크롤 폭이 390px 이내로 제어되고 가로 오버플로우가 원천 척결됨을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "상단 2중 중복 서브탭 중 구형 서브탭 그리드(#goalsSubtabs)가 은폐(display: none)되고 단일 스티키 서브바(#goalsStickySubnav)만 표시됨을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "드로어(#goalDetailDrawer)가 닫힌 상태에서 화면 레이아웃을 우측으로 팽창시키지 않도록 격리(display: none)됨을 보장한다."
+    },
+    {
+      "id": "R4",
+      "text": "목표 탭 진입 및 서브탭 전환 상호작용이 모바일 375px 화면에서 가로 넘침 없이 정상 완결됨을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내에 #screen-goals의 가로 오버플로우 방지 속성(overflow-x: hidden !important)이 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#screen-goals {\n  overflow-x: hidden !important;\n  max-width: 100% !important;\n  box-sizing: border-box !important;\n}"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내에 구형 서브탭 그리드(#goalsSubtabs) 전 테마 완전 은폐(display: none !important) 코드가 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "html[data-theme=\"urban-city\"] #goalsSubtabs.goals-subtabs-grid {\n  display: none !important;\n  visibility: hidden !important;\n  height: 0 !important;\n  min-height: 0 !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  overflow: hidden !important;\n  pointer-events: none !important;\n}"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "index.html 내에 목표 상세 드로어가 스크롤 컨테이너 밖으로 격리되어 독립 닫기 핸들러가 배선되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<button type=\"button\" class=\"btn btn-secondary btn-sm\" id=\"btnGoalDrawerClose\" onclick=\"closeGoalDetailDrawer()\" style=\"min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;\">✕</button>"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R4",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui",
+      "statement": "게스트 모드 진입 후 목표 탭(#screen-goals) 이동 시 가로 스크롤 오버플로우가 375px 이내로 제어되고 구형 서브탭이 은폐되며 단일 스티키 서브바가 정상 표시된다",
+      "touches": [
+        "ui.css",
+        "index.html"
+      ],
+      "scenario": "scenarios/goals-overflow-verified.json"
+    }
+  ]
+}

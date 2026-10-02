@@ -838,7 +838,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         <button type="button" class="goals-subtab-chip" id="btnGoalsSubTemplate" onclick="switchGoalsSubTab('templateEncyclopedia')">📖 템플릿</button>
         <button type="button" class="goals-subtab-chip" id="btnGoalsSubStats" onclick="switchGoalsSubTab('stats')">📊 성취통계</button>
       </div>
-      <div class="comm-subtabs comm-subtabs-clean goals-subtabs-grid" id="goalsSubtabs" style="margin-bottom:8px; display:none;"></div>
+      <div class="comm-subtabs comm-subtabs-clean goals-subtabs-grid" id="goalsSubtabs" style="margin-bottom:8px; display:none !important;" aria-hidden="true"></div>
       <div class="toss-headline" id="goalsHeadlineSentence">정상을 향해 힘차게 나아가고 있어요 🏔️</div>
       <div class="toss-quest-board">
         <div id="sanctuaryGoalsView"></div>
@@ -908,15 +908,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         </div>
         <div id="goalsStatChartContent" style="padding:12px 0;"></div>
       </div>
-      <!-- [#UIUX-37] 목표 상세 우측 슬라이드 드로어 -->
-      <div class="goal-detail-drawer" id="goalDetailDrawer">
-        <div class="goal-drawer-header">
-          <span id="goalDrawerTitle" style="font-size:1.1rem;font-weight:700;color:var(--ink);">목표 상세 🎯</span>
-          <button type="button" class="btn btn-secondary btn-sm" id="btnGoalDrawerClose" onclick="closeGoalDetailDrawer()" style="min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;">✕</button>
-        </div>
-        <div class="goal-drawer-body" id="goalDrawerBody"></div>
-      </div>
-          
     </section>
 
     <!-- CALENDAR -->
@@ -1943,6 +1934,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div id="fbSetupBody" style="margin-top:14px;"></div>
     </section>
   </main>
+
+  <!-- [#UIUX-37] 목표 상세 우측 슬라이드 드로어 (스크롤 컨테이너 외판 분리) -->
+  <div class="goal-detail-drawer" id="goalDetailDrawer">
+    <div class="goal-drawer-header">
+      <span id="goalDrawerTitle" style="font-size:1.1rem;font-weight:700;color:var(--ink);">목표 상세 🎯</span>
+      <button type="button" class="btn btn-secondary btn-sm" id="btnGoalDrawerClose" onclick="closeGoalDetailDrawer()" style="min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+    <div class="goal-drawer-body" id="goalDrawerBody"></div>
+  </div>
 
   <button class="back-to-top" id="backToTopBtn" type="button" aria-label="맨 위로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg></button>
   <div class="bottomnav">
