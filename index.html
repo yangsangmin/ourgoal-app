@@ -1298,8 +1298,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       
 
-      <!-- [#UIUX-49] [COMM-3X2-HUB] 소통 탭 3×2 그리드 허브 -->
-      <div class="comm-hub-grid" id="commHubGrid">
+      <!-- [#UIUX-49] [COMM-3X2-HUB] 소통 탭 3×2 그리드 허브 (TASK-ES-129: 은폐 단일화) -->
+      <div class="comm-hub-grid" id="commHubGrid" style="display:none !important;" aria-hidden="true">
         <button id="btnCommHubFeed" class="comm-hub-card active" type="button" onclick="switchCommSubTab('feed')">
           <span style="font-size:1.2rem;">📰</span>
           <span>피드</span>
@@ -1315,7 +1315,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       </div>
 
       <!-- [#UIUX-52] [NONTOXIC-REACTION] 4종 무공해 연대 리액션 플로팅 바 (공통 퀵 응원) -->
-      <div class="reaction-floating-bar" id="commFloatingReactionDock" style="margin-bottom:12px;">
+      <div class="reaction-floating-bar" id="commFloatingReactionDock" style="margin-bottom:6px;">
         <span style="font-size:0.8rem;color:var(--ink-soft);font-weight:700;margin-right:4px;">무공해 응원:</span>
         <button id="btnFloatingReactFire" class="btn-reaction-chip" type="button" onclick="triggerFloatingReaction('🔥')">🔥 <span id="reactCountFire">0</span></button>
         <button id="btnFloatingReactClap" class="btn-reaction-chip" type="button" onclick="triggerFloatingReaction('👏')">👏 <span id="reactCountClap">0</span></button>

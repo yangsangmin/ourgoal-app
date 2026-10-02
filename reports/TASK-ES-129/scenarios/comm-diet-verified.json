@@ -1,0 +1,16 @@
+{
+  "id": "comm-diet-verified",
+  "title": "게스트 진입 후 소통 탭(#screen-comm) 이동 시 중복 허브 그리드가 은폐되고 서브탭 바가 정상 표시된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"comm\"]" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"comm\"]" },
+    { "do": "waitFor", "selector": "#screen-comm" },
+    { "do": "wait", "ms": 500 },
+    { "expect": "notVisible", "selector": "#commHubGrid" },
+    { "expect": "visible", "selector": "#commBody" },
+    { "capture": "comm-diet-verified" }
+  ]
+}

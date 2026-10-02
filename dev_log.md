@@ -5339,8 +5339,30 @@
     - `goalsSubtabsDisplay`: `'none'` (구형 서브탭 2중 렌더링 소탕).
     - `goalsStickySubnavPresent`: `true` (최신 6대 스티키 서브탭 단일 노출).
   - 실측 캡처: `step3_es128_goals_overflow_verified.png`
+- **진행 단계**: [6단계: 프로덕션 배포 완료 (PR #628 원격 main 머지 및 실서버 배포)]
+---
+
+## [2026-10-02 15:25] [#TASK-ES-129] [소통탭] 7단계 피로층 다이어트(레이더 차트/피드 탭/필터 칩/작성 바 통폐합 및 단일 피드화)
+- **목표**: 상민님 직접 지시(2026-10-02 "병합하고 관련 모든 티켓 중단없이 집행해")에 따라, 소통 탭 진입 시 2중으로 중복 적재되던 3버튼 허브 카드(#commHubGrid)와 거대 요약 원카드로 인해 첫 피드가 화면 밖으로 밀려나던 7단계 피로층을 대폭 다이어트하여, 탭 진입 즉시 1초 만에 최신 피드와 동료들의 온기를 마주하도록 개선함.
+- **수정/실행 내역**:
+  - `ui.css`:
+    - `#commHubGrid, .comm-hub-grid`: `display: none !important;`로 완전 은폐하여 2중 버튼 소탕.
+    - `.toss-community-hero-card`: 마진과 패딩을 다이어트하고 인라인 가로 배치 스펙 적용하여 높이 대폭 절감.
+    - `.reaction-floating-bar`: 마진을 12px에서 6px로 축소하여 피드 접근성 대폭 개선.
+  - `index.html`: `#commHubGrid`에 `style="display:none !important;" aria-hidden="true"` 인라인 방어벽 구축.
+  - `docs/rules/TICKETS.md`: `#TASK-ES-129` 승인 티켓 등재.
+  - `docs/specs/REQ-TASK-ES-129-COMM-DIET.md`, `docs/specs/PLAN-TASK-ES-129-COMM-DIET.md`: 8원칙 엔지니어링 스펙 완비.
+  - `reports/TASK-ES-129/`: 법정 claims.json 및 시나리오, 결과 보고서 작성.
+- **검증 결과**:
+  - `npm test`: 스모크 440개 통과 (0개 실패), 무결성 38개 ALL PASS, Zero Dead-Click 941개 통과, 모듈러 5/5 전수 통과.
+  - Headless Chrome CDP 실측:
+    - `commHubGridDisplay`: `'none'` (중복 3버튼 0건 완전 은폐).
+    - `commBodyRelativeTop`: 213px (기존 ~340px에서 127px 대폭 다이어트 달성).
+    - `commReactionDockDisplay`: `'flex'` (무공해 응원 정상 작동).
+  - 실측 캡처: `step3_es129_comm_diet_verified.png`
 - **진행 단계**: [4단계: 심사 청구 완료 (초안 PR 생성 및 GitHub Court 법정 심사 대기)]
 ---
+
 
 
 
