@@ -5874,7 +5874,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(guestSaved.length > 0){
         var socialSaved = targetProfile.settings.savedAvatars || [];
         if(!socialSaved || socialSaved.length === 0){
-          if(gData.settings.savedAvatars) state.profile.settings.savedAvatars = gData.settings.savedAvatars;
+          targetProfile.settings.savedAvatars = gData.settings.savedAvatars.slice(0, 10);
+          if(state.profile && state.profile.settings){
+            if(gData.settings.savedAvatars) state.profile.settings.savedAvatars = gData.settings.savedAvatars;
+          }
         } else {
           var sMap = {};
           socialSaved.forEach(function(a){ if(a && (a.id || a.url)) sMap[a.id || a.url] = true; });
@@ -5886,22 +5889,29 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           });
           if(socialSaved.length > 10) socialSaved = socialSaved.slice(0, 10);
           targetProfile.settings.savedAvatars = socialSaved;
+          if(state.profile){
+            state.profile.settings = state.profile.settings || {};
+            state.profile.settings.savedAvatars = socialSaved;
+          }
         }
         guestMigrated = true;
       }
       if(gData.settings.customAvatarUrl && (!targetProfile.settings.customAvatarUrl || targetProfile.settings.avatarType !== 'custom')){
-        state.profile.settings.avatarType = gData.settings.avatarType;
-        state.profile.settings.customAvatarUrl = gData.settings.customAvatarUrl;
+        if(state.profile){
+          state.profile.settings = state.profile.settings || {};
+          state.profile.settings.avatarType = gData.settings.avatarType || 'custom';
+          state.profile.settings.customAvatarUrl = gData.settings.customAvatarUrl;
+          state.profile.avatarUrl = gData.settings.customAvatarUrl;
+        }
         targetProfile.settings.avatarType = gData.settings.avatarType || 'custom';
         targetProfile.settings.customAvatarUrl = gData.settings.customAvatarUrl;
         if(gData.settings.avatarThemeId) targetProfile.settings.avatarThemeId = gData.settings.avatarThemeId;
         if(gData.settings.avatarCraftCount) targetProfile.settings.avatarCraftCount = gData.settings.avatarCraftCount;
-        state.profile.avatarUrl = gData.settings.customAvatarUrl;
         targetProfile.avatarUrl = gData.settings.customAvatarUrl;
         guestMigrated = true;
       }
     } else if(gData.avatarUrl && !targetProfile.avatarUrl){
-      state.profile.avatarUrl = gData.avatarUrl;
+      if(state.profile) state.profile.avatarUrl = gData.avatarUrl;
       targetProfile.avatarUrl = gData.avatarUrl;
       guestMigrated = true;
     }
