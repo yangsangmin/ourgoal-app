@@ -37,6 +37,9 @@
         if (typeof global.renderTodayMissionCard === 'function') {
           global.renderTodayMissionCard();
         }
+        if (typeof global.initDimensionSliders === 'function') {
+          global.initDimensionSliders();
+        }
       } catch (err) {
         console.warn('[OurgoalHomeToday] Render warning:', err);
       }

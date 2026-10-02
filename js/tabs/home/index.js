@@ -92,6 +92,9 @@
         if (typeof global.renderHome === 'function') {
           global.renderHome();
         }
+        if (typeof global.initHomeCockpit === 'function') {
+          global.initHomeCockpit();
+        }
       } catch (renderErr) {
         console.warn('[OurgoalHomeMegaBlock] renderHome fallback warning:', renderErr);
       }
