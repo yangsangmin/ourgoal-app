@@ -1,0 +1,16 @@
+{
+  "id": "calendar-clean-verified",
+  "title": "게스트 진입 후 일정 탭(#screen-calendar) 이동 시 사진 일기장 제어 허브 및 가이드 배너가 은폐되고 캘린더 화면이 정상 가시화된다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": ".navbtn[data-tab=\"calendar\"]" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"calendar\"]" },
+    { "do": "waitFor", "selector": "#screen-calendar" },
+    { "do": "wait", "ms": 500 },
+    { "expect": "notVisible", "selector": "#og-task-29-container" },
+    { "expect": "notVisible", "selector": "#calSubGuideBanner" },
+    { "capture": "calendar-clean-verified" }
+  ]
+}

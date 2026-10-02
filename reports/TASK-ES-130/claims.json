@@ -1,0 +1,63 @@
+{
+  "task": "TASK-ES-130",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-130-CALENDAR-CLEAN.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "일정 탭 내부의 불필요한 사진 일기장 제어 허브 및 안내 배너(#og-task-29-container, #calSubGuideBanner)가 은폐(display: none)되어 캘린더 화면이 클린하게 확보됨을 보장한다."
+    },
+    {
+      "id": "R2",
+      "text": "일정 탭 상단 가이드 및 버튼 요소에 인라인 은폐 및 aria-hidden 속성이 지정되어 있음을 보장한다."
+    },
+    {
+      "id": "R3",
+      "text": "일정 탭 진입 시 사진 일기장 제어 허브 및 안내창이 은폐되고 캘린더 화면이 온전히 가시화됨을 보장한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "ui.css 내에 일정 탭 사진 일기장 안내창 및 제어 허브 완전 은폐 코드가 존재한다",
+      "touches": [
+        "ui.css"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "ui.css",
+        "text": "#screen-calendar #og-task-29-container,\n#screen-calendar #calSubGuideBanner,"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "index.html 내에 #og-task-29-container 요소에 인라인 은폐 및 aria-hidden 속성이 지정되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"og-task-29-container\" class=\"og-diary-guide-card\" style=\"display:none !important;\" aria-hidden=\"true\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui",
+      "statement": "일정 탭 진입 시 사진 일기장 제어 허브 및 안내창이 은폐되고 캘린더 화면이 정상 가시화된다",
+      "touches": [
+        "ui.css",
+        "index.html"
+      ],
+      "scenario": "scenarios/calendar-clean-verified.json"
+    }
+  ]
+}
