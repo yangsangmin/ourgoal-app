@@ -1,0 +1,31 @@
+{
+  "id": "home-onescreen-compass",
+  "title": "홈 첫 화면에는 3대 나침반만 보이고, 오늘 목표·동반자는 나침반을 눌러 85vh 시트로 열고 ✕·배경으로 닫는다",
+  "steps": [
+    { "do": "setViewport", "width": 375, "height": 812 },
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "expect": "visible", "selector": "#homeCompassRow", "timeoutMs": 15000 },
+    { "expect": "visible", "selector": "#homeAddGoal" },
+    { "expect": "notVisible", "selector": "#homeGoalList" },
+    { "expect": "notVisible", "selector": "#crewPacingWidget" },
+    { "capture": "home-first-screen" },
+    { "do": "click", "selector": "#homeCompassQuest" },
+    { "expect": "hasClass", "selector": "#homeDetailSheet", "className": "open" },
+    { "expect": "visible", "selector": "#homeGoalList" },
+    { "expect": "textContains", "selector": "#homeDetailTitle", "text": "오늘 목표" },
+    { "expect": "rect", "selector": "#homeDetailPanel", "minHeight": 650 },
+    { "capture": "quest-sheet" },
+    { "do": "click", "selector": "#homeDetailClose" },
+    { "expect": "notVisible", "selector": "#homeGoalList" },
+    { "do": "click", "selector": "#homeCompassCrew" },
+    { "expect": "visible", "selector": "#crewPacingWidget" },
+    { "expect": "textContains", "selector": "#homeDetailTitle", "text": "동반자" },
+    { "capture": "crew-sheet" },
+    { "do": "click", "selector": "#homeDetailBackdrop", "position": "top" },
+    { "expect": "notVisible", "selector": "#crewPacingWidget" },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"home\"]", "className": "active" },
+    { "expect": "noExceptions" }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "task": "TASK-ES-338",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-338-HOME-01-ONESCREEN-COCKPIT.md",
+  "requirements": [
+    { "id": "R1", "text": "메인 화면을 375px 모바일 뷰포트 기준 단일 무스크롤 원스크린(100vh)으로 단정화하고, 복잡한 세부 리스트 및 부가 기능은 85% 대형 바텀시트로 점진적 공개." },
+    { "id": "R2", "text": "메인 영역 height: 100vh 고정, 세부 시트 호출 시 0.3초 슬라이드 업 및 배경 30% 암막 처리, 12ms 햅틱 진동." },
+    { "id": "R3", "text": "[하단] 3대 미니 나침반(퀘스트/동류/회고)" },
+    { "id": "R4", "text": "[상단] 아바타/EXP 펄스 + [중앙] 오늘 1순위 실천 콕핏" },
+    { "id": "R5", "text": "UX 라이팅: \"오늘도 올바른 길로 가고 있어요, 내 자신 🌿\"" },
+    { "id": "R6", "text": "시스템 연계 안정성: js/tabs/home/index.js, OurgoalSanctuaryV3 단일 렌더러 귀속, 4대 뷰 상태 0ms 동기화." }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "375×812 홈 첫 화면에는 나침반과 새 목표 버튼이 보이고 목표 목록·동반자 레이스는 보이지 않으며, 나침반을 누르면 85vh 시트에서 열리고 ✕·배경 터치로 닫힌다",
+      "touches": ["js/tabs/home/sub-onescreen.js", "js/tabs/home/index.js", "index.html", "ui.css"],
+      "scenario": "scenarios/home-onescreen-compass.json"
+    },
+    {
+      "id": "C2",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "navigation",
+      "statement": "열린 홈 시트는 뒤로가기·Esc 로 시트만 닫히고 앱과 홈 탭에 머물며, 회고 나침반을 누르면 기록/통계 탭으로 전환된다",
+      "touches": ["js/tabs/home/sub-onescreen.js", "index.html", "ui.css"],
+      "scenario": "scenarios/home-sheet-back-esc.json"
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui-style",
+      "statement": "시트 배경 암막은 30% 검정이고 패널은 0.3초 슬라이드 업 트랜지션을 쓴다",
+      "touches": ["ui.css"],
+      "check": { "type": "codeContains", "file": "ui.css", "text": ".home-detail-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.30);opacity:0;transition:opacity .3s ease;}" }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "나침반·닫기 버튼·배경·쓸기 닫기마다 12ms 햅틱(triggerHaptic(12))을 부른다",
+      "touches": ["js/tabs/home/sub-onescreen.js"],
+      "check": { "type": "codeContains", "file": "js/tabs/home/sub-onescreen.js", "text": "global.triggerHaptic(12)" }
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "unverified",
+      "domain": "native-device",
+      "statement": "실제 폰에서 시트 손잡이를 아래로 80px 이상 쓸면 시트가 닫히고, 안드로이드 기기 뒤로가기 버튼으로도 시트만 닫히며, 진동이 느껴진다",
+      "touches": ["js/tabs/home/sub-onescreen.js"],
+      "unverified": {
+        "reason": "needs-real-device",
+        "who": "안드로이드 폰에서 아워골 앱(또는 크롬)을 여는 사람",
+        "how": [
+          "홈에서 '오늘 목표' 나침반을 누른다",
+          "시트 맨 위 손잡이를 손가락으로 아래로 길게 끌어 놓는다 — 시트가 닫히는지 본다",
+          "다시 '동반자' 나침반을 눌러 시트를 연다",
+          "폰의 뒤로가기 버튼을 누른다 — 시트만 닫히고 앱이 꺼지거나 다른 화면으로 가지 않는지 본다",
+          "나침반을 누를 때 짧은 진동이 오는지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R6",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "새 소블록 OurgoalHomeOneScreen 을 홈 메가블록(js/tabs/home/index.js) init 에 등록했다",
+      "touches": ["js/tabs/home/index.js"],
+      "check": { "type": "codeContains", "file": "js/tabs/home/index.js", "text": "this.registerSubBlock(global.OurgoalHomeOneScreen);" }
+    }
+  ]
+}
