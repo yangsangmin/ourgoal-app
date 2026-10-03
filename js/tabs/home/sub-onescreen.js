@@ -99,12 +99,16 @@
         topRight.insertBefore(addGoal, topRight.firstChild);
       }
 
-      // 4. 기존 노드를 지우지 않고 옮긴다(순서 유지)
+      // 4. 기존 노드를 지우지 않고 옮긴다(순서 유지: 미션 카드 -> 목표 타이틀 -> 칩 스트립 -> 목표 목록 -> 평가 배너)
       var questPanel = doc.getElementById('homeSheetPanelQuest');
+      var missionCard = doc.getElementById('todayMissionCard');
+      if (missionCard) questPanel.appendChild(missionCard);
       if (goalTitle) questPanel.appendChild(goalTitle);
       var strip = doc.getElementById('homePositionStrip');
       if (strip) questPanel.appendChild(strip);
       questPanel.appendChild(goalList);
+      var evalBanner = doc.getElementById('homeEvalBanner');
+      if (evalBanner) questPanel.appendChild(evalBanner);
       doc.getElementById('homeSheetPanelCrew').appendChild(crew);
 
       this.wire(row, sheet);

@@ -1,0 +1,28 @@
+{
+  "id": "home-shell-hardening",
+  "title": "홈 메인에서 미션 카드와 평가 배너가 보이지 않고, 나침반을 눌러 85vh 시트 안에서 확인하며 ✕ 버튼으로 닫힌다",
+  "steps": [
+    { "do": "setViewport", "width": 375, "height": 812 },
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "expect": "visible", "selector": "#homeCompassRow", "timeoutMs": 15000 },
+    { "expect": "visible", "selector": "#homeAddGoal" },
+    { "expect": "notVisible", "selector": "#homeGoalList" },
+    { "expect": "notVisible", "selector": "#todayMissionCard" },
+    { "expect": "notVisible", "selector": "#homeEvalBanner" },
+    { "expect": "exists", "selector": "#homeSheetPanelQuest #todayMissionCard" },
+    { "expect": "exists", "selector": "#homeSheetPanelQuest #homeEvalBanner" },
+    { "capture": "home-clean-screen" },
+    { "do": "click", "selector": "#homeCompassQuest" },
+    { "expect": "hasClass", "selector": "#homeDetailSheet", "className": "open" },
+    { "expect": "visible", "selector": "#homeGoalList" },
+    { "expect": "textContains", "selector": "#homeDetailTitle", "text": "오늘 목표" },
+    { "expect": "rect", "selector": "#homeDetailPanel", "minHeight": 650 },
+    { "capture": "quest-sheet-with-relocated-banners" },
+    { "do": "click", "selector": "#homeDetailClose" },
+    { "expect": "notVisible", "selector": "#homeGoalList" },
+    { "expect": "notHasClass", "selector": "#homeDetailSheet", "className": "open" },
+    { "expect": "noExceptions" }
+  ]
+}
