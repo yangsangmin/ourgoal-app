@@ -43,6 +43,9 @@
       if (global.OurgoalHomeQuest) {
         this.registerSubBlock(global.OurgoalHomeQuest);
       }
+      if (global.OurgoalHomeOneScreen) {
+        this.registerSubBlock(global.OurgoalHomeOneScreen);
+      }
 
       // 2. 도크 레지스트리에 홈 메가블록 자신을 등록
       if (global.OurgoalRegistry && typeof global.OurgoalRegistry.registerMegaBlock === 'function') {

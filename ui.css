@@ -16945,4 +16945,34 @@ small {
   touch-action: manipulation !important;
 }
 
-
+/* ============ HOME-01 홈 원스크린 콕핏: 3대 미니 나침반 + 85vh 상세 바텀시트 (js/tabs/home/sub-onescreen.js) ============ */
+.home-compass-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0;}
+#screen-home #homeCompassRow{order:8;}
+/* 하단 메뉴 여백은 main.screens 가 이미 준다(nav-h + 48px) — 원스크린 홈에서는 홈 자체의 이중 여백만 걷어낸다 */
+#screen-home.home-onescreen{padding-bottom:0 !important;}
+/* 한 화면 예산(375×812): 체크인 카드 아래 간격 12px, 비어 있는 히트맵 요약 카드의 여백 제거 */
+#screen-home.home-onescreen #captureCardBox{margin-bottom:12px !important;}
+#screen-home.home-onescreen #homeGrassSummaryCard{margin:0 !important;}
+.home-compass-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:64px;padding:8px 6px;border-radius:16px;background:var(--card);border:1px solid var(--rule);color:var(--ink);cursor:pointer;font:inherit;-webkit-tap-highlight-color:transparent;transition:transform .12s ease,border-color .15s ease;}
+.home-compass-btn:hover,.home-compass-btn:focus-visible{border-color:var(--brand);}
+.home-compass-btn:active{transform:scale(0.97);}
+.home-compass-ico{font-size:1.1rem;line-height:1;}
+.home-compass-label{font-size:.84rem;font-weight:700;letter-spacing:-.01em;}
+.home-compass-sub{font-size:.72rem;color:var(--ink-soft);}
+.home-detail-sheet{position:fixed;inset:0;z-index:90;visibility:hidden;pointer-events:none;transition:visibility 0s linear .3s;}
+.home-detail-sheet.open{visibility:visible;pointer-events:auto;transition:visibility 0s;}
+.home-detail-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.30);opacity:0;transition:opacity .3s ease;}
+.home-detail-sheet.open .home-detail-backdrop{opacity:1;}
+.home-detail-panel{position:absolute;left:0;right:0;bottom:0;margin:0 auto;width:100%;max-width:var(--maxw, 520px);height:85vh;display:flex;flex-direction:column;background:linear-gradient(var(--card2, transparent), var(--card2, transparent)), var(--bg, #0B0F17);border-radius:24px 24px 0 0;border:1px solid var(--rule);border-bottom:none;box-shadow:0 -12px 36px rgba(0,0,0,.45);transform:translateY(100%);transition:transform .3s cubic-bezier(0.16, 1, 0.3, 1);box-sizing:border-box;}
+.home-detail-sheet.open .home-detail-panel{transform:translateY(0);}
+.home-detail-handle{display:flex;justify-content:center;padding:10px 0 6px;cursor:grab;touch-action:none;}
+.home-detail-handle span{display:block;width:44px;height:5px;border-radius:999px;background:var(--surface-3, var(--rule));}
+.home-detail-head{position:relative;padding:0 20px;touch-action:none;}
+.home-detail-head h3{margin:0;padding:8px 52px 0 0;font-size:1.125rem;font-weight:800;color:var(--ink);letter-spacing:-.02em;}
+.home-detail-head .modal-sheet-close{top:-6px;right:12px;}
+.home-detail-hint{margin:6px 20px 8px;font-size:.78rem;color:var(--ink-soft);}
+.home-detail-body{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:0 16px calc(24px + env(safe-area-inset-bottom, 0px));}
+.home-sheet-panel .home-recent-title{margin-top:8px;}
+.sanctuary-top-right .home-topbar-add{min-height:44px;padding:0 14px;border-radius:999px;font-size:.84rem;font-weight:700;white-space:nowrap;color:var(--brand);border:1px solid var(--rule);background:var(--card);}
+.sanctuary-top-right .home-topbar-add::before{content:"＋ ";}
+.sanctuary-top-right .home-topbar-add:active{transform:scale(0.97);}

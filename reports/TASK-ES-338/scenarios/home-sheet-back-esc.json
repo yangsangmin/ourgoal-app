@@ -1,0 +1,25 @@
+{
+  "id": "home-sheet-back-esc",
+  "title": "열린 홈 시트는 뒤로가기·Esc 로 시트만 닫히고 앱에 머문다, 회고 나침반은 기록 탭으로 보낸다",
+  "steps": [
+    { "do": "setViewport", "width": 375, "height": 812 },
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeCompassQuest", "timeoutMs": 15000 },
+    { "do": "click", "selector": "#homeCompassQuest" },
+    { "expect": "visible", "selector": "#homeGoalList" },
+    { "do": "back" },
+    { "expect": "notVisible", "selector": "#homeGoalList" },
+    { "expect": "stillInApp" },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"home\"]", "className": "active" },
+    { "do": "click", "selector": "#homeCompassCrew" },
+    { "expect": "visible", "selector": "#crewPacingWidget" },
+    { "do": "key", "key": "Escape" },
+    { "expect": "notVisible", "selector": "#crewPacingWidget" },
+    { "do": "click", "selector": "#homeCompassReflect" },
+    { "expect": "hasClass", "selector": ".navbtn[data-tab=\"records\"]", "className": "active" },
+    { "expect": "visible", "selector": "#screen-records" },
+    { "capture": "records-tab" }
+  ]
+}

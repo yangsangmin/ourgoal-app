@@ -5636,4 +5636,9 @@
 - **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
 ---
 
-
+## [2026-10-04 00:40] HOME-01 홈 원스크린 콕핏 (#TASK-ES-338)
+- **목표**: 375×812 홈 첫 화면을 스크롤 없이 [상단 바·인사] + [오늘 체크인 카드] + [3대 미니 나침반]으로 줄이고, 오늘 목표 목록·동반자 레이스는 85vh 바텀시트로 점진 공개(노션 대개편 티켓 HOME-01).
+- **수정/실행 내역**: `js/tabs/home/sub-onescreen.js` 신규(OurgoalHomeOneScreen — 나침반 #homeCompassRow, 시트 #homeDetailSheet, 노드 이동, 닫기 4중·뒤로가기·Esc·탭 이탈 자동 닫힘), `js/tabs/home/index.js` 소블록 등록, `index.html` 스크립트 태그, `ui.css` HOME-01 블록. `#homeAddGoal` 은 상단 바로 옮겨 첫 화면에 남김(법정 표준 시나리오가 홈에서 누르는 버튼).
+- **발생한 문제 및 해결**: ① 시트를 #screen-home 안에 두자 `.screen` 의 will-change:transform 때문에 fixed 시트가 홈 상자에 갇힘(패널 690px 이 화면 0px 부터) → body 로 옮김. ② 홈 하단 여백 이중 적용(main.screens 108px + #screen-home 96px !important) → 원스크린 상태에서만 홈 쪽 여백 제거. ③ 처음 구현은 #homeAddGoal 을 시트에 같이 넣어 법정 표준 시나리오 3종을 깰 뻔함 → 상단 바로 분리. ④ localhost 로 열면 프리뷰 자동 입장 지름길로 빠져 법정과 다른 화면을 보게 됨 → 법정 실행기와 같은 전용 호스트 이름으로 실측.
+- **검증 결과**: 작업자 주장(법정이 확인한 것 아님) — 게스트 진입 375×812 스크롤 높이 1702px(origin/main) → 812px(무스크롤), 390×844·360×800 도 무스크롤, 375×667 은 799px(132px 스크롤 남음). 법정 실행기(court/lib/scenario.js)를 로컬에서 돌려 표준 시나리오 6종 + 신규 2종 통과. npm test 통과. 법정 판정은 PR 의 court 검사로만 인용한다.
+---
