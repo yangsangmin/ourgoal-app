@@ -1,0 +1,67 @@
+{
+  "task": "TASK-COURT-V4",
+  "requirementsSource": "01_OURGOAL_SUPREME_CONSTITUTION_FULL.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "아워골 v4 헌법 커널 정본(01_OURGOAL_SUPREME_CONSTITUTION_FULL.md)을 프로젝트 루트에 배치하고 AGENTS.md 및 CLAUDE.md에 동기화한다."
+    },
+    {
+      "id": "R2",
+      "text": "court/engine.js에 독립 법정 자율 검증 스크립트를 배치하고 구동 환경을 완비한다."
+    },
+    {
+      "id": "R3",
+      "text": ".github/workflows/court.yml 경로에 GitHub Actions CI/CD 독립 법정 게이트키퍼 워크플로우를 구성한다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "governance",
+      "statement": "프로젝트 루트에 01_OURGOAL_SUPREME_CONSTITUTION_FULL.md, AGENTS.md, CLAUDE.md가 동일한 헌법 커널로 배치되어 있다",
+      "touches": [
+        "01_OURGOAL_SUPREME_CONSTITUTION_FULL.md",
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "01_OURGOAL_SUPREME_CONSTITUTION_FULL.md",
+        "text": "ourgoal-supreme-constitution-v2026.10"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "court",
+      "statement": "court/engine.js에 CourtEngine 클래스가 정상 정의되어 있다",
+      "touches": [
+        "court/engine.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "court/engine.js",
+        "text": "class CourtEngine"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ci",
+      "statement": ".github/workflows/court.yml에 GitHub Actions 독립 법정 워크플로우가 등록되어 있다",
+      "touches": [
+        ".github/workflows/court.yml"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": ".github/workflows/court.yml",
+        "text": "OurGoal Independent Court Gatekeeper (v4)"
+      }
+    }
+  ]
+}
