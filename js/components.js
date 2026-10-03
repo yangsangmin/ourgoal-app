@@ -435,6 +435,13 @@
         locStorage.setItem('og_task-35_cache', JSON.stringify(syncPayload));
       }
 
+      // 실질적 갓생 스토리카드 모달 오픈 연동
+      if (typeof win.openMzShareCardModal === 'function') {
+        win.openMzShareCardModal();
+      } else if (typeof openMzShareCardModal === 'function') {
+        openMzShareCardModal();
+      }
+
       // 3. 완료 시각 피드백 토스트
       if (typeof win.showToast === 'function') {
         win.showToast('갓생 스토리카드 다각화 및 피드 게시가 완료되었습니다.', { type: 'success', duration: 2000 });

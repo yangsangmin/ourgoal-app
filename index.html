@@ -992,6 +992,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           <span class="privacy-badge" id="recPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" id="recStoryCardBtn" type="button" onclick="if(typeof openMzShareCardModal === 'function') openMzShareCardModal();" style="display:inline-flex;align-items:center;gap:4px;font-size:.78125rem;padding:5px 10px;font-weight:700;border:1px solid var(--border-color);border-radius:8px;background:var(--bg-card);color:var(--ink);cursor:pointer;">
+            <span>📸 갓생 스토리카드</span>
+          </button>
           <button class="btn btn-primary btn-sm" id="btnOpenTimeTracker" type="button" onclick="if(window.OurgoalTimeTracker) window.OurgoalTimeTracker.open();" style="display:none !important;" title="전체화면 스톱워치/타이머로 지금부터 시간을 측정하고 기록합니다">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/></svg>
             <span>⏱️ 지금부터 시간기록</span>
@@ -5012,9 +5015,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         saved_avatars: savedAvatarsPayload
       };
       var uUpsertRes = await sb.from('users').upsert(userUpsertObj);
-      if(uUpsertRes && uUpsertRes.error && /saved_avatars/i.test(uUpsertRes.error.message || '')){
-        delete userUpsertObj.saved_avatars;
-        await sb.from('users').upsert(userUpsertObj);
+      if(uUpsertRes && uUpsertRes.error){
+        if(/saved_avatars/i.test(uUpsertRes.error.message || '')){
+          delete userUpsertObj.saved_avatars;
+          uUpsertRes = await sb.from('users').upsert(userUpsertObj);
+        }
+        if(uUpsertRes && uUpsertRes.error && /interests|region|trash|saved_avatars/i.test(uUpsertRes.error.message || '')){
+          var minimalUser = {
+            id: uidVal, username: state.profile.username, display_name: state.profile.displayName,
+            bio: state.profile.bio || null, avatar_url: state.profile.avatarUrl || null
+          };
+          await sb.from('users').upsert(minimalUser);
+        }
       }
       if(savedAvatarsPayload.length){
         try { localStorage.setItem('ourgoal_saved_avatars_backup_' + uidVal, JSON.stringify(savedAvatarsPayload)); } catch(e){}
@@ -7186,9 +7198,42 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
   }
 
+  function getPeerRunnersForCategory(category){
+    var cat = category || '운동';
+    if(cat.indexOf('공부') !== -1 || cat.indexOf('학습') !== -1 || cat.indexOf('독서') !== -1){
+      return [
+        { name: '열정부엉이', emoji: '🦉', streak: 8, goal: '매일 1시간 몰입 공부' },
+        { name: '코딩마스터', emoji: '🦊', streak: 19, goal: '알고리즘 1일 1제' },
+        { name: '새벽독서러', emoji: '🐼', streak: 14, goal: '아침 30분 책 읽기' }
+      ];
+    } else if(cat.indexOf('기상') !== -1 || cat.indexOf('모닝') !== -1 || cat.indexOf('생활') !== -1 || cat.indexOf('루틴') !== -1){
+      return [
+        { name: '미라클모닝', emoji: '🌅', streak: 30, goal: '오전 6시 기상 & 스트레칭' },
+        { name: '성실토끼', emoji: '🐰', streak: 7, goal: '물 1L 마시기 & 영양제' },
+        { name: '루틴요정', emoji: '✨', streak: 15, goal: '하루 1줄 감사 일기' }
+      ];
+    }
+    return [
+      { name: '달리는치타', emoji: '🐆', streak: 12, goal: '하프마라톤 완주 도전' },
+      { name: '새벽러너', emoji: '🦌', streak: 5, goal: '아침 5km 가벼운 조깅' },
+      { name: '철인도전', emoji: '🦅', streak: 21, goal: '매일 푸시업 100개' }
+    ];
+  }
+
   function triggerFirstCheckinCelebrationModal(goal, checkinText, onDismiss){
     var av = (state.profile && state.profile.guardianAnimal) || { emoji: '🦉', name: '수호동물 부엉이' };
     var goalTitle = goal ? goal.title : (checkinText || '첫 실천');
+    var goalCat = (goal && goal.category) || '운동';
+    var peers = getPeerRunnersForCategory(goalCat);
+
+    var peersHtml = peers.map(function(peer){
+      return '<div style="flex:1;min-width:0;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:8px 6px;text-align:center;">' +
+        '<div style="font-size:22px;margin-bottom:2px;">' + peer.emoji + '</div>' +
+        '<div style="font-weight:700;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink);">' + escapeHtml(peer.name) + '</div>' +
+        '<div style="font-size:10px;color:var(--brand);font-weight:800;margin-top:2px;">🔥 ' + peer.streak + '일 연속</div>' +
+      '</div>';
+    }).join('');
+
     var html =
       '<div style="text-align:center;padding:12px 6px 8px;">' +
         '<div style="font-size:54px;margin-bottom:8px;animation:celebrationPulse .8s ease infinite alternate;">' + (av.emoji || '🦉') + '</div>' +
@@ -7198,11 +7243,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '<h3 style="font-size:1.25rem;font-weight:800;margin-bottom:8px;line-height:1.3;">' +
           '축하합니다! 첫 걸음을 내디뎠어요 🎉' +
         '</h3>' +
-        '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.5;margin-bottom:16px;">' +
+        '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.5;margin-bottom:14px;">' +
           '<b>' + escapeHtml(av.name) + '</b>이(가) 당신의 첫 시작을 힘차게 응원합니다!<br>' +
           '<b>"' + escapeHtml(goalTitle) + '"</b> 실천이 안전하게 기록되었습니다.' +
         '</p>' +
-        '<div style="background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:space-around;margin-bottom:18px;">' +
+        '<div style="background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:10px 12px;display:flex;align-items:center;justify-content:space-around;margin-bottom:14px;">' +
           '<div>' +
             '<div style="font-size:11px;color:var(--ink-faint);">보너스 경험치</div>' +
             '<div style="font-size:15px;font-weight:800;color:var(--brand);">+10 EXP ✨</div>' +
@@ -7213,8 +7258,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             '<div style="font-size:15px;font-weight:800;color:var(--ink);">🌱 새싹 러너 (Lv.1)</div>' +
           '</div>' +
         '</div>' +
+        '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:16px;text-align:left;">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+            '<span style="font-size:12px;font-weight:800;color:var(--ink);">🤝 함께 달리는 동류 러너</span>' +
+            '<span style="font-size:11px;color:var(--brand);font-weight:700;">' + escapeHtml(goalCat) + ' 분야</span>' +
+          '</div>' +
+          '<div style="display:flex;gap:6px;">' + peersHtml + '</div>' +
+          '<div style="font-size:11px;color:var(--ink-faint);margin-top:8px;line-height:1.4;">' +
+            '※ 혼자 달리지 않아요! 서로의 실천 발자국을 조용히 지켜보며 함께 성장합니다.' +
+          '</div>' +
+        '</div>' +
         '<div style="display:flex;flex-direction:column;gap:8px;">' +
-          '<button class="btn btn-primary btn-block" id="firstCheckinDoneBtn" type="button" style="padding:12px;font-size:14px;font-weight:800;">' +
+          '<button class="btn btn-primary btn-block" id="firstCheckinCommBtn" type="button" style="padding:12px;font-size:14px;font-weight:800;background:linear-gradient(135deg, var(--brand), #8b5cf6);border:none;box-shadow:0 4px 14px rgba(108,92,231,0.3);">' +
+            '💌 첫 웰컴 스탬프 보내고 소통 탭 가기 (+5 EXP)' +
+          '</button>' +
+          '<button class="btn btn-ghost btn-block" id="firstCheckinDoneBtn" type="button" style="padding:10px;font-size:13px;font-weight:700;color:var(--ink-soft);">' +
             '홈 콕핏 둘러보기 ➔' +
           '</button>' +
         '</div>' +
@@ -7226,6 +7284,26 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       setTimeout(function(){
         burstConfetti(window.innerWidth/2, window.innerHeight/2 - 60, 16);
       }, 250);
+
+      var commBtn = sheet.querySelector('#firstCheckinCommBtn');
+      if(commBtn){
+        commBtn.addEventListener('click', function(){
+          triggerHaptic(20);
+          burstConfetti(window.innerWidth/2, window.innerHeight/2, 25);
+          if(state.profile && state.profile.settings && state.profile.settings.xp){
+            state.profile.settings.xp.total = (state.profile.settings.xp.total || 0) + 5;
+            saveProfile();
+          }
+          toast('💌 동류 러너들에게 웰컴 응원 스탬프를 보냈어요! (+5 EXP)');
+          closeModal();
+          if(typeof setTab === 'function'){
+            state.commSubTab = 'feed';
+            setTab('comm');
+          }
+          if(typeof onDismiss === 'function') onDismiss();
+        });
+      }
+
       var doneBtn = sheet.querySelector('#firstCheckinDoneBtn');
       if(doneBtn){
         doneBtn.addEventListener('click', function(){
@@ -7235,6 +7313,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
     });
   }
+  window.triggerFirstCheckinCelebrationModal = triggerFirstCheckinCelebrationModal;
 
   /* ============ 온보딩 직후 소통 기능 짧은 투어 (첫 목표 생성 시 1회) ============ */
   function showCommTourModal(){
@@ -8705,19 +8784,30 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               '</div>' +
             '</div>';
           }).join('');
+
+          function updateInterestCount(){
+            var countEl = sheet.querySelector('#pvCount');
+            if(countEl) countEl.textContent = draft.interests.length+'개 선택됨 · 최대 8개';
+          }
+
           el.querySelectorAll('[data-int]').forEach(function(b){
-            b.addEventListener('click', function(){
+            b.addEventListener('click', function(ev){
+              if(ev && typeof ev.preventDefault === 'function') ev.preventDefault();
               var key = b.dataset.int;
               var i = draft.interests.indexOf(key);
               if(i===-1){
                 if(draft.interests.length>=8){ toast('관심 카테고리는 8개까지 고를 수 있어요'); return; }
                 draft.interests.push(key);
-              } else { draft.interests.splice(i,1); }
-              paintInterests();
+                b.classList.add('active');
+              } else {
+                draft.interests.splice(i,1);
+                b.classList.remove('active');
+              }
+              triggerHaptic(12);
+              updateInterestCount();
             });
           });
-          var countEl = sheet.querySelector('#pvCount');
-          if(countEl) countEl.textContent = draft.interests.length+'개 선택됨 · 최대 8개';
+          updateInterestCount();
         }
         paintInterests();
 
@@ -8751,10 +8841,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           }).join('');
 
           box.querySelectorAll('[data-delititem]').forEach(function(b){
-            b.addEventListener('click', function(){
+            b.addEventListener('click', function(ev){
+              if(ev && typeof ev.preventDefault === 'function') ev.preventDefault();
               var idx = parseInt(b.dataset.delititem, 10);
               draft.itItems.splice(idx, 1);
               paintItItems();
+              triggerHaptic(12);
               toast('잇템이 삭제되었습니다.');
             });
           });
@@ -8765,22 +8857,29 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var addBtn = sheet.querySelector('#pvAddItItem');
         var inlineForm = sheet.querySelector('#pvInlineItItemForm');
         if(addBtn && inlineForm){
-          addBtn.addEventListener('click', function(){
-            inlineForm.style.display = (inlineForm.style.display === 'none') ? 'block' : 'none';
-            if(inlineForm.style.display === 'block'){
-              sheet.querySelector('#itNameInput').focus();
+          addBtn.addEventListener('click', function(ev){
+            if(ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+            triggerHaptic(12);
+            var isHidden = (inlineForm.style.display === 'none' || !inlineForm.style.display);
+            inlineForm.style.display = isHidden ? 'block' : 'none';
+            if(isHidden){
+              try { inlineForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch(e){}
+              var inp = sheet.querySelector('#itNameInput');
+              if(inp) setTimeout(function(){ inp.focus(); }, 150);
             }
           });
         }
         var btnCancelInline = sheet.querySelector('#btnCancelInlineItItem');
         if(btnCancelInline){
-          btnCancelInline.addEventListener('click', function(){
+          btnCancelInline.addEventListener('click', function(ev){
+            if(ev && typeof ev.preventDefault === 'function') ev.preventDefault();
             inlineForm.style.display = 'none';
           });
         }
         var btnConfirmInline = sheet.querySelector('#btnConfirmInlineItItem');
         if(btnConfirmInline){
-          btnConfirmInline.addEventListener('click', function(){
+          btnConfirmInline.addEventListener('click', function(ev){
+            if(ev && typeof ev.preventDefault === 'function') ev.preventDefault();
             var nameVal = (sheet.querySelector('#itNameInput').value || '').trim();
             if(!nameVal){
               toast('잇템 이름을 입력해주세요.');
@@ -8806,7 +8905,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             sheet.querySelector('#itIsAffiliateCheck').checked = false;
             inlineForm.style.display = 'none';
             paintItItems();
-            if(typeof openProfileEditor === "function" && false){ openProfileEditor(draft); }
+            triggerHaptic(15);
             toast('"' + nameVal + '" 잇템을 추가했어요 ✨');
           });
         }
@@ -8817,7 +8916,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
         var regionSw = sheet.querySelector('#pvRegionPublic');
         if(regionSw){
-          regionSw.addEventListener('click', function(){
+          regionSw.addEventListener('click', function(ev){
+            if(ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+            triggerHaptic(12);
             draft.regionPublic = !draft.regionPublic;
             regionSw.className = 'switch' + (draft.regionPublic ? ' on' : '');
             toast(draft.regionPublic ? '지역 공개 설정됨' : '지역 비공개 설정됨');
@@ -8864,13 +8965,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         sheet.querySelector('#pvSave').addEventListener('click', async function(){
           syncInputsToDraft();
           if(!draft.name){ toast('닉네임을 입력해주세요'); return; }
+          triggerHaptic(20);
           p.displayName = draft.name;
           p.bio = draft.bio;
           p.avatarUrl = draft.avatarUrl;
-          p.interests = draft.interests;
-          p.region = regionRef.value || '';
-          p.regionPublic = draft.regionPublic;
-          p.itItems = draft.itItems;
+          p.interests = draft.interests || [];
+          p.region = regionRef.value || draft.region || '';
+          p.regionPublic = !!draft.regionPublic;
+          p.itItems = draft.itItems || [];
+
+          p.settings = p.settings || {};
+          p.settings.interests = p.interests;
+          p.settings.region = p.region;
+          p.settings.regionPublic = p.regionPublic;
+          p.settings.itItems = p.itItems;
 
           var uidVal = p.id || 'guest';
           try {
@@ -38552,21 +38660,23 @@ wirePromptEncyclopediaEvents(body);
         renderSettingsScreen();
       };
     }
-    // 🔐 계정 및 보안 (Req 10 - #TASK-ES-043 개인 이메일 노출 제거)
+    // 🔐 계정 및 보안 (Req 10 - [72] 로그인 상태 게스트 오표기 방지 및 안전 표출)
     var emailEl = document.getElementById('setAccountEmail');
     if(emailEl){
       var p = state.profile || {};
       var u = state.user || {};
-      var isGuest = (!u || !u.id) && (String(p.id || '').indexOf('guest') === 0);
+      var isRealUser = (u && u.id && String(u.id).indexOf('guest') === -1) ||
+                        (p && p.id && String(p.id).indexOf('guest') === -1 && p.isGuest !== true);
+      var isGuest = !isRealUser;
       var userEmail = (u && u.email) || p.email;
-      if(userEmail && userEmail.indexOf('@kakao.local') === -1 && userEmail.indexOf('@google.local') === -1){
-        emailEl.textContent = userEmail;
+      if(userEmail && userEmail.indexOf('@kakao.local') === -1 && userEmail.indexOf('@google.local') === -1 && userEmail.indexOf('@guest.local') === -1){
+        emailEl.textContent = userEmail + ' (인증 완료)';
       } else if(p.provider === 'kakao' || (u.app_metadata && u.app_metadata.provider === 'kakao')){
         emailEl.textContent = '카카오 계정 연동됨 (' + (p.displayName || p.nickname || '로그인 완료') + ')';
       } else if(p.provider === 'google' || (u.app_metadata && u.app_metadata.provider === 'google')){
         emailEl.textContent = '구글 계정 연동됨 (' + (p.displayName || '로그인 완료') + ')';
-      } else if(!isGuest && (p.id || u.id)){
-        emailEl.textContent = (p.displayName || '회원') + ' 계정 연동됨';
+      } else if(isRealUser){
+        emailEl.textContent = (p.displayName || '정회원') + ' 계정 연동됨 (동기화 활성)';
       } else {
         emailEl.textContent = '게스트 체험 모드 (로컬 안전 보관)';
       }

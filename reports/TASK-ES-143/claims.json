@@ -1,0 +1,137 @@
+{
+  "task": "TASK-ES-143",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-143-TRIO-ONBOARDING-PROFILE-STORY.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "온보딩 후속 E3 연계: 첫 체크인(E1) 축하 모달 내 카테고리별 동류 러너 3인 매칭(getPeerRunnersForCategory) 및 웰컴 응원 스탬프 발송(+5 EXP) -> 소통 탭 직통 전환 루프를 완결한다"
+    },
+    {
+      "id": "R2",
+      "text": "프로필 편집 4종 결함(잇템 추가, 관심 카테고리 선택, 지역공개 스위치, 내 동네 설정) 완치 및 로그인 상태 게스트 오표기를 교정하고 무손실 로컬/원격 영속화를 확립한다"
+    },
+    {
+      "id": "R3",
+      "text": "갓생 스토리카드 5대 비율(1:1, 3:4, 4:3, 9:16, 16:9) 및 4대 항목 선택 모달 실질적 오픈, 기록 탭 헤더 recStoryCardBtn 신설, 일정 탭 잠금화면 카드(9:16) 고해상도 생성을 고도화한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "onboarding",
+      "statement": "index.html에 getPeerRunnersForCategory 및 동류 러너 3인 매칭 렌더링 로직이 구현되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "function getPeerRunnersForCategory("
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "onboarding",
+      "statement": "index.html에 첫 체크인 축하 모달 내 firstCheckinCommBtn 및 firstCheckinDoneBtn 버튼이 구현되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"firstCheckinCommBtn\""
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "onboarding",
+      "statement": "index.html에 window.triggerFirstCheckinCelebrationModal 전역 바인딩이 구현되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "window.triggerFirstCheckinCelebrationModal = triggerFirstCheckinCelebrationModal;"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "profile",
+      "statement": "index.html에 setAccountEmail 내 정회원 상태 판별식이 구현되어 게스트 오표기를 방지한다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "var isRealUser = (u && u.id && String(u.id).indexOf('guest') === -1)"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "static",
+      "domain": "profile",
+      "statement": "index.html에 openProfileEditor 내 잇템 추가 폼, 관심 카테고리 칩 토글, 지역공개 스위치 무손실 저장 로직이 구현되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"pvAddItItem\""
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R3",
+      "kind": "static",
+      "domain": "storycard",
+      "statement": "js/records-stats.js와 js/components.js 내 handle기록스톱워치_Item35Action에 openMzShareCardModal() 직통 호출이 연결되어 있다",
+      "touches": ["js/records-stats.js", "js/components.js"],
+      "check": {
+        "type": "codeContains",
+        "file": "js/records-stats.js",
+        "text": "openMzShareCardModal();"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R3",
+      "kind": "static",
+      "domain": "storycard",
+      "statement": "index.html 기록 탭 헤더에 갓생 스토리카드 오픈 버튼 recStoryCardBtn이 구현되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"recStoryCardBtn\""
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "test",
+      "statement": "tests/trio-es143-es145.test.js에 온보딩 E3 연계, 프로필 편집 및 스토리카드 무결성 검증 테스트 스위트가 구현되어 있다",
+      "touches": ["tests/trio-es143-es145.test.js"],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/trio-es143-es145.test.js",
+        "text": "#TASK-ES-143 ~ #TASK-ES-145"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "tickets",
+      "statement": "docs/rules/TICKETS.md에 #TASK-ES-143, #TASK-ES-144, #TASK-ES-145 티켓이 승인 및 4단계로 등록되어 있다",
+      "touches": ["docs/rules/TICKETS.md"],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "#TASK-ES-143 | E1/E3/UX"
+      }
+    }
+  ]
+}
