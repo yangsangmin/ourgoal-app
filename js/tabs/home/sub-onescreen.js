@@ -215,7 +215,7 @@
         '<div class="home-hero-avatar-wrap" id="homeHeroAvatar" role="button" tabindex="0" aria-label="수호 아바타 상세 열기">' +
           '<div class="avatar-placeholder avatar-pulse-breathing" id="homeHeroAvatarImg">🌱</div>' +
         '</div>' +
-        '<div class="hero-avatar-exp" id="homeHeroExpBar" aria-label="경험치">' +
+        '<div class="hero-avatar-exp-bar" id="homeHeroExpBar" aria-label="경험치">' +
           '<div class="hero-avatar-exp-fill" id="homeHeroExpFill" style="width:0%;"></div>' +
         '</div>' +
         '<div class="hero-avatar-exp-text" id="homeHeroExpText" style="font-size:0.75rem;font-weight:600;color:var(--ink-soft);margin-top:2px;">Lv.1 · 0 EXP</div>';
