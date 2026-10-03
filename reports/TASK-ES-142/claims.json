@@ -1,0 +1,111 @@
+{
+  "task": "TASK-ES-142",
+  "requirementsSource": "docs/specs/REQ-TASK-ONBOARDING-30S.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "1단계 (10초): 16종 MBTI 수호동물 아바타 카드 선택과 4대 성향(분석형, 외교형, 관리형, 탐험형) 탭 필터 및 AI 사진 아바타 생성 안내를 제공한다"
+    },
+    {
+      "id": "R2",
+      "text": "2단계 (10초): 닉네임 자동 제안 및 3대 킬러 목표 프리셋(운동/공부/기상)과 나중에 설정하기 원터치 선택 및 시작하기(+10 EXP)를 제공한다"
+    },
+    {
+      "id": "R3",
+      "text": "3단계 (10초): 홈 콕핏 상단 첫 체크인 가이드 배너를 제공하고, 1줄 체크인(E1) 완료 시 수호동물 축하 팝업 모달(+10 EXP 보너스, 레벨 1 달성)을 노출한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "onboarding",
+      "statement": "index.html에 16종 MBTI 동물 아바타 카드 선택과 showObStep1 함수가 구현되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "function showObStep1("
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "onboarding",
+      "statement": "index.html에 4대 성향 탭(분석형, 외교형, 관리형, 탐험형) 필터 칩이 구현되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "['분석형', '외교형', '관리형', '탐험형']"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "onboarding",
+      "statement": "index.html에 닉네임 입력 및 3대 킬러 목표 프리셋과 showObStep2 함수가 구현되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "function showObStep2("
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "onboarding",
+      "statement": "온보딩 완료 시 completeOnboarding 함수에서 10 EXP가 지급된다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "awardXP(10, '온보딩 수호동물 안착 축하')"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R3",
+      "kind": "static",
+      "domain": "onboarding",
+      "statement": "홈 콕핏에 firstCheckinTutorialBanner 슬롯과 renderFirstCheckinTutorialBanner 함수가 구현되어 있다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "function renderFirstCheckinTutorialBanner("
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R3",
+      "kind": "static",
+      "domain": "onboarding",
+      "statement": "첫 체크인 완료 시 triggerFirstCheckinCelebrationModal 함수가 호출되어 축하 모달과 레벨 1 달성이 연출된다",
+      "touches": ["index.html"],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "function triggerFirstCheckinCelebrationModal("
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R3",
+      "kind": "static",
+      "domain": "onboarding",
+      "statement": "tests/onboarding-first-checkin.test.js에 온보딩 및 첫 체크인 무결성 검증 테스트 스위트가 구현되어 있다",
+      "touches": ["tests/onboarding-first-checkin.test.js"],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/onboarding-first-checkin.test.js",
+        "text": "firstCheckinTutorialBanner"
+      }
+    }
+  ]
+}
