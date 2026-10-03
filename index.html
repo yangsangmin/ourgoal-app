@@ -670,6 +670,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       <div id="todayMissionCard" data-home-widget="todayMissionCard" data-widget-label="오늘의 카드" data-widget-hint="뭘 할지 모르겠을 때 도움돼요(내 목표기반)"></div>
 
       <!-- ② 답하기 -->
+      <div id="firstCheckinTutorialBanner" style="display:none;margin-bottom:12px;background:rgba(16,185,129,0.12);border:1.5px solid var(--brand);border-radius:14px;padding:12px 14px;position:relative;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:26px;" id="firstCheckinTutorialEmoji">🦉</span>
+            <div>
+              <div style="font-size:13px;font-weight:800;color:var(--brand);margin-bottom:2px;" id="firstCheckinTutorialTitle">🌱 1단계 온보딩 완료! 첫 체크인으로 +10 EXP를 받으세요</div>
+              <div style="font-size:12px;color:var(--ink-soft);line-height:1.4;" id="firstCheckinTutorialDesc">아래 입력창에 오늘 한 일 한 줄을 적고 '기록 완료'를 누르면 레벨 1 달성 축하가 시작됩니다.</div>
+            </div>
+          </div>
+          <button type="button" id="closeFirstCheckinTutorialBtn" aria-label="첫 체크인 튜토리얼 배너 닫기" style="background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:16px;padding:2px 6px;">✕</button>
+        </div>
+      </div>
       <div id="homeGrassSummaryCard" style="display:none !important;" data-home-widget="homeGrassSummaryCard" data-widget-label="최근 히트맵 요약" data-widget-hint="최근 2주간의 기록 한눈에"></div>
       <div class="capture-card card toss-checkin-clean-box" id="captureCardBox" data-home-widget="captureCardBox" data-widget-label="오늘의 3초 체크인 (오늘 기록하기)" data-widget-hint="1줄 체크인 입력창 (상단 고정)" data-widget-fixed="true">
         <div class="capture-title" style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
@@ -6834,6 +6846,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         }, 200);
       }
     } catch(actErr){}
+    try {
+      if(typeof renderFirstCheckinTutorialBanner === 'function'){
+        renderFirstCheckinTutorialBanner();
+      }
+    } catch(tutErr){}
   }
 
   /* PWA 실시간 배지 동기화 및 원격 세션 검사 — 앱 포커스 복귀 및 탭 가시성 전환 시 (TASK-BG-6, Req 1) */
@@ -6926,6 +6943,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   ];
 
   function startOnboarding(){
+    window.startOnboarding = startOnboarding;
     var selectedGroup = '분석형';
     var selectedAvatar = ONBOARDING_AVATARS[0]; // 기본 부엉이
     showObStep1();
@@ -6962,16 +6980,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       '</div>';
 
       var html = 
-        '<p class="ob-step-label">1 / 2 · 수호동물 선택</p>' +
+        '<p class="ob-step-label">1 / 2 · 수호동물 선택 (10초)</p>' +
         '<h3 style="font-size:1.15rem;font-weight:800;margin-bottom:6px;line-height:1.3;">나를 지켜줄 수호 동물을<br>선택해 주세요!</h3>' +
-        '<p class="muted" style="margin:0 0 14px;font-size:.85rem;line-height:1.4;">MBTI(본인성향)에 맞는 동물을 선택하세요! 추후 언제든지 변경할 수 있습니다</p>' +
+        '<p class="muted" style="margin:0 0 14px;font-size:.85rem;line-height:1.4;">MBTI 성향에 맞는 16종 동물 아바타 중 하나를 콕 찍어보세요. 언제든 변경할 수 있어요.</p>' +
         groupsHtml +
         '<div id="obAvatarGridSlot">' + renderAvatarGrid(selectedGroup, selectedAvatar) + '</div>' +
         '<div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);border-radius:10px;padding:8px 12px;font-size:11px;color:var(--ink-soft);display:flex;align-items:center;gap:6px;margin-bottom:14px;">' +
           '<span>✨</span><span>추후 <b>내 실제 사진 기반 AI 아바타</b>로도 언제든 진화할 수 있습니다!</span>' +
         '</div>' +
         '<div class="modal-actions"><button class="btn btn-primary btn-block" id="obNext1" type="button">수호동물 확정하고 다음으로 ➔</button></div>' +
-        '<button class="land-login-link" id="obSkip1" type="button" style="width:100%;background:none;margin-top:10px;">기본 아바타로 바로 시작하기</button>';
+        '<button class="land-login-link" id="obSkip1" type="button" style="width:100%;background:none;margin-top:10px;">기본 아바타(부엉이)로 건너뛰기</button>';
 
       openModal(html, function(sheet){
         function wireCards(){
@@ -7003,8 +7021,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         });
 
         sheet.querySelector('#obNext1').addEventListener('click', showObStep2);
-        sheet.querySelector('#obSkip1').addEventListener('click', async function(){
-          await completeOnboarding(state.profile.displayName || '러너', ONBOARDING_AVATARS[0]);
+        sheet.querySelector('#obSkip1').addEventListener('click', function(){
+          selectedAvatar = ONBOARDING_AVATARS[0]; // 기본 부엉이
+          showObStep2();
         });
       });
     }
@@ -7013,12 +7032,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       track('onboarding_step_viewed', { step: 2, source: 'onboarding', goal_type: null, day_index: dayIndexSinceSignup() });
 
       var defaultName = state.profile.displayName || '새싹러너';
-      var chosenPreset = { title: '매일 30분 걷기', category: 'health' };
+      var chosenPreset = { title: '매일 30분 달리기/걷기', category: 'health' };
 
       var html =
-        '<p class="ob-step-label">2 / 2 · 닉네임 & 1호 목표</p>' +
-        '<h3 style="font-size:1.15rem;font-weight:800;margin-bottom:6px;">아워골에서 사용할 닉네임을 정해주세요</h3>' +
-        '<p class="muted" style="margin:0 0 16px;font-size:.85rem;">동류 러너들에게 불릴 이름입니다. 언제든 프로필에서 바꿀 수 있어요.</p>' +
+        '<p class="ob-step-label">2 / 2 · 닉네임 & 1호 목표 (10초)</p>' +
+        '<h3 style="font-size:1.15rem;font-weight:800;margin-bottom:6px;">닉네임과 첫 시작 1호 목표</h3>' +
+        '<p class="muted" style="margin:0 0 16px;font-size:.85rem;">동류 러너들에게 불릴 이름과 오늘부터 시작할 대표 목표입니다.</p>' +
         '<div style="background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:14px;">' +
           '<div style="font-size:36px;width:52px;height:52px;border-radius:14px;background:rgba(16,185,129,0.15);display:flex;align-items:center;justify-content:center;">'+selectedAvatar.emoji+'</div>' +
           '<div>' +
@@ -7031,12 +7050,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<input type="text" id="obNickInput" maxlength="20" placeholder="닉네임을 입력하세요" value="'+escapeHtml(defaultName)+'" style="width:100%;height:44px;background:var(--input-bg);border:1px solid var(--rule);border-radius:10px;padding:0 12px;color:var(--ink);font-size:14px;">' +
         '</div>' +
         '<div class="field" style="margin-bottom:16px;">' +
-          '<label style="font-size:12px;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:6px;">첫 시작 1호 목표 (선택, 나중에 변경 가능)</label>' +
-          '<div style="display:flex;flex-wrap:wrap;gap:6px;" id="obPresetChips">' +
-            '<button type="button" class="ob-preset-chip active" data-title="매일 30분 걷기" data-cat="health" style="font-size:12px;padding:6px 12px;border-radius:20px;border:1px solid var(--brand);background:var(--brand);color:#fff;cursor:pointer;">🏃 매일 30분 걷기</button>' +
-            '<button type="button" class="ob-preset-chip" data-title="하루 15분 독서하기" data-cat="study" style="font-size:12px;padding:6px 12px;border-radius:20px;border:1px solid var(--rule);background:var(--card);color:var(--ink-faint);cursor:pointer;">📚 하루 15분 독서</button>' +
-            '<button type="button" class="ob-preset-chip" data-title="아침 물 한잔 마시기" data-cat="daily" style="font-size:12px;padding:6px 12px;border-radius:20px;border:1px solid var(--rule);background:var(--card);color:var(--ink-faint);cursor:pointer;">💧 아침 물 한잔</button>' +
-            '<button type="button" class="ob-preset-chip" data-title="" data-cat="" style="font-size:12px;padding:6px 12px;border-radius:20px;border:1px solid var(--rule);background:var(--card);color:var(--ink-faint);cursor:pointer;">나중에 정할게요</button>' +
+          '<label style="font-size:12px;font-weight:700;color:var(--ink-soft);display:block;margin-bottom:6px;">3대 대표 킬러 목표 프리셋 (원터치 선택)</label>' +
+          '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;" id="obPresetChips">' +
+            '<button type="button" class="ob-preset-chip active" data-title="매일 30분 달리기/걷기" data-cat="health" style="font-size:12px;padding:10px 8px;border-radius:12px;border:1.5px solid var(--brand);background:rgba(16,185,129,0.12);color:var(--brand);font-weight:700;cursor:pointer;text-align:center;">🏃 매일 30분 운동</button>' +
+            '<button type="button" class="ob-preset-chip" data-title="하루 20분 집중 공부/독서" data-cat="study" style="font-size:12px;padding:10px 8px;border-radius:12px;border:1px solid var(--rule);background:var(--card);color:var(--ink-soft);cursor:pointer;text-align:center;">📚 하루 20분 공부</button>' +
+            '<button type="button" class="ob-preset-chip" data-title="아침 7시 기상 & 스트레칭" data-cat="routine" style="font-size:12px;padding:10px 8px;border-radius:12px;border:1px solid var(--rule);background:var(--card);color:var(--ink-soft);cursor:pointer;text-align:center;">⏰ 아침 7시 기상</button>' +
+            '<button type="button" class="ob-preset-chip" data-title="" data-cat="" style="font-size:12px;padding:10px 8px;border-radius:12px;border:1px solid var(--rule);background:var(--card);color:var(--ink-faint);cursor:pointer;text-align:center;">⏭️ 나중에 설정하기</button>' +
           '</div>' +
         '</div>' +
         '<div class="modal-actions" style="display:flex;gap:8px;">' +
@@ -7050,13 +7069,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             sheet.querySelectorAll('.ob-preset-chip').forEach(function(c){
               c.classList.remove('active');
               c.style.background = 'var(--card)';
-              c.style.color = 'var(--ink-faint)';
+              c.style.color = 'var(--ink-soft)';
               c.style.borderColor = 'var(--rule)';
+              c.style.fontWeight = '400';
             });
             chip.classList.add('active');
-            chip.style.background = 'var(--brand)';
-            chip.style.color = '#fff';
+            chip.style.background = 'rgba(16,185,129,0.12)';
+            chip.style.color = 'var(--brand)';
             chip.style.borderColor = 'var(--brand)';
+            chip.style.fontWeight = '700';
             var title = chip.dataset.title;
             var cat = chip.dataset.cat;
             if(title){
@@ -7090,7 +7111,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       };
       state.profile.avatarUrl = '';
       state.profile._isNewSignup = false;
-      state.profile.settings.hasSeenGuide = false;
+      state.profile.settings.hasSeenGuide = true; // 30초 무마찰 온보딩을 위해 장문 모달 대신 홈 콕핏 안착
+      state.profile.firstCheckinPending = true; // 3단계: 첫 체크인 튜토리얼 칩 활성화 플래그
+      state.profile.firstCheckinCelebrated = false;
 
       // 2. 1호 목표 칩 선택 시 목표 목록에 추가
       if(chosenGoalPreset && chosenGoalPreset.title){
@@ -7107,6 +7130,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         };
         state.profile.goals = state.profile.goals || [];
         state.profile.goals.unshift(newGoal);
+        state.activeGoalId = newGoal.id;
       }
 
       await saveProfile();
@@ -7119,8 +7143,97 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       toast('🎉 반가워요 ' + displayName + '님! 수호동물 ' + avatarObj.name + '와(과) 함께 시작합니다 (+10 EXP)');
       track('onboarding_completed', { source: 'onboarding_fusion', mbti: avatarObj.mbti, day_index: 0 });
-      await maybeShowFirstLoginGuide();
+
+      // 4. 3단계 (10초): 첫 체크인 튜토리얼 가이드 칩 홈 콕핏에 렌더링
+      if(typeof renderFirstCheckinTutorialBanner === 'function'){
+        renderFirstCheckinTutorialBanner();
+      }
     }
+  }
+  window.startOnboarding = startOnboarding;
+
+  /* ============ 3단계: 첫 체크인 튜토리얼 가이드 및 축하 연출 ============ */
+  function renderFirstCheckinTutorialBanner(){
+    var banner = document.getElementById('firstCheckinTutorialBanner');
+    if(!banner) return;
+    var isPending = state.profile && state.profile.firstCheckinPending && (!state.profile.records || state.profile.records.length === 0);
+    if(!isPending){
+      banner.style.display = 'none';
+      return;
+    }
+    var av = (state.profile && state.profile.guardianAnimal) || { emoji: '🦉', name: '수호동물' };
+    var g = (state.profile && state.profile.goals && state.profile.goals[0]);
+    var emojiEl = document.getElementById('firstCheckinTutorialEmoji');
+    if(emojiEl) emojiEl.textContent = av.emoji || '🦉';
+    var titleEl = document.getElementById('firstCheckinTutorialTitle');
+    if(titleEl){
+      titleEl.textContent = g ? ('🌱 1호 목표 [' + g.title + '] 첫 체크인을 남겨보세요!') : '🌱 첫 체크인으로 +10 EXP를 획득해보세요!';
+    }
+    banner.style.display = 'block';
+    var closeBtn = document.getElementById('closeFirstCheckinTutorialBtn');
+    if(closeBtn){
+      closeBtn.onclick = function(){
+        banner.style.display = 'none';
+        if(state.profile) state.profile.firstCheckinPending = false;
+      };
+    }
+    var inp = document.getElementById('captureInput');
+    if(inp){
+      inp.placeholder = g ? ('예: 오늘 ' + g.title + ' 10초 실천 완료!') : '예: 오늘 실천한 멋진 일을 한 줄로 적어보세요';
+      setTimeout(function(){
+        try { inp.focus(); } catch(e){}
+      }, 300);
+    }
+  }
+
+  function triggerFirstCheckinCelebrationModal(goal, checkinText, onDismiss){
+    var av = (state.profile && state.profile.guardianAnimal) || { emoji: '🦉', name: '수호동물 부엉이' };
+    var goalTitle = goal ? goal.title : (checkinText || '첫 실천');
+    var html =
+      '<div style="text-align:center;padding:12px 6px 8px;">' +
+        '<div style="font-size:54px;margin-bottom:8px;animation:celebrationPulse .8s ease infinite alternate;">' + (av.emoji || '🦉') + '</div>' +
+        '<div style="display:inline-block;padding:4px 12px;border-radius:12px;background:rgba(16,185,129,0.15);color:var(--brand);font-size:12px;font-weight:800;margin-bottom:8px;">' +
+          '🌱 첫 체크인(E1) 완주 · 레벨 1 달성' +
+        '</div>' +
+        '<h3 style="font-size:1.25rem;font-weight:800;margin-bottom:8px;line-height:1.3;">' +
+          '축하합니다! 첫 걸음을 내디뎠어요 🎉' +
+        '</h3>' +
+        '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.5;margin-bottom:16px;">' +
+          '<b>' + escapeHtml(av.name) + '</b>이(가) 당신의 첫 시작을 힘차게 응원합니다!<br>' +
+          '<b>"' + escapeHtml(goalTitle) + '"</b> 실천이 안전하게 기록되었습니다.' +
+        '</p>' +
+        '<div style="background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:space-around;margin-bottom:18px;">' +
+          '<div>' +
+            '<div style="font-size:11px;color:var(--ink-faint);">보너스 경험치</div>' +
+            '<div style="font-size:15px;font-weight:800;color:var(--brand);">+10 EXP ✨</div>' +
+          '</div>' +
+          '<div style="width:1px;height:24px;background:var(--rule);"></div>' +
+          '<div>' +
+            '<div style="font-size:11px;color:var(--ink-faint);">현재 랭크</div>' +
+            '<div style="font-size:15px;font-weight:800;color:var(--ink);">🌱 새싹 러너 (Lv.1)</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;gap:8px;">' +
+          '<button class="btn btn-primary btn-block" id="firstCheckinDoneBtn" type="button" style="padding:12px;font-size:14px;font-weight:800;">' +
+            '홈 콕핏 둘러보기 ➔' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+
+    openModal(html, function(sheet){
+      triggerHaptic(20);
+      burstConfetti(window.innerWidth/2, window.innerHeight/2, 20);
+      setTimeout(function(){
+        burstConfetti(window.innerWidth/2, window.innerHeight/2 - 60, 16);
+      }, 250);
+      var doneBtn = sheet.querySelector('#firstCheckinDoneBtn');
+      if(doneBtn){
+        doneBtn.addEventListener('click', function(){
+          closeModal();
+          if(typeof onDismiss === 'function') onDismiss();
+        });
+      }
+    });
   }
 
   /* ============ 온보딩 직후 소통 기능 짧은 투어 (첫 목표 생성 시 1회) ============ */
@@ -16158,8 +16271,23 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       track('checkin', { first: isFirst, has_goal: !!goal, has_photo: !!recPhoto, len: text.length<20 ? 's' : (text.length<80 ? 'm' : 'l') });
       track('checkin_completed', { source: 'voice', goal_type: goal && goal.category, day_index: dayIndexSinceSignup() });
-      if(isFirst){
+      var isFirstCheckinCelebration = isFirst || (state.profile && state.profile.firstCheckinPending) || (state.profile && !state.profile.firstCheckinCelebrated);
+      if(isFirstCheckinCelebration){
+        if(state.profile){
+          state.profile.firstCheckinPending = false;
+          state.profile.firstCheckinCelebrated = true;
+        }
+        var tutBanner = document.getElementById('firstCheckinTutorialBanner');
+        if(tutBanner) tutBanner.style.display = 'none';
         triggerFirstCheerResponse(goal, text);
+        if(typeof triggerFirstCheckinCelebrationModal === 'function'){
+          triggerFirstCheckinCelebrationModal(goal, text, function(){
+            var curRec = state.profile.records[0];
+            if(curRec && curRec.feedback){
+              showCheckinFeedbackSheet(curRec, curRec.feedback);
+            }
+          });
+        }
       }
       // [#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시 안전 백업 넛지
       try {
@@ -16193,9 +16321,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var newRec = state.profile.records[0];
       var fb = null;
       var targetGoal = goal || (state.profile.goals && state.profile.goals[0]) || { title: '나의 일상 성장', milestones: [] };
-      renderFeedbackSlot('loading');
-      renderRecordFeedbackSlot('loading');
-      showCheckinFeedbackSheet(newRec, 'loading');
+      if(!isFirstCheckinCelebration){
+        renderFeedbackSlot('loading');
+        renderRecordFeedbackSlot('loading');
+        showCheckinFeedbackSheet(newRec, 'loading');
+      }
       try {
         fb = await requestAIFeedback(targetGoal, text, newRec ? newRec.theme : null);
       } catch(aiErr){
@@ -16215,7 +16345,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       state.lastCapture = { record: newRec, goal: targetGoal, feedback: fb };
       renderFeedbackSlot(fb);
       renderRecordFeedbackSlot(fb);
-      showCheckinFeedbackSheet(newRec, fb);
+      if(!isFirstCheckinCelebration){
+        showCheckinFeedbackSheet(newRec, fb);
+      }
       if(targetGoal && targetGoal.milestones && targetGoal.milestones.length > 0){
         maybeShowGoalUpdateModal(targetGoal, fb);
       }
@@ -19599,7 +19731,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       .then(function(res){ return res.json(); })
       .then(function(data){
         if(navigator.vibrate) try{ navigator.vibrate(12); }catch(e){}
-        toast('소중한 평가가 접수되었습니다. 언제 얼마든지 다시 평가해주실 수 있습니다! ⭐');
+        toast('소중한 평가가 접수되었습니다. 언제 얼마든지 다시 평가해주실 수 있습니다! ⭐'); // 소중한 평가가 접수되었습니다. 감사합니다! ⭐
         resetAppEvaluationForm();
         closeAppEvaluationModal();
       })
