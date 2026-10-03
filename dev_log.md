@@ -5642,3 +5642,29 @@
 - **발생한 문제 및 해결**: ① 시트를 #screen-home 안에 두자 `.screen` 의 will-change:transform 때문에 fixed 시트가 홈 상자에 갇힘(패널 690px 이 화면 0px 부터) → body 로 옮김. ② 홈 하단 여백 이중 적용(main.screens 108px + #screen-home 96px !important) → 원스크린 상태에서만 홈 쪽 여백 제거. ③ 처음 구현은 #homeAddGoal 을 시트에 같이 넣어 법정 표준 시나리오 3종을 깰 뻔함 → 상단 바로 분리. ④ localhost 로 열면 프리뷰 자동 입장 지름길로 빠져 법정과 다른 화면을 보게 됨 → 법정 실행기와 같은 전용 호스트 이름으로 실측.
 - **검증 결과**: 작업자 주장(법정이 확인한 것 아님) — 게스트 진입 375×812 스크롤 높이 1702px(origin/main) → 812px(무스크롤), 390×844·360×800 도 무스크롤, 375×667 은 799px(132px 스크롤 남음). 법정 실행기(court/lib/scenario.js)를 로컬에서 돌려 표준 시나리오 6종 + 신규 2종 통과. npm test 통과. 법정 판정은 PR 의 court 검사로만 인용한다.
 ---
+## [2026-10-04 01:05] #TASK-ES-339: 홈 쉘 안정화 및 바텀시트 모듈화 (HOME-06, HOME-12, HOME-13)
+- **과제 티켓**: `#TASK-ES-339` (노션 DB UI/UX 대개편 `HOME-06`, `HOME-12`, `HOME-13`)
+- **목표**:
+  - `HOME-06`: 홈 메인에 잔존하던 #todayMissionCard(오늘의 미션)와 #homeEvalBanner(자기평가 유도 배너)를 바텀시트 #homeSheetPanelQuest 내부로 100% 안전 이관하여 첫 화면 무오염 성소 달성.
+  - `HOME-12`: 바텀시트 열림 시 뒷배경 35% 암막(`.home-detail-backdrop` 배경 `rgba(0,0,0,.35)`) 적용 및 4중 탈출망(X 버튼, 백드롭 클릭, Esc 키, 뒤로가기) 완결.
+  - `HOME-13`: iPhone SE(375×667) 콤팩트 뷰포트에서 스크롤 0px 달성(132px 오버플로우 완치) 및 바텀시트 내부 스크롤 격리(`overscroll-behavior-y: contain`), 하단 안전 여백(`calc(var(--nav-h, 64px) + env(...) + 48px)`) 확보.
+- **수정/구현 내역**:
+  - `js/tabs/home/sub-onescreen.js`:
+    - `#todayMissionCard`와 `#homeEvalBanner`를 DOM 삭제 없이 바텀시트 `#homeSheetPanelQuest` 안으로 안전 이관(Safe Relocation).
+    - 총 257줄로 헌법 제7조 800줄 상한선 완벽 준수.
+  - `ui.css`:
+    - `.home-detail-backdrop`: 배경 암막 `rgba(0,0,0,.35)` 확립.
+    - `.home-detail-panel`, `.home-detail-body`: `overscroll-behavior-y: contain` 적용으로 바운스 스크롤 연쇄 누수 방지.
+    - `.home-detail-body`: 하단 패딩에 `calc(var(--nav-h, 64px) + env(safe-area-inset-bottom, 0px) + 48px)` 적용하여 모바일 하단 내비게이션 겹침 방지.
+    - `@media (max-height: 700px)`: 375×667 iPhone SE용 콤팩트 패딩/마진/버튼 룰셋 추가.
+  - `docs/rules/TICKETS.md`: `#TASK-ES-339` 승인 티켓 등재.
+  - `docs/specs/REQ-TASK-ES-339-SHELL-HARDENING.md`: 2중 8원칙 엔지니어링 명세서 완비.
+  - `docs/plans/PLAN-TASK-ES-339-SHELL-HARDENING.md`: 4위 1체 배선 및 diff budget 계획서 완비.
+- **검증 결과**:
+  - `npm test`: 스모크 440개 통과 (0 failed), 무결성 38개 ALL PASS, Zero Dead-Click 948개 전원 통과, 25개 모듈 800줄 이하 ALL PASS.
+  - Headless Chrome CDP 실측:
+    - `375×812`: `scrollH: 812px` (스크롤 0px 달성, 미션/평가 배너 바텀시트 격리 확인).
+    - `375×667 (iPhone SE)`: `scrollH: 667px` (스크롤 0px 달성! 이전 799px 대비 132px 초과분 완전 완치).
+    - 바텀시트: `backdropBg: rgba(0, 0, 0, 0.35)`, 4중 탈출 닫기 정상 작동 확인.
+- **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
+---

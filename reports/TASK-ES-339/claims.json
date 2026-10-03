@@ -1,0 +1,73 @@
+{
+  "task": "TASK-ES-339",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-339-SHELL-HARDENING.md",
+  "requirements": [
+    { "id": "R1", "text": "메인 홈에는 1초 요약 콕핏만 남기고 상세 목록 및 잔존 배너(#todayMissionCard, #homeEvalBanner)를 85vh 바텀시트 내부로 100% 안전 이관하여 첫 화면 무오염 성소 달성." },
+    { "id": "R2", "text": "바텀시트 열림 시 뒷배경 35% 암막(rgba(0,0,0,.35)) 및 overscroll-behavior-y: contain 적용, 4중 탈출망(닫기 버튼, 백드롭 터치, Esc/뒤로가기, 제스처) 확립." },
+    { "id": "R3", "text": "375×667(iPhone SE) 스크롤 0px 달성(콤팩트 패딩 모드) 및 바텀시트 하단 안전 여백(calc(var(--nav-h) + env(safe-area-inset-bottom) + 48px)) 확보." }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "375×812 홈 첫 화면에는 잔존 배너(미션 카드·평가 배너)가 보이지 않고 시트 안으로 이관되어 있으며, 나침반을 누르면 85vh 시트가 열리고 ✕ 버튼으로 닫힌다",
+      "touches": ["js/tabs/home/sub-onescreen.js", "ui.css"],
+      "scenario": "scenarios/home-shell-hardening.json"
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui-style",
+      "statement": "바텀시트 배경 암막은 35% 검정(rgba(0,0,0,.35))이다",
+      "touches": ["ui.css"],
+      "check": { "type": "codeContains", "file": "ui.css", "text": "background:rgba(0,0,0,.35)" }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui-style",
+      "statement": "바텀시트 패널과 본체 스크롤에 overscroll-behavior-y contain이 적용되어 부모 체이닝을 차단한다",
+      "touches": ["ui.css"],
+      "check": { "type": "codeContains", "file": "ui.css", "text": "overscroll-behavior-y:contain" }
+    },
+    {
+      "id": "C4",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-style",
+      "statement": "700px 이하 소형 화면 전용 미디어쿼리가 정의되어 여백을 축소한다",
+      "touches": ["ui.css"],
+      "check": { "type": "codeContains", "file": "ui.css", "text": "@media (max-height: 700px)" }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "sub-onescreen.js에서 todayMissionCard와 homeEvalBanner를 homeSheetPanelQuest 안으로 DOM 삭제 없이 이동시켰다",
+      "touches": ["js/tabs/home/sub-onescreen.js"],
+      "check": { "type": "codeContains", "file": "js/tabs/home/sub-onescreen.js", "text": "if (missionCard) questPanel.appendChild(missionCard);" }
+    },
+    {
+      "id": "C6",
+      "req": "R3",
+      "kind": "unverified",
+      "domain": "native-device",
+      "statement": "실제 iPhone SE 기기에서 세로 스크롤 없이 홈 콕핏이 한눈에 보이고 시트를 스와이프 다운으로 닫을 수 있다",
+      "touches": ["ui.css", "js/tabs/home/sub-onescreen.js"],
+      "unverified": {
+        "reason": "needs-real-device",
+        "who": "실제 iPhone SE 또는 소형 안드로이드 폰을 사용하는 사람",
+        "how": [
+          "홈 화면 진입 후 세로 스크롤 없이 3대 나침반이 뷰포트 안에 들어오는지 본다",
+          "나침반을 눌러 시트를 연 뒤 손잡이를 아래로 쓸어 닫히는지 본다"
+        ]
+      }
+    }
+  ]
+}
