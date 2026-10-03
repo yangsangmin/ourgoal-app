@@ -1,0 +1,84 @@
+{
+  "task": "TASK-ES-340",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-340-CORE-INTERACTION.md",
+  "requirements": [
+    { "id": "R1", "text": "맨 위 가운데에 80px 대형 수호 아바타 배치, 숨쉬는 호흡 펄스(avatarPulseBreathing), EXP 바, 다이나믹 말풍선 융합." },
+    { "id": "R2", "text": "1순위 실천 카드 내 단일 체크인 인풋 통합, 예단 채우기 소탕(순수 빈칸 + 가이드 칩), 1-Tap 완료 버튼." },
+    { "id": "R3", "text": "입력 글 문맥 기반 3대 스마트 추천 칩([🏃 운동], [📚 독서], [🧘 멘탈]) 노출 및 0.5초 원터치 매핑." },
+    { "id": "R4", "text": "접힘(Progressive Disclosure) 아코디언 내 신체 에너지(0~100%) & 정신 몰입도(0~100%) 2줄 독립 터치 슬라이더 이식." },
+    { "id": "R5", "text": "앱 문구 전체를 다정한 1:1 러닝메이트 말투로 전면 쇄신 및 word-break: keep-all 적용." }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "375×812 홈 화면 상단에 80px 호흡 펄스 아바타와 말풍선, EXP 바가 노출되고 클릭 시 아바타 상세 모달이 열린다",
+      "touches": ["js/tabs/home/sub-onescreen.js", "ui.css"],
+      "scenario": "scenarios/home-core-interaction.json"
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "ui-style",
+      "statement": "ui.css에 80px 아바타 컨테이너 및 avatarPulseBreathing 호흡 펄스 키프레임이 선언되어 있다",
+      "touches": ["ui.css"],
+      "check": { "type": "codeContains", "file": "ui.css", "text": "@keyframes avatarPulseBreathing" }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "index.html 내 captureCardBox에 단일 인풋과 원터치 저장 버튼, 퀵 가이드 칩 영역이 배선되어 있다",
+      "touches": ["index.html"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "id=\"quickCheckinChips\"" }
+    },
+    {
+      "id": "C4",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "스마트 추천 칩 3종(운동, 독서, 멘탈)이 마크업 및 이벤트 리스너로 연결되어 있다",
+      "touches": ["index.html", "js/tabs/home/sub-onescreen.js"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "id=\"smartRecommendChips\"" }
+    },
+    {
+      "id": "C5",
+      "req": "R4",
+      "kind": "static",
+      "domain": "ui-style",
+      "statement": "신체/정신 듀얼 슬라이더가 dimension-accordion 접힘 요소로 감싸져 기본 상태에서 화면 높이를 점유하지 않는다",
+      "touches": ["index.html", "ui.css"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "id=\"dimensionAccordion\"" }
+    },
+    {
+      "id": "C6",
+      "req": "R5",
+      "kind": "static",
+      "domain": "ui-style",
+      "statement": "home-running-mate-text 클래스에 word-break: keep-all과 러닝메이트 줄바꿈이 적용되어 있다",
+      "touches": ["ui.css"],
+      "check": { "type": "codeContains", "file": "ui.css", "text": "word-break: keep-all" }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "unverified",
+      "domain": "native-device",
+      "statement": "실제 모바일 기기 터치 환경에서 80px 아바타를 탭했을 때 15ms 햅틱과 함께 아바타 관리 모달이 부드럽게 뜬다",
+      "touches": ["js/tabs/home/sub-onescreen.js"],
+      "unverified": {
+        "reason": "needs-real-device",
+        "who": "실제 터치 디바이스를 사용하는 사용자",
+        "how": [
+          "홈 상단 중앙의 80px 아바타를 손가락으로 탭한다",
+          "15ms 햅틱 진동과 함께 아바타 관리 팝업이 즉시 뜨는지 확인한다"
+        ]
+      }
+    }
+  ]
+}

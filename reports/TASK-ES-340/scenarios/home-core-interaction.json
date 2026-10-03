@@ -1,0 +1,30 @@
+{
+  "id": "home-core-interaction",
+  "title": "홈 메인에 80px 호흡 펄스 아바타와 스마트 추천 칩 3종이 렌더링되고 원터치 인터랙션이 정상 작동한다",
+  "steps": [
+    { "do": "setViewport", "width": 375, "height": 812 },
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "expect": "visible", "selector": "#homeCompassRow", "timeoutMs": 15000 },
+    { "expect": "visible", "selector": "#homeHeroAvatarCard" },
+    { "expect": "visible", "selector": "#homeHeroAvatar" },
+    { "expect": "visible", "selector": "#homeHeroAvatarImg" },
+    { "expect": "visible", "selector": "#homeHeroAvatarBubble" },
+    { "expect": "visible", "selector": "#homeHeroExpBar" },
+    { "expect": "visible", "selector": "#smartRecommendChips" },
+    { "expect": "visible", "selector": "#smartChipExercise" },
+    { "expect": "visible", "selector": "#smartChipReading" },
+    { "expect": "visible", "selector": "#smartChipMental" },
+    { "expect": "visible", "selector": "#dimensionAccordion" },
+    { "capture": "home-avatar-hero-and-smart-chips" },
+    { "do": "click", "selector": "#smartChipExercise" },
+    { "expect": "hasClass", "selector": "#smartChipExercise", "className": "active-smart-chip" },
+    { "capture": "smart-chip-activated" },
+    { "do": "click", "selector": "#homeHeroAvatar" },
+    { "expect": "visible", "selector": "#modalOverlay" },
+    { "expect": "visible", "selector": "#topRemainingCraftsTxt" },
+    { "capture": "avatar-modal-opened" },
+    { "expect": "noExceptions" }
+  ]
+}

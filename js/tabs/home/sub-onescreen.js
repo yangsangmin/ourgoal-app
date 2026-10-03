@@ -35,6 +35,9 @@
       if (!doc) return;
       if (!this._built) this.build();
       this.refreshCounts();
+      this.refreshAvatar();
+      this.wireSmartRecommendChips();
+      this.wireAccordion();
     },
 
     build: function() {
@@ -44,6 +47,9 @@
       var goalTitle = home ? home.querySelector('.home-recent-title') : null;
       var goalList = doc.getElementById('homeGoalList');
       if (!home || !checkin || !crew || !goalList) return;
+
+      // 0. HOME-02: 상단 80px 대형 아바타 호흡 펄스 카드
+      this.ensureHeroAvatarCard(home, checkin);
 
       // 1. 3대 미니 나침반 — 체크인 카드 바로 아래
       var row = doc.createElement('div');
@@ -196,6 +202,140 @@
       if (!sub || !list) return;
       var n = list.querySelectorAll('.goal-card').length;
       sub.textContent = n > 0 ? n + '개 진행 중' : '목표 세우기';
+    },
+
+    /** [HOME-02] 80px 중앙 대형 아바타 호흡 펄스 카드 보장 */
+    ensureHeroAvatarCard: function(home, checkin) {
+      if (!doc || doc.getElementById('homeHeroAvatarCard')) return;
+      var card = doc.createElement('div');
+      card.id = 'homeHeroAvatarCard';
+      card.className = 'home-hero-avatar-card';
+      card.innerHTML =
+        '<div class="hero-avatar-bubble" id="homeHeroAvatarBubble" role="status">오늘도 함께 달려볼까요? ✨</div>' +
+        '<div class="home-hero-avatar-wrap" id="homeHeroAvatar" role="button" tabindex="0" aria-label="수호 아바타 상세 열기">' +
+          '<div class="avatar-placeholder avatar-pulse-breathing" id="homeHeroAvatarImg">🌱</div>' +
+        '</div>' +
+        '<div class="hero-avatar-exp" id="homeHeroExpBar" aria-label="경험치">' +
+          '<div class="hero-avatar-exp-fill" id="homeHeroExpFill" style="width:0%;"></div>' +
+        '</div>' +
+        '<div class="hero-avatar-exp-text" id="homeHeroExpText" style="font-size:0.75rem;font-weight:600;color:var(--ink-soft);margin-top:2px;">Lv.1 · 0 EXP</div>';
+
+      checkin.parentNode.insertBefore(card, checkin);
+
+      var avatarBtn = doc.getElementById('homeHeroAvatar');
+      var openAvatar = function() {
+        if (typeof global.triggerHaptic === 'function') global.triggerHaptic(15);
+        if (global.OurgoalAvatar && global.OurgoalAvatar.openAvatarModal) {
+          global.OurgoalAvatar.openAvatarModal({
+            profile: global.state && global.state.profile,
+            state: global.state,
+            saveProfile: global.saveProfile,
+            toast: global.toast,
+            openModal: global.openModal,
+            closeModal: global.closeModal
+          });
+        } else {
+          var b = doc.getElementById('btnOpenAvatarModal');
+          if (b) b.click();
+          else if (typeof global.toast === 'function') global.toast('아바타 관리 창을 준비 중입니다 🌿');
+        }
+      };
+
+      if (avatarBtn) {
+        avatarBtn.addEventListener('click', openAvatar);
+        avatarBtn.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openAvatar();
+          }
+        });
+      }
+
+      this.refreshAvatar();
+    },
+
+    /** [HOME-02] 아바타 비주얼, EXP 게이지, 시간대별 러닝메이트 인사 갱신 */
+    refreshAvatar: function() {
+      if (!doc) return;
+      var img = doc.getElementById('homeHeroAvatarImg');
+      var bubble = doc.getElementById('homeHeroAvatarBubble');
+      var fill = doc.getElementById('homeHeroExpFill');
+      var txt = doc.getElementById('homeHeroExpText');
+      if (!img || !bubble) return;
+
+      var p = global.state && global.state.profile;
+      var visual = (p && (p.guardianAnimal || p.avatar)) || '🌱';
+      img.textContent = visual;
+
+      // 시간대별 다정한 1:1 러닝메이트 대화체
+      var hour = new Date().getHours();
+      var greeting = '오늘도 함께 한 걸음 나아가요 ✨';
+      if (hour >= 5 && hour < 12) {
+        greeting = '좋은 아침이에요! 오늘 하루도 가볍게 시작해볼까요? ☀️';
+      } else if (hour >= 12 && hour < 18) {
+        greeting = '오후의 활력을 충전할 시간이에요. 힘내봐요! 🌿';
+      } else if (hour >= 18 && hour < 22) {
+        greeting = '오늘 하루도 수고 많으셨어요. 차분히 마무리해요 ✨';
+      } else {
+        greeting = '포근한 밤이에요. 내일을 위해 푹 쉬어가요 🌙';
+      }
+      bubble.textContent = greeting;
+
+      var exp = (p && p.exp) || 0;
+      var level = Math.floor(exp / 100) + 1;
+      var curExp = exp % 100;
+      if (fill) fill.style.width = Math.min(100, Math.max(0, curExp)) + '%';
+      if (txt) txt.textContent = 'Lv.' + level + ' · ' + curExp + ' / 100 EXP';
+    },
+
+    /** [HOME-04] 스마트 추천 칩 3종(운동·독서·멘탈) 1-Tap 바인딩 */
+    wireSmartRecommendChips: function() {
+      if (!doc) return;
+      var chipsWrap = doc.getElementById('smartRecommendChips');
+      if (!chipsWrap || chipsWrap._wired) return;
+      chipsWrap._wired = true;
+
+      var btns = chipsWrap.querySelectorAll('.btn-smart-chip');
+      btns.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          if (typeof global.triggerHaptic === 'function') global.triggerHaptic(10);
+          var tag = btn.dataset.tag || btn.textContent.trim();
+          var inp = doc.getElementById('captureInput');
+          if (!inp) return;
+
+          var tagPrefix = '#' + tag + ' ';
+          var isActive = btn.classList.contains('active-smart-chip');
+          if (isActive) {
+            btn.classList.remove('active-smart-chip');
+            if (inp.value.startsWith(tagPrefix)) {
+              inp.value = inp.value.replace(tagPrefix, '');
+            }
+          } else {
+            btns.forEach(function(b) { b.classList.remove('active-smart-chip'); });
+            btn.classList.add('active-smart-chip');
+            if (!inp.value.includes(tagPrefix)) {
+              inp.value = tagPrefix + inp.value;
+            }
+          }
+          inp.dispatchEvent(new Event('input', { bubbles: true }));
+          inp.focus();
+          if (typeof global.toast === 'function') {
+            global.toast(isActive ? '칩 선택이 해제되었습니다' : tag + ' 칩이 선택되었습니다 🎯');
+          }
+        });
+      });
+    },
+
+    /** [HOME-05] 신체/정신 듀얼 슬라이더 아코디언 토글 햅틱 연결 */
+    wireAccordion: function() {
+      if (!doc) return;
+      var acc = doc.getElementById('dimensionAccordion');
+      if (!acc || acc._wired) return;
+      acc._wired = true;
+      acc.addEventListener('toggle', function() {
+        if (typeof global.triggerHaptic === 'function') global.triggerHaptic(10);
+      });
     },
 
     open: function(key) {

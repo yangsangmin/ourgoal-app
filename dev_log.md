@@ -5668,3 +5668,49 @@
     - 바텀시트: `backdropBg: rgba(0, 0, 0, 0.35)`, 4중 탈출 닫기 정상 작동 확인.
 - **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
 ---
+## [2026-10-04 01:30] #TASK-ES-340: 코어 인터랙션 4위 1체 배선 (HOME-02, HOME-03, HOME-04, HOME-05, HOME-11)
+- **과제 티켓**: `#TASK-ES-340` (노션 DB UI/UX 대개편 `HOME-02`, `HOME-03`, `HOME-04`, `HOME-05`, `HOME-11`)
+- **목표**:
+  - `HOME-02`: 상단 중앙 80px 대형 아바타 호흡 펄스(`avatarPulseBreathing`), EXP 게이지 바, 시간대별 맞춤형 다이나믹 말풍선 융합.
+  - `HOME-03`: 1순위 실천 카드 내 단일 체크인 인풋(`#captureInput`), 예단 채우기 소탕(순수 빈칸 + 가이드 칩 `#quickCheckinChips`), 1-Tap 완료 버튼.
+  - `HOME-04`: 스마트 추천 칩 3종 슬롯(`#smartRecommendChips`, `#smartChipExercise`, `#smartChipReading`, `#smartChipMental`) 노출 및 1-Tap 태그 자동 바인딩.
+  - `HOME-05`: 접힘(Progressive Disclosure) 아코디언(`#dimensionAccordion`) 내 신체 에너지(0~100%) & 정신 몰입도(0~100%) 2줄 독립 슬라이더 격리.
+  - `HOME-11`: 앱 문구 전체를 다정한 1:1 러닝메이트 말투로 전면 쇄신 및 `word-break: keep-all` 적용.
+- **수정/구현 내역**:
+  - `js/tabs/home/sub-onescreen.js`:
+    - `ensureHeroAvatarCard`: 상단 80px 대형 아바타 카드(`#homeHeroAvatarCard`, `#homeHeroAvatar`, `#homeHeroAvatarImg`, `#homeHeroAvatarBubble`, `#homeHeroExpBar`, `#homeHeroExpFill`, `#homeHeroExpText`) 동적 생성 및 15ms 햅틱 + 아바타 모달 연동.
+    - `refreshAvatar`: 실시간 프로필 비주얼, EXP(레벨/바), 시간대별 인사말(아침/오후/저녁/밤) 갱신.
+    - `wireSmartRecommendChips`: 스마트 추천 칩 3종 1-Tap 클릭 리스너, 10ms 햅틱, 태그 토글, `.active-smart-chip` 클래스 토글, 토스트 피드백.
+    - `wireAccordion`: `#dimensionAccordion` toggle 시 10ms 햅틱 연동.
+    - 총 355줄로 헌법 제7조 800줄 상한선 완벽 준수.
+  - `index.html`:
+    - `captureCardBox`: 러닝메이트 문구("오늘의 소중한 한 줄 ✍️") 및 빈칸 플레이스홀더 적용.
+    - `#smartRecommendChips` 3종 칩 마크업 탑재.
+    - 신체/정신 듀얼 슬라이더를 `<details class="dimension-accordion" id="dimensionAccordion">` 접힘 아코디언으로 감싸 점진 공개(0px 점유) 확립.
+    - `renderQuickCheckinGuideChips`: 불필요 조기 반환(`wrap.style.display = 'none'; return;`) 제거하고 가이드 칩 복구.
+    - `renderHome`: `OurgoalHomeOneScreen.refreshAvatar()` 호출 연동.
+  - `ui.css`:
+    - `@keyframes avatarPulseBreathing`: 3초 주기 호흡 펄스 키프레임.
+    - `.home-hero-avatar-card`, `.home-hero-avatar-wrap`: 80px 원형 컨테이너 및 섀도우.
+    - `.hero-avatar-bubble`: 꼬리표 포함 다이나믹 말풍선.
+    - `.smart-recommend-chips`, `.btn-smart-chip`, `.active-smart-chip`: 칩 UI 및 활성 보더.
+    - `.dimension-accordion`: 기본 접힘 및 애니메이션.
+    - `.home-running-mate-text`: `word-break: keep-all; line-height: 1.45;` 적용.
+    - `#screen-home.home-onescreen`: 한 화면 여백 최적화(인라인 액션 정돈, 콤팩트 패딩).
+    - `@media (max-height: 700px)`: 375×667 SE용 50px 아바타 콤팩트 룰셋 추가.
+  - `docs/rules/TICKETS.md`: `#TASK-ES-340` 승인 티켓 등재.
+  - `docs/specs/REQ-TASK-ES-340-CORE-INTERACTION.md`: 2중 8원칙 엔지니어링 요구사항 정의서 완비.
+  - `docs/plans/PLAN-TASK-ES-340-CORE-INTERACTION.md`: 4위 1체 배선 및 diff budget 계획서 완비.
+  - `reports/TASK-ES-340/claims.json`: R1~R5 요건 및 C1~C7 주장 정의 완비.
+  - `reports/TASK-ES-340/scenarios/home-core-interaction.json`: 자동 브라우저 검증 시나리오 완비.
+- **검증 결과**:
+  - `npm test`: 스모크 440개 통과 (0 failed), 무결성 38개 ALL PASS, Zero Dead-Click 951개 전원 통과, 25개 모듈 800줄 이하 ALL PASS.
+  - Headless Chrome CDP 실측:
+    - `375×812`: `scrollH: 812px`, `clientH: 812px` (스크롤 0px 달성! 80px 아바타 + 스마트 추천 칩 + 접힘 슬라이더 완벽 수용).
+    - `375×667 (iPhone SE)`: `scrollH: 667px`, `clientH: 667px` (스크롤 0px 달성! 초소형 화면 무스크롤 사수).
+    - 아바타: 호흡 펄스 애니메이션(`avatarPulseBreathing`), 15ms 햅틱 + 아바타 상세 모달 정상 오픈.
+    - 스마트 추천 칩: 1-Tap 클릭 시 10ms 햅틱 + 태그 토글 + 활성 보더 스타일 정상 작동.
+    - 접힘 아코디언: 기본 접힘 0px 점유, 토글 시 햅틱 연동.
+- **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
+---
+
