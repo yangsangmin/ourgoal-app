@@ -4934,14 +4934,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(!wrap) return;
     wrap.style.display = '';
 
+    var userGoals = (typeof state !== 'undefined' && state.profile && Array.isArray(state.profile.goals)) ? state.profile.goals.filter(function(g){ return !g.archivedAt; }) : [];
     var chips = [];
-    if(goals.length > 0){
-      goals.slice(0, 5).forEach(function(g){
-        var snippet = g.title.slice(0, 18);
+    if(userGoals.length > 0){
+      userGoals.slice(0, 5).forEach(function(g){
+        var snippet = (g.title || '').slice(0, 18);
         var icon = g.icon || '🎯';
         chips.push({
           label: icon + ' ' + snippet,
-          text: icon + ' [' + g.title + '] 오늘 실천 미션 완수! 한 걸음 더 성장했어요 🔥'
+          text: icon + ' [' + (g.title || '목표') + '] 오늘 실천 미션 완수! 한 걸음 더 성장했어요 🔥'
         });
       });
     }
