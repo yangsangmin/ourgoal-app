@@ -1,0 +1,635 @@
+{
+  "task": "TASK-ES-386",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-386-AVATAR-PERSONAS-SPLIT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/avatar-system.js 의 320종 페르소나 데이터(BODY_THEMES_320, 122~4283줄)를 js/data/avatar-personas/<mbti>.js 16개(MBTI 경계, 각 20종)로 글자 그대로 나눈다. 각 파일 800줄 이하, 줄 수 분할 금지."
+    },
+    {
+      "id": "R2",
+      "text": "avatar-system.js 는 같은 전역(OurgoalAvatar)·같은 배열 BODY_THEMES_320 을 그대로 만든다(동작·순서·내용 변경 0). index.html 은 <script> 태그 추가만."
+    },
+    {
+      "id": "R3",
+      "text": "증명: 분리 전후 페르소나 배열 deepStrictEqual(git 기준 커밋 원본 대비, stash 금지), 브라우저 로드 순서 시뮬레이션 동일, 아바타 모달 페르소나 화면 DOM 비교(게스트), npm test 통과 수 동일."
+    },
+    {
+      "id": "R4",
+      "text": "신고서 module-specs --write, 모듈 가드 통과·기준선 갱신, 800줄 넘는 파일을 늘리지 않음(avatar-system.js 줄 수 감소 측정)."
+    },
+    {
+      "id": "R5",
+      "text": "문서: REQ(8원칙), claims, dev_log 1줄, TICKETS 1줄. PR(초안 아님), 병합 안 함. 검사 폐기(retire)·기대값 낮추기 없음."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "INTJ 데이터 파일이 INTJ 페르소나 20종(id 1~20)을 전역 묶음 OurgoalAvatarPersonaParts.intj 에 둔다",
+      "touches": [
+        "js/data/avatar-personas/intj.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/avatar-personas/intj.js",
+        "text": "    (root.OurgoalAvatarPersonaParts = root.OurgoalAvatarPersonaParts || {}).intj = LIST;"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "INTP 데이터 파일이 INTP 페르소나 20종(id 21~40)을 전역 묶음 OurgoalAvatarPersonaParts.intp 에 둔다",
+      "touches": [
+        "js/data/avatar-personas/intp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/avatar-personas/intp.js",
+        "text": "    (root.OurgoalAvatarPersonaParts = root.OurgoalAvatarPersonaParts || {}).intp = LIST;"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ENTJ 데이터 파일이 ENTJ 페르소나 20종(id 41~60)을 전역 묶음 OurgoalAvatarPersonaParts.entj 에 둔다",
+      "touches": [
+        "js/data/avatar-personas/entj.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/avatar-personas/entj.js",
+        "text": "    (root.OurgoalAvatarPersonaParts = root.OurgoalAvatarPersonaParts || {}).entj = LIST;"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ENTP 데이터 파일이 ENTP 페르소나 20종(id 61~80)을 전역 묶음 OurgoalAvatarPersonaParts.entp 에 둔다",
+      "touches": [
+        "js/data/avatar-personas/entp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/avatar-personas/entp.js",
+        "text": "    (root.OurgoalAvatarPersonaParts = root.OurgoalAvatarPersonaParts || {}).entp = LIST;"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "INFJ 데이터 파일이 INFJ 페르소나 20종(id 81~100)을 전역 묶음 OurgoalAvatarPersonaParts.infj 에 둔다",
+      "touches": [
+        "js/data/avatar-personas/infj.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/avatar-personas/infj.js",
+        "text": "    (root.OurgoalAvatarPersonaParts = root.OurgoalAvatarPersonaParts || {}).infj = LIST;"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "INFP 데이터 파일이 INFP 페르소나 20종(id 101~120)을 전역 묶음 OurgoalAvatarPersonaParts.infp 에 둔다",
+      "touches": [
+        "js/data/avatar-personas/infp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/avatar-personas/infp.js",
+        "text": "    (root.OurgoalAvatarPersonaParts = root.OurgoalAvatarPersonaParts || {}).infp = LIST;"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ENFJ 데이터 파일이 ENFJ 페르소나 20종(id 121~140)을 전역 묶음 OurgoalAvatarPersonaParts.enfj 에 둔다",
+      "touches": [
+        "js/data/avatar-personas/enfj.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/avatar-personas/enfj.js",
+        "text": "    (root.OurgoalAvatarPersonaParts = root.OurgoalAvatarPersonaParts || {}).enfj = LIST;"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ENFP 데이터 파일이 ENFP 페르소나 20종(id 141~160)을 전역 묶음 OurgoalAvatarPersonaParts.enfp 에 둔다",
+      "touches": [
+        "js/data/avatar-personas/enfp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/avatar-personas/enfp.js",
+        "text": "    (root.OurgoalAvatarPersonaParts = root.OurgoalAvatarPersonaParts || {}).enfp = LIST;"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ISTJ 데이터 파일이 ISTJ 페르소나 20종(id 161~180)을 전역 묶음 OurgoalAvatarPersonaParts.istj 에 둔다",
+      "touches": [
+        "js/data/avatar-personas/istj.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/avatar-personas/istj.js",
+        "text": "    (root.OurgoalAvatarPersonaParts = root.OurgoalAvatarPersonaParts || {}).istj = LIST;"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ISFJ 데이터 파일이 ISFJ 페르소나 20종(id 181~200)을 전역 묶음 OurgoalAvatarPersonaParts.isfj 에 둔다",
+      "touches": [
+        "js/data/avatar-personas/isfj.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/avatar-personas/isfj.js",
+        "text": "    (root.OurgoalAvatarPersonaParts = root.OurgoalAvatarPersonaParts || {}).isfj = LIST;"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ESTJ 데이터 파일이 ESTJ 페르소나 20종(id 201~220)을 전역 묶음 OurgoalAvatarPersonaParts.estj 에 둔다",
+      "touches": [
+        "js/data/avatar-personas/estj.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/avatar-personas/estj.js",
+        "text": "    (root.OurgoalAvatarPersonaParts = root.OurgoalAvatarPersonaParts || {}).estj = LIST;"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ESFJ 데이터 파일이 ESFJ 페르소나 20종(id 221~240)을 전역 묶음 OurgoalAvatarPersonaParts.esfj 에 둔다",
+      "touches": [
+        "js/data/avatar-personas/esfj.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/avatar-personas/esfj.js",
+        "text": "    (root.OurgoalAvatarPersonaParts = root.OurgoalAvatarPersonaParts || {}).esfj = LIST;"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ISTP 데이터 파일이 ISTP 페르소나 20종(id 241~260)을 전역 묶음 OurgoalAvatarPersonaParts.istp 에 둔다",
+      "touches": [
+        "js/data/avatar-personas/istp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/avatar-personas/istp.js",
+        "text": "    (root.OurgoalAvatarPersonaParts = root.OurgoalAvatarPersonaParts || {}).istp = LIST;"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ISFP 데이터 파일이 ISFP 페르소나 20종(id 261~280)을 전역 묶음 OurgoalAvatarPersonaParts.isfp 에 둔다",
+      "touches": [
+        "js/data/avatar-personas/isfp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/avatar-personas/isfp.js",
+        "text": "    (root.OurgoalAvatarPersonaParts = root.OurgoalAvatarPersonaParts || {}).isfp = LIST;"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ESTP 데이터 파일이 ESTP 페르소나 20종(id 281~300)을 전역 묶음 OurgoalAvatarPersonaParts.estp 에 둔다",
+      "touches": [
+        "js/data/avatar-personas/estp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/avatar-personas/estp.js",
+        "text": "    (root.OurgoalAvatarPersonaParts = root.OurgoalAvatarPersonaParts || {}).estp = LIST;"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "ESFP 데이터 파일이 ESFP 페르소나 20종(id 301~320)을 전역 묶음 OurgoalAvatarPersonaParts.esfp 에 둔다",
+      "touches": [
+        "js/data/avatar-personas/esfp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/avatar-personas/esfp.js",
+        "text": "    (root.OurgoalAvatarPersonaParts = root.OurgoalAvatarPersonaParts || {}).esfp = LIST;"
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "avatar-system.js 가 MBTI 16개 순서(intj→…→esfp)로 파트를 잇는다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "  var PERSONA_PART_ORDER = ['intj', 'intp', 'entj', 'entp', 'infj', 'infp', 'enfj', 'enfp', 'istj', 'isfj', 'estj', 'esfj', 'istp', 'isfp', 'estp', 'esfp'];"
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "Node 경로는 데이터 파일을 require 로 읽는다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "        intj: require('./data/avatar-personas/intj.js'),"
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "브라우저 경로는 전역 OurgoalAvatarPersonaParts 를 이름으로 읽는다(self 없는 vm 에서도 같은 전역)",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "    return (typeof OurgoalAvatarPersonaParts !== 'undefined' && OurgoalAvatarPersonaParts) || {};"
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "같은 이름 BODY_THEMES_320 배열에 파트를 이어 붙인다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "    if (part && part.length) BODY_THEMES_320.push.apply(BODY_THEMES_320, part);"
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "avatar-system.js 에 페르소나 데이터 글자(id 1 그랜드 마스터)가 더는 없다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "js/avatar-system.js",
+        "text": "    \"name\": \"그랜드 마스터\","
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 이 INTJ 데이터 파일을 읽는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<script src=\"js/data/avatar-personas/intj.js?v=20261005-es386\"></script>"
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 이 ESFP 데이터 파일을 읽는다(마지막 파트)",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<script src=\"js/data/avatar-personas/esfp.js?v=20261005-es386\"></script>"
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R3",
+      "kind": "static",
+      "domain": "test",
+      "statement": "부품 시험이 Node 배열을 git 기준 커밋 원본 실행 배열과 deepStrictEqual 로 비교한다",
+      "touches": [
+        "tests/avatar-personas-split.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/avatar-personas-split.test.js",
+        "text": "    assert.deepStrictEqual(after.BODY_THEMES_320, base.BODY_THEMES_320);"
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R3",
+      "kind": "static",
+      "domain": "test",
+      "statement": "부품 시험이 index.html 의 <script> 순서 그대로 vm 실행한 배열의 지문을 원본 지문과 비교한다",
+      "touches": [
+        "tests/avatar-personas-split.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/avatar-personas-split.test.js",
+        "text": "  assert.strictEqual(sha(winSelf.OurgoalAvatar.BODY_THEMES_320), BASE_SHA256);"
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R3",
+      "kind": "static",
+      "domain": "test",
+      "statement": "부품 시험이 순서 변이(intj↔intp)에서 비교가 실패함을 확인한다",
+      "touches": [
+        "tests/avatar-personas-split.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/avatar-personas-split.test.js",
+        "text": "code.replace(\"var PERSONA_PART_ORDER = ['intj', 'intp',\", \"var PERSONA_PART_ORDER = ['intp', 'intj',\")"
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R3",
+      "kind": "static",
+      "domain": "test",
+      "statement": "부품 시험이 실패를 process.exitCode 로 알린다",
+      "touches": [
+        "tests/avatar-personas-split.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/avatar-personas-split.test.js",
+        "text": "failed++; process.exitCode = 1;"
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R3",
+      "kind": "static",
+      "domain": "test",
+      "statement": "npm test(셀 구조 시험)가 새 부품 시험을 돌린다",
+      "touches": [
+        "scripts/test-shipyard-modular.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/test-shipyard-modular.js",
+        "text": "  runNode('tests/avatar-personas-split.test.js');"
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "생성기가 원소 320개가 아니면 중단한다",
+      "touches": [
+        "docs/design/harness/module-split/gen-avatar-data.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/gen-avatar-data.js",
+        "text": "if (elems.length !== 320) fail('① 원소 수 ' + elems.length + ' ≠ 320');"
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "생성기가 배열 구간 밖 글자가 원본과 다르면 중단한다",
+      "touches": [
+        "docs/design/harness/module-split/gen-avatar-data.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/gen-avatar-data.js",
+        "text": "if (restAfter !== restBase) fail('⑤ 배열 밖 글자가 원본과 다르다');"
+      }
+    },
+    {
+      "id": "C31",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "DOM 비교 도구가 아바타 모달 도감 카드 영역을 단계마다 잰다",
+      "touches": [
+        "docs/design/harness/module-split/dom-compare-avatar-personas.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/dom-compare-avatar-personas.js",
+        "text": "    const items = document.getElementById('persona320ItemsContainer');"
+      }
+    },
+    {
+      "id": "C32",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "아바타 모달 도감 조작 19단계 DOM·모달·저장값·토스트 기준 대 작업 비교에서 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-386/dom-compare-avatar-personas.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-386/dom-compare-avatar-personas.json",
+        "path": "differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C33",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "같은 기준끼리 2회 비교(본질적 변동)도 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-386/dom-compare-avatar-personas-base-vs-base.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-386/dom-compare-avatar-personas-base-vs-base.json",
+        "path": "differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C34",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "분리 뒤에도 게스트로 설정 탭 「✏️ 프로필 편집」 → 아바타 모달에서 만화형을 고르고 「🧬 320종 MBTI 페르소나 도감」을 펼쳐 탐험가형 SP 탭을 누르면 '영원한 스포트라이트 스타' 카드가 보이고, 그 카드를 누르면 '[ESFP 영원한 스포트라이트 스타] 테마가 선택되었습니다' 안내가 뜨며, 분석형 NT 탭에서는 '그랜드 마스터' 카드가 보인다(나누기만 했으므로 기준 커밋에서도 같은 결과여야 한다)",
+      "touches": [
+        "js/avatar-system.js",
+        "js/data/avatar-personas/esfp.js",
+        "js/data/avatar-personas/intj.js",
+        "index.html"
+      ],
+      "scenario": "scenarios/avatar-persona-catalog.json"
+    },
+    {
+      "id": "C35",
+      "req": "R4",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "신고서에 데이터 세포 16개가 올라 있다(intj 예)",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "\"id\": \"data/avatar-personas/intj\","
+      }
+    },
+    {
+      "id": "C36",
+      "req": "R4",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "모듈 가드 기준선의 avatar-system.js 줄 수가 3222 로 낮아져 있다",
+      "touches": [
+        "docs/architecture/module-baseline.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/module-baseline.json",
+        "text": "\"js/avatar-system.js\": 3222,"
+      }
+    },
+    {
+      "id": "C37",
+      "req": "R5",
+      "kind": "static",
+      "domain": "docs",
+      "statement": "REQ 가 8원칙 ⑥ 반론 격파 절을 갖는다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-386-AVATAR-PERSONAS-SPLIT.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-386-AVATAR-PERSONAS-SPLIT.md",
+        "text": "## 6. [원칙 ⑥] 절차 재검증 및 반론 격파"
+      }
+    },
+    {
+      "id": "C38",
+      "req": "R5",
+      "kind": "static",
+      "domain": "docs",
+      "statement": "TICKETS 에 이 작업 1줄",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-386 | INFRA/분리 |"
+      }
+    },
+    {
+      "id": "C39",
+      "req": "R5",
+      "kind": "static",
+      "domain": "docs",
+      "statement": "dev_log 에 이 작업 1줄",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "- 2026-10-05 TASK-ES-386:"
+      }
+    },
+    {
+      "id": "C40",
+      "req": "R2",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "로그인한 실계정에서 도감 테마를 고르고 「아바타 적용하기」를 누르면 서버(users.avatar_url·saved_avatars)에 저장되고 다른 기기에서도 보인다(저장 코드는 바꾸지 않았고 테마 객체가 같음은 시험으로 쟀다)",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "아워골 실계정으로 로그인할 수 있는 사람",
+        "how": [
+          "실계정으로 로그인한다",
+          "설정 탭 「✏️ 프로필 편집」 → 만화형 → 「🧬 320종 MBTI 페르소나 도감」에서 아무 카드나 고르고 「아바타 적용하기」를 누른다",
+          "새로고침 또는 다른 기기에서 같은 계정으로 들어가 아바타가 그대로인지 본다"
+        ]
+      }
+    }
+  ]
+}
