@@ -1,0 +1,441 @@
+{
+  "task": "TASK-ES-360",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-360-CALENDAR-CELL.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 인라인 IIFE 의 일정 탭 렌더 함수(renderCalendarScreen)와 그것만 쓰는 헬퍼(renderCalDayDetail·parseNaturalScheduleText·executeCalAgentNaturalSchedule·calWeekStart·WEEKDAYS_KR)와 월 이동 calShift 를 js/tabs/calendar/ 로 글자 그대로 옮긴다. 기능 추가·삭제 0, 마크업·CSS 는 옮기지 않는다."
+    },
+    {
+      "id": "R2",
+      "text": "옮긴 코드가 읽는 인라인 스코프 이름은 js/core/app-scope.js getter 로만 읽고, index.html 은 IIFE 맨 위에서 같은 이름으로 가져와 호출처를 그대로 둔다. 전역 이름을 새로 늘리지 않는다."
+    },
+    {
+      "id": "R3",
+      "text": "화면 결과 전후 차이 0 — tab-check.js 일정 탭 base 2회·after 비교, 조작 단계별 DOM 비교, 토큰 동일 검사, 법정이 누를 수 있는 게스트 화면 시나리오."
+    },
+    {
+      "id": "R4",
+      "text": "신고서(modules.json)를 module-specs --write 로 반영(자리는 calendar.source 만, planned), 모듈 가드 통과·인라인 스크립트 줄 수 감소, 새 js 800줄 이하."
+    },
+    {
+      "id": "R5",
+      "text": "문서: REQ(8원칙), claims, dev_log 1줄, TICKETS 1줄. PR(초안 아님), 법정 판정 기록. 병합 안 함. 기준 시험지 검사 폐기(retire) 청구 없음."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "일정 화면 렌더 함수 renderCalendarScreen 이 js/tabs/calendar/render.js 에 선언되어 있다",
+      "touches": [
+        "js/tabs/calendar/render.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/calendar/render.js",
+        "text": "  function renderCalendarScreen(){"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "월·주·일 이동 함수 calShift 가 js/tabs/calendar/render.js 에 선언되어 있다",
+      "touches": [
+        "js/tabs/calendar/render.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/calendar/render.js",
+        "text": "  function calShift(dir){"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "요일 머리글 상수 WEEKDAYS_KR 가 js/tabs/calendar/render.js 로 옮겨져 있다",
+      "touches": [
+        "js/tabs/calendar/render.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/calendar/render.js",
+        "text": "  var WEEKDAYS_KR = ['일','월','화','수','목','금','토'];"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "선택한 날 상세 렌더 함수 renderCalDayDetail 이 js/tabs/calendar/day-detail.js 에 선언되어 있다",
+      "touches": [
+        "js/tabs/calendar/day-detail.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/calendar/day-detail.js",
+        "text": "  function renderCalDayDetail(itemsByDate){"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "AI 일정 비서 등록 함수 executeCalAgentNaturalSchedule 이 js/tabs/calendar/natural-schedule.js 에 선언되어 있다",
+      "touches": [
+        "js/tabs/calendar/natural-schedule.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/calendar/natural-schedule.js",
+        "text": "  async function executeCalAgentNaturalSchedule(txt){"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "renderCalendarScreen 이 다른 일정 파일로 간 renderCalDayDetail 을 일정 키트(K)로 부른다",
+      "touches": [
+        "js/tabs/calendar/render.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/calendar/render.js",
+        "text": "    K.renderCalDayDetail(itemsByDate);"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 에 남긴 날짜 칸 calCellHtml 을 옮긴 렌더가 app-scope 통로(L)로 부른다",
+      "touches": [
+        "js/tabs/calendar/render.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/calendar/render.js",
+        "text": "        '<div class=\"cal-grid cal-grid-week\">'+wcells.map(function(cd){ return L.calCellHtml(cd, itemsByDate, false); }).join('')+'</div>';"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 인라인 스크립트에 renderCalendarScreen 함수 선언이 남아 있지 않다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "  function renderCalendarScreen(){"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 인라인 스크립트에 renderCalDayDetail 함수 선언이 남아 있지 않다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "  function renderCalDayDetail(itemsByDate){"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "동결 시험지가 index.html 에서 찾는 날짜 칸 함수 calCellHtml 은 index.html 에 그대로 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "  function calCellHtml(d, itemsByDate, dim){"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html IIFE 맨 위에서 일정 키트의 renderCalendarScreen 을 같은 이름으로 가져온다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "  var renderCalendarScreen = _calendarKit.renderCalendarScreen;"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html IIFE 맨 위에서 일정 키트의 calShift 를 같은 이름으로 가져온다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "  var calShift = _calendarKit.calShift;"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "window.calShift 노출 줄은 이전 전과 같은 자리에 그대로 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "    window.calShift = calShift;"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "옮긴 코드가 읽는 calendarItemsByDate 가 app-scope getter 로 노출되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "    get calendarItemsByDate(){ return calendarItemsByDate; },"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "일정 렌더 파일이 일정 메가블록 index.js 앞에 로드된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<script src=\"js/tabs/calendar/render.js\"></script>"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "옮긴 뒤에도 게스트로 일정 탭을 열면 선택한 날 상세 목록에 + 일정 추가 버튼이 보이고, 누르면 일정 편집 시트(제목 입력칸)가 열린다(옮기기만 했으므로 기준 커밋에서도 같은 결과여야 한다)",
+      "touches": [
+        "js/tabs/calendar/day-detail.js",
+        "js/tabs/calendar/render.js",
+        "index.html"
+      ],
+      "scenario": "scenarios/calendar-day-detail-add.json"
+    },
+    {
+      "id": "C17",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "옮긴 뒤에도 일정 탭 AI 일정 비서 칸에 \"오후 3시 치과 예약\"을 적고 등록을 누르면 선택한 날 상세 목록에 그 일정이 나타난다(기준 커밋에서도 같은 결과여야 한다)",
+      "touches": [
+        "js/tabs/calendar/natural-schedule.js",
+        "js/tabs/calendar/render.js",
+        "js/tabs/calendar/day-detail.js"
+      ],
+      "scenario": "scenarios/calendar-agent-schedule.json"
+    },
+    {
+      "id": "C18",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "일정 탭 조작 20단계 DOM·모달·저장값·토스트 전후 비교에서 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-360/dom-compare-calendar.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-360/dom-compare-calendar.json",
+        "path": "differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "옮긴 7개 선언의 토큰열 동일·누수 0·미노출 0 검사 결과가 ok 로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-360/verify-calendar.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-360/verify-calendar.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R4",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "모듈 가드 기준선의 인라인 스크립트 줄 수가 35905 로 낮아져 있다",
+      "touches": [
+        "docs/architecture/module-baseline.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/module-baseline.json",
+        "path": "history.3.metrics.inlineScriptLines",
+        "equals": 35905
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R4",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "신고서에 일정 렌더 세포 calendar/render 가 있다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "\"id\": \"calendar/render\""
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R4",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "신고서에 일정 AI 일정 비서 세포 calendar/natural-schedule 이 있다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "\"id\": \"calendar/natural-schedule\""
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 가 8원칙 중 절차 재검증 절을 가진다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-360-CALENDAR-CELL.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-360-CALENDAR-CELL.md",
+        "text": "## 6. [원칙 ⑥] 절차 재검증 · 반론 격파"
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R5",
+      "kind": "static",
+      "domain": "tickets",
+      "statement": "티켓 대장에 TASK-ES-360 줄이 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-360 | INFRA/구조 |"
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R3",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "구글 캘린더를 연동한 실계정의 일정 탭(구글 일정 불러오기·미니 배지 연동됨 표시)도 이전 전과 같다",
+      "touches": [
+        "js/tabs/calendar/render.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "구글 캘린더를 연동한 실계정으로 로그인할 수 있는 사람",
+        "how": [
+          "구글 계정으로 로그인하고 설정에서 구글 캘린더를 연동한다",
+          "일정 탭을 연다",
+          "머리의 구글 미니 배지가 연동됨으로 보이고 구글 일정이 선택한 날 상세 목록에 함께 나오는지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "일정 탭 기준 실측 1회차와 후 실측 비교에서 비교한 값 447 중 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-360/tab-compare-base-run1-vs-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-360/tab-compare-base-run1-vs-after.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "일정 탭 기준 실측 2회 사이(본질적 변동) 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-360/tab-compare-base-run1-vs-run2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-360/tab-compare-base-run1-vs-run2.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    }
+  ]
+}

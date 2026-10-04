@@ -1,0 +1,18 @@
+{
+  "id": "calendar-day-detail-add",
+  "title": "일정 탭을 열면 선택한 날 상세 목록에 '+ 일정 추가' 버튼이 보이고, 누르면 일정 편집 시트(제목 입력칸)가 열린다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"calendar\"]" },
+    { "expect": "textContains", "selector": "#calDayDetail", "text": "일정 추가" },
+    { "expect": "visible", "selector": "#calAddManualBtn" },
+    { "expect": "notExists", "selector": "#calEditTitle" },
+    { "do": "click", "selector": "#calAddManualBtn" },
+    { "expect": "visible", "selector": "#calEditTitle" },
+    { "expect": "hasClass", "selector": "#modalOverlay", "className": "active" },
+    { "capture": "edit-sheet-open" }
+  ]
+}

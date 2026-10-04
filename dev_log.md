@@ -5865,3 +5865,4 @@
 - **법정**: B1B8A00B 확인 부족 — R2·R5·R6 "코드만 확인"(옮기기만 한 작업의 화면 시나리오는 기준 커밋에서도 통과해 법정 집계가 "고칠 게 없었음"이고, 같은 지시의 글자 주장과 섞이면 "코드만 확인"으로 묶인다).
 - **진행 단계**: [4단계: 심사 청구]
 ---
+- 2026-10-04 TASK-ES-360: 일정 탭 렌더 7개(renderCalendarScreen·renderCalDayDetail·parseNaturalScheduleText·executeCalAgentNaturalSchedule·calShift·calWeekStart·WEEKDAYS_KR)를 index.html 인라인에서 js/tabs/calendar/render.js·day-detail.js·natural-schedule.js 로 동작 그대로 이전(생성기 gen-calendar.js, 인라인 36,414→35,905줄, 토큰 동일·누수 0, 조작 20단계 DOM 비교 220값 차이 0). calCellHtml 은 동결 시험지 verify-integrity-gate #TASK-ES-197 이 index.html 에서 글자를 찾아 남김.
