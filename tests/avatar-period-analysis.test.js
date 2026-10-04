@@ -4,6 +4,23 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
+// #TASK-ES-390 (아바타·EXP 쪼개기 PR-4): 아바타 설정 모달이 js/avatar-system.js 에서 js/avatar/modal/*.js 로 옮겨 가도(동작 그대로) 같은 단언이 같은 코드를 찾도록
+// '아바타 합본'(js/avatar-system.js + js/avatar/**/*.js + js/data/avatar-personas/*.js 이름순, 쪼개기 생성기가 붙이는 AV.·MS. 접두를 뗌)을 읽는다 — tests/avatar-10slots-growth.test.js(#TASK-ES-389)와 같은 함수. 단언·기대값은 그대로다.
+function readAvatarBundle(single) {
+  const listJsTree = (dir, recursive) => {
+    if (!fs.existsSync(dir)) return [];
+    const out = [];
+    for (const e of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))) {
+      const p = path.join(dir, e.name);
+      if (e.isFile() && e.name.endsWith('.js')) out.push(p);
+      else if (recursive && e.isDirectory()) out.push(...listJsTree(p, true));
+    }
+    return out;
+  };
+  const js = path.dirname(single);
+  const parts = [...listJsTree(path.join(js, 'avatar'), true), ...listJsTree(path.join(js, 'data', 'avatar-personas'), false)];
+  return [single, ...parts].map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])(?:AV|MS)\.(?=[A-Za-z_$])/g, '$1')).join('\n');
+}
 
 function runTest() {
   const avatarPath = path.join(__dirname, '..', 'js', 'avatar-system.js');
@@ -12,7 +29,7 @@ function runTest() {
   assert.ok(fs.existsSync(avatarPath), 'avatar-system.js 파일이 존재해야 합니다.');
   assert.ok(fs.existsSync(uiCssPath), 'ui.css 파일이 존재해야 합니다.');
 
-  const avatarSrc = fs.readFileSync(avatarPath, 'utf8');
+  const avatarSrc = readAvatarBundle(avatarPath);
   const uiCss = fs.readFileSync(uiCssPath, 'utf8');
 
   // 1. 아바타 설정 모달 창 크기 확대 검증
