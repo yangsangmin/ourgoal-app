@@ -17089,6 +17089,33 @@ small {
   transition: width 0.3s ease;
 }
 
+/* HOME-19: 경험치를 얻는 순간 아바타 위로 "+N EXP" 를 0.5초 띄운다(평소에는 비어 있고 투명) */
+.hero-avatar-exp-gain {
+  position: absolute;
+  left: 50%;
+  top: 38%;
+  transform: translate(-50%, 0);
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--brand, #6366f1);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 2;
+}
+.hero-avatar-exp-gain.is-showing {
+  animation: heroExpGainFloat 0.5s ease-out forwards;
+}
+@keyframes heroExpGainFloat {
+  0% { opacity: 0; transform: translate(-50%, 6px); }
+  25% { opacity: 1; transform: translate(-50%, 0); }
+  75% { opacity: 1; transform: translate(-50%, -10px); }
+  100% { opacity: 0; transform: translate(-50%, -16px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-avatar-exp-gain.is-showing { animation: none; opacity: 1; }
+}
+
 /* HOME-04: 스마트 추천 칩 */
 .smart-recommend-chips {
   display: flex;
