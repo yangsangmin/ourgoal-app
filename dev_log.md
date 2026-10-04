@@ -5736,6 +5736,12 @@
 - **산출물**: docs/sql/2026-10-04-dm-rls-step1.sql(anon select RESTRICTIVE false)·step2.sql(행 종류별 RESTRICTIVE)·각 rollback·check.sql·README([손 필요])·test.mjs. 기존 정책은 지우지 않음.
 - **예비 확인(판정 아님)**: PGlite 로컬 Postgres 에서 using(true) 정책을 재현해 1·2단계·되돌리기 실행 33/33. 실서버 미실행(상민님 실행 대기).
 - **알아 둘 것**: 세션 없는 입장은 1단계 뒤 두 표 읽기, 2단계 뒤 쓰기를 잃는다. 마니또 응원 sender_id 가 받는 사람에게 노출되는 익명성 누출은 범위 밖.
+## [2026-10-04 15:30] #TASK-ES-344: 기록 원장 — 지운 기록 부활 차단 + 서버 필드 보존 (노션 REC-01)
+- **목표**: 휴지통으로 지운 기록이 어떤 복원 경로로도 돌아오지 않고, 시간 기록의 구간·몰입 시간·연결 목표 등이 서버 왕복 뒤 그대로 남게 한다.
+- **구현**: `js/record-ledger.js` 신규(행 변환·meta 묶기/풀기·칸 없을 때 재시도·id 병합). `api/track.js` `handleSyncRecords` 조회에 `.is('deleted_at', null)`(칸 없으면 폴백 조회 + 행 필터), 저장·응답을 모듈로. `index.html` `saveProfile`(meta 포함 upsert)·`loadProfile`(meta 풀기, 휴지통 기록은 로컬 백업 복구에서 제외)·`syncServerRecords`(통째 교체 → id 병합, forceRefresh 는 서버 값 우선). `docs/sql/2026-10-04-checkins-meta.sql`(add column if not exists meta jsonb default null) — 실서버 미실행.
+- **스키마 선택**: 칸 7개 대신 jsonb `meta` 1칸 — SQL 1줄·재시도 분기 1개, laps 는 원래 배열 객체, 서버 집계 용도 없음, 기존 `theme_metadata jsonb` 관례와 같음.
+- **예비 확인(판정 아님, 부품만 돌려 봄 — 가짜 Supabase)**: `tests/record-ledger-sync.test.js` 9/9. 측정값 deletedAfterSync 0·deletedAfterMerge 0·roundTripMismatch 0(META 7칸)·localKept 1. 같은 시험을 기준 커밋 `api/track.js` 로 돌리면 5/9(지운 기록 1건 부활, META 7칸 전부 불일치). `npm test` 종료코드 0(smoke 440/0, clicks 38/38).
+- **실서버 할 일**: SQL Editor 에서 `docs/sql/2026-10-04-checkins-meta.sql` 실행, `checkins.deleted_at` 실재 확인(없으면 `docs/sql/goals-checkins-softdelete.sql`).
 ## [2026-10-04 14:20] #TASK-ES-345: 구글 캘린더 토큰 계정 격리 (CAL-02)
 - **목표**: 같은 기기에서 계정을 바꾸면 다른 계정의 구글 토큰·일정·이메일을 쓰던 통로 제거(메모 08·17, 노션 CAL-02).
 - **원인**: #TASK-ES-265 재연동 완화용 공용 키(`ourgoal_gcal_token_v1_last`·`ourgoal_gcal_email_last`·`ourgoal_gcal_events`)와 폴백(`restoreGoogleToken` 아무 키 탐색, `loadLocalSettings` 타 uid 설정 복사), 메모리 토큰 주인 미확인.
