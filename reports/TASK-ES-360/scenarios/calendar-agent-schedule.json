@@ -1,0 +1,16 @@
+{
+  "id": "calendar-agent-schedule",
+  "title": "일정 탭 AI 일정 비서 칸에 '오후 3시 치과 예약'을 적고 등록을 누르면 선택한 날 상세 목록에 그 일정이 나타난다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"calendar\"]" },
+    { "expect": "visible", "selector": "#calAgentInput" },
+    { "do": "type", "selector": "#calAgentInput", "text": "오후 3시 치과 예약" },
+    { "do": "click", "selector": "#calAgentSendBtn" },
+    { "expect": "textContains", "selector": "#calDayDetail", "text": "치과 예약" },
+    { "capture": "agent-registered" }
+  ]
+}
