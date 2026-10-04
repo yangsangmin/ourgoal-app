@@ -1,0 +1,183 @@
+{
+  "id": "record-trash-confirm",
+  "title": "게스트가 기록 탭에서 샘플 기록 카드의 ×(기록 삭제)를 누르면 기본 확인창 대신 같은 문구의 앱 바텀시트 확인창이 뜨고, 취소하면 카드가 그대로 · 확인하면 카드가 휴지통으로 간다. 이어 설정의 휴지통 창에서 ×(영구 삭제)를 누르면 휴지통 창 위에 바텀시트 확인창이 뜨고, 취소하면 휴지통 창과 항목이 그대로 돌아오고 · 확인하면 항목이 영구 삭제되어 휴지통이 빈다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar button[onclick*=\"recUniversalTopBanner\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#recImportBannerBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#modalSheet [data-quick-sample=\"hyrox\"]"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#modalOverlay"
+    },
+    {
+      "do": "click",
+      "selector": "#screen-records button[onclick*=\"setRecMode('feed')\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#recordsList [data-recid=\"samp_hyrox_total_0\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#recordsList [data-recid=\"samp_hyrox_total_0\"] [data-recdel]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalOverlay.active #btnSheetConfirmCancel"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalSheet .sheet-confirm-body p",
+      "text": "이 기록을 휴지통으로 이동할까요?"
+    },
+    {
+      "capture": "record-trash-confirm-sheet"
+    },
+    {
+      "do": "click",
+      "selector": "#btnSheetConfirmCancel"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#modalOverlay"
+    },
+    {
+      "expect": "visible",
+      "selector": "#recordsList [data-recid=\"samp_hyrox_total_0\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#recordsList [data-recid=\"samp_hyrox_total_0\"] [data-recdel]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalOverlay.active #btnSheetConfirmOk"
+    },
+    {
+      "do": "click",
+      "selector": "#btnSheetConfirmOk"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#recordsList [data-recid=\"samp_hyrox_total_0\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#trashUndoToast"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#trashUndoToast",
+      "timeoutMs": 9000
+    },
+    {
+      "do": "click",
+      "selector": "#setGroupDataSummary"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#btnOpenTrashModal",
+      "text": "1개 보관 중"
+    },
+    {
+      "do": "click",
+      "selector": "#btnOpenTrashModal"
+    },
+    {
+      "expect": "count",
+      "selector": "#modalSheet [data-trashdel]",
+      "equals": 1
+    },
+    {
+      "do": "click",
+      "selector": "#modalSheet [data-trashdel]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalSheet .sheet-confirm-body p",
+      "text": "항목을 영구 삭제할까요?"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#modalSheet #trashCloseBtn"
+    },
+    {
+      "capture": "trash-permanent-delete-confirm-sheet"
+    },
+    {
+      "do": "click",
+      "selector": "#btnSheetConfirmCancel"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalOverlay.active #modalSheet #trashCloseBtn"
+    },
+    {
+      "expect": "count",
+      "selector": "#modalSheet [data-trashdel]",
+      "equals": 1
+    },
+    {
+      "expect": "notExists",
+      "selector": "#btnSheetConfirmOk"
+    },
+    {
+      "do": "click",
+      "selector": "#modalSheet [data-trashdel]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalOverlay.active #btnSheetConfirmOk"
+    },
+    {
+      "do": "click",
+      "selector": "#btnSheetConfirmOk"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalSheet .empty-state",
+      "text": "휴지통이 비어 있습니다"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#modalSheet [data-trashdel]"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
