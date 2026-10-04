@@ -24,8 +24,12 @@ function listJsTree(dir, recursive) {
   }
   return out;
 }
-// #TASK-ES-385: 아바타 세포(js/avatar/**/*.js)도 앱 합본에 넣는다(EXP 코드가 index.html → js/avatar/xp.js 로 옮겨 가도 html 단언이 같은 코드를 찾게). 지금은 그 폴더가 없어 합본 글자는 그대로다.
-const APP_MODULE_FILES = [...listJsTree(path.join(__dirname, '..', 'js', 'tabs'), true), ...listJsTree(path.join(__dirname, '..', 'js', 'core'), false), ...listJsTree(path.join(__dirname, '..', 'js', 'avatar'), true)];
+// #TASK-ES-385: EXP 코드가 index.html → js/avatar/xp.js 로 옮겨 가도 html 단언이 같은 코드를 찾게 앱 합본에 아바타 세포를 넣었다.
+// #TASK-ES-391: 앱 합본의 아바타 범위는 js/avatar/xp.js(있으면) 하나로 좁힌다. #TASK-ES-385 전에는 avatar-system.js 가 앱 합본에 없었으므로,
+// avatar-system.js 에서 js/avatar/** 로 옮긴 글자가 앱 합본 단언(예: #TASK-ES-155 「showToast( 없음」)에 새로 걸리지 않게 원래 범위로 되돌린다.
+// 아바타 글자 단언은 아바타 합본(AVATAR_SRC)이 그대로 본다. 단언·기대값·검사 수는 그대로다.
+const APP_AVATAR_XP_JS = path.join(__dirname, '..', 'js', 'avatar', 'xp.js');
+const APP_MODULE_FILES = [...listJsTree(path.join(__dirname, '..', 'js', 'tabs'), true), ...listJsTree(path.join(__dirname, '..', 'js', 'core'), false), ...(fs.existsSync(APP_AVATAR_XP_JS) ? [APP_AVATAR_XP_JS] : [])];
 // 세포 이전 생성기(module-split)는 index.html 지역 이름을 L.<이름>, 같은 탭 파일끼리 호출을 K.<이름> 으로 바꿔 쓴다(나머지 글자는 그대로).
 // 그런 파일(OurgoalAppScope 를 읽는 파일)만 접두를 떼고 읽어, 옮기기 전 글자를 찾던 단언이 같은 코드를 그대로 찾게 한다. 단언·기대값은 그대로다.
 function readAppModule(f) {
