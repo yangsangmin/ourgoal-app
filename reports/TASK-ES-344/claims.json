@@ -1,0 +1,81 @@
+{
+  "task": "TASK-ES-344",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-344-RECORD-LEDGER.md",
+  "requirements": [
+    { "id": "R1", "text": "sync_records 조회에 deleted_at IS NULL 조건 추가. 클라이언트 전체 교체 대신 id 기준 병합(로컬에만 있는 미동기화 기록은 보존, 로컬에서 지운 기록은 되살리지 않음)으로 바꾸되, 기존 동작(서버 복원으로 빈 로컬 복구)은 유지." },
+    { "id": "R2", "text": "손실 필드를 서버에 보존. 스키마 변경은 비파괴(ADD COLUMN IF NOT EXISTS, 기본값 null) SQL 파일만 추가하고 실서버에 실행하지 않는다. 컬럼이 아직 없을 때도 저장이 끊기지 않게 기존 재시도 패턴 유지. 개인정보 성격의 새 칸은 추가하지 않는다. jsonb 한 컬럼 방식도 검토해 더 단순한 쪽을 택하고 이유를 적는다." },
+    { "id": "R3", "text": "클라이언트 복원 시 그 필드들을 다시 기록 객체로 풀어 넣는다." },
+    { "id": "R4", "text": "로컬에서 재현 가능한 시험 스크립트로 ① 기록 생성→삭제→sync 복원→삭제 기록 0건 ② laps·durationMs·goalId 가 upsert payload 에 들어가고 복원 시 동일 ③ 로컬 미동기화 기록이 병합 후 보존. Supabase 는 mock 을 쓰되 '부품만 돌려 봄' 수준임을 정직하게 적는다. npm test 종료코드도 기록." }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "api/track.js 의 sync_records checkins 조회에 deleted_at IS NULL 조건이 들어 있다(칸이 없는 DB 는 필터 없이 다시 읽고 행 단위로 거른다)",
+      "touches": ["api/track.js"],
+      "check": { "type": "codeContains", "file": "api/track.js", "text": ".is('deleted_at', null)" }
+    },
+    {
+      "id": "C2", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "syncServerRecords 가 서버 기록을 휴지통 id 를 뺀 id 기준 병합으로 반영한다",
+      "touches": ["index.html"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "window.OurgoalRecordLedger.mergeServerRecords(state.profile.records || [], data.records, {" }
+    },
+    {
+      "id": "C3", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "syncServerRecords 의 서버 기록 통째 교체 코드가 없어졌다",
+      "touches": ["index.html"],
+      "check": { "type": "codeNotContains", "file": "index.html", "text": "state.profile.records = data.records;" }
+    },
+    {
+      "id": "C4", "req": "R1", "kind": "unverified", "domain": "ui-behavior",
+      "statement": "로그인한 계정에서 기록을 휴지통으로 지운 뒤 기록 탭의 이전 기록 전체 불러오기나 설정의 재동기화를 눌러도 지운 기록이 다시 나타나지 않는다",
+      "touches": ["index.html", "api/track.js"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "실계정으로 로그인할 수 있는 사람",
+        "how": ["앱에 로그인한다", "기록 하나를 만들고 휴지통으로 지운다", "설정의 계정 데이터 재동기화(#resyncAccountDataBtn)를 누른다", "기록 탭에 지운 기록이 없는지 본다"]
+      }
+    },
+    {
+      "id": "C5", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "checkins.meta jsonb 칸을 비파괴로 추가하는 SQL 파일을 넣었다(실서버 미실행)",
+      "touches": ["docs/sql/2026-10-04-checkins-meta.sql"],
+      "check": { "type": "codeContains", "file": "docs/sql/2026-10-04-checkins-meta.sql", "text": "alter table public.checkins add column if not exists meta jsonb default null;" }
+    },
+    {
+      "id": "C6", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "meta 에 담는 칸은 goalId·laps·durationMs·durationMinutes·visibility·isSample·title 7개다(새 종류의 개인정보 칸 없음)",
+      "touches": ["js/record-ledger.js"],
+      "check": { "type": "codeContains", "file": "js/record-ledger.js", "text": "var META_FIELDS = ['goalId', 'laps', 'durationMs', 'durationMinutes', 'visibility', 'isSample', 'title'];" }
+    },
+    {
+      "id": "C7", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "saveProfile 이 meta 를 포함한 행을, 칸이 없으면 빼고 재시도하는 upsertCheckinRows 로 저장한다",
+      "touches": ["index.html"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "await window.OurgoalRecordLedger.upsertCheckinRows(sb, recRows);" }
+    },
+    {
+      "id": "C8", "req": "R2", "kind": "unverified", "domain": "persistence",
+      "statement": "SQL 적용 후 실서버 Supabase 에서 시간 기록의 laps·durationMs·goalId 가 저장되고 다른 기기 로그인 복원 때 같은 값으로 돌아온다",
+      "touches": ["index.html", "api/track.js", "docs/sql/2026-10-04-checkins-meta.sql"],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "Supabase SQL Editor 권한이 있는 사람(상민님) 또는 별도 승인 절차",
+        "how": ["docs/sql/2026-10-04-checkins-meta.sql 을 SQL Editor 에서 실행한다", "앱에서 시간 기록(구간 포함)을 하나 저장한다", "다른 브라우저에서 같은 계정으로 로그인한다", "그 기록의 구간·몰입 시간·연결 목표가 같은지 본다"]
+      }
+    },
+    {
+      "id": "C9", "req": "R3", "kind": "static", "domain": "config",
+      "statement": "loadProfile 이 checkins.meta 를 기록 객체로 풀어 넣는다(sync_records 응답도 같은 모듈의 fromCheckinRow 로 푼다)",
+      "touches": ["index.html"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "return window.OurgoalRecordLedger.applyRecordMeta(rec, r.meta);" }
+    },
+    {
+      "id": "C10", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "시험 스크립트가 가짜 Supabase 로 ①②③을 돌리며 확인 수준을 부품만 돌려 봄으로 밝힌다. 작업자 PC 실행 결과 9/9, 측정값 deletedAfterSync 0·deletedAfterMerge 0·roundTripMismatch 0·localKept 1, 기준 커밋 api/track.js 로는 5/9(deletedAfterSync 1·roundTripMismatch 7), npm test 종료코드 0 — 작업자 주장이며 판정 아님",
+      "touches": ["tests/record-ledger-sync.test.js"],
+      "check": { "type": "codeContains", "file": "tests/record-ledger-sync.test.js", "text": "확인 수준: \"부품만 돌려 봄\"" }
+    }
+  ]
+}
