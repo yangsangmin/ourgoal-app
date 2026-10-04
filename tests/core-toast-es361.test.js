@@ -8,6 +8,23 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 
+// #TASK-ES-388 (팀 세포 쪼개기 2차 선행): 팀 코드가 js/team-invite-comm.js 에서 js/team-*.js 키트 부품(OurgoalTeamCommKit 에 함수를 담는 파일)으로 옮겨 가도
+// 같은 단언이 같은 코드를 찾도록 '팀 합본' = js/team-invite-comm.js(원문 그대로, 맨 앞) + 키트 부품(이름순, 생성기 접두 T.·K. 를 떼고) 를 읽는다. 단언·기대값은 그대로다.
+function listTeamCommParts(rootDir) {
+  const dir = path.join(rootDir, 'js');
+  return fs.readdirSync(dir).filter((n) => n.indexOf('team-') === 0 && n !== 'team-invite-comm.js' && n.endsWith('.js')).sort()
+    .map((n) => path.join(dir, n)).filter((f) => fs.statSync(f).isFile() && fs.readFileSync(f, 'utf8').indexOf('OurgoalTeamCommKit') >= 0);
+}
+function readTeamCommBundle(rootDir) {
+  const raw = fs.readFileSync(path.join(rootDir, 'js', 'team-invite-comm.js'), 'utf8');
+  const parts = listTeamCommParts(rootDir);
+  const src = [raw, ...parts.map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[TK]\.(?=[A-Za-z_$])/g, '$1'))].join('\n');
+  // 합본 맨 앞은 원문 그대로다(원본에서 찾던 글자는 같은 자리에서 찾는다). 부품 파일이 없으면 합본 = 원문.
+  assert.strictEqual(src.slice(0, raw.length), raw, '팀 합본 맨 앞 = js/team-invite-comm.js 원문');
+  if (parts.length === 0) assert.strictEqual(src, raw, '팀 합본 = js/team-invite-comm.js (부품 파일이 없을 때)');
+  return src;
+}
+
 const ROOT = path.join(__dirname, '..');
 const caps = require(path.join(ROOT, 'js/core/capabilities.js'));
 const T = require(path.join(ROOT, 'js/core/toast.js'));
@@ -91,7 +108,8 @@ async function check(title, fn) {
   await check('6곳(auth-safety·helpful-reason·reactions·team-invite-comm·team-linked-goals·team-visibility-levels)이 각자 만든 토스트 함수 없이 ui.toast.bind 를 부른다', () => {
     ['auth-safety', 'helpful-reason', 'reactions', 'team-invite-comm', 'team-linked-goals', 'team-visibility-levels'].forEach(f => {
       const src = fs.readFileSync(path.join(ROOT, 'js', f + '.js'), 'utf8');
-      assert.ok(!/\bfunction\s+(toast|showToast)\s*\(|\btoastFn\s*=\s*function\b/.test(src), f + ': 자체 토스트 함수 없음');
+      const scan = f === 'team-invite-comm' ? readTeamCommBundle(ROOT) : src;
+      assert.ok(!/\bfunction\s+(toast|showToast)\s*\(|\btoastFn\s*=\s*function\b/.test(scan), f + ': 자체 토스트 함수 없음');
       assert.ok(src.includes("OurgoalCapabilities.request('ui.toast.bind')"), f + ': 공용 통로 사용');
     });
   });
