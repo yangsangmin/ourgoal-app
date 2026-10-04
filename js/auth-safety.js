@@ -326,19 +326,59 @@
     );
   }
 
-  /* ============ P0: 회원 탈퇴 30일 유예(소프트 삭제) 복구 체크 ============ */
+  /* ============ P0: 회원 탈퇴 30일 유예 복구 체크 (#TASK-ES-351 서버 기록 기준) ============ */
+  // 탈퇴 신청 시각은 서버(auth app_metadata.deletion_requested_at)에 있다 — api/withdraw.js 의 request 모드가 쓴다.
+  // 그래서 어느 기기에서 로그인해도 같은 복구 안내가 뜬다. 이 시각 + 30일이 지나면 매일 도는 서버 파기 작업의 대상이다.
+  var DELETION_GRACE_DAYS = 30;
+  var DELETION_DAY_MS = 86400 * 1000;
+
+  // 서버 기록 읽기: getUser()(서버 최신값) → 실패하면 방금 로그인한 세션의 app_metadata. 둘 다 못 읽으면 known:false.
+  async function readServerDeletionRequest(sb){
+    var meta = null;
+    try {
+      var r = await sb.auth.getUser();
+      if(r && !r.error && r.data && r.data.user) meta = r.data.user.app_metadata || {};
+    } catch(e){}
+    if(!meta){
+      try {
+        var s = await sb.auth.getSession();
+        var su = s && s.data && s.data.session && s.data.session.user;
+        if(su) meta = su.app_metadata || {};
+      } catch(e){}
+    }
+    if(!meta) return { known: false };
+    var raw = meta.deletion_requested_at;
+    if(!raw) return { known: true, pending: false };
+    var t = Date.parse(raw);
+    return { known: true, pending: true, requestedMs: isFinite(t) ? t : null };
+  }
+
+  async function callWithdrawApi(sb, mode){
+    var s = await sb.auth.getSession();
+    var token = s && s.data && s.data.session && s.data.session.access_token;
+    if(!token) return { ok: false, error: 'no session' };
+    var resp = await window.fetch('/api/withdraw', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ mode: mode })
+    });
+    var body = null;
+    try { body = await resp.json(); } catch(e){}
+    return (resp.ok && body && body.ok === true) ? body : { ok: false, error: (body && body.error) || ('HTTP ' + resp.status) };
+  }
+
+  function clearLocalDeletionMarks(state){
+    if(state && state.profile && state.profile.settings){
+      delete state.profile.settings.pendingDeletionAt;
+      delete state.profile.settings.deletedAt;
+    }
+  }
+
   async function checkPendingDeletionRestore(){
     var state = stateRef || window.state;
     if(!state || !state.profile) return false;
     var st = state.profile.settings || {};
-    var pDel = st.pendingDeletionAt || st.deletedAt;
-    if(!pDel) return false;
-
-    var delTime = Number(pDel);
-    var now = Date.now();
-    var graceDays = 30;
-    var elapsedDays = Math.floor((now - delTime) / (86400 * 1000));
-    var remainDays = Math.max(0, graceDays - elapsedDays);
+    var localMark = st.pendingDeletionAt || st.deletedAt;
 
     var logoutFn = performLogoutFn || window.performLogout;
     var om = openModalFn || window.openModal;
@@ -346,10 +386,31 @@
     var sb = sbClient || window.sb;
     var sp = saveProfileFn || window.saveProfile;
 
-    if(remainDays <= 0){
-      if(logoutFn) await logoutFn('탈퇴 유예 기간(30일)이 만료되어 계정이 비활성화되었습니다.');
-      return true;
+    var srv = sb ? await readServerDeletionRequest(sb) : { known: false };
+
+    // 서버에 신청 기록이 없으면 서버가 정답이다 — 다른 기기에서 복구했거나 이 PR 이전(서버 기록 없는) 신청이다.
+    var serverPending = srv.known && srv.pending;
+    if(!serverPending && !localMark) return false;
+
+    var now = Date.now();
+    var remainDays = null;
+    var requestedText = '';
+    if(serverPending && srv.requestedMs){
+      remainDays = Math.max(0, Math.ceil((srv.requestedMs + DELETION_GRACE_DAYS * DELETION_DAY_MS - now) / DELETION_DAY_MS));
+      requestedText = new Date(srv.requestedMs).toLocaleDateString('ko-KR');
+      if(remainDays <= 0){
+        if(logoutFn) await logoutFn('탈퇴 신청 후 30일이 지나 영구 파기 대기 중인 계정입니다. 매일 한 번 도는 서버 파기 작업에서 계정과 데이터가 삭제됩니다.');
+        return true;
+      }
     }
+
+    var bodyHtml = serverPending
+      ? ('이 계정은 <b>탈퇴 신청 상태</b>입니다(서버 기록' + (requestedText ? ', 신청일 ' + requestedText : '') + ').<br>' +
+         (remainDays !== null ? '서버에서 <b>영구 파기까지 ' + remainDays + '일</b> 남았습니다.<br><br>' : '<br>') +
+         '지금 복구하면 서버의 탈퇴 신청 기록을 지우고, 목표·체크인 기록을 그대로 이어서 쓸 수 있습니다.')
+      : ('이 기기에 이전 방식의 탈퇴 신청 표시가 있습니다.<br>' +
+         '이 신청은 <b>서버에 기록되지 않아 자동 파기 대상이 아니며</b>, 데이터는 서버에 그대로 있습니다.<br><br>' +
+         '복구하면 표시를 지우고 그대로 이어서 쓸 수 있습니다. 탈퇴를 원하시면 복구 후 설정에서 다시 신청해 주세요.');
 
     return new Promise(function(resolve){
       if(!om){ resolve(false); return; }
@@ -364,38 +425,38 @@
         '<div style="text-align:center;padding:16px 8px;">' +
           '<div style="font-size:2.5rem;margin-bottom:10px;">🌱</div>' +
           '<h3 style="margin:0 0 8px;font-size:1.15rem;font-weight:700;">계정 복구 안내</h3>' +
-          '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.6;margin:0 0 16px;">' +
-            '이 계정은 현재 <b>회원 탈퇴 유예 보관 중</b>입니다.<br>' +
-            '(영구 파기까지 <b>' + remainDays + '일</b> 남음)<br><br>' +
-            '지금 복구하시면 기존의 모든 목표, 마일스톤, 체크인 기록을 그대로 이어서 이용하실 수 있습니다.' +
-          '</p>' +
+          '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.6;margin:0 0 16px;">' + bodyHtml + '</p>' +
           '<button class="btn btn-primary" id="btnRestoreAccount" style="width:100%;margin-bottom:8px;padding:12px;font-weight:700;border-radius:12px;background:var(--brand);border:none;">계정 및 기록 복구하기</button>' +
-          '<button class="btn btn-ghost btn-sm btn-close" id="btnCancelRestore" style="width:100%;">로그아웃 (탈퇴 상태 유지)</button>' +
+          '<button class="btn btn-ghost btn-sm btn-close" id="btnCancelRestore" style="width:100%;">로그아웃 (탈퇴 신청 유지)</button>' +
         '</div>',
         function(sheet){
           var rBtn = sheet.querySelector('#btnRestoreAccount');
           if(rBtn) rBtn.onclick = async function(){
-            if(cm) cm();
+            rBtn.disabled = true;
             toastFn('계정을 복구하는 중입니다…');
             try {
-              delete state.profile.settings.pendingDeletionAt;
-              delete state.profile.settings.deletedAt;
+              if(serverPending){
+                // 서버 기록을 지우고 서버가 '지운 것을 다시 읽어 확인'했을 때만 복구로 본다
+                var res = await callWithdrawApi(sb, 'restore');
+                if(!res.ok) throw new Error(res.error || '서버 복구 실패');
+              }
+              clearLocalDeletionMarks(state);
               if(sp) await sp();
-              try {
-                await sb.auth.updateUser({ data: { account_status: 'active', deleted_at: null } });
-              } catch(e){}
-              toastFn('계정이 성공적으로 복구되었습니다! 환영합니다.');
+              if(cm) cm();
+              toastFn('계정이 복구되었습니다. 서버의 탈퇴 신청 기록도 지웠어요. 환영합니다!');
               finish(false);
             } catch(e){
-              toastFn('복구 중 오류가 발생했습니다: ' + (e && e.message));
-              finish(false);
+              // 서버 기록이 남아 있으면 파기 대상이므로 앱에 들여보내지 않는다
+              if(cm) cm();
+              if(logoutFn) await logoutFn('복구를 서버에 기록하지 못했어요(' + (e && e.message) + '). 탈퇴 신청은 아직 유지 중입니다. 다시 로그인해 복구해 주세요.');
+              finish(true);
             }
           };
 
           var cBtn = sheet.querySelector('#btnCancelRestore');
           if(cBtn) cBtn.onclick = async function(){
             if(cm) cm();
-            if(logoutFn) await logoutFn('탈퇴 상태가 유지됩니다.');
+            if(logoutFn) await logoutFn('탈퇴 신청이 유지됩니다.');
             finish(true);
           };
 
@@ -404,7 +465,7 @@
           if(overlay){
             var ovHandler = function(e){
               if(e.target === overlay && !settled){
-                if(logoutFn) logoutFn('탈퇴 상태가 유지됩니다.');
+                if(logoutFn) logoutFn('탈퇴 신청이 유지됩니다.');
                 finish(true);
               }
             };
