@@ -90,4 +90,4 @@ assert.strictEqual(K.parseNaturalScheduleText('   ', SUN), null, '빈 입력은 
   passed++;
 }
 
-console.log('[PASS] calendar-natural-schedule.test.js: ' + passed + ' cases');
+console.log('ok · AI 일정 비서 자연어 파서 시험 ' + passed + '건 통과');

@@ -73,6 +73,6 @@ async function run() {
     assert.strictEqual(settings.notionAutoPush, false, '노션 자동 전송 값은 그대로');
   }
   assert.ok(saves >= 4 && rerenders >= 4, '누를 때마다 저장하고 설정 화면을 다시 그린다');
-  console.log('[PASS] settings-gcal-autosync-switch.test.js: 3 cases');
+  console.log('ok · 구글 캘린더 자동 동기화 스위치 시험 3건 통과');
 }
-run().catch(e => { console.error(e); process.exit(1); });
+run().catch(e => { console.error(e); process.exitCode = 1; });
