@@ -1,0 +1,94 @@
+{
+  "task": "TASK-ES-347",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-347-DM-RLS.md",
+  "requirements": [
+    { "id": "R1", "text": "두 표(team_pings·team_ping_replies)를 읽고 쓰는 모든 코드 경로를 전수 목록화(호출 종류·필터·그 행을 봐야 하는 사람·사용 칸)" },
+    { "id": "R2", "text": "앱의 인증 방식 확인 — auth.uid() 가 sender_id 와 같은지, 게스트 경로, api/** 서비스롤 경로 영향" },
+    { "id": "R3", "text": "행 종류별 RLS 설계 — 1단계(anon 차단)와 2단계(DM 두 사람·그룹 구성원 또는 authenticated·피드 댓글 로그인·마니또 필요 범위·쓰기는 본인 행)를 두 파일로" },
+    { "id": "R4", "text": "각 단계 되돌리기 SQL, 적용 전 현재 정책 확인 쿼리, 적용 후 확인 절차(anon 0건, A 자기 DM 보임, B 에게 A-C DM 안 보임, 피드 댓글 보임, 마니또 동작)" },
+    { "id": "R5", "text": "[손 필요] 클릭 단위 실행 안내 — 1단계 먼저, 앱 확인 후 2단계" },
+    { "id": "R6", "text": "REQ·PLAN(8원칙)·claims·TICKETS 한 줄·dev_log 항목" },
+    { "id": "R7", "text": "PR 본문 맨 위에 '보안 결함: DM 표 anon 공개(실측)'와 1단계 SQL 을 그대로 싣는다" }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "REQ 문서에 team_pings 22곳·team_ping_replies 5곳의 코드 경로 표가 실려 있다",
+      "touches": ["docs/specs/REQ-TASK-ES-347-DM-RLS.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-347-DM-RLS.md", "text": "### team_ping_replies — 5곳" }
+    },
+    {
+      "id": "C2", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "REQ 문서에 입장 경로별 Supabase 세션 유무 표가 있고, 구글 직접 로그인·빠른 복구·테스터 B·게스트는 세션 없는 anon 으로 적혀 있다",
+      "touches": ["docs/specs/REQ-TASK-ES-347-DM-RLS.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-347-DM-RLS.md", "text": "| 구글 직접 로그인 (index.html:5550 `loginWithDirectIdentifier`, 직전 `signOut`) | **없음** |" }
+    },
+    {
+      "id": "C3", "req": "R3", "kind": "static", "domain": "config",
+      "statement": "1단계 SQL 은 anon 역할의 select 를 거짓으로 묶는 RESTRICTIVE 정책을 두 표에 더한다",
+      "touches": ["docs/sql/2026-10-04-dm-rls-step1.sql"],
+      "check": { "type": "codeContains", "file": "docs/sql/2026-10-04-dm-rls-step1.sql", "text": "as restrictive for select to anon using (false);" }
+    },
+    {
+      "id": "C4", "req": "R3", "kind": "static", "domain": "config",
+      "statement": "2단계 SQL 은 로그인 사용자의 insert 를 sender_id 가 자기 id 인 행으로 제한한다",
+      "touches": ["docs/sql/2026-10-04-dm-rls-step2.sql"],
+      "check": { "type": "codeContains", "file": "docs/sql/2026-10-04-dm-rls-step2.sql", "text": "with check (sender_id::text = (select auth.uid())::text);" }
+    },
+    {
+      "id": "C5", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "2단계 되돌리기 SQL 이 있고 2단계가 더한 정책만 지운다",
+      "touches": ["docs/sql/2026-10-04-dm-rls-step2-rollback.sql"],
+      "check": { "type": "fileExists", "file": "docs/sql/2026-10-04-dm-rls-step2-rollback.sql" }
+    },
+    {
+      "id": "C6", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "확인 쿼리 파일에 적용 전 pg_policies 조회가 있다",
+      "touches": ["docs/sql/2026-10-04-dm-rls-check.sql"],
+      "check": { "type": "codeContains", "file": "docs/sql/2026-10-04-dm-rls-check.sql", "text": "where schemaname = 'public' and tablename in ('team_pings', 'team_ping_replies')" }
+    },
+    {
+      "id": "C7", "req": "R4", "kind": "unverified", "domain": "security-server",
+      "statement": "운영 DB 에 1단계를 적용하면 anon 키로 두 표가 0건으로 읽히고 로그인 사용자의 읽기는 그대로다",
+      "touches": ["docs/sql/2026-10-04-dm-rls-step1.sql"],
+      "unverified": {
+        "reason": "needs-live-server",
+        "who": "Supabase 대시보드에 로그인할 수 있는 상민님",
+        "how": ["docs/sql/2026-10-04-dm-rls-README.md 의 1단계 1~8번을 따른다", "check.sql [사후-1] 결과가 0, 0 인지 본다", "카카오 로그인한 앱에서 DM·피드 댓글·마니또·팀 채팅이 열리는지 본다"]
+      }
+    },
+    {
+      "id": "C8", "req": "R4", "kind": "unverified", "domain": "security-server",
+      "statement": "운영 DB 에 2단계를 적용하면 A 는 자기 DM 을 보고 B 에게는 A-C DM 이 0건이며 피드 댓글·마니또 풀은 둘 다 보인다",
+      "touches": ["docs/sql/2026-10-04-dm-rls-step2.sql"],
+      "unverified": {
+        "reason": "needs-two-accounts",
+        "who": "실제 로그인 계정 2개 이상과 Supabase 대시보드 권한을 가진 사람",
+        "how": ["README 2단계 1~5번(check.sql [사후-2]·[사후-3])을 실행한다", "A 계정으로 C 에게 DM 을 보내고 C 화면 도착·읽음 표시를 본다", "B 계정의 DM 목록에 A-C 대화가 없는지 본다", "피드 댓글 쓰기·지우기, 마니또 참여·응원, 팀 채팅을 각각 한 번씩 해 본다"]
+      }
+    },
+    {
+      "id": "C9", "req": "R5", "kind": "static", "domain": "config",
+      "statement": "실행 안내 문서가 SQL Editor 클릭 단위로 1단계 먼저, 앱 확인 후 2단계 순서를 안내한다",
+      "touches": ["docs/sql/2026-10-04-dm-rls-README.md"],
+      "check": { "type": "codeContains", "file": "docs/sql/2026-10-04-dm-rls-README.md", "text": "## 2단계 (1단계 뒤 앱이 정상인 것을 확인한 다음)" }
+    },
+    {
+      "id": "C10", "req": "R6", "kind": "static", "domain": "config",
+      "statement": "TICKETS.md 에 TASK-ES-347 한 줄이 4단계(심사 청구)로 등록됐다",
+      "touches": ["docs/rules/TICKETS.md"],
+      "check": { "type": "codeContains", "file": "docs/rules/TICKETS.md", "text": "- #TASK-ES-347 |" }
+    },
+    {
+      "id": "C11", "req": "R7", "kind": "unverified", "domain": "config",
+      "statement": "PR 본문 맨 위에 보안 결함 제목과 1단계 SQL 전문이 실려 있다",
+      "touches": ["docs/sql/2026-10-04-dm-rls-step1.sql"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "external-page",
+        "who": "GitHub PR 화면을 여는 사람",
+        "how": ["PR 본문 첫 줄이 '보안 결함: DM 표 anon 공개(실측)' 인지 본다", "그 아래 SQL 블록이 docs/sql/2026-10-04-dm-rls-step1.sql 과 같은지 본다"]
+      }
+    }
+  ]
+}
