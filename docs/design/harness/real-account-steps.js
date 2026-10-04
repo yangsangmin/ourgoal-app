@@ -332,7 +332,8 @@ auto('RA-COMM-03', '소통', '노션 COMM-03', ['A', 'B'], async (ctx, ev) => {
   await openCompanions(a1.dev.page); ev.listedNow = await companionListed(a1.dev.page, ctx.uids.B);
   await reloadDevice(ctx, a1.dev); await openCompanions(a1.dev.page); ev.afterReload = await companionListed(a1.dev.page, ctx.uids.B);
   const a2 = await ensureDevice(ctx, 'A2', 'A');
-  if (a2.ok) { await reloadDevice(ctx, a2.dev); await openCompanions(a2.dev.page); ev.otherDevice = await companionListed(a2.dev.page, ctx.uids.B); }
+  /* #TASK-ES-366: 다른 기기는 서버(/api/track sync_companions) 응답이 온 뒤 다시 그린다 — 기대값(B 가 보임)은 같고, 비동기 응답을 최대 12초 기다린다 */
+  if (a2.ok) { await reloadDevice(ctx, a2.dev); await openCompanions(a2.dev.page); ev.otherDevice = !!(await waitUntil(() => companionListed(a2.dev.page, ctx.uids.B), 12000, 500)); }
   if (!ev.listedNow) return { fail: '추가 직후 목록', saw: 'B 없음' };
   if (!ev.afterReload) return { fail: '새로고침 뒤 목록', saw: 'B 없음' };
   if (!ev.otherDevice) return { fail: '다른 기기 목록', saw: 'B 없음' };

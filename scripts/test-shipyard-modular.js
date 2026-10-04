@@ -161,6 +161,9 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/account-switch-isolation.test.js'); // #TASK-ES-365 CORE-09 계정 전환 격리(A 로그아웃 -> B 로그인 시 B 화면·업로드에 A 데이터 0건)
   // #TASK-ES-364 목표 템플릿 데이터 6파일 분리 전후 deepStrictEqual
   runNode('tests/goal-templates-data-split.test.js');
+  runNode('tests/comm-dm-ledger-es366.test.js'); // #TASK-ES-366 DM·동반자 서버 원장 통로(COMM-03·04)·동반자 자기 키만
+  runNode('tests/direct-login-guard.test.js'); // #TASK-ES-368 CORE-13 빠른 복구 잠금(A 백업 기기에서 세션 없이/B 세션으로 복구 시 A 데이터 0건)
+  runNode('tests/dev-host-gate.test.js'); // #TASK-ES-372 테스터 B 직통 입장은 로컬 개발 호스트에서만(운영 주소 ?debug=true 로 버튼 0개·직접 호출 입장 0회)
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
 

@@ -1,0 +1,428 @@
+{
+ "task": "TASK-ES-366",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-366-COMM-REAL-FIX.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "COMM-03: 동반자 목록이 서버에 저장되고 다른 기기(같은 계정 새 브라우저)에서 보인다 — js/team-invite-comm.js persistCompanions·syncCompanionsFromDb 가 /api/track sync_companions 를 본인 토큰(Authorization Bearer)과 함께 보낸다(js/tabs/comm/dm-ledger.js trackPost). 서버로·localStorage 로 가는 사본에는 대화 흔적(_thread·_loadedThreadFromDb·lastMsg)을 넣지 않는다."
+  },
+  {
+   "id": "R2",
+   "text": "COMM-04A: A 가 B 에게 보낸 1:1 DM 이 서버(team_ping_replies)에 저장되어 B 화면에 도착한다 — 운영 표에 없는 상태 열(status·sent_at·delivered_at·read_at·is_read) 때문에 insert 가 실패하면 그 열만 빼고 다시 넣고(insertReply), 저장 실패는 화면 토스트로 알린다."
+  },
+  {
+   "id": "R3",
+   "text": "COMM-04B: B 가 대화를 열면 읽음이 서버에 기록되어 A 쪽 \"미확인 (1)\"이 \"읽음\"으로 바뀐다 — markDmThreadAsRead 를 대화 열기·열린 대화의 새 메시지에서 부르고, 서버 함수 og_dm_mark(받는 사람 본인 행의 읽음·도착 열만)를 docs/sql/2026-10-04-dm-read-columns.sql 로 제공한다(대시보드 실행은 상민님). B 가 꺼져 있는 동안 A 화면에 \"도착\"을 지어내지 않는다."
+  },
+  {
+   "id": "R4",
+   "text": "계정 간 유출: ensureDefaultCompanions 가 자기 uid 키(ourgoal_companions_backup_<uid>)만 읽고, 비어 있어도 같은 기기 다른 계정의 동반자 사본을 가져오지 않는다."
+  },
+  {
+   "id": "R5",
+   "text": "문서·검사: REQ(8원칙), claims, dev_log 1줄, TICKETS 1줄, 신고서 module-specs --write, 모듈 가드 통과(team-invite-comm.js 줄 수 감소), npm test 0 실패, 새 js 800줄 이하. 동결 파일 변경·retire·기대값 낮추기 없음. index.html loadProfile·migrateGuestDataToUser·syncServerRecords·performLogout(#678) 변경 없음. PR(초안 아님), 병합 안 함."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "동반자 서버 통로가 /api/track 요청에 본인 로그인 토큰을 Authorization Bearer 로 붙인다",
+   "touches": [
+    "js/tabs/comm/dm-ledger.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/dm-ledger.js",
+    "text": "headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "다른 기기에서 동반자를 불러올 때(syncCompanionsFromDb) 토큰을 붙이는 통로로 서버에 묻는다",
+   "touches": [
+    "js/team-invite-comm.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-invite-comm.js",
+    "text": "global.OurgoalDmLedger.trackPost({ action: 'sync_companions', userId: state.profile.id })"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "동반자를 추가·삭제해 저장할 때(persistCompanions) 토큰을 붙이는 통로로 서버에 저장한다",
+   "touches": [
+    "js/team-invite-comm.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-invite-comm.js",
+    "text": "global.OurgoalDmLedger.trackPost({ action: 'sync_companions', userId: uid, companions: list })"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "저장되는 동반자 목록은 대화 흔적을 뺀 사본이다",
+   "touches": [
+    "js/team-invite-comm.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-invite-comm.js",
+    "text": "list = storageCopyOf(list);"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "부품 시험 tests/comm-dm-ledger-es366.test.js 가 npm test(shipyard)에서 돈다 — 토큰 부착·토큰 없으면 미전송·사본 정리·열 빼고 재시도·읽음 함수·호출부·도착 표시·자기 키만을 단언한다",
+   "touches": [
+    "scripts/test-shipyard-modular.js",
+    "tests/comm-dm-ledger-es366.test.js",
+    "js/tabs/comm/dm-ledger.js",
+    "js/team-invite-comm.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/test-shipyard-modular.js",
+    "text": "runNode('tests/comm-dm-ledger-es366.test.js');"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "실계정 하네스 RA-COMM-03 은 다른 기기 목록을 서버 응답 뒤까지(최대 12초) 기다려 잰다 — 기대값(B 가 보임)은 같다",
+   "touches": [
+    "docs/design/harness/real-account-steps.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/design/harness/real-account-steps.js",
+    "text": "ev.otherDevice = !!(await waitUntil(() => companionListed(a2.dev.page, ctx.uids.B), 12000, 500));"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "A 가 B 를 동반자로 추가하면 같은 계정의 다른 기기(새 브라우저)에서 소통 > 동반자 목록에 B 가 보인다",
+   "touches": [
+    "js/team-invite-comm.js",
+    "js/tabs/comm/dm-ledger.js"
+   ],
+   "unverified": {
+    "reason": "needs-two-accounts",
+    "who": "테스트 계정 두 개(A·B)로 로그인할 수 있는 사람(또는 실계정 하네스 실행자)",
+    "how": [
+     "배포본에서 node docs/design/harness/real-account-check.js --only RA-COMM-03 (환경 변수 OG_APP_URL·OG_TEST_A/B_EMAIL/PASSWORD)",
+     "또는 A 로 두 브라우저에 로그인 → 한쪽에서 B 를 동반자 추가 → 다른 쪽을 새로고침하고 소통 > 동반자에서 B 를 찾는다"
+    ]
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "DM 전송은 오류를 돌려받는 통로(insertReply)로 저장한다",
+   "touches": [
+    "js/team-invite-comm.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-invite-comm.js",
+    "text": "var insRes = await global.OurgoalDmLedger.insertReply(global.sb, {"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "운영 표에 상태 열이 없으면 그 열만 빼고 다시 넣는다",
+   "touches": [
+    "js/tabs/comm/dm-ledger.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/dm-ledger.js",
+    "text": "if (OPTIONAL_REPLY_COLUMNS.indexOf(k) === -1) base[k] = payload[k];"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "DM insert 에 보낸 쪽이 delivered_at 을 넣지 않는다",
+   "touches": [
+    "js/team-invite-comm.js"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "js/team-invite-comm.js",
+    "text": "delivered_at: deliveredAt"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R2",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "A 가 B 에게 DM 을 보내면 B 의 소통 > DM 목록에 A 대화가 생기고 열면 그 메시지가 보인다",
+   "touches": [
+    "js/team-invite-comm.js",
+    "js/tabs/comm/dm-ledger.js"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "note": "법정은 외부 통신을 막아 로그인할 수 없고, 이 확인은 서로 다른 실계정 두 개의 로그인 세션(Supabase 인증)이 있어야 한다 — 게스트 화면에서는 DM 전송·동반자 저장이 로그인 안내로 막힌다",
+    "who": "테스트 계정 두 개(A·B)로 로그인할 수 있는 사람(또는 실계정 하네스 실행자)",
+    "how": [
+     "배포본에서 node docs/design/harness/real-account-check.js --only RA-COMM-04A",
+     "또는 A·B 두 브라우저: A 가 동반자 B 의 DM 에서 메시지 전송 → B 소통 > DM 에서 A 대화를 열어 메시지 확인"
+    ]
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "받는 사람이 대화를 열면 읽음 서버 반영을 부른다(renderCommDM)",
+   "touches": [
+    "js/team-invite-comm.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-invite-comm.js",
+    "text": "      markDmThreadAsRead(myId, person.id);"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "읽음 반영은 통로의 markThreadRead 를 거쳐 결과를 돌려준다",
+   "touches": [
+    "js/team-invite-comm.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-invite-comm.js",
+    "text": "var markRes = await global.OurgoalDmLedger.markThreadRead(global.sb, myId, getDmThreadId(myId, peerId));"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "읽음은 서버 함수 og_dm_mark(p_read true)를 먼저 부른다",
+   "touches": [
+    "js/tabs/comm/dm-ledger.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/dm-ledger.js",
+    "text": "var r = await sb.rpc('og_dm_mark', { p_ping_id: threadId, p_read: true });"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "서버 함수 SQL(받는 사람 본인 행의 읽음·도착 열만 변경)과 되돌리기·로컬 시험이 있다",
+   "touches": [
+    "docs/sql/2026-10-04-dm-read-columns.sql",
+    "docs/sql/2026-10-04-dm-read-columns-rollback.sql",
+    "docs/sql/2026-10-04-dm-read-columns-test.mjs"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/sql/2026-10-04-dm-read-columns.sql",
+    "text": "create or replace function public.og_dm_mark(p_ping_id text, p_read boolean default true)"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "보낸 쪽이 도착 시각을 지어내지 않는다(전송 150ms 뒤를 도착으로 쓰던 줄 없음)",
+   "touches": [
+    "js/team-invite-comm.js"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "js/team-invite-comm.js",
+    "text": "new Date(Date.now() + 150).toISOString()"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "내 메시지 상세에는 도착 시각이 있을 때만 \"도착\"을 쓴다",
+   "touches": [
+    "js/team-invite-comm.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-invite-comm.js",
+    "text": "(deliveredAt ? ' · 도착 ' + esc(deliveredTimeDetail) : '')"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R3",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "B 가 꺼져 있는 동안 A 의 보낸 메시지 상세에 \"도착\"이 없고 \"미확인 (1)\"이며, B 가 대화를 연 뒤 A 를 새로고침하면 \"읽음\"으로 바뀐다(docs/sql/2026-10-04-dm-read-columns.sql 대시보드 실행 뒤)",
+   "touches": [
+    "js/team-invite-comm.js",
+    "js/tabs/comm/dm-ledger.js",
+    "docs/sql/2026-10-04-dm-read-columns.sql"
+   ],
+   "unverified": {
+    "reason": "needs-two-accounts",
+    "who": "테스트 계정 두 개(A·B)로 로그인할 수 있는 사람(또는 실계정 하네스 실행자)",
+    "how": [
+     "상민님이 Supabase SQL Editor 에서 docs/sql/2026-10-04-dm-read-columns.sql 전체 Run(맨 아래 열 5·함수 1 확인)",
+     "배포본에서 node docs/design/harness/real-account-check.js --only RA-COMM-04B",
+     "또는 B 를 로그아웃한 채 A 가 DM 전송 → A 메시지를 눌러 상세에 도착 없음 확인 → B 로그인해 대화 열기 → A 새로고침 후 읽음 확인"
+    ]
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R4",
+   "kind": "static",
+   "domain": "code",
+   "statement": "동반자 복원이 다른 계정 키를 훑는 반복문이 없다(자기 uid 키만)",
+   "touches": [
+    "js/team-invite-comm.js"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "js/team-invite-comm.js",
+    "text": "lk.indexOf(COMPANIONS_STORAGE_PREFIX) === 0"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R4",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "같은 기기에서 계정 X 로 동반자를 만든 뒤 로그아웃하고 동반자가 없는 계정 Y 로 들어가면 Y 의 동반자 목록에 X 의 동반자가 나타나지 않는다",
+   "touches": [
+    "js/team-invite-comm.js"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "note": "법정은 외부 통신을 막아 로그인할 수 없고, 이 확인은 서로 다른 실계정 두 개의 로그인 세션(Supabase 인증)이 있어야 한다 — 게스트 화면에서는 DM 전송·동반자 저장이 로그인 안내로 막힌다",
+    "who": "테스트 계정 두 개(A·B)로 로그인할 수 있는 사람(또는 실계정 하네스 실행자)",
+    "how": [
+     "한 브라우저에서 계정 X 로그인 → 동반자 1명 추가 → 로그아웃 → 동반자 없는 계정 Y 로그인 → 소통 > 동반자 목록이 비어 있는지 본다(index.html loadProfile 의 같은 결함은 #678 이 고친 뒤에 함께 확인)"
+    ]
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R5",
+   "kind": "static",
+   "domain": "code",
+   "statement": "REQ 문서가 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-366-COMM-REAL-FIX.md"
+   ],
+   "check": {
+    "type": "fileExists",
+    "file": "docs/specs/REQ-TASK-ES-366-COMM-REAL-FIX.md"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R5",
+   "kind": "static",
+   "domain": "code",
+   "statement": "모듈 가드 기준선의 team-invite-comm.js 줄 수가 4131 에서 4105 로 낮아졌다",
+   "touches": [
+    "docs/architecture/module-baseline.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/module-baseline.json",
+    "text": "\"js/team-invite-comm.js\": 4105"
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R5",
+   "kind": "static",
+   "domain": "code",
+   "statement": "dev_log 에 한 줄 기록",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "dev_log.md",
+    "text": "TASK-ES-366: 실계정 확인 실패 3건"
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R5",
+   "kind": "static",
+   "domain": "code",
+   "statement": "TICKETS 에 한 줄 기록",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/rules/TICKETS.md",
+    "text": "#TASK-ES-366 | FIX"
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "DM·동반자 서버 통로 세포(js/tabs/comm/dm-ledger.js)를 team-invite-comm.js 보다 먼저 불러온다(index.html 스크립트 태그 1개)",
+   "touches": [
+    "index.html",
+    "js/tabs/comm/dm-ledger.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "<script src=\"js/tabs/comm/dm-ledger.js?v=20261004-es366\"></script><script src=\"js/team-invite-comm.js?v=20260916-es131\"></script>"
+   }
+  }
+ ]
+}

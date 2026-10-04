@@ -2359,7 +2359,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   <script src="js/time-tracker.js?v=20260915-es090"></script>
   <script src="js/record-ledger.js?v=20261004-es344"></script>
   <script src="js/account-isolation.js?v=20261004-es365"></script>
-  <script src="js/components.js?v=20260917-es162"></script><script src="js/records-stats.js?v=20260926-es276"></script><script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/data/goal-templates/health.js?v=20261004-es364"></script><script src="js/data/goal-templates/study.js?v=20261004-es364"></script><script src="js/data/goal-templates/career.js?v=20261004-es364"></script><script src="js/data/goal-templates/hobby.js?v=20261004-es364"></script><script src="js/data/goal-templates/mind.js?v=20261004-es364"></script><script src="js/data/goal-templates/relation.js?v=20261004-es364"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script><script src="js/notify-engine.js?v=20260917-es152"></script><script src="js/sanctuary-v3-engine.js?v=20260928-prod-renewal-final"></script>
+  <script src="js/direct-login-guard.js?v=20261005-es372"></script>
+  <script src="js/components.js?v=20260917-es162"></script><script src="js/records-stats.js?v=20260926-es276"></script><script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/tabs/comm/dm-ledger.js?v=20261004-es366"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/data/goal-templates/health.js?v=20261004-es364"></script><script src="js/data/goal-templates/study.js?v=20261004-es364"></script><script src="js/data/goal-templates/career.js?v=20261004-es364"></script><script src="js/data/goal-templates/hobby.js?v=20261004-es364"></script><script src="js/data/goal-templates/mind.js?v=20261004-es364"></script><script src="js/data/goal-templates/relation.js?v=20261004-es364"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script><script src="js/notify-engine.js?v=20260917-es152"></script><script src="js/sanctuary-v3-engine.js?v=20260928-prod-renewal-final"></script>
 <script>
 (function(){
   "use strict";
@@ -5560,6 +5561,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ 2계정 상호작용 테스트 (테스터 B 직통 입장: #TASK-ES-169) ============ */
   async function enterAsTesterB(){
+    if(!window.OurgoalDirectLoginGuard.isLocalDevHost(typeof location !== 'undefined' ? location.hostname : '')){ toast('테스터 직통 입장은 로컬 개발 환경에서만 열려요.'); return false; }
     var testerId = '00000000-0000-4000-a000-000000000002';
     var testerNick = '테스터_B';
     toast('테스터 B 계정으로 입장 중입니다…');
@@ -5599,8 +5601,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function initDevDebugButtons(){
     var forceDebug = typeof arguments[0] === 'boolean' ? arguments[0] : false;
     var isExplicitDebug = (typeof location !== 'undefined') && (location.search && location.search.indexOf('debug=true') !== -1);
-    var isLocal = (typeof location !== 'undefined') && (location.hostname === 'localhost' || location.hostname === '127.0.0.1');
-    var isDev = forceDebug || (isLocal && isExplicitDebug) || isExplicitDebug;
+    var isLocal = (typeof location !== 'undefined') && (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || window.OurgoalDirectLoginGuard.isLocalDevHost(location.hostname));
+    var isDev = isLocal && (forceDebug || isExplicitDebug);
     var lWrap = document.getElementById('landTesterBWrap');
     var aWrap = document.getElementById('authTesterBWrap');
     if(isDev){
@@ -36638,46 +36640,42 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       toast('닉네임 또는 이메일을 입력해주세요.');
       return false;
     }
+    /* [#TASK-ES-368] 입력값은 신원 증명이 아니다 — 정식 세션 uid(또는 구글 인증 이메일·개발용 테스터 uid)로만 들어간다 */
+    var directSessionUid = null;
+    try {
+      var directSessRes = await sb.auth.getSession();
+      var directSess = directSessRes && directSessRes.data && directSessRes.data.session;
+      if(directSess && directSess.user && directSess.user.id) directSessionUid = directSess.user.id;
+    } catch(sessErr){ directSessionUid = null; }
+    var directTarget = window.OurgoalDirectLoginGuard.resolveDirectLoginTarget({
+      sessionUid: directSessionUid,
+      provider: extraOpt && extraOpt.provider,
+      verifiedEmail: extraOpt && extraOpt.email,
+      explicitUid: extraOpt && extraOpt.userId,
+      devHost: window.OurgoalDirectLoginGuard.isLocalDevHost(typeof location !== 'undefined' ? location.hostname : '')
+    });
+    if(!directTarget.allow){
+      window.OurgoalDirectLoginGuard.guideToFormalLogin(document, toast, typeof initRememberedAuthFields === 'function' ? initRememberedAuthFields : null);
+      return false;
+    }
     toast('계정 기록을 확인하고 입장 중입니다…');
     try {
       setDeviceLoginTime(Date.now());
-      var targetUserId = null;
+      var targetUserId = directTarget.uid;
       var targetUsername = idVal;
       var targetDisplayName = (extraOpt && extraOpt.displayName) || (idVal.indexOf('@') !== -1 ? idVal.split('@')[0] : idVal);
       var newExtra = {
         display_name: targetDisplayName,
         avatar_url: (extraOpt && extraOpt.avatarUrl) || ''
       };
-      if(extraOpt && extraOpt.userId){
-        targetUserId = extraOpt.userId;
-      }
-      // 1. 로컬 스토리지에 캐시된 목표/기록/프로필 ID 우선 검색 (#TASK-ES-035)
-      if(!targetUserId){
-        var backupPrefixes = ['ourgoal_goals_backup_', 'ourgoal_records_backup_', 'ourgoal_profile_backup_', 'ourgoal_settings_'];
-        for(var bi = 0; bi < backupPrefixes.length; bi++){
-          var pfx = backupPrefixes[bi];
-          for(var i = 0; i < localStorage.length; i++){
-            var lk = localStorage.key(i);
-            if(lk && lk.indexOf(pfx) === 0){
-              var candidateId = lk.replace(pfx, '');
-              if(candidateId){
-                targetUserId = candidateId;
-                break;
-              }
-            }
-          }
-          if(targetUserId) break;
-        }
-      }
-      if(!targetUserId){
-        var lastUid = localStorage.getItem('ourgoal_current_user');
-        if(lastUid) targetUserId = lastUid;
-      }
-      // 2. 만약 백업 ID가 없으면 결정론적 식별 해시 ID 생성
-      if(!targetUserId){
-        var h = await sha256Hex('ourgoal_user_' + idVal.toLowerCase());
+      // 1. 구글 인증 이메일은 그 이메일에서 결정되는 uid 로만 (이 기기의 다른 사람 백업 uid 를 고르지 않는다)
+      if(!targetUserId && directTarget.deriveFromEmail){
+        var h = await sha256Hex('ourgoal_user_' + directTarget.deriveFromEmail);
         targetUserId = 'u_' + h.slice(0, 16);
       }
+      // 2. 이 기기에 남은 "이 uid 의" 백업만 확인한다 (#TASK-ES-035 의 다중 백업 접두사, 다른 uid 키는 보지 않음)
+      var backupPrefixes = ['ourgoal_goals_backup_', 'ourgoal_records_backup_', 'ourgoal_profile_backup_', 'ourgoal_settings_'];
+      var ownBackupCount = backupPrefixes.filter(function(pfx){ return localStorage.getItem(pfx + targetUserId) !== null; }).length;
       // 3. 프로필 로드 (loadProfile은 내부에서 users 행 보장, goals/checkins 조회 및 로컬 백업 자동 복원 수행)
       var p = null;
       try {
@@ -36721,7 +36719,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var as = document.getElementById('authScreen');
       if(as) as.style.display = 'none';
       enterApp();
-      toast(targetDisplayName + '님, 환영합니다!');
+      toast(targetDisplayName + '님, 환영합니다!' + (ownBackupCount > 0 ? ' 이 기기에 남은 내 기록도 확인했어요.' : ''));
       return true;
     } catch(err){
       console.warn('직통 로그인 실패:', err);
@@ -36743,6 +36741,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '<h3 style="margin:0 0 8px;font-size:1.15rem;font-weight:700;">빠른 계정 복구 및 입장</h3>' +
         '<p style="font-size:.875rem;color:var(--ink-soft);line-height:1.6;margin:0 0 16px;">' +
           escapeHtml(customNotice || '카카오 로그인 연동 지연 시에도 사용하시던 닉네임이나 이메일을 입력하시면 기존 목표와 기록을 즉시 불러와 입장하실 수 있습니다!') +
+        '</p>' +
+        '<p id="rescueLoginRequiredNote" style="font-size:.78rem;color:var(--ink-faint);line-height:1.5;margin:0 0 14px;">' +
+          escapeHtml('내 기록은 카카오·구글·이메일로 로그인한 계정으로만 열려요. 로그인 전이면 로그인 화면으로 안내해 드려요.') +
         '</p>' +
         '<div style="margin-bottom:14px;text-align:left;">' +
           '<label style="font-size:.8rem;font-weight:600;color:var(--ink-soft);margin-bottom:4px;display:block;">카카오 닉네임 또는 이메일</label>' +
