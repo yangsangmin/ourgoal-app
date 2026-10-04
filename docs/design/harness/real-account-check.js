@@ -12,6 +12,7 @@
  * 안전:
  *   - 필수 환경 변수가 하나라도 없으면 브라우저를 띄우지 않고 어디에도 접속하지 않은 채 '계정 없음 — 재생 안 함'(종료 코드 2).
  *   - 주소에 'ogtest' 가 없거나 A·B 가 같으면 접속하지 않고 종료(종료 코드 3). 실사용 계정 오입력 방지.
+ *     이미 있는 테스트 계정을 쓸 때는 OG_TEST_ALLOW 에 그 주소들을 쉼표로 적는다(정확히 같은 주소만 통과).
  *   - 만드는 데이터에는 runTag 를 붙이고, 끝에 그 표식이 붙은 자기 행만 지운 뒤 지운 목록을 cleanup 에 남긴다.
  */
 const fs = require('fs'), path = require('path');
@@ -41,15 +42,23 @@ function makeRunTag(){
 }
 
 /* 계정 조건 점검. 값은 돌려주지 않고 무엇이 없는지 이름만 돌려준다. */
+/* 'ogtest' 가 들어 있거나, OG_TEST_ALLOW 에 정확히 같은 주소로 적힌 경우만 테스트 계정으로 본다. */
+function isTestAddress(addr, env){
+  const a = String(addr || '').trim().toLowerCase();
+  if (ACCOUNT_MARK.test(a)) return true;
+  const allow = String(env.OG_TEST_ALLOW || '').split(',').map((x) => x.trim().toLowerCase()).filter(Boolean);
+  return allow.indexOf(a) >= 0;
+}
+
 function checkEnv(env){
   const missing = REQUIRED_ENV.filter((k) => !String(env[k] || '').trim());
   if (missing.length) return { ok: false, code: 2, reason: NO_ACCOUNT_MSG, missing };
   const a = String(env.OG_TEST_A_EMAIL).trim().toLowerCase(), b = String(env.OG_TEST_B_EMAIL).trim().toLowerCase();
   const bad = [];
-  if (!ACCOUNT_MARK.test(a)) bad.push('OG_TEST_A_EMAIL 에 ogtest 없음');
-  if (!ACCOUNT_MARK.test(b)) bad.push('OG_TEST_B_EMAIL 에 ogtest 없음');
+  if (!isTestAddress(a, env)) bad.push('OG_TEST_A_EMAIL 에 ogtest 없음(OG_TEST_ALLOW 에도 없음)');
+  if (!isTestAddress(b, env)) bad.push('OG_TEST_B_EMAIL 에 ogtest 없음(OG_TEST_ALLOW 에도 없음)');
   if (a === b) bad.push('A·B 주소가 같음');
-  if (env.OG_TEST_C_EMAIL && !ACCOUNT_MARK.test(String(env.OG_TEST_C_EMAIL))) bad.push('OG_TEST_C_EMAIL 에 ogtest 없음');
+  if (env.OG_TEST_C_EMAIL && !isTestAddress(env.OG_TEST_C_EMAIL, env)) bad.push('OG_TEST_C_EMAIL 에 ogtest 없음(OG_TEST_ALLOW 에도 없음)');
   if (!/^https?:\/\//.test(String(env.OG_APP_URL))) bad.push('OG_APP_URL 이 http(s) 주소가 아님');
   if (bad.length) return { ok: false, code: 3, reason: '계정 조건 위반 — 접속 안 함', problems: bad };
   return { ok: true };

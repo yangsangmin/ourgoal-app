@@ -139,4 +139,21 @@ assert.strictEqual(capturedError, true, 'block:error event caught by watertight 
 delete homeMega.subBlocks['faulty-isolate'];
 console.log('  ✓ Watertight isolation verified: sub-block failure does not halt the ship');
 
+// 6. Module guard ratchet (#TASK-ES-356 CORE-08): 모듈화 부채가 기준선보다 늘면 실패 — docs/architecture/MODULE-BLUEPRINT.md
+console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots + guard/scaffold unit tests (TASK-ES-356)');
+{
+  const { spawnSync } = require('child_process');
+  const runNode = (rel) => {
+    const r = spawnSync(process.execPath, [path.join(__dirname, '..', rel)], { encoding: 'utf8', cwd: path.join(__dirname, '..') });
+    process.stdout.write(r.stdout || '');
+    if (r.status !== 0) process.stderr.write(r.stderr || '');
+    assert.strictEqual(r.status, 0, `${rel} must pass (exit ${r.status})`);
+  };
+  runNode('scripts/module-guard.js');
+  runNode('tests/core-capabilities-slots.test.js');
+  runNode('tests/module-guard.test.js');
+  runNode('tests/new-module.test.js');
+}
+console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
+
 console.log('✨ MASTER SHIPYARD MODULAR ARCHITECTURE VALIDATION 100% COMPLETE & PASS!');
