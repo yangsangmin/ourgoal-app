@@ -213,14 +213,14 @@
       "req": "R4",
       "kind": "static",
       "domain": "config",
-      "statement": "npm test(smoke-test) 가 계정 전환 격리 부품 시험을 실행한다",
+      "statement": "npm test(scripts/test-shipyard-modular.js) 가 계정 전환 격리 부품 시험을 실행한다",
       "touches": [
-        "scripts/smoke-test.js"
+        "scripts/test-shipyard-modular.js"
       ],
       "check": {
         "type": "codeContains",
-        "file": "scripts/smoke-test.js",
-        "text": "path.join(__dirname, '..', 'tests', 'account-switch-isolation.test.js')"
+        "file": "scripts/test-shipyard-modular.js",
+        "text": "runNode('tests/account-switch-isolation.test.js');"
       }
     },
     {

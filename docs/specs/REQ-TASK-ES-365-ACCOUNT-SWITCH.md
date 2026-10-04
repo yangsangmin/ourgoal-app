@@ -46,7 +46,7 @@
 | `performLogout` | 기존 두 키 삭제 + `clearSharedSessionCopies()`(전체 사본·직전 사용자·uid 없는 `ourgoal_offline_sync_queue`) |
 | `restoreSessionAndEnter` | `loadProfile` 전에 `dropForeignSessionCopy(session.user.id)`, 메모리 `state.profile` 이 다른 로그인 사용자면 비움 |
 | 부팅 게스트 복구 | `readOwnCopy('ourgoal_records_backup_', gp.id)`·`readOwnCopy('ourgoal_profile_backup_', gp.id)` |
-| 시험 | `tests/account-switch-isolation.test.js` (index.html 실제 함수 6개를 잘라 가짜 브라우저·RLS 흉내 가짜 Supabase·api/track.js 실제 처리기로 실행) + `scripts/smoke-test.js` 에서 실행 |
+| 시험 | `tests/account-switch-isolation.test.js` (index.html 실제 함수 6개를 잘라 가짜 브라우저·RLS 흉내 가짜 Supabase·api/track.js 실제 처리기로 실행) + `scripts/test-shipyard-modular.js`(npm test 마지막 단계)에서 실행 |
 | 세포 신고서 | `docs/architecture/modules.json` `account-isolation`(organ) |
 
 ## 4. [원칙 ④] 재검토 — 다른 길과 비교
@@ -75,7 +75,7 @@
 - 부품 시험 `tests/account-switch-isolation.test.js`:
   - 수정 후: **6/6 통과**. 측정값 `aTextOnB 0`, `aBioOnB 0`, `aCompanionOnB 0`, `bUploadsWithA 0`, `bLocalCopiesWithA 0`, `offlineATextOnB 0`, `noLogoutATextOnB 0`, `syncIdsOtherThanB 0`, `aBackRestored 1`(A 재로그인 때 자기 백업 복원), `guestRecMigrated 1`·`guestGoalMigrated 1`·`guestRecOnServerAsB 1`(게스트 이관 유지), `sharedKeysLeft []`, `serverAKept true`.
   - 수정 전(origin/main index.html 을 `--html` 로): **1/6 통과**(게스트 이관 ⑤만). `aTextOnB 1`, `aBioOnB 1`, `aCompanionOnB 1`, `bUploadsWithA 2`, `bLocalCopiesWithA 1`, `syncIdsOtherThanB 1`.
-- `npm test`(NODE_PATH 지정): 종료 코드 0, smoke 444 통과 0 실패, 무결성 38/38, 모듈 가드 통과.
+- `npm test`(NODE_PATH 지정): 종료 코드 0, smoke 443 통과 0 실패, 무결성 38/38, 모듈 가드 통과, test-shipyard-modular 안 계정 전환 격리 시험 6/6.
 - 모의 하네스 `--mock --only RA-CORE-SWITCH`: 수정 전(origin/main) **실패** `aTextOnB 1` → 수정 후 **통과** `aTextOnB 0`, `profileIsB true`.
 - 실계정 하네스(작업자 실측, 판정 아님): 수정 전 운영 **실패**(1절). 수정 후 — 8절.
 
