@@ -1,0 +1,67 @@
+{
+ "total": 13,
+ "passed": 5,
+ "failed": 8,
+ "results": [
+  {
+   "name": "S1 POST 토큰 없음 + 남의 userId → 401, 행 안 생김",
+   "ok": false,
+   "err": "응답 코드\n\n200 !== 401\n"
+  },
+  {
+   "name": "S2 POST 가짜 토큰 → 401, 행 안 생김",
+   "ok": false,
+   "err": "응답 코드\n\n200 !== 401\n"
+  },
+  {
+   "name": "S3 POST 본인 토큰 + 남의 userId → 403, 행 안 생김",
+   "ok": true
+  },
+  {
+   "name": "S4 POST 본인 토큰 + 본인 userId → 200, 행 user_id = 토큰 uid",
+   "ok": true
+  },
+  {
+   "name": "S5 POST 본인 토큰 + userId 생략 → 200, 행 user_id = 토큰 uid",
+   "ok": false,
+   "err": "응답 코드\n\n400 !== 200\n"
+  },
+  {
+   "name": "S6 DELETE 토큰 없음 → 401, 남의 구독 행 그대로",
+   "ok": false,
+   "err": "응답 코드\n\n200 !== 401\n"
+  },
+  {
+   "name": "S7 DELETE 본인 토큰으로 남의 구독 → 403, 행 그대로",
+   "ok": true
+  },
+  {
+   "name": "S8 DELETE 본인 토큰으로 본인 구독 → 200, 그 행만 지워짐",
+   "ok": true
+  },
+  {
+   "name": "S9 GET 공개키 조회는 토큰 없이 200 그대로",
+   "ok": true
+  },
+  {
+   "name": "A1 앱 구독 등록: 로그인 세션 → POST 1건, Authorization = Bearer 세션 토큰",
+   "ok": false,
+   "err": "Authorization 머리글\n+ actual - expected\n\n+ undefined\n- 'Bearer session-token-of-me'\n"
+  },
+  {
+   "name": "A2 앱 구독 등록: 세션 없음(게스트) → POST 0건",
+   "ok": false,
+   "err": "POST 건수\n\n1 !== 0\n"
+  },
+  {
+   "name": "A3 앱 구독 해제: 로그인 세션 → DELETE 1건, Authorization = Bearer 세션 토큰",
+   "ok": false,
+   "err": "Authorization 머리글\n+ actual - expected\n\n+ undefined\n- 'Bearer session-token-of-me'\n"
+  },
+  {
+   "name": "A4 앱 구독 해제: 세션 없음 → DELETE 0건",
+   "ok": false,
+   "err": "DELETE 건수\n\n1 !== 0\n"
+  }
+ ]
+}

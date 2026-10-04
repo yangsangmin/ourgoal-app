@@ -175,6 +175,8 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/goal-result-btn-es380.test.js');
   // #TASK-ES-386 아바타 페르소나 320종 → MBTI 16파일 분리 전후 deepStrictEqual(Node·브라우저 순서)·변이 2종
   runNode('tests/avatar-personas-split.test.js');
+  // #TASK-ES-400 /api/push-subscribe POST·DELETE 로그인 토큰 필수(없음 401·남의 userId 403·본인 200) · 앱 두 요청 Bearer, 세션 없으면 0건
+  runNode('tests/push-subscribe-auth-es400.test.js');
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
 

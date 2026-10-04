@@ -25,6 +25,21 @@ function verifyCalendarToken(token) {
   return { valid: false, isDemo: false, uid: null };
 }
 
+// #TASK-ES-400: 구독 등록·삭제는 로그인 사용자 토큰이 반드시 있어야 하고, 대상 사용자는 토큰의 uid 로만 정한다.
+async function resolveTokenUser(req, sb) {
+  var header = (req.headers && (req.headers.authorization || req.headers.Authorization)) || '';
+  var token = String(header).replace(/^Bearer\s+/i, '').trim();
+  if (!token || !sb) return null;
+  try {
+    var r = await sb.auth.getUser(token);
+    var u = r && r.data && r.data.user;
+    if (r.error || !u || !u.id) return null;
+    return String(u.id);
+  } catch (e) {
+    return null;
+  }
+}
+
 function getSupabase() {
   var url = process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
   var key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -86,26 +101,22 @@ module.exports = async function handler(req, res) {
 
   if (req.method === 'POST') {
     var body = req.body || {};
-    var userId = body.userId;
     var subscription = body.subscription;
     var checkinTimes = Array.isArray(body.checkinTimes) ? body.checkinTimes : [];
     var timezone = body.timezone || 'Asia/Seoul';
-    if (!userId || !subscription || !subscription.endpoint || !subscription.keys) {
-      res.status(400).json({ error: 'userId and subscription are required' });
+    var tokenUid = await resolveTokenUser(req, sb);
+    if (!tokenUid) {
+      res.status(401).json({ error: 'unauthorized: valid user token required' });
       return;
     }
-
-    // #TASK-ES-252: 토큰 제공 시 소유자 교차 검증
-    var authHeader = (req.headers && (req.headers.authorization || req.headers.Authorization)) || '';
-    var authToken = authHeader.replace(/^Bearer\s+/i, '').trim();
-    if (authToken && sb) {
-      try {
-        var { data: uData } = await sb.auth.getUser(authToken);
-        if (uData && uData.user && uData.user.id !== userId) {
-          res.status(403).json({ error: 'Forbidden: Token user does not match target userId' });
-          return;
-        }
-      } catch (e) {}
+    if (body.userId && String(body.userId) !== tokenUid) {
+      res.status(403).json({ error: 'Forbidden: Token user does not match target userId' });
+      return;
+    }
+    var userId = tokenUid;
+    if (!subscription || !subscription.endpoint || !subscription.keys) {
+      res.status(400).json({ error: 'subscription is required' });
+      return;
     }
 
     try {
@@ -134,24 +145,25 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    // #TASK-ES-252: 토큰 제공 시 소유자 교차 검증
-    var authHeader = (req.headers && (req.headers.authorization || req.headers.Authorization)) || '';
-    var authToken = authHeader.replace(/^Bearer\s+/i, '').trim();
-    if (authToken && sb) {
-      try {
-        var { data: uData } = await sb.auth.getUser(authToken);
-        if (uData && uData.user) {
-          var { data: subData } = await sb.from('push_subscriptions').select('user_id').eq('endpoint', endpoint).limit(1);
-          if (subData && subData.length > 0 && subData[0].user_id !== uData.user.id) {
-            res.status(403).json({ error: 'Forbidden: Cannot delete push subscription belonging to another user' });
-            return;
-          }
-        }
-      } catch (e) {}
+    var delUid = await resolveTokenUser(req, sb);
+    if (!delUid) {
+      res.status(401).json({ error: 'unauthorized: valid user token required' });
+      return;
+    }
+    try {
+      var { data: subData, error: subErr } = await sb.from('push_subscriptions').select('user_id').eq('endpoint', endpoint).limit(1);
+      if (subErr) throw subErr;
+      if (subData && subData.length > 0 && String(subData[0].user_id) !== delUid) {
+        res.status(403).json({ error: 'Forbidden: Cannot delete push subscription belonging to another user' });
+        return;
+      }
+    } catch (e) {
+      res.status(500).json({ error: e.message || 'unknown error' });
+      return;
     }
 
     try {
-      var delRes = await sb.from('push_subscriptions').delete().eq('endpoint', endpoint);
+      var delRes = await sb.from('push_subscriptions').delete().eq('endpoint', endpoint).eq('user_id', delUid);
       if (delRes.error) throw delRes.error;
       res.status(200).json({ ok: true });
     } catch (e) {
