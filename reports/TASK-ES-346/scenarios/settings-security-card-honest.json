@@ -1,0 +1,35 @@
+{
+  "id": "settings-security-card-honest",
+  "title": "PIN 을 설정하지 않은 게스트가 설정 탭을 열면 보안 배지가 '앱 잠금 PIN 꺼짐'으로 보인다(보호 중이라고 말하지 않는다)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#badge2faStatus",
+      "text": "앱 잠금 PIN 꺼짐"
+    },
+    {
+      "capture": "security-badge"
+    }
+  ]
+}

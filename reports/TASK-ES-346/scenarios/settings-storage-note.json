@@ -1,0 +1,39 @@
+{
+  "id": "settings-storage-note",
+  "title": "설정의 데이터 묶음을 열면 저장 방식 안내가 서버(로그인)·이 기기(설정·캐시·게스트)로 사실대로 보인다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#setGroupDataSummary"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#dataStorageNote",
+      "text": "아워골 서버(Supabase)에 저장되고"
+    },
+    {
+      "capture": "storage-note"
+    }
+  ]
+}

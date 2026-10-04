@@ -5730,6 +5730,25 @@
 - **진행 단계**: [4단계: 심사 청구]
 ---
 
+## [2026-10-04 14:30] #TASK-ES-347: DM 표(team_pings·team_ping_replies) anon 공개 읽기 차단 RLS 설계
+- **목표**: anon 키로 두 표 전부(39행·56행)가 읽히는 보안 결함(상민님 허가 하 건수 1회 실측, PR #357 부수 발견)을 앱 기능을 깨지 않는 범위로 좁힌다.
+- **조사**: 코드 경로 27곳 전수(REQ 표). 카카오·이메일은 Supabase 세션(auth.uid()=sender_id), 구글 직접 로그인·빠른 복구·테스터 B·게스트는 세션 없음(anon). 팀 구성원 정보는 서버에 없음. api/** 는 두 표 미참조(서비스롤은 RLS 우회).
+- **산출물**: docs/sql/2026-10-04-dm-rls-step1.sql(anon select RESTRICTIVE false)·step2.sql(행 종류별 RESTRICTIVE)·각 rollback·check.sql·README([손 필요])·test.mjs. 기존 정책은 지우지 않음.
+- **예비 확인(판정 아님)**: PGlite 로컬 Postgres 에서 using(true) 정책을 재현해 1·2단계·되돌리기 실행 33/33. 실서버 미실행(상민님 실행 대기).
+- **알아 둘 것**: 세션 없는 입장은 1단계 뒤 두 표 읽기, 2단계 뒤 쓰기를 잃는다. 마니또 응원 sender_id 가 받는 사람에게 노출되는 익명성 누출은 범위 밖.
+## [2026-10-04 15:30] #TASK-ES-344: 기록 원장 — 지운 기록 부활 차단 + 서버 필드 보존 (노션 REC-01)
+- **목표**: 휴지통으로 지운 기록이 어떤 복원 경로로도 돌아오지 않고, 시간 기록의 구간·몰입 시간·연결 목표 등이 서버 왕복 뒤 그대로 남게 한다.
+- **구현**: `js/record-ledger.js` 신규(행 변환·meta 묶기/풀기·칸 없을 때 재시도·id 병합). `api/track.js` `handleSyncRecords` 조회에 `.is('deleted_at', null)`(칸 없으면 폴백 조회 + 행 필터), 저장·응답을 모듈로. `index.html` `saveProfile`(meta 포함 upsert)·`loadProfile`(meta 풀기, 휴지통 기록은 로컬 백업 복구에서 제외)·`syncServerRecords`(통째 교체 → id 병합, forceRefresh 는 서버 값 우선). `docs/sql/2026-10-04-checkins-meta.sql`(add column if not exists meta jsonb default null) — 실서버 미실행.
+- **스키마 선택**: 칸 7개 대신 jsonb `meta` 1칸 — SQL 1줄·재시도 분기 1개, laps 는 원래 배열 객체, 서버 집계 용도 없음, 기존 `theme_metadata jsonb` 관례와 같음.
+- **예비 확인(판정 아님, 부품만 돌려 봄 — 가짜 Supabase)**: `tests/record-ledger-sync.test.js` 9/9. 측정값 deletedAfterSync 0·deletedAfterMerge 0·roundTripMismatch 0(META 7칸)·localKept 1. 같은 시험을 기준 커밋 `api/track.js` 로 돌리면 5/9(지운 기록 1건 부활, META 7칸 전부 불일치). `npm test` 종료코드 0(smoke 440/0, clicks 38/38).
+- **실서버 할 일**: SQL Editor 에서 `docs/sql/2026-10-04-checkins-meta.sql` 실행, `checkins.deleted_at` 실재 확인(없으면 `docs/sql/goals-checkins-softdelete.sql`).
+## [2026-10-04 14:20] #TASK-ES-345: 구글 캘린더 토큰 계정 격리 (CAL-02)
+- **목표**: 같은 기기에서 계정을 바꾸면 다른 계정의 구글 토큰·일정·이메일을 쓰던 통로 제거(메모 08·17, 노션 CAL-02).
+- **원인**: #TASK-ES-265 재연동 완화용 공용 키(`ourgoal_gcal_token_v1_last`·`ourgoal_gcal_email_last`·`ourgoal_gcal_events`)와 폴백(`restoreGoogleToken` 아무 키 탐색, `loadLocalSettings` 타 uid 설정 복사), 메모리 토큰 주인 미확인.
+- **구현**: `index.html` — `purgeLegacySharedGcalKeys`·`gcalCurrentUid`·`gcalEventsKey`·`ensureGcalOwner`·`gcalTokenStatus` 신규, `restoreGoogleToken`·`saveGoogleToken`·`isGoogleCalendarConnected`·`loadLocalSettings`·`migrateGuestDataToUser`·`getGoogleAccessToken`·`renderCalendarScreen`·설정 `#gcalStatusBox` 수정. 일정 캐시는 `ourgoal_gcal_events_<uid>`. 만료·부재 시 `#gcalReconnectBtn`·`#calGcalMiniBadge[data-gcal-state]` 가 `openGoogleCalendarConnectModal()` 재사용. 유지한 예외: 게스트 프로필 uid 키 → 새 uid 1회 이전 후 게스트 키 삭제.
+- **예비 확인(판정 아님)**: `docs/design/harness/gcal-isolation-check.js` 를 수정 전(origin/main c634fc2)·후에 실행 → 수정 전에는 게스트가 u_alice 토큰을 받고 A 일정·이메일이 보였음. 수정 후 restoreGoogleToken=null, A 일정·이메일 0, 구글 호출 중 A 토큰 0, 공용 키 3종 삭제, 설정 복사 0, A 재로그인 시 A 토큰 복원, 게스트→회원 이전 후 게스트 키 삭제, 만료 시 안내·다시 연결 표시. 요약: `docs/design/harness/out-gcal-isolation-2026-10-04.json`. `npm test` 종료코드 0(smoke 441 통과·0 실패).
+- **확인 못 함**: 실계정 2개 교차 확인(레벨 5), 실제 구글 OAuth 재연결 완료 화면.
+- **진행 단계**: [4단계: 심사 청구]
 ## [2026-10-04 13:30] #TASK-ES-343: 법정(court) PR #650 이전 구조로 복원 + 변경분 한정 정적 검사 3종 이식
 - **목표**: v4 엔진(court/engine.js)이 기존 부채까지 세어 모든 PR 을 돌려보내고(#651·#652 REJECTED), 가짜 "Level 5 Verified" 를 찍으며, pull_request + 관리자 키로 판사 분리를 깨뜨린 문제를 되돌린다. v4 의 정적 검사는 "이번 변경이 새로 만든 것만" 세는 형태로 예전 법정에 옮긴다.
 - **수정/실행 내역**:
@@ -5754,4 +5773,12 @@
   - 서버 칸(SQL) 추가 없음: 서버의 회원 검색 결과는 모두 실제 회원이고 AI 는 전부 클라이언트 시드(id 접두)라 판별에 서버 칸이 필요하지 않음.
 - **검증 결과**(측정값, 판정 아님): 헤드리스 M1(민지 UUID 실사용자) · M2(동반자 목록 실 사용자 배지·DM 후보 노출) · M3(축하 창 동류 러너 칸 없음, 고정 이름 0, 실데이터 입력 시 해당 회원만) · M4(마니또 AI 카드 배지 1/1·게이지 0·연속일수 0, 받은 응원 AI 배지 1/1, 웰컴 응원 AI 배지) · 피드 거짓 라벨 0 모두 true. 단위 시험 5/5(기준 커밋에서는 실패). npm test 종료코드 0. 실계정 2개(레벨 5)는 확인하지 못함.
 - **진행 단계**: [4단계: 심사 청구].
+
+## [2026-10-04 14:10] #TASK-ES-346: 설정 탭 정직성 SET-01(가짜 보안 표시)·SET-02(탈퇴 고지)
+- **조사(실제 동작)**: `api/withdraw.js` 는 화면에서 호출되지 않음(purge 모드 존재하나 호출자·크론 0). 탈퇴는 `submitWithdrawAccount` 가 `settings.pendingDeletionAt`(이 기기 localStorage) + `sb.auth.updateUser` 메타데이터(`account_status: pending_deletion`) 기록 후 로그아웃. 복구 창(`js/auth-safety.js checkPendingDeletionRestore`)은 이 기기 localStorage 표시가 있을 때만. 설정(`settings`)은 `ourgoal_settings_<uid>` localStorage 에만 저장(서버 upsert 없음). 개별 기기 차단 방송 `device_remote_revocations` 수신자 0곳.
+- **변경(index.html)**: 탈퇴 팝업 문장별 정정(대조표 REQ 3-4) · `#badge2faStatus` 를 `paintSecurityCard()` 실상태로 · '앱 잠금 PIN (이 기기)' 개명 · `hashAppLockPin`/`verifyAppLockPin`(SHA-256, `sha256v1$소금$hex`, 평문 첫 성공 시 이전) · `getRegisteredDevices` 가짜 2대 생성 제거·저장값 이 기기 1대로 정리·위치 미수집 · 개별 '원격 로그아웃'·`killDeviceSession` 거짓 토스트 제거 → `openLogoutOtherDevicesConfirmModal`(목록과 분리, `signOut({scope:'others'})` 실패 시 성공 토스트 없음, 게스트 안내) · 보안 카드 '서울, 대한민국'·'현재 1개의 활성 세션' 제거 · `paintCacheUsage()`(navigator.storage.estimate, 실패 시 '측정 불가') + `clearCacheBtn` 이 Cache API 실제 삭제 후 재측정 · 저장 방식 안내 정정 · 설정 묶음 summary id 2개(`#setGroupAccountSummary`·`#setGroupDataSummary`) · 설정 열 때 `renderActiveDevicesList()` 호출.
+- **시험지**: 거짓 고지를 고정하던 `scripts/smoke-test.js`(ES-158·ES-271 검사)와 `tests/account-withdrawal-modal.test.js`·`tests/device-session-control.test.js` 문자열 검사를 새 사실 문구로 교체(claims.json retire 에 사유).
+- **예비 확인(판정 아님, 작업자 측정)**: `reports/TASK-ES-346/measure-settings-honesty.js`(shots-lib 게스트 시드·Supabase 목) — 작업 트리: PIN 미설정 배지 '앱 잠금 PIN 꺼짐', 가짜 기기 생성 0·예전 저장값 3대→1대(가짜 0), 저장 PIN `sha256v1$…`(평문 0), 틀린 PIN 잠김 유지·맞는 PIN 해제, 평문 '4321' 사용자 통과 후 해시 이전, 저장공간 '브라우저 추정치'·비우기 후 재측정. origin/main 대조: 배지 '✓ 2단계 인증 보호 중', 확인 창 열면 가짜 기기 2대 저장, PIN 평문 '2580', 용량 '14.2 MB', 카드 버튼 '원격 기기 세션이 안전하게 차단되었습니다'. grep(index.html): '14.2 MB' 0 · 'dev_tablet_tab' 0 · '2단계 인증 보호 중' 0. `npm test` 종료코드 0.
+- **확인 못 함**: 실계정 로그인 상태의 탈퇴 팝업 화면, 실계정 2기기 '다른 기기 모두 로그아웃' 실효.
+- **진행 단계**: [4단계: 심사 청구]
 ---

@@ -32,14 +32,14 @@ assert.ok(html.includes('소통 및 커뮤니티 데이터'), 'loss item: commun
 // 4. 30일 안전 유예 및 원클릭 복구 안내
 assert.ok(html.includes('2. 30일 탈퇴 유예 안전망 및 원클릭 복구'), '30-day grace period title must exist');
 assert.ok(html.includes('30일간 안전 유예 기간'), '30-day grace notice must exist');
-assert.ok(html.includes('원클릭으로 모든 데이터가 100% 무손실 복구'), 'one-click lossless recovery notice must exist');
+assert.ok(html.includes('30일 안에 이 기기에서 다시 로그인'), 'same-device re-login recovery notice must exist (#TASK-ES-346)');
 
 // 5. 법적 책임 및 보존 고지 3대 법령
-assert.ok(html.includes('3. 법적 책임 및 관계 법령에 따른 정보 보존 고지'), 'legal responsibility title must exist');
+// [#TASK-ES-346 SET-02] 실행되지 않는 보존·파기 약속 대신 실제 현황과 삭제 요청 경로
+assert.ok(html.includes('3. 데이터 삭제(파기) 현황과 요청 방법'), 'deletion status and request path title must exist');
 assert.ok(html.includes('개인정보보호법 제21조'), 'Personal Information Protection Act Art 21 must exist');
-assert.ok(html.includes('전자상거래 등에서의 소비자보호에 관한 법률 제6조'), 'Electronic Commerce Act Art 6 must exist');
-assert.ok(html.includes('통신비밀보호법 제15조의2'), 'Protection of Communications Secrets Act Art 15-2 must exist');
-assert.ok(html.includes('부정 이용 및 분쟁 방지'), 'fraud prevention clause must exist');
+assert.ok(html.includes('아직 탈퇴 후 자동 파기 기능을 실행하고 있지 않습니다'), 'honest notice that auto purge is not running must exist');
+assert.ok(html.includes('ourgoal.support@gmail.com'), 'deletion request email must exist');
 
 // 6. 4위 1체 배선 (체크박스, 취소, 확정 버튼)
 assert.ok(html.includes('id="withdrawAgreeCheck"'), 'withdrawAgreeCheck checkbox must exist');

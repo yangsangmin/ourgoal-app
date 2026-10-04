@@ -1,0 +1,43 @@
+{
+  "id": "settings-killswitch-honest",
+  "title": "보안 카드의 '다른 기기 로그아웃' 버튼을 게스트가 누르면 세션이 없다고 알리고, 끊었다고 말하지 않는다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#btnDeviceKillSwitch"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "게스트 체험 모드는 로그인 세션이 없어"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#btnConfirmLogoutOtherModal"
+    },
+    {
+      "capture": "killswitch"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "id": "settings-security-card-facts",
+  "title": "설정 탭 보안 카드가 근거 없는 위치·세션 수 대신 '이 기기만 보여 주고 다른 기기 목록·위치는 수집하지 않는다'고 말한다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#securityCardSummary",
+      "text": "다른 기기의 접속 목록·위치는 수집하지 않아요"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#securityCardDeviceName",
+      "text": "이 기기 (지금 사용 중)"
+    },
+    {
+      "capture": "security-card-facts"
+    }
+  ]
+}
