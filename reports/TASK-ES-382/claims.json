@@ -193,6 +193,22 @@
    }
   },
   {
+   "id": "C19",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "게스트 tab-check 소통·목표 탭 48장 816값 비교(기준 대 작업)에서 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-382/tab-compare-base1-after.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-382/tab-compare-base1-after.json",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
    "id": "C12",
    "req": "R",
    "kind": "static",
@@ -258,7 +274,7 @@
    "req": "R",
    "kind": "static",
    "domain": "code",
-   "statement": "같은 부품 시험이 기준 사본(git archive 0e9a1e8)에서는 대화방 id 2건 실패로 기록되어 있다",
+   "statement": "같은 부품 시험이 기준 사본(git archive origin/main f3b1c50)에서는 대화방 id 2건 실패로 기록되어 있다",
    "touches": [
     "reports/TASK-ES-382/unit-feed-share-dm-thread-base.json"
    ],
@@ -288,7 +304,7 @@
      "A 로 로그인해 목표 탭 팀 화면의 👥 팀원 초대 → 동반자 B 초대 버튼, 소통 피드 카드의 영입 버튼 → 팀 선택을 눌러 토스트·팀원 목록을 본다",
      "소통 피드 글의 공유 → 동반자 B 에게 보내기 / 팀 톡방 공유를 눌러 B 화면 DM·팀 채팅에 그 글이 보이는지 본 뒤 만든 데이터를 지운다"
     ],
-    "note": "법정은 게스트(금고 fixture)로만 화면을 연다. 작업자 실측(판정 아님): 로컬 127.0.0.2 + /api 운영 전달로 RA-COMM-04A·04B 기준·작업 다섯 번 모두 통과, RA-COMM-03 은 기준·작업 양쪽에서 통과·실패가 번갈아 나옴(같은 단계 — 검색 결과에 상대 버튼 없음, 이 변경 밖의 동반자 검색), 계정 A 로그인 상태 모달 7단계 49값 차이 0 — 단 A 의 동반자·이끄는 팀이 0 이라 위 버튼은 그려지지 않아 누르지 못함(reports/TASK-ES-382/real-account-comm.json). 주소·계정은 가렸다."
+    "note": "법정은 게스트(금고 fixture)로만 화면을 연다. 작업자 실측(판정 아님): 로컬 127.0.0.2 + /api 운영 전달로 RA-COMM-04A·04B 기준·작업 다섯 번 모두 통과, RA-COMM-03 은 main 합치기 전 기준·작업 양쪽에서 흔들렸고(하네스 정리가 동반자를 못 지움) #698 이 들어온 뒤 기준·작업 모두 통과, 계정 A 로그인 상태 모달 7단계 49값 차이 0 — 단 A 의 동반자·이끄는 팀이 0 이라 위 버튼은 그려지지 않아 누르지 못함(reports/TASK-ES-382/real-account-comm.json). 주소·계정은 가렸다."
    }
   },
   {

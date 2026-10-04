@@ -34,14 +34,14 @@
 ## 4. [원칙 ④] 재검토 — 한계(정직하게)
 
 - 원본은 여전히 3,276줄로 800줄을 넘는다(④ 800줄 초과 파일 수는 10 그대로, 줄 수만 -829). 남은 묶음은 기준 시험지가 원본 파일 글자를 직접 찾는 단언 때문에, 시험지를 "원본 + 새 팀 파일" 합본으로 읽게 고친 선행 PR(제품 0·기대값 0)이 병합된 뒤에 옮길 수 있다(프로토콜 5절 5항과 같은 순서).
-- 실계정 RA-COMM-03 은 기준·작업 양쪽에서 통과와 실패가 번갈아 나왔다(기준 실패·통과, 작업 통과·실패·실패, 실패 단계는 늘 "검색 결과에 상대 테스트 계정 버튼 없음"). 이 변경이 건드리지 않는 동반자 검색(`renderCommTopInviteSearch`, 원본에 그대로)의 흔들림으로 본다 — 결함 후보로 보고.
+- 실계정 RA-COMM-03 은 main 합치기 전 기준(0e9a1e8)·작업 양쪽에서 통과와 실패가 번갈아 나왔다(실패 단계는 늘 "검색 결과에 상대 테스트 계정 버튼 없음"). 원인은 하네스 정리가 테스트 동반자를 못 지워 다음 회차에 이미 동반자인 상태로 시작한 것으로, #698(TASK-ES-383, 정리가 바텀시트 확인창을 누름)이 main 에 들어온 뒤 기준(f3b1c50)·작업(d338d67) 모두 3/3 통과했다.
 - 로그인 상태 모달 비교에서 계정 A 의 동반자·이끄는 팀이 0 이라 동반자 초대 버튼·피드 공유 DM 버튼·팀 영입 버튼은 그려지지 않았다(눌러 보지 못함). R 의 실서버 전송은 하지 않았다(지울 수 없는 DM 행이 남는다 — RLS). R 은 부품 시험으로만 증명.
 - R 이후 푸시 태그는 `'dm_' + threadId` 라 `dm_dm_…` 가 된다(알림 묶음 키일 뿐, 1줄 지시 범위 밖이라 그대로 둠). DM 화면 전송은 `'dm-' + threadId` 를 쓴다 — 태그 형식 통일은 별도 티켓.
 - 서비스워커 캐시: 원본 태그 버전을 못 올리므로, 옛 원본이 캐시에 남은 사용자는 옛 원본(자체 완결) + 새 파일 2개를 받는다. 옛 원본은 키트를 쓰지 않아 동작은 이전과 같다(#680 선례도 같은 판).
 
 ## 5. [원칙 ⑤] 절차
 
-1. 기준 사본 `git archive HEAD`(0e9a1e8) → 스크래치. 2. 단언 글자 지도로 옮길 묶음 확정. 3. 생성기 실행. 4. `verify-team-split.js`(토큰 동일·누수·노출·실행 순서). 5. `npm test` 기준·작업. 6. `module-specs --write`·`module-guard --update`. 7. 게스트 조작 비교 `dom-compare-team.js`(기준 2회·후 1회) + `tab-check.js comm,goals`(기준 2회·후 1회). 8. 실계정 하네스 RA-COMM-03·04A·04B 기준·작업 + 로그인 상태 모달 비교. 9. 옮기기 커밋 → R 수정·부품 시험 커밋. 10. REQ·claims·dev_log·TICKETS, PR.
+1. 기준 사본 `git archive HEAD`(0e9a1e8) → 스크래치. 2. 단언 글자 지도로 옮길 묶음 확정. 3. 생성기 실행. 4. `verify-team-split.js`(토큰 동일·누수·노출·실행 순서). 5. `npm test` 기준·작업. (도중 origin/main #696·#697·#698 이 들어와 합치고, 기준 사본을 f3b1c50 `git archive` 로 바꿔 4·5·7·8 단계를 다시 쟀다.) 6. `module-specs --write`·`module-guard --update`. 7. 게스트 조작 비교 `dom-compare-team.js`(기준 2회·후 1회) + `tab-check.js comm,goals`(기준 2회·후 1회). 8. 실계정 하네스 RA-COMM-03·04A·04B 기준·작업 + 로그인 상태 모달 비교. 9. 옮기기 커밋 → R 수정·부품 시험 커밋. 10. REQ·claims·dev_log·TICKETS, PR.
 
 ## 6. [원칙 ⑥] 절차 재검증 · 반론 격파
 
@@ -63,19 +63,21 @@
 | 항목 | 도구 | 결과 |
 | :-- | :-- | :-- |
 | 글자 동일 | `verify-team-split.js` | 6개 함수 토큰열 동일(T./K. 접두·주석 제외, R 1곳은 허용 목록), 누수 0·미노출 0·노출됐는데 안 씀 0·원본에 남은 정의 0·안 가져온 함수 0. 실행: `OurgoalTeamInviteComm` 키 42개·순서 동일, 옮긴 함수 = 키트 함수, window 이름 8개 동일(새 이름은 `OurgoalTeamCommKit` 1개) — `reports/TASK-ES-382/verify-team-split.json` `ok: true` |
-| npm test | `NODE_PATH=… npm test` | 기준·작업 같음 — smoke-test 443/443 · verify-integrity-gate 38/38 · verify-all-clicks 버튼 943/943 · test-shipyard-modular 통과(모듈 파일 40 그대로) · 모듈 가드 통과 |
-| 조작 전후(게스트) | `dom-compare-team.js` | 34단계(초대 모달 열기·탭 전환·검색·복사·문자·닫기, 모르는 팀 id, 영입 모달 열기·팀 만들기 이동·닫기, 피드 공유 모달 열기·외부 공유·닫기, 공유 카드 이미지 저장·외부 공유·피드 게시 확인/취소, 다시 그리기) × 13칸 = 442값, 기준 대 후 다른 값 0, 기준 대 기준 0, 콘솔 오류 0/0 — `reports/TASK-ES-382/dom-compare-team.json` |
-| 탭 실측(게스트) | `tab-check.js comm,goals` 기준 2회·후 1회 → `tab-compare.js` | (아래 9절) |
-| 실계정 하네스 | `real-account-check.js --only RA-COMM-03,RA-COMM-04A,RA-COMM-04B`, 로컬 127.0.0.2 + /api 운영 전달 | RA-COMM-04A·04B 다섯 번 모두 통과(기준 2·작업 3). RA-COMM-03 기준 실패·통과, 작업 통과·실패·실패(같은 단계, 4절) — `reports/TASK-ES-382/real-account-comm.json`. 지우지 못한 DM 행 2~3건(테스트 계정 A 작성, RLS 로 삭제 불가 — 하네스 기존 한계) |
-| 로그인 상태 모달 | 작업자 보조(같은 로컬 방식, 계정 A, 읽기만) | 7단계 49값, 기준 대 옮기기만 0·기준 대 최종 0, 콘솔 오류 같은 12건(정적 서버에 없는 자원 404·운영 API 400) |
-| R 부품 시험 | `tests/feed-share-dm-thread-es382.test.js` | 기준 사본 3/5(team_pings.id·team_ping_replies.ping_id 2건 실패) → 옮기기만 3/5(같은 실패) → 최종 5/5 — `reports/TASK-ES-382/unit-feed-share-dm-thread-*.json` |
-| 모듈 가드 | `node scripts/module-guard.js` | ① 34,257 · ② 677 · ③ 282 그대로 · ④ 10 그대로(800줄 초과 수), `js/team-invite-comm.js` 4,105 → 3,276줄. 기준선 낮춤 |
+| npm test | `NODE_PATH=… npm test` | 기준(f3b1c50)·작업 같음 — smoke-test 443/443 · verify-integrity-gate 38/38 · verify-all-clicks 버튼 943/943 · test-shipyard-modular 통과(모듈 파일 42 그대로) · 모듈 가드 통과. 합치기 전 기준(0e9a1e8)에서도 같았다 |
+| 조작 전후(게스트) | `dom-compare-team.js`(기준 f3b1c50) | 34단계(초대 모달 열기·탭 전환·검색·복사·문자·닫기, 모르는 팀 id, 영입 모달 열기·팀 만들기 이동·닫기, 피드 공유 모달 열기·외부 공유·닫기, 공유 카드 이미지 저장·외부 공유·피드 게시 확인/취소, 다시 그리기) × 13칸 = 442값, 기준 대 후 다른 값 0, 기준 대 기준 0, 콘솔 오류 0/0 — `reports/TASK-ES-382/dom-compare-team.json` |
+| 탭 실측(게스트) | `tab-check.js comm,goals` 기준 2회·후 1회 → `tab-compare.js` | 48장 816값, 기준 대 기준 0 · 기준 대 작업 0(9절) |
+| 실계정 하네스 | `real-account-check.js --only RA-COMM-03,RA-COMM-04A,RA-COMM-04B`, 로컬 127.0.0.2 + /api 운영 전달 | main 합친 뒤: 기준(f3b1c50) 3/3 · 작업(d338d67) 3/3. 합치기 전 다섯 번: RA-COMM-04A·04B 모두 통과, RA-COMM-03 은 기준·작업 양쪽에서 흔들림(4절, #698 로 해소) — `reports/TASK-ES-382/real-account-comm.json`. 회차마다 지우지 못한 DM 행 2~3건(테스트 계정 A 작성, RLS 로 삭제 불가 — 하네스 기존 한계) |
+| 로그인 상태 모달 | 작업자 보조(같은 로컬 방식, 계정 A, 읽기만) | 7단계 49값, 기준 대 옮기기만 0 · 기준 대 최종 0(합치기 전·후 모두), 콘솔 오류 기준 = 작업(같은 글자 — 정적 서버에 없는 자원 404·운영 API 400) |
+| R 부품 시험 | `tests/feed-share-dm-thread-es382.test.js` | 기준 사본(f3b1c50, 0e9a1e8 도 같음) 3/5(team_pings.id·team_ping_replies.ping_id 2건 실패) → 옮기기만 3/5(같은 실패) → 최종 5/5 — `reports/TASK-ES-382/unit-feed-share-dm-thread-*.json` |
+| 모듈 가드 | `node scripts/module-guard.js` | (main 합친 뒤) ① 34,058 · ② 669 · ③ 282 — 이 PR 이 안 바꿈 · ④ 10 그대로(800줄 초과 파일 수), `js/team-invite-comm.js` 4,105 → 3,276줄(-829). 기준선 낮춤 |
 
 폐기(retire) 청구 없음. 시험 기대값 변경 0. 동결 파일 변경 0.
 
 ## 9. 탭 실측(게스트) 결과
 
-(측정 뒤 채움)
+- `tab-check.js <앱> <out> comm,goals --deadclick off`, 기준(f3b1c50 `git archive`) 2회·작업(d338d67 `git archive`) 1회. 소통·목표 탭 × 3상태 × 4테마 × 2화면 = 48장.
+- `tab-compare.js`: 비교한 값 816 — 기준 1회 대 2회 0, 기준 1회 대 작업 0, 기준 2회 대 작업 0 (`reports/TASK-ES-382/tab-compare-base1-base2.json`·`tab-compare-base1-after.json`).
+- Dead-Click 탐지는 껐다(장마다 수 분 — 처음 돌린 합치기 전 기준 1회는 켠 채 약 45분). 옮긴 함수의 버튼은 조작 비교(`dom-compare-team.js`)가 직접 누른다.
 
 ## 10. 남은 범위(다음 PR)
 
