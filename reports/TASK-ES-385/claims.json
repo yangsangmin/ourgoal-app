@@ -1,0 +1,147 @@
+{
+  "task": "TASK-ES-385",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-385-AVATAR-TEST-BUNDLE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "smoke-test.js 와 tests 3개(avatar-exp-celebration·avatar-levelup-dialogue·enlarge-avatar-icons)가 아바타 글자를 「아바타 합본」(js/avatar-system.js + js/avatar/**/*.js + js/data/avatar-personas/*.js, 이름순, AV.·MS. 접두 제거)에서 읽고, FN_NAMES 추출 원본은 인라인 스크립트 + js/avatar/xp.js(있으면), 앱 합본 APP_MODULE_FILES 에 js/avatar/** 를 더한다. 단언 문장·기대값·검사 수 변경 0, 지금 합본 = avatar-system.js 단일 파일 글자 단언."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "아바타 합본 = avatar-system.js + 부품 파일(이름순, 접두 제거)",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const AVATAR_SRC = [AVATAR_SYSTEM_JS, ...AVATAR_PART_FILES].map(readAvatarFile).join('\\n');",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 파일이 없을 때 합본이 avatar-system.js 원문과 같음을 단언",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "if (AVATAR_PART_FILES.length === 0) assert.strictEqual(AVATAR_SRC, fs.readFileSync(AVATAR_SYSTEM_JS, 'utf8'), '아바타 합본 = js/avatar-system.js (부품 파일이 없을 때)');",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "FN_NAMES 추출 원본이 인라인 스크립트 + js/avatar/xp.js(있으면)",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const fnSource = mainScript + (fs.existsSync(AVATAR_XP_JS) ? '\\n' + readAvatarFile(AVATAR_XP_JS) : '');",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "앱 합본에 js/avatar/** 를 더함",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const APP_MODULE_FILES = [...listJsTree(path.join(__dirname, '..', 'js', 'tabs'), true), ...listJsTree(path.join(__dirname, '..', 'js', 'core'), false), ...listJsTree(path.join(__dirname, '..', 'js', 'avatar'), true)];",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "AV.·MS. 접두를 떼고 읽음",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "let src = fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])(?:AV|MS)\\.(?=[A-Za-z_$])/g, '$1');",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "EXP 축하 팝업 시험이 합본을 읽음",
+      "touches": [
+        "tests/avatar-exp-celebration.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const avatarSystemJs = readAvatarBundle(rootDir);",
+        "file": "tests/avatar-exp-celebration.test.js"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "레벨업 멘트 시험이 합본을 읽음",
+      "touches": [
+        "tests/avatar-levelup-dialogue.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const avatarSystemJs = readAvatarBundle(rootDir);",
+        "file": "tests/avatar-levelup-dialogue.test.js"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "아이콘 확대 시험이 합본을 읽음",
+      "touches": [
+        "tests/enlarge-avatar-icons.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const avatarJs = readAvatarBundle(rootDir);",
+        "file": "tests/enlarge-avatar-icons.test.js"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "아이콘 확대 시험의 실행은 실제 파일을 index.html script 순서대로",
+      "touches": [
+        "tests/enlarge-avatar-icons.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "(avatarScriptOrder.length ? avatarScriptOrder : ['js/avatar-system.js']).forEach((rel) => vm.runInContext(fs.readFileSync(path.join(rootDir, rel), 'utf-8'), context));",
+        "file": "tests/enlarge-avatar-icons.test.js"
+      }
+    }
+  ]
+}
