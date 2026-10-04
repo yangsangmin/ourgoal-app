@@ -1,0 +1,804 @@
+{
+  "task": "TASK-ES-387",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-387-TEAM-SPLIT-2.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/team-invite-comm.js(3,276줄)에 남은 책임 묶음 8개(팀 톡방·추천 템플릿·DM 수신함·DM 대화방·프로필 모달·상단 검색 바·동반자 탭·자동 생성 핸들러 5개, 함수 30개)를 js/team-*.js 키트 부품 8개로 글자 그대로 옮겨 원본을 800줄 이하로. 각 800줄 이하, 기능 추가·삭제 0, part1/part2 금지. 신고서·모듈 가드 기준선."
+    },
+    {
+      "id": "R2",
+      "text": "전역 노출(window.OurgoalTeamInviteComm 키 42개·순서, window.* 이름)·호출 순서·동작 그대로. 원본은 IIFE 머리에서 옮긴 함수를 같은 이름으로 가져오고, 상태 변수는 원본에 남기며 옮긴 코드가 대입하는 상태만 키트 통로에 setter 를 둔다."
+    },
+    {
+      "id": "R3",
+      "text": "전후 차이 0 — 토큰 동일 검사, npm test·tests 전부 기준과 같음, 게스트 조작 비교(기준 2회·후 1회), 탭 실측, 실계정 하네스 RA-COMM-03·04A·04B 기준·작업, 로그인 A·B 화면·모달 비교."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "팀 톡방 모달이 js/team-chat.js 로 옮겨졌다",
+      "touches": [
+        "js/team-chat.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "function openTeamChatModal(gid, groupsPool){",
+        "file": "js/team-chat.js"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "찌르기 뒤 자동 답장을 키트에 담는다",
+      "touches": [
+        "js/team-chat.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "K.handlePingSentAutoReply = handlePingSentAutoReply;",
+        "file": "js/team-chat.js"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "team-chat.js 는 팀 세포 키트 부품이다(팀 합본에 든다)",
+      "touches": [
+        "js/team-chat.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "var K = global.OurgoalTeamCommKit = global.OurgoalTeamCommKit || {};",
+        "file": "js/team-chat.js"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "추천 템플릿 미리보기 모달이 js/team-templates.js 로 옮겨졌다",
+      "touches": [
+        "js/team-templates.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "function openTemplatePreviewModal(tmplId){",
+        "file": "js/team-templates.js"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "템플릿 아코디언 이벤트 배선을 키트에 담는다",
+      "touches": [
+        "js/team-templates.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "K.wireTemplatesAccordionEvents = wireTemplatesAccordionEvents;",
+        "file": "js/team-templates.js"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "team-templates.js 는 팀 세포 키트 부품이다(팀 합본에 든다)",
+      "touches": [
+        "js/team-templates.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "var K = global.OurgoalTeamCommKit = global.OurgoalTeamCommKit || {};",
+        "file": "js/team-templates.js"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "DM 받은 대화방 목록 로드가 js/team-dm-inbox.js 로 옮겨졌다",
+      "touches": [
+        "js/team-dm-inbox.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "async function loadIncomingDmRooms(myId){",
+        "file": "js/team-dm-inbox.js"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "30초 스마트 폴링을 키트에 담는다",
+      "touches": [
+        "js/team-dm-inbox.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "K.startSmartDmPolling = startSmartDmPolling;",
+        "file": "js/team-dm-inbox.js"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "team-dm-inbox.js 는 팀 세포 키트 부품이다(팀 합본에 든다)",
+      "touches": [
+        "js/team-dm-inbox.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "var K = global.OurgoalTeamCommKit = global.OurgoalTeamCommKit || {};",
+        "file": "js/team-dm-inbox.js"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "DM 화면 renderCommDM 이 js/team-dm-room.js 로 옮겨졌다",
+      "touches": [
+        "js/team-dm-room.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "function renderCommDM(body){",
+        "file": "js/team-dm-room.js"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "DM 실시간 구독을 키트에 담는다",
+      "touches": [
+        "js/team-dm-room.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "K.subscribeRealtimeDm = subscribeRealtimeDm;",
+        "file": "js/team-dm-room.js"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "team-dm-room.js 는 팀 세포 키트 부품이다(팀 합본에 든다)",
+      "touches": [
+        "js/team-dm-room.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "var K = global.OurgoalTeamCommKit = global.OurgoalTeamCommKit || {};",
+        "file": "js/team-dm-room.js"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "프로필 모달이 js/team-profile.js 로 옮겨졌다",
+      "touches": [
+        "js/team-profile.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "function openUserProfileModal(user){",
+        "file": "js/team-profile.js"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "동반자 초대 링크 복사를 키트에 담는다",
+      "touches": [
+        "js/team-profile.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "K.copyCompanionInviteLink = copyCompanionInviteLink;",
+        "file": "js/team-profile.js"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "team-profile.js 는 팀 세포 키트 부품이다(팀 합본에 든다)",
+      "touches": [
+        "js/team-profile.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "var K = global.OurgoalTeamCommKit = global.OurgoalTeamCommKit || {};",
+        "file": "js/team-profile.js"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "소통 탭 상단 초대·검색 바가 js/team-companion-search.js 로 옮겨졌다",
+      "touches": [
+        "js/team-companion-search.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "function renderCommTopInviteSearch(container){",
+        "file": "js/team-companion-search.js"
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "상단 바 렌더를 키트에 담는다",
+      "touches": [
+        "js/team-companion-search.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "K.renderCommTopInviteSearch = renderCommTopInviteSearch;",
+        "file": "js/team-companion-search.js"
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "team-companion-search.js 는 팀 세포 키트 부품이다(팀 합본에 든다)",
+      "touches": [
+        "js/team-companion-search.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "var K = global.OurgoalTeamCommKit = global.OurgoalTeamCommKit || {};",
+        "file": "js/team-companion-search.js"
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "동반자 탭 화면이 js/team-companions.js 로 옮겨졌다",
+      "touches": [
+        "js/team-companions.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "function renderCommCompanions(body){",
+        "file": "js/team-companions.js"
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "동반자 탭 렌더를 키트에 담는다",
+      "touches": [
+        "js/team-companions.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "K.renderCommCompanions = renderCommCompanions;",
+        "file": "js/team-companions.js"
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "team-companions.js 는 팀 세포 키트 부품이다(팀 합본에 든다)",
+      "touches": [
+        "js/team-companions.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "var K = global.OurgoalTeamCommKit = global.OurgoalTeamCommKit || {};",
+        "file": "js/team-companions.js"
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "자동 생성 핸들러가 js/team-auto-actions.js 로 옮겨졌다",
+      "touches": [
+        "js/team-auto-actions.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "async function handle팀목표_Item25Action(event) {",
+        "file": "js/team-auto-actions.js"
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "자동 생성 핸들러 5개를 키트에 담는다",
+      "touches": [
+        "js/team-auto-actions.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "K.handle팀목표_Item39Action = handle팀목표_Item39Action;",
+        "file": "js/team-auto-actions.js"
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "team-auto-actions.js 는 팀 세포 키트 부품이다(팀 합본에 든다)",
+      "touches": [
+        "js/team-auto-actions.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "var K = global.OurgoalTeamCommKit = global.OurgoalTeamCommKit || {};",
+        "file": "js/team-auto-actions.js"
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "원본이 옮긴 함수를 IIFE 맨 위에서 같은 이름으로 가져온다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  var renderCommDM = _teamKit.renderCommDM;",
+        "file": "js/team-invite-comm.js"
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "원본이 자동 생성 핸들러를 가져와 노출 문을 그대로 둔다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  var handle팀목표_Item39Action = _teamKit.handle팀목표_Item39Action;",
+        "file": "js/team-invite-comm.js"
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "옮긴 코드가 대입하는 상태는 원본 변수에 setter 로 쓴다(상태는 원본에 남음)",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "    set _incomingDmRooms(v){ _incomingDmRooms = v; },",
+        "file": "js/team-invite-comm.js"
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "node 에서 원본을 require 하면 새 부품도 먼저 읽는다",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "require('./team-chat.js'); require('./team-templates.js'); require('./team-dm-inbox.js'); require('./team-dm-room.js');",
+        "file": "js/team-invite-comm.js"
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "자동 핸들러 노출 문은 원본 자리에 그대로",
+      "touches": [
+        "js/team-invite-comm.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  global.OurgoalTeamInviteComm.handle팀목표_Item25Action = handle팀목표_Item25Action;",
+        "file": "js/team-invite-comm.js"
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 이 새 부품을 원본보다 먼저 읽는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "<script src=\"js/team-chat.js?v=20261005-es387\"></script>",
+        "file": "index.html"
+      }
+    },
+    {
+      "id": "C31",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "새 부품 태그 바로 뒤가 원본 태그다(원본 태그 버전 그대로)",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "<script src=\"js/team-auto-actions.js?v=20261005-es387\"></script><script src=\"js/team-invite-comm.js?v=20260916-es131\"></script>",
+        "file": "index.html"
+      }
+    },
+    {
+      "id": "C32",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "신고서에 새 세포가 올라 있다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "\"id\": \"team-dm-room\",",
+        "file": "docs/architecture/modules.json"
+      }
+    },
+    {
+      "id": "C33",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 가드 기준선을 이 변경 기준으로 갱신했다",
+      "touches": [
+        "docs/architecture/module-baseline.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "\"commit\": \"259fd11\",",
+        "file": "docs/architecture/module-baseline.json"
+      }
+    },
+    {
+      "id": "C34",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "생성기가 1차 이음매 줄을 찾아 넓힌다(손으로 옮기지 않음)",
+      "touches": [
+        "docs/design/harness/module-split/gen-team-split-2.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const REQ_OLD = \"  if(!_teamKit && typeof require === 'function'){ require('./team-recruit.js'); require('./team-share.js'); _teamKit = global.OurgoalTeamCommKit; }\";",
+        "file": "docs/design/harness/module-split/gen-team-split-2.js"
+      }
+    },
+    {
+      "id": "C35",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "검사기가 대입하는데 setter 없는 이름을 센다",
+      "touches": [
+        "docs/design/harness/module-split/verify-team-split-2.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const assignedNoSetter = [...assignedT].filter(n => !setters.has(n)).sort();",
+        "file": "docs/design/harness/module-split/verify-team-split-2.js"
+      }
+    },
+    {
+      "id": "C36",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "게스트 조작 비교가 동반자 서브탭을 화면 입구로 연다",
+      "touches": [
+        "docs/design/harness/module-split/dom-compare-team-2.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  ['sub-companion', '#commBody [data-sub=\"companion\"]'],",
+        "file": "docs/design/harness/module-split/dom-compare-team-2.js"
+      }
+    },
+    {
+      "id": "C37",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "30개 함수 토큰열 동일·누수 0·setter 짝 맞음·노출 키 42개 순서와 window 이름이 같다고 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-387/verify-team-split-2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-387/verify-team-split-2.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C38",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "setter 로 쓴 값이 통로로 같은 객체로 읽힌다고 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-387/verify-team-split-2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-387/verify-team-split-2.json",
+        "path": "runtime.setterRoundTrip",
+        "equals": true
+      }
+    },
+    {
+      "id": "C39",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "기준(d9bd7f0 git archive)·작업 smoke 검사 제목·결과 목록이 같다고 기록되어 있다(작업자 실측)",
+      "touches": [
+        "reports/TASK-ES-387/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-387/test-compare.json",
+        "path": "smokeTitlesIdentical",
+        "equals": true
+      }
+    },
+    {
+      "id": "C40",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "tests 97개 종료 코드가 기준·작업 같다고 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-387/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-387/test-compare.json",
+        "path": "testsSameExit",
+        "equals": 97
+      }
+    },
+    {
+      "id": "C41",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "게스트 46단계 비교 598값에서 기준 대 후 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-387/dom-compare-team-2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-387/dom-compare-team-2.json",
+        "path": "differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C42",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "게스트 비교 기준 대 기준 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-387/dom-compare-team-2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-387/dom-compare-team-2.json",
+        "path": "baseVsBase.differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C43",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "소통·목표 탭 48장 816값 기준 대 작업 차이 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-387/tab-compare-base1-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-387/tab-compare-base1-after.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C44",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "탭 실측 기준 대 기준 차이 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-387/tab-compare-base1-base2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-387/tab-compare-base1-base2.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C45",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "작업 사본에서 실계정 RA-COMM-03·04A·04B 3/3 통과로 기록되어 있다(작업자 실측)",
+      "touches": [
+        "reports/TASK-ES-387/real-account-comm.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-387/real-account-comm.json",
+        "path": "runs.1.summary",
+        "equals": {
+          "통과": 3,
+          "실패": 0,
+          "못 함": 0
+        }
+      }
+    },
+    {
+      "id": "C46",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "기준 사본에서도 RA-COMM-03·04A·04B 3/3 통과로 기록되어 있다(작업자 실측)",
+      "touches": [
+        "reports/TASK-ES-387/real-account-comm.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-387/real-account-comm.json",
+        "path": "runs.0.summary",
+        "equals": {
+          "통과": 3,
+          "실패": 0,
+          "못 함": 0
+        }
+      }
+    },
+    {
+      "id": "C47",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "계정 A 로그인 상태 11단계 77값 기준 대 작업 차이 0 으로 기록되어 있다(작업자 실측)",
+      "touches": [
+        "reports/TASK-ES-387/login-comm-dom-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-387/login-comm-dom-compare.json",
+        "path": "accounts.A.base1VsWork",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C48",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "계정 B 로그인 상태 11단계 77값 기준 대 작업 차이 0 으로 기록되어 있다(작업자 실측)",
+      "touches": [
+        "reports/TASK-ES-387/login-comm-dom-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-387/login-comm-dom-compare.json",
+        "path": "accounts.B.base1VsWork",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C49",
+      "req": "R3",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "운영 Supabase 테스트 계정 A·B 가 서로 동반자일 때 동반자 탭의 프로필 보기·삭제·바로 DM 버튼과 상단 닉네임 검색 → 추가가 이전 전과 같게 동작한다",
+      "touches": [
+        "js/team-companions.js",
+        "js/team-companion-search.js",
+        "js/team-profile.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "테스트 계정 A·B 환경 변수가 있는 이 PC 의 세션 또는 상민님",
+        "how": [
+          "A·B 를 서로 동반자로 둔다",
+          "A 로 로그인해 소통 → 동반자 탭에서 B 카드의 프로필 보기·바로 DM 을 눌러 모달·DM 화면을 본다",
+          "상단 검색에 B 닉네임을 넣어 결과·추가 버튼을 본 뒤 만든 동반자를 지운다"
+        ]
+      },
+      "note": "로그인 비교 회차에서 A·B 동반자가 0명(하네스 정리가 지움)이라 동반자 카드 버튼은 그려지지 않았다. 동반자 추가 흐름은 실계정 하네스 RA-COMM-03 이 기준·작업 양쪽에서 통과했다."
+    },
+    {
+      "id": "C50",
+      "req": "R3",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "로그인 상태에서 DM 대화방을 열고 메시지를 보내면 대화방 화면·읽음 표시·안읽음 배지가 이전 전과 같다",
+      "touches": [
+        "js/team-dm-room.js",
+        "js/team-dm-inbox.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "테스트 계정 A·B 환경 변수가 있는 이 PC 의 세션 또는 상민님",
+        "how": [
+          "A 로 로그인해 소통 → DM 에서 B 대화방을 연다",
+          "메시지를 보내고 B 화면의 안읽음 배지·대화방·A 화면의 읽음 표시를 본다"
+        ]
+      },
+      "note": "로그인 비교는 대화방 목록 렌더까지만 했다(B 화면 대화방 2개 렌더, 기준·작업 같음) — 열면 읽음 표시가 서버에 써져 회차 상태가 바뀐다. 전송·도착·읽음은 실계정 하네스 RA-COMM-04A·04B 가 기준·작업 양쪽에서 통과했다."
+    }
+  ]
+}

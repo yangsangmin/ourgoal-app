@@ -1,0 +1,89 @@
+{
+ "env": "로컬 127.0.0.2 정적 서버 + /api 운영 전달, 운영 Supabase 테스트 계정 A·B(주소·계정 가림). 작업자 실측 — 판정 아님",
+ "order": [
+  "기준(git archive d9bd7f0)",
+  "작업(쪼개기 적용 사본)"
+ ],
+ "runs": [
+  {
+   "file": "ra-base.json",
+   "mode": "live",
+   "summary": {
+    "통과": 3,
+    "실패": 0,
+    "못 함": 0
+   },
+   "scenarios": [
+    {
+     "id": "RA-COMM-03",
+     "status": "통과",
+     "failedStep": null
+    },
+    {
+     "id": "RA-COMM-04A",
+     "status": "통과",
+     "failedStep": null
+    },
+    {
+     "id": "RA-COMM-04B",
+     "status": "통과",
+     "failedStep": null
+    }
+   ],
+   "leftover": [
+    {
+     "by": "A",
+     "table": "team_ping_replies",
+     "rows": 2,
+     "reason": "삭제 뒤에도 남음(RLS 로 삭제 불가일 수 있음)"
+    },
+    {
+     "by": "A",
+     "table": "team_pings",
+     "rows": 1,
+     "reason": "삭제 뒤에도 남음(RLS 로 삭제 불가일 수 있음)"
+    }
+   ]
+  },
+  {
+   "file": "ra-work.json",
+   "mode": "live",
+   "summary": {
+    "통과": 3,
+    "실패": 0,
+    "못 함": 0
+   },
+   "scenarios": [
+    {
+     "id": "RA-COMM-03",
+     "status": "통과",
+     "failedStep": null
+    },
+    {
+     "id": "RA-COMM-04A",
+     "status": "통과",
+     "failedStep": null
+    },
+    {
+     "id": "RA-COMM-04B",
+     "status": "통과",
+     "failedStep": null
+    }
+   ],
+   "leftover": [
+    {
+     "by": "A",
+     "table": "team_ping_replies",
+     "rows": 2,
+     "reason": "삭제 뒤에도 남음(RLS 로 삭제 불가일 수 있음)"
+    },
+    {
+     "by": "A",
+     "table": "team_pings",
+     "rows": 1,
+     "reason": "삭제 뒤에도 남음(RLS 로 삭제 불가일 수 있음)"
+    }
+   ]
+  }
+ ]
+}
