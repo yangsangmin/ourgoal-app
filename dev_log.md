@@ -5859,3 +5859,4 @@
 
 - 2026-10-04 TASK-ES-359: 시험지가 세포 파일의 L./K. 접두를 떼고 읽음(기대값 변경 0) — 기록 탭 이전(ES-358)이 TASK-ES-060 단언에 막힌 구조 문제 해소
 - 2026-10-04 TASK-ES-358: 기록 탭 렌더 7함수를 index.html 인라인에서 js/tabs/records/render.js·period-ai-card.js 로 동작 그대로 이전(인라인 38,207→37,368줄, 토큰 동일 검사·누수 0). 설정 시범 #666 이전 틀을 따름(미병합 상태라 app-scope.js 는 동일 사본). 기준 시험지의 index.html 글자 검사 7개는 이 브랜치에서 실패 — 합본 읽기 PR 뒤 재판정.
+- 2026-10-04 TASK-ES-360: 일정 탭 렌더 7개(renderCalendarScreen·renderCalDayDetail·parseNaturalScheduleText·executeCalAgentNaturalSchedule·calShift·calWeekStart·WEEKDAYS_KR)를 index.html 인라인에서 js/tabs/calendar/render.js·day-detail.js·natural-schedule.js 로 동작 그대로 이전(생성기 gen-calendar.js, 인라인 36,414→35,905줄, 토큰 동일·누수 0, 조작 20단계 DOM 비교 220값 차이 0). calCellHtml 은 동결 시험지 verify-integrity-gate #TASK-ES-197 이 index.html 에서 글자를 찾아 남김.

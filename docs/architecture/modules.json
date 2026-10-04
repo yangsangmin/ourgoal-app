@@ -800,6 +800,32 @@
       ]
     },
     {
+      "id": "calendar/day-detail",
+      "file": "js/tabs/calendar/day-detail.js",
+      "layer": "tabs",
+      "tab": "calendar",
+      "size": "small",
+      "kind": "tab",
+      "role": "일정 탭 선택한 날 상세 목록 렌더 — renderCalDayDetail. index.html 에서 글자 그대로 옮김(#TASK-ES-360)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "calendar/index",
       "file": "js/tabs/calendar/index.js",
       "layer": "tabs",
@@ -832,6 +858,61 @@
         "OurgoalRegistry",
         "renderCalendarScreen",
         "state"
+      ]
+    },
+    {
+      "id": "calendar/natural-schedule",
+      "file": "js/tabs/calendar/natural-schedule.js",
+      "layer": "tabs",
+      "tab": "calendar",
+      "size": "small",
+      "kind": "tab",
+      "role": "일정 탭 AI 일정 비서 — parseNaturalScheduleText·executeCalAgentNaturalSchedule(자연어 한 줄 → 일정 등록). index.html 에서 글자 그대로 옮김(#TASK-ES-360)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
+      "id": "calendar/render",
+      "file": "js/tabs/calendar/render.js",
+      "layer": "tabs",
+      "tab": "calendar",
+      "size": "small",
+      "kind": "tab",
+      "role": "일정 탭 화면 렌더 — renderCalendarScreen(일정 화면 전체)·calShift(월·주·일 이동)·calWeekStart·WEEKDAYS_KR. index.html 에서 글자 그대로 옮김(#TASK-ES-360), 인라인 스코프는 app-scope 통로로 읽는다(날짜 칸 calCellHtml 은 index.html 에 남음)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": [
+          "calendar.source"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalSanctuaryV3"
       ]
     },
     {
