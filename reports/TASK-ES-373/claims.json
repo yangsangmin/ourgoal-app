@@ -1,0 +1,265 @@
+{
+  "task": "TASK-ES-373",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-373-GOOGLE-SESSION.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "구글 GIS 자격증명(JWT)을 브라우저에서 서명 검증 없이 풀어 이메일을 믿고 입장하지 않는다. supabase.auth.signInWithIdToken({provider:\"google\", token}) 으로 넘겨 서버가 검증한 세션 uid 로만 입장한다."
+    },
+    {
+      "id": "R2",
+      "text": "서명 검증이 안 된(위조·무서명·만료·다른 aud) 자격증명이나 서버 검증 실패 시 아무 uid 로도 입장하지 않고 정식 로그인을 안내한다."
+    },
+    {
+      "id": "R3",
+      "text": "구글 로그인 버튼은 남긴다. 기존 구글 사용자(u_ uid) 연결은 선택지·권장안을 REQ 에 적고, 데이터 이관·삭제가 필요한 안은 구현하지 않고 보고한다."
+    },
+    {
+      "id": "R4",
+      "text": "부품 시험(npm test 경로): 위조·무서명 자격증명 → 입장 0, 서버 검증 성공(가짜 Supabase) → 세션 uid 로 입장."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "One-Tap 콜백(미로그인)이 자격증명을 Supabase 검증 경로(enterWithCredential)로 넘긴다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "return window.OurgoalGoogleSessionGuard.enterWithCredential({ sb: sb, credential: response.credential"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "검증 세포가 signInWithIdToken 에 provider google 으로 자격증명을 넘긴다",
+      "touches": [
+        "js/google-session-guard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/google-session-guard.js",
+        "text": "var params = { provider: 'google', token: credential };"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "검증 세포는 Supabase 가 돌려준 세션의 user.id 가 있어야만 성공으로 본다",
+      "touches": [
+        "js/google-session-guard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/google-session-guard.js",
+        "text": "if (!uid || !session.access_token) return { ok: false, uid: null, session: null, reason: 'no-session' };"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "loginWithDirectIdentifier 가 이메일에서 u_ uid 를 만들지 않는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "targetUserId = 'u_' + h.slice(0, 16);"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "빠른 복구 가드에서 구글 이메일 입장 갈래가 없어졌다",
+      "touches": [
+        "js/direct-login-guard.js"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "js/direct-login-guard.js",
+        "text": "reason: 'google-verified-email'"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "토큰 클라이언트 경로의 \"Google 계정으로 바로 시작하기\" 가 Supabase 구글 OAuth 로 넘어간다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "await window.OurgoalGoogleSessionGuard.startOAuthOrGuide({ sb: sb, redirectTo: window.location.origin, loginHint: email"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "검증 실패 시 정식 로그인 안내(guideFailure)로 간다",
+      "touches": [
+        "js/google-session-guard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/google-session-guard.js",
+        "text": "if (!v.ok) return guideFailure(o);"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "GIS 초기화에 nonce(hashed)를 넘긴다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "nonce: _googleOneTapNonce ? _googleOneTapNonce.hashed : undefined,"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "구글 계정 바로 시작 버튼이 남아 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "id=\"continueGoogleDirectBtn\""
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test(scripts/test-shipyard-modular.js) 가 구글 세션 부품 시험을 실행한다",
+      "touches": [
+        "scripts/test-shipyard-modular.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/test-shipyard-modular.js",
+        "text": "runNode('tests/google-session-guard.test.js');"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험이 위조·무서명 자격증명 5종의 입장 0회를 단언한다",
+      "touches": [
+        "tests/google-session-guard.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/google-session-guard.test.js",
+        "text": "assert.strictEqual(entered, 0, '위조 자격증명으로 입장 '"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험이 서버 검증 성공 시 세션 uid 입장을 단언한다",
+      "touches": [
+        "tests/google-session-guard.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/google-session-guard.test.js",
+        "text": "assert.strictEqual(m.goodProfile, 'server-uid'"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "빠른 복구 부품 시험 ④ 가 세션 없는 구글 이메일 입장 0 을 단언한다",
+      "touches": [
+        "tests/direct-login-guard.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/direct-login-guard.test.js",
+        "text": "assert.strictEqual(m.googleOk, false, '세션 없는 구글 이메일로 입장이 성공함');"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R1",
+      "kind": "unverified",
+      "domain": "security-client",
+      "statement": "실서버에서 구글 로그인 버튼으로 로그인하면 Supabase 세션이 생기고 그 세션 uid(uuid)로 앱에 들어간다",
+      "touches": [
+        "index.html",
+        "js/google-session-guard.js",
+        "js/direct-login-guard.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "상민님(실제 구글 계정)",
+        "how": [
+          "Supabase 대시보드 Authentication → Providers → Google 을 켠다(PR 본문 절차)",
+          "앱 첫 화면에서 구글로 시작하기를 누르고 계정을 고른다",
+          "안내 창의 Google 계정으로 바로 시작하기를 누른다",
+          "구글 화면을 거쳐 앱으로 돌아와 홈 화면이 열리는지 본다"
+        ],
+        "note": "법정은 외부 통신을 막아 구글·Supabase 에 로그인할 수 없다. 작업자도 실제 구글 로그인은 시도하지 않았다(지시). 2026-10-05 작업자 측정: 운영 Supabase /auth/v1/settings 의 external.google = false — 지금 상태로 병합하면 구글 로그인은 실패하고 정식 로그인 안내로 간다. 부품 시험 tests/google-session-guard.test.js ②④ 가 같은 흐름을 가짜 Supabase 로 잰다(goodProfile server-uid, tokenPathOAuth [google])."
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R2",
+      "kind": "unverified",
+      "domain": "security-client",
+      "statement": "실서버에서 구글 공급자가 꺼져 있거나 검증이 실패하면 앱에 들어가지 않고 로그인 화면과 안내 문구가 뜬다",
+      "touches": [
+        "index.html",
+        "js/google-session-guard.js",
+        "js/direct-login-guard.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "상민님 또는 로그인 가능한 세션",
+        "how": [
+          "구글 공급자를 켜기 전 배포본에서 구글로 시작하기 → 계정 선택 → Google 계정으로 바로 시작하기를 누른다",
+          "앱에 들어가지 않고 로그인 화면에 구글 확인 실패 안내가 뜨는지 본다"
+        ],
+        "note": "구글 계정 선택 팝업이 있어야 생기는 상태라 법정이 만들 수 없다. 부품 시험 ①⑤ 가 위조 5종·공급자 꺼짐을 가짜 Supabase 로 잰다(forgedEntered 0, disabledEnterApp 0, disabledGuide flex)."
+      }
+    }
+  ]
+}

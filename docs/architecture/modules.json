@@ -737,7 +737,7 @@
       "tab": null,
       "size": null,
       "kind": "organ",
-      "role": "[#TASK-ES-368] CORE-13 빠른 복구·닉네임 입장 잠금 — 정식 세션 uid(또는 구글 인증 이메일)로만 열고, 세션이 없으면 정식 로그인 안내",
+      "role": "[#TASK-ES-368] CORE-13 빠른 복구·닉네임 입장 잠금 — 정식 세션 uid 로만 열고, 세션이 없으면 정식 로그인 안내([#TASK-ES-373] 구글 이메일 갈래 제거)",
       "spans": [],
       "provides": [],
       "requires": [],
@@ -847,6 +847,30 @@
         "contributes": [
           "goal.template"
         ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "google-session-guard",
+      "file": "js/google-session-guard.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "[#TASK-ES-373] CORE-14 구글 로그인은 Supabase 가 검증한 세션으로만 연다 — GIS 자격증명은 signInWithIdToken, 액세스 토큰 경로는 signInWithOAuth, 검증 실패 시 정식 로그인 안내",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
       },
       "emits": [],
       "listens": [],
