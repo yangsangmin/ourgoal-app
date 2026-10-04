@@ -474,3 +474,4 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 
 
 - #TASK-ES-362 | FIX | [SET-08·CAL-03·CAL-04] 세포 이전 중 발견된 기존 버그 3건 — 설정 구글 캘린더 자동 동기화 스위치가 노션 값으로 뒤집힘(js/tabs/settings/sub-integrations.js 변수 분리) / AI 일정 비서 "내일 오후 3시 치과 예약" → "내 치과 예약"·오늘(js/tabs/calendar/natural-schedule.js 한글 경계 날짜 해석, tests/calendar-natural-schedule.test.js) / V3 달력 다른 날 선택 시 상세 칸이 이전 날짜에 머묾(js/sanctuary-v3-engine.js·js/tabs/calendar/day-detail.js refreshCalDayDetail·sub-day-detail.js) | 2026-10-04
+- #TASK-ES-367 | FIX/기능 삭제(승인) | [SET-09] 사용자가 열 수 없던 테마 선택 창(#themeSelectorModal)과 CSS display:none !important 로 숨겨진 입구(#captureLiveTheme·#btnOpenThemeModal/#captureThemeQuickBar), 그것만 쓰던 initUI·CSS 제거. 테마 변경은 설정 탭 #themeGrid .theme-card 로 유지 | 심사 청구

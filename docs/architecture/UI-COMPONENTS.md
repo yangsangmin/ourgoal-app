@@ -11,7 +11,7 @@
 | 토스트 | index.html `toast()`(2619줄, `#toast` 요소) + 같은 요소를 쓰는 `showUndoPrivacyToast`(2634)·`toastWithTrashUndo`(9605) | js 파일마다 만든 토스트 연결 통로(의존성 주입 래퍼) | **6** |
 | 모달(가운데·바텀시트 겸용) | index.html `openModal(html, onMount)`·`closeModal()`(7934·7987, `#modalOverlay`·`#modalSheet`) | js 파일마다 만든 openModal 연결 통로 | **4** |
 | | | 공용 모달을 안 쓰고 직접 만든 전체 화면 덮개 | **9** |
-| | | index.html 마크업에 따로 있는 덮개 요소(`eval-modal-backdrop` 3 · `theme-modal-backdrop` 1 · `#commProfileBottomSheet` 1) | 5 |
+| | | index.html 마크업에 따로 있는 덮개 요소(`eval-modal-backdrop` 3 · `#commProfileBottomSheet` 1 — `theme-modal-backdrop` 1 은 TASK-ES-367 에서 제거) | 4 |
 | 확인창 | index.html `openBottomSheetConfirm(title, message, okText, cancelText, onOk, onCancel)`(8023, `openModal` 위) | 브라우저 기본 `confirm()` 호출 | **41** |
 | 알림창 | index.html `openBottomSheetAlert(title, message, okText, onOk)`(8004) | 브라우저 기본 `alert()` | 1(grep) |
 | 바텀시트(별도 구현) | (정본 없음 — `openModal` 이 바텀시트 모양으로 뜬다) | `showCheckinFeedbackSheet`(18137, 자체 `checkin-ai-backdrop`) · `openInAppDmSheet`(24495, `#commProfileBottomSheet` 표시 전환) | 2 |
@@ -40,6 +40,7 @@ js/team-linked-goals.js:19 · js/team-visibility-levels.js:18 · js/theme-system
 > - **진짜 연결 통로 2곳**(team-linked-goals·team-visibility-levels): 주입 `openModal`/`closeModal` → 없으면 `window.openModal` 로 넘기기만 하던 함수. `js/core/modal.js` 가 주는 능력 `ui.modal.bind` 로 만든 `{ open, close }` 를 쓰게 바꿨다(주입 우선, 없으면 정본, 정본 준비 전엔 대기열). 그리기는 index.html 정본 `openModal`·`closeModal` 그대로다.
 > - **자체 모달 2곳**(theme-system·time-tracker): 정본으로 넘기는 통로가 아니라 자기 DOM(index.html 정적 덮개 `#themeSelectorModal` · 자체 전체화면 덮개 `#timeTrackerOverlay`)을 여는 함수가 같은 이름을 쓰고 있었다. 정본으로 옮기면 모양이 바뀌므로 이번엔 이름만 정정했다(`openThemeSelector`/`closeThemeSelector` · `openTrackerOverlay`/`closeTrackerOverlay`, 밖으로 드러난 API 키 `openModal`·`open` 은 그대로). 이 둘은 2-3 덮개 흡수(3절 4번) 대상이다 — `#timeTrackerOverlay` 는 덮개 지표(selfOverlay, time-tracker.js:131)에 이미 잡혀 있고, `#themeSelectorModal` 은 1절 정적 덮개 요소(`theme-modal-backdrop` 1)로 잡혀 있다.
 > - 새로 찾은 결함(고치지 않음): 테마 선택 창은 지금 화면에서 열 길이 없다. 여는 입구 두 곳(`#captureLiveTheme` 이 든 `#captureLiveMeta`, `#btnOpenThemeModal` 이 든 `#captureThemeQuickBar`)이 ui.css 5824·5955 줄 규칙으로 앱 테마 4종(focus-sanctuary·black·white·urban-city) 모두에서 `display:none !important` 다. 기능을 살릴지·지울지는 상민님 결정(기능 삭제 승인선).
+> - **TASK-ES-367(SET-09, 상민님 승인 2026-10-04 "결심필요 - 사용자가 열 수 없는 테마 선택 창 권장대로 진행해")에서 지웠다.** `#themeSelectorModal`·입구 `#captureLiveTheme`·`#captureThemeQuickBar`(`#btnOpenThemeModal`·즐겨찾기 칩)·안내 문구·`OurgoalThemeSystem.initUI`·그것만 쓰던 ui.css 규칙을 제거. 체크인 테마 분류(`suggestTheme`·`buildCheckinThemePayload`·온톨로지·즐겨찾기/커스텀 데이터 함수)와 저장된 프로필의 `themeSettings` 는 그대로다. 정적 덮개 요소(`theme-modal-backdrop`)는 이제 0.
 
 ### 2-3. 공용 모달 대신 직접 만든 전체 화면 덮개 9
 
