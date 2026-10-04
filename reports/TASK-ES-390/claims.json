@@ -1,0 +1,751 @@
+{
+  "task": "TASK-ES-390",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-390-AVATAR-MODAL.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/avatar-system.js(1,448줄)의 아바타 설정 모달(showAvatarLegalNotice·openAvatarModal)을 설계 REQ-TASK-ES-384 3-1절 js/avatar/modal/{index,markup,bind-period,bind-deck,bind-craft,bind-persona,bind-save}.js 로, PR-3 이 남긴 기능 카드 핸들러 4개·대사 2개를 js/avatar/feature-cards.js 로 생성기로 글자 그대로 옮긴다(손으로 옮긴 글자 0). 모달 섹션끼리 공유하는 지역 이름은 MS.<이름>(다시 대입되는 9개만 setter), 팩토리 이름은 AV.<이름>. 각 800줄 이하, avatar-system.js 800줄 이하."
+    },
+    {
+      "id": "R2",
+      "text": "공개 이름 42개(window.OurgoalAvatar)·섹션 실행 순서·window.handle아바타_* 대입 시점·동작 그대로. index.html 은 <script> 추가만, 새 전역 0. 자리 연결은 하지 않고 신고서 planned 에만."
+    },
+    {
+      "id": "R3",
+      "text": "증명: git archive 기준 사본 대비 줄·토큰 동일(허용 차이 MS.·AV. 접두), 모달 섹션별 조작 DOM 비교(게스트, 기준 대 기준·기준 대 작업), tab-check 홈·설정 기준 2회·후 1회 차이 0, npm test 통과 수 동일, 실계정 모달 왕복은 가능하면."
+    },
+    {
+      "id": "R4",
+      "text": "신고서 module-specs --write, 모듈 가드 통과·기준선 갱신(800줄 넘는 js 9 → 8). 시험지는 읽는 범위만(단언·기대값 0 변경)."
+    },
+    {
+      "id": "R5",
+      "text": "문서: REQ(8원칙), claims, dev_log 1줄, TICKETS 1줄. PR(초안 아님), 병합 안 함. retire·기대값 낮추기 없음, 동결 파일 변경 0."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "모달 조립자가 openAvatarModal 을 부품 통로 AV 에 담는다",
+      "touches": [
+        "js/avatar/modal/index.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/modal/index.js",
+        "text": "  AV.openAvatarModal = openAvatarModal;"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "모달 조립자가 openAvatarModal 호출마다 모달 상태 객체 MS 를 새로 만든다",
+      "touches": [
+        "js/avatar/modal/index.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/modal/index.js",
+        "text": "    var MS = {};"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "공유 바뀌는 변수(예: selectedType)는 원래 변수에 쓰는 setter 로 넘긴다",
+      "touches": [
+        "js/avatar/modal/index.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/modal/index.js",
+        "text": "        selectedType: { get: function () { return selectedType; }, set: function (v) { selectedType = v; } },"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "조립자가 기간 섹션을 원래 자리에서 MS 를 넘겨 부른다",
+      "touches": [
+        "js/avatar/modal/index.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/modal/index.js",
+        "text": "AV.bindAvatarModalPeriod(MS);"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "모달 HTML 섹션이 html 문자열을 돌려준다",
+      "touches": [
+        "js/avatar/modal/markup.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/modal/markup.js",
+        "text": "  AV.renderAvatarModalMarkup = renderAvatarModalMarkup;"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "기간 섹션이 기간 시작을 MS setter 로 바꾼다",
+      "touches": [
+        "js/avatar/modal/bind-period.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/modal/bind-period.js",
+        "text": "        MS.periodStart = s;"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "보관함 섹션 함수를 부품 통로에 담는다",
+      "touches": [
+        "js/avatar/modal/bind-deck.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/modal/bind-deck.js",
+        "text": "  AV.bindAvatarModalDeck = bindAvatarModalDeck;"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "제작 섹션이 사진 픽셀 자가 분석을 MS 공유 변수로 부른다",
+      "touches": [
+        "js/avatar/modal/bind-craft.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/modal/bind-craft.js",
+        "text": "              MS.currentFeatures = AV.extractPersonalFeatures(MS.lastUploadedImg);"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "초기 페르소나 복원 함수를 부품 통로에 담는다",
+      "touches": [
+        "js/avatar/modal/bind-craft.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/modal/bind-craft.js",
+        "text": "  AV.restoreAvatarModalPersona = restoreAvatarModalPersona;"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "도감 섹션 함수를 부품 통로에 담는다",
+      "touches": [
+        "js/avatar/modal/bind-persona.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/modal/bind-persona.js",
+        "text": "  AV.bindAvatarModalPersona = bindAvatarModalPersona;"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "적용하기 섹션 함수를 부품 통로에 담는다",
+      "touches": [
+        "js/avatar/modal/bind-save.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/modal/bind-save.js",
+        "text": "  AV.bindAvatarModalSave = bindAvatarModalSave;"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "기능 카드 세포가 핸들러 42 를 부품 통로에 담는다",
+      "touches": [
+        "js/avatar/feature-cards.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/feature-cards.js",
+        "text": "  AV.handle아바타_Item42Action = handle아바타_Item42Action;"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "기능 카드 세포가 레벨업 대사를 부품 통로에 담는다",
+      "touches": [
+        "js/avatar/feature-cards.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/feature-cards.js",
+        "text": "  AV.triggerAvatarLevelUpDialogue = triggerAvatarLevelUpDialogue;"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "avatar-system.js 가 옮긴 openAvatarModal 을 같은 이름으로 가져온다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "  var openAvatarModal = AV.openAvatarModal;"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "Node 에서 avatar-system.js 가 모달 조립자를 require 한다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "    require('./avatar/modal/index.js')(AV);"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "기능 카드 window 대입은 avatar-system.js 원래 자리에 남는다",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "    window.handle아바타_Item42Action = handle아바타_Item42Action;"
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "옮긴 코드가 읽는 확인창 통로 askConfirm 을 AV getter 로 노출",
+      "touches": [
+        "js/avatar-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar-system.js",
+        "text": "    get askConfirm() { return askConfirm; }"
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 이 avatar-system.js 앞에서 모달 조립자를 읽는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<script src=\"js/avatar/modal/index.js?v=20261005-es390\"></script>"
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 이 기능 카드 세포를 읽는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<script src=\"js/avatar/feature-cards.js?v=20261005-es390\"></script>"
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "글자·실행 검사 ① 섹션 몸통 = 기준 줄 통과(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-390/verify-avatar-modal.json",
+        "docs/design/harness/module-split/verify-avatar-modal.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/verify-avatar-modal.json",
+        "path": "results.0.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "글자·실행 검사 ② 기능 카드 몸통 = 기준 줄 통과(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-390/verify-avatar-modal.json",
+        "docs/design/harness/module-split/verify-avatar-modal.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/verify-avatar-modal.json",
+        "path": "results.1.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "글자·실행 검사 ③ 되맞추기 줄·토큰 = 기준 통과(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-390/verify-avatar-modal.json",
+        "docs/design/harness/module-split/verify-avatar-modal.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/verify-avatar-modal.json",
+        "path": "results.2.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "글자·실행 검사 ④ Node 공개 이름·함수 토큰 = 기준 통과(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-390/verify-avatar-modal.json",
+        "docs/design/harness/module-split/verify-avatar-modal.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/verify-avatar-modal.json",
+        "path": "results.3.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "글자·실행 검사 ⑤ 브라우저 vm(self 있음) = 기준 통과(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-390/verify-avatar-modal.json",
+        "docs/design/harness/module-split/verify-avatar-modal.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/verify-avatar-modal.json",
+        "path": "results.4.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "글자·실행 검사 ⑤ 브라우저 vm(self 없음) = 기준 통과(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-390/verify-avatar-modal.json",
+        "docs/design/harness/module-split/verify-avatar-modal.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/verify-avatar-modal.json",
+        "path": "results.5.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "글자·실행 검사 ⑥ 섹션 경계(자유 이름·MS setter 9개) 통과(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-390/verify-avatar-modal.json",
+        "docs/design/harness/module-split/verify-avatar-modal.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/verify-avatar-modal.json",
+        "path": "results.6.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "글자·실행 검사 ⑦ 파일 크기 800줄 이하 통과(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-390/verify-avatar-modal.json",
+        "docs/design/harness/module-split/verify-avatar-modal.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/verify-avatar-modal.json",
+        "path": "results.7.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "모달 섹션별 조작 42단계 기준 대 작업 비교 값 차이 0(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-390/dom-compare-avatar-modal.json",
+        "docs/design/harness/module-split/dom-compare-avatar-modal.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/dom-compare-avatar-modal.json",
+        "path": "differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "같은 조작 기준 대 기준 차이 0(도구 결정성)",
+      "touches": [
+        "reports/TASK-ES-390/dom-compare-avatar-modal-base-vs-base.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/dom-compare-avatar-modal-base-vs-base.json",
+        "path": "differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "탭 실측 홈·설정 기준 1회차 대 2회차 차이 0",
+      "touches": [
+        "reports/TASK-ES-390/tab-compare-base-run1-vs-run2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/tab-compare-base-run1-vs-run2.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C31",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "탭 실측 홈·설정 기준 대 작업 차이 0",
+      "touches": [
+        "reports/TASK-ES-390/tab-compare-base-vs-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/tab-compare-base-vs-after.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C32",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "실계정 A 모달 왕복(열기→만화형→표식 카드→적용→서버 users.avatar_url·새로고침 복원·정리) 작업 트리 실패 0(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-390/real-account-avatar-modal-after.json",
+        "docs/design/harness/module-split/real-account-avatar-modal.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/real-account-avatar-modal-after.json",
+        "path": "summary.failed",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C33",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "같은 실계정 왕복 기준 사본 실패 0",
+      "touches": [
+        "reports/TASK-ES-390/real-account-avatar-modal-base.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/real-account-avatar-modal-base.json",
+        "path": "summary.failed",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C34",
+      "req": "R3",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "실계정 왕복 뒤 서버 avatar_url 이 원래 값으로 돌아옴(남은 흔적 0)",
+      "touches": [
+        "reports/TASK-ES-390/real-account-avatar-modal-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/real-account-avatar-modal-after.json",
+        "path": "leftover",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C35",
+      "req": "R1",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "생성기 기록: 이름 참조 바꿈 392곳(손으로 옮긴 글자 0)",
+      "touches": [
+        "reports/TASK-ES-390/gen-avatar-modal-meta.json",
+        "docs/design/harness/module-split/gen-avatar-modal.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/gen-avatar-modal-meta.json",
+        "path": "edits",
+        "equals": 392
+      }
+    },
+    {
+      "id": "C36",
+      "req": "R1",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "생성기 기록: 다른 섹션 함수를 중첩 함수 밖에서 바로 부르는 곳 0",
+      "touches": [
+        "reports/TASK-ES-390/gen-avatar-modal-meta.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-390/gen-avatar-modal-meta.json",
+        "path": "immediateCrossCalls",
+        "equals": []
+      }
+    },
+    {
+      "id": "C37",
+      "req": "R4",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "모듈 가드 기준선 마지막 항목의 800줄 초과 js 파일 수 = 8",
+      "touches": [
+        "docs/architecture/module-baseline.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/module-baseline.json",
+        "path": "history.18.metrics.oversizeJsFiles.count",
+        "equals": 8
+      }
+    },
+    {
+      "id": "C38",
+      "req": "R4",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "신고서에 모달 조립자 세포가 있다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "\"file\": \"js/avatar/modal/index.js\""
+      }
+    },
+    {
+      "id": "C39",
+      "req": "R4",
+      "kind": "static",
+      "domain": "test",
+      "statement": "기간 분석 시험이 아바타 합본을 읽는다(단언 그대로)",
+      "touches": [
+        "tests/avatar-period-analysis.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/avatar-period-analysis.test.js",
+        "text": "  const avatarSrc = readAvatarBundle(avatarPath);"
+      }
+    },
+    {
+      "id": "C40",
+      "req": "R5",
+      "kind": "static",
+      "domain": "docs",
+      "statement": "REQ 8원칙 문서",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-390-AVATAR-MODAL.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-390-AVATAR-MODAL.md",
+        "text": "## 6. [원칙 ⑥] 절차 재검증 및 반론 격파"
+      }
+    },
+    {
+      "id": "C41",
+      "req": "R5",
+      "kind": "static",
+      "domain": "docs",
+      "statement": "dev_log 1줄",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "2026-10-05 TASK-ES-390:"
+      }
+    },
+    {
+      "id": "C42",
+      "req": "R5",
+      "kind": "static",
+      "domain": "docs",
+      "statement": "TICKETS 1줄",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "#TASK-ES-390 | INFRA/분리"
+      }
+    },
+    {
+      "id": "C43",
+      "req": "R5",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "생성기가 모달 섹션 경계를 검사한다",
+      "touches": [
+        "docs/design/harness/module-split/gen-avatar-modal.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/gen-avatar-modal.js",
+        "text": "throw new Error('다시 대입되는 공유 이름이 설계 9개와 다름: '"
+      }
+    },
+    {
+      "id": "C44",
+      "req": "R5",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "신고서 손 칸 스크립트",
+      "touches": [
+        "docs/design/harness/module-split/spec-avatar-modal.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/spec-avatar-modal.js",
+        "text": "  'js/avatar/modal/index.js': { provides: ['avatar.open'], contributes: ['settings.section'] },"
+      }
+    },
+    {
+      "id": "C45",
+      "req": "R5",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "실계정 모달 왕복 스크립트",
+      "touches": [
+        "docs/design/harness/module-split/real-account-avatar-modal.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/real-account-avatar-modal.js",
+        "text": "const readServerUrl = page => page.evaluate(async () => {"
+      }
+    },
+    {
+      "id": "C46",
+      "req": "R2",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "진짜 폰에서 아바타 설정 모달의 사진 선택(파일 선택 창)·제작이 이전과 같다(PC 헤드리스에서 1×1 사진·목 응답으로는 쟀다)",
+      "touches": [
+        "js/avatar/modal/bind-craft.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "file-attach",
+        "who": "아워골 앱을 쓸 수 있는 사람",
+        "how": [
+          "폰에서 설정 탭 「✏️ 프로필 편집」 → 만화형 → 「📷 사진 선택하기」 → 동의 → 사진 고르기",
+          "「내 사진으로 아바타 제작」을 눌러 결과(또는 서버 문제 안내)가 이전과 같은지 본다"
+        ]
+      }
+    }
+  ]
+}

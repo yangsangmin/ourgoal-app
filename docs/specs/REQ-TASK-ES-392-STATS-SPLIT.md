@@ -56,6 +56,7 @@
 ## 9. 화면 측정
 - `tab-check.js` 기록·목표(통계를 그리는 탭) — 기준(09f4a99 git archive) 2회: 비교한 값 894 · 다른 값 0(본질 변동 0) → `tab-compare-base1-base2.json`. 기준 1회 대 후 1회: 894 · 0 → `tab-compare-base1-after.json`.
 - `dom-compare-stats.js` 게스트 조작 24단계(통계 세그먼트 → 렌즈 교차 비율·레이더·요일 리듬·추세 → 그리드 열기·검색·전체 선택·해제·행 추가(행 편집 모달)·닫기 → 데이터 관리 메뉴 → 스키마 편집·검색·새 이름 입력·닫기 → 메뉴에서 그리드 → 탭 왕복), 단계마다 `#screen-records`·`#modalOverlay`·`#uStatsFullscreenModal` HTML·localStorage·토스트·활성 화면·API 키·콘솔 오류 9칸 = 216칸: 기준 2회 차이 0, 기준 대 후 0, 콘솔 오류 0·0·0 → `dom-compare-stats.json`. 옮긴 코드가 실제로 그렸다: 렌즈 단계마다 화면 HTML 크기가 바뀌고(123,192 → 118,069·118,111·117,839 바이트), 그리드 모달 30,972 바이트·스키마 편집 모달 8,613 바이트.
+- main(d2e0dbb — #707·#708·#709·#710) 합친 뒤 다시 잼: `js/universal-stats.js` 는 main 에서 안 바뀜. npm test 기준(git archive d2e0dbb) 443·38/38·943/943·셀 42·모듈 가드 ④ 8 → 합친 작업 같음, smoke 제목 동일, verify-stats-split ok, 게스트 조작 비교 216칸 차이 0 → `dom-compare-stats-main.json`. 기준선은 main 판을 받고 `module-guard --update` 로 다시 만듦(④ 8). 기록·목표 tab-check 는 합치기 전(09f4a99 기준)에만 쟀다.
 - 실계정: [기본값] 이번엔 돌리지 않음 — 옮긴 함수 9개는 로그인·서버 경로를 직접 부르지 않고(저장은 호출자가 넘긴 `saveProfile` 그대로), 토큰열이 같다. 로그인 화면 비교는 확인 못 함으로 남긴다.
 
 ## 10. 남은 범위 (2차 이후, `js/universal-stats.js` 5,171줄)

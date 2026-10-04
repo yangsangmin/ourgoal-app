@@ -261,15 +261,15 @@
       "req": "R1",
       "kind": "static",
       "domain": "config",
-      "statement": "기준선 마지막 항목(이 변경으로 다시 잰 것)의 800줄 초과 js 파일 수는 9 그대로(universal-stats.js 는 6092→5171 로 줄었지만 아직 800 초과)",
+      "statement": "기준선 마지막 항목(main d2e0dbb 합친 뒤 다시 잰 것)의 800줄 초과 js 파일 수는 8(main 의 아바타 쪼개기로 9→8, universal-stats.js 는 6092→5171 로 줄었지만 아직 800 초과)",
       "touches": [
         "docs/architecture/module-baseline.json"
       ],
       "check": {
         "type": "jsonPath",
         "file": "docs/architecture/module-baseline.json",
-        "path": "history.18.metrics.oversizeJsFiles.count",
-        "equals": 9
+        "path": "history.19.metrics.oversizeJsFiles.count",
+        "equals": 8
       }
     },
     {
@@ -500,6 +500,38 @@
     },
     {
       "id": "C32",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "main(d2e0dbb) 합친 뒤에도 npm test 수치가 그 기준과 같다고 기록",
+      "touches": [
+        "reports/TASK-ES-392/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-392/test-compare.json",
+        "path": "afterMainMerge.sameNumbers",
+        "equals": true
+      }
+    },
+    {
+      "id": "C33",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "main(d2e0dbb) 기준으로 다시 잰 게스트 통계 조작 비교도 차이 0 으로 기록",
+      "touches": [
+        "reports/TASK-ES-392/dom-compare-stats-main.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-392/dom-compare-stats-main.json",
+        "path": "differingExcludingNoise",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C34",
       "req": "R1",
       "kind": "static",
       "domain": "config",
@@ -514,7 +546,7 @@
       }
     },
     {
-      "id": "C33",
+      "id": "C35",
       "req": "R1",
       "kind": "static",
       "domain": "config",
@@ -529,7 +561,7 @@
       }
     },
     {
-      "id": "C34",
+      "id": "C36",
       "req": "R1",
       "kind": "static",
       "domain": "config",

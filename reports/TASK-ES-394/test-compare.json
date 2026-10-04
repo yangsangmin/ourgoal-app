@@ -1,0 +1,45 @@
+{
+ "test": "tests/core-confirm-es374.test.js",
+ "note": "기준 사본 = git archive origin/main (#707 병합 뒤). 변이 트리는 스크래치에만 있고 저장소에 넣지 않음.",
+ "runs": {
+  "base_tree_old_test": {
+   "exitCode": 0,
+   "passedCount": 14,
+   "firstFailure": null
+  },
+  "base_tree_new_test": {
+   "exitCode": 0,
+   "passedCount": 14,
+   "firstFailure": null
+  },
+  "work_tree_new_test": {
+   "exitCode": 0,
+   "passedCount": 14,
+   "firstFailure": null
+  },
+  "mutant_modal_bind_save_confirm_old_test": {
+   "exitCode": 0,
+   "passedCount": 14,
+   "firstFailure": null
+  },
+  "mutant_modal_bind_save_confirm_new_test": {
+   "exitCode": 1,
+   "passedCount": null,
+   "firstFailure": "confirm( 직접 호출 없음"
+  },
+  "mutant_feature_cards_window_confirm_old_test": {
+   "exitCode": 0,
+   "passedCount": 14,
+   "firstFailure": null
+  },
+  "mutant_feature_cards_window_confirm_new_test": {
+   "exitCode": 1,
+   "passedCount": null,
+   "firstFailure": "confirm( 직접 호출 없음"
+  }
+ },
+ "mutants": {
+  "mut394": "js/avatar/modal/bind-save.js 끝에 function __probe(){ if (confirm(\"probe\")) return 1; } 추가",
+  "mut394b": "js/avatar/feature-cards.js 끝에 function __probe2(){ return window.confirm(\"probe\"); } 추가"
+ }
+}

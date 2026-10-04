@@ -280,7 +280,7 @@
                       sender_name: myNick,
                       title: '1:1 DM (피드 공유)',
                       body: shareMsg.slice(0, 80),
-                      tag: 'dm_' + threadId
+                      tag: 'dm-' + threadId
                     })
                   }).catch(function(){});
                 } catch(pe){}

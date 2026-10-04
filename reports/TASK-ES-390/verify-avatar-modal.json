@@ -1,0 +1,225 @@
+{
+  "task": "TASK-ES-390",
+  "base": "09f4a99 (git archive)",
+  "results": [
+    {
+      "name": "① 섹션 7개 몸통(MS./AV. 접두 뗌) = 기준 avatar-system.js 의 그 줄 그대로",
+      "ok": true,
+      "detail": {
+        "markup": {
+          "lines": 166,
+          "from": 197,
+          "to": 362,
+          "prefixedLines": 22,
+          "exports": []
+        },
+        "restore": {
+          "lines": 8,
+          "from": 378,
+          "to": 385,
+          "prefixedLines": 3,
+          "exports": []
+        },
+        "period": {
+          "lines": 64,
+          "from": 410,
+          "to": 473,
+          "prefixedLines": 17,
+          "exports": []
+        },
+        "deck": {
+          "lines": 224,
+          "from": 475,
+          "to": 698,
+          "prefixedLines": 89,
+          "exports": [
+            "onAvatarCraftCompleted",
+            "updateCustomAvatarView",
+            "updateRemainingUI"
+          ]
+        },
+        "craft": {
+          "lines": 197,
+          "from": 700,
+          "to": 896,
+          "prefixedLines": 60,
+          "exports": []
+        },
+        "persona": {
+          "lines": 86,
+          "from": 898,
+          "to": 983,
+          "prefixedLines": 13,
+          "exports": []
+        },
+        "save": {
+          "lines": 64,
+          "from": 985,
+          "to": 1048,
+          "prefixedLines": 32,
+          "exports": []
+        }
+      }
+    },
+    {
+      "name": "② 기능 카드 몸통 = 기준의 옮긴 줄 그대로(접두 0)",
+      "ok": true,
+      "detail": {
+        "lines": 314,
+        "runs": 4,
+        "exports": 6
+      }
+    },
+    {
+      "name": "③ 되맞추기: 이음매 2 빼고 안내 주석 자리에 modal/index.js(섹션 몸통 끼움)·기능 카드 몸통 = 기준 avatar-system.js(줄·토큰)",
+      "ok": true,
+      "detail": {
+        "lines": 1449,
+        "tokens": 8881,
+        "prefixTokensAdded": 784,
+        "headerLines": 23,
+        "mainLines": 249
+      }
+    },
+    {
+      "name": "④ Node: 공개 이름 42개 순서·함수 토큰·데이터 = 기준",
+      "ok": true,
+      "detail": {
+        "names": 42,
+        "functions": 33
+      }
+    },
+    {
+      "name": "⑤ 브라우저 vm(index.html 순서, self 있음): 공개 이름·함수 토큰·데이터 = 기준, window.handle아바타_* 4개 같은 함수, 새 전역 0",
+      "ok": true,
+      "detail": {
+        "scripts": 30,
+        "baseScripts": 22,
+        "globals": [
+          "OurgoalAvatar",
+          "OurgoalAvatarParts",
+          "OurgoalAvatarPersonaParts",
+          "handle아바타_Item26Action",
+          "handle아바타_Item32Action",
+          "handle아바타_Item41Action",
+          "handle아바타_Item42Action"
+        ]
+      }
+    },
+    {
+      "name": "⑤ 브라우저 vm(index.html 순서, self 없음): 공개 이름·함수 토큰·데이터 = 기준, window.handle아바타_* 4개 같은 함수, 새 전역 0",
+      "ok": true,
+      "detail": {
+        "scripts": 30,
+        "baseScripts": 22,
+        "globals": [
+          "OurgoalAvatar",
+          "OurgoalAvatarParts",
+          "OurgoalAvatarPersonaParts"
+        ]
+      }
+    },
+    {
+      "name": "⑥ 섹션 경계: 섹션 파일 자유 이름 ⊆ 기준 전역 · MS 읽기 ⊆ getter∪섹션 함수 · MS 대입 = setter 9개",
+      "ok": true,
+      "detail": {
+        "files": {
+          "feature-cards.js": {
+            "lines": 341,
+            "msReads": 0,
+            "msWrites": []
+          },
+          "modal/index.js": {
+            "lines": 192,
+            "msReads": 0,
+            "msWrites": []
+          },
+          "modal/markup.js": {
+            "lines": 190,
+            "msReads": 10,
+            "msWrites": []
+          },
+          "modal/bind-period.js": {
+            "lines": 87,
+            "msReads": 10,
+            "msWrites": [
+              "periodEnd",
+              "periodStart"
+            ]
+          },
+          "modal/bind-deck.js": {
+            "lines": 250,
+            "msReads": 22,
+            "msWrites": [
+              "chosenTheme",
+              "currentPersona",
+              "newCustomUrl",
+              "onAvatarCraftCompleted",
+              "selectedType",
+              "updateCustomAvatarView",
+              "updateRemainingUI"
+            ]
+          },
+          "modal/bind-craft.js": {
+            "lines": 234,
+            "msReads": 23,
+            "msWrites": [
+              "chosenTheme",
+              "currentFeatures",
+              "currentPersona",
+              "lastUploadedDataUrl",
+              "lastUploadedImg"
+            ]
+          },
+          "modal/bind-persona.js": {
+            "lines": 109,
+            "msReads": 4,
+            "msWrites": [
+              "chosenTheme",
+              "currentPersona"
+            ]
+          },
+          "modal/bind-save.js": {
+            "lines": 87,
+            "msReads": 16,
+            "msWrites": []
+          }
+        },
+        "getters": 46,
+        "setters": [
+          "chosenTheme",
+          "currentFeatures",
+          "currentPersona",
+          "lastUploadedDataUrl",
+          "lastUploadedImg",
+          "newCustomUrl",
+          "periodEnd",
+          "periodStart",
+          "selectedType"
+        ],
+        "sectionFunctions": [
+          "onAvatarCraftCompleted",
+          "updateCustomAvatarView",
+          "updateRemainingUI"
+        ],
+        "msNamesRead": 49
+      }
+    },
+    {
+      "name": "⑦ 파일 크기: 새 파일 8개·avatar-system.js 각 800줄 이하",
+      "ok": true,
+      "detail": {
+        "js/avatar/feature-cards.js": 341,
+        "js/avatar/modal/index.js": 192,
+        "js/avatar/modal/markup.js": 190,
+        "js/avatar/modal/bind-period.js": 87,
+        "js/avatar/modal/bind-deck.js": 250,
+        "js/avatar/modal/bind-craft.js": 234,
+        "js/avatar/modal/bind-persona.js": 109,
+        "js/avatar/modal/bind-save.js": 87,
+        "js/avatar-system.js": 249,
+        "base js/avatar-system.js": 1448
+      }
+    }
+  ]
+}

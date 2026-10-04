@@ -43,6 +43,32 @@ function readStatsBundle(rootDir) {
   if (parts.length === 0) assert.strictEqual(src, raw, '통계 합본 = js/universal-stats.js (부품 파일이 없을 때)');
   return src;
 }
+// #TASK-ES-394 (시험 범위 공백, #708 후속): 아바타 코드가 js/avatar-system.js 에서 js/avatar/**/*.js(모달 섹션 js/avatar/modal/*·기능 카드 js/avatar/feature-cards.js 등)로 옮겨 가도
+// 「confirm( 직접 호출 없음」 부재 단언이 옮긴 코드까지 보도록 '아바타 합본' 을 scripts/smoke-test.js 의 AVATAR_SRC 와 같은 범위·같은 접두 제거 방식으로 읽는다.
+// 범위 = js/avatar-system.js + js/avatar/**/*.js + js/data/avatar-personas/*.js(이름순). 생성기 접두 AV.·MS. 를 떼고, OurgoalAppScope 를 읽는 파일만 L.·K. 도 뗀다. 단언·기대값은 그대로다.
+function listJsTree(dir, recursive) {
+  if (!fs.existsSync(dir)) return [];
+  const out = [];
+  for (const e of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))) {
+    const p = path.join(dir, e.name);
+    if (e.isFile() && e.name.endsWith('.js')) out.push(p);
+    else if (recursive && e.isDirectory()) out.push(...listJsTree(p, true));
+  }
+  return out;
+}
+function readAvatarFile(f) {
+  let src = fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])(?:AV|MS)\.(?=[A-Za-z_$])/g, '$1');
+  if (src.indexOf('OurgoalAppScope') >= 0) src = src.replace(/(^|[^A-Za-z0-9_$.])[LK]\.(?=[A-Za-z_$])/g, '$1');
+  return src;
+}
+function readAvatarBundle(rootDir) {
+  const single = path.join(rootDir, 'js', 'avatar-system.js');
+  const parts = [...listJsTree(path.join(rootDir, 'js', 'avatar'), true), ...listJsTree(path.join(rootDir, 'js', 'data', 'avatar-personas'), false)];
+  const src = [single, ...parts].map(readAvatarFile).join('\n');
+  // 부품 파일이 없으면 합본 = js/avatar-system.js 한 파일 글자.
+  if (parts.length === 0) assert.strictEqual(src, fs.readFileSync(single, 'utf8'), '아바타 합본 = js/avatar-system.js (부품 파일이 없을 때)');
+  return src;
+}
 const ROOT = path.join(__dirname, '..');
 const caps = require(path.join(ROOT, 'js/core/capabilities.js'));
 const C = require(path.join(ROOT, 'js/core/confirm.js'));
@@ -314,7 +340,8 @@ function fakeDom() {
     files.forEach(f => {
       const src = fs.readFileSync(path.join(ROOT, f), 'utf8').split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l)).join('\n');
       const scan = f === 'js/team-invite-comm.js' ? readTeamCommBundle(ROOT).split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l)).join('\n')
-        : f === 'js/universal-stats.js' ? readStatsBundle(ROOT).split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l)).join('\n') : src;
+        : f === 'js/universal-stats.js' ? readStatsBundle(ROOT).split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l)).join('\n')
+        : f === 'js/avatar-system.js' ? readAvatarBundle(ROOT).split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l)).join('\n') : src;
       assert.ok(!/(?:^|[^.\w$])confirm\(|\bwindow\.confirm\(/.test(scan), f + ': confirm( 직접 호출 없음');
       assert.ok(src.includes("OurgoalCapabilities.request('ui.confirm.bind')"), f + ': 공용 확인창 통로 사용');
     });

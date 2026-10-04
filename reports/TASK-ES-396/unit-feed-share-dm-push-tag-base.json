@@ -1,0 +1,31 @@
+{
+ "test": "feed-share-dm-push-tag-es396",
+ "root": "base396",
+ "total": 5,
+ "passed": 3,
+ "failed": 2,
+ "results": [
+  {
+   "name": "DM 화면 전송(팀 합본)의 푸시 꼬리표 형식은 'dm-' + threadId 다",
+   "ok": true
+  },
+  {
+   "name": "피드 공유 → 동반자 DM 버튼을 누르면 푸시 요청이 1건 나간다",
+   "ok": true
+  },
+  {
+   "name": "피드 공유 DM 푸시 꼬리표 = 'dm-' + 대화방 id (DM 화면 전송과 같은 형식)",
+   "ok": false,
+   "err": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'dm_dm_00000000-0000-4000-8000-000000000002_11111111-1111-4111-8111-111111111111'\n- 'dm-dm_00000000-0000-4000-8000-000000000002_11111111-1111-4111-8111-111111111111'\n"
+  },
+  {
+   "name": "피드 공유 DM 푸시 꼬리표에 접두가 겹치지 않는다(dm_dm_ 없음)",
+   "ok": false,
+   "err": "dm_dm_ 겹침 없음: dm_dm_00000000-0000-4000-8000-000000000002_11111111-1111-4111-8111-111111111111"
+  },
+  {
+   "name": "대화방 id(team_pings.id)는 그대로 getDmThreadId 값이다",
+   "ok": true
+  }
+ ]
+}
