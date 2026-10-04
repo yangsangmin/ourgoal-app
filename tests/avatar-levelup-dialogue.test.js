@@ -4,6 +4,27 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 
+// #TASK-ES-385 (아바타·EXP 쪼개기 PR-1, 설계 REQ-TASK-ES-384 5절): 아바타 코드가 js/avatar-system.js 에서 js/avatar/**/*.js · js/data/avatar-personas/*.js 로 옮겨 가도
+// 같은 단언이 같은 코드를 찾도록 '아바타 합본'(이름순, 쪼개기 생성기가 붙이는 AV.·MS. 접두를 뗌)을 읽는다. 단언·기대값은 그대로다.
+function listJsTree(dir, recursive) {
+  if (!fs.existsSync(dir)) return [];
+  const out = [];
+  for (const e of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))) {
+    const p = path.join(dir, e.name);
+    if (e.isFile() && e.name.endsWith('.js')) out.push(p);
+    else if (recursive && e.isDirectory()) out.push(...listJsTree(p, true));
+  }
+  return out;
+}
+function readAvatarBundle(rootDir) {
+  const single = path.join(rootDir, 'js', 'avatar-system.js');
+  const parts = [...listJsTree(path.join(rootDir, 'js', 'avatar'), true), ...listJsTree(path.join(rootDir, 'js', 'data', 'avatar-personas'), false)];
+  const src = [single, ...parts].map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])(?:AV|MS)\.(?=[A-Za-z_$])/g, '$1')).join('\n');
+  // 지금(부품 파일 0개)은 합본이 js/avatar-system.js 한 파일과 글자가 같다.
+  if (parts.length === 0) assert.strictEqual(src, fs.readFileSync(single, 'utf8'), '아바타 합본 = js/avatar-system.js (부품 파일이 없을 때)');
+  return src;
+}
+
 const SUITE_NAME = 'avatar-levelup-dialogue';
 
 function runTests() {
@@ -12,7 +33,7 @@ function runTests() {
   const rootDir = path.resolve(__dirname, '..');
   const indexHtml = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf8');
   const componentsJs = fs.readFileSync(path.join(rootDir, 'js/components.js'), 'utf8');
-  const avatarSystemJs = fs.readFileSync(path.join(rootDir, 'js/avatar-system.js'), 'utf8');
+  const avatarSystemJs = readAvatarBundle(rootDir);
   const uiCss = fs.readFileSync(path.join(rootDir, 'ui.css'), 'utf8');
 
   // 1. index.html 마크업 검증
