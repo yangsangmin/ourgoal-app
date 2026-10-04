@@ -1,0 +1,141 @@
+{
+ "task": "TASK-ES-394",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-394-CONFIRM-TEST-AVATAR-SCOPE.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "tests/core-confirm-es374.test.js 의 js/avatar-system.js 칸 「confirm( 직접 호출 없음」 부재 단언이 아바타 합본(js/avatar-system.js + js/avatar/**/*.js + js/data/avatar-personas/*.js, smoke AVATAR_SRC 와 같은 범위·접두 제거)을 읽는다."
+  },
+  {
+   "id": "R2",
+   "text": "단언 문장·기대값·검사 수 변경 0, 지운 단언 0. 같은 종류 tests/ 목록화. 제품 코드 0."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "아바타 칸의 부재 단언이 읽는 글자(scan)가 아바타 합본이다",
+   "touches": [
+    "tests/core-confirm-es374.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/core-confirm-es374.test.js",
+    "text": "        : f === 'js/avatar-system.js' ? readAvatarBundle(ROOT).split(/\\r?\\n/).filter(l => !/^\\s*(\\/\\/|\\/?\\*)/.test(l)).join('\\n') : src;"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "아바타 합본 범위가 js/avatar/** 재귀 + js/data/avatar-personas/*.js 다(smoke AVATAR_PART_FILES 와 같음)",
+   "touches": [
+    "tests/core-confirm-es374.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/core-confirm-es374.test.js",
+    "text": "  const parts = [...listJsTree(path.join(rootDir, 'js', 'avatar'), true), ...listJsTree(path.join(rootDir, 'js', 'data', 'avatar-personas'), false)];"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "「confirm( 직접 호출 없음」 단언 문장은 그대로 남아 있다",
+   "touches": [
+    "tests/core-confirm-es374.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/core-confirm-es374.test.js",
+    "text": "      assert.ok(!/(?:^|[^.\\w$])confirm\\(|\\bwindow\\.confirm\\(/.test(scan), f + ': confirm( 직접 호출 없음');"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "작업 트리에서 확인창 시험이 14건 통과로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-394/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-394/test-compare.json",
+    "path": "runs.work_tree_new_test.passedCount",
+    "equals": 14
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "기준 사본에서도 같은 시험이 14건 통과다(검사 수 그대로)",
+   "touches": [
+    "reports/TASK-ES-394/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-394/test-compare.json",
+    "path": "runs.base_tree_old_test.passedCount",
+    "equals": 14
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "js/avatar/modal/bind-save.js 에 confirm( 탐침을 넣은 변이 트리에서 새 시험지는 실패(종료 1)한다",
+   "touches": [
+    "reports/TASK-ES-394/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-394/test-compare.json",
+    "path": "runs.mutant_modal_bind_save_confirm_new_test.exitCode",
+    "equals": 1
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "같은 변이 트리에서 기준 시험지는 통과(종료 0)한다 — 고친 공백이 실제로 있었다",
+   "touches": [
+    "reports/TASK-ES-394/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-394/test-compare.json",
+    "path": "runs.mutant_modal_bind_save_confirm_old_test.exitCode",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "js/avatar/feature-cards.js 에 window.confirm( 탐침을 넣은 변이 트리에서 새 시험지는 실패(종료 1)한다",
+   "touches": [
+    "reports/TASK-ES-394/test-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-394/test-compare.json",
+    "path": "runs.mutant_feature_cards_window_confirm_new_test.exitCode",
+    "equals": 1
+   }
+  }
+ ]
+}
