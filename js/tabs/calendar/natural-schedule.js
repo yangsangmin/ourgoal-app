@@ -12,7 +12,13 @@
   // 일정 키트: 일정 파일끼리 서로 부르는 함수 묶음(전역 이름을 새로 늘리지 않는다)
   var K = global.OurgoalCalendarKit = global.OurgoalCalendarKit || {};
 
-  function parseNaturalScheduleText(text){
+  // [#TASK-ES-362 CAL-03] 한글 날짜 표현의 앞뒤 경계. JS 정규식의 단어 경계(\b)는 영문·숫자 기준이라 한글 사이에서는 늘 거짓이었다
+  // (그래서 "내일"이 날짜로 안 읽히고, 요일 패턴이 "내일"의 "일"을 일요일로 잡아 제목이 "내 …"가 됐다).
+  // 앞: 문장 처음 또는 한글이 아닌 글자. 뒤: 문장 끝·한글이 아닌 글자, 또는 조사(에·은·는·엔) 하나 뒤의 끝·한글 아닌 글자.
+  var KO_BEFORE = '(^|[^가-힣])';
+  var KO_AFTER = '(?:에|은|는|엔|까지|부터)?(?=$|[^가-힣])';
+
+  function parseNaturalScheduleText(text, nowOverride){
     var raw = (text || '').trim();
     if(!raw) return null;
 
@@ -26,35 +32,61 @@
       raw = raw.replace(/https?:\/\/[^\s]+/g, ' ').trim();
     }
 
-    // 2. 날짜 분석 (기준일: 오늘)
-    var now = new Date();
+    // 2. 날짜 분석 (기준일: 오늘 — 시험에서만 nowOverride 로 기준일을 고정한다)
+    var now = (nowOverride instanceof Date && !isNaN(nowOverride.getTime())) ? nowOverride : new Date();
     var targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     var dateMatched = false;
-
-    // 2-1. 상대 날짜
-    if(/\b오늘\b/.test(raw)){
-      dateMatched = true;
-      raw = raw.replace(/\b오늘\b/, ' ');
-    } else if(/\b내일\b/.test(raw)){
-      targetDate.setDate(targetDate.getDate() + 1);
-      dateMatched = true;
-      raw = raw.replace(/\b내일\b/, ' ');
-    } else if(/\b모레\b/.test(raw)){
-      targetDate.setDate(targetDate.getDate() + 2);
-      dateMatched = true;
-      raw = raw.replace(/\b모레\b/, ' ');
-    } else if(/\b글피\b/.test(raw)){
-      targetDate.setDate(targetDate.getDate() + 3);
-      dateMatched = true;
-      raw = raw.replace(/\b글피\b/, ' ');
+    // 찾은 날짜 표현을 제목에서 통째로 지운다(앞 경계 글자는 남긴다).
+    function cut(re){
+      var m = raw.match(re);
+      if(!m) return null;
+      raw = raw.replace(re, function(all, lead){ return (lead || '') + ' '; });
+      return m;
     }
 
-    // 2-2. 이번 주 / 다음 주 요일
+    // 2-1. 구체적 날짜 (YYYY년 M월 D일 or YYYY-MM-DD or YYYY.M.D) — 가장 구체적인 것이 먼저다
+    var fullDateMatch = cut(/(^|[^\d])(\d{4})\s*[.\-\/년]\s*(\d{1,2})\s*[.\-\/월]\s*(\d{1,2})\s*일?(?:에)?/);
+    if(fullDateMatch){
+      targetDate = new Date(parseInt(fullDateMatch[2], 10), parseInt(fullDateMatch[3], 10) - 1, parseInt(fullDateMatch[4], 10));
+      dateMatched = true;
+    } else {
+      // M월 D일 or M/D or M.D
+      var monthDayMatch = cut(/(^|[^\d])(\d{1,2})\s*(?:월\s*|[.\/])(\d{1,2})\s*일?(?:에)?/);
+      if(monthDayMatch){
+        targetDate = new Date(now.getFullYear(), parseInt(monthDayMatch[2], 10) - 1, parseInt(monthDayMatch[3], 10));
+        dateMatched = true;
+      }
+    }
+
+    // 2-2. N일 후 / N일 뒤
+    if(!dateMatched){
+      var afterMatch = cut(/(^|[^\d])(\d{1,3})\s*일\s*(?:후|뒤)(?:에)?(?=$|[^가-힣])/);
+      if(afterMatch){
+        targetDate.setDate(targetDate.getDate() + parseInt(afterMatch[2], 10));
+        dateMatched = true;
+      }
+    }
+
+    // 2-3. 상대 날짜 (오늘·내일·모레·글피)
+    if(!dateMatched){
+      var relOffsets = { '오늘': 0, '내일': 1, '모레': 2, '내일모레': 2, '글피': 3 };
+      var relMatch = cut(new RegExp(KO_BEFORE + '(내일\\s*모레|오늘|내일|모레|글피)' + KO_AFTER));
+      if(relMatch){
+        targetDate.setDate(targetDate.getDate() + relOffsets[relMatch[2].replace(/\s+/g, '')]);
+        dateMatched = true;
+      }
+    }
+
+    // 2-4. 이번 주 / 다음 주 요일 — "요일"을 붙이거나 "이번 주·다음 주"를 앞에 둔 경우만 요일로 읽는다
+    //      (예전에는 아무 글자 "월·화·수·목·금·토·일"이나 요일로 잡아 "내일"·"수학"·"10월"이 깨졌다)
     var dayMap = { '일': 0, '월': 1, '화': 2, '수': 3, '목': 4, '금': 5, '토': 6 };
-    var weekMatch = raw.match(/(이번\s*주|다음\s*주)?\s*([월화수목금토일])(?:요일)?/);
+    var weekMatch = cut(new RegExp(KO_BEFORE + '(?:(이번\\s*주|다음\\s*주|담주)\\s*)?([월화수목금토일])요일' + KO_AFTER));
+    if(!weekMatch){
+      weekMatch = cut(new RegExp(KO_BEFORE + '(이번\\s*주|다음\\s*주|담주)\\s*([월화수목금토일])' + KO_AFTER));
+    }
     if(weekMatch && !dateMatched){
-      var isNextWeek = weekMatch[1] && weekMatch[1].indexOf('다음') !== -1;
-      var targetDay = dayMap[weekMatch[2]];
+      var isNextWeek = !!weekMatch[2] && /다음|담주/.test(weekMatch[2]);
+      var targetDay = dayMap[weekMatch[3]];
       var curDay = now.getDay();
       var diff = targetDay - curDay;
       if(isNextWeek){
@@ -64,22 +96,6 @@
       }
       targetDate.setDate(targetDate.getDate() + diff);
       dateMatched = true;
-      raw = raw.replace(weekMatch[0], ' ');
-    }
-
-    // 2-3. 구체적 날짜 (YYYY년 M월 D일 or M월 D일 or M/D or YYYY-MM-DD)
-    var fullDateMatch = raw.match(/(\d{4})[.\-\/년]\s*(\d{1,2})[.\-\/월]\s*(\d{1,2})일?/);
-    if(fullDateMatch){
-      targetDate = new Date(parseInt(fullDateMatch[1], 10), parseInt(fullDateMatch[2], 10) - 1, parseInt(fullDateMatch[3], 10));
-      dateMatched = true;
-      raw = raw.replace(fullDateMatch[0], ' ');
-    } else {
-      var monthDayMatch = raw.match(/(\d{1,2})[.\/월]\s*(\d{1,2})일?/);
-      if(monthDayMatch){
-        targetDate = new Date(now.getFullYear(), parseInt(monthDayMatch[1], 10) - 1, parseInt(monthDayMatch[2], 10));
-        dateMatched = true;
-        raw = raw.replace(monthDayMatch[0], ' ');
-      }
     }
 
     var y = targetDate.getFullYear();
@@ -89,8 +105,9 @@
 
     // 3. 시간 분석 (오전/오후/낮/저녁/밤 N시 M분 or HH:mm)
     var timeStr = '';
-    var timeMatch1 = raw.match(/(오전|오후|낮|저녁|밤|새벽)?\s*(\d{1,2})시(?:\s*(\d{1,2})분)?/);
-    var timeMatch2 = raw.match(/(\d{1,2}):(\d{2})/);
+    // [#TASK-ES-362 CAL-03] 시간 뒤 조사 "에"도 시간 표현으로 함께 지운다("오후 3시에 치과" → 제목 "치과", 예전에는 "에 치과")
+    var timeMatch1 = raw.match(/(오전|오후|낮|저녁|밤|새벽)?\s*(\d{1,2})시(?:\s*(\d{1,2})분)?(?:에)?/);
+    var timeMatch2 = raw.match(/(\d{1,2}):(\d{2})(?:에)?/);
 
     if(timeMatch1){
       var meridiem = timeMatch1[1] || '';

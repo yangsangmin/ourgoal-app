@@ -46,10 +46,12 @@
         var s = state || global.state;
         if (!s) return false;
 
-        // 기존 일별 상세 모달/시트 렌더러 연동
-        if (typeof global.renderCalendarDayDetail === 'function') {
-          global.renderCalendarDayDetail();
-          drew = true;
+        // [#TASK-ES-362 CAL-04] 선택한 날 상세 칸 렌더러 연동. 예전에는 어디에도 없는 global.renderCalendarDayDetail 을 찾아
+        // 늘 그리지 않았다. 실제 함수는 같은 일정 세포의 day-detail.js 가 일정 키트에 올린 refreshCalDayDetail 이다(전역 이름을 늘리지 않는다).
+        // 상세 칸(#calDayDetail)이나 프로필이 없으면 그리지 않고 false — 메가블록이 폴백한다.
+        var kit = global.OurgoalCalendarKit;
+        if (kit && typeof kit.refreshCalDayDetail === 'function') {
+          drew = kit.refreshCalDayDetail() === true;
         }
       } catch (err) {
         drew = false;

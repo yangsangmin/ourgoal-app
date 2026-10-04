@@ -4,7 +4,7 @@
  * #TASK-ES-360 (일정 탭 세포 이전): index.html 인라인 IIFE 의 renderCalDayDetail(이전 전 12157~12296줄)을 동작 그대로 옮겼다.
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>. 버그도 그대로 옮겼다.
  * renderCalendarScreen(js/tabs/calendar/render.js)이 K.renderCalDayDetail 로 부른다.
- * (소블록 sub-day-detail.js 가 찾는 window.renderCalendarDayDetail 과는 다른 이름이다 — 이전 전과 같다.)
+ * 소블록 sub-day-detail.js 와 V3 달력(js/sanctuary-v3-engine.js 날짜 선택·이동)도 K.renderCalDayDetail 로 부른다(#TASK-ES-362 CAL-04 — 예전에는 없는 전역 이름을 찾아 늘 건너뛰었다).
  */
 (function(global) {
   'use strict';
@@ -154,7 +154,17 @@
     L.wireAttachmentChipClicks(wrap);
   }
 
+  // [#TASK-ES-362 CAL-04] 다른 세포가 부르는 안전한 다시 그리기 — V3 달력 날짜 선택·이동(js/sanctuary-v3-engine.js)과 소블록 sub-day-detail.js.
+  // 상세 칸(#calDayDetail)이나 프로필이 없으면 그리지 않고 false, 그렸으면 true.
+  function refreshCalDayDetail(){
+    if(typeof document === 'undefined' || !document.getElementById('calDayDetail')) return false;
+    if(!L.state || !L.state.profile) return false;
+    try { renderCalDayDetail(); return true; }
+    catch(err){ console.warn('[OurgoalCalendarKit] 날짜 상세 칸 다시 그리기 실패:', err); return false; }
+  }
+
   K.renderCalDayDetail = renderCalDayDetail;
+  K.refreshCalDayDetail = refreshCalDayDetail;
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = K;

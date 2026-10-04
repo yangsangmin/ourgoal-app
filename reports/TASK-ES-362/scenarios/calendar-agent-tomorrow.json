@@ -1,0 +1,17 @@
+{
+  "id": "calendar-agent-tomorrow",
+  "title": "일정 탭 AI 일정 비서에 '내일 오후 3시 치과 예약'을 적고 등록하면 내일(D-1) 상세 목록에 제목 '치과 예약'으로 나타난다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"calendar\"]" },
+    { "expect": "visible", "selector": "#calAgentInput" },
+    { "do": "type", "selector": "#calAgentInput", "text": "내일 오후 3시 치과 예약" },
+    { "do": "click", "selector": "#calAgentSendBtn" },
+    { "expect": "textEquals", "selector": "#calDayDetail .ms-title", "text": "치과 예약" },
+    { "expect": "textEquals", "selector": "#calDayDetail .dday-pill", "text": "D-1" },
+    { "capture": "agent-tomorrow-registered" }
+  ]
+}

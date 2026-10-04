@@ -1,0 +1,19 @@
+{
+  "id": "calendar-select-day-detail",
+  "title": "일정 탭 달력에서 오늘에 일정을 등록한 뒤 일정이 없는 다른 날을 누르면, 아래 상세 칸이 그 날(일정 없음)로 바뀐다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"calendar\"]" },
+    { "expect": "visible", "selector": "#calAgentInput" },
+    { "do": "type", "selector": "#calAgentInput", "text": "오후 3시 치과 예약" },
+    { "do": "click", "selector": "#calAgentSendBtn" },
+    { "expect": "textEquals", "selector": "#calDayDetail .ms-title", "text": "치과 예약" },
+    { "do": "click", "selector": ".s-month-grid > :nth-child(1 of .s-cal-day-cell:not(.empty):not(.today):not(.active))" },
+    { "expect": "visible", "selector": "#calDayDetail .empty-state" },
+    { "expect": "notExists", "selector": "#calDayDetail .ms-title" },
+    { "capture": "other-day-selected" }
+  ]
+}
