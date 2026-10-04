@@ -4808,7 +4808,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         e.stopPropagation();
         var delId = btn.dataset.delpromptid;
         if(!delId) return;
-        if(!confirm('등록하신 프롬프트를 삭제하시겠습니까?')) return;
+        if(!(await OurgoalCapabilities.call('ui.confirm', '등록하신 프롬프트를 삭제하시겠습니까?'))) return;
         if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
         var uList = getUserPrompts();
         var filtered = uList.filter(function(u){ return u.id !== delId; });
@@ -6533,7 +6533,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   });
 
   document.getElementById('resetBtn').addEventListener('click', async function(){
-    if(!confirm('이 계정의 모든 목표·기록·설정을 초기화할까요? 되돌릴 수 없어요.')) return;
+    if(!(await OurgoalCapabilities.call('ui.confirm', '이 계정의 모든 목표·기록·설정을 초기화할까요? 되돌릴 수 없어요.'))) return;
     var fresh = defaultProfile(state.profile.id, state.profile.username, state.profile.displayName);
     state.profile = fresh;
     await saveProfile();
@@ -9369,7 +9369,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var trash = getTrashList();
     var item = trash.find(function(x){ return x.id === trashId; });
     if(!item) return;
-    if(!confirm('"' + item.title + '" 항목을 영구 삭제할까요?\n더 이상 복구할 수 없습니다.')) return;
+    if(!(await OurgoalCapabilities.call('ui.confirm', '"' + item.title + '" 항목을 영구 삭제할까요?\n더 이상 복구할 수 없습니다.'))) return;
     state.profile.trash = trash.filter(function(x){ return x.id !== trashId; });
     var uidVal = state.profile.id || 'guest';
     try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify(state.profile.trash)); } catch(e){}
@@ -9381,7 +9381,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(!state.profile) return;
     var trash = getTrashList();
     if(!trash.length){ toast('휴지통이 이미 비어 있습니다'); return; }
-    if(!confirm('휴지통을 완전히 비울까요?\n보관 중인 ' + trash.length + '개 항목이 모두 영구 삭제되며 복구할 수 없습니다.')) return;
+    if(!(await OurgoalCapabilities.call('ui.confirm', '휴지통을 완전히 비울까요?\n보관 중인 ' + trash.length + '개 항목이 모두 영구 삭제되며 복구할 수 없습니다.'))) return;
     state.profile.trash = [];
     var uidVal = state.profile.id || 'guest';
     try { localStorage.setItem('ourgoal_trash_backup_' + uidVal, JSON.stringify([])); } catch(e){}
@@ -9394,8 +9394,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(prev) prev.remove();
     var bar = document.createElement('div');
     bar.id = 'trashUndoToast';
-    bar.style.cssText = 'position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:24px;font-size:.875rem;font-weight:700;display:flex;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.28);z-index:99999;max-width:92vw;';
-    bar.innerHTML = '<span>' + msg + '</span><button type="button" id="btnTrashUndoAction" style="background:var(--brand);color:#fff;border:none;padding:4px 10px;border-radius:12px;font-size:.8125rem;font-weight:700;cursor:pointer;flex:0 0 auto;">실행 취소</button>';
+    bar.style.cssText = 'position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:24px;font-size:.875rem;font-weight:700;display:flex;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.28);z-index:99999;max-width:92vw;pointer-events:none;';
+    bar.innerHTML = '<span>' + msg + '</span><button type="button" id="btnTrashUndoAction" style="background:var(--brand);color:#fff;border:none;padding:4px 10px;border-radius:12px;font-size:.8125rem;font-weight:700;cursor:pointer;flex:0 0 auto;pointer-events:auto;">실행 취소</button>';
     document.body.appendChild(bar);
     var uBtn = bar.querySelector('#btnTrashUndoAction');
     if(uBtn){
@@ -10711,7 +10711,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       if(deleteBtn){
         deleteBtn.addEventListener('click', async function(){
-          if(confirm('이날의 배경사진을 초기화하고 기본 배경으로 되돌릴까요?')){
+          if(await OurgoalCapabilities.call('ui.confirm', '이날의 배경사진을 초기화하고 기본 배경으로 되돌릴까요?')){
             delete state.profile.calendarDayBackgrounds[sel];
             try {
               var uidVal = (state.profile && state.profile.id) || 'guest';
@@ -10920,7 +10920,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         sheet.querySelectorAll('[data-hubdel]').forEach(function(btn){
           btn.onclick = async function(){
             var sid = btn.dataset.hubdel;
-            if(!confirm('이 일정을 휴지통으로 이동할까요?\n7일간 보관되며 언제든 원복할 수 있습니다.')) return;
+            if(!(await OurgoalCapabilities.call('ui.confirm', '이 일정을 휴지통으로 이동할까요?\n7일간 보관되며 언제든 원복할 수 있습니다.'))) return;
             var targetSched = (state.profile.settings.customSchedules || []).find(function(c){ return c.id === sid; });
             if(targetSched){
               await moveToTrash('schedule', sid, targetSched, 'in_app', targetSched.title);
@@ -11209,7 +11209,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var delBtn = sheet.querySelector('#calEditDeleteBtn');
         if(delBtn){
           delBtn.onclick = async function(){
-            if(!confirm('이 일정을 휴지통으로 이동할까요?\n7일간 보관되며 언제든 원복할 수 있습니다.')) return;
+            if(!(await OurgoalCapabilities.call('ui.confirm', '이 일정을 휴지통으로 이동할까요?\n7일간 보관되며 언제든 원복할 수 있습니다.'))) return;
             if(kind==='custom'){
               await moveToTrash('schedule', eventItem.id, eventItem, 'in_app', eventItem.title);
             } else if(kind==='goal'){
@@ -17031,7 +17031,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           var pid = btn.getAttribute('data-id');
           var target = presets.find(function(p){ return p.id === pid; });
           if(!target) return;
-          if(!confirm('‘' + (target.title || '이 피드백') + '’ 설정을 보관함에서 삭제하시겠습니까?')) return;
+          if(!(await OurgoalCapabilities.call('ui.confirm', '‘' + (target.title || '이 피드백') + '’ 설정을 보관함에서 삭제하시겠습니까?'))) return;
           var newPresets = presets.filter(function(p){ return p.id !== pid; });
           if(settings.customFeedbackPrompt === target.prompt){
             settings.customFeedbackActive = false;
@@ -19770,7 +19770,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var delBtn = sheet.querySelector('#attDelConfirmBtn');
         if(delBtn){
           delBtn.addEventListener('click', async function(){
-            if(!confirm('이 참고자료를 삭제할까요?')) return;
+            if(!(await OurgoalCapabilities.call('ui.confirm', '이 참고자료를 삭제할까요?'))) return;
             closeModal();
             if(onDelete) await onDelete();
           });
@@ -23798,7 +23798,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     setupUserSessionRealtime();
   }
   function setupUserSessionRealtime(){
-    if(!state.profile || !state.profile.id) return;
+    if(!sb || typeof sb.channel !== 'function' || !state.profile || !state.profile.id) return;
     if(USER_SESSION_CHANNEL){
       try{ sb.removeChannel(USER_SESSION_CHANNEL); }catch(e){}
       USER_SESSION_CHANNEL = null;
@@ -23831,7 +23831,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
     });
   }
-  function setupTeamCommentsRealtime(){
+  function setupTeamCommentsRealtime(){ if(!sb || typeof sb.channel !== 'function') return;
     sb.channel('team_comments_channel')
       .on('postgres_changes', { event:'INSERT', schema:'public', table:'team_comments' }, function(payload){
         var row = payload.new;
@@ -23939,7 +23939,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       return;
     }
     var displayName = userName || '이 사용자';
-    if(!confirm(displayName + '님을 차단할까요?\r\n차단하면 내 화면에서 이 사용자의 게시물과 댓글이 숨겨집니다.')) return;
+    if(!(await OurgoalCapabilities.call('ui.confirm', displayName + '님을 차단할까요?\r\n차단하면 내 화면에서 이 사용자의 게시물과 댓글이 숨겨집니다.'))) return;
     var settings = state.profile.settings;
     if(!settings.blockedUsers) settings.blockedUsers = [];
     if(!settings.blockedUsers.some(function(b){ return (typeof b === 'string' ? b : b.id) === userId; })){
@@ -24848,7 +24848,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       });
 
       sheet.querySelector('#modalDelLgBtn').addEventListener('click', async function(){
-        if(!confirm('정말 "' + lg.name + '" 조와 속한 모든 목표/할일을 삭제할까요?')) return;
+        if(!(await OurgoalCapabilities.call('ui.confirm', '정말 "' + lg.name + '" 조와 속한 모든 목표/할일을 삭제할까요?'))) return;
         state.profile.settings.groupLevelGoals[gid] = levelGroups.filter(function(x){ return x.id !== lgId; });
         await saveProfile();
         toast('조를 삭제했어요');
@@ -25787,7 +25787,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       card.querySelectorAll('[data-reportcmt]').forEach(function(btn){
         btn.addEventListener('click', async function(){
           var id = btn.dataset.reportcmt;
-          if(!confirm('이 댓글을 신고할까요? 신고가 여러 건 쌓이면 자동으로 숨겨져요.')) return;
+          if(!(await OurgoalCapabilities.call('ui.confirm', '이 댓글을 신고할까요? 신고가 여러 건 쌓이면 자동으로 숨겨져요.'))) return;
           btn.disabled = true;
           var res = await sb.rpc('report_content', { p_target_type: 'team_comment', p_target_id: id, p_reason: '' });
           if(res.error){
@@ -25943,7 +25943,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           return refreshModal();
         }
         if(t.closest('#modalTgDelGoalBtn')){
-          if(!confirm('정말 "' + tg.title + '" 팀 목표를 삭제할까요?')) return;
+          if(!(await OurgoalCapabilities.call('ui.confirm', '정말 "' + tg.title + '" 팀 목표를 삭제할까요?'))) return;
           g.teamGoals = (g.teamGoals||[]).filter(function(x){ return x.id !== tgid; });
           await saveProfile(); toast('팀 목표를 삭제했어요'); closeModal(); return renderTeamGoalsScreen();
         }
@@ -26276,7 +26276,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(delBtn){
         delBtn.addEventListener('click', async function(e){
           e.stopPropagation();
-          if(!confirm('이 기록을 휴지통으로 이동할까요?\n7일간 보관되며 언제든 원복할 수 있습니다.')) return;
+          if(!(await OurgoalCapabilities.call('ui.confirm', '이 기록을 휴지통으로 이동할까요?\n7일간 보관되며 언제든 원복할 수 있습니다.'))) return;
           await moveToTrash('record', id, rec, 'in_app', rec.text || rec.title || '체크인 기록');
           card.remove();
           onUpdate();
@@ -31213,7 +31213,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       return;
     }
 
-    var confirmed = confirm('체험용 샘플 데이터 ' + sampleCount + '건만 말끔히 삭제할까요?\n(내가 직접 적은 기록은 100% 안전하게 유지됩니다)');
+    var confirmed = await OurgoalCapabilities.call('ui.confirm', '체험용 샘플 데이터 ' + sampleCount + '건만 말끔히 삭제할까요?\n(내가 직접 적은 기록은 100% 안전하게 유지됩니다)');
     if(!confirmed) return;
 
     if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(15);
@@ -33132,11 +33132,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var FEED_POSTS_CACHE = null; // null=아직 안 불러옴, 로드 후 배열
   async function ensureFeedPostsLoaded(){
     if(FEED_POSTS_CACHE) return;
-    FEED_POSTS_CACHE = [];
+    FEED_POSTS_CACHE = []; if(!sb) return;
     var res = await sb.from('feed_posts').select('*').order('created_at', { ascending:false }).limit(50);
     FEED_POSTS_CACHE = res.data || [];
   }
-  function setupFeedPostsRealtime(){
+  function setupFeedPostsRealtime(){ if(!sb || typeof sb.channel !== 'function') return;
     function rerenderIfFeedVisible(){
       if(state.activeTab!=='comm' || state.commSubTab!=='feed') return;
       var subBody = document.getElementById('commSubBody');
@@ -33954,7 +33954,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     body.querySelectorAll('[data-reportpost]').forEach(function(btn){
       btn.addEventListener('click', async function(){
         var id = btn.dataset.reportpost;
-        if(!confirm('이 게시물을 신고할까요? 신고가 여러 건 쌓이면 자동으로 숨겨져요.')) return;
+        if(!(await OurgoalCapabilities.call('ui.confirm', '이 게시물을 신고할까요? 신고가 여러 건 쌓이면 자동으로 숨겨져요.'))) return;
         btn.disabled = true;
         var res = await sb.rpc('report_content', { p_target_type: 'feed_post', p_target_id: id, p_reason: '' });
         if(res.error){
@@ -35346,7 +35346,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     body.querySelectorAll('[data-mnreveal]').forEach(function(btn){
       btn.addEventListener('click', async function(){
         var pid = btn.dataset.mnreveal;
-        if(!confirm('정체 공개를 제안할까요? 상대도 수락해야 서로 프로필이 열려요.')) return;
+        if(!(await OurgoalCapabilities.call('ui.confirm', '정체 공개를 제안할까요? 상대도 수락해야 서로 프로필이 열려요.'))) return;
         ms.revealed[pid] = nowISO();
         await saveProfile();
         toast('정체 공개를 제안했어요 🎭');
@@ -35357,14 +35357,14 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       ms.allowDm = !ms.allowDm; await saveProfile(); renderCommManito(body);
     });
     document.getElementById('mnReshuffle').addEventListener('click', async function(){
-      if(!confirm('지금 마니또와의 응원 기록은 유지되고, 새 마니또 3명이 배정돼요. 진행할까요?')) return;
+      if(!(await OurgoalCapabilities.call('ui.confirm', '지금 마니또와의 응원 기록은 유지되고, 새 마니또 3명이 배정돼요. 진행할까요?'))) return;
       ms.seed = Math.floor(Math.random()*100000);
       await saveProfile();
       toast('새 마니또가 배정됐어요 🎁');
       renderCommManito(body);
     });
     document.getElementById('mnQuit').addEventListener('click', async function(){
-      if(!confirm('마니또를 그만둘까요? 보낸 응원 기록은 남아요.')) return;
+      if(!(await OurgoalCapabilities.call('ui.confirm', '마니또를 그만둘까요? 보낸 응원 기록은 남아요.'))) return;
       ms.joined = false;
       await saveProfile();
       renderCommManito(body);
