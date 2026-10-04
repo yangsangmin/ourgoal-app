@@ -58,11 +58,11 @@
 
 ## 8. [원칙 ⑧] 성과 측정 (작업자 측정, 판정 아님)
 
-측정 파일: 효과 지표 `reports/TASK-ES-354/measure-effect.json`(스크립트 `measure-effect.js`), 6탭 `tab-check-base-bb343d3-run1.json`·`tab-check-after.json`·`tab-compare-*.json`·`tab-compare-summary.json`, 설정 조작 `dom-compare-settings.json`, 토큰 동일 `verify-equiv.json`.
+측정 파일: main 병합 뒤 비교 `tab-compare-main-vs-head-settings-records.json`·`dom-compare-settings-vs-main.json`, 효과 지표 `reports/TASK-ES-354/measure-effect.json`(스크립트 `measure-effect.js`), 6탭 `tab-check-base-bb343d3-run1.json`·`tab-check-after.json`·`tab-compare-*.json`·`tab-compare-summary.json`, 설정 조작 `dom-compare-settings.json`, 토큰 동일 `verify-equiv.json`.
 
 | 항목 | 이전 전(bb343d3) | 이전 후 |
 | :-- | --: | --: |
-| index.html 줄 수 | 40,568 | 39,620 (−948) |
+| index.html 줄 수 | 40,568 (bb343d3) · 39,732 (병합 직전 main 6ffba01) | 39,620 (−948) · 38,783 (−949) |
 | index.html 의 `function renderSettingsScreen(` 정의 | 1 | 0 |
 | 800줄 넘는 js/ 파일 수 | 12 | 12 (새 파일 중 넘는 것 0) |
 | 새·바뀐 파일 줄 수 | — | app-scope 62 · ui-helpers 45 · render 257 · sub-profile 189 · sub-security 126 · sub-notify 254 · sub-appearance 122 · sub-integrations 296 · sub-data 127 · index.js 139 |
@@ -72,6 +72,7 @@
 | tab-check 6탭 136장(테마 4 × 2해상도 × 상태) — 기준 1회차 대 2회차 | 2,520값 중 차이 0 | — |
 | tab-check 기준 1회차·2회차 대 이전 후 | — | 2,520값 중 차이 0 / 0 |
 | 콘솔 오류(136장 합) | 0 | 0 |
+| main(6ffba01, 기록 탭 #671 포함) 병합 뒤: 설정·기록 40장 tab-compare / 설정 조작 24단계 | — | 745값 차이 0 / 동작 차이 0 |
 | 설정 조작 24단계 비교(화면 HTML·저장값·토스트·테마·클래스·활성 화면·전역 노출·새 오류) | — | 동작 차이 0 (구조 차이 48 = 소블록 수 3→6, 아무것도 그리지 않던 view:sync 구독 3개 없음 × 24단계) |
 | 법정 시나리오 예비 실행(court/lib/scenario.js, 판정 아님) `settings-theme-contrast-same` | 통과 | 통과 |
 | `npm test` | 0 (443·38/38·버튼 953/953) | 0 (443·38/38·버튼 953/953) |
