@@ -5782,3 +5782,15 @@
 - **확인 못 함**: 실계정 로그인 상태의 탈퇴 팝업 화면, 실계정 2기기 '다른 기기 모두 로그아웃' 실효.
 - **진행 단계**: [4단계: 심사 청구]
 ---
+
+## [2026-10-04 16:00] #TASK-ES-351: 탈퇴 신청 30일 후 계정·데이터 영구 파기 (상민님 결정 "탈퇴 후 영구파기로 진행해")
+- **근거**: 상민님 결정 원문(2026-10-04), 노션 SET-02, 생각 메모장 16, PR #357(#T019) purge 설계(대상 표 목록·재조회 잔여 0·null=실패·confirm) 흡수.
+- **서버 기록**: auth app_metadata `deletion_requested_at`(서비스롤만 씀). `api/withdraw.js` request 모드가 쓰고 `getUserById` 로 다시 읽어 같을 때만 ok, restore 모드가 지우고 비었을 때만 ok. 새 표·칸(DDL) 없음.
+- **화면**: `submitWithdrawAccount`(index.html)가 request 를 부르고 ok 일 때만 로그아웃(실패 시 오류 토스트). `checkPendingDeletionRestore`(js/auth-safety.js)가 getUser→세션 app_metadata 로 판정 → 어느 기기에서든 복구 창, 복구는 서버 restore 성공 때만 진입. 서버 기록 없는 옛 신청은 "자동 파기 대상 아님"을 사실대로 안내.
+- **파기 실행**: `docs/sql/2026-10-04-account-purge-install.sql` — 비공개 스키마 `ourgoal_private`, `account_purge_run(p_mode dry-run|purge, p_limit 최대 50, p_run_by manual|cron)` SECURITY DEFINER, anon·authenticated 실행 회수. 계정마다 하위 트랜잭션으로 21개 대상 칸 + auth.audit_log_entries + auth.users 삭제 → 같은 계정 재조회 0 아니면 그 계정 통째로 되돌림 → 실행 끝에 처리 계정 전부 재조회. 목록 밖 사용자 외래키가 있으면 purge 거부. 실행 기록 `account_purge_runs` 는 건수·SQLSTATE 만. pg_cron `ourgoal-account-purge-daily`(18:30 UTC) 꺼진 채 설치. 확인·켜기·되돌리기 SQL + README([손 필요]).
+- **방식 선택 이유**: pg_net→API 는 비밀값을 DB·Vercel 두 곳에 두고 HTTP 중간 실패 시 반쯤 지워진 계정이 남는다. SQL 함수는 외부 통신 0, 계정 단위 원자적.
+- **고지**: 탈퇴 창 1·2·3번, 앱 안 방침 제3·5조·약관 제4조, docs/legal/privacy.md 제3·4·6조, terms.md 제5조. 법령 보존 기록 실측: 결제 코드 0(전자상거래법 보존 대상 없음), 접속 로그 별도 보관 없음(events 는 익명) → "따로 보관하는 기록 없음". 파기 범위 밖: 받은 메시지, 익명 통계, 문의의 노션·텔레그램 사본(api/track.js), 위탁사 로그·백업.
+- **예비 확인(판정 아님, 작업자 측정)**: `node scripts/test-account-purge.js` 13/13(29일 대상 아님·31일 대상, 신청·복구 재조회, 기록 실패 ok:false, 복구 창 서버 기준·복구 실패 시 진입 차단, SQL·API 목록 일치). PGlite(`docs/sql/2026-10-04-account-purge-test.mjs`) 39/39(꺼진 예약, dry-run 삭제 0, purge 잔여 0·identities 연쇄, 실패 계정 무손상, 조용한 잔여 잡음, 상한 50/55, 목록 밖 외래키 거부, anon·authenticated 거부, 되돌리기). 기준 커밋 smoke 로 채점 시 ES-158·ES-271 2건 깨짐 → retire. `npm test` 종료코드 0.
+- **확인 못 함**: 실서버 설치·dry-run·예약 실행(레벨 5), postgres 의 auth.users 삭제 권한·운영 트리거, 로그인 뒤 탈퇴 창·복구 창 화면, Vercel SUPABASE_SERVICE_ROLE_KEY 설정 여부.
+- **진행 단계**: [4단계: 심사 청구]
+---

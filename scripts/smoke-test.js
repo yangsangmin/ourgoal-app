@@ -917,6 +917,23 @@ check('compliance: [#TASK-ES-175] 공식 운영 이메일(ourgoal.support@gmail.
   assert.ok(!tabGuides.includes('support@ourgoal.kr'), 'js/tab-guides.js에 support@ourgoal.kr 부재');
 });
 
+/* ── [#TASK-ES-351] 탈퇴 신청 서버 기록·복구·30일 후 영구 파기 ───────────────────── */
+check('compliance: [#TASK-ES-351] 탈퇴 신청·복구·파기 모의 Supabase 시험(scripts/test-account-purge.js)이 통과한다', () => {
+  const { spawnSync } = require('child_process');
+  const r = spawnSync(process.execPath, [path.join(__dirname, 'test-account-purge.js')], { encoding: 'utf8' });
+  assert.strictEqual(r.status, 0, 'test-account-purge.js 실패: ' + (r.stdout || '') + (r.stderr || ''));
+});
+
+check('compliance: [#TASK-ES-351] 탈퇴 버튼은 서버 요청 모드를 부르고, 로그인 복구 판정은 서버 기록을 읽는다', () => {
+  const authSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'auth-safety.js'), 'utf8');
+  const submit = html.slice(html.indexOf('async function submitWithdrawAccount()'), html.indexOf('function openWithdrawModal()'));
+  assert.ok(submit.includes("fetch('/api/withdraw'") && submit.includes("mode: 'request'"), '탈퇴 신청이 /api/withdraw request 모드 호출');
+  assert.ok(submit.indexOf("mode: 'request'") < submit.indexOf('sb.auth.signOut()'), '서버 기록 확인 뒤에만 로그아웃');
+  assert.ok(submit.includes('wBody.ok !== true'), '서버가 ok 를 주지 않으면 실패 처리');
+  assert.ok(authSrc.includes('meta.deletion_requested_at'), '복구 판정이 서버 app_metadata.deletion_requested_at 을 읽음');
+  assert.ok(authSrc.includes("callWithdrawApi(sb, 'restore')"), '복구 버튼이 서버 restore 모드 호출');
+});
+
 check('compliance: api/withdraw.js 가 유효한 핸들러 모듈이다', () => {
   const handler = require('../api/withdraw.js');
   assert.strictEqual(typeof handler, 'function', 'api/withdraw.js 핸들러 함수 존재');
@@ -6222,7 +6239,9 @@ check('compliance: [#TASK-ES-158] 회원 탈퇴 시 법적책임·데이터 분�
   assert.ok(indexSrc.includes('30일 탈퇴 유예 안전망 및 원클릭 복구'), '2. 30일 유예 및 복구 안내 문구 존재');
   // [#TASK-ES-346 SET-02] 실행되지 않는 '자동 파기·법정 분리 보관' 고지를 실제 처리 방식과 삭제 요청 경로로 바꿨다
   assert.ok(indexSrc.includes('3. 데이터 삭제(파기) 현황과 요청 방법'), '3. 데이터 삭제 현황·요청 방법 고지 문구 존재');
-  assert.ok(indexSrc.includes('아직 탈퇴 후 자동 파기 기능을 실행하고 있지 않습니다'), '자동 파기 미실행 사실 고지');
+  // [#TASK-ES-351] 30일 후 서버 자동 영구 파기를 구현해 '자동 파기 미실행' 고지를 실제 파기 고지로 바꿨다
+  assert.ok(!indexSrc.includes('아직 탈퇴 후 자동 파기 기능을 실행하고 있지 않습니다'), '자동 파기 미실행 옛 고지 제거');
+  assert.ok(indexSrc.includes('30일 복구 기간이 끝나면 서버에서 자동으로 영구 파기'), '30일 후 서버 자동 영구 파기 고지');
 
   // 3. 동의 체크박스 및 인터랙티브 버튼 배선 확인
   assert.ok(indexSrc.includes('id="withdrawAgreeCheck"'), '동의 체크박스 요소 존재');
@@ -8693,7 +8712,7 @@ check('compliance: [#TASK-ES-271] 계정 탈퇴 시 법적책임·데이터 분�
   // 4. 30일 안전 유예 및 원클릭 복구
   assert.ok(indexHtml.includes('2. 30일 탈퇴 유예 안전망 및 원클릭 복구'), '30일 탈퇴 유예 섹션');
   assert.ok(indexHtml.includes('30일간 안전 유예 기간'), '30일 안전 유예 기간 안내');
-  assert.ok(indexHtml.includes('30일 안에 이 기기에서 다시 로그인'), '30일 내 같은 기기 재로그인 복구 안내(#TASK-ES-346)');
+  assert.ok(indexHtml.includes('30일 안에 어느 기기에서든 다시 로그인'), '30일 내 어느 기기에서든 재로그인 복구 안내(#TASK-ES-351 서버 기록)');
 
   // 5. 법적 책임 및 보존 3대 법령
   // [#TASK-ES-346 SET-02] 실행되지 않는 보존·파기 약속 대신 실제 현황과 삭제 요청 경로를 고지한다
