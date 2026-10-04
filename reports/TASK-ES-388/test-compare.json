@@ -1,0 +1,141 @@
+{
+  "task": "TASK-ES-388",
+  "what": "기준 사본(origin/main 2e3558a git archive) 대 작업 트리 — npm test 수치와 tests/ 중 js/team-invite-comm.js 를 읽는 13개 시험 출력 비교",
+  "base": {
+    "tree": "git archive 2e3558a (스크래치, .git 없음)",
+    "npmTest": {
+      "smoke": [
+        443,
+        0
+      ],
+      "integrity": [
+        38,
+        38,
+        0
+      ],
+      "buttons": [
+        943,
+        943
+      ],
+      "shipyardModularFiles": [
+        42
+      ],
+      "moduleGuard": [
+        34058,
+        669,
+        282,
+        10,
+        0
+      ],
+      "checkLines": {
+        "pass": 491,
+        "fail": 0
+      }
+    }
+  },
+  "work": {
+    "tree": "feat/2026-10-05-task-es-388-team-test-bundle 작업 트리",
+    "npmTest": {
+      "smoke": [
+        443,
+        0
+      ],
+      "integrity": [
+        38,
+        38,
+        0
+      ],
+      "buttons": [
+        943,
+        943
+      ],
+      "shipyardModularFiles": [
+        42
+      ],
+      "moduleGuard": [
+        34058,
+        669,
+        282,
+        10,
+        0
+      ],
+      "checkLines": {
+        "pass": 491,
+        "fail": 0
+      }
+    }
+  },
+  "smokeTitlesIdentical": true,
+  "smokeTitleCount": {
+    "base": 450,
+    "work": 450
+  },
+  "teamTests": [
+    {
+      "file": "tests/comm-ai-identity-es348.test.js",
+      "sameOutputAfterNormalize": true,
+      "baseLastLine": "ℹ fail 0"
+    },
+    {
+      "file": "tests/comm-dm-ledger-es366.test.js",
+      "sameOutputAfterNormalize": true,
+      "baseLastLine": "[comm/dm-ledger] 10/10 통과"
+    },
+    {
+      "file": "tests/comm-feed-cleanup.test.js",
+      "sameOutputAfterNormalize": true,
+      "baseLastLine": "AssertionError [ERR_ASSERTION]: renderCalendar must be called"
+    },
+    {
+      "file": "tests/comm-post-feed-button-fix.test.js",
+      "sameOutputAfterNormalize": true,
+      "baseLastLine": "AssertionError [ERR_ASSERTION]: renderCalendar must be called"
+    },
+    {
+      "file": "tests/core-confirm-es374.test.js",
+      "sameOutputAfterNormalize": true,
+      "baseLastLine": "[core/confirm] 14건 통과"
+    },
+    {
+      "file": "tests/core-toast-es361.test.js",
+      "sameOutputAfterNormalize": true,
+      "baseLastLine": "[core/toast] 8건 통과"
+    },
+    {
+      "file": "tests/dm-delivery-read-receipt.test.js",
+      "sameOutputAfterNormalize": true,
+      "baseLastLine": "AssertionError [ERR_ASSERTION]: renderCalendar가 호출되어야 합니다."
+    },
+    {
+      "file": "tests/dm-keyboard-autofocus-fix.test.js",
+      "sameOutputAfterNormalize": true,
+      "baseLastLine": "AssertionError [ERR_ASSERTION]: renderCalendar must be called"
+    },
+    {
+      "file": "tests/feed-share-dm-thread-es382.test.js",
+      "sameOutputAfterNormalize": true,
+      "baseLastLine": null
+    },
+    {
+      "file": "tests/goal-template-legacy-cleanup.test.js",
+      "sameOutputAfterNormalize": true,
+      "baseLastLine": "AssertionError [ERR_ASSERTION]: renderGoalsScreen 내 60선 창 제거 주석 및 로직 확인"
+    },
+    {
+      "file": "tests/manito-ai-limit.test.js",
+      "sameOutputAfterNormalize": true,
+      "baseLastLine": "[TEST PASS] manito-ai-limit - All assertions succeeded!"
+    },
+    {
+      "file": "tests/remove-ai-companions.test.js",
+      "sameOutputAfterNormalize": true,
+      "baseLastLine": "[TEST PASS] remove-ai-companions - All assertions succeeded!"
+    },
+    {
+      "file": "tests/unique-display-name.test.js",
+      "sameOutputAfterNormalize": true,
+      "baseLastLine": "🎉 [#TASK-ES-320 / 노션 69] 모든 단위 테스트 통과 (100% 무결점)"
+    }
+  ],
+  "note": "tests/ 13개의 종료 코드·출력은 경로·시간·스택 줄 번호(도우미 17줄만큼 밀림) 글자를 빼면 기준과 같다. comm-feed-cleanup·comm-post-feed-button-fix·dm-delivery-read-receipt·dm-keyboard-autofocus-fix·goal-template-legacy-cleanup 5개는 기준에서도 실패한다(renderCalendar·renderGoalsScreen 단언, 팀 파일과 무관한 기존 실패, 고치지 않음). npm test 로그의 차이는 기준 사본에 .git 이 없어 생기는 줄(fatal: not a git repository·기준 커밋 못 읽음 → goal-templates-data-split 9 → 10 passed)뿐이다."
+}

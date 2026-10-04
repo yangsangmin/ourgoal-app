@@ -3,12 +3,29 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 
+// #TASK-ES-388 (팀 세포 쪼개기 2차 선행): 팀 코드가 js/team-invite-comm.js 에서 js/team-*.js 키트 부품(OurgoalTeamCommKit 에 함수를 담는 파일)으로 옮겨 가도
+// 같은 단언이 같은 코드를 찾도록 '팀 합본' = js/team-invite-comm.js(원문 그대로, 맨 앞) + 키트 부품(이름순, 생성기 접두 T.·K. 를 떼고) 를 읽는다. 단언·기대값은 그대로다.
+function listTeamCommParts(rootDir) {
+  const dir = path.join(rootDir, 'js');
+  return fs.readdirSync(dir).filter((n) => n.indexOf('team-') === 0 && n !== 'team-invite-comm.js' && n.endsWith('.js')).sort()
+    .map((n) => path.join(dir, n)).filter((f) => fs.statSync(f).isFile() && fs.readFileSync(f, 'utf8').indexOf('OurgoalTeamCommKit') >= 0);
+}
+function readTeamCommBundle(rootDir) {
+  const raw = fs.readFileSync(path.join(rootDir, 'js', 'team-invite-comm.js'), 'utf8');
+  const parts = listTeamCommParts(rootDir);
+  const src = [raw, ...parts.map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[TK]\.(?=[A-Za-z_$])/g, '$1'))].join('\n');
+  // 합본 맨 앞은 원문 그대로다(원본에서 찾던 글자는 같은 자리에서 찾는다). 부품 파일이 없으면 합본 = 원문.
+  assert.strictEqual(src.slice(0, raw.length), raw, '팀 합본 맨 앞 = js/team-invite-comm.js 원문');
+  if (parts.length === 0) assert.strictEqual(src, raw, '팀 합본 = js/team-invite-comm.js (부품 파일이 없을 때)');
+  return src;
+}
+
 function runTest() {
   console.log('[TEST] #TASK-ES-318: DM 카카오톡 방식 전송/도착/읽음 확인 및 상세 시각 표시 검증 시작');
 
   // 1. js/team-invite-comm.js 소스 코드 정적 분석
   const commJsPath = path.resolve(__dirname, '../js/team-invite-comm.js');
-  const commJs = fs.readFileSync(commJsPath, 'utf8');
+  const commJs = readTeamCommBundle(path.resolve(__dirname, '..'));
 
   assert(commJs.includes('renderSingleDmMsg'), 'renderSingleDmMsg 함수가 team-invite-comm.js에 있어야 합니다.');
   assert(commJs.includes('formatDmDetailTime'), 'formatDmDetailTime 함수가 team-invite-comm.js에 있어야 합니다.');
