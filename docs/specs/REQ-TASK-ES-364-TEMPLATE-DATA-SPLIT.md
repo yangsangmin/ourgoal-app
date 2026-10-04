@@ -52,14 +52,14 @@
 
 ## 8. [원칙 ⑧] 성과 측정 (작업자 측정, 판정 아님)
 
-모두 로컬(정적 서버 + 헤드리스 Chrome + 게스트 시드 + Supabase 목, 원격·실계정 없음). 기준 = origin/main 9962457. 결과 파일 `reports/TASK-ES-364/`.
+모두 로컬(정적 서버 + 헤드리스 Chrome + 게스트 시드 + Supabase 목, 원격·실계정 없음). 기준 = origin/main 9962457(분리 커밋) · 합친 뒤 a2c593f(화면 비교 재실행). 결과 파일 `reports/TASK-ES-364/`.
 
 | 항목 | 도구 | 결과 |
 | :-- | :-- | :-- |
 | 배열 동일 | `tests/goal-templates-data-split.test.js` | 10건 통과 — Node·브라우저 경로 list deepStrictEqual 원본, 지문 6151e77a… 동일, 60종·id 순서 동일, getByCategory·getById·search 동일 |
 | 변이 시험 | 파트 값 1개·카테고리 순서 바꿔 실행 | 둘 다 실패(시험이 잡음) |
 | 템플릿 화면 조작 | `dom-compare-templates.js` 22단계 × 11칸 | 기준 대 후 242값 차이 0 (기준 대 기준: 오늘 미션 지문 `hash` 11곳만 본질 변동 → 제외 후 0) |
-| 목표·소통 탭 실측 | `tab-check.js goals,comm` 기준 2회·후 | 아래 `tab-compare` 결과 파일 |
+| 목표 탭 실측 | `tab-check.js goals --deadclick off` 기준(a2c593f) 2회·후 | 기준 대 기준 408값 차이 0 · 기준 대 후 408값 차이 0 (소통 탭은 첫 시도가 진행되지 않아 이번에 재지 않음) |
 | 게스트 시나리오 | `reports/TASK-ES-364/scenarios/goal-template-pick.json` (법정 실행기 로컬) | 기준·후 모두 통과, 공허 확인 0 |
 | 모듈 가드 | `scripts/module-guard.js` | ① 35905 · ② 691 · ③ 282 · ④ 12→11 · ⑤ 0, 기준선 `--update` |
 | npm test | | 0 실패 — 443 통과 · 38/38 · 버튼 957/957 · 모듈 시험 전부 |

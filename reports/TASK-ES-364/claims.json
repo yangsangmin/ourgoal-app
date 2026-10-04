@@ -345,6 +345,98 @@
           "다른 기기(또는 새로고침 후)에서 같은 계정으로 목표 탭을 열어 그 목표가 보이는지 본다"
         ]
       }
+    },
+    {
+      "id": "C22",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "학습·자격 데이터 파일이 자기 배열을 OurgoalGoalTemplateParts.study 에 둔다",
+      "touches": [
+        "js/data/goal-templates/study.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/goal-templates/study.js",
+        "text": "    (root.OurgoalGoalTemplateParts = root.OurgoalGoalTemplateParts || {}).study = LIST;"
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "커리어·머니 데이터 파일이 자기 배열을 OurgoalGoalTemplateParts.career 에 둔다",
+      "touches": [
+        "js/data/goal-templates/career.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/goal-templates/career.js",
+        "text": "    (root.OurgoalGoalTemplateParts = root.OurgoalGoalTemplateParts || {}).career = LIST;"
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "취미·창작 데이터 파일이 자기 배열을 OurgoalGoalTemplateParts.hobby 에 둔다",
+      "touches": [
+        "js/data/goal-templates/hobby.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/goal-templates/hobby.js",
+        "text": "    (root.OurgoalGoalTemplateParts = root.OurgoalGoalTemplateParts || {}).hobby = LIST;"
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "마음·습관 데이터 파일이 자기 배열을 OurgoalGoalTemplateParts.mind 에 둔다",
+      "touches": [
+        "js/data/goal-templates/mind.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/goal-templates/mind.js",
+        "text": "    (root.OurgoalGoalTemplateParts = root.OurgoalGoalTemplateParts || {}).mind = LIST;"
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "목표 탭 기준(a2c593f) 실측 1회차와 후 실측 비교에서 비교한 값 408 중 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-364/tab-compare-goals-base-run1-vs-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-364/tab-compare-goals-base-run1-vs-after.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "목표 탭 기준 실측 2회 사이(본질적 변동) 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-364/tab-compare-goals-base-run1-vs-run2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-364/tab-compare-goals-base-run1-vs-run2.json",
+        "path": "differingValues",
+        "equals": 0
+      }
     }
   ]
 }
