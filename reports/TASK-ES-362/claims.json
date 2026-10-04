@@ -1,0 +1,343 @@
+{
+ "task": "TASK-ES-362",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-362-CELL-BUGFIX.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "SET-08: 설정 구글 캘린더 \"목표·일정 변경 시 자동 동기화\" 스위치가 노션 자동 전송 값으로 뒤집히는 결함을 고친다 — js/tabs/settings/sub-integrations.js 의 중복 선언 var isAuto 를 용도별 이름으로 나눈다."
+  },
+  {
+   "id": "R2",
+   "text": "CAL-03: AI 일정 비서 parseNaturalScheduleText(js/tabs/calendar/natural-schedule.js)가 오늘·내일·모레·요일(이번 주/다음 주)·N일 후를 날짜로 해석하고 그 표현을 제목에서 통째로 뺀다. 기존에 되던 입력 형태는 그대로 동작한다. 부품 시험(tests/)을 더한다."
+  },
+  {
+   "id": "R3",
+   "text": "CAL-04: 보이는 V3 달력(OurgoalSanctuaryV3.selectCalDay, js/sanctuary-v3-engine.js)에서 날짜를 고르면 #calDayDetail 이 그 날로 다시 그려진다(renderCalDayDetail, js/tabs/calendar/day-detail.js). sub-day-detail.js 가 없는 window.renderCalendarDayDetail 대신 실제 함수를 부른다. 숨은 #calGrid 정리는 화면에서 사라지는 것이 없을 때만."
+  },
+  {
+   "id": "R4",
+   "text": "문서·검사: REQ(8원칙), claims, dev_log 1줄, TICKETS 1줄, 신고서 module-specs --write, 모듈 가드 통과, npm test 0 실패, 새 js 800줄 이하. 동결 파일 변경·retire·기대값 낮추기 없음. PR(초안 아님), 병합 안 함."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "구글 캘린더 자동 동기화 스위치와 노션 자동 전송 스위치가 더는 같은 변수 이름 isAuto 를 쓰지 않는다(연동 섹션에 var isAuto 선언 0)",
+   "touches": [
+    "js/tabs/settings/sub-integrations.js"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "js/tabs/settings/sub-integrations.js",
+    "text": "var isAuto"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "자동 동기화 스위치를 누르면 자기 값(isGcalAutoSync)을 뒤집어 저장한다",
+   "touches": [
+    "js/tabs/settings/sub-integrations.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/settings/sub-integrations.js",
+    "text": "settings.gcalAutoSync = !isGcalAutoSync;"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "노션 자동 전송 스위치를 누르면 자기 값(isNotionAutoPush)을 뒤집어 저장한다",
+   "touches": [
+    "js/tabs/settings/sub-integrations.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/settings/sub-integrations.js",
+    "text": "settings.notionAutoPush = !isNotionAutoPush;"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "부품 시험 tests/settings-gcal-autosync-switch.test.js 가 있고 npm test(shipyard)에서 돈다 — 켜진 자동 동기화 스위치를 누르면 꺼지고 노션 값은 그대로임을 단언한다(기준 커밋 코드에서는 실패)",
+   "touches": [
+    "scripts/test-shipyard-modular.js",
+    "tests/settings-gcal-autosync-switch.test.js",
+    "js/tabs/settings/sub-integrations.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/test-shipyard-modular.js",
+    "text": "runNode('tests/settings-gcal-autosync-switch.test.js');"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "구글 캘린더를 연동한 계정에서 설정 > 고급 > 구글 캘린더 연동의 \"목표·일정 변경 시 자동 동기화\" 스위치를 누르면 꺼지고, 다시 누르면 켜진다(노션 자동 전송 스위치 값과 무관)",
+   "touches": [
+    "js/tabs/settings/sub-integrations.js"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "구글 캘린더를 연동한 실계정으로 로그인할 수 있는 사람",
+    "how": [
+     "구글 계정으로 로그인하고 설정에서 구글 캘린더를 연동한다(연동 전에는 이 스위치 줄 #gcalSyncRow 가 숨겨져 있다)",
+     "노션 자동 전송 스위치는 꺼 둔 채로 자동 동기화 스위치(켜짐)를 누른다",
+     "스위치가 꺼짐으로 바뀌고 새로고침 뒤에도 꺼져 있는지 본다, 다시 눌러 켜지는지 본다"
+    ]
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 9,
+   "domain": "ui-behavior",
+   "statement": "게스트로 일정 탭 AI 일정 비서에 \"내일 오후 3시 치과 예약\"을 적고 등록을 누르면, 선택한 날 상세 칸이 내일(D-1)로 바뀌고 그 일정 제목이 \"치과 예약\"으로 나온다(기준 커밋에서는 제목 \"내 치과 예약\"·날짜가 내일이 아님)",
+   "touches": [
+    "js/tabs/calendar/natural-schedule.js"
+   ],
+   "scenario": "scenarios/calendar-agent-tomorrow.json"
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "오늘·내일·모레·글피·요일 앞 경계를 한글 기준(앞이 문장 처음이거나 한글이 아닌 글자)으로 잰다 — 한글 사이에서 늘 거짓인 \b 단어 경계 대신",
+   "touches": [
+    "js/tabs/calendar/natural-schedule.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/calendar/natural-schedule.js",
+    "text": "var KO_BEFORE = '(^|[^가-힣])';"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "요일은 \"요일\"을 붙였거나 이번 주·다음 주를 앞에 둔 경우만 읽는다 — 낱말 속 월·화·수·일 글자를 요일로 잡지 않는다",
+   "touches": [
+    "js/tabs/calendar/natural-schedule.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/calendar/natural-schedule.js",
+    "text": "([월화수목금토일])요일' + KO_AFTER"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "N일 후·N일 뒤를 날짜로 해석한다(오늘 + N일)",
+   "touches": [
+    "js/tabs/calendar/natural-schedule.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/calendar/natural-schedule.js",
+    "text": "targetDate.getDate() + parseInt(afterMatch[2], 10)"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "부품 시험 tests/calendar-natural-schedule.test.js 가 있고 npm test(shipyard)에서 돈다 — 오늘·내일·모레·내일모레·글피·N일 후·요일·이번 주/다음 주·기존 형태 6종 등 32건(기준 커밋 코드에서는 첫 단언 \"CAL-03 원문 — 제목\"에서 실패)",
+   "touches": [
+    "scripts/test-shipyard-modular.js",
+    "tests/calendar-natural-schedule.test.js",
+    "js/tabs/calendar/natural-schedule.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/test-shipyard-modular.js",
+    "text": "runNode('tests/calendar-natural-schedule.test.js');"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 11,
+   "domain": "ui-behavior",
+   "statement": "게스트로 일정 탭에서 오늘에 일정을 등록한 뒤 달력에서 일정이 없는 다른 날을 누르면, 아래 상세 칸이 그 날(일정 없음 안내)로 바뀐다(기준 커밋에서는 오늘 일정이 계속 보임)",
+   "touches": [
+    "js/sanctuary-v3-engine.js",
+    "js/tabs/calendar/day-detail.js"
+   ],
+   "scenario": "scenarios/calendar-select-day-detail.json"
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "fix",
+   "symptom": 8,
+   "domain": "ui-behavior",
+   "statement": "게스트로 일정 탭 달력에서 다음 달 화살표를 누르면 아래 상세 칸이 다음 달 1일로 바뀌고(오늘 D-day 표시가 사라짐), 오늘 버튼을 누르면 다시 오늘(D-day)로 돌아온다(기준 커밋에서는 화살표를 눌러도 상세 칸이 오늘에 머묾)",
+   "touches": [
+    "js/sanctuary-v3-engine.js",
+    "js/tabs/calendar/day-detail.js"
+   ],
+   "scenario": "scenarios/calendar-month-arrow-detail.json"
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "V3 달력 엔진이 없는 전역 window.renderCalDayDetail 을 더는 찾지 않는다(날짜 선택·이동 6곳)",
+   "touches": [
+    "js/sanctuary-v3-engine.js"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "js/sanctuary-v3-engine.js",
+    "text": "window.renderCalDayDetail"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "V3 달력 엔진의 상세 칸 다시 그리기가 일정 키트의 실제 함수 refreshCalDayDetail 을 부른다",
+   "touches": [
+    "js/sanctuary-v3-engine.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/sanctuary-v3-engine.js",
+    "text": "kit.refreshCalDayDetail()"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "일정 키트에 상세 칸 안전 다시 그리기 refreshCalDayDetail 이 올라가 있다(새 전역 이름 없음)",
+   "touches": [
+    "js/tabs/calendar/day-detail.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/calendar/day-detail.js",
+    "text": "K.refreshCalDayDetail = refreshCalDayDetail;"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "소블록 sub-day-detail.js 가 없는 global.renderCalendarDayDetail 대신 일정 키트의 refreshCalDayDetail 로 그린다",
+   "touches": [
+    "js/tabs/calendar/sub-day-detail.js"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "js/tabs/calendar/sub-day-detail.js",
+    "text": "global.renderCalendarDayDetail"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "숨은 고전 그리드 #calGrid 는 기록 탭 융합 달력(#recInlineCalGridSlot)이 복사해 보여 주므로 그리기를 그대로 둔다",
+   "touches": [
+    "js/tabs/calendar/render.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/calendar/render.js",
+    "text": "document.getElementById('calGrid').innerHTML = gridHtml;"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R4",
+   "kind": "static",
+   "domain": "code",
+   "statement": "REQ 문서(8원칙)가 있다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-362-CELL-BUGFIX.md"
+   ],
+   "check": {
+    "type": "fileExists",
+    "file": "docs/specs/REQ-TASK-ES-362-CELL-BUGFIX.md"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R4",
+   "kind": "static",
+   "domain": "code",
+   "statement": "모듈 가드 기준선에서 sanctuary-v3-engine.js 줄 수가 1964 로 낮아졌다(래칫 — 부채 증가 0)",
+   "touches": [
+    "docs/architecture/module-baseline.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/module-baseline.json",
+    "text": "\"js/sanctuary-v3-engine.js\": 1964"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R4",
+   "kind": "static",
+   "domain": "code",
+   "statement": "dev_log 에 이번 작업 1줄",
+   "touches": [
+    "dev_log.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "dev_log.md",
+    "text": "TASK-ES-362: 세포 이전 중 발견된 기존 버그 3건"
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R4",
+   "kind": "static",
+   "domain": "code",
+   "statement": "TICKETS 에 이번 작업 1줄",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/rules/TICKETS.md",
+    "text": "#TASK-ES-362 | FIX"
+   }
+  }
+ ]
+}

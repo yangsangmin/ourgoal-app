@@ -43,6 +43,13 @@
       .replace(/'/g, '&#039;');
   }
 
+  // [#TASK-ES-362 CAL-04] 날짜를 고르거나 옮기면 아래 상세 칸(#calDayDetail)을 그 날짜로 다시 그린다. 예전에는 없는 전역 window.renderCalDayDetail 을
+  // 찾아 늘 건너뛰었다. 실제 함수는 일정 키트(js/tabs/calendar/day-detail.js refreshCalDayDetail) — 전역 이름을 새로 달지 않는다.
+  function renderCalDayDetail() {
+    var kit = window.OurgoalCalendarKit;
+    return !!(kit && typeof kit.refreshCalDayDetail === 'function' && kit.refreshCalDayDetail());
+  }
+
   function getTodayStr() {
     var d = new Date();
     var y = d.getFullYear();
@@ -1401,9 +1408,7 @@
         calScreen.setAttribute('data-cal-mode', m);
       }
       renderSanctuaryCalendar();
-      if (m === 'month' && typeof window.renderCalDayDetail === 'function') {
-        window.renderCalDayDetail();
-      }
+      if (m === 'month') renderCalDayDetail();
     },
     getActiveRecMode: function() {
       return engine.activeRecMode;
@@ -1449,9 +1454,7 @@
       }
       toast(engine.calYear + '년 ' + engine.calMonth + '월로 이동했습니다.');
       renderSanctuaryCalendar();
-      if (typeof window.renderCalDayDetail === 'function') {
-        window.renderCalDayDetail();
-      }
+      renderCalDayDetail();
     },
     selectToday: function() {
       var d = new Date();
@@ -1465,9 +1468,7 @@
       }
       toast('오늘(' + tStr + ')로 이동했습니다.');
       renderSanctuaryCalendar();
-      if (typeof window.renderCalDayDetail === 'function') {
-        window.renderCalDayDetail();
-      }
+      renderCalDayDetail();
     },
     shiftWeek: function(dir) {
       var base = engine.selectedCalDate || getTodayStr();
@@ -1484,9 +1485,7 @@
       }
       toast(newKey + ' 주간으로 이동했습니다.');
       renderSanctuaryCalendar();
-      if (typeof window.renderCalDayDetail === 'function') {
-        window.renderCalDayDetail();
-      }
+      renderCalDayDetail();
     },
     shiftTimelineDay: function(dir) {
       var base = engine.selectedCalDate || getTodayStr();
@@ -1503,9 +1502,7 @@
       }
       toast(newKey + ' 타임라인으로 이동했습니다.');
       renderSanctuaryCalendar();
-      if (typeof window.renderCalDayDetail === 'function') {
-        window.renderCalDayDetail();
-      }
+      renderCalDayDetail();
     },
     selectCalDay: function(dateKey) {
       engine.selectedCalDate = dateKey;
@@ -1514,9 +1511,7 @@
       }
       toast(dateKey + ' 일정을 선택했습니다.');
       renderSanctuaryCalendar();
-      if (typeof window.renderCalDayDetail === 'function') {
-        window.renderCalDayDetail();
-      }
+      renderCalDayDetail();
     },
     openScheduleDetail: function(dateKey, schedId, kind, goalId) {
       var dt = dateKey || engine.selectedCalDate || getTodayStr();
