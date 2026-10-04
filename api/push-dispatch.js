@@ -62,6 +62,41 @@ async function isAuthorized(req, sb) {
   return !!(cachedDbToken && sameToken(token, cachedDbToken));
 }
 
+// #TASK-ES-397: 앱의 DM 즉시 푸시(대화방 전송·피드 공유)는 로그인한 사용자가 직접 부른다. 그 사용자는 위 두 비밀값을 갖지 않으므로
+// 즉시 발송 분기에 한해 Supabase 로그인 세션 토큰도 받는다. 받는 조건(모두 만족해야 통과, 하나라도 어긋나면 거절):
+//  ① 토큰이 Supabase 가 확인한 실제 사용자 토큰(sb.auth.getUser)
+//  ② 받는 사람이 본인이 아님
+//  ③ 그 사용자가 방금(DM_PROOF_WINDOW_MIN 분 안) 받는 사람에게 보낸 DM 행이 team_ping_replies 에 실제로 있음 — DM 을 보낸 사람만 그 상대에게 알림을 보낸다
+// 정기 발송(크론) 분기는 여전히 위 두 비밀값만 받는다. 사용자 토큰으로는 그 분기에 들어가지 못한다.
+var DM_PROOF_WINDOW_MIN = 10;
+var DM_TITLE_MAX = 80;
+var DM_BODY_MAX = 200;
+async function authorizeDmSender(sb, token, targetUserId) {
+  if (!token || !targetUserId) return { ok: false, status: 401, error: 'unauthorized' };
+  var userId = null;
+  try {
+    var u = await sb.auth.getUser(token);
+    userId = (!u.error && u.data && u.data.user && u.data.user.id) ? String(u.data.user.id) : null;
+  } catch (e) { userId = null; }
+  if (!userId) return { ok: false, status: 401, error: 'unauthorized' };
+  if (userId === targetUserId) return { ok: false, status: 403, error: 'forbidden: self target' };
+  var since = new Date(Date.now() - DM_PROOF_WINDOW_MIN * 60000).toISOString();
+  try {
+    var proof = await sb.from('team_ping_replies').select('id')
+      .eq('sender_id', userId).eq('receiver_id', targetUserId).gte('created_at', since).limit(1);
+    if (proof.error || !Array.isArray(proof.data) || proof.data.length === 0) {
+      return { ok: false, status: 403, error: 'forbidden: no recent dm to target' };
+    }
+  } catch (e) {
+    return { ok: false, status: 403, error: 'forbidden: no recent dm to target' };
+  }
+  return { ok: true, userId: userId };
+}
+
+function clip(v, max) { return String(v == null ? '' : v).slice(0, max); }
+// 사용자 호출은 앱 안 경로만 연다(바깥 주소로 이끄는 알림 금지)
+function safeAppPath(u) { var s = String(u || ''); return /^\/(?![\/\\])/.test(s) ? s : '/#comm'; }
+
 module.exports = async function handler(req, res) {
   // #TASK-ES-252: 호출자 인증 우선 검사 (인증 토큰 부재 시 즉시 401 Fail-Closed 차단)
   var authHeader = (req && req.headers && (req.headers.authorization || req.headers.Authorization)) || '';
@@ -82,13 +117,24 @@ module.exports = async function handler(req, res) {
   var sb = createClient(process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL, supabaseKey);
 
   // #TASK-ES-252: 모든 발송 분기(인스턴트 및 정기 크론) 진입 전 엄격한 토큰 유효성 검증 강제
+  var isInstant = !!(req.method === 'POST' && req.body && req.body.targetUserId);
+  var dmSender = null; // 사용자 토큰으로 들어온 DM 발신자(비밀값 호출이면 null)
   if (!(await isAuthorized(req, sb))) {
-    res.status(401).json({ error: 'unauthorized' });
-    return;
+    // #TASK-ES-397: 비밀값이 아니면 즉시 발송 분기에서만 로그인 사용자 + 최근 DM 증거를 본다. 정기 발송은 그대로 401.
+    if (!isInstant) {
+      res.status(401).json({ error: 'unauthorized' });
+      return;
+    }
+    var dmAuth = await authorizeDmSender(sb, token, String(req.body.targetUserId).trim());
+    if (!dmAuth.ok) {
+      res.status(dmAuth.status).json({ error: dmAuth.error });
+      return;
+    }
+    dmSender = dmAuth.userId;
   }
 
   // [#TASK-ES-168] 특정 대상 유저 1:1 DM 및 전역 알림 즉시 푸시 발송 분기
-  if (req.method === 'POST' && req.body && req.body.targetUserId) {
+  if (isInstant) {
     webpush.setVapidDetails(
       'mailto:' + (process.env.VAPID_CONTACT_EMAIL || 'admin@ourgoal.app'),
       vapidPublic,
@@ -100,7 +146,16 @@ module.exports = async function handler(req, res) {
       if (subRes.error) throw subRes.error;
       var subs = subRes.data || [];
       var sentCount = 0;
-      var payload = JSON.stringify({
+      var payload = JSON.stringify(dmSender ? {
+        // 사용자 호출: 글자 길이 제한·아이콘 고정·앱 안 경로만
+        title: clip(req.body.title || '아워골 알림', DM_TITLE_MAX),
+        body: clip(req.body.body || '', DM_BODY_MAX),
+        icon: '/icons/icon-192.png',
+        badge: '/icons/badge-72.png',
+        url: safeAppPath(req.body.url || '/#comm'),
+        tag: clip(req.body.tag || ('dm-' + Date.now()), 120),
+        timestamp: Date.now()
+      } : {
         title: req.body.title || '아워골 알림',
         body: req.body.body || '',
         icon: req.body.icon || '/icons/icon-192.png',
