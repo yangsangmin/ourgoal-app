@@ -568,7 +568,6 @@ body:has(.checkin-ai-backdrop) .toast.show {
 @keyframes mic-pulse{0%{box-shadow:0 0 0 0 rgba(255,79,100,.4);}70%{box-shadow:0 0 0 10px rgba(255,79,100,0);}100%{box-shadow:0 0 0 0 rgba(255,79,100,0);}}
 .mic-status{display:block;text-align:right;font-size:.75rem;color:var(--brand-strong);font-weight:600;margin:-4px 0 4px;}
 .capture-live-meta{display:none;font-size:.75rem;color:var(--ink-soft);margin:0 0 8px;padding:6px 10px;background:var(--surface-2);border-radius:8px;align-items:center;justify-content:space-between;border:none;}
-.capture-live-theme{font-weight:600;color:var(--ink-soft);}
 .capture-char-count{color:var(--ink-faint);}
 .mission-card{background:var(--card);border-radius:var(--radius-lg);padding:16px;margin:0 0 12px;box-shadow:var(--shadow-sm);border:var(--card-border);display:block;transition:all .15s var(--ease);}
 .mission-card:hover{box-shadow:var(--shadow);transform:translateY(-1px);}
@@ -1325,228 +1324,6 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
 [data-theme="black"] .comm-subtabs,[data-theme="dark"] .comm-subtabs{background:var(--bg);}
 [data-theme="black"] select,[data-theme="dark"] select,[data-theme="dark-space"] select,[data-theme="glowing-space"] select,[data-theme="deep-sea"] select,[data-theme="sunset-beach"] select,[data-theme="urban-city"] select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23AEB4BC' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");}
 
-/* ============ 24. 계층형 테마 & 즐겨찾기 시스템 (#TASK-ES-028) ============ */
-.theme-quick-bar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  overflow-x: auto;
-  padding: 4px 0 10px;
-  margin-bottom: 2px;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-.theme-quick-bar::-webkit-scrollbar { display: none; }
-.theme-fav-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 11px;
-  border-radius: 999px;
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--text-2, #888);
-  background: var(--surface-2, rgba(255,255,255,0.06));
-  border: 1px solid var(--line, rgba(255,255,255,0.1));
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.18s ease;
-  user-select: none;
-}
-.theme-fav-chip:active { transform: scale(0.96); }
-.theme-fav-chip.active {
-  color: #fff;
-  background: var(--primary, #3b82f6);
-  border-color: var(--primary, #3b82f6);
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
-  font-weight: 600;
-}
-.theme-add-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  color: var(--primary, #3b82f6);
-  background: rgba(59, 130, 246, 0.08);
-  border: 1px dashed rgba(59, 130, 246, 0.4);
-  cursor: pointer;
-  white-space: nowrap;
-}
-.theme-add-chip:hover { background: rgba(59, 130, 246, 0.15); }
-.capture-live-theme.suggested {
-  color: var(--primary, #3b82f6);
-  background: rgba(59, 130, 246, 0.12);
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  cursor: pointer;
-  animation: pulse-soft 2s infinite;
-}
-.capture-live-theme.active {
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-@keyframes pulse-soft {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.82; }
-}
-
-/* 바텀시트 모달 스타일 */
-.theme-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(4px);
-  z-index: 9999;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-.theme-modal-sheet {
-  background: var(--card, #1e1e24);
-  width: 100%;
-  max-width: 520px;
-  max-height: 85vh;
-  border-radius: 20px 20px 0 0;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 -8px 30px rgba(0,0,0,0.4);
-  animation: slideUpModal 0.22s ease-out;
-  overflow: hidden;
-}
-@keyframes slideUpModal {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-.theme-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 20px 12px;
-  border-bottom: 1px solid var(--line, rgba(255,255,255,0.08));
-}
-.theme-modal-header h3 { margin: 0; font-size: 17px; font-weight: 700; color: var(--text, #fff); }
-.theme-modal-close {
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  line-height: 1;
-  color: var(--text-2, #888);
-  cursor: pointer;
-  padding: 0 4px;
-}
-.theme-modal-tabs {
-  display: flex;
-  background: var(--surface-2, rgba(255,255,255,0.04));
-  padding: 4px 16px;
-  gap: 8px;
-  border-bottom: 1px solid var(--line, rgba(255,255,255,0.08));
-}
-.theme-tab-btn {
-  flex: 1;
-  padding: 10px 12px;
-  font-size: 13.5px;
-  font-weight: 600;
-  border: none;
-  background: transparent;
-  color: var(--text-2, #888);
-  border-bottom: 2px solid transparent;
-  cursor: pointer;
-}
-.theme-tab-btn.active {
-  color: var(--primary, #3b82f6);
-  border-bottom-color: var(--primary, #3b82f6);
-}
-.theme-modal-body {
-  padding: 16px 20px 24px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  max-height: calc(85vh - 130px);
-}
-.theme-panel { display: flex; flex-direction: column; gap: 14px; }
-.theme-custom-field { display: flex; flex-direction: column; gap: 6px; }
-.theme-custom-field label { font-size: 12.5px; font-weight: 600; color: var(--text-2, #aaa); }
-.theme-custom-input {
-  width: 100%;
-  padding: 11px 13px;
-  border-radius: 10px;
-  border: 1px solid var(--line, rgba(255,255,255,0.15));
-  background: var(--surface-2, rgba(255,255,255,0.05));
-  color: var(--text, #fff);
-  font-size: 14px;
-  box-sizing: border-box;
-}
-.theme-emoji-picker {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding: 4px 0;
-  scrollbar-width: none;
-}
-.theme-emoji-btn {
-  font-size: 20px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  background: var(--surface-2, rgba(255,255,255,0.06));
-  border: 1px solid transparent;
-  cursor: pointer;
-}
-.theme-emoji-btn.active {
-  border-color: var(--primary, #3b82f6);
-  background: rgba(59, 130, 246, 0.2);
-}
-.theme-search-box { margin-bottom: 12px; }
-.theme-tree-major {
-  border: 1px solid var(--line, rgba(255,255,255,0.08));
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 8px;
-}
-.theme-tree-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 14px;
-  background: var(--surface-2, rgba(255,255,255,0.03));
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 13.5px;
-}
-.theme-tree-content {
-  padding: 10px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: var(--card, #1e1e24);
-  border-top: 1px solid var(--line, rgba(255,255,255,0.05));
-}
-.theme-leaf-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.theme-leaf-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 9px;
-  border-radius: 6px;
-  font-size: 12px;
-  background: var(--surface-2, rgba(255,255,255,0.05));
-  border: 1px solid var(--line, rgba(255,255,255,0.08));
-  color: var(--text, #ddd);
-  cursor: pointer;
-}
-.theme-leaf-chip:hover { border-color: var(--primary, #3b82f6); }
-.theme-leaf-chip .theme-star-icon {
-  color: var(--text-2, #666);
-  font-size: 13px;
-  cursor: pointer;
-  padding: 0 2px;
-}
-.theme-leaf-chip .theme-star-icon.starred { color: #f59e0b; }
-
 /* ================= #TASK-ES-037 기록/목표 UX 개선 스타일 ================= */
 .rec-day-accordion {
   margin-bottom: 8px;
@@ -1877,12 +1654,6 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
     padding: 2px 5px !important;
   }
 }
-.theme-guide-microcopy {
-  font-size: 0.75rem;
-  color: var(--ink-faint);
-  margin: 2px 0 6px 2px;
-  line-height: 1.4;
-}
 #rsManualForm input, #rsManualForm select, #rsManualForm textarea {
   background: #ffffff !important;
   color: #111827 !important;
@@ -1901,60 +1672,6 @@ input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shado
   gap: 4px;
   margin: 2px 0 6px;
   flex-wrap: wrap;
-}
-
-/* ================= #TASK-ES-045 테마 모달 시인성 강화 (글자색 검은색 강제) ================= */
-.theme-custom-input {
-  color: #111827 !important;
-  background: #FFFFFF !important;
-  border-color: #D1D5DB !important;
-}
-.theme-custom-input option {
-  color: #111827 !important;
-  background: #FFFFFF !important;
-}
-.theme-custom-field label {
-  color: #111827 !important;
-  font-weight: 700 !important;
-}
-.theme-tree-head {
-  color: #111827 !important;
-}
-.theme-tree-head span {
-  color: #111827 !important;
-}
-.theme-tree-content {
-  background: #F9FAFB !important;
-}
-.theme-tree-content > div {
-  color: #111827 !important;
-}
-.theme-leaf-chip {
-  color: #111827 !important;
-  background: #FFFFFF !important;
-  border-color: #D1D5DB !important;
-}
-.theme-leaf-chip:hover {
-  border-color: var(--primary, #3b82f6) !important;
-}
-.theme-leaf-chip .theme-star-icon {
-  color: #9CA3AF !important;
-}
-.theme-leaf-chip .theme-star-icon.starred {
-  color: #F59E0B !important;
-}
-.theme-search-item {
-  color: #111827 !important;
-  background: #FFFFFF !important;
-}
-.theme-search-item span {
-  color: #111827 !important;
-}
-.theme-search-item small {
-  color: #4B5563 !important;
-}
-#themeSearchResults {
-  color: #111827 !important;
 }
 
 /* ==========================================================================
@@ -5549,7 +5266,6 @@ html[data-theme="urban-city"] #appShell {
 /* 6대 노이즈 배너 시각적 정리 (기능과 이벤트는 100% 보존) */
 #btnCustomHomeLayout,
 #screen-home .home-head-row span,
-.theme-guide-microcopy,
 #offlineNoticeBanner {
   display: none !important;
 }
@@ -5817,10 +5533,6 @@ html[data-theme="urban-city"] #appShell {
 [data-theme="black"] #todayMissionCard,
 [data-theme="white"] #todayMissionCard,
 [data-theme="urban-city"] #todayMissionCard,
-[data-theme="focus-sanctuary"] .theme-guide-microcopy,
-[data-theme="black"] .theme-guide-microcopy,
-[data-theme="white"] .theme-guide-microcopy,
-[data-theme="urban-city"] .theme-guide-microcopy,
 [data-theme="focus-sanctuary"] #captureLiveMeta,
 [data-theme="black"] #captureLiveMeta,
 [data-theme="white"] #captureLiveMeta,
@@ -5949,13 +5661,6 @@ html[data-theme="urban-city"] #appShell {
 [data-theme="black"] #captureCardBox .capture-sub,
 [data-theme="white"] #captureCardBox .capture-sub,
 [data-theme="urban-city"] #captureCardBox .capture-sub {
-  display: none !important;
-}
-
-[data-theme="focus-sanctuary"] #captureThemeQuickBar,
-[data-theme="black"] #captureThemeQuickBar,
-[data-theme="white"] #captureThemeQuickBar,
-[data-theme="urban-city"] #captureThemeQuickBar {
   display: none !important;
 }
 
@@ -9177,7 +8882,7 @@ html[data-theme="urban-city"] .theme-card.active {
 }
 
 /* 8. 모달 바텀시트 하단 안전 영역 패딩 */
-.modal-sheet, .sheet, .modal-box, .theme-modal-sheet {
+.modal-sheet, .sheet, .modal-box {
   padding-bottom: max(20px, env(safe-area-inset-bottom, 0px)) !important;
   box-sizing: border-box !important;
 }

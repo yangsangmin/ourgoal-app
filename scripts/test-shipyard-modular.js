@@ -171,6 +171,8 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/guest-null-client-es377.test.js');
   // #TASK-ES-378 결과 입력 창 「보관」 — 목표 단위·마일스톤·할 일 어디서 열어도 목표 보관 + 화면 갱신(renderAll), 예외 0
   runNode('tests/result-modal-archive-es378.test.js');
+  // #TASK-ES-380 「+ 최종 결과」(#goalResultBtn) 가 숨김 카드(.toss-goal-hero-card) 밖 목표 상세 맨 위 줄에 있다
+  runNode('tests/goal-result-btn-es380.test.js');
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
 
