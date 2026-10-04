@@ -12,7 +12,7 @@ let n = 0;
 function check(title, fn) {
   fn();
   n++;
-  console.log('  ✓ ' + title);
+  console.log('  ok · ' + title);
 }
 
 console.log('[core] 능력 등록부·꽂는 자리 시험');
@@ -124,4 +124,4 @@ check('자리: withdrawCell 로 세포가 떨어지면 모든 자리에서 흔�
   assert.ok(!slots.list('home.card').some(x => x.cellId === 'avatar-system'));
 });
 
-console.log(`✓ 능력 등록부·꽂는 자리 시험 ${n}건 통과`);
+console.log(`ok · 능력 등록부·꽂는 자리 시험 ${n}건 통과`);

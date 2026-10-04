@@ -55,15 +55,15 @@ try {
   assert.deepStrictEqual(decl.contributes, ['record.type']);
   assert.deepStrictEqual(decl.listens, ['view:sync']);
   assert.strictEqual(decl.capabilities[0].name, 'records.zz-scaffold-probe', '능력 기술(capabilities)이 신고서에 있다');
-  console.log('  ✓ 세포·시험 뼈대·신고서 생성(provides·contributes·capabilities 포함)');
+  console.log('  ok · 세포·시험 뼈대·신고서 생성(provides·contributes·capabilities 포함)');
 
   const t = node([TEST]);
   assert.strictEqual(t.status, 0, '만든 시험 뼈대 통과:\n' + t.stdout + t.stderr);
-  console.log('  ✓ 만든 빈 세포가 레지스트리 경유로 마운트되고 능력·자리·구독이 dispose 로 흔적 0');
+  console.log('  ok · 만든 빈 세포가 레지스트리 경유로 마운트되고 능력·자리·구독이 dispose 로 흔적 0');
 
   const g = node([GUARD]);
   assert.strictEqual(g.status, 0, '새 세포를 더해도 모듈 가드 통과:\n' + g.stdout + g.stderr);
-  console.log('  ✓ 신고서 있는 새 세포 — 모듈 가드 통과');
+  console.log('  ok · 신고서 있는 새 세포 — 모듈 가드 통과');
 
   const noDecl = JSON.parse(fs.readFileSync(SPEC, 'utf8'));
   noDecl.cells = noDecl.cells.filter(c => c.id !== CELL_ID);
@@ -71,7 +71,7 @@ try {
   const g2 = node([GUARD]);
   assert.strictEqual(g2.status, 1, '신고서 없는 새 세포는 가드 실패');
   assert.ok(/신고서 없는 세포: js\/tabs\/records\/sub-zz-scaffold-probe\.js/.test(g2.stderr), g2.stderr);
-  console.log('  ✓ 신고서를 지우면 가드가 "신고서 없는 세포"로 실패');
+  console.log('  ok · 신고서를 지우면 가드가 "신고서 없는 세포"로 실패');
 
   const dup = node([NEW_MODULE, TAB, NAME]);
   assert.strictEqual(dup.status, 1, '같은 이름 다시 만들기 거부');
@@ -84,10 +84,10 @@ try {
   assert.ok(/정식 목록 15곳에 없다/.test(badSlot.stderr), badSlot.stderr);
   const noTab = node([NEW_MODULE, 'no-such-tab', 'x']);
   assert.strictEqual(noTab.status, 1, '큰 세포 없는 탭 거부');
-  console.log('  ✓ 중복·이름 규칙 위반·목록 밖 자리·없는 탭 거부');
+  console.log('  ok · 중복·이름 규칙 위반·목록 밖 자리·없는 탭 거부');
 } finally {
   cleanup();
 }
 assert.ok(!fs.existsSync(MOD) && !fs.existsSync(TEST), '생성물 삭제');
 assert.strictEqual(fs.readFileSync(SPEC, 'utf8'), specOriginal, 'modules.json 원문 복원');
-console.log('✓ new-module 시험 통과(생성물 삭제·신고서 원문 복원 확인)');
+console.log('ok · new-module 시험 통과(생성물 삭제·신고서 원문 복원 확인)');

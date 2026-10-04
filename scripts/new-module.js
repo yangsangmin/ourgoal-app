@@ -229,7 +229,7 @@ assert.strictEqual(mine(), 0, 'dispose 후 구독 0');
 ${capGone}
 ${slotGone}
 
-console.log('✓ cell ${owner}: 레지스트리 마운트·구독 1개·능력·자리·dispose 흔적 0 확인');
+console.log('ok · cell ${owner}: 레지스트리 마운트·구독 1개·능력·자리·dispose 흔적 0 확인');
 `;
 }
 

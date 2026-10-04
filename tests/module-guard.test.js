@@ -50,7 +50,7 @@ const results = [];
 function check(title, fn) {
   fn();
   results.push(title);
-  console.log('  ✓ ' + title);
+  console.log('  ok · ' + title);
 }
 
 console.log('[module-guard] 모듈 가드 시험');
@@ -214,4 +214,4 @@ check('신고서: 신고서 없는 세포·주는 세포 없는 requires·데이
   }
 });
 
-console.log(`✓ module-guard 시험 ${results.length}건 통과(통과 1 · 실패 ①④⑤ 3 · 래칫 1 · 신고서 1)`);
+console.log(`ok · module-guard 시험 ${results.length}건 통과(통과 1 · 실패 ①④⑤ 3 · 래칫 1 · 신고서 1)`);
