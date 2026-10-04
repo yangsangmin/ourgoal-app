@@ -2293,7 +2293,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   <script src="js/time-tracker.js?v=20260915-es090"></script>
   <script src="js/record-ledger.js?v=20261004-es344"></script>
   <script src="js/account-isolation.js?v=20261004-es365"></script>
-  <script src="js/direct-login-guard.js?v=20261005-es372"></script>
+  <script src="js/direct-login-guard.js?v=20261005-es373"></script><script src="js/google-session-guard.js?v=20261005-es373"></script>
   <script src="js/components.js?v=20260917-es162"></script><script src="js/records-stats.js?v=20260926-es276"></script><script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/tabs/comm/dm-ledger.js?v=20261004-es366"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/data/goal-templates/health.js?v=20261004-es364"></script><script src="js/data/goal-templates/study.js?v=20261004-es364"></script><script src="js/data/goal-templates/career.js?v=20261004-es364"></script><script src="js/data/goal-templates/hobby.js?v=20261004-es364"></script><script src="js/data/goal-templates/mind.js?v=20261004-es364"></script><script src="js/data/goal-templates/relation.js?v=20261004-es364"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script><script src="js/notify-engine.js?v=20260917-es152"></script><script src="js/sanctuary-v3-engine.js?v=20260928-prod-renewal-final"></script>
 <script>
 (function(){
@@ -5661,8 +5661,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var gBtn = sheet.querySelector('#continueGoogleDirectBtn');
         if(gBtn) gBtn.onclick = async function(){
           closeModal();
-          try { localStorage.setItem('ourgoal_last_auth_provider', 'google'); } catch(e){}
-          await loginWithDirectIdentifier(email, { displayName: name, avatarUrl: picture, provider: 'google', accessToken: accessToken, email: email });
+          /* [#TASK-ES-373] 액세스 토큰·userinfo 이메일은 검증 세션이 아니다 — Supabase 구글 OAuth 로 검증 세션을 받아 그 uid 로만 입장 */
+          await window.OurgoalGoogleSessionGuard.startOAuthOrGuide({ sb: sb, redirectTo: window.location.origin, loginHint: email, doc: document, toast: toast, initFields: typeof initRememberedAuthFields === 'function' ? initRememberedAuthFields : null, storage: localStorage, markLogin: setDeviceLoginTime });
         };
         var kBtn = sheet.querySelector('#conflictKakaoLoginBtn');
         if(kBtn) kBtn.onclick = function(){
@@ -5774,15 +5774,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
   }
 
-  function initGoogleOneTap(){
+  var _googleOneTapNonce = null;
+  async function initGoogleOneTap(){
     if(window.google && google.accounts && google.accounts.id && GOOGLE_OAUTH_CLIENT_ID){
       try {
+        _googleOneTapNonce = await window.OurgoalGoogleSessionGuard.createNonce(); /* [#TASK-ES-373] GIS 에는 hashed, Supabase 에는 raw */
         google.accounts.id.initialize({
           client_id: GOOGLE_OAUTH_CLIENT_ID,
+          nonce: _googleOneTapNonce ? _googleOneTapNonce.hashed : undefined,
           auto_select: false,
           cancel_on_tap_outside: true,
           callback: async function(response){
-            if(response && response.credential){
+            /* [#TASK-ES-373] 미로그인: 자격증명을 브라우저에서 풀어 믿지 않고 Supabase signInWithIdToken 검증 세션 uid 로만 입장(실패 시 정식 로그인 안내) */
+            if(response && response.credential && !(state.profile && state.profile.id)) return window.OurgoalGoogleSessionGuard.enterWithCredential({ sb: sb, credential: response.credential, rawNonce: _googleOneTapNonce && _googleOneTapNonce.raw, restore: restoreSessionAndEnter, getProfileId: function(){ return state.profile && state.profile.id; }, doc: document, toast: toast, initFields: typeof initRememberedAuthFields === 'function' ? initRememberedAuthFields : null, storage: localStorage, markLogin: setDeviceLoginTime });
+            if(response && response.credential){ /* 이미 로그인한 상태: 기존처럼 캘린더 연동 표시만(입장 uid 를 바꾸지 않는다) */
               var payload = parseJwtPayload(response.credential);
               if(payload && payload.email){
                 await handleGoogleUserSuccess({
@@ -36025,7 +36030,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       toast('닉네임 또는 이메일을 입력해주세요.');
       return false;
     }
-    /* [#TASK-ES-368] 입력값은 신원 증명이 아니다 — 정식 세션 uid(또는 구글 인증 이메일·개발용 테스터 uid)로만 들어간다 */
+    /* [#TASK-ES-368·373] 입력값·구글 이메일은 신원 증명이 아니다 — 정식 세션 uid(또는 개발용 테스터 uid)로만 들어간다 */
     var directSessionUid = null;
     try {
       var directSessRes = await sb.auth.getSession();
@@ -36053,11 +36058,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         display_name: targetDisplayName,
         avatar_url: (extraOpt && extraOpt.avatarUrl) || ''
       };
-      // 1. 구글 인증 이메일은 그 이메일에서 결정되는 uid 로만 (이 기기의 다른 사람 백업 uid 를 고르지 않는다)
-      if(!targetUserId && directTarget.deriveFromEmail){
-        var h = await sha256Hex('ourgoal_user_' + directTarget.deriveFromEmail);
-        targetUserId = 'u_' + h.slice(0, 16);
-      }
       // 2. 이 기기에 남은 "이 uid 의" 백업만 확인한다 (#TASK-ES-035 의 다중 백업 접두사, 다른 uid 키는 보지 않음)
       var backupPrefixes = ['ourgoal_goals_backup_', 'ourgoal_records_backup_', 'ourgoal_profile_backup_', 'ourgoal_settings_'];
       var ownBackupCount = backupPrefixes.filter(function(pfx){ return localStorage.getItem(pfx + targetUserId) !== null; }).length;
