@@ -8513,8 +8513,9 @@ check('compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연�
   assert.ok(indexHtml.includes('window.getGoogleAccessToken = getGoogleAccessToken;'), 'getGoogleAccessToken 전역 노출 검증');
   assert.ok(indexHtml.includes('ourgoal_gcal_email_last'), 'ourgoal_gcal_email_last 이메일 힌트 영속화 검증');
 
-  // 2. loadLocalSettings 이전 세션 구글 캘린더 연동 상속 자가 치유 검증
-  assert.ok(indexHtml.includes('candObj.googleCalendarConnected') && indexHtml.includes('ourgoal_settings_guest'), 'loadLocalSettings 이전 세션 캘린더 연동 상속 검증');
+  // 2. [#TASK-ES-345 CAL-02 로 대체] loadLocalSettings 가 게스트·직전 사용자 설정에서 구글 캘린더 연동을 복사하던 자가 치유는
+  //    다른 계정의 연동 정보·토큰을 새 계정에 넘기는 결함이라 제거됐다. 이제는 복사가 없어야 한다.
+  assert.ok(!indexHtml.includes('candObj.googleCalendarConnected'), 'loadLocalSettings 다른 계정 캘린더 연동 복사 제거 검증 (#TASK-ES-345)');
 
   // 3. migrateGuestDataToUser 게스트 구글 캘린더 및 토큰 이관 검증
   assert.ok(indexHtml.includes('targetProfile.settings.googleCalendarConnected = true;') && indexHtml.includes('ourgoal_gcal_token_v1_guest'), 'migrateGuestDataToUser 구글 캘린더 및 토큰 이관 검증');
@@ -10025,6 +10026,59 @@ check('compliance: [#TASK-ES-322] [71] 2단계 인증(2FA) 실질적 보안 작�
   assert.ok(jsComp.includes('app_entry_challenge_guaranteed: true'), 'components.js app_entry_challenge_guaranteed 플래그 탑재');
   assert.ok(jsComp.includes('disable_pin_verification_active: true'), 'components.js disable_pin_verification_active 플래그 탑재');
   assert.ok(fs.existsSync(path.join(__dirname, '..', 'tests', 'two-factor-auth.test.js')), '단위 테스트 파일 tests/two-factor-auth.test.js 존재');
+});
+
+/* ============ [#TASK-ES-345] CAL-02 구글 캘린더 토큰 계정 격리 — index.html 의 실제 함수를 꺼내 돌린다 ============ */
+check('compliance: [#TASK-ES-345] CAL-02 구글 캘린더 토큰은 현재 로그인 uid 키만 읽고 _last·공용 키를 정리한다', () => {
+  const vm = require('vm');
+  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  function extractFn(name) {
+    const start = indexHtml.indexOf('function ' + name + '(');
+    assert.ok(start !== -1, name + ' 함수가 index.html 에 있다');
+    let i = indexHtml.indexOf('{', start), depth = 0;
+    for (; i < indexHtml.length; i++) {
+      const ch = indexHtml[i];
+      if (ch === '{') depth++;
+      else if (ch === '}') { depth--; if (depth === 0) return indexHtml.slice(start, i + 1); }
+    }
+    throw new Error(name + ' 함수 끝을 찾지 못함');
+  }
+  const keysLine = indexHtml.match(/var GCAL_LEGACY_SHARED_KEYS = \[[^\]]*\];/);
+  assert.ok(keysLine, 'GCAL_LEGACY_SHARED_KEYS 목록이 있다');
+  function mkStore() {
+    const m = new Map();
+    return { getItem: k => (m.has(k) ? m.get(k) : null), setItem: (k, v) => m.set(k, String(v)), removeItem: k => m.delete(k), key: i => Array.from(m.keys())[i] || null, get length() { return m.size; }, _m: m };
+  }
+  const ls = mkStore(), ss = mkStore();
+  const ctx = { localStorage: ls, sessionStorage: ss, state: { profile: null, googleToken: null }, Date, JSON, String };
+  vm.createContext(ctx);
+  vm.runInContext([keysLine[0], 'purgeLegacySharedGcalKeys', 'gcalCurrentUid', 'gcalEventsKey', 'ensureGcalOwner', 'saveGoogleToken', 'restoreGoogleToken']
+    .map((n, idx) => (idx === 0 ? n : extractFn(n))).join('\n'), ctx);
+  const aTok = JSON.stringify({ accessToken: 'TOK_A', expiresAt: Date.now() + 3600e3, email: 'a@example.com' });
+  ls.setItem('ourgoal_gcal_token_v1_u_a', aTok);
+  ls.setItem('ourgoal_gcal_token_v1_last', aTok);
+  ls.setItem('ourgoal_gcal_email_last', 'a@example.com');
+  ls.setItem('ourgoal_gcal_events', '[{"id":"ev_a"}]');
+  // ① uid B 로 복원 -> null, A 토큰 미사용
+  ctx.state.profile = { id: 'u_b', settings: {} };
+  assert.strictEqual(vm.runInContext('restoreGoogleToken()', ctx), null, 'uid B 는 A 토큰을 받지 않는다');
+  // ③ 공용 키 정리
+  assert.strictEqual(ls.getItem('ourgoal_gcal_token_v1_last'), null, '_last 토큰 키 삭제');
+  assert.strictEqual(ls.getItem('ourgoal_gcal_email_last'), null, '이메일 _last 키 삭제');
+  assert.strictEqual(ls.getItem('ourgoal_gcal_events'), null, '공용 일정 캐시 키 삭제');
+  // ② A 재로그인 -> A 토큰 복원
+  ctx.state.profile = { id: 'u_a', settings: {} };
+  assert.strictEqual(vm.runInContext('restoreGoogleToken()', ctx).accessToken, 'TOK_A', 'A 재로그인 시 A 토큰 복원');
+  // 로그아웃 없이 B 로 바꾸면 메모리 토큰도 버림
+  ctx.state.profile = { id: 'u_b', settings: {} };
+  assert.strictEqual(vm.runInContext('restoreGoogleToken()', ctx), null, '메모리에 남은 A 토큰도 B 에게 안 간다');
+  // B 저장은 B 키에만, _last 쓰기 없음
+  vm.runInContext("saveGoogleToken({ accessToken: 'TOK_B', expiresAt: Date.now() + 3600e3 }, '')", ctx);
+  assert.strictEqual(ls.getItem('ourgoal_gcal_token_v1_last'), null, '저장 시 _last 키를 쓰지 않는다');
+  assert.strictEqual(JSON.parse(ls.getItem('ourgoal_gcal_token_v1_u_b')).ownerUid, 'u_b', 'B 토큰에 주인 uid 기록');
+  assert.strictEqual(JSON.parse(ls.getItem('ourgoal_gcal_token_v1_u_a')).accessToken, 'TOK_A', 'A 키는 그대로');
+  // ④ loadLocalSettings 가 다른 uid 설정을 복사하지 않는다
+  assert.ok(!extractFn('loadLocalSettings').includes('googleCalendarConnected = true'), 'loadLocalSettings 다른 계정 연동 설정 복사 없음');
 });
 
 console.log(passed + '개 통과, ' + failures + '개 실패');

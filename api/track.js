@@ -1,4 +1,5 @@
 var { createClient } = require('@supabase/supabase-js');
+var RecordLedger = require('../js/record-ledger');
 
 var DEFAULT_SUPABASE_URL = 'https://dvqosviqbciohcywkzbq.supabase.co';
 
@@ -86,11 +87,16 @@ async function handleSyncRecords(sb, body, res, req) {
     } catch (e) {}
 
     // checkins 테이블 조회 (오직 인증된 본인 UID로만 격리 조회)
+    // [#TASK-ES-344] REC-01: 휴지통으로 지운 기록(deleted_at)은 복원 대상에서 뺀다.
+    // deleted_at 컬럼이 아직 없는 DB 에서는 필터 없이 다시 읽고, 행 단위로 한 번 더 거른다.
     var fetchedRecords = [];
     try {
-      var recRes = await sb.from('checkins').select('*').eq('user_id', targetUid).order('start_at', { ascending: false });
+      var recRes = await sb.from('checkins').select('*').eq('user_id', targetUid).is('deleted_at', null).order('start_at', { ascending: false });
+      if (recRes && recRes.error && /deleted_at/i.test(recRes.error.message || '')) {
+        recRes = await sb.from('checkins').select('*').eq('user_id', targetUid).order('start_at', { ascending: false });
+      }
       if (recRes.data && recRes.data.length > 0) {
-        fetchedRecords = recRes.data;
+        fetchedRecords = recRes.data.filter(RecordLedger.isLiveRow);
       }
     } catch (e) {}
 
@@ -107,20 +113,12 @@ async function handleSyncRecords(sb, body, res, req) {
     if (recordsToSave && recordsToSave.length && targetUid) {
       try {
         var rows = recordsToSave.map(function(r) {
-          return {
-            id: r.id,
-            user_id: targetUid,
-            type: r.type || 'checkin',
-            text: r.text || '',
-            start_at: r.startAt || r.start_at || new Date().toISOString(),
-            end_at: r.endAt || r.end_at || null,
-            category: r.category || null,
-            theme: r.theme || null,
-            sub_theme: r.subTheme || r.sub_theme || null,
-            theme_confidence: r.themeConfidence || r.theme_confidence || null
-          };
+          var row = RecordLedger.toCheckinRow(r, targetUid);
+          row.type = r.type || 'checkin';
+          row.start_at = r.startAt || r.start_at || new Date().toISOString();
+          return row;
         });
-        await sb.from('checkins').upsert(rows);
+        await RecordLedger.upsertCheckinRows(sb, rows);
       } catch (e) {}
     }
 
@@ -181,20 +179,7 @@ async function handleSyncRecords(sb, body, res, req) {
       settings: fetchedSettings,
       savedAvatars: (matchedUser && matchedUser.saved_avatars) || [],
       recordsCount: fetchedRecords.length,
-      records: fetchedRecords.map(function(r) {
-        return {
-          id: r.id,
-          type: r.type,
-          text: r.text,
-          startAt: r.start_at,
-          endAt: r.end_at,
-          createdAt: r.created_at,
-          category: r.category || null,
-          theme: r.theme || null,
-          subTheme: r.sub_theme || null,
-          themeConfidence: r.theme_confidence || null
-        };
-      }),
+      records: fetchedRecords.map(RecordLedger.fromCheckinRow),
       goalsCount: fetchedGoals.length,
       goals: fetchedGoals.map(function(g) {
         return {

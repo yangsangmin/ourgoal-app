@@ -1,0 +1,159 @@
+{
+  "task": "TASK-ES-345",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-345-GCAL-TOKEN-ISOLATION.md",
+  "requirements": [
+    { "id": "R1", "text": "토큰은 현재 로그인 uid 키만 읽는다. `_last` 키 쓰기·읽기 제거, 아무 키 탐색 제거, 다른 uid 의 gcal 설정 복사 제거." },
+    { "id": "R2", "text": "게스트→회원 전환(같은 사람) 경로가 있다면 그 경로는 명시적으로 유지하되 이유를 코드 주석·보고에 적는다(게스트 uid 키 → 새 uid 로의 1회 이전만 허용 등)." },
+    { "id": "R3", "text": "기존 `_last` 키는 다음 로드 때 지운다(남의 토큰 잔존 제거)." },
+    { "id": "R4", "text": "토큰 만료·부재 시 사용자에게 1줄 안내 + '다시 연결' 1탭(기존 연결 함수 재사용). 새 정보 수집·서버 저장 금지(서버 refresh token 보관은 상민님 결심 사항이라 범위 밖)." },
+    { "id": "R5", "text": "측정: 헤드리스 브라우저 또는 Node 단위 시험으로 ① uid A 토큰 저장 → uid B 로 restoreGoogleToken → null, A 토큰 사용 0 ② uid A 재로그인 시 A 토큰 복원 ③ `_last` 키 정리 확인 ④ 다른 uid 설정 복사 0. `npm test` 종료코드 기록." },
+    { "id": "R6", "text": "실계정 2개 확인(레벨 5)은 못 했다고 정직하게 claims 에 적는다." }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "unverified",
+      "domain": "security-client",
+      "statement": "같은 기기에서 계정 A 로 구글 캘린더를 연결한 뒤 로그아웃하고 계정 B 로 로그인하면, B 화면에는 A 의 일정·이메일이 보이지 않고 A 의 토큰으로 구글 API 를 부르지 않는다(다른 사용자의 토큰 사용 0)",
+      "touches": ["index.html"],
+      "unverified": {
+        "reason": "needs-two-accounts",
+        "who": "구글 계정 2개와 아워골 계정 2개를 가진 사람(상민님)",
+        "how": [
+          "PC 크롬에서 아워골에 계정 A 로 로그인한다",
+          "설정 > 고급 설정 > 구글 캘린더 연동으로 구글 계정 A 를 연결하고, 일정 탭에 A 의 구글 일정이 보이는지 본다",
+          "로그아웃한 뒤 같은 브라우저에서 계정 B 로 로그인한다",
+          "일정 탭에 A 의 구글 일정이 하나도 없고, 배지가 '+ 연동'인지 본다",
+          "개발자 도구 네트워크 탭에서 googleapis.com 요청의 Authorization 값이 A 연결 때의 값과 같지 않은지(또는 요청이 없는지) 본다"
+        ]
+      }
+    },
+    {
+      "id": "C2", "req": "R1", "kind": "unverified",
+      "domain": "security-client",
+      "statement": "로그아웃 없이 다른 계정으로 바로 로그인해도 메모리에 남은 이전 계정의 구글 토큰·일정 캐시를 새 계정이 쓰지 않는다(다른 사용자의 토큰 사용 0)",
+      "touches": ["index.html"],
+      "unverified": {
+        "reason": "needs-two-accounts",
+        "who": "아워골 계정 2개를 가진 사람(상민님)",
+        "how": [
+          "계정 A 로 로그인해 구글 캘린더를 연결한다",
+          "로그아웃하지 않고 로그인 화면(직접 식별자 로그인)으로 계정 B 에 들어간다",
+          "일정 탭에 A 의 구글 일정이 없고 배지가 '+ 연동'인지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C3", "req": "R2", "kind": "unverified",
+      "domain": "persistence",
+      "statement": "게스트로 구글 캘린더를 연결한 사람이 같은 기기에서 회원으로 가입·로그인하면 연결이 그대로 이어지고(게스트 uid 키 → 새 uid 키 1회 이전), 그 뒤 게스트 키는 남지 않는다",
+      "touches": ["index.html"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "구글 계정과 아워골 가입 가능한 계정을 가진 사람",
+        "how": [
+          "로그아웃 상태에서 '로그인 없이 둘러보기'로 들어간다",
+          "설정 > 고급 설정에서 구글 캘린더를 연결한다",
+          "같은 브라우저에서 회원으로 로그인한다",
+          "일정 탭 배지가 '연동됨'이고 다시 연결을 요구하지 않는지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C4", "req": "R3", "kind": "unverified",
+      "domain": "persistence",
+      "statement": "예전 버전이 남긴 계정 공용 키(ourgoal_gcal_token_v1_last·ourgoal_gcal_email_last·ourgoal_gcal_events)는 새 버전으로 앱을 처음 열 때 지워진다",
+      "touches": ["index.html"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "external-page",
+        "who": "예전 버전에서 구글 캘린더를 연결해 둔 브라우저를 가진 사람",
+        "how": [
+          "배포 전 버전에서 구글 캘린더를 연결해 둔 브라우저로 새 버전을 연다(공용 키를 만들려면 구글 OAuth 외부 화면을 거쳐야 하고, 법정 시작 상태 금고에는 그 키가 없다)",
+          "개발자 도구 > Application > Local Storage 에서 ourgoal_gcal_token_v1_last·ourgoal_gcal_email_last·ourgoal_gcal_events 가 없어졌는지 본다",
+          "자기 계정 키 ourgoal_gcal_token_v1_<내 uid> 는 남아 있는지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C5", "req": "R4", "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "구글 캘린더가 연동돼 있는데 이 계정의 토큰이 만료됐거나 없으면, 설정 화면에 '구글 캘린더 연결이 끊겼어요 · 다시 연결해 주세요' 1줄과 '다시 연결' 버튼이 보이고, 일정 탭 배지가 '다시 연결'로 바뀌며, 누르면 기존 연결 창(구글 캘린더 연동)이 열린다",
+      "touches": ["index.html"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "external-page",
+        "who": "구글 계정을 가진 사람",
+        "how": [
+          "구글 캘린더를 연결하고 1시간 넘게 지난 뒤(토큰 만료) 앱을 다시 연다",
+          "설정 > 고급 설정 > 구글 캘린더 연동에 안내 1줄과 '다시 연결' 버튼이 보이는지 본다",
+          "일정 탭 머리의 배지가 '다시 연결'인지 본다",
+          "'다시 연결'을 눌러 구글 연결 창이 뜨고, 연결 뒤 배지가 '연동됨'으로 바뀌는지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C6", "req": "R5", "kind": "static",
+      "domain": "config",
+      "statement": "수정 후 앱에서 다른 계정(u_alice) 흔적이 남은 기기로 게스트가 restoreGoogleToken 을 부르면 null 이 나온 측정값이 요약 JSON 에 기록되어 있다(예비 확인 도구 출력)",
+      "touches": ["docs/design/harness/out-gcal-isolation-2026-10-04.json"],
+      "check": { "type": "jsonPath", "file": "docs/design/harness/out-gcal-isolation-2026-10-04.json", "path": "head.measures.M1_otherUidGetsNothing.restoreResult", "equals": null }
+    },
+    {
+      "id": "C7", "req": "R5", "kind": "static",
+      "domain": "config",
+      "statement": "같은 스크립트를 수정 전 origin/main 에 돌렸을 때 게스트가 u_alice 토큰 TOK_ALICE_SECRET 을 받은 측정값이 요약 JSON 에 기록되어 있다",
+      "touches": ["docs/design/harness/out-gcal-isolation-2026-10-04.json"],
+      "check": { "type": "jsonPath", "file": "docs/design/harness/out-gcal-isolation-2026-10-04.json", "path": "base.measures.M1_otherUidGetsNothing.restoreResult", "equals": "TOK_ALICE_SECRET" }
+    },
+    {
+      "id": "C8", "req": "R5", "kind": "static",
+      "domain": "config",
+      "statement": "요약 JSON 에 수정 후 A 재로그인 시 A 토큰이 복원된 값이 기록되어 있다",
+      "touches": ["docs/design/harness/out-gcal-isolation-2026-10-04.json"],
+      "check": { "type": "jsonPath", "file": "docs/design/harness/out-gcal-isolation-2026-10-04.json", "path": "head.measures.M2_ownerRoundTrip.aliceRestores", "equals": "TOK_ALICE_SECRET" }
+    },
+    {
+      "id": "C9", "req": "R5", "kind": "static",
+      "domain": "config",
+      "statement": "요약 JSON 에 수정 후 _last 토큰 키가 정리된(null) 값이 기록되어 있다",
+      "touches": ["docs/design/harness/out-gcal-isolation-2026-10-04.json"],
+      "check": { "type": "jsonPath", "file": "docs/design/harness/out-gcal-isolation-2026-10-04.json", "path": "head.measures.M3_legacyKeysPurged.tokenLast", "equals": null }
+    },
+    {
+      "id": "C10", "req": "R5", "kind": "static",
+      "domain": "config",
+      "statement": "요약 JSON 에 수정 후 게스트 설정 저장본에 다른 계정 연동 표시가 복사되지 않은(false) 값이 기록되어 있다",
+      "touches": ["docs/design/harness/out-gcal-isolation-2026-10-04.json"],
+      "check": { "type": "jsonPath", "file": "docs/design/harness/out-gcal-isolation-2026-10-04.json", "path": "head.measures.M4_noSettingsCopy.storedConnected", "equals": false }
+    },
+    {
+      "id": "C11", "req": "R5", "kind": "static",
+      "domain": "config",
+      "statement": "smoke-test 에 index.html 의 실제 토큰 함수를 꺼내 돌리는 TASK-ES-345 검사가 추가되어 있다",
+      "touches": ["scripts/smoke-test.js"],
+      "check": { "type": "codeContains", "file": "scripts/smoke-test.js", "text": "CAL-02 구글 캘린더 토큰은 현재 로그인 uid 키만 읽고 _last·공용 키를 정리한다" }
+    },
+    {
+      "id": "C12", "req": "R6", "kind": "unverified",
+      "domain": "multi-user",
+      "statement": "실계정 2개로 계정 A 연동 → 로그아웃 → 계정 B 로그인 시 A 일정 0건·A 토큰 사용 0 을 확인하는 레벨 5 확인은 하지 못했다",
+      "touches": ["index.html"],
+      "unverified": {
+        "reason": "needs-two-accounts",
+        "who": "상민님(실계정 2개)",
+        "how": [
+          "C1 의 절차를 실제 운영 주소(ourgoal-app.vercel.app)에서 계정 2개로 수행한다",
+          "B 화면 일정 탭·설정 화면에 A 의 일정·이메일이 없는지, 네트워크 탭에 A 토큰이 실린 요청이 없는지 본다"
+        ]
+      }
+    }
+  ],
+  "retire": [
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연동 원인 규명 및 해결 검증",
+      "reason": "이 검사 안의 'loadLocalSettings 이전 세션 캘린더 연동 상속 검증' 줄은 다른 계정(게스트·직전 사용자·이메일 _last)의 구글 캘린더 연동 설정을 새 계정에 복사하는 코드 글자(candObj.googleCalendarConnected)가 있는지만 보던 글자 검사다. CAL-02 지시('다른 uid 의 gcal 설정 복사 제거')에 따라 그 복사 코드를 지웠으므로 그 줄만 '복사 없음' 확인으로 바꿨다. 같은 검사의 나머지 줄(전역 노출·이메일 키 문자열·게스트 이전·settings_ledger)은 그대로 두었고 작업 커밋에서 통과한다."
+    }
+  ]
+}
