@@ -332,6 +332,104 @@
         "file": "docs/plans/PLAN-TASK-ES-354-SETTINGS-MODULE.md",
         "text": "- [x] [4단계: 심사 청구]"
       }
+    },
+    {
+      "id": "C20",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "옮긴 뒤에도 설정 탭을 열면 설정 묶음이 4개 이상 접힌 채 보이고, 알림 묶음을 누르면 펼쳐지고 다시 누르면 접힌다(옮기기만 했으므로 기준 커밋에서도 같은 결과여야 한다)",
+      "touches": [
+        "js/tabs/settings/render.js",
+        "index.html"
+      ],
+      "scenario": "scenarios/settings-groups-open-close.json"
+    },
+    {
+      "id": "C21",
+      "req": "R5",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "기능 묶음 단위로 나눈 알림 섹션 소블록에서도 진동만 버튼을 누르면 그 버튼이 선택되고 소리+진동 선택이 풀린다(이전과 같은 동작)",
+      "touches": [
+        "js/tabs/settings/sub-notify.js"
+      ],
+      "scenario": "scenarios/settings-notify-mode.json"
+    },
+    {
+      "id": "C22",
+      "req": "R6",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "core 로 옮긴 공용 헬퍼 a11ySwitch 를 쓰는 데이터 절약 스위치를 누르면 켜짐 표시와 aria-checked 가 true 로 바뀐다(이전과 같은 동작)",
+      "touches": [
+        "js/core/ui-helpers.js",
+        "js/tabs/settings/sub-appearance.js"
+      ],
+      "scenario": "scenarios/settings-datasaver-switch.json"
+    },
+    {
+      "id": "C23",
+      "req": "R6",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "앱 스코프 통로는 노출하는 이름의 getter/setter 를 그대로 scope 에 단다",
+      "touches": [
+        "js/core/app-scope.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/core/app-scope.js",
+        "text": "Object.defineProperty(scope, name, d);"
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "설정 메가블록이 새 섹션 소블록(AI·저장공간 등)을 레지스트리에 등록한다",
+      "touches": [
+        "js/tabs/settings/index.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/settings/index.js",
+        "text": "this.registerSubBlock(global.OurgoalSettingsSubData);"
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R5",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "AI·저장공간·내보내기·지원 묶음은 sub-data.js 의 섹션 렌더로 나뉘었다",
+      "touches": [
+        "js/tabs/settings/sub-data.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/settings/sub-data.js",
+        "text": "function renderDataSection(settings){"
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R5",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "구글 캘린더·노션·차단·잇템 묶음은 sub-integrations.js 의 섹션 렌더로 나뉘었다",
+      "touches": [
+        "js/tabs/settings/sub-integrations.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/settings/sub-integrations.js",
+        "text": "function renderIntegrationsSection(settings){"
+      }
     }
   ]
 }

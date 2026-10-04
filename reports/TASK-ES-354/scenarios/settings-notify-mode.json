@@ -1,0 +1,19 @@
+{
+  "id": "settings-notify-mode",
+  "title": "설정 알림 묶음에서 진동만 버튼을 누르면 그 버튼이 선택되고 소리+진동 버튼은 선택이 풀린다(알림 섹션 소블록 sub-notify)",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "click", "selector": "details.settings-group-accordion:has(#notifFeedbackModeGrid) > summary" },
+    { "expect": "hasClass", "selector": "#notifFeedbackModeGrid [data-notifmode=\"all\"]", "className": "active" },
+    { "expect": "notHasClass", "selector": "#notifFeedbackModeGrid [data-notifmode=\"vibrate\"]", "className": "active" },
+    { "do": "click", "selector": "#notifFeedbackModeGrid [data-notifmode=\"vibrate\"]" },
+    { "do": "wait", "ms": 800 },
+    { "expect": "hasClass", "selector": "#notifFeedbackModeGrid [data-notifmode=\"vibrate\"]", "className": "active" },
+    { "expect": "notHasClass", "selector": "#notifFeedbackModeGrid [data-notifmode=\"all\"]", "className": "active" },
+    { "capture": "after-vibrate" }
+  ]
+}

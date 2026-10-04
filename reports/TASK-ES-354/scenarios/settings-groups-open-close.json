@@ -1,0 +1,19 @@
+{
+  "id": "settings-groups-open-close",
+  "title": "설정 탭을 열면 설정 묶음이 4개 이상 접힌 채 보이고, 알림 묶음을 누르면 펼쳐져 피드백 모드 버튼이 보이며, 다시 누르면 접힌다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "expect": "count", "selector": "#screen-settings details.settings-group-accordion > summary", "min": 4 },
+    { "expect": "notExists", "selector": "#screen-settings details.settings-group-accordion[open]" },
+    { "do": "click", "selector": "details.settings-group-accordion:has(#notifFeedbackModeGrid) > summary" },
+    { "expect": "exists", "selector": "details.settings-group-accordion[open] #notifFeedbackModeGrid" },
+    { "expect": "visible", "selector": "#notifFeedbackModeGrid [data-notifmode=\"vibrate\"]" },
+    { "do": "click", "selector": "details.settings-group-accordion:has(#notifFeedbackModeGrid) > summary" },
+    { "expect": "notExists", "selector": "details.settings-group-accordion[open] #notifFeedbackModeGrid" },
+    { "capture": "after-close" }
+  ]
+}

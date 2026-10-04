@@ -1,0 +1,18 @@
+{
+  "id": "settings-datasaver-switch",
+  "title": "설정 화면·홈 묶음에서 데이터 절약 스위치를 누르면 켜짐 표시와 접근성 상태(aria-checked)가 true 로 바뀐다(공용 헬퍼 a11ySwitch)",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "click", "selector": "details.settings-group-accordion:has(#dataSaverSwitch) > summary" },
+    { "expect": "attr", "selector": "#dataSaverSwitch", "name": "aria-checked", "equals": "false" },
+    { "do": "click", "selector": "#dataSaverSwitch" },
+    { "do": "wait", "ms": 800 },
+    { "expect": "attr", "selector": "#dataSaverSwitch", "name": "aria-checked", "equals": "true" },
+    { "expect": "hasClass", "selector": "#dataSaverSwitch", "className": "on" },
+    { "capture": "after-datasaver" }
+  ]
+}
