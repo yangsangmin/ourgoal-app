@@ -1,0 +1,64 @@
+{
+  "task": "TASK-ES-369",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-369-INTEGRITY-BUNDLE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "동결 검사 scripts/verify-integrity-gate.js 가 scripts/smoke-test.js 와 같은 앱 소스 합본(index.html + js/tabs/**/*.js + js/core/*.js, OurgoalAppScope 를 읽는 세포 파일은 L./K. 접두 제거)을 읽는다. 단언·기대값·검사 수 변경 0. 금고 파일 변경 — 승인 원문(상민님 2026-10-04): \"끝난 뒤 지침이 필요한 일들 모두 세션권장대로 진행해\"."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "동결 검사가 js/tabs 재귀·js/core 의 .js 파일 목록을 만든다",
+      "touches": ["scripts/verify-integrity-gate.js"],
+      "check": {
+        "type": "codeContains",
+        "text": "const APP_MODULE_FILES = [...listJsTree(path.join(ROOT_DIR, 'js', 'tabs'), true), ...listJsTree(path.join(ROOT_DIR, 'js', 'core'), false)];",
+        "file": "scripts/verify-integrity-gate.js"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "OurgoalAppScope 를 읽는 세포 파일만 L./K. 접두를 떼고 읽는다",
+      "touches": ["scripts/verify-integrity-gate.js"],
+      "check": {
+        "type": "codeContains",
+        "text": "return src.replace(/(^|[^A-Za-z0-9_$.])[LK]\\.(?=[A-Za-z_$])/g, '$1');",
+        "file": "scripts/verify-integrity-gate.js"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "전역 html 이 index.html + 세포 파일 합본이다",
+      "touches": ["scripts/verify-integrity-gate.js"],
+      "check": {
+        "type": "codeContains",
+        "text": "const html = indexHtmlOnly + APP_MODULE_FILES.map(function (f) { return '\\n' + readAppModule(f); }).join('');",
+        "file": "scripts/verify-integrity-gate.js"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "[검증 18]~[검증 22] 가 index.html 을 다시 읽지 않고 합본을 본다",
+      "touches": ["scripts/verify-integrity-gate.js"],
+      "check": {
+        "type": "codeContains",
+        "text": "const indexContent = html;",
+        "file": "scripts/verify-integrity-gate.js"
+      }
+    }
+  ]
+}

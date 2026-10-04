@@ -1181,17 +1181,10 @@
     markDmRoomRead(myId, peerId);
     if(!global.sb || !myId || !peerId || String(myId).indexOf('guest') === 0) return;
     try {
-      var threadId = getDmThreadId(myId, peerId);
-      var nowIso = new Date().toISOString();
-      await global.sb.from('team_ping_replies')
-        .update({
-          is_read: true,
-          status: 'read',
-          read_at: nowIso
-        })
-        .eq('ping_id', threadId)
-        .eq('receiver_id', myId)
-        .neq('status', 'read');
+      // #TASK-ES-366: 받는 사람이 대화를 열면 부른다(전에는 부르는 곳이 없었다). 서버 함수 og_dm_mark → 없으면 직접 update
+      var markRes = await global.OurgoalDmLedger.markThreadRead(global.sb, myId, getDmThreadId(myId, peerId));
+      if(!markRes.ok) console.warn('[DM] 읽음 서버 반영 안 됨:', markRes.error);
+      return markRes;
     } catch(err){
       console.warn('[DM] markDmThreadAsRead 서버 업데이트 오류(무시):', err);
     }
@@ -1233,6 +1226,7 @@
         res.data.forEach(function(r){
           if(!r.sender_id || r.sender_id === myId) return;
           var senderId = String(r.sender_id).trim();
+          if(r.ping_id && !seenSenders[senderId] && global.OurgoalDmLedger) global.OurgoalDmLedger.markThreadDelivered(global.sb, r.ping_id); // #TASK-ES-366 받는 기기가 받아 감 = 도착
 
           // 최신 메시지 매핑 (최신 순이므로 첫 번째 발견된 메시지가 가장 최신)
           if(!_lastDmMessageMap[senderId]){
@@ -1355,7 +1349,7 @@
               });
             }
           } else {
-            markDmRoomRead(myId, senderId);
+            markDmThreadAsRead(myId, senderId);
             // [#TASK-ES-168] 활성 채팅방 DOM 실시간 즉각 추가
             var msgsEl = document.getElementById('dmMsgs');
             if(msgsEl && document.body.contains(msgsEl)){
@@ -1592,8 +1586,8 @@
   function renderSingleDmMsg(m){
     var isMe = (m.from === 'me');
     var sentAt = m.sentAt || m.createdAt || m.time;
-    var deliveredAt = m.deliveredAt || sentAt;
-    var readAt = m.readAt || (m.read ? deliveredAt : null);
+    var deliveredAt = m.deliveredAt || (isMe ? null : sentAt); // #TASK-ES-366: 내 메시지는 받는 기기가 받아 간 시각이 있을 때만 '도착'
+    var readAt = m.readAt || (m.read ? (deliveredAt || sentAt) : null);
     var timeStr = formatDmTime(sentAt);
 
     var sentTimeDetail = formatDmDetailTime(sentAt);
@@ -1619,7 +1613,7 @@
           '</div>' +
         '</div>' +
         '<div id="' + detailId + '" class="dm-msg-detail-box" style="display:none;margin-top:3px;font-size:0.6875rem;color:var(--ink-soft);background:var(--surface-2);padding:4px 8px;border-radius:6px;border:1px solid var(--rule);">' +
-          '<span>전송 ' + esc(sentTimeDetail) + ' · 도착 ' + esc(deliveredTimeDetail) + ' · ' + (m.read ? ('읽음 ' + esc(readTimeDetail)) : '<b style="color:#eab308;">미확인 (1)</b>') + '</span>' +
+          '<span>전송 ' + esc(sentTimeDetail) + (deliveredAt ? ' · 도착 ' + esc(deliveredTimeDetail) : '') + ' · ' + (m.read ? ('읽음 ' + esc(readTimeDetail)) : '<b style="color:#eab308;">미확인 (1)</b>') + '</span>' +
         '</div>' +
       '</div>';
     } else {
@@ -1653,8 +1647,8 @@
           var isMe = (r.sender_id === myId);
           var isRead = isMe ? (r.is_read === true || r.status === 'read') : true;
           var sentAt = r.sent_at || r.created_at || new Date().toISOString();
-          var deliveredAt = r.delivered_at || sentAt;
-          var readAt = isRead ? (r.read_at || deliveredAt) : null;
+          var deliveredAt = r.delivered_at || (isMe ? null : sentAt);
+          var readAt = isRead ? (r.read_at || deliveredAt || sentAt) : null;
           var status = isRead ? 'read' : (r.delivered_at ? 'delivered' : 'sent');
           return {
             id: r.id,
@@ -1693,7 +1687,7 @@
           var r = payload.new;
           if(!r) return;
           if(r.sender_id !== myId){
-            markDmRoomRead(myId, r.sender_id);
+            markDmThreadAsRead(myId, r.sender_id);
             person.isUnread = false;
             person._thread = person._thread || [];
             // 상대방의 새 메시지가 수신되면 내가 보낸 이전 메시지는 읽음 처리
@@ -1738,7 +1732,7 @@
       var person = getDmPerson(state.dmActiveId);
       if(!person){ state.dmActiveId = null; return renderCommDM(body); }
 
-      markDmRoomRead(myId, person.id);
+      markDmThreadAsRead(myId, person.id);
       person.isUnread = false;
 
       var threadId = getDmThreadId(myId, person.id);
@@ -1853,7 +1847,7 @@
 
         // 1. Optimistic UI 반영 (카카오톡 방식 노란색 1 및 전송 시각)
         var sentAt = nowIso;
-        var deliveredAt = new Date(Date.now() + 150).toISOString();
+        var deliveredAt = null; // #TASK-ES-366: 도착은 받는 기기가 서버에서 받아 갔을 때만(og_dm_mark) — 보내는 쪽이 지어내지 않는다
         var newMeMsg = {
           id: replyId,
           from: 'me',
@@ -1863,7 +1857,7 @@
           sentAt: sentAt,
           deliveredAt: deliveredAt,
           readAt: null,
-          status: 'delivered',
+          status: 'sent',
           read: false
         };
         person._thread.push(newMeMsg);
@@ -1879,8 +1873,6 @@
             msgsEl.scrollTop = msgsEl.scrollHeight;
           }
         }
-
-        showToast('메시지를 전송했습니다! 💬');
 
         // 2. 헌법 제19조 의거 Supabase 서버 DB 원장 영속화
         if(global.sb){
@@ -1902,8 +1894,8 @@
               status: 'active'
             });
 
-            // 1:1 메시지 레코드 저장 (카카오톡 방식 전송/도착 상태 영속화)
-            await global.sb.from('team_ping_replies').insert({
+            // 1:1 메시지 레코드 저장 — #TASK-ES-366: 오류를 돌려받아 확인한다(상태 열이 없는 운영 표면 그 열만 빼고 다시 넣는다)
+            var insRes = await global.OurgoalDmLedger.insertReply(global.sb, {
               id: replyId,
               ping_id: threadId,
               group_id: 'dm_direct',
@@ -1913,11 +1905,12 @@
               sender_avatar: myAvatar,
               receiver_id: person.id,
               message: text,
-              status: 'delivered',
+              status: 'sent',
               sent_at: sentAt,
-              delivered_at: deliveredAt,
               created_at: nowIso
             });
+            if(!insRes.ok){ newMeMsg.status = 'failed'; showToast('메시지가 서버에 저장되지 않았어요. 잠시 뒤 다시 보내 주세요.'); return; }
+            showToast('메시지를 전송했습니다! 💬');
 
             // [#TASK-ES-168] 상대방에게 Web Push 즉시 비동기 발송 (백그라운드/앱종료 수신 보장)
             try {
@@ -1936,7 +1929,7 @@
               });
             } catch(fetchErr){}
           } catch(err){
-            console.warn('[DM] Supabase 영속화 실패:', err);
+            console.warn('[DM] Supabase 영속화 실패:', err); showToast('메시지가 서버에 저장되지 않았어요. 잠시 뒤 다시 보내 주세요.');
           }
         }
       };
@@ -2106,6 +2099,7 @@
   }
 
   var COMPANIONS_STORAGE_PREFIX = 'ourgoal_companions_backup_';
+  function storageCopyOf(list){ return global.OurgoalDmLedger ? global.OurgoalDmLedger.storageCopy(list) : list; }
 
   function getCompanionsStorageKey(){
     var state = global.state || {};
@@ -2133,21 +2127,7 @@
           restored = parsed;
         }
       }
-      if(!restored || restored.length === 0){
-        for(var kIdx = 0; kIdx < localStorage.length; kIdx++){
-          var lk = localStorage.key(kIdx);
-          if(lk && lk.indexOf(COMPANIONS_STORAGE_PREFIX) === 0){
-            var cRaw = localStorage.getItem(lk);
-            if(cRaw){
-              var cParsed = JSON.parse(cRaw);
-              if(Array.isArray(cParsed) && cParsed.length > 0){
-                restored = cParsed;
-                break;
-              }
-            }
-          }
-        }
-      }
+      // #TASK-ES-366: 자기 uid 키만 읽는다 — 예전엔 비면 다른 계정의 ourgoal_companions_backup_* 를 훑어 가져왔다(계정 간 유출)
     } catch(e){}
 
     if(restored && restored.length > 0){
@@ -2180,12 +2160,9 @@
     ensureDefaultCompanions();
 
     // 2단계: /api/track 서버리스 원장 비동기 조회 및 병합
-    if(typeof fetch !== 'undefined'){
-      fetch('/api/track', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'sync_companions', userId: state.profile.id })
-      }).then(function(res){
+    if(global.OurgoalDmLedger){
+      // #TASK-ES-366: 본인 토큰을 붙여야 서버가 동반자를 돌려준다(토큰 없이 보내면 401 → 다른 기기에서 목록이 비었다)
+      global.OurgoalDmLedger.trackPost({ action: 'sync_companions', userId: state.profile.id }).then(function(res){
         if(res && res.ok) return res.json();
         return null;
       }).then(function(data){
@@ -2204,7 +2181,7 @@
           });
           if(addedAny){
             try {
-              localStorage.setItem(getCompanionsStorageKey(), JSON.stringify(comps));
+              localStorage.setItem(getCompanionsStorageKey(), JSON.stringify(storageCopyOf(comps)));
             } catch(e){}
             if(body) renderCommCompanions(body);
           }
@@ -2230,7 +2207,7 @@
             }
           });
           if(addedAny){
-            try { localStorage.setItem(getCompanionsStorageKey(), JSON.stringify(comps)); } catch(e){}
+            try { localStorage.setItem(getCompanionsStorageKey(), JSON.stringify(storageCopyOf(comps))); } catch(e){}
             if(body) renderCommCompanions(body);
           }
         }
@@ -2243,6 +2220,8 @@
     if(!state.profile || !state.profile.id) return;
     var uid = state.profile.id;
     var list = (Array.isArray(customList) && customList.length) ? customList : ((state.profile && state.profile.companions) || []);
+    // #TASK-ES-366: 대화 흔적(_thread·_loadedThreadFromDb·lastMsg)은 사본(localStorage·서버 events 원장)에 넣지 않는다
+    list = storageCopyOf(list);
 
     // 1순위: localStorage 0ms 동기식 영구 저장 (새로고침 시 100% 무손실 복구)
     try {
@@ -2255,14 +2234,9 @@
     if(String(uid).indexOf('guest') === 0) return;
 
     // 2순위: /api/track 서버리스 파이프라인 (events 원장 영구 저장)
-    if(typeof fetch !== 'undefined'){
-      try {
-        fetch('/api/track', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'sync_companions', userId: uid, companions: list })
-        }).catch(function(err){ console.warn('[동반자] /api/track 서버 저장 실패:', err); });
-      } catch(e){}
+    if(global.OurgoalDmLedger){
+      global.OurgoalDmLedger.trackPost({ action: 'sync_companions', userId: uid, companions: list })
+        .catch(function(err){ console.warn('[동반자] /api/track 서버 저장 실패:', err); });
     }
 
     // 3순위: Supabase users.companions 컬럼 업데이트 시도 (PostgrestFilterBuilder 호환)
