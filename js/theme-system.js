@@ -617,7 +617,7 @@
       quickBarEl.innerHTML = html;
 
       var addBtn = document.getElementById('btnOpenThemeModal');
-      if(addBtn) addBtn.onclick = openModal;
+      if(addBtn) addBtn.onclick = openThemeSelector;
 
       quickBarEl.querySelectorAll('.theme-fav-chip').forEach(function(chip){
         chip.onclick = function(){
@@ -632,19 +632,19 @@
       });
     }
 
-    function openModal(){
+    function openThemeSelector(){ // #TASK-ES-363: 정본 openModal 통로가 아니라 index.html 정적 덮개 #themeSelectorModal 을 여는 자체 모달 — 이름만 정정(동작 불변, 덮개 한 벌화 4단계 대상)
       if(!themeModal) return;
       themeModal.style.display = 'flex';
       renderTree();
     }
-    function closeModal(){
+    function closeThemeSelector(){
       if(themeModal) themeModal.style.display = 'none';
     }
 
     var themeModalClose = document.getElementById('themeModalCloseBtn');
-    if(themeModalClose) themeModalClose.onclick = closeModal;
+    if(themeModalClose) themeModalClose.onclick = closeThemeSelector;
     if(themeModal){
-      themeModal.onclick = function(e){ if(e.target === themeModal) closeModal(); };
+      themeModal.onclick = function(e){ if(e.target === themeModal) closeThemeSelector(); };
     }
 
     var tabCustom = document.getElementById('tabThemeCustom');
@@ -690,7 +690,7 @@
           onSelect(newCustom);
           await saveProfile();
           renderQuickBar();
-          closeModal();
+          closeThemeSelector();
           if(inp) inp.value = '';
           toast('나만의 테마 [' + label + '] 생성 및 적용 완료!');
         }
@@ -727,7 +727,7 @@
           if(flat){
             onSelect(flat);
             renderQuickBar();
-            closeModal();
+            closeThemeSelector();
             toast('[' + flat.label + '] 테마 적용됨');
           }
         };
@@ -771,7 +771,7 @@
               if(found){
                 onSelect(found);
                 renderQuickBar();
-                closeModal();
+                closeThemeSelector();
                 toast('[' + found.label + '] 테마 적용됨');
               }
             };
@@ -783,8 +783,8 @@
 
     return {
       renderQuickBar: renderQuickBar,
-      openModal: openModal,
-      closeModal: closeModal
+      openModal: openThemeSelector,
+      closeModal: closeThemeSelector
     };
   }
 
