@@ -1,0 +1,521 @@
+{
+ "task": "TASK-ES-375",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-375-GOALS-CELL-2.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 인라인 IIFE 의 목표 탭 결과 입력 모달 openResultModal 과 내보내기·보관 묶음(buildGoalSnapshot·goalSnapshotSummary·exportGoalSnapshot·archiveGoal·openGoalCertificateModal)을 책임 단위 두 파일 js/tabs/goals/result-modal.js·goal-export.js 로 글자 그대로 옮긴다. 기능 추가·삭제 0, 마크업·CSS 는 옮기지 않는다."
+  },
+  {
+   "id": "R2",
+   "text": "옮긴 코드가 읽는 인라인 스코프 이름은 js/core/app-scope.js getter 로만 읽고, index.html 은 IIFE 머리에서 옮긴 함수 중 바깥에서 부르는 것을 같은 이름으로 가져와 호출처를 그대로 둔다. 옮긴 함수 이름을 window 에 새로 달지 않는다."
+  },
+  {
+   "id": "R3",
+   "text": "화면 결과 전후 차이 0 — 토큰 동일 검사, 조작 단계별 DOM·저장값·토스트·확인창·내보낸 파일 비교(기준 2회·후 1회), tab-check 목표 탭 기준 2회·후 비교, 법정이 누를 수 있는 게스트 화면 시나리오."
+  },
+  {
+   "id": "R4",
+   "text": "신고서(modules.json)를 module-specs --write 로 반영(자리는 goal.detail, 실제로 꽂지 않으므로 planned), 모듈 가드 통과·인라인 스크립트 줄 수 감소, 새 js 800줄 이하."
+  },
+  {
+   "id": "R5",
+   "text": "문서: REQ(8원칙), claims, dev_log 1줄, TICKETS 1줄. PR(초안 아님), 법정 판정 기록. 병합 안 함. 기준 시험지 검사 폐기(retire) 청구 없음."
+  },
+  {
+   "id": "R6",
+   "text": "로그인 흐름: 실계정 하네스 목표 시나리오(RA-GOALS-03)를 이전 전(운영)·이전 후(로컬)로 돌리고, 테스트 계정 A·B 로그인 상태에서 결과 입력·내보내기·보관을 전후 비교한다(작업자 실측 — 법정 도구는 로그인 화면을 못 연다)."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "목표·마일스톤·할 일 공용 결과 입력 모달 openResultModal 이 js/tabs/goals/result-modal.js 에 선언되어 있다",
+   "touches": [
+    "js/tabs/goals/result-modal.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/goals/result-modal.js",
+    "text": "  function openResultModal(kind, obj, onSaved, goal){"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "AI 분석용 목표 현황 묶음을 만드는 buildGoalSnapshot 이 js/tabs/goals/goal-export.js 에 선언되어 있다",
+   "touches": [
+    "js/tabs/goals/goal-export.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/goals/goal-export.js",
+    "text": "  function buildGoalSnapshot(goals){"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "목표 현황 md 요약을 만드는 goalSnapshotSummary 가 js/tabs/goals/goal-export.js 에 선언되어 있다",
+   "touches": [
+    "js/tabs/goals/goal-export.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/goals/goal-export.js",
+    "text": "  function goalSnapshotSummary(snap){"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "목표 현황 내보내기 exportGoalSnapshot 이 js/tabs/goals/goal-export.js 에 선언되어 있다",
+   "touches": [
+    "js/tabs/goals/goal-export.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/goals/goal-export.js",
+    "text": "  function exportGoalSnapshot(scope, goal){"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "목표 보관 archiveGoal 이 js/tabs/goals/goal-export.js 에 선언되어 있다",
+   "touches": [
+    "js/tabs/goals/goal-export.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/goals/goal-export.js",
+    "text": "  async function archiveGoal(goal){"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "완주 인증서 모달 openGoalCertificateModal 이 js/tabs/goals/goal-export.js 에 선언되어 있다",
+   "touches": [
+    "js/tabs/goals/goal-export.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/goals/goal-export.js",
+    "text": "  async function openGoalCertificateModal(goal){"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "archiveGoal 이 100% 달성이면 같은 파일의 openGoalCertificateModal 을 접두 없이 부른다",
+   "touches": [
+    "js/tabs/goals/goal-export.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/goals/goal-export.js",
+    "text": "      openGoalCertificateModal(goal);"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인 스크립트에 openResultModal 함수 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  function openResultModal(kind, obj, onSaved, goal){"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인 스크립트에 buildGoalSnapshot 함수 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  function buildGoalSnapshot(goals){"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인 스크립트에 goalSnapshotSummary 함수 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  function goalSnapshotSummary(snap){"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인 스크립트에 exportGoalSnapshot 함수 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  function exportGoalSnapshot(scope, goal){"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인 스크립트에 archiveGoal 함수 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  async function archiveGoal(goal){"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인 스크립트에 openGoalCertificateModal 함수 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  async function openGoalCertificateModal(goal){"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html IIFE 머리에서 목표 키트의 openResultModal 를 같은 이름으로 가져온다(1차 이음매 getter 가 이 값을 돌려준다)",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "  var openResultModal = _goalsKit.openResultModal;"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html IIFE 머리에서 목표 키트의 exportGoalSnapshot 를 같은 이름으로 가져온다(1차 이음매 getter 가 이 값을 돌려준다)",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "  var exportGoalSnapshot = _goalsKit.exportGoalSnapshot;"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html IIFE 머리에서 목표 키트의 archiveGoal 를 같은 이름으로 가져온다(1차 이음매 getter 가 이 값을 돌려준다)",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "  var archiveGoal = _goalsKit.archiveGoal;"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "옮긴 인증서 모달이 읽는 generateGoalCertificateImage 가 app-scope getter 로 노출되어 있다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "    get generateGoalCertificateImage(){ return generateGoalCertificateImage; },"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "결과 입력 모달 파일이 목표 메가블록 index.js 앞에 로드된다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "<script src=\"js/tabs/goals/result-modal.js\"></script>"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "내보내기·보관 파일이 목표 메가블록 index.js 앞에 로드된다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "<script src=\"js/tabs/goals/goal-export.js\"></script>"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 새 목표를 만들고 목표 탭에서 첫 마일스톤의 결과 입력을 누르면 결과 입력 모달이 열리고, 빈 채로 AI 정리를 누르면 안내 토스트가, 달성 내용을 적고 저장하면 모달이 닫히며 그 마일스톤 결과 칸에 달성률이 보인다(옮기기만 했으므로 기준 커밋에서도 같은 결과여야 한다)",
+   "touches": [
+    "js/tabs/goals/result-modal.js"
+   ],
+   "scenario": "scenarios/goals-ms-result-modal-save.json"
+  },
+  {
+   "id": "C21",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 목표 상세의 AI 분석용 내보내기와 전체 버튼을 누르면 파일을 받았다는 토스트가 뜬다(기준 커밋에서도 같은 결과여야 한다)",
+   "touches": [
+    "js/tabs/goals/goal-export.js"
+   ],
+   "scenario": "scenarios/goals-export-snapshot.json"
+  },
+  {
+   "id": "C22",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 편집 모드의 보관 버튼을 누르고 결과 먼저 입력을 수락해 적고 저장하면 목표가 보관되어 기록 탭으로 넘어가고 완주 인증서 창(공유·이미지 저장)이 뜬다(기준 커밋에서도 같은 결과여야 한다)",
+   "touches": [
+    "js/tabs/goals/result-modal.js",
+    "js/tabs/goals/goal-export.js"
+   ],
+   "scenario": "scenarios/goals-archive-with-result.json"
+  },
+  {
+   "id": "C23",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "목표 탭 결과 입력·내보내기·보관 조작 비교(게스트, 기준 대 후)에서 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-375/dom-compare-goals-2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-375/dom-compare-goals-2.json",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "같은 기준 앱 2회 조작 비교(본질적 변동)에서 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-375/dom-compare-goals-2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-375/dom-compare-goals-2.json",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "옮긴 6개 선언의 토큰열 동일·누수 0·미노출 0 검사 결과가 ok 로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-375/verify-goals-2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-375/verify-goals-2.json",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "모듈 가드 기준선의 인라인 스크립트 줄 수가 34316 으로 낮아져 있다",
+   "touches": [
+    "docs/architecture/module-baseline.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "docs/architecture/module-baseline.json",
+    "path": "history.11.metrics.inlineScriptLines",
+    "equals": 34316
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서에 결과 입력 모달 세포 goals/result-modal 이 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/modules.json",
+    "text": "\"id\": \"goals/result-modal\""
+   }
+  },
+  {
+   "id": "C28",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서에 내보내기·보관 세포 goals/goal-export 가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/modules.json",
+    "text": "\"id\": \"goals/goal-export\""
+   }
+  },
+  {
+   "id": "C29",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 가 8원칙 중 절차 재검증 절을 가진다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-375-GOALS-CELL-2.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/specs/REQ-TASK-ES-375-GOALS-CELL-2.md",
+    "text": "## 6. [원칙 ⑥] 절차 재검증 · 반론 격파"
+   }
+  },
+  {
+   "id": "C30",
+   "req": "R5",
+   "kind": "static",
+   "domain": "tickets",
+   "statement": "티켓 대장에 TASK-ES-375 줄이 있다",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/rules/TICKETS.md",
+    "text": "- #TASK-ES-375 | INFRA/구조 |"
+   }
+  },
+  {
+   "id": "C31",
+   "req": "R6",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "운영 Supabase 테스트 계정 A·B 로 각각 로그인한 상태에서 목표 탭의 결과 입력 모달(목표·마일스톤 저장·취소)·AI 분석용 내보내기·보관·완주 인증서가 이전 전과 같게 동작한다",
+   "touches": [
+    "js/tabs/goals/result-modal.js",
+    "js/tabs/goals/goal-export.js"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "테스트 계정 A·B 환경 변수가 있는 이 PC 의 세션 또는 상민님",
+    "how": [
+     "node docs/design/harness/real-account-check.js --only RA-GOALS-03 --out 결과.json 을 운영 주소(병합·배포 뒤)로 실행해 RA-GOALS-03 통과를 본다",
+     "테스트 계정으로 로그인해 목표 탭에서 마일스톤 결과 입력 → 적고 저장 → 결과 칸에 달성률이 보이는지 본다",
+     "편집 → 보관 → 결과 먼저 입력 수락 → 저장 → 기록 탭으로 넘어가고(100% 면 완주 인증서) 목표가 보관함에 있는지 본 뒤 그 목표를 지운다"
+    ],
+    "note": "법정은 게스트(금고 fixture)로만 화면을 연다 — 운영 Supabase 계정으로 로그인한 목표 탭은 법정 도구가 열 수 없다. 작업자 실측(판정 아님): RA-GOALS-03 운영(이전 전)·로컬 기준 사본·로컬 이 변경 모두 통과(reports/TASK-ES-375/real-account-ra-*.json), 계정 A·B 로그인 상태 조작 각 22단계 220값 차이 0(reports/TASK-ES-375/real-account-goals-dom-compare-A.json·-B.json), 표식 목표 각 1개 만들고 지움·남은 0. 주소·계정은 가렸다."
+   }
+  },
+  {
+   "id": "C32",
+   "req": "R3",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "완주 인증서 창의 공유하기 버튼이 이전 전과 같게 기기 공유 창(또는 문구 복사)을 띄운다",
+   "touches": [
+    "js/tabs/goals/goal-export.js"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "native-dialog",
+    "who": "진짜 폰을 가진 사람(상민님)",
+    "how": [
+     "게스트로 목표 하나를 100% 결과로 저장하고 편집 → 보관한다",
+     "완주 인증서 창에서 공유하기를 누른다",
+     "기기 공유 창이 뜨거나(이미지·문구) 문구 복사 안내 토스트가 뜨는지 본다"
+    ],
+    "note": "공유하기(navigator.share)는 운영체제 공유 창이라 법정·헤드리스 도구가 열 수 없다. 작업자 실측은 인증서 창이 뜨고 이미지 저장 버튼이 '이미지를 저장했어요' 토스트를 내는 데까지(게스트 조작 비교·시나리오 goals-archive-with-result)."
+   }
+  }
+ ]
+}

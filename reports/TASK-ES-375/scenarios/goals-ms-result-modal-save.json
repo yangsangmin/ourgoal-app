@@ -1,0 +1,110 @@
+{
+  "id": "goals-ms-result-modal-save",
+  "title": "새 목표 상세에서 첫 마일스톤의 결과입력을 누르면 결과 입력 모달이 열리고, 빈 채로 AI 정리를 누르면 안내 토스트가, 달성 내용을 적고 저장하면 모달이 닫히며 그 마일스톤 결과 칸에 달성률이 보인다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#homeAddGoal"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#ngManualBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#ngManualBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#mGoalTitle"
+    },
+    {
+      "do": "type",
+      "selector": "#mGoalTitle",
+      "text": "세포 이전 확인 목표"
+    },
+    {
+      "do": "click",
+      "selector": "#mSave"
+    },
+    {
+      "do": "wait",
+      "ms": 1200
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#goalDetailBody",
+      "text": "전체 (3)"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#goalDetailBody .ms-row:nth-child(1) [data-msresult]",
+      "text": "결과 입력"
+    },
+    {
+      "do": "click",
+      "selector": "#goalDetailBody .ms-row:nth-child(1) [data-msresult]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#rsAiQuickInput"
+    },
+    {
+      "expect": "visible",
+      "selector": "#rsSave"
+    },
+    {
+      "do": "click",
+      "selector": "#rsAiQuickApplyBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "달성한 내용을 줄글로 적어주세요"
+    },
+    {
+      "do": "type",
+      "selector": "#rsAiQuickInput",
+      "text": "오늘 5km 30분 달림"
+    },
+    {
+      "do": "click",
+      "selector": "#rsSave"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#rsSave"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "저장 완료"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#goalDetailBody .ms-row:nth-child(1) [data-msresult]",
+      "text": "달성률"
+    }
+  ]
+}
