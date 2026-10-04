@@ -1,0 +1,62 @@
+{
+  "task": "TASK-ES-342",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-342-HOME-CHECK-HARNESS.md",
+  "requirements": [
+    { "id": "R1", "text": "docs/design/harness/ 의 shots.js·shots-lib.js·audit.js 를 읽고, 재사용해 새 스크립트 docs/design/harness/home-check.js 를 만든다. 인자: <APP_DIR(워크트리 경로)> <outDir>. APP_DIR 하드코딩 금지(shots.js 는 고치지 말고 새 스크립트에서 인자로)." },
+    { "id": "R2", "text": "테마 4종(focus-sanctuary·black·white·urban-city) × 뷰포트 375×667·375×812 = 8장 홈 촬영 + 홈 상세 바텀시트 열림 상태 + 체크인 입력 포커스 상태." },
+    { "id": "R3", "text": "각 장마다 JSON: 문서 스크롤 높이(무스크롤 여부), 44px 미만 클릭 타겟 수, 콘솔 에러 수, 화면에 있으나 display:none 등으로 숨겨진 상호작용 요소 수와 id 목록, 'Lv.'·'EXP' 텍스트가 홈에 보이는지." },
+    { "id": "R4", "text": "나중에 목표탭에도 쓰도록 탭 이름을 인자로 받을 수 있게(기본 home) 설계하되, 이 작업은 홈만 검증." },
+    { "id": "R5", "text": "실행해서 산출물 생성(원격 서버·실계정 쓰지 말 것: 기존 shots-lib 의 게스트 프로필 시드·Supabase 목 방식 그대로). 산출물 PNG 는 커밋하지 말고 요약 JSON 1개만 docs/design/harness/out-home-<날짜>.json 정도로(용량 작게)." },
+    { "id": "R6", "text": "검증: 스크립트를 실제로 돌린 출력 수치를 보고(예비 확인). 미측정을 통과로 적지 말 것." }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "home-check.js 가 shots-lib.js 를 불러와 게스트 시드 페이지 생성 함수를 재사용한다",
+      "touches": ["docs/design/harness/home-check.js"],
+      "check": { "type": "codeContains", "file": "docs/design/harness/home-check.js", "text": "require('./shots-lib.js')" }
+    },
+    {
+      "id": "C2", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "home-check.js 에는 앱 경로 C:/dev/ourgoal-app 이 적혀 있지 않고 첫 인자로 받는다",
+      "touches": ["docs/design/harness/home-check.js"],
+      "check": { "type": "codeNotContains", "file": "docs/design/harness/home-check.js", "text": "C:/dev/ourgoal-app" }
+    },
+    {
+      "id": "C3", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "home-check.js 의 테마 목록이 index.html 의 테마 4종과 같은 값으로 적혀 있다",
+      "touches": ["docs/design/harness/home-check.js"],
+      "check": { "type": "codeContains", "file": "docs/design/harness/home-check.js", "text": "const THEMES = ['focus-sanctuary', 'black', 'white', 'urban-city'];" }
+    },
+    {
+      "id": "C4", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "요약 JSON 의 마지막(24번째) 장 이름이 urban-city 375x812 체크인 포커스 상태로 기록되어 있다",
+      "touches": ["docs/design/harness/out-home-2026-10-04.json"],
+      "check": { "type": "jsonPath", "file": "docs/design/harness/out-home-2026-10-04.json", "path": "shots.23.name", "equals": "home-urban-city-375x812-focus" }
+    },
+    {
+      "id": "C5", "req": "R3", "kind": "static", "domain": "config",
+      "statement": "home-check.js 측정 함수가 숨겨진 상호작용 요소의 id 목록 칸을 낸다",
+      "touches": ["docs/design/harness/home-check.js"],
+      "check": { "type": "codeContains", "file": "docs/design/harness/home-check.js", "text": "hiddenInteractiveIds: hidden.filter(h => h.id).map(h => h.id)" }
+    },
+    {
+      "id": "C6", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "home-check.js 가 셋째 인자로 탭 이름을 받고 없으면 home 으로 둔다",
+      "touches": ["docs/design/harness/home-check.js"],
+      "check": { "type": "codeContains", "file": "docs/design/harness/home-check.js", "text": "const TAB = pos[2] || 'home';" }
+    },
+    {
+      "id": "C7", "req": "R5", "kind": "static", "domain": "config",
+      "statement": "요약 JSON 에 측정 환경이 로컬 정적 서버·게스트 시드·Supabase 목(원격·실계정 없음)으로 기록되어 있다",
+      "touches": ["docs/design/harness/out-home-2026-10-04.json"],
+      "check": { "type": "jsonPath", "file": "docs/design/harness/out-home-2026-10-04.json", "path": "env", "equals": "local static server + headless Chrome + guest seed + Supabase mock (no remote, no real account)" }
+    },
+    {
+      "id": "C8", "req": "R6", "kind": "static", "domain": "config",
+      "statement": "요약 JSON 첫 장(focus-sanctuary 375x667 기본)에 문서 높이 1016 이 기록되어 있다",
+      "touches": ["docs/design/harness/out-home-2026-10-04.json"],
+      "check": { "type": "jsonPath", "file": "docs/design/harness/out-home-2026-10-04.json", "path": "shots.0.docScrollHeight", "equals": 1016 }
+    }
+  ]
+}
