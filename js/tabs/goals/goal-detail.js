@@ -87,11 +87,16 @@
         (goal.topic ? L.topicPill(goal.topic) : '') +
         '<span class="dday-pill" style="background:var(--sage-soft);color:var(--sage);">달성 '+goalPct+'%</span>' +
         predictedPill +
-        (!L.state.goalEditMode ?
-          ('<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button" style="font-size:.75rem;padding:2px 8px;margin-left:auto;color:var(--ink-soft);border:1px solid var(--rule);">' +
-            (goal.result ? '📝 결과 수정' : '+ 최종 결과') +
-          '</button>') : '') +
       '</div>' +
+    '</div>';
+    /* #TASK-ES-380: "+ 최종 결과" 버튼은 위 카드(ui.css 가 상단 등반 로드맵과 중복이라 숨김) 밖, 목표 상세 맨 위 한 줄에 둔다.
+       문구·동작(goal-detail-events.js 의 L.openResultModal('goal', goal, …))은 그대로이고, 저장된 결과가 있으면 그 줄에 달성률을 보여 준다. */
+    var goalResultPct = goal.result ? L.resultPct(goal.result) : null;
+    var goalResultRow = '<div class="goal-result-row" id="goalResultRow" style="display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:0 0 8px;">' +
+      (goal.result ? '<span class="faint" id="goalResultSummary" style="font-size:.75rem;">최종 결과 · ' + (goalResultPct === null ? '기록 완료' : '달성률 ' + goalResultPct + '%') + '</span>' : '') +
+      '<button class="btn btn-ghost btn-sm" id="goalResultBtn" type="button" style="font-size:.75rem;padding:2px 8px;color:var(--ink-soft);border:1px solid var(--rule);">' +
+        (goal.result ? '📝 결과 수정' : '+ 최종 결과') +
+      '</button>' +
     '</div>';
     var dueRow = '<div class="duedate-row"><span class="lbl">목표 마감일시 (년월일시분)</span>' +
       '<span style="display:flex;align-items:center;gap:6px;">' +
@@ -419,7 +424,7 @@
       '</div>' : '';
 
     body.innerHTML =
-      (L.state.goalEditMode ? (window.OurgoalGoalEditUX?OurgoalGoalEditUX.renderTitleRow(L.state,goal):'') + dueRow + visRow : metaStrip) +
+      (L.state.goalEditMode ? (window.OurgoalGoalEditUX?OurgoalGoalEditUX.renderTitleRow(L.state,goal):'') + dueRow + visRow : metaStrip + goalResultRow) +
       (L.state.goalEditMode ? '' : goalStatusRow) +
       msFilterBar +
       '<div class="ms-list">'+msHtml+'</div>' +
