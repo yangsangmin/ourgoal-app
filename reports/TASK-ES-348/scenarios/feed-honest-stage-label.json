@@ -1,6 +1,6 @@
 {
   "id": "feed-honest-stage-label",
-  "title": "공유된 실천이 없는 게스트가 소통 피드를 열면 실제로 없는 AI 가이드를 세는 라벨 대신 아직 공유된 실천이 없다는 라벨이 나온다",
+  "title": "게스트가 소통 피드를 열면 피드 안내 문장이 나오고, 실제로 섞지 않는 AI 가이드를 세는 라벨(초기 실천 가이드 (1건)·응원 가이드 1건 포함)은 나오지 않는다",
   "steps": [
     {
       "do": "setViewport",
@@ -39,8 +39,14 @@
     {
       "expect": "textContains",
       "selector": "#commSubBody",
-      "text": "아직 공유된 실천이 없어요",
+      "text": "같은 목표를 향해 가는 사람들",
       "timeoutMs": 8000
+    },
+    {
+      "expect": "neverVisible",
+      "selector": "#commSubBody",
+      "text": "가이드",
+      "forMs": 1500
     },
     {
       "expect": "noExceptions"
