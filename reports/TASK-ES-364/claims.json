@@ -1,0 +1,350 @@
+{
+  "task": "TASK-ES-364",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-364-TEMPLATE-DATA-SPLIT.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "js/goal-templates-data.js 의 템플릿 60종 배열을 카테고리 6개 데이터 파일(js/data/goal-templates/<category>.js)로 글자 그대로 나누고, 원래 파일은 같은 순서로 잇는 조립자로 둔다. 각 파일 800줄 이하, 줄 수 분할 금지, 템플릿 수·순서·내용 변경 0."
+    },
+    {
+      "id": "R2",
+      "text": "전역 OURGOAL_60_TEMPLATES(list·getByCategory·getById·search)와 읽는 쪽(index.html·team-invite-comm.js·viral-sharing.js) 동작 그대로. index.html 은 <script> 추가·순서만. JSON 대신 js 유지([기본값], 동기 로드 순서 보존)."
+    },
+    {
+      "id": "R3",
+      "text": "증명: 분리 전후 배열 deepStrictEqual 부품 시험(npm test 경로), 템플릿 화면 조작 DOM 전후 비교 차이 0, 목표·소통 탭 tab-check 전후 비교, 게스트 화면 시나리오."
+    },
+    {
+      "id": "R4",
+      "text": "신고서 module-specs --write 반영, 모듈 가드 통과, 800줄 넘는 세포 12→11 기준선 갱신."
+    },
+    {
+      "id": "R5",
+      "text": "문서: REQ(8원칙), claims, dev_log 1줄, TICKETS 1줄. PR(초안 아님), 병합 안 함. 검사 폐기(retire) 청구 없음."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "운동·건강 데이터 파일이 자기 10종 배열을 데이터 묶음 OurgoalGoalTemplateParts.health 에 둔다",
+      "touches": [
+        "js/data/goal-templates/health.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/goal-templates/health.js",
+        "text": "    (root.OurgoalGoalTemplateParts = root.OurgoalGoalTemplateParts || {}).health = LIST;"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "관계·생활 데이터 파일이 자기 10종 배열을 데이터 묶음 OurgoalGoalTemplateParts.relation 에 둔다",
+      "touches": [
+        "js/data/goal-templates/relation.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/goal-templates/relation.js",
+        "text": "    (root.OurgoalGoalTemplateParts = root.OurgoalGoalTemplateParts || {}).relation = LIST;"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "첫 템플릿 tpl_hlt_01 이 운동·건강 데이터 파일로 옮겨져 있다",
+      "touches": [
+        "js/data/goal-templates/health.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/goal-templates/health.js",
+        "text": "    \"id\": \"tpl_hlt_01\","
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "마지막 템플릿 tpl_rel_10 이 관계·생활 데이터 파일로 옮겨져 있다",
+      "touches": [
+        "js/data/goal-templates/relation.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/data/goal-templates/relation.js",
+        "text": "    \"id\": \"tpl_rel_10\","
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "조립자 js/goal-templates-data.js 에 템플릿 데이터 원소가 남아 있지 않다",
+      "touches": [
+        "js/goal-templates-data.js"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "js/goal-templates-data.js",
+        "text": "    \"id\": \"tpl_hlt_01\","
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "조립자가 카테고리 6개를 원래 배열 순서(health→study→career→hobby→mind→relation)로 잇는다",
+      "touches": [
+        "js/goal-templates-data.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/goal-templates-data.js",
+        "text": "  var PART_ORDER = ['health', 'study', 'career', 'hobby', 'mind', 'relation'];"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "Node 경로에서 조립자가 운동·건강 데이터 파일을 require 로 읽는다",
+      "touches": [
+        "js/goal-templates-data.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/goal-templates-data.js",
+        "text": "        health: require('./data/goal-templates/health.js'),"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "조립자가 이전과 같은 전역 이름 OURGOAL_60_TEMPLATES 로 노출한다",
+      "touches": [
+        "js/goal-templates-data.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/goal-templates-data.js",
+        "text": "    root.OURGOAL_60_TEMPLATES = exp;"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "이은 템플릿 전부에 이전과 같이 isAi 표시를 단다",
+      "touches": [
+        "js/goal-templates-data.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/goal-templates-data.js",
+        "text": "  TEMPLATES.forEach(function(t){ t.isAi = true; });"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "데이터 파일 6개 중 마지막(관계·생활)이 조립자 바로 앞에 로드된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<script src=\"js/data/goal-templates/relation.js?v=20261004-es364\"></script><script src=\"js/goal-templates-data.js?v=20260916-es101\"></script>"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "운동·건강 데이터 파일이 index.html 에서 로드된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<script src=\"js/data/goal-templates/health.js?v=20261004-es364\"></script>"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "분리 뒤에도 게스트로 목표 탭 「템플릿」 서브탭에서 운동·건강 칩을 누르면 '풀코스 마라톤 Sub-4', 관계·생활 칩을 누르면 '비폭력대화(NVC) 4단계' 템플릿 이름이 보이고, 그 템플릿의 이식 버튼을 누르면 그 이름의 목표 알약이 목표 탭에 생긴다(나누기만 했으므로 기준 커밋에서도 같은 결과여야 한다)",
+      "touches": [
+        "js/goal-templates-data.js",
+        "js/data/goal-templates/health.js",
+        "js/data/goal-templates/relation.js",
+        "index.html"
+      ],
+      "scenario": "scenarios/goal-template-pick.json"
+    },
+    {
+      "id": "C13",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "동일성 시험이 분리 전 원본(기준 커밋)과 분리 후 list 를 deepStrictEqual 로 맞댄다",
+      "touches": [
+        "tests/goal-templates-data-split.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/goal-templates-data-split.test.js",
+        "text": "    assert.deepStrictEqual(after.list, base.list);"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "동일성 시험이 분리 전 list JSON 지문으로도 맞댄다(얕은 복제본 대비)",
+      "touches": [
+        "tests/goal-templates-data-split.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/goal-templates-data-split.test.js",
+        "text": "const BASE_SHA256 = '6151e77aadc183947b520c94b31f44653ea8b093455df156d06213815b3e0a0a';"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "동일성 시험이 npm test 경로(test-shipyard-modular [Test 6])에서 돈다",
+      "touches": [
+        "scripts/test-shipyard-modular.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/test-shipyard-modular.js",
+        "text": "  runNode('tests/goal-templates-data-split.test.js');"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "템플릿 화면 조작 22단계 DOM·모달·저장값·토스트 전후 비교에서 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-364/dom-compare-templates.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-364/dom-compare-templates.json",
+        "path": "differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R4",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "모듈 가드 기준선의 800줄 넘는 js 파일 수가 11 로 낮아져 있다",
+      "touches": [
+        "docs/architecture/module-baseline.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/module-baseline.json",
+        "path": "history.5.metrics.oversizeJsFiles.count",
+        "equals": 11
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R4",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "신고서에 운동·건강 데이터 세포 data/goal-templates/health 가 있다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "\"id\": \"data/goal-templates/health\""
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 가 8원칙 중 절차 재검증 절을 가진다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-364-TEMPLATE-DATA-SPLIT.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-364-TEMPLATE-DATA-SPLIT.md",
+        "text": "## 6. [원칙 ⑥] 절차 재검증 · 반론 격파"
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R5",
+      "kind": "static",
+      "domain": "tickets",
+      "statement": "티켓 대장에 TASK-ES-364 줄이 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-364 | INFRA/구조 |"
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R3",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "로그인한 실계정에서 템플릿을 이식하면 새 목표가 서버 원장(Supabase)에 저장되고 다른 기기에서도 보인다(이식 코드는 바꾸지 않았고 템플릿 객체가 같음은 시험으로 쟀다)",
+      "touches": [
+        "js/goal-templates-data.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "아워골 실계정으로 로그인할 수 있는 사람",
+        "how": [
+          "실계정으로 로그인한다",
+          "목표 탭 「템플릿」 서브탭에서 관계·생활 칩을 누르고 비폭력대화(NVC) 4단계 템플릿의 이식 버튼을 누른다",
+          "다른 기기(또는 새로고침 후)에서 같은 계정으로 목표 탭을 열어 그 목표가 보이는지 본다"
+        ]
+      }
+    }
+  ]
+}

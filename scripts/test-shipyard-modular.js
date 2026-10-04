@@ -154,6 +154,8 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/module-guard.test.js');
   runNode('tests/new-module.test.js');
   runNode('tests/core-toast-es361.test.js'); // #TASK-ES-361 공용 토스트 통로(ui.toast)·CORE-10
+  // #TASK-ES-364 목표 템플릿 데이터 6파일 분리 전후 deepStrictEqual
+  runNode('tests/goal-templates-data-split.test.js');
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
 

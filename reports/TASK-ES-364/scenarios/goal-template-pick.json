@@ -1,0 +1,68 @@
+{
+  "id": "goal-template-pick",
+  "title": "게스트로 목표 탭 「템플릿」 서브탭에서 마음·습관 칩 다음 운동·건강 칩 → '풀코스 마라톤 Sub-4', 관계·생활 칩 → '비폭력대화(NVC) 4단계' 템플릿 이름이 보이고, 그 템플릿의 이식 버튼을 누르면 그 이름의 목표 알약(.s-goal-pill)이 목표 탭에 생긴다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubTemplate"
+    },
+    {
+      "do": "click",
+      "selector": "#templateEncyclopediaView [data-subtcat=\"mind\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#templateEncyclopediaView [data-subtcat=\"health\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#templateEncyclopediaView",
+      "text": "풀코스 마라톤 Sub-4"
+    },
+    {
+      "do": "click",
+      "selector": "#templateEncyclopediaView [data-subtcat=\"relation\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#templateEncyclopediaView",
+      "text": "비폭력대화(NVC) 4단계"
+    },
+    {
+      "capture": "template-visible"
+    },
+    {
+      "do": "click",
+      "selector": "#templateEncyclopediaView [data-subtpl-clone=\"tpl_rel_10\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#screen-goals .s-goal-pills-wrap",
+      "text": "비폭력대화(NVC) 4단계"
+    },
+    {
+      "capture": "template-picked"
+    }
+  ]
+}

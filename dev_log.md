@@ -5867,3 +5867,5 @@
 - **진행 단계**: [4단계: 심사 청구]
 ---
 - 2026-10-04 TASK-ES-360: 일정 탭 렌더 7개(renderCalendarScreen·renderCalDayDetail·parseNaturalScheduleText·executeCalAgentNaturalSchedule·calShift·calWeekStart·WEEKDAYS_KR)를 index.html 인라인에서 js/tabs/calendar/render.js·day-detail.js·natural-schedule.js 로 동작 그대로 이전(생성기 gen-calendar.js, 인라인 36,414→35,905줄, 토큰 동일·누수 0, 조작 20단계 DOM 비교 220값 차이 0). calCellHtml 은 동결 시험지 verify-integrity-gate #TASK-ES-197 이 index.html 에서 글자를 찾아 남김.
+---
+- 2026-10-04 TASK-ES-364: 목표 템플릿 데이터 파일 분리(쪼개는 순서 7) — js/goal-templates-data.js 3,526줄 → 조립자 69줄 + js/data/goal-templates/ 카테고리 6파일(각 595~603줄, 10종씩), 전역 OURGOAL_60_TEMPLATES·순서·내용 그대로(분리 전후 list deepStrictEqual·JSON 지문 6151e77a… 동일), 800줄 넘는 세포 12→11. 새 전역 묶음 OurgoalGoalTemplateParts 1개(데이터 파트 전달용). 진행 단계 [4단계: 심사 청구].
