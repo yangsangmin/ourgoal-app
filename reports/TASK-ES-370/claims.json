@@ -1,0 +1,467 @@
+{
+  "task": "TASK-ES-370",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-370-GOALS-CELL.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 인라인 IIFE 의 목표 탭 메인 렌더 renderGoalsScreen(1,044줄)과 그것만 쓰는 렌더 헬퍼(resultBadgeHtml·formatDateTimeBadge)를 js/tabs/goals/ 로 글자 그대로 옮긴다. 800줄을 넘는 renderGoalsScreen 은 책임 단위 세 구간(머리·상세 마크업·상세 이벤트)으로 나눈다. 기능 추가·삭제 0, 마크업·CSS 는 옮기지 않는다."
+    },
+    {
+      "id": "R2",
+      "text": "옮긴 코드가 읽는 인라인 스코프 이름은 js/core/app-scope.js getter 로만 읽고, index.html 은 IIFE 맨 위에서 같은 이름으로 가져와 호출처를 그대로 둔다. 옮긴 함수 이름을 window 에 새로 달지 않는다."
+    },
+    {
+      "id": "R3",
+      "text": "화면 결과 전후 차이 0 — 토큰 동일 검사, 조작 단계별 DOM 비교(기준 2회·후 1회), tab-check 목표 탭 기준 2회·후 비교, 법정이 누를 수 있는 게스트 화면 시나리오."
+    },
+    {
+      "id": "R4",
+      "text": "신고서(modules.json)를 module-specs --write 로 반영(자리는 goal.detail, 실제로 꽂지 않으므로 planned), 모듈 가드 통과·인라인 스크립트 줄 수 감소, 새 js 800줄 이하."
+    },
+    {
+      "id": "R5",
+      "text": "문서: REQ(8원칙), claims, dev_log 1줄, TICKETS 1줄. PR(초안 아님), 법정 판정 기록. 병합 안 함. 기준 시험지 검사 폐기(retire) 청구 없음."
+    },
+    {
+      "id": "R6",
+      "text": "로그인 흐름: 실계정 하네스 목표 시나리오(RA-GOALS-03)를 이전 전(운영)·이전 후(로컬)로 돌려 결과가 같거나 나은지 확인한다(작업자 실측 — 법정 도구는 로그인 화면을 못 연다)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "목표 탭 메인 렌더 함수 renderGoalsScreen 이 js/tabs/goals/render.js 에 선언되어 있다",
+      "touches": [
+        "js/tabs/goals/render.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/goals/render.js",
+        "text": "  function renderGoalsScreen(){"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "renderGoalsScreen 의 상세 마크업 구간이 js/tabs/goals/goal-detail.js 의 renderGoalDetailBody(goal, body) 로 옮겨져 있다",
+      "touches": [
+        "js/tabs/goals/goal-detail.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/goals/goal-detail.js",
+        "text": "  function renderGoalDetailBody(goal, body){"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "renderGoalsScreen 의 상세 이벤트 배선 구간이 js/tabs/goals/goal-detail-events.js 의 wireGoalDetailEvents 로 옮겨져 있다",
+      "touches": [
+        "js/tabs/goals/goal-detail-events.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/goals/goal-detail-events.js",
+        "text": "  function wireGoalDetailEvents(goal, body, allCollapsed, goalStatusHash, isDateStale, goalStatusStale){"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "조립자 renderGoalsScreen 이 머리 다음에 상세 마크업 구간을 목표 키트(K)로 부른다",
+      "touches": [
+        "js/tabs/goals/render.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/goals/render.js",
+        "text": "    var _goalDetail = K.renderGoalDetailBody(goal, body);"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "조립자 renderGoalsScreen 이 상세 마크업 구간이 돌려준 지역 변수 4개를 그대로 상세 이벤트 구간에 넘긴다",
+      "touches": [
+        "js/tabs/goals/render.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/goals/render.js",
+        "text": "    K.wireGoalDetailEvents(goal, body, _goalDetail.allCollapsed, _goalDetail.goalStatusHash, _goalDetail.isDateStale, _goalDetail.goalStatusStale);"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "상세 마크업 구간이 다음 구간이 쓰는 지역 변수 4개를 돌려준다",
+      "touches": [
+        "js/tabs/goals/goal-detail.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/goals/goal-detail.js",
+        "text": "    return { allCollapsed: allCollapsed, goalStatusHash: goalStatusHash, isDateStale: isDateStale, goalStatusStale: goalStatusStale };"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "목표 상세만 쓰는 결과 배지 헬퍼 resultBadgeHtml 이 js/tabs/goals/goal-detail.js 로 옮겨져 있다",
+      "touches": [
+        "js/tabs/goals/goal-detail.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/goals/goal-detail.js",
+        "text": "  function resultBadgeHtml(r){"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "목표 상세만 쓰는 마감일시 배지 헬퍼 formatDateTimeBadge 가 js/tabs/goals/goal-detail.js 로 옮겨져 있다",
+      "touches": [
+        "js/tabs/goals/goal-detail.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/goals/goal-detail.js",
+        "text": "  function formatDateTimeBadge(str){"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 인라인 스크립트에 renderGoalsScreen 함수 선언이 남아 있지 않다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "  function renderGoalsScreen(){"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 인라인 스크립트에 resultBadgeHtml 함수 선언이 남아 있지 않다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "  function resultBadgeHtml(r){"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 인라인 스크립트에 formatDateTimeBadge 함수 선언이 남아 있지 않다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "  function formatDateTimeBadge(str){"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html IIFE 맨 위에서 목표 키트의 renderGoalsScreen 을 같은 이름으로 가져온다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "  var renderGoalsScreen = _goalsKit.renderGoalsScreen;"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "window.renderGoalsScreen 노출 줄은 이전 전과 같은 자리(index.html)에 그대로 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "  window.renderGoalsScreen = renderGoalsScreen;"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "옮긴 코드가 읽는 renderPromptEncyclopediaHtml 이 app-scope getter 로 노출되어 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "    get renderPromptEncyclopediaHtml(){ return renderPromptEncyclopediaHtml; },"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "목표 렌더 파일이 목표 메가블록 index.js 앞에 로드된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<script src=\"js/tabs/goals/render.js\"></script>"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "옮긴 뒤에도 게스트로 목표 탭을 열고 서브탭 줄에서 루틴을 누르면 루틴 칩이 켜지고 루틴 화면이 보이며, 개인을 누르면 개인 칩이 켜지고 루틴 화면이 다시 숨는다(옮기기만 했으므로 기준 커밋에서도 같은 결과여야 한다)",
+      "touches": [
+        "js/tabs/goals/render.js",
+        "index.html"
+      ],
+      "scenario": "scenarios/goals-subtab-routine.json"
+    },
+    {
+      "id": "C17",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "옮긴 뒤에도 게스트로 새 목표를 직접 만들고 목표 탭을 열면 상세 칸에 마일스톤 3개와 필터(대기 3)가 보이고, 편집을 눌러 마일스톤 추가를 누르면 상세 칸의 마일스톤이 4개로 늘어난다(기준 커밋에서도 같은 결과여야 한다)",
+      "touches": [
+        "js/tabs/goals/render.js",
+        "js/tabs/goals/goal-detail.js",
+        "js/tabs/goals/goal-detail-events.js"
+      ],
+      "scenario": "scenarios/goals-new-goal-milestone.json"
+    },
+    {
+      "id": "C18",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "목표 탭 조작 36단계 DOM·모달·목표 상태·저장값·토스트 전후 비교에서 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-370/dom-compare-goals.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-370/dom-compare-goals.json",
+        "path": "differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "같은 기준 앱 2회 조작 비교(본질적 변동)에서 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-370/dom-compare-goals.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-370/dom-compare-goals.json",
+        "path": "baseVsBaseDiffering",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "옮긴 3개 선언의 토큰열 동일(renderGoalsScreen 은 세 파일 이어 붙여)·누수 0·미노출 0 검사 결과가 ok 로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-370/verify-goals.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-370/verify-goals.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R4",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "모듈 가드 기준선의 인라인 스크립트 줄 수가 34806 으로 낮아져 있다",
+      "touches": [
+        "docs/architecture/module-baseline.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/module-baseline.json",
+        "path": "history.7.metrics.inlineScriptLines",
+        "equals": 34806
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R4",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "신고서에 목표 렌더 세포 goals/render 가 있다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "\"id\": \"goals/render\""
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R4",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "신고서에 목표 상세 마크업 세포 goals/goal-detail 이 있다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "\"id\": \"goals/goal-detail\""
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R4",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "신고서에 목표 상세 이벤트 세포 goals/goal-detail-events 가 있다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "\"id\": \"goals/goal-detail-events\""
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 가 8원칙 중 절차 재검증 절을 가진다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-370-GOALS-CELL.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-370-GOALS-CELL.md",
+        "text": "## 6. [원칙 ⑥] 절차 재검증 · 반론 격파"
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R5",
+      "kind": "static",
+      "domain": "tickets",
+      "statement": "티켓 대장에 TASK-ES-370 줄이 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-370 | INFRA/구조 |"
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R6",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "운영 Supabase 테스트 계정 A 로 로그인한 상태에서 목표 탭(표식 목표 만들기·칩 선택·편집·마일스톤 추가·필터·보기·접기·선택·팀·팀 연계·루틴 서브탭·다시 그리기)의 화면이 이전 전과 같다",
+      "touches": [
+        "js/tabs/goals/render.js",
+        "js/tabs/goals/goal-detail.js",
+        "js/tabs/goals/goal-detail-events.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "테스트 계정 A·B 환경 변수가 있는 이 PC 의 세션 또는 상민님",
+        "how": [
+          "node docs/design/harness/real-account-check.js --only RA-GOALS-03 --out 결과.json 을 운영 주소(병합·배포 뒤)로 실행한다",
+          "결과의 RA-GOALS-03 이 통과이고 evidence.onA2 가 true 인지 본다",
+          "또는 직접: 테스트 계정으로 로그인해 목표 탭에서 목표 칩을 바꾸고 편집 → 마일스톤 추가 → 편집 완료를 눌러 상세 칸이 이전과 같이 바뀌는지 본다"
+        ],
+        "note": "법정은 게스트(금고 fixture guest-fresh)로만 화면을 연다 — 운영 Supabase 계정으로 로그인한 목표 탭은 법정 도구가 열 수 없다. 작업자 실측(판정 아님): RA-GOALS-03 운영(이전 전)·로컬 기준 사본·로컬 이 변경 모두 통과(reports/TASK-ES-370/real-account-ra-*.json), 로그인 상태 조작 20단계 120값 차이 0(reports/TASK-ES-370/real-account-goals-dom-compare.json). 주소·계정은 가렸다."
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R6",
+      "kind": "unverified",
+      "domain": "multi-user",
+      "statement": "팀에 속한 계정에서 목표 탭 서브탭 전환(팀목표·팀 연계)의 머리 부분(칩 활성·화면 보이기/숨기기)이 이전 전과 같다",
+      "touches": [
+        "js/tabs/goals/render.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "팀에 속한 테스트 계정으로 로그인할 수 있는 사람",
+        "how": [
+          "팀에 속한 테스트 계정으로 로그인한다",
+          "목표 탭에서 팀목표·팀 연계 서브탭을 차례로 누른다",
+          "누른 칩이 켜지고 해당 화면만 보이는지 본다"
+        ],
+        "note": "테스트 계정 A·B 는 팀이 없어 팀 목표 데이터가 있는 상태를 만들 수 없다. 팀 목표 내용은 이번에 옮기지 않은 renderTeamGoalsScreen(index.html)이 그리고, 옮긴 머리는 서브탭 칩 활성·화면 보이기/숨기기와 분기만 한다."
+      }
+    }
+  ]
+}
