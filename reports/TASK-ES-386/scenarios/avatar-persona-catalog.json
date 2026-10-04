@@ -1,0 +1,87 @@
+{
+  "id": "avatar-persona-catalog",
+  "title": "게스트로 설정 탭 「✏️ 프로필 편집」(#btnSettingsQuickAvatar) → 아바타 모달 「🎨 만화형 3등신 아바타」를 고르고 「🧬 320종 MBTI 페르소나 도감」을 펼치고 탐험가형 SP 탭을 누르면 '영원한 스포트라이트 스타'(ESFP, id 320) 카드가 보이고, 그 카드를 누르면 '[ESFP 영원한 스포트라이트 스타] 테마가 선택되었습니다' 안내가 뜨며, 분석형 NT 탭을 누르면 '그랜드 마스터'(INTJ, id 1) 카드가 보인다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#btnSettingsQuickAvatar"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#avatarTypeToggle [data-avatartype=\"custom\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#avatarTypeToggle [data-avatartype=\"custom\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnToggle320PersonaCatalog",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#btnToggle320PersonaCatalog"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#persona320GroupTabs [data-group=\"SP\"]",
+      "timeoutMs": 10000
+    },
+    {
+      "do": "click",
+      "selector": "#persona320GroupTabs [data-group=\"SP\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#persona320ItemsContainer",
+      "text": "영원한 스포트라이트 스타"
+    },
+    {
+      "do": "click",
+      "selector": "#persona320ItemsContainer .persona-theme-card[data-tid=\"320\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "[ESFP 영원한 스포트라이트 스타] 테마가 선택되었습니다"
+    },
+    {
+      "capture": "persona-esfp-picked"
+    },
+    {
+      "do": "click",
+      "selector": "#persona320GroupTabs [data-group=\"NT\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#persona320ItemsContainer",
+      "text": "그랜드 마스터"
+    },
+    {
+      "capture": "persona-nt-visible"
+    }
+  ]
+}
