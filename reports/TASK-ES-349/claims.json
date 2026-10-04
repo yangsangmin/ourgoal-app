@@ -1,0 +1,92 @@
+{
+  "task": "TASK-ES-349",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-349-SIX-TAB-HARNESS.md",
+  "requirements": [
+    { "id": "R1", "text": "기존 docs/design/harness/home-check.js(PR #651, shots-lib.js 의 newPage 재사용 — 게스트 시드·Supabase mock·외부 호출 차단)를 탭 인자형 공통 도구로 넓힌다: 탭 home·goals·records·calendar·comm·settings × 테마 4종(index.html 의 실제 테마 값) × 375×667·375×812. 각 탭은 그 탭의 주요 상태(예: 서브탭·바텀시트 1개)까지 실제 클릭으로 들어간다 — 들어갔는지 검증하고 못 들어가면 그 사실을 기록(가짜 성공 금지)." },
+    { "id": "R2", "text": "측정 항목(장별 JSON): 페이지 높이/화면 높이·무스크롤 여부, 44px 미만 조작 요소 목록, 콘솔 오류, 숨은 조작 요소(display:none 부모 아래 버튼 등) 목록과 숨긴 이유, display:none !important 가 걸린 요소 수, 그리고 자동 클릭 Dead-Click 탐지: 보이는 조작 요소를 하나씩 눌러 DOM 변화·네트워크 시도·토스트·화면 전환 중 아무 반응이 없으면 Dead-Click 후보로 기록(눌러서 다른 탭으로 가면 원래 상태로 복귀). 외부로 나가는 동작(window.open, 외부 링크)·삭제/초기화처럼 되돌릴 수 없는 버튼은 누르지 말고 '누르지 않음(사유)'로 기록." },
+    { "id": "R3", "text": "홈 도구(home-check.js)는 새 공통 도구로 대체하되, 기존 명령이 깨지지 않게 얇은 호환 래퍼로 남긴다(삭제 금지)." },
+    { "id": "R4", "text": "산출물은 요약 JSON 만 커밋(PNG 는 커밋하지 말 것, scratchpad 나 .gitignore 된 폴더로), 6탭 각각 1회 실행 결과 요약 파일을 docs/design/harness/out-six-tab-2026-10-04.json 정도로." },
+    { "id": "R5", "text": "재현성: 같은 커밋에서 2회 실행해 지표 차이 0 인지 비교(차이가 있으면 원인과 함께 기록)." },
+    { "id": "R6", "text": "문서: README(도구 사용법 한 단락) 또는 docs/design/harness/ 안 설명, REQ/PLAN(TASK-ES-349), reports/TASK-ES-349/claims.json, TICKETS 1줄, dev_log 항목. 근거: 노션 CORE-01." }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "tab-check.js 가 여섯 탭 이름을 탭 인자 목록으로 갖는다",
+      "touches": ["docs/design/harness/tab-check.js"],
+      "check": { "type": "codeContains", "file": "docs/design/harness/tab-check.js", "text": "const TABS = ['home', 'goals', 'records', 'calendar', 'comm', 'settings'];" }
+    },
+    {
+      "id": "C2", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "tab-check.js 의 테마 목록이 index.html 의 테마 4종 값으로 적혀 있다",
+      "touches": ["docs/design/harness/tab-check.js"],
+      "check": { "type": "codeContains", "file": "docs/design/harness/tab-check.js", "text": "const THEMES = ['focus-sanctuary', 'black', 'white', 'urban-city'];" }
+    },
+    {
+      "id": "C3", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "tab-states.js 의 상태 진입은 누른 뒤 DOM 확인 결과를 entered 로 돌려준다(확인 실패면 false)",
+      "touches": ["docs/design/harness/tab-states.js"],
+      "check": { "type": "codeContains", "file": "docs/design/harness/tab-states.js", "text": "entered: !!v.ok" }
+    },
+    {
+      "id": "C4", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "요약 JSON 에 목표 탭 루틴 서브탭 첫 장의 진입 확인값이 true 로 기록되어 있다(작업자 주장 측정값)",
+      "touches": ["docs/design/harness/out-six-tab-2026-10-04.json"],
+      "check": { "type": "jsonPath", "file": "docs/design/harness/out-six-tab-2026-10-04.json", "path": "tabs.goals.shots.1.entered", "equals": true }
+    },
+    {
+      "id": "C5", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "tab-check.js 측정 함수가 탭 영역 안에서 important 로 강제된 display none 요소 수 칸을 낸다",
+      "touches": ["docs/design/harness/tab-check.js"],
+      "check": { "type": "codeContains", "file": "docs/design/harness/tab-check.js", "text": "importantNoneInScope: inScopeImportant.length" }
+    },
+    {
+      "id": "C6", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "tab-deadclick.js 가 눌러도 반응이 없던 요소를 Dead-Click 후보 목록에 넣는다",
+      "touches": ["docs/design/harness/tab-deadclick.js"],
+      "check": { "type": "codeContains", "file": "docs/design/harness/tab-deadclick.js", "text": "res.dead.push({ sel: c.sel, text: c.text" }
+    },
+    {
+      "id": "C7", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "tab-deadclick.js 가 삭제·초기화·로그아웃류 요소는 누르지 않고 사유를 적는다",
+      "touches": ["docs/design/harness/tab-deadclick.js"],
+      "check": { "type": "codeContains", "file": "docs/design/harness/tab-deadclick.js", "text": "return '되돌릴 수 없음(삭제·초기화·로그아웃·차단)';" }
+    },
+    {
+      "id": "C8", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "요약 JSON 에 홈 기본 상태 대표 장의 Dead-Click 후보 수 2 가 기록되어 있다(작업자 주장 측정값)",
+      "touches": ["docs/design/harness/out-six-tab-2026-10-04.json"],
+      "check": { "type": "jsonPath", "file": "docs/design/harness/out-six-tab-2026-10-04.json", "path": "tabs.home.deadClick.home|base|focus-sanctuary-375x667.deadCount", "equals": 2 }
+    },
+    {
+      "id": "C9", "req": "R3", "kind": "static", "domain": "config",
+      "statement": "home-check.js 는 남아 있고 공통 도구 tab-check.js 로 넘기는 래퍼다",
+      "touches": ["docs/design/harness/home-check.js"],
+      "check": { "type": "codeContains", "file": "docs/design/harness/home-check.js", "text": "require('./tab-check.js')" }
+    },
+    {
+      "id": "C10", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "요약 JSON 의 설정 탭 마지막(16번째) 장 이름이 urban-city 375x812 시트 상태로 기록되어 있다",
+      "touches": ["docs/design/harness/out-six-tab-2026-10-04.json"],
+      "check": { "type": "jsonPath", "file": "docs/design/harness/out-six-tab-2026-10-04.json", "path": "tabs.settings.shots.15.name", "equals": "settings-urban-city-375x812-sheet" }
+    },
+    {
+      "id": "C11", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "요약 JSON 에 측정 환경이 로컬 정적 서버·게스트 시드·Supabase 목(원격·실계정 없음)으로 기록되어 있다",
+      "touches": ["docs/design/harness/out-six-tab-2026-10-04.json"],
+      "check": { "type": "jsonPath", "file": "docs/design/harness/out-six-tab-2026-10-04.json", "path": "env", "equals": "local static server + headless Chrome + guest seed + Supabase mock (no remote, no real account)" }
+    },
+    {
+      "id": "C12", "req": "R5", "kind": "static", "domain": "config",
+      "statement": "재현성 비교 파일에 같은 커밋 두 실행의 다른 값 수 0 이 기록되어 있다(작업자 주장 측정값)",
+      "touches": ["docs/design/harness/out-six-tab-2026-10-04-repro.json"],
+      "check": { "type": "jsonPath", "file": "docs/design/harness/out-six-tab-2026-10-04-repro.json", "path": "differingValues", "equals": 0 }
+    },
+    {
+      "id": "C13", "req": "R6", "kind": "static", "domain": "config",
+      "statement": "docs/design/harness/README.md 에 도구 사용법 설명이 있다",
+      "touches": ["docs/design/harness/README.md"],
+      "check": { "type": "fileExists", "file": "docs/design/harness/README.md" }
+    }
+  ]
+}
