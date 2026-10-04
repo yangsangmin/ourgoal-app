@@ -10,7 +10,13 @@ const path = require('path');
 const assert = require('assert');
 
 const INDEX_HTML = path.join(__dirname, '..', 'index.html');
-const html = fs.readFileSync(INDEX_HTML, 'utf8');
+const indexHtmlOnly = fs.readFileSync(INDEX_HTML, 'utf8');
+// #TASK-ES-354 CORE-07: 설정 탭 렌더 코드가 index.html 인라인 스크립트에서 js/tabs/settings/*.js 로 옮겨 갔다(동작 그대로).
+// 소스 글자 검사는 앱 소스 합본(index.html + 옮긴 설정 모듈)으로 본다 — ui.css 분리 때 styleSrc 를 합본으로 본 것과 같은 방식.
+const MOVED_MODULES = ['js/core/app-scope.js', 'js/core/ui-helpers.js', 'js/tabs/settings/render.js', 'js/tabs/settings/sub-profile.js', 'js/tabs/settings/sub-security.js', 'js/tabs/settings/sub-notify.js', 'js/tabs/settings/sub-appearance.js', 'js/tabs/settings/sub-integrations.js', 'js/tabs/settings/sub-data.js'];
+const html = indexHtmlOnly + MOVED_MODULES.map(function(f){ var p = path.join(__dirname, '..', f); return fs.existsSync(p) ? '\n' + fs.readFileSync(p, 'utf8') : ''; }).join('');
+// 검사마다 index.html 을 다시 읽던 곳도 같은 합본을 본다(#TASK-ES-354).
+const APP_SRC = html;
 // 2026-09-12 UI v2: 스타일은 ui.css(외부)로 분리됐다. CSS 존재 검사는 html+css 합본으로 본다.
 const UI_CSS = path.join(__dirname, '..', 'ui.css');
 const styleSrc = html + (fs.existsSync(UI_CSS) ? fs.readFileSync(UI_CSS, 'utf8') : '');
@@ -96,7 +102,9 @@ const FN_NAMES = [
   'getTemplateAdNoticeMessage', 'computeAdCountdownProgress', 'isTemplateRewardedAdEnabled',
 ];
 
-const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
+// #TASK-ES-354 CORE-07: 여러 탭 공용 순수 헬퍼(nowISO·triggerHaptic 등)는 js/core/ui-helpers.js 로 옮겨 갔다 — 인라인 스크립트 다음에 이어 붙여 같은 이름으로 찾는다.
+const UNIT_SRC = mainScript + '\n' + fs.readFileSync(path.join(__dirname, '..', 'js', 'core', 'ui-helpers.js'), 'utf8');
+const extracted = FN_NAMES.map(name => extractFunction(UNIT_SRC, name)).join('\n');
 
 const sandboxSrc =
   'var STREAK_FREEZE_MAX = 3;\n' +
@@ -1510,7 +1518,7 @@ check('compliance: 가상 페르소나 40인 및 유저 피드백 TOP 10 핵심 
 });
 
 check('compliance: 최초 로그인 시 모든 공개 범위(헤더 배지, 설정 셀렉트, 목표/기록 기본값)가 비공개로 설정되어 있다', () => {
-  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const html = APP_SRC;
 
   // 1. 헤더 배지 초기 마크업 비공개 확인
   assert.ok(html.includes('id="goalsPrivacyBadge" title="클릭하여 공개 범위 변경">나만 보기</span>'), '목표 탭 배지 비공개 기본값');
@@ -1553,7 +1561,7 @@ check('compliance: 가상 페르소나 200인 및 2배 다양화(신경다양성
 });
 
 check('compliance: 11인 외부 UI/UX 감시 및 개선팀 1차 전면 개선사항이 index.html에 구현되어 있다', () => {
-  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const html = APP_SRC;
 
   // 1. 모바일 하단 플로팅 엄지독 제거 (사용자 UX 개선 요청으로 번잡한 퀵이동 버튼 삭제)
   assert.ok(!html.includes('id="bottomThumbDock"'), '하단 플로팅 엄지독 컨테이너 제거 확인');
@@ -1584,7 +1592,7 @@ check('compliance: 11인 외부 UI/UX 감시 및 개선팀 1차 전면 개선사
 });
 
 check('compliance: 유료 기능 잠금이 전면 해제되고 모든 기능(무제한 목표, AI 코치, 30일 리포트)이 100% 무료로 제공된다', () => {
-  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const html = APP_SRC;
 
   // 1. 토스 결제 위젯 제거 확인
   assert.strictEqual(html.includes('tosspayments.com/v1/payment-widget'), false, '토스페이먼츠 스크립트 제거');
@@ -1607,7 +1615,7 @@ check('compliance: 유료 기능 잠금이 전면 해제되고 모든 기능(무
 });
 
 check('compliance: 기록/달력 6대 UX 개선사항(기록 탭 AI 피드백, 히트맵 기간·횟수 시각화, 위클리 리캡 항목선택, 기간별 AI 피드백, 퀵도크 삭제, 일정 허브 모달 정상동작)이 모두 구현되어 있다', () => {
-  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const html = APP_SRC;
 
   // 1. 기록 탭 실시간 AI 피드백 슬롯 및 렌더러
   assert.ok(html.includes('id="recFeedbackSlot"'), '기록 탭 피드백 슬롯 마커 존재');
@@ -3343,7 +3351,7 @@ check('compliance: [#TASK-ES-056] 아워골 전면 Gemini API 단일화 및 오�
   const visionCode = fs.readFileSync(path.join(__dirname, '..', 'api', 'vision-table.js'), 'utf8');
   assert.ok(!visionCode.includes('gemini-2.5-flash') && !visionCode.includes('gemini-1.5-flash'), 'vision-table.js 내 404 유발 구버전 모델 제거');
 
-  const htmlCode = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const htmlCode = APP_SRC;
   assert.ok(htmlCode.includes('⚡ 오프라인 상태 또는 아워골 서버 문제로 기본 안내가 생성되었습니다'), 'index.html 에 사용자 확정 오프라인/서버 지연 안내 문구 탑재');
   assert.ok(htmlCode.includes('aiProvider:"gemini"') || htmlCode.includes('aiProvider: "gemini"'), 'index.html 기본 AI 프로바이더 gemini 단일화');
   assert.ok(htmlCode.includes('gemini-3.1-flash-lite'), 'index.html 기본 모델 gemini-3.1-flash-lite 확인');
@@ -3370,7 +3378,7 @@ check('compliance: [#TASK-ES-057] 맞춤 템플릿 AI 줄글 분석의 Gemini 3.
   const vercelCfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
   assert.ok(vercelCfg.rewrites.some(r => r.source === '/api/customtemplate' && r.destination === '/api/goaltemplate'), 'vercel.json 에 /api/customtemplate 리라이트 규칙 존재');
 
-  const htmlCode = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const htmlCode = APP_SRC;
   assert.ok(htmlCode.includes('/api/customtemplate'), 'index.html 이 /api/customtemplate 엔드포인트 비동기 호출');
   assert.ok(htmlCode.includes('Gemini 3.1 Flash Lite가 양식 설계 중'), 'index.html 에 로딩 인디케이터 상태 탑재');
   assert.ok(htmlCode.includes("action: 'custom_record_template'"), 'index.html 이 custom_record_template 액션 전달');
@@ -3462,7 +3470,7 @@ check('compliance: [#TASK-ES-058] 아워골 AI 목표 및 템플릿 생성 유�
   }
 
   // 4. index.html 이중 방어망 배선 검증
-  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const html = APP_SRC;
   assert.ok(html.includes('<script src="js/content-moderation.js"></script>'), 'index.html 내 content-moderation.js 로드');
   assert.ok(html.includes('window.OurgoalModeration.check(text)'), 'sendGoalAgentMessage 내 사전 차단 배선');
   assert.ok(html.includes('window.OurgoalModeration.check(desc)'), 'showNewGoalChatStep 내 사전 차단 배선');
@@ -3582,7 +3590,7 @@ check('[TASK-ES-059] 테마 구분 없는 임의 데이터 AI 자율 메트릭 �
   assert.ok(apiFiles.length <= 12, `Vercel Hobby 12개 함수 한도 준수 (현재 ${apiFiles.length}개)`);
 
   // 8. index.html 배선 검증
-  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const html = APP_SRC;
   assert.ok(html.includes('src="js/universal-stats.js'), 'index.html 내 universal-stats.js 로드');
   assert.ok(html.includes('id="recAddBtn"'), '기록 상단 새 기록 버튼 보존');
   assert.ok(!html.includes('id="recSampleTopBtn"'), '새기록 왼쪽 샘플로드 버튼 삭제 완료');
@@ -3658,7 +3666,7 @@ check('compliance: [#TASK-ES-059-FUSION] 임의 데이터 자율 융합(Ingest &
 });
 
 check('compliance: [#TASK-AUTH-P0-SAFETY] 로그인/계정관리 P0 안전망 패키지(비밀번호 찾기/변경, 로그인 유지, 30일 탈퇴 유예, 최근 로그인 뱃지) 무결성 검증', () => {
-  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const html = APP_SRC;
   const authCode = fs.readFileSync(path.join(__dirname, '..', 'js/auth-safety.js'), 'utf8');
 
   // 1. 로그인 폼 및 설정 UI 컴포넌트 검증
@@ -3764,7 +3772,7 @@ check('compliance: [#TASK-ES-042] 체크인 3단 피드백 모드(기본·중간
 });
 
 check('compliance: [#TASK-ES-059-BUTTONS] 기록 버튼 중복 해소 및 세부기록 모달 기능 연계 검증', () => {
-  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const html = APP_SRC;
   const rsCode = fs.readFileSync(path.join(__dirname, '..', 'js', 'records-stats.js'), 'utf8');
 
   // 1. 헤더 새기록 왼쪽 버튼 2종 완전 삭제 및 새기록 버튼 단독 유지
@@ -3841,7 +3849,7 @@ check('compliance: [#TASK-ES-060] 1900년대 및 역대 과거 임의 데이터 
   assert.ok(mockBox.innerHTML.includes('전체'), '전체(all) 기간 버튼 렌더링');
 
   // 6. index.html 무결성 검증 (캐시버스터, fmtDateLabel 연도 표기, try-catch 방어)
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   assert.ok(indexHtml.includes('universal-stats.js?v=20260914-es060') || indexHtml.includes('universal-stats.js?v=20260914-es061'), '캐시버스터 갱신');
   assert.ok(indexHtml.includes("d.getFullYear() !== today.getFullYear()"), 'fmtDateLabel 과거 연도 표기 로직 탑재');
   assert.ok(indexHtml.includes("OurgoalUniversalStats.renderUniversalStatsDashboard(uDashBox, allRecs, state"), '대시보드 호출 탑재');
@@ -3904,7 +3912,7 @@ check('compliance: [#TASK-ES-061] 유니버설 데이터 자율 융합, 동적 E
   assert.strictEqual(typeof uStats.openTaxonomyManagerModal, 'function', 'openTaxonomyManagerModal 함수 탑재');
 
   // 7. index.html 배선 및 탑바/가이드 연동 검증
-  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const html = APP_SRC;
   assert.ok(html.includes('recAnalyticsGuideBtn'), '기록 상단 가이드 바인딩 방어 로직 유지');
   assert.ok(html.includes('topHomeGuideBtn'), '탑바 전역 활용법 퀵 액션 버튼(#topHomeGuideBtn) 마운트');
   assert.ok(html.includes('OurgoalUniversalStats.openGuideModal'), '가이드 버튼 클릭 시 openGuideModal 호출');
@@ -4017,7 +4025,7 @@ check('compliance: [#TASK-ES-061-DEFITNESS] 운동/건강 편향 탈피 및 임�
   assert.ok(capturedModalHtml.includes('uImpTabText'), '텍스트 붙여넣기 탭 탑재');
 
   // 8. index.html 배너 문구의 도메인 중립성 검증
-  const indexHtmlContent = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtmlContent = APP_SRC;
   assert.ok(indexHtmlContent.includes('영업 실적, 개발 커밋, 수험 공부, 자산, 운동'), 'index.html 배너의 전 도메인 포용 문구 검증');
 });
 
@@ -4188,7 +4196,7 @@ check('compliance: [#TASK-ES-061-UIUX-MASTERPIECE] 4대 렌즈 마이크로 뱃�
 check('compliance: [#TASK-ES-090] 아워골 기록탭 지금부터 시간기록(전체화면, 가로세로 회전, 스톱워치 4대 버튼, 취소 안전 경고, 내 기록 저장) 무결성 검증', () => {
   const fs = require('fs');
   const path = require('path');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const trackerJsPath = path.join(__dirname, '..', 'js', 'time-tracker.js');
 
@@ -4435,7 +4443,7 @@ check('compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료
   assert.ok(populated.includes('🎥') && populated.includes('🖼️') && populated.includes('📝') && populated.includes('🔗'), '4대 아이콘 표출');
 
   // index.html 무결성 & 기술안전핀 TECH-RULE-01 (index.html 라인수 보존)
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const lines = indexHtml.split(/\r?\n/).length;
   assert.ok(lines >= 20000, '스마트 안전핀 TECH-RULE-01: index.html 본체 무결성 보존 및 무단 대량삭제 방지');
   assert.ok(indexHtml.includes('js/calendar-attachment.js'), 'calendar-attachment.js 로드 태그');
@@ -4450,7 +4458,7 @@ check('compliance: [#TASK-ES-096] 캘린더 일정(customSchedules) 참고자료
 });
 
 check('compliance: [#TASK-ES-102 & #TASK-ES-126] 전 탭(홈·목표·일정·기록·소통·설정) 활용법 탑바 단일화 및 6대 탭 통합 가이드 허브 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   
   // 1. 탑바 전역 활용법 단일 퀵 액션(#topHomeGuideBtn) 및 본문 중복 버튼 6종 제거 무결성 검증
   assert.ok(indexHtml.includes('id="topHomeGuideBtn"'), '탑바 내 활용법 단일 퀵 액션 버튼 탑재');
@@ -4479,7 +4487,7 @@ check('compliance: [#TASK-ES-102 & #TASK-ES-126] 전 탭(홈·목표·일정·�
 });
 
 check('compliance: [#TASK-ES-103] Web Push VAPID API 구축 및 UGC 신고·차단 안전망 완결성 검증', async () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. api/push-subscribe.js VAPID 처리 및 vercel.json rewrite 규격 검증 (Vercel Hobby 12개 한도 준수)
   const vercelJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
@@ -4530,7 +4538,7 @@ check('compliance: [#TASK-ES-103] Web Push VAPID API 구축 및 UGC 신고·차�
 });
 
 check('compliance: [#TASK-ES-104] 팀 목표 초대·소통 및 소통탭 전면 정비(초대·팀원대화·모임창복구·피드아코디언·게시버튼·1:1소통카드3종) 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. js/team-invite-comm.js 모듈 및 script 태그 탑재 검증
   const modulePath = path.join(__dirname, '..', 'js', 'team-invite-comm.js');
@@ -4579,7 +4587,7 @@ check('compliance: [#TASK-ES-104] 팀 목표 초대·소통 및 소통탭 전면
 });
 
 check('compliance: [#TASK-ES-105] 추천템플릿 목표탭 이전·둘러보기 모달·게시하기 연동·모임원 DM바·동반자 소셜탭 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const modulePath = path.join(__dirname, '..', 'js', 'team-invite-comm.js');
   assert.ok(fs.existsSync(modulePath), 'js/team-invite-comm.js 파일 존재');
   const moduleContent = fs.readFileSync(modulePath, 'utf8');
@@ -4623,7 +4631,7 @@ check('compliance: [#TASK-ES-105] 추천템플릿 목표탭 이전·둘러보기
 });
 
 check('compliance: [#TASK-ES-107] 팀 연계 개인목표 및 상호 달성도 체크·소통 시스템 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. 목표 탭 하위 서브탭에 '팀 연계' 탑재 및 뷰 컨테이너 검증
   assert.ok(indexHtml.includes("['teamLinked','팀 연계']") || indexHtml.includes("['teamLinked','팀 연계 개인목표']"), '서브탭에 팀 연계 탑재');
@@ -4658,7 +4666,7 @@ check('compliance: [#TASK-ES-107] 팀 연계 개인목표 및 상호 달성도 �
 });
 
 check('compliance: [#TASK-ES-106] 헌법 제19조 의거 실 사용자 계정 상호 연동(Real Inter-Account Interaction) DM 및 동반자 시스템 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const modulePath = path.join(__dirname, '..', 'js', 'team-invite-comm.js');
   assert.ok(fs.existsSync(modulePath), 'js/team-invite-comm.js 파일 존재');
   const moduleContent = fs.readFileSync(modulePath, 'utf8');
@@ -4694,7 +4702,7 @@ check('compliance: [#TASK-ES-106] 헌법 제19조 의거 실 사용자 계정 �
 });
 
 check('compliance: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화 및 구글 캘린더 연동 분리 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const authSafety = fs.readFileSync(path.join(__dirname, '..', 'js', 'auth-safety.js'), 'utf8');
 
   // 1. 랜딩 및 인증 화면 카카오 단일 메인 CTA 강조 & 구글 로그인 버튼 숨김
@@ -4727,7 +4735,7 @@ check('compliance: [#TASK-ES-108] 아워골 로그인 체계 카카오 단일화
 });
 
 check('compliance: [#TASK-ES-109] 목표 탭 편집 모드 완료 버튼 누락 해결, 목표 제목 편집 지원 및 하단 고정 완료 액션바 완결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const goalEditUxPath = path.join(__dirname, '..', 'js', 'goal-edit-ux.js');
   const teamLinkedPath = path.join(__dirname, '..', 'js', 'team-linked-goals.js');
@@ -5089,7 +5097,7 @@ check('compliance: [#TASK-ES-122] 아바타 생성 기간 설정(목표·팀·�
 });
 
 check('compliance: [#TASK-ES-123] 인앱 1:1 고객 문의·오류 제보 접수 시스템 완결 및 노션 DB·텔레그램 실시간 자동 연동 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
   const vercelCfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
   const ddlExists = fs.existsSync(path.join(__dirname, '..', 'docs', 'sql', '2026-09-16-inquiries.sql'));
@@ -5120,7 +5128,7 @@ check('compliance: [#TASK-ES-123] 인앱 1:1 고객 문의·오류 제보 접수
 });
 
 check('compliance: [#TASK-ES-178] 설정 탭 1:1 고객 문의 링크(footInquiryLink) 무반응 결함 수술 및 4위1체 리스너·글로벌 스코프 배선 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
 
   // 1. 푸터 1:1 고객 문의 링크 마크업 및 인라인 핸들러 제거 검증
   assert.ok(indexSrc.includes('id="footInquiryLink"'), '설정 탭 푸터에 footInquiryLink 마크업 존재');
@@ -5167,7 +5175,7 @@ check('compliance: [#TASK-ES-124] 동반자 실 사용자 닉네임 검색 2중 
   assert.ok(commSrc.includes('메시지를 전송했습니다! 💬'), 'DM 발송 즉각 피드백 배선');
 
   // 6. 캐시 버스팅 및 서비스워커 갱신 무결성 검증
-  const htmlSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const htmlSrc = APP_SRC;
   assert.ok(htmlSrc.includes('team-invite-comm.js?v=20260916-es1'), 'index.html 스크립트 캐시 버스팅 태그 갱신');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
   assert.ok(swSrc.includes('ourgoal-shell-v20260916-es1'), 'sw.js 캐시 네임 갱신');
@@ -5178,7 +5186,7 @@ check('compliance: [#TASK-ES-124] 동반자 실 사용자 닉네임 검색 2중 
 });
 
 check('compliance: [#TASK-CONST-003] index.html 스마트 무결성 안전핀 검증 (22,196줄 고정 잠금 해제, 본체 20,000줄 보존, // ... 무단 축약 금지)', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const rawControl = fs.readFileSync(path.join(__dirname, '..', 'docs', 'rules', 'rules-control.json'), 'utf8');
   const rulesControl = JSON.parse(rawControl.replace(/^---[\s\S]*?---\s*/, ''));
   const registry = fs.readFileSync(path.join(__dirname, '..', 'docs', 'rules', 'AI_TECHNICAL_RULES_REGISTRY.md'), 'utf8');
@@ -5256,7 +5264,7 @@ check('compliance: [#TASK-ES-127] 16개 MBTI 연계 320개 아바타 페르소�
 check('compliance: [#TASK-ES-125] 아바타 기본 제작 한도 초기 3회 조정 및 7일 연속 체크인 1회 충전 리워드 루프 & 기존 10회 보존 무결성 검증', () => {
   const avatarSystem = require(path.join(__dirname, '..', 'js', 'avatar-system.js'));
   const avatarJsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
 
   // 1. 상수 정의 검증
   assert.strictEqual(avatarSystem.DEFAULT_BASE_CRAFTS, 3, '신규 기본 제작 한도 3회');
@@ -5325,7 +5333,7 @@ check('compliance: [#TASK-ES-125] 아바타 기본 제작 한도 초기 3회 조
 
 /* ============ [#TASK-ES-126] 전 탭 중복 노출 '💡 활용법' 버튼 단일화 및 6대 탭 통합 가이드 허브 무결성 종합 검증 ============ */
 check('compliance: [#TASK-ES-126] 전 탭 중복 노출 활용법 버튼 단일화 및 6대 탭 통합 가이드 허브 무결성 종합 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const guideScriptPath = path.join(__dirname, '..', 'js', 'tab-guides.js');
   const guideContent = fs.readFileSync(guideScriptPath, 'utf8');
 
@@ -5369,7 +5377,7 @@ check('compliance: [#TASK-ES-126] 전 탭 중복 노출 활용법 버튼 단일�
 check('compliance: [#TASK-ES-129] 동반자 데이터 영구 영속화 및 무손실 보존(로컬 자가복원 + 서버리스 원장) 검증', () => {
   const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
   const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
   // 1. 캐시 버스팅 및 PWA 최신 갱신 검증
@@ -5394,7 +5402,7 @@ check('compliance: [#TASK-ES-129] 동반자 데이터 영구 영속화 및 무�
 
 check('compliance: [#TASK-ES-130] 동반자 탭 0ms 무중단 렌더링 및 PostgrestFilterBuilder 예외 완전 격리 검증', () => {
   const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
 
   // 1. Supabase PostgrestFilterBuilder .catch 문법 에러 배제
   assert.ok(!commSrc.includes(".eq('id', uid).catch("), 'Supabase 빌더 직접 .catch() 호출 완전 제거');
@@ -5412,7 +5420,7 @@ check('compliance: [#TASK-ES-130] 동반자 탭 0ms 무중단 렌더링 및 Post
 /* ============ [#TASK-ES-131] DM 수신자 완벽 사용자 경험(UX) 파이프라인 검증 ============ */
 check('compliance: [#TASK-ES-131] DM 수신자 완벽 사용자 경험(수신함 자동인입 + 레드 닷 뱃지 + 맞추가 배너) 검증', () => {
   const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
   // 1. 캐시 버스팅 및 PWA 버전 검증
@@ -5439,7 +5447,7 @@ check('compliance: [#TASK-ES-131] DM 수신자 완벽 사용자 경험(수신함
 
 /* ============ [#TASK-ES-127-IMPL] 활용법 감찰 적발 미구현 시스템 백엔드·로직 완결 검증 ============ */
 check('compliance: [#TASK-ES-127-IMPL] 활용법 감찰 적발 미구현 시스템(WebCal 캘린더 피드 + 데일리퀘스트 EXP 누적 + 도달예정일 알고리즘 + 30일 탈퇴유예) 완결 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const pushSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'push-subscribe.js'), 'utf8');
   const withdrawSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'withdraw.js'), 'utf8');
   const vercelJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
@@ -5470,7 +5478,7 @@ check('compliance: [#TASK-ES-127-IMPL] 활용법 감찰 적발 미구현 시스�
 
 /* ============ [#TASK-ES-133] 소통 탭 3대 핵심 상호작용(댓글·새팀·마니또) 실 서버 DB 완전 배선 검증 ============ */
 check('compliance: [#TASK-ES-133] 소통 탭 3대 핵심 상호작용(피드 댓글 서버 실시간 동기화 + 새 팀 전역 공유 영구 보존 + 마니또 실 유저 익명 응원 연동) 무결성 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
 
   // 1. 피드 댓글 Supabase team_pings 서버 실시간 동기화 및 삭제 배선
   assert.ok(indexSrc.includes("loadServerFeedComments"), 'loadServerFeedComments 비동기 서버 댓글 로더 탑재');
@@ -5495,7 +5503,7 @@ check('compliance: [#TASK-ES-133] 소통 탭 3대 핵심 상호작용(피드 댓
 });
 
 check('compliance: [#TASK-ES-134] 목표 탭 현상태 분석 AI 조언 명칭 변경, 분석완료 상태 전환 배지 및 스마트 캐시 제어 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
 
   // 1. 라벨 명칭 '현상태 분석 AI 조언' 단일화 및 'AI 현황' 미니바 타이틀 제거
   assert.ok(indexSrc.includes('현상태 분석 AI 조언'), '목표 탭 상단 타이틀이 현상태 분석 AI 조언으로 명시되어야 함');
@@ -5513,7 +5521,7 @@ check('compliance: [#TASK-ES-134] 목표 탭 현상태 분석 AI 조언 명칭 �
 });
 
 check('compliance: [#TASK-ES-135] 아바타 보관함(서랍) 3중 영속화(Supabase DB + LocalStorage + 마이그레이션 합집합 복원) 무결성 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
   const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
   const sqlPath = path.join(__dirname, '..', 'docs', 'sql', '2026-09-17-users-saved-avatars-column.sql');
@@ -5543,7 +5551,7 @@ check('compliance: [#TASK-ES-135] 아바타 보관함(서랍) 3중 영속화(Sup
 });
 
 check('compliance: [#TASK-ES-136] 목표 데이터 해시 변경 감지 보강 및 "오늘의 카드" 안내 멘트 상민님 지정 원문 100% 교체', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
 
   // 1. 홈 탭 '오늘의 카드' 상민님 확정 원문 라벨 및 1pt 축소 보조 배지 검증
   assert.ok(indexSrc.includes('<div class="ct-label" style="margin:0;">오늘의 카드</div>'), '홈 탭 오늘의 카드 라벨 교체');
@@ -5619,7 +5627,7 @@ check('compliance: [#TASK-ES-136] 목표 데이터 해시 변경 감지 보강 �
 });
 
 check('compliance: [#TASK-ES-137] AI 엔진 공통 데이터 불변 시 API 재호출 전면 차단 & KST 자정(00:00) 자동 롤오버 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
 
   // 1. getKSTDateKey 정의 및 dateKey 보존 검증
   assert.ok(indexSrc.includes('function getKSTDateKey(iso)'), 'getKSTDateKey 함수 정의');
@@ -5646,7 +5654,7 @@ check('compliance: [#TASK-ES-137] AI 엔진 공통 데이터 불변 시 API 재�
 });
 
 check('compliance: [#TASK-ES-138] 캘린더 일정(customSchedules) 일간/시간표 24시간 블록 뷰 구현 및 세부 일정 저장 무결성 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
 
   // 1. 일간/시간표 뷰(view === day) 타임라인 블록 렌더링 코드 검증
   assert.ok(indexSrc.includes('timetable-card'), 'timetable-card 컨테이너 탑재');
@@ -5663,7 +5671,7 @@ check('compliance: [#TASK-ES-138] 캘린더 일정(customSchedules) 일간/시�
 });
 
 check('compliance: [#TASK-ES-139] 설정창 노션 연동 6대 UX 개선 및 가이드 툴팁·URL 정규화 완결 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
 
   // 1. extractNotionDatabaseId 32자리 UUID 자동 추출 함수 검증
   assert.ok(indexSrc.includes('function extractNotionDatabaseId(input)'), 'extractNotionDatabaseId 정규화 함수 정의');
@@ -5693,7 +5701,7 @@ check('compliance: [#TASK-ES-139] 설정창 노션 연동 6대 UX 개선 및 가
 });
 
 check('compliance: [#TASK-ES-140] 목표 탭 3계층(목표·마일스톤·태스크) 일정 설정 배지 및 팝업 모달·캘린더 24시간 블록 연동 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 배지 포맷터, 모달, 업데이트 함수 정의 및 전역 노출 확인
@@ -5771,7 +5779,7 @@ check('compliance: [#TASK-ES-141] 홈 구성 커스텀(customize.js) 최적화 �
 });
 
 check('compliance: [#TASK-ES-142] 구글 캘린더 연동 영속성 및 토큰 복원·동의 루프 방어 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
 
   // 1. saveGoogleToken 및 restoreGoogleToken 함수 탑재 확인
   assert.ok(indexSrc.includes('function saveGoogleToken(tokenObj)'), 'saveGoogleToken 토큰 로컬 저장 함수 정의');
@@ -5790,7 +5798,7 @@ check('compliance: [#TASK-ES-142] 구글 캘린더 연동 영속성 및 토큰 �
 });
 
 check('compliance: [#TASK-ES-143] 전 AI 엔드포인트 로컬 스마트 룰베이스 폴백 및 보안/RLS 무결성 감사 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const reportPath = path.join(__dirname, '..', 'docs', 'reports', 'SECURITY_AND_AI_RESILIENCE_AUDIT_20260917.md');
 
   // 1. 보안 및 AI 회복탄력성 종합 감사 보고서 존재 확인
@@ -5846,7 +5854,7 @@ check('compliance: [#TASK-ES-143] 전 AI 엔드포인트 로컬 스마트 룰베
 });
 
 check('compliance: [#TASK-ES-144] 동반자 새로고침(F5) 증발 결함 근본 해결 및 1:1 DM 실시간 수신 파이프라인 무결성 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
 
   // 1. index.html defaultProfile, loadProfile, saveProfile 동반자 영속화 배선 확인
@@ -5875,7 +5883,7 @@ check('compliance: [#TASK-ES-144] 동반자 새로고침(F5) 증발 결함 근�
 
 /* ============ [#TASK-ES-145] 마니또 실 유저 판별 무결성 및 가짜 실 유저 표기 오류 개선 검증 ============ */
 check('compliance: [#TASK-ES-145] 마니또 실 유저 판별 무결성 및 가짜 실 유저 표기 오류 개선 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
 
   // 1. index.html isValidRealUser 탑재 및 실 사용자 UUID 정밀 식별
@@ -5901,7 +5909,7 @@ check('compliance: [#TASK-ES-145] 마니또 실 유저 판별 무결성 및 가�
 
 /* ============ [#TASK-ES-146] 홈 탭 최하단 <아워골 평가해주기> 고정 배너 및 90% 팝업 평가폼 무결성 검증 ============ */
 check('compliance: [#TASK-ES-146] 홈 탭 최하단 <아워골 평가해주기> 고정 배너 및 90% 팝업 평가폼 무결성 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const customSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'customize.js'), 'utf8');
   const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
@@ -5932,7 +5940,7 @@ check('compliance: [#TASK-ES-146] 홈 탭 최하단 <아워골 평가해주기> 
 
 /* ============ [#TASK-ES-147] 목표 탭 '목표만' 버튼 이격 배치 및 하위 마일스톤형 확인 UI 검증 ============ */
 check('compliance: [#TASK-ES-147] 목표 탭 \'목표만\' 버튼 이격 배치 및 하위 마일스톤형 확인 UI 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 목표 탭 상단 필터 바 [목표만] 분리 이격 배치 확인
@@ -5952,7 +5960,7 @@ check('compliance: [#TASK-ES-147] 목표 탭 \'목표만\' 버튼 이격 배치 
 
 /* ============ [#TASK-ES-148] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 탑재 검증 ============ */
 check('compliance: [#TASK-ES-148] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 탑재 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. renderStopwatchWidgetHtml 내 안내 문구 탑재 확인
@@ -5966,7 +5974,7 @@ check('compliance: [#TASK-ES-148] 맞춤 템플릿 스톱워치 표 시간기입
 
 /* ============ [#TASK-ES-149] 팀목표 200% 활용 가이드 안내문구 ('* 팀 목표를 생성하면 사라짐') 표시 검증 ============ */
 check('compliance: [#TASK-ES-149] 팀목표 200% 활용 가이드 안내문구 (\'* 팀 목표를 생성하면 사라짐\') 표시 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. renderTeamGoalsEmptyGuideHtml 내 안내 문구 탑재 확인
@@ -5977,7 +5985,7 @@ check('compliance: [#TASK-ES-149] 팀목표 200% 활용 가이드 안내문구 (
 
 /* ============ [#TASK-ES-150] 아바타 레벨업 대형 팝업 및 성장 성향 프롬프트 설정 무결성 검증 ============ */
 check('compliance: [#TASK-ES-150] 아바타 레벨업 대형 팝업 및 성장 성향 프롬프트 설정 무결성 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 대형 팝업 모달 및 대형 아바타 컨테이너 (200px 이상) 탑재 확인
@@ -6004,7 +6012,7 @@ check('compliance: [#TASK-ES-150] 아바타 레벨업 대형 팝업 및 성장 �
 
 /* ============ [#TASK-ES-151] 캘린더 일정 체크버튼 완료/미완료 토글 및 목표 양방향 동기화 무결성 검증 ============ */
 check('compliance: [#TASK-ES-151] 캘린더 일정 체크버튼 완료/미완료 토글 및 목표 양방향 동기화 무결성 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 체크버튼 및 완료 상태 UI/CSS 검증
@@ -6030,7 +6038,7 @@ check('compliance: [#TASK-ES-151] 캘린더 일정 체크버튼 완료/미완료
 
 /* ============ [#TASK-ES-152] 백그라운드·앱종료·미확인 전역 알림 엔진(OurgoalNotifyEngine) 및 세부 제어 센터 무결성 검증 ============ */
 check('compliance: [#TASK-ES-152] 백그라운드·앱종료·미확인 전역 알림 엔진(OurgoalNotifyEngine) 및 세부 제어 센터 무결성 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
   const notifyModPath = path.join(__dirname, '..', 'js', 'notify-engine.js');
@@ -6065,7 +6073,7 @@ check('compliance: [#TASK-ES-152] 백그라운드·앱종료·미확인 전역 �
 
 /* ============ [#TASK-ES-153] 캘린더 일자별 배경 사진 지정 및 50% 투명도 전역 렌더링 무결성 검증 ============ */
 check('compliance: [#TASK-ES-153] 캘린더 일자별 배경 사진 지정 및 50% 투명도 전역 렌더링 무결성 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const uiSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. CSS 50% 투명도 및 꽉 찬 배경 레이어 규칙 검증
@@ -6098,7 +6106,7 @@ check('compliance: [#TASK-ES-153] 캘린더 일자별 배경 사진 지정 및 5
 /* ============ [#TASK-ES-154] 아워골 평가하기 3중 접수창구(텔레그램·노션·DB) 및 피드백 파이프라인 무결성 검증 ============ */
 check('compliance: [#TASK-ES-154] 아워골 평가하기 3중 접수창구(텔레그램·노션·DB) 및 피드백 파이프라인 무결성 검증', () => {
   const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
   // 1. api/track.js 백엔드 app_evaluation 수신 및 5대 항목 리포트 조립 검증
@@ -6124,7 +6132,7 @@ check('compliance: [#TASK-ES-154] 아워골 평가하기 3중 접수창구(텔�
 
 /* ============ [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템추가 결함 해결 및 감성 안내문구 무결성 검증 ============ */
 check('compliance: [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템추가 결함 해결 및 감성 안내문구 무결성 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const styleSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
@@ -6154,7 +6162,7 @@ check('compliance: [#TASK-ES-155] 캘린더 배경사진·체크토글·잇템�
 
 /* ============ [#TASK-ES-153-SILENT] 구글 캘린더 일정 저장 시 계정 선택창 팝업 원천 차단 및 백그라운드 무음 동기화 검증 ============ */
 check('compliance: [#TASK-ES-153-SILENT] 구글 캘린더 일정 저장 시 계정 선택창 팝업 원천 차단 및 백그라운드 무음 동기화 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
 
   // 1. requestGoogleToken 내 다중 계정 선택창 건너뛰기 hint 파라미터 탑재 검증
   assert.ok(indexSrc.includes('reqOpts.hint = gEmail'), 'requestGoogleToken 내 기존 연동 이메일 hint 파라미터 전달');
@@ -6172,7 +6180,7 @@ check('compliance: [#TASK-ES-153-SILENT] 구글 캘린더 일정 저장 시 계�
 
 /* ============ [#TASK-ES-156] 캘린더 일정 체크 토글 및 구글 연동 일정 편집 시 제목 프리필 결함 해결 검증 ============ */
 check('compliance: [#TASK-ES-156] 캘린더 일정 체크 토글 및 구글 연동 일정 편집 시 제목 프리필 결함 해결 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
   // 1. calendarItemsByDate 내 구글 이벤트에 schedId 및 gcalDoneMap 기반 done 보존 검증
@@ -6200,7 +6208,7 @@ check('compliance: [#TASK-ES-156] 캘린더 일정 체크 토글 및 구글 연�
 
 /* ============ [#TASK-ES-157] 캘린더 구글 캘린더 거대 배너 제거 및 헤더 미니 구글 아이콘 배지 콤팩트화 검증 ============ */
 check('compliance: [#TASK-ES-157] 캘린더 구글 캘린더 거대 배너 제거 및 헤더 미니 구글 아이콘 배지 콤팩트화 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
   // 1. 캘린더 헤더 내 calGcalMiniBadgeSlot 마운트 포인트 확인
@@ -6223,7 +6231,7 @@ check('compliance: [#TASK-ES-157] 캘린더 구글 캘린더 거대 배너 제�
 
 /* ============ [#TASK-ES-158] 회원 탈퇴 시 법적책임·데이터 분실 사전 안내 팝업 및 동의 4위 1체 배선 검증 ============ */
 check('compliance: [#TASK-ES-158] 회원 탈퇴 시 법적책임·데이터 분실 사전 안내 팝업 및 동의 4위 1체 배선 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
@@ -6262,7 +6270,7 @@ check('compliance: [#TASK-ES-158] 회원 탈퇴 시 법적책임·데이터 분�
 /* ============ [#TASK-ES-159] 아바타 레벨별 상징 백그라운드 이미지 결합 시스템 검증 ============ */
 check('compliance: [#TASK-ES-159] 아바타 레벨별 상징 백그라운드 이미지(새싹·숲·포세이돈·제우스·우주 5대 테마) 결합 검증', () => {
   const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
@@ -6299,7 +6307,7 @@ check('compliance: [#TASK-ES-159] 아바타 레벨별 상징 백그라운드 이
 
 /* ============ [#TASK-ES-160] 각 탭 200% 활용법 및 실제 우수 사용사례 쇼케이스 허브 모달 검증 ============ */
 check('compliance: [#TASK-ES-160] 각 탭 200% 활용법 및 실제 우수 사용사례 쇼케이스 허브 모달 4위 1체 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
@@ -6330,7 +6338,7 @@ check('compliance: [#TASK-ES-160] 각 탭 200% 활용법 및 실제 우수 사�
 
 /* ============ [#TASK-ES-161] 참고자료 첨부 스마트 감지 · 비주얼 프리뷰 · 리치 칩 UI/UX 검증 ============ */
 check('compliance: [#TASK-ES-161] 참고자료 첨부 스마트 감지 · 비주얼 프리뷰 · 리치 칩 UI/UX 4위 1체 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const calAttSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'calendar-attachment.js'), 'utf8');
   const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
@@ -6364,7 +6372,7 @@ check('compliance: [#TASK-ES-161] 참고자료 첨부 스마트 감지 · 비주
 /* ============ [#TASK-ES-162] 공통 UI 컴포넌트 모듈화(OurgoalComponents 5대 컴포넌트) 검증 ============ */
 check('compliance: [#TASK-ES-162] 공통 UI 컴포넌트 모듈화(OurgoalComponents 5대 컴포넌트) 시스템 4위 1체 검증', () => {
   const compModule = require('../js/components.js');
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
@@ -6409,7 +6417,7 @@ check('compliance: [#TASK-ES-162] 공통 UI 컴포넌트 모듈화(OurgoalCompon
 /* ============ [#TASK-ES-163] 측정지표 분석할 항목별 차등 지정 및 정밀화·고도화 시스템 검증 ============ */
 check('compliance: [#TASK-ES-163] 측정지표 분석할 항목별 차등 지정 및 정밀화·고도화 시스템 검증', () => {
   const uStats = require('../js/universal-stats.js');
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
@@ -6476,7 +6484,7 @@ check('compliance: [#TASK-ES-163] 측정지표 분석할 항목별 차등 지정
 
 /* ============ [#TASK-ES-164] 소통창 화면정리 및 피드·소통 UI 시인성·피로도 개선 시스템 검증 ============ */
 check('compliance: [#TASK-ES-164] 소통창 화면정리 및 피드·소통 UI 시인성·피로도 개선 시스템 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
@@ -6513,7 +6521,7 @@ check('compliance: [#TASK-ES-164] 소통창 화면정리 및 피드·소통 UI �
 
 /* ============ [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 시스템 검증 ============ */
 check('compliance: [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 시스템 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
   // 1. 아바타 인사 팝업 모달 마크업 및 필수 요소 검증
@@ -6557,7 +6565,7 @@ check('compliance: [#TASK-ES-165] 앱 진입 시 화면 절반 크기 아바타 
 
 /* ============ [#TASK-ES-166] 활용법 내 아바타 전용 탭 최우선(맨 앞) 신설 및 200% 활용 가이드 & 쇼케이스 검증 ============ */
 check('compliance: [#TASK-ES-166] 활용법 내 아바타 전용 탭 최우선(맨 앞) 신설 및 200% 활용 가이드 & 쇼케이스 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
@@ -6589,7 +6597,7 @@ check('compliance: [#TASK-ES-166] 활용법 내 아바타 전용 탭 최우선(�
 
 /* ============ [#TASK-ES-167] 아바타 페르소나 사용자 노출 '77종' 전면 배제·'320종' 단일화 및 영구 금지 헌법 규제 검증 ============ */
 check('compliance: [#TASK-ES-167] 아바타 페르소나 사용자 노출 \'77종\' 전면 배제·\'320종\' 단일화 및 영구 금지 헌법 규제 검증', () => {
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const promptSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'promptgen.js'), 'utf8');
   const rulesSrc = fs.readFileSync(path.join(__dirname, '..', 'docs', 'rules', 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
@@ -6615,7 +6623,7 @@ check('compliance: [#TASK-ES-168] 1:1 DM 및 전역 알림(Web Push·ServiceWork
   const pushSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'push-dispatch.js'), 'utf8');
   const notifySrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'notify-engine.js'), 'utf8');
   const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
@@ -6650,7 +6658,7 @@ check('compliance: [#TASK-ES-169] 2계정 실제 유저 상호작용 무결성 �
   const viralSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'viral-sharing.js'), 'utf8');
   const commSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
   const leaderSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-leader-check.js'), 'utf8');
-  const indexSrc = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexSrc = APP_SRC;
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
   // 1. 딥링크 파라미터 매핑 (type=group&id=...) 검증
@@ -6709,7 +6717,7 @@ check('compliance: [#TASK-ES-173] 나만의 홈 구성 상단 고정(아바타·
 });
 
 check('compliance: [#TASK-ES-174] 아워골 생각 메모장 잔여 대기 과제 9건([45]~[53]) 전수 구현 및 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const statsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'universal-stats.js'), 'utf8');
   const teamLinkedSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-linked-goals.js'), 'utf8');
   const trackerSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'time-tracker.js'), 'utf8');
@@ -6758,7 +6766,7 @@ check('compliance: [#TASK-ES-174] 아워골 생각 메모장 잔여 대기 과�
 });
 
 check('compliance: [#TASK-ES-175] 기록 탭 시간기록 카드 슬림화([47]) 및 스톱워치 구간기록 시간창 자동 상단 이동([44]) & 입력창 모던 정돈([55]) 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const trackerSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'time-tracker.js'), 'utf8');
 
@@ -6780,7 +6788,7 @@ check('compliance: [#TASK-ES-175] 기록 탭 시간기록 카드 슬림화([47])
 });
 
 check('compliance: [#TASK-ES-176] 팀 목표창 View ↔ Edit 완전 분리(A안) · 3대 본질 시너지(E1/E2/E3) 및 목표/소통 탭 60선 대형창 제거 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const geuSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'goal-edit-ux.js'), 'utf8');
   const tlgSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-linked-goals.js'), 'utf8');
@@ -6813,7 +6821,7 @@ check('compliance: [#TASK-ES-176] 팀 목표창 View ↔ Edit 완전 분리(A안
 });
 
 check('compliance: [#TASK-ES-177] 아워골 생각 메모장 3대 완결 과제([58] 소통 피드 직접 사진 첨부 · [59] 카테고리 10종 확장 및 가로스크롤 · [60] 성취통계 껍데기 버튼 영구 삭제)', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uStatsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'universal-stats.js'), 'utf8');
 
   // 1. [60] 성취통계 껍데기 버튼 삭제 검증
@@ -6843,7 +6851,7 @@ check('compliance: [#TASK-ES-177] 아워골 생각 메모장 3대 완결 과제(
 });
 
 check('compliance: [#TASK-ES-179] 잇템(제휴링크) 법적 안전장치 및 텔레그램/노션 3초 퀵 신고 파이프라인 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
@@ -6880,7 +6888,7 @@ check('compliance: [#TASK-ES-179] 잇템(제휴링크) 법적 안전장치 및 �
 
 /* ============ [#TASK-ES-180] 아워골 생각 메모장 9대 대기 과제([61]~[69]) 및 6대 탭 활용법 모달 최신화 검증 ============ */
 check('compliance: [#TASK-ES-180] 아워골 생각 메모장 9대 대기 과제([61]~[69]) 및 6대 탭 활용법 모달 최신화 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const manifestJson = fs.readFileSync(path.join(__dirname, '..', 'manifest.json'), 'utf8');
   const widgetHtml = fs.readFileSync(path.join(__dirname, '..', 'widget.html'), 'utf8');
   const commJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
@@ -6947,7 +6955,7 @@ check('compliance: [#TASK-ES-180] 아워골 생각 메모장 9대 대기 과제(
 });
 
 check('compliance: [#TASK-ES-181] 폰 잠금화면에서 바로 보기 통합 허브(위젯 구독·모닝 알림) 및 배경화면 다운로드 제거 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
   // 1. 일정 탭 내 잠금화면 버튼 마운트 검증
@@ -6973,7 +6981,7 @@ check('compliance: [#TASK-ES-181] 폰 잠금화면에서 바로 보기 통합 �
 });
 
 check('compliance: [#TASK-ES-182] 폰 잠금화면 실시간 라이브 서비스 (월 달력 그리드·일정 3선 줄바꿈금지·5종 개별선택·0ms 즉각 미리보기) 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
   // 1. 실시간 잠금화면 연동 엔진 및 페이로드 빌더 함수 탑재 검증
@@ -7023,7 +7031,7 @@ check('compliance: [#TASK-ES-182] 폰 잠금화면 실시간 라이브 서비스
 });
 
 check('compliance: [#TASK-ES-183] 스마트폰 잠금화면 전체 장악 (Screen-On Full-Screen LockScreen Takeover) 네이티브 서비스 및 사용자 통제 파이프라인 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
 
   // 1. 잠금화면 전체 장악 제어 버튼 및 슬라이더 탑재 검증
@@ -7089,7 +7097,7 @@ check('compliance: [#TASK-SANCTUARY-COMM-RADAR-REAL-INTEGRITY] 소통 탭 실시
 
 
 check('compliance: [#TASK-ES-184] 아워골 생각 메모장 18대 잔여 대기 과제([70]~[87]) 전수 구현 및 개정 헌법(v2026.09.18) 6대 무결성 검증', () => {
-  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const html = APP_SRC;
   const css = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // [그룹 1: 계정 & 보안]
@@ -7248,7 +7256,7 @@ check('[#TASK-ES-186] 성소 기준 4대 테마(성소·블랙·화이트·도�
 });
 
 check('[#TASK-ES-187] 목표 탭 템플릿 백과사전 단일 서브탭 분리 및 상단 중복 버튼 제거 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
 
   // 1. 마운틴 트레일 카드 내 mountain-actions 및 불필요 버튼 0건 검증
@@ -7268,7 +7276,7 @@ check('[#TASK-ES-187] 목표 탭 템플릿 백과사전 단일 서브탭 분리 
 });
 
 check('[#TASK-ES-188] 로그인 창 둘러보기 버튼 문구 정돈 (로그인 없이 둘러보기) 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. 메인 버튼 텍스트 '로그인 없이 둘러보기' 탑재 확인
   assert.ok(indexHtml.includes('id="btnLandingPreviewDirect"'), '랜딩 메인 둘러보기 버튼 구비');
@@ -7283,7 +7291,7 @@ check('[#TASK-ES-188] 로그인 창 둘러보기 버튼 문구 정돈 (로그인
 
 
 check('[#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) 및 AI/실유저 2원화 이식 시스템 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. 3대 도메인 탭 버튼 구비 확인
   assert.ok(indexHtml.includes('id="encyclDomainPersonal"'), '개인목표 백과사전 버튼 구비');
@@ -7312,7 +7320,7 @@ check('[#TASK-ES-189] 템플릿 백과사전 3대 분류(개인·루틴·팀) �
 });
 
 check('[#TASK-CALENDAR-TAB-RESTORATION 일정 탭 전수 결함 정상화 및 4위 1체 시맨틱 복원 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
@@ -7357,7 +7365,7 @@ check('[#TASK-CALENDAR-TAB-RESTORATION 일정 탭 전수 결함 정상화 및 4�
 
 /* ============ [#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도화 검증 ============ */
 check('[#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도화 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
 
   // 1. 전역 인터페이스 배선 확인
@@ -7384,7 +7392,7 @@ check('[#TASK-ES-190] 목표 추가 기능 전면 복원 및 4위 1체 UX 고도
 
 /* ============ [#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결성 검증 ============ */
 check('[#TASK-ES-192] 데드클릭 12건 전수 소탕 및 인터랙션 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
 
   // 1. 순수 데드클릭 박멸 확인
@@ -7432,7 +7440,7 @@ check('[#TASK-ES-193] 집중 타이머 기록 탭 이전 및 기록 탭 6종 3×
 });
 
 check('[#TASK-ES-194] 소통 탭 6종 3×2 그리드 조형 및 가로스크롤 은폐 해소 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 소통 탭 6종 서브탭 확인
@@ -7449,7 +7457,7 @@ check('[#TASK-ES-194] 소통 탭 6종 3×2 그리드 조형 및 가로스크롤 
 });
 
 check('[#TASK-ES-196] 체크인 즉시 아바타 AI 피드백 고도화 & 영구 원장 영속화 및 기록 탭 상시 노출 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 체크인 저장 시 피드백 영구 보존 배선 확인
@@ -7472,7 +7480,7 @@ check('[#TASK-ES-196] 체크인 즉시 아바타 AI 피드백 고도화 & 영구
 });
 
 check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo Diary) 썸네일 자동 연계 & 히트맵 14px 스케일업 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 달력 셀 min-height 76px 및 사진형 일기 클래스 선언 확인
@@ -7494,7 +7502,7 @@ check('[#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo 
 });
 
 check('[#TASK-ES-217 / 생각 메모장 88번] 오늘의 3초 체크인 목표 커닝페이퍼 칩 플레이스홀더 가이드화 및 지움 피로도 근절 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. applyQuickCunningText에서 inp.value = text 제거 및 placeholder 배선 확인
   assert.ok(indexHtml.includes("inp.placeholder = '예: ' + text;"), 'applyQuickCunningText 내 inp.placeholder 배선 누락');
@@ -7508,7 +7516,7 @@ check('[#TASK-ES-217 / 생각 메모장 88번] 오늘의 3초 체크인 목표 �
 });
 
 check('[#TASK-ES-219 / 생각 메모장 89번] 데이터분석 프롬프트 백과사전 실사용 유저 등록·피드 게시 및 도움돼요 상호작용 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. 프롬프트 백과사전 헤더 내 [➕ 나만의 프롬프트 올리기] 버튼 배선 확인
   assert.ok(indexHtml.includes('id="btnAddUserPrompt"'), 'btnAddUserPrompt 버튼 누락');
@@ -7530,7 +7538,7 @@ check('[#TASK-ES-219 / 생각 메모장 89번] 데이터분석 프롬프트 백�
 });
 
 check('[#TASK-ES-220] 교대근무자 전용 가변형 루틴 자동 스케줄링 및 맞춤 루틴 연동 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. 교대근무 4종 캡슐 바 및 모드별 4개 버튼 확인
   assert.ok(indexHtml.includes('id="shiftWorkRoutineBar"'), 'id="shiftWorkRoutineBar" 배선 누락');
@@ -7563,7 +7571,7 @@ check('[#TASK-ES-220] 교대근무자 전용 가변형 루틴 자동 스케줄�
 });
 
 check('[#TASK-ES-222] 카카오톡 인앱 브라우저 감지 및 Safari/Chrome 탈출 가이드 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. KAKAOTALK UA 감지 및 안드로이드 intent 자동 탈출 배선 확인
   assert.ok(indexHtml.includes('/KAKAOTALK/i.test(navigator.userAgent)'), 'KAKAOTALK UA 감지 정규식 누락');
@@ -7588,7 +7596,7 @@ check('[#TASK-ES-222] 카카오톡 인앱 브라우저 감지 및 Safari/Chrome 
 });
 
 check('[#TASK-ES-223] [생각 메모장 93번] 개발 디버그 버튼 프로덕션 완전 소거 및 로컬 조건부 격리 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. 랜딩 및 로그인 화면 테스터 B 래퍼 display:none 기본 격리 확인
   assert.ok(indexHtml.includes('id="landTesterBWrap" style="display:none;'), 'landTesterBWrap display:none 기본 탑재');
@@ -7604,7 +7612,7 @@ check('[#TASK-ES-223] [생각 메모장 93번] 개발 디버그 버튼 프로덕
 });
 
 check('[#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기록 시 안전 백업 넛지 및 카카오 무손실 병합 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. 게스트 3회 실천 백업 넛지 바텀시트 및 트리거 함수 정의 확인
   assert.ok(indexHtml.includes('function openGuestBackupNudgeModal()'), 'openGuestBackupNudgeModal 함수 구현 확인');
@@ -7622,7 +7630,7 @@ check('[#TASK-ES-224] [생각 메모장 94번] 게스트(둘러보기) 3회 기�
 });
 
 check('[#TASK-ES-225] [생각 메모장 95번] 동시 접속 급증 대비 Gemini API 분당 쿼터(Rate Limit 429) 방어 및 백오프 큐 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const apiFeedback = fs.readFileSync(path.join(__dirname, '..', 'api', 'feedback.js'), 'utf8');
 
   // 1. GeminiQuotaDispatcher 및 지수 백오프 큐 선언 확인
@@ -7644,7 +7652,7 @@ check('[#TASK-ES-225] [생각 메모장 95번] 동시 접속 급증 대비 Gemin
 });
 
 check('[#TASK-ES-226] [생각 메모장 96번] 체크인 완료 즉시 [📢 피드에도 자랑하기 (+5 EXP)] 1-클릭 고속 발행 파이프라인 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. #btnCheckinInstantShareFeed 및 #chkCheckinShareGoalTitle 마크업 존재 확인
   assert.ok(indexHtml.includes('id="btnCheckinInstantShareFeed"'), '#btnCheckinInstantShareFeed 버튼 누락');
@@ -7665,7 +7673,7 @@ check('[#TASK-ES-226] [생각 메모장 96번] 체크인 완료 즉시 [📢 피
 });
 
 check('[#TASK-ES-227] [생각 메모장 97번] 음성 마이크(STT) 클릭 시 권한 거부 상태 자가 진단 및 1초 권한 허용 모달 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. openMicPermissionGuideModal 함수 및 전역 노출 확인
   assert.ok(indexHtml.includes('function openMicPermissionGuideModal'), 'openMicPermissionGuideModal 함수 선언 누락');
@@ -7690,7 +7698,7 @@ check('[#TASK-ES-227] [생각 메모장 97번] 음성 마이크(STT) 클릭 시 
 });
 
 check('[#TASK-ES-228] [생각 메모장 98번] 홈 탭 \'오늘 달성 레이스\' 가짜 시뮬레이션 제거 및 \'함께 달리는 동류 N명\' 실데이터 배선 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. #userCrewHeadline 및 #btnGoLiveFeed 마크업 존재 확인
@@ -7719,7 +7727,7 @@ check('[#TASK-ES-228] [생각 메모장 98번] 홈 탭 \'오늘 달성 레이스
 });
 
 check('[#TASK-ES-229] 팀 목표 및 소통 탭 내 가상 샘플 그룹(MOCK_GROUPS) 분리 및 [💡 활용 예시] 배지·새 팀 만들기 전면화', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. isMockGroup 판별 헬퍼 및 기본 MOCK_GROUPS isMock:true 배선 확인
@@ -7742,7 +7750,7 @@ check('[#TASK-ES-229] 팀 목표 및 소통 탭 내 가상 샘플 그룹(MOCK_GR
 });
 
 check('[#TASK-ES-230] 마니또(Manito) 매칭 즉시 원클릭 웰컴 응원 스탬프 발송 및 실시간 푸시 피드백 배선', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. MANITO_WELCOME_STAMPS 4종 정의 확인
@@ -7766,7 +7774,7 @@ check('[#TASK-ES-230] 마니또(Manito) 매칭 즉시 원클릭 웰컴 응원 �
 
 check('[#TASK-ES-231] 소통 탭 내 [🔗 내 전용 동반자 초대 링크 복사] 및 [가입자 닉네임 검색] 상단 신설 무결성', () => {
   const commJsContent = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
-  const indexHtmlContent = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtmlContent = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 소통 탭 메인 상단 #commTopCompanionBar 및 renderCommTopInviteSearch 배선 확인
@@ -7795,7 +7803,7 @@ check('[#TASK-ES-231] 소통 탭 내 [🔗 내 전용 동반자 초대 링크 �
 });
 
 check('[#TASK-ES-232] \'폰 잠금화면에서 보기\' 명칭 [📱 잠금화면용 일정 카드 저장] 정직화 및 9:16 배경 생성 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const sanctuaryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
 
   // 1. 정직화된 버튼 명칭 확인
@@ -7817,7 +7825,7 @@ check('[#TASK-ES-232] \'폰 잠금화면에서 보기\' 명칭 [📱 잠금화�
 });
 
 check('[#TASK-ES-233] 가입 첫날 신규 유저(기록 0~2개) \'3일 실천 완성 레이더 차트 미리보기\' 인포그래픽 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. 미리보기 함수 및 6대 영역(체력, 지식, 마음, 관계, 커리어, 루틴) 확인
   assert.ok(indexHtml.includes('function renderColdstartRadarPreviewSvg'), 'renderColdstartRadarPreviewSvg 함수 탑재');
@@ -7839,7 +7847,7 @@ check('[#TASK-ES-233] 가입 첫날 신규 유저(기록 0~2개) \'3일 실천 �
 });
 
 check('[#TASK-ES-234] 아이폰(iOS Safari) 접속 시 홈 화면에 추가(PWA) 3단계 가이드 및 푸시 알림 연계 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 배너 3단계 비주얼 카드 및 클래스 선언 확인
@@ -7859,7 +7867,7 @@ check('[#TASK-ES-234] 아이폰(iOS Safari) 접속 시 홈 화면에 추가(PWA)
 });
 
 check('[#TASK-ES-235] 설정 탭 내 전문가용 외부 연동(구글캘린더 OAuth, 노션 API, Gemini API) [고급 설정] 기본 접힘 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 고급 설정 아코디언 탑재 및 기본 접힘(open 부재) 검증
@@ -7882,7 +7890,7 @@ check('[#TASK-ES-235] 설정 탭 내 전문가용 외부 연동(구글캘린더 
 });
 
 check('[#TASK-ES-236] AI 목표 어시스턴트 제안된 목표 플랜 확인 및 단계 선택 프리뷰 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 제안된 목표 플랜 확인 프리뷰 시트 탑재 확인
@@ -7902,7 +7910,7 @@ check('[#TASK-ES-236] AI 목표 어시스턴트 제안된 목표 플랜 확인 �
 });
 
 check('[#TASK-ES-237] 목표탭 상단 5개 서브탭 버튼 중앙 정렬 및 시인성·터치 가독성 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8').replace(/\r\n/g, '\n');
+  const indexHtml = APP_SRC.replace(/\r\n/g, '\n');
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 그리드 중앙 정렬 선언 확인
@@ -7917,7 +7925,7 @@ check('[#TASK-ES-237] 목표탭 상단 5개 서브탭 버튼 중앙 정렬 및 �
 });
 
 check('[#TASK-ES-238] 목표탭 대표 안내멘트(#goalsHeadlineSentence) 시인성 개선 및 공간 효율적 간결 문구 재배치 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. #goalsHeadlineSentence 압축 스타일 선언 확인
@@ -7936,7 +7944,7 @@ check('[#TASK-ES-238] 목표탭 대표 안내멘트(#goalsHeadlineSentence) 시�
 });
 
 check('[#TASK-ES-239] 목표탭 마일스톤·세부 할일 다건 등록 시 계층형 시인성 개선 및 접이식 관리 편의성 극대화 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. .task-list 세로 가이드 라인 및 접이식 컴포넌트 CSS 확인
@@ -7952,7 +7960,7 @@ check('[#TASK-ES-239] 목표탭 마일스톤·세부 할일 다건 등록 시 �
 });
 
 check('[#TASK-ES-240] 일정탭 대표 안내멘트(#calHeadlineSentence) 시인성 개선 및 공간 효율적 간결 문구 재배치 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. #calHeadlineSentence 압축 스타일 선언 확인
@@ -7987,7 +7995,7 @@ check('[#TASK-ES-241] 일정탭 주간 뷰 전환 버튼 및 주간 캘린더 �
 });
 
 check('[#TASK-ES-242] 기록탭 대표 안내멘트(#recHeadlineSentence) 시인성 개선 및 공간 효율적 간결 문구 재배치 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. #recHeadlineSentence 압축 스타일 선언 확인
@@ -8003,7 +8011,7 @@ check('[#TASK-ES-242] 기록탭 대표 안내멘트(#recHeadlineSentence) 시인
 });
 
 check('[#TASK-ES-243] 소통탭 대표 안내멘트(#commHeadlineSentence) 시인성 개선 및 공간 효율적 간결 문구 재배치 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. #commHeadlineSentence 압축 스타일 선언 확인
@@ -8020,7 +8028,7 @@ check('[#TASK-ES-243] 소통탭 대표 안내멘트(#commHeadlineSentence) 시�
 });
 
 check('[#TASK-ES-244] 설정탭 대표 안내멘트(#settingsHeadlineSentence) 시인성 개선 및 공간 효율적 간결 문구 재배치 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. #settingsHeadlineSentence 압축 스타일 선언 확인
@@ -8037,7 +8045,7 @@ check('[#TASK-ES-244] 설정탭 대표 안내멘트(#settingsHeadlineSentence) �
 });
 
 check('[#TASK-ES-245] 기록탭 샘플 데이터 1초 체험 후 원클릭 완전 삭제/초기화 기능 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. #recSamplePurgeBanner 슬롯 확인
@@ -8083,7 +8091,7 @@ check('[#TASK-ES-247] 소통탭 상단 6대 서브탭 버튼 가로너비 균등
 });
 
 check('[#TASK-ES-248] 설정탭 상단 프로필 요약 카드 시인성 강화 및 계정·아바타 정보 가독성 전면 개선 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 아바타 64px 래퍼 및 레벨 뱃지 오버레이 배선 확인
@@ -8106,7 +8114,7 @@ check('[#TASK-ES-249] 상황별 다이나믹 아바타 리액션 도감 100% 무
   const avatarSystemPath = path.join(__dirname, '..', 'js', 'avatar-system.js');
   const avatarModule = require(avatarSystemPath);
   const avatarSrc = fs.readFileSync(avatarSystemPath, 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 5대 상황별 다이나믹 프리셋 정의 검증
@@ -8149,7 +8157,7 @@ check('[#TASK-ES-249] 상황별 다이나믹 아바타 리액션 도감 100% 무
 });
 
 check('[#TASK-ES-250] 소통탭 8중 레이어 다이어트 및 모바일 375px 타이포그래피·조형 전면 정상화', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const sanctEngine = fs.readFileSync(path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js'), 'utf8');
 
@@ -8181,7 +8189,7 @@ check('[#TASK-ES-250] 소통탭 8중 레이어 다이어트 및 모바일 375px 
 });
 
 check('[#TASK-ES-218] 설정 탭(screen-settings) 토스식 UI/UX 전면 혁신 및 모바일 375px 조형 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 프로필 요약 카드 토스식 3단 조형 (.toss-settings-hero-top, .toss-settings-hero-actions, .toss-settings-hero-stats) 확인
@@ -8254,13 +8262,13 @@ check('[#TASK-ES-252] 사용자 계정 및 데이터 관리·보관 5계층 보�
   const visionTableSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'vision-table.js'), 'utf8');
   assert.ok(!visionTableSrc.includes('body.apiKey || process.env.NOTION_API_KEY'), 'api/vision-table.js 서버 키 오픈프록시 차단 확인');
 
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   assert.ok(indexHtml.includes('getSupabaseAuthToken'), 'index.html getSupabaseAuthToken 헬퍼 확인');
   assert.ok(indexHtml.includes('fetchSignedCalendarToken'), 'index.html fetchSignedCalendarToken 확인');
 });
 
 check('[#TASK-ES-253] 일정 체크 토글 및 목표 양방향 연동 UI/UX 완결 무결성', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 일정 추가/수정 모달 목표 세부할일 선택 UI/UX 탑재
@@ -8287,7 +8295,7 @@ check('[#TASK-ES-253] 일정 체크 토글 및 목표 양방향 연동 UI/UX 완
 
 /* ============ [#TASK-ES-254] 백그라운드·앱종료·미확인 전역 알림(DM 포함) 및 세부 알림 설정창 완결 ============ */
 check('compliance: [#TASK-ES-254] 백그라운드·앱종료·미확인 전역 알림(DM 포함) 및 세부 알림 설정창 완결', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const notifyJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'notify-engine.js'), 'utf8');
 
   // 1. OurgoalNotifyEngine 설정 및 5대 카테고리 필터링
@@ -8310,7 +8318,7 @@ check('compliance: [#TASK-ES-254] 백그라운드·앱종료·미확인 전역 �
 
 /* ============ [#TASK-ES-255] 목표 탭 현상태 분석 AI 조언 문구/상태 안내 및 재분석 방지 ============ */
 check('compliance: [#TASK-ES-255] 목표 탭 현상태 분석 AI 조언 문구 단일화 및 뱃지 상태 정상화 & 재분석 방지', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. 문구 단일화 및 레거시 제거 검증
   assert.ok(indexHtml.includes('현상태 분석 AI 조언'), '헤더 "현상태 분석 AI 조언" 명시 확인');
@@ -8328,7 +8336,7 @@ check('compliance: [#TASK-ES-255] 목표 탭 현상태 분석 AI 조언 문구 �
 
 /* ============ [#TASK-ES-256] 팀목표 200% 활용 가이드 안내문구 ('* 팀 목표를 생성하면 사라짐') 및 조건부 소멸 검증 ============ */
 check('compliance: [#TASK-ES-256] 팀목표 200% 활용 가이드 안내문구 및 조건부 소멸 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. 안내문구 텍스트 및 클래스/ID 속성 검증
   assert.ok(indexHtml.includes('* 팀 목표를 생성하면 사라짐'), '안내문구 "* 팀 목표를 생성하면 사라짐" 원문 검증');
@@ -8346,7 +8354,7 @@ check('compliance: [#TASK-ES-256] 팀목표 200% 활용 가이드 안내문구 �
 
 /* ============ [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 검증 ============ */
 check('compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입 안내문구 및 시간 컬럼 빈칸 UX 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. 스톱워치 위젯 안내문구 원문 및 속성 검증
   assert.ok(indexHtml.includes('id="swInjectHint"'), 'swInjectHint 안내 ID 속성 검증');
@@ -8363,7 +8371,7 @@ check('compliance: [#TASK-ES-257] 맞춤 템플릿 스톱워치 표 시간기입
 
 /* ============ [#TASK-ES-258] 팀목표 시인성 개선, 아코디언 및 통합/목표별 수준관리 분리 검증 ============ */
 check('compliance: [#TASK-ES-258] 팀목표 시인성 개선, 아코디언 및 통합/목표별 수준관리 분리 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const teamVis = require('../js/team-visibility-levels.js');
 
   // 1. 단일 대표 목표 및 칩 스위처 렌더링 검증
@@ -8391,7 +8399,7 @@ check('compliance: [#TASK-ES-258] 팀목표 시인성 개선, 아코디언 및 �
 
 /* ============ [#TASK-ES-259] 목표탭 구글 캘린더 일정 설정 버튼 및 디데이(기간) 표시 연동 검증 ============ */
 check('compliance: [#TASK-ES-259] 목표탭 구글 캘린더 일정 설정 버튼 및 디데이(기간) 표시 연동 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 목표 카드 metaStrip 내 일정 버튼 및 구글 달력 버튼 배선 검증
@@ -8414,7 +8422,7 @@ check('compliance: [#TASK-ES-259] 목표탭 구글 캘린더 일정 설정 버�
 
 /* ============ [#TASK-ES-260] 기록탭 명칭 '기록/통계'로 변경 2차 초정밀 완결 검증 ============ */
 check('compliance: [#TASK-ES-260] 기록탭 명칭 \'기록/통계\'로 변경 2차 초정밀 완결 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 하단 내비게이션 바 data-tab="records" 버튼 검증 (텍스트 및 aria-label)
@@ -8439,7 +8447,7 @@ check('compliance: [#TASK-ES-260] 기록탭 명칭 \'기록/통계\'로 변경 2
 
 /* ============ [#TASK-ES-261] 목표탭 ‘목표만’ 버튼 이격 배치 및 하위 마일스톤형 확인 UI 검증 ============ */
 check('compliance: [#TASK-ES-261] 목표탭 ‘목표만’ 버튼 이격 배치 및 하위 마일스톤형 확인 UI 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 목표 뷰 토글 옵션 텍스트 단정화 검증 ('기본', '마일스톤', '할일', '🎯 목표만')
@@ -8463,7 +8471,7 @@ check('compliance: [#TASK-ES-261] 목표탭 ‘목표만’ 버튼 이격 배치
 
 /* ============ [#TASK-ES-262] 오늘의 미션 추천카드 내 안내멘트 생성 (‘뭘 할지 모르겠을 때 도움돼요’) 검증 ============ */
 check('compliance: [#TASK-ES-262] 오늘의 미션 추천카드 내 안내멘트 생성 (‘뭘 할지 모르겠을 때 도움돼요’) 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 헤더 마크업 및 안내멘트 텍스트 검증
@@ -8481,7 +8489,7 @@ check('compliance: [#TASK-ES-262] 오늘의 미션 추천카드 내 안내멘트
 
 /* ============ [#TASK-ES-263] 나만의 홈 구성 연동 전수조사 및 자동 연동 시스템화 검증 ============ */
 check('compliance: [#TASK-ES-263] 나만의 홈 구성 연동 전수조사 및 자동 연동 시스템화 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const customJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'customize.js'), 'utf8');
 
   // 1. 선언적 data-home-widget 속성 마크업 부여 검증 (전수조사 정합화)
@@ -8503,7 +8511,7 @@ check('compliance: [#TASK-ES-263] 나만의 홈 구성 연동 전수조사 및 �
 
 /* ============ [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 (API 낭비 방지) 검증 ============ */
 check('compliance: [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 호출 최적화 (API 낭비 방지) 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
 
   // 1. 표준 시간대 날짜 키 및 window 전역 노출 검증
   assert.ok(indexHtml.includes('function getEffectiveStandardDateKey'), 'getEffectiveStandardDateKey 함수 정의 검증');
@@ -8523,7 +8531,7 @@ check('compliance: [#TASK-ES-264] 오늘의 미션 및 AI 피드백 조건부 �
 
 /* ============ [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연동 원인 규명 및 해결 검증 ============ */
 check('compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연동 원인 규명 및 해결 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const trackJs = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
 
   // 1. Silent Refresh 및 window 전역 노출 검증
@@ -8545,7 +8553,7 @@ check('compliance: [#TASK-ES-265] 구글 캘린더 연동 로그인 시 재연�
 
 /* ============ [#TASK-ES-266] 전 탭 ‘이 페이지 활용법’ 우측 최상단 이름 왼쪽 배치 검증 ============ */
 check('compliance: [#TASK-ES-266] 전 탭 ‘이 페이지 활용법’ 우측 최상단 이름 왼쪽 배치 및 동적 동기화 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. #topHomeGuideBtn 요소 및 지시 원문 텍스트 검증
@@ -8573,7 +8581,7 @@ check('compliance: [#TASK-ES-266] 전 탭 ‘이 페이지 활용법’ 우측 �
 /* ============ [#TASK-ES-267] 아바타 10개 관리 및 레벨업 팝업/공유/저장/프롬프트 성향 설정 검증 ============ */
 check('compliance: [#TASK-ES-267] 아바타 10개 관리 및 레벨업 팝업/공유/저장/프롬프트 성향 설정 검증', () => {
   const avatarSystemSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 10개 독립 슬롯 인벤토리 렌더러 검증
@@ -8595,7 +8603,7 @@ check('compliance: [#TASK-ES-267] 아바타 10개 관리 및 레벨업 팝업/�
 
 /* ============ [#TASK-ES-268] 홈탭 최하단 <아워골 평가해주기> 고정배너 및 90% 팝업 평가폼 검증 ============ */
 check('compliance: [#TASK-ES-268] 홈탭 최하단 <아워골 평가해주기> 고정배너 및 90% 팝업 평가폼 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 홈탭 최하단 고정 배너 및 <아워골 평가해주기> 버튼 존재 검증
@@ -8659,7 +8667,7 @@ check('compliance: [#TASK-ES-269] 기간 설정(목표·팀·기록 분석) 맞�
 
 /* ============ [#TASK-ES-270] 목표탭 상단 '루틴' 탭(요일별 반복 설정·자동 알림·EXP 10) 신설 및 스케줄러 고도화 ============ */
 check('[#TASK-ES-270] 목표탭 상단 루틴 탭(개인 왼쪽 배치·요일별 칩 필터·교대근무 1초 치환·EXP 10) 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 목표 탭 상단 서브탭 '개인' 왼쪽에 '루틴' 배치
@@ -8691,7 +8699,7 @@ check('[#TASK-ES-270] 목표탭 상단 루틴 탭(개인 왼쪽 배치·요일�
 
 /* ============ [#TASK-ES-271] 계정 탈퇴 시 법적책임·데이터 분실 사전 안내 팝업 및 4위 1체 배선 ============ */
 check('compliance: [#TASK-ES-271] 계정 탈퇴 시 법적책임·데이터 분실 사전 안내 팝업 및 4위 1체 배선 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 설정 탭 내 회원 탈퇴 버튼 및 클릭 리스너
@@ -8815,7 +8823,7 @@ check('compliance: [#TASK-ES-273] 각 탭 활용법 내용 최신화 및 실제 
 
 /* ============ [#TASK-ES-274] 목표탭 참고자료 첨부 효과적·효율적 UI/UX 고도화 및 실제 UI 검증 ============ */
 check('compliance: [#TASK-ES-274] 목표탭 참고자료 첨부 효과적·효율적 UI/UX 고도화 및 실제 UI 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. renderInlineAttachmentChips 함수 및 window 전역 노출 검증
@@ -8840,7 +8848,7 @@ check('compliance: [#TASK-ES-274] 목표탭 참고자료 첨부 효과적·효�
 
 /* ============ [#TASK-ES-275] 컴포넌트 모듈화 (효과 시너지, 개발 효율화, UI 및 사용자경험 개선) ============ */
 check('compliance: [#TASK-ES-275] 컴포넌트 모듈화 (효과 시너지, 개발 효율화, UI 및 사용자경험 개선)', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const componentsJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
@@ -8863,7 +8871,7 @@ check('compliance: [#TASK-ES-275] 컴포넌트 모듈화 (효과 시너지, 개�
 
 /* ============ [#TASK-ES-276] 측정지표 분석할 항목별 차등 지정 및 정밀화·고도화 ============ */
 check('compliance: [#TASK-ES-276] 측정지표 분석할 항목별 차등 지정 및 정밀화·고도화', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const recordsStatsJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'records-stats.js'), 'utf8');
 
@@ -8885,7 +8893,7 @@ check('compliance: [#TASK-ES-276] 측정지표 분석할 항목별 차등 지정
 
 /* ============ [#TASK-ES-277] 소통창 화면정리 (피드·소통 UI 시인성 및 피로도 개선) ============ */
 check('compliance: [#TASK-ES-277] 소통창 화면정리 (피드·소통 UI 시인성 및 피로도 개선)', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const teamInviteCommJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
 
@@ -8907,7 +8915,7 @@ check('compliance: [#TASK-ES-277] 소통창 화면정리 (피드·소통 UI 시�
 
 /* ============ [#TASK-ES-278] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 구현 ============ */
 check('compliance: [#TASK-ES-278] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 구현', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const avatarSystemJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
 
@@ -8929,7 +8937,7 @@ check('compliance: [#TASK-ES-278] 앱 진입 시 화면 절반 크기 아바타 
 
 /* ============ [#TASK-ES-279] DM창 타 유저 클릭 시 키보드 자동 팝업 방지 및 텍스트창 터치 시 오픈으로 변경 ============ */
 check('compliance: [#TASK-ES-279] DM창 타 유저 클릭 시 키보드 자동 팝업 방지 및 텍스트창 터치 시 오픈으로 변경', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const commJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
 
@@ -8951,7 +8959,7 @@ check('compliance: [#TASK-ES-279] DM창 타 유저 클릭 시 키보드 자동 �
 
 /* ============ [#TASK-ES-280] 일정 사진 일기장 안내창 우측 상단 닫기(X) 버튼 추가 및 영구 숨김 처리 ============ */
 check('compliance: [#TASK-ES-280] 일정 사진 일기장 안내창 우측 상단 닫기(X) 버튼 추가 및 영구 숨김 처리', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const calAttachmentJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'calendar-attachment.js'), 'utf8');
 
@@ -8974,7 +8982,7 @@ check('compliance: [#TASK-ES-280] 일정 사진 일기장 안내창 우측 상�
 
 /* ============ [#TASK-ES-281] 소통탭 게시하기 버튼 먹통 오류 수정 및 정상 동작 복구 ============ */
 check('compliance: [#TASK-ES-281] 소통탭 게시하기 버튼 먹통 오류 수정 및 정상 동작 복구', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const commJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
 
@@ -8998,7 +9006,7 @@ check('compliance: [#TASK-ES-281] 소통탭 게시하기 버튼 먹통 오류 �
 
 /* ============ [#TASK-ES-282] 전 탭 상위 중복 '홈구성' 버튼 제거 및 '나만의 홈 구성' 단일화 ============ */
 check('compliance: [#TASK-ES-282] 전 탭 상위 중복 \'홈구성\' 버튼 제거 및 \'나만의 홈 구성\' 단일화', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const customJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'customize.js'), 'utf8');
 
@@ -9024,7 +9032,7 @@ check('compliance: [#TASK-ES-282] 전 탭 상위 중복 \'홈구성\' 버튼 제
 
 /* ============ [#TASK-ES-283] 홈 및 전 탭 우측 상단 아바타 아이콘 크기 확대 ============ */
 check('compliance: [#TASK-ES-283] 홈 및 전 탭 우측 상단 아바타 아이콘 크기 확대 (애정도·시인성 강화)', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const avatarJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
 
@@ -9051,7 +9059,7 @@ check('compliance: [#TASK-ES-283] 홈 및 전 탭 우측 상단 아바타 아이
 
 /* ============ [#TASK-ES-284] 오늘의 퀘스트 미션 변경 ('핵심 마일스톤 1개' -> '할일 1개' 실행 및 10EXP 보상 조정) ============ */
 check('compliance: [#TASK-ES-284] 오늘의 퀘스트 미션 변경 (\'핵심 마일스톤 1개\' -> \'할일 1개\' 실행 및 10EXP 보상 조정)', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
@@ -9077,7 +9085,7 @@ check('compliance: [#TASK-ES-284] 오늘의 퀘스트 미션 변경 (\'핵심 �
 
 /* ============ [#TASK-ES-285] 홈 목표현황판 불필요 지표(진행중 목표·평균달성률·병행분야) 삭제 및 인터페이스 최적화 ============ */
 check('compliance: [#TASK-ES-285] 홈 목표현황판 불필요 지표(진행중 목표·평균달성률·병행분야) 삭제 및 인터페이스 최적화', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
@@ -9100,7 +9108,7 @@ check('compliance: [#TASK-ES-285] 홈 목표현황판 불필요 지표(진행중
 
 /* ============ [#TASK-ES-286] 갓생 스토리카드 다각화(1:1·3:4·9:16 비율 및 항목 선택) 및 피드 즉시 게시 기능 구현 ============ */
 check('compliance: [#TASK-ES-286] 갓생 스토리카드 다각화(1:1·3:4·9:16 비율 및 항목 선택) 및 피드 즉시 게시 기능 구현', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
   const recJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'records-stats.js'), 'utf8');
@@ -9125,7 +9133,7 @@ check('compliance: [#TASK-ES-286] 갓생 스토리카드 다각화(1:1·3:4·9:1
 
 /* ============ [#TASK-ES-287] 동반자 탭 내 AI 동반자 전면 제거 (실 사용자 중심 전환) ============ */
 check('compliance: [#TASK-ES-287] 동반자 탭 내 AI 동반자 전면 제거 (실 사용자 중심 전환)', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
   const teamJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
@@ -9152,7 +9160,7 @@ check('compliance: [#TASK-ES-287] 동반자 탭 내 AI 동반자 전면 제거 (
 check('TASK-ES-288: 설정창 전면 개편 4위 1체 배선 및 모바일 375px 규격 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
   const custJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'customize.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 및 js/customize.js handle전체공통_Item38Action 정의 검증
@@ -9177,7 +9185,7 @@ check('TASK-ES-288: 설정창 전면 개편 4위 1체 배선 및 모바일 375px
 check('TASK-ES-289: 마니또 AI 동반자 1명 제한 및 실 유저 20명 초과 시 AI 전원 삭제 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
   const teamJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 및 js/team-invite-comm.js handle팀목표_Item39Action 정의 검증
@@ -9202,7 +9210,7 @@ check('TASK-ES-289: 마니또 AI 동반자 1명 제한 및 실 유저 20명 초�
 check('TASK-ES-290: 일정 배경사진 최대 2장 및 상하 반반 분할 레이아웃 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
   const goalRegistryJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'goal-templates-registry.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 및 js/goal-templates-registry.js 정의 검증
@@ -9229,7 +9237,7 @@ check('TASK-ES-290: 일정 배경사진 최대 2장 및 상하 반반 분할 레
 check('TASK-ES-291: 레벨업 연출 멘트 및 배경 변경 유도 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
   const avatarJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 및 js/avatar-system.js 정의 검증
@@ -9256,7 +9264,7 @@ check('TASK-ES-291: 레벨업 연출 멘트 및 배경 변경 유도 4위 1체 �
 check('TASK-ES-292: 경험치 획득 시 아바타 축하 팝업 연출("잘했다! 내 자신!") 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
   const avatarJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 및 js/avatar-system.js 정의 검증
@@ -9282,7 +9290,7 @@ check('TASK-ES-292: 경험치 획득 시 아바타 축하 팝업 연출("잘했�
 /* ============ [TASK-ES-293] 성취통계 측정지표 다중선택 필터링 기능 구현 ============ */
 check('TASK-ES-293: 성취통계 측정지표 다중선택 필터링 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 정의 및 export 검증
@@ -9307,7 +9315,7 @@ check('TASK-ES-293: 성취통계 측정지표 다중선택 필터링 4위 1체 �
 /* ============ [TASK-ES-294] 스톱워치 실시간 구간별 활동기록 팝업·상세 연동 및 초기화 2중 확인 안전장치 구축 ============ */
 check('TASK-ES-294: 스톱워치 실시간 구간별 활동기록 팝업·상세 연동 및 초기화 2중 확인 안전장치 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 정의 및 export 검증
@@ -9330,7 +9338,7 @@ check('TASK-ES-294: 스톱워치 실시간 구간별 활동기록 팝업·상세
 /* ============ [TASK-ES-295] 성취통계 데이터 관리 옆 접기토글 작동 안함 오류 수정 ============ */
 check('TASK-ES-295: 성취통계 데이터 관리 옆 접기토글 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 정의 및 export 검증
@@ -9354,7 +9362,7 @@ check('TASK-ES-295: 성취통계 데이터 관리 옆 접기토글 4위 1체 배
 /* ============ [TASK-ES-296] 팀 연계 개인목표 실제 우수 사용사례 예시 이미지 배치 및 생성 시 자동 숨김 처리 ============ */
 check('TASK-ES-296: 팀 연계 개인목표 우수 사용사례 예시 카드 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 정의 및 export 검증
@@ -9380,7 +9388,7 @@ check('TASK-ES-296: 팀 연계 개인목표 우수 사용사례 예시 카드 4�
 /* ============ [TASK-ES-297] 시간기록 모달창 세부설명 간소화('시간별로 세부 내용을 작성할 수 있어요') 및 창 크기 축소 ============ */
 check('TASK-ES-297: 시간기록 모달창 세부설명 간소화 및 창 크기 축소 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 정의 및 export 검증
@@ -9406,7 +9414,7 @@ check('TASK-ES-297: 시간기록 모달창 세부설명 간소화 및 창 크기
 /* ============ [TASK-ES-298] 홈 경험치창·각 탭 우측상단 프로필·설정창 아바타 아이콘 크기 일괄 확대 ============ */
 check('TASK-ES-298: 아바타 아이콘 크기 일괄 확대 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 정의 및 export 검증
@@ -9435,7 +9443,7 @@ check('TASK-ES-298: 아바타 아이콘 크기 일괄 확대 4위 1체 배선 �
 /* ============ [TASK-ES-299] 팀 목표 댓글 작성 및 전송 기능 먹통 오류 수정 ============ */
 check('TASK-ES-299: 팀 목표 댓글 작성 및 전송 기능 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 정의 및 export 검증
@@ -9465,7 +9473,7 @@ check('TASK-ES-299: 팀 목표 댓글 작성 및 전송 기능 4위 1체 배선 
 /* ============ [TASK-ES-300] 설정창 진입 시 모든 설정 섹션 기본 접힘(Collapsed) 상태 적용 ============ */
 check('TASK-ES-300: 설정창 진입 시 모든 설정 섹션 기본 접힘 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 정의 및 export 검증
@@ -9493,7 +9501,7 @@ check('TASK-ES-300: 설정창 진입 시 모든 설정 섹션 기본 접힘 4위
 /* ============ [TASK-ES-301] 피드 게시 모달 내 '미리보기' 버튼 추가 및 피드 렌더링 사전 확인 기능 구현 ============ */
 check('TASK-ES-301: 피드 게시 모달 내 미리보기 버튼 및 피드 렌더링 사전 확인 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 정의 및 export 검증
@@ -9523,7 +9531,7 @@ check('TASK-ES-301: 피드 게시 모달 내 미리보기 버튼 및 피드 렌�
 /* ============ [TASK-ES-302] 팀 목표 탭 최초 진입 시 접을 수 있는 모든 아코디언 요소 기본 접힘 처리 ============ */
 check('TASK-ES-302: 팀 목표 탭 최초 진입 시 접을 수 있는 모든 아코디언 기본 접힘 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 정의 및 export 검증
@@ -9549,7 +9557,7 @@ check('TASK-ES-302: 팀 목표 탭 최초 진입 시 접을 수 있는 모든 �
 /* ============ [TASK-ES-303] 목표탭 '템플릿백과사전' 전체화면 팝업 및 상호작용 구현 ============ */
 check('TASK-ES-303: 목표탭 템플릿백과사전 전체화면 팝업 및 상호작용 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. js/components.js 정의 및 export 검증
@@ -9579,7 +9587,7 @@ check('TASK-ES-303: 목표탭 템플릿백과사전 전체화면 팝업 및 상�
 
 /* ============ [TASK-ES-304] 홈화면 상단 누적 배선용 테스트 카드(og-task-*) 23종 일괄 화면 은폐 ============ */
 check('TASK-ES-304: 홈화면 상단 누적 배선용 테스트 카드 23종 일괄 화면 은폐 및 홈화면 기능 최상단 복원 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. index.html 비노출 슬롯 및 홈화면 핵심 위젯 존재 검증
@@ -9605,7 +9613,7 @@ check('TASK-ES-304: 홈화면 상단 누적 배선용 테스트 카드 23종 일
 
 /* ============ [TASK-ES-305] 노션 [54] 루틴 상세 모달 및 편집 기능 (목표탭 벤치마킹) ============ */
 check('TASK-ES-305: 루틴 상세 모달 및 편집 기능 구현 (목표탭 벤치마킹 & 루틴 카드 클릭 시 바로 진입) 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. openRoutineDetailModal 모달 및 목표탭 벤치마킹 마크업 검증
@@ -9639,7 +9647,7 @@ check('TASK-ES-305: 루틴 상세 모달 및 편집 기능 구현 (목표탭 벤
 
 /* ============ [TASK-ES-306] 노션 [55] 스톱워치 구간기록별 텍스트 입력창 UI 정돈 및 시인성 개선 ============ */
 check('TASK-ES-306: 스톱워치 구간기록별 텍스트 입력창 UI 정돈 및 시인성 개선 (랩 컨테이너, 텍스트 인풋, 즉시 기입 배선) 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. HTML 마크업 및 필수 클래스/함수 존재 검증
@@ -9666,7 +9674,7 @@ check('TASK-ES-306: 스톱워치 구간기록별 텍스트 입력창 UI 정돈 �
 
 /* ============ [TASK-ES-307] 노션 [56] 성취통계 다중 선택된 측정지표 데이터 그래프 동시 렌더링 연동 ============ */
 check('TASK-ES-307: 성취통계 다중 선택된 측정지표 데이터 그래프 동시 렌더링 연동 (칩 바, 다중 SVG 라인, 요약 배지) 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const jsStats = fs.readFileSync(path.join(__dirname, '..', 'js', 'records-stats.js'), 'utf8');
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
@@ -9698,7 +9706,7 @@ check('TASK-ES-307: 성취통계 다중 선택된 측정지표 데이터 그래�
 
 /* ============ [TASK-ES-308] 노션 [57] 소통탭 게시 시 공유 대상(목표·기록·AI피드백) 선택형 UI 구현 및 다짐 작성 유지 ============ */
 check('TASK-ES-308: 소통탭 게시 시 공유 대상(목표·기록·AI피드백) 선택형 UI 및 다짐 작성 유지 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
@@ -9724,7 +9732,7 @@ check('TASK-ES-308: 소통탭 게시 시 공유 대상(목표·기록·AI피드�
 
 /* ============ [TASK-ES-309] 노션 [58] 소통 피드 게시하기 내 사진(이미지) 첨부 기능 추가 ============ */
 check('TASK-ES-309: 소통 피드 게시하기 내 사진(이미지) 첨부 드롭존, 프리뷰 카드 및 피드 연동 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
@@ -9752,7 +9760,7 @@ check('TASK-ES-309: 소통 피드 게시하기 내 사진(이미지) 첨부 드�
 });
 
 check('compliance: [#TASK-ES-310] [59] 소통 피드 게시하기 카테고리 분류 다양화 및 가로 스크롤 선택 UI 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
@@ -9778,7 +9786,7 @@ check('compliance: [#TASK-ES-310] [59] 소통 피드 게시하기 카테고리 �
 });
 
 check('compliance: [#TASK-ES-311] [60] 성취통계 메뉴 내 미작동 껍데기 버튼(목표연계·캘린더 등록) 영구 삭제 및 Zero Dead Click 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const uStatsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'universal-stats.js'), 'utf8');
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
@@ -9799,7 +9807,7 @@ check('compliance: [#TASK-ES-311] [60] 성취통계 메뉴 내 미작동 껍데�
 });
 
 check('compliance: [#TASK-ES-312] [61] 피드 내 AI 봇 활동내역 최하단 1개 축소 및 실 유저 20명 초과 시 전면 제거 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
   // 1. index.html 피드 및 사진인증 내 AI 봇 제어 로직 검증
@@ -9819,7 +9827,7 @@ check('compliance: [#TASK-ES-312] [61] 피드 내 AI 봇 활동내역 최하단 
 
 check('compliance: [#TASK-ES-313] [62] 기기 바탕화면용 위젯 기능(일정·목표·기록 3종 × 3가지 구성) 개발 완결 무결성 검증', () => {
   const widgetHtml = fs.readFileSync(path.join(__dirname, '..', 'widget.html'), 'utf8');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const manifestJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'manifest.json'), 'utf8'));
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
@@ -9840,7 +9848,7 @@ check('compliance: [#TASK-ES-313] [62] 기기 바탕화면용 위젯 기능(일�
 });
 
 check('compliance: [#TASK-ES-314] [63] 피드 게시 시 실천기록 최신순 자동적용 및 기록 맞춤형 AI피드백/다짐 연동 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
   // 1. index.html 피드 게시 모달 최신순 정렬 및 자동선택 로직
@@ -9857,7 +9865,7 @@ check('compliance: [#TASK-ES-314] [63] 피드 게시 시 실천기록 최신순 
 });
 
 check('compliance: [#TASK-ES-315] [64] 기존 \'AI 추천 목표템플릿 예시 60선\' 창 영구 제거 (목표탭·소통탭 템플릿백과사전 일원화) 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const teamInviteJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
@@ -9876,7 +9884,7 @@ check('compliance: [#TASK-ES-315] [64] 기존 \'AI 추천 목표템플릿 예시
 });
 
 check('compliance: [#TASK-ES-316] [65] 일정 편집 내 사전 알림 설정(울릴 시간 N분 전 지정) 기능 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const notifyEngineJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'notify-engine.js'), 'utf8');
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
@@ -9903,7 +9911,7 @@ check('compliance: [#TASK-ES-316] [65] 일정 편집 내 사전 알림 설정(�
 });
 
 check('compliance: [#TASK-ES-317] [66] 아워골 평가해주기 창 밑 상시 평가 안내 문구 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
   // 1. 모달 하단 상시 평가 안내 문구 확인
@@ -9942,7 +9950,7 @@ check('compliance: [#TASK-ES-318] [67] DM 전송 상태·읽음 확인(카카오
 });
 
 check('compliance: [#TASK-ES-319] [68] 팀 만들기 불필요 제약(정원 제한·인증 주기·챌린지 기간·인증 규칙·진행방식) 전면 삭제 및 무해화 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
   // 1. 5대 제약 입력 필드 영구 삭제 확인
@@ -9969,7 +9977,7 @@ check('compliance: [#TASK-ES-319] [68] 팀 만들기 불필요 제약(정원 제
 });
 
 check('compliance: [#TASK-ES-320] [69] 카카오 로그인 동명이인 가입/중복 닉네임 방지 고유 태그 부여 및 동반자 핀포인트 매칭 완결 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
   const commJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-invite-comm.js'), 'utf8');
 
@@ -9994,7 +10002,7 @@ check('compliance: [#TASK-ES-320] [69] 카카오 로그인 동명이인 가입/�
 });
 
 check('compliance: [#TASK-ES-321] [70] 원격 로그아웃 전 로그인 기기 목록 확인 및 개별 세션 제어 완결 무결성 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
   // 1. 활성 기기 목록 및 5대 식별 앵커 검증
@@ -10023,7 +10031,7 @@ check('compliance: [#TASK-ES-321] [70] 원격 로그아웃 전 로그인 기기 
 });
 
 check('compliance: [#TASK-ES-322] [71] 2단계 인증(2FA) 실질적 보안 작동 및 무결성 복구 검증', () => {
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
   // 1. 2FA PIN 설정, 해제, 챌린지 모달 및 마크업 검증
@@ -10050,7 +10058,7 @@ check('compliance: [#TASK-ES-322] [71] 2단계 인증(2FA) 실질적 보안 작�
 /* ============ [#TASK-ES-345] CAL-02 구글 캘린더 토큰 계정 격리 — index.html 의 실제 함수를 꺼내 돌린다 ============ */
 check('compliance: [#TASK-ES-345] CAL-02 구글 캘린더 토큰은 현재 로그인 uid 키만 읽고 _last·공용 키를 정리한다', () => {
   const vm = require('vm');
-  const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  const indexHtml = APP_SRC;
   function extractFn(name) {
     const start = indexHtml.indexOf('function ' + name + '(');
     assert.ok(start !== -1, name + ' 함수가 index.html 에 있다');

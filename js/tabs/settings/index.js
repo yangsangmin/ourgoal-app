@@ -43,6 +43,16 @@
       if (global.OurgoalSettingsSubAppearance) {
         this.registerSubBlock(global.OurgoalSettingsSubAppearance);
       }
+      // #TASK-ES-354 CORE-07: renderSettingsScreen 에서 옮겨 온 섹션 소블록(알림·외부 연동·AI/저장공간)
+      if (global.OurgoalSettingsSubNotify) {
+        this.registerSubBlock(global.OurgoalSettingsSubNotify);
+      }
+      if (global.OurgoalSettingsSubIntegrations) {
+        this.registerSubBlock(global.OurgoalSettingsSubIntegrations);
+      }
+      if (global.OurgoalSettingsSubData) {
+        this.registerSubBlock(global.OurgoalSettingsSubData);
+      }
 
       // 2. 도크 레지스트리에 설정 메가블록 자신을 등록
       if (global.OurgoalRegistry && typeof global.OurgoalRegistry.registerMegaBlock === 'function') {

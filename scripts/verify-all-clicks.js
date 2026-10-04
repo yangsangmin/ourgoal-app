@@ -29,6 +29,13 @@ if (fs.existsSync(JS_DIR)) {
     allJs += '\n' + fs.readFileSync(path.join(JS_DIR, f), 'utf8');
   });
 }
+// #TASK-ES-354 CORE-07: 설정 탭 렌더 코드(버튼을 그리는 문자열·핸들러 배선)가 index.html 인라인 스크립트에서 아래 파일로 옮겨 갔다(동작 그대로).
+// 옮기기 전과 같은 범위를 재도록, 이 파일들은 '앱 마크업 소스'(정적 <button> 추출 대상)와 핸들러 소스 양쪽에 index.html 과 함께 넣는다.
+const MOVED_MODULES = ['js/core/app-scope.js', 'js/core/ui-helpers.js', 'js/tabs/settings/render.js', 'js/tabs/settings/sub-profile.js', 'js/tabs/settings/sub-security.js',
+  'js/tabs/settings/sub-notify.js', 'js/tabs/settings/sub-appearance.js', 'js/tabs/settings/sub-integrations.js', 'js/tabs/settings/sub-data.js'];
+const movedSrc = MOVED_MODULES.map(f => path.join(ROOT_DIR, f)).filter(p => fs.existsSync(p)).map(p => '\n' + fs.readFileSync(p, 'utf8')).join('');
+allJs += movedSrc;
+const markupSrc = html + movedSrc;
 const combinedJs = allJs;
 
 console.log('================================================================');
@@ -129,7 +136,7 @@ console.log('✓ [PASS] 카나리 변이 시험 통과: 공통 CSS 클래스를 
 // ================================================================
 // 1. Static HTML 버튼 전수 추출 및 검사
 // ================================================================
-const staticButtons = [...html.matchAll(/<button([^>]*)>([\s\S]*?)<\/button>/gi)].map(m => {
+const staticButtons = [...markupSrc.matchAll(/<button([^>]*)>([\s\S]*?)<\/button>/gi)].map(m => {
   const attrs = m[1];
   const text = m[2].replace(/<[^>]+>/g, '').trim();
   const idMatch = attrs.match(/id=["']([^"']+)["']/i);
