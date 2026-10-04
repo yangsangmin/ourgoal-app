@@ -1,0 +1,363 @@
+{
+  "task": "TASK-ES-358",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-358-RECORDS-CELL.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 인라인 IIFE 의 기록 탭 렌더 함수(renderRecordsScreen 과 그것만 부르는 기간별 AI 피드백 카드 함수, 세그먼트·캐러셀 전환)를 js/tabs/records/ 로 글자 그대로 옮긴다. 기능 추가·삭제 0, 마크업·CSS 는 옮기지 않는다."
+    },
+    {
+      "id": "R2",
+      "text": "옮긴 코드가 읽는 인라인 스코프 이름은 js/core/app-scope.js(설정 시범 #666 과 같은 통로) getter 로만 읽고, index.html 은 IIFE 맨 위에서 같은 이름으로 가져와 호출처를 그대로 둔다. 전역 이름을 새로 늘리지 않는다."
+    },
+    {
+      "id": "R3",
+      "text": "화면 결과 전후 차이 0 — docs/design/harness/tab-check.js 기록 탭 base 2회·after 1회 비교, 조작 단계별 DOM 비교."
+    },
+    {
+      "id": "R4",
+      "text": "신고서(modules.json)를 module-specs --write 로 반영(kind tab, 자리는 record.type·stats.card 안에서만), 모듈 가드 통과·인라인 스크립트 줄 수 감소, 새 js 800줄 이하."
+    },
+    {
+      "id": "R5",
+      "text": "문서: REQ(8원칙), claims, dev_log 1줄, TICKETS 1줄. PR(초안 아님), 법정 판정 기록. 병합 안 함. 기준 시험지 검사 폐기(retire) 청구 없음."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "기록 화면 렌더 함수 renderRecordsScreen 이 js/tabs/records/render.js 에 선언되어 있다",
+      "touches": [
+        "js/tabs/records/render.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/records/render.js",
+        "text": "  function renderRecordsScreen(){"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "세그먼트 전환 함수 setRecordsSegment 가 js/tabs/records/render.js 에 선언되어 있다",
+      "touches": [
+        "js/tabs/records/render.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/records/render.js",
+        "text": "  function setRecordsSegment(seg, silent){"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "기간별 AI 피드백 카드 초기화 함수가 js/tabs/records/period-ai-card.js 에 선언되어 있다",
+      "touches": [
+        "js/tabs/records/period-ai-card.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/records/period-ai-card.js",
+        "text": "  function initPeriodAiCard(records){"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "renderRecordsScreen 이 다른 기록 파일로 간 initPeriodAiCard 를 기록 키트(K)로 부른다",
+      "touches": [
+        "js/tabs/records/render.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/records/render.js",
+        "text": "    K.initPeriodAiCard(allRecs);"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 인라인 스크립트에 renderRecordsScreen 함수 선언이 남아 있지 않다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "  function renderRecordsScreen(){"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 인라인 스크립트에 initPeriodAiCard 함수 선언이 남아 있지 않다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "  function initPeriodAiCard(records){"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "IIFE 실행 중 대입되는 window.purgeSampleRecordsOneClick 문은 index.html 원래 자리에 남아 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "  window.purgeSampleRecordsOneClick = async function(){"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html IIFE 맨 위에서 기록 키트의 renderRecordsScreen 을 같은 이름으로 가져온다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "  var renderRecordsScreen = _recordsKit.renderRecordsScreen;"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "옮긴 코드가 대입하는 인라인 변수 state 에 app-scope setter 가 달려 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "    get state(){ return state; }, set state(v){ state = v; },"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "옮긴 코드는 인라인 state 를 app-scope 통로(L.state)로 읽고 쓴다",
+      "touches": [
+        "js/tabs/records/render.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/records/render.js",
+        "text": "    if(!L.state) L.state = {};"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "app-scope 통로 스크립트가 store.js 다음에 로드된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<script src=\"js/core/app-scope.js\"></script>"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기록 렌더 파일이 기록 메가블록 index.js 앞에 로드된다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<script src=\"js/tabs/records/render.js\"></script>"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "app-scope 통로가 getter/setter 를 그대로 옮겨 다는 expose 함수를 가진다",
+      "touches": [
+        "js/core/app-scope.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/core/app-scope.js",
+        "text": "    expose: function (owner, source) {"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "기록 탭 기준 실측 1회차와 후 실측 비교에서 비교한 값 447 중 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-358/tab-compare-base-run1-vs-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-358/tab-compare-base-run1-vs-after.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "기록 탭 기준 실측 2회 사이(본질적 변동) 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-358/tab-compare-base-run1-vs-run2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-358/tab-compare-base-run1-vs-run2.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "기록 탭 조작 13단계 DOM·저장값·토스트 전후 비교에서 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-358/dom-compare-records.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-358/dom-compare-records.json",
+        "path": "differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "옮긴 7함수의 토큰열 동일·누수 0·미노출 0 검사 결과가 ok 로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-358/verify-records.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-358/verify-records.json",
+        "path": "ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R4",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "모듈 가드 기준선의 인라인 스크립트 줄 수가 37368 로 낮아져 있다",
+      "touches": [
+        "docs/architecture/module-baseline.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/module-baseline.json",
+        "path": "history.1.metrics.inlineScriptLines",
+        "equals": 37368
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R4",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "신고서에 기록 렌더 세포 records/render 가 있다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "\"id\": \"records/render\""
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R4",
+      "kind": "static",
+      "domain": "architecture",
+      "statement": "기록 렌더 세포는 계획된 자리로 정식 목록의 record.type 만 적는다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "\"record.type\""
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ 가 8원칙 중 성과 측정 절을 가진다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-358-RECORDS-CELL.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-358-RECORDS-CELL.md",
+        "text": "## 8. [원칙 ⑧] 성과 측정 (작업자 측정, 판정 아님)"
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R5",
+      "kind": "static",
+      "domain": "tickets",
+      "statement": "티켓 대장에 TASK-ES-358 줄이 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-358 | INFRA/구조 |"
+      }
+    }
+  ]
+}
