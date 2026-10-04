@@ -60,6 +60,7 @@
 ## 8. 성과 측정
 
 - [x] `module-metrics`(기준 a2c593f → 작업): 미분화 덩어리(index.html 인라인 스크립트) 35905 → 35846 · 800줄 넘는 세포 12 → 11(js/theme-system.js 804 → 606) · index.html 함수 선언 691 → 690 · index.html 38280 → 38152줄 · 전역 직접 연결 282 → 282 · 중복 세포 불변.
+- [x] origin/main(24f105b, #678·#679 병합) 을 합친 뒤 다시 잰 값(기준 24f105b → 작업): 미분화 덩어리 35822 → 35763(-59) · 800줄 넘는 세포 11 → 10(js/theme-system.js 빠짐) · index.html 함수 선언 691 → 690 · index.html 38198 → 38070줄 · 전역 직접 연결 282 → 282 · 데이터 중복 16 → 16 · 중복 세포 불변. 모듈 가드 기준선은 합친 뒤 `module-guard --update` 로 다시 낮춤.
 - [x] ui.css 17216 → 16921줄.
 - [x] `docs/design/harness/tab-check.js home --deadclick off`(테마 4종 × 375×667·375×812 × 상태 3 = 24장, 게스트 시드·Supabase 목, 기준은 a2c593f 스냅샷): 홈 영역 `!important` display:none 요소 장당 43 → 41(24장 합 1020 → 972) · 문서 전체 75 → 73(합 1764 → 1716) · 숨은 조작 요소 장당 46 → 40(합 1144 → 1000, `#btnOpenThemeModal`·`.theme-fav-chip` 5개 빠짐) · 숨김 목록 속 테마 입구 언급 24 → 0 · 44px 미만 요소 240 → 240 · 콘솔 오류 0 → 0.
 - [ ] [4단계: 심사 청구] — 판정은 법정(`node court/chat.js <PR>`)만 낸다.

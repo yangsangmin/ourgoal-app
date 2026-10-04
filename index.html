@@ -2286,7 +2286,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
   <script src="js/record-ledger.js?v=20261004-es344"></script>
-  <script src="js/components.js?v=20260917-es162"></script><script src="js/records-stats.js?v=20260926-es276"></script><script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script><script src="js/notify-engine.js?v=20260917-es152"></script><script src="js/sanctuary-v3-engine.js?v=20260928-prod-renewal-final"></script>
+  <script src="js/account-isolation.js?v=20261004-es365"></script>
+  <script src="js/components.js?v=20260917-es162"></script><script src="js/records-stats.js?v=20260926-es276"></script><script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/data/goal-templates/health.js?v=20261004-es364"></script><script src="js/data/goal-templates/study.js?v=20261004-es364"></script><script src="js/data/goal-templates/career.js?v=20261004-es364"></script><script src="js/data/goal-templates/hobby.js?v=20261004-es364"></script><script src="js/data/goal-templates/mind.js?v=20261004-es364"></script><script src="js/data/goal-templates/relation.js?v=20261004-es364"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script><script src="js/notify-engine.js?v=20260917-es152"></script><script src="js/sanctuary-v3-engine.js?v=20260928-prod-renewal-final"></script>
 <script>
 (function(){
   "use strict";
@@ -3639,24 +3640,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     });
 
     // 기록 로컬 백업 자동 복구 및 자가 치유 안전망 (#TASK-ES-035)
-    var localCachedRecords = [];
-    try {
-      localCachedRecords = JSON.parse(localStorage.getItem('ourgoal_records_backup_' + userId) || '[]');
-    } catch(e){}
-    if((!localCachedRecords || localCachedRecords.length === 0) && (!records || records.length === 0)){
-      for(var rkIdx = 0; rkIdx < localStorage.length; rkIdx++){
-        var rk = localStorage.key(rkIdx);
-        if(rk && rk.indexOf('ourgoal_records_backup_') === 0){
-          try {
-            var candRecs = JSON.parse(localStorage.getItem(rk) || '[]');
-            if(candRecs && candRecs.length > 0){
-              localCachedRecords = candRecs;
-              break;
-            }
-          } catch(e){}
-        }
-      }
-    }
+    /* [#TASK-ES-365] CORE-09: 이 uid 의 백업만 읽는다. 예전에는 자기 백업이 비면 이 기기의 다른 사람 백업(ourgoal_records_backup_<다른 uid>)을
+       골라 새 계정 화면에 띄우고 서버에도 올렸다(RA-CORE-SWITCH 실패 원인). 게스트 -> 회원 이관은 migrateGuestDataToUser 가 따로 한다. */
+    var localCachedRecords = window.OurgoalAccountIsolation.readOwnCopy('ourgoal_records_backup_', userId, []);
+    if(!Array.isArray(localCachedRecords)) localCachedRecords = [];
     /* [#TASK-ES-344] 마지막 기록을 지우면 saveProfile 이 백업을 갱신하지 않으므로(recs.length 0), 휴지통에 있는 기록은 로컬 백업 복구에서도 뺀다 */
     try {
       var trashedRecIds = window.OurgoalRecordLedger.trashRecordIds(JSON.parse(localStorage.getItem('ourgoal_trash_backup_' + userId) || '[]'));
@@ -3665,9 +3652,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
     } catch(e){}
     if((!records || records.length === 0) && localCachedRecords && localCachedRecords.length > 0){
-      records = localCachedRecords;
+      records = window.OurgoalAccountIsolation.ownRecordsOnly(localCachedRecords, userId);
       try {
-        await window.OurgoalRecordLedger.upsertCheckinRows(sb, records.map(function(r){
+        if(records.length) await window.OurgoalRecordLedger.upsertCheckinRows(sb, records.map(function(r){
           return window.OurgoalRecordLedger.toCheckinRow(r, userId);
         }));
       } catch(e){}
@@ -3676,24 +3663,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
 
     // 프로필 편집 내역(소개, 관심사, 지역, 잇템) 로컬 백업 복원 및 무결성 보장 (#TASK-ES-035)
-    var localCachedProf = null;
-    try {
-      localCachedProf = JSON.parse(localStorage.getItem('ourgoal_profile_backup_' + userId) || 'null');
-    } catch(e){}
-    if(!localCachedProf){
-      for(var pkIdx = 0; pkIdx < localStorage.length; pkIdx++){
-        var pk = localStorage.key(pkIdx);
-        if(pk && pk.indexOf('ourgoal_profile_backup_') === 0){
-          try {
-            var candProf = JSON.parse(localStorage.getItem(pk) || 'null');
-            if(candProf && (candProf.bio || (candProf.interests && candProf.interests.length > 0) || candProf.region)){
-              localCachedProf = candProf;
-              break;
-            }
-          } catch(e){}
-        }
-      }
-    }
+    /* [#TASK-ES-365] 프로필 백업도 이 uid 것만 — 다른 사람의 소개·관심·지역·잇템을 새 계정에 붙이지 않는다 */
+    var localCachedProf = window.OurgoalAccountIsolation.readOwnCopy('ourgoal_profile_backup_', userId, null);
     var finalDisplayName = urow.display_name || (localCachedProf && localCachedProf.displayName) || defaultDisplayName;
     var finalBio = urow.bio || (localCachedProf && localCachedProf.bio) || '';
     var finalAvatarUrl = urow.avatar_url || (localCachedProf && localCachedProf.avatarUrl) || '';
@@ -3769,16 +3740,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     // 서버 관리자 엔드포인트(/api/track)를 통한 비인증 RLS 차단 우회 및 이전 기록 복원 (#TASK-ES-036)
     if(!records || records.length === 0){
       try {
+        /* [#TASK-ES-365] 이 기기의 다른 사람 uid(직전 사용자·다른 백업 키)를 서버에 보내지 않는다. 서버도 인증 uid 로만 조회한다(api/track.js handleSyncRecords) */
         var syncCandIds = [userId];
-        var curLastUid = localStorage.getItem('ourgoal_current_user');
-        if(curLastUid && syncCandIds.indexOf(curLastUid) === -1) syncCandIds.push(curLastUid);
-        for(var sIdx = 0; sIdx < localStorage.length; sIdx++){
-          var sKey = localStorage.key(sIdx);
-          if(sKey && (sKey.indexOf('ourgoal_goals_backup_') === 0 || sKey.indexOf('ourgoal_records_backup_') === 0)){
-            var sCand = sKey.replace('ourgoal_goals_backup_', '').replace('ourgoal_records_backup_', '');
-            if(sCand && syncCandIds.indexOf(sCand) === -1) syncCandIds.push(sCand);
-          }
-        }
         var sToken = await getSupabaseAuthToken();
         if (sToken) {
           var sRes = await fetch('/api/track', {
@@ -3791,7 +3754,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           });
           if(sRes.ok){
             var sData = await sRes.json();
-            if(sData && sData.records && sData.records.length > 0){
+            if(sData && sData.records && sData.records.length > 0 && window.OurgoalAccountIsolation.isResponseForUid(sData.targetUserId, userId)){
               records = sData.records;
               try { localStorage.setItem('ourgoal_records_backup_' + userId, JSON.stringify(records)); } catch(e){}
               if(sData.user){
@@ -3806,24 +3769,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
 
     // 동반자(companions) 로컬 백업 자동 복구 및 자가 치유 (#TASK-ES-144)
-    var localCachedCompanions = [];
-    try {
-      localCachedCompanions = JSON.parse(localStorage.getItem('ourgoal_companions_backup_' + userId) || '[]');
-    } catch(e){}
-    if(!Array.isArray(localCachedCompanions) || localCachedCompanions.length === 0){
-      for(var ckIdx = 0; ckIdx < localStorage.length; ckIdx++){
-        var ck = localStorage.key(ckIdx);
-        if(ck && ck.indexOf('ourgoal_companions_backup_') === 0){
-          try {
-            var candComps = JSON.parse(localStorage.getItem(ck) || '[]');
-            if(Array.isArray(candComps) && candComps.length > 0){
-              localCachedCompanions = candComps;
-              break;
-            }
-          } catch(e){}
-        }
-      }
-    }
+    /* [#TASK-ES-365] 동반자 백업도 이 uid 것만 — 다른 사람의 동반자 목록을 새 계정에 붙이지 않는다 */
+    var localCachedCompanions = window.OurgoalAccountIsolation.readOwnCopy('ourgoal_companions_backup_', userId, []);
     var finalCompanions = (Array.isArray(localCachedCompanions) && localCachedCompanions.length > 0) ? localCachedCompanions : [];
     var localCachedTrash = [];
     try { localCachedTrash = JSON.parse(localStorage.getItem('ourgoal_trash_backup_' + userId) || '[]'); } catch(e){}
@@ -5196,10 +5143,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         } catch(e){}
         /* [#TASK-ES-344] REC-01: goalId·laps·durationMs·durationMinutes·visibility·isSample·title 을 meta(jsonb)에 담아 보낸다.
            checkins.meta/theme/category 컬럼이 아직 없는 DB에서는 그 칸을 빼고 재시도해 기록 저장이 끊기지 않게 한다(upsertCheckinRows) */
-        var recRows = recs.map(function(r){
+        /* [#TASK-ES-365] 주인 표시(user_id·ownerUid)가 지금 uid 와 다른 기록은 지금 계정 이름으로 올리지 않는다 */
+        var recRows = window.OurgoalAccountIsolation.ownRecordsOnly(recs, uidVal).map(function(r){
           return window.OurgoalRecordLedger.toCheckinRow(r, uidVal);
         });
-        await window.OurgoalRecordLedger.upsertCheckinRows(sb, recRows);
+        if(recRows.length) await window.OurgoalRecordLedger.upsertCheckinRows(sb, recRows);
       }
       try {
         localStorage.setItem('ourgoal_profile_backup_' + uidVal, JSON.stringify({
@@ -5229,23 +5177,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var uname = state.profile.username || '';
     var dname = state.profile.displayName || '';
 
+    /* [#TASK-ES-365] 현재 uid 만 보낸다(이 기기의 직전 사용자·다른 백업 uid 를 함께 보내던 것 제거) */
     var candidateIds = [uid];
-    try {
-      var lastUid = localStorage.getItem('ourgoal_current_user');
-      if(lastUid && candidateIds.indexOf(lastUid) === -1) candidateIds.push(lastUid);
-      for(var i = 0; i < localStorage.length; i++){
-        var lk = localStorage.key(i);
-        if(lk){
-          var pfxs = ['ourgoal_goals_backup_', 'ourgoal_records_backup_', 'ourgoal_profile_backup_', 'ourgoal_settings_'];
-          for(var pi = 0; pi < pfxs.length; pi++){
-            if(lk.indexOf(pfxs[pi]) === 0){
-              var cand = lk.replace(pfxs[pi], '');
-              if(cand && candidateIds.indexOf(cand) === -1) candidateIds.push(cand);
-            }
-          }
-        }
-      }
-    } catch(e){}
 
     try {
       var sToken = await getSupabaseAuthToken();
@@ -5273,6 +5206,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(!resp.ok) return false;
       var data = await resp.json();
       if(!data || !data.ok) return false;
+      /* [#TASK-ES-365] 응답 주인이 다르거나, 기다리는 사이 로그아웃·계정 전환으로 화면 주인이 바뀌었으면 합치지 않는다 */
+      if(!window.OurgoalAccountIsolation.isResponseForUid(data.targetUserId, uid)) return false;
+      if(!state.profile || state.profile.id !== uid) return false;
 
       var updated = false;
 
@@ -5304,9 +5240,6 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           state.profile.records = mergedRes.records;
           try {
             localStorage.setItem('ourgoal_records_backup_' + uid, JSON.stringify(mergedRes.records));
-            if(data.targetUserId && data.targetUserId !== uid){
-              localStorage.setItem('ourgoal_records_backup_' + data.targetUserId, JSON.stringify(mergedRes.records));
-            }
           } catch(e){}
           updated = true;
         }
@@ -5975,6 +5908,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     } catch(e){ return false; }
 
     if(!gData || gData.id === targetUserId) return false;
+    /* [#TASK-ES-365] 이 키는 로그인 사용자의 전체 사본으로도 쓰인다(saveProfile). 게스트가 만든 사본만 이관하고,
+       다른 로그인 사용자의 사본이면 새 계정으로 옮기지 않고 버린다(계정 전환 유출·오염 차단) */
+    if(!window.OurgoalAccountIsolation.canMigrateGuestCopy(gData, targetUserId)){
+      window.OurgoalAccountIsolation.dropForeignSessionCopy(targetUserId);
+      return false;
+    }
 
     var hasGuestData = (Array.isArray(gData.goals) && gData.goals.length > 0) ||
                        (Array.isArray(gData.records) && gData.records.length > 0) ||
@@ -6246,6 +6185,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     try {
       localStorage.removeItem('ourgoal_guest_profile');
       localStorage.removeItem('ourgoal_current_user');
+      /* [#TASK-ES-365] 계정 공용 키(전체 사본·직전 사용자·uid 없는 오프라인 대기열)를 정리한다. uid 별 백업은 그 주인만 읽으므로 남긴다 */
+      window.OurgoalAccountIsolation.clearSharedSessionCopies();
     } catch(e){}
     state.profile = null;
     var shell = document.getElementById('appShell');
@@ -37525,6 +37466,9 @@ wirePromptEncyclopediaEvents(body);
       if(um.full_name || um.name || um.nickname) newExtra.display_name = um.full_name || um.name || um.nickname;
       var userEmail = session.user.email || um.email || (newExtra.display_name ? (newExtra.display_name + '@kakao.local') : (session.user.id.slice(0, 8) + '@kakao.local'));
       setDeviceLoginTime(Date.now());
+      /* [#TASK-ES-365] 다른 로그인 사용자의 전체 사본·메모리 프로필이 남아 있으면 새 계정에 이어 붙이지 않는다(게스트 사본은 이관용으로 둔다) */
+      window.OurgoalAccountIsolation.dropForeignSessionCopy(session.user.id);
+      if(state.profile && state.profile.id !== session.user.id && !window.OurgoalAccountIsolation.isGuestId(state.profile.id)) state.profile = null;
       try {
         state.profile = await loadProfile(session.user.id, userEmail, newExtra, (session.user.app_metadata && session.user.app_metadata.provider) || null);
       } catch(lpErr){
@@ -37851,41 +37795,15 @@ wirePromptEncyclopediaEvents(body);
         if(gp && gp.id){
           var gpUpdated = false;
           if(!gp.records || gp.records.length === 0){
-            var recBackup = null;
-            try { recBackup = JSON.parse(localStorage.getItem('ourgoal_records_backup_' + gp.id) || 'null'); } catch(e){}
-            if(!recBackup || recBackup.length === 0){
-              for(var gRk = 0; gRk < localStorage.length; gRk++){
-                var rKey = localStorage.key(gRk);
-                if(rKey && rKey.indexOf('ourgoal_records_backup_') === 0){
-                  try {
-                    var cRecs = JSON.parse(localStorage.getItem(rKey) || '[]');
-                    if(cRecs && cRecs.length > 0){ recBackup = cRecs; break; }
-                  } catch(e){}
-                }
-              }
-            }
-            if(recBackup && recBackup.length > 0){
+            /* [#TASK-ES-365] 이 사본 주인(gp.id)의 백업만 읽는다 — 새 게스트가 이 기기의 다른 사람 기록을 받아 보지 않게 */
+            var recBackup = window.OurgoalAccountIsolation.readOwnCopy('ourgoal_records_backup_', gp.id, null);
+            if(Array.isArray(recBackup) && recBackup.length > 0){
               gp.records = recBackup;
               gpUpdated = true;
             }
           }
           if(!gp.bio && (!gp.interests || gp.interests.length === 0) && !gp.region){
-            var profBackup = null;
-            try { profBackup = JSON.parse(localStorage.getItem('ourgoal_profile_backup_' + gp.id) || 'null'); } catch(e){}
-            if(!profBackup){
-              for(var gPk = 0; gPk < localStorage.length; gPk++){
-                var pKey = localStorage.key(gPk);
-                if(pKey && pKey.indexOf('ourgoal_profile_backup_') === 0){
-                  try {
-                    var cProf = JSON.parse(localStorage.getItem(pKey) || 'null');
-                    if(cProf && (cProf.bio || (cProf.interests && cProf.interests.length > 0) || cProf.region)){
-                      profBackup = cProf;
-                      break;
-                    }
-                  } catch(e){}
-                }
-              }
-            }
+            var profBackup = window.OurgoalAccountIsolation.readOwnCopy('ourgoal_profile_backup_', gp.id, null);
             if(profBackup){
               if(profBackup.bio) gp.bio = profBackup.bio;
               if(profBackup.interests && profBackup.interests.length) gp.interests = profBackup.interests;

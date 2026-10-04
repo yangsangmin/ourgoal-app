@@ -238,14 +238,14 @@
       "req": "R5",
       "kind": "static",
       "domain": "config",
-      "statement": "모듈 가드 기준선에서 js/theme-system.js 가 800줄 넘는 세포 목록에서 빠졌다(804 → 606줄, 800줄 초과 세포 12 → 11, module-guard --update 산출)",
+      "statement": "모듈 가드 기준선 최신 항목(commit 1aefa2f, origin/main 24f105b 합친 뒤 module-guard --update 산출)에서 js/theme-system.js 가 800줄 넘는 세포 목록에 없다(804 → 606줄, 800줄 초과 세포 11 → 10)",
       "touches": [
         "docs/architecture/module-baseline.json"
       ],
       "check": {
         "type": "codeContains",
         "file": "docs/architecture/module-baseline.json",
-        "text": "\"commit\": \"a2c593f\""
+        "text": "\"commit\": \"1aefa2f\""
       }
     },
     {
@@ -253,14 +253,14 @@
       "req": "R5",
       "kind": "static",
       "domain": "config",
-      "statement": "REQ 8원칙 8절에 module-metrics(미분화 35905 → 35846, 800줄 초과 12 → 11)와 tab-check(홈 !important 숨김 장당 43 → 41, 숨은 조작 요소 46 → 40) 측정값이 적혀 있다",
+      "statement": "REQ 8원칙 8절에 module-metrics(origin/main 24f105b 기준 미분화 35822 → 35763, 800줄 초과 11 → 10)와 tab-check(홈 !important 숨김 장당 43 → 41, 숨은 조작 요소 46 → 40) 측정값이 적혀 있다",
       "touches": [
         "docs/specs/REQ-TASK-ES-367-THEME-SELECTOR-REMOVE.md"
       ],
       "check": {
         "type": "codeContains",
         "file": "docs/specs/REQ-TASK-ES-367-THEME-SELECTOR-REMOVE.md",
-        "text": "미분화 덩어리(index.html 인라인 스크립트) 35905 → 35846"
+        "text": "미분화 덩어리 35822 → 35763(-59)"
       }
     },
     {
