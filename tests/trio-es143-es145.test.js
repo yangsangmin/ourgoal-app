@@ -28,7 +28,9 @@ test('#TASK-ES-143 온보딩 후속 E3 동류 러너 매칭 & 첫 웰컴 스탬�
   assert.ok(indexHtml.includes('id="firstCheckinCommBtn"'), '첫 웰컴 스탬프 발송 버튼(#firstCheckinCommBtn)이 존재해야 함');
   assert.ok(indexHtml.includes('id="firstCheckinDoneBtn"'), '홈 콕핏 둘러보기 버튼(#firstCheckinDoneBtn)이 존재해야 함');
   assert.ok(indexHtml.includes('함께 달리는 동류 러너'), '동류 러너 조망 섹션 타이틀이 존재해야 함');
-  assert.ok(indexHtml.includes("toast('💌 동류 러너들에게 웰컴 응원 스탬프를 보냈어요! (+5 EXP)')"), '웰컴 스탬프 발송 완료 피드백 토스트가 연동되어야 함');
+  // [#TASK-ES-352] 아무것도 보내지 않던 '보냈어요' 토스트를 실제 발송 수 기반 문구로 교체
+  assert.ok(indexHtml.includes("goComm('💌 ' + r.sent + '명에게 웰컴 응원을 보냈어요! (+5 EXP)'"), '웰컴 응원 발송 완료 토스트는 실제로 보낸 수를 말해야 함');
+  assert.ok(indexHtml.includes("goComm('🤝 소통 탭에서 함께하는 분을 찾아보세요')"), '보낼 수 없을 때는 보냈다는 말 없이 소통 탭으로 안내해야 함');
   assert.ok(indexHtml.includes("state.commSubTab = 'feed'"), '소통 탭 피드로의 직통 전환이 배선되어야 함');
 });
 
