@@ -173,6 +173,8 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/result-modal-archive-es378.test.js');
   // #TASK-ES-380 「+ 최종 결과」(#goalResultBtn) 가 숨김 카드(.toss-goal-hero-card) 밖 목표 상세 맨 위 줄에 있다
   runNode('tests/goal-result-btn-es380.test.js');
+  // #TASK-ES-386 아바타 페르소나 320종 → MBTI 16파일 분리 전후 deepStrictEqual(Node·브라우저 순서)·변이 2종
+  runNode('tests/avatar-personas-split.test.js');
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
 
