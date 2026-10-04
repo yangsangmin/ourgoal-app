@@ -852,20 +852,15 @@
     {
       "id": "C53",
       "req": "R4",
-      "kind": "unverified",
+      "kind": "behavior",
+      "change": "new",
       "domain": "ui-behavior",
-      "statement": "진짜 폰에서 체크인하면 홈 링·레벨 배지·축하 팝업이 이전과 같이 오른다(PC 헤드리스 게스트·실계정으로는 쟀다)",
+      "statement": "옮긴 뒤에도 게스트로 홈에서 체크인 한 줄을 적고 「오늘 실천 완료」(#captureSave)를 누르면 축하 팝업에 「EXP 획득」이 뜨고 홈 레벨 배지(#levelBadgeRow) 경험치 글자가 「0 / 100 XP」에서 「40 / 100 XP」로 오른다(옮기기만 했으므로 기준 커밋에서도 같은 결과여야 한다)",
       "touches": [
-        "js/avatar/xp.js"
+        "js/avatar/xp.js",
+        "index.html"
       ],
-      "unverified": {
-        "reason": "needs-real-device",
-        "who": "아워골 앱을 쓸 수 있는 사람",
-        "how": [
-          "폰에서 홈 「오늘 실천 완료」 체크인",
-          "축하 팝업 「+10 EXP 획득」과 홈 링·레벨 배지가 오르는지 본다"
-        ]
-      }
+      "scenario": "scenarios/home-checkin-exp.json"
     }
   ]
 }
