@@ -24,7 +24,28 @@ const UI_JS = path.join(ROOT_DIR, 'ui.js');
 const SPECS_DIR = path.join(ROOT_DIR, 'docs', 'specs');
 const RULES_DIR = path.join(ROOT_DIR, 'docs', 'rules');
 
-const html = fs.readFileSync(INDEX_HTML, 'utf8');
+const indexHtmlOnly = fs.readFileSync(INDEX_HTML, 'utf8');
+// #TASK-ES-369: 탭 코드가 index.html 에서 세포 파일(js/tabs/**/*.js · js/core/*.js)로 옮겨 가도 같은 단언이 같은 코드를 찾도록,
+// 소스 글자 검사는 scripts/smoke-test.js 와 같은 '앱 소스 합본' = index.html + js/tabs/**/*.js + js/core/*.js 를 본다. 단언·기대값·검사 수는 그대로다.
+function listJsTree(dir, recursive) {
+  if (!fs.existsSync(dir)) return [];
+  const out = [];
+  for (const e of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))) {
+    const p = path.join(dir, e.name);
+    if (e.isFile() && e.name.endsWith('.js')) out.push(p);
+    else if (recursive && e.isDirectory()) out.push(...listJsTree(p, true));
+  }
+  return out;
+}
+const APP_MODULE_FILES = [...listJsTree(path.join(ROOT_DIR, 'js', 'tabs'), true), ...listJsTree(path.join(ROOT_DIR, 'js', 'core'), false)];
+// 세포 이전 생성기(module-split)는 index.html 지역 이름을 L.<이름>, 같은 탭 파일끼리 호출을 K.<이름> 으로 바꿔 쓴다.
+// 그런 파일(OurgoalAppScope 를 읽는 파일)만 접두를 떼고 읽어, 옮기기 전 글자를 찾던 단언이 같은 코드를 그대로 찾게 한다.
+function readAppModule(f) {
+  const src = fs.readFileSync(f, 'utf8');
+  if (src.indexOf('OurgoalAppScope') < 0) return src;
+  return src.replace(/(^|[^A-Za-z0-9_$.])[LK]\.(?=[A-Za-z_$])/g, '$1');
+}
+const html = indexHtmlOnly + APP_MODULE_FILES.map(function (f) { return '\n' + readAppModule(f); }).join('');
 const uiCss = fs.existsSync(UI_CSS) ? fs.readFileSync(UI_CSS, 'utf8') : '';
 const uiJs = fs.existsSync(UI_JS) ? fs.readFileSync(UI_JS, 'utf8') : '';
 
@@ -437,6 +458,7 @@ check('UI 텍스트, 라벨 및 신규 스펙에서 \'잔디\' 단어가 100% �
 check('UI 텍스트, 라벨, 가이드 및 프롬프트에서 아바타 \'77종/77가지\' 노출이 영구 배제되고 \'320종\'으로 단일화되었다 (헌법 제10조 제4~5항)', () => {
   const uiFilesToCheck = [
     INDEX_HTML,
+    ...APP_MODULE_FILES,
     path.join(ROOT_DIR, 'api', 'promptgen.js')
   ];
 
@@ -458,7 +480,7 @@ check('UI 텍스트, 라벨, 가이드 및 프롬프트에서 아바타 \'77종/
   assert.strictEqual(violations.length, 0, `아바타 금지 표현 '77종/77가지' 발견 (320종으로 변경 필수):\n${violations.join('\n')}`);
 
   // index.html 및 rules 정본 내 320종 단일 표기 검증
-  const freshHtml = fs.readFileSync(INDEX_HTML, 'utf8');
+  const freshHtml = html;
   assert.ok(freshHtml.includes('320종'), 'index.html 내 320종 페르소나 표기 누락');
 
   const rulesDoc = path.join(RULES_DIR, 'OURGOAL_ABSOLUTE_INTEGRITY_RULES.md');
@@ -774,8 +796,7 @@ check('[검증 17/17] [#TASK-ES-193] 집중 타이머 기록 탭 이전 및 기�
 });
 
 check('[검증 18/18] [#TASK-ES-194] 소통 탭 6종 3×2 그리드 조형 정적 방화벽 검사', () => {
-  const indexPath = path.join(__dirname, '..', 'index.html');
-  const indexContent = fs.readFileSync(indexPath, 'utf8');
+  const indexContent = html;
   const cssPath = path.join(__dirname, '..', 'ui.css');
   const cssContent = fs.readFileSync(cssPath, 'utf8');
 
@@ -796,8 +817,7 @@ check('[검증 18/18] [#TASK-ES-194] 소통 탭 6종 3×2 그리드 조형 정�
 });
 
 check('[검증 19/20] [#TASK-ES-195] 목표 탭 5종 서브탭 5열 그리드 단정화 및 통계 세그먼트 버튼 40px 정적 방화벽 검사', () => {
-  const indexPath = path.join(__dirname, '..', 'index.html');
-  const indexContent = fs.readFileSync(indexPath, 'utf8');
+  const indexContent = html;
   const cssPath = path.join(__dirname, '..', 'ui.css');
   const cssContent = fs.readFileSync(cssPath, 'utf8');
 
@@ -818,8 +838,7 @@ check('[검증 19/20] [#TASK-ES-195] 목표 탭 5종 서브탭 5열 그리드 �
 });
 
 check('[검증 20/20] [#TASK-ES-196] 체크인 즉시 아바타 AI 피드백 고도화 & 영구 원장 영속화 및 기록 탭 상시 노출 무결성 검사', () => {
-  const indexPath = path.join(__dirname, '..', 'index.html');
-  const indexContent = fs.readFileSync(indexPath, 'utf8');
+  const indexContent = html;
   const cssPath = path.join(__dirname, '..', 'ui.css');
   const cssContent = fs.readFileSync(cssPath, 'utf8');
 
@@ -843,8 +862,7 @@ check('[검증 20/20] [#TASK-ES-196] 체크인 즉시 아바타 AI 피드백 고
 });
 
 check('[검증 21/21] [#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진형 일기(Photo Diary) 썸네일 자동 연계 & 히트맵 14px 스케일업 무결성 검사', () => {
-  const indexPath = path.join(__dirname, '..', 'index.html');
-  const indexContent = fs.readFileSync(indexPath, 'utf8');
+  const indexContent = html;
   const cssPath = path.join(__dirname, '..', 'ui.css');
   const cssContent = fs.readFileSync(cssPath, 'utf8');
 
@@ -872,8 +890,7 @@ check('[검증 21/21] [#TASK-ES-197] 일정 달력 셀 확대(76px) 및 사진�
 check('[검증 22/22] #TASK-ES-198: 캘린더 6대 결함 전수 일괄 정상화 검증', () => {
   const sanctPath = path.join(__dirname, '..', 'js', 'sanctuary-v3-engine.js');
   const sanctContent = fs.readFileSync(sanctPath, 'utf8');
-  const indexPath = path.join(__dirname, '..', 'index.html');
-  const indexContent = fs.readFileSync(indexPath, 'utf8');
+  const indexContent = html;
 
   // 1. 주간 모드 크래시 방어 확인 (weekRowsHtml 정상 사용, weekDays.join 미호출, dayDetailsHtml 정의)
   assert.ok(!sanctContent.includes('weekDays.join'), 'sanctuary-v3-engine.js 내 정의되지 않은 weekDays.join 호출 차단 실패');
@@ -921,8 +938,7 @@ check('[검증 23/23] #TASK-ES-201: 전 탭 상단 네비게이션 Sticky & 어�
   assert.ok(sanctContent.includes('s-goal-pills-wrap empty'), '목표 0건 빈 상태 네비게이션 보존 누락');
 
   // 5. [상민님 지시 반영] AI 목표 어시스턴트 상단 전진 배치 확인
-  const indexHtmlPath = path.join(__dirname, '..', 'index.html');
-  const indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
+  const indexHtml = html;
   const agentCardIdx = indexHtml.indexOf('id="goalAgentCard"');
   const goalHeadRowIdx = indexHtml.indexOf('class="goal-head-row"');
   assert.ok(agentCardIdx !== -1 && goalHeadRowIdx !== -1 && agentCardIdx < goalHeadRowIdx, 'AI 목표 어시스턴트가 세부 마일스톤 목록 상단에 전진 배치되어야 함');
