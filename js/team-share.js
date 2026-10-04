@@ -239,7 +239,7 @@
               var myAvatar = (state.profile && (state.profile.avatar || state.profile.avatarUrl)) || '🌱';
 
               if(global.sb){
-                var threadId = [myId, peerId].sort().join('_');
+                var threadId = T.getDmThreadId(myId, peerId); // [#TASK-ES-382 R] 대화방 화면·읽음 표시와 같은 id('dm_' 접두) — 예전엔 접두 없이 만들어 이 메시지가 대화방에서 빠졌다
                 var replyId = 'rep_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
 
                 await global.sb.from('team_pings').upsert({

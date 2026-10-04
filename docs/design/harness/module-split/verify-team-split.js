@@ -18,7 +18,13 @@ const MOVED = {
 const MAIN = 'js/team-invite-comm.js';
 const ALL = [].concat(...Object.values(MOVED));
 const read = f => fs.readFileSync(f, 'utf8').replace(/\r\n/g, '\n');
+// 옮기기와 같은 PR 의 의도한 수정(별도 지시 항목 R): 이전 전 글자에 같은 수정을 적용한 뒤 비교한다. 이 목록 밖의 차이는 실패다.
+const PATCHES = [
+  { fn: 'openFeedShareModal', from: "var threadId = [myId, peerId].sort().join('_');", to: 'var threadId = getDmThreadId(myId, peerId);', why: '#TASK-ES-382 R 피드 공유 DM 대화방 id 를 getDmThreadId 로' },
+];
+const readOrig = f => { let t = read(f); for (const p of PATCHES) { if (t.split(p.from).length !== 2) throw new Error('수정 전 글자 1곳 아님: ' + p.from); t = t.replace(p.from, p.to); } return t; };
 const norm = toks => {
+  toks = toks.filter(t => t.type !== 'CommentLine' && t.type !== 'CommentBlock');
   const vals = toks.map(t => (t.type.label === 'name' || t.type.keyword) ? String(t.value) : (t.value !== undefined ? t.type.label + ':' + String(t.value) : t.type.label));
   const out = [];
   for (let i = 0; i < vals.length; i++) {
@@ -30,7 +36,7 @@ const norm = toks => {
 const iifeBody = a => a.program.body[0].expression.callee.body.body;
 const topFns = a => { const m = {}; for (const x of iifeBody(a)) if (x.type === 'FunctionDeclaration') m[x.id.name] = x; return m; };
 // ① 글자
-const oast = parser.parse(read(ORIG), { sourceType: 'script', tokens: true });
+const oast = parser.parse(readOrig(ORIG), { sourceType: 'script', tokens: true });
 const ofns = topFns(oast);
 const equiv = [];
 for (const [f, names] of Object.entries(MOVED)) {
@@ -95,6 +101,7 @@ const globalsB = keys(before), globalsA = keys(after).filter(k => k !== 'Ourgoal
 const sameGlobals = JSON.stringify(globalsB) === JSON.stringify(globalsA);
 const scopeOk = [...exposed].every(n => after.OurgoalTeamCommKit.scope[n] !== undefined);
 const report = {
+  patchesApplied: PATCHES.map(p => p.fn + ': ' + p.why),
   equivalent: equiv.every(r => r.same), equiv, exposed: [...exposed].sort(), imported: [...imported].sort(), notImported, leftFunctionDefsInMain: leftDefs, files,
   usedT: [...usedT].sort(), notExposed, exposedUnused, usedK: [...usedK].sort(), kNotDefined,
   runtime: { apiKeys: apiA.length, sameApiKeysAndOrder: sameApi, movedFunctionsAreKitFunctions: movedSame, windowNamesBefore: globalsB.length, sameWindowNamesExceptKit: sameGlobals, newWindowNames: keys(after).filter(k => !globalsB.includes(k)), scopeGettersResolve: scopeOk },

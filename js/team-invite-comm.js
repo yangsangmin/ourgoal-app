@@ -25,6 +25,7 @@
     get _userCache(){ return _userCache; },
     get askConfirm(){ return askConfirm; },
     get ensureDefaultCompanions(){ return ensureDefaultCompanions; },
+    get getDmThreadId(){ return getDmThreadId; }, // [#TASK-ES-382 R] 피드 공유 DM 대화방 id
     get esc(){ return esc; },
     get isKnownAiCompanion(){ return isKnownAiCompanion; },
     get persistCompanions(){ return persistCompanions; },
