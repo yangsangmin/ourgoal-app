@@ -948,6 +948,13 @@ check('compliance: [#TASK-ES-351] 탈퇴 신청·복구·파기 모의 Supabase 
   assert.strictEqual(r.status, 0, 'test-account-purge.js 실패: ' + (r.stdout || '') + (r.stderr || ''));
 });
 
+/* ── [#TASK-ES-365] CORE-09 계정 전환 격리 ───────────────────── */
+check('compliance: [#TASK-ES-365] A 로그아웃 -> 같은 브라우저 B 로그인 시 B 화면·업로드에 A 데이터 0건(tests/account-switch-isolation.test.js)', () => {
+  const { spawnSync } = require('child_process');
+  const r = spawnSync(process.execPath, [path.join(__dirname, '..', 'tests', 'account-switch-isolation.test.js')], { encoding: 'utf8' });
+  assert.strictEqual(r.status, 0, 'account-switch-isolation.test.js 실패: ' + (r.stdout || '') + (r.stderr || ''));
+});
+
 check('compliance: [#TASK-ES-351] 탈퇴 버튼은 서버 요청 모드를 부르고, 로그인 복구 판정은 서버 기록을 읽는다', () => {
   const authSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'auth-safety.js'), 'utf8');
   const submit = html.slice(html.indexOf('async function submitWithdrawAccount()'), html.indexOf('function openWithdrawModal()'));
