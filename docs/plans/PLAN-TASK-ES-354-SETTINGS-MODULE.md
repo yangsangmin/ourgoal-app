@@ -15,7 +15,7 @@
 | `js/tabs/settings/render.js`, `sub-notify.js`, `sub-integrations.js`, `sub-data.js` | 신규 |
 | `js/tabs/settings/sub-profile.js`, `sub-security.js`, `sub-appearance.js` | 껍데기 → 실제 섹션 렌더 |
 | `js/tabs/settings/index.js` | 새 소블록 3개 등록 |
-| `scripts/smoke-test.js`, `scripts/verify-all-clicks.js` | 소스 글자를 index.html + 옮긴 파일 합본으로 읽음(기대값 그대로) |
+| `docs/architecture/modules.json`, `module-baseline.json` | CORE-08 세포 신고서 등록(설정 섹션 6개 contributes settings.section)·기준선 하향 (시험지 합본 읽기는 선행 PR #669) |
 | `docs/design/harness/module-split/*.js` | 신규 — 생성기·글자 검사 2종·설정 조작 비교 |
 | `docs/specs/MODULE-SPLIT-PROTOCOL.md`, REQ, 이 문서, `reports/TASK-ES-354/*` | 신규 |
 | `docs/rules/TICKETS.md`, `dev_log.md` | 한 줄 / 작업 기록 |

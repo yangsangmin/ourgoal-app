@@ -3,7 +3,7 @@
 - 근거: 노션 「아워골 UI/UX 대개편 작업 티켓 DB」 CORE-07(모듈 분할 공통 틀)·SET-07(설정 탭 모듈 이전). 상민님 원문 "이제 진짜 모듈화 진행해야지?"(2026-10-02), "모듈화부터 제대로 정착시켜야하지 않을까?"(2026-10-04). 상민님 질문 "800줄 블록화·모듈화가 알맞은 방향인가"에 대한 오케스트레이터 결론(2026-10-04: 줄 수가 아니라 책임 단위, 공용 부품 먼저, 탭 순서).
 - 참고만: `docs/specs/LEDGER-DESIGN-2026-10-04.md`(원장 설계 — 이번 범위 아님).
 - 틀 문서: `docs/specs/MODULE-SPLIT-PROTOCOL.md`.
-- 범위: `index.html`(설정 렌더 코드·공용 헬퍼 3개 삭제, IIFE 맨 위 가져오기·통로 노출, `<script>` 태그), `js/core/app-scope.js`·`js/core/ui-helpers.js`(신규), `js/tabs/settings/*`(render.js·sub-notify·sub-integrations·sub-data 신규, sub-profile·sub-security·sub-appearance 교체, index.js 등록 3줄), `scripts/smoke-test.js`·`scripts/verify-all-clicks.js`(소스 합본으로 읽기 — 기대값은 그대로), 도구 `docs/design/harness/module-split/`. 마크업(HTML)·CSS 는 옮기지 않았다.
+- 범위: `index.html`(설정 렌더 코드·공용 헬퍼 3개 삭제, IIFE 맨 위 가져오기·통로 노출, `<script>` 태그), `js/core/app-scope.js`·`js/core/ui-helpers.js`(신규), `js/tabs/settings/*`(render.js·sub-notify·sub-integrations·sub-data 신규, sub-profile·sub-security·sub-appearance 교체, index.js 등록 3줄), 세포 신고서 `docs/architecture/modules.json`·기준선 `module-baseline.json`(CORE-08), 도구 `docs/design/harness/module-split/`. 마크업(HTML)·CSS 는 옮기지 않았다.
 
 ## 1. [원칙 ①] 문제 정확히 파악 — 지시 원문(요지)
 
@@ -30,14 +30,14 @@
 - `js/tabs/settings/render.js`: `renderSettingsHeroCard`·`collapseAllSettingsSections`·`toggleAdvancedSettings`·`formatStorageBytes`·`paintCacheUsage`·`renderSettingsScreen`(머리 23줄 + 소블록 6개를 원래 순서로 `render(settings)`)·`bindSettingsHapticDelegate`(문서 클릭 햅틱 위임 1문)·`bindSettingsStaticHandlers`(체크인 시간 추가·테스트 알림·내보내기 2·가져오기 2, 6문). 키트 `window.OurgoalSettingsKit`.
 - 소블록(책임 단위): `sub-profile.js`(공개 범위·아바타 인사·활동 상태) · `sub-security.js`(계정 표시·비밀번호·앱 잠금 PIN·다른 기기 로그아웃) · `sub-notify.js`(체크인 시간·알림 센터·방해금지·유형별 알림) · `sub-appearance.js`(테마·고대비·글자 크기·데이터 절약) · `sub-integrations.js`(구글 캘린더·가상 페르소나·휴지통/차단·노션·잇템) · `sub-data.js`(AI 키·자동 제안·캐시·내보내기 형식·고객지원·고급 설정 햅틱). 각 `render(settings)` = 원래 구간 본문, `mount` = dispose 후 `false`(이전과 같은 폴백 경로), `dispose` = `offOwner('settings/<id>')`.
 - `index.html`: 지운 구간(이전 전 38632~39647줄) 자리에 `bindSettingsHapticDelegate()`·`window.collapseAllSettingsSections/toggleAdvancedSettings/paintCacheUsage = …`(원래 순서)·`bindSettingsStaticHandlers()` 만 남김. `<script>` 태그 6줄 추가.
-- 시험: `scripts/smoke-test.js` 가 소스 글자를 index.html 단일 파일로 보던 것을 "index.html + 옮긴 파일" 합본으로(검사 187곳의 `readFileSync(index.html)` → `APP_SRC`, 단위 시험 함수 추출은 `ui-helpers.js` 를 이어 붙임). `scripts/verify-all-clicks.js` 는 정적 `<button>` 추출·핸들러 탐색에 옮긴 파일을 더함. 기대값(통과 수·버튼 수)은 바꾸지 않았다.
+- 시험: 소스 합본 읽기는 선행 PR #669(TASK-ES-357)로 main 에 먼저 들어갔고, 이 PR 은 시험 파일을 바꾸지 않는다(main 과 같음).
 
 ## 4. [원칙 ④] 재검토 — 한계(정직하게)
 
 - 바뀐 내부 구조(화면에는 안 보임): 설정 메가블록에 등록된 소블록 3 → 6, 설정 소블록 3개가 걸던 `view:sync` 구독 3개(핸들러가 아무것도 그리지 않던 것)는 걸지 않는다. 화면·저장값 차이 0(8절).
 - 레지스트리 경유 그리기(메가블록이 직접 `renderSettingsScreen`)로 바꾸지 않았다 — 렌더가 예외를 던질 때 레지스트리가 삼키고 `setTab` 이 한 번 더 부르는 경로가 생겨 동작이 바뀌기 때문이다(별도 티켓).
 - 옮기며 발견한 기존 버그(고치지 않음, 별도 티켓): ① `renderSettingsScreen` 안 `var isAuto` 중복 선언 — 구글 캘린더 "자동 동기화" 스위치 클릭이 노션 자동 전송 값(`!!settings.notionAutoPush`)으로 뒤집는다 ② `js/components.js` 의 `win.renderSettingsScreen()` 5곳은 전역에 그 함수가 없어 늘 건너뛴다 ③ index.html 마크업 `#btnOpenDynamicAlbum` 의 인라인 onclick 은 전역 `renderSettingsScreen` 을 찾는다(설정 히어로 카드가 그려지면 `.onclick` 으로 덮여 실제로는 안 쓰임).
-- 기준 시험지(bb343d3 의 `scripts/smoke-test.js`)로 작업 커밋을 채점하면 index.html 한 파일에서 설정 코드 글자를 찾던 검사 13개가 깨진다(코드가 옮겨 갔으므로). 단언은 그대로이고 작업 커밋 시험지 합본에서는 통과한다. 주장 파일 `retire` 에 제목별 사유를 적었다 — 이 폐기는 판정서에 상민님 결심 사항으로 올라간다(승인선 ⑤ 규범·시험 기준 쪽). 시험 기대값을 낮춘 것은 없다.
+- 기준 시험지가 index.html 한 파일에서 설정 코드 글자를 찾던 검사 13개는, 선행 PR #669(TASK-ES-357, 시험지가 index.html + js/tabs/** + js/core/* 합본을 읽음 — 단언·기대값 그대로)가 main 에 들어간 뒤 그대로 통과한다. 그래서 이 PR 은 검사 폐기(retire) 0건이다(예비 점검으로 확인).
 - 측정은 게스트 시드·목 Supabase 화면이다. 로그인 사용자의 설정 화면(카카오·구글 계정 표시, 비밀번호 버튼 분기)은 같은 코드 경로지만 화면으로는 못 쟀다.
 
 ## 5. [원칙 ⑤] 절차

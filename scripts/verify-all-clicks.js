@@ -29,13 +29,22 @@ if (fs.existsSync(JS_DIR)) {
     allJs += '\n' + fs.readFileSync(path.join(JS_DIR, f), 'utf8');
   });
 }
-// #TASK-ES-354 CORE-07: 설정 탭 렌더 코드(버튼을 그리는 문자열·핸들러 배선)가 index.html 인라인 스크립트에서 아래 파일로 옮겨 갔다(동작 그대로).
-// 옮기기 전과 같은 범위를 재도록, 이 파일들은 '앱 마크업 소스'(정적 <button> 추출 대상)와 핸들러 소스 양쪽에 index.html 과 함께 넣는다.
-const MOVED_MODULES = ['js/core/app-scope.js', 'js/core/ui-helpers.js', 'js/tabs/settings/render.js', 'js/tabs/settings/sub-profile.js', 'js/tabs/settings/sub-security.js',
-  'js/tabs/settings/sub-notify.js', 'js/tabs/settings/sub-appearance.js', 'js/tabs/settings/sub-integrations.js', 'js/tabs/settings/sub-data.js'];
-const movedSrc = MOVED_MODULES.map(f => path.join(ROOT_DIR, f)).filter(p => fs.existsSync(p)).map(p => '\n' + fs.readFileSync(p, 'utf8')).join('');
-allJs += movedSrc;
-const markupSrc = html + movedSrc;
+// #TASK-ES-357 (CORE-07 준비): 탭 렌더 코드(버튼을 그리는 문자열·핸들러 배선)가 index.html 인라인 스크립트에서 js/tabs/<탭>/*.js · js/core/*.js 로 옮겨 가도(동작 그대로)
+// 같은 범위를 재도록, 앱 소스 합본 = index.html + js/tabs/**/*.js + js/core/*.js 를 정적 <button> 추출 대상과 핸들러 소스 양쪽에 쓴다(이전엔 index.html·js/ 바로 아래만).
+function listJsTree(dir, recursive) {
+  if (!fs.existsSync(dir)) return [];
+  const out = [];
+  for (const e of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))) {
+    const p = path.join(dir, e.name);
+    if (e.isFile() && e.name.endsWith('.js')) out.push(p);
+    else if (recursive && e.isDirectory()) out.push(...listJsTree(p, true));
+  }
+  return out;
+}
+const moduleSrc = [...listJsTree(path.join(JS_DIR, 'tabs'), true), ...listJsTree(path.join(JS_DIR, 'core'), false)]
+  .map(p => '\n' + fs.readFileSync(p, 'utf8')).join('');
+allJs += moduleSrc;
+const markupSrc = html + moduleSrc;
 const combinedJs = allJs;
 
 console.log('================================================================');

@@ -11,11 +11,22 @@ const assert = require('assert');
 
 const INDEX_HTML = path.join(__dirname, '..', 'index.html');
 const indexHtmlOnly = fs.readFileSync(INDEX_HTML, 'utf8');
-// #TASK-ES-354 CORE-07: 설정 탭 렌더 코드가 index.html 인라인 스크립트에서 js/tabs/settings/*.js 로 옮겨 갔다(동작 그대로).
-// 소스 글자 검사는 앱 소스 합본(index.html + 옮긴 설정 모듈)으로 본다 — ui.css 분리 때 styleSrc 를 합본으로 본 것과 같은 방식.
-const MOVED_MODULES = ['js/core/app-scope.js', 'js/core/ui-helpers.js', 'js/tabs/settings/render.js', 'js/tabs/settings/sub-profile.js', 'js/tabs/settings/sub-security.js', 'js/tabs/settings/sub-notify.js', 'js/tabs/settings/sub-appearance.js', 'js/tabs/settings/sub-integrations.js', 'js/tabs/settings/sub-data.js'];
-const html = indexHtmlOnly + MOVED_MODULES.map(function(f){ var p = path.join(__dirname, '..', f); return fs.existsSync(p) ? '\n' + fs.readFileSync(p, 'utf8') : ''; }).join('');
-// 검사마다 index.html 을 다시 읽던 곳도 같은 합본을 본다(#TASK-ES-354).
+// #TASK-ES-357 (CORE-07 준비): 탭 렌더 코드가 index.html 인라인 스크립트에서 js/tabs/<탭>/*.js · js/core/*.js 로 옮겨 가도(동작 그대로) 같은 단언이 같은 코드를 찾도록,
+// 소스 글자 검사는 '앱 소스 합본' = index.html + js/tabs/**/*.js + js/core/*.js 를 본다(ui.css 분리 때 styleSrc 를 합본으로 본 것과 같은 방식). 단언·기대값은 그대로다.
+// 인라인 <script> 문법 검사·순수 함수 추출(mainScript)은 index.html 한 파일에서만 한다.
+function listJsTree(dir, recursive) {
+  if (!fs.existsSync(dir)) return [];
+  const out = [];
+  for (const e of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))) {
+    const p = path.join(dir, e.name);
+    if (e.isFile() && e.name.endsWith('.js')) out.push(p);
+    else if (recursive && e.isDirectory()) out.push(...listJsTree(p, true));
+  }
+  return out;
+}
+const APP_MODULE_FILES = [...listJsTree(path.join(__dirname, '..', 'js', 'tabs'), true), ...listJsTree(path.join(__dirname, '..', 'js', 'core'), false)];
+const html = indexHtmlOnly + APP_MODULE_FILES.map(function (f) { return '\n' + fs.readFileSync(f, 'utf8'); }).join('');
+// 검사마다 index.html 을 다시 읽던 곳도 같은 합본을 본다.
 const APP_SRC = html;
 // 2026-09-12 UI v2: 스타일은 ui.css(외부)로 분리됐다. CSS 존재 검사는 html+css 합본으로 본다.
 const UI_CSS = path.join(__dirname, '..', 'ui.css');
@@ -39,7 +50,7 @@ function check(label, fn) {
 /* ============ 1. <script> 문법 검증 ============ */
 console.log('[1/2] index.html 인라인 <script> 문법 검증');
 
-const scriptMatches = [...html.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)]
+const scriptMatches = [...indexHtmlOnly.matchAll(/<script([^>]*)>([\s\S]*?)<\/script>/g)]
   .filter(m => !/\bsrc=/.test(m[1]))
   .map(m => m[2])
   .filter(code => code.trim().length > 0);
@@ -102,9 +113,7 @@ const FN_NAMES = [
   'getTemplateAdNoticeMessage', 'computeAdCountdownProgress', 'isTemplateRewardedAdEnabled',
 ];
 
-// #TASK-ES-354 CORE-07: 여러 탭 공용 순수 헬퍼(nowISO·triggerHaptic 등)는 js/core/ui-helpers.js 로 옮겨 갔다 — 인라인 스크립트 다음에 이어 붙여 같은 이름으로 찾는다.
-const UNIT_SRC = mainScript + '\n' + fs.readFileSync(path.join(__dirname, '..', 'js', 'core', 'ui-helpers.js'), 'utf8');
-const extracted = FN_NAMES.map(name => extractFunction(UNIT_SRC, name)).join('\n');
+const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
 
 const sandboxSrc =
   'var STREAK_FREEZE_MAX = 3;\n' +
