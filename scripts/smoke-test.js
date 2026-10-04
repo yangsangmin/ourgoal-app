@@ -2752,9 +2752,11 @@ check('compliance: [#TASK-ES-028] 계층형 테마(대·중·소) 온톨로지, 
 
   // 6. index.html 마크업 및 스크립트 로드 검증
   assert.ok(html.includes('js/theme-system.js'), 'index.html에 js/theme-system.js 스크립트 로드');
-  assert.ok(html.includes('id="captureThemeQuickBar"'), '즐겨찾기 퀵바 컨테이너 존재');
-  assert.ok(html.includes('id="themeSelectorModal"'), '테마 선택 바텀시트 모달 존재');
-  assert.ok(html.includes('id="customThemeInput"'), '나만의 테마 입력 필드 존재');
+  // #TASK-ES-367(SET-09, 상민님 승인 2026-10-04): 앱 테마 4종 모두에서 CSS 로 숨겨 열 수 없던 테마 선택 창·입구를 지웠다
+  assert.strictEqual(html.includes('id="captureThemeQuickBar"'), false, '숨겨진 즐겨찾기 퀵바(입구) 제거');
+  assert.strictEqual(html.includes('id="themeSelectorModal"'), false, '열 수 없던 테마 선택 바텀시트 모달 제거');
+  assert.strictEqual(html.includes('id="customThemeInput"'), false, '모달 안 나만의 테마 입력 필드 제거');
+  assert.strictEqual(html.includes('id="captureLiveTheme"'), false, '숨겨진 테마 배지(입구) 제거');
 
   // 7. api/feedback.js 동적 프롬프트 인젝터 검증
   const feedbackCode = fs.readFileSync(path.join(__dirname, '..', 'api', 'feedback.js'), 'utf8');
@@ -2918,7 +2920,8 @@ check('compliance: [#TASK-ES-033] 카카오/구글 로그인 충돌 방지, 세�
 check('compliance: [#TASK-ES-034] 기록 탭 버튼 상호작용 및 런타임 안정성(ReferenceError esc 방어, min-height 0, 정적 리스너)이 완비되어 있다', () => {
   // 1. ReferenceError esc 방지 및 escapeHtml 주입 검증
   assert.ok(!html.includes('esc: esc,'), '미선언 esc 전달 제거');
-  assert.ok(html.includes('esc: escapeHtml,'), '정상 escapeHtml 주입');
+  // escapeHtml 을 넘기던 유일한 곳(테마 창 초기화 OurgoalThemeSystem.initUI)은 #TASK-ES-367(SET-09, 상민님 승인 2026-10-04)에서 창과 함께 제거
+  assert.strictEqual(html.includes('OurgoalThemeSystem.initUI'), false, '열 수 없던 테마 창 초기화 호출 제거');
 
   // 2. CSS Grid 아코디언 min-height: 0 검증
   assert.ok(styleSrc.includes('.rec-acc-inner{overflow:hidden;padding:0;min-height:0;}'), '아코디언 축소 min-height 0');
@@ -3065,8 +3068,8 @@ check('compliance: [#TASK-ES-044] 홈·목표 12대 핵심 UX 개편 및 성장�
   assert.strictEqual(html.includes('id="quickRoutineRow"'), false, '오늘 기록하기 퀵 루틴 칩 행 제거 확인');
   assert.strictEqual(html.includes('id="micStatus"'), false, '듣고 있어요 안내 텍스트 요소 제거 확인');
 
-  // 3. +테마와 입력창 사이 테마 안내 문구
-  assert.ok(html.includes('(테마 : ai 분석 및 DB시각화에 활용됨)'), '테마 가이드 안내 문구 존재');
+  // 3. +테마와 입력창 사이 테마 안내 문구 — #TASK-ES-367(SET-09, 상민님 승인 2026-10-04)에서 숨겨진 +테마 퀵바와 함께 제거
+  assert.strictEqual(html.includes('(테마 : ai 분석 및 DB시각화에 활용됨)'), false, '숨겨진 +테마 퀵바 안내 문구 제거');
 
   // 4. (닉네임)님, 안녕하세요 우측 끝 '나만의 홈 구성' 버튼 및 모달 연동
   assert.ok(html.includes('id="btnCustomHomeLayout"'), '나만의 홈 구성 버튼 id 존재');
@@ -3137,9 +3140,9 @@ check('compliance: [#TASK-ES-045] 홈·기록 8대 핵심 UX 고밀도화 및 �
   assert.ok(html.includes('>내 성장 확인하기<'), '내 성장 확인하기 버튼 라벨');
   assert.ok(html.includes("challengeBtn.onclick = function(){ setTab('records'); };"), '내 성장 확인하기 클릭 시 기록 탭 이동 핸들러');
 
-  // 6. 테마 선택기 텍스트 색상 검은색(#111827) 전면 개편
-  assert.ok(styleSrc.includes('.theme-custom-input') && styleSrc.includes('#111827 !important'), '테마 인풋 검은색(#111827) 스타일 적용');
-  assert.ok(styleSrc.includes('.theme-leaf-chip') && styleSrc.includes('border-color: #D1D5DB !important'), '테마 칩 테두리 및 검은색 스타일 적용');
+  // 6. 테마 선택기 — #TASK-ES-367(SET-09, 상민님 승인 2026-10-04)에서 열 수 없던 창을 지웠으므로 그 창만 쓰던 스타일도 남지 않는다
+  assert.strictEqual(styleSrc.includes('.theme-custom-input'), false, '지운 테마 창 입력 스타일 제거');
+  assert.strictEqual(styleSrc.includes('.theme-leaf-chip'), false, '지운 테마 창 칩 스타일 제거');
 
   // 7. 나만의 홈 구성 버튼 밑에 안내문구 '필요없는 창 지우기' 추가
   assert.ok(html.includes('필요없는 창 지우기'), '필요없는 창 지우기 안내문구 마크업 존재');

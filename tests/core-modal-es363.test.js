@@ -154,7 +154,7 @@ function fakeCanon(log) {
       assert.ok(src.includes('var openModal = _modal.open, closeModal = _modal.close;'), f + ': 통로가 만든 함수 쌍');
     });
     const theme = require(path.join(ROOT, 'js/theme-system.js')).OurgoalThemeSystem;
-    assert.strictEqual(typeof theme.initUI, 'function');
+    assert.strictEqual(typeof theme.initUI, 'undefined', 'theme-system: 열 수 없던 테마 선택 창(initUI)은 #TASK-ES-367 에서 제거');
     const tt = fs.readFileSync(path.join(ROOT, 'js/time-tracker.js'), 'utf8');
     assert.ok(tt.includes('open: openTrackerOverlay,') && tt.includes('close: closeTrackerOverlay,'), 'OurgoalTimeTracker.open/close 키 그대로');
   });
