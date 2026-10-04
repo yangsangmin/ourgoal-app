@@ -140,7 +140,8 @@ function normLs(ls) {
     if (/^ph_/.test(k)) continue; // posthog 분석 SDK 상태(실행마다 무작위 id)
     let val = v;
     // 객체 키는 정렬해 적는다: 오늘의 미션 캐시처럼 비동기 응답이 도착한 순서대로 키가 쌓이는 값은 실행마다 키 순서가 달라진다(같은 앱 2회 실행에서도 — 아래 base-vs-base 로 확인)
-    try { const j = JSON.parse(v); val = JSON.stringify(sortKeys(j), (key, x) => (/(At|Time|time|_at|updated|ts)$/.test(key) && typeof x !== 'object') ? '<t>' : (key === 'hash' && typeof x === 'string') ? '<hash>' : x); } catch (e) {}
+    try { const j = JSON.parse(v); val = JSON.stringify(sortKeys(j), (key, x) => key === 'bonusCraftCredits' ? undefined : (/(At|Time|time|_at|updated|ts)$/.test(key) && typeof x !== 'object') ? '<t>' : (key === 'hash' && typeof x === 'string') ? '<hash>' : x); } catch (e) {}
+    // bonusCraftCredits(js/avatar-system.js 가 기본값을 채우는 설정 칸)는 첫 저장 전에는 부팅 속도에 따라 저장값에 있기도 없기도 하다 — 같은 기준 앱 2회 실행에서 처음 7단계가 달랐다(#TASK-ES-375 실측). 옮긴 코드와 무관한 칸이라 뺀다.
     // hash(목표 상태 요약 캐시의 computeGoalStatusHash 값)는 마일스톤 id 를 섞어 만든다 — 마일스톤 추가가 만든 id 가 시각+난수라 실행마다 다르다. 목표 내용 자체는 cal.goals 칸에서 id 만 지우고 맞댄다.
     o[k] = VOL(val);
   }

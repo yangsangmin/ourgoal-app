@@ -38,7 +38,7 @@
 
 ## 6. [원칙 ⑥] 절차 재검증 · 반론 격파
 
-- 반론 1: "함수 선언을 `var x = _goalsKit.x` 로 바꾸면 끌어올림(hoisting)이 사라져, IIFE 가 그 줄보다 먼저 이 함수를 부르면 `undefined` 를 부른다." → 가져오기 줄은 IIFE 머리(`"use strict";` 다음 이음매 묶음, 2555줄 근처)에 있고, 그보다 앞서 도는 문은 앞선 탭 이음매뿐이다(함수 호출 없음). 옮긴 함수들은 모두 사용자 조작(버튼)이나 그 콜백에서만 불린다. 1차 이음매 getter(`get openResultModal(){ return openResultModal; }`)는 읽을 때마다 가져온 var 를 돌려주므로 `goal-detail-events.js` 의 `L.openResultModal(…)` 은 이제 키트의 같은 함수를 부른다 — 게스트 조작 52단계에서 결과 모달·내보내기·보관 경로가 기준과 같은 값을 냈다.
+- 반론 1: "함수 선언을 `var x = _goalsKit.x` 로 바꾸면 끌어올림(hoisting)이 사라져, IIFE 가 그 줄보다 먼저 이 함수를 부르면 `undefined` 를 부른다." → 가져오기 줄은 IIFE 머리(`"use strict";` 다음 이음매 묶음, 2555줄 근처)에 있고, 그보다 앞서 도는 문은 앞선 탭 이음매뿐이다(함수 호출 없음). 옮긴 함수들은 모두 사용자 조작(버튼)이나 그 콜백에서만 불린다. 1차 이음매 getter(`get openResultModal(){ return openResultModal; }`)는 읽을 때마다 가져온 var 를 돌려주므로 `goal-detail-events.js` 의 `L.openResultModal(…)` 은 이제 키트의 같은 함수를 부른다 — 게스트 조작 59단계에서 결과 모달·내보내기·보관 경로가 기준과 같은 값을 냈다.
 - 반론 2: "함수 안에서 이름 없이 부르던 것(`renderGoalDetail`·`renderHomeGoals`)이 파일 스코프로 옮겨 가면 다른 것을 부를 수 있다." → 검사기 `verify-goals-2.js` 가 옮긴 파일의 접두 없는 이름 중 인라인 IIFE 바인딩과 겹치는 것(누수)이 0 임을 확인했다. 두 이름은 이전 전에도 IIFE 에 없는 이름이라(전역 조회 → 없음) 옮긴 뒤에도 같은 전역 조회다 — 오류도 같은 오류다(조작 비교 `rs-just-archive-ms` 단계에서 기준·후 모두 `ReferenceError: renderGoalDetail is not defined` 1건, 다른 값 0).
 - 반론 3: "게스트 시드는 `window.confirm` 을 늘 true 로 바꿔 두어 보관 확인창의 거절 경로를 못 잰다." → 조작 비교가 그 단계에서만 확인창 답을 정하는 대역을 걸어 거절(→ 바로 보관)·수락(→ 결과 입력 모달 → 저장 → 보관) 두 경로를 모두 눌렀고, 물은 글자까지 맞댔다.
 
@@ -55,8 +55,8 @@
 | 항목 | 도구 | 결과 |
 | :-- | :-- | :-- |
 | 글자 동일 | `verify-goals-2.js` | openResultModal 2,508 토큰·buildGoalSnapshot 452·goalSnapshotSummary 547·exportGoalSnapshot 131·archiveGoal 71·openGoalCertificateModal 480 전부 동일(L./K. 접두 제외), 누수 0·미노출 0·남은 정의 0·안 가져온 사용 0 (`verify-goals-2.json` `ok: true`) |
-| 조작 전후(게스트) | `dom-compare-goals-2.js` | 52단계(결과 모달 목표·마일스톤·할 일: 수동 입력 펼치기·빈 AI 정리·AI 정리·저장·빈 저장·취소·100% 저장 / 내보내기 md 하나·전체·json / 보관: 결과 있음 → 완주 인증서·이미지 저장, 확인창 거절 → 바로 보관, 확인창 수락 → 결과 입력 → 보관 / 결과 모달 '보관' 버튼 두 경로 / 다시 그리기) × 13칸(화면 HTML·모달·목표 상태·저장값·토스트·확인창 글자·내보낸 파일 글자 …) = 676값, 기준 대 후 다른 값 0, 기준 대 기준 0, 콘솔 오류 기준 1 = 후 1(같은 `ReferenceError` — 4절 결함 1). 지운 값: 시간·난수, 인증서 캔버스 PNG(같은 앱 2회에서도 바이트가 달라 자리표로) |
-| 탭 실측 | `tab-check.js … goals` 기준 2회·후 1회 → `tab-compare.js` | 아래 표 끝 줄(측정 후 채움) |
+| 조작 전후(게스트) | `dom-compare-goals-2.js` | 59단계(결과 모달 목표·마일스톤·할 일: 수동 입력 펼치기·빈 AI 정리·AI 정리·저장·빈 저장·취소·100% 저장, 앰비언트 카드 '완료 승인'·'완료 승인 및 보관' / 내보내기 md 하나·전체·json / 보관: 결과 있음 → 완주 인증서·이미지 저장, 확인창 거절 → 바로 보관, 확인창 수락 → 결과 입력 → 보관 / 결과 모달 '보관' 버튼 두 경로 / 다시 그리기) × 13칸(화면 HTML·모달·목표 상태·저장값·토스트·확인창 글자·내보낸 파일 글자 …) = 767값, 기준 대 후 다른 값 0, 기준 대 기준 0, 콘솔 오류 기준 1 = 후 1(같은 `ReferenceError` — 4절 결함 1). 지운 값: 시간·난수, 인증서 캔버스 PNG(같은 앱 2회에서도 바이트가 달라 자리표로), 저장값의 `bonusCraftCredits`(js/avatar-system.js 가 채우는 칸 — 첫 저장 전 부팅 속도에 따라 있기도 없기도 해 같은 기준 앱 2회에서 처음 7단계가 달랐다) |
+| 탭 실측 | `tab-check.js … goals` 기준 2회·후 1회 → `tab-compare.js` | 목표 탭 24장(4테마×2화면×3상태)+Dead-Click, 비교한 값 447 — 기준 1회 대 2회 0, 기준 1회 대 후 0, 기준 2회 대 후 0 |
 | 실계정 RA-GOALS-03 | `real-account-check.js --only RA-GOALS-03` | 운영(이전 전) 통과 · 로컬 127.0.0.2 + /api 운영 전달 기준 사본 통과 · 같은 방식 이 변경 통과(정리 goals 1행 삭제·남은 0, 세 번 모두). 주소·계정 가림 |
 | 실계정 로그인 상태 조작 | 작업자 보조 스크립트(같은 로컬 방식) | 계정 A·B 각각 22단계(표식 목표 만들기 → 마일스톤 추가 → 목표 결과 모달: 수동 펼치기·빈 AI 정리·AI 정리·저장 → 마일스톤 결과 100% 저장 → 다시 열기·취소 → 목표 100% 저장 → 내보내기 → 보관 → 완주 인증서 → 이미지 저장) × 10칸 = 220값, 다른 값 0. 콘솔 오류 기준 = 후(같은 종류: 정적 서버에 없는 자원 404·운영 API 400). 표식 목표 각 1개 만들고 지움, 남은 0 |
 | 화면 시나리오(법정 형식) | `court/lib/scenario.js` runScenario, 법정 정적 서버·무작위 호스트 | `goals-ms-result-modal-save`·`goals-export-snapshot`·`goals-archive-with-result` 기준·후 모두 통과, 약점 0 |
@@ -67,6 +67,6 @@
 
 폐기(retire) 청구 없음. 시험 기대값 변경 0. 동결 파일 변경 0.
 
-확인 못 함: 실제 폰(레벨 6), 구글 캘린더 연동, AI 실서버 응답(결과 모달의 'AI 정리'는 로컬 규칙 변환 `convertTextToNotionDbRecord` 경로), 공유 시트(`navigator.share` — 헤드리스에 없음), 앰비언트 1-Tap 버튼(`#ambientCheckinConfirmBtn` — 이번 시드 조건에서 그려지지 않음).
+확인 못 함: 실제 폰(레벨 6), 구글 캘린더 연동, AI 실서버 응답(결과 모달의 'AI 정리'는 로컬 규칙 변환 `convertTextToNotionDbRecord` 경로), 공유 시트(`navigator.share` — 헤드리스에 없음).
 
 * **체크리스트 마감 규칙**: 본 작업계획서는 [4단계: 심사 청구]까지만 등록함.

@@ -516,6 +516,38 @@
     ],
     "note": "공유하기(navigator.share)는 운영체제 공유 창이라 법정·헤드리스 도구가 열 수 없다. 작업자 실측은 인증서 창이 뜨고 이미지 저장 버튼이 '이미지를 저장했어요' 토스트를 내는 데까지(게스트 조작 비교·시나리오 goals-archive-with-result)."
    }
+  },
+  {
+   "id": "C33",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui",
+   "statement": "목표 탭 기준 실측 1회차와 후 실측 비교에서 비교한 값 447 중 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-375/tab-compare-base-run1-vs-after.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-375/tab-compare-base-run1-vs-after.json",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C34",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui",
+   "statement": "목표 탭 기준 실측 2회 사이(본질적 변동) 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-375/tab-compare-base-run1-vs-run2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-375/tab-compare-base-run1-vs-run2.json",
+    "path": "differingValues",
+    "equals": 0
+   }
   }
  ]
 }
