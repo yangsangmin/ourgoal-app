@@ -7,7 +7,7 @@
  *   2. 세션이 없으면 열지 않는다(needs-login) — 화면은 정식 로그인(카카오·구글·이메일)으로 안내한다.
  *   3. 예외 두 갈래는 기존 입장 방법을 없애지 않기 위해 남긴다:
  *      - Google 계정 인증(GIS)으로 확인된 이메일: 그 이메일에서 결정되는 uid(기기 백업을 훑지 않음).
- *      - 개발용 테스터 B 직통(호출자가 uid 를 명시, 운영 화면에서는 버튼이 제거됨).
+ *      - 개발용 테스터 B 직통(호출자가 uid 를 명시) — [#TASK-ES-372] 로컬 개발 호스트(devHost true)일 때만.
  *   이 기기의 다른 사람 백업 키를 훑어 uid 를 고르는 길은 어느 갈래에도 없다. */
 (function (root) {
   'use strict';
@@ -19,7 +19,7 @@
     return v !== undefined && v !== null && String(v) !== '';
   }
 
-  /* opt: { sessionUid, provider, verifiedEmail, explicitUid }
+  /* opt: { sessionUid, provider, verifiedEmail, explicitUid, devHost }
    * 돌려줌: { allow, uid, deriveFromEmail, reason } — uid 를 정할 수 없으면 allow=false, reason='needs-login' */
   function resolveDirectLoginTarget(opt) {
     var o = opt || {};
@@ -29,10 +29,23 @@
     if (o.provider === 'google' && present(o.verifiedEmail)) {
       return { allow: true, uid: null, deriveFromEmail: String(o.verifiedEmail).trim().toLowerCase(), reason: 'google-verified-email' };
     }
-    if (present(o.explicitUid)) {
+    if (present(o.explicitUid) && o.devHost === true) {
       return { allow: true, uid: String(o.explicitUid), deriveFromEmail: null, reason: 'explicit-tester' };
     }
     return { allow: false, uid: null, deriveFromEmail: null, reason: 'needs-login' };
+  }
+
+  /* [#TASK-ES-372] 개발용 직통 입장(테스터 B)은 로컬 개발 호스트에서만 연다.
+   * 결함(PR #686 빌더 발견): 운영 주소에 ?debug=true 를 붙이면 테스터 B 버튼이 보이고 인증 없이 테스터 B uid 로 들어갔다.
+   * 허용: localhost, 127.0.0.1, [::1], *.localhost. 그 밖(운영·미리보기 주소)은 쿼리와 상관없이 막는다. */
+  var LOCAL_DEV_HOSTS = ['localhost', '127.0.0.1', '[::1]', '::1'];
+  var LOCAL_DEV_SUFFIX = '.localhost';
+
+  function isLocalDevHost(hostname) {
+    var h = String(hostname || '').trim().toLowerCase().replace(/\.$/, '');
+    if (!h) return false;
+    if (LOCAL_DEV_HOSTS.indexOf(h) !== -1) return true;
+    return h.length > LOCAL_DEV_SUFFIX.length && h.slice(-LOCAL_DEV_SUFFIX.length) === LOCAL_DEV_SUFFIX;
   }
 
   /* 이 uid 의 백업 키 중 이 기기에 남아 있는 것(다른 uid 키는 보지 않는다) */
@@ -66,7 +79,8 @@
     NEEDS_LOGIN_MESSAGE: NEEDS_LOGIN_MESSAGE,
     resolveDirectLoginTarget: resolveDirectLoginTarget,
     ownBackupKeys: ownBackupKeys,
-    guideToFormalLogin: guideToFormalLogin
+    guideToFormalLogin: guideToFormalLogin,
+    isLocalDevHost: isLocalDevHost
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (root) root.OurgoalDirectLoginGuard = api;
