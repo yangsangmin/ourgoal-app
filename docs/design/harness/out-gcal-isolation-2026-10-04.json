@@ -1,0 +1,126 @@
+{
+  "task": "TASK-ES-345",
+  "ticket": "CAL-02",
+  "date": "2026-10-04",
+  "note": "예비 확인 도구 출력(판정 아님). 같은 스크립트를 수정 전(base: origin/main c634fc2)·수정 후(head: 작업 브랜치)에 돌린 결과.",
+  "env": "local static server + headless Chrome + guest seed + Supabase mock (no remote, no real account)",
+  "head": {
+    "measures": {
+      "M1_otherUidGetsNothing": {
+        "uid": "guest_demo",
+        "restoreResult": null,
+        "stateGoogleToken": null,
+        "getAccessTokenNonInteractive": null,
+        "settingsConnected": false,
+        "settingsEmail": "",
+        "isConnected": false,
+        "calendarShowsAliceEvent": false,
+        "calendarShowsAliceEmail": false,
+        "googleCallsWithAliceToken": 0,
+        "googleCallsTotal": 0
+      },
+      "M3_legacyKeysPurged": {
+        "tokenLast": null,
+        "emailLast": null,
+        "sharedEventsCache": null,
+        "aliceOwnKeyKept": true
+      },
+      "M4_noSettingsCopy": {
+        "storedConnected": false,
+        "storedHasAliceEmail": false,
+        "memoryConnected": false
+      },
+      "M2_ownerRoundTrip": {
+        "aliceRestores": "TOK_ALICE_SECRET",
+        "backToGuestInMemory": null,
+        "guestOwnRestores": "TOK_GUEST_OWN",
+        "aliceAfterGuestSave": "TOK_ALICE_SECRET",
+        "guestAgain": "TOK_GUEST_OWN",
+        "lastKeyWrittenBySave": null
+      },
+      "M5_guestToMemberOnce": {
+        "guestId": "guest_demo",
+        "movedToken": "TOK_GUEST_OWN",
+        "movedOwner": "u_newbie",
+        "guestKeyLeft": null,
+        "aliceUntouched": "TOK_ALICE_SECRET"
+      },
+      "M6_reconnectNotice": {
+        "uid": "guest_demo",
+        "tokenStatus": "expired",
+        "noticeText": "구글 캘린더 연결이 끊겼어요 · 다시 연결해 주세요",
+        "buttonText": "다시 연결",
+        "settingsTapFeedback": [
+          "구글 캘린더 연동에 실패"
+        ],
+        "calendarBadge": {
+          "text": "다시 연결",
+          "state": "expired",
+          "title": "구글 캘린더 연결이 끊겼어요 · 눌러서 다시 연결"
+        },
+        "calendarTapFeedback": [
+          "구글 캘린더 연동에 실패"
+        ]
+      }
+    },
+    "pageErrors": []
+  },
+  "base": {
+    "measures": {
+      "M1_otherUidGetsNothing": {
+        "uid": "guest_demo",
+        "restoreResult": "TOK_ALICE_SECRET",
+        "stateGoogleToken": "TOK_ALICE_SECRET",
+        "getAccessTokenNonInteractive": "TOK_ALICE_SECRET",
+        "settingsConnected": true,
+        "settingsEmail": "alice@example.com",
+        "isConnected": true,
+        "calendarShowsAliceEvent": true,
+        "calendarShowsAliceEmail": true,
+        "googleCallsWithAliceToken": 0,
+        "googleCallsTotal": 1
+      },
+      "M3_legacyKeysPurged": {
+        "tokenLast": "{\"accessToken\":\"TOK_ALICE_SECRET\",\"expiresAt\":1791093400222,\"email\":\"alice@example.com\",\"updatedAt\":1791089800222}",
+        "emailLast": "alice@example.com",
+        "sharedEventsCache": "[{\"id\":\"ev_alice\",\"title\":\"ALICE 비밀 일정\",\"summary\":\"ALICE 비밀 일정\",\"date\":\"2026-10-04\",\"start\":{\"date\":\"2026-10-04\"},\"end\":{\"date\":\"2026-10-04\"},\"kind\":\"gcal\"}]",
+        "aliceOwnKeyKept": true
+      },
+      "M4_noSettingsCopy": {
+        "storedConnected": true,
+        "storedHasAliceEmail": true,
+        "memoryConnected": true
+      },
+      "M2_ownerRoundTrip": {
+        "aliceRestores": "TOK_ALICE_SECRET",
+        "backToGuestInMemory": "TOK_ALICE_SECRET",
+        "guestOwnRestores": "TOK_ALICE_SECRET",
+        "aliceAfterGuestSave": "TOK_ALICE_SECRET",
+        "guestAgain": "TOK_ALICE_SECRET",
+        "lastKeyWrittenBySave": "{\"accessToken\":\"TOK_GUEST_OWN\",\"expiresAt\":1791093404852,\"email\":\"alice@example.com\",\"updatedAt\":1791089804853}"
+      },
+      "M5_guestToMemberOnce": {
+        "guestId": "guest_demo",
+        "movedToken": "TOK_GUEST_OWN",
+        "guestKeyLeft": "{\"accessToken\":\"TOK_GUEST_OWN\",\"expiresAt\":1791093404852,\"email\":\"alice@example.com\",\"updatedAt\":1791089804853}",
+        "aliceUntouched": "TOK_ALICE_SECRET"
+      },
+      "M6_reconnectNotice": {
+        "uid": "guest_demo",
+        "tokenStatus": "n/a",
+        "noticeText": null,
+        "buttonText": null,
+        "settingsTapFeedback": "button-missing",
+        "calendarBadge": {
+          "text": "연동됨",
+          "state": null,
+          "title": "구글 캘린더 연동됨 (me@example.com) · 클릭하여 지금 동기화"
+        },
+        "calendarTapFeedback": [
+          "구글 로그인 스크립트를 불러오는 중"
+        ]
+      }
+    },
+    "pageErrors": []
+  }
+}
