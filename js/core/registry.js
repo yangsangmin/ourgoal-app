@@ -107,9 +107,12 @@
 
       // 수밀 격벽: 개별 블록의 오류가 전역 애플리케이션으로 전파되지 않도록 완벽 격리
       try {
-        block.mount(el, state || (global.OurgoalStore ? global.OurgoalStore.getState() : {}), global.OurgoalEvents);
-        block.mounted = true;
-        return true;
+        const result = block.mount(el, state || (global.OurgoalStore ? global.OurgoalStore.getState() : {}), global.OurgoalEvents);
+        // #TASK-ES-353 CORE-04: 블록이 명시적으로 false(아무것도 못 그림)를 돌려주면 실패로 알려 호출자(setTab)가 폴백하게 한다.
+        // 메가블록은 소블록이 하나도 그리지 못하면 자체 폴백을 먼저 돈다. undefined 를 돌려주는 옛 마운트 함수는 성공으로 본다.
+        block.mounted = result !== false;
+        block.mountCount = (block.mountCount || 0) + 1;
+        return block.mounted;
       } catch (err) {
         const errorRecord = {
           blockId: id,

@@ -2692,8 +2692,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(themeId === 'dark') themeId = 'black';
     if(themeId === 'light' || themeId === 'system') themeId = 'white';
     if(['focus-sanctuary', 'black', 'white', 'urban-city'].indexOf(themeId) === -1) themeId = 'focus-sanctuary';
+    /* [#TASK-ES-353] 설정 저장(saveLocalSettings→applyAppSettings)마다 같은 테마로 불려 햅틱·활성 탭 재렌더가 반복되던 것 차단 — 실제로 바뀔 때만 */
+    var themeChanged = document.documentElement.getAttribute('data-theme') !== themeId;
     document.documentElement.setAttribute('data-theme', themeId);
-    try{ if(typeof triggerHaptic === 'function') triggerHaptic(12); } catch(e){}
+    if(themeChanged){ try{ if(typeof triggerHaptic === 'function') triggerHaptic(12); } catch(e){} }
     var found = THEMES.find(function(t){ return t.id === themeId; });
     if(found && found.metaColor){
       var meta = document.querySelector('meta[name="theme-color"]');
@@ -2701,7 +2703,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
     try{ localStorage.setItem('ourgoal_current_theme', themeId); } catch(e){}
     try{
-      if(typeof window !== 'undefined' && window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render && window.state && window.state.activeTab){
+      if(themeChanged && typeof window !== 'undefined' && window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render && window.state && window.state.activeTab){
         window.OurgoalSanctuaryV3.render(window.state.activeTab);
       }
     }catch(e){}
@@ -7784,9 +7786,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var targetScrollY = (window._tabScrollMemory && typeof window._tabScrollMemory[tab] === 'number') ? window._tabScrollMemory[tab] : 0;
       window.scrollTo({top: targetScrollY, behavior:'auto'});
 
-      if(window.OurgoalRegistry && window.OurgoalRegistry.isReady()){
-        window.OurgoalRegistry.mount(tab, document.getElementById('screen-' + tab), state);
-      } else {
+      /* [#TASK-ES-353] 레지스트리 마운트가 실패(false)하면 레거시 렌더로 폴백 */
+      var mountedByRegistry = !!(window.OurgoalRegistry && window.OurgoalRegistry.isReady() && window.OurgoalRegistry.mount(tab, document.getElementById('screen-' + tab), state));
+      if(!mountedByRegistry){
         if(tab==='home') renderHome();
         if(tab==='goals') renderGoalsScreen();
         if(tab==='calendar') renderCalendarScreen();
@@ -33281,8 +33283,9 @@ wirePromptEncyclopediaEvents(body);
     }
   }
 
-  function setRecordsSegment(seg){
-    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+  function setRecordsSegment(seg, silent){
+    /* [#TASK-ES-353] silent: 렌더가 상태 복원용으로 부를 때는 햅틱 없음(사용자가 누를 때만) */
+    if(!silent && typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
     state.recordsSegment = seg;
     var viewFeed = document.getElementById('recViewFeed');
     var viewStats = document.getElementById('recViewStats');
@@ -33306,8 +33309,8 @@ wirePromptEncyclopediaEvents(body);
     }
   }
 
-  function setRecordsSlide(idx){
-    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+  function setRecordsSlide(idx, silent){
+    if(!silent && typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
     state.recordsSlide = idx;
     var track = document.getElementById('recCarouselTrack');
     if(track){
@@ -33524,8 +33527,8 @@ wirePromptEncyclopediaEvents(body);
     }
 
     // 세그먼트 및 캐러셀 상태 동기화
-    setRecordsSegment(state.recordsSegment || 'feed');
-    setRecordsSlide(state.recordsSlide || 0);
+    setRecordsSegment(state.recordsSegment || 'feed', true);
+    setRecordsSlide(state.recordsSlide || 0, true);
 
     var segCountEl = document.getElementById('recSegCount');
     if(segCountEl) segCountEl.textContent = allRecs.length;
@@ -33547,7 +33550,7 @@ wirePromptEncyclopediaEvents(body);
       state.recordsSlide = 1;
       state.recordsSlideInit = true;
     }
-    setRecordsSlide(curSlide);
+    setRecordsSlide(curSlide, true);
 
     // 캐러셀 스와이프 제스처 지원 (모바일 PWA 터치 최적화)
     var vport = document.getElementById('recCarouselViewport');
@@ -39739,32 +39742,20 @@ wirePromptEncyclopediaEvents(body);
   function dispatchFullViewPropagation(specificViews){
     if(!state || !state.profile) return;
     var views = Array.isArray(specificViews) ? specificViews : ['home', 'records', 'stats', 'calendar'];
-    try {
-      if(views.includes('home') && typeof renderHome === 'function') renderHome();
-    } catch(e){ console.warn('[FullViewPropagation] renderHome error:', e); }
-    try {
-      if(views.includes('records') && typeof renderRecordsScreen === 'function') renderRecordsScreen();
-    } catch(e){ console.warn('[FullViewPropagation] renderRecordsScreen error:', e); }
-    try {
-      if(views.includes('stats')){
-        if(typeof renderStatsScreen === 'function') renderStatsScreen();
-        if(typeof universalStatsRender === 'function') universalStatsRender();
-      }
-    } catch(e){ console.warn('[FullViewPropagation] stats render error:', e); }
-    try {
-      if(views.includes('calendar')){
-        if(typeof renderCalendarScreen === 'function') renderCalendarScreen();
-        if(typeof renderCalendar === 'function') renderCalendar();
-      }
-    } catch(e){ console.warn('[FullViewPropagation] calendar render error:', e); }
-    try {
-      if(window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render && state.activeTab){
-        window.OurgoalSanctuaryV3.render(state.activeTab);
-      }
-    } catch(e){ console.warn('[FullViewPropagation] SanctuaryV3 render error:', e); }
-    try {
-      if(typeof checkGuestBackupNudge === 'function') checkGuestBackupNudge();
-    } catch(nudgeErr){}
+    var changeReason = (typeof specificViews === 'string') ? specificViews : null;
+    /* [#TASK-ES-353 CORE-04] 같은 틱 렌더 합치기: 영역별 렌더를 버스의 requestRender 로 모으고 끝에서 1회씩 그린다(view:sync 구독 소블록과 같은 키) */
+    var ev = window.OurgoalEvents;
+    var queueRender = function(key, fn){
+      if(ev && typeof ev.requestRender === 'function') ev.requestRender(key, fn);
+      else { try { fn(); } catch(e){ console.warn('[FullViewPropagation] ' + key + ' error:', e); } }
+    };
+    if(views.includes('home') && typeof renderHome === 'function') queueRender('renderHome', renderHome);
+    if(views.includes('records') && typeof renderRecordsScreen === 'function') queueRender('renderRecordsScreen', renderRecordsScreen);
+    if(views.includes('stats')){
+      if(typeof renderStatsScreen === 'function') queueRender('renderStatsScreen', renderStatsScreen);
+      if(typeof universalStatsRender === 'function') queueRender('universalStatsRender', universalStatsRender);
+    }
+    if(views.includes('calendar') && typeof renderCalendarScreen === 'function') queueRender('renderCalendarScreen', renderCalendarScreen);
     try {
       if(window.OurgoalStore && typeof window.OurgoalStore.setState === 'function'){
         window.OurgoalStore.setState({
@@ -39775,9 +39766,18 @@ wirePromptEncyclopediaEvents(body);
     } catch(storeErr){ console.warn('[FullViewPropagation] OurgoalStore error:', storeErr); }
     try {
       if(window.OurgoalEvents && typeof window.OurgoalEvents.emit === 'function'){
-        window.OurgoalEvents.emit('view:sync', { views: views, state: state });
+        window.OurgoalEvents.emit('view:sync', { views: views, state: state, reason: changeReason });
       }
     } catch(evErr){ console.warn('[FullViewPropagation] OurgoalEvents error:', evErr); }
+    if(ev && typeof ev.flushRenders === 'function') ev.flushRenders();
+    try {
+      if(window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render && state.activeTab){
+        window.OurgoalSanctuaryV3.render(state.activeTab);
+      }
+    } catch(e){ console.warn('[FullViewPropagation] SanctuaryV3 render error:', e); }
+    try {
+      if(typeof checkGuestBackupNudge === 'function') checkGuestBackupNudge();
+    } catch(nudgeErr){}
   }
   if(typeof window !== 'undefined'){
     window.dispatchFullViewPropagation = dispatchFullViewPropagation;

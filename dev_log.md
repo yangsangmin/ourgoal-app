@@ -5789,3 +5789,10 @@
 - **새로 확인한 결함(코드 읽기)**: 휴지통 서버값 미반영(`loadProfile` 의 `finalTrash` 미반환), `deadline` 읽기 2곳(목표만 보기 D-day 빈칸), `renderRoutineMatrixGrid` 가 쓰는 곳 없는 `profile.routines` 를 읽음, 목표 시작일 서버 미저장, 게스트 이전 checkins meta 누락, `OfflineSyncManager.flush()` 처리기 없이 대기열 삭제, 전체 백업 JSON 에 외부 키·PIN 해시 포함, 타인 레벨 늘 Lv.1.
 - **확인 못 함**: 운영 DB 칸·형, 휴지통 덮어쓰기·수호동물 손실의 실제 발생(호출 순서 추정).
 - **진행 단계**: [4단계: 심사 청구]
+## [2026-10-04 18:30] #TASK-ES-353: 변경 이벤트 단일화·리스너 중복 방지 (CORE-04, HOME-18·GOALS-22 흡수)
+- **목표**: 변경 1회에 탭마다 자기 영역만 1회 다시 그린다. 탭 재진입에도 구독 1개, 발행처 없는 구독 0, 미정의 renderCalendar 호출 0, 빈 소블록이면 폴백.
+- **수정**: `js/core/event-bus.js`(소유자 키·`offOwner`·`subscriptions`·`requestRender`/`flushRenders`·`EVENTS` 재정의·`CHANGE_DICTIONARY`), `js/core/registry.js`(false 면 실패), `js/tabs/*/index.js` 6개(그린 소블록만 셈·`lastMountDrew`), 소블록 18개(dispose·그렸는가·`view:sync` 1종 구독), `index.html`(setTab 폴백·전파기 합치기·renderCalendar 삭제·applyTheme 테마 바뀔 때만·기록 세그먼트 silent), js 6개 renderCalendar→renderCalendarScreen 52곳.
+- **측정(작업자 측정, 판정 아님 — reports/TASK-ES-353/measure-*.json)**: 탭 4종 각 10회 뒤 구독 347→12, 체크인 1회 렌더 기록 11→1·캘린더 11→1·목표 20→1·홈 1→1, 햅틱 호출 52→5, 할 일 체크 목표 렌더 6→1, 설정 진입 renderSettingsScreen 0→10/10, 유령 구독 23→0, renderCalendar 53→0, 콘솔 오류 0. npm test 0.
+- **확인 못 함**: 같은 계정 두 기기 반영(HOME-18), 실제 폰 체감, 통계 화면 촬영. EXP 원장 이원화는 CORE-03 실행 티켓 몫.
+- **진행 단계**: [4단계: 심사 청구]
+---
