@@ -131,7 +131,7 @@
     {
       "id": "C8",
       "req": "R3",
-      "kind": "withdrawn",
+      "kind": "static",
       "domain": "config",
       "statement": "구글 인증 이메일 입장은 막지 않고 그 이메일에서 정해지는 uid 로만 연다",
       "touches": [
@@ -141,8 +141,7 @@
         "type": "codeContains",
         "file": "js/direct-login-guard.js",
         "text": "return { allow: true, uid: null, deriveFromEmail: String(o.verifiedEmail).trim().toLowerCase(), reason: 'google-verified-email' };"
-      },
-      "withdrawnReason": "#TASK-ES-373(PR #688, CORE-14)로 대체 — 구글 이메일 갈래(google-verified-email)는 서명 검증 없는 이메일로 세션 없이 u_ uid 입장을 허용해 삭제했다. 구글 입장은 Supabase 검증 세션(signInWithIdToken/signInWithOAuth)으로만. 상민님 결정 2026-10-05 선택지 A."
+      }
     },
     {
       "id": "C9",
