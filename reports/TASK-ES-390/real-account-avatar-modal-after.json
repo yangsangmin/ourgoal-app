@@ -1,0 +1,65 @@
+{
+ "label": "after",
+ "runTag": "ogtest-es390-202610042148-c5sl",
+ "env": "local 127.0.0.2 static + /api forwarded to production (avatar-face·persona blocked) · test account A (address hidden)",
+ "steps": [
+  {
+   "name": "① 로그인(이메일)",
+   "ok": true,
+   "evidence": {
+    "loggedIn": true
+   }
+  },
+  {
+   "name": "① 서버 users.avatar_url 읽기(값은 기록 안 함)",
+   "ok": true,
+   "evidence": {
+    "hasValue": false,
+    "error": null
+   }
+  },
+  {
+   "name": "② 설정 → #btnSettingsQuickAvatar → 모달 열림",
+   "ok": true,
+   "evidence": {
+    "button": "clicked",
+    "modal": true
+   }
+  },
+  {
+   "name": "② 만화형 → 표식 카드 → 적용하기 → state·서버 users.avatar_url = 표식 (토스트·#avatarTypeToggle 사라짐은 참고값)",
+   "ok": true,
+   "evidence": {
+    "action": "saved",
+    "serverIsTag": true,
+    "serverError": null,
+    "toastOk": true,
+    "modalClosed": false,
+    "stateIsTag": true,
+    "typeCustom": true
+   }
+  },
+  {
+   "name": "③ 기기 사본 파기 → 새로고침 → state.profile.avatarUrl 이 서버에서 표식으로 되살아남",
+   "ok": true,
+   "evidence": {
+    "reloggedIn": true,
+    "restoredIsTag": true
+   }
+  },
+  {
+   "name": "④ 정리: 원래 값으로 되돌림 → 서버 users.avatar_url = 원래 값",
+   "ok": true,
+   "evidence": {
+    "sameAsOriginal": true,
+    "error": null
+   }
+  }
+ ],
+ "errors": 0,
+ "leftover": 0,
+ "summary": {
+  "ok": 6,
+  "failed": 0
+ }
+}
