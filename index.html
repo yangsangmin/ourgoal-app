@@ -2320,7 +2320,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   <script src="js/avatar-system.js?v=20260913-es054"></script>
   <script src="js/content-moderation.js"></script>
   <script src="js/auth-safety.js"></script>
-  <script src="js/universal-stats.js?v=20260914-es061d"></script>
+  <script src="js/stats-taxonomy.js?v=20261005-es392"></script><script src="js/stats-data-grid.js?v=20261005-es392"></script><script src="js/stats-lenses.js?v=20261005-es392"></script><script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
   <script src="js/record-ledger.js?v=20261004-es344"></script>
   <script src="js/account-isolation.js?v=20261004-es365"></script>
@@ -35626,6 +35626,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     try{
       if(!('serviceWorker' in navigator) || !('PushManager' in window)) return;
       if(!('Notification' in window) || Notification.permission!=='granted') return;
+      var pushSubToken = await getSupabaseAuthToken(); if(!pushSubToken) return; /* #TASK-ES-400 서버 구독은 로그인 세션 토큰으로만(게스트·세션 없음은 요청 안 함) */
       var reg = await navigator.serviceWorker.ready;
       var sub = await reg.pushManager.getSubscription();
       if(!sub){
@@ -35639,8 +35640,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
       var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul';
       await fetch('/api/push-subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + pushSubToken },
         body: JSON.stringify({
           userId: state.profile.id,
           subscription: sub.toJSON(),
@@ -35658,9 +35658,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(!sub) return;
       var endpoint = sub.endpoint;
       await sub.unsubscribe();
+      var pushUnsubToken = await getSupabaseAuthToken(); if(!pushUnsubToken) return;
       await fetch('/api/push-subscribe', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'DELETE', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + pushUnsubToken },
         body: JSON.stringify({ endpoint: endpoint })
       });
     } catch(e){ console.warn('Web Push 구독 해제 실패:', e); }
