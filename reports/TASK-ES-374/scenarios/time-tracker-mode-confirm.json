@@ -1,0 +1,31 @@
+{
+  "id": "time-tracker-mode-confirm",
+  "title": "게스트가 시간기록 스톱워치를 시작한 뒤 타이머 탭을 누르면 기본 확인창 대신 앱 바텀시트 확인창(같은 문구)이 시간기록 화면 위에 뜨고, 취소하면 스톱워치 그대로 · 확인하면 타이머로 바뀐다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "do": "click", "selector": "#recQuickDockBar button[onclick*=\"OurgoalTimeTracker\"]" },
+    { "expect": "visible", "selector": "#timeTrackerOverlay" },
+    { "do": "click", "selector": "#btnTtActionStart" },
+    { "do": "wait", "ms": 1200 },
+    { "do": "click", "selector": "#ttTabTimer" },
+    { "expect": "visible", "selector": "#modalOverlay.active #btnSheetConfirmOk" },
+    { "expect": "textContains", "selector": "#modalSheet .sheet-confirm-body p", "text": "현재 측정을 초기화하고 타이머로 변경하시겠습니까?" },
+    { "capture": "tt-confirm-sheet" },
+    { "do": "click", "selector": "#btnSheetConfirmCancel" },
+    { "expect": "notVisible", "selector": "#modalOverlay" },
+    { "expect": "hasClass", "selector": "#ttTabStopwatch", "className": "active" },
+    { "expect": "notHasClass", "selector": "#ttTabTimer", "className": "active" },
+    { "expect": "notVisible", "selector": "#ttTimerSetup" },
+    { "do": "click", "selector": "#ttTabTimer" },
+    { "expect": "visible", "selector": "#modalOverlay.active #btnSheetConfirmOk" },
+    { "do": "click", "selector": "#btnSheetConfirmOk" },
+    { "expect": "notVisible", "selector": "#modalOverlay" },
+    { "expect": "hasClass", "selector": "#ttTabTimer", "className": "active" },
+    { "expect": "visible", "selector": "#ttTimerSetup" },
+    { "expect": "noExceptions" }
+  ]
+}

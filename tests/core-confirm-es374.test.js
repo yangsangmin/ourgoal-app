@@ -1,0 +1,300 @@
+'use strict';
+// 공용 확인창 통로 시험 (#TASK-ES-374 · 기본 확인창 → 앱 바텀시트 1단계): js/core/confirm.js (능력 ui.confirm · ui.confirm.bind)
+// - 정본(index.html 이 단 window.openBottomSheetConfirm)이 있으면 그것으로 띄우고, 확인 → 동작 1회 · 취소 → 0회.
+// - 정본이 없으면 브라우저 기본 확인창(window.confirm)으로 떨어진다(동작 손실 방지).
+// - 문구는 호출부가 넘긴 그대로 본문으로 간다(정본이 innerHTML 로 넣으므로 글자 그대로 보이게 이스케이프만).
+// - 한 번에 하나만 띄우고 겹친 요청은 차례를 기다린다. 통로가 만든 함수가 주입 자리에 와도 재귀하지 않는다.
+// - 열린 정본 모달 안에서 띄우면 밑 모달 노드를 떼어 두었다가 확인창이 닫힌 뒤 같은 노드를 다시 붙이고 나서 결과를 돌려준다.
+// - 실제 호출부(js/customize.js 홈 구성 되돌리기)를 그대로 돌려 확인 → 되돌림 1회, 취소 → 0회를 잰다.
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+
+const ROOT = path.join(__dirname, '..');
+const caps = require(path.join(ROOT, 'js/core/capabilities.js'));
+const C = require(path.join(ROOT, 'js/core/confirm.js'));
+
+let n = 0;
+function clean() {
+  C.reset();
+  delete globalThis.openBottomSheetConfirm;
+  delete globalThis.confirm;
+  delete globalThis.document;
+  delete globalThis.openModal;
+  delete globalThis.MutationObserver;
+  delete globalThis.addEventListener;
+  delete globalThis.removeEventListener;
+}
+async function check(title, fn) {
+  clean();
+  await fn();
+  clean();
+  n++;
+  console.log('  ok · ' + title);
+}
+const tick = () => new Promise(r => setImmediate(r));
+
+// 정본 openBottomSheetConfirm 흉내: 받은 인자를 적어 두고, 시험이 확인/취소를 누르게 한다.
+function fakeSheetConfirm(log) {
+  const calls = [];
+  const fn = function (title, message, okText, cancelText, onOk, onCancel) {
+    log.push(['sheet', title, message, okText, cancelText]);
+    calls.push({ ok: onOk, cancel: onCancel });
+  };
+  fn.calls = calls;
+  return fn;
+}
+
+// 아주 작은 가짜 DOM (노드 이동·classList·style 만)
+function el(id) {
+  const node = {
+    id: id, parent: null, kids: [], style: {}, handlers: {},
+    classList: {
+      set: new Set(),
+      add(c) { this.set.add(c); node._mut(); }, remove(c) { this.set.delete(c); node._mut(); }, contains(c) { return this.set.has(c); }
+    },
+    get firstChild() { return this.kids[0] || null; },
+    appendChild(c) {
+      if (c.isFragment) { while (c.kids.length) this.appendChild(c.kids[0]); return c; }
+      if (c.parent) c.parent.removeChild(c);
+      c.parent = this; this.kids.push(c); return c;
+    },
+    removeChild(c) { const i = this.kids.indexOf(c); if (i >= 0) this.kids.splice(i, 1); c.parent = null; return c; },
+    _observers: [],
+    _mut() { this._observers.forEach(o => o()); }
+  };
+  return node;
+}
+function fakeDom() {
+  const overlay = el('modalOverlay');
+  const sheet = el('modalSheet');
+  const doc = {
+    getElementById(id) { return id === 'modalOverlay' ? overlay : id === 'modalSheet' ? sheet : null; },
+    createDocumentFragment() { const f = el('#frag'); f.isFragment = true; return f; }
+  };
+  return { overlay, sheet, doc };
+}
+
+(async () => {
+  console.log('[core/confirm] 공용 확인창 통로 시험');
+
+  await check('능력 등록: ui.confirm(화면) · ui.confirm.bind 를 core/confirm 세포가 준다', () => {
+    const d = caps.describe();
+    const a = d.find(x => x.name === 'ui.confirm');
+    const b = d.find(x => x.name === 'ui.confirm.bind');
+    assert.ok(a && a.cell === 'core/confirm' && a.sideEffect === 'screen', 'ui.confirm 기술');
+    assert.ok(b && b.cell === 'core/confirm', 'ui.confirm.bind 기술');
+    assert.strictEqual(caps.request('ui.confirm'), C.confirm);
+    assert.strictEqual(caps.request('ui.confirm.bind'), C.bind);
+  });
+
+  await check('정본 있음 · 확인을 누르면 뒤따르는 동작이 1회 실행되고, 본문은 넘긴 문구 그대로다', async () => {
+    const log = [];
+    const sheetFn = fakeSheetConfirm(log);
+    globalThis.openBottomSheetConfirm = sheetFn;
+    let nativeCalls = 0;
+    globalThis.confirm = function () { nativeCalls++; return true; };
+    const ask = C.bind(() => null);
+    let ran = 0;
+    const handler = async function () { if (!(await ask('이 마일스톤을 삭제할까요?'))) return; ran++; };
+    const p = handler();
+    await tick();
+    assert.strictEqual(ran, 0, '누르기 전에는 동작 0회');
+    assert.deepStrictEqual(log, [['sheet', '', '이 마일스톤을 삭제할까요?', '', '']]);
+    sheetFn.calls[0].ok();
+    await p;
+    assert.strictEqual(ran, 1, '확인 → 동작 1회');
+    assert.strictEqual(nativeCalls, 0, '기본 확인창은 뜨지 않는다');
+  });
+
+  await check('정본 있음 · 취소를 누르면 동작 0회', async () => {
+    const log = [];
+    const sheetFn = fakeSheetConfirm(log);
+    globalThis.openBottomSheetConfirm = sheetFn;
+    const ask = C.bind(() => null);
+    let ran = 0;
+    const p = (async function () { if (!(await ask('해당 기록을 삭제하시겠습니까?'))) return; ran++; })();
+    await tick();
+    sheetFn.calls[0].cancel();
+    await p;
+    assert.strictEqual(ran, 0, '취소 → 동작 0회');
+    assert.strictEqual(C.pending(), 0);
+  });
+
+  await check('정본 없음 · 브라우저 기본 확인창으로 떨어진다(같은 문구 1회, 결과 그대로)', async () => {
+    const seen = [];
+    globalThis.confirm = function (m) { seen.push(m); return seen.length === 1; };
+    const ask = C.bind(() => null);
+    let ran = 0;
+    const h = async function (m) { if (!(await ask(m))) return; ran++; };
+    await h('구글 캘린더 연동을 해제하시겠습니까?');
+    await h('홈 구성을 처음 상태로 되돌릴까요?');
+    assert.deepStrictEqual(seen, ['구글 캘린더 연동을 해제하시겠습니까?', '홈 구성을 처음 상태로 되돌릴까요?']);
+    assert.strictEqual(ran, 1, '기본 확인창 확인 → 1회, 취소 → 0회');
+  });
+
+  await check('정본도 기본 확인창도 없으면 동작하지 않는다(false)', async () => {
+    assert.strictEqual(await C.confirm('x'), false);
+  });
+
+  await check('문구에 꺾쇠·따옴표·줄바꿈이 있어도 글자 그대로 보이게 이스케이프만 하고 줄바꿈은 둔다', async () => {
+    const log = [];
+    const sheetFn = fakeSheetConfirm(log);
+    globalThis.openBottomSheetConfirm = sheetFn;
+    const p = C.confirm('정말 "<b>팀</b>" 조를 삭제할까요?\n(복구 불가)');
+    sheetFn.calls[0].cancel();
+    assert.strictEqual(await p, false);
+    assert.strictEqual(log[0][2], '정말 &quot;&lt;b&gt;팀&lt;/b&gt;&quot; 조를 삭제할까요?\n(복구 불가)');
+  });
+
+  await check('겹친 요청은 대기열에서 차례를 기다린다 — 첫째가 닫힌 뒤에 둘째를 띄운다', async () => {
+    const log = [];
+    const sheetFn = fakeSheetConfirm(log);
+    globalThis.openBottomSheetConfirm = sheetFn;
+    const p1 = C.confirm('첫째');
+    const p2 = C.confirm('둘째');
+    assert.strictEqual(log.length, 1, '둘째는 아직 안 뜬다');
+    assert.strictEqual(C.pending(), 2);
+    sheetFn.calls[0].ok();
+    assert.strictEqual(await p1, true);
+    assert.strictEqual(log.length, 2);
+    assert.strictEqual(log[1][2], '둘째');
+    sheetFn.calls[1].cancel();
+    assert.strictEqual(await p2, false);
+    assert.strictEqual(C.pending(), 0);
+  });
+
+  await check('bind: 주입 확인 함수가 있으면 그것을 쓰고, 통로 자신이 주입돼도 재귀 없이 정본으로 1회 간다', async () => {
+    const log = [];
+    const sheetFn = fakeSheetConfirm(log);
+    globalThis.openBottomSheetConfirm = sheetFn;
+    const injected = [];
+    const a = C.bind(() => function (m) { injected.push(m); return true; });
+    assert.strictEqual(await a('주입'), true);
+    assert.deepStrictEqual(injected, ['주입']);
+    assert.strictEqual(log.length, 0);
+    const self = C.bind(() => C.confirm);
+    const p = self('재귀 없음');
+    assert.strictEqual(log.length, 1);
+    sheetFn.calls[0].ok();
+    assert.strictEqual(await p, true);
+    globalThis.openBottomSheetConfirm = C.confirm;
+    globalThis.confirm = function () { return false; };
+    assert.strictEqual(await C.confirm('정본 자리에 통로 자신'), false, '자기 자신을 정본으로 보지 않고 기본 확인창으로');
+  });
+
+  await check('열린 정본 모달 안에서 띄우면 밑 모달 노드를 떼었다가 닫힌 뒤 같은 노드를 다시 붙이고, 그 다음에 동작한다', async () => {
+    const dom = fakeDom();
+    globalThis.document = dom.doc;
+    const under = el('kf1ResetBtn');
+    under.handlers.click = 'live';
+    dom.sheet.appendChild(under);
+    dom.overlay.classList.add('active');
+    let pop = null;
+    globalThis.addEventListener = function (t, f) { if (t === 'popstate') pop = f; };
+    globalThis.removeEventListener = function () {};
+    const reopened = [];
+    globalThis.openModal = function (html, onMount) { reopened.push(html); dom.overlay.classList.add('active'); onMount(dom.sheet); };
+    const log = [];
+    globalThis.openBottomSheetConfirm = function (t, m, ok, cancel, onOk, onCancel) {
+      log.push(m);
+      assert.strictEqual(dom.sheet.kids.length, 0, '확인창을 그리기 전 밑 모달 노드가 떼어져 있다');
+      assert.strictEqual(dom.overlay.style.zIndex, '2147483000', '확인창이 떠 있는 동안 맨 위 층');
+      dom.sheet.appendChild(el('btnSheetConfirmOk'));
+      log.onOk = onOk;
+    };
+    let ran = 0;
+    let sawUnder = null;
+    const p = (async function () { if (!(await C.confirm('홈 구성을 처음 상태로 되돌릴까요?'))) return; ran++; sawUnder = dom.sheet.kids[0]; })();
+    await tick();
+    dom.overlay.classList.remove('active'); // 정본 closeModal
+    log.onOk();
+    await tick();
+    assert.strictEqual(ran, 0, 'history.back 의 popstate 전에는 아직 동작하지 않는다');
+    pop();
+    await p;
+    assert.strictEqual(ran, 1, '확인 → 동작 1회');
+    assert.deepStrictEqual(reopened, [''], '밑 모달을 정본 openModal 로 1회 다시 연다');
+    assert.strictEqual(sawUnder, under, '동작할 때 시트에는 원래 노드(이벤트 연결 그대로)가 붙어 있다');
+    assert.strictEqual(under.handlers.click, 'live');
+    assert.strictEqual(dom.overlay.style.zIndex, '', '층 높이는 원래대로');
+  });
+
+  await check('✕·바깥 탭·뒤로가기로 닫히면(onOk/onCancel 없음) 취소로 보고 동작 0회', async () => {
+    const dom = fakeDom();
+    globalThis.document = dom.doc;
+    globalThis.MutationObserver = function (cb) {
+      this.observe = function (node) { node._observers.push(cb); this.node = node; };
+      this.disconnect = function () { if (this.node) this.node._observers = []; };
+    };
+    globalThis.openBottomSheetConfirm = function () { dom.overlay.classList.add('active'); };
+    let ran = 0;
+    const p = (async function () { if (!(await C.confirm('이 조언을 지울까요?'))) return; ran++; })();
+    await tick();
+    dom.overlay.classList.remove('active');
+    await p;
+    assert.strictEqual(ran, 0);
+  });
+
+  await check('정본이 그리지 못하면(#modalOverlay 가 안 열림) 기본 확인창으로 떨어진다', async () => {
+    const dom = fakeDom();
+    globalThis.document = dom.doc;
+    globalThis.openBottomSheetConfirm = function () { throw new Error('그리기 실패'); };
+    const seen = [];
+    globalThis.confirm = function (m) { seen.push(m); return true; };
+    const warn = console.warn; console.warn = function () {};
+    try { assert.strictEqual(await C.confirm('아워골 피드에 게시할까요?'), true); } finally { console.warn = warn; }
+    assert.deepStrictEqual(seen, ['아워골 피드에 게시할까요?']);
+  });
+
+  await check('실제 호출부 js/customize.js 홈 구성 되돌리기: 취소 → 되돌림 0회 · 확인 → 되돌림 1회', async () => {
+    const K = require(path.join(ROOT, 'js/customize.js'));
+    const log = [];
+    const sheetFn = fakeSheetConfirm(log);
+    globalThis.openBottomSheetConfirm = sheetFn;
+    const settings = { homeLayout: { hidden: ['todayMissionCard'], version: 1 } };
+    let saves = 0, closes = 0;
+    const buttons = {};
+    const sheet = { querySelectorAll() { return []; }, querySelector(sel) { return buttons[sel] || (buttons[sel] = {}); } };
+    K.open({ state: { profile: { settings } }, saveProfile() { saves++; }, toast() {}, closeModal() { closes++; }, openModal(html, cb) { cb(sheet); } });
+    const reset = buttons['#kf1ResetBtn'].onclick;
+    assert.strictEqual(typeof reset, 'function');
+    let p = reset();
+    await tick();
+    assert.strictEqual(log[0][2], '홈 구성을 처음 상태로 되돌릴까요?');
+    sheetFn.calls[0].cancel();
+    await p;
+    assert.deepStrictEqual(settings.homeLayout.hidden, ['todayMissionCard'], '취소 → 그대로');
+    assert.strictEqual(saves + closes, 0, '취소 → 저장·닫기 0회');
+    p = reset();
+    await tick();
+    sheetFn.calls[1].ok();
+    await p;
+    assert.deepStrictEqual(settings.homeLayout.hidden, [], '확인 → 되돌림');
+    assert.strictEqual(saves, 1, '확인 → 저장 1회');
+    assert.strictEqual(closes, 1, '확인 → 닫기 1회');
+  });
+
+  await check('index.html 밖 9개 파일에 기본 확인창 직접 호출이 없고 모두 ui.confirm.bind 를 부른다', () => {
+    const files = ['js/avatar-system.js', 'js/customize.js', 'js/reactions.js', 'js/tabs/settings/sub-integrations.js', 'js/team-invite-comm.js',
+      'js/team-linked-goals.js', 'js/team-visibility-levels.js', 'js/time-tracker.js', 'js/universal-stats.js'];
+    files.forEach(f => {
+      const src = fs.readFileSync(path.join(ROOT, f), 'utf8').split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l)).join('\n');
+      assert.ok(!/(?:^|[^.\w$])confirm\(|\bwindow\.confirm\(/.test(src), f + ': confirm( 직접 호출 없음');
+      assert.ok(src.includes("OurgoalCapabilities.request('ui.confirm.bind')"), f + ': 공용 확인창 통로 사용');
+    });
+  });
+
+  await check('index.html: 공용 확인창 통로가 공용 모달 통로 바로 다음, 호출부 파일보다 먼저 로드된다', () => {
+    const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+    const modal0 = html.indexOf('<script src="js/core/modal.js"></script>');
+    const conf0 = html.indexOf('<script src="js/core/confirm.js"></script>');
+    assert.ok(modal0 > 0 && conf0 > modal0, 'modal.js → confirm.js 순서');
+    ['js/tabs/settings/sub-integrations.js', 'js/reactions.js', '/js/customize.js', 'js/avatar-system.js', 'js/universal-stats.js'].forEach(f => {
+      const i = html.indexOf('src="' + f);
+      assert.ok(i > conf0, f + ' 는 confirm.js 뒤');
+    });
+  });
+
+  console.log('[core/confirm] ' + n + '건 통과');
+})().catch(e => { console.error(e); process.exitCode = 1; });

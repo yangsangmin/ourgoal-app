@@ -14,7 +14,7 @@
 
 (function(root){
   'use strict';
-
+  var askConfirm = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.confirm.bind')) ? OurgoalCapabilities.request('ui.confirm.bind') : typeof require === 'function' ? require('./core/confirm.js').bind : function(get){ return function(m){ var o = get(); return Promise.resolve(typeof o === 'function' ? o(m) : false); }; })(function(){ return null; });
   /* ================= 0. 헬퍼 유틸리티 ================= */
   function pad(n){ return n < 10 ? '0' + n : String(n); }
   function dateKey(d){ return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
@@ -3308,9 +3308,9 @@
       });
 
       containerEl.querySelectorAll('.u-tax-del-btn').forEach(function(btn){
-        btn.onclick = function(){
+        btn.onclick = async function(){
           var entName = btn.dataset.name;
-          if(!confirm('[' + entName + '] 스키마를 삭제하시겠습니까? (기존 기록은 안전 보존됩니다)')) return;
+          if(!(await askConfirm('[' + entName + '] 스키마를 삭제하시겠습니까? (기존 기록은 안전 보존됩니다)'))) return;
           customSchemas = customSchemas.filter(function(cs){ return cs.name !== entName; });
           if(state.profile) state.profile.customSchemas = customSchemas;
           if(callbacks.saveProfile) callbacks.saveProfile();
@@ -3618,9 +3618,9 @@
 
       var bulkDelBtn = modalContainer.querySelector('#uGridBulkDelBtn');
       if(bulkDelBtn){
-        bulkDelBtn.onclick = function(){
+        bulkDelBtn.onclick = async function(){
           var delIds = Object.keys(selectedRecIds);
-          if(!confirm('선택된 ' + delIds.length + '개 기록을 완전히 삭제하시겠습니까?')) return;
+          if(!(await askConfirm('선택된 ' + delIds.length + '개 기록을 완전히 삭제하시겠습니까?'))) return;
           if(state.profile && state.profile.records){
             state.profile.records = state.profile.records.filter(function(r){ return !selectedRecIds[r.id]; });
             allRecs = state.profile.records;
@@ -3633,9 +3633,9 @@
       }
 
       modalContainer.querySelectorAll('.u-grid-del-btn').forEach(function(btn){
-        btn.onclick = function(){
+        btn.onclick = async function(){
           var id = btn.dataset.id;
-          if(!confirm('해당 기록을 삭제하시겠습니까?')) return;
+          if(!(await askConfirm('해당 기록을 삭제하시겠습니까?'))) return;
           if(state.profile && state.profile.records){
             state.profile.records = state.profile.records.filter(function(r){ return r.id !== id; });
             allRecs = state.profile.records;
@@ -5518,7 +5518,7 @@
       // 0. 샘플 데이터 일괄 삭제/정화 안전망
       if(purgeBtn){
         purgeBtn.onclick = async function(){
-          if(!confirm('체험용으로 로드된 샘플 데이터 ' + sampleCount + '건만 삭제하시겠습니까?\n(회원님의 실제 기록은 100% 안전하게 보존됩니다)')) return;
+          if(!(await askConfirm('체험용으로 로드된 샘플 데이터 ' + sampleCount + '건만 삭제하시겠습니까?\n(회원님의 실제 기록은 100% 안전하게 보존됩니다)'))) return;
           var kept = curRecs.filter(function(r){ return !r.isSample; });
           if(state && state.profile) state.profile.records = kept;
           if(saveProfileFn) await saveProfileFn();
