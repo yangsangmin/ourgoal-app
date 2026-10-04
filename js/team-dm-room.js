@@ -386,17 +386,22 @@
             T.showToast('메시지를 전송했습니다! 💬');
 
             // [#TASK-ES-168] 상대방에게 Web Push 즉시 비동기 발송 (백그라운드/앱종료 수신 보장)
+            // #TASK-ES-397: 로그인 세션 Bearer 를 붙여 보낸다(예전엔 머리글 없이 나가 운영에서 401 — 푸시 0건). 토큰이 없으면 보내지 않는다
             try {
-              fetch('/api/push-dispatch', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  targetUserId: person.id,
-                  title: '💬 ' + myName + '님의 메시지',
-                  body: text,
-                  url: '/#comm',
-                  tag: 'dm-' + threadId
-                })
+              var dmLedger = global.OurgoalDmLedger;
+              Promise.resolve(dmLedger && dmLedger.getAuthToken ? dmLedger.getAuthToken() : null).then(function(pushToken){
+                if(!pushToken) return null;
+                return fetch('/api/push-dispatch', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + pushToken },
+                  body: JSON.stringify({
+                    targetUserId: person.id,
+                    title: '💬 ' + myName + '님의 메시지',
+                    body: text,
+                    url: '/#comm',
+                    tag: 'dm-' + threadId
+                  })
+                });
               }).catch(function(pErr){
                 console.warn('[DM] push dispatch fetch error (graceful):', pErr);
               });

@@ -1,0 +1,242 @@
+{
+ "task": "TASK-ES-397",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-397-DM-PUSH-AUTH.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "DM 대화방 전송(js/team-dm-room.js)과 피드 공유 DM(js/team-share.js)의 /api/push-dispatch 요청이 로그인 세션 Bearer 를 붙이고 받는 사람을 targetUserId 로 보낸다. 토큰이 없으면 보내지 않는다."
+  },
+  {
+   "id": "R2",
+   "text": "api/push-dispatch.js 즉시 발송 분기가 실제 사용자 토큰 + 최근 그 상대에게 보낸 DM 행이 있을 때만 사용자 요청을 받는다. 자기 자신·가짜 토큰·토큰 없음은 거절, 정기 발송 분기는 비밀값만."
+  },
+  {
+   "id": "R3",
+   "text": "부품 시험 기준 사본 실패 → 작업 통과, npm test 결과 기준과 같음, 실계정 실측 전후 기록."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "DM 대화방 전송의 푸시 요청 머리글에 로그인 세션 Bearer 가 붙는다",
+   "touches": [
+    "js/team-dm-room.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-dm-room.js",
+    "text": "'Authorization': 'Bearer ' + pushToken"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "피드 공유 DM 의 푸시 요청 머리글에 로그인 세션 Bearer 가 붙는다",
+   "touches": [
+    "js/team-share.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-share.js",
+    "text": "'Authorization': 'Bearer ' + pushToken"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "피드 공유 DM 의 푸시 요청 받는 사람 칸이 서버가 읽는 targetUserId 다",
+   "touches": [
+    "js/team-share.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-share.js",
+    "text": "targetUserId: peerId,"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "서버가 사용자 토큰 요청을 그 사용자가 최근 그 상대에게 보낸 DM 행으로 확인한다",
+   "touches": [
+    "api/push-dispatch.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "api/push-dispatch.js",
+    "text": ".eq('sender_id', userId).eq('receiver_id', targetUserId).gte('created_at', since).limit(1);"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "서버는 비밀값이 아닌 토큰으로 정기 발송 분기에 들어오면 401 로 끝낸다",
+   "touches": [
+    "api/push-dispatch.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "api/push-dispatch.js",
+    "text": "if (!isInstant) {"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "새 부품 시험이 npm test 경로(test-shipyard-modular Test 6)에 등록되어 있다",
+   "touches": [
+    "scripts/test-shipyard-modular.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "scripts/test-shipyard-modular.js",
+    "text": "runNode('tests/dm-push-auth-es397.test.js');"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "부품 시험이 작업 트리에서 12건 모두 통과로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-397/unit-work.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-397/unit-work.json",
+    "path": "failed",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "같은 부품 시험이 기준 사본(git archive d2e0dbb)에서는 8건 실패로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-397/unit-base.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-397/unit-base.json",
+    "path": "failed",
+    "equals": 8
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "수정 전 실계정 실측에서 대화방 전송 푸시 요청은 머리글 없이 나가 401 이었다",
+   "touches": [
+    "reports/TASK-ES-397/live-base.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-397/live-base.json",
+    "path": "steps.3.evidence.requests.0.status",
+    "equals": 401
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "수정 후 실계정 실측에서 피드 공유 푸시 요청은 Bearer 를 붙이고 targetUserId 를 B 로 보냈다",
+   "touches": [
+    "reports/TASK-ES-397/live-work-prodapi.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-397/live-work-prodapi.json",
+    "path": "steps.5.evidence.requests.0.targetUserIdIsPeer",
+    "equals": true
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R2",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "배포 뒤 테스트 계정 A 가 B 에게 DM 을 보내면 /api/push-dispatch 가 2xx 로 받고 B 기기에 알림이 온다",
+   "touches": [
+    "api/push-dispatch.js",
+    "js/team-dm-room.js",
+    "js/team-share.js"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "병합·배포 뒤 테스트 계정 A·B 환경 변수가 있는 세션(docs/design/harness/real-account-dm-push.js) 또는 상민님",
+    "how": [
+     "병합·운영 배포 확인",
+     "node docs/design/harness/real-account-dm-push.js <앱 폴더> after-deploy <결과.json> — 환경 변수는 자식 프로세스에만",
+     "① 대화방 전송 ② 피드 공유 요청 응답 코드가 2xx 인지 본다(B 구독이 있으면 sent ≥ 1)"
+    ],
+    "note": "서버 변경은 병합 전이라 운영 /api 에 없다. 수정 후 운영 실측은 앱 요청 형태만 바뀐 것을 보였고 응답은 예전 서버의 401 unauthorized 였다(reports/TASK-ES-397/live-work-prodapi.json)."
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "앱이 고친 대화방 전송 파일을 새 버전 꼬리로 읽어 예전 캐시를 쓰지 않는다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "js/team-dm-room.js?v=20261005-es397"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "새 부품 시험이 피드 공유 실제 요청의 받는 사람 칸이 targetUserId 인지 맞대어 본다",
+   "touches": [
+    "tests/dm-push-auth-es397.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/dm-push-auth-es397.test.js",
+    "text": "assert.strictEqual(sharePushes[0].body.targetUserId, PEER, 'targetUserId = 받는 사람');"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "ES-396 시험이 브라우저와 같은 순서로 로그인 세션 통로 dm-ledger.js 를 먼저 읽는다(단언·기대값 그대로)",
+   "touches": [
+    "tests/feed-share-dm-push-tag-es396.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/feed-share-dm-push-tag-es396.test.js",
+    "text": "const files = ['js/tabs/comm/dm-ledger.js'].concat("
+   }
+  }
+ ]
+}
