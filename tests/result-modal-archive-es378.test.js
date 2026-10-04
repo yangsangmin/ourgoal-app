@@ -136,4 +136,4 @@ function newGoal() {
   });
 
   console.log('결과 입력 창 「보관」 시험 ' + n + '건 통과');
-})().catch(function (e) { console.error(e && e.stack || e); process.exit(1); });
+})().catch(function (e) { console.error(e && e.stack || e); process.exitCode = 1; });
