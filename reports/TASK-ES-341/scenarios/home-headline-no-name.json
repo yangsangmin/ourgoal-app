@@ -1,0 +1,14 @@
+{
+  "id": "home-headline-no-name",
+  "title": "닉네임이 없는 게스트의 홈 헤드라인에 하드코딩 이름(상민)이 붙지 않고 이름 없는 문장으로 나온다",
+  "steps": [
+    { "do": "setViewport", "width": 375, "height": 812 },
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "expect": "visible", "selector": "#homeHeadlineSentence", "timeoutMs": 15000 },
+    { "expect": "textEquals", "selector": "#homeHeadlineSentence", "text": "가슴 뛰는 첫 번째 목표를 시작해볼까요? 🌱" },
+    { "capture": "home-headline-no-name" },
+    { "expect": "noExceptions" }
+  ]
+}
