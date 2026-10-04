@@ -501,14 +501,15 @@
       "req": "R1",
       "kind": "static",
       "domain": "config",
-      "statement": "모듈 가드 기준선을 이 변경 기준으로 갱신했다",
+      "statement": "모듈 가드 기준선에 이 변경(64c187c) 기준 항목이 있고, 그 항목의 800줄 넘는 파일 수가 9 다(main 합친 뒤 다시 만든 기준선)",
       "touches": [
         "docs/architecture/module-baseline.json"
       ],
       "check": {
-        "type": "codeContains",
-        "text": "\"commit\": \"259fd11\",",
-        "file": "docs/architecture/module-baseline.json"
+        "type": "jsonPath",
+        "file": "docs/architecture/module-baseline.json",
+        "path": "history.17.metrics.oversizeJsFiles.count",
+        "equals": 9
       }
     },
     {
