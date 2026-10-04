@@ -179,6 +179,8 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/dm-push-auth-es397.test.js');
   // #TASK-ES-400 /api/push-subscribe POST·DELETE 로그인 토큰 필수(없음 401·남의 userId 403·본인 200) · 앱 두 요청 Bearer, 세션 없으면 0건
   runNode('tests/push-subscribe-auth-es400.test.js');
+  // #TASK-ES-399 일반 로그아웃은 이 기기만(scope local) · 서버가 지운 세션('Auth session missing!'·401)은 로그아웃 화면으로 · 네트워크 오류·60초 유예는 그대로
+  runNode('tests/logout-scope-es399.test.js');
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
 

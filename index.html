@@ -5641,7 +5641,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     // [보호 2] 미로그인 상태에서 구글 로그인 시도:
     // 기존 카카오 계정 오염 및 세션 파괴를 원천 차단하고, 구글 직접 진입 및 카카오 데이터 연동 듀얼 옵션 제공
     var isAccountConflict = true;
-    try { await sb.auth.signOut(); } catch(e){}
+    try { await sb.auth.signOut({ scope: 'local' }); } catch(e){}
 
     openModal(
       '<div style="text-align:center;padding:16px 8px;">' +
@@ -5823,7 +5823,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       try {
         var existingSession = await sb.auth.getSession();
         if(existingSession && existingSession.data && existingSession.data.session){
-          await sb.auth.signOut();
+          await sb.auth.signOut({ scope: 'local' });
         }
       } catch(e){}
       setDeviceLoginTime(Date.now());
@@ -6253,8 +6253,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }catch(e){}
   }
   async function performLogout(reasonMsg){
-    try { updateAppBadge(0); } catch(e){}
-    try { await sb.auth.signOut(); } catch(e){}
+    try { updateAppBadge(0); } catch(e){} try { if(typeof removePushSubscription === 'function') await Promise.race([removePushSubscription(), new Promise(function(r){ setTimeout(r, 3000); })]); } catch(e){} /* #TASK-ES-399 로그아웃 전(세션 있을 때) 이 기기 푸시 구독을 서버에서 해제 — 남으면 로그아웃한 기기로 이전 사용자 알림이 온다. 서비스 워커가 없으면 3초 뒤 그대로 진행 */
+    try { await sb.auth.signOut({ scope: 'local' }); } catch(e){} /* #TASK-ES-399 이 기기만 — 기본값 global 은 같은 계정의 다른 기기까지 끊는다. 다른 기기는 openLogoutOtherDevicesConfirmModal(others) */
     try { state.googleToken = null; sessionStorage.removeItem('ourgoal_google_token'); } catch(e){}
     try { if(window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect(); } catch(e){}
     try {
@@ -6281,11 +6281,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       // 방금 로그인한 직후(60초 이내)에는 토큰 동기화 및 일시적 지연으로 인한 세션 튕김 오탐 방어
       if(Date.now() - myLogin < 60000) return false;
 
-      // 1. Supabase Auth 사용자 세션 유효성 검사 (명백한 JWT 무효/만료 에러일 때만 로그아웃)
+      // 1. Supabase Auth 사용자 세션 유효성 검사 (명백한 JWT 무효/만료·서버가 세션을 지운 'Auth session missing!'·401 일 때만 로그아웃 — #TASK-ES-399)
       var uRes = await sb.auth.getUser();
       if(uRes && uRes.error){
         var eMsg = String(uRes.error.message || '').toLowerCase();
-        if(eMsg.indexOf('jwt') !== -1 || eMsg.indexOf('invalid') !== -1 || eMsg.indexOf('expired') !== -1){
+        if(eMsg.indexOf('jwt') !== -1 || eMsg.indexOf('invalid') !== -1 || eMsg.indexOf('expired') !== -1 || eMsg.indexOf('session missing') !== -1 || Number(uRes.error.status) === 401){
           await performLogout('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
           return true;
         }
@@ -6534,7 +6534,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       updateAppBadge(0);
       if(state.notifyTimer){ clearInterval(state.notifyTimer); state.notifyTimer=null; }
 
-      await sb.auth.signOut();
+      await sb.auth.signOut(); /* #TASK-ES-399 탈퇴는 의도적으로 기본값 global — 탈퇴 신청한 계정의 모든 기기 세션을 끝낸다(30일 안에 다시 로그인하면 복구) */
       state.profile = null;
 
       closeWithdrawModal();
@@ -35896,7 +35896,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
   function openLoginRescueModal(customNotice){
     try {
-      sb.auth.signOut();
+      sb.auth.signOut({ scope: 'local' });
       for(var ki = localStorage.length - 1; ki >= 0; ki--){
         var lk = localStorage.key(ki);
         if(lk && (lk.indexOf('sb-') === 0 || lk === 'ourgoal_guest_profile')) localStorage.removeItem(lk);
@@ -35947,7 +35947,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   async function rescueLoginSession(){
     try {
       toast('로그인 상태를 깨끗이 정리하고 재시도 중입니다…');
-      await sb.auth.signOut();
+      await sb.auth.signOut({ scope: 'local' });
     } catch(e){}
     try {
       sessionStorage.clear();
@@ -36031,7 +36031,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       if(authErr){
         var decoded = decodeURIComponent(authErr.replace(/\+/g, ' '));
         console.warn('OAuth 인가 오류 감지:', decoded);
-        try { await sb.auth.signOut(); } catch(e){}
+        try { await sb.auth.signOut({ scope: 'local' }); } catch(e){}
         if(window.history && window.history.replaceState){
           window.history.replaceState(null, '', window.location.pathname);
         }
@@ -36065,7 +36065,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         var ok = await restoreSessionAndEnter(session);
         if(ok) return;
       } else if(isOAuthCallback){
-        try { await sb.auth.signOut(); } catch(e){}
+        try { await sb.auth.signOut({ scope: 'local' }); } catch(e){}
         if(window.history && window.history.replaceState) window.history.replaceState(null, '', window.location.pathname);
         openLoginRescueModal('카카오톡 인앱 브라우저 세션 지연이 발생했습니다. 닉네임이나 이메일을 입력하시면 즉시 내 데이터를 불러와 입장하실 수 있습니다!');
       }
