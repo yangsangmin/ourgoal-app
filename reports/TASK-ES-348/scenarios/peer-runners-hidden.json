@@ -1,0 +1,59 @@
+{
+  "id": "peer-runners-hidden",
+  "title": "같은 분야 실제 회원 데이터가 없는 게스트의 첫 체크인 축하 창에 하드코딩 동류 러너(이름·연속일수)가 나오지 않고, 축하 창 버튼은 그대로 보인다",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 375,
+      "height": 812
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#captureInput",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#captureInput"
+    },
+    {
+      "do": "type",
+      "selector": "#captureInput",
+      "text": "아침 러닝 5km 완료"
+    },
+    {
+      "do": "click",
+      "selector": "#captureSave"
+    },
+    {
+      "expect": "visible",
+      "selector": "#firstCheckinCommBtn",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "neverVisible",
+      "selector": "#modalSheet",
+      "text": "함께 달리는 동류 러너",
+      "forMs": 1500
+    },
+    {
+      "expect": "visible",
+      "selector": "#firstCheckinDoneBtn"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

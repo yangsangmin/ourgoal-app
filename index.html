@@ -1408,17 +1408,17 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             <span style="font-size:1.1rem;">🛡️</span>
             <span style="font-weight:700;font-size:0.95rem;color:var(--ink);">계정 보안 1초 조망</span>
           </div>
-          <span class="badge-2fa-status" id="badge2faStatus">✓ 2단계 인증 보호 중</span>
+          <span class="badge-2fa-status" id="badge2faStatus">앱 잠금 PIN 확인 중…</span>
         </div>
-        <div style="font-size:0.82rem;color:var(--ink-soft);margin-bottom:12px;">현재 1개의 활성 세션이 연결되어 있으며, 모든 통신이 암호화되어 안전합니다.</div>
+        <div id="securityCardSummary" style="font-size:0.82rem;color:var(--ink-soft);margin-bottom:12px;">이 화면은 지금 쓰는 이 기기만 보여 줘요. 다른 기기의 접속 목록·위치는 수집하지 않아요.</div>
         
         <!-- [#UIUX-55] [DEVICE-KILLSWITCH] 연결된 기기 5대 식별 앵커 & 원격 차단 -->
         <div class="device-session-item">
           <div>
-            <div style="font-size:0.85rem;font-weight:700;color:var(--ink);">📱 모바일 기기 (현재 기기)</div>
-            <div style="font-size:0.75rem;color:var(--ink-soft);">최근 활동: 방금 전 · 서울, 대한민국</div>
+            <div id="securityCardDeviceName" style="font-size:0.85rem;font-weight:700;color:var(--ink);">이 기기 (지금 사용 중)</div>
+            <div style="font-size:0.75rem;color:var(--ink-soft);">위치 정보는 수집하지 않아요</div>
           </div>
-          <button id="btnDeviceKillSwitch" class="btn-device-killswitch" type="button" onclick="killDeviceSession()">원격 차단</button>
+          <button id="btnDeviceKillSwitch" class="btn-device-killswitch" type="button" onclick="killDeviceSession()">다른 기기 로그아웃</button>
         </div>
         <div style="margin-top:10px;display:flex;justify-content:flex-end;">
           <button id="btnSettingsSecurityRefresh" class="btn-security-refresh" type="button" onclick="refreshSecurityStatus()">🔄 보안 상태 점검</button>
@@ -1459,13 +1459,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       <!-- [그룹 1] 👤 계정 & 프로필 -->
       <details class="settings-group-accordion toss-settings-group" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
-        <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
+        <summary id="setGroupAccountSummary" style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
           <div style="display:flex;flex-direction:column;gap:3px;">
             <div style="display:flex;align-items:center;gap:8px;">
               <span style="font-size:1.15rem;">👤</span>
               <span>계정 & 프로필</span>
             </div>
-            <span class="faint" style="font-size:.75rem;font-weight:400;margin-left:26px;">프로필, 소셜 로그인 연동, 320종 아바타, 2단계 인증</span>
+            <span class="faint" style="font-size:.75rem;font-weight:400;margin-left:26px;">프로필, 소셜 로그인 연동, 320종 아바타, 앱 잠금 PIN</span>
           </div>
           <span class="faint" style="font-size:.78125rem;">접기/펼치기 ▾</span>
         </summary>
@@ -1526,21 +1526,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         </div>
         <button class="btn btn-ghost btn-sm btn-block" id="btnChangePassModal" type="button" style="margin-bottom:12px;font-size:.8125rem;">비밀번호 변경</button>
         <div class="toggle-row">
-          <div class="t">2단계 인증 (2FA) 보안 로그인</div>
+          <div class="t">앱 잠금 PIN (이 기기)</div>
           <div class="switch" id="twoFactorSwitch"></div>
         </div>
         <div id="twoFactorPinControls" style="display:none;margin-top:6px;padding:8px 12px;background:var(--card2);border-radius:10px;justify-content:space-between;align-items:center;">
-          <span class="faint" style="font-size:.78rem;">🔐 보안 PIN 4자리 활성화됨</span>
+          <span class="faint" style="font-size:.78rem;">🔐 이 기기에 앱 잠금 PIN 4자리 설정됨</span>
           <button class="btn btn-ghost btn-sm" id="btnChange2FaPin" type="button" style="font-size:.75rem;padding:3px 8px;">PIN 변경</button>
         </div>
         <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--rule);">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-            <div style="font-size:.875rem;font-weight:700;">활성 로그인 기기 및 세션</div>
-            <span class="faint" style="font-size:.75rem;" id="activeDeviceCountBadge">실시간 확인 중…</span>
+            <div style="font-size:.875rem;font-weight:700;">로그인 기기 및 세션</div>
+            <span class="faint" style="font-size:.75rem;" id="activeDeviceCountBadge">이 기기만 표시</span>
           </div>
-          <p class="faint" style="margin:0 0 8px;font-size:.78125rem;">현재 계정으로 로그인된 기기 목록입니다. 의심스러운 기기는 즉시 원격 로그아웃할 수 있어요.</p>
+          <p class="faint" style="margin:0 0 8px;font-size:.78125rem;">아워골은 다른 기기의 접속 목록을 수집하지 않아 지금 쓰는 이 기기만 보여 드려요. 다른 기기가 의심되면 아래 버튼으로 이 기기를 뺀 모든 기기의 로그인을 해제할 수 있어요.</p>
           <div id="activeDevicesContainer" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;"></div>
-          <button class="btn btn-ghost btn-sm" id="logoutOtherDevicesBtn" type="button" style="margin-top:4px;width:100%;font-size:.8125rem;border-color:rgba(235,87,87,0.3);color:var(--red);">다른 모든 기기 일괄 원격 로그아웃</button>
+          <button class="btn btn-ghost btn-sm" id="logoutOtherDevicesBtn" type="button" style="margin-top:4px;width:100%;font-size:.8125rem;border-color:rgba(235,87,87,0.3);color:var(--red);">다른 모든 기기에서 로그아웃</button>
         </div>
       </details>
 
@@ -1729,7 +1729,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       <!-- [그룹 4] 💾 데이터 백업 & 고급 설정 / 고객지원 (#TASK-ES-235) -->
       <details class="settings-group-accordion toss-settings-group" style="margin-bottom:14px;border:1px solid var(--rule);border-radius:16px;background:var(--card);overflow:hidden;">
-        <summary style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
+        <summary id="setGroupDataSummary" style="padding:14px 16px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;background:var(--card2);list-style:none;">
           <div style="display:flex;flex-direction:column;gap:3px;">
             <div style="display:flex;align-items:center;gap:8px;">
               <span style="font-size:1.15rem;">💾</span>
@@ -1753,7 +1753,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--card2);border-radius:12px;margin-bottom:12px;">
               <div>
                 <b style="font-size:.875rem;">임시 캐시 및 데이터</b>
-                <div class="faint" id="cacheSizeText" style="font-size:.8125rem;">14.2 MB 사용 중</div>
+                <div class="faint" id="cacheSizeText" style="font-size:.8125rem;">사용량 확인 중…</div>
               </div>
               <button class="btn btn-ghost btn-sm" id="clearCacheBtn" type="button" style="font-size:.8125rem;">캐시 비우기</button>
             </div>
@@ -1771,7 +1771,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             </div>
             <p class="faint" style="font-size:.8125rem;margin:6px 0 0;">체크인 전체 내보내기: 위에서 고른 형식(CSV/JSON)으로 체크인 기록 전체를 내려받아요 · 전체 백업: 목표·설정까지 포함한 복원용 JSON</p>
             <input type="file" id="importFile" accept="application/json" style="display:none;">
-            <p class="danger-note">데이터는 이 기기(이 대화)에만 저장됩니다</p>
+            <p class="danger-note" id="dataStorageNote">로그인하면 목표·체크인 기록·프로필은 아워골 서버(Supabase)에 저장되고, 앱 설정과 화면 캐시는 이 기기에만 저장돼요. 게스트 체험 모드의 데이터는 이 기기에만 있어요.</p>
           </div>
 
           <div class="set-block">
@@ -2692,8 +2692,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(themeId === 'dark') themeId = 'black';
     if(themeId === 'light' || themeId === 'system') themeId = 'white';
     if(['focus-sanctuary', 'black', 'white', 'urban-city'].indexOf(themeId) === -1) themeId = 'focus-sanctuary';
+    /* [#TASK-ES-353] 설정 저장(saveLocalSettings→applyAppSettings)마다 같은 테마로 불려 햅틱·활성 탭 재렌더가 반복되던 것 차단 — 실제로 바뀔 때만 */
+    var themeChanged = document.documentElement.getAttribute('data-theme') !== themeId;
     document.documentElement.setAttribute('data-theme', themeId);
-    try{ if(typeof triggerHaptic === 'function') triggerHaptic(12); } catch(e){}
+    if(themeChanged){ try{ if(typeof triggerHaptic === 'function') triggerHaptic(12); } catch(e){} }
     var found = THEMES.find(function(t){ return t.id === themeId; });
     if(found && found.metaColor){
       var meta = document.querySelector('meta[name="theme-color"]');
@@ -2701,7 +2703,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
     try{ localStorage.setItem('ourgoal_current_theme', themeId); } catch(e){}
     try{
-      if(typeof window !== 'undefined' && window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render && window.state && window.state.activeTab){
+      if(themeChanged && typeof window !== 'undefined' && window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render && window.state && window.state.activeTab){
         window.OurgoalSanctuaryV3.render(window.state.activeTab);
       }
     }catch(e){}
@@ -3783,38 +3785,34 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   
   /* ============ [70] 활성 로그인 기기 목록 실시간 렌더링 & 개별 세션 로그아웃 ============ */
+  /* [#TASK-ES-346 SET-01] 아워골은 다른 기기의 접속 목록·위치를 수집하지 않는다.
+     이 목록은 이 기기의 localStorage 에만 있으므로 "지금 쓰는 이 기기" 한 대만 사실대로 보여 준다.
+     예전 판이 처음 열 때 만들어 저장해 둔 실재하지 않는 기기 2대(와 위치 문구)는 읽을 때 이 기기 한 대로 정리한다. */
   function getRegisteredDevices(){
     var uidVal = (state.profile && state.profile.id) || 'guest';
     var myDevId = getDeviceId();
+    var key = 'ourgoal_registered_devices_' + uidVal;
     var raw = null;
-    try { raw = JSON.parse(localStorage.getItem('ourgoal_registered_devices_' + uidVal) || 'null'); } catch(e){}
+    try { raw = JSON.parse(localStorage.getItem(key) || 'null'); } catch(e){}
     var ua = navigator.userAgent;
     var os = /iPhone|iPad/i.test(ua) ? 'iOS' : /Android/i.test(ua) ? 'Android' : /Macintosh/i.test(ua) ? 'macOS' : 'Windows';
     var browser = /Chrome/i.test(ua) ? 'Chrome' : /Safari/i.test(ua) ? 'Safari' : /Firefox/i.test(ua) ? 'Firefox' : 'Browser';
-
-    if(!Array.isArray(raw) || raw.length === 0){
-      raw = [
-        { id: myDevId, name: os + ' ' + browser, platform: os, isCurrent: true, firstLogin: Date.now() - 3600000 * 5, lastActive: Date.now(), ipHint: '대한민국 서울 (현재 위치)', revoked: false },
-        { id: 'dev_mobile_pwa', name: '스마트폰 (모바일 PWA 앱)', platform: 'Mobile', isCurrent: false, firstLogin: Date.now() - 3600000 * 24 * 2, lastActive: Date.now() - 3600000 * 2, ipHint: '대한민국 (모바일 LTE/5G)', revoked: false },
-        { id: 'dev_tablet_tab', name: '태블릿 / iPad Web', platform: 'Tablet', isCurrent: false, firstLogin: Date.now() - 3600000 * 24 * 5, lastActive: Date.now() - 3600000 * 26, ipHint: '대한민국 경기 (Wi-Fi 사무실)', revoked: false }
-      ];
-      try { localStorage.setItem('ourgoal_registered_devices_' + uidVal, JSON.stringify(raw)); } catch(e){}
-    } else {
-      var hasMine = false;
-      raw.forEach(function(d){
-        if(d.id === myDevId){
-          d.isCurrent = true;
-          d.lastActive = Date.now();
-          hasMine = true;
-        } else {
-          d.isCurrent = false;
-        }
-      });
-      if(!hasMine){
-        raw.unshift({ id: myDevId, name: os + ' ' + browser, platform: os, isCurrent: true, firstLogin: Date.now(), lastActive: Date.now(), ipHint: '대한민국 서울 (현재 위치)', revoked: false });
-      }
+    var mine = null;
+    if(Array.isArray(raw)){
+      raw.forEach(function(d){ if(d && d.id === myDevId) mine = d; });
     }
-    return raw;
+    var cleaned = [{
+      id: myDevId,
+      name: os + ' ' + browser,
+      platform: os,
+      isCurrent: true,
+      firstLogin: (mine && mine.firstLogin) || Date.now(),
+      lastActive: Date.now(),
+      ipHint: null, /* 위치·IP 는 수집하지 않는다 */
+      revoked: false
+    }];
+    try { localStorage.setItem(key, JSON.stringify(cleaned)); } catch(e){}
+    return cleaned;
   }
 
   function renderActiveDevicesList(){
@@ -3822,11 +3820,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var badge = document.getElementById('activeDeviceCountBadge');
     if(!container) return;
     var devices = getRegisteredDevices();
-    var activeCount = devices.filter(function(d){ return !d.revoked; }).length;
-    var revokedCount = devices.filter(function(d){ return !!d.revoked; }).length;
     if(badge){
-      badge.innerHTML = '<span style="color:var(--brand);font-weight:700;">' + activeCount + '대 활성 연결</span>' +
-        (revokedCount > 0 ? ' <span class="faint" style="font-size:.72rem;">(' + revokedCount + '대 차단됨)</span>' : '');
+      /* 다른 기기 수는 알 수 없으므로 기기 수를 지어내지 않는다 */
+      badge.textContent = '이 기기만 표시';
     }
 
     container.innerHTML = devices.map(function(d){
@@ -3853,12 +3849,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
               '<span style="font-weight:700;color:var(--ink);">' + escapeHtml(d.name) + '</span>' +
               statusBadge +
             '</div>' +
-            '<div class="faint" style="font-size:.72rem;margin-top:2px;">' + escapeHtml(d.ipHint || '대한민국') + ' · ' + timeAgo + '</div>' +
+            '<div class="faint" style="font-size:.72rem;margin-top:2px;">' + escapeHtml(d.ipHint || '위치 정보 수집 안 함') + ' · ' + timeAgo + '</div>' +
           '</div>' +
         '</div>' +
         '<div>' +
           (d.isCurrent
-            ? '<span class="faint" style="font-size:.72rem;color:var(--brand);font-weight:700;">(보호됨)</span>'
+            ? '<span class="faint" style="font-size:.72rem;color:var(--brand);font-weight:700;">(이 기기)</span>'
             : (isRevoked
                 ? '<button class="btn btn-ghost btn-xs" type="button" disabled style="font-size:.72rem;opacity:.5;border-color:var(--rule);">차단 완료</button>'
                 : '<button class="btn btn-ghost btn-xs btn-revoke-device" data-devid="' + escapeHtml(d.id) + '" data-devname="' + escapeHtml(d.name) + '" type="button" style="font-size:.72rem;color:var(--red);border-color:rgba(235,87,87,0.3);font-weight:700;">원격 로그아웃</button>')) +
@@ -3871,24 +3867,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
         var devId = btn.dataset.devid;
         var devName = btn.dataset.devname || '기기';
-        if(!confirm('\'' + devName + '\' 기기에서 아워골 세션을 원격 로그아웃하시겠습니까?\n해당 기기의 접근이 즉시 차단됩니다.')) return;
-        var uidVal = (state.profile && state.profile.id) || 'guest';
-        var list = getRegisteredDevices();
-        list.forEach(function(x){
-          if(x.id === devId){
-            x.revoked = true;
-            x.revokedAt = Date.now();
-          }
-        });
-        try { localStorage.setItem('ourgoal_registered_devices_' + uidVal, JSON.stringify(list)); } catch(e){}
-        try {
-          if(window.sb && sb.channel){
-            var ch = sb.channel('device_remote_revocations');
-            await ch.send({ type: 'broadcast', event: 'revoke_device', payload: { deviceId: devId, timestamp: Date.now() } });
-          }
-        } catch(e){}
-        renderActiveDevicesList();
-        toast('‘' + devName + '’ 기기를 원격 로그아웃(세션 차단)했습니다.');
+        /* [#TASK-ES-346 SET-01] 기기 한 대만 골라 끊는 서버 기능은 없다(예전 판의 방송은 받는 쪽이 없었다).
+           끊었다고 말하거나 '차단됨'으로 표시하지 않고, 실제로 동작하는 일괄 로그아웃으로 안내한다. */
+        toast('‘' + devName + '’ 한 대만 골라 로그아웃하는 기능은 아직 없어요. "다른 모든 기기에서 로그아웃"을 이용해 주세요.');
+        if(typeof openLogoutOtherDevicesConfirmModal === 'function') openLogoutOtherDevicesConfirmModal();
       });
     });
   }
@@ -3896,40 +3878,22 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ [70] 다른 모든 기기 원격 로그아웃 전 로그인 기기 목록 확인 모달 ============ */
   function openLogoutOtherDevicesConfirmModal(){
     if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-    var devices = getRegisteredDevices();
-    var otherDevices = devices.filter(function(d){ return !d.isCurrent && !d.revoked; });
-
-    if(otherDevices.length === 0){
-      toast('현재 본 기기 외에 활성화된 다른 로그인 기기가 없습니다.');
+    /* [#TASK-ES-346 SET-01] 다른 기기 목록은 수집하지 않으므로 목록으로 막지 않는다.
+       실제 동작은 Supabase 의 sb.auth.signOut({ scope: 'others' }) — 이 기기를 뺀 모든 로그인 세션을 서버에서 해제한다. */
+    if(!state.profile || !state.profile.id || String(state.profile.id).indexOf('guest') === 0){
+      toast('게스트 체험 모드는 로그인 세션이 없어 다른 기기에서 로그아웃할 것이 없어요.');
       return;
     }
 
-    var listHtml = otherDevices.map(function(d){
-      var timeAgo = Math.round((Date.now() - d.lastActive) / 3600000) + '시간 전 활동';
-      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface-2);border-radius:10px;margin-bottom:6px;border:1px solid var(--rule);">' +
-        '<div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">' +
-          '<span style="font-size:1.3rem;">' + (d.platform==='Mobile'?'📱':(d.platform==='Tablet'?'📟':'💻')) + '</span>' +
-          '<div style="min-width:0;flex:1;">' +
-            '<div style="font-weight:700;color:var(--ink);font-size:.84rem;">' + escapeHtml(d.name) + '</div>' +
-            '<div class="faint" style="font-size:.72rem;margin-top:2px;">' + escapeHtml(d.ipHint || '대한민국') + ' · ' + timeAgo + '</div>' +
-          '</div>' +
-        '</div>' +
-        '<span class="dday-pill" style="font-size:.65rem;background:rgba(235,87,87,0.12);color:var(--red);font-weight:700;flex-shrink:0;">차단 예정</span>' +
-      '</div>';
-    }).join('');
-
     var modalHtml = 
       '<h3>📱 다른 모든 기기 원격 로그아웃 확인</h3>' +
-      '<p class="faint" style="margin:-6px 0 12px;font-size:.8125rem;">현재 사용 중인 본 기기를 제외한 아래 <strong>' + otherDevices.length + '대</strong>의 모든 기기에서 즉시 세션이 종료됩니다.</p>' +
-      '<div style="max-height:220px;overflow-y:auto;margin-bottom:14px;padding-right:2px;">' +
-        listHtml +
-      '</div>' +
+      '<p class="faint" style="margin:-6px 0 12px;font-size:.8125rem;">지금 쓰는 이 기기를 뺀, 이 계정으로 로그인된 모든 기기의 로그인을 해제해요. 아워골은 다른 기기 목록을 수집하지 않아 몇 대가 해제될지는 보여 드릴 수 없어요.</p>' +
       '<div style="padding:10px 12px;background:rgba(235,87,87,0.06);border:1px dashed rgba(235,87,87,0.3);border-radius:10px;margin-bottom:14px;font-size:.78rem;color:var(--ink-soft);line-height:1.45;">' +
-        '⚠️ 원격 로그아웃을 진행하면 해당 기기에서 열려있는 아워골 앱 세션이 실시간으로 차단되며, 다시 이용하려면 비밀번호나 소셜 인증을 거쳐야 합니다.' +
+        '⚠️ 해제된 기기에서 다시 쓰려면 다시 로그인해야 해요. 그 기기에 이미 열려 있는 화면은 다음에 서버와 연결을 확인할 때 로그아웃돼요.' +
       '</div>' +
       '<div class="modal-actions">' +
         '<button class="btn btn-ghost" id="btnCancelLogoutOtherModal" type="button">취소</button>' +
-        '<button class="btn btn-primary" id="btnConfirmLogoutOtherModal" type="button" style="background:var(--red);border-color:var(--red);color:#fff;font-weight:700;">' + otherDevices.length + '대 기기 즉시 일괄 로그아웃</button>' +
+        '<button class="btn btn-primary" id="btnConfirmLogoutOtherModal" type="button" style="background:var(--red);border-color:var(--red);color:#fff;font-weight:700;">다른 기기 모두 로그아웃</button>' +
       '</div>';
 
     openModal(modalHtml, function(sheet){
@@ -3948,20 +3912,21 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           var nowTs = Date.now();
           var uidVal = (state.profile && state.profile.id) || 'guest';
 
-          // 1. 등록 기기 목록 전체에서 타 기기 전원 revoked = true 처리
-          var list = getRegisteredDevices();
-          var revokedCnt = 0;
-          list.forEach(function(x){
-            if(x.id !== myDevId){
-              x.revoked = true;
-              x.revokedAt = nowTs;
-              revokedCnt++;
-            }
-          });
-          try { localStorage.setItem('ourgoal_registered_devices_' + uidVal, JSON.stringify(list)); } catch(e){}
+          // 1. (삭제됨 #TASK-ES-346) 이 기기에 저장된 가짜 기기 목록에 '차단됨'을 찍던 단계 — 다른 기기 목록은 수집하지 않는다.
 
-          // 2. Supabase Auth others 세션 무효화
-          try { await sb.auth.signOut({ scope: 'others' }); } catch(e){ console.warn('signOut others warning:', e); }
+          // 2. Supabase Auth others 세션 무효화 — 실패하면 '로그아웃했다'고 말하지 않는다
+          var signOutOthersError = null;
+          try {
+            var soRes = await sb.auth.signOut({ scope: 'others' });
+            if(soRes && soRes.error) signOutOthersError = soRes.error;
+          } catch(e){ signOutOthersError = e; }
+          if(signOutOthersError){
+            console.warn('signOut others error:', signOutOthersError);
+            btnConfirm.disabled = false;
+            btnConfirm.textContent = '다른 기기 모두 로그아웃';
+            toast('다른 기기 로그아웃에 실패했어요. 네트워크를 확인하고 다시 시도해 주세요.');
+            return;
+          }
 
           // 3. Auth 메타데이터 갱신
           try {
@@ -4002,36 +3967,90 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           // 7. 실시간 화면 갱신 (끄면 꺼지는 시각적 피드백 보장!)
           closeModal();
           renderActiveDevicesList();
-          toast('다른 ' + revokedCnt + '대 기기에서 안전하게 원격 로그아웃되었습니다.');
+          toast('이 기기를 뺀 모든 기기의 로그인을 해제했어요.');
         });
       }
     });
   }
   if(typeof window !== 'undefined'){ window.openLogoutOtherDevicesConfirmModal = openLogoutOtherDevicesConfirmModal; }
 
-  /* ============ [71] 2단계 인증(2FA) 보안 PIN 설정 및 세션 진입 챌린지 ============ */
+  /* ============ [71] 앱 잠금 PIN (이 기기) — 설정·해제·앱 진입 확인 ============ */
+  /* [#TASK-ES-346 SET-01] 이 기능은 서버 2단계 인증이 아니다. 앱 설정(이 기기의 localStorage)에 PIN 을 두고
+     이 기기에서 앱을 새로 열 때 확인하는 '앱 잠금'이다. PIN 원문은 저장하지 않고
+     SHA-256(소금 + PIN) 값만 'sha256v1$<소금>$<16진수>' 형태로 settings.twoFactorPin 에 둔다.
+     소금 = 설정 당시 uid + 무작위 16바이트 → 게스트→회원 이전 뒤에도 같은 값으로 검증된다.
+     예전 판이 평문 4자리로 저장한 PIN 은 첫 검증 성공 때 해시로 바꿔 저장한다(잠김 방지). */
+  var APP_LOCK_PIN_PREFIX = 'sha256v1$';
+  function isHashedAppLockPin(v){
+    return typeof v === 'string' && v.indexOf(APP_LOCK_PIN_PREFIX) === 0;
+  }
+  function appLockCryptoAvailable(){
+    return !!(window.crypto && window.crypto.subtle && typeof window.crypto.subtle.digest === 'function' && typeof TextEncoder === 'function');
+  }
+  async function sha256HexAppLock(text){
+    var buf = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return Array.prototype.map.call(new Uint8Array(buf), function(b){ return ('0' + b.toString(16)).slice(-2); }).join('');
+  }
+  async function hashAppLockPin(pin, salt){
+    if(!salt){
+      var rnd = new Uint8Array(16);
+      window.crypto.getRandomValues(rnd);
+      var uidPart = (state.profile && state.profile.id) || 'guest';
+      salt = uidPart + ':' + Array.prototype.map.call(rnd, function(b){ return ('0' + b.toString(16)).slice(-2); }).join('');
+    }
+    var hex = await sha256HexAppLock(salt + '|' + String(pin));
+    return APP_LOCK_PIN_PREFIX + salt + '$' + hex;
+  }
+  /* 입력한 PIN 이 저장값과 맞는지 확인한다. 평문 저장값이 맞으면 해시로 이전해 저장한다. */
+  async function verifyAppLockPin(entered){
+    var settings = (state.profile && state.profile.settings) || {};
+    var stored = settings.twoFactorPin || '';
+    if(!stored || !/^[0-9]{4}$/.test(String(entered || ''))) return false;
+    if(isHashedAppLockPin(stored)){
+      if(!appLockCryptoAvailable()) return false;
+      var body = stored.slice(APP_LOCK_PIN_PREFIX.length);
+      var cut = body.lastIndexOf('$');
+      if(cut < 0) return false;
+      var salt = body.slice(0, cut);
+      var recomputed = await hashAppLockPin(entered, salt);
+      return recomputed === stored;
+    }
+    /* 예전 평문 저장값 */
+    if(String(entered) !== String(stored)) return false;
+    if(appLockCryptoAvailable()){
+      try {
+        settings.twoFactorPin = await hashAppLockPin(entered);
+        await saveProfile();
+      } catch(e){ console.warn('[app-lock] 평문 PIN 해시 이전 실패(다음 검증 때 다시 시도):', e); }
+    }
+    return true;
+  }
+  if(typeof window !== 'undefined'){
+    window.verifyAppLockPin = verifyAppLockPin;
+    window.isHashedAppLockPin = isHashedAppLockPin;
+  }
+
   function openTwoFactorSetupModal(){
     var settings = (state.profile && state.profile.settings) || {};
-    var currentPin = settings.twoFactorPin || '';
     var isEnabled = !!(settings.twoFactorAuth && settings.twoFactorPin);
 
     openModal(
-      '<h3>🔐 2단계 인증 (2FA) 보안 설정</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">앱 진입 및 중요 계정 접근 시 본인 확인을 위한 4자리 보안 PIN 번호를 설정합니다.</p>' +
+      '<h3>🔐 앱 잠금 PIN (이 기기)</h3>' +
+      '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">이 기기에서 아워골을 새로 열 때 물어볼 4자리 PIN 을 정해요.</p>' +
       '<div class="field">' +
-        '<label>4자리 보안 PIN 번호</label>' +
+        '<label>4자리 PIN</label>' +
         '<input type="password" id="twoFaPinInput" maxlength="4" placeholder="숫자 4자리 입력" pattern="[0-9]*" inputmode="numeric" style="letter-spacing:6px;font-size:1.25rem;text-align:center;font-weight:700;">' +
       '</div>' +
       '<div class="field">' +
-        '<label>PIN 번호 확인</label>' +
+        '<label>PIN 확인</label>' +
         '<input type="password" id="twoFaPinConfirm" maxlength="4" placeholder="다시 한 번 입력" pattern="[0-9]*" inputmode="numeric" style="letter-spacing:6px;font-size:1.25rem;text-align:center;font-weight:700;">' +
       '</div>' +
       '<div style="margin:10px 0;padding:10px 12px;background:var(--card2);border-radius:10px;font-size:.78125rem;color:var(--ink-soft);line-height:1.45;">' +
-        '※ 2단계 인증 활성화 후 다른 기기에서 로그인하거나 브라우저를 다시 열 때 해당 PIN 번호를 입력해야 앱이 열립니다.' +
+        '※ 이 기기에서만 적용돼요. 브라우저(앱)를 닫았다가 다시 열면 PIN 을 물어봐요. 다른 기기에는 적용되지 않고, 로그인 비밀번호나 서버 2단계 인증을 대신하지 않아요. PIN 은 원문이 아닌 해시값으로만 이 기기에 저장돼요.' +
       '</div>' +
       '<div class="modal-actions">' +
         '<button class="btn btn-ghost" id="btnCancel2Fa" type="button">취소</button>' +
-        '<button class="btn btn-primary" id="btnSave2Fa" type="button">' + (isEnabled ? 'PIN 변경 저장' : '2단계 인증 활성화') + '</button>' +
+        '<button class="btn btn-primary" id="btnSave2Fa" type="button">' + (isEnabled ? 'PIN 변경 저장' : '앱 잠금 켜기') + '</button>' +
       '</div>',
       function(sheet){
         sheet.querySelector('#btnCancel2Fa').addEventListener('click', closeModal);
@@ -4040,23 +4059,27 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           var pin2 = sheet.querySelector('#twoFaPinConfirm').value.trim();
           if(!/^[0-9]{4}$/.test(pin1)){
             if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-            toast('PIN 번호는 숫자 4자리로 입력해주세요.');
+            toast('PIN 은 숫자 4자리로 입력해주세요.');
             return;
           }
           if(pin1 !== pin2){
             if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-            toast('PIN 번호가 일치하지 않습니다.');
+            toast('PIN 이 일치하지 않습니다.');
+            return;
+          }
+          if(!appLockCryptoAvailable()){
+            toast('이 환경에서는 PIN 을 안전하게(해시로) 저장할 수 없어 앱 잠금을 켤 수 없어요.');
             return;
           }
           if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
           if(!state.profile.settings) state.profile.settings = {};
+          state.profile.settings.twoFactorPin = await hashAppLockPin(pin1);
           state.profile.settings.twoFactorAuth = true;
-          state.profile.settings.twoFactorPin = pin1;
           sessionStorage.setItem('ourgoal_2fa_verified', 'true');
           await saveProfile();
           closeModal();
           renderSettingsScreen();
-          toast('2단계 인증(2FA) 보안이 설정되었습니다. 🔐');
+          toast('이 기기에 앱 잠금 PIN 을 설정했어요. 🔐');
         });
       }
     );
@@ -4064,27 +4087,27 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   function openTwoFactorDisableModal(onSuccess){
     var settings = (state.profile && state.profile.settings) || {};
-    var existingPin = settings.twoFactorPin || '';
 
     openModal(
-      '<h3>🔐 2단계 인증 해제 확인</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">2단계 인증을 해제하려면 현재 설정된 4자리 보안 PIN 번호를 입력해주세요.</p>' +
+      '<h3>🔐 앱 잠금 PIN 끄기</h3>' +
+      '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">앱 잠금을 끄려면 지금 설정된 4자리 PIN 을 입력해주세요.</p>' +
       '<div class="field">' +
-        '<label>현재 보안 PIN 번호</label>' +
+        '<label>현재 PIN</label>' +
         '<input type="password" id="disable2FaPinInput" maxlength="4" placeholder="••••" pattern="[0-9]*" inputmode="numeric" autofocus style="letter-spacing:8px;font-size:1.4rem;text-align:center;font-weight:700;">' +
       '</div>' +
       '<div class="modal-actions">' +
         '<button class="btn btn-ghost" id="btnCancelDisable2Fa" type="button">취소</button>' +
-        '<button class="btn btn-primary" id="btnConfirmDisable2Fa" type="button" style="background:var(--red);border-color:var(--red);color:#fff;font-weight:700;">인증 해제</button>' +
+        '<button class="btn btn-primary" id="btnConfirmDisable2Fa" type="button" style="background:var(--red);border-color:var(--red);color:#fff;font-weight:700;">앱 잠금 끄기</button>' +
       '</div>',
       function(sheet){
         var pinInp = sheet.querySelector('#disable2FaPinInput');
         sheet.querySelector('#btnCancelDisable2Fa').addEventListener('click', closeModal);
         sheet.querySelector('#btnConfirmDisable2Fa').addEventListener('click', async function(){
           var entered = pinInp ? pinInp.value.trim() : '';
-          if(existingPin && entered !== existingPin){
+          var ok = settings.twoFactorPin ? await verifyAppLockPin(entered) : true;
+          if(!ok){
             if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-            toast('보안 PIN 번호가 일치하지 않습니다.');
+            toast('PIN 이 일치하지 않습니다.');
             if(pinInp){
               pinInp.value = '';
               pinInp.focus();
@@ -4098,7 +4121,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           await saveProfile();
           closeModal();
           renderSettingsScreen();
-          toast('2단계 인증이 안전하게 해제되었습니다.');
+          toast('이 기기의 앱 잠금 PIN 을 껐어요.');
           if(onSuccess) onSuccess();
         });
       }
@@ -4117,19 +4140,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
 
     openModal(
-      '<h3>🔐 2단계 보안 인증 (2FA)</h3>' +
-      '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">계정 보호를 위해 설정하신 4자리 보안 PIN 번호를 입력해주세요.</p>' +
+      '<h3>🔐 앱 잠금 PIN</h3>' +
+      '<p class="faint" style="margin:-8px 0 14px;font-size:.8125rem;">이 기기에 설정하신 4자리 앱 잠금 PIN 을 입력해주세요.</p>' +
       '<div class="field">' +
         '<input type="password" id="challenge2FaPin" maxlength="4" placeholder="••••" pattern="[0-9]*" inputmode="numeric" autofocus style="letter-spacing:10px;font-size:1.6rem;text-align:center;font-weight:700;margin:10px 0;">' +
       '</div>' +
       '<div class="modal-actions" style="display:flex;gap:8px;">' +
         '<button class="btn btn-ghost" id="btn2FaLogout" type="button" style="flex:1;">로그아웃</button>' +
-        '<button class="btn btn-primary" id="btnVerify2FaChallenge" type="button" style="flex:2;font-weight:700;">인증 및 잠금해제</button>' +
+        '<button class="btn btn-primary" id="btnVerify2FaChallenge" type="button" style="flex:2;font-weight:700;">잠금 해제</button>' +
       '</div>',
       function(sheet){
         var pinInput = sheet.querySelector('#challenge2FaPin');
         var verifyBtn = sheet.querySelector('#btnVerify2FaChallenge');
         var logoutBtn = sheet.querySelector('#btn2FaLogout');
+        var verifying = false;
 
         if(logoutBtn){
           logoutBtn.addEventListener('click', function(){
@@ -4138,17 +4162,22 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           });
         }
 
-        function doVerify(){
+        async function doVerify(){
+          if(verifying) return;
+          verifying = true;
           var entered = pinInput ? pinInput.value.trim() : '';
-          if(entered === settings.twoFactorPin){
+          var ok = false;
+          try { ok = await verifyAppLockPin(entered); } catch(e){ ok = false; }
+          verifying = false;
+          if(ok){
             if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
             sessionStorage.setItem('ourgoal_2fa_verified', 'true');
             closeModal();
-            toast('2단계 보안 인증이 완료되었습니다. 환영합니다! ✨');
+            toast('앱 잠금을 풀었어요. 환영합니다! ✨');
             if(onSuccess) onSuccess();
           } else {
             if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-            toast('보안 PIN 번호가 올바르지 않습니다.');
+            toast('PIN 이 올바르지 않습니다.');
             if(pinInput){
               pinInput.value = '';
               pinInput.focus();
@@ -6389,17 +6418,28 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var uid = state.profile.id;
     var now = Date.now();
     try {
-      toast('탈퇴 유예 신청 처리 중입니다…');
+      toast('탈퇴 신청을 서버에 기록하는 중입니다…');
+      // [#TASK-ES-351] 탈퇴 신청 시각을 서버(auth app_metadata.deletion_requested_at)에 기록한다.
+      // 서버가 쓰고 다시 읽어 확인했을 때만 ok — 기록되지 않았으면 로그아웃하지 않고 실패를 알린다.
+      var wSess = await sb.auth.getSession();
+      var wToken = wSess && wSess.data && wSess.data.session && wSess.data.session.access_token;
+      if(!wToken) throw new Error('로그인 세션을 확인할 수 없어요. 다시 로그인한 뒤 신청해 주세요');
+      var wResp = await fetch('/api/withdraw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + wToken },
+        body: JSON.stringify({ mode: 'request' })
+      });
+      var wBody = null;
+      try { wBody = await wResp.json(); } catch(e){}
+      if(!wResp.ok || !wBody || wBody.ok !== true){
+        throw new Error('서버에 탈퇴 신청을 기록하지 못했어요. 잠시 후 다시 시도하거나 ourgoal.support@gmail.com 으로 요청해 주세요');
+      }
+
+      // 이 기기 표시는 보조 기록(판정은 서버 기록으로 한다 — js/auth-safety.js checkPendingDeletionRestore)
       if(!state.profile.settings) state.profile.settings = {};
       state.profile.settings.pendingDeletionAt = now;
       state.profile.settings.deletedAt = now;
       await saveProfile();
-
-      try {
-        await sb.auth.updateUser({
-          data: { account_status: 'pending_deletion', deleted_at: now }
-        });
-      } catch(e){}
 
       // 알림 및 세션 정리
       try {
@@ -6417,7 +6457,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       document.getElementById('appShell').classList.remove('active');
       document.getElementById('authScreen').style.display = 'flex';
       initRememberedAuthFields();
-      toast('탈퇴 신청이 접수되었습니다. 30일 이내에 로그인하시면 언제든 복구하실 수 있습니다.');
+      toast('탈퇴 신청을 서버에 기록했어요. 30일이 지나면 계정과 데이터가 서버에서 영구 파기돼요. 그 전에 어느 기기에서든 다시 로그인하면 복구할 수 있어요.');
     } catch(err){
       console.error('Withdrawal error:', err);
       if(confirmBtn){
@@ -6448,19 +6488,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '</div>' +
         '<div class="withdraw-top-banner">' +
           '아워골 서비스를 이용해 주셔서 진심으로 감사드립니다.<br>' +
-          '계정 탈퇴 신청 전, 아래의 <b>데이터 영구 파기 및 법적 보존 고지사항</b>을 반드시 확인해 주시기 바랍니다.' +
+          '계정 탈퇴 신청 전, 아래의 <b>탈퇴 신청 후 실제로 일어나는 일</b>과 <b>영구 파기 범위</b>를 꼭 확인해 주세요.' +
         '</div>' +
 
         '<!-- 1. 데이터 분실 4대 영역 안내 -->' +
         '<div class="withdraw-box withdraw-box-danger">' +
           '<div class="withdraw-box-title"><span>🗑️</span> 1. 소중한 목표 및 기록 분실 안내 (개인 자산 4대 영역 고지)</div>' +
           '<div class="withdraw-box-desc">' +
-            '탈퇴 유예 기간(30일)이 경과하면 아래의 모든 사용자 자산이 영구히 소각되며 다시는 복구할 수 없습니다.' +
+            '탈퇴를 신청하고 <b>30일이 지나면</b>, 매일 한 번 도는 서버 파기 작업이 아래 데이터와 로그인 계정을 <b>서버에서 영구 파기</b>합니다. 파기된 뒤에는 다시 복구할 수 없습니다.' +
             '<ul>' +
               '<li><b>목표 및 마일스톤</b>: 유저가 수립한 모든 개인/팀 목표, 하위 세부 할일, 루틴 설정 및 완료 진행 상태 전체</li>' +
               '<li><b>인생 실천 기록 및 타임라인</b>: 매일 남기신 3초 체크인, 일일 회고록, 뽀모도로 타이머 누적 시간, 첨부 링크, 누적 히트맵 데이터</li>' +
               '<li><b>아바타 인벤토리 및 성장 자산</b>: 320종 맞춤 아바타, 10개 커스텀 슬롯, 성장 레벨/경험치(EXP), 도감 수집률, 획득 배지 전체</li>' +
-              '<li><b>소통 및 커뮤니티 데이터</b>: 피드 인증 게시글, 응원/스탬프 내역, 마니또 매칭 및 1:1 대화록 전체</li>' +
+              '<li><b>소통 및 커뮤니티 데이터</b>: 피드 인증 게시글, 응원/스탬프 내역, 내가 보낸 마니또 응원·1:1 메시지·팀 댓글</li>' +
             '</ul>' +
           '</div>' +
         '</div>' +
@@ -6471,23 +6511,24 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<div class="withdraw-box-desc">' +
             '우발적인 클릭이나 실수로 인한 자산 유실을 방지하기 위해 <b>30일간 안전 유예 기간</b>이 부여됩니다.' +
             '<ul>' +
-              '<li>탈퇴 신청 즉시 계정은 비활성화 상태로 전환되어 안전하게 보관됩니다.</li>' +
-              '<li><b>30일 이내에 기존 계정으로 재로그인</b>하시면 별도 서류 없이 <b>원클릭으로 모든 데이터가 100% 무손실 복구</b>됩니다.</li>' +
-              '<li>신청 후 30일이 지나면 백업을 포함한 모든 개인 데이터가 완전 자동 영구 파기됩니다.</li>' +
+              '<li>탈퇴를 신청하면 신청 시각이 <b>서버에 기록</b>되고, 이 기기에서 바로 로그아웃됩니다. 서버에 기록되지 않으면 탈퇴 신청이 되지 않고 오류를 알려 드립니다.</li>' +
+              '<li><b>30일 안에 어느 기기에서든 다시 로그인</b>하면 복구 안내가 뜨고, 복구를 누르면 서버의 탈퇴 신청 기록을 지우므로 데이터를 그대로 이어서 쓸 수 있습니다.</li>' +
+              '<li>30일이 지나면 복구할 수 없고 로그인해도 앱에 들어갈 수 없습니다. 그 뒤 매일 한 번 도는 서버 파기 작업에서 차례대로(하루 최대 50계정) 계정과 데이터가 삭제됩니다.</li>' +
             '</ul>' +
           '</div>' +
         '</div>' +
 
-        '<!-- 3. 법적 책임 및 관계 법령에 따른 보존 의무 -->' +
+        '<!-- 3. 파기 범위와 법령상 보존 기록 -->' +
         '<div class="withdraw-box withdraw-box-legal">' +
-          '<div class="withdraw-box-title"><span>⚖️</span> 3. 법적 책임 및 관계 법령에 따른 정보 보존 고지</div>' +
+          '<div class="withdraw-box-title"><span>⚖️</span> 3. 데이터 삭제(파기) 현황과 요청 방법</div>' +
           '<div class="withdraw-box-desc">' +
-            '개인정보보호법에 의거하여 회원 탈퇴 시 개인정보는 원칙적으로 지체 없이 영구 파기됩니다. 단, 전자상거래법 및 통신비밀보호법 등 관계 법령에 따라 아래 정보는 법정 기간 동안 분리 보관 후 파기됩니다.' +
+            '개인정보보호법 제21조는 보유 목적이 끝난 개인정보를 지체 없이 파기하도록 정하고 있습니다. 아워골은 위 2번의 <b>30일 복구 기간이 끝나면 서버에서 자동으로 영구 파기</b>합니다.' +
             '<ul>' +
-              '<li><b>개인정보보호법 제21조</b>: 회원 탈퇴 및 보유 기간 경과 시 개인정보 영구 파기 의무 준수 (30일 유예 후 자동 파기)</li>' +
-              '<li><b>전자상거래 등에서의 소비자보호에 관한 법률 제6조</b>: 계약 또는 청약철회 기록(5년), 대금결제/재화공급 기록(5년), 소비자 불만·분쟁처리 기록(3년)</li>' +
-              '<li><b>통신비밀보호법 제15조의2</b>: 로그인 기록 및 서비스 접속 로그, IP 주소(3개월)</li>' +
-              '<li><b>부정 이용 및 분쟁 방지</b>: 악의적 탈퇴·재가입 반복 방지 및 부정이용 방지를 위해 탈퇴 시점의 암호화된 식별값(해시)을 별도 격리 보관</li>' +
+              '<li><b>파기되는 것</b>: 위 1번의 데이터(목표·체크인 기록과 그 백업·프로필·피드 글·내가 보낸 메시지·신고·알림 구독·1:1 문의 원장·설정과 동반자 저장 기록)와 로그인 계정, 로그인 기록(인증 감사 로그).</li>' +
+              '<li><b>파기되지 않는 것</b>: 다른 회원이 나에게 보낸 메시지(그 회원의 글), 누가 보냈는지 담지 않은 익명 이용 통계, 1:1 문의·앱 평가로 보내신 내용의 운영팀 문의함(노션)·알림(텔레그램) 사본, 호스팅 회사(Supabase·Vercel)의 접속 로그와 장애 대비 백업(각 회사의 보관 기간이 끝나면 사라짐).</li>' +
+              '<li><b>법령상 보존 의무 기록</b>: 아워골은 유료 결제·거래가 없어 전자상거래법상 보존할 계약·결제 기록이 없고, 통신비밀보호법상 접속 기록(3개월)도 따로 떼어 보관하지 않습니다. 그래서 탈퇴 후 법령을 이유로 따로 보관하는 기록은 없습니다.</li>' +
+              '<li><b>더 빨리 지우거나 사본 삭제를 원하시면</b>: 공식 지원 이메일 <b>ourgoal.support@gmail.com</b> 으로 가입한 이메일(또는 카카오 계정)과 함께 &quot;계정 데이터 삭제 요청&quot;을 보내 주세요.</li>' +
+              '<li><b>이 기기에 남는 것</b>: 앱 설정과 화면 캐시 일부. 기기의 브라우저 데이터 삭제로 지울 수 있습니다.</li>' +
             '</ul>' +
           '</div>' +
         '</div>' +
@@ -6495,7 +6536,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '<div class="withdraw-agree-wrapper">' +
           '<label class="withdraw-check-label" for="withdrawAgreeCheck">' +
             '<input type="checkbox" id="withdrawAgreeCheck">' +
-            '<span>위의 <b>데이터 영구 분실 위험</b>과 <b>법적 책임 및 보존 사항</b>을 모두 충분히 확인하였으며, 회원 탈퇴에 동의합니다.</span>' +
+            '<span>위의 <b>30일 후 서버 영구 파기</b>와 <b>파기 범위</b>를 확인했으며, 회원 탈퇴를 신청합니다.</span>' +
           '</label>' +
         '</div>' +
 
@@ -7243,39 +7284,112 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
   }
 
-  function getPeerRunnersForCategory(category){
-    var cat = category || '운동';
-    if(cat.indexOf('공부') !== -1 || cat.indexOf('학습') !== -1 || cat.indexOf('독서') !== -1){
-      return [
-        { name: '열정부엉이', emoji: '🦉', streak: 8, goal: '매일 1시간 몰입 공부' },
-        { name: '코딩마스터', emoji: '🦊', streak: 19, goal: '알고리즘 1일 1제' },
-        { name: '새벽독서러', emoji: '🐼', streak: 14, goal: '아침 30분 책 읽기' }
-      ];
-    } else if(cat.indexOf('기상') !== -1 || cat.indexOf('모닝') !== -1 || cat.indexOf('생활') !== -1 || cat.indexOf('루틴') !== -1){
-      return [
-        { name: '미라클모닝', emoji: '🌅', streak: 30, goal: '오전 6시 기상 & 스트레칭' },
-        { name: '성실토끼', emoji: '🐰', streak: 7, goal: '물 1L 마시기 & 영양제' },
-        { name: '루틴요정', emoji: '✨', streak: 15, goal: '하루 1줄 감사 일기' }
-      ];
-    }
-    return [
-      { name: '달리는치타', emoji: '🐆', streak: 12, goal: '하프마라톤 완주 도전' },
-      { name: '새벽러너', emoji: '🦌', streak: 5, goal: '아침 5km 가벼운 조깅' },
-      { name: '철인도전', emoji: '🦅', streak: 21, goal: '매일 푸시업 100개' }
-    ];
+  /* [#TASK-ES-348] 동류 러너는 실원장(feed_posts → FEED_POSTS_CACHE)의 같은 분야 실제 회원만. 고정 명단·연속일수 하드코딩 없음.
+   * 연속일수는 피드 글에 없는 값이라 표시하지 않는다. 0명이면 빈 배열 → 위젯을 그리지 않는다(침묵). */
+  function peerCategoryKey(cat){
+    var c = String(cat || '');
+    if(/공부|학습|시험|자격증/.test(c)) return 'study';
+    if(/독서|책/.test(c)) return 'reading';
+    if(/기상|모닝/.test(c)) return 'morning';
+    if(/생활|루틴|습관/.test(c)) return 'life';
+    if(/러닝|달리기|마라톤/.test(c)) return 'running';
+    if(/운동|헬스|체력/.test(c)) return 'workout';
+    return null;
   }
+  function getPeerRunnersForCategory(category, posts){
+    var cat = category || '운동';
+    var src = Array.isArray(posts) ? posts : (Array.isArray(FEED_POSTS_CACHE) ? FEED_POSTS_CACHE : []);
+    var myId = state.profile ? String(state.profile.id || '') : '';
+    var items = src.filter(function(p){
+      return p && !p.is_ai && isValidRealUser(String(p.user_id || '')) && String(p.user_id) !== myId;
+    }).map(function(p){
+      var ex = p.extra || {};
+      return { userId: String(p.user_id), name: p.display_name || '', goal: p.goal_title || '', action: p.caption || '', category: ex.category || '' };
+    });
+    var key = peerCategoryKey(cat);
+    var matched = key ? filterFeedByCategory(items, key) : items.filter(function(it){
+      return (it.goal + ' ' + it.action + ' ' + it.category).indexOf(cat) !== -1;
+    });
+    var seen = {}, out = [];
+    matched.forEach(function(it){
+      if(out.length >= 3 || seen[it.userId] || !it.name) return;
+      seen[it.userId] = true;
+      out.push({ userId: it.userId, name: it.name, emoji: it.name.slice(0, 1), goal: it.goal });
+    });
+    return out;
+  }
+  window.getPeerRunnersForCategory = getPeerRunnersForCategory;
+
+  /* [#TASK-ES-352] 첫 체크인 축하 창 웰컴 응원 — 화면에 보인 실제 동류 회원에게 기존 마니또 응원 형식
+   * (team_pings · group_id 'manito' · target_type 'manito_cheer' · ping_type 'welcome_cheer')으로 1명당 1행을 보낸다.
+   * 받는 사람은 소통 탭 → 마니또 '받은 응원함'(loadServerManitoData 의 receiver_id 조회)에서 본다.
+   * 같은 사람에게 하루 1회: 행 id 를 날짜·보낸 사람·받는 사람으로 정해 서버가 같은 날 두 번째 행을 거절하고, 기기에도 오늘 보낸 명단을 남긴다. */
+  function canSendFirstCheckinWelcome(){
+    var myId = state.profile ? String(state.profile.id || '') : '';
+    return !!(sb && state.user && isValidRealUser(myId));
+  }
+  function firstCheckinWelcomeSentToday(){
+    var s = state.profile && state.profile.settings;
+    if(!s) return {};
+    var today = dateKey(nowISO());
+    if(!s.welcomeStampSent || s.welcomeStampSent.date !== today) s.welcomeStampSent = { date: today, to: {} };
+    return s.welcomeStampSent.to;
+  }
+  async function sendFirstCheckinWelcomeStamps(peers){
+    var out = { sent: 0, already: 0, failed: 0, reason: '' };
+    var myId = String(state.profile.id);
+    var myName = state.profile.displayName || state.profile.name || '아워골 회원';
+    var today = dateKey(nowISO());
+    var sentTo = firstCheckinWelcomeSentToday();
+    for(var i = 0; i < peers.length; i++){
+      var peerId = String(peers[i].userId || '');
+      if(!isValidRealUser(peerId) || peerId === myId) continue;
+      if(sentTo[peerId]){ out.already++; continue; }
+      var row = {
+        id: 'fcw_' + today + '_' + myId + '_' + peerId,
+        group_id: 'manito',
+        sender_id: myId,
+        sender_name: myName,
+        sender_avatar: '🌱',
+        receiver_id: peerId,
+        target_type: 'manito_cheer',
+        target_id: 'seed',
+        target_title: '첫 체크인 웰컴 응원',
+        ping_type: 'welcome_cheer',
+        message: myName + '님이 첫 체크인을 마치고 같은 분야 동료에게 웰컴 응원을 보냈어요. 함께 꾸준히 가요! 🌱',
+        status: 'sent',
+        hidden: false,
+        created_at: nowISO()
+      };
+      try {
+        var res = await sb.from('team_pings').insert(row);
+        var err = res && res.error;
+        if(!err){ out.sent++; sentTo[peerId] = nowISO(); }
+        else if(String(err.code || '') === '23505'){ out.already++; sentTo[peerId] = nowISO(); }
+        else { out.failed++; out.reason = err.message ? '서버 응답: ' + String(err.message).slice(0, 40) : '서버가 거절함'; }
+      } catch(e){
+        out.failed++;
+        out.reason = '연결 오류';
+      }
+    }
+    return out;
+  }
+  window.sendFirstCheckinWelcomeStamps = sendFirstCheckinWelcomeStamps;
 
   function triggerFirstCheckinCelebrationModal(goal, checkinText, onDismiss){
     var av = (state.profile && state.profile.guardianAnimal) || { emoji: '🦉', name: '수호동물 부엉이' };
     var goalTitle = goal ? goal.title : (checkinText || '첫 실천');
     var goalCat = (goal && goal.category) || '운동';
     var peers = getPeerRunnersForCategory(goalCat);
+    var canSendWelcome = peers.length > 0 && canSendFirstCheckinWelcome();
+    var welcomeSentMap = canSendWelcome ? firstCheckinWelcomeSentToday() : {};
+    var welcomePending = peers.filter(function(p){ return !welcomeSentMap[p.userId]; }).length;
 
     var peersHtml = peers.map(function(peer){
       return '<div style="flex:1;min-width:0;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:8px 6px;text-align:center;">' +
         '<div style="font-size:22px;margin-bottom:2px;">' + peer.emoji + '</div>' +
         '<div style="font-weight:700;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink);">' + escapeHtml(peer.name) + '</div>' +
-        '<div style="font-size:10px;color:var(--brand);font-weight:800;margin-top:2px;">🔥 ' + peer.streak + '일 연속</div>' +
+        '<div style="font-size:10px;color:var(--ink-faint);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(peer.goal || '') + '</div>' +
       '</div>';
     }).join('');
 
@@ -7303,19 +7417,19 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             '<div style="font-size:15px;font-weight:800;color:var(--ink);">🌱 새싹 러너 (Lv.1)</div>' +
           '</div>' +
         '</div>' +
-        '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:16px;text-align:left;">' +
+        (peers.length ? '<div id="firstCheckinPeerRunners" style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:16px;text-align:left;">' +
           '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
             '<span style="font-size:12px;font-weight:800;color:var(--ink);">🤝 함께 달리는 동류 러너</span>' +
             '<span style="font-size:11px;color:var(--brand);font-weight:700;">' + escapeHtml(goalCat) + ' 분야</span>' +
           '</div>' +
           '<div style="display:flex;gap:6px;">' + peersHtml + '</div>' +
           '<div style="font-size:11px;color:var(--ink-faint);margin-top:8px;line-height:1.4;">' +
-            '※ 혼자 달리지 않아요! 서로의 실천 발자국을 조용히 지켜보며 함께 성장합니다.' +
+            '※ 같은 분야에서 피드에 실천을 공유한 실제 회원이에요. 서로의 발자국을 지켜보며 함께 성장합니다.' +
           '</div>' +
-        '</div>' +
+        '</div>' : '') +
         '<div style="display:flex;flex-direction:column;gap:8px;">' +
           '<button class="btn btn-primary btn-block" id="firstCheckinCommBtn" type="button" style="padding:12px;font-size:14px;font-weight:800;background:linear-gradient(135deg, var(--brand), #8b5cf6);border:none;box-shadow:0 4px 14px rgba(108,92,231,0.3);">' +
-            '💌 첫 웰컴 스탬프 보내고 소통 탭 가기 (+5 EXP)' +
+            (canSendWelcome ? (welcomePending ? ('💌 동류 러너 ' + welcomePending + '명에게 웰컴 응원 보내기 (+5 EXP)') : '✅ 오늘 웰컴 응원 보냄 · 소통 탭 가기') : '🤝 소통 탭에서 함께할 분 찾아보기') +
           '</button>' +
           '<button class="btn btn-ghost btn-block" id="firstCheckinDoneBtn" type="button" style="padding:10px;font-size:13px;font-weight:700;color:var(--ink-soft);">' +
             '홈 콕핏 둘러보기 ➔' +
@@ -7332,21 +7446,40 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       var commBtn = sheet.querySelector('#firstCheckinCommBtn');
       if(commBtn){
-        commBtn.addEventListener('click', function(){
+        commBtn.addEventListener('click', async function(){
+          if(commBtn.disabled) return;
           triggerHaptic(20);
-          burstConfetti(window.innerWidth/2, window.innerHeight/2, 25);
-          if(state.profile && state.profile.settings && state.profile.settings.xp){
-            state.profile.settings.xp.total = (state.profile.settings.xp.total || 0) + 5;
-            notifyXpGained(5, state.profile.settings.xp.total);
+          var goComm = function(msg){
+            closeModal();
+            if(typeof setTab === 'function'){
+              state.commSubTab = 'feed';
+              setTab('comm');
+            }
+            toast(msg);
+            if(typeof onDismiss === 'function') onDismiss();
+          };
+          // [#TASK-ES-352] 세션 없는 사용자·동류 0명: 보내지 않는다. '보냈어요' 문구·EXP 없이 소통 탭으로만.
+          if(!(peers.length > 0 && canSendFirstCheckinWelcome())){
+            goComm('🤝 소통 탭에서 함께하는 분을 찾아보세요');
+            return;
+          }
+          commBtn.disabled = true;
+          commBtn.textContent = '💌 보내는 중…';
+          var r = await sendFirstCheckinWelcomeStamps(peers);
+          if(r.sent > 0){
+            burstConfetti(window.innerWidth/2, window.innerHeight/2, 25);
+            if(state.profile && state.profile.settings && state.profile.settings.xp){
+              state.profile.settings.xp.total = (state.profile.settings.xp.total || 0) + 5;
+              notifyXpGained(5, state.profile.settings.xp.total);
+            }
             saveProfile();
+            goComm('💌 ' + r.sent + '명에게 웰컴 응원을 보냈어요! (+5 EXP)' + (r.failed ? ' · ' + r.failed + '명은 못 보냈어요(' + r.reason + ')' : ''));
+          } else if(r.failed > 0){
+            goComm('웰컴 응원을 보내지 못했어요(' + r.reason + '). 소통 탭에서 함께하는 분을 찾아보세요');
+          } else {
+            saveProfile();
+            goComm('오늘은 이미 웰컴 응원을 보냈어요. 소통 탭에서 함께하는 분을 찾아보세요');
           }
-          toast('💌 동류 러너들에게 웰컴 응원 스탬프를 보냈어요! (+5 EXP)');
-          closeModal();
-          if(typeof setTab === 'function'){
-            state.commSubTab = 'feed';
-            setTab('comm');
-          }
-          if(typeof onDismiss === 'function') onDismiss();
         });
       }
 
@@ -7744,9 +7877,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       var targetScrollY = (window._tabScrollMemory && typeof window._tabScrollMemory[tab] === 'number') ? window._tabScrollMemory[tab] : 0;
       window.scrollTo({top: targetScrollY, behavior:'auto'});
 
-      if(window.OurgoalRegistry && window.OurgoalRegistry.isReady()){
-        window.OurgoalRegistry.mount(tab, document.getElementById('screen-' + tab), state);
-      } else {
+      /* [#TASK-ES-353] 레지스트리 마운트가 실패(false)하면 레거시 렌더로 폴백 */
+      var mountedByRegistry = !!(window.OurgoalRegistry && window.OurgoalRegistry.isReady() && window.OurgoalRegistry.mount(tab, document.getElementById('screen-' + tab), state));
+      if(!mountedByRegistry){
         if(tab==='home') renderHome();
         if(tab==='goals') renderGoalsScreen();
         if(tab==='calendar') renderCalendarScreen();
@@ -7942,9 +8075,9 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<div style="max-height:55vh;overflow-y:auto;font-size:0.8rem;line-height:1.65;padding-right:4px;color:var(--ink-soft);">' +
           '<p><b>제1조 (수집하는 개인정보 항목)</b><br>• 회원가입 및 소셜 로그인(카카오/구글/애플): 이메일 주소, 닉네임, 프로필 사진 URL, 소셜 고유 식별자<br>• 서비스 이용: 목표, 마일스톤, 체크인 기록, 피드백 설정, 피드 게시물 및 댓글<br>• 기기 정보: 기기 식별값(익명 sid), 접속 일시</p>' +
           '<p><b>제2조 (개인정보의 처리 목적)</b><br>• 회원 식별 및 계정 관리<br>• 목표 관리, 체크인 기록 저장 및 맞춤 피드백 제공<br>• 1:1 고객 문의 응대 및 중요 고지사항 전달</p>' +
-          '<p><b>제3조 (보유 및 파기)</b><br>• 원칙적으로 회원 탈퇴 시 모든 개인정보는 지체 없이 즉시 영구 파기됩니다.<br>• 단, 전자상거래법 등 관계 법령에 따른 보존 의무가 있는 경우 법정 기간 동안 안전하게 보관 후 파기합니다.</p>' +
+          '<p><b>제3조 (보유 및 파기)</b><br>• 회원 탈퇴를 신청하면 신청 시각이 서버에 기록되고, 30일 안에 다시 로그인하면 복구할 수 있습니다.<br>• 신청 후 30일이 지나면 매일 한 번 도는 서버 파기 작업이 계정과 목표·체크인 기록(백업 포함)·프로필·피드 글·내가 보낸 메시지·설정과 동반자 저장 기록 등 개인정보를 영구 파기합니다(하루 최대 50계정, 차례대로).<br>• 다른 회원이 보낸 메시지, 익명 이용 통계, 1:1 문의의 운영팀 문의함(노션)·알림(텔레그램) 사본, 호스팅 회사(Supabase·Vercel)의 접속 로그·장애 대비 백업은 이 작업으로 지워지지 않습니다(사본은 이메일 요청 시 삭제).<br>• 아워골은 유료 결제·거래가 없어 전자상거래법상 보존 기록이 없고, 통신비밀보호법상 접속 기록도 따로 보관하지 않습니다.</p>' +
           '<p><b>제4조 (제3자 제공 및 위탁)</b><br>• 서비스는 이용자의 동의 없이 개인정보를 제3자에게 제공하지 않습니다.<br>• 인프라 위탁: Supabase Inc. (클라우드 DB), Vercel Inc. (호스팅 및 API)</p>' +
-          '<p><b>제5조 (이용자의 권리와 행사)</b><br>• 이용자는 언제든지 [설정] 메뉴의 [회원 탈퇴]를 통해 계정 삭제 및 개인정보 파기를 직접 실행할 수 있습니다.</p>' +
+          '<p><b>제5조 (이용자의 권리와 행사)</b><br>• 이용자는 언제든지 [설정] 메뉴의 [회원 탈퇴]로 탈퇴를 신청할 수 있으며, 신청 30일 후 계정과 개인정보가 서버에서 영구 파기됩니다.<br>• 더 빨리 삭제하거나 사본 삭제를 원하시면 ourgoal.support@gmail.com 으로 요청할 수 있습니다.</p>' +
           '<p><b>제6조 (개인정보 보호책임자)</b><br>• 성명: 아워골 운영팀 · 문의: ourgoal.support@gmail.com</p>' +
           '</div>';
       } else {
@@ -7954,7 +8087,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           '<p><b>제1조 (목적)</b><br>본 약관은 아워골 서비스의 이용과 관련하여 서비스와 회원 간의 권리, 의무 및 책임사항을 규정합니다.</p>' +
           '<p><b>제2조 (이용계약)</b><br>회원가입 또는 소셜 로그인을 통해 서비스를 시작함으로써 본 약관 및 개인정보처리방침에 동의한 것으로 간주됩니다.</p>' +
           '<p><b>제3조 (사용자 콘텐츠 및 커뮤니티 정책)</b><br>• 음란물, 폭력/혐오 표현, 타인 비방, 무단 광고 등 불법·유해 콘텐츠 게시를 엄격히 금지합니다.<br>• 신고가 누적되거나 운영 정책을 위반한 콘텐츠는 사전 통보 없이 즉시 숨김 또는 삭제될 수 있습니다.</p>' +
-          '<p><b>제4조 (계약 해지 및 회원 탈퇴)</b><br>회원은 언제든지 서비스 내 [설정] 메뉴를 통해 회원 탈퇴를 신청할 수 있으며, 탈퇴 시 모든 데이터는 즉시 영구 파기됩니다.</p>' +
+          '<p><b>제4조 (계약 해지 및 회원 탈퇴)</b><br>회원은 언제든지 서비스 내 [설정] 메뉴를 통해 회원 탈퇴를 신청할 수 있습니다. 신청 시각은 서버에 기록되며, 30일 안에 다시 로그인하면 복구할 수 있고, 30일이 지나면 계정과 데이터가 서버에서 영구 파기되어 복구할 수 없습니다. 파기 범위는 개인정보처리방침 제3조를 따릅니다.</p>' +
           '<p><b>제5조 (면책 조항)</b><br>서비스는 천재지변, 외부 클라우드 장애 등 불가항력적 사유로 인한 장애에 대하여 책임을 면합니다.</p>' +
           '</div>';
       }
@@ -24367,17 +24500,37 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
   window.openInAppDmSheet = openInAppDmSheet;
 
+  /* [#TASK-ES-346 SET-01] 보안 카드는 실제 상태만 보여 준다.
+     배지: 이 기기에 앱 잠금 PIN 이 설정돼 있을 때만 '설정됨'. 서버 2단계 인증은 없으므로 그런 표시를 하지 않는다. */
+  function paintSecurityCard(){
+    var settings = (state.profile && state.profile.settings) || {};
+    var pinOn = !!(settings.twoFactorAuth && settings.twoFactorPin);
+    var b = document.getElementById('badge2faStatus');
+    if(b){
+      b.textContent = pinOn ? '🔐 앱 잠금 PIN 설정됨 (이 기기)' : '앱 잠금 PIN 꺼짐';
+      b.setAttribute('data-applock', pinOn ? 'on' : 'off');
+    }
+    var nameEl = document.getElementById('securityCardDeviceName');
+    if(nameEl){
+      var dev = null;
+      try { dev = (typeof getRegisteredDevices === 'function') ? getRegisteredDevices()[0] : null; } catch(e){}
+      nameEl.textContent = '이 기기 (지금 사용 중)' + (dev && dev.name ? ' · ' + dev.name : '');
+    }
+    return pinOn;
+  }
+  window.paintSecurityCard = paintSecurityCard;
+
   function refreshSecurityStatus(){
     triggerHapticFeedback(12);
-    var b = document.getElementById('badge2faStatus');
-    if(b) b.textContent = '✓ 2단계 인증 보호 중 (인증 완료)';
-    if(typeof toast === 'function') toast('계정 보안 상태가 최신으로 갱신되었습니다 🛡️');
+    var pinOn = paintSecurityCard();
+    if(typeof toast === 'function') toast(pinOn ? '이 기기에 앱 잠금 PIN 이 설정돼 있어요.' : '이 기기에 앱 잠금 PIN 이 꺼져 있어요. 설정 > 계정 및 보안에서 켤 수 있어요.');
   }
   window.refreshSecurityStatus = refreshSecurityStatus;
 
+  /* 예전 판은 '원격 기기 세션이 차단되었습니다' 토스트만 띄웠다. 실제로 되는 '다른 기기 모두 로그아웃'으로 연결한다. */
   function killDeviceSession(){
     triggerHapticFeedback(12);
-    if(typeof toast === 'function') toast('원격 기기 세션이 안전하게 차단되었습니다 🔒');
+    if(typeof openLogoutOtherDevicesConfirmModal === 'function') openLogoutOtherDevicesConfirmModal();
   }
   window.killDeviceSession = killDeviceSession;
 
@@ -33221,8 +33374,9 @@ wirePromptEncyclopediaEvents(body);
     }
   }
 
-  function setRecordsSegment(seg){
-    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+  function setRecordsSegment(seg, silent){
+    /* [#TASK-ES-353] silent: 렌더가 상태 복원용으로 부를 때는 햅틱 없음(사용자가 누를 때만) */
+    if(!silent && typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
     state.recordsSegment = seg;
     var viewFeed = document.getElementById('recViewFeed');
     var viewStats = document.getElementById('recViewStats');
@@ -33246,8 +33400,8 @@ wirePromptEncyclopediaEvents(body);
     }
   }
 
-  function setRecordsSlide(idx){
-    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
+  function setRecordsSlide(idx, silent){
+    if(!silent && typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
     state.recordsSlide = idx;
     var track = document.getElementById('recCarouselTrack');
     if(track){
@@ -33464,8 +33618,8 @@ wirePromptEncyclopediaEvents(body);
     }
 
     // 세그먼트 및 캐러셀 상태 동기화
-    setRecordsSegment(state.recordsSegment || 'feed');
-    setRecordsSlide(state.recordsSlide || 0);
+    setRecordsSegment(state.recordsSegment || 'feed', true);
+    setRecordsSlide(state.recordsSlide || 0, true);
 
     var segCountEl = document.getElementById('recSegCount');
     if(segCountEl) segCountEl.textContent = allRecs.length;
@@ -33487,7 +33641,7 @@ wirePromptEncyclopediaEvents(body);
       state.recordsSlide = 1;
       state.recordsSlideInit = true;
     }
-    setRecordsSlide(curSlide);
+    setRecordsSlide(curSlide, true);
 
     // 캐러셀 스와이프 제스처 지원 (모바일 PWA 터치 최적화)
     var vport = document.getElementById('recCarouselViewport');
@@ -36139,7 +36293,7 @@ wirePromptEncyclopediaEvents(body);
 
     var stageLabel = !virtualCheerEnabled ? ' · 실시간 활동 피드' :
       (realCount > 20 ? ' · 🌟 실유저 중심 피드 (실사용자 100%)' :
-      (realCount === 0 ? ' · 🤖 초기 실천 가이드 (1건)' : ' · 👥 실시간 활동 피드 (응원 가이드 1건 포함)'));
+      (realCount === 0 ? ' · 아직 공유된 실천이 없어요' : ' · 👥 실시간 활동 피드'));
 
     var categories = [
       { key: 'all', label: '전체' },
@@ -37637,7 +37791,7 @@ wirePromptEncyclopediaEvents(body);
   }
   function manitoMajors(){
     var ints = (state.profile.interests||[]).map(function(t){ return t.split('/')[0]; }).filter(function(k){ return TOPICS[k]; });
-    var goalMajors = state.profile.goals.filter(function(g){ return !g.archivedAt && g.topic; }).map(function(g){ return g.topic.split('/')[0]; });
+    var goalMajors = state.profile.goals.filter(function(g){ return !g.archivedAt && g.topic; }).map(function(g){ return g.topic.split('/')[0]; }).filter(function(k){ return TOPICS[k]; }); // [#TASK-ES-352] TOPICS 에 없는 주제(예: reading)는 화면이 깨지므로 뺀다
     var all = ints.concat(goalMajors);
     var seen = {}; all = all.filter(function(k){ if(seen[k]) return false; seen[k]=true; return true; });
     return all.length ? all : ['health','study','mind'];
@@ -37681,8 +37835,9 @@ wirePromptEncyclopediaEvents(body);
           if(row.hidden === true || row.status === 'inactive') return;
           var info = {}; try { info = JSON.parse(row.message); } catch(e){}
           var major = row.target_id || info.major || 'health';
-          var realStreak = typeof info.streak === 'number' ? Math.max(1, info.streak) : 1;
-          var realPct = typeof info.pct === 'number' ? Math.max(0, Math.min(100, info.pct)) : 20;
+          // [#TASK-ES-348] 값이 없으면 null(화면에서 숨김). 예전 기본값 1일·20% 는 측정값이 아니었다.
+          var realStreak = typeof info.streak === 'number' ? Math.max(0, info.streak) : null;
+          var realPct = typeof info.pct === 'number' ? Math.max(0, Math.min(100, info.pct)) : null;
           var realLogs = (Array.isArray(info.logs) && info.logs.length) ? info.logs : [
             '아직 작성된 기록이 없습니다',
             '응원을 보내 목표 달성을 격려해보세요!',
@@ -37748,7 +37903,6 @@ wirePromptEncyclopediaEvents(body);
         var sub = subs[seed % subs.length];
         var tmpl = CREATOR_TEMPLATES.find(function(t){ return t.category===major; });
         var goalTitle = tmpl ? tmpl.title : (TOPICS[major] ? TOPICS[major].label+' · '+sub+' 3개월 도전' : '꾸준한 실천');
-        var pct = 20 + (seed % 60);
         var daySeed = hashStr(today + major + ms.seed);
         var logs = [
           ['오늘 30분 채웠어요, 생각보다 할 만하네요','컨디션 별로였지만 15분은 했어요','드디어 한 단계 넘었다! 기록 남깁니다','오늘은 쉬는 날. 대신 내일 계획 세움','같이 하는 사람 있으니까 안 빼먹게 돼요'][daySeed % 5],
@@ -37762,8 +37916,8 @@ wirePromptEncyclopediaEvents(body);
           name: genAnonName(major, seed),
           sub: sub,
           goalTitle: goalTitle,
-          pct: pct,
-          streak: 2 + (seed % 12),
+          pct: null, // [#TASK-ES-348] AI 동반자에게 시드로 만든 달성률·연속일수를 붙이지 않는다
+          streak: null,
           logs: logs,
           is_ai: true
         });
@@ -37816,7 +37970,13 @@ wirePromptEncyclopediaEvents(body);
     var ms = manitoState();
     if(!ms.joined){
       var majors = manitoMajors();
+      // [#TASK-ES-352] 마니또를 시작하지 않은 회원에게도 실제로 도착한 응원(첫 체크인 웰컴 응원 등)은 보여 준다.
+      var preJoinInbox = (REAL_MANITO_INBOX_CACHE || []).slice(0, 5);
       body.innerHTML =
+        (preJoinInbox.length ? '<div class="card" id="manitoPreJoinInbox"><div class="card-title-row"><h3>받은 응원함</h3><span class="dday-pill">'+preJoinInbox.length+'</span></div>' +
+          preJoinInbox.map(function(it){
+            return '<div class="cheer-in"><div class="ci">'+it.stamp.icon+'</div><div class="cb"><b>'+escapeHtml(it.from.name)+'</b> · <span class="ct">'+it.when+'</span><div>'+escapeHtml(it.text)+'</div></div></div>';
+          }).join('') + '</div>' : '') +
         '<div class="manito-hero">' +
           '<h3>마니또를 만나볼까요?</h3>' +
           '<p>관심 카테고리가 비슷한 사람들과 <b>익명으로</b> 엮여요. 서로의 목표와 오늘 기록을 보며 응원을 주고받고, 마음이 맞으면 DM까지.</p>' +
@@ -37919,7 +38079,7 @@ wirePromptEncyclopediaEvents(body);
           '<span style="font-size:0.75rem;color:var(--ink-faint);font-weight:600;">1초 원클릭 응원</span>' +
         '</div>' +
         '<h3 class="manito-welcome-title">' +
-          '<span>' + firstPartner.emoji + ' ' + escapeHtml(firstPartner.name) + '님에게 웰컴 응원 보내기</span>' +
+          '<span>' + firstPartner.emoji + ' ' + escapeHtml(firstPartner.name) + '님에게 웰컴 응원 보내기' + (firstPartner.is_ai ? ' <span class="feed-c-badge badge-ai">AI</span>' : '') + '</span>' +
         '</h3>' +
         '<p class="manito-welcome-desc">' +
           '목표: "<b>' + escapeHtml(firstPartner.goalTitle) + '</b>"<br>' +
@@ -37952,7 +38112,7 @@ wirePromptEncyclopediaEvents(body);
       '</div>' +
       (inbox.length ? '<div class="card"><div class="card-title-row"><h3>받은 응원함</h3><span class="dday-pill">'+inbox.length+'</span></div>' +
         inbox.map(function(it){
-          return '<div class="cheer-in"><div class="ci">'+it.stamp.icon+'</div><div class="cb"><b>'+escapeHtml(it.from.name)+'</b> · <span class="ct">'+it.when+'</span><div>'+escapeHtml(it.text)+'</div></div></div>';
+          return '<div class="cheer-in"><div class="ci">'+it.stamp.icon+'</div><div class="cb"><b>'+escapeHtml(it.from.name)+'</b>'+((it.is_ai || (it.from && it.from.is_ai)) ? ' <span class="feed-c-badge badge-ai">AI</span>' : '')+' · <span class="ct">'+it.when+'</span><div>'+escapeHtml(it.text)+'</div></div></div>';
         }).join('') + '</div>' : '') +
       '<p class="faint" style="margin:4px 0 10px;">내 마니또 '+partners.length+'명 · 익명이에요</p>' +
       partners.map(function(p){
@@ -37970,9 +38130,9 @@ wirePromptEncyclopediaEvents(body);
             '<div class="manito-avatar">'+p.emoji+'</div>' +
             '<div style="flex:1;min-width:0;">' +
               '<div class="manito-name">'+escapeHtml(p.name)+partnerBadgeHtml+'</div>' +
-              '<div class="manito-sub">'+TOPICS[p.major].icon+' '+TOPICS[p.major].label+' · '+escapeHtml(p.sub)+' · 🔥 '+p.streak+'일 연속</div>' +
+              '<div class="manito-sub">'+TOPICS[p.major].icon+' '+TOPICS[p.major].label+' · '+escapeHtml(p.sub)+(p.streak > 0 ? ' · 🔥 '+p.streak+'일 연속' : '')+'</div>' +
             '</div>' +
-            '<div class="gauge">'+gaugeSvg(p.pct, 46, color)+'</div>' +
+            (typeof p.pct === 'number' ? '<div class="gauge">'+gaugeSvg(p.pct, 46, color)+'</div>' : '') +
           '</div>' +
           '<div style="font-weight:700;font-size:.9375rem;margin-bottom:2px;">'+escapeHtml(p.goalTitle)+'</div>' +
           '<div class="manito-rec"><span class="d">오늘</span><span>'+escapeHtml(p.logs[0])+'</span></div>' +
@@ -38582,6 +38742,30 @@ wirePromptEncyclopediaEvents(body);
   }
   window.toggleAdvancedSettings = toggleAdvancedSettings;
 
+  /* [#TASK-ES-346 SET-01] 저장공간 표시는 navigator.storage.estimate() 실측값. 못 재면 '측정 불가'. */
+  function formatStorageBytes(n){
+    if(!(n >= 0)) return null;
+    if(n < 1024) return n + ' B';
+    if(n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+    return (n / 1024 / 1024).toFixed(1) + ' MB';
+  }
+  async function paintCacheUsage(){
+    var el = document.getElementById('cacheSizeText');
+    if(!el) return null;
+    var usage = null;
+    try {
+      if(navigator.storage && typeof navigator.storage.estimate === 'function'){
+        var est = await navigator.storage.estimate();
+        if(est && typeof est.usage === 'number') usage = est.usage;
+      }
+    } catch(e){ usage = null; }
+    var txt = formatStorageBytes(usage);
+    el.textContent = txt ? ('약 ' + txt + ' 사용 중 (브라우저 추정치)') : '사용량 측정 불가';
+    el.setAttribute('data-measured', txt ? 'estimate' : 'unavailable');
+    return usage;
+  }
+  window.paintCacheUsage = paintCacheUsage;
+
   function renderSettingsScreen(){
     if(typeof triggerHapticFeedback === 'function'){
       triggerHapticFeedback(12);
@@ -38780,13 +38964,16 @@ wirePromptEncyclopediaEvents(body);
         };
       }
     }
+    if(typeof window.paintSecurityCard === 'function'){ try { window.paintSecurityCard(); } catch(e){} }
+    /* [#TASK-ES-346 SET-01] '로그인 기기 및 세션' 목록은 설정을 열 때 이 기기 한 대를 사실대로 그린다(예전엔 비어 있었다) */
+    if(typeof renderActiveDevicesList === 'function'){ try { renderActiveDevicesList(); } catch(e){} }
     var twoFaSw = document.getElementById('twoFactorSwitch');
     var pinCtrl = document.getElementById('twoFactorPinControls');
     var btnChangePin = document.getElementById('btnChange2FaPin');
     if(twoFaSw){
       var twoFaOn = !!(settings.twoFactorAuth && settings.twoFactorPin);
       twoFaSw.className = 'switch' + (twoFaOn ? ' on' : '');
-      a11ySwitch(twoFaSw, twoFaOn, '2단계 인증 (2FA) 보안 로그인');
+      a11ySwitch(twoFaSw, twoFaOn, '앱 잠금 PIN (이 기기)');
       if(pinCtrl){
         pinCtrl.style.display = twoFaOn ? 'flex' : 'none';
       }
@@ -39365,12 +39552,27 @@ wirePromptEncyclopediaEvents(body);
     // 💾 저장공간 및 캐시 관리 (Req 10)
     var clearCacheBtn = document.getElementById('clearCacheBtn');
     if(clearCacheBtn){
-      clearCacheBtn.onclick = function(){
-        var cacheEl = document.getElementById('cacheSizeText');
-        if(cacheEl) cacheEl.textContent = '0 KB 사용 중';
-        toast('임시 캐시 및 이미지 데이터를 모두 비웠습니다');
+      /* [#TASK-ES-346 SET-01] 실측: 지우기 버튼은 화면 캐시(Cache API)만 지우고, 지운 뒤 다시 잰 값을 보여 준다.
+         목표·기록·설정(localStorage)은 지우지 않는다. */
+      clearCacheBtn.onclick = async function(){
+        clearCacheBtn.disabled = true;
+        var removed = 0, failed = false;
+        try {
+          if(window.caches && typeof caches.keys === 'function'){
+            var keys = await caches.keys();
+            for(var ci = 0; ci < keys.length; ci++){
+              if(await caches.delete(keys[ci])) removed++;
+            }
+          } else {
+            failed = true;
+          }
+        } catch(e){ failed = true; }
+        await paintCacheUsage();
+        clearCacheBtn.disabled = false;
+        toast(failed ? '이 브라우저에서는 화면 캐시를 지울 수 없어요.' : ('화면 캐시 ' + removed + '개 묶음을 지웠어요. 목표·기록은 그대로예요.'));
       };
     }
+    paintCacheUsage();
     var fmtWrap = document.getElementById('formatToggle');
     fmtWrap.querySelectorAll('.format-opt').forEach(function(o){
       o.classList.toggle('active', o.dataset.fmt===state.profile.settings.exportFormat);
@@ -39637,32 +39839,20 @@ wirePromptEncyclopediaEvents(body);
   function dispatchFullViewPropagation(specificViews){
     if(!state || !state.profile) return;
     var views = Array.isArray(specificViews) ? specificViews : ['home', 'records', 'stats', 'calendar'];
-    try {
-      if(views.includes('home') && typeof renderHome === 'function') renderHome();
-    } catch(e){ console.warn('[FullViewPropagation] renderHome error:', e); }
-    try {
-      if(views.includes('records') && typeof renderRecordsScreen === 'function') renderRecordsScreen();
-    } catch(e){ console.warn('[FullViewPropagation] renderRecordsScreen error:', e); }
-    try {
-      if(views.includes('stats')){
-        if(typeof renderStatsScreen === 'function') renderStatsScreen();
-        if(typeof universalStatsRender === 'function') universalStatsRender();
-      }
-    } catch(e){ console.warn('[FullViewPropagation] stats render error:', e); }
-    try {
-      if(views.includes('calendar')){
-        if(typeof renderCalendarScreen === 'function') renderCalendarScreen();
-        if(typeof renderCalendar === 'function') renderCalendar();
-      }
-    } catch(e){ console.warn('[FullViewPropagation] calendar render error:', e); }
-    try {
-      if(window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render && state.activeTab){
-        window.OurgoalSanctuaryV3.render(state.activeTab);
-      }
-    } catch(e){ console.warn('[FullViewPropagation] SanctuaryV3 render error:', e); }
-    try {
-      if(typeof checkGuestBackupNudge === 'function') checkGuestBackupNudge();
-    } catch(nudgeErr){}
+    var changeReason = (typeof specificViews === 'string') ? specificViews : null;
+    /* [#TASK-ES-353 CORE-04] 같은 틱 렌더 합치기: 영역별 렌더를 버스의 requestRender 로 모으고 끝에서 1회씩 그린다(view:sync 구독 소블록과 같은 키) */
+    var ev = window.OurgoalEvents;
+    var queueRender = function(key, fn){
+      if(ev && typeof ev.requestRender === 'function') ev.requestRender(key, fn);
+      else { try { fn(); } catch(e){ console.warn('[FullViewPropagation] ' + key + ' error:', e); } }
+    };
+    if(views.includes('home') && typeof renderHome === 'function') queueRender('renderHome', renderHome);
+    if(views.includes('records') && typeof renderRecordsScreen === 'function') queueRender('renderRecordsScreen', renderRecordsScreen);
+    if(views.includes('stats')){
+      if(typeof renderStatsScreen === 'function') queueRender('renderStatsScreen', renderStatsScreen);
+      if(typeof universalStatsRender === 'function') queueRender('universalStatsRender', universalStatsRender);
+    }
+    if(views.includes('calendar') && typeof renderCalendarScreen === 'function') queueRender('renderCalendarScreen', renderCalendarScreen);
     try {
       if(window.OurgoalStore && typeof window.OurgoalStore.setState === 'function'){
         window.OurgoalStore.setState({
@@ -39673,9 +39863,18 @@ wirePromptEncyclopediaEvents(body);
     } catch(storeErr){ console.warn('[FullViewPropagation] OurgoalStore error:', storeErr); }
     try {
       if(window.OurgoalEvents && typeof window.OurgoalEvents.emit === 'function'){
-        window.OurgoalEvents.emit('view:sync', { views: views, state: state });
+        window.OurgoalEvents.emit('view:sync', { views: views, state: state, reason: changeReason });
       }
     } catch(evErr){ console.warn('[FullViewPropagation] OurgoalEvents error:', evErr); }
+    if(ev && typeof ev.flushRenders === 'function') ev.flushRenders();
+    try {
+      if(window.OurgoalSanctuaryV3 && window.OurgoalSanctuaryV3.render && state.activeTab){
+        window.OurgoalSanctuaryV3.render(state.activeTab);
+      }
+    } catch(e){ console.warn('[FullViewPropagation] SanctuaryV3 render error:', e); }
+    try {
+      if(typeof checkGuestBackupNudge === 'function') checkGuestBackupNudge();
+    } catch(nudgeErr){}
   }
   if(typeof window !== 'undefined'){
     window.dispatchFullViewPropagation = dispatchFullViewPropagation;

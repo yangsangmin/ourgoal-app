@@ -337,7 +337,7 @@
                 '<div style="min-width:0;flex:1;">' +
                   '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
                     '<div style="font-weight:700;font-size:.8125rem;color:var(--ink);">' + (typeof formatDisplayNameWithTag === 'function' ? formatDisplayNameWithTag(u.nickname || u.name) : esc(u.nickname || u.name)) + '</div>' +
-                    '<span class="dday-pill" style="font-size:.625rem;background:var(--surface-2);color:var(--brand-strong);">' + esc(u.theme || '실천') + '</span>' +
+                    (isKnownAiCompanion(u) ? '<span class="dday-pill badge-ai" style="font-size:.625rem;background:var(--surface-2);color:var(--brand-strong);border:1px solid rgba(108,92,231,0.3);font-weight:700;">🤖 AI 예시</span>' : '<span class="dday-pill" style="font-size:.625rem;background:var(--surface-2);color:var(--brand-strong);">' + esc(u.theme || '실천') + '</span>') +
                   '</div>' +
                   '<div class="faint" style="font-size:.72rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(u.intro || '아워골 회원') + '</div>' +
                 '</div>' +
@@ -363,9 +363,9 @@
               avatar: uavatar,
               intro: uintro,
               level: 1,
-              streak: 1,
+              streak: 0,
               theme: '동반자',
-              isAiBot: false,
+              isAiBot: isKnownAiCompanion({ id: uid, nickname: uname }),
               createdAt: new Date().toISOString()
             };
 
@@ -1469,7 +1469,7 @@
     // 1. 실제 동반자 중 실 유저
     var comps = (state.profile && state.profile.companions) || [];
     comps.forEach(function(c){
-      if(!isKnownAiCompanion(c) && !c.isAiBot && String(c.id || '') !== String(myId)){
+      if(!isKnownAiCompanion(c) && String(c.id || '') !== String(myId)){
         if(!pool.some(function(x){ return String(x.id) === String(c.id); })){
           pool.push({
             id: c.id,
@@ -1486,7 +1486,7 @@
 
     // 2. 수신된 실 유저 대화방
     (_incomingDmRooms || []).forEach(function(inc){
-      if(!isKnownAiCompanion(inc) && !inc.isAiBot && String(inc.id || '') !== String(myId)){
+      if(!isKnownAiCompanion(inc) && String(inc.id || '') !== String(myId)){
         if(!pool.some(function(x){ return String(x.id) === String(inc.id); })){
           pool.push({
             id: inc.id,
@@ -1506,7 +1506,7 @@
     joinedGroups.forEach(function(grp){
       if(grp && Array.isArray(grp.membersList)){
         grp.membersList.forEach(function(mem){
-          if(mem && !isKnownAiCompanion(mem) && !mem.isAiBot && String(mem.id || '') !== String(myId)){
+          if(mem && !isKnownAiCompanion(mem) && String(mem.id || '') !== String(myId)){
             if(!pool.some(function(x){ return String(x.id) === String(mem.id); })){
               pool.push({
                 id: mem.id,
@@ -1764,13 +1764,13 @@
       }
 
       var subTitle = person.groupName ? ('👥 ' + esc(person.groupName) + (person.role ? ' · ' + esc(person.role) : '')) : (person.theme ? ('🤝 동반자 · ' + esc(person.theme)) : '아워골 회원');
-      var isPersonReal = !person.isAiBot && !isKnownAiCompanion(person) && (typeof window !== 'undefined' && typeof window.isValidRealUser === 'function' ? window.isValidRealUser(person.id) : (String(person.id).indexOf('guest') !== 0 && String(person.id).indexOf('comp_') !== 0 && String(person.id).indexOf('mem_') !== 0));
+      var isPersonReal = !isKnownAiCompanion(person) && (typeof window !== 'undefined' && typeof window.isValidRealUser === 'function' ? window.isValidRealUser(person.id) : (String(person.id).indexOf('guest') !== 0 && String(person.id).indexOf('comp_') !== 0 && String(person.id).indexOf('mem_') !== 0));
       var badgeTag = isPersonReal ? '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--ink);margin-left:6px;">실 사용자</span>' : '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--brand-strong);margin-left:6px;">🤖 AI 봇</span>';
 
       var isMyCompanion = (state.profile && state.profile.companions || []).some(function(c){
         return String(c.id || '').trim().toLowerCase() === String(person.id || '').trim().toLowerCase();
       });
-      var canFollowBack = !isMyCompanion && !person.isAiBot && String(person.id).indexOf('mem_') !== 0;
+      var canFollowBack = !isMyCompanion && !isKnownAiCompanion(person) && String(person.id).indexOf('mem_') !== 0;
       var followBackBannerHtml = canFollowBack ? (
         '<div id="dmFollowBackBanner" style="margin-bottom:12px;padding:10px 14px;background:var(--surface-2);border:1.5px solid var(--brand);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;">' +
           '<div style="font-size:.8125rem;color:var(--ink);display:flex;align-items:center;gap:6px;">' +
@@ -2069,33 +2069,31 @@
   /* ------------------------------------------------------------
    * 6. 동반자(친구·팔로우) 실제 회원 연동 시스템 (헌법 제19조 준수)
    * ------------------------------------------------------------ */
-  var KNOWN_AI_BOT_NAMES = [
-    '새벽러너_민지', '민지', '김민지',
-    '코드장인_도현', '도현', '박도현',
-    '갓생사는_수아', '수아', '이수아',
-    '이지수 팀장', '지수_TF장',
-    '김민우 대리', '민우_운영조',
-    '박소연 사원', '소연_레크조',
-    '최현아', '현아_드라이브',
-    '정준호', '준호_맛집탐험',
-    '강성진 코치', '성진_헤드코치',
-    '윤태양', '태양_와드러버'
-  ];
+  /* [#TASK-ES-348] AI 판별은 이름이 아니라 표식으로 한다. 실명형 이름(민지·도현·수아 등)으로 판별하면 같은 닉네임의 실제 회원이 AI 로 빠진다.
+   * 표식: is_ai·botBadge(서버/시드 데이터) · 시드 id 접두(comp_·mem_·mock_·bot_·ai_·mn_·sim_·guest) · 오프라인 예시 id · isAiBot(인증 UUID 가 아닐 때만).
+   * 인증 UUID 계정의 isAiBot 은 예전 이름 판별이 남긴 값일 수 있어 믿지 않는다. 페르소나 핸들은 정확 일치 AND 인증 UUID 아님일 때만 AI. */
+  var AI_ID_PREFIXES = ['comp_', 'mem_', 'mock_', 'bot_', 'ai_', 'mn_', 'sim_', 'guest'];
+  var LOCAL_SAMPLE_USER_IDS = ['user-runner-sm', 'user-early-reader', 'user-clean-coder', 'user-minji-runner', 'user-dohyun-dev', 'user-sua-god'];
+  var KNOWN_AI_BOT_NAMES = ['새벽러너_민지', '코드장인_도현', '갓생사는_수아', '지수_TF장', '민우_운영조', '소연_레크조', '현아_드라이브', '준호_맛집탐험', '성진_헤드코치', '태양_와드러버'];
+  function isAuthUuid(id){ return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(id || '').trim()); }
+  function hasAiIdMarker(id){
+    var s = String(id || '').trim().toLowerCase();
+    if(!s) return false;
+    return LOCAL_SAMPLE_USER_IDS.indexOf(s) !== -1 || AI_ID_PREFIXES.some(function(p){ return s.indexOf(p) === 0; });
+  }
 
   function isKnownAiCompanion(userOrId){
     if(!userOrId) return false;
     if(typeof userOrId === 'string'){
-      var s = userOrId.toLowerCase();
-      if(s.indexOf('comp_') === 0 || s.indexOf('mem_') === 0 || s.indexOf('mock_') === 0 || s.indexOf('bot_') === 0 || s.indexOf('ai_') === 0 || s.indexOf('mn_') === 0 || s.indexOf('guest') === 0) return true;
-      return KNOWN_AI_BOT_NAMES.some(function(n){ return n === userOrId; });
+      var s = userOrId.trim().toLowerCase();
+      if(s.indexOf('mn_') === 0 || s.indexOf('guest') === 0) return true;
+      return hasAiIdMarker(s);
     }
+    if(userOrId.is_ai === true || userOrId.botBadge) return true;
+    if(hasAiIdMarker(userOrId.id)) return true;
+    if(isAuthUuid(userOrId.id)) return false;
     if(userOrId.isAiBot === true) return true;
-    var uid = String(userOrId.id || '').toLowerCase();
-    if(uid.indexOf('comp_') === 0 || uid.indexOf('mem_') === 0 || uid.indexOf('mock_') === 0 || uid.indexOf('bot_') === 0 || uid.indexOf('ai_') === 0 || uid.indexOf('mn_') === 0 || uid.indexOf('guest') === 0) return true;
-    var nick = userOrId.nickname || userOrId.name || '';
-    if(KNOWN_AI_BOT_NAMES.some(function(n){ return n === nick; })) return true;
-    if(userOrId.botBadge) return true;
-    return false;
+    return KNOWN_AI_BOT_NAMES.indexOf(String(userOrId.nickname || userOrId.name || '').trim()) !== -1;
   }
 
   function safeAvatarHtml(avatar, size){
@@ -2166,7 +2164,7 @@
       state.profile.companions = [];
     } else {
       state.profile.companions = state.profile.companions.filter(function(c){
-        return !isKnownAiCompanion(c) && !c.isAiBot && String(c.id || '').indexOf('comp_') !== 0;
+        return !isKnownAiCompanion(c) && String(c.id || '').indexOf('comp_') !== 0;
       });
     }
 
@@ -2301,7 +2299,7 @@
 
     var heatmapCubes = '';
     for(var d = 13; d >= 0; d--){
-      var hasCheckin = (d % 3 !== 0);
+      var hasCheckin = Array.isArray(user.recentCheckinDays) && user.recentCheckinDays.indexOf(d) !== -1; // [#TASK-ES-348] 예전 d%3 가짜 무늬 제거, 데이터 없으면 빈 칸
       var bg = hasCheckin ? 'var(--brand)' : 'var(--rule)';
       heatmapCubes += '<div style="flex:1;aspect-ratio:1/1;background:' + bg + ';border-radius:3px;" title="' + d + '일 전 실천"></div>';
     }
@@ -2320,7 +2318,7 @@
         '<div class="faint" style="font-size:.8125rem;margin-top:2px;">' + esc(user.theme || (isAiBot ? 'AI 목표 동반자' : '아워골 동반자')) + '</div>' +
         '<div style="display:flex;justify-content:center;gap:6px;margin-top:8px;">' +
           '<span class="dday-pill" style="font-size:.75rem;">Lv.' + (user.level || 1) + '</span>' +
-          '<span class="dday-pill" style="font-size:.75rem;background:var(--red-soft);color:var(--brand-strong);">🔥 ' + (user.streak || 1) + '일 연속 실천</span>' +
+          (user.streak > 0 ? '<span class="dday-pill" style="font-size:.75rem;background:var(--red-soft);color:var(--brand-strong);">🔥 ' + user.streak + '일 연속 실천</span>' : '') +
         '</div>' +
       '</div>' +
       '<div style="padding:10px 14px;background:var(--surface-2);border-radius:12px;margin-bottom:14px;font-size:.8125rem;color:var(--ink);line-height:1.5;text-align:center;">' +
@@ -2334,7 +2332,7 @@
       '<div style="margin-bottom:16px;">' +
         '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
           '<span style="font-size:.8125rem;font-weight:700;color:var(--ink);">최근 14일 실천 히트맵</span>' +
-          '<span class="faint" style="font-size:.75rem;">' + (user.streak || 1) + '일 연속 달성 중</span>' +
+          '<span class="faint" style="font-size:.75rem;">' + (user.streak > 0 ? user.streak + '일 연속 달성 중' : '공개된 실천 기록 없음') + '</span>' +
         '</div>' +
         '<div style="display:flex;gap:4px;padding:8px 10px;background:var(--card);border:1px solid var(--rule);border-radius:10px;">' +
           heatmapCubes +
@@ -2531,7 +2529,7 @@
                 '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">' +
                   '<div style="font-weight:700;font-size:.875rem;color:var(--ink);">' + (typeof formatDisplayNameWithTag === 'function' ? formatDisplayNameWithTag(u.nickname || u.name) : esc(u.nickname || u.name)) + '</div>' +
                   '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--brand-strong);border:1px solid rgba(108,92,231,0.2);">' + esc(u.theme || '실천') + '</span>' +
-                  '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--ink-soft);">🔥 Lv.' + (u.level || 1) + ' · ' + (u.streak || 1) + '일 연속</span>' +
+                  '<span class="dday-pill" style="font-size:.6875rem;background:var(--surface-2);color:var(--ink-soft);">🔥 Lv.' + (u.level || 1) + (u.streak > 0 ? ' · ' + u.streak + '일 연속' : '') + '</span>' +
                 '</div>' +
                 '<div class="faint" style="font-size:.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(u.intro || '함께 실천하는 아워골 동반자') + '</div>' +
               '</div>' +
@@ -2614,7 +2612,7 @@
                 avatar: u.avatar || '👤',
                 intro: u.intro || '함께 실천하는 아워골 회원',
                 level: u.level || 1,
-                streak: u.streak || 1,
+                streak: u.streak || 0,
                 theme: u.theme || '일반',
                 isAiBot: false
               };
@@ -2641,7 +2639,7 @@
                 avatar: u.avatar_url || '👤',
                 intro: u.bio || '함께 실천하는 아워골 회원',
                 level: 1,
-                streak: 1,
+                streak: 0,
                 theme: (u.interests && u.interests[0]) || '일반',
                 isAiBot: false
               };
@@ -2798,11 +2796,10 @@
     try {
       var healed = false;
       companions.forEach(function(c){
-        if(isKnownAiCompanion(c)){
-          if(!c.isAiBot){
-            c.isAiBot = true;
-            healed = true;
-          }
+        var aiNow = isKnownAiCompanion(c);
+        if(!!c.isAiBot !== aiNow){
+          c.isAiBot = aiNow;
+          healed = true;
         }
       });
       if(healed){
@@ -2891,7 +2888,7 @@
             '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-wrap:wrap;">' +
               '<b style="font-size:.9375rem;color:var(--ink);cursor:pointer;" class="comp-avatar-click" data-viewprof="' + c.id + '">' + esc(c.nickname || c.name) + '</b>' +
               badgeHtml +
-              '<span style="font-size:.75rem;color:var(--brand-strong);font-weight:700;">🔥 ' + (c.streak || 1) + '일</span>' +
+              (c.streak > 0 ? '<span style="font-size:.75rem;color:var(--brand-strong);font-weight:700;">🔥 ' + c.streak + '일</span>' : '') +
             '</div>' +
             '<div class="faint" style="font-size:.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(c.intro || c.theme || (isAi ? '초기 활동을 함께하는 AI 동반자' : '목표를 향해 함께 달리는 동반자')) + '</div>' +
           '</div>' +
@@ -3060,7 +3057,7 @@
                 avatar: u.avatar || '👤',
                 intro: u.intro || '함께 실천하는 아워골 회원',
                 level: u.level || 1,
-                streak: u.streak || 1,
+                streak: u.streak || 0,
                 theme: u.theme || '일반',
                 isAiBot: false
               };
@@ -3089,7 +3086,7 @@
                 avatar: u.avatar_url || '👤',
                 intro: u.bio || '함께 실천하는 아워골 회원',
                 level: 1,
-                streak: 1,
+                streak: 0,
                 theme: (u.interests && u.interests[0]) || '일반',
                 isAiBot: false
               };
@@ -3635,6 +3632,7 @@
     shareCardExternal: shareCardExternal,
     saveCardImage: saveCardImage,
     getTeamMembersPool: getTeamMembersPool,
+    isKnownAiCompanion: isKnownAiCompanion,
     getDmPerson: getDmPerson,
     renderCommDM: renderCommDM,
     openUserProfileModal: openUserProfileModal,
@@ -3717,7 +3715,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -3804,7 +3802,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -3925,7 +3923,7 @@
       }
 
       // 5. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -4015,7 +4013,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -4076,7 +4074,7 @@
         updated_at: new Date().toISOString(),
         ai_limit: 1,
         purge_ai_threshold: 20,
-        active_real_users: 25,
+        active_real_users: null, // [#TASK-ES-348] 측정하지 않은 수치는 null(이전 25 는 하드코딩)
         ai_purged: true,
         state: 'completed'
       };
@@ -4104,7 +4102,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();

@@ -529,7 +529,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -626,7 +626,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();

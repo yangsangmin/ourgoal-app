@@ -20,9 +20,20 @@
      * @param {Object} events
      */
     mount: function(container, state, events) {
-      this.render(state);
+      // #TASK-ES-353: 이전 mount 의 구독을 먼저 해제하고, '실제로 그렸는가'를 돌려준다(빈 소블록이면 메가블록이 폴백)
+      this.dispose(events);
+      var drew = this.render(state) === true;
       this.bindEvents(events);
-      return true;
+      return drew;
+    },
+
+    /**
+     * 이전 mount 에서 건 구독 해제 (#TASK-ES-353 CORE-04)
+     * @param {Object} events
+     */
+    dispose: function(events) {
+      var ev = events || global.OurgoalEvents;
+      if (ev && typeof ev.offOwner === 'function') ev.offOwner('goals/team');
     },
 
     /**
@@ -30,22 +41,27 @@
      * @param {Object} state
      */
     render: function(state) {
+      var drew = false;
       try {
         var s = state || global.state;
-        if (!s) return;
+        if (!s) return false;
 
         if (s.goalsSubTab === 'team') {
           if (typeof global.renderTeamGoalsScreen === 'function') {
             global.renderTeamGoalsScreen();
+            drew = true;
           }
         } else if (s.goalsSubTab === 'teamLinked') {
           if (global.OurgoalTeamLinkedGoals && typeof global.OurgoalTeamLinkedGoals.renderTeamLinkedGoalsScreen === 'function') {
             global.OurgoalTeamLinkedGoals.renderTeamLinkedGoalsScreen();
+            drew = true;
           }
         }
       } catch (err) {
+        drew = false;
         console.warn('[OurgoalGoalsTeam] Render warning:', err);
       }
+      return drew;
     },
 
     /**
@@ -56,13 +72,16 @@
       var ev = events || global.OurgoalEvents;
       if (!ev || typeof ev.on !== 'function') return;
 
+      // #TASK-ES-353 CORE-04: 변경 이벤트는 1종(EVENTS.CHANGED = 'view:sync', dispatchFullViewPropagation 이 발행).
+      // 소유자 키로 걸어 탭에 다시 들어와도 구독이 쌓이지 않고, 같은 틱의 요청은 'renderTeamGoalsScreen' 키로 합쳐 1회만 그린다.
       var self = this;
       ev.on('view:sync', function() {
-        self.render(global.state);
-      });
-      ev.on('goal:updated', function() {
-        self.render(global.state);
-      });
+        if (typeof ev.requestRender === 'function') {
+          ev.requestRender('renderTeamGoalsScreen', function() { self.render(global.state); });
+        } else {
+          self.render(global.state);
+        }
+      }, { owner: 'goals/team' });
     }
   };
 

@@ -212,7 +212,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -288,7 +288,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -364,7 +364,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -448,7 +448,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -524,7 +524,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -602,7 +602,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -653,7 +653,7 @@
         updated_at: new Date().toISOString(),
         ai_limit: 1,
         purge_ai_threshold: 20,
-        active_real_users: 25,
+        active_real_users: null, // [#TASK-ES-348] 측정하지 않은 수치는 null(이전 25 는 하드코딩)
         ai_purged: true,
         state: 'completed'
       };
@@ -681,7 +681,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -759,7 +759,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -837,7 +837,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -915,7 +915,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -1014,7 +1014,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -1094,7 +1094,7 @@
         win.showToast('성취통계 다중 측정지표 그래프 동시 렌더링이 적용되었습니다.', { type: 'success', duration: 2000 });
       }
 
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -1175,7 +1175,7 @@
         win.showToast('공유 대상이 선택되었습니다. 다짐과 함께 게시할 준비가 완료되었습니다.', { type: 'success', duration: 2000 });
       }
 
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -1256,7 +1256,7 @@
         win.showToast('실천 인증 사진 첨부 설정이 완료되었습니다. 피드에 게시할 준비가 되었습니다.', { type: 'success', duration: 2000 });
       }
 
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -1336,7 +1336,7 @@
         win.showToast('카테고리 분류가 다양하게 적용되었습니다.', { type: 'success', duration: 2000 });
       }
 
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -1412,7 +1412,7 @@
         win.showToast('성취통계 미작동 버튼이 완전히 정리되었습니다.', { type: 'success', duration: 2000 });
       }
 
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -1508,7 +1508,7 @@
         win.showToast('피드 내 AI 봇 활동내역이 1개로 축소되고 최하단에 정렬되었습니다.', { type: 'success', duration: 2000 });
       }
 
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -1617,7 +1617,7 @@
         win.showToast('기기 바탕화면용 위젯(일정·목표·기록 3종 × 3구성)이 활성화되었습니다.', { type: 'success', duration: 2000 });
       }
 
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -1718,7 +1718,7 @@
         win.showToast('실천기록 최신순 자동적용 및 맞춤형 AI피드백·다짐 연동이 활성화되었습니다.', { type: 'success', duration: 2000 });
       }
 
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -1828,7 +1828,7 @@
         }
       }
 
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -1929,7 +1929,7 @@
         }
       }
 
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
@@ -2040,7 +2040,7 @@
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderAll === 'function') win.renderAll();
 
       return syncPayload;
@@ -2147,7 +2147,7 @@
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderAll === 'function') win.renderAll();
 
       return syncPayload;
@@ -2255,7 +2255,7 @@
       if (typeof win.renderCommScreen === 'function') win.renderCommScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderAll === 'function') win.renderAll();
 
       return syncPayload;
@@ -2359,7 +2359,7 @@
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderAll === 'function') win.renderAll();
 
       return syncPayload;
@@ -2471,7 +2471,7 @@
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderCommScreen === 'function') win.renderCommScreen();
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderAll === 'function') win.renderAll();
 
       return syncPayload;
@@ -2580,7 +2580,7 @@
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderCommScreen === 'function') win.renderCommScreen();
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderAll === 'function') win.renderAll();
 
       return syncPayload;
@@ -2687,7 +2687,7 @@
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderCommScreen === 'function') win.renderCommScreen();
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderAll === 'function') win.renderAll();
 
       return syncPayload;
@@ -2768,7 +2768,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -2870,7 +2870,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -2968,7 +2968,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -3078,7 +3078,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -3192,7 +3192,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -3266,7 +3266,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -3359,7 +3359,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -3444,7 +3444,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -3548,7 +3548,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();
@@ -3669,7 +3669,7 @@
       }
 
       // 4. 헌법 제15조 제6항 4대 뷰 원자적 동시 전파
-      if (typeof win.renderCalendar === 'function') win.renderCalendar();
+      if (typeof win.renderCalendarScreen === 'function') win.renderCalendarScreen();
       if (typeof win.renderGoalsScreen === 'function') win.renderGoalsScreen();
       if (typeof win.renderHome === 'function') win.renderHome();
       if (typeof win.renderRecordsScreen === 'function') win.renderRecordsScreen();

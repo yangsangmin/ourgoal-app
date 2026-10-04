@@ -5771,5 +5771,57 @@
 - **재현성**: A·B 비교 2520값 중 다른 값 0. 앞선 시도(`241f13e`)에서는 8값이 달랐다 — 실행 B 달력 첫 장에서 탭 버튼 첫 누름이 병렬 부하로 안 먹어 홈을 잰 것. 탭 버튼을 2회까지 다시 누르도록 고친 뒤 처음부터 다시 잼.
 - **한계**: 노션 완료 기준의 "촬영 48장/탭" 보다 적다(작업 지시의 "주요 상태 1~2개" 범위). 접힌 `details` 안 요소는 Dead-Click 대상에서 빠짐. 거름은 낱말 기준이라 할 일 이름 "러닝화 구매" 같은 행이 '돈' 사유로 안 눌린다. 반응 판정은 "무엇이든 바뀌었는가"까지다. 목 Supabase·게스트 화면만, 헤드리스라 가상 키보드 없음.
 - **산출물**: `docs/design/harness/out-six-tab-2026-10-04.json`(요약 약 200KB), `out-six-tab-2026-10-04-repro.json`. PNG 는 저장소 밖.
+## [2026-10-04 14:30] #TASK-ES-348: 소통 COMM-01 — 실제 회원 AI 오분류 제거 + AI 표시 없는 가짜 사람·가짜 수치 정직화
+- **목표**: 닉네임이 민지·도현·수아 같은 흔한 이름인 실제 회원이 AI 로 분류되어 동반자 목록·DM 후보에서 빠지는 결함을 없애고, AI 표시 없이 사람처럼 보이던 하드코딩 러너·시드 수치를 숨기거나 AI 배지를 단다.
+- **수정/실행 내역**:
+  - `js/team-invite-comm.js`: isKnownAiCompanion 을 표식 기반으로 재작성(is_ai·botBadge · id 접두 comp_/mem_/mock_/bot_/ai_/mn_/sim_/guest · 오프라인 예시 id 6개 · 비인증 id 의 isAiBot · 밑줄 페르소나 핸들 10개는 정확 일치 AND 비인증 id). 실명형 이름 항목 삭제. 인증 UUID 계정의 isAiBot(예전 이름 판별이 저장한 값)은 믿지 않음. 호출부 6곳의 별도 isAiBot 검사 제거, 자가 치유 양방향. 팀 영입 검색 오프라인 예시에 AI 예시 배지, 연속일수 기본값 1 제거, 프로필 히트맵 d%3 무늬 제거, active_real_users null. 4137→4135줄(800줄 초과 파일이라 줄 수를 늘리지 않음).
+  - `index.html`: getPeerRunnersForCategory 를 FEED_POSTS_CACHE 실원장 기반으로(비 AI·인증 UUID·같은 분야, 최대 3명, 연속일수 없음), 0명이면 `#firstCheckinPeerRunners` 를 그리지 않음. 마니또 AI 시드 달성률·연속일수 제거, 실 회원 값 없으면 null → 게이지·연속일수 숨김. 받은 응원함·웰컴 응원 AI 배지. 피드 단계 라벨 정직화.
+  - `js/components.js`: active_real_users null.
+  - 측정 도구 `docs/design/harness/comm-ai-identity-check.js`, 단위 시험 `tests/comm-ai-identity-es348.test.js`, 법정 시나리오 4개(`reports/TASK-ES-348/scenarios/`).
+  - 서버 칸(SQL) 추가 없음: 서버의 회원 검색 결과는 모두 실제 회원이고 AI 는 전부 클라이언트 시드(id 접두)라 판별에 서버 칸이 필요하지 않음.
+- **검증 결과**(측정값, 판정 아님): 헤드리스 M1(민지 UUID 실사용자) · M2(동반자 목록 실 사용자 배지·DM 후보 노출) · M3(축하 창 동류 러너 칸 없음, 고정 이름 0, 실데이터 입력 시 해당 회원만) · M4(마니또 AI 카드 배지 1/1·게이지 0·연속일수 0, 받은 응원 AI 배지 1/1, 웰컴 응원 AI 배지) · 피드 거짓 라벨 0 모두 true. 단위 시험 5/5(기준 커밋에서는 실패). npm test 종료코드 0. 실계정 2개(레벨 5)는 확인하지 못함.
+- **진행 단계**: [4단계: 심사 청구].
+
+## [2026-10-04 14:10] #TASK-ES-346: 설정 탭 정직성 SET-01(가짜 보안 표시)·SET-02(탈퇴 고지)
+- **조사(실제 동작)**: `api/withdraw.js` 는 화면에서 호출되지 않음(purge 모드 존재하나 호출자·크론 0). 탈퇴는 `submitWithdrawAccount` 가 `settings.pendingDeletionAt`(이 기기 localStorage) + `sb.auth.updateUser` 메타데이터(`account_status: pending_deletion`) 기록 후 로그아웃. 복구 창(`js/auth-safety.js checkPendingDeletionRestore`)은 이 기기 localStorage 표시가 있을 때만. 설정(`settings`)은 `ourgoal_settings_<uid>` localStorage 에만 저장(서버 upsert 없음). 개별 기기 차단 방송 `device_remote_revocations` 수신자 0곳.
+- **변경(index.html)**: 탈퇴 팝업 문장별 정정(대조표 REQ 3-4) · `#badge2faStatus` 를 `paintSecurityCard()` 실상태로 · '앱 잠금 PIN (이 기기)' 개명 · `hashAppLockPin`/`verifyAppLockPin`(SHA-256, `sha256v1$소금$hex`, 평문 첫 성공 시 이전) · `getRegisteredDevices` 가짜 2대 생성 제거·저장값 이 기기 1대로 정리·위치 미수집 · 개별 '원격 로그아웃'·`killDeviceSession` 거짓 토스트 제거 → `openLogoutOtherDevicesConfirmModal`(목록과 분리, `signOut({scope:'others'})` 실패 시 성공 토스트 없음, 게스트 안내) · 보안 카드 '서울, 대한민국'·'현재 1개의 활성 세션' 제거 · `paintCacheUsage()`(navigator.storage.estimate, 실패 시 '측정 불가') + `clearCacheBtn` 이 Cache API 실제 삭제 후 재측정 · 저장 방식 안내 정정 · 설정 묶음 summary id 2개(`#setGroupAccountSummary`·`#setGroupDataSummary`) · 설정 열 때 `renderActiveDevicesList()` 호출.
+- **시험지**: 거짓 고지를 고정하던 `scripts/smoke-test.js`(ES-158·ES-271 검사)와 `tests/account-withdrawal-modal.test.js`·`tests/device-session-control.test.js` 문자열 검사를 새 사실 문구로 교체(claims.json retire 에 사유).
+- **예비 확인(판정 아님, 작업자 측정)**: `reports/TASK-ES-346/measure-settings-honesty.js`(shots-lib 게스트 시드·Supabase 목) — 작업 트리: PIN 미설정 배지 '앱 잠금 PIN 꺼짐', 가짜 기기 생성 0·예전 저장값 3대→1대(가짜 0), 저장 PIN `sha256v1$…`(평문 0), 틀린 PIN 잠김 유지·맞는 PIN 해제, 평문 '4321' 사용자 통과 후 해시 이전, 저장공간 '브라우저 추정치'·비우기 후 재측정. origin/main 대조: 배지 '✓ 2단계 인증 보호 중', 확인 창 열면 가짜 기기 2대 저장, PIN 평문 '2580', 용량 '14.2 MB', 카드 버튼 '원격 기기 세션이 안전하게 차단되었습니다'. grep(index.html): '14.2 MB' 0 · 'dev_tablet_tab' 0 · '2단계 인증 보호 중' 0. `npm test` 종료코드 0.
+- **확인 못 함**: 실계정 로그인 상태의 탈퇴 팝업 화면, 실계정 2기기 '다른 기기 모두 로그아웃' 실효.
+- **진행 단계**: [4단계: 심사 청구]
+---
+
+## [2026-10-04 15:20] #TASK-ES-352: 소통 COMM-05 — 첫 체크인 축하 창 '웰컴 응원 스탬프' 실제 발송
+- **목표**: 아무것도 보내지 않으면서 '동류 러너들에게 웰컴 응원 스탬프를 보냈어요' 라고 말하고 +5 EXP 를 주던 `#firstCheckinCommBtn` 에 실제 발송을 붙인다(상민님 결정 2026-10-04, 노션 COMM-05, PR #659 결심 후보). 못 보내면 거짓 문구 없이 소통 탭 안내.
+- **수정/실행 내역**:
+  - `index.html`: `canSendFirstCheckinWelcome`·`firstCheckinWelcomeSentToday`·`sendFirstCheckinWelcomeStamps` 신설. 화면에 보인 동류 회원(인증 UUID) 1명당 team_pings 1행 — 기존 마니또 응원 형식(group_id 'manito' · target_type 'manito_cheer' · target_id 'seed' · ping_type 'welcome_cheer', sender_id 내 id, receiver_id 상대, id `fcw_<날짜>_<나>_<상대>`). 같은 사람 하루 1회: 기기 기록(settings.welcomeStampSent) + 서버 중복 키(23505)는 '이미 보냄'. 토스트는 실제 보낸 수, 실패는 사유. EXP +5 는 1명 이상 보냈을 때만. 게스트·0명은 insert 없이 '소통 탭에서 함께하는 분을 찾아보세요' + 소통 탭. 버튼 글자도 상황대로(N명에게 보내기 / 오늘 보냄 / 소통 탭에서 찾아보기).
+  - 받는 쪽: 응원류 team_pings 를 receiver_id 로 읽는 기존 화면은 마니또 '받은 응원함'뿐이라 거기에 싣고, 마니또를 시작하지 않은 회원에게도 실제로 도착한 응원은 시작 화면 위 `#manitoPreJoinInbox` 카드로 보여 준다. 조사 중 `manitoMajors` 가 TOPICS 에 없는 목표 topic(예: reading)으로 시작 전 화면을 빈 화면으로 만드는 오류를 발견해 거름.
+  - `tests/trio-es143-es145.test.js`: 거짓 토스트 문자열 검사를 사실 문구 검사로 교체(법정 기준 시험지 채점 대상이 아니어서 retire 는 내지 않음 — 법정 예비 점검이 "깨지지 않은 검사"로 알려 줌).
+  - 측정 도구 `docs/design/harness/welcome-stamp-check.js`(목이 insert 기록·같은 id 23505 거절), 법정 시나리오 `reports/TASK-ES-352/scenarios/guest-welcome-no-false-send.json`.
+- **검증 결과**(측정값, 판정 아님): 헤드리스 작업 트리 — M1 동류 2명 → insert 2행(형식 일치)·토스트 '2명'·EXP +5 / M2 같은 날 다시 0행·EXP 0, 기기 기록을 지워도 시도 2·저장 0·EXP 0 / M3 게스트·로그인 0명 insert 0·'보냈어요' 0·소통 탭 / M4 받는 회원(마니또 미시작) 받은 응원함에 1건. origin/main — 다섯 경우 모두 insert 0인데 '보냈어요' 토스트·EXP +5, 받는 쪽 화면은 TOPICS 오류로 빈 화면. npm test 종료코드 0. 실계정 2개(레벨 5)는 확인하지 못함.
+- **진행 단계**: [4단계: 심사 청구].
+## [2026-10-04 16:00] #TASK-ES-351: 탈퇴 신청 30일 후 계정·데이터 영구 파기 (상민님 결정 "탈퇴 후 영구파기로 진행해")
+- **근거**: 상민님 결정 원문(2026-10-04), 노션 SET-02, 생각 메모장 16, PR #357(#T019) purge 설계(대상 표 목록·재조회 잔여 0·null=실패·confirm) 흡수.
+- **서버 기록**: auth app_metadata `deletion_requested_at`(서비스롤만 씀). `api/withdraw.js` request 모드가 쓰고 `getUserById` 로 다시 읽어 같을 때만 ok, restore 모드가 지우고 비었을 때만 ok. 새 표·칸(DDL) 없음.
+- **화면**: `submitWithdrawAccount`(index.html)가 request 를 부르고 ok 일 때만 로그아웃(실패 시 오류 토스트). `checkPendingDeletionRestore`(js/auth-safety.js)가 getUser→세션 app_metadata 로 판정 → 어느 기기에서든 복구 창, 복구는 서버 restore 성공 때만 진입. 서버 기록 없는 옛 신청은 "자동 파기 대상 아님"을 사실대로 안내.
+- **파기 실행**: `docs/sql/2026-10-04-account-purge-install.sql` — 비공개 스키마 `ourgoal_private`, `account_purge_run(p_mode dry-run|purge, p_limit 최대 50, p_run_by manual|cron)` SECURITY DEFINER, anon·authenticated 실행 회수. 계정마다 하위 트랜잭션으로 21개 대상 칸 + events 의 props.userId 행(api/track.js 가 쓰는 settings_ledger·companion_ledger — 설정·동반자 원장) + auth.audit_log_entries + auth.users 삭제 → 같은 계정 재조회 0 아니면 그 계정 통째로 되돌림 → 실행 끝에 처리 계정 전부 재조회. 목록 밖 사용자 외래키가 있으면 purge 거부. 실행 기록 `account_purge_runs` 는 건수·SQLSTATE 만. pg_cron `ourgoal-account-purge-daily`(18:30 UTC) 꺼진 채 설치. 확인·켜기·되돌리기 SQL + README([손 필요]).
+- **방식 선택 이유**: pg_net→API 는 비밀값을 DB·Vercel 두 곳에 두고 HTTP 중간 실패 시 반쯤 지워진 계정이 남는다. SQL 함수는 외부 통신 0, 계정 단위 원자적.
+- **고지**: 탈퇴 창 1·2·3번, 앱 안 방침 제3·5조·약관 제4조, docs/legal/privacy.md 제3·4·6조, terms.md 제5조. 법령 보존 기록 실측: 결제 코드 0(전자상거래법 보존 대상 없음), 접속 로그 별도 보관 없음(events 는 익명) → "따로 보관하는 기록 없음". 파기 범위 밖: 받은 메시지, 익명 통계, 문의의 노션·텔레그램 사본(api/track.js), 위탁사 로그·백업.
+- **예비 확인(판정 아님, 작업자 측정)**: `node scripts/test-account-purge.js` 13/13(29일 대상 아님·31일 대상, 신청·복구 재조회, 기록 실패 ok:false, 복구 창 서버 기준·복구 실패 시 진입 차단, SQL·API 목록 일치). PGlite(`docs/sql/2026-10-04-account-purge-test.mjs`) 43/43(꺼진 예약, dry-run 삭제 0, purge 잔여 0·identities 연쇄·events 설정 원장 삭제·익명 이벤트 보존, 실패 계정 무손상, 조용한 잔여 잡음, 상한 50/55, 목록 밖 외래키 거부, anon·authenticated 거부, 되돌리기). 기준 커밋 smoke 로 채점 시 ES-158·ES-271 2건 깨짐 → retire. `npm test` 종료코드 0.
+- **확인 못 함**: 실서버 설치·dry-run·예약 실행(레벨 5), postgres 의 auth.users 삭제 권한·운영 트리거, 로그인 뒤 탈퇴 창·복구 창 화면, Vercel SUPABASE_SERVICE_ROLE_KEY 설정 여부.
+- **진행 단계**: [4단계: 심사 청구]
+---
+## [2026-10-04 16:30] #TASK-ES-350: 단일 원장 설계서 (CORE-03)
+- **목표**: 사용자 데이터가 탭마다 다른 곳에 저장·중복되고 일부는 기기 밖으로 못 나가는 문제(노션 CORE-03)를 탭 티켓이 같은 설계로 고치도록 원장 설계서를 먼저 만든다. 앱 코드 수정 0줄, SQL 파일 0개, 운영 조회 0회.
+- **산출물**: `docs/specs/LEDGER-DESIGN-2026-10-04.md`(지도 29항목·목표 설계·[결심 필요] 후보 K1~K4·수명주기 하네스 설계 L01~L11·실행 순서·SQL 초안·prefs 허용/금지 목록), `reports/TASK-ES-350/count-ledger-map.js`(지도표 집계), REQ·PLAN·claims.
+- **측정(스크립트 산출, 판정 아님)**: 항목 29 · 중복 저장 16 · 로컬 전용 18 · 서버 왕복 있음 10 · 서버 쓰기만 1(휴지통). 손으로 적은 중복 17 을 스크립트가 16 으로 정정.
+- **새로 확인한 결함(코드 읽기)**: 휴지통 서버값 미반영(`loadProfile` 의 `finalTrash` 미반환), `deadline` 읽기 2곳(목표만 보기 D-day 빈칸), `renderRoutineMatrixGrid` 가 쓰는 곳 없는 `profile.routines` 를 읽음, 목표 시작일 서버 미저장, 게스트 이전 checkins meta 누락, `OfflineSyncManager.flush()` 처리기 없이 대기열 삭제, 전체 백업 JSON 에 외부 키·PIN 해시 포함, 타인 레벨 늘 Lv.1.
+- **확인 못 함**: 운영 DB 칸·형, 휴지통 덮어쓰기·수호동물 손실의 실제 발생(호출 순서 추정).
+- **진행 단계**: [4단계: 심사 청구]
+## [2026-10-04 18:30] #TASK-ES-353: 변경 이벤트 단일화·리스너 중복 방지 (CORE-04, HOME-18·GOALS-22 흡수)
+- **목표**: 변경 1회에 탭마다 자기 영역만 1회 다시 그린다. 탭 재진입에도 구독 1개, 발행처 없는 구독 0, 미정의 renderCalendar 호출 0, 빈 소블록이면 폴백.
+- **수정**: `js/core/event-bus.js`(소유자 키·`offOwner`·`subscriptions`·`requestRender`/`flushRenders`·`EVENTS` 재정의·`CHANGE_DICTIONARY`), `js/core/registry.js`(false 면 실패), `js/tabs/*/index.js` 6개(그린 소블록만 셈·`lastMountDrew`), 소블록 18개(dispose·그렸는가·`view:sync` 1종 구독), `index.html`(setTab 폴백·전파기 합치기·renderCalendar 삭제·applyTheme 테마 바뀔 때만·기록 세그먼트 silent), js 6개 renderCalendar→renderCalendarScreen 52곳.
+- **측정(작업자 측정, 판정 아님 — reports/TASK-ES-353/measure-*.json)**: 탭 4종 각 10회 뒤 구독 347→12, 체크인 1회 렌더 기록 11→1·캘린더 11→1·목표 20→1·홈 1→1, 햅틱 호출 52→5, 할 일 체크 목표 렌더 6→1, 설정 진입 renderSettingsScreen 0→10/10, 유령 구독 23→0, renderCalendar 53→0, 콘솔 오류 0. npm test 0.
+- **확인 못 함**: 같은 계정 두 기기 반영(HOME-18), 실제 폰 체감, 통계 화면 촬영. EXP 원장 이원화는 CORE-03 실행 티켓 몫.
 - **진행 단계**: [4단계: 심사 청구]
 ---

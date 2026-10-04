@@ -51,7 +51,8 @@
           name: self.name,
           containerId: self.containerId,
           mount: function(container, state, events) {
-            return self.mount(container, state, events);
+            self.mount(container, state, events);
+            return self.lastMountDrew === true;
           }
         });
       }
@@ -70,6 +71,7 @@
       // 1. 하위 소블록 순차 수밀 마운트
       var blockIds = Object.keys(this.subBlocks);
       var mountedCount = 0;
+      var fallbackDrew = false;
       for (var i = 0; i < blockIds.length; i++) {
         var bId = blockIds[i];
         var block = this.subBlocks[bId];
@@ -78,8 +80,8 @@
             var subContainer = block.containerId && typeof document !== 'undefined'
               ? document.getElementById(block.containerId)
               : null;
-            block.mount(subContainer, s, ev);
-            mountedCount++;
+            // #TASK-ES-353: '실제로 그렸다'(true)를 돌려준 소블록만 센다 — 빈 소블록뿐이면 아래 폴백이 돈다
+            if (block.mount(subContainer, s, ev) === true) mountedCount++;
           }
         } catch (subErr) {
           console.warn('[OurgoalGoalsMegaBlock] Sub-block mount error in "' + bId + '":', subErr);
@@ -91,15 +93,19 @@
 
       // 2. 이중 렌더링 중복 방어 및 수밀 조율 (무손실 점진 전환 폴백)
       if (mountedCount === 0) {
-        // 소블록이 없거나 마운트에 실패한 경우: 전체 목표 화면 레거시 렌더러 안전 폴백 호출
+        // 소블록이 없거나 아무 소블록도 실제로 그리지 못한 경우(#TASK-ES-353): 전체 목표 화면 레거시 렌더러 안전 폴백 호출
         try {
           if (typeof global.renderGoalsScreen === 'function') {
             global.renderGoalsScreen();
+            fallbackDrew = true;
           }
         } catch (renderErr) {
           console.warn('[OurgoalGoalsMegaBlock] renderGoalsScreen fallback warning:', renderErr);
         }
       }
+
+      // #TASK-ES-353: 실제로 그렸는가 — 레지스트리 경유 마운트는 이 값을 돌려줘 setTab 이 레거시 렌더로 폴백하게 한다
+      this.lastMountDrew = mountedCount > 0 || fallbackDrew;
 
       // 3. 마운트 완료 이벤트 발행
       if (ev && typeof ev.emit === 'function') {
