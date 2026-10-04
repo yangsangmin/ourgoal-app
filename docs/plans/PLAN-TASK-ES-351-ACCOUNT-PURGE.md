@@ -31,7 +31,7 @@
 - [x] 반론 2 "반쯤 지워진다" → 하위 트랜잭션, PGlite [4]·[5].
 
 ## 7. [원칙 ⑦] 즉시 실행
-- [x] 구현 · `node scripts/test-account-purge.js` 13/13 · PGlite 39/39 · `npm test`.
+- [x] 구현 · `node scripts/test-account-purge.js` 13/13 · PGlite 43/43 · `npm test`.
 
 ## 8. [원칙 ⑧] 성과 측정
 - [x] 측정값은 dev_log.md 와 PR 본문(판정 아님).

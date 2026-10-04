@@ -26,17 +26,23 @@ function makeMockSb(db, opts) {
   return {
     from: function (table) {
       function run(kind) {
-        return {
-          eq: async function (col, val) {
+        function exec(match) {
             if (!(table in db)) return { error: { code: 'PGRST205', message: 'Could not find the table' }, count: null };
             if (kind === 'delete' && opts.failDelete === table) return { error: { code: '42501', message: 'permission denied' }, count: null };
             if (kind === 'count' && opts.failCount === table) return { error: { code: '57014', message: 'timeout' }, count: null };
-            const hit = db[table].filter(function (row) { return row[col] === val; });
+            const hit = db[table].filter(match);
             if (kind === 'delete') {
               if (opts.stickyTable === table) return { error: null, count: 0 };
-              db[table] = db[table].filter(function (row) { return row[col] !== val; });
+              db[table] = db[table].filter(function (row) { return !match(row); });
             }
             return { error: null, count: hit.length };
+        }
+        return {
+          eq: async function (col, val) { return exec(function (row) { return row[col] === val; }); },
+          filter: async function (pathExpr, op, val) {
+            const m = /^([a-z_]+)->>([A-Za-z_]+)$/.exec(pathExpr);
+            assert.ok(m && op === 'eq', 'filter 형식: ' + pathExpr);
+            return exec(function (row) { return row[m[1]] && String(row[m[1]][m[2]]) === val; });
           }
         };
       }
@@ -87,7 +93,12 @@ function seed() {
     team_ping_replies: [{ id: 'r1', sender_id: UID }, { id: 'r2', sender_id: OTHER }],
     content_reports: [{ id: 1, reporter_id: UID }],
     credit_ledger: [{ id: 1, user_id: UID }],
-    checkins_backup: [{ id: 'c1', user_id: UID }]
+    checkins_backup: [{ id: 'c1', user_id: UID }],
+    events: [
+      { id: 1, sid: null, name: 'settings_ledger', props: { userId: UID, settings: {} } },
+      { id: 2, sid: null, name: 'companion_ledger', props: { userId: OTHER } },
+      { id: 3, sid: 'anon', name: 'checkin', props: {} }
+    ]
     // 나머지 표는 운영처럼 '없는 테이블'로 둔다
   };
 }
@@ -108,6 +119,8 @@ function fakeRes() {
   assert.strictEqual(out.deleted['goals.user_id'], 2);
   assert.strictEqual(out.deleted['users.id'], 1);
   assert.strictEqual(out.deleted['credit_ledger.user_id'], 1);
+  assert.strictEqual(out.deleted['events.props.userId'], 1, 'events 의 내 설정 원장 행 삭제');
+  assert.strictEqual(db.events.length, 2, '타인 원장·익명 이벤트는 남음');
   assert.ok(out.skipped.indexOf('content_reactions.user_id') !== -1, '없는 표는 skipped 에 이름이 남는다');
   assert.strictEqual(db.goals.length, 1, '다른 사용자의 목표는 남아야 함');
   assert.strictEqual(db.users.length, 1, '다른 사용자는 남아야 함');
@@ -239,6 +252,9 @@ function fakeRes() {
   const block = sql.slice(sql.indexOf('$targets$') + 9, sql.lastIndexOf('$targets$'));
   const sqlTargets = [...block.matchAll(/\(\s*\d+,\s*'([a-z_]+)',\s*'([a-z_]+)'\)/g)].map(function (m) { return m[1] + '.' + m[2]; });
   assert.deepStrictEqual(sqlTargets, PURGE_TARGETS.map(function (t) { return t.table + '.' + t.col; }), 'SQL 대상 목록과 API 대상 목록이 같아야 함');
+  const jblock = sql.slice(sql.indexOf('$jtargets$') + 10, sql.lastIndexOf('$jtargets$'));
+  const sqlJson = [...jblock.matchAll(/\(\s*\d+,\s*'([a-z_]+)',\s*'([a-z_]+)',\s*'([A-Za-z_]+)'\)/g)].map(function (m) { return m[1] + '.' + m[2] + '.' + m[3]; });
+  assert.deepStrictEqual(sqlJson, withdraw.PURGE_JSON_TARGETS.map(function (t) { return t.table + '.' + t.col + '.' + t.key; }), 'SQL json 대상과 API json 대상이 같아야 함');
   assert.ok(sql.includes("interval '30 days'"), 'SQL 대상 조건 30일');
   assert.ok(sql.includes("raw_app_meta_data->>'deletion_requested_at'"), 'SQL 이 API 와 같은 서버 기록 칸을 읽음');
   assert.ok(sql.includes('least(greatest(coalesce(p_limit, 50), 1), 50)'), 'SQL 처리 상한 50');

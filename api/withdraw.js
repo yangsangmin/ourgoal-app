@@ -44,7 +44,25 @@ var PURGE_TARGETS = [
   { table: 'goals', col: 'user_id' },
   { table: 'users', col: 'id' }
 ];
+// 사용자 칸 대신 jsonb 안에 사용자 id 를 담는 행: events 의 settings_ledger·companion_ledger(api/track.js 가 props.userId 로 씀).
+// 익명 이벤트(props 에 userId 없음)는 건드리지 않는다. SQL 의 ourgoal_private.account_purge_json_targets 와 같은 목록이다.
+var PURGE_JSON_TARGETS = [
+  { table: 'events', col: 'props', key: 'userId' },
+  { table: 'events', col: 'props', key: 'user_id' }
+];
 var PURGE_CONFIRM = 'PERMANENT_DELETE';
+
+// 칸 대상은 .eq(칸, uid), json 대상은 .filter('props->>userId', 'eq', uid)
+function allPurgeTargets() {
+  var list = PURGE_TARGETS.map(function (t) {
+    return { key: t.table + '.' + t.col, table: t.table, apply: function (q, uid) { return q.eq(t.col, uid); } };
+  });
+  PURGE_JSON_TARGETS.forEach(function (t) {
+    var path = t.col + '->>' + t.key;
+    list.push({ key: t.table + '.' + t.col + '.' + t.key, table: t.table, apply: function (q, uid) { return q.filter(path, 'eq', uid); } });
+  });
+  return list;
+}
 
 // 운영 DB 에 아직 없는 테이블(PGRST205·42P01)·컬럼(42703·PGRST204)은 오류가 아니라 '없음'으로 건너뛰고 skipped 에 이름을 남긴다.
 function isMissingRelation(error) {
@@ -116,12 +134,13 @@ async function clearDeletionRequest(sb, uid) {
 async function purgeUserData(sb, uid) {
   var deleted = {}, remaining = {}, skipped = [], errors = [];
   var i, t, key, r;
+  var targets = allPurgeTargets();
 
-  for (i = 0; i < PURGE_TARGETS.length; i++) {
-    t = PURGE_TARGETS[i];
-    key = t.table + '.' + t.col;
+  for (i = 0; i < targets.length; i++) {
+    t = targets[i];
+    key = t.key;
     try {
-      r = await sb.from(t.table).delete({ count: 'exact' }).eq(t.col, uid);
+      r = await t.apply(sb.from(t.table).delete({ count: 'exact' }), uid);
       if (r.error) {
         if (isMissingRelation(r.error)) { skipped.push(key); continue; }
         deleted[key] = null;
@@ -144,12 +163,12 @@ async function purgeUserData(sb, uid) {
     errors.push({ step: 'auth', target: 'auth.users', message: e.message });
   }
 
-  for (i = 0; i < PURGE_TARGETS.length; i++) {
-    t = PURGE_TARGETS[i];
-    key = t.table + '.' + t.col;
+  for (i = 0; i < targets.length; i++) {
+    t = targets[i];
+    key = t.key;
     if (skipped.indexOf(key) !== -1) continue;
     try {
-      r = await sb.from(t.table).select('*', { count: 'exact', head: true }).eq(t.col, uid);
+      r = await t.apply(sb.from(t.table).select('*', { count: 'exact', head: true }), uid);
       if (r.error) {
         remaining[key] = null;
         errors.push({ step: 'verify', target: key, message: r.error.message });
@@ -274,5 +293,6 @@ module.exports.recordDeletionRequest = recordDeletionRequest;
 module.exports.clearDeletionRequest = clearDeletionRequest;
 module.exports.deletionStatus = deletionStatus;
 module.exports.PURGE_TARGETS = PURGE_TARGETS;
+module.exports.PURGE_JSON_TARGETS = PURGE_JSON_TARGETS;
 module.exports.DELETION_KEY = DELETION_KEY;
 module.exports.GRACE_DAYS = GRACE_DAYS;

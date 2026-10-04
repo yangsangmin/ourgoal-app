@@ -44,7 +44,7 @@ create table public.credit_ledger(id bigserial primary key, user_id uuid not nul
 create table public.content_reports(id bigserial primary key, reporter_id uuid not null references auth.users(id) on delete cascade);
 create table public.inquiries(id bigserial primary key, user_id text, content text);
 create table public.checkins_backup(id text, user_id text not null);
-create table public.events(id bigserial primary key, sid text, name text);
+create table public.events(id bigserial primary key, sid text, name text, props jsonb not null default '{}'::jsonb);
 `);
   // 운영처럼 pg_cron 확장 생성 줄만 빼고 설치 파일 그대로 실행
   await db.exec(rd('2026-10-04-account-purge-install.sql').replace('create extension if not exists pg_cron;', ''));
@@ -71,6 +71,8 @@ insert into public.credit_ledger(user_id, amount) values ('${id}', 1);
 insert into public.content_reports(reporter_id) values ('${id}');
 insert into public.inquiries(user_id, content) values ('${id}', 'q');
 insert into public.checkins_backup values ('c${n}', '${id}');
+insert into public.events(sid, name, props) values (null, 'settings_ledger', json_build_object('userId', '${id}', 'settings', json_build_object('geminiKey', 'k')));
+insert into public.events(sid, name, props) values ('anon-sid-${n}', 'checkin', '{}'::jsonb);
 `);
   return id;
 }
@@ -104,6 +106,7 @@ console.log('[2] 29일 계정은 대상 아님·31일 계정은 대상, dry-run 
   ok(r.ok === true && r.mode === 'dry-run', 'dry-run ok');
   ok(r.due_total === 1 && r.processed === 1, '대상 1계정(31일)만 — 29일·기록 없음·잘못된 시각은 대상 아님');
   ok(r.rows_by_table['goals.user_id'] === 2 && r.rows_by_table['auth.users'] === 1, '표별 행 수: goals 2, auth.users 1');
+  ok(r.rows_by_table['events.props.userId'] === 1, 'events 의 props.userId 행(설정 원장)도 센다');
   ok(r.legacy_pending === 1, '옛 방식 신청 1계정은 건수로만 보고(대상 아님)');
   ok((await totalRows(db)) === before, 'dry-run 뒤 행 수 변화 0');
   ok((await left(db, a31)) > 0 && (await left(db, b29)) > 0 && (await left(db, c0)) > 0, '세 계정 모두 그대로');
@@ -123,6 +126,9 @@ console.log('[3] purge 후 잔여 0, 다른 계정·상대가 보낸 글은 보�
   ok((await left(db, a31)) === 0, 'A 의 행 0(auth.users·audit 포함)');
   ok(Number((await one(db, `select count(*) from auth.identities where user_id = '${a31}'`)).count) === 0, 'auth.identities 도 연쇄 삭제');
   ok((await left(db, b29)) > 0, '29일 계정 B 는 그대로');
+  ok(Number((await one(db, `select count(*) from public.events where props->>'userId' = '${a31}'`)).count) === 0, 'A 의 설정 원장(events props.userId) 삭제');
+  ok(Number((await one(db, `select count(*) from public.events where sid = 'anon-sid-1'`)).count) === 1, '익명 이벤트는 남음');
+  ok(Number((await one(db, `select count(*) from public.events where props->>'userId' = '${b29}'`)).count) === 1, 'B 의 설정 원장은 남음');
   ok(Number((await one(db, `select count(*) from public.team_pings where id = 'incoming'`)).count) === 1, 'B 가 A 에게 보낸 DM 은 남음(상대의 글)');
   const logText = JSON.stringify((await db.query(`select * from ourgoal_private.account_purge_runs`)).rows);
   ok(!logText.includes(a31) && !logText.includes('u1@test.local'), '실행 기록에 사용자 id·이메일 없음');

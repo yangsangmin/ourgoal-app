@@ -10,7 +10,7 @@
 | `2026-10-04-account-purge-check.sql` | 블록별 확인 쿼리. [2] 가 dry-run(삭제 0, 건수만) | 해당 없음 |
 | `2026-10-04-account-purge-enable.sql` | 예약 켜기 | 같은 파일 맨 아래 주석 한 줄(끄기) 또는 rollback |
 | `2026-10-04-account-purge-rollback.sql` | 예약 삭제·함수 삭제(앞으로의 파기를 멈춤. 이미 파기된 것은 못 돌린다) | install 을 다시 실행 |
-| `2026-10-04-account-purge-test.mjs` | 세션이 로컬 Postgres(PGlite)로 위 SQL 을 돌려 본 시험(39/39). 실서버 확인이 아니다 | — |
+| `2026-10-04-account-purge-test.mjs` | 세션이 로컬 Postgres(PGlite)로 위 SQL 을 돌려 본 시험(43/43). 실서버 확인이 아니다 | — |
 
 ## 언제 하나
 

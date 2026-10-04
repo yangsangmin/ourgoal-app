@@ -112,6 +112,18 @@ as $texists$
   )
 $texists$;
 
+-- 사용자 칸 대신 jsonb 안에 사용자 id 를 담는 표: events 의 settings_ledger·companion_ledger 행(api/track.js 가 props.userId 로 씀).
+-- 익명 행(props 에 userId 없음)은 건드리지 않는다. api/withdraw.js 의 PURGE_JSON_TARGETS 와 같은 목록이다.
+create or replace function ourgoal_private.account_purge_json_targets()
+returns table(ord int, tbl text, col text, json_key text)
+language sql
+immutable
+as $jtargets$
+  values
+    (1, 'events', 'props', 'userId'),
+    (2, 'events', 'props', 'user_id')
+$jtargets$;
+
 -- 한 계정의 대상 표 행 수(잔여 측정). 표가 없으면 그 표는 세지 않는다.
 create or replace function ourgoal_private.account_rows_left(p_uid uuid)
 returns bigint
@@ -127,6 +139,12 @@ begin
   for t in select * from ourgoal_private.account_purge_targets() order by ord loop
     if ourgoal_private.target_exists(t.tbl, t.col) then
       execute format('select count(*) from public.%I where %I::text = $1', t.tbl, t.col) into n using p_uid::text;
+      total := total + n;
+    end if;
+  end loop;
+  for t in select * from ourgoal_private.account_purge_json_targets() order by ord loop
+    if ourgoal_private.target_exists(t.tbl, t.col) then
+      execute format('select count(*) from public.%I where %I->>%L = $1', t.tbl, t.col, t.json_key) into n using p_uid::text;
       total := total + n;
     end if;
   end loop;
@@ -230,6 +248,13 @@ begin
           v_rows := jsonb_set(v_rows, array[v_key], to_jsonb(coalesce((v_rows->>v_key)::bigint, 0) + n));
         end if;
       end loop;
+      for t in select * from ourgoal_private.account_purge_json_targets() order by ord loop
+        if ourgoal_private.target_exists(t.tbl, t.col) then
+          v_key := t.tbl || '.' || t.col || '.' || t.json_key;
+          execute format('select count(*) from public.%I where %I->>%L = $1', t.tbl, t.col, t.json_key) into n using v_uid::text;
+          v_rows := jsonb_set(v_rows, array[v_key], to_jsonb(coalesce((v_rows->>v_key)::bigint, 0) + n));
+        end if;
+      end loop;
       v_rows := jsonb_set(v_rows, array['auth.users'], to_jsonb(coalesce((v_rows->>'auth.users')::bigint, 0) + 1));
       continue;
     end if;
@@ -252,6 +277,13 @@ begin
           execute format('delete from public.%I where %I::text = $1', t.tbl, t.col) using v_uid::text;
           get diagnostics n = row_count;
           v_acc := jsonb_set(v_acc, array[t.tbl || '.' || t.col], to_jsonb(n));
+        end if;
+      end loop;
+      for t in select * from ourgoal_private.account_purge_json_targets() order by ord loop
+        if ourgoal_private.target_exists(t.tbl, t.col) then
+          execute format('delete from public.%I where %I->>%L = $1', t.tbl, t.col, t.json_key) using v_uid::text;
+          get diagnostics n = row_count;
+          v_acc := jsonb_set(v_acc, array[t.tbl || '.' || t.col || '.' || t.json_key], to_jsonb(n));
         end if;
       end loop;
       if to_regclass('auth.audit_log_entries') is not null then

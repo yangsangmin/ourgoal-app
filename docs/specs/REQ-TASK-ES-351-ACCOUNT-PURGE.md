@@ -51,6 +51,7 @@
 | `api/withdraw.js` `recordDeletionRequest`·`clearDeletionRequest` 는 쓴 뒤 `getUserById` 로 다시 읽어 확인될 때만 ok | "기록했다"는 선언이 아니라 측정. 실패하면 화면은 로그아웃하지 않고 오류를 알린다 |
 | 파기 = SQL 함수 `ourgoal_private.account_purge_run(p_mode, p_limit, p_run_by)` + pg_cron `ourgoal-account-purge-daily`(18:30 UTC) | 동결(vercel.json·워크플로)을 피하고, 비밀값·외부 통신 없이 계정 단위 트랜잭션으로 지운다(반론 2) |
 | 대상 표 목록은 PR #357 의 운영 실측 목록 + `credit_ledger`(auth.users 외래키, cascade 없음 — 빠지면 auth 삭제가 막힘)·`template_copies`·`inquiries`·`app_evaluations`·`user_action_logs`·`user_interactions`·`goals_backup`·`checkins_backup` | 화면 코드가 쓰는 표(`sb.from(...)`)와 docs/sql 의 `create table` 전수에서 사용자 칸을 가진 표. 없는 표·칸은 건너뛴다 |
+| `events` 표 중 `props->>'userId'` 가 있는 행(api/track.js:149 `settings_ledger`·:363 `companion_ledger` — 설정 전체·동반자 목록 사본)도 대상(`PURGE_JSON_TARGETS`·`account_purge_json_targets()`). 익명 이벤트는 남긴다 | events 는 "익명"이라 대상 밖이라던 #357 판단과 달리, 이 두 종류 행은 사용자 id 와 설정(외부 서비스 키 포함 가능)을 담는다(LEDGER-DESIGN M13·M14) |
 | API `PURGE_TARGETS` 와 SQL `account_purge_targets()` 는 같은 목록, 시험이 대조 | 두 곳이 어긋나는 것을 막는다 |
 | 옛 방식 신청(서버 기록 없음)은 자동 파기 대상이 아니다. 로그인 시 "서버에 기록되지 않아 자동 파기 대상이 아님"을 사실대로 안내 | #658 이 그 사용자들에게 "자동 파기 안 함"이라고 고지했다. 조용히 지우면 고지와 어긋난다 |
 | 본인 즉시 삭제(`mode:'purge'`)는 PR #357 코드(확인 문구·재조회)로 교체만, 화면 연결은 안 함 | 기존 무검증 경로를 안전하게 고치되 범위를 늘리지 않는다 |
@@ -70,7 +71,7 @@
 | 30일 안에 어느 기기에서든 다시 로그인하면 복구 안내, 복구는 서버 기록 삭제 | `readServerDeletionRequest`(getUser → 세션) → 복구 창 → `clearDeletionRequest` + 재조회 |
 | 30일이 지나면 복구 불가·앱 진입 불가 | `remainDays <= 0` → `logoutFn` |
 | 매일 한 번 서버 파기 작업이 차례대로(하루 최대 50계정) 삭제 | pg_cron `30 18 * * *` → `account_purge_run('purge', 50, 'cron')`, `order by` 신청 시각 |
-| 파기되는 것: 목표·체크인과 백업·프로필·피드 글·보낸 메시지·신고·알림 구독·문의 원장·로그인 계정·인증 감사 로그 | `account_purge_targets()` 21개 칸 + `auth.audit_log_entries`(actor_id) + `auth.users` |
+| 파기되는 것: 목표·체크인과 백업·프로필·피드 글·보낸 메시지·신고·알림 구독·문의 원장·로그인 계정·인증 감사 로그 | `account_purge_targets()` 21개 칸 + `account_purge_json_targets()`(events props.userId) + `auth.audit_log_entries`(actor_id) + `auth.users` |
 | 파기되지 않는 것: 받은 메시지, 익명 통계, 노션·텔레그램 사본, 위탁사 로그·백업 | `receiver_id` 미대상, `events` 미대상, `api/track.js` 외부 전송 |
 | 법령 보존 기록 없음 | 2-1 실측 |
 

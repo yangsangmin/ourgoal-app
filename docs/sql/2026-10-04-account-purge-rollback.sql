@@ -11,6 +11,7 @@ drop function if exists ourgoal_private.account_rows_left(uuid);
 drop function if exists ourgoal_private.target_exists(text, text);
 drop function if exists ourgoal_private.try_ts(text);
 drop function if exists ourgoal_private.account_purge_targets();
+drop function if exists ourgoal_private.account_purge_json_targets();
 
 commit;
 
