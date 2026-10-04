@@ -1,0 +1,18 @@
+{
+  "id": "calendar-month-arrow-detail",
+  "title": "일정 탭 달력에서 다음 달 화살표를 누르면 아래 상세 칸이 다음 달 1일로 바뀌고(오늘 D-day 표시가 사라짐), 오늘 버튼을 누르면 다시 오늘(D-day)로 돌아온다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"calendar\"]" },
+    { "expect": "textEquals", "selector": "#calDayDetail .dday-pill", "text": "D-day" },
+    { "do": "click", "selector": ".s-month-header .s-cal-arrow:last-of-type" },
+    { "expect": "neverVisible", "selector": "#calDayDetail .dday-pill", "text": "D-day", "forMs": 800 },
+    { "expect": "textContains", "selector": "#calDayDetail h3", "text": "-01" },
+    { "do": "click", "selector": ".s-cal-today-badge" },
+    { "expect": "textEquals", "selector": "#calDayDetail .dday-pill", "text": "D-day" },
+    { "capture": "back-to-today" }
+  ]
+}

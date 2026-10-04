@@ -154,6 +154,9 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/module-guard.test.js');
   runNode('tests/new-module.test.js');
   runNode('tests/core-toast-es361.test.js'); // #TASK-ES-361 공용 토스트 통로(ui.toast)·CORE-10
+  // #TASK-ES-362: 세포 이전 중 발견된 기존 버그 수정의 부품 시험(SET-08 · CAL-03)
+  runNode('tests/settings-gcal-autosync-switch.test.js');
+  runNode('tests/calendar-natural-schedule.test.js');
   runNode('tests/core-modal-es363.test.js'); // #TASK-ES-363 공용 모달 통로(ui.modal)·대기열·재귀 없음
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
