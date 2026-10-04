@@ -230,5 +230,5 @@ function ttRecord(id, startIso) {
   var pass = results.filter(function (r) { return r.ok; }).length;
   console.log('\n측정값 ' + JSON.stringify(m));
   console.log('결과: ' + pass + '/' + results.length + ' 통과');
-  process.exit(pass === results.length ? 0 : 1);
+  process.exitCode = (pass === results.length ? 0 : 1);
 })();
