@@ -1,0 +1,414 @@
+{
+  "tool": "docs/design/harness/real-account-check.js",
+  "task": "TASK-ES-355",
+  "mode": "mock",
+  "note": "가짜 Supabase(두 브라우저가 노드 쪽 메모리 서버 공유) — 배선 점검이며 실계정 확인이 아니다",
+  "appUrl": "local static server",
+  "accounts": [
+    "A",
+    "B"
+  ],
+  "runTag": "ogtest-202610042009-4qdj",
+  "startedAt": "2026-10-04T11:09:20.356Z",
+  "finishedAt": "2026-10-04T11:11:26.514Z",
+  "scenarios": [
+    {
+      "id": "RA-CORE-LOGIN",
+      "tab": "공통",
+      "source": "CORE-02 전제",
+      "ms": 6464,
+      "evidence": {
+        "distinct": true
+      },
+      "status": "통과"
+    },
+    {
+      "id": "RA-CORE-SWITCH",
+      "tab": "공통",
+      "source": "#655 TASK-ES-345 C2(일반화)",
+      "ms": 11835,
+      "evidence": {
+        "profileIsB": true,
+        "aTextOnB": 1
+      },
+      "status": "실패",
+      "failedStep": {
+        "step": "B 기록 탭",
+        "saw": "A 의 표식 기록 1건 보임"
+      }
+    },
+    {
+      "id": "RA-REC-01",
+      "tab": "기록",
+      "source": "#654 TASK-ES-344 C8 · #663 TASK-ES-353 C19",
+      "ms": 10316,
+      "evidence": {
+        "onA1": 1,
+        "onA2": 1
+      },
+      "status": "통과"
+    },
+    {
+      "id": "RA-REC-02",
+      "tab": "기록",
+      "source": "#663 TASK-ES-353 C19",
+      "ms": 29172,
+      "evidence": {
+        "liveWithin20s": false,
+        "afterReload": 1
+      },
+      "status": "통과"
+    },
+    {
+      "id": "RA-GOALS-03",
+      "tab": "목표",
+      "source": "노션 GOALS-03",
+      "ms": 7870,
+      "evidence": {
+        "onA2": true
+      },
+      "status": "통과"
+    },
+    {
+      "id": "RA-COMM-03",
+      "tab": "소통",
+      "source": "노션 COMM-03",
+      "ms": 9328,
+      "evidence": {
+        "already": false,
+        "listedNow": true,
+        "afterReload": true,
+        "otherDevice": true
+      },
+      "status": "통과"
+    },
+    {
+      "id": "RA-COMM-04A",
+      "tab": "소통",
+      "source": "노션 COMM-04 · #656 TASK-ES-347 C8",
+      "ms": 22596,
+      "evidence": {
+        "arrivedOnB": 1
+      },
+      "status": "통과"
+    },
+    {
+      "id": "RA-COMM-04B",
+      "tab": "소통",
+      "source": "노션 COMM-04 완료 기준",
+      "ms": 16766,
+      "evidence": {
+        "whileBOff": {
+          "unread": true,
+          "read": false,
+          "detail": "전송 2026.10.04 오후 8:11:00 · 도착 2026.10.04 오후 8:11:00 · 미확인 (1)"
+        },
+        "bOpened": true,
+        "afterBOpened": {
+          "unread": true,
+          "read": false,
+          "detail": "전송 2026.10.04 오후 8:11:00 · 도착 2026.10.04 오후 8:11:00 · 미확인 (1)"
+        }
+      },
+      "status": "실패",
+      "failedStep": {
+        "step": "B 꺼짐 동안 도착 표시",
+        "saw": "도착 글자가 이미 있음: 전송 2026.10.04 오후 8:11:00 · 도착 2026.10.04 오후 8:11:00 · 미확인 (1)"
+      }
+    },
+    {
+      "id": "RA-COMM-04C",
+      "tab": "소통",
+      "source": "#656 TASK-ES-347 C7",
+      "status": "못 함",
+      "failedStep": {
+        "step": "mock",
+        "saw": "mock 모드는 배선 점검 RA-CORE-LOGIN·RA-CORE-SWITCH·RA-REC-01·RA-REC-02·RA-GOALS-03·RA-COMM-03·RA-COMM-04A·RA-COMM-04B·RA-SET-02 만 재생"
+      }
+    },
+    {
+      "id": "RA-COMM-04D",
+      "tab": "소통",
+      "source": "#656 TASK-ES-347 C8",
+      "status": "못 함",
+      "failedStep": {
+        "step": "mock",
+        "saw": "mock 모드는 배선 점검 RA-CORE-LOGIN·RA-CORE-SWITCH·RA-REC-01·RA-REC-02·RA-GOALS-03·RA-COMM-03·RA-COMM-04A·RA-COMM-04B·RA-SET-02 만 재생"
+      }
+    },
+    {
+      "id": "RA-SET-02",
+      "tab": "설정",
+      "source": "#658 TASK-ES-346 C4 · #662 TASK-ES-351 C17",
+      "ms": 2284,
+      "evidence": {
+        "has30": true,
+        "hasBox3": true
+      },
+      "status": "통과"
+    },
+    {
+      "id": "RA-SET-03",
+      "tab": "설정",
+      "source": "#662 TASK-ES-351 C4",
+      "status": "못 함",
+      "failedStep": {
+        "step": "mock",
+        "saw": "mock 모드는 배선 점검 RA-CORE-LOGIN·RA-CORE-SWITCH·RA-REC-01·RA-REC-02·RA-GOALS-03·RA-COMM-03·RA-COMM-04A·RA-COMM-04B·RA-SET-02 만 재생"
+      }
+    },
+    {
+      "id": "RA-SET-01",
+      "tab": "설정",
+      "source": "#658 TASK-ES-346 C14",
+      "status": "못 함",
+      "failedStep": {
+        "step": "mock",
+        "saw": "mock 모드는 배선 점검 RA-CORE-LOGIN·RA-CORE-SWITCH·RA-REC-01·RA-REC-02·RA-GOALS-03·RA-COMM-03·RA-COMM-04A·RA-COMM-04B·RA-SET-02 만 재생"
+      }
+    },
+    {
+      "id": "RA-REC-03",
+      "tab": "기록",
+      "source": "#654 TASK-ES-344 C4·C8",
+      "status": "못 함",
+      "failedStep": {
+        "step": "manual",
+        "saw": "수동 — checkins-meta SQL 적용 여부 확인·스톱워치 구간 조작이 필요 — 표의 사람 절차"
+      },
+      "manual": "real-account-scenarios.md 의 RA-REC-03 행"
+    },
+    {
+      "id": "RA-CAL-01",
+      "tab": "일정",
+      "source": "#655 TASK-ES-345 C1·C12",
+      "status": "못 함",
+      "failedStep": {
+        "step": "manual",
+        "saw": "수동 — 구글 OAuth 외부 화면"
+      },
+      "manual": "real-account-scenarios.md 의 RA-CAL-01 행"
+    },
+    {
+      "id": "RA-CAL-02",
+      "tab": "일정",
+      "source": "#655 TASK-ES-345 C2",
+      "status": "못 함",
+      "failedStep": {
+        "step": "manual",
+        "saw": "수동 — 구글 OAuth 외부 화면"
+      },
+      "manual": "real-account-scenarios.md 의 RA-CAL-02 행"
+    },
+    {
+      "id": "RA-CAL-03",
+      "tab": "일정",
+      "source": "#655 TASK-ES-345 C3·C5",
+      "status": "못 함",
+      "failedStep": {
+        "step": "manual",
+        "saw": "수동 — 외부 화면·토큰 1시간 만료 대기"
+      },
+      "manual": "real-account-scenarios.md 의 RA-CAL-03 행"
+    },
+    {
+      "id": "RA-GOALS-03R",
+      "tab": "목표",
+      "source": "노션 GOALS-03(루틴)",
+      "status": "못 함",
+      "failedStep": {
+        "step": "manual",
+        "saw": "수동 — 루틴 원장 통일(GOALS-03 구현) 전"
+      },
+      "manual": "real-account-scenarios.md 의 RA-GOALS-03R 행"
+    },
+    {
+      "id": "RA-GOALS-14",
+      "tab": "목표",
+      "source": "노션 GOALS-14",
+      "status": "못 함",
+      "failedStep": {
+        "step": "manual",
+        "saw": "수동 — 기능 구현 전(티켓 대기)"
+      },
+      "manual": "real-account-scenarios.md 의 RA-GOALS-14 행"
+    },
+    {
+      "id": "RA-GOALS-16",
+      "tab": "목표",
+      "source": "노션 GOALS-16",
+      "status": "못 함",
+      "failedStep": {
+        "step": "manual",
+        "saw": "수동 — 기능 구현 전(티켓 대기)"
+      },
+      "manual": "real-account-scenarios.md 의 RA-GOALS-16 행"
+    },
+    {
+      "id": "RA-GOALS-17",
+      "tab": "목표",
+      "source": "노션 GOALS-17",
+      "status": "못 함",
+      "failedStep": {
+        "step": "manual",
+        "saw": "수동 — 기능 구현 전 · 계정 3개"
+      },
+      "manual": "real-account-scenarios.md 의 RA-GOALS-17 행"
+    },
+    {
+      "id": "RA-GOALS-18",
+      "tab": "목표",
+      "source": "노션 GOALS-18",
+      "status": "못 함",
+      "failedStep": {
+        "step": "manual",
+        "saw": "수동 — 기능 구현 전(티켓 대기)"
+      },
+      "manual": "real-account-scenarios.md 의 RA-GOALS-18 행"
+    },
+    {
+      "id": "RA-GOALS-19",
+      "tab": "목표",
+      "source": "노션 GOALS-19",
+      "status": "못 함",
+      "failedStep": {
+        "step": "manual",
+        "saw": "수동 — B 쪽 노출 화면 미정(GOALS-19 구현 뒤 자동화)"
+      },
+      "manual": "real-account-scenarios.md 의 RA-GOALS-19 행"
+    },
+    {
+      "id": "RA-COMM-01",
+      "tab": "소통",
+      "source": "#659 TASK-ES-348 C4·C14",
+      "status": "못 함",
+      "failedStep": {
+        "step": "manual",
+        "saw": "수동 — B 닉네임을 '민지'로 바꾸면 검색에 운영 사용자가 섞임 — 사람이 B 만 고른다"
+      },
+      "manual": "real-account-scenarios.md 의 RA-COMM-01 행"
+    },
+    {
+      "id": "RA-COMM-05",
+      "tab": "소통",
+      "source": "#661 TASK-ES-352 C6·C12",
+      "status": "못 함",
+      "failedStep": {
+        "step": "manual",
+        "saw": "수동 — A 첫 체크인은 계정당 1번 · 피드 공개 게시 필요"
+      },
+      "manual": "real-account-scenarios.md 의 RA-COMM-05 행"
+    },
+    {
+      "id": "RA-COMM-11",
+      "tab": "소통",
+      "source": "노션 COMM-11",
+      "status": "못 함",
+      "failedStep": {
+        "step": "manual",
+        "saw": "수동 — 세션 없는 로그인 경로(하네스는 이메일 로그인만)"
+      },
+      "manual": "real-account-scenarios.md 의 RA-COMM-11 행"
+    },
+    {
+      "id": "RA-SET-04",
+      "tab": "설정",
+      "source": "#662 TASK-ES-351 C13·C21",
+      "status": "못 함",
+      "failedStep": {
+        "step": "manual",
+        "saw": "수동 — 서버 SQL · 되돌릴 수 없는 파기 — 그때 [결심 필요]"
+      },
+      "manual": "real-account-scenarios.md 의 RA-SET-04 행"
+    },
+    {
+      "id": "RA-SET-05",
+      "tab": "설정",
+      "source": "#662 TASK-ES-351 C4 후속",
+      "status": "못 함",
+      "failedStep": {
+        "step": "manual",
+        "saw": "수동 — 시각 이동은 SQL"
+      },
+      "manual": "real-account-scenarios.md 의 RA-SET-05 행"
+    }
+  ],
+  "summary": {
+    "통과": 7,
+    "실패": 2,
+    "못 함": 19
+  },
+  "cleanup": {
+    "deleted": [
+      {
+        "by": "A",
+        "table": "users.companions",
+        "what": "B",
+        "how": "화면 삭제 버튼"
+      },
+      {
+        "by": "A",
+        "table": "checkins",
+        "rows": 2
+      },
+      {
+        "by": "A",
+        "table": "goals",
+        "rows": 1
+      },
+      {
+        "by": "A",
+        "table": "team_ping_replies",
+        "rows": 2
+      },
+      {
+        "by": "A",
+        "table": "team_pings",
+        "rows": 1
+      },
+      {
+        "by": "B",
+        "table": "checkins",
+        "rows": 1
+      }
+    ],
+    "leftover": [],
+    "madeDuringRun": [
+      {
+        "by": "A",
+        "table": "checkins",
+        "what": "ogtest-202610042009-4qdj switch"
+      },
+      {
+        "by": "A",
+        "table": "checkins",
+        "what": "ogtest-202610042009-4qdj rec01"
+      },
+      {
+        "by": "A",
+        "table": "checkins",
+        "what": "ogtest-202610042009-4qdj rec02"
+      },
+      {
+        "by": "A",
+        "table": "goals",
+        "what": "ogtest-202610042009-4qdj goal"
+      },
+      {
+        "by": "A",
+        "table": "users.companions",
+        "what": "B"
+      },
+      {
+        "by": "A",
+        "table": "team_ping_replies",
+        "what": "ogtest-202610042009-4qdj dm-a"
+      },
+      {
+        "by": "A",
+        "table": "team_ping_replies",
+        "what": "ogtest-202610042009-4qdj dm-b"
+      }
+    ]
+  }
+}
