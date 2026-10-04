@@ -46,6 +46,7 @@ result-modal.js 3곳 수정(대상 변수 1줄 + 보관 처리기 + 저장 및 �
 ## 8. [원칙 ⑧] 성과 측정
 - 부품 시험 `tests/result-modal-archive-es378.test.js` 5건: 기준 커밋 모듈에서는 첫 검사(목표 단위 보관)가 `archivedAt` undefined 로 실패, 작업 커밋에서 5건 통과.
 - 시나리오 `goals-ms-result-archive`: 기준 커밋 27단계(`noExceptions` — ReferenceError renderGoalDetail)에서 멈춤, 작업 커밋 전 단계 통과(보관 토스트 → 창 닫힘 → 목표 탭 빈 목표 안내 → 예외 0).
+- 시나리오 `goals-task-result-archive`(할 일 경로, 법정 1차 판정 "R3 코드만 확인" 뒤 추가): 기준 커밋 30단계(같은 ReferenceError)에서 멈춤, 작업 커밋 전 단계 통과.
 * 체크리스트 마감 규칙: [4단계: 심사 청구]까지만 등록.
 
 ## 확인 못 한 것

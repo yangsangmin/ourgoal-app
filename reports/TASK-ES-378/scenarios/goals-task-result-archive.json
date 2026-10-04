@@ -1,0 +1,132 @@
+{
+  "id": "goals-task-result-archive",
+  "title": "게스트가 새 목표의 첫 마일스톤에 할 일을 하나 더해 그 할 일 결과를 저장한 뒤 결과 입력 창을 다시 열어 「보관」을 누르면 「목표가 보관함으로 이동되었습니다」 토스트가 뜨고 창이 닫히며 목표 탭이 빈 목표 안내로 바뀌고, 그동안 미처리 예외(ReferenceError 포함)가 0건이다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#homeAddGoal"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#ngManualBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#ngManualBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#mGoalTitle"
+    },
+    {
+      "do": "type",
+      "selector": "#mGoalTitle",
+      "text": "할 일 보관 확인 목표"
+    },
+    {
+      "do": "click",
+      "selector": "#mSave"
+    },
+    {
+      "do": "wait",
+      "ms": 1200
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#goalDetailBody",
+      "text": "전체 (3)"
+    },
+    {
+      "do": "click",
+      "selector": "#goalEditToggle"
+    },
+    {
+      "do": "click",
+      "selector": "#goalDetailBody .ms-row:nth-child(1) [data-addtask]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#goalDetailBody .ms-row:nth-child(1) .task-row:nth-child(1) [data-taskresult]",
+      "text": "+결과"
+    },
+    {
+      "do": "click",
+      "selector": "#goalDetailBody .ms-row:nth-child(1) .task-row:nth-child(1) [data-taskresult]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#rsSave"
+    },
+    {
+      "do": "type",
+      "selector": "#rsAiQuickInput",
+      "text": "자료 목록 정리 끝냄"
+    },
+    {
+      "do": "click",
+      "selector": "#rsSave"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#rsSave"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#goalDetailBody .ms-row:nth-child(1) .task-row:nth-child(1) [data-taskresult]",
+      "text": "달성률"
+    },
+    {
+      "do": "click",
+      "selector": "#goalDetailBody .ms-row:nth-child(1) .task-row:nth-child(1) [data-taskresult]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#rsJustArchive"
+    },
+    {
+      "do": "click",
+      "selector": "#rsJustArchive"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "목표가 보관함으로 이동되었습니다"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#rsJustArchive"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#goalsHeadlineSentence",
+      "text": "새로운 목표를 세우고"
+    },
+    {
+      "capture": "goals-after-task-archive"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
