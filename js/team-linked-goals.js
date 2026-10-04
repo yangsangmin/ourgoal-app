@@ -18,6 +18,7 @@
   var toast = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.toast.bind')) ? OurgoalCapabilities.request('ui.toast.bind') : typeof require === 'function' ? require('./core/toast.js').bind : function(get){ return function(m){ var o = get(); if(typeof o === 'function') return o(m); }; })(function(){ return _ctx && _ctx.toast; }); /* #TASK-ES-361: 공용 토스트 통로(js/core/toast.js · ui.toast) — 주입 토스트 우선, 없으면 공용(준비 전이면 대기열) */
   var _modal = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.modal.bind')) ? OurgoalCapabilities.request('ui.modal.bind') : typeof require === 'function' ? require('./core/modal.js').bind : function(get){ return { open: function(h, cb){ var o = get(); if(o && typeof o.openModal === 'function') return o.openModal(h, cb); }, close: function(){ var o = get(); if(o && typeof o.closeModal === 'function') return o.closeModal(); } }; })(function(){ return _ctx; }); /* #TASK-ES-363: 공용 모달 통로(js/core/modal.js · ui.modal) — 주입 openModal/closeModal 우선, 없으면 정본(준비 전이면 대기열) */
   var openModal = _modal.open, closeModal = _modal.close;
+  var askConfirm = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.confirm.bind')) ? OurgoalCapabilities.request('ui.confirm.bind') : typeof require === 'function' ? require('./core/confirm.js').bind : function(get){ return function(m){ var o = get(); return Promise.resolve(typeof o === 'function' ? o(m) : false); }; })(function(){ return _ctx && _ctx.confirm; });
   function triggerHaptic(ms){ if(_ctx.triggerHaptic) _ctx.triggerHaptic(ms); else if(global.triggerHaptic) global.triggerHaptic(ms); }
   function esc(s){
     if(s == null) return '';
@@ -61,7 +62,6 @@
     if(_ctx.renderTeamGoalsScreen) _ctx.renderTeamGoalsScreen();
     else if(global.renderTeamGoalsScreen) global.renderTeamGoalsScreen();
   }
-
   /* ------------------------------------------------------------
    * 1. 참가자 목록 가져오기 & 실시간 달성도 동기화
    * ------------------------------------------------------------ */
@@ -527,7 +527,7 @@
     var btnDelGoal = view.querySelector('#btnDeleteTlGoal');
     if(btnDelGoal){
       btnDelGoal.addEventListener('click', async function(){
-        if(!confirm('정말 "' + goal.title + '" 팀 연계 개인목표를 삭제할까요?')) return;
+        if(!(await askConfirm('정말 "' + goal.title + '" 팀 연계 개인목표를 삭제할까요?'))) return;
         p.goals = (p.goals || []).filter(function(g){ return g.id !== goal.id; });
         state.activeTeamLinkedGoalId = null;
         state.teamLinkedEditMode = false;
@@ -605,7 +605,7 @@
     view.querySelectorAll('[data-tlmsdel]').forEach(function(btn){
       btn.addEventListener('click', async function(){
         var msId = btn.dataset.tlmsdel;
-        if(!confirm('이 마일스톤을 삭제할까요?')) return;
+        if(!(await askConfirm('이 마일스톤을 삭제할까요?'))) return;
         goal.milestones = (goal.milestones || []).filter(function(m){ return m.id !== msId; });
         syncTeamGoalParticipantProgress(goal);
         await saveProfile();
