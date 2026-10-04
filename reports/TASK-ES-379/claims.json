@@ -1,0 +1,677 @@
+{
+ "task": "TASK-ES-379",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "index.html 인라인 IIFE 의 소통 탭 메인 렌더 renderCommScreen 과 그것만 부르는 위임 renderCommDM·renderCommCompanions 를 js/tabs/comm/render.js 로, 피드 댓글·리액션 헬퍼(SERVER_FEED_COMMENTS_CACHE·loadServerFeedComments·getFeedComments·setFeedComments·handleUserCommentSubmit·toggleFeedReaction)를 js/tabs/comm/feed-comments.js 로 글자 그대로 옮긴다. 기능 추가·삭제 0, 마크업·CSS 는 옮기지 않는다."
+  },
+  {
+   "id": "R2",
+   "text": "옮긴 코드가 읽는 인라인 스코프 이름은 js/core/app-scope.js getter 로만 읽고, index.html 은 IIFE 머리에서 옮긴 함수 중 바깥에서 부르는 것을 같은 이름으로 가져와 호출처를 그대로 둔다. 옮긴 함수 이름을 window 에 새로 달지 않는다."
+  },
+  {
+   "id": "R3",
+   "text": "화면 결과 전후 차이 0 — 토큰 동일 검사, 조작 단계별 DOM·저장값·토스트·확인창 비교(기준 2회·후 1회), tab-check 소통 탭 기준 2회·후 비교, 법정이 누를 수 있는 게스트 화면 시나리오."
+  },
+  {
+   "id": "R4",
+   "text": "신고서(modules.json)를 module-specs --write 로 반영(자리 feed.card·reaction.kind 는 실제로 꽂지 않으므로 planned), 모듈 가드 통과·인라인 스크립트 줄 수 감소, 새 js 800줄 이하."
+  },
+  {
+   "id": "R5",
+   "text": "문서: REQ(8원칙), claims, dev_log 1줄, TICKETS 1줄. PR(초안 아님), 법정 판정 기록. 병합 안 함. 기준 시험지 검사 폐기(retire) 청구 없음, 기대값 변경 0."
+  },
+  {
+   "id": "R6",
+   "text": "로그인 흐름: 실계정 하네스 RA-COMM-03·RA-COMM-04A 를 기준 사본·이 변경(로컬 127.0.0.2 + /api 운영 전달)에 돌리고, 테스트 계정 A·B 로그인 상태 소통 탭 DOM 을 전후 비교한다(작업자 실측 — 법정 도구는 로그인 화면을 못 연다)."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "소통 탭 메인 렌더 renderCommScreen 이 js/tabs/comm/render.js 에 선언되어 있다",
+   "touches": [
+    "js/tabs/comm/render.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/render.js",
+    "text": "  function renderCommScreen(){"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "DM 서브탭 위임 renderCommDM 이 js/tabs/comm/render.js 에 선언되어 있다",
+   "touches": [
+    "js/tabs/comm/render.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/render.js",
+    "text": "  function renderCommDM(body){"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "동반자 서브탭 위임 renderCommCompanions 가 js/tabs/comm/render.js 에 선언되어 있다",
+   "touches": [
+    "js/tabs/comm/render.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/render.js",
+    "text": "  function renderCommCompanions(body){"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "renderCommScreen 이 같은 파일의 DM 위임을 접두 없이 부른다",
+   "touches": [
+    "js/tabs/comm/render.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/render.js",
+    "text": "    else if(L.state.commSubTab==='dm') renderCommDM(subBody);"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "서버 댓글 캐시 SERVER_FEED_COMMENTS_CACHE 가 js/tabs/comm/feed-comments.js 안 변수로 선언되어 있다",
+   "touches": [
+    "js/tabs/comm/feed-comments.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/feed-comments.js",
+    "text": "  var SERVER_FEED_COMMENTS_CACHE = {};"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "서버 댓글 불러오기 loadServerFeedComments 가 js/tabs/comm/feed-comments.js 에 선언되어 있다",
+   "touches": [
+    "js/tabs/comm/feed-comments.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/feed-comments.js",
+    "text": "  async function loadServerFeedComments(postId){"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "댓글 읽기 getFeedComments 가 js/tabs/comm/feed-comments.js 에 선언되어 있다",
+   "touches": [
+    "js/tabs/comm/feed-comments.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/feed-comments.js",
+    "text": "  function getFeedComments(postId){"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "댓글 쓰기 setFeedComments 가 js/tabs/comm/feed-comments.js 에 선언되어 있다",
+   "touches": [
+    "js/tabs/comm/feed-comments.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/feed-comments.js",
+    "text": "  function setFeedComments(postId, list){"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "댓글 등록 handleUserCommentSubmit 이 js/tabs/comm/feed-comments.js 에 선언되어 있다",
+   "touches": [
+    "js/tabs/comm/feed-comments.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/feed-comments.js",
+    "text": "  function handleUserCommentSubmit(postId, text){"
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "예전 이모지 반응 토글 toggleFeedReaction 이 js/tabs/comm/feed-comments.js 에 선언되어 있다",
+   "touches": [
+    "js/tabs/comm/feed-comments.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/feed-comments.js",
+    "text": "  async function toggleFeedReaction(postId, rType, btn){"
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인 스크립트에 renderCommScreen 함수 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  function renderCommScreen(){"
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인 스크립트에 renderCommDM 함수 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  function renderCommDM(body){"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인 스크립트에 renderCommCompanions 함수 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  function renderCommCompanions(body){"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인 스크립트에 SERVER_FEED_COMMENTS_CACHE 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  var SERVER_FEED_COMMENTS_CACHE = {};"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인 스크립트에 loadServerFeedComments 함수 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  async function loadServerFeedComments(postId){"
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인 스크립트에 getFeedComments 함수 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  function getFeedComments(postId){"
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인 스크립트에 setFeedComments 함수 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  function setFeedComments(postId, list){"
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인 스크립트에 handleUserCommentSubmit 함수 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  function handleUserCommentSubmit(postId, text){"
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 인라인 스크립트에 toggleFeedReaction 함수 선언이 남아 있지 않다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "index.html",
+    "text": "  async function toggleFeedReaction(postId, rType, btn){"
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html IIFE 머리에서 소통 키트의 renderCommScreen 를 같은 이름으로 가져온다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "  var renderCommScreen = _commKit.renderCommScreen;"
+   }
+  },
+  {
+   "id": "C21",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html IIFE 머리에서 소통 키트의 loadServerFeedComments 를 같은 이름으로 가져온다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "  var loadServerFeedComments = _commKit.loadServerFeedComments;"
+   }
+  },
+  {
+   "id": "C22",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html IIFE 머리에서 소통 키트의 getFeedComments 를 같은 이름으로 가져온다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "  var getFeedComments = _commKit.getFeedComments;"
+   }
+  },
+  {
+   "id": "C23",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html IIFE 머리에서 소통 키트의 setFeedComments 를 같은 이름으로 가져온다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "  var setFeedComments = _commKit.setFeedComments;"
+   }
+  },
+  {
+   "id": "C24",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html IIFE 머리에서 소통 키트의 handleUserCommentSubmit 를 같은 이름으로 가져온다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "  var handleUserCommentSubmit = _commKit.handleUserCommentSubmit;"
+   }
+  },
+  {
+   "id": "C25",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html IIFE 머리에서 소통 키트의 toggleFeedReaction 를 같은 이름으로 가져온다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "  var toggleFeedReaction = _commKit.toggleFeedReaction;"
+   }
+  },
+  {
+   "id": "C26",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "옮긴 댓글 헬퍼가 읽는 피드 캐시 FEED_POSTS_CACHE 가 app-scope getter 로 노출되어 있다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "    get FEED_POSTS_CACHE(){ return FEED_POSTS_CACHE; },"
+   }
+  },
+  {
+   "id": "C27",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "옮긴 댓글 헬퍼가 피드 캐시를 app-scope 통로로 읽는다",
+   "touches": [
+    "js/tabs/comm/feed-comments.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/tabs/comm/feed-comments.js",
+    "text": "    var curRealCount = (L.FEED_POSTS_CACHE || []).length;"
+   }
+  },
+  {
+   "id": "C28",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "피드 댓글·리액션 파일이 소통 메가블록 index.js 앞에 로드된다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "<script src=\"js/tabs/comm/feed-comments.js\"></script>"
+   }
+  },
+  {
+   "id": "C29",
+   "req": "R2",
+   "kind": "static",
+   "domain": "config",
+   "statement": "소통 메인 렌더 파일이 소통 메가블록 index.js 앞에 로드된다",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "<script src=\"js/tabs/comm/render.js\"></script>"
+   }
+  },
+  {
+   "id": "C30",
+   "req": "R3",
+   "kind": "behavior",
+   "change": "new",
+   "domain": "ui-behavior",
+   "statement": "옮긴 뒤에도 게스트로 소통 탭에 들어가면 서브탭 칩 6개가 그려지고, 팀·동반자·DM·마니또·공유·피드 칩을 차례로 누르면 누른 칩만 활성이 되고 아래 화면이 그 서브탭 내용으로 바뀌며 예외가 없다(옮기기만 했으므로 기준 커밋에서도 같은 결과여야 한다)",
+   "touches": [
+    "js/tabs/comm/render.js"
+   ],
+   "scenario": "scenarios/comm-subtabs-switch.json"
+  },
+  {
+   "id": "C31",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "소통 탭 조작 비교(게스트, 50단계 × 13칸, 기준 대 후)에서 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-379/dom-compare-comm.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-379/dom-compare-comm.json",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C32",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "같은 기준 앱 2회 조작 비교(본질적 변동)에서 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-379/dom-compare-comm.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-379/dom-compare-comm.json",
+    "path": "baseVsBaseDiffering",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C33",
+   "req": "R3",
+   "kind": "static",
+   "domain": "code",
+   "statement": "옮긴 9개 선언의 토큰열 동일·누수 0·미노출 0 검사 결과가 ok 로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-379/verify-comm.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-379/verify-comm.json",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C34",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "모듈 가드 기준선의 인라인 스크립트 줄 수가 34117 로 낮아져 있다",
+   "touches": [
+    "docs/architecture/module-baseline.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "docs/architecture/module-baseline.json",
+    "path": "history.12.metrics.inlineScriptLines",
+    "equals": 34117
+   }
+  },
+  {
+   "id": "C35",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서에 소통 메인 렌더 세포 comm/render 가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/modules.json",
+    "text": "\"id\": \"comm/render\""
+   }
+  },
+  {
+   "id": "C36",
+   "req": "R4",
+   "kind": "static",
+   "domain": "architecture",
+   "statement": "신고서에 피드 댓글·리액션 세포 comm/feed-comments 가 있다",
+   "touches": [
+    "docs/architecture/modules.json"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/architecture/modules.json",
+    "text": "\"id\": \"comm/feed-comments\""
+   }
+  },
+  {
+   "id": "C37",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "REQ 가 8원칙 중 절차 재검증 절을 가진다",
+   "touches": [
+    "docs/specs/REQ-TASK-ES-379-COMM-CELL.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/specs/REQ-TASK-ES-379-COMM-CELL.md",
+    "text": "## 6. [원칙 ⑥] 절차 재검증 · 반론 격파"
+   }
+  },
+  {
+   "id": "C38",
+   "req": "R5",
+   "kind": "static",
+   "domain": "tickets",
+   "statement": "티켓 대장에 TASK-ES-379 줄이 있다",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/rules/TICKETS.md",
+    "text": "- #TASK-ES-379 | INFRA/구조 |"
+   }
+  },
+  {
+   "id": "C39",
+   "req": "R6",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "로그인 A·B 소통 탭 읽기 조작 비교(기준1 대 후)에서 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-379/real-account-comm-dom-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-379/real-account-comm-dom-compare.json",
+    "path": "base1VsAfter.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C40",
+   "req": "R6",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "로그인 A·B 소통 탭 읽기 조작의 기준 2회 사이(본질적 변동) 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-379/real-account-comm-dom-compare.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-379/real-account-comm-dom-compare.json",
+    "path": "base1VsBase2.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C41",
+   "req": "R6",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "운영 Supabase 테스트 계정 A·B 로 로그인한 상태에서 이 변경의 소통 탭이 동반자 추가(RA-COMM-03)·DM 도착(RA-COMM-04A)과 서브탭 6개 화면을 이전 전과 같게 보여 준다",
+   "touches": [
+    "js/tabs/comm/render.js",
+    "js/tabs/comm/feed-comments.js"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "테스트 계정 A·B 환경 변수가 있는 이 PC 의 세션 또는 상민님",
+    "how": [
+     "node docs/design/harness/real-account-check.js --only RA-COMM-03,RA-COMM-04A --out 결과.json 을 이 변경이 올라간 주소로 실행해 두 시나리오가 통과인지 본다",
+     "테스트 계정 A·B 로 각각 로그인해 소통 탭 서브탭 6개(피드·팀·동반자·DM·마니또·공유)를 눌러 이전과 같은 화면인지 본다"
+    ],
+    "note": "작업자 실측(판정 아님): 로컬 127.0.0.2 정적 서버 + /api 운영 전달로 기준 사본·이 변경 모두 RA-COMM-03·04A 통과(reports/TASK-ES-379/real-account-ra-local-base.json·after.json), 로그인 A·B 읽기 조작 210값 차이 0. 운영 배포가 막혀 있어 운영 주소로는 돌리지 못했다."
+   }
+  },
+  {
+   "id": "C42",
+   "req": "R6",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "로그인 상태에서 피드 글의 댓글 등록·빠른 답글·댓글 삭제가 이전 전과 같게 서버(team_pings feed_comment)에 저장·표시된다",
+   "touches": [
+    "js/tabs/comm/feed-comments.js"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "테스트 계정으로 올린 피드 글이 있는 상민님 또는 세션",
+    "how": [
+     "테스트 계정 B 로 피드에 글을 하나 올린다(공개 글이므로 상민님 결정 뒤)",
+     "테스트 계정 A 로 그 글의 댓글을 펼쳐 댓글을 등록하고, B 로 다시 열어 같은 댓글이 보이는지 본다",
+     "등록한 댓글과 글을 지운다"
+    ],
+    "note": "운영 피드의 글은 실사용자 글이라 작업자는 댓글·응원을 남기지 않았다. 게스트 목 서버 조작 비교(댓글 펼치기·빈 댓글·등록·빠른 답글·삭제)는 기준 대 후 차이 0."
+   }
+  }
+ ]
+}

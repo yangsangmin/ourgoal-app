@@ -1,0 +1,154 @@
+{
+  "id": "comm-subtabs-switch",
+  "title": "게스트로 소통 탭에 들어가면 서브탭 칩 6개가 그려지고, 팀·동반자·DM·마니또·공유·피드 칩을 차례로 누르면 누른 칩만 활성이 되고 아래 화면이 그 서브탭 내용으로 바뀐다(소통 메인 렌더 renderCommScreen·DM·동반자 위임)",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".navbtn[data-tab=\"comm\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "expect": "count",
+      "selector": "#commBody .comm-subtab",
+      "equals": 6
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#commBody [data-sub=\"feed\"]",
+      "className": "active"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#commSubBody",
+      "text": "전체 피드"
+    },
+    {
+      "do": "click",
+      "selector": "#commBody [data-sub=\"group\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#commBody [data-sub=\"group\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#commBody [data-sub=\"feed\"]",
+      "className": "active"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#commSubBody",
+      "text": "우리만의 팀 만들기"
+    },
+    {
+      "do": "click",
+      "selector": "#commBody [data-sub=\"companion\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#commBody [data-sub=\"companion\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#commBody [data-sub=\"feed\"]",
+      "className": "active"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#commSubBody",
+      "text": "동반자 목록"
+    },
+    {
+      "do": "click",
+      "selector": "#commBody [data-sub=\"dm\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#commBody [data-sub=\"dm\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#commBody [data-sub=\"feed\"]",
+      "className": "active"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#commSubBody",
+      "text": "내 팀 동료에게 바로 DM 보내기"
+    },
+    {
+      "do": "click",
+      "selector": "#commBody [data-sub=\"manito\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#commBody [data-sub=\"manito\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#commBody [data-sub=\"feed\"]",
+      "className": "active"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#commSubBody",
+      "text": "마니또를 만나볼까요?"
+    },
+    {
+      "do": "click",
+      "selector": "#commBody [data-sub=\"share\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#commBody [data-sub=\"share\"]",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#commBody [data-sub=\"feed\"]",
+      "className": "active"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#commSubBody",
+      "text": "목표를 만들면 진행 카드를 공유할 수 있어요."
+    },
+    {
+      "do": "click",
+      "selector": "#commBody [data-sub=\"feed\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#commBody [data-sub=\"feed\"]",
+      "className": "active"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#commSubBody",
+      "text": "전체 피드"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

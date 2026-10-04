@@ -2335,6 +2335,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/comm/sub-feed.js"></script>
 <script src="js/tabs/comm/sub-companions.js"></script>
 <script src="js/tabs/comm/sub-crew.js"></script>
+<script src="js/tabs/comm/feed-comments.js"></script>
+<script src="js/tabs/comm/render.js"></script>
 <script src="js/tabs/comm/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Settings Mega-Block & Sub-Blocks (설정 메가블록 및 소블록 외판) -->
 <script src="js/tabs/settings/sub-profile.js"></script>
@@ -2566,6 +2568,28 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get generateGoalCertificateImage(){ return generateGoalCertificateImage; },
     get goalProgress(){ return goalProgress; },
     get topicLabel(){ return topicLabel; }
+  });
+
+  /* ============ [#TASK-ES-379] 소통 탭 모듈 이음매 1차 (docs/specs/MODULE-SPLIT-PROTOCOL.md, 목표 탭 #TASK-ES-370·#TASK-ES-375 와 같은 틀) ============
+     ① 가져오기: js/tabs/comm/render.js · feed-comments.js 로 옮긴 함수 중 이 스코프에서 부르는 것을 같은 이름으로 가져온다(전역에 새 이름을 만들지 않는다).
+     ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매(설정·기록·일정·목표)가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). 옮긴 코드가 대입하는 이름만 setter 를 단다. */
+  var _commKit = window.OurgoalCommKit;
+  var renderCommScreen = _commKit.renderCommScreen;
+  var loadServerFeedComments = _commKit.loadServerFeedComments;
+  var getFeedComments = _commKit.getFeedComments;
+  var setFeedComments = _commKit.setFeedComments;
+  var handleUserCommentSubmit = _commKit.handleUserCommentSubmit;
+  var toggleFeedReaction = _commKit.toggleFeedReaction;
+  window.OurgoalAppScope.expose('index.html', {
+    get FEED_POSTS_CACHE(){ return FEED_POSTS_CACHE; },
+    get dayIndexSinceSignup(){ return dayIndexSinceSignup; },
+    get fmtTime(){ return fmtTime; },
+    get newId(){ return newId; },
+    get renderCommFeed(){ return renderCommFeed; },
+    get renderCommGroups(){ return renderCommGroups; },
+    get renderCommManito(){ return renderCommManito; },
+    get renderCommShare(){ return renderCommShare; },
+    get sb(){ return sb; }
   });
 
   try{
@@ -32523,54 +32547,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     paintSubs(TOPICS[initMajor] ? initMajor : Object.keys(TOPICS)[0]);
   }
 
-  function renderCommScreen(){
-    // 토스 동류 소통 요약 원카드 (#TASK-ES-216) 통계 바인딩
-    var heroGrpEl = document.getElementById('commHeroGroupCount');
-    if(heroGrpEl) heroGrpEl.textContent = ((state.profile && state.profile.groups) ? state.profile.groups.length : 0) + '개';
-    var heroCompEl = document.getElementById('commHeroCompanionCount');
-    if(heroCompEl) heroCompEl.textContent = ((state.profile && state.profile.companions) ? state.profile.companions.length : 0) + '명';
-    var heroCheerEl = document.getElementById('commHeroCheerCount');
-    if(heroCheerEl) heroCheerEl.textContent = ((state.profile && state.profile.cheersReceived) ? state.profile.cheersReceived : 0) + '개';
-
-    var body = document.getElementById('commBody');
-    var subtabsList = [
-      { key: 'feed', label: '피드', icon: '📰' },
-      { key: 'group', label: '팀', icon: '👥' },
-      { key: 'companion', label: '동반자', icon: '🤝' }, /* companion:동반자 */
-      { key: 'dm', label: 'DM', icon: '💬' },
-      { key: 'manito', label: '마니또', icon: '🎁' },
-      { key: 'share', label: '공유', icon: '📤' }
-    ];
-    var hasBadge = window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.getDmUnreadStatus && window.OurgoalTeamInviteComm.getDmUnreadStatus();
-    var subtabHtml = '<div class="comm-subtabs comm-subtabs-clean comm-subtabs-grid">' +
-      subtabsList.map(function(s){
-        var bHtml = (s.key === 'dm') ? '<span id="dmSubtabBadge" style="display:'+(hasBadge?'inline-block':'none')+';width:6px;height:6px;border-radius:50%;background:#ef4444;margin-left:4px;vertical-align:middle;"></span>' : '';
-        return '<div class="comm-subtab'+(state.commSubTab===s.key?' active':'')+'" data-sub="'+s.key+'">'+s.icon+' '+s.label+bHtml+'</div>';
-      }).join('') + '</div>';
-    body.innerHTML = subtabHtml +
-      '<div id="commTopCompanionBar" style="display:' + (state.commSubTab === 'companion' ? 'block' : 'none') + '"></div>' +
-      '<div id="commSubBody"></div>';
-    if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.renderCommTopInviteSearch){
-      window.OurgoalTeamInviteComm.renderCommTopInviteSearch(document.getElementById('commTopCompanionBar'));
-    }
-    body.querySelectorAll('[data-sub]').forEach(function(t){
-      t.addEventListener('click', function(){
-        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-        if(t.dataset.sub==='dm' && window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.updateDmUnreadBadge) window.OurgoalTeamInviteComm.updateDmUnreadBadge(false);
-        state.commSubTab = t.dataset.sub;
-        state.activeGroupId = null;
-        state.manitoDm = null;
-        state.dmActiveId = null; renderCommScreen();
-      });
-    });
-    var subBody = document.getElementById('commSubBody');
-    if(state.commSubTab==='share') renderCommShare(subBody);
-    else if(state.commSubTab==='feed') renderCommFeed(subBody);
-    else if(state.commSubTab==='group') renderCommGroups(subBody);
-    else if(state.commSubTab==='manito') renderCommManito(subBody);
-    else if(state.commSubTab==='dm') renderCommDM(subBody);
-    else if(state.commSubTab==='companion') renderCommCompanions(subBody);
-  }
+  /* [#TASK-ES-379] renderCommScreen → js/tabs/comm/render.js 로 옮김(소통 탭 세포 1차) */
 
   /* ============ 플랫폼 맞춤 공유 카드 ============ */
   var SHARE_PLATFORMS = {
@@ -33191,171 +33168,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       .subscribe();
   }
   /* ============ 피드 상호소통 댓글 & 리액션 헬퍼 (#TASK-ES-133 서버 DB 실시간 동기화) ============ */
-  var SERVER_FEED_COMMENTS_CACHE = {};
-  async function loadServerFeedComments(postId){
-    if(!postId) return;
-    try {
-      var res = await sb.from('team_pings').select('*').eq('group_id', 'feed').eq('target_type', 'feed_comment').eq('target_id', postId).order('created_at', { ascending: true });
-      if(res.data && res.data.length){
-        var localList = getFeedComments(postId), changed = false;
-        res.data.forEach(function(row){
-          if(!localList.some(function(c){ return c.id === row.id; })){
-            localList.push({ id: row.id, userId: row.sender_id, name: row.sender_name || '동료', avatar: row.sender_avatar || '👤', text: row.message, time: fmtTime(row.created_at) || '방금', isMe: (row.sender_id === (state.profile ? state.profile.id : '')), is_ai: false, createdAt: row.created_at });
-            changed = true;
-          }
-        });
-        if(changed){
-          setFeedComments(postId, localList);
-          SERVER_FEED_COMMENTS_CACHE[postId] = localList;
-          var subBody = document.getElementById('commSubBody');
-          if(subBody && state.activeTab === 'comm' && state.commSubTab === 'feed'){
-            var cListEl = subBody.querySelector('#cpanel_' + postId + ' .feed-comments-list');
-            if(cListEl && localList.length){
-              cListEl.innerHTML = localList.map(function(c){
-                var cIsMe = c.isMe || (c.userId === (state.profile ? state.profile.id : ''));
-                var cBadge = c.is_ai ? '<span class="feed-c-badge badge-ai">AI봇</span>' : (cIsMe ? '<span class="feed-c-badge badge-author">나</span>' : '');
-                return '<div class="feed-comment-bubble'+(cIsMe?' me-comment':'')+'">' +
-                  '<div class="feed-c-avatar'+(cIsMe?' me':'')+'">'+escapeHtml(c.avatar||'👤')+'</div>' +
-                  '<div class="feed-c-body">' +
-                    '<div class="feed-c-meta">' +
-                      '<span class="feed-c-author">'+escapeHtml(c.name)+cBadge+'</span>' +
-                      '<div style="display:flex;align-items:center;gap:6px;">' +
-                        '<span class="feed-c-time">'+escapeHtml(c.time||'방금')+'</span>' +
-                        (cIsMe ? '<button class="feed-c-del" data-delcomment="'+postId+'" data-cid="'+c.id+'" type="button" title="삭제">×</button>' : '') +
-                      '</div>' +
-                    '</div>' +
-                    '<div class="feed-c-text">'+escapeHtml(c.text)+'</div>' +
-                  '</div>' +
-                '</div>';
-              }).join('');
-            }
-          }
-        }
-      }
-    } catch(e){
-      console.warn('[FeedComment] loadServerFeedComments error:', e);
-    }
-  }
-
-  function getFeedComments(postId){
-    if(!state.profile.settings.feedComments) state.profile.settings.feedComments = {};
-    if(!state.profile.settings.feedComments[postId]){
-      // 대표 가상 페르소나 게시물에 초기 활성 댓글을 시딩하여 생동감 넘치는 커뮤니티 조성
-      if(postId === 'sim_p01'){
-        state.profile.settings.feedComments[postId] = [
-          { id:'sc_1', name:'박준서', avatar:'준', text:'토익 900점 꼭 넘기실 겁니다! 도서관 출석 파이팅 🔥', time:'20분 전', is_ai:true },
-          { id:'sc_2', name:'김서연', avatar:'서', text:'아침 일찍부터 대단하세요! 오답노트 꼼꼼히 하시면 금방 점수 올라요 👍', time:'10분 전', is_ai:true }
-        ];
-      } else if(postId === 'sim_p02'){
-        state.profile.settings.feedComments[postId] = [
-          { id:'sc_3', name:'이지민', avatar:'지', text:'DP 골드 문제 진짜 어려운데 점심시간 쪼개서 풀다니 대단해요 💻', time:'45분 전', is_ai:true }
-        ];
-      } else if(postId === 'sim_p03'){
-        state.profile.settings.feedComments[postId] = [
-          { id:'sc_4', name:'정예린', avatar:'예', text:'MVP 론칭 진심으로 응원합니다! 출시되면 바로 테스트해볼게요 ✨', time:'1시간 전', is_ai:true }
-        ];
-      } else if(postId === 'sim_p21'){
-        state.profile.settings.feedComments[postId] = [
-          { id:'sc_5', name:'최수빈', avatar:'수', text:'국시 모의고사 점수 상승 축하드려요! 끝까지 컨디션 조절 잘 하세요 👏', time:'15분 전', is_ai:true }
-        ];
-      } else {
-        state.profile.settings.feedComments[postId] = [];
-      }
-    }
-    var comments = state.profile.settings.feedComments[postId] || [];
-    // [#TASK-ES-312, 61] 실 유저 20명 초과 시 AI 댓글 전면 제거 (0건)
-    var curRealCount = (FEED_POSTS_CACHE || []).length;
-    if(curRealCount > 20){
-      return comments.filter(function(c){ return !c.is_ai; });
-    }
-    return comments;
-  }
-
-  function setFeedComments(postId, list){
-    if(!state.profile.settings.feedComments) state.profile.settings.feedComments = {};
-    state.profile.settings.feedComments[postId] = list;
-  }
-
-  function handleUserCommentSubmit(postId, text){
-    if(!text || !text.trim()) return;
-    var trimmed = text.trim();
-    var list = getFeedComments(postId);
-    var cId = 'fc_' + newId();
-    list.push({
-      id: cId,
-      userId: state.profile.id,
-      name: state.profile.displayName || '나',
-      avatar: (state.profile.displayName || '나').slice(0, 1),
-      text: trimmed,
-      time: '방금',
-      isMe: true,
-      is_ai: false,
-      createdAt: nowISO()
-    });
-    setFeedComments(postId, list);
-    state.expandedComments = state.expandedComments || {};
-    state.expandedComments[postId] = true;
-    saveProfile();
-    triggerHaptic(10);
-    toast('댓글을 등록했어요!');
-
-    // Supabase team_pings 서버 실시간 영구 동기화 (#TASK-ES-133)
-    var cmtRow = {
-      id: cId,
-      group_id: 'feed',
-      sender_id: state.profile.id,
-      sender_name: state.profile.displayName || '나',
-      sender_avatar: (state.profile.displayName || '나').slice(0, 1),
-      receiver_id: '',
-      target_type: 'feed_comment',
-      target_id: postId,
-      target_title: '피드 게시물',
-      ping_type: 'comment',
-      message: trimmed,
-      status: 'sent',
-      hidden: false,
-      created_at: nowISO()
-    };
-    sb.from('team_pings').insert(cmtRow).then(function(res){
-      if(res.error) console.warn('[FeedComment] Supabase insert warn:', res.error.message);
-    });
-
-    var subBody = document.getElementById('commSubBody');
-    if(subBody && state.activeTab === 'comm' && state.commSubTab === 'feed') renderCommFeed(subBody);
-
-    // [TASK-ES-332] 가짜 봇 즉각 답글 상호작용 완전 제거
-  }
-
-  async function toggleFeedReaction(postId, rType, btn){
-    var s = state.profile.settings;
-    if(!s.feedReactions) s.feedReactions = {};
-    var rKey = postId + ':' + rType;
-    var nowOn = !s.feedReactions[rKey];
-    if(nowOn) s.feedReactions[rKey] = true;
-    else delete s.feedReactions[rKey];
-
-    // 기존 호환성 유지
-    if(nowOn) s.feedReactions[postId] = true;
-
-    if(nowOn){
-      triggerHaptic(12);
-      var rect = btn.getBoundingClientRect();
-      burstConfetti(rect.left + rect.width / 2, rect.top, 8);
-      track('cheer_sent', { source: 'feed', goal_type: null, day_index: dayIndexSinceSignup(), post_id: postId, reaction: rType });
-    }
-    await saveProfile();
-
-    var post = (FEED_POSTS_CACHE || []).find(function(p){ return p.id === postId; });
-    if(post){
-      var delta = nowOn ? 1 : -1;
-      var res = await sb.rpc('increment_post_cheers', { p_post_id: postId, p_delta: delta });
-      if(!res.error && typeof res.data === 'number') post.cheers_count = res.data;
-      else post.cheers_count = Math.max(0, (post.cheers_count || 0) + delta);
-    }
-
-    var subBody = document.getElementById('commSubBody');
-    if(subBody && state.activeTab === 'comm' && state.commSubTab === 'feed') renderCommFeed(subBody);
-  }
+  /* [#TASK-ES-379] SERVER_FEED_COMMENTS_CACHE · loadServerFeedComments · getFeedComments · setFeedComments · handleUserCommentSubmit · toggleFeedReaction → js/tabs/comm/feed-comments.js 로 옮김(소통 탭 세포 1차) */
 
   function feedPostHtml(p){
     var ex = p.extra || {};
@@ -35421,17 +35234,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* ============ DM & 동반자 소통 시스템 (TASK-ES-105) ============ */
-  function renderCommDM(body){
-    if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.renderCommDM){
-      return window.OurgoalTeamInviteComm.renderCommDM(body);
-    }
-  }
-
-  function renderCommCompanions(body){
-    if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.renderCommCompanions){
-      return window.OurgoalTeamInviteComm.renderCommCompanions(body);
-    }
-  }
+  /* [#TASK-ES-379] renderCommDM · renderCommCompanions → js/tabs/comm/render.js 로 옮김(소통 탭 세포 1차) */
 
   function openUserProfileModal(user){
     if(window.OurgoalTeamInviteComm && window.OurgoalTeamInviteComm.openUserProfileModal){
