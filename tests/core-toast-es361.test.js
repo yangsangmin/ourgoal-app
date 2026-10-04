@@ -108,4 +108,4 @@ async function check(title, fn) {
   });
 
   console.log('[core/toast] ' + n + '건 통과');
-})().catch(e => { console.error(e); process.exit(1); });
+})().catch(e => { console.error(e); process.exitCode = 1; });
