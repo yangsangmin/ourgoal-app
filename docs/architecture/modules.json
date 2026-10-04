@@ -2556,6 +2556,198 @@
       ]
     },
     {
+      "id": "team-auto-actions",
+      "file": "js/team-auto-actions.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "자동 생성 직통 핸들러 5개(handle팀목표_Item25·37·39Action, handle소통_Item28·30Action). team-invite-comm.js 에서 분열(#TASK-ES-387)",
+      "spans": [
+        "goals",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "team-chat",
+      "file": "js/team-chat.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "팀 톡방 — openTeamChatModal(팀 목표 팀원 대화)·handlePingSentAutoReply(찌르기 뒤 자동 답장). team-invite-comm.js 에서 분열(#TASK-ES-387)",
+      "spans": [
+        "goals",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "MOCK_GROUPS",
+        "closeModal",
+        "fmtTime",
+        "groupState",
+        "openModal",
+        "saveProfile",
+        "sb",
+        "state",
+        "triggerHaptic"
+      ]
+    },
+    {
+      "id": "team-companion-search",
+      "file": "js/team-companion-search.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "소통 탭 상단 초대 링크·닉네임 검색 바 — renderCommTopInviteSearch. team-invite-comm.js 에서 분열(#TASK-ES-387)",
+      "spans": [
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "saveProfile",
+        "sb",
+        "state"
+      ]
+    },
+    {
+      "id": "team-companions",
+      "file": "js/team-companions.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "동반자 탭 화면 — renderCommCompanions. team-invite-comm.js 에서 분열(#TASK-ES-387)",
+      "spans": [
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "renderCommScreen",
+        "saveProfile",
+        "sb",
+        "setTab",
+        "state"
+      ]
+    },
+    {
+      "id": "team-dm-inbox",
+      "file": "js/team-dm-inbox.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "DM 수신함 — 읽음 표시·안읽음 배지·받은 대화방 목록·수신 실시간 구독·스마트 폴링. team-invite-comm.js 에서 분열(#TASK-ES-387)",
+      "spans": [
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalDmLedger",
+        "OurgoalNotifyEngine",
+        "fmtTime",
+        "sb",
+        "state",
+        "updateTopNotifBadge"
+      ]
+    },
+    {
+      "id": "team-dm-room",
+      "file": "js/team-dm-room.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "DM 대화방 — 메시지 렌더·DB 로드·실시간 구독·DM 화면 renderCommDM. team-invite-comm.js 에서 분열(#TASK-ES-387)",
+      "spans": [
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalDmLedger",
+        "isValidRealUser",
+        "saveProfile",
+        "sb",
+        "state",
+        "toggleDmMsgDetail"
+      ]
+    },
+    {
       "id": "team-invite-comm",
       "file": "js/team-invite-comm.js",
       "layer": "legacy",
@@ -2584,37 +2776,31 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": [
-        "CREATOR_TEMPLATES",
-        "MOCK_GROUPS",
         "MOCK_PEOPLE",
-        "OURGOAL_60_TEMPLATES",
         "OurgoalDmLedger",
-        "OurgoalNotifyEngine",
         "OurgoalTeamCommKit",
-        "__FORCE_LEGACY_TPL_ACCORDION",
         "cloneTemplate",
         "closeModal",
-        "daysFromNow",
         "fmtTime",
-        "groupState",
         "handle",
-        "isValidRealUser",
         "nowISO",
         "openModal",
         "renderAuthScreen",
-        "renderCommScreen",
-        "renderGoalsScreen",
         "require:./core/confirm.js",
         "require:./core/toast.js",
+        "require:./team-auto-actions.js",
+        "require:./team-chat.js",
+        "require:./team-companion-search.js",
+        "require:./team-companions.js",
+        "require:./team-dm-inbox.js",
+        "require:./team-dm-room.js",
+        "require:./team-profile.js",
         "require:./team-recruit.js",
         "require:./team-share.js",
+        "require:./team-templates.js",
         "saveProfile",
         "sb",
-        "setTab",
-        "shareContent",
-        "state",
-        "triggerHaptic",
-        "updateTopNotifBadge"
+        "state"
       ]
     },
     {
@@ -2697,6 +2883,40 @@
       ]
     },
     {
+      "id": "team-profile",
+      "file": "js/team-profile.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "프로필 모달·동반자 초대 링크 — openUserProfileModal·copyCompanionInviteLink. team-invite-comm.js 에서 분열(#TASK-ES-387)",
+      "spans": [
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "closeModal",
+        "isValidRealUser",
+        "openModal",
+        "renderCommScreen",
+        "saveProfile",
+        "setTab",
+        "state"
+      ]
+    },
+    {
       "id": "team-recruit",
       "file": "js/team-recruit.js",
       "layer": "legacy",
@@ -2774,6 +2994,48 @@
         "shareContent",
         "state",
         "triggerHaptic"
+      ]
+    },
+    {
+      "id": "team-templates",
+      "file": "js/team-templates.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "추천 템플릿 — openTemplatePreviewModal·openRecommendTemplateModal·renderTemplatesAccordionHtml·wireTemplatesAccordionEvents. team-invite-comm.js 에서 분열(#TASK-ES-387)",
+      "spans": [
+        "goals",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "CREATOR_TEMPLATES",
+        "MOCK_GROUPS",
+        "OURGOAL_60_TEMPLATES",
+        "__FORCE_LEGACY_TPL_ACCORDION",
+        "closeModal",
+        "daysFromNow",
+        "groupState",
+        "openModal",
+        "renderGoalsScreen",
+        "saveProfile",
+        "sb",
+        "setTab",
+        "shareContent",
+        "state"
       ]
     },
     {
