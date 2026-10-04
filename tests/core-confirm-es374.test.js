@@ -27,6 +27,22 @@ function readTeamCommBundle(rootDir) {
   return src;
 }
 
+// #TASK-ES-393 (통계 세포 쪼개기 1차 선행): 통계 코드가 js/universal-stats.js 에서 js/stats-*.js 키트 부품(OurgoalUniversalStatsKit 에 함수를 담는 파일)으로 옮겨 가도
+// 같은 단언이 같은 코드를 찾도록 '통계 합본' = js/universal-stats.js(원문 그대로, 맨 앞) + 키트 부품(이름순, 생성기 접두 S.·K. 를 떼고) 를 읽는다. 단언·기대값은 그대로다.
+function listStatsParts(rootDir) {
+  const dir = path.join(rootDir, 'js');
+  return fs.readdirSync(dir).filter((n) => n.indexOf('stats-') === 0 && n.endsWith('.js')).sort()
+    .map((n) => path.join(dir, n)).filter((f) => fs.statSync(f).isFile() && fs.readFileSync(f, 'utf8').indexOf('OurgoalUniversalStatsKit') >= 0);
+}
+function readStatsBundle(rootDir) {
+  const raw = fs.readFileSync(path.join(rootDir, 'js', 'universal-stats.js'), 'utf8');
+  const parts = listStatsParts(rootDir);
+  const src = [raw, ...parts.map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[SK]\.(?=[A-Za-z_$])/g, '$1'))].join('\n');
+  // 합본 맨 앞은 원문 그대로다(원본에서 찾던 글자는 같은 자리에서 찾는다). 부품 파일이 없으면 합본 = 원문.
+  assert.strictEqual(src.slice(0, raw.length), raw, '통계 합본 맨 앞 = js/universal-stats.js 원문');
+  if (parts.length === 0) assert.strictEqual(src, raw, '통계 합본 = js/universal-stats.js (부품 파일이 없을 때)');
+  return src;
+}
 const ROOT = path.join(__dirname, '..');
 const caps = require(path.join(ROOT, 'js/core/capabilities.js'));
 const C = require(path.join(ROOT, 'js/core/confirm.js'));
@@ -297,7 +313,8 @@ function fakeDom() {
       'js/team-linked-goals.js', 'js/team-visibility-levels.js', 'js/time-tracker.js', 'js/universal-stats.js'];
     files.forEach(f => {
       const src = fs.readFileSync(path.join(ROOT, f), 'utf8').split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l)).join('\n');
-      const scan = f === 'js/team-invite-comm.js' ? readTeamCommBundle(ROOT).split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l)).join('\n') : src;
+      const scan = f === 'js/team-invite-comm.js' ? readTeamCommBundle(ROOT).split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l)).join('\n')
+        : f === 'js/universal-stats.js' ? readStatsBundle(ROOT).split(/\r?\n/).filter(l => !/^\s*(\/\/|\/?\*)/.test(l)).join('\n') : src;
       assert.ok(!/(?:^|[^.\w$])confirm\(|\bwindow\.confirm\(/.test(scan), f + ': confirm( 직접 호출 없음');
       assert.ok(src.includes("OurgoalCapabilities.request('ui.confirm.bind')"), f + ': 공용 확인창 통로 사용');
     });
