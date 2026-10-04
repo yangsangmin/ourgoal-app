@@ -1,0 +1,1994 @@
+{
+  "schema": "ourgoal.cells/1",
+  "undifferentiated": [
+    {
+      "id": "index-html",
+      "file": "index.html",
+      "role": "미분화 덩어리 — 아직 세포로 분화되지 않은 인라인 스크립트(여기서 세포를 하나씩 떼어 낸다)",
+      "emits": [
+        "checkin:created",
+        "record:saved",
+        "tab:changed",
+        "view:sync"
+      ],
+      "listens": []
+    }
+  ],
+  "note": "세포 신고서. 손으로 정하는 칸(kind·role·spans·provides·requires·contributes·owns·capabilities·planned)은 여기서 고치고, 코드에서 뽑는 칸(emits·listens·domRoot·ownerKeys·dependsOn)은 node scripts/module-specs.js --write 가 다시 쓴다. 규칙: docs/architecture/MODULE-BLUEPRINT.md",
+  "cells": [
+    {
+      "id": "auth-safety",
+      "file": "js/auth-safety.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": null,
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [
+          "auth.session"
+        ],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "closeModal",
+        "openModal",
+        "performLogout",
+        "saveProfile",
+        "sb",
+        "state"
+      ]
+    },
+    {
+      "id": "avatar-system",
+      "file": "js/avatar-system.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "Ourgoal Avatar System (#TASK-ES-044, #TASK-ES-046, #TASK-ES-047, #TASK-ES-048)",
+      "spans": [
+        "home",
+        "settings",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [
+          "xp.award"
+        ],
+        "contributes": [
+          "home.card",
+          "settings.section",
+          "profile.badge"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "closeModal",
+        "handle",
+        "openModal"
+      ]
+    },
+    {
+      "id": "calendar-attachment",
+      "file": "js/calendar-attachment.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "==============================================================================",
+      "spans": [
+        "records",
+        "comm",
+        "calendar",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": [
+          "calendar.source"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "handle",
+        "openAddAttachmentModal",
+        "openAttachmentViewer",
+        "openCalendarDayEditHubModal",
+        "renderAll",
+        "renderAttachmentChipsHtml",
+        "renderCalendarScreen",
+        "saveProfile",
+        "state",
+        "toast"
+      ]
+    },
+    {
+      "id": "components",
+      "file": "js/components.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "==============================================================================",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [
+          "ui.toast",
+          "ui.sheet",
+          "ui.confirm"
+        ],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "closeModal",
+        "handle",
+        "window"
+      ]
+    },
+    {
+      "id": "content-moderation",
+      "file": "js/content-moderation.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "Ourgoal Content Moderation & Anti-Abuse Defense Engine (#TASK-ES-058)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "core/capabilities",
+      "file": "js/core/capabilities.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "OurGoal Cell Skeleton - Capability Registry (신경 = 능력 등록부)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "core/event-bus",
+      "file": "js/core/event-bus.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "OurGoal Shipyard Architecture - Core Event Bus (배관망)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "core/registry",
+      "file": "js/core/registry.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "OurGoal Shipyard Architecture - Block Registry (조선소 레지스트리 도크)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [
+        "block:error",
+        "registry:ready"
+      ],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalEvents",
+        "OurgoalStore"
+      ]
+    },
+    {
+      "id": "core/slots",
+      "file": "js/core/slots.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "OurGoal Cell Skeleton - Slots (꽂는 자리)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [
+        "block:error"
+      ],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalEvents"
+      ]
+    },
+    {
+      "id": "core/store",
+      "file": "js/core/store.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "OurGoal Shipyard Architecture - State Store Wrapper (공통 상태 저장소)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [
+        "state:updated"
+      ],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalEvents",
+        "state"
+      ]
+    },
+    {
+      "id": "credits",
+      "file": "js/credits.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "아워골 — 공용 크레딧 클라이언트 (#TASK-ES-015, INFRA)",
+      "spans": [
+        "comm",
+        "home",
+        "records"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OURGOAL_CONFIG",
+        "sb"
+      ]
+    },
+    {
+      "id": "customize",
+      "file": "js/customize.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "앱을 내맘대로! — 홈 구성 요소 켜기/끄기 (#TASK-ES-020, #TASK-ES-141, #TASK-ES-173)",
+      "spans": [
+        "home"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": [
+          "home.card"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "goal-edit-ux",
+      "file": "js/goal-edit-ux.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "OurGoal - 목표 편집 모드 완료 UX 및 목표 제목 편집 지원 모듈 (#TASK-ES-109)",
+      "spans": [
+        "records",
+        "comm",
+        "calendar",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": [
+          "goal.detail"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalTeamLinkedGoals",
+        "TEAM_COMMENTS_CACHE",
+        "sb"
+      ]
+    },
+    {
+      "id": "goal-templates-data",
+      "file": "js/goal-templates-data.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "============ 아워골 6대 카테고리 60대 전문가 목표 템플릿 모듈 ============",
+      "spans": [
+        "goals",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": [
+          "goal.template"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "goal-templates-registry",
+      "file": "js/goal-templates-registry.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": null,
+      "spans": [
+        "goals",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": [
+          "goal.template"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "helpful-reason",
+      "file": "js/helpful-reason.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "============================================================",
+      "spans": [
+        "comm",
+        "home",
+        "records"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalCredits",
+        "OurgoalReactions"
+      ]
+    },
+    {
+      "id": "notify-engine",
+      "file": "js/notify-engine.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "============================================================",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [
+          "notify.send"
+        ],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "AudioContext",
+        "OurgoalComm",
+        "calendarItemsByDate",
+        "focus",
+        "renderCommScreen",
+        "saveLocalSettings",
+        "saveProfile",
+        "state",
+        "switchTab",
+        "updateTopNotifBadge",
+        "webkitAudioContext"
+      ]
+    },
+    {
+      "id": "reactions",
+      "file": "js/reactions.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "============================================================",
+      "spans": [
+        "comm",
+        "home",
+        "records"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": [
+          "reaction.kind",
+          "feed.card"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalHelpfulReason"
+      ]
+    },
+    {
+      "id": "record-ledger",
+      "file": "js/record-ledger.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "[#TASK-ES-344] REC-01 기록 원장 — checkins 행 변환·meta 보존·서버/로컬 id 병합",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [
+        "data.records"
+      ],
+      "capabilities": [],
+      "planned": {
+        "provides": [
+          "ledger.read",
+          "ledger.write",
+          "server.sync"
+        ],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "records-stats",
+      "file": "js/records-stats.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "records-stats.js - 아워골 기록 탭 통계·피드 헬퍼 모듈",
+      "spans": [
+        "records",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": [
+          "stats.card"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "handle"
+      ]
+    },
+    {
+      "id": "sanctuary-v3-engine",
+      "file": "js/sanctuary-v3-engine.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "js/sanctuary-v3-engine.js — 포커스 성소 20대 전수 화면 실제 엔진 직결 조형 렌더러",
+      "spans": [
+        "home",
+        "records",
+        "calendar",
+        "settings"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalTeamInviteComm",
+        "OurgoalTimeTracker",
+        "OurgoalViralSharing",
+        "calendarItemsByDate",
+        "dDay",
+        "goalAchievement",
+        "openAddRecordModal",
+        "openAddScheduleModal",
+        "openCalendarDayBgPickerModal",
+        "openCalendarDayEditHubModal",
+        "openCalendarLockScreenModal",
+        "openCalendarManualEditModal",
+        "openWeeklyRecapModal",
+        "playTimerBeep",
+        "promptNewGoal",
+        "renderCalDayDetail",
+        "restoreGoal",
+        "saveProfile",
+        "setRecordsSegment",
+        "setTab",
+        "showScreen",
+        "switchTab",
+        "toggleScheduleDone",
+        "triggerHaptic"
+      ]
+    },
+    {
+      "id": "streaks",
+      "file": "js/streaks.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "아워골 — 출석·스트릭·배지 (#TASK-ES-019, E1)",
+      "spans": [
+        "comm",
+        "home",
+        "records"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OURGOAL_CONFIG"
+      ]
+    },
+    {
+      "id": "tab-guides",
+      "file": "js/tab-guides.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "OurGoal All Tabs Usage Guide System (All-in-One Guide Hub)",
+      "spans": [
+        "records",
+        "comm",
+        "calendar",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "openModal",
+        "state"
+      ]
+    },
+    {
+      "id": "calendar/index",
+      "file": "js/tabs/calendar/index.js",
+      "layer": "tabs",
+      "tab": "calendar",
+      "size": "large",
+      "kind": "tab",
+      "role": "OurGoal Calendar Mega-Block Orchestrator (일정 캘린더 탭 메가블록 총괄 허브)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [
+        "block:error",
+        "calendar:mounted"
+      ],
+      "listens": [],
+      "domRoot": "screen-calendar",
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalCalendarDayDetail",
+        "OurgoalCalendarMonthView",
+        "OurgoalCalendarPhotoDiary",
+        "OurgoalEvents",
+        "OurgoalRegistry",
+        "renderCalendarScreen",
+        "state"
+      ]
+    },
+    {
+      "id": "calendar/sub-day-detail",
+      "file": "js/tabs/calendar/sub-day-detail.js",
+      "layer": "tabs",
+      "tab": "calendar",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Calendar Sub-Block: Day Detail Timeline (일자별 체크인 및 목표 실천 타임라인)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [
+        "view:sync"
+      ],
+      "domRoot": "calDayDetailSlot",
+      "ownerKeys": [
+        "calendar/day-detail"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "renderCalendarDayDetail",
+        "state"
+      ]
+    },
+    {
+      "id": "calendar/sub-month-view",
+      "file": "js/tabs/calendar/sub-month-view.js",
+      "layer": "tabs",
+      "tab": "calendar",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Calendar Sub-Block: Month Grid View (월간 달력 그리드 및 날짜 선택)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [
+        "view:sync"
+      ],
+      "domRoot": "sanctuaryCalendarView",
+      "ownerKeys": [
+        "calendar/month-view"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "renderCalendarScreen",
+        "state"
+      ]
+    },
+    {
+      "id": "calendar/sub-photo-diary",
+      "file": "js/tabs/calendar/sub-photo-diary.js",
+      "layer": "tabs",
+      "tab": "calendar",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Calendar Sub-Block: Photo Diary Thumbnails (사진형 일기 썸네일 뷰어)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [
+        "view:sync"
+      ],
+      "domRoot": "calSubGuideBanner",
+      "ownerKeys": [
+        "calendar/photo-diary"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "renderCalendarPhotoThumbnails",
+        "state"
+      ]
+    },
+    {
+      "id": "comm/index",
+      "file": "js/tabs/comm/index.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "large",
+      "kind": "tab",
+      "role": "OurGoal Community Mega-Block Orchestrator (소통 커뮤니티 탭 메가블록 총괄 허브)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [
+        "block:error",
+        "comm:mounted"
+      ],
+      "listens": [],
+      "domRoot": "screen-comm",
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalCommSubCompanions",
+        "OurgoalCommSubCrew",
+        "OurgoalCommSubFeed",
+        "OurgoalEvents",
+        "OurgoalRegistry",
+        "renderCommScreen",
+        "state"
+      ]
+    },
+    {
+      "id": "comm/sub-companions",
+      "file": "js/tabs/comm/sub-companions.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Community Sub-Block: Companions & DM (러닝메이트 동반자 및 DM)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [
+        "view:sync"
+      ],
+      "domRoot": "commSubBody",
+      "ownerKeys": [
+        "comm/companions"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "renderCommCompanions",
+        "renderCommDM",
+        "state"
+      ]
+    },
+    {
+      "id": "comm/sub-crew",
+      "file": "js/tabs/comm/sub-crew.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Community Sub-Block: Crew & Teams (크루 팀 및 마니또/공유)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [
+        "view:sync"
+      ],
+      "domRoot": "commSubBody",
+      "ownerKeys": [
+        "comm/crew"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "renderCommGroups",
+        "renderCommManito",
+        "renderCommShare",
+        "state"
+      ]
+    },
+    {
+      "id": "comm/sub-feed",
+      "file": "js/tabs/comm/sub-feed.js",
+      "layer": "tabs",
+      "tab": "comm",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Community Sub-Block: Feed (소통 피드 및 응원 인터랙션)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [
+        "view:sync"
+      ],
+      "domRoot": "commSubBody",
+      "ownerKeys": [
+        "comm/feed"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "renderCommFeed",
+        "state"
+      ]
+    },
+    {
+      "id": "goals/index",
+      "file": "js/tabs/goals/index.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "large",
+      "kind": "tab",
+      "role": "OurGoal Goals Mega-Block Orchestrator (목표 메가블록 총괄 허브)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [
+        "block:error",
+        "goals:mounted"
+      ],
+      "listens": [],
+      "domRoot": "screen-goals",
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalEvents",
+        "OurgoalGoalsPersonal",
+        "OurgoalGoalsRoutine",
+        "OurgoalGoalsTeam",
+        "OurgoalRegistry",
+        "renderGoalsScreen",
+        "state"
+      ]
+    },
+    {
+      "id": "goals/sub-personal",
+      "file": "js/tabs/goals/sub-personal.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Goals Sub-Block: Personal Goals & Milestones (개인 목표 및 세부 마일스톤)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [
+        "view:sync"
+      ],
+      "domRoot": "personalGoalsView",
+      "ownerKeys": [
+        "goals/personal"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "renderGoalsScreen",
+        "state"
+      ]
+    },
+    {
+      "id": "goals/sub-routine",
+      "file": "js/tabs/goals/sub-routine.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Goals Sub-Block: Routine Goals Cockpit (루틴 목표 콕핏)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [
+        "view:sync"
+      ],
+      "domRoot": "routineGoalsView",
+      "ownerKeys": [
+        "goals/routine"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "renderRoutineGoalsScreen",
+        "state"
+      ]
+    },
+    {
+      "id": "goals/sub-team",
+      "file": "js/tabs/goals/sub-team.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Goals Sub-Block: Team & Linked Goals (팀 목표 및 팀 연계)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [
+        "view:sync"
+      ],
+      "domRoot": "teamGoalsView",
+      "ownerKeys": [
+        "goals/team"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "OurgoalTeamLinkedGoals",
+        "renderTeamGoalsScreen",
+        "state"
+      ]
+    },
+    {
+      "id": "home/index",
+      "file": "js/tabs/home/index.js",
+      "layer": "tabs",
+      "tab": "home",
+      "size": "large",
+      "kind": "tab",
+      "role": "OurGoal Home Mega-Block Orchestrator (홈 메가블록 총괄 허브)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [
+        "block:error",
+        "home:mounted"
+      ],
+      "listens": [],
+      "domRoot": "screen-home",
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalEvents",
+        "OurgoalHomeHeatmap",
+        "OurgoalHomeOneScreen",
+        "OurgoalHomeQuest",
+        "OurgoalHomeToday",
+        "OurgoalRegistry",
+        "initHomeCockpit",
+        "renderHome",
+        "state"
+      ]
+    },
+    {
+      "id": "home/sub-heatmap",
+      "file": "js/tabs/home/sub-heatmap.js",
+      "layer": "tabs",
+      "tab": "home",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Home Sub-Block: Heatmap & Streak Summary (상단 히트맵 요약 스트릭)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": "homeGrassSummaryCard",
+      "ownerKeys": [
+        "home/heatmap"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "computeStreakDays",
+        "renderHomeGrassSummary",
+        "streakBadgeHtml",
+        "updateAppBadge"
+      ]
+    },
+    {
+      "id": "home/sub-onescreen",
+      "file": "js/tabs/home/sub-onescreen.js",
+      "layer": "tabs",
+      "tab": "home",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Home One-Screen Sub-Block (HOME-01 홈 원스크린 콕핏)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": "homeCompassRow",
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAvatar",
+        "closeModal",
+        "levelProgress",
+        "openModal",
+        "saveProfile",
+        "setTab",
+        "state",
+        "toast",
+        "triggerHaptic"
+      ]
+    },
+    {
+      "id": "home/sub-quest",
+      "file": "js/tabs/home/sub-quest.js",
+      "layer": "tabs",
+      "tab": "home",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Home Sub-Block: Daily Quest & Level Badge (데일리 퀘스트 & 레벨 배지)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": "levelBadgeRow",
+      "ownerKeys": [
+        "home/quest"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "initFeedbackTierBar",
+        "renderDailyQuestBar",
+        "renderLevelBadge"
+      ]
+    },
+    {
+      "id": "home/sub-today",
+      "file": "js/tabs/home/sub-today.js",
+      "layer": "tabs",
+      "tab": "home",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Home Sub-Block: Today's Mission & 1-Second Cockpit (오늘의 미션 & 1초 콕핏)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": "todayMissionCard",
+      "ownerKeys": [
+        "home/today"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "initDimensionSliders",
+        "renderQuickCheckinGuideChips",
+        "renderTodayMissionCard"
+      ]
+    },
+    {
+      "id": "records/index",
+      "file": "js/tabs/records/index.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "large",
+      "kind": "tab",
+      "role": "OurGoal Records Mega-Block Orchestrator (기록 탭 메가블록 총괄 허브)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [
+        "block:error",
+        "records:mounted"
+      ],
+      "listens": [],
+      "domRoot": "screen-records",
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalEvents",
+        "OurgoalRecordsRetrospect",
+        "OurgoalRecordsTimeline",
+        "OurgoalRecordsTimer",
+        "OurgoalRegistry",
+        "renderRecordsScreen",
+        "state"
+      ]
+    },
+    {
+      "id": "records/sub-retrospect",
+      "file": "js/tabs/records/sub-retrospect.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Records Sub-Block: Retrospect & AI Review (5단위 회고 및 AI 피드백)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [
+        "view:sync"
+      ],
+      "domRoot": "recAiFeedbackSlot",
+      "ownerKeys": [
+        "records/retrospect"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "state",
+        "syncRealtimeAiFeedbackSlot"
+      ]
+    },
+    {
+      "id": "records/sub-timeline",
+      "file": "js/tabs/records/sub-timeline.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Records Sub-Block: Timeline & Filters (체크인 타임라인 및 필터)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [
+        "view:sync"
+      ],
+      "domRoot": "recordsList",
+      "ownerKeys": [
+        "records/timeline"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "renderRecordsScreen",
+        "state"
+      ]
+    },
+    {
+      "id": "records/sub-timer",
+      "file": "js/tabs/records/sub-timer.js",
+      "layer": "tabs",
+      "tab": "records",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Records Sub-Block: Focus Timer & Stopwatch (집중 타이머 및 스톱워치)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [
+        "view:sync"
+      ],
+      "domRoot": "recFocusTimerSlot",
+      "ownerKeys": [
+        "records/timer"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "renderTimerWidget",
+        "state"
+      ]
+    },
+    {
+      "id": "settings/index",
+      "file": "js/tabs/settings/index.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "large",
+      "kind": "tab",
+      "role": "OurGoal Settings Mega-Block Orchestrator (설정 탭 메가블록 총괄 허브)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [
+        "block:error",
+        "settings:mounted"
+      ],
+      "listens": [],
+      "domRoot": "screen-settings",
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalEvents",
+        "OurgoalRegistry",
+        "OurgoalSettingsSubAppearance",
+        "OurgoalSettingsSubProfile",
+        "OurgoalSettingsSubSecurity",
+        "renderSettingsScreen",
+        "state"
+      ]
+    },
+    {
+      "id": "settings/sub-appearance",
+      "file": "js/tabs/settings/sub-appearance.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Settings Sub-Block: Appearance & Themes (화면 테마 4종 및 알림/위젯 설정)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [
+        "view:sync"
+      ],
+      "domRoot": "screen-settings",
+      "ownerKeys": [
+        "settings/appearance"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "state",
+        "updatePrivacyBadges"
+      ]
+    },
+    {
+      "id": "settings/sub-profile",
+      "file": "js/tabs/settings/sub-profile.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Settings Sub-Block: Profile & Avatar (프로필 편집 및 아바타 연동)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [
+        "view:sync"
+      ],
+      "domRoot": "profileCard",
+      "ownerKeys": [
+        "settings/profile"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "renderProfileCard",
+        "state"
+      ]
+    },
+    {
+      "id": "settings/sub-security",
+      "file": "js/tabs/settings/sub-security.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Settings Sub-Block: Security & 2FA (계정 보안 및 2FA / 기기 제어)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [
+        "view:sync"
+      ],
+      "domRoot": "screen-settings",
+      "ownerKeys": [
+        "settings/security"
+      ],
+      "dependsOn": [
+        "OurgoalEvents",
+        "state",
+        "updateTwoFactorStatusUI"
+      ]
+    },
+    {
+      "id": "team-invite-comm",
+      "file": "js/team-invite-comm.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "============================================================",
+      "spans": [
+        "goals",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "CREATOR_TEMPLATES",
+        "FEED_POSTS_CACHE",
+        "Kakao",
+        "MOCK_GROUPS",
+        "MOCK_PEOPLE",
+        "OURGOAL_60_TEMPLATES",
+        "OurgoalNotifyEngine",
+        "__FORCE_LEGACY_TPL_ACCORDION",
+        "burstConfetti",
+        "canManageTeamGoals",
+        "cloneTemplate",
+        "closeModal",
+        "daysFromNow",
+        "fmtTime",
+        "goalProgress",
+        "groupState",
+        "handle",
+        "isValidRealUser",
+        "newId",
+        "nowISO",
+        "openModal",
+        "renderAuthScreen",
+        "renderCommScreen",
+        "renderGoalsScreen",
+        "renderTeamGoalsScreen",
+        "saveProfile",
+        "sb",
+        "setTab",
+        "shareContent",
+        "showToast",
+        "state",
+        "toast",
+        "triggerHaptic",
+        "updateTopNotifBadge"
+      ]
+    },
+    {
+      "id": "team-leader-check",
+      "file": "js/team-leader-check.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "============================================================",
+      "spans": [
+        "goals",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalTeamInviteComm",
+        "renderCommScreen",
+        "sb",
+        "setTab",
+        "state"
+      ]
+    },
+    {
+      "id": "team-linked-goals",
+      "file": "js/team-linked-goals.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "============================================================",
+      "spans": [
+        "goals",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": [
+          "goal.detail"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "MOCK_GROUPS",
+        "closeModal",
+        "dDay",
+        "goalAchievement",
+        "groupState",
+        "openModal",
+        "renderGoalsScreen",
+        "renderTeamGoalsScreen",
+        "saveProfile",
+        "state",
+        "toast",
+        "triggerHaptic"
+      ]
+    },
+    {
+      "id": "team-visibility-levels",
+      "file": "js/team-visibility-levels.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "============================================================",
+      "spans": [
+        "goals",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "MOCK_GROUPS",
+        "OurgoalTeamLeaderCheck",
+        "OurgoalTeamLinkedGoals",
+        "TEAM_COMMENTS_CACHE",
+        "canManageTeamGoals",
+        "closeModal",
+        "dDay",
+        "daysFromNow",
+        "getGroupLevelGoals",
+        "groupState",
+        "openModal",
+        "renderTeamGoalsScreen",
+        "saveProfile",
+        "state",
+        "teamCommentsBlockHtml",
+        "toast",
+        "triggerHaptic",
+        "uid"
+      ]
+    },
+    {
+      "id": "template-credit",
+      "file": "js/template-credit.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "아워골 — 템플릿 복제 크레딧 + 선택형 보상 광고 (KF-2 #TASK-ES-017, E3)",
+      "spans": [
+        "goals",
+        "comm"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OURGOAL_CONFIG",
+        "OurgoalCredits"
+      ]
+    },
+    {
+      "id": "theme-system",
+      "file": "js/theme-system.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "============================================================",
+      "spans": [
+        "home",
+        "records",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "time-tracker",
+      "file": "js/time-tracker.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "js/time-tracker.js — 아워골 기록탭 '지금부터 시간기록' (스톱워치 & 타이머) 완전 통합 모듈",
+      "spans": [
+        "records",
+        "calendar"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": [
+          "record.type"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "AudioContext",
+        "cancelAnimationFrame",
+        "webkitAudioContext"
+      ]
+    },
+    {
+      "id": "top-helpful",
+      "file": "js/top-helpful.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "============================================================",
+      "spans": [
+        "comm",
+        "home",
+        "records"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "universal-stats",
+      "file": "js/universal-stats.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "ourgoal - universal-stats.js",
+      "spans": [
+        "records",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": [
+          "stats.card"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "closeModal",
+        "openModal",
+        "saveProfile",
+        "toast"
+      ]
+    },
+    {
+      "id": "viral-sharing",
+      "file": "js/viral-sharing.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "============================================================",
+      "spans": [
+        "records",
+        "comm",
+        "calendar",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": [
+          "share.format"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "CREATOR_TEMPLATES",
+        "CURATED_MARKET_TEMPLATES",
+        "FEED_POSTS_CACHE",
+        "OURGOAL_60_TEMPLATES",
+        "OurgoalTeamInviteComm",
+        "cloneTemplate",
+        "closeModal",
+        "defaultProfile",
+        "enterApp",
+        "openAddGoalModal",
+        "openModal",
+        "renderAll",
+        "renderCommScreen",
+        "setTab",
+        "showPeerInviteLandingModal",
+        "state",
+        "switchTab",
+        "timeAgoStr",
+        "toast",
+        "triggerHaptic"
+      ]
+    },
+    {
+      "id": "future/ai-assistant",
+      "file": null,
+      "layer": "future",
+      "tab": null,
+      "kind": "future",
+      "role": "(미래) AI 비서 — 모든 세포의 능력 기술(capabilities)을 읽고 사용자 데이터·서비스를 결합해 명령·질의를 처리",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [
+          "ai.ask"
+        ],
+        "contributes": [
+          "assistant.skill"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    }
+  ]
+}

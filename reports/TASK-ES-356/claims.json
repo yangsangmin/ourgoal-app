@@ -1,0 +1,160 @@
+{
+  "task": "TASK-ES-356",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-356-CELL-SKELETON.md",
+  "requirements": [
+    { "id": "R1", "text": "세포 골격 청사진 docs/architecture/MODULE-BLUEPRINT.md: 세포 해부(신고서 = provides·requires·contributes·emits·listens·owns·capabilities), 세포 종류 4가지(organ·tab·hybrid·future), 연결망 3종(신호=사건 버스, 신경=능력 등록부, 꽂는 자리=슬롯), 세포의 삶(추가·분열·융합·소멸·재편 — 소멸·재편은 상민님 결정), 건강 지표, 계층·의존 방향·전역 노출·이름·파일 크기·새 기능 절차·모듈 단위 검증, 쪼개는 순서(1 설정 → 2 공용 화면 부품 → 3 기록·일정 → 4 팀 → 5 아바타·EXP → 6 홈 → 7 데이터 파일)와 단계별 측정 지표, 현재 실측 기준선. 노션 [청사진] 아워골 세포 골격 v0.1 과 시각화와 일치. 분할 절차 문서(TASK-ES-354 MODULE-SPLIT-PROTOCOL)는 하위로 링크." },
+    { "id": "R2", "text": "코어 최소 골격(동작 변화 0, 기존 코드는 안 고침, 새 파일만): js/core/capabilities.js(provide(name, impl, meta)/request(name) — 없으면 명확한 오류), js/core/slots.js(define/contribute/list, 정식 자리 15곳 — 이름은 영문 키·설명은 한글, assistant.skill 은 미래·등록만), 신고서 형식(modules.json 확장: kind·provides·requires·contributes·emits·listens·owns·capabilities). registry 의 사본 보관 틈은 고치거나 청사진에 명시. 실제 화면 슬롯 배선은 하지 않는다." },
+    { "id": "R3", "text": "가드 scripts/module-guard.js + 기준선 docs/architecture/module-baseline.json: ① index.html 인라인 스크립트 줄 ② index.html 함수 선언 수 ③ window 전역 직접 대입 수 ④ 800줄 초과 js 파일 수와 줄 수 ⑤ 탭 간 직접 참조 수가 기준선보다 늘면 실패, 줄면 통과하고 낮출 수 있다고 알림(래칫, 늘리려면 사유 필수). 신고서 검증: 신고서 없는 새 세포·requires 를 아무도 provide 하지 않음·owns 중복·정식 목록 밖 자리 → 실패, 명세와 실제 이벤트 불일치 → 경고. npm test 경로에 연결해 현재 main 에서 통과." },
+    { "id": "R4", "text": "스캐폴드 scripts/new-module.js <tab> <name>: 새 세포를 신고서·capabilities 포함으로 js/tabs/<tab>/sub-<name>.js(인터페이스·명세 머리 주석·dispose)와 시험 뼈대로 생성, index.html 수정은 안내만. 만든 빈 모듈이 레지스트리에 마운트되는 것을 시험으로 증명(시험 후 생성물 삭제)." },
+    { "id": "R5", "text": "진척 지표 scripts/module-metrics.js: ①~⑤ + 모듈 수·평균 크기 + 노션 6절 건강 지표(미분화 덩어리 줄·전역 연결·800줄 초과·실제로 그리는 작은 세포·중복 세포(토스트 등)·데이터 중복 저장)를 JSON 으로 출력, 양비스 상태창에 올릴 출력 형식을 정하고(연결 방법은 문서만), 오늘 값을 docs/architecture/metrics-2026-10-04.json 에 저장." },
+    { "id": "R6", "text": "공용 UI 부품 목록 docs/architecture/UI-COMPONENTS.md: index.html 등에 중복된 바텀시트·토스트·확인창·칩·모달 구현의 수·위치 표와 js/ui 로 한 벌화하는 이전 순서(구현은 다음 티켓)." },
+    { "id": "R7", "text": "시험: capabilities·slots 단위 시험, 가드 위반 시험(①·④·⑤ 각각 실패, 임시 사본), 스캐폴드 마운트 시험." },
+    { "id": "R8", "text": "문서: REQ/PLAN(TASK-ES-356), reports/TASK-ES-356/claims.json, TICKETS 1줄, dev_log. 커밋·push·PR(초안 아님), 법정 판정 기록. 병합하지 않는다." }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "세포 골격 청사진 문서 docs/architecture/MODULE-BLUEPRINT.md 를 만들었다(세포 해부·종류 4가지·연결망 3종·세포의 삶·쪼개는 순서 7단계·건강 지표·기준선)",
+      "touches": ["docs/architecture/MODULE-BLUEPRINT.md"],
+      "check": { "type": "fileExists", "file": "docs/architecture/MODULE-BLUEPRINT.md" }
+    },
+    {
+      "id": "C2", "req": "R2", "kind": "static", "domain": "logic",
+      "statement": "능력 등록부는 주는 세포가 없는 능력을 요청하면 CAPABILITY_MISSING 오류를 낸다",
+      "touches": ["js/core/capabilities.js"],
+      "check": { "type": "codeContains", "file": "js/core/capabilities.js", "text": "throw capError('CAPABILITY_MISSING'" }
+    },
+    {
+      "id": "C3", "req": "R2", "kind": "static", "domain": "logic",
+      "statement": "능력 등록부는 한 능력에 주는 세포를 하나로 제한한다(다른 세포가 같은 이름을 주면 CAPABILITY_CONFLICT)",
+      "touches": ["js/core/capabilities.js"],
+      "check": { "type": "codeContains", "file": "js/core/capabilities.js", "text": "throw capError('CAPABILITY_CONFLICT'" }
+    },
+    {
+      "id": "C4", "req": "R2", "kind": "static", "domain": "logic",
+      "statement": "꽂는 자리는 정식 목록 15곳만 기여·정의할 수 있고 목록 밖 이름은 SLOT_NOT_ALLOWED 오류다",
+      "touches": ["js/core/slots.js"],
+      "check": { "type": "codeContains", "file": "js/core/slots.js", "text": "throw slotError('SLOT_NOT_ALLOWED'" }
+    },
+    {
+      "id": "C5", "req": "R2", "kind": "static", "domain": "logic",
+      "statement": "꽂는 자리 정식 목록에 AI 비서 기술 assistant.skill 을 미래 자리(등록만 허용)로 두었다",
+      "touches": ["js/core/slots.js"],
+      "check": { "type": "codeContains", "file": "js/core/slots.js", "text": "{ name: 'assistant.skill', host: 'future/ai-assistant', description: 'AI 비서 기술(미래 — 등록만 허용)', future: true }" }
+    },
+    {
+      "id": "C6", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "세포 신고서 docs/architecture/modules.json 을 cells 형식(ourgoal.cells/1)으로 만들었다",
+      "touches": ["docs/architecture/modules.json"],
+      "check": { "type": "jsonPath", "file": "docs/architecture/modules.json", "path": "schema", "equals": "ourgoal.cells/1" }
+    },
+    {
+      "id": "C7", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "index.html 은 세포가 아니라 미분화 덩어리(undifferentiated)로 신고서에 따로 적었다",
+      "touches": ["docs/architecture/modules.json"],
+      "check": { "type": "jsonPath", "file": "docs/architecture/modules.json", "path": "undifferentiated.0.file", "equals": "index.html" }
+    },
+    {
+      "id": "C8", "req": "R3", "kind": "static", "domain": "logic",
+      "statement": "모듈 가드는 래칫 지표가 기준선보다 늘면 실패로 센다",
+      "touches": ["scripts/module-guard.js"],
+      "check": { "type": "codeContains", "file": "scripts/module-guard.js", "text": "if (c > b) failures.push(" }
+    },
+    {
+      "id": "C9", "req": "R3", "kind": "static", "domain": "logic",
+      "statement": "기준선을 올릴 때 20자 이상 사유가 없으면 거부한다",
+      "touches": ["scripts/module-guard.js"],
+      "check": { "type": "codeContains", "file": "scripts/module-guard.js", "text": "기준선 올리기 거부 — 사유(--reason" }
+    },
+    {
+      "id": "C10", "req": "R3", "kind": "static", "domain": "logic",
+      "statement": "신고서 검증은 신고서 없는 세포를 실패로 센다",
+      "touches": ["scripts/module-specs.js"],
+      "check": { "type": "codeContains", "file": "scripts/module-specs.js", "text": "failures.push(`신고서 없는 세포: ${rel}" }
+    },
+    {
+      "id": "C11", "req": "R3", "kind": "static", "domain": "logic",
+      "statement": "신고서 검증은 필요한 능력(requires)을 주는 세포가 없으면 실패로 센다",
+      "touches": ["scripts/module-specs.js"],
+      "check": { "type": "codeContains", "file": "scripts/module-specs.js", "text": "가 필요한 능력 ${r} 을 주는 세포가 없다" }
+    },
+    {
+      "id": "C12", "req": "R3", "kind": "static", "domain": "logic",
+      "statement": "신고서 검증은 데이터 하나에 주인(owns)이 둘이면 실패로 센다",
+      "touches": ["scripts/module-specs.js"],
+      "check": { "type": "codeContains", "file": "scripts/module-specs.js", "text": "의 주인이 둘: ${owners.get(o)}" }
+    },
+    {
+      "id": "C13", "req": "R3", "kind": "static", "domain": "logic",
+      "statement": "npm test 가 부르는 scripts/test-shipyard-modular.js 가 모듈 가드를 실행한다",
+      "touches": ["scripts/test-shipyard-modular.js"],
+      "check": { "type": "codeContains", "file": "scripts/test-shipyard-modular.js", "text": "runNode('scripts/module-guard.js');" }
+    },
+    {
+      "id": "C14", "req": "R3", "kind": "static", "domain": "config",
+      "statement": "기준선 파일에 오늘 main 실측 ① index.html 인라인 스크립트 줄 38207 을 적었다",
+      "touches": ["docs/architecture/module-baseline.json"],
+      "check": { "type": "jsonPath", "file": "docs/architecture/module-baseline.json", "path": "history.0.metrics.inlineScriptLines", "equals": 38207 }
+    },
+    {
+      "id": "C15", "req": "R4", "kind": "static", "domain": "logic",
+      "statement": "스캐폴드는 세포 파일·시험 뼈대와 함께 신고서(modules.json)에 새 세포 항목을 더한다",
+      "touches": ["scripts/new-module.js"],
+      "check": { "type": "codeContains", "file": "scripts/new-module.js", "text": "if (o.writeSpec) addDeclaration(root, decl, modRel);" }
+    },
+    {
+      "id": "C16", "req": "R4", "kind": "static", "domain": "logic",
+      "statement": "스캐폴드 시험은 만든 빈 세포가 레지스트리 경유로 마운트되는지 생성한 시험 뼈대로 확인하고 생성물을 지운다",
+      "touches": ["tests/new-module.test.js"],
+      "check": { "type": "codeContains", "file": "tests/new-module.test.js", "text": "assert.ok(!fs.existsSync(MOD) && !fs.existsSync(TEST), '생성물 삭제');" }
+    },
+    {
+      "id": "C17", "req": "R5", "kind": "static", "domain": "config",
+      "statement": "오늘 지표 파일에 실제로 그리는 작은 세포 수 2(전체 19)를 적었다",
+      "touches": ["docs/architecture/metrics-2026-10-04.json"],
+      "check": { "type": "jsonPath", "file": "docs/architecture/metrics-2026-10-04.json", "path": "health.drawingSmallCells.drew", "equals": 2 }
+    },
+    {
+      "id": "C18", "req": "R5", "kind": "static", "domain": "config",
+      "statement": "오늘 지표 파일에 토스트 중복 세포 6을 적었다",
+      "touches": ["docs/architecture/metrics-2026-10-04.json"],
+      "check": { "type": "jsonPath", "file": "docs/architecture/metrics-2026-10-04.json", "path": "health.duplicateCells.toast", "equals": 6 }
+    },
+    {
+      "id": "C19", "req": "R5", "kind": "static", "domain": "logic",
+      "statement": "지표 스크립트는 상태창 카드 한 장(--card)을 낸다",
+      "touches": ["scripts/module-metrics.js"],
+      "check": { "type": "codeContains", "file": "scripts/module-metrics.js", "text": "card: 'ourgoal-cell-health'" }
+    },
+    {
+      "id": "C20", "req": "R6", "kind": "static", "domain": "config",
+      "statement": "공용 화면 부품 중복 조사와 한 벌화 순서 문서 docs/architecture/UI-COMPONENTS.md 를 만들었다",
+      "touches": ["docs/architecture/UI-COMPONENTS.md"],
+      "check": { "type": "fileExists", "file": "docs/architecture/UI-COMPONENTS.md" }
+    },
+    {
+      "id": "C21", "req": "R7", "kind": "static", "domain": "logic",
+      "statement": "가드 시험은 탭 간 직접 참조를 일부러 만든 임시 사본에서 가드가 실패함을 확인한다",
+      "touches": ["tests/module-guard.test.js"],
+      "check": { "type": "codeContains", "file": "tests/module-guard.test.js", "text": "f.startsWith('⑤ 탭 간 직접 참조 수: 0 → 2')" }
+    },
+    {
+      "id": "C22", "req": "R7", "kind": "static", "domain": "logic",
+      "statement": "능력 등록부·꽂는 자리 단위 시험이 npm test 경로에서 돈다",
+      "touches": ["scripts/test-shipyard-modular.js", "tests/core-capabilities-slots.test.js"],
+      "check": { "type": "codeContains", "file": "scripts/test-shipyard-modular.js", "text": "runNode('tests/core-capabilities-slots.test.js');" }
+    },
+    {
+      "id": "C23", "req": "R8", "kind": "static", "domain": "config",
+      "statement": "REQ 문서를 8원칙 독립 헤더로 작성했다",
+      "touches": ["docs/specs/REQ-TASK-ES-356-CELL-SKELETON.md"],
+      "check": { "type": "fileExists", "file": "docs/specs/REQ-TASK-ES-356-CELL-SKELETON.md" }
+    },
+    {
+      "id": "C24", "req": "R8", "kind": "static", "domain": "config",
+      "statement": "PLAN 문서를 [4단계: 심사 청구]까지만 등록했다",
+      "touches": ["docs/plans/PLAN-TASK-ES-356-CELL-SKELETON.md"],
+      "check": { "type": "fileExists", "file": "docs/plans/PLAN-TASK-ES-356-CELL-SKELETON.md" }
+    }
+  ]
+}
