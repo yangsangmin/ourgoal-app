@@ -453,6 +453,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-344 | 기록 보존/FIX | [REC-01] [기록] 지운 기록 부활 차단(sync_records deleted_at IS NULL + 클라이언트 id 병합·휴지통 id 제외) + 기록 필드 7종(goalId·laps·durationMs·durationMinutes·visibility·isSample·title) checkins.meta jsonb 보존(비파괴 SQL 추가만, 실서버 미실행) | 상민님 지시 (2026-10-04 노션 티켓 REC-01 데이터 손실 작업 지시) | 4단계(심사 청구)
 - #TASK-ES-345 | 보안/INFRA | [CAL-02] [일정] 구글 캘린더 토큰 계정 격리 — restoreGoogleToken·saveGoogleToken 현재 uid 키만 사용(_last·아무 키 탐색 제거), loadLocalSettings 다른 uid gcal 설정 복사 제거, 공용 키(_last·email_last·ourgoal_gcal_events) 로드 시 삭제, 게스트→회원 1회 이전만 유지, 만료·부재 시 1줄 안내 + 다시 연결 1탭 | 상민님 지시 (2026-10-04 노션 티켓 CAL-02 · 메모 08·17) | 4단계(심사 청구)
 - #TASK-ES-343 | INFRA/법정 | [법정] court 를 PR #650 이전 구조(judge.js · pull_request_target · 읽기 권한)로 복원 + v4 정적 검사 3종(800줄 상한·CSS 은폐·금지 낱말)을 "이번 변경이 새로 만든 것만" 세는 형태로 이식, engine.js 는 존치(상민님 결정) | 상민님 승인 (2026-10-04 법정 복원 지시) | 4단계(심사 청구)
+- #TASK-ES-349 | 검증 도구/INFRA | [CORE-01] [6개 탭 공통] 공통 실측 도구 docs/design/harness/tab-check.js — 탭(home·goals·records·calendar·comm·settings) × 테마 4종 × 375×667·375×812 × 주요 상태(서브탭·시트 실제 클릭 진입 확인), 장별 지표(문서 높이·44px 미만·콘솔 오류·숨은 조작 요소와 사유·!important 로 강제된 display:none 수) + 자동 클릭 Dead-Click 탐지, home-check.js 호환 래퍼, 2회 실행 재현성 비교 | 상민님 지시 (2026-10-04 노션 CORE-01 공통 기반 작업 지시) | 4단계(심사 청구)
 
 ## 제안 (축 미확정 — 구현 금지)
 - (없음)
