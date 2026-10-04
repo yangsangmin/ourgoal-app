@@ -162,6 +162,7 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   // #TASK-ES-364 목표 템플릿 데이터 6파일 분리 전후 deepStrictEqual
   runNode('tests/goal-templates-data-split.test.js');
   runNode('tests/comm-dm-ledger-es366.test.js'); // #TASK-ES-366 DM·동반자 서버 원장 통로(COMM-03·04)·동반자 자기 키만
+  runNode('tests/direct-login-guard.test.js'); // #TASK-ES-368 CORE-13 빠른 복구 잠금(A 백업 기기에서 세션 없이/B 세션으로 복구 시 A 데이터 0건)
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
 

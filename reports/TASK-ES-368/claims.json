@@ -1,0 +1,124 @@
+{
+  "task": "TASK-ES-368",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-368-DIRECT-LOGIN.md",
+  "requirements": [
+    { "id": "R1", "text": "빠른 복구는 정식 Supabase 로그인 세션이 있을 때만 허용한다(세션 uid 와 같은 uid 의 자기 백업만 연다)." },
+    { "id": "R2", "text": "세션이 없으면 정식 로그인(카카오·구글·이메일)으로 안내한다." },
+    { "id": "R3", "text": "화면의 입장 방법(버튼·입력칸)이 사라지게 되면 그 부분은 하지 말고 멈춰서 보고한다. 버튼은 남기고 동작만 안전하게 바꾸는 것이 기본." },
+    { "id": "R4", "text": "부품 시험(npm test 경로): A 백업이 있는 기기에서 세션 없이/B 세션으로 빠른 복구 시 A 데이터 0." },
+    { "id": "R5", "text": "추가 범위(2026-10-05 승인): index.html loadProfile 이 자기 키가 비면 다른 사람 ourgoal_companions_backup_* 를 훑는 것을 js/account-isolation.js readOwnCopy 로 자기 uid 키만 읽게 고친다. 부품 시험 1건 추가." }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "loginWithDirectIdentifier 가 정식 세션 uid 를 읽어 입장 대상 uid 를 한 규칙(resolveDirectLoginTarget)으로 정한다",
+      "touches": ["index.html"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "var directTarget = window.OurgoalDirectLoginGuard.resolveDirectLoginTarget({" }
+    },
+    {
+      "id": "C2", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "이 기기의 백업 키를 훑어 처음 걸린 uid 로 입장하던 줄이 없어졌다",
+      "touches": ["index.html"],
+      "check": { "type": "codeNotContains", "file": "index.html", "text": "var candidateId = lk.replace(pfx, '');" }
+    },
+    {
+      "id": "C3", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "세션이 있으면 입장 uid 는 세션 uid 다(입력값·호출자가 넘긴 다른 uid 무시)",
+      "touches": ["js/direct-login-guard.js"],
+      "check": { "type": "codeContains", "file": "js/direct-login-guard.js", "text": "return { allow: true, uid: String(o.sessionUid), deriveFromEmail: null, reason: 'session' };" }
+    },
+    {
+      "id": "C4", "req": "R2", "kind": "behavior", "change": "fix", "symptom": 7, "domain": "ui-behavior",
+      "statement": "로그인하지 않은 첫 화면에서 빠른 복구에 닉네임을 넣고 입장을 누르면 앱에 들어가지 않고 로그인 화면과 로그인 안내 문구가 뜬다",
+      "touches": ["index.html", "js/direct-login-guard.js"],
+      "scenario": "scenarios/rescue-needs-login.json"
+    },
+    {
+      "id": "C5", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "세션이 없으면 아무 데이터도 열지 않고 정식 로그인 안내로 보낸 뒤 끝낸다",
+      "touches": ["index.html"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "window.OurgoalDirectLoginGuard.guideToFormalLogin(document, toast, typeof initRememberedAuthFields === 'function' ? initRememberedAuthFields : null);" }
+    },
+    {
+      "id": "C6", "req": "R3", "kind": "static", "domain": "config",
+      "statement": "빠른 복구 입력칸과 입장 버튼은 그대로 있다",
+      "touches": ["index.html"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "'<button class=\"btn btn-primary\" id=\"rescueDirectEnterBtn\" style=\"width:100%;padding:12px;font-weight:700;border-radius:12px;background:var(--brand);border:none;margin-bottom:8px;\">' +" }
+    },
+    {
+      "id": "C7", "req": "R3", "kind": "static", "domain": "config",
+      "statement": "첫 화면의 닉네임 입장 링크는 그대로 있다",
+      "touches": ["index.html"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "id=\"landNickQuickLink\"" }
+    },
+    {
+      "id": "C8", "req": "R3", "kind": "static", "domain": "config",
+      "statement": "구글 인증 이메일 입장은 막지 않고 그 이메일에서 정해지는 uid 로만 연다",
+      "touches": ["js/direct-login-guard.js"],
+      "check": { "type": "codeContains", "file": "js/direct-login-guard.js", "text": "return { allow: true, uid: null, deriveFromEmail: String(o.verifiedEmail).trim().toLowerCase(), reason: 'google-verified-email' };" }
+    },
+    {
+      "id": "C9", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "부품 시험이 A 백업 기기에서 세션 없이 복구할 때 화면의 A 데이터 0건을 단언한다",
+      "touches": ["tests/direct-login-guard.test.js"],
+      "check": { "type": "codeContains", "file": "tests/direct-login-guard.test.js", "text": "assert.strictEqual(m.noSessionAOnScreen, 0" }
+    },
+    {
+      "id": "C10", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "부품 시험이 A 백업 기기에서 B 세션으로 복구할 때 B 업로드의 A 데이터 0건을 단언한다",
+      "touches": ["tests/direct-login-guard.test.js"],
+      "check": { "type": "codeContains", "file": "tests/direct-login-guard.test.js", "text": "assert.strictEqual(m.bSessionUploadsWithA, 0" }
+    },
+    {
+      "id": "C11", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "npm test(scripts/test-shipyard-modular.js) 가 빠른 복구 잠금 부품 시험을 실행한다",
+      "touches": ["scripts/test-shipyard-modular.js"],
+      "check": { "type": "codeContains", "file": "scripts/test-shipyard-modular.js", "text": "runNode('tests/direct-login-guard.test.js');" }
+    },
+    {
+      "id": "C12", "req": "R5", "kind": "static", "domain": "config",
+      "statement": "loadProfile 의 동반자 백업 복구는 이 uid 의 키만 읽는다",
+      "touches": ["index.html"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "var localCachedCompanions = window.OurgoalAccountIsolation.readOwnCopy('ourgoal_companions_backup_', userId, []);" }
+    },
+    {
+      "id": "C13", "req": "R5", "kind": "static", "domain": "config",
+      "statement": "부품 시험이 B 자기 동반자 키가 비어도 A 동반자 0건을 단언한다",
+      "touches": ["tests/direct-login-guard.test.js"],
+      "check": { "type": "codeContains", "file": "tests/direct-login-guard.test.js", "text": "assert.strictEqual(m.bCompanionsFromA, 0" }
+    },
+    {
+      "id": "C14", "req": "R1", "kind": "unverified", "domain": "security-client",
+      "statement": "실서버에서 테스트 계정 A 가 이 기기에 기록을 남기고 로그아웃한 뒤, 첫 화면 빠른 복구에 다른 닉네임을 넣어도 A 로 들어가지 않고 로그인 화면 안내가 뜬다",
+      "touches": ["index.html", "js/direct-login-guard.js"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "테스트 계정 A 가 있는 사람(이 PC 의 세션 또는 상민님)",
+        "how": [
+          "같은 브라우저에서 테스트 계정 A 로 이메일 로그인해 기록 1개를 저장한다",
+          "설정에서 로그아웃한다",
+          "첫 화면의 '로그인이 잘 안 되시나요? (1초 빠른 복구·입장)' 를 눌러 다른 닉네임을 넣고 '내 데이터 불러오고 바로 입장' 을 누른다",
+          "앱에 들어가지 않고 로그인 화면과 안내 문구가 뜨는지, A 의 기록이 보이지 않는지 본다"
+        ],
+        "note": "법정은 외부 통신을 막아 로그인할 수 없고, 금고 fixture 는 guest-fresh 하나뿐이라 'A 백업이 남은 기기' 상태를 시작 상태로 줄 수 없다. 작업자 실측(2026-10-05, 로컬 정적 서버 + 운영 Supabase + 테스트 계정 A): 수정 전 enteredApp true·profileIsA true·aMarkInProfile 1, 수정 후 enteredApp false·authScreenShown true·aMarkInProfile 0. 근거는 REQ 8절."
+      }
+    },
+    {
+      "id": "C15", "req": "R1", "kind": "unverified", "domain": "security-client",
+      "statement": "정식 로그인 세션 B 로 빠른 복구 함수가 불리면 이 기기에 A 백업이 있어도 B 자기 데이터만 열린다",
+      "touches": ["index.html", "js/direct-login-guard.js"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "테스트 계정 A·B 가 있는 사람",
+        "how": [
+          "같은 브라우저에서 A 로 로그인해 기록 1개 저장 후 로그아웃한다",
+          "B 로 로그인한 상태에서 빠른 복구 함수가 불리는 경로를 연다(현재 모달은 열릴 때 세션을 끊으므로 화면 경로에서는 로그인 안내로 간다)",
+          "B 화면에 A 기록이 0건인지 본다"
+        ],
+        "note": "로그인한 뒤에만 생기는 상태라 법정이 만들 수 없다. 부품 시험 tests/direct-login-guard.test.js ②③ 이 같은 조건을 가짜 Supabase 로 잰다(bSessionProfile B, bSessionAOnScreen 0, bSessionUploadsWithA 0)."
+      }
+    }
+  ]
+}
