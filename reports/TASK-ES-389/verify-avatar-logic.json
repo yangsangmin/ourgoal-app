@@ -1,0 +1,102 @@
+{
+  "task": "TASK-ES-389",
+  "base": "base-389",
+  "results": [
+    {
+      "name": "① 부품 5개 몸통(AV. 접두 뗌) = 기준 avatar-system.js 옮긴 줄 그대로",
+      "ok": true,
+      "detail": {
+        "themes": {
+          "movedLines": 161,
+          "avPrefixed": 11,
+          "exports": 7,
+          "fileLines": 188
+        },
+        "render": {
+          "movedLines": 589,
+          "avPrefixed": 0,
+          "exports": 6,
+          "fileLines": 615
+        },
+        "craft-engine": {
+          "movedLines": 600,
+          "avPrefixed": 0,
+          "exports": 6,
+          "fileLines": 626
+        },
+        "wallet": {
+          "movedLines": 193,
+          "avPrefixed": 11,
+          "exports": 8,
+          "fileLines": 221
+        },
+        "dynamic-album": {
+          "movedLines": 302,
+          "avPrefixed": 1,
+          "exports": 5,
+          "fileLines": 327
+        }
+      }
+    },
+    {
+      "name": "② 새 avatar-system.js(이음매 머리·안내 주석 뺀 것) = 기준에서 옮긴 줄 뺀 것",
+      "ok": true,
+      "detail": {
+        "headerLines": 50,
+        "markers": 13,
+        "keptLines": 1386,
+        "movedLines": 1837,
+        "mainLines": 1448
+      }
+    },
+    {
+      "name": "③ 토큰열: 기준 avatar-system.js = 새 avatar-system.js(머리 뺌) 의 안내 주석 자리에 부품 몸통(AV. 뗌)을 끼운 것",
+      "ok": true,
+      "detail": {
+        "tokens": 26334,
+        "runs": 13
+      }
+    },
+    {
+      "name": "④ Node: 공개 이름 42개 순서·함수 토큰·데이터 = 기준",
+      "ok": true,
+      "detail": {
+        "names": 42,
+        "functions": 33
+      }
+    },
+    {
+      "name": "⑤ 브라우저 vm(index.html 순서, self 있음): 공개 이름·함수 토큰·데이터 = 기준, window.handle아바타_* 4개 같은 함수",
+      "ok": true,
+      "detail": {
+        "scripts": 22,
+        "newGlobals": [
+          "OurgoalAvatarParts"
+        ]
+      }
+    },
+    {
+      "name": "⑤ 브라우저 vm(index.html 순서, self 없음): 공개 이름·함수 토큰·데이터 = 기준, window.handle아바타_* 4개 같은 함수",
+      "ok": true,
+      "detail": {
+        "scripts": 22,
+        "newGlobals": [
+          "OurgoalAvatarParts"
+        ]
+      }
+    },
+    {
+      "name": "⑥ 파일 크기: 부품 5개·avatar-system.js 각 800줄 이하 여부(avatar-system.js 는 모달 PR-4 전이라 넘을 수 있음 — 값만 적음)",
+      "ok": true,
+      "detail": {
+        "js/avatar/themes.js": 188,
+        "js/avatar/render.js": 615,
+        "js/avatar/craft-engine.js": 626,
+        "js/avatar/wallet.js": 221,
+        "js/avatar/dynamic-album.js": 327,
+        "js/avatar-system.js": 1448,
+        "base js/avatar-system.js": 3222
+      }
+    }
+  ]
+}

@@ -49,7 +49,8 @@ function runBrowser(sources, withSelf) {
 }
 function scriptOrderFromIndex() {
   const html = read('index.html');
-  return [...html.matchAll(/<script[^>]*\bsrc="(js\/(?:avatar-system|data\/avatar-personas\/[^"?]+)\.js)(?:\?[^"]*)?"/g)].map(m => m[1]);
+  // #TASK-ES-389: 아바타 로직 부품(js/avatar/*.js, 아바타·EXP 쪼개기 PR-3)도 index.html 순서 그대로 같이 실행한다(읽는 범위만 넓힘 — 부품이 없으면 이전과 같다).
+  return [...html.matchAll(/<script[^>]*\bsrc="(js\/(?:avatar-system|avatar\/[^"?]+|data\/avatar-personas\/[^"?]+)\.js)(?:\?[^"]*)?"/g)].map(m => m[1]);
 }
 
 console.log('[avatar-personas-split] #TASK-ES-386');
@@ -92,6 +93,7 @@ if (base) {
 
 // 2) 브라우저 경로
 const order = scriptOrderFromIndex();
+const CELL_PARTS = order.filter(rel => rel.indexOf('js/avatar/') === 0);
 const afterSources = order.map(rel => [rel, read(rel)]);
 const winSelf = runBrowser(afterSources, true);
 const winNoSelf = runBrowser(afterSources, false);
@@ -112,7 +114,8 @@ ok('브라우저 경로: 새 전역은 데이터 묶음 OurgoalAvatarPersonaPart
   // 기준 커밋을 못 읽는 사본(.git 없음)에서는 avatar-system.js 하나만 실행한 전역 이름을 기준으로 쓴다(데이터 파일과 무관한 이름들)
   const aloneWin = baseWin || runBrowser([['js/avatar-system.js', read('js/avatar-system.js')]], true);
   const baseNames = Object.keys(aloneWin).filter(k => !skip.includes(k)).sort();
-  assert.deepStrictEqual(names, baseNames.concat(['OurgoalAvatarPersonaParts']).sort());
+  // #TASK-ES-389: 로직 부품이 있으면 부품 통로 OurgoalAvatarParts 하나가 더 생긴다(설계 REQ-TASK-ES-384 3-1절에 적은 새 전역 1개). 그 밖의 새 전역은 0.
+  assert.deepStrictEqual(names, baseNames.concat(['OurgoalAvatarPersonaParts'], CELL_PARTS.length ? ['OurgoalAvatarParts'] : []).sort());
   assert.deepStrictEqual(Object.keys(winSelf.OurgoalAvatarPersonaParts), PART_ORDER);
 });
 
@@ -165,7 +168,9 @@ ok('데이터 파일 16개 각 800줄 이하, 각 20종', () => {
   });
 });
 ok('index.html: 데이터 파일 16개가 PART_ORDER 순서로 avatar-system.js 보다 먼저 읽힌다', () => {
-  assert.deepStrictEqual(order, PART_FILES.concat(['js/avatar-system.js']));
+  assert.deepStrictEqual(order.filter(rel => rel.indexOf('js/avatar/') !== 0), PART_FILES.concat(['js/avatar-system.js']));
+  // #TASK-ES-389: 로직 부품도 모두 avatar-system.js 보다 먼저 읽힌다(조립자가 읽을 때 부품 통로가 채워져 있어야 한다).
+  CELL_PARTS.forEach(rel => assert.ok(order.indexOf(rel) < order.indexOf('js/avatar-system.js'), rel + ' 이 avatar-system.js 보다 먼저'));
 });
 
 console.log('[avatar-personas-split] ' + passed + ' passed · ' + failed + ' failed');

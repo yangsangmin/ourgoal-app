@@ -1,0 +1,65 @@
+{
+ "label": "base",
+ "runTag": "ogtest-es389-202610042032-dhel",
+ "env": "local 127.0.0.2 static + /api forwarded to production · test account A (address hidden)",
+ "steps": [
+  {
+   "name": "① 로그인(이메일)",
+   "ok": true,
+   "evidence": {
+    "loggedIn": true
+   }
+  },
+  {
+   "name": "① 서버 보관함 읽기",
+   "ok": false,
+   "evidence": {
+    "error": "column users.saved_avatars does not exist"
+   }
+  },
+  {
+   "name": "② addSavedAvatar + saveProfile → 서버 users.saved_avatars 에 표식 항목 1건, 값 같음",
+   "ok": false,
+   "evidence": {
+    "localCount": 1,
+    "sameValue": false,
+    "fields": [
+     "createdAt",
+     "growthPrompt",
+     "id",
+     "mbti",
+     "motto",
+     "periodEnd",
+     "periodStart",
+     "themeIcon",
+     "themeId",
+     "themeName",
+     "url"
+    ]
+   }
+  },
+  {
+   "name": "③ 기기 사본 파기 → 새로고침 → 화면 상태에 서버에서 되살아남(deepStrictEqual)",
+   "ok": false,
+   "evidence": {
+    "reloggedIn": true,
+    "localCount": 0,
+    "tagged": 0,
+    "sameValue": false
+   }
+  },
+  {
+   "name": "④ removeSavedAvatar + saveProfile → 서버 표식 항목 0, 건수 = 처음",
+   "ok": false,
+   "evidence": {
+    "removeReturned": null
+   }
+  }
+ ],
+ "errors": 0,
+ "leftover": null,
+ "summary": {
+  "ok": 1,
+  "failed": 4
+ }
+}
