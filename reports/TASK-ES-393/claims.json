@@ -1,0 +1,399 @@
+{
+  "task": "TASK-ES-393",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-393-STATS-TEST-BUNDLE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "scripts/smoke-test.js(글자 7곳 + #TASK-ES-060 실행 1곳)와 tests 2개가 통계 글자를 「통계 합본」(js/universal-stats.js 원문 맨 앞 + js/ 바로 아래 OurgoalUniversalStatsKit 표식이 있는 stats-*.js 키트 부품, 이름순, 부품만 S.·K. 접두 제거)에서 읽고 실행한다. 단언 문장·기대값·검사 수 변경 0, 제품 코드 0, 금고 파일 0. 합본 맨 앞 = 원문 단언."
+    },
+    {
+      "id": "R2",
+      "text": "전후 측정: 기준(git archive 09f4a99) 대 작업 npm test 수치·smoke 검사 제목 동일, tests 2개 출력 동일(정규화 뒤), 모의 이전 트리에서 기준 시험지는 깨지고 새 시험지는 통과."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "통계 합본 = js/universal-stats.js 원문(맨 앞) + 키트 부품(이름순, 접두 제거)",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const STATS_SRC = [UNIVERSAL_STATS_RAW, ...STATS_PART_FILES.map(readStatsPartFile)].join('\\n');",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "키트 부품 = js/ 바로 아래 stats- 로 시작하고 OurgoalUniversalStatsKit 표식이 있는 파일(records-stats.js 제외)",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "return n.indexOf('stats-') === 0 && fs.readFileSync(f, 'utf8').indexOf('OurgoalUniversalStatsKit') >= 0;",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품만 생성기 접두 S.·K. 를 떼고 읽음",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "function readStatsPartFile(f) { return fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[SK]\\.(?=[A-Za-z_$])/g, '$1'); }",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "합본 맨 앞 = 원문 단언(check 밖, 검사 수 불변)",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "assert.strictEqual(STATS_SRC.slice(0, UNIVERSAL_STATS_RAW.length), UNIVERSAL_STATS_RAW, '통계 합본 맨 앞 = js/universal-stats.js 원문');",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 0개일 때 합본 = 원문 단언 — 지금은 읽는 글자가 그대로",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "if (STATS_PART_FILES.length === 0) assert.strictEqual(STATS_SRC, UNIVERSAL_STATS_RAW, '통계 합본 = js/universal-stats.js (부품 파일이 없을 때)');",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "#TASK-ES-060 은 키트 부품 → 원본 순서로 같은 mockWindow 에서 실행(브라우저 script 순서와 같음)",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  STATS_PART_FILES.forEach(function (f) { new Function('window', fs.readFileSync(f, 'utf8'))(mockWindow); });",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "#TASK-ES-177·#TASK-ES-311 껍데기 버튼 부재 단언이 통계 합본을 봄",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const uStatsSrc = STATS_SRC;",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "#TASK-ES-174 [45] 아코디언 토글 단언이 통계 합본을 봄",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const statsSrc = STATS_SRC;",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "#TASK-ES-091~094 통계 글자 단언이 통계 합본을 봄",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const statsJs = STATS_SRC;",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "껍데기 버튼 부재 단언 대상이 통계 합본",
+      "touches": [
+        "tests/achievement-stats-shell-button-removal.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const uStats = readStatsBundle(rootDir);",
+        "file": "tests/achievement-stats-shell-button-removal.test.js"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "시험 안 합본 맨 앞 = 원문 단언",
+      "touches": [
+        "tests/achievement-stats-shell-button-removal.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  assert.strictEqual(src.slice(0, raw.length), raw, '통계 합본 맨 앞 = js/universal-stats.js 원문');",
+        "file": "tests/achievement-stats-shell-button-removal.test.js"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "직접 confirm( 부재 단언만 통계 합본(존재 단언은 원본 그대로)",
+      "touches": [
+        "tests/core-confirm-es374.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "        : f === 'js/universal-stats.js' ? readStatsBundle(ROOT).split(/\\r?\\n/).filter(l => !/^\\s*(\\/\\/|\\/?\\*)/.test(l)).join('\\n') : src;",
+        "file": "tests/core-confirm-es374.test.js"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 0개일 때 합본 = 원문 단언",
+      "touches": [
+        "tests/core-confirm-es374.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  if (parts.length === 0) assert.strictEqual(src, raw, '통계 합본 = js/universal-stats.js (부품 파일이 없을 때)');",
+        "file": "tests/core-confirm-es374.test.js"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준(09f4a99)과 작업 트리의 npm test 수치(smoke·무결성·버튼·셀·모듈 가드)가 같다고 기록(작업자 실측)",
+      "touches": [
+        "reports/TASK-ES-393/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-393/test-compare.json",
+        "path": "sameNumbers",
+        "equals": true
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "smoke 검사 제목 목록이 기준과 같다고 기록",
+      "touches": [
+        "reports/TASK-ES-393/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-393/test-compare.json",
+        "path": "smokeTitlesIdentical",
+        "equals": true
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 트리 smoke 443 통과·0 실패로 기록",
+      "touches": [
+        "reports/TASK-ES-393/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-393/test-compare.json",
+        "path": "work.npmTest.smoke",
+        "equals": [
+          443,
+          0
+        ]
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준 사본 smoke 443 통과·0 실패로 기록",
+      "touches": [
+        "reports/TASK-ES-393/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-393/test-compare.json",
+        "path": "base.npmTest.smoke",
+        "equals": [
+          443,
+          0
+        ]
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 트리 버튼 943/943 로 기록",
+      "touches": [
+        "reports/TASK-ES-393/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-393/test-compare.json",
+        "path": "work.npmTest.buttons",
+        "equals": [
+          943,
+          943
+        ]
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests 2개 출력이 정규화 뒤 기준과 같다고 기록",
+      "touches": [
+        "reports/TASK-ES-393/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-393/test-compare.json",
+        "path": "testsSame",
+        "equals": true
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 이전 트리를 기준 시험지로 채점하면 442/443(#TASK-ES-060 실패)으로 기록",
+      "touches": [
+        "reports/TASK-ES-393/mock-move.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-393/mock-move.json",
+        "path": "oldSheet.smoke",
+        "equals": [
+          442,
+          1
+        ]
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "같은 모의 이전 트리를 새 시험지로 채점하면 443/443 으로 기록",
+      "touches": [
+        "reports/TASK-ES-393/mock-move.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-393/mock-move.json",
+        "path": "newSheet.smoke",
+        "equals": [
+          443,
+          0
+        ]
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ/PLAN 이 8원칙 헤더와 구체적 식별자(readStatsBundle)를 담는다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-393-STATS-TEST-BUNDLE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "## 6. [원칙 ⑥] 절차 재검증 및 반론 격파",
+        "file": "docs/specs/REQ-TASK-ES-393-STATS-TEST-BUNDLE.md"
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 에 ES-393 한 줄 기록",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "- 2026-10-05 TASK-ES-393: 통계 세포 쪼개기 1차 선행(시험지)",
+        "file": "dev_log.md"
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 에 ES-393 한 줄 기록(4단계 심사 청구)",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "- #TASK-ES-393 | INFRA/시험 | [통계 세포 쪼개기 1차 선행 시험지]",
+        "file": "docs/rules/TICKETS.md"
+      }
+    }
+  ]
+}

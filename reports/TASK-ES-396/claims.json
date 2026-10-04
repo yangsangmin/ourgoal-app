@@ -1,0 +1,129 @@
+{
+ "task": "TASK-ES-396",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-396-FEED-SHARE-DM-PUSH-TAG.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "js/team-share.js 피드 공유 DM 푸시 꼬리표를 DM 화면 전송(js/team-dm-room.js)과 같은 'dm-' + threadId 로 맞춘다. 대화방 id·행 저장·버튼/토스트 피드백 변경 0."
+  },
+  {
+   "id": "R2",
+   "text": "부품 시험으로 기준 사본 실패 → 작업 통과를 보인다. npm test 결과 기준과 같음."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "피드 공유 DM 푸시 꼬리표가 'dm-' + threadId 다",
+   "touches": [
+    "js/team-share.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-share.js",
+    "text": "                      tag: 'dm-' + threadId"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "피드 공유 DM 푸시 꼬리표를 'dm_' + threadId 로 만들던 줄(dm_dm_ 겹침)이 남아 있지 않다",
+   "touches": [
+    "js/team-share.js"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "js/team-share.js",
+    "text": "tag: 'dm_' + threadId"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "DM 화면 전송의 푸시 꼬리표 형식은 'dm-' + threadId 다(맞춘 기준)",
+   "touches": [
+    "js/team-dm-room.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-dm-room.js",
+    "text": "                  tag: 'dm-' + threadId"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "부품 시험 tests/feed-share-dm-push-tag-es396.test.js 가 피드 공유 실제 요청 본문 꼬리표를 dm- + 대화방 id 와 맞대어 본다",
+   "touches": [
+    "tests/feed-share-dm-push-tag-es396.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/feed-share-dm-push-tag-es396.test.js",
+    "text": "    assert.strictEqual(app.pushes[0].body.tag, 'dm-' + threadId);"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "부품 시험이 작업 트리에서 5/5 통과로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-396/unit-feed-share-dm-push-tag-work.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-396/unit-feed-share-dm-push-tag-work.json",
+    "path": "failed",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "같은 부품 시험이 기준 사본(git archive origin/main)에서는 꼬리표 2건 실패로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-396/unit-feed-share-dm-push-tag-base.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-396/unit-feed-share-dm-push-tag-base.json",
+    "path": "failed",
+    "equals": 2
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R1",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "실기기에서 피드 공유 DM 알림과 DM 화면 전송 알림이 같은 대화방 꼬리표로 묶인다",
+   "touches": [
+    "js/team-share.js"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "테스트 계정 A·B 와 푸시 구독 기기가 있는 세션 또는 상민님",
+    "how": [
+     "A·B 를 동반자로 두고 B 기기에서 푸시 구독",
+     "A 가 DM 화면 전송 1회, 피드 공유 DM 1회",
+     "B 기기 알림 센터에서 두 알림이 같은 묶음인지 본다"
+    ],
+    "note": "클라이언트 요청은 받는 사람을 receiver_id 로 보내고 Authorization 머리글이 없어, 서버 즉시 발송 분기(targetUserId·isAuthorized)에 들어가지 못한다(코드 읽기) — 별도 작업. 이번 PR 은 요청 본문 꼬리표만 맞춘다."
+   }
+  }
+ ]
+}
