@@ -25,6 +25,10 @@
     {
       "id": "R6",
       "text": "커밋(끝에 Co-Authored-By), push, PR(초안 아님), 본문 끝에 Generated with Claude Code. node court/chat.js <PR> 판정 줄을 기다려 기록."
+    },
+    {
+      "id": "R7",
+      "text": "후속(2026-10-04 상민님 \"이미 테스트계정이 많은데 또 만들어야 하나?\"): 주소에 ogtest 가 없는 기존 테스트 계정도 OG_TEST_ALLOW 에 정확히 같은 주소로 적으면 쓸 수 있게 한다. 적히지 않은 주소·부분 일치는 여전히 접속하지 않는다."
     }
   ],
   "claims": [
@@ -321,6 +325,36 @@
         "how": [
           "PR 본문 마지막 줄을 본다"
         ]
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "하네스가 OG_TEST_ALLOW 의 주소와 정확히 같은 경우만 ogtest 없는 주소를 테스트 계정으로 받는다",
+      "touches": [
+        "docs/design/harness/real-account-check.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "return allow.indexOf(a) >= 0;",
+        "file": "docs/design/harness/real-account-check.js"
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "안내서에 기존 테스트 계정 사용법과 --include-withdraw 금지가 적혀 있다",
+      "touches": [
+        "docs/design/harness/real-account-README.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "`--include-withdraw` 는 그 계정을 탈퇴 신청시키므로 기존 계정에는 쓰지 않는다",
+        "file": "docs/design/harness/real-account-README.md"
       }
     }
   ]
