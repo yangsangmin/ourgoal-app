@@ -326,6 +326,21 @@
     ],
     "note": "실서버 전송은 하지 않았다 — 테스트 계정이 보낸 DM 행은 RLS 로 지워지지 않아 남는다(하네스 정리 한계). 대신 부품 시험이 team_pings.id·team_ping_replies.ping_id 가 대화방 화면이 읽는 getDmThreadId 값과 같음을 잰다(C15·C16)."
    }
+  },
+  {
+   "id": "C20",
+   "req": "R",
+   "kind": "static",
+   "domain": "code",
+   "statement": "부품 시험 tests/feed-share-dm-thread-es382.test.js 가 피드 공유 DM 의 team_pings.id 를 대화방 화면이 읽는 getDmThreadId 값과 맞대어 본다",
+   "touches": [
+    "tests/feed-share-dm-thread-es382.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/feed-share-dm-thread-es382.test.js",
+    "text": "    assert.strictEqual(ping.row.id, api.getDmThreadId(ME, PEER));"
+   }
   }
  ]
 }

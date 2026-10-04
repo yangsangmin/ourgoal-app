@@ -24,14 +24,31 @@ function listJsTree(dir, recursive) {
   }
   return out;
 }
-const APP_MODULE_FILES = [...listJsTree(path.join(__dirname, '..', 'js', 'tabs'), true), ...listJsTree(path.join(__dirname, '..', 'js', 'core'), false)];
+// #TASK-ES-385: 아바타 세포(js/avatar/**/*.js)도 앱 합본에 넣는다(EXP 코드가 index.html → js/avatar/xp.js 로 옮겨 가도 html 단언이 같은 코드를 찾게). 지금은 그 폴더가 없어 합본 글자는 그대로다.
+const APP_MODULE_FILES = [...listJsTree(path.join(__dirname, '..', 'js', 'tabs'), true), ...listJsTree(path.join(__dirname, '..', 'js', 'core'), false), ...listJsTree(path.join(__dirname, '..', 'js', 'avatar'), true)];
 // 세포 이전 생성기(module-split)는 index.html 지역 이름을 L.<이름>, 같은 탭 파일끼리 호출을 K.<이름> 으로 바꿔 쓴다(나머지 글자는 그대로).
 // 그런 파일(OurgoalAppScope 를 읽는 파일)만 접두를 떼고 읽어, 옮기기 전 글자를 찾던 단언이 같은 코드를 그대로 찾게 한다. 단언·기대값은 그대로다.
 function readAppModule(f) {
+  if (isAvatarCellFile(f)) return readAvatarFile(f);
   const src = fs.readFileSync(f, 'utf8');
   if (src.indexOf('OurgoalAppScope') < 0) return src;
   return src.replace(/(^|[^A-Za-z0-9_$.])[LK]\.(?=[A-Za-z_$])/g, '$1');
 }
+// #TASK-ES-385 (아바타·EXP 쪼개기 PR-1, 설계 REQ-TASK-ES-384 5절): 아바타 코드가 js/avatar-system.js 에서 js/avatar/**/*.js · js/data/avatar-personas/*.js 로 옮겨 가도(동작 그대로)
+// 같은 단언이 같은 코드를 찾도록, 아바타 소스 글자 검사는 '아바타 합본' = js/avatar-system.js + js/avatar/**/*.js + js/data/avatar-personas/*.js(이름순) 를 본다.
+// 쪼개기 생성기는 부품끼리 부르는 이름을 AV.<이름>, 모달 섹션 공유 변수를 MS.<이름> 으로 바꿔 쓴다 — 그 접두를 떼고 읽는다(L.·K. 와 같은 방식). 단언·기대값은 그대로다.
+const AVATAR_CELL_DIR = path.join(__dirname, '..', 'js', 'avatar');
+function isAvatarCellFile(f) { return path.resolve(f).indexOf(path.resolve(AVATAR_CELL_DIR) + path.sep) === 0; }
+function readAvatarFile(f) {
+  let src = fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])(?:AV|MS)\.(?=[A-Za-z_$])/g, '$1');
+  if (src.indexOf('OurgoalAppScope') >= 0) src = src.replace(/(^|[^A-Za-z0-9_$.])[LK]\.(?=[A-Za-z_$])/g, '$1');
+  return src;
+}
+const AVATAR_SYSTEM_JS = path.join(__dirname, '..', 'js', 'avatar-system.js');
+const AVATAR_PART_FILES = [...listJsTree(AVATAR_CELL_DIR, true), ...listJsTree(path.join(__dirname, '..', 'js', 'data', 'avatar-personas'), false)];
+const AVATAR_SRC = [AVATAR_SYSTEM_JS, ...AVATAR_PART_FILES].map(readAvatarFile).join('\n');
+// 지금(부품 파일 0개)은 아바타 합본이 js/avatar-system.js 한 파일과 글자가 같다 — 범위만 넓혔고 읽는 글자는 그대로임을 단언한다.
+if (AVATAR_PART_FILES.length === 0) assert.strictEqual(AVATAR_SRC, fs.readFileSync(AVATAR_SYSTEM_JS, 'utf8'), '아바타 합본 = js/avatar-system.js (부품 파일이 없을 때)');
 const html = indexHtmlOnly + APP_MODULE_FILES.map(function (f) { return '\n' + readAppModule(f); }).join('');
 // 검사마다 index.html 을 다시 읽던 곳도 같은 합본을 본다.
 const APP_SRC = html;
@@ -120,7 +137,10 @@ const FN_NAMES = [
   'getTemplateAdNoticeMessage', 'computeAdCountdownProgress', 'isTemplateRewardedAdEnabled',
 ];
 
-const extracted = FN_NAMES.map(name => extractFunction(mainScript, name)).join('\n');
+// #TASK-ES-385: EXP 함수(xpForLevel·levelForXP·levelProgress)가 js/avatar/xp.js 로 옮겨 가도 같은 함수를 뽑도록, 추출 원본은 인라인 스크립트 + js/avatar/xp.js(있으면)다. 지금은 xp.js 가 없어 mainScript 그대로다.
+const AVATAR_XP_JS = path.join(AVATAR_CELL_DIR, 'xp.js');
+const fnSource = mainScript + (fs.existsSync(AVATAR_XP_JS) ? '\n' + readAvatarFile(AVATAR_XP_JS) : '');
+const extracted = FN_NAMES.map(name => extractFunction(fnSource, name)).join('\n');
 
 const sandboxSrc =
   'var STREAK_FREEZE_MAX = 3;\n' +
@@ -3153,7 +3173,7 @@ check('compliance: [#TASK-ES-045] 홈·기록 8대 핵심 UX 고밀도화 및 �
 
 check('compliance: [#TASK-ES-046] 77종 3등신 캐릭터 바디 풀 및 난수 추첨 합성 & 나무망치 제작 연출 검증', () => {
   const AvatarSystem = require('../js/avatar-system.js');
-  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSrc = AVATAR_SRC;
 
   // 1. 77종 3등신 바디 풀 완전 탑재 검증
   assert.strictEqual(Array.isArray(AvatarSystem.BODY_THEMES_77), true, '77종 바디 풀 배열 존재');
@@ -3180,7 +3200,7 @@ check('compliance: [#TASK-ES-046] 77종 3등신 캐릭터 바디 풀 및 난수 
 
 check('compliance: [#TASK-ES-047] 사진 기반 퍼스널 컬러/특징 분석 및 77종 바디 일체형 무봉제 만화형 페이스 합성 엔진 검증', () => {
   const AvatarSystem = require('../js/avatar-system.js');
-  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSrc = AVATAR_SRC;
 
   // 1. 퍼스널 특징 추출기 검증
   assert.strictEqual(typeof AvatarSystem.extractPersonalFeatures, 'function', 'extractPersonalFeatures 함수 존재');
@@ -3205,7 +3225,7 @@ check('compliance: [#TASK-ES-047] 사진 기반 퍼스널 컬러/특징 분석 �
 
 check('compliance: [#TASK-ES-048] 아바타 적용 즉시 반영, 제작 시 3회 차감, Gemini 비전 엔드포인트 & 무봉제 샌드위치 렌더러, 뱃지 제거 검증', () => {
   const AvatarSystem = require('../js/avatar-system.js');
-  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSrc = AVATAR_SRC;
 
   // 1. /api/avatar-face 리라이트 및 api/promptgen.js 비전 핸들러 무결성 검증 (Vercel 12개 한도 엄수)
   const vercelCfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
@@ -3230,7 +3250,7 @@ check('compliance: [#TASK-ES-048] 아바타 적용 즉시 반영, 제작 시 3�
 
 check('compliance: [#TASK-ES-049] Gemini 3.1 Flash-Lite 초가성비 비전 모델 교체 및 사진 픽셀 기반 동적 만화 얼굴 이중 방어망 검증', () => {
   const promptgenSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'promptgen.js'), 'utf8');
-  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSrc = AVATAR_SRC;
   const AvatarSystem = require('../js/avatar-system.js');
 
   // 1. api/promptgen.js 내 404 구버전 모델 퇴출 및 gemini-3.1-flash-lite 1순위 탑재 확인
@@ -3250,7 +3270,7 @@ check('compliance: [#TASK-ES-049] Gemini 3.1 Flash-Lite 초가성비 비전 모�
 
 
 check('compliance: [#TASK-ES-050] 아바타 API 실패 시 정중 안내 문구 및 횟수 롤백 복원 검증', () => {
-  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSrc = AVATAR_SRC;
 
   // 1. 상민님 지시 정확한 안내 멘트 탑재 확인
   assert.ok(
@@ -3270,7 +3290,7 @@ check('compliance: [#TASK-ES-050] 아바타 API 실패 시 정중 안내 문구 
 
 check('compliance: [#TASK-ES-051] Gemini 비전 inlineData 규격 준수, API 키 트림 및 사진 512px JPEG 리사이징 검증', () => {
   const promptgenSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'promptgen.js'), 'utf8');
-  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSrc = AVATAR_SRC;
 
   // 1. promptgen.js 내 GEMINI_API_KEY .trim() 처리 검증
   assert.ok(promptgenSrc.includes('process.env.GEMINI_API_KEY.trim()'), 'process.env.GEMINI_API_KEY trim 처리 필수');
@@ -3285,7 +3305,7 @@ check('compliance: [#TASK-ES-051] Gemini 비전 inlineData 규격 준수, API �
 
 check('compliance: [#TASK-ES-052] Gemini 3.1 Flash-Lite Image 멀티모달 이미지 생성 모델 도입 및 아바타 연동 검증', () => {
   const promptgenSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'promptgen.js'), 'utf8');
-  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSrc = AVATAR_SRC;
 
   // 1. promptgen.js 내 gemini-3.1-flash-lite-image 모델 탑재 검증
   assert.ok(promptgenSrc.includes("'gemini-3.1-flash-lite-image'"), '최신 멀티모달 이미지 생성 모델 1순위 탑재');
@@ -3301,7 +3321,7 @@ check('compliance: [#TASK-ES-052] Gemini 3.1 Flash-Lite Image 멀티모달 이�
 
 check('compliance: [#TASK-ES-053] 아바타 모달 미세조정 버튼(헤어스타일/표정/다른바디) 삭제 및 아바타 제작 한도 10회 확대 검증', () => {
   const AvatarSystem = require('../js/avatar-system.js');
-  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSrc = AVATAR_SRC;
 
   // 1. 제작 한도 10회 검증
   assert.strictEqual(AvatarSystem.MAX_AVATAR_CHANGES, 10, 'MAX_AVATAR_CHANGES 10회');
@@ -3326,7 +3346,7 @@ check('compliance: [#TASK-ES-053] 아바타 모달 미세조정 버튼(헤어스
 
 check('compliance: [#TASK-ES-054] 아바타 테마 번호(#숫자) 삭제 및 AI 이미지 생성 프롬프트 모자(Hat) 반영 검증', () => {
   const promptgenSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'promptgen.js'), 'utf8');
-  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSrc = AVATAR_SRC;
 
   // 1. promptgen.js 내 hat / headwear 지침 탑재 검증
   assert.ok(
@@ -4959,7 +4979,7 @@ check('compliance: [#TASK-ES-116] 카카오톡 인앱 브라우저 외부 탈출
 });
 
 check('compliance: [#TASK-ES-117] 아바타 생성 후 앱 업데이트·재로그인·재접속 시 아바타 영속성 및 화면 동기화 무결성 검증', () => {
-  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSrc = AVATAR_SRC;
 
   // 1. avatar-system.js 에서 profile.avatarUrl 동기화 확인
   assert.ok(
@@ -5018,7 +5038,7 @@ check('compliance: [#TASK-ES-118] 홈 상단 고정 바(Topbar) 활용법·홈�
 });
 
 check('compliance: [#TASK-ES-119] 생성한 아바타 누적 보관함(서랍) 구축 및 원클릭 자유로운 변경·착용 시스템 검증', () => {
-  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSrc = AVATAR_SRC;
 
   // 1. 보관함 데이터 모델 및 헬퍼 함수 구현 확인
   assert.ok(avatarSrc.includes('function getSavedAvatars(profile)'), 'getSavedAvatars 함수 구현');
@@ -5082,7 +5102,7 @@ check('compliance: [#TASK-ES-121] 피드·모임·템플릿 외부 SNS 공유 �
 });
 
 check('compliance: [#TASK-ES-122] 아바타 생성 기간 설정(목표·팀·기록 분석 MBTI/좌우명) 결합 및 77종 바디 안내문구 정비 검증', () => {
-  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSrc = AVATAR_SRC;
   const promptgenSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'promptgen.js'), 'utf8');
   const vercelCfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'vercel.json'), 'utf8'));
 
@@ -5229,7 +5249,7 @@ check('compliance: [#TASK-CONST-003] index.html 스마트 무결성 안전핀 �
 
 check('compliance: [#TASK-ES-127] 16개 MBTI 연계 320개 아바타 페르소나 온톨로지 및 시스템 무결성 검증', () => {
   const avatarSystem = require(path.join(__dirname, '..', 'js', 'avatar-system.js'));
-  const avatarJsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarJsSrc = AVATAR_SRC;
 
   // 1. 320종 전체 페르소나 탑재 검증
   assert.ok(avatarSystem.BODY_THEMES_320, 'BODY_THEMES_320 데이터셋 존재');
@@ -5282,7 +5302,7 @@ check('compliance: [#TASK-ES-127] 16개 MBTI 연계 320개 아바타 페르소�
 /* ============ [#TASK-ES-125] 아바타 기본 제작 한도 초기 3회 조정 및 7일 연속 체크인 1회 충전 리워드 루프 & 기존 10회 보존 무결성 검증 ============ */
 check('compliance: [#TASK-ES-125] 아바타 기본 제작 한도 초기 3회 조정 및 7일 연속 체크인 1회 충전 리워드 루프 & 기존 10회 보존 무결성 검증', () => {
   const avatarSystem = require(path.join(__dirname, '..', 'js', 'avatar-system.js'));
-  const avatarJsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarJsSrc = AVATAR_SRC;
   const indexSrc = APP_SRC;
 
   // 1. 상수 정의 검증
@@ -5542,7 +5562,7 @@ check('compliance: [#TASK-ES-134] 목표 탭 현상태 분석 AI 조언 명칭 �
 check('compliance: [#TASK-ES-135] 아바타 보관함(서랍) 3중 영속화(Supabase DB + LocalStorage + 마이그레이션 합집합 복원) 무결성 검증', () => {
   const indexSrc = APP_SRC;
   const trackSrc = fs.readFileSync(path.join(__dirname, '..', 'api', 'track.js'), 'utf8');
-  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSrc = AVATAR_SRC;
   const sqlPath = path.join(__dirname, '..', 'docs', 'sql', '2026-09-17-users-saved-avatars-column.sql');
 
   // 1. Supabase SQL 정의서 존재 및 컬럼 규격 확인
@@ -6288,7 +6308,7 @@ check('compliance: [#TASK-ES-158] 회원 탈퇴 시 법적책임·데이터 분�
 
 /* ============ [#TASK-ES-159] 아바타 레벨별 상징 백그라운드 이미지 결합 시스템 검증 ============ */
 check('compliance: [#TASK-ES-159] 아바타 레벨별 상징 백그라운드 이미지(새싹·숲·포세이돈·제우스·우주 5대 테마) 결합 검증', () => {
-  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSrc = AVATAR_SRC;
   const indexSrc = APP_SRC;
   const cssSrc = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const swSrc = fs.readFileSync(path.join(__dirname, '..', 'sw.js'), 'utf8');
@@ -8132,7 +8152,7 @@ check('[#TASK-ES-248] 설정탭 상단 프로필 요약 카드 시인성 강화 
 check('[#TASK-ES-249] 상황별 다이나믹 아바타 리액션 도감 100% 무료 기능 및 생성횟수 3회 문구 정상화', () => {
   const avatarSystemPath = path.join(__dirname, '..', 'js', 'avatar-system.js');
   const avatarModule = require(avatarSystemPath);
-  const avatarSrc = fs.readFileSync(avatarSystemPath, 'utf8');
+  const avatarSrc = AVATAR_SRC;
   const indexHtml = APP_SRC;
   const cssContent = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
@@ -8599,7 +8619,7 @@ check('compliance: [#TASK-ES-266] 전 탭 ‘이 페이지 활용법’ 우측 �
 
 /* ============ [#TASK-ES-267] 아바타 10개 관리 및 레벨업 팝업/공유/저장/프롬프트 성향 설정 검증 ============ */
 check('compliance: [#TASK-ES-267] 아바타 10개 관리 및 레벨업 팝업/공유/저장/프롬프트 성향 설정 검증', () => {
-  const avatarSystemSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSystemSrc = AVATAR_SRC;
   const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
@@ -8652,7 +8672,7 @@ check('compliance: [#TASK-ES-268] 홈탭 최하단 <아워골 평가해주기> �
 
 /* ============ [#TASK-ES-269] 기간 설정(목표·팀·기록 분석) 맞춤형 아바타 생성 결합 및 설정창 확대 검증 ============ */
 check('compliance: [#TASK-ES-269] 기간 설정(목표·팀·기록 분석) 맞춤형 아바타 생성 결합 및 설정창 확대 검증', () => {
-  const avatarSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSrc = AVATAR_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. 아바타 설정 모달 창 시원한 크기 확대 (620px / 94vh / 640px)
@@ -8764,7 +8784,7 @@ check('compliance: [#TASK-ES-271] 계정 탈퇴 시 법적책임·데이터 분�
 
 /* ============ [#TASK-ES-272] 아바타 레벨별 상징 백그라운드 이미지 결합 및 비가림성 보장 ============ */
 check('compliance: [#TASK-ES-272] 아바타 레벨별 상징 백그라운드 이미지 결합 및 비가림성 보장 무결성 검증', () => {
-  const avatarCode = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarCode = AVATAR_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
   const avatarApi = require('../js/avatar-system.js');
 
@@ -8936,7 +8956,7 @@ check('compliance: [#TASK-ES-277] 소통창 화면정리 (피드·소통 UI 시�
 check('compliance: [#TASK-ES-278] 앱 진입 시 화면 절반 크기 아바타 인사 팝업 및 시간대별 멘트·설정창 커스텀 구현', () => {
   const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
-  const avatarSystemJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarSystemJs = AVATAR_SRC;
 
   // 1. js/avatar-system.js handle아바타_Item26Action 정의 검증
   assert.ok(avatarSystemJs.includes('async function handle아바타_Item26Action('), 'handle아바타_Item26Action 함수 정의');
@@ -9053,7 +9073,7 @@ check('compliance: [#TASK-ES-282] 전 탭 상위 중복 \'홈구성\' 버튼 제
 check('compliance: [#TASK-ES-283] 홈 및 전 탭 우측 상단 아바타 아이콘 크기 확대 (애정도·시인성 강화)', () => {
   const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
-  const avatarJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarJs = AVATAR_SRC;
 
   // 1. js/avatar-system.js handle아바타_Item32Action 정의 검증
   assert.ok(avatarJs.includes('async function handle아바타_Item32Action('), 'handle아바타_Item32Action 함수 정의');
@@ -9255,7 +9275,7 @@ check('TASK-ES-290: 일정 배경사진 최대 2장 및 상하 반반 분할 레
 /* ============ [TASK-ES-291] 레벨업 연출 멘트("진짜 잘했다! 내자신! 내 뒤의 배경좀 바꿔줘라 지겹다!") 적용 ============ */
 check('TASK-ES-291: 레벨업 연출 멘트 및 배경 변경 유도 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
-  const avatarJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarJs = AVATAR_SRC;
   const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
@@ -9282,7 +9302,7 @@ check('TASK-ES-291: 레벨업 연출 멘트 및 배경 변경 유도 4위 1체 �
 /* ============ [TASK-ES-292] 경험치 획득 시 아바타 축하 팝업 연출("잘했다! 내 자신!") 구현 ============ */
 check('TASK-ES-292: 경험치 획득 시 아바타 축하 팝업 연출("잘했다! 내 자신!") 4위 1체 배선 검증', () => {
   const compJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
-  const avatarJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'avatar-system.js'), 'utf8');
+  const avatarJs = AVATAR_SRC;
   const indexHtml = APP_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
