@@ -2975,8 +2975,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(amount > 0){
       triggerAvatarCelebrationPopup(amount, reason);
     }
+    notifyXpGained(amount, xp.total);
     return { total: xp.total, leveledUp: leveledUp };
   }
+  // [HOME-19] 경험치가 바뀌면 홈 아바타 진행 링에 알린다(링 갱신 + +N EXP 0.5초 표시)
+  function notifyXpGained(amount, total){
+    try {
+      if(window.OurgoalHomeOneScreen && typeof window.OurgoalHomeOneScreen.onXpGained === 'function'){
+        window.OurgoalHomeOneScreen.onXpGained(amount, total);
+      }
+    } catch(e){}
+  }
+  window.notifyXpGained = notifyXpGained;
   function hasUserCustomizedAvatar(profile){
     if(!profile) return false;
     var s = profile.settings || {};
@@ -5149,8 +5159,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           action: 'sync_records',
           userId: uid,
           username: uname,
-          displayName: dname || (state.profile && (state.profile.nickname || state.profile.displayName)) || '상민',
-          nickname: (state.profile && (state.profile.nickname || state.profile.displayName)) || dname || '상민',
+          displayName: dname || (state.profile && (state.profile.nickname || state.profile.displayName)) || '',
+          nickname: (state.profile && (state.profile.nickname || state.profile.displayName)) || dname || '',
           backupIds: candidateIds,
           settingsToSave: (state.profile && state.profile.settings && state.profile.settings.googleCalendarConnected) ? {
             googleCalendarConnected: true,
@@ -7305,6 +7315,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
           burstConfetti(window.innerWidth/2, window.innerHeight/2, 25);
           if(state.profile && state.profile.settings && state.profile.settings.xp){
             state.profile.settings.xp.total = (state.profile.settings.xp.total || 0) + 5;
+            notifyXpGained(5, state.profile.settings.xp.total);
             saveProfile();
           }
           toast('💌 동류 러너들에게 웰컴 응원 스탬프를 보냈어요! (+5 EXP)');
@@ -13913,7 +13924,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         btnCheckin.onclick = focusHomeCheckinInput;
       }
     } else if(activeCount === 1 && myCheckedToday){
-      if(headlineEl) headlineEl.innerHTML = '오늘 <b>' + escapeHtml(nick) + '</b>님이 영광의 <b>첫 완주 페이스메이커</b>입니다 👏';
+      if(headlineEl) headlineEl.innerHTML = nick ? ('오늘 <b>' + escapeHtml(nick) + '</b>님이 영광의 <b>첫 완주 페이스메이커</b>입니다 👏') : '오늘 영광의 <b>첫 완주 페이스메이커</b>가 되셨어요 👏';
       if(badgeEl){
         badgeEl.textContent = '🏆 오늘의 첫 완주';
         badgeEl.style.background = 'rgba(245, 158, 11, 0.14)';
@@ -13936,7 +13947,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         coldStartBox.style.borderColor = 'rgba(245, 158, 11, 0.35)';
       }
       if(coldStartIcon) coldStartIcon.textContent = '🏆';
-      if(coldStartDesc) coldStartDesc.textContent = '멋진 선두 주자! 곧 다른 동반자들이 ' + escapeHtml(nick) + '님의 뒤를 이어 합류할 예정이에요.';
+      if(coldStartDesc) coldStartDesc.textContent = nick ? ('멋진 선두 주자! 곧 다른 동반자들이 ' + nick + '님의 뒤를 이어 합류할 예정이에요.') : '멋진 선두 주자! 곧 다른 동반자들이 뒤를 이어 합류할 예정이에요.';
       if(btnCheckin){
         btnCheckin.style.display = 'inline-flex';
         btnCheckin.textContent = '동반자 피드 ➔';
@@ -13999,7 +14010,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         coldStartBox.style.display = 'none';
       }
       if(myCheckedToday){
-        if(headlineEl) headlineEl.innerHTML = '오늘 <b>' + escapeHtml(nick) + '</b>님과 함께 페이스를 맞추는 동반자 <b>' + activeCount + '명</b> ⚡';
+        if(headlineEl) headlineEl.innerHTML = (nick ? ('오늘 <b>' + escapeHtml(nick) + '</b>님과 함께 페이스를 맞추는 동반자 <b>') : '오늘 함께 페이스를 맞추는 동반자 <b>') + activeCount + '명</b> ⚡';
         if(subtextEl) subtextEl.textContent = '오늘 체크인 완주! 동반자들의 피드를 응원해보세요 ✨';
       } else {
         if(headlineEl) headlineEl.innerHTML = '오늘 벌써 <b>' + activeCount + '명</b>의 동반자가 달리고 있어요 🏃';
@@ -14013,7 +14024,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(!w) return;
     w.style.display = 'block';
 
-    var nick = (state.profile && (state.profile.nickname || state.profile.displayName)) || '상민';
+    var nick = (state.profile && (state.profile.nickname || state.profile.displayName)) || ''; // [HOME-21] 닉네임 없으면 이름 없는 문장
     var today = typeof dateKey === 'function' ? dateKey() : (new Date()).toISOString().slice(0, 10);
 
     // 1. 내가 오늘 체크인했는지 여부
@@ -14355,19 +14366,27 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var goals = sortGoalsByOrder(rawGoals, goalOrder);
 
     if(homeHeadline){
-      var nick = (state.profile && state.profile.nickname) || '상민';
-      var todayCheckins = (state.profile.records || []).filter(function(r){ return r.date === dateKey(); });
+      // [HOME-21] 닉네임이 없으면 이름 없이 말한다(하드코딩 이름 금지)
+      var nick = (state.profile && state.profile.nickname) || '';
+      var nickLead = nick ? (escapeHtml(nick) + '님, ') : '';
+      // [HOME-21] 체크인 기록은 date 없이 startAt 만 가진다 — startAt 로 날짜를 구하고, 옛 date 필드 기록도 그대로 센다
+      var todayKeyHL = dateKey();
+      var todayCheckins = (state.profile.records || []).filter(function(r){
+        if(!r) return false;
+        var rKey = r.date || (r.startAt ? dateKey(r.startAt) : null);
+        return rKey === todayKeyHL;
+      });
       if(!goals.length){
-        homeHeadline.innerHTML = escapeHtml(nick) + '님, 가슴 뛰는 <b>첫 번째 목표</b>를 시작해볼까요? 🌱';
+        homeHeadline.innerHTML = nickLead + '가슴 뛰는 <b>첫 번째 목표</b>를 시작해볼까요? 🌱';
       } else {
         var firstG = goals[0];
         var firstGPct = (typeof goalProgress === 'function') ? goalProgress(firstG) : 0;
         if(firstGPct >= 100){
-          homeHeadline.innerHTML = escapeHtml(nick) + '님, 오늘 1순위 목표를 <b>멋지게 완주</b>하셨어요! 🏆';
+          homeHeadline.innerHTML = nickLead + '오늘 1순위 목표를 <b>멋지게 완주</b>하셨어요! 🏆';
         } else if(todayCheckins.length > 0){
-          homeHeadline.innerHTML = escapeHtml(nick) + '님, 오늘 멋진 실천을 <b>' + todayCheckins.length + '회</b> 기록하셨어요 🔥';
+          homeHeadline.innerHTML = nickLead + '오늘 멋진 실천을 <b>' + todayCheckins.length + '회</b> 기록하셨어요 🔥';
         } else {
-          homeHeadline.innerHTML = escapeHtml(nick) + '님, 오늘 하루를 완성할 <b>실천과 몰입</b>이 기다려요 ✨';
+          homeHeadline.innerHTML = nickLead + '오늘 하루를 완성할 <b>실천과 몰입</b>이 기다려요 ✨';
         }
       }
     }

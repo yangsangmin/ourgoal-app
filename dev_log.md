@@ -5714,6 +5714,14 @@
 - **진행 단계**: [4단계: 심사 청구 (PR 생성 및 GitHub Court 법정 심사 대기)]
 ---
 
+## [2026-10-04] #TASK-ES-341: 홈 아바타 EXP 진행 바 실값화 · 하드코딩 이름 제거 (HOME-19, HOME-21)
+- **과제 티켓**: `#TASK-ES-341` (노션 DB UI/UX 대개편 `HOME-19`, `HOME-21`)
+- **수정 내역**:
+  - `js/tabs/home/sub-onescreen.js`: `#homeHeroExpText`(Lv.1 · 0 / 100 EXP 고정 글자) 제거, `#homeHeroExpBar` progressbar(aria-valuenow), `expProgressPct`(settings.xp.total → levelProgress.pct), `onXpGained`(+N EXP 0.5초, 연속 보상 합산), `#homeHeroExpGain`.
+  - `index.html`: `notifyXpGained` 신설·`awardXP`/웰컴 스탬프(+5) 경로 배선, 헤드라인·동반자 위젯·/api/track 의 '상민' 기본값 제거(닉네임 없으면 이름 없는 문장), 헤드라인 오늘 체크인 수를 `r.date || dateKey(r.startAt)` 로 집계.
+  - `ui.css`: `.hero-avatar-exp-gain` + `@keyframes heroExpGainFloat`(0.5초, reduced-motion 대응).
+- **범위 밖(보고만)**: 루틴 템플릿 `rt_real_sangmin_445` author '상민' 은 콘텐츠 작성자 표기라 유지. 타인 화면의 레벨 숫자 숨김은 이번 범위 아님.
+- **예비 검증(판정 아님)**: npm test 종료코드 0. 로컬 court 실행기로 시나리오 4건을 기준(origin/main)·작업 트리에서 실행 — 작업 트리 4건 통과, 기준은 home-exp-ring 단계7·home-exp-value 단계6·home-headline-no-name 단계6에서 실패, home-avatar-tap 은 기준에서도 통과(연결 확인).
 ## [2026-10-04 12:40] #TASK-ES-342: 홈 점검 하네스 home-check.js (HOME-25, GOALS-01 공용)
 - **목표**: 테마 4종 × 뷰포트 375×667·375×812 × 상태(기본·`#homeDetailSheet` 열림·`#captureInput` 포커스) 홈 화면을 같은 측정으로 기록하는 도구.
 - **구현**: `docs/design/harness/home-check.js` 신규 — `shots-lib.js` 의 `newPage`(게스트 시드·Supabase 목·외부 호출 차단) 재사용, `APP_DIR`·`outDir`·`tab`(기본 home)·`--summary` 인자. `shots.js`·`shots-lib.js`·`audit.js` 는 수정하지 않음.

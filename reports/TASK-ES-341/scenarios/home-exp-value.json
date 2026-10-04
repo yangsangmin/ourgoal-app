@@ -1,0 +1,19 @@
+{
+  "id": "home-exp-value",
+  "title": "홈 아바타 진행 바 비율이 실제 경험치(settings.xp.total) 기준이며, 체크인으로 경험치가 50 이 되면 진행 바가 50% 가 된다",
+  "steps": [
+    { "do": "setViewport", "width": 375, "height": 812 },
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "expect": "visible", "selector": "#homeHeroExpBar", "timeoutMs": 15000 },
+    { "expect": "attr", "selector": "#homeHeroExpBar", "name": "aria-valuenow", "equals": "0" },
+    { "do": "click", "selector": "#captureInput" },
+    { "do": "type", "selector": "#captureInput", "text": "아침 독서 30분 완료" },
+    { "do": "click", "selector": "#captureSave" },
+    { "expect": "attr", "selector": "#homeHeroExpBar", "name": "aria-valuenow", "equals": "50", "timeoutMs": 8000 },
+    { "expect": "style", "selector": "#homeHeroExpFill", "prop": "width", "equals": "90px" },
+    { "capture": "home-exp-value-after-checkin" },
+    { "expect": "noExceptions" }
+  ]
+}

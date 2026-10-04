@@ -215,10 +215,11 @@
         '<div class="home-hero-avatar-wrap" id="homeHeroAvatar" role="button" tabindex="0" aria-label="수호 아바타 상세 열기">' +
           '<div class="avatar-placeholder avatar-pulse-breathing" id="homeHeroAvatarImg">🌱</div>' +
         '</div>' +
-        '<div class="hero-avatar-exp-bar" id="homeHeroExpBar" aria-label="경험치">' +
+        // [HOME-19] 홈에는 레벨·EXP 숫자를 쓰지 않는다 — 숫자 없는 진행 바 + 얻는 순간 0.5초 "+N EXP"
+        '<div class="hero-avatar-exp-bar" id="homeHeroExpBar" role="progressbar" aria-label="다음 성장까지 진행" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">' +
           '<div class="hero-avatar-exp-fill" id="homeHeroExpFill" style="width:0%;"></div>' +
         '</div>' +
-        '<div class="hero-avatar-exp-text" id="homeHeroExpText" style="font-size:0.75rem;font-weight:600;color:var(--ink-soft);margin-top:2px;">Lv.1 · 0 EXP</div>';
+        '<div class="hero-avatar-exp-gain" id="homeHeroExpGain" aria-live="polite"></div>';
 
       checkin.parentNode.insertBefore(card, checkin);
 
@@ -260,7 +261,6 @@
       var img = doc.getElementById('homeHeroAvatarImg');
       var bubble = doc.getElementById('homeHeroAvatarBubble');
       var fill = doc.getElementById('homeHeroExpFill');
-      var txt = doc.getElementById('homeHeroExpText');
       if (!img || !bubble) return;
 
       var p = global.state && global.state.profile;
@@ -281,11 +281,53 @@
       }
       bubble.textContent = greeting;
 
-      var exp = (p && p.exp) || 0;
-      var level = Math.floor(exp / 100) + 1;
-      var curExp = exp % 100;
-      if (fill) fill.style.width = Math.min(100, Math.max(0, curExp)) + '%';
-      if (txt) txt.textContent = 'Lv.' + level + ' · ' + curExp + ' / 100 EXP';
+      // [HOME-19] 실제 경험치는 settings.xp.total 이다(p.exp 는 아무도 쓰지 않는 칸이라 늘 0 이었다)
+      var pct = this.expProgressPct(p);
+      var bar = doc.getElementById('homeHeroExpBar');
+      if (fill) fill.style.width = pct + '%';
+      if (bar) bar.setAttribute('aria-valuenow', String(pct));
+    },
+
+    /** [HOME-19] 현재 레벨 안에서의 진행 비율(0~100). 레벨 공식은 앱의 levelProgress/levelForXP 를 그대로 쓴다 */
+    expProgressPct: function(p) {
+      var xpObj = p && p.settings && p.settings.xp;
+      var total = Number(xpObj && xpObj.total) || 0;
+      if (total < 0) total = 0;
+      var pct = 0;
+      if (typeof global.levelProgress === 'function') {
+        pct = Number(global.levelProgress(total).pct) || 0;
+      } else {
+        // levelProgress 를 아직 못 읽은 경우의 동일 공식(index.html xpForLevel: 50*(L-1)*L)
+        var lv = 1;
+        while (50 * lv * (lv + 1) <= total) lv++;
+        var floor = 50 * (lv - 1) * lv;
+        var ceil = 50 * lv * (lv + 1);
+        pct = Math.round(((total - floor) / (ceil - floor)) * 100);
+      }
+      return Math.min(100, Math.max(0, pct));
+    },
+
+    /** [HOME-19] 경험치를 얻은 순간: 진행 바를 다시 그리고 "+N EXP" 를 0.5초 띄웠다가 지운다 */
+    onXpGained: function(amount) {
+      if (!doc) return;
+      this.refreshAvatar();
+      var n = Math.round(Number(amount) || 0);
+      var gain = doc.getElementById('homeHeroExpGain');
+      if (!gain || n <= 0) return;
+      // 한 번의 행동에 여러 보상이 연달아 붙으면(체크인 + 데일리 퀘스트) 0.5초 안의 것을 합쳐 한 번에 보여 준다
+      if (this._gainTimer) { clearTimeout(this._gainTimer); n += this._gainSum || 0; }
+      this._gainSum = n;
+      gain.textContent = '+' + n + ' EXP';
+      gain.classList.remove('is-showing');
+      void gain.offsetWidth;
+      gain.classList.add('is-showing');
+      var self = this;
+      this._gainTimer = setTimeout(function() {
+        gain.classList.remove('is-showing');
+        gain.textContent = '';
+        self._gainTimer = null;
+        self._gainSum = 0;
+      }, 500);
     },
 
     /** [HOME-04] 스마트 추천 칩 3종(운동·독서·멘탈) 1-Tap 바인딩 */
