@@ -2,7 +2,7 @@
  "task": "TASK-ES-354",
  "tool": "docs/design/harness/tab-check.js all + tab-compare.js",
  "base": "bb343d3 (git archive, 2회: run1·run2 병렬)",
- "after": "691dd87 작업 트리 사본(제품 코드 동일)",
+ "after": "a15c766 제품 코드(최종 설정 이전 코드, 기록 탭 #671 병합 전) — git archive",
  "env": "local static server + headless Chrome + guest seed + Supabase mock (no remote, no real account)",
  "matrix": {
   "themes": [
@@ -16,7 +16,7 @@
    "375x812"
   ]
  },
- "note": "두 앱 모두 git 저장소 밖 사본이라 요약의 commit 칸은 null(같은 커밋: true 는 null==null). 커밋은 이 파일의 base/after 칸이 정본.",
+ "note": "base·after 모두 git archive 사본이라 요약의 commit 칸은 null. 기준 bb343d3 대 이 PR 의 설정 이전 최종 제품 코드(a15c766). #671(기록 탭) 병합 뒤 판은 dom-compare-settings-vs-main.json·tab-compare-main-vs-head-settings-records.json 으로 따로 비교.",
  "baselineNoise": {
   "file": "tab-compare-base-run1-vs-run2.json",
   "comparedValues": 2520,
