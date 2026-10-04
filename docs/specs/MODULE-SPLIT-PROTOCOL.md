@@ -59,7 +59,8 @@ OurgoalXxxSubYyy = {
 3. **글자 검사**: `verify-equiv.js <이전 전 index.html> <APP>` — 옮긴 구간 전부 토큰열이 이전 전과 같은지(차이 허용: `L.`·`U.`·`K.` 접두뿐). `verify-free.js <APP>` — 옮긴 파일에 IIFE 이름이 접두 없이 남아(전역으로 새어) 다른 값을 읽는 곳 0, `L.<이름>` 이 모두 노출됐는지.
 4. **화면 비교**: 옮긴 뒤 `tab-check.js … all` 1회 → `tab-compare.js base1.json after.json` → 해당 탭 장 전부 + 다른 5탭 차이 0(1단계 본질 변동 제외). 탭별 조작 비교(설정 예: `dom-compare-settings.js <base-app> <after-app> <out.json>`)로 단계마다 화면 HTML·저장값(localStorage)·토스트·테마·콘솔 오류를 맞대 본다(시간·난수 값만 지움).
 5. **소스 글자 시험**: `npm test` 0. 소스 글자를 grep 하는 시험(`scripts/smoke-test.js`·`verify-all-clicks.js`)은 "앱 소스 = index.html + 옮긴 파일" 합본으로 보게 고친다(ui.css 분리 때 `styleSrc` 합본과 같은 방식). 시험의 기대값은 바꾸지 않는다 — 통과 수·버튼 수가 이전 전과 같아야 한다(설정: 443 통과·38/38·버튼 953/953). **법정은 기준 커밋의 시험지로 채점한다**: 기준 시험지에서 index.html 한 파일의 글자를 찾던 검사는 옮긴 뒤 깨진다(설정: 13개). 그 검사들은 주장 파일 `retire` 에 검사 제목별로 "옮겨 갔고 작업 커밋 시험지 합본에서는 그대로 통과" 사유를 적는다 — 이 폐기는 상민님 결심 사항으로 판정서에 올라간다. 다음 탭부터 이 마찰을 없애려면 시험지 합본 읽기(이번 PR)가 main 에 먼저 들어가 있어야 한다.
-6. 법정: 새 js 파일 800줄 이하, 옮긴 줄 중 `display:none !important`·금지 낱말 0(이번 변경이 "새로 만든" 것만 센다 — CSS 는 옮기지 않는다).
+6. **세포 신고서(CORE-08)**: 새로 만든 js 파일은 `node scripts/module-specs.js --write` 로 `docs/architecture/modules.json` 에 올리고 손 칸(kind·role·contributes)을 적는다(설정 섹션 소블록: `kind: tab`, `contributes: ["settings.section"]`). `node scripts/module-guard.js` 통과 후 줄어든 부채는 `--update` 로 기준선을 낮춘다(래칫). `js/core/slots.js` 의 `slots.contribute` 로 실제 연결하는 것은 등록 순서·오류 경로가 바뀌므로 옮기기 PR 다음의 별도 PR 로 한다.
+7. 법정: 새 js 파일 800줄 이하, 옮긴 줄 중 `display:none !important`·금지 낱말 0(이번 변경이 "새로 만든" 것만 센다 — CSS 는 옮기지 않는다).
 
 ## 6. 실패 시 되돌리기
 
