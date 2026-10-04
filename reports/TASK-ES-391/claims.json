@@ -1,0 +1,57 @@
+{
+  "task": "TASK-ES-391",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-391-AVATAR-APP-BUNDLE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "scripts/smoke-test.js 의 앱 합본 APP_MODULE_FILES 의 아바타 범위를 js/avatar/** 전체에서 js/avatar/xp.js(있으면) 하나로 좁힌다. 아바타 합본 AVATAR_SRC·FN_NAMES 추출 원본은 그대로. 단언 문장·기대값·검사 수 변경 0, 제품 코드 0."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "앱 합본에 넣을 아바타 파일은 js/avatar/xp.js 하나",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const APP_AVATAR_XP_JS = path.join(__dirname, '..', 'js', 'avatar', 'xp.js');",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "APP_MODULE_FILES = js/tabs/** + js/core/* + xp.js(있으면)",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const APP_MODULE_FILES = [...listJsTree(path.join(__dirname, '..', 'js', 'tabs'), true), ...listJsTree(path.join(__dirname, '..', 'js', 'core'), false), ...(fs.existsSync(APP_AVATAR_XP_JS) ? [APP_AVATAR_XP_JS] : [])];",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "아바타 합본은 그대로(avatar-system.js + js/avatar/** + 페르소나 데이터)",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const AVATAR_SRC = [AVATAR_SYSTEM_JS, ...AVATAR_PART_FILES].map(readAvatarFile).join('\\n');",
+        "file": "scripts/smoke-test.js"
+      }
+    }
+  ]
+}

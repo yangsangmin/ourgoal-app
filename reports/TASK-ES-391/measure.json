@@ -1,0 +1,13 @@
+{
+  "task": "TASK-ES-391",
+  "note": "작업자 실측(판정 아님)",
+  "base": { "ref": "origin/main fa5a7b6", "smoke": "443개 통과, 0개 실패", "npmTestExit": 0 },
+  "after": { "smoke": "443개 통과, 0개 실패", "npmTestExit": 0, "passLineDiffVsBase": 0 },
+  "mutation": {
+    "probe": "js/avatar/zz-probe.js = (function(){ var win = {}; if (0) win.showToast('probe'); })();",
+    "baseArchiveCopy": "442개 통과, 1개 실패 — [#TASK-ES-155]",
+    "after": "443개 통과, 0개 실패",
+    "xpProbe": "js/avatar/xp.js 에 같은 내용 → 작업본 442개 통과, 1개 실패 — [#TASK-ES-155] (xp.js 는 앱 합본에 남음)",
+    "probesRemoved": true
+  }
+}
