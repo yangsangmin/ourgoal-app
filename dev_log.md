@@ -5867,3 +5867,4 @@
 - **진행 단계**: [4단계: 심사 청구]
 ---
 - 2026-10-04 TASK-ES-360: 일정 탭 렌더 7개(renderCalendarScreen·renderCalDayDetail·parseNaturalScheduleText·executeCalAgentNaturalSchedule·calShift·calWeekStart·WEEKDAYS_KR)를 index.html 인라인에서 js/tabs/calendar/render.js·day-detail.js·natural-schedule.js 로 동작 그대로 이전(생성기 gen-calendar.js, 인라인 36,414→35,905줄, 토큰 동일·누수 0, 조작 20단계 DOM 비교 220값 차이 0). calCellHtml 은 동결 시험지 verify-integrity-gate #TASK-ES-197 이 index.html 에서 글자를 찾아 남김.
+- 2026-10-04 TASK-ES-363: 공용 모달 한 통로 js/core/modal.js(ui.modal·ui.modal.close·ui.modal.bind) — 진짜 연결 통로 2곳(team-linked-goals·team-visibility-levels) 융합, 자체 모달 2곳(theme-system·time-tracker) 이름 정정, 모달 연결 통로 4→0(module-metrics 산출), 그리기는 index.html 정본 openModal 그대로. 발견: 테마 선택 창 입구가 앱 테마 4종 모두에서 CSS 로 숨어 열 길이 없음(고치지 않음)

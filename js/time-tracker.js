@@ -383,7 +383,7 @@
     // 8. 경고 팝업: 정말 취소
     d.confirmYesBtn.onclick = function() {
       hideCancelDialog();
-      closeModal();
+      closeTrackerOverlay();
     };
 
     // 9. 내 기록에 저장 버튼
@@ -485,7 +485,7 @@
     if (hasProgress) {
       showCancelDialog();
     } else {
-      closeModal();
+      closeTrackerOverlay();
     }
   }
 
@@ -1175,13 +1175,13 @@
       toast('시간 기록이 내 기록에 성공적으로 저장되었습니다! 🎉');
     }
 
-    closeModal();
+    closeTrackerOverlay();
   }
 
   /**
    * 모달 열기
    */
-  function openModal() {
+  function openTrackerOverlay() { // #TASK-ES-363: 정본 openModal 통로가 아니라 자체 전체화면 덮개 #timeTrackerOverlay 를 여는 함수 — 이름만 정정(동작 불변, 덮개 한 벌화 4단계 대상)
     initDOM();
     tracker.isOpen = true;
     tracker.forcedLandscape = false;
@@ -1200,7 +1200,7 @@
   /**
    * 모달 닫기
    */
-  function closeModal() {
+  function closeTrackerOverlay() {
     if (!tracker.isOpen) return;
     safeCaf(tracker.rafId);
     resetTracker();
@@ -1212,8 +1212,8 @@
 
   // 외부 공개 API
   global.OurgoalTimeTracker = {
-    open: openModal,
-    close: closeModal,
+    open: openTrackerOverlay,
+    close: closeTrackerOverlay,
     switchMode: switchMode,
     getState: function() { return tracker; }
   };
