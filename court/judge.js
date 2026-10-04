@@ -20,6 +20,7 @@ const claimsLib = require('./claims');
 const { probeBoot } = require('./probes/boot');
 const { probeBaseTests, classifyCheck } = require('./probes/base-tests');
 const report = require('./report');
+const newDebt = require('./lib/new-debt');
 
 const EXIT = { '통과': 0, '확인 부족': 3, '돌려보냄': 1, '심사 못 함': 2, '심사 전': 0 };
 // 법정이 판정을 내기 전에 실행이 끝났을 때 남는 판정서의 첫 줄·둘째 줄(시작하자마자 써 두고, 판정이 나면 덮어쓴다).
@@ -373,6 +374,9 @@ async function judge(opts) {
       if (/^reports\/.*\/(verdict\.json|REPORT\.md)$/i.test(f.path)) reject('성적표를 저장소에 넣음', f.path + ' — 판정서는 법정이 만드는 것이며 저장소에 커밋할 수 없다(손으로 고친 성적표를 막는다)');
     }
     if (v.envSensitive.length) warn('접속 환경에 따라 갈리는 코드 ' + v.envSensitive.length + '곳', '접속 주소·기기·언어·시간대·화면 상태를 읽는 줄이 제품 코드에 추가됐다: ' + v.envSensitive.slice(0, 4).map(e => e.file + ' — ' + e.line.slice(0, 120)).join(' / ') + '. 법정의 화면은 PC 의 자동 브라우저라서, 법정에서 된 것이 실제 사용자 환경에서도 되는지는 보증하지 못한다.');
+    // 2-1) 이번 변경이 새로 만든 정적 위반(800줄 상한·CSS 은폐·금지 낱말). 기준 커밋에 이미 있던 부채는 세지 않는다(court/lib/new-debt.js).
+    try { for (const x of newDebt.check({ repo, base: v.base.sha, head: v.head.sha, changed, isProduct: isDeployed }).violations) reject(x.title, x.text); }
+    catch (e) { toolErrors.push('새로 생긴 정적 위반 검사를 끝내지 못했다: ' + String((e && e.message) || e).slice(0, 200)); }
     const deployedChanged = [...productSet].filter(p => !isTooling(p));
     const ownScripts = changed.filter(f => f.status === 'A' && SCRIPT_EXT.test(f.path) && !isAppendOnly(f.path) && !isFrozen(f.path) && !isDeployed(f.path)).map(f => f.path);
     if (ownScripts.length && deployedChanged.length) warn('이 작업이 만든 검사 스크립트 ' + ownScripts.length + '개', '그 출력은 증거로 인정하지 않는다: ' + ownScripts.slice(0, 10).join(', '));

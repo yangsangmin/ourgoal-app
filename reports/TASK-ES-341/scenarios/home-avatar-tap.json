@@ -1,0 +1,16 @@
+{
+  "id": "home-avatar-tap",
+  "title": "홈 아바타를 누르면 아바타 설정창이 열린다(레벨 숫자는 설정창에서만 보인다)",
+  "steps": [
+    { "do": "setViewport", "width": 375, "height": 812 },
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "expect": "visible", "selector": "#homeHeroAvatar", "timeoutMs": 15000 },
+    { "do": "click", "selector": "#homeHeroAvatar" },
+    { "expect": "visible", "selector": "#modalOverlay.active", "timeoutMs": 8000 },
+    { "expect": "visible", "selector": "#topRemainingCraftsTxt" },
+    { "capture": "home-avatar-tap-modal" },
+    { "expect": "noExceptions" }
+  ]
+}
