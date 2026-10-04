@@ -1,0 +1,336 @@
+{
+ "env": "로컬 127.0.0.2 정적 서버 + /api 운영 전달, 운영 Supabase 테스트 계정 A·B(주소·계정 가림). 작업자 실측 — 판정 아님",
+ "order": [
+  "기준(git archive 0e9a1e8) 1회차",
+  "작업(옮기기만, 2fa6fc2) 1회차",
+  "기준(0e9a1e8) 2회차",
+  "작업(옮기기만) 2회차",
+  "작업(R 포함, 72287de)",
+  "기준(git archive origin/main f3b1c50 — #698 하네스 정리 수정 포함)",
+  "작업(main 합친 d338d67)"
+ ],
+ "runs": [
+  {
+   "file": "ra-base.json",
+   "mode": "live",
+   "summary": {
+    "통과": 2,
+    "실패": 1,
+    "못 함": 0
+   },
+   "scenarios": [
+    {
+     "id": "RA-COMM-03",
+     "status": "실패",
+     "failedStep": {
+      "step": "A 가 B 추가",
+      "saw": "검색 결과에 상대 테스트 계정(uid 일치) 버튼 없음"
+     }
+    },
+    {
+     "id": "RA-COMM-04A",
+     "status": "통과",
+     "failedStep": null
+    },
+    {
+     "id": "RA-COMM-04B",
+     "status": "통과",
+     "failedStep": null
+    }
+   ],
+   "leftover": [
+    {
+     "by": "A",
+     "table": "team_ping_replies",
+     "rows": 2
+    },
+    {
+     "by": "A",
+     "table": "team_pings",
+     "rows": 1
+    }
+   ]
+  },
+  {
+   "file": "ra-after.json",
+   "mode": "live",
+   "summary": {
+    "통과": 3,
+    "실패": 0,
+    "못 함": 0
+   },
+   "scenarios": [
+    {
+     "id": "RA-COMM-03",
+     "status": "통과",
+     "failedStep": null
+    },
+    {
+     "id": "RA-COMM-04A",
+     "status": "통과",
+     "failedStep": null
+    },
+    {
+     "id": "RA-COMM-04B",
+     "status": "통과",
+     "failedStep": null
+    }
+   ],
+   "leftover": [
+    {
+     "by": "A",
+     "table": "users.companions"
+    },
+    {
+     "by": "A",
+     "table": "team_ping_replies",
+     "rows": 2
+    },
+    {
+     "by": "A",
+     "table": "team_pings",
+     "rows": 1
+    }
+   ]
+  },
+  {
+   "file": "ra-base2.json",
+   "mode": "live",
+   "summary": {
+    "통과": 3,
+    "실패": 0,
+    "못 함": 0
+   },
+   "scenarios": [
+    {
+     "id": "RA-COMM-03",
+     "status": "통과",
+     "failedStep": null
+    },
+    {
+     "id": "RA-COMM-04A",
+     "status": "통과",
+     "failedStep": null
+    },
+    {
+     "id": "RA-COMM-04B",
+     "status": "통과",
+     "failedStep": null
+    }
+   ],
+   "leftover": [
+    {
+     "by": "A",
+     "table": "users.companions"
+    },
+    {
+     "by": "A",
+     "table": "team_ping_replies",
+     "rows": 2
+    },
+    {
+     "by": "A",
+     "table": "team_pings",
+     "rows": 1
+    }
+   ]
+  },
+  {
+   "file": "ra-after2.json",
+   "mode": "live",
+   "summary": {
+    "통과": 2,
+    "실패": 1,
+    "못 함": 0
+   },
+   "scenarios": [
+    {
+     "id": "RA-COMM-03",
+     "status": "실패",
+     "failedStep": {
+      "step": "A 가 B 추가",
+      "saw": "검색 결과에 상대 테스트 계정(uid 일치) 버튼 없음"
+     }
+    },
+    {
+     "id": "RA-COMM-04A",
+     "status": "통과",
+     "failedStep": null
+    },
+    {
+     "id": "RA-COMM-04B",
+     "status": "통과",
+     "failedStep": null
+    }
+   ],
+   "leftover": [
+    {
+     "by": "A",
+     "table": "team_ping_replies",
+     "rows": 2
+    },
+    {
+     "by": "A",
+     "table": "team_pings",
+     "rows": 1
+    }
+   ]
+  },
+  {
+   "file": "ra-final.json",
+   "mode": "live",
+   "summary": {
+    "통과": 2,
+    "실패": 1,
+    "못 함": 0
+   },
+   "scenarios": [
+    {
+     "id": "RA-COMM-03",
+     "status": "실패",
+     "failedStep": {
+      "step": "A 가 B 추가",
+      "saw": "검색 결과에 상대 테스트 계정(uid 일치) 버튼 없음"
+     }
+    },
+    {
+     "id": "RA-COMM-04A",
+     "status": "통과",
+     "failedStep": null
+    },
+    {
+     "id": "RA-COMM-04B",
+     "status": "통과",
+     "failedStep": null
+    }
+   ],
+   "leftover": [
+    {
+     "by": "A",
+     "table": "team_ping_replies",
+     "rows": 2
+    },
+    {
+     "by": "A",
+     "table": "team_pings",
+     "rows": 1
+    }
+   ]
+  },
+  {
+   "file": "ra-m-base.json",
+   "mode": "live",
+   "summary": {
+    "통과": 3,
+    "실패": 0,
+    "못 함": 0
+   },
+   "scenarios": [
+    {
+     "id": "RA-COMM-03",
+     "status": "통과",
+     "failedStep": null
+    },
+    {
+     "id": "RA-COMM-04A",
+     "status": "통과",
+     "failedStep": null
+    },
+    {
+     "id": "RA-COMM-04B",
+     "status": "통과",
+     "failedStep": null
+    }
+   ],
+   "leftover": [
+    {
+     "by": "A",
+     "table": "team_ping_replies",
+     "rows": 2
+    },
+    {
+     "by": "A",
+     "table": "team_pings",
+     "rows": 1
+    }
+   ]
+  },
+  {
+   "file": "ra-m-after.json",
+   "mode": "live",
+   "summary": {
+    "통과": 3,
+    "실패": 0,
+    "못 함": 0
+   },
+   "scenarios": [
+    {
+     "id": "RA-COMM-03",
+     "status": "통과",
+     "failedStep": null
+    },
+    {
+     "id": "RA-COMM-04A",
+     "status": "통과",
+     "failedStep": null
+    },
+    {
+     "id": "RA-COMM-04B",
+     "status": "통과",
+     "failedStep": null
+    }
+   ],
+   "leftover": [
+    {
+     "by": "A",
+     "table": "team_ping_replies",
+     "rows": 2
+    },
+    {
+     "by": "A",
+     "table": "team_pings",
+     "rows": 1
+    }
+   ]
+  }
+ ],
+ "loggedInModals": {
+  "what": "계정 A 로그인 뒤 소통 탭에서 openTeamInviteModal·openScoutToTeamModal·openFeedShareModal 열기·탭 전환·닫기 7단계의 모달 HTML·토스트·동반자/팀 버튼 수(읽기만)",
+  "login": [
+   true,
+   true,
+   true,
+   true,
+   true
+  ],
+  "steps": [
+   "invite-g0:called:comps0:teams0",
+   "invite-search-tab:clicked:comps0:teams0",
+   "invite-close:clicked:comps0:teams0",
+   "scout:called:comps0:teams0",
+   "scout-close:clicked:comps0:teams0",
+   "feedshare:called:comps0:teams0",
+   "feedshare-close:clicked:comps0:teams0"
+  ],
+  "baseVsMoveOnly": {
+   "values": 49,
+   "differing": 0,
+   "errorsSame": true
+  },
+  "baseVsFinal": {
+   "values": 49,
+   "differing": 0,
+   "errorsSame": true
+  },
+  "baseVsFinalOldBase": {
+   "values": 49,
+   "differing": 0,
+   "errorsSame": true
+  },
+  "consoleErrorsEach": [
+   12,
+   12,
+   12
+  ]
+ }
+}

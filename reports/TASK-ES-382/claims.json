@@ -1,0 +1,346 @@
+{
+ "task": "TASK-ES-382",
+ "requirementsSource": "docs/specs/REQ-TASK-ES-382-TEAM-SPLIT.md",
+ "requirements": [
+  {
+   "id": "R1",
+   "text": "js/team-invite-comm.js(4,105줄)에서 책임 묶음 두 개 — 팀 초대·영입 모달(openTeamInviteModal·openScoutToTeamModal)과 공유(postShareCardToFeed·shareCardExternal·saveCardImage·openFeedShareModal) — 를 js/team-recruit.js·js/team-share.js 로 글자 그대로 옮기고 원본 줄 수를 줄인다. 각 800줄 이하, 기능 추가·삭제 0."
+  },
+  {
+   "id": "R2",
+   "text": "전역 노출(window.OurgoalTeamInviteComm 키·순서, window.* 이름)·호출 순서·동작 그대로. 원본은 IIFE 머리에서 옮긴 함수를 같은 이름으로 가져오고, 옮긴 코드가 읽는 원본 스코프 이름만 키트 통로에 getter 로 노출한다."
+  },
+  {
+   "id": "R3",
+   "text": "전후 차이 0 — 토큰 동일 검사, 게스트 조작 비교(기준 2회·후 1회), npm test 기준과 같은 통과 수, 실계정 하네스 RA-COMM-03·04A·04B 기준·작업 비교."
+  },
+  {
+   "id": "R4",
+   "text": "신고서 module-specs --write, 모듈 가드 통과·기준선 낮춤. 기준 시험지 기대값 변경·retire 0, 동결 파일 변경 0."
+  },
+  {
+   "id": "R",
+   "text": "(별도 지시 항목, #697 빌더 발견) 피드 공유 모달에서 동반자에게 보내는 DM 의 대화방 id 를 getDmThreadId(myId, peerId) 로 만들어, 그 메시지가 1:1 대화방 화면·읽음 표시와 같은 id 에 들어가게 한다. 부품 시험으로 기준 실패 → 작업 통과를 보인다."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C1",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "팀 목표 팀원 초대 모달 openTeamInviteModal 이 js/team-recruit.js 에 선언되어 있다",
+   "touches": [
+    "js/team-recruit.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-recruit.js",
+    "text": "  function openTeamInviteModal(gid, groupsPool){"
+   }
+  },
+  {
+   "id": "C2",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "피드 유저 팀 영입 모달 openScoutToTeamModal 이 js/team-recruit.js 에 선언되어 있다",
+   "touches": [
+    "js/team-recruit.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-recruit.js",
+    "text": "  function openScoutToTeamModal(targetUser){"
+   }
+  },
+  {
+   "id": "C3",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "공유 카드 피드 게시 postShareCardToFeed 가 js/team-share.js 에 선언되어 있다",
+   "touches": [
+    "js/team-share.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-share.js",
+    "text": "  async function postShareCardToFeed(g, lastRec, canvasDataUrl){"
+   }
+  },
+  {
+   "id": "C4",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "피드 글 공유 모달 openFeedShareModal 이 js/team-share.js 에 선언되어 있다",
+   "touches": [
+    "js/team-share.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-share.js",
+    "text": "  function openFeedShareModal(post){"
+   }
+  },
+  {
+   "id": "C5",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "원본 js/team-invite-comm.js 에 openTeamInviteModal 함수 선언이 남아 있지 않다",
+   "touches": [
+    "js/team-invite-comm.js"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "js/team-invite-comm.js",
+    "text": "  function openTeamInviteModal(gid, groupsPool){"
+   }
+  },
+  {
+   "id": "C6",
+   "req": "R1",
+   "kind": "static",
+   "domain": "code",
+   "statement": "원본 js/team-invite-comm.js 에 openFeedShareModal 함수 선언이 남아 있지 않다",
+   "touches": [
+    "js/team-invite-comm.js"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "js/team-invite-comm.js",
+    "text": "  function openFeedShareModal(post){"
+   }
+  },
+  {
+   "id": "C7",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "원본은 IIFE 머리에서 키트의 openTeamInviteModal 을 같은 이름으로 가져와 내부 호출·노출 객체를 그대로 둔다",
+   "touches": [
+    "js/team-invite-comm.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-invite-comm.js",
+    "text": "  var openTeamInviteModal = _teamKit.openTeamInviteModal;"
+   }
+  },
+  {
+   "id": "C8",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "index.html 은 새 파일 2개를 원본 script 태그 바로 앞에서 읽는다(원본 태그·버전 글자 그대로)",
+   "touches": [
+    "index.html"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "index.html",
+    "text": "<script src=\"js/team-recruit.js?v=20261005-es382\"></script><script src=\"js/team-share.js?v=20261005-es382\"></script><script src=\"js/team-invite-comm.js?v=20260916-es131\"></script>"
+   }
+  },
+  {
+   "id": "C9",
+   "req": "R2",
+   "kind": "static",
+   "domain": "code",
+   "statement": "옮긴 6개 함수의 토큰열이 이전 전과 같고(T. 접두·R 1곳 제외), 누수·미노출 0, 노출 객체 키 42개·순서와 window 이름이 같다고 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-382/verify-team-split.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-382/verify-team-split.json",
+    "path": "ok",
+    "equals": true
+   }
+  },
+  {
+   "id": "C10",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "게스트 조작 34단계(초대·영입·피드 공유 모달, 공유 카드 3대 버튼) 비교에서 기준 대 후 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-382/dom-compare-team.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-382/dom-compare-team.json",
+    "path": "differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C11",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "계정 A 로그인 상태에서 세 모달을 열고 닫은 7단계 비교가 기준 대 최종 다른 값 0 으로 기록되어 있다(작업자 실측)",
+   "touches": [
+    "reports/TASK-ES-382/real-account-comm.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-382/real-account-comm.json",
+    "path": "loggedInModals.baseVsFinal.differing",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C19",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui-behavior",
+   "statement": "게스트 tab-check 소통·목표 탭 48장 816값 비교(기준 대 작업)에서 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-382/tab-compare-base1-after.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-382/tab-compare-base1-after.json",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C12",
+   "req": "R",
+   "kind": "static",
+   "domain": "code",
+   "statement": "피드 공유 DM 은 대화방 id 를 getDmThreadId(myId, peerId) 로 만든다",
+   "touches": [
+    "js/team-share.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-share.js",
+    "text": "                var threadId = T.getDmThreadId(myId, peerId);"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R",
+   "kind": "static",
+   "domain": "code",
+   "statement": "피드 공유 DM 이 대화방 id 를 'dm_' 없이 만들던 줄이 남아 있지 않다",
+   "touches": [
+    "js/team-share.js"
+   ],
+   "check": {
+    "type": "codeNotContains",
+    "file": "js/team-share.js",
+    "text": "var threadId = [myId, peerId].sort().join('_');"
+   }
+  },
+  {
+   "id": "C14",
+   "req": "R",
+   "kind": "static",
+   "domain": "code",
+   "statement": "원본 스코프 통로가 getDmThreadId 를 getter 로 노출한다",
+   "touches": [
+    "js/team-invite-comm.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "js/team-invite-comm.js",
+    "text": "    get getDmThreadId(){ return getDmThreadId; },"
+   }
+  },
+  {
+   "id": "C15",
+   "req": "R",
+   "kind": "static",
+   "domain": "code",
+   "statement": "부품 시험(tests/feed-share-dm-thread-es382.test.js)이 작업 트리에서 5/5 통과로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-382/unit-feed-share-dm-thread-work.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-382/unit-feed-share-dm-thread-work.json",
+    "path": "failed",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C16",
+   "req": "R",
+   "kind": "static",
+   "domain": "code",
+   "statement": "같은 부품 시험이 기준 사본(git archive origin/main f3b1c50)에서는 대화방 id 2건 실패로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-382/unit-feed-share-dm-thread-base.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-382/unit-feed-share-dm-thread-base.json",
+    "path": "failed",
+    "equals": 2
+   }
+  },
+  {
+   "id": "C17",
+   "req": "R3",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "운영 Supabase 테스트 계정으로 로그인한 상태에서 동반자·이끄는 팀이 있을 때 팀원 초대 모달의 동반자 원탭 초대, 피드 유저 팀 영입, 피드 공유 모달의 동반자 DM·팀 톡방 공유가 이전 전과 같게 동작한다",
+   "touches": [
+    "js/team-recruit.js",
+    "js/team-share.js"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "테스트 계정 A·B 환경 변수가 있는 이 PC 의 세션 또는 상민님",
+    "how": [
+     "테스트 계정 A·B 를 서로 동반자로 두고 A 가 팀 목표를 하나 이끄는 상태를 만든다",
+     "A 로 로그인해 목표 탭 팀 화면의 👥 팀원 초대 → 동반자 B 초대 버튼, 소통 피드 카드의 영입 버튼 → 팀 선택을 눌러 토스트·팀원 목록을 본다",
+     "소통 피드 글의 공유 → 동반자 B 에게 보내기 / 팀 톡방 공유를 눌러 B 화면 DM·팀 채팅에 그 글이 보이는지 본 뒤 만든 데이터를 지운다"
+    ],
+    "note": "법정은 게스트(금고 fixture)로만 화면을 연다. 작업자 실측(판정 아님): 로컬 127.0.0.2 + /api 운영 전달로 RA-COMM-04A·04B 기준·작업 다섯 번 모두 통과, RA-COMM-03 은 main 합치기 전 기준·작업 양쪽에서 흔들렸고(하네스 정리가 동반자를 못 지움) #698 이 들어온 뒤 기준·작업 모두 통과, 계정 A 로그인 상태 모달 7단계 49값 차이 0 — 단 A 의 동반자·이끄는 팀이 0 이라 위 버튼은 그려지지 않아 누르지 못함(reports/TASK-ES-382/real-account-comm.json). 주소·계정은 가렸다."
+   }
+  },
+  {
+   "id": "C18",
+   "req": "R",
+   "kind": "unverified",
+   "domain": "ui-behavior",
+   "statement": "실서버에서 A 가 피드 글을 동반자 B 에게 DM 으로 공유하면 그 메시지가 A·B 의 1:1 대화방 화면에 보이고 B 가 열면 읽음으로 바뀐다",
+   "touches": [
+    "js/team-share.js"
+   ],
+   "unverified": {
+    "reason": "tool-cannot-measure",
+    "cannotBecause": "needs-login",
+    "who": "테스트 계정 A·B 환경 변수가 있는 이 PC 의 세션 또는 상민님",
+    "how": [
+     "A·B 를 동반자로 둔 뒤 A 로 로그인해 소통 피드 글의 공유 → B 에게 보내기",
+     "A 의 B 대화방과 B 의 DM 목록·대화방에 그 공유 글이 보이는지, B 가 연 뒤 A 화면에 읽음이 뜨는지 본다"
+    ],
+    "note": "실서버 전송은 하지 않았다 — 테스트 계정이 보낸 DM 행은 RLS 로 지워지지 않아 남는다(하네스 정리 한계). 대신 부품 시험이 team_pings.id·team_ping_replies.ping_id 가 대화방 화면이 읽는 getDmThreadId 값과 같음을 잰다(C15·C16)."
+   }
+  },
+  {
+   "id": "C20",
+   "req": "R",
+   "kind": "static",
+   "domain": "code",
+   "statement": "부품 시험 tests/feed-share-dm-thread-es382.test.js 가 피드 공유 DM 의 team_pings.id 를 대화방 화면이 읽는 getDmThreadId 값과 맞대어 본다",
+   "touches": [
+    "tests/feed-share-dm-thread-es382.test.js"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "tests/feed-share-dm-thread-es382.test.js",
+    "text": "    assert.strictEqual(ping.row.id, api.getDmThreadId(ME, PEER));"
+   }
+  }
+ ]
+}
