@@ -1,0 +1,65 @@
+{
+  "id": "settings-stats-after-checkin",
+  "title": "홈에서 체크인 1회 후 설정 탭에 들어가면 프로필 카드의 총 기록이 새로고침 없이 1로 보인다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#profileCard .profile-stats",
+      "text": "0총 기록"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"home\"]"
+    },
+    {
+      "do": "type",
+      "selector": "#captureInput",
+      "text": "법정 확인 체크인"
+    },
+    {
+      "do": "click",
+      "selector": "#captureSave"
+    },
+    {
+      "do": "click",
+      "selector": "#firstCheckinDoneBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#btnCheckinAiClose"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#profileCard .profile-stats",
+      "text": "1총 기록"
+    },
+    {
+      "capture": "settings-after-checkin"
+    }
+  ]
+}

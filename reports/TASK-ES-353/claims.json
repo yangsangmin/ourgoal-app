@@ -1,0 +1,134 @@
+{
+  "task": "TASK-ES-353",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-353-EVENT-BUS.md",
+  "requirements": [
+    { "id": "R1", "text": "event-bus 에 같은 (이벤트, 핸들러) 또는 같은 소유자 키 중복 등록 방지 + mount 시 이전 구독 해제(dispose)." },
+    { "id": "R2", "text": "변경 이벤트 사전 1개(체크인·기록·목표·할일·일정·EXP·설정)를 문서와 상수로 정하고, 구독을 실제 발행 이름에 맞춘다. 발행 0 인 구독 제거." },
+    { "id": "R3", "text": "받는 쪽은 자기 영역만 1회 다시 그린다(같은 틱 중복 렌더 합치기)." },
+    { "id": "R4", "text": "미정의 renderCalendar 호출을 실제 렌더 함수(renderCalendarScreen 또는 성소 엔진)로 바꾸거나 제거." },
+    { "id": "R5", "text": "마운트 성공 판정을 '실제로 그렸는가'로 — 빈 소블록이면 폴백 동작." },
+    { "id": "R6", "text": "측정: 헤드리스(docs/design/harness/shots-lib.js newPage) 계측으로 ① 기록·캘린더·설정 탭을 각 10회 오간 뒤 체크인 1회 → 탭별 렌더 함수 호출 1회 ② 발행 0 인 구독 0(grep/런타임 목록) ③ renderCalendar 미정의 호출 0 ④ 체크인·할일 체크가 새로고침 없이 홈·목표·기록·캘린더에 반영(촬영 또는 DOM 값). npm test 0." },
+    { "id": "R7", "text": "문서: REQ/PLAN(TASK-ES-353), reports/TASK-ES-353/claims.json, TICKETS 1줄, dev_log. HOME-18·GOALS-22 는 이 PR 로 함께 완료됨을 REQ 에 명시." },
+    { "id": "R8", "text": "HOME-18 흡수분: 같은 계정 두 기기에서 한쪽 기록이 다른 쪽에 반영(노션 HOME-18 완료 기준)." }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "static", "domain": "logic",
+      "statement": "이벤트 버스가 같은 (이벤트, 소유자 키) 구독을 새로 쌓지 않고 바꿔 끼우며, 소유자 키로 구독을 한꺼번에 해제하는 offOwner 를 제공한다",
+      "touches": ["js/core/event-bus.js"],
+      "check": { "type": "codeContains", "file": "js/core/event-bus.js", "text": "list = list.filter(entry => entry.owner !== owner);" }
+    },
+    {
+      "id": "C2", "req": "R1", "kind": "static", "domain": "logic",
+      "statement": "기록 타임라인 소블록은 mount 때 dispose 로 이전 구독을 먼저 해제한다",
+      "touches": ["js/tabs/records/sub-timeline.js"],
+      "check": { "type": "codeContains", "file": "js/tabs/records/sub-timeline.js", "text": "ev.offOwner('records/timeline')" }
+    },
+    {
+      "id": "C3", "req": "R2", "kind": "static", "domain": "logic",
+      "statement": "변경 이벤트 사전 CHANGE_DICTIONARY(checkin·record·goal·todo·schedule·exp·settings → view:sync)를 버스 상수로 정했다",
+      "touches": ["js/core/event-bus.js"],
+      "check": { "type": "codeContains", "file": "js/core/event-bus.js", "text": "const CHANGE_DICTIONARY = Object.freeze({" }
+    },
+    {
+      "id": "C4", "req": "R2", "kind": "static", "domain": "logic",
+      "statement": "기록 타임라인 소블록은 발행처가 없는 record:deleted 를 더 이상 구독하지 않는다",
+      "touches": ["js/tabs/records/sub-timeline.js"],
+      "check": { "type": "codeNotContains", "file": "js/tabs/records/sub-timeline.js", "text": "record:deleted" }
+    },
+    {
+      "id": "C5", "req": "R2", "kind": "static", "domain": "logic",
+      "statement": "기록 타이머 소블록은 발행처가 없는 timer:saved 를 더 이상 구독하지 않는다",
+      "touches": ["js/tabs/records/sub-timer.js"],
+      "check": { "type": "codeNotContains", "file": "js/tabs/records/sub-timer.js", "text": "timer:saved" }
+    },
+    {
+      "id": "C6", "req": "R2", "kind": "static", "domain": "logic",
+      "statement": "캘린더 월간 소블록은 발행처가 없는 calendar:dateSelected 를 더 이상 구독하지 않는다",
+      "touches": ["js/tabs/calendar/sub-month-view.js"],
+      "check": { "type": "codeNotContains", "file": "js/tabs/calendar/sub-month-view.js", "text": "calendar:dateSelected" }
+    },
+    {
+      "id": "C7", "req": "R2", "kind": "static", "domain": "logic",
+      "statement": "목표 개인 소블록은 발행처가 없는 goal:updated 를 더 이상 구독하지 않는다",
+      "touches": ["js/tabs/goals/sub-personal.js"],
+      "check": { "type": "codeNotContains", "file": "js/tabs/goals/sub-personal.js", "text": "goal:updated" }
+    },
+    {
+      "id": "C8", "req": "R3", "kind": "static", "domain": "logic",
+      "statement": "변경 전파기 dispatchFullViewPropagation 은 영역 렌더를 버스에 모았다가 view:sync 발행 뒤 한 번씩 실행한다",
+      "touches": ["index.html"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "if(ev && typeof ev.flushRenders === 'function') ev.flushRenders();" }
+    },
+    {
+      "id": "C9", "req": "R3", "kind": "static", "domain": "logic",
+      "statement": "목표 개인 소블록은 변경 때 renderGoalsScreen 키로 렌더를 요청해 같은 틱의 중복 요청과 합쳐진다",
+      "touches": ["js/tabs/goals/sub-personal.js"],
+      "check": { "type": "codeContains", "file": "js/tabs/goals/sub-personal.js", "text": "ev.requestRender('renderGoalsScreen'" }
+    },
+    {
+      "id": "C10", "req": "R3", "kind": "static", "domain": "logic",
+      "statement": "기록 화면을 그릴 때 세그먼트·슬라이드 상태 복원 호출은 조용히(silent) 처리한다",
+      "touches": ["index.html"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "setRecordsSegment(state.recordsSegment || 'feed', true);" }
+    },
+    {
+      "id": "C11", "req": "R4", "kind": "static", "domain": "logic",
+      "statement": "js/components.js 에 미정의 renderCalendar 호출이 남아 있지 않다(renderCalendarScreen 으로 바꿈)",
+      "touches": ["js/components.js"],
+      "check": { "type": "codeNotContains", "file": "js/components.js", "text": "win.renderCalendar()" }
+    },
+    {
+      "id": "C12", "req": "R4", "kind": "static", "domain": "logic",
+      "statement": "js/team-invite-comm.js 에 미정의 renderCalendar 호출이 남아 있지 않다",
+      "touches": ["js/team-invite-comm.js"],
+      "check": { "type": "codeNotContains", "file": "js/team-invite-comm.js", "text": "win.renderCalendar()" }
+    },
+    {
+      "id": "C13", "req": "R4", "kind": "static", "domain": "logic",
+      "statement": "js/avatar-system.js 에 미정의 renderCalendar 호출이 남아 있지 않다",
+      "touches": ["js/avatar-system.js"],
+      "check": { "type": "codeNotContains", "file": "js/avatar-system.js", "text": "win.renderCalendar()" }
+    },
+    {
+      "id": "C14", "req": "R4", "kind": "static", "domain": "logic",
+      "statement": "index.html 의 변경 전파기에서 미정의 renderCalendar 호출을 지웠다",
+      "touches": ["index.html"],
+      "check": { "type": "codeNotContains", "file": "index.html", "text": "renderCalendar();" }
+    },
+    {
+      "id": "C15", "req": "R5", "kind": "behavior", "change": "fix", "symptom": 13, "domain": "navigation",
+      "statement": "홈에서 체크인 1회 후 설정 탭에 들어가면 프로필 카드의 총 기록이 새로고침 없이 1로 보인다(예전에는 빈 소블록이 마운트 성공으로 세어져 설정 화면이 다시 그려지지 않아 0으로 남음)",
+      "touches": ["js/tabs/settings/index.js", "js/tabs/settings/sub-profile.js", "js/core/registry.js", "index.html"],
+      "scenario": "scenarios/settings-stats-after-checkin.json"
+    },
+    {
+      "id": "C16", "req": "R5", "kind": "static", "domain": "logic",
+      "statement": "레지스트리 mount 는 블록이 아무것도 못 그렸다고(false) 알리면 실패로 돌려준다",
+      "touches": ["js/core/registry.js"],
+      "check": { "type": "codeContains", "file": "js/core/registry.js", "text": "block.mounted = result !== false;" }
+    },
+    {
+      "id": "C17", "req": "R6", "kind": "static", "domain": "config",
+      "statement": "기준(origin/main)·작업 브랜치 측정 결과 파일을 남겼다(작업자 측정, 판정 아님)",
+      "touches": ["reports/TASK-ES-353/measure-result.json"],
+      "check": { "type": "fileExists", "file": "reports/TASK-ES-353/measure-result.json" }
+    },
+    {
+      "id": "C18", "req": "R7", "kind": "static", "domain": "config",
+      "statement": "REQ 에 HOME-18·GOALS-22 가 이 PR 로 함께 완료된다고 적었다",
+      "touches": ["docs/specs/REQ-TASK-ES-353-EVENT-BUS.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-353-EVENT-BUS.md", "text": "HOME-18·GOALS-22 는 이 PR 로 함께 완료된다" }
+    },
+    {
+      "id": "C19", "req": "R8", "kind": "unverified", "domain": "multi-user",
+      "statement": "같은 계정으로 로그인한 두 기기에서 한쪽 체크인이 다른 쪽 화면에 반영된다",
+      "touches": ["index.html"],
+      "unverified": {
+        "reason": "needs-two-accounts",
+        "who": "같은 회원 계정으로 두 기기(폰과 PC 등)에 로그인할 수 있는 사람",
+        "how": ["두 기기에서 같은 계정으로 앱에 로그인한다", "기기 A 홈에서 체크인 1개를 남긴다", "기기 B 에서 새로고침 없이(또는 앱을 다시 열어) 기록 탭에 그 체크인이 보이는지 본다"]
+      }
+    }
+  ]
+}
