@@ -148,7 +148,7 @@ async function openState(browser, base, tab, theme, vp, st) {
     const errBefore = errors.length;
     let entry;
     try { entry = await st.enter(page); } catch (e) { entry = { entered: false, note: 'enter 실패: ' + String(e).slice(0, 120) }; }
-    return { ok: !!entry.entered, page, close, errors, httpErrors, bootOverlays, note: entry.note, errBefore };
+    return { ok: !!entry.entered, page, close, errors, httpErrors, bootOverlays, note: (nav.retried ? nav.note + ' · ' : '') + (entry.note || ''), errBefore };
   } catch (e) {
     return { ok: false, page, close, errors, httpErrors, bootOverlays: [], note: '열기 실패: ' + String(e).slice(0, 120), errBefore: errors.length };
   }

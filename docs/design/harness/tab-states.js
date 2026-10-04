@@ -173,15 +173,20 @@ async function boot(page) {
 
 /* 하단 탭 버튼을 진짜로 누르고 그 탭 화면이 활성인지 확인한다 */
 async function goTab(page, tab) {
-  if (tab !== 'home') {
-    const c = await clickReal(page, '.navbtn[data-tab="' + tab + '"]');
-    if (!c.clicked) return { ok: false, note: c.note };
-    await sleep(900);
+  // 병렬 실행으로 느려지면 첫 누름이 안 먹을 때가 있다(2026-10-04 실행 B 달력 첫 장에서 실측) — 진짜 누름을 두 번까지 다시 하고, 다시 한 횟수를 남긴다
+  let active = null, tries = 0;
+  for (; tries < 3; tries++) {
+    if (tab !== 'home') {
+      const c = await clickReal(page, '.navbtn[data-tab="' + tab + '"]');
+      if (!c.clicked) return { ok: false, note: c.note };
+      await sleep(900 + tries * 600);
+    }
+    active = await page.evaluate(() => (document.querySelector('.screen.active') || {}).id || null);
+    if (active === 'screen-' + tab) break;
   }
-  const active = await page.evaluate(() => (document.querySelector('.screen.active') || {}).id || null);
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
   await sleep(200);
-  return { ok: active === 'screen-' + tab, note: '활성 화면=' + active };
+  return { ok: active === 'screen-' + tab, note: '활성 화면=' + active + (tries > 0 ? ' · 탭 버튼 다시 누름 ' + Math.min(tries, 2) + '회' : ''), retried: tries > 0 };
 }
 
 module.exports = { STATES, TAB_NOTES, boot, goTab, clickReal, sleep };
