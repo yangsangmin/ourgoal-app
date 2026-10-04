@@ -1,0 +1,76 @@
+{
+ "tool": "docs/design/harness/real-account-check.js",
+ "task": "TASK-ES-355",
+ "mode": "live",
+ "note": "실계정 재생 — 작업자 예비 증거, 판정 아님",
+ "appUrl": "<가림> 로컬 정적 서버 127.0.0.2 + /api 운영 전달 — 이 변경 사본",
+ "accounts": "<가림>",
+ "runTag": "ogtest-202610050316-mo95",
+ "startedAt": "2026-10-04T18:16:34.952Z",
+ "finishedAt": "2026-10-04T18:17:19.623Z",
+ "scenarios": [
+  {
+   "id": "RA-COMM-03",
+   "tab": "소통",
+   "source": "노션 COMM-03",
+   "ms": 22728,
+   "evidence": {
+    "already": false,
+    "listedNow": true,
+    "afterReload": true,
+    "otherDevice": true
+   },
+   "status": "통과"
+  },
+  {
+   "id": "RA-COMM-04A",
+   "tab": "소통",
+   "source": "노션 COMM-04 · #656 TASK-ES-347 C8",
+   "ms": 6637,
+   "evidence": {
+    "arrivedOnB": 1
+   },
+   "status": "통과"
+  }
+ ],
+ "summary": {
+  "통과": 2,
+  "실패": 0,
+  "못 함": 0
+ },
+ "cleanup": {
+  "deleted": [],
+  "leftover": [
+   {
+    "by": "A",
+    "table": "users.companions",
+    "what": "B",
+    "how": "화면 삭제 버튼"
+   },
+   {
+    "by": "A",
+    "table": "team_ping_replies",
+    "rows": 1,
+    "reason": "삭제 뒤에도 남음(RLS 로 삭제 불가일 수 있음)"
+   },
+   {
+    "by": "A",
+    "table": "team_pings",
+    "rows": 1,
+    "reason": "삭제 뒤에도 남음(RLS 로 삭제 불가일 수 있음)"
+   }
+  ],
+  "madeDuringRun": [
+   {
+    "by": "A",
+    "table": "users.companions",
+    "what": "B"
+   },
+   {
+    "by": "A",
+    "table": "team_ping_replies",
+    "what": "ogtest-202610050316-mo95 dm-a"
+   }
+  ]
+ }
+}

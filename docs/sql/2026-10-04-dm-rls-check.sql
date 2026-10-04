@@ -98,3 +98,39 @@ select 'B 가 보는 피드 댓글', count(*) from public.team_pings where group
 union all
 select 'B 가 보는 마니또 풀', count(*) from public.team_pings where group_id = 'manito_pool';
 rollback;
+
+-- ============================================================
+-- [사전-6] #TASK-ES-381 — 2단계 직전 확인: og_dm_mark 가 있고(1), security definer(true)이며,
+--          두 표의 rls_강제 가 false 여야 2단계 뒤에도 읽음 표시가 된다(강제가 true 면 함수가 0행이 된다)
+-- ============================================================
+select 'og_dm_mark 수(1)' as 확인, count(*)::text as 값 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+ where n.nspname = 'public' and p.proname = 'og_dm_mark'
+union all
+select 'og_dm_mark security definer(true)', coalesce(bool_and(p.prosecdef)::text, '함수 없음') from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+ where n.nspname = 'public' and p.proname = 'og_dm_mark'
+union all
+select c.relname || ' rls_강제(false)', c.relforcerowsecurity::text from pg_class c join pg_namespace n on n.oid = c.relnamespace
+ where n.nspname = 'public' and c.relname in ('team_pings', 'team_ping_replies');
+
+-- ============================================================
+-- [사전-7] #TASK-ES-381 — 2단계의 id 규칙에 안 맞는 기존 행 수(건수만). 0 이 아니어도 2단계 실행은 안전하다
+--          (기존 행은 지우거나 고치지 않는다). 그 행들은 같은 id 로 다시 upsert 할 때만 막힌다 — 수를 기록해 둔다.
+-- ============================================================
+select '대화방 id 규칙 밖 DM 메시지(team_ping_replies)' as 확인, count(*) as 수
+  from public.team_ping_replies r
+ where r.ping_id::text not in (
+         'dm_' || least(r.sender_id::text collate "C", r.receiver_id::text collate "C") || '_' || greatest(r.sender_id::text collate "C", r.receiver_id::text collate "C"),
+         least(r.sender_id::text collate "C", r.receiver_id::text collate "C") || '_' || greatest(r.sender_id::text collate "C", r.receiver_id::text collate "C"))
+    or r.ping_id is null or r.sender_id is null or r.receiver_id is null
+union all
+select '대화방 id 규칙 밖 대화방 부모 행(team_pings dm_direct)', count(*)
+  from public.team_pings p
+ where p.group_id = 'dm_direct'
+   and (p.id::text not in (
+         'dm_' || least(p.sender_id::text collate "C", p.receiver_id::text collate "C") || '_' || greatest(p.sender_id::text collate "C", p.receiver_id::text collate "C"),
+         least(p.sender_id::text collate "C", p.receiver_id::text collate "C") || '_' || greatest(p.sender_id::text collate "C", p.receiver_id::text collate "C"))
+        or p.sender_id is null or p.receiver_id is null)
+union all
+select '본인 풀 id 가 아닌 마니또 풀 행(team_pings manito_pool)', count(*)
+  from public.team_pings p
+ where p.group_id = 'manito_pool' and p.id::text is distinct from 'mn_pool_' || p.sender_id::text;
