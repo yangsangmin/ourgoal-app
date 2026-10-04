@@ -672,6 +672,38 @@
     ],
     "note": "운영 피드의 글은 실사용자 글이라 작업자는 댓글·응원을 남기지 않았다. 게스트 목 서버 조작 비교(댓글 펼치기·빈 댓글·등록·빠른 답글·삭제)는 기준 대 후 차이 0."
    }
+  },
+  {
+   "id": "C43",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui",
+   "statement": "소통 탭 기준 실측 1회차와 후 실측 비교에서 비교한 값 447 중 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-379/tab-compare-base-run1-vs-after.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-379/tab-compare-base-run1-vs-after.json",
+    "path": "differingValues",
+    "equals": 0
+   }
+  },
+  {
+   "id": "C44",
+   "req": "R3",
+   "kind": "static",
+   "domain": "ui",
+   "statement": "소통 탭 기준 실측 2회 사이(본질적 변동) 다른 값 0 으로 기록되어 있다",
+   "touches": [
+    "reports/TASK-ES-379/tab-compare-base-run1-vs-run2.json"
+   ],
+   "check": {
+    "type": "jsonPath",
+    "file": "reports/TASK-ES-379/tab-compare-base-run1-vs-run2.json",
+    "path": "differingValues",
+    "equals": 0
+   }
   }
  ]
 }

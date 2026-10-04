@@ -64,7 +64,7 @@
 | :-- | :-- | :-- |
 | 글자 동일 | `verify-comm.js` | 옮긴 9개 선언 토큰열 동일(renderCommScreen 594·renderCommDM 31·renderCommCompanions 31·SERVER_FEED_COMMENTS_CACHE 6·loadServerFeedComments 477·getFeedComments 340·setFeedComments 44·handleUserCommentSubmit 322·toggleFeedReaction 303, L./K. 접두 제외), 누수 0·미노출 0·남은 정의 0·안 가져온 사용 0 (`verify-comm.json` `ok: true`) |
 | 조작 전후(게스트) | `dom-compare-comm.js` | 50단계(소통 진입·피드 카테고리 2·유형 2·반응 모듈 단추·예전 이모지 반응 4·댓글 펼치기·빈 댓글·등록·빠른 답글·삭제·프로필·DM·동반자·신고·차단·공유·스카우트·템플릿·서브탭 6·탭 왕복 …) × 13칸 = 650값, 기준 대 후 다른 값 0, 기준 대 기준 0, 콘솔 오류 0/0/0. 지운 값: 시간·난수, 기록 입력 창 datetime-local 기본값(분 단위 지금 시각), 마니또 미리보기 익명 이름(난수) — 둘 다 같은 기준 앱 2회에서 달랐다 |
-| 탭 실측 | `tab-check.js … comm` 기준 2회·후 1회 → `tab-compare.js` | TAB_CHECK_RESULT |
+| 탭 실측 | `tab-check.js … comm` 기준 2회·후 1회 → `tab-compare.js` | 소통 탭 24장(4테마×2화면×3상태: 기본·서브탭·시트)+Dead-Click, 비교한 값 447 — 기준 1회 대 2회 다른 값 0(본질 변동 0), 기준 1회 대 후 0, 기준 2회 대 후 0. 두 앱 모두 git 폴더가 아니라 요약의 commit 칸은 null(같은 커밋 표시는 그 때문 — 실제로는 기준 20a2493 대 이 변경) |
 | 실계정 RA-COMM-03·04A | `real-account-check.js --only RA-COMM-03,RA-COMM-04A`(로컬 127.0.0.2 + /api 운영 전달) | 기준 사본 **통과·통과** · 이 변경 **통과·통과**(동반자 즉시·새로고침·다른 기기 모두 참, B 도착 1건). 주소·계정 가림 |
 | 실계정 로그인 상태 조작 | 작업자 보조 스크립트(같은 로컬 방식, 계정 A·B, 읽기 조작만) | 15단계 × 7칸 × 2계정 = 210값, 기준1 대 후 0·기준1 대 기준2 0·기준2 대 후 0. 콘솔 오류 A 14·B 9 세 번 모두 같은 수·같은 종류(404·400) (`real-account-comm-dom-compare.json`) |
 | 화면 시나리오(법정 형식) | `court/lib/scenario.js` runScenario, 법정 정적 서버·법정 무작위 호스트 | `comm-subtabs-switch` 기준·후 모두 통과, 약점 0, 예외 0 |
