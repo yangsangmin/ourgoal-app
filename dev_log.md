@@ -5832,3 +5832,11 @@
 - **확인 못 함**: 같은 계정 두 기기 반영(HOME-18), 실제 폰 체감, 통계 화면 촬영. EXP 원장 이원화는 CORE-03 실행 티켓 몫.
 - **진행 단계**: [4단계: 심사 청구]
 ---
+## [2026-10-04 23:10] #TASK-ES-356: 세포 골격 — 모듈 청사진 + 재발 방지 장치 (노션 CORE-08, [청사진] 아워골 세포 골격 v0.1)
+- **목표**: 모듈화가 우상향으로 쌓이게 — 세포끼리 신호·능력 요청·꽂는 자리로만 맞물리는 골격, 모든 세포의 신고서, 부채가 늘면 막는 래칫. 제품 동작 변화 0(index.html·js/tabs/**·기존 js 0줄 수정).
+- **산출물**: `docs/architecture/MODULE-BLUEPRINT.md`·`UI-COMPONENTS.md`·`modules.json`(세포 59 + 미분화 1)·`module-baseline.json`·`metrics-2026-10-04.json`, `js/core/capabilities.js`·`js/core/slots.js`(정식 자리 15곳), `scripts/module-metrics.js`·`module-guard.js`·`module-specs.js`·`new-module.js`, 시험 `tests/core-capabilities-slots.test.js`·`module-guard.test.js`·`new-module.test.js`, `scripts/test-shipyard-modular.js` [Test 6](npm test 연결 — 상민님 원문이 요구한 규칙 강화).
+- **측정(스크립트 산출, 판정 아님)**: ① 인라인 스크립트 38,207줄 · ② 함수 718 · ③ 전역 직접 대입 282 · ④ 800줄 초과 12 · ⑤ 탭 간 참조 0 · 실제로 그리는 작은 세포 2/19 · 중복 세포 토스트 6·리캡 3·타이머 4(모달 통로 4·덮개 9·confirm 41) · 데이터 중복 저장 16. 가드 시험 6건(통과 1·①④⑤ 실패 3·래칫 1·신고서 1), 코어 시험 12건, 스캐폴드 시험 통과, npm test 0.
+- **새로 확인한 결함(코드 읽기)**: `js/team-invite-comm.js` `showToast` 가 `init()` 전에 불리면 자기 자신을 다시 불러 토스트가 조용히 안 뜬다(고치지 않음, UI-COMPONENTS.md 2-1). 레지스트리 `registerSubBlock` 사본 보관 틈(청사진 4-4).
+- **확인 못 함**: 브라우저 앱 안 능력 등록부·자리 동작(index.html 미연결 — 첫 사용처 TASK-ES-354), 커맨드센터 상태창 표시(범위 밖, 연결 방법만 문서).
+- **진행 단계**: [4단계: 심사 청구]
+---
