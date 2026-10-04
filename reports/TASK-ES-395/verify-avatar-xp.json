@@ -1,0 +1,133 @@
+{
+  "task": "TASK-ES-395",
+  "base": "base395",
+  "passed": 7,
+  "total": 7,
+  "results": [
+    {
+      "name": "① 토큰: 옮긴 선언 8개 = 이전 전 index.html (허용 차이: L. 접두 · awardXP 의 저장 어댑터 부르는 줄)",
+      "ok": true,
+      "detail": {
+        "decls": 8,
+        "tokens": 561,
+        "allowedTokenDiff": 43,
+        "rows": [
+          "XP_RULES:13",
+          "XP_LOG_MAX:5",
+          "xpForLevel:18",
+          "levelForXP:29",
+          "levelProgress:79",
+          "triggerAvatarCelebrationPopup:215",
+          "awardXP:156",
+          "notifyXpGained:46"
+        ]
+      }
+    },
+    {
+      "name": "② index.html 줄: 옮긴 줄·허용 줄을 빼면 이전 전과 줄 단위로 같다(호출처·getter·window 대입 줄 그대로)",
+      "ok": true,
+      "detail": {
+        "baseLines": 36404,
+        "afterLines": 36354,
+        "removedLines": 63,
+        "addedLines": 13,
+        "comparedLines": 36341,
+        "windowLines": [
+          3139,
+          3140,
+          3141,
+          3142,
+          3143
+        ]
+      }
+    },
+    {
+      "name": "③ 누수·가져오기: xp.js 자유 이름 ⊆ 전역, L.<이름> 노출됨, 옮긴 정의 index.html 에 0, 쓰는 이름 모두 가져옴, 가져오기는 IIFE 머리",
+      "ok": true,
+      "detail": {
+        "xpFreeNames": [
+          "Math",
+          "document",
+          "globalThis",
+          "module",
+          "require",
+          "setTimeout",
+          "window"
+        ],
+        "usedL": [
+          "nowISO",
+          "state"
+        ],
+        "imported": [
+          "XP_RULES",
+          "xpForLevel",
+          "levelForXP",
+          "levelProgress",
+          "triggerAvatarCelebrationPopup",
+          "awardXP",
+          "notifyXpGained"
+        ],
+        "importLines": [
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "firstImportStmt": 5,
+        "firstNonVarStmt": 19
+      }
+    },
+    {
+      "name": "④ 부품 시험: 지급 순서마다 settings.xp·반환값·팝업 DOM·홈 링 알림이 기준과 deepStrictEqual (빈 칸·기존 값·200건 상한)",
+      "ok": true,
+      "detail": {
+        "steps": 27,
+        "starts": {
+          "empty": {
+            "total": 200,
+            "logLen": 9,
+            "events": 16
+          },
+          "existing": {
+            "total": 490,
+            "logLen": 10,
+            "events": 16
+          },
+          "nearCap": {
+            "total": 10190,
+            "logLen": 200,
+            "events": 16
+          }
+        },
+        "noProfileError": "TypeError"
+      }
+    },
+    {
+      "name": "④-2 레벨 함수 xpForLevel(1~400)·levelForXP·levelProgress(0~200000) 전수 = 기준",
+      "ok": true,
+      "detail": {
+        "xpValues": 200001
+      }
+    },
+    {
+      "name": "⑤ 능력 xp.award·xp.read: cell=avatar/xp, award = 지급과 같은 함수, read 는 저장 칸을 만들지 않고 프로필이 없어도 던지지 않음",
+      "ok": true,
+      "detail": {
+        "caps": [
+          "xp.award(local)",
+          "xp.read(none)"
+        ]
+      }
+    },
+    {
+      "name": "⑥ 파일 크기: js/avatar/xp.js 800줄 이하",
+      "ok": true,
+      "detail": {
+        "xpJsLines": 137
+      }
+    }
+  ]
+}
