@@ -5729,3 +5729,18 @@
 - **산출물**: `docs/design/harness/out-home-2026-10-04.json`(요약). PNG 는 저장소 밖.
 - **진행 단계**: [4단계: 심사 청구]
 ---
+
+## [2026-10-04 13:30] #TASK-ES-343: 법정(court) PR #650 이전 구조로 복원 + 변경분 한정 정적 검사 3종 이식
+- **목표**: v4 엔진(court/engine.js)이 기존 부채까지 세어 모든 PR 을 돌려보내고(#651·#652 REJECTED), 가짜 "Level 5 Verified" 를 찍으며, pull_request + 관리자 키로 판사 분리를 깨뜨린 문제를 되돌린다. v4 의 정적 검사는 "이번 변경이 새로 만든 것만" 세는 형태로 예전 법정에 옮긴다.
+- **수정/실행 내역**:
+  - `.github/workflows/court.yml`: `git show a18f22e^:.github/workflows/court.yml` 그대로 복원(blob 5abdf42 일치). pull_request_target · 읽기 권한(contents·pull-requests) · main 의 trusted/court/judge.js · 시크릿 없음.
+  - `court/lib/new-debt.js`(신규): 기준 커밋(merge-base)과 작업 커밋의 git show/diff 글자만 읽어 ① js/ .js 800줄 상한을 새로 넘김 ② CSS 은폐 줄 ③ anti_pattern_blacklist 12개 낱말을 센다. ②③은 추가된 줄에 있고 파일 안의 패턴 수가 기준보다 늘었을 때만(독립 검토 반영). 이름 변경 파일은 옛 경로와 맞댐.
+  - `court/judge.js`: "2) 추가된 줄 검사" 뒤에서 호출해 돌려보냄 사유로 넣음(+4줄, 703줄). 기존 검사·임계값 변경 없음.
+  - `court/selftest/unit-new-debt.js`(신규, U-new-debt-pure·repo·judge) + `court/selftest/unit.js` 등록 1줄.
+  - `court/README.md`: engine.js 미사용·존치는 상민님 결정 단락, 새 검사 3종 표.
+  - `court/engine.js` 는 지우지 않음.
+- **검증 결과**(측정값, 판정 아님):
+  - `node court/selftest/run.js --unit-only`: 기대대로 35/35.
+  - 실제 저장소: #651(5bd2bac) 새 위반 0 · #652(94fa362, ui.css·index.html·js 수정) 새 위반 0 — 같은 커밋에서 js/ 800줄 초과 파일 12개(v4 식 전체 스캔이 세는 것). 94fa362 위 시험 커밋 ac89218(ui.css 에 display:none !important 한 줄) → "CSS 은폐 줄이 새로 추가됨 ui.css:17217" 1건. 시험 커밋 c61c64d(새 900줄 js) → "800줄 상한을 새로 넘김" 1건. 시험 커밋은 임시 복제 저장소에만 있음.
+- **진행 단계**: [4단계: 심사 청구]. 이 PR 은 main 의 v4 설정으로 심사된다(금고 파일 변경 → v4 VAULT_VIOLATION 예상). 우회하지 않고 결과를 PR 에 기록.
+---
