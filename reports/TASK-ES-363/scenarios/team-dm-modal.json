@@ -1,0 +1,22 @@
+{
+  "id": "team-dm-modal",
+  "title": "게스트가 팀목표 체험 팀에서 팀원 DM 을 누르면 팀 연계 모듈이 공용 모달 통로로 정본 모달(1:1 대화)을 열고, 닫기를 누르면 닫힌다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "do": "click", "selector": "#btnGoalsSubTeam" },
+    { "do": "click", "selector": "[data-tgquickjoin=\"g-workshop\"]" },
+    { "do": "wait", "ms": 2600 },
+    { "do": "click", "selector": "[data-tgpdm^=\"g-workshop:tg-ws-1:상민:\"]" },
+    { "expect": "visible", "selector": "#modalOverlay.active" },
+    { "expect": "textContains", "selector": "#modalSheet", "text": "상민님과의 1:1 대화" },
+    { "expect": "visible", "selector": "#tgDmInputText" },
+    { "capture": "team-dm-modal-open" },
+    { "do": "click", "selector": "#btnCloseTgDmModal" },
+    { "expect": "notVisible", "selector": "#modalOverlay.active" },
+    { "expect": "notVisible", "selector": "#tgDmInputText" }
+  ]
+}

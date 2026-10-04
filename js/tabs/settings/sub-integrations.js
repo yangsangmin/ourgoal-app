@@ -72,11 +72,13 @@
     }
     var autoSyncSw = document.getElementById('gcalAutoSyncSwitch');
     if(autoSyncSw){
-      var isAuto = settings.gcalAutoSync !== false;
-      autoSyncSw.className = 'switch' + (isAuto ? ' on' : '');
-      U.a11ySwitch(autoSyncSw, isAuto, '목표·일정 변경 시 자동 동기화');
+      // [#TASK-ES-362 SET-08] 노션 자동 전송 스위치와 같은 이름(isAuto)을 쓰면 함수 안 var 가 하나로 합쳐져,
+      // 누를 때 노션 값으로 뒤집혔다. 용도별 이름으로 나눈다.
+      var isGcalAutoSync = settings.gcalAutoSync !== false;
+      autoSyncSw.className = 'switch' + (isGcalAutoSync ? ' on' : '');
+      U.a11ySwitch(autoSyncSw, isGcalAutoSync, '목표·일정 변경 시 자동 동기화');
       autoSyncSw.onclick = async function(){
-        settings.gcalAutoSync = !isAuto;
+        settings.gcalAutoSync = !isGcalAutoSync;
         await L.saveProfile();
         K.renderSettingsScreen();
       };
@@ -177,11 +179,11 @@
 
     var notionAutoPushSw = document.getElementById('notionAutoPushSwitch');
     if(notionAutoPushSw){
-      var isAuto = !!settings.notionAutoPush;
-      notionAutoPushSw.className = 'switch' + (isAuto ? ' on' : '');
-      U.a11ySwitch(notionAutoPushSw, isAuto, '맞춤 템플릿 저장 시 노션 DB로 자동 전송');
+      var isNotionAutoPush = !!settings.notionAutoPush;
+      notionAutoPushSw.className = 'switch' + (isNotionAutoPush ? ' on' : '');
+      U.a11ySwitch(notionAutoPushSw, isNotionAutoPush, '맞춤 템플릿 저장 시 노션 DB로 자동 전송');
       notionAutoPushSw.onclick = async function(){
-        settings.notionAutoPush = !isAuto;
+        settings.notionAutoPush = !isNotionAutoPush;
         await L.saveProfile();
         K.renderSettingsScreen();
       };

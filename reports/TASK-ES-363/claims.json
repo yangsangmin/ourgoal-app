@@ -1,0 +1,264 @@
+{
+  "task": "TASK-ES-363",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-363-MODAL-UNIFY.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "node scripts/module-metrics.js 의 duplicateCellSites 중 modalBridge(각자 만든 openModal 통로 4곳: team-linked-goals, team-visibility-levels, theme-system, time-tracker)를 공용 통로로 바꾼다 — modalBridge 4 → 0"
+    },
+    {
+      "id": "R2",
+      "text": "토스트 통합 PR #675(js/core/toast.js, 능력 ui.toast, 대기열, bind)와 같은 방식으로 js/core/ 에 공용 모달 통로(능력 ui.modal)를 만든다"
+    },
+    {
+      "id": "R3",
+      "text": "그리는 것은 지금처럼 index.html 정본 openModal 이 하게 해서 모양·동작이 바뀌지 않게 한다 — 게스트로 여는 모달이 열리고 닫힌다"
+    },
+    {
+      "id": "R4",
+      "text": "부품 시험(tests/)으로 통로 대기열·재귀 없음을 증명하고 npm test 경로에 넣는다"
+    },
+    {
+      "id": "R5",
+      "text": "세포 신고서를 갱신(node scripts/module-specs.js --write)하고 모듈 가드를 통과한다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "js/team-linked-goals.js 의 openModal·closeModal 은 각자 만든 함수가 아니라 공용 통로 ui.modal.bind 가 만든 함수 쌍이다(주입 openModal/closeModal 우선)",
+      "touches": [
+        "js/team-linked-goals.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-linked-goals.js",
+        "text": "  var _modal = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.modal.bind')) ? OurgoalCapabilities.request('ui.modal.bind')"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "js/team-visibility-levels.js 의 openModal·closeModal 은 공용 통로 ui.modal.bind 가 만든 함수 쌍이다",
+      "touches": [
+        "js/team-visibility-levels.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/team-visibility-levels.js",
+        "text": "  var _modal = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.modal.bind')) ? OurgoalCapabilities.request('ui.modal.bind')"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "js/team-linked-goals.js 에 정본으로 넘기기만 하던 자체 통로 함수 function openModal(html, cb) 가 없다",
+      "touches": [
+        "js/team-linked-goals.js"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "js/team-linked-goals.js",
+        "text": "function openModal(html, cb)"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "js/team-visibility-levels.js 에 자체 통로 함수 function openModal(html, cb) 가 없다",
+      "touches": [
+        "js/team-visibility-levels.js"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "js/team-visibility-levels.js",
+        "text": "function openModal(html, cb)"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "js/theme-system.js 의 openModal 은 정본으로 가는 통로가 아니라 #themeSelectorModal 을 여는 자체 모달이라 이름을 openThemeSelector 로 정정했고, 밖으로 드러난 initUI 반환 키 openModal 은 그대로다",
+      "touches": [
+        "js/theme-system.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/theme-system.js",
+        "text": "      openModal: openThemeSelector,"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "js/time-tracker.js 의 openModal 은 자체 전체화면 덮개 #timeTrackerOverlay 를 여는 함수라 이름을 openTrackerOverlay 로 정정했고, 공개 API OurgoalTimeTracker.open 키는 그대로다",
+      "touches": [
+        "js/time-tracker.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/time-tracker.js",
+        "text": "    open: openTrackerOverlay,"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "js/core/modal.js 가 능력 등록부에 ui.modal 능력을 core/modal 세포 이름으로 준다(ui.modal.close·ui.modal.bind 도 함께)",
+      "touches": [
+        "js/core/modal.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/core/modal.js",
+        "text": "    caps.provide('ui.modal', open, {"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "index.html 이 공용 모달 통로(modal.js)를 공용 토스트 통로 바로 다음, 두 팀 파일보다 먼저 로드한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<script src=\"js/core/toast.js\"></script>\n<script src=\"js/core/modal.js\"></script>"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R4",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "정본 모달이 아직 없으면 열기·닫기 요청을 대기열에 두고, 정본이 붙거나 DOMContentLoaded 때 요청 순서대로 넘긴다",
+      "touches": [
+        "js/core/modal.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/core/modal.js",
+        "text": "    document.addEventListener('DOMContentLoaded', flush);"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R4",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "통로는 window.openModal 자리에 자기가 만든 함수가 있으면 정본으로 보지 않는다(재귀 차단)",
+      "touches": [
+        "js/core/modal.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/core/modal.js",
+        "text": "    if (typeof g === 'function' && !isChannel(g)) return g;"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R4",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "부품 시험 tests/core-modal-es363.test.js 가 정본 준비 전 열기·닫기·열기 요청이 정본이 붙는 순간 순서대로 넘어가는지 단언한다",
+      "touches": [
+        "tests/core-modal-es363.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/core-modal-es363.test.js",
+        "text": "    assert.deepStrictEqual(log, [['open', '<p>첫째</p>', 'undefined'], ['close', 0], ['open', '<p>둘째</p>', 'function']]);"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R4",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "부품 시험이 주입 자리에 통로 자신이 들어와도 재귀하지 않고 정본으로 1회씩 가는지 단언한다",
+      "touches": [
+        "tests/core-modal-es363.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/core-modal-es363.test.js",
+        "text": "    assert.deepStrictEqual(main, [['open', '<p>재귀 없음</p>', 'undefined'], ['close', 0]]);"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험이 npm test 경로(scripts/test-shipyard-modular.js Test 6)에서 돈다",
+      "touches": [
+        "scripts/test-shipyard-modular.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/test-shipyard-modular.js",
+        "text": "  runNode('tests/core-modal-es363.test.js');"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "게스트가 팀목표 체험 팀에서 팀원 DM 을 누르면 팀 연계 모듈이 공용 모달 통로로 연 정본 모달(1:1 대화)이 보이고, 닫기를 누르면 닫힌다",
+      "touches": [
+        "js/team-linked-goals.js",
+        "js/core/modal.js",
+        "index.html"
+      ],
+      "scenario": "scenarios/team-dm-modal.json"
+    },
+    {
+      "id": "C15",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "게스트가 기록 탭 퀵 액션 줄의 시간기록을 누르면 시간 기록 모듈의 전체화면 창이 열리고(이름만 정정한 openTrackerOverlay), 측정 전 닫기를 누르면 닫힌다",
+      "touches": [
+        "js/time-tracker.js"
+      ],
+      "scenario": "scenarios/time-tracker-overlay.json"
+    },
+    {
+      "id": "C16",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "세포 신고서에 core/modal 세포가 ui.modal·ui.modal.close·ui.modal.bind 를 주고 두 팀 세포가 ui.modal.bind 를 필요로 한다고 적혀 있다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "\"id\": \"core/modal\""
+      }
+    }
+  ]
+}

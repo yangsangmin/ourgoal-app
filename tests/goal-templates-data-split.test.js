@@ -26,7 +26,7 @@ const BASE_IDS = PART_ORDER.map(c => ({ health: 'hlt', study: 'std', career: 'ca
   .reduce((acc, k) => acc.concat(Array.from({ length: 10 }, (_, i) => 'tpl_' + k + '_' + String(i + 1).padStart(2, '0'))), []);
 
 let passed = 0;
-function ok(name, fn) { fn(); passed++; console.log('  ✓ ' + name); }
+function ok(name, fn) { fn(); passed++; console.log('  ok · ' + name); }
 
 const sha = (list) => crypto.createHash('sha256').update(JSON.stringify(list)).digest('hex');
 const plain = (x) => JSON.parse(JSON.stringify(x));

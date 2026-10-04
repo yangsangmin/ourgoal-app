@@ -15,8 +15,8 @@
   function getProfile(){ return (_deps.getProfile ? _deps.getProfile() : (getState().profile || {})) || {}; }
   function saveProfile(){ return (_deps.saveProfile ? _deps.saveProfile() : (global.saveProfile ? global.saveProfile() : Promise.resolve())); }
   var toast = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.toast.bind')) ? OurgoalCapabilities.request('ui.toast.bind') : typeof require === 'function' ? require('./core/toast.js').bind : function(get){ return function(m){ var o = get(); if(typeof o === 'function') return o(m); }; })(function(){ return _deps && _deps.toast; }); /* #TASK-ES-361: 공용 토스트 통로(js/core/toast.js · ui.toast) — 주입 토스트 우선, 없으면 공용(준비 전이면 대기열) */
-  function openModal(html, cb){ if(_deps.openModal) _deps.openModal(html, cb); else if(global.openModal) global.openModal(html, cb); }
-  function closeModal(){ if(_deps.closeModal) _deps.closeModal(); else if(global.closeModal) global.closeModal(); }
+  var _modal = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.modal.bind')) ? OurgoalCapabilities.request('ui.modal.bind') : typeof require === 'function' ? require('./core/modal.js').bind : function(get){ return { open: function(h, cb){ var o = get(); if(o && typeof o.openModal === 'function') return o.openModal(h, cb); }, close: function(){ var o = get(); if(o && typeof o.closeModal === 'function') return o.closeModal(); } }; })(function(){ return _deps; }); /* #TASK-ES-363: 공용 모달 통로(js/core/modal.js · ui.modal) — 주입 openModal/closeModal 우선, 없으면 정본(준비 전이면 대기열) */
+  var openModal = _modal.open, closeModal = _modal.close;
   function triggerHaptic(ms){ if(_deps.triggerHaptic) _deps.triggerHaptic(ms); else if(global.triggerHaptic) global.triggerHaptic(ms); }
   function esc(s){
     if(s == null) return '';

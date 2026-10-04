@@ -260,6 +260,68 @@
       "dependsOn": []
     },
     {
+      "id": "core/modal",
+      "file": "js/core/modal.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "공용 모달 통로 — 능력 ui.modal·ui.modal.close·ui.modal.bind. 그리기는 index.html 정본 openModal()/closeModal()(#modalOverlay·#modalSheet), 정본 준비 전 대기열(#TASK-ES-363)",
+      "spans": [],
+      "provides": [
+        "ui.modal",
+        "ui.modal.close",
+        "ui.modal.bind"
+      ],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [
+        {
+          "name": "ui.modal",
+          "description": "화면 가운데·아래 공용 모달(바텀시트)을 연다(index.html 정본 #modalOverlay·#modalSheet, 뒤로가기로 닫힘). 정본 준비 전이면 대기열에 두었다가 연다",
+          "sideEffect": "screen",
+          "needsConfirm": false,
+          "input": {
+            "html": "string",
+            "onMount": "function"
+          }
+        },
+        {
+          "name": "ui.modal.close",
+          "description": "열린 공용 모달을 닫는다(index.html 정본 closeModal)",
+          "sideEffect": "screen",
+          "needsConfirm": false,
+          "input": {}
+        },
+        {
+          "name": "ui.modal.bind",
+          "description": "세포용 모달 열기·닫기 함수 쌍을 만든다 — 주입받은 openModal/closeModal(getOverrides())이 있으면 그것, 없으면 ui.modal",
+          "sideEffect": "none",
+          "needsConfirm": false,
+          "input": {
+            "getOverrides": "function"
+          },
+          "output": {
+            "open": "function",
+            "close": "function"
+          }
+        }
+      ],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalCapabilities",
+        "require:./capabilities.js"
+      ]
+    },
+    {
       "id": "core/registry",
       "file": "js/core/registry.js",
       "layer": "core",
@@ -941,6 +1003,7 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": [
+        "OurgoalCalendarKit",
         "OurgoalTeamInviteComm",
         "OurgoalTimeTracker",
         "OurgoalViralSharing",
@@ -956,7 +1019,6 @@
         "openWeeklyRecapModal",
         "playTimerBeep",
         "promptNewGoal",
-        "renderCalDayDetail",
         "restoreGoal",
         "saveProfile",
         "setRecordsSegment",
@@ -1172,8 +1234,8 @@
         "calendar/day-detail"
       ],
       "dependsOn": [
+        "OurgoalCalendarKit",
         "OurgoalEvents",
-        "renderCalendarDayDetail",
         "state"
       ]
     },
@@ -2237,7 +2299,8 @@
       ],
       "provides": [],
       "requires": [
-        "ui.toast.bind"
+        "ui.toast.bind",
+        "ui.modal.bind"
       ],
       "contributes": [],
       "owns": [],
@@ -2254,13 +2317,12 @@
       "ownerKeys": [],
       "dependsOn": [
         "MOCK_GROUPS",
-        "closeModal",
         "dDay",
         "goalAchievement",
         "groupState",
-        "openModal",
         "renderGoalsScreen",
         "renderTeamGoalsScreen",
+        "require:./core/modal.js",
         "require:./core/toast.js",
         "saveProfile",
         "state",
@@ -2281,7 +2343,8 @@
       ],
       "provides": [],
       "requires": [
-        "ui.toast.bind"
+        "ui.toast.bind",
+        "ui.modal.bind"
       ],
       "contributes": [],
       "owns": [],
@@ -2300,13 +2363,12 @@
         "OurgoalTeamLinkedGoals",
         "TEAM_COMMENTS_CACHE",
         "canManageTeamGoals",
-        "closeModal",
         "dDay",
         "daysFromNow",
         "getGroupLevelGoals",
         "groupState",
-        "openModal",
         "renderTeamGoalsScreen",
+        "require:./core/modal.js",
         "require:./core/toast.js",
         "saveProfile",
         "state",
