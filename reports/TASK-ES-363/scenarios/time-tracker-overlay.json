@@ -1,0 +1,51 @@
+{
+  "id": "time-tracker-overlay",
+  "title": "게스트가 기록 탭 퀵 액션 줄의 시간기록을 누르면 전체화면 시간 기록 창(시간 기록 모듈 자체 창)이 열리고, 측정 전 닫기를 누르면 바로 닫힌다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar button[onclick*=\"OurgoalTimeTracker\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#timeTrackerOverlay"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#ttDigits",
+      "text": "00:00:00"
+    },
+    {
+      "capture": "time-tracker-open"
+    },
+    {
+      "do": "click",
+      "selector": "#btnTtClose"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#timeTrackerOverlay"
+    }
+  ]
+}

@@ -36,6 +36,11 @@
 
 js/team-linked-goals.js:19 · js/team-visibility-levels.js:18 · js/theme-system.js:635 · js/time-tracker.js:1184
 
+> **TASK-ES-363 에서 0 으로 줄였다.** 4곳을 열어 보니 성격이 둘이었다.
+> - **진짜 연결 통로 2곳**(team-linked-goals·team-visibility-levels): 주입 `openModal`/`closeModal` → 없으면 `window.openModal` 로 넘기기만 하던 함수. `js/core/modal.js` 가 주는 능력 `ui.modal.bind` 로 만든 `{ open, close }` 를 쓰게 바꿨다(주입 우선, 없으면 정본, 정본 준비 전엔 대기열). 그리기는 index.html 정본 `openModal`·`closeModal` 그대로다.
+> - **자체 모달 2곳**(theme-system·time-tracker): 정본으로 넘기는 통로가 아니라 자기 DOM(index.html 정적 덮개 `#themeSelectorModal` · 자체 전체화면 덮개 `#timeTrackerOverlay`)을 여는 함수가 같은 이름을 쓰고 있었다. 정본으로 옮기면 모양이 바뀌므로 이번엔 이름만 정정했다(`openThemeSelector`/`closeThemeSelector` · `openTrackerOverlay`/`closeTrackerOverlay`, 밖으로 드러난 API 키 `openModal`·`open` 은 그대로). 이 둘은 2-3 덮개 흡수(3절 4번) 대상이다 — `#timeTrackerOverlay` 는 덮개 지표(selfOverlay, time-tracker.js:131)에 이미 잡혀 있고, `#themeSelectorModal` 은 1절 정적 덮개 요소(`theme-modal-backdrop` 1)로 잡혀 있다.
+> - 새로 찾은 결함(고치지 않음): 테마 선택 창은 지금 화면에서 열 길이 없다. 여는 입구 두 곳(`#captureLiveTheme` 이 든 `#captureLiveMeta`, `#btnOpenThemeModal` 이 든 `#captureThemeQuickBar`)이 ui.css 5824·5955 줄 규칙으로 앱 테마 4종(focus-sanctuary·black·white·urban-city) 모두에서 `display:none !important` 다. 기능을 살릴지·지울지는 상민님 결정(기능 삭제 승인선).
+
 ### 2-3. 공용 모달 대신 직접 만든 전체 화면 덮개 9
 
 index.html:7664(`position:fixed;inset:0`) · index.html:16044(`mic-perm-backdrop`)·16048 · index.html:16351(`position:fixed;inset:0`) · index.html:18153(`checkin-ai-backdrop`) · js/avatar-system.js:5567(`modal-backdrop active`)·5568 · js/time-tracker.js:131(`tt-overlay`) · js/universal-stats.js:5184(`style.inset = '0'`)
@@ -60,6 +65,7 @@ grep -ohE 'id="[A-Za-z]*(BottomSheet|Sheet)"' index.html | sort -u              
 
 1. **`js/ui/toast.js` 기관 세포** — index.html `toast`·`showUndoPrivacyToast`·`toastWithTrashUndo` 를 옮기고 `ui.toast`(`{ message, action? }`) 능력을 `provides`. 6개 연결 통로는 `OurgoalCapabilities.request('ui.toast')` 로 바꾼다(team-invite-comm 재귀도 이때 사라진다). 지표: 토스트 6 → 0, ③ 감소(`window.toast`·`window.showToast`).
 2. **`js/ui/sheet.js`** — `openModal`·`closeModal`(뒤로가기 history 처리 포함)을 옮기고 `ui.sheet` 능력. 모달 연결 통로 4 → 0.
+   - (TASK-ES-363) 통로 쪽은 끝났다: `js/core/modal.js` 가 `ui.modal`·`ui.modal.close`·`ui.modal.bind` 를 주고 모달 연결 통로 4 → 0. 남은 일은 정본을 `js/ui/sheet.js` 로 옮기는 것뿐이며 `attach({ open, close })` 자리로 열어 두었다.
 3. **`js/ui/confirm.js`** — `openBottomSheetConfirm`·`openBottomSheetAlert` 를 `ui.confirm`·`ui.alert` 로. 기본 `confirm()` 41 을 탭 이전 단계마다 그 탭 몫씩 바꾼다(삭제·탈퇴 확인처럼 되돌릴 수 없는 동작은 문구를 바꾸지 않는다).
 4. **덮개 9 흡수** — 직접 만든 덮개를 `ui.sheet` 로 바꾸되, 체크인 직후 시트(`showCheckinFeedbackSheet`)는 `checkin.after` 자리의 기여로 옮긴다.
 5. **칩** — 칩 클래스 52종을 `js/ui/chip.js` + 한 벌 CSS 로 모으는 것은 디자인 토큰 결정이 필요해 마지막(보기 차이는 사람 눈 확인 — `visual-quality`).
