@@ -1,0 +1,200 @@
+{
+  "task": "TASK-ES-372",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-372-DEBUG-GATE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "개발용 테스터 B 직통 버튼은 로컬 개발 호스트(localhost, 127.0.0.1, [::1], *.localhost)에서만 보인다. 운영·미리보기 호스트에서는 ?debug=true·강제 인자와 상관없이 버튼이 생기지 않는다."
+    },
+    {
+      "id": "R2",
+      "text": "로컬 개발 호스트가 아니면 enterAsTesterB 나 직통 입장 규칙을 직접 불러도 테스터 uid 로 입장하지 않는다."
+    },
+    {
+      "id": "R3",
+      "text": "부품 시험(npm test 경로)으로 호스트별 허용/차단을 잰다."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "initDevDebugButtons 는 로컬 개발 호스트일 때만(그리고 ?debug=true 또는 강제 인자일 때만) 버튼을 보인다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "    var isDev = isLocal && (forceDebug || isExplicitDebug);"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "호스트와 상관없이 ?debug=true 만으로 버튼을 보이던 조건이 없어졌다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "var isDev = forceDebug || (isLocal && isExplicitDebug) || isExplicitDebug;"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "로컬 개발 호스트 판정은 localhost·127.0.0.1·[::1]·::1 목록과 .localhost 하위 이름만 참이다",
+      "touches": [
+        "js/direct-login-guard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/direct-login-guard.js",
+        "text": "  var LOCAL_DEV_HOSTS = ['localhost', '127.0.0.1', '[::1]', '::1'];"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "enterAsTesterB 는 로컬 개발 호스트가 아니면 입장하지 않고 끝낸다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "    if(!window.OurgoalDirectLoginGuard.isLocalDevHost(typeof location !== 'undefined' ? location.hostname : '')){ toast('테스터 직통 입장은 로컬 개발 환경에서만 열려요.'); return false; }"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "직통 입장 규칙은 호출자가 uid 를 넘겨도 로컬 개발 호스트(devHost true)가 아니면 열지 않는다",
+      "touches": [
+        "js/direct-login-guard.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/direct-login-guard.js",
+        "text": "    if (present(o.explicitUid) && o.devHost === true) {"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "loginWithDirectIdentifier 가 현재 호스트의 로컬 개발 여부를 직통 입장 규칙에 넘긴다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "      devHost: window.OurgoalDirectLoginGuard.isLocalDevHost(typeof location !== 'undefined' ? location.hostname : '')"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험이 운영·미리보기 호스트 8곳에서 ?debug=true 로 테스터 버튼 0개를 단언한다",
+      "touches": [
+        "tests/dev-host-gate.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/dev-host-gate.test.js",
+        "text": "assert.strictEqual(m.blockedHostButtons[h], 0"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험이 운영·미리보기 호스트에서 enterAsTesterB 직접 호출 시 입장 0회를 단언한다",
+      "touches": [
+        "tests/dev-host-gate.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/dev-host-gate.test.js",
+        "text": "assert.strictEqual(m.blockedHostEntries[h], 0"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험이 로컬 개발 호스트에서는 ?debug=true 로 버튼 2개와 테스터 B 입장 1회를 단언한다",
+      "touches": [
+        "tests/dev-host-gate.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/dev-host-gate.test.js",
+        "text": "assert.strictEqual(m.allowedHostButtons[h], 2"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test(scripts/test-shipyard-modular.js)가 호스트 제한 부품 시험을 실행한다",
+      "touches": [
+        "scripts/test-shipyard-modular.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/test-shipyard-modular.js",
+        "text": "runNode('tests/dev-host-gate.test.js');"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "바뀐 직통 입장 규칙 파일을 브라우저가 새로 받도록 캐시 꼬리표를 올렸다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<script src=\"js/direct-login-guard.js?v=20261005-es372\"></script>"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "세포 신고서에 호스트 제한 역할을 적었다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "개발용 테스터 B 직통(isLocalDevHost)은 로컬 개발 호스트에서만"
+      }
+    }
+  ]
+}

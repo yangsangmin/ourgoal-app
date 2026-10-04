@@ -2356,7 +2356,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   <script src="js/time-tracker.js?v=20260915-es090"></script>
   <script src="js/record-ledger.js?v=20261004-es344"></script>
   <script src="js/account-isolation.js?v=20261004-es365"></script>
-  <script src="js/direct-login-guard.js?v=20261005-es368"></script>
+  <script src="js/direct-login-guard.js?v=20261005-es372"></script>
   <script src="js/components.js?v=20260917-es162"></script><script src="js/records-stats.js?v=20260926-es276"></script><script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/tabs/comm/dm-ledger.js?v=20261004-es366"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/data/goal-templates/health.js?v=20261004-es364"></script><script src="js/data/goal-templates/study.js?v=20261004-es364"></script><script src="js/data/goal-templates/career.js?v=20261004-es364"></script><script src="js/data/goal-templates/hobby.js?v=20261004-es364"></script><script src="js/data/goal-templates/mind.js?v=20261004-es364"></script><script src="js/data/goal-templates/relation.js?v=20261004-es364"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script><script src="js/notify-engine.js?v=20260917-es152"></script><script src="js/sanctuary-v3-engine.js?v=20260928-prod-renewal-final"></script>
 <script>
 (function(){
@@ -5515,6 +5515,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
   /* ============ 2계정 상호작용 테스트 (테스터 B 직통 입장: #TASK-ES-169) ============ */
   async function enterAsTesterB(){
+    if(!window.OurgoalDirectLoginGuard.isLocalDevHost(typeof location !== 'undefined' ? location.hostname : '')){ toast('테스터 직통 입장은 로컬 개발 환경에서만 열려요.'); return false; }
     var testerId = '00000000-0000-4000-a000-000000000002';
     var testerNick = '테스터_B';
     toast('테스터 B 계정으로 입장 중입니다…');
@@ -5554,8 +5555,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   function initDevDebugButtons(){
     var forceDebug = typeof arguments[0] === 'boolean' ? arguments[0] : false;
     var isExplicitDebug = (typeof location !== 'undefined') && (location.search && location.search.indexOf('debug=true') !== -1);
-    var isLocal = (typeof location !== 'undefined') && (location.hostname === 'localhost' || location.hostname === '127.0.0.1');
-    var isDev = forceDebug || (isLocal && isExplicitDebug) || isExplicitDebug;
+    var isLocal = (typeof location !== 'undefined') && (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || window.OurgoalDirectLoginGuard.isLocalDevHost(location.hostname));
+    var isDev = isLocal && (forceDebug || isExplicitDebug);
     var lWrap = document.getElementById('landTesterBWrap');
     var aWrap = document.getElementById('authTesterBWrap');
     if(isDev){
@@ -37663,7 +37664,8 @@ wirePromptEncyclopediaEvents(body);
       sessionUid: directSessionUid,
       provider: extraOpt && extraOpt.provider,
       verifiedEmail: extraOpt && extraOpt.email,
-      explicitUid: extraOpt && extraOpt.userId
+      explicitUid: extraOpt && extraOpt.userId,
+      devHost: window.OurgoalDirectLoginGuard.isLocalDevHost(typeof location !== 'undefined' ? location.hostname : '')
     });
     if(!directTarget.allow){
       window.OurgoalDirectLoginGuard.guideToFormalLogin(document, toast, typeof initRememberedAuthFields === 'function' ? initRememberedAuthFields : null);
