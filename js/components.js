@@ -653,7 +653,7 @@
         updated_at: new Date().toISOString(),
         ai_limit: 1,
         purge_ai_threshold: 20,
-        active_real_users: 25,
+        active_real_users: null, // [#TASK-ES-348] 측정하지 않은 수치는 null(이전 25 는 하드코딩)
         ai_purged: true,
         state: 'completed'
       };

@@ -5763,6 +5763,16 @@
   - 실제 저장소: #651(5bd2bac) 새 위반 0 · #652(94fa362, ui.css·index.html·js 수정) 새 위반 0 — 같은 커밋에서 js/ 800줄 초과 파일 12개(v4 식 전체 스캔이 세는 것). 94fa362 위 시험 커밋 ac89218(ui.css 에 display:none !important 한 줄) → "CSS 은폐 줄이 새로 추가됨 ui.css:17217" 1건. 시험 커밋 c61c64d(새 900줄 js) → "800줄 상한을 새로 넘김" 1건. 시험 커밋은 임시 복제 저장소에만 있음.
 - **진행 단계**: [4단계: 심사 청구]. 이 PR 은 main 의 v4 설정으로 심사된다(금고 파일 변경 → v4 VAULT_VIOLATION 예상). 우회하지 않고 결과를 PR 에 기록.
 ---
+## [2026-10-04 14:30] #TASK-ES-348: 소통 COMM-01 — 실제 회원 AI 오분류 제거 + AI 표시 없는 가짜 사람·가짜 수치 정직화
+- **목표**: 닉네임이 민지·도현·수아 같은 흔한 이름인 실제 회원이 AI 로 분류되어 동반자 목록·DM 후보에서 빠지는 결함을 없애고, AI 표시 없이 사람처럼 보이던 하드코딩 러너·시드 수치를 숨기거나 AI 배지를 단다.
+- **수정/실행 내역**:
+  - `js/team-invite-comm.js`: isKnownAiCompanion 을 표식 기반으로 재작성(is_ai·botBadge · id 접두 comp_/mem_/mock_/bot_/ai_/mn_/sim_/guest · 오프라인 예시 id 6개 · 비인증 id 의 isAiBot · 밑줄 페르소나 핸들 10개는 정확 일치 AND 비인증 id). 실명형 이름 항목 삭제. 인증 UUID 계정의 isAiBot(예전 이름 판별이 저장한 값)은 믿지 않음. 호출부 6곳의 별도 isAiBot 검사 제거, 자가 치유 양방향. 팀 영입 검색 오프라인 예시에 AI 예시 배지, 연속일수 기본값 1 제거, 프로필 히트맵 d%3 무늬 제거, active_real_users null. 4137→4135줄(800줄 초과 파일이라 줄 수를 늘리지 않음).
+  - `index.html`: getPeerRunnersForCategory 를 FEED_POSTS_CACHE 실원장 기반으로(비 AI·인증 UUID·같은 분야, 최대 3명, 연속일수 없음), 0명이면 `#firstCheckinPeerRunners` 를 그리지 않음. 마니또 AI 시드 달성률·연속일수 제거, 실 회원 값 없으면 null → 게이지·연속일수 숨김. 받은 응원함·웰컴 응원 AI 배지. 피드 단계 라벨 정직화.
+  - `js/components.js`: active_real_users null.
+  - 측정 도구 `docs/design/harness/comm-ai-identity-check.js`, 단위 시험 `tests/comm-ai-identity-es348.test.js`, 법정 시나리오 4개(`reports/TASK-ES-348/scenarios/`).
+  - 서버 칸(SQL) 추가 없음: 서버의 회원 검색 결과는 모두 실제 회원이고 AI 는 전부 클라이언트 시드(id 접두)라 판별에 서버 칸이 필요하지 않음.
+- **검증 결과**(측정값, 판정 아님): 헤드리스 M1(민지 UUID 실사용자) · M2(동반자 목록 실 사용자 배지·DM 후보 노출) · M3(축하 창 동류 러너 칸 없음, 고정 이름 0, 실데이터 입력 시 해당 회원만) · M4(마니또 AI 카드 배지 1/1·게이지 0·연속일수 0, 받은 응원 AI 배지 1/1, 웰컴 응원 AI 배지) · 피드 거짓 라벨 0 모두 true. 단위 시험 5/5(기준 커밋에서는 실패). npm test 종료코드 0. 실계정 2개(레벨 5)는 확인하지 못함.
+- **진행 단계**: [4단계: 심사 청구].
 
 ## [2026-10-04 14:10] #TASK-ES-346: 설정 탭 정직성 SET-01(가짜 보안 표시)·SET-02(탈퇴 고지)
 - **조사(실제 동작)**: `api/withdraw.js` 는 화면에서 호출되지 않음(purge 모드 존재하나 호출자·크론 0). 탈퇴는 `submitWithdrawAccount` 가 `settings.pendingDeletionAt`(이 기기 localStorage) + `sb.auth.updateUser` 메타데이터(`account_status: pending_deletion`) 기록 후 로그아웃. 복구 창(`js/auth-safety.js checkPendingDeletionRestore`)은 이 기기 localStorage 표시가 있을 때만. 설정(`settings`)은 `ourgoal_settings_<uid>` localStorage 에만 저장(서버 upsert 없음). 개별 기기 차단 방송 `device_remote_revocations` 수신자 0곳.

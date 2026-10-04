@@ -1,0 +1,61 @@
+{
+  "id": "manito-inbox-ai-badge",
+  "title": "게스트가 마니또를 시작하면 AI 동반자가 보낸 받은 응원에 AI 배지가 붙는다",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 375,
+      "height": 812
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": ".navbtn[data-tab=\"comm\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".comm-subtab[data-sub=\"manito\"]"
+    },
+    {
+      "do": "click",
+      "selector": ".comm-subtab[data-sub=\"manito\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#mnJoin"
+    },
+    {
+      "do": "click",
+      "selector": "#mnJoin"
+    },
+    {
+      "expect": "visible",
+      "selector": ".manito-card .badge-ai",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "visible",
+      "selector": ".cheer-in .badge-ai",
+      "timeoutMs": 5000
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

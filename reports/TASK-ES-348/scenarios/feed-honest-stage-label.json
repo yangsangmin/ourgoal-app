@@ -1,0 +1,55 @@
+{
+  "id": "feed-honest-stage-label",
+  "title": "게스트가 소통 피드를 열면 피드 안내 문장이 나오고, 실제로 섞지 않는 AI 가이드를 세는 라벨(초기 실천 가이드 (1건)·응원 가이드 1건 포함)은 나오지 않는다",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 375,
+      "height": 812
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": ".navbtn[data-tab=\"comm\"]",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"comm\"]"
+    },
+    {
+      "do": "waitFor",
+      "selector": ".comm-subtab[data-sub=\"feed\"]"
+    },
+    {
+      "do": "click",
+      "selector": ".comm-subtab[data-sub=\"feed\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#commSubBody",
+      "text": "같은 목표를 향해 가는 사람들",
+      "timeoutMs": 8000
+    },
+    {
+      "expect": "neverVisible",
+      "selector": "#commSubBody",
+      "text": "가이드",
+      "forMs": 1500
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
