@@ -2313,6 +2313,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/goals/goal-detail.js"></script>
 <script src="js/tabs/goals/goal-detail-events.js"></script>
 <script src="js/tabs/goals/render.js"></script>
+<script src="js/tabs/goals/result-modal.js"></script>
+<script src="js/tabs/goals/goal-export.js"></script>
 <script src="js/tabs/goals/index.js"></script>
 <!-- OurGoal Shipyard Architecture: Records Mega-Block & Sub-Blocks (기록 메가블록 및 소블록 외판) -->
 <script src="js/tabs/records/sub-timeline.js"></script>
@@ -2548,6 +2550,22 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get toDateTimeLocalValue(){ return toDateTimeLocalValue; },
     get topicPill(){ return topicPill; },
     get wirePromptEncyclopediaEvents(){ return wirePromptEncyclopediaEvents; }
+  });
+
+  /* ============ [#TASK-ES-375] 목표 탭 모듈 이음매 2차 (docs/specs/MODULE-SPLIT-PROTOCOL.md, 1차 #TASK-ES-370 과 같은 틀) ============
+     ① 가져오기: js/tabs/goals/result-modal.js · goal-export.js 로 옮긴 함수 중 이 스코프에서 부르는 것(위 1차 노출의 getter 포함)을 같은 이름으로 가져온다(전역에 새 이름을 만들지 않는다).
+     ② 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프 이름 중 앞선 이음매(설정·기록·일정·목표 1차)가 아직 노출하지 않은 것만 getter 로 더한다(스코프 분석으로 뽑았다). */
+  var openResultModal = _goalsKit.openResultModal;
+  var exportGoalSnapshot = _goalsKit.exportGoalSnapshot;
+  var archiveGoal = _goalsKit.archiveGoal;
+  window.OurgoalAppScope.expose('index.html', {
+    get buildInviteLinkSuffix(){ return buildInviteLinkSuffix; },
+    get burstConfetti(){ return burstConfetti; },
+    get convertTextToNotionDbRecord(){ return convertTextToNotionDbRecord; },
+    get download(){ return download; },
+    get generateGoalCertificateImage(){ return generateGoalCertificateImage; },
+    get goalProgress(){ return goalProgress; },
+    get topicLabel(){ return topicLabel; }
   });
 
   try{
@@ -8579,356 +8597,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     };
   }
 
-  /* 목표·마일스톤·할 일 공용 결과 입력 모달 */
-  function openResultModal(kind, obj, onSaved, goal){
-    var r = obj.result || {};
-    var kindLabel = kind==='goal' ? '목표' : (kind==='ms' ? '마일스톤' : '할 일');
-    var displayTitle = (obj && obj.title && obj.title !== '커리큘럼 정하기' && obj.title !== '커리큘럼') ? obj.title : '';
-
-    var currentDb = r.dbProperties || (r.target || r.result ? {
-      title: r.summary || (displayTitle || '실천 기록'),
-      status: (resultPct(r) >= 100) ? '완료' : '진행중',
-      progress: resultPct(r) || 100,
-      metric: (r.result ? (r.result + (r.unit || '')) : '100%'),
-      keyTakeaway: r.note || '',
-      tags: ['실천'],
-      date: isoDate(new Date())
-    } : null);
-
-    function renderNotionCardHtml(db){
-      if(!db) return '';
-      var stColor = db.status==='완료' ? 'var(--sage)' : (db.status==='진행중' ? 'var(--gold)' : 'var(--ink-soft)');
-      var stBg = db.status==='완료' ? 'var(--sage-soft)' : (db.status==='진행중' ? 'var(--gold-soft)' : 'var(--rule)');
-      return '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
-          '<span style="font-size:.8125rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:4px;">' +
-            '<span>Notion DB 변환 규격</span>' +
-          '</span>' +
-          '<span class="dday-pill" style="background:'+stBg+';color:'+stColor+';font-weight:700;font-size:.8125rem;">'+escapeHtml(db.status)+' ('+db.progress+'%)</span>' +
-        '</div>' +
-        '<table style="width:100%;font-size:.8125rem;border-collapse:collapse;line-height:1.6;">' +
-          '<tr><td style="color:var(--ink-faint);width:76px;padding:2px 0;">항목명</td><td style="font-weight:700;color:var(--ink);">'+escapeHtml(db.title||'-')+'</td></tr>' +
-          '<tr><td style="color:var(--ink-faint);padding:2px 0;">수치/실적</td><td>'+escapeHtml(db.metric||'-')+'</td></tr>' +
-          '<tr><td style="color:var(--ink-faint);padding:2px 0;">핵심 성과</td><td>'+escapeHtml(db.keyTakeaway||'-')+'</td></tr>' +
-          '<tr><td style="color:var(--ink-faint);padding:2px 0;">태그</td><td>'+(db.tags||[]).map(function(t){ return '<span class="chip" style="font-size:.6875rem;padding:2px 6px;margin-right:4px;">#'+escapeHtml(t)+'</span>'; }).join('')+'</td></tr>' +
-          '<tr><td style="color:var(--ink-faint);padding:2px 0;">일자</td><td>'+escapeHtml(db.date||isoDate(new Date()))+'</td></tr>' +
-        '</table>';
-    }
-
-    var previewInitialHtml = '<div id="rsNotionDbPreview" style="'+(currentDb?'':'display:none;')+'margin-bottom:12px;padding:12px;background:var(--card);border:1px solid var(--rule);border-radius:12px;">' +
-      (currentDb ? renderNotionCardHtml(currentDb) : '') +
-    '</div>';
-
-    openModal(
-      '<h3>' + kindLabel + ' 결과 기록</h3>' +
-      (displayTitle ? '<p class="muted" style="margin:-8px 0 12px;"><b style="color:var(--ink);font-size:.9375rem;">' + escapeHtml(displayTitle) + '</b></p>' : '<div style="height:6px;"></div>') +
-      '<div id="ambientCheckinCard" style="margin-bottom:12px;padding:12px 14px;background:var(--surface-2);border:1px solid var(--sage-line);border-radius:12px;">' +
-        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-          '<span style="font-size:.875rem;color:var(--sage);font-weight:700;display:flex;align-items:center;gap:4px;">' +
-            '<span>제로-입력 선제 예측 체크인</span>' +
-          '</span>' +
-          '<span style="font-size:.7rem;background:var(--sage-soft);color:var(--sage);padding:2px 6px;border-radius:4px;font-weight:700;">1-Tap 승인</span>' +
-        '</div>' +
-        '<div style="font-size:.875rem;font-weight:700;color:var(--ink);margin-bottom:8px;">' +
-          '오늘 \'' + escapeHtml(displayTitle || (obj && obj.title) || '실천') + '\' 100% 완료하셨나요?' +
-        '</div>' +
-        '<button class="btn btn-primary btn-sm" id="ambientCheckinConfirmBtn" type="button" style="width:100%;font-weight:700;background:var(--sage);border-color:var(--sage);padding:8px 12px;font-size:.875rem;display:flex;align-items:center;justify-content:center;gap:6px;">' +
-          '<span>1-Tap 즉시 승인 및 기록 저장</span>' +
-        '</button>' +
-        '<button class="btn btn-secondary btn-sm" id="ambientCheckinArchiveBtn" type="button" style="width:100%;font-weight:700;margin-top:6px;padding:8px 12px;font-size:.875rem;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--card);border:1px solid var(--sage-line);color:var(--sage);">' +
-          '<span>1-Tap 즉시 승인 및 기록 저장 및 보관함으로 이동</span>' +
-        '</button>' +
-      '</div>' +
-      '<div style="margin-bottom:12px;padding:12px 14px;background:var(--surface-2);border:1px solid var(--rule);border-radius:12px;">' +
-        '<div style="font-size:.875rem;color:var(--ink);font-weight:700;display:flex;align-items:center;gap:4px;margin-bottom:6px;">' +
-          '<span>AI 비서로 결과 입력</span>' +
-        '</div>' +
-        '<div style="font-size:.8125rem;color:var(--ink-soft);line-height:1.45;margin-bottom:10px;">' +
-          '오늘 한 일을 한 줄로 적어주시면 기록으로 알맞게 정리해드려요' +
-        '</div>' +
-        '<div style="display:flex;flex-direction:column;gap:8px;">' +
-          '<textarea id="rsAiQuickInput" rows="2" placeholder="예: 오늘 20km 1시간 40분 완주했어 땀 많이 흘림 / 알고리즘 골드 2문제 풀고 오답노트 정리 완료 / 기본서 3단원 50페이지 다 읽음" style="width:100%;box-sizing:border-box;font-size:.875rem;padding:8px 10px;border-radius:8px;border:1px solid var(--rule);background:var(--card);color:var(--ink);resize:vertical;"></textarea>' +
-          '<button class="btn btn-primary btn-sm" id="rsAiQuickApplyBtn" type="button" style="align-self:flex-end;font-size:.8125rem;font-weight:700;padding:6px 12px;white-space:nowrap;">' +
-            'AI 자동 정리' +
-          '</button>' +
-        '</div>' +
-      '</div>' +
-
-      previewInitialHtml +
-
-      '<div style="margin-bottom:14px;">' +
-        '<div id="rsManualToggleBtn" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:8px 12px;background:var(--card);border:1px dashed var(--rule);border-radius:10px;">' +
-          '<span style="font-size:.8125rem;font-weight:700;color:var(--ink-soft);display:flex;align-items:center;gap:6px;">' +
-            '<span>수동입력하기</span>' +
-          '</span>' +
-          '<span id="rsManualToggleArrow" style="font-size:.8125rem;color:var(--ink-faint);">펼치기 ▾</span>' +
-        '</div>' +
-        '<div id="rsManualForm" style="display:none;margin-top:8px;padding:14px;background:#FFFFFF;border:1.5px solid var(--rule);border-radius:12px;box-shadow:0 3px 12px rgba(0,0,0,0.06);">' +
-          '<div class="field" style="margin-bottom:8px;">' +
-            '<label style="font-size:.8125rem;font-weight:700;">실천 내용 / 항목명</label>' +
-            '<input id="rsManualTitle" type="text" value="' + escapeHtml((currentDb && currentDb.title) || '') + '" placeholder="예: 3강 수강 완료 및 개념 복습" style="font-size:.875rem;padding:6px 10px;">' +
-          '</div>' +
-          '<div style="display:flex;gap:8px;margin-bottom:8px;">' +
-            '<div class="field" style="flex:1;">' +
-              '<label style="font-size:.8125rem;font-weight:700;">진행 상태</label>' +
-              '<select id="rsManualStatus" style="font-size:.875rem;padding:6px 8px;">' +
-                '<option value="완료"'+((!currentDb || currentDb.status==='완료')?' selected':'')+'>완료 (100%)</option>' +
-                '<option value="진행중"'+(currentDb && currentDb.status==='진행중'?' selected':'')+'>진행중 (50%)</option>' +
-                '<option value="대기"'+(currentDb && currentDb.status==='대기'?' selected':'')+'>계획/대기</option>' +
-              '</select>' +
-            '</div>' +
-            '<div class="field" style="flex:1;">' +
-              '<label style="font-size:.8125rem;font-weight:700;">달성률 (%)</label>' +
-              '<input id="rsManualPct" type="number" min="0" max="100" value="' + (currentDb ? currentDb.progress : 100) + '" placeholder="100" style="font-size:.875rem;padding:6px 8px;">' +
-            '</div>' +
-          '</div>' +
-          '<div class="field" style="margin-bottom:8px;">' +
-            '<label style="font-size:.8125rem;font-weight:700;">달성 수치 / 소요 시간</label>' +
-            '<input id="rsManualMetric" type="text" value="' + escapeHtml((currentDb && currentDb.metric) || '') + '" placeholder="예: 2시간, 5km, 30쪽" style="font-size:.875rem;padding:6px 10px;">' +
-          '</div>' +
-          '<div class="field" style="margin-bottom:0;">' +
-            '<label style="font-size:.8125rem;font-weight:700;">성과 및 배운 점</label>' +
-            '<input id="rsManualKeyTakeaway" type="text" value="' + escapeHtml((currentDb && currentDb.keyTakeaway) || '') + '" placeholder="예: 핵심 공식 암기 완료" style="font-size:.875rem;padding:6px 10px;">' +
-          '</div>' +
-        '</div>' +
-      '</div>' +
-
-      '<div class="modal-actions" style="display:flex;gap:6px;flex-wrap:wrap;">' +
-        '<button class="btn btn-ghost" id="rsCancel" type="button" style="flex:1;min-width:60px;">취소</button>' +
-        '<button class="btn btn-secondary" id="rsSave" type="button" style="flex:1;min-width:60px;">저장</button>' +
-        '<button class="btn btn-primary" id="rsSaveAndArchive" type="button" style="flex:1.6;min-width:140px;background:var(--emerald);border-color:var(--emerald);">저장 및 보관함으로 이동</button>' +
-        (currentDb ? '<button class="btn btn-ghost" id="rsJustArchive" type="button" style="color:var(--amber);border-color:var(--rule);">보관</button>' : '') +
-      '</div>',
-      function(sheet){
-        var aiInput = sheet.querySelector('#rsAiQuickInput');
-        var aiApplyBtn = sheet.querySelector('#rsAiQuickApplyBtn');
-        var previewBox = sheet.querySelector('#rsNotionDbPreview');
-
-        var manualToggleBtn = sheet.querySelector('#rsManualToggleBtn');
-        var manualToggleArrow = sheet.querySelector('#rsManualToggleArrow');
-        var manualForm = sheet.querySelector('#rsManualForm');
-
-        var manualTitle = sheet.querySelector('#rsManualTitle');
-        var manualStatus = sheet.querySelector('#rsManualStatus');
-        var manualPct = sheet.querySelector('#rsManualPct');
-        var manualMetric = sheet.querySelector('#rsManualMetric');
-        var manualKeyTakeaway = sheet.querySelector('#rsManualKeyTakeaway');
-
-        var activeDbRecord = currentDb;
-
-        // 수동입력하기 토글
-        var manualOpen = false;
-        manualToggleBtn.addEventListener('click', function(){
-          manualOpen = !manualOpen;
-          manualForm.style.display = manualOpen ? 'block' : 'none';
-          manualToggleArrow.textContent = manualOpen ? '접기 ▴' : '펼치기 ▾';
-        });
-
-        // AI 자동 정리
-        function runAiConversion(){
-          var text = aiInput.value.trim();
-          if(!text){ toast('달성한 내용을 줄글로 적어주세요'); return; }
-          var converted = convertTextToNotionDbRecord(text, kind, obj, goal);
-          activeDbRecord = converted;
-          previewBox.style.display = 'block';
-          previewBox.innerHTML = renderNotionCardHtml(converted);
-
-          // 수동 입력 폼에도 동기화
-          manualTitle.value = converted.title;
-          manualStatus.value = converted.status;
-          manualPct.value = converted.progress;
-          manualMetric.value = converted.metric;
-          manualKeyTakeaway.value = converted.keyTakeaway;
-
-          toast('기록 형식으로 변환 완료! ✨');
-        }
-
-        aiApplyBtn.addEventListener('click', runAiConversion);
-        aiInput.addEventListener('keydown', function(e){
-          if(e.key === 'Enter' && (e.ctrlKey || e.metaKey)){
-            e.preventDefault();
-            runAiConversion();
-          }
-        });
-
-        var ambientBtn = sheet.querySelector('#ambientCheckinConfirmBtn');
-        if(ambientBtn){
-          ambientBtn.addEventListener('click', function(){
-            if(window._recordHesitation) window._recordHesitation('ambientCheckinConfirmBtn');
-            triggerHaptic(30);
-            var ambTitle = displayTitle || (obj && obj.title) || '실천 완료';
-            var dateStr = isoDate(new Date());
-            activeDbRecord = {
-              title: ambTitle,
-              status: '완료',
-              progress: 100,
-              metric: '100%',
-              keyTakeaway: '선제 예측 1-Tap 승인 완료',
-              tags: ['실천', '완료', '앰비언트'],
-              date: dateStr,
-              notionSchema: {
-                'Name': { type: 'title', title: [{ type: 'text', text: { content: ambTitle } }] },
-                'Status': { type: 'select', select: { name: '완료' } },
-                'Progress': { type: 'number', number: 100 },
-                'Metric': { type: 'rich_text', rich_text: [{ type: 'text', text: { content: '100%' } }] },
-                'KeyTakeaway': { type: 'rich_text', rich_text: [{ type: 'text', text: { content: '선제 예측 1-Tap 승인 완료' } }] },
-                'Tags': { type: 'multi_select', multi_select: [{ name: '실천' }, { name: '완료' }, { name: '앰비언트' }] },
-                'Date': { type: 'date', date: { start: dateStr } }
-              }
-            };
-            sheet.querySelector('#rsSave').click();
-          });
-        }
-
-        sheet.querySelector('#rsCancel').addEventListener('click', closeModal);
-
-        var runSaveAndArchive = false;
-
-        var saveAndArchiveBtn = sheet.querySelector('#rsSaveAndArchive');
-        if(saveAndArchiveBtn){
-          saveAndArchiveBtn.addEventListener('click', function(){
-            runSaveAndArchive = true;
-            sheet.querySelector('#rsSave').click();
-          });
-        }
-
-        var justArchiveBtn = sheet.querySelector('#rsJustArchive');
-        if(justArchiveBtn){
-          justArchiveBtn.addEventListener('click', async function(){
-            if(goal){
-              goal.archivedAt = nowISO();
-              await saveProfile();
-              toast('목표가 보관함으로 이동되었습니다 📦');
-              closeModal();
-              if(onSaved) onSaved();
-              renderGoalDetail();
-              renderHomeGoals();
-            }
-          });
-        }
-
-        var ambientArchiveBtn = sheet.querySelector('#ambientCheckinArchiveBtn');
-        if(ambientArchiveBtn){
-          ambientArchiveBtn.addEventListener('click', async function(){
-            if(window._recordHesitation) window._recordHesitation('ambientCheckinArchiveBtn');
-            triggerHaptic(30);
-            var ambTitle = displayTitle || (obj && obj.title) || '실천 완료';
-            var dateStr = isoDate(new Date());
-            activeDbRecord = {
-              title: ambTitle,
-              status: '완료',
-              progress: 100,
-              metric: '100%',
-              keyTakeaway: '선제 예측 1-Tap 승인 완료 및 보관',
-              tags: ['실천', '완료', '앰비언트', '보관'],
-              date: dateStr,
-              notionSchema: {
-                'Name': { type: 'title', title: [{ type: 'text', text: { content: ambTitle } }] },
-                'Status': { type: 'select', select: { name: '완료' } },
-                'Progress': { type: 'number', number: 100 },
-                'Metric': { type: 'rich_text', rich_text: [{ type: 'text', text: { content: '100%' } }] },
-                'KeyTakeaway': { type: 'rich_text', rich_text: [{ type: 'text', text: { content: '1-Tap 즉시 승인 및 보관' } }] },
-                'Tags': { type: 'multi_select', multi_select: [{ name: '실천' }, { name: '완료' }, { name: '보관' }] },
-                'Date': { type: 'date', date: { start: dateStr } }
-              }
-            };
-            runSaveAndArchive = true;
-            sheet.querySelector('#rsSave').click();
-          });
-        }
-
-        sheet.querySelector('#rsSave').addEventListener('click', async function(){
-          // 1. AI 텍스트가 입력되어 있으나 아직 변환 버튼을 누르지 않은 경우 즉시 변환
-          var aiText = aiInput.value.trim();
-          if(aiText && (!activeDbRecord || activeDbRecord.keyTakeaway !== aiText)){
-            activeDbRecord = convertTextToNotionDbRecord(aiText, kind, obj, goal);
-          }
-
-          // 2. 수동입력 폼이 열려있거나 입력값이 있는 경우 수동 입력값 우선 반영
-          if(manualTitle.value.trim()){
-            var mTitle = manualTitle.value.trim();
-            var mStatus = manualStatus.value;
-            var mPct = parseInt(manualPct.value, 10);
-            if(isNaN(mPct)) mPct = (mStatus === '완료' ? 100 : (mStatus === '진행중' ? 50 : 0));
-            var mMetric = manualMetric.value.trim() || (mPct + '%');
-            var mTakeaway = manualKeyTakeaway.value.trim() || mTitle;
-            var dateStr = isoDate(new Date());
-
-            var tags = activeDbRecord ? activeDbRecord.tags : ['실천'];
-            if(mStatus === '완료' && tags.indexOf('완료') === -1) tags.push('완료');
-
-            activeDbRecord = {
-              title: mTitle,
-              status: mStatus,
-              progress: mPct,
-              metric: mMetric,
-              keyTakeaway: mTakeaway,
-              tags: tags,
-              date: dateStr,
-              notionSchema: {
-                'Name': { type: 'title', title: [{ type: 'text', text: { content: mTitle } }] },
-                'Status': { type: 'select', select: { name: mStatus } },
-                'Progress': { type: 'number', number: mPct },
-                'Metric': { type: 'rich_text', rich_text: [{ type: 'text', text: { content: mMetric } }] },
-                'KeyTakeaway': { type: 'rich_text', rich_text: [{ type: 'text', text: { content: mTakeaway } }] },
-                'Tags': { type: 'multi_select', multi_select: tags.map(function(t){ return { name: t }; }) },
-                'Date': { type: 'date', date: { start: dateStr } }
-              }
-            };
-          }
-
-          if(!activeDbRecord){
-            toast('달성한 내용을 적어주시거나 수동입력으로 저장해주세요.');
-            return;
-          }
-
-          var wasDone = kind==='task' ? !!obj.done : obj.status==='done';
-          var pct = activeDbRecord.progress;
-
-          obj.result = {
-            target: 100,
-            result: pct,
-            unit: '%',
-            pct: pct,
-            note: activeDbRecord.keyTakeaway || activeDbRecord.title,
-            summary: activeDbRecord.title,
-            dbProperties: {
-              title: activeDbRecord.title,
-              status: activeDbRecord.status,
-              progress: pct,
-              metric: activeDbRecord.metric,
-              keyTakeaway: activeDbRecord.keyTakeaway,
-              tags: activeDbRecord.tags,
-              date: activeDbRecord.date
-            },
-            notionDb: activeDbRecord.notionSchema,
-            recordedAt: nowISO()
-          };
-
-          if(kind==='task') obj.done = pct >= 100;
-          if(kind==='ms') obj.status = pct >= 100 ? 'done' : (pct > 0 ? 'doing' : obj.status);
-
-          var nowDone = kind==='task' ? !!obj.done : obj.status==='done';
-          var celebrateMs = kind==='ms' && !wasDone && nowDone && !!goal;
-          if(!wasDone && nowDone && !celebrateMs){
-            if(navigator.vibrate) navigator.vibrate([12,40,24]);
-            burstConfetti(window.innerWidth/2, window.innerHeight/2);
-          }
-          var msXpRes = null;
-          if(kind==='ms' && !wasDone && obj.status==='done') msXpRes = awardXP(XP_RULES.milestoneDone, '마일스톤 완료');
-          if(runSaveAndArchive && goal){
-            goal.archivedAt = nowISO();
-          }
-          await saveProfile();
-          closeModal();
-          toast(runSaveAndArchive ? '결과 저장 및 보관함으로 이동 완료! 📦' : (pct >= 100 ? '완료로 정리해서 저장 완료!' : '달성률 ' + pct + '%로 정리해서 저장 완료!'));
-          if(onSaved) onSaved();
-          renderLevelBadge();
-          if(msXpRes && msXpRes.leveledUp) showLevelUpBanner(levelForXP(msXpRes.total));
-          if(celebrateMs) celebrateMilestoneDone(goal, obj);
-        });
-      }
-    );
-  }
+  /* [#TASK-ES-375] openResultModal → js/tabs/goals/result-modal.js 로 옮김(목표 탭 세포 2차) */
 
   /* ============ 프로필 ============ */
   function avatarHtml(size){
@@ -21042,116 +20711,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   document.getElementById('goalAgentSendBtn').addEventListener('click', function(){ sendGoalAgentMessage(); });
   document.getElementById('goalAgentInput').addEventListener('keydown', function(e){ if(e.key==='Enter') sendGoalAgentMessage(); });
 
-  /* ============ 목표 현황 데이터 내보내기 (AI 분석용) ============ */
-  function buildGoalSnapshot(goals){
-    var p = state.profile;
-    var recs = p.records.slice().sort(function(a,b){ return new Date(b.startAt)-new Date(a.startAt); });
-    return {
-      exportedAt: nowISO(),
-      purpose: 'AI 분석용 목표 현황 스냅샷',
-      user: {
-        displayName: p.displayName,
-        bio: p.bio || '',
-        interests: (p.interests||[]).map(function(t){ return topicLabel(t) || t; }),
-        region: p.region || null,
-        streakDays: computeStreakDays(),
-        totalRecords: p.records.length
-      },
-      goals: goals.map(function(g){
-        return {
-          title: g.title,
-          topic: topicLabel(g.topic) || null,
-          visibility: VISIBILITY_LABELS[g.visibility||'private'],
-          createdAt: g.createdAt,
-          dueDate: g.dueDate || null,
-          dDay: g.dueDate ? dDay(g.dueDate) : null,
-          archived: !!g.archivedAt,
-          archivedAt: g.archivedAt || null,
-          progressPercent: goalProgress(g),
-          achievementPercent: goalAchievement(g),
-          finalResult: g.result || null,
-          milestones: g.milestones.map(function(m){
-            return {
-              title: m.title,
-              status: m.status,
-              dueDate: m.dueDate || null,
-              dDay: m.dueDate ? dDay(m.dueDate) : null,
-              result: m.result || null,
-              tasks: (m.tasks||[]).map(function(t){
-                return { title: t.title, done: !!t.done, dueDate: t.dueDate||null, result: t.result||null };
-              })
-            };
-          })
-        };
-      }),
-      recentCheckins: recs.slice(0, 60).map(function(r){
-        return { date: dateKey(r.startAt), type: r.type, text: r.text,
-          minutes: r.endAt ? Math.round((new Date(r.endAt)-new Date(r.startAt))/60000) : null };
-      }),
-      analysisHints: [
-        '목표별 achievementPercent와 마일스톤 result를 비교해 어디서 진행이 막혔는지 찾아주세요',
-        'recentCheckins의 날짜 간격으로 실천 주기와 끊긴 구간을 분석해주세요',
-        'dDay가 임박하거나 지난 항목 중 결과가 비어 있는 것을 우선순위로 알려주세요'
-      ]
-    };
-  }
-  function goalSnapshotSummary(snap){
-    var lines = ['# 아워골 목표 현황 (' + dateKey(snap.exportedAt) + ')', ''];
-    lines.push('사용자: ' + snap.user.displayName + ' · 연속 기록 ' + snap.user.streakDays + '일 · 총 기록 ' + snap.user.totalRecords + '개');
-    if(snap.user.region) lines.push('지역: ' + snap.user.region);
-    if(snap.user.interests.length) lines.push('관심: ' + snap.user.interests.join(', '));
-    lines.push('');
-    snap.goals.forEach(function(g){
-      lines.push('## ' + g.title + (g.archived ? ' (보관됨)' : ''));
-      lines.push('- 카테고리: ' + (g.topic || '미설정') + ' / 공개: ' + g.visibility);
-      lines.push('- 마감: ' + (g.dueDate || '없음') + (g.dDay ? ' (' + g.dDay + ')' : '') + ' / 진행률 ' + g.progressPercent + '% · 달성률 ' + g.achievementPercent + '%');
-      if(g.finalResult) lines.push('- 최종 결과: ' + (g.finalResult.result||0) + '/' + (g.finalResult.target||'-') + ' ' + (g.finalResult.unit||'') + (g.finalResult.note ? ' · ' + g.finalResult.note : ''));
-      g.milestones.forEach(function(m){
-        var r = m.result;
-        lines.push('  - [' + m.status + '] ' + m.title + (m.dueDate ? ' (' + m.dueDate + ' ' + m.dDay + ')' : '') +
-          (r ? ' → ' + (r.result||0) + '/' + (r.target||'-') + ' ' + (r.unit||'') : ''));
-        (m.tasks||[]).forEach(function(t){
-          var tr = t.result;
-          lines.push('    · ' + t.title + (t.dueDate ? ' (' + t.dueDate + ')' : '') +
-            (tr ? ' → ' + (tr.result||0) + '/' + (tr.target||'-') + ' ' + (tr.unit||'') : (t.done ? ' → 완료' : '')));
-        });
-      });
-      lines.push('');
-    });
-    lines.push('## 최근 체크인');
-    snap.recentCheckins.slice(0, 30).forEach(function(r){
-      lines.push('- ' + r.date + ' · ' + r.text + (r.minutes ? ' (' + r.minutes + '분)' : ''));
-    });
-    return lines.join('\r\n');
-  }
-  function exportGoalSnapshot(scope, goal){
-    var goals = scope==='one' && goal ? [goal] : state.profile.goals;
-    if(!goals.length){ toast('내보낼 목표가 없어요'); return; }
-    var snap = buildGoalSnapshot(goals);
-    var stamp = dateKey(nowISO());
-    var fmt = state.profile.settings.exportFormat || 'csv';
-    if(fmt === 'json'){
-      download('아워골_목표현황_'+stamp+'.json', JSON.stringify(snap, null, 2), 'application/json');
-    } else {
-      download('아워골_목표현황_'+stamp+'.md', '﻿'+goalSnapshotSummary(snap), 'text/markdown;charset=utf-8');
-    }
-    toast('AI 분석용 파일을 받았어요');
-  }
+  /* [#TASK-ES-375] buildGoalSnapshot · goalSnapshotSummary · exportGoalSnapshot → js/tabs/goals/goal-export.js 로 옮김(목표 탭 세포 2차) */
 
   /* ============ 목표 보관(기록으로 옮기기) ============ */
-  async function archiveGoal(goal){
-    goal.archivedAt = nowISO();
-    state.activeGoalId = null;
-    var fullyAchieved = goalAchievement(goal) >= 100;
-    await saveProfile();
-    renderAll();
-    setTab('records');
-    if(fullyAchieved){
-      openGoalCertificateModal(goal);
-    } else {
-      toast('"'+goal.title+'"을(를) 기록으로 옮겼어요');
-    }
-  }
+  /* [#TASK-ES-375] archiveGoal → js/tabs/goals/goal-export.js 로 옮김(목표 탭 세포 2차) */
   async function restoreGoal(goal){
     goal.archivedAt = null;
     await saveProfile();
@@ -33270,58 +32833,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     drawShareWatermark(ctx, dims, state.profile.id, '#fff');
     return canvas;
   }
-  async function openGoalCertificateModal(goal){
-    var pct = goalAchievement(goal);
-    var days = Math.max(1, Math.round((new Date(goal.archivedAt||nowISO()) - new Date(goal.createdAt))/86400000));
-    openModal(
-      '<h3 style="text-align:center;">완주를 축하해요!</h3>' +
-      '<p class="muted" style="text-align:center;margin:-6px 0 16px;">"'+escapeHtml(goal.title)+'"을(를) '+pct+'% 달성으로 마쳤어요</p>' +
-      '<div id="certImgWrap" style="text-align:center;color:var(--ink-faint);padding:60px 0;">인증서 만드는 중…</div>' +
-      '<div class="modal-actions">' +
-        '<button class="btn btn-primary" id="certShareBtn" type="button" disabled>공유하기</button>' +
-        '<button class="btn btn-ghost" id="certSaveBtn" type="button" disabled>이미지 저장</button>' +
-      '</div>',
-      function(){
-        if(navigator.vibrate) navigator.vibrate([12,40,24]);
-        burstConfetti(window.innerWidth/2, window.innerHeight/3);
-      }
-    );
-    var canvas = await generateGoalCertificateImage(goal, pct, days);
-    var dataUrl = canvas.toDataURL('image/png');
-    var wrap = document.getElementById('certImgWrap');
-    if(!wrap) return; // 사용자가 모달을 이미 닫음
-    wrap.outerHTML = '<img id="certImgWrap" src="'+dataUrl+'" alt="목표 완주 인증서" style="width:100%;border-radius:16px;display:block;">';
-    var shareBtn = document.getElementById('certShareBtn');
-    var saveBtn = document.getElementById('certSaveBtn');
-    if(shareBtn) shareBtn.disabled = false;
-    if(saveBtn) saveBtn.disabled = false;
-    if(shareBtn) shareBtn.addEventListener('click', async function(){
-      var text = '아워골에서 "'+goal.title+'" '+pct+'% 달성으로 완주했어요! 🏆'+buildInviteLinkSuffix(goal.id, goal.title);
-      try{
-        var blob = await (await fetch(dataUrl)).blob();
-        var file = new File([blob], 'ourgoal-certificate.png', { type:'image/png' });
-        if(navigator.canShare && navigator.canShare({ files:[file] })){
-          await navigator.share({ files:[file], title:'아워골', text: text });
-          toast('공유했어요');
-        } else if(navigator.share){
-          await navigator.share({ title:'아워골', text: text });
-          toast('이 기기는 이미지 공유를 지원하지 않아 문구로 공유했어요 · 이미지는 저장 버튼을 써주세요');
-        } else if(navigator.clipboard){
-          await navigator.clipboard.writeText(text);
-          toast('공유 문구를 복사했어요 · 이미지는 저장 버튼으로 받아주세요');
-        } else {
-          toast('이미지 저장 버튼으로 받아서 직접 공유해주세요');
-        }
-      } catch(e){ /* 사용자가 공유 시트를 취소함 */ }
-    });
-    if(saveBtn) saveBtn.addEventListener('click', function(){
-      var a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = '아워골_완주인증서.png';
-      document.body.appendChild(a); a.click(); a.remove();
-      toast('이미지를 저장했어요');
-    });
-  }
+  /* [#TASK-ES-375] openGoalCertificateModal → js/tabs/goals/goal-export.js 로 옮김(목표 탭 세포 2차) */
 
   function renderCommShare(body){
     var goals = state.profile.goals.filter(function(g){ return !g.archivedAt; });

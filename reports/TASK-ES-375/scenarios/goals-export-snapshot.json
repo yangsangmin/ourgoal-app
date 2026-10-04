@@ -1,0 +1,86 @@
+{
+  "id": "goals-export-snapshot",
+  "title": "목표 상세의 AI 분석용 내보내기 버튼을 누르면 파일을 받았다는 토스트가 뜨고, 전체 버튼도 같은 토스트를 띄운다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#homeAddGoal"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#ngManualBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#ngManualBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#mGoalTitle"
+    },
+    {
+      "do": "type",
+      "selector": "#mGoalTitle",
+      "text": "세포 이전 확인 목표"
+    },
+    {
+      "do": "click",
+      "selector": "#mSave"
+    },
+    {
+      "do": "wait",
+      "ms": 1200
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#goalDetailBody",
+      "text": "전체 (3)"
+    },
+    {
+      "do": "click",
+      "selector": "#goalExportBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "AI 분석용 파일을 받았어요"
+    },
+    {
+      "do": "wait",
+      "ms": 2600
+    },
+    {
+      "do": "click",
+      "selector": "#goalExportAllBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "AI 분석용 파일을 받았어요"
+    },
+    {
+      "expect": "stillInApp"
+    }
+  ]
+}
