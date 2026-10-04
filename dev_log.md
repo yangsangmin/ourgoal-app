@@ -5722,5 +5722,10 @@
   - `ui.css`: `.hero-avatar-exp-gain` + `@keyframes heroExpGainFloat`(0.5초, reduced-motion 대응).
 - **범위 밖(보고만)**: 루틴 템플릿 `rt_real_sangmin_445` author '상민' 은 콘텐츠 작성자 표기라 유지. 타인 화면의 레벨 숫자 숨김은 이번 범위 아님.
 - **예비 검증(판정 아님)**: npm test 종료코드 0. 로컬 court 실행기로 시나리오 4건을 기준(origin/main)·작업 트리에서 실행 — 작업 트리 4건 통과, 기준은 home-exp-ring 단계7·home-exp-value 단계6·home-headline-no-name 단계6에서 실패, home-avatar-tap 은 기준에서도 통과(연결 확인).
+## [2026-10-04 12:40] #TASK-ES-342: 홈 점검 하네스 home-check.js (HOME-25, GOALS-01 공용)
+- **목표**: 테마 4종 × 뷰포트 375×667·375×812 × 상태(기본·`#homeDetailSheet` 열림·`#captureInput` 포커스) 홈 화면을 같은 측정으로 기록하는 도구.
+- **구현**: `docs/design/harness/home-check.js` 신규 — `shots-lib.js` 의 `newPage`(게스트 시드·Supabase 목·외부 호출 차단) 재사용, `APP_DIR`·`outDir`·`tab`(기본 home)·`--summary` 인자. `shots.js`·`shots-lib.js`·`audit.js` 는 수정하지 않음.
+- **실행(예비 확인, 판정 아님)**: 워크트리 대상 24장. 문서 높이 375×667=1016, 375×812=1146(테마 무관, 둘 다 스크롤 있음 — 가장 낮은 요소 `#iosPwaSlot`). 44px 미만 타겟 667=12개·812=8개. 콘솔 에러 0. 숨김 상호작용 요소 기본 46개(시트 상태 51개). Lv./EXP 24장 모두 렌더됨. 375×667 에서 `#homeCompassQuest` 누름 지점(y=597)이 하단 탭바에 가려짐 → 스크롤 후 열림. 진입 때 `#avatarGreetingModal` 이 매번 떠 있었음(닫기 버튼으로 닫고 측정).
+- **산출물**: `docs/design/harness/out-home-2026-10-04.json`(요약). PNG 는 저장소 밖.
 - **진행 단계**: [4단계: 심사 청구]
 ---
