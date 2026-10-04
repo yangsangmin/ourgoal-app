@@ -5792,3 +5792,10 @@
   - 측정 도구 `docs/design/harness/welcome-stamp-check.js`(목이 insert 기록·같은 id 23505 거절), 법정 시나리오 `reports/TASK-ES-352/scenarios/guest-welcome-no-false-send.json`.
 - **검증 결과**(측정값, 판정 아님): 헤드리스 작업 트리 — M1 동류 2명 → insert 2행(형식 일치)·토스트 '2명'·EXP +5 / M2 같은 날 다시 0행·EXP 0, 기기 기록을 지워도 시도 2·저장 0·EXP 0 / M3 게스트·로그인 0명 insert 0·'보냈어요' 0·소통 탭 / M4 받는 회원(마니또 미시작) 받은 응원함에 1건. origin/main — 다섯 경우 모두 insert 0인데 '보냈어요' 토스트·EXP +5, 받는 쪽 화면은 TOPICS 오류로 빈 화면. npm test 종료코드 0. 실계정 2개(레벨 5)는 확인하지 못함.
 - **진행 단계**: [4단계: 심사 청구].
+## [2026-10-04 16:30] #TASK-ES-350: 단일 원장 설계서 (CORE-03)
+- **목표**: 사용자 데이터가 탭마다 다른 곳에 저장·중복되고 일부는 기기 밖으로 못 나가는 문제(노션 CORE-03)를 탭 티켓이 같은 설계로 고치도록 원장 설계서를 먼저 만든다. 앱 코드 수정 0줄, SQL 파일 0개, 운영 조회 0회.
+- **산출물**: `docs/specs/LEDGER-DESIGN-2026-10-04.md`(지도 29항목·목표 설계·[결심 필요] 후보 K1~K4·수명주기 하네스 설계 L01~L11·실행 순서·SQL 초안·prefs 허용/금지 목록), `reports/TASK-ES-350/count-ledger-map.js`(지도표 집계), REQ·PLAN·claims.
+- **측정(스크립트 산출, 판정 아님)**: 항목 29 · 중복 저장 16 · 로컬 전용 18 · 서버 왕복 있음 10 · 서버 쓰기만 1(휴지통). 손으로 적은 중복 17 을 스크립트가 16 으로 정정.
+- **새로 확인한 결함(코드 읽기)**: 휴지통 서버값 미반영(`loadProfile` 의 `finalTrash` 미반환), `deadline` 읽기 2곳(목표만 보기 D-day 빈칸), `renderRoutineMatrixGrid` 가 쓰는 곳 없는 `profile.routines` 를 읽음, 목표 시작일 서버 미저장, 게스트 이전 checkins meta 누락, `OfflineSyncManager.flush()` 처리기 없이 대기열 삭제, 전체 백업 JSON 에 외부 키·PIN 해시 포함, 타인 레벨 늘 Lv.1.
+- **확인 못 함**: 운영 DB 칸·형, 휴지통 덮어쓰기·수호동물 손실의 실제 발생(호출 순서 추정).
+- **진행 단계**: [4단계: 심사 청구]
