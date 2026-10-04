@@ -25,7 +25,14 @@ function listJsTree(dir, recursive) {
   return out;
 }
 const APP_MODULE_FILES = [...listJsTree(path.join(__dirname, '..', 'js', 'tabs'), true), ...listJsTree(path.join(__dirname, '..', 'js', 'core'), false)];
-const html = indexHtmlOnly + APP_MODULE_FILES.map(function (f) { return '\n' + fs.readFileSync(f, 'utf8'); }).join('');
+// 세포 이전 생성기(module-split)는 index.html 지역 이름을 L.<이름>, 같은 탭 파일끼리 호출을 K.<이름> 으로 바꿔 쓴다(나머지 글자는 그대로).
+// 그런 파일(OurgoalAppScope 를 읽는 파일)만 접두를 떼고 읽어, 옮기기 전 글자를 찾던 단언이 같은 코드를 그대로 찾게 한다. 단언·기대값은 그대로다.
+function readAppModule(f) {
+  const src = fs.readFileSync(f, 'utf8');
+  if (src.indexOf('OurgoalAppScope') < 0) return src;
+  return src.replace(/(^|[^A-Za-z0-9_$.])[LK]\.(?=[A-Za-z_$])/g, '$1');
+}
+const html = indexHtmlOnly + APP_MODULE_FILES.map(function (f) { return '\n' + readAppModule(f); }).join('');
 // 검사마다 index.html 을 다시 읽던 곳도 같은 합본을 본다.
 const APP_SRC = html;
 // 2026-09-12 UI v2: 스타일은 ui.css(외부)로 분리됐다. CSS 존재 검사는 html+css 합본으로 본다.

@@ -1,0 +1,42 @@
+{
+  "task": "TASK-ES-359",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-359-TEST-SCOPE-PREFIX.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "세포 이전 생성기가 붙이는 L./K. 접두 때문에 옮기기 전 글자를 찾던 시험 단언이 깨지는 구조 문제를, 시험지가 OurgoalAppScope 를 읽는 세포 파일만 접두를 떼고 읽게 해 해결한다. 단언·기대값 변경 0, main 에서 통과 수 동일."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "smoke-test 가 OurgoalAppScope 를 읽는 파일만 L./K. 접두를 떼고 합본에 넣는다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "return src.replace(/(^|[^A-Za-z0-9_$.])[LK]\\.(?=[A-Za-z_$])/g, '$1');",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "합본이 readAppModule 을 거쳐 만들어진다",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const html = indexHtmlOnly + APP_MODULE_FILES.map(function (f) { return '\\n' + readAppModule(f); }).join('');",
+        "file": "scripts/smoke-test.js"
+      }
+    }
+  ]
+}
