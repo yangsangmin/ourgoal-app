@@ -165,7 +165,7 @@ async function runTab(browser, base, tab, outDir, deadMode) {
     const newErrors = o.errors.slice(o.errBefore);
     await o.close();
     shotsOut.push({ name, tab, themeRequested: theme, viewportRequested: vp, state: st.key, opener: st.opener, entered: o.ok, enterNote: o.note || null, bootOverlays: o.bootOverlays, ...m,
-      consoleErrors: newErrors.length, consoleErrorSamples: newErrors.slice(0, 5), consoleErrorsFromLoad: o.errBefore, httpErrors: [...new Set(o.httpErrors)] });
+      consoleErrors: newErrors.length, consoleErrorSamples: newErrors.slice(0, 5), consoleErrorsFromLoad: o.errBefore, consoleErrorLoadSamples: o.errors.slice(0, Math.min(o.errBefore, 3)), httpErrors: [...new Set(o.httpErrors)] });
     console.log(name, '| 진입', o.ok, '| 높이', m.docScrollHeight, '/', vp.height, m.noScroll ? '무스크롤' : '스크롤', '| 44px미만', m.smallTargets, '| 숨김', m.hiddenInteractive, '| !important', m.importantNoneInScope, '| 콘솔오류', newErrors.length);
     const rep = theme === THEMES[0] && vp === VIEWPORTS[0];
     if (deadMode !== 'off' && st.deadScope !== false && (deadMode === 'all' || rep)) {
@@ -188,7 +188,7 @@ function slimShot(s) {
     smallTargets: s.smallTargets, smallTargetList: (s.smallTargetList || []).map(x => x.sel + ' ' + x.w + 'x' + x.h),
     hiddenInteractive: s.hiddenInteractive, hiddenInteractiveDetail: (s.hiddenInteractiveDetail || []).map(h => h.sel + ' ← ' + h.why),
     importantNoneInScope: s.importantNoneInScope, importantNoneInDoc: s.importantNoneInDoc, importantNoneRules: s.importantNoneRules,
-    consoleErrors: s.consoleErrors, consoleErrorSamples: (s.consoleErrorSamples || []).slice(0, 2), consoleErrorsFromLoad: s.consoleErrorsFromLoad, httpErrors: s.httpErrors,
+    consoleErrors: s.consoleErrors, consoleErrorSamples: (s.consoleErrorSamples || []).slice(0, 2), consoleErrorsFromLoad: s.consoleErrorsFromLoad, consoleErrorLoadSamples: s.consoleErrorLoadSamples, httpErrors: s.httpErrors,
     lvVisible: s.lvVisible, expVisible: s.expVisible, deadClick: s.deadClick || null, measureError: s.measureError
   };
 }
@@ -254,7 +254,24 @@ function parseArgs(argv) {
   return { pos, opt };
 }
 
+/* 탭을 따로따로(병렬로) 돌린 전체 결과(<tab>-check.json)들을 요약 JSON 하나로 묶는다.
+ * 사용: node tab-check.js --merge <summary.json> <a/home-check.json> <b/goals-check.json> ... */
+function mergeFull(summaryFile, fullFiles) {
+  const fulls = fullFiles.map(f => JSON.parse(fs.readFileSync(f, 'utf8')));
+  const commits = [...new Set(fulls.map(f => f.commit))];
+  if (commits.length !== 1) throw new Error('서로 다른 커밋의 결과는 묶지 않는다: ' + commits.join(', '));
+  const perTab = {};
+  for (const f of fulls) perTab[f.tab] = { shots: f.shots, deadClick: f.deadClick };
+  const ordered = {};
+  for (const t of TABS) if (perTab[t]) ordered[t] = perTab[t];
+  writeSummary(path.resolve(summaryFile), { tool: 'docs/design/harness/tab-check.js', task: 'TASK-ES-349', appDir: path.basename(fulls[0].appDir), commit: commits[0],
+    measuredAt: fulls.map(f => f.measuredAt).sort().pop(), env: ENV, matrix: { themes: THEMES, viewports: VIEWPORTS.map(v => v.width + 'x' + v.height) },
+    deadClickMode: fulls[0].deadClickMode || 'rep(기본값 — 탭별 실행에 --deadclick 을 주지 않음)', runSeconds: null, mergedFrom: fulls.map(f => f.tab + '-check.json') }, ordered);
+  console.log('묶음:', Object.keys(ordered).join(','), '→', path.resolve(summaryFile));
+}
+
 async function main(argv, toolName) {
+  if (argv[0] === '--merge') return mergeFull(argv[1], argv.slice(2));
   const { pos, opt } = parseArgs(argv);
   if (pos.length < 2) {
     console.error('사용: node ' + (toolName || 'tab-check.js') + ' <APP_DIR> <outDir> [home|goals|records|calendar|comm|settings|all|쉼표목록] [--summary <file.json>] [--deadclick rep|all|off]');
@@ -280,7 +297,7 @@ async function main(argv, toolName) {
   try {
     for (const tab of tabs) {
       perTab[tab] = await runTab(browser, base, tab, outDir, opt.deadclick);
-      const full = { tool: 'docs/design/harness/tab-check.js', appDir: APP_DIR, commit, tab, measuredAt: new Date().toISOString(), env: ENV, ...perTab[tab] };
+      const full = { tool: 'docs/design/harness/tab-check.js', appDir: APP_DIR, commit, tab, measuredAt: new Date().toISOString(), env: ENV, deadClickMode: opt.deadclick, ...perTab[tab] };
       fs.writeFileSync(path.join(outDir, tab + '-check.json'), JSON.stringify(full, null, 2), 'utf8');
     }
   } finally {

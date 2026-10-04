@@ -70,7 +70,8 @@ function skipReason(c, origin) {
     if (c.resolved && !String(c.resolved).startsWith(origin) && !/^#/.test(c.href) && !/^javascript:/i.test(c.href)) return '외부 링크(' + String(c.resolved).slice(0, 60) + ')';
     if (String(c.target).toLowerCase() === '_blank') return '새 창 링크(target=_blank)';
   }
-  if (/window\.open|location\.(href|assign|replace)\s*=|location\.(assign|replace)\(/.test(c.onclick)) return '새 창·페이지 이동 코드(onclick)';
+  // window.openAddRecordModal 같은 앱 함수 이름과 헷갈리지 않게 window.open( 호출만 본다
+  if (/window\.open\s*\(|location\.href\s*=|location\.(assign|replace)\s*\(/.test(c.onclick)) return '새 창·페이지 이동 코드(onclick)';
   if (c.tag === 'SUMMARY') return null; // 접힌 묶음을 펼치기만 한다
   if (/삭제|지우기|지움|비우기|초기화|리셋|탈퇴|로그아웃|원격 차단|일괄|\b(reset|delete|remove|clear|logout|withdraw|kill|wipe|del|delpost|timedel)/i.test(c.words)) return '되돌릴 수 없음(삭제·초기화·로그아웃·차단)';
   if (/결제|구독|구매|업그레이드|\b(checkout|payment)/i.test(c.words)) return '돈(결제·구독)';
