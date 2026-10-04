@@ -7305,11 +7305,70 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
   window.getPeerRunnersForCategory = getPeerRunnersForCategory;
 
+  /* [#TASK-ES-352] 첫 체크인 축하 창 웰컴 응원 — 화면에 보인 실제 동류 회원에게 기존 마니또 응원 형식
+   * (team_pings · group_id 'manito' · target_type 'manito_cheer' · ping_type 'welcome_cheer')으로 1명당 1행을 보낸다.
+   * 받는 사람은 소통 탭 → 마니또 '받은 응원함'(loadServerManitoData 의 receiver_id 조회)에서 본다.
+   * 같은 사람에게 하루 1회: 행 id 를 날짜·보낸 사람·받는 사람으로 정해 서버가 같은 날 두 번째 행을 거절하고, 기기에도 오늘 보낸 명단을 남긴다. */
+  function canSendFirstCheckinWelcome(){
+    var myId = state.profile ? String(state.profile.id || '') : '';
+    return !!(sb && state.user && isValidRealUser(myId));
+  }
+  function firstCheckinWelcomeSentToday(){
+    var s = state.profile && state.profile.settings;
+    if(!s) return {};
+    var today = dateKey(nowISO());
+    if(!s.welcomeStampSent || s.welcomeStampSent.date !== today) s.welcomeStampSent = { date: today, to: {} };
+    return s.welcomeStampSent.to;
+  }
+  async function sendFirstCheckinWelcomeStamps(peers){
+    var out = { sent: 0, already: 0, failed: 0, reason: '' };
+    var myId = String(state.profile.id);
+    var myName = state.profile.displayName || state.profile.name || '아워골 회원';
+    var today = dateKey(nowISO());
+    var sentTo = firstCheckinWelcomeSentToday();
+    for(var i = 0; i < peers.length; i++){
+      var peerId = String(peers[i].userId || '');
+      if(!isValidRealUser(peerId) || peerId === myId) continue;
+      if(sentTo[peerId]){ out.already++; continue; }
+      var row = {
+        id: 'fcw_' + today + '_' + myId + '_' + peerId,
+        group_id: 'manito',
+        sender_id: myId,
+        sender_name: myName,
+        sender_avatar: '🌱',
+        receiver_id: peerId,
+        target_type: 'manito_cheer',
+        target_id: 'seed',
+        target_title: '첫 체크인 웰컴 응원',
+        ping_type: 'welcome_cheer',
+        message: myName + '님이 첫 체크인을 마치고 같은 분야 동료에게 웰컴 응원을 보냈어요. 함께 꾸준히 가요! 🌱',
+        status: 'sent',
+        hidden: false,
+        created_at: nowISO()
+      };
+      try {
+        var res = await sb.from('team_pings').insert(row);
+        var err = res && res.error;
+        if(!err){ out.sent++; sentTo[peerId] = nowISO(); }
+        else if(String(err.code || '') === '23505'){ out.already++; sentTo[peerId] = nowISO(); }
+        else { out.failed++; out.reason = err.message ? '서버 응답: ' + String(err.message).slice(0, 40) : '서버가 거절함'; }
+      } catch(e){
+        out.failed++;
+        out.reason = '연결 오류';
+      }
+    }
+    return out;
+  }
+  window.sendFirstCheckinWelcomeStamps = sendFirstCheckinWelcomeStamps;
+
   function triggerFirstCheckinCelebrationModal(goal, checkinText, onDismiss){
     var av = (state.profile && state.profile.guardianAnimal) || { emoji: '🦉', name: '수호동물 부엉이' };
     var goalTitle = goal ? goal.title : (checkinText || '첫 실천');
     var goalCat = (goal && goal.category) || '운동';
     var peers = getPeerRunnersForCategory(goalCat);
+    var canSendWelcome = peers.length > 0 && canSendFirstCheckinWelcome();
+    var welcomeSentMap = canSendWelcome ? firstCheckinWelcomeSentToday() : {};
+    var welcomePending = peers.filter(function(p){ return !welcomeSentMap[p.userId]; }).length;
 
     var peersHtml = peers.map(function(peer){
       return '<div style="flex:1;min-width:0;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:8px 6px;text-align:center;">' +
@@ -7355,7 +7414,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         '</div>' : '') +
         '<div style="display:flex;flex-direction:column;gap:8px;">' +
           '<button class="btn btn-primary btn-block" id="firstCheckinCommBtn" type="button" style="padding:12px;font-size:14px;font-weight:800;background:linear-gradient(135deg, var(--brand), #8b5cf6);border:none;box-shadow:0 4px 14px rgba(108,92,231,0.3);">' +
-            '💌 첫 웰컴 스탬프 보내고 소통 탭 가기 (+5 EXP)' +
+            (canSendWelcome ? (welcomePending ? ('💌 동류 러너 ' + welcomePending + '명에게 웰컴 응원 보내기 (+5 EXP)') : '✅ 오늘 웰컴 응원 보냄 · 소통 탭 가기') : '🤝 소통 탭에서 함께할 분 찾아보기') +
           '</button>' +
           '<button class="btn btn-ghost btn-block" id="firstCheckinDoneBtn" type="button" style="padding:10px;font-size:13px;font-weight:700;color:var(--ink-soft);">' +
             '홈 콕핏 둘러보기 ➔' +
@@ -7372,21 +7431,40 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 
       var commBtn = sheet.querySelector('#firstCheckinCommBtn');
       if(commBtn){
-        commBtn.addEventListener('click', function(){
+        commBtn.addEventListener('click', async function(){
+          if(commBtn.disabled) return;
           triggerHaptic(20);
-          burstConfetti(window.innerWidth/2, window.innerHeight/2, 25);
-          if(state.profile && state.profile.settings && state.profile.settings.xp){
-            state.profile.settings.xp.total = (state.profile.settings.xp.total || 0) + 5;
-            notifyXpGained(5, state.profile.settings.xp.total);
+          var goComm = function(msg){
+            closeModal();
+            if(typeof setTab === 'function'){
+              state.commSubTab = 'feed';
+              setTab('comm');
+            }
+            toast(msg);
+            if(typeof onDismiss === 'function') onDismiss();
+          };
+          // [#TASK-ES-352] 세션 없는 사용자·동류 0명: 보내지 않는다. '보냈어요' 문구·EXP 없이 소통 탭으로만.
+          if(!(peers.length > 0 && canSendFirstCheckinWelcome())){
+            goComm('🤝 소통 탭에서 함께하는 분을 찾아보세요');
+            return;
+          }
+          commBtn.disabled = true;
+          commBtn.textContent = '💌 보내는 중…';
+          var r = await sendFirstCheckinWelcomeStamps(peers);
+          if(r.sent > 0){
+            burstConfetti(window.innerWidth/2, window.innerHeight/2, 25);
+            if(state.profile && state.profile.settings && state.profile.settings.xp){
+              state.profile.settings.xp.total = (state.profile.settings.xp.total || 0) + 5;
+              notifyXpGained(5, state.profile.settings.xp.total);
+            }
             saveProfile();
+            goComm('💌 ' + r.sent + '명에게 웰컴 응원을 보냈어요! (+5 EXP)' + (r.failed ? ' · ' + r.failed + '명은 못 보냈어요(' + r.reason + ')' : ''));
+          } else if(r.failed > 0){
+            goComm('웰컴 응원을 보내지 못했어요(' + r.reason + '). 소통 탭에서 함께하는 분을 찾아보세요');
+          } else {
+            saveProfile();
+            goComm('오늘은 이미 웰컴 응원을 보냈어요. 소통 탭에서 함께하는 분을 찾아보세요');
           }
-          toast('💌 동류 러너들에게 웰컴 응원 스탬프를 보냈어요! (+5 EXP)');
-          closeModal();
-          if(typeof setTab === 'function'){
-            state.commSubTab = 'feed';
-            setTab('comm');
-          }
-          if(typeof onDismiss === 'function') onDismiss();
         });
       }
 
@@ -37697,7 +37775,7 @@ wirePromptEncyclopediaEvents(body);
   }
   function manitoMajors(){
     var ints = (state.profile.interests||[]).map(function(t){ return t.split('/')[0]; }).filter(function(k){ return TOPICS[k]; });
-    var goalMajors = state.profile.goals.filter(function(g){ return !g.archivedAt && g.topic; }).map(function(g){ return g.topic.split('/')[0]; });
+    var goalMajors = state.profile.goals.filter(function(g){ return !g.archivedAt && g.topic; }).map(function(g){ return g.topic.split('/')[0]; }).filter(function(k){ return TOPICS[k]; }); // [#TASK-ES-352] TOPICS 에 없는 주제(예: reading)는 화면이 깨지므로 뺀다
     var all = ints.concat(goalMajors);
     var seen = {}; all = all.filter(function(k){ if(seen[k]) return false; seen[k]=true; return true; });
     return all.length ? all : ['health','study','mind'];
@@ -37876,7 +37954,13 @@ wirePromptEncyclopediaEvents(body);
     var ms = manitoState();
     if(!ms.joined){
       var majors = manitoMajors();
+      // [#TASK-ES-352] 마니또를 시작하지 않은 회원에게도 실제로 도착한 응원(첫 체크인 웰컴 응원 등)은 보여 준다.
+      var preJoinInbox = (REAL_MANITO_INBOX_CACHE || []).slice(0, 5);
       body.innerHTML =
+        (preJoinInbox.length ? '<div class="card" id="manitoPreJoinInbox"><div class="card-title-row"><h3>받은 응원함</h3><span class="dday-pill">'+preJoinInbox.length+'</span></div>' +
+          preJoinInbox.map(function(it){
+            return '<div class="cheer-in"><div class="ci">'+it.stamp.icon+'</div><div class="cb"><b>'+escapeHtml(it.from.name)+'</b> · <span class="ct">'+it.when+'</span><div>'+escapeHtml(it.text)+'</div></div></div>';
+          }).join('') + '</div>' : '') +
         '<div class="manito-hero">' +
           '<h3>마니또를 만나볼까요?</h3>' +
           '<p>관심 카테고리가 비슷한 사람들과 <b>익명으로</b> 엮여요. 서로의 목표와 오늘 기록을 보며 응원을 주고받고, 마음이 맞으면 DM까지.</p>' +

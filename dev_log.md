@@ -5782,3 +5782,13 @@
 - **확인 못 함**: 실계정 로그인 상태의 탈퇴 팝업 화면, 실계정 2기기 '다른 기기 모두 로그아웃' 실효.
 - **진행 단계**: [4단계: 심사 청구]
 ---
+
+## [2026-10-04 15:20] #TASK-ES-352: 소통 COMM-05 — 첫 체크인 축하 창 '웰컴 응원 스탬프' 실제 발송
+- **목표**: 아무것도 보내지 않으면서 '동류 러너들에게 웰컴 응원 스탬프를 보냈어요' 라고 말하고 +5 EXP 를 주던 `#firstCheckinCommBtn` 에 실제 발송을 붙인다(상민님 결정 2026-10-04, 노션 COMM-05, PR #659 결심 후보). 못 보내면 거짓 문구 없이 소통 탭 안내.
+- **수정/실행 내역**:
+  - `index.html`: `canSendFirstCheckinWelcome`·`firstCheckinWelcomeSentToday`·`sendFirstCheckinWelcomeStamps` 신설. 화면에 보인 동류 회원(인증 UUID) 1명당 team_pings 1행 — 기존 마니또 응원 형식(group_id 'manito' · target_type 'manito_cheer' · target_id 'seed' · ping_type 'welcome_cheer', sender_id 내 id, receiver_id 상대, id `fcw_<날짜>_<나>_<상대>`). 같은 사람 하루 1회: 기기 기록(settings.welcomeStampSent) + 서버 중복 키(23505)는 '이미 보냄'. 토스트는 실제 보낸 수, 실패는 사유. EXP +5 는 1명 이상 보냈을 때만. 게스트·0명은 insert 없이 '소통 탭에서 함께하는 분을 찾아보세요' + 소통 탭. 버튼 글자도 상황대로(N명에게 보내기 / 오늘 보냄 / 소통 탭에서 찾아보기).
+  - 받는 쪽: 응원류 team_pings 를 receiver_id 로 읽는 기존 화면은 마니또 '받은 응원함'뿐이라 거기에 싣고, 마니또를 시작하지 않은 회원에게도 실제로 도착한 응원은 시작 화면 위 `#manitoPreJoinInbox` 카드로 보여 준다. 조사 중 `manitoMajors` 가 TOPICS 에 없는 목표 topic(예: reading)으로 시작 전 화면을 빈 화면으로 만드는 오류를 발견해 거름.
+  - `tests/trio-es143-es145.test.js`: 거짓 토스트 문자열 검사를 사실 문구 검사로 교체(claims retire).
+  - 측정 도구 `docs/design/harness/welcome-stamp-check.js`(목이 insert 기록·같은 id 23505 거절), 법정 시나리오 `reports/TASK-ES-352/scenarios/guest-welcome-no-false-send.json`.
+- **검증 결과**(측정값, 판정 아님): 헤드리스 작업 트리 — M1 동류 2명 → insert 2행(형식 일치)·토스트 '2명'·EXP +5 / M2 같은 날 다시 0행·EXP 0, 기기 기록을 지워도 시도 2·저장 0·EXP 0 / M3 게스트·로그인 0명 insert 0·'보냈어요' 0·소통 탭 / M4 받는 회원(마니또 미시작) 받은 응원함에 1건. origin/main — 다섯 경우 모두 insert 0인데 '보냈어요' 토스트·EXP +5, 받는 쪽 화면은 TOPICS 오류로 빈 화면. npm test 종료코드 0. 실계정 2개(레벨 5)는 확인하지 못함.
+- **진행 단계**: [4단계: 심사 청구].

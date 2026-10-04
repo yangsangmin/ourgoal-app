@@ -1,0 +1,72 @@
+{
+  "id": "guest-welcome-no-false-send",
+  "title": "로그인하지 않은 게스트가 첫 체크인 축하 창의 소통 버튼을 누르면 '보냈어요' 없이 '소통 탭에서 함께하는 분을 찾아보세요' 안내와 함께 소통 탭으로 간다",
+  "steps": [
+    {
+      "do": "setViewport",
+      "width": 375,
+      "height": 812
+    },
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "expect": "visible",
+      "selector": "#captureInput",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#captureInput"
+    },
+    {
+      "do": "type",
+      "selector": "#captureInput",
+      "text": "아침 러닝 5km 완료"
+    },
+    {
+      "do": "click",
+      "selector": "#captureSave"
+    },
+    {
+      "expect": "visible",
+      "selector": "#firstCheckinCommBtn",
+      "timeoutMs": 8000
+    },
+    {
+      "do": "click",
+      "selector": "#firstCheckinCommBtn"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "소통 탭에서 함께하는 분을 찾아보세요",
+      "timeoutMs": 4000
+    },
+    {
+      "expect": "neverVisible",
+      "selector": "#toast",
+      "text": "보냈어요",
+      "forMs": 1500
+    },
+    {
+      "expect": "visible",
+      "selector": "#screen-comm"
+    },
+    {
+      "expect": "noExceptions"
+    },
+    {
+      "capture": "after-guest-welcome"
+    }
+  ]
+}
