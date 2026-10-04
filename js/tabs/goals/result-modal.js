@@ -5,6 +5,7 @@
  * 목표 상세(js/tabs/goals/goal-detail-events.js)의 결과 버튼·마일스톤 행·할 일 결과·보관 전 결과 입력이 L.openResultModal 로 부른다
  * (index.html 이 IIFE 머리에서 이 키트의 함수를 같은 이름으로 가져오므로, 1차 이음매의 getter 가 그대로 이 함수를 돌려준다).
  * 바꾼 것은 이름 참조뿐이다 — 인라인 스코프 이름은 L.<이름>, 목표 키트 함수는 K.<이름>. 버그도 그대로 옮겼다(고치는 것은 별도 티켓).
+ * #TASK-ES-378: 「보관」(#rsJustArchive)이 목표 단위에서 Dead-Click(goal 인자 없음)·없는 renderGoalDetail/renderHomeGoals 호출로 ReferenceError 나던 것을 고쳤다 — 보관 대상은 archiveGoalTarget, 화면 갱신은 L.renderAll().
  * 선례: 목표 탭 1차 #TASK-ES-370 · 일정 탭 #TASK-ES-360. 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
  */
 (function(global) {
@@ -18,6 +19,8 @@
   function openResultModal(kind, obj, onSaved, goal){
     var r = obj.result || {};
     var kindLabel = kind==='goal' ? '목표' : (kind==='ms' ? '마일스톤' : '할 일');
+    // #TASK-ES-378: 보관 대상 목표 — 마일스톤·할 일은 넘겨받은 goal, 목표 단위 결과(goal 인자 없음)는 obj 자신
+    var archiveGoalTarget = goal || (kind==='goal' ? obj : null);
     var displayTitle = (obj && obj.title && obj.title !== '커리큘럼 정하기' && obj.title !== '커리큘럼') ? obj.title : '';
 
     var currentDb = r.dbProperties || (r.target || r.result ? {
@@ -229,14 +232,13 @@
         var justArchiveBtn = sheet.querySelector('#rsJustArchive');
         if(justArchiveBtn){
           justArchiveBtn.addEventListener('click', async function(){
-            if(goal){
-              goal.archivedAt = L.nowISO();
+            if(archiveGoalTarget){
+              archiveGoalTarget.archivedAt = L.nowISO();
               await L.saveProfile();
               L.toast('목표가 보관함으로 이동되었습니다 📦');
               L.closeModal();
               if(onSaved) onSaved();
-              renderGoalDetail();
-              renderHomeGoals();
+              L.renderAll();
             }
           });
         }
@@ -350,8 +352,8 @@
           }
           var msXpRes = null;
           if(kind==='ms' && !wasDone && obj.status==='done') msXpRes = L.awardXP(L.XP_RULES.milestoneDone, '마일스톤 완료');
-          if(runSaveAndArchive && goal){
-            goal.archivedAt = L.nowISO();
+          if(runSaveAndArchive && archiveGoalTarget){
+            archiveGoalTarget.archivedAt = L.nowISO();
           }
           await L.saveProfile();
           L.closeModal();
