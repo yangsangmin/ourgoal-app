@@ -1,0 +1,19 @@
+{
+  "id": "settings-applock-pin",
+  "title": "설정에서 앱 잠금 PIN 을 켜면 보안 배지가 '앱 잠금 PIN 설정됨 (이 기기)'로 바뀐다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "click", "selector": "#setGroupAccountSummary" },
+    { "do": "click", "selector": "#twoFactorSwitch" },
+    { "do": "type", "selector": "#twoFaPinInput", "text": "2580" },
+    { "do": "type", "selector": "#twoFaPinConfirm", "text": "2580" },
+    { "do": "click", "selector": "#btnSave2Fa" },
+    { "expect": "textContains", "selector": "#badge2faStatus", "text": "앱 잠금 PIN 설정됨 (이 기기)" },
+    { "expect": "textContains", "selector": ".toggle-row .t", "text": "앱 잠금 PIN (이 기기)" },
+    { "capture": "applock-on" }
+  ]
+}

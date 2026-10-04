@@ -1,0 +1,388 @@
+{
+  "task": "TASK-ES-346",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-346-SETTINGS-HONESTY.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "SET-02: 탈퇴 팝업이 '30일 후 완전 자동 영구 파기'·개인정보보호법 준수를 고지하는데 api/withdraw.js 는 메타데이터만 기록하고 파기 실행 없음 → 고지 문구를 실제 처리(요청 접수·유예·현재는 자동 파기 미실행이면 그 사실과 문의 경로)에 맞게 고친다. 먼저 api/withdraw.js 와 관련 코드를 읽어 실제로 무엇을 하는지 정확히 확인하고 문구를 그에 맞춘다."
+    },
+    {
+      "id": "R2",
+      "text": "SET-01: #badge2faStatus 초기 마크업 '✓ 2단계 인증 보호 중' 하드코딩 → 실제 상태(설정됐을 때만)로. refreshSecurityStatus 도 정직하게."
+    },
+    {
+      "id": "R3",
+      "text": "SET-01: 2단계 인증은 실제로 이 기기 안의 PIN 비교(openTwoFactorSetupModal, challengeTwoFactorModal, settings.twoFactorPin 평문). 이름을 '앱 잠금 PIN (이 기기)'처럼 실제대로 바꾼다."
+    },
+    {
+      "id": "R4",
+      "text": "SET-01: PIN 은 평문 대신 해시(예: SubtleCrypto SHA-256 + uid 소금)로 저장·비교. 기존 평문 PIN 사용자는 첫 검증 성공 시 해시로 이전(잠김 방지)."
+    },
+    {
+      "id": "R5",
+      "text": "SET-01: getRegisteredDevices: 저장값이 없으면 실재하지 않는 기기 2대와 위치를 만들어 저장 → 생성 제거, 현재 기기만(알 수 있는 정보만) 또는 빈 목록 + 사실 안내. 이미 저장된 가짜 항목(id dev_mobile_pwa·dev_tablet_tab)은 로드 시 정리."
+    },
+    {
+      "id": "R6",
+      "text": "SET-01: 개별 '원격 로그아웃'·killDeviceSession 이 토스트만: 실제로 끊을 수 없으면 '끊었다'는 토스트·결과를 없애고, 실제로 되는 '다른 기기에서 모두 로그아웃'(sb.auth.signOut scope others)으로 안내."
+    },
+    {
+      "id": "R7",
+      "text": "SET-01: 보안 카드의 하드코딩 '서울, 대한민국'·'현재 1개의 활성 세션' 문구 → 사실대로 또는 제거(문구 제거는 기능 삭제 아님)."
+    },
+    {
+      "id": "R8",
+      "text": "SET-01: #cacheSizeText '14.2 MB' 하드코딩, clearCacheBtn 문구만 '0 KB' → 실측(navigator.storage.estimate 또는 Cache API) 또는 측정 불가 시 '측정 불가'."
+    },
+    {
+      "id": "R9",
+      "text": "SET-01: \"데이터는 이 기기(이 대화)에만 저장됩니다\" 사실과 반대 → 실제 저장 방식대로."
+    },
+    {
+      "id": "R10",
+      "text": "측정: 헤드리스 브라우저 또는 단위 시험으로 ① PIN 미설정 시 보호 배지 미표시 ② 가짜 기기 생성 0, 기존 가짜 항목 정리 ③ PIN 설정 후 저장값이 평문 아님, 올바른 PIN 통과·틀린 PIN 실패, 평문 PIN 이전 ④ 캐시 표시가 하드코딩 아님. grep: '14.2 MB' 0, 'dev_tablet_tab' 생성 코드 0, '2단계 인증 보호 중' 하드코딩 0. 고지 문구↔서버 동작 대조표(문장별). npm test 종료코드. 실계정 2기기 확인은 못 했다고 정직하게."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "탈퇴 팝업이 자동 파기를 아직 실행하지 않는다는 사실을 고지한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "아직 탈퇴 후 자동 파기 기능을 실행하고 있지 않습니다"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "탈퇴 팝업에서 '30일이 지나면 완전 자동 영구 파기' 문장을 없앴다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "완전 자동 영구 파기"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "탈퇴 팝업이 삭제 요청 경로(공식 지원 이메일)로 '계정 데이터 삭제 요청'을 안내한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "계정 데이터 삭제 요청"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "로그인한 회원이 설정의 회원 탈퇴를 누르면 바뀐 고지(자동 파기 미실행·이 기기 30일 복구·삭제 요청 이메일)가 팝업에 보인다",
+      "touches": [
+        "index.html"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "로그인할 수 있는 회원 계정을 가진 사람",
+        "how": [
+          "앱에 로그인한다",
+          "설정 탭 맨 아래 '회원 탈퇴'를 누른다",
+          "1번 상자에 '현재 30일이 지나도 자동으로 삭제되지 않으며'가, 3번 상자 제목이 '데이터 삭제(파기) 현황과 요청 방법'인지 본다",
+          "탈퇴 신청은 누르지 않고 취소한다"
+        ]
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 6,
+      "domain": "ui-behavior",
+      "statement": "PIN 을 켜지 않은 게스트가 설정 탭을 열면 보안 배지가 '앱 잠금 PIN 꺼짐'으로 보인다(예전에는 '✓ 2단계 인증 보호 중')",
+      "touches": [
+        "index.html"
+      ],
+      "scenario": "scenarios/settings-security-card-honest.json"
+    },
+    {
+      "id": "C6",
+      "req": "R3",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "설정 계정 묶음의 스위치 이름이 '앱 잠금 PIN (이 기기)'이고, PIN 을 켜면 보안 배지가 '앱 잠금 PIN 설정됨 (이 기기)'로 바뀐다",
+      "touches": [
+        "index.html"
+      ],
+      "scenario": "scenarios/settings-applock-pin.json"
+    },
+    {
+      "id": "C7",
+      "req": "R4",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "앱 잠금 PIN 은 SubtleCrypto SHA-256(소금 + PIN) 값으로 만들어 저장한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "window.crypto.subtle.digest('SHA-256'"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R4",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "예전 평문 PIN 이 맞게 입력되면 그 PIN 의 해시로 바꿔 저장한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "settings.twoFactorPin = await hashAppLockPin(entered);"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R4",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "PIN 설정 저장 때 평문이 아니라 해시값을 settings.twoFactorPin 에 넣는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "state.profile.settings.twoFactorPin = await hashAppLockPin(pin1);"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R5",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "설정 계정 묶음을 열면 로그인 기기 목록에 이 기기 한 대만 보이고 배지는 '이 기기만 표시'다",
+      "touches": [
+        "index.html"
+      ],
+      "scenario": "scenarios/settings-device-list-honest.json"
+    },
+    {
+      "id": "C11",
+      "req": "R5",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "앱 코드에 가짜 태블릿 기기(dev_tablet_tab)를 만드는 코드가 없다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "dev_tablet_tab"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R6",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 7,
+      "domain": "ui-behavior",
+      "statement": "보안 카드의 기기 버튼을 게스트가 누르면 '세션이 없다'고 알리고 '차단했다'는 토스트를 내지 않는다(예전에는 '원격 기기 세션이 안전하게 차단되었습니다')",
+      "touches": [
+        "index.html"
+      ],
+      "scenario": "scenarios/settings-killswitch-honest.json"
+    },
+    {
+      "id": "C13",
+      "req": "R6",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "'다른 기기 모두 로그아웃'은 Supabase 의 signOut scope others 를 부르고 실패하면 성공 토스트를 내지 않는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "toast('다른 기기 로그아웃에 실패했어요. 네트워크를 확인하고 다시 시도해 주세요.');"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R6",
+      "kind": "unverified",
+      "domain": "security-server",
+      "statement": "로그인한 회원이 '다른 기기 모두 로그아웃'을 누르면 다른 기기의 로그인이 실제로 풀린다",
+      "touches": [
+        "index.html"
+      ],
+      "unverified": {
+        "reason": "needs-two-accounts",
+        "who": "같은 회원 계정으로 기기 두 대(PC 와 폰 등)에 로그인할 수 있는 사람",
+        "how": [
+          "[손 필요] 기기 A 와 기기 B 에 같은 계정으로 로그인한다",
+          "기기 A 설정 > 계정 및 보안 > '다른 모든 기기에서 로그아웃' > '다른 기기 모두 로그아웃'을 누른다",
+          "기기 B 에서 앱을 새로고침하거나 15초 기다려 로그인 화면으로 돌아가는지 본다",
+          "기기 A 는 로그인 상태로 남는지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "보안 카드에서 근거 없는 위치 문구 '서울, 대한민국'을 없앴다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "서울, 대한민국"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "보안 카드에서 근거 없는 '현재 1개의 활성 세션' 문구를 없앴다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "현재 1개의 활성 세션"
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R8",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "설정 데이터 묶음을 열면 저장공간이 브라우저 추정치로 보이고, 캐시 비우기를 누르면 지운 묶음 수를 알린 뒤 다시 잰 값을 보인다",
+      "touches": [
+        "index.html"
+      ],
+      "scenario": "scenarios/settings-cache-measured.json"
+    },
+    {
+      "id": "C18",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "저장공간 표시에 고정값 '14.2 MB' 가 없다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "14.2 MB"
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R9",
+      "kind": "static",
+      "domain": "config",
+      "statement": "저장 방식 안내가 '로그인하면 목표·기록·프로필은 서버(Supabase), 설정·캐시는 이 기기, 게스트는 이 기기'로 바뀌었다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "아워골 서버(Supabase)에 저장되고, 앱 설정과 화면 캐시는 이 기기에만 저장돼요"
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R9",
+      "kind": "static",
+      "domain": "config",
+      "statement": "'데이터는 이 기기(이 대화)에만 저장됩니다' 문구가 없다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "이 기기(이 대화)에만 저장됩니다"
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R10",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기기 목록 단위 시험이 '대 활성 연결' 대신 '이 기기만 표시'를 확인하도록 바뀌었다",
+      "touches": [
+        "tests/device-session-control.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/device-session-control.test.js",
+        "text": "indexHtml.includes('이 기기만 표시')"
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R10",
+      "kind": "static",
+      "domain": "config",
+      "statement": "탈퇴 팝업 단위 시험이 법정 보존 문구 대신 자동 파기 미실행 고지와 삭제 요청 이메일을 확인하도록 바뀌었다",
+      "touches": [
+        "tests/account-withdrawal-modal.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/account-withdrawal-modal.test.js",
+        "text": "html.includes('아직 탈퇴 후 자동 파기 기능을 실행하고 있지 않습니다')"
+      }
+    }
+  ],
+  "retire": [
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-158] 회원 탈퇴 시 법적책임·데이터 분실 사전 안내 팝업 및 동의 4위 1체 배선 검증",
+      "reason": "SET-02 지시: 이 검사는 실행되지 않는 '법적 책임 및 관계 법령에 따른 정보 보존'(전자상거래법·통신비밀보호법 분리 보관) 고지 문구의 존재를 요구했다. 코드에 그런 보관·파기 처리가 없어 문구를 사실(자동 파기 미실행·삭제 요청 경로)로 바꿨고, 검사도 새 사실 문구를 확인하도록 고쳤다. 글자 존재 검사이며 제품 함수를 돌리지 않는다."
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-271] 계정 탈퇴 시 법적책임·데이터 분실 사전 안내 팝업 및 4위 1체 배선 무결성 검증",
+      "reason": "SET-02 지시: 이 검사는 '원클릭으로 모든 데이터가 100% 무손실 복구'·'법적 책임 및 관계 법령에 따른 정보 보존 고지'·전자상거래법 제6조·통신비밀보호법 제15조의2·부정 이용 해시 격리 문구의 존재를 요구했다. 복구는 이 기기 30일 이내만 되고 보존·격리 처리는 코드에 없어 문구를 사실대로 바꿨고, 검사도 새 문구를 확인하도록 고쳤다. 글자 존재 검사이며 제품 함수를 돌리지 않는다."
+    }
+  ]
+}

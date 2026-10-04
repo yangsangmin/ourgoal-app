@@ -6220,8 +6220,9 @@ check('compliance: [#TASK-ES-158] 회원 탈퇴 시 법적책임·데이터 분�
   assert.ok(indexSrc.includes('id="withdrawModal"'), '전용 withdrawModal 컨테이너 마크업 존재');
   assert.ok(indexSrc.includes('소중한 목표 및 기록 분실 안내'), '1. 데이터 분실 안내 문구 존재');
   assert.ok(indexSrc.includes('30일 탈퇴 유예 안전망 및 원클릭 복구'), '2. 30일 유예 및 복구 안내 문구 존재');
-  assert.ok(indexSrc.includes('법적 책임 및 관계 법령에 따른 정보 보존'), '3. 법적 책임 보존 고지 문구 존재');
-  assert.ok(indexSrc.includes('전자상거래 등에서의 소비자보호에 관한 법률') && indexSrc.includes('통신비밀보호법'), '관련 법령 명시');
+  // [#TASK-ES-346 SET-02] 실행되지 않는 '자동 파기·법정 분리 보관' 고지를 실제 처리 방식과 삭제 요청 경로로 바꿨다
+  assert.ok(indexSrc.includes('3. 데이터 삭제(파기) 현황과 요청 방법'), '3. 데이터 삭제 현황·요청 방법 고지 문구 존재');
+  assert.ok(indexSrc.includes('아직 탈퇴 후 자동 파기 기능을 실행하고 있지 않습니다'), '자동 파기 미실행 사실 고지');
 
   // 3. 동의 체크박스 및 인터랙티브 버튼 배선 확인
   assert.ok(indexSrc.includes('id="withdrawAgreeCheck"'), '동의 체크박스 요소 존재');
@@ -8691,14 +8692,13 @@ check('compliance: [#TASK-ES-271] 계정 탈퇴 시 법적책임·데이터 분�
   // 4. 30일 안전 유예 및 원클릭 복구
   assert.ok(indexHtml.includes('2. 30일 탈퇴 유예 안전망 및 원클릭 복구'), '30일 탈퇴 유예 섹션');
   assert.ok(indexHtml.includes('30일간 안전 유예 기간'), '30일 안전 유예 기간 안내');
-  assert.ok(indexHtml.includes('원클릭으로 모든 데이터가 100% 무손실 복구'), '원클릭 100% 무손실 복구 안내');
+  assert.ok(indexHtml.includes('30일 안에 이 기기에서 다시 로그인'), '30일 내 같은 기기 재로그인 복구 안내(#TASK-ES-346)');
 
   // 5. 법적 책임 및 보존 3대 법령
-  assert.ok(indexHtml.includes('3. 법적 책임 및 관계 법령에 따른 정보 보존 고지'), '법적 책임 고지 섹션');
+  // [#TASK-ES-346 SET-02] 실행되지 않는 보존·파기 약속 대신 실제 현황과 삭제 요청 경로를 고지한다
+  assert.ok(indexHtml.includes('3. 데이터 삭제(파기) 현황과 요청 방법'), '데이터 삭제 현황·요청 방법 섹션');
   assert.ok(indexHtml.includes('개인정보보호법 제21조'), '개인정보보호법 제21조 명시');
-  assert.ok(indexHtml.includes('전자상거래 등에서의 소비자보호에 관한 법률 제6조'), '전자상거래법 제6조 명시');
-  assert.ok(indexHtml.includes('통신비밀보호법 제15조의2'), '통신비밀보호법 제15조의2 명시');
-  assert.ok(indexHtml.includes('부정 이용 및 분쟁 방지'), '부정 이용 방지 고지');
+  assert.ok(indexHtml.includes('ourgoal.support@gmail.com'), '삭제 요청 경로(공식 지원 이메일) 명시');
 
   // 6. 4위 1체 배선 (체크박스, 취소, 확정 버튼)
   assert.ok(indexHtml.includes('id="withdrawAgreeCheck"'), 'withdrawAgreeCheck 체크박스');

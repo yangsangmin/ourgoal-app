@@ -1,0 +1,18 @@
+{
+  "id": "settings-device-list-honest",
+  "title": "설정의 계정 묶음을 열면 로그인 기기 목록에 이 기기 한 대만 보이고, 다른 기기 로그아웃 버튼은 게스트에게 세션이 없다고 알린다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "click", "selector": "#setGroupAccountSummary" },
+    { "expect": "count", "selector": "#activeDevicesContainer .active-device-card", "equals": 1 },
+    { "expect": "textContains", "selector": "#activeDeviceCountBadge", "text": "이 기기만 표시" },
+    { "do": "click", "selector": "#logoutOtherDevicesBtn" },
+    { "expect": "textContains", "selector": "#toast", "text": "게스트 체험 모드는 로그인 세션이 없어" },
+    { "expect": "notVisible", "selector": "#btnConfirmLogoutOtherModal" },
+    { "capture": "device-list" }
+  ]
+}
