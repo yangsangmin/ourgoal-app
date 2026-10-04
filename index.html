@@ -3774,17 +3774,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     var raw = null;
     try { raw = JSON.parse(localStorage.getItem(key) || 'null'); } catch(e){}
     var ua = navigator.userAgent;
-    var os = /iPhone|iPad/i.test(ua) ? 'iOS' : /Android/i.test(ua) ? 'Android' : /Macintosh/i.test(ua) ? 'macOS' : /Windows/i.test(ua) ? 'Windows' : '알 수 없는 OS';
-    var browser = /Edg\//i.test(ua) ? 'Edge' : /Chrome|CriOS/i.test(ua) ? 'Chrome' : /Safari/i.test(ua) ? 'Safari' : /Firefox/i.test(ua) ? 'Firefox' : '브라우저';
-    var platform = /iPhone|Android.*Mobile/i.test(ua) ? 'Mobile' : (/iPad|Android/i.test(ua) ? 'Tablet' : 'Desktop');
+    var os = /iPhone|iPad/i.test(ua) ? 'iOS' : /Android/i.test(ua) ? 'Android' : /Macintosh/i.test(ua) ? 'macOS' : 'Windows';
+    var browser = /Chrome/i.test(ua) ? 'Chrome' : /Safari/i.test(ua) ? 'Safari' : /Firefox/i.test(ua) ? 'Firefox' : 'Browser';
     var mine = null;
     if(Array.isArray(raw)){
       raw.forEach(function(d){ if(d && d.id === myDevId) mine = d; });
     }
     var cleaned = [{
       id: myDevId,
-      name: os + ' · ' + browser,
-      platform: platform,
+      name: os + ' ' + browser,
+      platform: os,
       isCurrent: true,
       firstLogin: (mine && mine.firstLogin) || Date.now(),
       lastActive: Date.now(),
