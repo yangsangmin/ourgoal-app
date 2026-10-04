@@ -1,0 +1,520 @@
+{
+  "task": "TASK-ES-376",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-376-CONFIRM-SHEET-2.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 의 기본 확인창 confirm() 중 1단계 빌더 권장 순서 1(모달 밖 단순 삭제 6곳)·2(캘린더 3곳)·3(소통 6곳)·4(팀 2곳)·6(샘플 정리·계정 초기화 2곳)을 앱 바텀시트(1단계 통로 ui.confirm)로 바꾼다 — 문구 변경 0, 목표 탭 안 7곳은 손대지 않음, index.html 인라인 줄 수를 늘리지 않음"
+    },
+    {
+      "id": "R2",
+      "text": "각 처리기를 async 로 하고 확인했을 때만 동작, 취소·✕·뒤로가기면 아무 일 없음"
+    },
+    {
+      "id": "R3",
+      "text": "부품 시험을 추가한다(npm test 경로)"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "기록 카드 ×(기록 삭제)는 바텀시트 확인창(같은 문구)에서 확인했을 때만 휴지통으로 옮긴다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "          if(!(await OurgoalCapabilities.call('ui.confirm', '이 기록을 휴지통으로 이동할까요?\\n7일간 보관되며 언제든 원복할 수 있습니다.'))) return;"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "휴지통 항목 영구 삭제는 바텀시트 확인창(같은 문구)에서 확인했을 때만 지운다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "    if(!(await OurgoalCapabilities.call('ui.confirm', '\"' + item.title + '\" 항목을 영구 삭제할까요?\\n더 이상 복구할 수 없습니다.'))) return;"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "휴지통 비우기는 바텀시트 확인창(같은 문구)에서 확인했을 때만 비운다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "    if(!(await OurgoalCapabilities.call('ui.confirm', '휴지통을 완전히 비울까요?\\n보관 중인 ' + trash.length + '개 항목이 모두 영구 삭제되며 복구할 수 없습니다.'))) return;"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "참고자료 삭제는 바텀시트 확인창(같은 문구)에서 확인했을 때만 지운다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "            if(!(await OurgoalCapabilities.call('ui.confirm', '이 참고자료를 삭제할까요?'))) return;"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "등록한 프롬프트 삭제는 바텀시트 확인창(같은 문구)에서 확인했을 때만 지운다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "        if(!(await OurgoalCapabilities.call('ui.confirm', '등록하신 프롬프트를 삭제하시겠습니까?'))) return;"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "피드백 설정 보관함 삭제는 바텀시트 확인창(같은 문구)에서 확인했을 때만 지운다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "          if(!(await OurgoalCapabilities.call('ui.confirm', '‘' + (target.title || '이 피드백') + '’ 설정을 보관함에서 삭제하시겠습니까?'))) return;"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "캘린더 날짜 배경사진 초기화는 바텀시트 확인창(같은 문구)에서 확인했을 때만 되돌린다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "          if(await OurgoalCapabilities.call('ui.confirm', '이날의 배경사진을 초기화하고 기본 배경으로 되돌릴까요?')){"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "캘린더 일정 휴지통 이동(날짜 허브·일정 편집 창 2곳, 같은 줄)은 바텀시트 확인창(같은 문구)에서 확인했을 때만 옮긴다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "            if(!(await OurgoalCapabilities.call('ui.confirm', '이 일정을 휴지통으로 이동할까요?\\n7일간 보관되며 언제든 원복할 수 있습니다.'))) return;"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "사용자 차단은 바텀시트 확인창(같은 문구)에서 확인했을 때만 차단 목록에 넣는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "    if(!(await OurgoalCapabilities.call('ui.confirm', displayName + '님을 차단할까요?\\r\\n차단하면 내 화면에서 이 사용자의 게시물과 댓글이 숨겨집니다.'))) return;"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "팀 댓글 신고는 바텀시트 확인창(같은 문구)에서 확인했을 때만 신고한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "          if(!(await OurgoalCapabilities.call('ui.confirm', '이 댓글을 신고할까요? 신고가 여러 건 쌓이면 자동으로 숨겨져요.'))) return;"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "피드 게시물 신고는 바텀시트 확인창(같은 문구)에서 확인했을 때만 신고한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "        if(!(await OurgoalCapabilities.call('ui.confirm', '이 게시물을 신고할까요? 신고가 여러 건 쌓이면 자동으로 숨겨져요.'))) return;"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "마니또 정체 공개 제안은 바텀시트 확인창(같은 문구)에서 확인했을 때만 제안한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "        if(!(await OurgoalCapabilities.call('ui.confirm', '정체 공개를 제안할까요? 상대도 수락해야 서로 프로필이 열려요.'))) return;"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "마니또 다시 배정은 바텀시트 확인창(같은 문구)에서 확인했을 때만 다시 배정한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "      if(!(await OurgoalCapabilities.call('ui.confirm', '지금 마니또와의 응원 기록은 유지되고, 새 마니또 3명이 배정돼요. 진행할까요?'))) return;"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "마니또 그만두기는 바텀시트 확인창(같은 문구)에서 확인했을 때만 그만둔다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "      if(!(await OurgoalCapabilities.call('ui.confirm', '마니또를 그만둘까요? 보낸 응원 기록은 남아요.'))) return;"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "수준별 조 삭제(index.html openLevelGroupDetailModal)는 바텀시트 확인창(같은 문구)에서 확인했을 때만 지운다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "        if(!(await OurgoalCapabilities.call('ui.confirm', '정말 \"' + lg.name + '\" 조와 속한 모든 목표/할일을 삭제할까요?'))) return;"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "팀 목표 삭제는 바텀시트 확인창(같은 문구)에서 확인했을 때만 지운다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "          if(!(await OurgoalCapabilities.call('ui.confirm', '정말 \"' + tg.title + '\" 팀 목표를 삭제할까요?'))) return;"
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "샘플 데이터 정리는 바텀시트 확인창(같은 문구)에서 확인했을 때만 정리한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "    var confirmed = await OurgoalCapabilities.call('ui.confirm', '체험용 샘플 데이터 ' + sampleCount + '건만 말끔히 삭제할까요?\\n(내가 직접 적은 기록은 100% 안전하게 유지됩니다)');"
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "계정 데이터 초기화는 바텀시트 확인창(같은 문구)에서 확인했을 때만 초기화한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "    if(!(await OurgoalCapabilities.call('ui.confirm', '이 계정의 모든 목표·기록·설정을 초기화할까요? 되돌릴 수 없어요.'))) return;"
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "목표 탭 루틴 삭제 확인창은 이번 범위 밖이라 그대로 둔다(목표 탭 세포 이전 중)",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "        if(!confirm('이 루틴을 삭제하시겠습니까?')) return;"
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "게스트가 기록 탭 샘플 기록 카드의 ×를 누르면 기본 확인창 대신 예전 문구 「이 기록을 휴지통으로 이동할까요?」 그대로의 앱 바텀시트 확인창이 뜨고, 설정 휴지통 창의 ×에서도 휴지통 창 위에 「항목을 영구 삭제할까요?」 바텀시트 확인창이 뜬다",
+      "touches": [
+        "index.html"
+      ],
+      "scenario": "scenarios/record-trash-confirm.json"
+    },
+    {
+      "id": "C21",
+      "req": "R1",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "게스트가 설정의 「이 계정 데이터 초기화」를 누르면 기본 확인창 대신 예전 문구 「이 계정의 모든 목표·기록·설정을 초기화할까요? 되돌릴 수 없어요.」 그대로의 앱 바텀시트 확인창이 뜬다",
+      "touches": [
+        "index.html"
+      ],
+      "scenario": "scenarios/settings-reset-confirm.json"
+    },
+    {
+      "id": "C22",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "기록 카드 휴지통 이동과 휴지통 영구 삭제는 취소하면 아무 일 없이 카드·휴지통 창·항목이 그대로 돌아오고, 확인하면 카드가 휴지통으로 가고 휴지통이 빈다",
+      "touches": [
+        "index.html"
+      ],
+      "scenario": "scenarios/record-trash-confirm.json"
+    },
+    {
+      "id": "C23",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "게스트가 기록 탭 샘플 정리(1초 정리하기)를 취소하거나 뒤로가기로 닫으면 샘플이 그대로 남고, 확인하면 정리되어 배너가 사라진다",
+      "touches": [
+        "index.html"
+      ],
+      "scenario": "scenarios/sample-purge-confirm.json"
+    },
+    {
+      "id": "C24",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "게스트가 계정 데이터 초기화를 취소하거나 ✕로 닫으면 기록이 그대로 남고, 확인하면 초기화되어 기록 탭의 샘플 정리 배너가 사라진다",
+      "touches": [
+        "index.html"
+      ],
+      "scenario": "scenarios/settings-reset-confirm.json"
+    },
+    {
+      "id": "C25",
+      "req": "R2",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "로그인한 계정에서 피드 게시물·팀 댓글의 신고 버튼을 누르면 같은 문구의 바텀시트 확인창이 뜨고, 취소하면 신고가 들어가지 않고 확인하면 신고된다",
+      "touches": [
+        "index.html"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "테스트 계정으로 로그인할 수 있는 사람(이 PC 의 세션 또는 상민님)",
+        "how": [
+          "테스트 계정으로 로그인한다",
+          "소통 탭 피드에서 게시물의 신고를 누른다",
+          "바텀시트 확인창의 문구가 「이 게시물을 신고할까요? 신고가 여러 건 쌓이면 자동으로 숨겨져요.」인지 보고 취소를 누른다 — 버튼이 그대로 눌리는지 본다",
+          "다시 눌러 확인 — 신고 완료 안내가 뜨는지 본다",
+          "팀 목표 카드 댓글의 신고도 같은 순서로 본다"
+        ],
+        "note": "법정은 외부 통신을 막아 로그인할 수 없다. 같은 한 줄 문지기(OurgoalCapabilities.call('ui.confirm', 예전 문구))이고, 확인 1회/취소 0회는 부품 시험 tests/core-confirm-es376.test.js 와 게스트 화면 시나리오 3건으로 갈음했다."
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R2",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "로그인한 계정에서 사용자 차단을 누르면 같은 문구의 바텀시트 확인창이 뜨고, 취소하면 차단되지 않고 확인하면 그 사용자의 게시물과 댓글이 내 화면에서 숨겨진다",
+      "touches": [
+        "index.html"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "테스트 계정으로 로그인할 수 있는 사람(이 PC 의 세션 또는 상민님)",
+        "how": [
+          "테스트 계정으로 로그인한다",
+          "소통 탭 피드에서 다른 계정 게시물의 차단을 누른다",
+          "바텀시트 확인창 문구를 보고 취소 — 게시물이 그대로 보이는지 본다",
+          "다시 눌러 확인 — 「님을 차단했어요」 안내와 함께 게시물이 숨겨지는지 본다"
+        ],
+        "note": "법정은 외부 통신을 막아 로그인할 수 없다. 같은 한 줄 문지기(OurgoalCapabilities.call('ui.confirm', 예전 문구))이고, 확인 1회/취소 0회는 부품 시험 tests/core-confirm-es376.test.js 와 게스트 화면 시나리오 3건으로 갈음했다. 차단 처리기 blockUser 는 index.html 소스를 그대로 잘라 시험했다(취소 → 원격 저장 0회, 확인 → 1회)."
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R2",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "로그인한 계정의 마니또 화면에서 정체 공개 제안·다시 배정·그만두기는 같은 문구의 바텀시트 확인창에서 확인했을 때만 바뀐다",
+      "touches": [
+        "index.html"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "테스트 계정으로 로그인할 수 있는 사람(이 PC 의 세션 또는 상민님)",
+        "how": [
+          "테스트 계정으로 로그인해 소통 탭 마니또에 참여한다",
+          "정체 공개 제안·새 마니또 배정·마니또 그만두기를 각각 눌러 바텀시트 문구를 보고 취소 — 화면이 그대로인지 본다",
+          "다시 눌러 확인 — 각 동작이 일어나는지 본다"
+        ],
+        "note": "법정은 외부 통신을 막아 로그인할 수 없다. 같은 한 줄 문지기(OurgoalCapabilities.call('ui.confirm', 예전 문구))이고, 확인 1회/취소 0회는 부품 시험 tests/core-confirm-es376.test.js 와 게스트 화면 시나리오 3건으로 갈음했다."
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R2",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "로그인한 팀장 계정에서 수준별 조 삭제·팀 목표 삭제는 같은 문구의 바텀시트 확인창에서 확인했을 때만 지워지고, 취소하면 조 상세·팀 목표 편집 창이 그대로 돌아온다",
+      "touches": [
+        "index.html"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "테스트 계정으로 로그인할 수 있는 사람(이 PC 의 세션 또는 상민님)",
+        "how": [
+          "팀이 있는 테스트 계정으로 로그인한다",
+          "팀 목표 화면에서 수준별 조 상세 창을 열고 조 삭제를 누른다 — 문구를 보고 취소, 조 상세 창이 그대로인지 본다",
+          "팀 목표 편집 창의 삭제도 같은 순서로 본다",
+          "다시 눌러 확인 — 지워지는지 본다"
+        ],
+        "note": "법정은 외부 통신을 막아 로그인할 수 없다. 같은 한 줄 문지기(OurgoalCapabilities.call('ui.confirm', 예전 문구))이고, 확인 1회/취소 0회는 부품 시험 tests/core-confirm-es376.test.js 와 게스트 화면 시나리오 3건으로 갈음했다."
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R2",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "로그인한 계정에서 계정 데이터 초기화를 확인하면 서버 원장의 프로필도 초기화되고, 취소하면 서버 원장이 그대로다",
+      "touches": [
+        "index.html"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "테스트 계정으로 로그인할 수 있는 사람(이 PC 의 세션 또는 상민님)",
+        "how": [
+          "지워져도 되는 테스트 계정으로 로그인한다(실데이터 계정 금지 — 되돌릴 수 없다)",
+          "설정 「데이터 백업 & 고급 설정」을 펼쳐 「이 계정 데이터 초기화」를 누른다 — 문구를 보고 취소",
+          "새로고침 뒤 기록·목표가 그대로인지 본다",
+          "다시 눌러 확인 — 새로고침 뒤에도 초기화된 상태인지 본다"
+        ],
+        "note": "법정은 외부 통신을 막아 로그인할 수 없다. 같은 한 줄 문지기(OurgoalCapabilities.call('ui.confirm', 예전 문구))이고, 확인 1회/취소 0회는 부품 시험 tests/core-confirm-es376.test.js 와 게스트 화면 시나리오 3건으로 갈음했다. 게스트 경로는 scenarios/settings-reset-confirm.json 으로 잰다."
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R3",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "부품 시험이 index.html 의 실제 휴지통 영구 삭제 처리기를 잘라 돌려 취소 → 저장 0회, 확인 → 그 항목만 지우고 저장 1회를 단언한다",
+      "touches": [
+        "tests/core-confirm-es376.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/core-confirm-es376.test.js",
+        "text": "    assert.deepStrictEqual(state.profile.trash.map(x => x.id), ['t2'], '확인 → t1 만 지움');"
+      }
+    },
+    {
+      "id": "C31",
+      "req": "R3",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "부품 시험이 19곳 문지기 줄이 예전 문구 그대로 공용 통로를 부르는지 센다",
+      "touches": [
+        "tests/core-confirm-es376.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/core-confirm-es376.test.js",
+        "text": "    assert.strictEqual(total, 19);"
+      }
+    },
+    {
+      "id": "C32",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험이 npm test 경로(scripts/test-shipyard-modular.js)에서 돈다",
+      "touches": [
+        "scripts/test-shipyard-modular.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/test-shipyard-modular.js",
+        "text": "  runNode('tests/core-confirm-es376.test.js');"
+      }
+    }
+  ]
+}

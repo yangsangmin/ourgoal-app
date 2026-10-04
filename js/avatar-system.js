@@ -19,7 +19,7 @@
   }
 }(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
-
+  var askConfirm = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.confirm.bind')) ? OurgoalCapabilities.request('ui.confirm.bind') : typeof require === 'function' ? require('./core/confirm.js').bind : function(get){ return function(m){ var o = get(); return Promise.resolve(typeof o === 'function' ? o(m) : false); }; })(function(){ return null; });
   var DEFAULT_BASE_CRAFTS = 3;
   var LEGACY_MAX_CRAFTS = 10; // 레거시 10회 호환: /10회
   var MAX_AVATAR_CHANGES = 10; // 보관함 최대 저장 용량 및 레거시 10회 호환
@@ -6012,10 +6012,10 @@
 
         var delBtns = sheet.querySelectorAll('.btn-del-saved-avatar');
         delBtns.forEach(function (btn) {
-          btn.onclick = function (e) {
+          btn.onclick = async function (e) {
             e.stopPropagation();
             var avaId = btn.getAttribute('data-ava-id');
-            if (confirm('이 아바타를 슬롯에서 삭제하시겠습니까?')) {
+            if (await askConfirm('이 아바타를 슬롯에서 삭제하시겠습니까?')) {
               var ok = removeSavedAvatar(profile, avaId);
               if (ok) {
                 if (deps.state && deps.state.profile) {

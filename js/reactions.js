@@ -28,6 +28,7 @@
   var REASON_MAX = 300;
 
   var deps = null;
+  var askConfirm = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.confirm.bind')) ? OurgoalCapabilities.request('ui.confirm.bind') : typeof require === 'function' ? require('./core/confirm.js').bind : function(get){ return function(m){ var o = get(); return Promise.resolve(typeof o === 'function' ? o(m) : false); }; })(function(){ return deps && deps.confirm; });
   var serverOk = null;          // null 미확인 · true 사용 가능 · false 미적용(기기 저장 폴백)
   var counts = {};              // targetId -> { cheer:n, helpful:n, poor:n, advice:n }
   var mine = {};                // targetId -> { cheer:true, ... }
@@ -340,10 +341,10 @@
     var tg = wrap.querySelector('[data-rxadvtoggle]');
     if(tg) tg.addEventListener('click', function(){ expanded[it.id] = !expanded[it.id]; patch(wrap.parentNode, [it]); });
     wrap.querySelectorAll('[data-rxmod]').forEach(function(b){
-      b.addEventListener('click', function(){
+      b.addEventListener('click', async function(){
         if(!deps.sb) return;
         var action = b.dataset.rxmod;
-        if(action === 'delete' && !window.confirm('이 조언을 지울까요?')) return;
+        if(action === 'delete' && !(await askConfirm('이 조언을 지울까요?'))) return;
         deps.sb.rpc('moderate_advice', { p_reaction_id: Number(b.dataset.rxmodid), p_action: action }).then(function(res){
           if(res.error){ toast('잠시 후 다시 시도해주세요'); return; }
           toast(action === 'delete' ? '조언을 지웠어요' : '공개 범위를 바꿨어요');

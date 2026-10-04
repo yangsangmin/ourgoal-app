@@ -1,0 +1,104 @@
+{
+  "id": "goals-archive-with-result",
+  "title": "편집 모드의 보관 버튼을 누르고 결과 먼저 입력을 수락하면 결과 입력 모달이 열리고, 달성 내용을 적어 저장하면 목표가 보관되어 기록 탭으로 넘어가며 100% 달성이라 완주 인증서 창(공유·이미지 저장 버튼)이 뜬다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#homeAddGoal"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#ngManualBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#ngManualBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#mGoalTitle"
+    },
+    {
+      "do": "type",
+      "selector": "#mGoalTitle",
+      "text": "세포 이전 확인 목표"
+    },
+    {
+      "do": "click",
+      "selector": "#mSave"
+    },
+    {
+      "do": "wait",
+      "ms": 1200
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#goalDetailBody",
+      "text": "전체 (3)"
+    },
+    {
+      "do": "click",
+      "selector": "#goalEditToggle"
+    },
+    {
+      "expect": "visible",
+      "selector": "#goalArchiveBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#goalArchiveBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#rsSave"
+    },
+    {
+      "do": "type",
+      "selector": "#rsAiQuickInput",
+      "text": "목표 절반 정도 해냄"
+    },
+    {
+      "do": "click",
+      "selector": "#rsSave"
+    },
+    {
+      "expect": "hasClass",
+      "selector": ".navbtn[data-tab=\"records\"]",
+      "className": "active"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalOverlay",
+      "text": "완주를 축하해요"
+    },
+    {
+      "expect": "visible",
+      "selector": "#certSaveBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#certShareBtn"
+    }
+  ]
+}

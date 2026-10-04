@@ -90,7 +90,9 @@
         "comm"
       ],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "ui.confirm.bind"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -111,7 +113,8 @@
       "dependsOn": [
         "closeModal",
         "handle",
-        "openModal"
+        "openModal",
+        "require:./core/confirm.js"
       ]
     },
     {
@@ -258,6 +261,67 @@
       "domRoot": null,
       "ownerKeys": [],
       "dependsOn": []
+    },
+    {
+      "id": "core/confirm",
+      "file": "js/core/confirm.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "공용 확인창 통로 — 능력 ui.confirm·ui.confirm.bind. 그리기는 index.html 정본 openBottomSheetConfirm()(#modalOverlay·#modalSheet), 정본 없으면 브라우저 기본 확인창, 열린 모달 위에서는 밑 모달을 떼었다 복원(#TASK-ES-374)",
+      "spans": [],
+      "provides": [
+        "ui.confirm",
+        "ui.confirm.bind"
+      ],
+      "requires": [
+        "ui.modal"
+      ],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [
+        {
+          "name": "ui.confirm",
+          "description": "확인/취소 바텀시트를 띄우고 결과를 Promise<boolean> 으로 돌려준다(index.html 정본 openBottomSheetConfirm). 정본이 없으면 브라우저 기본 확인창",
+          "sideEffect": "screen",
+          "needsConfirm": false,
+          "input": {
+            "message": "string",
+            "opts": "object"
+          },
+          "output": {
+            "confirmed": "boolean"
+          }
+        },
+        {
+          "name": "ui.confirm.bind",
+          "description": "세포용 확인 함수를 만든다 — 주입받은 확인 함수가 있으면 그것, 없으면 ui.confirm",
+          "sideEffect": "none",
+          "needsConfirm": false,
+          "input": {
+            "getOverride": "function"
+          },
+          "output": {
+            "confirm": "function"
+          }
+        }
+      ],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "MutationObserver",
+        "OurgoalCapabilities",
+        "openBottomSheetConfirm",
+        "openModal",
+        "require:./capabilities.js"
+      ]
     },
     {
       "id": "core/event-bus",
@@ -552,7 +616,9 @@
         "home"
       ],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "ui.confirm.bind"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -566,7 +632,9 @@
       "listens": [],
       "domRoot": null,
       "ownerKeys": [],
-      "dependsOn": []
+      "dependsOn": [
+        "require:./core/confirm.js"
+      ]
     },
     {
       "id": "data/goal-templates/career",
@@ -715,6 +783,30 @@
         "goals",
         "comm"
       ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "direct-login-guard",
+      "file": "js/direct-login-guard.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "[#TASK-ES-368] CORE-13 빠른 복구·닉네임 입장 잠금 — 정식 세션 uid(또는 구글 인증 이메일)로만 열고, 세션이 없으면 정식 로그인 안내 · [#TASK-ES-372] 개발용 테스터 B 직통(isLocalDevHost)은 로컬 개발 호스트에서만",
+      "spans": [],
       "provides": [],
       "requires": [],
       "contributes": [],
@@ -917,6 +1009,7 @@
       ],
       "provides": [],
       "requires": [
+        "ui.confirm.bind",
         "ui.toast.bind"
       ],
       "contributes": [],
@@ -935,6 +1028,7 @@
       "ownerKeys": [],
       "dependsOn": [
         "OurgoalHelpfulReason",
+        "require:./core/confirm.js",
         "require:./core/toast.js"
       ]
     },
@@ -1489,6 +1583,90 @@
       ]
     },
     {
+      "id": "goals/goal-detail-events",
+      "file": "js/tabs/goals/goal-detail-events.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "목표 탭 선택한 목표의 상세 이벤트 배선 — wireGoalDetailEvents(renderGoalsScreen 상세 이벤트 구간). index.html 에서 글자 그대로 옮김(#TASK-ES-370)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": [
+          "goal.detail"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalGoalEditUX"
+      ]
+    },
+    {
+      "id": "goals/goal-detail",
+      "file": "js/tabs/goals/goal-detail.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "목표 탭 선택한 목표의 상세 마크업 — renderGoalDetailBody(renderGoalsScreen 상세 마크업 구간)·resultBadgeHtml·formatDateTimeBadge. index.html 에서 글자 그대로 옮김(#TASK-ES-370)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": [
+          "goal.detail"
+        ]
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalGoalEditUX"
+      ]
+    },
+    {
+      "id": "goals/goal-export",
+      "file": "js/tabs/goals/goal-export.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Goal Export & Archive (목표 탭 — AI 분석용 내보내기 · 목표 보관 · 완주 인증서)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope"
+      ]
+    },
+    {
       "id": "goals/index",
       "file": "js/tabs/goals/index.js",
       "layer": "tabs",
@@ -1521,6 +1699,61 @@
         "OurgoalRegistry",
         "renderGoalsScreen",
         "state"
+      ]
+    },
+    {
+      "id": "goals/render",
+      "file": "js/tabs/goals/render.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "목표 탭 메인 렌더 — renderGoalsScreen(머리: 서브탭 칩·서브탭 분기·목표 칩·편집 토글·빈 상태 + 상세 두 구간을 원래 순서로 부르는 조립자). index.html 에서 글자 그대로 옮김(#TASK-ES-370), 인라인 스코프는 app-scope 통로로 읽는다",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalGoalEditUX",
+        "OurgoalTeamLinkedGoals"
+      ]
+    },
+    {
+      "id": "goals/result-modal",
+      "file": "js/tabs/goals/result-modal.js",
+      "layer": "tabs",
+      "tab": "goals",
+      "size": "small",
+      "kind": "tab",
+      "role": "OurGoal Result Modal (목표 탭 — 목표·마일스톤·할 일 공용 결과 입력 모달)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "_recordHesitation"
       ]
     },
     {
@@ -2120,7 +2353,9 @@
       "role": "설정 섹션: 구글 캘린더·가상 페르소나·휴지통/차단·노션·잇템 (#TASK-ES-354)",
       "spans": [],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "ui.confirm.bind"
+      ],
       "contributes": [
         "settings.section"
       ],
@@ -2139,7 +2374,8 @@
       "dependsOn": [
         "OurgoalAppScope",
         "OurgoalEvents",
-        "OurgoalUiHelpers"
+        "OurgoalUiHelpers",
+        "require:../../core/confirm.js"
       ]
     },
     {
@@ -2254,6 +2490,7 @@
       ],
       "provides": [],
       "requires": [
+        "ui.confirm.bind",
         "ui.toast.bind"
       ],
       "contributes": [],
@@ -2294,6 +2531,7 @@
         "renderCommScreen",
         "renderGoalsScreen",
         "renderTeamGoalsScreen",
+        "require:./core/confirm.js",
         "require:./core/toast.js",
         "saveProfile",
         "sb",
@@ -2351,8 +2589,9 @@
       ],
       "provides": [],
       "requires": [
-        "ui.toast.bind",
-        "ui.modal.bind"
+        "ui.confirm.bind",
+        "ui.modal.bind",
+        "ui.toast.bind"
       ],
       "contributes": [],
       "owns": [],
@@ -2374,6 +2613,7 @@
         "groupState",
         "renderGoalsScreen",
         "renderTeamGoalsScreen",
+        "require:./core/confirm.js",
         "require:./core/modal.js",
         "require:./core/toast.js",
         "saveProfile",
@@ -2395,8 +2635,9 @@
       ],
       "provides": [],
       "requires": [
-        "ui.toast.bind",
-        "ui.modal.bind"
+        "ui.confirm.bind",
+        "ui.modal.bind",
+        "ui.toast.bind"
       ],
       "contributes": [],
       "owns": [],
@@ -2420,6 +2661,7 @@
         "getGroupLevelGoals",
         "groupState",
         "renderTeamGoalsScreen",
+        "require:./core/confirm.js",
         "require:./core/modal.js",
         "require:./core/toast.js",
         "saveProfile",
@@ -2500,7 +2742,9 @@
         "calendar"
       ],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "ui.confirm.bind"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -2517,6 +2761,7 @@
       "dependsOn": [
         "AudioContext",
         "cancelAnimationFrame",
+        "require:./core/confirm.js",
         "webkitAudioContext"
       ]
     },
@@ -2561,7 +2806,9 @@
         "goals"
       ],
       "provides": [],
-      "requires": [],
+      "requires": [
+        "ui.confirm.bind"
+      ],
       "contributes": [],
       "owns": [],
       "capabilities": [],
@@ -2578,6 +2825,7 @@
       "dependsOn": [
         "closeModal",
         "openModal",
+        "require:./core/confirm.js",
         "saveProfile",
         "toast"
       ]

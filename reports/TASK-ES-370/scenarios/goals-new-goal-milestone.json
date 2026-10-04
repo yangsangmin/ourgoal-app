@@ -1,0 +1,91 @@
+{
+  "id": "goals-new-goal-milestone",
+  "title": "새 목표를 직접 만들고 목표 탭을 열면 상세 칸에 마일스톤 3개와 필터(대기 3)가 보이고, 편집을 눌러 마일스톤 추가를 누르면 상세 칸의 마일스톤이 4개로 늘어난다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": "#homeAddGoal"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#ngManualBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#ngManualBtn"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#mGoalTitle"
+    },
+    {
+      "do": "type",
+      "selector": "#mGoalTitle",
+      "text": "세포 이전 확인 목표"
+    },
+    {
+      "do": "click",
+      "selector": "#mSave"
+    },
+    {
+      "do": "wait",
+      "ms": 1200
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#goalDetailBody",
+      "text": "대기 (3)"
+    },
+    {
+      "expect": "count",
+      "selector": "#goalDetailBody .ms-row",
+      "equals": 3
+    },
+    {
+      "expect": "notExists",
+      "selector": "#addMsBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#goalEditToggle"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#goalEditToggle",
+      "text": "편집 완료"
+    },
+    {
+      "do": "click",
+      "selector": "#addMsBtn"
+    },
+    {
+      "expect": "count",
+      "selector": "#goalDetailBody .ms-row",
+      "equals": 4
+    },
+    {
+      "capture": "new-milestone"
+    }
+  ]
+}

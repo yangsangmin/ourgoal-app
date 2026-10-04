@@ -1,0 +1,147 @@
+{
+  "id": "settings-reset-confirm",
+  "title": "게스트가 체험용 샘플 기록을 불러온 뒤 설정의 「이 계정 데이터 초기화」를 누르면 기본 확인창 대신 같은 문구의 앱 바텀시트 확인창이 뜨고, 취소하거나 ✕로 닫으면 기록이 그대로 남고 · 확인하면 초기화되어 기록 탭의 샘플 정리 배너가 사라진다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#recQuickDockBar button[onclick*=\"recUniversalTopBanner\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#recImportBannerBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#modalSheet [data-quick-sample=\"hyrox\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#recSamplePurgeBtn"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#setGroupDataSummary"
+    },
+    {
+      "expect": "visible",
+      "selector": "#resetBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#resetBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalOverlay.active #btnSheetConfirmCancel"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalSheet .sheet-confirm-body p",
+      "text": "이 계정의 모든 목표·기록·설정을 초기화할까요? 되돌릴 수 없어요."
+    },
+    {
+      "capture": "settings-reset-confirm-sheet"
+    },
+    {
+      "do": "click",
+      "selector": "#btnSheetConfirmCancel"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#modalOverlay"
+    },
+    {
+      "do": "click",
+      "selector": "#resetBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalOverlay.active #btnSheetConfirmOk"
+    },
+    {
+      "do": "click",
+      "selector": "#modalSheet .modal-sheet-close"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#modalOverlay"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "expect": "visible",
+      "selector": "#recSamplePurgeBtn"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "click",
+      "selector": "#setGroupDataSummary"
+    },
+    {
+      "expect": "visible",
+      "selector": "#resetBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#resetBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalOverlay.active #btnSheetConfirmOk"
+    },
+    {
+      "do": "click",
+      "selector": "#btnSheetConfirmOk"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#modalOverlay"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#toast",
+      "text": "초기화했어요"
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"records\"]"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#recSamplePurgeBtn"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}
