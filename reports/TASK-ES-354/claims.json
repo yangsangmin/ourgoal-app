@@ -1,0 +1,288 @@
+{
+  "task": "TASK-ES-354",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-354-SETTINGS-MODULE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "CORE-07 틀 문서(docs/specs/MODULE-SPLIT-PROTOCOL.md 등): 소블록 인터페이스(mount·render·dispose, 이벤트는 #663 사전), 인라인 함수가 쓰는 공용 상태·헬퍼(state, saveProfile, toast, esc 등)를 새 파일에서 어떻게 참조하는지(전역 노출 목록을 최소로, 한 곳에서 노출), 옮기는 순서, 전후 비교 절차(같은 커밋 기준 2회 실행 차이 0 확인 → 이전 후 실행 → tab-compare 로 해당 탭 장 전부 차이 0), 실패 시 되돌리기."
+    },
+    {
+      "id": "R2",
+      "text": "설정 탭 시범: renderSettingsScreen 과 설정 전용 핸들러·헬퍼를 js/tabs/settings/ 아래 묶음별 파일(각 800줄 이하)로 옮기고 index.html 에서는 삭제. 마크업(HTML)은 이번에는 옮기지 말 것. 설정 소블록 껍데기를 실제 렌더로 교체. 다른 탭이 부르는 함수(renderSettingsScreen 호출 20여 곳)는 같은 이름으로 계속 동작해야 한다. 동작은 하나도 바꾸지 않고 옮기기만 한다(버그도 그대로)."
+    },
+    {
+      "id": "R3",
+      "text": "측정(완료 기준): ① index.html 에서 renderSettingsScreen 정의 0, 줄 수 감소량 ② 새 파일 각 800줄 이하 ③ tab-check 로 설정 탭(그리고 회귀 확인용 6탭 전부) 이전 전/후 실행 → tab-compare 차이 0(시간 의존 값 등 본질적 변동은 2회 기준 실행으로 제외 근거 제시) ④ 콘솔 오류 증가 0 ⑤ npm test 0."
+    },
+    {
+      "id": "R4",
+      "text": "문서: REQ/PLAN(TASK-ES-354), reports/TASK-ES-354/claims.json, TICKETS 1줄, dev_log."
+    },
+    {
+      "id": "R5",
+      "text": "보완 ①: 800줄은 상한일 뿐 기준이 아니다 — 줄 수로 자르지 말고 책임(기능 묶음) 단위로 나눠라. '…-part1/part2' 같은 줄 수 분할 금지."
+    },
+    {
+      "id": "R6",
+      "text": "보완 ②: 공용 부품을 먼저 — 설정 코드가 쓰는 공용 함수·상태를 목록화하고, 여러 탭이 같이 쓰는 것은 js/core/ 아래로 한 번만 노출하는 통로를 만들어라. 설정 전용 임시 통로를 늘리지 말 것. 실제로 core 로 옮기는 것은 설정이 쓰는 범위로 한정하고, 동작은 그대로."
+    },
+    {
+      "id": "R7",
+      "text": "보완 ③: 틀 문서에 위 두 원칙과 '탭 순서: 설정→기록→일정 먼저, 로그인 흐름이 많은 목표·소통은 실계정 확인(CORE-02) 뒤'를 적어라."
+    },
+    {
+      "id": "R8",
+      "text": "보완 ④: 효과 지표 3개 — index.html 줄 수 전/후, 800줄 초과 js 파일 수 전/후, 새 파일 목록·줄 수."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모듈 분할 공통 틀 문서에 소블록 인터페이스·공용 부품 참조·옮기는 순서·전후 비교 절차·되돌리기를 적었다",
+      "touches": [
+        "docs/specs/MODULE-SPLIT-PROTOCOL.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/MODULE-SPLIT-PROTOCOL.md",
+        "text": "## 6. 실패 시 되돌리기"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "index.html 인라인 스크립트에 renderSettingsScreen 함수 정의가 없다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "function renderSettingsScreen("
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "renderSettingsScreen 은 js/tabs/settings/render.js 에 있고 소블록 6개를 원래 순서로 같은 settings 객체로 부른다",
+      "touches": [
+        "js/tabs/settings/render.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/settings/render.js",
+        "text": "global.OurgoalSettingsSubData.render(settings);"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "index.html 의 renderSettingsScreen 호출 9곳은 IIFE 맨 위에서 같은 이름으로 가져온 함수를 부른다(전역에 새로 달지 않음)",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "var renderSettingsScreen = _settingsKit.renderSettingsScreen;"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "설정 프로필 소블록은 window 에 없는 함수를 부르던 껍데기 대신 공개 범위·아바타 인사·활동 상태 섹션의 실제 렌더를 가진다",
+      "touches": [
+        "js/tabs/settings/sub-profile.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/settings/sub-profile.js",
+        "text": "render: renderProfileSection,"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "효과 지표 파일(스크립트 산출)에 index.html 40568→39595줄, renderSettingsScreen 정의 0, 새·바뀐 설정·코어 js 파일 최대 296줄로 기록됐다",
+      "touches": [
+        "reports/TASK-ES-354/measure-effect.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-354/measure-effect.json",
+        "path": "renderSettingsScreenDefinitionsInIndex",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "설정 탭 조작 비교 파일(작업자 측정)에 이전 전·후를 같은 24단계로 조작한 결과 화면 HTML·저장값·토스트·테마·콘솔 오류 차이 0 으로 기록됐다",
+      "touches": [
+        "reports/TASK-ES-354/dom-compare-settings.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-354/dom-compare-settings.json",
+        "path": "differingBehavior",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "6탭 실측 비교 요약 파일(작업자 측정)에 같은 커밋 2회 실행에서도 바뀐 값을 뺀 이전 전·후 차이 0 으로 기록됐다",
+      "touches": [
+        "reports/TASK-ES-354/tab-compare-summary.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-354/tab-compare-summary.json",
+        "path": "differingAfterExcludingBaselineNoise",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R3",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "로그인한 사용자(카카오·구글·이메일 계정)의 설정 화면 계정 표시·비밀번호 버튼 분기도 이전 전과 같다",
+      "touches": [
+        "js/tabs/settings/sub-security.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "실계정으로 로그인할 수 있는 사람",
+        "how": [
+          "카카오 또는 구글로 로그인한다",
+          "설정 탭을 연다",
+          "계정 줄이 '카카오 계정 연동됨 (닉네임)' 같은 원래 문구인지, 비밀번호 버튼 글자가 '비밀번호 등록/설정 (소셜 연동)' 인지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 에 TASK-ES-354 한 줄을 4단계(심사 청구)로 적었다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "#TASK-ES-354 | INFRA/모듈화"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R5",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "826줄 렌더 함수를 줄 수가 아니라 기능 묶음(알림 등) 소블록으로 나눴다",
+      "touches": [
+        "js/tabs/settings/sub-notify.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/settings/sub-notify.js",
+        "text": "function renderNotifySection(settings){"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R6",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "여러 탭 공용 순수 헬퍼 6개를 js/core/ui-helpers.js 로 실제로 옮겼다",
+      "touches": [
+        "js/core/ui-helpers.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/core/ui-helpers.js",
+        "text": "global.OurgoalUiHelpers = OurgoalUiHelpers;"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R6",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "인라인 스코프 공용 상태·함수는 js/core/app-scope.js 한 통로에만 getter 로 노출한다(모든 탭 공용, 설정 전용 통로 없음)",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "window.OurgoalAppScope.expose('index.html', {"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R7",
+      "kind": "static",
+      "domain": "config",
+      "statement": "틀 문서에 탭 순서(설정→기록→일정 먼저, 목표·소통은 CORE-02 뒤)를 적었다",
+      "touches": [
+        "docs/specs/MODULE-SPLIT-PROTOCOL.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/MODULE-SPLIT-PROTOCOL.md",
+        "text": "로그인 흐름이 많은 **목표·소통은 실계정 확인(CORE-02) 뒤**"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R8",
+      "kind": "static",
+      "domain": "config",
+      "statement": "효과 지표 파일(스크립트 산출)에 800줄 넘는 js/ 파일 수가 이전 전 12 → 이전 후 12 로 기록됐다(새 파일 중 넘는 것 0)",
+      "touches": [
+        "reports/TASK-ES-354/measure-effect.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-354/measure-effect.json",
+        "path": "jsOver800.after",
+        "equals": 12
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "옮긴 뒤에도 설정 탭에서 화이트 테마 카드를 누르면 그 카드가 선택 표시되고, 고대비 스위치를 누르면 켜진다 — 이전 전 커밋에서도 같은 시험이 통과해야 한다(옮기기만 했으므로 법정 결과는 고칠 게 없었음이 맞다)",
+      "touches": [
+        "js/tabs/settings/sub-appearance.js",
+        "js/tabs/settings/render.js",
+        "index.html"
+      ],
+      "scenario": "scenarios/settings-theme-contrast-same.json"
+    }
+  ]
+}

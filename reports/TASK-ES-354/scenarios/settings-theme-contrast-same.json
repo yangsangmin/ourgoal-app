@@ -1,0 +1,23 @@
+{
+  "id": "settings-theme-contrast-same",
+  "title": "설정 탭에서 화이트 테마 카드를 누르면 화이트 테마가 적용되고, 고대비 스위치를 누르면 켜진다(이전 전과 같은 동작)",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "click", "selector": "details.settings-group-accordion:has(#themeGrid) > summary" },
+    { "expect": "visible", "selector": "#themeGrid .theme-card[data-themeid=\"white\"]" },
+    { "do": "click", "selector": "#themeGrid .theme-card[data-themeid=\"white\"]" },
+    { "do": "wait", "ms": 800 },
+    { "expect": "exists", "selector": "#themeGrid .theme-card.active[data-themeid=\"white\"] .theme-check" },
+    { "expect": "hasClass", "selector": "#themeGrid .theme-card[data-themeid=\"white\"]", "className": "active" },
+    { "do": "click", "selector": "details.settings-group-accordion:has(#themeGrid) > summary" },
+    { "expect": "notHasClass", "selector": "#highContrastSwitch", "className": "on" },
+    { "do": "click", "selector": "#highContrastSwitch" },
+    { "do": "wait", "ms": 800 },
+    { "expect": "hasClass", "selector": "#highContrastSwitch", "className": "on" },
+    { "capture": "after-contrast" }
+  ]
+}
