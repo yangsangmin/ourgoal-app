@@ -462,6 +462,38 @@
         ],
         "note": "테스트 계정 A·B 는 팀이 없어 팀 목표 데이터가 있는 상태를 만들 수 없다. 팀 목표 내용은 이번에 옮기지 않은 renderTeamGoalsScreen(index.html)이 그리고, 옮긴 머리는 서브탭 칩 활성·화면 보이기/숨기기와 분기만 한다."
       }
+    },
+    {
+      "id": "C29",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "목표 탭 기준 실측 1회차와 후 실측 비교에서 비교한 값 447 중 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-370/tab-compare-base-run1-vs-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-370/tab-compare-base-run1-vs-after.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R3",
+      "kind": "static",
+      "domain": "ui",
+      "statement": "목표 탭 기준 실측 2회 사이(본질적 변동) 다른 값 0 으로 기록되어 있다",
+      "touches": [
+        "reports/TASK-ES-370/tab-compare-base-run1-vs-run2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-370/tab-compare-base-run1-vs-run2.json",
+        "path": "differingValues",
+        "equals": 0
+      }
     }
   ]
 }
