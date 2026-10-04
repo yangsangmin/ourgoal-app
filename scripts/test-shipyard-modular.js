@@ -168,6 +168,8 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/dev-host-gate.test.js'); // #TASK-ES-372 테스터 B 직통 입장은 로컬 개발 호스트에서만(운영 주소 ?debug=true 로 버튼 0개·직접 호출 입장 0회)
   // #TASK-ES-377 Supabase 클라이언트 없음(sb=null) → 실시간 구독 예외 없이 건너뜀 · 휴지통 되돌리기 안내가 조작을 막지 않음
   runNode('tests/guest-null-client-es377.test.js');
+  // #TASK-ES-378 결과 입력 창 「보관」 — 목표 단위·마일스톤·할 일 어디서 열어도 목표 보관 + 화면 갱신(renderAll), 예외 0
+  runNode('tests/result-modal-archive-es378.test.js');
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
 

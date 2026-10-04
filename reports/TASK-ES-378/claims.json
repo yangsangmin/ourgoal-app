@@ -1,0 +1,113 @@
+{
+  "task": "TASK-ES-378",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-378-RESULT-MODAL-ARCHIVE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "결과 입력 모달의 「보관」 버튼 #rsJustArchive 를 목표 단위 결과에서 열면 goal 인자가 없어 눌러도 아무 일 없음(Dead-Click) — 눌렀을 때 그 목표가 보관되게 고친다"
+    },
+    {
+      "id": "R2",
+      "text": "마일스톤·할 일에서 열면 보관·저장은 되지만 ReferenceError: renderGoalDetail is not defined(renderHomeGoals 도 미정의)로 화면 갱신 실패 — 없는 함수 대신 실제 존재하는 렌더 경로를 불러 화면이 갱신되게 고친다"
+    },
+    {
+      "id": "R3",
+      "text": "두 경우 모두 보관이 되고 화면이 갱신되며 완료 피드백(기존 토스트)이 뜬다 — 문구 변경 0"
+    },
+    {
+      "id": "R4",
+      "text": "#goalResultBtn 을 숨기는 ui.css 규칙(#goalDetailBody > .toss-goal-hero-card { display:none !important })은 손대지 않고, index.html 인라인 줄 수를 늘리지 않으며, 부품 시험은 npm test 경로에 둔다"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R2",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 27,
+      "domain": "ui-behavior",
+      "statement": "게스트가 새 목표의 첫 마일스톤 결과를 저장한 뒤 결과 입력 창을 다시 열어 「보관」을 누르면 「목표가 보관함으로 이동되었습니다」 토스트가 뜨고 창이 닫히며 목표 탭이 빈 목표 안내로 바뀌고, 그동안 미처리 예외(ReferenceError 포함)가 0건이다",
+      "touches": [
+        "js/tabs/goals/result-modal.js"
+      ],
+      "scenario": "scenarios/goals-ms-result-archive.json"
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "보관 대상 목표는 넘겨받은 goal 이 있으면 그것, 없고 목표 단위(kind 'goal')로 열렸으면 그 목표 자신이다",
+      "touches": [
+        "js/tabs/goals/result-modal.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/goals/result-modal.js",
+        "text": "    var archiveGoalTarget = goal || (kind==='goal' ? obj : null);"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "「보관」 처리기는 보관 대상 목표에 보관 시각을 찍는다(목표 단위에서도 Dead-Click 이 아니다)",
+      "touches": [
+        "js/tabs/goals/result-modal.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/goals/result-modal.js",
+        "text": "              archiveGoalTarget.archivedAt = L.nowISO();"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "「보관」 처리기의 화면 갱신은 정의되지 않은 renderGoalDetail·renderHomeGoals 대신 앱 공용 통로의 renderAll 을 부른다",
+      "touches": [
+        "js/tabs/goals/result-modal.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/goals/result-modal.js",
+        "text": "              L.renderAll();"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R3",
+      "kind": "static",
+      "domain": "logic",
+      "statement": "같은 원인으로 목표 단위에서 「저장 및 보관함으로 이동」이 토스트만 띄우고 보관하지 않던 것도 보관 대상 목표로 실제 보관한다(문구 그대로)",
+      "touches": [
+        "js/tabs/goals/result-modal.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/tabs/goals/result-modal.js",
+        "text": "          if(runSaveAndArchive && archiveGoalTarget){"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험 tests/result-modal-archive-es378.test.js(목표 단위·마일스톤·할 일 보관, 결과 없을 때 버튼 없음, 목표 단위 저장 및 보관)를 npm test 경로(scripts/test-shipyard-modular.js)에 등록했다",
+      "touches": [
+        "scripts/test-shipyard-modular.js",
+        "tests/result-modal-archive-es378.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/test-shipyard-modular.js",
+        "text": "  runNode('tests/result-modal-archive-es378.test.js');"
+      }
+    }
+  ]
+}
