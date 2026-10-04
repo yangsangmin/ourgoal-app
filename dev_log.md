@@ -5721,3 +5721,12 @@
 - **산출물**: `docs/design/harness/out-home-2026-10-04.json`(요약). PNG 는 저장소 밖.
 - **진행 단계**: [4단계: 심사 청구]
 ---
+
+## [2026-10-04 14:30] #TASK-ES-347: DM 표(team_pings·team_ping_replies) anon 공개 읽기 차단 RLS 설계
+- **목표**: anon 키로 두 표 전부(39행·56행)가 읽히는 보안 결함(상민님 허가 하 건수 1회 실측, PR #357 부수 발견)을 앱 기능을 깨지 않는 범위로 좁힌다.
+- **조사**: 코드 경로 27곳 전수(REQ 표). 카카오·이메일은 Supabase 세션(auth.uid()=sender_id), 구글 직접 로그인·빠른 복구·테스터 B·게스트는 세션 없음(anon). 팀 구성원 정보는 서버에 없음. api/** 는 두 표 미참조(서비스롤은 RLS 우회).
+- **산출물**: docs/sql/2026-10-04-dm-rls-step1.sql(anon select RESTRICTIVE false)·step2.sql(행 종류별 RESTRICTIVE)·각 rollback·check.sql·README([손 필요])·test.mjs. 기존 정책은 지우지 않음.
+- **예비 확인(판정 아님)**: PGlite 로컬 Postgres 에서 using(true) 정책을 재현해 1·2단계·되돌리기 실행 33/33. 실서버 미실행(상민님 실행 대기).
+- **알아 둘 것**: 세션 없는 입장은 1단계 뒤 두 표 읽기, 2단계 뒤 쓰기를 잃는다. 마니또 응원 sender_id 가 받는 사람에게 노출되는 익명성 누출은 범위 밖.
+- **진행 단계**: [4단계: 심사 청구]
+---
