@@ -176,6 +176,36 @@
      "실계정 하네스 RA-COMM-03·04A·04B·04C·04D 를 돌린다"
     ]
    }
+  },
+  {
+   "id": "C12",
+   "req": "R3",
+   "kind": "static",
+   "domain": "logic",
+   "statement": "옛 2단계 로컬 시험이 받는 사람의 직접 update 읽음 표시를 0행으로 기대한다(재확정판 정책에 맞춘 의도된 변경)",
+   "touches": [
+    "docs/sql/2026-10-04-dm-rls-test.mjs"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/sql/2026-10-04-dm-rls-test.mjs",
+    "text": "ok('2단계(#TASK-ES-381 재확정): 받는 사람 C 의 직접 update 읽음 표시는 0행"
+   }
+  },
+  {
+   "id": "C13",
+   "req": "R5",
+   "kind": "static",
+   "domain": "config",
+   "statement": "TICKETS.md 에 TASK-ES-381 한 줄이 4단계(심사 청구)로 있다",
+   "touches": [
+    "docs/rules/TICKETS.md"
+   ],
+   "check": {
+    "type": "codeContains",
+    "file": "docs/rules/TICKETS.md",
+    "text": "- #TASK-ES-381 | INFRA | [DM 공개 차단 2단계 SQL 재확정]"
+   }
   }
  ]
 }
