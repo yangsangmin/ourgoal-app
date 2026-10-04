@@ -32,13 +32,17 @@ assert.ok(html.includes('소통 및 커뮤니티 데이터'), 'loss item: commun
 // 4. 30일 안전 유예 및 원클릭 복구 안내
 assert.ok(html.includes('2. 30일 탈퇴 유예 안전망 및 원클릭 복구'), '30-day grace period title must exist');
 assert.ok(html.includes('30일간 안전 유예 기간'), '30-day grace notice must exist');
-assert.ok(html.includes('30일 안에 이 기기에서 다시 로그인'), 'same-device re-login recovery notice must exist (#TASK-ES-346)');
+// [#TASK-ES-351] 탈퇴 신청 시각이 서버에 기록되어 어느 기기에서든 복구 안내가 뜬다
+assert.ok(html.includes('30일 안에 어느 기기에서든 다시 로그인'), 'any-device re-login recovery notice must exist (#TASK-ES-351)');
 
 // 5. 법적 책임 및 보존 고지 3대 법령
 // [#TASK-ES-346 SET-02] 실행되지 않는 보존·파기 약속 대신 실제 현황과 삭제 요청 경로
 assert.ok(html.includes('3. 데이터 삭제(파기) 현황과 요청 방법'), 'deletion status and request path title must exist');
 assert.ok(html.includes('개인정보보호법 제21조'), 'Personal Information Protection Act Art 21 must exist');
-assert.ok(html.includes('아직 탈퇴 후 자동 파기 기능을 실행하고 있지 않습니다'), 'honest notice that auto purge is not running must exist');
+// [#TASK-ES-351] 30일 후 서버 자동 영구 파기를 구현했으므로 '자동 파기 미실행' 고지를 실제 파기 고지로 바꿨다
+assert.ok(!html.includes('아직 탈퇴 후 자동 파기 기능을 실행하고 있지 않습니다'), 'stale not-running notice must be gone (#TASK-ES-351)');
+assert.ok(html.includes('30일 복구 기간이 끝나면 서버에서 자동으로 영구 파기'), 'server auto purge after 30 days notice must exist (#TASK-ES-351)');
+assert.ok(html.includes('따로 보관하는 기록은 없습니다'), 'honest statutory retention notice must exist (#TASK-ES-351)');
 assert.ok(html.includes('ourgoal.support@gmail.com'), 'deletion request email must exist');
 
 // 6. 4위 1체 배선 (체크박스, 취소, 확정 버튼)
