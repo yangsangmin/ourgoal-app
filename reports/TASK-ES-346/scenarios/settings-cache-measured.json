@@ -1,0 +1,17 @@
+{
+  "id": "settings-cache-measured",
+  "title": "설정의 데이터 묶음을 열면 저장공간이 브라우저 추정치로 보이고, 캐시 비우기를 누르면 지운 묶음 수를 알려 준다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "click", "selector": "#setGroupDataSummary" },
+    { "expect": "textContains", "selector": "#cacheSizeText", "text": "브라우저 추정치" },
+    { "do": "click", "selector": "#clearCacheBtn" },
+    { "expect": "textContains", "selector": "#toast", "text": "화면 캐시" },
+    { "expect": "textContains", "selector": "#cacheSizeText", "text": "브라우저 추정치" },
+    { "capture": "cache" }
+  ]
+}

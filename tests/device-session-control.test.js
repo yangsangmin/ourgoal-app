@@ -29,7 +29,7 @@ console.log('  ✅ 1. index.html 기기 목록 및 세션 제어 핵심 함수 �
 assert.ok(indexHtml.includes('🟢 현재 기기'), '현재 기기 정상 상태 배지 확인');
 assert.ok(indexHtml.includes('🔴 원격 차단됨'), '원격 로그아웃/차단 시각적 배지 확인');
 assert.ok(indexHtml.includes('🟢 정상 연결 중'), '타 활성 기기 정상 연결 배지 확인');
-assert.ok(indexHtml.includes('대 활성 연결'), '실시간 활성 기기 카운트 뱃지 확인');
+assert.ok(indexHtml.includes('이 기기만 표시'), '기기 배지는 수집하지 않는 다른 기기 수를 지어내지 않고 이 기기만 표시함(#TASK-ES-346)');
 assert.ok(indexHtml.includes('ipHint'), '접속 위치 및 IP 힌트 속성 확인');
 console.log('  ✅ 2. 기기 5대 식별 앵커 및 실시간 상태 배지 렌더링 확인');
 

@@ -5763,3 +5763,12 @@
   - 실제 저장소: #651(5bd2bac) 새 위반 0 · #652(94fa362, ui.css·index.html·js 수정) 새 위반 0 — 같은 커밋에서 js/ 800줄 초과 파일 12개(v4 식 전체 스캔이 세는 것). 94fa362 위 시험 커밋 ac89218(ui.css 에 display:none !important 한 줄) → "CSS 은폐 줄이 새로 추가됨 ui.css:17217" 1건. 시험 커밋 c61c64d(새 900줄 js) → "800줄 상한을 새로 넘김" 1건. 시험 커밋은 임시 복제 저장소에만 있음.
 - **진행 단계**: [4단계: 심사 청구]. 이 PR 은 main 의 v4 설정으로 심사된다(금고 파일 변경 → v4 VAULT_VIOLATION 예상). 우회하지 않고 결과를 PR 에 기록.
 ---
+
+## [2026-10-04 14:10] #TASK-ES-346: 설정 탭 정직성 SET-01(가짜 보안 표시)·SET-02(탈퇴 고지)
+- **조사(실제 동작)**: `api/withdraw.js` 는 화면에서 호출되지 않음(purge 모드 존재하나 호출자·크론 0). 탈퇴는 `submitWithdrawAccount` 가 `settings.pendingDeletionAt`(이 기기 localStorage) + `sb.auth.updateUser` 메타데이터(`account_status: pending_deletion`) 기록 후 로그아웃. 복구 창(`js/auth-safety.js checkPendingDeletionRestore`)은 이 기기 localStorage 표시가 있을 때만. 설정(`settings`)은 `ourgoal_settings_<uid>` localStorage 에만 저장(서버 upsert 없음). 개별 기기 차단 방송 `device_remote_revocations` 수신자 0곳.
+- **변경(index.html)**: 탈퇴 팝업 문장별 정정(대조표 REQ 3-4) · `#badge2faStatus` 를 `paintSecurityCard()` 실상태로 · '앱 잠금 PIN (이 기기)' 개명 · `hashAppLockPin`/`verifyAppLockPin`(SHA-256, `sha256v1$소금$hex`, 평문 첫 성공 시 이전) · `getRegisteredDevices` 가짜 2대 생성 제거·저장값 이 기기 1대로 정리·위치 미수집 · 개별 '원격 로그아웃'·`killDeviceSession` 거짓 토스트 제거 → `openLogoutOtherDevicesConfirmModal`(목록과 분리, `signOut({scope:'others'})` 실패 시 성공 토스트 없음, 게스트 안내) · 보안 카드 '서울, 대한민국'·'현재 1개의 활성 세션' 제거 · `paintCacheUsage()`(navigator.storage.estimate, 실패 시 '측정 불가') + `clearCacheBtn` 이 Cache API 실제 삭제 후 재측정 · 저장 방식 안내 정정 · 설정 묶음 summary id 2개(`#setGroupAccountSummary`·`#setGroupDataSummary`) · 설정 열 때 `renderActiveDevicesList()` 호출.
+- **시험지**: 거짓 고지를 고정하던 `scripts/smoke-test.js`(ES-158·ES-271 검사)와 `tests/account-withdrawal-modal.test.js`·`tests/device-session-control.test.js` 문자열 검사를 새 사실 문구로 교체(claims.json retire 에 사유).
+- **예비 확인(판정 아님, 작업자 측정)**: `reports/TASK-ES-346/measure-settings-honesty.js`(shots-lib 게스트 시드·Supabase 목) — 작업 트리: PIN 미설정 배지 '앱 잠금 PIN 꺼짐', 가짜 기기 생성 0·예전 저장값 3대→1대(가짜 0), 저장 PIN `sha256v1$…`(평문 0), 틀린 PIN 잠김 유지·맞는 PIN 해제, 평문 '4321' 사용자 통과 후 해시 이전, 저장공간 '브라우저 추정치'·비우기 후 재측정. origin/main 대조: 배지 '✓ 2단계 인증 보호 중', 확인 창 열면 가짜 기기 2대 저장, PIN 평문 '2580', 용량 '14.2 MB', 카드 버튼 '원격 기기 세션이 안전하게 차단되었습니다'. grep(index.html): '14.2 MB' 0 · 'dev_tablet_tab' 0 · '2단계 인증 보호 중' 0. `npm test` 종료코드 0.
+- **확인 못 함**: 실계정 로그인 상태의 탈퇴 팝업 화면, 실계정 2기기 '다른 기기 모두 로그아웃' 실효.
+- **진행 단계**: [4단계: 심사 청구]
+---
