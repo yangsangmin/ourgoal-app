@@ -1,0 +1,121 @@
+{
+  "task": "TASK-ES-348",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-348-REAL-USER-AI-BADGE.md",
+  "requirements": [
+    { "id": "R1", "text": "AI 판별을 이름 목록이 아니라 실제 표식으로: 실제 AI/시드 계정·데이터에 이미 있는 구분 필드(예: is_ai, isBot, persona, seed 접두 id 등)를 찾아 그것으로 판별. 서버 칸 추가가 필요하면 SQL 파일만 추가(비파괴, 실행하지 않음)하고 보고. 이름 목록은 실명형 이름을 제거하고, 남긴다면 정확 일치 + 다른 표식과 AND 로만." },
+    { "id": "R2", "text": "하드코딩 동류 러너: 실제 같은 카테고리 사용자 데이터(이미 쓰는 FEED_POSTS_CACHE 등 실원장)가 있으면 그걸로, 없으면 0명일 때 위젯을 숨김(침묵) 또는 'AI 예시' 배지를 단 예시로. 숫자·연속일수 하드코딩 금지." },
+    { "id": "R3", "text": "화면의 모든 AI 요소에 'AI' 배지(기존 배지 스타일이 있으면 재사용)." },
+    { "id": "R4", "text": "그 밖에 소통 쪽 가짜 수치(마니또 AI 달성률 시드, handle팀목표_Item39Action 의 active_real_users: 25 하드코딩, 피드 '응원 가이드 1건 포함' 거짓 라벨)는 확인해서 같은 PR 에서 정직화 가능한 것은 처리(값 없으면 숨김, AI 는 배지)." },
+    { "id": "R5", "text": "기존 기능(위젯·버튼) 자체 제거는 하지 말 것 — 필요해 보이면 보고에 [결심 필요] 후보로." },
+    { "id": "R6", "text": "실계정 2개 확인(레벨 5)은 못 했다고 정직하게." }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "KNOWN_AI_BOT_NAMES 에서 실명형 이름('민지'·'김민지'·'도현'·'박도현'·'수아'·'이수아'·'최현아'·'정준호'·'윤태양' 및 직함형 '이지수 팀장' 등)을 지우고 밑줄 페르소나 핸들 10개만 남겼다",
+      "touches": ["js/team-invite-comm.js"],
+      "check": { "type": "codeNotContains", "file": "js/team-invite-comm.js", "text": "'새벽러너_민지', '민지', '김민지'" }
+    },
+    {
+      "id": "C2", "req": "R1", "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "isKnownAiCompanion 은 is_ai·botBadge·시드 id 접두(comp_·mem_·mock_·bot_·ai_·mn_·sim_·guest)·오프라인 예시 id 로 판별하고, 인증 UUID 계정이면 예전 이름 판별이 저장한 isAiBot 을 믿지 않으며, 페르소나 핸들은 정확 일치이면서 인증 UUID 가 아닐 때만 AI 로 본다",
+      "touches": ["js/team-invite-comm.js"],
+      "check": { "type": "codeContains", "file": "js/team-invite-comm.js", "text": "if(isAuthUuid(userOrId.id)) return false;" }
+    },
+    {
+      "id": "C3", "req": "R1", "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "DM 후보(getTeamMembersPool)·동반자 동기화 필터·DM 상대 배지·맞팔 배너가 별도 isAiBot 검사 없이 isKnownAiCompanion 하나로 판단하고, 동반자 목록 자가 치유가 잘못 저장된 isAiBot 을 false 로 되돌린다",
+      "touches": ["js/team-invite-comm.js"],
+      "check": { "type": "codeContains", "file": "js/team-invite-comm.js", "text": "if(!!c.isAiBot !== aiNow){" }
+    },
+    {
+      "id": "C4", "req": "R1", "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "로그인한 회원의 동반자 목록에 닉네임 '민지'(인증 UUID) 회원이 '실 사용자' 배지로 남고 DM 후보에도 나온다(작업자 주장: 로컬 헤드리스 docs/design/harness/comm-ai-identity-check.js M1·M2 통과, 단위 시험 tests/comm-ai-identity-es348.test.js 5건 통과)",
+      "touches": ["js/team-invite-comm.js"],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "아워골 회원 계정으로 로그인할 수 있는 사람",
+        "how": ["닉네임 '민지' 인 실제 회원을 동반자로 추가한다", "소통 탭 동반자 목록에서 그 회원 옆 배지가 '실 사용자' 인지 본다", "DM 탭에서 그 회원이 대화 상대 목록에 있는지 본다"]
+      }
+    },
+    {
+      "id": "C5", "req": "R2", "kind": "behavior", "change": "fix", "symptom": 10,
+      "domain": "ui-behavior",
+      "statement": "같은 분야 실제 회원 데이터가 없는 게스트의 첫 체크인 축하 창에 하드코딩 동류 러너 칸이 나오지 않고(0명이면 침묵), 축하 창의 두 버튼은 그대로 보인다",
+      "touches": ["index.html"],
+      "scenario": "scenarios/peer-runners-hidden.json"
+    },
+    {
+      "id": "C6", "req": "R2", "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "getPeerRunnersForCategory 는 FEED_POSTS_CACHE(feed_posts 실원장)에서 is_ai 가 아니고 인증 UUID 인 다른 회원의 같은 분야 글만 골라 최대 3명을 돌려주며, 연속일수는 피드 글에 없는 값이라 돌려주지도 그리지도 않는다(작업자 주장: 헤드리스 M3_fn — 실회원 2명·시뮬 1·AI 1 입력에서 운동 분야 1명만)",
+      "touches": ["index.html"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "return p && !p.is_ai && isValidRealUser(String(p.user_id || '')) && String(p.user_id) !== myId;" }
+    },
+    {
+      "id": "C7", "req": "R3", "kind": "behavior", "change": "fix", "symptom": 12,
+      "domain": "ui-behavior",
+      "statement": "게스트가 마니또를 시작하면 AI 동반자가 보낸 받은 응원 줄에 AI 배지가 붙는다",
+      "touches": ["index.html"],
+      "scenario": "scenarios/manito-inbox-ai-badge.json"
+    },
+    {
+      "id": "C8", "req": "R3", "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "팀 영입 검색의 오프라인 예시 회원 6명(user-runner-sm 등)에 '🤖 AI 예시' 배지가 붙고, 영입할 때 isAiBot 이 표식으로 정해진다. 마니또 웰컴 응원 문구의 AI 동반자 이름에도 AI 배지가 붙는다",
+      "touches": ["js/team-invite-comm.js", "index.html"],
+      "check": { "type": "codeContains", "file": "js/team-invite-comm.js", "text": "🤖 AI 예시</span>" }
+    },
+    {
+      "id": "C9", "req": "R4", "kind": "behavior", "change": "fix", "symptom": 12,
+      "domain": "ui-behavior",
+      "statement": "게스트가 마니또를 시작하면 AI 동반자 카드에 시드로 만든 달성률 게이지가 나오지 않는다(AI 배지는 있다)",
+      "touches": ["index.html"],
+      "scenario": "scenarios/manito-ai-no-seed-gauge.json"
+    },
+    {
+      "id": "C10", "req": "R4", "kind": "behavior", "change": "fix", "symptom": 9,
+      "domain": "ui-behavior",
+      "statement": "공유된 실천이 없는 게스트가 소통 피드를 열면 실제로 섞지 않는 AI 가이드를 세는 라벨('초기 실천 가이드 (1건)'·'응원 가이드 1건 포함') 대신 '아직 공유된 실천이 없어요' 가 나온다",
+      "touches": ["index.html"],
+      "scenario": "scenarios/feed-honest-stage-label.json"
+    },
+    {
+      "id": "C11", "req": "R4", "kind": "static",
+      "domain": "config",
+      "statement": "handle팀목표_Item39Action 의 active_real_users 하드코딩 25 를 null(측정하지 않음)로 바꿨다 — js/team-invite-comm.js 와 js/components.js 두 곳",
+      "touches": ["js/team-invite-comm.js", "js/components.js"],
+      "check": { "type": "codeNotContains", "file": "js/components.js", "text": "active_real_users: 25" }
+    },
+    {
+      "id": "C12", "req": "R4", "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "마니또 실 회원의 달성률·연속일수가 서버에 없으면 기본값 20%·1일 대신 null 로 두어 게이지·연속일수를 숨기고, 동반자 목록·검색·프로필 창의 연속일수 기본값 1 과 프로필 14일 히트맵의 d%3 무늬를 없앴다",
+      "touches": ["index.html", "js/team-invite-comm.js"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "var realPct = typeof info.pct === 'number' ? Math.max(0, Math.min(100, info.pct)) : null;" }
+    },
+    {
+      "id": "C13", "req": "R5", "kind": "static",
+      "domain": "ui-behavior",
+      "statement": "기존 위젯·버튼은 지우지 않았다 — 첫 체크인 축하 창의 웰컴 스탬프 버튼(#firstCheckinCommBtn)·둘러보기 버튼과 동류 러너 위젯 코드는 남아 있고, 동류 러너 칸은 실데이터가 있을 때 그려진다",
+      "touches": ["index.html"],
+      "check": { "type": "codeContains", "file": "index.html", "text": "(peers.length ? '<div id=\"firstCheckinPeerRunners\"" }
+    },
+    {
+      "id": "C14", "req": "R6", "kind": "unverified",
+      "domain": "realtime",
+      "statement": "실제 회원 두 계정 사이에서 닉네임 '민지' 회원과 동반자 맺기·DM 주고받기가 되는지는 확인하지 못했다",
+      "touches": ["js/team-invite-comm.js"],
+      "unverified": {
+        "reason": "needs-two-accounts",
+        "who": "아워골 실제 회원 계정 두 개를 쓸 수 있는 사람",
+        "how": ["계정 B 의 닉네임을 '민지' 로 정한다", "계정 A 로 로그인해 '민지' 를 검색해 동반자 신청한다", "계정 A 의 동반자 목록에 '민지' 가 '실 사용자' 배지로 남는지 본다", "A 와 B 가 DM 을 주고받는지 본다"]
+      }
+    }
+  ]
+}

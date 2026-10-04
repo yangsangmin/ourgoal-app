@@ -7221,27 +7221,41 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
   }
 
-  function getPeerRunnersForCategory(category){
-    var cat = category || '운동';
-    if(cat.indexOf('공부') !== -1 || cat.indexOf('학습') !== -1 || cat.indexOf('독서') !== -1){
-      return [
-        { name: '열정부엉이', emoji: '🦉', streak: 8, goal: '매일 1시간 몰입 공부' },
-        { name: '코딩마스터', emoji: '🦊', streak: 19, goal: '알고리즘 1일 1제' },
-        { name: '새벽독서러', emoji: '🐼', streak: 14, goal: '아침 30분 책 읽기' }
-      ];
-    } else if(cat.indexOf('기상') !== -1 || cat.indexOf('모닝') !== -1 || cat.indexOf('생활') !== -1 || cat.indexOf('루틴') !== -1){
-      return [
-        { name: '미라클모닝', emoji: '🌅', streak: 30, goal: '오전 6시 기상 & 스트레칭' },
-        { name: '성실토끼', emoji: '🐰', streak: 7, goal: '물 1L 마시기 & 영양제' },
-        { name: '루틴요정', emoji: '✨', streak: 15, goal: '하루 1줄 감사 일기' }
-      ];
-    }
-    return [
-      { name: '달리는치타', emoji: '🐆', streak: 12, goal: '하프마라톤 완주 도전' },
-      { name: '새벽러너', emoji: '🦌', streak: 5, goal: '아침 5km 가벼운 조깅' },
-      { name: '철인도전', emoji: '🦅', streak: 21, goal: '매일 푸시업 100개' }
-    ];
+  /* [#TASK-ES-348] 동류 러너는 실원장(feed_posts → FEED_POSTS_CACHE)의 같은 분야 실제 회원만. 고정 명단·연속일수 하드코딩 없음.
+   * 연속일수는 피드 글에 없는 값이라 표시하지 않는다. 0명이면 빈 배열 → 위젯을 그리지 않는다(침묵). */
+  function peerCategoryKey(cat){
+    var c = String(cat || '');
+    if(/공부|학습|시험|자격증/.test(c)) return 'study';
+    if(/독서|책/.test(c)) return 'reading';
+    if(/기상|모닝/.test(c)) return 'morning';
+    if(/생활|루틴|습관/.test(c)) return 'life';
+    if(/러닝|달리기|마라톤/.test(c)) return 'running';
+    if(/운동|헬스|체력/.test(c)) return 'workout';
+    return null;
   }
+  function getPeerRunnersForCategory(category, posts){
+    var cat = category || '운동';
+    var src = Array.isArray(posts) ? posts : (Array.isArray(FEED_POSTS_CACHE) ? FEED_POSTS_CACHE : []);
+    var myId = state.profile ? String(state.profile.id || '') : '';
+    var items = src.filter(function(p){
+      return p && !p.is_ai && isValidRealUser(String(p.user_id || '')) && String(p.user_id) !== myId;
+    }).map(function(p){
+      var ex = p.extra || {};
+      return { userId: String(p.user_id), name: p.display_name || '', goal: p.goal_title || '', action: p.caption || '', category: ex.category || '' };
+    });
+    var key = peerCategoryKey(cat);
+    var matched = key ? filterFeedByCategory(items, key) : items.filter(function(it){
+      return (it.goal + ' ' + it.action + ' ' + it.category).indexOf(cat) !== -1;
+    });
+    var seen = {}, out = [];
+    matched.forEach(function(it){
+      if(out.length >= 3 || seen[it.userId] || !it.name) return;
+      seen[it.userId] = true;
+      out.push({ userId: it.userId, name: it.name, emoji: it.name.slice(0, 1), goal: it.goal });
+    });
+    return out;
+  }
+  window.getPeerRunnersForCategory = getPeerRunnersForCategory;
 
   function triggerFirstCheckinCelebrationModal(goal, checkinText, onDismiss){
     var av = (state.profile && state.profile.guardianAnimal) || { emoji: '🦉', name: '수호동물 부엉이' };
@@ -7253,7 +7267,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       return '<div style="flex:1;min-width:0;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:8px 6px;text-align:center;">' +
         '<div style="font-size:22px;margin-bottom:2px;">' + peer.emoji + '</div>' +
         '<div style="font-weight:700;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink);">' + escapeHtml(peer.name) + '</div>' +
-        '<div style="font-size:10px;color:var(--brand);font-weight:800;margin-top:2px;">🔥 ' + peer.streak + '일 연속</div>' +
+        '<div style="font-size:10px;color:var(--ink-faint);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(peer.goal || '') + '</div>' +
       '</div>';
     }).join('');
 
@@ -7281,16 +7295,16 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
             '<div style="font-size:15px;font-weight:800;color:var(--ink);">🌱 새싹 러너 (Lv.1)</div>' +
           '</div>' +
         '</div>' +
-        '<div style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:16px;text-align:left;">' +
+        (peers.length ? '<div id="firstCheckinPeerRunners" style="background:var(--card2);border:1px solid var(--rule);border-radius:12px;padding:12px;margin-bottom:16px;text-align:left;">' +
           '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
             '<span style="font-size:12px;font-weight:800;color:var(--ink);">🤝 함께 달리는 동류 러너</span>' +
             '<span style="font-size:11px;color:var(--brand);font-weight:700;">' + escapeHtml(goalCat) + ' 분야</span>' +
           '</div>' +
           '<div style="display:flex;gap:6px;">' + peersHtml + '</div>' +
           '<div style="font-size:11px;color:var(--ink-faint);margin-top:8px;line-height:1.4;">' +
-            '※ 혼자 달리지 않아요! 서로의 실천 발자국을 조용히 지켜보며 함께 성장합니다.' +
+            '※ 같은 분야에서 피드에 실천을 공유한 실제 회원이에요. 서로의 발자국을 지켜보며 함께 성장합니다.' +
           '</div>' +
-        '</div>' +
+        '</div>' : '') +
         '<div style="display:flex;flex-direction:column;gap:8px;">' +
           '<button class="btn btn-primary btn-block" id="firstCheckinCommBtn" type="button" style="padding:12px;font-size:14px;font-weight:800;background:linear-gradient(135deg, var(--brand), #8b5cf6);border:none;box-shadow:0 4px 14px rgba(108,92,231,0.3);">' +
             '💌 첫 웰컴 스탬프 보내고 소통 탭 가기 (+5 EXP)' +
@@ -36092,7 +36106,7 @@ wirePromptEncyclopediaEvents(body);
 
     var stageLabel = !virtualCheerEnabled ? ' · 실시간 활동 피드' :
       (realCount > 20 ? ' · 🌟 실유저 중심 피드 (실사용자 100%)' :
-      (realCount === 0 ? ' · 🤖 초기 실천 가이드 (1건)' : ' · 👥 실시간 활동 피드 (응원 가이드 1건 포함)'));
+      (realCount === 0 ? ' · 아직 공유된 실천이 없어요' : ' · 👥 실시간 활동 피드'));
 
     var categories = [
       { key: 'all', label: '전체' },
@@ -37634,8 +37648,9 @@ wirePromptEncyclopediaEvents(body);
           if(row.hidden === true || row.status === 'inactive') return;
           var info = {}; try { info = JSON.parse(row.message); } catch(e){}
           var major = row.target_id || info.major || 'health';
-          var realStreak = typeof info.streak === 'number' ? Math.max(1, info.streak) : 1;
-          var realPct = typeof info.pct === 'number' ? Math.max(0, Math.min(100, info.pct)) : 20;
+          // [#TASK-ES-348] 값이 없으면 null(화면에서 숨김). 예전 기본값 1일·20% 는 측정값이 아니었다.
+          var realStreak = typeof info.streak === 'number' ? Math.max(0, info.streak) : null;
+          var realPct = typeof info.pct === 'number' ? Math.max(0, Math.min(100, info.pct)) : null;
           var realLogs = (Array.isArray(info.logs) && info.logs.length) ? info.logs : [
             '아직 작성된 기록이 없습니다',
             '응원을 보내 목표 달성을 격려해보세요!',
@@ -37701,7 +37716,6 @@ wirePromptEncyclopediaEvents(body);
         var sub = subs[seed % subs.length];
         var tmpl = CREATOR_TEMPLATES.find(function(t){ return t.category===major; });
         var goalTitle = tmpl ? tmpl.title : (TOPICS[major] ? TOPICS[major].label+' · '+sub+' 3개월 도전' : '꾸준한 실천');
-        var pct = 20 + (seed % 60);
         var daySeed = hashStr(today + major + ms.seed);
         var logs = [
           ['오늘 30분 채웠어요, 생각보다 할 만하네요','컨디션 별로였지만 15분은 했어요','드디어 한 단계 넘었다! 기록 남깁니다','오늘은 쉬는 날. 대신 내일 계획 세움','같이 하는 사람 있으니까 안 빼먹게 돼요'][daySeed % 5],
@@ -37715,8 +37729,8 @@ wirePromptEncyclopediaEvents(body);
           name: genAnonName(major, seed),
           sub: sub,
           goalTitle: goalTitle,
-          pct: pct,
-          streak: 2 + (seed % 12),
+          pct: null, // [#TASK-ES-348] AI 동반자에게 시드로 만든 달성률·연속일수를 붙이지 않는다
+          streak: null,
           logs: logs,
           is_ai: true
         });
@@ -37872,7 +37886,7 @@ wirePromptEncyclopediaEvents(body);
           '<span style="font-size:0.75rem;color:var(--ink-faint);font-weight:600;">1초 원클릭 응원</span>' +
         '</div>' +
         '<h3 class="manito-welcome-title">' +
-          '<span>' + firstPartner.emoji + ' ' + escapeHtml(firstPartner.name) + '님에게 웰컴 응원 보내기</span>' +
+          '<span>' + firstPartner.emoji + ' ' + escapeHtml(firstPartner.name) + '님에게 웰컴 응원 보내기' + (firstPartner.is_ai ? ' <span class="feed-c-badge badge-ai">AI</span>' : '') + '</span>' +
         '</h3>' +
         '<p class="manito-welcome-desc">' +
           '목표: "<b>' + escapeHtml(firstPartner.goalTitle) + '</b>"<br>' +
@@ -37905,7 +37919,7 @@ wirePromptEncyclopediaEvents(body);
       '</div>' +
       (inbox.length ? '<div class="card"><div class="card-title-row"><h3>받은 응원함</h3><span class="dday-pill">'+inbox.length+'</span></div>' +
         inbox.map(function(it){
-          return '<div class="cheer-in"><div class="ci">'+it.stamp.icon+'</div><div class="cb"><b>'+escapeHtml(it.from.name)+'</b> · <span class="ct">'+it.when+'</span><div>'+escapeHtml(it.text)+'</div></div></div>';
+          return '<div class="cheer-in"><div class="ci">'+it.stamp.icon+'</div><div class="cb"><b>'+escapeHtml(it.from.name)+'</b>'+((it.is_ai || (it.from && it.from.is_ai)) ? ' <span class="feed-c-badge badge-ai">AI</span>' : '')+' · <span class="ct">'+it.when+'</span><div>'+escapeHtml(it.text)+'</div></div></div>';
         }).join('') + '</div>' : '') +
       '<p class="faint" style="margin:4px 0 10px;">내 마니또 '+partners.length+'명 · 익명이에요</p>' +
       partners.map(function(p){
@@ -37923,9 +37937,9 @@ wirePromptEncyclopediaEvents(body);
             '<div class="manito-avatar">'+p.emoji+'</div>' +
             '<div style="flex:1;min-width:0;">' +
               '<div class="manito-name">'+escapeHtml(p.name)+partnerBadgeHtml+'</div>' +
-              '<div class="manito-sub">'+TOPICS[p.major].icon+' '+TOPICS[p.major].label+' · '+escapeHtml(p.sub)+' · 🔥 '+p.streak+'일 연속</div>' +
+              '<div class="manito-sub">'+TOPICS[p.major].icon+' '+TOPICS[p.major].label+' · '+escapeHtml(p.sub)+(p.streak > 0 ? ' · 🔥 '+p.streak+'일 연속' : '')+'</div>' +
             '</div>' +
-            '<div class="gauge">'+gaugeSvg(p.pct, 46, color)+'</div>' +
+            (typeof p.pct === 'number' ? '<div class="gauge">'+gaugeSvg(p.pct, 46, color)+'</div>' : '') +
           '</div>' +
           '<div style="font-weight:700;font-size:.9375rem;margin-bottom:2px;">'+escapeHtml(p.goalTitle)+'</div>' +
           '<div class="manito-rec"><span class="d">오늘</span><span>'+escapeHtml(p.logs[0])+'</span></div>' +

@@ -450,6 +450,7 @@ notion_id: "3de598db-9096-819f-aac2-fb49fa8f68fd"
 - #TASK-ES-341 | 1초 콕핏/E1 | [HOME-19/21] [홈] 아바타 EXP 진행 바 실값화(settings.xp.total·levelProgress, 홈 숫자 제거·+N EXP 0.5초) + 하드코딩 이름 '상민' 기본값 제거(헤드라인·동반자 위젯·/api/track) + 헤드라인 오늘 N회 startAt 집계 | 상민님 확정 방향 (2026-10-04 — 노션 「아워골 UI/UX 대개편 작업 티켓 DB」 HOME-19, HOME-21) | 4단계(심사 청구)
 - #TASK-ES-342 | 검증 도구/INFRA | [HOME-25] [홈] 홈 점검 하네스 docs/design/harness/home-check.js — 테마 4종 × 375×667·375×812 × (기본·상세 바텀시트·체크인 포커스) 촬영 및 장별 지표(문서 높이·44px 미만 타겟·콘솔 에러·숨김 상호작용 요소·Lv/EXP 노출) JSON, 탭 인자(기본 home, GOALS-01 공용) | 상민님 지시 (2026-10-04 노션 티켓 HOME-25 검증 도구 작업 지시) | 4단계(심사 청구)
 - #TASK-ES-343 | INFRA/법정 | [법정] court 를 PR #650 이전 구조(judge.js · pull_request_target · 읽기 권한)로 복원 + v4 정적 검사 3종(800줄 상한·CSS 은폐·금지 낱말)을 "이번 변경이 새로 만든 것만" 세는 형태로 이식, engine.js 는 존치(상민님 결정) | 상민님 승인 (2026-10-04 법정 복원 지시) | 4단계(심사 청구)
+- #TASK-ES-348 | E3/소통 | [COMM-01] [소통] 실제 회원 AI 오분류 제거(isKnownAiCompanion 을 이름 목록 대신 is_ai·botBadge·시드 id 접두·오프라인 예시 id 표식으로, 실명형 이름 삭제, 인증 UUID 의 묵은 isAiBot 무시) + AI 표시 없는 가짜 사람 정직화(첫 체크인 동류 러너 하드코딩 9명 → feed_posts 실원장·0명이면 숨김, 마니또 AI 시드 달성률·연속일수 제거·AI 배지, 피드 거짓 라벨, active_real_users 25 → null, 팀 영입 오프라인 예시 AI 예시 배지) | 상민님 지시 (2026-10-04 노션 「아워골 UI/UX 대개편 작업 티켓 DB」 COMM-01, 원문 ES-124·ES-145·메모 37) | 4단계(심사 청구)
 
 ## 제안 (축 미확정 — 구현 금지)
 - (없음)
