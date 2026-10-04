@@ -2097,6 +2097,93 @@
       ]
     },
     {
+      "id": "stats-data-grid",
+      "file": "js/stats-data-grid.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "통계 그리드 — 도메인 중립 데이터 그리드 모달·행 편집 모달(openUniversalDataGrid·openRowEditModal). universal-stats.js 에서 분열(#TASK-ES-392)",
+      "spans": [
+        "records",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "closeModal",
+        "openModal"
+      ]
+    },
+    {
+      "id": "stats-lenses",
+      "file": "js/stats-lenses.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "통계 분석 렌즈 — 교차 비율·레이더·요일 리듬 차트와 통계 진단 리포트(순수 함수 6개). universal-stats.js 에서 분열(#TASK-ES-392)",
+      "spans": [
+        "records",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
+      "id": "stats-taxonomy",
+      "file": "js/stats-taxonomy.js",
+      "layer": "legacy",
+      "tab": null,
+      "size": null,
+      "kind": "hybrid",
+      "role": "통계 스키마 편집 — 패싯 온톨로지 탐색기·스키마 CRUD 모달(openTaxonomyManagerModal). universal-stats.js 에서 분열(#TASK-ES-392)",
+      "spans": [
+        "records",
+        "goals"
+      ],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "closeModal",
+        "openModal"
+      ]
+    },
+    {
       "id": "streaks",
       "file": "js/streaks.js",
       "layer": "legacy",
@@ -4168,6 +4255,9 @@
         "closeModal",
         "openModal",
         "require:./core/confirm.js",
+        "require:./stats-data-grid.js",
+        "require:./stats-lenses.js",
+        "require:./stats-taxonomy.js",
         "saveProfile",
         "toast"
       ]
