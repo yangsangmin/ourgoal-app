@@ -1,0 +1,18 @@
+{
+  "id": "auth-rescue-no-session",
+  "title": "로그인 화면의 '로그인 문제 해결'에서 로그인 없이 닉네임으로 입장을 누르면 아무 계정으로도 들어가지 않고 로그인 화면에 머물며 로그인 안내 문구가 뜬다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#landLoginLink" },
+    { "do": "click", "selector": "#landLoginLink" },
+    { "do": "click", "selector": "#authRescueBtn" },
+    { "expect": "visible", "selector": "#rescueIdentifierInput" },
+    { "do": "type", "selector": "#rescueIdentifierInput", "text": "ogtest-other@example.invalid" },
+    { "do": "click", "selector": "#rescueDirectEnterBtn" },
+    { "expect": "textContains", "selector": "#loginError", "text": "로그인한 상태에서만", "timeoutMs": 8000 },
+    { "expect": "visible", "selector": "#loginSubmit" },
+    { "do": "wait", "ms": 3000 },
+    { "expect": "notVisible", "selector": "#homeAddGoal" },
+    { "capture": "auth-rescue-no-session" }
+  ]
+}
