@@ -345,6 +345,30 @@
       ]
     },
     {
+      "id": "core/ui-helpers",
+      "file": "js/core/ui-helpers.js",
+      "layer": "core",
+      "tab": null,
+      "size": null,
+      "kind": "organ",
+      "role": "공용 순수 화면 헬퍼(escapeHtml·a11ySwitch·download) — index.html 에서 옮겨 옴(#TASK-ES-354)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": []
+    },
+    {
       "id": "credits",
       "file": "js/credits.js",
       "layer": "legacy",
@@ -1552,10 +1576,50 @@
         "OurgoalEvents",
         "OurgoalRegistry",
         "OurgoalSettingsSubAppearance",
+        "OurgoalSettingsSubData",
+        "OurgoalSettingsSubIntegrations",
+        "OurgoalSettingsSubNotify",
         "OurgoalSettingsSubProfile",
         "OurgoalSettingsSubSecurity",
         "renderSettingsScreen",
         "state"
+      ]
+    },
+    {
+      "id": "settings/render",
+      "file": "js/tabs/settings/render.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "설정 화면 조립자: renderSettingsScreen(머리 + 섹션 6개를 원래 순서로)·히어로 카드·섹션 접기·캐시 표시·정적 버튼 바인딩 (#TASK-ES-354)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": null,
+      "ownerKeys": [],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalAvatar",
+        "OurgoalCustomize",
+        "OurgoalNotifyEngine",
+        "OurgoalSettingsSubAppearance",
+        "OurgoalSettingsSubData",
+        "OurgoalSettingsSubIntegrations",
+        "OurgoalSettingsSubNotify",
+        "OurgoalSettingsSubProfile",
+        "OurgoalSettingsSubSecurity",
+        "OurgoalTemplateCredit",
+        "OurgoalUiHelpers"
       ]
     },
     {
@@ -1565,11 +1629,13 @@
       "tab": "settings",
       "size": "small",
       "kind": "tab",
-      "role": "OurGoal Settings Sub-Block: Appearance & Themes (화면 테마 4종 및 알림/위젯 설정)",
+      "role": "설정 섹션: 테마·고대비·글자 크기·데이터 절약 (#TASK-ES-354)",
       "spans": [],
       "provides": [],
       "requires": [],
-      "contributes": [],
+      "contributes": [
+        "settings.section"
+      ],
       "owns": [],
       "capabilities": [],
       "planned": {
@@ -1577,17 +1643,112 @@
         "contributes": []
       },
       "emits": [],
-      "listens": [
-        "view:sync"
-      ],
-      "domRoot": "screen-settings",
+      "listens": [],
+      "domRoot": "themeGrid",
       "ownerKeys": [
         "settings/appearance"
       ],
       "dependsOn": [
+        "OurgoalAppScope",
         "OurgoalEvents",
-        "state",
-        "updatePrivacyBadges"
+        "OurgoalUiHelpers"
+      ]
+    },
+    {
+      "id": "settings/sub-data",
+      "file": "js/tabs/settings/sub-data.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "설정 섹션: AI 키·자동 제안·캐시·내보내기 형식·고객지원·고급 설정 (#TASK-ES-354)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [
+        "settings.section"
+      ],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": "geminiKeyBlock",
+      "ownerKeys": [
+        "settings/data"
+      ],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalEvents",
+        "OurgoalUiHelpers"
+      ]
+    },
+    {
+      "id": "settings/sub-integrations",
+      "file": "js/tabs/settings/sub-integrations.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "설정 섹션: 구글 캘린더·가상 페르소나·휴지통/차단·노션·잇템 (#TASK-ES-354)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [
+        "settings.section"
+      ],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": "gcalStatusBox",
+      "ownerKeys": [
+        "settings/integrations"
+      ],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalEvents",
+        "OurgoalUiHelpers"
+      ]
+    },
+    {
+      "id": "settings/sub-notify",
+      "file": "js/tabs/settings/sub-notify.js",
+      "layer": "tabs",
+      "tab": "settings",
+      "size": "small",
+      "kind": "tab",
+      "role": "설정 섹션: 체크인 시간·알림 센터·방해금지·유형별 알림 (#TASK-ES-354)",
+      "spans": [],
+      "provides": [],
+      "requires": [],
+      "contributes": [
+        "settings.section"
+      ],
+      "owns": [],
+      "capabilities": [],
+      "planned": {
+        "provides": [],
+        "contributes": []
+      },
+      "emits": [],
+      "listens": [],
+      "domRoot": "checkinTimesRow",
+      "ownerKeys": [
+        "settings/notify"
+      ],
+      "dependsOn": [
+        "OurgoalAppScope",
+        "OurgoalEvents",
+        "OurgoalNotifyEngine",
+        "OurgoalUiHelpers"
       ]
     },
     {
@@ -1597,11 +1758,13 @@
       "tab": "settings",
       "size": "small",
       "kind": "tab",
-      "role": "OurGoal Settings Sub-Block: Profile & Avatar (프로필 편집 및 아바타 연동)",
+      "role": "설정 섹션: 공개 범위·아바타 인사 팝업·실시간 활동 상태 (renderSettingsScreen 이 순서대로 부름, #TASK-ES-354)",
       "spans": [],
       "provides": [],
       "requires": [],
-      "contributes": [],
+      "contributes": [
+        "settings.section"
+      ],
       "owns": [],
       "capabilities": [],
       "planned": {
@@ -1609,17 +1772,15 @@
         "contributes": []
       },
       "emits": [],
-      "listens": [
-        "view:sync"
-      ],
+      "listens": [],
       "domRoot": "profileCard",
       "ownerKeys": [
         "settings/profile"
       ],
       "dependsOn": [
+        "OurgoalAppScope",
         "OurgoalEvents",
-        "renderProfileCard",
-        "state"
+        "OurgoalUiHelpers"
       ]
     },
     {
@@ -1629,11 +1790,13 @@
       "tab": "settings",
       "size": "small",
       "kind": "tab",
-      "role": "OurGoal Settings Sub-Block: Security & 2FA (계정 보안 및 2FA / 기기 제어)",
+      "role": "설정 섹션: 계정 표시·비밀번호·앱 잠금 PIN·다른 기기 로그아웃 (#TASK-ES-354)",
       "spans": [],
       "provides": [],
       "requires": [],
-      "contributes": [],
+      "contributes": [
+        "settings.section"
+      ],
       "owns": [],
       "capabilities": [],
       "planned": {
@@ -1641,17 +1804,16 @@
         "contributes": []
       },
       "emits": [],
-      "listens": [
-        "view:sync"
-      ],
-      "domRoot": "screen-settings",
+      "listens": [],
+      "domRoot": "setAccountEmail",
       "ownerKeys": [
         "settings/security"
       ],
       "dependsOn": [
+        "OurgoalAppScope",
         "OurgoalEvents",
-        "state",
-        "updateTwoFactorStatusUI"
+        "OurgoalUiHelpers",
+        "paintSecurityCard"
       ]
     },
     {

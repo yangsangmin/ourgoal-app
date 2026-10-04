@@ -1,0 +1,80 @@
+{
+ "task": "TASK-ES-354",
+ "tool": "docs/design/harness/tab-check.js all + tab-compare.js",
+ "base": "bb343d3 (git archive, 2회: run1·run2 병렬)",
+ "after": "691dd87 작업 트리 사본(제품 코드 동일)",
+ "env": "local static server + headless Chrome + guest seed + Supabase mock (no remote, no real account)",
+ "matrix": {
+  "themes": [
+   "focus-sanctuary",
+   "black",
+   "white",
+   "urban-city"
+  ],
+  "viewports": [
+   "375x667",
+   "375x812"
+  ]
+ },
+ "note": "두 앱 모두 git 저장소 밖 사본이라 요약의 commit 칸은 null(같은 커밋: true 는 null==null). 커밋은 이 파일의 base/after 칸이 정본.",
+ "baselineNoise": {
+  "file": "tab-compare-base-run1-vs-run2.json",
+  "comparedValues": 2520,
+  "differingValues": 0
+ },
+ "beforeVsAfter": [
+  {
+   "file": "tab-compare-base-run1-vs-after.json",
+   "comparedValues": 2520,
+   "differingValues": 0
+  },
+  {
+   "file": "tab-compare-base-run2-vs-after.json",
+   "comparedValues": 2520,
+   "differingValues": 0
+  }
+ ],
+ "excludedAsNoise": [],
+ "differingAfterExcludingBaselineNoise": 0,
+ "totalShots": 136,
+ "tabs": {
+  "home": {
+   "shots": 24,
+   "entered": 24,
+   "consoleErrors": 0,
+   "deadClickCandidates": 2
+  },
+  "goals": {
+   "shots": 24,
+   "entered": 24,
+   "consoleErrors": 0,
+   "deadClickCandidates": 0
+  },
+  "records": {
+   "shots": 24,
+   "entered": 24,
+   "consoleErrors": 0,
+   "deadClickCandidates": 1
+  },
+  "calendar": {
+   "shots": 24,
+   "entered": 24,
+   "consoleErrors": 0,
+   "deadClickCandidates": 1
+  },
+  "comm": {
+   "shots": 24,
+   "entered": 24,
+   "consoleErrors": 0,
+   "deadClickCandidates": 4
+  },
+  "settings": {
+   "shots": 16,
+   "entered": 16,
+   "consoleErrors": 0,
+   "deadClickCandidates": 0
+  }
+ },
+ "consoleErrorsBefore": 0,
+ "consoleErrorsAfter": 0
+}

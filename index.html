@@ -2295,6 +2295,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/core/registry.js"></script>
 <script src="js/core/store.js"></script>
 <script src="js/core/app-scope.js"></script>
+<script src="js/core/ui-helpers.js"></script>
 <!-- OurGoal Shipyard Architecture: Home Mega-Block & Sub-Blocks (홈 메가블록 및 소블록 외판) -->
 <script src="js/tabs/home/sub-heatmap.js"></script>
 <script src="js/tabs/home/sub-today.js"></script>
@@ -2327,6 +2328,10 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script src="js/tabs/settings/sub-profile.js"></script>
 <script src="js/tabs/settings/sub-security.js"></script>
 <script src="js/tabs/settings/sub-appearance.js"></script>
+<script src="js/tabs/settings/sub-notify.js"></script>
+<script src="js/tabs/settings/sub-integrations.js"></script>
+<script src="js/tabs/settings/sub-data.js"></script>
+<script src="js/tabs/settings/render.js"></script>
 <script src="js/tabs/settings/index.js"></script>
 <script src="js/credits.js"></script>
 <script src="js/reactions.js"></script>
@@ -2348,6 +2353,76 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
 <script>
 (function(){
   "use strict";
+
+  /* ============ [#TASK-ES-354 CORE-07] 모듈 이음매 (docs/specs/MODULE-SPLIT-PROTOCOL.md) ============
+     ① 가져오기: 바깥 파일로 옮긴 함수를 이 스코프에서 같은 이름으로 부른다(전역에 새 이름을 만들지 않는다).
+     ② 공용 헬퍼: 여러 탭이 같이 쓰는 순수 헬퍼는 js/core/ui-helpers.js(window.OurgoalUiHelpers)에 있다. 같은 이름으로 가져온다.
+     ③ 앱 스코프 통로: 옮긴 코드가 읽는 이 스코프의 공용 상태·함수를 window.OurgoalAppScope.scope 한 곳에만 getter 로 노출한다(목록은 스코프 분석으로 뽑았다 — 옮긴 코드가 실제로 쓰는 이름만). 모든 탭이 같은 통로를 쓴다. */
+  var _ui = window.OurgoalUiHelpers;
+  var escapeHtml = _ui.escapeHtml;
+  var a11ySwitch = _ui.a11ySwitch;
+  var download = _ui.download;
+  var _settingsKit = window.OurgoalSettingsKit;
+  var renderSettingsScreen = _settingsKit.renderSettingsScreen;
+  var collapseAllSettingsSections = _settingsKit.collapseAllSettingsSections;
+  var toggleAdvancedSettings = _settingsKit.toggleAdvancedSettings;
+  var paintCacheUsage = _settingsKit.paintCacheUsage;
+  var bindSettingsHapticDelegate = _settingsKit.bindSettingsHapticDelegate;
+  var bindSettingsStaticHandlers = _settingsKit.bindSettingsStaticHandlers;
+  window.OurgoalAppScope.expose('index.html', {
+    get THEMES(){ return THEMES; },
+    get applyAppSettings(){ return applyAppSettings; },
+    get applyTheme(){ return applyTheme; },
+    get avatarHtml(){ return avatarHtml; },
+    get closeModal(){ return closeModal; },
+    get computeStreakDays(){ return computeStreakDays; },
+    get exportAllCheckins(){ return exportAllCheckins; },
+    get gcalTokenStatus(){ return gcalTokenStatus; },
+    get generateDynamicNotification(){ return generateDynamicNotification; },
+    get getTrashList(){ return getTrashList; },
+    get googleTokenClient(){ return googleTokenClient; }, set googleTokenClient(v){ googleTokenClient = v; },
+    get isGoogleCalendarConnected(){ return isGoogleCalendarConnected; },
+    get levelForXP(){ return levelForXP; },
+    get nowISO(){ return nowISO; },
+    get openAvatarGreetingPopup(){ return openAvatarGreetingPopup; },
+    get openBlockedUsersModal(){ return openBlockedUsersModal; },
+    get openChangePasswordModal(){ return openChangePasswordModal; },
+    get openCustomerInquiryModal(){ return openCustomerInquiryModal; },
+    get openFaqModal(){ return openFaqModal; },
+    get openGcalExportModal(){ return openGcalExportModal; },
+    get openGcalImportModal(){ return openGcalImportModal; },
+    get openGoogleCalendarConnectModal(){ return openGoogleCalendarConnectModal; },
+    get openItemReportModal(){ return openItemReportModal; },
+    get openLogoutOtherDevicesConfirmModal(){ return openLogoutOtherDevicesConfirmModal; },
+    get openModal(){ return openModal; },
+    get openNotificationSoftAskModal(){ return openNotificationSoftAskModal; },
+    get openProfileEditor(){ return openProfileEditor; },
+    get openTrashModal(){ return openTrashModal; },
+    get openTwoFactorDisableModal(){ return openTwoFactorDisableModal; },
+    get openTwoFactorSetupModal(){ return openTwoFactorSetupModal; },
+    get openWidgetSettingsModal(){ return openWidgetSettingsModal; },
+    get pushRecordToNotion(){ return pushRecordToNotion; },
+    get refreshCustomFeedbackButtons(){ return refreshCustomFeedbackButtons; },
+    get removePushSubscription(){ return removePushSubscription; },
+    get renderActiveDevicesList(){ return renderActiveDevicesList; },
+    get renderAll(){ return renderAll; },
+    get renderCalendarScreen(){ return renderCalendarScreen; },
+    get renderHome(){ return renderHome; },
+    get renderProfileCard(){ return renderProfileCard; },
+    get saveProfile(){ return saveProfile; },
+    get sendToNotion(){ return sendToNotion; },
+    get setTab(){ return setTab; },
+    get setupNotifyTimer(){ return setupNotifyTimer; },
+    get showNotifyBanner(){ return showNotifyBanner; },
+    get state(){ return state; },
+    get syncAllToGoogleCalendar(){ return syncAllToGoogleCalendar; },
+    get syncPushSubscription(){ return syncPushSubscription; },
+    get toast(){ return toast; },
+    get track(){ return track; },
+    get triggerHaptic(){ return triggerHaptic; },
+    get triggerHapticFeedback(){ return triggerHapticFeedback; },
+    get updatePrivacyBadges(){ return updatePrivacyBadges; }
+  });
 
   /* ============ [#TASK-ES-358] 기록 탭 모듈 이음매 (docs/specs/MODULE-SPLIT-PROTOCOL.md) ============
      ① 가져오기: js/tabs/records/render.js 로 옮긴 함수를 이 스코프에서 같은 이름으로 부른다(전역에 새 이름을 만들지 않는다).
@@ -2470,19 +2545,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* ============ Utilities ============ */
   function uid(p){ return (p||'id') + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
   function newId(){ return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : uid('id'); }
-  function escapeHtml(s){
-    return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; });
-  }
-  /* 접근성: div 기반 토글 스위치에 role/aria/키보드 조작 지원 부여 (클릭 동작은 그대로 유지) */
-  function a11ySwitch(el, checked, label){
-    el.setAttribute('role','switch');
-    el.setAttribute('aria-checked', checked ? 'true' : 'false');
-    el.setAttribute('tabindex','0');
-    if(label) el.setAttribute('aria-label', label);
-    el.onkeydown = function(e){
-      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); el.click(); }
-    };
-  }
+  /* [#TASK-ES-354 CORE-07] escapeHtml → js/core/ui-helpers.js 로 옮김(맨 위에서 같은 이름으로 가져온다) */
+  /* [#TASK-ES-354 CORE-07] a11ySwitch → js/core/ui-helpers.js 로 옮김(맨 위에서 같은 이름으로 가져온다) */
   function pad(n){ return n<10?'0'+n:''+n; }
   function nowISO(){ return new Date().toISOString(); }
   function fmtTime(iso){ if(!iso) return ''; var d=new Date(iso); return pad(d.getHours())+':'+pad(d.getMinutes()); }
@@ -2624,14 +2688,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(diff>0) return 'D-'+diff;
     return 'D+'+Math.abs(diff);
   }
-  function download(filename, content, mime){
-    var blob = new Blob([content], {type: mime});
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
-  }
+  /* [#TASK-ES-354 CORE-07] download → js/core/ui-helpers.js 로 옮김(맨 위에서 같은 이름으로 가져온다) */
   /* ============ Confetti ============ */
   function burstConfetti(x, y, count){
     if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -37793,1022 +37850,16 @@ wirePromptEncyclopediaEvents(body);
     }
   });
 
-  /* ============ RENDER: SETTINGS HERO CARD (#TASK-ES-218, #TASK-ES-248) ============ */
-  function renderSettingsHeroCard(){
-    var card = document.getElementById('settingsHeroCard');
-    if(!card) return;
-    var p = state.profile || {};
-    var u = state.user || {};
-    var nickEl = document.getElementById('settingsHeroNickname');
-    if(nickEl) nickEl.textContent = p.displayName || '사용자';
-    var rankEl = document.getElementById('settingsHeroRank');
-    if(rankEl){
-      var activeG = (p.goals || []).filter(function(g){ return !g.archivedAt; }).length;
-      var rText = activeG >= 5 ? '열정 마스터' : (activeG >= 1 ? '성장 러너' : '새싹 러너');
-      rankEl.textContent = rText;
-    }
-    // #TASK-ES-248 & #TASK-ES-298: 76px 대형 아바타 링 및 Lv.N 뱃지 오버레이
-    var avatarSlot = document.getElementById('settingsHeroAvatarSlot');
-    if(avatarSlot && typeof avatarHtml === 'function'){
-      var xpTotal = (p.settings && p.settings.xp && p.settings.xp.total) || 0;
-      var curLv = (typeof levelForXP === 'function') ? levelForXP(xpTotal) : 1;
-      avatarSlot.innerHTML =
-        '<div class="toss-settings-avatar-wrap">' +
-          avatarHtml(76) + /* #TASK-ES-298: 76px 확대 (구 avatarHtml(64) 구 avatarHtml(58)) */
-          '<span class="toss-settings-level-badge">Lv.' + curLv + '</span>' +
-        '</div>';
-    }
-    // #TASK-ES-248: 계정 연동 상태(카카오 / 구글 / 회원 / 게스트) 아이콘 표출
-    var statusEl = document.getElementById('settingsHeroStatusDesc');
-    if(statusEl){
-      var isGuest = (!u || !u.id) && (String(p.id || '').indexOf('guest') === 0);
-      if(p.provider === 'kakao' || (u.app_metadata && u.app_metadata.provider === 'kakao')){
-        statusEl.innerHTML = '<span style="color:#eab308;font-weight:600;white-space:nowrap;">🟡 카카오 계정 연동</span> <span style="white-space:nowrap;">· 5계층 보안 방어선 보호 중</span>';
-      } else if(p.provider === 'google' || (u.app_metadata && u.app_metadata.provider === 'google')){
-        statusEl.innerHTML = '<span style="color:#3b82f6;font-weight:600;white-space:nowrap;">🔵 구글 계정 연동</span> <span style="white-space:nowrap;">· 5계층 보안 방어선 보호 중</span>';
-      } else if(!isGuest && (p.id || u.id)){
-        statusEl.innerHTML = '<span style="color:#10b981;font-weight:600;white-space:nowrap;">🟢 회원 계정 연동</span> <span style="white-space:nowrap;">· 5계층 보안 방어선 보호 중</span>';
-      } else {
-        statusEl.innerHTML = '<span style="color:var(--ink-soft);font-weight:600;white-space:nowrap;">👤 게스트 체험 모드</span> <span style="white-space:nowrap;">· 로컬 샌드박스 안전 보관</span>';
-      }
-    }
-    var goalsEl = document.getElementById('settingsHeroGoalsCount');
-    if(goalsEl){
-      var activeGoals = (p.goals || []).filter(function(g){ return !g.archivedAt; });
-      goalsEl.textContent = activeGoals.length;
-    }
-    var recordsEl = document.getElementById('settingsHeroRecordsCount');
-    if(recordsEl){
-      recordsEl.textContent = (p.records || []).length;
-    }
-    var streakEl = document.getElementById('settingsHeroStreakCount');
-    if(streakEl){
-      streakEl.textContent = (typeof computeStreakDays === 'function' ? computeStreakDays() : 0) + '일';
-    }
-    var btnQuickAv = document.getElementById('btnSettingsQuickAvatar');
-    if(btnQuickAv){
-      btnQuickAv.onclick = function(){
-        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-        if(window.OurgoalAvatar && window.OurgoalAvatar.openAvatarModal){
-          window.OurgoalAvatar.openAvatarModal({ profile: state.profile, state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal });
-        } else {
-          var b = document.getElementById('btnOpenAvatarModal');
-          if(b) b.click();
-        }
-      };
-    }
-    var btnOpenDynamic = document.getElementById('btnOpenDynamicAlbum');
-    if(btnOpenDynamic){
-      btnOpenDynamic.onclick = function(){
-        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-        if(window.OurgoalAvatar && window.OurgoalAvatar.openDynamicAlbumModal){
-          window.OurgoalAvatar.openDynamicAlbumModal({
-            profile: state.profile,
-            state: state,
-            saveProfile: saveProfile,
-            toast: toast,
-            openModal: openModal,
-            closeModal: closeModal,
-            renderHome: renderHome,
-            renderSettingsScreen: renderSettingsScreen
-          });
-        } else {
-          toast('아바타 도감을 불러오는 중입니다.');
-        }
-      };
-    }
-  }
-
+  /* ============ [#TASK-ES-354 CORE-07·SET-07] 설정 탭 렌더 → js/tabs/settings/render.js · sub-*.js 로 옮김 ============
+     renderSettingsHeroCard · collapseAllSettingsSections · toggleAdvancedSettings · formatStorageBytes · paintCacheUsage · renderSettingsScreen
+     과 설정 화면 정적 바인딩. 함수는 이 IIFE 맨 위에서 같은 이름으로 가져온다. 아래 호출·노출 줄은 이전 전과 같은 순서를 지키려고 같은 자리에 둔다. */
   // 설정 아코디언 인터랙션 12ms 햅틱 배선 (#TASK-ES-218)
-  document.addEventListener('click', function(e){
-    if(e.target && e.target.closest && e.target.closest('.toss-settings-group summary')){
-      if(typeof triggerHapticFeedback === 'function'){
-        triggerHapticFeedback(12);
-      }
-    }
-  });
-
-  /* ============ RENDER: SETTINGS ============ */
-  /* ============ [#TASK-ES-235] 고급 설정 (외부 연동 & API) 토글 헬퍼 ============ */
-  /* [#TASK-ES-300] 설정창 진입 시 모든 설정 섹션 기본 접힘(Collapsed) 헬퍼 */
-  function collapseAllSettingsSections(){
-    var accordions = document.querySelectorAll('.settings-group-accordion, .toss-settings-group details, #advancedSettingsAccordion');
-    accordions.forEach(function(acc){ acc.open = false; });
-  }
+  bindSettingsHapticDelegate();
   window.collapseAllSettingsSections = collapseAllSettingsSections;
-
-  function toggleAdvancedSettings(open){
-    var adv = document.getElementById('advancedSettingsAccordion');
-    if(adv){
-      adv.open = (open !== undefined) ? !!open : !adv.open;
-      if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-    }
-  }
   window.toggleAdvancedSettings = toggleAdvancedSettings;
-
-  /* [#TASK-ES-346 SET-01] 저장공간 표시는 navigator.storage.estimate() 실측값. 못 재면 '측정 불가'. */
-  function formatStorageBytes(n){
-    if(!(n >= 0)) return null;
-    if(n < 1024) return n + ' B';
-    if(n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
-    return (n / 1024 / 1024).toFixed(1) + ' MB';
-  }
-  async function paintCacheUsage(){
-    var el = document.getElementById('cacheSizeText');
-    if(!el) return null;
-    var usage = null;
-    try {
-      if(navigator.storage && typeof navigator.storage.estimate === 'function'){
-        var est = await navigator.storage.estimate();
-        if(est && typeof est.usage === 'number') usage = est.usage;
-      }
-    } catch(e){ usage = null; }
-    var txt = formatStorageBytes(usage);
-    el.textContent = txt ? ('약 ' + txt + ' 사용 중 (브라우저 추정치)') : '사용량 측정 불가';
-    el.setAttribute('data-measured', txt ? 'estimate' : 'unavailable');
-    return usage;
-  }
   window.paintCacheUsage = paintCacheUsage;
-
-  function renderSettingsScreen(){
-    if(typeof triggerHapticFeedback === 'function'){
-      triggerHapticFeedback(12);
-    }
-    collapseAllSettingsSections();
-    renderSettingsHeroCard();
-    refreshCustomFeedbackButtons();
-    renderProfileCard();
-    if(typeof OurgoalCredits !== 'undefined'){ OurgoalCredits.renderSettingsSection(document.getElementById('settingsCreditsBlock')).then(function(){ if(window.OurgoalTemplateCredit) window.OurgoalTemplateCredit.renderAdOptIn(document.getElementById('settingsCreditsBlock')); }); } // KF-2 #TASK-ES-017: 선택형 "광고 보고 크레딧 받기"
-
-    var settings = state.profile.settings;
-    // 🧩 앱을 내맘대로! (#TASK-ES-020) — 로직은 js/customize.js
-    var homeLayoutBtn = document.getElementById('homeLayoutOpenBtn');
-    if(homeLayoutBtn) homeLayoutBtn.onclick = function(){
-      if(!window.OurgoalCustomize){ toast('잠시 후 다시 시도해 주세요'); return; }
-      OurgoalCustomize.open({ state: state, saveProfile: saveProfile, toast: toast, openModal: openModal, closeModal: closeModal, track: track });
-    };
-
-    // 📱 [#TASK-ES-180], [62] 기기 바탕화면 위젯 설정 & 미리보기 모달
-    var btnOpenWidget = document.getElementById('btnOpenWidgetModal');
-    if(btnOpenWidget){
-      btnOpenWidget.onclick = openWidgetSettingsModal;
-    }
-    // 🔒 공개 범위 및 프라이버시 (Req 8)
-    if(!settings.privacy) settings.privacy = { goals:"private", calendar:"private", records:"private", stats:"private" };
-    var privGoalSel = document.getElementById('privGoalSelect');
-    if(privGoalSel){
-      privGoalSel.value = settings.privacy.goals || 'private';
-      privGoalSel.onchange = async function(){
-        settings.privacy.goals = privGoalSel.value;
-        await saveProfile();
-        updatePrivacyBadges();
-        toast('목표 기본 공개 범위를 변경했어요');
-      };
-    }
-    var privCalSel = document.getElementById('privCalSelect');
-    if(privCalSel){
-      privCalSel.value = settings.privacy.calendar || 'private';
-      privCalSel.onchange = async function(){
-        settings.privacy.calendar = privCalSel.value;
-        await saveProfile();
-        updatePrivacyBadges();
-        toast('일정 공개 범위를 변경했어요');
-      };
-    }
-    var privRecSel = document.getElementById('privRecSelect');
-    if(privRecSel){
-      privRecSel.value = settings.privacy.records || 'private';
-      privRecSel.onchange = async function(){
-        settings.privacy.records = privRecSel.value;
-        await saveProfile();
-        updatePrivacyBadges();
-        toast('기록 공개 범위를 변경했어요');
-      };
-    }
-    var privStatsSel = document.getElementById('privStatsSelect');
-    if(privStatsSel){
-      privStatsSel.value = settings.privacy.stats || 'private';
-      privStatsSel.onchange = async function(){
-        settings.privacy.stats = privStatsSel.value;
-        await saveProfile();
-        toast('통계 공개 범위를 변경했어요');
-      };
-    }
-    // 🤖 아바타 인사 팝업 커스텀 (#TASK-ES-165, #TASK-ES-191)
-    if(!settings.avatarGreeting) {
-      settings.avatarGreeting = {
-        enabled: true,
-        dayStartHour: 4,
-        nightStartHour: 16,
-        dayGreeting: '',
-        nightGreeting: ''
-      };
-    }
-    var agConf = settings.avatarGreeting;
-    var agSw = document.getElementById('avatarGreetingSwitch');
-    if(agSw){
-      var isAgOn = agConf.enabled !== false;
-      agSw.className = 'switch' + (isAgOn ? ' on' : '');
-      a11ySwitch(agSw, isAgOn, '아바타 인사 팝업');
-      agSw.onclick = async function(){
-        agConf.enabled = !isAgOn;
-        await saveProfile();
-        renderSettingsScreen();
-        toast(agConf.enabled ? '아바타 인사 팝업을 켰어요' : '아바타 인사 팝업을 껐어요');
-      };
-    }
-    var agDayHourSel = document.getElementById('avatarGreetingDayHour');
-    if(agDayHourSel){
-      if(agDayHourSel.options.length === 0){
-        for(var h = 0; h < 24; h++){
-          var opt = document.createElement('option');
-          opt.value = h;
-          opt.textContent = (h < 12 ? '오전 ' : '오후 ') + (h === 0 ? 12 : (h > 12 ? h - 12 : h)) + '시 (' + (h < 10 ? '0' + h : h) + ':00)';
-          agDayHourSel.appendChild(opt);
-        }
-      }
-      agDayHourSel.value = typeof agConf.dayStartHour === 'number' ? agConf.dayStartHour : 4;
-      agDayHourSel.onchange = async function(){
-        agConf.dayStartHour = parseInt(agDayHourSel.value, 10);
-        await saveProfile();
-        toast('주간 시작 시간을 변경했어요');
-      };
-    }
-    var agNightHourSel = document.getElementById('avatarGreetingNightHour');
-    if(agNightHourSel){
-      if(agNightHourSel.options.length === 0){
-        for(var nh = 0; nh < 24; nh++){
-          var nopt = document.createElement('option');
-          nopt.value = nh;
-          nopt.textContent = (nh < 12 ? '오전 ' : '오후 ') + (nh === 0 ? 12 : (nh > 12 ? nh - 12 : nh)) + '시 (' + (nh < 10 ? '0' + nh : nh) + ':00)';
-          agNightHourSel.appendChild(nopt);
-        }
-      }
-      agNightHourSel.value = typeof agConf.nightStartHour === 'number' ? agConf.nightStartHour : 16;
-      agNightHourSel.onchange = async function(){
-        agConf.nightStartHour = parseInt(agNightHourSel.value, 10);
-        await saveProfile();
-        toast('야간 시작 시간을 변경했어요');
-      };
-    }
-    var agDayMsgInput = document.getElementById('avatarGreetingDayMsg');
-    if(agDayMsgInput){
-      // [#TASK-ES-191] 입력창 지움 피로도 근절: 기본값은 placeholder로만 안내
-      agDayMsgInput.value = agConf.dayGreeting || '';
-      agDayMsgInput.placeholder = '오늘은 뭘 할거냐? 내자신';
-      agDayMsgInput.onchange = async function(){
-        agConf.dayGreeting = agDayMsgInput.value.trim();
-        await saveProfile();
-        toast('주간 인사 멘트를 저장했어요');
-      };
-    }
-    var agNightMsgInput = document.getElementById('avatarGreetingNightMsg');
-    if(agNightMsgInput){
-      agNightMsgInput.value = agConf.nightGreeting || '';
-      agNightMsgInput.placeholder = '오늘은 뭘 했냐? 내자신';
-      agNightMsgInput.onchange = async function(){
-        agConf.nightGreeting = agNightMsgInput.value.trim();
-        await saveProfile();
-        toast('야간 인사 멘트를 저장했어요');
-      };
-    }
-    var agPreviewBtn = document.getElementById('btnPreviewAvatarGreeting');
-    if(agPreviewBtn){
-      agPreviewBtn.onclick = function(){
-        openAvatarGreetingPopup(state.profile, true);
-      };
-    }
-
-    var onlineSw = document.getElementById('onlineStatusSwitch');
-    if(onlineSw){
-      var isOnline = settings.onlineStatus !== false;
-      onlineSw.className = 'switch' + (isOnline ? ' on' : '');
-      a11ySwitch(onlineSw, isOnline, '실시간 활동 상태 표시');
-      onlineSw.onclick = async function(){
-        settings.onlineStatus = !isOnline;
-        await saveProfile();
-        renderSettingsScreen();
-      };
-    }
-    // 🔐 계정 및 보안 (Req 10 - [72] 로그인 상태 게스트 오표기 방지 및 안전 표출)
-    var emailEl = document.getElementById('setAccountEmail');
-    if(emailEl){
-      var p = state.profile || {};
-      var u = state.user || {};
-      var isRealUser = (u && u.id && String(u.id).indexOf('guest') === -1) ||
-                        (p && p.id && String(p.id).indexOf('guest') === -1 && p.isGuest !== true);
-      var isGuest = !isRealUser;
-      var userEmail = (u && u.email) || p.email;
-      if(userEmail && userEmail.indexOf('@kakao.local') === -1 && userEmail.indexOf('@google.local') === -1 && userEmail.indexOf('@guest.local') === -1){
-        emailEl.textContent = userEmail + ' (인증 완료)';
-      } else if(p.provider === 'kakao' || (u.app_metadata && u.app_metadata.provider === 'kakao')){
-        emailEl.textContent = '카카오 계정 연동됨 (' + (p.displayName || p.nickname || '로그인 완료') + ')';
-      } else if(p.provider === 'google' || (u.app_metadata && u.app_metadata.provider === 'google')){
-        emailEl.textContent = '구글 계정 연동됨 (' + (p.displayName || '로그인 완료') + ')';
-      } else if(isRealUser){
-        emailEl.textContent = (p.displayName || '정회원') + ' 계정 연동됨 (동기화 활성)';
-      } else {
-        emailEl.textContent = '게스트 체험 모드 (로컬 안전 보관)';
-      }
-    }
-    var chgPassBtn = document.getElementById('btnChangePassModal');
-    if(chgPassBtn){
-      var isOAuthUser = (state.profile && (state.profile.provider === 'kakao' || state.profile.provider === 'google')) ||
-                        (state.user && state.user.app_metadata && (state.user.app_metadata.provider === 'kakao' || state.user.app_metadata.provider === 'google'));
-      if(isGuest){
-        chgPassBtn.textContent = '🔒 간편 회원가입 / 계정 연동';
-        chgPassBtn.onclick = function(){
-          if(typeof openAuthModal === 'function') openAuthModal();
-          else toast('소셜 로그인으로 내 소중한 데이터를 안전하게 보관하세요');
-        };
-      } else {
-        chgPassBtn.textContent = isOAuthUser ? '비밀번호 등록/설정 (소셜 연동)' : '비밀번호 변경';
-        chgPassBtn.onclick = function(){
-          openChangePasswordModal();
-        };
-      }
-    }
-    if(typeof window.paintSecurityCard === 'function'){ try { window.paintSecurityCard(); } catch(e){} }
-    /* [#TASK-ES-346 SET-01] '로그인 기기 및 세션' 목록은 설정을 열 때 이 기기 한 대를 사실대로 그린다(예전엔 비어 있었다) */
-    if(typeof renderActiveDevicesList === 'function'){ try { renderActiveDevicesList(); } catch(e){} }
-    var twoFaSw = document.getElementById('twoFactorSwitch');
-    var pinCtrl = document.getElementById('twoFactorPinControls');
-    var btnChangePin = document.getElementById('btnChange2FaPin');
-    if(twoFaSw){
-      var twoFaOn = !!(settings.twoFactorAuth && settings.twoFactorPin);
-      twoFaSw.className = 'switch' + (twoFaOn ? ' on' : '');
-      a11ySwitch(twoFaSw, twoFaOn, '앱 잠금 PIN (이 기기)');
-      if(pinCtrl){
-        pinCtrl.style.display = twoFaOn ? 'flex' : 'none';
-      }
-      twoFaSw.onclick = function(){
-        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-        if(!twoFaOn){
-          if(typeof openTwoFactorSetupModal === 'function') openTwoFactorSetupModal();
-        } else {
-          if(typeof openTwoFactorDisableModal === 'function') openTwoFactorDisableModal();
-        }
-      };
-    }
-    if(btnChangePin){
-      btnChangePin.onclick = function(){
-        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-        if(typeof openTwoFactorSetupModal === 'function') openTwoFactorSetupModal();
-      };
-    }
-    var logoutOtherBtn = document.getElementById('logoutOtherDevicesBtn');
-    if(logoutOtherBtn){
-      logoutOtherBtn.onclick = function(){
-        if(typeof openLogoutOtherDevicesConfirmModal === 'function'){
-          openLogoutOtherDevicesConfirmModal();
-        }
-      };
-    }
-    // 체크인 시간 설정
-    var row = document.getElementById('checkinTimesRow');
-    var times = (settings && Array.isArray(settings.checkinTimes)) ? settings.checkinTimes : ["10:00","15:00","21:00"];
-    if(settings) settings.checkinTimes = times;
-    row.innerHTML = times.map(function(t, i){
-      return '<div class="time-chip"><input type="time" value="'+t+'" data-timeidx="'+i+'" aria-label="체크인 시간 '+(i+1)+'"><button class="icon-btn" data-timedel="'+i+'" style="margin-left:4px;" aria-label="체크인 시간 삭제">×</button></div>';
-    }).join('');
-    row.querySelectorAll('[data-timeidx]').forEach(function(inp){
-      inp.addEventListener('change', async function(){
-        times[+inp.dataset.timeidx] = inp.value;
-        await saveProfile();
-        if(settings.notify) syncPushSubscription();
-      });
-    });
-    row.querySelectorAll('[data-timedel]').forEach(function(btn){
-      btn.addEventListener('click', async function(){
-        times.splice(+btn.dataset.timedel, 1);
-        await saveProfile(); renderSettingsScreen();
-        if(settings.notify) syncPushSubscription();
-      });
-    });
-    var presetTimesBtn = document.getElementById('presetTimesBtn');
-    if(presetTimesBtn){
-      presetTimesBtn.onclick = async function(){
-        settings.checkinTimes = ['07:15', '12:30', '18:45', '23:15'];
-        await saveProfile();
-        renderSettingsScreen();
-        if(settings.notify) syncPushSubscription();
-        toast('추천 4회 루틴(아침·점심·퇴근·취침 전)으로 설정했어요');
-        triggerHaptic(15);
-      };
-    }
-    // 🔔 [#TASK-ES-152] 전역 알림 설정 센터 바인딩
-    if(!state.profile.settings.notifications){
-      state.profile.settings.notifications = {
-        feedbackMode: 'all',
-        privacyLevel: 'detail',
-        dmMessages: true,
-        teamActivities: true,
-        goalReminders: true,
-        bgEnabled: true
-      };
-    }
-    var notifConfig = state.profile.settings.notifications;
-
-    // 1. 피드백 모드 (소리/진동)
-    var fbModeGrid = document.getElementById('notifFeedbackModeGrid');
-    if(fbModeGrid){
-      fbModeGrid.querySelectorAll('[data-notifmode]').forEach(function(btn){
-        var mode = btn.dataset.notifmode;
-        btn.classList.toggle('active', (notifConfig.feedbackMode || 'all') === mode);
-        btn.onclick = async function(){
-          notifConfig.feedbackMode = mode;
-          if(mode === 'all' || mode === 'sound'){
-            if(window.OurgoalNotifyEngine) window.OurgoalNotifyEngine.playNotificationSound();
-          }
-          if(mode === 'all' || mode === 'vibrate'){
-            if(window.OurgoalNotifyEngine) window.OurgoalNotifyEngine.vibrate([80, 40, 80]);
-          }
-          await saveProfile();
-          renderSettingsScreen();
-          var labels = { all: '소리+진동', sound: '소리만', vibrate: '진동만', silent: '무음' };
-          toast('알림 피드백을 ' + labels[mode] + '(으)로 설정했어요');
-        };
-      });
-    }
-
-    // 2. 알림 프라이버시 토글
-    var privToggle = document.getElementById('notifPrivacyToggle');
-    if(privToggle){
-      privToggle.querySelectorAll('[data-privacy]').forEach(function(btn){
-        var pLevel = btn.dataset.privacy;
-        btn.classList.toggle('active', (notifConfig.privacyLevel || 'detail') === pLevel);
-        btn.onclick = async function(){
-          notifConfig.privacyLevel = pLevel;
-          await saveProfile();
-          renderSettingsScreen();
-          toast(pLevel === 'summary' ? '알림 보안 마스킹(간략형)이 적용되었어요' : '알림 상세 내용 표시가 설정되었어요');
-        };
-      });
-    }
-
-    // 3. 백그라운드 Web Notification 토글
-    var bgSw = document.getElementById('notifBgSwitch');
-    if(bgSw){
-      var isBg = notifConfig.bgEnabled !== false;
-      bgSw.className = 'switch' + (isBg ? ' on' : '');
-      a11ySwitch(bgSw, isBg, '백그라운드 Web Notification 수신');
-      bgSw.onclick = async function(){
-        notifConfig.bgEnabled = !isBg;
-        await saveProfile();
-        renderSettingsScreen();
-        toast(notifConfig.bgEnabled ? '백그라운드 알림을 켰어요' : '백그라운드 알림을 껐어요');
-      };
-    }
-
-    // 4. 시스템 권한 상태 및 요청 버튼
-    var permLabel = document.getElementById('notifPermStatusLabel');
-    var reqPermBtn = document.getElementById('btnReqNotifPerm');
-    if(permLabel){
-      if(typeof window !== 'undefined' && ('Notification' in window)){
-        var pStatus = Notification.permission;
-        if(pStatus === 'granted'){
-          permLabel.innerHTML = '<span style="color:#10b981;font-weight:700;">✓ 허용됨</span> (백그라운드 알림 가능)';
-          if(reqPermBtn) reqPermBtn.style.display = 'none';
-        } else if(pStatus === 'denied'){
-          permLabel.innerHTML = '<span style="color:var(--brand-strong);font-weight:700;">✗ 차단됨</span> (브라우저 설정에서 허용)';
-          if(reqPermBtn){
-            reqPermBtn.textContent = '설정 안내';
-            reqPermBtn.onclick = function(){ alert('브라우저 주소창 좌측의 사이트 설정 아이콘을 눌러 알림을 [허용]으로 변경해주세요.'); };
-          }
-        } else {
-          permLabel.innerHTML = '<span style="color:#f59e0b;font-weight:700;">미설정</span> (권한 요청 필요)';
-          if(reqPermBtn){
-            reqPermBtn.textContent = '권한 요청';
-            reqPermBtn.onclick = async function(){
-              var res = await (window.OurgoalNotifyEngine ? window.OurgoalNotifyEngine.requestPermission() : Notification.requestPermission());
-              renderSettingsScreen();
-              if(res === 'granted') toast('시스템 알림 권한이 허용되었어요! 🎉');
-              else toast('시스템 알림 권한이 거부되었어요');
-            };
-          }
-        }
-      } else {
-        permLabel.textContent = '현재 브라우저 미지원';
-        if(reqPermBtn) reqPermBtn.style.display = 'none';
-      }
-    }
-
-    var sw = document.getElementById('notifySwitch');
-    sw.className = 'switch' + (settings.notify ? ' on' : '');
-    a11ySwitch(sw, settings.notify, '체크인 시간에 알림 받기 (앱을 꺼도 와요)');
-    sw.onclick = async function(){
-      if(!settings.notify){
-        if('Notification' in window){
-          var granted = await openNotificationSoftAskModal();
-          if(!granted){
-            toast('알림 권한이 허용되지 않았어요');
-            return;
-          }
-        }
-        settings.notify = true;
-        syncPushSubscription();
-      } else {
-        settings.notify = false;
-        removePushSubscription();
-      }
-      await saveProfile();
-      renderSettingsScreen();
-      setupNotifyTimer();
-    };
-    // 🔔 야간 방해금지 및 유형별 알림 제어 (Req 10)
-    var qhSw = document.getElementById('quietHoursSwitch');
-    var qhRow = document.getElementById('quietHoursRow');
-    if(qhSw){
-      var qhOn = !!settings.quietHoursEnabled;
-      qhSw.className = 'switch' + (qhOn ? ' on' : '');
-      a11ySwitch(qhSw, qhOn, '야간 방해금지 모드');
-      if(qhRow) qhRow.style.display = qhOn ? 'flex' : 'none';
-      qhSw.onclick = async function(){
-        settings.quietHoursEnabled = !qhOn;
-        await saveProfile();
-        renderSettingsScreen();
-        toast(settings.quietHoursEnabled ? '야간 방해금지 모드가 켜졌어요' : '야간 방해금지 모드가 꺼졌어요');
-      };
-    }
-    var qhStart = document.getElementById('quietStartInput');
-    if(qhStart){
-      qhStart.value = settings.quietHoursStart || '22:00';
-      qhStart.onchange = async function(){
-        settings.quietHoursStart = qhStart.value;
-        await saveProfile();
-      };
-    }
-    var qhEnd = document.getElementById('quietEndInput');
-    if(qhEnd){
-      qhEnd.value = settings.quietHoursEnd || '08:00';
-      qhEnd.onchange = async function(){
-        settings.quietHoursEnd = qhEnd.value;
-        await saveProfile();
-      };
-    }
-    var wireNotifSwitch = function(id, configKey, legacyProp, label){
-      var el = document.getElementById(id);
-      if(!el) return;
-      var currentVal = (notifConfig[configKey] !== false) && (settings[legacyProp] !== false);
-      el.className = 'switch' + (currentVal ? ' on' : '');
-      a11ySwitch(el, currentVal, label);
-      el.onclick = async function(){
-        var nextVal = !currentVal;
-        notifConfig[configKey] = nextVal;
-        settings[legacyProp] = nextVal;
-        await saveProfile();
-        renderSettingsScreen();
-        toast(label + (nextVal ? '을(를) 켰어요' : '을(를) 껐어요'));
-      };
-    };
-    wireNotifSwitch('notifDmSwitch', 'dmMessages', 'notifDm', '1:1 DM 및 메시지 수신 알림');
-    wireNotifSwitch('notifTeamSwitch', 'teamActivities', 'notifTeamVerify', '팀원 일일 인증 알림');
-    wireNotifSwitch('notifCheersSwitch', 'cheerActivities', 'notifCheers', '응원 및 댓글 알림');
-    wireNotifSwitch('notifDdaySwitch', 'goalReminders', 'notifDday', '마감 D-day 임박 알림');
-    wireNotifSwitch('notifStreakSwitch', 'streakReminders', 'notifStreak', '일일 스트릭 유지 리마인더');
-    // 🎨 화면 스타일 (Req 10 - 8대 테마)
-    var curTheme = (settings && settings.theme) || localStorage.getItem('ourgoal_current_theme') || 'focus-sanctuary';
-    if(curTheme === 'dark') curTheme = 'black';
-    if(curTheme === 'light' || curTheme === 'system') curTheme = 'white';
-    var themeGrid = document.getElementById('themeGrid');
-    if(themeGrid){
-      themeGrid.innerHTML = THEMES.map(function(t){
-        var isActive = (t.id === curTheme);
-        return '<div class="theme-card' + (isActive ? ' active' : '') + '" data-themeid="' + t.id + '">' +
-          '<div class="theme-dot theme-swatch" style="background:' + t.preview + '"></div>' +
-          '<div class="theme-info">' +
-            '<div class="theme-name">' + (t.label || t.name) + (isActive ? ' <span class="theme-check"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></span>' : '') + '</div>' +
-            '<div class="theme-desc">' + t.desc + '</div>' +
-          '</div>' +
-        '</div>';
-      }).join('');
-      themeGrid.querySelectorAll('.theme-card').forEach(function(card){
-        card.onclick = async function(){
-          var tid = card.dataset.themeid;
-          if(settings){
-            settings.theme = tid;
-            await saveProfile();
-          }
-          applyTheme(tid);
-          renderSettingsScreen();
-          triggerHaptic(10);
-          var found = THEMES.find(function(t){ return t.id === tid; });
-          toast((found ? found.name : tid) + ' 테마가 적용되었어요');
-        };
-      });
-    }
-    var hcSw = document.getElementById('highContrastSwitch');
-    if(hcSw){
-      var hcOn = !!settings.highContrast;
-      hcSw.className = 'switch' + (hcOn ? ' on' : '');
-      a11ySwitch(hcSw, hcOn, '고대비 모드');
-      hcSw.onclick = async function(){
-        settings.highContrast = !hcOn;
-        await saveProfile();
-        applyAppSettings(settings);
-        renderSettingsScreen();
-        toast(settings.highContrast ? '고대비 모드가 켜졌어요' : '고대비 모드가 꺼졌어요');
-        triggerHaptic(10);
-      };
-    }
-    var curFs = settings.fontSize || 'normal';
-    var fsWrap = document.getElementById('fontSizeToggle');
-    if(fsWrap){
-      fsWrap.querySelectorAll('.format-opt').forEach(function(o){
-        o.classList.toggle('active', o.dataset.fs === curFs);
-        o.onclick = async function(){
-          settings.fontSize = o.dataset.fs;
-          await saveProfile();
-          applyAppSettings(settings);
-          renderSettingsScreen();
-        };
-      });
-    }
-    var dsSw = document.getElementById('dataSaverSwitch');
-    if(dsSw){
-      var dsOn = !!settings.dataSaver;
-      dsSw.className = 'switch' + (dsOn ? ' on' : '');
-      a11ySwitch(dsSw, dsOn, '데이터 절약 모드');
-      dsSw.onclick = async function(){
-        settings.dataSaver = !dsOn;
-        await saveProfile();
-        renderSettingsScreen();
-        toast(settings.dataSaver ? '데이터 절약 모드가 켜졌어요 (저용량 이미지)' : '데이터 절약 모드가 꺼졌어요');
-      };
-    }
-    // 📅 구글 캘린더 연동 (Req 3 & 4)
-    if(!settings.gcalSync) settings.gcalSync = { goals:{}, ms:{}, imported:{} };
-    var gcalIdInput = document.getElementById('gcalClientIdInput');
-    if(gcalIdInput) gcalIdInput.value = settings.gcalClientId || '';
-    var gcalConnected = isGoogleCalendarConnected();
-    var statusBox = document.getElementById('gcalStatusBox');
-    // [#TASK-ES-345 CAL-02] 연동돼 있는데 이 계정의 토큰이 없거나 만료됐으면 1줄 안내 + '다시 연결' 1탭(기존 연결 함수 재사용)
-    var gcalTokState = gcalConnected ? gcalTokenStatus() : 'missing';
-    if(statusBox){
-      if(gcalConnected && gcalTokState !== 'valid'){
-        statusBox.innerHTML =
-          '<div id="gcalReconnectNotice" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
-            '<p class="faint" style="margin:0;color:var(--amber);font-weight:700;flex:1;min-width:0;">' +
-              (gcalTokState === 'expired' ? '구글 캘린더 연결이 끊겼어요 · 다시 연결해 주세요' : '이 계정의 구글 캘린더 연결 정보가 없어요 · 다시 연결해 주세요') +
-            '</p>' +
-            '<button class="btn btn-primary btn-sm" id="gcalReconnectBtn" type="button" style="min-height:44px;">다시 연결</button>' +
-          '</div>';
-        var reBtn = document.getElementById('gcalReconnectBtn');
-        if(reBtn) reBtn.onclick = openGoogleCalendarConnectModal;
-      } else {
-        statusBox.innerHTML = gcalConnected
-          ? '<p class="faint" style="margin:0;color:var(--sage);font-weight:700;">구글 캘린더가 연동되었습니다</p>'
-          : '<p class="faint" style="margin:0;color:var(--amber);font-weight:700;">구글 캘린더를 연동하세요</p>';
-      }
-    }
-    var qConnRow = document.getElementById('gcalQuickConnectRow');
-    if(qConnRow) qConnRow.style.display = gcalConnected ? 'none' : 'block';
-    var syncRow = document.getElementById('gcalSyncRow');
-    if(syncRow) syncRow.style.display = gcalConnected ? 'flex' : 'none';
-    var qConnBtn = document.getElementById('gcalQuickConnectBtn');
-    if(qConnBtn) qConnBtn.onclick = openGoogleCalendarConnectModal;
-    var syncNowBtn = document.getElementById('gcalSyncNowBtn');
-    if(syncNowBtn) syncNowBtn.onclick = function(){ syncAllToGoogleCalendar(true); };
-    var disconnBtn = document.getElementById('gcalDisconnectBtn');
-    if(disconnBtn){
-      disconnBtn.onclick = async function(){
-        if(confirm('구글 캘린더 연동을 해제하시겠습니까?')){
-          state.googleToken = null;
-          try {
-            var uid = (state.profile && state.profile.id) || 'guest';
-            localStorage.removeItem('ourgoal_gcal_token_v1_' + uid);
-            localStorage.removeItem('ourgoal_gcal_token_v1_last');
-            sessionStorage.removeItem('ourgoal_google_token');
-          } catch(e){}
-          settings.googleCalendarConnected = false;
-          settings.googleCalendarEmail = '';
-          await saveProfile();
-          renderSettingsScreen();
-          if(state.activeTab === 'calendar') renderCalendarScreen();
-          toast('구글 캘린더 연동이 해제되었습니다');
-        }
-      };
-    }
-    var autoSyncSw = document.getElementById('gcalAutoSyncSwitch');
-    if(autoSyncSw){
-      var isAuto = settings.gcalAutoSync !== false;
-      autoSyncSw.className = 'switch' + (isAuto ? ' on' : '');
-      a11ySwitch(autoSyncSw, isAuto, '목표·일정 변경 시 자동 동기화');
-      autoSyncSw.onclick = async function(){
-        settings.gcalAutoSync = !isAuto;
-        await saveProfile();
-        renderSettingsScreen();
-      };
-    }
-    if(gcalIdInput){
-      gcalIdInput.onchange = async function(){
-        settings.gcalClientId = gcalIdInput.value.trim();
-        googleTokenClient = null;
-        await saveProfile();
-        renderSettingsScreen();
-      };
-    }
-    var gImpBtn = document.getElementById('gcalImportBtn');
-    if(gImpBtn) gImpBtn.onclick = openGcalImportModal;
-    var gExpBtn = document.getElementById('gcalExportBtn');
-    if(gExpBtn) gExpBtn.onclick = openGcalExportModal;
-    // 가상 페르소나
-    var cheerSw = document.getElementById('virtualCheerSwitch');
-    if(cheerSw){
-      var isCheerOn = settings.virtualCheerEnabled !== false;
-      cheerSw.className = 'switch' + (isCheerOn ? ' on' : '');
-      a11ySwitch(cheerSw, isCheerOn, '가상 페르소나 응원 수신');
-      cheerSw.onclick = async function(){
-        settings.virtualCheerEnabled = !isCheerOn;
-        await saveProfile();
-        renderSettingsScreen();
-      };
-    }
-    // 차단 사용자
-    var trashList = getTrashList();
-    var trashBtn = document.getElementById('btnOpenTrashModal');
-    if(trashBtn){
-      trashBtn.textContent = '🗑️ 휴지통 (' + trashList.length + '개 보관 중)';
-      trashBtn.onclick = openTrashModal;
-    }
-    var blockedList = settings.blockedUsers || [];
-    var countDesc = document.getElementById('blockedCountDesc');
-    if(countDesc) countDesc.textContent = blockedList.length ? ('현재 ' + blockedList.length + '명의 사용자를 차단 중이에요.') : '차단된 사용자의 글/댓글은 피드에서 숨겨집니다.';
-    var manageBlockedBtn = document.getElementById('manageBlockedBtn');
-    if(manageBlockedBtn) manageBlockedBtn.onclick = function(){ openBlockedUsersModal(); };
-    // 노션 연동
-    var notionSw = document.getElementById('notionSwitch');
-    notionSw.className = 'switch' + (settings.notionSync ? ' on' : '');
-    a11ySwitch(notionSw, settings.notionSync, 'Notion 자동 동기화');
-    document.getElementById('notionUrlBlock').style.display = settings.notionSync ? '' : 'none';
-    var notionUrlInput = document.getElementById('notionWebhookInput');
-    if(notionUrlInput){
-      notionUrlInput.value = settings.notionWebhookUrl || '';
-      notionUrlInput.onchange = async function(){
-        settings.notionWebhookUrl = notionUrlInput.value.trim();
-        await saveProfile();
-      };
-    }
-    var notionKeyInput = document.getElementById('notionApiKeyInput');
-    if(notionKeyInput){
-      notionKeyInput.value = settings.notionApiKey || '';
-      notionKeyInput.onchange = async function(){
-        settings.notionApiKey = notionKeyInput.value.trim();
-        await saveProfile();
-      };
-    }
-    function extractNotionDatabaseId(input){
-      if(!input) return '';
-      var str = String(input).trim();
-      var dashMatch = str.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
-      if(dashMatch) return dashMatch[0].replace(/-/g, '').toLowerCase();
-      var hexMatch = str.match(/[0-9a-f]{32}/i);
-      if(hexMatch) return hexMatch[0].toLowerCase();
-      return str.replace(/^.*\//, '').replace(/\?.*$/, '').replace(/-/g, '').trim();
-    }
-    if(typeof window !== 'undefined'){ window.extractNotionDatabaseId = extractNotionDatabaseId; }
-
-    function updateNotionDirectLink(){
-      var directLink = document.getElementById('notionDirectOpenLink');
-      if(directLink){
-        if(settings.notionDatabaseId){
-          directLink.href = 'https://www.notion.so/' + settings.notionDatabaseId;
-          directLink.title = '내 노션 데이터베이스 바로 열기';
-        } else {
-          directLink.href = 'https://www.notion.so';
-          directLink.title = '노션 홈페이지 열기';
-        }
-      }
-    }
-
-    var notionDbInput = document.getElementById('notionDbIdInput');
-    if(notionDbInput){
-      notionDbInput.value = settings.notionDatabaseId || '';
-      notionDbInput.onchange = async function(){
-        var cleanId = extractNotionDatabaseId(notionDbInput.value);
-        settings.notionDatabaseId = cleanId;
-        notionDbInput.value = cleanId;
-        await saveProfile();
-        updateNotionDirectLink();
-      };
-    }
-    updateNotionDirectLink();
-
-    var notionAutoPushSw = document.getElementById('notionAutoPushSwitch');
-    if(notionAutoPushSw){
-      var isAuto = !!settings.notionAutoPush;
-      notionAutoPushSw.className = 'switch' + (isAuto ? ' on' : '');
-      a11ySwitch(notionAutoPushSw, isAuto, '맞춤 템플릿 저장 시 노션 DB로 자동 전송');
-      notionAutoPushSw.onclick = async function(){
-        settings.notionAutoPush = !isAuto;
-        await saveProfile();
-        renderSettingsScreen();
-      };
-    }
-    notionSw.onclick = async function(){
-      settings.notionSync = !settings.notionSync;
-      await saveProfile();
-      renderSettingsScreen();
-    };
-    document.getElementById('notionTestBtn').onclick = async function(){
-      if(settings.notionApiKey && settings.notionDatabaseId){
-        toast('Notion DB로 테스트 전송 중...');
-        var res = await pushRecordToNotion({ startAt: nowISO(), memo: '아워골 연동 테스트' }, { title: '테스트' }, ['항목', '상태'], [['연동 확인', '성공']]);
-        toast(res.ok ? '' + res.summary : '전송 실패: ' + (res.error || res.summary));
-      } else if(settings.notionWebhookUrl){
-        var ok = await sendToNotion({ text:'아워골 테스트 전송입니다', createdAt: nowISO() }, null);
-        toast(ok ? '노션 웹훅으로 테스트 전송했어요' : '전송에 실패했어요 · URL을 확인해주세요');
-      } else {
-        toast('API Key와 Database ID를 먼저 입력해주세요 (아래 4단계 가이드 참고)');
-        if(!settings.notionApiKey && notionKeyInput) notionKeyInput.focus();
-        else if(!settings.notionDatabaseId && notionDbInput) notionDbInput.focus();
-      }
-    };
-    // 잇템 통계 및 안전 관리 (#TASK-ES-179)
-    var statsEl = document.getElementById('itemStatsList');
-    if(statsEl){
-      var myItems = state.profile.itItems || [];
-      var myItemsHtml = '';
-      if(myItems.length){
-        myItemsHtml = '<div style="margin-bottom:14px;">' +
-          '<div style="font-size:.875rem;font-weight:700;margin-bottom:8px;color:var(--ink);">내가 등록한 잇템 ('+myItems.length+'개)</div>' +
-          myItems.map(function(it){
-            var isAff = it.isAffiliate || /파트너스|쿠팡|affiliate|제휴/i.test(it.desc || '');
-            return '<div class="it-item-card" style="flex-direction:column;align-items:stretch;">' +
-              '<div style="display:flex;align-items:center;gap:10px;">' +
-                (it.imageUrl ? '<img src="'+it.imageUrl+'" class="it-item-thumb" alt="">' : '<div class="it-item-thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem;"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l1 14H5z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg></div>') +
-                '<div style="flex:1;min-width:0;">' +
-                  '<div style="display:flex;align-items:center;gap:4px;">' +
-                    '<div style="font-weight:700;font-size:.875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+escapeHtml(it.name)+'</div>' +
-                    (isAff ? '<span class="dday-pill" style="font-size:.6875rem;background:rgba(108,92,231,0.12);color:var(--brand-strong);font-weight:700;padding:1px 5px;flex-shrink:0;">제휴</span>' : '') +
-                  '</div>' +
-                  (it.desc ? '<div class="faint" style="font-size:.8125rem;margin-top:2px;">'+escapeHtml(it.desc)+'</div>' : '') +
-                '</div>' +
-                (it.buyUrl ? '<a href="'+escapeHtml(it.buyUrl)+'" target="_blank" rel="noopener noreferrer nofollow" class="btn btn-ghost btn-sm" style="font-size:.8125rem;padding:4px 8px;flex:0 0 auto;">구매 링크 ↗</a>' : '') +
-              '</div>' +
-              '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:6px;border-top:1px dashed var(--rule);font-size:.6875rem;color:var(--ink-faint);">' +
-                '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">※ 아워골은 상품 판매 당사자가 아닙니다.</span>' +
-                '<button class="btn btn-ghost btn-xs btn-report-ititem" data-itname="'+escapeHtml(it.name)+'" data-iturl="'+escapeHtml(it.buyUrl||'')+'" data-itowner="'+escapeHtml((state.profile&&state.profile.nickname)||'내 잇템')+'" type="button" style="font-size:.6875rem;padding:2px 6px;color:var(--red);border:1px solid rgba(235,87,87,0.3);border-radius:6px;cursor:pointer;flex-shrink:0;margin-left:6px;">🚨 신고</button>' +
-              '</div>' +
-            '</div>';
-          }).join('') +
-        '</div>';
-      } else {
-        myItemsHtml = '<div style="margin-bottom:12px;padding:10px 12px;background:var(--card2);border-radius:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">' +
-          '<div style="font-size:.8125rem;color:var(--ink-soft);">아직 등록한 잇템이 없어요.<br>프로필 편집에서 장비·꿀템을 등록해보세요!</div>' +
-          '<button class="btn btn-ghost btn-sm" id="setGoProfileBtn" type="button" style="font-size:.8125rem;padding:4px 8px;">등록하기</button>' +
-        '</div>';
-      }
-      statsEl.innerHTML =
-        myItemsHtml +
-        '<div class="collective-card" style="border-color:var(--rule);background:var(--card2);margin-bottom:12px;padding:12px 14px;border-radius:12px;">' +
-          '<div style="font-weight:700;font-size:.875rem;color:var(--ink);margin-bottom:4px;display:flex;align-items:center;gap:6px;"><span>🛡️ 투명한 잇템 추천 가이드</span></div>' +
-          '<p class="faint" style="margin:0;font-size:.8125rem;line-height:1.45;">' +
-            '아워골은 동료 러너 간의 진정성 있는 장비 추천을 지지합니다. 제휴 링크 등록 시 대가성을 꼭 표기해 주세요. 의심스러운 링크는 각 카드의 [🚨 신고]로 제보하실 수 있습니다.' +
-          '</p>' +
-        '</div>';
-
-      var goProf = statsEl.querySelector('#setGoProfileBtn');
-      if(goProf) goProf.addEventListener('click', openProfileEditor);
-
-      statsEl.querySelectorAll('.btn-report-ititem').forEach(function(rb){
-        rb.addEventListener('click', function(e){
-          e.stopPropagation();
-          if(typeof openItemReportModal === 'function'){
-            openItemReportModal({ itemName: rb.dataset.itname, itemUrl: rb.dataset.iturl, itemOwner: rb.dataset.itowner });
-          }
-        });
-      });
-    }
-    // AI 설정 (Gemini API 전면 단일화)
-    settings.aiProvider = 'gemini';
-    var aiWrap = document.getElementById('aiProviderToggle');
-    if(aiWrap){
-      aiWrap.querySelectorAll('.format-opt').forEach(function(o){
-        o.classList.add('active');
-        o.onclick = async function(){
-          settings.aiProvider = 'gemini';
-          await saveProfile();
-          renderSettingsScreen();
-        };
-      });
-    }
-    var geminiBlock = document.getElementById('geminiKeyBlock');
-    if(geminiBlock) geminiBlock.style.display = '';
-    var keyInput = document.getElementById('geminiKeyInput');
-    var modelInput = document.getElementById('geminiModelInput');
-    if(keyInput){
-      keyInput.value = settings.geminiKey || '';
-      keyInput.onchange = async function(){ settings.geminiKey = keyInput.value.trim(); await saveProfile(); };
-    }
-    if(modelInput){
-      modelInput.value = settings.geminiModel || 'gemini-3.1-flash-lite';
-      modelInput.onchange = async function(){ settings.geminiModel = modelInput.value.trim() || 'gemini-3.1-flash-lite'; await saveProfile(); };
-    }
-    var autoSw = document.getElementById('autoUpdateSwitch');
-    autoSw.className = 'switch' + (settings.autoUpdateSuggest!==false ? ' on' : '');
-    a11ySwitch(autoSw, settings.autoUpdateSuggest!==false, '기록 보고 목표 진행 상황 자동 업데이트 제안');
-    autoSw.onclick = async function(){
-      settings.autoUpdateSuggest = settings.autoUpdateSuggest===false;
-      await saveProfile();
-      renderSettingsScreen();
-    };
-    // 💾 저장공간 및 캐시 관리 (Req 10)
-    var clearCacheBtn = document.getElementById('clearCacheBtn');
-    if(clearCacheBtn){
-      /* [#TASK-ES-346 SET-01] 실측: 지우기 버튼은 화면 캐시(Cache API)만 지우고, 지운 뒤 다시 잰 값을 보여 준다.
-         목표·기록·설정(localStorage)은 지우지 않는다. */
-      clearCacheBtn.onclick = async function(){
-        clearCacheBtn.disabled = true;
-        var removed = 0, failed = false;
-        try {
-          if(window.caches && typeof caches.keys === 'function'){
-            var keys = await caches.keys();
-            for(var ci = 0; ci < keys.length; ci++){
-              if(await caches.delete(keys[ci])) removed++;
-            }
-          } else {
-            failed = true;
-          }
-        } catch(e){ failed = true; }
-        await paintCacheUsage();
-        clearCacheBtn.disabled = false;
-        toast(failed ? '이 브라우저에서는 화면 캐시를 지울 수 없어요.' : ('화면 캐시 ' + removed + '개 묶음을 지웠어요. 목표·기록은 그대로예요.'));
-      };
-    }
-    paintCacheUsage();
-    var fmtWrap = document.getElementById('formatToggle');
-    fmtWrap.querySelectorAll('.format-opt').forEach(function(o){
-      o.classList.toggle('active', o.dataset.fmt===state.profile.settings.exportFormat);
-      o.onclick = async function(){ state.profile.settings.exportFormat = o.dataset.fmt; await saveProfile(); renderSettingsScreen(); };
-    });
-    // 💬 고객지원 및 FAQ (Req 10)
-    var inqBtn = document.getElementById('feedbackInquiryBtn');
-    if(inqBtn) inqBtn.onclick = openCustomerInquiryModal;
-    var faqBtn = document.getElementById('faqAccordionBtn');
-    if(faqBtn) faqBtn.onclick = openFaqModal;
-
-    var advAccordion = document.getElementById('advancedSettingsAccordion');
-    if(advAccordion && !advAccordion._hapticBound){
-      advAccordion._hapticBound = true;
-      advAccordion.addEventListener('toggle', function(){
-        if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-      });
-    }
-  }
-  document.getElementById('addTimeBtn').addEventListener('click', async function(){
-    state.profile.settings.checkinTimes.push('12:00');
-    await saveProfile(); renderSettingsScreen();
-    if(state.profile.settings.notify) syncPushSubscription();
-  });
-  document.getElementById('testNotifyBtn').addEventListener('click', function(){
-    if(typeof triggerHapticFeedback === 'function') triggerHapticFeedback(12);
-    if(window.OurgoalNotifyEngine){
-      window.OurgoalNotifyEngine.dispatchGlobalNotification({
-        type: 'system',
-        title: '🔔 아워골 알림 센터',
-        body: '전역 알림(사운드·진동·포그라운드 배너·백그라운드)이 완벽하게 연동되었습니다! ✨',
-        icon: '🔔'
-      });
-    } else {
-      var msg = generateDynamicNotification(state.profile);
-      setTab('home');
-      showNotifyBanner(msg);
-      if('Notification' in window && Notification.permission==='granted'){
-        new Notification('아워골', { body: msg });
-      }
-    }
-    toast('테스트 알림을 발송했어요! 🔔');
-  });
-  document.getElementById('settingsExportCheckins').addEventListener('click', exportAllCheckins);
-  document.getElementById('settingsExportAll').addEventListener('click', function(){
-    download('아워골_백업_'+state.profile.username+'.json', JSON.stringify(state.profile, null, 2), 'application/json');
-    toast('전체 데이터를 내보냈어요');
-  });
-  document.getElementById('settingsImportAll').addEventListener('click', function(){
-    document.getElementById('importFile').click();
-  });
-  document.getElementById('importFile').addEventListener('change', function(e){
-    var file = e.target.files[0];
-    if(!file) return;
-    var reader = new FileReader();
-    reader.onload = async function(){
-      try{
-        var data = JSON.parse(reader.result);
-        if(!data.username) throw new Error('bad file');
-        data.id = state.profile.id; // keep current Supabase user id
-        data.username = state.profile.username;
-        state.profile = data;
-        await saveProfile();
-        renderAll();
-        toast('가져왔어요');
-      } catch(err){
-        toast('파일을 읽을 수 없어요');
-      }
-    };
-    reader.readAsText(file);
-    e.target.value = '';
-  });
+  // 체크인 시간 추가·테스트 알림·내보내기·가져오기 버튼 바인딩
+  bindSettingsStaticHandlers();
   /* ============ 방해금지 시간대(DND, 조용한 시간) 판별 순수 함수 (TASK-BG-7) ============ */
   function isWithinDND(now, dndSettings){
     if(!dndSettings) return false;
