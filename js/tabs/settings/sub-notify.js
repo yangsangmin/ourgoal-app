@@ -8,7 +8,7 @@
 (function(global) {
   'use strict';
   // 공용 부품은 js/core 두 곳으로만 읽는다(설정 전용 통로 없음).
-  //  U = js/core/ui-helpers.js — 여러 탭이 같이 쓰는 순수 헬퍼(escapeHtml·a11ySwitch·nowISO·download·triggerHaptic·triggerHapticFeedback), 코드가 실제로 옮겨 와 있다.
+  //  U = js/core/ui-helpers.js — 여러 탭이 같이 쓰는 순수 헬퍼(escapeHtml·a11ySwitch·download), 코드가 실제로 옮겨 와 있다.
   //  L = js/core/app-scope.js — 아직 index.html 인라인 스코프에 있는 공용 상태·함수(state·saveProfile·toast …)를 getter 로 읽는 통로. 값은 읽을 때마다 살아 있는 값이다.
   var U = global.OurgoalUiHelpers || {};
   var L = (global.OurgoalAppScope && global.OurgoalAppScope.scope) || {};
@@ -46,7 +46,7 @@
         K.renderSettingsScreen();
         if(settings.notify) L.syncPushSubscription();
         L.toast('추천 4회 루틴(아침·점심·퇴근·취침 전)으로 설정했어요');
-        U.triggerHaptic(15);
+        L.triggerHaptic(15);
       };
     }
     // 🔔 [#TASK-ES-152] 전역 알림 설정 센터 바인딩

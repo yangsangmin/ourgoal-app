@@ -12,7 +12,7 @@
 (function(global) {
   'use strict';
   // 공용 부품은 js/core 두 곳으로만 읽는다(설정 전용 통로 없음).
-  //  U = js/core/ui-helpers.js — 여러 탭이 같이 쓰는 순수 헬퍼(escapeHtml·a11ySwitch·nowISO·download·triggerHaptic·triggerHapticFeedback), 코드가 실제로 옮겨 와 있다.
+  //  U = js/core/ui-helpers.js — 여러 탭이 같이 쓰는 순수 헬퍼(escapeHtml·a11ySwitch·download), 코드가 실제로 옮겨 와 있다.
   //  L = js/core/app-scope.js — 아직 index.html 인라인 스코프에 있는 공용 상태·함수(state·saveProfile·toast …)를 getter 로 읽는 통로. 값은 읽을 때마다 살아 있는 값이다.
   var U = global.OurgoalUiHelpers || {};
   var L = (global.OurgoalAppScope && global.OurgoalAppScope.scope) || {};
@@ -73,7 +73,7 @@
     var btnQuickAv = document.getElementById('btnSettingsQuickAvatar');
     if(btnQuickAv){
       btnQuickAv.onclick = function(){
-        if(typeof U.triggerHapticFeedback === 'function') U.triggerHapticFeedback(12);
+        if(typeof L.triggerHapticFeedback === 'function') L.triggerHapticFeedback(12);
         if(window.OurgoalAvatar && window.OurgoalAvatar.openAvatarModal){
           window.OurgoalAvatar.openAvatarModal({ profile: L.state.profile, state: L.state, saveProfile: L.saveProfile, toast: L.toast, openModal: L.openModal, closeModal: L.closeModal });
         } else {
@@ -85,7 +85,7 @@
     var btnOpenDynamic = document.getElementById('btnOpenDynamicAlbum');
     if(btnOpenDynamic){
       btnOpenDynamic.onclick = function(){
-        if(typeof U.triggerHapticFeedback === 'function') U.triggerHapticFeedback(12);
+        if(typeof L.triggerHapticFeedback === 'function') L.triggerHapticFeedback(12);
         if(window.OurgoalAvatar && window.OurgoalAvatar.openDynamicAlbumModal){
           window.OurgoalAvatar.openDynamicAlbumModal({
             profile: L.state.profile,
@@ -109,8 +109,8 @@
     // 설정 아코디언 인터랙션 12ms 햅틱 배선 (#TASK-ES-218)
     document.addEventListener('click', function(e){
       if(e.target && e.target.closest && e.target.closest('.toss-settings-group summary')){
-        if(typeof U.triggerHapticFeedback === 'function'){
-          U.triggerHapticFeedback(12);
+        if(typeof L.triggerHapticFeedback === 'function'){
+          L.triggerHapticFeedback(12);
         }
       }
     });
@@ -126,7 +126,7 @@
     var adv = document.getElementById('advancedSettingsAccordion');
     if(adv){
       adv.open = (open !== undefined) ? !!open : !adv.open;
-      if(typeof U.triggerHapticFeedback === 'function') U.triggerHapticFeedback(12);
+      if(typeof L.triggerHapticFeedback === 'function') L.triggerHapticFeedback(12);
     }
   }
 
@@ -154,8 +154,8 @@
   }
 
   function renderSettingsScreen(){
-    if(typeof U.triggerHapticFeedback === 'function'){
-      U.triggerHapticFeedback(12);
+    if(typeof L.triggerHapticFeedback === 'function'){
+      L.triggerHapticFeedback(12);
     }
     collapseAllSettingsSections();
     renderSettingsHeroCard();
@@ -193,7 +193,7 @@
       if(L.state.profile.settings.notify) L.syncPushSubscription();
     });
     document.getElementById('testNotifyBtn').addEventListener('click', function(){
-      if(typeof U.triggerHapticFeedback === 'function') U.triggerHapticFeedback(12);
+      if(typeof L.triggerHapticFeedback === 'function') L.triggerHapticFeedback(12);
       if(window.OurgoalNotifyEngine){
         window.OurgoalNotifyEngine.dispatchGlobalNotification({
           type: 'system',

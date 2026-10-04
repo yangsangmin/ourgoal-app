@@ -10,7 +10,7 @@
 
 | 파일 | 변경 |
 | :-- | :-- |
-| `index.html` | 설정 렌더 코드(이전 전 38632~39647줄)·공용 헬퍼 6개 삭제, IIFE 맨 위 가져오기·`OurgoalAppScope.expose`, 원래 자리 호출 2줄, `<script>` 6줄 |
+| `index.html` | 설정 렌더 코드(이전 전 38632~39647줄)·공용 헬퍼 3개 삭제, IIFE 맨 위 가져오기·`OurgoalAppScope.expose`, 원래 자리 호출 2줄, `<script>` 6줄 |
 | `js/core/app-scope.js`, `js/core/ui-helpers.js` | 신규 — 공용 통로 / 공용 순수 헬퍼 |
 | `js/tabs/settings/render.js`, `sub-notify.js`, `sub-integrations.js`, `sub-data.js` | 신규 |
 | `js/tabs/settings/sub-profile.js`, `sub-security.js`, `sub-appearance.js` | 껍데기 → 실제 섹션 렌더 |

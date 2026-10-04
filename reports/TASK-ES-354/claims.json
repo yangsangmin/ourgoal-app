@@ -116,7 +116,7 @@
       "req": "R3",
       "kind": "static",
       "domain": "config",
-      "statement": "효과 지표 파일(스크립트 산출)에 index.html 40568→39595줄, renderSettingsScreen 정의 0, 새·바뀐 설정·코어 js 파일 최대 296줄로 기록됐다",
+      "statement": "효과 지표 파일(스크립트 산출)에 index.html 40568→39620줄, renderSettingsScreen 정의 0, 새·바뀐 설정·코어 js 파일 최대 296줄로 기록됐다",
       "touches": [
         "reports/TASK-ES-354/measure-effect.json"
       ],
@@ -214,7 +214,7 @@
       "req": "R6",
       "kind": "static",
       "domain": "logic",
-      "statement": "여러 탭 공용 순수 헬퍼 6개를 js/core/ui-helpers.js 로 실제로 옮겼다",
+      "statement": "여러 탭 공용 순수 헬퍼 3개(escapeHtml·a11ySwitch·download)를 js/core/ui-helpers.js 로 실제로 옮겼다",
       "touches": [
         "js/core/ui-helpers.js"
       ],
@@ -283,6 +283,73 @@
         "index.html"
       ],
       "scenario": "scenarios/settings-theme-contrast-same.json"
+    }
+  ],
+  "retire": [
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "KF-2: 복제 흐름에서 광고가 분리되고, 광고는 설정의 선택형 버튼 한 경로뿐이다 (정본 §3)",
+      "reason": "검사하던 설정 탭 코드(선택형 버튼은 설정 › 크레딧 섹션에만)가 동작 그대로 index.html 인라인 스크립트에서 js/tabs/settings/*.js 로 옮겨 가 기준 시험지가 index.html 한 파일에서 그 글자를 못 찾는다. 단언은 바꾸지 않았고, 작업 커밋의 시험지는 같은 단언을 앱 소스 합본(index.html + 옮긴 파일)에서 그대로 통과한다(443/443). 버그 수정·기능 삭제 아님(#TASK-ES-354 옮기기만)."
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-043] 9대 UX 핵심 결함(스트릭 보존, 개인정보 보호, 게스트 병합, localhost 차단, 랜딩 버튼, 연타 방어, 즉시 렌더, 도구어 순화, 인앱 안내)이 구현되어 있다",
+      "reason": "검사하던 설정 탭 코드(설정 화면 계정 이메일에 하드코딩 제거)가 동작 그대로 index.html 인라인 스크립트에서 js/tabs/settings/*.js 로 옮겨 가 기준 시험지가 index.html 한 파일에서 그 글자를 못 찾는다. 단언은 바꾸지 않았고, 작업 커밋의 시험지는 같은 단언을 앱 소스 합본(index.html + 옮긴 파일)에서 그대로 통과한다(443/443). 버그 수정·기능 삭제 아님(#TASK-ES-354 옮기기만)."
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-139] 설정창 노션 연동 6대 UX 개선 및 가이드 툴팁·URL 정규화 완결 검증",
+      "reason": "검사하던 설정 탭 코드(extractNotionDatabaseId 정규화 함수 정의)가 동작 그대로 index.html 인라인 스크립트에서 js/tabs/settings/*.js 로 옮겨 가 기준 시험지가 index.html 한 파일에서 그 글자를 못 찾는다. 단언은 바꾸지 않았고, 작업 커밋의 시험지는 같은 단언을 앱 소스 합본(index.html + 옮긴 파일)에서 그대로 통과한다(443/443). 버그 수정·기능 삭제 아님(#TASK-ES-354 옮기기만)."
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-142] 구글 캘린더 연동 영속성 및 토큰 복원·동의 루프 방어 검증",
+      "reason": "검사하던 설정 탭 코드(연동 해제 시 로컬 토큰 전수 영구 파기)가 동작 그대로 index.html 인라인 스크립트에서 js/tabs/settings/*.js 로 옮겨 가 기준 시험지가 index.html 한 파일에서 그 글자를 못 찾는다. 단언은 바꾸지 않았고, 작업 커밋의 시험지는 같은 단언을 앱 소스 합본(index.html + 옮긴 파일)에서 그대로 통과한다(443/443). 버그 수정·기능 삭제 아님(#TASK-ES-354 옮기기만)."
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-152] 백그라운드·앱종료·미확인 전역 알림 엔진(OurgoalNotifyEngine) 및 세부 제어 센터 무결성 검증",
+      "reason": "검사하던 설정 탭 코드(notifications 설정 영속화 바인딩)가 동작 그대로 index.html 인라인 스크립트에서 js/tabs/settings/*.js 로 옮겨 가 기준 시험지가 index.html 한 파일에서 그 글자를 못 찾는다. 단언은 바꾸지 않았고, 작업 커밋의 시험지는 같은 단언을 앱 소스 합본(index.html + 옮긴 파일)에서 그대로 통과한다(443/443). 버그 수정·기능 삭제 아님(#TASK-ES-354 옮기기만)."
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-184] 아워골 생각 메모장 18대 잔여 대기 과제([70]~[87]) 전수 구현 및 개정 헌법(v2026.09.18) 6대 무결성 검증",
+      "reason": "검사하던 설정 탭 코드([72] 카카오 연동 시 정상 표기 분기 존재)가 동작 그대로 index.html 인라인 스크립트에서 js/tabs/settings/*.js 로 옮겨 가 기준 시험지가 index.html 한 파일에서 그 글자를 못 찾는다. 단언은 바꾸지 않았고, 작업 커밋의 시험지는 같은 단언을 앱 소스 합본(index.html + 옮긴 파일)에서 그대로 통과한다(443/443). 버그 수정·기능 삭제 아님(#TASK-ES-354 옮기기만)."
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "[#TASK-ES-235] 설정 탭 내 전문가용 외부 연동(구글캘린더 OAuth, 노션 API, Gemini API) [고급 설정] 기본 접힘 무결성",
+      "reason": "검사하던 설정 탭 코드(아코디언 토글 햅틱 바인딩 확인)가 동작 그대로 index.html 인라인 스크립트에서 js/tabs/settings/*.js 로 옮겨 가 기준 시험지가 index.html 한 파일에서 그 글자를 못 찾는다. 단언은 바꾸지 않았고, 작업 커밋의 시험지는 같은 단언을 앱 소스 합본(index.html + 옮긴 파일)에서 그대로 통과한다(443/443). 버그 수정·기능 삭제 아님(#TASK-ES-354 옮기기만)."
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "[#TASK-ES-248] 설정탭 상단 프로필 요약 카드 시인성 강화 및 계정·아바타 정보 가독성 전면 개선 무결성",
+      "reason": "검사하던 설정 탭 코드(toss-settings-avatar-wrap 선언 누락)가 동작 그대로 index.html 인라인 스크립트에서 js/tabs/settings/*.js 로 옮겨 가 기준 시험지가 index.html 한 파일에서 그 글자를 못 찾는다. 단언은 바꾸지 않았고, 작업 커밋의 시험지는 같은 단언을 앱 소스 합본(index.html + 옮긴 파일)에서 그대로 통과한다(443/443). 버그 수정·기능 삭제 아님(#TASK-ES-354 옮기기만)."
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "[#TASK-ES-249] 상황별 다이나믹 아바타 리액션 도감 100% 무료 기능 및 생성횟수 3회 문구 정상화",
+      "reason": "검사하던 설정 탭 코드(renderSettingsScreen 내 btnOpenDynamicAlbum 클릭 핸들러 누락)가 동작 그대로 index.html 인라인 스크립트에서 js/tabs/settings/*.js 로 옮겨 가 기준 시험지가 index.html 한 파일에서 그 글자를 못 찾는다. 단언은 바꾸지 않았고, 작업 커밋의 시험지는 같은 단언을 앱 소스 합본(index.html + 옮긴 파일)에서 그대로 통과한다(443/443). 버그 수정·기능 삭제 아님(#TASK-ES-354 옮기기만)."
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "[#TASK-ES-218] 설정 탭(screen-settings) 토스식 UI/UX 전면 혁신 및 모바일 375px 조형 무결성",
+      "reason": "검사하던 설정 탭 코드(설정 아코디언 12ms 햅틱 배선 확인)가 동작 그대로 index.html 인라인 스크립트에서 js/tabs/settings/*.js 로 옮겨 가 기준 시험지가 index.html 한 파일에서 그 글자를 못 찾는다. 단언은 바꾸지 않았고, 작업 커밋의 시험지는 같은 단언을 앱 소스 합본(index.html + 옮긴 파일)에서 그대로 통과한다(443/443). 버그 수정·기능 삭제 아님(#TASK-ES-354 옮기기만)."
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "compliance: [#TASK-ES-254] 백그라운드·앱종료·미확인 전역 알림(DM 포함) 및 세부 알림 설정창 완결",
+      "reason": "검사하던 설정 탭 코드(설정창 스위치 notifConfig 실시간 동기화)가 동작 그대로 index.html 인라인 스크립트에서 js/tabs/settings/*.js 로 옮겨 가 기준 시험지가 index.html 한 파일에서 그 글자를 못 찾는다. 단언은 바꾸지 않았고, 작업 커밋의 시험지는 같은 단언을 앱 소스 합본(index.html + 옮긴 파일)에서 그대로 통과한다(443/443). 버그 수정·기능 삭제 아님(#TASK-ES-354 옮기기만)."
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "TASK-ES-298: 아바타 아이콘 크기 일괄 확대 4위 1체 배선 검증",
+      "reason": "검사하던 설정 탭 코드(설정창 아바타 76px 확대)가 동작 그대로 index.html 인라인 스크립트에서 js/tabs/settings/*.js 로 옮겨 가 기준 시험지가 index.html 한 파일에서 그 글자를 못 찾는다. 단언은 바꾸지 않았고, 작업 커밋의 시험지는 같은 단언을 앱 소스 합본(index.html + 옮긴 파일)에서 그대로 통과한다(443/443). 버그 수정·기능 삭제 아님(#TASK-ES-354 옮기기만)."
+    },
+    {
+      "file": "scripts/smoke-test.js",
+      "check": "TASK-ES-300: 설정창 진입 시 모든 설정 섹션 기본 접힘 4위 1체 배선 검증",
+      "reason": "검사하던 설정 탭 코드(renderSettingsScreen 내 collapseAllSettingsSections 호출)가 동작 그대로 index.html 인라인 스크립트에서 js/tabs/settings/*.js 로 옮겨 가 기준 시험지가 index.html 한 파일에서 그 글자를 못 찾는다. 단언은 바꾸지 않았고, 작업 커밋의 시험지는 같은 단언을 앱 소스 합본(index.html + 옮긴 파일)에서 그대로 통과한다(443/443). 버그 수정·기능 삭제 아님(#TASK-ES-354 옮기기만)."
     }
   ]
 }

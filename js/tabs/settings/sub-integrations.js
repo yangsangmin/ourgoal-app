@@ -8,7 +8,7 @@
 (function(global) {
   'use strict';
   // 공용 부품은 js/core 두 곳으로만 읽는다(설정 전용 통로 없음).
-  //  U = js/core/ui-helpers.js — 여러 탭이 같이 쓰는 순수 헬퍼(escapeHtml·a11ySwitch·nowISO·download·triggerHaptic·triggerHapticFeedback), 코드가 실제로 옮겨 와 있다.
+  //  U = js/core/ui-helpers.js — 여러 탭이 같이 쓰는 순수 헬퍼(escapeHtml·a11ySwitch·download), 코드가 실제로 옮겨 와 있다.
   //  L = js/core/app-scope.js — 아직 index.html 인라인 스코프에 있는 공용 상태·함수(state·saveProfile·toast …)를 getter 로 읽는 통로. 값은 읽을 때마다 살아 있는 값이다.
   var U = global.OurgoalUiHelpers || {};
   var L = (global.OurgoalAppScope && global.OurgoalAppScope.scope) || {};
@@ -194,10 +194,10 @@
     document.getElementById('notionTestBtn').onclick = async function(){
       if(settings.notionApiKey && settings.notionDatabaseId){
         L.toast('Notion DB로 테스트 전송 중...');
-        var res = await L.pushRecordToNotion({ startAt: U.nowISO(), memo: '아워골 연동 테스트' }, { title: '테스트' }, ['항목', '상태'], [['연동 확인', '성공']]);
+        var res = await L.pushRecordToNotion({ startAt: L.nowISO(), memo: '아워골 연동 테스트' }, { title: '테스트' }, ['항목', '상태'], [['연동 확인', '성공']]);
         L.toast(res.ok ? '' + res.summary : '전송 실패: ' + (res.error || res.summary));
       } else if(settings.notionWebhookUrl){
-        var ok = await L.sendToNotion({ text:'아워골 테스트 전송입니다', createdAt: U.nowISO() }, null);
+        var ok = await L.sendToNotion({ text:'아워골 테스트 전송입니다', createdAt: L.nowISO() }, null);
         L.toast(ok ? '노션 웹훅으로 테스트 전송했어요' : '전송에 실패했어요 · URL을 확인해주세요');
       } else {
         L.toast('API Key와 Database ID를 먼저 입력해주세요 (아래 4단계 가이드 참고)');

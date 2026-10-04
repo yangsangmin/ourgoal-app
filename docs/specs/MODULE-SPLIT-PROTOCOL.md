@@ -15,12 +15,12 @@
 
 | 파일 | 전역 1개 | 무엇 | 옮긴 파일에서 |
 | :-- | :-- | :-- | :-- |
-| `js/core/ui-helpers.js` | `window.OurgoalUiHelpers` | 여러 탭이 같이 쓰고 **인라인 스코프 변수를 읽지 않는** 순수 헬퍼. 코드가 실제로 옮겨 와 있다. 지금: `escapeHtml`·`a11ySwitch`·`nowISO`·`download`·`triggerHaptic`·`triggerHapticFeedback` | `var U = global.OurgoalUiHelpers;` → `U.escapeHtml(…)` |
+| `js/core/ui-helpers.js` | `window.OurgoalUiHelpers` | 여러 탭이 같이 쓰고 **인라인 스코프 변수를 읽지 않는** 순수 헬퍼. 코드가 실제로 옮겨 와 있다. 지금: `escapeHtml`·`a11ySwitch`·`download` | `var U = global.OurgoalUiHelpers;` → `U.escapeHtml(…)` |
 | `js/core/app-scope.js` | `window.OurgoalAppScope` | 아직 index.html 에 남아 있는 공용 상태·함수(`state`·`saveProfile`·`toast`·`openModal` …)를 **getter** 로 읽는 통로. 모든 탭이 같은 통로를 쓴다 | `var L = global.OurgoalAppScope.scope;` → `L.state.profile`, `L.saveProfile()` |
 
 - 노출하는 쪽은 index.html IIFE 맨 위 한 곳이다: `window.OurgoalAppScope.expose('index.html', { get state(){ return state; }, … })`. getter 라서 나중에 다시 대입된 변수도 살아 있는 값으로 읽힌다. 옮긴 코드가 대입하는 이름만 setter 를 단다(설정: `googleTokenClient`).
-- 노출 목록은 손으로 고르지 않는다. 생성기가 `@babel/traverse` 스코프 분석으로 "옮긴 코드가 실제로 읽는, IIFE 최상위에 선언된 이름"만 뽑는다(설정 시범 49개). `OurgoalAppScope.names()` 로 확인한다.
-- 헬퍼를 `ui-helpers.js` 로 옮기는 조건: (가) 옮기는 탭이 쓴다 (나) 함수 본문이 IIFE 스코프 이름을 읽지 않는다(서로끼리는 된다) (다) IIFE 안에서 재대입·중복 선언이 없다. 하나라도 어기면 옮기지 않고 `app-scope` getter 로 둔다(예: `toast` 는 `toastTimer` 를 다른 함수와 같이 써서 남겼다).
+- 노출 목록은 손으로 고르지 않는다. 생성기가 `@babel/traverse` 스코프 분석으로 "옮긴 코드가 실제로 읽는, IIFE 최상위에 선언된 이름"만 뽑는다(설정 시범 52개). `OurgoalAppScope.names()` 로 확인한다.
+- 헬퍼를 `ui-helpers.js` 로 옮기는 조건: (가) 옮기는 탭이 쓴다 (나) 함수 본문이 IIFE 스코프 이름을 읽지 않는다(서로끼리는 된다) (다) IIFE 안에서 재대입·중복 선언이 없다. (라) 기준 시험지가 인라인 스크립트에서 그 이름으로 함수를 뽑아 단위 시험하지 않는다(`scripts/smoke-test.js` 의 `FN_NAMES` — 법정은 늘 기준 커밋의 시험지로 작업 커밋을 채점하므로, 옮기면 시험지가 중간에 죽는다. 그런 함수는 시험지를 먼저 고친 별도 PR 이 병합된 뒤 옮긴다). 하나라도 어기면 옮기지 않고 `app-scope` getter 로 둔다(예: `toast` 는 `toastTimer` 를 다른 함수와 같이 써서, `nowISO`·`triggerHaptic` 은 (라) 때문에 남겼다).
 - 다음 탭이 같은 이름을 쓰면 `expose` 목록에 한 줄을 더할 뿐, 새 통로를 만들지 않는다. `ui-helpers.js` 로 옮겨 간 헬퍼는 index.html 맨 위에서 이미 같은 이름으로 가져오므로 다른 탭 코드는 그대로 돈다.
 
 ## 2. 소블록 인터페이스 (#663 CORE-04 사전 위에서)
@@ -58,7 +58,7 @@ OurgoalXxxSubYyy = {
 2. **생성**: 생성기(설정 예: `gen-settings.js <APP> <이전 전 index.html>`)가 스코프 분석 → 경계·지역 변수·재대입 검사 → 글자 그대로 옮기고 이름 참조만 `L.`/`U.`/`K.` 로 바꿈 → index.html 에서 지움 + 가져오기·노출·원래 자리 호출을 넣음. 손으로 옮기지 않는다(옮긴 글자 수천 줄을 손으로 맞추면 반드시 틀린다).
 3. **글자 검사**: `verify-equiv.js <이전 전 index.html> <APP>` — 옮긴 구간 전부 토큰열이 이전 전과 같은지(차이 허용: `L.`·`U.`·`K.` 접두뿐). `verify-free.js <APP>` — 옮긴 파일에 IIFE 이름이 접두 없이 남아(전역으로 새어) 다른 값을 읽는 곳 0, `L.<이름>` 이 모두 노출됐는지.
 4. **화면 비교**: 옮긴 뒤 `tab-check.js … all` 1회 → `tab-compare.js base1.json after.json` → 해당 탭 장 전부 + 다른 5탭 차이 0(1단계 본질 변동 제외). 탭별 조작 비교(설정 예: `dom-compare-settings.js <base-app> <after-app> <out.json>`)로 단계마다 화면 HTML·저장값(localStorage)·토스트·테마·콘솔 오류를 맞대 본다(시간·난수 값만 지움).
-5. **소스 글자 시험**: `npm test` 0. 소스 글자를 grep 하는 시험(`scripts/smoke-test.js`·`verify-all-clicks.js`)은 "앱 소스 = index.html + 옮긴 파일" 합본으로 보게 고친다(ui.css 분리 때 `styleSrc` 합본과 같은 방식). 시험의 기대값은 바꾸지 않는다 — 통과 수·버튼 수가 이전 전과 같아야 한다(설정: 443 통과·38/38·버튼 953/953).
+5. **소스 글자 시험**: `npm test` 0. 소스 글자를 grep 하는 시험(`scripts/smoke-test.js`·`verify-all-clicks.js`)은 "앱 소스 = index.html + 옮긴 파일" 합본으로 보게 고친다(ui.css 분리 때 `styleSrc` 합본과 같은 방식). 시험의 기대값은 바꾸지 않는다 — 통과 수·버튼 수가 이전 전과 같아야 한다(설정: 443 통과·38/38·버튼 953/953). **법정은 기준 커밋의 시험지로 채점한다**: 기준 시험지에서 index.html 한 파일의 글자를 찾던 검사는 옮긴 뒤 깨진다(설정: 13개). 그 검사들은 주장 파일 `retire` 에 검사 제목별로 "옮겨 갔고 작업 커밋 시험지 합본에서는 그대로 통과" 사유를 적는다 — 이 폐기는 상민님 결심 사항으로 판정서에 올라간다. 다음 탭부터 이 마찰을 없애려면 시험지 합본 읽기(이번 PR)가 main 에 먼저 들어가 있어야 한다.
 6. 법정: 새 js 파일 800줄 이하, 옮긴 줄 중 `display:none !important`·금지 낱말 0(이번 변경이 "새로 만든" 것만 센다 — CSS 는 옮기지 않는다).
 
 ## 6. 실패 시 되돌리기
@@ -68,6 +68,6 @@ OurgoalXxxSubYyy = {
 
 ## 7. 설정 탭 시범 결과 요약 (#TASK-ES-354)
 
-- 옮긴 것: `renderSettingsScreen`(826줄 → 조립자 + 소블록 6개)·`renderSettingsHeroCard`·`collapseAllSettingsSections`·`toggleAdvancedSettings`·`formatStorageBytes`·`paintCacheUsage` + 설정 정적 바인딩 7문 → `js/tabs/settings/render.js`·`sub-profile.js`·`sub-security.js`·`sub-notify.js`·`sub-appearance.js`·`sub-integrations.js`·`sub-data.js`. 공용 헬퍼 6개 → `js/core/ui-helpers.js`. 통로 `js/core/app-scope.js`(49개 getter).
+- 옮긴 것: `renderSettingsScreen`(826줄 → 조립자 + 소블록 6개)·`renderSettingsHeroCard`·`collapseAllSettingsSections`·`toggleAdvancedSettings`·`formatStorageBytes`·`paintCacheUsage` + 설정 정적 바인딩 7문 → `js/tabs/settings/render.js`·`sub-profile.js`·`sub-security.js`·`sub-notify.js`·`sub-appearance.js`·`sub-integrations.js`·`sub-data.js`. 공용 헬퍼 3개 → `js/core/ui-helpers.js`. 통로 `js/core/app-scope.js`(52개 getter).
 - 측정값은 `docs/specs/REQ-TASK-ES-354-SETTINGS-MODULE.md` 8절.
 - 다음 탭 주의점: 같은 함수 안 `var` 중복 선언(섹션 경계가 바꿔 버림), IIFE 실행 중 바로 도는 등록문(원래 자리에서 부를 것), `window.x` 노출 선후(다른 파일과의 덮어쓰기 순서), 다른 파일이 `win.<이름>` 으로 찾는 함수(노출 금지), 소스 글자 시험의 단일 파일 가정.

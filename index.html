@@ -2359,10 +2359,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var _ui = window.OurgoalUiHelpers;
   var escapeHtml = _ui.escapeHtml;
   var a11ySwitch = _ui.a11ySwitch;
-  var nowISO = _ui.nowISO;
   var download = _ui.download;
-  var triggerHaptic = _ui.triggerHaptic;
-  var triggerHapticFeedback = _ui.triggerHapticFeedback;
   var _settingsKit = window.OurgoalSettingsKit;
   var renderSettingsScreen = _settingsKit.renderSettingsScreen;
   var collapseAllSettingsSections = _settingsKit.collapseAllSettingsSections;
@@ -2384,6 +2381,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get googleTokenClient(){ return googleTokenClient; }, set googleTokenClient(v){ googleTokenClient = v; },
     get isGoogleCalendarConnected(){ return isGoogleCalendarConnected; },
     get levelForXP(){ return levelForXP; },
+    get nowISO(){ return nowISO; },
     get openAvatarGreetingPopup(){ return openAvatarGreetingPopup; },
     get openBlockedUsersModal(){ return openBlockedUsersModal; },
     get openChangePasswordModal(){ return openChangePasswordModal; },
@@ -2419,6 +2417,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     get syncPushSubscription(){ return syncPushSubscription; },
     get toast(){ return toast; },
     get track(){ return track; },
+    get triggerHaptic(){ return triggerHaptic; },
+    get triggerHapticFeedback(){ return triggerHapticFeedback; },
     get updatePrivacyBadges(){ return updatePrivacyBadges; }
   });
 
@@ -2504,7 +2504,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   /* [#TASK-ES-354 CORE-07] escapeHtml → js/core/ui-helpers.js 로 옮김(맨 위에서 같은 이름으로 가져온다) */
   /* [#TASK-ES-354 CORE-07] a11ySwitch → js/core/ui-helpers.js 로 옮김(맨 위에서 같은 이름으로 가져온다) */
   function pad(n){ return n<10?'0'+n:''+n; }
-  /* [#TASK-ES-354 CORE-07] nowISO → js/core/ui-helpers.js 로 옮김(맨 위에서 같은 이름으로 가져온다) */
+  function nowISO(){ return new Date().toISOString(); }
   function fmtTime(iso){ if(!iso) return ''; var d=new Date(iso); return pad(d.getHours())+':'+pad(d.getMinutes()); }
   function fmtDateLabel(iso){
     var d = new Date(iso); if(!iso || isNaN(d.getTime())) d = new Date();
@@ -2790,9 +2790,34 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   }
 
   /* ============ 가상유저 개선 10대 핵심 헬퍼 함수 ============ */
-  /* [#TASK-ES-354 CORE-07] triggerHaptic → js/core/ui-helpers.js 로 옮김(맨 위에서 같은 이름으로 가져온다) */
+  function triggerHaptic(pattern){
+    var HAPTIC_PATTERNS = {
+      tap: 12,
+      light: 8,
+      checkin: [12, 35, 18],
+      streak: [20, 45, 30],
+      success: [15, 30, 25],
+      drag: 10,
+      warning: [25, 40, 25]
+    };
+    try{
+      if(typeof navigator !== 'undefined' && navigator && navigator.vibrate){
+        var p = pattern;
+        if(typeof pattern === 'string' && HAPTIC_PATTERNS[pattern]){
+          p = HAPTIC_PATTERNS[pattern];
+        } else if(p === undefined || p === null){
+          p = 12;
+        }
+        navigator.vibrate(p);
+        return true;
+      }
+    }catch(e){}
+    return false;
+  }
 
-  /* [#TASK-ES-354 CORE-07] triggerHapticFeedback → js/core/ui-helpers.js 로 옮김(맨 위에서 같은 이름으로 가져온다) */
+  function triggerHapticFeedback(pattern){
+    return triggerHaptic(pattern || 12);
+  }
   window.triggerHapticFeedback = triggerHapticFeedback;
 
   function reorderMilestones(goal, fromIdx, toIdx){

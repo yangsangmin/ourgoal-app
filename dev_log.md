@@ -5827,8 +5827,8 @@
 ---
 ## [2026-10-04 21:00] #TASK-ES-354: 모듈 분할 공통 틀(CORE-07) + 설정 탭 시범 이전(SET-07)
 - **목표**: 설정 탭 렌더 코드를 동작 그대로 index.html 에서 js/tabs/settings/ 책임 단위 파일로 옮기고, 공용 부품 통로를 js/core/ 에 만들고, 다른 탭에도 쓰는 틀 문서를 남긴다(상민님 "이제 진짜 모듈화 진행해야지?" 10-02, "모듈화부터 제대로 정착시켜야하지 않을까?" 10-04).
-- **수정**: `index.html`(설정 렌더 1,016줄·공용 헬퍼 6개 삭제, IIFE 맨 위 가져오기·`OurgoalAppScope.expose` 49개 getter, 원래 자리 호출 2줄), `js/core/app-scope.js`·`js/core/ui-helpers.js` 신규, `js/tabs/settings/render.js`·`sub-notify.js`·`sub-integrations.js`·`sub-data.js` 신규, `sub-profile/security/appearance.js` 껍데기→실제 섹션 렌더, `index.js` 등록 3줄, `scripts/smoke-test.js`·`verify-all-clicks.js` 소스 합본 읽기(기대값 그대로), 도구 `docs/design/harness/module-split/`, 틀 `docs/specs/MODULE-SPLIT-PROTOCOL.md`.
-- **측정(작업자 측정, 판정 아님 — reports/TASK-ES-354/)**: index.html 40,568→39,595줄, renderSettingsScreen 정의 1→0, 800줄 넘는 js 12→12, 새 파일 최대 296줄, 옮긴 구간 토큰 동일 8/8, tab-check 6탭 136장 기준 2회 차이 0 · 기준 대 이후 2,520값 차이 0, 콘솔 오류 0→0, 설정 조작 24단계 동작 차이 0, npm test 0(443·38/38·953/953).
+- **수정**: `index.html`(설정 렌더 1,016줄·공용 헬퍼 3개 삭제, IIFE 맨 위 가져오기·`OurgoalAppScope.expose` 52개 getter, 원래 자리 호출 2줄), `js/core/app-scope.js`·`js/core/ui-helpers.js` 신규, `js/tabs/settings/render.js`·`sub-notify.js`·`sub-integrations.js`·`sub-data.js` 신규, `sub-profile/security/appearance.js` 껍데기→실제 섹션 렌더, `index.js` 등록 3줄, `scripts/smoke-test.js`·`verify-all-clicks.js` 소스 합본 읽기(기대값 그대로), 도구 `docs/design/harness/module-split/`, 틀 `docs/specs/MODULE-SPLIT-PROTOCOL.md`.
+- **측정(작업자 측정, 판정 아님 — reports/TASK-ES-354/)**: index.html 40,568→39,620줄, renderSettingsScreen 정의 1→0, 800줄 넘는 js 12→12, 새 파일 최대 296줄, 옮긴 구간 토큰 동일 8/8, tab-check 6탭 136장 기준 2회 차이 0 · 기준 대 이후 2,520값 차이 0, 콘솔 오류 0→0, 설정 조작 24단계 동작 차이 0, npm test 0(443·38/38·953/953).
 - **발견한 기존 버그(고치지 않음)**: renderSettingsScreen 안 `var isAuto` 중복(구글 캘린더 자동 동기화 스위치가 노션 값으로 뒤집힘), components.js `win.renderSettingsScreen()` 5곳 늘 건너뜀.
 - **확인 못 함**: 로그인 사용자 설정 화면(카카오·구글 표시 분기), 실제 폰.
 - **진행 단계**: [4단계: 심사 청구]

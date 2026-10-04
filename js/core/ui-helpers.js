@@ -3,7 +3,7 @@
  *
  * #TASK-ES-354 (노션 CORE-07): index.html 인라인 IIFE 의 공용 헬퍼 중 설정 탭이 쓰고, 인라인 스코프 변수를 읽지 않는 것만 글자 그대로 옮겼다.
  * index.html 은 IIFE 맨 위에서 같은 이름으로 가져와 쓰고(호출하는 곳은 그대로), 옮긴 탭 파일은 U.<이름> 으로 읽는다.
- * window 노출은 이전과 같은 자리(index.html)에서만 한다(window.triggerHapticFeedback 등). 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
+ * window 노출이 필요하면 이전과 같은 자리(index.html)에서만 한다. 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md
  */
 (function(global) {
   'use strict';
@@ -23,8 +23,6 @@
     };
   }
 
-  function nowISO(){ return new Date().toISOString(); }
-
   function download(filename, content, mime){
     var blob = new Blob([content], {type: mime});
     var url = URL.createObjectURL(blob);
@@ -34,42 +32,10 @@
     setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
   }
 
-  function triggerHaptic(pattern){
-    var HAPTIC_PATTERNS = {
-      tap: 12,
-      light: 8,
-      checkin: [12, 35, 18],
-      streak: [20, 45, 30],
-      success: [15, 30, 25],
-      drag: 10,
-      warning: [25, 40, 25]
-    };
-    try{
-      if(typeof navigator !== 'undefined' && navigator && navigator.vibrate){
-        var p = pattern;
-        if(typeof pattern === 'string' && HAPTIC_PATTERNS[pattern]){
-          p = HAPTIC_PATTERNS[pattern];
-        } else if(p === undefined || p === null){
-          p = 12;
-        }
-        navigator.vibrate(p);
-        return true;
-      }
-    }catch(e){}
-    return false;
-  }
-
-  function triggerHapticFeedback(pattern){
-    return triggerHaptic(pattern || 12);
-  }
-
   var OurgoalUiHelpers = {
     escapeHtml: escapeHtml,
     a11ySwitch: a11ySwitch,
-    nowISO: nowISO,
-    download: download,
-    triggerHaptic: triggerHaptic,
-    triggerHapticFeedback: triggerHapticFeedback
+    download: download
   };
 
   if (typeof module !== 'undefined' && module.exports) {

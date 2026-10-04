@@ -33,7 +33,8 @@ const FILES = {
 };
 const MOVED_FN = ['renderSettingsHeroCard', 'collapseAllSettingsSections', 'toggleAdvancedSettings', 'formatStorageBytes', 'paintCacheUsage', 'renderSettingsScreen'];
 // 여러 탭이 같이 쓰는 순수 헬퍼: js/core/ui-helpers.js 로 실제로 옮긴다(설정이 쓰는 것만, 인라인 스코프 변수를 읽지 않는 것만)
-const CORE_UI = ['escapeHtml', 'a11ySwitch', 'nowISO', 'download', 'triggerHaptic', 'triggerHapticFeedback'];
+// nowISO·triggerHaptic 은 기준 시험지(scripts/smoke-test.js FN_NAMES)가 인라인 스크립트에서 이름으로 뽑아 단위 시험하므로 옮기지 않는다(옮기면 기준 시험지가 죽는다 — 법정). triggerHapticFeedback 은 triggerHaptic 을 읽어 함께 남는다.
+const CORE_UI = ['escapeHtml', 'a11ySwitch', 'download'];
 const MOVED = new Set([...MOVED_FN, 'bindSettingsHapticDelegate', 'bindSettingsStaticHandlers']);
 
 let iife = null;
@@ -135,7 +136,7 @@ const fnRange = name => range(H(fnNode(name).node), HE(fnNode(name).node));
 
 const HEADER_BRIDGE = [
   "  // 공용 부품은 js/core 두 곳으로만 읽는다(설정 전용 통로 없음).",
-  "  //  U = js/core/ui-helpers.js — 여러 탭이 같이 쓰는 순수 헬퍼(escapeHtml·a11ySwitch·nowISO·download·triggerHaptic·triggerHapticFeedback), 코드가 실제로 옮겨 와 있다.",
+  "  //  U = js/core/ui-helpers.js — 여러 탭이 같이 쓰는 순수 헬퍼(escapeHtml·a11ySwitch·download), 코드가 실제로 옮겨 와 있다.",
   "  //  L = js/core/app-scope.js — 아직 index.html 인라인 스코프에 있는 공용 상태·함수(state·saveProfile·toast …)를 getter 로 읽는 통로. 값은 읽을 때마다 살아 있는 값이다.",
   "  var U = global.OurgoalUiHelpers || {};",
   "  var L = (global.OurgoalAppScope && global.OurgoalAppScope.scope) || {};",
@@ -306,7 +307,7 @@ out['js/core/ui-helpers.js'] = [
   ' *',
   ' * #TASK-ES-354 (노션 CORE-07): index.html 인라인 IIFE 의 공용 헬퍼 중 설정 탭이 쓰고, 인라인 스코프 변수를 읽지 않는 것만 글자 그대로 옮겼다.',
   ' * index.html 은 IIFE 맨 위에서 같은 이름으로 가져와 쓰고(호출하는 곳은 그대로), 옮긴 탭 파일은 U.<이름> 으로 읽는다.',
-  ' * window 노출은 이전과 같은 자리(index.html)에서만 한다(window.triggerHapticFeedback 등). 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md',
+  ' * window 노출이 필요하면 이전과 같은 자리(index.html)에서만 한다. 규칙: docs/specs/MODULE-SPLIT-PROTOCOL.md',
   ' */',
   '(function(global) {',
   "  'use strict';",
