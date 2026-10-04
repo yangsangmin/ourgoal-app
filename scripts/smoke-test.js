@@ -68,6 +68,22 @@ const TEAM_COMM_SRC = [TEAM_INVITE_COMM_RAW, ...TEAM_COMM_PART_FILES.map(readTea
 // 합본 맨 앞은 js/team-invite-comm.js 원문 그대로다 — 원본에서 찾던 글자는 같은 자리(indexOf 첫 위치)에서 그대로 찾는다. 부품 파일이 없으면 합본 = 원문.
 assert.strictEqual(TEAM_COMM_SRC.slice(0, TEAM_INVITE_COMM_RAW.length), TEAM_INVITE_COMM_RAW, '팀 합본 맨 앞 = js/team-invite-comm.js 원문');
 if (TEAM_COMM_PART_FILES.length === 0) assert.strictEqual(TEAM_COMM_SRC, TEAM_INVITE_COMM_RAW, '팀 합본 = js/team-invite-comm.js (부품 파일이 없을 때)');
+// #TASK-ES-393 (통계 세포 쪼개기 1차 선행 — 시험지): 통계 코드가 js/universal-stats.js 에서 js/stats-*.js 세포(통계 세포 키트 OurgoalUniversalStatsKit 에 함수를 담는 파일)로 옮겨 가도(동작 그대로)
+// 같은 단언이 같은 코드를 찾도록, 통계 소스 글자 검사는 '통계 합본' = js/universal-stats.js(원문 그대로, 맨 앞) + 키트 부품 js/stats-*.js(이름순) 를 본다.
+// 쪼개기 생성기는 원본 스코프 이름을 S.<이름>, 키트를 K.<이름> 으로 바꿔 쓴다 — 부품만 그 접두를 떼고 읽는다(T.·K.·L.·AV. 와 같은 방식). 단언·기대값은 그대로다.
+// js/records-stats.js 는 다른 세포라 이름(stats- 로 시작)·표식 둘 다로 거른다.
+const UNIVERSAL_STATS_JS = path.join(__dirname, '..', 'js', 'universal-stats.js');
+function isStatsPartFile(f) {
+  const n = path.basename(f);
+  return n.indexOf('stats-') === 0 && fs.readFileSync(f, 'utf8').indexOf('OurgoalUniversalStatsKit') >= 0;
+}
+function readStatsPartFile(f) { return fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[SK]\.(?=[A-Za-z_$])/g, '$1'); }
+const STATS_PART_FILES = listJsTree(path.join(__dirname, '..', 'js'), false).filter(isStatsPartFile);
+const UNIVERSAL_STATS_RAW = fs.readFileSync(UNIVERSAL_STATS_JS, 'utf8');
+const STATS_SRC = [UNIVERSAL_STATS_RAW, ...STATS_PART_FILES.map(readStatsPartFile)].join('\n');
+// 합본 맨 앞은 js/universal-stats.js 원문 그대로다 — 원본에서 찾던 글자는 같은 자리(indexOf 첫 위치)에서 그대로 찾는다. 부품 파일이 없으면 합본 = 원문.
+assert.strictEqual(STATS_SRC.slice(0, UNIVERSAL_STATS_RAW.length), UNIVERSAL_STATS_RAW, '통계 합본 맨 앞 = js/universal-stats.js 원문');
+if (STATS_PART_FILES.length === 0) assert.strictEqual(STATS_SRC, UNIVERSAL_STATS_RAW, '통계 합본 = js/universal-stats.js (부품 파일이 없을 때)');
 const html = indexHtmlOnly + APP_MODULE_FILES.map(function (f) { return '\n' + readAppModule(f); }).join('');
 // 검사마다 index.html 을 다시 읽던 곳도 같은 합본을 본다.
 const APP_SRC = html;
@@ -3859,6 +3875,8 @@ check('compliance: [#TASK-ES-060] 1900년대 및 역대 과거 임의 데이터 
   new Function(uSrc); // 문법 유효성 확인
 
   const mockWindow = {};
+  // #TASK-ES-393: 브라우저와 같은 순서(키트 부품 js/stats-*.js 이름순 → 원본)로 같은 mockWindow 에서 실행한다. 부품 파일이 없으면 원본 한 파일 실행 그대로다.
+  STATS_PART_FILES.forEach(function (f) { new Function('window', fs.readFileSync(f, 'utf8'))(mockWindow); });
   new Function('window', uSrc)(mockWindow);
   const U = mockWindow.OurgoalUniversalStats;
   assert.ok(U, 'OurgoalUniversalStats 객체 노출');
@@ -4292,7 +4310,7 @@ check('compliance: [#TASK-ES-091] 아워골 데이터 가져오기 & 1초 샘플
   const statsJsPath = path.join(__dirname, '..', 'js', 'universal-stats.js');
 
   assert.ok(fs.existsSync(statsJsPath), 'js/universal-stats.js 파일이 존재해야 함');
-  const statsJs = fs.readFileSync(statsJsPath, 'utf8');
+  const statsJs = STATS_SRC;
 
   // 1. 원터치 1초 로드 버튼 및 카드 인터랙션 검증
   assert.ok(statsJs.includes('u-sample-quick-btn'), '샘플 카드에 원터치 1초 로드 버튼이 배선되어 있어야 함');
@@ -4326,7 +4344,7 @@ check('compliance: [#TASK-ES-092] 전문가용 데이터 시각화 파워 보존
   const statsJsPath = path.join(__dirname, '..', 'js', 'universal-stats.js');
 
   assert.ok(fs.existsSync(statsJsPath), 'js/universal-stats.js 파일이 존재해야 함');
-  const statsJs = fs.readFileSync(statsJsPath, 'utf8');
+  const statsJs = STATS_SRC;
 
   // 1. 헤더 단순화 및 데이터 관리 통합 수납 모달 검증
   assert.ok(statsJs.includes('uHdrMgmtMenuBtn'), '헤더에 데이터 관리 메뉴 버튼(uHdrMgmtMenuBtn)이 배선되어 있어야 함');
@@ -4360,7 +4378,7 @@ check('compliance: [#TASK-ES-092] 전문가용 데이터 시각화 파워 보존
 /* ============ [#TASK-ES-093] 추천 샘플 데이터 테마별 카테고리화 및 효과적 UI/UX 무결성 검증 ============ */
 check('compliance: [#TASK-ES-093] 추천 샘플 데이터 5대 테마별 엄선 7종(총 35종) 카탈로그, 2열 반응형 그리드 및 하이록스 1초 융합 검증', () => {
   const uStats = require('../js/universal-stats.js');
-  const statsJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'universal-stats.js'), 'utf8');
+  const statsJs = STATS_SRC;
   const uiCss = fs.readFileSync(path.join(__dirname, '..', 'ui.css'), 'utf8');
 
   // 1. SAMPLE_THEMES 5대 테마 x 7종 카탈로그 검증
@@ -4397,7 +4415,7 @@ check('compliance: [#TASK-ES-093] 추천 샘플 데이터 5대 테마별 엄선 
 /* ============ [#TASK-ES-094] 기출문제 1W 하루단위 꺾은선 그래프 및 전 기간 시인성 UX 무결성 검증 ============ */
 check('compliance: [#TASK-ES-094] 기출문제 예시 1W 기간 하루단위 꺾은선 그래프(7일 연속 세션), 요일 x축 레이블링 및 전 기간 반응형 시인성 검증', () => {
   const uStats = require('../js/universal-stats.js');
-  const statsJs = fs.readFileSync(path.join(__dirname, '..', 'js', 'universal-stats.js'), 'utf8');
+  const statsJs = STATS_SRC;
 
   // 1. 기출문제 샘플 생성기 1W 일별 데이터 검증
   const studyRecs = uStats.generateDomainSample('study');
@@ -6776,7 +6794,7 @@ check('compliance: [#TASK-ES-173] 나만의 홈 구성 상단 고정(아바타·
 
 check('compliance: [#TASK-ES-174] 아워골 생각 메모장 잔여 대기 과제 9건([45]~[53]) 전수 구현 및 무결성 검증', () => {
   const indexHtml = APP_SRC;
-  const statsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'universal-stats.js'), 'utf8');
+  const statsSrc = STATS_SRC;
   const teamLinkedSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-linked-goals.js'), 'utf8');
   const trackerSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'time-tracker.js'), 'utf8');
   const teamLevelsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'team-visibility-levels.js'), 'utf8');
@@ -6880,7 +6898,7 @@ check('compliance: [#TASK-ES-176] 팀 목표창 View ↔ Edit 완전 분리(A안
 
 check('compliance: [#TASK-ES-177] 아워골 생각 메모장 3대 완결 과제([58] 소통 피드 직접 사진 첨부 · [59] 카테고리 10종 확장 및 가로스크롤 · [60] 성취통계 껍데기 버튼 영구 삭제)', () => {
   const indexHtml = APP_SRC;
-  const uStatsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'universal-stats.js'), 'utf8');
+  const uStatsSrc = STATS_SRC;
 
   // 1. [60] 성취통계 껍데기 버튼 삭제 검증
   assert.ok(!uStatsSrc.includes('uLinkGoalBtn'), 'universal-stats.js에 uLinkGoalBtn이 존재하지 않아야 함');
@@ -9845,7 +9863,7 @@ check('compliance: [#TASK-ES-310] [59] 소통 피드 게시하기 카테고리 �
 
 check('compliance: [#TASK-ES-311] [60] 성취통계 메뉴 내 미작동 껍데기 버튼(목표연계·캘린더 등록) 영구 삭제 및 Zero Dead Click 무결성 검증', () => {
   const indexHtml = APP_SRC;
-  const uStatsSrc = fs.readFileSync(path.join(__dirname, '..', 'js', 'universal-stats.js'), 'utf8');
+  const uStatsSrc = STATS_SRC;
   const jsComp = fs.readFileSync(path.join(__dirname, '..', 'js', 'components.js'), 'utf8');
 
   // 1. universal-stats.js 껍데기 버튼 및 라벨 부재 검증
