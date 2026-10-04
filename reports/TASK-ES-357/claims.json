@@ -1,0 +1,26 @@
+{
+  "task": "TASK-ES-357",
+  "requirements": [
+    { "id": "R1", "text": "시험지 합본 읽기만 별도 PR 로 분리: scripts/smoke-test.js(·verify-all-clicks.js 등 index.html 글자를 읽는 시험)가 \"앱 소스 = index.html + js/tabs/**/*.js + js/core/*.js\" 합본을 읽게만 바꾼다. 제품 코드 변경 0, 기대값·통과 수 변경 0(main 에서 전후 npm test 통과 수 동일 확인)." }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "smoke-test 의 소스 글자 검사가 index.html + js/tabs/**/*.js + js/core/*.js 합본을 읽는다(검사마다 index.html 을 다시 읽던 187곳도 같은 합본)",
+      "touches": ["scripts/smoke-test.js"],
+      "check": { "type": "codeContains", "file": "scripts/smoke-test.js", "text": "const html = indexHtmlOnly + APP_MODULE_FILES.map(" }
+    },
+    {
+      "id": "C2", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "smoke-test 의 인라인 스크립트 문법 검사·순수 함수 추출은 이전처럼 index.html 한 파일에서 한다",
+      "touches": ["scripts/smoke-test.js"],
+      "check": { "type": "codeContains", "file": "scripts/smoke-test.js", "text": "const scriptMatches = [...indexHtmlOnly.matchAll(" }
+    },
+    {
+      "id": "C3", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "verify-all-clicks 의 정적 버튼 추출과 핸들러 탐색이 같은 합본(js/tabs/**·js/core/*)을 더해 읽는다",
+      "touches": ["scripts/verify-all-clicks.js"],
+      "check": { "type": "codeContains", "file": "scripts/verify-all-clicks.js", "text": "const markupSrc = html + moduleSrc;" }
+    }
+  ]
+}
