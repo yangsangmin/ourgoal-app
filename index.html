@@ -9725,8 +9725,8 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     if(prev) prev.remove();
     var bar = document.createElement('div');
     bar.id = 'trashUndoToast';
-    bar.style.cssText = 'position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:24px;font-size:.875rem;font-weight:700;display:flex;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.28);z-index:99999;max-width:92vw;';
-    bar.innerHTML = '<span>' + msg + '</span><button type="button" id="btnTrashUndoAction" style="background:var(--brand);color:#fff;border:none;padding:4px 10px;border-radius:12px;font-size:.8125rem;font-weight:700;cursor:pointer;flex:0 0 auto;">실행 취소</button>';
+    bar.style.cssText = 'position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:24px;font-size:.875rem;font-weight:700;display:flex;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.28);z-index:99999;max-width:92vw;pointer-events:none;';
+    bar.innerHTML = '<span>' + msg + '</span><button type="button" id="btnTrashUndoAction" style="background:var(--brand);color:#fff;border:none;padding:4px 10px;border-radius:12px;font-size:.8125rem;font-weight:700;cursor:pointer;flex:0 0 auto;pointer-events:auto;">실행 취소</button>';
     document.body.appendChild(bar);
     var uBtn = bar.querySelector('#btnTrashUndoAction');
     if(uBtn){
@@ -24235,7 +24235,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     setupUserSessionRealtime();
   }
   function setupUserSessionRealtime(){
-    if(!state.profile || !state.profile.id) return;
+    if(!sb || typeof sb.channel !== 'function' || !state.profile || !state.profile.id) return;
     if(USER_SESSION_CHANNEL){
       try{ sb.removeChannel(USER_SESSION_CHANNEL); }catch(e){}
       USER_SESSION_CHANNEL = null;
@@ -24268,7 +24268,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
       }
     });
   }
-  function setupTeamCommentsRealtime(){
+  function setupTeamCommentsRealtime(){ if(!sb || typeof sb.channel !== 'function') return;
     sb.channel('team_comments_channel')
       .on('postgres_changes', { event:'INSERT', schema:'public', table:'team_comments' }, function(payload){
         var row = payload.new;
@@ -33620,11 +33620,11 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var FEED_POSTS_CACHE = null; // null=아직 안 불러옴, 로드 후 배열
   async function ensureFeedPostsLoaded(){
     if(FEED_POSTS_CACHE) return;
-    FEED_POSTS_CACHE = [];
+    FEED_POSTS_CACHE = []; if(!sb) return;
     var res = await sb.from('feed_posts').select('*').order('created_at', { ascending:false }).limit(50);
     FEED_POSTS_CACHE = res.data || [];
   }
-  function setupFeedPostsRealtime(){
+  function setupFeedPostsRealtime(){ if(!sb || typeof sb.channel !== 'function') return;
     function rerenderIfFeedVisible(){
       if(state.activeTab!=='comm' || state.commSubTab!=='feed') return;
       var subBody = document.getElementById('commSubBody');
