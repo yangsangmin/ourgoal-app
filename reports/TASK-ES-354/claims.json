@@ -33,6 +33,10 @@
     {
       "id": "R8",
       "text": "보완 ④: 효과 지표 3개 — index.html 줄 수 전/후, 800줄 초과 js 파일 수 전/후, 새 파일 목록·줄 수."
+    },
+    {
+      "id": "R9",
+      "text": "CORE-08(#667) 병합 뒤 #666 의 js/tabs/settings/** 는 node scripts/module-specs.js --write 로 신고서(docs/architecture/modules.json)에 올려 모듈 가드를 통과시킬 것(kind: tab, contributes: [\"settings.section\"])."
     }
   ],
   "claims": [
@@ -283,6 +287,51 @@
         "index.html"
       ],
       "scenario": "scenarios/settings-theme-contrast-same.json"
+    },
+    {
+      "id": "C17",
+      "req": "R9",
+      "kind": "static",
+      "domain": "config",
+      "statement": "세포 신고서에 설정 섹션 소블록이 꽂는 자리 settings.section 으로 올라가 있다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/architecture/modules.json",
+        "text": "\"settings.section\""
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 에 TASK-ES-354 작업 기록이 있다",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "#TASK-ES-354: 모듈 분할 공통 틀(CORE-07) + 설정 탭 시범 이전(SET-07)"
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "PLAN 체크리스트는 4단계(심사 청구)까지만 적었다",
+      "touches": [
+        "docs/plans/PLAN-TASK-ES-354-SETTINGS-MODULE.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/plans/PLAN-TASK-ES-354-SETTINGS-MODULE.md",
+        "text": "- [x] [4단계: 심사 청구]"
+      }
     }
   ]
 }
