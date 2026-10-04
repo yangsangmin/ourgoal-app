@@ -109,7 +109,9 @@ ok('브라우저 경로(self 없음 — 전역 this 로 실행): 같은 배열',
 ok('브라우저 경로: 새 전역은 데이터 묶음 OurgoalAvatarPersonaParts 하나뿐(16개 키, PART_ORDER 순)', () => {
   const skip = ['console', 'setTimeout', 'clearTimeout', 'self', 'window'];
   const names = Object.keys(winSelf).filter(k => !skip.includes(k)).sort();
-  const baseNames = baseWin ? Object.keys(baseWin).filter(k => !skip.includes(k)).sort() : ['OurgoalAvatar'];
+  // 기준 커밋을 못 읽는 사본(.git 없음)에서는 avatar-system.js 하나만 실행한 전역 이름을 기준으로 쓴다(데이터 파일과 무관한 이름들)
+  const aloneWin = baseWin || runBrowser([['js/avatar-system.js', read('js/avatar-system.js')]], true);
+  const baseNames = Object.keys(aloneWin).filter(k => !skip.includes(k)).sort();
   assert.deepStrictEqual(names, baseNames.concat(['OurgoalAvatarPersonaParts']).sort());
   assert.deepStrictEqual(Object.keys(winSelf.OurgoalAvatarPersonaParts), PART_ORDER);
 });
