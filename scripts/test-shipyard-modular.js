@@ -158,6 +158,7 @@ console.log('[Test 6] Cell skeleton: module guard ratchet + capabilities/slots +
   runNode('tests/settings-gcal-autosync-switch.test.js');
   runNode('tests/calendar-natural-schedule.test.js');
   runNode('tests/core-modal-es363.test.js'); // #TASK-ES-363 공용 모달 통로(ui.modal)·대기열·재귀 없음
+  runNode('tests/account-switch-isolation.test.js'); // #TASK-ES-365 CORE-09 계정 전환 격리(A 로그아웃 -> B 로그인 시 B 화면·업로드에 A 데이터 0건)
 }
 console.log('  ✓ Module guard ratchet held; capabilities/slots pass; guard fixtures fail on ①④⑤·신고서; scaffold cell mounts via registry');
 
