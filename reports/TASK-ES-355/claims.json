@@ -1,0 +1,327 @@
+{
+  "task": "TASK-ES-355",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-355-REAL-ACCOUNT-HARNESS.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "시나리오 표(docs/design/harness/real-account-scenarios.md): 행마다 [출처 PR·주장 id / A 가 하는 일 / B(또는 같은 계정 2기기)에 보여야 하는 것 / 확인 방법(화면 DOM·API 응답·건수) / 필요한 계정 조건]. 오늘 PR 들의 레벨5 미확인 항목 전부 + 목표탭 GOALS-03·14·16~19(공개범위·팀) + 소통 COMM-03·04(동반자·DM) 핵심."
+    },
+    {
+      "id": "R2",
+      "text": "하네스(docs/design/harness/real-account-check.js): 환경 변수(예: OG_TEST_A_EMAIL, OG_TEST_A_PASSWORD, OG_TEST_B_EMAIL, OG_TEST_B_PASSWORD, OG_APP_URL)로 두 계정을 이메일 로그인해 헤드리스 브라우저 두 개로 시나리오를 재생. 환경 변수가 없으면 아무 데도 접속하지 않고 '계정 없음 — 재생 안 함' 으로 정직하게 종료(가짜 통과 금지). 결과는 시나리오별 통과/실패/못 함 JSON. 쓰기 시나리오는 테스트 계정 데이터만 만들고 끝에 정리(지운 것까지 기록). 운영 사용자 데이터를 읽거나 바꾸는 시나리오 금지."
+    },
+    {
+      "id": "R3",
+      "text": "[손 필요] 안내(docs/design/harness/real-account-README.md): 테스트 계정 2개를 만드는 클릭 단위 절차(앱의 이메일 가입 경로 또는 Supabase 대시보드 Authentication → Add user 중 저장소 실제 구조에 맞는 쪽), 환경 변수 넣는 방법(이 PC: Windows 사용자 환경 변수, 값은 채팅에 쓰지 말 것), 실행 명령, 결과 읽는 법, 테스트 계정 삭제 방법."
+    },
+    {
+      "id": "R4",
+      "text": "로컬 검증: 환경 변수 없이 실행 → '계정 없음' 종료 확인. 가능하면 shots-lib 의 Supabase mock 으로 두 '가짜 세션'을 흉내 내 하네스 배선만 1~2개 시나리오로 돌려 보되, 결과 파일에 mock 이라 명시."
+    },
+    {
+      "id": "R5",
+      "text": "문서: REQ/PLAN(TASK-ES-355), reports/TASK-ES-355/claims.json, TICKETS 1줄, dev_log. 근거: 노션 CORE-02, 원문 \"내가 테스트 계정을 만들어서 다른기기에 로그인해서 두 계정으로 직접 체크하고 싶은데\"(ES-169), \"실제구현이란 실제 사용자들의, 상대방 계정(들)과 상호 연동되는 거야\"(ES-106)."
+    },
+    {
+      "id": "R6",
+      "text": "커밋(끝에 Co-Authored-By), push, PR(초안 아님), 본문 끝에 Generated with Claude Code. node court/chat.js <PR> 판정 줄을 기다려 기록."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "시나리오 표의 합계 줄이 28행(자동 11·조건부 2·수동 15)으로 적혀 있다",
+      "touches": [
+        "docs/design/harness/real-account-scenarios.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "| **합계** | **28** | **11** | **2** | **15** |",
+        "file": "docs/design/harness/real-account-scenarios.md"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "시나리오 표에 동반자 추가 유지 행(COMM-03)이 있다",
+      "touches": [
+        "docs/design/harness/real-account-scenarios.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "| RA-COMM-03 | 노션 COMM-03 완료 기준 |",
+        "file": "docs/design/harness/real-account-scenarios.md"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "시나리오 표에 공개범위 행(GOALS-19)이 있다",
+      "touches": [
+        "docs/design/harness/real-account-scenarios.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "| RA-GOALS-19 | 노션 GOALS-19 |",
+        "file": "docs/design/harness/real-account-scenarios.md"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "하네스가 필수 환경 변수 다섯 개 이름을 목록으로 갖는다",
+      "touches": [
+        "docs/design/harness/real-account-check.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const REQUIRED_ENV = ['OG_APP_URL', 'OG_TEST_A_EMAIL', 'OG_TEST_A_PASSWORD', 'OG_TEST_B_EMAIL', 'OG_TEST_B_PASSWORD'];",
+        "file": "docs/design/harness/real-account-check.js"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "하네스가 계정 없음 문구를 상수로 갖는다",
+      "touches": [
+        "docs/design/harness/real-account-check.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const NO_ACCOUNT_MSG = '계정 없음 — 재생 안 함';",
+        "file": "docs/design/harness/real-account-check.js"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "하네스가 주소에 ogtest 표식이 없는 계정을 받지 않는다",
+      "touches": [
+        "docs/design/harness/real-account-check.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "if (!ACCOUNT_MARK.test(a)) bad.push('OG_TEST_A_EMAIL 에 ogtest 없음');",
+        "file": "docs/design/harness/real-account-check.js"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "정리 단계가 실행 표식이 든 자기 행만 지운다",
+      "touches": [
+        "docs/design/harness/real-account-steps.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const d = await sb.from(t).delete().eq(owner, uid).ilike(col, '%' + tag + '%').select('id');",
+        "file": "docs/design/harness/real-account-steps.js"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "공개 키 확인은 건수만 받는다(한 행 범위·count=exact)",
+      "touches": [
+        "docs/design/harness/real-account-steps.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "Prefer: 'count=exact', Range: '0-0'",
+        "file": "docs/design/harness/real-account-steps.js"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "안내문이 대시보드 Add user 에서 Auto Confirm User 를 체크하라고 적는다",
+      "touches": [
+        "docs/design/harness/real-account-README.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "**Auto Confirm User** 를 체크한다",
+        "file": "docs/design/harness/real-account-README.md"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "안내문에 테스트 계정 삭제 절차가 있다",
+      "touches": [
+        "docs/design/harness/real-account-README.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "## 7. 테스트 계정 지우기",
+        "file": "docs/design/harness/real-account-README.md"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "계정 없음 실행 결과 파일의 status 가 계정 없음 문구다(작업자 실행 기록)",
+      "touches": [
+        "docs/design/harness/out-real-account-none-2026-10-04.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "path": "status",
+        "equals": "계정 없음 — 재생 안 함",
+        "file": "docs/design/harness/out-real-account-none-2026-10-04.json"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "계정 없음 실행 결과 파일에 접속 0 이 적혀 있다",
+      "touches": [
+        "docs/design/harness/out-real-account-none-2026-10-04.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "path": "network",
+        "equals": "접속 0 (브라우저를 띄우지 않음)",
+        "file": "docs/design/harness/out-real-account-none-2026-10-04.json"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "mock 실행 결과 파일의 mode 가 mock 이다",
+      "touches": [
+        "docs/design/harness/out-real-account-mock-2026-10-04.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "path": "mode",
+        "equals": "mock",
+        "file": "docs/design/harness/out-real-account-mock-2026-10-04.json"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "mock 은 노드 쪽 공유 서버를 두 브라우저에 연결한다",
+      "touches": [
+        "docs/design/harness/real-account-mock.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "await page.exposeFunction('__ogMockDb', (t) => server.handle(t));",
+        "file": "docs/design/harness/real-account-mock.js"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "REQ/PLAN 문서가 있다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-355-REAL-ACCOUNT-HARNESS.md"
+      ],
+      "check": {
+        "type": "fileExists",
+        "file": "docs/specs/REQ-TASK-ES-355-REAL-ACCOUNT-HARNESS.md"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "TICKETS 에 TASK-ES-355 줄이 있다",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "- #TASK-ES-355 |",
+        "file": "docs/rules/TICKETS.md"
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "dev_log 에 TASK-ES-355 항목이 있다",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "#TASK-ES-355: 실계정 2개 확인 하네스",
+        "file": "dev_log.md"
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R2",
+      "kind": "unverified",
+      "domain": "multi-user",
+      "statement": "테스트 계정 두 개로 하네스를 실서버에 재생하면 자동 시나리오가 통과·실패·못 함으로 기록되고 정리 뒤 남은 테스트 데이터가 0 이다",
+      "touches": [
+        "docs/design/harness/real-account-check.js",
+        "docs/design/harness/real-account-steps.js"
+      ],
+      "unverified": {
+        "reason": "needs-two-accounts",
+        "who": "Supabase 대시보드에 로그인할 수 있는 상민님(테스트 계정 생성) + 하네스를 돌리는 세션",
+        "how": [
+          "docs/design/harness/real-account-README.md 1·3절대로 테스트 계정 A·B 를 만들고 환경 변수를 넣는다",
+          "세션이 node docs/design/harness/real-account-check.js --out <결과.json> 을 실행한다",
+          "결과 JSON 의 summary·scenarios 와 cleanup.leftover 가 빈 목록인지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R6",
+      "kind": "unverified",
+      "domain": "config",
+      "statement": "PR 본문 끝에 Claude Code 생성 표시가 있다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-355-REAL-ACCOUNT-HARNESS.md"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "external-page",
+        "who": "GitHub PR 화면을 여는 사람",
+        "how": [
+          "PR 본문 마지막 줄을 본다"
+        ]
+      }
+    }
+  ]
+}
