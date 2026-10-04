@@ -1,0 +1,285 @@
+{
+  "task": "TASK-ES-365",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-365-ACCOUNT-SWITCH.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "로그아웃·계정 전환 때 이전 사용자의 로컬 데이터(기록·목표·설정 사본, localStorage ourgoal_* 등)를 정리하거나 사용자 id 로 분리한다(같은 브라우저 A 로그아웃 → B 로그인 시 B 화면에 A 기록 0건)."
+    },
+    {
+      "id": "R2",
+      "text": "서버 동기화(syncServerRecords 등)는 현재 로그인 uid 의 데이터만 올린다."
+    },
+    {
+      "id": "R3",
+      "text": "게스트→로그인 첫 전환 시 게스트 데이터 이관 등 기존 의도된 흐름은 깨지 않는다."
+    },
+    {
+      "id": "R4",
+      "text": "부품 시험(tests/, npm test 경로)으로 A→로그아웃→B 시 B 화면·업로드 대상에 A 데이터 0건 증명."
+    },
+    {
+      "id": "R5",
+      "text": "사용자 데이터를 지우는 동작은 이전 사용자의 로컬 사본 정리로 한정하고 서버 원장은 지우지 않는다."
+    },
+    {
+      "id": "R6",
+      "text": "실계정 확인(RA-CORE-SWITCH)은 claims 에 unverified(needs-two-accounts)로 적고 작업자 실측 결과는 REQ 에 기록."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "loadProfile 의 기록 백업 복구가 이 uid 의 백업 키만 읽는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "var localCachedRecords = window.OurgoalAccountIsolation.readOwnCopy('ourgoal_records_backup_', userId, []);"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "loadProfile 이 이 기기의 다른 사람 기록 백업 키를 훑어 빌려 오던 반복문이 없어졌다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "rk.indexOf('ourgoal_records_backup_') === 0"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "loadProfile 의 프로필 백업 복구가 이 uid 의 백업 키만 읽는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "var localCachedProf = window.OurgoalAccountIsolation.readOwnCopy('ourgoal_profile_backup_', userId, null);"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부팅 때 게스트 사본 복구가 그 사본 주인의 기록 백업만 읽는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "var recBackup = window.OurgoalAccountIsolation.readOwnCopy('ourgoal_records_backup_', gp.id, null);"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "로그아웃 때 계정 공용 사본(전체 사본·직전 사용자·uid 없는 오프라인 대기열)을 정리한다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "window.OurgoalAccountIsolation.clearSharedSessionCopies();"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "세션 진입 때 다른 로그인 사용자의 전체 사본을 버린다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "window.OurgoalAccountIsolation.dropForeignSessionCopy(session.user.id);"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "saveProfile 이 주인 표시가 다른 기록을 지금 uid 이름으로 올리지 않는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "var recRows = window.OurgoalAccountIsolation.ownRecordsOnly(recs, uidVal).map(function(r){"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "syncServerRecords 가 응답을 기다리는 사이 화면 주인이 바뀌면 합치지 않는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "if(!state.profile || state.profile.id !== uid) return false;"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "syncServerRecords 의 sync_records 요청에 이 기기의 다른 uid 를 함께 싣던 반복문이 없어졌다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "var pfxs = ['ourgoal_goals_backup_', 'ourgoal_records_backup_', 'ourgoal_profile_backup_', 'ourgoal_settings_'];"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "migrateGuestDataToUser 는 게스트 id 사본만 이관한다(게스트 → 회원 이관 경로 유지)",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "if(!window.OurgoalAccountIsolation.canMigrateGuestCopy(gData, targetUserId)){"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R3",
+      "kind": "static",
+      "domain": "config",
+      "statement": "이관 가능 판정은 게스트 id 이고 대상과 다른 사본일 때만 참이다",
+      "touches": [
+        "js/account-isolation.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/account-isolation.js",
+        "text": "return !!copy && isGuestId(copy.id) && !sameOwner(copy.id, targetUid);"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험이 B 세션의 A 기록 업로드 시도 0건을 단언한다",
+      "touches": [
+        "tests/account-switch-isolation.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/account-switch-isolation.test.js",
+        "text": "assert.strictEqual(m.bUploadsWithA, 0"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R4",
+      "kind": "static",
+      "domain": "config",
+      "statement": "npm test(scripts/test-shipyard-modular.js) 가 계정 전환 격리 부품 시험을 실행한다",
+      "touches": [
+        "scripts/test-shipyard-modular.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "scripts/test-shipyard-modular.js",
+        "text": "runNode('tests/account-switch-isolation.test.js');"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R5",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 시험이 로그아웃 뒤 서버 A 기록이 그대로이고 A uid 백업이 남는 것을 단언한다",
+      "touches": [
+        "tests/account-switch-isolation.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "tests/account-switch-isolation.test.js",
+        "text": "assert.ok(m.serverAKept, "
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R6",
+      "kind": "unverified",
+      "domain": "multi-user",
+      "statement": "실서버에서 같은 브라우저로 테스트 계정 A 로그인·기록 저장·로그아웃 뒤 B 로 로그인하면 B 기록 탭에 A 의 표식 기록이 0건이다(RA-CORE-SWITCH)",
+      "touches": [
+        "index.html",
+        "js/account-isolation.js"
+      ],
+      "unverified": {
+        "reason": "needs-two-accounts",
+        "who": "테스트 계정 A·B 환경 변수가 있는 이 PC 의 세션 또는 상민님",
+        "how": [
+          "OG_APP_URL 을 이 PR 의 미리보기 주소(병합 뒤에는 운영 주소)로 둔다",
+          "node docs/design/harness/real-account-check.js --only RA-CORE-SWITCH --out 결과.json 을 실행한다",
+          "결과의 RA-CORE-SWITCH 가 통과이고 evidence.aTextOnB 가 0 인지 본다",
+          "또는 직접: 같은 브라우저에서 A 로 기록 1개 저장 → 설정 로그아웃 → B 로그인 → 기록 탭에 그 글자가 없는지 본다"
+        ]
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R3",
+      "kind": "unverified",
+      "domain": "persistence",
+      "statement": "실서버에서 게스트로 목표·기록을 만든 뒤 로그인하면 그 목표·기록이 로그인 계정으로 옮겨지고 그 계정 이름으로 서버에 저장된다",
+      "touches": [
+        "index.html",
+        "js/account-isolation.js"
+      ],
+      "unverified": {
+        "reason": "tool-cannot-measure",
+        "cannotBecause": "needs-login",
+        "who": "테스트 계정이 있는 사람(게스트 입장 버튼은 화면에서 숨겨져 있어 미리보기 주소의 ?preview 또는 게스트 사본이 필요)",
+        "how": [
+          "미리보기 주소에서 게스트로 입장해 기록 1개를 저장한다",
+          "같은 브라우저에서 테스트 계정으로 로그인한다",
+          "기록 탭에 그 기록이 있는지, 다른 기기에서 같은 계정으로 로그인해도 보이는지 본다"
+        ],
+        "note": "게스트 입장 버튼(#landGuestBtn)은 화면에서 숨겨져 있고, 법정 금고 fixture 는 guest-fresh 하나뿐이라 게스트 기록이 있는 상태를 만들 수 없다. 이관 결과는 로그인한 뒤의 화면에서만 보인다."
+      }
+    }
+  ]
+}
