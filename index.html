@@ -2317,6 +2317,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   <script src="js/avatar/modal/bind-craft.js?v=20261005-es390"></script>
   <script src="js/avatar/modal/bind-persona.js?v=20261005-es390"></script>
   <script src="js/avatar/modal/bind-save.js?v=20261005-es390"></script>
+  <script src="js/avatar/xp.js?v=20261005-es395"></script>
   <script src="js/avatar-system.js?v=20260913-es054"></script>
   <script src="js/content-moderation.js"></script>
   <script src="js/auth-safety.js"></script>
@@ -2338,6 +2339,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   var escapeHtml = _ui.escapeHtml;
   var a11ySwitch = _ui.a11ySwitch;
   var download = _ui.download;
+  /* [#TASK-ES-395] EXP 세포 가져오기 — js/avatar/xp.js(window.OurgoalAvatarParts.xp)로 옮긴 EXP 이름을 같은 이름으로 부른다. 지급 호출처·app-scope getter 는 글자 그대로다. */
+  var _xp = window.OurgoalAvatarParts.xp;
+  var XP_RULES = _xp.XP_RULES;
+  var xpForLevel = _xp.xpForLevel;
+  var levelForXP = _xp.levelForXP;
+  var levelProgress = _xp.levelProgress;
+  var triggerAvatarCelebrationPopup = _xp.triggerAvatarCelebrationPopup;
+  var awardXP = _xp.awardXP;
+  var notifyXpGained = _xp.notifyXpGained;
   var _settingsKit = window.OurgoalSettingsKit;
   var renderSettingsScreen = _settingsKit.renderSettingsScreen;
   var collapseAllSettingsSections = _settingsKit.collapseAllSettingsSections;
@@ -3123,73 +3133,13 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     return s.subscription;
   }
 
-  /* ============ XP/레벨 시스템 ============ */
-  var XP_RULES = { checkin: 10, milestoneDone: 50 };
-  var XP_LOG_MAX = 200;
-  function xpForLevel(level){
-    // 레벨 1은 0 XP, 이후 레벨마다 필요 누적치가 50*(level-1)*level 만큼 늘어나는 성장 곡선.
-    return 50 * (level - 1) * level;
-  }
-  function levelForXP(xp){
-    var level = 1;
-    while(xpForLevel(level + 1) <= xp) level++;
-    return level;
-  }
-  function levelProgress(xp){
-    var level = levelForXP(xp);
-    var floor = xpForLevel(level);
-    var ceil = xpForLevel(level + 1);
-    return { level: level, xp: xp, into: xp - floor, span: ceil - floor, pct: Math.round(((xp - floor) / (ceil - floor)) * 100) };
-  }
-  function triggerAvatarCelebrationPopup(amount, reason){
-    try {
-      var oldPop = document.getElementById('avatarCelebrationToast');
-      if(oldPop) oldPop.remove();
-      var pop = document.createElement('div');
-      pop.id = 'avatarCelebrationToast';
-      pop.style.cssText = 'position:fixed;bottom:78px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,rgba(30,27,75,0.95),rgba(49,46,129,0.95));border:1.5px solid rgba(129,140,248,0.6);box-shadow:0 12px 30px rgba(0,0,0,0.35);backdrop-filter:blur(8px);border-radius:24px;padding:8px 16px;display:flex;align-items:center;gap:10px;z-index:99999;color:#fff;font-size:.875rem;font-weight:700;animation:animFadeInUp 0.3s cubic-bezier(0.16,1,0.3,1);cursor:pointer;user-select:none;pointer-events:auto;';
-      var avImg = (state.profile && (state.profile.avatarUrl || (state.profile.settings && state.profile.settings.customAvatarUrl))) || '';
-      var avIcon = avImg ? ('<img src="'+avImg+'" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1.5px solid #818cf8;">') : '<span style="font-size:1.4rem;">🧑‍🚀</span>';
-      pop.innerHTML = avIcon + '<div><div style="font-size:.84rem;color:#e0e7ff;">"잘했다! 내 자신!"</div><div style="font-size:.72rem;color:#38bdf8;font-weight:800;">+' + amount + ' EXP 획득</div></div><span style="font-size:.75rem;color:#94a3b8;margin-left:4px;">✕</span>';
-      pop.onclick = function(){ pop.remove(); };
-      document.body.appendChild(pop);
-      setTimeout(function(){
-        if(pop.parentNode){
-          pop.style.transition = 'opacity 0.4s, transform 0.4s';
-          pop.style.opacity = '0';
-          pop.style.transform = 'translateX(-50%) translateY(12px)';
-          setTimeout(function(){ if(pop.parentNode) pop.remove(); }, 400);
-        }
-      }, 2500);
-    } catch(e){}
-  }
+  /* ============ XP/레벨 시스템 ============
+     [#TASK-ES-395] 선언(XP_RULES · XP_LOG_MAX · xpForLevel · levelForXP · levelProgress · triggerAvatarCelebrationPopup · awardXP · notifyXpGained)은 js/avatar/xp.js 로 옮김(동작 그대로).
+     이 IIFE 맨 위에서 같은 이름으로 가져온다. 아래 window 대입 줄은 원래 자리 그대로다. */
   window.triggerAvatarCelebrationPopup = triggerAvatarCelebrationPopup;
   window.xpForLevel = xpForLevel;
   window.levelForXP = levelForXP;
   window.levelProgress = levelProgress;
-
-  function awardXP(amount, reason){
-    if(!state.profile.settings.xp) state.profile.settings.xp = { total:0, log:[] };
-    var xp = state.profile.settings.xp;
-    var beforeLevel = levelForXP(xp.total);
-    xp.total += amount;
-    xp.log.unshift({ amount: amount, reason: reason, at: nowISO() });
-    if(xp.log.length > XP_LOG_MAX) xp.log.length = XP_LOG_MAX;
-    var leveledUp = levelForXP(xp.total) > beforeLevel;
-    if(amount > 0){
-      triggerAvatarCelebrationPopup(amount, reason);
-    }
-    notifyXpGained(amount, xp.total);
-    return { total: xp.total, leveledUp: leveledUp };
-  }
-  // [HOME-19] 경험치가 바뀌면 홈 아바타 진행 링에 알린다(링 갱신 + +N EXP 0.5초 표시)
-  function notifyXpGained(amount, total){
-    try {
-      if(window.OurgoalHomeOneScreen && typeof window.OurgoalHomeOneScreen.onXpGained === 'function'){
-        window.OurgoalHomeOneScreen.onXpGained(amount, total);
-      }
-    } catch(e){}
-  }
   window.notifyXpGained = notifyXpGained;
   function hasUserCustomizedAvatar(profile){
     if(!profile) return false;
