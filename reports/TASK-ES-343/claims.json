@@ -1,0 +1,49 @@
+{
+  "task": "TASK-ES-343",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-343-COURT-RESTORE.md",
+  "requirements": [
+    { "id": "R1", "text": ".github/workflows/court.yml 을 PR #650 이전(a18f22e^) 내용으로 정확히 복원한다. 관리자 키·쓰기 권한이 없고 pull_request_target + main 의 court/ 를 쓴다" },
+    { "id": "R2", "text": "800줄 상한: js/ 아래 .js 가 작업 커밋에서 800줄 초과일 때, 기준 커밋에 없던 파일·기준에서 800줄 이하였는데 넘음·이미 넘던 파일이 더 길어짐만 위반으로 센다" },
+    { "id": "R3", "text": "CSS 은폐: display:none !important, position:absolute; left:-9999px 가 PR diff 의 추가된 줄에 새로 나온 경우만 위반으로 센다(지운 줄은 무시)" },
+    { "id": "R4", "text": "금지 키워드: AGENTS.md anti_pattern_blacklist 12개 정규식이 제품 파일의 추가된 줄에 새로 나온 경우만 위반으로 센다" },
+    { "id": "R5", "text": "court/engine.js 는 지우지 않고, README 에 사용되지 않음과 존치 여부는 상민님 결정이라는 단락을 둔다. 새 검사 3종을 README 에 문서화한다" }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "court.yml 이 pull_request_target 으로 돌고 main 쪽 법정(trusted/court/judge.js)을 실행한다",
+      "touches": [".github/workflows/court.yml"],
+      "check": { "type": "codeContains", "file": ".github/workflows/court.yml", "text": "node trusted/court/judge.js --repo pr" }
+    },
+    {
+      "id": "C2", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "court.yml 에 Supabase 관리자 키가 없다",
+      "touches": [".github/workflows/court.yml"],
+      "check": { "type": "codeNotContains", "file": ".github/workflows/court.yml", "text": "SUPABASE_SERVICE_ROLE_KEY" }
+    },
+    {
+      "id": "C3", "req": "R2", "kind": "static", "domain": "logic",
+      "statement": "법정이 800줄 상한을 기준 커밋 대비 새로 넘긴 경우에만 돌려보낸다(이미 넘던 파일이 같거나 줄면 위반 아님)",
+      "touches": ["court/lib/new-debt.js", "court/judge.js"],
+      "check": { "type": "codeContains", "file": "court/lib/new-debt.js", "text": "if (headLines > baseLines) return 'grew';" }
+    },
+    {
+      "id": "C4", "req": "R3", "kind": "static", "domain": "logic",
+      "statement": "법정이 CSS 은폐 패턴을 추가된 줄에서만 찾아 파일:줄·패턴과 함께 돌려보낸다",
+      "touches": ["court/lib/new-debt.js", "court/judge.js"],
+      "check": { "type": "codeContains", "file": "court/lib/new-debt.js", "text": "title: 'CSS 은폐 줄이 새로 추가됨'" }
+    },
+    {
+      "id": "C5", "req": "R4", "kind": "static", "domain": "logic",
+      "statement": "법정이 금지 키워드 12개를 제품 파일의 추가된 줄에서만 찾아 돌려보낸다",
+      "touches": ["court/lib/new-debt.js", "court/judge.js"],
+      "check": { "type": "codeContains", "file": "court/lib/new-debt.js", "text": "title: '금지 낱말이 새로 추가됨'" }
+    },
+    {
+      "id": "C6", "req": "R5", "kind": "static", "domain": "config",
+      "statement": "README 에 engine.js 미사용 단락과 새 검사 3종 설명이 있고 engine.js 는 그대로 있다",
+      "touches": ["court/README.md"],
+      "check": { "type": "codeContains", "file": "court/README.md", "text": "새로 생긴 정적 위반만 센다" }
+    }
+  ]
+}
