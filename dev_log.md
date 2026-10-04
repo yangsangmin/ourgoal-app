@@ -5859,4 +5859,10 @@
 
 - 2026-10-04 TASK-ES-359: 시험지가 세포 파일의 L./K. 접두를 떼고 읽음(기대값 변경 0) — 기록 탭 이전(ES-358)이 TASK-ES-060 단언에 막힌 구조 문제 해소
 - 2026-10-04 TASK-ES-358: 기록 탭 렌더 7함수를 index.html 인라인에서 js/tabs/records/render.js·period-ai-card.js 로 동작 그대로 이전(인라인 38,207→37,368줄, 토큰 동일 검사·누수 0). 설정 시범 #666 이전 틀을 따름(미병합 상태라 app-scope.js 는 동일 사본). 기준 시험지의 index.html 글자 검사 7개는 이 브랜치에서 실패 — 합본 읽기 PR 뒤 재판정.
+## [2026-10-04 23:00] #TASK-ES-354: 법정 반영·main(#669·#670·#671) 병합
+- **수정**: 선행 PR #669(TASK-ES-357 시험지 합본 읽기) 병합 뒤 retire 13건 삭제(기준 시험지에서 깨지는 검사 0), CORE-08 신고서(설정 섹션 6개 contributes settings.section)·모듈 가드 기준선 하향, 화면 시나리오 4건(테마·고대비, 묶음 펼치기·접기, 알림 모드, 데이터 절약 스위치), 주장 C17~C26. #671 기록 탭 세포와 IIFE 머리 노출 블록 2개 공존.
+- **측정(작업자 측정)**: 기준 bb343d3 대 최종 설정 코드 6탭 136장 2,520값 차이 0(기준 2회 차이 0), main 6ffba01 대 병합 판 설정·기록 40장 745값 차이 0, 설정 조작 24단계 동작 차이 0, index.html 39,732→38,783(−949, main 기준), npm test 0(443·38/38·957/957·모듈 가드 통과).
+- **법정**: B1B8A00B 확인 부족 — R2·R5·R6 "코드만 확인"(옮기기만 한 작업의 화면 시나리오는 기준 커밋에서도 통과해 법정 집계가 "고칠 게 없었음"이고, 같은 지시의 글자 주장과 섞이면 "코드만 확인"으로 묶인다).
+- **진행 단계**: [4단계: 심사 청구]
+---
 - 2026-10-04 TASK-ES-360: 일정 탭 렌더 7개(renderCalendarScreen·renderCalDayDetail·parseNaturalScheduleText·executeCalAgentNaturalSchedule·calShift·calWeekStart·WEEKDAYS_KR)를 index.html 인라인에서 js/tabs/calendar/render.js·day-detail.js·natural-schedule.js 로 동작 그대로 이전(생성기 gen-calendar.js, 인라인 36,414→35,905줄, 토큰 동일·누수 0, 조작 20단계 DOM 비교 220값 차이 0). calCellHtml 은 동결 시험지 verify-integrity-gate #TASK-ES-197 이 index.html 에서 글자를 찾아 남김.
