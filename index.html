@@ -2340,6 +2340,7 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
   <script src="js/auth-safety.js"></script>
   <script src="js/universal-stats.js?v=20260914-es061d"></script>
   <script src="js/time-tracker.js?v=20260915-es090"></script>
+  <script src="js/record-ledger.js?v=20261004-es344"></script>
   <script src="js/components.js?v=20260917-es162"></script><script src="js/records-stats.js?v=20260926-es276"></script><script src="js/calendar-attachment.js?v=20260916-es125"></script><script src="js/tab-guides.js?v=20260915-es102"></script><script src="js/team-invite-comm.js?v=20260916-es131"></script><script src="js/team-linked-goals.js?v=20260916-es105"></script><script src="js/goal-templates-data.js?v=20260916-es101"></script><script src="js/goal-edit-ux.js?v=20260916-es109"></script><script src="js/team-visibility-levels.js?v=20260916-es110"></script><script src="js/viral-sharing.js?v=20260916-es121"></script><script src="js/notify-engine.js?v=20260917-es152"></script><script src="js/sanctuary-v3-engine.js?v=20260928-prod-renewal-final"></script>
 <script>
 (function(){
@@ -3556,13 +3557,15 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
     }
 
     var records = (recsRes.data||[]).filter(function(r){ return !r.deleted_at; }).map(function(r){
-      return {
+      var rec = {
         id:r.id, type:r.type, text:r.text, startAt:r.start_at, endAt:r.end_at, createdAt:r.created_at,
         category: r.category || null,
         theme: r.theme || (typeof classifyRecordTheme === 'function' ? classifyRecordTheme(r.text, r.category).theme : 'daily'),
         subTheme: r.sub_theme || null,
         themeConfidence: r.theme_confidence || null
       };
+      /* [#TASK-ES-344] meta(jsonb)에 보존한 goalId·laps·durationMs 등을 기록 객체로 풀어 넣는다 */
+      return window.OurgoalRecordLedger.applyRecordMeta(rec, r.meta);
     });
 
     // 기록 로컬 백업 자동 복구 및 자가 치유 안전망 (#TASK-ES-035)
@@ -3584,15 +3587,18 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         }
       }
     }
+    /* [#TASK-ES-344] 마지막 기록을 지우면 saveProfile 이 백업을 갱신하지 않으므로(recs.length 0), 휴지통에 있는 기록은 로컬 백업 복구에서도 뺀다 */
+    try {
+      var trashedRecIds = window.OurgoalRecordLedger.trashRecordIds(JSON.parse(localStorage.getItem('ourgoal_trash_backup_' + userId) || '[]'));
+      if(trashedRecIds.length && Array.isArray(localCachedRecords)){
+        localCachedRecords = localCachedRecords.filter(function(r){ return !r || trashedRecIds.indexOf(String(r.id)) === -1; });
+      }
+    } catch(e){}
     if((!records || records.length === 0) && localCachedRecords && localCachedRecords.length > 0){
       records = localCachedRecords;
       try {
-        await sb.from('checkins').upsert(records.map(function(r){
-          return {
-            id:r.id, user_id:userId, type:r.type, text:r.text, start_at:r.startAt, end_at:r.endAt,
-            category: r.category || null, theme: r.theme || null, sub_theme: r.subTheme || null,
-            theme_confidence: r.themeConfidence || null
-          };
+        await window.OurgoalRecordLedger.upsertCheckinRows(sb, records.map(function(r){
+          return window.OurgoalRecordLedger.toCheckinRow(r, userId);
         }));
       } catch(e){}
     } else if(records && records.length > 0){
@@ -5091,27 +5097,12 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         try {
           localStorage.setItem('ourgoal_records_backup_' + uidVal, JSON.stringify(recs));
         } catch(e){}
+        /* [#TASK-ES-344] REC-01: goalId·laps·durationMs·durationMinutes·visibility·isSample·title 을 meta(jsonb)에 담아 보낸다.
+           checkins.meta/theme/category 컬럼이 아직 없는 DB에서는 그 칸을 빼고 재시도해 기록 저장이 끊기지 않게 한다(upsertCheckinRows) */
         var recRows = recs.map(function(r){
-          return {
-            id:r.id, user_id:uidVal, type:r.type, text:r.text, start_at:r.startAt, end_at:r.endAt,
-            category: r.category || null,
-            theme: r.theme || null,
-            sub_theme: r.subTheme || null,
-            theme_confidence: r.themeConfidence || null
-          };
+          return window.OurgoalRecordLedger.toCheckinRow(r, uidVal);
         });
-        var upRes = await sb.from('checkins').upsert(recRows);
-        if(upRes && upRes.error && (/category/i.test(upRes.error.message || '') || /theme/i.test(upRes.error.message || ''))){
-          /* checkins.theme/category 컬럼이 아직 없는 DB에서는 레거시 형식으로 재시도해 기록 저장이 끊기지 않게 한다 */
-          await sb.from('checkins').upsert(recRows.map(function(x){
-            var y = Object.assign({}, x);
-            delete y.theme;
-            delete y.sub_theme;
-            delete y.theme_confidence;
-            if(/category/i.test(upRes.error.message || '')) delete y.category;
-            return y;
-          }));
-        }
+        await window.OurgoalRecordLedger.upsertCheckinRows(sb, recRows);
       }
       try {
         localStorage.setItem('ourgoal_profile_backup_' + uidVal, JSON.stringify({
@@ -5204,14 +5195,20 @@ posthog.init('phc_A2ADboXdFdYKeokwiMRWtHmYUWEaCMXBZoT6gKpQpwn2', {
         }
       }
 
+      /* [#TASK-ES-344] REC-01: 서버 기록으로 통째 교체하지 않고 id 기준으로 병합한다.
+         - 로컬에만 있는 미동기화 기록은 보존, 휴지통으로 지운 기록은 서버에 남아 있어도 되살리지 않는다.
+         - 로컬이 비어 있으면 서버 기록 전부가 들어와 기존 '빈 로컬 복구' 동작은 그대로다. */
       if(data.records && data.records.length > 0){
-        var curCount = (state.profile.records || []).length;
-        if(data.records.length > curCount || forceRefresh || curCount === 0){
-          state.profile.records = data.records;
+        var mergedRes = window.OurgoalRecordLedger.mergeServerRecords(state.profile.records || [], data.records, {
+          deletedIds: window.OurgoalRecordLedger.trashRecordIds(getTrashList()),
+          preferServer: !!forceRefresh
+        });
+        if(mergedRes.changed){
+          state.profile.records = mergedRes.records;
           try {
-            localStorage.setItem('ourgoal_records_backup_' + uid, JSON.stringify(data.records));
+            localStorage.setItem('ourgoal_records_backup_' + uid, JSON.stringify(mergedRes.records));
             if(data.targetUserId && data.targetUserId !== uid){
-              localStorage.setItem('ourgoal_records_backup_' + data.targetUserId, JSON.stringify(data.records));
+              localStorage.setItem('ourgoal_records_backup_' + data.targetUserId, JSON.stringify(mergedRes.records));
             }
           } catch(e){}
           updated = true;
