@@ -1,0 +1,83 @@
+{
+  "task": "TASK-ES-393",
+  "what": "기준 사본(origin/main 09f4a99 git archive) 대 작업 트리 — npm test 수치와 js/universal-stats.js 글자를 읽는 tests 2개 출력 비교",
+  "base": {
+    "tree": "git archive 09f4a99 (스크래치, .git 없음). git 을 읽는 시험 줄(goal-templates-data-split·avatar-personas-split 의 기준 커밋 읽기)만 다르게 나와, 같은 커밋의 분리 작업 폴더(git worktree --detach 09f4a99)로 한 번 더 쟀고 그 출력은 작업 트리와 경로 줄 말고 같다",
+    "npmTest": {
+      "smoke": [
+        443,
+        0
+      ],
+      "integrity": [
+        38,
+        38,
+        0
+      ],
+      "buttons": [
+        943,
+        943
+      ],
+      "shipyardModularFiles": 42,
+      "moduleGuard": [
+        34058,
+        669,
+        282,
+        9,
+        0
+      ]
+    }
+  },
+  "work": {
+    "tree": "feat/2026-10-05-task-es-393-stats-test-bundle 작업 트리",
+    "npmTest": {
+      "smoke": [
+        443,
+        0
+      ],
+      "integrity": [
+        38,
+        38,
+        0
+      ],
+      "buttons": [
+        943,
+        943
+      ],
+      "shipyardModularFiles": 42,
+      "moduleGuard": [
+        34058,
+        669,
+        282,
+        9,
+        0
+      ]
+    }
+  },
+  "sameNumbers": true,
+  "smokeTitlesIdentical": true,
+  "smokeTitleCount": 443,
+  "tests": [
+    {
+      "test": "tests/achievement-stats-shell-button-removal.test.js",
+      "sameOutputAfterNormalize": true,
+      "firstLines": [
+        "[TEST START] achievement-stats-shell-button-removal (#TASK-ES-311)",
+        "1. 성취통계 미작동 껍데기 버튼 영구 삭제 및 Zero Dead Click 전수 확인 통과",
+        "2. components.js 직통 액션 핸들러 및 export 검증 통과",
+        "[TEST ERROR] AssertionError [ERR_ASSERTION]: renderCalendar 뷰 전파 확인"
+      ]
+    },
+    {
+      "test": "tests/core-confirm-es374.test.js",
+      "sameOutputAfterNormalize": true,
+      "firstLines": [
+        "[core/confirm] 공용 확인창 통로 시험",
+        "  ok · 능력 등록: ui.confirm(화면) · ui.confirm.bind 를 core/confirm 세포가 준다",
+        "  ok · 정본 있음 · 확인을 누르면 뒤따르는 동작이 1회 실행되고, 본문은 넘긴 문구 그대로다",
+        "  ok · 정본 있음 · 취소를 누르면 동작 0회"
+      ]
+    }
+  ],
+  "testsSame": true,
+  "note": "tests/achievement-stats-shell-button-removal.test.js 는 기준에서도 renderCalendar 뷰 전파 단언(통계 파일과 무관)에서 실패한다 — 기존, 고치지 않음(기대값 변경 금지). 실패 지점·출력이 기준과 같다."
+}

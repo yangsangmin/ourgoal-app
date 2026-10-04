@@ -10,13 +10,29 @@ const assert = require('assert');
 
 console.log('[TEST START] achievement-stats-shell-button-removal (#TASK-ES-311)');
 
+// #TASK-ES-393 (통계 세포 쪼개기 1차 선행): 통계 코드가 js/universal-stats.js 에서 js/stats-*.js 키트 부품(OurgoalUniversalStatsKit 에 함수를 담는 파일)으로 옮겨 가도
+// 같은 단언이 같은 코드를 찾도록 '통계 합본' = js/universal-stats.js(원문 그대로, 맨 앞) + 키트 부품(이름순, 생성기 접두 S.·K. 를 떼고) 를 읽는다. 단언·기대값은 그대로다.
+function listStatsParts(rootDir) {
+  const dir = path.join(rootDir, 'js');
+  return fs.readdirSync(dir).filter((n) => n.indexOf('stats-') === 0 && n.endsWith('.js')).sort()
+    .map((n) => path.join(dir, n)).filter((f) => fs.statSync(f).isFile() && fs.readFileSync(f, 'utf8').indexOf('OurgoalUniversalStatsKit') >= 0);
+}
+function readStatsBundle(rootDir) {
+  const raw = fs.readFileSync(path.join(rootDir, 'js', 'universal-stats.js'), 'utf8');
+  const parts = listStatsParts(rootDir);
+  const src = [raw, ...parts.map((f) => fs.readFileSync(f, 'utf8').replace(/(^|[^A-Za-z0-9_$.])[SK]\.(?=[A-Za-z_$])/g, '$1'))].join('\n');
+  // 합본 맨 앞은 원문 그대로다(원본에서 찾던 글자는 같은 자리에서 찾는다). 부품 파일이 없으면 합본 = 원문.
+  assert.strictEqual(src.slice(0, raw.length), raw, '통계 합본 맨 앞 = js/universal-stats.js 원문');
+  if (parts.length === 0) assert.strictEqual(src, raw, '통계 합본 = js/universal-stats.js (부품 파일이 없을 때)');
+  return src;
+}
 const rootDir = path.resolve(__dirname, '..');
 const htmlPath = path.join(rootDir, 'index.html');
 const uStatsPath = path.join(rootDir, 'js', 'universal-stats.js');
 const jsCompPath = path.join(rootDir, 'js', 'components.js');
 
 const html = fs.readFileSync(htmlPath, 'utf8');
-const uStats = fs.readFileSync(uStatsPath, 'utf8');
+const uStats = readStatsBundle(rootDir);
 const jsComp = fs.readFileSync(jsCompPath, 'utf8');
 
 // 1. universal-stats.js 및 index.html 미작동 껍데기 버튼 및 라벨 부재(Zero Dead Click) 검증
