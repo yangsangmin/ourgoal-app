@@ -48,7 +48,8 @@ function loadApp() {
   const win = {
     console: { log: function () {}, warn: function () {}, error: function () {} },
     state: { profile: { id: ME, displayName: '나', companions: [{ id: PEER, nickname: '상대' }] } },
-    sb: { from: table },
+    // #TASK-ES-397: 피드 공유 DM 푸시는 로그인 세션 토큰이 있을 때만 나간다 — 로그인한 사용자를 흉내 내는 세션 1개
+    sb: { from: table, auth: { getSession: function () { return Promise.resolve({ data: { session: { access_token: 'session-token' } } }); } } },
     fetch: function (url, opts) { pushes.push({ url: url, body: JSON.parse(opts.body) }); return Promise.resolve({ ok: true }); },
     localStorage: { getItem: function () { return null; }, setItem: function () {} },
     openModal: function (html, onMount) {
@@ -61,7 +62,8 @@ function loadApp() {
   };
   win.window = win;
   const ctx = vm.createContext(win);
-  const files = listTeamCommParts(ROOT).map(function (f) { return 'js/' + path.basename(f); }).concat(['js/team-invite-comm.js']);
+  // #TASK-ES-397: 브라우저와 같은 순서로 js/tabs/comm/dm-ledger.js(로그인 세션 토큰 통로)를 팀 부품보다 먼저 읽는다(기준 사본에도 있는 파일)
+  const files = ['js/tabs/comm/dm-ledger.js'].concat(listTeamCommParts(ROOT).map(function (f) { return 'js/' + path.basename(f); }), ['js/team-invite-comm.js']);
   for (const f of files) vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), ctx, { filename: f });
   win.OurgoalTeamInviteComm.init({ toast: function () {} });
   return { win, sent, pushes, buttons };
@@ -85,6 +87,8 @@ const noComments = function (s) { return s.split(/\r?\n/).filter(function (l) { 
     api.openFeedShareModal({ id: 'post_1', name: '작성자', goal: '아침 달리기', action: '5km' });
     assert.strictEqual(app.buttons.length, 1, '동반자 버튼 1개');
     await app.buttons[0].onclick();
+    // #TASK-ES-397: 푸시 요청은 토큰을 받은 뒤(약속 사슬) 나간다 — 남은 약속을 비운 뒤 센다
+    for (let i = 0; i < 5; i++) await new Promise(function (r) { setTimeout(r, 0); });
     assert.strictEqual(app.pushes.length, 1, '푸시 요청 1건');
     assert.strictEqual(app.pushes[0].url, '/api/push-dispatch');
   });
