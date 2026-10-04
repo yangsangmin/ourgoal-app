@@ -371,6 +371,31 @@
         "file": "tests/account-withdrawal-modal.test.js",
         "text": "html.includes('아직 탈퇴 후 자동 파기 기능을 실행하고 있지 않습니다')"
       }
+    },
+    {
+      "id": "C24",
+      "req": "R7",
+      "kind": "behavior",
+      "change": "fix",
+      "symptom": 6,
+      "domain": "ui-behavior",
+      "statement": "설정 탭 보안 카드 요약이 '다른 기기의 접속 목록·위치는 수집하지 않아요'로, 기기 줄이 '이 기기 (지금 사용 중)'으로 보인다(예전에는 '현재 1개의 활성 세션'·'서울, 대한민국')",
+      "touches": [
+        "index.html"
+      ],
+      "scenario": "scenarios/settings-security-card-facts.json"
+    },
+    {
+      "id": "C25",
+      "req": "R9",
+      "kind": "behavior",
+      "change": "new",
+      "domain": "ui-behavior",
+      "statement": "설정 데이터 묶음을 열면 저장 방식 안내가 '로그인하면 목표·기록·프로필은 아워골 서버(Supabase), 설정·캐시는 이 기기'로 보인다",
+      "touches": [
+        "index.html"
+      ],
+      "scenario": "scenarios/settings-storage-note.json"
     }
   ],
   "retire": [
