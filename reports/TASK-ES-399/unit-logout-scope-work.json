@@ -1,0 +1,57 @@
+{
+ "test": "logout-scope-es399",
+ "root": "logout-scope",
+ "total": 12,
+ "passed": 12,
+ "failed": 0,
+ "results": [
+  {
+   "name": "일반 로그아웃(performLogout)은 signOut 을 한 번, { scope: 'local' } 로 부른다(이 기기만)",
+   "ok": true
+  },
+  {
+   "name": "로그아웃은 세션이 있을 때 먼저 이 기기 푸시 구독을 서버에서 지운다(DELETE /api/push-subscribe + 세션 Bearer) — 그 다음 signOut",
+   "ok": true
+  },
+  {
+   "name": "서비스 워커가 준비되지 않아도(ready 가 끝나지 않음) 로그아웃은 막히지 않고 끝난다",
+   "ok": true
+  },
+  {
+   "name": "구독이 없거나 서비스 워커가 없는 브라우저는 구독 요청 0건으로 로그아웃한다",
+   "ok": true
+  },
+  {
+   "name": "서버가 세션을 지운 기기(getUser: 'Auth session missing!')는 끊긴 세션으로 판정되어 로그아웃 화면으로 간다",
+   "ok": true
+  },
+  {
+   "name": "문구는 대소문자를 가리지 않는다('AUTH SESSION MISSING')",
+   "ok": true
+  },
+  {
+   "name": "getUser 오류 응답 401 도 끊긴 세션으로 판정된다",
+   "ok": true
+  },
+  {
+   "name": "잠깐의 네트워크 오류('Failed to fetch', status 0)로는 로그아웃시키지 않는다",
+   "ok": true
+  },
+  {
+   "name": "로그인 직후 60초 안에는 'Auth session missing!' 이어도 로그아웃시키지 않는다(기존 오탐 방어 유지)",
+   "ok": true
+  },
+  {
+   "name": "세션이 살아 있으면(getUser 정상) 로그아웃시키지 않는다",
+   "ok": true
+  },
+  {
+   "name": "인자 없는 signOut()(기본값 global)은 탈퇴(submitWithdrawAccount) 1곳에만 남는다",
+   "ok": true
+  },
+  {
+   "name": "다른 기기 로그아웃은 그대로 { scope: 'others' } 다",
+   "ok": true
+  }
+ ]
+}

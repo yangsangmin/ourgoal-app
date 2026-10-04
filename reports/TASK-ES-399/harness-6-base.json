@@ -1,0 +1,88 @@
+{
+ "tool": "docs/design/harness/real-account-check.js --only (로컬 127.0.0.2 정적 서버 + /api 운영 전달)",
+ "label": "base",
+ "note": "작업자 예비 증거, 판정 아님",
+ "summary": {
+  "통과": 2,
+  "실패": 4,
+  "못 함": 0
+ },
+ "scenarios": [
+  {
+   "id": "RA-CORE-LOGIN",
+   "status": "통과",
+   "evidence": {
+    "distinct": true
+   },
+   "failedStep": null
+  },
+  {
+   "id": "RA-CORE-SWITCH",
+   "status": "통과",
+   "evidence": {
+    "profileIsB": true,
+    "aTextOnB": 0
+   },
+   "failedStep": null
+  },
+  {
+   "id": "RA-COMM-03",
+   "status": "실패",
+   "evidence": {
+    "already": false,
+    "listedNow": true,
+    "afterReload": true,
+    "otherDevice": false
+   },
+   "failedStep": {
+    "step": "다른 기기 목록",
+    "saw": "B 없음"
+   }
+  },
+  {
+   "id": "RA-COMM-04A",
+   "status": "실패",
+   "evidence": {
+    "arrivedOnB": null
+   },
+   "failedStep": {
+    "step": "B 대화",
+    "saw": "45초 안에 B 화면에 A 의 표식 메시지 0건"
+   }
+  },
+  {
+   "id": "RA-COMM-04B",
+   "status": "실패",
+   "evidence": {
+    "whileBOff": {
+     "unread": true,
+     "read": false,
+     "detail": "전송 2026.10.05 오전 8:35:33 · 미확인 (1)"
+    },
+    "bOpened": false,
+    "afterBOpened": null
+   },
+   "failedStep": {
+    "step": "B 가 대화 열기",
+    "saw": "B 화면에 메시지 없음"
+   }
+  },
+  {
+   "id": "RA-SET-01",
+   "status": "실패",
+   "evidence": {},
+   "failedStep": {
+    "step": "다른 기기 로그아웃 버튼",
+    "saw": "#logoutOtherDevicesBtn 없음"
+   }
+  }
+ ],
+ "cleanupLeftover": [
+  {
+   "by": "A",
+   "table": "team_ping_replies",
+   "rows": 2,
+   "reason": "삭제 뒤에도 남음(RLS 로 삭제 불가일 수 있음)"
+  }
+ ]
+}

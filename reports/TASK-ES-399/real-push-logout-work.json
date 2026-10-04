@@ -1,0 +1,65 @@
+{
+ "label": "work",
+ "runTag": "ogtest-es399-202610042302-cpx2",
+ "env": "local 127.0.0.2 static + /api/push-subscribe = local handler of this copy (auth.getUser real Supabase, table in memory) · other /api forwarded to production · test accounts A·B (addresses hidden)",
+ "steps": [
+  {
+   "name": "B 로그인(uid 읽기)",
+   "ok": true,
+   "evidence": {
+    "loggedIn": true
+   }
+  },
+  {
+   "name": "A 로그인",
+   "ok": true,
+   "evidence": {
+    "loggedIn": true
+   }
+  },
+  {
+   "name": "① 앱 구독 등록 요청",
+   "ok": true,
+   "evidence": {
+    "call": "called",
+    "count": 1,
+    "requests": [
+     {
+      "method": "POST",
+      "hasBearer": true,
+      "bodyUserIdIs": "A",
+      "endpointMark": "ogtest-es399-202610042302-cpx2-a",
+      "status": 200,
+      "error": null
+     }
+    ],
+    "rowOwner": "A"
+   }
+  },
+  {
+   "name": "⑤ 로그아웃 버튼 → 이 기기 구독 해제 요청",
+   "ok": true,
+   "evidence": {
+    "authScreen": true,
+    "count": 1,
+    "requests": [
+     {
+      "method": "DELETE",
+      "hasBearer": true,
+      "bodyUserIdIs": null,
+      "endpointMark": "ogtest-es399-202610042302-cpx2-a",
+      "status": 200,
+      "error": null
+     }
+    ],
+    "rowLeftOwner": null
+   }
+  }
+ ],
+ "memRowsAtEnd": [
+  {
+   "owner": "B",
+   "mark": "<run>-b-seed"
+  }
+ ]
+}
