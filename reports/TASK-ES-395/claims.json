@@ -1,0 +1,871 @@
+{
+  "task": "TASK-ES-395",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-395-AVATAR-XP.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "index.html 인라인 IIFE 의 「XP/레벨 시스템」 구간 선언 8개(XP_RULES·XP_LOG_MAX·xpForLevel·levelForXP·levelProgress·triggerAvatarCelebrationPopup·awardXP·notifyXpGained)를 설계 REQ-TASK-ES-384 3-2절 PR-5 대로 js/avatar/xp.js 로 생성기로 옮긴다. 바꾸는 글자는 IIFE 이름 L. 접두와 저장 어댑터뿐, 800줄 이하."
+    },
+    {
+      "id": "R2",
+      "text": "index.html 은 IIFE 머리에서 같은 이름으로 가져온다 — 지급 호출처 21곳·app-scope getter 글자 그대로, window.xpForLevel·levelForXP·levelProgress·triggerAvatarCelebrationPopup·notifyXpGained 대입 줄은 원래 자리. 새 전역 0."
+    },
+    {
+      "id": "R3",
+      "text": "저장 위치는 그대로(state.profile.settings.xp) — 저장을 맡는 어댑터 함수 하나(xpStore)로 모으기만, 서버 원장 이관(K-XP1)은 하지 않는다. 능력 xp.award·xp.read 를 js/core/capabilities.js 에 provide."
+    },
+    {
+      "id": "R4",
+      "text": "증명: git archive 기준 대비 토큰 동일(허용: 가져오기 줄·L. 접두·어댑터), 체크인·마일스톤·퀘스트 지급 후 settings.xp deepStrictEqual 전후, 홈 링·레벨 배지 DOM 동일(게스트), tab-check 홈 기준 2회·후 1회 차이 0, npm test 통과 수 동일, 실계정 체크인 EXP 기준·작업 같음(가능하면)."
+    },
+    {
+      "id": "R5",
+      "text": "신고서 module-specs --write(자리 checkin.after 는 planned), 모듈 가드 기준선 갱신, REQ 8원칙·claims·dev_log·TICKETS 각 1줄, 금고 파일 변경 0, retire·기대값 낮추기 0."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "EXP 세포 xp.js 가 awardXP 를 정의한다",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "  function awardXP(amount, reason){"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "옮긴 awardXP 는 IIFE 의 nowISO 를 app-scope 통로 L. 로 읽는다",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "    xp.log.unshift({ amount: amount, reason: reason, at: L.nowISO() });"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "레벨 곡선 xpForLevel 이 옮기기 전 글자 그대로 xp.js 에 있다",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "    return 50 * (level - 1) * level;"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "저장을 맡는 어댑터 xpStore 가 xp.js 에 하나 있다",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "  function xpStore(create){"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "어댑터의 만들기 갈래는 옮기기 전 awardXP 머리 두 줄과 같은 칸(settings.xp)을 쓴다",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "    if(!L.state.profile.settings.xp) L.state.profile.settings.xp = { total:0, log:[] };"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "awardXP 는 저장 칸을 어댑터로만 얻는다",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "    var xp = xpStore(true);"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "능력 xp.award 를 awardXP 로 provide 한다",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "    caps.provide('xp.award', awardXP, {"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R3",
+      "kind": "static",
+      "domain": "code",
+      "statement": "능력 xp.read 를 readXP 로 provide 한다",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "    caps.provide('xp.read', readXP, {"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "키트는 기존 전역 OurgoalAvatarParts 안의 xp 칸이다(새 전역 0)",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "js/avatar/xp.js",
+        "text": "  var K = AVP.xp = AVP.xp || {};"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html IIFE 머리가 EXP 키트를 읽는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "  var _xp = window.OurgoalAvatarParts.xp;"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 이 awardXP 를 같은 이름으로 가져온다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "  var awardXP = _xp.awardXP;"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 이 XP_RULES 를 같은 이름으로 가져온다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "  var XP_RULES = _xp.XP_RULES;"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 에 awardXP 정의가 남지 않았다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "  function awardXP(amount, reason){"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R1",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 에 levelProgress 정의가 남지 않았다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeNotContains",
+        "file": "index.html",
+        "text": "  function levelProgress(xp){"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "window.notifyXpGained 대입 줄은 index.html 원래 자리에 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "  window.notifyXpGained = notifyXpGained;"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "window.levelProgress 대입 줄은 index.html 에 그대로 있다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "  window.levelProgress = levelProgress;"
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "체크인 지급 호출처 글자 그대로",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "    var xpRes = awardXP(XP_RULES.checkin, '체크인');"
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "app-scope getter awardXP 글자 그대로",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "    get awardXP(){ return awardXP; },"
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R2",
+      "kind": "static",
+      "domain": "code",
+      "statement": "index.html 이 xp.js 를 읽는다",
+      "touches": [
+        "index.html"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "index.html",
+        "text": "<script src=\"js/avatar/xp.js?v=20261005-es395\"></script>"
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "신고서에 EXP 세포 칸이 있다",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/modules.json",
+        "path": "cells.16.file",
+        "equals": "js/avatar/xp.js"
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "EXP 세포 종류는 hybrid",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/modules.json",
+        "path": "cells.16.kind",
+        "equals": "hybrid"
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "EXP 세포 신고서 provides = xp.award·xp.read",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/modules.json",
+        "path": "cells.16.provides",
+        "equals": [
+          "xp.award",
+          "xp.read"
+        ]
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "자리 checkin.after 는 planned 에만",
+      "touches": [
+        "docs/architecture/modules.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/modules.json",
+        "path": "cells.16.planned.contributes",
+        "equals": [
+          "checkin.after"
+        ]
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "모듈 가드 기준선의 index.html 인라인 줄 수가 34,007(전 기준 34,058)",
+      "touches": [
+        "docs/architecture/module-baseline.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/module-baseline.json",
+        "path": "history.19.metrics.inlineScriptLines",
+        "equals": 34007
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "직전 기준선의 index.html 인라인 줄 수는 34,058",
+      "touches": [
+        "docs/architecture/module-baseline.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "docs/architecture/module-baseline.json",
+        "path": "history.18.metrics.inlineScriptLines",
+        "equals": 34058
+      }
+    },
+    {
+      "id": "C26",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "검사 ① 토큰 동일 통과(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-395/verify-avatar-xp.json",
+        "docs/design/harness/module-split/verify-avatar-xp.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/verify-avatar-xp.json",
+        "path": "results.0.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C27",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "검사 ② index.html 줄 동일 통과(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-395/verify-avatar-xp.json",
+        "docs/design/harness/module-split/verify-avatar-xp.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/verify-avatar-xp.json",
+        "path": "results.1.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C28",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "검사 ③ 누수 0·가져오기 통과(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-395/verify-avatar-xp.json",
+        "docs/design/harness/module-split/verify-avatar-xp.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/verify-avatar-xp.json",
+        "path": "results.2.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C29",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "검사 ④ 부품 시험 settings.xp deepStrictEqual 통과(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-395/verify-avatar-xp.json",
+        "docs/design/harness/module-split/verify-avatar-xp.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/verify-avatar-xp.json",
+        "path": "results.3.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C30",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "검사 ④-2 레벨 함수 전수 통과(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-395/verify-avatar-xp.json",
+        "docs/design/harness/module-split/verify-avatar-xp.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/verify-avatar-xp.json",
+        "path": "results.4.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C31",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "검사 ⑤ 능력 xp.award·xp.read 통과(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-395/verify-avatar-xp.json",
+        "docs/design/harness/module-split/verify-avatar-xp.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/verify-avatar-xp.json",
+        "path": "results.5.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C32",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "검사 ⑥ 800줄 이하 통과(작업자 측정)",
+      "touches": [
+        "reports/TASK-ES-395/verify-avatar-xp.json",
+        "docs/design/harness/module-split/verify-avatar-xp.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/verify-avatar-xp.json",
+        "path": "results.6.ok",
+        "equals": true
+      }
+    },
+    {
+      "id": "C33",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "부품 시험이 지급 27단계(빈 칸·기존 값·200건 상한 × 9종)를 기준과 비교했다",
+      "touches": [
+        "reports/TASK-ES-395/verify-avatar-xp.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/verify-avatar-xp.json",
+        "path": "results.3.detail.steps",
+        "equals": 27
+      }
+    },
+    {
+      "id": "C34",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "게스트 화면 132값 기준 대 작업 차이 0",
+      "touches": [
+        "reports/TASK-ES-395/dom-compare-avatar-xp.json",
+        "docs/design/harness/module-split/dom-compare-avatar-xp.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/dom-compare-avatar-xp.json",
+        "path": "differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C35",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "게스트 화면 기준 대 기준 차이 0(측정 흔들림 없음)",
+      "touches": [
+        "reports/TASK-ES-395/dom-compare-avatar-xp-base-vs-base.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/dom-compare-avatar-xp-base-vs-base.json",
+        "path": "differing",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C36",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "레벨 배지를 11단계 모두 그렸다",
+      "touches": [
+        "reports/TASK-ES-395/dom-compare-avatar-xp.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/dom-compare-avatar-xp.json",
+        "path": "present.levelBadgeRow",
+        "equals": "11/11"
+      }
+    },
+    {
+      "id": "C37",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "작업 쪽 마일스톤 완료 뒤 EXP 580·이력 6",
+      "touches": [
+        "reports/TASK-ES-395/dom-compare-avatar-xp.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/dom-compare-avatar-xp.json",
+        "path": "xpTotals.after.9",
+        "equals": "ms-m2-done:580/6"
+      }
+    },
+    {
+      "id": "C38",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "tab-check 홈 기준 1회차 대 2회차 0",
+      "touches": [
+        "reports/TASK-ES-395/tab-compare-base-run1-vs-run2.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/tab-compare-base-run1-vs-run2.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C39",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "tab-check 홈 기준 대 작업 0",
+      "touches": [
+        "reports/TASK-ES-395/tab-compare-base-vs-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/tab-compare-base-vs-after.json",
+        "path": "differingValues",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C40",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "npm test 통과 줄 기준 대 작업 차이 0",
+      "touches": [
+        "reports/TASK-ES-395/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/test-compare.json",
+        "path": "npmTest.passLineDiff",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C41",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "작업 smoke 443 통과 0 실패",
+      "touches": [
+        "reports/TASK-ES-395/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/test-compare.json",
+        "path": "npmTest.smokeAfter",
+        "equals": [
+          443,
+          0
+        ]
+      }
+    },
+    {
+      "id": "C42",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "tests/*.test.js 98개 종료 코드 기준 대 작업 차이 0",
+      "touches": [
+        "reports/TASK-ES-395/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/test-compare.json",
+        "path": "testsDir.exitCodeDiffs",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C43",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "실계정 체크인 EXP 작업 4/4",
+      "touches": [
+        "reports/TASK-ES-395/real-account-avatar-xp-after.json",
+        "docs/design/harness/module-split/real-account-avatar-xp.js"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/real-account-avatar-xp-after.json",
+        "path": "summary.failed",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C44",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "실계정 체크인 EXP 기준 4/4",
+      "touches": [
+        "reports/TASK-ES-395/real-account-avatar-xp-base.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/real-account-avatar-xp-base.json",
+        "path": "summary.failed",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C45",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "실계정 작업: 체크인 한 번에 +40(체크인 10 + 퀘스트 30)",
+      "touches": [
+        "reports/TASK-ES-395/real-account-avatar-xp-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/real-account-avatar-xp-after.json",
+        "path": "measure.gained",
+        "equals": 40
+      }
+    },
+    {
+      "id": "C46",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "실계정 기준: 같은 체크인에 +40",
+      "touches": [
+        "reports/TASK-ES-395/real-account-avatar-xp-base.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/real-account-avatar-xp-base.json",
+        "path": "measure.gained",
+        "equals": 40
+      }
+    },
+    {
+      "id": "C47",
+      "req": "R4",
+      "kind": "static",
+      "domain": "tooling",
+      "statement": "실계정 시험이 서버 checkins 에 남긴 행 0",
+      "touches": [
+        "reports/TASK-ES-395/real-account-avatar-xp-after.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-395/real-account-avatar-xp-after.json",
+        "path": "leftover",
+        "equals": 0
+      }
+    },
+    {
+      "id": "C48",
+      "req": "R4",
+      "kind": "static",
+      "domain": "code",
+      "statement": "생성기가 xp.js 를 쓴다",
+      "touches": [
+        "docs/design/harness/module-split/gen-avatar-xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/gen-avatar-xp.js",
+        "text": "const OUT = path.join(APP, 'js', 'avatar', 'xp.js');"
+      }
+    },
+    {
+      "id": "C49",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "신고서 손 칸 스크립트가 checkin.after 를 planned 로 적는다",
+      "touches": [
+        "docs/design/harness/module-split/spec-avatar-xp.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/design/harness/module-split/spec-avatar-xp.js",
+        "text": "c.planned = { provides: [], contributes: ['checkin.after'] };"
+      }
+    },
+    {
+      "id": "C50",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "REQ 가 8원칙 머리를 갖춘다",
+      "touches": [
+        "docs/specs/REQ-TASK-ES-395-AVATAR-XP.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/specs/REQ-TASK-ES-395-AVATAR-XP.md",
+        "text": "## 6. [원칙 ⑥] 절차 재검증 및 반론 격파"
+      }
+    },
+    {
+      "id": "C51",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "dev_log 1줄",
+      "touches": [
+        "dev_log.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "dev_log.md",
+        "text": "- 2026-10-05 TASK-ES-395:"
+      }
+    },
+    {
+      "id": "C52",
+      "req": "R5",
+      "kind": "static",
+      "domain": "code",
+      "statement": "TICKETS 1줄",
+      "touches": [
+        "docs/rules/TICKETS.md"
+      ],
+      "check": {
+        "type": "codeContains",
+        "file": "docs/rules/TICKETS.md",
+        "text": "- #TASK-ES-395 |"
+      }
+    },
+    {
+      "id": "C53",
+      "req": "R4",
+      "kind": "unverified",
+      "domain": "ui-behavior",
+      "statement": "진짜 폰에서 체크인하면 홈 링·레벨 배지·축하 팝업이 이전과 같이 오른다(PC 헤드리스 게스트·실계정으로는 쟀다)",
+      "touches": [
+        "js/avatar/xp.js"
+      ],
+      "unverified": {
+        "reason": "needs-real-device",
+        "who": "아워골 앱을 쓸 수 있는 사람",
+        "how": [
+          "폰에서 홈 「오늘 실천 완료」 체크인",
+          "축하 팝업 「+10 EXP 획득」과 홈 링·레벨 배지가 오르는지 본다"
+        ]
+      }
+    }
+  ]
+}
