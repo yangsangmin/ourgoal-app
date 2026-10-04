@@ -3,7 +3,7 @@
 // - 소통 피드 「공유」 모달(openFeedShareModal)에서 동반자에게 DM 으로 보내면, 그 메시지가 1:1 대화방 화면·읽음 표시와 같은 대화방 id 에 들어가야 한다.
 // - 대화방 화면은 getDmThreadId(myId, peerId) = 'dm_' + 작은 id + '_' + 큰 id 로 읽는다. 예전 피드 공유는 'dm_' 없이 만들어 그 메시지가 대화방에서 빠졌다.
 // - 앱 파일을 그대로 읽어(브라우저와 같은 순서) 가짜 모달·가짜 Supabase(보낸 행만 기록)로 버튼을 누르고, team_pings.id·team_ping_replies.ping_id 를 잰다.
-// 사용: node <이 시험 파일> [저장소 뿌리 경로] — 기준 커밋 사본(git archive)을 넘기면 그 사본을 잰다.
+// 사용: node <이 시험 파일> [저장소 뿌리 경로] [결과 JSON 경로] — 기준 커밋 사본(git archive)을 넘기면 그 사본을 잰다.
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
@@ -83,5 +83,6 @@ function check(name, fn) {
   const fail = results.filter(function (r) { return !r.ok; });
   for (const r of results) console.log((r.ok ? '  ok   ' : '  FAIL ') + r.name + (r.ok ? '' : ' — ' + r.err));
   console.log('feed-share-dm-thread: ' + (results.length - fail.length) + '/' + results.length + ' (root: ' + path.basename(ROOT) + ')');
+  if (process.argv[3]) fs.writeFileSync(process.argv[3], JSON.stringify({ test: 'feed-share-dm-thread-es382', root: path.basename(ROOT), total: results.length, passed: results.length - fail.length, failed: fail.length, results: results }, null, 1));
   process.exitCode = fail.length ? 1 : 0;
 })();
