@@ -1,7 +1,7 @@
 'use strict';
 // 목표 상세 「+ 최종 결과」 버튼 위치 시험 (#TASK-ES-380)
 // - js/tabs/goals/goal-detail.js 를 그대로 불러, 앱 공용 통로(L)만 가짜로 바꿔 끼우고 목표 상세 마크업을 만든다.
-// - ui.css 의 `#goalDetailBody > .toss-goal-hero-card { display:none !important }` 가 숨기는 카드 안에 #goalResultBtn 이 남아 있으면 실패한다.
+// - ui.css 의 숨김 규칙(선택자 `#goalDetailBody > .toss-goal-hero-card`)이 숨기는 카드 안에 #goalResultBtn 이 남아 있으면 실패한다.
 // - 버튼은 #goalDetailBody 바로 아래 줄(.goal-result-row)에 있고, 문구는 결과 없으면 「+ 최종 결과」, 있으면 「📝 결과 수정」 + 달성률 요약이다.
 // - 편집 모드에서는 버튼을 그리지 않는다(예전과 같다).
 // 사용: node <이 시험 파일> [저장소 뿌리 경로] — 기준 커밋 사본(git archive)을 넘기면 그 사본의 모듈을 잰다.
