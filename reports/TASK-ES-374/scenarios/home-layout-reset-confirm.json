@@ -1,0 +1,117 @@
+{
+  "id": "home-layout-reset-confirm",
+  "title": "게스트가 설정 탭 「앱을 내맘대로!」의 홈 구성 고르기 창에서 기본으로 되돌리기를 누르면 앱 바텀시트 확인창(같은 문구)이 뜨고, 취소하면 홈 구성 창이 그대로 돌아와 계속 쓸 수 있고 · 확인하면 끈 항목이 기본(켜짐)으로 되돌아가고 창이 닫힌다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"settings\"]"
+    },
+    {
+      "do": "click",
+      "selector": "details.settings-group-accordion:has(#homeLayoutOpenBtn) > summary"
+    },
+    {
+      "do": "click",
+      "selector": "#homeLayoutOpenBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalSheet #kf1ResetBtn"
+    },
+    {
+      "do": "click",
+      "selector": "#kf1ResetBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalOverlay.active #btnSheetConfirmCancel"
+    },
+    {
+      "expect": "textContains",
+      "selector": "#modalSheet .sheet-confirm-body p",
+      "text": "홈 구성을 처음 상태로 되돌릴까요?"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#modalSheet #kf1ResetBtn"
+    },
+    {
+      "capture": "home-layout-confirm-sheet"
+    },
+    {
+      "do": "click",
+      "selector": "#btnSheetConfirmCancel"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalOverlay.active #modalSheet #kf1ResetBtn"
+    },
+    {
+      "expect": "notExists",
+      "selector": "#btnSheetConfirmOk"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#modalSheet .switch[data-kf1-id=\"todayGlancePill\"]",
+      "className": "on"
+    },
+    {
+      "do": "click",
+      "selector": "#modalSheet .switch[data-kf1-id=\"todayGlancePill\"]"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#modalSheet .switch[data-kf1-id=\"todayGlancePill\"]",
+      "className": "on"
+    },
+    {
+      "do": "click",
+      "selector": "#kf1ResetBtn"
+    },
+    {
+      "expect": "visible",
+      "selector": "#modalOverlay.active #btnSheetConfirmOk"
+    },
+    {
+      "do": "click",
+      "selector": "#btnSheetConfirmOk"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#modalOverlay"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "click",
+      "selector": "#homeLayoutOpenBtn"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#modalSheet .switch[data-kf1-id=\"todayGlancePill\"]",
+      "className": "on"
+    },
+    {
+      "expect": "noExceptions"
+    }
+  ]
+}

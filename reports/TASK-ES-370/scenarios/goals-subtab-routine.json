@@ -1,0 +1,70 @@
+{
+  "id": "goals-subtab-routine",
+  "title": "목표 탭 위 서브탭 줄에서 루틴을 누르면 루틴 칩이 켜지고 루틴 화면이 보이며, 개인을 누르면 개인 칩이 켜지고 루틴 화면이 다시 숨는다",
+  "steps": [
+    {
+      "do": "goto",
+      "path": "/index.html"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "click",
+      "selector": "#btnLandingPreviewDirect"
+    },
+    {
+      "do": "waitFor",
+      "selector": "#homeAddGoal",
+      "timeoutMs": 15000
+    },
+    {
+      "do": "click",
+      "selector": ".navbtn[data-tab=\"goals\"]"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#btnGoalsSubPersonal",
+      "className": "active"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#routineGoalsView"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubRoutine"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#btnGoalsSubRoutine",
+      "className": "active"
+    },
+    {
+      "expect": "notHasClass",
+      "selector": "#btnGoalsSubPersonal",
+      "className": "active"
+    },
+    {
+      "expect": "visible",
+      "selector": "#routineGoalsView"
+    },
+    {
+      "capture": "routine-subtab"
+    },
+    {
+      "do": "click",
+      "selector": "#btnGoalsSubPersonal"
+    },
+    {
+      "expect": "hasClass",
+      "selector": "#btnGoalsSubPersonal",
+      "className": "active"
+    },
+    {
+      "expect": "notVisible",
+      "selector": "#routineGoalsView"
+    }
+  ]
+}

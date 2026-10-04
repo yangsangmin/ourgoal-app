@@ -12,6 +12,7 @@
   //  L = js/core/app-scope.js — 아직 index.html 인라인 스코프에 있는 공용 상태·함수(state·saveProfile·toast …)를 getter 로 읽는 통로. 값은 읽을 때마다 살아 있는 값이다.
   var U = global.OurgoalUiHelpers || {};
   var L = (global.OurgoalAppScope && global.OurgoalAppScope.scope) || {};
+  var askConfirm = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.confirm.bind')) ? OurgoalCapabilities.request('ui.confirm.bind') : typeof require === 'function' ? require('../../core/confirm.js').bind : function(get){ return function(m){ var o = get(); return Promise.resolve(typeof o === 'function' ? o(m) : false); }; })(function(){ return null; });
   // 설정 키트: 설정 파일끼리 서로 부르는 함수 묶음(전역 이름을 새로 늘리지 않는다)
   var K = global.OurgoalSettingsKit = global.OurgoalSettingsKit || {};
 
@@ -53,7 +54,7 @@
     var disconnBtn = document.getElementById('gcalDisconnectBtn');
     if(disconnBtn){
       disconnBtn.onclick = async function(){
-        if(confirm('구글 캘린더 연동을 해제하시겠습니까?')){
+        if(await askConfirm('구글 캘린더 연동을 해제하시겠습니까?')){
           L.state.googleToken = null;
           try {
             var uid = (L.state.profile && L.state.profile.id) || 'guest';

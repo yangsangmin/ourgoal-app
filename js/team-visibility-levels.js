@@ -17,6 +17,7 @@
   var toast = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.toast.bind')) ? OurgoalCapabilities.request('ui.toast.bind') : typeof require === 'function' ? require('./core/toast.js').bind : function(get){ return function(m){ var o = get(); if(typeof o === 'function') return o(m); }; })(function(){ return _deps && _deps.toast; }); /* #TASK-ES-361: 공용 토스트 통로(js/core/toast.js · ui.toast) — 주입 토스트 우선, 없으면 공용(준비 전이면 대기열) */
   var _modal = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.modal.bind')) ? OurgoalCapabilities.request('ui.modal.bind') : typeof require === 'function' ? require('./core/modal.js').bind : function(get){ return { open: function(h, cb){ var o = get(); if(o && typeof o.openModal === 'function') return o.openModal(h, cb); }, close: function(){ var o = get(); if(o && typeof o.closeModal === 'function') return o.closeModal(); } }; })(function(){ return _deps; }); /* #TASK-ES-363: 공용 모달 통로(js/core/modal.js · ui.modal) — 주입 openModal/closeModal 우선, 없으면 정본(준비 전이면 대기열) */
   var openModal = _modal.open, closeModal = _modal.close;
+  var askConfirm = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.confirm.bind')) ? OurgoalCapabilities.request('ui.confirm.bind') : typeof require === 'function' ? require('./core/confirm.js').bind : function(get){ return function(m){ var o = get(); return Promise.resolve(typeof o === 'function' ? o(m) : false); }; })(function(){ return _deps && _deps.confirm; });
   function triggerHaptic(ms){ if(_deps.triggerHaptic) _deps.triggerHaptic(ms); else if(global.triggerHaptic) global.triggerHaptic(ms); }
   function esc(s){
     if(s == null) return '';
@@ -72,7 +73,6 @@
     if(global.teamCommentsBlockHtml) return global.teamCommentsBlockHtml(gid, targetId);
     return '';
   }
-
   /* ------------------------------------------------------------
    * 1. 팀 통합 수준 & 목표별 수준 데이터 헬퍼
    * ------------------------------------------------------------ */
@@ -260,7 +260,7 @@
       });
 
       sheet.querySelector('#modalDelLgBtn').addEventListener('click', async function(){
-        if(!confirm('정말 "' + lg.name + '" 조와 속한 모든 목표/할일을 삭제할까요?')) return;
+        if(!(await askConfirm('정말 "' + lg.name + '" 조와 속한 모든 목표/할일을 삭제할까요?'))) return;
         var p = getProfile();
         p.settings = p.settings || {};
         if(tgid){

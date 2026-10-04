@@ -14,7 +14,7 @@
 
 (function(global) {
   'use strict';
-
+  var askConfirm = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.confirm.bind')) ? OurgoalCapabilities.request('ui.confirm.bind') : typeof require === 'function' ? require('./core/confirm.js').bind : function(get){ return function(m){ var o = get(); return Promise.resolve(typeof o === 'function' ? o(m) : false); }; })(function(){ return null; });
   // 내부 상태 객체
   var tracker = {
     isOpen: false,
@@ -305,18 +305,18 @@
     var d = tracker.dom;
 
     // 1. 모드 탭 (스톱워치 / 타이머 전환)
-    d.tabStopwatch.onclick = function() {
+    d.tabStopwatch.onclick = async function() {
       if (tracker.mode === 'stopwatch') return;
       if (tracker.state !== 'idle') {
-        if (!confirm('현재 측정을 초기화하고 스톱워치로 변경하시겠습니까?')) return;
+        if (!(await askConfirm('현재 측정을 초기화하고 스톱워치로 변경하시겠습니까?'))) return;
       }
       switchMode('stopwatch');
     };
 
-    d.tabTimer.onclick = function() {
+    d.tabTimer.onclick = async function() {
       if (tracker.mode === 'timer') return;
       if (tracker.state !== 'idle') {
-        if (!confirm('현재 측정을 초기화하고 타이머로 변경하시겠습니까?')) return;
+        if (!(await askConfirm('현재 측정을 초기화하고 타이머로 변경하시겠습니까?'))) return;
       }
       switchMode('timer');
     };

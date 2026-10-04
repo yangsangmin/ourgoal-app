@@ -13,6 +13,7 @@
   /* #TASK-ES-361 (CORE-10): 예전 통로는 init 전에 불리면 자기 자신을 다시 불러(재귀) 오류가 try/catch 에 묻혀 토스트가 안 떴다.
    * 공용 토스트 통로(js/core/toast.js · ui.toast) 하나로 — 주입(_ctx.toast) 우선, 없으면 공용(정본 준비 전이면 대기열). */
   var showToast = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.toast.bind')) ? OurgoalCapabilities.request('ui.toast.bind') : typeof require === 'function' ? require('./core/toast.js').bind : function(get){ return function(m){ var o = get(); if(typeof o === 'function') return o(m); }; })(function(){ return _ctx && _ctx.toast; });
+  var askConfirm = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.confirm.bind')) ? OurgoalCapabilities.request('ui.confirm.bind') : typeof require === 'function' ? require('./core/confirm.js').bind : function(get){ return function(m){ var o = get(); return Promise.resolve(typeof o === 'function' ? o(m) : false); }; })(function(){ return _ctx && _ctx.confirm; });
   function getAppToast(){ return showToast; }
   function getAppOpenModal(){ return _ctx.openModal || global.openModal; }
   function getAppCloseModal(){ return _ctx.closeModal || global.closeModal; }
@@ -22,7 +23,6 @@
   function getAppNowISO(){ return (_ctx.nowISO ? _ctx.nowISO() : (global.nowISO ? global.nowISO() : new Date().toISOString())); }
   function getAppMockPeople(){ return _ctx.MOCK_PEOPLE || global.MOCK_PEOPLE || []; }
   function getAppCloneTemplate(){ return _ctx.cloneTemplate || global.cloneTemplate || (typeof window !== 'undefined' ? window.cloneTemplate : null); }
-
   function esc(s){
     if(s == null) return '';
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -1026,7 +1026,7 @@
    * 4. 소통탭 공유창 1:1 '외부sns 소통용 카드 제작하기' & 3대 버튼
    * ------------------------------------------------------------ */
   async function postShareCardToFeed(g, lastRec, canvasDataUrl){
-    if(!confirm('아워골 피드에 게시할까요?')) return;
+    if(!(await askConfirm('아워골 피드에 게시할까요?'))) return;
 
     var postId = 'post_' + (global.newId ? global.newId() : Date.now());
     var prof = (global.state && global.state.profile) || {};
@@ -3227,7 +3227,7 @@
         var uid = btn.dataset.delcomp;
         var comp = companions.find(function(x){ return String(x.id || '').trim().toLowerCase() === String(uid || '').trim().toLowerCase(); });
         var name = comp ? comp.nickname : '해당 동반자';
-        if(!confirm(name + '님과의 동반자 관계를 해제하시겠습니까?')) return;
+        if(!(await askConfirm(name + '님과의 동반자 관계를 해제하시겠습니까?'))) return;
         state.profile.companions = companions.filter(function(x){ return String(x.id || '').trim().toLowerCase() !== String(uid || '').trim().toLowerCase(); });
         try { if(global.saveProfile) await global.saveProfile(); } catch(e){}
         try { persistCompanions(); } catch(pErr){ console.warn('[동반자] persistCompanions 오류(무시):', pErr); }

@@ -67,6 +67,8 @@ grep -ohE 'id="[A-Za-z]*(BottomSheet|Sheet)"' index.html | sort -u              
 2. **`js/ui/sheet.js`** — `openModal`·`closeModal`(뒤로가기 history 처리 포함)을 옮기고 `ui.sheet` 능력. 모달 연결 통로 4 → 0.
    - (TASK-ES-363) 통로 쪽은 끝났다: `js/core/modal.js` 가 `ui.modal`·`ui.modal.close`·`ui.modal.bind` 를 주고 모달 연결 통로 4 → 0. 남은 일은 정본을 `js/ui/sheet.js` 로 옮기는 것뿐이며 `attach({ open, close })` 자리로 열어 두었다.
 3. **`js/ui/confirm.js`** — `openBottomSheetConfirm`·`openBottomSheetAlert` 를 `ui.confirm`·`ui.alert` 로. 기본 `confirm()` 41 을 탭 이전 단계마다 그 탭 몫씩 바꾼다(삭제·탈퇴 확인처럼 되돌릴 수 없는 동작은 문구를 바꾸지 않는다).
+   - (TASK-ES-374) 1단계 끝: `js/core/confirm.js` 가 `ui.confirm`·`ui.confirm.bind` 를 주고(그리기는 index.html 정본 `openBottomSheetConfirm`, 정본 없으면 기본 확인창), index.html 밖 기본 확인창 15 → 0. 남은 일은 index.html 26곳(2단계 순서는 REQ-TASK-ES-374)과 정본을 `js/ui/confirm.js` 로 옮기는 것(`attach(fn)` 자리).
+   - (TASK-ES-376) 2단계 끝: index.html 인라인 스크립트 19곳이 `OurgoalCapabilities.call('ui.confirm', 문구)` 로 정본 바텀시트를 띄운다(문구 그대로, 줄 수 증가 0). 기본 확인창 26 → 7 — 남은 7곳은 목표 탭(index.html 루틴 삭제 2 · js/tabs/goals 5)으로 목표 탭 세포 이전과 같이 바꾼다. 24953 계열 「결과를 먼저 입력할까요?」는 취소가 곧 동작이라 3갈래 처리가 필요하다.
 4. **덮개 9 흡수** — 직접 만든 덮개를 `ui.sheet` 로 바꾸되, 체크인 직후 시트(`showCheckinFeedbackSheet`)는 `checkin.after` 자리의 기여로 옮긴다.
 5. **칩** — 칩 클래스 52종을 `js/ui/chip.js` + 한 벌 CSS 로 모으는 것은 디자인 토큰 결정이 필요해 마지막(보기 차이는 사람 눈 확인 — `visual-quality`).
 

@@ -5,7 +5,7 @@
  * 규칙(상민님 2026-10-04 승인 방향):
  *   1. 정식 Supabase 로그인 세션이 있으면 그 세션 uid 로만 연다(입력값·다른 uid 무시). 백업은 그 uid 의 것만 읽힌다.
  *   2. 세션이 없으면 열지 않는다(needs-login) — 화면은 정식 로그인(카카오·구글·이메일)으로 안내한다.
- *   3. 예외 한 갈래: 개발용 테스터 B 직통(호출자가 uid 를 명시, 운영 화면에서는 버튼이 제거됨).
+ *   3. 예외 한 갈래: 개발용 테스터 B 직통(호출자가 uid 를 명시) — [#TASK-ES-372] 로컬 개발 호스트(devHost true)일 때만.
  *   [#TASK-ES-373] 구글 이메일 갈래(provider:'google' + 이메일 → u_ uid)는 없앴다. 이메일은 브라우저가 서명 검증 없이
  *   푼 값이라 신원 증명이 아니다. 구글 로그인은 js/google-session-guard.js 로 Supabase 검증 세션을 받아 1번 갈래로만 들어온다.
  *   이 기기의 다른 사람 백업 키를 훑어 uid 를 고르는 길은 어느 갈래에도 없다. */
@@ -19,17 +19,30 @@
     return v !== undefined && v !== null && String(v) !== '';
   }
 
-  /* opt: { sessionUid, explicitUid } (provider·verifiedEmail 을 받아도 입장 근거로 쓰지 않는다)
+  /* opt: { sessionUid, explicitUid, devHost } (provider·verifiedEmail 을 받아도 입장 근거로 쓰지 않는다)
    * 돌려줌: { allow, uid, deriveFromEmail(항상 null), reason } — uid 를 정할 수 없으면 allow=false, reason='needs-login' */
   function resolveDirectLoginTarget(opt) {
     var o = opt || {};
     if (present(o.sessionUid)) {
       return { allow: true, uid: String(o.sessionUid), deriveFromEmail: null, reason: 'session' };
     }
-    if (present(o.explicitUid)) {
+    if (present(o.explicitUid) && o.devHost === true) {
       return { allow: true, uid: String(o.explicitUid), deriveFromEmail: null, reason: 'explicit-tester' };
     }
     return { allow: false, uid: null, deriveFromEmail: null, reason: 'needs-login' };
+  }
+
+  /* [#TASK-ES-372] 개발용 직통 입장(테스터 B)은 로컬 개발 호스트에서만 연다.
+   * 결함(PR #686 빌더 발견): 운영 주소에 ?debug=true 를 붙이면 테스터 B 버튼이 보이고 인증 없이 테스터 B uid 로 들어갔다.
+   * 허용: localhost, 127.0.0.1, [::1], *.localhost. 그 밖(운영·미리보기 주소)은 쿼리와 상관없이 막는다. */
+  var LOCAL_DEV_HOSTS = ['localhost', '127.0.0.1', '[::1]', '::1'];
+  var LOCAL_DEV_SUFFIX = '.localhost';
+
+  function isLocalDevHost(hostname) {
+    var h = String(hostname || '').trim().toLowerCase().replace(/\.$/, '');
+    if (!h) return false;
+    if (LOCAL_DEV_HOSTS.indexOf(h) !== -1) return true;
+    return h.length > LOCAL_DEV_SUFFIX.length && h.slice(-LOCAL_DEV_SUFFIX.length) === LOCAL_DEV_SUFFIX;
   }
 
   /* 이 uid 의 백업 키 중 이 기기에 남아 있는 것(다른 uid 키는 보지 않는다) */
@@ -63,7 +76,8 @@
     NEEDS_LOGIN_MESSAGE: NEEDS_LOGIN_MESSAGE,
     resolveDirectLoginTarget: resolveDirectLoginTarget,
     ownBackupKeys: ownBackupKeys,
-    guideToFormalLogin: guideToFormalLogin
+    guideToFormalLogin: guideToFormalLogin,
+    isLocalDevHost: isLocalDevHost
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (root) root.OurgoalDirectLoginGuard = api;

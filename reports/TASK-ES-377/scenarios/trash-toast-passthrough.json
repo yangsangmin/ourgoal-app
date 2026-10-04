@@ -1,0 +1,33 @@
+{
+  "id": "trash-toast-passthrough",
+  "title": "게스트가 기록 카드를 휴지통으로 옮긴 직후(되돌리기 안내가 떠 있는 6초 안에) 설정 탭의 「데이터 백업 & 고급 설정」 아코디언 제목을 누르면 아코디언이 열리고, 안내의 「실행 취소」는 그대로 눌려 기록이 되돌아온다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "do": "click", "selector": "#recQuickDockBar button[onclick*=\"recUniversalTopBanner\"]" },
+    { "do": "click", "selector": "#recImportBannerBtn" },
+    { "do": "click", "selector": "#modalSheet [data-quick-sample=\"hyrox\"]" },
+    { "expect": "notVisible", "selector": "#modalOverlay" },
+    { "do": "click", "selector": "#screen-records button[onclick*=\"setRecMode('feed')\"]" },
+    { "expect": "visible", "selector": "#recordsList [data-recid=\"samp_hyrox_total_0\"]" },
+    { "do": "click", "selector": "#recordsList [data-recid=\"samp_hyrox_total_0\"] [data-recdel]" },
+    { "expect": "visible", "selector": "#modalOverlay.active #btnSheetConfirmOk" },
+    { "do": "click", "selector": "#btnSheetConfirmOk" },
+    { "expect": "notExists", "selector": "#recordsList [data-recid=\"samp_hyrox_total_0\"]" },
+    { "expect": "textContains", "selector": "#trashUndoToast", "text": "실행 취소" },
+    { "expect": "style", "selector": "#trashUndoToast", "prop": "pointer-events", "equals": "none" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"settings\"]" },
+    { "do": "click", "selector": "#setGroupDataSummary" },
+    { "expect": "textContains", "selector": "#btnOpenTrashModal", "text": "1개 보관 중" },
+    { "expect": "visible", "selector": "#trashUndoToast #btnTrashUndoAction" },
+    { "capture": "accordion-open-while-undo-toast" },
+    { "do": "click", "selector": "#btnTrashUndoAction" },
+    { "expect": "notExists", "selector": "#trashUndoToast" },
+    { "do": "click", "selector": ".navbtn[data-tab=\"records\"]" },
+    { "expect": "visible", "selector": "#recordsList [data-recid=\"samp_hyrox_total_0\"]" },
+    { "expect": "noExceptions" }
+  ]
+}

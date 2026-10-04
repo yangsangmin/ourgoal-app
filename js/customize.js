@@ -9,6 +9,7 @@
  */
 (function(root){
   'use strict';
+  var askConfirm = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.confirm.bind')) ? OurgoalCapabilities.request('ui.confirm.bind') : typeof require === 'function' ? require('./core/confirm.js').bind : function(get){ return function(m){ var o = get(); return Promise.resolve(typeof o === 'function' ? o(m) : false); }; })(function(){ return null; });
 
   var WHITELIST = [
     { id: 'levelBadgeRow',        label: '아바타 & 레벨 배지',      hint: '내 아바타, 레벨, 경험치 바 (상단 고정)', fixed: true },
@@ -202,8 +203,8 @@
         sw.onkeydown = function(e){ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggle(); } };
       });
       var resetBtn = sheet.querySelector('#kf1ResetBtn');
-      if(resetBtn) resetBtn.onclick = function(){
-        if(!confirm('홈 구성을 처음 상태로 되돌릴까요?')) return;
+      if(resetBtn) resetBtn.onclick = async function(){
+        if(!(await askConfirm('홈 구성을 처음 상태로 되돌릴까요?'))) return;
         settings.homeLayout = { hidden: [], version: 1 };
         leaveCustomMode();
         persist();
