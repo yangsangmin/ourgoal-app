@@ -1,0 +1,419 @@
+{
+  "task": "TASK-ES-403",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-403-TEAM-GOALS-TEST-BUNDLE.md",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "scripts/smoke-test.js(13곳)와 tests 3개(부재 단언)가 팀 목표 세 파일(team-visibility-levels·team-leader-check·team-linked-goals)의 글자를 「팀 목표 합본」(원본 원문 맨 앞 + js/ 바로 아래 OurgoalTeamGoalsKit 표식·원본 칸 대입이 있는 team-*.js 부품, 이름순, 부품만 T.·K. 접두 제거)에서 읽는다. 단언 문장·기대값·검사 수 변경 0, 제품 코드 0, 금고 파일 0. 합본 맨 앞 = 원문 단언."
+    },
+    {
+      "id": "R2",
+      "text": "전후 측정: 기준(git archive) 대 작업 npm test 수치·smoke 검사 제목·결과 동일, tests 종료 코드 동일, 모의 이전 트리에서 기준 시험지는 깨지고 새 시험지는 통과."
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "팀 목표 합본 칸 = 원본 3개 → 키트 칸 이름",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "const TEAM_GOALS_KIT_SLOTS = { 'team-visibility-levels.js': 'visibilityLevels', 'team-leader-check.js': 'leaderCheck', 'team-linked-goals.js': 'linkedGoals' };",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C2",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품 = OurgoalTeamGoalsKit 표식과 그 원본 칸 대입이 있는 js/team-*.js",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "    return t.indexOf('OurgoalTeamGoalsKit') >= 0 && t.indexOf('KIT.' + slot + ' = ') >= 0;",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C3",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "합본 = 원본 원문(맨 앞) + 부품(T.·K. 접두 제거)",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const src = [raw, ...parts.map(readTeamPartFile)].join('\\n');",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C4",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "합본 맨 앞 = 원본 원문 단언",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  assert.strictEqual(src.slice(0, raw.length), raw, '팀 목표 합본 맨 앞 = ' + path.basename(origFile) + ' 원문');",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C5",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "부품이 없으면 합본 = 원문 단언",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  if (parts.length === 0) assert.strictEqual(src, raw, '팀 목표 합본 = ' + path.basename(origFile) + ' (부품 파일이 없을 때)');",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C6",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "파일 머리에서 세 원본 합본을 한 번씩 단언(check 밖 — 검사 수 불변)",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "Object.keys(TEAM_GOALS_KIT_SLOTS).forEach(n => readTeamGoalsBundle(path.join(__dirname, '..', 'js', n)));",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C7",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ES-026 팀장 점검 모듈 글자 검사가 합본을 읽음",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const src = readTeamGoalsBundle(modPath);",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C8",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ES-169 팀장 도장 영속화 글자 검사가 합본을 읽음",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const leaderSrc = readTeamGoalsBundle(path.join(__dirname, '..', 'js', 'team-leader-check.js'));",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C9",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ES-174 팀 연계·수준관리 글자 검사가 합본을 읽음",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const teamLinkedSrc = readTeamGoalsBundle(path.join(__dirname, '..', 'js', 'team-linked-goals.js'));",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C10",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ES-109 팀 연계 편집 완료 글자 검사가 합본을 읽음",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const teamLinked = readTeamGoalsBundle(teamLinkedPath);",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C11",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "ES-107 팀 연계 모듈 글자 검사(잔디 부재 포함)가 합본을 읽음",
+      "touches": [
+        "scripts/smoke-test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "  const moduleContent = readTeamGoalsBundle(modulePath);",
+        "file": "scripts/smoke-test.js"
+      }
+    },
+    {
+      "id": "C12",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "core-confirm: 팀 목표 두 파일의 confirm( 부재 단언이 합본을 봄",
+      "touches": [
+        "tests/core-confirm-es374.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "        : TEAM_GOALS_KIT_SLOTS[path.basename(f)] ? readTeamGoalsBundle(ROOT, path.basename(f)).split(/\\r?\\n/).filter(l => !/^\\s*(\\/\\/|\\/?\\*)/.test(l)).join('\\n')",
+        "file": "tests/core-confirm-es374.test.js"
+      }
+    },
+    {
+      "id": "C13",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "core-toast: 자체 토스트 함수 부재 단언이 합본을 봄",
+      "touches": [
+        "tests/core-toast-es361.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "      const scan = f === 'team-invite-comm' ? readTeamCommBundle(ROOT) : TEAM_GOALS_KIT_SLOTS[f + '.js'] ? readTeamGoalsBundle(ROOT, f + '.js') : src;",
+        "file": "tests/core-toast-es361.test.js"
+      }
+    },
+    {
+      "id": "C14",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "core-modal: function openModal 부재 단언이 합본을 봄",
+      "touches": [
+        "tests/core-modal-es363.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "      const src = TEAM_GOALS_KIT_SLOTS[f + '.js'] ? readTeamGoalsBundle(ROOT, f + '.js') : fs.readFileSync(path.join(ROOT, 'js', f + '.js'), 'utf8');",
+        "file": "tests/core-modal-es363.test.js"
+      }
+    },
+    {
+      "id": "C15",
+      "req": "R1",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests 3개의 합본 함수: 부품 = 표식과 칸 대입이 있는 파일",
+      "touches": [
+        "tests/core-modal-es363.test.js"
+      ],
+      "check": {
+        "type": "codeContains",
+        "text": "    .filter((f) => { if (!fs.statSync(f).isFile()) return false; const t = fs.readFileSync(f, 'utf8'); return t.indexOf('OurgoalTeamGoalsKit') >= 0 && t.indexOf('KIT.' + slot + ' = ') >= 0; });",
+        "file": "tests/core-modal-es363.test.js"
+      }
+    },
+    {
+      "id": "C16",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준 대 작업 smoke 검사 제목 목록 동일",
+      "touches": [
+        "reports/TASK-ES-403/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-403/test-compare.json",
+        "path": "smokeTitlesIdentical",
+        "equals": true
+      }
+    },
+    {
+      "id": "C17",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준 대 작업 smoke 결과 목록 동일",
+      "touches": [
+        "reports/TASK-ES-403/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-403/test-compare.json",
+        "path": "smokeResultsIdentical",
+        "equals": true
+      }
+    },
+    {
+      "id": "C18",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 smoke 443 통과 0 실패",
+      "touches": [
+        "reports/TASK-ES-403/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-403/test-compare.json",
+        "path": "work.npmTest.smoke",
+        "equals": [
+          443,
+          0
+        ]
+      }
+    },
+    {
+      "id": "C19",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "기준 smoke 443 통과 0 실패",
+      "touches": [
+        "reports/TASK-ES-403/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-403/test-compare.json",
+        "path": "base.npmTest.smoke",
+        "equals": [
+          443,
+          0
+        ]
+      }
+    },
+    {
+      "id": "C20",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 무결성 38/38",
+      "touches": [
+        "reports/TASK-ES-403/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-403/test-compare.json",
+        "path": "work.npmTest.integrity",
+        "equals": [
+          38,
+          38
+        ]
+      }
+    },
+    {
+      "id": "C21",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "작업 버튼 943/943",
+      "touches": [
+        "reports/TASK-ES-403/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-403/test-compare.json",
+        "path": "work.npmTest.buttons",
+        "equals": [
+          943,
+          943
+        ]
+      }
+    },
+    {
+      "id": "C22",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "tests 100개 + test-team-linked-goals 종료 코드 기준과 같음",
+      "touches": [
+        "reports/TASK-ES-403/test-compare.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-403/test-compare.json",
+        "path": "testsExitCodesIdentical",
+        "equals": true
+      }
+    },
+    {
+      "id": "C23",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 이전 트리: 기준 시험지 440/443",
+      "touches": [
+        "reports/TASK-ES-403/mock-move.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-403/mock-move.json",
+        "path": "oldSheet.smoke",
+        "equals": [
+          440,
+          3
+        ]
+      }
+    },
+    {
+      "id": "C24",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 이전 트리: 새 시험지 443/443",
+      "touches": [
+        "reports/TASK-ES-403/mock-move.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-403/mock-move.json",
+        "path": "newSheet.smoke",
+        "equals": [
+          443,
+          0
+        ]
+      }
+    },
+    {
+      "id": "C25",
+      "req": "R2",
+      "kind": "static",
+      "domain": "config",
+      "statement": "모의 이전 트리: 새 시험지에서 tests 종료 코드 기준과 같음",
+      "touches": [
+        "reports/TASK-ES-403/mock-move.json"
+      ],
+      "check": {
+        "type": "jsonPath",
+        "file": "reports/TASK-ES-403/mock-move.json",
+        "path": "newSheet.testsExitCodesIdentical",
+        "equals": true
+      }
+    }
+  ]
+}
