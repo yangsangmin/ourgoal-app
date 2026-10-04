@@ -110,4 +110,4 @@ function fakeClient() {
   });
 
   console.log('게스트 실시간 구독 null 가드: ' + n + '건 모두 통과');
-})().catch(function (e) { console.error(e); process.exit(1); });
+})().catch(function (e) { console.error(e); process.exitCode = 1; });

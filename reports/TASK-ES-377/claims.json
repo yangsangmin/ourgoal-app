@@ -31,14 +31,14 @@
       "touches": [
         "index.html"
       ],
-      "scenario": "scenarios/guest-boot-realtime.json"
+      "scenario": "scenarios/guest-boot-channel.json"
     },
     {
       "id": "C2",
       "req": "R1",
       "kind": "static",
       "domain": "logic",
-      "statement": "setupTeamCommentsRealtime 은 Supabase 클라이언트(sb)나 sb.channel 이 없으면 구독 없이 바로 돌아간다",
+      "statement": "팀 댓글 구독 함수는 Supabase 클라이언트(sb)나 sb.channel 이 없으면 채널을 열지 않고 바로 돌아간다",
       "touches": [
         "index.html"
       ],
@@ -53,7 +53,7 @@
       "req": "R2",
       "kind": "static",
       "domain": "logic",
-      "statement": "같은 패턴 1: setupFeedPostsRealtime 도 sb·sb.channel 이 없으면 바로 돌아간다",
+      "statement": "같은 패턴 1: 피드 게시물 구독 함수도 sb·sb.channel 이 없으면 채널을 열지 않고 바로 돌아간다",
       "touches": [
         "index.html"
       ],
@@ -68,7 +68,7 @@
       "req": "R2",
       "kind": "static",
       "domain": "logic",
-      "statement": "같은 패턴 2: setupUserSessionRealtime 은 sb·sb.channel 이 없거나 프로필 id 가 없으면 바로 돌아간다",
+      "statement": "같은 패턴 2: 사용자 세션(원격 로그아웃) 구독 함수는 sb·sb.channel 이 없거나 프로필 id 가 없으면 바로 돌아간다",
       "touches": [
         "index.html"
       ],
@@ -141,15 +141,15 @@
       "req": "R4",
       "kind": "static",
       "domain": "config",
-      "statement": "부품 시험 tests/guest-realtime-es377.test.js 를 npm test 경로(scripts/test-shipyard-modular.js)에 등록했다",
+      "statement": "부품 시험 tests/guest-null-client-es377.test.js 를 npm test 경로(scripts/test-shipyard-modular.js)에 등록했다",
       "touches": [
         "scripts/test-shipyard-modular.js",
-        "tests/guest-realtime-es377.test.js"
+        "tests/guest-null-client-es377.test.js"
       ],
       "check": {
         "type": "codeContains",
         "file": "scripts/test-shipyard-modular.js",
-        "text": "  runNode('tests/guest-realtime-es377.test.js');"
+        "text": "  runNode('tests/guest-null-client-es377.test.js');"
       }
     }
   ]

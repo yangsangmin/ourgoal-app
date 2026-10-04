@@ -10,7 +10,7 @@
 
 ## REQ
 
-- 대상 파일: `index.html`(인라인 스크립트 6줄을 같은 줄 수로 고침 — 새 함수·새 전역·새 줄 0) · `tests/guest-realtime-es377.test.js`(신규) · `scripts/test-shipyard-modular.js`(1줄 등록) · `dev_log.md` · `docs/rules/TICKETS.md`
+- 대상 파일: `index.html`(인라인 스크립트 6줄을 같은 줄 수로 고침 — 새 함수·새 전역·새 줄 0) · `tests/guest-null-client-es377.test.js`(신규) · `scripts/test-shipyard-modular.js`(1줄 등록) · `dev_log.md` · `docs/rules/TICKETS.md`
 - sb 없이 `.channel` 을 부르던 곳 목록(지금 main 70db18a 기준):
 
 | 위치 | 함수 | 이전 | 고침 |
@@ -50,10 +50,10 @@ index.html 6줄 같은 줄 수로 수정 → 부품 시험(실제 소스 잘라 
 완료 — 커밋 참조.
 
 ## 8. [원칙 ⑧] 성과 측정
-- 부품 시험 `tests/guest-realtime-es377.test.js` 5건: 기준 커밋 소스에서는 첫 검사가 `Cannot read properties of null (reading 'channel')` 로 실패, 작업 커밋에서 5건 통과.
+- 부품 시험 `tests/guest-null-client-es377.test.js` 5건: 기준 커밋 소스에서는 첫 검사가 `Cannot read properties of null (reading 'channel')` 로 실패, 작업 커밋에서 5건 통과.
 - 시나리오 `trash-toast-passthrough`: 기준 커밋 17단계(`pointer-events="auto"`)에서 멈춤, 작업 커밋 전 단계 통과(아코디언 열림 → 실행 취소 → 기록 복귀).
 - 모듈 가드: ① 34806 · ② 686 · ③ 282 그대로.
 * 체크리스트 마감 규칙: [4단계: 심사 청구]까지만 등록.
 
 ## 확인 못 한 것
-- 법정은 supabase 라이브러리 고정 사본을 넣어 앱을 열기 때문에 법정 안에서는 `sb` 가 null 이 아니다 → 게스트 입장 시나리오(`guest-boot-realtime`)는 기준 커밋에서도 통과한다("고칠 게 없었음"으로 나올 수 있음). sb=null 경로는 부품 시험으로만 잰다.
+- 법정은 supabase 라이브러리 고정 사본을 넣어 앱을 열기 때문에 법정 안에서는 `sb` 가 null 이 아니다 → 게스트 입장 시나리오(`guest-boot-channel`)는 기준 커밋에서도 통과한다("고칠 게 없었음"으로 나올 수 있음). sb=null 경로는 부품 시험으로만 잰다.
