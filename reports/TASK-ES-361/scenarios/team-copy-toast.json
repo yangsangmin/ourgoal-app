@@ -1,0 +1,18 @@
+{
+  "id": "team-copy-toast",
+  "title": "게스트가 체험 팀의 팀 목표를 팀 연계 개인목표로 복사하며 참가하면 팀 연계 모듈 토스트(복사하고 참가했습니다)가 화면에 뜬다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"goals\"]" },
+    { "do": "click", "selector": "#btnGoalsSubTeam" },
+    { "do": "click", "selector": "[data-tgquickjoin=\"g-workshop\"]" },
+    { "do": "wait", "ms": 2600 },
+    { "do": "click", "selector": "[data-copyteamgoal=\"g-workshop:tg-ws-1\"]" },
+    { "expect": "textContains", "selector": "#toast", "text": "팀 목표를 팀 연계 개인목표로 복사하고 참가했습니다" },
+    { "expect": "hasClass", "selector": "#toast", "className": "show" },
+    { "capture": "copy-toast" }
+  ]
+}

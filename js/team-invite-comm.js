@@ -10,13 +10,9 @@
   'use strict';
 
   var _ctx = {};
-  function showToast(msg){
-    try {
-      if(_ctx && typeof _ctx.toast === 'function') return _ctx.toast(msg);
-      if(typeof global.toast === 'function') return showToast(msg);
-      if(typeof window !== 'undefined' && typeof window.showToast === 'function') return window.showToast(msg);
-    } catch(e){}
-  }
+  /* #TASK-ES-361 (CORE-10): 예전 통로는 init 전에 불리면 자기 자신을 다시 불러(재귀) 오류가 try/catch 에 묻혀 토스트가 안 떴다.
+   * 공용 토스트 통로(js/core/toast.js · ui.toast) 하나로 — 주입(_ctx.toast) 우선, 없으면 공용(정본 준비 전이면 대기열). */
+  var showToast = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.toast.bind')) ? OurgoalCapabilities.request('ui.toast.bind') : typeof require === 'function' ? require('./core/toast.js').bind : function(get){ return function(m){ var o = get(); if(typeof o === 'function') return o(m); }; })(function(){ return _ctx && _ctx.toast; });
   function getAppToast(){ return showToast; }
   function getAppOpenModal(){ return _ctx.openModal || global.openModal; }
   function getAppCloseModal(){ return _ctx.closeModal || global.closeModal; }

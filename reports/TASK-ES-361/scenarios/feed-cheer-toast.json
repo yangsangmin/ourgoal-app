@@ -1,0 +1,19 @@
+{
+  "id": "feed-cheer-toast",
+  "title": "게스트가 소통 피드에 글을 올린 뒤 응원해요를 누르면(서버 연결 없음) 반응 모듈 토스트(잠시 후 다시 시도해주세요)가 화면에 뜬다",
+  "steps": [
+    { "do": "goto", "path": "/index.html" },
+    { "do": "waitFor", "selector": "#btnLandingPreviewDirect" },
+    { "do": "click", "selector": "#btnLandingPreviewDirect" },
+    { "do": "waitFor", "selector": "#homeAddGoal", "timeoutMs": 15000 },
+    { "do": "click", "selector": ".navbtn[data-tab=\"comm\"]" },
+    { "do": "click", "selector": "#btnCommPostFeed" },
+    { "do": "type", "selector": "#shareCaptionInput", "text": "오늘도 30분 달렸어요" },
+    { "do": "click", "selector": "#shareConfirmBtn" },
+    { "do": "wait", "ms": 2800 },
+    { "do": "click", "selector": "[data-rx=\"cheer\"]" },
+    { "expect": "textContains", "selector": "#toast", "text": "잠시 후 다시 시도해주세요" },
+    { "expect": "hasClass", "selector": "#toast", "className": "show" },
+    { "capture": "cheer-toast" }
+  ]
+}

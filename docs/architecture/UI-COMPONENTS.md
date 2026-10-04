@@ -21,6 +21,8 @@
 
 ### 2-1. 토스트 연결 통로 6 (`function toast`/`showToast`/`toastFn` — index.html 밖)
 
+> **TASK-ES-361 에서 0 으로 줄였다**: 6곳은 `js/core/toast.js` 가 주는 능력 `ui.toast.bind` 로 만든 함수를 쓰고(주입 토스트 우선), 그리기는 index.html 정본 `toast()` 그대로다(정본 준비 전엔 대기열). team-invite-comm 재귀(CORE-10)도 사라졌다. 아래 표는 그 전 기록이다. 정본을 `js/ui/toast.js` 로 옮기는 일(3절 1번 앞부분)은 `attach(fn)` 자리로 남겨 두었다.
+
 | 파일:줄 | 이름 | 하는 일 |
 | :-- | :-- | :-- |
 | js/auth-safety.js:6 | `toastFn` | 기본값 `console.log` — `init(deps)` 전에는 화면에 안 뜬다 |

@@ -3,7 +3,8 @@
 
   var sbClient = null;
   var stateRef = null;
-  var toastFn = function(m){ console.log(m); };
+  var injectedToast = null;
+  var toastFn = ((typeof OurgoalCapabilities !== 'undefined' && OurgoalCapabilities.has('ui.toast.bind')) ? OurgoalCapabilities.request('ui.toast.bind') : typeof require === 'function' ? require('./core/toast.js').bind : function(get){ return function(m){ var o = get(); if(typeof o === 'function') return o(m); }; })(function(){ return injectedToast; }); /* #TASK-ES-361: 공용 토스트 통로(js/core/toast.js · ui.toast) — 주입 토스트 우선, 없으면 공용(준비 전이면 대기열) */
   var openModalFn = null;
   var closeModalFn = null;
   var performLogoutFn = null;
@@ -14,7 +15,7 @@
     if(!deps) return;
     sbClient = deps.sb;
     stateRef = deps.state;
-    if(deps.toast) toastFn = deps.toast;
+    if(deps.toast) injectedToast = deps.toast;
     if(deps.openModal) openModalFn = deps.openModal;
     if(deps.closeModal) closeModalFn = deps.closeModal;
     if(deps.performLogout) performLogoutFn = deps.performLogout;
