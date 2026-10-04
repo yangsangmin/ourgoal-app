@@ -1,0 +1,91 @@
+{
+  "task": "TASK-ES-384",
+  "requirementsSource": "docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md",
+  "requirements": [
+    { "id": "R1", "text": "js/avatar-system.js 의 책임 지도 — 함수 목록·줄 범위·호출 관계·전역 노출·다른 파일/index.html 이 부르는 이름·시험이 글자를 찾는 함수(smoke FN_NAMES 등)" },
+    { "id": "R2", "text": "나눌 세포 목록(각 800줄 이하, 꽂는 자리는 정식 15곳 중), 옮기는 순서(PR 3~5개), 각 PR 의 증명 방법(git archive 기준 사본 대비 토큰 동일·DOM 비교·실계정 하네스)" },
+    { "id": "R3", "text": "EXP 저장 위치 현황(localStorage 키·Supabase 표·칸·계산 함수, 몇 벌), 통일 목표 설계(원장 하나·나머지 파생), 데이터 이관 필요 여부 — 필요하면 [결심 필요] 표시(GUARD_03 백업 대책)" },
+    { "id": "R4", "text": "위험·막힐 지점, 두 번 손대지 않는 순서" },
+    { "id": "R5", "text": "문서만: REQ(8원칙 헤더 ## N. [원칙 ①]), dev_log·TICKETS 각 1줄, claims.json. 제품 코드·동결 파일 수정 0, 운영 DB 조회·쓰기 0" }
+  ],
+  "claims": [
+    {
+      "id": "C1", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "REQ 2-1절에 avatar-system.js 최상위 선언의 줄 범위·호출·저장 표가 있다",
+      "touches": ["docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md", "text": "| 줄 범위 | 줄 수 | 이름 | 종류 | 같은 파일 안 호출 | 저장 |" }
+    },
+    {
+      "id": "C2", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "REQ 2-1절은 openAvatarModal 이 5599~6477줄 879줄이라고 적는다(측정 스크립트 산출)",
+      "touches": ["docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md", "text": "| 5599~6477 | **879** | `openAvatarModal` |" }
+    },
+    {
+      "id": "C3", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "REQ 2-3절이 smoke FN_NAMES 의 xpForLevel·levelForXP·levelProgress 를 EXP 세포 이전의 걸림돌로 적는다",
+      "touches": ["docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md", "text": "그 안에 **`xpForLevel`·`levelForXP`·`levelProgress`** 가 있다" }
+    },
+    {
+      "id": "C4", "req": "R1", "kind": "static", "domain": "config",
+      "statement": "측정 스크립트가 시험 파일의 소스 글자 단언을 avatar-system.js 선언에 대응시킨다",
+      "touches": ["reports/TASK-ES-384/avatar-map.js"],
+      "check": { "type": "codeContains", "file": "reports/TASK-ES-384/avatar-map.js", "text": "// 6) 소스 글자 단언(파일 글자를 직접 찾는 시험) → 그 글자가 사는 선언" }
+    },
+    {
+      "id": "C5", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "REQ 3-1절에 세포 목록 표(파일·담당·옮길 선언·줄·꽂는 자리·능력)가 있다",
+      "touches": ["docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md", "text": "| 세포(파일) | 담당 | 옮길 선언 | 줄(합) | 꽂는 자리(정식 15곳 중) | 능력(provides) |" }
+    },
+    {
+      "id": "C6", "req": "R2", "kind": "static", "domain": "config",
+      "statement": "REQ 3-2절에 PR 5개 순서의 첫 행으로 시험지 선행 PR 이 있다",
+      "touches": ["docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md", "text": "| **PR-1 시험지 선행** |" }
+    },
+    {
+      "id": "C7", "req": "R3", "kind": "static", "domain": "config",
+      "statement": "REQ 2-4절에 EXP 저장 위치 현황 표와 벌 수(앱 안 2벌·서버 0)가 있다",
+      "touches": ["docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md", "text": "- **몇 벌인가**: 앱 안 저장 **2벌**(X1 정본 역할 + X2 전체 사본), 서버 0벌" }
+    },
+    {
+      "id": "C8", "req": "R3", "kind": "static", "domain": "config",
+      "statement": "REQ 4-4절이 데이터 이관이 필요하다고 보고 [결심 필요] K-XP1 로 표시한다",
+      "touches": ["docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md", "text": "### 4-4. 데이터 이관이 필요한가 — **필요하다 → [결심 필요] K-XP1**" }
+    },
+    {
+      "id": "C9", "req": "R3", "kind": "static", "domain": "config",
+      "statement": "REQ 4-3절 통일안이 total = baseTotal + 로그 합 규칙으로 기존 합계를 보존한다",
+      "touches": ["docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md", "text": "**`total = baseTotal + Σlog.amount`**" }
+    },
+    {
+      "id": "C10", "req": "R4", "kind": "static", "domain": "config",
+      "statement": "REQ 8-2절에 위험·막힐 지점 목록이 있다",
+      "touches": ["docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md", "text": "### 8-2. 위험 · 막힐 지점(예상)" }
+    },
+    {
+      "id": "C11", "req": "R5", "kind": "static", "domain": "config",
+      "statement": "REQ 가 8원칙 헤더 형식(## N. [원칙 ①])을 따른다",
+      "touches": ["docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md"],
+      "check": { "type": "codeContains", "file": "docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md", "text": "## 8. [원칙 ⑧] 성과 측정 · 위험 · 막힐 지점" }
+    },
+    {
+      "id": "C12", "req": "R5", "kind": "static", "domain": "config",
+      "statement": "TICKETS 에 TASK-ES-384 한 줄이 4단계(심사 청구)로 등록되어 있다",
+      "touches": ["docs/rules/TICKETS.md"],
+      "check": { "type": "codeContains", "file": "docs/rules/TICKETS.md", "text": "- #TASK-ES-384 | INFRA/설계 | [아바타·EXP 세포 쪼개기 설계]" }
+    },
+    {
+      "id": "C13", "req": "R5", "kind": "static", "domain": "config",
+      "statement": "dev_log 에 TASK-ES-384 항목이 있다",
+      "touches": ["dev_log.md"],
+      "check": { "type": "codeContains", "file": "dev_log.md", "text": "- 2026-10-05 TASK-ES-384: 아바타·EXP 세포 쪼개기 설계" }
+    }
+  ]
+}

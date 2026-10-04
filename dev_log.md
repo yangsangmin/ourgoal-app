@@ -5894,3 +5894,5 @@
 - 2026-10-05 TASK-ES-381: DM 공개 차단 2단계 SQL 재확정(운영 미적용, 세션은 SQL 실행 안 함) — #680 뒤 앱 요청 전수 대조 결과 동작 충돌은 없고 주석 1건(받는 사람 update 가능 — 운영에 허용 정책 없음) 오류, 위조 구멍 2종(남의 대화방 ping_id 에 끼워 넣기, dm_direct 부모·mn_pool_ id 선점) 발견 → 정책 이름 그대로 식만 좁힘(답장 insert/update 대화방 id 고정, 답장 update 보낸 사람만, team_pings dm_direct·manito_pool id 규칙), check.sql [사전-6](og_dm_mark·FORCE RLS 꺼짐)·[사전-7](규칙 밖 기존 행 수) 추가, README 2단계 절차 재작성. PGlite 운영 모양 시험 52/52(2026-10-04 판은 위조 3건 통과), 옛 시험 33/33(84행 기대 의도 변경), 읽음 열 시험 20/20
 
 - 2026-10-05 TASK-ES-383: 실계정 하네스 정리 단계가 앱 바텀시트 확인창(#TASK-ES-374/376 이후)을 눌러 테스트 동반자 관계를 지우고, 동반자 목록 동기화를 기다린 뒤 판단하게 함 — 운영 실계정 실측: 정리 deleted 1·leftover 0, 다음 실행 already:false 로 새로 추가 통과
+
+- 2026-10-05 TASK-ES-384: 아바타·EXP 세포 쪼개기 설계(쪼개는 순서 5, 코드 변경 0) — docs/specs/REQ-TASK-ES-384-AVATAR-EXP-PLAN.md. 측정 reports/TASK-ES-384/avatar-map.js: avatar-system.js 7,351줄 중 320종 데이터 4,161줄·모달 879줄, 공개 이름 42·글자 단언 113. 계획 PR 5개(시험지 합본 선행 → 페르소나 데이터 16파일 → 로직 6세포 → 모달 섹션 → EXP 세포 저장 어댑터), 최대 파일 약 590줄. EXP 는 앱 안 2벌(settings.xp·guest_profile 사본)·서버 0, 서버 원장 이관은 [결심 필요] K-XP1(baseTotal 로 합계 보존)
